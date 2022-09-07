@@ -276,14 +276,11 @@ TEST(ParserDecodeTest, FlateEncode) {
 
   for (size_t i = 0; i < std::size(flate_encode_cases); ++i) {
     const pdfium::StrFuncTestData& data = flate_encode_cases[i];
-    std::unique_ptr<uint8_t, FxFreeDeleter> buf;
-    uint32_t buf_size;
-    EXPECT_TRUE(FlateEncode({data.input, data.input_size}, &buf, &buf_size));
-    ASSERT_TRUE(buf);
-    EXPECT_EQ(data.expected_size, buf_size) << " for case " << i;
-    if (data.expected_size != buf_size)
+    DataVector<uint8_t> result = FlateEncode({data.input, data.input_size});
+    EXPECT_EQ(data.expected_size, result.size()) << " for case " << i;
+    if (data.expected_size != result.size())
       continue;
-    EXPECT_EQ(0, memcmp(data.expected, buf.get(), data.expected_size))
+    EXPECT_EQ(0, memcmp(data.expected, result.data(), data.expected_size))
         << " for case " << i;
   }
 }

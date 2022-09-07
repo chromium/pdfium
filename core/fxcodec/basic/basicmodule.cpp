@@ -230,24 +230,14 @@ std::unique_ptr<ScanlineDecoder> BasicModule::CreateRunLengthDecoder(
 }
 
 // static
-bool BasicModule::RunLengthEncode(
-    pdfium::span<const uint8_t> src_span,
-    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-    uint32_t* dest_size) {
-  // Check inputs
-  if (src_span.empty() || !dest_buf || !dest_size)
-    return false;
+DataVector<uint8_t> BasicModule::RunLengthEncode(
+    pdfium::span<const uint8_t> src_span) {
+  if (src_span.empty())
+    return {};
 
-  // Edge case
-  if (src_span.size() == 1) {
-    *dest_size = 3;
-    dest_buf->reset(FX_Alloc(uint8_t, *dest_size));
-    auto dest_buf_span = pdfium::make_span(dest_buf->get(), *dest_size);
-    dest_buf_span[0] = 0;
-    dest_buf_span[1] = src_span[0];
-    dest_buf_span[2] = 128;
-    return true;
-  }
+  // Handle edge case.
+  if (src_span.size() == 1)
+    return {0, src_span[0], 128};
 
   // Worst case: 1 nonmatch, 2 match, 1 nonmatch, 2 match, etc. This becomes
   // 4 output chars for every 3 input, plus up to 4 more for the 1-2 chars
@@ -257,10 +247,10 @@ bool BasicModule::RunLengthEncode(
   estimated_size /= 3;
   estimated_size *= 4;
   estimated_size += 1;
-  dest_buf->reset(FX_Alloc(uint8_t, estimated_size.ValueOrDie()));
+  DataVector<uint8_t> result(estimated_size.ValueOrDie());
 
   // Set up pointers.
-  uint8_t* out = dest_buf->get();
+  uint8_t* out = result.data();
   uint32_t run_start = 0;
   uint32_t run_end = 1;
   uint8_t x = src_span[run_start];
@@ -311,8 +301,10 @@ bool BasicModule::RunLengthEncode(
     out += 2;
   }
   *out = 128;
-  *dest_size = pdfium::base::checked_cast<uint32_t>(out + 1 - dest_buf->get());
-  return true;
+  size_t new_size = out + 1 - result.data();
+  CHECK_LE(new_size, result.size());
+  result.resize(new_size);
+  return result;
 }
 
 // static

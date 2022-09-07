@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_stream.h"
@@ -44,16 +45,12 @@ struct EncoderIface {
                          int pitch,
                          std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                          uint32_t* dest_size);
-  bool (*pFlateEncodeFunc)(pdfium::span<const uint8_t> src_span,
-                           std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                           uint32_t* dest_size);
+  DataVector<uint8_t> (*pFlateEncodeFunc)(pdfium::span<const uint8_t> src_span);
   bool (*pJpegEncodeFunc)(const RetainPtr<CFX_DIBBase>& pSource,
                           uint8_t** dest_buf,
                           size_t* dest_size);
-  bool (*pRunLengthEncodeFunc)(
-      pdfium::span<const uint8_t> src_buf,
-      std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-      uint32_t* dest_size);
+  DataVector<uint8_t> (*pRunLengthEncodeFunc)(
+      pdfium::span<const uint8_t> src_buf);
 };
 
 class CFX_PSRenderer {
@@ -122,6 +119,18 @@ class CFX_PSRenderer {
  private:
   struct Glyph;
 
+  struct PSCompressResult {
+    PSCompressResult();
+    PSCompressResult(const PSCompressResult&) = delete;
+    PSCompressResult& operator=(const PSCompressResult&) = delete;
+    PSCompressResult(PSCompressResult&&) noexcept;
+    PSCompressResult& operator=(PSCompressResult&&) noexcept;
+    ~PSCompressResult();
+
+    DataVector<uint8_t> data;
+    ByteString filter;
+  };
+
   void StartRendering();
   void EndRendering();
   void OutputPath(const CFX_Path& path, const CFX_Matrix* pObject2Device);
@@ -147,11 +156,8 @@ class CFX_PSRenderer {
                        int height,
                        std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                        uint32_t* dest_size) const;
-  void PSCompressData(uint8_t* src_buf,
-                      uint32_t src_size,
-                      uint8_t** output_buf,
-                      uint32_t* output_size,
-                      const char** filter) const;
+  absl::optional<PSCompressResult> PSCompressData(
+      pdfium::span<const uint8_t> src_span) const;
   void WritePreambleString(ByteStringView str);
   void WritePSBinary(pdfium::span<const uint8_t> data);
   void WriteStream(fxcrt::ostringstream& stream);

@@ -7,10 +7,13 @@
 #ifndef CORE_FPDFAPI_PARSER_FPDF_PARSER_DECODE_H_
 #define CORE_FPDFAPI_PARSER_FPDF_PARSER_DECODE_H_
 
+#include <stdint.h>
+
 #include <memory>
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -49,9 +52,7 @@ std::unique_ptr<fxcodec::ScanlineDecoder> CreateFlateDecoder(
     int bpc,
     const CPDF_Dictionary* pParams);
 
-bool FlateEncode(pdfium::span<const uint8_t> src_span,
-                 std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                 uint32_t* dest_size);
+DataVector<uint8_t> FlateEncode(pdfium::span<const uint8_t> src_span);
 
 uint32_t FlateDecode(pdfium::span<const uint8_t> src_span,
                      std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,

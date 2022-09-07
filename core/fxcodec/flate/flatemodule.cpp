@@ -865,21 +865,19 @@ uint32_t FlateModule::FlateOrLZWDecode(
 }
 
 // static
-bool FlateModule::Encode(pdfium::span<const uint8_t> src_span,
-                         std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                         uint32_t* dest_size) {
+DataVector<uint8_t> FlateModule::Encode(pdfium::span<const uint8_t> src_span) {
   const unsigned long src_size =
       pdfium::base::checked_cast<unsigned long>(src_span.size());
   pdfium::base::CheckedNumeric<unsigned long> safe_dest_size = src_size;
   safe_dest_size += src_size / 1000;
   safe_dest_size += 12;
-  unsigned long temp_size = safe_dest_size.ValueOrDie();
-  dest_buf->reset(FX_Alloc(uint8_t, temp_size));
-  if (!FlateCompress(dest_buf->get(), &temp_size, src_span.data(), src_size))
-    return false;
+  unsigned long dest_size = safe_dest_size.ValueOrDie();
+  DataVector<uint8_t> dest_buf(dest_size);
+  if (!FlateCompress(dest_buf.data(), &dest_size, src_span.data(), src_size))
+    return {};
 
-  *dest_size = pdfium::base::checked_cast<uint32_t>(temp_size);
-  return true;
+  dest_buf.resize(pdfium::base::checked_cast<size_t>(dest_size));
+  return dest_buf;
 }
 
 }  // namespace fxcodec

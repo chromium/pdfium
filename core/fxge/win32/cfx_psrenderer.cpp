@@ -198,6 +198,16 @@ struct CFX_PSRenderer::Glyph {
   absl::optional<std::array<float, 4>> adjust_matrix;
 };
 
+CFX_PSRenderer::PSCompressResult::PSCompressResult() = default;
+
+CFX_PSRenderer::PSCompressResult::PSCompressResult(
+    PSCompressResult&&) noexcept = default;
+
+CFX_PSRenderer::PSCompressResult& CFX_PSRenderer::PSCompressResult::operator=(
+    PSCompressResult&&) noexcept = default;
+
+CFX_PSRenderer::PSCompressResult::~PSCompressResult() = default;
+
 CFX_PSRenderer::CFX_PSRenderer(CFX_PSFontTracker* font_tracker,
                                const EncoderIface* encoder_iface)
     : m_pFontTracker(font_tracker), m_pEncoderIface(encoder_iface) {
@@ -565,13 +575,14 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     int bpp = pConverted->GetBPP() / 8;
     uint8_t* output_buf = nullptr;
     size_t output_size = 0;
-    const char* filter = nullptr;
+    bool output_buf_is_owned = true;
+    absl::optional<PSCompressResult> compress_result;
+    ByteString filter;
     if ((m_Level.value() == RenderingLevel::kLevel2 || options.bLossy) &&
         m_pEncoderIface->pJpegEncodeFunc(pConverted, &output_buf,
                                          &output_size)) {
       filter = "/DCTDecode filter ";
-    }
-    if (!filter) {
+    } else {
       int src_pitch = width * bpp;
       output_size = height * src_pitch;
       output_buf = FX_Alloc(uint8_t, output_size);
@@ -589,21 +600,19 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
           memcpy(dest_scan, src_scan, src_pitch);
         }
       }
-      uint8_t* compressed_buf;
-      uint32_t compressed_size;
-      PSCompressData(output_buf,
-                     pdfium::base::checked_cast<uint32_t>(output_size),
-                     &compressed_buf, &compressed_size, &filter);
-      if (output_buf != compressed_buf)
+      compress_result = PSCompressData({output_buf, output_size});
+      if (compress_result.has_value()) {
         FX_Free(output_buf);
-
-      output_buf = compressed_buf;
-      output_size = compressed_size;
+        output_buf_is_owned = false;
+        output_buf = compress_result.value().data.data();
+        output_size = compress_result.value().data.size();
+        filter = compress_result.value().filter;
+      }
     }
     buf << " 8[";
     buf << width << " 0 0 -" << height << " 0 " << height << "]";
     buf << "currentfile/ASCII85Decode filter ";
-    if (filter)
+    if (!filter.IsEmpty())
       buf << filter;
 
     buf << "false " << bpp;
@@ -611,7 +620,8 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     WriteStream(buf);
 
     WritePSBinary({output_buf, output_size});
-    FX_Free(output_buf);
+    if (output_buf_is_owned)
+      FX_Free(output_buf);
   }
   WriteString("\nQ\n");
   return true;
@@ -838,42 +848,30 @@ bool CFX_PSRenderer::FaxCompressData(
   return true;
 }
 
-void CFX_PSRenderer::PSCompressData(uint8_t* src_buf,
-                                    uint32_t src_size,
-                                    uint8_t** output_buf,
-                                    uint32_t* output_size,
-                                    const char** filter) const {
-  *output_buf = src_buf;
-  *output_size = src_size;
-  *filter = "";
-  if (src_size < 1024)
-    return;
+absl::optional<CFX_PSRenderer::PSCompressResult> CFX_PSRenderer::PSCompressData(
+    pdfium::span<const uint8_t> src_span) const {
+  if (src_span.size() < 1024)
+    return absl::nullopt;
 
-  uint8_t* dest_buf = nullptr;
-  uint32_t dest_size = src_size;
+  DataVector<uint8_t> (*encode_func)(pdfium::span<const uint8_t> src_span);
+  ByteString filter;
   if (m_Level.value() == RenderingLevel::kLevel3 ||
       m_Level.value() == RenderingLevel::kLevel3Type42) {
-    std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf_unique;
-    if (m_pEncoderIface->pFlateEncodeFunc(pdfium::make_span(src_buf, src_size),
-                                          &dest_buf_unique, &dest_size)) {
-      dest_buf = dest_buf_unique.release();
-      *filter = "/FlateDecode filter ";
-    }
+    encode_func = m_pEncoderIface->pFlateEncodeFunc;
+    filter = "/FlateDecode filter ";
   } else {
-    std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf_unique;
-    if (m_pEncoderIface->pRunLengthEncodeFunc({src_buf, src_size},
-                                              &dest_buf_unique, &dest_size)) {
-      dest_buf = dest_buf_unique.release();
-      *filter = "/RunLengthDecode filter ";
-    }
+    encode_func = m_pEncoderIface->pRunLengthEncodeFunc;
+    filter = "/RunLengthDecode filter ";
   }
-  if (dest_size < src_size) {
-    *output_buf = dest_buf;
-    *output_size = dest_size;
-  } else {
-    *filter = nullptr;
-    FX_Free(dest_buf);
-  }
+
+  DataVector<uint8_t> decode_result = encode_func(src_span);
+  if (decode_result.size() == 0 || decode_result.size() >= src_span.size())
+    return absl::nullopt;
+
+  PSCompressResult result;
+  result.data = std::move(decode_result);
+  result.filter = filter;
+  return result;
 }
 
 void CFX_PSRenderer::WritePreambleString(ByteStringView str) {

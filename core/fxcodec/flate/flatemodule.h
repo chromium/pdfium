@@ -11,6 +11,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "third_party/base/span.h"
 
@@ -43,9 +44,7 @@ class FlateModule {
       std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
       uint32_t* dest_size);
 
-  static bool Encode(pdfium::span<const uint8_t> src_span,
-                     std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                     uint32_t* dest_size);
+  static DataVector<uint8_t> Encode(pdfium::span<const uint8_t> src_span);
 
   FlateModule() = delete;
   FlateModule(const FlateModule&) = delete;

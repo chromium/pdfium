@@ -9,9 +9,7 @@
 
 #include <stdint.h>
 
-#include <memory>
-
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "third_party/abseil-cpp/absl/types/variant.h"
 #include "third_party/base/span.h"
@@ -34,20 +32,12 @@ class CPDF_FlateEncoder {
   pdfium::span<const uint8_t> GetSpan() const;
 
  private:
-  // TODO(crbug.com/pdfium/1872): Replace with fxcrt::DataVector.
-  struct OwnedData {
-    OwnedData(std::unique_ptr<uint8_t, FxFreeDeleter> buffer, uint32_t size);
-    ~OwnedData();
-
-    std::unique_ptr<uint8_t, FxFreeDeleter> buffer;
-    uint32_t size;
-  };
-
   bool is_owned() const { return m_Data.index() == 1; }
 
-  RetainPtr<CPDF_StreamAcc> m_pAcc;
+  // Must outlive `m_Data`.
+  RetainPtr<CPDF_StreamAcc> const m_pAcc;
 
-  absl::variant<pdfium::span<const uint8_t>, OwnedData> m_Data;
+  absl::variant<pdfium::span<const uint8_t>, DataVector<uint8_t>> m_Data;
 
   // Only one of these two pointers is valid at any time.
   RetainPtr<const CPDF_Dictionary> m_pDict;
