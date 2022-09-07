@@ -93,11 +93,12 @@ int FindPageIndex(const CPDF_Dictionary* pNode,
   }
 
   for (size_t i = 0; i < pKidList->size(); i++) {
-    const CPDF_Dictionary* pKid = pKidList->GetDictAt(i);
+    RetainPtr<const CPDF_Dictionary> pKid = pKidList->GetDictAt(i);
     if (!pKid || pKid == pNode)
       continue;
 
-    int found_index = FindPageIndex(pKid, skip_count, objnum, index, level + 1);
+    int found_index =
+        FindPageIndex(pKid.Get(), skip_count, objnum, index, level + 1);
     if (found_index >= 0)
       return found_index;
   }

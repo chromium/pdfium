@@ -646,14 +646,14 @@ CPDF_CalGray::~CPDF_CalGray() = default;
 uint32_t CPDF_CalGray::v_Load(CPDF_Document* pDoc,
                               const CPDF_Array* pArray,
                               std::set<const CPDF_Object*>* pVisited) {
-  const CPDF_Dictionary* pDict = pArray->GetDictAt(1);
+  RetainPtr<const CPDF_Dictionary> pDict = pArray->GetDictAt(1);
   if (!pDict)
     return 0;
 
-  if (!GetWhitePoint(pDict, m_WhitePoint))
+  if (!GetWhitePoint(pDict.Get(), m_WhitePoint))
     return 0;
 
-  GetBlackPoint(pDict, m_BlackPoint);
+  GetBlackPoint(pDict.Get(), m_BlackPoint);
 
   m_Gamma = pDict->GetNumberFor("Gamma");
   if (m_Gamma == 0)
@@ -695,14 +695,14 @@ CPDF_CalRGB::~CPDF_CalRGB() = default;
 uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
                              const CPDF_Array* pArray,
                              std::set<const CPDF_Object*>* pVisited) {
-  const CPDF_Dictionary* pDict = pArray->GetDictAt(1);
+  RetainPtr<const CPDF_Dictionary> pDict = pArray->GetDictAt(1);
   if (!pDict)
     return 0;
 
-  if (!GetWhitePoint(pDict, m_WhitePoint))
+  if (!GetWhitePoint(pDict.Get(), m_WhitePoint))
     return 0;
 
-  GetBlackPoint(pDict, m_BlackPoint);
+  GetBlackPoint(pDict.Get(), m_BlackPoint);
 
   const CPDF_Array* pParam = pDict->GetArrayFor("Gamma");
   if (pParam) {
@@ -809,14 +809,14 @@ void CPDF_LabCS::GetDefaultValue(int iComponent,
 uint32_t CPDF_LabCS::v_Load(CPDF_Document* pDoc,
                             const CPDF_Array* pArray,
                             std::set<const CPDF_Object*>* pVisited) {
-  const CPDF_Dictionary* pDict = pArray->GetDictAt(1);
+  RetainPtr<const CPDF_Dictionary> pDict = pArray->GetDictAt(1);
   if (!pDict)
     return 0;
 
-  if (!GetWhitePoint(pDict, m_WhitePoint))
+  if (!GetWhitePoint(pDict.Get(), m_WhitePoint))
     return 0;
 
-  GetBlackPoint(pDict, m_BlackPoint);
+  GetBlackPoint(pDict.Get(), m_BlackPoint);
 
   const CPDF_Array* pParam = pDict->GetArrayFor("Range");
   static constexpr float kDefaultRanges[kRangesCount] = {-100.0f, 100.0f,
@@ -893,7 +893,7 @@ CPDF_ICCBasedCS::~CPDF_ICCBasedCS() = default;
 uint32_t CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc,
                                  const CPDF_Array* pArray,
                                  std::set<const CPDF_Object*>* pVisited) {
-  const CPDF_Stream* pStream = pArray->GetStreamAt(1);
+  RetainPtr<const CPDF_Stream> pStream = pArray->GetStreamAt(1);
   if (!pStream)
     return 0;
 
@@ -906,7 +906,8 @@ uint32_t CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc,
     return 0;
 
   uint32_t nComponents = static_cast<uint32_t>(nDictComponents);
-  m_pProfile = CPDF_DocPageData::FromDocument(pDoc)->GetIccProfile(pStream);
+  m_pProfile =
+      CPDF_DocPageData::FromDocument(pDoc)->GetIccProfile(pStream.Get());
   if (!m_pProfile)
     return 0;
 

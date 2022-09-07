@@ -410,7 +410,7 @@ bool CPDF_CIDFont::Load() {
   if (!pFonts || pFonts->size() != 1)
     return false;
 
-  const CPDF_Dictionary* pCIDFontDict = pFonts->GetDictAt(0);
+  RetainPtr<const CPDF_Dictionary> pCIDFontDict = pFonts->GetDictAt(0);
   if (!pCIDFontDict)
     return false;
 

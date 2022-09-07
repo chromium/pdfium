@@ -55,9 +55,9 @@ const CPDF_Dictionary* GetConfig(CPDF_Document* pDoc,
     return pConfig;
 
   for (size_t i = 0; i < pConfigs->size(); i++) {
-    const CPDF_Dictionary* pFind = pConfigs->GetDictAt(i);
-    if (pFind && HasIntent(pFind, "View", ""))
-      return pFind;
+    RetainPtr<const CPDF_Dictionary> pFind = pConfigs->GetDictAt(i);
+    if (pFind && HasIntent(pFind.Get(), "View", ""))
+      return pFind.Get();
   }
   return pConfig;
 }
@@ -112,7 +112,7 @@ bool CPDF_OCContext::LoadOCGStateFromConfig(
 
   ByteString csFind = csConfig + "State";
   for (size_t i = 0; i < pArray->size(); i++) {
-    const CPDF_Dictionary* pUsage = pArray->GetDictAt(i);
+    RetainPtr<const CPDF_Dictionary> pUsage = pArray->GetDictAt(i);
     if (!pUsage)
       continue;
 
@@ -250,12 +250,12 @@ bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict) const {
   bool bValidEntrySeen = false;
   for (size_t i = 0; i < pArray->size(); i++) {
     bool bItem = true;
-    const CPDF_Dictionary* pItemDict = pArray->GetDictAt(i);
+    RetainPtr<const CPDF_Dictionary> pItemDict = pArray->GetDictAt(i);
     if (!pItemDict)
       continue;
 
     bValidEntrySeen = true;
-    bItem = GetOCGVisible(pItemDict);
+    bItem = GetOCGVisible(pItemDict.Get());
 
     if ((csP == "AnyOn" && bItem) || (csP == "AnyOff" && !bItem))
       return true;

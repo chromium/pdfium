@@ -87,7 +87,7 @@ ByteString FDFToURLEncodedData(ByteString buffer) {
 
   fxcrt::ostringstream encoded_data;
   for (uint32_t i = 0; i < pFields->size(); i++) {
-    const CPDF_Dictionary* pField = pFields->GetDictAt(i);
+    RetainPtr<const CPDF_Dictionary> pField = pFields->GetDictAt(i);
     if (!pField)
       continue;
     WideString name = pField->GetUnicodeTextFor("T");

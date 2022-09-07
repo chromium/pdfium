@@ -374,11 +374,11 @@ size_t CountNamesInternal(const CPDF_Dictionary* pNode,
 
   size_t nCount = 0;
   for (size_t i = 0; i < pKids->size(); i++) {
-    const CPDF_Dictionary* pKid = pKids->GetDictAt(i);
+    RetainPtr<const CPDF_Dictionary> pKid = pKids->GetDictAt(i);
     if (!pKid)
       continue;
 
-    nCount += CountNamesInternal(pKid, nLevel + 1, seen);
+    nCount += CountNamesInternal(pKid.Get(), nLevel + 1, seen);
   }
   return nCount;
 }

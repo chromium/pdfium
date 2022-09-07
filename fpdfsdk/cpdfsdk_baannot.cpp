@@ -190,7 +190,7 @@ BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
       GetAnnotDict()->GetArrayFor(pdfium::annotation::kBorder);
   if (pBorder) {
     if (pBorder->size() >= 4) {
-      const CPDF_Array* pDP = pBorder->GetArrayAt(3);
+      RetainPtr<const CPDF_Array> pDP = pBorder->GetArrayAt(3);
       if (pDP && pDP->size() > 0)
         return BorderStyle::kDash;
     }

@@ -627,11 +627,12 @@ const CPDF_FormControl* CPDF_InteractiveForm::GetControlAtPoint(
 
   for (size_t i = pAnnotList->size(); i > 0; --i) {
     size_t annot_index = i - 1;
-    const CPDF_Dictionary* pAnnot = pAnnotList->GetDictAt(annot_index);
+    RetainPtr<const CPDF_Dictionary> pAnnot =
+        pAnnotList->GetDictAt(annot_index);
     if (!pAnnot)
       continue;
 
-    const auto it = m_ControlMap.find(pAnnot);
+    const auto it = m_ControlMap.find(pAnnot.Get());
     if (it == m_ControlMap.end())
       continue;
 
@@ -765,7 +766,7 @@ void CPDF_InteractiveForm::LoadField(RetainPtr<CPDF_Dictionary> pFieldDict,
     return;
   }
 
-  const CPDF_Dictionary* pFirstKid = pKids->GetDictAt(0);
+  RetainPtr<const CPDF_Dictionary> pFirstKid = pKids->GetDictAt(0);
   if (!pFirstKid)
     return;
 

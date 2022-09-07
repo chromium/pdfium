@@ -35,11 +35,11 @@ const CPDF_Object* SearchNumberNode(const CPDF_Dictionary* pNode, int num) {
     return nullptr;
 
   for (size_t i = 0; i < pKids->size(); i++) {
-    const CPDF_Dictionary* pKid = pKids->GetDictAt(i);
+    RetainPtr<const CPDF_Dictionary> pKid = pKids->GetDictAt(i);
     if (!pKid)
       continue;
 
-    const CPDF_Object* pFound = SearchNumberNode(pKid, num);
+    const CPDF_Object* pFound = SearchNumberNode(pKid.Get(), num);
     if (pFound)
       return pFound;
   }

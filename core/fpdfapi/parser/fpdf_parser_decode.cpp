@@ -382,9 +382,10 @@ absl::optional<DecoderArray> GetDecoderArray(const CPDF_Dictionary* pDict) {
 
     const CPDF_Array* pParamsArray = ToArray(pParams);
     for (size_t i = 0; i < pDecoders->size(); ++i) {
+      // TODO(tsepez): push retained arguments.
       decoder_array.push_back(
           {pDecoders->GetStringAt(i),
-           pParamsArray ? pParamsArray->GetDictAt(i) : nullptr});
+           pParamsArray ? pParamsArray->GetDictAt(i).Get() : nullptr});
     }
   } else {
     DCHECK(pFilter->IsName());

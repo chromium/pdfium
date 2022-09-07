@@ -626,8 +626,8 @@ CPDF_Stream* CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
     const CPDF_Array* pSrcContentArray = ToArray(pSrcContentObj);
     if (pSrcContentArray) {
       for (size_t i = 0; i < pSrcContentArray->size(); ++i) {
-        const CPDF_Stream* pStream = pSrcContentArray->GetStreamAt(i);
-        auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+        RetainPtr<const CPDF_Stream> pStream = pSrcContentArray->GetStreamAt(i);
+        auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream.Get());
         pAcc->LoadAllDataFiltered();
         bsSrcContentStream += ByteString(pAcc->GetSpan());
         bsSrcContentStream += "\n";

@@ -74,7 +74,7 @@ uint32_t DecodeInlineStream(pdfium::span<const uint8_t> src_span,
                             int width,
                             int height,
                             const ByteString& decoder,
-                            const CPDF_Dictionary* pParam,
+                            RetainPtr<const CPDF_Dictionary> pParam,
                             uint32_t orig_size) {
   // |decoder| should not be an abbreviation.
   DCHECK(decoder != "A85");
@@ -88,11 +88,11 @@ uint32_t DecodeInlineStream(pdfium::span<const uint8_t> src_span,
   std::unique_ptr<uint8_t, FxFreeDeleter> ignored_result;
   uint32_t ignored_size;
   if (decoder == "FlateDecode") {
-    return FlateOrLZWDecode(false, src_span, pParam, orig_size, &ignored_result,
-                            &ignored_size);
+    return FlateOrLZWDecode(false, src_span, pParam.Get(), orig_size,
+                            &ignored_result, &ignored_size);
   }
   if (decoder == "LZWDecode") {
-    return FlateOrLZWDecode(true, src_span, pParam, 0, &ignored_result,
+    return FlateOrLZWDecode(true, src_span, pParam.Get(), 0, &ignored_result,
                             &ignored_size);
   }
   if (decoder == "DCTDecode") {
@@ -103,7 +103,7 @@ uint32_t DecodeInlineStream(pdfium::span<const uint8_t> src_span,
   }
   if (decoder == "CCITTFaxDecode") {
     std::unique_ptr<ScanlineDecoder> pDecoder =
-        CreateFaxDecoder(src_span, width, height, pParam);
+        CreateFaxDecoder(src_span, width, height, pParam.Get());
     return DecodeAllScanlines(std::move(pDecoder));
   }
 
@@ -139,7 +139,7 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     return nullptr;
 
   ByteString decoder;
-  const CPDF_Dictionary* pParam = nullptr;
+  RetainPtr<const CPDF_Dictionary> pParam;
   const CPDF_Object* pFilter = pDict->GetDirectObjectFor("Filter");
   if (pFilter) {
     const CPDF_Array* pArray = pFilter->AsArray();
@@ -151,7 +151,7 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
         pParam = pParams->GetDictAt(0);
     } else {
       decoder = pFilter->GetString();
-      pParam = pDict->GetDictFor(pdfium::stream::kDecodeParms);
+      pParam.Reset(pDict->GetDictFor(pdfium::stream::kDecodeParms));
     }
   }
   uint32_t width = pDict->GetIntegerFor("Width");
@@ -186,7 +186,7 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     m_Pos += dwOrigSize;
   } else {
     dwStreamSize = DecodeInlineStream(m_pBuf.subspan(m_Pos), width, height,
-                                      decoder, pParam, dwOrigSize);
+                                      decoder, std::move(pParam), dwOrigSize);
     if (!pdfium::base::IsValueInRangeForNumericType<int>(dwStreamSize))
       return nullptr;
 

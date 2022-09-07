@@ -71,11 +71,12 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
         if (!pDash)
           break;
 
-        const CPDF_Array* pArray = pDash->GetArrayAt(0);
+        RetainPtr<const CPDF_Array> pArray = pDash->GetArrayAt(0);
         if (!pArray)
           break;
 
-        SetLineDash(pArray, pDash->GetNumberAt(1), 1.0f);
+        // TODO(tsepez): pass moved retained object.
+        SetLineDash(pArray.Get(), pDash->GetNumberAt(1), 1.0f);
         break;
       }
       case FXBSTR_ID('R', 'I', 0, 0):

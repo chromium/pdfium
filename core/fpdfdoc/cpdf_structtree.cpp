@@ -77,8 +77,11 @@ void CPDF_StructTree::LoadPageTree(const CPDF_Dictionary* pPageDict) {
 
   StructElementMap element_map;
   for (size_t i = 0; i < pParentArray->size(); i++) {
-    if (const CPDF_Dictionary* pParent = pParentArray->GetDictAt(i))
-      AddPageNode(pParent, &element_map, 0);
+    RetainPtr<const CPDF_Dictionary> pParent = pParentArray->GetDictAt(i);
+    if (pParent) {
+      // TODO(tsepez): pass moved retained object.
+      AddPageNode(pParent.Get(), &element_map, 0);
+    }
   }
 }
 

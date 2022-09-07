@@ -140,11 +140,12 @@ std::vector<XFAPacket> GetXFAPackets(const CPDF_Object* xfa_object) {
     if (!name)
       continue;
 
-    const CPDF_Stream* data = xfa_array->GetStreamAt(i + 1);
+    RetainPtr<const CPDF_Stream> data = xfa_array->GetStreamAt(i + 1);
     if (!data)
       continue;
 
-    packets.push_back({name->GetString(), data});
+    // TODO(tsepez): push retained objects.
+    packets.push_back({name->GetString(), data.Get()});
   }
   return packets;
 }

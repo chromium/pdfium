@@ -457,7 +457,8 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
     if (pBorderArray) {
       width = pBorderArray->GetNumberAt(2);
       if (pBorderArray->size() == 4) {
-        pDashArray = pBorderArray->GetArrayAt(3);
+        // TODO(tsepez): convert to retained in future CPDF_Dictionary CLs.
+        pDashArray = pBorderArray->GetArrayAt(3).Get();
         if (!pDashArray) {
           return;
         }

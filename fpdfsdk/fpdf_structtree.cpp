@@ -166,7 +166,9 @@ FPDF_StructElement_GetAttributeAtIndex(FPDF_STRUCTELEMENT struct_element,
     const CPDF_Array* array = attr_obj->AsArray();
     if (index < 0 || static_cast<size_t>(index) >= array->size())
       return nullptr;
-    return FPDFStructElementAttrFromCPDFDictionary(array->GetDictAt(index));
+    // TODO(tsepez): should embedder take a reference here?
+    return FPDFStructElementAttrFromCPDFDictionary(
+        array->GetDictAt(index).Get());
   }
 
   return nullptr;

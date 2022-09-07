@@ -75,8 +75,11 @@ RetainPtr<CPDF_SeekableMultiStream> CreateXFAMultiStream(
   if (pElementXFA->IsArray()) {
     const CPDF_Array* pXFAArray = pElementXFA->AsArray();
     for (size_t i = 0; i < pXFAArray->size() / 2; i++) {
-      if (const CPDF_Stream* pStream = pXFAArray->GetStreamAt(i * 2 + 1))
-        xfaStreams.push_back(pStream);
+      RetainPtr<const CPDF_Stream> pStream = pXFAArray->GetStreamAt(i * 2 + 1);
+      if (pStream) {
+        // TODO(tsepez): push retained objects.
+        xfaStreams.push_back(pStream.Get());
+      }
     }
   } else if (pElementXFA->IsStream()) {
     xfaStreams.push_back(pElementXFA->AsStream());

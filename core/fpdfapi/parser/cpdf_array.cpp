@@ -142,35 +142,36 @@ float CPDF_Array::GetNumberAt(size_t index) const {
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_Array::GetMutableDictAt(size_t index) {
-  return pdfium::WrapRetain(const_cast<CPDF_Dictionary*>(GetDictAt(index)));
-}
-
-// TODO(tsepez): return retained objects from these.
-const CPDF_Dictionary* CPDF_Array::GetDictAt(size_t index) const {
-  RetainPtr<const CPDF_Object> p = GetDirectObjectAt(index);
+  RetainPtr<CPDF_Object> p = GetMutableDirectObjectAt(index);
   if (!p)
     return nullptr;
-  if (const CPDF_Dictionary* pDict = p->AsDictionary())
-    return pDict;
-  if (const CPDF_Stream* pStream = p->AsStream())
-    return pStream->GetDict();
+  CPDF_Dictionary* pDict = p->AsMutableDictionary();
+  if (pDict)
+    return pdfium::WrapRetain(pDict);
+  CPDF_Stream* pStream = p->AsMutableStream();
+  if (pStream)
+    return pStream->GetMutableDict();
   return nullptr;
 }
 
-RetainPtr<CPDF_Stream> CPDF_Array::GetMutableStreamAt(size_t index) {
-  return pdfium::WrapRetain(const_cast<CPDF_Stream*>(GetStreamAt(index)));
+RetainPtr<const CPDF_Dictionary> CPDF_Array::GetDictAt(size_t index) const {
+  return const_cast<CPDF_Array*>(this)->GetMutableDictAt(index);
 }
 
-const CPDF_Stream* CPDF_Array::GetStreamAt(size_t index) const {
-  return ToStream(GetDirectObjectAt(index)).Get();
+RetainPtr<CPDF_Stream> CPDF_Array::GetMutableStreamAt(size_t index) {
+  return ToStream(GetMutableDirectObjectAt(index));
+}
+
+RetainPtr<const CPDF_Stream> CPDF_Array::GetStreamAt(size_t index) const {
+  return const_cast<CPDF_Array*>(this)->GetMutableStreamAt(index);
 }
 
 RetainPtr<CPDF_Array> CPDF_Array::GetMutableArrayAt(size_t index) {
-  return pdfium::WrapRetain(const_cast<CPDF_Array*>(GetArrayAt(index)));
+  return ToArray(GetMutableDirectObjectAt(index));
 }
 
-const CPDF_Array* CPDF_Array::GetArrayAt(size_t index) const {
-  return ToArray(GetDirectObjectAt(index)).Get();
+RetainPtr<const CPDF_Array> CPDF_Array::GetArrayAt(size_t index) const {
+  return const_cast<CPDF_Array*>(this)->GetMutableArrayAt(index);
 }
 
 void CPDF_Array::Clear() {

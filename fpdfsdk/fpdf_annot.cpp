@@ -896,7 +896,7 @@ FPDFAnnot_GetInkListPath(FPDF_ANNOTATION annot,
   if (!ink_list)
     return 0;
 
-  const CPDF_Array* path = ink_list->GetArrayAt(path_index);
+  RetainPtr<const CPDF_Array> path = ink_list->GetArrayAt(path_index);
   if (!path)
     return 0;
 

@@ -342,8 +342,11 @@ const CPDF_Array* GetDashArray(const CPDF_Dictionary& pAnnotDict) {
 
   if (const CPDF_Array* pBorderArray =
           pAnnotDict.GetArrayFor(pdfium::annotation::kBorder)) {
-    if (pBorderArray->size() == 4)
-      return pBorderArray->GetArrayAt(3);
+    if (pBorderArray->size() == 4) {
+      // TODO(tsepez): Convert to retained as part of future CPDF_Dictionary
+      // CLs.
+      return pBorderArray->GetArrayAt(3).Get();
+    }
   }
 
   return nullptr;
@@ -663,7 +666,7 @@ bool GenerateInkAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   pAnnotDict->SetRectFor(pdfium::annotation::kRect, rect);
 
   for (size_t i = 0; i < pInkList->size(); i++) {
-    const CPDF_Array* pInkCoordList = pInkList->GetArrayAt(i);
+    RetainPtr<const CPDF_Array> pInkCoordList = pInkList->GetArrayAt(i);
     if (!pInkCoordList || pInkCoordList->size() < 2)
       continue;
 

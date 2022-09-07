@@ -167,8 +167,10 @@ CPDF_Action CPDF_Action::GetSubAction(size_t iIndex) const {
     return CPDF_Action(nullptr);
 
   const CPDF_Object* pNext = m_pDict->GetDirectObjectFor("Next");
-  if (const CPDF_Array* pArray = ToArray(pNext))
-    return CPDF_Action(pArray->GetDictAt(iIndex));
+  if (const CPDF_Array* pArray = ToArray(pNext)) {
+    // TODO(tsepez): Actions should take retained arguments.
+    return CPDF_Action(pArray->GetDictAt(iIndex).Get());
+  }
   if (const CPDF_Dictionary* pDict = ToDictionary(pNext)) {
     if (iIndex == 0)
       return CPDF_Action(pDict);
