@@ -13,6 +13,7 @@
 
 class CPDF_IndirectObjectHolder;
 class CPDF_Stream;
+class CPDF_StreamAcc;
 class IFX_SeekableReadStream;
 
 // Implementation of logic of PDF "Object Streams".
@@ -48,6 +49,8 @@ class CPDF_ObjectStream {
       CPDF_IndirectObjectHolder* pObjList,
       uint32_t object_offset) const;
 
+  // Must outlive `data_stream_`.
+  RetainPtr<CPDF_StreamAcc> const stream_acc_;
   RetainPtr<IFX_SeekableReadStream> data_stream_;
   int first_object_offset_ = 0;
   std::vector<ObjectInfo> object_info_;

@@ -14,7 +14,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
-#include "core/fxcrt/cfx_read_only_memory_stream.h"
+#include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/check.h"
 #include "third_party/base/ptr_util.h"
@@ -63,7 +63,8 @@ std::unique_ptr<CPDF_ObjectStream> CPDF_ObjectStream::Create(
 }
 
 CPDF_ObjectStream::CPDF_ObjectStream(const CPDF_Stream* obj_stream)
-    : first_object_offset_(obj_stream->GetDict()->GetIntegerFor("First")) {
+    : stream_acc_(pdfium::MakeRetain<CPDF_StreamAcc>(obj_stream)),
+      first_object_offset_(obj_stream->GetDict()->GetIntegerFor("First")) {
   DCHECK(IsObjectStream(obj_stream));
   Init(obj_stream);
 }
@@ -89,13 +90,9 @@ RetainPtr<CPDF_Object> CPDF_ObjectStream::ParseObject(
 }
 
 void CPDF_ObjectStream::Init(const CPDF_Stream* stream) {
-  {
-    auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(stream);
-    stream_acc->LoadAllDataFiltered();
-    const uint32_t data_size = stream_acc->GetSize();
-    data_stream_ = pdfium::MakeRetain<CFX_ReadOnlyMemoryStream>(
-        stream_acc->DetachData(), data_size);
-  }
+  stream_acc_->LoadAllDataFiltered();
+  data_stream_ =
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(stream_acc_->GetSpan());
 
   CPDF_SyntaxParser syntax(data_stream_);
   const int object_count = stream->GetDict()->GetIntegerFor("N");
