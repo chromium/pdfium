@@ -16,7 +16,6 @@
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/binary_buffer.h"
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/calculate_pitch.h"
 #include "third_party/base/check.h"
@@ -677,8 +676,7 @@ class FaxEncoder {
  public:
   FaxEncoder(const uint8_t* src_buf, int width, int height, int pitch);
   ~FaxEncoder();
-  void Encode(std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-              uint32_t* dest_size);
+  DataVector<uint8_t> Encode();
 
  private:
   void FaxEncode2DLine(const uint8_t* src_buf);
@@ -786,8 +784,7 @@ void FaxEncoder::FaxEncode2DLine(const uint8_t* src_buf) {
   }
 }
 
-void FaxEncoder::Encode(std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                        uint32_t* dest_size) {
+DataVector<uint8_t> FaxEncoder::Encode() {
   m_DestBitpos = 0;
   uint8_t last_byte = 0;
   for (int i = 0; i < m_Rows; ++i) {
@@ -802,21 +799,18 @@ void FaxEncoder::Encode(std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
   }
   if (m_DestBitpos)
     m_DestBuf.AppendByte(last_byte);
-  *dest_size = pdfium::base::checked_cast<uint32_t>(m_DestBuf.GetSize());
-  *dest_buf = m_DestBuf.DetachBuffer();
+  return m_DestBuf.DetachBuffer();
 }
 
 }  // namespace
 
 // static
-void FaxModule::FaxEncode(const uint8_t* src_buf,
-                          int width,
-                          int height,
-                          int pitch,
-                          std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                          uint32_t* dest_size) {
+DataVector<uint8_t> FaxModule::FaxEncode(const uint8_t* src_buf,
+                                         int width,
+                                         int height,
+                                         int pitch) {
   FaxEncoder encoder(src_buf, width, height, pitch);
-  encoder.Encode(dest_buf, dest_size);
+  return encoder.Encode();
 }
 
 #endif  // BUILDFLAG(IS_WIN)

@@ -37,12 +37,10 @@ struct FXDIB_ResampleOptions;
 
 struct EncoderIface {
   DataVector<uint8_t> (*pA85EncodeFunc)(pdfium::span<const uint8_t> src_buf);
-  void (*pFaxEncodeFunc)(const uint8_t* src_buf,
-                         int width,
-                         int height,
-                         int pitch,
-                         std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                         uint32_t* dest_size);
+  DataVector<uint8_t> (*pFaxEncodeFunc)(const uint8_t* src_buf,
+                                        int width,
+                                        int height,
+                                        int pitch);
   DataVector<uint8_t> (*pFlateEncodeFunc)(pdfium::span<const uint8_t> src_span);
   bool (*pJpegEncodeFunc)(const RetainPtr<CFX_DIBBase>& pSource,
                           uint8_t** dest_buf,
@@ -117,6 +115,18 @@ class CFX_PSRenderer {
  private:
   struct Glyph;
 
+  struct FaxCompressResult {
+    FaxCompressResult();
+    FaxCompressResult(const FaxCompressResult&) = delete;
+    FaxCompressResult& operator=(const FaxCompressResult&) = delete;
+    FaxCompressResult(FaxCompressResult&&) noexcept;
+    FaxCompressResult& operator=(FaxCompressResult&&) noexcept;
+    ~FaxCompressResult();
+
+    DataVector<uint8_t> data;
+    bool compressed;
+  };
+
   struct PSCompressResult {
     PSCompressResult();
     PSCompressResult(const PSCompressResult&) = delete;
@@ -149,11 +159,9 @@ class CFX_PSRenderer {
                             CFX_Font* font,
                             float font_size,
                             fxcrt::ostringstream& buf);
-  bool FaxCompressData(std::unique_ptr<uint8_t, FxFreeDeleter> src_buf,
-                       int width,
-                       int height,
-                       std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                       uint32_t* dest_size) const;
+  FaxCompressResult FaxCompressData(DataVector<uint8_t> src_buf,
+                                    int width,
+                                    int height) const;
   absl::optional<PSCompressResult> PSCompressData(
       pdfium::span<const uint8_t> src_span) const;
   void WritePreambleString(ByteStringView str);

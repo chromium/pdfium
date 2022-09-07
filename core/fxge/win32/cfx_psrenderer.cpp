@@ -20,6 +20,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontcache.h"
@@ -197,6 +198,16 @@ struct CFX_PSRenderer::Glyph {
   const uint32_t glyph_index;
   absl::optional<std::array<float, 4>> adjust_matrix;
 };
+
+CFX_PSRenderer::FaxCompressResult::FaxCompressResult() = default;
+
+CFX_PSRenderer::FaxCompressResult::FaxCompressResult(
+    FaxCompressResult&&) noexcept = default;
+
+CFX_PSRenderer::FaxCompressResult& CFX_PSRenderer::FaxCompressResult::operator=(
+    FaxCompressResult&&) noexcept = default;
+
+CFX_PSRenderer::FaxCompressResult::~FaxCompressResult() = default;
 
 CFX_PSRenderer::PSCompressResult::PSCompressResult() = default;
 
@@ -516,19 +527,19 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   buf << width << " " << height;
 
   if (pSource->GetBPP() == 1 && !pSource->HasPalette()) {
-    int pitch = (width + 7) / 8;
-    uint32_t src_size = height * pitch;
-    std::unique_ptr<uint8_t, FxFreeDeleter> src_buf(
-        FX_Alloc(uint8_t, src_size));
-    for (int row = 0; row < height; row++) {
-      const uint8_t* src_scan = pSource->GetScanline(row).data();
-      memcpy(src_buf.get() + row * pitch, src_scan, pitch);
+    const int pitch = (width + 7) / 8;
+    const uint32_t src_size = height * pitch;
+    DataVector<uint8_t> src_buf(src_size);
+    {
+      auto src_buf_span = pdfium::make_span(src_buf);
+      for (int row = 0; row < height; row++) {
+        pdfium::span<const uint8_t> src_scan = pSource->GetScanline(row);
+        fxcrt::spancpy(src_buf_span.subspan(row * pitch, pitch), src_scan);
+      }
     }
 
-    std::unique_ptr<uint8_t, FxFreeDeleter> output_buf;
-    uint32_t output_size;
-    bool compressed = FaxCompressData(std::move(src_buf), width, height,
-                                      &output_buf, &output_size);
+    FaxCompressResult compress_result =
+        FaxCompressData(std::move(src_buf), width, height);
     if (pSource->IsMaskFormat()) {
       SetColor(color);
       m_bColorSet = false;
@@ -539,7 +550,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     buf << width << " 0 0 -" << height << " 0 " << height
         << "]currentfile/ASCII85Decode filter ";
 
-    if (compressed) {
+    if (compress_result.compressed) {
       buf << "<</K -1/EndOfBlock false/Columns " << width << "/Rows " << height
           << ">>/CCITTFaxDecode filter ";
     }
@@ -549,7 +560,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
       buf << "false 1 colorimage\n";
 
     WriteStream(buf);
-    WritePSBinary({output_buf.get(), output_size});
+    WritePSBinary(compress_result.data);
   } else {
     CFX_DIBExtractor source_extractor(pSource);
     RetainPtr<CFX_DIBBase> pConverted = source_extractor.GetBitmap();
@@ -831,21 +842,21 @@ bool CFX_PSRenderer::DrawText(int nChars,
   return true;
 }
 
-bool CFX_PSRenderer::FaxCompressData(
-    std::unique_ptr<uint8_t, FxFreeDeleter> src_buf,
+CFX_PSRenderer::FaxCompressResult CFX_PSRenderer::FaxCompressData(
+    DataVector<uint8_t> src_buf,
     int width,
-    int height,
-    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-    uint32_t* dest_size) const {
+    int height) const {
+  FaxCompressResult result;
   if (width * height <= 128) {
-    *dest_buf = std::move(src_buf);
-    *dest_size = (width + 7) / 8 * height;
-    return false;
+    src_buf.resize((width + 7) / 8 * height);
+    result.data = std::move(src_buf);
+    result.compressed = false;
+  } else {
+    result.data = m_pEncoderIface->pFaxEncodeFunc(src_buf.data(), width, height,
+                                                  (width + 7) / 8);
+    result.compressed = true;
   }
-
-  m_pEncoderIface->pFaxEncodeFunc(src_buf.get(), width, height, (width + 7) / 8,
-                                  dest_buf, dest_size);
-  return true;
+  return result;
 }
 
 absl::optional<CFX_PSRenderer::PSCompressResult> CFX_PSRenderer::PSCompressData(

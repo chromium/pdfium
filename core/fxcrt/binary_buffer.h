@@ -13,6 +13,7 @@
 #include <memory>
 
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "third_party/base/span.h"
 
@@ -44,8 +45,13 @@ class BinaryBuffer {
   void AppendString(const ByteString& str);
   void AppendByte(uint8_t byte);
 
-  // Releases ownership of |m_pBuffer| and returns it.
-  std::unique_ptr<uint8_t, FxFreeDeleter> DetachBuffer();
+  // Temporarily does a copy. Will have intended behavior once the TODO below
+  // gets addressed.
+  // Releases ownership of `m_pBuffer` and returns it.
+  DataVector<uint8_t> DetachBuffer();
+  // TODO(crbug.com/pdfium/1872): Convert `m_pBuffer` to DataVector and delete
+  // this deprecated version.
+  std::unique_ptr<uint8_t, FxFreeDeleter> DetachBufferDeprecated();
 
  protected:
   void ExpandBuf(size_t size);
