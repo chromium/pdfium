@@ -221,3 +221,8 @@ bool CPDF_Stream::WriteTo(IFX_ArchiveStream* archive,
 
   return true;
 }
+
+const uint8_t* CPDF_Stream::GetInMemoryRawData() const {
+  DCHECK(IsMemoryBased());
+  return m_pDataBuf.get();
+}

@@ -13,8 +13,8 @@
 
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
-#include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/abseil-cpp/absl/types/variant.h"
 #include "third_party/base/span.h"
 
 class CPDF_Dictionary;
@@ -43,6 +43,17 @@ class CPDF_StreamAcc final : public Retainable {
   std::unique_ptr<uint8_t, FxFreeDeleter> DetachData();
 
  private:
+  // TODO(crbug.com/pdfium/1872): Replace with fxcrt::DataVector.
+  struct OwnedData {
+    OwnedData(std::unique_ptr<uint8_t, FxFreeDeleter> buffer, uint32_t size);
+    OwnedData(OwnedData&&);
+    OwnedData& operator=(OwnedData&&);
+    ~OwnedData();
+
+    std::unique_ptr<uint8_t, FxFreeDeleter> buffer;
+    uint32_t size;
+  };
+
   explicit CPDF_StreamAcc(const CPDF_Stream* pStream);
   ~CPDF_StreamAcc() override;
 
@@ -54,8 +65,9 @@ class CPDF_StreamAcc final : public Retainable {
   // Reads the raw data from |m_pStream|, or return nullptr on failure.
   std::unique_ptr<uint8_t, FxFreeDeleter> ReadRawStream() const;
 
-  MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
-  uint32_t m_dwSize = 0;
+  bool is_owned() const { return m_Data.index() == 1; }
+
+  absl::variant<pdfium::span<const uint8_t>, OwnedData> m_Data;
   ByteString m_ImageDecoder;
   RetainPtr<const CPDF_Dictionary> m_pImageParam;
   RetainPtr<const CPDF_Stream> const m_pStream;

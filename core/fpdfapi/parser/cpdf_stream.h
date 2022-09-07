@@ -35,9 +35,10 @@ class CPDF_Stream final : public CPDF_Object {
                const CPDF_Encryptor* encryptor) const override;
 
   size_t GetRawSize() const { return m_dwSize; }
-  // Will be null in case when stream is not memory based.
-  // Use CPDF_StreamAcc to data access in all cases.
-  uint8_t* GetInMemoryRawData() const { return m_pDataBuf.get(); }
+  // Can only be called when stream is memory-based.
+  // This is meant to be used by CPDF_StreamAcc only.
+  // Other callers should use CPDF_StreamAcc to access data in all cases.
+  const uint8_t* GetInMemoryRawData() const;
 
   // Copies span or stream into internally-owned buffer.
   void SetData(pdfium::span<const uint8_t> pData);
