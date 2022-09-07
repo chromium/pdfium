@@ -852,7 +852,7 @@ CFX_PSRenderer::FaxCompressResult CFX_PSRenderer::FaxCompressData(
     result.data = std::move(src_buf);
     result.compressed = false;
   } else {
-    result.data = m_pEncoderIface->pFaxEncodeFunc(src_buf.data(), width, height,
+    result.data = m_pEncoderIface->pFaxEncodeFunc(src_buf, width, height,
                                                   (width + 7) / 8);
     result.compressed = true;
   }

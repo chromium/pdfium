@@ -45,7 +45,7 @@ class FaxModule {
                          uint8_t* dest_buf);
 
 #if BUILDFLAG(IS_WIN)
-  static DataVector<uint8_t> FaxEncode(const uint8_t* src_buf,
+  static DataVector<uint8_t> FaxEncode(pdfium::span<const uint8_t> src_span,
                                        int width,
                                        int height,
                                        int pitch);

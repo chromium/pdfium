@@ -36,8 +36,8 @@ struct CFX_FillRenderOptions;
 struct FXDIB_ResampleOptions;
 
 struct EncoderIface {
-  DataVector<uint8_t> (*pA85EncodeFunc)(pdfium::span<const uint8_t> src_buf);
-  DataVector<uint8_t> (*pFaxEncodeFunc)(const uint8_t* src_buf,
+  DataVector<uint8_t> (*pA85EncodeFunc)(pdfium::span<const uint8_t> src_span);
+  DataVector<uint8_t> (*pFaxEncodeFunc)(pdfium::span<const uint8_t> src_span,
                                         int width,
                                         int height,
                                         int pitch);
@@ -46,7 +46,7 @@ struct EncoderIface {
                           uint8_t** dest_buf,
                           size_t* dest_size);
   DataVector<uint8_t> (*pRunLengthEncodeFunc)(
-      pdfium::span<const uint8_t> src_buf);
+      pdfium::span<const uint8_t> src_span);
 };
 
 class CFX_PSRenderer {
