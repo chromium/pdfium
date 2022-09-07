@@ -308,17 +308,11 @@ DataVector<uint8_t> BasicModule::RunLengthEncode(
 }
 
 // static
-bool BasicModule::A85Encode(pdfium::span<const uint8_t> src_span,
-                            std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                            uint32_t* dest_size) {
-  // Check inputs.
-  if (!dest_buf || !dest_size)
-    return false;
-
-  if (src_span.empty()) {
-    *dest_size = 0;
-    return false;
-  }
+DataVector<uint8_t> BasicModule::A85Encode(
+    pdfium::span<const uint8_t> src_span) {
+  DataVector<uint8_t> result;
+  if (src_span.empty())
+    return result;
 
   // Worst case: 5 output for each 4 input (plus up to 4 from leftover), plus
   // 2 character new lines each 75 output chars plus 2 termination chars. May
@@ -329,10 +323,10 @@ bool BasicModule::A85Encode(pdfium::span<const uint8_t> src_span,
   estimated_size += 4;
   estimated_size += src_span.size() / 30;
   estimated_size += 2;
-  dest_buf->reset(FX_Alloc(uint8_t, estimated_size.ValueOrDie()));
+  result.resize(estimated_size.ValueOrDie());
 
   // Set up pointers.
-  uint8_t* out = dest_buf->get();
+  uint8_t* out = result.data();
   uint32_t pos = 0;
   uint32_t line_length = 0;
   while (src_span.size() >= 4 && pos < src_span.size() - 3) {
@@ -345,8 +339,8 @@ bool BasicModule::A85Encode(pdfium::span<const uint8_t> src_span,
       line_length++;
     } else {  // Compute base 85 characters and add 33.
       for (int i = 4; i >= 0; i--) {
-        out[i] = (uint8_t)(val % 85) + 33;
-        val = val / 85;
+        out[i] = (val % 85) + 33;
+        val /= 85;
       }
       out += 5;
       line_length += 5;
@@ -367,8 +361,8 @@ bool BasicModule::A85Encode(pdfium::span<const uint8_t> src_span,
     }
     for (int i = 4; i >= 0; i--) {
       if (i <= count)
-        out[i] = (uint8_t)(val % 85) + 33;
-      val = val / 85;
+        out[i] = (val % 85) + 33;
+      val /= 85;
     }
     out += count + 1;
   }
@@ -377,8 +371,10 @@ bool BasicModule::A85Encode(pdfium::span<const uint8_t> src_span,
   out[0] = '~';
   out[1] = '>';
   out += 2;
-  *dest_size = pdfium::base::checked_cast<uint32_t>(out - dest_buf->get());
-  return true;
+  size_t new_size = out - result.data();
+  CHECK_LE(new_size, result.size());
+  result.resize(new_size);
+  return result;
 }
 
 }  // namespace fxcodec

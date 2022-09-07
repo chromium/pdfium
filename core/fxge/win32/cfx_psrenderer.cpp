@@ -879,13 +879,10 @@ void CFX_PSRenderer::WritePreambleString(ByteStringView str) {
 }
 
 void CFX_PSRenderer::WritePSBinary(pdfium::span<const uint8_t> data) {
-  std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;
-  uint32_t dest_size;
-  if (m_pEncoderIface->pA85EncodeFunc(data, &dest_buf, &dest_size)) {
-    m_Output.write(reinterpret_cast<const char*>(dest_buf.get()), dest_size);
-  } else {
-    m_Output.write(reinterpret_cast<const char*>(data.data()), data.size());
-  }
+  DataVector<uint8_t> encoded_data = m_pEncoderIface->pA85EncodeFunc(data);
+  pdfium::span<const uint8_t> result =
+      encoded_data.empty() ? data : encoded_data;
+  m_Output.write(reinterpret_cast<const char*>(result.data()), result.size());
 }
 
 void CFX_PSRenderer::WriteStream(fxcrt::ostringstream& stream) {

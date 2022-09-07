@@ -12,7 +12,6 @@
 #include <memory>
 
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "third_party/base/span.h"
 
 namespace fxcodec {
@@ -31,9 +30,7 @@ class BasicModule {
   static DataVector<uint8_t> RunLengthEncode(
       pdfium::span<const uint8_t> src_span);
 
-  static bool A85Encode(pdfium::span<const uint8_t> src_span,
-                        std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                        uint32_t* dest_size);
+  static DataVector<uint8_t> A85Encode(pdfium::span<const uint8_t> src_span);
 
   BasicModule() = delete;
   BasicModule(const BasicModule&) = delete;

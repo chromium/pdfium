@@ -36,9 +36,7 @@ struct CFX_FillRenderOptions;
 struct FXDIB_ResampleOptions;
 
 struct EncoderIface {
-  bool (*pA85EncodeFunc)(pdfium::span<const uint8_t> src_buf,
-                         std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                         uint32_t* dest_size);
+  DataVector<uint8_t> (*pA85EncodeFunc)(pdfium::span<const uint8_t> src_buf);
   void (*pFaxEncodeFunc)(const uint8_t* src_buf,
                          int width,
                          int height,
