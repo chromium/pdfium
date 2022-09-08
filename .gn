@@ -26,4 +26,5 @@ no_check_targets = [
   "//v8:v8_internal_headers",
   "//v8/src/inspector:inspector",
   "//v8/test/cctest:cctest_sources",
+  "//v8/test/unittests:inspector_unittests_sources",
 ]
