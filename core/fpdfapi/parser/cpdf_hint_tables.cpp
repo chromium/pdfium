@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
+#include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
@@ -101,7 +102,7 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
 
   // Item 1: The least number of objects in a page.
   const uint32_t dwObjLeastNum = hStream->GetBits(32);
-  if (!dwObjLeastNum)
+  if (!dwObjLeastNum || dwObjLeastNum >= CPDF_Parser::kMaxObjectNumber)
     return false;
 
   // Item 2: The location of the first page's page object.
@@ -164,7 +165,7 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
   m_PageInfos[nFirstPageNum].set_start_obj_num(
       m_pLinearized->GetFirstPageObjNum());
   // The object number of remaining pages starts from 1.
-  uint32_t dwStartObjNum = 1;
+  FX_SAFE_UINT32 dwStartObjNum = 1;
   for (uint32_t i = 0; i < nPages; ++i) {
     FX_SAFE_UINT32 safeDeltaObj = hStream->GetBits(dwDeltaObjectsBits);
     safeDeltaObj += dwObjLeastNum;
@@ -173,8 +174,12 @@ bool CPDF_HintTables::ReadPageHintTable(CFX_BitStream* hStream) {
     m_PageInfos[i].set_objects_count(safeDeltaObj.ValueOrDie());
     if (i == nFirstPageNum)
       continue;
-    m_PageInfos[i].set_start_obj_num(dwStartObjNum);
+    m_PageInfos[i].set_start_obj_num(dwStartObjNum.ValueOrDie());
     dwStartObjNum += m_PageInfos[i].objects_count();
+    if (!dwStartObjNum.IsValid() ||
+        dwStartObjNum.ValueOrDie() >= CPDF_Parser::kMaxObjectNumber) {
+      return false;
+    }
   }
   hStream->ByteAlign();
 
