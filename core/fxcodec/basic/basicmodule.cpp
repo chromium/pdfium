@@ -325,8 +325,8 @@ DataVector<uint8_t> BasicModule::A85Encode(
   estimated_size += 2;
   result.resize(estimated_size.ValueOrDie());
 
-  // Set up pointers.
-  uint8_t* out = result.data();
+  // Set up span and counts.
+  auto result_span = pdfium::make_span(result);
   uint32_t pos = 0;
   uint32_t line_length = 0;
   while (src_span.size() >= 4 && pos < src_span.size() - 3) {
@@ -334,20 +334,21 @@ DataVector<uint8_t> BasicModule::A85Encode(
     uint32_t val = FXSYS_UINT32_GET_MSBFIRST(val_span);
     pos += 4;
     if (val == 0) {  // All zero special case
-      *out = 'z';
-      out++;
+      result_span[0] = 'z';
+      result_span = result_span.subspan(1);
       line_length++;
     } else {  // Compute base 85 characters and add 33.
       for (int i = 4; i >= 0; i--) {
-        out[i] = (val % 85) + 33;
+        result_span[i] = (val % 85) + 33;
         val /= 85;
       }
-      out += 5;
+      result_span = result_span.subspan(5);
       line_length += 5;
     }
     if (line_length >= 75) {  // Add a return.
-      *out++ = '\r';
-      *out++ = '\n';
+      result_span[0] = '\r';
+      result_span[1] = '\n';
+      result_span = result_span.subspan(2);
       line_length = 0;
     }
   }
@@ -361,17 +362,16 @@ DataVector<uint8_t> BasicModule::A85Encode(
     }
     for (int i = 4; i >= 0; i--) {
       if (i <= count)
-        out[i] = (val % 85) + 33;
+        result_span[i] = (val % 85) + 33;
       val /= 85;
     }
-    out += count + 1;
+    result_span = result_span.subspan(count + 1);
   }
 
   // Terminating characters.
-  out[0] = '~';
-  out[1] = '>';
-  out += 2;
-  size_t new_size = out - result.data();
+  result_span[0] = '~';
+  result_span[1] = '>';
+  size_t new_size = 2 + result.size() - result_span.size();
   CHECK_LE(new_size, result.size());
   result.resize(new_size);
   return result;
