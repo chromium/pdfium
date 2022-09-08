@@ -249,8 +249,8 @@ DataVector<uint8_t> BasicModule::RunLengthEncode(
   estimated_size += 1;
   DataVector<uint8_t> result(estimated_size.ValueOrDie());
 
-  // Set up pointers.
-  uint8_t* out = result.data();
+  // Set up span and counts.
+  auto result_span = pdfium::make_span(result);
   uint32_t run_start = 0;
   uint32_t run_end = 1;
   uint8_t x = src_span[run_start];
@@ -267,41 +267,41 @@ DataVector<uint8_t> BasicModule::RunLengthEncode(
         y = src_span[run_end];
     }
     if (run_end - run_start > 1) {  // Matched run but not at end of input.
-      out[0] = 257 - (run_end - run_start);
-      out[1] = x;
+      result_span[0] = 257 - (run_end - run_start);
+      result_span[1] = x;
       x = y;
       run_start = run_end;
       run_end++;
       if (run_end < src_span.size())
         y = src_span[run_end];
-      out += 2;
+      result_span = result_span.subspan(2);
       continue;
     }
     // Mismatched run
     while (x != y && run_end <= run_start + max_len) {
-      out[run_end - run_start] = x;
+      result_span[run_end - run_start] = x;
       x = y;
       run_end++;
       if (run_end == src_span.size()) {
         if (run_end <= run_start + max_len) {
-          out[run_end - run_start] = x;
+          result_span[run_end - run_start] = x;
           run_end++;
         }
         break;
       }
       y = src_span[run_end];
     }
-    out[0] = run_end - run_start - 2;
-    out += run_end - run_start;
+    result_span[0] = run_end - run_start - 2;
+    result_span = result_span.subspan(run_end - run_start);
     run_start = run_end - 1;
   }
   if (run_start < src_span.size()) {  // 1 leftover character
-    out[0] = 0;
-    out[1] = x;
-    out += 2;
+    result_span[0] = 0;
+    result_span[1] = x;
+    result_span = result_span.subspan(2);
   }
-  *out = 128;
-  size_t new_size = out + 1 - result.data();
+  result_span[0] = 128;
+  size_t new_size = 1 + result.size() - result_span.size();
   CHECK_LE(new_size, result.size());
   result.resize(new_size);
   return result;
