@@ -172,7 +172,7 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
 // will be the index of |csName| in |ppFind|. If |csName| is not found, |ppFind|
 // will be the leaf array that |csName| should be added to, and |pFindIndex|
 // will be the index that it should be added at.
-const CPDF_Object* SearchNameNodeByNameInternal(
+RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
     const RetainPtr<CPDF_Dictionary>& pNode,
     const WideString& csName,
     int nLevel,
@@ -219,7 +219,7 @@ const CPDF_Object* SearchNameNodeByNameInternal(
         continue;
 
       *nIndex += i;
-      return pNames->GetDirectObjectAt(i * 2 + 1);
+      return pdfium::WrapRetain(pNames->GetDirectObjectAt(i * 2 + 1));
     }
     *nIndex += dwCount;
     return nullptr;
@@ -235,7 +235,7 @@ const CPDF_Object* SearchNameNodeByNameInternal(
     if (!pKid)
       continue;
 
-    const CPDF_Object* pFound = SearchNameNodeByNameInternal(
+    RetainPtr<const CPDF_Object> pFound = SearchNameNodeByNameInternal(
         pKid, csName, nLevel + 1, nIndex, ppFind, pFindIndex);
     if (pFound)
       return pFound;
@@ -245,10 +245,11 @@ const CPDF_Object* SearchNameNodeByNameInternal(
 
 // Wrapper for SearchNameNodeByNameInternal() so callers do not need to know
 // about the details.
-const CPDF_Object* SearchNameNodeByName(const RetainPtr<CPDF_Dictionary>& pNode,
-                                        const WideString& csName,
-                                        RetainPtr<CPDF_Array>* ppFind,
-                                        int* pFindIndex) {
+RetainPtr<const CPDF_Object> SearchNameNodeByName(
+    const RetainPtr<CPDF_Dictionary>& pNode,
+    const WideString& csName,
+    RetainPtr<CPDF_Array>* ppFind,
+    int* pFindIndex) {
   size_t nIndex = 0;
   return SearchNameNodeByNameInternal(pNode, csName, 0, &nIndex, ppFind,
                                       pFindIndex);
@@ -352,24 +353,25 @@ size_t CountNamesInternal(const CPDF_Dictionary* pNode,
   return nCount;
 }
 
-const CPDF_Array* GetNamedDestFromObject(const CPDF_Object* obj) {
-  if (!obj)
-    return nullptr;
-  const CPDF_Array* array = obj->AsArray();
+RetainPtr<const CPDF_Array> GetNamedDestFromObject(
+    RetainPtr<const CPDF_Object> obj) {
+  RetainPtr<const CPDF_Array> array = ToArray(obj);
   if (array)
     return array;
-  const CPDF_Dictionary* dict = obj->AsDictionary();
+  RetainPtr<const CPDF_Dictionary> dict = ToDictionary(obj);
   if (dict)
-    return dict->GetArrayFor("D");
+    return pdfium::WrapRetain(dict->GetArrayFor("D"));
   return nullptr;
 }
 
-const CPDF_Array* LookupOldStyleNamedDest(CPDF_Document* pDoc,
-                                          const ByteString& name) {
+RetainPtr<const CPDF_Array> LookupOldStyleNamedDest(CPDF_Document* pDoc,
+                                                    const ByteString& name) {
   const CPDF_Dictionary* pDests = pDoc->GetRoot()->GetDictFor("Dests");
   if (!pDests)
     return nullptr;
-  return GetNamedDestFromObject(pDests->GetDirectObjectFor(name));
+  // TODO(tsepez): return const retained objects from CPDF object getters.
+  return GetNamedDestFromObject(
+      pdfium::WrapRetain(pDests->GetDirectObjectFor(name)));
 }
 
 }  // namespace
@@ -435,9 +437,10 @@ std::unique_ptr<CPDF_NameTree> CPDF_NameTree::CreateForTesting(
 }
 
 // static
-const CPDF_Array* CPDF_NameTree::LookupNamedDest(CPDF_Document* pDoc,
-                                                 const ByteString& name) {
-  const CPDF_Array* dest_array = nullptr;
+RetainPtr<const CPDF_Array> CPDF_NameTree::LookupNamedDest(
+    CPDF_Document* pDoc,
+    const ByteString& name) {
+  RetainPtr<const CPDF_Array> dest_array;
   std::unique_ptr<CPDF_NameTree> name_tree = Create(pDoc, "Dests");
   if (name_tree)
     dest_array = name_tree->LookupNewStyleNamedDest(name);
@@ -539,11 +542,12 @@ CPDF_Object* CPDF_NameTree::LookupValueAndName(size_t nIndex,
   return result.value().value.Get();
 }
 
-const CPDF_Object* CPDF_NameTree::LookupValue(const WideString& csName) const {
+RetainPtr<const CPDF_Object> CPDF_NameTree::LookupValue(
+    const WideString& csName) const {
   return SearchNameNodeByName(m_pRoot, csName, nullptr, nullptr);
 }
 
-const CPDF_Array* CPDF_NameTree::LookupNewStyleNamedDest(
+RetainPtr<const CPDF_Array> CPDF_NameTree::LookupNewStyleNamedDest(
     const ByteString& sName) {
   return GetNamedDestFromObject(LookupValue(PDF_DecodeText(sName.raw_span())));
 }
