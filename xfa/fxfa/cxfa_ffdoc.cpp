@@ -279,7 +279,8 @@ RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(WideStringView wsName,
   if (count == 0)
     return nullptr;
 
-  const CPDF_Object* pObject = name_tree->LookupValue(WideString(wsName));
+  RetainPtr<const CPDF_Object> pObject =
+      name_tree->LookupValue(WideString(wsName));
   if (!pObject) {
     for (size_t i = 0; i < count; ++i) {
       WideString wsTemp;
@@ -291,11 +292,12 @@ RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(WideStringView wsName,
     }
   }
 
-  const CPDF_Stream* pStream = ToStream(pObject);
+  RetainPtr<const CPDF_Stream> pStream = ToStream(pObject);
   if (!pStream)
     return nullptr;
 
-  auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+  // TODO(tsepez): make CPDF_StreamAcc constructor take retained argument.
+  auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream.Get());
   pAcc->LoadAllDataFiltered();
 
   auto pImageFileRead =
