@@ -37,7 +37,8 @@ CPDF_Dest::CPDF_Dest(const CPDF_Dest& that) = default;
 CPDF_Dest::~CPDF_Dest() = default;
 
 // static
-CPDF_Dest CPDF_Dest::Create(CPDF_Document* pDoc, const CPDF_Object* pDest) {
+CPDF_Dest CPDF_Dest::Create(CPDF_Document* pDoc,
+                            RetainPtr<const CPDF_Object> pDest) {
   if (!pDest)
     return CPDF_Dest(nullptr);
 

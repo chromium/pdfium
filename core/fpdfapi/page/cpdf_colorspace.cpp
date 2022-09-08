@@ -1046,11 +1046,12 @@ bool CPDF_ICCBasedCS::FindAlternateProfile(
     const CPDF_Dictionary* pDict,
     std::set<const CPDF_Object*>* pVisited,
     uint32_t nExpectedComponents) {
-  const CPDF_Object* pAlterCSObj = pDict->GetDirectObjectFor("Alternate");
+  RetainPtr<const CPDF_Object> pAlterCSObj =
+      pDict->GetDirectObjectFor("Alternate");
   if (!pAlterCSObj)
     return false;
 
-  auto pAlterCS = CPDF_ColorSpace::Load(pDoc, pAlterCSObj, pVisited);
+  auto pAlterCS = CPDF_ColorSpace::Load(pDoc, pAlterCSObj.Get(), pVisited);
   if (!pAlterCS)
     return false;
 

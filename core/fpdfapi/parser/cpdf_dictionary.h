@@ -46,7 +46,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   const CPDF_Object* GetObjectFor(const ByteString& key) const;
   RetainPtr<CPDF_Object> GetMutableObjectFor(const ByteString& key);
 
-  const CPDF_Object* GetDirectObjectFor(const ByteString& key) const;
+  RetainPtr<const CPDF_Object> GetDirectObjectFor(const ByteString& key) const;
   RetainPtr<CPDF_Object> GetMutableDirectObjectFor(const ByteString& key);
 
   // These will return the string representation of the object specified by

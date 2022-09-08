@@ -98,7 +98,7 @@ void CPDF_StructElement::LoadKids(const CPDF_Dictionary* pDict) {
   if (const CPDF_Reference* pRef = ToReference(pObj))
     PageObjNum = pRef->GetRefObjNum();
 
-  const CPDF_Object* pKids = pDict->GetDirectObjectFor("K");
+  RetainPtr<const CPDF_Object> pKids = pDict->GetDirectObjectFor("K");
   if (!pKids)
     return;
 
@@ -115,7 +115,9 @@ void CPDF_StructElement::LoadKids(const CPDF_Dictionary* pDict) {
   }
 
   m_Kids.resize(1);
-  LoadKid(PageObjNum, pKids, &m_Kids[0]);
+
+  // TODO(tsepez): pass retained arguments.
+  LoadKid(PageObjNum, pKids.Get(), &m_Kids[0]);
 }
 
 void CPDF_StructElement::LoadKid(uint32_t PageObjNum,

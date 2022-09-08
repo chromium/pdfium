@@ -312,8 +312,10 @@ FPDFImageObj_GetImageFilterCount(FPDF_PAGEOBJECT image_object) {
     return 0;
 
   const CPDF_Dictionary* pDict = pImg->GetDict();
-  const CPDF_Object* pFilter =
-      pDict ? pDict->GetDirectObjectFor("Filter") : nullptr;
+  if (!pDict)
+    return 0;
+
+  RetainPtr<const CPDF_Object> pFilter = pDict->GetDirectObjectFor("Filter");
   if (!pFilter)
     return 0;
 
@@ -336,7 +338,7 @@ FPDFImageObj_GetImageFilter(FPDF_PAGEOBJECT image_object,
 
   CPDF_PageObject* pObj = CPDFPageObjectFromFPDFPageObject(image_object);
   const CPDF_Dictionary* pDict = pObj->AsImage()->GetImage()->GetDict();
-  const CPDF_Object* pFilter = pDict->GetDirectObjectFor("Filter");
+  RetainPtr<const CPDF_Object> pFilter = pDict->GetDirectObjectFor("Filter");
   ByteString bsFilter = pFilter->IsName()
                             ? pFilter->AsName()->GetString()
                             : pFilter->AsArray()->GetStringAt(index);

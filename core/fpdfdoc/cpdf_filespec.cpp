@@ -95,11 +95,12 @@ WideString CPDF_FileSpec::DecodeFileName(const WideString& filepath) {
 WideString CPDF_FileSpec::GetFileName() const {
   WideString csFileName;
   if (const CPDF_Dictionary* pDict = m_pObj->AsDictionary()) {
-    const CPDF_String* pUF = ToString(pDict->GetDirectObjectFor("UF"));
+    RetainPtr<const CPDF_String> pUF =
+        ToString(pDict->GetDirectObjectFor("UF"));
     if (pUF)
       csFileName = pUF->GetUnicodeText();
     if (csFileName.IsEmpty()) {
-      const CPDF_String* pK =
+      RetainPtr<const CPDF_String> pK =
           ToString(pDict->GetDirectObjectFor(pdfium::stream::kF));
       if (pK)
         csFileName = WideString::FromDefANSI(pK->GetString().AsStringView());
@@ -109,7 +110,8 @@ WideString CPDF_FileSpec::GetFileName() const {
 
     if (csFileName.IsEmpty()) {
       for (const auto* key : {"DOS", "Mac", "Unix"}) {
-        const CPDF_String* pValue = ToString(pDict->GetDirectObjectFor(key));
+        RetainPtr<const CPDF_String> pValue =
+            ToString(pDict->GetDirectObjectFor(key));
         if (pValue) {
           csFileName =
               WideString::FromDefANSI(pValue->GetString().AsStringView());

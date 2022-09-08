@@ -422,7 +422,8 @@ bool CPDF_CIDFont::Load() {
     m_bAdobeCourierStd = true;
   }
 
-  const CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
+  RetainPtr<const CPDF_Object> pEncoding =
+      m_pFontDict->GetDirectObjectFor("Encoding");
   if (!pEncoding)
     return false;
 
@@ -474,7 +475,8 @@ bool CPDF_CIDFont::Load() {
   if (!IsEmbedded())
     LoadSubstFont();
 
-  const CPDF_Object* pmap = pCIDFontDict->GetDirectObjectFor("CIDToGIDMap");
+  RetainPtr<const CPDF_Object> pmap =
+      pCIDFontDict->GetDirectObjectFor("CIDToGIDMap");
   if (pmap) {
     const CPDF_Stream* pMapStream = pmap->AsStream();
     if (pMapStream) {

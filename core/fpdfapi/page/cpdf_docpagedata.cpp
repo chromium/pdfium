@@ -274,8 +274,8 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
     if (!pCS && pResources) {
       const CPDF_Dictionary* pList = pResources->GetDictFor("ColorSpace");
       if (pList) {
-        return GetColorSpaceInternal(pList->GetDirectObjectFor(name), nullptr,
-                                     pVisited, pVisitedInternal);
+        return GetColorSpaceInternal(pList->GetDirectObjectFor(name).Get(),
+                                     nullptr, pVisited, pVisitedInternal);
       }
     }
     if (!pCS || !pResources)
@@ -285,7 +285,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
     if (!pColorSpaces)
       return pCS;
 
-    const CPDF_Object* pDefaultCS = nullptr;
+    RetainPtr<const CPDF_Object> pDefaultCS;
     switch (pCS->GetFamily()) {
       case CPDF_ColorSpace::Family::kDeviceRGB:
         pDefaultCS = pColorSpaces->GetDirectObjectFor("DefaultRGB");
@@ -302,7 +302,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
     if (!pDefaultCS)
       return pCS;
 
-    return GetColorSpaceInternal(pDefaultCS, nullptr, pVisited,
+    return GetColorSpaceInternal(pDefaultCS.Get(), nullptr, pVisited,
                                  pVisitedInternal);
   }
 

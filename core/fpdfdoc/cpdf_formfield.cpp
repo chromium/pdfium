@@ -40,7 +40,7 @@ const CPDF_Object* GetFieldAttrRecursive(const CPDF_Dictionary* pFieldDict,
   if (!pFieldDict || nLevel > kGetFieldMaxRecursion)
     return nullptr;
 
-  const CPDF_Object* pAttr = pFieldDict->GetDirectObjectFor(name);
+  const CPDF_Object* pAttr = pFieldDict->GetDirectObjectFor(name).Get();
   if (pAttr)
     return pAttr;
 

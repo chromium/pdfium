@@ -216,7 +216,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage1() {
       m_IsIncremental = false;
 
     const CPDF_Dictionary* pDict = m_pDocument->GetRoot();
-    m_pMetadata.Reset(pDict ? pDict->GetDirectObjectFor("Metadata") : nullptr);
+    m_pMetadata = pDict ? pDict->GetDirectObjectFor("Metadata") : nullptr;
     m_iStage = Stage::kWriteHeader10;
   }
   if (m_iStage == Stage::kWriteHeader10) {

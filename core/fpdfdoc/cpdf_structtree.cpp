@@ -48,7 +48,7 @@ void CPDF_StructTree::LoadPageTree(const CPDF_Dictionary* pPageDict) {
   if (!m_pTreeRoot)
     return;
 
-  const CPDF_Object* pKids = m_pTreeRoot->GetDirectObjectFor("K");
+  RetainPtr<const CPDF_Object> pKids = m_pTreeRoot->GetDirectObjectFor("K");
   if (!pKids)
     return;
 
@@ -122,7 +122,7 @@ RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
 bool CPDF_StructTree::AddTopLevelNode(
     const CPDF_Dictionary* pDict,
     const RetainPtr<CPDF_StructElement>& pElement) {
-  const CPDF_Object* pObj = m_pTreeRoot->GetDirectObjectFor("K");
+  RetainPtr<const CPDF_Object> pObj = m_pTreeRoot->GetDirectObjectFor("K");
   if (!pObj)
     return false;
 

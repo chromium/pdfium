@@ -399,9 +399,7 @@ RetainPtr<const CPDF_Array> LookupOldStyleNamedDest(CPDF_Document* pDoc,
   const CPDF_Dictionary* pDests = pDoc->GetRoot()->GetDictFor("Dests");
   if (!pDests)
     return nullptr;
-  // TODO(tsepez): return const retained objects from CPDF object getters.
-  return GetNamedDestFromObject(
-      pdfium::WrapRetain(pDests->GetDirectObjectFor(name)));
+  return GetNamedDestFromObject(pDests->GetDirectObjectFor(name));
 }
 
 }  // namespace

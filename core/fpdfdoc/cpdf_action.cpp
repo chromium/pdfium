@@ -66,9 +66,10 @@ WideString CPDF_Action::GetFilePath() const {
     return WideString();
   }
 
-  const CPDF_Object* pFile = m_pDict->GetDirectObjectFor(pdfium::stream::kF);
+  RetainPtr<const CPDF_Object> pFile =
+      m_pDict->GetDirectObjectFor(pdfium::stream::kF);
   if (pFile)
-    return CPDF_FileSpec(pFile).GetFileName();
+    return CPDF_FileSpec(pFile.Get()).GetFileName();
 
   if (type != Type::kLaunch)
     return WideString();
@@ -91,7 +92,7 @@ ByteString CPDF_Action::GetURI(const CPDF_Document* pDoc) const {
   if (pURI) {
     auto result = csURI.Find(":");
     if (!result.has_value() || result.value() == 0) {
-      auto* pBase = pURI->GetDirectObjectFor("Base");
+      RetainPtr<const CPDF_Object> pBase = pURI->GetDirectObjectFor("Base");
       if (pBase && (pBase->IsString() || pBase->IsStream()))
         csURI = pBase->GetString() + csURI;
     }
@@ -118,7 +119,7 @@ std::vector<const CPDF_Object*> CPDF_Action::GetAllFields() const {
 
   ByteString csType = m_pDict->GetStringFor("S");
   const CPDF_Object* pFields = csType == "Hide"
-                                   ? m_pDict->GetDirectObjectFor("T")
+                                   ? m_pDict->GetDirectObjectFor("T").Get()
                                    : m_pDict->GetArrayFor("Fields");
   if (!pFields)
     return result;
@@ -153,7 +154,7 @@ size_t CPDF_Action::GetSubActionsCount() const {
   if (!m_pDict || !m_pDict->KeyExist("Next"))
     return 0;
 
-  const CPDF_Object* pNext = m_pDict->GetDirectObjectFor("Next");
+  RetainPtr<const CPDF_Object> pNext = m_pDict->GetDirectObjectFor("Next");
   if (!pNext)
     return 0;
   if (pNext->IsDictionary())
@@ -166,12 +167,15 @@ CPDF_Action CPDF_Action::GetSubAction(size_t iIndex) const {
   if (!m_pDict || !m_pDict->KeyExist("Next"))
     return CPDF_Action(nullptr);
 
-  const CPDF_Object* pNext = m_pDict->GetDirectObjectFor("Next");
-  if (const CPDF_Array* pArray = ToArray(pNext)) {
+  RetainPtr<const CPDF_Object> pNext = m_pDict->GetDirectObjectFor("Next");
+  if (!pNext)
+    return CPDF_Action(nullptr);
+
+  if (const CPDF_Array* pArray = pNext->AsArray()) {
     // TODO(tsepez): Actions should take retained arguments.
     return CPDF_Action(pArray->GetDictAt(iIndex).Get());
   }
-  if (const CPDF_Dictionary* pDict = ToDictionary(pNext)) {
+  if (const CPDF_Dictionary* pDict = pNext->AsDictionary()) {
     if (iIndex == 0)
       return CPDF_Action(pDict);
   }
@@ -182,6 +186,8 @@ const CPDF_Object* CPDF_Action::GetJavaScriptObject() const {
   if (!m_pDict)
     return nullptr;
 
-  const CPDF_Object* pJS = m_pDict->GetDirectObjectFor("JS");
-  return (pJS && (pJS->IsString() || pJS->IsStream())) ? pJS : nullptr;
+  RetainPtr<const CPDF_Object> pJS = m_pDict->GetDirectObjectFor("JS");
+
+  // TODO(tsepez): return retained references.
+  return (pJS && (pJS->IsString() || pJS->IsStream())) ? pJS.Get() : nullptr;
 }

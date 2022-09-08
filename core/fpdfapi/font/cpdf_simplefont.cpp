@@ -152,7 +152,8 @@ void CPDF_SimpleFont::LoadDifferences(const CPDF_Dictionary* encoding) {
 }
 
 void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
-  const CPDF_Object* pEncoding = m_pFontDict->GetDirectObjectFor("Encoding");
+  RetainPtr<const CPDF_Object> pEncoding =
+      m_pFontDict->GetDirectObjectFor("Encoding");
   if (!pEncoding) {
     if (m_BaseFontName == "Symbol") {
       m_BaseEncoding =

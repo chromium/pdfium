@@ -344,15 +344,16 @@ bool CPDF_DIB::LoadColorInfo(const CPDF_Dictionary* pFormResources,
     return true;
   }
 
-  const CPDF_Object* pCSObj = m_pDict->GetDirectObjectFor("ColorSpace");
+  RetainPtr<const CPDF_Object> pCSObj =
+      m_pDict->GetDirectObjectFor("ColorSpace");
   if (!pCSObj)
     return false;
 
   auto* pDocPageData = CPDF_DocPageData::FromDocument(m_pDocument.Get());
   if (pFormResources)
-    m_pColorSpace = pDocPageData->GetColorSpace(pCSObj, pFormResources);
+    m_pColorSpace = pDocPageData->GetColorSpace(pCSObj.Get(), pFormResources);
   if (!m_pColorSpace)
-    m_pColorSpace = pDocPageData->GetColorSpace(pCSObj, pPageResources);
+    m_pColorSpace = pDocPageData->GetColorSpace(pCSObj.Get(), pPageResources);
   if (!m_pColorSpace)
     return false;
 
@@ -417,7 +418,7 @@ bool CPDF_DIB::GetDecodeAndMaskArray() {
   if (m_pDict->KeyExist("SMask"))
     return true;
 
-  const CPDF_Object* pMask = m_pDict->GetDirectObjectFor("Mask");
+  RetainPtr<const CPDF_Object> pMask = m_pDict->GetDirectObjectFor("Mask");
   if (!pMask)
     return true;
 
@@ -751,7 +752,7 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
 
   RetainPtr<const CPDF_Stream> mask(m_pDict->GetStreamFor("SMask"));
   if (!mask) {
-    mask.Reset(ToStream(m_pDict->GetDirectObjectFor("Mask")));
+    mask = ToStream(m_pDict->GetDirectObjectFor("Mask"));
     return mask ? StartLoadMaskDIB(std::move(mask)) : LoadState::kSuccess;
   }
 

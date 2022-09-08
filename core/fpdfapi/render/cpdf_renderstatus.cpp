@@ -1404,10 +1404,10 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
     return nullptr;
 
   std::unique_ptr<CPDF_Function> pFunc;
-  const CPDF_Object* pFuncObj =
+  RetainPtr<const CPDF_Object> pFuncObj =
       pSMaskDict->GetDirectObjectFor(pdfium::transparency::kTR);
   if (pFuncObj && (pFuncObj->IsDictionary() || pFuncObj->IsStream()))
-    pFunc = CPDF_Function::Load(pFuncObj);
+    pFunc = CPDF_Function::Load(pFuncObj.Get());
 
   CFX_Matrix matrix = mtMatrix;
   matrix.Translate(-pClipRect->left, -pClipRect->top);
@@ -1500,14 +1500,14 @@ FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
   if (!pBC)
     return kDefaultColor;
 
-  const CPDF_Object* pCSObj = nullptr;
+  RetainPtr<const CPDF_Object> pCSObj;
   const CPDF_Dictionary* pGroup =
       pGroupDict ? pGroupDict->GetDictFor("Group") : nullptr;
   if (pGroup)
     pCSObj = pGroup->GetDirectObjectFor(pdfium::transparency::kCS);
   RetainPtr<CPDF_ColorSpace> pCS =
       CPDF_DocPageData::FromDocument(m_pContext->GetDocument())
-          ->GetColorSpace(pCSObj, nullptr);
+          ->GetColorSpace(pCSObj.Get(), nullptr);
   if (!pCS)
     return kDefaultColor;
 

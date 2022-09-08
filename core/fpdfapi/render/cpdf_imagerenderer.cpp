@@ -171,10 +171,11 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
       pPage ? pPage->GetPageResources() : nullptr;
   const CPDF_Dictionary* pStreamDict =
       m_pImageObject->GetImage()->GetStream()->GetDict();
-  const CPDF_Object* pCSObj = pStreamDict->GetDirectObjectFor("ColorSpace");
+  RetainPtr<const CPDF_Object> pCSObj =
+      pStreamDict->GetDirectObjectFor("ColorSpace");
   auto* pData = CPDF_DocPageData::FromDocument(pDocument);
   RetainPtr<CPDF_ColorSpace> pColorSpace =
-      pData->GetColorSpace(pCSObj, pPageResources);
+      pData->GetColorSpace(pCSObj.Get(), pPageResources);
   if (pColorSpace) {
     CPDF_ColorSpace::Family format = pColorSpace->GetFamily();
     if (format == CPDF_ColorSpace::Family::kDeviceCMYK ||

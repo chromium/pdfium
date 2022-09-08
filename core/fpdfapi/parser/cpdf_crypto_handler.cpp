@@ -38,7 +38,8 @@ bool CPDF_CryptoHandler::IsSignatureDictionary(
     const CPDF_Dictionary* dictionary) {
   if (!dictionary)
     return false;
-  const CPDF_Object* type_obj = dictionary->GetDirectObjectFor(kTypeKey);
+  RetainPtr<const CPDF_Object> type_obj =
+      dictionary->GetDirectObjectFor(kTypeKey);
   if (!type_obj)
     type_obj = dictionary->GetDirectObjectFor(pdfium::form_fields::kFT);
   return type_obj && type_obj->GetString() == pdfium::form_fields::kSig;

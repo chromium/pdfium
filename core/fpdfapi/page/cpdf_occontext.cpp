@@ -17,7 +17,7 @@ namespace {
 bool HasIntent(const CPDF_Dictionary* pDict,
                ByteStringView csElement,
                ByteStringView csDef) {
-  const CPDF_Object* pIntent = pDict->GetDirectObjectFor("Intent");
+  RetainPtr<const CPDF_Object> pIntent = pDict->GetDirectObjectFor("Intent");
   if (!pIntent)
     return csElement == csDef;
 
@@ -233,7 +233,7 @@ bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict) const {
     return GetOCGVE(pVE, 0);
 
   ByteString csP = pOCMDDict->GetStringFor("P", "AnyOn");
-  const CPDF_Object* pOCGObj = pOCMDDict->GetDirectObjectFor("OCGs");
+  RetainPtr<const CPDF_Object> pOCGObj = pOCMDDict->GetDirectObjectFor("OCGs");
   if (!pOCGObj)
     return true;
 

@@ -23,7 +23,8 @@ WideString CPDF_Bookmark::GetTitle() const {
   if (!m_pDict)
     return WideString();
 
-  const CPDF_String* pString = ToString(m_pDict->GetDirectObjectFor("Title"));
+  RetainPtr<const CPDF_String> pString =
+      ToString(m_pDict->GetDirectObjectFor("Title"));
   if (!pString)
     return WideString();
 

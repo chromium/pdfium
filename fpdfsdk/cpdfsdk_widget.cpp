@@ -357,7 +357,7 @@ bool CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode) {
     ap_entry = "N";
 
   // Get the AP stream or subdirectory
-  const CPDF_Object* pSub = pAP->GetDirectObjectFor(ap_entry);
+  RetainPtr<const CPDF_Object> pSub = pAP->GetDirectObjectFor(ap_entry);
   if (!pSub)
     return false;
 

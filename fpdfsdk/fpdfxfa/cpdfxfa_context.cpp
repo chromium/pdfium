@@ -67,7 +67,8 @@ RetainPtr<CPDF_SeekableMultiStream> CreateXFAMultiStream(
   if (!pAcroForm)
     return nullptr;
 
-  const CPDF_Object* pElementXFA = pAcroForm->GetDirectObjectFor("XFA");
+  RetainPtr<const CPDF_Object> pElementXFA =
+      pAcroForm->GetDirectObjectFor("XFA");
   if (!pElementXFA)
     return nullptr;
 

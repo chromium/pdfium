@@ -20,7 +20,8 @@ class CPDF_Dest {
   ~CPDF_Dest();
 
   // Use when |pDest| is an object of an unknown type. Can pass in nullptr.
-  static CPDF_Dest Create(CPDF_Document* pDoc, const CPDF_Object* pDest);
+  static CPDF_Dest Create(CPDF_Document* pDoc,
+                          RetainPtr<const CPDF_Object> pDest);
 
   const CPDF_Array* GetArray() const { return m_pArray.Get(); }
   int GetDestPageIndex(CPDF_Document* pDoc) const;

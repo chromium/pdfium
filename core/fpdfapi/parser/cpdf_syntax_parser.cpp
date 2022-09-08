@@ -707,7 +707,8 @@ FX_FILESIZE CPDF_SyntaxParser::FindStreamEndPos() {
 
 RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     RetainPtr<CPDF_Dictionary> pDict) {
-  const CPDF_Number* pLenObj = ToNumber(pDict->GetDirectObjectFor("Length"));
+  RetainPtr<const CPDF_Number> pLenObj =
+      ToNumber(pDict->GetDirectObjectFor("Length"));
   FX_FILESIZE len = pLenObj ? pLenObj->GetInteger() : -1;
 
   // Locate the start of stream.

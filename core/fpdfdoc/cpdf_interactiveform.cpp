@@ -823,14 +823,14 @@ void CPDF_InteractiveForm::AddTerminalField(
     if (pParent && pParent != pFieldDict &&
         !pParent->KeyExist(pdfium::form_fields::kFT)) {
       if (pFieldDict->KeyExist(pdfium::form_fields::kFT)) {
-        const CPDF_Object* pFTValue =
+        RetainPtr<const CPDF_Object> pFTValue =
             pFieldDict->GetDirectObjectFor(pdfium::form_fields::kFT);
         if (pFTValue)
           pParent->SetFor(pdfium::form_fields::kFT, pFTValue->Clone());
       }
 
       if (pFieldDict->KeyExist(pdfium::form_fields::kFf)) {
-        const CPDF_Object* pFfValue =
+        RetainPtr<const CPDF_Object> pFfValue =
             pFieldDict->GetDirectObjectFor(pdfium::form_fields::kFf);
         if (pFfValue)
           pParent->SetFor(pdfium::form_fields::kFf, pFfValue->Clone());

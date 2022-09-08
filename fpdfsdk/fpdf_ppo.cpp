@@ -600,7 +600,7 @@ ByteString CPDF_NPageToOneExporter::AddSubPage(
 CPDF_Stream* CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
     const RetainPtr<CPDF_Page>& pSrcPage) {
   const CPDF_Dictionary* pSrcPageDict = pSrcPage->GetDict();
-  const CPDF_Object* pSrcContentObj =
+  RetainPtr<const CPDF_Object> pSrcContentObj =
       pSrcPageDict->GetDirectObjectFor(pdfium::page_object::kContents);
 
   CPDF_Stream* pNewXObject = dest()->NewIndirect<CPDF_Stream>(
@@ -623,7 +623,7 @@ CPDF_Stream* CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
 
   if (pSrcContentObj) {
     ByteString bsSrcContentStream;
-    const CPDF_Array* pSrcContentArray = ToArray(pSrcContentObj);
+    const CPDF_Array* pSrcContentArray = pSrcContentObj->AsArray();
     if (pSrcContentArray) {
       for (size_t i = 0; i < pSrcContentArray->size(); ++i) {
         RetainPtr<const CPDF_Stream> pStream = pSrcContentArray->GetStreamAt(i);

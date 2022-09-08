@@ -623,7 +623,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     }
   }
   ReplaceAbbr(pDict.Get());
-  const CPDF_Object* pCSObj = nullptr;
+  RetainPtr<const CPDF_Object> pCSObj;
   if (pDict->KeyExist("ColorSpace")) {
     pCSObj = pDict->GetDirectObjectFor("ColorSpace");
     if (pCSObj->IsName()) {
@@ -636,8 +636,8 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     }
   }
   pDict->SetNewFor<CPDF_Name>("Subtype", "Image");
-  RetainPtr<CPDF_Stream> pStream =
-      m_pSyntax->ReadInlineStream(m_pDocument.Get(), std::move(pDict), pCSObj);
+  RetainPtr<CPDF_Stream> pStream = m_pSyntax->ReadInlineStream(
+      m_pDocument.Get(), std::move(pDict), pCSObj.Get());
   while (true) {
     CPDF_StreamParser::ElementType type = m_pSyntax->ParseNextElement();
     if (type == CPDF_StreamParser::ElementType::kEndOfData)
