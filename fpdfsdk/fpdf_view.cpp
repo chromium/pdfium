@@ -1050,7 +1050,9 @@ FPDF_GetNamedDestByName(FPDF_DOCUMENT document, FPDF_BYTESTRING name) {
     return nullptr;
 
   ByteString dest_name(name);
-  return FPDFDestFromCPDFArray(CPDF_NameTree::LookupNamedDest(pDoc, dest_name));
+  // TODO(tsepez): murky ownership, should caller get a reference?
+  return FPDFDestFromCPDFArray(
+      CPDF_NameTree::LookupNamedDest(pDoc, dest_name).Get());
 }
 
 #ifdef PDF_ENABLE_V8

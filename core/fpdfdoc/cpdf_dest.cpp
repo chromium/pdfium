@@ -41,9 +41,11 @@ CPDF_Dest CPDF_Dest::Create(CPDF_Document* pDoc, const CPDF_Object* pDest) {
   if (!pDest)
     return CPDF_Dest(nullptr);
 
-  if (pDest->IsString() || pDest->IsName())
-    return CPDF_Dest(CPDF_NameTree::LookupNamedDest(pDoc, pDest->GetString()));
-
+  if (pDest->IsString() || pDest->IsName()) {
+    // TODO(tsepez): make CPDF_Dest constructor take retained args.
+    return CPDF_Dest(
+        CPDF_NameTree::LookupNamedDest(pDoc, pDest->GetString()).Get());
+  }
   return CPDF_Dest(pDest->AsArray());
 }
 
