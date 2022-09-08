@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span_util.h"
 
 CFX_MemoryStream::CFX_MemoryStream() = default;
 
@@ -72,7 +73,7 @@ bool CFX_MemoryStream::WriteBlockAtOffset(const void* buffer,
     return false;
 
   size_t new_pos = safe_new_pos.ValueOrDie();
-  if (new_pos > m_nTotalSize) {
+  if (new_pos > m_data.size()) {
     static constexpr size_t kBlockSize = 64 * 1024;
     FX_SAFE_SIZE_T new_size = new_pos;
     new_size *= 2;
@@ -82,15 +83,12 @@ bool CFX_MemoryStream::WriteBlockAtOffset(const void* buffer,
     if (!new_size.IsValid())
       return false;
 
-    m_nTotalSize = new_size.ValueOrDie();
-    if (m_data)
-      m_data.reset(FX_Realloc(uint8_t, m_data.release(), m_nTotalSize));
-    else
-      m_data.reset(FX_Alloc(uint8_t, m_nTotalSize));
+    m_data.resize(new_size.ValueOrDie());
   }
   m_nCurPos = new_pos;
 
-  memcpy(&m_data.get()[offset], buffer, size);
+  fxcrt::spancpy(pdfium::make_span(m_data),
+                 pdfium::make_span(static_cast<const uint8_t*>(buffer), size));
   m_nCurSize = std::max(m_nCurSize, m_nCurPos);
 
   return true;
