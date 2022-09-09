@@ -319,41 +319,35 @@ ByteString GetColorStringWithDefault(const CPDF_Array* pColor,
   return GenerateColorAP(crDefaultColor, nOperation);
 }
 
-float GetBorderWidth(const CPDF_Dictionary& pAnnotDict) {
-  if (const CPDF_Dictionary* pBorderStyleDict = pAnnotDict.GetDictFor("BS")) {
-    if (pBorderStyleDict->KeyExist("W"))
-      return pBorderStyleDict->GetNumberFor("W");
-  }
+float GetBorderWidth(const CPDF_DictionaryLocker& locked_dict) {
+  const CPDF_Dictionary* pBorderStyleDict = locked_dict.GetDictFor("BS");
+  if (pBorderStyleDict && pBorderStyleDict->KeyExist("W"))
+    return pBorderStyleDict->GetNumberFor("W");
 
-  if (const CPDF_Array* pBorderArray =
-          pAnnotDict.GetArrayFor(pdfium::annotation::kBorder)) {
-    if (pBorderArray->size() > 2)
-      return pBorderArray->GetNumberAt(2);
-  }
+  const CPDF_Array* pBorderArray =
+      locked_dict.GetArrayFor(pdfium::annotation::kBorder);
+  if (pBorderArray && pBorderArray->size() > 2)
+    return pBorderArray->GetNumberAt(2);
 
   return 1;
 }
 
-const CPDF_Array* GetDashArray(const CPDF_Dictionary& pAnnotDict) {
-  if (const CPDF_Dictionary* pBorderStyleDict = pAnnotDict.GetDictFor("BS")) {
-    if (pBorderStyleDict->GetStringFor("S") == "D")
-      return pBorderStyleDict->GetArrayFor("D");
-  }
+RetainPtr<const CPDF_Array> GetDashArray(
+    const CPDF_DictionaryLocker& locked_dict) {
+  const CPDF_Dictionary* pBorderStyleDict = locked_dict.GetDictFor("BS");
+  if (pBorderStyleDict && pBorderStyleDict->GetStringFor("S") == "D")
+    return pdfium::WrapRetain(pBorderStyleDict->GetArrayFor("D"));
 
-  if (const CPDF_Array* pBorderArray =
-          pAnnotDict.GetArrayFor(pdfium::annotation::kBorder)) {
-    if (pBorderArray->size() == 4) {
-      // TODO(tsepez): Convert to retained as part of future CPDF_Dictionary
-      // CLs.
-      return pBorderArray->GetArrayAt(3).Get();
-    }
-  }
+  const CPDF_Array* pBorderArray =
+      locked_dict.GetArrayFor(pdfium::annotation::kBorder);
+  if (pBorderArray && pBorderArray->size() == 4)
+    return pBorderArray->GetArrayAt(3);
 
   return nullptr;
 }
 
-ByteString GetDashPatternString(const CPDF_Dictionary& pAnnotDict) {
-  const CPDF_Array* pDashArray = GetDashArray(pAnnotDict);
+ByteString GetDashPatternString(const CPDF_DictionaryLocker& locked_dict) {
+  RetainPtr<const CPDF_Array> pDashArray = GetDashArray(locked_dict);
   if (!pDashArray || pDashArray->IsEmpty())
     return ByteString();
 
@@ -536,65 +530,68 @@ bool GenerateCircleAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   fxcrt::ostringstream sAppStream;
   ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
+  {
+    CPDF_DictionaryLocker locked_dict(pAnnotDict);
+    const CPDF_Array* pInteriorColor = locked_dict.GetArrayFor("IC");
+    sAppStream << GetColorStringWithDefault(
+        pInteriorColor, CFX_Color(CFX_Color::Type::kTransparent),
+        PaintOperation::kFill);
 
-  const CPDF_Array* pInteriorColor = pAnnotDict->GetArrayFor("IC");
-  sAppStream << GetColorStringWithDefault(
-      pInteriorColor, CFX_Color(CFX_Color::Type::kTransparent),
-      PaintOperation::kFill);
+    sAppStream << GetColorStringWithDefault(
+        locked_dict.GetArrayFor(pdfium::annotation::kC),
+        CFX_Color(CFX_Color::Type::kRGB, 0, 0, 0), PaintOperation::kStroke);
 
-  sAppStream << GetColorStringWithDefault(
-      pAnnotDict->GetArrayFor(pdfium::annotation::kC),
-      CFX_Color(CFX_Color::Type::kRGB, 0, 0, 0), PaintOperation::kStroke);
+    float fBorderWidth = GetBorderWidth(locked_dict);
+    bool bIsStrokeRect = fBorderWidth > 0;
 
-  float fBorderWidth = GetBorderWidth(*pAnnotDict);
-  bool bIsStrokeRect = fBorderWidth > 0;
+    if (bIsStrokeRect) {
+      sAppStream << fBorderWidth << " w ";
+      sAppStream << GetDashPatternString(locked_dict);
+    }
 
-  if (bIsStrokeRect) {
-    sAppStream << fBorderWidth << " w ";
-    sAppStream << GetDashPatternString(*pAnnotDict);
+    CFX_FloatRect rect =
+        locked_dict.GetUnderlying()->GetRectFor(pdfium::annotation::kRect);
+    rect.Normalize();
+
+    if (bIsStrokeRect) {
+      // Deflating rect because stroking a path entails painting all points
+      // whose perpendicular distance from the path in user space is less than
+      // or equal to half the line width.
+      rect.Deflate(fBorderWidth / 2, fBorderWidth / 2);
+    }
+
+    const float fMiddleX = (rect.left + rect.right) / 2;
+    const float fMiddleY = (rect.top + rect.bottom) / 2;
+
+    // |fL| is precalculated approximate value of 4 * tan((3.14 / 2) / 4) / 3,
+    // where |fL| * radius is a good approximation of control points for
+    // arc with 90 degrees.
+    const float fL = 0.5523f;
+    const float fDeltaX = fL * rect.Width() / 2.0;
+    const float fDeltaY = fL * rect.Height() / 2.0;
+
+    // Starting point
+    sAppStream << fMiddleX << " " << rect.top << " m\n";
+    // First Bezier Curve
+    sAppStream << fMiddleX + fDeltaX << " " << rect.top << " " << rect.right
+               << " " << fMiddleY + fDeltaY << " " << rect.right << " "
+               << fMiddleY << " c\n";
+    // Second Bezier Curve
+    sAppStream << rect.right << " " << fMiddleY - fDeltaY << " "
+               << fMiddleX + fDeltaX << " " << rect.bottom << " " << fMiddleX
+               << " " << rect.bottom << " c\n";
+    // Third Bezier Curve
+    sAppStream << fMiddleX - fDeltaX << " " << rect.bottom << " " << rect.left
+               << " " << fMiddleY - fDeltaY << " " << rect.left << " "
+               << fMiddleY << " c\n";
+    // Fourth Bezier Curve
+    sAppStream << rect.left << " " << fMiddleY + fDeltaY << " "
+               << fMiddleX - fDeltaX << " " << rect.top << " " << fMiddleX
+               << " " << rect.top << " c\n";
+
+    bool bIsFillRect = pInteriorColor && !pInteriorColor->IsEmpty();
+    sAppStream << GetPaintOperatorString(bIsStrokeRect, bIsFillRect) << "\n";
   }
-
-  CFX_FloatRect rect = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
-  rect.Normalize();
-
-  if (bIsStrokeRect) {
-    // Deflating rect because stroking a path entails painting all points whose
-    // perpendicular distance from the path in user space is less than or equal
-    // to half the line width.
-    rect.Deflate(fBorderWidth / 2, fBorderWidth / 2);
-  }
-
-  const float fMiddleX = (rect.left + rect.right) / 2;
-  const float fMiddleY = (rect.top + rect.bottom) / 2;
-
-  // |fL| is precalculated approximate value of 4 * tan((3.14 / 2) / 4) / 3,
-  // where |fL| * radius is a good approximation of control points for
-  // arc with 90 degrees.
-  const float fL = 0.5523f;
-  const float fDeltaX = fL * rect.Width() / 2.0;
-  const float fDeltaY = fL * rect.Height() / 2.0;
-
-  // Starting point
-  sAppStream << fMiddleX << " " << rect.top << " m\n";
-  // First Bezier Curve
-  sAppStream << fMiddleX + fDeltaX << " " << rect.top << " " << rect.right
-             << " " << fMiddleY + fDeltaY << " " << rect.right << " "
-             << fMiddleY << " c\n";
-  // Second Bezier Curve
-  sAppStream << rect.right << " " << fMiddleY - fDeltaY << " "
-             << fMiddleX + fDeltaX << " " << rect.bottom << " " << fMiddleX
-             << " " << rect.bottom << " c\n";
-  // Third Bezier Curve
-  sAppStream << fMiddleX - fDeltaX << " " << rect.bottom << " " << rect.left
-             << " " << fMiddleY - fDeltaY << " " << rect.left << " " << fMiddleY
-             << " c\n";
-  // Fourth Bezier Curve
-  sAppStream << rect.left << " " << fMiddleY + fDeltaY << " "
-             << fMiddleX - fDeltaX << " " << rect.top << " " << fMiddleX << " "
-             << rect.top << " c\n";
-
-  bool bIsFillRect = pInteriorColor && !pInteriorColor->IsEmpty();
-  sAppStream << GetPaintOperatorString(bIsStrokeRect, bIsFillRect) << "\n";
 
   auto pExtGStateDict =
       GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
@@ -638,26 +635,28 @@ bool GenerateHighlightAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 }
 
 bool GenerateInkAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
-  float fBorderWidth = GetBorderWidth(*pAnnotDict);
-  bool bIsStroke = fBorderWidth > 0;
-
-  if (!bIsStroke)
-    return false;
-
   const CPDF_Array* pInkList = pAnnotDict->GetArrayFor("InkList");
   if (!pInkList || pInkList->IsEmpty())
     return false;
 
-  fxcrt::ostringstream sAppStream;
+  float fBorderWidth;
   ByteString sExtGSDictName = "GS";
-  sAppStream << "/" << sExtGSDictName << " gs ";
+  fxcrt::ostringstream sAppStream;
+  {
+    CPDF_DictionaryLocker locked_dict(pAnnotDict);
+    fBorderWidth = GetBorderWidth(locked_dict);
+    const bool bIsStroke = fBorderWidth > 0;
+    if (!bIsStroke)
+      return false;
 
-  sAppStream << GetColorStringWithDefault(
-      pAnnotDict->GetArrayFor(pdfium::annotation::kC),
-      CFX_Color(CFX_Color::Type::kRGB, 0, 0, 0), PaintOperation::kStroke);
+    sAppStream << "/" << sExtGSDictName << " gs ";
+    sAppStream << GetColorStringWithDefault(
+        locked_dict.GetArrayFor(pdfium::annotation::kC),
+        CFX_Color(CFX_Color::Type::kRGB, 0, 0, 0), PaintOperation::kStroke);
 
-  sAppStream << fBorderWidth << " w ";
-  sAppStream << GetDashPatternString(*pAnnotDict);
+    sAppStream << fBorderWidth << " w ";
+    sAppStream << GetDashPatternString(locked_dict);
+  }
 
   // Set inflated rect as a new rect because paths near the border with large
   // width should not be clipped to the original rect.
@@ -785,43 +784,42 @@ bool GeneratePopupAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 }
 
 bool GenerateSquareAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
+  const ByteString sExtGSDictName = "GS";
   fxcrt::ostringstream sAppStream;
-  ByteString sExtGSDictName = "GS";
   sAppStream << "/" << sExtGSDictName << " gs ";
+  {
+    CPDF_DictionaryLocker locked_dict(pAnnotDict);
+    const CPDF_Array* pInteriorColor = locked_dict.GetArrayFor("IC");
+    sAppStream << GetColorStringWithDefault(
+        pInteriorColor, CFX_Color(CFX_Color::Type::kTransparent),
+        PaintOperation::kFill);
 
-  const CPDF_Array* pInteriorColor = pAnnotDict->GetArrayFor("IC");
-  sAppStream << GetColorStringWithDefault(
-      pInteriorColor, CFX_Color(CFX_Color::Type::kTransparent),
-      PaintOperation::kFill);
+    sAppStream << GetColorStringWithDefault(
+        locked_dict.GetArrayFor(pdfium::annotation::kC),
+        CFX_Color(CFX_Color::Type::kRGB, 0, 0, 0), PaintOperation::kStroke);
 
-  sAppStream << GetColorStringWithDefault(
-      pAnnotDict->GetArrayFor(pdfium::annotation::kC),
-      CFX_Color(CFX_Color::Type::kRGB, 0, 0, 0), PaintOperation::kStroke);
+    float fBorderWidth = GetBorderWidth(locked_dict);
+    const bool bIsStrokeRect = fBorderWidth > 0;
+    if (bIsStrokeRect) {
+      sAppStream << fBorderWidth << " w ";
+      sAppStream << GetDashPatternString(locked_dict);
+    }
 
-  float fBorderWidth = GetBorderWidth(*pAnnotDict);
-  bool bIsStrokeRect = fBorderWidth > 0;
+    CFX_FloatRect rect = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
+    rect.Normalize();
 
-  if (bIsStrokeRect) {
-    sAppStream << fBorderWidth << " w ";
-    sAppStream << GetDashPatternString(*pAnnotDict);
+    if (bIsStrokeRect) {
+      // Deflating rect because stroking a path entails painting all points
+      // whose perpendicular distance from the path in user space is less than
+      // or equal to half the line width.
+      rect.Deflate(fBorderWidth / 2, fBorderWidth / 2);
+    }
+
+    const bool bIsFillRect = pInteriorColor && (pInteriorColor->size() > 0);
+    sAppStream << rect.left << " " << rect.bottom << " " << rect.Width() << " "
+               << rect.Height() << " re "
+               << GetPaintOperatorString(bIsStrokeRect, bIsFillRect) << "\n";
   }
-
-  CFX_FloatRect rect = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
-  rect.Normalize();
-
-  if (bIsStrokeRect) {
-    // Deflating rect because stroking a path entails painting all points whose
-    // perpendicular distance from the path in user space is less than or equal
-    // to half the line width.
-    rect.Deflate(fBorderWidth / 2, fBorderWidth / 2);
-  }
-
-  bool bIsFillRect = pInteriorColor && (pInteriorColor->size() > 0);
-
-  sAppStream << rect.left << " " << rect.bottom << " " << rect.Width() << " "
-             << rect.Height() << " re "
-             << GetPaintOperatorString(bIsStrokeRect, bIsFillRect) << "\n";
-
   auto pExtGStateDict =
       GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
   auto pResourceDict =
