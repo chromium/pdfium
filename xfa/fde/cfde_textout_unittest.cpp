@@ -117,12 +117,9 @@ class CFDETextOutLargeBitmapTest : public CFDETextOutTest {
   }
 
   const char* GetLargeTextBlobChecksum() {
-#if defined(_SKIA_SUPPORT_)
-    static const char kExpectedChecksum[] = "6181929583fd7651169306852397806f";
-#else
-    static const char kExpectedChecksum[] = "268b71a8660b51e31c6bf30fc7ff1e08";
-#endif
-    return kExpectedChecksum;
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+      return "6181929583fd7651169306852397806f";
+    return "268b71a8660b51e31c6bf30fc7ff1e08";
   }
 };
 
