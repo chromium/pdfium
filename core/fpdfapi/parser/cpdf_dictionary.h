@@ -127,6 +127,10 @@ class CPDF_Dictionary final : public CPDF_Object {
   explicit CPDF_Dictionary(const WeakPtr<ByteStringPool>& pPool);
   ~CPDF_Dictionary() override;
 
+  // No guarantees about result lifetime, use with caution.
+  const CPDF_Object* GetObjectForInternal(const ByteString& key) const;
+  CPDF_Object* GetMutableObjectForInternal(const ByteString& key);
+
   ByteString MaybeIntern(const ByteString& str);
   RetainPtr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
@@ -143,6 +147,7 @@ class CPDF_DictionaryLocker {
   using const_iterator = CPDF_Dictionary::const_iterator;
 
   explicit CPDF_DictionaryLocker(const CPDF_Dictionary* pDictionary);
+  explicit CPDF_DictionaryLocker(RetainPtr<const CPDF_Dictionary> pDictionary);
   ~CPDF_DictionaryLocker();
 
   const_iterator begin() const {
@@ -152,6 +157,15 @@ class CPDF_DictionaryLocker {
   const_iterator end() const {
     CHECK(m_pDictionary->IsLocked());
     return m_pDictionary->m_Map.end();
+  }
+
+  // Results are only valid for the lifetime of the Dictionary Locker.
+  const CPDF_Dictionary* GetUnderlying() const { return m_pDictionary.Get(); }
+  const CPDF_Array* GetArrayFor(const ByteString& key) const;
+  const CPDF_Dictionary* GetDictFor(const ByteString& key) const;
+  const CPDF_Object* GetObjectFor(const ByteString& key) const {
+    CHECK(m_pDictionary->IsLocked());
+    return m_pDictionary->GetObjectForInternal(key);
   }
 
  private:

@@ -149,6 +149,10 @@ class CPDF_Array final : public CPDF_Object {
   explicit CPDF_Array(const WeakPtr<ByteStringPool>& pPool);
   ~CPDF_Array() override;
 
+  // No guarantees about result lifetime, use with caution.
+  const CPDF_Object* GetObjectAtInternal(size_t index) const;
+  CPDF_Object* GetMutableObjectAtInternal(size_t index);
+
   RetainPtr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;
@@ -164,6 +168,7 @@ class CPDF_ArrayLocker {
   using const_iterator = CPDF_Array::const_iterator;
 
   explicit CPDF_ArrayLocker(const CPDF_Array* pArray);
+  explicit CPDF_ArrayLocker(RetainPtr<const CPDF_Array> pArray);
   ~CPDF_ArrayLocker();
 
   const_iterator begin() const {
@@ -173,6 +178,15 @@ class CPDF_ArrayLocker {
   const_iterator end() const {
     CHECK(m_pArray->IsLocked());
     return m_pArray->m_Objects.end();
+  }
+
+  // Results are only valid for the lifetime of the Array Locker.
+  const CPDF_Array* GetUnderlying() const { return m_pArray.Get(); }
+  const CPDF_Array* GetArrayAt(size_t index) const;
+  const CPDF_Dictionary* GetDictAt(size_t index) const;
+  const CPDF_Object* GetObjectAt(size_t index) const {
+    CHECK(m_pArray->IsLocked());
+    return m_pArray->GetObjectAtInternal(index);
   }
 
  private:

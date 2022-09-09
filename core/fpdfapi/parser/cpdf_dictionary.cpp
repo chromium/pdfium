@@ -71,14 +71,24 @@ RetainPtr<CPDF_Object> CPDF_Dictionary::CloneNonCyclic(
   return pCopy;
 }
 
-const CPDF_Object* CPDF_Dictionary::GetObjectFor(const ByteString& key) const {
+CPDF_Object* CPDF_Dictionary::GetMutableObjectForInternal(
+    const ByteString& key) {
   auto it = m_Map.find(key);
   return it != m_Map.end() ? it->second.Get() : nullptr;
 }
 
+const CPDF_Object* CPDF_Dictionary::GetObjectForInternal(
+    const ByteString& key) const {
+  return const_cast<CPDF_Dictionary*>(this)->GetMutableObjectForInternal(key);
+}
+
 RetainPtr<CPDF_Object> CPDF_Dictionary::GetMutableObjectFor(
     const ByteString& key) {
-  return pdfium::WrapRetain(const_cast<CPDF_Object*>(GetObjectFor(key)));
+  return pdfium::WrapRetain(GetMutableObjectForInternal(key));
+}
+
+const CPDF_Object* CPDF_Dictionary::GetObjectFor(const ByteString& key) const {
+  return GetObjectForInternal(key);
 }
 
 RetainPtr<const CPDF_Object> CPDF_Dictionary::GetDirectObjectFor(
@@ -324,6 +334,22 @@ CPDF_DictionaryLocker::CPDF_DictionaryLocker(const CPDF_Dictionary* pDictionary)
   m_pDictionary->m_LockCount++;
 }
 
+CPDF_DictionaryLocker::CPDF_DictionaryLocker(
+    RetainPtr<const CPDF_Dictionary> pDictionary)
+    : m_pDictionary(std::move(pDictionary)) {
+  m_pDictionary->m_LockCount++;
+}
+
 CPDF_DictionaryLocker::~CPDF_DictionaryLocker() {
   m_pDictionary->m_LockCount--;
+}
+
+const CPDF_Array* CPDF_DictionaryLocker::GetArrayFor(
+    const ByteString& key) const {
+  return ToArray(GetObjectFor(key));
+}
+
+const CPDF_Dictionary* CPDF_DictionaryLocker::GetDictFor(
+    const ByteString& key) const {
+  return ToDictionary(GetObjectFor(key));
 }

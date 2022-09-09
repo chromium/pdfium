@@ -237,3 +237,17 @@ TEST(ArrayTest, Iterator) {
     EXPECT_EQ(elems[index++], it->AsNumber()->GetInteger());
   EXPECT_EQ(std::size(elems), index);
 }
+
+TEST(ArrayTest, LockerGetters) {
+  auto arr = pdfium::MakeRetain<CPDF_Array>();
+  arr->InsertNewAt<CPDF_Dictionary>(0);
+  arr->InsertNewAt<CPDF_Array>(1);
+
+  CPDF_ArrayLocker locked_arr(std::move(arr));
+  EXPECT_TRUE(locked_arr.GetObjectAt(0));
+  EXPECT_FALSE(locked_arr.GetArrayAt(0));
+  EXPECT_TRUE(locked_arr.GetDictAt(0));
+  EXPECT_TRUE(locked_arr.GetObjectAt(1));
+  EXPECT_TRUE(locked_arr.GetArrayAt(1));
+  EXPECT_FALSE(locked_arr.GetDictAt(1));
+}

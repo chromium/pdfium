@@ -114,6 +114,7 @@ pdfium_unittest_source_set("unittests") {
   sources = [
     "cpdf_array_unittest.cpp",
     "cpdf_cross_ref_avail_unittest.cpp",
+    "cpdf_dictionary_unittest.cpp",
     "cpdf_document_unittest.cpp",
     "cpdf_hint_tables_unittest.cpp",
     "cpdf_indirect_object_holder_unittest.cpp",
