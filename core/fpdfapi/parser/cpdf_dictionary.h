@@ -65,7 +65,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   int GetIntegerFor(const ByteString& key) const;
   int GetIntegerFor(const ByteString& key, int default_int) const;
   int GetDirectIntegerFor(const ByteString& key) const;
-  float GetNumberFor(const ByteString& key) const;
+  float GetFloatFor(const ByteString& key) const;
   const CPDF_Dictionary* GetDictFor(const ByteString& key) const;
   RetainPtr<CPDF_Dictionary> GetMutableDictFor(const ByteString& key);
   RetainPtr<CPDF_Dictionary> GetOrCreateDictFor(const ByteString& key);

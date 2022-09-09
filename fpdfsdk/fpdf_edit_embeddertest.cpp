@@ -3028,7 +3028,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType0Font) {
   ASSERT_TRUE(ordering);
   EXPECT_EQ(CPDF_Object::kString, ordering->GetType());
   EXPECT_EQ("Identity", ordering->GetString());
-  EXPECT_EQ(0, cidinfo_dict->GetNumberFor("Supplement"));
+  EXPECT_EQ(0, cidinfo_dict->GetFloatFor("Supplement"));
   CheckFontDescriptor(cidfont_dict.Get(), FPDF_FONT_TYPE1, false, false, span);
 
   // Check widths
@@ -3071,7 +3071,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType2Font) {
   ASSERT_TRUE(cidinfo_dict);
   EXPECT_EQ("Adobe", cidinfo_dict->GetStringFor("Registry"));
   EXPECT_EQ("Identity", cidinfo_dict->GetStringFor("Ordering"));
-  EXPECT_EQ(0, cidinfo_dict->GetNumberFor("Supplement"));
+  EXPECT_EQ(0, cidinfo_dict->GetFloatFor("Supplement"));
   CheckFontDescriptor(cidfont_dict.Get(), FPDF_FONT_TRUETYPE, false, true,
                       span);
 

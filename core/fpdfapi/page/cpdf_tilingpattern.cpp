@@ -34,8 +34,8 @@ CPDF_TilingPattern* CPDF_TilingPattern::AsTilingPattern() {
 std::unique_ptr<CPDF_Form> CPDF_TilingPattern::Load(CPDF_PageObject* pPageObj) {
   const CPDF_Dictionary* pDict = pattern_obj()->GetDict();
   m_bColored = pDict->GetIntegerFor("PaintType") == 1;
-  m_XStep = static_cast<float>(fabs(pDict->GetNumberFor("XStep")));
-  m_YStep = static_cast<float>(fabs(pDict->GetNumberFor("YStep")));
+  m_XStep = static_cast<float>(fabs(pDict->GetFloatFor("XStep")));
+  m_YStep = static_cast<float>(fabs(pDict->GetFloatFor("YStep")));
 
   CPDF_Stream* pStream = pattern_obj()->AsMutableStream();
   if (!pStream)

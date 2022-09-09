@@ -248,7 +248,7 @@ RetainPtr<CPDF_Dictionary> SetExtGStateInResourceDict(
 
   // CA respresents current stroking alpha specifying constant opacity
   // value that should be used in transparent imaging model.
-  float fOpacity = pAnnotDict->GetNumberFor("CA");
+  float fOpacity = pAnnotDict->GetFloatFor("CA");
 
   pGSDict->SetNewFor<CPDF_Number>("CA", fOpacity);
 
@@ -696,8 +696,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
 
   const CPDF_Array* pColor = pAnnotDict->GetArrayFor(
       type == FPDFANNOT_COLORTYPE_InteriorColor ? "IC" : "C");
-  *A =
-      (pAnnotDict->KeyExist("CA") ? pAnnotDict->GetNumberFor("CA") : 1) * 255.f;
+  *A = (pAnnotDict->KeyExist("CA") ? pAnnotDict->GetFloatFor("CA") : 1) * 255.f;
   if (!pColor) {
     // Use default color. The default colors must be consistent with the ones
     // used to generate AP. See calls to GetColorStringWithDefault() in
@@ -1096,7 +1095,7 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
     // checking for value < 1 and not <= 1 so that the output PDF size does not
     // unnecessarily bloat up by creating a new dictionary in case of solid
     // color.
-    if (pAnnotDict->KeyExist("CA") && pAnnotDict->GetNumberFor("CA") < 1.0f) {
+    if (pAnnotDict->KeyExist("CA") && pAnnotDict->GetFloatFor("CA") < 1.0f) {
       RetainPtr<CPDF_Dictionary> pResourceDict =
           SetExtGStateInResourceDict(pDoc, pAnnotDict.Get(), "Normal");
       pStreamDict->SetFor("Resources", pResourceDict);

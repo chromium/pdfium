@@ -482,7 +482,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
     ByteString style = pBS->GetStringFor("S");
     pDashArray = pBS->GetArrayFor("D");
     style_char = style[0];
-    width = pBS->GetNumberFor("W");
+    width = pBS->GetFloatFor("W");
   }
   if (width <= 0) {
     return;

@@ -146,7 +146,7 @@ int CPDF_Dictionary::GetDirectIntegerFor(const ByteString& key) const {
   return p ? p->GetInteger() : 0;
 }
 
-float CPDF_Dictionary::GetNumberFor(const ByteString& key) const {
+float CPDF_Dictionary::GetFloatFor(const ByteString& key) const {
   const CPDF_Object* p = GetObjectFor(key);
   return p ? p->GetNumber() : 0;
 }

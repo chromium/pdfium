@@ -655,7 +655,7 @@ uint32_t CPDF_CalGray::v_Load(CPDF_Document* pDoc,
 
   GetBlackPoint(pDict.Get(), m_BlackPoint);
 
-  m_Gamma = pDict->GetNumberFor("Gamma");
+  m_Gamma = pDict->GetFloatFor("Gamma");
   if (m_Gamma == 0)
     m_Gamma = kDefaultGamma;
   return 1;

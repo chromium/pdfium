@@ -322,7 +322,7 @@ ByteString GetColorStringWithDefault(const CPDF_Array* pColor,
 float GetBorderWidth(const CPDF_DictionaryLocker& locked_dict) {
   const CPDF_Dictionary* pBorderStyleDict = locked_dict.GetDictFor("BS");
   if (pBorderStyleDict && pBorderStyleDict->KeyExist("W"))
-    return pBorderStyleDict->GetNumberFor("W");
+    return pBorderStyleDict->GetFloatFor("W");
 
   const CPDF_Array* pBorderArray =
       locked_dict.GetArrayFor(pdfium::annotation::kBorder);
@@ -476,8 +476,7 @@ RetainPtr<CPDF_Dictionary> GenerateExtGStateDict(
       pdfium::MakeRetain<CPDF_Dictionary>(pAnnotDict.GetByteStringPool());
   pGSDict->SetNewFor<CPDF_Name>("Type", "ExtGState");
 
-  float fOpacity =
-      pAnnotDict.KeyExist("CA") ? pAnnotDict.GetNumberFor("CA") : 1;
+  float fOpacity = pAnnotDict.KeyExist("CA") ? pAnnotDict.GetFloatFor("CA") : 1;
   pGSDict->SetNewFor<CPDF_Number>("CA", fOpacity);
   pGSDict->SetNewFor<CPDF_Number>("ca", fOpacity);
   pGSDict->SetNewFor<CPDF_Boolean>("AIS", false);
@@ -1006,7 +1005,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
   CFX_Color crRightBottom;
   if (const CPDF_Dictionary* pBSDict = pAnnotDict->GetDictFor("BS")) {
     if (pBSDict->KeyExist("W"))
-      fBorderWidth = pBSDict->GetNumberFor("W");
+      fBorderWidth = pBSDict->GetFloatFor("W");
 
     if (const CPDF_Array* pArray = pBSDict->GetArrayFor("D")) {
       dsBorder = CPVT_Dash(pArray->GetIntegerAt(0), pArray->GetIntegerAt(1),

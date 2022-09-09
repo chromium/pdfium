@@ -202,7 +202,7 @@ TEST_F(FPDFAnnotEmbedderTest, SetAPWithOpacity) {
   ASSERT_TRUE(gs_dict);
   ByteString type = gs_dict->GetStringFor(pdfium::annotation::kType);
   EXPECT_EQ("ExtGState", type);
-  float opacity = gs_dict->GetNumberFor("CA");
+  float opacity = gs_dict->GetFloatFor("CA");
   // Opacity value of 102 is represented as 0.4f (=104/255) in /CA entry.
   EXPECT_FLOAT_EQ(0.4f, opacity);
   ByteString blend_mode = gs_dict->GetStringFor("BM");

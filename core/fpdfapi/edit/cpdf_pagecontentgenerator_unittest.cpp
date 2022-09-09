@@ -218,8 +218,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
       TestGetResource(&generator, "ExtGState",
                       pathString.Substr(48, pathString.GetLength() - 91));
   ASSERT_TRUE(externalGS);
-  EXPECT_EQ(0.5f, externalGS->GetNumberFor("ca"));
-  EXPECT_EQ(0.8f, externalGS->GetNumberFor("CA"));
+  EXPECT_EQ(0.5f, externalGS->GetFloatFor("ca"));
+  EXPECT_EQ(0.8f, externalGS->GetFloatFor("CA"));
 
   // Same path, now with a stroke.
   pPathObj->m_GraphState.SetLineWidth(10.5f);
@@ -292,8 +292,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
       &generator, "ExtGState",
       midString.First(midString.GetLength() - compareString2.GetLength()));
   ASSERT_TRUE(externalGS);
-  EXPECT_EQ(0.5f, externalGS->GetNumberFor("ca"));
-  EXPECT_EQ(0.8f, externalGS->GetNumberFor("CA"));
+  EXPECT_EQ(0.5f, externalGS->GetFloatFor("ca"));
+  EXPECT_EQ(0.8f, externalGS->GetFloatFor("CA"));
   const CPDF_Dictionary* fontDict = TestGetResource(
       &generator, "Font",
       lastString.First(lastString.GetLength() - compareString3.GetLength()));
