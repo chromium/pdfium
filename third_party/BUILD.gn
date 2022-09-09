@@ -63,6 +63,10 @@ if (pdf_bundle_freetype) {
       "FT_CONFIG_MODULES_H=\"freetype-custom-config/ftmodule.h\"",
       "FT_CONFIG_OPTIONS_H=\"freetype-custom-config/ftoption.h\"",
     ]
+    if (is_clang) {
+      # Multiple functions in freetype/src/src/truetype/ttobjs.h are unused.
+      cflags = [ "-Wno-unused-function" ]
+    }
   }
 
   # Tests may link against this even if the production library doesn't,
