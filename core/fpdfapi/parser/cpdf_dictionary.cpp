@@ -202,6 +202,11 @@ RetainPtr<CPDF_Stream> CPDF_Dictionary::GetMutableStreamFor(
   return pdfium::WrapRetain(const_cast<CPDF_Stream*>(GetStreamFor(key)));
 }
 
+RetainPtr<const CPDF_Number> CPDF_Dictionary::GetNumberFor(
+    const ByteString& key) const {
+  return pdfium::WrapRetain(ToNumber(GetObjectFor(key)));
+}
+
 CFX_FloatRect CPDF_Dictionary::GetRectFor(const ByteString& key) const {
   CFX_FloatRect rect;
   const CPDF_Array* pArray = GetArrayFor(key);

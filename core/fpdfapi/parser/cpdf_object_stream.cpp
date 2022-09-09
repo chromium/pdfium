@@ -31,8 +31,8 @@ bool IsObjectStream(const CPDF_Object* object) {
   if (!ValidateDictType(stream_dict, "ObjStm"))
     return false;
 
-  const CPDF_Number* number_of_objects =
-      ToNumber(stream_dict->GetObjectFor("N"));
+  RetainPtr<const CPDF_Number> number_of_objects =
+      stream_dict->GetNumberFor("N");
   if (!number_of_objects || !number_of_objects->IsInteger() ||
       number_of_objects->GetInteger() < 0 ||
       number_of_objects->GetInteger() >=
@@ -40,8 +40,8 @@ bool IsObjectStream(const CPDF_Object* object) {
     return false;
   }
 
-  const CPDF_Number* first_object_offset =
-      ToNumber(stream_dict->GetObjectFor("First"));
+  RetainPtr<const CPDF_Number> first_object_offset =
+      stream_dict->GetNumberFor("First");
   if (!first_object_offset || !first_object_offset->IsInteger() ||
       first_object_offset->GetInteger() < 0) {
     return false;

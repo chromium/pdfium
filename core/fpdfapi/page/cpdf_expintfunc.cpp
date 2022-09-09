@@ -25,7 +25,7 @@ bool CPDF_ExpIntFunc::v_Init(const CPDF_Object* pObj,
   if (!pDict)
     return false;
 
-  const CPDF_Number* pExponent = ToNumber(pDict->GetObjectFor("N"));
+  RetainPtr<const CPDF_Number> pExponent = pDict->GetNumberFor("N");
   if (!pExponent)
     return false;
 

@@ -31,7 +31,7 @@ bool IsValidNumericDictionaryValue(const CPDF_Dictionary* pDict,
                                    bool must_exist = true) {
   if (!pDict->KeyExist(key))
     return !must_exist;
-  const CPDF_Number* pNum = ToNumber(pDict->GetObjectFor(key));
+  RetainPtr<const CPDF_Number> pNum = pDict->GetNumberFor(key);
   if (!pNum || !pNum->IsInteger())
     return false;
   const int raw_value = pNum->GetInteger();
