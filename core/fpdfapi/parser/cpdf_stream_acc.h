@@ -67,10 +67,11 @@ class CPDF_StreamAcc final : public Retainable {
 
   bool is_owned() const { return m_Data.index() == 1; }
 
-  absl::variant<pdfium::span<const uint8_t>, OwnedData> m_Data;
   ByteString m_ImageDecoder;
   RetainPtr<const CPDF_Dictionary> m_pImageParam;
+  // Needs to outlive `m_Data` when the data is not owned.
   RetainPtr<const CPDF_Stream> const m_pStream;
+  absl::variant<pdfium::span<const uint8_t>, OwnedData> m_Data;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_STREAM_ACC_H_
