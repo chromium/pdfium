@@ -182,6 +182,10 @@ RetainPtr<const CPDF_Array> CPDF_Array::GetArrayAt(size_t index) const {
   return const_cast<CPDF_Array*>(this)->GetMutableArrayAt(index);
 }
 
+RetainPtr<const CPDF_Number> CPDF_Array::GetNumberAt(size_t index) const {
+  return ToNumber(GetObjectAt(index));
+}
+
 void CPDF_Array::Clear() {
   CHECK(!IsLocked());
   m_Objects.clear();
