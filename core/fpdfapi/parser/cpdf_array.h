@@ -59,7 +59,7 @@ class CPDF_Array final : public CPDF_Object {
   WideString GetUnicodeTextAt(size_t index) const;
   bool GetBooleanAt(size_t index, bool bDefault) const;
   int GetIntegerAt(size_t index) const;
-  float GetNumberAt(size_t index) const;
+  float GetFloatAt(size_t index) const;
   RetainPtr<CPDF_Dictionary> GetMutableDictAt(size_t index);
   RetainPtr<const CPDF_Dictionary> GetDictAt(size_t index) const;
   RetainPtr<CPDF_Stream> GetMutableStreamAt(size_t index);

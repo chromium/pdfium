@@ -40,7 +40,7 @@ void TestArrayAccessors(const CPDF_Array* arr,
                         CPDF_Stream* stream_val) {
   EXPECT_STREQ(str_val, arr->GetStringAt(index).c_str());
   EXPECT_EQ(int_val, arr->GetIntegerAt(index));
-  EXPECT_EQ(float_val, arr->GetNumberAt(index));
+  EXPECT_EQ(float_val, arr->GetFloatAt(index));
   EXPECT_EQ(arr_val, arr->GetArrayAt(index));
   EXPECT_EQ(dict_val, arr->GetDictAt(index));
   EXPECT_EQ(stream_val, arr->GetStreamAt(index));
@@ -714,7 +714,7 @@ TEST(PDFArrayTest, GetTypeAt) {
     for (size_t i = 0; i < arr->size(); ++i) {
       EXPECT_STREQ(expected_str[i], arr->GetStringAt(i).c_str());
       EXPECT_EQ(expected_int[i], arr->GetIntegerAt(i));
-      EXPECT_EQ(expected_float[i], arr->GetNumberAt(i));
+      EXPECT_EQ(expected_float[i], arr->GetFloatAt(i));
       if (i == 11)
         EXPECT_EQ(arr_val, arr->GetArrayAt(i));
       else

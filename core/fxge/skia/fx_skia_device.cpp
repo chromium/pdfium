@@ -2239,10 +2239,10 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
   SkPath skClip;
   SkPath skPath;
   if (kAxialShading == shadingType) {
-    float start_x = pCoords->GetNumberAt(0);
-    float start_y = pCoords->GetNumberAt(1);
-    float end_x = pCoords->GetNumberAt(2);
-    float end_y = pCoords->GetNumberAt(3);
+    float start_x = pCoords->GetFloatAt(0);
+    float start_y = pCoords->GetFloatAt(1);
+    float end_x = pCoords->GetFloatAt(2);
+    float end_y = pCoords->GetFloatAt(3);
     SkPoint pts[] = {{start_x, start_y}, {end_x, end_y}};
     skMatrix.mapPoints(pts, SK_ARRAY_COUNT(pts));
     paint.setShader(
@@ -2279,12 +2279,12 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     skPath.addRect(skRect);
     skMatrix.setIdentity();
   } else if (kRadialShading == shadingType) {
-    float start_x = pCoords->GetNumberAt(0);
-    float start_y = pCoords->GetNumberAt(1);
-    float start_r = pCoords->GetNumberAt(2);
-    float end_x = pCoords->GetNumberAt(3);
-    float end_y = pCoords->GetNumberAt(4);
-    float end_r = pCoords->GetNumberAt(5);
+    float start_x = pCoords->GetFloatAt(0);
+    float start_y = pCoords->GetFloatAt(1);
+    float start_r = pCoords->GetFloatAt(2);
+    float end_x = pCoords->GetFloatAt(3);
+    float end_y = pCoords->GetFloatAt(4);
+    float end_r = pCoords->GetFloatAt(5);
     SkPoint pts[] = {{start_x, start_y}, {end_x, end_y}};
 
     paint.setShader(SkGradientShader::MakeTwoPointConical(

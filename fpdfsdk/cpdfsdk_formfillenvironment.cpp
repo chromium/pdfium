@@ -894,7 +894,7 @@ bool CPDFSDK_FormFillEnvironment::DoActionDestination(const CPDF_Dest& dest) {
   // parameter that explains about the rest of |dest_array|.
   if (dest_array) {
     for (size_t i = 2; i < dest_array->size(); i++)
-      dest_positions.push_back(dest_array->GetNumberAt(i));
+      dest_positions.push_back(dest_array->GetFloatAt(i));
   }
 
   DoGoToAction(dest.GetDestPageIndex(document), dest.GetZoomMode(),

@@ -141,5 +141,5 @@ size_t CPDF_Dest::GetNumParams() const {
 }
 
 float CPDF_Dest::GetParam(size_t index) const {
-  return m_pArray ? m_pArray->GetNumberAt(2 + index) : 0;
+  return m_pArray ? m_pArray->GetFloatAt(2 + index) : 0;
 }

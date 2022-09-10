@@ -153,7 +153,7 @@ std::vector<float> ReadArrayElementsToVector(const CPDF_Array* pArray,
   DCHECK(pArray->size() >= nCount);
   std::vector<float> ret(nCount);
   for (size_t i = 0; i < nCount; ++i)
-    ret[i] = pArray->GetNumberAt(i);
+    ret[i] = pArray->GetFloatAt(i);
   return ret;
 }
 

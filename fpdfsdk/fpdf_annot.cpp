@@ -873,8 +873,8 @@ FPDFAnnot_GetVertices(FPDF_ANNOTATION annot,
       fxcrt::CollectionSize<unsigned long>(*vertices) / 2;
   if (buffer && length >= points_len) {
     for (unsigned long i = 0; i < points_len; ++i) {
-      buffer[i].x = vertices->GetNumberAt(i * 2);
-      buffer[i].y = vertices->GetNumberAt(i * 2 + 1);
+      buffer[i].x = vertices->GetFloatAt(i * 2);
+      buffer[i].y = vertices->GetFloatAt(i * 2 + 1);
     }
   }
   return points_len;
@@ -904,8 +904,8 @@ FPDFAnnot_GetInkListPath(FPDF_ANNOTATION annot,
       fxcrt::CollectionSize<unsigned long>(*path) / 2;
   if (buffer && length >= points_len) {
     for (unsigned long i = 0; i < points_len; ++i) {
-      buffer[i].x = path->GetNumberAt(i * 2);
-      buffer[i].y = path->GetNumberAt(i * 2 + 1);
+      buffer[i].x = path->GetFloatAt(i * 2);
+      buffer[i].y = path->GetFloatAt(i * 2 + 1);
     }
   }
   return points_len;
@@ -929,10 +929,10 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetLine(FPDF_ANNOTATION annot,
   if (!line || line->size() < 4)
     return false;
 
-  start->x = line->GetNumberAt(0);
-  start->y = line->GetNumberAt(1);
-  end->x = line->GetNumberAt(2);
-  end->y = line->GetNumberAt(3);
+  start->x = line->GetFloatAt(0);
+  start->y = line->GetFloatAt(1);
+  end->x = line->GetFloatAt(2);
+  end->y = line->GetFloatAt(3);
   return true;
 }
 
@@ -974,9 +974,9 @@ FPDFAnnot_GetBorder(FPDF_ANNOTATION annot,
   if (!border || border->size() < 3)
     return false;
 
-  *horizontal_radius = border->GetNumberAt(0);
-  *vertical_radius = border->GetNumberAt(1);
-  *border_width = border->GetNumberAt(2);
+  *horizontal_radius = border->GetFloatAt(0);
+  *vertical_radius = border->GetFloatAt(1);
+  *border_width = border->GetFloatAt(2);
   return true;
 }
 

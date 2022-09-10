@@ -392,8 +392,8 @@ bool CPDF_DIB::GetDecodeAndMaskArray() {
   const CPDF_Array* pDecode = m_pDict->GetArrayFor("Decode");
   if (pDecode) {
     for (uint32_t i = 0; i < m_nComponents; i++) {
-      m_CompData[i].m_DecodeMin = pDecode->GetNumberAt(i * 2);
-      float max = pDecode->GetNumberAt(i * 2 + 1);
+      m_CompData[i].m_DecodeMin = pDecode->GetFloatAt(i * 2);
+      float max = pDecode->GetFloatAt(i * 2 + 1);
       m_CompData[i].m_DecodeStep = (max - m_CompData[i].m_DecodeMin) / max_data;
       float def_value;
       float def_min;

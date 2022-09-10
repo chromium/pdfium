@@ -134,13 +134,13 @@ bool CPDF_MeshStream::Load() {
   if (!pDecode || pDecode->size() != 4 + m_nComponents * 2)
     return false;
 
-  m_xmin = pDecode->GetNumberAt(0);
-  m_xmax = pDecode->GetNumberAt(1);
-  m_ymin = pDecode->GetNumberAt(2);
-  m_ymax = pDecode->GetNumberAt(3);
+  m_xmin = pDecode->GetFloatAt(0);
+  m_xmax = pDecode->GetFloatAt(1);
+  m_ymin = pDecode->GetFloatAt(2);
+  m_ymax = pDecode->GetFloatAt(3);
   for (uint32_t i = 0; i < m_nComponents; ++i) {
-    m_ColorMin[i] = pDecode->GetNumberAt(i * 2 + 4);
-    m_ColorMax[i] = pDecode->GetNumberAt(i * 2 + 5);
+    m_ColorMin[i] = pDecode->GetFloatAt(i * 2 + 4);
+    m_ColorMax[i] = pDecode->GetFloatAt(i * 2 + 5);
   }
 
   if (ShouldCheckBPC(m_type)) {

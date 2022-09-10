@@ -76,7 +76,7 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
           break;
 
         // TODO(tsepez): pass moved retained object.
-        SetLineDash(pArray.Get(), pDash->GetNumberAt(1), 1.0f);
+        SetLineDash(pArray.Get(), pDash->GetFloatAt(1), 1.0f);
         break;
       }
       case FXBSTR_ID('R', 'I', 0, 0):
@@ -87,7 +87,7 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
         if (!pFont)
           break;
 
-        m_TextState.SetFontSize(pFont->GetNumberAt(1));
+        m_TextState.SetFontSize(pFont->GetFloatAt(1));
         m_TextState.SetFont(pParser->FindFont(pFont->GetStringAt(0)));
         break;
       }

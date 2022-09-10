@@ -70,8 +70,8 @@ bool CPDF_Type3Font::Load() {
   const CPDF_Array* pBBox = m_pFontDict->GetArrayFor("FontBBox");
   if (pBBox) {
     CFX_FloatRect box(
-        pBBox->GetNumberAt(0) * xscale, pBBox->GetNumberAt(1) * yscale,
-        pBBox->GetNumberAt(2) * xscale, pBBox->GetNumberAt(3) * yscale);
+        pBBox->GetFloatAt(0) * xscale, pBBox->GetFloatAt(1) * yscale,
+        pBBox->GetFloatAt(2) * xscale, pBBox->GetFloatAt(3) * yscale);
     CPDF_Type3Char::TextUnitRectToGlyphUnitRect(&box);
     m_FontBBox = box.ToFxRect();
   }
@@ -86,7 +86,7 @@ bool CPDF_Type3Font::Load() {
       for (size_t i = 0; i < count; i++) {
         m_CharWidthL[StartChar + i] =
             FXSYS_roundf(CPDF_Type3Char::TextUnitToGlyphUnit(
-                pWidthArray->GetNumberAt(i) * xscale));
+                pWidthArray->GetFloatAt(i) * xscale));
       }
     }
   }

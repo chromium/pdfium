@@ -221,8 +221,8 @@ CFX_FloatRect CPDF_Annot::RectFromQuadPointsArray(const CPDF_Array* pArray,
   // pair1 = top_right.
 
   return CFX_FloatRect(
-      pArray->GetNumberAt(4 + nIndex * 8), pArray->GetNumberAt(5 + nIndex * 8),
-      pArray->GetNumberAt(2 + nIndex * 8), pArray->GetNumberAt(3 + nIndex * 8));
+      pArray->GetFloatAt(4 + nIndex * 8), pArray->GetFloatAt(5 + nIndex * 8),
+      pArray->GetFloatAt(2 + nIndex * 8), pArray->GetFloatAt(3 + nIndex * 8));
 }
 
 // static
@@ -455,7 +455,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
         m_pAnnotDict->GetArrayFor(pdfium::annotation::kBorder);
     style_char = 'S';
     if (pBorderArray) {
-      width = pBorderArray->GetNumberAt(2);
+      width = pBorderArray->GetFloatAt(2);
       if (pBorderArray->size() == 4) {
         // TODO(tsepez): convert to retained in future CPDF_Dictionary CLs.
         pDashArray = pBorderArray->GetArrayAt(3).Get();
@@ -490,9 +490,9 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   const CPDF_Array* pColor = m_pAnnotDict->GetArrayFor(pdfium::annotation::kC);
   uint32_t argb = 0xff000000;
   if (pColor) {
-    int R = static_cast<int32_t>(pColor->GetNumberAt(0) * 255);
-    int G = static_cast<int32_t>(pColor->GetNumberAt(1) * 255);
-    int B = static_cast<int32_t>(pColor->GetNumberAt(2) * 255);
+    int R = static_cast<int32_t>(pColor->GetFloatAt(0) * 255);
+    int G = static_cast<int32_t>(pColor->GetFloatAt(1) * 255);
+    int B = static_cast<int32_t>(pColor->GetFloatAt(2) * 255);
     argb = ArgbEncode(0xff, R, G, B);
   }
   CFX_GraphStateData graph_state;

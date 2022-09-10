@@ -160,7 +160,7 @@ class FPDFEditEmbedderTest : public EmbedderTest {
     int num_cids_checked = 0;
     int cur_cid = 0;
     for (size_t idx = 0; idx < widths_array->size(); idx++) {
-      int cid = widths_array->GetNumberAt(idx);
+      int cid = widths_array->GetFloatAt(idx);
       EXPECT_GE(cid, cur_cid);
       ASSERT_FALSE(++idx == widths_array->size());
       RetainPtr<const CPDF_Object> next = widths_array->GetObjectAt(idx);
@@ -170,7 +170,7 @@ class FPDFEditEmbedderTest : public EmbedderTest {
         int cnt = static_cast<int>(arr->size());
         size_t inner_idx = 0;
         for (cur_cid = cid; cur_cid < cid + cnt; cur_cid++) {
-          int width = arr->GetNumberAt(inner_idx++);
+          int width = arr->GetFloatAt(inner_idx++);
           EXPECT_EQ(width, typed_font->GetCharWidthF(cur_cid))
               << " at cid " << cur_cid;
         }
@@ -181,7 +181,7 @@ class FPDFEditEmbedderTest : public EmbedderTest {
       ASSERT_TRUE(next->IsNumber());
       int last_cid = next->AsNumber()->GetInteger();
       ASSERT_FALSE(++idx == widths_array->size());
-      int width = widths_array->GetNumberAt(idx);
+      int width = widths_array->GetFloatAt(idx);
       for (cur_cid = cid; cur_cid <= last_cid; cur_cid++) {
         EXPECT_EQ(width, typed_font->GetCharWidthF(cur_cid))
             << " at cid " << cur_cid;
@@ -2954,9 +2954,9 @@ TEST_F(FPDFEditEmbedderTest, LoadSimpleType1Font) {
   const CPDF_Array* widths_array = font_dict->GetArrayFor("Widths");
   ASSERT_TRUE(widths_array);
   ASSERT_EQ(224u, widths_array->size());
-  EXPECT_EQ(250, widths_array->GetNumberAt(0));
-  EXPECT_EQ(569, widths_array->GetNumberAt(11));
-  EXPECT_EQ(500, widths_array->GetNumberAt(223));
+  EXPECT_EQ(250, widths_array->GetFloatAt(0));
+  EXPECT_EQ(569, widths_array->GetFloatAt(11));
+  EXPECT_EQ(500, widths_array->GetFloatAt(223));
   CheckFontDescriptor(font_dict, FPDF_FONT_TYPE1, true, false, span);
 }
 
@@ -2983,9 +2983,9 @@ TEST_F(FPDFEditEmbedderTest, LoadSimpleTrueTypeFont) {
   const CPDF_Array* widths_array = font_dict->GetArrayFor("Widths");
   ASSERT_TRUE(widths_array);
   ASSERT_EQ(224u, widths_array->size());
-  EXPECT_EQ(600, widths_array->GetNumberAt(33));
-  EXPECT_EQ(600, widths_array->GetNumberAt(74));
-  EXPECT_EQ(600, widths_array->GetNumberAt(223));
+  EXPECT_EQ(600, widths_array->GetFloatAt(33));
+  EXPECT_EQ(600, widths_array->GetFloatAt(74));
+  EXPECT_EQ(600, widths_array->GetFloatAt(223));
   CheckFontDescriptor(font_dict, FPDF_FONT_TRUETYPE, false, false, span);
 }
 

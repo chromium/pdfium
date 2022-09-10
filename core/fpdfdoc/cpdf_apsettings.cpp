@@ -40,20 +40,20 @@ CFX_Color::TypeAndARGB CPDF_ApSettings::GetColorARGB(
 
   const size_t dwCount = pEntry->size();
   if (dwCount == 1) {
-    const float g = pEntry->GetNumberAt(0) * 255;
+    const float g = pEntry->GetFloatAt(0) * 255;
     return {CFX_Color::Type::kGray, ArgbEncode(255, (int)g, (int)g, (int)g)};
   }
   if (dwCount == 3) {
-    float r = pEntry->GetNumberAt(0) * 255;
-    float g = pEntry->GetNumberAt(1) * 255;
-    float b = pEntry->GetNumberAt(2) * 255;
+    float r = pEntry->GetFloatAt(0) * 255;
+    float g = pEntry->GetFloatAt(1) * 255;
+    float b = pEntry->GetFloatAt(2) * 255;
     return {CFX_Color::Type::kRGB, ArgbEncode(255, (int)r, (int)g, (int)b)};
   }
   if (dwCount == 4) {
-    float c = pEntry->GetNumberAt(0);
-    float m = pEntry->GetNumberAt(1);
-    float y = pEntry->GetNumberAt(2);
-    float k = pEntry->GetNumberAt(3);
+    float c = pEntry->GetFloatAt(0);
+    float m = pEntry->GetFloatAt(1);
+    float y = pEntry->GetFloatAt(2);
+    float k = pEntry->GetFloatAt(3);
     float r = (1.0f - std::min(1.0f, c + k)) * 255;
     float g = (1.0f - std::min(1.0f, m + k)) * 255;
     float b = (1.0f - std::min(1.0f, y + k)) * 255;
@@ -69,7 +69,7 @@ float CPDF_ApSettings::GetOriginalColorComponent(
     return 0;
 
   const CPDF_Array* pEntry = m_pDict->GetArrayFor(csEntry);
-  return pEntry ? pEntry->GetNumberAt(index) : 0;
+  return pEntry ? pEntry->GetFloatAt(index) : 0;
 }
 
 CFX_Color CPDF_ApSettings::GetOriginalColor(const ByteString& csEntry) const {
@@ -82,16 +82,16 @@ CFX_Color CPDF_ApSettings::GetOriginalColor(const ByteString& csEntry) const {
 
   size_t dwCount = pEntry->size();
   if (dwCount == 1) {
-    return CFX_Color(CFX_Color::Type::kGray, pEntry->GetNumberAt(0));
+    return CFX_Color(CFX_Color::Type::kGray, pEntry->GetFloatAt(0));
   }
   if (dwCount == 3) {
-    return CFX_Color(CFX_Color::Type::kRGB, pEntry->GetNumberAt(0),
-                     pEntry->GetNumberAt(1), pEntry->GetNumberAt(2));
+    return CFX_Color(CFX_Color::Type::kRGB, pEntry->GetFloatAt(0),
+                     pEntry->GetFloatAt(1), pEntry->GetFloatAt(2));
   }
   if (dwCount == 4) {
-    return CFX_Color(CFX_Color::Type::kCMYK, pEntry->GetNumberAt(0),
-                     pEntry->GetNumberAt(1), pEntry->GetNumberAt(2),
-                     pEntry->GetNumberAt(3));
+    return CFX_Color(CFX_Color::Type::kCMYK, pEntry->GetFloatAt(0),
+                     pEntry->GetFloatAt(1), pEntry->GetFloatAt(2),
+                     pEntry->GetFloatAt(3));
   }
   return CFX_Color();
 }

@@ -250,14 +250,14 @@ bool GetQuadPointsAtIndex(const CPDF_Array* array,
     return false;
 
   quad_index *= 8;
-  quad_points->x1 = array->GetNumberAt(quad_index);
-  quad_points->y1 = array->GetNumberAt(quad_index + 1);
-  quad_points->x2 = array->GetNumberAt(quad_index + 2);
-  quad_points->y2 = array->GetNumberAt(quad_index + 3);
-  quad_points->x3 = array->GetNumberAt(quad_index + 4);
-  quad_points->y3 = array->GetNumberAt(quad_index + 5);
-  quad_points->x4 = array->GetNumberAt(quad_index + 6);
-  quad_points->y4 = array->GetNumberAt(quad_index + 7);
+  quad_points->x1 = array->GetFloatAt(quad_index);
+  quad_points->y1 = array->GetFloatAt(quad_index + 1);
+  quad_points->x2 = array->GetFloatAt(quad_index + 2);
+  quad_points->y2 = array->GetFloatAt(quad_index + 3);
+  quad_points->x3 = array->GetFloatAt(quad_index + 4);
+  quad_points->y3 = array->GetFloatAt(quad_index + 5);
+  quad_points->x4 = array->GetFloatAt(quad_index + 6);
+  quad_points->y4 = array->GetFloatAt(quad_index + 7);
   return true;
 }
 

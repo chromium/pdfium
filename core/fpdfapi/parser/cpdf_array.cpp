@@ -66,10 +66,10 @@ CFX_FloatRect CPDF_Array::GetRect() const {
   if (m_Objects.size() != 4)
     return rect;
 
-  rect.left = GetNumberAt(0);
-  rect.bottom = GetNumberAt(1);
-  rect.right = GetNumberAt(2);
-  rect.top = GetNumberAt(3);
+  rect.left = GetFloatAt(0);
+  rect.bottom = GetFloatAt(1);
+  rect.right = GetFloatAt(2);
+  rect.top = GetFloatAt(3);
   return rect;
 }
 
@@ -77,8 +77,8 @@ CFX_Matrix CPDF_Array::GetMatrix() const {
   if (m_Objects.size() != 6)
     return CFX_Matrix();
 
-  return CFX_Matrix(GetNumberAt(0), GetNumberAt(1), GetNumberAt(2),
-                    GetNumberAt(3), GetNumberAt(4), GetNumberAt(5));
+  return CFX_Matrix(GetFloatAt(0), GetFloatAt(1), GetFloatAt(2), GetFloatAt(3),
+                    GetFloatAt(4), GetFloatAt(5));
 }
 
 absl::optional<size_t> CPDF_Array::Find(const CPDF_Object* pThat) const {
@@ -143,7 +143,7 @@ int CPDF_Array::GetIntegerAt(size_t index) const {
   return m_Objects[index]->GetInteger();
 }
 
-float CPDF_Array::GetNumberAt(size_t index) const {
+float CPDF_Array::GetFloatAt(size_t index) const {
   if (index >= m_Objects.size())
     return 0;
   return m_Objects[index]->GetNumber();

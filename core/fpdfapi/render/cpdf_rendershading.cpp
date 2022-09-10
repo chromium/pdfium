@@ -106,16 +106,16 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   if (!pCoords)
     return;
 
-  float start_x = pCoords->GetNumberAt(0);
-  float start_y = pCoords->GetNumberAt(1);
-  float end_x = pCoords->GetNumberAt(2);
-  float end_y = pCoords->GetNumberAt(3);
+  float start_x = pCoords->GetFloatAt(0);
+  float start_y = pCoords->GetFloatAt(1);
+  float end_x = pCoords->GetFloatAt(2);
+  float end_y = pCoords->GetFloatAt(3);
   float t_min = 0;
   float t_max = 1.0f;
   const CPDF_Array* pArray = pDict->GetArrayFor("Domain");
   if (pArray) {
-    t_min = pArray->GetNumberAt(0);
-    t_max = pArray->GetNumberAt(1);
+    t_min = pArray->GetFloatAt(0);
+    t_max = pArray->GetFloatAt(1);
   }
   pArray = pDict->GetArrayFor("Extend");
   const bool bStartExtend = pArray && pArray->GetBooleanAt(0, false);
@@ -173,18 +173,18 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   if (!pCoords)
     return;
 
-  float start_x = pCoords->GetNumberAt(0);
-  float start_y = pCoords->GetNumberAt(1);
-  float start_r = pCoords->GetNumberAt(2);
-  float end_x = pCoords->GetNumberAt(3);
-  float end_y = pCoords->GetNumberAt(4);
-  float end_r = pCoords->GetNumberAt(5);
+  float start_x = pCoords->GetFloatAt(0);
+  float start_y = pCoords->GetFloatAt(1);
+  float start_r = pCoords->GetFloatAt(2);
+  float end_x = pCoords->GetFloatAt(3);
+  float end_y = pCoords->GetFloatAt(4);
+  float end_r = pCoords->GetFloatAt(5);
   float t_min = 0;
   float t_max = 1.0f;
   const CPDF_Array* pArray = pDict->GetArrayFor("Domain");
   if (pArray) {
-    t_min = pArray->GetNumberAt(0);
-    t_max = pArray->GetNumberAt(1);
+    t_min = pArray->GetFloatAt(0);
+    t_max = pArray->GetFloatAt(1);
   }
   pArray = pDict->GetArrayFor("Extend");
   const bool bStartExtend = pArray && pArray->GetBooleanAt(0, false);
@@ -271,10 +271,10 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   float xmax = 1.0f;
   float ymax = 1.0f;
   if (pDomain) {
-    xmin = pDomain->GetNumberAt(0);
-    xmax = pDomain->GetNumberAt(1);
-    ymin = pDomain->GetNumberAt(2);
-    ymax = pDomain->GetNumberAt(3);
+    xmin = pDomain->GetFloatAt(0);
+    xmax = pDomain->GetFloatAt(1);
+    ymin = pDomain->GetFloatAt(2);
+    ymax = pDomain->GetFloatAt(3);
   }
   CFX_Matrix mtDomain2Target = pDict->GetMatrixFor("Matrix");
   CFX_Matrix matrix =

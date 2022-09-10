@@ -327,7 +327,7 @@ float GetBorderWidth(const CPDF_DictionaryLocker& locked_dict) {
   const CPDF_Array* pBorderArray =
       locked_dict.GetArrayFor(pdfium::annotation::kBorder);
   if (pBorderArray && pBorderArray->size() > 2)
-    return pBorderArray->GetNumberAt(2);
+    return pBorderArray->GetFloatAt(2);
 
   return 1;
 }
@@ -357,7 +357,7 @@ ByteString GetDashPatternString(const CPDF_DictionaryLocker& locked_dict) {
 
   sDashStream << "[";
   for (size_t i = 0; i < pDashArrayCount; ++i)
-    sDashStream << pDashArray->GetNumberAt(i) << " ";
+    sDashStream << pDashArray->GetFloatAt(i) << " ";
   sDashStream << "] 0 d\n";
 
   return ByteString(sDashStream);
@@ -668,12 +668,12 @@ bool GenerateInkAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
     if (!pInkCoordList || pInkCoordList->size() < 2)
       continue;
 
-    sAppStream << pInkCoordList->GetNumberAt(0) << " "
-               << pInkCoordList->GetNumberAt(1) << " m ";
+    sAppStream << pInkCoordList->GetFloatAt(0) << " "
+               << pInkCoordList->GetFloatAt(1) << " m ";
 
     for (size_t j = 0; j < pInkCoordList->size() - 1; j += 2) {
-      sAppStream << pInkCoordList->GetNumberAt(j) << " "
-                 << pInkCoordList->GetNumberAt(j + 1) << " l ";
+      sAppStream << pInkCoordList->GetFloatAt(j) << " "
+                 << pInkCoordList->GetFloatAt(j + 1) << " l ";
     }
 
     sAppStream << "S\n";

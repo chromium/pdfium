@@ -96,7 +96,7 @@ void GetBlackPoint(const CPDF_Dictionary* pDict, float* pPoints) {
 
   // Check to make sure all values are non-negative.
   for (size_t i = 0; i < kBlackWhitePointCount; ++i) {
-    pPoints[i] = pParam->GetNumberAt(i);
+    pPoints[i] = pParam->GetFloatAt(i);
     if (pPoints[i] < 0) {
       GetDefaultBlackPoint(pPoints);
       return;
@@ -110,7 +110,7 @@ bool GetWhitePoint(const CPDF_Dictionary* pDict, float* pPoints) {
     return false;
 
   for (size_t i = 0; i < kBlackWhitePointCount; ++i)
-    pPoints[i] = pParam->GetNumberAt(i);
+    pPoints[i] = pParam->GetFloatAt(i);
   return pPoints[0] > 0.0f && pPoints[1] == 1.0f && pPoints[2] > 0.0f;
 }
 
@@ -708,14 +708,14 @@ uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
   if (pParam) {
     m_bHasGamma = true;
     for (size_t i = 0; i < std::size(m_Gamma); ++i)
-      m_Gamma[i] = pParam->GetNumberAt(i);
+      m_Gamma[i] = pParam->GetFloatAt(i);
   }
 
   pParam = pDict->GetArrayFor("Matrix");
   if (pParam) {
     m_bHasMatrix = true;
     for (size_t i = 0; i < std::size(m_Matrix); ++i)
-      m_Matrix[i] = pParam->GetNumberAt(i);
+      m_Matrix[i] = pParam->GetFloatAt(i);
   }
   return 3;
 }
@@ -824,7 +824,7 @@ uint32_t CPDF_LabCS::v_Load(CPDF_Document* pDoc,
   static_assert(std::size(kDefaultRanges) == std::extent<decltype(m_Ranges)>(),
                 "Range size mismatch");
   for (size_t i = 0; i < std::size(kDefaultRanges); ++i)
-    m_Ranges[i] = pParam ? pParam->GetNumberAt(i) : kDefaultRanges[i];
+    m_Ranges[i] = pParam ? pParam->GetFloatAt(i) : kDefaultRanges[i];
   return 3;
 }
 

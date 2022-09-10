@@ -1392,7 +1392,7 @@ CJS_Result CJS_Document::gotoNamedDest(
   std::vector<float> scrollPositionArray;
   if (arrayObject) {
     for (size_t i = 2; i < arrayObject->size(); i++)
-      scrollPositionArray.push_back(arrayObject->GetNumberAt(i));
+      scrollPositionArray.push_back(arrayObject->GetFloatAt(i));
   }
   pRuntime->BeginBlock();
   m_pFormFillEnv->DoGoToAction(dest.GetDestPageIndex(pDocument),

@@ -1285,7 +1285,7 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
   }
   if (nsegs == 0) {
     for (size_t i = 0; i < n; i++) {
-      float fKerning = pArray->GetNumberAt(i);
+      float fKerning = pArray->GetFloatAt(i);
       if (fKerning != 0)
         m_pCurStates->m_TextPos.x -= GetHorizontalTextSize(fKerning);
     }
