@@ -264,10 +264,10 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
   if (!m_pJbig2Context) {
     m_pJbig2Context = std::make_unique<Jbig2Context>();
     if (m_pStreamAcc->GetImageParam()) {
-      const CPDF_Stream* pGlobals =
+      RetainPtr<const CPDF_Stream> pGlobals =
           m_pStreamAcc->GetImageParam()->GetStreamFor("JBIG2Globals");
       if (pGlobals) {
-        m_pGlobalAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pGlobals);
+        m_pGlobalAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pGlobals.Get());
         m_pGlobalAcc->LoadAllDataFiltered();
       }
     }

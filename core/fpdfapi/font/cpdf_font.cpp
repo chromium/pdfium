@@ -202,7 +202,7 @@ void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* pFontDesc) {
     m_FontBBox.top = pBBox->GetIntegerAt(3);
   }
 
-  const CPDF_Stream* pFontFile = pFontDesc->GetStreamFor("FontFile");
+  RetainPtr<const CPDF_Stream> pFontFile = pFontDesc->GetStreamFor("FontFile");
   if (!pFontFile)
     pFontFile = pFontDesc->GetStreamFor("FontFile2");
   if (!pFontFile)
@@ -210,13 +210,13 @@ void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* pFontDesc) {
   if (!pFontFile)
     return;
 
+  const uint64_t key = pFontFile->KeyForCache();
   auto* pData = m_pDocument->GetPageData();
-  m_pFontFile = pData->GetFontFileStreamAcc(pFontFile);
+  m_pFontFile = pData->GetFontFileStreamAcc(std::move(pFontFile));
   if (!m_pFontFile)
     return;
 
-  if (!m_Font.LoadEmbedded(m_pFontFile->GetSpan(), IsVertWriting(),
-                           pFontFile->KeyForCache())) {
+  if (!m_Font.LoadEmbedded(m_pFontFile->GetSpan(), IsVertWriting(), key)) {
     pData->MaybePurgeFontFileStreamAcc(m_pFontFile->GetStream()->AsStream());
     m_pFontFile = nullptr;
   }
@@ -262,11 +262,11 @@ void CPDF_Font::CheckFontMetrics() {
 
 void CPDF_Font::LoadUnicodeMap() const {
   m_bToUnicodeLoaded = true;
-  const CPDF_Stream* pStream = m_pFontDict->GetStreamFor("ToUnicode");
+  RetainPtr<const CPDF_Stream> pStream = m_pFontDict->GetStreamFor("ToUnicode");
   if (!pStream)
     return;
 
-  m_pToUnicodeMap = std::make_unique<CPDF_ToUnicodeMap>(pStream);
+  m_pToUnicodeMap = std::make_unique<CPDF_ToUnicodeMap>(std::move(pStream));
 }
 
 int CPDF_Font::GetStringWidth(ByteStringView pString) {

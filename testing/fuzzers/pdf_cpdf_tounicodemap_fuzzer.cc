@@ -5,6 +5,7 @@
 #include <fuzzer/FuzzedDataProvider.h>
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/font/cpdf_tounicodemap.h"
@@ -30,7 +31,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   auto stream = pdfium::MakeRetain<CPDF_Stream>();
   stream->SetData(remaining);
 
-  auto to_unicode_map = std::make_unique<CPDF_ToUnicodeMap>(stream.Get());
+  auto to_unicode_map = std::make_unique<CPDF_ToUnicodeMap>(std::move(stream));
   to_unicode_map->Lookup(charcode_to_lookup);
   to_unicode_map->ReverseLookup(char_for_reverse_lookup);
   return 0;

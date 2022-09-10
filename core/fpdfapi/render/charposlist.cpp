@@ -9,6 +9,7 @@
 #include "build/build_config.h"
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_font.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/text_char_pos.h"
 

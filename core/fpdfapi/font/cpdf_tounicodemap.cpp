@@ -40,8 +40,8 @@ WideString StringDataAdd(WideString str) {
 
 }  // namespace
 
-CPDF_ToUnicodeMap::CPDF_ToUnicodeMap(const CPDF_Stream* pStream) {
-  Load(pStream);
+CPDF_ToUnicodeMap::CPDF_ToUnicodeMap(RetainPtr<const CPDF_Stream> pStream) {
+  Load(std::move(pStream));
 }
 
 CPDF_ToUnicodeMap::~CPDF_ToUnicodeMap() = default;
@@ -120,9 +120,9 @@ WideString CPDF_ToUnicodeMap::StringToWideString(ByteStringView str) {
   return result;
 }
 
-void CPDF_ToUnicodeMap::Load(const CPDF_Stream* pStream) {
+void CPDF_ToUnicodeMap::Load(RetainPtr<const CPDF_Stream> pStream) {
   CIDSet cid_set = CIDSET_UNKNOWN;
-  auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+  auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream.Get());
   pAcc->LoadAllDataFiltered();
   CPDF_SimpleParser parser(pAcc->GetSpan());
   while (true) {

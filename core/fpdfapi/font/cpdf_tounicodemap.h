@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
@@ -21,7 +22,7 @@ class CPDF_Stream;
 
 class CPDF_ToUnicodeMap {
  public:
-  explicit CPDF_ToUnicodeMap(const CPDF_Stream* pStream);
+  explicit CPDF_ToUnicodeMap(RetainPtr<const CPDF_Stream> pStream);
   ~CPDF_ToUnicodeMap();
 
   WideString Lookup(uint32_t charcode) const;
@@ -36,7 +37,7 @@ class CPDF_ToUnicodeMap {
   static absl::optional<uint32_t> StringToCode(ByteStringView str);
   static WideString StringToWideString(ByteStringView str);
 
-  void Load(const CPDF_Stream* pStream);
+  void Load(RetainPtr<const CPDF_Stream> pStream);
   void HandleBeginBFChar(CPDF_SimpleParser* pParser);
   void HandleBeginBFRange(CPDF_SimpleParser* pParser);
   uint32_t GetMultiCharIndexIndicator() const;

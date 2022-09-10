@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/cpdfsdk_helpers.h"
 
+#include <utility>
+
 #include "build/build_config.h"
 #include "constants/form_fields.h"
 #include "constants/stream_dict_common.h"
@@ -375,9 +377,9 @@ void ReportUnsupportedFeatures(const CPDF_Document* pDoc) {
   }
 
   // SharedForm
-  const CPDF_Stream* pStream = pRootDict->GetStreamFor("Metadata");
+  RetainPtr<const CPDF_Stream> pStream = pRootDict->GetStreamFor("Metadata");
   if (pStream) {
-    CPDF_Metadata metadata(pStream);
+    CPDF_Metadata metadata(std::move(pStream));
     for (const UnsupportedFeature& feature : metadata.CheckForSharedForm())
       RaiseUnsupportedError(static_cast<int>(feature));
   }

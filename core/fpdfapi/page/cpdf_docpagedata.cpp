@@ -417,9 +417,9 @@ RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
 }
 
 RetainPtr<CPDF_StreamAcc> CPDF_DocPageData::GetFontFileStreamAcc(
-    const CPDF_Stream* pFontStream) {
+    RetainPtr<const CPDF_Stream> pFontStream) {
   DCHECK(pFontStream);
-  auto it = m_FontFileMap.find(pFontStream);
+  auto it = m_FontFileMap.find(pFontStream.Get());
   if (it != m_FontFileMap.end())
     return it->second;
 
@@ -435,9 +435,9 @@ RetainPtr<CPDF_StreamAcc> CPDF_DocPageData::GetFontFileStreamAcc(
     org_size = safe_org_size.ValueOrDefault(0);
   }
 
-  auto pFontAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pFontStream);
+  auto pFontAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pFontStream.Get());
   pFontAcc->LoadAllDataFilteredWithEstimatedSize(org_size);
-  m_FontFileMap[pFontStream] = pFontAcc;
+  m_FontFileMap[pFontStream.Get()] = pFontAcc;
   return pFontAcc;
 }
 

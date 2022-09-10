@@ -24,7 +24,8 @@ const CPDF_Stream* CPDFStreamForThumbnailFromPage(FPDF_PAGE page) {
   if (!page_dict->KeyExist("Type"))
     return nullptr;
 
-  return page_dict->GetStreamFor("Thumb");
+  // TODO(tsepez): return retained objects.
+  return page_dict->GetStreamFor("Thumb").Get();
 }
 
 }  // namespace

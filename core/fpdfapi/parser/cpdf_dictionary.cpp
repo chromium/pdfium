@@ -193,13 +193,14 @@ RetainPtr<CPDF_Array> CPDF_Dictionary::GetOrCreateArrayFor(
   return pdfium::WrapRetain(SetNewFor<CPDF_Array>(key));
 }
 
-const CPDF_Stream* CPDF_Dictionary::GetStreamFor(const ByteString& key) const {
-  return ToStream(GetDirectObjectFor(key).Get());
+RetainPtr<const CPDF_Stream> CPDF_Dictionary::GetStreamFor(
+    const ByteString& key) const {
+  return ToStream(GetDirectObjectFor(key));
 }
 
 RetainPtr<CPDF_Stream> CPDF_Dictionary::GetMutableStreamFor(
     const ByteString& key) {
-  return pdfium::WrapRetain(const_cast<CPDF_Stream*>(GetStreamFor(key)));
+  return ToStream(GetMutableDirectObjectFor(key));
 }
 
 RetainPtr<const CPDF_Number> CPDF_Dictionary::GetNumberFor(

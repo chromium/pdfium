@@ -41,7 +41,7 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
   // CPDF_Document::PageDataIface:
   void ClearStockFont() override;
   RetainPtr<CPDF_StreamAcc> GetFontFileStreamAcc(
-      const CPDF_Stream* pFontStream) override;
+      RetainPtr<const CPDF_Stream> pFontStream) override;
   void MaybePurgeFontFileStreamAcc(const CPDF_Stream* pFontStream) override;
 
   // CPDF_Font::FormFactoryIFace:

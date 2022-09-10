@@ -7,6 +7,7 @@
 #include "core/fpdfdoc/cpdf_metadata.h"
 
 #include <memory>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
@@ -61,8 +62,9 @@ void CheckForSharedFormInternal(CFX_XMLElement* element,
 
 }  // namespace
 
-CPDF_Metadata::CPDF_Metadata(const CPDF_Stream* pStream) : stream_(pStream) {
-  DCHECK(pStream);
+CPDF_Metadata::CPDF_Metadata(RetainPtr<const CPDF_Stream> pStream)
+    : stream_(std::move(pStream)) {
+  DCHECK(stream_);
 }
 
 CPDF_Metadata::~CPDF_Metadata() = default;

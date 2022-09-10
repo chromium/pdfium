@@ -34,7 +34,7 @@ enum class UnsupportedFeature : uint8_t {
 
 class CPDF_Metadata {
  public:
-  explicit CPDF_Metadata(const CPDF_Stream* pStream);
+  explicit CPDF_Metadata(RetainPtr<const CPDF_Stream> pStream);
   ~CPDF_Metadata();
 
   std::vector<UnsupportedFeature> CheckForSharedForm() const;

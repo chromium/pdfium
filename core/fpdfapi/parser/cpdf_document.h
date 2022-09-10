@@ -53,7 +53,7 @@ class CPDF_Document : public Observable,
 
     virtual void ClearStockFont() = 0;
     virtual RetainPtr<CPDF_StreamAcc> GetFontFileStreamAcc(
-        const CPDF_Stream* pFontStream) = 0;
+        RetainPtr<const CPDF_Stream> pFontStream) = 0;
     virtual void MaybePurgeFontFileStreamAcc(
         const CPDF_Stream* pFontStream) = 0;
 

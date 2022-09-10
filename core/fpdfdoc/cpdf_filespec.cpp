@@ -142,9 +142,11 @@ const CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
   for (size_t i = 0; i < end; ++i) {
     ByteString key = kKeys[i];
     if (!pDict->GetUnicodeTextFor(key).IsEmpty()) {
-      const CPDF_Stream* pStream = pFiles->GetStreamFor(key);
-      if (pStream)
-        return pStream;
+      RetainPtr<const CPDF_Stream> pStream = pFiles->GetStreamFor(key);
+      if (pStream) {
+        // TODO(tsepez): return retained object.
+        return pStream.Get();
+      }
     }
   }
   return nullptr;
