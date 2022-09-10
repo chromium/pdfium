@@ -367,6 +367,28 @@ def _CheckIncludeOrder(input_api, output_api):
   return results
 
 
+def _CheckLibcxxRevision(input_api, output_api):
+  """Makes sure that libcxx_revision is set correctly."""
+  if 'DEPS' not in [f.LocalPath() for f in input_api.AffectedFiles()]:
+    return []
+
+  script_path = input_api.os_path.join('testing', 'tools', 'libcxx_check.py')
+  buildtools_deps_path = input_api.os_path.join('buildtools',
+                                                'deps_revisions.gni')
+
+  try:
+    errors = input_api.subprocess.check_output(
+        [script_path, 'DEPS', buildtools_deps_path])
+  except input_api.subprocess.CalledProcessError as error:
+    msg = 'libcxx_check.py failed:'
+    long_text = error.output.decode('utf-8', 'ignore')
+    return [output_api.PresubmitError(msg, long_text=long_text)]
+
+  if errors:
+    return [output_api.PresubmitError(errors)]
+  return []
+
+
 def _CheckTestDuplicates(input_api, output_api):
   """Checks that pixel and javascript tests don't contain duplicates.
   We use .in and .pdf files, having both can cause race conditions on the bots,
@@ -474,6 +496,7 @@ def CheckChangeOnUpload(input_api, output_api):
       input_api.canned_checks.CheckChangeLintsClean(
           input_api, output_api, lint_filters=LINT_FILTERS))
   results.extend(_CheckIncludeOrder(input_api, output_api))
+  results.extend(_CheckLibcxxRevision(input_api, output_api))
   results.extend(_CheckTestDuplicates(input_api, output_api))
   results.extend(_CheckPNGFormat(input_api, output_api))
   results.extend(_CheckUselessForwardDeclarations(input_api, output_api))
