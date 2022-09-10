@@ -34,11 +34,13 @@ class CFX_MemoryStream final : public IFX_SeekableStream {
 
  private:
   CFX_MemoryStream();
+  CFX_MemoryStream(std::unique_ptr<uint8_t, FxFreeDeleter> pBuffer,
+                   size_t nSize);
   ~CFX_MemoryStream() override;
 
   std::unique_ptr<uint8_t, FxFreeDeleter> m_data;
-  size_t m_nTotalSize = 0;
-  size_t m_nCurSize = 0;
+  size_t m_nTotalSize;
+  size_t m_nCurSize;
   size_t m_nCurPos = 0;
 };
 

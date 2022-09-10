@@ -793,23 +793,26 @@ absl::optional<ByteString> CFX_FontMapper::LocalizedFontNameStartingWith(
 #endif  // BUILDFLAG(IS_WIN)
 
 #ifdef PDF_ENABLE_XFA
-DataVector<uint8_t> CFX_FontMapper::RawBytesForIndex(size_t index) {
+std::unique_ptr<uint8_t, FxFreeDeleter> CFX_FontMapper::RawBytesForIndex(
+    size_t index,
+    size_t* returned_length) {
   CHECK_LT(index, m_FaceArray.size());
 
   void* font_handle = m_pFontInfo->MapFont(0, false, FX_Charset::kDefault, 0,
                                            GetFaceName(index));
   if (!font_handle)
-    return DataVector<uint8_t>();
+    return nullptr;
 
   ScopedFontDeleter scoped_font(m_pFontInfo.get(), font_handle);
   size_t required_size = m_pFontInfo->GetFontData(font_handle, 0, {});
   if (required_size == 0)
-    return DataVector<uint8_t>();
+    return nullptr;
 
-  DataVector<uint8_t> result(required_size);
-  size_t actual_size = m_pFontInfo->GetFontData(font_handle, 0, result);
-  CHECK_EQ(required_size, actual_size);
-  return result;
+  std::unique_ptr<uint8_t, FxFreeDeleter> pBuffer(
+      FX_Alloc(uint8_t, required_size + 1));
+  *returned_length =
+      m_pFontInfo->GetFontData(font_handle, 0, {pBuffer.get(), required_size});
+  return pBuffer;
 }
 #endif  // PDF_ENABLE_XFA
 
@@ -820,10 +823,12 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* font_handle,
   RetainPtr<CFX_FontMgr::FontDesc> pFontDesc =
       m_pFontMgr->GetCachedTTCFontDesc(ttc_size, checksum);
   if (!pFontDesc) {
-    DataVector<uint8_t> font_data(ttc_size);
-    m_pFontInfo->GetFontData(font_handle, kTableTTCF, font_data);
-    pFontDesc = m_pFontMgr->AddCachedTTCFontDesc(ttc_size, checksum,
-                                                 std::move(font_data));
+    std::unique_ptr<uint8_t, FxFreeDeleter> pFontData(
+        FX_Alloc(uint8_t, ttc_size));
+    m_pFontInfo->GetFontData(font_handle, kTableTTCF,
+                             {pFontData.get(), ttc_size});
+    pFontDesc = m_pFontMgr->AddCachedTTCFontDesc(
+        ttc_size, checksum, std::move(pFontData), ttc_size);
   }
   CHECK(ttc_size >= data_size);
   size_t font_offset = ttc_size - data_size;
@@ -850,10 +855,11 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* font_handle,
   RetainPtr<CFX_FontMgr::FontDesc> pFontDesc =
       m_pFontMgr->GetCachedFontDesc(subst_name, weight, is_italic);
   if (!pFontDesc) {
-    DataVector<uint8_t> font_data(data_size);
-    m_pFontInfo->GetFontData(font_handle, 0, font_data);
+    std::unique_ptr<uint8_t, FxFreeDeleter> pFontData(
+        FX_Alloc(uint8_t, data_size));
+    m_pFontInfo->GetFontData(font_handle, 0, {pFontData.get(), data_size});
     pFontDesc = m_pFontMgr->AddCachedFontDesc(subst_name, weight, is_italic,
-                                              std::move(font_data));
+                                              std::move(pFontData), data_size);
   }
   RetainPtr<CFX_Face> pFace(pFontDesc->GetFace(0));
   if (pFace)

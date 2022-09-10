@@ -15,7 +15,7 @@
 #include <tuple>
 
 #include "core/fxcrt/bytestring.h"
-#include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/freetype/fx_freetype.h"
@@ -31,16 +31,17 @@ class CFX_FontMgr {
     CONSTRUCT_VIA_MAKE_RETAIN;
     ~FontDesc() override;
 
-    pdfium::span<const uint8_t> FontData() const {
-      return pdfium::make_span(m_pFontData);
+    pdfium::span<uint8_t> FontData() const {
+      return {m_pFontData.get(), m_Size};
     }
     void SetFace(size_t index, CFX_Face* face);
     CFX_Face* GetFace(size_t index) const;
 
    private:
-    explicit FontDesc(DataVector<uint8_t> data);
+    FontDesc(std::unique_ptr<uint8_t, FxFreeDeleter> pData, size_t size);
 
-    const DataVector<uint8_t> m_pFontData;
+    const size_t m_Size;
+    std::unique_ptr<uint8_t, FxFreeDeleter> const m_pFontData;
     ObservedPtr<CFX_Face> m_TTCFaces[16];
   };
 
@@ -55,15 +56,19 @@ class CFX_FontMgr {
   RetainPtr<FontDesc> GetCachedFontDesc(const ByteString& face_name,
                                         int weight,
                                         bool bItalic);
-  RetainPtr<FontDesc> AddCachedFontDesc(const ByteString& face_name,
-                                        int weight,
-                                        bool bItalic,
-                                        DataVector<uint8_t> data);
+  RetainPtr<FontDesc> AddCachedFontDesc(
+      const ByteString& face_name,
+      int weight,
+      bool bItalic,
+      std::unique_ptr<uint8_t, FxFreeDeleter> pData,
+      size_t size);
 
   RetainPtr<FontDesc> GetCachedTTCFontDesc(size_t ttc_size, uint32_t checksum);
-  RetainPtr<FontDesc> AddCachedTTCFontDesc(size_t ttc_size,
-                                           uint32_t checksum,
-                                           DataVector<uint8_t> data);
+  RetainPtr<FontDesc> AddCachedTTCFontDesc(
+      size_t ttc_size,
+      uint32_t checksum,
+      std::unique_ptr<uint8_t, FxFreeDeleter> pData,
+      size_t size);
 
   RetainPtr<CFX_Face> NewFixedFace(RetainPtr<FontDesc> pDesc,
                                    pdfium::span<const uint8_t> span,

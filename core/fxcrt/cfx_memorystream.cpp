@@ -11,7 +11,12 @@
 
 #include "core/fxcrt/fx_safe_types.h"
 
-CFX_MemoryStream::CFX_MemoryStream() = default;
+CFX_MemoryStream::CFX_MemoryStream() : m_nTotalSize(0), m_nCurSize(0) {}
+
+CFX_MemoryStream::CFX_MemoryStream(
+    std::unique_ptr<uint8_t, FxFreeDeleter> pBuffer,
+    size_t nSize)
+    : m_data(std::move(pBuffer)), m_nTotalSize(nSize), m_nCurSize(nSize) {}
 
 CFX_MemoryStream::~CFX_MemoryStream() = default;
 
