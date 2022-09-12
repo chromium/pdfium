@@ -28,6 +28,19 @@ static_assert(
     "PixelWeight storage may be re-used without invoking its destructor");
 
 // static
+bool CStretchEngine::UseInterpolateBilinear(
+    const FXDIB_ResampleOptions& options,
+    int dest_width,
+    int dest_height,
+    int src_width,
+    int src_height) {
+  return !options.bInterpolateBilinear && !options.bNoSmoothing &&
+         abs(dest_width) != 0 &&
+         abs(dest_height) / 8 <
+             static_cast<long long>(src_width) * src_height / abs(dest_width);
+}
+
+// static
 size_t CStretchEngine::PixelWeight::TotalBytesForWeightCount(
     size_t weight_count) {
   // Always room for one weight even for empty ranges due to declaration
@@ -192,9 +205,8 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
   if (options.bNoSmoothing) {
     m_ResampleOptions.bNoSmoothing = true;
   } else {
-    if (!options.bInterpolateBilinear && abs(dest_width) != 0 &&
-        abs(dest_height) / 8 < static_cast<long long>(m_SrcWidth) *
-                                   m_SrcHeight / abs(dest_width)) {
+    if (UseInterpolateBilinear(options, dest_width, dest_height, m_SrcWidth,
+                               m_SrcHeight)) {
       m_ResampleOptions.bInterpolateBilinear = true;
     } else {
       m_ResampleOptions = options;
