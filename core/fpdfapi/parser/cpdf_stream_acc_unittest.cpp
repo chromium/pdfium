@@ -19,3 +19,15 @@ TEST(StreamAccTest, ReadRawDataFailed) {
   stream_acc->LoadAllDataRaw();
   EXPECT_TRUE(stream_acc->GetSpan().empty());
 }
+
+// Regression test for crbug.com/1361849. Should not trigger
+// ProbeForLowSeverityLifetimeIssue() failure.
+TEST(StreamAccTest, DataStreamLifeTime) {
+  constexpr uint8_t kData[] = {'a', 'b', 'c'};
+  auto stream = pdfium::MakeRetain<CPDF_Stream>();
+  stream->SetData(kData);
+  auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(stream.Get());
+  stream_acc->LoadAllDataRaw();
+  stream.Reset();
+  EXPECT_EQ(pdfium::make_span(kData), stream_acc->GetSpan());
+}
