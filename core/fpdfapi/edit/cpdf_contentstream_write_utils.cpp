@@ -30,3 +30,11 @@ std::ostream& WritePoint(std::ostream& stream, const CFX_PointF& point) {
   WriteFloat(stream, point.y);
   return stream;
 }
+
+std::ostream& WriteRect(std::ostream& stream, const CFX_FloatRect& rect) {
+  WriteFloat(stream, rect.left) << " ";
+  WriteFloat(stream, rect.bottom) << " ";
+  WriteFloat(stream, rect.Width()) << " ";
+  WriteFloat(stream, rect.Height());
+  return stream;
+}

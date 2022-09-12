@@ -223,11 +223,7 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
   if (clipRect) {
     CFX_FloatRect rect = CFXFloatRectFromFSRectF(*clipRect);
     rect.Normalize();
-
-    WriteFloat(text_buf, rect.left) << " ";
-    WriteFloat(text_buf, rect.bottom) << " ";
-    WriteFloat(text_buf, rect.Width()) << " ";
-    WriteFloat(text_buf, rect.Height()) << " re W* n ";
+    WriteRect(text_buf, rect) << " re W* n ";
   }
   if (matrix)
     WriteMatrix(text_buf, CFXMatrixFromFSMatrix(*matrix)) << " cm ";

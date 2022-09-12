@@ -137,10 +137,7 @@ void WriteBezierCurve(fxcrt::ostringstream& stream,
 }
 
 void WriteAppendRect(fxcrt::ostringstream& stream, const CFX_FloatRect& rect) {
-  WriteFloat(stream, rect.left) << " ";
-  WriteFloat(stream, rect.bottom) << " ";
-  WriteFloat(stream, rect.Width()) << " ";
-  WriteFloat(stream, rect.Height()) << " " << kAppendRectOperator << "\n";
+  WriteRect(stream, rect) << " " << kAppendRectOperator << "\n";
 }
 
 ByteString GetStrokeColorAppStream(const CFX_Color& color) {
