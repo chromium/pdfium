@@ -130,7 +130,11 @@ class CPDF_Dictionary final : public CPDF_Object {
 
   // No guarantees about result lifetime, use with caution.
   const CPDF_Object* GetObjectForInternal(const ByteString& key) const;
-  CPDF_Object* GetMutableObjectForInternal(const ByteString& key);
+  const CPDF_Object* GetDirectObjectForInternal(const ByteString& key) const;
+  const CPDF_Array* GetArrayForInternal(const ByteString& key) const;
+  const CPDF_Dictionary* GetDictForInternal(const ByteString& key) const;
+  const CPDF_Number* GetNumberForInternal(const ByteString& key) const;
+  const CPDF_Stream* GetStreamForInternal(const ByteString& key) const;
 
   ByteString MaybeIntern(const ByteString& str);
   RetainPtr<CPDF_Object> CloneNonCyclic(
@@ -162,11 +166,29 @@ class CPDF_DictionaryLocker {
 
   // Results are only valid for the lifetime of the Dictionary Locker.
   const CPDF_Dictionary* GetUnderlying() const { return m_pDictionary.Get(); }
-  const CPDF_Array* GetArrayFor(const ByteString& key) const;
-  const CPDF_Dictionary* GetDictFor(const ByteString& key) const;
   const CPDF_Object* GetObjectFor(const ByteString& key) const {
     CHECK(m_pDictionary->IsLocked());
     return m_pDictionary->GetObjectForInternal(key);
+  }
+  const CPDF_Object* GetDirectObjectFor(const ByteString& key) const {
+    CHECK(m_pDictionary->IsLocked());
+    return m_pDictionary->GetDirectObjectForInternal(key);
+  }
+  const CPDF_Array* GetArrayFor(const ByteString& key) const {
+    CHECK(m_pDictionary->IsLocked());
+    return m_pDictionary->GetArrayForInternal(key);
+  }
+  const CPDF_Dictionary* GetDictFor(const ByteString& key) const {
+    CHECK(m_pDictionary->IsLocked());
+    return m_pDictionary->GetDictForInternal(key);
+  }
+  const CPDF_Number* GetNumberFor(const ByteString& key) const {
+    CHECK(m_pDictionary->IsLocked());
+    return m_pDictionary->GetNumberForInternal(key);
+  }
+  const CPDF_Stream* GetStreamFor(const ByteString& key) const {
+    CHECK(m_pDictionary->IsLocked());
+    return m_pDictionary->GetStreamForInternal(key);
   }
 
  private:
