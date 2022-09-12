@@ -6,6 +6,8 @@
 
 #include "core/fxge/cfx_path.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <iterator>
 
@@ -174,15 +176,14 @@ void UpdateLineJoinPoints(CFX_FloatRect* rect,
     start_k = (mid_pos.y - start_pos.y) / (mid_pos.x - start_pos.x);
     start_c = mid_pos.y - (start_k * mid_pos.x);
     start_len = FXSYS_sqrt2(start_to_mid.x, start_to_mid.y);
-    start_dc =
-        static_cast<float>(fabs(half_width * start_len / start_to_mid.x));
+    start_dc = fabsf(half_width * start_len / start_to_mid.x);
   }
   if (!bEndVert) {
     CFX_PointF end_to_mid = end_pos - mid_pos;
     end_k = end_to_mid.y / end_to_mid.x;
     end_c = mid_pos.y - (end_k * mid_pos.x);
     end_len = FXSYS_sqrt2(end_to_mid.x, end_to_mid.y);
-    end_dc = static_cast<float>(fabs(half_width * end_len / end_to_mid.x));
+    end_dc = fabs(half_width * end_len / end_to_mid.x);
   }
   if (bStartVert) {
     CFX_PointF outside(start_pos.x, 0);
