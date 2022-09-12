@@ -49,7 +49,6 @@ bool CBC_PDF417Writer::SetErrorCorrectionLevel(int32_t level) {
 DataVector<uint8_t> CBC_PDF417Writer::Encode(WideStringView contents,
                                              int32_t* pOutWidth,
                                              int32_t* pOutHeight) {
-  DataVector<uint8_t> results;
   CBC_PDF417 encoder;
   int32_t col = (m_Width / m_ModuleWidth - 69) / 17;
   int32_t row = m_Height / (m_ModuleWidth * 20);
@@ -60,7 +59,7 @@ DataVector<uint8_t> CBC_PDF417Writer::Encode(WideStringView contents,
   else if (row >= 3 && row <= 90)
     encoder.setDimensions(30, 1, row, row);
   if (!encoder.GenerateBarcodeLogic(contents, error_correction_level()))
-    return results;
+    return DataVector<uint8_t>();
 
   CBC_BarcodeMatrix* barcodeMatrix = encoder.getBarcodeMatrix();
   DataVector<uint8_t> matrixData = barcodeMatrix->toBitArray();
@@ -73,10 +72,7 @@ DataVector<uint8_t> CBC_PDF417Writer::Encode(WideStringView contents,
   }
   *pOutWidth = matrixWidth;
   *pOutHeight = matrixHeight;
-  results = fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(*pOutWidth,
-                                                                *pOutHeight);
-  memcpy(results.data(), matrixData.data(), *pOutWidth * *pOutHeight);
-  return results;
+  return matrixData;
 }
 
 void CBC_PDF417Writer::RotateArray(DataVector<uint8_t>* bitarray,

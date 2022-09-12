@@ -23,6 +23,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <utility>
 
 #include "core/fxcrt/data_vector.h"
 #include "third_party/base/check_op.h"
@@ -36,6 +37,10 @@ CBC_CommonByteMatrix::CBC_CommonByteMatrix(size_t width, size_t height)
 }
 
 CBC_CommonByteMatrix::~CBC_CommonByteMatrix() = default;
+
+DataVector<uint8_t> CBC_CommonByteMatrix::TakeArray() {
+  return std::move(m_bytes);
+}
 
 uint8_t CBC_CommonByteMatrix::Get(size_t x, size_t y) const {
   const size_t offset = y * m_width + x;

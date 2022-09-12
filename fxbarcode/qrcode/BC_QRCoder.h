@@ -30,7 +30,7 @@ class CBC_QRCoder final {
   int32_t GetNumTotalBytes() const;
   int32_t GetNumDataBytes() const;
   int32_t GetNumRSBlocks() const;
-  const CBC_CommonByteMatrix* GetMatrix() const;
+  std::unique_ptr<CBC_CommonByteMatrix> TakeMatrix();
 
   bool IsValid() const;
 

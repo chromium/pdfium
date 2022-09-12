@@ -24,8 +24,9 @@
 
 #include <stdint.h>
 
+#include <memory>
+
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/stl_util.h"
 #include "fxbarcode/common/BC_CommonByteMatrix.h"
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "fxbarcode/qrcode/BC_QRCoder.h"
@@ -50,7 +51,6 @@ DataVector<uint8_t> CBC_QRCodeWriter::Encode(WideStringView contents,
                                              int32_t ecLevel,
                                              int32_t* pOutWidth,
                                              int32_t* pOutHeight) {
-  DataVector<uint8_t> results;
   CBC_QRCoderErrorCorrectionLevel* ec = nullptr;
   switch (ecLevel) {
     case 0:
@@ -66,17 +66,14 @@ DataVector<uint8_t> CBC_QRCodeWriter::Encode(WideStringView contents,
       ec = CBC_QRCoderErrorCorrectionLevel::H;
       break;
     default:
-      return results;
+      return DataVector<uint8_t>();
   }
   CBC_QRCoder qr;
   if (!CBC_QRCoderEncoder::Encode(contents, ec, &qr))
-    return results;
+    return DataVector<uint8_t>();
 
   *pOutWidth = qr.GetMatrixWidth();
   *pOutHeight = qr.GetMatrixWidth();
-  results = fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(*pOutWidth,
-                                                                *pOutHeight);
-  memcpy(results.data(), qr.GetMatrix()->GetArray().data(),
-         *pOutWidth * *pOutHeight);
-  return results;
+  std::unique_ptr<CBC_CommonByteMatrix> matrix = qr.TakeMatrix();
+  return matrix->TakeArray();
 }

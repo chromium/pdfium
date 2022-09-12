@@ -20,6 +20,7 @@ class CBC_CommonByteMatrix final {
   size_t GetWidth() const { return m_width; }
   size_t GetHeight() const { return m_height; }
   pdfium::span<const uint8_t> GetArray() const { return m_bytes; }
+  DataVector<uint8_t> TakeArray();
 
   uint8_t Get(size_t x, size_t y) const;
   void Set(size_t x, size_t y, uint8_t value);

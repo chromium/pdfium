@@ -60,8 +60,8 @@ int32_t CBC_QRCoder::GetNumRSBlocks() const {
   return m_numRSBlocks;
 }
 
-const CBC_CommonByteMatrix* CBC_QRCoder::GetMatrix() const {
-  return m_matrix.get();
+std::unique_ptr<CBC_CommonByteMatrix> CBC_QRCoder::TakeMatrix() {
+  return std::move(m_matrix);
 }
 
 bool CBC_QRCoder::IsValid() const {
