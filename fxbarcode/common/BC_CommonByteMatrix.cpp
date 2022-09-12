@@ -23,15 +23,16 @@
 
 #include <algorithm>
 #include <iterator>
-#include "core/fxcrt/stl_util.h"
+
+#include "core/fxcrt/data_vector.h"
 #include "third_party/base/check_op.h"
 
 CBC_CommonByteMatrix::CBC_CommonByteMatrix(size_t width, size_t height)
     : m_width(width), m_height(height) {
   static constexpr size_t kMaxBytes = 256 * 1024 * 1024;  // 256 MB.
-  CHECK_LT(width, kMaxBytes / height);
-  m_bytes = fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(height, width);
-  Fill(0xff);
+  static constexpr uint8_t kDefaultFill = 0xff;
+  CHECK_LT(m_width, kMaxBytes / m_height);
+  m_bytes.resize(m_width * m_height, kDefaultFill);
 }
 
 CBC_CommonByteMatrix::~CBC_CommonByteMatrix() = default;

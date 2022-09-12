@@ -10,7 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <vector>
+#include "core/fxcrt/data_vector.h"
 
 class CBC_CommonBitMatrix {
  public:
@@ -23,7 +23,7 @@ class CBC_CommonBitMatrix {
  private:
   const size_t m_height;
   const size_t m_rowSize;
-  std::vector<uint32_t> m_bits;
+  DataVector<uint32_t> m_bits;
 };
 
 #endif  // FXBARCODE_COMMON_BC_COMMONBITMATRIX_H_

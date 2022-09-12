@@ -22,15 +22,14 @@
 
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 
-#include "core/fxcrt/stl_util.h"
+#include "core/fxcrt/data_vector.h"
 #include "third_party/base/check_op.h"
 
 CBC_CommonBitMatrix::CBC_CommonBitMatrix(size_t width, size_t height)
     : m_height(height), m_rowSize((width + 31) >> 5) {
   static constexpr int32_t kMaxBits = 1024 * 1024 * 1024;  // 1 Gb.
-  CHECK_LT(width, kMaxBits / height);
-
-  m_bits = fxcrt::Vector2D<uint32_t>(m_rowSize, m_height);
+  CHECK_LT(m_rowSize, kMaxBits / m_height);
+  m_bits.resize(m_rowSize * m_height);
 }
 
 CBC_CommonBitMatrix::~CBC_CommonBitMatrix() = default;
