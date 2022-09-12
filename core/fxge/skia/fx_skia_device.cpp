@@ -2466,9 +2466,8 @@ bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
 #if defined(_SKIA_SUPPORT_)
   CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(
       pBitmap->GetWidth(), pBitmap->GetHeight(), left, top);
-  std::unique_ptr<CFX_ImageRenderer> dummy;
-  return StartDIBits(pBitmap, 0xFF, argb, m, FXDIB_ResampleOptions(), &dummy,
-                     blend_type);
+  return StartDIBitsSkia(pBitmap, 0xFF, argb, m, FXDIB_ResampleOptions(),
+                         blend_type);
 #endif
 
 #if defined(_SKIA_SUPPORT_PATHS_)
@@ -2505,9 +2504,8 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   SkRect skClipRect = SkRect::MakeLTRB(pClipRect->left, pClipRect->bottom,
                                        pClipRect->right, pClipRect->top);
   m_pCanvas->clipRect(skClipRect, SkClipOp::kIntersect, true);
-  std::unique_ptr<CFX_ImageRenderer> dummy;
-  return StartDIBits(pSource, 0xFF, argb, m, FXDIB_ResampleOptions(), &dummy,
-                     blend_type);
+  return StartDIBitsSkia(pSource, 0xFF, argb, m, FXDIB_ResampleOptions(),
+                         blend_type);
 #endif  // defined(_SKIA_SUPPORT_)
 
 #if defined(_SKIA_SUPPORT_PATHS_)
@@ -2543,57 +2541,8 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
     std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_type) {
 #if defined(_SKIA_SUPPORT_)
-  m_pCache->FlushForDraw();
-  DebugValidate(m_pBitmap, m_pBackdropBitmap);
-  // Storage vectors must outlive `skBitmap`.
-  DataVector<uint8_t> dst8_storage;
-  DataVector<uint32_t> dst32_storage;
-  SkBitmap skBitmap;
-  int width;
-  int height;
-  if (!Upsample(pSource, dst8_storage, dst32_storage, &skBitmap, &width,
-                &height, /*forceAlpha=*/false, m_bRgbByteOrder)) {
-    return false;
-  }
-  {
-    SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
-    SkMatrix skMatrix;
-    SetBitmapMatrix(matrix, width, height, &skMatrix);
-    m_pCanvas->concat(skMatrix);
-    SkPaint paint;
-    SetBitmapPaint(pSource->IsMaskFormat(), !m_FillOptions.aliased_path,
-                   bitmap_alpha, argb, blend_type, &paint);
-    // TODO(caryclark) Once Skia supports 8 bit src to 8 bit dst remove this
-    if (m_pBitmap && m_pBitmap->GetBPP() == 8 && pSource->GetBPP() == 8) {
-      SkMatrix inv;
-      SkAssertResult(skMatrix.invert(&inv));
-      for (int y = 0; y < m_pBitmap->GetHeight(); ++y) {
-        for (int x = 0; x < m_pBitmap->GetWidth(); ++x) {
-          SkPoint src = {x + 0.5f, y + 0.5f};
-          inv.mapPoints(&src, 1);
-          // SkMatrix::mapPoints() can sometimes output NaN values or values
-          // outside the boundary of the `skBitmap`. Therefore clamping these
-          // values is necessary before getting color information within the
-          // `skBitmap`.
-          src.fX =
-              isnan(src.fX) ? 0.5f : pdfium::clamp(src.fX, 0.5f, width - 0.5f);
-          src.fY =
-              isnan(src.fY) ? 0.5f : pdfium::clamp(src.fY, 0.5f, height - 0.5f);
-
-          m_pBitmap->SetPixel(x, y, skBitmap.getColor(src.fX, src.fY));
-        }
-      }
-    } else {
-      SkSamplingOptions sampling_options =
-          options.bInterpolateBilinear
-              ? SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kLinear)
-              : SkSamplingOptions();
-      m_pCanvas->drawImageRect(skBitmap.asImage(),
-                               SkRect::MakeWH(width, height), sampling_options,
-                               &paint);
-    }
-  }
-  DebugValidate(m_pBitmap, m_pBackdropBitmap);
+  return StartDIBitsSkia(pSource, bitmap_alpha, argb, matrix, options,
+                         blend_type);
 #endif  // defined(_SKIA_SUPPORT_)
 
 #if defined(_SKIA_SUPPORT_PATHS_)
@@ -2604,8 +2553,8 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
   *handle = std::make_unique<CFX_ImageRenderer>(
       m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb, matrix, options,
       m_bRgbByteOrder);
-#endif  // defined(_SKIA_SUPPORT_PATHS_)
   return true;
+#endif  // defined(_SKIA_SUPPORT_PATHS_)
 }
 
 bool CFX_SkiaDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
@@ -2775,6 +2724,67 @@ void CFX_SkiaDeviceDriver::Dump() const {
 void CFX_SkiaDeviceDriver::DebugVerifyBitmapIsPreMultiplied() const {
   if (m_pBackdropBitmap)
     m_pBackdropBitmap->DebugVerifyBitmapIsPreMultiplied();
+}
+
+bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
+    const RetainPtr<CFX_DIBBase>& pSource,
+    int bitmap_alpha,
+    uint32_t argb,
+    const CFX_Matrix& matrix,
+    const FXDIB_ResampleOptions& options,
+    BlendMode blend_type) {
+  m_pCache->FlushForDraw();
+  DebugValidate(m_pBitmap, m_pBackdropBitmap);
+  // Storage vectors must outlive `skBitmap`.
+  DataVector<uint8_t> dst8_storage;
+  DataVector<uint32_t> dst32_storage;
+  SkBitmap skBitmap;
+  int width;
+  int height;
+  if (!Upsample(pSource, dst8_storage, dst32_storage, &skBitmap, &width,
+                &height, /*forceAlpha=*/false, m_bRgbByteOrder)) {
+    return false;
+  }
+  {
+    SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
+    SkMatrix skMatrix;
+    SetBitmapMatrix(matrix, width, height, &skMatrix);
+    m_pCanvas->concat(skMatrix);
+    SkPaint paint;
+    SetBitmapPaint(pSource->IsMaskFormat(), !m_FillOptions.aliased_path,
+                   bitmap_alpha, argb, blend_type, &paint);
+    // TODO(caryclark) Once Skia supports 8 bit src to 8 bit dst remove this
+    if (m_pBitmap && m_pBitmap->GetBPP() == 8 && pSource->GetBPP() == 8) {
+      SkMatrix inv;
+      SkAssertResult(skMatrix.invert(&inv));
+      for (int y = 0; y < m_pBitmap->GetHeight(); ++y) {
+        for (int x = 0; x < m_pBitmap->GetWidth(); ++x) {
+          SkPoint src = {x + 0.5f, y + 0.5f};
+          inv.mapPoints(&src, 1);
+          // SkMatrix::mapPoints() can sometimes output NaN values or values
+          // outside the boundary of the `skBitmap`. Therefore clamping these
+          // values is necessary before getting color information within the
+          // `skBitmap`.
+          src.fX =
+              isnan(src.fX) ? 0.5f : pdfium::clamp(src.fX, 0.5f, width - 0.5f);
+          src.fY =
+              isnan(src.fY) ? 0.5f : pdfium::clamp(src.fY, 0.5f, height - 0.5f);
+
+          m_pBitmap->SetPixel(x, y, skBitmap.getColor(src.fX, src.fY));
+        }
+      }
+    } else {
+      SkSamplingOptions sampling_options =
+          options.bInterpolateBilinear
+              ? SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kLinear)
+              : SkSamplingOptions();
+      m_pCanvas->drawImageRect(skBitmap.asImage(),
+                               SkRect::MakeWH(width, height), sampling_options,
+                               &paint);
+    }
+  }
+  DebugValidate(m_pBitmap, m_pBackdropBitmap);
+  return true;
 }
 #endif
 
