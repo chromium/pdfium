@@ -214,7 +214,7 @@ void SetPageContents(const ByteString& key,
   } else {
     ByteString sStream = "q\n";
     {
-      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pContentsStream.Get());
+      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pContentsStream);
       pAcc->LoadAllDataFiltered();
       sStream += ByteString(pAcc->GetSpan());
       sStream += "\nQ";
@@ -400,7 +400,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
     ByteString sStream;
     {
-      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pNewXObject);
+      auto pAcc =
+          pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(pNewXObject));
       pAcc->LoadAllDataFiltered();
       sStream = ByteString(pAcc->GetSpan());
     }

@@ -104,7 +104,8 @@ CPDF_MeshStream::CPDF_MeshStream(
       m_funcs(funcs),
       m_pShadingStream(pShadingStream),
       m_pCS(pCS),
-      m_pStream(pdfium::MakeRetain<CPDF_StreamAcc>(pShadingStream)) {}
+      m_pStream(pdfium::MakeRetain<CPDF_StreamAcc>(
+          pdfium::WrapRetain(pShadingStream))) {}
 
 CPDF_MeshStream::~CPDF_MeshStream() = default;
 

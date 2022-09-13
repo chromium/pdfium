@@ -63,7 +63,8 @@ std::unique_ptr<CPDF_ObjectStream> CPDF_ObjectStream::Create(
 }
 
 CPDF_ObjectStream::CPDF_ObjectStream(const CPDF_Stream* obj_stream)
-    : stream_acc_(pdfium::MakeRetain<CPDF_StreamAcc>(obj_stream)),
+    : stream_acc_(
+          pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(obj_stream))),
       first_object_offset_(obj_stream->GetDict()->GetIntegerFor("First")) {
   DCHECK(IsObjectStream(obj_stream));
   Init(obj_stream);

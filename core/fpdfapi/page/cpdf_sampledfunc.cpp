@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_sampledfunc.h"
 
+#include <utility>
+
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
@@ -42,7 +44,7 @@ CPDF_SampledFunc::~CPDF_SampledFunc() = default;
 
 bool CPDF_SampledFunc::v_Init(const CPDF_Object* pObj,
                               std::set<const CPDF_Object*>* pVisited) {
-  const CPDF_Stream* pStream = pObj->AsStream();
+  RetainPtr<const CPDF_Stream> pStream(pObj->AsStream());
   if (!pStream)
     return false;
 
@@ -80,7 +82,7 @@ bool CPDF_SampledFunc::v_Init(const CPDF_Object* pObj,
     return false;
 
   m_SampleMax = 0xffffffff >> (32 - m_nBitsPerSample);
-  m_pSampleStream = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+  m_pSampleStream = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pStream));
   m_pSampleStream->LoadAllDataFiltered();
   if (nTotalSampleBytes.ValueOrDie() > m_pSampleStream->GetSize())
     return false;

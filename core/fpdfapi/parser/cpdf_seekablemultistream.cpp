@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/span_util.h"
@@ -17,7 +18,8 @@
 CPDF_SeekableMultiStream::CPDF_SeekableMultiStream(
     const std::vector<const CPDF_Stream*>& streams) {
   for (const CPDF_Stream* pStream : streams) {
-    m_Data.push_back(pdfium::MakeRetain<CPDF_StreamAcc>(pStream));
+    m_Data.push_back(
+        pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(pStream)));
     m_Data.back()->LoadAllDataFiltered();
   }
 }

@@ -58,7 +58,8 @@ unsigned long GetStreamMaybeCopyAndReturnLengthImpl(const CPDF_Stream* stream,
                                                     unsigned long buflen,
                                                     bool decode) {
   DCHECK(stream);
-  auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(stream);
+  auto stream_acc =
+      pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(stream));
 
   if (decode)
     stream_acc->LoadAllDataFiltered();

@@ -503,8 +503,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
         ByteString content = ByteString::Format(kFormat, bPath.c_str());
         fileWrite->WriteString(content.AsStringView());
       }
-      // TODO(tsepez): stream acc should take a retained object.
-      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream.Get());
+      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pStream));
       pAcc->LoadAllDataFiltered();
       pdfium::span<const uint8_t> span = pAcc->GetSpan();
       fileWrite->WriteBlock(span.data(), span.size());

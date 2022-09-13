@@ -67,7 +67,7 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
   if (const CPDF_String* pString = pTableObj->AsString()) {
     m_Table = pString->GetString();
   } else if (const CPDF_Stream* pStream = pTableObj->AsStream()) {
-    auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+    auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(pStream));
     pAcc->LoadAllDataFiltered();
     m_Table = ByteStringView(pAcc->GetSpan());
   }

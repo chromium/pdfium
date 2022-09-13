@@ -725,7 +725,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
   if (!pObject || !pObject->GetObjNum())
     return false;
 
-  const CPDF_Stream* pStream = pObject->AsStream();
+  RetainPtr<const CPDF_Stream> pStream(pObject->AsStream());
   if (!pStream)
     return false;
 
@@ -765,7 +765,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
     return false;
 
   uint32_t total_width = dwAccWidth.ValueOrDie();
-  auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream);
+  auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pStream));
   pAcc->LoadAllDataFiltered();
 
   pdfium::span<const uint8_t> data_span = pAcc->GetSpan();

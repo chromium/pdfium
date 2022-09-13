@@ -54,7 +54,7 @@ class CPDF_StreamAcc final : public Retainable {
     uint32_t size;
   };
 
-  explicit CPDF_StreamAcc(const CPDF_Stream* pStream);
+  explicit CPDF_StreamAcc(RetainPtr<const CPDF_Stream> pStream);
   ~CPDF_StreamAcc() override;
 
   void LoadAllData(bool bRawAccess, uint32_t estimated_size, bool bImageAcc);

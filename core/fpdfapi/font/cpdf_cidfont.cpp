@@ -21,6 +21,7 @@
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_memory.h"
@@ -437,7 +438,8 @@ bool CPDF_CIDFont::Load() {
   auto* pFontGlobals = CPDF_FontGlobals::GetInstance();
   const CPDF_Stream* pEncodingStream = pEncoding->AsStream();
   if (pEncodingStream) {
-    auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pEncodingStream);
+    auto pAcc =
+        pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(pEncodingStream));
     pAcc->LoadAllDataFiltered();
     pdfium::span<const uint8_t> span = pAcc->GetSpan();
     m_pCMap = pdfium::MakeRetain<CPDF_CMap>(span);
@@ -478,9 +480,9 @@ bool CPDF_CIDFont::Load() {
   RetainPtr<const CPDF_Object> pmap =
       pCIDFontDict->GetDirectObjectFor("CIDToGIDMap");
   if (pmap) {
-    const CPDF_Stream* pMapStream = pmap->AsStream();
+    RetainPtr<const CPDF_Stream> pMapStream(pmap->AsStream());
     if (pMapStream) {
-      m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pMapStream);
+      m_pStreamAcc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pMapStream));
       m_pStreamAcc->LoadAllDataFiltered();
     } else if (m_pFontFile && pmap->IsName() &&
                pmap->GetString() == "Identity") {

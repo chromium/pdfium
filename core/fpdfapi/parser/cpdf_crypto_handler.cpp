@@ -267,7 +267,8 @@ bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
       if (child->IsStream()) {
         // TODO(art-snake): Move decryption into the CPDF_Stream class.
         CPDF_Stream* stream = child->AsMutableStream();
-        auto stream_access = pdfium::MakeRetain<CPDF_StreamAcc>(stream);
+        auto stream_access =
+            pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(stream));
         stream_access->LoadAllDataRaw();
 
         if (IsCipherAES() && stream_access->GetSize() < 16) {

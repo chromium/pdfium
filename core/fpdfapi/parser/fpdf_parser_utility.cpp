@@ -7,6 +7,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 
 #include <ostream>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"
@@ -243,9 +244,9 @@ std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
       break;
     }
     case CPDF_Object::kStream: {
-      const CPDF_Stream* p = pObj->AsStream();
+      RetainPtr<const CPDF_Stream> p(pObj->AsStream());
       buf << p->GetDict() << "stream\r\n";
-      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(p);
+      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(p));
       pAcc->LoadAllDataRaw();
       pdfium::span<const uint8_t> span = pAcc->GetSpan();
       buf.write(reinterpret_cast<const char*>(span.data()), span.size());

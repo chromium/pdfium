@@ -100,7 +100,7 @@ RetainPtr<CPDF_Object> CPDF_Stream::CloneNonCyclic(
     bool bDirect,
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
-  auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(this);
+  auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(this));
   pAcc->LoadAllDataRaw();
 
   uint32_t streamSize = pAcc->GetSize();
@@ -182,7 +182,7 @@ bool CPDF_Stream::HasFilter() const {
 }
 
 WideString CPDF_Stream::GetUnicodeText() const {
-  auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(this);
+  auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(this));
   pAcc->LoadAllDataFiltered();
   return PDF_DecodeText(pAcc->GetSpan());
 }

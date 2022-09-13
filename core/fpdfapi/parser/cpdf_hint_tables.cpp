@@ -454,7 +454,8 @@ bool CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
   if (shared_hint_table_offset <= 0)
     return false;
 
-  auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pHintStream);
+  auto pAcc =
+      pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(pHintStream));
   pAcc->LoadAllDataFiltered();
 
   uint32_t size = pAcc->GetSize();

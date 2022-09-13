@@ -27,8 +27,8 @@ CPDF_StreamAcc::OwnedData& CPDF_StreamAcc::OwnedData::operator=(OwnedData&&) =
 
 CPDF_StreamAcc::OwnedData::~OwnedData() = default;
 
-CPDF_StreamAcc::CPDF_StreamAcc(const CPDF_Stream* pStream)
-    : m_pStream(pStream) {}
+CPDF_StreamAcc::CPDF_StreamAcc(RetainPtr<const CPDF_Stream> pStream)
+    : m_pStream(std::move(pStream)) {}
 
 CPDF_StreamAcc::~CPDF_StreamAcc() = default;
 

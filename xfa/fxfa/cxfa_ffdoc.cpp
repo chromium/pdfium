@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -296,8 +297,7 @@ RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(WideStringView wsName,
   if (!pStream)
     return nullptr;
 
-  // TODO(tsepez): make CPDF_StreamAcc constructor take retained argument.
-  auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pStream.Get());
+  auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pStream));
   pAcc->LoadAllDataFiltered();
 
   auto pImageFileRead =
