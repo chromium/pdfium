@@ -419,8 +419,8 @@ bool AddColors(const CPDF_ExpIntFunc* pFunc,
   if (pFunc->GetOrigOutputs() != 3)
     return false;
 
-  auto begin_values = pFunc->GetBeginValues().begin();
-  auto end_values = pFunc->GetEndValues().begin();
+  auto begin_values = pFunc->GetBeginValues();
+  auto end_values = pFunc->GetEndValues();
   if (is_encode_reversed)
     std::swap(begin_values, end_values);
 

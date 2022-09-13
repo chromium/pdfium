@@ -12,6 +12,10 @@
 
 #include "core/fpdfapi/page/cpdf_function.h"
 
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#include "third_party/base/span.h"
+#endif
+
 class CPDF_ExpIntFunc final : public CPDF_Function {
  public:
   CPDF_ExpIntFunc();
@@ -25,8 +29,11 @@ class CPDF_ExpIntFunc final : public CPDF_Function {
 
   uint32_t GetOrigOutputs() const { return m_nOrigOutputs; }
   float GetExponent() const { return m_Exponent; }
-  const std::vector<float>& GetBeginValues() const { return m_BeginValues; }
-  const std::vector<float>& GetEndValues() const { return m_EndValues; }
+
+#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+  pdfium::span<const float> GetBeginValues() const { return m_BeginValues; }
+  pdfium::span<const float> GetEndValues() const { return m_EndValues; }
+#endif
 
  private:
   uint32_t m_nOrigOutputs = 0;
