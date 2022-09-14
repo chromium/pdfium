@@ -100,7 +100,7 @@ bool CPDF_FormControl::IsChecked() const {
   DCHECK(GetType() == CPDF_FormField::kCheckBox ||
          GetType() == CPDF_FormField::kRadioButton);
   ByteString csOn = GetOnStateName();
-  ByteString csAS = m_pWidgetDict->GetStringFor("AS");
+  ByteString csAS = m_pWidgetDict->GetByteStringFor("AS");
   return csAS == csOn;
 }
 
@@ -120,7 +120,7 @@ bool CPDF_FormControl::IsDefaultChecked() const {
 void CPDF_FormControl::CheckControl(bool bChecked) {
   DCHECK(GetType() == CPDF_FormField::kCheckBox ||
          GetType() == CPDF_FormField::kRadioButton);
-  ByteString csOldAS = m_pWidgetDict->GetStringFor("AS", "Off");
+  ByteString csOldAS = m_pWidgetDict->GetByteStringFor("AS", "Off");
   ByteString csAS = "Off";
   if (bChecked)
     csAS = GetOnStateName();
@@ -131,7 +131,7 @@ void CPDF_FormControl::CheckControl(bool bChecked) {
 
 CPDF_FormControl::HighlightingMode CPDF_FormControl::GetHighlightingMode()
     const {
-  ByteString csH = m_pWidgetDict->GetStringFor("H", "I");
+  ByteString csH = m_pWidgetDict->GetByteStringFor("H", "I");
   for (size_t i = 0; i < std::size(kHighlightModes); ++i) {
     // TODO(tsepez): disambiguate string ctors.
     if (csH == ByteStringView(kHighlightModes[i]))
@@ -185,7 +185,7 @@ int CPDF_FormControl::GetTextPosition() const {
 CPDF_DefaultAppearance CPDF_FormControl::GetDefaultAppearance() const {
   if (m_pWidgetDict->KeyExist(pdfium::form_fields::kDA)) {
     return CPDF_DefaultAppearance(
-        m_pWidgetDict->GetStringFor(pdfium::form_fields::kDA));
+        m_pWidgetDict->GetByteStringFor(pdfium::form_fields::kDA));
   }
   const CPDF_Object* pObj = CPDF_FormField::GetFieldAttr(
       m_pField->GetDict(), pdfium::form_fields::kDA);

@@ -52,7 +52,7 @@ CPDF_Font::CPDF_Font(CPDF_Document* pDocument,
                      RetainPtr<CPDF_Dictionary> pFontDict)
     : m_pDocument(pDocument),
       m_pFontDict(std::move(pFontDict)),
-      m_BaseFontName(m_pFontDict->GetStringFor("BaseFont")) {}
+      m_BaseFontName(m_pFontDict->GetByteStringFor("BaseFont")) {}
 
 CPDF_Font::~CPDF_Font() {
   if (m_pFontFile) {
@@ -306,10 +306,10 @@ RetainPtr<CPDF_Font> CPDF_Font::GetStockFont(CPDF_Document* pDoc,
 RetainPtr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
                                        RetainPtr<CPDF_Dictionary> pFontDict,
                                        FormFactoryIface* pFactory) {
-  ByteString type = pFontDict->GetStringFor("Subtype");
+  ByteString type = pFontDict->GetByteStringFor("Subtype");
   RetainPtr<CPDF_Font> pFont;
   if (type == "TrueType") {
-    ByteString tag = pFontDict->GetStringFor("BaseFont").First(4);
+    ByteString tag = pFontDict->GetByteStringFor("BaseFont").First(4);
     for (size_t i = 0; i < std::size(kChineseFontNames); ++i) {
       if (tag == ByteString(kChineseFontNames[i], kChineseFontNameSize)) {
         const CPDF_Dictionary* pFontDesc =

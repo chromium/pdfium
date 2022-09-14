@@ -1418,7 +1418,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
 
   CFX_DefaultRenderDevice bitmap_device;
   bool bLuminosity =
-      pSMaskDict->GetStringFor(pdfium::transparency::kSoftMaskSubType) !=
+      pSMaskDict->GetByteStringFor(pdfium::transparency::kSoftMaskSubType) !=
       pdfium::transparency::kAlpha;
   int width = pClipRect->right - pClipRect->left;
   int height = pClipRect->bottom - pClipRect->top;

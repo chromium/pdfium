@@ -105,7 +105,7 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
       continue;
 
     ByteString sSubtype =
-        pAnnotDict->GetStringFor(pdfium::annotation::kSubtype);
+        pAnnotDict->GetByteStringFor(pdfium::annotation::kSubtype);
     if (sSubtype == "Popup")
       continue;
 
@@ -337,7 +337,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     CFX_FloatRect rcAnnot = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
     rcAnnot.Normalize();
 
-    ByteString sAnnotState = pAnnotDict->GetStringFor("AS");
+    ByteString sAnnotState = pAnnotDict->GetByteStringFor("AS");
     RetainPtr<CPDF_Dictionary> pAnnotAP =
         pAnnotDict->GetMutableDictFor(pdfium::annotation::kAP);
     if (!pAnnotAP)

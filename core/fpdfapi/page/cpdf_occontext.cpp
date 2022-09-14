@@ -97,7 +97,7 @@ bool CPDF_OCContext::LoadOCGStateFromConfig(
   if (!pConfig)
     return true;
 
-  bool bState = pConfig->GetStringFor("BaseState", "ON") != "OFF";
+  bool bState = pConfig->GetByteStringFor("BaseState", "ON") != "OFF";
   const CPDF_Array* pArray = pConfig->GetArrayFor("ON");
   if (pArray && pArray->Contains(pOCGDict))
     bState = true;
@@ -116,7 +116,7 @@ bool CPDF_OCContext::LoadOCGStateFromConfig(
     if (!pUsage)
       continue;
 
-    if (pUsage->GetStringFor("Event", "View") != csConfig)
+    if (pUsage->GetByteStringFor("Event", "View") != csConfig)
       continue;
 
     const CPDF_Array* pOCGs = pUsage->GetArrayFor("OCGs");
@@ -130,7 +130,7 @@ bool CPDF_OCContext::LoadOCGStateFromConfig(
     if (!pState)
       continue;
 
-    bState = pState->GetStringFor(csFind) != "OFF";
+    bState = pState->GetByteStringFor(csFind) != "OFF";
   }
   return bState;
 }
@@ -146,12 +146,12 @@ bool CPDF_OCContext::LoadOCGState(const CPDF_Dictionary* pOCGDict) const {
     if (pState) {
       ByteString csFind = csState + "State";
       if (pState->KeyExist(csFind))
-        return pState->GetStringFor(csFind) != "OFF";
+        return pState->GetByteStringFor(csFind) != "OFF";
     }
     if (csState != "View") {
       pState = pUsage->GetDictFor("View");
       if (pState && pState->KeyExist("ViewState"))
-        return pState->GetStringFor("ViewState") != "OFF";
+        return pState->GetByteStringFor("ViewState") != "OFF";
     }
   }
   return LoadOCGStateFromConfig(csState, pOCGDict);
@@ -232,7 +232,7 @@ bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict) const {
   if (pVE)
     return GetOCGVE(pVE, 0);
 
-  ByteString csP = pOCMDDict->GetStringFor("P", "AnyOn");
+  ByteString csP = pOCMDDict->GetByteStringFor("P", "AnyOn");
   RetainPtr<const CPDF_Object> pOCGObj = pOCMDDict->GetDirectObjectFor("OCGs");
   if (!pOCGObj)
     return true;
@@ -270,7 +270,7 @@ bool CPDF_OCContext::CheckOCGVisible(const CPDF_Dictionary* pOCGDict) const {
   if (!pOCGDict)
     return true;
 
-  ByteString csType = pOCGDict->GetStringFor("Type", "OCG");
+  ByteString csType = pOCGDict->GetByteStringFor("Type", "OCG");
   if (csType == "OCG")
     return GetOCGVisible(pOCGDict);
   return LoadOCMDState(pOCGDict);

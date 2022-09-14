@@ -147,9 +147,10 @@ TEST_F(FPDFAnnotEmbedderTest, SetAP) {
   // Check for non-existence of resources dictionary in case of opaque color
   const CPDF_Dictionary* resources_dict = stream_dict->GetDictFor("Resources");
   ASSERT_FALSE(resources_dict);
-  ByteString type = stream_dict->GetStringFor(pdfium::annotation::kType);
+  ByteString type = stream_dict->GetByteStringFor(pdfium::annotation::kType);
   EXPECT_EQ("XObject", type);
-  ByteString sub_type = stream_dict->GetStringFor(pdfium::annotation::kSubtype);
+  ByteString sub_type =
+      stream_dict->GetByteStringFor(pdfium::annotation::kSubtype);
   EXPECT_EQ("Form", sub_type);
 
   // Check that the appearance stream is same as we just set.
@@ -200,12 +201,12 @@ TEST_F(FPDFAnnotEmbedderTest, SetAPWithOpacity) {
   ASSERT_TRUE(extGState_dict);
   const CPDF_Dictionary* gs_dict = extGState_dict->GetDictFor("GS");
   ASSERT_TRUE(gs_dict);
-  ByteString type = gs_dict->GetStringFor(pdfium::annotation::kType);
+  ByteString type = gs_dict->GetByteStringFor(pdfium::annotation::kType);
   EXPECT_EQ("ExtGState", type);
   float opacity = gs_dict->GetFloatFor("CA");
   // Opacity value of 102 is represented as 0.4f (=104/255) in /CA entry.
   EXPECT_FLOAT_EQ(0.4f, opacity);
-  ByteString blend_mode = gs_dict->GetStringFor("BM");
+  ByteString blend_mode = gs_dict->GetByteStringFor("BM");
   EXPECT_EQ("Normal", blend_mode);
   bool alpha_source_flag = gs_dict->GetBooleanFor("AIS", true);
   EXPECT_FALSE(alpha_source_flag);

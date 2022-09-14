@@ -75,7 +75,7 @@ FPDFSignatureObj_GetContents(FPDF_SIGNATURE signature,
   if (!value_dict)
     return 0;
 
-  ByteString contents = value_dict->GetStringFor("Contents");
+  ByteString contents = value_dict->GetByteStringFor("Contents");
   const unsigned long contents_len =
       pdfium::base::checked_cast<unsigned long>(contents.GetLength());
   if (buffer && length >= contents_len)

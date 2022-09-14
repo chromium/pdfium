@@ -334,7 +334,7 @@ float GetBorderWidth(const CPDF_Dictionary* pDict) {
 
 RetainPtr<const CPDF_Array> GetDashArray(const CPDF_Dictionary* pDict) {
   const CPDF_Dictionary* pBorderStyleDict = pDict->GetDictFor("BS");
-  if (pBorderStyleDict && pBorderStyleDict->GetStringFor("S") == "D")
+  if (pBorderStyleDict && pBorderStyleDict->GetByteStringFor("S") == "D")
     return pdfium::WrapRetain(pBorderStyleDict->GetArrayFor("D"));
 
   const CPDF_Array* pBorderArray =
@@ -920,7 +920,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
   if (CPDF_Object* pDAObj = CPDF_FormField::GetFieldAttr(pAnnotDict, "DA"))
     DA = pDAObj->GetString();
   if (DA.IsEmpty())
-    DA = pFormDict->GetStringFor("DA");
+    DA = pFormDict->GetByteStringFor("DA");
   if (DA.IsEmpty())
     return;
 
@@ -1002,8 +1002,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
       dsBorder = CPVT_Dash(pArray->GetIntegerAt(0), pArray->GetIntegerAt(1),
                            pArray->GetIntegerAt(2));
     }
-    if (pBSDict->GetStringFor("S").GetLength()) {
-      switch (pBSDict->GetStringFor("S")[0]) {
+    if (pBSDict->GetByteStringFor("S").GetLength()) {
+      switch (pBSDict->GetByteStringFor("S")[0]) {
         case 'S':
           nBorderStyle = BorderStyle::kSolid;
           break;

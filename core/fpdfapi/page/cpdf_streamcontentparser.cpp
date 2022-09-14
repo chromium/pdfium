@@ -736,7 +736,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
 
   ByteString type;
   if (pXObject->GetDict())
-    type = pXObject->GetDict()->GetStringFor("Subtype");
+    type = pXObject->GetDict()->GetByteStringFor("Subtype");
 
   if (type == "Form") {
     AddForm(std::move(pXObject));

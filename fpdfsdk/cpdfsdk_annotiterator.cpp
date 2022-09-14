@@ -103,7 +103,7 @@ void CPDFSDK_AnnotIterator::AddSelectedToAnnots(
 CPDFSDK_AnnotIterator::TabOrder CPDFSDK_AnnotIterator::GetTabOrder(
     CPDFSDK_PageView* pPageView) {
   CPDF_Page* pPDFPage = pPageView->GetPDFPage();
-  ByteString sTabs = pPDFPage->GetDict()->GetStringFor("Tabs");
+  ByteString sTabs = pPDFPage->GetDict()->GetByteStringFor("Tabs");
   if (sTabs == "R")
     return kRow;
   if (sTabs == "C")

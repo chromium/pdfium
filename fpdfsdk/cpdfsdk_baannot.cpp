@@ -117,7 +117,7 @@ void CPDFSDK_BAAnnot::SetAppStateOff() {
 }
 
 ByteString CPDFSDK_BAAnnot::GetAppState() const {
-  return GetAnnotDict()->GetStringFor(pdfium::annotation::kAS);
+  return GetAnnotDict()->GetByteStringFor(pdfium::annotation::kAS);
 }
 
 void CPDFSDK_BAAnnot::SetBorderWidth(int nWidth) {
@@ -173,7 +173,7 @@ void CPDFSDK_BAAnnot::SetBorderStyle(BorderStyle nStyle) {
 BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
   const CPDF_Dictionary* pBSDict = GetAnnotDict()->GetDictFor("BS");
   if (pBSDict) {
-    ByteString sBorderStyle = pBSDict->GetStringFor("S", "S");
+    ByteString sBorderStyle = pBSDict->GetByteStringFor("S", "S");
     if (sBorderStyle == "S")
       return BorderStyle::kSolid;
     if (sBorderStyle == "D")

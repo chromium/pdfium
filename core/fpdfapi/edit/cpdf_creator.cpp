@@ -593,7 +593,7 @@ void CPDF_Creator::InitID() {
     DCHECK(m_pParser);
     int revision = m_pEncryptDict->GetIntegerFor("R");
     if ((revision == 2 || revision == 3) &&
-        m_pEncryptDict->GetStringFor("Filter") == "Standard") {
+        m_pEncryptDict->GetByteStringFor("Filter") == "Standard") {
       m_pNewEncryptDict = ToDictionary(m_pEncryptDict->Clone());
       m_pEncryptDict = m_pNewEncryptDict;
       m_pSecurityHandler = pdfium::MakeRetain<CPDF_SecurityHandler>();

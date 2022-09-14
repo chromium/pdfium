@@ -1812,7 +1812,7 @@ void CPDFSDK_AppStream::AddImage(const ByteString& sAPType,
 
   const CPDF_Dictionary* pImageDict = pImage->GetDict();
   if (pImageDict)
-    sImageAlias = pImageDict->GetStringFor("Name");
+    sImageAlias = pImageDict->GetByteStringFor("Name");
 
   RetainPtr<CPDF_Dictionary> pStreamResList =
       pStreamDict->GetOrCreateDictFor("Resources");

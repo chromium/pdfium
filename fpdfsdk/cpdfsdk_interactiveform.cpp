@@ -92,7 +92,7 @@ ByteString FDFToURLEncodedData(ByteString buffer) {
       continue;
     WideString name = pField->GetUnicodeTextFor("T");
     ByteString name_b = name.ToDefANSI();
-    ByteString csBValue = pField->GetStringFor("V");
+    ByteString csBValue = pField->GetByteStringFor("V");
     WideString csWValue = PDF_DecodeText(csBValue.raw_span());
     ByteString csValue_b = csWValue.ToDefANSI();
     encoded_data << name_b << "=" << csValue_b;

@@ -404,7 +404,7 @@ void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot) {
       break;
     case CPDF_Annot::Subtype::SCREEN: {
       const CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
-      ByteString cbString = pAnnotDict->GetStringFor("IT");
+      ByteString cbString = pAnnotDict->GetByteStringFor("IT");
       if (cbString != "Img")
         RaiseUnsupportedError(FPDF_UNSP_ANNOT_SCREEN_MEDIA);
       break;
@@ -417,7 +417,8 @@ void CheckForUnsupportedAnnot(const CPDF_Annot* pAnnot) {
       break;
     case CPDF_Annot::Subtype::WIDGET: {
       const CPDF_Dictionary* pAnnotDict = pAnnot->GetAnnotDict();
-      ByteString cbString = pAnnotDict->GetStringFor(pdfium::form_fields::kFT);
+      ByteString cbString =
+          pAnnotDict->GetByteStringFor(pdfium::form_fields::kFT);
       if (cbString == pdfium::form_fields::kSig)
         RaiseUnsupportedError(FPDF_UNSP_ANNOT_SIG);
       break;

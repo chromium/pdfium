@@ -402,7 +402,7 @@ uint32_t CPDF_CIDFont::CharCodeFromUnicode(wchar_t unicode) const {
 }
 
 bool CPDF_CIDFont::Load() {
-  if (m_pFontDict->GetStringFor("Subtype") == "TrueType") {
+  if (m_pFontDict->GetByteStringFor("Subtype") == "TrueType") {
     LoadGB2312();
     return true;
   }
@@ -415,7 +415,7 @@ bool CPDF_CIDFont::Load() {
   if (!pCIDFontDict)
     return false;
 
-  m_BaseFontName = pCIDFontDict->GetStringFor("BaseFont");
+  m_BaseFontName = pCIDFontDict->GetByteStringFor("BaseFont");
   if ((m_BaseFontName == "CourierStd" || m_BaseFontName == "CourierStd-Bold" ||
        m_BaseFontName == "CourierStd-BoldOblique" ||
        m_BaseFontName == "CourierStd-Oblique") &&
@@ -428,7 +428,7 @@ bool CPDF_CIDFont::Load() {
   if (!pEncoding)
     return false;
 
-  ByteString subtype = pCIDFontDict->GetStringFor("Subtype");
+  ByteString subtype = pCIDFontDict->GetByteStringFor("Subtype");
   m_FontType =
       subtype == "CIDFontType0" ? CIDFontType::kType1 : CIDFontType::kTrueType;
 
@@ -458,7 +458,7 @@ bool CPDF_CIDFont::Load() {
     const CPDF_Dictionary* pCIDInfo = pCIDFontDict->GetDictFor("CIDSystemInfo");
     if (pCIDInfo) {
       m_Charset = CPDF_CMapParser::CharsetFromOrdering(
-          pCIDInfo->GetStringFor("Ordering").AsStringView());
+          pCIDInfo->GetByteStringFor("Ordering").AsStringView());
     }
   }
   if (m_Charset != CIDSET_UNKNOWN) {
@@ -856,7 +856,7 @@ float CPDF_CIDFont::CIDTransformToFloat(uint8_t ch) {
 }
 
 void CPDF_CIDFont::LoadGB2312() {
-  m_BaseFontName = m_pFontDict->GetStringFor("BaseFont");
+  m_BaseFontName = m_pFontDict->GetByteStringFor("BaseFont");
   m_Charset = CIDSET_GB1;
 
   auto* pFontGlobals = CPDF_FontGlobals::GetInstance();

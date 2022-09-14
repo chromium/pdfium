@@ -260,7 +260,7 @@ bool CPDF_PageOrganizer::Init() {
 
   pDocInfoDict->SetNewFor<CPDF_String>("Producer", "PDFium", false);
 
-  ByteString cbRootType = pNewRoot->GetStringFor("Type", ByteString());
+  ByteString cbRootType = pNewRoot->GetByteStringFor("Type", ByteString());
   if (cbRootType.IsEmpty())
     pNewRoot->SetNewFor<CPDF_Name>("Type", "Catalog");
 
@@ -272,7 +272,7 @@ bool CPDF_PageOrganizer::Init() {
     pNewRoot->SetNewFor<CPDF_Reference>("Pages", dest(),
                                         pNewPages->GetObjNum());
   }
-  ByteString cbPageType = pNewPages->GetStringFor("Type", ByteString());
+  ByteString cbPageType = pNewPages->GetByteStringFor("Type", ByteString());
   if (cbPageType.IsEmpty())
     pNewPages->SetNewFor<CPDF_Name>("Type", "Pages");
 
@@ -350,7 +350,7 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Reference* pRef) {
   RetainPtr<CPDF_Object> pClone = pDirect->Clone();
   const CPDF_Dictionary* pDictClone = pClone->AsDictionary();
   if (pDictClone && pDictClone->KeyExist("Type")) {
-    ByteString strType = pDictClone->GetStringFor("Type");
+    ByteString strType = pDictClone->GetByteStringFor("Type");
     if (strType.EqualNoCase("Pages"))
       return 4;
     if (strType.EqualNoCase("Page"))

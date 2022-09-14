@@ -91,7 +91,7 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Document* pDocument,
   pAnnotDict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Popup");
   pAnnotDict->SetNewFor<CPDF_String>(
       pdfium::form_fields::kT,
-      pParentDict->GetStringFor(pdfium::form_fields::kT), false);
+      pParentDict->GetByteStringFor(pdfium::form_fields::kT), false);
   pAnnotDict->SetNewFor<CPDF_String>(pdfium::annotation::kContents,
                                      sContents.ToUTF8(), false);
 
@@ -123,7 +123,7 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Document* pDocument,
 
 void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   if (!pAnnotDict ||
-      pAnnotDict->GetStringFor(pdfium::annotation::kSubtype) != "Widget") {
+      pAnnotDict->GetByteStringFor(pdfium::annotation::kSubtype) != "Widget") {
     return;
   }
 
@@ -164,7 +164,7 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 
   pAnnotDict->SetNewFor<CPDF_String>(
       pdfium::annotation::kAS,
-      pParentDict->GetStringFor(pdfium::annotation::kAS), false);
+      pParentDict->GetByteStringFor(pdfium::annotation::kAS), false);
 }
 
 }  // namespace
@@ -186,7 +186,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     if (!pDict)
       continue;
     const ByteString subtype =
-        pDict->GetStringFor(pdfium::annotation::kSubtype);
+        pDict->GetByteStringFor(pdfium::annotation::kSubtype);
     if (subtype == "Popup") {
       // Skip creating Popup annotations in the PDF document since PDFium
       // provides its own Popup annotations.

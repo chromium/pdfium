@@ -288,11 +288,11 @@ TEST_F(PDFObjectsTest, GetNameFor) {
   EXPECT_STREQ("", m_DictObj->GetNameFor("string").c_str());
   EXPECT_STREQ("Pdf", m_DictObj->GetNameFor("name").c_str());
 
-  EXPECT_STREQ("", m_DictObj->GetStringFor("invalid").c_str());
-  EXPECT_STREQ("false", m_DictObj->GetStringFor("bool").c_str());
-  EXPECT_STREQ("0.23", m_DictObj->GetStringFor("num").c_str());
-  EXPECT_STREQ("ium", m_DictObj->GetStringFor("string").c_str());
-  EXPECT_STREQ("Pdf", m_DictObj->GetStringFor("name").c_str());
+  EXPECT_STREQ("", m_DictObj->GetByteStringFor("invalid").c_str());
+  EXPECT_STREQ("false", m_DictObj->GetByteStringFor("bool").c_str());
+  EXPECT_STREQ("0.23", m_DictObj->GetByteStringFor("num").c_str());
+  EXPECT_STREQ("ium", m_DictObj->GetByteStringFor("string").c_str());
+  EXPECT_STREQ("Pdf", m_DictObj->GetByteStringFor("name").c_str());
 }
 
 TEST_F(PDFObjectsTest, GetArray) {

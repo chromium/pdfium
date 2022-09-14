@@ -79,14 +79,14 @@ WideString CPDF_Action::GetFilePath() const {
     return WideString();
 
   return WideString::FromDefANSI(
-      pWinDict->GetStringFor(pdfium::stream::kF).AsStringView());
+      pWinDict->GetByteStringFor(pdfium::stream::kF).AsStringView());
 }
 
 ByteString CPDF_Action::GetURI(const CPDF_Document* pDoc) const {
   if (GetType() != Type::kURI)
     return ByteString();
 
-  ByteString csURI = m_pDict->GetStringFor("URI");
+  ByteString csURI = m_pDict->GetByteStringFor("URI");
   const CPDF_Dictionary* pRoot = pDoc->GetRoot();
   const CPDF_Dictionary* pURI = pRoot->GetDictFor("URI");
   if (pURI) {
@@ -105,7 +105,7 @@ bool CPDF_Action::GetHideStatus() const {
 }
 
 ByteString CPDF_Action::GetNamedAction() const {
-  return m_pDict->GetStringFor("N");
+  return m_pDict->GetByteStringFor("N");
 }
 
 uint32_t CPDF_Action::GetFlags() const {
@@ -117,7 +117,7 @@ std::vector<const CPDF_Object*> CPDF_Action::GetAllFields() const {
   if (!m_pDict)
     return result;
 
-  ByteString csType = m_pDict->GetStringFor("S");
+  ByteString csType = m_pDict->GetByteStringFor("S");
   const CPDF_Object* pFields = csType == "Hide"
                                    ? m_pDict->GetDirectObjectFor("T").Get()
                                    : m_pDict->GetArrayFor("Fields");

@@ -3069,8 +3069,8 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType2Font) {
   const CPDF_Dictionary* cidinfo_dict =
       cidfont_dict->GetDictFor("CIDSystemInfo");
   ASSERT_TRUE(cidinfo_dict);
-  EXPECT_EQ("Adobe", cidinfo_dict->GetStringFor("Registry"));
-  EXPECT_EQ("Identity", cidinfo_dict->GetStringFor("Ordering"));
+  EXPECT_EQ("Adobe", cidinfo_dict->GetByteStringFor("Registry"));
+  EXPECT_EQ("Identity", cidinfo_dict->GetByteStringFor("Ordering"));
   EXPECT_EQ(0, cidinfo_dict->GetFloatFor("Supplement"));
   CheckFontDescriptor(cidfont_dict.Get(), FPDF_FONT_TRUETYPE, false, true,
                       span);

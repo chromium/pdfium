@@ -35,5 +35,5 @@ ByteString CPDF_Icon::GetImageAlias() const {
   if (!pDict)
     return ByteString();
 
-  return pDict->GetStringFor("Name");
+  return pDict->GetByteStringFor("Name");
 }

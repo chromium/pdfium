@@ -403,7 +403,7 @@ WideString CPDFXFA_DocEnvironment::GetTitle(const CXFA_FFDoc* hDoc) const {
   if (!pInfoDict)
     return WideString();
 
-  ByteString csTitle = pInfoDict->GetStringFor("Title");
+  ByteString csTitle = pInfoDict->GetByteStringFor("Title");
   return WideString::FromDefANSI(csTitle.AsStringView());
 }
 

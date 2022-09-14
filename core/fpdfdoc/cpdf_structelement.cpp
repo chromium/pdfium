@@ -56,7 +56,7 @@ CPDF_StructElement::~CPDF_StructElement() {
 }
 
 ByteString CPDF_StructElement::GetObjType() const {
-  return GetDict()->GetStringFor("Type");
+  return GetDict()->GetByteStringFor("Type");
 }
 
 WideString CPDF_StructElement::GetAltText() const {

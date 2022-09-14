@@ -85,12 +85,12 @@ RetainPtr<CPDF_Stream> GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
   if (!pDict)
     return nullptr;
 
-  ByteString as = pAnnotDict->GetStringFor(pdfium::annotation::kAS);
+  ByteString as = pAnnotDict->GetByteStringFor(pdfium::annotation::kAS);
   if (as.IsEmpty()) {
-    ByteString value = pAnnotDict->GetStringFor("V");
+    ByteString value = pAnnotDict->GetByteStringFor("V");
     if (value.IsEmpty()) {
       const CPDF_Dictionary* pParentDict = pAnnotDict->GetDictFor("Parent");
-      value = pParentDict ? pParentDict->GetStringFor("V") : ByteString();
+      value = pParentDict ? pParentDict->GetByteStringFor("V") : ByteString();
     }
     as = (!value.IsEmpty() && pDict->KeyExist(value)) ? value : "Off";
   }
@@ -103,7 +103,7 @@ CPDF_Annot::CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument)
     : m_pAnnotDict(pDict),
       m_pDocument(pDocument),
       m_nSubtype(StringToAnnotSubtype(
-          m_pAnnotDict->GetStringFor(pdfium::annotation::kSubtype))),
+          m_pAnnotDict->GetByteStringFor(pdfium::annotation::kSubtype))),
       m_bIsTextMarkupAnnotation(IsTextMarkupAnnotation(m_nSubtype)),
       m_bHasGeneratedAP(
           m_pAnnotDict->GetBooleanFor(kPDFiumKey_HasGeneratedAP, false)) {
@@ -479,7 +479,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
       width = 1;
     }
   } else {
-    ByteString style = pBS->GetStringFor("S");
+    ByteString style = pBS->GetByteStringFor("S");
     pDashArray = pBS->GetArrayFor("D");
     style_char = style[0];
     width = pBS->GetFloatFor("W");

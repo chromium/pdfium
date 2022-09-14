@@ -51,9 +51,9 @@ class CPDF_Dictionary final : public CPDF_Object {
 
   // These will return the string representation of the object specified by
   // |key|, for any object type that has a string representation.
-  ByteString GetStringFor(const ByteString& key) const;
-  ByteString GetStringFor(const ByteString& key,
-                          const ByteString& default_str) const;
+  ByteString GetByteStringFor(const ByteString& key) const;
+  ByteString GetByteStringFor(const ByteString& key,
+                              const ByteString& default_str) const;
   WideString GetUnicodeTextFor(const ByteString& key) const;
 
   // This will only return the string representation of a name object specified

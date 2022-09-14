@@ -104,13 +104,13 @@ RetainPtr<CPDF_Object> CPDF_Dictionary::GetMutableDirectObjectFor(
       const_cast<CPDF_Object*>(GetDirectObjectForInternal(key)));
 }
 
-ByteString CPDF_Dictionary::GetStringFor(const ByteString& key) const {
+ByteString CPDF_Dictionary::GetByteStringFor(const ByteString& key) const {
   const CPDF_Object* p = GetObjectForInternal(key);
   return p ? p->GetString() : ByteString();
 }
 
-ByteString CPDF_Dictionary::GetStringFor(const ByteString& key,
-                                         const ByteString& def) const {
+ByteString CPDF_Dictionary::GetByteStringFor(const ByteString& key,
+                                             const ByteString& def) const {
   const CPDF_Object* p = GetObjectForInternal(key);
   return p ? p->GetString() : ByteString(def);
 }

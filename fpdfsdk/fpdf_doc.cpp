@@ -375,7 +375,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_Enumerate(FPDF_PAGE page,
         ToDictionary(pAnnots->GetMutableDirectObjectAt(i));
     if (!pDict)
       continue;
-    if (pDict->GetStringFor("Subtype") == "Link") {
+    if (pDict->GetByteStringFor("Subtype") == "Link") {
       *start_pos = static_cast<int>(i + 1);
       *link_annot = FPDFLinkFromCPDFDictionary(pDict.Get());
       return true;

@@ -118,7 +118,7 @@ void CPDF_PageObjectHolder::LoadTransparencyInfo() {
   if (!pGroup)
     return;
 
-  if (pGroup->GetStringFor(pdfium::transparency::kGroupSubType) !=
+  if (pGroup->GetByteStringFor(pdfium::transparency::kGroupSubType) !=
       pdfium::transparency::kTransparency) {
     return;
   }

@@ -121,7 +121,7 @@ class CPDF_ObjectAvailExcludeTypeKey final : public CPDF_ObjectAvail {
     // In this case CPDF_ObjectAvail should wait availability of this item and
     // call ExcludeObject again.
     return object->IsDictionary() &&
-           object->GetDict()->GetStringFor("Type") == "Exclude me";
+           object->GetDict()->GetByteStringFor("Type") == "Exclude me";
   }
 };
 

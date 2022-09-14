@@ -28,7 +28,7 @@ CPDF_IconFit::ScaleMethod CPDF_IconFit::GetScaleMethod() const {
   if (!m_pDict)
     return ScaleMethod::kAlways;
 
-  ByteString csSW = m_pDict->GetStringFor("SW", "A");
+  ByteString csSW = m_pDict->GetByteStringFor("SW", "A");
   if (csSW == "B")
     return ScaleMethod::kBigger;
   if (csSW == "S")
@@ -39,7 +39,7 @@ CPDF_IconFit::ScaleMethod CPDF_IconFit::GetScaleMethod() const {
 }
 
 bool CPDF_IconFit::IsProportionalScale() const {
-  return !m_pDict || m_pDict->GetStringFor("S", "P") != "A";
+  return !m_pDict || m_pDict->GetByteStringFor("S", "P") != "A";
 }
 
 CFX_PointF CPDF_IconFit::GetIconBottomLeftPosition() const {

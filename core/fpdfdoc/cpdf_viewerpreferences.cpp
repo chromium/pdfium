@@ -18,12 +18,12 @@ CPDF_ViewerPreferences::~CPDF_ViewerPreferences() = default;
 
 bool CPDF_ViewerPreferences::IsDirectionR2L() const {
   const CPDF_Dictionary* pDict = GetViewerPreferences();
-  return pDict && pDict->GetStringFor("Direction") == "R2L";
+  return pDict && pDict->GetByteStringFor("Direction") == "R2L";
 }
 
 bool CPDF_ViewerPreferences::PrintScaling() const {
   const CPDF_Dictionary* pDict = GetViewerPreferences();
-  return !pDict || pDict->GetStringFor("PrintScaling") != "None";
+  return !pDict || pDict->GetByteStringFor("PrintScaling") != "None";
 }
 
 int32_t CPDF_ViewerPreferences::NumCopies() const {
@@ -38,7 +38,7 @@ const CPDF_Array* CPDF_ViewerPreferences::PrintPageRange() const {
 
 ByteString CPDF_ViewerPreferences::Duplex() const {
   const CPDF_Dictionary* pDict = GetViewerPreferences();
-  return pDict ? pDict->GetStringFor("Duplex") : ByteString("None");
+  return pDict ? pDict->GetByteStringFor("Duplex") : ByteString("None");
 }
 
 absl::optional<ByteString> CPDF_ViewerPreferences::GenericName(

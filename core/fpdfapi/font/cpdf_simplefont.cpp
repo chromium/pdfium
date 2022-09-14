@@ -186,7 +186,7 @@ void CPDF_SimpleFont::LoadPDFEncoding(bool bEmbedded, bool bTrueType) {
 
   if (m_BaseEncoding != FontEncoding::kAdobeSymbol &&
       m_BaseEncoding != FontEncoding::kZapfDingbats) {
-    ByteString bsEncoding = pDict->GetStringFor("BaseEncoding");
+    ByteString bsEncoding = pDict->GetByteStringFor("BaseEncoding");
     if (bTrueType && bsEncoding == pdfium::font_encodings::kMacExpertEncoding)
       bsEncoding = pdfium::font_encodings::kWinAnsiEncoding;
     GetPredefinedEncoding(bsEncoding, &m_BaseEncoding);

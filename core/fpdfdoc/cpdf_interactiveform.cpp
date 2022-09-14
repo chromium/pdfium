@@ -719,7 +719,7 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::GetFormFont(
 CPDF_DefaultAppearance CPDF_InteractiveForm::GetDefaultAppearance() const {
   if (!m_pFormDict)
     return CPDF_DefaultAppearance();
-  return CPDF_DefaultAppearance(m_pFormDict->GetStringFor("DA"));
+  return CPDF_DefaultAppearance(m_pFormDict->GetByteStringFor("DA"));
 }
 
 int CPDF_InteractiveForm::GetFormAlignment() const {
@@ -906,7 +906,7 @@ bool CPDF_InteractiveForm::CheckRequiredFields(
     if (bIncludeOrExclude == bFind) {
       const CPDF_Dictionary* pFieldDict = pField->GetDict();
       if (pField->IsRequired() &&
-          pFieldDict->GetStringFor(pdfium::form_fields::kV).IsEmpty()) {
+          pFieldDict->GetByteStringFor(pdfium::form_fields::kV).IsEmpty()) {
         return false;
       }
     }
@@ -960,7 +960,9 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
       continue;
 
     if ((dwFlags & pdfium::form_flags::kRequired) != 0 &&
-        pField->GetDict()->GetStringFor(pdfium::form_fields::kV).IsEmpty()) {
+        pField->GetDict()
+            ->GetByteStringFor(pdfium::form_fields::kV)
+            .IsEmpty()) {
       continue;
     }
 
