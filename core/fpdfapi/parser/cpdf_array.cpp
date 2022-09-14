@@ -268,11 +268,3 @@ CPDF_ArrayLocker::CPDF_ArrayLocker(RetainPtr<const CPDF_Array> pArray)
 CPDF_ArrayLocker::~CPDF_ArrayLocker() {
   m_pArray->m_LockCount--;
 }
-
-const CPDF_Array* CPDF_ArrayLocker::GetArrayAt(size_t index) const {
-  return ToArray(GetObjectAt(index));
-}
-
-const CPDF_Dictionary* CPDF_ArrayLocker::GetDictAt(size_t index) const {
-  return ToDictionary(GetObjectAt(index));
-}

@@ -181,15 +181,6 @@ class CPDF_ArrayLocker {
     return m_pArray->m_Objects.end();
   }
 
-  // Results are only valid for the lifetime of the Array Locker.
-  const CPDF_Array* GetUnderlying() const { return m_pArray.Get(); }
-  const CPDF_Array* GetArrayAt(size_t index) const;
-  const CPDF_Dictionary* GetDictAt(size_t index) const;
-  const CPDF_Object* GetObjectAt(size_t index) const {
-    CHECK(m_pArray->IsLocked());
-    return m_pArray->GetObjectAtInternal(index);
-  }
-
  private:
   RetainPtr<const CPDF_Array> const m_pArray;
 };

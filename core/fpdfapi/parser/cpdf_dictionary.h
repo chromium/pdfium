@@ -164,33 +164,6 @@ class CPDF_DictionaryLocker {
     return m_pDictionary->m_Map.end();
   }
 
-  // Results are only valid for the lifetime of the Dictionary Locker.
-  const CPDF_Dictionary* GetUnderlying() const { return m_pDictionary.Get(); }
-  const CPDF_Object* GetObjectFor(const ByteString& key) const {
-    CHECK(m_pDictionary->IsLocked());
-    return m_pDictionary->GetObjectForInternal(key);
-  }
-  const CPDF_Object* GetDirectObjectFor(const ByteString& key) const {
-    CHECK(m_pDictionary->IsLocked());
-    return m_pDictionary->GetDirectObjectForInternal(key);
-  }
-  const CPDF_Array* GetArrayFor(const ByteString& key) const {
-    CHECK(m_pDictionary->IsLocked());
-    return m_pDictionary->GetArrayForInternal(key);
-  }
-  const CPDF_Dictionary* GetDictFor(const ByteString& key) const {
-    CHECK(m_pDictionary->IsLocked());
-    return m_pDictionary->GetDictForInternal(key);
-  }
-  const CPDF_Number* GetNumberFor(const ByteString& key) const {
-    CHECK(m_pDictionary->IsLocked());
-    return m_pDictionary->GetNumberForInternal(key);
-  }
-  const CPDF_Stream* GetStreamFor(const ByteString& key) const {
-    CHECK(m_pDictionary->IsLocked());
-    return m_pDictionary->GetStreamForInternal(key);
-  }
-
  private:
   RetainPtr<const CPDF_Dictionary> const m_pDictionary;
 };
