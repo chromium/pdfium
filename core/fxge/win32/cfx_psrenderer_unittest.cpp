@@ -3,10 +3,43 @@
 // found in the LICENSE file.
 
 #include "core/fxge/win32/cfx_psrenderer.h"
+
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/retain_ptr.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
+#include "core/fxge/dib/fx_dib.h"
+#include "core/fxge/win32/cfx_psfonttracker.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/span.h"
+
+namespace {
+
+DataVector<uint8_t> FakeA85Encode(pdfium::span<const uint8_t> src_span) {
+  return DataVector<uint8_t>({'d', 'u', 'm', 'm', 'y', 'a', '8', '5'});
+}
+
+class TestWriteStream final : public IFX_RetainableWriteStream {
+ public:
+  CONSTRUCT_VIA_MAKE_RETAIN;
+
+  // IFX_RetainableWriteStream:
+  bool WriteBlock(const void* pData, size_t size) override {
+    const uint8_t* data_as_uint8 = static_cast<const uint8_t*>(pData);
+    data_.insert(data_.end(), data_as_uint8, data_as_uint8 + size);
+    return true;
+  }
+
+  pdfium::span<const uint8_t> GetSpan() const { return data_; }
+
+ private:
+  DataVector<uint8_t> data_;
+};
+
+}  // namespace
 
 TEST(PSRendererTest, GenerateType42SfntData) {
   absl::optional<ByteString> result;
@@ -137,4 +170,46 @@ FontName currentdict end definefont pop
       "2descendant", FX_RECT(12, -5, 34, 199), /*num_glyphs=*/5,
       /*glyphs_per_descendant_font=*/3);
   EXPECT_STREQ(kExpected2DescendantFontResult, result.c_str());
+}
+
+TEST(PSRendererTest, DrawDIBits) {
+  static constexpr char kExpectedOutput[] = R"(
+save
+/im/initmatrix load def
+/n/newpath load def/m/moveto load def/l/lineto load def/c/curveto load def/h/closepath load def
+/f/fill load def/F/eofill load def/s/stroke load def/W/clip load def/W*/eoclip load def
+/rg/setrgbcolor load def/k/setcmykcolor load def
+/J/setlinecap load def/j/setlinejoin load def/w/setlinewidth load def/M/setmiterlimit load def/d/setdash load def
+/q/gsave load def/Q/grestore load def/iM/imagemask load def
+/Tj/show load def/Ff/findfont load def/Fs/scalefont load def/Sf/setfont load def
+/cm/concat load def/Cm/currentmatrix load def/mx/matrix load def/sm/setmatrix load def
+q
+[1 0 0 1 0 0]cm 10 2 1[10 0 0 -2 0 2]currentfile/ASCII85Decode filter false 1 colorimage
+dummya85
+Q
+
+restore
+)";
+  auto output_stream = pdfium::MakeRetain<TestWriteStream>();
+
+  {
+    constexpr int kWidth = 10;
+    constexpr int kHeight = 2;
+    CFX_PSFontTracker font_tracker;
+    const EncoderIface encoder_interface{&FakeA85Encode, nullptr, nullptr,
+                                         nullptr, nullptr};
+    CFX_PSRenderer renderer(&font_tracker, &encoder_interface);
+    renderer.Init(output_stream, CFX_PSRenderer::RenderingLevel::kLevel2,
+                  kWidth, kHeight);
+
+    auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+    bool result = bitmap->Create(kWidth, kHeight, FXDIB_Format::k1bppRgb);
+    ASSERT_TRUE(result);
+    bitmap->Clear(0);
+    ASSERT_TRUE(renderer.DrawDIBits(bitmap, /*color=*/0, CFX_Matrix(),
+                                    FXDIB_ResampleOptions()));
+  }
+
+  ByteString output(output_stream->GetSpan());
+  EXPECT_STREQ(output.c_str(), kExpectedOutput);
 }

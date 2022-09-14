@@ -161,7 +161,8 @@ class CFX_PSRenderer {
                             fxcrt::ostringstream& buf);
   FaxCompressResult FaxCompressData(DataVector<uint8_t> src_buf,
                                     int width,
-                                    int height) const;
+                                    int height,
+                                    int pitch) const;
   absl::optional<PSCompressResult> PSCompressData(
       pdfium::span<const uint8_t> src_span) const;
   void WritePreambleString(ByteStringView str);

@@ -522,12 +522,12 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   buf << "[" << matrix.a << " " << matrix.b << " " << matrix.c << " "
       << matrix.d << " " << matrix.e << " " << matrix.f << "]cm ";
 
-  int width = pSource->GetWidth();
-  int height = pSource->GetHeight();
+  const int width = pSource->GetWidth();
+  const int height = pSource->GetHeight();
+  const int pitch = pSource->GetPitch();
   buf << width << " " << height;
 
   if (pSource->GetBPP() == 1 && !pSource->HasPalette()) {
-    const int pitch = (width + 7) / 8;
     const uint32_t src_size = height * pitch;
     DataVector<uint8_t> src_buf(src_size);
     {
@@ -539,7 +539,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     }
 
     FaxCompressResult compress_result =
-        FaxCompressData(std::move(src_buf), width, height);
+        FaxCompressData(std::move(src_buf), width, height, pitch);
     if (pSource->IsMaskFormat()) {
       SetColor(color);
       m_bColorSet = false;
@@ -845,15 +845,16 @@ bool CFX_PSRenderer::DrawText(int nChars,
 CFX_PSRenderer::FaxCompressResult CFX_PSRenderer::FaxCompressData(
     DataVector<uint8_t> src_buf,
     int width,
-    int height) const {
+    int height,
+    int pitch) const {
   FaxCompressResult result;
   if (width * height <= 128) {
-    src_buf.resize((width + 7) / 8 * height);
+    src_buf.resize(pitch * height);
     result.data = std::move(src_buf);
     result.compressed = false;
   } else {
-    result.data = m_pEncoderIface->pFaxEncodeFunc(src_buf, width, height,
-                                                  (width + 7) / 8);
+    result.data =
+        m_pEncoderIface->pFaxEncodeFunc(src_buf, width, height, pitch);
     result.compressed = true;
   }
   return result;
