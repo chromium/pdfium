@@ -192,7 +192,7 @@ bool CPDF_SecurityHandler::OnInit(const CPDF_Dictionary* pEncryptDict,
                                   const CPDF_Array* pIdArray,
                                   const ByteString& password) {
   if (pIdArray)
-    m_FileId = pIdArray->GetStringAt(0);
+    m_FileId = pIdArray->GetByteStringAt(0);
   else
     m_FileId.clear();
   if (!LoadDict(pEncryptDict))
@@ -592,7 +592,7 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
 
   ByteString file_id;
   if (pIdArray)
-    file_id = pIdArray->GetStringAt(0);
+    file_id = pIdArray->GetByteStringAt(0);
 
   CalcEncryptKey(m_pEncryptDict.Get(), user_password, m_EncryptKey, key_len,
                  false, file_id);

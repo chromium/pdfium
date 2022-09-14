@@ -24,7 +24,7 @@ bool HasIntent(const CPDF_Dictionary* pDict,
   ByteString bsIntent;
   if (const CPDF_Array* pArray = pIntent->AsArray()) {
     for (size_t i = 0; i < pArray->size(); i++) {
-      bsIntent = pArray->GetStringAt(i);
+      bsIntent = pArray->GetByteStringAt(i);
       if (bsIntent == "All" || bsIntent == csElement)
         return true;
     }
@@ -187,7 +187,7 @@ bool CPDF_OCContext::GetOCGVE(const CPDF_Array* pExpression, int nLevel) const {
   if (nLevel > 32 || !pExpression)
     return false;
 
-  ByteString csOperator = pExpression->GetStringAt(0);
+  ByteString csOperator = pExpression->GetByteStringAt(0);
   if (csOperator == "Not") {
     RetainPtr<const CPDF_Object> pOCGObj = pExpression->GetDirectObjectAt(1);
     if (!pOCGObj)

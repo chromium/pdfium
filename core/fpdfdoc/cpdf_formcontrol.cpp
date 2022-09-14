@@ -90,7 +90,7 @@ WideString CPDF_FormControl::GetExportValue() const {
   const CPDF_Array* pArray =
       ToArray(CPDF_FormField::GetFieldAttr(m_pField->GetDict(), "Opt"));
   if (pArray)
-    csOn = pArray->GetStringAt(m_pField->GetControlIndex(this));
+    csOn = pArray->GetByteStringAt(m_pField->GetControlIndex(this));
   if (csOn.IsEmpty())
     csOn = "Yes";
   return PDF_DecodeText(csOn.raw_span());

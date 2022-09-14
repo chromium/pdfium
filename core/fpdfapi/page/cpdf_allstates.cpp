@@ -88,7 +88,7 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
           break;
 
         m_TextState.SetFontSize(pFont->GetFloatAt(1));
-        m_TextState.SetFont(pParser->FindFont(pFont->GetStringAt(0)));
+        m_TextState.SetFont(pParser->FindFont(pFont->GetByteStringAt(0)));
         break;
       }
       case FXBSTR_ID('T', 'R', 0, 0):
@@ -101,7 +101,7 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
         break;
       case FXBSTR_ID('B', 'M', 0, 0): {
         const CPDF_Array* pArray = pObject->AsArray();
-        m_GeneralState.SetBlendMode(pArray ? pArray->GetStringAt(0)
+        m_GeneralState.SetBlendMode(pArray ? pArray->GetByteStringAt(0)
                                            : pObject->GetString());
         if (m_GeneralState.GetBlendType() > BlendMode::kMultiply)
           pParser->GetPageObjectHolder()->SetBackgroundAlphaNeeded(true);

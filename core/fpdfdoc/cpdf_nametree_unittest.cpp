@@ -22,7 +22,7 @@ void CheckNameKeyValue(const CPDF_Array* names,
                        const char* key,
                        int value) {
   ASSERT_TRUE(names);
-  EXPECT_STREQ(key, names->GetStringAt(pair_index * 2).c_str());
+  EXPECT_STREQ(key, names->GetByteStringAt(pair_index * 2).c_str());
   EXPECT_EQ(value, names->GetIntegerAt(pair_index * 2 + 1));
 }
 

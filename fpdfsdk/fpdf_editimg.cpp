@@ -341,7 +341,7 @@ FPDFImageObj_GetImageFilter(FPDF_PAGEOBJECT image_object,
   RetainPtr<const CPDF_Object> pFilter = pDict->GetDirectObjectFor("Filter");
   ByteString bsFilter = pFilter->IsName()
                             ? pFilter->AsName()->GetString()
-                            : pFilter->AsArray()->GetStringAt(index);
+                            : pFilter->AsArray()->GetByteStringAt(index);
 
   return NulTerminateMaybeCopyAndReturnLength(bsFilter, buffer, buflen);
 }

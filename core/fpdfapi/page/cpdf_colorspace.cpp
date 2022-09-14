@@ -1111,7 +1111,7 @@ void CPDF_SeparationCS::GetDefaultValue(int iComponent,
 uint32_t CPDF_SeparationCS::v_Load(CPDF_Document* pDoc,
                                    const CPDF_Array* pArray,
                                    std::set<const CPDF_Object*>* pVisited) {
-  m_IsNoneType = pArray->GetStringAt(1) == "None";
+  m_IsNoneType = pArray->GetByteStringAt(1) == "None";
   if (m_IsNoneType)
     return 1;
 

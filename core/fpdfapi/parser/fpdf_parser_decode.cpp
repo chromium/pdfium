@@ -106,7 +106,7 @@ bool ValidateDecoderPipeline(const CPDF_Array* pDecoders) {
       "FlateDecode",    "Fl",  "LZWDecode",       "LZW", "ASCII85Decode", "A85",
       "ASCIIHexDecode", "AHx", "RunLengthDecode", "RL"};
   for (size_t i = 0; i < count - 1; ++i) {
-    if (!pdfium::Contains(kValidDecoders, pDecoders->GetStringAt(i)))
+    if (!pdfium::Contains(kValidDecoders, pDecoders->GetByteStringAt(i)))
       return false;
   }
   return true;
@@ -384,7 +384,7 @@ absl::optional<DecoderArray> GetDecoderArray(const CPDF_Dictionary* pDict) {
     for (size_t i = 0; i < pDecoders->size(); ++i) {
       // TODO(tsepez): push retained arguments.
       decoder_array.push_back(
-          {pDecoders->GetStringAt(i),
+          {pDecoders->GetByteStringAt(i),
            pParamsArray ? pParamsArray->GetDictAt(i).Get() : nullptr});
     }
   } else {

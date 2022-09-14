@@ -55,7 +55,7 @@ class CPDF_Array final : public CPDF_Object {
   // The Get*At() methods tolerate out-of-bounds indices and return nullptr
   // in those cases. Furthermore, these safely coerce to the sub-class,
   // returning nullptr if the object at the location is of a different type.
-  ByteString GetStringAt(size_t index) const;
+  ByteString GetByteStringAt(size_t index) const;
   WideString GetUnicodeTextAt(size_t index) const;
   bool GetBooleanAt(size_t index, bool bDefault) const;
   int GetIntegerAt(size_t index) const;
