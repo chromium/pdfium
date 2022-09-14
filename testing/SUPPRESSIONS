@@ -375,9 +375,6 @@ jetman_std_fixed.pdf mac * * *
 js_calculate.pdf * * * *
 list_box.pdf * * * *
 
-# TODO(pdfium:1861): Remove after associated bug is fixed
-mask_array.pdf * * * skia
-
 negative.pdf mac * * *
 new_certify1.pdf mac * * *
 
