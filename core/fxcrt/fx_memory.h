@@ -106,6 +106,8 @@ inline T FxAlignToBoundary(T size) {
   return (size + (N - 1)) & ~(N - 1);
 }
 
+size_t Fx2DSizeOrDie(size_t w, size_t h);
+
 #endif  // __cplusplus
 
 #endif  // CORE_FXCRT_FX_MEMORY_H_

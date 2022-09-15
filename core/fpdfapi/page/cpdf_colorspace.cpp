@@ -33,6 +33,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
@@ -998,10 +999,8 @@ void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
     return;
   }
   if (m_pCache.empty()) {
-    m_pCache =
-        fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(nMaxColors, 3);
-    auto temp_src = fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(
-        nMaxColors, nComponents);
+    m_pCache.resize(Fx2DSizeOrDie(nMaxColors, 3));
+    DataVector<uint8_t> temp_src(Fx2DSizeOrDie(nMaxColors, nComponents));
     size_t src_index = 0;
     for (int i = 0; i < nMaxColors; i++) {
       uint32_t color = i;

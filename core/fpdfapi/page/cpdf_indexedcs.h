@@ -6,10 +6,10 @@
 #define CORE_FPDFAPI_PAGE_CPDF_INDEXEDCS_H_
 
 #include <set>
-#include <vector>
 
 #include "core/fpdfapi/page/cpdf_basedcs.h"
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Document;
@@ -37,7 +37,7 @@ class CPDF_IndexedCS final : public CPDF_BasedCS {
   uint32_t m_nBaseComponents = 0;
   int m_MaxIndex = 0;
   ByteString m_Table;
-  std::vector<float> m_pCompMinMax;
+  DataVector<float> m_pCompMinMax;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_INDEXEDCS_H_

@@ -13,6 +13,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/debug/alias.h"
+#include "third_party/base/numerics/safe_math.h"
 
 #if BUILDFLAG(IS_WIN)
 #include <windows.h>
@@ -101,3 +102,9 @@ void* StringAllocOrDie(size_t num_members, size_t member_size) {
 }
 }  // namespace internal
 }  // namespace pdfium
+
+size_t Fx2DSizeOrDie(size_t w, size_t h) {
+  pdfium::base::CheckedNumeric<size_t> safe_size = w;
+  safe_size *= h;
+  return safe_size.ValueOrDie();
+}

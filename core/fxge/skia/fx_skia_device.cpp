@@ -25,6 +25,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/cfx_bitstream.h"
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/stl_util.h"
@@ -419,8 +420,8 @@ bool AddColors(const CPDF_ExpIntFunc* pFunc,
   if (pFunc->GetOrigOutputs() != 3)
     return false;
 
-  auto begin_values = pFunc->GetBeginValues();
-  auto end_values = pFunc->GetEndValues();
+  pdfium::span<const float> begin_values = pFunc->GetBeginValues();
+  pdfium::span<const float> end_values = pFunc->GetEndValues();
   if (is_encode_reversed)
     std::swap(begin_values, end_values);
 
@@ -677,8 +678,7 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
   int rowBytes = pSource->GetPitch();
   switch (pSource->GetBPP()) {
     case 1: {
-      dst8_storage =
-          fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(width, height);
+      dst8_storage = DataVector<uint8_t>(Fx2DSizeOrDie(width, height));
       pdfium::span<uint8_t> dst8_pixels(dst8_storage);
       // By default, the two colors for grayscale are 0xFF and 0x00 unless they
       // are specified in the palette.
@@ -708,8 +708,7 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
     case 8:
       // we upscale ctables to 32bit.
       if (pSource->HasPalette()) {
-        dst32_storage = fxcrt::Vector2D<uint32_t, FxAllocAllocator<uint32_t>>(
-            width, height);
+        dst32_storage = DataVector<uint32_t>(Fx2DSizeOrDie(width, height));
         pdfium::span<SkPMColor> dst32_pixels(dst32_storage);
         const size_t src_palette_size = pSource->GetRequiredPaletteSize();
         pdfium::span<const uint32_t> src_palette = pSource->GetPaletteSpan();
@@ -732,8 +731,7 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
       }
       break;
     case 24: {
-      dst32_storage =
-          fxcrt::Vector2D<uint32_t, FxAllocAllocator<uint32_t>>(width, height);
+      dst32_storage = DataVector<uint32_t>(Fx2DSizeOrDie(width, height));
       pdfium::span<uint32_t> dst32_pixels(dst32_storage);
       for (int y = 0; y < height; ++y) {
         const uint8_t* srcRow =

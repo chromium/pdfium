@@ -6,10 +6,8 @@
 #define CORE_FXCRT_STL_UTIL_H_
 
 #include <memory>
-#include <vector>
 
 #include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/numerics/safe_math.h"
 
 namespace fxcrt {
 
@@ -34,14 +32,6 @@ ResultType CollectionSize(const Collection& collection) {
 template <typename IndexType, typename Collection>
 bool IndexInBounds(const Collection& collection, IndexType index) {
   return index >= 0 && index < CollectionSize<IndexType>(collection);
-}
-
-// Safely allocate a 1-dim vector big enough for |w| by |h| or die.
-template <typename T, typename A = std::allocator<T>>
-std::vector<T, A> Vector2D(size_t w, size_t h) {
-  pdfium::base::CheckedNumeric<size_t> safe_size = w;
-  safe_size *= h;
-  return std::vector<T, A>(safe_size.ValueOrDie());
 }
 
 }  // namespace fxcrt

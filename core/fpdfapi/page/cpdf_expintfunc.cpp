@@ -11,6 +11,8 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/stl_util.h"
 
@@ -38,8 +40,8 @@ bool CPDF_ExpIntFunc::v_Init(const CPDF_Object* pObj,
     m_nOutputs = 1;
 
   const CPDF_Array* pArray1 = pDict->GetArrayFor("C1");
-  m_BeginValues = fxcrt::Vector2D<float>(m_nOutputs, 2);
-  m_EndValues = fxcrt::Vector2D<float>(m_nOutputs, 2);
+  m_BeginValues = DataVector<float>(Fx2DSizeOrDie(m_nOutputs, 2));
+  m_EndValues = DataVector<float>(m_BeginValues.size());
   for (uint32_t i = 0; i < m_nOutputs; i++) {
     m_BeginValues[i] = pArray0 ? pArray0->GetFloatAt(i) : 0.0f;
     m_EndValues[i] = pArray1 ? pArray1->GetFloatAt(i) : 1.0f;

@@ -5,6 +5,7 @@
 #include "core/fpdfapi/page/cpdf_indexedcs.h"
 
 #include <set>
+#include <vector>
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
@@ -14,9 +15,10 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxcrt/stl_util.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/span.h"
 
@@ -51,7 +53,7 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
     return 0;
 
   m_nBaseComponents = m_pBaseCS->CountComponents();
-  m_pCompMinMax = fxcrt::Vector2D<float>(m_nBaseComponents, 2);
+  m_pCompMinMax = DataVector<float>(Fx2DSizeOrDie(m_nBaseComponents, 2));
   float defvalue;
   for (uint32_t i = 0; i < m_nBaseComponents; i++) {
     m_pBaseCS->GetDefaultValue(i, &defvalue, &m_pCompMinMax[i * 2],

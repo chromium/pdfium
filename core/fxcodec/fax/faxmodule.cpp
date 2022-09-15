@@ -16,7 +16,7 @@
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/binary_buffer.h"
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/stl_util.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxge/calculate_pitch.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
@@ -708,8 +708,7 @@ FaxEncoder::FaxEncoder(pdfium::span<const uint8_t> src_span,
       m_Rows(height),
       m_Pitch(pitch),
       m_InitialRefLine(m_Pitch, 0xff),
-      m_LineBuf(
-          fxcrt::Vector2D<uint8_t, FxAllocAllocator<uint8_t>>(8, m_Pitch)),
+      m_LineBuf(Fx2DSizeOrDie(8, m_Pitch)),
       m_RefLineSpan(m_InitialRefLine) {
   m_DestBuf.SetAllocStep(10240);
 }

@@ -8,9 +8,9 @@
 #define CORE_FPDFAPI_PAGE_CPDF_EXPINTFUNC_H_
 
 #include <set>
-#include <vector>
 
 #include "core/fpdfapi/page/cpdf_function.h"
+#include "core/fxcrt/data_vector.h"
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
 #include "third_party/base/span.h"
@@ -38,8 +38,8 @@ class CPDF_ExpIntFunc final : public CPDF_Function {
  private:
   uint32_t m_nOrigOutputs = 0;
   float m_Exponent = 0.0f;
-  std::vector<float> m_BeginValues;
-  std::vector<float> m_EndValues;
+  DataVector<float> m_BeginValues;
+  DataVector<float> m_EndValues;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_EXPINTFUNC_H_
