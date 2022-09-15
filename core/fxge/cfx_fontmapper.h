@@ -14,11 +14,14 @@
 #include "build/build_config.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_codepage_forward.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_face.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
+
+#ifdef PDF_ENABLE_XFA
+#include "core/fxcrt/fixed_uninit_data_vector.h"
+#endif
 
 class CFX_FontMgr;
 class CFX_SubstFont;
@@ -85,9 +88,7 @@ class CFX_FontMapper {
 
 #ifdef PDF_ENABLE_XFA
   // `index` must be less than GetFaceSize().
-  std::unique_ptr<uint8_t, FxFreeDeleter> RawBytesForIndex(
-      size_t index,
-      size_t* returned_length);
+  FixedUninitDataVector<uint8_t> RawBytesForIndex(size_t index);
 #endif  // PDF_ENABLE_XFA
 
  private:
