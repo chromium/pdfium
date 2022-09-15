@@ -422,16 +422,6 @@ if (current_cpu == "x86" || current_cpu == "x64") {
     }
     visibility = [ ":skia_opts" ]
   }
-  skia_source_set("skia_opts_sse41") {
-    sources = skia_opts.sse41_sources
-    if (!is_win || is_clang) {
-      cflags = [ "-msse4.1" ]
-    }
-    if (is_win) {
-      defines = [ "SK_CPU_SSE_LEVEL=41" ]
-    }
-    visibility = [ ":skia_opts" ]
-  }
   skia_source_set("skia_opts_sse42") {
     sources = skia_opts.sse42_sources
     if (!is_win || is_clang) {
@@ -485,13 +475,11 @@ skia_source_set("skia_opts") {
   defines = []
 
   if (current_cpu == "x86" || current_cpu == "x64") {
-    sources = skia_opts.sse2_sources
     deps = [
       ":skia_opts_avx",
       ":skia_opts_hsw",
       ":skia_opts_skx",
       ":skia_opts_sse3",
-      ":skia_opts_sse41",
       ":skia_opts_sse42",
     ]
   } else if (current_cpu == "arm") {
@@ -500,10 +488,7 @@ skia_source_set("skia_opts") {
     cflags += [ "-fomit-frame-pointer" ]
 
     if (arm_version >= 7) {
-      sources = skia_opts.armv7_sources
       if (arm_use_neon || arm_optionally_use_neon) {
-        sources += skia_opts.neon_sources
-
         # Root build config sets -mfpu=$arm_fpu, which we expect to be neon
         # when running this.
         if (!arm_use_neon) {
@@ -511,24 +496,13 @@ skia_source_set("skia_opts") {
           cflags += [ "-mfpu=neon" ]
         }
       }
-    } else {
-      sources = skia_opts.none_sources
     }
   } else if (current_cpu == "arm64") {
-    sources = skia_opts.arm64_sources
-  } else if (current_cpu == "mipsel") {
+    # Conditional and empty body needed to avoid assert() below.
+  } else if (current_cpu == "mipsel" || current_cpu == "mips64el") {
     cflags += [ "-fomit-frame-pointer" ]
-
-    if (mips_dsp_rev >= 1) {
-      sources = skia_opts.mips_dsp_sources
-    } else {
-      sources = skia_opts.none_sources
-    }
-  } else if (current_cpu == "mips64el") {
-    cflags += [ "-fomit-frame-pointer" ]
-    sources = skia_opts.none_sources
   } else {
-    assert(false, "Need to port cpu specific stuff from gn/BUILDCONFIG.gn")
+    assert(false, "Unsupported target CPU " + current_cpu)
   }
 
   if (is_android && !is_debug) {
