@@ -50,7 +50,7 @@ class CFX_FileBufferArchive final : public IFX_ArchiveStream {
   FX_FILESIZE offset_ = 0;
   DataVector<uint8_t> buffer_;
   pdfium::span<uint8_t> available_;
-  RetainPtr<IFX_RetainableWriteStream> backing_file_;
+  RetainPtr<IFX_RetainableWriteStream> const backing_file_;
 };
 
 CFX_FileBufferArchive::CFX_FileBufferArchive(
@@ -68,8 +68,6 @@ CFX_FileBufferArchive::~CFX_FileBufferArchive() {
 bool CFX_FileBufferArchive::Flush() {
   size_t nUsed = buffer_.size() - available_.size();
   available_ = pdfium::make_span(buffer_);
-  if (!backing_file_)
-    return false;
   if (!nUsed)
     return true;
   return backing_file_->WriteBlock(buffer_.data(), nUsed);
