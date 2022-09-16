@@ -164,6 +164,21 @@ static_assert(static_cast<int>(CPDF_Object::Type::kReference) ==
                   FPDF_OBJECT_REFERENCE,
               "CPDF_Object::kReference value mismatch");
 
+// These checks ensure the consistency of annotation additional action event
+// values across core/ and public.
+static_assert(static_cast<int>(CPDF_AAction::kKeyStroke) ==
+                  FPDF_ANNOT_AACTION_KEY_STROKE,
+              "CPDF_AAction::kKeyStroke value mismatch");
+static_assert(static_cast<int>(CPDF_AAction::kFormat) ==
+                  FPDF_ANNOT_AACTION_FORMAT,
+              "CPDF_AAction::kFormat value mismatch");
+static_assert(static_cast<int>(CPDF_AAction::kValidate) ==
+                  FPDF_ANNOT_AACTION_VALIDATE,
+              "CPDF_AAction::kValidate value mismatch");
+static_assert(static_cast<int>(CPDF_AAction::kCalculate) ==
+                  FPDF_ANNOT_AACTION_CALCULATE,
+              "CPDF_AAction::kCalculate value mismatch");
+
 bool HasAPStream(CPDF_Dictionary* pAnnotDict) {
   return !!GetAnnotAP(pAnnotDict, CPDF_Annot::AppearanceMode::kNormal);
 }
@@ -1221,6 +1236,28 @@ FPDF_EXPORT int FPDF_CALLCONV
 FPDFAnnot_GetFormFieldType(FPDF_FORMHANDLE hHandle, FPDF_ANNOTATION annot) {
   const CPDF_FormField* pFormField = GetFormField(hHandle, annot);
   return pFormField ? static_cast<int>(pFormField->GetFieldType()) : -1;
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAnnot_GetFormAdditionalActionJavaScript(FPDF_FORMHANDLE hHandle,
+                                            FPDF_ANNOTATION annot,
+                                            int event,
+                                            FPDF_WCHAR* buffer,
+                                            unsigned long buflen) {
+  const CPDF_FormField* pFormField = GetFormField(hHandle, annot);
+  if (!pFormField)
+    return 0;
+
+  if (event < FPDF_ANNOT_AACTION_KEY_STROKE ||
+      event > FPDF_ANNOT_AACTION_CALCULATE) {
+    return 0;
+  }
+
+  auto type = static_cast<CPDF_AAction::AActionType>(event);
+  CPDF_AAction additional_action = pFormField->GetAdditionalAction();
+  CPDF_Action action = additional_action.GetAction(type);
+  return Utf16EncodeMaybeCopyAndReturnLength(action.GetJavaScript(), buffer,
+                                             buflen);
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV

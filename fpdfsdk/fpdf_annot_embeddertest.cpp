@@ -3612,6 +3612,42 @@ TEST_F(FPDFAnnotEmbedderTest, AnnotationBorder) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFAnnotEmbedderTest, AnnotationJavaScript) {
+  ASSERT_TRUE(OpenDocument("annot_javascript.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    // FPDFAnnot_GetFormAdditionalActionJavaScript() positive testing.
+    unsigned long length_bytes = FPDFAnnot_GetFormAdditionalActionJavaScript(
+        form_handle(), annot.get(), FPDF_ANNOT_AACTION_FORMAT, nullptr, 0);
+    ASSERT_EQ(62u, length_bytes);
+    std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
+    EXPECT_EQ(62u, FPDFAnnot_GetFormAdditionalActionJavaScript(
+                       form_handle(), annot.get(), FPDF_ANNOT_AACTION_FORMAT,
+                       buf.data(), length_bytes));
+    EXPECT_EQ(L"AFDate_FormatEx(\"yyyy-mm-dd\");",
+              GetPlatformWString(buf.data()));
+
+    // FPDFAnnot_GetFormAdditionalActionJavaScript() negative testing.
+    EXPECT_EQ(0u, FPDFAnnot_GetFormAdditionalActionJavaScript(
+                      form_handle(), nullptr, 0, nullptr, 0));
+    EXPECT_EQ(0u, FPDFAnnot_GetFormAdditionalActionJavaScript(
+                      nullptr, annot.get(), 0, nullptr, 0));
+    EXPECT_EQ(0u, FPDFAnnot_GetFormAdditionalActionJavaScript(
+                      form_handle(), annot.get(), 0, nullptr, 0));
+    EXPECT_EQ(2u, FPDFAnnot_GetFormAdditionalActionJavaScript(
+                      form_handle(), annot.get(), FPDF_ANNOT_AACTION_KEY_STROKE,
+                      nullptr, 0));
+  }
+
+  UnloadPage(page);
+}
+
 // Due to https://crbug.com/pdfium/570, the AnnotationBorder test above cannot
 // actually render the line annotations inside line_annot.pdf. For now, use a
 // square annotation in annots.pdf for testing.
