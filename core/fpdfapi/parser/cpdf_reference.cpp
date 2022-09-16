@@ -22,22 +22,22 @@ CPDF_Object::Type CPDF_Reference::GetType() const {
 }
 
 ByteString CPDF_Reference::GetString() const {
-  RetainPtr<const CPDF_Object> obj = SafeGetDirect();
+  const CPDF_Object* obj = FastGetDirect();
   return obj ? obj->GetString() : ByteString();
 }
 
 float CPDF_Reference::GetNumber() const {
-  RetainPtr<const CPDF_Object> obj = SafeGetDirect();
+  const CPDF_Object* obj = FastGetDirect();
   return obj ? obj->GetNumber() : 0;
 }
 
 int CPDF_Reference::GetInteger() const {
-  RetainPtr<const CPDF_Object> obj = SafeGetDirect();
+  const CPDF_Object* obj = FastGetDirect();
   return obj ? obj->GetInteger() : 0;
 }
 
 RetainPtr<const CPDF_Dictionary> CPDF_Reference::GetDict() const {
-  RetainPtr<const CPDF_Object> obj = SafeGetDirect();
+  const CPDF_Object* obj = FastGetDirect();
   return obj ? obj->GetDict() : nullptr;
 }
 
@@ -62,8 +62,11 @@ RetainPtr<CPDF_Object> CPDF_Reference::CloneNonCyclic(
              : nullptr;
 }
 
-RetainPtr<const CPDF_Object> CPDF_Reference::SafeGetDirect() const {
-  RetainPtr<const CPDF_Object> obj = GetDirect();
+const CPDF_Object* CPDF_Reference::FastGetDirect() const {
+  if (!m_pObjList)
+    return nullptr;
+  const CPDF_Object* obj =
+      m_pObjList->GetOrParseIndirectObjectInternal(m_RefObjNum);
   return (obj && !obj->IsReference()) ? obj : nullptr;
 }
 
