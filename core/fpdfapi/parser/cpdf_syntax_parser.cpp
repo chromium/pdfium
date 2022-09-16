@@ -24,6 +24,8 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/autorestorer.h"
+#include "core/fxcrt/cfx_read_only_vector_stream.h"
+#include "core/fxcrt/fixed_uninit_data_vector.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/check.h"
@@ -722,7 +724,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
       len = -1;
   }
 
-  RetainPtr<IFX_SeekableReadStream> data;
+  RetainPtr<IFX_SeekableReadStream> substream;
   if (len > 0) {
     // Check data availability first to allow the Validator to request data
     // smoothly, without jumps.
@@ -731,7 +733,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
       return nullptr;
     }
 
-    data = pdfium::MakeRetain<ReadableSubStream>(
+    substream = pdfium::MakeRetain<ReadableSubStream>(
         GetValidator(), m_HeaderOffset + GetPos(), len);
     SetPos(GetPos() + len);
   }
@@ -754,7 +756,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     // specified length, it signals the end of stream.
     if (memcmp(m_WordBuffer, kEndStreamStr.raw_str(),
                kEndStreamStr.GetLength()) != 0) {
-      data.Reset();
+      substream.Reset();
       len = -1;
       SetPos(streamStartPos);
     }
@@ -778,16 +780,27 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
         return nullptr;
       }
 
-      data = pdfium::MakeRetain<ReadableSubStream>(
+      substream = pdfium::MakeRetain<ReadableSubStream>(
           GetValidator(), m_HeaderOffset + GetPos(), len);
       SetPos(GetPos() + len);
     }
   }
 
   RetainPtr<CPDF_Stream> pStream;
-  if (data) {
+  if (substream) {
+    // It is unclear from CPDF_SyntaxParser's perspective what object
+    // `substream` is ultimately holding references to. To avoid unexpectedly
+    // changing object lifetimes by handing `substream` to `pStream`, make a
+    // copy of the data here.
+    FixedUninitDataVector<uint8_t> data(substream->GetSize());
+    bool did_read = substream->ReadBlockAtOffset(data.writable_span().data(), 0,
+                                                 data.size());
+    CHECK(did_read);
+    auto data_as_stream =
+        pdfium::MakeRetain<CFX_ReadOnlyVectorStream>(std::move(data));
+
     pStream = pdfium::MakeRetain<CPDF_Stream>();
-    pStream->InitStreamFromFile(std::move(data), std::move(pDict));
+    pStream->InitStreamFromFile(std::move(data_as_stream), std::move(pDict));
   } else {
     DCHECK(!len);
     pStream = pdfium::MakeRetain<CPDF_Stream>(pdfium::span<const uint8_t>(),
