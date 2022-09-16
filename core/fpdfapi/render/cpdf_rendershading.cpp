@@ -877,7 +877,8 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
                               int alpha,
                               const CPDF_RenderOptions& options) {
   const auto& funcs = pPattern->GetFuncs();
-  const CPDF_Dictionary* pDict = pPattern->GetShadingObject()->GetDict();
+  RetainPtr<const CPDF_Dictionary> pDict =
+      pPattern->GetShadingObject()->GetDict();
   RetainPtr<CPDF_ColorSpace> pColorSpace = pPattern->GetCS();
   if (!pColorSpace)
     return;
@@ -924,13 +925,16 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
     case kMaxShading:
       return;
     case kFunctionBasedShading:
-      DrawFuncShading(pBitmap, FinalMatrix, pDict, funcs, pColorSpace, alpha);
+      DrawFuncShading(pBitmap, FinalMatrix, pDict.Get(), funcs, pColorSpace,
+                      alpha);
       break;
     case kAxialShading:
-      DrawAxialShading(pBitmap, FinalMatrix, pDict, funcs, pColorSpace, alpha);
+      DrawAxialShading(pBitmap, FinalMatrix, pDict.Get(), funcs, pColorSpace,
+                       alpha);
       break;
     case kRadialShading:
-      DrawRadialShading(pBitmap, FinalMatrix, pDict, funcs, pColorSpace, alpha);
+      DrawRadialShading(pBitmap, FinalMatrix, pDict.Get(), funcs, pColorSpace,
+                        alpha);
       break;
     case kFreeFormGouraudTriangleMeshShading: {
       // The shading object can be a stream or a dictionary. We do not handle

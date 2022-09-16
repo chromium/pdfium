@@ -64,7 +64,7 @@ class CPDF_Object : public Retainable {
   virtual WideString GetUnicodeText() const;
   virtual float GetNumber() const;
   virtual int GetInteger() const;
-  virtual const CPDF_Dictionary* GetDict() const;
+  virtual RetainPtr<const CPDF_Dictionary> GetDict() const;
 
   virtual void SetString(const ByteString& str);
 

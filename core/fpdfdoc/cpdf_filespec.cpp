@@ -162,7 +162,8 @@ const CPDF_Dictionary* CPDF_FileSpec::GetParamsDict() const {
   if (!pStream)
     return nullptr;
 
-  const CPDF_Dictionary* pDict = pStream->GetDict();
+  // TODO(tsepez): return retained reference.
+  RetainPtr<const CPDF_Dictionary> pDict = pStream->GetDict();
   return pDict ? pDict->GetDictFor("Params") : nullptr;
 }
 

@@ -474,11 +474,11 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
     return GetStockCSForName(pObj->GetString());
 
   if (const CPDF_Stream* pStream = pObj->AsStream()) {
-    const CPDF_Dictionary* pDict = pStream->GetDict();
+    RetainPtr<const CPDF_Dictionary> pDict = pStream->GetDict();
     if (!pDict)
       return nullptr;
 
-    CPDF_DictionaryLocker locker(pDict);
+    CPDF_DictionaryLocker locker(std::move(pDict));
     for (const auto& it : locker) {
       CPDF_Name* pValue = ToName(it.second.Get());
       if (pValue) {
@@ -901,7 +901,7 @@ uint32_t CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc,
   // The PDF 1.7 spec says the number of components must be valid. While some
   // PDF viewers tolerate invalid values, Acrobat does not, so be consistent
   // with Acrobat and reject bad values.
-  const CPDF_Dictionary* pDict = pStream->GetDict();
+  RetainPtr<const CPDF_Dictionary> pDict = pStream->GetDict();
   int32_t nDictComponents = pDict ? pDict->GetIntegerFor("N") : 0;
   if (!IsValidIccComponents(nDictComponents))
     return 0;
@@ -923,14 +923,14 @@ uint32_t CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc,
   // SRGB, a profile PDFium recognizes but does not support well, then try the
   // alternate profile.
   if (!m_pProfile->IsSupported() &&
-      !FindAlternateProfile(pDoc, pDict, pVisited, nComponents)) {
+      !FindAlternateProfile(pDoc, pDict.Get(), pVisited, nComponents)) {
     // If there is no alternate profile, use a stock profile as mentioned in
     // the PDF 1.7 spec in table 4.16 in the "Alternate" key description.
     DCHECK(!m_pBaseCS);
     m_pBaseCS = GetStockAlternateProfile(nComponents);
   }
 
-  m_pRanges = GetRanges(pDict, nComponents);
+  m_pRanges = GetRanges(pDict.Get(), nComponents);
   return nComponents;
 }
 

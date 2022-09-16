@@ -72,10 +72,10 @@ int CPDF_Object::GetInteger() const {
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_Object::GetMutableDict() {
-  return pdfium::WrapRetain(const_cast<CPDF_Dictionary*>(GetDict()));
+  return pdfium::WrapRetain(const_cast<CPDF_Dictionary*>(GetDict().Get()));
 }
 
-const CPDF_Dictionary* CPDF_Object::GetDict() const {
+RetainPtr<const CPDF_Dictionary> CPDF_Object::GetDict() const {
   return nullptr;
 }
 

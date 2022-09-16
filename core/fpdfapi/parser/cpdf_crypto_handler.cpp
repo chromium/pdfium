@@ -243,7 +243,7 @@ bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
   while (object_to_decrypt) {
     CPDF_NonConstObjectWalker walker(std::move(object_to_decrypt));
     while (RetainPtr<CPDF_Object> child = walker.GetNext()) {
-      const CPDF_Dictionary* parent_dict =
+      RetainPtr<const CPDF_Dictionary> parent_dict =
           walker.GetParent() ? walker.GetParent()->GetDict() : nullptr;
       if (walker.dictionary_key() == kContentsKey &&
           (parent_dict->KeyExist(kTypeKey) ||
@@ -254,7 +254,7 @@ bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
         // Temporary skip it, to prevent signature corruption.
         // It will be decrypted on next interations, if this is not contents of
         // signature dictionary.
-        may_be_sign_dictionaries.push({parent_dict, std::move(child)});
+        may_be_sign_dictionaries.push({parent_dict.Get(), std::move(child)});
         walker.SkipWalkIntoCurrentObject();
         continue;
       }

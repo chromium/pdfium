@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/parser/cpdf_reference.h"
 
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fxcrt/fx_stream.h"
 #include "third_party/base/check_op.h"
@@ -35,7 +36,7 @@ int CPDF_Reference::GetInteger() const {
   return obj ? obj->GetInteger() : 0;
 }
 
-const CPDF_Dictionary* CPDF_Reference::GetDict() const {
+RetainPtr<const CPDF_Dictionary> CPDF_Reference::GetDict() const {
   RetainPtr<const CPDF_Object> obj = SafeGetDirect();
   return obj ? obj->GetDict() : nullptr;
 }

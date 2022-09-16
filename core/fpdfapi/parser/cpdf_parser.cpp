@@ -729,7 +729,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
   if (!pStream)
     return false;
 
-  const CPDF_Dictionary* pDict = pStream->GetDict();
+  RetainPtr<const CPDF_Dictionary> pDict = pStream->GetDict();
   int32_t prev = pDict->GetIntegerFor("Prev");
   if (prev < 0)
     return false;
@@ -854,10 +854,11 @@ const CPDF_Array* CPDF_Parser::GetIDArray() const {
   return GetTrailer() ? GetTrailer()->GetArrayFor("ID") : nullptr;
 }
 
+// TODO(tsepez): return retained object, though not clear if it can change.
 const CPDF_Dictionary* CPDF_Parser::GetRoot() const {
   RetainPtr<CPDF_Object> obj =
       m_pObjectsHolder->GetOrParseIndirectObject(GetRootObjNum());
-  return obj ? obj->GetDict() : nullptr;
+  return obj ? obj->GetDict().Get() : nullptr;
 }
 
 const CPDF_Dictionary* CPDF_Parser::GetEncryptDict() const {

@@ -440,7 +440,7 @@ FPDF_StructElement_GetMarkedContentIdAtIndex(FPDF_STRUCTELEMENT struct_element,
     return index == 0 ? p->GetInteger() : -1;
 
   if (p->IsDictionary())
-    return GetMcidFromDict(p->GetDict());
+    return GetMcidFromDict(p->GetDict().Get());
 
   if (p->IsArray()) {
     const CPDF_Array* array = p->AsArray();
@@ -450,7 +450,7 @@ FPDF_StructElement_GetMarkedContentIdAtIndex(FPDF_STRUCTELEMENT struct_element,
     if (array_elem->IsNumber())
       return array_elem->GetInteger();
     if (array_elem->IsDictionary()) {
-      return GetMcidFromDict(array_elem->GetDict());
+      return GetMcidFromDict(array_elem->GetDict().Get());
     }
   }
   return -1;

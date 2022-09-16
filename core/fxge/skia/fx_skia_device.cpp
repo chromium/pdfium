@@ -2194,7 +2194,8 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
   size_t nFuncs = pFuncs.size();
   if (nFuncs > 1)  // TODO(caryclark) remove this restriction
     return false;
-  const CPDF_Dictionary* pDict = pPattern->GetShadingObject()->GetDict();
+  RetainPtr<const CPDF_Dictionary> pDict =
+      pPattern->GetShadingObject()->GetDict();
   const CPDF_Array* pCoords = pDict->GetArrayFor("Coords");
   if (!pCoords && kCoonsPatchMeshShading != shadingType)
     return false;

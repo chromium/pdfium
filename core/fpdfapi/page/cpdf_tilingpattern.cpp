@@ -32,7 +32,7 @@ CPDF_TilingPattern* CPDF_TilingPattern::AsTilingPattern() {
 }
 
 std::unique_ptr<CPDF_Form> CPDF_TilingPattern::Load(CPDF_PageObject* pPageObj) {
-  const CPDF_Dictionary* pDict = pattern_obj()->GetDict();
+  RetainPtr<const CPDF_Dictionary> pDict = pattern_obj()->GetDict();
   m_bColored = pDict->GetIntegerFor("PaintType") == 1;
   m_XStep = fabsf(pDict->GetFloatFor("XStep"));
   m_YStep = fabsf(pDict->GetFloatFor("YStep"));

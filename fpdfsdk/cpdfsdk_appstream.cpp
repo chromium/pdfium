@@ -1810,7 +1810,7 @@ void CPDFSDK_AppStream::AddImage(const ByteString& sAPType,
   RetainPtr<CPDF_Dictionary> pStreamDict = pStream->GetMutableDict();
   ByteString sImageAlias = "IMG";
 
-  const CPDF_Dictionary* pImageDict = pImage->GetDict();
+  RetainPtr<const CPDF_Dictionary> pImageDict = pImage->GetDict();
   if (pImageDict)
     sImageAlias = pImageDict->GetByteStringFor("Name");
 

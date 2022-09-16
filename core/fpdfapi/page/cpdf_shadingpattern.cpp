@@ -50,7 +50,7 @@ bool CPDF_ShadingPattern::Load() {
     return true;
 
   const CPDF_Object* pShadingObj = GetShadingObject();
-  const CPDF_Dictionary* pShadingDict =
+  RetainPtr<const CPDF_Dictionary> pShadingDict =
       pShadingObj ? pShadingObj->GetDict() : nullptr;
   if (!pShadingDict)
     return false;

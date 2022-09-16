@@ -364,7 +364,8 @@ uint32_t FlateOrLZWDecode(bool bLZW,
                                        estimated_size, dest_buf, dest_size);
 }
 
-absl::optional<DecoderArray> GetDecoderArray(const CPDF_Dictionary* pDict) {
+absl::optional<DecoderArray> GetDecoderArray(
+    RetainPtr<const CPDF_Dictionary> pDict) {
   RetainPtr<const CPDF_Object> pFilter = pDict->GetDirectObjectFor("Filter");
   if (!pFilter)
     return DecoderArray();
@@ -390,7 +391,7 @@ absl::optional<DecoderArray> GetDecoderArray(const CPDF_Dictionary* pDict) {
   } else {
     DCHECK(pFilter->IsName());
     decoder_array.push_back(
-        {pFilter->GetString(), pParams ? pParams->GetDict() : nullptr});
+        {pFilter->GetString(), pParams ? pParams->GetDict().Get() : nullptr});
   }
 
   return decoder_array;

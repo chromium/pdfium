@@ -48,7 +48,7 @@ bool CPDF_SampledFunc::v_Init(const CPDF_Object* pObj,
   if (!pStream)
     return false;
 
-  const CPDF_Dictionary* pDict = pStream->GetDict();
+  RetainPtr<const CPDF_Dictionary> pDict = pStream->GetDict();
   const CPDF_Array* pSize = pDict->GetArrayFor("Size");
   if (!pSize || pSize->IsEmpty())
     return false;

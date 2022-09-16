@@ -173,7 +173,7 @@ bool CPDF_CrossRefAvail::CheckCrossRefStream() {
   if (CheckReadProblems())
     return false;
 
-  const CPDF_Dictionary* trailer =
+  RetainPtr<const CPDF_Dictionary> trailer =
       cross_ref && cross_ref->IsStream() ? cross_ref->GetDict() : nullptr;
   if (!trailer) {
     status_ = CPDF_DataAvail::kDataError;

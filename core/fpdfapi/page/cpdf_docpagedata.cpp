@@ -337,7 +337,7 @@ RetainPtr<CPDF_Pattern> CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
   if (it != m_PatternMap.end() && it->second)
     return pdfium::WrapRetain(it->second.Get());
 
-  const CPDF_Dictionary* pDict = pPatternObj->GetDict();
+  RetainPtr<const CPDF_Dictionary> pDict = pPatternObj->GetDict();
   if (!pDict)
     return nullptr;
 
@@ -424,7 +424,7 @@ RetainPtr<CPDF_StreamAcc> CPDF_DocPageData::GetFontFileStreamAcc(
   if (it != m_FontFileMap.end())
     return it->second;
 
-  const CPDF_Dictionary* pFontDict = pFontStream->GetDict();
+  RetainPtr<const CPDF_Dictionary> pFontDict = pFontStream->GetDict();
   int32_t len1 = pFontDict->GetIntegerFor("Length1");
   int32_t len2 = pFontDict->GetIntegerFor("Length2");
   int32_t len3 = pFontDict->GetIntegerFor("Length3");

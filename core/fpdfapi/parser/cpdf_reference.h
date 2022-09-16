@@ -26,7 +26,7 @@ class CPDF_Reference final : public CPDF_Object {
   ByteString GetString() const override;
   float GetNumber() const override;
   int GetInteger() const override;
-  const CPDF_Dictionary* GetDict() const override;
+  RetainPtr<const CPDF_Dictionary> GetDict() const override;
   CPDF_Reference* AsMutableReference() override;
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;

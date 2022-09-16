@@ -21,11 +21,12 @@ class StreamIterator final : public CPDF_ObjectWalker::SubobjectIterator {
 
   bool IsFinished() const override { return IsStarted() && is_finished_; }
 
+  // TODO(tsepez): return retained reference.
   const CPDF_Object* IncrementImpl() override {
     DCHECK(IsStarted());
     DCHECK(!IsFinished());
     is_finished_ = true;
-    return object()->GetDict();
+    return object()->GetDict().Get();
   }
 
   void Start() override {}

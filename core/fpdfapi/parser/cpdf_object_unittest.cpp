@@ -162,7 +162,7 @@ class PDFObjectsTest : public testing::Test {
         if (!stream1->GetDict() && !stream2->GetDict())
           return true;
         // Compare dictionaries.
-        if (!Equal(stream1->GetDict(), stream2->GetDict()))
+        if (!Equal(stream1->GetDict().Get(), stream2->GetDict().Get()))
           return false;
 
         auto streamAcc1 =
@@ -275,7 +275,7 @@ TEST_F(PDFObjectsTest, GetDict) {
                                                          m_DictObj.Get(),
                                                          m_StreamDictObj.Get()};
   for (size_t i = 0; i < m_RefObjs.size(); ++i)
-    EXPECT_TRUE(Equal(indirect_obj_results[i], m_RefObjs[i]->GetDict()));
+    EXPECT_TRUE(Equal(indirect_obj_results[i], m_RefObjs[i]->GetDict().Get()));
 }
 
 TEST_F(PDFObjectsTest, GetNameFor) {
@@ -966,7 +966,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     RetainPtr<CPDF_Stream> cloned_stream = ToStream(stream_obj->Clone());
     // Cloned object should be the same as the original.
     ASSERT_TRUE(cloned_stream);
-    const CPDF_Object* cloned_dict = cloned_stream->GetDict();
+    RetainPtr<const CPDF_Object> cloned_dict = cloned_stream->GetDict();
     ASSERT_TRUE(cloned_dict);
     ASSERT_TRUE(cloned_dict->IsDictionary());
     // Recursively referenced object is not cloned.

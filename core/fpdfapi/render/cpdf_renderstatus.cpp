@@ -1430,7 +1430,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   CPDF_ColorSpace::Family nCSFamily = CPDF_ColorSpace::Family::kUnknown;
   if (bLuminosity) {
     FX_ARGB back_color =
-        GetBackColor(pSMaskDict, pGroup->GetDict(), &nCSFamily);
+        GetBackColor(pSMaskDict, pGroup->GetDict().Get(), &nCSFamily);
     bitmap->Clear(back_color);
   } else {
     bitmap->Clear(0);

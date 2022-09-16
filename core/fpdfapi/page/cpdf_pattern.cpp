@@ -28,6 +28,6 @@ CPDF_ShadingPattern* CPDF_Pattern::AsShadingPattern() {
 }
 
 void CPDF_Pattern::SetPatternToFormMatrix() {
-  const CPDF_Dictionary* pDict = pattern_obj()->GetDict();
+  RetainPtr<const CPDF_Dictionary> pDict = pattern_obj()->GetDict();
   m_Pattern2Form = pDict->GetMatrixFor("Matrix") * m_ParentMatrix;
 }

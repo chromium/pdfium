@@ -245,7 +245,7 @@ std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
     }
     case CPDF_Object::kStream: {
       RetainPtr<const CPDF_Stream> p(pObj->AsStream());
-      buf << p->GetDict() << "stream\r\n";
+      buf << p->GetDict().Get() << "stream\r\n";
       auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(p));
       pAcc->LoadAllDataRaw();
       pdfium::span<const uint8_t> span = pAcc->GetSpan();

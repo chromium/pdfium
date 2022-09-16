@@ -186,7 +186,7 @@ FPDFSignatureObj_GetDocMDPPermission(FPDF_SIGNATURE signature) {
 
   CPDF_ArrayLocker locker(references);
   for (auto& reference : locker) {
-    const CPDF_Dictionary* reference_dict = reference->GetDict();
+    const CPDF_Dictionary* reference_dict = reference->GetDict().Get();
     if (!reference_dict)
       continue;
 

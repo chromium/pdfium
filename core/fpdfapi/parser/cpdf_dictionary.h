@@ -35,7 +35,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   // CPDF_Object:
   Type GetType() const override;
   RetainPtr<CPDF_Object> Clone() const override;
-  const CPDF_Dictionary* GetDict() const override;
+  RetainPtr<const CPDF_Dictionary> GetDict() const override;
   CPDF_Dictionary* AsMutableDictionary() override;
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;

@@ -42,8 +42,8 @@ CPDF_Object::Type CPDF_Dictionary::GetType() const {
   return kDictionary;
 }
 
-const CPDF_Dictionary* CPDF_Dictionary::GetDict() const {
-  return this;
+RetainPtr<const CPDF_Dictionary> CPDF_Dictionary::GetDict() const {
+  return pdfium::WrapRetain(this);
 }
 
 CPDF_Dictionary* CPDF_Dictionary::AsMutableDictionary() {
@@ -161,7 +161,7 @@ const CPDF_Dictionary* CPDF_Dictionary::GetDictForInternal(
   if (const CPDF_Dictionary* pDict = p->AsDictionary())
     return pDict;
   if (const CPDF_Stream* pStream = p->AsStream())
-    return pStream->GetDict();
+    return pStream->GetDict().Get();
   return nullptr;
 }
 

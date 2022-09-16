@@ -28,7 +28,7 @@ class CPDF_Stream final : public CPDF_Object {
   // CPDF_Object:
   Type GetType() const override;
   RetainPtr<CPDF_Object> Clone() const override;
-  const CPDF_Dictionary* GetDict() const override;
+  RetainPtr<const CPDF_Dictionary> GetDict() const override;
   WideString GetUnicodeText() const override;
   CPDF_Stream* AsMutableStream() override;
   bool WriteTo(IFX_ArchiveStream* archive,

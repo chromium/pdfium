@@ -27,8 +27,8 @@ bool IsObjectStream(const CPDF_Object* object) {
     return false;
 
   // See ISO 32000-1:2008 spec, table 16.
-  const CPDF_Dictionary* stream_dict = stream->GetDict();
-  if (!ValidateDictType(stream_dict, "ObjStm"))
+  RetainPtr<const CPDF_Dictionary> stream_dict = stream->GetDict();
+  if (!ValidateDictType(stream_dict.Get(), "ObjStm"))
     return false;
 
   RetainPtr<const CPDF_Number> number_of_objects =

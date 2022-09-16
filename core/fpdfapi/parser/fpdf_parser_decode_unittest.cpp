@@ -120,7 +120,7 @@ TEST(ParserDecodeTest, GetDecoderArray) {
   {
     // Treat no filter as an empty filter array.
     auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
-    absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict.Get());
+    absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict);
     ASSERT_TRUE(decoder_array.has_value());
     EXPECT_TRUE(decoder_array.value().empty());
   }
@@ -128,14 +128,14 @@ TEST(ParserDecodeTest, GetDecoderArray) {
     // Wrong filter type.
     auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
     dict->SetNewFor<CPDF_String>("Filter", "RL", false);
-    absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict.Get());
+    absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict);
     EXPECT_FALSE(decoder_array.has_value());
   }
   {
     // Filter name.
     auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
     dict->SetNewFor<CPDF_Name>("Filter", "RL");
-    absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict.Get());
+    absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict);
     ASSERT_TRUE(decoder_array.has_value());
     ASSERT_EQ(1u, decoder_array.value().size());
     EXPECT_EQ("RL", decoder_array.value()[0].first);
@@ -144,7 +144,7 @@ TEST(ParserDecodeTest, GetDecoderArray) {
     // Empty filter array.
     auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
     dict->SetNewFor<CPDF_Array>("Filter");
-    absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict.Get());
+    absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict);
     ASSERT_TRUE(decoder_array.has_value());
     EXPECT_TRUE(decoder_array.value().empty());
   }
@@ -153,7 +153,7 @@ TEST(ParserDecodeTest, GetDecoderArray) {
     auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
     auto* filter_array = dict->SetNewFor<CPDF_Array>("Filter");
     filter_array->AppendNew<CPDF_Name>("FooBar");
-    absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict.Get());
+    absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict);
     ASSERT_TRUE(decoder_array.has_value());
     ASSERT_EQ(1u, decoder_array.value().size());
     EXPECT_EQ("FooBar", decoder_array.value()[0].first);
@@ -164,7 +164,7 @@ TEST(ParserDecodeTest, GetDecoderArray) {
     auto* filter_array = dict->SetNewFor<CPDF_Array>("Filter");
     filter_array->AppendNew<CPDF_Name>("AHx");
     filter_array->AppendNew<CPDF_Name>("LZWDecode");
-    absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict.Get());
+    absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict);
     ASSERT_TRUE(decoder_array.has_value());
     ASSERT_EQ(2u, decoder_array.value().size());
     EXPECT_EQ("AHx", decoder_array.value()[0].first);
@@ -176,7 +176,7 @@ TEST(ParserDecodeTest, GetDecoderArray) {
     auto* invalid_filter_array = dict->SetNewFor<CPDF_Array>("Filter");
     invalid_filter_array->AppendNew<CPDF_Name>("DCTDecode");
     invalid_filter_array->AppendNew<CPDF_Name>("CCITTFaxDecode");
-    absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict.Get());
+    absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict);
     EXPECT_FALSE(decoder_array.has_value());
   }
 }

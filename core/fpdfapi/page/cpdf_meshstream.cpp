@@ -112,7 +112,8 @@ CPDF_MeshStream::~CPDF_MeshStream() = default;
 bool CPDF_MeshStream::Load() {
   m_pStream->LoadAllDataFiltered();
   m_BitStream = std::make_unique<CFX_BitStream>(m_pStream->GetSpan());
-  const CPDF_Dictionary* pDict = m_pShadingStream->GetDict();
+
+  RetainPtr<const CPDF_Dictionary> pDict = m_pShadingStream->GetDict();
   m_nCoordBits = pDict->GetIntegerFor("BitsPerCoordinate");
   m_nComponentBits = pDict->GetIntegerFor("BitsPerComponent");
   if (ShouldCheckBPC(m_type)) {

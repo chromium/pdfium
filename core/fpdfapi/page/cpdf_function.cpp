@@ -86,8 +86,8 @@ CPDF_Function::~CPDF_Function() = default;
 bool CPDF_Function::Init(const CPDF_Object* pObj,
                          std::set<const CPDF_Object*>* pVisited) {
   const CPDF_Stream* pStream = pObj->AsStream();
-  const CPDF_Dictionary* pDict =
-      pStream ? pStream->GetDict() : pObj->AsDictionary();
+  RetainPtr<const CPDF_Dictionary> pDict =
+      pStream ? pStream->GetDict() : pdfium::WrapRetain(pObj->AsDictionary());
 
   const CPDF_Array* pDomains = pDict->GetArrayFor("Domain");
   if (!pDomains)

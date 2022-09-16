@@ -341,8 +341,11 @@ bool CPDF_DataAvail::CheckPage() {
 }
 
 bool CPDF_DataAvail::GetPageKids(CPDF_Object* pPages) {
-  const CPDF_Dictionary* pDict = pPages->GetDict();
-  const CPDF_Object* pKids = pDict ? pDict->GetObjectFor("Kids") : nullptr;
+  RetainPtr<const CPDF_Dictionary> pDict = pPages->GetDict();
+  if (!pDict)
+    return true;
+
+  const CPDF_Object* pKids = pDict->GetObjectFor("Kids");
   if (!pKids)
     return true;
 
@@ -706,7 +709,7 @@ bool CPDF_DataAvail::CheckPageCount() {
   if (!pPages)
     return false;
 
-  const CPDF_Dictionary* pPagesDict = pPages->GetDict();
+  RetainPtr<const CPDF_Dictionary> pPagesDict = pPages->GetDict();
   if (!pPagesDict) {
     m_internalStatus = InternalStatus::kError;
     return false;
