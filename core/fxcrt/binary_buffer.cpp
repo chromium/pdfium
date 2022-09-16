@@ -47,7 +47,7 @@ void BinaryBuffer::DeleteBuf(size_t start_index, size_t count) {
   m_DataSize -= count;
 }
 
-pdfium::span<uint8_t> BinaryBuffer::GetSpan() {
+pdfium::span<uint8_t> BinaryBuffer::GetMutableSpan() {
   return {m_buffer.data(), GetSize()};
 }
 

@@ -147,8 +147,9 @@ bool CPDF_CryptoHandler::DecryptStream(void* context,
   if (m_Cipher == Cipher::kRC4) {
     size_t old_size = dest_buf.GetSize();
     dest_buf.AppendBlock(source.data(), source.size());
-    CRYPT_ArcFourCrypt(static_cast<CRYPT_rc4_context*>(context),
-                       dest_buf.GetSpan().subspan(old_size, source.size()));
+    CRYPT_ArcFourCrypt(
+        static_cast<CRYPT_rc4_context*>(context),
+        dest_buf.GetMutableSpan().subspan(old_size, source.size()));
     return true;
   }
   AESCryptContext* pContext = static_cast<AESCryptContext*>(context);

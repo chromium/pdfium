@@ -389,7 +389,7 @@ bool CFX_GlobalData::SaveGlobalPersisitentVariables() {
   sFile.AppendBlock(&dwSize, sizeof(uint32_t));
   sFile.AppendSpan(sData.GetSpan());
 
-  CRYPT_ArcFourCryptBlock(sFile.GetSpan(), kRC4KEY);
+  CRYPT_ArcFourCryptBlock(sFile.GetMutableSpan(), kRC4KEY);
   return m_pDelegate->StoreBuffer(sFile.GetSpan());
 }
 
