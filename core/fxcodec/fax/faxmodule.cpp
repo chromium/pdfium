@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <iterator>
 #include <memory>
+#include <utility>
 
 #include "build/build_config.h"
 #include "core/fxcodec/scanlinedecoder.h"
@@ -23,6 +24,11 @@
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/span.h"
+
+#if BUILDFLAG(IS_WIN)
+#include "core/fxcrt/span_util.h"
+#include "core/fxge/dib/cfx_dibbase.h"
+#endif
 
 namespace fxcodec {
 
@@ -675,10 +681,7 @@ const uint8_t WhiteRunMarkup[80] = {
 
 class FaxEncoder {
  public:
-  FaxEncoder(pdfium::span<const uint8_t> src_span,
-             int width,
-             int height,
-             int pitch);
+  explicit FaxEncoder(RetainPtr<CFX_DIBBase> src);
   ~FaxEncoder();
   DataVector<uint8_t> Encode();
 
@@ -687,8 +690,9 @@ class FaxEncoder {
   void FaxEncodeRun(int run, bool bWhite);
   void AddBitStream(int data, int bitlen);
 
+  // Must outlive `m_RefLineSpan`.
+  RetainPtr<CFX_DIBBase> const m_Src;
   int m_DestBitpos = 0;
-  const pdfium::span<const uint8_t> m_SrcSpan;
   const int m_Cols;
   const int m_Rows;
   const int m_Pitch;
@@ -699,17 +703,15 @@ class FaxEncoder {
   pdfium::span<const uint8_t> m_RefLineSpan;
 };
 
-FaxEncoder::FaxEncoder(pdfium::span<const uint8_t> src_span,
-                       int width,
-                       int height,
-                       int pitch)
-    : m_SrcSpan(src_span),
-      m_Cols(width),
-      m_Rows(height),
-      m_Pitch(pitch),
+FaxEncoder::FaxEncoder(RetainPtr<CFX_DIBBase> src)
+    : m_Src(std::move(src)),
+      m_Cols(m_Src->GetWidth()),
+      m_Rows(m_Src->GetHeight()),
+      m_Pitch(m_Src->GetPitch()),
       m_InitialRefLine(m_Pitch, 0xff),
       m_LineBuf(Fx2DSizeOrDie(8, m_Pitch)),
       m_RefLineSpan(m_InitialRefLine) {
+  DCHECK_EQ(1, m_Src->GetBPP());
   m_DestBuf.SetAllocStep(10240);
 }
 
@@ -798,8 +800,7 @@ DataVector<uint8_t> FaxEncoder::Encode() {
   m_DestBitpos = 0;
   uint8_t last_byte = 0;
   for (int i = 0; i < m_Rows; ++i) {
-    pdfium::span<const uint8_t> scan_line =
-        m_SrcSpan.subspan(i * m_Pitch, m_Pitch);
+    pdfium::span<const uint8_t> scan_line = m_Src->GetScanline(i);
     std::fill(std::begin(m_LineBuf), std::end(m_LineBuf), 0);
     m_LineBuf[0] = last_byte;
     FaxEncode2DLine(scan_line);
@@ -816,11 +817,9 @@ DataVector<uint8_t> FaxEncoder::Encode() {
 }  // namespace
 
 // static
-DataVector<uint8_t> FaxModule::FaxEncode(pdfium::span<const uint8_t> src_span,
-                                         int width,
-                                         int height,
-                                         int pitch) {
-  FaxEncoder encoder(src_span, width, height, pitch);
+DataVector<uint8_t> FaxModule::FaxEncode(RetainPtr<CFX_DIBBase> src) {
+  DCHECK_EQ(1, src->GetBPP());
+  FaxEncoder encoder(std::move(src));
   return encoder.Encode();
 }
 

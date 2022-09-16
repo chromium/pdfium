@@ -37,10 +37,7 @@ struct FXDIB_ResampleOptions;
 
 struct EncoderIface {
   DataVector<uint8_t> (*pA85EncodeFunc)(pdfium::span<const uint8_t> src_span);
-  DataVector<uint8_t> (*pFaxEncodeFunc)(pdfium::span<const uint8_t> src_span,
-                                        int width,
-                                        int height,
-                                        int pitch);
+  DataVector<uint8_t> (*pFaxEncodeFunc)(RetainPtr<CFX_DIBBase> src);
   DataVector<uint8_t> (*pFlateEncodeFunc)(pdfium::span<const uint8_t> src_span);
   bool (*pJpegEncodeFunc)(const RetainPtr<CFX_DIBBase>& pSource,
                           uint8_t** dest_buf,
@@ -159,10 +156,7 @@ class CFX_PSRenderer {
                             CFX_Font* font,
                             float font_size,
                             fxcrt::ostringstream& buf);
-  FaxCompressResult FaxCompressData(DataVector<uint8_t> src_buf,
-                                    int width,
-                                    int height,
-                                    int pitch) const;
+  FaxCompressResult FaxCompressData(RetainPtr<CFX_DIBBase> src) const;
   absl::optional<PSCompressResult> PSCompressData(
       pdfium::span<const uint8_t> src_span) const;
   void WritePreambleString(ByteStringView str);

@@ -16,7 +16,10 @@
 
 #if BUILDFLAG(IS_WIN)
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/retain_ptr.h"
 #endif
+
+class CFX_DIBBase;
 
 namespace fxcodec {
 
@@ -45,10 +48,8 @@ class FaxModule {
                          uint8_t* dest_buf);
 
 #if BUILDFLAG(IS_WIN)
-  static DataVector<uint8_t> FaxEncode(pdfium::span<const uint8_t> src_span,
-                                       int width,
-                                       int height,
-                                       int pitch);
+  // `src` must have a BPP value of 1.
+  static DataVector<uint8_t> FaxEncode(RetainPtr<CFX_DIBBase> src);
 #endif  // BUILDFLAG(IS_WIN)
 
   FaxModule() = delete;
