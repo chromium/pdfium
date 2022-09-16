@@ -133,7 +133,7 @@ source_set("fxcrt") {
   ]
   if (pdf_use_partition_alloc) {
     sources += [ "fx_memory_pa.cpp" ]
-    deps += [ "../../third_party:pdfium_partition_alloc" ]
+    deps += [ "//base/allocator/partition_allocator:partition_alloc" ]
   } else {
     sources += [ "fx_memory_malloc.cpp" ]
   }

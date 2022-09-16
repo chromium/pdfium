@@ -19,6 +19,7 @@
 /third_party/libjpeg_turbo
 /third_party/llvm
 /third_party/llvm-build
+/third_party/lss
 /third_party/markupsafe
 /third_party/nasm
 /third_party/skia
