@@ -64,9 +64,13 @@ size_t CFX_MemoryStream::ReadBlock(void* buffer, size_t size) {
 bool CFX_MemoryStream::WriteBlockAtOffset(const void* buffer,
                                           FX_FILESIZE offset,
                                           size_t size) {
-  if (!buffer || offset < 0 || !size)
+  if (offset < 0)
     return false;
 
+  if (size == 0)
+    return true;
+
+  DCHECK(buffer);
   FX_SAFE_SIZE_T safe_new_pos = size;
   safe_new_pos += offset;
   if (!safe_new_pos.IsValid())

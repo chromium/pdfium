@@ -212,7 +212,7 @@ bool CPDF_Stream::WriteTo(IFX_ArchiveStream* archive,
   if (!archive->WriteString("stream\r\n"))
     return false;
 
-  if (size && !archive->WriteBlock(data.data(), size))
+  if (!archive->WriteBlock(data.data(), size))
     return false;
 
   if (!archive->WriteString("\r\nendstream"))

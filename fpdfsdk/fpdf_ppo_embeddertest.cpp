@@ -24,7 +24,7 @@ class FPDFPPOEmbedderTest : public EmbedderTest {};
 int FakeBlockWriter(FPDF_FILEWRITE* pThis,
                     const void* pData,
                     unsigned long size) {
-  return size;
+  return 1;  // Always succeeds.
 }
 
 constexpr int kRectanglesMultiPagesPageCount = 2;

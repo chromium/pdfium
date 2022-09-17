@@ -16,6 +16,8 @@
 
 class IFX_WriteStream {
  public:
+  // When `size` is 0, treat it as a no-op and return true. That is also the
+  // only time when `pData` can be null.
   virtual bool WriteBlock(const void* pData, size_t size) = 0;
 
   bool WriteString(ByteStringView str);
