@@ -46,6 +46,10 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
 
 }  // namespace
 
+bool IFX_WriteStream::WriteSpan(pdfium::span<const uint8_t> data) {
+  return WriteBlock(data.data(), data.size());
+}
+
 bool IFX_WriteStream::WriteString(ByteStringView str) {
   return WriteBlock(str.unterminated_c_str(), str.GetLength());
 }

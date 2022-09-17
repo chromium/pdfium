@@ -13,6 +13,7 @@
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_types.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/base/span.h"
 
 class IFX_WriteStream {
  public:
@@ -20,6 +21,7 @@ class IFX_WriteStream {
   // only time when `pData` can be null.
   virtual bool WriteBlock(const void* pData, size_t size) = 0;
 
+  bool WriteSpan(pdfium::span<const uint8_t> data);
   bool WriteString(ByteStringView str);
   bool WriteByte(uint8_t byte);
   bool WriteDWord(uint32_t i);
