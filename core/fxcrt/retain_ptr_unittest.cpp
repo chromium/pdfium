@@ -4,11 +4,13 @@
 
 #include "core/fxcrt/retain_ptr.h"
 
+#include <set>
 #include <utility>
 #include <vector>
 
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/pseudo_retainable.h"
+#include "third_party/base/containers/contains.h"
 
 namespace fxcrt {
 
@@ -400,6 +402,48 @@ TEST(RetainPtr, VectorMove) {
   }
   EXPECT_EQ(1, obj.retain_count());
   EXPECT_EQ(1, obj.release_count());
+}
+
+TEST(RetainPtr, SetContains) {
+  // Makes sure pdfium::Contains() works the same way with raw pointers and
+  // RetainPtrs for containers that use find().
+  PseudoRetainable obj1;
+  PseudoRetainable obj2;
+  std::set<const PseudoRetainable*> the_set;
+  the_set.insert(&obj1);
+  EXPECT_TRUE(pdfium::Contains(the_set, &obj1));
+  EXPECT_FALSE(pdfium::Contains(the_set, &obj2));
+
+  RetainPtr<PseudoRetainable> ptr1(&obj1);
+  RetainPtr<PseudoRetainable> ptr2(&obj2);
+  EXPECT_TRUE(pdfium::Contains(the_set, ptr1));
+  EXPECT_FALSE(pdfium::Contains(the_set, ptr2));
+
+  RetainPtr<const PseudoRetainable> const_ptr1(&obj1);
+  RetainPtr<const PseudoRetainable> const_ptr2(&obj2);
+  EXPECT_TRUE(pdfium::Contains(the_set, const_ptr1));
+  EXPECT_FALSE(pdfium::Contains(the_set, const_ptr2));
+}
+
+TEST(RetainPtr, VectorContains) {
+  // Makes sure pdfium::Contains() works the same way with raw pointers and
+  // RetainPtrs. for containers that use begin()/end().
+  PseudoRetainable obj1;
+  PseudoRetainable obj2;
+  std::vector<const PseudoRetainable*> vec;
+  vec.push_back(&obj1);
+  EXPECT_TRUE(pdfium::Contains(vec, &obj1));
+  EXPECT_FALSE(pdfium::Contains(vec, &obj2));
+
+  RetainPtr<PseudoRetainable> ptr1(&obj1);
+  RetainPtr<PseudoRetainable> ptr2(&obj2);
+  EXPECT_TRUE(pdfium::Contains(vec, ptr1));
+  EXPECT_FALSE(pdfium::Contains(vec, ptr2));
+
+  RetainPtr<const PseudoRetainable> const_ptr1(&obj1);
+  RetainPtr<const PseudoRetainable> const_ptr2(&obj2);
+  EXPECT_TRUE(pdfium::Contains(vec, const_ptr1));
+  EXPECT_FALSE(pdfium::Contains(vec, const_ptr2));
 }
 
 }  // namespace fxcrt
