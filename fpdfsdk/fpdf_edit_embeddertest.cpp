@@ -2636,6 +2636,9 @@ TEST_F(FPDFEditEmbedderTest, GlyphPaths) {
   FPDF_FONT font = FPDFTextObj_GetFont(text);
   ASSERT_TRUE(font);
 
+  // bad glyph argument.
+  ASSERT_FALSE(FPDFFont_GetGlyphPath(font, 1, 12.0f));
+
   // good glyphpath
   FPDF_GLYPHPATH gpath = FPDFFont_GetGlyphPath(font, 's', 12.0f);
   ASSERT_TRUE(gpath);

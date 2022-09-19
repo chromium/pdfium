@@ -824,6 +824,8 @@ FPDFFont_GetGlyphPath(FPDF_FONT font, uint32_t glyph, float font_size) {
   std::vector<TextCharPos> pos =
       GetCharPosList(pdfium::make_span(&charcode, 1),
                      pdfium::span<const float>(), pFont, font_size);
+  if (pos.empty())
+    return nullptr;
 
   CFX_Font* pCfxFont;
   if (pos[0].m_FallbackFontPosition == -1) {
