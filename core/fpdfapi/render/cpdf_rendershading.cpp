@@ -102,7 +102,7 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   if (total_results == 0)
     return;
 
-  const CPDF_Array* pCoords = pDict->GetArrayFor("Coords");
+  RetainPtr<const CPDF_Array> pCoords = pDict->GetArrayFor("Coords");
   if (!pCoords)
     return;
 
@@ -112,7 +112,7 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   float end_y = pCoords->GetFloatAt(3);
   float t_min = 0;
   float t_max = 1.0f;
-  const CPDF_Array* pArray = pDict->GetArrayFor("Domain");
+  RetainPtr<const CPDF_Array> pArray = pDict->GetArrayFor("Domain");
   if (pArray) {
     t_min = pArray->GetFloatAt(0);
     t_max = pArray->GetFloatAt(1);
@@ -169,7 +169,7 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   if (total_results == 0)
     return;
 
-  const CPDF_Array* pCoords = pDict->GetArrayFor("Coords");
+  RetainPtr<const CPDF_Array> pCoords = pDict->GetArrayFor("Coords");
   if (!pCoords)
     return;
 
@@ -181,7 +181,7 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   float end_r = pCoords->GetFloatAt(5);
   float t_min = 0;
   float t_max = 1.0f;
-  const CPDF_Array* pArray = pDict->GetArrayFor("Domain");
+  RetainPtr<const CPDF_Array> pArray = pDict->GetArrayFor("Domain");
   if (pArray) {
     t_min = pArray->GetFloatAt(0);
     t_max = pArray->GetFloatAt(1);
@@ -265,7 +265,7 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   if (total_results == 0)
     return;
 
-  const CPDF_Array* pDomain = pDict->GetArrayFor("Domain");
+  RetainPtr<const CPDF_Array> pDomain = pDict->GetArrayFor("Domain");
   float xmin = 0.0f;
   float ymin = 0.0f;
   float xmax = 1.0f;
@@ -885,10 +885,10 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
 
   FX_ARGB background = 0;
   if (!pPattern->IsShadingObject() && pDict->KeyExist("Background")) {
-    const CPDF_Array* pBackColor = pDict->GetArrayFor("Background");
+    RetainPtr<const CPDF_Array> pBackColor = pDict->GetArrayFor("Background");
     if (pBackColor && pBackColor->size() >= pColorSpace->CountComponents()) {
-      std::vector<float> comps =
-          ReadArrayElementsToVector(pBackColor, pColorSpace->CountComponents());
+      std::vector<float> comps = ReadArrayElementsToVector(
+          pBackColor.Get(), pColorSpace->CountComponents());
 
       float R = 0.0f;
       float G = 0.0f;

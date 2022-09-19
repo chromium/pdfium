@@ -69,7 +69,7 @@ int FindPageIndex(const CPDF_Dictionary* pNode,
     return -1;
   }
 
-  const CPDF_Array* pKidList = pNode->GetArrayFor("Kids");
+  RetainPtr<const CPDF_Array> pKidList = pNode->GetArrayFor("Kids");
   if (!pKidList)
     return -1;
 

@@ -132,7 +132,7 @@ bool CPDF_MeshStream::Load() {
     return false;
 
   m_nComponents = m_funcs.empty() ? nComponents : 1;
-  const CPDF_Array* pDecode = pDict->GetArrayFor("Decode");
+  RetainPtr<const CPDF_Array> pDecode = pDict->GetArrayFor("Decode");
   if (!pDecode || pDecode->size() != 4 + m_nComponents * 2)
     return false;
 

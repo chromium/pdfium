@@ -42,7 +42,7 @@ const CPDF_Dictionary* GetConfig(CPDF_Document* pDoc,
   if (!pOCProperties)
     return nullptr;
 
-  const CPDF_Array* pOCGs = pOCProperties->GetArrayFor("OCGs");
+  RetainPtr<const CPDF_Array> pOCGs = pOCProperties->GetArrayFor("OCGs");
   if (!pOCGs)
     return nullptr;
 
@@ -50,7 +50,7 @@ const CPDF_Dictionary* GetConfig(CPDF_Document* pDoc,
     return nullptr;
 
   const CPDF_Dictionary* pConfig = pOCProperties->GetDictFor("D");
-  const CPDF_Array* pConfigs = pOCProperties->GetArrayFor("Configs");
+  RetainPtr<const CPDF_Array> pConfigs = pOCProperties->GetArrayFor("Configs");
   if (!pConfigs)
     return pConfig;
 
@@ -98,7 +98,7 @@ bool CPDF_OCContext::LoadOCGStateFromConfig(
     return true;
 
   bool bState = pConfig->GetByteStringFor("BaseState", "ON") != "OFF";
-  const CPDF_Array* pArray = pConfig->GetArrayFor("ON");
+  RetainPtr<const CPDF_Array> pArray = pConfig->GetArrayFor("ON");
   if (pArray && pArray->Contains(pOCGDict))
     bState = true;
 
@@ -119,7 +119,7 @@ bool CPDF_OCContext::LoadOCGStateFromConfig(
     if (pUsage->GetByteStringFor("Event", "View") != csConfig)
       continue;
 
-    const CPDF_Array* pOCGs = pUsage->GetArrayFor("OCGs");
+    RetainPtr<const CPDF_Array> pOCGs = pUsage->GetArrayFor("OCGs");
     if (!pOCGs)
       continue;
 
@@ -228,9 +228,11 @@ bool CPDF_OCContext::GetOCGVE(const CPDF_Array* pExpression, int nLevel) const {
 }
 
 bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict) const {
-  const CPDF_Array* pVE = pOCMDDict->GetArrayFor("VE");
-  if (pVE)
-    return GetOCGVE(pVE, 0);
+  RetainPtr<const CPDF_Array> pVE = pOCMDDict->GetArrayFor("VE");
+  if (pVE) {
+    // TODO(tsepez): pass retained argument.
+    return GetOCGVE(pVE.Get(), 0);
+  }
 
   ByteString csP = pOCMDDict->GetByteStringFor("P", "AnyOn");
   RetainPtr<const CPDF_Object> pOCGObj = pOCMDDict->GetDirectObjectFor("OCGs");

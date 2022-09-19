@@ -145,7 +145,7 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     const CPDF_Array* pArray = pFilter->AsArray();
     if (pArray) {
       decoder = pArray->GetByteStringAt(0);
-      const CPDF_Array* pParams =
+      RetainPtr<const CPDF_Array> pParams =
           pDict->GetArrayFor(pdfium::stream::kDecodeParms);
       if (pParams)
         pParam = pParams->GetDictAt(0);

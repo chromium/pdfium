@@ -229,14 +229,14 @@ CFX_FloatRect CPDF_Annot::RectFromQuadPointsArray(const CPDF_Array* pArray,
 CFX_FloatRect CPDF_Annot::BoundingRectFromQuadPoints(
     const CPDF_Dictionary* pAnnotDict) {
   CFX_FloatRect ret;
-  const CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
-  size_t nQuadPointCount = pArray ? QuadPointCount(pArray) : 0;
+  RetainPtr<const CPDF_Array> pArray = pAnnotDict->GetArrayFor("QuadPoints");
+  size_t nQuadPointCount = pArray ? QuadPointCount(pArray.Get()) : 0;
   if (nQuadPointCount == 0)
     return ret;
 
-  ret = RectFromQuadPointsArray(pArray, 0);
+  ret = RectFromQuadPointsArray(pArray.Get(), 0);
   for (size_t i = 1; i < nQuadPointCount; ++i) {
-    CFX_FloatRect rect = RectFromQuadPointsArray(pArray, i);
+    CFX_FloatRect rect = RectFromQuadPointsArray(pArray.Get(), i);
     ret.Union(rect);
   }
   return ret;
@@ -245,11 +245,11 @@ CFX_FloatRect CPDF_Annot::BoundingRectFromQuadPoints(
 // static
 CFX_FloatRect CPDF_Annot::RectFromQuadPoints(const CPDF_Dictionary* pAnnotDict,
                                              size_t nIndex) {
-  const CPDF_Array* pArray = pAnnotDict->GetArrayFor("QuadPoints");
-  size_t nQuadPointCount = pArray ? QuadPointCount(pArray) : 0;
+  RetainPtr<const CPDF_Array> pArray = pAnnotDict->GetArrayFor("QuadPoints");
+  size_t nQuadPointCount = pArray ? QuadPointCount(pArray.Get()) : 0;
   if (nIndex >= nQuadPointCount)
     return CFX_FloatRect();
-  return RectFromQuadPointsArray(pArray, nIndex);
+  return RectFromQuadPointsArray(pArray.Get(), nIndex);
 }
 
 // static
@@ -449,9 +449,9 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   const CPDF_Dictionary* pBS = m_pAnnotDict->GetDictFor("BS");
   char style_char;
   float width;
-  const CPDF_Array* pDashArray = nullptr;
+  RetainPtr<const CPDF_Array> pDashArray;
   if (!pBS) {
-    const CPDF_Array* pBorderArray =
+    RetainPtr<const CPDF_Array> pBorderArray =
         m_pAnnotDict->GetArrayFor(pdfium::annotation::kBorder);
     style_char = 'S';
     if (pBorderArray) {
@@ -487,7 +487,8 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   if (width <= 0) {
     return;
   }
-  const CPDF_Array* pColor = m_pAnnotDict->GetArrayFor(pdfium::annotation::kC);
+  RetainPtr<const CPDF_Array> pColor =
+      m_pAnnotDict->GetArrayFor(pdfium::annotation::kC);
   uint32_t argb = 0xff000000;
   if (pColor) {
     int R = static_cast<int32_t>(pColor->GetFloatAt(0) * 255);
@@ -506,7 +507,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   if (style_char == 'D') {
     if (pDashArray) {
       graph_state.m_DashArray =
-          ReadArrayElementsToVector(pDashArray, pDashArray->size());
+          ReadArrayElementsToVector(pDashArray.Get(), pDashArray->size());
       if (graph_state.m_DashArray.size() % 2)
         graph_state.m_DashArray.push_back(graph_state.m_DashArray.back());
     } else {

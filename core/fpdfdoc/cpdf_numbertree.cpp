@@ -13,12 +13,12 @@ namespace {
 
 // TODO(tsepez): return retained objects.
 const CPDF_Object* SearchNumberNode(const CPDF_Dictionary* pNode, int num) {
-  const CPDF_Array* pLimits = pNode->GetArrayFor("Limits");
+  RetainPtr<const CPDF_Array> pLimits = pNode->GetArrayFor("Limits");
   if (pLimits &&
       (num < pLimits->GetIntegerAt(0) || num > pLimits->GetIntegerAt(1))) {
     return nullptr;
   }
-  const CPDF_Array* pNumbers = pNode->GetArrayFor("Nums");
+  RetainPtr<const CPDF_Array> pNumbers = pNode->GetArrayFor("Nums");
   if (pNumbers) {
     for (size_t i = 0; i < pNumbers->size() / 2; i++) {
       int index = pNumbers->GetIntegerAt(i * 2);
@@ -30,7 +30,7 @@ const CPDF_Object* SearchNumberNode(const CPDF_Dictionary* pNode, int num) {
     return nullptr;
   }
 
-  const CPDF_Array* pKids = pNode->GetArrayFor("Kids");
+  RetainPtr<const CPDF_Array> pKids = pNode->GetArrayFor("Kids");
   if (!pKids)
     return nullptr;
 

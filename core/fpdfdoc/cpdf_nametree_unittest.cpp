@@ -38,7 +38,7 @@ void CheckLimitsArray(const CPDF_Dictionary* node,
                       const char* least,
                       const char* greatest) {
   ASSERT_TRUE(node);
-  const CPDF_Array* limits = node->GetArrayFor("Limits");
+  RetainPtr<const CPDF_Array> limits = node->GetArrayFor("Limits");
   ASSERT_TRUE(limits);
   EXPECT_EQ(2u, limits->size());
   RetainPtr<const CPDF_String> left = limits->GetStringAt(0);
@@ -270,9 +270,9 @@ TEST(cpdf_nametree, AddIntoKids) {
       pKid1->GetArrayFor("Kids")->GetDictAt(1);
   ASSERT_TRUE(pGrandKid3);
   CheckLimitsArray(pGrandKid3.Get(), "9.txt", "99.txt");
-  const CPDF_Array* pNames = pGrandKid3->GetArrayFor("Names");
-  CheckNameKeyValue(pNames, 0, "9.txt", 999);
-  CheckNameKeyValue(pNames, 1, "99.txt", 99);
+  RetainPtr<const CPDF_Array> pNames = pGrandKid3->GetArrayFor("Names");
+  CheckNameKeyValue(pNames.Get(), 0, "9.txt", 999);
+  CheckNameKeyValue(pNames.Get(), 1, "99.txt", 99);
 
   // Check that the nodes on the third level has the expected limits and names.
   RetainPtr<const CPDF_Dictionary> pGreatGrandKid4 =
@@ -280,19 +280,19 @@ TEST(cpdf_nametree, AddIntoKids) {
   ASSERT_TRUE(pGreatGrandKid4);
   CheckLimitsArray(pGreatGrandKid4.Get(), "0.txt", "2.txt");
   pNames = pGreatGrandKid4->GetArrayFor("Names");
-  CheckNameKeyValue(pNames, 0, "0.txt", -5);
-  CheckNameKeyValue(pNames, 1, "1.txt", 111);
-  CheckNameKeyValue(pNames, 2, "2.txt", 222);
+  CheckNameKeyValue(pNames.Get(), 0, "0.txt", -5);
+  CheckNameKeyValue(pNames.Get(), 1, "1.txt", 111);
+  CheckNameKeyValue(pNames.Get(), 2, "2.txt", 222);
 
   RetainPtr<const CPDF_Dictionary> pGreatGrandKid5 =
       pGrandKid2->GetArrayFor("Kids")->GetDictAt(1);
   ASSERT_TRUE(pGreatGrandKid5);
   CheckLimitsArray(pGreatGrandKid5.Get(), "3.txt", "6.txt");
   pNames = pGreatGrandKid5->GetArrayFor("Names");
-  CheckNameKeyValue(pNames, 0, "3.txt", 333);
-  CheckNameKeyValue(pNames, 1, "4.txt", 444);
-  CheckNameKeyValue(pNames, 2, "5.txt", 555);
-  CheckNameKeyValue(pNames, 3, "6.txt", 666);
+  CheckNameKeyValue(pNames.Get(), 0, "3.txt", 333);
+  CheckNameKeyValue(pNames.Get(), 1, "4.txt", 444);
+  CheckNameKeyValue(pNames.Get(), 2, "5.txt", 555);
+  CheckNameKeyValue(pNames.Get(), 3, "6.txt", 666);
 }
 
 TEST(cpdf_nametree, DeleteFromKids) {

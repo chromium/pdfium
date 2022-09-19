@@ -33,13 +33,13 @@ bool CPDF_ExpIntFunc::v_Init(const CPDF_Object* pObj,
 
   m_Exponent = pExponent->GetNumber();
 
-  const CPDF_Array* pArray0 = pDict->GetArrayFor("C0");
+  RetainPtr<const CPDF_Array> pArray0 = pDict->GetArrayFor("C0");
   if (pArray0 && m_nOutputs == 0)
     m_nOutputs = fxcrt::CollectionSize<uint32_t>(*pArray0);
   if (m_nOutputs == 0)
     m_nOutputs = 1;
 
-  const CPDF_Array* pArray1 = pDict->GetArrayFor("C1");
+  RetainPtr<const CPDF_Array> pArray1 = pDict->GetArrayFor("C1");
   m_BeginValues = DataVector<float>(Fx2DSizeOrDie(m_nOutputs, 2));
   m_EndValues = DataVector<float>(m_BeginValues.size());
   for (uint32_t i = 0; i < m_nOutputs; i++) {

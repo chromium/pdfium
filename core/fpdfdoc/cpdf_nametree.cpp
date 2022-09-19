@@ -99,7 +99,7 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
   if (pLimits)
     std::tie(csLeft, csRight) = GetNodeLimitsAndSanitize(pLimits.Get());
 
-  const CPDF_Array* pNames = pNode->GetArrayFor("Names");
+  RetainPtr<const CPDF_Array> pNames = pNode->GetArrayFor("Names");
   if (pNames) {
     if (pNames != pFind)
       return false;
@@ -152,7 +152,8 @@ bool UpdateNodesAndLimitsUponDeletion(CPDF_Dictionary* pNode,
     WideString csNewLeft = csRight;
     WideString csNewRight = csLeft;
     for (size_t j = 0; j < pKids->size(); ++j) {
-      const CPDF_Array* pKidLimits = pKids->GetDictAt(j)->GetArrayFor("Limits");
+      RetainPtr<const CPDF_Array> pKidLimits =
+          pKids->GetDictAt(j)->GetArrayFor("Limits");
       DCHECK(pKidLimits);
       if (pKidLimits->GetUnicodeTextAt(0).Compare(csNewLeft) < 0)
         csNewLeft = pKidLimits->GetUnicodeTextAt(0);
@@ -364,11 +365,11 @@ size_t CountNamesInternal(const CPDF_Dictionary* pNode,
   if (!inserted)
     return 0;
 
-  const CPDF_Array* pNames = pNode->GetArrayFor("Names");
+  RetainPtr<const CPDF_Array> pNames = pNode->GetArrayFor("Names");
   if (pNames)
     return pNames->size() / 2;
 
-  const CPDF_Array* pKids = pNode->GetArrayFor("Kids");
+  RetainPtr<const CPDF_Array> pKids = pNode->GetArrayFor("Kids");
   if (!pKids)
     return 0;
 
@@ -390,7 +391,7 @@ RetainPtr<const CPDF_Array> GetNamedDestFromObject(
     return array;
   RetainPtr<const CPDF_Dictionary> dict = ToDictionary(obj);
   if (dict)
-    return pdfium::WrapRetain(dict->GetArrayFor("D"));
+    return dict->GetArrayFor("D");
   return nullptr;
 }
 

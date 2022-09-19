@@ -272,7 +272,7 @@ TEST_F(FPDFAnnotEmbedderTest, InkListAPIValidations) {
   EXPECT_EQ(0, FPDFAnnot_AddInkStroke(ink_annot.get(), kFirstInkStroke,
                                       kFirstStrokePointCount));
 
-  const CPDF_Array* inklist = annot_dict->GetArrayFor("InkList");
+  RetainPtr<const CPDF_Array> inklist = annot_dict->GetArrayFor("InkList");
   ASSERT_TRUE(inklist);
   EXPECT_EQ(1u, inklist->size());
   EXPECT_EQ(kFirstStrokePointCount * 2, inklist->GetArrayAt(0)->size());
@@ -328,7 +328,7 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveInkList) {
   EXPECT_EQ(0,
             FPDFAnnot_AddInkStroke(ink_annot.get(), kInkStroke, kPointCount));
 
-  const CPDF_Array* inklist = annot_dict->GetArrayFor("InkList");
+  RetainPtr<const CPDF_Array> inklist = annot_dict->GetArrayFor("InkList");
   ASSERT_TRUE(inklist);
   ASSERT_EQ(1u, inklist->size());
   EXPECT_EQ(kPointCount * 2, inklist->GetArrayAt(0)->size());

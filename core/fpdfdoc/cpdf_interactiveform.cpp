@@ -621,7 +621,8 @@ const CPDF_FormControl* CPDF_InteractiveForm::GetControlAtPoint(
     const CPDF_Page* pPage,
     const CFX_PointF& point,
     int* z_order) const {
-  const CPDF_Array* pAnnotList = pPage->GetDict()->GetArrayFor("Annots");
+  RetainPtr<const CPDF_Array> pAnnotList =
+      pPage->GetDict()->GetArrayFor("Annots");
   if (!pAnnotList)
     return nullptr;
 
@@ -661,7 +662,7 @@ int CPDF_InteractiveForm::CountFieldsInCalculationOrder() {
   if (!m_pFormDict)
     return 0;
 
-  const CPDF_Array* pArray = m_pFormDict->GetArrayFor("CO");
+  RetainPtr<const CPDF_Array> pArray = m_pFormDict->GetArrayFor("CO");
   return pArray ? fxcrt::CollectionSize<int>(*pArray) : 0;
 }
 
@@ -669,7 +670,7 @@ CPDF_FormField* CPDF_InteractiveForm::GetFieldInCalculationOrder(int index) {
   if (!m_pFormDict || index < 0)
     return nullptr;
 
-  const CPDF_Array* pArray = m_pFormDict->GetArrayFor("CO");
+  RetainPtr<const CPDF_Array> pArray = m_pFormDict->GetArrayFor("CO");
   if (!pArray)
     return nullptr;
 
@@ -683,7 +684,7 @@ int CPDF_InteractiveForm::FindFieldInCalculationOrder(
   if (!m_pFormDict)
     return -1;
 
-  const CPDF_Array* pArray = m_pFormDict->GetArrayFor("CO");
+  RetainPtr<const CPDF_Array> pArray = m_pFormDict->GetArrayFor("CO");
   if (!pArray)
     return -1;
 

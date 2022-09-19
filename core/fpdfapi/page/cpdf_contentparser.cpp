@@ -76,7 +76,7 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
   if (pGraphicStates)
     form_matrix.Concat(pGraphicStates->m_CTM);
 
-  const CPDF_Array* pBBox = pForm->GetDict()->GetArrayFor("BBox");
+  RetainPtr<const CPDF_Array> pBBox = pForm->GetDict()->GetArrayFor("BBox");
   CFX_FloatRect form_bbox;
   CPDF_Path ClipPath;
   if (pBBox) {
@@ -148,7 +148,7 @@ bool CPDF_ContentParser::Continue(PauseIndicatorIface* pPause) {
 CPDF_ContentParser::Stage CPDF_ContentParser::GetContent() {
   DCHECK_EQ(m_CurrentStage, Stage::kGetContent);
   DCHECK(m_pObjectHolder->IsPage());
-  const CPDF_Array* pContent =
+  RetainPtr<const CPDF_Array> pContent =
       m_pObjectHolder->GetDict()->GetArrayFor(pdfium::page_object::kContents);
   RetainPtr<const CPDF_Stream> pStreamObj = ToStream(
       pContent ? pContent->GetDirectObjectAt(m_CurrentOffset) : nullptr);

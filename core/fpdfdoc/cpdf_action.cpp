@@ -118,14 +118,15 @@ std::vector<const CPDF_Object*> CPDF_Action::GetAllFields() const {
     return result;
 
   ByteString csType = m_pDict->GetByteStringFor("S");
-  const CPDF_Object* pFields = csType == "Hide"
-                                   ? m_pDict->GetDirectObjectFor("T").Get()
-                                   : m_pDict->GetArrayFor("Fields");
+  RetainPtr<const CPDF_Object> pFields = csType == "Hide"
+                                             ? m_pDict->GetDirectObjectFor("T")
+                                             : m_pDict->GetArrayFor("Fields");
   if (!pFields)
     return result;
 
   if (pFields->IsDictionary() || pFields->IsString()) {
-    result.push_back(pFields);
+    // TODO(tsepez): push retained arguments.
+    result.push_back(pFields.Get());
   } else if (const CPDF_Array* pArray = pFields->AsArray()) {
     for (size_t i = 0; i < pArray->size(); ++i) {
       RetainPtr<const CPDF_Object> pObj = pArray->GetDirectObjectAt(i);

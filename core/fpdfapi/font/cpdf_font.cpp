@@ -194,7 +194,7 @@ void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* pFontDesc) {
   }
   if (m_Descent > 10)
     m_Descent = -m_Descent;
-  const CPDF_Array* pBBox = pFontDesc->GetArrayFor("FontBBox");
+  RetainPtr<const CPDF_Array> pBBox = pFontDesc->GetArrayFor("FontBBox");
   if (pBBox) {
     m_FontBBox.left = pBBox->GetIntegerAt(0);
     m_FontBBox.bottom = pBBox->GetIntegerAt(1);

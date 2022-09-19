@@ -81,7 +81,7 @@ ByteString FDFToURLEncodedData(ByteString buffer) {
   if (!pMainDict)
     return ByteString();
 
-  const CPDF_Array* pFields = pMainDict->GetArrayFor("Fields");
+  RetainPtr<const CPDF_Array> pFields = pMainDict->GetArrayFor("Fields");
   if (!pFields)
     return ByteString();
 
@@ -180,7 +180,7 @@ int CPDFSDK_InteractiveForm::GetPageIndexByAnnotDict(
     if (!pPageDict)
       continue;
 
-    const CPDF_Array* pAnnots = pPageDict->GetArrayFor("Annots");
+    RetainPtr<const CPDF_Array> pAnnots = pPageDict->GetArrayFor("Annots");
     if (!pAnnots)
       continue;
 

@@ -31,9 +31,10 @@ int32_t CPDF_ViewerPreferences::NumCopies() const {
   return pDict ? pDict->GetIntegerFor("NumCopies") : 1;
 }
 
+// TODO(tsepez): return retained references.
 const CPDF_Array* CPDF_ViewerPreferences::PrintPageRange() const {
   const CPDF_Dictionary* pDict = GetViewerPreferences();
-  return pDict ? pDict->GetArrayFor("PrintPageRange") : nullptr;
+  return pDict ? pDict->GetArrayFor("PrintPageRange").Get() : nullptr;
 }
 
 ByteString CPDF_ViewerPreferences::Duplex() const {

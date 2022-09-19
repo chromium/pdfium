@@ -226,7 +226,8 @@ RetainPtr<IFX_SeekableStream> MakeSeekableStream(
 
 const CPDF_Array* GetQuadPointsArrayFromDictionary(
     const CPDF_Dictionary* dict) {
-  return dict->GetArrayFor("QuadPoints");
+  // TODO(tsepez): return retained object.
+  return dict->GetArrayFor("QuadPoints").Get();
 }
 
 RetainPtr<CPDF_Array> GetMutableQuadPointsArrayFromDictionary(
@@ -364,7 +365,7 @@ void ReportUnsupportedFeatures(const CPDF_Document* pDoc) {
 
     const CPDF_Dictionary* pJSDict = pNameDict->GetDictFor("JavaScript");
     if (pJSDict) {
-      const CPDF_Array* pArray = pJSDict->GetArrayFor("Names");
+      RetainPtr<const CPDF_Array> pArray = pJSDict->GetArrayFor("Names");
       if (pArray) {
         for (size_t i = 0; i < pArray->size(); i++) {
           ByteString cbStr = pArray->GetByteStringAt(i);

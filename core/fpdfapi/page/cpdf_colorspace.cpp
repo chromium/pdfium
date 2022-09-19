@@ -89,7 +89,7 @@ void GetDefaultBlackPoint(float* pPoints) {
 }
 
 void GetBlackPoint(const CPDF_Dictionary* pDict, float* pPoints) {
-  const CPDF_Array* pParam = pDict->GetArrayFor("BlackPoint");
+  RetainPtr<const CPDF_Array> pParam = pDict->GetArrayFor("BlackPoint");
   if (!pParam || pParam->size() != kBlackWhitePointCount) {
     GetDefaultBlackPoint(pPoints);
     return;
@@ -106,7 +106,7 @@ void GetBlackPoint(const CPDF_Dictionary* pDict, float* pPoints) {
 }
 
 bool GetWhitePoint(const CPDF_Dictionary* pDict, float* pPoints) {
-  const CPDF_Array* pParam = pDict->GetArrayFor("WhitePoint");
+  RetainPtr<const CPDF_Array> pParam = pDict->GetArrayFor("WhitePoint");
   if (!pParam || pParam->size() != kBlackWhitePointCount)
     return false;
 
@@ -705,18 +705,18 @@ uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
 
   GetBlackPoint(pDict.Get(), m_BlackPoint);
 
-  const CPDF_Array* pParam = pDict->GetArrayFor("Gamma");
-  if (pParam) {
+  RetainPtr<const CPDF_Array> pGamma = pDict->GetArrayFor("Gamma");
+  if (pGamma) {
     m_bHasGamma = true;
     for (size_t i = 0; i < std::size(m_Gamma); ++i)
-      m_Gamma[i] = pParam->GetFloatAt(i);
+      m_Gamma[i] = pGamma->GetFloatAt(i);
   }
 
-  pParam = pDict->GetArrayFor("Matrix");
-  if (pParam) {
+  RetainPtr<const CPDF_Array> pMatrix = pDict->GetArrayFor("Matrix");
+  if (pMatrix) {
     m_bHasMatrix = true;
     for (size_t i = 0; i < std::size(m_Matrix); ++i)
-      m_Matrix[i] = pParam->GetFloatAt(i);
+      m_Matrix[i] = pMatrix->GetFloatAt(i);
   }
   return 3;
 }
@@ -819,7 +819,7 @@ uint32_t CPDF_LabCS::v_Load(CPDF_Document* pDoc,
 
   GetBlackPoint(pDict.Get(), m_BlackPoint);
 
-  const CPDF_Array* pParam = pDict->GetArrayFor("Range");
+  RetainPtr<const CPDF_Array> pParam = pDict->GetArrayFor("Range");
   static constexpr float kDefaultRanges[kRangesCount] = {-100.0f, 100.0f,
                                                          -100.0f, 100.0f};
   static_assert(std::size(kDefaultRanges) == std::extent<decltype(m_Ranges)>(),
@@ -1081,9 +1081,9 @@ RetainPtr<CPDF_ColorSpace> CPDF_ICCBasedCS::GetStockAlternateProfile(
 std::vector<float> CPDF_ICCBasedCS::GetRanges(const CPDF_Dictionary* pDict,
                                               uint32_t nComponents) {
   DCHECK(IsValidIccComponents(nComponents));
-  const CPDF_Array* pRanges = pDict->GetArrayFor("Range");
+  RetainPtr<const CPDF_Array> pRanges = pDict->GetArrayFor("Range");
   if (pRanges && pRanges->size() >= nComponents * 2)
-    return ReadArrayElementsToVector(pRanges, nComponents * 2);
+    return ReadArrayElementsToVector(pRanges.Get(), nComponents * 2);
 
   std::vector<float> ranges;
   ranges.reserve(nComponents * 2);

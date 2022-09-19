@@ -48,7 +48,7 @@ CFX_PointF CPDF_IconFit::GetIconBottomLeftPosition() const {
   if (!m_pDict)
     return {fLeft, fBottom};
 
-  const CPDF_Array* pA = m_pDict->GetArrayFor("A");
+  RetainPtr<const CPDF_Array> pA = m_pDict->GetArrayFor("A");
   if (!pA)
     return {fLeft, fBottom};
 
@@ -68,7 +68,7 @@ CFX_PointF CPDF_IconFit::GetIconPosition() const {
   if (!m_pDict)
     return CFX_PointF();
 
-  const CPDF_Array* pA = m_pDict->GetArrayFor("A");
+  RetainPtr<const CPDF_Array> pA = m_pDict->GetArrayFor("A");
   if (!pA)
     return CFX_PointF();
 

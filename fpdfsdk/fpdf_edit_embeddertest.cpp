@@ -115,7 +115,7 @@ class FPDFEditEmbedderTest : public EmbedderTest {
     EXPECT_TRUE(FontStyleIsNonSymbolic(font_flags));
     ASSERT_TRUE(font_desc->KeyExist("FontBBox"));
 
-    const CPDF_Array* fontBBox = font_desc->GetArrayFor("FontBBox");
+    RetainPtr<const CPDF_Array> fontBBox = font_desc->GetArrayFor("FontBBox");
     ASSERT_TRUE(fontBBox);
     EXPECT_EQ(4u, fontBBox->size());
     // Check that the coordinates are in the preferred order according to spec
@@ -2954,7 +2954,7 @@ TEST_F(FPDFEditEmbedderTest, LoadSimpleType1Font) {
   EXPECT_EQ(32, font_dict->GetIntegerFor("FirstChar"));
   EXPECT_EQ(255, font_dict->GetIntegerFor("LastChar"));
 
-  const CPDF_Array* widths_array = font_dict->GetArrayFor("Widths");
+  RetainPtr<const CPDF_Array> widths_array = font_dict->GetArrayFor("Widths");
   ASSERT_TRUE(widths_array);
   ASSERT_EQ(224u, widths_array->size());
   EXPECT_EQ(250, widths_array->GetFloatAt(0));
@@ -2983,7 +2983,7 @@ TEST_F(FPDFEditEmbedderTest, LoadSimpleTrueTypeFont) {
   EXPECT_EQ(32, font_dict->GetIntegerFor("FirstChar"));
   EXPECT_EQ(255, font_dict->GetIntegerFor("LastChar"));
 
-  const CPDF_Array* widths_array = font_dict->GetArrayFor("Widths");
+  RetainPtr<const CPDF_Array> widths_array = font_dict->GetArrayFor("Widths");
   ASSERT_TRUE(widths_array);
   ASSERT_EQ(224u, widths_array->size());
   EXPECT_EQ(600, widths_array->GetFloatAt(33));
@@ -3009,7 +3009,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType0Font) {
   EXPECT_EQ("Type0", font_dict->GetNameFor("Subtype"));
   EXPECT_EQ("Tinos-Regular-Identity-H", font_dict->GetNameFor("BaseFont"));
   EXPECT_EQ("Identity-H", font_dict->GetNameFor("Encoding"));
-  const CPDF_Array* descendant_array =
+  RetainPtr<const CPDF_Array> descendant_array =
       font_dict->GetArrayFor("DescendantFonts");
   ASSERT_TRUE(descendant_array);
   EXPECT_EQ(1u, descendant_array->size());
@@ -3037,10 +3037,10 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType0Font) {
   CheckFontDescriptor(cidfont_dict.Get(), FPDF_FONT_TYPE1, false, false, span);
 
   // Check widths
-  const CPDF_Array* widths_array = cidfont_dict->GetArrayFor("W");
+  RetainPtr<const CPDF_Array> widths_array = cidfont_dict->GetArrayFor("W");
   ASSERT_TRUE(widths_array);
   EXPECT_GT(widths_array->size(), 1u);
-  CheckCompositeFontWidths(widths_array, typed_font);
+  CheckCompositeFontWidths(widths_array.Get(), typed_font);
 }
 
 TEST_F(FPDFEditEmbedderTest, LoadCIDType2Font) {
@@ -3060,7 +3060,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType2Font) {
   EXPECT_EQ("Type0", font_dict->GetNameFor("Subtype"));
   EXPECT_EQ("Arimo-Italic", font_dict->GetNameFor("BaseFont"));
   EXPECT_EQ("Identity-H", font_dict->GetNameFor("Encoding"));
-  const CPDF_Array* descendant_array =
+  RetainPtr<const CPDF_Array> descendant_array =
       font_dict->GetArrayFor("DescendantFonts");
   ASSERT_TRUE(descendant_array);
   EXPECT_EQ(1u, descendant_array->size());
@@ -3081,9 +3081,9 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType2Font) {
                       span);
 
   // Check widths
-  const CPDF_Array* widths_array = cidfont_dict->GetArrayFor("W");
+  RetainPtr<const CPDF_Array> widths_array = cidfont_dict->GetArrayFor("W");
   ASSERT_TRUE(widths_array);
-  CheckCompositeFontWidths(widths_array, typed_font);
+  CheckCompositeFontWidths(widths_array.Get(), typed_font);
 }
 
 TEST_F(FPDFEditEmbedderTest, NormalizeNegativeRotation) {

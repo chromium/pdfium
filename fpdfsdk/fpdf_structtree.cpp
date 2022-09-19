@@ -184,7 +184,7 @@ FPDF_StructElement_GetStringAttribute(FPDF_STRUCTELEMENT struct_element,
   CPDF_StructElement* elem =
       CPDFStructElementFromFPDFStructElement(struct_element);
   const CPDF_Dictionary* dict = elem ? elem->GetDict() : nullptr;
-  const CPDF_Array* array = dict ? dict->GetArrayFor("A") : nullptr;
+  RetainPtr<const CPDF_Array> array = dict ? dict->GetArrayFor("A") : nullptr;
   if (!array)
     return 0;
   CPDF_ArrayLocker locker(array);

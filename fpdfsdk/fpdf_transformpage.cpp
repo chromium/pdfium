@@ -50,7 +50,7 @@ bool GetBoundingBox(const CPDF_Page* page,
   if (!page || !left || !bottom || !right || !top)
     return false;
 
-  const CPDF_Array* pArray = page->GetDict()->GetArrayFor(key);
+  RetainPtr<const CPDF_Array> pArray = page->GetDict()->GetArrayFor(key);
   if (!pArray)
     return false;
 

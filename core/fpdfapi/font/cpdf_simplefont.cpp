@@ -105,7 +105,7 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
 }
 
 void CPDF_SimpleFont::LoadCharWidths(const CPDF_Dictionary* font_desc) {
-  const CPDF_Array* width_array = m_pFontDict->GetArrayFor("Widths");
+  RetainPtr<const CPDF_Array> width_array = m_pFontDict->GetArrayFor("Widths");
   m_bUseFontWidth = !width_array;
   if (!width_array)
     return;
@@ -129,7 +129,7 @@ void CPDF_SimpleFont::LoadCharWidths(const CPDF_Dictionary* font_desc) {
 }
 
 void CPDF_SimpleFont::LoadDifferences(const CPDF_Dictionary* encoding) {
-  const CPDF_Array* diffs = encoding->GetArrayFor("Differences");
+  RetainPtr<const CPDF_Array> diffs = encoding->GetArrayFor("Differences");
   if (!diffs)
     return;
 

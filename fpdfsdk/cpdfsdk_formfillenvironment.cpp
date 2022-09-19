@@ -659,7 +659,7 @@ bool CPDFSDK_FormFillEnvironment::ProcOpenAction() {
   if (!pRoot)
     return false;
 
-  const CPDF_Object* pOpenAction = pRoot->GetDictFor("OpenAction");
+  RetainPtr<const CPDF_Object> pOpenAction(pRoot->GetDictFor("OpenAction"));
   if (!pOpenAction)
     pOpenAction = pRoot->GetArrayFor("OpenAction");
   if (!pOpenAction)

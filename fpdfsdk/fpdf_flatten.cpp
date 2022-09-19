@@ -93,7 +93,7 @@ int ParserAnnots(CPDF_Document* pSourceDoc,
     return FLATTEN_FAIL;
 
   GetContentsRect(pSourceDoc, pPageDic, pRectArray);
-  const CPDF_Array* pAnnots = pPageDic->GetArrayFor("Annots");
+  RetainPtr<const CPDF_Array> pAnnots = pPageDic->GetArrayFor("Annots");
   if (!pAnnots)
     return FLATTEN_NOTHINGTODO;
 

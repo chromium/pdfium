@@ -752,9 +752,10 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
   }
 
   std::vector<CrossRefV5IndexEntry> indices =
-      GetCrossRefV5Indices(pDict->GetArrayFor("Index"), size);
+      GetCrossRefV5Indices(pDict->GetArrayFor("Index").Get(), size);
 
-  std::vector<uint32_t> field_widths = GetFieldWidths(pDict->GetArrayFor("W"));
+  std::vector<uint32_t> field_widths =
+      GetFieldWidths(pDict->GetArrayFor("W").Get());
   if (field_widths.size() < kMinFieldCount)
     return false;
 
@@ -850,8 +851,9 @@ void CPDF_Parser::ProcessCrossRefV5Entry(
   m_CrossRefTable->AddCompressed(obj_num, archive_obj_num, archive_obj_index);
 }
 
+// TODO(tsepez): return retained object.
 const CPDF_Array* CPDF_Parser::GetIDArray() const {
-  return GetTrailer() ? GetTrailer()->GetArrayFor("ID") : nullptr;
+  return GetTrailer() ? GetTrailer()->GetArrayFor("ID").Get() : nullptr;
 }
 
 // TODO(tsepez): return retained object, though not clear if it can change.

@@ -407,7 +407,8 @@ bool CPDF_CIDFont::Load() {
     return true;
   }
 
-  const CPDF_Array* pFonts = m_pFontDict->GetArrayFor("DescendantFonts");
+  RetainPtr<const CPDF_Array> pFonts =
+      m_pFontDict->GetArrayFor("DescendantFonts");
   if (!pFonts || pFonts->size() != 1)
     return false;
 
@@ -471,9 +472,11 @@ bool CPDF_CIDFont::Load() {
       FT_UseCIDCharmap(m_Font.GetFaceRec(), m_pCMap->GetCoding());
   }
   m_DefaultWidth = pCIDFontDict->GetIntegerFor("DW", 1000);
-  const CPDF_Array* pWidthArray = pCIDFontDict->GetArrayFor("W");
-  if (pWidthArray)
-    LoadMetricsArray(pWidthArray, &m_WidthList, 1);
+  RetainPtr<const CPDF_Array> pWidthArray = pCIDFontDict->GetArrayFor("W");
+  if (pWidthArray) {
+    // TODO(tsepez): pass retained argument.
+    LoadMetricsArray(pWidthArray.Get(), &m_WidthList, 1);
+  }
   if (!IsEmbedded())
     LoadSubstFont();
 
@@ -492,10 +495,13 @@ bool CPDF_CIDFont::Load() {
 
   CheckFontMetrics();
   if (IsVertWriting()) {
-    pWidthArray = pCIDFontDict->GetArrayFor("W2");
-    if (pWidthArray)
-      LoadMetricsArray(pWidthArray, &m_VertMetrics, 3);
-    const CPDF_Array* pDefaultArray = pCIDFontDict->GetArrayFor("DW2");
+    RetainPtr<const CPDF_Array> pWidth2Array = pCIDFontDict->GetArrayFor("W2");
+    if (pWidth2Array) {
+      // TODO(tsepez): pass retained argument.
+      LoadMetricsArray(pWidth2Array.Get(), &m_VertMetrics, 3);
+    }
+    RetainPtr<const CPDF_Array> pDefaultArray =
+        pCIDFontDict->GetArrayFor("DW2");
     if (pDefaultArray) {
       m_DefaultVY = pDefaultArray->GetIntegerAt(0);
       m_DefaultW1 = pDefaultArray->GetIntegerAt(1);

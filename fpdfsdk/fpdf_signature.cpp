@@ -26,11 +26,11 @@ std::vector<RetainPtr<CPDF_Dictionary>> CollectSignatures(CPDF_Document* doc) {
   if (!acro_form)
     return signatures;
 
-  const CPDF_Array* fields = acro_form->GetArrayFor("Fields");
+  RetainPtr<const CPDF_Array> fields = acro_form->GetArrayFor("Fields");
   if (!fields)
     return signatures;
 
-  CPDF_ArrayLocker locker(fields);
+  CPDF_ArrayLocker locker(std::move(fields));
   for (auto& field : locker) {
     RetainPtr<CPDF_Dictionary> field_dict = field->GetMutableDict();
     if (field_dict && field_dict->GetNameFor("FT") == "Sig")
@@ -97,7 +97,7 @@ FPDFSignatureObj_GetByteRange(FPDF_SIGNATURE signature,
   if (!value_dict)
     return 0;
 
-  const CPDF_Array* byte_range = value_dict->GetArrayFor("ByteRange");
+  RetainPtr<const CPDF_Array> byte_range = value_dict->GetArrayFor("ByteRange");
   if (!byte_range)
     return 0;
 
@@ -180,11 +180,11 @@ FPDFSignatureObj_GetDocMDPPermission(FPDF_SIGNATURE signature) {
   if (!value_dict)
     return permission;
 
-  const CPDF_Array* references = value_dict->GetArrayFor("Reference");
+  RetainPtr<const CPDF_Array> references = value_dict->GetArrayFor("Reference");
   if (!references)
     return permission;
 
-  CPDF_ArrayLocker locker(references);
+  CPDF_ArrayLocker locker(std::move(references));
   for (auto& reference : locker) {
     const CPDF_Dictionary* reference_dict = reference->GetDict().Get();
     if (!reference_dict)

@@ -1134,7 +1134,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
 
   auto name_tree = CPDF_NameTree::Create(pDoc, "Dests");
   size_t name_tree_count = name_tree ? name_tree->GetCount() : 0;
-  const CPDF_Object* pDestObj = nullptr;
+  RetainPtr<const CPDF_Object> pDestObj;
   WideString wsName;
   if (static_cast<size_t>(index) >= name_tree_count) {
     // If |index| is out of bounds, then try to retrieve the Nth old style named

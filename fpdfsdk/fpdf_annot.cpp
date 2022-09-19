@@ -323,14 +323,16 @@ const CPDFSDK_Widget* GetRadioButtonOrCheckBoxWidget(FPDF_FORMHANDLE hHandle,
   return pFormControl ? pForm->GetWidget(pFormControl) : nullptr;
 }
 
+// TODO(tsepez): return retained references.
 const CPDF_Array* GetInkList(FPDF_ANNOTATION annot) {
   FPDF_ANNOTATION_SUBTYPE subtype = FPDFAnnot_GetSubtype(annot);
   if (subtype != FPDF_ANNOT_INK)
     return nullptr;
 
   const CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
-  return annot_dict ? annot_dict->GetArrayFor(pdfium::annotation::kInkList)
-                    : nullptr;
+  return annot_dict
+             ? annot_dict->GetArrayFor(pdfium::annotation::kInkList).Get()
+             : nullptr;
 }
 
 }  // namespace
@@ -384,7 +386,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetAnnotCount(FPDF_PAGE page) {
   if (!pPage)
     return 0;
 
-  const CPDF_Array* pAnnots = pPage->GetDict()->GetArrayFor("Annots");
+  RetainPtr<const CPDF_Array> pAnnots = pPage->GetDict()->GetArrayFor("Annots");
   return pAnnots ? fxcrt::CollectionSize<int>(*pAnnots) : 0;
 }
 
@@ -421,7 +423,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetAnnotIndex(FPDF_PAGE page,
   if (!pAnnotDict)
     return -1;
 
-  const CPDF_Array* pAnnots = pPage->GetDict()->GetArrayFor("Annots");
+  RetainPtr<const CPDF_Array> pAnnots = pPage->GetDict()->GetArrayFor("Annots");
   if (!pAnnots)
     return -1;
 
@@ -709,7 +711,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetColor(FPDF_ANNOTATION annot,
   if (HasAPStream(pAnnotDict.Get()))
     return false;
 
-  const CPDF_Array* pColor = pAnnotDict->GetArrayFor(
+  RetainPtr<const CPDF_Array> pColor = pAnnotDict->GetArrayFor(
       type == FPDFANNOT_COLORTYPE_InteriorColor ? "IC" : "C");
   *A = (pAnnotDict->KeyExist("CA") ? pAnnotDict->GetFloatFor("CA") : 1) * 255.f;
   if (!pColor) {
@@ -878,7 +880,7 @@ FPDFAnnot_GetVertices(FPDF_ANNOTATION annot,
   if (!annot_dict)
     return 0;
 
-  const CPDF_Array* vertices =
+  RetainPtr<const CPDF_Array> vertices =
       annot_dict->GetArrayFor(pdfium::annotation::kVertices);
   if (!vertices)
     return 0;
@@ -940,7 +942,8 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_GetLine(FPDF_ANNOTATION annot,
   if (!annot_dict)
     return false;
 
-  const CPDF_Array* line = annot_dict->GetArrayFor(pdfium::annotation::kL);
+  RetainPtr<const CPDF_Array> line =
+      annot_dict->GetArrayFor(pdfium::annotation::kL);
   if (!line || line->size() < 4)
     return false;
 
@@ -984,7 +987,7 @@ FPDFAnnot_GetBorder(FPDF_ANNOTATION annot,
   if (!annot_dict)
     return false;
 
-  const CPDF_Array* border =
+  RetainPtr<const CPDF_Array> border =
       annot_dict->GetArrayFor(pdfium::annotation::kBorder);
   if (!border || border->size() < 3)
     return false;

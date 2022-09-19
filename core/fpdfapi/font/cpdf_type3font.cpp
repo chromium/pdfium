@@ -58,7 +58,7 @@ void CPDF_Type3Font::WillBeDestroyed() {
 
 bool CPDF_Type3Font::Load() {
   m_pFontResources = m_pFontDict->GetMutableDictFor("Resources");
-  const CPDF_Array* pMatrix = m_pFontDict->GetArrayFor("FontMatrix");
+  RetainPtr<const CPDF_Array> pMatrix = m_pFontDict->GetArrayFor("FontMatrix");
   float xscale = 1.0f;
   float yscale = 1.0f;
   if (pMatrix) {
@@ -67,7 +67,7 @@ bool CPDF_Type3Font::Load() {
     yscale = m_FontMatrix.d;
   }
 
-  const CPDF_Array* pBBox = m_pFontDict->GetArrayFor("FontBBox");
+  RetainPtr<const CPDF_Array> pBBox = m_pFontDict->GetArrayFor("FontBBox");
   if (pBBox) {
     CFX_FloatRect box(
         pBBox->GetFloatAt(0) * xscale, pBBox->GetFloatAt(1) * yscale,
@@ -79,7 +79,8 @@ bool CPDF_Type3Font::Load() {
   static constexpr size_t kCharLimit = std::extent<decltype(m_CharWidthL)>();
   int StartChar = m_pFontDict->GetIntegerFor("FirstChar");
   if (StartChar >= 0 && static_cast<size_t>(StartChar) < kCharLimit) {
-    const CPDF_Array* pWidthArray = m_pFontDict->GetArrayFor("Widths");
+    RetainPtr<const CPDF_Array> pWidthArray =
+        m_pFontDict->GetArrayFor("Widths");
     if (pWidthArray) {
       size_t count = std::min(pWidthArray->size(), kCharLimit);
       count = std::min(count, kCharLimit - StartChar);

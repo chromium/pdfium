@@ -1496,7 +1496,8 @@ FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
                                         const CPDF_Dictionary* pGroupDict,
                                         CPDF_ColorSpace::Family* pCSFamily) {
   static constexpr FX_ARGB kDefaultColor = ArgbEncode(255, 0, 0, 0);
-  const CPDF_Array* pBC = pSMaskDict->GetArrayFor(pdfium::transparency::kBC);
+  RetainPtr<const CPDF_Array> pBC =
+      pSMaskDict->GetArrayFor(pdfium::transparency::kBC);
   if (!pBC)
     return kDefaultColor;
 
@@ -1522,7 +1523,7 @@ FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
 
   uint32_t comps = std::max(8u, pCS->CountComponents());
   size_t count = std::min<size_t>(8, pBC->size());
-  std::vector<float> floats = ReadArrayElementsToVector(pBC, count);
+  std::vector<float> floats = ReadArrayElementsToVector(pBC.Get(), count);
   floats.resize(comps);
 
   float R;

@@ -33,15 +33,15 @@ bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj,
   if (!pDict)
     return false;
 
-  const CPDF_Array* pFunctionsArray = pDict->GetArrayFor("Functions");
+  RetainPtr<const CPDF_Array> pFunctionsArray = pDict->GetArrayFor("Functions");
   if (!pFunctionsArray)
     return false;
 
-  const CPDF_Array* pBoundsArray = pDict->GetArrayFor("Bounds");
+  RetainPtr<const CPDF_Array> pBoundsArray = pDict->GetArrayFor("Bounds");
   if (!pBoundsArray)
     return false;
 
-  const CPDF_Array* pEncodeArray = pDict->GetArrayFor("Encode");
+  RetainPtr<const CPDF_Array> pEncodeArray = pDict->GetArrayFor("Encode");
   if (!pEncodeArray)
     return false;
 
@@ -103,7 +103,7 @@ bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj,
     m_bounds.push_back(pBoundsArray->GetFloatAt(i));
   m_bounds.push_back(m_Domains[1]);
 
-  m_encode = ReadArrayElementsToVector(pEncodeArray, nSubs * 2);
+  m_encode = ReadArrayElementsToVector(pEncodeArray.Get(), nSubs * 2);
   return true;
 }
 

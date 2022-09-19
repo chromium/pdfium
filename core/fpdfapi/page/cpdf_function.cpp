@@ -89,7 +89,7 @@ bool CPDF_Function::Init(const CPDF_Object* pObj,
   RetainPtr<const CPDF_Dictionary> pDict =
       pStream ? pStream->GetDict() : pdfium::WrapRetain(pObj->AsDictionary());
 
-  const CPDF_Array* pDomains = pDict->GetArrayFor("Domain");
+  RetainPtr<const CPDF_Array> pDomains = pDict->GetArrayFor("Domain");
   if (!pDomains)
     return false;
 
@@ -98,9 +98,9 @@ bool CPDF_Function::Init(const CPDF_Object* pObj,
     return false;
 
   size_t nInputs = m_nInputs * 2;
-  m_Domains = ReadArrayElementsToVector(pDomains, nInputs);
+  m_Domains = ReadArrayElementsToVector(pDomains.Get(), nInputs);
 
-  const CPDF_Array* pRanges = pDict->GetArrayFor("Range");
+  RetainPtr<const CPDF_Array> pRanges = pDict->GetArrayFor("Range");
   m_nOutputs = pRanges ? fxcrt::CollectionSize<uint32_t>(*pRanges) / 2 : 0;
 
   // Ranges are required for type 0 and type 4 functions. A non-zero
@@ -112,7 +112,7 @@ bool CPDF_Function::Init(const CPDF_Object* pObj,
 
   if (m_nOutputs > 0) {
     size_t nOutputs = m_nOutputs * 2;
-    m_Ranges = ReadArrayElementsToVector(pRanges, nOutputs);
+    m_Ranges = ReadArrayElementsToVector(pRanges.Get(), nOutputs);
   }
 
   uint32_t old_outputs = m_nOutputs;

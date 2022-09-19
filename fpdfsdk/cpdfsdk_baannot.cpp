@@ -132,7 +132,7 @@ void CPDFSDK_BAAnnot::SetBorderWidth(int nWidth) {
 }
 
 int CPDFSDK_BAAnnot::GetBorderWidth() const {
-  const CPDF_Array* pBorder =
+  RetainPtr<const CPDF_Array> pBorder =
       GetAnnotDict()->GetArrayFor(pdfium::annotation::kBorder);
   if (pBorder)
     return pBorder->GetIntegerAt(2);
@@ -186,7 +186,7 @@ BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
       return BorderStyle::kUnderline;
   }
 
-  const CPDF_Array* pBorder =
+  RetainPtr<const CPDF_Array> pBorder =
       GetAnnotDict()->GetArrayFor(pdfium::annotation::kBorder);
   if (pBorder) {
     if (pBorder->size() >= 4) {

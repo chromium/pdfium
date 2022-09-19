@@ -95,7 +95,7 @@ CPDF_LinearizedHeader::CPDF_LinearizedHeader(const CPDF_Dictionary* pDict,
       m_szFirstPageEndOffset(pDict->GetIntegerFor("E")),
       m_FirstPageObjNum(pDict->GetIntegerFor("O")),
       m_szLastXRefOffset(szLastXRefOffset) {
-  const CPDF_Array* pHintStreamRange = pDict->GetArrayFor("H");
+  RetainPtr<const CPDF_Array> pHintStreamRange = pDict->GetArrayFor("H");
   const size_t nHintStreamSize =
       pHintStreamRange ? pHintStreamRange->size() : 0;
   if (nHintStreamSize == 2 || nHintStreamSize == 4) {
