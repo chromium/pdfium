@@ -484,11 +484,11 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
   // Each entry shall be exactly 20 byte.
   // A sample entry looks like:
   // "0000000000 00007 f\r\n"
-  static constexpr int32_t kEntryConstSize = 20;
+  static constexpr int32_t kEntrySize = 20;
 
   if (!out_objects) {
     FX_SAFE_FILESIZE pos = count;
-    pos *= kEntryConstSize;
+    pos *= kEntrySize;
     pos += m_pSyntax->GetPos();
     if (!pos.IsValid())
       return false;
@@ -504,33 +504,33 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
   if (new_size.ValueOrDie() > kMaxXRefSize)
     return false;
 
-  const size_t max_entries_in_file =
-      m_pSyntax->GetDocumentSize() / kEntryConstSize;
+  const size_t max_entries_in_file = m_pSyntax->GetDocumentSize() / kEntrySize;
   if (new_size.ValueOrDie() > max_entries_in_file)
     return false;
 
   out_objects->resize(new_size.ValueOrDie());
 
-  DataVector<char> buf(1024 * kEntryConstSize + 1);
+  DataVector<char> buf(1024 * kEntrySize + 1);
   buf.back() = '\0';
 
-  uint32_t nBytesToRead = count;
-  while (nBytesToRead > 0) {
-    const uint32_t block_size = std::min(nBytesToRead, 1024u);
+  uint32_t entries_to_read = count;
+  while (entries_to_read > 0) {
+    const uint32_t entries_in_block = std::min(entries_to_read, 1024u);
+    const uint32_t bytes_to_read = entries_in_block * kEntrySize;
     if (!m_pSyntax->ReadBlock(reinterpret_cast<uint8_t*>(buf.data()),
-                              block_size * kEntryConstSize)) {
+                              bytes_to_read)) {
       return false;
     }
 
-    for (uint32_t i = 0; i < block_size; i++) {
-      uint32_t iObjectIndex = count - nBytesToRead + i;
+    for (uint32_t i = 0; i < entries_in_block; i++) {
+      uint32_t iObjectIndex = count - entries_to_read + i;
       CrossRefObjData& obj_data =
           (*out_objects)[start_obj_index + iObjectIndex];
       const uint32_t objnum = start_objnum + iObjectIndex;
       obj_data.obj_num = objnum;
       ObjectInfo& info = obj_data.info;
 
-      char* pEntry = &buf[i * kEntryConstSize];
+      const char* pEntry = &buf[i * kEntrySize];
       if (pEntry[17] == 'f') {
         info.pos = 0;
         info.type = ObjectType::kFree;
@@ -555,7 +555,7 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
         info.type = ObjectType::kNotCompressed;
       }
     }
-    nBytesToRead -= block_size;
+    entries_to_read -= entries_in_block;
   }
   return true;
 }
