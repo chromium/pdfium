@@ -40,6 +40,8 @@ class FixedUninitDataVector {
   }
   ~FixedUninitDataVector() = default;
 
+  operator pdfium::span<const T>() const { return span(); }
+
   pdfium::span<T> writable_span() {
     return pdfium::make_span(data_.get(), size_);
   }

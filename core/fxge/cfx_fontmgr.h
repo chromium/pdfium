@@ -31,7 +31,7 @@ class CFX_FontMgr {
     CONSTRUCT_VIA_MAKE_RETAIN;
     ~FontDesc() override;
 
-    pdfium::span<const uint8_t> FontData() const { return m_pFontData.span(); }
+    pdfium::span<const uint8_t> FontData() const { return m_pFontData; }
     void SetFace(size_t index, CFX_Face* face);
     CFX_Face* GetFace(size_t index) const;
 
