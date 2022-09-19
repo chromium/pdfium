@@ -839,7 +839,7 @@ void CPDF_InteractiveForm::AddTerminalField(
 
     auto newField = std::make_unique<CPDF_FormField>(this, pParent.Get());
     pField = newField.get();
-    const CPDF_Object* pTObj =
+    RetainPtr<const CPDF_Object> pTObj =
         pFieldDict->GetObjectFor(pdfium::form_fields::kT);
     if (ToReference(pTObj)) {
       RetainPtr<CPDF_Object> pClone = pTObj->CloneDirectObject();

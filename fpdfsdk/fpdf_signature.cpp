@@ -140,7 +140,7 @@ FPDFSignatureObj_GetReason(FPDF_SIGNATURE signature,
   if (!value_dict)
     return 0;
 
-  const CPDF_Object* obj = value_dict->GetObjectFor("Reason");
+  RetainPtr<const CPDF_Object> obj = value_dict->GetObjectFor("Reason");
   if (!obj || !obj->IsString())
     return 0;
 
@@ -161,7 +161,7 @@ FPDFSignatureObj_GetTime(FPDF_SIGNATURE signature,
   if (!value_dict)
     return 0;
 
-  const CPDF_Object* obj = value_dict->GetObjectFor("M");
+  RetainPtr<const CPDF_Object> obj = value_dict->GetObjectFor("M");
   if (!obj || !obj->IsString())
     return 0;
 

@@ -47,7 +47,7 @@ absl::optional<ByteString> CPDF_ViewerPreferences::GenericName(
   if (!pDict)
     return absl::nullopt;
 
-  const CPDF_Name* pName = ToName(pDict->GetObjectFor(bsKey));
+  RetainPtr<const CPDF_Name> pName = ToName(pDict->GetObjectFor(bsKey));
   if (!pName)
     return absl::nullopt;
 

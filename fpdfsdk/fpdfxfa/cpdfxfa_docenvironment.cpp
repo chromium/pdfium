@@ -464,7 +464,8 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
     if (!pAcroForm)
       return;
 
-    const CPDF_Array* pArray = ToArray(pAcroForm->GetObjectFor("XFA"));
+    RetainPtr<const CPDF_Array> pArray =
+        ToArray(pAcroForm->GetObjectFor("XFA"));
     if (!pArray)
       return;
 

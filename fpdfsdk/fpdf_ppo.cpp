@@ -168,12 +168,13 @@ const CPDF_Object* PageDictGetInheritableTag(const CPDF_Dictionary* pDict,
   if (!pp)
     return nullptr;
 
+  // TODO(tsepez): return retained objects throughout.
   if (pDict->KeyExist(bsSrcTag))
-    return pDict->GetObjectFor(bsSrcTag);
+    return pDict->GetObjectFor(bsSrcTag).Get();
 
   while (pp) {
     if (pp->KeyExist(bsSrcTag))
-      return pp->GetObjectFor(bsSrcTag);
+      return pp->GetObjectFor(bsSrcTag).Get();
     if (!pp->KeyExist(pdfium::page_object::kParent))
       break;
     pp = ToDictionary(

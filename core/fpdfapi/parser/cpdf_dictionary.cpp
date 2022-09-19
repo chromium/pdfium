@@ -77,8 +77,9 @@ const CPDF_Object* CPDF_Dictionary::GetObjectForInternal(
   return it != m_Map.end() ? it->second.Get() : nullptr;
 }
 
-const CPDF_Object* CPDF_Dictionary::GetObjectFor(const ByteString& key) const {
-  return GetObjectForInternal(key);
+RetainPtr<const CPDF_Object> CPDF_Dictionary::GetObjectFor(
+    const ByteString& key) const {
+  return pdfium::WrapRetain(GetObjectForInternal(key));
 }
 
 RetainPtr<CPDF_Object> CPDF_Dictionary::GetMutableObjectFor(

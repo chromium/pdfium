@@ -256,8 +256,13 @@ bool CPDF_DataAvail::CheckRoot() {
   if (GetValidator()->has_read_problems())
     return false;
 
-  const CPDF_Reference* pRef =
-      ToReference(m_pRoot ? m_pRoot->GetObjectFor("Pages") : nullptr);
+  if (!m_pRoot) {
+    m_internalStatus = InternalStatus::kError;
+    return false;
+  }
+
+  RetainPtr<const CPDF_Reference> pRef =
+      ToReference(m_pRoot->GetObjectFor("Pages"));
   if (!pRef) {
     m_internalStatus = InternalStatus::kError;
     return false;
@@ -270,8 +275,13 @@ bool CPDF_DataAvail::CheckRoot() {
 
 bool CPDF_DataAvail::PreparePageItem() {
   const CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
-  const CPDF_Reference* pRef =
-      ToReference(pRoot ? pRoot->GetObjectFor("Pages") : nullptr);
+  if (!pRoot) {
+    m_internalStatus = InternalStatus::kError;
+    return false;
+  }
+
+  RetainPtr<const CPDF_Reference> pRef =
+      ToReference(pRoot->GetObjectFor("Pages"));
   if (!pRef) {
     m_internalStatus = InternalStatus::kError;
     return false;
@@ -345,7 +355,7 @@ bool CPDF_DataAvail::GetPageKids(CPDF_Object* pPages) {
   if (!pDict)
     return true;
 
-  const CPDF_Object* pKids = pDict->GetObjectFor("Kids");
+  RetainPtr<const CPDF_Object> pKids = pDict->GetObjectFor("Kids");
   if (!pKids)
     return true;
 
@@ -979,12 +989,13 @@ CPDF_DataAvail::DocFormStatus CPDF_DataAvail::CheckAcroForm() {
     if (!pRoot)
       return kFormAvailable;
 
-    const CPDF_Object* pAcroForm = pRoot->GetObjectFor("AcroForm");
+    RetainPtr<const CPDF_Object> pAcroForm = pRoot->GetObjectFor("AcroForm");
     if (!pAcroForm)
       return kFormNotExist;
 
+    // TODO(tsepez): pass retained argument.
     m_pFormAvail = std::make_unique<CPDF_PageObjectAvail>(
-        GetValidator(), m_pDocument.Get(), pAcroForm);
+        GetValidator(), m_pDocument.Get(), pAcroForm.Get());
   }
   switch (m_pFormAvail->CheckAvail()) {
     case kDataError:

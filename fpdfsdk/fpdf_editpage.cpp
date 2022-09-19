@@ -403,7 +403,7 @@ FPDFPageObjMark_GetParamValueType(FPDF_PAGEOBJECTMARK mark,
   if (!pParams)
     return FPDF_OBJECT_UNKNOWN;
 
-  const CPDF_Object* pObject = pParams->GetObjectFor(key);
+  RetainPtr<const CPDF_Object> pObject = pParams->GetObjectFor(key);
   return pObject ? pObject->GetType() : FPDF_OBJECT_UNKNOWN;
 }
 
@@ -418,7 +418,7 @@ FPDFPageObjMark_GetParamIntValue(FPDF_PAGEOBJECTMARK mark,
   if (!pParams)
     return false;
 
-  const CPDF_Object* pObj = pParams->GetObjectFor(key);
+  RetainPtr<const CPDF_Object> pObj = pParams->GetObjectFor(key);
   if (!pObj || !pObj->IsNumber())
     return false;
 
@@ -439,7 +439,7 @@ FPDFPageObjMark_GetParamStringValue(FPDF_PAGEOBJECTMARK mark,
   if (!pParams)
     return false;
 
-  const CPDF_Object* pObj = pParams->GetObjectFor(key);
+  RetainPtr<const CPDF_Object> pObj = pParams->GetObjectFor(key);
   if (!pObj || !pObj->IsString())
     return false;
 
@@ -461,7 +461,7 @@ FPDFPageObjMark_GetParamBlobValue(FPDF_PAGEOBJECTMARK mark,
   if (!pParams)
     return false;
 
-  const CPDF_Object* pObj = pParams->GetObjectFor(key);
+  RetainPtr<const CPDF_Object> pObj = pParams->GetObjectFor(key);
   if (!pObj || !pObj->IsString())
     return false;
 

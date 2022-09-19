@@ -105,8 +105,9 @@ const CPDF_Object* GetXFAEntryFromDocument(const CPDF_Document* doc) {
   if (!root)
     return nullptr;
 
+  // TODO(tsepez): return retained objects.
   const CPDF_Dictionary* acro_form = root->GetDictFor("AcroForm");
-  return acro_form ? acro_form->GetObjectFor("XFA") : nullptr;
+  return acro_form ? acro_form->GetObjectFor("XFA").Get() : nullptr;
 }
 
 struct XFAPacket {
@@ -252,7 +253,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetFormType(FPDF_DOCUMENT document) {
   if (!pAcroForm)
     return FORMTYPE_NONE;
 
-  const CPDF_Object* pXFA = pAcroForm->GetObjectFor("XFA");
+  RetainPtr<const CPDF_Object> pXFA = pAcroForm->GetObjectFor("XFA");
   if (!pXFA)
     return FORMTYPE_ACRO_FORM;
 

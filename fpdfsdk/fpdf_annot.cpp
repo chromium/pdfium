@@ -1007,7 +1007,7 @@ FPDFAnnot_GetValueType(FPDF_ANNOTATION annot, FPDF_BYTESTRING key) {
     return FPDF_OBJECT_UNKNOWN;
 
   const CPDF_AnnotContext* pAnnot = CPDFAnnotContextFromFPDFAnnotation(annot);
-  const CPDF_Object* pObj = pAnnot->GetAnnotDict()->GetObjectFor(key);
+  RetainPtr<const CPDF_Object> pObj = pAnnot->GetAnnotDict()->GetObjectFor(key);
   return pObj ? pObj->GetType() : FPDF_OBJECT_UNKNOWN;
 }
 
@@ -1049,7 +1049,7 @@ FPDFAnnot_GetNumberValue(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return false;
 
-  const CPDF_Object* p = pAnnotDict->GetObjectFor(key);
+  RetainPtr<const CPDF_Object> p = pAnnotDict->GetObjectFor(key);
   if (!p || p->GetType() != FPDF_OBJECT_NUMBER)
     return false;
 

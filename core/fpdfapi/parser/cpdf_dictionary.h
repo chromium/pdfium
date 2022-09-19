@@ -43,7 +43,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   bool IsLocked() const { return !!m_LockCount; }
 
   size_t size() const { return m_Map.size(); }
-  const CPDF_Object* GetObjectFor(const ByteString& key) const;
+  RetainPtr<const CPDF_Object> GetObjectFor(const ByteString& key) const;
   RetainPtr<CPDF_Object> GetMutableObjectFor(const ByteString& key);
 
   RetainPtr<const CPDF_Object> GetDirectObjectFor(const ByteString& key) const;

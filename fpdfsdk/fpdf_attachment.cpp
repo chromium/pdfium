@@ -145,7 +145,7 @@ FPDFAttachment_GetValueType(FPDF_ATTACHMENT attachment, FPDF_BYTESTRING key) {
     return FPDF_OBJECT_UNKNOWN;
 
   CPDF_FileSpec spec(CPDFObjectFromFPDFAttachment(attachment));
-  const CPDF_Object* pObj = spec.GetParamsDict()->GetObjectFor(key);
+  RetainPtr<const CPDF_Object> pObj = spec.GetParamsDict()->GetObjectFor(key);
   return pObj ? pObj->GetType() : FPDF_OBJECT_UNKNOWN;
 }
 
