@@ -137,7 +137,7 @@ std::vector<XFAPacket> GetXFAPackets(const CPDF_Object* xfa_object) {
     if (i + 1 == xfa_array->size())
       break;
 
-    RetainPtr<const CPDF_String> name = ToString(xfa_array->GetObjectAt(i));
+    RetainPtr<const CPDF_String> name = xfa_array->GetStringAt(i);
     if (!name)
       continue;
 

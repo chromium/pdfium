@@ -67,6 +67,7 @@ class CPDF_Array final : public CPDF_Object {
   RetainPtr<CPDF_Array> GetMutableArrayAt(size_t index);
   RetainPtr<const CPDF_Array> GetArrayAt(size_t index) const;
   RetainPtr<const CPDF_Number> GetNumberAt(size_t index) const;
+  RetainPtr<const CPDF_String> GetStringAt(size_t index) const;
 
   CFX_FloatRect GetRect() const;
   CFX_Matrix GetMatrix() const;

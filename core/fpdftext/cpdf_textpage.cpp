@@ -831,8 +831,7 @@ CPDF_TextPage::MarkedContentState CPDF_TextPage::PreMarkedContent(
     pDict = item->GetParam();
     if (!pDict)
       continue;
-    RetainPtr<const CPDF_String> temp =
-        ToString(pDict->GetObjectFor("ActualText"));
+    RetainPtr<const CPDF_String> temp = pDict->GetStringFor("ActualText");
     if (temp) {
       bExist = true;
       actText = temp->GetUnicodeText();

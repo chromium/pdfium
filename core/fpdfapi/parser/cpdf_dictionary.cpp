@@ -233,6 +233,16 @@ RetainPtr<const CPDF_Number> CPDF_Dictionary::GetNumberFor(
   return pdfium::WrapRetain(GetNumberForInternal(key));
 }
 
+const CPDF_String* CPDF_Dictionary::GetStringForInternal(
+    const ByteString& key) const {
+  return ToString(GetObjectForInternal(key));
+}
+
+RetainPtr<const CPDF_String> CPDF_Dictionary::GetStringFor(
+    const ByteString& key) const {
+  return pdfium::WrapRetain(GetStringForInternal(key));
+}
+
 CFX_FloatRect CPDF_Dictionary::GetRectFor(const ByteString& key) const {
   CFX_FloatRect rect;
   const CPDF_Array* pArray = GetArrayFor(key);

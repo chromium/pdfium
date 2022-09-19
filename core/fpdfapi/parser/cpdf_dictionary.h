@@ -75,6 +75,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   RetainPtr<const CPDF_Stream> GetStreamFor(const ByteString& key) const;
   RetainPtr<CPDF_Stream> GetMutableStreamFor(const ByteString& key);
   RetainPtr<const CPDF_Number> GetNumberFor(const ByteString& key) const;
+  RetainPtr<const CPDF_String> GetStringFor(const ByteString& key) const;
   CFX_FloatRect GetRectFor(const ByteString& key) const;
   CFX_Matrix GetMatrixFor(const ByteString& key) const;
 
@@ -135,6 +136,7 @@ class CPDF_Dictionary final : public CPDF_Object {
   const CPDF_Dictionary* GetDictForInternal(const ByteString& key) const;
   const CPDF_Number* GetNumberForInternal(const ByteString& key) const;
   const CPDF_Stream* GetStreamForInternal(const ByteString& key) const;
+  const CPDF_String* GetStringForInternal(const ByteString& key) const;
 
   ByteString MaybeIntern(const ByteString& str);
   RetainPtr<CPDF_Object> CloneNonCyclic(

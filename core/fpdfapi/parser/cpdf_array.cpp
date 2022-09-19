@@ -186,6 +186,10 @@ RetainPtr<const CPDF_Number> CPDF_Array::GetNumberAt(size_t index) const {
   return ToNumber(GetObjectAt(index));
 }
 
+RetainPtr<const CPDF_String> CPDF_Array::GetStringAt(size_t index) const {
+  return ToString(GetObjectAt(index));
+}
+
 void CPDF_Array::Clear() {
   CHECK(!IsLocked());
   m_Objects.clear();
