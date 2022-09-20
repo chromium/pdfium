@@ -71,9 +71,6 @@ FRC_10_8.2.4_View_C.pdf * * * skia
 
 FRC_11_8.2.2__T8.3_first_last_exchange.pdf * * * *
 
-# TODO(pdfium:1857): Remove after associated bug is fixed
-FRC_11_8.2.4_View_edit.pdf * * * skia
-
 FRC_12_8.2.2__T8.3_first_outline_obj_ID.pdf * * * *
 FRC_13_8.2.2__T8.3_Count_edit300.pdf * * * *
 FRC_14_8.2.2__T8.3_Count_edit0.pdf * * * *
@@ -121,12 +118,6 @@ FRC_8.4.1_Annotations_NM.pdf * * * *
 FRC_8.5_Page_C_SubmitForm.pdf * * * *
 FRC_8.5_Page_PI_ResetForm_Phantom.pdf * * * *
 
-# TODO(pdfium:1859): Remove after associated bug is fixed
-FRC_8.5_Screen_Img_D_Launch.pdf * * * skia
-
-# TODO(pdfium:1859): Remove after associated bug is fixed
-FRC_8.5_URI_IsMap.pdf * * * skia
-
 FRC_8.5_Widget_F.pdf * nov8 * *
 FRC_8_8.2.2__T8.3_Count_remove.pdf * * * *
 FRC_9_8.2.2__T8.3_remove_first_item.pdf * * * *
@@ -159,9 +150,6 @@ annotation_square_dash.pdf * * * skia,skiapaths
 
 app_launchurl.pdf mac * * *
 appstoredescription3.1_en_updated.pdf mac * * *
-
-# TODO(pdfium:1859): Remove after associated bug is fixed
-bi.pdf * * * skia
 
 bookmark.pdf * * * *
 bookmarkgetcolor.pdf mac * * *
