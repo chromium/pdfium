@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fixed_uninit_data_vector.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -35,15 +35,15 @@ class CPDF_TransferFunc final : public Retainable, public Observable {
 
  private:
   CPDF_TransferFunc(bool bIdentify,
-                    DataVector<uint8_t> samples_r,
-                    DataVector<uint8_t> samples_g,
-                    DataVector<uint8_t> samples_b);
+                    FixedUninitDataVector<uint8_t> samples_r,
+                    FixedUninitDataVector<uint8_t> samples_g,
+                    FixedUninitDataVector<uint8_t> samples_b);
   ~CPDF_TransferFunc() override;
 
   const bool m_bIdentity;
-  const DataVector<uint8_t> m_SamplesR;
-  const DataVector<uint8_t> m_SamplesG;
-  const DataVector<uint8_t> m_SamplesB;
+  const FixedUninitDataVector<uint8_t> m_SamplesR;
+  const FixedUninitDataVector<uint8_t> m_SamplesG;
+  const FixedUninitDataVector<uint8_t> m_SamplesB;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_TRANSFERFUNC_H_

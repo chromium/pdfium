@@ -12,14 +12,14 @@
 
 #include "core/fpdfapi/page/cpdf_transferfuncdib.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fixed_uninit_data_vector.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "third_party/base/check_op.h"
 
 CPDF_TransferFunc::CPDF_TransferFunc(bool bIdentify,
-                                     DataVector<uint8_t> samples_r,
-                                     DataVector<uint8_t> samples_g,
-                                     DataVector<uint8_t> samples_b)
+                                     FixedUninitDataVector<uint8_t> samples_r,
+                                     FixedUninitDataVector<uint8_t> samples_g,
+                                     FixedUninitDataVector<uint8_t> samples_b)
     : m_bIdentity(bIdentify),
       m_SamplesR(std::move(samples_r)),
       m_SamplesG(std::move(samples_g)),
@@ -32,9 +32,9 @@ CPDF_TransferFunc::CPDF_TransferFunc(bool bIdentify,
 CPDF_TransferFunc::~CPDF_TransferFunc() = default;
 
 FX_COLORREF CPDF_TransferFunc::TranslateColor(FX_COLORREF colorref) const {
-  return FXSYS_BGR(m_SamplesB[FXSYS_GetBValue(colorref)],
-                   m_SamplesG[FXSYS_GetGValue(colorref)],
-                   m_SamplesR[FXSYS_GetRValue(colorref)]);
+  return FXSYS_BGR(m_SamplesB.span()[FXSYS_GetBValue(colorref)],
+                   m_SamplesG.span()[FXSYS_GetGValue(colorref)],
+                   m_SamplesR.span()[FXSYS_GetRValue(colorref)]);
 }
 
 RetainPtr<CFX_DIBBase> CPDF_TransferFunc::TranslateImage(
