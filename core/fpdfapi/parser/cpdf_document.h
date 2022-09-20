@@ -55,7 +55,7 @@ class CPDF_Document : public Observable,
     virtual RetainPtr<CPDF_StreamAcc> GetFontFileStreamAcc(
         RetainPtr<const CPDF_Stream> pFontStream) = 0;
     virtual void MaybePurgeFontFileStreamAcc(
-        const CPDF_Stream* pFontStream) = 0;
+        RetainPtr<const CPDF_Stream> pFontStream) = 0;
 
     void SetDocument(CPDF_Document* pDoc) { m_pDoc = pDoc; }
     CPDF_Document* GetDocument() const { return m_pDoc.Get(); }

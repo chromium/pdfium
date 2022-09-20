@@ -422,7 +422,7 @@ RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
 RetainPtr<CPDF_StreamAcc> CPDF_DocPageData::GetFontFileStreamAcc(
     RetainPtr<const CPDF_Stream> pFontStream) {
   DCHECK(pFontStream);
-  auto it = m_FontFileMap.find(pFontStream.Get());
+  auto it = m_FontFileMap.find(pFontStream);
   if (it != m_FontFileMap.end())
     return it->second;
 
@@ -440,16 +440,16 @@ RetainPtr<CPDF_StreamAcc> CPDF_DocPageData::GetFontFileStreamAcc(
 
   auto pFontAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pFontStream);
   pFontAcc->LoadAllDataFilteredWithEstimatedSize(org_size);
-  m_FontFileMap[pFontStream.Get()] = pFontAcc;
+  m_FontFileMap[std::move(pFontStream)] = pFontAcc;
   return pFontAcc;
 }
 
 void CPDF_DocPageData::MaybePurgeFontFileStreamAcc(
-    const CPDF_Stream* pFontStream) {
+    RetainPtr<const CPDF_Stream> pFontStream) {
   if (!pFontStream)
     return;
 
-  auto it = m_FontFileMap.find(pFontStream);
+  auto it = m_FontFileMap.find(std::move(pFontStream));
   if (it != m_FontFileMap.end() && it->second->HasOneRef())
     m_FontFileMap.erase(it);
 }

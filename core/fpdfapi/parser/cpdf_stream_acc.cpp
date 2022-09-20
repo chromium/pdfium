@@ -67,6 +67,10 @@ void CPDF_StreamAcc::LoadAllDataRaw() {
   LoadAllData(true, 0, false);
 }
 
+RetainPtr<const CPDF_Stream> CPDF_StreamAcc::GetStream() const {
+  return m_pStream;
+}
+
 const CPDF_Dictionary* CPDF_StreamAcc::GetDict() const {
   // TODO(tsepez): return retained references.
   return m_pStream ? m_pStream->GetDict().Get() : nullptr;

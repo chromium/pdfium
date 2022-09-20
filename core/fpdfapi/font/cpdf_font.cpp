@@ -57,10 +57,8 @@ CPDF_Font::CPDF_Font(CPDF_Document* pDocument,
 CPDF_Font::~CPDF_Font() {
   if (m_pFontFile) {
     auto* pPageData = m_pDocument->GetPageData();
-    if (pPageData) {
-      pPageData->MaybePurgeFontFileStreamAcc(
-          m_pFontFile->GetStream()->AsStream());
-    }
+    if (pPageData)
+      pPageData->MaybePurgeFontFileStreamAcc(m_pFontFile->GetStream());
   }
 }
 
@@ -217,7 +215,7 @@ void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* pFontDesc) {
     return;
 
   if (!m_Font.LoadEmbedded(m_pFontFile->GetSpan(), IsVertWriting(), key)) {
-    pData->MaybePurgeFontFileStreamAcc(m_pFontFile->GetStream()->AsStream());
+    pData->MaybePurgeFontFileStreamAcc(m_pFontFile->GetStream());
     m_pFontFile = nullptr;
   }
 }

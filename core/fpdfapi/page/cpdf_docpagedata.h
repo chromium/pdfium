@@ -42,7 +42,8 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
   void ClearStockFont() override;
   RetainPtr<CPDF_StreamAcc> GetFontFileStreamAcc(
       RetainPtr<const CPDF_Stream> pFontStream) override;
-  void MaybePurgeFontFileStreamAcc(const CPDF_Stream* pFontStream) override;
+  void MaybePurgeFontFileStreamAcc(
+      RetainPtr<const CPDF_Stream> pFontStream) override;
 
   // CPDF_Font::FormFactoryIFace:
   std::unique_ptr<CPDF_Font::FormIface> CreateForm(
@@ -109,7 +110,8 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
   // Specific destruction order may be required between maps.
   std::map<ByteString, RetainPtr<const CPDF_Stream>> m_HashProfileMap;
   std::map<const CPDF_Object*, ObservedPtr<CPDF_ColorSpace>> m_ColorSpaceMap;
-  std::map<const CPDF_Stream*, RetainPtr<CPDF_StreamAcc>> m_FontFileMap;
+  std::map<RetainPtr<const CPDF_Stream>, RetainPtr<CPDF_StreamAcc>>
+      m_FontFileMap;
   std::map<const CPDF_Stream*, ObservedPtr<CPDF_IccProfile>> m_IccProfileMap;
   std::map<const CPDF_Object*, ObservedPtr<CPDF_Pattern>> m_PatternMap;
   std::map<uint32_t, RetainPtr<CPDF_Image>> m_ImageMap;

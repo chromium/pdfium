@@ -32,7 +32,7 @@ class CPDF_StreamAcc final : public Retainable {
   void LoadAllDataImageAcc(uint32_t estimated_size);
   void LoadAllDataRaw();
 
-  const CPDF_Stream* GetStream() const { return m_pStream.Get(); }
+  RetainPtr<const CPDF_Stream> GetStream() const;
   const CPDF_Dictionary* GetDict() const;
 
   uint32_t GetSize() const;
