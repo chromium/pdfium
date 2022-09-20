@@ -241,7 +241,7 @@ CPDF_Dictionary* CPDF_Document::TraversePDFPages(int iPage,
       // If child did not finish, no pages to go, or max level reached, end
       if (m_pTreeTraversal.size() != level + 1 || *nPagesToGo == 0 ||
           m_bReachedMaxPageLevel) {
-        page = pageKid;
+        page.Reset(pageKid);
         break;
       }
     }

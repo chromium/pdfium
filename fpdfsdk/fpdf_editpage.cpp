@@ -705,7 +705,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_TransformAnnots(FPDF_PAGE page,
     if (pRectArray)
       pRectArray->Clear();
     else
-      pRectArray = pAnnotDict->SetNewFor<CPDF_Array>("Rect");
+      pRectArray.Reset(pAnnotDict->SetNewFor<CPDF_Array>("Rect"));
 
     pRectArray->AppendNew<CPDF_Number>(rect.left);
     pRectArray->AppendNew<CPDF_Number>(rect.bottom);

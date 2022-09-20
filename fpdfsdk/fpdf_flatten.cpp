@@ -220,7 +220,7 @@ void SetPageContents(const ByteString& key,
       sStream += "\nQ";
     }
     pContentsStream->SetDataAndRemoveFilter(sStream.raw_span());
-    pContentsArray = pDocument->NewIndirect<CPDF_Array>();
+    pContentsArray.Reset(pDocument->NewIndirect<CPDF_Array>());
     pContentsArray->AppendNew<CPDF_Reference>(pDocument,
                                               pContentsStream->GetObjNum());
     pPage->SetNewFor<CPDF_Reference>(pdfium::page_object::kContents, pDocument,
@@ -360,7 +360,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
               pFirstObj = pFirstObj->GetMutableDirect();
             if (!pFirstObj->IsStream())
               continue;
-            pAPStream = pFirstObj->AsMutableStream();
+            pAPStream.Reset(pFirstObj->AsMutableStream());
           }
         }
       }
@@ -381,9 +381,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
     RetainPtr<CPDF_Object> pObj = pAPStream;
     if (pObj->IsInline()) {
-      RetainPtr<CPDF_Object> pNew = pObj->Clone();
-      pObj = pNew.Get();
-      pDocument->AddIndirectObject(std::move(pNew));
+      pObj = pObj->Clone();
+      pDocument->AddIndirectObject(pObj);
     }
 
     RetainPtr<CPDF_Dictionary> pObjDict = pObj->GetMutableDict();

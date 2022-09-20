@@ -267,6 +267,7 @@ FX_Charset GetNativeCharSet() {
   return FX_GetCharsetFromCodePage(FX_GetACP());
 }
 
+// TODO(tsepez): return retained reference.
 CPDF_Dictionary* InitDict(CPDF_Document* pDocument) {
   CPDF_Dictionary* pFormDict = pDocument->NewIndirect<CPDF_Dictionary>();
   pDocument->GetMutableRoot()->SetNewFor<CPDF_Reference>(
@@ -569,7 +570,7 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeInteractiveFormFont(
   RetainPtr<CPDF_Dictionary> pFormDict =
       pDocument->GetMutableRoot()->GetMutableDictFor("AcroForm");
   if (!pFormDict)
-    pFormDict = InitDict(pDocument);
+    pFormDict.Reset(InitDict(pDocument));
 
   FX_Charset charSet = GetNativeCharSet();
   ByteString csTemp;

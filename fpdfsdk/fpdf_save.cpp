@@ -82,10 +82,10 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
     if (pFormPDFObj->IsReference()) {
       RetainPtr<CPDF_Object> pFormDirectObj = pFormPDFObj->GetMutableDirect();
       if (pFormDirectObj && pFormDirectObj->IsStream()) {
-        pFormStream = pFormDirectObj->AsMutableStream();
+        pFormStream.Reset(pFormDirectObj->AsMutableStream());
       }
     } else if (pFormPDFObj->IsStream()) {
-      pFormStream = pFormPDFObj->AsMutableStream();
+      pFormStream.Reset(pFormPDFObj->AsMutableStream());
     }
   }
 
@@ -99,10 +99,10 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
       RetainPtr<CPDF_Object> pDataSetsDirectObj =
           pDataSetsRefObj->GetMutableDirect();
       if (pDataSetsDirectObj && pDataSetsDirectObj->IsStream()) {
-        pDataSetsStream = pDataSetsDirectObj->AsMutableStream();
+        pDataSetsStream.Reset(pDataSetsDirectObj->AsMutableStream());
       }
     } else if (pDataSetsPDFObj->IsStream()) {
-      pDataSetsStream = pDataSetsPDFObj->AsMutableStream();
+      pDataSetsStream.Reset(pDataSetsPDFObj->AsMutableStream());
     }
   }
   // L"datasets"

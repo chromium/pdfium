@@ -629,7 +629,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     if (pCSObj->IsName()) {
       ByteString name = pCSObj->GetString();
       if (name != "DeviceRGB" && name != "DeviceGray" && name != "DeviceCMYK") {
-        pCSObj = FindResourceObj("ColorSpace", name);
+        pCSObj.Reset(FindResourceObj("ColorSpace", name));
         if (pCSObj && pCSObj->IsInline())
           pDict->SetFor("ColorSpace", pCSObj->Clone());
       }

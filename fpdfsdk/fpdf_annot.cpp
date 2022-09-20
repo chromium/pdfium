@@ -684,7 +684,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetColor(FPDF_ANNOTATION annot,
   if (pColor)
     pColor->Clear();
   else
-    pColor = pAnnotDict->SetNewFor<CPDF_Array>(key);
+    pColor.Reset(pAnnotDict->SetNewFor<CPDF_Array>(key));
 
   pColor->AppendNew<CPDF_Number>(R / 255.f);
   pColor->AppendNew<CPDF_Number>(G / 255.f);
@@ -797,7 +797,7 @@ FPDFAnnot_AppendAttachmentPoints(FPDF_ANNOTATION annot,
   RetainPtr<CPDF_Array> pQuadPointsArray =
       GetMutableQuadPointsArrayFromDictionary(pAnnotDict.Get());
   if (!pQuadPointsArray)
-    pQuadPointsArray = AddQuadPointsArrayToDictionary(pAnnotDict.Get());
+    pQuadPointsArray.Reset(AddQuadPointsArrayToDictionary(pAnnotDict.Get()));
   AppendQuadPoints(pQuadPointsArray.Get(), quad_points);
   UpdateBBox(pAnnotDict.Get());
   return true;
@@ -1120,9 +1120,10 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
     }
 
     // Storing reference to indirect object in annotation's AP
-    if (!pApDict)
-      pApDict = pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP);
-
+    if (!pApDict) {
+      pApDict.Reset(
+          pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP));
+    }
     pApDict->SetNewFor<CPDF_Reference>(modeKey, pDoc,
                                        pNewIndirectStream->GetObjNum());
   } else {

@@ -39,7 +39,7 @@ CPDF_PageContentManager::CPDF_PageContentManager(
     if (!indirect_obj)
       return;
 
-    contents_array = indirect_obj->AsMutableArray();
+    contents_array.Reset(indirect_obj->AsMutableArray());
     if (contents_array)
       contents_array_ = std::move(contents_array);
     else if (indirect_obj->IsStream())

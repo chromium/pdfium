@@ -1154,14 +1154,14 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
     CPDF_DictionaryLocker locker(pDest);
     for (const auto& it : locker) {
       bsName = it.first.AsStringView();
-      pDestObj = it.second.Get();
+      pDestObj = it.second;
       if (i == index)
         break;
       i++;
     }
     wsName = PDF_DecodeText(bsName.raw_span());
   } else {
-    pDestObj = name_tree->LookupValueAndName(index, &wsName);
+    pDestObj.Reset(name_tree->LookupValueAndName(index, &wsName));
   }
   if (!pDestObj)
     return nullptr;

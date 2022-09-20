@@ -944,7 +944,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
   RetainPtr<CPDF_Dictionary> pFontDict =
       pDRFontDict->GetMutableDictFor(font_name);
   if (!pFontDict) {
-    pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
+    pFontDict.Reset(pDoc->NewIndirect<CPDF_Dictionary>());
     pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
     pFontDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
     pFontDict->SetNewFor<CPDF_Name>("BaseFont", CFX_Font::kDefaultAnsiFontName);
@@ -1061,7 +1061,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
       pAnnotDict->GetOrCreateDictFor(pdfium::annotation::kAP);
   RetainPtr<CPDF_Stream> pNormalStream = pAPDict->GetMutableStreamFor("N");
   if (!pNormalStream) {
-    pNormalStream = pDoc->NewIndirect<CPDF_Stream>();
+    pNormalStream.Reset(pDoc->NewIndirect<CPDF_Stream>());
     pAPDict->SetNewFor<CPDF_Reference>("N", pDoc, pNormalStream->GetObjNum());
   }
   RetainPtr<CPDF_Dictionary> pStreamDict = pNormalStream->GetMutableDict();
@@ -1075,7 +1075,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
         if (!ValidateFontResourceDict(pStreamResFontList.Get()))
           return;
       } else {
-        pStreamResFontList = pStreamResList->SetNewFor<CPDF_Dictionary>("Font");
+        pStreamResFontList.Reset(
+            pStreamResList->SetNewFor<CPDF_Dictionary>("Font"));
       }
       if (!pStreamResFontList->KeyExist(font_name)) {
         pStreamResFontList->SetNewFor<CPDF_Reference>(font_name, pDoc,
@@ -1328,7 +1329,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     if (!ValidateFontResourceDict(pStreamResFontList.Get()))
       return;
   } else {
-    pStreamResFontList = pStreamResList->SetNewFor<CPDF_Dictionary>("Font");
+    pStreamResFontList.Reset(
+        pStreamResList->SetNewFor<CPDF_Dictionary>("Font"));
   }
 
   if (!pStreamResFontList->KeyExist(font_name)) {

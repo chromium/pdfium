@@ -85,7 +85,7 @@ bool CPDF_StructElement::UpdateKidIfElement(const CPDF_Dictionary* pDict,
   bool bSave = false;
   for (auto& kid : m_Kids) {
     if (kid.m_Type == Kid::kElement && kid.m_pDict == pDict) {
-      kid.m_pElement = pElement;
+      kid.m_pElement.Reset(pElement);
       bSave = true;
     }
   }

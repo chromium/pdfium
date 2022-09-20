@@ -323,7 +323,7 @@ absl::optional<IndexSearchResult> SearchNameNodeByIndexInternal(
     IndexSearchResult result;
     result.key = pNames->GetUnicodeTextAt(index);
     result.value = std::move(value);
-    result.container = pNames.Get();  // TODO(tsepez): retain result.
+    result.container = std::move(pNames);
     result.index = index;
     return result;
   }
@@ -444,14 +444,14 @@ std::unique_ptr<CPDF_NameTree> CPDF_NameTree::CreateWithRootNameArray(
   // Retrieve the document's Names dictionary; create it if missing.
   RetainPtr<CPDF_Dictionary> pNames = pRoot->GetMutableDictFor("Names");
   if (!pNames) {
-    pNames = pDoc->NewIndirect<CPDF_Dictionary>();
+    pNames.Reset(pDoc->NewIndirect<CPDF_Dictionary>());
     pRoot->SetNewFor<CPDF_Reference>("Names", pDoc, pNames->GetObjNum());
   }
 
   // Create the |category| dictionary if missing.
   RetainPtr<CPDF_Dictionary> pCategory = pNames->GetMutableDictFor(category);
   if (!pCategory) {
-    pCategory = pDoc->NewIndirect<CPDF_Dictionary>();
+    pCategory.Reset(pDoc->NewIndirect<CPDF_Dictionary>());
     pCategory->SetNewFor<CPDF_Array>("Names");
     pNames->SetNewFor<CPDF_Reference>(category, pDoc, pCategory->GetObjNum());
   }

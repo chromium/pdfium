@@ -92,12 +92,6 @@ class RetainPtr {
     return *this;
   }
 
-  // Use sparingly, may produce reference count churn.
-  RetainPtr& operator=(T* that) {
-    Reset(that);
-    return *this;
-  }
-
   bool operator==(const RetainPtr& that) const { return Get() == that.Get(); }
   bool operator!=(const RetainPtr& that) const { return !(*this == that); }
 

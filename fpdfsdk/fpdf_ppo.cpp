@@ -269,7 +269,7 @@ bool CPDF_PageOrganizer::Init() {
   RetainPtr<CPDF_Dictionary> pNewPages =
       pElement ? ToDictionary(pElement->GetMutableDirect()) : nullptr;
   if (!pNewPages) {
-    pNewPages = dest()->NewIndirect<CPDF_Dictionary>();
+    pNewPages.Reset(dest()->NewIndirect<CPDF_Dictionary>());
     pNewRoot->SetNewFor<CPDF_Reference>("Pages", dest(),
                                         pNewPages->GetObjNum());
   }
@@ -666,7 +666,7 @@ CPDF_NPageToOneExporter::CreateXObjectContextFromPage(int src_page_index) {
   auto src_page = pdfium::MakeRetain<CPDF_Page>(src(), src_page_dict);
   auto xobject = std::make_unique<XObjectContext>();
   xobject->dest_doc = dest();
-  xobject->xobject = MakeXObjectFromPageRaw(src_page);
+  xobject->xobject.Reset(MakeXObjectFromPageRaw(src_page));
   return xobject;
 }
 

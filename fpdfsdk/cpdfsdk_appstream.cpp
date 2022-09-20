@@ -1829,7 +1829,7 @@ void CPDFSDK_AppStream::Write(const ByteString& sAPType,
   RetainPtr<CPDF_Dictionary> pParentDict;
   ByteString key;
   if (sAPState.IsEmpty()) {
-    pParentDict = dict_.Get();
+    pParentDict = dict_;
     key = sAPType;
   } else {
     pParentDict = dict_->GetOrCreateDictFor(sAPType);
@@ -1845,15 +1845,13 @@ void CPDFSDK_AppStream::Write(const ByteString& sAPType,
   if (!doc->IsModifiedAPStream(pStream.Get())) {
     if (pStream)
       pOrigStreamDict = pStream->GetMutableDict();
-    pStream = doc->CreateModifiedAPStream();
+    pStream.Reset(doc->CreateModifiedAPStream());
     pParentDict->SetNewFor<CPDF_Reference>(key, doc, pStream->GetObjNum());
   }
 
   RetainPtr<CPDF_Dictionary> pStreamDict = pStream->GetMutableDict();
   if (!pStreamDict) {
-    auto pNewDict =
-        widget_->GetPDFAnnot()->GetDocument()->New<CPDF_Dictionary>();
-    pStreamDict = pNewDict.Get();
+    pStreamDict = widget_->GetPDFAnnot()->GetDocument()->New<CPDF_Dictionary>();
     pStreamDict->SetNewFor<CPDF_Name>("Type", "XObject");
     pStreamDict->SetNewFor<CPDF_Name>("Subtype", "Form");
     pStreamDict->SetNewFor<CPDF_Number>("FormType", 1);
@@ -1865,7 +1863,7 @@ void CPDFSDK_AppStream::Write(const ByteString& sAPType,
         pStreamDict->SetFor("Resources", pResources->Clone());
     }
 
-    pStream->InitStream({}, std::move(pNewDict));
+    pStream->InitStream({}, pStreamDict);
   }
   pStreamDict->SetMatrixFor("Matrix", widget_->GetMatrix());
   pStreamDict->SetRectFor("BBox", widget_->GetRotatedRect());

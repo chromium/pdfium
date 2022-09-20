@@ -299,16 +299,15 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
 
   RetainPtr<CPDF_Stream> pStream = pAPDict->GetMutableStreamFor(m_sAPType);
   if (!pStream) {
-    pStream = m_pDocument->NewIndirect<CPDF_Stream>();
+    pStream.Reset(m_pDocument->NewIndirect<CPDF_Stream>());
     pAPDict->SetNewFor<CPDF_Reference>(m_sAPType, m_pDocument.Get(),
                                        pStream->GetObjNum());
   }
 
   RetainPtr<CPDF_Dictionary> pStreamDict = pStream->GetMutableDict();
   if (!pStreamDict) {
-    auto pOwnedDict = m_pDocument->New<CPDF_Dictionary>();
-    pStreamDict = pOwnedDict.Get();
-    pStream->InitStream({}, std::move(pOwnedDict));
+    pStreamDict = m_pDocument->New<CPDF_Dictionary>();
+    pStream->InitStream({}, pStreamDict);
   }
 
   RetainPtr<CPDF_Dictionary> pStreamResList =
@@ -316,7 +315,7 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
   RetainPtr<CPDF_Dictionary> pStreamResFontList =
       pStreamResList->GetMutableDictFor("Font");
   if (!pStreamResFontList) {
-    pStreamResFontList = m_pDocument->NewIndirect<CPDF_Dictionary>();
+    pStreamResFontList.Reset(m_pDocument->NewIndirect<CPDF_Dictionary>());
     pStreamResList->SetNewFor<CPDF_Reference>("Font", m_pDocument.Get(),
                                               pStreamResFontList->GetObjNum());
   }

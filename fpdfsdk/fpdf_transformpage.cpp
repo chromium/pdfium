@@ -241,7 +241,7 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
     pContentArray->InsertNewAt<CPDF_Reference>(0, pDoc, pStream->GetObjNum());
     pContentArray->AppendNew<CPDF_Reference>(pDoc, pEndStream->GetObjNum());
   } else if (pContentObj->IsStream() && !pContentObj->IsInline()) {
-    pContentArray = pDoc->NewIndirect<CPDF_Array>();
+    pContentArray.Reset(pDoc->NewIndirect<CPDF_Array>());
     pContentArray->AppendNew<CPDF_Reference>(pDoc, pStream->GetObjNum());
     pContentArray->AppendNew<CPDF_Reference>(pDoc, pContentObj->GetObjNum());
     pContentArray->AppendNew<CPDF_Reference>(pDoc, pEndStream->GetObjNum());
@@ -267,7 +267,7 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
 
     RetainPtr<CPDF_Dictionary> pDict;
     if (pObj->IsDictionary())
-      pDict = pObj->AsMutableDictionary();
+      pDict.Reset(pObj->AsMutableDictionary());
     else if (CPDF_Stream* pObjStream = pObj->AsMutableStream())
       pDict = pObjStream->GetMutableDict();
     else

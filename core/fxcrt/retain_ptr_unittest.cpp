@@ -212,8 +212,9 @@ TEST(RetainPtr, Assign) {
       EXPECT_EQ(0, obj.release_count());
     }
     {
+      // Test assignment from wrapped underlying type.
       RetainPtr<PseudoRetainable> ptr2;
-      ptr2 = ptr.Get();  // Test assignment from underlying type.
+      ptr2 = pdfium::WrapRetain(ptr.Get());
       EXPECT_EQ(3, obj.retain_count());
       EXPECT_EQ(1, obj.release_count());
     }
@@ -235,8 +236,9 @@ TEST(RetainPtr, AssignConvert) {
       EXPECT_EQ(0, obj.release_count());
     }
     {
+      // Test assignment from wrapped underlying type.
       RetainPtr<const PseudoRetainable> ptr2;
-      ptr2 = ptr.Get();  // Test assignment from underlying type.
+      ptr2 = pdfium::WrapRetain(ptr.Get());
       EXPECT_EQ(3, obj.retain_count());
       EXPECT_EQ(1, obj.release_count());
     }
