@@ -85,12 +85,13 @@ ByteString BaseFontNameForType(CFX_Font* pFont, int font_type) {
   return CFX_Font::kUntitledFontName;
 }
 
+// TODO(tsepez): return retained references.
 CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
                               const ByteString& font_name,
                               CFX_Font* pFont,
                               pdfium::span<const uint8_t> span,
                               int font_type) {
-  CPDF_Dictionary* pFontDesc = pDoc->NewIndirect<CPDF_Dictionary>();
+  auto pFontDesc = pDoc->NewIndirect<CPDF_Dictionary>();
   pFontDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
   pFontDesc->SetNewFor<CPDF_Name>("FontName", font_name);
   int flags = 0;
@@ -120,7 +121,7 @@ CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
   pFontDesc->SetNewFor<CPDF_Number>("CapHeight", pFont->GetAscent());
   pFontDesc->SetNewFor<CPDF_Number>("StemV", pFont->IsBold() ? 120 : 70);
 
-  CPDF_Stream* pStream = pDoc->NewIndirect<CPDF_Stream>();
+  auto pStream = pDoc->NewIndirect<CPDF_Stream>();
   pStream->SetData(span);
   // TODO(npm): Lengths for Type1 fonts.
   if (font_type == FPDF_FONT_TRUETYPE) {
@@ -129,7 +130,7 @@ CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
   }
   ByteString fontFile = font_type == FPDF_FONT_TYPE1 ? "FontFile" : "FontFile2";
   pFontDesc->SetNewFor<CPDF_Reference>(fontFile, pDoc, pStream->GetObjNum());
-  return pFontDesc;
+  return pFontDesc.Get();
 }
 
 const char ToUnicodeStart[] =
@@ -178,6 +179,7 @@ void AddUnicode(fxcrt::ostringstream* pBuffer, uint32_t unicode) {
 }
 
 // Loads the charcode to unicode mapping into a stream
+// TODO(tsepez): return retained result.
 CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
                          const std::multimap<uint32_t, uint32_t>& to_unicode) {
   // A map charcode->unicode
@@ -282,16 +284,16 @@ CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
   buffer << "endbfrange\n";
   buffer << ToUnicodeEnd;
   // TODO(npm): Encrypt / Compress?
-  CPDF_Stream* stream = pDoc->NewIndirect<CPDF_Stream>();
+  auto stream = pDoc->NewIndirect<CPDF_Stream>();
   stream->SetDataFromStringstream(&buffer);
-  return stream;
+  return stream.Get();
 }
 
 RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* pDoc,
                                     std::unique_ptr<CFX_Font> pFont,
                                     pdfium::span<const uint8_t> span,
                                     int font_type) {
-  RetainPtr<CPDF_Dictionary> pFontDict(pDoc->NewIndirect<CPDF_Dictionary>());
+  auto pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
   pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
   pFontDict->SetNewFor<CPDF_Name>(
       "Subtype", font_type == FPDF_FONT_TYPE1 ? "Type1" : "TrueType");
@@ -306,7 +308,7 @@ RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* pDoc,
     return nullptr;
   pFontDict->SetNewFor<CPDF_Number>("FirstChar",
                                     static_cast<int>(dwCurrentChar));
-  CPDF_Array* widthsArray = pDoc->NewIndirect<CPDF_Array>();
+  auto widthsArray = pDoc->NewIndirect<CPDF_Array>();
   while (true) {
     widthsArray->AppendNew<CPDF_Number>(pFont->GetGlyphWidth(dwGlyphIndex));
     uint32_t nextChar = static_cast<uint32_t>(
@@ -334,7 +336,7 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
                                        std::unique_ptr<CFX_Font> pFont,
                                        pdfium::span<const uint8_t> span,
                                        int font_type) {
-  RetainPtr<CPDF_Dictionary> pFontDict(pDoc->NewIndirect<CPDF_Dictionary>());
+  auto pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
   pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
   pFontDict->SetNewFor<CPDF_Name>("Subtype", "Type0");
   // TODO(npm): Get the correct encoding, if it's not identity.
@@ -344,7 +346,7 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
   pFontDict->SetNewFor<CPDF_Name>(
       "BaseFont", font_type == FPDF_FONT_TYPE1 ? name + "-" + encoding : name);
 
-  CPDF_Dictionary* pCIDFont = pDoc->NewIndirect<CPDF_Dictionary>();
+  auto pCIDFont = pDoc->NewIndirect<CPDF_Dictionary>();
   pCIDFont->SetNewFor<CPDF_Name>("Type", "Font");
   pCIDFont->SetNewFor<CPDF_Name>("Subtype", font_type == FPDF_FONT_TYPE1
                                                 ? "CIDFontType0"
@@ -353,7 +355,7 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
 
   // TODO(npm): Maybe use FT_Get_CID_Registry_Ordering_Supplement to get the
   // CIDSystemInfo
-  CPDF_Dictionary* pCIDSystemInfo = pDoc->NewIndirect<CPDF_Dictionary>();
+  auto pCIDSystemInfo = pDoc->NewIndirect<CPDF_Dictionary>();
   pCIDSystemInfo->SetNewFor<CPDF_String>("Registry", "Adobe", false);
   pCIDSystemInfo->SetNewFor<CPDF_String>("Ordering", "Identity", false);
   pCIDSystemInfo->SetNewFor<CPDF_Number>("Supplement", 0);
@@ -387,7 +389,7 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
     if (dwGlyphIndex == 0)
       break;
   }
-  CPDF_Array* widthsArray = pDoc->NewIndirect<CPDF_Array>();
+  auto widthsArray = pDoc->NewIndirect<CPDF_Array>();
   for (auto it = widths.begin(); it != widths.end(); ++it) {
     int ch = it->first;
     int w = it->second;

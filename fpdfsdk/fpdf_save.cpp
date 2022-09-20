@@ -117,7 +117,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
           pDataSetsStream->InitStreamFromFile(pFileWrite, std::move(pDataDict));
         }
       } else {
-        CPDF_Stream* pData = pPDFDocument->NewIndirect<CPDF_Stream>();
+        auto pData = pPDFDocument->NewIndirect<CPDF_Stream>();
         pData->InitStreamFromFile(pFileWrite, std::move(pDataDict));
         int iLast = fxcrt::CollectionSize<int>(*pArray) - 2;
         pArray->InsertNewAt<CPDF_String>(iLast, "datasets", false);
@@ -137,7 +137,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
         if (pFormStream)
           pFormStream->InitStreamFromFile(pFileWrite, std::move(pDataDict));
       } else {
-        CPDF_Stream* pData = pPDFDocument->NewIndirect<CPDF_Stream>();
+        auto pData = pPDFDocument->NewIndirect<CPDF_Stream>();
         pData->InitStreamFromFile(pFileWrite, std::move(pDataDict));
         int iLast = fxcrt::CollectionSize<int>(*pArray) - 2;
         pArray->InsertNewAt<CPDF_String>(iLast, "form", false);

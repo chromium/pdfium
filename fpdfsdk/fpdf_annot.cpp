@@ -1098,8 +1098,7 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
     if (!pDoc)
       return false;
 
-    CPDF_Stream* pNewIndirectStream = pDoc->NewIndirect<CPDF_Stream>();
-
+    auto pNewIndirectStream = pDoc->NewIndirect<CPDF_Stream>();
     ByteString newAPStream =
         PDF_EncodeText(WideStringFromFPDFWideString(value).AsStringView());
     pNewIndirectStream->SetData(newAPStream.raw_span());

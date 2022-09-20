@@ -444,14 +444,14 @@ std::unique_ptr<CPDF_NameTree> CPDF_NameTree::CreateWithRootNameArray(
   // Retrieve the document's Names dictionary; create it if missing.
   RetainPtr<CPDF_Dictionary> pNames = pRoot->GetMutableDictFor("Names");
   if (!pNames) {
-    pNames.Reset(pDoc->NewIndirect<CPDF_Dictionary>());
+    pNames = pDoc->NewIndirect<CPDF_Dictionary>();
     pRoot->SetNewFor<CPDF_Reference>("Names", pDoc, pNames->GetObjNum());
   }
 
   // Create the |category| dictionary if missing.
   RetainPtr<CPDF_Dictionary> pCategory = pNames->GetMutableDictFor(category);
   if (!pCategory) {
-    pCategory.Reset(pDoc->NewIndirect<CPDF_Dictionary>());
+    pCategory = pDoc->NewIndirect<CPDF_Dictionary>();
     pCategory->SetNewFor<CPDF_Array>("Names");
     pNames->SetNewFor<CPDF_Reference>(category, pDoc, pCategory->GetObjNum());
   }

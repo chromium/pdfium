@@ -32,19 +32,20 @@ class CPDF_IndirectObjectHolder {
   void DeleteIndirectObject(uint32_t objnum);
 
   // Creates and adds a new object owned by the indirect object holder,
-  // and returns an unowned pointer to it.  We have a special case to
+  // and returns a retained pointer to it.  We have a special case to
   // handle objects that can intern strings from our ByteStringPool.
   template <typename T, typename... Args>
-  typename std::enable_if<!CanInternStrings<T>::value, T*>::type NewIndirect(
-      Args&&... args) {
-    return static_cast<T*>(
-        AddIndirectObject(pdfium::MakeRetain<T>(std::forward<Args>(args)...)));
+  typename std::enable_if<!CanInternStrings<T>::value, RetainPtr<T>>::type
+  NewIndirect(Args&&... args) {
+    return pdfium::WrapRetain(static_cast<T*>(
+        AddIndirectObject(pdfium::MakeRetain<T>(std::forward<Args>(args)...))));
   }
   template <typename T, typename... Args>
-  typename std::enable_if<CanInternStrings<T>::value, T*>::type NewIndirect(
-      Args&&... args) {
-    return static_cast<T*>(AddIndirectObject(
-        pdfium::MakeRetain<T>(m_pByteStringPool, std::forward<Args>(args)...)));
+  typename std::enable_if<CanInternStrings<T>::value, RetainPtr<T>>::type
+  NewIndirect(Args&&... args) {
+    return pdfium::WrapRetain(
+        static_cast<T*>(AddIndirectObject(pdfium::MakeRetain<T>(
+            m_pByteStringPool, std::forward<Args>(args)...))));
   }
 
   // Creates and adds a new object not owned by the indirect object holder,

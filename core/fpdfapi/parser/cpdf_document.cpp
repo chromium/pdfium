@@ -326,10 +326,11 @@ JBig2_DocumentContext* CPDF_Document::GetOrCreateCodecContext() {
   return m_pCodecContext.get();
 }
 
+// TODO(tsepez): return retained reference.
 CPDF_Stream* CPDF_Document::CreateModifiedAPStream() {
-  auto* stream = NewIndirect<CPDF_Stream>();
+  auto stream = NewIndirect<CPDF_Stream>();
   m_ModifiedAPStreamIDs.insert(stream->GetObjNum());
-  return stream;
+  return stream.Get();
 }
 
 bool CPDF_Document::IsModifiedAPStream(const CPDF_Stream* stream) const {
@@ -392,19 +393,19 @@ uint32_t CPDF_Document::GetUserPermissions() const {
 void CPDF_Document::CreateNewDoc() {
   DCHECK(!m_pRootDict);
   DCHECK(!m_pInfoDict);
-  m_pRootDict.Reset(NewIndirect<CPDF_Dictionary>());
+  m_pRootDict = NewIndirect<CPDF_Dictionary>();
   m_pRootDict->SetNewFor<CPDF_Name>("Type", "Catalog");
 
-  CPDF_Dictionary* pPages = NewIndirect<CPDF_Dictionary>();
+  auto pPages = NewIndirect<CPDF_Dictionary>();
   pPages->SetNewFor<CPDF_Name>("Type", "Pages");
   pPages->SetNewFor<CPDF_Number>("Count", 0);
   pPages->SetNewFor<CPDF_Array>("Kids");
   m_pRootDict->SetNewFor<CPDF_Reference>("Pages", this, pPages->GetObjNum());
-  m_pInfoDict.Reset(NewIndirect<CPDF_Dictionary>());
+  m_pInfoDict = NewIndirect<CPDF_Dictionary>();
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_Document::CreateNewPage(int iPage) {
-  RetainPtr<CPDF_Dictionary> pDict(NewIndirect<CPDF_Dictionary>());
+  auto pDict = NewIndirect<CPDF_Dictionary>();
   pDict->SetNewFor<CPDF_Name>("Type", "Page");
   uint32_t dwObjNum = pDict->GetObjNum();
   if (!InsertNewPage(iPage, pDict.Get())) {

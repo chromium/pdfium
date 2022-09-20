@@ -228,11 +228,11 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
   if (matrix)
     WriteMatrix(text_buf, CFXMatrixFromFSMatrix(*matrix)) << " cm ";
 
-  CPDF_Stream* pStream =
+  auto pStream =
       pDoc->NewIndirect<CPDF_Stream>(nullptr, 0, pDoc->New<CPDF_Dictionary>());
   pStream->SetDataFromStringstream(&text_buf);
 
-  CPDF_Stream* pEndStream =
+  auto pEndStream =
       pDoc->NewIndirect<CPDF_Stream>(nullptr, 0, pDoc->New<CPDF_Dictionary>());
   pEndStream->SetData(ByteStringView(" Q").raw_span());
 
@@ -241,7 +241,7 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
     pContentArray->InsertNewAt<CPDF_Reference>(0, pDoc, pStream->GetObjNum());
     pContentArray->AppendNew<CPDF_Reference>(pDoc, pEndStream->GetObjNum());
   } else if (pContentObj->IsStream() && !pContentObj->IsInline()) {
-    pContentArray.Reset(pDoc->NewIndirect<CPDF_Array>());
+    pContentArray = pDoc->NewIndirect<CPDF_Array>();
     pContentArray->AppendNew<CPDF_Reference>(pDoc, pStream->GetObjNum());
     pContentArray->AppendNew<CPDF_Reference>(pDoc, pContentObj->GetObjNum());
     pContentArray->AppendNew<CPDF_Reference>(pDoc, pEndStream->GetObjNum());
@@ -406,7 +406,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
   if (!pDoc)
     return;
 
-  CPDF_Stream* pStream =
+  auto pStream =
       pDoc->NewIndirect<CPDF_Stream>(nullptr, 0, pDoc->New<CPDF_Dictionary>());
   pStream->SetDataFromStringstream(&strClip);
 
@@ -414,7 +414,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertClipPath(FPDF_PAGE page,
   if (pArray) {
     pArray->InsertNewAt<CPDF_Reference>(0, pDoc, pStream->GetObjNum());
   } else if (pContentObj->IsStream() && !pContentObj->IsInline()) {
-    CPDF_Array* pContentArray = pDoc->NewIndirect<CPDF_Array>();
+    auto pContentArray = pDoc->NewIndirect<CPDF_Array>();
     pContentArray->AppendNew<CPDF_Reference>(pDoc, pStream->GetObjNum());
     pContentArray->AppendNew<CPDF_Reference>(pDoc, pContentObj->GetObjNum());
     pPageDict->SetNewFor<CPDF_Reference>(pdfium::page_object::kContents, pDoc,

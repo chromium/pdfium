@@ -397,7 +397,7 @@ ByteString GetPopupContentsString(CPDF_Document* pDoc,
 RetainPtr<CPDF_Dictionary> GenerateResourceFontDict(
     CPDF_Document* pDoc,
     const ByteString& sFontDictName) {
-  CPDF_Dictionary* pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
+  auto pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
   pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
   pFontDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
   pFontDict->SetNewFor<CPDF_Name>("BaseFont", CFX_Font::kDefaultAnsiFontName);
@@ -503,7 +503,7 @@ void GenerateAndSetAPDict(CPDF_Document* pDoc,
                           fxcrt::ostringstream* psAppStream,
                           RetainPtr<CPDF_Dictionary> pResourceDict,
                           bool bIsTextMarkupAnnotation) {
-  CPDF_Stream* pNormalStream = pDoc->NewIndirect<CPDF_Stream>();
+  auto pNormalStream = pDoc->NewIndirect<CPDF_Stream>();
   pNormalStream->SetDataFromStringstream(psAppStream);
 
   RetainPtr<CPDF_Dictionary> pAPDict =
@@ -944,7 +944,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
   RetainPtr<CPDF_Dictionary> pFontDict =
       pDRFontDict->GetMutableDictFor(font_name);
   if (!pFontDict) {
-    pFontDict.Reset(pDoc->NewIndirect<CPDF_Dictionary>());
+    pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
     pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
     pFontDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
     pFontDict->SetNewFor<CPDF_Name>("BaseFont", CFX_Font::kDefaultAnsiFontName);
@@ -1061,7 +1061,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
       pAnnotDict->GetOrCreateDictFor(pdfium::annotation::kAP);
   RetainPtr<CPDF_Stream> pNormalStream = pAPDict->GetMutableStreamFor("N");
   if (!pNormalStream) {
-    pNormalStream.Reset(pDoc->NewIndirect<CPDF_Stream>());
+    pNormalStream = pDoc->NewIndirect<CPDF_Stream>();
     pAPDict->SetNewFor<CPDF_Reference>("N", pDoc, pNormalStream->GetObjNum());
   }
   RetainPtr<CPDF_Dictionary> pStreamDict = pNormalStream->GetMutableDict();

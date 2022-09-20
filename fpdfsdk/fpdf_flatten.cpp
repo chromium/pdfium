@@ -180,12 +180,13 @@ ByteString GenerateFlattenedContent(const ByteString& key) {
   return "q 1 0 0 1 0 0 cm /" + key + " Do Q";
 }
 
+// TODO(tsepez): return retained reference.
 CPDF_Object* NewIndirectContentsStream(CPDF_Document* pDocument,
                                        const ByteString& contents) {
-  CPDF_Stream* pNewContents = pDocument->NewIndirect<CPDF_Stream>(
+  auto pNewContents = pDocument->NewIndirect<CPDF_Stream>(
       nullptr, 0, pDocument->New<CPDF_Dictionary>());
   pNewContents->SetData(contents.raw_span());
-  return pNewContents;
+  return pNewContents.Get();
 }
 
 void SetPageContents(const ByteString& key,
@@ -220,7 +221,7 @@ void SetPageContents(const ByteString& key,
       sStream += "\nQ";
     }
     pContentsStream->SetDataAndRemoveFilter(sStream.raw_span());
-    pContentsArray.Reset(pDocument->NewIndirect<CPDF_Array>());
+    pContentsArray = pDocument->NewIndirect<CPDF_Array>();
     pContentsArray->AppendNew<CPDF_Reference>(pDocument,
                                               pContentsStream->GetObjNum());
     pPage->SetNewFor<CPDF_Reference>(pdfium::page_object::kContents, pDocument,
@@ -297,7 +298,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
   RetainPtr<CPDF_Dictionary> pRes =
       pPageDict->GetOrCreateDictFor(pdfium::page_object::kResources);
-  CPDF_Stream* pNewXObject = pDocument->NewIndirect<CPDF_Stream>(
+  auto pNewXObject = pDocument->NewIndirect<CPDF_Stream>(
       nullptr, 0, pDocument->New<CPDF_Dictionary>());
   RetainPtr<CPDF_Dictionary> pPageXObject = pRes->GetOrCreateDictFor("XObject");
 
@@ -399,8 +400,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
     ByteString sStream;
     {
-      auto pAcc =
-          pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(pNewXObject));
+      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pNewXObject);
       pAcc->LoadAllDataFiltered();
       sStream = ByteString(pAcc->GetSpan());
     }

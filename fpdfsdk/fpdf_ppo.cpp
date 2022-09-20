@@ -269,7 +269,7 @@ bool CPDF_PageOrganizer::Init() {
   RetainPtr<CPDF_Dictionary> pNewPages =
       pElement ? ToDictionary(pElement->GetMutableDirect()) : nullptr;
   if (!pNewPages) {
-    pNewPages.Reset(dest()->NewIndirect<CPDF_Dictionary>());
+    pNewPages = dest()->NewIndirect<CPDF_Dictionary>();
     pNewRoot->SetNewFor<CPDF_Reference>("Pages", dest(),
                                         pNewPages->GetObjNum());
   }
@@ -278,7 +278,7 @@ bool CPDF_PageOrganizer::Init() {
     pNewPages->SetNewFor<CPDF_Name>("Type", "Pages");
 
   if (!pNewPages->GetArrayFor("Kids")) {
-    auto* pNewArray = dest()->NewIndirect<CPDF_Array>();
+    auto pNewArray = dest()->NewIndirect<CPDF_Array>();
     pNewPages->SetNewFor<CPDF_Number>("Count", 0);
     pNewPages->SetNewFor<CPDF_Reference>("Kids", dest(),
                                          pNewArray->GetObjNum());
@@ -598,13 +598,14 @@ ByteString CPDF_NPageToOneExporter::AddSubPage(
   return ByteString(contentStream);
 }
 
+// TODO(tsepez): return retained object.
 CPDF_Stream* CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
     const RetainPtr<CPDF_Page>& pSrcPage) {
   const CPDF_Dictionary* pSrcPageDict = pSrcPage->GetDict();
   RetainPtr<const CPDF_Object> pSrcContentObj =
       pSrcPageDict->GetDirectObjectFor(pdfium::page_object::kContents);
 
-  CPDF_Stream* pNewXObject = dest()->NewIndirect<CPDF_Stream>(
+  auto pNewXObject = dest()->NewIndirect<CPDF_Stream>(
       nullptr, 0, dest()->New<CPDF_Dictionary>());
   RetainPtr<CPDF_Dictionary> pNewXObjectDict = pNewXObject->GetMutableDict();
   static const char kResourceString[] = "Resources";
@@ -634,15 +635,14 @@ CPDF_Stream* CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
         bsSrcContentStream += "\n";
       }
     } else {
-      const CPDF_Stream* pStream = pSrcContentObj->AsStream();
-      auto pAcc =
-          pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(pStream));
+      RetainPtr<const CPDF_Stream> pStream(pSrcContentObj->AsStream());
+      auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pStream));
       pAcc->LoadAllDataFiltered();
       bsSrcContentStream = ByteString(pAcc->GetSpan());
     }
     pNewXObject->SetDataAndRemoveFilter(bsSrcContentStream.raw_span());
   }
-  return pNewXObject;
+  return pNewXObject.Get();
 }
 
 ByteString CPDF_NPageToOneExporter::MakeXObjectFromPage(
@@ -680,8 +680,7 @@ void CPDF_NPageToOneExporter::FinishPage(
     pPageXObject->SetNewFor<CPDF_Reference>(it.first, dest(), it.second);
 
   auto pDict = dest()->New<CPDF_Dictionary>();
-  CPDF_Stream* pStream =
-      dest()->NewIndirect<CPDF_Stream>(nullptr, 0, std::move(pDict));
+  auto pStream = dest()->NewIndirect<CPDF_Stream>(nullptr, 0, std::move(pDict));
   pStream->SetData(bsContent.raw_span());
   pDestPageDict->SetNewFor<CPDF_Reference>(pdfium::page_object::kContents,
                                            dest(), pStream->GetObjNum());

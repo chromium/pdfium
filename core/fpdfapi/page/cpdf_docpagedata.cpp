@@ -221,8 +221,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::GetStandardFont(
     return pdfium::WrapRetain(pFont);
   }
 
-  RetainPtr<CPDF_Dictionary> pDict(
-      GetDocument()->NewIndirect<CPDF_Dictionary>());
+  auto pDict = GetDocument()->NewIndirect<CPDF_Dictionary>();
   pDict->SetNewFor<CPDF_Name>("Type", "Font");
   pDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
   pDict->SetNewFor<CPDF_Name>("BaseFont", fontName);
@@ -485,9 +484,9 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddFont(std::unique_ptr<CFX_Font> pFont,
       CalculateFlags(pFont->IsBold(), pFont->IsItalic(), pFont->IsFixedWidth(),
                      false, false, charset == FX_Charset::kSymbol);
 
-  RetainPtr<CPDF_Dictionary> pBaseDict(
-      GetDocument()->NewIndirect<CPDF_Dictionary>());
+  auto pBaseDict = GetDocument()->NewIndirect<CPDF_Dictionary>();
   pBaseDict->SetNewFor<CPDF_Name>("Type", "Font");
+
   auto pEncoding = std::make_unique<CFX_UnicodeEncoding>(pFont.get());
   RetainPtr<CPDF_Dictionary> pFontDict = pBaseDict;
   if (!bCJK) {
@@ -599,8 +598,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddWindowsFont(LOGFONTA* pLogFont) {
                  ptm->otmrcFontBox.right, ptm->otmrcFontBox.top};
   FX_Free(tm_buf);
   basefont.Replace(" ", "");
-  RetainPtr<CPDF_Dictionary> pBaseDict(
-      GetDocument()->NewIndirect<CPDF_Dictionary>());
+  auto pBaseDict = GetDocument()->NewIndirect<CPDF_Dictionary>();
   pBaseDict->SetNewFor<CPDF_Name>("Type", "Font");
   RetainPtr<CPDF_Dictionary> pFontDict = pBaseDict;
   if (!bCJK) {
@@ -653,8 +651,7 @@ size_t CPDF_DocPageData::CalculateEncodingDict(FX_Charset charset,
   if (i == std::size(kFX_CharsetUnicodes))
     return i;
 
-  CPDF_Dictionary* pEncodingDict =
-      GetDocument()->NewIndirect<CPDF_Dictionary>();
+  auto pEncodingDict = GetDocument()->NewIndirect<CPDF_Dictionary>();
   pEncodingDict->SetNewFor<CPDF_Name>("BaseEncoding",
                                       pdfium::font_encodings::kWinAnsiEncoding);
 
@@ -671,12 +668,13 @@ size_t CPDF_DocPageData::CalculateEncodingDict(FX_Charset charset,
   return i;
 }
 
+// TODO(tsepez): return retained reference.
 CPDF_Dictionary* CPDF_DocPageData::ProcessbCJK(
     const RetainPtr<CPDF_Dictionary>& pBaseDict,
     FX_Charset charset,
     ByteString basefont,
     std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert) {
-  CPDF_Dictionary* pFontDict = GetDocument()->NewIndirect<CPDF_Dictionary>();
+  auto pFontDict = GetDocument()->NewIndirect<CPDF_Dictionary>();
   ByteString cmap;
   ByteString ordering;
   int supplement = 0;
@@ -736,5 +734,5 @@ CPDF_Dictionary* CPDF_DocPageData::ProcessbCJK(
 
   CPDF_Array* pArray = pBaseDict->SetNewFor<CPDF_Array>("DescendantFonts");
   pArray->AppendNew<CPDF_Reference>(GetDocument(), pFontDict->GetObjNum());
-  return pFontDict;
+  return pFontDict.Get();
 }

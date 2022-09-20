@@ -316,14 +316,14 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   {
     // Set the text object font and text
     auto pTextObj = std::make_unique<CPDF_TextObject>();
-    RetainPtr<CPDF_Dictionary> pDict(pDoc->NewIndirect<CPDF_Dictionary>());
+    auto pDict = pDoc->NewIndirect<CPDF_Dictionary>();
     pDict->SetNewFor<CPDF_Name>("Type", "Font");
     pDict->SetNewFor<CPDF_Name>("Subtype", "TrueType");
 
     RetainPtr<CPDF_Font> pFont = CPDF_Font::GetStockFont(pDoc.get(), "Arial");
     pDict->SetNewFor<CPDF_Name>("BaseFont", pFont->GetBaseFontName());
 
-    CPDF_Dictionary* pDesc = pDoc->NewIndirect<CPDF_Dictionary>();
+    auto pDesc = pDoc->NewIndirect<CPDF_Dictionary>();
     pDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
     pDesc->SetNewFor<CPDF_Name>("FontName", pFont->GetBaseFontName());
     pDict->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc.get(),

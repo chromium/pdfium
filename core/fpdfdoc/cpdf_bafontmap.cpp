@@ -299,7 +299,7 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
 
   RetainPtr<CPDF_Stream> pStream = pAPDict->GetMutableStreamFor(m_sAPType);
   if (!pStream) {
-    pStream.Reset(m_pDocument->NewIndirect<CPDF_Stream>());
+    pStream = m_pDocument->NewIndirect<CPDF_Stream>();
     pAPDict->SetNewFor<CPDF_Reference>(m_sAPType, m_pDocument.Get(),
                                        pStream->GetObjNum());
   }
@@ -315,7 +315,7 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
   RetainPtr<CPDF_Dictionary> pStreamResFontList =
       pStreamResList->GetMutableDictFor("Font");
   if (!pStreamResFontList) {
-    pStreamResFontList.Reset(m_pDocument->NewIndirect<CPDF_Dictionary>());
+    pStreamResFontList = m_pDocument->NewIndirect<CPDF_Dictionary>();
     pStreamResList->SetNewFor<CPDF_Reference>("Font", m_pDocument.Get(),
                                               pStreamResFontList->GetObjNum());
   }

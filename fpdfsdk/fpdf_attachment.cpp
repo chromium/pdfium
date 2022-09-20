@@ -77,7 +77,7 @@ FPDFDoc_AddAttachment(FPDF_DOCUMENT document, FPDF_WIDESTRING name) {
     return nullptr;
 
   // Set up the basic entries in the filespec dictionary.
-  CPDF_Dictionary* pFile = pDoc->NewIndirect<CPDF_Dictionary>();
+  auto pFile = pDoc->NewIndirect<CPDF_Dictionary>();
   pFile->SetNewFor<CPDF_Name>("Type", "Filespec");
   pFile->SetNewFor<CPDF_String>("UF", wsName.AsStringView());
   pFile->SetNewFor<CPDF_String>(pdfium::stream::kF, wsName.AsStringView());
@@ -86,7 +86,7 @@ FPDFDoc_AddAttachment(FPDF_DOCUMENT document, FPDF_WIDESTRING name) {
   if (!name_tree->AddValueAndName(pFile->MakeReference(pDoc), wsName))
     return nullptr;
 
-  return FPDFAttachmentFromCPDFObject(pFile);
+  return FPDFAttachmentFromCPDFObject(pFile.Get());
 }
 
 FPDF_EXPORT FPDF_ATTACHMENT FPDF_CALLCONV
@@ -242,8 +242,8 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
   // Create the file stream and have the filespec dictionary link to it.
   std::unique_ptr<uint8_t, FxFreeDeleter> stream(FX_AllocUninit(uint8_t, len));
   memcpy(stream.get(), contents, len);
-  CPDF_Stream* pFileStream = pDoc->NewIndirect<CPDF_Stream>(
-      std::move(stream), len, std::move(pFileStreamDict));
+  auto pFileStream = pDoc->NewIndirect<CPDF_Stream>(std::move(stream), len,
+                                                    std::move(pFileStreamDict));
   CPDF_Dictionary* pEFDict =
       pFile->AsMutableDictionary()->SetNewFor<CPDF_Dictionary>("EF");
   pEFDict->SetNewFor<CPDF_Reference>("F", pDoc, pFileStream->GetObjNum());

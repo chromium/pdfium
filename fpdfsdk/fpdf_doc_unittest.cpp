@@ -28,14 +28,14 @@ class PDFDocTest : public TestWithPageModule {
  public:
   struct DictObjInfo {
     uint32_t num;
-    CPDF_Dictionary* obj;
+    RetainPtr<CPDF_Dictionary> obj;
   };
 
   void SetUp() override {
     TestWithPageModule::SetUp();
     auto pTestDoc = std::make_unique<CPDF_TestDocument>();
     m_pIndirectObjs = pTestDoc.get();
-    m_pRootObj.Reset(m_pIndirectObjs->NewIndirect<CPDF_Dictionary>());
+    m_pRootObj = m_pIndirectObjs->NewIndirect<CPDF_Dictionary>();
     pTestDoc->SetRoot(m_pRootObj.Get());
     m_pDoc.reset(FPDFDocumentFromCPDFDocument(pTestDoc.release()));
   }
@@ -50,8 +50,7 @@ class PDFDocTest : public TestWithPageModule {
   std::vector<DictObjInfo> CreateDictObjs(int num) {
     std::vector<DictObjInfo> info;
     for (int i = 0; i < num; ++i) {
-      // Objects created will be released by the document.
-      CPDF_Dictionary* obj = m_pIndirectObjs->NewIndirect<CPDF_Dictionary>();
+      auto obj = m_pIndirectObjs->NewIndirect<CPDF_Dictionary>();
       info.push_back({obj->GetObjNum(), obj});
     }
     return info;
@@ -117,12 +116,12 @@ TEST_F(PDFDocTest, FindBookmark) {
 
     // Title with a match.
     title = GetFPDFWideString(L"Chapter 2");
-    EXPECT_EQ(FPDFBookmarkFromCPDFDictionary(bookmarks[2].obj),
+    EXPECT_EQ(FPDFBookmarkFromCPDFDictionary(bookmarks[2].obj.Get()),
               FPDFBookmark_Find(m_pDoc.get(), title.get()));
 
     // Title match is case insensitive.
     title = GetFPDFWideString(L"cHaPter 2");
-    EXPECT_EQ(FPDFBookmarkFromCPDFDictionary(bookmarks[2].obj),
+    EXPECT_EQ(FPDFBookmarkFromCPDFDictionary(bookmarks[2].obj.Get()),
               FPDFBookmark_Find(m_pDoc.get(), title.get()));
   }
   {
@@ -157,7 +156,7 @@ TEST_F(PDFDocTest, FindBookmark) {
 
     // Title with a match.
     title = GetFPDFWideString(L"Chapter 2");
-    EXPECT_EQ(FPDFBookmarkFromCPDFDictionary(bookmarks[2].obj),
+    EXPECT_EQ(FPDFBookmarkFromCPDFDictionary(bookmarks[2].obj.Get()),
               FPDFBookmark_Find(m_pDoc.get(), title.get()));
   }
   {
@@ -198,7 +197,7 @@ TEST_F(PDFDocTest, FindBookmark) {
 
     // Title with a match.
     title = GetFPDFWideString(L"Chapter 3");
-    EXPECT_EQ(FPDFBookmarkFromCPDFDictionary(bookmarks[3].obj),
+    EXPECT_EQ(FPDFBookmarkFromCPDFDictionary(bookmarks[3].obj.Get()),
               FPDFBookmark_Find(m_pDoc.get(), title.get()));
   }
 }

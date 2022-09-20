@@ -976,8 +976,8 @@ TEST(PDFObjectTest, CloneCheckLoop) {
   {
     CPDF_IndirectObjectHolder objects_holder;
     // Create an object with a reference loop.
-    CPDF_Dictionary* dict_obj = objects_holder.NewIndirect<CPDF_Dictionary>();
-    RetainPtr<CPDF_Array> arr_obj = pdfium::MakeRetain<CPDF_Array>();
+    auto dict_obj = objects_holder.NewIndirect<CPDF_Dictionary>();
+    auto arr_obj = pdfium::MakeRetain<CPDF_Array>();
     arr_obj->InsertNewAt<CPDF_Reference>(0, &objects_holder,
                                          dict_obj->GetObjNum());
     RetainPtr<const CPDF_Object> elem0 = arr_obj->GetObjectAt(0);
