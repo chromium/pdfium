@@ -157,7 +157,7 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   if (pAnnotDict->KeyExist(pdfium::annotation::kAS))
     return;
 
-  const CPDF_Dictionary* pParentDict =
+  RetainPtr<const CPDF_Dictionary> pParentDict =
       pAnnotDict->GetDictFor(pdfium::form_fields::kParent);
   if (!pParentDict || !pParentDict->KeyExist(pdfium::annotation::kAS))
     return;
@@ -177,7 +177,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     return;
 
   const CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
-  const CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
+  RetainPtr<const CPDF_Dictionary> pAcroForm = pRoot->GetDictFor("AcroForm");
   bool bRegenerateAP =
       pAcroForm && pAcroForm->GetBooleanFor("NeedAppearances", false);
   for (size_t i = 0; i < pAnnots->size(); ++i) {

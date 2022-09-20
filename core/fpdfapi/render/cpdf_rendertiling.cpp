@@ -124,7 +124,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
       pStates = CPDF_RenderStatus::CloneObjStates(pPageObj, bStroke);
 
     const CPDF_Dictionary* pFormDict = pPatternForm->GetDict();
-    const CPDF_Dictionary* pFormResource = pFormDict->GetDictFor("Resources");
+    RetainPtr<const CPDF_Dictionary> pFormResource =
+        pFormDict->GetDictFor("Resources");
     for (int col = min_col; col <= max_col; col++) {
       for (int row = min_row; row <= max_row; row++) {
         CFX_PointF original = mtPattern2Device.Transform(
@@ -136,7 +137,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
         CPDF_RenderStatus status(pContext, pDevice);
         status.SetOptions(options);
         status.SetTransparency(pPatternForm->GetTransparency());
-        status.SetFormResource(pFormResource);
+        status.SetFormResource(pFormResource.Get());
         status.SetDropObjects(pRenderStatus->GetDropObjects());
         status.Initialize(pRenderStatus, pStates.get());
         status.RenderObjectList(pPatternForm, matrix);

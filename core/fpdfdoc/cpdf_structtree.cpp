@@ -19,7 +19,7 @@ namespace {
 
 bool IsTagged(const CPDF_Document* pDoc) {
   const CPDF_Dictionary* pCatalog = pDoc->GetRoot();
-  const CPDF_Dictionary* pMarkInfo = pCatalog->GetDictFor("MarkInfo");
+  RetainPtr<const CPDF_Dictionary> pMarkInfo = pCatalog->GetDictFor("MarkInfo");
   return pMarkInfo && pMarkInfo->GetIntegerFor("Marked");
 }
 
@@ -62,11 +62,13 @@ void CPDF_StructTree::LoadPageTree(const CPDF_Dictionary* pPageDict) {
 
   m_Kids.clear();
   m_Kids.resize(dwKids);
-  const CPDF_Dictionary* pParentTree = m_pTreeRoot->GetDictFor("ParentTree");
+  RetainPtr<const CPDF_Dictionary> pParentTree =
+      m_pTreeRoot->GetDictFor("ParentTree");
   if (!pParentTree)
     return;
 
-  CPDF_NumberTree parent_tree(pParentTree);
+  // TODO(tsepez): pass retained object.
+  CPDF_NumberTree parent_tree(pParentTree.Get());
   int parents_id = pPageDict->GetIntegerFor("StructParents", -1);
   if (parents_id < 0)
     return;
@@ -99,7 +101,7 @@ RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
 
   auto pElement = pdfium::MakeRetain<CPDF_StructElement>(this, pDict);
   (*map)[pDict] = pElement;
-  const CPDF_Dictionary* pParent = pDict->GetDictFor("P");
+  RetainPtr<const CPDF_Dictionary> pParent = pDict->GetDictFor("P");
   if (!pParent || pParent->GetNameFor("Type") == "StructTreeRoot") {
     if (!AddTopLevelNode(pDict, pElement))
       map->erase(pDict);
@@ -107,7 +109,7 @@ RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
   }
 
   RetainPtr<CPDF_StructElement> pParentElement =
-      AddPageNode(pParent, map, nLevel + 1);
+      AddPageNode(pParent.Get(), map, nLevel + 1);
   if (!pParentElement)
     return pElement;
 

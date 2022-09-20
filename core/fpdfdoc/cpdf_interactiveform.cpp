@@ -131,7 +131,7 @@ ByteString GenerateNewFontResourceName(const CPDF_Dictionary* pResDict,
     m++;
   }
 
-  const CPDF_Dictionary* pDict = pResDict->GetDictFor("Font");
+  RetainPtr<const CPDF_Dictionary> pDict = pResDict->GetDictFor("Font");
   DCHECK(pDict);
 
   int num = 0;
@@ -174,15 +174,16 @@ RetainPtr<CPDF_Font> AddNativeFont(FX_Charset charSet,
 bool FindFont(const CPDF_Dictionary* pFormDict,
               const CPDF_Font* pFont,
               ByteString* csNameTag) {
-  const CPDF_Dictionary* pDR = pFormDict->GetDictFor("DR");
+  RetainPtr<const CPDF_Dictionary> pDR = pFormDict->GetDictFor("DR");
   if (!pDR)
     return false;
 
-  const CPDF_Dictionary* pFonts = pDR->GetDictFor("Font");
-  if (!ValidateFontResourceDict(pFonts))
+  RetainPtr<const CPDF_Dictionary> pFonts = pDR->GetDictFor("Font");
+  // TODO(tsepez): this eventually locks the dict, pass locker instead.
+  if (!ValidateFontResourceDict(pFonts.Get()))
     return false;
 
-  CPDF_DictionaryLocker locker(pFonts);
+  CPDF_DictionaryLocker locker(std::move(pFonts));
   for (const auto& it : locker) {
     const ByteString& csKey = it.first;
     RetainPtr<const CPDF_Dictionary> pElement =
@@ -205,12 +206,12 @@ bool FindFontFromDoc(const CPDF_Dictionary* pFormDict,
   if (csFontName.IsEmpty())
     return false;
 
-  const CPDF_Dictionary* pDR = pFormDict->GetDictFor("DR");
+  RetainPtr<const CPDF_Dictionary> pDR = pFormDict->GetDictFor("DR");
   if (!pDR)
     return false;
 
-  const CPDF_Dictionary* pFonts = pDR->GetDictFor("Font");
-  if (!ValidateFontResourceDict(pFonts))
+  RetainPtr<const CPDF_Dictionary> pFonts = pDR->GetDictFor("Font");
+  if (!ValidateFontResourceDict(pFonts.Get()))
     return false;
 
   csFontName.Remove(' ');
@@ -299,12 +300,12 @@ RetainPtr<CPDF_Font> GetNativeFont(const CPDF_Dictionary* pFormDict,
                                    CPDF_Document* pDocument,
                                    FX_Charset charSet,
                                    ByteString* csNameTag) {
-  const CPDF_Dictionary* pDR = pFormDict->GetDictFor("DR");
+  RetainPtr<const CPDF_Dictionary> pDR = pFormDict->GetDictFor("DR");
   if (!pDR)
     return nullptr;
 
-  const CPDF_Dictionary* pFonts = pDR->GetDictFor("Font");
-  if (!ValidateFontResourceDict(pFonts))
+  RetainPtr<const CPDF_Dictionary> pFonts = pDR->GetDictFor("Font");
+  if (!ValidateFontResourceDict(pFonts.Get()))
     return nullptr;
 
   CPDF_DictionaryLocker locker(pFonts);
@@ -800,7 +801,7 @@ void CPDF_InteractiveForm::AddTerminalField(
     RetainPtr<CPDF_Dictionary> pFieldDict) {
   if (!pFieldDict->KeyExist(pdfium::form_fields::kFT)) {
     // Key "FT" is required for terminal fields, it is also inheritable.
-    const CPDF_Dictionary* pParentDict =
+    RetainPtr<const CPDF_Dictionary> pParentDict =
         pFieldDict->GetDictFor(pdfium::form_fields::kParent);
     if (!pParentDict || !pParentDict->KeyExist(pdfium::form_fields::kFT))
       return;

@@ -166,9 +166,9 @@ const CPDF_Dictionary* CPDF_Dictionary::GetDictForInternal(
   return nullptr;
 }
 
-const CPDF_Dictionary* CPDF_Dictionary::GetDictFor(
+RetainPtr<const CPDF_Dictionary> CPDF_Dictionary::GetDictFor(
     const ByteString& key) const {
-  return GetDictForInternal(key);
+  return pdfium::WrapRetain(GetDictForInternal(key));
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_Dictionary::GetMutableDictFor(

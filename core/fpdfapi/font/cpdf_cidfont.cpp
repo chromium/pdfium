@@ -450,13 +450,15 @@ bool CPDF_CIDFont::Load() {
     m_pCMap = pFontGlobals->GetPredefinedCMap(cmap);
   }
 
-  const CPDF_Dictionary* pFontDesc = pCIDFontDict->GetDictFor("FontDescriptor");
+  RetainPtr<const CPDF_Dictionary> pFontDesc =
+      pCIDFontDict->GetDictFor("FontDescriptor");
   if (pFontDesc)
-    LoadFontDescriptor(pFontDesc);
+    LoadFontDescriptor(pFontDesc.Get());
 
   m_Charset = m_pCMap->GetCharset();
   if (m_Charset == CIDSET_UNKNOWN) {
-    const CPDF_Dictionary* pCIDInfo = pCIDFontDict->GetDictFor("CIDSystemInfo");
+    RetainPtr<const CPDF_Dictionary> pCIDInfo =
+        pCIDFontDict->GetDictFor("CIDSystemInfo");
     if (pCIDInfo) {
       m_Charset = CPDF_CMapParser::CharsetFromOrdering(
           pCIDInfo->GetByteStringFor("Ordering").AsStringView());
@@ -868,9 +870,10 @@ void CPDF_CIDFont::LoadGB2312() {
   auto* pFontGlobals = CPDF_FontGlobals::GetInstance();
   m_pCMap = pFontGlobals->GetPredefinedCMap("GBK-EUC-H");
   m_pCID2UnicodeMap = pFontGlobals->GetCID2UnicodeMap(m_Charset);
-  const CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictFor("FontDescriptor");
+  RetainPtr<const CPDF_Dictionary> pFontDesc =
+      m_pFontDict->GetDictFor("FontDescriptor");
   if (pFontDesc)
-    LoadFontDescriptor(pFontDesc);
+    LoadFontDescriptor(pFontDesc.Get());
 
   if (!IsEmbedded())
     LoadSubstFont();

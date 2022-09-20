@@ -49,7 +49,7 @@ bool DocHasXFA(const CPDF_Document* doc) {
   if (!root)
     return false;
 
-  const CPDF_Dictionary* form = root->GetDictFor("AcroForm");
+  RetainPtr<const CPDF_Dictionary> form = root->GetDictFor("AcroForm");
   return form && form->GetArrayFor("XFA");
 }
 
@@ -358,12 +358,13 @@ void ReportUnsupportedFeatures(const CPDF_Document* pDoc) {
   if (pRootDict->KeyExist("Collection"))
     RaiseUnsupportedError(FPDF_UNSP_DOC_PORTABLECOLLECTION);
 
-  const CPDF_Dictionary* pNameDict = pRootDict->GetDictFor("Names");
+  RetainPtr<const CPDF_Dictionary> pNameDict = pRootDict->GetDictFor("Names");
   if (pNameDict) {
     if (pNameDict->KeyExist("EmbeddedFiles"))
       RaiseUnsupportedError(FPDF_UNSP_DOC_ATTACHMENT);
 
-    const CPDF_Dictionary* pJSDict = pNameDict->GetDictFor("JavaScript");
+    RetainPtr<const CPDF_Dictionary> pJSDict =
+        pNameDict->GetDictFor("JavaScript");
     if (pJSDict) {
       RetainPtr<const CPDF_Array> pArray = pJSDict->GetArrayFor("Names");
       if (pArray) {

@@ -397,7 +397,8 @@ RetainPtr<const CPDF_Array> GetNamedDestFromObject(
 
 RetainPtr<const CPDF_Array> LookupOldStyleNamedDest(CPDF_Document* pDoc,
                                                     const ByteString& name) {
-  const CPDF_Dictionary* pDests = pDoc->GetRoot()->GetDictFor("Dests");
+  RetainPtr<const CPDF_Dictionary> pDests =
+      pDoc->GetRoot()->GetDictFor("Dests");
   if (!pDests)
     return nullptr;
   return GetNamedDestFromObject(pDests->GetDirectObjectFor(name));

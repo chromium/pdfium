@@ -89,7 +89,8 @@ RetainPtr<CPDF_Stream> GetAnnotAPInternal(CPDF_Dictionary* pAnnotDict,
   if (as.IsEmpty()) {
     ByteString value = pAnnotDict->GetByteStringFor("V");
     if (value.IsEmpty()) {
-      const CPDF_Dictionary* pParentDict = pAnnotDict->GetDictFor("Parent");
+      RetainPtr<const CPDF_Dictionary> pParentDict =
+          pAnnotDict->GetDictFor("Parent");
       value = pParentDict ? pParentDict->GetByteStringFor("V") : ByteString();
     }
     as = (!value.IsEmpty() && pDict->KeyExist(value)) ? value : "Off";
@@ -129,7 +130,7 @@ void CPDF_Annot::GenerateAPIfNeeded() {
 bool CPDF_Annot::ShouldGenerateAP() const {
   // If AP dictionary exists and defines an appearance for normal mode, we use
   // the appearance defined in the existing AP dictionary.
-  const CPDF_Dictionary* pAP =
+  RetainPtr<const CPDF_Dictionary> pAP =
       m_pAnnotDict->GetDictFor(pdfium::annotation::kAP);
   if (pAP && pAP->GetDictFor("N"))
     return false;
@@ -446,7 +447,7 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
   if (!bPrinting && (annot_flags & pdfium::annotation_flags::kNoView)) {
     return;
   }
-  const CPDF_Dictionary* pBS = m_pAnnotDict->GetDictFor("BS");
+  RetainPtr<const CPDF_Dictionary> pBS = m_pAnnotDict->GetDictFor("BS");
   char style_char;
   float width;
   RetainPtr<const CPDF_Array> pDashArray;

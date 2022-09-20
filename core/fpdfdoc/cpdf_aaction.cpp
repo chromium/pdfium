@@ -54,7 +54,9 @@ bool CPDF_AAction::ActionExist(AActionType eType) const {
 }
 
 CPDF_Action CPDF_AAction::GetAction(AActionType eType) const {
-  return CPDF_Action(m_pDict ? m_pDict->GetDictFor(kAATypes[eType]) : nullptr);
+  // TOOD(tsepez): pass retained object.
+  return CPDF_Action(m_pDict ? m_pDict->GetDictFor(kAATypes[eType]).Get()
+                             : nullptr);
 }
 
 // static

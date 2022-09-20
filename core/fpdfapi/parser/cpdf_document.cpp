@@ -268,9 +268,10 @@ CPDF_Parser::Error CPDF_Document::HandleLoadResult(CPDF_Parser::Error error) {
   return error;
 }
 
+// TODO(tsepez): return retained references.
 const CPDF_Dictionary* CPDF_Document::GetPagesDict() const {
   const CPDF_Dictionary* pRoot = GetRoot();
-  return pRoot ? pRoot->GetDictFor("Pages") : nullptr;
+  return pRoot ? pRoot->GetDictFor("Pages").Get() : nullptr;
 }
 
 CPDF_Dictionary* CPDF_Document::GetPagesDict() {

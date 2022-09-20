@@ -137,7 +137,7 @@ int CPDFSDK_BAAnnot::GetBorderWidth() const {
   if (pBorder)
     return pBorder->GetIntegerAt(2);
 
-  const CPDF_Dictionary* pBSDict = GetAnnotDict()->GetDictFor("BS");
+  RetainPtr<const CPDF_Dictionary> pBSDict = GetAnnotDict()->GetDictFor("BS");
   if (pBSDict)
     return pBSDict->GetIntegerFor("W", 1);
 
@@ -171,7 +171,7 @@ void CPDFSDK_BAAnnot::SetBorderStyle(BorderStyle nStyle) {
 }
 
 BorderStyle CPDFSDK_BAAnnot::GetBorderStyle() const {
-  const CPDF_Dictionary* pBSDict = GetAnnotDict()->GetDictFor("BS");
+  RetainPtr<const CPDF_Dictionary> pBSDict = GetAnnotDict()->GetDictFor("BS");
   if (pBSDict) {
     ByteString sBorderStyle = pBSDict->GetByteStringFor("S", "S");
     if (sBorderStyle == "S")
@@ -207,11 +207,12 @@ bool CPDFSDK_BAAnnot::IsVisible() const {
 }
 
 CPDF_Action CPDFSDK_BAAnnot::GetAction() const {
-  return CPDF_Action(GetAnnotDict()->GetDictFor("A"));
+  return CPDF_Action(GetAnnotDict()->GetDictFor("A").Get());
 }
 
 CPDF_AAction CPDFSDK_BAAnnot::GetAAction() const {
-  return CPDF_AAction(GetAnnotDict()->GetDictFor(pdfium::form_fields::kAA));
+  return CPDF_AAction(
+      GetAnnotDict()->GetDictFor(pdfium::form_fields::kAA).Get());
 }
 
 CPDF_Action CPDFSDK_BAAnnot::GetAAction(CPDF_AAction::AActionType eAAT) {

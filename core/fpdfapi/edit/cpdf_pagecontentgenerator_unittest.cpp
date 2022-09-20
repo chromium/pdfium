@@ -40,7 +40,7 @@ class CPDF_PageContentGeneratorTest : public TestWithPageModule {
                                          const ByteString& type,
                                          const ByteString& name) {
     const CPDF_Dictionary* pResources = pGen->m_pObjHolder->GetResources();
-    return pResources->GetDictFor(type)->GetDictFor(name);
+    return pResources->GetDictFor(type)->GetDictFor(name).Get();
   }
 
   void TestProcessText(CPDF_PageContentGenerator* pGen,
@@ -373,7 +373,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
   EXPECT_EQ("Font", fontDict->GetNameFor("Type"));
   EXPECT_EQ("TrueType", fontDict->GetNameFor("Subtype"));
   EXPECT_EQ("Helvetica", fontDict->GetNameFor("BaseFont"));
-  const CPDF_Dictionary* fontDesc = fontDict->GetDictFor("FontDescriptor");
+  RetainPtr<const CPDF_Dictionary> fontDesc =
+      fontDict->GetDictFor("FontDescriptor");
   ASSERT_TRUE(fontDesc);
   EXPECT_TRUE(fontDesc->GetObjNum());
   EXPECT_EQ("FontDescriptor", fontDesc->GetNameFor("Type"));

@@ -106,7 +106,7 @@ const CPDF_Object* GetXFAEntryFromDocument(const CPDF_Document* doc) {
     return nullptr;
 
   // TODO(tsepez): return retained objects.
-  const CPDF_Dictionary* acro_form = root->GetDictFor("AcroForm");
+  RetainPtr<const CPDF_Dictionary> acro_form = root->GetDictFor("AcroForm");
   return acro_form ? acro_form->GetObjectFor("XFA").Get() : nullptr;
 }
 
@@ -249,7 +249,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_GetFormType(FPDF_DOCUMENT document) {
   if (!pRoot)
     return FORMTYPE_NONE;
 
-  const CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
+  RetainPtr<const CPDF_Dictionary> pAcroForm = pRoot->GetDictFor("AcroForm");
   if (!pAcroForm)
     return FORMTYPE_NONE;
 
@@ -1031,7 +1031,7 @@ FPDF_CountNamedDests(FPDF_DOCUMENT document) {
 
   auto name_tree = CPDF_NameTree::Create(pDoc, "Dests");
   FX_SAFE_UINT32 count = name_tree ? name_tree->GetCount() : 0;
-  const CPDF_Dictionary* pOldStyleDests = pRoot->GetDictFor("Dests");
+  RetainPtr<const CPDF_Dictionary> pOldStyleDests = pRoot->GetDictFor("Dests");
   if (pOldStyleDests)
     count += pOldStyleDests->size();
   return count.ValueOrDefault(0);
@@ -1139,7 +1139,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
   if (static_cast<size_t>(index) >= name_tree_count) {
     // If |index| is out of bounds, then try to retrieve the Nth old style named
     // destination. Where N is 0-indexed, with N = index - name_tree_count.
-    const CPDF_Dictionary* pDest = pRoot->GetDictFor("Dests");
+    RetainPtr<const CPDF_Dictionary> pDest = pRoot->GetDictFor("Dests");
     if (!pDest)
       return nullptr;
 

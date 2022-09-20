@@ -18,6 +18,6 @@ FPDFCatalog_IsTagged(FPDF_DOCUMENT document) {
   if (!pCatalog)
     return false;
 
-  const CPDF_Dictionary* pMarkInfo = pCatalog->GetDictFor("MarkInfo");
+  RetainPtr<const CPDF_Dictionary> pMarkInfo = pCatalog->GetDictFor("MarkInfo");
   return pMarkInfo && pMarkInfo->GetIntegerFor("Marked") != 0;
 }

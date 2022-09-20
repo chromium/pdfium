@@ -74,7 +74,7 @@ WideString CPDF_Action::GetFilePath() const {
   if (type != Type::kLaunch)
     return WideString();
 
-  const CPDF_Dictionary* pWinDict = m_pDict->GetDictFor("Win");
+  RetainPtr<const CPDF_Dictionary> pWinDict = m_pDict->GetDictFor("Win");
   if (!pWinDict)
     return WideString();
 
@@ -88,7 +88,7 @@ ByteString CPDF_Action::GetURI(const CPDF_Document* pDoc) const {
 
   ByteString csURI = m_pDict->GetByteStringFor("URI");
   const CPDF_Dictionary* pRoot = pDoc->GetRoot();
-  const CPDF_Dictionary* pURI = pRoot->GetDictFor("URI");
+  RetainPtr<const CPDF_Dictionary> pURI = pRoot->GetDictFor("URI");
   if (pURI) {
     auto result = csURI.Find(":");
     if (!result.has_value() || result.value() == 0) {

@@ -56,11 +56,11 @@ CFX_FloatRect CPDF_FormControl::GetRect() const {
 ByteString CPDF_FormControl::GetOnStateName() const {
   DCHECK(GetType() == CPDF_FormField::kCheckBox ||
          GetType() == CPDF_FormField::kRadioButton);
-  const CPDF_Dictionary* pAP = m_pWidgetDict->GetDictFor("AP");
+  RetainPtr<const CPDF_Dictionary> pAP = m_pWidgetDict->GetDictFor("AP");
   if (!pAP)
     return ByteString();
 
-  const CPDF_Dictionary* pN = pAP->GetDictFor("N");
+  RetainPtr<const CPDF_Dictionary> pN = pAP->GetDictFor("N");
   if (!pN)
     return ByteString();
 

@@ -88,7 +88,7 @@ const CPDF_Object* CPDF_Page::GetPageAttr(const ByteString& name) const {
       return pObj.Get();
     }
     visited.insert(pPageDict);
-    pPageDict = pPageDict->GetDictFor(pdfium::page_object::kParent);
+    pPageDict = pPageDict->GetDictFor(pdfium::page_object::kParent).Get();
   }
   return nullptr;
 }

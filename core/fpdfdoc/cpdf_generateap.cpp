@@ -320,7 +320,7 @@ ByteString GetColorStringWithDefault(const CPDF_Array* pColor,
 }
 
 float GetBorderWidth(const CPDF_Dictionary* pDict) {
-  const CPDF_Dictionary* pBorderStyleDict = pDict->GetDictFor("BS");
+  RetainPtr<const CPDF_Dictionary> pBorderStyleDict = pDict->GetDictFor("BS");
   if (pBorderStyleDict && pBorderStyleDict->KeyExist("W"))
     return pBorderStyleDict->GetFloatFor("W");
 
@@ -332,7 +332,7 @@ float GetBorderWidth(const CPDF_Dictionary* pDict) {
 }
 
 RetainPtr<const CPDF_Array> GetDashArray(const CPDF_Dictionary* pDict) {
-  const CPDF_Dictionary* pBorderStyleDict = pDict->GetDictFor("BS");
+  RetainPtr<const CPDF_Dictionary> pBorderStyleDict = pDict->GetDictFor("BS");
   if (pBorderStyleDict && pBorderStyleDict->GetByteStringFor("S") == "D")
     return pBorderStyleDict->GetArrayFor("D");
 
@@ -959,7 +959,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     return;
 
   CFX_FloatRect rcAnnot = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
-  const CPDF_Dictionary* pMKDict = pAnnotDict->GetDictFor("MK");
+  RetainPtr<const CPDF_Dictionary> pMKDict = pAnnotDict->GetDictFor("MK");
   int32_t nRotate =
       pMKDict ? pMKDict->GetIntegerFor(pdfium::appearance::kR) : 0;
 
@@ -993,7 +993,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
   CPVT_Dash dsBorder(3, 0, 0);
   CFX_Color crLeftTop;
   CFX_Color crRightBottom;
-  if (const CPDF_Dictionary* pBSDict = pAnnotDict->GetDictFor("BS")) {
+  if (RetainPtr<const CPDF_Dictionary> pBSDict = pAnnotDict->GetDictFor("BS")) {
     if (pBSDict->KeyExist("W"))
       fBorderWidth = pBSDict->GetFloatFor("W");
 

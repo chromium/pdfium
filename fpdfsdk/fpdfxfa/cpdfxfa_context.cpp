@@ -63,7 +63,7 @@ RetainPtr<CPDF_SeekableMultiStream> CreateXFAMultiStream(
   if (!pRoot)
     return nullptr;
 
-  const CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
+  RetainPtr<const CPDF_Dictionary> pAcroForm = pRoot->GetDictFor("AcroForm");
   if (!pAcroForm)
     return nullptr;
 

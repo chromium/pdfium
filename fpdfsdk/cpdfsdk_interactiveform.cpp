@@ -77,7 +77,8 @@ ByteString FDFToURLEncodedData(ByteString buffer) {
   if (!pFDF)
     return buffer;
 
-  const CPDF_Dictionary* pMainDict = pFDF->GetRoot()->GetDictFor("FDF");
+  RetainPtr<const CPDF_Dictionary> pMainDict =
+      pFDF->GetRoot()->GetDictFor("FDF");
   if (!pMainDict)
     return ByteString();
 
@@ -132,7 +133,8 @@ CPDFSDK_Widget* CPDFSDK_InteractiveForm::GetWidget(
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
   CPDFSDK_PageView* pPage = nullptr;
 
-  if (const CPDF_Dictionary* pPageDict = pControlDict->GetDictFor("P")) {
+  if (RetainPtr<const CPDF_Dictionary> pPageDict =
+          pControlDict->GetDictFor("P")) {
     int nPageIndex = pDocument->GetPageIndex(pPageDict->GetObjNum());
     if (nPageIndex >= 0)
       pPage = m_pFormFillEnv->GetPageViewAtIndex(nPageIndex);

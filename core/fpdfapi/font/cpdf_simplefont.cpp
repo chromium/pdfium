@@ -221,10 +221,11 @@ FX_RECT CPDF_SimpleFont::GetCharBBox(uint32_t charcode) {
 }
 
 bool CPDF_SimpleFont::LoadCommon() {
-  const CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictFor("FontDescriptor");
+  RetainPtr<const CPDF_Dictionary> pFontDesc =
+      m_pFontDict->GetDictFor("FontDescriptor");
   if (pFontDesc)
-    LoadFontDescriptor(pFontDesc);
-  LoadCharWidths(pFontDesc);
+    LoadFontDescriptor(pFontDesc.Get());
+  LoadCharWidths(pFontDesc.Get());
   if (m_pFontFile) {
     if (m_BaseFontName.GetLength() > 8 && m_BaseFontName[7] == '+')
       m_BaseFontName = m_BaseFontName.Last(m_BaseFontName.GetLength() - 8);

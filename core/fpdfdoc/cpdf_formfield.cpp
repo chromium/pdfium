@@ -45,7 +45,8 @@ const CPDF_Object* GetFieldAttrRecursive(const CPDF_Dictionary* pFieldDict,
     return pAttr;
 
   return GetFieldAttrRecursive(
-      pFieldDict->GetDictFor(pdfium::form_fields::kParent), name, nLevel + 1);
+      pFieldDict->GetDictFor(pdfium::form_fields::kParent).Get(), name,
+      nLevel + 1);
 }
 
 }  // namespace
@@ -88,7 +89,7 @@ WideString CPDF_FormField::GetFullNameForDict(
       else
         full_name = short_name + L'.' + full_name;
     }
-    pLevel = pLevel->GetDictFor(pdfium::form_fields::kParent);
+    pLevel = pLevel->GetDictFor(pdfium::form_fields::kParent).Get();
     if (pdfium::Contains(visited, pLevel))
       break;
   }

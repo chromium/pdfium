@@ -90,7 +90,8 @@ bool CPDF_Type1Font::Load() {
   if (!IsBase14Font())
     return LoadCommon();
 
-  const CPDF_Dictionary* pFontDesc = m_pFontDict->GetDictFor("FontDescriptor");
+  RetainPtr<const CPDF_Dictionary> pFontDesc =
+      m_pFontDict->GetDictFor("FontDescriptor");
   if (pFontDesc && pFontDesc->KeyExist("Flags")) {
     m_Flags = pFontDesc->GetIntegerFor("Flags");
   } else if (IsSymbolicFont()) {

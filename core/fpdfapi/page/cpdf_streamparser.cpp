@@ -151,7 +151,7 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
         pParam = pParams->GetDictAt(0);
     } else {
       decoder = pFilter->GetString();
-      pParam.Reset(pDict->GetDictFor(pdfium::stream::kDecodeParms));
+      pParam = pDict->GetDictFor(pdfium::stream::kDecodeParms);
     }
   }
   uint32_t width = pDict->GetIntegerFor("Width");

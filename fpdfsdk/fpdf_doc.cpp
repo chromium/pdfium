@@ -440,7 +440,7 @@ FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV FPDF_GetPageAAction(FPDF_PAGE page,
     return nullptr;
 
   const CPDF_Dictionary* page_dict = pdf_page->GetDict();
-  CPDF_AAction aa(page_dict->GetDictFor(pdfium::form_fields::kAA));
+  CPDF_AAction aa(page_dict->GetDictFor(pdfium::form_fields::kAA).Get());
 
   CPDF_AAction::AActionType type;
   if (aa_type == FPDFPAGE_AACTION_OPEN)

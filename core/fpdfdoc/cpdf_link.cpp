@@ -25,5 +25,5 @@ CPDF_Dest CPDF_Link::GetDest(CPDF_Document* pDoc) {
 }
 
 CPDF_Action CPDF_Link::GetAction() {
-  return CPDF_Action(m_pDict->GetDictFor("A"));
+  return CPDF_Action(m_pDict->GetDictFor("A").Get());
 }

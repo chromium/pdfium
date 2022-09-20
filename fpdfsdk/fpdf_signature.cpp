@@ -22,7 +22,7 @@ std::vector<RetainPtr<CPDF_Dictionary>> CollectSignatures(CPDF_Document* doc) {
   if (!root)
     return signatures;
 
-  const CPDF_Dictionary* acro_form = root->GetDictFor("AcroForm");
+  RetainPtr<const CPDF_Dictionary> acro_form = root->GetDictFor("AcroForm");
   if (!acro_form)
     return signatures;
 
@@ -71,7 +71,7 @@ FPDFSignatureObj_GetContents(FPDF_SIGNATURE signature,
   if (!signature_dict)
     return 0;
 
-  const CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
+  RetainPtr<const CPDF_Dictionary> value_dict = signature_dict->GetDictFor("V");
   if (!value_dict)
     return 0;
 
@@ -93,7 +93,7 @@ FPDFSignatureObj_GetByteRange(FPDF_SIGNATURE signature,
   if (!signature_dict)
     return 0;
 
-  const CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
+  RetainPtr<const CPDF_Dictionary> value_dict = signature_dict->GetDictFor("V");
   if (!value_dict)
     return 0;
 
@@ -119,7 +119,7 @@ FPDFSignatureObj_GetSubFilter(FPDF_SIGNATURE signature,
   if (!signature_dict)
     return 0;
 
-  const CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
+  RetainPtr<const CPDF_Dictionary> value_dict = signature_dict->GetDictFor("V");
   if (!value_dict || !value_dict->KeyExist("SubFilter"))
     return 0;
 
@@ -136,7 +136,7 @@ FPDFSignatureObj_GetReason(FPDF_SIGNATURE signature,
   if (!signature_dict)
     return 0;
 
-  const CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
+  RetainPtr<const CPDF_Dictionary> value_dict = signature_dict->GetDictFor("V");
   if (!value_dict)
     return 0;
 
@@ -157,7 +157,7 @@ FPDFSignatureObj_GetTime(FPDF_SIGNATURE signature,
   if (!signature_dict)
     return 0;
 
-  const CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
+  RetainPtr<const CPDF_Dictionary> value_dict = signature_dict->GetDictFor("V");
   if (!value_dict)
     return 0;
 
@@ -176,7 +176,7 @@ FPDFSignatureObj_GetDocMDPPermission(FPDF_SIGNATURE signature) {
   if (!signature_dict)
     return permission;
 
-  const CPDF_Dictionary* value_dict = signature_dict->GetDictFor("V");
+  RetainPtr<const CPDF_Dictionary> value_dict = signature_dict->GetDictFor("V");
   if (!value_dict)
     return permission;
 
@@ -186,7 +186,7 @@ FPDFSignatureObj_GetDocMDPPermission(FPDF_SIGNATURE signature) {
 
   CPDF_ArrayLocker locker(std::move(references));
   for (auto& reference : locker) {
-    const CPDF_Dictionary* reference_dict = reference->GetDict().Get();
+    RetainPtr<const CPDF_Dictionary> reference_dict = reference->GetDict();
     if (!reference_dict)
       continue;
 
@@ -194,7 +194,7 @@ FPDFSignatureObj_GetDocMDPPermission(FPDF_SIGNATURE signature) {
     if (transform_method != "DocMDP")
       continue;
 
-    const CPDF_Dictionary* transform_params =
+    RetainPtr<const CPDF_Dictionary> transform_params =
         reference_dict->GetDictFor("TransformParams");
     if (!transform_params)
       continue;

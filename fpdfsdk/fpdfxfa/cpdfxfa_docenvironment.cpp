@@ -460,7 +460,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
     if (!pRoot)
       return;
 
-    const CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
+    RetainPtr<const CPDF_Dictionary> pAcroForm = pRoot->GetDictFor("AcroForm");
     if (!pAcroForm)
       return;
 
@@ -750,7 +750,7 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
     return false;
   }
 
-  const CPDF_Dictionary* pAcroForm = pRoot->GetDictFor("AcroForm");
+  RetainPtr<const CPDF_Dictionary> pAcroForm = pRoot->GetDictFor("AcroForm");
   if (!pAcroForm) {
     fileStream->Flush();
     return false;

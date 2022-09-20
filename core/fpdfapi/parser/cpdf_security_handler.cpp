@@ -234,14 +234,16 @@ static bool LoadCryptInfo(const CPDF_Dictionary* pEncryptDict,
   *keylen_out = 0;
   int keylen = 0;
   if (Version >= 4) {
-    const CPDF_Dictionary* pCryptFilters = pEncryptDict->GetDictFor("CF");
+    RetainPtr<const CPDF_Dictionary> pCryptFilters =
+        pEncryptDict->GetDictFor("CF");
     if (!pCryptFilters)
       return false;
 
     if (name == "Identity") {
       *cipher = CPDF_CryptoHandler::Cipher::kNone;
     } else {
-      const CPDF_Dictionary* pDefFilter = pCryptFilters->GetDictFor(name);
+      RetainPtr<const CPDF_Dictionary> pDefFilter =
+          pCryptFilters->GetDictFor(name);
       if (!pDefFilter)
         return false;
 

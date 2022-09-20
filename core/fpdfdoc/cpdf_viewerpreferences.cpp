@@ -55,7 +55,8 @@ absl::optional<ByteString> CPDF_ViewerPreferences::GenericName(
   return pName->GetString();
 }
 
+// TODO(tsepez): return retained object.
 const CPDF_Dictionary* CPDF_ViewerPreferences::GetViewerPreferences() const {
   const CPDF_Dictionary* pDict = m_pDoc->GetRoot();
-  return pDict ? pDict->GetDictFor("ViewerPreferences") : nullptr;
+  return pDict ? pDict->GetDictFor("ViewerPreferences").Get() : nullptr;
 }

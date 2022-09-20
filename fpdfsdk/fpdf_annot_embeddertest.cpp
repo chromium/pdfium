@@ -139,13 +139,14 @@ TEST_F(FPDFAnnotEmbedderTest, SetAP) {
   ASSERT_TRUE(context);
   const CPDF_Dictionary* annot_dict = context->GetAnnotDict();
   ASSERT_TRUE(annot_dict);
-  const CPDF_Dictionary* ap_dict =
+  RetainPtr<const CPDF_Dictionary> ap_dict =
       annot_dict->GetDictFor(pdfium::annotation::kAP);
   ASSERT_TRUE(ap_dict);
-  const CPDF_Dictionary* stream_dict = ap_dict->GetDictFor("N");
+  RetainPtr<const CPDF_Dictionary> stream_dict = ap_dict->GetDictFor("N");
   ASSERT_TRUE(stream_dict);
   // Check for non-existence of resources dictionary in case of opaque color
-  const CPDF_Dictionary* resources_dict = stream_dict->GetDictFor("Resources");
+  RetainPtr<const CPDF_Dictionary> resources_dict =
+      stream_dict->GetDictFor("Resources");
   ASSERT_FALSE(resources_dict);
   ByteString type = stream_dict->GetByteStringFor(pdfium::annotation::kType);
   EXPECT_EQ("XObject", type);
@@ -189,17 +190,18 @@ TEST_F(FPDFAnnotEmbedderTest, SetAPWithOpacity) {
   ASSERT_TRUE(context);
   const CPDF_Dictionary* annot_dict = context->GetAnnotDict();
   ASSERT_TRUE(annot_dict);
-  const CPDF_Dictionary* ap_dict =
+  RetainPtr<const CPDF_Dictionary> ap_dict =
       annot_dict->GetDictFor(pdfium::annotation::kAP);
   ASSERT_TRUE(ap_dict);
-  const CPDF_Dictionary* stream_dict = ap_dict->GetDictFor("N");
+  RetainPtr<const CPDF_Dictionary> stream_dict = ap_dict->GetDictFor("N");
   ASSERT_TRUE(stream_dict);
-  const CPDF_Dictionary* resources_dict = stream_dict->GetDictFor("Resources");
+  RetainPtr<const CPDF_Dictionary> resources_dict =
+      stream_dict->GetDictFor("Resources");
   ASSERT_TRUE(stream_dict);
-  const CPDF_Dictionary* extGState_dict =
+  RetainPtr<const CPDF_Dictionary> extGState_dict =
       resources_dict->GetDictFor("ExtGState");
   ASSERT_TRUE(extGState_dict);
-  const CPDF_Dictionary* gs_dict = extGState_dict->GetDictFor("GS");
+  RetainPtr<const CPDF_Dictionary> gs_dict = extGState_dict->GetDictFor("GS");
   ASSERT_TRUE(gs_dict);
   ByteString type = gs_dict->GetByteStringFor(pdfium::annotation::kType);
   EXPECT_EQ("ExtGState", type);

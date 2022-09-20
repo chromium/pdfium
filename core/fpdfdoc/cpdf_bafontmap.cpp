@@ -180,15 +180,16 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::FindFontSameCharset(ByteString* sFontAlias,
   if (!pRootDict)
     return nullptr;
 
-  const CPDF_Dictionary* pAcroFormDict = pRootDict->GetDictFor("AcroForm");
+  RetainPtr<const CPDF_Dictionary> pAcroFormDict =
+      pRootDict->GetDictFor("AcroForm");
   if (!pAcroFormDict)
     return nullptr;
 
-  const CPDF_Dictionary* pDRDict = pAcroFormDict->GetDictFor("DR");
+  RetainPtr<const CPDF_Dictionary> pDRDict = pAcroFormDict->GetDictFor("DR");
   if (!pDRDict)
     return nullptr;
 
-  return FindResFontSameCharset(pDRDict, sFontAlias, nCharset);
+  return FindResFontSameCharset(pDRDict.Get(), sFontAlias, nCharset);
 }
 
 RetainPtr<CPDF_Font> CPDF_BAFontMap::FindResFontSameCharset(
@@ -198,7 +199,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::FindResFontSameCharset(
   if (!pResDict)
     return nullptr;
 
-  const CPDF_Dictionary* pFonts = pResDict->GetDictFor("Font");
+  RetainPtr<const CPDF_Dictionary> pFonts = pResDict->GetDictFor("Font");
   if (!pFonts)
     return nullptr;
 

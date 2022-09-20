@@ -90,11 +90,12 @@ absl::optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
   if (!pPDFRoot)
     return absl::nullopt;
 
-  const CPDF_Dictionary* pLabels = pPDFRoot->GetDictFor("PageLabels");
+  RetainPtr<const CPDF_Dictionary> pLabels = pPDFRoot->GetDictFor("PageLabels");
   if (!pLabels)
     return absl::nullopt;
 
-  CPDF_NumberTree numberTree(pLabels);
+  // TODO(tsepez): pass retained object.
+  CPDF_NumberTree numberTree(pLabels.Get());
   RetainPtr<const CPDF_Object> pValue;
   int n = nPage;
   while (n >= 0) {

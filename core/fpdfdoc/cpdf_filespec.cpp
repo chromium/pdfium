@@ -131,7 +131,7 @@ const CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
     return nullptr;
 
   // Get the embedded files dictionary.
-  const CPDF_Dictionary* pFiles = pDict->GetDictFor("EF");
+  RetainPtr<const CPDF_Dictionary> pFiles = pDict->GetDictFor("EF");
   if (!pFiles)
     return nullptr;
 
@@ -157,6 +157,7 @@ CPDF_Stream* CPDF_FileSpec::GetFileStream() {
       static_cast<const CPDF_FileSpec*>(this)->GetFileStream());
 }
 
+// TODO(tsepez): return retained reference.
 const CPDF_Dictionary* CPDF_FileSpec::GetParamsDict() const {
   const CPDF_Stream* pStream = GetFileStream();
   if (!pStream)
@@ -164,7 +165,7 @@ const CPDF_Dictionary* CPDF_FileSpec::GetParamsDict() const {
 
   // TODO(tsepez): return retained reference.
   RetainPtr<const CPDF_Dictionary> pDict = pStream->GetDict();
-  return pDict ? pDict->GetDictFor("Params") : nullptr;
+  return pDict ? pDict->GetDictFor("Params").Get() : nullptr;
 }
 
 CPDF_Dictionary* CPDF_FileSpec::GetParamsDict() {

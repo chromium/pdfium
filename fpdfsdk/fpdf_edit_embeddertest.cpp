@@ -98,7 +98,8 @@ class FPDFEditEmbedderTest : public EmbedderTest {
                            bool bold,
                            bool italic,
                            pdfium::span<const uint8_t> span) {
-    const CPDF_Dictionary* font_desc = font_dict->GetDictFor("FontDescriptor");
+    RetainPtr<const CPDF_Dictionary> font_desc =
+        font_dict->GetDictFor("FontDescriptor");
     ASSERT_TRUE(font_desc);
     EXPECT_EQ("FontDescriptor", font_desc->GetNameFor("Type"));
     ByteString font_name = font_desc->GetNameFor("FontName");
@@ -2826,7 +2827,7 @@ TEST_F(FPDFEditEmbedderTest, GraphicsData) {
 
   // Check that the ExtGState was created
   CPDF_Page* cpage = CPDFPageFromFPDFPage(page.get());
-  const CPDF_Dictionary* graphics_dict =
+  RetainPtr<const CPDF_Dictionary> graphics_dict =
       cpage->GetResources()->GetDictFor("ExtGState");
   ASSERT_TRUE(graphics_dict);
   EXPECT_EQ(2u, graphics_dict->size());
@@ -2880,7 +2881,7 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
 
   // Check the ExtGState
   CPDF_Page* cpage = CPDFPageFromFPDFPage(page);
-  const CPDF_Dictionary* graphics_dict =
+  RetainPtr<const CPDF_Dictionary> graphics_dict =
       cpage->GetResources()->GetDictFor("ExtGState");
   ASSERT_TRUE(graphics_dict);
   EXPECT_EQ(2u, graphics_dict->size());
@@ -2922,7 +2923,8 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
   FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 300, 300);
   FPDFPage_InsertObject(page, text_object);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  const CPDF_Dictionary* font_dict = cpage->GetResources()->GetDictFor("Font");
+  RetainPtr<const CPDF_Dictionary> font_dict =
+      cpage->GetResources()->GetDictFor("Font");
   ASSERT_TRUE(font_dict);
   EXPECT_EQ(1u, font_dict->size());
 
@@ -3020,7 +3022,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType0Font) {
   EXPECT_EQ("Font", cidfont_dict->GetNameFor("Type"));
   EXPECT_EQ("CIDFontType0", cidfont_dict->GetNameFor("Subtype"));
   EXPECT_EQ("Tinos-Regular", cidfont_dict->GetNameFor("BaseFont"));
-  const CPDF_Dictionary* cidinfo_dict =
+  RetainPtr<const CPDF_Dictionary> cidinfo_dict =
       cidfont_dict->GetDictFor("CIDSystemInfo");
   ASSERT_TRUE(cidinfo_dict);
   RetainPtr<const CPDF_Object> registry =
@@ -3071,7 +3073,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType2Font) {
   EXPECT_EQ("Font", cidfont_dict->GetNameFor("Type"));
   EXPECT_EQ("CIDFontType2", cidfont_dict->GetNameFor("Subtype"));
   EXPECT_EQ("Arimo-Italic", cidfont_dict->GetNameFor("BaseFont"));
-  const CPDF_Dictionary* cidinfo_dict =
+  RetainPtr<const CPDF_Dictionary> cidinfo_dict =
       cidfont_dict->GetDictFor("CIDSystemInfo");
   ASSERT_TRUE(cidinfo_dict);
   EXPECT_EQ("Adobe", cidinfo_dict->GetByteStringFor("Registry"));

@@ -34,10 +34,11 @@ bool HasIntent(const CPDF_Dictionary* pDict,
   return bsIntent == "All" || bsIntent == csElement;
 }
 
+// TODO(tsepez): return retained object.
 const CPDF_Dictionary* GetConfig(CPDF_Document* pDoc,
                                  const CPDF_Dictionary* pOCGDict) {
   DCHECK(pOCGDict);
-  const CPDF_Dictionary* pOCProperties =
+  RetainPtr<const CPDF_Dictionary> pOCProperties =
       pDoc->GetRoot()->GetDictFor("OCProperties");
   if (!pOCProperties)
     return nullptr;
@@ -49,17 +50,17 @@ const CPDF_Dictionary* GetConfig(CPDF_Document* pDoc,
   if (!pOCGs->Contains(pOCGDict))
     return nullptr;
 
-  const CPDF_Dictionary* pConfig = pOCProperties->GetDictFor("D");
+  RetainPtr<const CPDF_Dictionary> pConfig = pOCProperties->GetDictFor("D");
   RetainPtr<const CPDF_Array> pConfigs = pOCProperties->GetArrayFor("Configs");
   if (!pConfigs)
-    return pConfig;
+    return pConfig.Get();
 
   for (size_t i = 0; i < pConfigs->size(); i++) {
     RetainPtr<const CPDF_Dictionary> pFind = pConfigs->GetDictAt(i);
     if (pFind && HasIntent(pFind.Get(), "View", ""))
       return pFind.Get();
   }
-  return pConfig;
+  return pConfig.Get();
 }
 
 ByteString GetUsageTypeString(CPDF_OCContext::UsageType eType) {
@@ -126,7 +127,7 @@ bool CPDF_OCContext::LoadOCGStateFromConfig(
     if (!pOCGs->Contains(pOCGDict))
       continue;
 
-    const CPDF_Dictionary* pState = pUsage->GetDictFor(csConfig);
+    RetainPtr<const CPDF_Dictionary> pState = pUsage->GetDictFor(csConfig);
     if (!pState)
       continue;
 
@@ -140,9 +141,9 @@ bool CPDF_OCContext::LoadOCGState(const CPDF_Dictionary* pOCGDict) const {
     return true;
 
   ByteString csState = GetUsageTypeString(m_eUsageType);
-  const CPDF_Dictionary* pUsage = pOCGDict->GetDictFor("Usage");
+  RetainPtr<const CPDF_Dictionary> pUsage = pOCGDict->GetDictFor("Usage");
   if (pUsage) {
-    const CPDF_Dictionary* pState = pUsage->GetDictFor(csState);
+    RetainPtr<const CPDF_Dictionary> pState = pUsage->GetDictFor(csState);
     if (pState) {
       ByteString csFind = csState + "State";
       if (pState->KeyExist(csFind))

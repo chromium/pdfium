@@ -342,7 +342,7 @@ bool CPDFSDK_Widget::HandleXFAAAction(
 #endif  // PDF_ENABLE_XFA
 
 bool CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode) {
-  const CPDF_Dictionary* pAP =
+  RetainPtr<const CPDF_Dictionary> pAP =
       GetAnnotDict()->GetDictFor(pdfium::annotation::kAP);
   if (!pAP)
     return false;

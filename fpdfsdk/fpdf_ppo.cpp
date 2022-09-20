@@ -832,14 +832,15 @@ FPDF_CopyViewerPreferences(FPDF_DOCUMENT dest_doc, FPDF_DOCUMENT src_doc) {
     return false;
 
   const CPDF_Dictionary* pSrcDict = pSrcDoc->GetRoot();
-  pSrcDict = pSrcDict->GetDictFor("ViewerPreferences");
-  if (!pSrcDict)
+  RetainPtr<const CPDF_Dictionary> pPrefDict =
+      pSrcDict->GetDictFor("ViewerPreferences");
+  if (!pPrefDict)
     return false;
 
   RetainPtr<CPDF_Dictionary> pDstDict = pDstDoc->GetMutableRoot();
   if (!pDstDict)
     return false;
 
-  pDstDict->SetFor("ViewerPreferences", pSrcDict->CloneDirectObject());
+  pDstDict->SetFor("ViewerPreferences", pPrefDict->CloneDirectObject());
   return true;
 }

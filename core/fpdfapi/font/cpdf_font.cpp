@@ -312,7 +312,7 @@ RetainPtr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
     ByteString tag = pFontDict->GetByteStringFor("BaseFont").First(4);
     for (size_t i = 0; i < std::size(kChineseFontNames); ++i) {
       if (tag == ByteString(kChineseFontNames[i], kChineseFontNameSize)) {
-        const CPDF_Dictionary* pFontDesc =
+        RetainPtr<const CPDF_Dictionary> pFontDesc =
             pFontDict->GetDictFor("FontDescriptor");
         if (!pFontDesc || !pFontDesc->KeyExist("FontFile2"))
           pFont = pdfium::MakeRetain<CPDF_CIDFont>(pDoc, std::move(pFontDict));
