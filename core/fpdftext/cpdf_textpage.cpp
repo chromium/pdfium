@@ -294,28 +294,25 @@ void CPDF_TextPage::Init() {
 
   const int nCount = CountChars();
   if (nCount)
-    m_CharIndices.push_back(0);
+    m_CharIndices.push_back({0, 0});
 
+  bool skipped = false;
   for (int i = 0; i < nCount; ++i) {
     const CharInfo& charinfo = m_CharList[i];
     if (charinfo.m_CharType == CPDF_TextPage::CharType::kGenerated ||
         (charinfo.m_Unicode != 0 && !IsControlChar(charinfo)) ||
         (charinfo.m_Unicode == 0 && charinfo.m_CharCode != 0)) {
-      if (m_CharIndices.size() % 2) {
-        m_CharIndices.push_back(1);
-      } else {
-        m_CharIndices.back() += 1;
-      }
+      m_CharIndices.back().count++;
+      skipped = true;
     } else {
-      if (m_CharIndices.size() % 2) {
-        m_CharIndices.back() = i + 1;
+      if (skipped) {
+        m_CharIndices.push_back({i + 1, 0});
+        skipped = false;
       } else {
-        m_CharIndices.push_back(i + 1);
+        m_CharIndices.back().index = i + 1;
       }
     }
   }
-  if (m_CharIndices.size() % 2)
-    m_CharIndices.pop_back();
 }
 
 int CPDF_TextPage::CountChars() const {
@@ -324,22 +321,22 @@ int CPDF_TextPage::CountChars() const {
 
 int CPDF_TextPage::CharIndexFromTextIndex(int text_index) const {
   int count = 0;
-  for (size_t i = 0; i < m_CharIndices.size(); i += 2) {
-    count += m_CharIndices[i + 1];
+  for (const auto& info : m_CharIndices) {
+    count += info.count;
     if (count > text_index)
-      return text_index - count + m_CharIndices[i + 1] + m_CharIndices[i];
+      return text_index - count + info.count + info.index;
   }
   return -1;
 }
 
 int CPDF_TextPage::TextIndexFromCharIndex(int char_index) const {
   int count = 0;
-  for (size_t i = 0; i < m_CharIndices.size(); i += 2) {
-    int text_index = char_index - m_CharIndices[i];
-    if (text_index < m_CharIndices[i + 1])
+  for (const auto& info : m_CharIndices) {
+    int text_index = char_index - info.index;
+    if (text_index < info.count)
       return text_index >= 0 ? text_index + count : -1;
 
-    count += m_CharIndices[i + 1];
+    count += info.count;
   }
   return -1;
 }

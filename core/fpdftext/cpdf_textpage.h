@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
-#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
@@ -103,6 +102,11 @@ class CPDF_TextPage {
     CFX_Matrix m_formMatrix;
   };
 
+  struct CharSegment {
+    int index;
+    int count;
+  };
+
   void Init();
   bool IsHyphen(wchar_t curChar) const;
   void ProcessObject();
@@ -137,7 +141,7 @@ class CPDF_TextPage {
       const std::function<bool(const CharInfo&)>& predicate) const;
 
   UnownedPtr<const CPDF_Page> const m_pPage;
-  DataVector<uint16_t> m_CharIndices;
+  std::vector<CharSegment> m_CharIndices;
   std::deque<CharInfo> m_CharList;
   std::deque<CharInfo> m_TempCharList;
   WideTextBuffer m_TextBuf;
