@@ -234,6 +234,15 @@ extern "C" {
 //          future.
 FPDF_EXPORT void FPDF_CALLCONV FPDF_InitLibrary();
 
+// PDF renderer types - Experimental.
+// Selection of 2D graphics library to use for rendering to FPDF_BITMAPs.
+typedef enum {
+  // Anti-Grain Geometry - https://sourceforge.net/projects/agg/
+  FPDF_RENDERERTYPE_AGG = 0,
+  // Skia - https://skia.org/
+  FPDF_RENDERERTYPE_SKIA = 1,
+} FPDF_RENDERER_TYPE;
+
 // Process-wide options for initializing the library.
 typedef struct FPDF_LIBRARY_CONFIG_ {
   // Version number of the interface. Currently must be 2.
@@ -257,10 +266,20 @@ typedef struct FPDF_LIBRARY_CONFIG_ {
   // embedders.
   unsigned int m_v8EmbedderSlot;
 
-  // Version 3 - Experimantal,
+  // Version 3 - Experimental.
 
   // Pointer to the V8::Platform to use.
   void* m_pPlatform;
+
+  // Version 4 - Experimental.
+
+  // Explicit specification of core renderer to use. |m_RendererType| must be
+  // a valid value for |FPDF_LIBRARY_CONFIG| versions of this level or higher,
+  // or else the initialization will fail with an immediate crash.
+  // Note that use of a specified |FPDF_RENDERER_TYPE| value for which the
+  // corresponding render library is not included in the build will similarly
+  // fail with an immediate crash.
+  FPDF_RENDERER_TYPE m_RendererType;
 
 } FPDF_LIBRARY_CONFIG;
 

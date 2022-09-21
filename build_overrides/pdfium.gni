@@ -21,9 +21,11 @@ pdf_enable_xfa_override = false
 # Default: Use PartitionAlloc unless it is a MSVC build.
 pdf_use_partition_alloc_override = !is_win || is_clang
 
-# Build PDFium against skia (experimental) rather than agg, replacing all PDFium
-# graphics.
-# Default: Use agg.
+# Build PDFium to use Skia (experimental) for all PDFium graphics.
+# If enabled, coexists in build with AGG graphics and the default
+# renderer is selectable at runtime.
+# The default is to use AGG when both `pdf_use_skia_override` and
+# `pdf_use_skia_paths_override` are set to their defaults of false.
 pdf_use_skia_override = false
 
 # Build PDFium against skia (experimental) rather than agg, adding only path
