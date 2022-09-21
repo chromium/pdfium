@@ -147,10 +147,18 @@ void Harness(void (*Test)(CFX_SkiaDeviceDriver*, const State&),
 }  // namespace
 
 TEST(fxge, SkiaStateEmpty) {
+  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() &&
+      !CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    return;
+  }
   Harness(&EmptyTest, {});
 }
 
 TEST(fxge, SkiaStatePath) {
+  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() &&
+      !CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    return;
+  }
   Harness(&CommonTest, {State::Change::kNo, State::Save::kYes,
                         State::Clip::kSame, State::Graphic::kPath, 0xFF112233});
   Harness(&CommonTest,
@@ -167,6 +175,9 @@ TEST(fxge, SkiaStatePath) {
 #if defined(_SKIA_SUPPORT_)
 // TODO(crbug.com/pdfium/11): Fix this test and enable.
 TEST(fxge, DISABLED_SkiaStateText) {
+  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    return;
+
   Harness(&CommonTest,
           {State::Change::kNo, State::Save::kYes, State::Clip::kDifferentMatrix,
            State::Graphic::kText, 0xFF445566});
@@ -176,5 +187,9 @@ TEST(fxge, DISABLED_SkiaStateText) {
 #endif
 
 TEST(fxge, SkiaStateOOSClip) {
+  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() &&
+      !CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    return;
+  }
   Harness(&OutOfSequenceClipTest, {});
 }

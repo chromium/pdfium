@@ -4276,12 +4276,14 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForHelloWorldText) {
     ScopedFPDFBitmap x10_bitmap(
         FPDFTextObj_GetRenderedBitmap(document(), page, text_object, 10));
     ASSERT_TRUE(x10_bitmap);
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-    const char kX10Checksum[] = "bfabf04699139d05c3924526beeb4b95";
-#else
-    const char kX10Checksum[] = "149f63de758ab01d3b75605cdfd4c176";
-#endif
-    CompareBitmap(x10_bitmap.get(), 631, 103, kX10Checksum);
+    const char* x10_checksum = []() {
+      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+          CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+        return "bfabf04699139d05c3924526beeb4b95";
+      }
+      return "149f63de758ab01d3b75605cdfd4c176";
+    }();
+    CompareBitmap(x10_bitmap.get(), 631, 103, x10_checksum);
   }
 
   {
@@ -4303,12 +4305,14 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForHelloWorldText) {
     ScopedFPDFBitmap x10_bitmap(
         FPDFTextObj_GetRenderedBitmap(document(), page, text_object, 10));
     ASSERT_TRUE(x10_bitmap);
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-    const char kX10Checksum[] = "c7eef7859332c75ab793ebae1c6e7221";
-#else
-    const char kX10Checksum[] = "f5f93bf64de579b59e775d7076ca0a5a";
-#endif
-    CompareBitmap(x10_bitmap.get(), 1143, 150, kX10Checksum);
+    const char* x10_checksum = []() {
+      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+          CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+        return "c7eef7859332c75ab793ebae1c6e7221";
+      }
+      return "f5f93bf64de579b59e775d7076ca0a5a";
+    }();
+    CompareBitmap(x10_bitmap.get(), 1143, 150, x10_checksum);
   }
 
   UnloadPage(page);
@@ -4337,12 +4341,14 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForRotatedText) {
   ScopedFPDFBitmap x10_bitmap(
       FPDFTextObj_GetRenderedBitmap(document(), page, text_object, 10));
   ASSERT_TRUE(x10_bitmap);
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kX10Checksum[] = "4816dd6782e9a977c58fb1ca0ced74d3";
-#else
-  const char kX10Checksum[] = "bbd3842a4b50dbfcbce4eee2b067a297";
-#endif
-  CompareBitmap(x10_bitmap.get(), 275, 275, kX10Checksum);
+  const char* x10_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      return "4816dd6782e9a977c58fb1ca0ced74d3";
+    }
+    return "bbd3842a4b50dbfcbce4eee2b067a297";
+  }();
+  CompareBitmap(x10_bitmap.get(), 275, 275, x10_checksum);
 
   UnloadPage(page);
 }
@@ -4358,12 +4364,14 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForColorText) {
   ScopedFPDFBitmap bitmap(
       FPDFTextObj_GetRenderedBitmap(document(), page, text_object, 7.3f));
   ASSERT_TRUE(bitmap);
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  const char kChecksum[] = "bb3778ba739c921525de44e9ab412868";
-#else
-  const char kChecksum[] = "e8154fa8ededf4d9b8b35b5260897b6c";
-#endif
-  CompareBitmap(bitmap.get(), 120, 186, kChecksum);
+  const char* checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
+        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      return "bb3778ba739c921525de44e9ab412868";
+    }
+    return "e8154fa8ededf4d9b8b35b5260897b6c";
+  }();
+  CompareBitmap(bitmap.get(), 120, 186, checksum);
 
   UnloadPage(page);
 }
