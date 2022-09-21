@@ -16,6 +16,17 @@ struct FxFreeDeleter {
   inline void operator()(void* ptr) const { FX_Free(ptr); }
 };
 
+// Escape hatch mechanism to allow non_arithmetic types into data partition.
+template <typename T>
+struct IsFXDataPartitionException : std::false_type {};
+
+// Use with caution. No further checks are made to see if `T` is appropriate
+// for the Data Partition (e.g. no pointers, strings, vtables, etc.). This
+// declaration must occur in the top-level namespace.
+#define FX_DATA_PARTITION_EXCEPTION(T) \
+  template <>                          \
+  struct IsFXDataPartitionException<T> : std::true_type {}
+
 // Allocators for mapping STL containers onto Partition Alloc.
 // Otherwise, replacing e.g. the FX_AllocUninit/FX_Free pairs with STL may
 // undo some of the nice segregation that we get from PartitionAlloc.
@@ -23,7 +34,8 @@ template <class T, void* F(size_t, size_t)>
 struct FxPartitionAllocAllocator {
  public:
 #if !defined(COMPILER_MSVC) || defined(NDEBUG)
-  static_assert(std::is_arithmetic<T>::value,
+  static_assert(std::is_arithmetic<T>::value ||
+                    IsFXDataPartitionException<T>::value,
                 "Only numeric types allowed in this partition");
 #endif
 
@@ -77,7 +89,8 @@ struct FxPartitionAllocAllocator {
 // Used to put backing store for std::vector<> and such into the
 // general partition, ensuring they contain data only.
 template <typename T,
-          typename = std::enable_if_t<std::is_arithmetic<T>::value, T>>
+          typename = std::enable_if_t<std::is_arithmetic<T>::value ||
+                                      IsFXDataPartitionException<T>::value>>
 using FxAllocAllocator =
     FxPartitionAllocAllocator<T, pdfium::internal::AllocOrDie>;
 

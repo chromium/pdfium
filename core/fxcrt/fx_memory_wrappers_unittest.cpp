@@ -12,6 +12,17 @@
 #include "build/build_config.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
+namespace {
+
+struct OnlyNumbers {
+  int x;
+  int y;
+};
+
+}  // namespace
+
+FX_DATA_PARTITION_EXCEPTION(OnlyNumbers);
+
 TEST(fxcrt, FxFreeDeleter) {
   std::unique_ptr<int, FxFreeDeleter> empty(nullptr);
   std::unique_ptr<int, FxFreeDeleter> thing(FX_Alloc(int, 1));
@@ -45,4 +56,11 @@ TEST(fxcrt, FxStringAllocator) {
   str << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
   str << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
   str << 42.0f;
+}
+
+TEST(fxcrt, FxAllocAllocatorStructException) {
+  std::vector<OnlyNumbers, FxAllocAllocator<OnlyNumbers>> vec;
+  vec.push_back({42, 73});
+  EXPECT_EQ(vec.back().x, 42);
+  EXPECT_EQ(vec.back().y, 73);
 }
