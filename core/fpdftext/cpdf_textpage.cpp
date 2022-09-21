@@ -304,14 +304,10 @@ void CPDF_TextPage::Init() {
       if (m_CharIndices.size() % 2) {
         m_CharIndices.push_back(1);
       } else {
-        if (m_CharIndices.empty())
-          continue;
         m_CharIndices.back() += 1;
       }
     } else {
       if (m_CharIndices.size() % 2) {
-        if (m_CharIndices.empty())
-          continue;
         m_CharIndices.back() = i + 1;
       } else {
         m_CharIndices.push_back(i + 1);
