@@ -39,7 +39,8 @@ class CPDF_IccProfile final : public Retainable, public Observable {
 
  private:
   // Keeps stream alive for the duration of the CPDF_IccProfile.
-  CPDF_IccProfile(const CPDF_Stream* pStream, pdfium::span<const uint8_t> span);
+  CPDF_IccProfile(RetainPtr<const CPDF_Stream> pStream,
+                  pdfium::span<const uint8_t> span);
   ~CPDF_IccProfile() override;
 
   const bool m_bsRGB;

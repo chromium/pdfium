@@ -92,8 +92,8 @@ class CPDF_Document : public Observable,
   CPDF_Parser* GetParser() const { return m_pParser.get(); }
   const CPDF_Dictionary* GetRoot() const { return m_pRootDict.Get(); }
   RetainPtr<CPDF_Dictionary> GetMutableRoot() { return m_pRootDict; }
-  CPDF_Dictionary* GetInfo();
-  const CPDF_Array* GetFileIdentifier() const;
+  RetainPtr<CPDF_Dictionary> GetInfo();
+  RetainPtr<const CPDF_Array> GetFileIdentifier() const;
 
   void DeletePage(int iPage);
   int GetPageCount() const;

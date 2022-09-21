@@ -396,10 +396,14 @@ void CPDFXFA_DocEnvironment::SetCalculationsEnabled(CXFA_FFDoc* hDoc,
 }
 
 WideString CPDFXFA_DocEnvironment::GetTitle(const CXFA_FFDoc* hDoc) const {
-  if (hDoc != m_pContext->GetXFADoc() || !m_pContext->GetPDFDoc())
+  if (hDoc != m_pContext->GetXFADoc())
     return WideString();
 
-  const CPDF_Dictionary* pInfoDict = m_pContext->GetPDFDoc()->GetInfo();
+  CPDF_Document* pPDFDoc = m_pContext->GetPDFDoc();
+  if (!pPDFDoc)
+    return WideString();
+
+  RetainPtr<const CPDF_Dictionary> pInfoDict = pPDFDoc->GetInfo();
   if (!pInfoDict)
     return WideString();
 
@@ -409,10 +413,14 @@ WideString CPDFXFA_DocEnvironment::GetTitle(const CXFA_FFDoc* hDoc) const {
 
 void CPDFXFA_DocEnvironment::SetTitle(CXFA_FFDoc* hDoc,
                                       const WideString& wsTitle) {
-  if (hDoc != m_pContext->GetXFADoc() || !m_pContext->GetPDFDoc())
+  if (hDoc != m_pContext->GetXFADoc())
     return;
 
-  CPDF_Dictionary* pInfoDict = m_pContext->GetPDFDoc()->GetInfo();
+  CPDF_Document* pPDFDoc = m_pContext->GetPDFDoc();
+  if (!pPDFDoc)
+    return;
+
+  RetainPtr<CPDF_Dictionary> pInfoDict = pPDFDoc->GetInfo();
   if (pInfoDict)
     pInfoDict->SetNewFor<CPDF_String>("Title", wsTitle.AsStringView());
 }

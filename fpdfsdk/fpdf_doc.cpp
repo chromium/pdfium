@@ -470,7 +470,7 @@ FPDF_GetFileIdentifier(FPDF_DOCUMENT document,
   if (id_type != FILEIDTYPE_PERMANENT && id_type != FILEIDTYPE_CHANGING)
     return 0;
 
-  const CPDF_Array* pFileId = pDoc->GetFileIdentifier();
+  RetainPtr<const CPDF_Array> pFileId = pDoc->GetFileIdentifier();
   if (!pFileId)
     return 0;
 
@@ -494,9 +494,10 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetMetaText(FPDF_DOCUMENT document,
   if (!pDoc)
     return 0;
 
-  const CPDF_Dictionary* pInfo = pDoc->GetInfo();
+  RetainPtr<const CPDF_Dictionary> pInfo = pDoc->GetInfo();
   if (!pInfo)
     return 0;
+
   WideString text = pInfo->GetUnicodeTextFor(tag);
   return Utf16EncodeMaybeCopyAndReturnLength(text, buffer, buflen);
 }

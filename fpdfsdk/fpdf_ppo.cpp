@@ -255,7 +255,7 @@ bool CPDF_PageOrganizer::Init() {
   if (!pNewRoot)
     return false;
 
-  CPDF_Dictionary* pDocInfoDict = dest()->GetInfo();
+  RetainPtr<CPDF_Dictionary> pDocInfoDict = dest()->GetInfo();
   if (!pDocInfoDict)
     return false;
 

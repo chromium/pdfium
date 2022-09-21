@@ -35,7 +35,7 @@ class CPDF_Pattern : public Retainable, public Observable {
 
  protected:
   CPDF_Pattern(CPDF_Document* pDoc,
-               CPDF_Object* pObj,
+               RetainPtr<CPDF_Object> pObj,
                const CFX_Matrix& parentMatrix);
 
   void SetPatternToFormMatrix();

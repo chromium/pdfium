@@ -6,13 +6,17 @@
 
 #include "core/fpdfapi/page/cpdf_pattern.h"
 
+#include <utility>
+
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "third_party/base/check.h"
 
 CPDF_Pattern::CPDF_Pattern(CPDF_Document* pDoc,
-                           CPDF_Object* pObj,
+                           RetainPtr<CPDF_Object> pObj,
                            const CFX_Matrix& parentMatrix)
-    : m_pDocument(pDoc), m_pPatternObj(pObj), m_ParentMatrix(parentMatrix) {
+    : m_pDocument(pDoc),
+      m_pPatternObj(std::move(pObj)),
+      m_ParentMatrix(parentMatrix) {
   DCHECK(m_pDocument);
   DCHECK(m_pPatternObj);
 }

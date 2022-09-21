@@ -182,7 +182,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::GetFont(
   if (!pFontDict)
     return nullptr;
 
-  auto it = m_FontMap.find(pFontDict.Get());
+  auto it = m_FontMap.find(pFontDict);
   if (it != m_FontMap.end() && it->second)
     return pdfium::WrapRetain(it->second.Get());
 
@@ -191,7 +191,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::GetFont(
   if (!pFont)
     return nullptr;
 
-  m_FontMap[pFontDict.Get()].Reset(pFont.Get());
+  m_FontMap[std::move(pFontDict)].Reset(pFont.Get());
   return pFont;
 }
 
@@ -235,7 +235,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::GetStandardFont(
   if (!pFont)
     return nullptr;
 
-  m_FontMap[pDict.Get()].Reset(pFont.Get());
+  m_FontMap[std::move(pDict)].Reset(pFont.Get());
   return pFont;
 }
 
@@ -307,7 +307,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
                                  pVisitedInternal);
   }
 
-  const CPDF_Array* pArray = pCSObj->AsArray();
+  RetainPtr<const CPDF_Array> pArray(pCSObj->AsArray());
   if (!pArray || pArray->IsEmpty())
     return nullptr;
 
@@ -316,21 +316,22 @@ RetainPtr<CPDF_ColorSpace> CPDF_DocPageData::GetColorSpaceInternal(
                                  pVisited, pVisitedInternal);
   }
 
-  auto it = m_ColorSpaceMap.find(pCSObj);
+  auto it = m_ColorSpaceMap.find(pArray);
   if (it != m_ColorSpaceMap.end() && it->second)
     return pdfium::WrapRetain(it->second.Get());
 
   RetainPtr<CPDF_ColorSpace> pCS =
-      CPDF_ColorSpace::Load(GetDocument(), pArray, pVisited);
+      CPDF_ColorSpace::Load(GetDocument(), pArray.Get(), pVisited);
   if (!pCS)
     return nullptr;
 
-  m_ColorSpaceMap[pCSObj].Reset(pCS.Get());
+  m_ColorSpaceMap[std::move(pArray)].Reset(pCS.Get());
   return pCS;
 }
 
-RetainPtr<CPDF_Pattern> CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
-                                                     const CFX_Matrix& matrix) {
+RetainPtr<CPDF_Pattern> CPDF_DocPageData::GetPattern(
+    RetainPtr<CPDF_Object> pPatternObj,
+    const CFX_Matrix& matrix) {
   if (!pPatternObj)
     return nullptr;
 
@@ -358,7 +359,7 @@ RetainPtr<CPDF_Pattern> CPDF_DocPageData::GetPattern(CPDF_Object* pPatternObj,
 }
 
 RetainPtr<CPDF_ShadingPattern> CPDF_DocPageData::GetShading(
-    CPDF_Object* pPatternObj,
+    RetainPtr<CPDF_Object> pPatternObj,
     const CFX_Matrix& matrix) {
   if (!pPatternObj)
     return nullptr;
@@ -392,7 +393,7 @@ void CPDF_DocPageData::MaybePurgeImage(uint32_t dwStreamObjNum) {
 }
 
 RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
-    const CPDF_Stream* pProfileStream) {
+    RetainPtr<const CPDF_Stream> pProfileStream) {
   if (!pProfileStream)
     return nullptr;
 
@@ -400,21 +401,20 @@ RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
   if (it != m_IccProfileMap.end() && it->second)
     return pdfium::WrapRetain(it->second.Get());
 
-  auto pAccessor =
-      pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(pProfileStream));
+  auto pAccessor = pdfium::MakeRetain<CPDF_StreamAcc>(pProfileStream);
   pAccessor->LoadAllDataFiltered();
 
   ByteString bsDigest = pAccessor->ComputeDigest();
   auto hash_it = m_HashProfileMap.find(bsDigest);
   if (hash_it != m_HashProfileMap.end()) {
-    auto it_copied_stream = m_IccProfileMap.find(hash_it->second.Get());
+    auto it_copied_stream = m_IccProfileMap.find(hash_it->second);
     if (it_copied_stream != m_IccProfileMap.end() && it_copied_stream->second)
       return pdfium::WrapRetain(it_copied_stream->second.Get());
   }
   auto pProfile =
       pdfium::MakeRetain<CPDF_IccProfile>(pProfileStream, pAccessor->GetSpan());
   m_IccProfileMap[pProfileStream].Reset(pProfile.Get());
-  m_HashProfileMap[bsDigest].Reset(pProfileStream);
+  m_HashProfileMap[bsDigest] = std::move(pProfileStream);
   return pProfile;
 }
 

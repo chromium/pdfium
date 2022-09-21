@@ -7,6 +7,7 @@
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_function.h"
@@ -30,10 +31,11 @@ ShadingType ToShadingType(int type) {
 }  // namespace
 
 CPDF_ShadingPattern::CPDF_ShadingPattern(CPDF_Document* pDoc,
-                                         CPDF_Object* pPatternObj,
+                                         RetainPtr<CPDF_Object> pPatternObj,
                                          bool bShading,
                                          const CFX_Matrix& parentMatrix)
-    : CPDF_Pattern(pDoc, pPatternObj, parentMatrix), m_bShading(bShading) {
+    : CPDF_Pattern(pDoc, std::move(pPatternObj), parentMatrix),
+      m_bShading(bShading) {
   DCHECK(document());
   if (!bShading)
     SetPatternToFormMatrix();

@@ -172,7 +172,7 @@ FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
     }
   }
 
-  CPDF_Dictionary* pInfoDict = pDoc->GetInfo();
+  RetainPtr<CPDF_Dictionary> pInfoDict = pDoc->GetInfo();
   if (pInfoDict) {
     if (IsPDFSandboxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
       pInfoDict->SetNewFor<CPDF_String>("CreationDate", DateStr, false);

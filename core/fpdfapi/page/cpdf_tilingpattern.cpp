@@ -8,6 +8,8 @@
 
 #include <math.h>
 
+#include <utility>
+
 #include "core/fpdfapi/page/cpdf_allstates.h"
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
@@ -17,9 +19,9 @@
 #include "third_party/base/check.h"
 
 CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* pDoc,
-                                       CPDF_Object* pPatternObj,
+                                       RetainPtr<CPDF_Object> pPatternObj,
                                        const CFX_Matrix& parentMatrix)
-    : CPDF_Pattern(pDoc, pPatternObj, parentMatrix) {
+    : CPDF_Pattern(pDoc, std::move(pPatternObj), parentMatrix) {
   DCHECK(document());
   m_bColored = pattern_obj()->GetDict()->GetIntegerFor("PaintType") == 1;
   SetPatternToFormMatrix();

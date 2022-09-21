@@ -564,7 +564,8 @@ void CPDF_Creator::InitID() {
   DCHECK(!m_pIDArray);
 
   m_pIDArray = pdfium::MakeRetain<CPDF_Array>();
-  const CPDF_Array* pOldIDArray = m_pParser ? m_pParser->GetIDArray() : nullptr;
+  RetainPtr<const CPDF_Array> pOldIDArray =
+      m_pParser ? m_pParser->GetIDArray() : nullptr;
   RetainPtr<const CPDF_Object> pID1 =
       pOldIDArray ? pOldIDArray->GetObjectAt(0) : nullptr;
   if (pID1) {

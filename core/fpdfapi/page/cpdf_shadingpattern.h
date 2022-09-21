@@ -62,7 +62,7 @@ class CPDF_ShadingPattern final : public CPDF_Pattern {
 
  private:
   CPDF_ShadingPattern(CPDF_Document* pDoc,
-                      CPDF_Object* pPatternObj,
+                      RetainPtr<CPDF_Object> pPatternObj,
                       bool bShading,
                       const CFX_Matrix& parentMatrix);
   CPDF_ShadingPattern(const CPDF_ShadingPattern&) = delete;

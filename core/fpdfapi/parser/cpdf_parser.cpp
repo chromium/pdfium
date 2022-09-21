@@ -851,9 +851,8 @@ void CPDF_Parser::ProcessCrossRefV5Entry(
   m_CrossRefTable->AddCompressed(obj_num, archive_obj_num, archive_obj_index);
 }
 
-// TODO(tsepez): return retained object.
-const CPDF_Array* CPDF_Parser::GetIDArray() const {
-  return GetTrailer() ? GetTrailer()->GetArrayFor("ID").Get() : nullptr;
+RetainPtr<const CPDF_Array> CPDF_Parser::GetIDArray() const {
+  return GetTrailer() ? GetTrailer()->GetArrayFor("ID") : nullptr;
 }
 
 // TODO(tsepez): return retained object, though not clear if it can change.

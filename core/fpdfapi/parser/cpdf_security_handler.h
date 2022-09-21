@@ -24,7 +24,7 @@ class CPDF_SecurityHandler final : public Retainable {
   CONSTRUCT_VIA_MAKE_RETAIN;
 
   bool OnInit(const CPDF_Dictionary* pEncryptDict,
-              const CPDF_Array* pIdArray,
+              RetainPtr<const CPDF_Array> pIdArray,
               const ByteString& password);
   void OnCreate(CPDF_Dictionary* pEncryptDict,
                 const CPDF_Array* pIdArray,

@@ -189,7 +189,7 @@ CPDF_SecurityHandler::CPDF_SecurityHandler() = default;
 CPDF_SecurityHandler::~CPDF_SecurityHandler() = default;
 
 bool CPDF_SecurityHandler::OnInit(const CPDF_Dictionary* pEncryptDict,
-                                  const CPDF_Array* pIdArray,
+                                  RetainPtr<const CPDF_Array> pIdArray,
                                   const ByteString& password) {
   if (pIdArray)
     m_FileId = pIdArray->GetByteStringAt(0);

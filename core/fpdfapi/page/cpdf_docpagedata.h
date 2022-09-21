@@ -76,15 +76,16 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
       const CPDF_Dictionary* pResources,
       std::set<const CPDF_Object*>* pVisited);
 
-  RetainPtr<CPDF_Pattern> GetPattern(CPDF_Object* pPatternObj,
+  RetainPtr<CPDF_Pattern> GetPattern(RetainPtr<CPDF_Object> pPatternObj,
                                      const CFX_Matrix& matrix);
-  RetainPtr<CPDF_ShadingPattern> GetShading(CPDF_Object* pPatternObj,
+  RetainPtr<CPDF_ShadingPattern> GetShading(RetainPtr<CPDF_Object> pPatternObj,
                                             const CFX_Matrix& matrix);
 
   RetainPtr<CPDF_Image> GetImage(uint32_t dwStreamObjNum);
   void MaybePurgeImage(uint32_t dwStreamObjNum);
 
-  RetainPtr<CPDF_IccProfile> GetIccProfile(const CPDF_Stream* pProfileStream);
+  RetainPtr<CPDF_IccProfile> GetIccProfile(
+      RetainPtr<const CPDF_Stream> pProfileStream);
 
  private:
   // Loads a colorspace in a context that might be while loading another
@@ -109,13 +110,16 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
 
   // Specific destruction order may be required between maps.
   std::map<ByteString, RetainPtr<const CPDF_Stream>> m_HashProfileMap;
-  std::map<const CPDF_Object*, ObservedPtr<CPDF_ColorSpace>> m_ColorSpaceMap;
+  std::map<RetainPtr<const CPDF_Array>, ObservedPtr<CPDF_ColorSpace>>
+      m_ColorSpaceMap;
   std::map<RetainPtr<const CPDF_Stream>, RetainPtr<CPDF_StreamAcc>>
       m_FontFileMap;
-  std::map<const CPDF_Stream*, ObservedPtr<CPDF_IccProfile>> m_IccProfileMap;
-  std::map<const CPDF_Object*, ObservedPtr<CPDF_Pattern>> m_PatternMap;
+  std::map<RetainPtr<const CPDF_Stream>, ObservedPtr<CPDF_IccProfile>>
+      m_IccProfileMap;
+  std::map<RetainPtr<const CPDF_Object>, ObservedPtr<CPDF_Pattern>>
+      m_PatternMap;
   std::map<uint32_t, RetainPtr<CPDF_Image>> m_ImageMap;
-  std::map<const CPDF_Dictionary*, ObservedPtr<CPDF_Font>> m_FontMap;
+  std::map<RetainPtr<const CPDF_Dictionary>, ObservedPtr<CPDF_Font>> m_FontMap;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_DOCPAGEDATA_H_

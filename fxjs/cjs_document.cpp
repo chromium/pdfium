@@ -660,7 +660,8 @@ CJS_Result CJS_Document::get_info(CJS_Runtime* pRuntime) {
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  const auto* pDictionary = m_pFormFillEnv->GetPDFDocument()->GetInfo();
+  RetainPtr<const CPDF_Dictionary> pDictionary =
+      m_pFormFillEnv->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
@@ -726,9 +727,11 @@ CJS_Result CJS_Document::getPropertyInternal(CJS_Runtime* pRuntime,
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  CPDF_Dictionary* pDictionary = m_pFormFillEnv->GetPDFDocument()->GetInfo();
+  RetainPtr<CPDF_Dictionary> pDictionary =
+      m_pFormFillEnv->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+
   return CJS_Result::Success(pRuntime->NewString(
       pDictionary->GetUnicodeTextFor(propName).AsStringView()));
 }

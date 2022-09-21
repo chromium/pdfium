@@ -88,9 +88,8 @@ class CPDF_Parser {
   uint32_t GetPermissions() const;
   uint32_t GetRootObjNum() const;
   uint32_t GetInfoObjNum() const;
-  const CPDF_Array* GetIDArray() const;
+  RetainPtr<const CPDF_Array> GetIDArray() const;
   const CPDF_Dictionary* GetRoot() const;
-
   const CPDF_Dictionary* GetEncryptDict() const;
 
   RetainPtr<CPDF_Object> ParseIndirectObject(uint32_t objnum);
