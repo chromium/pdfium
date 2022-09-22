@@ -14,6 +14,13 @@
 namespace fxcrt {
 namespace {
 
+template <typename T, typename C = std::less<T>>
+class NoLinearSearchSet : public std::set<T, C> {
+ public:
+  typename std::set<T, C>::iterator begin() noexcept = delete;
+  typename std::set<T, C>::const_iterator cbegin() const noexcept = delete;
+};
+
 class Clink {
  public:
   UnownedPtr<Clink> next_ = nullptr;
@@ -192,7 +199,7 @@ TEST(UnownedPtr, TransparentCompare) {
   int foos[2];
   UnownedPtr<int> ptr1(&foos[0]);
   UnownedPtr<int> ptr2(&foos[1]);
-  std::set<UnownedPtr<int>, std::less<>> holder;
+  NoLinearSearchSet<UnownedPtr<int>, std::less<>> holder;
   holder.insert(ptr1);
   EXPECT_NE(holder.end(), holder.find(&foos[0]));
   EXPECT_EQ(holder.end(), holder.find(&foos[1]));
