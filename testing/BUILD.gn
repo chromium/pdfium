@@ -7,6 +7,8 @@ import("../pdfium.gni")
 source_set("test_support") {
   testonly = true
   sources = [
+    "command_line_helpers.cpp",
+    "command_line_helpers.h",
     "font_renamer.cpp",
     "font_renamer.h",
     "fx_string_testhelpers.cpp",
