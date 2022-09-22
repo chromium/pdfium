@@ -911,80 +911,58 @@ TEST_F(FPDFViewEmbedderTest, Hang_1055) {
 
 TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
   const char* clipped_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "d2929fae285593cd1c1d446750d47d60";
-    }
     return "a84cab93c102b9b9290fba3047ba702c";
   }();
   const char* top_left_quarter_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "31d24d8c6a2bac380b2f5c393e77ecc9";
-    }
     return "f11a11137c8834389e31cf555a4a6979";
   }();
   const char* hori_stretched_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "af6eaa0d3388261693df5390138e4da1";
-    }
     return "48ef9205941ed19691ccfa00d717187e";
   }();
   const char* rotated_90_clockwise_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "b4baa001d201baed576cd6d5d0d5a160";
-    }
     return "d8da2c7bf77521550d0f2752b9cf3482";
   }();
   const char* rotated_180_clockwise_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "51819227d0863222aed366d5d7c5d9c8";
-    }
     return "0113386bb0bd45125bacc6dee78bfe78";
   }();
   const char* rotated_270_clockwise_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "f2b046e46c2751cebc777a9725ae2f3e";
-    }
     return "a287e0f74ce203699cda89f9cc97a240";
   }();
   const char* mirror_hori_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "c7fbec322b4fc6bcf46ec1eb89661c41";
-    }
     return "6e8d7a6fde39d8e720fb9e620102918c";
   }();
   const char* mirror_vert_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "a8b00bc40677a73c15a08b9769d1b576";
-    }
     return "8f3a555ef9c0d5031831ae3715273707";
   }();
   const char* larger_top_left_quarter_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "35deb5ed4b73675ce33f68328a33c687";
-    }
     return "172a2f4adafbadbe98017b1c025b9e27";
   }();
   const char* larger_rotated_diagonal_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "1dbf599403c235926d3ddcbc0ea10ee8";
-    }
     return "3d62417468bdaff0eb14391a0c30a3b1";
   }();
   const char* tile_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "387be3a84774f39aaa955314d2fe7106";
-    }
     return "0a190003c97220bf8877684c8d7e89cf";
   }();
   const char kLargerChecksum[] = "c806145641c3e6fc4e022c7065343749";
@@ -1396,10 +1374,8 @@ TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
 
   const char* original_checksum = []() {
 #if BUILDFLAG(IS_APPLE)
-    if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() &&
-        !CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (!CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "0e339d606aafb63077f49e238dc27cb0";
-    }
 #endif
     return "288502887ffc63291f35a0573b944375";
   }();
@@ -1446,17 +1422,13 @@ TEST_F(FPDFViewEmbedderTest, RenderJpxLzwImageWithFlags) {
 
 TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithFlags) {
   const char* grayscale_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "b596ac8bbe64e7bff31888ab05e4dcf4";
-    }
     return "7b553f1052069a9c61237a05db0955d6";
   }();
   const char* no_smoothpath_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "4d71ed53d9f6e6a761876ebb4ff23e19";
-    }
     return "ff6e5c509d1f6984bcdfd18b26a4203a";
   }();
 
@@ -1491,17 +1463,14 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithAndWithoutExternalMemory) {
   ASSERT_TRUE(page);
 
   const char* gray_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "3dfe1fc3889123d68e1748fefac65e72";
-    }
     return "b561c11edc44dc3972125a9b8744fa2f";
   }();
 
   // TODO(crbug.com/pdfium/1489): Add a test for FPDFBitmap_BGR in
   // Skia/SkiaPaths modes once Skia provides support for BGR24 format.
-  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() &&
-      !CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+  if (!CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer()) {
     static const char kBgrChecksum[] = "ab6312e04c0d3f4e46fb302a45173d05";
 
     static constexpr int kBgrStride = 600;  // Width of 200 * 24 bits per pixel.
@@ -1573,10 +1542,8 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
   }();
   const char* no_smoothtext_checksum = []() {
 #if BUILDFLAG(IS_APPLE)
-    if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() &&
-        !CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (!CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "6eef7237f7591f07616e238422086737";
-    }
 #endif
     return "37d0b34e1762fdda4c05ce7ea357b828";
   }();

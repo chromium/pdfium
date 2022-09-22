@@ -263,9 +263,9 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
   ByteString FaceGlyphsKey(keygen.key_, keygen.key_len_);
 
 #if BUILDFLAG(IS_APPLE)
-  const bool bDoLookUp = !text_options->native_text ||
-                         CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-                         CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer();
+  const bool bDoLookUp =
+      !text_options->native_text ||
+      CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer();
 #else
   const bool bDoLookUp = true;
 #endif
@@ -275,8 +275,7 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
   }
 
 #if BUILDFLAG(IS_APPLE)
-  DCHECK(!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer());
-  DCHECK(!CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer());
+  DCHECK(!CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer());
 
   std::unique_ptr<CFX_GlyphBitmap> pGlyphBitmap;
   auto it = m_SizeMap.find(FaceGlyphsKey);

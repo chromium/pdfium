@@ -123,10 +123,8 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
                                   -fFontSize, matrix, color, kOptions);
   }
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-      CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
     device->Flush(false);
-  }
 #endif
 
   return bRet;

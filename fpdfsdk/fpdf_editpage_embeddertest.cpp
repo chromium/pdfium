@@ -12,10 +12,8 @@ class FPDFEditPageEmbedderTest : public EmbedderTest {};
 
 TEST_F(FPDFEditPageEmbedderTest, Rotation) {
   const char* rotated_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "eded83f75f3d0332c584c416c571c0df";
-    }
     return "d599429574ff0dcad3bc898ea8b874ca";
   }();
 

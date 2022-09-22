@@ -49,6 +49,10 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
   // Runtime check to see if SkiaPaths is the renderer variant in use.
   static bool SkiaPathsIsDefaultRenderer();
 
+  // Convenient way to check if either SkiaIsDefaultRenderer() or
+  // SkiaPathsIsDefaultRenderer() returns true.
+  static bool SkiaVariantIsDefaultRenderer();
+
 #if defined(_SKIA_SUPPORT_)
   // This internal definition of renderer types must stay updated with respect
   // to the public definition of `FPDF_RENDERER_TYPE`, so that all public

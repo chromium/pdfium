@@ -490,10 +490,8 @@ CFX_RenderDevice::CFX_RenderDevice() = default;
 CFX_RenderDevice::~CFX_RenderDevice() {
   RestoreState(false);
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-      CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
     Flush(true);
-  }
 #endif
 }
 
@@ -807,10 +805,8 @@ bool CFX_RenderDevice::DrawFillStrokePath(
     return false;
   }
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-      CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
     bitmap_device.GetDeviceDriver()->Flush();
-  }
 #endif
   FX_RECT src_rect(0, 0, rect.Width(), rect.Height());
   return m_pDeviceDriver->SetDIBits(bitmap, 0, src_rect, rect.left, rect.top,
@@ -1056,8 +1052,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
         // one expires 10/7/19.  This makes LCD anti-aliasing very ugly, so we
         // instead fall back on NORMAL anti-aliasing.
         anti_alias = FT_RENDER_MODE_NORMAL;
-        if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-            CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+        if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer()) {
           // Since |anti_alias| doesn't affect Skia rendering, and Skia only
           // follows strictly to the options provided by |text_options|, we need
           // to update |text_options| so that Skia falls back on normal
@@ -1223,8 +1218,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   }
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATH_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-      CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer()) {
     // DrawNormalTextHelper() can result in unpremultiplied bitmaps for
     // rendering glyphs. Make sure `bitmap` is premultiplied before proceeding
     // or CFX_DIBBase::DebugVerifyBufferIsPreMultiplied() check will fail.

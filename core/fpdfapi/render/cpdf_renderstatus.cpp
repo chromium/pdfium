@@ -125,10 +125,8 @@ FXDIB_Format GetFormatForLuminosity(bool is_luminosity) {
 #if BUILDFLAG(IS_APPLE)
   return FXDIB_Format::kRgb32;
 #else
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-      CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
     return FXDIB_Format::kRgb32;
-  }
   return FXDIB_Format::kRgb;
 #endif
 }
@@ -173,8 +171,7 @@ class ScopedSkiaDeviceFlush {
   ScopedSkiaDeviceFlush& operator=(const ScopedSkiaDeviceFlush&) = delete;
 
   ~ScopedSkiaDeviceFlush() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer()) {
       m_pDevice->Flush(/*release=*/false);
     }
   }
@@ -722,8 +719,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   bitmap_render.Initialize(nullptr, nullptr);
   bitmap_render.ProcessObjectNoClip(pPageObj, new_matrix);
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-      CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer()) {
     bitmap_device.Flush(true);
     bitmap->UnPreMultiply();
   }

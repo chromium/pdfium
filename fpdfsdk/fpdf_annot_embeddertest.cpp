@@ -405,10 +405,8 @@ TEST_F(FPDFAnnotEmbedderTest, RenderAnnotWithOnlyRolloverAP) {
 
 TEST_F(FPDFAnnotEmbedderTest, RenderMultilineMarkupAnnotWithoutAP) {
   const char* checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "ec1f4ccbd0aecfdea6d53893387a0101";
-    }
     return "76512832d88017668d9acc7aacd13dae";
   }();
 
@@ -1117,10 +1115,8 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveAnnotation) {
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
   const char* md5_modified_path = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "f671765166acf45d80e833ea3aff8b90";
-    }
 #if BUILDFLAG(IS_APPLE)
     return "e31421f86c61d4e9cda138f15f561ca3";
 #else
@@ -1128,10 +1124,8 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 #endif
   }();
   const char* md5_two_paths = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "7d2db46e1ae6bcf88d18d334af309551";
-    }
 #if BUILDFLAG(IS_APPLE)
     return "58d932492f9d485d6a4bc0ba76c04557";
 #else
@@ -1139,10 +1133,8 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 #endif
   }();
   const char* md5_new_annot = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "92bfb06058ff608571a3baf65f7fc05d";
-    }
 #if BUILDFLAG(IS_APPLE)
     return "61f9ad13f2fd235753db198cf9704773";
 #else
@@ -1359,10 +1351,8 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
 #endif
   }();
   const char* md5_modified_image = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "5806fadc1a192bc4bb07511a0711c957";
-    }
 #if BUILDFLAG(IS_APPLE)
     return "8068eb568e5c1c5fbe84e98f7a980ac3";
 #else
@@ -1592,10 +1582,8 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   UnloadPage(page);
 
   const char* md5 = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "2b9078043cd6130fef4e8542dcda943e";
-    }
 #if BUILDFLAG(IS_APPLE)
     return "cd90315b250dfe08265ce0ac335c5f76";
 #else
@@ -2134,10 +2122,8 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsComboBox) {
 
 TEST_F(FPDFAnnotEmbedderTest, BUG_1206) {
   const char* expected_bitmap = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "a1ea1ceebb26922fae576cb79ce63af0";
-    }
     return "0d9fc05c6762fd788bd23fd87a4967bc";
   }();
   static constexpr size_t kExpectedSize = 1590;
@@ -3060,10 +3046,8 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
 
   {
     const char* md5_sum = []() {
-      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-          CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
         return "7b08d6e8c0423302755c110e17abf7de";
-      }
 #if BUILDFLAG(IS_APPLE)
       return "108a46c517c4eaace9982ee83e8e3296";
 #else
@@ -3090,10 +3074,8 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
 
   {
     const char* md5_sum = []() {
-      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-          CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
         return "371171ea3f000db6354b24a702b0312b";
-      }
 #if BUILDFLAG(IS_APPLE)
       return "eb3869335e7a219e1b5f25c1c6037b97";
 #else
@@ -3111,10 +3093,8 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
 
   {
     const char* md5_sum = []() {
-      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-          CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+      if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
         return "4aba010a83b9d91722921fde6bf30cdc";
-      }
 #if BUILDFLAG(IS_APPLE)
       return "d20b1978da2362d3942ea0fc6d230997";
 #else
@@ -3690,19 +3670,15 @@ TEST_F(FPDFAnnotEmbedderTest, AnnotationBorderRendering) {
 
   const char* original_checksum = []() {
 #if BUILDFLAG(IS_APPLE)
-    if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() &&
-        !CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (!CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "522a4a6b6c7eab5bf95ded1f21ea372e";
-    }
 #endif
     return "12127303aecd80c6288460f7c0d79f3f";
   }();
   const char* modified_checksum = []() {
 #if BUILDFLAG(IS_APPLE)
-    if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() &&
-        !CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (!CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "6844019e07b83cc01723415f58218d06";
-    }
 #endif
     return "73d06ff4c665fe85029acef30240dcca";
   }();

@@ -336,10 +336,8 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderTextWithColorScheme) {
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderPathWithColorScheme) {
   // Test rendering of paths with forced color scheme on.
   const char* rectangles_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "4b0f850a94698d07b6cd2814d1b4ccb7";
-    }
     return "249f59b0d066c4f6bd89782a80822219";
   }();
 
@@ -355,10 +353,8 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
   // Test rendering of paths with forced color scheme on and conversion from
   // fill to stroke enabled. The fill paths should be rendered as stroke.
   const char* rectangles_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "c1cbbd2ce6921f608a3c55140592419b";
-    }
     return "0ebcc11e617635eca1fa9ce475383a80";
   }();
 
@@ -428,10 +424,8 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderInkWithColorScheme) {
   // Test rendering of multiple ink with forced color scheme on.
   const char* content_with_ink_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "ebc57721e4c8da34156e09b9b2e62fb0";
-    }
     return "797bce7dc6c50ee86b095405df9fe5aa";
   }();
 
@@ -445,10 +439,8 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderInkWithColorScheme) {
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
   // Test rendering of static annotation with forced color scheme on.
   const char* content_with_stamp_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "a791fdb4f595bb6c4187cc2aeed5e9e8";
-    }
 #if BUILDFLAG(IS_APPLE)
     return "7a209e29caeeab7d2b25b34570a4ace6";
 #else
@@ -466,10 +458,8 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderFormWithColorScheme) {
   // Test rendering of form does not change with forced color scheme on.
   const char* content_with_form_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "9f75d98afc6d6313bd87e6562ea6df15";
-    }
     return "080f7a4381606659301440e1b14dca35";
   }();
 

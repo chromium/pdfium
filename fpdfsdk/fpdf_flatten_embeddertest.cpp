@@ -83,10 +83,8 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
   }();
   const char* flattened_page_checksum = []() {
 #if BUILDFLAG(IS_APPLE)
-    if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() &&
-        !CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (!CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "41debc60cf2a8f74c710ec6082d77b18";
-    }
 #endif
     return "0832157462ea70fbbf053e14b1d6457f";
   }();
@@ -109,10 +107,8 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
 
 TEST_F(FPDFFlattenEmbedderTest, BUG_890322) {
   const char* checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "793689536cf64fe792c2f241888c0cf3";
-    }
     return "6c674642154408e877d88c6c082d67e9";
   }();
   ASSERT_TRUE(OpenDocument("bug_890322.pdf"));
@@ -132,10 +128,8 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_890322) {
 
 TEST_F(FPDFFlattenEmbedderTest, BUG_896366) {
   const char* checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() ||
-        CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
       return "c3cccfadc4c5249e6aa0675e511fa4c3";
-    }
     return "f71ab085c52c8445ae785eca3ec858b1";
   }();
   ASSERT_TRUE(OpenDocument("bug_896366.pdf"));
