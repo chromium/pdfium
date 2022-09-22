@@ -1264,6 +1264,19 @@ FPDFAnnot_GetFormAdditionalActionJavaScript(FPDF_FORMHANDLE hHandle,
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDFAnnot_GetFormFieldAlternateName(FPDF_FORMHANDLE hHandle,
+                                    FPDF_ANNOTATION annot,
+                                    FPDF_WCHAR* buffer,
+                                    unsigned long buflen) {
+  const CPDF_FormField* pFormField = GetFormField(hHandle, annot);
+  if (!pFormField)
+    return 0;
+
+  return Utf16EncodeMaybeCopyAndReturnLength(pFormField->GetAlternateName(),
+                                             buffer, buflen);
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAnnot_GetFormFieldValue(FPDF_FORMHANDLE hHandle,
                             FPDF_ANNOTATION annot,
                             FPDF_WCHAR* buffer,

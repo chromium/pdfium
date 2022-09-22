@@ -3650,6 +3650,35 @@ TEST_F(FPDFAnnotEmbedderTest, AnnotationJavaScript) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFAnnotEmbedderTest, FormFieldAlternateName) {
+  ASSERT_TRUE(OpenDocument("click_form.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  EXPECT_EQ(8, FPDFPage_GetAnnotCount(page));
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    // FPDFAnnot_GetFormFieldAlternateName() positive testing.
+    unsigned long length_bytes = FPDFAnnot_GetFormFieldAlternateName(
+        form_handle(), annot.get(), nullptr, 0);
+    ASSERT_EQ(34u, length_bytes);
+    std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
+    EXPECT_EQ(34u, FPDFAnnot_GetFormFieldAlternateName(
+                       form_handle(), annot.get(), buf.data(), length_bytes));
+    EXPECT_EQ(L"readOnlyCheckbox", GetPlatformWString(buf.data()));
+
+    // FPDFAnnot_GetFormFieldAlternateName() negative testing.
+    EXPECT_EQ(0u, FPDFAnnot_GetFormFieldAlternateName(form_handle(), nullptr,
+                                                      nullptr, 0));
+    EXPECT_EQ(0u, FPDFAnnot_GetFormFieldAlternateName(nullptr, annot.get(),
+                                                      nullptr, 0));
+  }
+
+  UnloadPage(page);
+}
+
 // Due to https://crbug.com/pdfium/570, the AnnotationBorder test above cannot
 // actually render the line annotations inside line_annot.pdf. For now, use a
 // square annotation in annots.pdf for testing.

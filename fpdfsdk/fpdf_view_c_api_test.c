@@ -55,6 +55,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFAnnot_GetFormAdditionalActionJavaScript);
     CHK(FPDFAnnot_GetFormControlCount);
     CHK(FPDFAnnot_GetFormControlIndex);
+    CHK(FPDFAnnot_GetFormFieldAlternateName);
     CHK(FPDFAnnot_GetFormFieldAtPoint);
     CHK(FPDFAnnot_GetFormFieldExportValue);
     CHK(FPDFAnnot_GetFormFieldFlags);
