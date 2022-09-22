@@ -4,7 +4,9 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 
+#include <functional>
 #include <memory>
+#include <set>
 #include <utility>
 
 #include "testing/gtest/include/gtest/gtest.h"
@@ -184,6 +186,16 @@ TEST(UnownedPtr, OperatorLT) {
   EXPECT_FALSE(ptr1 < ptr1);
   EXPECT_TRUE(ptr1 < ptr2);
   EXPECT_FALSE(ptr2 < ptr1);
+}
+
+TEST(UnownedPtr, TransparentCompare) {
+  int foos[2];
+  UnownedPtr<int> ptr1(&foos[0]);
+  UnownedPtr<int> ptr2(&foos[1]);
+  std::set<UnownedPtr<int>, std::less<>> holder;
+  holder.insert(ptr1);
+  EXPECT_NE(holder.end(), holder.find(&foos[0]));
+  EXPECT_EQ(holder.end(), holder.find(&foos[1]));
 }
 
 }  // namespace fxcrt
