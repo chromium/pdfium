@@ -1395,12 +1395,13 @@ CJS_Result CJS_Document::gotoNamedDest(
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
-  CPDF_Array* dest_array = CPDF_NameTree::LookupNamedDest(
+  RetainPtr<const CPDF_Array> dest_array = CPDF_NameTree::LookupNamedDest(
       pDocument, pRuntime->ToByteString(params[0]));
   if (!dest_array)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  CPDF_Dest dest(dest_array);
+  // TODO(tsepez): make CPDF_Dest constructor take retained argument.
+  CPDF_Dest dest(dest_array.Get());
   const CPDF_Array* arrayObject = dest.GetArray();
   std::vector<float> scrollPositionArray;
   if (arrayObject) {

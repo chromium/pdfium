@@ -170,4 +170,9 @@ inline RetainPtr<CPDF_Dictionary> ToDictionary(RetainPtr<CPDF_Object> obj) {
   return RetainPtr<CPDF_Dictionary>(ToDictionary(obj.Get()));
 }
 
+inline RetainPtr<const CPDF_Dictionary> ToDictionary(
+    RetainPtr<const CPDF_Object> obj) {
+  return RetainPtr<const CPDF_Dictionary>(ToDictionary(obj.Get()));
+}
+
 #endif  // CORE_FPDFAPI_PARSER_CPDF_DICTIONARY_H_

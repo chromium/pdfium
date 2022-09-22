@@ -194,4 +194,8 @@ inline RetainPtr<CPDF_Array> ToArray(RetainPtr<CPDF_Object> obj) {
   return RetainPtr<CPDF_Array>(ToArray(obj.Get()));
 }
 
+inline RetainPtr<const CPDF_Array> ToArray(RetainPtr<const CPDF_Object> obj) {
+  return RetainPtr<const CPDF_Array>(ToArray(obj.Get()));
+}
+
 #endif  // CORE_FPDFAPI_PARSER_CPDF_ARRAY_H_

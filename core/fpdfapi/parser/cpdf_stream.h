@@ -92,4 +92,8 @@ inline RetainPtr<CPDF_Stream> ToStream(RetainPtr<CPDF_Object> obj) {
   return RetainPtr<CPDF_Stream>(ToStream(obj.Get()));
 }
 
+inline RetainPtr<const CPDF_Stream> ToStream(RetainPtr<const CPDF_Object> obj) {
+  return RetainPtr<const CPDF_Stream>(ToStream(obj.Get()));
+}
+
 #endif  // CORE_FPDFAPI_PARSER_CPDF_STREAM_H_
