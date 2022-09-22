@@ -214,7 +214,20 @@ void CPDF_Array::ConvertToIndirectObjectAt(size_t index,
   m_Objects[index] = pNew->MakeReference(pHolder);
 }
 
-CPDF_Object* CPDF_Array::SetAt(size_t index, RetainPtr<CPDF_Object> pObj) {
+void CPDF_Array::SetAt(size_t index, RetainPtr<CPDF_Object> pObj) {
+  (void)SetAtInternal(index, std::move(pObj));
+}
+
+void CPDF_Array::InsertAt(size_t index, RetainPtr<CPDF_Object> pObj) {
+  (void)InsertAtInternal(index, std::move(pObj));
+}
+
+void CPDF_Array::Append(RetainPtr<CPDF_Object> pObj) {
+  (void)AppendInternal(std::move(pObj));
+}
+
+CPDF_Object* CPDF_Array::SetAtInternal(size_t index,
+                                       RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
   CHECK(pObj);
   CHECK(pObj->IsInline());
@@ -226,7 +239,8 @@ CPDF_Object* CPDF_Array::SetAt(size_t index, RetainPtr<CPDF_Object> pObj) {
   return pRet;
 }
 
-CPDF_Object* CPDF_Array::InsertAt(size_t index, RetainPtr<CPDF_Object> pObj) {
+CPDF_Object* CPDF_Array::InsertAtInternal(size_t index,
+                                          RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
   CHECK(pObj);
   CHECK(pObj->IsInline());
@@ -238,7 +252,7 @@ CPDF_Object* CPDF_Array::InsertAt(size_t index, RetainPtr<CPDF_Object> pObj) {
   return pRet;
 }
 
-CPDF_Object* CPDF_Array::Append(RetainPtr<CPDF_Object> pObj) {
+CPDF_Object* CPDF_Array::AppendInternal(RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
   CHECK(pObj);
   CHECK(pObj->IsInline());

@@ -57,7 +57,7 @@ void InsertWidthArrayImpl(std::vector<int> widths, CPDF_Array* pWidthArray) {
     pWidthArray->AppendNew<CPDF_Number>(widths[0]);
     return;
   }
-  CPDF_Array* pWidthArray1 = pWidthArray->AppendNew<CPDF_Array>();
+  auto pWidthArray1 = pWidthArray->AppendNew<CPDF_Array>();
   for (int w : widths)
     pWidthArray1->AppendNew<CPDF_Number>(w);
 }
@@ -655,7 +655,7 @@ size_t CPDF_DocPageData::CalculateEncodingDict(FX_Charset charset,
   pEncodingDict->SetNewFor<CPDF_Name>("BaseEncoding",
                                       pdfium::font_encodings::kWinAnsiEncoding);
 
-  CPDF_Array* pArray = pEncodingDict->SetNewFor<CPDF_Array>("Differences");
+  auto pArray = pEncodingDict->SetNewFor<CPDF_Array>("Differences");
   pArray->AppendNew<CPDF_Number>(128);
 
   const uint16_t* pUnicodes = kFX_CharsetUnicodes[i].m_pUnicodes;
@@ -678,43 +678,43 @@ CPDF_Dictionary* CPDF_DocPageData::ProcessbCJK(
   ByteString cmap;
   ByteString ordering;
   int supplement = 0;
-  CPDF_Array* pWidthArray = pFontDict->SetNewFor<CPDF_Array>("W");
+  auto pWidthArray = pFontDict->SetNewFor<CPDF_Array>("W");
   switch (charset) {
     case FX_Charset::kChineseTraditional:
       cmap = "ETenms-B5-H";
       ordering = "CNS1";
       supplement = 4;
       pWidthArray->AppendNew<CPDF_Number>(1);
-      Insert(0x20, 0x7e, pWidthArray);
+      Insert(0x20, 0x7e, pWidthArray.Get());
       break;
     case FX_Charset::kChineseSimplified:
       cmap = "GBK-EUC-H";
       ordering = "GB1";
       supplement = 2;
       pWidthArray->AppendNew<CPDF_Number>(7716);
-      Insert(0x20, 0x20, pWidthArray);
+      Insert(0x20, 0x20, pWidthArray.Get());
       pWidthArray->AppendNew<CPDF_Number>(814);
-      Insert(0x21, 0x7e, pWidthArray);
+      Insert(0x21, 0x7e, pWidthArray.Get());
       break;
     case FX_Charset::kHangul:
       cmap = "KSCms-UHC-H";
       ordering = "Korea1";
       supplement = 2;
       pWidthArray->AppendNew<CPDF_Number>(1);
-      Insert(0x20, 0x7e, pWidthArray);
+      Insert(0x20, 0x7e, pWidthArray.Get());
       break;
     case FX_Charset::kShiftJIS:
       cmap = "90ms-RKSJ-H";
       ordering = "Japan1";
       supplement = 5;
       pWidthArray->AppendNew<CPDF_Number>(231);
-      Insert(0x20, 0x7d, pWidthArray);
+      Insert(0x20, 0x7d, pWidthArray.Get());
       pWidthArray->AppendNew<CPDF_Number>(326);
-      Insert(0xa0, 0xa0, pWidthArray);
+      Insert(0xa0, 0xa0, pWidthArray.Get());
       pWidthArray->AppendNew<CPDF_Number>(327);
-      Insert(0xa1, 0xdf, pWidthArray);
+      Insert(0xa1, 0xdf, pWidthArray.Get());
       pWidthArray->AppendNew<CPDF_Number>(631);
-      Insert(0x7e, 0x7e, pWidthArray);
+      Insert(0x7e, 0x7e, pWidthArray.Get());
       break;
     default:
       break;
@@ -726,13 +726,12 @@ CPDF_Dictionary* CPDF_DocPageData::ProcessbCJK(
   pFontDict->SetNewFor<CPDF_Name>("Subtype", "CIDFontType2");
   pFontDict->SetNewFor<CPDF_Name>("BaseFont", basefont);
 
-  CPDF_Dictionary* pCIDSysInfo =
-      pFontDict->SetNewFor<CPDF_Dictionary>("CIDSystemInfo");
+  auto pCIDSysInfo = pFontDict->SetNewFor<CPDF_Dictionary>("CIDSystemInfo");
   pCIDSysInfo->SetNewFor<CPDF_String>("Registry", "Adobe", false);
   pCIDSysInfo->SetNewFor<CPDF_String>("Ordering", ordering, false);
   pCIDSysInfo->SetNewFor<CPDF_Number>("Supplement", supplement);
 
-  CPDF_Array* pArray = pBaseDict->SetNewFor<CPDF_Array>("DescendantFonts");
+  auto pArray = pBaseDict->SetNewFor<CPDF_Array>("DescendantFonts");
   pArray->AppendNew<CPDF_Reference>(GetDocument(), pFontDict->GetObjNum());
   return pFontDict.Get();
 }

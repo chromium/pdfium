@@ -40,10 +40,10 @@ TEST_F(BAFontMapTest, DefaultFont) {
 TEST_F(BAFontMapTest, Bug853238) {
   CPDF_TestDocument doc;
   auto root_dict = pdfium::MakeRetain<CPDF_Dictionary>();
-  auto* acroform_dict = root_dict->SetNewFor<CPDF_Dictionary>("AcroForm");
-  auto* annot_dr_dict = acroform_dict->SetNewFor<CPDF_Dictionary>("DR");
-  auto* annot_font_dict = annot_dr_dict->SetNewFor<CPDF_Dictionary>("Font");
-  auto* annot_font_f1_dict = annot_font_dict->SetNewFor<CPDF_Dictionary>("F1");
+  auto acroform_dict = root_dict->SetNewFor<CPDF_Dictionary>("AcroForm");
+  auto annot_dr_dict = acroform_dict->SetNewFor<CPDF_Dictionary>("DR");
+  auto annot_font_dict = annot_dr_dict->SetNewFor<CPDF_Dictionary>("Font");
+  auto annot_font_f1_dict = annot_font_dict->SetNewFor<CPDF_Dictionary>("F1");
   annot_font_f1_dict->SetNewFor<CPDF_Name>("Type", "Font");
   annot_font_f1_dict->SetNewFor<CPDF_Name>("Subtype", "Type1");
   annot_font_f1_dict->SetNewFor<CPDF_Name>("BaseFont", "Times-Roman");

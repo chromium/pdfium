@@ -321,7 +321,7 @@ TEST(ObjectAvailTest, SelfReferedInlinedObject) {
 
   holder.GetTestObject(1)->GetMutableDict()->SetNewFor<CPDF_Reference>(
       "Data", &holder, 2);
-  auto* root =
+  auto root =
       holder.GetTestObject(1)->GetMutableDict()->SetNewFor<CPDF_Dictionary>(
           "Dict");
 
@@ -330,11 +330,9 @@ TEST(ObjectAvailTest, SelfReferedInlinedObject) {
   holder.AddObject(2, pdfium::MakeRetain<CPDF_String>(nullptr, "Data", false),
                    TestHolder::ObjectState::Unavailable);
 
-  CPDF_ObjectAvail avail(holder.GetValidator(), &holder, root);
-
+  CPDF_ObjectAvail avail(holder.GetValidator(), &holder, root.Get());
   EXPECT_EQ(CPDF_DataAvail::kDataNotAvailable, avail.CheckAvail());
 
   holder.SetObjectState(2, TestHolder::ObjectState::Available);
-
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, avail.CheckAvail());
 }

@@ -75,68 +75,61 @@ class CPDF_Array final : public CPDF_Object {
   absl::optional<size_t> Find(const CPDF_Object* pThat) const;
   bool Contains(const CPDF_Object* pThat) const;
 
-  // Creates object owned by the array, returns unowned pointer to it.
+  // Creates object owned by the array, and returns a retained pointer to it.
   // We have special cases for objects that can intern strings from
   // a ByteStringPool. Prefer using these templates over direct calls
   // to Append()/SetAt()/InsertAt() since by creating a new object with no
   // previous references, they ensure cycles can not be introduced.
   template <typename T, typename... Args>
-  typename std::enable_if<!CanInternStrings<T>::value, T*>::type AppendNew(
-      Args&&... args) {
-    return static_cast<T*>(
-        Append(pdfium::MakeRetain<T>(std::forward<Args>(args)...)));
+  typename std::enable_if<!CanInternStrings<T>::value, RetainPtr<T>>::type
+  AppendNew(Args&&... args) {
+    return pdfium::WrapRetain(static_cast<T*>(
+        AppendInternal(pdfium::MakeRetain<T>(std::forward<Args>(args)...))));
   }
   template <typename T, typename... Args>
-  typename std::enable_if<CanInternStrings<T>::value, T*>::type AppendNew(
-      Args&&... args) {
-    return static_cast<T*>(
-        Append(pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...)));
+  typename std::enable_if<CanInternStrings<T>::value, RetainPtr<T>>::type
+  AppendNew(Args&&... args) {
+    return pdfium::WrapRetain(static_cast<T*>(AppendInternal(
+        pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...))));
   }
   template <typename T, typename... Args>
-  typename std::enable_if<!CanInternStrings<T>::value, T*>::type SetNewAt(
-      size_t index,
-      Args&&... args) {
-    return static_cast<T*>(
-        SetAt(index, pdfium::MakeRetain<T>(std::forward<Args>(args)...)));
+  typename std::enable_if<!CanInternStrings<T>::value, RetainPtr<T>>::type
+  SetNewAt(size_t index, Args&&... args) {
+    return pdfium::WrapRetain(static_cast<T*>(SetAtInternal(
+        index, pdfium::MakeRetain<T>(std::forward<Args>(args)...))));
   }
   template <typename T, typename... Args>
-  typename std::enable_if<CanInternStrings<T>::value, T*>::type SetNewAt(
-      size_t index,
-      Args&&... args) {
-    return static_cast<T*>(SetAt(
-        index, pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...)));
+  typename std::enable_if<CanInternStrings<T>::value, RetainPtr<T>>::type
+  SetNewAt(size_t index, Args&&... args) {
+    return pdfium::WrapRetain(static_cast<T*>(SetAtInternal(
+        index, pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...))));
   }
   template <typename T, typename... Args>
-  typename std::enable_if<!CanInternStrings<T>::value, T*>::type InsertNewAt(
-      size_t index,
-      Args&&... args) {
-    return static_cast<T*>(
-        InsertAt(index, pdfium::MakeRetain<T>(std::forward<Args>(args)...)));
+  typename std::enable_if<!CanInternStrings<T>::value, RetainPtr<T>>::type
+  InsertNewAt(size_t index, Args&&... args) {
+    return pdfium::WrapRetain(static_cast<T*>(InsertAtInternal(
+        index, pdfium::MakeRetain<T>(std::forward<Args>(args)...))));
   }
   template <typename T, typename... Args>
-  typename std::enable_if<CanInternStrings<T>::value, T*>::type InsertNewAt(
-      size_t index,
-      Args&&... args) {
-    return static_cast<T*>(InsertAt(
-        index, pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...)));
+  typename std::enable_if<CanInternStrings<T>::value, RetainPtr<T>>::type
+  InsertNewAt(size_t index, Args&&... args) {
+    return pdfium::WrapRetain(static_cast<T*>(InsertAtInternal(
+        index, pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...))));
   }
 
   // Adds non-null `pObj` to the end of the array, growing as appropriate.
-  // Retains reference to `pObj`, and returns raw pointer for convenience.
-  CPDF_Object* Append(RetainPtr<CPDF_Object> pObj);
+  void Append(RetainPtr<CPDF_Object> pObj);
 
-  // Overwrites the object at `index` with non-null `pObj`. If `index` is
-  // less than the array size, then retains reference to `pObj`, and returns
-  // raw pointer for convenience. Otherwise, `index` is out of bounds, and
-  // `pObj` is neither stored nor retained, and nullptr is returned.
-  CPDF_Object* SetAt(size_t index, RetainPtr<CPDF_Object> pObj);
+  // Overwrites the object at `index` with non-null `pObj`, if it is
+  // in bounds. Otherwise, `index` is out of bounds, and `pObj` is
+  // not stored.
+  void SetAt(size_t index, RetainPtr<CPDF_Object> pObj);
 
   // Inserts non-null `pObj` at `index` and shifts by one position all of the
-  // objects beyond it like std::vector::insert(). If `index` is less than or
-  // equal to the current array size, then retains reference to `pObj`, and
-  // returns raw pointer for convenience. Otherwise, `index` is out of bounds,
-  // and `pObj` is neither stored nor retained, and nullptr is returned.
-  CPDF_Object* InsertAt(size_t index, RetainPtr<CPDF_Object> pObj);
+  // objects beyond it like std::vector::insert(), if `index` is less than or
+  // equal to the current array size. Otherwise, `index` is out of bounds,
+  // and `pObj` is not stored.
+  void InsertAt(size_t index, RetainPtr<CPDF_Object> pObj);
 
   void Clear();
   void RemoveAt(size_t index);
@@ -154,6 +147,9 @@ class CPDF_Array final : public CPDF_Object {
   // No guarantees about result lifetime, use with caution.
   const CPDF_Object* GetObjectAtInternal(size_t index) const;
   CPDF_Object* GetMutableObjectAtInternal(size_t index);
+  CPDF_Object* AppendInternal(RetainPtr<CPDF_Object> pObj);
+  CPDF_Object* SetAtInternal(size_t index, RetainPtr<CPDF_Object> pObj);
+  CPDF_Object* InsertAtInternal(size_t index, RetainPtr<CPDF_Object> pObj);
 
   RetainPtr<CPDF_Object> CloneNonCyclic(
       bool bDirect,

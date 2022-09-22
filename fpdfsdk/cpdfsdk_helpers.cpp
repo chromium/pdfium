@@ -236,7 +236,7 @@ RetainPtr<CPDF_Array> GetMutableQuadPointsArrayFromDictionary(
       const_cast<CPDF_Array*>(GetQuadPointsArrayFromDictionary(dict)));
 }
 
-CPDF_Array* AddQuadPointsArrayToDictionary(CPDF_Dictionary* dict) {
+RetainPtr<CPDF_Array> AddQuadPointsArrayToDictionary(CPDF_Dictionary* dict) {
   return dict->SetNewFor<CPDF_Array>(kQuadPoints);
 }
 

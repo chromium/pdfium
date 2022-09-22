@@ -151,7 +151,7 @@ TEST(ParserDecodeTest, GetDecoderArray) {
   {
     // Valid 1 element filter array.
     auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
-    auto* filter_array = dict->SetNewFor<CPDF_Array>("Filter");
+    auto filter_array = dict->SetNewFor<CPDF_Array>("Filter");
     filter_array->AppendNew<CPDF_Name>("FooBar");
     absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict);
     ASSERT_TRUE(decoder_array.has_value());
@@ -161,7 +161,7 @@ TEST(ParserDecodeTest, GetDecoderArray) {
   {
     // Valid 2 element filter array.
     auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
-    auto* filter_array = dict->SetNewFor<CPDF_Array>("Filter");
+    auto filter_array = dict->SetNewFor<CPDF_Array>("Filter");
     filter_array->AppendNew<CPDF_Name>("AHx");
     filter_array->AppendNew<CPDF_Name>("LZWDecode");
     absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict);
@@ -173,7 +173,7 @@ TEST(ParserDecodeTest, GetDecoderArray) {
   {
     // Invalid 2 element filter array.
     auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
-    auto* invalid_filter_array = dict->SetNewFor<CPDF_Array>("Filter");
+    auto invalid_filter_array = dict->SetNewFor<CPDF_Array>("Filter");
     invalid_filter_array->AppendNew<CPDF_Name>("DCTDecode");
     invalid_filter_array->AppendNew<CPDF_Name>("CCITTFaxDecode");
     absl::optional<DecoderArray> decoder_array = GetDecoderArray(dict);

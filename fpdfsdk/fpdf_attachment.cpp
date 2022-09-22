@@ -216,8 +216,7 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
 
   // Create a dictionary for the new embedded file stream.
   auto pFileStreamDict = pdfium::MakeRetain<CPDF_Dictionary>();
-  CPDF_Dictionary* pParamsDict =
-      pFileStreamDict->SetNewFor<CPDF_Dictionary>("Params");
+  auto pParamsDict = pFileStreamDict->SetNewFor<CPDF_Dictionary>("Params");
 
   // Set the size of the new file in the dictionary.
   pFileStreamDict->SetNewFor<CPDF_Number>(pdfium::stream::kDL,
@@ -244,8 +243,7 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
   memcpy(stream.get(), contents, len);
   auto pFileStream = pDoc->NewIndirect<CPDF_Stream>(std::move(stream), len,
                                                     std::move(pFileStreamDict));
-  CPDF_Dictionary* pEFDict =
-      pFile->AsMutableDictionary()->SetNewFor<CPDF_Dictionary>("EF");
+  auto pEFDict = pFile->AsMutableDictionary()->SetNewFor<CPDF_Dictionary>("EF");
   pEFDict->SetNewFor<CPDF_Reference>("F", pDoc, pFileStream->GetObjNum());
   return true;
 }

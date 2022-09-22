@@ -525,12 +525,11 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_AddInkStroke(FPDF_ANNOTATION annot,
   if (!safe_ink_size.IsValid<int32_t>())
     return -1;
 
-  CPDF_Array* ink_coord_list = inklist->AppendNew<CPDF_Array>();
+  auto ink_coord_list = inklist->AppendNew<CPDF_Array>();
   for (size_t i = 0; i < point_count; i++) {
     ink_coord_list->AppendNew<CPDF_Number>(points[i].x);
     ink_coord_list->AppendNew<CPDF_Number>(points[i].y);
   }
-
   return static_cast<int>(inklist->size() - 1);
 }
 
@@ -684,7 +683,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetColor(FPDF_ANNOTATION annot,
   if (pColor)
     pColor->Clear();
   else
-    pColor.Reset(pAnnotDict->SetNewFor<CPDF_Array>(key));
+    pColor = pAnnotDict->SetNewFor<CPDF_Array>(key);
 
   pColor->AppendNew<CPDF_Number>(R / 255.f);
   pColor->AppendNew<CPDF_Number>(G / 255.f);
@@ -797,7 +796,7 @@ FPDFAnnot_AppendAttachmentPoints(FPDF_ANNOTATION annot,
   RetainPtr<CPDF_Array> pQuadPointsArray =
       GetMutableQuadPointsArrayFromDictionary(pAnnotDict.Get());
   if (!pQuadPointsArray)
-    pQuadPointsArray.Reset(AddQuadPointsArrayToDictionary(pAnnotDict.Get()));
+    pQuadPointsArray = AddQuadPointsArrayToDictionary(pAnnotDict.Get());
   AppendQuadPoints(pQuadPointsArray.Get(), quad_points);
   UpdateBBox(pAnnotDict.Get());
   return true;
@@ -967,8 +966,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetBorder(FPDF_ANNOTATION annot,
   // not use the border values.
   annot_dict->RemoveFor(pdfium::annotation::kAP);
 
-  CPDF_Array* border =
-      annot_dict->SetNewFor<CPDF_Array>(pdfium::annotation::kBorder);
+  auto border = annot_dict->SetNewFor<CPDF_Array>(pdfium::annotation::kBorder);
   border->AppendNew<CPDF_Number>(horizontal_radius);
   border->AppendNew<CPDF_Number>(vertical_radius);
   border->AppendNew<CPDF_Number>(border_width);
@@ -1120,8 +1118,7 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
 
     // Storing reference to indirect object in annotation's AP
     if (!pApDict) {
-      pApDict.Reset(
-          pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP));
+      pApDict = pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP);
     }
     pApDict->SetNewFor<CPDF_Reference>(modeKey, pDoc,
                                        pNewIndirectStream->GetObjNum());
@@ -1477,7 +1474,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetURI(FPDF_ANNOTATION annot,
 
   RetainPtr<CPDF_Dictionary> annot_dict =
       GetMutableAnnotDictFromFPDFAnnotation(annot);
-  CPDF_Dictionary* action = annot_dict->SetNewFor<CPDF_Dictionary>("A");
+  auto action = annot_dict->SetNewFor<CPDF_Dictionary>("A");
   action->SetNewFor<CPDF_Name>("Type", "Action");
   action->SetNewFor<CPDF_Name>("S", "URI");
   action->SetNewFor<CPDF_String>("URI", uri, /*bHex=*/false);

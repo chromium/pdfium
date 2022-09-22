@@ -948,7 +948,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
     pMainDict->SetFor("F", pNewDict);
   }
 
-  CPDF_Array* pFields = pMainDict->SetNewFor<CPDF_Array>("Fields");
+  auto pFields = pMainDict->SetNewFor<CPDF_Array>("Fields");
   CFieldTree::Node* pRoot = m_pFieldTree->GetRoot();
   const size_t nCount = pRoot->CountFields();
   for (size_t i = 0; i < nCount; ++i) {

@@ -88,24 +88,22 @@ class CPDF_Dictionary final : public CPDF_Object {
   // a new object with no previous references, they ensure cycles can not be
   // introduced.
   template <typename T, typename... Args>
-  typename std::enable_if<!CanInternStrings<T>::value, T*>::type SetNewFor(
-      const ByteString& key,
-      Args&&... args) {
-    return static_cast<T*>(
-        SetFor(key, pdfium::MakeRetain<T>(std::forward<Args>(args)...)));
+  typename std::enable_if<!CanInternStrings<T>::value, RetainPtr<T>>::type
+  SetNewFor(const ByteString& key, Args&&... args) {
+    return pdfium::WrapRetain(static_cast<T*>(SetForInternal(
+        key, pdfium::MakeRetain<T>(std::forward<Args>(args)...))));
   }
   template <typename T, typename... Args>
-  typename std::enable_if<CanInternStrings<T>::value, T*>::type SetNewFor(
-      const ByteString& key,
-      Args&&... args) {
-    return static_cast<T*>(SetFor(
-        key, pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...)));
+  typename std::enable_if<CanInternStrings<T>::value, RetainPtr<T>>::type
+  SetNewFor(const ByteString& key, Args&&... args) {
+    return pdfium::WrapRetain(static_cast<T*>(SetForInternal(
+        key, pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...))));
   }
 
   // If |pObj| is null, then |key| is erased from the map. Otherwise, takes
-  // ownership of |pObj|, returns an unowned pointer to it. Invalidates
-  // iterators for the element with the key |key|.
-  CPDF_Object* SetFor(const ByteString& key, RetainPtr<CPDF_Object> pObj);
+  // ownership of |pObj| and stores in in the map. Invalidates iterators for
+  // the element with the key |key|.
+  void SetFor(const ByteString& key, RetainPtr<CPDF_Object> pObj);
 
   // Convenience functions to convert native objects to array form.
   void SetRectFor(const ByteString& key, const CFX_FloatRect& rect);
@@ -137,6 +135,8 @@ class CPDF_Dictionary final : public CPDF_Object {
   const CPDF_Number* GetNumberForInternal(const ByteString& key) const;
   const CPDF_Stream* GetStreamForInternal(const ByteString& key) const;
   const CPDF_String* GetStringForInternal(const ByteString& key) const;
+  CPDF_Object* SetForInternal(const ByteString& key,
+                              RetainPtr<CPDF_Object> pObj);
 
   ByteString MaybeIntern(const ByteString& str);
   RetainPtr<CPDF_Object> CloneNonCyclic(

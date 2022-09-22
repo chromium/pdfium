@@ -1816,8 +1816,7 @@ void CPDFSDK_AppStream::AddImage(const ByteString& sAPType,
 
   RetainPtr<CPDF_Dictionary> pStreamResList =
       pStreamDict->GetOrCreateDictFor("Resources");
-  CPDF_Dictionary* pXObject =
-      pStreamResList->SetNewFor<CPDF_Dictionary>("XObject");
+  auto pXObject = pStreamResList->SetNewFor<CPDF_Dictionary>("XObject");
   pXObject->SetNewFor<CPDF_Reference>(sImageAlias,
                                       widget_->GetPageView()->GetPDFDocument(),
                                       pImage->GetObjNum());

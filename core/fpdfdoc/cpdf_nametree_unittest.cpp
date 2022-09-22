@@ -29,7 +29,7 @@ void CheckNameKeyValue(const CPDF_Array* names,
 void AddLimitsArray(CPDF_Dictionary* node,
                     const char* least,
                     const char* greatest) {
-  CPDF_Array* limits = node->SetNewFor<CPDF_Array>("Limits");
+  auto limits = node->SetNewFor<CPDF_Array>("Limits");
   limits->AppendNew<CPDF_String>(least, false);
   limits->AppendNew<CPDF_String>(greatest, false);
 }
@@ -69,36 +69,34 @@ void CheckLimitsArray(const CPDF_Dictionary* node,
 //   {2.txt: 222}      {5.txt: 555}
 //
 void FillNameTreeDict(CPDF_Dictionary* pRootDict) {
-  CPDF_Array* pRootKids = pRootDict->SetNewFor<CPDF_Array>("Kids");
-  CPDF_Dictionary* pKid1 = pRootKids->AppendNew<CPDF_Dictionary>();
+  auto pRootKids = pRootDict->SetNewFor<CPDF_Array>("Kids");
+  auto pKid1 = pRootKids->AppendNew<CPDF_Dictionary>();
 
   // Make the lower and upper limit out of order on purpose.
-  AddLimitsArray(pKid1, "9.txt", "1.txt");
-  CPDF_Array* pKids1Kids = pKid1->SetNewFor<CPDF_Array>("Kids");
-  CPDF_Dictionary* pGrandKid2 = pKids1Kids->AppendNew<CPDF_Dictionary>();
-  CPDF_Dictionary* pGrandKid3 = pKids1Kids->AppendNew<CPDF_Dictionary>();
+  AddLimitsArray(pKid1.Get(), "9.txt", "1.txt");
+  auto pKids1Kids = pKid1->SetNewFor<CPDF_Array>("Kids");
+  auto pGrandKid2 = pKids1Kids->AppendNew<CPDF_Dictionary>();
+  auto pGrandKid3 = pKids1Kids->AppendNew<CPDF_Dictionary>();
 
-  AddLimitsArray(pGrandKid2, "1.txt", "5.txt");
-  CPDF_Array* pGrandKid2Kids = pGrandKid2->SetNewFor<CPDF_Array>("Kids");
-  CPDF_Dictionary* pGreatGrandKid4 =
-      pGrandKid2Kids->AppendNew<CPDF_Dictionary>();
-  CPDF_Dictionary* pGreatGrandKid5 =
-      pGrandKid2Kids->AppendNew<CPDF_Dictionary>();
+  AddLimitsArray(pGrandKid2.Get(), "1.txt", "5.txt");
+  auto pGrandKid2Kids = pGrandKid2->SetNewFor<CPDF_Array>("Kids");
+  auto pGreatGrandKid4 = pGrandKid2Kids->AppendNew<CPDF_Dictionary>();
+  auto pGreatGrandKid5 = pGrandKid2Kids->AppendNew<CPDF_Dictionary>();
 
-  AddLimitsArray(pGrandKid3, "9.txt", "9.txt");
-  CPDF_Array* pNames = pGrandKid3->SetNewFor<CPDF_Array>("Names");
-  AddNameKeyValue(pNames, "9.txt", 999);
+  AddLimitsArray(pGrandKid3.Get(), "9.txt", "9.txt");
+  auto pNames = pGrandKid3->SetNewFor<CPDF_Array>("Names");
+  AddNameKeyValue(pNames.Get(), "9.txt", 999);
 
   // Make the lower and upper limit out of order on purpose.
-  AddLimitsArray(pGreatGrandKid4, "2.txt", "1.txt");
+  AddLimitsArray(pGreatGrandKid4.Get(), "2.txt", "1.txt");
   pNames = pGreatGrandKid4->SetNewFor<CPDF_Array>("Names");
-  AddNameKeyValue(pNames, "1.txt", 111);
-  AddNameKeyValue(pNames, "2.txt", 222);
+  AddNameKeyValue(pNames.Get(), "1.txt", 111);
+  AddNameKeyValue(pNames.Get(), "2.txt", 222);
 
-  AddLimitsArray(pGreatGrandKid5, "3.txt", "5.txt");
+  AddLimitsArray(pGreatGrandKid5.Get(), "3.txt", "5.txt");
   pNames = pGreatGrandKid5->SetNewFor<CPDF_Array>("Names");
-  AddNameKeyValue(pNames, "3.txt", 333);
-  AddNameKeyValue(pNames, "5.txt", 555);
+  AddNameKeyValue(pNames.Get(), "3.txt", 333);
+  AddNameKeyValue(pNames.Get(), "5.txt", 555);
 }
 
 }  // namespace
@@ -106,7 +104,7 @@ void FillNameTreeDict(CPDF_Dictionary* pRootDict) {
 TEST(cpdf_nametree, GetUnicodeNameWithBOM) {
   // Set up the root dictionary with a Names array.
   auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
-  CPDF_Array* pNames = pRootDict->SetNewFor<CPDF_Array>("Names");
+  auto pNames = pRootDict->SetNewFor<CPDF_Array>("Names");
 
   // Add the key "1" (with BOM) and value 100 into the array.
   constexpr char kData[] = "\xFE\xFF\x00\x31";
@@ -154,9 +152,9 @@ TEST(cpdf_nametree, GetFromTreeWithLimitsArrayWith4Items) {
 TEST(cpdf_nametree, AddIntoNames) {
   // Set up a name tree with a single Names array.
   auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
-  CPDF_Array* pNames = pRootDict->SetNewFor<CPDF_Array>("Names");
-  AddNameKeyValue(pNames, "2.txt", 222);
-  AddNameKeyValue(pNames, "7.txt", 777);
+  auto pNames = pRootDict->SetNewFor<CPDF_Array>("Names");
+  AddNameKeyValue(pNames.Get(), "2.txt", 222);
+  AddNameKeyValue(pNames.Get(), "7.txt", 777);
 
   std::unique_ptr<CPDF_NameTree> name_tree =
       CPDF_NameTree::CreateForTesting(pRootDict.Get());
@@ -178,17 +176,17 @@ TEST(cpdf_nametree, AddIntoNames) {
                                          L"9.txt"));
 
   // Check that the names array has the expected key-value pairs.
-  CheckNameKeyValue(pNames, 0, "1.txt", 111);
-  CheckNameKeyValue(pNames, 1, "2.txt", 222);
-  CheckNameKeyValue(pNames, 2, "5.txt", 555);
-  CheckNameKeyValue(pNames, 3, "7.txt", 777);
-  CheckNameKeyValue(pNames, 4, "9.txt", 999);
+  CheckNameKeyValue(pNames.Get(), 0, "1.txt", 111);
+  CheckNameKeyValue(pNames.Get(), 1, "2.txt", 222);
+  CheckNameKeyValue(pNames.Get(), 2, "5.txt", 555);
+  CheckNameKeyValue(pNames.Get(), 3, "7.txt", 777);
+  CheckNameKeyValue(pNames.Get(), 4, "9.txt", 999);
 }
 
 TEST(cpdf_nametree, AddIntoEmptyNames) {
   // Set up a name tree with an empty Names array.
   auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
-  const CPDF_Array* pNames = pRootDict->SetNewFor<CPDF_Array>("Names");
+  auto pNames = pRootDict->SetNewFor<CPDF_Array>("Names");
 
   std::unique_ptr<CPDF_NameTree> name_tree =
       CPDF_NameTree::CreateForTesting(pRootDict.Get());
@@ -214,10 +212,10 @@ TEST(cpdf_nametree, AddIntoEmptyNames) {
                                          L"9.txt"));
 
   // Check that the names array has the expected key-value pairs.
-  CheckNameKeyValue(pNames, 0, "1.txt", 111);
-  CheckNameKeyValue(pNames, 1, "2.txt", 111);
-  CheckNameKeyValue(pNames, 2, "5.txt", 555);
-  CheckNameKeyValue(pNames, 3, "9.txt", 999);
+  CheckNameKeyValue(pNames.Get(), 0, "1.txt", 111);
+  CheckNameKeyValue(pNames.Get(), 1, "2.txt", 111);
+  CheckNameKeyValue(pNames.Get(), 2, "5.txt", 555);
+  CheckNameKeyValue(pNames.Get(), 3, "9.txt", 999);
 }
 
 TEST(cpdf_nametree, AddIntoKids) {

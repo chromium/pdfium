@@ -1075,8 +1075,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
         if (!ValidateFontResourceDict(pStreamResFontList.Get()))
           return;
       } else {
-        pStreamResFontList.Reset(
-            pStreamResList->SetNewFor<CPDF_Dictionary>("Font"));
+        pStreamResFontList = pStreamResList->SetNewFor<CPDF_Dictionary>("Font");
       }
       if (!pStreamResFontList->KeyExist(font_name)) {
         pStreamResFontList->SetNewFor<CPDF_Reference>(font_name, pDoc,
@@ -1329,8 +1328,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     if (!ValidateFontResourceDict(pStreamResFontList.Get()))
       return;
   } else {
-    pStreamResFontList.Reset(
-        pStreamResList->SetNewFor<CPDF_Dictionary>("Font"));
+    pStreamResFontList = pStreamResList->SetNewFor<CPDF_Dictionary>("Font");
   }
 
   if (!pStreamResFontList->KeyExist(font_name)) {

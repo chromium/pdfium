@@ -112,7 +112,8 @@ class CPDF_TestDocumentWithPageWithoutPageNum final : public CPDF_TestDocument {
     allPages->AppendNew<CPDF_Reference>(
         this, AddIndirectObject(CreateNumberedPage(1))->GetObjNum());
     // Page without pageNum.
-    inlined_page_ = allPages->Append(CreateNumberedPage(2));
+    inlined_page_ = CreateNumberedPage(2);
+    allPages->Append(inlined_page_);
     CPDF_Dictionary* pagesDict =
         CreatePageTreeNode(std::move(allPages), this, 3);
     SetRootForTesting(NewIndirect<CPDF_Dictionary>().Get());
@@ -121,10 +122,10 @@ class CPDF_TestDocumentWithPageWithoutPageNum final : public CPDF_TestDocument {
     ResizePageListForTesting(3);
   }
 
-  const CPDF_Object* inlined_page() const { return inlined_page_; }
+  const CPDF_Object* inlined_page() const { return inlined_page_.Get(); }
 
  private:
-  const CPDF_Object* inlined_page_;
+  RetainPtr<CPDF_Object> inlined_page_;
 };
 
 class TestLinearized final : public CPDF_LinearizedHeader {

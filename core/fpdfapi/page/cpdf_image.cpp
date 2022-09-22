@@ -107,7 +107,7 @@ RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
     csname = "DeviceRGB";
   } else if (info.num_components == 4) {
     csname = "DeviceCMYK";
-    CPDF_Array* pDecode = pDict->SetNewFor<CPDF_Array>("Decode");
+    auto pDecode = pDict->SetNewFor<CPDF_Array>("Decode");
     for (int n = 0; n < 4; n++) {
       pDecode->AppendNew<CPDF_Number>(1);
       pDecode->AppendNew<CPDF_Number>(0);
@@ -117,7 +117,7 @@ RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
   pDict->SetNewFor<CPDF_Number>("BitsPerComponent", info.bits_per_components);
   pDict->SetNewFor<CPDF_Name>("Filter", "DCTDecode");
   if (!info.color_transform) {
-    CPDF_Dictionary* pParms =
+    auto pParms =
         pDict->SetNewFor<CPDF_Dictionary>(pdfium::stream::kDecodeParms);
     pParms->SetNewFor<CPDF_Number>("ColorTransform", 0);
   }
@@ -197,12 +197,12 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     if (set_a == 0 || reset_a == 0) {
       pDict->SetNewFor<CPDF_Boolean>("ImageMask", true);
       if (reset_a == 0) {
-        CPDF_Array* pArray = pDict->SetNewFor<CPDF_Array>("Decode");
+        auto pArray = pDict->SetNewFor<CPDF_Array>("Decode");
         pArray->AppendNew<CPDF_Number>(1);
         pArray->AppendNew<CPDF_Number>(0);
       }
     } else {
-      CPDF_Array* pCS = pDict->SetNewFor<CPDF_Array>("ColorSpace");
+      auto pCS = pDict->SetNewFor<CPDF_Array>("ColorSpace");
       pCS->AppendNew<CPDF_Name>("Indexed");
       pCS->AppendNew<CPDF_Name>("DeviceRGB");
       pCS->AppendNew<CPDF_Number>(1);

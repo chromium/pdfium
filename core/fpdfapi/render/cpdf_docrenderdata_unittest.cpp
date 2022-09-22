@@ -73,19 +73,18 @@ constexpr uint8_t kExpectedType4FunctionSamples[] = {
 RetainPtr<CPDF_Stream> CreateType0FunctionStream() {
   auto func_dict = pdfium::MakeRetain<CPDF_Dictionary>();
   func_dict->SetNewFor<CPDF_Number>("FunctionType", 0);
+  func_dict->SetNewFor<CPDF_Number>("BitsPerSample", 8);
 
-  CPDF_Array* domain_array = func_dict->SetNewFor<CPDF_Array>("Domain");
+  auto domain_array = func_dict->SetNewFor<CPDF_Array>("Domain");
   domain_array->AppendNew<CPDF_Number>(0);
   domain_array->AppendNew<CPDF_Number>(1);
 
-  CPDF_Array* range_array = func_dict->SetNewFor<CPDF_Array>("Range");
+  auto range_array = func_dict->SetNewFor<CPDF_Array>("Range");
   range_array->AppendNew<CPDF_Number>(0);
   range_array->AppendNew<CPDF_Number>(0.5f);
 
-  CPDF_Array* size_array = func_dict->SetNewFor<CPDF_Array>("Size");
+  auto size_array = func_dict->SetNewFor<CPDF_Array>("Size");
   size_array->AppendNew<CPDF_Number>(4);
-
-  func_dict->SetNewFor<CPDF_Number>("BitsPerSample", 8);
 
   static const char content[] = "1234";
   size_t len = std::size(content);
@@ -100,16 +99,16 @@ RetainPtr<CPDF_Dictionary> CreateType2FunctionDict() {
   func_dict->SetNewFor<CPDF_Number>("FunctionType", 2);
   func_dict->SetNewFor<CPDF_Number>("N", 1);
 
-  CPDF_Array* domain_array = func_dict->SetNewFor<CPDF_Array>("Domain");
+  auto domain_array = func_dict->SetNewFor<CPDF_Array>("Domain");
   domain_array->AppendNew<CPDF_Number>(0);
   domain_array->AppendNew<CPDF_Number>(1);
 
-  CPDF_Array* c0_array = func_dict->SetNewFor<CPDF_Array>("C0");
+  auto c0_array = func_dict->SetNewFor<CPDF_Array>("C0");
   c0_array->AppendNew<CPDF_Number>(0.1f);
   c0_array->AppendNew<CPDF_Number>(0.2f);
   c0_array->AppendNew<CPDF_Number>(0.8f);
 
-  CPDF_Array* c1_array = func_dict->SetNewFor<CPDF_Array>("C1");
+  auto c1_array = func_dict->SetNewFor<CPDF_Array>("C1");
   c1_array->AppendNew<CPDF_Number>(0.05f);
   c1_array->AppendNew<CPDF_Number>(0.01f);
   c1_array->AppendNew<CPDF_Number>(0.4f);
@@ -121,11 +120,11 @@ RetainPtr<CPDF_Stream> CreateType4FunctionStream() {
   auto func_dict = pdfium::MakeRetain<CPDF_Dictionary>();
   func_dict->SetNewFor<CPDF_Number>("FunctionType", 4);
 
-  CPDF_Array* domain_array = func_dict->SetNewFor<CPDF_Array>("Domain");
+  auto domain_array = func_dict->SetNewFor<CPDF_Array>("Domain");
   domain_array->AppendNew<CPDF_Number>(0);
   domain_array->AppendNew<CPDF_Number>(1);
 
-  CPDF_Array* range_array = func_dict->SetNewFor<CPDF_Array>("Range");
+  auto range_array = func_dict->SetNewFor<CPDF_Array>("Range");
   range_array->AppendNew<CPDF_Number>(-1);
   range_array->AppendNew<CPDF_Number>(1);
 
@@ -141,11 +140,11 @@ RetainPtr<CPDF_Stream> CreateBadType4FunctionStream() {
   auto func_dict = pdfium::MakeRetain<CPDF_Dictionary>();
   func_dict->SetNewFor<CPDF_Number>("FunctionType", 4);
 
-  CPDF_Array* domain_array = func_dict->SetNewFor<CPDF_Array>("Domain");
+  auto domain_array = func_dict->SetNewFor<CPDF_Array>("Domain");
   domain_array->AppendNew<CPDF_Number>(0);
   domain_array->AppendNew<CPDF_Number>(1);
 
-  CPDF_Array* range_array = func_dict->SetNewFor<CPDF_Array>("Range");
+  auto range_array = func_dict->SetNewFor<CPDF_Array>("Range");
   range_array->AppendNew<CPDF_Number>(-1);
   range_array->AppendNew<CPDF_Number>(1);
 

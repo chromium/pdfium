@@ -516,7 +516,7 @@ void CPDF_FormField::SetItemSelectionSelected(int index,
   if (GetType() != kListBox) {
     m_pDict->SetNewFor<CPDF_String>(pdfium::form_fields::kV,
                                     opt_value.AsStringView());
-    CPDF_Array* pI = m_pDict->SetNewFor<CPDF_Array>("I");
+    auto pI = m_pDict->SetNewFor<CPDF_Array>("I");
     pI->AppendNew<CPDF_Number>(index);
     return;
   }
@@ -528,7 +528,7 @@ void CPDF_FormField::SetItemSelectionSelected(int index,
     return;
   }
 
-  CPDF_Array* pArray = m_pDict->SetNewFor<CPDF_Array>(pdfium::form_fields::kV);
+  auto pArray = m_pDict->SetNewFor<CPDF_Array>(pdfium::form_fields::kV);
   for (int i = 0; i < CountOptions(); i++) {
     if (i == index || IsItemSelected(i))
       pArray->AppendNew<CPDF_String>(GetOptionValue(i).AsStringView());

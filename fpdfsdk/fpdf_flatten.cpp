@@ -317,7 +317,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
 
   SetPageContents(key, pPageDict.Get(), pDocument);
 
-  CPDF_Dictionary* pNewXORes = nullptr;
+  RetainPtr<CPDF_Dictionary> pNewXORes;
   if (!key.IsEmpty()) {
     pPageXObject->SetNewFor<CPDF_Reference>(key, pDocument,
                                             pNewXObject->GetObjNum());

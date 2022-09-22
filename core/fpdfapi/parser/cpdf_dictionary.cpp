@@ -182,7 +182,7 @@ RetainPtr<CPDF_Dictionary> CPDF_Dictionary::GetOrCreateDictFor(
   RetainPtr<CPDF_Dictionary> result = GetMutableDictFor(key);
   if (result)
     return result;
-  return pdfium::WrapRetain(SetNewFor<CPDF_Dictionary>(key));
+  return SetNewFor<CPDF_Dictionary>(key);
 }
 
 const CPDF_Array* CPDF_Dictionary::GetArrayForInternal(
@@ -205,7 +205,7 @@ RetainPtr<CPDF_Array> CPDF_Dictionary::GetOrCreateArrayFor(
   RetainPtr<CPDF_Array> result = GetMutableArrayFor(key);
   if (result)
     return result;
-  return pdfium::WrapRetain(SetNewFor<CPDF_Array>(key));
+  return SetNewFor<CPDF_Array>(key);
 }
 
 const CPDF_Stream* CPDF_Dictionary::GetStreamForInternal(
@@ -270,8 +270,13 @@ std::vector<ByteString> CPDF_Dictionary::GetKeys() const {
   return result;
 }
 
-CPDF_Object* CPDF_Dictionary::SetFor(const ByteString& key,
-                                     RetainPtr<CPDF_Object> pObj) {
+void CPDF_Dictionary::SetFor(const ByteString& key,
+                             RetainPtr<CPDF_Object> pObj) {
+  (void)SetForInternal(key, std::move(pObj));
+}
+
+CPDF_Object* CPDF_Dictionary::SetForInternal(const ByteString& key,
+                                             RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
   if (!pObj) {
     m_Map.erase(key);
@@ -323,7 +328,7 @@ void CPDF_Dictionary::ReplaceKey(const ByteString& oldkey,
 
 void CPDF_Dictionary::SetRectFor(const ByteString& key,
                                  const CFX_FloatRect& rect) {
-  CPDF_Array* pArray = SetNewFor<CPDF_Array>(key);
+  auto pArray = SetNewFor<CPDF_Array>(key);
   pArray->AppendNew<CPDF_Number>(rect.left);
   pArray->AppendNew<CPDF_Number>(rect.bottom);
   pArray->AppendNew<CPDF_Number>(rect.right);
@@ -332,7 +337,7 @@ void CPDF_Dictionary::SetRectFor(const ByteString& key,
 
 void CPDF_Dictionary::SetMatrixFor(const ByteString& key,
                                    const CFX_Matrix& matrix) {
-  CPDF_Array* pArray = SetNewFor<CPDF_Array>(key);
+  auto pArray = SetNewFor<CPDF_Array>(key);
   pArray->AppendNew<CPDF_Number>(matrix.a);
   pArray->AppendNew<CPDF_Number>(matrix.b);
   pArray->AppendNew<CPDF_Number>(matrix.c);
