@@ -77,13 +77,18 @@ RetainPtr<CPDF_Font> CPDF_FontGlobals::Find(
 void CPDF_FontGlobals::Set(CPDF_Document* pDoc,
                            CFX_FontMapper::StandardFont index,
                            RetainPtr<CPDF_Font> pFont) {
-  if (!pdfium::Contains(m_StockMap, pDoc))
-    m_StockMap[pDoc] = std::make_unique<CFX_StockFontArray>();
-  m_StockMap[pDoc]->SetFont(index, std::move(pFont));
+  UnownedPtr<CPDF_Document> pKey(pDoc);
+  if (!pdfium::Contains(m_StockMap, pKey))
+    m_StockMap[pKey] = std::make_unique<CFX_StockFontArray>();
+  m_StockMap[pKey]->SetFont(index, std::move(pFont));
 }
 
 void CPDF_FontGlobals::Clear(CPDF_Document* pDoc) {
-  m_StockMap.erase(pDoc);
+  // Avoid constructing smart-pointer key as erase() doesn't invoke
+  // transparent lookup in the same way find() does.
+  auto it = m_StockMap.find(pDoc);
+  if (it != m_StockMap.end())
+    m_StockMap.erase(it);
 }
 
 void CPDF_FontGlobals::LoadEmbeddedGB1CMaps() {
