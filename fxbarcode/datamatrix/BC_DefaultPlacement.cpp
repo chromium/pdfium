@@ -34,47 +34,45 @@ CBC_DefaultPlacement::CBC_DefaultPlacement(WideString codewords,
                                            int32_t numrows)
     : m_codewords(std::move(codewords)),
       m_numrows(numrows),
-      m_numcols(numcols) {
-  m_bits.resize(numcols * numrows);
-  for (int32_t i = 0; i < numcols * numrows; i++) {
-    m_bits[i] = (uint8_t)2;
-  }
+      m_numcols(numcols),
+      m_bits(numcols * numrows, 2) {
+  Init();
 }
 
 CBC_DefaultPlacement::~CBC_DefaultPlacement() = default;
 
-bool CBC_DefaultPlacement::getBit(int32_t col, int32_t row) {
+bool CBC_DefaultPlacement::GetBit(int32_t col, int32_t row) const {
   return m_bits[row * m_numcols + col] == 1;
 }
 
-void CBC_DefaultPlacement::setBit(int32_t col, int32_t row, bool bit) {
-  m_bits[row * m_numcols + col] = bit ? (uint8_t)1 : (uint8_t)0;
+void CBC_DefaultPlacement::SetBit(int32_t col, int32_t row, bool bit) {
+  m_bits[row * m_numcols + col] = bit ? 1 : 0;
 }
 
-bool CBC_DefaultPlacement::hasBit(int32_t col, int32_t row) {
+bool CBC_DefaultPlacement::HasBit(int32_t col, int32_t row) const {
   return m_bits[row * m_numcols + col] != 2;
 }
 
-void CBC_DefaultPlacement::place() {
+void CBC_DefaultPlacement::Init() {
   int32_t pos = 0;
   int32_t row = 4;
   int32_t col = 0;
   do {
     if ((row == m_numrows) && (col == 0)) {
-      corner1(pos++);
+      SetCorner1(pos++);
     }
     if ((row == m_numrows - 2) && (col == 0) && ((m_numcols % 4) != 0)) {
-      corner2(pos++);
+      SetCorner2(pos++);
     }
     if ((row == m_numrows - 2) && (col == 0) && (m_numcols % 8 == 4)) {
-      corner3(pos++);
+      SetCorner3(pos++);
     }
     if ((row == m_numrows + 4) && (col == 2) && ((m_numcols % 8) == 0)) {
-      corner4(pos++);
+      SetCorner4(pos++);
     }
     do {
-      if ((row < m_numrows) && (col >= 0) && !hasBit(col, row)) {
-        utah(row, col, pos++);
+      if ((row < m_numrows) && (col >= 0) && !HasBit(col, row)) {
+        SetUtah(row, col, pos++);
       }
       row -= 2;
       col += 2;
@@ -82,8 +80,8 @@ void CBC_DefaultPlacement::place() {
     row++;
     col += 3;
     do {
-      if ((row >= 0) && (col < m_numcols) && !hasBit(col, row)) {
-        utah(row, col, pos++);
+      if ((row >= 0) && (col < m_numcols) && !HasBit(col, row)) {
+        SetUtah(row, col, pos++);
       }
       row += 2;
       col -= 2;
@@ -91,16 +89,16 @@ void CBC_DefaultPlacement::place() {
     row += 3;
     col++;
   } while ((row < m_numrows) || (col < m_numcols));
-  if (!hasBit(m_numcols - 1, m_numrows - 1)) {
-    setBit(m_numcols - 1, m_numrows - 1, true);
-    setBit(m_numcols - 2, m_numrows - 2, true);
+  if (!HasBit(m_numcols - 1, m_numrows - 1)) {
+    SetBit(m_numcols - 1, m_numrows - 1, true);
+    SetBit(m_numcols - 2, m_numrows - 2, true);
   }
 }
 
-void CBC_DefaultPlacement::module(int32_t row,
-                                  int32_t col,
-                                  int32_t pos,
-                                  int32_t bit) {
+void CBC_DefaultPlacement::SetModule(int32_t row,
+                                     int32_t col,
+                                     int32_t pos,
+                                     int32_t bit) {
   if (row < 0) {
     row += m_numrows;
     col += 4 - ((m_numrows + 4) % 8);
@@ -111,60 +109,60 @@ void CBC_DefaultPlacement::module(int32_t row,
   }
   int32_t v = m_codewords[pos];
   v &= 1 << (8 - bit);
-  setBit(col, row, v != 0);
+  SetBit(col, row, v != 0);
 }
 
-void CBC_DefaultPlacement::utah(int32_t row, int32_t col, int32_t pos) {
-  module(row - 2, col - 2, pos, 1);
-  module(row - 2, col - 1, pos, 2);
-  module(row - 1, col - 2, pos, 3);
-  module(row - 1, col - 1, pos, 4);
-  module(row - 1, col, pos, 5);
-  module(row, col - 2, pos, 6);
-  module(row, col - 1, pos, 7);
-  module(row, col, pos, 8);
+void CBC_DefaultPlacement::SetUtah(int32_t row, int32_t col, int32_t pos) {
+  SetModule(row - 2, col - 2, pos, 1);
+  SetModule(row - 2, col - 1, pos, 2);
+  SetModule(row - 1, col - 2, pos, 3);
+  SetModule(row - 1, col - 1, pos, 4);
+  SetModule(row - 1, col, pos, 5);
+  SetModule(row, col - 2, pos, 6);
+  SetModule(row, col - 1, pos, 7);
+  SetModule(row, col, pos, 8);
 }
 
-void CBC_DefaultPlacement::corner1(int32_t pos) {
-  module(m_numrows - 1, 0, pos, 1);
-  module(m_numrows - 1, 1, pos, 2);
-  module(m_numrows - 1, 2, pos, 3);
-  module(0, m_numcols - 2, pos, 4);
-  module(0, m_numcols - 1, pos, 5);
-  module(1, m_numcols - 1, pos, 6);
-  module(2, m_numcols - 1, pos, 7);
-  module(3, m_numcols - 1, pos, 8);
+void CBC_DefaultPlacement::SetCorner1(int32_t pos) {
+  SetModule(m_numrows - 1, 0, pos, 1);
+  SetModule(m_numrows - 1, 1, pos, 2);
+  SetModule(m_numrows - 1, 2, pos, 3);
+  SetModule(0, m_numcols - 2, pos, 4);
+  SetModule(0, m_numcols - 1, pos, 5);
+  SetModule(1, m_numcols - 1, pos, 6);
+  SetModule(2, m_numcols - 1, pos, 7);
+  SetModule(3, m_numcols - 1, pos, 8);
 }
 
-void CBC_DefaultPlacement::corner2(int32_t pos) {
-  module(m_numrows - 3, 0, pos, 1);
-  module(m_numrows - 2, 0, pos, 2);
-  module(m_numrows - 1, 0, pos, 3);
-  module(0, m_numcols - 4, pos, 4);
-  module(0, m_numcols - 3, pos, 5);
-  module(0, m_numcols - 2, pos, 6);
-  module(0, m_numcols - 1, pos, 7);
-  module(1, m_numcols - 1, pos, 8);
+void CBC_DefaultPlacement::SetCorner2(int32_t pos) {
+  SetModule(m_numrows - 3, 0, pos, 1);
+  SetModule(m_numrows - 2, 0, pos, 2);
+  SetModule(m_numrows - 1, 0, pos, 3);
+  SetModule(0, m_numcols - 4, pos, 4);
+  SetModule(0, m_numcols - 3, pos, 5);
+  SetModule(0, m_numcols - 2, pos, 6);
+  SetModule(0, m_numcols - 1, pos, 7);
+  SetModule(1, m_numcols - 1, pos, 8);
 }
 
-void CBC_DefaultPlacement::corner3(int32_t pos) {
-  module(m_numrows - 3, 0, pos, 1);
-  module(m_numrows - 2, 0, pos, 2);
-  module(m_numrows - 1, 0, pos, 3);
-  module(0, m_numcols - 2, pos, 4);
-  module(0, m_numcols - 1, pos, 5);
-  module(1, m_numcols - 1, pos, 6);
-  module(2, m_numcols - 1, pos, 7);
-  module(3, m_numcols - 1, pos, 8);
+void CBC_DefaultPlacement::SetCorner3(int32_t pos) {
+  SetModule(m_numrows - 3, 0, pos, 1);
+  SetModule(m_numrows - 2, 0, pos, 2);
+  SetModule(m_numrows - 1, 0, pos, 3);
+  SetModule(0, m_numcols - 2, pos, 4);
+  SetModule(0, m_numcols - 1, pos, 5);
+  SetModule(1, m_numcols - 1, pos, 6);
+  SetModule(2, m_numcols - 1, pos, 7);
+  SetModule(3, m_numcols - 1, pos, 8);
 }
 
-void CBC_DefaultPlacement::corner4(int32_t pos) {
-  module(m_numrows - 1, 0, pos, 1);
-  module(m_numrows - 1, m_numcols - 1, pos, 2);
-  module(0, m_numcols - 3, pos, 3);
-  module(0, m_numcols - 2, pos, 4);
-  module(0, m_numcols - 1, pos, 5);
-  module(1, m_numcols - 3, pos, 6);
-  module(1, m_numcols - 2, pos, 7);
-  module(1, m_numcols - 1, pos, 8);
+void CBC_DefaultPlacement::SetCorner4(int32_t pos) {
+  SetModule(m_numrows - 1, 0, pos, 1);
+  SetModule(m_numrows - 1, m_numcols - 1, pos, 2);
+  SetModule(0, m_numcols - 3, pos, 3);
+  SetModule(0, m_numcols - 2, pos, 4);
+  SetModule(0, m_numcols - 1, pos, 5);
+  SetModule(1, m_numcols - 3, pos, 6);
+  SetModule(1, m_numcols - 2, pos, 7);
+  SetModule(1, m_numcols - 1, pos, 8);
 }

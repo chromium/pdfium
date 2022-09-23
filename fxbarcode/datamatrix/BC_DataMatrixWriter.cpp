@@ -78,7 +78,7 @@ std::unique_ptr<CBC_CommonByteMatrix> EncodeLowLevel(
         matrix->Set(matrixX, matrixY, true);
         matrixX++;
       }
-      matrix->Set(matrixX, matrixY, placement->getBit(x, y));
+      matrix->Set(matrixX, matrixY, placement->GetBit(x, y));
       matrixX++;
       if (x % symbolInfo->matrix_width() == symbolInfo->matrix_width() - 1) {
         matrix->Set(matrixX, matrixY, y % 2 == 0);
@@ -133,7 +133,6 @@ DataVector<uint8_t> CBC_DataMatrixWriter::Encode(const WideString& contents,
 
   auto placement =
       std::make_unique<CBC_DefaultPlacement>(codewords, width, height);
-  placement->place();
   auto bytematrix = EncodeLowLevel(placement.get(), pSymbolInfo);
   DCHECK(bytematrix);
 
