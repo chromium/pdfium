@@ -71,8 +71,9 @@ class RetainPtr {
     m_pObj.reset(obj);
   }
 
-  explicit operator T*() const { return Get(); }
-  T* Get() const { return m_pObj.get(); }
+  operator T*() const noexcept { return Get(); }
+  T* Get() const noexcept { return m_pObj.get(); }
+
   UnownedPtr<T> BackPointer() const { return UnownedPtr<T>(Get()); }
   void Swap(RetainPtr& that) { m_pObj.swap(that.m_pObj); }
 
@@ -149,16 +150,6 @@ class Retainable {
 
   mutable intptr_t m_nRefCount = 0;
 };
-
-template <typename T, typename U>
-inline bool operator==(const U* lhs, const RetainPtr<T>& rhs) {
-  return rhs == lhs;
-}
-
-template <typename T, typename U>
-inline bool operator!=(const U* lhs, const RetainPtr<T>& rhs) {
-  return rhs != lhs;
-}
 
 }  // namespace fxcrt
 

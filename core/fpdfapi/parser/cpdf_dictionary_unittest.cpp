@@ -18,7 +18,7 @@ TEST(DictionaryTest, Iterators) {
   dict->SetNewFor<CPDF_Stream>("the-stream");
   dict->SetNewFor<CPDF_Number>("the-number", 42);
 
-  CPDF_DictionaryLocker locked_dict(std::move(dict));
+  CPDF_DictionaryLocker locked_dict(dict.Get());
   auto it = locked_dict.begin();
   EXPECT_NE(it, locked_dict.end());
   EXPECT_EQ(it->first, ByteString("the-array"));

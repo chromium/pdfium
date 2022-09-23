@@ -4,6 +4,7 @@
 
 #include "core/fxcrt/retain_ptr.h"
 
+#include <functional>
 #include <set>
 #include <utility>
 #include <vector>
@@ -11,6 +12,17 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/pseudo_retainable.h"
 #include "third_party/base/containers/contains.h"
+
+namespace {
+
+template <typename T, typename C = std::less<T>>
+class NoLinearSearchSet : public std::set<T, C> {
+ public:
+  typename std::set<T, C>::iterator begin() noexcept = delete;
+  typename std::set<T, C>::const_iterator cbegin() const noexcept = delete;
+};
+
+}  // namespace
 
 namespace fxcrt {
 namespace {
@@ -421,21 +433,53 @@ TEST(RetainPtr, SetContains) {
   // RetainPtrs for containers that use find().
   PseudoRetainable obj1;
   PseudoRetainable obj2;
-  NoLinearSearchSet<const PseudoRetainable*, std::less<>> the_set;
-  the_set.insert(&obj1);
-  EXPECT_TRUE(pdfium::Contains(the_set, &obj1));
-  EXPECT_FALSE(pdfium::Contains(the_set, &obj2));
-
   RetainPtr<PseudoRetainable> ptr1(&obj1);
   RetainPtr<PseudoRetainable> ptr2(&obj2);
-  // TODO(tsepez): remove Get() after fixing transparent compare for RetainPtr.
-  EXPECT_TRUE(pdfium::Contains(the_set, ptr1.Get()));
-  EXPECT_FALSE(pdfium::Contains(the_set, ptr2.Get()));
-
   RetainPtr<const PseudoRetainable> const_ptr1(&obj1);
   RetainPtr<const PseudoRetainable> const_ptr2(&obj2);
-  EXPECT_TRUE(pdfium::Contains(the_set, const_ptr1.Get()));
-  EXPECT_FALSE(pdfium::Contains(the_set, const_ptr2.Get()));
+  NoLinearSearchSet<RetainPtr<const PseudoRetainable>, std::less<>> the_set;
+
+  // Intially, two smart pointers to each object.
+  EXPECT_EQ(2, obj1.retain_count());
+  EXPECT_EQ(0, obj1.release_count());
+  EXPECT_EQ(2, obj2.retain_count());
+  EXPECT_EQ(0, obj2.release_count());
+
+  // Passed by const-ref, increment on copy into set's data structure.
+  the_set.insert(const_ptr1);
+  EXPECT_EQ(3, obj1.retain_count());
+  EXPECT_EQ(0, obj1.release_count());
+  EXPECT_EQ(2, obj2.retain_count());
+  EXPECT_EQ(0, obj2.release_count());
+
+  // None of the following should cause any churn.
+  EXPECT_NE(the_set.end(), the_set.find(&obj1));
+  EXPECT_EQ(the_set.end(), the_set.find(&obj2));
+  EXPECT_TRUE(pdfium::Contains(the_set, &obj1));
+  EXPECT_FALSE(pdfium::Contains(the_set, &obj2));
+  EXPECT_EQ(3, obj1.retain_count());
+  EXPECT_EQ(0, obj1.release_count());
+  EXPECT_EQ(2, obj2.retain_count());
+  EXPECT_EQ(0, obj2.release_count());
+
+  EXPECT_NE(the_set.end(), the_set.find(const_ptr1));
+  EXPECT_EQ(the_set.end(), the_set.find(const_ptr2));
+  EXPECT_TRUE(pdfium::Contains(the_set, const_ptr1));
+  EXPECT_FALSE(pdfium::Contains(the_set, const_ptr2));
+  EXPECT_EQ(3, obj1.retain_count());
+  EXPECT_EQ(0, obj1.release_count());
+  EXPECT_EQ(2, obj2.retain_count());
+  EXPECT_EQ(0, obj2.release_count());
+
+  // These involve const-removing conversions which seem to churn.
+  EXPECT_NE(the_set.end(), the_set.find(ptr1));
+  EXPECT_EQ(the_set.end(), the_set.find(ptr2));
+  EXPECT_TRUE(pdfium::Contains(the_set, ptr1));
+  EXPECT_FALSE(pdfium::Contains(the_set, ptr2));
+  EXPECT_EQ(5, obj1.retain_count());
+  EXPECT_EQ(2, obj1.release_count());
+  EXPECT_EQ(4, obj2.retain_count());
+  EXPECT_EQ(2, obj2.release_count());
 }
 
 TEST(RetainPtr, VectorContains) {
