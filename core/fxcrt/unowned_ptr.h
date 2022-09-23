@@ -51,21 +51,39 @@ class UnownedPtr {
 
   // Deliberately implicit to allow returning nullptrs.
   // NOLINTNEXTLINE(runtime/explicit)
-  constexpr UnownedPtr(std::nullptr_t ptr) noexcept {}
+  constexpr UnownedPtr(std::nullptr_t ptr) {}
 
-  template <typename U>
-  explicit constexpr UnownedPtr(U* pObj) noexcept : m_pObj(pObj) {}
+  explicit constexpr UnownedPtr(T* pObj) noexcept : m_pObj(pObj) {}
 
-  constexpr UnownedPtr(const UnownedPtr& that) noexcept = default;
+  // Copy-construct an UnownedPtr.
+  // Required in addition to copy conversion constructor below.
+  constexpr UnownedPtr(const UnownedPtr& that) noexcept : m_pObj(that.Get()) {}
 
   // Move-construct an UnownedPtr. After construction, |that| will be NULL.
+  // Required in addition to move conversion constructor below.
   constexpr UnownedPtr(UnownedPtr&& that) noexcept : m_pObj(that.Release()) {}
 
+  // Copy conversion constructor.
+  template <class U,
+            typename = typename std::enable_if<
+                std::is_convertible<U*, T*>::value>::type>
+  UnownedPtr(const UnownedPtr<U>& that) : UnownedPtr(that.Get()) {}
+
+  // Move-conversion constructor.
+  template <class U,
+            typename = typename std::enable_if<
+                std::is_convertible<U*, T*>::value>::type>
+  UnownedPtr(UnownedPtr<U>&& that) noexcept {
+    Reset(that.Release());
+  }
+
+  // Assing an UnownedPtr from a raw ptr.
   UnownedPtr& operator=(T* that) noexcept {
     Reset(that);
     return *this;
   }
 
+  // Copy-assign an UnownedPtr.
   UnownedPtr& operator=(const UnownedPtr& that) noexcept {
     if (*this != that)
       Reset(that.Get());
@@ -131,5 +149,16 @@ class UnownedPtr {
 }  // namespace fxcrt
 
 using fxcrt::UnownedPtr;
+
+namespace pdfium {
+
+// Type-deducing wrapper to make an UnownedPtr from an ordinary pointer,
+// since equivalent constructor is explicit.
+template <typename T>
+UnownedPtr<T> WrapUnowned(T* that) {
+  return UnownedPtr<T>(that);
+}
+
+}  // namespace pdfium
 
 #endif  // CORE_FXCRT_UNOWNED_PTR_H_

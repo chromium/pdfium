@@ -298,10 +298,8 @@ TEST(RetainPtr, MoveAssignConvert) {
     RetainPtr<PseudoRetainable> ptr1(&obj);
     {
       RetainPtr<const PseudoRetainable> ptr2;
-      EXPECT_EQ(&obj, ptr1.Get());
-      EXPECT_FALSE(ptr2.Get());
       ptr2 = std::move(ptr1);
-      EXPECT_FALSE(ptr1.Get());
+      EXPECT_FALSE(ptr1);
       EXPECT_EQ(&obj, ptr2.Get());
       EXPECT_EQ(1, obj.retain_count());
       EXPECT_EQ(0, obj.release_count());
