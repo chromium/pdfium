@@ -18,7 +18,7 @@ class CPDF_StreamAcc;
 class CPDF_SeekableMultiStream final : public IFX_SeekableStream {
  public:
   explicit CPDF_SeekableMultiStream(
-      const std::vector<const CPDF_Stream*>& streams);
+      std::vector<RetainPtr<const CPDF_Stream>> streams);
   ~CPDF_SeekableMultiStream() override;
 
   // IFX_SeekableReadStream

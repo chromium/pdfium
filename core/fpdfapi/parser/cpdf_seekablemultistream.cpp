@@ -7,6 +7,7 @@
 #include "core/fpdfapi/parser/cpdf_seekablemultistream.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
@@ -16,10 +17,9 @@
 #include "third_party/base/notreached.h"
 
 CPDF_SeekableMultiStream::CPDF_SeekableMultiStream(
-    const std::vector<const CPDF_Stream*>& streams) {
-  for (const CPDF_Stream* pStream : streams) {
-    m_Data.push_back(
-        pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(pStream)));
+    std::vector<RetainPtr<const CPDF_Stream>> streams) {
+  for (auto& pStream : streams) {
+    m_Data.push_back(pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pStream)));
     m_Data.back()->LoadAllDataFiltered();
   }
 }

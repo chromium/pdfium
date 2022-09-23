@@ -178,7 +178,8 @@ int CPDFSDK_InteractiveForm::GetPageIndexByAnnotDict(
   DCHECK(pAnnotDict);
 
   for (int i = 0, sz = pDocument->GetPageCount(); i < sz; i++) {
-    const CPDF_Dictionary* pPageDict = pDocument->GetPageDictionary(i);
+    RetainPtr<const CPDF_Dictionary> pPageDict =
+        pDocument->GetPageDictionary(i);
     if (!pPageDict)
       continue;
 

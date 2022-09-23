@@ -149,8 +149,9 @@ NupPageSettings NupState::CalculateNewPagePosition(const CFX_SizeF& pagesize) {
   return CalculatePageEdit(iSubX, iSubY, pagesize);
 }
 
-const CPDF_Object* PageDictGetInheritableTag(const CPDF_Dictionary* pDict,
-                                             const ByteString& bsSrcTag) {
+const CPDF_Object* PageDictGetInheritableTag(
+    RetainPtr<const CPDF_Dictionary> pDict,
+    const ByteString& bsSrcTag) {
   if (!pDict || bsSrcTag.IsEmpty())
     return nullptr;
   if (!pDict->KeyExist(pdfium::page_object::kParent) ||
@@ -184,13 +185,13 @@ const CPDF_Object* PageDictGetInheritableTag(const CPDF_Dictionary* pDict,
 }
 
 bool CopyInheritable(RetainPtr<CPDF_Dictionary> pDestPageDict,
-                     const CPDF_Dictionary* pSrcPageDict,
+                     RetainPtr<const CPDF_Dictionary> pSrcPageDict,
                      const ByteString& key) {
   if (pDestPageDict->KeyExist(key))
     return true;
 
   const CPDF_Object* pInheritable =
-      PageDictGetInheritableTag(pSrcPageDict, key);
+      PageDictGetInheritableTag(std::move(pSrcPageDict), key);
   if (!pInheritable)
     return false;
 
@@ -395,7 +396,8 @@ bool CPDF_PageExporter::ExportPage(pdfium::span<const uint32_t> pageIndices,
   int curpage = nIndex;
   for (uint32_t pageIndex : pageIndices) {
     RetainPtr<CPDF_Dictionary> pDestPageDict = dest()->CreateNewPage(curpage);
-    auto* pSrcPageDict = src()->GetPageDictionary(pageIndex);
+    RetainPtr<const CPDF_Dictionary> pSrcPageDict =
+        src()->GetPageDictionary(pageIndex);
     if (!pSrcPageDict || !pDestPageDict)
       return false;
 
@@ -601,7 +603,8 @@ ByteString CPDF_NPageToOneExporter::AddSubPage(
 // TODO(tsepez): return retained object.
 CPDF_Stream* CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
     const RetainPtr<CPDF_Page>& pSrcPage) {
-  const CPDF_Dictionary* pSrcPageDict = pSrcPage->GetDict();
+  // TODO(tsepez): return retained object from CPDF_Page::GetDict()'
+  RetainPtr<const CPDF_Dictionary> pSrcPageDict(pSrcPage->GetDict());
   RetainPtr<const CPDF_Object> pSrcContentObj =
       pSrcPageDict->GetDirectObjectFor(pdfium::page_object::kContents);
 

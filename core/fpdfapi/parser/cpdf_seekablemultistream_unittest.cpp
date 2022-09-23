@@ -4,6 +4,7 @@
 
 #include "core/fpdfapi/parser/cpdf_seekablemultistream.h"
 
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -11,8 +12,9 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(CPDFSeekableMultiStreamTest, NoStreams) {
-  std::vector<const CPDF_Stream*> streams;
-  auto fileread = pdfium::MakeRetain<CPDF_SeekableMultiStream>(streams);
+  std::vector<RetainPtr<const CPDF_Stream>> streams;
+  auto fileread =
+      pdfium::MakeRetain<CPDF_SeekableMultiStream>(std::move(streams));
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));
@@ -21,10 +23,10 @@ TEST(CPDFSeekableMultiStreamTest, NoStreams) {
 }
 
 TEST(CXFAFileReadTest, EmptyStreams) {
-  std::vector<const CPDF_Stream*> streams;
-  auto stream1 = pdfium::MakeRetain<CPDF_Stream>();
-  streams.push_back(stream1.Get());
-  auto fileread = pdfium::MakeRetain<CPDF_SeekableMultiStream>(streams);
+  std::vector<RetainPtr<const CPDF_Stream>> streams;
+  streams.push_back(pdfium::MakeRetain<CPDF_Stream>());
+  auto fileread =
+      pdfium::MakeRetain<CPDF_SeekableMultiStream>(std::move(streams));
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));
@@ -33,7 +35,6 @@ TEST(CXFAFileReadTest, EmptyStreams) {
 }
 
 TEST(CXFAFileReadTest, NormalStreams) {
-  std::vector<const CPDF_Stream*> streams;
   // 16 chars total.
   auto stream1 =
       pdfium::MakeRetain<CPDF_Stream>(ByteStringView("one t").raw_span(),
@@ -44,10 +45,12 @@ TEST(CXFAFileReadTest, NormalStreams) {
       pdfium::MakeRetain<CPDF_Stream>(ByteStringView("three!!!").raw_span(),
                                       pdfium::MakeRetain<CPDF_Dictionary>());
 
-  streams.push_back(stream1.Get());
-  streams.push_back(stream2.Get());
-  streams.push_back(stream3.Get());
-  auto fileread = pdfium::MakeRetain<CPDF_SeekableMultiStream>(streams);
+  std::vector<RetainPtr<const CPDF_Stream>> streams;
+  streams.push_back(std::move(stream1));
+  streams.push_back(std::move(stream2));
+  streams.push_back(std::move(stream3));
+  auto fileread =
+      pdfium::MakeRetain<CPDF_SeekableMultiStream>(std::move(streams));
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));

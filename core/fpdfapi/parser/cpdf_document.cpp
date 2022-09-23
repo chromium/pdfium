@@ -283,7 +283,7 @@ bool CPDF_Document::IsPageLoaded(int iPage) const {
   return !!m_PageList[iPage];
 }
 
-const CPDF_Dictionary* CPDF_Document::GetPageDictionary(int iPage) {
+RetainPtr<const CPDF_Dictionary> CPDF_Document::GetPageDictionary(int iPage) {
   if (!fxcrt::IndexInBounds(m_PageList, iPage))
     return nullptr;
 
@@ -291,10 +291,8 @@ const CPDF_Dictionary* CPDF_Document::GetPageDictionary(int iPage) {
   if (objnum) {
     RetainPtr<CPDF_Dictionary> result =
         ToDictionary(GetOrParseIndirectObject(objnum));
-    if (result) {
-      // TODO(tsepez): return retained result.
-      return result.Get();
-    }
+    if (result)
+      return result;
   }
 
   CPDF_Dictionary* pPages = GetPagesDict();
@@ -306,14 +304,15 @@ const CPDF_Dictionary* CPDF_Document::GetPageDictionary(int iPage) {
     m_pTreeTraversal.push_back(std::make_pair(pPages, 0));
   }
   int nPagesToGo = iPage - m_iNextPageToTraverse + 1;
+  // TODO(tsepez): return retained page from TraversePDFPages().
   CPDF_Dictionary* pPage = TraversePDFPages(iPage, &nPagesToGo, 0);
   m_iNextPageToTraverse = iPage + 1;
-  return pPage;
+  return pdfium::WrapRetain(pPage);
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_Document::GetMutablePageDictionary(int iPage) {
   return pdfium::WrapRetain(
-      const_cast<CPDF_Dictionary*>(GetPageDictionary(iPage)));
+      const_cast<CPDF_Dictionary*>(GetPageDictionary(iPage).Get()));
 }
 
 void CPDF_Document::SetPageObjNum(int iPage, uint32_t objNum) {

@@ -822,7 +822,8 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
   const HintsScope hints_scope(GetValidator(), pHints);
   if (m_pLinearized) {
     if (dwPage == m_pLinearized->GetFirstPageNo()) {
-      auto* pPageDict = m_pDocument->GetPageDictionary(iPage);
+      RetainPtr<const CPDF_Dictionary> pPageDict =
+          m_pDocument->GetPageDictionary(iPage);
       if (!pPageDict)
         return kDataError;
 
@@ -881,7 +882,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::IsPageAvail(
   {
     auto page_num_obj = std::make_pair(
         dwPage, std::make_unique<CPDF_PageObjectAvail>(
-                    GetValidator(), m_pDocument.Get(), pPageDict.Get()));
+                    GetValidator(), m_pDocument.Get(), pPageDict));
     CPDF_PageObjectAvail* page_obj_avail =
         m_PagesObjAvail.insert(std::move(page_num_obj)).first->second.get();
     const DocAvailStatus status = page_obj_avail->CheckAvail();
@@ -913,9 +914,8 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckResources(
   CPDF_PageObjectAvail* resource_avail =
       m_PagesResourcesAvail
           .insert(std::make_pair(
-              resources,
-              std::make_unique<CPDF_PageObjectAvail>(
-                  GetValidator(), m_pDocument.Get(), resources.Get())))
+              resources, std::make_unique<CPDF_PageObjectAvail>(
+                             GetValidator(), m_pDocument.Get(), resources)))
           .first->second.get();
   return resource_avail->CheckAvail();
 }
@@ -935,10 +935,11 @@ int CPDF_DataAvail::GetPageCount() const {
   return m_pDocument ? m_pDocument->GetPageCount() : 0;
 }
 
-const CPDF_Dictionary* CPDF_DataAvail::GetPageDictionary(int index) const {
+RetainPtr<const CPDF_Dictionary> CPDF_DataAvail::GetPageDictionary(
+    int index) const {
   if (!m_pDocument || index < 0 || index >= GetPageCount())
     return nullptr;
-  const CPDF_Dictionary* page = m_pDocument->GetPageDictionary(index);
+  RetainPtr<const CPDF_Dictionary> page = m_pDocument->GetPageDictionary(index);
   if (page)
     return page;
   if (!m_pLinearized || !m_pHintTables)
@@ -993,9 +994,8 @@ CPDF_DataAvail::DocFormStatus CPDF_DataAvail::CheckAcroForm() {
     if (!pAcroForm)
       return kFormNotExist;
 
-    // TODO(tsepez): pass retained argument.
     m_pFormAvail = std::make_unique<CPDF_PageObjectAvail>(
-        GetValidator(), m_pDocument.Get(), pAcroForm.Get());
+        GetValidator(), m_pDocument.Get(), std::move(pAcroForm));
   }
   switch (m_pFormAvail->CheckAvail()) {
     case kDataError:
@@ -1012,10 +1012,13 @@ CPDF_DataAvail::DocFormStatus CPDF_DataAvail::CheckAcroForm() {
 
 bool CPDF_DataAvail::ValidatePage(uint32_t dwPage) const {
   int iPage = pdfium::base::checked_cast<int>(dwPage);
-  auto* pPageDict = m_pDocument->GetPageDictionary(iPage);
+  RetainPtr<const CPDF_Dictionary> pPageDict =
+      m_pDocument->GetPageDictionary(iPage);
   if (!pPageDict)
     return false;
-  CPDF_PageObjectAvail obj_avail(GetValidator(), m_pDocument.Get(), pPageDict);
+
+  CPDF_PageObjectAvail obj_avail(GetValidator(), m_pDocument.Get(),
+                                 std::move(pPageDict));
   return obj_avail.CheckAvail() == kDataAvailable;
 }
 

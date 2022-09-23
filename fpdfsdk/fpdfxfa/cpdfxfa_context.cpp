@@ -72,23 +72,21 @@ RetainPtr<CPDF_SeekableMultiStream> CreateXFAMultiStream(
   if (!pElementXFA)
     return nullptr;
 
-  std::vector<const CPDF_Stream*> xfaStreams;
+  std::vector<RetainPtr<const CPDF_Stream>> xfa_streams;
   if (pElementXFA->IsArray()) {
     const CPDF_Array* pXFAArray = pElementXFA->AsArray();
     for (size_t i = 0; i < pXFAArray->size() / 2; i++) {
       RetainPtr<const CPDF_Stream> pStream = pXFAArray->GetStreamAt(i * 2 + 1);
-      if (pStream) {
-        // TODO(tsepez): push retained objects.
-        xfaStreams.push_back(pStream.Get());
-      }
+      if (pStream)
+        xfa_streams.push_back(std::move(pStream));
     }
   } else if (pElementXFA->IsStream()) {
-    xfaStreams.push_back(pElementXFA->AsStream());
+    xfa_streams.push_back(ToStream(pElementXFA));
   }
-  if (xfaStreams.empty())
+  if (xfa_streams.empty())
     return nullptr;
 
-  return pdfium::MakeRetain<CPDF_SeekableMultiStream>(xfaStreams);
+  return pdfium::MakeRetain<CPDF_SeekableMultiStream>(std::move(xfa_streams));
 }
 
 }  // namespace

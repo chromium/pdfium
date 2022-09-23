@@ -16,8 +16,10 @@
 
 CPDF_ObjectAvail::CPDF_ObjectAvail(RetainPtr<CPDF_ReadValidator> validator,
                                    CPDF_IndirectObjectHolder* holder,
-                                   const CPDF_Object* root)
-    : validator_(std::move(validator)), holder_(holder), root_(root) {
+                                   RetainPtr<const CPDF_Object> root)
+    : validator_(std::move(validator)),
+      holder_(holder),
+      root_(std::move(root)) {
   DCHECK(validator_);
   DCHECK(holder);
   DCHECK(root_);
