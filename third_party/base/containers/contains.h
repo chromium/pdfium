@@ -15,6 +15,14 @@ namespace pdfium {
 
 namespace internal {
 
+// Small helper to detect whether a given type has a nested `key_type` typedef.
+// Used below to catch misuses of the API for associative containers.
+template <typename T, typename SFINAE = void>
+struct HasKeyType : std::false_type {};
+
+template <typename T>
+struct HasKeyType<T, std::void_t<typename T::key_type>> : std::true_type {};
+
 // Utility type traits used for specializing base::Contains() below.
 template <typename Container, typename Element, typename = void>
 struct HasFindWithNpos : std::false_type {};
@@ -59,6 +67,11 @@ template <typename Container,
               !internal::HasFindWithEnd<Container, Value>::value &&
               !internal::HasContains<Container, Value>::value>* = nullptr>
 bool Contains(const Container& container, const Value& value) {
+  static_assert(
+      !internal::HasKeyType<Container>::value,
+      "Error: About to perform linear search on an associative container. "
+      "Either use a more generic comparator (e.g. std::less<>) or, if a linear "
+      "search is desired, provide an explicit projection parameter.");
   using std::begin;
   using std::end;
   return std::find(begin(container), end(container), value) != end(container);

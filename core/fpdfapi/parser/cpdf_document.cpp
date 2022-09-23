@@ -448,7 +448,7 @@ bool CPDF_Document::InsertDeletePDFPage(CPDF_Dictionary* pPages,
       nPagesToGo -= nPages;
       continue;
     }
-    if (pdfium::Contains(*pVisited, pKid))
+    if (pdfium::Contains(*pVisited, pKid.Get()))
       return false;
 
     ScopedSetInsertion<CPDF_Dictionary*> insertion(pVisited, pKid.Get());
