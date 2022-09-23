@@ -22,26 +22,24 @@
 
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 
-#include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fixed_zeroed_data_vector.h"
 #include "third_party/base/check_op.h"
 
 CBC_CommonBitMatrix::CBC_CommonBitMatrix(size_t width, size_t height)
     : m_height(height), m_rowSize((width + 31) >> 5) {
   static constexpr int32_t kMaxBits = 1024 * 1024 * 1024;  // 1 Gb.
   CHECK_LT(m_rowSize, kMaxBits / m_height);
-  m_bits.resize(m_rowSize * m_height);
+  m_bits = FixedZeroedDataVector<uint32_t>(m_rowSize * m_height);
 }
 
 CBC_CommonBitMatrix::~CBC_CommonBitMatrix() = default;
 
 bool CBC_CommonBitMatrix::Get(size_t x, size_t y) const {
   size_t offset = y * m_rowSize + (x >> 5);
-  CHECK_LT(offset, m_rowSize * m_height);
-  return ((m_bits[offset] >> (x & 0x1f)) & 1) != 0;
+  return ((m_bits.span()[offset] >> (x & 0x1f)) & 1) != 0;
 }
 
 void CBC_CommonBitMatrix::Set(size_t x, size_t y) {
   size_t offset = y * m_rowSize + (x >> 5);
-  CHECK_LT(offset, m_rowSize * m_height);
-  m_bits[offset] |= 1u << (x & 0x1f);
+  m_bits.writable_span()[offset] |= 1u << (x & 0x1f);
 }
