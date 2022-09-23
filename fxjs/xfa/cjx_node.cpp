@@ -370,8 +370,8 @@ CJS_Result CJX_Node::saveXML(CFXJSE_Engine* runtime,
     pElement->Save(pMemoryStream);
   }
 
-  return CJS_Result::Success(runtime->NewString(
-      ByteStringView(pMemoryStream->GetBuffer(), pMemoryStream->GetSize())));
+  return CJS_Result::Success(
+      runtime->NewString(ByteStringView(pMemoryStream->GetSpan())));
 }
 
 CJS_Result CJX_Node::setAttribute(

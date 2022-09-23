@@ -196,9 +196,8 @@ void RegenerateFormFile_Changed(CXFA_Node* pNode,
 
         auto pMemStream = pdfium::MakeRetain<CFX_MemoryStream>();
         pRichTextXML->Save(pMemStream);
-        wsChildren += WideString::FromUTF8(
-            ByteStringView(pMemStream->GetBuffer(),
-                           static_cast<size_t>(pMemStream->GetSize())));
+        wsChildren +=
+            WideString::FromUTF8(ByteStringView(pMemStream->GetSpan()));
       } else if (pRawValueNode->GetElementType() == XFA_Element::Sharpxml &&
                  contentType.has_value() &&
                  contentType.value().EqualsASCII("text/xml")) {

@@ -10,6 +10,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/base/span.h"
 
 class CFX_MemoryStream final : public IFX_SeekableStream {
  public:
@@ -28,7 +29,7 @@ class CFX_MemoryStream final : public IFX_SeekableStream {
                           size_t size) override;
   bool Flush() override;
 
-  const uint8_t* GetBuffer() const { return m_data.data(); }
+  pdfium::span<const uint8_t> GetSpan() const;
 
  private:
   CFX_MemoryStream();

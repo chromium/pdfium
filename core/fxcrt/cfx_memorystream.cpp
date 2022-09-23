@@ -32,21 +32,27 @@ bool CFX_MemoryStream::Flush() {
   return true;
 }
 
+pdfium::span<const uint8_t> CFX_MemoryStream::GetSpan() const {
+  return pdfium::make_span(m_data).first(m_nCurSize);
+}
+
 bool CFX_MemoryStream::ReadBlockAtOffset(void* buffer,
                                          FX_FILESIZE offset,
                                          size_t size) {
   if (!buffer || offset < 0 || !size)
     return false;
 
-  FX_SAFE_SIZE_T newPos = size;
-  newPos += offset;
-  if (!newPos.IsValid() || newPos.ValueOrDefault(0) == 0 ||
-      newPos.ValueOrDie() > m_nCurSize) {
+  FX_SAFE_SIZE_T new_pos = size;
+  new_pos += offset;
+  if (!new_pos.IsValid() || new_pos.ValueOrDefault(0) == 0 ||
+      new_pos.ValueOrDie() > m_nCurSize) {
     return false;
   }
 
-  m_nCurPos = newPos.ValueOrDie();
-  memcpy(buffer, &GetBuffer()[offset], size);
+  m_nCurPos = new_pos.ValueOrDie();
+  // Safe to cast `offset` because it was used to calculate `new_pos` above, and
+  // `new_pos` is valid.
+  memcpy(buffer, &GetSpan()[static_cast<size_t>(offset)], size);
   return true;
 }
 
