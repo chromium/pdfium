@@ -27,7 +27,17 @@
 #include <utility>
 
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fx_memory.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
+#include "third_party/base/check_op.h"
+
+namespace {
+
+size_t GetIndex(size_t col, size_t row, size_t num_cols) {
+  return row * num_cols + col;
+}
+
+}  // namespace
 
 CBC_DefaultPlacement::CBC_DefaultPlacement(WideString codewords,
                                            int32_t numcols,
@@ -35,22 +45,36 @@ CBC_DefaultPlacement::CBC_DefaultPlacement(WideString codewords,
     : m_codewords(std::move(codewords)),
       m_numrows(numrows),
       m_numcols(numcols),
-      m_bits(numcols * numrows, 2) {
+      m_bits(Fx2DSizeOrDie(numcols, numrows), 2) {
+  CHECK_GT(m_numrows, 0);
+  CHECK_GT(m_numcols, 0);
   Init();
 }
 
 CBC_DefaultPlacement::~CBC_DefaultPlacement() = default;
 
 bool CBC_DefaultPlacement::GetBit(int32_t col, int32_t row) const {
-  return m_bits[row * m_numcols + col] == 1;
+  CHECK_GE(col, 0);
+  CHECK_GE(row, 0);
+  CHECK_LT(col, m_numcols);
+  CHECK_LT(row, m_numrows);
+  return m_bits[GetIndex(col, row, m_numcols)] == 1;
 }
 
 void CBC_DefaultPlacement::SetBit(int32_t col, int32_t row, bool bit) {
-  m_bits[row * m_numcols + col] = bit ? 1 : 0;
+  DCHECK_GE(col, 0);
+  DCHECK_GE(row, 0);
+  DCHECK_LT(col, m_numcols);
+  DCHECK_LT(row, m_numrows);
+  m_bits[GetIndex(col, row, m_numcols)] = bit ? 1 : 0;
 }
 
 bool CBC_DefaultPlacement::HasBit(int32_t col, int32_t row) const {
-  return m_bits[row * m_numcols + col] != 2;
+  DCHECK_GE(col, 0);
+  DCHECK_GE(row, 0);
+  DCHECK_LT(col, m_numcols);
+  DCHECK_LT(row, m_numrows);
+  return m_bits[GetIndex(col, row, m_numcols)] != 2;
 }
 
 void CBC_DefaultPlacement::Init() {
