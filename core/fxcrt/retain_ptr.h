@@ -27,12 +27,16 @@ struct ReleaseDeleter {
 template <class T>
 class RetainPtr {
  public:
+  RetainPtr() = default;
+
+  // Deliberately implicit to allow returning nullptrs.
+  // NOLINTNEXTLINE(runtime/explicit)
+  RetainPtr(std::nullptr_t ptr) {}
+
   explicit RetainPtr(T* pObj) : m_pObj(pObj) {
     if (m_pObj)
       m_pObj->Retain();
   }
-
-  RetainPtr() = default;
 
   // Copy-construct a RetainPtr.
   // Required in addition to copy conversion constructor below.
@@ -41,10 +45,6 @@ class RetainPtr {
   // Move-construct a RetainPtr. After construction, |that| will be NULL.
   // Required in addition to move conversion constructor below.
   RetainPtr(RetainPtr&& that) noexcept { Unleak(that.Leak()); }
-
-  // Deliberately implicit to allow returning nullptrs.
-  // NOLINTNEXTLINE(runtime/explicit)
-  RetainPtr(std::nullptr_t ptr) {}
 
   // Copy conversion constructor.
   template <class U,
@@ -58,6 +58,18 @@ class RetainPtr {
                 std::is_convertible<U*, T*>::value>::type>
   RetainPtr(RetainPtr<U>&& that) noexcept {
     Unleak(that.Leak());
+  }
+
+  RetainPtr& operator=(const RetainPtr& that) {
+    if (*this != that)
+      Reset(that.Get());
+    return *this;
+  }
+
+  // Move-assign a RetainPtr. After assignment, |that| will be NULL.
+  RetainPtr& operator=(RetainPtr&& that) noexcept {
+    Unleak(that.Leak());
+    return *this;
   }
 
   template <class U>
@@ -80,18 +92,6 @@ class RetainPtr {
   // Useful for passing notion of object ownership across a C API.
   T* Leak() { return m_pObj.release(); }
   void Unleak(T* ptr) { m_pObj.reset(ptr); }
-
-  RetainPtr& operator=(const RetainPtr& that) {
-    if (*this != that)
-      Reset(that.Get());
-    return *this;
-  }
-
-  // Move-assign a RetainPtr. After assignment, |that| will be NULL.
-  RetainPtr& operator=(RetainPtr&& that) noexcept {
-    Unleak(that.Leak());
-    return *this;
-  }
 
   bool operator==(const RetainPtr& that) const { return Get() == that.Get(); }
   bool operator!=(const RetainPtr& that) const { return !(*this == that); }

@@ -48,27 +48,18 @@ template <class T>
 class UnownedPtr {
  public:
   constexpr UnownedPtr() noexcept = default;
-  constexpr UnownedPtr(const UnownedPtr& that) noexcept = default;
-
-  // Move-construct an UnownedPtr. After construction, |that| will be NULL.
-  constexpr UnownedPtr(UnownedPtr&& that) noexcept : m_pObj(that.Release()) {}
-
-  template <typename U>
-  explicit constexpr UnownedPtr(U* pObj) noexcept : m_pObj(pObj) {}
 
   // Deliberately implicit to allow returning nullptrs.
   // NOLINTNEXTLINE(runtime/explicit)
   constexpr UnownedPtr(std::nullptr_t ptr) noexcept {}
 
-  ~UnownedPtr() {
-    ProbeForLowSeverityLifetimeIssue();
-    m_pObj = nullptr;
-  }
+  template <typename U>
+  explicit constexpr UnownedPtr(U* pObj) noexcept : m_pObj(pObj) {}
 
-  void Reset(T* obj = nullptr) {
-    ProbeForLowSeverityLifetimeIssue();
-    m_pObj = obj;
-  }
+  constexpr UnownedPtr(const UnownedPtr& that) noexcept = default;
+
+  // Move-construct an UnownedPtr. After construction, |that| will be NULL.
+  constexpr UnownedPtr(UnownedPtr&& that) noexcept : m_pObj(that.Release()) {}
 
   UnownedPtr& operator=(T* that) noexcept {
     Reset(that);
@@ -86,6 +77,16 @@ class UnownedPtr {
     if (*this != that)
       Reset(that.Release());
     return *this;
+  }
+
+  ~UnownedPtr() {
+    ProbeForLowSeverityLifetimeIssue();
+    m_pObj = nullptr;
+  }
+
+  void Reset(T* obj = nullptr) {
+    ProbeForLowSeverityLifetimeIssue();
+    m_pObj = obj;
   }
 
   bool operator==(std::nullptr_t ptr) const { return Get() == nullptr; }
