@@ -154,6 +154,7 @@ class CPDF_DictionaryLocker {
   using const_iterator = CPDF_Dictionary::const_iterator;
 
   explicit CPDF_DictionaryLocker(const CPDF_Dictionary* pDictionary);
+  explicit CPDF_DictionaryLocker(RetainPtr<CPDF_Dictionary> pDictionary);
   explicit CPDF_DictionaryLocker(RetainPtr<const CPDF_Dictionary> pDictionary);
   ~CPDF_DictionaryLocker();
 

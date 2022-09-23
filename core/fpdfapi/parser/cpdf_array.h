@@ -166,6 +166,7 @@ class CPDF_ArrayLocker {
   using const_iterator = CPDF_Array::const_iterator;
 
   explicit CPDF_ArrayLocker(const CPDF_Array* pArray);
+  explicit CPDF_ArrayLocker(RetainPtr<CPDF_Array> pArray);
   explicit CPDF_ArrayLocker(RetainPtr<const CPDF_Array> pArray);
   ~CPDF_ArrayLocker();
 

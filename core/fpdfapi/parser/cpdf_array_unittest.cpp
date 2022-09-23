@@ -230,9 +230,9 @@ TEST(ArrayTest, Iterator) {
   auto arr = pdfium::MakeRetain<CPDF_Array>();
   for (size_t i = 0; i < std::size(elems); ++i)
     arr->InsertNewAt<CPDF_Number>(i, elems[i]);
-  size_t index = 0;
 
-  CPDF_ArrayLocker locker(arr.Get());
+  size_t index = 0;
+  CPDF_ArrayLocker locker(arr);
   for (const auto& it : locker)
     EXPECT_EQ(elems[index++], it->AsNumber()->GetInteger());
   EXPECT_EQ(std::size(elems), index);

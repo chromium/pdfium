@@ -354,7 +354,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
         pAPStream = pAPDict->GetMutableStreamFor(sAnnotState);
       } else {
         if (pAPDict->size() > 0) {
-          CPDF_DictionaryLocker locker(pAPDict.Get());
+          CPDF_DictionaryLocker locker(pAPDict);
           RetainPtr<CPDF_Object> pFirstObj = locker.begin()->second;
           if (pFirstObj) {
             if (pFirstObj->IsReference())

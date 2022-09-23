@@ -380,6 +380,12 @@ CPDF_DictionaryLocker::CPDF_DictionaryLocker(const CPDF_Dictionary* pDictionary)
 }
 
 CPDF_DictionaryLocker::CPDF_DictionaryLocker(
+    RetainPtr<CPDF_Dictionary> pDictionary)
+    : m_pDictionary(std::move(pDictionary)) {
+  m_pDictionary->m_LockCount++;
+}
+
+CPDF_DictionaryLocker::CPDF_DictionaryLocker(
     RetainPtr<const CPDF_Dictionary> pDictionary)
     : m_pDictionary(std::move(pDictionary)) {
   m_pDictionary->m_LockCount++;

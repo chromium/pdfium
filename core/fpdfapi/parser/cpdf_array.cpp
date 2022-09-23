@@ -278,6 +278,11 @@ CPDF_ArrayLocker::CPDF_ArrayLocker(const CPDF_Array* pArray)
   m_pArray->m_LockCount++;
 }
 
+CPDF_ArrayLocker::CPDF_ArrayLocker(RetainPtr<CPDF_Array> pArray)
+    : m_pArray(std::move(pArray)) {
+  m_pArray->m_LockCount++;
+}
+
 CPDF_ArrayLocker::CPDF_ArrayLocker(RetainPtr<const CPDF_Array> pArray)
     : m_pArray(std::move(pArray)) {
   m_pArray->m_LockCount++;

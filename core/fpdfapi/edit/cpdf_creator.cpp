@@ -426,8 +426,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
   }
 
   if (m_pParser) {
-    RetainPtr<CPDF_Dictionary> p = m_pParser->GetCombinedTrailer();
-    CPDF_DictionaryLocker locker(p.Get());
+    CPDF_DictionaryLocker locker(m_pParser->GetCombinedTrailer());
     for (const auto& it : locker) {
       const ByteString& key = it.first;
       CPDF_Object* pValue = it.second.Get();
