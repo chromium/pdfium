@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/base/containers/contains.h"
 
 namespace fxcrt {
 namespace {
@@ -203,6 +204,8 @@ TEST(UnownedPtr, TransparentCompare) {
   holder.insert(ptr1);
   EXPECT_NE(holder.end(), holder.find(&foos[0]));
   EXPECT_EQ(holder.end(), holder.find(&foos[1]));
+  EXPECT_TRUE(pdfium::Contains(holder, &foos[0]));
+  EXPECT_FALSE(pdfium::Contains(holder, &foos[1]));
 }
 
 }  // namespace fxcrt
