@@ -318,7 +318,7 @@ CPDF_CMap::CPDF_CMap(ByteStringView bsPredefinedName)
 }
 
 CPDF_CMap::CPDF_CMap(pdfium::span<const uint8_t> spEmbeddedData)
-    : m_DirectCharcodeToCIDTable(65536) {
+    : m_DirectCharcodeToCIDTable(kDirectMapTableSize) {
   CPDF_CMapParser parser(this);
   CPDF_SimpleParser syntax(spEmbeddedData);
   while (true) {
@@ -342,8 +342,9 @@ uint16_t CPDF_CMap::CIDFromCharCode(uint32_t charcode) const {
   if (m_DirectCharcodeToCIDTable.empty())
     return static_cast<uint16_t>(charcode);
 
-  if (charcode < 0x10000)
-    return m_DirectCharcodeToCIDTable[charcode];
+  auto table_span = m_DirectCharcodeToCIDTable.span();
+  if (charcode < table_span.size())
+    return table_span[charcode];
 
   auto it = std::lower_bound(m_AdditionalCharcodeToCIDMappings.begin(),
                              m_AdditionalCharcodeToCIDMappings.end(), charcode,
