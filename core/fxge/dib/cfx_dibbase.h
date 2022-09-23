@@ -30,6 +30,8 @@ class CFX_DIBBase : public Retainable {
   static constexpr FXDIB_Format kPlatformRGBFormat = FXDIB_Format::kRgb;
 #endif  // BUILDFLAG(IS_APPLE)
 
+  static constexpr uint32_t kPaletteSize = 256;
+
   ~CFX_DIBBase() override;
 
   virtual uint8_t* GetBuffer() const;

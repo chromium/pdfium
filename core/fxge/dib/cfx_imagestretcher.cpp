@@ -12,6 +12,8 @@
 #include "core/fxge/dib/cstretchengine.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
+#include "third_party/base/span.h"
 
 namespace {
 
@@ -53,30 +55,43 @@ CFX_ImageStretcher::CFX_ImageStretcher(
 
 CFX_ImageStretcher::~CFX_ImageStretcher() = default;
 
+// static
+void CFX_ImageStretcher::BuildPaletteFrom1BppSource(
+    const RetainPtr<const CFX_DIBBase>& source,
+    pdfium::span<FX_ARGB> palette_span) {
+  DCHECK_EQ(FXDIB_Format::k1bppRgb, source->GetFormat());
+  DCHECK(source->HasPalette());
+  DCHECK_EQ(CFX_DIBBase::kPaletteSize, palette_span.size());
+
+  int a0;
+  int r0;
+  int g0;
+  int b0;
+  std::tie(a0, r0, g0, b0) = ArgbDecode(source->GetPaletteArgb(0));
+  int a1;
+  int r1;
+  int g1;
+  int b1;
+  std::tie(a1, r1, g1, b1) = ArgbDecode(source->GetPaletteArgb(1));
+  DCHECK_EQ(255, a0);
+  DCHECK_EQ(255, a1);
+
+  for (int i = 0; i < static_cast<int>(CFX_DIBBase::kPaletteSize); ++i) {
+    int r = r0 + (r1 - r0) * i / 255;
+    int g = g0 + (g1 - g0) * i / 255;
+    int b = b0 + (b1 - b0) * i / 255;
+    palette_span[i] = ArgbEncode(255, r, g, b);
+  }
+}
+
 bool CFX_ImageStretcher::Start() {
   if (m_DestWidth == 0 || m_DestHeight == 0)
     return false;
 
   if (m_pSource->GetFormat() == FXDIB_Format::k1bppRgb &&
       m_pSource->HasPalette()) {
-    FX_ARGB pal[256];
-    int a0;
-    int r0;
-    int g0;
-    int b0;
-    std::tie(a0, r0, g0, b0) = ArgbDecode(m_pSource->GetPaletteArgb(0));
-    int a1;
-    int r1;
-    int g1;
-    int b1;
-    std::tie(a1, r1, g1, b1) = ArgbDecode(m_pSource->GetPaletteArgb(1));
-    for (int i = 0; i < 256; ++i) {
-      int a = a0 + (a1 - a0) * i / 255;
-      int r = r0 + (r1 - r0) * i / 255;
-      int g = g0 + (g1 - g0) * i / 255;
-      int b = b0 + (b1 - b0) * i / 255;
-      pal[i] = ArgbEncode(a, r, g, b);
-    }
+    FX_ARGB pal[CFX_DIBBase::kPaletteSize];
+    BuildPaletteFrom1BppSource(m_pSource, pal);
     if (!m_pDest->SetInfo(m_ClipRect.Width(), m_ClipRect.Height(), m_DestFormat,
                           pal)) {
       return false;

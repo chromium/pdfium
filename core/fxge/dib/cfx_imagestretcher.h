@@ -14,6 +14,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/dib/scanlinecomposer_iface.h"
+#include "third_party/base/span.h"
 
 class CFX_DIBBase;
 class CStretchEngine;
@@ -28,6 +29,17 @@ class CFX_ImageStretcher {
                      const FX_RECT& bitmap_rect,
                      const FXDIB_ResampleOptions& options);
   ~CFX_ImageStretcher();
+
+  // Builds a new palette with a size of `CFX_DIBBase::kPaletteSize` from the
+  // existing palette in `source`. Note: The caller must make sure that the
+  // parameters meet the following conditions:
+  //   source       - The format must be `FXDIB_Format::k1bppRgb` and it must
+  //                  have a palette.
+  //   palette_span - The size must be `CFX_DIBBase::kPaletteSize` to be able
+  //                  to hold the new palette.
+  static void BuildPaletteFrom1BppSource(
+      const RetainPtr<const CFX_DIBBase>& source,
+      pdfium::span<FX_ARGB> palette_span);
 
   bool Start();
   bool Continue(PauseIndicatorIface* pPause);

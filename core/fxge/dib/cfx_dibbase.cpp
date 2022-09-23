@@ -854,7 +854,6 @@ bool CFX_DIBBase::GetOverlapRect(int& dest_left,
 }
 
 void CFX_DIBBase::SetPalette(pdfium::span<const uint32_t> src_palette) {
-  static const uint32_t kPaletteSize = 256;
   if (src_palette.empty() || GetBPP() > 8) {
     m_palette.clear();
     return;
