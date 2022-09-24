@@ -39,6 +39,7 @@ source_set("fxcrt") {
     "cfx_utf8encoder.h",
     "data_vector.h",
     "fileaccess_iface.h",
+    "fixed_size_data_vector.h",
     "fixed_uninit_data_vector.h",
     "fixed_zeroed_data_vector.h",
     "fx_bidi.cpp",
