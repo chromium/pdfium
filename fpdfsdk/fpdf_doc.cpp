@@ -250,7 +250,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFDest_GetDestPageIndex(FPDF_DOCUMENT document,
   if (!dest)
     return -1;
 
-  CPDF_Dest destination(CPDFArrayFromFPDFDest(dest));
+  CPDF_Dest destination(pdfium::WrapRetain(CPDFArrayFromFPDFDest(dest)));
   return destination.GetDestPageIndex(pDoc);
 }
 
@@ -261,7 +261,7 @@ FPDFDest_GetView(FPDF_DEST dest, unsigned long* pNumParams, FS_FLOAT* pParams) {
     return 0;
   }
 
-  CPDF_Dest destination(CPDFArrayFromFPDFDest(dest));
+  CPDF_Dest destination(pdfium::WrapRetain(CPDFArrayFromFPDFDest(dest)));
   const unsigned long nParams =
       pdfium::base::checked_cast<unsigned long>(destination.GetNumParams());
   DCHECK(nParams <= 4);
@@ -282,13 +282,13 @@ FPDFDest_GetLocationInPage(FPDF_DEST dest,
   if (!dest)
     return false;
 
-  auto destination = std::make_unique<CPDF_Dest>(CPDFArrayFromFPDFDest(dest));
+  CPDF_Dest destination(pdfium::WrapRetain(CPDFArrayFromFPDFDest(dest)));
 
   // FPDF_BOOL is an int, GetXYZ expects bools.
   bool bHasX;
   bool bHasY;
   bool bHasZoom;
-  if (!destination->GetXYZ(&bHasX, &bHasY, &bHasZoom, x, y, zoom))
+  if (!destination.GetXYZ(&bHasX, &bHasY, &bHasZoom, x, y, zoom))
     return false;
 
   *hasXVal = bHasX;

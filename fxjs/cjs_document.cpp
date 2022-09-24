@@ -1388,8 +1388,7 @@ CJS_Result CJS_Document::gotoNamedDest(
   if (!dest_array)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  // TODO(tsepez): make CPDF_Dest constructor take retained argument.
-  CPDF_Dest dest(dest_array.Get());
+  CPDF_Dest dest(std::move(dest_array));
   const CPDF_Array* arrayObject = dest.GetArray();
   std::vector<float> scrollPositionArray;
   if (arrayObject) {

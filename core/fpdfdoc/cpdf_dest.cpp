@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -30,7 +31,8 @@ static_assert(std::size(kZoomModes) == std::size(kZoomModeMaxParamCount),
 
 }  // namespace
 
-CPDF_Dest::CPDF_Dest(const CPDF_Array* pArray) : m_pArray(pArray) {}
+CPDF_Dest::CPDF_Dest(RetainPtr<const CPDF_Array> pArray)
+    : m_pArray(std::move(pArray)) {}
 
 CPDF_Dest::CPDF_Dest(const CPDF_Dest& that) = default;
 
@@ -42,12 +44,10 @@ CPDF_Dest CPDF_Dest::Create(CPDF_Document* pDoc,
   if (!pDest)
     return CPDF_Dest(nullptr);
 
-  if (pDest->IsString() || pDest->IsName()) {
-    // TODO(tsepez): make CPDF_Dest constructor take retained args.
-    return CPDF_Dest(
-        CPDF_NameTree::LookupNamedDest(pDoc, pDest->GetString()).Get());
-  }
-  return CPDF_Dest(pDest->AsArray());
+  if (pDest->IsString() || pDest->IsName())
+    return CPDF_Dest(CPDF_NameTree::LookupNamedDest(pDoc, pDest->GetString()));
+
+  return CPDF_Dest(ToArray(pDest));
 }
 
 int CPDF_Dest::GetDestPageIndex(CPDF_Document* pDoc) const {

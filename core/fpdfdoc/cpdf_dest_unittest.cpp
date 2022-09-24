@@ -26,19 +26,19 @@ TEST(cpdf_dest, GetXYZ) {
   array->AppendNew<CPDF_Name>("XYZ");
   array->AppendNew<CPDF_Number>(4);  // X
   {
-    auto dest = std::make_unique<CPDF_Dest>(nullptr);
-    EXPECT_FALSE(dest->GetXYZ(&hasX, &hasY, &hasZoom, &x, &y, &zoom));
+    CPDF_Dest dest(nullptr);
+    EXPECT_FALSE(dest.GetXYZ(&hasX, &hasY, &hasZoom, &x, &y, &zoom));
   }
   {
     // Not enough entries.
-    auto dest = std::make_unique<CPDF_Dest>(array.Get());
-    EXPECT_FALSE(dest->GetXYZ(&hasX, &hasY, &hasZoom, &x, &y, &zoom));
+    CPDF_Dest dest(array);
+    EXPECT_FALSE(dest.GetXYZ(&hasX, &hasY, &hasZoom, &x, &y, &zoom));
   }
   array->AppendNew<CPDF_Number>(5);  // Y
   array->AppendNew<CPDF_Number>(6);  // Zoom.
   {
-    auto dest = std::make_unique<CPDF_Dest>(array.Get());
-    EXPECT_TRUE(dest->GetXYZ(&hasX, &hasY, &hasZoom, &x, &y, &zoom));
+    CPDF_Dest dest(array);
+    EXPECT_TRUE(dest.GetXYZ(&hasX, &hasY, &hasZoom, &x, &y, &zoom));
     EXPECT_TRUE(hasX);
     EXPECT_TRUE(hasY);
     EXPECT_TRUE(hasZoom);
@@ -49,8 +49,8 @@ TEST(cpdf_dest, GetXYZ) {
   // Set zoom to 0.
   array->SetNewAt<CPDF_Number>(4, 0);
   {
-    auto dest = std::make_unique<CPDF_Dest>(array.Get());
-    EXPECT_TRUE(dest->GetXYZ(&hasX, &hasY, &hasZoom, &x, &y, &zoom));
+    CPDF_Dest dest(array);
+    EXPECT_TRUE(dest.GetXYZ(&hasX, &hasY, &hasZoom, &x, &y, &zoom));
     EXPECT_FALSE(hasZoom);
   }
   // Set values to null.
@@ -58,8 +58,8 @@ TEST(cpdf_dest, GetXYZ) {
   array->SetNewAt<CPDF_Null>(3);
   array->SetNewAt<CPDF_Null>(4);
   {
-    auto dest = std::make_unique<CPDF_Dest>(array.Get());
-    EXPECT_TRUE(dest->GetXYZ(&hasX, &hasY, &hasZoom, &x, &y, &zoom));
+    CPDF_Dest dest(array);
+    EXPECT_TRUE(dest.GetXYZ(&hasX, &hasY, &hasZoom, &x, &y, &zoom));
     EXPECT_FALSE(hasX);
     EXPECT_FALSE(hasY);
     EXPECT_FALSE(hasZoom);

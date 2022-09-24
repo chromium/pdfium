@@ -7,15 +7,15 @@
 #ifndef CORE_FPDFDOC_CPDF_DEST_H_
 #define CORE_FPDFDOC_CPDF_DEST_H_
 
+#include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fxcrt/retain_ptr.h"
 
-class CPDF_Array;
 class CPDF_Document;
 class CPDF_Object;
 
 class CPDF_Dest {
  public:
-  explicit CPDF_Dest(const CPDF_Array* pArray);
+  explicit CPDF_Dest(RetainPtr<const CPDF_Array> pArray);
   CPDF_Dest(const CPDF_Dest& that);
   ~CPDF_Dest();
 
