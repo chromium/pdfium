@@ -6,6 +6,7 @@
 
 #include "core/fxge/cfx_font.h"
 #include "third_party/base/check.h"
+#include "third_party/base/compiler_specific.h"
 #include "third_party/base/containers/contains.h"
 
 CFX_PSFontTracker::CFX_PSFontTracker() = default;
@@ -14,13 +15,14 @@ CFX_PSFontTracker::~CFX_PSFontTracker() = default;
 
 void CFX_PSFontTracker::AddFontObject(const CFX_Font* font) {
   uint64_t tag = font->GetObjectTag();
-  [[maybe_unused]] bool inserted;
+  bool inserted;
   if (tag != 0) {
     inserted = seen_font_tags_.insert(tag).second;
   } else {
     inserted = seen_font_ptrs_.insert(UnownedPtr<const CFX_Font>(font)).second;
   }
   DCHECK(inserted);
+  ALLOW_UNUSED_LOCAL(inserted);
 }
 
 bool CFX_PSFontTracker::SeenFontObject(const CFX_Font* font) const {
