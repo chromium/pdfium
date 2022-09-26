@@ -1177,9 +1177,7 @@ void CPDF_RenderStatus::DrawShadingPattern(CPDF_ShadingPattern* pattern,
 
 void CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
                                        const CFX_Matrix& mtObj2Device) {
-  FX_RECT rect = pShadingObj->GetTransformedBBox(mtObj2Device);
-  FX_RECT clip_box = m_pDevice->GetClipBox();
-  rect.Intersect(clip_box);
+  FX_RECT rect = GetObjectClippedRect(pShadingObj, mtObj2Device);
   if (rect.IsEmpty())
     return;
 
