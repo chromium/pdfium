@@ -75,18 +75,18 @@ void CPDF_Page::ParseContent() {
 }
 
 RetainPtr<CPDF_Object> CPDF_Page::GetMutablePageAttr(const ByteString& name) {
-  return pdfium::WrapRetain(const_cast<CPDF_Object*>(GetPageAttr(name)));
+  return pdfium::WrapRetain(const_cast<CPDF_Object*>(GetPageAttr(name).Get()));
 }
 
-const CPDF_Object* CPDF_Page::GetPageAttr(const ByteString& name) const {
+RetainPtr<const CPDF_Object> CPDF_Page::GetPageAttr(
+    const ByteString& name) const {
   std::set<const CPDF_Dictionary*> visited;
   const CPDF_Dictionary* pPageDict = GetDict();
   while (pPageDict && !pdfium::Contains(visited, pPageDict)) {
     RetainPtr<const CPDF_Object> pObj = pPageDict->GetDirectObjectFor(name);
-    if (pObj) {
-      // TODO(tsepez): return retained objects.
-      return pObj.Get();
-    }
+    if (pObj)
+      return pObj;
+
     visited.insert(pPageDict);
     pPageDict = pPageDict->GetDictFor(pdfium::page_object::kParent).Get();
   }
@@ -95,7 +95,7 @@ const CPDF_Object* CPDF_Page::GetPageAttr(const ByteString& name) const {
 
 CFX_FloatRect CPDF_Page::GetBox(const ByteString& name) const {
   CFX_FloatRect box;
-  const CPDF_Array* pBox = ToArray(GetPageAttr(name));
+  RetainPtr<const CPDF_Array> pBox = ToArray(GetPageAttr(name));
   if (pBox) {
     box = pBox->GetRect();
     box.Normalize();
@@ -177,7 +177,8 @@ CFX_Matrix CPDF_Page::GetDisplayMatrix(const FX_RECT& rect, int iRotate) const {
 }
 
 int CPDF_Page::GetPageRotation() const {
-  const CPDF_Object* pRotate = GetPageAttr(pdfium::page_object::kRotate);
+  RetainPtr<const CPDF_Object> pRotate =
+      GetPageAttr(pdfium::page_object::kRotate);
   int rotate = pRotate ? (pRotate->GetInteger() / 90) % 4 : 0;
   return (rotate < 0) ? (rotate + 4) : rotate;
 }

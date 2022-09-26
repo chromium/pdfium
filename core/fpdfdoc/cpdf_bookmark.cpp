@@ -6,6 +6,7 @@
 
 #include "core/fpdfdoc/cpdf_bookmark.h"
 
+#include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/data_vector.h"

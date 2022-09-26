@@ -33,7 +33,7 @@ class CPDF_Image final : public Retainable {
 
   void ConvertStreamToIndirectObject();
 
-  const CPDF_Dictionary* GetDict() const;
+  RetainPtr<const CPDF_Dictionary> GetDict() const;
   const CPDF_Stream* GetStream() const { return m_pStream.Get(); }
   const CPDF_Dictionary* GetOC() const { return m_pOC.Get(); }
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
