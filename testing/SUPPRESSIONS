@@ -208,10 +208,6 @@ edit_transform.pdf mac * * *
 en_contact.pdf mac * * *
 en_diy.pdf mac * * *
 en_foxit.pdf mac * * *
-
-# TODO(pdfium:1810): Remove after associated bug is fixed
-en_fqa.pdf * * * skia
-
 en_fqa2.pdf mac * * *
 en_introduce.pdf mac * * *
 en_tem.pdf mac * * *
