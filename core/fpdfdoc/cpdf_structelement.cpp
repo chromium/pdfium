@@ -40,9 +40,9 @@ CPDF_StructElement::Kid::Kid(const Kid& that) = default;
 CPDF_StructElement::Kid::~Kid() = default;
 
 CPDF_StructElement::CPDF_StructElement(const CPDF_StructTree* pTree,
-                                       const CPDF_Dictionary* pDict)
+                                       RetainPtr<const CPDF_Dictionary> pDict)
     : m_pTree(pTree),
-      m_pDict(pDict),
+      m_pDict(std::move(pDict)),
       m_Type(GetStructElementType(m_pTree.Get(), m_pDict.Get())) {
   LoadKids(m_pDict.Get());
 }

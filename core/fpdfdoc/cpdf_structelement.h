@@ -57,7 +57,7 @@ class CPDF_StructElement final : public Retainable {
   };
 
   CPDF_StructElement(const CPDF_StructTree* pTree,
-                     const CPDF_Dictionary* pDict);
+                     RetainPtr<const CPDF_Dictionary> pDict);
   ~CPDF_StructElement() override;
 
   void LoadKids(const CPDF_Dictionary* pDict);

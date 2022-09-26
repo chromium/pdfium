@@ -6,6 +6,8 @@
 
 #include "core/fpdfdoc/cpdf_structtree.h"
 
+#include <utility>
+
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -80,15 +82,13 @@ void CPDF_StructTree::LoadPageTree(const CPDF_Dictionary* pPageDict) {
   StructElementMap element_map;
   for (size_t i = 0; i < pParentArray->size(); i++) {
     RetainPtr<const CPDF_Dictionary> pParent = pParentArray->GetDictAt(i);
-    if (pParent) {
-      // TODO(tsepez): pass moved retained object.
-      AddPageNode(pParent.Get(), &element_map, 0);
-    }
+    if (pParent)
+      AddPageNode(std::move(pParent), &element_map, 0);
   }
 }
 
 RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
-    const CPDF_Dictionary* pDict,
+    RetainPtr<const CPDF_Dictionary> pDict,
     StructElementMap* map,
     int nLevel) {
   static constexpr int kStructTreeMaxRecursion = 32;
@@ -103,17 +103,17 @@ RetainPtr<CPDF_StructElement> CPDF_StructTree::AddPageNode(
   (*map)[pDict] = pElement;
   RetainPtr<const CPDF_Dictionary> pParent = pDict->GetDictFor("P");
   if (!pParent || pParent->GetNameFor("Type") == "StructTreeRoot") {
-    if (!AddTopLevelNode(pDict, pElement))
+    if (!AddTopLevelNode(pDict.Get(), pElement))
       map->erase(pDict);
     return pElement;
   }
 
   RetainPtr<CPDF_StructElement> pParentElement =
-      AddPageNode(pParent.Get(), map, nLevel + 1);
+      AddPageNode(std::move(pParent), map, nLevel + 1);
   if (!pParentElement)
     return pElement;
 
-  if (!pParentElement->UpdateKidIfElement(pDict, pElement.Get()))
+  if (!pParentElement->UpdateKidIfElement(pDict.Get(), pElement.Get()))
     map->erase(pDict);
 
   pElement->SetParent(pParentElement.Get());
