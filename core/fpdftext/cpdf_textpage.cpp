@@ -818,7 +818,7 @@ CPDF_TextPage::MarkedContentState CPDF_TextPage::PreMarkedContent(
 
   WideString actText;
   bool bExist = false;
-  const CPDF_Dictionary* pDict = nullptr;
+  RetainPtr<const CPDF_Dictionary> pDict;
   for (size_t i = 0; i < nContentMarks; ++i) {
     const CPDF_ContentMarkItem* item = pMarks->GetItem(i);
     pDict = item->GetParam();
@@ -876,7 +876,7 @@ void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
   WideString actText;
   for (size_t n = 0; n < nContentMarks; ++n) {
     const CPDF_ContentMarkItem* item = pMarks->GetItem(n);
-    const CPDF_Dictionary* pDict = item->GetParam();
+    RetainPtr<const CPDF_Dictionary> pDict = item->GetParam();
     if (pDict)
       actText = pDict->GetUnicodeTextFor("ActualText");
   }

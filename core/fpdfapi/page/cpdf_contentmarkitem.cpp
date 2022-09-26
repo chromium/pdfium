@@ -15,22 +15,21 @@ CPDF_ContentMarkItem::CPDF_ContentMarkItem(ByteString name)
 
 CPDF_ContentMarkItem::~CPDF_ContentMarkItem() = default;
 
-// TODO(tsepez): return retained reference.
-const CPDF_Dictionary* CPDF_ContentMarkItem::GetParam() const {
+RetainPtr<const CPDF_Dictionary> CPDF_ContentMarkItem::GetParam() const {
   switch (m_ParamType) {
     case kPropertiesDict:
-      return m_pPropertiesHolder->GetDictFor(m_PropertyName).Get();
+      return m_pPropertiesHolder->GetDictFor(m_PropertyName);
     case kDirectDict:
-      return m_pDirectDict.Get();
+      return m_pDirectDict;
     case kNone:
     default:
       return nullptr;
   }
 }
 
-CPDF_Dictionary* CPDF_ContentMarkItem::GetParam() {
-  return const_cast<CPDF_Dictionary*>(
-      static_cast<const CPDF_ContentMarkItem*>(this)->GetParam());
+RetainPtr<CPDF_Dictionary> CPDF_ContentMarkItem::GetParam() {
+  return pdfium::WrapRetain(const_cast<CPDF_Dictionary*>(
+      static_cast<const CPDF_ContentMarkItem*>(this)->GetParam().Get()));
 }
 
 void CPDF_ContentMarkItem::SetDirectDict(RetainPtr<CPDF_Dictionary> pDict) {

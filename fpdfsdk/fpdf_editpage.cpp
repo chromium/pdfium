@@ -104,14 +104,14 @@ void CalcBoundingBox(CPDF_PageObject* pPageObj) {
   }
 }
 
-CPDF_Dictionary* GetMarkParamDict(FPDF_PAGEOBJECTMARK mark) {
+RetainPtr<CPDF_Dictionary> GetMarkParamDict(FPDF_PAGEOBJECTMARK mark) {
   CPDF_ContentMarkItem* pMarkItem =
       CPDFContentMarkItemFromFPDFPageObjectMark(mark);
   return pMarkItem ? pMarkItem->GetParam() : nullptr;
 }
 
-CPDF_Dictionary* GetOrCreateMarkParamsDict(FPDF_DOCUMENT document,
-                                           FPDF_PAGEOBJECTMARK mark) {
+RetainPtr<CPDF_Dictionary> GetOrCreateMarkParamsDict(FPDF_DOCUMENT document,
+                                                     FPDF_PAGEOBJECTMARK mark) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
@@ -121,15 +121,11 @@ CPDF_Dictionary* GetOrCreateMarkParamsDict(FPDF_DOCUMENT document,
   if (!pMarkItem)
     return nullptr;
 
-  CPDF_Dictionary* pParams = pMarkItem->GetParam();
-
-  // If the Params dict does not exist, create a new one.
+  RetainPtr<CPDF_Dictionary> pParams = pMarkItem->GetParam();
   if (!pParams) {
-    auto new_dict = pDoc->New<CPDF_Dictionary>();
-    pParams = new_dict.Get();
-    pMarkItem->SetDirectDict(std::move(new_dict));
+    pParams = pDoc->New<CPDF_Dictionary>();
+    pMarkItem->SetDirectDict(pParams);
   }
-
   return pParams;
 }
 
@@ -366,7 +362,7 @@ FPDFPageObjMark_CountParams(FPDF_PAGEOBJECTMARK mark) {
   if (!pMarkItem)
     return -1;
 
-  const CPDF_Dictionary* pParams = pMarkItem->GetParam();
+  RetainPtr<const CPDF_Dictionary> pParams = pMarkItem->GetParam();
   return pParams ? fxcrt::CollectionSize<int>(*pParams) : 0;
 }
 
@@ -379,7 +375,7 @@ FPDFPageObjMark_GetParamKey(FPDF_PAGEOBJECTMARK mark,
   if (!out_buflen)
     return false;
 
-  const CPDF_Dictionary* pParams = GetMarkParamDict(mark);
+  RetainPtr<const CPDF_Dictionary> pParams = GetMarkParamDict(mark);
   if (!pParams)
     return false;
 
@@ -399,7 +395,7 @@ FPDFPageObjMark_GetParamKey(FPDF_PAGEOBJECTMARK mark,
 FPDF_EXPORT FPDF_OBJECT_TYPE FPDF_CALLCONV
 FPDFPageObjMark_GetParamValueType(FPDF_PAGEOBJECTMARK mark,
                                   FPDF_BYTESTRING key) {
-  const CPDF_Dictionary* pParams = GetMarkParamDict(mark);
+  RetainPtr<const CPDF_Dictionary> pParams = GetMarkParamDict(mark);
   if (!pParams)
     return FPDF_OBJECT_UNKNOWN;
 
@@ -414,7 +410,7 @@ FPDFPageObjMark_GetParamIntValue(FPDF_PAGEOBJECTMARK mark,
   if (!out_value)
     return false;
 
-  const CPDF_Dictionary* pParams = GetMarkParamDict(mark);
+  RetainPtr<const CPDF_Dictionary> pParams = GetMarkParamDict(mark);
   if (!pParams)
     return false;
 
@@ -435,7 +431,7 @@ FPDFPageObjMark_GetParamStringValue(FPDF_PAGEOBJECTMARK mark,
   if (!out_buflen)
     return false;
 
-  const CPDF_Dictionary* pParams = GetMarkParamDict(mark);
+  RetainPtr<const CPDF_Dictionary> pParams = GetMarkParamDict(mark);
   if (!pParams)
     return false;
 
@@ -457,7 +453,7 @@ FPDFPageObjMark_GetParamBlobValue(FPDF_PAGEOBJECTMARK mark,
   if (!out_buflen)
     return false;
 
-  const CPDF_Dictionary* pParams = GetMarkParamDict(mark);
+  RetainPtr<const CPDF_Dictionary> pParams = GetMarkParamDict(mark);
   if (!pParams)
     return false;
 
@@ -516,7 +512,8 @@ FPDFPageObjMark_SetIntParam(FPDF_DOCUMENT document,
   if (!pPageObj || !PageObjectContainsMark(pPageObj, mark))
     return false;
 
-  CPDF_Dictionary* pParams = GetOrCreateMarkParamsDict(document, mark);
+  RetainPtr<CPDF_Dictionary> pParams =
+      GetOrCreateMarkParamsDict(document, mark);
   if (!pParams)
     return false;
 
@@ -535,7 +532,8 @@ FPDFPageObjMark_SetStringParam(FPDF_DOCUMENT document,
   if (!pPageObj || !PageObjectContainsMark(pPageObj, mark))
     return false;
 
-  CPDF_Dictionary* pParams = GetOrCreateMarkParamsDict(document, mark);
+  RetainPtr<CPDF_Dictionary> pParams =
+      GetOrCreateMarkParamsDict(document, mark);
   if (!pParams)
     return false;
 
@@ -555,7 +553,8 @@ FPDFPageObjMark_SetBlobParam(FPDF_DOCUMENT document,
   if (!pPageObj || !PageObjectContainsMark(pPageObj, mark))
     return false;
 
-  CPDF_Dictionary* pParams = GetOrCreateMarkParamsDict(document, mark);
+  RetainPtr<CPDF_Dictionary> pParams =
+      GetOrCreateMarkParamsDict(document, mark);
   if (!pParams)
     return false;
 
@@ -576,7 +575,7 @@ FPDFPageObjMark_RemoveParam(FPDF_PAGEOBJECT page_object,
   if (!pPageObj)
     return false;
 
-  CPDF_Dictionary* pParams = GetMarkParamDict(mark);
+  RetainPtr<CPDF_Dictionary> pParams = GetMarkParamDict(mark);
   if (!pParams)
     return false;
 

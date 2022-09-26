@@ -118,7 +118,7 @@ const CPDF_ContentMarkItem* CPDF_ContentMarks::MarkData::GetItem(
 
 int CPDF_ContentMarks::MarkData::GetMarkedContentID() const {
   for (const auto& pMark : m_Marks) {
-    const CPDF_Dictionary* pDict = pMark->GetParam();
+    RetainPtr<const CPDF_Dictionary> pDict = pMark->GetParam();
     if (pDict && pDict->KeyExist("MCID"))
       return pDict->GetIntegerFor("MCID");
   }

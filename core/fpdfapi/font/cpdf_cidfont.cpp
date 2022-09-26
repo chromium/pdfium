@@ -223,7 +223,7 @@ bool IsMetricForCID(const int* pEntry, uint16_t cid) {
   return pEntry[0] <= cid && pEntry[1] >= cid;
 }
 
-void LoadMetricsArray(const CPDF_Array* pArray,
+void LoadMetricsArray(RetainPtr<const CPDF_Array> pArray,
                       std::vector<int>* result,
                       int nElements) {
   int width_status = 0;
@@ -475,10 +475,9 @@ bool CPDF_CIDFont::Load() {
   }
   m_DefaultWidth = pCIDFontDict->GetIntegerFor("DW", 1000);
   RetainPtr<const CPDF_Array> pWidthArray = pCIDFontDict->GetArrayFor("W");
-  if (pWidthArray) {
-    // TODO(tsepez): pass retained argument.
-    LoadMetricsArray(pWidthArray.Get(), &m_WidthList, 1);
-  }
+  if (pWidthArray)
+    LoadMetricsArray(std::move(pWidthArray), &m_WidthList, 1);
+
   if (!IsEmbedded())
     LoadSubstFont();
 
@@ -498,10 +497,9 @@ bool CPDF_CIDFont::Load() {
   CheckFontMetrics();
   if (IsVertWriting()) {
     RetainPtr<const CPDF_Array> pWidth2Array = pCIDFontDict->GetArrayFor("W2");
-    if (pWidth2Array) {
-      // TODO(tsepez): pass retained argument.
-      LoadMetricsArray(pWidth2Array.Get(), &m_VertMetrics, 3);
-    }
+    if (pWidth2Array)
+      LoadMetricsArray(std::move(pWidth2Array), &m_VertMetrics, 3);
+
     RetainPtr<const CPDF_Array> pDefaultArray =
         pCIDFontDict->GetArrayFor("DW2");
     if (pDefaultArray) {
