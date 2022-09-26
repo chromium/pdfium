@@ -103,11 +103,11 @@ class CPDF_RenderStatus {
   FX_ARGB GetFillArgb(CPDF_PageObject* pObj) const;
   FX_ARGB GetFillArgbForType3(CPDF_PageObject* pObj) const;
 
-  void DrawTilingPattern(CPDF_TilingPattern* pPattern,
+  void DrawTilingPattern(CPDF_TilingPattern* pattern,
                          CPDF_PageObject* pPageObj,
                          const CFX_Matrix& mtObj2Device,
                          bool stroke);
-  void DrawShadingPattern(CPDF_ShadingPattern* pPattern,
+  void DrawShadingPattern(CPDF_ShadingPattern* pattern,
                           const CPDF_PageObject* pPageObj,
                           const CFX_Matrix& mtObj2Device,
                           bool stroke);

@@ -1189,11 +1189,11 @@ void CPDF_RenderStatus::ProcessShading(const CPDF_ShadingObject* pShadingObj,
       m_Options);
 }
 
-void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
+void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pattern,
                                           CPDF_PageObject* pPageObj,
                                           const CFX_Matrix& mtObj2Device,
                                           bool stroke) {
-  const std::unique_ptr<CPDF_Form> pPatternForm = pPattern->Load(pPageObj);
+  const std::unique_ptr<CPDF_Form> pPatternForm = pattern->Load(pPageObj);
   if (!pPatternForm)
     return;
 
@@ -1209,7 +1209,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pPattern,
     return;
 
   RetainPtr<CFX_DIBitmap> pScreen =
-      CPDF_RenderTiling::Draw(this, pPageObj, pPattern, pPatternForm.get(),
+      CPDF_RenderTiling::Draw(this, pPageObj, pattern, pPatternForm.get(),
                               mtObj2Device, clip_box, stroke);
   if (!pScreen)
     return;
