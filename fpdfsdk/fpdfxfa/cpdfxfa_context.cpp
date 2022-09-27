@@ -16,7 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_seekablemultistream.h"
 #include "core/fxcrt/autonuller.h"
-#include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fixed_zeroed_data_vector.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
@@ -343,18 +343,19 @@ WideString CPDFXFA_Context::Response(const WideString& wsQuestion,
   if (!m_pFormFillEnv)
     return WideString();
 
-  int nLength = 2048;
-  DataVector<uint8_t> pBuff(nLength);
-  nLength = m_pFormFillEnv->JS_appResponse(wsQuestion, wsTitle, wsDefaultAnswer,
-                                           WideString(), bMark, pBuff);
-  if (nLength <= 0)
+  int byte_length = 2048;
+  FixedZeroedDataVector<uint16_t> buffer(byte_length / sizeof(uint16_t));
+  pdfium::span<uint16_t> buffer_span = buffer.writable_span();
+  byte_length = m_pFormFillEnv->JS_appResponse(
+      wsQuestion, wsTitle, wsDefaultAnswer, WideString(), bMark,
+      pdfium::as_writable_bytes(buffer_span));
+  if (byte_length <= 0)
     return WideString();
 
-  nLength = std::min(2046, nLength);
-  pBuff[nLength] = 0;
-  pBuff[nLength + 1] = 0;
-  return WideString::FromUTF16LE(reinterpret_cast<uint16_t*>(pBuff.data()),
-                                 nLength / sizeof(uint16_t));
+  byte_length = std::min(2046, byte_length);
+  buffer_span[byte_length / sizeof(uint16_t)] = 0;
+  return WideString::FromUTF16LE(buffer_span.data(),
+                                 byte_length / sizeof(uint16_t));
 }
 
 RetainPtr<IFX_SeekableReadStream> CPDFXFA_Context::DownloadURL(
