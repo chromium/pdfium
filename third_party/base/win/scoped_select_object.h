@@ -8,7 +8,6 @@
 #include <windows.h>
 
 #include "third_party/base/check.h"
-#include "third_party/base/compiler_specific.h"
 
 namespace pdfium {
 namespace base {
@@ -29,8 +28,7 @@ class ScopedSelectObject {
   ScopedSelectObject& operator=(const ScopedSelectObject&) = delete;
 
   ~ScopedSelectObject() {
-    HGDIOBJ object = SelectObject(hdc_, oldobj_);
-    ALLOW_UNUSED_LOCAL(object);
+    [[maybe_unused]] HGDIOBJ object = SelectObject(hdc_, oldobj_);
     DCHECK((GetObjectType(oldobj_) != OBJ_REGION && object) ||
            (GetObjectType(oldobj_) == OBJ_REGION && object != HGDI_ERROR));
   }
