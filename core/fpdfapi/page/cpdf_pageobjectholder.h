@@ -14,6 +14,7 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_transparency.h"
@@ -72,7 +73,9 @@ class CPDF_PageObjectHolder {
   RetainPtr<CPDF_Dictionary> GetMutableDict() { return m_pDict; }
   const CPDF_Dictionary* GetResources() const { return m_pResources.Get(); }
   RetainPtr<CPDF_Dictionary> GetMutableResources() { return m_pResources; }
-  void SetResources(CPDF_Dictionary* pDict) { m_pResources.Reset(pDict); }
+  void SetResources(RetainPtr<CPDF_Dictionary> pDict) {
+    m_pResources = std::move(pDict);
+  }
   const CPDF_Dictionary* GetPageResources() const {
     return m_pPageResources.Get();
   }

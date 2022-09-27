@@ -49,10 +49,10 @@ CPDF_PageContentManager::CPDF_PageContentManager(
 
 CPDF_PageContentManager::~CPDF_PageContentManager() = default;
 
-// TODO(tsepez): return retained reference.
-CPDF_Stream* CPDF_PageContentManager::GetStreamByIndex(size_t stream_index) {
+RetainPtr<CPDF_Stream> CPDF_PageContentManager::GetStreamByIndex(
+    size_t stream_index) {
   if (contents_stream_)
-    return stream_index == 0 ? contents_stream_.Get() : nullptr;
+    return stream_index == 0 ? contents_stream_ : nullptr;
 
   if (!contents_array_)
     return nullptr;
@@ -62,7 +62,7 @@ CPDF_Stream* CPDF_PageContentManager::GetStreamByIndex(size_t stream_index) {
   if (!stream_reference)
     return nullptr;
 
-  return stream_reference->GetMutableDirect()->AsMutableStream();
+  return ToStream(stream_reference->GetMutableDirect());
 }
 
 size_t CPDF_PageContentManager::AddStream(fxcrt::ostringstream* buf) {
