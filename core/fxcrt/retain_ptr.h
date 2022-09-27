@@ -60,7 +60,20 @@ class RetainPtr {
     Unleak(that.Leak());
   }
 
+  // Assign a RetainPtr from nullptr;
+  RetainPtr& operator=(std::nullptr_t) noexcept {
+    Reset();
+    return *this;
+  }
+
+  // Assign a RetainPtr from a raw ptr.
+  RetainPtr& operator=(T* that) noexcept {
+    Reset(that);
+    return *this;
+  }
+
   // Copy-assign a RetainPtr.
+  // Required in addition to copy conversion assignment below.
   RetainPtr& operator=(const RetainPtr& that) {
     if (*this != that)
       Reset(that.Get());
@@ -68,7 +81,27 @@ class RetainPtr {
   }
 
   // Move-assign a RetainPtr. After assignment, |that| will be NULL.
+  // Required in addition to move conversion assignment below.
   RetainPtr& operator=(RetainPtr&& that) noexcept {
+    Unleak(that.Leak());
+    return *this;
+  }
+
+  // Copy-convert assign a RetainPtr.
+  template <class U,
+            typename = typename std::enable_if<
+                std::is_convertible<U*, T*>::value>::type>
+  RetainPtr& operator=(const RetainPtr<U>& that) {
+    if (*this != that)
+      Reset(that.Get());
+    return *this;
+  }
+
+  // Move-convert assign a RetainPtr. After assignment, |that| will be NULL.
+  template <class U,
+            typename = typename std::enable_if<
+                std::is_convertible<U*, T*>::value>::type>
+  RetainPtr& operator=(RetainPtr<U>&& that) noexcept {
     Unleak(that.Leak());
     return *this;
   }

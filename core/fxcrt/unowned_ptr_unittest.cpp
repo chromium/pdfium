@@ -64,9 +64,102 @@ void ReleaseDangling() {
 
 }  // namespace
 
-TEST(UnownedPtr, Null) {
+TEST(UnownedPtr, DefaultCtor) {
   UnownedPtr<Clink> ptr;
   EXPECT_FALSE(ptr.Get());
+}
+
+TEST(UnownedPtr, NullptrCtor) {
+  UnownedPtr<Clink> ptr(nullptr);
+  EXPECT_FALSE(ptr.Get());
+}
+
+TEST(UnownedPtr, RawCtor) {
+  auto obj = std::make_unique<Clink>();
+  UnownedPtr<Clink> ptr(obj.get());
+  EXPECT_EQ(obj.get(), ptr.Get());
+}
+
+TEST(UnownedPtr, CopyCtor) {
+  std::unique_ptr<Clink> obj = std::make_unique<Clink>();
+  UnownedPtr<Clink> ptr1(obj.get());
+  UnownedPtr<Clink> ptr2(ptr1);
+  EXPECT_EQ(obj.get(), ptr2);
+  EXPECT_EQ(obj.get(), ptr1);
+}
+
+TEST(UnownedPtr, MoveCtor) {
+  std::unique_ptr<Clink> obj = std::make_unique<Clink>();
+  UnownedPtr<Clink> ptr1(obj.get());
+  UnownedPtr<Clink> ptr2(std::move(ptr1));
+  EXPECT_EQ(obj.get(), ptr2);
+  EXPECT_FALSE(ptr1);
+}
+
+TEST(UnownedPtr, CopyConversionCtor) {
+  std::unique_ptr<Clink> obj = std::make_unique<Clink>();
+  UnownedPtr<Clink> ptr1(obj.get());
+  UnownedPtr<const Clink> ptr2(ptr1);
+  EXPECT_EQ(obj.get(), ptr2);
+  EXPECT_EQ(obj.get(), ptr1);
+}
+
+TEST(UnownedPtr, MoveConversionCtor) {
+  std::unique_ptr<Clink> obj = std::make_unique<Clink>();
+  UnownedPtr<Clink> ptr1(obj.get());
+  UnownedPtr<const Clink> ptr2(std::move(ptr1));
+  EXPECT_EQ(obj.get(), ptr2);
+  EXPECT_FALSE(ptr1);
+}
+
+TEST(UnownedPtr, NullptrAssign) {
+  std::unique_ptr<Clink> obj = std::make_unique<Clink>();
+  UnownedPtr<Clink> ptr(obj.get());
+  ptr = nullptr;
+  EXPECT_FALSE(ptr);
+}
+
+TEST(UnownedPtr, RawAssign) {
+  std::unique_ptr<Clink> obj = std::make_unique<Clink>();
+  UnownedPtr<Clink> ptr;
+  ptr = obj.get();
+  EXPECT_EQ(obj.get(), ptr.Get());
+}
+
+TEST(UnownedPtr, CopyAssign) {
+  std::unique_ptr<Clink> obj = std::make_unique<Clink>();
+  UnownedPtr<Clink> ptr1(obj.get());
+  UnownedPtr<Clink> ptr2;
+  ptr2 = ptr1;
+  EXPECT_EQ(obj.get(), ptr1.Get());
+  EXPECT_EQ(obj.get(), ptr2.Get());
+}
+
+TEST(UnownedPtr, MoveAssign) {
+  std::unique_ptr<Clink> obj = std::make_unique<Clink>();
+  UnownedPtr<Clink> ptr1(obj.get());
+  UnownedPtr<Clink> ptr2;
+  ptr2 = std::move(ptr1);
+  EXPECT_FALSE(ptr1);
+  EXPECT_EQ(obj.get(), ptr2.Get());
+}
+
+TEST(UnownedPtr, CopyConversionAssign) {
+  std::unique_ptr<Clink> obj = std::make_unique<Clink>();
+  UnownedPtr<Clink> ptr1(obj.get());
+  UnownedPtr<const Clink> ptr2;
+  ptr2 = ptr1;
+  EXPECT_EQ(obj.get(), ptr1.Get());
+  EXPECT_EQ(obj.get(), ptr2.Get());
+}
+
+TEST(UnownedPtr, MoveConversionAssign) {
+  std::unique_ptr<Clink> obj = std::make_unique<Clink>();
+  UnownedPtr<Clink> ptr1(obj.get());
+  UnownedPtr<const Clink> ptr2;
+  ptr2 = std::move(ptr1);
+  EXPECT_FALSE(ptr1);
+  EXPECT_EQ(obj.get(), ptr2.Get());
 }
 
 TEST(UnownedPtr, PtrOk) {
@@ -83,22 +176,6 @@ TEST(UnownedPtr, PtrNotOk) {
 #else
   DeleteDangling();
 #endif
-}
-
-TEST(UnownedPtr, CopyCtor) {
-  std::unique_ptr<Clink> obj = std::make_unique<Clink>();
-  UnownedPtr<Clink> ptr1(obj.get());
-  UnownedPtr<Clink> ptr2(ptr1);
-  EXPECT_TRUE(ptr2);
-  EXPECT_TRUE(ptr1);
-}
-
-TEST(UnownedPtr, CopyConversionCtor) {
-  std::unique_ptr<Clink> obj = std::make_unique<Clink>();
-  UnownedPtr<Clink> ptr1(obj.get());
-  UnownedPtr<const Clink> ptr2(ptr1);
-  EXPECT_TRUE(ptr2);
-  EXPECT_TRUE(ptr1);
 }
 
 TEST(UnownedPtr, ResetOk) {
@@ -141,41 +218,6 @@ TEST(UnownedPtr, ReleaseOk) {
     auto ptr1 = std::make_unique<Clink>();
     ptr2->next_ = ptr1.get();
     ptr2->next_.Release();
-  }
-}
-
-TEST(UnownedPtr, MoveCtorOk) {
-  UnownedPtr<Clink> outer;
-  {
-    auto owned = std::make_unique<Clink>();
-    outer = owned.get();
-    UnownedPtr<Clink> inner(std::move(outer));
-    EXPECT_FALSE(outer.Get());
-    EXPECT_EQ(owned.get(), inner.Get());
-  }
-}
-
-TEST(UnownedPtr, MoveConversionCtorOk) {
-  UnownedPtr<Clink> outer;
-  {
-    auto owned = std::make_unique<Clink>();
-    outer = owned.get();
-    UnownedPtr<const Clink> inner(std::move(outer));
-    EXPECT_FALSE(outer.Get());
-  }
-}
-
-TEST(UnownedPtr, MoveConversionAssignOk) {
-  UnownedPtr<Clink> outer;
-  {
-    auto owned = std::make_unique<Clink>();
-    outer = owned.get();
-    // TODO(tsepez): disambiguate ctors and actually const-convert.
-    // UnownedPtr<const Clink> inner;
-    UnownedPtr<Clink> inner;
-    inner = std::move(outer);
-    EXPECT_FALSE(outer);
-    EXPECT_EQ(owned.get(), inner.Get());
   }
 }
 

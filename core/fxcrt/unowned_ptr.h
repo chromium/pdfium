@@ -63,7 +63,7 @@ class UnownedPtr {
   // Required in addition to move conversion constructor below.
   constexpr UnownedPtr(UnownedPtr&& that) noexcept : m_pObj(that.Release()) {}
 
-  // Copy conversion constructor.
+  // Copy-conversion constructor.
   template <class U,
             typename = typename std::enable_if<
                 std::is_convertible<U*, T*>::value>::type>
@@ -77,13 +77,20 @@ class UnownedPtr {
     Reset(that.Release());
   }
 
-  // Assing an UnownedPtr from a raw ptr.
+  // Assign an UnownedPtr from nullptr.
+  UnownedPtr& operator=(std::nullptr_t) noexcept {
+    Reset();
+    return *this;
+  }
+
+  // Assign an UnownedPtr from a raw ptr.
   UnownedPtr& operator=(T* that) noexcept {
     Reset(that);
     return *this;
   }
 
   // Copy-assign an UnownedPtr.
+  // Required in addition to copy conversion assignment below.
   UnownedPtr& operator=(const UnownedPtr& that) noexcept {
     if (*this != that)
       Reset(that.Get());
@@ -91,7 +98,28 @@ class UnownedPtr {
   }
 
   // Move-assign an UnownedPtr. After assignment, |that| will be NULL.
+  // Required in addition to move conversion assignment below.
   UnownedPtr& operator=(UnownedPtr&& that) noexcept {
+    if (*this != that)
+      Reset(that.Release());
+    return *this;
+  }
+
+  // Copy-convert assignment.
+  template <class U,
+            typename = typename std::enable_if<
+                std::is_convertible<U*, T*>::value>::type>
+  UnownedPtr& operator=(const UnownedPtr<U>& that) noexcept {
+    if (*this != that)
+      Reset(that.Get());
+    return *this;
+  }
+
+  // Move-convert assignment. After assignment, |that| will be NULL.
+  template <class U,
+            typename = typename std::enable_if<
+                std::is_convertible<U*, T*>::value>::type>
+  UnownedPtr& operator=(UnownedPtr<U>&& that) noexcept {
     if (*this != that)
       Reset(that.Release());
     return *this;

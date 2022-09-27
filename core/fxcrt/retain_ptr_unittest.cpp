@@ -36,12 +36,17 @@ class NoLinearSearchSet : public std::set<T, C> {
 
 }  // namespace
 
-TEST(RetainPtr, Null) {
+TEST(RetainPtr, DefaultCtor) {
   RetainPtr<PseudoRetainable> ptr;
   EXPECT_FALSE(ptr.Get());
 }
 
-TEST(RetainPtr, Normal) {
+TEST(RetainPtr, NullptrCtor) {
+  RetainPtr<PseudoRetainable> ptr(nullptr);
+  EXPECT_FALSE(ptr.Get());
+}
+
+TEST(RetainPtr, RawCtor) {
   PseudoRetainable obj;
   {
     RetainPtr<PseudoRetainable> ptr(&obj);
@@ -59,22 +64,6 @@ TEST(RetainPtr, CopyCtor) {
     RetainPtr<PseudoRetainable> ptr1(&obj);
     {
       RetainPtr<PseudoRetainable> ptr2(ptr1);
-      EXPECT_EQ(2, obj.retain_count());
-      EXPECT_EQ(0, obj.release_count());
-    }
-    EXPECT_EQ(2, obj.retain_count());
-    EXPECT_EQ(1, obj.release_count());
-  }
-  EXPECT_EQ(2, obj.retain_count());
-  EXPECT_EQ(2, obj.release_count());
-}
-
-TEST(RetainPtr, CopyConversionCtor) {
-  PseudoRetainable obj;
-  {
-    RetainPtr<PseudoRetainable> ptr1(&obj);
-    {
-      RetainPtr<const PseudoRetainable> ptr2(ptr1);
       EXPECT_EQ(2, obj.retain_count());
       EXPECT_EQ(0, obj.release_count());
     }
@@ -103,6 +92,22 @@ TEST(RetainPtr, MoveCtor) {
   EXPECT_EQ(1, obj.release_count());
 }
 
+TEST(RetainPtr, CopyConversionCtor) {
+  PseudoRetainable obj;
+  {
+    RetainPtr<PseudoRetainable> ptr1(&obj);
+    {
+      RetainPtr<const PseudoRetainable> ptr2(ptr1);
+      EXPECT_EQ(2, obj.retain_count());
+      EXPECT_EQ(0, obj.release_count());
+    }
+    EXPECT_EQ(2, obj.retain_count());
+    EXPECT_EQ(1, obj.release_count());
+  }
+  EXPECT_EQ(2, obj.retain_count());
+  EXPECT_EQ(2, obj.release_count());
+}
+
 TEST(RetainPtr, MoveConversionCtor) {
   PseudoRetainable obj;
   {
@@ -110,6 +115,108 @@ TEST(RetainPtr, MoveConversionCtor) {
     {
       RetainPtr<const PseudoRetainable> ptr2(std::move(ptr1));
       EXPECT_FALSE(ptr1.Get());
+      EXPECT_EQ(&obj, ptr2.Get());
+      EXPECT_EQ(1, obj.retain_count());
+      EXPECT_EQ(0, obj.release_count());
+    }
+    EXPECT_EQ(1, obj.retain_count());
+    EXPECT_EQ(1, obj.release_count());
+  }
+  EXPECT_EQ(1, obj.retain_count());
+  EXPECT_EQ(1, obj.release_count());
+}
+
+TEST(RetainPtr, NullptrAssign) {
+  PseudoRetainable obj;
+  RetainPtr<PseudoRetainable> ptr(&obj);
+  ptr = nullptr;
+  EXPECT_FALSE(ptr);
+}
+
+TEST(RetainPtr, RawAssign) {
+  PseudoRetainable obj;
+  RetainPtr<PseudoRetainable> ptr;
+  ptr = &obj;
+  EXPECT_EQ(&obj, ptr);
+}
+
+TEST(RetainPtr, CopyAssign) {
+  PseudoRetainable obj;
+  {
+    RetainPtr<PseudoRetainable> ptr(&obj);
+    {
+      RetainPtr<PseudoRetainable> ptr2;
+      ptr2 = ptr;
+      EXPECT_EQ(2, obj.retain_count());
+      EXPECT_EQ(0, obj.release_count());
+    }
+    {
+      // Test assignment from wrapped underlying type.
+      RetainPtr<PseudoRetainable> ptr2;
+      ptr2 = pdfium::WrapRetain(ptr.Get());
+      EXPECT_EQ(3, obj.retain_count());
+      EXPECT_EQ(1, obj.release_count());
+    }
+    EXPECT_EQ(3, obj.retain_count());
+    EXPECT_EQ(2, obj.release_count());
+  }
+  EXPECT_EQ(3, obj.retain_count());
+  EXPECT_EQ(3, obj.release_count());
+}
+
+TEST(RetainPtr, MoveAssign) {
+  PseudoRetainable obj;
+  {
+    RetainPtr<PseudoRetainable> ptr1(&obj);
+    {
+      RetainPtr<PseudoRetainable> ptr2;
+      EXPECT_EQ(&obj, ptr1.Get());
+      EXPECT_FALSE(ptr2.Get());
+      ptr2 = std::move(ptr1);
+      EXPECT_FALSE(ptr1.Get());
+      EXPECT_EQ(&obj, ptr2.Get());
+      EXPECT_EQ(1, obj.retain_count());
+      EXPECT_EQ(0, obj.release_count());
+    }
+    EXPECT_EQ(1, obj.retain_count());
+    EXPECT_EQ(1, obj.release_count());
+  }
+  EXPECT_EQ(1, obj.retain_count());
+  EXPECT_EQ(1, obj.release_count());
+}
+
+TEST(RetainPtr, CopyConvertAssign) {
+  PseudoRetainable obj;
+  {
+    RetainPtr<PseudoRetainable> ptr(&obj);
+    {
+      RetainPtr<const PseudoRetainable> ptr2;
+      ptr2 = ptr;
+      EXPECT_EQ(2, obj.retain_count());
+      EXPECT_EQ(0, obj.release_count());
+    }
+    {
+      // Test assignment from wrapped underlying type.
+      RetainPtr<const PseudoRetainable> ptr2;
+      ptr2 = pdfium::WrapRetain(ptr.Get());
+      EXPECT_EQ(3, obj.retain_count());
+      EXPECT_EQ(1, obj.release_count());
+    }
+    EXPECT_EQ(3, obj.retain_count());
+    EXPECT_EQ(2, obj.release_count());
+  }
+  EXPECT_EQ(3, obj.retain_count());
+  EXPECT_EQ(3, obj.release_count());
+}
+
+TEST(RetainPtr, MoveConvertAssign) {
+  PseudoRetainable obj;
+  {
+    RetainPtr<PseudoRetainable> ptr1(&obj);
+    {
+      RetainPtr<const PseudoRetainable> ptr2;
+      ptr2 = std::move(ptr1);
+      EXPECT_FALSE(ptr1);
       EXPECT_EQ(&obj, ptr2.Get());
       EXPECT_EQ(1, obj.retain_count());
       EXPECT_EQ(0, obj.release_count());
@@ -221,94 +328,6 @@ TEST(RetainPtr, SwapNull) {
   }
   EXPECT_EQ(1, obj1.retain_count());
   EXPECT_EQ(1, obj1.release_count());
-}
-
-TEST(RetainPtr, Assign) {
-  PseudoRetainable obj;
-  {
-    RetainPtr<PseudoRetainable> ptr(&obj);
-    {
-      RetainPtr<PseudoRetainable> ptr2;
-      ptr2 = ptr;
-      EXPECT_EQ(2, obj.retain_count());
-      EXPECT_EQ(0, obj.release_count());
-    }
-    {
-      // Test assignment from wrapped underlying type.
-      RetainPtr<PseudoRetainable> ptr2;
-      ptr2 = pdfium::WrapRetain(ptr.Get());
-      EXPECT_EQ(3, obj.retain_count());
-      EXPECT_EQ(1, obj.release_count());
-    }
-    EXPECT_EQ(3, obj.retain_count());
-    EXPECT_EQ(2, obj.release_count());
-  }
-  EXPECT_EQ(3, obj.retain_count());
-  EXPECT_EQ(3, obj.release_count());
-}
-
-TEST(RetainPtr, AssignConvert) {
-  PseudoRetainable obj;
-  {
-    RetainPtr<PseudoRetainable> ptr(&obj);
-    {
-      RetainPtr<const PseudoRetainable> ptr2;
-      ptr2 = ptr;
-      EXPECT_EQ(2, obj.retain_count());
-      EXPECT_EQ(0, obj.release_count());
-    }
-    {
-      // Test assignment from wrapped underlying type.
-      RetainPtr<const PseudoRetainable> ptr2;
-      ptr2 = pdfium::WrapRetain(ptr.Get());
-      EXPECT_EQ(3, obj.retain_count());
-      EXPECT_EQ(1, obj.release_count());
-    }
-    EXPECT_EQ(3, obj.retain_count());
-    EXPECT_EQ(2, obj.release_count());
-  }
-  EXPECT_EQ(3, obj.retain_count());
-  EXPECT_EQ(3, obj.release_count());
-}
-
-TEST(RetainPtr, MoveAssign) {
-  PseudoRetainable obj;
-  {
-    RetainPtr<PseudoRetainable> ptr1(&obj);
-    {
-      RetainPtr<PseudoRetainable> ptr2;
-      EXPECT_EQ(&obj, ptr1.Get());
-      EXPECT_FALSE(ptr2.Get());
-      ptr2 = std::move(ptr1);
-      EXPECT_FALSE(ptr1.Get());
-      EXPECT_EQ(&obj, ptr2.Get());
-      EXPECT_EQ(1, obj.retain_count());
-      EXPECT_EQ(0, obj.release_count());
-    }
-    EXPECT_EQ(1, obj.retain_count());
-    EXPECT_EQ(1, obj.release_count());
-  }
-  EXPECT_EQ(1, obj.retain_count());
-  EXPECT_EQ(1, obj.release_count());
-}
-
-TEST(RetainPtr, MoveAssignConvert) {
-  PseudoRetainable obj;
-  {
-    RetainPtr<PseudoRetainable> ptr1(&obj);
-    {
-      RetainPtr<const PseudoRetainable> ptr2;
-      ptr2 = std::move(ptr1);
-      EXPECT_FALSE(ptr1);
-      EXPECT_EQ(&obj, ptr2.Get());
-      EXPECT_EQ(1, obj.retain_count());
-      EXPECT_EQ(0, obj.release_count());
-    }
-    EXPECT_EQ(1, obj.retain_count());
-    EXPECT_EQ(1, obj.release_count());
-  }
-  EXPECT_EQ(1, obj.retain_count());
-  EXPECT_EQ(1, obj.release_count());
 }
 
 TEST(RetainPtr, Equals) {
