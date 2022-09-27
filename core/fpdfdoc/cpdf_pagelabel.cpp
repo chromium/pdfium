@@ -6,6 +6,8 @@
 
 #include "core/fpdfdoc/cpdf_pagelabel.h"
 
+#include <utility>
+
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
@@ -94,13 +96,11 @@ absl::optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
   if (!pLabels)
     return absl::nullopt;
 
-  // TODO(tsepez): pass retained object.
-  CPDF_NumberTree numberTree(pLabels.Get());
+  CPDF_NumberTree numberTree(std::move(pLabels));
   RetainPtr<const CPDF_Object> pValue;
   int n = nPage;
   while (n >= 0) {
-    // TODO(tsepez): make LookupValue() return retained object.
-    pValue = pdfium::WrapRetain(numberTree.LookupValue(n));
+    pValue = numberTree.LookupValue(n);
     if (pValue)
       break;
     n--;

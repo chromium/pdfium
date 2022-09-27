@@ -64,13 +64,13 @@ void CPDF_StructTree::LoadPageTree(const CPDF_Dictionary* pPageDict) {
 
   m_Kids.clear();
   m_Kids.resize(dwKids);
+
   RetainPtr<const CPDF_Dictionary> pParentTree =
       m_pTreeRoot->GetDictFor("ParentTree");
   if (!pParentTree)
     return;
 
-  // TODO(tsepez): pass retained object.
-  CPDF_NumberTree parent_tree(pParentTree.Get());
+  CPDF_NumberTree parent_tree(std::move(pParentTree));
   int parents_id = pPageDict->GetIntegerFor("StructParents", -1);
   if (parents_id < 0)
     return;
