@@ -69,7 +69,7 @@ class CPDFSDK_InteractiveForm final
   void DoAction_ResetForm(const CPDF_Action& action);
 
   std::vector<CPDF_FormField*> GetFieldFromObjects(
-      const std::vector<const CPDF_Object*>& objects) const;
+      const std::vector<RetainPtr<const CPDF_Object>>& objects) const;
   bool SubmitFields(const WideString& csDestination,
                     const std::vector<CPDF_FormField*>& fields,
                     bool bIncludeOrExclude,

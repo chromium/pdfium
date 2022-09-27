@@ -49,8 +49,7 @@ CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const {
 }
 
 CPDF_Action CPDF_Bookmark::GetAction() const {
-  // TODO(tsepez): pass retained object.
-  return CPDF_Action(m_pDict ? m_pDict->GetDictFor("A").Get() : nullptr);
+  return CPDF_Action(m_pDict ? m_pDict->GetDictFor("A") : nullptr);
 }
 
 int CPDF_Bookmark::GetCount() const {

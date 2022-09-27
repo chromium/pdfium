@@ -7,6 +7,7 @@
 #include "core/fpdfdoc/cpdf_action.h"
 
 #include <iterator>
+#include <utility>
 
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -26,7 +27,8 @@ const char* const kActionTypeStrings[] = {
 
 }  // namespace
 
-CPDF_Action::CPDF_Action(const CPDF_Dictionary* pDict) : m_pDict(pDict) {}
+CPDF_Action::CPDF_Action(RetainPtr<const CPDF_Dictionary> pDict)
+    : m_pDict(std::move(pDict)) {}
 
 CPDF_Action::CPDF_Action(const CPDF_Action& that) = default;
 
@@ -112,8 +114,8 @@ uint32_t CPDF_Action::GetFlags() const {
   return m_pDict->GetIntegerFor("Flags");
 }
 
-std::vector<const CPDF_Object*> CPDF_Action::GetAllFields() const {
-  std::vector<const CPDF_Object*> result;
+std::vector<RetainPtr<const CPDF_Object>> CPDF_Action::GetAllFields() const {
+  std::vector<RetainPtr<const CPDF_Object>> result;
   if (!m_pDict)
     return result;
 
@@ -125,16 +127,18 @@ std::vector<const CPDF_Object*> CPDF_Action::GetAllFields() const {
     return result;
 
   if (pFields->IsDictionary() || pFields->IsString()) {
-    // TODO(tsepez): push retained arguments.
-    result.push_back(pFields.Get());
-  } else if (const CPDF_Array* pArray = pFields->AsArray()) {
-    for (size_t i = 0; i < pArray->size(); ++i) {
-      RetainPtr<const CPDF_Object> pObj = pArray->GetDirectObjectAt(i);
-      if (pObj) {
-        // TODO(tsepez): push retained objects.
-        result.push_back(pObj.Get());
-      }
-    }
+    result.push_back(std::move(pFields));
+    return result;
+  }
+
+  const CPDF_Array* pArray = pFields->AsArray();
+  if (!pArray)
+    return result;
+
+  for (size_t i = 0; i < pArray->size(); ++i) {
+    RetainPtr<const CPDF_Object> pObj = pArray->GetDirectObjectAt(i);
+    if (pObj)
+      result.push_back(std::move(pObj));
   }
   return result;
 }
@@ -172,23 +176,20 @@ CPDF_Action CPDF_Action::GetSubAction(size_t iIndex) const {
   if (!pNext)
     return CPDF_Action(nullptr);
 
-  if (const CPDF_Array* pArray = pNext->AsArray()) {
-    // TODO(tsepez): Actions should take retained arguments.
-    return CPDF_Action(pArray->GetDictAt(iIndex).Get());
-  }
+  if (const CPDF_Array* pArray = pNext->AsArray())
+    return CPDF_Action(pArray->GetDictAt(iIndex));
+
   if (const CPDF_Dictionary* pDict = pNext->AsDictionary()) {
     if (iIndex == 0)
-      return CPDF_Action(pDict);
+      return CPDF_Action(pdfium::WrapRetain(pDict));
   }
   return CPDF_Action(nullptr);
 }
 
-const CPDF_Object* CPDF_Action::GetJavaScriptObject() const {
+RetainPtr<const CPDF_Object> CPDF_Action::GetJavaScriptObject() const {
   if (!m_pDict)
     return nullptr;
 
   RetainPtr<const CPDF_Object> pJS = m_pDict->GetDirectObjectFor("JS");
-
-  // TODO(tsepez): return retained references.
-  return (pJS && (pJS->IsString() || pJS->IsStream())) ? pJS.Get() : nullptr;
+  return (pJS && (pJS->IsString() || pJS->IsStream())) ? pJS : nullptr;
 }

@@ -207,7 +207,7 @@ bool CPDFSDK_BAAnnot::IsVisible() const {
 }
 
 CPDF_Action CPDFSDK_BAAnnot::GetAction() const {
-  return CPDF_Action(GetAnnotDict()->GetDictFor("A").Get());
+  return CPDF_Action(GetAnnotDict()->GetDictFor("A"));
 }
 
 CPDF_AAction CPDFSDK_BAAnnot::GetAAction() const {

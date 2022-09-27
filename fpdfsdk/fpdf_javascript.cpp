@@ -45,7 +45,7 @@ FPDFDoc_GetJavaScriptAction(FPDF_DOCUMENT document, int index) {
     return nullptr;
 
   // Validate |obj|. Type is optional, but must be valid if present.
-  CPDF_Action action(obj);
+  CPDF_Action action(pdfium::WrapRetain(obj));
   if (action.GetType() != CPDF_Action::Type::kJavaScript)
     return nullptr;
 

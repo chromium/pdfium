@@ -43,7 +43,7 @@ class CPDF_Action {
     kLast = kGoTo3DView
   };
 
-  explicit CPDF_Action(const CPDF_Dictionary* pDict);
+  explicit CPDF_Action(RetainPtr<const CPDF_Dictionary> pDict);
   CPDF_Action(const CPDF_Action& that);
   ~CPDF_Action();
 
@@ -57,7 +57,7 @@ class CPDF_Action {
   ByteString GetNamedAction() const;
   uint32_t GetFlags() const;
 
-  std::vector<const CPDF_Object*> GetAllFields() const;
+  std::vector<RetainPtr<const CPDF_Object>> GetAllFields() const;
 
   // Differentiates between empty JS entry and no JS entry.
   absl::optional<WideString> MaybeGetJavaScript() const;
@@ -69,7 +69,7 @@ class CPDF_Action {
   CPDF_Action GetSubAction(size_t iIndex) const;
 
  private:
-  const CPDF_Object* GetJavaScriptObject() const;
+  RetainPtr<const CPDF_Object> GetJavaScriptObject() const;
 
   RetainPtr<const CPDF_Dictionary> const m_pDict;
 };

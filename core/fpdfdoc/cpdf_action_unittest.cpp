@@ -81,16 +81,12 @@ TEST(CPDFActionTest, GetType) {
   for (const auto& test_case : kValidTestCases) {
     {
       // Type is present.
-      RetainPtr<CPDF_Dictionary> dict =
-          CreateActionDictWithType(test_case.action_type);
-      CPDF_Action action(dict.Get());
+      CPDF_Action action(CreateActionDictWithType(test_case.action_type));
       EXPECT_EQ(test_case.expected_type, action.GetType());
     }
     {
       // Type is optional, so omitting it is ok.
-      RetainPtr<CPDF_Dictionary> dict =
-          CreateActionDictWithoutType(test_case.action_type);
-      CPDF_Action action(dict.Get());
+      CPDF_Action action(CreateActionDictWithoutType(test_case.action_type));
       EXPECT_EQ(test_case.expected_type, action.GetType());
     }
   }
@@ -99,23 +95,20 @@ TEST(CPDFActionTest, GetType) {
   for (const auto& test_case : kValidTestCases) {
     {
       // Type is optional, but must be valid if present.
-      RetainPtr<CPDF_Dictionary> dict =
-          CreateActionDictWithInvalidType(test_case.action_type);
-      CPDF_Action action(dict.Get());
+      CPDF_Action action(
+          CreateActionDictWithInvalidType(test_case.action_type));
       EXPECT_EQ(CPDF_Action::Type::kUnknown, action.GetType());
     }
     {
       // The action type (/S) must be a name.
-      RetainPtr<CPDF_Dictionary> dict =
-          CreateInvalidActionDictWithType(test_case.action_type);
-      CPDF_Action action(dict.Get());
+      CPDF_Action action(
+          CreateInvalidActionDictWithType(test_case.action_type));
       EXPECT_EQ(CPDF_Action::Type::kUnknown, action.GetType());
     }
     {
       // The action type (/S) must be a name.
-      RetainPtr<CPDF_Dictionary> dict =
-          CreateInvalidActionDictWithoutType(test_case.action_type);
-      CPDF_Action action(dict.Get());
+      CPDF_Action action(
+          CreateInvalidActionDictWithoutType(test_case.action_type));
       EXPECT_EQ(CPDF_Action::Type::kUnknown, action.GetType());
     }
   }
@@ -128,8 +121,7 @@ TEST(CPDFActionTest, GetType) {
 
   // Test invalid actions.
   for (const char* test_case : kInvalidTestCases) {
-    RetainPtr<CPDF_Dictionary> dict = CreateActionDictWithType(test_case);
-    CPDF_Action action(dict.Get());
+    CPDF_Action action(CreateActionDictWithType(test_case));
     EXPECT_EQ(CPDF_Action::Type::kUnknown, action.GetType());
   }
 }

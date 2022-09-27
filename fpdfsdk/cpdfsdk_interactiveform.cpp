@@ -505,7 +505,7 @@ void CPDFSDK_InteractiveForm::DoAction_ResetForm(const CPDF_Action& action) {
 }
 
 std::vector<CPDF_FormField*> CPDFSDK_InteractiveForm::GetFieldFromObjects(
-    const std::vector<const CPDF_Object*>& objects) const {
+    const std::vector<RetainPtr<const CPDF_Object>>& objects) const {
   std::vector<CPDF_FormField*> fields;
   for (const CPDF_Object* pObject : objects) {
     if (!pObject || !pObject->IsString())

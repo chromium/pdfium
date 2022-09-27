@@ -168,7 +168,7 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV FPDFAction_GetType(FPDF_ACTION action) {
   if (!action)
     return PDFACTION_UNSUPPORTED;
 
-  CPDF_Action cAction(CPDFDictionaryFromFPDFAction(action));
+  CPDF_Action cAction(pdfium::WrapRetain(CPDFDictionaryFromFPDFAction(action)));
   switch (cAction.GetType()) {
     case CPDF_Action::Type::kGoTo:
       return PDFACTION_GOTO;
@@ -196,7 +196,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDFAction_GetDest(FPDF_DOCUMENT document,
       type != PDFACTION_EMBEDDEDGOTO) {
     return nullptr;
   }
-  CPDF_Action cAction(CPDFDictionaryFromFPDFAction(action));
+  CPDF_Action cAction(pdfium::WrapRetain(CPDFDictionaryFromFPDFAction(action)));
   return FPDFDestFromCPDFArray(cAction.GetDest(pDoc).GetArray());
 }
 
@@ -208,7 +208,7 @@ FPDFAction_GetFilePath(FPDF_ACTION action, void* buffer, unsigned long buflen) {
     return 0;
   }
 
-  CPDF_Action cAction(CPDFDictionaryFromFPDFAction(action));
+  CPDF_Action cAction(pdfium::WrapRetain(CPDFDictionaryFromFPDFAction(action)));
   ByteString path = cAction.GetFilePath().ToUTF8();
   return NulTerminateMaybeCopyAndReturnLength(path, buffer, buflen);
 }
@@ -226,7 +226,7 @@ FPDFAction_GetURIPath(FPDF_DOCUMENT document,
   if (type != PDFACTION_URI)
     return 0;
 
-  CPDF_Action cAction(CPDFDictionaryFromFPDFAction(action));
+  CPDF_Action cAction(pdfium::WrapRetain(CPDFDictionaryFromFPDFAction(action)));
   ByteString path = cAction.GetURI(pDoc);
 
   // Table 206 in the ISO 32000-1:2008 spec states the type for the URI field is

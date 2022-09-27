@@ -649,7 +649,8 @@ void CPDFSDK_FormFillEnvironment::ProcJavascriptAction() {
   size_t count = name_tree->GetCount();
   for (size_t i = 0; i < count; ++i) {
     WideString name;
-    CPDF_Action action(ToDictionary(name_tree->LookupValueAndName(i, &name)));
+    CPDF_Action action(ToDictionary(
+        pdfium::WrapRetain(name_tree->LookupValueAndName(i, &name))));
     DoActionJavaScript(action, name);
   }
 }
@@ -668,11 +669,11 @@ bool CPDFSDK_FormFillEnvironment::ProcOpenAction() {
   if (pOpenAction->IsArray())
     return true;
 
-  const CPDF_Dictionary* pDict = pOpenAction->AsDictionary();
+  RetainPtr<const CPDF_Dictionary> pDict = ToDictionary(pOpenAction);
   if (!pDict)
     return false;
 
-  DoActionDocOpen(CPDF_Action(pDict));
+  DoActionDocOpen(CPDF_Action(std::move(pDict)));
   return true;
 }
 
