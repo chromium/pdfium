@@ -752,7 +752,7 @@ void CPDF_InteractiveForm::ResetForm() {
 
 const std::vector<UnownedPtr<CPDF_FormControl>>&
 CPDF_InteractiveForm::GetControlsForField(const CPDF_FormField* pField) {
-  return m_ControlLists[pField];
+  return m_ControlLists[pdfium::WrapUnowned(pField)];
 }
 
 void CPDF_InteractiveForm::LoadField(RetainPtr<CPDF_Dictionary> pFieldDict,
@@ -880,8 +880,8 @@ CPDF_FormControl* CPDF_InteractiveForm::AddControl(
 
   auto pNew = std::make_unique<CPDF_FormControl>(pField, pWidgetDict);
   CPDF_FormControl* pControl = pNew.get();
-  m_ControlMap[pWidgetDict.Get()] = std::move(pNew);
-  m_ControlLists[pField].emplace_back(pControl);
+  m_ControlMap[pWidgetDict] = std::move(pNew);
+  m_ControlLists[pdfium::WrapUnowned(pField)].emplace_back(pControl);
   return pControl;
 }
 

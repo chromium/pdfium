@@ -198,11 +198,13 @@ int CPDFSDK_InteractiveForm::GetPageIndexByAnnotDict(
 
 void CPDFSDK_InteractiveForm::AddMap(CPDF_FormControl* pControl,
                                      CPDFSDK_Widget* pWidget) {
-  m_Map[pControl] = pWidget;
+  m_Map[pdfium::WrapUnowned(pControl)] = pWidget;
 }
 
 void CPDFSDK_InteractiveForm::RemoveMap(CPDF_FormControl* pControl) {
-  m_Map.erase(pControl);
+  auto it = m_Map.find(pControl);
+  if (it != m_Map.end())
+    m_Map.erase(it);
 }
 
 void CPDFSDK_InteractiveForm::EnableCalculate(bool bEnabled) {

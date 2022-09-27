@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_PARSER_CPDF_DATA_AVAIL_H_
 #define CORE_FPDFAPI_PARSER_CPDF_DATA_AVAIL_H_
 
+#include <functional>
 #include <map>
 #include <memory>
 #include <set>
@@ -183,14 +184,16 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
   std::vector<RetainPtr<CPDF_Object>> m_PagesArray;
   bool m_bTotalLoadPageTree = false;
   bool m_bCurPageDictLoadOK = false;
+  bool m_bHeaderAvail = false;
   PageNode m_PageNode;
   std::set<uint32_t> m_pageMapCheckState;
   std::set<uint32_t> m_pagesLoadState;
   std::unique_ptr<CPDF_HintTables> m_pHintTables;
   std::map<uint32_t, std::unique_ptr<CPDF_PageObjectAvail>> m_PagesObjAvail;
-  std::map<const CPDF_Object*, std::unique_ptr<CPDF_PageObjectAvail>>
+  std::map<RetainPtr<const CPDF_Object>,
+           std::unique_ptr<CPDF_PageObjectAvail>,
+           std::less<>>
       m_PagesResourcesAvail;
-  bool m_bHeaderAvail = false;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_DATA_AVAIL_H_

@@ -10,6 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <functional>
 #include <map>
 #include <memory>
 #include <vector>
@@ -109,10 +110,14 @@ class CPDF_InteractiveForm {
   UnownedPtr<CPDF_Document> const m_pDocument;
   RetainPtr<CPDF_Dictionary> m_pFormDict;
   std::unique_ptr<CFieldTree> m_pFieldTree;
-  std::map<const CPDF_Dictionary*, std::unique_ptr<CPDF_FormControl>>
+  std::map<RetainPtr<const CPDF_Dictionary>,
+           std::unique_ptr<CPDF_FormControl>,
+           std::less<>>
       m_ControlMap;
   // Points into |m_ControlMap|.
-  std::map<const CPDF_FormField*, std::vector<UnownedPtr<CPDF_FormControl>>>
+  std::map<UnownedPtr<const CPDF_FormField>,
+           std::vector<UnownedPtr<CPDF_FormControl>>,
+           std::less<>>
       m_ControlLists;
   UnownedPtr<NotifierIface> m_pFormNotify;
 };

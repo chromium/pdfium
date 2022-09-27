@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_RENDER_CPDF_DOCRENDERDATA_H_
 #define CORE_FPDFAPI_RENDER_CPDF_DOCRENDERDATA_H_
 
+#include <functional>
 #include <map>
 
 #include "build/build_config.h"
@@ -51,8 +52,11 @@ class CPDF_DocRenderData : public CPDF_Document::RenderDataIface {
       const CPDF_Object* pObj) const;
 
  private:
+  // TODO(tsepez): investigate this map outliving its font keys.
   std::map<CPDF_Font*, ObservedPtr<CPDF_Type3Cache>> m_Type3FaceMap;
-  std::map<const CPDF_Object*, ObservedPtr<CPDF_TransferFunc>>
+  std::map<RetainPtr<const CPDF_Object>,
+           ObservedPtr<CPDF_TransferFunc>,
+           std::less<>>
       m_TransferFuncMap;
 
 #if BUILDFLAG(IS_WIN)

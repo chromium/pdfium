@@ -56,7 +56,7 @@ void CPDF_PageRenderCache::CacheOptimization(int32_t dwLimitCacheSize) {
   uint32_t nTimeCount = m_nTimeCount;
   if (nTimeCount + 1 < nTimeCount) {
     for (uint32_t i = 0; i < nCount; i++)
-      m_ImageCache[cache_info[i].pStream]->SetTimeCount(i);
+      m_ImageCache[pdfium::WrapRetain(cache_info[i].pStream)]->SetTimeCount(i);
     m_nTimeCount = nCount;
   }
 
@@ -97,7 +97,7 @@ bool CPDF_PageRenderCache::StartGetCachedBitmap(
 
   m_nTimeCount++;
   if (!m_bCurFindCache)
-    m_ImageCache[pStream] = m_pCurImageCacheEntry.Release();
+    m_ImageCache[pdfium::WrapRetain(pStream)] = m_pCurImageCacheEntry.Release();
 
   if (ret == CPDF_DIB::LoadState::kFail)
     m_nCacheSize += m_pCurImageCacheEntry->EstimateSize();
@@ -113,7 +113,9 @@ bool CPDF_PageRenderCache::Continue(PauseIndicatorIface* pPause,
 
   m_nTimeCount++;
   if (!m_bCurFindCache) {
-    m_ImageCache[m_pCurImageCacheEntry->GetImage()->GetStream()] =
+    // TODO(tsepez): GetStream() should return retained reference.
+    m_ImageCache[pdfium::WrapRetain(
+        m_pCurImageCacheEntry->GetImage()->GetStream())] =
         m_pCurImageCacheEntry.Release();
   }
   m_nCacheSize += m_pCurImageCacheEntry->EstimateSize();

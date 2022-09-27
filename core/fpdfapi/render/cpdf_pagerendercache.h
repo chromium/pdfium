@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include <functional>
 #include <map>
 #include <memory>
 
@@ -91,7 +92,10 @@ class CPDF_PageRenderCache final : public CPDF_Page::RenderCacheIface {
   void ClearImageCacheEntry(const CPDF_Stream* pStream);
 
   UnownedPtr<CPDF_Page> const m_pPage;
-  std::map<const CPDF_Stream*, std::unique_ptr<ImageCacheEntry>> m_ImageCache;
+  std::map<RetainPtr<const CPDF_Stream>,
+           std::unique_ptr<ImageCacheEntry>,
+           std::less<>>
+      m_ImageCache;
   MaybeOwned<ImageCacheEntry> m_pCurImageCacheEntry;
   uint32_t m_nTimeCount = 0;
   uint32_t m_nCacheSize = 0;

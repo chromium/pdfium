@@ -63,7 +63,7 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(
     return pdfium::WrapRetain(it->second.Get());
 
   auto pFunc = CreateTransferFunc(pObj);
-  m_TransferFuncMap[pObj].Reset(pFunc.Get());
+  m_TransferFuncMap[pdfium::WrapRetain(pObj)].Reset(pFunc.Get());
   return pFunc;
 }
 

@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_OCCONTEXT_H_
 #define CORE_FPDFAPI_PAGE_CPDF_OCCONTEXT_H_
 
+#include <functional>
 #include <map>
 
 #include "core/fxcrt/bytestring.h"
@@ -40,7 +41,8 @@ class CPDF_OCContext final : public Retainable {
 
   UnownedPtr<CPDF_Document> const m_pDocument;
   const UsageType m_eUsageType;
-  mutable std::map<const CPDF_Dictionary*, bool> m_OGCStateCache;
+  mutable std::map<RetainPtr<const CPDF_Dictionary>, bool, std::less<>>
+      m_OGCStateCache;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_OCCONTEXT_H_
