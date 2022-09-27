@@ -876,14 +876,13 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
                               const FX_RECT& clip_rect,
                               int alpha,
                               const CPDF_RenderOptions& options) {
-  const auto& funcs = pPattern->GetFuncs();
-  RetainPtr<const CPDF_Dictionary> pDict =
-      pPattern->GetShadingObject()->GetDict();
   RetainPtr<CPDF_ColorSpace> pColorSpace = pPattern->GetCS();
   if (!pColorSpace)
     return;
 
   FX_ARGB background = 0;
+  RetainPtr<const CPDF_Dictionary> pDict =
+      pPattern->GetShadingObject()->GetDict();
   if (!pPattern->IsShadingObject() && pDict->KeyExist("Background")) {
     RetainPtr<const CPDF_Array> pBackColor = pDict->GetArrayFor("Background");
     if (pBackColor && pBackColor->size() >= pColorSpace->CountComponents()) {
@@ -914,26 +913,27 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
   if (!buffer.Initialize())
     return;
 
-  CFX_Matrix FinalMatrix = mtMatrix * buffer.GetMatrix();
   RetainPtr<CFX_DIBitmap> pBitmap = buffer.GetBitmap();
   if (!pBitmap->GetBuffer())
     return;
 
   pBitmap->Clear(background);
+  const CFX_Matrix final_matrix = mtMatrix * buffer.GetMatrix();
+  const auto& funcs = pPattern->GetFuncs();
   switch (pPattern->GetShadingType()) {
     case kInvalidShading:
     case kMaxShading:
       return;
     case kFunctionBasedShading:
-      DrawFuncShading(pBitmap, FinalMatrix, pDict.Get(), funcs, pColorSpace,
+      DrawFuncShading(pBitmap, final_matrix, pDict.Get(), funcs, pColorSpace,
                       alpha);
       break;
     case kAxialShading:
-      DrawAxialShading(pBitmap, FinalMatrix, pDict.Get(), funcs, pColorSpace,
+      DrawAxialShading(pBitmap, final_matrix, pDict.Get(), funcs, pColorSpace,
                        alpha);
       break;
     case kRadialShading:
-      DrawRadialShading(pBitmap, FinalMatrix, pDict.Get(), funcs, pColorSpace,
+      DrawRadialShading(pBitmap, final_matrix, pDict.Get(), funcs, pColorSpace,
                         alpha);
       break;
     case kFreeFormGouraudTriangleMeshShading: {
@@ -941,7 +941,7 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
       // the case of dictionary at the moment.
       const CPDF_Stream* pStream = ToStream(pPattern->GetShadingObject());
       if (pStream) {
-        DrawFreeGouraudShading(pBitmap, FinalMatrix, pStream, funcs,
+        DrawFreeGouraudShading(pBitmap, final_matrix, pStream, funcs,
                                pColorSpace, alpha);
       }
       break;
@@ -951,7 +951,7 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
       // the case of dictionary at the moment.
       const CPDF_Stream* pStream = ToStream(pPattern->GetShadingObject());
       if (pStream) {
-        DrawLatticeGouraudShading(pBitmap, FinalMatrix, pStream, funcs,
+        DrawLatticeGouraudShading(pBitmap, final_matrix, pStream, funcs,
                                   pColorSpace, alpha);
       }
       break;
@@ -962,7 +962,7 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
       // the case of dictionary at the moment.
       const CPDF_Stream* pStream = ToStream(pPattern->GetShadingObject());
       if (pStream) {
-        DrawCoonPatchMeshes(pPattern->GetShadingType(), pBitmap, FinalMatrix,
+        DrawCoonPatchMeshes(pPattern->GetShadingType(), pBitmap, final_matrix,
                             pStream, funcs, pColorSpace,
                             options.GetOptions().bNoPathSmooth, alpha);
       }
