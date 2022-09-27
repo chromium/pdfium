@@ -19,7 +19,7 @@ class CPDF_Bookmark {
  public:
   CPDF_Bookmark();
   CPDF_Bookmark(const CPDF_Bookmark& that);
-  explicit CPDF_Bookmark(const CPDF_Dictionary* pDict);
+  explicit CPDF_Bookmark(RetainPtr<const CPDF_Dictionary> pDict);
   ~CPDF_Bookmark();
 
   const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }

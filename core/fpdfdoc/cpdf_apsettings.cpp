@@ -106,8 +106,7 @@ RetainPtr<CPDF_Stream> CPDF_ApSettings::GetIcon(
 }
 
 CPDF_IconFit CPDF_ApSettings::GetIconFit() const {
-  // TODO(tsepez): pass retained object.
-  return CPDF_IconFit(m_pDict ? m_pDict->GetDictFor("IF").Get() : nullptr);
+  return CPDF_IconFit(m_pDict ? m_pDict->GetDictFor("IF") : nullptr);
 }
 
 int CPDF_ApSettings::GetTextPosition() const {

@@ -71,7 +71,7 @@ WideString CPDF_Action::GetFilePath() const {
   RetainPtr<const CPDF_Object> pFile =
       m_pDict->GetDirectObjectFor(pdfium::stream::kF);
   if (pFile)
-    return CPDF_FileSpec(pFile.Get()).GetFileName();
+    return CPDF_FileSpec(std::move(pFile)).GetFileName();
 
   if (type != Type::kLaunch)
     return WideString();

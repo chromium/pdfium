@@ -80,7 +80,8 @@ FPDFBookmark_GetFirstChild(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark) {
   if (!pDoc)
     return nullptr;
   CPDF_BookmarkTree tree(pDoc);
-  CPDF_Bookmark cBookmark(CPDFDictionaryFromFPDFBookmark(bookmark));
+  CPDF_Bookmark cBookmark(
+      pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(bookmark)));
   return FPDFBookmarkFromCPDFDictionary(
       tree.GetFirstChild(cBookmark).GetDict());
 }
@@ -95,7 +96,8 @@ FPDFBookmark_GetNextSibling(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark) {
     return nullptr;
 
   CPDF_BookmarkTree tree(pDoc);
-  CPDF_Bookmark cBookmark(CPDFDictionaryFromFPDFBookmark(bookmark));
+  CPDF_Bookmark cBookmark(
+      pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(bookmark)));
   return FPDFBookmarkFromCPDFDictionary(
       tree.GetNextSibling(cBookmark).GetDict());
 }
@@ -106,7 +108,8 @@ FPDFBookmark_GetTitle(FPDF_BOOKMARK bookmark,
                       unsigned long buflen) {
   if (!bookmark)
     return 0;
-  CPDF_Bookmark cBookmark(CPDFDictionaryFromFPDFBookmark(bookmark));
+  CPDF_Bookmark cBookmark(
+      pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(bookmark)));
   WideString title = cBookmark.GetTitle();
   return Utf16EncodeMaybeCopyAndReturnLength(title, buffer, buflen);
 }
@@ -114,7 +117,8 @@ FPDFBookmark_GetTitle(FPDF_BOOKMARK bookmark,
 FPDF_EXPORT int FPDF_CALLCONV FPDFBookmark_GetCount(FPDF_BOOKMARK bookmark) {
   if (!bookmark)
     return 0;
-  CPDF_Bookmark cBookmark(CPDFDictionaryFromFPDFBookmark(bookmark));
+  CPDF_Bookmark cBookmark(
+      pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(bookmark)));
   return cBookmark.GetCount();
 }
 
@@ -143,7 +147,8 @@ FPDFBookmark_GetDest(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark) {
   if (!bookmark)
     return nullptr;
 
-  CPDF_Bookmark cBookmark(CPDFDictionaryFromFPDFBookmark(bookmark));
+  CPDF_Bookmark cBookmark(
+      pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(bookmark)));
   CPDF_Dest dest = cBookmark.GetDest(pDoc);
   if (dest.GetArray())
     return FPDFDestFromCPDFArray(dest.GetArray());
@@ -160,7 +165,8 @@ FPDFBookmark_GetAction(FPDF_BOOKMARK bookmark) {
   if (!bookmark)
     return nullptr;
 
-  CPDF_Bookmark cBookmark(CPDFDictionaryFromFPDFBookmark(bookmark));
+  CPDF_Bookmark cBookmark(
+      pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(bookmark)));
   return FPDFActionFromCPDFDictionary(cBookmark.GetAction().GetDict());
 }
 

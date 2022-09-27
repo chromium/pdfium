@@ -6,6 +6,8 @@
 
 #include "core/fpdfdoc/cpdf_bookmark.h"
 
+#include <utility>
+
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
@@ -16,7 +18,8 @@ CPDF_Bookmark::CPDF_Bookmark() = default;
 
 CPDF_Bookmark::CPDF_Bookmark(const CPDF_Bookmark& that) = default;
 
-CPDF_Bookmark::CPDF_Bookmark(const CPDF_Dictionary* pDict) : m_pDict(pDict) {}
+CPDF_Bookmark::CPDF_Bookmark(RetainPtr<const CPDF_Dictionary> pDict)
+    : m_pDict(std::move(pDict)) {}
 
 CPDF_Bookmark::~CPDF_Bookmark() = default;
 

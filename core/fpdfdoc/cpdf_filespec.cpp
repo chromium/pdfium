@@ -7,6 +7,7 @@
 #include "core/fpdfdoc/cpdf_filespec.h"
 
 #include <iterator>
+#include <utility>
 
 #include "build/build_config.h"
 #include "constants/stream_dict_common.h"
@@ -56,7 +57,8 @@ WideString ChangeSlashToPDF(const wchar_t* str) {
 
 }  // namespace
 
-CPDF_FileSpec::CPDF_FileSpec(const CPDF_Object* pObj) : m_pObj(pObj) {
+CPDF_FileSpec::CPDF_FileSpec(RetainPtr<const CPDF_Object> pObj)
+    : m_pObj(std::move(pObj)) {
   DCHECK(m_pObj);
 }
 
@@ -125,7 +127,7 @@ WideString CPDF_FileSpec::GetFileName() const {
   return DecodeFileName(csFileName);
 }
 
-const CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
+RetainPtr<const CPDF_Stream> CPDF_FileSpec::GetFileStream() const {
   const CPDF_Dictionary* pDict = m_pObj->AsDictionary();
   if (!pDict)
     return nullptr;
@@ -143,34 +145,25 @@ const CPDF_Stream* CPDF_FileSpec::GetFileStream() const {
     ByteString key = kKeys[i];
     if (!pDict->GetUnicodeTextFor(key).IsEmpty()) {
       RetainPtr<const CPDF_Stream> pStream = pFiles->GetStreamFor(key);
-      if (pStream) {
-        // TODO(tsepez): return retained object.
-        return pStream.Get();
-      }
+      if (pStream)
+        return pStream;
     }
   }
   return nullptr;
 }
 
-CPDF_Stream* CPDF_FileSpec::GetFileStream() {
-  return const_cast<CPDF_Stream*>(
-      static_cast<const CPDF_FileSpec*>(this)->GetFileStream());
-}
-
-// TODO(tsepez): return retained reference.
-const CPDF_Dictionary* CPDF_FileSpec::GetParamsDict() const {
+RetainPtr<const CPDF_Dictionary> CPDF_FileSpec::GetParamsDict() const {
   const CPDF_Stream* pStream = GetFileStream();
   if (!pStream)
     return nullptr;
 
-  // TODO(tsepez): return retained reference.
   RetainPtr<const CPDF_Dictionary> pDict = pStream->GetDict();
-  return pDict ? pDict->GetDictFor("Params").Get() : nullptr;
+  return pDict ? pDict->GetDictFor("Params") : nullptr;
 }
 
-CPDF_Dictionary* CPDF_FileSpec::GetParamsDict() {
-  return const_cast<CPDF_Dictionary*>(
-      static_cast<const CPDF_FileSpec*>(this)->GetParamsDict());
+RetainPtr<CPDF_Dictionary> CPDF_FileSpec::GetMutableParamsDict() {
+  return pdfium::WrapRetain(
+      const_cast<CPDF_Dictionary*>(GetParamsDict().Get()));
 }
 
 WideString CPDF_FileSpec::EncodeFileName(const WideString& filepath) {

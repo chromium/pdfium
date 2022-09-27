@@ -7,6 +7,7 @@
 #include "core/fpdfdoc/cpdf_iconfit.h"
 
 #include <algorithm>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -18,7 +19,8 @@ constexpr float kDefaultPosition = 0.5f;
 
 }  // namespace
 
-CPDF_IconFit::CPDF_IconFit(const CPDF_Dictionary* pDict) : m_pDict(pDict) {}
+CPDF_IconFit::CPDF_IconFit(RetainPtr<const CPDF_Dictionary> pDict)
+    : m_pDict(std::move(pDict)) {}
 
 CPDF_IconFit::CPDF_IconFit(const CPDF_IconFit& that) = default;
 
