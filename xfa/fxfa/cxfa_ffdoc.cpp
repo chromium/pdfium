@@ -285,10 +285,10 @@ RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(WideStringView wsName,
   if (!pObject) {
     for (size_t i = 0; i < count; ++i) {
       WideString wsTemp;
-      // TODO(tsepez): return retained object.
-      CPDF_Object* pTempObject = name_tree->LookupValueAndName(i, &wsTemp);
+      RetainPtr<CPDF_Object> pTempObject =
+          name_tree->LookupValueAndName(i, &wsTemp);
       if (wsTemp == wsName) {
-        pObject.Reset(pTempObject);
+        pObject = std::move(pTempObject);
         break;
       }
     }

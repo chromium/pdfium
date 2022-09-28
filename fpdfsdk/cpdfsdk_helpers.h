@@ -248,12 +248,13 @@ RetainPtr<IFX_SeekableStream> MakeSeekableStream(
     FPDF_FILEHANDLER* pFileHandler);
 #endif  // PDF_ENABLE_XFA
 
-const CPDF_Array* GetQuadPointsArrayFromDictionary(const CPDF_Dictionary* dict);
+RetainPtr<const CPDF_Array> GetQuadPointsArrayFromDictionary(
+    const CPDF_Dictionary* dict);
 RetainPtr<CPDF_Array> GetMutableQuadPointsArrayFromDictionary(
     CPDF_Dictionary* dict);
 RetainPtr<CPDF_Array> AddQuadPointsArrayToDictionary(CPDF_Dictionary* dict);
 bool IsValidQuadPointsIndex(const CPDF_Array* array, size_t index);
-bool GetQuadPointsAtIndex(const CPDF_Array* array,
+bool GetQuadPointsAtIndex(RetainPtr<const CPDF_Array> array,
                           size_t quad_index,
                           FS_QUADPOINTSF* quad_points);
 

@@ -809,7 +809,8 @@ FPDFAnnot_CountAttachmentPoints(FPDF_ANNOTATION annot) {
 
   const CPDF_Dictionary* pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
-  const CPDF_Array* pArray = GetQuadPointsArrayFromDictionary(pAnnotDict);
+  RetainPtr<const CPDF_Array> pArray =
+      GetQuadPointsArrayFromDictionary(pAnnotDict);
   return pArray ? pArray->size() / 8 : 0;
 }
 
@@ -822,11 +823,12 @@ FPDFAnnot_GetAttachmentPoints(FPDF_ANNOTATION annot,
 
   const CPDF_Dictionary* pAnnotDict =
       CPDFAnnotContextFromFPDFAnnotation(annot)->GetAnnotDict();
-  const CPDF_Array* pArray = GetQuadPointsArrayFromDictionary(pAnnotDict);
+  RetainPtr<const CPDF_Array> pArray =
+      GetQuadPointsArrayFromDictionary(pAnnotDict);
   if (!pArray)
     return false;
 
-  return GetQuadPointsAtIndex(pArray, quad_index, quad_points);
+  return GetQuadPointsAtIndex(std::move(pArray), quad_index, quad_points);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetRect(FPDF_ANNOTATION annot,

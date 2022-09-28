@@ -1196,7 +1196,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
     }
     wsName = PDF_DecodeText(bsName.raw_span());
   } else {
-    pDestObj.Reset(name_tree->LookupValueAndName(index, &wsName));
+    pDestObj = name_tree->LookupValueAndName(index, &wsName);
   }
   if (!pDestObj)
     return nullptr;

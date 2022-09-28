@@ -5,6 +5,7 @@
 #include "public/fpdf_javascript.h"
 
 #include <memory>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -39,13 +40,13 @@ FPDFDoc_GetJavaScriptAction(FPDF_DOCUMENT document, int index) {
     return nullptr;
 
   WideString name;
-  CPDF_Dictionary* obj =
+  RetainPtr<CPDF_Dictionary> obj =
       ToDictionary(name_tree->LookupValueAndName(index, &name));
   if (!obj)
     return nullptr;
 
   // Validate |obj|. Type is optional, but must be valid if present.
-  CPDF_Action action(pdfium::WrapRetain(obj));
+  CPDF_Action action(std::move(obj));
   if (action.GetType() != CPDF_Action::Type::kJavaScript)
     return nullptr;
 

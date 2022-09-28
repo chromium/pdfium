@@ -119,7 +119,7 @@ int CalculateFlags(bool bold,
   return flags;
 }
 
-void ProcessNonbCJK(const RetainPtr<CPDF_Dictionary>& pBaseDict,
+void ProcessNonbCJK(RetainPtr<CPDF_Dictionary> pBaseDict,
                     bool bold,
                     bool italic,
                     ByteString basefont,
@@ -519,11 +519,11 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddFont(std::unique_ptr<CFX_Font> pFont,
     ProcessNonbCJK(pBaseDict, pFont->IsBold(), pFont->IsItalic(), basefont,
                    std::move(pWidths));
   } else {
-    pFontDict.Reset(ProcessbCJK(
+    pFontDict = ProcessbCJK(
         pBaseDict, charset, basefont,
         [&pFont, &pEncoding](wchar_t start, wchar_t end, CPDF_Array* widthArr) {
           InsertWidthArray1(pFont.get(), pEncoding.get(), start, end, widthArr);
-        }));
+        });
   }
   int italicangle = pFont->GetSubstFontItalicAngle();
   FX_RECT bbox = pFont->GetBBox().value_or(FX_RECT());
@@ -617,11 +617,11 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddWindowsFont(LOGFONTA* pLogFont) {
     ProcessNonbCJK(pBaseDict, pLogFont->lfWeight > FW_MEDIUM,
                    pLogFont->lfItalic != 0, basefont, std::move(pWidths));
   } else {
-    pFontDict.Reset(
+    pFontDict =
         ProcessbCJK(pBaseDict, eCharset, basefont,
                     [&hDC](wchar_t start, wchar_t end, CPDF_Array* widthArr) {
                       InsertWidthArray(hDC, start, end, widthArr);
-                    }));
+                    });
   }
   auto pBBox = pdfium::MakeRetain<CPDF_Array>();
   for (int i = 0; i < 4; i++)
@@ -668,9 +668,8 @@ size_t CPDF_DocPageData::CalculateEncodingDict(FX_Charset charset,
   return i;
 }
 
-// TODO(tsepez): return retained reference.
-CPDF_Dictionary* CPDF_DocPageData::ProcessbCJK(
-    const RetainPtr<CPDF_Dictionary>& pBaseDict,
+RetainPtr<CPDF_Dictionary> CPDF_DocPageData::ProcessbCJK(
+    RetainPtr<CPDF_Dictionary> pBaseDict,
     FX_Charset charset,
     ByteString basefont,
     std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert) {
@@ -733,5 +732,5 @@ CPDF_Dictionary* CPDF_DocPageData::ProcessbCJK(
 
   auto pArray = pBaseDict->SetNewFor<CPDF_Array>("DescendantFonts");
   pArray->AppendNew<CPDF_Reference>(GetDocument(), pFontDict->GetObjNum());
-  return pFontDict.Get();
+  return pFontDict;
 }

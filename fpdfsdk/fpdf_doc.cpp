@@ -415,7 +415,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFLink_GetAnnotRect(FPDF_LINK link_annot,
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFLink_CountQuadPoints(FPDF_LINK link_annot) {
-  const CPDF_Array* pArray =
+  RetainPtr<const CPDF_Array> pArray =
       GetQuadPointsArrayFromDictionary(CPDFDictionaryFromFPDFLink(link_annot));
   return pArray ? static_cast<int>(pArray->size() / 8) : 0;
 }
@@ -431,12 +431,13 @@ FPDFLink_GetQuadPoints(FPDF_LINK link_annot,
   if (!pLinkDict)
     return false;
 
-  const CPDF_Array* pArray = GetQuadPointsArrayFromDictionary(pLinkDict);
+  RetainPtr<const CPDF_Array> pArray =
+      GetQuadPointsArrayFromDictionary(pLinkDict);
   if (!pArray)
     return false;
 
-  return GetQuadPointsAtIndex(pArray, static_cast<size_t>(quad_index),
-                              quad_points);
+  return GetQuadPointsAtIndex(std::move(pArray),
+                              static_cast<size_t>(quad_index), quad_points);
 }
 
 FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV FPDF_GetPageAAction(FPDF_PAGE page,

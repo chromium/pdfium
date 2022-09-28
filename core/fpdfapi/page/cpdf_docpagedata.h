@@ -100,8 +100,8 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
       std::set<const CPDF_Object*>* pVisitedInternal);
 
   size_t CalculateEncodingDict(FX_Charset charset, CPDF_Dictionary* pBaseDict);
-  CPDF_Dictionary* ProcessbCJK(
-      const RetainPtr<CPDF_Dictionary>& pBaseDict,
+  RetainPtr<CPDF_Dictionary> ProcessbCJK(
+      RetainPtr<CPDF_Dictionary> pBaseDict,
       FX_Charset charset,
       ByteString basefont,
       std::function<void(wchar_t, wchar_t, CPDF_Array*)> Insert);

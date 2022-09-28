@@ -559,8 +559,9 @@ bool CPDF_NameTree::DeleteValueAndName(size_t nIndex) {
   return true;
 }
 
-CPDF_Object* CPDF_NameTree::LookupValueAndName(size_t nIndex,
-                                               WideString* csName) const {
+RetainPtr<CPDF_Object> CPDF_NameTree::LookupValueAndName(
+    size_t nIndex,
+    WideString* csName) const {
   absl::optional<IndexSearchResult> result =
       SearchNameNodeByIndex(m_pRoot.Get(), nIndex);
   if (!result) {
@@ -569,7 +570,7 @@ CPDF_Object* CPDF_NameTree::LookupValueAndName(size_t nIndex,
   }
 
   *csName = std::move(result.value().key);
-  return result.value().value.Get();
+  return result.value().value;
 }
 
 RetainPtr<const CPDF_Object> CPDF_NameTree::LookupValue(

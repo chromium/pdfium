@@ -649,8 +649,7 @@ void CPDFSDK_FormFillEnvironment::ProcJavascriptAction() {
   size_t count = name_tree->GetCount();
   for (size_t i = 0; i < count; ++i) {
     WideString name;
-    CPDF_Action action(ToDictionary(
-        pdfium::WrapRetain(name_tree->LookupValueAndName(i, &name))));
+    CPDF_Action action(ToDictionary(name_tree->LookupValueAndName(i, &name)));
     DoActionJavaScript(action, name);
   }
 }

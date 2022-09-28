@@ -101,7 +101,7 @@ FPDFDoc_GetAttachment(FPDF_DOCUMENT document, int index) {
 
   WideString csName;
   return FPDFAttachmentFromCPDFObject(
-      name_tree->LookupValueAndName(index, &csName));
+      name_tree->LookupValueAndName(index, &csName).Get());
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

@@ -224,16 +224,15 @@ RetainPtr<IFX_SeekableStream> MakeSeekableStream(
 }
 #endif  // PDF_ENABLE_XFA
 
-const CPDF_Array* GetQuadPointsArrayFromDictionary(
+RetainPtr<const CPDF_Array> GetQuadPointsArrayFromDictionary(
     const CPDF_Dictionary* dict) {
-  // TODO(tsepez): return retained object.
-  return dict->GetArrayFor("QuadPoints").Get();
+  return dict->GetArrayFor("QuadPoints");
 }
 
 RetainPtr<CPDF_Array> GetMutableQuadPointsArrayFromDictionary(
     CPDF_Dictionary* dict) {
   return pdfium::WrapRetain(
-      const_cast<CPDF_Array*>(GetQuadPointsArrayFromDictionary(dict)));
+      const_cast<CPDF_Array*>(GetQuadPointsArrayFromDictionary(dict).Get()));
 }
 
 RetainPtr<CPDF_Array> AddQuadPointsArrayToDictionary(CPDF_Dictionary* dict) {
@@ -244,7 +243,7 @@ bool IsValidQuadPointsIndex(const CPDF_Array* array, size_t index) {
   return array && index < array->size() / 8;
 }
 
-bool GetQuadPointsAtIndex(const CPDF_Array* array,
+bool GetQuadPointsAtIndex(RetainPtr<const CPDF_Array> array,
                           size_t quad_index,
                           FS_QUADPOINTSF* quad_points) {
   DCHECK(quad_points);
