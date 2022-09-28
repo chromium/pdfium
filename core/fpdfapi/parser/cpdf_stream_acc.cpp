@@ -71,9 +71,12 @@ RetainPtr<const CPDF_Stream> CPDF_StreamAcc::GetStream() const {
   return m_pStream;
 }
 
-const CPDF_Dictionary* CPDF_StreamAcc::GetDict() const {
-  // TODO(tsepez): return retained references.
-  return m_pStream ? m_pStream->GetDict().Get() : nullptr;
+RetainPtr<const CPDF_Dictionary> CPDF_StreamAcc::GetDict() const {
+  return m_pStream ? m_pStream->GetDict() : nullptr;
+}
+
+RetainPtr<const CPDF_Dictionary> CPDF_StreamAcc::GetImageParam() const {
+  return m_pImageParam;
 }
 
 const uint8_t* CPDF_StreamAcc::GetData() const {
@@ -154,8 +157,8 @@ void CPDF_StreamAcc::ProcessFilteredData(uint32_t estimated_size,
   std::unique_ptr<uint8_t, FxFreeDeleter> pDecodedData;
   uint32_t dwDecodedSize = 0;
 
-  absl::optional<std::vector<std::pair<ByteString, const CPDF_Object*>>>
-      decoder_array = GetDecoderArray(m_pStream->GetDict());
+  absl::optional<DecoderArray> decoder_array =
+      GetDecoderArray(m_pStream->GetDict());
   if (!decoder_array.has_value() || decoder_array.value().empty() ||
       !PDF_DataDecode(src_span, estimated_size, bImageAcc,
                       decoder_array.value(), &pDecodedData, &dwDecodedSize,

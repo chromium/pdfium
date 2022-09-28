@@ -33,13 +33,13 @@ class CPDF_StreamAcc final : public Retainable {
   void LoadAllDataRaw();
 
   RetainPtr<const CPDF_Stream> GetStream() const;
-  const CPDF_Dictionary* GetDict() const;
+  RetainPtr<const CPDF_Dictionary> GetDict() const;
+  RetainPtr<const CPDF_Dictionary> GetImageParam() const;
 
   uint32_t GetSize() const;
   pdfium::span<const uint8_t> GetSpan() const;
   ByteString ComputeDigest() const;
   ByteString GetImageDecoder() const { return m_ImageDecoder; }
-  const CPDF_Dictionary* GetImageParam() const { return m_pImageParam.Get(); }
   std::unique_ptr<uint8_t, FxFreeDeleter> DetachData();
 
  private:

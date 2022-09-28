@@ -383,29 +383,27 @@ absl::optional<DecoderArray> GetDecoderArray(
 
     RetainPtr<const CPDF_Array> pParamsArray = ToArray(pParams);
     for (size_t i = 0; i < pDecoders->size(); ++i) {
-      // TODO(tsepez): push retained arguments.
       decoder_array.push_back(
           {pDecoders->GetByteStringAt(i),
-           pParamsArray ? pParamsArray->GetDictAt(i).Get() : nullptr});
+           pParamsArray ? pParamsArray->GetDictAt(i) : nullptr});
     }
   } else {
     DCHECK(pFilter->IsName());
     decoder_array.push_back(
-        {pFilter->GetString(), pParams ? pParams->GetDict().Get() : nullptr});
+        {pFilter->GetString(), pParams ? pParams->GetDict() : nullptr});
   }
 
   return decoder_array;
 }
 
-bool PDF_DataDecode(
-    pdfium::span<const uint8_t> src_span,
-    uint32_t last_estimated_size,
-    bool bImageAcc,
-    const std::vector<std::pair<ByteString, const CPDF_Object*>>& decoder_array,
-    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-    uint32_t* dest_size,
-    ByteString* ImageEncoding,
-    RetainPtr<const CPDF_Dictionary>* pImageParams) {
+bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
+                    uint32_t last_estimated_size,
+                    bool bImageAcc,
+                    const DecoderArray& decoder_array,
+                    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
+                    uint32_t* dest_size,
+                    ByteString* ImageEncoding,
+                    RetainPtr<const CPDF_Dictionary>* pImageParams) {
   std::unique_ptr<uint8_t, FxFreeDeleter> result;
   // May be changed to point to |result| in the for-loop below. So put it below
   // |result| and let it get destroyed first.

@@ -82,7 +82,8 @@ uint32_t FlateOrLZWDecode(bool bLZW,
 // Returns an empty vector if there is no filter, or if the filter is an empty
 // array.
 // Otherwise, returns a vector of decoders.
-using DecoderArray = std::vector<std::pair<ByteString, const CPDF_Object*>>;
+using DecoderArray =
+    std::vector<std::pair<ByteString, RetainPtr<const CPDF_Object>>>;
 absl::optional<DecoderArray> GetDecoderArray(
     RetainPtr<const CPDF_Dictionary> pDict);
 

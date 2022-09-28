@@ -44,7 +44,7 @@ CPDF_StructElement::CPDF_StructElement(const CPDF_StructTree* pTree,
     : m_pTree(pTree),
       m_pDict(std::move(pDict)),
       m_Type(GetStructElementType(m_pTree.Get(), m_pDict.Get())) {
-  LoadKids(m_pDict.Get());
+  LoadKids(m_pDict);
 }
 
 CPDF_StructElement::~CPDF_StructElement() {
@@ -92,7 +92,7 @@ bool CPDF_StructElement::UpdateKidIfElement(const CPDF_Dictionary* pDict,
   return bSave;
 }
 
-void CPDF_StructElement::LoadKids(const CPDF_Dictionary* pDict) {
+void CPDF_StructElement::LoadKids(RetainPtr<const CPDF_Dictionary> pDict) {
   RetainPtr<const CPDF_Object> pObj = pDict->GetObjectFor("Pg");
   const CPDF_Reference* pRef = ToReference(pObj.Get());
   const uint32_t PageObjNum = pRef ? pRef->GetRefObjNum() : 0;
@@ -104,22 +104,17 @@ void CPDF_StructElement::LoadKids(const CPDF_Dictionary* pDict) {
   if (const CPDF_Array* pArray = pKids->AsArray()) {
     m_Kids.resize(pArray->size());
     for (size_t i = 0; i < pArray->size(); ++i) {
-      RetainPtr<const CPDF_Object> pKid = pArray->GetDirectObjectAt(i);
-
-      // TODO(tsepez): LoadKid() can take moved retained pKid
-      LoadKid(PageObjNum, pKid.Get(), &m_Kids[i]);
+      LoadKid(PageObjNum, pArray->GetDirectObjectAt(i), &m_Kids[i]);
     }
     return;
   }
 
   m_Kids.resize(1);
-
-  // TODO(tsepez): pass retained arguments.
-  LoadKid(PageObjNum, pKids.Get(), &m_Kids[0]);
+  LoadKid(PageObjNum, std::move(pKids), &m_Kids[0]);
 }
 
 void CPDF_StructElement::LoadKid(uint32_t PageObjNum,
-                                 const CPDF_Object* pKidObj,
+                                 RetainPtr<const CPDF_Object> pKidObj,
                                  Kid* pKid) {
   if (!pKidObj)
     return;
