@@ -855,14 +855,13 @@ RetainPtr<const CPDF_Array> CPDF_Parser::GetIDArray() const {
   return GetTrailer() ? GetTrailer()->GetArrayFor("ID") : nullptr;
 }
 
-// TODO(tsepez): return retained object, though not clear if it can change.
-const CPDF_Dictionary* CPDF_Parser::GetRoot() const {
+RetainPtr<const CPDF_Dictionary> CPDF_Parser::GetRoot() const {
   RetainPtr<CPDF_Object> obj =
       m_pObjectsHolder->GetOrParseIndirectObject(GetRootObjNum());
-  return obj ? obj->GetDict().Get() : nullptr;
+  return obj ? obj->GetDict() : nullptr;
 }
 
-const CPDF_Dictionary* CPDF_Parser::GetEncryptDict() const {
+RetainPtr<const CPDF_Dictionary> CPDF_Parser::GetEncryptDict() const {
   if (!GetTrailer())
     return nullptr;
 
@@ -872,13 +871,11 @@ const CPDF_Dictionary* CPDF_Parser::GetEncryptDict() const {
     return nullptr;
 
   if (pEncryptObj->IsDictionary())
-    return pEncryptObj->AsDictionary();
+    return pdfium::WrapRetain(pEncryptObj->AsDictionary());
 
   if (pEncryptObj->IsReference()) {
-    // TODO(tsepez): return retained object.
     return ToDictionary(m_pObjectsHolder->GetOrParseIndirectObject(
-                            pEncryptObj->AsReference()->GetRefObjNum()))
-        .Get();
+        pEncryptObj->AsReference()->GetRefObjNum()));
   }
   return nullptr;
 }
