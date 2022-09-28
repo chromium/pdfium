@@ -343,19 +343,18 @@ WideString CPDFXFA_Context::Response(const WideString& wsQuestion,
   if (!m_pFormFillEnv)
     return WideString();
 
-  int byte_length = 2048;
-  FixedZeroedDataVector<uint16_t> buffer(byte_length / sizeof(uint16_t));
+  constexpr int kMaxWideChars = 1024;
+  FixedZeroedDataVector<uint16_t> buffer(kMaxWideChars);
   pdfium::span<uint16_t> buffer_span = buffer.writable_span();
-  byte_length = m_pFormFillEnv->JS_appResponse(
+  int byte_length = m_pFormFillEnv->JS_appResponse(
       wsQuestion, wsTitle, wsDefaultAnswer, WideString(), bMark,
       pdfium::as_writable_bytes(buffer_span));
   if (byte_length <= 0)
     return WideString();
 
-  byte_length = std::min(2046, byte_length);
-  buffer_span[byte_length / sizeof(uint16_t)] = 0;
-  return WideString::FromUTF16LE(buffer_span.data(),
-                                 byte_length / sizeof(uint16_t));
+  buffer_span = buffer_span.first(
+      std::min<size_t>(kMaxWideChars, byte_length / sizeof(uint16_t)));
+  return WideString::FromUTF16LE(buffer_span.data(), buffer_span.size());
 }
 
 RetainPtr<IFX_SeekableReadStream> CPDFXFA_Context::DownloadURL(
