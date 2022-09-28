@@ -65,7 +65,7 @@ class CPDF_DIB final : public CFX_DIBBase {
   RetainPtr<CPDF_DIB> DetachMask();
 
  private:
-  CPDF_DIB(CPDF_Document* pDoc, const CPDF_Stream* pStream);
+  CPDF_DIB(CPDF_Document* pDoc, RetainPtr<const CPDF_Stream> pStream);
   ~CPDF_DIB() override;
 
   struct JpxSMaskInlineData {

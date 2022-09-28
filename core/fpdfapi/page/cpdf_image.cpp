@@ -84,6 +84,14 @@ RetainPtr<const CPDF_Dictionary> CPDF_Image::GetDict() const {
   return m_pStream ? m_pStream->GetDict() : nullptr;
 }
 
+RetainPtr<const CPDF_Stream> CPDF_Image::GetStream() const {
+  return m_pStream;
+}
+
+RetainPtr<const CPDF_Dictionary> CPDF_Image::GetOC() const {
+  return m_pOC;
+}
+
 RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
     pdfium::span<uint8_t> src_span) {
   absl::optional<JpegModule::ImageInfo> info_opt =

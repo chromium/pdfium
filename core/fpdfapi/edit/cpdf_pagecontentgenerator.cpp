@@ -313,7 +313,7 @@ void CPDF_PageContentGenerator::ProcessImage(fxcrt::ostringstream* buf,
   if (pImage->IsInline())
     return;
 
-  const CPDF_Stream* pStream = pImage->GetStream();
+  RetainPtr<const CPDF_Stream> pStream = pImage->GetStream();
   if (!pStream)
     return;
 

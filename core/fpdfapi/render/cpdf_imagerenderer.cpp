@@ -196,7 +196,7 @@ bool CPDF_ImageRenderer::Start(CPDF_ImageObject* pImageObject,
   m_pImageObject = pImageObject;
   m_BlendType = blendType;
   m_mtObj2Device = mtObj2Device;
-  const CPDF_Dictionary* pOC = m_pImageObject->GetImage()->GetOC();
+  RetainPtr<const CPDF_Dictionary> pOC = m_pImageObject->GetImage()->GetOC();
   if (pOC && GetRenderOptions().GetOCContext() &&
       !GetRenderOptions().GetOCContext()->CheckOCGVisible(pOC)) {
     return false;

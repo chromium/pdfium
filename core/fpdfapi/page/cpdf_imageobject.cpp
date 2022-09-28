@@ -86,7 +86,7 @@ void CPDF_ImageObject::MaybePurgeCache() {
   if (!pPageData)
     return;
 
-  const CPDF_Stream* pStream = m_pImage->GetStream();
+  RetainPtr<const CPDF_Stream> pStream = m_pImage->GetStream();
   if (!pStream)
     return;
 

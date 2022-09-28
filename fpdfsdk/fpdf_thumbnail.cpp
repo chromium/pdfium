@@ -4,6 +4,8 @@
 
 #include "public/fpdf_thumbnail.h"
 
+#include <utility>
+
 #include "core/fpdfapi/page/cpdf_dib.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -54,14 +56,15 @@ FPDFPage_GetRawThumbnailData(FPDF_PAGE page,
 
 FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV
 FPDFPage_GetThumbnailAsBitmap(FPDF_PAGE page) {
-  const CPDF_Stream* thumb_stream = CPDFStreamForThumbnailFromPage(page);
+  RetainPtr<const CPDF_Stream> thumb_stream =
+      pdfium::WrapRetain(CPDFStreamForThumbnailFromPage(page));
   if (!thumb_stream)
     return nullptr;
 
   const CPDF_Page* p_page = CPDFPageFromFPDFPage(page);
 
-  auto p_source =
-      pdfium::MakeRetain<CPDF_DIB>(p_page->GetDocument(), thumb_stream);
+  auto p_source = pdfium::MakeRetain<CPDF_DIB>(p_page->GetDocument(),
+                                               std::move(thumb_stream));
   const CPDF_DIB::LoadState start_status = p_source->StartLoadDIBBase(
       false, nullptr, p_page->GetPageResources(), false,
       CPDF_ColorSpace::Family::kUnknown, false);

@@ -154,8 +154,8 @@ JpxDecodeAction GetJpxDecodeAction(const CJPX_Decoder::JpxImageInfo& jpx_info,
 
 }  // namespace
 
-CPDF_DIB::CPDF_DIB(CPDF_Document* pDoc, const CPDF_Stream* pStream)
-    : m_pDocument(pDoc), m_pStream(pStream) {}
+CPDF_DIB::CPDF_DIB(CPDF_Document* pDoc, RetainPtr<const CPDF_Stream> pStream)
+    : m_pDocument(pDoc), m_pStream(std::move(pStream)) {}
 
 CPDF_DIB::~CPDF_DIB() = default;
 
@@ -802,7 +802,8 @@ bool CPDF_DIB::IsJBigImage() const {
 
 CPDF_DIB::LoadState CPDF_DIB::StartLoadMaskDIB(
     RetainPtr<const CPDF_Stream> mask_stream) {
-  m_pMask = pdfium::MakeRetain<CPDF_DIB>(m_pDocument.Get(), mask_stream.Get());
+  m_pMask =
+      pdfium::MakeRetain<CPDF_DIB>(m_pDocument.Get(), std::move(mask_stream));
   LoadState ret = m_pMask->StartLoadDIBBase(
       false, nullptr, nullptr, true, CPDF_ColorSpace::Family::kUnknown, false);
   if (ret == LoadState::kContinue) {

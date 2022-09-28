@@ -34,8 +34,8 @@ class CPDF_Image final : public Retainable {
   void ConvertStreamToIndirectObject();
 
   RetainPtr<const CPDF_Dictionary> GetDict() const;
-  const CPDF_Stream* GetStream() const { return m_pStream.Get(); }
-  const CPDF_Dictionary* GetOC() const { return m_pOC.Get(); }
+  RetainPtr<const CPDF_Stream> GetStream() const;
+  RetainPtr<const CPDF_Dictionary> GetOC() const;
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
 
   int32_t GetPixelHeight() const { return m_Height; }
