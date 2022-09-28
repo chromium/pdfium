@@ -116,7 +116,7 @@ class CPDF_Document : public Observable,
   }
 
   // Behaves like NewIndirect<CPDF_Stream>(), but keeps track of the new stream.
-  CPDF_Stream* CreateModifiedAPStream();
+  RetainPtr<CPDF_Stream> CreateModifiedAPStream();
 
   // Returns whether CreateModifiedAPStream() created `stream`.
   bool IsModifiedAPStream(const CPDF_Stream* stream) const;
@@ -161,18 +161,22 @@ class CPDF_Document : public Observable,
 
   // Retrieve page count information by getting count value from the tree nodes
   int RetrievePageCount();
+
   // When this method is called, m_pTreeTraversal[level] exists.
-  CPDF_Dictionary* TraversePDFPages(int iPage, int* nPagesToGo, size_t level);
+  RetainPtr<CPDF_Dictionary> TraversePDFPages(int iPage,
+                                              int* nPagesToGo,
+                                              size_t level);
 
-  const CPDF_Dictionary* GetPagesDict() const;
-  CPDF_Dictionary* GetPagesDict();
+  RetainPtr<const CPDF_Dictionary> GetPagesDict() const;
+  RetainPtr<CPDF_Dictionary> GetMutablePagesDict();
 
-  bool InsertDeletePDFPage(CPDF_Dictionary* pPages,
+  bool InsertDeletePDFPage(RetainPtr<CPDF_Dictionary> pPages,
                            int nPagesToGo,
-                           CPDF_Dictionary* pPageDict,
+                           RetainPtr<CPDF_Dictionary> pPageDict,
                            bool bInsert,
-                           std::set<CPDF_Dictionary*>* pVisited);
-  bool InsertNewPage(int iPage, CPDF_Dictionary* pPageDict);
+                           std::set<RetainPtr<CPDF_Dictionary>>* pVisited);
+
+  bool InsertNewPage(int iPage, RetainPtr<CPDF_Dictionary> pPageDict);
   void ResetTraversal();
   CPDF_Parser::Error HandleLoadResult(CPDF_Parser::Error error);
 
@@ -184,7 +188,7 @@ class CPDF_Document : public Observable,
   // vector corresponds to the level being described. The pair contains a
   // pointer to the dictionary being processed at the level, and an index of the
   // of the child being processed within the dictionary's /Kids array.
-  std::vector<std::pair<CPDF_Dictionary*, size_t>> m_pTreeTraversal;
+  std::vector<std::pair<RetainPtr<CPDF_Dictionary>, size_t>> m_pTreeTraversal;
 
   // True if the CPDF_Parser succeeded without having to rebuild the cross
   // reference table.
