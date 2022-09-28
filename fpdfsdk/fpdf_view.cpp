@@ -136,22 +136,21 @@ void UseRendererType(FPDF_RENDERER_TYPE public_type) {
 #endif
 }
 
-const CPDF_Object* GetXFAEntryFromDocument(const CPDF_Document* doc) {
+RetainPtr<const CPDF_Object> GetXFAEntryFromDocument(const CPDF_Document* doc) {
   const CPDF_Dictionary* root = doc->GetRoot();
   if (!root)
     return nullptr;
 
-  // TODO(tsepez): return retained objects.
   RetainPtr<const CPDF_Dictionary> acro_form = root->GetDictFor("AcroForm");
-  return acro_form ? acro_form->GetObjectFor("XFA").Get() : nullptr;
+  return acro_form ? acro_form->GetObjectFor("XFA") : nullptr;
 }
 
 struct XFAPacket {
   ByteString name;
-  const CPDF_Stream* data;
+  RetainPtr<const CPDF_Stream> data;
 };
 
-std::vector<XFAPacket> GetXFAPackets(const CPDF_Object* xfa_object) {
+std::vector<XFAPacket> GetXFAPackets(RetainPtr<const CPDF_Object> xfa_object) {
   std::vector<XFAPacket> packets;
 
   if (!xfa_object)
@@ -159,8 +158,7 @@ std::vector<XFAPacket> GetXFAPackets(const CPDF_Object* xfa_object) {
 
   RetainPtr<const CPDF_Stream> xfa_stream = ToStream(xfa_object->GetDirect());
   if (xfa_stream) {
-    // TODO(tsepez): push retained objects.
-    packets.push_back({"", xfa_stream.Get()});
+    packets.push_back({"", std::move(xfa_stream)});
     return packets;
   }
 
@@ -181,8 +179,7 @@ std::vector<XFAPacket> GetXFAPackets(const CPDF_Object* xfa_object) {
     if (!data)
       continue;
 
-    // TODO(tsepez): push retained objects.
-    packets.push_back({name->GetString(), data.Get()});
+    packets.push_back({name->GetString(), std::move(data)});
   }
   return packets;
 }

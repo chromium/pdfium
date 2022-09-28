@@ -180,13 +180,13 @@ ByteString GenerateFlattenedContent(const ByteString& key) {
   return "q 1 0 0 1 0 0 cm /" + key + " Do Q";
 }
 
-// TODO(tsepez): return retained reference.
-CPDF_Object* NewIndirectContentsStream(CPDF_Document* pDocument,
-                                       const ByteString& contents) {
+RetainPtr<CPDF_Reference> NewIndirectContentsStreamReference(
+    CPDF_Document* pDocument,
+    const ByteString& contents) {
   auto pNewContents = pDocument->NewIndirect<CPDF_Stream>(
       nullptr, 0, pDocument->New<CPDF_Dictionary>());
   pNewContents->SetData(contents.raw_span());
-  return pNewContents.Get();
+  return pNewContents->MakeReference(pDocument);
 }
 
 void SetPageContents(const ByteString& key,
@@ -198,10 +198,9 @@ void SetPageContents(const ByteString& key,
       pPage->GetMutableStreamFor(pdfium::page_object::kContents);
   if (!pContentsStream && !pContentsArray) {
     if (!key.IsEmpty()) {
-      pPage->SetFor(
-          pdfium::page_object::kContents,
-          NewIndirectContentsStream(pDocument, GenerateFlattenedContent(key))
-              ->MakeReference(pDocument));
+      pPage->SetFor(pdfium::page_object::kContents,
+                    NewIndirectContentsStreamReference(
+                        pDocument, GenerateFlattenedContent(key)));
     }
     return;
   }
@@ -209,9 +208,8 @@ void SetPageContents(const ByteString& key,
   pPage->ConvertToIndirectObjectFor(pdfium::page_object::kContents, pDocument);
   if (pContentsArray) {
     pContentsArray->InsertAt(
-        0, NewIndirectContentsStream(pDocument, "q")->MakeReference(pDocument));
-    pContentsArray->Append(
-        NewIndirectContentsStream(pDocument, "Q")->MakeReference(pDocument));
+        0, NewIndirectContentsStreamReference(pDocument, "q"));
+    pContentsArray->Append(NewIndirectContentsStreamReference(pDocument, "Q"));
   } else {
     ByteString sStream = "q\n";
     {
@@ -228,9 +226,8 @@ void SetPageContents(const ByteString& key,
                                      pContentsArray->GetObjNum());
   }
   if (!key.IsEmpty()) {
-    pContentsArray->Append(
-        NewIndirectContentsStream(pDocument, GenerateFlattenedContent(key))
-            ->MakeReference(pDocument));
+    pContentsArray->Append(NewIndirectContentsStreamReference(
+        pDocument, GenerateFlattenedContent(key)));
   }
 }
 

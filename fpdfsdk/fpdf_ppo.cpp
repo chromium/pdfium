@@ -149,7 +149,7 @@ NupPageSettings NupState::CalculateNewPagePosition(const CFX_SizeF& pagesize) {
   return CalculatePageEdit(iSubX, iSubY, pagesize);
 }
 
-const CPDF_Object* PageDictGetInheritableTag(
+RetainPtr<const CPDF_Object> PageDictGetInheritableTag(
     RetainPtr<const CPDF_Dictionary> pDict,
     const ByteString& bsSrcTag) {
   if (!pDict || bsSrcTag.IsEmpty())
@@ -169,13 +169,12 @@ const CPDF_Object* PageDictGetInheritableTag(
   if (!pp)
     return nullptr;
 
-  // TODO(tsepez): return retained objects throughout.
   if (pDict->KeyExist(bsSrcTag))
-    return pDict->GetObjectFor(bsSrcTag).Get();
+    return pDict->GetObjectFor(bsSrcTag);
 
   while (pp) {
     if (pp->KeyExist(bsSrcTag))
-      return pp->GetObjectFor(bsSrcTag).Get();
+      return pp->GetObjectFor(bsSrcTag);
     if (!pp->KeyExist(pdfium::page_object::kParent))
       break;
     pp = ToDictionary(
@@ -190,7 +189,7 @@ bool CopyInheritable(RetainPtr<CPDF_Dictionary> pDestPageDict,
   if (pDestPageDict->KeyExist(key))
     return true;
 
-  const CPDF_Object* pInheritable =
+  RetainPtr<const CPDF_Object> pInheritable =
       PageDictGetInheritableTag(std::move(pSrcPageDict), key);
   if (!pInheritable)
     return false;
@@ -422,7 +421,7 @@ bool CPDF_PageExporter::ExportPage(pdfium::span<const uint32_t> pageIndices,
                          pdfium::page_object::kMediaBox)) {
       // Search for "CropBox" in the source page dictionary.
       // If it does not exist, use the default letter size.
-      const CPDF_Object* pInheritable = PageDictGetInheritableTag(
+      RetainPtr<const CPDF_Object> pInheritable = PageDictGetInheritableTag(
           pSrcPageDict, pdfium::page_object::kCropBox);
       if (pInheritable) {
         pDestPageDict->SetFor(pdfium::page_object::kMediaBox,
@@ -496,8 +495,8 @@ class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
 
   // Creates an XObject from |pSrcPage|. Updates mapping as needed.
   // Returns the name of the newly created XObject.
-  ByteString MakeXObjectFromPage(const RetainPtr<CPDF_Page>& pSrcPage);
-  CPDF_Stream* MakeXObjectFromPageRaw(const RetainPtr<CPDF_Page>& pSrcPage);
+  ByteString MakeXObjectFromPage(RetainPtr<CPDF_Page> pSrcPage);
+  RetainPtr<CPDF_Stream> MakeXObjectFromPageRaw(RetainPtr<CPDF_Page> pSrcPage);
 
   // Adds |bsContent| as the Contents key in |pDestPageDict|.
   // Adds the objects in |m_XObjectNameToNumberMap| to the XObject dictionary in
@@ -600,9 +599,8 @@ ByteString CPDF_NPageToOneExporter::AddSubPage(
   return ByteString(contentStream);
 }
 
-// TODO(tsepez): return retained object.
-CPDF_Stream* CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
-    const RetainPtr<CPDF_Page>& pSrcPage) {
+RetainPtr<CPDF_Stream> CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
+    RetainPtr<CPDF_Page> pSrcPage) {
   // TODO(tsepez): return retained object from CPDF_Page::GetDict()'
   RetainPtr<const CPDF_Dictionary> pSrcPageDict(pSrcPage->GetDict());
   RetainPtr<const CPDF_Object> pSrcContentObj =
@@ -645,12 +643,12 @@ CPDF_Stream* CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
     }
     pNewXObject->SetDataAndRemoveFilter(bsSrcContentStream.raw_span());
   }
-  return pNewXObject.Get();
+  return pNewXObject;
 }
 
 ByteString CPDF_NPageToOneExporter::MakeXObjectFromPage(
-    const RetainPtr<CPDF_Page>& pSrcPage) {
-  CPDF_Stream* pNewXObject = MakeXObjectFromPageRaw(pSrcPage);
+    RetainPtr<CPDF_Page> pSrcPage) {
+  RetainPtr<CPDF_Stream> pNewXObject = MakeXObjectFromPageRaw(pSrcPage);
 
   // TODO(xlou): A better name schema to avoid possible object name collision.
   ByteString bsXObjectName = ByteString::Format("X%d", ++m_nObjectNumber);

@@ -179,9 +179,9 @@ void AddUnicode(fxcrt::ostringstream* pBuffer, uint32_t unicode) {
 }
 
 // Loads the charcode to unicode mapping into a stream
-// TODO(tsepez): return retained result.
-CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
-                         const std::multimap<uint32_t, uint32_t>& to_unicode) {
+RetainPtr<CPDF_Stream> LoadUnicode(
+    CPDF_Document* pDoc,
+    const std::multimap<uint32_t, uint32_t>& to_unicode) {
   // A map charcode->unicode
   std::map<uint32_t, uint32_t> char_to_uni;
   // A map <char_start, char_end> to vector v of unicode characters of size (end
@@ -286,7 +286,7 @@ CPDF_Stream* LoadUnicode(CPDF_Document* pDoc,
   // TODO(npm): Encrypt / Compress?
   auto stream = pDoc->NewIndirect<CPDF_Stream>();
   stream->SetDataFromStringstream(&buffer);
-  return stream.Get();
+  return stream;
 }
 
 RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* pDoc,
@@ -444,7 +444,7 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
   auto pDescendant = pFontDict->SetNewFor<CPDF_Array>("DescendantFonts");
   pDescendant->AppendNew<CPDF_Reference>(pDoc, pCIDFont->GetObjNum());
 
-  CPDF_Stream* toUnicodeStream = LoadUnicode(pDoc, to_unicode);
+  RetainPtr<CPDF_Stream> toUnicodeStream = LoadUnicode(pDoc, to_unicode);
   pFontDict->SetNewFor<CPDF_Reference>("ToUnicode", pDoc,
                                        toUnicodeStream->GetObjNum());
   return CPDF_DocPageData::FromDocument(pDoc)->GetFont(pFontDict);
