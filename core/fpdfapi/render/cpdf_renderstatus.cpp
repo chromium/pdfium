@@ -480,10 +480,10 @@ FX_ARGB CPDF_RenderStatus::GetFillArgbForType3(CPDF_PageObject* pObj) const {
 
   int32_t alpha =
       static_cast<int32_t>((pObj->m_GeneralState.GetFillAlpha() * 255));
-  if (pObj->m_GeneralState.GetTR()) {
+  RetainPtr<const CPDF_Object> pTR = pObj->m_GeneralState.GetTR();
+  if (pTR) {
     if (!pObj->m_GeneralState.GetTransferFunc()) {
-      pObj->m_GeneralState.SetTransferFunc(
-          GetTransferFunc(pObj->m_GeneralState.GetTR()));
+      pObj->m_GeneralState.SetTransferFunc(GetTransferFunc(std::move(pTR)));
     }
     if (pObj->m_GeneralState.GetTransferFunc()) {
       colorref =
@@ -509,10 +509,10 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
 
   int32_t alpha = static_cast<int32_t>(pObj->m_GeneralState.GetStrokeAlpha() *
                                        255);  // not rounded.
-  if (pObj->m_GeneralState.GetTR()) {
+  RetainPtr<const CPDF_Object> pTR = pObj->m_GeneralState.GetTR();
+  if (pTR) {
     if (!pObj->m_GeneralState.GetTransferFunc()) {
-      pObj->m_GeneralState.SetTransferFunc(
-          GetTransferFunc(pObj->m_GeneralState.GetTR()));
+      pObj->m_GeneralState.SetTransferFunc(GetTransferFunc(std::move(pTR)));
     }
     if (pObj->m_GeneralState.GetTransferFunc()) {
       colorref =

@@ -50,7 +50,7 @@ class CPDF_Form final : public CPDF_PageObjectHolder,
                     const CFX_Matrix* pParentMatrix,
                     std::set<const uint8_t*>* pParsedSet);
 
-  const CPDF_Stream* GetStream() const;
+  RetainPtr<const CPDF_Stream> GetStream() const;
 
  private:
   void ParseContentInternal(const CPDF_AllStates* pGraphicStates,

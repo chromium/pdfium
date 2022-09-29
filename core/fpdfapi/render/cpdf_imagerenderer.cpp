@@ -108,9 +108,10 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
       !m_Loader.GetMask()) {
     return StartBitmapAlpha();
   }
-  if (state.GetTR()) {
+  RetainPtr<const CPDF_Object> pTR = state.GetTR();
+  if (pTR) {
     if (!state.GetTransferFunc())
-      state.SetTransferFunc(m_pRenderStatus->GetTransferFunc(state.GetTR()));
+      state.SetTransferFunc(m_pRenderStatus->GetTransferFunc(std::move(pTR)));
 
     if (state.GetTransferFunc() && !state.GetTransferFunc()->GetIdentity())
       m_pDIBBase = m_Loader.TranslateImage(state.GetTransferFunc());

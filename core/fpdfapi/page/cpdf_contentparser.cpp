@@ -111,8 +111,7 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Form* pForm,
     pState->SetFillAlpha(1.0f);
     pState->SetSoftMask(nullptr);
   }
-  m_pSingleStream = pdfium::MakeRetain<CPDF_StreamAcc>(
-      pdfium::WrapRetain(pForm->GetStream()));
+  m_pSingleStream = pdfium::MakeRetain<CPDF_StreamAcc>(pForm->GetStream());
   m_pSingleStream->LoadAllDataFiltered();
   m_Data = m_pSingleStream->GetSpan();
 }

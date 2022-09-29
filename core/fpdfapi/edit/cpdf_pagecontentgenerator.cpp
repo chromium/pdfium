@@ -340,14 +340,14 @@ void CPDF_PageContentGenerator::ProcessForm(fxcrt::ostringstream* buf,
     return;
   }
 
-  const CPDF_Stream* pStream = pFormObj->form()->GetStream();
+  RetainPtr<const CPDF_Stream> pStream = pFormObj->form()->GetStream();
   if (!pStream)
     return;
 
   *buf << "q\n";
   WriteMatrix(*buf, pFormObj->form_matrix()) << " cm ";
 
-  ByteString name = RealizeResource(pStream, "XObject");
+  ByteString name = RealizeResource(pStream.Get(), "XObject");
   *buf << "/" << PDF_NameEncode(name) << " Do Q\n";
 }
 

@@ -39,12 +39,12 @@ class CPDF_GeneralState {
   float GetStrokeAlpha() const;
   void SetStrokeAlpha(float alpha);
 
-  const CPDF_Dictionary* GetSoftMask() const;
+  RetainPtr<const CPDF_Dictionary> GetSoftMask() const;
   RetainPtr<CPDF_Dictionary> GetMutableSoftMask();
   void SetSoftMask(RetainPtr<CPDF_Dictionary> pDict);
 
-  const CPDF_Object* GetTR() const;
-  void SetTR(const CPDF_Object* pObject);
+  RetainPtr<const CPDF_Object> GetTR() const;
+  void SetTR(RetainPtr<const CPDF_Object> pObject);
 
   RetainPtr<CPDF_TransferFunc> GetTransferFunc() const;
   void SetTransferFunc(RetainPtr<CPDF_TransferFunc> pFunc);

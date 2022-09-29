@@ -107,8 +107,8 @@ CFX_FloatRect CPDF_Form::CalcBoundingBox() const {
   return CFX_FloatRect(left, bottom, right, top);
 }
 
-const CPDF_Stream* CPDF_Form::GetStream() const {
-  return m_pFormStream.Get();
+RetainPtr<const CPDF_Stream> CPDF_Form::GetStream() const {
+  return m_pFormStream;
 }
 
 absl::optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
