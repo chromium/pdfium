@@ -284,6 +284,11 @@ class TestRunner:
     # Running a test defines a number of attributes on the fly.
     # pylint: disable=attribute-defined-outside-init
 
+    if self.test_dir == 'corpus':
+      relative_test_dir = self.test_dir
+    else:
+      relative_test_dir = os.path.join('resources', self.test_dir)
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -359,9 +364,17 @@ class TestRunner:
         help='Prevents the return value from being non-zero '
         'when image comparison fails.')
 
+    parser.add_argument(
+        'inputted_file_paths',
+        nargs='*',
+        help='Path to test files to run, relative to '
+        f'testing/{relative_test_dir}. If omitted, runs all test files under '
+        f'testing/{relative_test_dir}.',
+        metavar='relative/test/path')
+
     skia_gold.add_skia_gold_args(parser)
 
-    self.options, self.inputted_file_paths = parser.parse_known_args()
+    self.options = parser.parse_args()
 
     if (self.options.regenerate_expected and
         self.options.regenerate_expected not in ['all', 'platform']):
@@ -375,10 +388,6 @@ class TestRunner:
     self.third_party_font_dir = finder.ThirdPartyFontsDir()
 
     self.source_dir = finder.TestingDir()
-    if self.test_dir != 'corpus':
-      test_dir = finder.TestingDir(os.path.join('resources', self.test_dir))
-    else:
-      test_dir = finder.TestingDir(self.test_dir)
 
     self.pdfium_test_path = finder.ExecutablePath('pdfium_test')
     if not os.path.exists(self.pdfium_test_path):
@@ -406,13 +415,13 @@ class TestRunner:
       return 1
 
 
-    walk_from_dir = finder.TestingDir(test_dir)
+    walk_from_dir = finder.TestingDir(relative_test_dir)
 
     self.test_cases = []
     self.execution_suppressed_cases = []
     input_file_re = re.compile('^.+[.](in|pdf)$')
-    if self.inputted_file_paths:
-      for file_name in self.inputted_file_paths:
+    if self.options.inputted_file_paths:
+      for file_name in self.options.inputted_file_paths:
         file_name.replace('.pdf', '.in')
         input_path = os.path.join(walk_from_dir, file_name)
         if not os.path.isfile(input_path):
