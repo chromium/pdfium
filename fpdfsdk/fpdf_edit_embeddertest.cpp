@@ -3845,15 +3845,7 @@ TEST_F(FPDFEditEmbedderTest, GetBitmapIgnoresSMask) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_)
-#define MAYBE_GetRenderedBitmapHandlesSetMatrix \
-  DISABLED_GetRenderedBitmapHandlesSetMatrix
-#else
-#define MAYBE_GetRenderedBitmapHandlesSetMatrix \
-  GetRenderedBitmapHandlesSetMatrix
-#endif
-TEST_F(FPDFEditEmbedderTest, MAYBE_GetRenderedBitmapHandlesSetMatrix) {
+TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSetMatrix) {
   ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -3863,14 +3855,19 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_GetRenderedBitmapHandlesSetMatrix) {
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
 
   {
-    // Render |obj| as is.
+    // Render `obj` as is.
     ScopedFPDFBitmap bitmap(
         FPDFImageObj_GetRenderedBitmap(document(), page, obj));
     EXPECT_EQ(FPDFBitmap_BGRA, FPDFBitmap_GetFormat(bitmap.get()));
-    CompareBitmap(bitmap.get(), 53, 43, "582ca300e003f512d7b552c7b5b45d2e");
+    const char* checksum = []() {
+      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+        return "3b51fc066ee18efbf70bab0501763603";
+      return "582ca300e003f512d7b552c7b5b45d2e";
+    }();
+    CompareBitmap(bitmap.get(), 53, 43, checksum);
   }
 
-  // Check the matrix for |obj|.
+  // Check the matrix for `obj`.
   FS_MATRIX matrix;
   EXPECT_TRUE(FPDFPageObj_GetMatrix(obj, &matrix));
   EXPECT_FLOAT_EQ(53.0f, matrix.a);
@@ -3880,7 +3877,7 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_GetRenderedBitmapHandlesSetMatrix) {
   EXPECT_FLOAT_EQ(72.0f, matrix.e);
   EXPECT_FLOAT_EQ(646.510009765625f, matrix.f);
 
-  // Modify the matrix for |obj|.
+  // Modify the matrix for `obj`.
   matrix.a = 120.0;
   EXPECT_TRUE(FPDFPageObj_SetMatrix(obj, &matrix));
 
@@ -3894,12 +3891,17 @@ TEST_F(FPDFEditEmbedderTest, MAYBE_GetRenderedBitmapHandlesSetMatrix) {
   EXPECT_FLOAT_EQ(646.510009765625f, matrix.f);
 
   {
-    // Render |obj| again. Note that the FPDFPageObj_SetMatrix() call has an
+    // Render `obj` again. Note that the FPDFPageObj_SetMatrix() call has an
     // effect.
     ScopedFPDFBitmap bitmap(
         FPDFImageObj_GetRenderedBitmap(document(), page, obj));
     EXPECT_EQ(FPDFBitmap_BGRA, FPDFBitmap_GetFormat(bitmap.get()));
-    CompareBitmap(bitmap.get(), 120, 43, "0824c16dcf2dfcef44b45d88db1fddce");
+    const char* checksum = []() {
+      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+        return "74081c2a48c2fd4f1fde544f056e956b";
+      return "0824c16dcf2dfcef44b45d88db1fddce";
+    }();
+    CompareBitmap(bitmap.get(), 120, 43, checksum);
   }
 
   UnloadPage(page);
