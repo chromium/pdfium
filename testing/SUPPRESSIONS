@@ -332,9 +332,6 @@ format_text_color.pdf mac * * *
 formfeild.pdf * * * *
 getarray.pdf mac * * *
 
-# TODO(pdfium:1862): Remove after associated bug is fixed
-image_8bit_devicergb_dctdecode.pdf * * * skia
-
 # TODO(pdfium:1856): Remove after associated bug is fixed
 image_bmp.pdf * * * skia
 
