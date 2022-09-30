@@ -2348,12 +2348,12 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     skPath.transform(inverse);
   } else {
     DCHECK_EQ(kCoonsPatchMeshShading, shadingType);
-    RetainPtr<const CPDF_Stream> pStream(
-        ToStream(pPattern->GetShadingObject()));
+    RetainPtr<const CPDF_Stream> pStream =
+        ToStream(pPattern->GetShadingObject());
     if (!pStream)
       return false;
-    CPDF_MeshStream stream(shadingType, pPattern->GetFuncs(), pStream,
-                           pPattern->GetCS());
+    CPDF_MeshStream stream(shadingType, pPattern->GetFuncs(),
+                           std::move(pStream), pPattern->GetCS());
     if (!stream.Load())
       return false;
     SkPoint cubics[12];

@@ -7,13 +7,13 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_PATTERN_H_
 #define CORE_FPDFAPI_PAGE_CPDF_PATTERN_H_
 
+#include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Document;
-class CPDF_Object;
 class CPDF_ShadingPattern;
 class CPDF_TilingPattern;
 
@@ -29,7 +29,7 @@ class CPDF_Pattern : public Retainable, public Observable {
 
   // All the getters that return pointers return non-NULL pointers.
   CPDF_Document* document() const { return m_pDocument.Get(); }
-  CPDF_Object* pattern_obj() const { return m_pPatternObj.Get(); }
+  RetainPtr<CPDF_Object> pattern_obj() const { return m_pPatternObj; }
   const CFX_Matrix& pattern_to_form() const { return m_Pattern2Form; }
   const CFX_Matrix& parent_matrix() const { return m_ParentMatrix; }
 

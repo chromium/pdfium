@@ -54,7 +54,7 @@ class CPDF_ShadingPattern final : public CPDF_Pattern {
 
   ShadingType GetShadingType() const { return m_ShadingType; }
   bool IsShadingObject() const { return m_bShading; }
-  const CPDF_Object* GetShadingObject() const;
+  RetainPtr<const CPDF_Object> GetShadingObject() const;
   RetainPtr<CPDF_ColorSpace> GetCS() const { return m_pCS; }
   const std::vector<std::unique_ptr<CPDF_Function>>& GetFuncs() const {
     return m_pFunctions;

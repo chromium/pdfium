@@ -941,8 +941,8 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
     case kFreeFormGouraudTriangleMeshShading: {
       // The shading object can be a stream or a dictionary. We do not handle
       // the case of dictionary at the moment.
-      RetainPtr<const CPDF_Stream> pStream(
-          ToStream(pPattern->GetShadingObject()));
+      RetainPtr<const CPDF_Stream> pStream =
+          ToStream(pPattern->GetShadingObject());
       if (pStream) {
         DrawFreeGouraudShading(pBitmap, final_matrix, std::move(pStream), funcs,
                                pColorSpace, alpha);
@@ -952,8 +952,8 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
     case kLatticeFormGouraudTriangleMeshShading: {
       // The shading object can be a stream or a dictionary. We do not handle
       // the case of dictionary at the moment.
-      RetainPtr<const CPDF_Stream> pStream(
-          ToStream(pPattern->GetShadingObject()));
+      RetainPtr<const CPDF_Stream> pStream =
+          ToStream(pPattern->GetShadingObject());
       if (pStream) {
         DrawLatticeGouraudShading(pBitmap, final_matrix, std::move(pStream),
                                   funcs, pColorSpace, alpha);
@@ -964,9 +964,8 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
     case kTensorProductPatchMeshShading: {
       // The shading object can be a stream or a dictionary. We do not handle
       // the case of dictionary at the moment.
-      // TODO(tsepez): GetShadinObject() should return retained object.
-      RetainPtr<const CPDF_Stream> pStream(
-          ToStream(pPattern->GetShadingObject()));
+      RetainPtr<const CPDF_Stream> pStream =
+          ToStream(pPattern->GetShadingObject());
       if (pStream) {
         DrawCoonPatchMeshes(pPattern->GetShadingType(), pBitmap, final_matrix,
                             std::move(pStream), funcs, pColorSpace,

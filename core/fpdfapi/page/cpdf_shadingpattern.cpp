@@ -51,7 +51,7 @@ bool CPDF_ShadingPattern::Load() {
   if (m_ShadingType != kInvalidShading)
     return true;
 
-  const CPDF_Object* pShadingObj = GetShadingObject();
+  RetainPtr<const CPDF_Object> pShadingObj = GetShadingObject();
   RetainPtr<const CPDF_Dictionary> pShadingDict =
       pShadingObj ? pShadingObj->GetDict() : nullptr;
   if (!pShadingDict)
@@ -87,10 +87,9 @@ bool CPDF_ShadingPattern::Load() {
   return Validate();
 }
 
-const CPDF_Object* CPDF_ShadingPattern::GetShadingObject() const {
-  return m_bShading
-             ? pattern_obj()
-             : pattern_obj()->GetDict()->GetDirectObjectFor("Shading").Get();
+RetainPtr<const CPDF_Object> CPDF_ShadingPattern::GetShadingObject() const {
+  return m_bShading ? pattern_obj()
+                    : pattern_obj()->GetDict()->GetDirectObjectFor("Shading");
 }
 
 bool CPDF_ShadingPattern::Validate() const {

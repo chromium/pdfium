@@ -66,7 +66,7 @@ const char kPathOperatorRectangle[] = "re";
 CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
                              const CFX_Matrix& matrix) {
   ShadingType type = pShading->GetShadingType();
-  RetainPtr<const CPDF_Stream> pStream(ToStream(pShading->GetShadingObject()));
+  RetainPtr<const CPDF_Stream> pStream = ToStream(pShading->GetShadingObject());
   RetainPtr<CPDF_ColorSpace> pCS = pShading->GetCS();
   if (!pStream || !pCS)
     return CFX_FloatRect();
