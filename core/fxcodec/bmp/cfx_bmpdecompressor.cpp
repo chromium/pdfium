@@ -377,16 +377,31 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRGB() {
     SaveDecodingStatus(DecodeStatus::kData);
     switch (bit_counts_) {
       case 1: {
-        for (uint32_t col = 0; col < width_; ++col)
-          out_row_buffer_[idx++] =
+        for (uint32_t col = 0; col < width_; ++col) {
+          uint8_t index =
               dest_buf[col >> 3] & (0x80 >> (col % 8)) ? 0x01 : 0x00;
+          if (!ValidateColorIndex(index))
+            return BmpDecoder::Status::kFail;
+          out_row_buffer_[idx++] = index;
+        }
         break;
       }
       case 4: {
         for (uint32_t col = 0; col < width_; ++col) {
-          out_row_buffer_[idx++] = (col & 0x01)
-                                       ? (dest_buf[col >> 1] & 0x0F)
+          uint8_t index = (col & 0x01) ? (dest_buf[col >> 1] & 0x0F)
                                        : ((dest_buf[col >> 1] & 0xF0) >> 4);
+          if (!ValidateColorIndex(index))
+            return BmpDecoder::Status::kFail;
+          out_row_buffer_[idx++] = index;
+        }
+        break;
+      }
+      case 8: {
+        for (uint32_t col = 0; col < width_; ++col) {
+          uint8_t index = dest_buf[col];
+          if (!ValidateColorIndex(index))
+            return BmpDecoder::Status::kFail;
+          out_row_buffer_[idx++] = index;
         }
         break;
       }
@@ -421,18 +436,14 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRGB() {
         }
         break;
       }
-      case 8:
       case 24:
       case 32:
+        // TODO(crbug.com/pdfium/1901): Apply bitfields.
         uint8_t* dest_buf_data = dest_buf.data();
         std::copy(dest_buf_data, dest_buf_data + src_row_bytes_,
                   out_row_buffer_.begin());
         idx += src_row_bytes_;
         break;
-    }
-    for (uint8_t byte : out_row_buffer_) {
-      if (!ValidateColorIndex(byte))
-        return BmpDecoder::Status::kFail;
     }
     ReadNextScanline();
   }
