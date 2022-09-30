@@ -92,7 +92,7 @@ class CPDF_StreamContentParser {
   void AddObjectParam(RetainPtr<CPDF_Object> pObj);
   int GetNextParamPos();
   void ClearAllParams();
-  CPDF_Object* GetObject(uint32_t index);
+  RetainPtr<CPDF_Object> GetObject(uint32_t index);
   ByteString GetString(uint32_t index) const;
   float GetNumber(uint32_t index) const;
   // Calls GetNumber() |count| times and returns the values in reverse order.

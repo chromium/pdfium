@@ -38,9 +38,9 @@ void CPDF_ContentMarkItem::SetDirectDict(RetainPtr<CPDF_Dictionary> pDict) {
 }
 
 void CPDF_ContentMarkItem::SetPropertiesHolder(
-    CPDF_Dictionary* pHolder,
+    RetainPtr<CPDF_Dictionary> pHolder,
     const ByteString& property_name) {
   m_ParamType = kPropertiesDict;
-  m_pPropertiesHolder.Reset(pHolder);
+  m_pPropertiesHolder = std::move(pHolder);
   m_PropertyName = property_name;
 }

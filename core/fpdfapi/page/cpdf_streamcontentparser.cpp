@@ -328,7 +328,7 @@ void CPDF_StreamContentParser::ClearAllParams() {
   m_ParamCount = 0;
 }
 
-CPDF_Object* CPDF_StreamContentParser::GetObject(uint32_t index) {
+RetainPtr<CPDF_Object> CPDF_StreamContentParser::GetObject(uint32_t index) {
   if (index >= m_ParamCount) {
     return nullptr;
   }
@@ -343,15 +343,15 @@ CPDF_Object* CPDF_StreamContentParser::GetObject(uint32_t index) {
         param.m_Number.IsInteger()
             ? pdfium::MakeRetain<CPDF_Number>(param.m_Number.GetSigned())
             : pdfium::MakeRetain<CPDF_Number>(param.m_Number.GetFloat());
-    return param.m_pObject.Get();
+    return param.m_pObject;
   }
   if (param.m_Type == ContentParam::Type::kName) {
     param.m_Type = ContentParam::Type::kObject;
     param.m_pObject = m_pDocument->New<CPDF_Name>(param.m_Name);
-    return param.m_pObject.Get();
+    return param.m_pObject;
   }
   if (param.m_Type == ContentParam::Type::kObject)
-    return param.m_pObject.Get();
+    return param.m_pObject;
 
   NOTREACHED();
   return nullptr;
@@ -576,7 +576,7 @@ void CPDF_StreamContentParser::Handle_EOFillStrokePath() {
 }
 
 void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
-  CPDF_Object* pProperty = GetObject(0);
+  RetainPtr<CPDF_Object> pProperty = GetObject(0);
   if (!pProperty)
     return;
 
@@ -589,10 +589,11 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
     RetainPtr<CPDF_Dictionary> pHolder = FindResourceHolder("Properties");
     if (!pHolder || !pHolder->GetDictFor(property_name))
       return;
-    // TODO(tsepez): pass retained argument.
-    new_marks->AddMarkWithPropertiesHolder(tag, pHolder.Get(), property_name);
+
+    new_marks->AddMarkWithPropertiesHolder(tag, std::move(pHolder),
+                                           property_name);
   } else if (pProperty->IsDictionary()) {
-    new_marks->AddMarkWithDirectDict(tag, pProperty->AsMutableDictionary());
+    new_marks->AddMarkWithDirectDict(tag, ToDictionary(pProperty));
   } else {
     return;
   }
