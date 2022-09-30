@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_function.h"
 
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_expintfunc.h"
@@ -40,21 +41,22 @@ CPDF_Function::Type IntegerToFunctionType(int iType) {
 
 // static
 std::unique_ptr<CPDF_Function> CPDF_Function::Load(
-    const CPDF_Object* pFuncObj) {
-  std::set<const CPDF_Object*> visited;
-  return Load(pFuncObj, &visited);
+    RetainPtr<const CPDF_Object> pFuncObj) {
+  VisitedSet visited;
+  return Load(std::move(pFuncObj), &visited);
 }
 
 // static
 std::unique_ptr<CPDF_Function> CPDF_Function::Load(
-    const CPDF_Object* pFuncObj,
-    std::set<const CPDF_Object*>* pVisited) {
+    RetainPtr<const CPDF_Object> pFuncObj,
+    VisitedSet* pVisited) {
   if (!pFuncObj)
     return nullptr;
 
   if (pdfium::Contains(*pVisited, pFuncObj))
     return nullptr;
-  ScopedSetInsertion<const CPDF_Object*> insertion(pVisited, pFuncObj);
+
+  ScopedSetInsertion<VisitedSet::value_type> insertion(pVisited, pFuncObj);
 
   int iType = -1;
   if (const CPDF_Stream* pStream = pFuncObj->AsStream())
@@ -83,8 +85,7 @@ CPDF_Function::CPDF_Function(Type type) : m_Type(type) {}
 
 CPDF_Function::~CPDF_Function() = default;
 
-bool CPDF_Function::Init(const CPDF_Object* pObj,
-                         std::set<const CPDF_Object*>* pVisited) {
+bool CPDF_Function::Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
   const CPDF_Stream* pStream = pObj->AsStream();
   RetainPtr<const CPDF_Dictionary> pDict =
       pStream ? pStream->GetDict() : pdfium::WrapRetain(pObj->AsDictionary());

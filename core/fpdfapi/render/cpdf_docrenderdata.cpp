@@ -54,7 +54,7 @@ RetainPtr<CPDF_Type3Cache> CPDF_DocRenderData::GetCachedType3(
 }
 
 RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(
-    const CPDF_Object* pObj) {
+    RetainPtr<const CPDF_Object> pObj) {
   if (!pObj)
     return nullptr;
 
@@ -63,7 +63,7 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(
     return pdfium::WrapRetain(it->second.Get());
 
   auto pFunc = CreateTransferFunc(pObj);
-  m_TransferFuncMap[pdfium::WrapRetain(pObj)].Reset(pFunc.Get());
+  m_TransferFuncMap[pObj].Reset(pFunc.Get());
   return pFunc;
 }
 
@@ -76,7 +76,7 @@ CFX_PSFontTracker* CPDF_DocRenderData::GetPSFontTracker() {
 #endif
 
 RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
-    const CPDF_Object* pObj) const {
+    RetainPtr<const CPDF_Object> pObj) const {
   std::unique_ptr<CPDF_Function> pFuncs[3];
   const CPDF_Array* pArray = pObj->AsArray();
   if (pArray) {
@@ -84,8 +84,7 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
       return nullptr;
 
     for (uint32_t i = 0; i < 3; ++i) {
-      // TODO(tsepez): pass retained objects to Load().
-      pFuncs[2 - i] = CPDF_Function::Load(pArray->GetDirectObjectAt(i).Get());
+      pFuncs[2 - i] = CPDF_Function::Load(pArray->GetDirectObjectAt(i));
       if (!pFuncs[2 - i])
         return nullptr;
     }

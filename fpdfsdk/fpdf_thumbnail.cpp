@@ -17,7 +17,7 @@
 
 namespace {
 
-const CPDF_Stream* CPDFStreamForThumbnailFromPage(FPDF_PAGE page) {
+RetainPtr<const CPDF_Stream> CPDFStreamForThumbnailFromPage(FPDF_PAGE page) {
   const CPDF_Page* p_page = CPDFPageFromFPDFPage(page);
   if (!p_page)
     return nullptr;
@@ -26,8 +26,7 @@ const CPDF_Stream* CPDFStreamForThumbnailFromPage(FPDF_PAGE page) {
   if (!page_dict->KeyExist("Type"))
     return nullptr;
 
-  // TODO(tsepez): return retained objects.
-  return page_dict->GetStreamFor("Thumb").Get();
+  return page_dict->GetStreamFor("Thumb");
 }
 
 }  // namespace
@@ -36,7 +35,8 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFPage_GetDecodedThumbnailData(FPDF_PAGE page,
                                  void* buffer,
                                  unsigned long buflen) {
-  const CPDF_Stream* thumb_stream = CPDFStreamForThumbnailFromPage(page);
+  RetainPtr<const CPDF_Stream> thumb_stream =
+      CPDFStreamForThumbnailFromPage(page);
   if (!thumb_stream)
     return 0u;
 
@@ -47,7 +47,8 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFPage_GetRawThumbnailData(FPDF_PAGE page,
                              void* buffer,
                              unsigned long buflen) {
-  const CPDF_Stream* thumb_stream = CPDFStreamForThumbnailFromPage(page);
+  RetainPtr<const CPDF_Stream> thumb_stream =
+      CPDFStreamForThumbnailFromPage(page);
   if (!thumb_stream)
     return 0u;
 
@@ -57,7 +58,7 @@ FPDFPage_GetRawThumbnailData(FPDF_PAGE page,
 FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV
 FPDFPage_GetThumbnailAsBitmap(FPDF_PAGE page) {
   RetainPtr<const CPDF_Stream> thumb_stream =
-      pdfium::WrapRetain(CPDFStreamForThumbnailFromPage(page));
+      CPDFStreamForThumbnailFromPage(page);
   if (!thumb_stream)
     return nullptr;
 

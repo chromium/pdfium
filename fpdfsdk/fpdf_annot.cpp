@@ -323,16 +323,14 @@ const CPDFSDK_Widget* GetRadioButtonOrCheckBoxWidget(FPDF_FORMHANDLE hHandle,
   return pFormControl ? pForm->GetWidget(pFormControl) : nullptr;
 }
 
-// TODO(tsepez): return retained references.
-const CPDF_Array* GetInkList(FPDF_ANNOTATION annot) {
+RetainPtr<const CPDF_Array> GetInkList(FPDF_ANNOTATION annot) {
   FPDF_ANNOTATION_SUBTYPE subtype = FPDFAnnot_GetSubtype(annot);
   if (subtype != FPDF_ANNOT_INK)
     return nullptr;
 
   const CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
-  return annot_dict
-             ? annot_dict->GetArrayFor(pdfium::annotation::kInkList).Get()
-             : nullptr;
+  return annot_dict ? annot_dict->GetArrayFor(pdfium::annotation::kInkList)
+                    : nullptr;
 }
 
 }  // namespace
@@ -900,7 +898,7 @@ FPDFAnnot_GetVertices(FPDF_ANNOTATION annot,
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDFAnnot_GetInkListCount(FPDF_ANNOTATION annot) {
-  const CPDF_Array* ink_list = GetInkList(annot);
+  RetainPtr<const CPDF_Array> ink_list = GetInkList(annot);
   return ink_list ? fxcrt::CollectionSize<unsigned long>(*ink_list) : 0;
 }
 
@@ -909,7 +907,7 @@ FPDFAnnot_GetInkListPath(FPDF_ANNOTATION annot,
                          unsigned long path_index,
                          FS_POINTF* buffer,
                          unsigned long length) {
-  const CPDF_Array* ink_list = GetInkList(annot);
+  RetainPtr<const CPDF_Array> ink_list = GetInkList(annot);
   if (!ink_list)
     return 0;
 

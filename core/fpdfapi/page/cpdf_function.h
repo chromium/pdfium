@@ -11,6 +11,7 @@
 #include <set>
 #include <vector>
 
+#include "core/fxcrt/retain_ptr.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/span.h"
 
@@ -30,7 +31,8 @@ class CPDF_Function {
     kType4PostScript = 4,
   };
 
-  static std::unique_ptr<CPDF_Function> Load(const CPDF_Object* pFuncObj);
+  static std::unique_ptr<CPDF_Function> Load(
+      RetainPtr<const CPDF_Object> pFuncObj);
 
   virtual ~CPDF_Function();
 
@@ -55,12 +57,12 @@ class CPDF_Function {
  protected:
   explicit CPDF_Function(Type type);
 
+  using VisitedSet = std::set<RetainPtr<const CPDF_Object>>;
   static std::unique_ptr<CPDF_Function> Load(
-      const CPDF_Object* pFuncObj,
-      std::set<const CPDF_Object*>* pVisited);
-  bool Init(const CPDF_Object* pObj, std::set<const CPDF_Object*>* pVisited);
-  virtual bool v_Init(const CPDF_Object* pObj,
-                      std::set<const CPDF_Object*>* pVisited) = 0;
+      RetainPtr<const CPDF_Object> pFuncObj,
+      VisitedSet* pVisited);
+  bool Init(const CPDF_Object* pObj, VisitedSet* pVisited);
+  virtual bool v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) = 0;
   virtual bool v_Call(pdfium::span<const float> inputs,
                       pdfium::span<float> results) const = 0;
 

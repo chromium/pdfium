@@ -267,8 +267,7 @@ FX_Charset GetNativeCharSet() {
   return FX_GetCharsetFromCodePage(FX_GetACP());
 }
 
-// TODO(tsepez): return retained reference.
-CPDF_Dictionary* InitDict(CPDF_Document* pDocument) {
+RetainPtr<CPDF_Dictionary> InitDict(CPDF_Document* pDocument) {
   auto pFormDict = pDocument->NewIndirect<CPDF_Dictionary>();
   pDocument->GetMutableRoot()->SetNewFor<CPDF_Reference>(
       "AcroForm", pDocument, pFormDict->GetObjNum());
@@ -295,7 +294,7 @@ CPDF_Dictionary* InitDict(CPDF_Document* pDocument) {
     csDA = "/" + PDF_NameEncode(csBaseName) + " 0 Tf ";
   csDA += "0 g";
   pFormDict->SetNewFor<CPDF_String>("DA", csDA, /*bHex=*/false);
-  return pFormDict.Get();
+  return pFormDict;
 }
 
 RetainPtr<CPDF_Font> GetNativeFont(const CPDF_Dictionary* pFormDict,
@@ -571,7 +570,7 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeInteractiveFormFont(
   RetainPtr<CPDF_Dictionary> pFormDict =
       pDocument->GetMutableRoot()->GetMutableDictFor("AcroForm");
   if (!pFormDict)
-    pFormDict.Reset(InitDict(pDocument));
+    pFormDict = InitDict(pDocument);
 
   FX_Charset charSet = GetNativeCharSet();
   ByteString csTemp;

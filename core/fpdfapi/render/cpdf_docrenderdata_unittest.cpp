@@ -161,8 +161,8 @@ class TestDocRenderData : public CPDF_DocRenderData {
   TestDocRenderData() : CPDF_DocRenderData() {}
 
   RetainPtr<CPDF_TransferFunc> CreateTransferFuncForTesting(
-      const CPDF_Object* pObj) const {
-    return CreateTransferFunc(pObj);
+      RetainPtr<const CPDF_Object> pObj) const {
+    return CreateTransferFunc(std::move(pObj));
   }
 };
 
@@ -170,7 +170,7 @@ TEST(CPDF_DocRenderDataTest, TransferFunctionOne) {
   RetainPtr<CPDF_Dictionary> func_dict = CreateType2FunctionDict();
 
   TestDocRenderData render_data;
-  auto func = render_data.CreateTransferFuncForTesting(func_dict.Get());
+  auto func = render_data.CreateTransferFuncForTesting(func_dict);
   ASSERT_TRUE(func);
   EXPECT_FALSE(func->GetIdentity());
 
@@ -206,7 +206,7 @@ TEST(CPDF_DocRenderDataTest, TransferFunctionArray) {
   func_array->Append(CreateType4FunctionStream());
 
   TestDocRenderData render_data;
-  auto func = render_data.CreateTransferFuncForTesting(func_array.Get());
+  auto func = render_data.CreateTransferFuncForTesting(func_array);
   ASSERT_TRUE(func);
   EXPECT_FALSE(func->GetIdentity());
 
@@ -240,7 +240,7 @@ TEST(CPDF_DocRenderDataTest, BadTransferFunctions) {
     auto func_stream = CreateBadType4FunctionStream();
 
     TestDocRenderData render_data;
-    auto func = render_data.CreateTransferFuncForTesting(func_stream.Get());
+    auto func = render_data.CreateTransferFuncForTesting(func_stream);
     EXPECT_FALSE(func);
   }
 
@@ -248,7 +248,7 @@ TEST(CPDF_DocRenderDataTest, BadTransferFunctions) {
     auto func_array = pdfium::MakeRetain<CPDF_Array>();
 
     TestDocRenderData render_data;
-    auto func = render_data.CreateTransferFuncForTesting(func_array.Get());
+    auto func = render_data.CreateTransferFuncForTesting(func_array);
     EXPECT_FALSE(func);
   }
 
@@ -259,7 +259,7 @@ TEST(CPDF_DocRenderDataTest, BadTransferFunctions) {
     func_array->Append(CreateBadType4FunctionStream());
 
     TestDocRenderData render_data;
-    auto func = render_data.CreateTransferFuncForTesting(func_array.Get());
+    auto func = render_data.CreateTransferFuncForTesting(func_array);
     EXPECT_FALSE(func);
   }
 }

@@ -456,10 +456,10 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* path_obj,
 }
 
 RetainPtr<CPDF_TransferFunc> CPDF_RenderStatus::GetTransferFunc(
-    const CPDF_Object* pObj) const {
+    RetainPtr<const CPDF_Object> pObj) const {
   DCHECK(pObj);
   auto* pDocCache = CPDF_DocRenderData::FromDocument(m_pContext->GetDocument());
-  return pDocCache ? pDocCache->GetTransferFunc(pObj) : nullptr;
+  return pDocCache ? pDocCache->GetTransferFunc(std::move(pObj)) : nullptr;
 }
 
 FX_ARGB CPDF_RenderStatus::GetFillArgb(CPDF_PageObject* pObj) const {
@@ -1402,7 +1402,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   RetainPtr<const CPDF_Object> pFuncObj =
       pSMaskDict->GetDirectObjectFor(pdfium::transparency::kTR);
   if (pFuncObj && (pFuncObj->IsDictionary() || pFuncObj->IsStream()))
-    pFunc = CPDF_Function::Load(pFuncObj.Get());
+    pFunc = CPDF_Function::Load(std::move(pFuncObj));
 
   CFX_Matrix matrix = mtMatrix;
   matrix.Translate(-pClipRect->left, -pClipRect->top);

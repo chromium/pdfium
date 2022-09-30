@@ -17,34 +17,33 @@ CPDF_ViewerPreferences::CPDF_ViewerPreferences(const CPDF_Document* pDoc)
 CPDF_ViewerPreferences::~CPDF_ViewerPreferences() = default;
 
 bool CPDF_ViewerPreferences::IsDirectionR2L() const {
-  const CPDF_Dictionary* pDict = GetViewerPreferences();
+  RetainPtr<const CPDF_Dictionary> pDict = GetViewerPreferences();
   return pDict && pDict->GetByteStringFor("Direction") == "R2L";
 }
 
 bool CPDF_ViewerPreferences::PrintScaling() const {
-  const CPDF_Dictionary* pDict = GetViewerPreferences();
+  RetainPtr<const CPDF_Dictionary> pDict = GetViewerPreferences();
   return !pDict || pDict->GetByteStringFor("PrintScaling") != "None";
 }
 
 int32_t CPDF_ViewerPreferences::NumCopies() const {
-  const CPDF_Dictionary* pDict = GetViewerPreferences();
+  RetainPtr<const CPDF_Dictionary> pDict = GetViewerPreferences();
   return pDict ? pDict->GetIntegerFor("NumCopies") : 1;
 }
 
-// TODO(tsepez): return retained references.
-const CPDF_Array* CPDF_ViewerPreferences::PrintPageRange() const {
-  const CPDF_Dictionary* pDict = GetViewerPreferences();
-  return pDict ? pDict->GetArrayFor("PrintPageRange").Get() : nullptr;
+RetainPtr<const CPDF_Array> CPDF_ViewerPreferences::PrintPageRange() const {
+  RetainPtr<const CPDF_Dictionary> pDict = GetViewerPreferences();
+  return pDict ? pDict->GetArrayFor("PrintPageRange") : nullptr;
 }
 
 ByteString CPDF_ViewerPreferences::Duplex() const {
-  const CPDF_Dictionary* pDict = GetViewerPreferences();
+  RetainPtr<const CPDF_Dictionary> pDict = GetViewerPreferences();
   return pDict ? pDict->GetByteStringFor("Duplex") : ByteString("None");
 }
 
 absl::optional<ByteString> CPDF_ViewerPreferences::GenericName(
     const ByteString& bsKey) const {
-  const CPDF_Dictionary* pDict = GetViewerPreferences();
+  RetainPtr<const CPDF_Dictionary> pDict = GetViewerPreferences();
   if (!pDict)
     return absl::nullopt;
 
@@ -55,8 +54,8 @@ absl::optional<ByteString> CPDF_ViewerPreferences::GenericName(
   return pName->GetString();
 }
 
-// TODO(tsepez): return retained object.
-const CPDF_Dictionary* CPDF_ViewerPreferences::GetViewerPreferences() const {
+RetainPtr<const CPDF_Dictionary> CPDF_ViewerPreferences::GetViewerPreferences()
+    const {
   const CPDF_Dictionary* pDict = m_pDoc->GetRoot();
-  return pDict ? pDict->GetDictFor("ViewerPreferences").Get() : nullptr;
+  return pDict ? pDict->GetDictFor("ViewerPreferences") : nullptr;
 }

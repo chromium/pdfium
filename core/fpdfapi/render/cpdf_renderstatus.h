@@ -98,7 +98,7 @@ class CPDF_RenderStatus {
 #endif
 
   RetainPtr<CPDF_TransferFunc> GetTransferFunc(
-      const CPDF_Object* pObject) const;
+      RetainPtr<const CPDF_Object> pObject) const;
 
   FX_ARGB GetFillArgb(CPDF_PageObject* pObj) const;
   FX_ARGB GetFillArgbForType3(CPDF_PageObject* pObj) const;

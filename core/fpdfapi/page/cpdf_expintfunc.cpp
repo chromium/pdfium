@@ -21,8 +21,7 @@ CPDF_ExpIntFunc::CPDF_ExpIntFunc()
 
 CPDF_ExpIntFunc::~CPDF_ExpIntFunc() = default;
 
-bool CPDF_ExpIntFunc::v_Init(const CPDF_Object* pObj,
-                             std::set<const CPDF_Object*>* pVisited) {
+bool CPDF_ExpIntFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
   RetainPtr<const CPDF_Dictionary> pDict = pObj->GetDict();
   if (!pDict)
     return false;
