@@ -16,7 +16,7 @@
 class CPDF_Link {
  public:
   CPDF_Link();
-  explicit CPDF_Link(CPDF_Dictionary* pDict);
+  explicit CPDF_Link(RetainPtr<CPDF_Dictionary> pDict);
   CPDF_Link(const CPDF_Link& that);
   ~CPDF_Link();
 

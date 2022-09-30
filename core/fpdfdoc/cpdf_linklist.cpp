@@ -6,6 +6,8 @@
 
 #include "core/fpdfdoc/cpdf_linklist.h"
 
+#include <utility>
+
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -25,11 +27,11 @@ CPDF_Link CPDF_LinkList::GetLinkAtPoint(CPDF_Page* pPage,
 
   for (size_t i = pPageLinkList->size(); i > 0; --i) {
     size_t annot_index = i - 1;
-    CPDF_Dictionary* pAnnot = (*pPageLinkList)[annot_index].Get();
+    RetainPtr<CPDF_Dictionary> pAnnot = (*pPageLinkList)[annot_index];
     if (!pAnnot)
       continue;
 
-    CPDF_Link link(pAnnot);
+    CPDF_Link link(std::move(pAnnot));
     if (!link.GetRect().Contains(point))
       continue;
 

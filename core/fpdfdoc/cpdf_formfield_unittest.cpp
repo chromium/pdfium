@@ -54,7 +54,7 @@ void TestMultiselectFieldDict(RetainPtr<CPDF_Array> opt_array,
 
   CPDF_TestDocument doc;
   CPDF_InteractiveForm form(&doc);
-  CPDF_FormField form_field(&form, form_dict.Get());
+  CPDF_FormField form_field(&form, std::move(form_dict));
   EXPECT_EQ(expected_use_indices, form_field.UseSelectedIndicesObject());
   for (int i = 0; i < form_field.CountOptions(); i++) {
     const bool expected_selected = pdfium::Contains(expected_indices, i);

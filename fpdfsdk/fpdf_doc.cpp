@@ -345,7 +345,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDFLink_GetDest(FPDF_DOCUMENT document,
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pDoc)
     return nullptr;
-  CPDF_Link cLink(CPDFDictionaryFromFPDFLink(link));
+  CPDF_Link cLink(pdfium::WrapRetain(CPDFDictionaryFromFPDFLink(link)));
   FPDF_DEST dest = FPDFDestFromCPDFArray(cLink.GetDest(pDoc).GetArray());
   if (dest)
     return dest;
@@ -360,7 +360,7 @@ FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV FPDFLink_GetAction(FPDF_LINK link) {
   if (!link)
     return nullptr;
 
-  CPDF_Link cLink(CPDFDictionaryFromFPDFLink(link));
+  CPDF_Link cLink(pdfium::WrapRetain(CPDFDictionaryFromFPDFLink(link)));
   return FPDFActionFromCPDFDictionary(cLink.GetAction().GetDict());
 }
 
@@ -447,7 +447,7 @@ FPDF_EXPORT FPDF_ACTION FPDF_CALLCONV FPDF_GetPageAAction(FPDF_PAGE page,
     return nullptr;
 
   const CPDF_Dictionary* page_dict = pdf_page->GetDict();
-  CPDF_AAction aa(page_dict->GetDictFor(pdfium::form_fields::kAA).Get());
+  CPDF_AAction aa(page_dict->GetDictFor(pdfium::form_fields::kAA));
 
   CPDF_AAction::AActionType type;
   if (aa_type == FPDFPAGE_AACTION_OPEN)

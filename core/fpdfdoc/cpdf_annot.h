@@ -73,7 +73,7 @@ class CPDF_Annot {
                                           size_t nIndex);
   static size_t QuadPointCount(const CPDF_Array* pArray);
 
-  CPDF_Annot(CPDF_Dictionary* pDict, CPDF_Document* pDocument);
+  CPDF_Annot(RetainPtr<CPDF_Dictionary> pDict, CPDF_Document* pDocument);
   ~CPDF_Annot();
 
   Subtype GetSubtype() const;

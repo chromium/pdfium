@@ -39,7 +39,7 @@ class CPDF_AAction {
     kNumberOfActions  // Must be last.
   };
 
-  explicit CPDF_AAction(const CPDF_Dictionary* pDict);
+  explicit CPDF_AAction(RetainPtr<const CPDF_Dictionary> pDict);
   CPDF_AAction(const CPDF_AAction& that);
   ~CPDF_AAction();
 

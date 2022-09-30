@@ -703,7 +703,7 @@ ByteString GetEditAppStream(CPWL_EditImpl* pEdit,
 }
 
 ByteString GenerateIconAppStream(CPDF_IconFit& fit,
-                                 CPDF_Stream* pIconStream,
+                                 RetainPtr<CPDF_Stream> pIconStream,
                                  const CFX_FloatRect& rcIcon) {
   if (rcIcon.IsEmpty() || !pIconStream)
     return ByteString();
@@ -715,7 +715,7 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
   if (!pWnd->Move(rcIcon, false, false))
     return ByteString();
 
-  auto pPDFIcon = std::make_unique<CPDF_Icon>(pIconStream);
+  auto pPDFIcon = std::make_unique<CPDF_Icon>(std::move(pIconStream));
   ByteString sAlias = pPDFIcon->GetImageAlias();
   if (sAlias.GetLength() <= 0)
     return ByteString();
@@ -748,7 +748,7 @@ ByteString GenerateIconAppStream(CPDF_IconFit& fit,
 
 ByteString GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
                                   IPVT_FontMap* pFontMap,
-                                  CPDF_Stream* pIconStream,
+                                  RetainPtr<CPDF_Stream> pIconStream,
                                   CPDF_IconFit& IconFit,
                                   const WideString& sLabel,
                                   const CFX_Color& crText,
@@ -910,7 +910,7 @@ ByteString GetPushButtonAppStream(const CFX_FloatRect& rcBBox,
   }
 
   fxcrt::ostringstream sTemp;
-  sTemp << GenerateIconAppStream(IconFit, pIconStream, rcIcon);
+  sTemp << GenerateIconAppStream(IconFit, std::move(pIconStream), rcIcon);
 
   if (!rcLabel.IsEmpty()) {
     pEdit->SetPlateRect(rcLabel);
@@ -1242,8 +1242,8 @@ void CPDFSDK_AppStream::SetAsPushButton() {
         GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
                                    crRightBottom, nBorderStyle, dsBorder) +
         GetPushButtonAppStream(iconFit.GetFittingBounds() ? rcWindow : rcClient,
-                               &font_map, pNormalIcon.Get(), iconFit,
-                               csNormalCaption, crText, fFontSize, nLayout);
+                               &font_map, pNormalIcon, iconFit, csNormalCaption,
+                               crText, fFontSize, nLayout);
 
     Write("N", csAP, ByteString());
     if (pNormalIcon)
@@ -1269,7 +1269,7 @@ void CPDFSDK_AppStream::SetAsPushButton() {
         GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
                                    crRightBottom, nBorderStyle, dsBorder) +
         GetPushButtonAppStream(iconFit.GetFittingBounds() ? rcWindow : rcClient,
-                               &font_map, pRolloverIcon.Get(), iconFit,
+                               &font_map, pRolloverIcon, iconFit,
                                csRolloverCaption, crText, fFontSize, nLayout);
 
     Write("R", csAP, ByteString());
@@ -1305,8 +1305,8 @@ void CPDFSDK_AppStream::SetAsPushButton() {
         GetBorderAppStreamInternal(rcWindow, fBorderWidth, crBorder, crLeftTop,
                                    crRightBottom, nBorderStyle, dsBorder) +
         GetPushButtonAppStream(iconFit.GetFittingBounds() ? rcWindow : rcClient,
-                               &font_map, pDownIcon.Get(), iconFit,
-                               csDownCaption, crText, fFontSize, nLayout);
+                               &font_map, pDownIcon, iconFit, csDownCaption,
+                               crText, fFontSize, nLayout);
 
     Write("D", csAP, ByteString());
     if (pDownIcon)

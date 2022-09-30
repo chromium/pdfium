@@ -97,8 +97,8 @@ WideString CPDF_FormField::GetFullNameForDict(
 }
 
 CPDF_FormField::CPDF_FormField(CPDF_InteractiveForm* pForm,
-                               CPDF_Dictionary* pDict)
-    : m_pForm(pForm), m_pDict(pDict) {
+                               RetainPtr<CPDF_Dictionary> pDict)
+    : m_pForm(pForm), m_pDict(std::move(pDict)) {
   InitFieldFlags();
 }
 
@@ -270,7 +270,7 @@ FormFieldType CPDF_FormField::GetFieldType() const {
 
 CPDF_AAction CPDF_FormField::GetAdditionalAction() const {
   CPDF_Object* pObj = GetFieldAttr(m_pDict.Get(), pdfium::form_fields::kAA);
-  return CPDF_AAction(pObj ? pObj->GetDict().Get() : nullptr);
+  return CPDF_AAction(pObj ? pObj->GetDict() : nullptr);
 }
 
 WideString CPDF_FormField::GetAlternateName() const {

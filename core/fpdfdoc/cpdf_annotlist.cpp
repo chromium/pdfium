@@ -116,7 +116,8 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Document* pDocument,
   pAnnotDict->SetRectFor(pdfium::annotation::kRect, popupRect);
   pAnnotDict->SetNewFor<CPDF_Number>(pdfium::annotation::kF, 0);
 
-  auto pPopupAnnot = std::make_unique<CPDF_Annot>(pAnnotDict.Get(), pDocument);
+  auto pPopupAnnot =
+      std::make_unique<CPDF_Annot>(std::move(pAnnotDict), pDocument);
   pAnnot->SetPopupAnnot(pPopupAnnot.get());
   return pPopupAnnot;
 }
@@ -194,7 +195,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
     }
     pAnnots->ConvertToIndirectObjectAt(i, m_pDocument.Get());
     m_AnnotList.push_back(
-        std::make_unique<CPDF_Annot>(pDict.Get(), m_pDocument.Get()));
+        std::make_unique<CPDF_Annot>(pDict, m_pDocument.Get()));
     if (bRegenerateAP && subtype == "Widget" &&
         CPDF_InteractiveForm::IsUpdateAPEnabled() &&
         !pDict->GetDictFor(pdfium::annotation::kAP)) {

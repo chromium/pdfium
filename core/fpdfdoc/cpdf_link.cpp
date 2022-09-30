@@ -6,11 +6,14 @@
 
 #include "core/fpdfdoc/cpdf_link.h"
 
+#include <utility>
+
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 
 CPDF_Link::CPDF_Link() = default;
 
-CPDF_Link::CPDF_Link(CPDF_Dictionary* pDict) : m_pDict(pDict) {}
+CPDF_Link::CPDF_Link(RetainPtr<CPDF_Dictionary> pDict)
+    : m_pDict(std::move(pDict)) {}
 
 CPDF_Link::CPDF_Link(const CPDF_Link& that) = default;
 

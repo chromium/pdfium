@@ -6,10 +6,13 @@
 
 #include "core/fpdfdoc/cpdf_icon.h"
 
+#include <utility>
+
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 
-CPDF_Icon::CPDF_Icon(const CPDF_Stream* pStream) : m_pStream(pStream) {}
+CPDF_Icon::CPDF_Icon(RetainPtr<const CPDF_Stream> pStream)
+    : m_pStream(std::move(pStream)) {}
 
 CPDF_Icon::~CPDF_Icon() = default;
 
