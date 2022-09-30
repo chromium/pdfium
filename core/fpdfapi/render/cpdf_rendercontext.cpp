@@ -22,11 +22,12 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 
-CPDF_RenderContext::CPDF_RenderContext(CPDF_Document* pDoc,
-                                       CPDF_Dictionary* pPageResources,
-                                       CPDF_PageRenderCache* pPageCache)
+CPDF_RenderContext::CPDF_RenderContext(
+    CPDF_Document* pDoc,
+    RetainPtr<CPDF_Dictionary> pPageResources,
+    CPDF_PageRenderCache* pPageCache)
     : m_pDocument(pDoc),
-      m_pPageResources(pPageResources),
+      m_pPageResources(std::move(pPageResources)),
       m_pPageCache(pPageCache) {}
 
 CPDF_RenderContext::~CPDF_RenderContext() = default;

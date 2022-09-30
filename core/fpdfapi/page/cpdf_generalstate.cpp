@@ -218,16 +218,16 @@ void CPDF_GeneralState::SetOPMode(int mode) {
   m_Ref.GetPrivateCopy()->m_OPMode = mode;
 }
 
-void CPDF_GeneralState::SetBG(const CPDF_Object* pObject) {
-  m_Ref.GetPrivateCopy()->m_pBG.Reset(pObject);
+void CPDF_GeneralState::SetBG(RetainPtr<const CPDF_Object> pObject) {
+  m_Ref.GetPrivateCopy()->m_pBG = std::move(pObject);
 }
 
-void CPDF_GeneralState::SetUCR(const CPDF_Object* pObject) {
-  m_Ref.GetPrivateCopy()->m_pUCR.Reset(pObject);
+void CPDF_GeneralState::SetUCR(RetainPtr<const CPDF_Object> pObject) {
+  m_Ref.GetPrivateCopy()->m_pUCR = std::move(pObject);
 }
 
-void CPDF_GeneralState::SetHT(const CPDF_Object* pObject) {
-  m_Ref.GetPrivateCopy()->m_pHT.Reset(pObject);
+void CPDF_GeneralState::SetHT(RetainPtr<const CPDF_Object> pObject) {
+  m_Ref.GetPrivateCopy()->m_pHT = std::move(pObject);
 }
 
 void CPDF_GeneralState::SetFlatness(float flatness) {

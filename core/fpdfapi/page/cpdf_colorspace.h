@@ -12,6 +12,7 @@
 
 #include <array>
 #include <set>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_pattern.h"
@@ -41,9 +42,9 @@ class PatternValue {
     return {m_Comps.data(), m_Comps.size()};
   }
 
-  CPDF_Pattern* GetPattern() const { return m_pRetainedPattern.Get(); }
-  void SetPattern(const RetainPtr<CPDF_Pattern>& pPattern) {
-    m_pRetainedPattern = pPattern;
+  RetainPtr<CPDF_Pattern> GetPattern() const { return m_pRetainedPattern; }
+  void SetPattern(RetainPtr<CPDF_Pattern> pPattern) {
+    m_pRetainedPattern = std::move(pPattern);
   }
 
  private:

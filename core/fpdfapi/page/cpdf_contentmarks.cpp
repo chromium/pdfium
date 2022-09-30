@@ -146,7 +146,7 @@ void CPDF_ContentMarks::MarkData::AddMarkWithPropertiesHolder(
     const ByteString& property_name) {
   auto pItem = pdfium::MakeRetain<CPDF_ContentMarkItem>(name);
   pItem->SetPropertiesHolder(std::move(pDict), property_name);
-  m_Marks.push_back(pItem);
+  m_Marks.push_back(std::move(pItem));
 }
 
 bool CPDF_ContentMarks::MarkData::RemoveMark(CPDF_ContentMarkItem* pMarkItem) {

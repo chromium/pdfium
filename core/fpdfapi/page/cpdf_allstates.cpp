@@ -138,7 +138,7 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
         }
         [[fallthrough]];
       case FXBSTR_ID('B', 'G', '2', 0):
-        m_GeneralState.SetBG(pObject.Get());
+        m_GeneralState.SetBG(std::move(pObject));
         break;
       case FXBSTR_ID('U', 'C', 'R', 0):
         if (pGS->KeyExist("UCR2")) {
@@ -146,10 +146,10 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
         }
         [[fallthrough]];
       case FXBSTR_ID('U', 'C', 'R', '2'):
-        m_GeneralState.SetUCR(pObject.Get());
+        m_GeneralState.SetUCR(std::move(pObject));
         break;
       case FXBSTR_ID('H', 'T', 0, 0):
-        m_GeneralState.SetHT(pObject.Get());
+        m_GeneralState.SetHT(std::move(pObject));
         break;
       case FXBSTR_ID('F', 'L', 0, 0):
         m_GeneralState.SetFlatness(pObject->GetNumber());

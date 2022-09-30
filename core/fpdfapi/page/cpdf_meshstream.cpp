@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_meshstream.h"
 
+#include <utility>
+
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_function.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -98,14 +100,13 @@ CPDF_MeshVertex::~CPDF_MeshVertex() = default;
 CPDF_MeshStream::CPDF_MeshStream(
     ShadingType type,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
-    const CPDF_Stream* pShadingStream,
-    const RetainPtr<CPDF_ColorSpace>& pCS)
+    RetainPtr<const CPDF_Stream> pShadingStream,
+    RetainPtr<CPDF_ColorSpace> pCS)
     : m_type(type),
       m_funcs(funcs),
-      m_pShadingStream(pShadingStream),
-      m_pCS(pCS),
-      m_pStream(pdfium::MakeRetain<CPDF_StreamAcc>(
-          pdfium::WrapRetain(pShadingStream))) {}
+      m_pShadingStream(std::move(pShadingStream)),
+      m_pCS(std::move(pCS)),
+      m_pStream(pdfium::MakeRetain<CPDF_StreamAcc>(m_pShadingStream)) {}
 
 CPDF_MeshStream::~CPDF_MeshStream() = default;
 

@@ -19,11 +19,11 @@
 #include "third_party/base/notreached.h"
 
 CPVT_FontMap::CPVT_FontMap(CPDF_Document* pDoc,
-                           CPDF_Dictionary* pResDict,
+                           RetainPtr<CPDF_Dictionary> pResDict,
                            RetainPtr<CPDF_Font> pDefFont,
                            const ByteString& sDefFontAlias)
     : m_pDocument(pDoc),
-      m_pResDict(pResDict),
+      m_pResDict(std::move(pResDict)),
       m_pDefFont(std::move(pDefFont)),
       m_sDefFontAlias(sDefFontAlias) {}
 

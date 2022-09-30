@@ -235,7 +235,8 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   // Set up all the rendering code.
   RetainPtr<CPDF_Dictionary> page_resources =
       optional_page ? optional_page->GetMutablePageResources() : nullptr;
-  CPDF_RenderContext context(doc, page_resources.Get(), /*pPageCache=*/nullptr);
+  CPDF_RenderContext context(doc, std::move(page_resources),
+                             /*pPageCache=*/nullptr);
   CFX_DefaultRenderDevice device;
   device.Attach(result_bitmap);
   CPDF_RenderStatus status(&context, &device);

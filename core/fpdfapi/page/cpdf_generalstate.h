@@ -63,9 +63,9 @@ class CPDF_GeneralState {
   int GetOPMode() const;
   void SetOPMode(int mode);
 
-  void SetBG(const CPDF_Object* pObject);
-  void SetUCR(const CPDF_Object* pObject);
-  void SetHT(const CPDF_Object* pObject);
+  void SetBG(RetainPtr<const CPDF_Object> pObject);
+  void SetUCR(RetainPtr<const CPDF_Object> pObject);
+  void SetHT(RetainPtr<const CPDF_Object> pObject);
 
   void SetFlatness(float flatness);
   void SetSmoothness(float smoothness);

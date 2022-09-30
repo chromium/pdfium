@@ -21,7 +21,7 @@ class CPDF_Font;
 class CPVT_FontMap final : public IPVT_FontMap {
  public:
   CPVT_FontMap(CPDF_Document* pDoc,
-               CPDF_Dictionary* pResDict,
+               RetainPtr<CPDF_Dictionary> pResDict,
                RetainPtr<CPDF_Font> pDefFont,
                const ByteString& sDefFontAlias);
   ~CPVT_FontMap() override;

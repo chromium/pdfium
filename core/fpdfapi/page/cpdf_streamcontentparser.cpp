@@ -66,12 +66,13 @@ const char kPathOperatorRectangle[] = "re";
 CFX_FloatRect GetShadingBBox(CPDF_ShadingPattern* pShading,
                              const CFX_Matrix& matrix) {
   ShadingType type = pShading->GetShadingType();
-  const CPDF_Stream* pStream = ToStream(pShading->GetShadingObject());
+  RetainPtr<const CPDF_Stream> pStream(ToStream(pShading->GetShadingObject()));
   RetainPtr<CPDF_ColorSpace> pCS = pShading->GetCS();
   if (!pStream || !pCS)
     return CFX_FloatRect();
 
-  CPDF_MeshStream stream(type, pShading->GetFuncs(), pStream, pCS);
+  CPDF_MeshStream stream(type, pShading->GetFuncs(), std::move(pStream),
+                         std::move(pCS));
   if (!stream.Load())
     return CFX_FloatRect();
 
@@ -589,7 +590,6 @@ void CPDF_StreamContentParser::Handle_BeginMarkedContent_Dictionary() {
     RetainPtr<CPDF_Dictionary> pHolder = FindResourceHolder("Properties");
     if (!pHolder || !pHolder->GetDictFor(property_name))
       return;
-
     new_marks->AddMarkWithPropertiesHolder(tag, std::move(pHolder),
                                            property_name);
   } else if (pProperty->IsDictionary()) {
@@ -1079,7 +1079,7 @@ void CPDF_StreamContentParser::Handle_ShadeFill() {
 
   CFX_Matrix matrix = m_pCurStates->m_CTM * m_mtContentToUser;
   auto pObj = std::make_unique<CPDF_ShadingObject>(GetCurrentStreamIndex(),
-                                                   pShading.Get(), matrix);
+                                                   pShading, matrix);
   SetGraphicStates(pObj.get(), false, false, false);
   CFX_FloatRect bbox =
       pObj->m_ClipPath.HasRef() ? pObj->m_ClipPath.GetClipBox() : m_BBox;

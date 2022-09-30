@@ -43,7 +43,7 @@ class CPDF_RenderContext {
   };
 
   CPDF_RenderContext(CPDF_Document* pDoc,
-                     CPDF_Dictionary* pPageResources,
+                     RetainPtr<CPDF_Dictionary> pPageResources,
                      CPDF_PageRenderCache* pPageCache);
   ~CPDF_RenderContext();
 

@@ -1088,8 +1088,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     pStreamDict->SetRectFor("BBox", rcBBox);
   }
   CPVT_FontMap map(
-      pDoc,
-      pStreamDict ? pStreamDict->GetMutableDictFor("Resources").Get() : nullptr,
+      pDoc, pStreamDict ? pStreamDict->GetMutableDictFor("Resources") : nullptr,
       std::move(pDefFont), font_name);
   CPVT_VariableText::Provider prd(&map);
 

@@ -20,7 +20,7 @@ class CPDF_StreamAcc;
 
 class CPDF_FlateEncoder {
  public:
-  CPDF_FlateEncoder(const CPDF_Stream* pStream, bool bFlateEncode);
+  CPDF_FlateEncoder(RetainPtr<const CPDF_Stream> pStream, bool bFlateEncode);
   ~CPDF_FlateEncoder();
 
   void CloneDict();

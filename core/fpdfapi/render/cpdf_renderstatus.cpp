@@ -382,7 +382,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
   status.SetDeviceMatrix(buffer.GetMatrix());
   status.SetTransparency(m_Transparency);
   status.SetDropObjects(m_bDropObjects);
-  status.SetFormResource(pFormResource.Get());
+  status.SetFormResource(std::move(pFormResource));
   status.Initialize(nullptr, nullptr);
   status.RenderSingleObject(pObj, matrix);
   buffer.OutputToDevice();
@@ -407,7 +407,7 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
   status.SetStopObject(m_pStopObj.Get());
   status.SetTransparency(m_Transparency);
   status.SetDropObjects(m_bDropObjects);
-  status.SetFormResource(pResources.Get());
+  status.SetFormResource(std::move(pResources));
   status.Initialize(this, pFormObj);
   status.m_curBlend = m_curBlend;
   {
@@ -715,7 +715,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   bitmap_render.SetStopObject(m_pStopObj.Get());
   bitmap_render.SetStdCS(true);
   bitmap_render.SetDropObjects(m_bDropObjects);
-  bitmap_render.SetFormResource(pFormResource.Get());
+  bitmap_render.SetFormResource(std::move(pFormResource));
   bitmap_render.Initialize(nullptr, nullptr);
   bitmap_render.ProcessObjectNoClip(pPageObj, new_matrix);
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
@@ -998,7 +998,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         status.SetType3Char(pType3Char);
         status.SetFillColor(fill_argb);
         status.SetDropObjects(m_bDropObjects);
-        status.SetFormResource(pFormResource.Get());
+        status.SetFormResource(std::move(pFormResource));
         status.Initialize(this, pStates.get());
         status.m_Type3FontCache = m_Type3FontCache;
         status.m_Type3FontCache.emplace_back(pType3Font);
@@ -1023,7 +1023,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         status.SetType3Char(pType3Char);
         status.SetFillColor(fill_argb);
         status.SetDropObjects(m_bDropObjects);
-        status.SetFormResource(pFormResource.Get());
+        status.SetFormResource(std::move(pFormResource));
         status.Initialize(this, pStates.get());
         status.m_Type3FontCache = m_Type3FontCache;
         status.m_Type3FontCache.emplace_back(pType3Font);
@@ -1441,7 +1441,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   status.SetGroupFamily(nCSFamily);
   status.SetLoadMask(bLuminosity);
   status.SetStdCS(true);
-  status.SetFormResource(pFormResource.Get());
+  status.SetFormResource(std::move(pFormResource));
   status.SetDropObjects(m_bDropObjects);
   status.Initialize(nullptr, nullptr);
   status.RenderObjectList(&form, matrix);

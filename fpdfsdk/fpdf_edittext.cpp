@@ -635,7 +635,7 @@ FPDFTextObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   CFX_DefaultRenderDevice* device_ptr = device.get();
   render_context_ptr->m_pDevice = std::move(device);
   render_context_ptr->m_pContext = std::make_unique<CPDF_RenderContext>(
-      doc, page_resources.Get(), /*pPageCache=*/nullptr);
+      doc, std::move(page_resources), /*pPageCache=*/nullptr);
 
   device_ptr->Attach(result_bitmap);
 

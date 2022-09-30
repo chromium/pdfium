@@ -416,14 +416,14 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
 void DrawFreeGouraudShading(
     const RetainPtr<CFX_DIBitmap>& pBitmap,
     const CFX_Matrix& mtObject2Bitmap,
-    const CPDF_Stream* pShadingStream,
+    RetainPtr<const CPDF_Stream> pShadingStream,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
-    const RetainPtr<CPDF_ColorSpace>& pCS,
+    RetainPtr<CPDF_ColorSpace> pCS,
     int alpha) {
   DCHECK_EQ(pBitmap->GetFormat(), FXDIB_Format::kArgb);
 
   CPDF_MeshStream stream(kFreeFormGouraudTriangleMeshShading, funcs,
-                         pShadingStream, pCS);
+                         std::move(pShadingStream), std::move(pCS));
   if (!stream.Load())
     return;
 
@@ -455,9 +455,9 @@ void DrawFreeGouraudShading(
 void DrawLatticeGouraudShading(
     const RetainPtr<CFX_DIBitmap>& pBitmap,
     const CFX_Matrix& mtObject2Bitmap,
-    const CPDF_Stream* pShadingStream,
+    RetainPtr<const CPDF_Stream> pShadingStream,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
-    const RetainPtr<CPDF_ColorSpace>& pCS,
+    RetainPtr<CPDF_ColorSpace> pCS,
     int alpha) {
   DCHECK_EQ(pBitmap->GetFormat(), FXDIB_Format::kArgb);
 
@@ -466,7 +466,7 @@ void DrawLatticeGouraudShading(
     return;
 
   CPDF_MeshStream stream(kLatticeFormGouraudTriangleMeshShading, funcs,
-                         pShadingStream, pCS);
+                         std::move(pShadingStream), std::move(pCS));
   if (!stream.Load())
     return;
 
@@ -776,9 +776,9 @@ void DrawCoonPatchMeshes(
     ShadingType type,
     const RetainPtr<CFX_DIBitmap>& pBitmap,
     const CFX_Matrix& mtObject2Bitmap,
-    const CPDF_Stream* pShadingStream,
+    RetainPtr<const CPDF_Stream> pShadingStream,
     const std::vector<std::unique_ptr<CPDF_Function>>& funcs,
-    const RetainPtr<CPDF_ColorSpace>& pCS,
+    RetainPtr<CPDF_ColorSpace> pCS,
     bool bNoPathSmooth,
     int alpha) {
   DCHECK_EQ(pBitmap->GetFormat(), FXDIB_Format::kArgb);
@@ -787,7 +787,9 @@ void DrawCoonPatchMeshes(
 
   CFX_DefaultRenderDevice device;
   device.Attach(pBitmap);
-  CPDF_MeshStream stream(type, funcs, pShadingStream, pCS);
+
+  CPDF_MeshStream stream(type, funcs, std::move(pShadingStream),
+                         std::move(pCS));
   if (!stream.Load())
     return;
 
@@ -939,9 +941,10 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
     case kFreeFormGouraudTriangleMeshShading: {
       // The shading object can be a stream or a dictionary. We do not handle
       // the case of dictionary at the moment.
-      const CPDF_Stream* pStream = ToStream(pPattern->GetShadingObject());
+      RetainPtr<const CPDF_Stream> pStream(
+          ToStream(pPattern->GetShadingObject()));
       if (pStream) {
-        DrawFreeGouraudShading(pBitmap, final_matrix, pStream, funcs,
+        DrawFreeGouraudShading(pBitmap, final_matrix, std::move(pStream), funcs,
                                pColorSpace, alpha);
       }
       break;
@@ -949,10 +952,11 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
     case kLatticeFormGouraudTriangleMeshShading: {
       // The shading object can be a stream or a dictionary. We do not handle
       // the case of dictionary at the moment.
-      const CPDF_Stream* pStream = ToStream(pPattern->GetShadingObject());
+      RetainPtr<const CPDF_Stream> pStream(
+          ToStream(pPattern->GetShadingObject()));
       if (pStream) {
-        DrawLatticeGouraudShading(pBitmap, final_matrix, pStream, funcs,
-                                  pColorSpace, alpha);
+        DrawLatticeGouraudShading(pBitmap, final_matrix, std::move(pStream),
+                                  funcs, pColorSpace, alpha);
       }
       break;
     }
@@ -960,10 +964,12 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
     case kTensorProductPatchMeshShading: {
       // The shading object can be a stream or a dictionary. We do not handle
       // the case of dictionary at the moment.
-      const CPDF_Stream* pStream = ToStream(pPattern->GetShadingObject());
+      // TODO(tsepez): GetShadinObject() should return retained object.
+      RetainPtr<const CPDF_Stream> pStream(
+          ToStream(pPattern->GetShadingObject()));
       if (pStream) {
         DrawCoonPatchMeshes(pPattern->GetShadingType(), pBitmap, final_matrix,
-                            pStream, funcs, pColorSpace,
+                            std::move(pStream), funcs, pColorSpace,
                             options.GetOptions().bNoPathSmooth, alpha);
       }
       break;

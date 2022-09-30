@@ -189,7 +189,7 @@ WideString CPDF_Stream::GetUnicodeText() const {
 bool CPDF_Stream::WriteTo(IFX_ArchiveStream* archive,
                           const CPDF_Encryptor* encryptor) const {
   const bool is_metadata = IsMetaDataStreamDictionary(GetDict().Get());
-  CPDF_FlateEncoder encoder(this, !is_metadata);
+  CPDF_FlateEncoder encoder(pdfium::WrapRetain(this), !is_metadata);
 
   DataVector<uint8_t> encrypted_data;
   pdfium::span<const uint8_t> data = encoder.GetSpan();

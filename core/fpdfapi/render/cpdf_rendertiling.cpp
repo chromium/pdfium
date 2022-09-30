@@ -137,7 +137,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
         CPDF_RenderStatus status(pContext, pDevice);
         status.SetOptions(options);
         status.SetTransparency(pPatternForm->GetTransparency());
-        status.SetFormResource(pFormResource.Get());
+        status.SetFormResource(pFormResource);
         status.SetDropObjects(pRenderStatus->GetDropObjects());
         status.Initialize(pRenderStatus, pStates.get());
         status.RenderObjectList(pPatternForm, matrix);
