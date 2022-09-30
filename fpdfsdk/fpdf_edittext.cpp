@@ -85,12 +85,11 @@ ByteString BaseFontNameForType(CFX_Font* pFont, int font_type) {
   return CFX_Font::kUntitledFontName;
 }
 
-// TODO(tsepez): return retained references.
-CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
-                              const ByteString& font_name,
-                              CFX_Font* pFont,
-                              pdfium::span<const uint8_t> span,
-                              int font_type) {
+RetainPtr<CPDF_Dictionary> LoadFontDesc(CPDF_Document* pDoc,
+                                        const ByteString& font_name,
+                                        CFX_Font* pFont,
+                                        pdfium::span<const uint8_t> span,
+                                        int font_type) {
   auto pFontDesc = pDoc->NewIndirect<CPDF_Dictionary>();
   pFontDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
   pFontDesc->SetNewFor<CPDF_Name>("FontName", font_name);
@@ -130,7 +129,7 @@ CPDF_Dictionary* LoadFontDesc(CPDF_Document* pDoc,
   }
   ByteString fontFile = font_type == FPDF_FONT_TYPE1 ? "FontFile" : "FontFile2";
   pFontDesc->SetNewFor<CPDF_Reference>(fontFile, pDoc, pStream->GetObjNum());
-  return pFontDesc.Get();
+  return pFontDesc;
 }
 
 const char ToUnicodeStart[] =
@@ -324,7 +323,7 @@ RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* pDoc,
                                     static_cast<int>(dwCurrentChar));
   pFontDict->SetNewFor<CPDF_Reference>("Widths", pDoc,
                                        widthsArray->GetObjNum());
-  CPDF_Dictionary* pFontDesc =
+  RetainPtr<CPDF_Dictionary> pFontDesc =
       LoadFontDesc(pDoc, name, pFont.get(), span, font_type);
 
   pFontDict->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc,
@@ -362,7 +361,7 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
   pCIDFont->SetNewFor<CPDF_Reference>("CIDSystemInfo", pDoc,
                                       pCIDSystemInfo->GetObjNum());
 
-  CPDF_Dictionary* pFontDesc =
+  RetainPtr<CPDF_Dictionary> pFontDesc =
       LoadFontDesc(pDoc, name, pFont.get(), span, font_type);
   pCIDFont->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc,
                                       pFontDesc->GetObjNum());

@@ -25,10 +25,9 @@ namespace {
 
 const int kNumTestPages = 7;
 
-// TODO(tsepez): return retained reference.
-CPDF_Dictionary* CreatePageTreeNode(RetainPtr<CPDF_Array> kids,
-                                    CPDF_Document* pDoc,
-                                    int count) {
+RetainPtr<CPDF_Dictionary> CreatePageTreeNode(RetainPtr<CPDF_Array> kids,
+                                              CPDF_Document* pDoc,
+                                              int count) {
   CPDF_Array* pUnowned =
       pDoc->AddIndirectObject(std::move(kids))->AsMutableArray();
   auto pageNode = pDoc->NewIndirect<CPDF_Dictionary>();
@@ -39,7 +38,7 @@ CPDF_Dictionary* CreatePageTreeNode(RetainPtr<CPDF_Array> kids,
     pUnowned->GetMutableDictAt(i)->SetNewFor<CPDF_Reference>(
         "Parent", pDoc, pageNode->GetObjNum());
   }
-  return pageNode.Get();
+  return pageNode;
 }
 
 RetainPtr<CPDF_Dictionary> CreateNumberedPage(size_t number) {
@@ -60,14 +59,14 @@ class CPDF_TestDocumentForPages final : public CPDF_TestDocument {
         this, AddIndirectObject(CreateNumberedPage(1))->GetObjNum());
     zeroToTwo->AppendNew<CPDF_Reference>(
         this, AddIndirectObject(CreateNumberedPage(2))->GetObjNum());
-    CPDF_Dictionary* branch1 =
+    RetainPtr<CPDF_Dictionary> branch1 =
         CreatePageTreeNode(std::move(zeroToTwo), this, 3);
 
     auto zeroToThree = pdfium::MakeRetain<CPDF_Array>();
     zeroToThree->AppendNew<CPDF_Reference>(this, branch1->GetObjNum());
     zeroToThree->AppendNew<CPDF_Reference>(
         this, AddIndirectObject(CreateNumberedPage(3))->GetObjNum());
-    CPDF_Dictionary* branch2 =
+    RetainPtr<CPDF_Dictionary> branch2 =
         CreatePageTreeNode(std::move(zeroToThree), this, 4);
 
     auto fourFive = pdfium::MakeRetain<CPDF_Array>();
@@ -75,22 +74,23 @@ class CPDF_TestDocumentForPages final : public CPDF_TestDocument {
         this, AddIndirectObject(CreateNumberedPage(4))->GetObjNum());
     fourFive->AppendNew<CPDF_Reference>(
         this, AddIndirectObject(CreateNumberedPage(5))->GetObjNum());
-    CPDF_Dictionary* branch3 = CreatePageTreeNode(std::move(fourFive), this, 2);
+    RetainPtr<CPDF_Dictionary> branch3 =
+        CreatePageTreeNode(std::move(fourFive), this, 2);
 
     auto justSix = pdfium::MakeRetain<CPDF_Array>();
     justSix->AppendNew<CPDF_Reference>(
         this, AddIndirectObject(CreateNumberedPage(6))->GetObjNum());
-    CPDF_Dictionary* branch4 = CreatePageTreeNode(std::move(justSix), this, 1);
+    RetainPtr<CPDF_Dictionary> branch4 =
+        CreatePageTreeNode(std::move(justSix), this, 1);
 
     auto allPages = pdfium::MakeRetain<CPDF_Array>();
     allPages->AppendNew<CPDF_Reference>(this, branch2->GetObjNum());
     allPages->AppendNew<CPDF_Reference>(this, branch3->GetObjNum());
     allPages->AppendNew<CPDF_Reference>(this, branch4->GetObjNum());
-    CPDF_Dictionary* pagesDict =
+    RetainPtr<CPDF_Dictionary> pagesDict =
         CreatePageTreeNode(std::move(allPages), this, kNumTestPages);
 
-    // TODO(tsepez): pass retained argument.
-    SetRootForTesting(NewIndirect<CPDF_Dictionary>().Get());
+    SetRootForTesting(NewIndirect<CPDF_Dictionary>());
     GetMutableRoot()->SetNewFor<CPDF_Reference>("Pages", this,
                                                 pagesDict->GetObjNum());
     ResizePageListForTesting(kNumTestPages);
@@ -114,9 +114,9 @@ class CPDF_TestDocumentWithPageWithoutPageNum final : public CPDF_TestDocument {
     // Page without pageNum.
     inlined_page_ = CreateNumberedPage(2);
     allPages->Append(inlined_page_);
-    CPDF_Dictionary* pagesDict =
+    RetainPtr<CPDF_Dictionary> pagesDict =
         CreatePageTreeNode(std::move(allPages), this, 3);
-    SetRootForTesting(NewIndirect<CPDF_Dictionary>().Get());
+    SetRootForTesting(NewIndirect<CPDF_Dictionary>());
     GetMutableRoot()->SetNewFor<CPDF_Reference>("Pages", this,
                                                 pagesDict->GetObjNum());
     ResizePageListForTesting(3);
@@ -141,7 +141,7 @@ class CPDF_TestDocPagesWithoutKids final : public CPDF_TestDocument {
     pagesDict->SetNewFor<CPDF_Name>("Type", "Pages");
     pagesDict->SetNewFor<CPDF_Number>("Count", 3);
     ResizePageListForTesting(10);
-    SetRootForTesting(NewIndirect<CPDF_Dictionary>().Get());
+    SetRootForTesting(NewIndirect<CPDF_Dictionary>());
     GetMutableRoot()->SetNewFor<CPDF_Reference>("Pages", this,
                                                 pagesDict->GetObjNum());
   }

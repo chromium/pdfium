@@ -5,6 +5,7 @@
 #include "core/fpdfapi/parser/cpdf_test_document.h"
 
 #include <memory>
+#include <utility>
 
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
@@ -13,6 +14,6 @@ CPDF_TestDocument::CPDF_TestDocument()
     : CPDF_Document(std::make_unique<CPDF_DocRenderData>(),
                     std::make_unique<CPDF_DocPageData>()) {}
 
-void CPDF_TestDocument::SetRoot(CPDF_Dictionary* root) {
-  SetRootForTesting(root);
+void CPDF_TestDocument::SetRoot(RetainPtr<CPDF_Dictionary> root) {
+  SetRootForTesting(std::move(root));
 }

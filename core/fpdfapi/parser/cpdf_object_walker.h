@@ -26,9 +26,9 @@ class CPDF_ObjectWalker {
     const CPDF_Object* object() const { return object_.Get(); }
 
    protected:
-    explicit SubobjectIterator(const CPDF_Object* object);
+    explicit SubobjectIterator(RetainPtr<const CPDF_Object> object);
 
-    virtual const CPDF_Object* IncrementImpl() = 0;
+    virtual RetainPtr<const CPDF_Object> IncrementImpl() = 0;
     virtual void Start() = 0;
 
    private:
@@ -48,7 +48,7 @@ class CPDF_ObjectWalker {
 
  private:
   static std::unique_ptr<SubobjectIterator> MakeIterator(
-      const CPDF_Object* object);
+      RetainPtr<const CPDF_Object> object);
 
   RetainPtr<const CPDF_Object> next_object_;
   RetainPtr<const CPDF_Object> parent_object_;

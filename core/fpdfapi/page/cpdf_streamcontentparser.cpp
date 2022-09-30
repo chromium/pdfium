@@ -1175,7 +1175,6 @@ RetainPtr<CPDF_ColorSpace> CPDF_StreamContentParser::FindColorSpace(
 
       return CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceCMYK);
     }
-    // TODO(tsepez); pass retained argument.
     return CPDF_DocPageData::FromDocument(m_pDocument.Get())
         ->GetColorSpace(pDefObj.Get(), nullptr);
   }

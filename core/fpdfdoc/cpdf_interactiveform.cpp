@@ -276,7 +276,6 @@ RetainPtr<CPDF_Dictionary> InitDict(CPDF_Document* pDocument) {
   FX_Charset charSet = GetNativeCharSet();
   RetainPtr<CPDF_Font> pFont = AddStandardFont(pDocument);
   if (pFont) {
-    // TODO(tsepez): pass retained reference.
     AddFont(pFormDict.Get(), pDocument, pFont, &csBaseName);
   }
   if (charSet != FX_Charset::kANSI) {

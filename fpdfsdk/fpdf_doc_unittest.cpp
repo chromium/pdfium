@@ -36,7 +36,7 @@ class PDFDocTest : public TestWithPageModule {
     auto pTestDoc = std::make_unique<CPDF_TestDocument>();
     m_pIndirectObjs = pTestDoc.get();
     m_pRootObj = m_pIndirectObjs->NewIndirect<CPDF_Dictionary>();
-    pTestDoc->SetRoot(m_pRootObj.Get());
+    pTestDoc->SetRoot(m_pRootObj);
     m_pDoc.reset(FPDFDocumentFromCPDFDocument(pTestDoc.release()));
   }
 

@@ -47,7 +47,7 @@ TEST_F(BAFontMapTest, Bug853238) {
   annot_font_f1_dict->SetNewFor<CPDF_Name>("Type", "Font");
   annot_font_f1_dict->SetNewFor<CPDF_Name>("Subtype", "Type1");
   annot_font_f1_dict->SetNewFor<CPDF_Name>("BaseFont", "Times-Roman");
-  doc.SetRoot(root_dict.Get());
+  doc.SetRoot(root_dict);
 
   auto annot_dict = pdfium::MakeRetain<CPDF_Dictionary>();
   annot_dict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Widget");

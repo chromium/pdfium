@@ -48,7 +48,7 @@ TEST_F(PDFCatalogTest, IsTagged) {
   EXPECT_FALSE(FPDFCatalog_IsTagged(m_pDoc.get()));
 
   // Empty root
-  pTestDoc->SetRoot(m_pRootObj.Get());
+  pTestDoc->SetRoot(m_pRootObj);
   EXPECT_FALSE(FPDFCatalog_IsTagged(m_pDoc.get()));
 
   // Root with other key

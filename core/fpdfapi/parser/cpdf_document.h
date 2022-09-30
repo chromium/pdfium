@@ -144,7 +144,7 @@ class CPDF_Document : public Observable,
  protected:
   void SetParser(std::unique_ptr<CPDF_Parser> pParser);
 
-  void SetRootForTesting(CPDF_Dictionary* root);
+  void SetRootForTesting(RetainPtr<CPDF_Dictionary> root);
   void ResizePageListForTesting(size_t size);
 
  private:

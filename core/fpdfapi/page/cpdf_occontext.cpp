@@ -232,7 +232,6 @@ bool CPDF_OCContext::GetOCGVE(const CPDF_Array* pExpression, int nLevel) const {
 bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict) const {
   RetainPtr<const CPDF_Array> pVE = pOCMDDict->GetArrayFor("VE");
   if (pVE) {
-    // TODO(tsepez): pass retained argument.
     return GetOCGVE(pVE.Get(), 0);
   }
 

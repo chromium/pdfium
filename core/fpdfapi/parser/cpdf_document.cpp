@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/parser/cpdf_document.h"
 
+#include <utility>
+
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
@@ -525,8 +527,8 @@ void CPDF_Document::DeletePage(int iPage) {
   m_PageList.erase(m_PageList.begin() + iPage);
 }
 
-void CPDF_Document::SetRootForTesting(CPDF_Dictionary* root) {
-  m_pRootDict.Reset(root);
+void CPDF_Document::SetRootForTesting(RetainPtr<CPDF_Dictionary> root) {
+  m_pRootDict = std::move(root);
 }
 
 void CPDF_Document::ResizePageListForTesting(size_t size) {

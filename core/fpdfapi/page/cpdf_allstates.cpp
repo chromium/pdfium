@@ -75,7 +75,6 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
         if (!pArray)
           break;
 
-        // TODO(tsepez): pass moved retained object.
         SetLineDash(pArray.Get(), pDash->GetFloatAt(1), 1.0f);
         break;
       }
