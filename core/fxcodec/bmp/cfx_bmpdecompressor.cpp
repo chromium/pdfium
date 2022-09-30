@@ -93,7 +93,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpHeader() {
 
   bmp_header.bfType =
       FXSYS_UINT16_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&bmp_header.bfType));
-  bmp_header.bfOffBits = FXSYS_UINT32_GET_LSBFIRST(
+  data_offset_ = FXSYS_UINT32_GET_LSBFIRST(
       reinterpret_cast<uint8_t*>(&bmp_header.bfOffBits));
   data_size_ =
       FXSYS_UINT32_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&bmp_header.bfSize));
@@ -338,11 +338,11 @@ bool CFX_BmpDecompressor::ValidateFlag() const {
 
 BmpDecoder::Status CFX_BmpDecompressor::DecodeImage() {
   if (decode_status_ == DecodeStatus::kDataPre) {
-    input_buffer_->Seek(0);
-    if (!GetDataPosition(header_offset_)) {
+    if (!GetDataPosition(data_offset_)) {
       decode_status_ = DecodeStatus::kTail;
       return BmpDecoder::Status::kFail;
     }
+    input_buffer_->Seek(data_offset_);
 
     row_num_ = 0;
     SaveDecodingStatus(DecodeStatus::kData);

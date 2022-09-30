@@ -86,6 +86,7 @@ class CFX_BmpDecompressor {
   uint32_t color_used_ = 0;
   int32_t pal_num_ = 0;
   PalType pal_type_ = PalType::kNew;
+  uint32_t data_offset_ = 0;
   uint32_t data_size_ = 0;
   uint32_t img_ifh_size_ = 0;
   uint32_t row_num_ = 0;
