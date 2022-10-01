@@ -37,7 +37,7 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
     return 0;
 
   RetainPtr<const CPDF_Object> pBaseObj = pArray->GetDirectObjectAt(1);
-  if (pBaseObj == GetArray())
+  if (HasSameArray(pBaseObj.Get()))
     return 0;
 
   auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);

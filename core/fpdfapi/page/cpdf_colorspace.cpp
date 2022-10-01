@@ -1114,7 +1114,7 @@ uint32_t CPDF_SeparationCS::v_Load(CPDF_Document* pDoc,
     return 1;
 
   RetainPtr<const CPDF_Object> pAltArray = pArray->GetDirectObjectAt(2);
-  if (pAltArray == GetArray())
+  if (HasSameArray(pAltArray.Get()))
     return 0;
 
   m_pBaseCS = Load(pDoc, pAltArray.Get(), pVisited);
@@ -1187,7 +1187,7 @@ uint32_t CPDF_DeviceNCS::v_Load(CPDF_Document* pDoc,
     return 0;
 
   RetainPtr<const CPDF_Object> pAltCS = pArray->GetDirectObjectAt(2);
-  if (!pAltCS || pAltCS == GetArray())
+  if (!pAltCS || HasSameArray(pAltCS.Get()))
     return 0;
 
   m_pBaseCS = Load(pDoc, pAltCS.Get(), pVisited);

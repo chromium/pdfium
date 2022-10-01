@@ -16,16 +16,16 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_pattern.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
 
-class CPDF_Array;
 class CPDF_Document;
 class CPDF_IndexedCS;
-class CPDF_Object;
 class CPDF_PatternCS;
 
 constexpr size_t kMaxPatternColorComps = 16;
@@ -133,8 +133,8 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   // components count.
   void SetComponentsForStockCS(uint32_t nComponents);
 
-  const CPDF_Array* GetArray() const { return m_pArray.Get(); }
   bool IsStdConversionEnabled() const { return m_dwStdConversion != 0; }
+  bool HasSameArray(const CPDF_Object* pObj) const { return m_pArray == pObj; }
 
  private:
   friend class CPDF_CalGray_TranslateImageLine_Test;
