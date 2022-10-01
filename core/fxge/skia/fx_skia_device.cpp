@@ -54,6 +54,7 @@
 #include "third_party/skia/include/core/SkImage.h"
 #include "third_party/skia/include/core/SkPaint.h"
 #include "third_party/skia/include/core/SkPath.h"
+#include "third_party/skia/include/core/SkPathEffect.h"
 #include "third_party/skia/include/core/SkRSXform.h"
 #include "third_party/skia/include/core/SkRect.h"
 #include "third_party/skia/include/core/SkSamplingOptions.h"
@@ -980,7 +981,7 @@ class SkiaState {
     if (Accumulator::kPath == m_type || drawIndex != m_commandIndex ||
         (Accumulator::kText == m_type &&
          (FontChanged(pFont, matrix, font_size, scaleX, color, options) ||
-          hasRSX == m_rsxform.isEmpty()))) {
+          hasRSX == m_rsxform.empty()))) {
       Flush();
     }
     if (Accumulator::kText != m_type) {
@@ -1001,7 +1002,7 @@ class SkiaState {
       m_pFont = pFont;
       m_textOptions = options;
     }
-    if (!hasRSX && !m_rsxform.isEmpty())
+    if (!hasRSX && !m_rsxform.empty())
       FlushText();
 
     int count = m_charDetails.Count();
@@ -1082,7 +1083,7 @@ class SkiaState {
 #endif
     if (m_rsxform.count()) {
       sk_sp<SkTextBlob> blob = SkTextBlob::MakeFromRSXform(
-          glyphs.begin(), glyphs.bytes(), m_rsxform.begin(), font,
+          glyphs.begin(), glyphs.size_bytes(), m_rsxform.begin(), font,
           SkTextEncoding::kGlyphID);
       skCanvas->drawTextBlob(blob, 0, 0, skPaint);
     } else {
