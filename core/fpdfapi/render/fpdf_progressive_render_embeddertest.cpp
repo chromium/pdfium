@@ -24,16 +24,11 @@ constexpr FX_ARGB kRed = 0xFFFF0000;
 constexpr FX_ARGB kWhite = 0xFFFFFFFF;
 
 const char* AnnotationStampWithApBaseContentChecksum() {
-#if BUILDFLAG(IS_APPLE) && !defined(_SKIA_SUPPORT_) && \
-    !defined(_SKIA_SUPPORT_PATHS_)
-  static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
-      "243f3d6267d9db09198fed9f8c4957fd";
-#else
-  static constexpr char kAnnotationStampWithApBaseContentChecksum[] =
-      "e31414933c9ff3950773981e5bf61678";
+#if BUILDFLAG(IS_APPLE)
+  if (!CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+    return "243f3d6267d9db09198fed9f8c4957fd";
 #endif
-
-  return kAnnotationStampWithApBaseContentChecksum;
+  return "e31414933c9ff3950773981e5bf61678";
 }
 
 }  // namespace
