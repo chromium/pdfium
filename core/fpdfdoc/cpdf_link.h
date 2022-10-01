@@ -20,7 +20,6 @@ class CPDF_Link {
   CPDF_Link(const CPDF_Link& that);
   ~CPDF_Link();
 
-  const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
   RetainPtr<CPDF_Dictionary> GetMutableDict() const { return m_pDict; }
   CFX_FloatRect GetRect();
   CPDF_Dest GetDest(CPDF_Document* pDoc);
