@@ -15,24 +15,27 @@
 #include "third_party/base/span.h"
 
 class CPDF_Dictionary;
+class CPDF_Encryptor;
 class CPDF_Stream;
 class CPDF_StreamAcc;
+class IFX_ArchiveStream;
 
 class CPDF_FlateEncoder {
  public:
   CPDF_FlateEncoder(RetainPtr<const CPDF_Stream> pStream, bool bFlateEncode);
   ~CPDF_FlateEncoder();
 
-  void CloneDict();
-  CPDF_Dictionary* GetClonedDict();
-
-  // Returns |m_pClonedDict| if it is valid. Otherwise returns |m_pDict|.
-  const CPDF_Dictionary* GetDict() const;
+  void UpdateLength(size_t size);
+  bool WriteDictTo(IFX_ArchiveStream* archive,
+                   const CPDF_Encryptor* encryptor) const;
 
   pdfium::span<const uint8_t> GetSpan() const;
 
  private:
   bool is_owned() const { return m_Data.index() == 1; }
+
+  // Returns |m_pClonedDict| if it is valid. Otherwise returns |m_pDict|.
+  const CPDF_Dictionary* GetDict() const;
 
   // Must outlive `m_Data`.
   RetainPtr<CPDF_StreamAcc> const m_pAcc;

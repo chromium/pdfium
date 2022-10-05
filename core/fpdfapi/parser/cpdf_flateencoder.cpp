@@ -51,20 +51,22 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(RetainPtr<const CPDF_Stream> pStream,
 
 CPDF_FlateEncoder::~CPDF_FlateEncoder() = default;
 
-void CPDF_FlateEncoder::CloneDict() {
-  if (m_pClonedDict) {
-    DCHECK(!m_pDict);
+void CPDF_FlateEncoder::UpdateLength(size_t size) {
+  if (static_cast<size_t>(GetDict()->GetIntegerFor("Length")) == size)
     return;
-  }
 
-  m_pClonedDict = ToDictionary(m_pDict->Clone());
+  if (!m_pClonedDict) {
+    m_pClonedDict = ToDictionary(m_pDict->Clone());
+    m_pDict.Reset();
+  }
   DCHECK(m_pClonedDict);
-  m_pDict.Reset();
+  DCHECK(!m_pDict);
+  m_pClonedDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(size));
 }
 
-CPDF_Dictionary* CPDF_FlateEncoder::GetClonedDict() {
-  DCHECK(!m_pDict);
-  return m_pClonedDict.Get();
+bool CPDF_FlateEncoder::WriteDictTo(IFX_ArchiveStream* archive,
+                                    const CPDF_Encryptor* encryptor) const {
+  return GetDict()->WriteTo(archive, encryptor);
 }
 
 const CPDF_Dictionary* CPDF_FlateEncoder::GetDict() const {
@@ -72,7 +74,6 @@ const CPDF_Dictionary* CPDF_FlateEncoder::GetDict() const {
     DCHECK(!m_pDict);
     return m_pClonedDict.Get();
   }
-
   return m_pDict.Get();
 }
 

@@ -193,20 +193,13 @@ bool CPDF_Stream::WriteTo(IFX_ArchiveStream* archive,
 
   DataVector<uint8_t> encrypted_data;
   pdfium::span<const uint8_t> data = encoder.GetSpan();
-
   if (encryptor && !is_metadata) {
     encrypted_data = encryptor->Encrypt(data);
     data = encrypted_data;
   }
 
-  const size_t size = data.size();
-  if (static_cast<size_t>(encoder.GetDict()->GetIntegerFor("Length")) != size) {
-    encoder.CloneDict();
-    encoder.GetClonedDict()->SetNewFor<CPDF_Number>("Length",
-                                                    static_cast<int>(size));
-  }
-
-  if (!encoder.GetDict()->WriteTo(archive, encryptor))
+  encoder.UpdateLength(data.size());
+  if (!encoder.WriteDictTo(archive, encryptor))
     return false;
 
   if (!archive->WriteString("stream\r\n"))
