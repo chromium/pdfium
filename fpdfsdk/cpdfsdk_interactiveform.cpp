@@ -265,7 +265,7 @@ void CPDFSDK_InteractiveForm::OnCalculate(CPDF_FormField* pFormField) {
       continue;
 
     CPDF_AAction aAction = pField->GetAdditionalAction();
-    if (!aAction.GetDict() || !aAction.ActionExist(CPDF_AAction::kCalculate))
+    if (!aAction.ActionExist(CPDF_AAction::kCalculate))
       continue;
 
     CPDF_Action action = aAction.GetAction(CPDF_AAction::kCalculate);
@@ -303,7 +303,7 @@ absl::optional<WideString> CPDFSDK_InteractiveForm::OnFormat(
   }
 
   CPDF_AAction aAction = pFormField->GetAdditionalAction();
-  if (aAction.GetDict() && aAction.ActionExist(CPDF_AAction::kFormat)) {
+  if (aAction.ActionExist(CPDF_AAction::kFormat)) {
     CPDF_Action action = aAction.GetAction(CPDF_AAction::kFormat);
     if (action.GetDict()) {
       WideString script = action.GetJavaScript();
@@ -350,7 +350,7 @@ void CPDFSDK_InteractiveForm::UpdateField(CPDF_FormField* pFormField) {
 bool CPDFSDK_InteractiveForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
                                                 const WideString& csValue) {
   CPDF_AAction aAction = pFormField->GetAdditionalAction();
-  if (!aAction.GetDict() || !aAction.ActionExist(CPDF_AAction::kKeyStroke))
+  if (!aAction.ActionExist(CPDF_AAction::kKeyStroke))
     return true;
 
   CPDF_Action action = aAction.GetAction(CPDF_AAction::kKeyStroke);
@@ -369,7 +369,7 @@ bool CPDFSDK_InteractiveForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
 bool CPDFSDK_InteractiveForm::OnValidate(CPDF_FormField* pFormField,
                                          const WideString& csValue) {
   CPDF_AAction aAction = pFormField->GetAdditionalAction();
-  if (!aAction.GetDict() || !aAction.ActionExist(CPDF_AAction::kValidate))
+  if (!aAction.ActionExist(CPDF_AAction::kValidate))
     return true;
 
   CPDF_Action action = aAction.GetAction(CPDF_AAction::kValidate);

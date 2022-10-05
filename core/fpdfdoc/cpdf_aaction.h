@@ -45,7 +45,7 @@ class CPDF_AAction {
 
   bool ActionExist(AActionType eType) const;
   CPDF_Action GetAction(AActionType eType) const;
-  const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
+  bool HasDict() const { return !!m_pDict; }
 
   static bool IsUserInput(AActionType type);
 

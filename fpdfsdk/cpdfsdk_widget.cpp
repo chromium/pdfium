@@ -1075,7 +1075,7 @@ CPDF_Action CPDFSDK_Widget::GetAAction(CPDF_AAction::AActionType eAAT) {
     case CPDF_AAction::kValidate:
     case CPDF_AAction::kCalculate: {
       CPDF_FormField* pField = GetFormField();
-      if (pField->GetAdditionalAction().GetDict())
+      if (pField->GetAdditionalAction().HasDict())
         return pField->GetAdditionalAction().GetAction(eAAT);
       return CPDFSDK_BAAnnot::GetAAction(eAAT);
     }
