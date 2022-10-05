@@ -12,9 +12,10 @@
 #include <memory>
 #include <vector>
 
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/retain_ptr.h"
 
-class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_StructElement;
 
@@ -29,9 +30,8 @@ class CPDF_StructTree {
 
   size_t CountTopElements() const { return m_Kids.size(); }
   CPDF_StructElement* GetTopElement(size_t i) const { return m_Kids[i].Get(); }
-  const CPDF_Dictionary* GetRoleMap() const { return m_pRoleMap.Get(); }
-  const CPDF_Dictionary* GetPage() const { return m_pPage.Get(); }
-  const CPDF_Dictionary* GetTreeRoot() const { return m_pTreeRoot.Get(); }
+  uint32_t GetPageObjNum() const { return m_pPage->GetObjNum(); }
+  ByteString GetRoleMapNameFor(const ByteString& type) const;
 
  private:
   using StructElementMap = std::map<RetainPtr<const CPDF_Dictionary>,

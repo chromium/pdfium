@@ -18,21 +18,6 @@
 #include "core/fpdfdoc/cpdf_structtree.h"
 #include "third_party/base/check.h"
 
-namespace {
-
-ByteString GetStructElementType(const CPDF_StructTree* pTree,
-                                const CPDF_Dictionary* pDict) {
-  ByteString type = pDict->GetNameFor("S");
-  if (pTree->GetRoleMap()) {
-    ByteString mapped = pTree->GetRoleMap()->GetNameFor(type);
-    if (!mapped.IsEmpty())
-      type = std::move(mapped);
-  }
-  return type;
-}
-
-}  // namespace
-
 CPDF_StructElement::Kid::Kid() = default;
 
 CPDF_StructElement::Kid::Kid(const Kid& that) = default;
@@ -43,7 +28,7 @@ CPDF_StructElement::CPDF_StructElement(const CPDF_StructTree* pTree,
                                        RetainPtr<const CPDF_Dictionary> pDict)
     : m_pTree(pTree),
       m_pDict(std::move(pDict)),
-      m_Type(GetStructElementType(m_pTree.Get(), m_pDict.Get())) {
+      m_Type(m_pTree->GetRoleMapNameFor(m_pDict->GetNameFor("S"))) {
   LoadKids(m_pDict);
 }
 
@@ -120,7 +105,7 @@ void CPDF_StructElement::LoadKid(uint32_t PageObjNum,
     return;
 
   if (pKidObj->IsNumber()) {
-    if (m_pTree->GetPage()->GetObjNum() != PageObjNum)
+    if (m_pTree->GetPageObjNum() != PageObjNum)
       return;
 
     pKid->m_Type = Kid::kPageContent;
@@ -139,7 +124,7 @@ void CPDF_StructElement::LoadKid(uint32_t PageObjNum,
   }
   ByteString type = pKidDict->GetNameFor("Type");
   if ((type == "MCR" || type == "OBJR") &&
-      m_pTree->GetPage()->GetObjNum() != PageObjNum) {
+      m_pTree->GetPageObjNum() != PageObjNum) {
     return;
   }
 
