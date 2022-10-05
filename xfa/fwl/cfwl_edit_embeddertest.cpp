@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "core/fxcrt/widestring.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_formfill.h"
 #include "public/fpdf_fwlevent.h"
@@ -37,7 +38,11 @@ class CFWLEditEmbedderTest : public XFAJSEmbedderTest {
   void TearDown() override {
     FSDK_SetTimeFunction(nullptr);
     FSDK_SetLocaltimeFunction(nullptr);
-    UnloadPage(page());
+    // TODO(crbug.com/pdfium/11): A page might not have been loaded if a test
+    // is skipped at runtime. This check for a non-null page should be able to
+    // removed once none of the tests are being skipped for Skia.
+    if (page())
+      UnloadPage(page());
     EmbedderTest::TearDown();
   }
 
@@ -51,7 +56,7 @@ class CFWLEditEmbedderTest : public XFAJSEmbedderTest {
   EmbedderTestTimerHandlingDelegate delegate() const { return delegate_; }
 
  private:
-  FPDF_PAGE page_;
+  FPDF_PAGE page_ = nullptr;
   EmbedderTestTimerHandlingDelegate delegate_;
 };
 
@@ -78,13 +83,11 @@ TEST_F(CFWLEditEmbedderTest, LeftClickMouseSelection) {
   EXPECT_STREQ(L"defgh", WideString::FromUTF16LE(buf, len).c_str());
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_DragMouseSelection DISABLED_DragMouseSelection
-#else
-#define MAYBE_DragMouseSelection DragMouseSelection
-#endif
-TEST_F(CFWLEditEmbedderTest, MAYBE_DragMouseSelection) {
+TEST_F(CFWLEditEmbedderTest, DragMouseSelection) {
+  // TODO(crbug.com/pdfium/11): Fix this test and enable for Skia variants.
+  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+    return;
+
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
   FORM_OnLButtonDown(form_handle(), page(), 0, 115, 58);
   for (size_t i = 0; i < 10; ++i)
@@ -110,13 +113,11 @@ TEST_F(CFWLEditEmbedderTest, MAYBE_DragMouseSelection) {
   }
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_SimpleFill DISABLED_SimpleFill
-#else
-#define MAYBE_SimpleFill SimpleFill
-#endif
-TEST_F(CFWLEditEmbedderTest, MAYBE_SimpleFill) {
+TEST_F(CFWLEditEmbedderTest, SimpleFill) {
+  // TODO(crbug.com/pdfium/11): Fix this test and enable for Skia variants.
+  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+    return;
+
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
   const char kBlankMD5[] = "8dda78a3afaf9f7b5210eb81cacc4600";
   {
@@ -136,14 +137,11 @@ TEST_F(CFWLEditEmbedderTest, MAYBE_SimpleFill) {
   }
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_FillWithNewLineWithoutMultiline \
-  DISABLED_FillWithNewLineWithoutMultiline
-#else
-#define MAYBE_FillWithNewLineWithoutMultiline FillWithNewLineWithoutMultiline
-#endif
-TEST_F(CFWLEditEmbedderTest, MAYBE_FillWithNewLineWithoutMultiline) {
+TEST_F(CFWLEditEmbedderTest, FillWithNewLineWithoutMultiline) {
+  // TODO(crbug.com/pdfium/11): Fix this test and enable for Skia variants.
+  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+    return;
+
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
   FORM_OnLButtonDown(form_handle(), page(), 0, 115, 58);
   for (size_t i = 0; i < 5; ++i)
@@ -210,13 +208,11 @@ TEST_F(CFWLEditEmbedderTest, DISABLED_FillWithNewLineWithMultiline) {
   }
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_DateTimePickerTest DISABLED_DateTimePickerTest
-#else
-#define MAYBE_DateTimePickerTest DateTimePickerTest
-#endif
-TEST_F(CFWLEditEmbedderTest, MAYBE_DateTimePickerTest) {
+TEST_F(CFWLEditEmbedderTest, DateTimePickerTest) {
+  // TODO(crbug.com/pdfium/11): Fix this test and enable for Skia variants.
+  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+    return;
+
   CreateAndInitializeFormPDF("xfa/xfa_date_time_edit.pdf");
 
   // Give focus to date time widget, creating down-arrow button.
@@ -254,13 +250,11 @@ TEST_F(CFWLEditEmbedderTest, MAYBE_DateTimePickerTest) {
   }
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_ImageEditTest DISABLED_ImageEditTest
-#else
-#define MAYBE_ImageEditTest ImageEditTest
-#endif
-TEST_F(CFWLEditEmbedderTest, MAYBE_ImageEditTest) {
+TEST_F(CFWLEditEmbedderTest, ImageEditTest) {
+  // TODO(crbug.com/pdfium/11): Fix this test and enable for Skia variants.
+  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+    return;
+
   CreateAndInitializeFormPDF("xfa/xfa_image_edit.pdf");
   FORM_OnLButtonDown(form_handle(), page(), 0, 115, 58);
 
@@ -272,13 +266,11 @@ TEST_F(CFWLEditEmbedderTest, MAYBE_ImageEditTest) {
   }
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-#define MAYBE_ComboBoxTest DISABLED_ComboBoxTest
-#else
-#define MAYBE_ComboBoxTest ComboBoxTest
-#endif
-TEST_F(CFWLEditEmbedderTest, MAYBE_ComboBoxTest) {
+TEST_F(CFWLEditEmbedderTest, ComboBoxTest) {
+  // TODO(crbug.com/pdfium/11): Fix this test and enable for Skia variants.
+  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+    return;
+
   CreateAndInitializeFormPDF("xfa/xfa_combobox.pdf");
 
   // Give focus to widget.
