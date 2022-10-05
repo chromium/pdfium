@@ -86,7 +86,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 #endif  // PDF_ENABLE_XFA
 
   // for pdf/static xfa.
-  CPDFSDK_AnnotForwardIteration annot_iteration(this);
+  CPDFSDK_AnnotIteration annot_iteration(this);
   for (const auto& pSDKAnnot : annot_iteration) {
     pSDKAnnot->OnDraw(pDevice, mtUser2Device, pOptions->GetDrawAnnots());
   }
@@ -118,7 +118,7 @@ std::unique_ptr<CPDFSDK_Annot> CPDFSDK_PageView::NewAnnot(CPDF_Annot* annot) {
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFXAnnotAtPoint(const CFX_PointF& point) {
-  CPDFSDK_AnnotForwardIteration annot_iteration(this);
+  CPDFSDK_AnnotIteration annot_iteration(this);
   for (const auto& pSDKAnnot : annot_iteration) {
     CFX_FloatRect rc = pSDKAnnot->GetViewBBox();
     if (pSDKAnnot->GetAnnotSubtype() == CPDF_Annot::Subtype::POPUP)
@@ -130,7 +130,7 @@ CPDFSDK_Annot* CPDFSDK_PageView::GetFXAnnotAtPoint(const CFX_PointF& point) {
 }
 
 CPDFSDK_Annot* CPDFSDK_PageView::GetFXWidgetAtPoint(const CFX_PointF& point) {
-  CPDFSDK_AnnotForwardIteration annot_iteration(this);
+  CPDFSDK_AnnotIteration annot_iteration(this);
   for (const auto& pSDKAnnot : annot_iteration) {
     const CPDF_Annot::Subtype sub_type = pSDKAnnot->GetAnnotSubtype();
     bool do_hit_test = sub_type == CPDF_Annot::Subtype::WIDGET;

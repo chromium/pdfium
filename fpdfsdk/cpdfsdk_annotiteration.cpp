@@ -7,46 +7,30 @@
 #include "fpdfsdk/cpdfsdk_annotiteration.h"
 
 #include <algorithm>
-#include <utility>
 
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 
-CPDFSDK_AnnotIteration::CPDFSDK_AnnotIteration(CPDFSDK_PageView* pPageView,
-                                               bool bReverse) {
-  // Copying/sorting ObservedPtrs is expensive, so do it once at the end.
-  std::vector<CPDFSDK_Annot*> copiedList = pPageView->GetAnnotList();
-  std::stable_sort(copiedList.begin(), copiedList.end(),
+CPDFSDK_AnnotIteration::CPDFSDK_AnnotIteration(CPDFSDK_PageView* pPageView) {
+  // Copying ObservedPtrs is expensive, so do it once at the end.
+  std::vector<CPDFSDK_Annot*> copied_list = pPageView->GetAnnotList();
+  std::stable_sort(copied_list.begin(), copied_list.end(),
                    [](const CPDFSDK_Annot* p1, const CPDFSDK_Annot* p2) {
                      return p1->GetLayoutOrder() < p2->GetLayoutOrder();
                    });
 
   CPDFSDK_Annot* pTopMostAnnot = pPageView->GetFocusAnnot();
   if (pTopMostAnnot) {
-    auto it = std::find(copiedList.begin(), copiedList.end(), pTopMostAnnot);
-    if (it != copiedList.end()) {
-      copiedList.erase(it);
-      copiedList.insert(copiedList.begin(), pTopMostAnnot);
+    auto it = std::find(copied_list.begin(), copied_list.end(), pTopMostAnnot);
+    if (it != copied_list.end()) {
+      copied_list.erase(it);
+      copied_list.insert(copied_list.begin(), pTopMostAnnot);
     }
   }
-  if (bReverse)
-    std::reverse(copiedList.begin(), copiedList.end());
 
-  m_List.reserve(copiedList.size());
-  for (auto* pAnnot : copiedList)
+  m_List.reserve(copied_list.size());
+  for (auto* pAnnot : copied_list)
     m_List.emplace_back(pAnnot);
 }
 
 CPDFSDK_AnnotIteration::~CPDFSDK_AnnotIteration() = default;
-
-CPDFSDK_AnnotForwardIteration::CPDFSDK_AnnotForwardIteration(
-    CPDFSDK_PageView* pPageView)
-    : CPDFSDK_AnnotIteration(pPageView, /*bReverse=*/false) {}
-
-CPDFSDK_AnnotForwardIteration::~CPDFSDK_AnnotForwardIteration() = default;
-
-CPDFSDK_AnnotReverseIteration::CPDFSDK_AnnotReverseIteration(
-    CPDFSDK_PageView* pPageView)
-    : CPDFSDK_AnnotIteration(pPageView, /*bReverse=*/true) {}
-
-CPDFSDK_AnnotReverseIteration::~CPDFSDK_AnnotReverseIteration() = default;
