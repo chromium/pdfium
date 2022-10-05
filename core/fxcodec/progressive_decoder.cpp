@@ -376,7 +376,6 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
   m_pCodecMemory->Seek(m_pCodecMemory->GetSize());
   if (!GifReadMoreData(&error_status))
     return false;
-  m_pCodecMemory->Seek(0);
 
   CFX_GifPalette* pPalette = nullptr;
   if (pal_num != 0 && pal_ptr) {
@@ -1469,10 +1468,15 @@ bool ProgressiveDecoder::ReadMoreData(
       return false;
     }
   } else {
-    size_t dwConsumed = m_pCodecMemory->GetSize() - dwUnconsumed;
-    m_pCodecMemory->Consume(dwConsumed);
+    // TODO(crbug.com/pdfium/1904): Simplify the `CFX_CodecMemory` API so we
+    // don't need to do this awkward dance to free up exactly enough buffer
+    // space for the next read.
+    size_t dwConsumable = m_pCodecMemory->GetSize() - dwUnconsumed;
     dwBytesToFetchFromFile = pdfium::base::checked_cast<uint32_t>(
-        std::min<size_t>(dwBytesToFetchFromFile, dwConsumed));
+        std::min<size_t>(dwBytesToFetchFromFile, dwConsumable));
+    m_pCodecMemory->Consume(dwBytesToFetchFromFile);
+    m_pCodecMemory->Seek(dwConsumable - dwBytesToFetchFromFile);
+    dwUnconsumed += m_pCodecMemory->GetPosition();
   }
 
   // Append new data past the bytes not yet processed by the codec.

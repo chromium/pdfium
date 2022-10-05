@@ -15,7 +15,11 @@ class CFX_CodecMemory final : public Retainable {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  pdfium::span<uint8_t> GetSpan() { return {buffer_.get(), size_}; }
+  // Returns a span over the unconsumed contents of the buffer.
+  pdfium::span<uint8_t> GetUnconsumedSpan() {
+    return {buffer_.get() + pos_, size_ - pos_};
+  }
+
   uint8_t* GetBuffer() { return buffer_.get(); }
   size_t GetSize() const { return size_; }
   size_t GetPosition() const { return pos_; }

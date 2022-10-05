@@ -218,7 +218,7 @@ bool PngDecoder::ContinueDecode(ProgressiveDecoderIface::Context* pContext,
     }
     return false;
   }
-  pdfium::span<uint8_t> src_buf = codec_memory->GetSpan();
+  pdfium::span<uint8_t> src_buf = codec_memory->GetUnconsumedSpan();
   png_process_data(ctx->m_pPng, ctx->m_pInfo, src_buf.data(), src_buf.size());
   return true;
 }

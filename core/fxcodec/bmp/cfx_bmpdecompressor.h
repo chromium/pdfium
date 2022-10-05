@@ -64,7 +64,7 @@ class CFX_BmpDecompressor {
   BmpDecoder::Status DecodeRGB();
   BmpDecoder::Status DecodeRLE8();
   BmpDecoder::Status DecodeRLE4();
-  bool ReadData(pdfium::span<uint8_t> buf);
+  bool ReadAllOrNone(pdfium::span<uint8_t> buf);
   void SaveDecodingStatus(DecodeStatus status);
   bool ValidateColorIndex(uint8_t val) const;
   bool ValidateFlag() const;
