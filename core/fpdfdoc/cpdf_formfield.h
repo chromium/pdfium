@@ -136,7 +136,6 @@ class CPDF_FormField {
   // entries are consistent with the value (/V) object.
   bool UseSelectedIndicesObject() const;
 
-  const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
   CPDF_InteractiveForm* GetForm() const { return m_pForm.Get(); }
 
   WideString GetCheckValue(bool bDefault) const;

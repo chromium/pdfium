@@ -76,7 +76,7 @@ ByteString CPDF_FormControl::GetCheckedAPState() const {
   DCHECK(GetType() == CPDF_FormField::kCheckBox ||
          GetType() == CPDF_FormField::kRadioButton);
   ByteString csOn = GetOnStateName();
-  if (ToArray(CPDF_FormField::GetFieldAttr(m_pField->GetDict(), "Opt")))
+  if (ToArray(CPDF_FormField::GetFieldAttr(m_pField->GetFieldDict(), "Opt")))
     csOn = ByteString::FormatInteger(m_pField->GetControlIndex(this));
   if (csOn.IsEmpty())
     csOn = "Yes";
@@ -88,7 +88,7 @@ WideString CPDF_FormControl::GetExportValue() const {
          GetType() == CPDF_FormField::kRadioButton);
   ByteString csOn = GetOnStateName();
   const CPDF_Array* pArray =
-      ToArray(CPDF_FormField::GetFieldAttr(m_pField->GetDict(), "Opt"));
+      ToArray(CPDF_FormField::GetFieldAttr(m_pField->GetFieldDict(), "Opt"));
   if (pArray)
     csOn = pArray->GetByteStringAt(m_pField->GetControlIndex(this));
   if (csOn.IsEmpty())
@@ -108,7 +108,7 @@ bool CPDF_FormControl::IsDefaultChecked() const {
   DCHECK(GetType() == CPDF_FormField::kCheckBox ||
          GetType() == CPDF_FormField::kRadioButton);
   const CPDF_Object* pDV =
-      CPDF_FormField::GetFieldAttr(m_pField->GetDict(), "DV");
+      CPDF_FormField::GetFieldAttr(m_pField->GetFieldDict(), "DV");
   if (!pDV)
     return false;
 
@@ -188,7 +188,7 @@ CPDF_DefaultAppearance CPDF_FormControl::GetDefaultAppearance() const {
         m_pWidgetDict->GetByteStringFor(pdfium::form_fields::kDA));
   }
   const CPDF_Object* pObj = CPDF_FormField::GetFieldAttr(
-      m_pField->GetDict(), pdfium::form_fields::kDA);
+      m_pField->GetFieldDict(), pdfium::form_fields::kDA);
   if (!pObj)
     return m_pForm->GetDefaultAppearance();
 
@@ -252,7 +252,7 @@ int CPDF_FormControl::GetControlAlignment() const {
     return m_pWidgetDict->GetIntegerFor(pdfium::form_fields::kQ, 0);
 
   const CPDF_Object* pObj = CPDF_FormField::GetFieldAttr(
-      m_pField->GetDict(), pdfium::form_fields::kQ);
+      m_pField->GetFieldDict(), pdfium::form_fields::kQ);
   if (pObj)
     return pObj->GetInteger();
 

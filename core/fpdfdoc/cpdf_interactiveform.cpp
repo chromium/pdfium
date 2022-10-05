@@ -689,7 +689,7 @@ int CPDF_InteractiveForm::FindFieldInCalculationOrder(
   if (!pArray)
     return -1;
 
-  absl::optional<size_t> maybe_found = pArray->Find(pField->GetDict());
+  absl::optional<size_t> maybe_found = pArray->Find(pField->GetFieldDict());
   if (!maybe_found.has_value())
     return -1;
 
@@ -906,7 +906,7 @@ bool CPDF_InteractiveForm::CheckRequiredFields(
     if (fields)
       bFind = pdfium::Contains(*fields, pField);
     if (bIncludeOrExclude == bFind) {
-      const CPDF_Dictionary* pFieldDict = pField->GetDict();
+      const CPDF_Dictionary* pFieldDict = pField->GetFieldDict();
       if (pField->IsRequired() &&
           pFieldDict->GetByteStringFor(pdfium::form_fields::kV).IsEmpty()) {
         return false;
@@ -962,7 +962,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
       continue;
 
     if ((dwFlags & pdfium::form_flags::kRequired) != 0 &&
-        pField->GetDict()
+        pField->GetFieldDict()
             ->GetByteStringFor(pdfium::form_fields::kV)
             .IsEmpty()) {
       continue;
@@ -978,7 +978,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
       WideString csExport = pField->GetCheckValue(false);
       ByteString csBExport = PDF_EncodeText(csExport.AsStringView());
       const CPDF_Object* pOpt =
-          CPDF_FormField::GetFieldAttr(pField->GetDict(), "Opt");
+          CPDF_FormField::GetFieldAttr(pField->GetFieldDict(), "Opt");
       if (pOpt) {
         pFieldDict->SetNewFor<CPDF_String>(pdfium::form_fields::kV, csBExport,
                                            false);
@@ -987,7 +987,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
       }
     } else {
       const CPDF_Object* pV = CPDF_FormField::GetFieldAttr(
-          pField->GetDict(), pdfium::form_fields::kV);
+          pField->GetFieldDict(), pdfium::form_fields::kV);
       if (pV)
         pFieldDict->SetFor(pdfium::form_fields::kV, pV->CloneDirectObject());
     }
