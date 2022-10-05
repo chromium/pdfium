@@ -357,7 +357,7 @@ bool CPDFSDK_BAAnnot::OnKeyDown(FWL_VKEYCODE nKeyCode,
 
   CPDF_Action action = GetAAction(CPDF_AAction::kKeyStroke);
   CPDFSDK_FormFillEnvironment* env = GetPageView()->GetFormFillEnv();
-  if (action.GetDict()) {
+  if (action.HasDict()) {
     return env->DoActionLink(action, CPDF_AAction::kKeyStroke, nFlags);
   }
 

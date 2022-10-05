@@ -47,6 +47,7 @@ class CPDF_Action {
   CPDF_Action(const CPDF_Action& that);
   ~CPDF_Action();
 
+  bool HasDict() const { return !!m_pDict; }
   const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
 
   Type GetType() const;
@@ -56,6 +57,7 @@ class CPDF_Action {
   bool GetHideStatus() const;
   ByteString GetNamedAction() const;
   uint32_t GetFlags() const;
+  bool HasFields() const;
 
   std::vector<RetainPtr<const CPDF_Object>> GetAllFields() const;
 

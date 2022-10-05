@@ -114,6 +114,10 @@ uint32_t CPDF_Action::GetFlags() const {
   return m_pDict->GetIntegerFor("Flags");
 }
 
+bool CPDF_Action::HasFields() const {
+  return m_pDict->KeyExist("Fields");
+}
+
 std::vector<RetainPtr<const CPDF_Object>> CPDF_Action::GetAllFields() const {
   std::vector<RetainPtr<const CPDF_Object>> result;
   if (!m_pDict)

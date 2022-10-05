@@ -269,7 +269,7 @@ void CPDFSDK_InteractiveForm::OnCalculate(CPDF_FormField* pFormField) {
       continue;
 
     CPDF_Action action = aAction.GetAction(CPDF_AAction::kCalculate);
-    if (!action.GetDict())
+    if (!action.HasDict())
       continue;
 
     WideString csJS = action.GetJavaScript();
@@ -305,7 +305,7 @@ absl::optional<WideString> CPDFSDK_InteractiveForm::OnFormat(
   CPDF_AAction aAction = pFormField->GetAdditionalAction();
   if (aAction.ActionExist(CPDF_AAction::kFormat)) {
     CPDF_Action action = aAction.GetAction(CPDF_AAction::kFormat);
-    if (action.GetDict()) {
+    if (action.HasDict()) {
       WideString script = action.GetJavaScript();
       if (!script.IsEmpty()) {
         IJS_Runtime::ScopedEventContext pContext(pRuntime);
@@ -354,7 +354,7 @@ bool CPDFSDK_InteractiveForm::OnKeyStrokeCommit(CPDF_FormField* pFormField,
     return true;
 
   CPDF_Action action = aAction.GetAction(CPDF_AAction::kKeyStroke);
-  if (!action.GetDict())
+  if (!action.HasDict())
     return true;
 
   CFFL_FieldAction fa;
@@ -373,7 +373,7 @@ bool CPDFSDK_InteractiveForm::OnValidate(CPDF_FormField* pFormField,
     return true;
 
   CPDF_Action action = aAction.GetAction(CPDF_AAction::kValidate);
-  if (!action.GetDict())
+  if (!action.HasDict())
     return true;
 
   CFFL_FieldAction fa;
@@ -420,8 +420,7 @@ bool CPDFSDK_InteractiveForm::DoAction_SubmitForm(const CPDF_Action& action) {
   if (sDestination.IsEmpty())
     return false;
 
-  const CPDF_Dictionary* pActionDict = action.GetDict();
-  if (pActionDict->KeyExist("Fields")) {
+  if (action.HasFields()) {
     uint32_t dwFlags = action.GetFlags();
     std::vector<CPDF_FormField*> fields =
         GetFieldFromObjects(action.GetAllFields());
@@ -493,8 +492,7 @@ ByteString CPDFSDK_InteractiveForm::ExportFormToFDFTextBuf() {
 
 void CPDFSDK_InteractiveForm::DoAction_ResetForm(const CPDF_Action& action) {
   DCHECK(action.GetDict());
-  const CPDF_Dictionary* pActionDict = action.GetDict();
-  if (!pActionDict->KeyExist("Fields")) {
+  if (!action.HasFields()) {
     m_pInteractiveForm->ResetForm();
     return;
   }

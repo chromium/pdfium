@@ -155,7 +155,7 @@ FPDFBookmark_GetDest(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark) {
   // If this bookmark is not directly associated with a dest, we try to get
   // action
   CPDF_Action action = cBookmark.GetAction();
-  if (!action.GetDict())
+  if (!action.HasDict())
     return nullptr;
   return FPDFDestFromCPDFArray(action.GetDest(pDoc).GetArray());
 }
@@ -351,7 +351,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDFLink_GetDest(FPDF_DOCUMENT document,
     return dest;
   // If this link is not directly associated with a dest, we try to get action
   CPDF_Action action = cLink.GetAction();
-  if (!action.GetDict())
+  if (!action.HasDict())
     return nullptr;
   return FPDFDestFromCPDFArray(action.GetDest(pDoc).GetArray());
 }

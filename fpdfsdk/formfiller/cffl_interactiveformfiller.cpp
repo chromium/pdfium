@@ -97,7 +97,7 @@ void CFFL_InteractiveFormFiller::OnMouseEnter(
     ObservedPtr<CPDFSDK_Widget>& pWidget,
     Mask<FWL_EVENTFLAG> nFlag) {
   if (!m_bNotifying) {
-    if (pWidget->GetAAction(CPDF_AAction::kCursorEnter).GetDict()) {
+    if (pWidget->GetAAction(CPDF_AAction::kCursorEnter).HasDict()) {
       uint32_t nValueAge = pWidget->GetValueAge();
       pWidget->ClearAppModified();
       DCHECK(pPageView);
@@ -130,7 +130,7 @@ void CFFL_InteractiveFormFiller::OnMouseExit(
     ObservedPtr<CPDFSDK_Widget>& pWidget,
     Mask<FWL_EVENTFLAG> nFlag) {
   if (!m_bNotifying) {
-    if (pWidget->GetAAction(CPDF_AAction::kCursorExit).GetDict()) {
+    if (pWidget->GetAAction(CPDF_AAction::kCursorExit).HasDict()) {
       uint32_t nValueAge = pWidget->GetValueAge();
       pWidget->ClearAppModified();
       DCHECK(pPageView);
@@ -166,7 +166,7 @@ bool CFFL_InteractiveFormFiller::OnLButtonDown(
     const CFX_PointF& point) {
   if (!m_bNotifying) {
     if (Annot_HitTest(pWidget.Get(), point) &&
-        pWidget->GetAAction(CPDF_AAction::kButtonDown).GetDict()) {
+        pWidget->GetAAction(CPDF_AAction::kButtonDown).HasDict()) {
       uint32_t nValueAge = pWidget->GetValueAge();
       pWidget->ClearAppModified();
       DCHECK(pPageView);
@@ -244,7 +244,7 @@ bool CFFL_InteractiveFormFiller::OnButtonUp(
   if (m_bNotifying)
     return false;
 
-  if (!pWidget->GetAAction(CPDF_AAction::kButtonUp).GetDict())
+  if (!pWidget->GetAAction(CPDF_AAction::kButtonUp).HasDict())
     return false;
 
   uint32_t nAge = pWidget->GetAppearanceAge();
@@ -356,7 +356,7 @@ bool CFFL_InteractiveFormFiller::OnSetFocus(
     return false;
 
   if (!m_bNotifying) {
-    if (pWidget->GetAAction(CPDF_AAction::kGetFocus).GetDict()) {
+    if (pWidget->GetAAction(CPDF_AAction::kGetFocus).HasDict()) {
       uint32_t nValueAge = pWidget->GetValueAge();
       pWidget->ClearAppModified();
 
@@ -412,7 +412,7 @@ bool CFFL_InteractiveFormFiller::OnKillFocus(
   if (m_bNotifying)
     return true;
 
-  if (!pWidget->GetAAction(CPDF_AAction::kLoseFocus).GetDict())
+  if (!pWidget->GetAAction(CPDF_AAction::kLoseFocus).HasDict())
     return true;
 
   pWidget->ClearAppModified();
@@ -646,7 +646,7 @@ bool CFFL_InteractiveFormFiller::OnKeyStrokeCommit(
   if (m_bNotifying)
     return true;
 
-  if (!pWidget->GetAAction(CPDF_AAction::kKeyStroke).GetDict())
+  if (!pWidget->GetAAction(CPDF_AAction::kKeyStroke).HasDict())
     return true;
 
   DCHECK(pPageView);
@@ -680,7 +680,7 @@ bool CFFL_InteractiveFormFiller::OnValidate(
   if (m_bNotifying)
     return true;
 
-  if (!pWidget->GetAAction(CPDF_AAction::kValidate).GetDict())
+  if (!pWidget->GetAAction(CPDF_AAction::kValidate).HasDict())
     return true;
 
   DCHECK(pPageView);
@@ -883,7 +883,7 @@ std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
 #endif  // PDF_ENABLE_XFA
 
   if (m_bNotifying ||
-      !pWidget->GetAAction(CPDF_AAction::kKeyStroke).GetDict()) {
+      !pWidget->GetAAction(CPDF_AAction::kKeyStroke).HasDict()) {
     return {true, false};
   }
 
