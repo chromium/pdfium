@@ -340,6 +340,10 @@ bool CFX_BmpDecompressor::ValidateFlag() const {
 
 BmpDecoder::Status CFX_BmpDecompressor::DecodeImage() {
   if (decode_status_ == DecodeStatus::kDataPre) {
+    // In order to tolerate certain corrupt BMP files, use the header offset if
+    // the data offset would point into the header.
+    data_offset_ = std::max(header_offset_, data_offset_);
+
     input_buffer_->Seek(input_buffer_->GetSize());
     if (!GetDataPosition(data_offset_)) {
       decode_status_ = DecodeStatus::kTail;
