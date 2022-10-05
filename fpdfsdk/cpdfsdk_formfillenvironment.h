@@ -276,7 +276,10 @@ class CPDFSDK_FormFillEnvironment final
 
   UnownedPtr<FPDF_FORMFILLINFO> const m_pInfo;
   std::unique_ptr<IJS_Runtime> m_pIJSRuntime;
+
+  // Iterator stability guarantees as provided by std::map<> required.
   std::map<IPDF_Page*, std::unique_ptr<CPDFSDK_PageView>> m_PageMap;
+
   std::unique_ptr<CPDFSDK_InteractiveForm> m_pInteractiveForm;
   ObservedPtr<CPDFSDK_Annot> m_pFocusAnnot;
   UnownedPtr<CPDF_Document> const m_pCPDFDoc;
