@@ -997,3 +997,31 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
 void CPDF_InteractiveForm::SetNotifierIface(NotifierIface* pNotify) {
   m_pFormNotify = pNotify;
 }
+
+bool CPDF_InteractiveForm::NotifyBeforeValueChange(CPDF_FormField* pField,
+                                                   const WideString& csValue) {
+  return !m_pFormNotify || m_pFormNotify->BeforeValueChange(pField, csValue);
+}
+
+void CPDF_InteractiveForm::NotifyAfterValueChange(CPDF_FormField* pField) {
+  if (m_pFormNotify)
+    m_pFormNotify->AfterValueChange(pField);
+}
+
+bool CPDF_InteractiveForm::NotifyBeforeSelectionChange(
+    CPDF_FormField* pField,
+    const WideString& csValue) {
+  return !m_pFormNotify ||
+         m_pFormNotify->BeforeSelectionChange(pField, csValue);
+}
+
+void CPDF_InteractiveForm::NotifyAfterSelectionChange(CPDF_FormField* pField) {
+  if (m_pFormNotify)
+    m_pFormNotify->AfterSelectionChange(pField);
+}
+
+void CPDF_InteractiveForm::NotifyAfterCheckedStatusChange(
+    CPDF_FormField* pField) {
+  if (m_pFormNotify)
+    m_pFormNotify->AfterCheckedStatusChange(pField);
+}

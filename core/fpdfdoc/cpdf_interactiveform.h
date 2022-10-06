@@ -90,10 +90,18 @@ class CPDF_InteractiveForm {
   void SetNotifierIface(NotifierIface* pNotify);
   void FixPageFields(CPDF_Page* pPage);
 
-  NotifierIface* GetFormNotify() const { return m_pFormNotify.Get(); }
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
   const CPDF_Dictionary* GetFormDict() const { return m_pFormDict.Get(); }
   RetainPtr<CPDF_Dictionary> GetMutableFormDict() { return m_pFormDict; }
+
+  // Wrap callbacks thru NotifierIface.
+  bool NotifyBeforeValueChange(CPDF_FormField* pField,
+                               const WideString& csValue);
+  void NotifyAfterValueChange(CPDF_FormField* pField);
+  bool NotifyBeforeSelectionChange(CPDF_FormField* pField,
+                                   const WideString& csValue);
+  void NotifyAfterSelectionChange(CPDF_FormField* pField);
+  void NotifyAfterCheckedStatusChange(CPDF_FormField* pField);
 
   const std::vector<UnownedPtr<CPDF_FormControl>>& GetControlsForField(
       const CPDF_FormField* pField);

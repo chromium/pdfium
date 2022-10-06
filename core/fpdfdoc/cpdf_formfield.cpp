@@ -156,8 +156,7 @@ bool CPDF_FormField::ResetField() {
         CheckControl(i, GetControl(i)->IsDefaultChecked(),
                      NotificationOption::kDoNotNotify);
       }
-      if (m_pForm->GetFormNotify())
-        m_pForm->GetFormNotify()->AfterCheckedStatusChange(this);
+      m_pForm->NotifyAfterCheckedStatusChange(this);
       break;
     }
     case kComboBox:
@@ -196,7 +195,7 @@ bool CPDF_FormField::ResetField() {
       if (!bHasRV && (csDValue == csValue))
         return false;
 
-      if (!NotifyBeforeValueChange(csDValue))
+      if (!m_pForm->NotifyBeforeValueChange(this, csDValue))
         return false;
 
       {
@@ -217,7 +216,7 @@ bool CPDF_FormField::ResetField() {
           m_pDict->RemoveFor(pdfium::form_fields::kRV);
         }
       }
-      NotifyAfterValueChange();
+      m_pForm->NotifyAfterValueChange(this);
       break;
     }
   }
@@ -343,7 +342,7 @@ bool CPDF_FormField::SetValue(const WideString& value,
     case kComboBox: {
       WideString csValue = value;
       if (notify == NotificationOption::kNotify &&
-          !NotifyBeforeValueChange(csValue)) {
+          !m_pForm->NotifyBeforeValueChange(this, csValue)) {
         return false;
       }
       ByteString key(bDefault ? pdfium::form_fields::kDV
@@ -363,7 +362,7 @@ bool CPDF_FormField::SetValue(const WideString& value,
         }
       }
       if (notify == NotificationOption::kNotify)
-        NotifyAfterValueChange();
+        m_pForm->NotifyAfterValueChange(this);
       break;
     }
     case kListBox: {
@@ -375,7 +374,7 @@ bool CPDF_FormField::SetValue(const WideString& value,
         return false;
 
       if (notify == NotificationOption::kNotify &&
-          !NotifyBeforeSelectionChange(value)) {
+          !m_pForm->NotifyBeforeSelectionChange(this, value)) {
         return false;
       }
       if (!bDefault) {
@@ -383,7 +382,7 @@ bool CPDF_FormField::SetValue(const WideString& value,
         SetItemSelection(iIndex, NotificationOption::kDoNotNotify);
       }
       if (notify == NotificationOption::kNotify)
-        NotifyAfterSelectionChange();
+        m_pForm->NotifyAfterSelectionChange(this);
       break;
     }
     default:
@@ -460,7 +459,7 @@ int CPDF_FormField::GetSelectedIndex(int index) const {
 }
 
 bool CPDF_FormField::ClearSelection(NotificationOption notify) {
-  if (notify == NotificationOption::kNotify && m_pForm->GetFormNotify()) {
+  if (notify == NotificationOption::kNotify) {
     WideString csValue;
     int iIndex = GetSelectedIndex(0);
     if (iIndex >= 0)
@@ -637,8 +636,8 @@ bool CPDF_FormField::CheckControl(int iControlIndex,
     m_pDict->SetNewFor<CPDF_Name>(pdfium::form_fields::kV,
                                   ByteString::FormatInteger(iControlIndex));
   }
-  if (notify == NotificationOption::kNotify && m_pForm->GetFormNotify())
-    m_pForm->GetFormNotify()->AfterCheckedStatusChange(this);
+  if (notify == NotificationOption::kNotify)
+    m_pForm->NotifyAfterCheckedStatusChange(this);
   return true;
 }
 
@@ -674,8 +673,8 @@ bool CPDF_FormField::SetCheckValue(const WideString& value,
     if (val)
       break;
   }
-  if (notify == NotificationOption::kNotify && m_pForm->GetFormNotify())
-    m_pForm->GetFormNotify()->AfterCheckedStatusChange(this);
+  if (notify == NotificationOption::kNotify)
+    m_pForm->NotifyAfterCheckedStatusChange(this);
   return true;
 }
 
@@ -830,34 +829,12 @@ bool CPDF_FormField::UseSelectedIndicesObject() const {
   return pdfium::Contains(values, GetOptionValue(index));
 }
 
-bool CPDF_FormField::NotifyBeforeSelectionChange(const WideString& value) {
-  auto* pNotify = m_pForm->GetFormNotify();
-  return !pNotify || pNotify->BeforeSelectionChange(this, value);
-}
-
-void CPDF_FormField::NotifyAfterSelectionChange() {
-  auto* pNotify = m_pForm->GetFormNotify();
-  if (pNotify)
-    pNotify->AfterSelectionChange(this);
-}
-
-bool CPDF_FormField::NotifyBeforeValueChange(const WideString& value) {
-  auto* pNotify = m_pForm->GetFormNotify();
-  return !pNotify || pNotify->BeforeValueChange(this, value);
-}
-
-void CPDF_FormField::NotifyAfterValueChange() {
-  auto* pNotify = m_pForm->GetFormNotify();
-  if (pNotify)
-    pNotify->AfterValueChange(this);
-}
-
 bool CPDF_FormField::NotifyListOrComboBoxBeforeChange(const WideString& value) {
   switch (GetType()) {
     case kListBox:
-      return NotifyBeforeSelectionChange(value);
+      return m_pForm->NotifyBeforeSelectionChange(this, value);
     case kComboBox:
-      return NotifyBeforeValueChange(value);
+      return m_pForm->NotifyBeforeValueChange(this, value);
     default:
       return true;
   }
@@ -866,10 +843,10 @@ bool CPDF_FormField::NotifyListOrComboBoxBeforeChange(const WideString& value) {
 void CPDF_FormField::NotifyListOrComboBoxAfterChange() {
   switch (GetType()) {
     case kListBox:
-      NotifyAfterSelectionChange();
+      m_pForm->NotifyAfterSelectionChange(this);
       break;
     case kComboBox:
-      NotifyAfterValueChange();
+      m_pForm->NotifyAfterValueChange(this);
       break;
     default:
       break;

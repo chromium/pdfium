@@ -156,10 +156,6 @@ class CPDF_FormField {
                      bool bDefault,
                      NotificationOption notify);
   void SetItemSelectionSelected(int index, const WideString& opt_value);
-  bool NotifyBeforeSelectionChange(const WideString& value);
-  void NotifyAfterSelectionChange();
-  bool NotifyBeforeValueChange(const WideString& value);
-  void NotifyAfterValueChange();
   bool NotifyListOrComboBoxBeforeChange(const WideString& value);
   void NotifyListOrComboBoxAfterChange();
 
