@@ -91,8 +91,6 @@ class CPDF_InteractiveForm {
   void FixPageFields(CPDF_Page* pPage);
 
   CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
-  const CPDF_Dictionary* GetFormDict() const { return m_pFormDict.Get(); }
-  RetainPtr<CPDF_Dictionary> GetMutableFormDict() { return m_pFormDict; }
 
   // Wrap callbacks thru NotifierIface.
   bool NotifyBeforeValueChange(CPDF_FormField* pField,
