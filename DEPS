@@ -132,6 +132,10 @@ vars = {
   # and whatever else without interference from each other.
   'pdfium_tests_revision': '9377290e2bcb35fd6443d77e04972e0e3b2a6f0c',
   # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling resultdb
+  # and whatever else without interference from each other.
+  'resultdb_version': 'git_revision:6cc18e2763e180929d70c786b419c1f8e6bcc66c',
+  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling skia
   # and whatever else without interference from each other.
   'skia_revision': '03cb8e7d8ee33d9b7dc2232610baa7e4a1b74e75',
@@ -331,6 +335,16 @@ deps = {
   'tools/memory':
     Var('chromium_git') + '/chromium/src/tools/memory@' +
         Var('tools_memory_revision'),
+
+  'tools/resultdb': {
+    'packages': [
+      {
+        'package': 'infra/tools/result_adapter/${{platform}}',
+        'version': Var('resultdb_version'),
+      },
+    ],
+    'dep_type': 'cipd',
+  },
 
   # TODO(crbug.com/pdfium/1650): Set up autorollers for goldctl.
   'tools/skia_goldctl/linux': {

@@ -28,6 +28,7 @@
 /tools/clang
 /tools/code_coverage
 /tools/memory
+/tools/resultdb
 /tools/skia_goldctl
 /v8
 /xcodebuild
