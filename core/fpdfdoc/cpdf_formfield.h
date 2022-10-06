@@ -73,16 +73,19 @@ class CPDF_FormField {
   ~CPDF_FormField();
 
   static absl::optional<FormFieldType> IntToFormFieldType(int value);
-
-  static const CPDF_Object* GetFieldAttr(const CPDF_Dictionary* pFieldDict,
-                                         const ByteString& name);
-  static CPDF_Object* GetFieldAttr(CPDF_Dictionary* pFieldDict,
-                                   const ByteString& name);
-
   static WideString GetFullNameForDict(const CPDF_Dictionary* pFieldDict);
+  static const CPDF_Object* GetFieldAttrForDict(
+      const CPDF_Dictionary* pFieldDict,
+      const ByteString& name);
+  static CPDF_Object* GetFieldAttrForDict(CPDF_Dictionary* pFieldDict,
+                                          const ByteString& name);
 
   WideString GetFullName() const;
   Type GetType() const { return m_Type; }
+
+  const CPDF_Object* GetFieldAttr(const ByteString& name) const {
+    return GetFieldAttrForDict(m_pDict.Get(), name);
+  }
 
   const CPDF_Dictionary* GetFieldDict() const { return m_pDict.Get(); }
   bool ResetField();

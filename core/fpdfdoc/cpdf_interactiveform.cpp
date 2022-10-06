@@ -977,8 +977,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
         pField->GetType() == CPDF_FormField::kRadioButton) {
       WideString csExport = pField->GetCheckValue(false);
       ByteString csBExport = PDF_EncodeText(csExport.AsStringView());
-      const CPDF_Object* pOpt =
-          CPDF_FormField::GetFieldAttr(pField->GetFieldDict(), "Opt");
+      const CPDF_Object* pOpt = pField->GetFieldAttr("Opt");
       if (pOpt) {
         pFieldDict->SetNewFor<CPDF_String>(pdfium::form_fields::kV, csBExport,
                                            false);
@@ -986,8 +985,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
         pFieldDict->SetNewFor<CPDF_Name>(pdfium::form_fields::kV, csBExport);
       }
     } else {
-      const CPDF_Object* pV = CPDF_FormField::GetFieldAttr(
-          pField->GetFieldDict(), pdfium::form_fields::kV);
+      const CPDF_Object* pV = pField->GetFieldAttr(pdfium::form_fields::kV);
       if (pV)
         pFieldDict->SetFor(pdfium::form_fields::kV, pV->CloneDirectObject());
     }

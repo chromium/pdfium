@@ -916,7 +916,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     return;
 
   ByteString DA;
-  if (CPDF_Object* pDAObj = CPDF_FormField::GetFieldAttr(pAnnotDict, "DA"))
+  CPDF_Object* pDAObj = CPDF_FormField::GetFieldAttrForDict(pAnnotDict, "DA");
+  if (pDAObj)
     DA = pDAObj->GetString();
   if (DA.IsEmpty())
     DA = pFormDict->GetByteStringFor("DA");
@@ -1094,16 +1095,17 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
 
   switch (type) {
     case CPDF_GenerateAP::kTextField: {
-      const CPDF_Object* pV =
-          CPDF_FormField::GetFieldAttr(pAnnotDict, pdfium::form_fields::kV);
+      const CPDF_Object* pV = CPDF_FormField::GetFieldAttrForDict(
+          pAnnotDict, pdfium::form_fields::kV);
       WideString swValue = pV ? pV->GetUnicodeText() : WideString();
-      const CPDF_Object* pQ = CPDF_FormField::GetFieldAttr(pAnnotDict, "Q");
+      const CPDF_Object* pQ =
+          CPDF_FormField::GetFieldAttrForDict(pAnnotDict, "Q");
       int32_t nAlign = pQ ? pQ->GetInteger() : 0;
-      const CPDF_Object* pFf =
-          CPDF_FormField::GetFieldAttr(pAnnotDict, pdfium::form_fields::kFf);
+      const CPDF_Object* pFf = CPDF_FormField::GetFieldAttrForDict(
+          pAnnotDict, pdfium::form_fields::kFf);
       uint32_t dwFlags = pFf ? pFf->GetInteger() : 0;
       const CPDF_Object* pMaxLen =
-          CPDF_FormField::GetFieldAttr(pAnnotDict, "MaxLen");
+          CPDF_FormField::GetFieldAttrForDict(pAnnotDict, "MaxLen");
       uint32_t dwMaxLen = pMaxLen ? pMaxLen->GetInteger() : 0;
       CPVT_VariableText vt(&prd);
       vt.SetPlateRect(rcBody);
@@ -1157,8 +1159,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
       break;
     }
     case CPDF_GenerateAP::kComboBox: {
-      const CPDF_Object* pV =
-          CPDF_FormField::GetFieldAttr(pAnnotDict, pdfium::form_fields::kV);
+      const CPDF_Object* pV = CPDF_FormField::GetFieldAttrForDict(
+          pAnnotDict, pdfium::form_fields::kV);
       WideString swValue = pV ? pV->GetUnicodeText() : WideString();
       CPVT_VariableText vt(&prd);
       CFX_FloatRect rcButton = rcBody;
@@ -1225,10 +1227,10 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     }
     case CPDF_GenerateAP::kListBox: {
       CPDF_Array* pOpts =
-          ToArray(CPDF_FormField::GetFieldAttr(pAnnotDict, "Opt"));
+          ToArray(CPDF_FormField::GetFieldAttrForDict(pAnnotDict, "Opt"));
       CPDF_Array* pSels =
-          ToArray(CPDF_FormField::GetFieldAttr(pAnnotDict, "I"));
-      CPDF_Object* pTi = CPDF_FormField::GetFieldAttr(pAnnotDict, "TI");
+          ToArray(CPDF_FormField::GetFieldAttrForDict(pAnnotDict, "I"));
+      CPDF_Object* pTi = CPDF_FormField::GetFieldAttrForDict(pAnnotDict, "TI");
       int32_t nTop = pTi ? pTi->GetInteger() : 0;
       fxcrt::ostringstream sBody;
       if (pOpts) {

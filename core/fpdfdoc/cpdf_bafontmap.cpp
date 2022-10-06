@@ -238,13 +238,13 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
 
   ByteString sDA;
   const CPDF_Object* pObj =
-      CPDF_FormField::GetFieldAttr(m_pAnnotDict.Get(), "DA");
+      CPDF_FormField::GetFieldAttrForDict(m_pAnnotDict.Get(), "DA");
   if (pObj)
     sDA = pObj->GetString();
 
   if (bWidget) {
     if (sDA.IsEmpty()) {
-      pObj = CPDF_FormField::GetFieldAttr(pAcroFormDict.Get(), "DA");
+      pObj = CPDF_FormField::GetFieldAttrForDict(pAcroFormDict.Get(), "DA");
       sDA = pObj ? pObj->GetString() : ByteString();
     }
   }
