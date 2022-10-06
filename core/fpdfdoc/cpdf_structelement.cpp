@@ -41,19 +41,41 @@ CPDF_StructElement::~CPDF_StructElement() {
 }
 
 ByteString CPDF_StructElement::GetObjType() const {
-  return GetDict()->GetByteStringFor("Type");
+  return m_pDict->GetByteStringFor("Type");
 }
 
 WideString CPDF_StructElement::GetAltText() const {
-  return GetDict()->GetUnicodeTextFor("Alt");
+  return m_pDict->GetUnicodeTextFor("Alt");
 }
 
 WideString CPDF_StructElement::GetActualText() const {
-  return GetDict()->GetUnicodeTextFor("ActualText");
+  return m_pDict->GetUnicodeTextFor("ActualText");
 }
 
 WideString CPDF_StructElement::GetTitle() const {
-  return GetDict()->GetUnicodeTextFor("T");
+  return m_pDict->GetUnicodeTextFor("T");
+}
+
+absl::optional<WideString> CPDF_StructElement::GetID() const {
+  RetainPtr<const CPDF_Object> obj = m_pDict->GetObjectFor("ID");
+  if (!obj || !obj->IsString())
+    return absl::nullopt;
+  return obj->GetUnicodeText();
+}
+
+absl::optional<WideString> CPDF_StructElement::GetLang() const {
+  RetainPtr<const CPDF_Object> obj = m_pDict->GetObjectFor("Lang");
+  if (!obj || !obj->IsString())
+    return absl::nullopt;
+  return obj->GetUnicodeText();
+}
+
+RetainPtr<const CPDF_Object> CPDF_StructElement::GetA() const {
+  return m_pDict->GetObjectFor("A");
+}
+
+RetainPtr<const CPDF_Object> CPDF_StructElement::GetK() const {
+  return m_pDict->GetObjectFor("K");
 }
 
 size_t CPDF_StructElement::CountKids() const {
