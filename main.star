@@ -134,13 +134,12 @@ def get_properties_by_name(name):
 
     return properties
 
-def pdfium_internal_builder(name, bucket, enable_resultdb):
+def pdfium_internal_builder(name, bucket):
     """Creates a builder based on the builder name and the bucket name.
 
     Args:
       name: The builder name.
       bucket: The name of the bucket that the builder belongs to.
-      enable_resultdb: Whether to enable ResultDB.
 
     Returns:
       The desired builder.
@@ -182,10 +181,6 @@ def pdfium_internal_builder(name, bucket, enable_resultdb):
     # Update properties based on the builder name.
     properties.update(get_properties_by_name(name))
 
-    resultdb_settings = None
-    if enable_resultdb:
-        resultdb_settings = resultdb.settings(enable = True)
-
     return luci.builder(
         name = name,
         bucket = bucket,
@@ -195,7 +190,7 @@ def pdfium_internal_builder(name, bucket, enable_resultdb):
         notifies = notifies,
         properties = properties,
         service_account = service_account,
-        resultdb_settings = resultdb_settings,
+        resultdb_settings = resultdb.settings(enable = True),
         triggered_by = triggered_by,
     )
 
@@ -203,8 +198,7 @@ def add_entries_for_builder(
         name,
         category = None,
         short_name = None,
-        skip_ci_builder = False,
-        enable_resultdb = False):
+        skip_ci_builder = False):
     """Creates builder, tryjob verifier and view entries for a given builder name.
 
     Args:
@@ -214,7 +208,6 @@ def add_entries_for_builder(
       skip_ci_builder: Whether to skip creating a builder in the "ci" bucket.
           When set to True, it will also skip making the matching console view
           entry for that "ci" builder.
-      enable_resultdb: Whether to enable ResultDB.
     """
 
     # Add builders in buckets.
@@ -222,7 +215,6 @@ def add_entries_for_builder(
         pdfium_internal_builder(
             name,
             bucket = "ci",
-            enable_resultdb = enable_resultdb,
         )
 
         # Add the matching console view entry.
@@ -242,7 +234,6 @@ def add_entries_for_builder(
     pdfium_internal_builder(
         name,
         bucket = "try",
-        enable_resultdb = enable_resultdb,
     )
 
     # Add the matching list view entry.
@@ -446,7 +437,6 @@ add_entries_for_builder(name = "linux", category = "main|linux")
 add_entries_for_builder(name = "linux_asan_lsan", category = "main|linux", short_name = "asan")
 add_entries_for_builder(name = "linux_msan", category = "main|linux", short_name = "msan")
 add_entries_for_builder(name = "linux_no_v8", category = "no v8", short_name = "linux")
-add_entries_for_builder(name = "linux_resultdb", category = "linux", short_name = "rdb", skip_ci_builder = True, enable_resultdb = True)
 add_entries_for_builder(name = "linux_skia", category = "skia|linux")
 add_entries_for_builder(name = "linux_skia_paths", category = "skia_paths|linux")
 add_entries_for_builder(name = "linux_ubsan", category = "main|linux", short_name = "ubsan")
