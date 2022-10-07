@@ -67,7 +67,7 @@ bool IsPageObject(CPDF_Page* pPage) {
   if (!pPage)
     return false;
 
-  const CPDF_Dictionary* pFormDict = pPage->GetDict();
+  RetainPtr<const CPDF_Dictionary> pFormDict = pPage->GetDict();
   if (!pFormDict->KeyExist(pdfium::page_object::kType))
     return false;
 

@@ -168,7 +168,7 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   } else {
     pDocument = m_pImageObject->GetImage()->GetDocument();
   }
-  const CPDF_Dictionary* pPageResources =
+  RetainPtr<const CPDF_Dictionary> pPageResources =
       pPage ? pPage->GetPageResources() : nullptr;
   RetainPtr<const CPDF_Dictionary> pStreamDict =
       m_pImageObject->GetImage()->GetStream()->GetDict();

@@ -23,7 +23,7 @@ class CPDF_StructTree {
  public:
   static std::unique_ptr<CPDF_StructTree> LoadPage(
       const CPDF_Document* pDoc,
-      const CPDF_Dictionary* pPageDict);
+      RetainPtr<const CPDF_Dictionary> pPageDict);
 
   explicit CPDF_StructTree(const CPDF_Document* pDoc);
   ~CPDF_StructTree();
@@ -38,7 +38,7 @@ class CPDF_StructTree {
                                     RetainPtr<CPDF_StructElement>,
                                     std::less<>>;
 
-  void LoadPageTree(const CPDF_Dictionary* pPageDict);
+  void LoadPageTree(RetainPtr<const CPDF_Dictionary> pPageDict);
   RetainPtr<CPDF_StructElement> AddPageNode(
       RetainPtr<const CPDF_Dictionary> pDict,
       StructElementMap* map,

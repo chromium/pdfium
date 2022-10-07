@@ -39,7 +39,8 @@ class CPDF_PageContentGeneratorTest : public TestWithPageModule {
   const CPDF_Dictionary* TestGetResource(CPDF_PageContentGenerator* pGen,
                                          const ByteString& type,
                                          const ByteString& name) {
-    const CPDF_Dictionary* pResources = pGen->m_pObjHolder->GetResources();
+    RetainPtr<const CPDF_Dictionary> pResources =
+        pGen->m_pObjHolder->GetResources();
     return pResources->GetDictFor(type)->GetDictFor(name).Get();
   }
 

@@ -391,7 +391,7 @@ FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
 
   RetainPtr<CPDF_DIB> pSource = pImg->CreateNewDIB();
   CPDF_DIB::LoadState ret = pSource->StartLoadDIBBase(
-      false, nullptr, pPage->GetPageResources(), false,
+      false, nullptr, pPage->GetPageResources().Get(), false,
       CPDF_ColorSpace::Family::kUnknown, false);
   if (ret == CPDF_DIB::LoadState::kFail)
     return true;

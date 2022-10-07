@@ -30,12 +30,12 @@ bool IsTagged(const CPDF_Document* pDoc) {
 // static
 std::unique_ptr<CPDF_StructTree> CPDF_StructTree::LoadPage(
     const CPDF_Document* pDoc,
-    const CPDF_Dictionary* pPageDict) {
+    RetainPtr<const CPDF_Dictionary> pPageDict) {
   if (!IsTagged(pDoc))
     return nullptr;
 
   auto pTree = std::make_unique<CPDF_StructTree>(pDoc);
-  pTree->LoadPageTree(pPageDict);
+  pTree->LoadPageTree(std::move(pPageDict));
   return pTree;
 }
 
@@ -54,8 +54,8 @@ ByteString CPDF_StructTree::GetRoleMapNameFor(const ByteString& type) const {
   return type;
 }
 
-void CPDF_StructTree::LoadPageTree(const CPDF_Dictionary* pPageDict) {
-  m_pPage.Reset(pPageDict);
+void CPDF_StructTree::LoadPageTree(RetainPtr<const CPDF_Dictionary> pPageDict) {
+  m_pPage = std::move(pPageDict);
   if (!m_pTreeRoot)
     return;
 
@@ -80,7 +80,7 @@ void CPDF_StructTree::LoadPageTree(const CPDF_Dictionary* pPageDict) {
     return;
 
   CPDF_NumberTree parent_tree(std::move(pParentTree));
-  int parents_id = pPageDict->GetIntegerFor("StructParents", -1);
+  int parents_id = m_pPage->GetIntegerFor("StructParents", -1);
   if (parents_id < 0)
     return;
 

@@ -80,8 +80,8 @@ RetainPtr<CPDF_Object> CPDF_Page::GetMutablePageAttr(const ByteString& name) {
 
 RetainPtr<const CPDF_Object> CPDF_Page::GetPageAttr(
     const ByteString& name) const {
-  std::set<const CPDF_Dictionary*> visited;
-  const CPDF_Dictionary* pPageDict = GetDict();
+  std::set<RetainPtr<const CPDF_Dictionary>> visited;
+  RetainPtr<const CPDF_Dictionary> pPageDict = GetDict();
   while (pPageDict && !pdfium::Contains(visited, pPageDict)) {
     RetainPtr<const CPDF_Object> pObj = pPageDict->GetDirectObjectFor(name);
     if (pObj)

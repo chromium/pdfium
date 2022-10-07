@@ -601,8 +601,7 @@ ByteString CPDF_NPageToOneExporter::AddSubPage(
 
 RetainPtr<CPDF_Stream> CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
     RetainPtr<CPDF_Page> pSrcPage) {
-  // TODO(tsepez): return retained object from CPDF_Page::GetDict()'
-  RetainPtr<const CPDF_Dictionary> pSrcPageDict(pSrcPage->GetDict());
+  RetainPtr<const CPDF_Dictionary> pSrcPageDict = pSrcPage->GetDict();
   RetainPtr<const CPDF_Object> pSrcContentObj =
       pSrcPageDict->GetDirectObjectFor(pdfium::page_object::kContents);
 

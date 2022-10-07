@@ -18,11 +18,11 @@
 namespace {
 
 RetainPtr<const CPDF_Stream> CPDFStreamForThumbnailFromPage(FPDF_PAGE page) {
-  const CPDF_Page* p_page = CPDFPageFromFPDFPage(page);
-  if (!p_page)
+  const CPDF_Page* pdf_page = CPDFPageFromFPDFPage(page);
+  if (!pdf_page)
     return nullptr;
 
-  const CPDF_Dictionary* page_dict = p_page->GetDict();
+  RetainPtr<const CPDF_Dictionary> page_dict = pdf_page->GetDict();
   if (!page_dict->KeyExist("Type"))
     return nullptr;
 
@@ -62,18 +62,17 @@ FPDFPage_GetThumbnailAsBitmap(FPDF_PAGE page) {
   if (!thumb_stream)
     return nullptr;
 
-  const CPDF_Page* p_page = CPDFPageFromFPDFPage(page);
-
-  auto p_source = pdfium::MakeRetain<CPDF_DIB>(p_page->GetDocument(),
-                                               std::move(thumb_stream));
-  const CPDF_DIB::LoadState start_status = p_source->StartLoadDIBBase(
-      false, nullptr, p_page->GetPageResources(), false,
+  const CPDF_Page* pdf_page = CPDFPageFromFPDFPage(page);
+  auto dib_source = pdfium::MakeRetain<CPDF_DIB>(pdf_page->GetDocument(),
+                                                 std::move(thumb_stream));
+  const CPDF_DIB::LoadState start_status = dib_source->StartLoadDIBBase(
+      false, nullptr, pdf_page->GetPageResources().Get(), false,
       CPDF_ColorSpace::Family::kUnknown, false);
   if (start_status == CPDF_DIB::LoadState::kFail)
     return nullptr;
 
   auto thumb_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!thumb_bitmap->Copy(p_source))
+  if (!thumb_bitmap->Copy(dib_source))
     return nullptr;
 
   return FPDFBitmapFromCFXDIBitmap(thumb_bitmap.Leak());
