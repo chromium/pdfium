@@ -183,6 +183,18 @@ int CPDF_Page::GetPageRotation() const {
   return (rotate < 0) ? (rotate + 4) : rotate;
 }
 
+RetainPtr<CPDF_Array> CPDF_Page::GetOrCreateAnnotsArray() {
+  return GetMutableDict()->GetOrCreateArrayFor("Annots");
+}
+
+RetainPtr<CPDF_Array> CPDF_Page::GetMutableAnnotsArray() {
+  return GetMutableDict()->GetMutableArrayFor("Annots");
+}
+
+RetainPtr<const CPDF_Array> CPDF_Page::GetAnnotsArray() const {
+  return GetDict()->GetArrayFor("Annots");
+}
+
 void CPDF_Page::SetRenderContext(std::unique_ptr<RenderContextIface> pContext) {
   DCHECK(!m_pRenderContext);
   DCHECK(pContext);

@@ -371,8 +371,7 @@ FPDFPage_CreateAnnot(FPDF_PAGE page, FPDF_ANNOTATION_SUBTYPE subtype) {
   auto pNewAnnot =
       std::make_unique<CPDF_AnnotContext>(pDict, IPDFPageFromFPDFPage(page));
 
-  RetainPtr<CPDF_Array> pAnnotList =
-      pPage->GetMutableDict()->GetOrCreateArrayFor("Annots");
+  RetainPtr<CPDF_Array> pAnnotList = pPage->GetOrCreateAnnotsArray();
   pAnnotList->Append(pDict);
 
   // Caller takes ownership.
@@ -384,7 +383,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetAnnotCount(FPDF_PAGE page) {
   if (!pPage)
     return 0;
 
-  RetainPtr<const CPDF_Array> pAnnots = pPage->GetDict()->GetArrayFor("Annots");
+  RetainPtr<const CPDF_Array> pAnnots = pPage->GetAnnotsArray();
   return pAnnots ? fxcrt::CollectionSize<int>(*pAnnots) : 0;
 }
 
@@ -394,8 +393,7 @@ FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV FPDFPage_GetAnnot(FPDF_PAGE page,
   if (!pPage || index < 0)
     return nullptr;
 
-  RetainPtr<CPDF_Array> pAnnots =
-      pPage->GetMutableDict()->GetMutableArrayFor("Annots");
+  RetainPtr<CPDF_Array> pAnnots = pPage->GetMutableAnnotsArray();
   if (!pAnnots || static_cast<size_t>(index) >= pAnnots->size())
     return nullptr;
 
@@ -421,7 +419,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetAnnotIndex(FPDF_PAGE page,
   if (!pAnnotDict)
     return -1;
 
-  RetainPtr<const CPDF_Array> pAnnots = pPage->GetDict()->GetArrayFor("Annots");
+  RetainPtr<const CPDF_Array> pAnnots = pPage->GetAnnotsArray();
   if (!pAnnots)
     return -1;
 
@@ -447,8 +445,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_RemoveAnnot(FPDF_PAGE page,
   if (!pPage || index < 0)
     return false;
 
-  RetainPtr<CPDF_Array> pAnnots =
-      pPage->GetMutableDict()->GetMutableArrayFor("Annots");
+  RetainPtr<CPDF_Array> pAnnots = pPage->GetMutableAnnotsArray();
   if (!pAnnots || static_cast<size_t>(index) >= pAnnots->size())
     return false;
 

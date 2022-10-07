@@ -622,8 +622,7 @@ const CPDF_FormControl* CPDF_InteractiveForm::GetControlAtPoint(
     const CPDF_Page* pPage,
     const CFX_PointF& point,
     int* z_order) const {
-  RetainPtr<const CPDF_Array> pAnnotList =
-      pPage->GetDict()->GetArrayFor("Annots");
+  RetainPtr<const CPDF_Array> pAnnotList = pPage->GetAnnotsArray();
   if (!pAnnotList)
     return nullptr;
 
@@ -785,8 +784,7 @@ void CPDF_InteractiveForm::LoadField(RetainPtr<CPDF_Dictionary> pFieldDict,
 }
 
 void CPDF_InteractiveForm::FixPageFields(CPDF_Page* pPage) {
-  RetainPtr<CPDF_Array> pAnnots =
-      pPage->GetMutableDict()->GetMutableArrayFor("Annots");
+  RetainPtr<CPDF_Array> pAnnots = pPage->GetMutableAnnotsArray();
   if (!pAnnots)
     return;
 
