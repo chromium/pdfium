@@ -249,10 +249,6 @@ example_027.pdf mac * * *
 example_028.pdf mac * * *
 example_029.pdf mac * * *
 example_030.pdf mac * * *
-
-# TODO(pdfium:1809): Remove after associated bug is fixed
-example_030.pdf * * * skia,skiapaths
-
 example_031.pdf mac * * *
 example_032.pdf mac * * *
 example_033.pdf mac * * *
