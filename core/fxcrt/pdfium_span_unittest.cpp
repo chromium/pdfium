@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <vector>
+
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/span.h"
 
@@ -49,3 +51,21 @@ TEST(PdfiumSpanDeathTest, EmptySpanBack) {
   pdfium::span<int> empty_span;
   EXPECT_DEATH(empty_span.back() += 1, ".*");
 }
+
+#if defined(ADDRESS_SANITIZER)
+namespace {
+
+void CreateDanglingSpan() {
+  pdfium::span<int> data_span;
+  {
+    std::vector<int> data(4);
+    data_span = pdfium::make_span(data);
+  }
+}
+
+}  // namespace
+
+TEST(PdfiumSpanDeathTest, DanglingReference) {
+  EXPECT_DEATH(CreateDanglingSpan(), ".*");
+}
+#endif  // defined(ADDRESS_SANITIZER)
