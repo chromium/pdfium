@@ -28,8 +28,8 @@ RetainPtr<const CPDF_Dictionary> CPDF_ContentMarkItem::GetParam() const {
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_ContentMarkItem::GetParam() {
-  return pdfium::WrapRetain(const_cast<CPDF_Dictionary*>(
-      static_cast<const CPDF_ContentMarkItem*>(this)->GetParam().Get()));
+  return pdfium::WrapRetain(
+      const_cast<CPDF_Dictionary*>(std::as_const(*this).GetParam().Get()));
 }
 
 void CPDF_ContentMarkItem::SetDirectDict(RetainPtr<CPDF_Dictionary> pDict) {

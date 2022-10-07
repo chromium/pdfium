@@ -173,6 +173,11 @@ const CStretchEngine::PixelWeight* CStretchEngine::WeightTable::GetPixelWeight(
       &m_WeightTables[(pixel - m_DestMin) * m_ItemSizeBytes]);
 }
 
+CStretchEngine::PixelWeight* CStretchEngine::WeightTable::GetPixelWeight(
+    int pixel) {
+  return const_cast<PixelWeight*>(std::as_const(*this).GetPixelWeight(pixel));
+}
+
 CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
                                FXDIB_Format dest_format,
                                int dest_width,

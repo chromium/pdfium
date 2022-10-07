@@ -97,10 +97,7 @@ class CStretchEngine {
                           const FXDIB_ResampleOptions& options);
 
     const PixelWeight* GetPixelWeight(int pixel) const;
-    PixelWeight* GetPixelWeight(int pixel) {
-      return const_cast<PixelWeight*>(
-          static_cast<const WeightTable*>(this)->GetPixelWeight(pixel));
-    }
+    PixelWeight* GetPixelWeight(int pixel);
 
    private:
     int m_DestMin = 0;
