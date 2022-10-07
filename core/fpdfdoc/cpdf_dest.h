@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFDOC_CPDF_DEST_H_
 #define CORE_FPDFDOC_CPDF_DEST_H_
 
+#include <vector>
+
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fxcrt/retain_ptr.h"
 
@@ -24,14 +26,15 @@ class CPDF_Dest {
                           RetainPtr<const CPDF_Object> pDest);
 
   const CPDF_Array* GetArray() const { return m_pArray.Get(); }
+
   int GetDestPageIndex(CPDF_Document* pDoc) const;
+  std::vector<float> GetScrollPositionArray() const;
 
   // Returns the zoom mode, as one of the PDFDEST_VIEW_* values in fpdf_doc.h.
   int GetZoomMode() const;
 
   size_t GetNumParams() const;
   float GetParam(size_t index) const;
-
   bool GetXYZ(bool* pHasX,
               bool* pHasY,
               bool* pHasZoom,

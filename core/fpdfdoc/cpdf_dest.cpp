@@ -67,6 +67,17 @@ int CPDF_Dest::GetDestPageIndex(CPDF_Document* pDoc) const {
   return pDoc->GetPageIndex(pPage->GetObjNum());
 }
 
+std::vector<float> CPDF_Dest::GetScrollPositionArray() const {
+  std::vector<float> result;
+  if (m_pArray) {
+    // Skip over index 0 which contains destination page details, and index 1
+    // which contains a parameter that describes the rest of the array.
+    for (size_t i = 2; i < m_pArray->size(); i++)
+      result.push_back(m_pArray->GetFloatAt(i));
+  }
+  return result;
+}
+
 int CPDF_Dest::GetZoomMode() const {
   if (!m_pArray)
     return 0;

@@ -888,17 +888,8 @@ bool CPDFSDK_FormFillEnvironment::DoActionDestination(const CPDF_Dest& dest) {
   CPDF_Document* document = GetPDFDocument();
   DCHECK(document);
 
-  const CPDF_Array* dest_array = dest.GetArray();
-  std::vector<float> dest_positions;
-  // |dest_array| index 0 contains destination page details and index 1 contains
-  // parameter that explains about the rest of |dest_array|.
-  if (dest_array) {
-    for (size_t i = 2; i < dest_array->size(); i++)
-      dest_positions.push_back(dest_array->GetFloatAt(i));
-  }
-
-  DoGoToAction(dest.GetDestPageIndex(document), dest.GetZoomMode(),
-               dest_positions);
+  std::vector<float> positions = dest.GetScrollPositionArray();
+  DoGoToAction(dest.GetDestPageIndex(document), dest.GetZoomMode(), positions);
   return true;
 }
 

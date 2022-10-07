@@ -1389,15 +1389,10 @@ CJS_Result CJS_Document::gotoNamedDest(
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   CPDF_Dest dest(std::move(dest_array));
-  const CPDF_Array* arrayObject = dest.GetArray();
-  std::vector<float> scrollPositionArray;
-  if (arrayObject) {
-    for (size_t i = 2; i < arrayObject->size(); i++)
-      scrollPositionArray.push_back(arrayObject->GetFloatAt(i));
-  }
+  std::vector<float> positions = dest.GetScrollPositionArray();
   pRuntime->BeginBlock();
   m_pFormFillEnv->DoGoToAction(dest.GetDestPageIndex(pDocument),
-                               dest.GetZoomMode(), scrollPositionArray);
+                               dest.GetZoomMode(), positions);
   pRuntime->EndBlock();
   return CJS_Result::Success();
 }
