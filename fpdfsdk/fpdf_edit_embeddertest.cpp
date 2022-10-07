@@ -137,8 +137,7 @@ class FPDFEditEmbedderTest : public EmbedderTest {
     // Check that the font stream is the one that was provided
     ASSERT_EQ(span.size(), streamAcc->GetSize());
     if (font_type == FPDF_FONT_TRUETYPE) {
-      ASSERT_EQ(static_cast<int>(span.size()),
-                streamAcc->GetDict()->GetIntegerFor("Length1"));
+      ASSERT_EQ(static_cast<int>(span.size()), streamAcc->GetLength1ForTest());
     }
 
     pdfium::span<const uint8_t> stream_data = streamAcc->GetSpan();

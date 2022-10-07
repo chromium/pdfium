@@ -71,8 +71,8 @@ RetainPtr<const CPDF_Stream> CPDF_StreamAcc::GetStream() const {
   return m_pStream;
 }
 
-RetainPtr<const CPDF_Dictionary> CPDF_StreamAcc::GetDict() const {
-  return m_pStream ? m_pStream->GetDict() : nullptr;
+int CPDF_StreamAcc::GetLength1ForTest() const {
+  return m_pStream->GetDict()->GetIntegerFor("Length1");
 }
 
 RetainPtr<const CPDF_Dictionary> CPDF_StreamAcc::GetImageParam() const {

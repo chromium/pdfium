@@ -33,7 +33,6 @@ class CPDF_StreamAcc final : public Retainable {
   void LoadAllDataRaw();
 
   RetainPtr<const CPDF_Stream> GetStream() const;
-  RetainPtr<const CPDF_Dictionary> GetDict() const;
   RetainPtr<const CPDF_Dictionary> GetImageParam() const;
 
   uint32_t GetSize() const;
@@ -41,6 +40,8 @@ class CPDF_StreamAcc final : public Retainable {
   ByteString ComputeDigest() const;
   ByteString GetImageDecoder() const { return m_ImageDecoder; }
   std::unique_ptr<uint8_t, FxFreeDeleter> DetachData();
+
+  int GetLength1ForTest() const;
 
  private:
   // TODO(crbug.com/pdfium/1872): Replace with fxcrt::DataVector.
