@@ -41,7 +41,9 @@ class CPDF_FormControl {
 
   CPDF_FormField::Type GetType() const { return m_pField->GetType(); }
   CPDF_FormField* GetField() const { return m_pField.Get(); }
-  const CPDF_Dictionary* GetWidget() const { return m_pWidgetDict.Get(); }
+  RetainPtr<const CPDF_Dictionary> GetWidgetDict() const {
+    return m_pWidgetDict;
+  }
   CFX_FloatRect GetRect() const;
 
   ByteString GetCheckedAPState() const;

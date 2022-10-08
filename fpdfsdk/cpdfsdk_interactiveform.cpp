@@ -129,12 +129,11 @@ CPDFSDK_Widget* CPDFSDK_InteractiveForm::GetWidget(
   if (pWidget)
     return pWidget;
 
-  const CPDF_Dictionary* pControlDict = pControl->GetWidget();
   CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
   CPDFSDK_PageView* pPage = nullptr;
-
-  if (RetainPtr<const CPDF_Dictionary> pPageDict =
-          pControlDict->GetDictFor("P")) {
+  RetainPtr<const CPDF_Dictionary> pControlDict = pControl->GetWidgetDict();
+  RetainPtr<const CPDF_Dictionary> pPageDict = pControlDict->GetDictFor("P");
+  if (pPageDict) {
     int nPageIndex = pDocument->GetPageIndex(pPageDict->GetObjNum());
     if (nPageIndex >= 0)
       pPage = m_pFormFillEnv->GetPageViewAtIndex(nPageIndex);

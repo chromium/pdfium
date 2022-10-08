@@ -405,7 +405,7 @@ int CPDF_FormField::GetMaxLen() const {
     if (!pControl)
       continue;
 
-    const CPDF_Dictionary* pWidgetDict = pControl->GetWidget();
+    RetainPtr<const CPDF_Dictionary> pWidgetDict = pControl->GetWidgetDict();
     if (pWidgetDict->KeyExist("MaxLen"))
       return pWidgetDict->GetIntegerFor("MaxLen");
   }
