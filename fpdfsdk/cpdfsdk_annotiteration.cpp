@@ -11,26 +11,39 @@
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 
-CPDFSDK_AnnotIteration::CPDFSDK_AnnotIteration(CPDFSDK_PageView* pPageView) {
+// static
+CPDFSDK_AnnotIteration CPDFSDK_AnnotIteration::CreateForDrawing(
+    CPDFSDK_PageView* page_view) {
+  CPDFSDK_AnnotIteration result(page_view);
+  return CPDFSDK_AnnotIteration(page_view, /*put_focused_annot_at_end=*/true);
+}
+
+CPDFSDK_AnnotIteration::CPDFSDK_AnnotIteration(CPDFSDK_PageView* page_view)
+    : CPDFSDK_AnnotIteration(page_view, /*put_focused_annot_at_end=*/false) {}
+
+CPDFSDK_AnnotIteration::CPDFSDK_AnnotIteration(CPDFSDK_PageView* page_view,
+                                               bool put_focused_annot_at_end) {
   // Copying ObservedPtrs is expensive, so do it once at the end.
-  std::vector<CPDFSDK_Annot*> copied_list = pPageView->GetAnnotList();
+  std::vector<CPDFSDK_Annot*> copied_list = page_view->GetAnnotList();
   std::stable_sort(copied_list.begin(), copied_list.end(),
                    [](const CPDFSDK_Annot* p1, const CPDFSDK_Annot* p2) {
                      return p1->GetLayoutOrder() < p2->GetLayoutOrder();
                    });
 
-  CPDFSDK_Annot* pTopMostAnnot = pPageView->GetFocusAnnot();
+  CPDFSDK_Annot* pTopMostAnnot = page_view->GetFocusAnnot();
   if (pTopMostAnnot) {
     auto it = std::find(copied_list.begin(), copied_list.end(), pTopMostAnnot);
     if (it != copied_list.end()) {
       copied_list.erase(it);
-      copied_list.insert(copied_list.begin(), pTopMostAnnot);
+      auto insert_it =
+          put_focused_annot_at_end ? copied_list.end() : copied_list.begin();
+      copied_list.insert(insert_it, pTopMostAnnot);
     }
   }
 
-  m_List.reserve(copied_list.size());
+  list_.reserve(copied_list.size());
   for (auto* pAnnot : copied_list)
-    m_List.emplace_back(pAnnot);
+    list_.emplace_back(pAnnot);
 }
 
 CPDFSDK_AnnotIteration::~CPDFSDK_AnnotIteration() = default;

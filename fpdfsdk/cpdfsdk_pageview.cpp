@@ -86,7 +86,7 @@ void CPDFSDK_PageView::PageView_OnDraw(CFX_RenderDevice* pDevice,
 #endif  // PDF_ENABLE_XFA
 
   // for pdf/static xfa.
-  CPDFSDK_AnnotIteration annot_iteration(this);
+  auto annot_iteration = CPDFSDK_AnnotIteration::CreateForDrawing(this);
   for (const auto& pSDKAnnot : annot_iteration) {
     pSDKAnnot->OnDraw(pDevice, mtUser2Device, pOptions->GetDrawAnnots());
   }

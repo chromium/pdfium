@@ -1,0 +1,4 @@
+# Open the dropdown
+mousemove,140,145
+mousedown,left,140,145
+mouseup,left,140,145
