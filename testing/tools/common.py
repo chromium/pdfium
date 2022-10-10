@@ -12,6 +12,8 @@ import re
 import subprocess
 import sys
 
+import pdfium_root
+
 
 def os_name():
   if sys.platform.startswith('linux'):
@@ -87,26 +89,12 @@ class DirectoryFinder:
   checkout or a chromium checkout of PDFium.'''
 
   def __init__(self, build_location):
-    # |build_location| is typically "out/Debug" or "out/Release".
-    # Expect |my_dir| to be .../pdfium/testing/tools.
-    self.my_dir = os.path.dirname(os.path.realpath(__file__))
-    self.testing_dir = os.path.dirname(self.my_dir)
-    if (os.path.basename(self.my_dir) != 'tools' or
-        os.path.basename(self.testing_dir) != 'testing'):
-      raise Exception('Confused, can not find pdfium root directory, aborting.')
-    self.pdfium_dir = os.path.dirname(self.testing_dir)
-    # Find path to build directory.  This depends on whether this is a
-    # standalone build vs. a build as part of a chromium checkout. For
-    # standalone, we expect a path like .../pdfium/out/Debug, but for
-    # chromium, we expect a path like .../src/out/Debug two levels
-    # higher (to skip over the third_party/pdfium path component under
-    # which chromium sticks pdfium).
-    self.base_dir = self.pdfium_dir
-    one_up_dir = os.path.dirname(self.base_dir)
-    two_up_dir = os.path.dirname(one_up_dir)
-    if (os.path.basename(two_up_dir) == 'src' and
-        os.path.basename(one_up_dir) == 'third_party'):
-      self.base_dir = two_up_dir
+    # `build_location` is typically "out/Debug" or "out/Release".
+    root_finder = pdfium_root.RootDirectoryFinder()
+    self.testing_dir = os.path.join(root_finder.pdfium_root, 'testing')
+    self.my_dir = os.path.join(self.testing_dir, 'tools')
+    self.pdfium_dir = root_finder.pdfium_root
+    self.base_dir = root_finder.source_root
     self.build_dir = os.path.join(self.base_dir, build_location)
     self.os_name = os_name()
 
