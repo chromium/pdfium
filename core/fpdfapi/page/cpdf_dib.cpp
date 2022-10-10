@@ -275,15 +275,13 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
     pdfium::span<const uint8_t> pSrcSpan;
     if (m_pStreamAcc) {
       pSrcSpan = m_pStreamAcc->GetSpan();
-      if (m_pStreamAcc->GetStream())
-        nSrcKey = m_pStreamAcc->GetStream()->KeyForCache();
+      nSrcKey = m_pStreamAcc->KeyForCache();
     }
     uint64_t nGlobalKey = 0;
     pdfium::span<const uint8_t> pGlobalSpan;
     if (m_pGlobalAcc) {
       pGlobalSpan = m_pGlobalAcc->GetSpan();
-      if (m_pGlobalAcc->GetStream())
-        nGlobalKey = m_pGlobalAcc->GetStream()->KeyForCache();
+      nGlobalKey = m_pGlobalAcc->KeyForCache();
     }
     iDecodeStatus = Jbig2Decoder::StartDecode(
         m_pJbig2Context.get(), m_pDocument->GetOrCreateCodecContext(), m_Width,

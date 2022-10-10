@@ -98,6 +98,10 @@ pdfium::span<const uint8_t> CPDF_StreamAcc::GetSpan() const {
   return {GetData(), GetSize()};
 }
 
+uint64_t CPDF_StreamAcc::KeyForCache() const {
+  return m_pStream ? m_pStream->KeyForCache() : 0;
+}
+
 ByteString CPDF_StreamAcc::ComputeDigest() const {
   uint8_t digest[20];
   CRYPT_SHA1Generate(GetData(), GetSize(), digest);
