@@ -101,7 +101,11 @@ class CPDF_Font : public Retainable, public Observable {
   absl::optional<FX_Charset> GetSubstFontCharset() const;
   bool IsEmbedded() const { return IsType3Font() || m_pFontFile != nullptr; }
   RetainPtr<CPDF_Dictionary> GetMutableFontDict() { return m_pFontDict; }
-  const CPDF_Dictionary* GetFontDict() const { return m_pFontDict.Get(); }
+  RetainPtr<const CPDF_Dictionary> GetFontDict() const { return m_pFontDict; }
+  uint32_t GetFontDictObjNum() const { return m_pFontDict->GetObjNum(); }
+  bool FontDictIs(const CPDF_Dictionary* pThat) const {
+    return m_pFontDict == pThat;
+  }
   void ClearFontDict() { m_pFontDict = nullptr; }
   bool IsStandardFont() const;
   bool HasFace() const { return !!m_Font.GetFaceRec(); }

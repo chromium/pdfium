@@ -571,7 +571,7 @@ void CPDF_PageContentGenerator::ProcessText(fxcrt::ostringstream* buf,
   if (maybe_name.has_value()) {
     dictName = std::move(maybe_name.value());
   } else {
-    const CPDF_Object* pIndirectFont = pFont->GetFontDict();
+    RetainPtr<const CPDF_Object> pIndirectFont = pFont->GetFontDict();
     if (pIndirectFont->IsInline()) {
       // In this case we assume it must be a standard font
       auto pFontDict = pdfium::MakeRetain<CPDF_Dictionary>();

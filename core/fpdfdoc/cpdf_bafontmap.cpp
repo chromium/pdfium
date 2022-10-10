@@ -320,7 +320,7 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
                                               pStreamResFontList->GetObjNum());
   }
   if (!pStreamResFontList->KeyExist(sAlias)) {
-    const CPDF_Dictionary* pFontDict = pFont->GetFontDict();
+    RetainPtr<const CPDF_Dictionary> pFontDict = pFont->GetFontDict();
     RetainPtr<CPDF_Object> pObject =
         pFontDict->IsInline() ? pFontDict->Clone()
                               : pFontDict->MakeReference(m_pDocument.Get());

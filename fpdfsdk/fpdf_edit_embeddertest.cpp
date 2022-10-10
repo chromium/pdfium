@@ -2904,7 +2904,7 @@ TEST_F(FPDFEditEmbedderTest, LoadSimpleType1Font) {
   CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
   EXPECT_TRUE(typed_font->IsType1Font());
 
-  const CPDF_Dictionary* font_dict = typed_font->GetFontDict();
+  RetainPtr<const CPDF_Dictionary> font_dict = typed_font->GetFontDict();
   EXPECT_EQ("Font", font_dict->GetNameFor("Type"));
   EXPECT_EQ("Type1", font_dict->GetNameFor("Subtype"));
   EXPECT_EQ("Tinos-Bold", font_dict->GetNameFor("BaseFont"));
@@ -2933,7 +2933,7 @@ TEST_F(FPDFEditEmbedderTest, LoadSimpleTrueTypeFont) {
   CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
   EXPECT_TRUE(typed_font->IsTrueTypeFont());
 
-  const CPDF_Dictionary* font_dict = typed_font->GetFontDict();
+  RetainPtr<const CPDF_Dictionary> font_dict = typed_font->GetFontDict();
   EXPECT_EQ("Font", font_dict->GetNameFor("Type"));
   EXPECT_EQ("TrueType", font_dict->GetNameFor("Subtype"));
   EXPECT_EQ("Cousine-Regular", font_dict->GetNameFor("BaseFont"));
@@ -2963,7 +2963,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType0Font) {
   EXPECT_TRUE(typed_font->IsCIDFont());
 
   // Check font dictionary entries
-  const CPDF_Dictionary* font_dict = typed_font->GetFontDict();
+  RetainPtr<const CPDF_Dictionary> font_dict = typed_font->GetFontDict();
   EXPECT_EQ("Font", font_dict->GetNameFor("Type"));
   EXPECT_EQ("Type0", font_dict->GetNameFor("Subtype"));
   EXPECT_EQ("Tinos-Regular-Identity-H", font_dict->GetNameFor("BaseFont"));
@@ -3014,7 +3014,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType2Font) {
   EXPECT_TRUE(typed_font->IsCIDFont());
 
   // Check font dictionary entries
-  const CPDF_Dictionary* font_dict = typed_font->GetFontDict();
+  RetainPtr<const CPDF_Dictionary> font_dict = typed_font->GetFontDict();
   EXPECT_EQ("Font", font_dict->GetNameFor("Type"));
   EXPECT_EQ("Type0", font_dict->GetNameFor("Subtype"));
   EXPECT_EQ("Arimo-Italic", font_dict->GetNameFor("BaseFont"));

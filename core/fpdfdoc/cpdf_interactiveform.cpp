@@ -190,7 +190,7 @@ bool FindFont(const CPDF_Dictionary* pFormDict,
         ToDictionary(it.second->GetDirect());
     if (!ValidateDictType(pElement.Get(), "Font"))
       continue;
-    if (pFont->GetFontDict() == pElement) {
+    if (pFont->FontDictIs(pElement)) {
       *csNameTag = csKey;
       return true;
     }
@@ -260,7 +260,7 @@ void AddFont(CPDF_Dictionary* pFormDict,
   csNameTag->Remove(' ');
   *csNameTag = GenerateNewFontResourceName(pDR.Get(), *csNameTag);
   pFonts->SetNewFor<CPDF_Reference>(*csNameTag, pDocument,
-                                    pFont->GetFontDict()->GetObjNum());
+                                    pFont->GetFontDictObjNum());
 }
 
 FX_Charset GetNativeCharSet() {
