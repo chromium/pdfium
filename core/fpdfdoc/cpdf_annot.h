@@ -79,7 +79,6 @@ class CPDF_Annot {
   Subtype GetSubtype() const;
   uint32_t GetFlags() const;
   CFX_FloatRect GetRect() const;
-  CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
   const CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict.Get(); }
   RetainPtr<CPDF_Dictionary> GetMutableAnnotDict() { return m_pAnnotDict; }
 

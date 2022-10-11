@@ -1850,7 +1850,7 @@ void CPDFSDK_AppStream::Write(const ByteString& sAPType,
 
   RetainPtr<CPDF_Dictionary> pStreamDict = pStream->GetMutableDict();
   if (!pStreamDict) {
-    pStreamDict = widget_->GetPDFAnnot()->GetDocument()->New<CPDF_Dictionary>();
+    pStreamDict = doc->New<CPDF_Dictionary>();
     pStreamDict->SetNewFor<CPDF_Name>("Type", "XObject");
     pStreamDict->SetNewFor<CPDF_Name>("Subtype", "Form");
     pStreamDict->SetNewFor<CPDF_Number>("FormType", 1);
