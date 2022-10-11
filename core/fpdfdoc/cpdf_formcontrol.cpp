@@ -215,8 +215,8 @@ RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
       RetainPtr<CPDF_Dictionary> pElement =
           pFonts->GetMutableDictFor(csFontNameTag.value());
       if (pElement) {
-        auto* pData = CPDF_DocPageData::FromDocument(m_pForm->GetDocument());
-        RetainPtr<CPDF_Font> pFont = pData->GetFont(pElement);
+        RetainPtr<CPDF_Font> pFont =
+            m_pForm->GetFontForElement(std::move(pElement));
         if (pFont)
           return pFont;
       }
@@ -241,8 +241,7 @@ RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
   if (!pElement)
     return nullptr;
 
-  auto* pDocPageData = CPDF_DocPageData::FromDocument(m_pForm->GetDocument());
-  return pDocPageData->GetFont(pElement);
+  return m_pForm->GetFontForElement(std::move(pElement));
 }
 
 int CPDF_FormControl::GetControlAlignment() const {

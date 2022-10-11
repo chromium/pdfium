@@ -72,9 +72,10 @@ class CPDF_InteractiveForm {
   int FindFieldInCalculationOrder(const CPDF_FormField* pField);
 
   RetainPtr<CPDF_Font> GetFormFont(ByteString csNameTag) const;
+  RetainPtr<CPDF_Font> GetFontForElement(
+      RetainPtr<CPDF_Dictionary> pElement) const;
   CPDF_DefaultAppearance GetDefaultAppearance() const;
   int GetFormAlignment() const;
-
   bool CheckRequiredFields(const std::vector<CPDF_FormField*>* fields,
                            bool bIncludeOrExclude) const;
 
@@ -89,8 +90,6 @@ class CPDF_InteractiveForm {
 
   void SetNotifierIface(NotifierIface* pNotify);
   void FixPageFields(CPDF_Page* pPage);
-
-  CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
 
   // Wrap callbacks thru NotifierIface.
   bool NotifyBeforeValueChange(CPDF_FormField* pField,

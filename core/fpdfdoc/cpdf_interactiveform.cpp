@@ -713,6 +713,11 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::GetFormFont(
   if (!ValidateDictType(pElement.Get(), "Font"))
     return nullptr;
 
+  return GetFontForElement(std::move(pElement));
+}
+
+RetainPtr<CPDF_Font> CPDF_InteractiveForm::GetFontForElement(
+    RetainPtr<CPDF_Dictionary> pElement) const {
   auto* pData = CPDF_DocPageData::FromDocument(m_pDocument);
   return pData->GetFont(std::move(pElement));
 }
