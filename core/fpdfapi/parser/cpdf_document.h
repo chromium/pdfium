@@ -58,6 +58,8 @@ class CPDF_Document : public Observable,
         RetainPtr<CPDF_StreamAcc>&& pStreamAcc) = 0;
 
     void SetDocument(CPDF_Document* pDoc) { m_pDoc = pDoc; }
+
+   protected:
     CPDF_Document* GetDocument() const { return m_pDoc.Get(); }
 
    private:
@@ -70,6 +72,8 @@ class CPDF_Document : public Observable,
     virtual ~RenderDataIface();
 
     void SetDocument(CPDF_Document* pDoc) { m_pDoc = pDoc; }
+
+   protected:
     CPDF_Document* GetDocument() const { return m_pDoc.Get(); }
 
    private:
