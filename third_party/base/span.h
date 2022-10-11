@@ -15,6 +15,7 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/check.h"
+#include "third_party/base/compiler_specific.h"
 
 namespace pdfium {
 
@@ -176,7 +177,7 @@ using EnableIfConstSpanCompatibleContainer =
 
 // [span], class template span
 template <typename T>
-class span {
+class TRIVIAL_ABI GSL_POINTER span {
  public:
   using value_type = typename std::remove_cv<T>::type;
   using pointer = T*;
