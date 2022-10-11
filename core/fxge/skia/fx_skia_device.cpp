@@ -1775,7 +1775,8 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
   // to render the glyph without any adjustments.
   const CFX_SubstFont* subst_font = pFont->GetSubstFont();
   const int subst_font_weight =
-      (subst_font && subst_font->m_bFlagMM) ? subst_font->m_Weight : 0;
+      (subst_font && subst_font->IsBuiltInGenericFont()) ? subst_font->m_Weight
+                                                         : 0;
   for (const TextCharPos& cp : pCharPos) {
     const int glyph_width = pFont->GetGlyphWidth(
         cp.m_GlyphIndex, cp.m_FontCharWidth, subst_font_weight);

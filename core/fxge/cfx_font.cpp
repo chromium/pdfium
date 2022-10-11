@@ -420,7 +420,7 @@ int CFX_Font::GetGlyphWidth(uint32_t glyph_index,
                             int weight) const {
   if (!m_Face)
     return 0;
-  if (m_pSubstFont && m_pSubstFont->m_bFlagMM)
+  if (m_pSubstFont && m_pSubstFont->IsBuiltInGenericFont())
     AdjustMMParams(glyph_index, dest_width, weight);
   int err =
       FT_Load_Glyph(m_Face->GetRec(), glyph_index,
@@ -702,7 +702,7 @@ std::unique_ptr<CFX_Path> CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
       else
         ft_matrix.xy -= ft_matrix.xx * skew / 100;
     }
-    if (m_pSubstFont->m_bFlagMM)
+    if (m_pSubstFont->IsBuiltInGenericFont())
       AdjustMMParams(glyph_index, dest_width, m_pSubstFont->m_Weight);
   }
   ScopedFontTransform scoped_transform(m_Face, &ft_matrix);
@@ -712,7 +712,7 @@ std::unique_ptr<CFX_Path> CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
     load_flags |= FT_LOAD_NO_HINTING;
   if (FT_Load_Glyph(m_Face->GetRec(), glyph_index, load_flags))
     return nullptr;
-  if (m_pSubstFont && !m_pSubstFont->m_bFlagMM &&
+  if (m_pSubstFont && !m_pSubstFont->IsBuiltInGenericFont() &&
       m_pSubstFont->m_Weight > 400) {
     uint32_t index = std::min<uint32_t>((m_pSubstFont->m_Weight - 400) / 10,
                                         kWeightPowArraySize - 1);

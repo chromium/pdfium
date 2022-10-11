@@ -136,7 +136,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph(
       else
         ft_matrix.xy -= ft_matrix.xx * skew / 100;
     }
-    if (pSubstFont->m_bFlagMM) {
+    if (pSubstFont->IsBuiltInGenericFont()) {
       pFont->AdjustMMParams(glyph_index, dest_width,
                             pFont->GetSubstFont()->m_Weight);
     }
@@ -164,7 +164,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph(
     weight = pSubstFont->m_WeightCJK;
   else
     weight = pSubstFont ? pSubstFont->m_Weight : 0;
-  if (pSubstFont && !pSubstFont->m_bFlagMM && weight > 400) {
+  if (pSubstFont && !pSubstFont->IsBuiltInGenericFont() && weight > 400) {
     uint32_t index = (weight - 400) / 10;
     pdfium::base::CheckedNumeric<signed long> level =
         CFX_Font::GetWeightLevel(pSubstFont->m_Charset, index);

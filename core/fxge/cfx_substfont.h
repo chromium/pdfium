@@ -20,13 +20,19 @@ class CFX_SubstFont {
 #endif
   void UseChromeSerif();
 
+  void SetIsBuiltInGenericFont() { m_bFlagMM = true; }
+  bool IsBuiltInGenericFont() const { return m_bFlagMM; }
+
   ByteString m_Family;
   FX_Charset m_Charset = FX_Charset::kANSI;
   int m_Weight = 0;
   int m_ItalicAngle = 0;
   int m_WeightCJK = 0;
+
   bool m_bSubstCJK = false;
   bool m_bItalicCJK = false;
+
+ private:
   bool m_bFlagMM = false;
 };
 

@@ -502,7 +502,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::UseInternalSubst(
     return m_StandardFaces[base_font];
   }
 
-  subst_font->m_bFlagMM = true;
+  subst_font->SetIsBuiltInGenericFont();
   subst_font->m_ItalicAngle = italic_angle;
   if (weight)
     subst_font->m_Weight = weight;
