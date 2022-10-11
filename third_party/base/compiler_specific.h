@@ -7,6 +7,13 @@
 
 #include "build/build_config.h"
 
+// A wrapper around `__has_attribute`, similar to HAS_CPP_ATTRIBUTE.
+#if defined(__has_attribute)
+#define HAS_ATTRIBUTE(x) __has_attribute(x)
+#else
+#define HAS_ATTRIBUTE(x) 0
+#endif
+
 // Annotate a function indicating it should not be inlined.
 // Use like:
 //   NOINLINE void DoStuff() { ... }
@@ -143,6 +150,41 @@
 #define HAS_FEATURE(FEATURE) __has_feature(FEATURE)
 #else
 #define HAS_FEATURE(FEATURE) 0
+#endif
+
+// Marks a type as being eligible for the "trivial" ABI despite having a
+// non-trivial destructor or copy/move constructor. Such types can be relocated
+// after construction by simply copying their memory, which makes them eligible
+// to be passed in registers. The canonical example is std::unique_ptr.
+//
+// Use with caution; this has some subtle effects on constructor/destructor
+// ordering and will be very incorrect if the type relies on its address
+// remaining constant. When used as a function argument (by value), the value
+// may be constructed in the caller's stack frame, passed in a register, and
+// then used and destructed in the callee's stack frame. A similar thing can
+// occur when values are returned.
+//
+// TRIVIAL_ABI is not needed for types which have a trivial destructor and
+// copy/move constructors, such as base::TimeTicks and other POD.
+//
+// It is also not likely to be effective on types too large to be passed in one
+// or two registers on typical target ABIs.
+//
+// See also:
+//   https://clang.llvm.org/docs/AttributeReference.html#trivial-abi
+//   https://libcxx.llvm.org/docs/DesignDocs/UniquePtrTrivialAbi.html
+#if defined(__clang__) && HAS_ATTRIBUTE(trivial_abi)
+#define TRIVIAL_ABI [[clang::trivial_abi]]
+#else
+#define TRIVIAL_ABI
+#endif
+
+#if defined(__clang__)
+#define GSL_OWNER [[gsl::Owner]]
+#define GSL_POINTER [[gsl::Pointer]]
+#else
+#define GSL_OWNER
+#define GSL_POINTER
 #endif
 
 #endif  // THIRD_PARTY_BASE_COMPILER_SPECIFIC_H_

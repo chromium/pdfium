@@ -14,6 +14,7 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/check.h"
+#include "third_party/base/compiler_specific.h"
 
 namespace fxcrt {
 
@@ -25,7 +26,7 @@ struct ReleaseDeleter {
 
 // Analogous to base's scoped_refptr.
 template <class T>
-class RetainPtr {
+class TRIVIAL_ABI RetainPtr {
  public:
   RetainPtr() noexcept = default;
 

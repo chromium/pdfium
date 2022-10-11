@@ -10,6 +10,8 @@
 #include <type_traits>
 #include <utility>
 
+#include "third_party/base/compiler_specific.h"
+
 // UnownedPtr is a smart pointer class that behaves very much like a
 // standard C-style pointer. The advantages of using it over raw
 // pointers are:
@@ -45,7 +47,7 @@ class span;
 namespace fxcrt {
 
 template <class T>
-class UnownedPtr {
+class TRIVIAL_ABI GSL_POINTER UnownedPtr {
  public:
   constexpr UnownedPtr() noexcept = default;
 

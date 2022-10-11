@@ -573,6 +573,15 @@ if (pdf_enable_xfa_tiff) {
   }
 }
 
+source_set("pdfium_compiler_specific") {
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    "//build/config/compiler:no_chromium_code",
+    ":pdfium_third_party_config",
+  ]
+  sources = [ "base/compiler_specific.h" ]
+}
+
 source_set("pdfium_base") {
   configs -= [ "//build/config/compiler:chromium_code" ]
   configs += [
@@ -584,7 +593,6 @@ source_set("pdfium_base") {
     "base/bits.h",
     "base/check.h",
     "base/check_op.h",
-    "base/compiler_specific.h",
     "base/containers/adapters.h",
     "base/containers/contains.h",
     "base/cxx17_backports.h",
@@ -611,6 +619,7 @@ source_set("pdfium_base") {
     "base/template_util.h",
   ]
   public_deps = [
+    ":pdfium_compiler_specific",
     "../core/fxcrt:unowned_ptr",
     "//third_party/abseil-cpp:absl",
   ]
