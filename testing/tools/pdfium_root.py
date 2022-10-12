@@ -45,9 +45,9 @@ def _remove_path_suffix(path, expected_suffix):
 
 
 def add_source_directory_to_import_path(source_directory_path):
-  """Adds a source root-relative directory to the import path."""
+  """Adds a source root-relative directory to end of the import path."""
   root_finder = RootDirectoryFinder()
   path = os.path.realpath(
       os.path.join(root_finder.source_root, source_directory_path))
   if path not in sys.path:
-    sys.path.insert(0, path)
+    sys.path.append(path)
