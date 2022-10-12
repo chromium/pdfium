@@ -31,7 +31,6 @@ class CPDF_Document : public Observable,
   class Extension {
    public:
     virtual ~Extension() = default;
-    virtual CPDF_Document* GetPDFDoc() const = 0;
     virtual int GetPageCount() const = 0;
     virtual void DeletePage(int page_index) = 0;
     virtual uint32_t GetUserPermissions() const = 0;

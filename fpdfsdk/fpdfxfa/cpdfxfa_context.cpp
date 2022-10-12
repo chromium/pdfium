@@ -256,10 +256,6 @@ RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(
   return nullptr;
 }
 
-CPDF_Document* CPDFXFA_Context::GetPDFDoc() const {
-  return m_pPDFDoc.Get();
-}
-
 void CPDFXFA_Context::DeletePage(int page_index) {
   // Delete from the document first because, if GetPage was never called for
   // this |page_index| then |m_XFAPageList| may have size < |page_index| even

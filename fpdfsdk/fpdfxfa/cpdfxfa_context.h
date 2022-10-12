@@ -54,6 +54,7 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
     m_XFAPageList.resize(count);
   }
 
+  CPDF_Document* GetPDFDoc() const { return m_pPDFDoc.Get(); }
   CFX_XMLDocument* GetXMLDoc() { return m_pXML.get(); }
   CXFA_FFDoc* GetXFADoc() { return m_pXFADoc; }
   CXFA_FFDocView* GetXFADocView() const { return m_pXFADocView.Get(); }
@@ -67,7 +68,6 @@ class CPDFXFA_Context final : public CPDF_Document::Extension,
   void ClearChangeMark();
 
   // CPDF_Document::Extension:
-  CPDF_Document* GetPDFDoc() const override;
   int GetPageCount() const override;
   void DeletePage(int page_index) override;
   uint32_t GetUserPermissions() const override;
