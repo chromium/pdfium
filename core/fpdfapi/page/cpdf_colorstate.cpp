@@ -131,19 +131,16 @@ void CPDF_ColorState::SetPattern(RetainPtr<CPDF_Pattern> pattern,
                                  FX_COLORREF* colorref) {
   DCHECK(color);
   DCHECK(colorref);
-
   color->SetValueForPattern(pattern, values);
   int R;
   int G;
   int B;
-  bool ret = color->GetRGB(&R, &G, &B);
-  if (CPDF_TilingPattern* pTilingPattern = pattern->AsTilingPattern()) {
-    if (!ret && pTilingPattern->colored()) {
-      *colorref = 0x00BFBFBF;
-      return;
-    }
+  if (color->GetRGB(&R, &G, &B)) {
+    *colorref = FXSYS_BGR(B, G, R);
+    return;
   }
-  *colorref = ret ? FXSYS_BGR(B, G, R) : 0xFFFFFFFF;
+  CPDF_TilingPattern* tiling = pattern->AsTilingPattern();
+  *colorref = tiling && tiling->colored() ? 0x00BFBFBF : 0xFFFFFFFF;
 }
 
 CPDF_ColorState::ColorData::ColorData() = default;
