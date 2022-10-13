@@ -809,7 +809,9 @@ FixedUninitDataVector<uint8_t> CFX_FontMapper::RawBytesForIndex(size_t index) {
   FixedUninitDataVector<uint8_t> result(required_size);
   size_t actual_size =
       m_pFontInfo->GetFontData(font_handle, 0, result.writable_span());
-  CHECK_EQ(required_size, actual_size);
+  if (actual_size != required_size)
+    return FixedUninitDataVector<uint8_t>();
+
   return result;
 }
 #endif  // PDF_ENABLE_XFA
@@ -825,7 +827,9 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* font_handle,
     FixedUninitDataVector<uint8_t> font_data(ttc_size);
     size_t size = m_pFontInfo->GetFontData(font_handle, kTableTTCF,
                                            font_data.writable_span());
-    CHECK_EQ(ttc_size, size);
+    if (size != ttc_size)
+      return nullptr;
+
     pFontDesc = m_pFontMgr->AddCachedTTCFontDesc(ttc_size, checksum,
                                                  std::move(font_data));
   }
@@ -856,7 +860,9 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* font_handle,
     FixedUninitDataVector<uint8_t> font_data(data_size);
     size_t size =
         m_pFontInfo->GetFontData(font_handle, 0, font_data.writable_span());
-    CHECK_EQ(data_size, size);
+    if (size != data_size)
+      return nullptr;
+
     pFontDesc = m_pFontMgr->AddCachedFontDesc(subst_name, weight, is_italic,
                                               std::move(font_data));
   }
