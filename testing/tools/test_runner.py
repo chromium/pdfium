@@ -7,7 +7,6 @@ from __future__ import print_function
 from __future__ import division
 
 import argparse
-import functools
 import multiprocessing
 import os
 import re
@@ -38,6 +37,25 @@ class KeyboardInterruptError(Exception):
   pass
 
 
+# This is a class, rather than a closure, to make it picklable.
+class _WrapKeyboardInterrupt:
+  """Wraps `KeyboardInterrupt` thrown from a callable.
+
+  This wrapper prevents `KeyboardInterrupt` from escaping the wrapped callable,
+  by wrapping the exception in a custom `KeyboardInterruptError` exception
+  instead.
+  """
+
+  def __init__(self, wrapped):
+    self.wrapped = wrapped
+
+  def __call__(self, *args):
+    try:
+      return self.wrapped(*args)
+    except KeyboardInterrupt as exc:
+      raise KeyboardInterruptError() from exc
+
+
 # Nomenclature:
 #   x_root - "x"
 #   x_filename - "x.ext"
@@ -47,37 +65,6 @@ class KeyboardInterruptError(Exception):
 
 def _GetTestId(test_path):
   return os.path.splitext(os.path.basename(test_path))[0]
-
-
-def TestOneFileParallel(this, test_case):
-  """Wrapper to call GenerateAndTest() and redirect output to stdout."""
-  try:
-    input_filename, source_dir = test_case
-    result = this.GenerateAndTest(input_filename, source_dir)
-    return (result, input_filename, source_dir)
-  except KeyboardInterrupt:
-    # TODO(https://crbug.com/pdfium/1674): Re-enable this check after try bots
-    # can run with Python3.
-    # pylint: disable=raise-missing-from
-    raise KeyboardInterruptError()
-
-
-def RunSkiaWrapper(this, input_chunk):
-  """Wrapper to call RunSkia() and redirect output to stdout"""
-  try:
-    results = []
-    for img_path_input_filename in input_chunk:
-      img_path, input_filename = img_path_input_filename
-      multiprocessing_name = multiprocessing.current_process().name
-
-      test_name, skia_success = this.RunSkia(img_path, multiprocessing_name)
-      results.append((test_name, skia_success, input_filename))
-    return results
-  except KeyboardInterrupt:
-    # TODO(https://crbug.com/pdfium/1674): Re-enable this check after try bots
-    # can run with Python3.
-    # pylint: disable=raise-missing-from
-    raise KeyboardInterruptError()
 
 
 def DeleteFiles(files):
@@ -108,7 +95,11 @@ class TestRunner:
           process_name=process_name)
     return self.skia_tester
 
-  def RunSkia(self, img_path, process_name=None):
+  def RunSkia(self, test_case):
+    # TODO(crbug.com/pdfium/1916): Replace this with a dataclass.
+    img_path, input_filename = test_case
+    process_name = multiprocessing.current_process().name
+
     skia_tester = self.GetSkiaGoldTester(process_name=process_name)
     # The output filename without image extension becomes the test name.
     # For example, "/path/to/.../testing/corpus/example_005.pdf.0.png"
@@ -116,13 +107,21 @@ class TestRunner:
     test_name = _GetTestId(img_path)
     skia_success = skia_tester.UploadTestResultToSkiaGold(test_name, img_path)
     sys.stdout.flush()
-    return test_name, skia_success
 
-  # GenerateAndTest returns a tuple <success, outputfiles> where
-  # success is a boolean indicating whether the tests passed comparison
-  # tests and outputfiles is a list tuples:
-  #          (path_to_image, md5_hash_of_pixelbuffer)
-  def GenerateAndTest(self, input_filename, source_dir):
+    return test_name, skia_success, input_filename
+
+  def GenerateAndTest(self, test_case):
+    """Generate test input and run pdfium_test.
+
+    Returns a tuple ((<success, outputfiles>), <input filename>, <source
+    directory>) where "success" is a boolean indicating whether the tests passed
+    comparison tests and "outputfiles" is a list of tuples (<path to image>,
+    <MD5 hash of pixel buffer>). The "input filename" and "source directory" are
+    copied from the `test_case` argument.
+    """
+    # TODO(crbug.com/pdfium/1916): Replace this with a dataclass.
+    input_filename, source_dir = test_case
+
     input_root = _GetTestId(input_filename)
     pdf_path = os.path.join(self.working_dir, input_root + '.pdf')
 
@@ -138,7 +137,7 @@ class TestRunner:
 
     if raised_exception is not None:
       print('FAILURE: {}; {}'.format(input_filename, raised_exception))
-      return False, []
+      return (False, []), input_filename, source_dir
 
     results = []
     if self.test_type in TEXT_TESTS:
@@ -150,23 +149,23 @@ class TestRunner:
 
     if raised_exception is not None:
       print('FAILURE: {}; {}'.format(input_filename, raised_exception))
-      return False, results
+      return (False, results), input_filename, source_dir
 
     if actual_images:
       if self.image_differ.HasDifferences(input_filename, source_dir,
                                           self.working_dir):
         self.RegenerateIfNeeded_(input_filename, source_dir)
-        return False, results
+        return (False, results), input_filename, source_dir
     else:
       if (self.enforce_expected_images and
           not self.test_suppressor.IsImageDiffSuppressed(input_filename)):
         self.RegenerateIfNeeded_(input_filename, source_dir)
         print('FAILURE: {}; Missing expected images'.format(input_filename))
-        return False, results
+        return (False, results), input_filename, source_dir
 
     if self.delete_output_on_success:
       DeleteFiles(actual_images)
-    return True, results
+    return (True, results), input_filename, source_dir
 
   # TODO(crbug.com/pdfium/1508): Add support for an option to automatically
   # generate Skia/SkiaPaths specific expected results.
@@ -481,83 +480,35 @@ class TestRunner:
     self.skia_gold_failures = []
     self.result_suppressed_cases = []
 
-    gold_results = []
     if self.test_type not in TEXT_TESTS and self.options.run_skia_gold:
       assert self.options.gold_output_dir
       # Clear out and create top level gold output directory before starting
       skia_gold.clear_gold_output_dir(self.options.gold_output_dir)
 
-    if self.options.num_workers > 1 and len(self.test_cases) > 1:
+    with multiprocessing.Pool(self.options.num_workers) as pool:
       skia_gold_parallel_inputs = []
-      try:
-        pool = multiprocessing.Pool(self.options.num_workers)
-        worker_func = functools.partial(TestOneFileParallel, self)
+      for test_result in pool.imap(
+          _WrapKeyboardInterrupt(self.GenerateAndTest), self.test_cases):
+        result, input_filename, source_dir = test_result
+        input_path = os.path.join(source_dir, input_filename)
 
-        worker_results = pool.imap(worker_func, self.test_cases)
-        for worker_result in worker_results:
-          result, input_filename, source_dir = worker_result
-          input_path = os.path.join(source_dir, input_filename)
+        self.HandleResult(input_filename, input_path, result)
 
-          self.HandleResult(input_filename, input_path, result)
+        if self.test_type not in TEXT_TESTS and self.options.run_skia_gold:
+          _, image_paths = result
+          for path, _ in image_paths:
+            skia_gold_parallel_inputs.append((path, input_filename))
 
-          if self.test_type not in TEXT_TESTS and self.options.run_skia_gold:
-            _, image_paths = result
-            if image_paths:
-              path_filename_tuples = [
-                  (path, input_filename) for path, _ in image_paths
-              ]
-              skia_gold_parallel_inputs.extend(path_filename_tuples)
-
-      except KeyboardInterrupt:
-        pool.terminate()
-      finally:
-        pool.close()
-        pool.join()
-
-      if skia_gold_parallel_inputs and self.test_type not in TEXT_TESTS:
-        try:
-          pool = multiprocessing.Pool(self.options.num_workers)
-          gold_worker_func = functools.partial(RunSkiaWrapper, self)
-
-          def chunk_input(whole_list):
-            chunked = []
-            size = len(whole_list) // self.options.num_workers
-            for i in range(0, len(whole_list), size):
-              chunked.append(whole_list[i:i + size])
-            return chunked
-
-          chunked_input = chunk_input(skia_gold_parallel_inputs)
-          pool_results = pool.imap(gold_worker_func, chunked_input)
-          for r in pool_results:
-            gold_results.extend(r)
-        except KeyboardInterrupt:
-          pool.terminate()
-        finally:
-          pool.close()
-          pool.join()
-    else:
-      for test_case in self.test_cases:
-        input_filename, input_file_dir = test_case
-        result = self.GenerateAndTest(input_filename, input_file_dir)
-        self.HandleResult(input_filename,
-                          os.path.join(input_file_dir, input_filename), result)
-
-        _, image_paths = result
-        if image_paths and self.test_type not in TEXT_TESTS and \
-            self.options.run_skia_gold:
-          for img_path, _ in image_paths:
-            test_name, skia_success = self.RunSkia(img_path)
-            gold_results.append((test_name, skia_success, input_filename))
-
-    for r in gold_results:
-      test_name, skia_success, input_filename = r
-      if skia_success:
-        if self.test_suppressor.IsResultSuppressed(input_filename):
-          self.skia_gold_unexpected_successes.append(test_name)
+      for skia_gold_result in pool.imap(
+          _WrapKeyboardInterrupt(self.RunSkia), skia_gold_parallel_inputs):
+        test_name, skia_success, input_filename = skia_gold_result
+        if skia_success:
+          if self.test_suppressor.IsResultSuppressed(input_filename):
+            self.skia_gold_unexpected_successes.append(test_name)
+          else:
+            self.skia_gold_successes.append(test_name)
         else:
-          self.skia_gold_successes.append(test_name)
-      else:
-        self.skia_gold_failures.append(test_name)
+          self.skia_gold_failures.append(test_name)
 
     # For some reason, summary will be cut off from stdout on windows if
     # _PrintSummary() is called at the end
