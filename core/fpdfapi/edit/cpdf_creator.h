@@ -73,7 +73,7 @@ class CPDF_Creator {
   CPDF_CryptoHandler* GetCryptoHandler();
 
   UnownedPtr<CPDF_Document> const m_pDocument;
-  UnownedPtr<const CPDF_Parser> const m_pParser;
+  UnownedPtr<CPDF_Parser> const m_pParser;
   RetainPtr<const CPDF_Dictionary> m_pEncryptDict;
   RetainPtr<CPDF_Dictionary> m_pNewEncryptDict;
   RetainPtr<CPDF_SecurityHandler> m_pSecurityHandler;

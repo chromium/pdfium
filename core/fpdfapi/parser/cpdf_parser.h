@@ -31,6 +31,7 @@ class CPDF_ObjectStream;
 class CPDF_ReadValidator;
 class CPDF_SecurityHandler;
 class CPDF_SyntaxParser;
+class IFX_ArchiveStream;
 class IFX_SeekableReadStream;
 
 class CPDF_Parser {
@@ -109,6 +110,7 @@ class CPDF_Parser {
   RetainPtr<CPDF_Object> ParseIndirectObjectAt(FX_FILESIZE pos,
                                                uint32_t objnum);
 
+  FX_FILESIZE GetDocumentSize() const;
   uint32_t GetFirstPageNo() const;
   const CPDF_LinearizedHeader* GetLinearizedHeader() const {
     return m_pLinearized.get();
@@ -120,7 +122,8 @@ class CPDF_Parser {
 
   bool xref_table_rebuilt() const { return m_bXRefTableRebuilt; }
 
-  CPDF_SyntaxParser* GetSyntax() const { return m_pSyntax.get(); }
+  std::vector<unsigned int> GetTrailerEnds();
+  bool WriteToArchive(IFX_ArchiveStream* archive, FX_FILESIZE src_size);
 
   void SetLinearizedHeaderForTesting(
       std::unique_ptr<CPDF_LinearizedHeader> pLinearized);

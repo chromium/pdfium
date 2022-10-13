@@ -995,6 +995,10 @@ RetainPtr<CPDF_Object> CPDF_Parser::ParseIndirectObjectAt(FX_FILESIZE pos,
   return result;
 }
 
+FX_FILESIZE CPDF_Parser::GetDocumentSize() const {
+  return m_pSyntax->GetDocumentSize();
+}
+
 uint32_t CPDF_Parser::GetFirstPageNo() const {
   return m_pLinearized ? m_pLinearized->GetFirstPageNo() : 0;
 }
@@ -1143,4 +1147,65 @@ CPDF_Parser::Error CPDF_Parser::LoadLinearizedMainXRefTable() {
 void CPDF_Parser::SetSyntaxParserForTesting(
     std::unique_ptr<CPDF_SyntaxParser> parser) {
   m_pSyntax = std::move(parser);
+}
+
+std::vector<unsigned int> CPDF_Parser::GetTrailerEnds() {
+  std::vector<unsigned int> trailer_ends;
+  m_pSyntax->SetTrailerEnds(&trailer_ends);
+
+  // Traverse the document.
+  m_pSyntax->SetPos(0);
+  while (true) {
+    CPDF_SyntaxParser::WordResult word_result = m_pSyntax->GetNextWord();
+    if (word_result.is_number) {
+      // The object number was read. Read the generation number.
+      word_result = m_pSyntax->GetNextWord();
+      if (!word_result.is_number)
+        break;
+
+      word_result = m_pSyntax->GetNextWord();
+      if (word_result.word != "obj")
+        break;
+
+      m_pSyntax->GetObjectBody(nullptr);
+
+      word_result = m_pSyntax->GetNextWord();
+      if (word_result.word != "endobj")
+        break;
+    } else if (word_result.word == "trailer") {
+      m_pSyntax->GetObjectBody(nullptr);
+    } else if (word_result.word == "startxref") {
+      m_pSyntax->GetNextWord();
+    } else if (word_result.word == "xref") {
+      while (true) {
+        word_result = m_pSyntax->GetNextWord();
+        if (word_result.word.IsEmpty() || word_result.word == "startxref")
+          break;
+      }
+      m_pSyntax->GetNextWord();
+    } else {
+      break;
+    }
+  }
+
+  // Stop recording trailer ends.
+  m_pSyntax->SetTrailerEnds(nullptr);
+  return trailer_ends;
+}
+
+bool CPDF_Parser::WriteToArchive(IFX_ArchiveStream* archive,
+                                 FX_FILESIZE src_size) {
+  static constexpr FX_FILESIZE kBufferSize = 4096;
+  DataVector<uint8_t> buffer(kBufferSize);
+  m_pSyntax->SetPos(0);
+  while (src_size) {
+    const uint32_t block_size =
+        static_cast<uint32_t>(std::min(kBufferSize, src_size));
+    if (!m_pSyntax->ReadBlock(buffer.data(), block_size))
+      return false;
+    if (!archive->WriteBlock(buffer.data(), block_size))
+      return false;
+    src_size -= block_size;
+  }
+  return true;
 }

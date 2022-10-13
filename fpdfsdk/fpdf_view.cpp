@@ -22,7 +22,6 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fpdfapi/render/cpdf_pagerendercache.h"
@@ -1278,48 +1277,7 @@ FPDF_GetTrailerEnds(FPDF_DOCUMENT document,
 
   // Start recording trailer ends.
   auto* parser = doc->GetParser();
-  CPDF_SyntaxParser* syntax = parser->GetSyntax();
-  std::vector<unsigned int> trailer_ends;
-  syntax->SetTrailerEnds(&trailer_ends);
-
-  // Traverse the document.
-  syntax->SetPos(0);
-  while (true) {
-    CPDF_SyntaxParser::WordResult word_result = syntax->GetNextWord();
-    if (word_result.is_number) {
-      // The object number was read. Read the generation number.
-      word_result = syntax->GetNextWord();
-      if (!word_result.is_number)
-        break;
-
-      word_result = syntax->GetNextWord();
-      if (word_result.word != "obj")
-        break;
-
-      syntax->GetObjectBody(nullptr);
-
-      word_result = syntax->GetNextWord();
-      if (word_result.word != "endobj")
-        break;
-    } else if (word_result.word == "trailer") {
-      syntax->GetObjectBody(nullptr);
-    } else if (word_result.word == "startxref") {
-      syntax->GetNextWord();
-    } else if (word_result.word == "xref") {
-      while (true) {
-        word_result = syntax->GetNextWord();
-        if (word_result.word.IsEmpty() || word_result.word == "startxref")
-          break;
-      }
-      syntax->GetNextWord();
-    } else {
-      break;
-    }
-  }
-
-  // Stop recording trailer ends.
-  syntax->SetTrailerEnds(nullptr);
-
+  std::vector<unsigned int> trailer_ends = parser->GetTrailerEnds();
   const unsigned long trailer_ends_len =
       fxcrt::CollectionSize<unsigned long>(trailer_ends);
   if (buffer && length >= trailer_ends_len) {
