@@ -21,7 +21,7 @@ class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {
 
  protected:
   CFXJSE_Context* GetJseContext() {
-    return GetScriptContext()->GetJseContext();
+    return GetScriptContext()->GetJseContextForTest();
   }
 
   void ExecuteExpectError(ByteStringView input) {

@@ -130,7 +130,6 @@ class CFXJSE_Engine final : public CFX_V8 {
 
   CXFA_Object* GetThisObject() const { return m_pThisObject; }
   CFXJSE_Class* GetJseNormalClass() const { return m_pJsClass.Get(); }
-  CFXJSE_Context* GetJseContext() const { return m_JsContext.get(); }
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
 
   void SetNodesOfRunScript(std::vector<cppgc::Persistent<CXFA_Node>>* pArray);
@@ -149,7 +148,10 @@ class CFXJSE_Engine final : public CFX_V8 {
 
   bool IsResolvingNodes() const { return m_bResolvingNodes; }
 
+  CFXJSE_Context* GetJseContextForTest() const { return GetJseContext(); }
+
  private:
+  CFXJSE_Context* GetJseContext() const { return m_JsContext.get(); }
   CFXJSE_Context* CreateVariablesContext(CXFA_Script* pScriptNode,
                                          CXFA_Node* pSubform);
   void RemoveBuiltInObjs(CFXJSE_Context* pContext);

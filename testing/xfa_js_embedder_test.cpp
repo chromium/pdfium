@@ -74,7 +74,8 @@ bool XFAJSEmbedderTest::OpenDocumentWithOptions(
 }
 
 bool XFAJSEmbedderTest::Execute(ByteStringView input) {
-  CFXJSE_ScopeUtil_IsolateHandleContext scope(script_context_->GetJseContext());
+  CFXJSE_ScopeUtil_IsolateHandleContext scope(
+      script_context_->GetJseContextForTest());
   if (ExecuteHelper(input))
     return true;
 
@@ -97,7 +98,8 @@ bool XFAJSEmbedderTest::Execute(ByteStringView input) {
 }
 
 bool XFAJSEmbedderTest::ExecuteSilenceFailure(ByteStringView input) {
-  CFXJSE_ScopeUtil_IsolateHandleContext scope(script_context_->GetJseContext());
+  CFXJSE_ScopeUtil_IsolateHandleContext scope(
+      script_context_->GetJseContextForTest());
   return ExecuteHelper(input);
 }
 
