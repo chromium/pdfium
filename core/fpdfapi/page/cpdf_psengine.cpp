@@ -16,6 +16,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_string.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 
 namespace {
@@ -95,19 +96,22 @@ CPDF_PSOP::CPDF_PSOP(float value) : m_op(PSOP_CONST), m_value(value) {}
 
 CPDF_PSOP::~CPDF_PSOP() = default;
 
+bool CPDF_PSOP::Parse(CPDF_SimpleParser* parser, int depth) {
+  CHECK_EQ(m_op, PSOP_PROC);
+  return m_proc->Parse(parser, depth);
+}
+
+void CPDF_PSOP::Execute(CPDF_PSEngine* pEngine) {
+  CHECK_EQ(m_op, PSOP_PROC);
+  m_proc->Execute(pEngine);
+}
+
 float CPDF_PSOP::GetFloatValue() const {
   if (m_op == PSOP_CONST)
     return m_value;
 
   NOTREACHED();
   return 0;
-}
-
-CPDF_PSProc* CPDF_PSOP::GetProc() const {
-  if (m_op == PSOP_PROC)
-    return m_proc.get();
-  NOTREACHED();
-  return nullptr;
 }
 
 bool CPDF_PSEngine::Execute() {
@@ -132,7 +136,7 @@ bool CPDF_PSProc::Parse(CPDF_SimpleParser* parser, int depth) {
 
     if (word == "{") {
       m_Operators.push_back(std::make_unique<CPDF_PSOP>());
-      if (!m_Operators.back()->GetProc()->Parse(parser, depth + 1))
+      if (!m_Operators.back()->Parse(parser, depth + 1))
         return false;
       continue;
     }
@@ -157,14 +161,14 @@ bool CPDF_PSProc::Execute(CPDF_PSEngine* pEngine) {
         return false;
 
       if (pEngine->PopInt())
-        m_Operators[i - 1]->GetProc()->Execute(pEngine);
+        m_Operators[i - 1]->Execute(pEngine);
     } else if (op == PSOP_IFELSE) {
       if (i < 2 || m_Operators[i - 1]->GetOp() != PSOP_PROC ||
           m_Operators[i - 2]->GetOp() != PSOP_PROC) {
         return false;
       }
       size_t offset = pEngine->PopInt() ? 2 : 1;
-      m_Operators[i - offset]->GetProc()->Execute(pEngine);
+      m_Operators[i - offset]->Execute(pEngine);
     } else {
       pEngine->DoOperator(op);
     }
