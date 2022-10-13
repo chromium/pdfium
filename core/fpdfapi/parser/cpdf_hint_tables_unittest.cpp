@@ -67,9 +67,9 @@ TEST_F(HintTablesTest, Load) {
   auto data_avail = MakeDataAvailFromFile("feature_linearized_loading.pdf");
   ASSERT_EQ(CPDF_DataAvail::kDataAvailable, data_avail->IsDocAvail(nullptr));
 
-  ASSERT_TRUE(data_avail->GetHintTables());
+  ASSERT_TRUE(data_avail->GetHintTablesForTest());
 
-  const CPDF_HintTables* hint_tables = data_avail->GetHintTables();
+  const CPDF_HintTables* hint_tables = data_avail->GetHintTablesForTest();
   FX_FILESIZE page_start = 0;
   FX_FILESIZE page_length = 0;
   uint32_t page_obj_num = 0;
@@ -94,7 +94,7 @@ TEST_F(HintTablesTest, PageAndGroupInfos) {
   auto data_avail = MakeDataAvailFromFile("feature_linearized_loading.pdf");
   ASSERT_EQ(CPDF_DataAvail::kDataAvailable, data_avail->IsDocAvail(nullptr));
 
-  const CPDF_HintTables* hint_tables = data_avail->GetHintTables();
+  const CPDF_HintTables* hint_tables = data_avail->GetHintTablesForTest();
   ASSERT_TRUE(hint_tables);
   ASSERT_EQ(2u, hint_tables->PageInfos().size());
 

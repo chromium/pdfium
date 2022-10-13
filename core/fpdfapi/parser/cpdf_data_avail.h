@@ -90,7 +90,9 @@ class CPDF_DataAvail final : public Observable::ObserverIface {
       std::unique_ptr<CPDF_Document::PageDataIface> pPageData,
       const ByteString& password);
 
-  const CPDF_HintTables* GetHintTables() const { return m_pHintTables.get(); }
+  const CPDF_HintTables* GetHintTablesForTest() const {
+    return m_pHintTables.get();
+  }
 
  private:
   enum class InternalStatus : uint8_t {
