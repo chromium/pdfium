@@ -258,7 +258,8 @@ FPDFPage_RemoveObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_obj) {
   if (!IsPageObject(pPage))
     return false;
 
-  return pPage->RemovePageObject(pPageObj);
+  // Caller takes ownership.
+  return !!pPage->RemovePageObject(pPageObj).release();
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFPage_CountObjects(FPDF_PAGE page) {

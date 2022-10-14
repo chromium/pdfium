@@ -85,7 +85,9 @@ class CPDF_PageObjectHolder {
   size_t GetPageObjectCount() const { return m_PageObjectList.size(); }
   CPDF_PageObject* GetPageObjectByIndex(size_t index) const;
   void AppendPageObject(std::unique_ptr<CPDF_PageObject> pPageObj);
-  bool RemovePageObject(CPDF_PageObject* pPageObj);
+
+  // Remove `pPageObj` if present, and transfer ownership to the caller.
+  std::unique_ptr<CPDF_PageObject> RemovePageObject(CPDF_PageObject* pPageObj);
   bool ErasePageObjectAtIndex(size_t index);
 
   iterator begin() { return m_PageObjectList.begin(); }

@@ -139,22 +139,23 @@ void CPDF_PageObjectHolder::AppendPageObject(
   m_PageObjectList.push_back(std::move(pPageObj));
 }
 
-bool CPDF_PageObjectHolder::RemovePageObject(CPDF_PageObject* pPageObj) {
+std::unique_ptr<CPDF_PageObject> CPDF_PageObjectHolder::RemovePageObject(
+    CPDF_PageObject* pPageObj) {
   fxcrt::FakeUniquePtr<CPDF_PageObject> p(pPageObj);
 
   auto it =
       std::find(std::begin(m_PageObjectList), std::end(m_PageObjectList), p);
   if (it == std::end(m_PageObjectList))
-    return false;
+    return nullptr;
 
-  it->release();
+  std::unique_ptr<CPDF_PageObject> result = std::move(*it);
   m_PageObjectList.erase(it);
 
   int32_t content_stream = pPageObj->GetContentStream();
   if (content_stream >= 0)
     m_DirtyStreams.insert(content_stream);
 
-  return true;
+  return result;
 }
 
 bool CPDF_PageObjectHolder::ErasePageObjectAtIndex(size_t index) {
