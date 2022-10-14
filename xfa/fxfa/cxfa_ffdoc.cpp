@@ -26,6 +26,7 @@
 #include "third_party/base/check.h"
 #include "v8/include/cppgc/allocation.h"
 #include "v8/include/cppgc/heap.h"
+#include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/font/cfgas_pdffontmgr.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
@@ -262,6 +263,15 @@ bool CXFA_FFDoc::OpenDoc(CFX_XMLDocument* pXML) {
     m_FormType = FormType::kXFAFull;
 
   return true;
+}
+
+RetainPtr<CFGAS_GEFont> CXFA_FFDoc::GetPDFFont(const WideString& family,
+                                               uint32_t styles,
+                                               bool strict) {
+  if (!m_pPDFFontMgr)
+    return nullptr;
+
+  return m_pPDFFontMgr->GetFont(family, styles, strict);
 }
 
 RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(WideStringView wsName,

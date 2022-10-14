@@ -24,6 +24,7 @@
 #include "xfa/fxfa/fxfa.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
+class CFGAS_GEFont;
 class CFGAS_PDFFontMgr;
 class CFX_DIBBase;
 class CFX_DIBitmap;
@@ -31,8 +32,8 @@ class CFX_XMLDocument;
 class CPDF_Document;
 class CXFA_FFApp;
 class CXFA_FFDoc;
-class CXFA_FFNotify;
 class CXFA_FFDocView;
+class CXFA_FFNotify;
 class CXFA_FFPageView;
 class CXFA_FFWidget;
 class CXFA_LayoutProcessor;
@@ -166,9 +167,11 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
   CXFA_Document* GetXFADoc() const { return m_pDocument; }
   CXFA_FFApp* GetApp() const { return m_pApp.Get(); }
   CPDF_Document* GetPDFDoc() const { return m_pPDFDoc.Get(); }
-  CFGAS_PDFFontMgr* GetPDFFontMgr() const { return m_pPDFFontMgr.get(); }
   CXFA_FFDocView* GetDocView(CXFA_LayoutProcessor* pLayout);
   CXFA_FFDocView* GetDocView();
+  RetainPtr<CFGAS_GEFont> GetPDFFont(const WideString& family,
+                                     uint32_t styles,
+                                     bool strict);
   RetainPtr<CFX_DIBitmap> GetPDFNamedImage(WideStringView wsName,
                                            int32_t& iImageXDpi,
                                            int32_t& iImageYDpi);

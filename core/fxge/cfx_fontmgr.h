@@ -18,10 +18,10 @@
 #include "core/fxcrt/fixed_uninit_data_vector.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxge/cfx_face.h"
 #include "core/fxge/freetype/fx_freetype.h"
 #include "third_party/base/span.h"
 
-class CFX_Face;
 class CFX_FontMapper;
 
 class CFX_FontMgr {
