@@ -20,6 +20,12 @@ class FakeUniquePtr : public std::unique_ptr<T> {
   ~FakeUniquePtr() { std::unique_ptr<T>::release(); }
 };
 
+// Type-deducing wrapper for FakeUniquePtr<T>.
+template <class T>
+FakeUniquePtr<T> MakeFakeUniquePtr(T* arg) {
+  return FakeUniquePtr<T>(arg);
+}
+
 // Convenience routine for "int-fected" code, so that the stl collection
 // size_t size() method return values will be checked.
 template <typename ResultType, typename Collection>
