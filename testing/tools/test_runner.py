@@ -10,6 +10,7 @@ import argparse
 from dataclasses import dataclass
 import multiprocessing
 import os
+import platform
 import re
 import shutil
 import subprocess
@@ -431,6 +432,11 @@ class TestRunner:
     self.resultdb = result_sink.TryInitClient()
     if self.resultdb:
       print('Detected ResultSink environment')
+
+      # TODO(crbug.com/pdfium/1921): Fix performance on Windows.
+      if platform.system() == 'Windows':
+        self.resultdb = None
+        print('Disabled ResultDB support due to https://crbug.com/pdfium/1921')
 
     # Collect test cases.
     walk_from_dir = finder.TestingDir(relative_test_dir)
