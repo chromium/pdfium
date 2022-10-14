@@ -7,6 +7,7 @@ from __future__ import print_function
 from __future__ import division
 
 import argparse
+from dataclasses import dataclass
 import multiprocessing
 import os
 import re
@@ -17,8 +18,8 @@ import sys
 import common
 import pdfium_root
 import pngdiffer
-import suppressor
 from skia_gold import skia_gold
+import suppressor
 
 pdfium_root.add_source_directory_to_import_path(os.path.join('build', 'util'))
 from lib.results import result_sink, result_types
@@ -56,17 +57,6 @@ class _WrapKeyboardInterrupt:
       raise KeyboardInterruptError() from exc
 
 
-# Nomenclature:
-#   x_root - "x"
-#   x_filename - "x.ext"
-#   x_path - "path/to/a/b/c/x.ext"
-#   c_dir - "path/to/a/b/c"
-
-
-def _GetTestId(test_path):
-  return os.path.splitext(os.path.basename(test_path))[0]
-
-
 def DeleteFiles(files):
   """Utility function to delete a list of files"""
   for f in files:
@@ -87,43 +77,26 @@ class TestRunner:
     self.enforce_expected_images = False
     self.skia_tester = None
 
-  def GetSkiaGoldTester(self, process_name=None):
+  def GetSkiaGoldTester(self):
     if not self.skia_tester:
       self.skia_tester = skia_gold.SkiaGoldTester(
           source_type=self.test_type,
           skia_gold_args=self.options,
-          process_name=process_name)
+          process_name=multiprocessing.current_process().name)
     return self.skia_tester
 
   def RunSkia(self, test_case):
-    # TODO(crbug.com/pdfium/1916): Replace this with a dataclass.
-    img_path, input_filename = test_case
-    process_name = multiprocessing.current_process().name
-
-    skia_tester = self.GetSkiaGoldTester(process_name=process_name)
-    # The output filename without image extension becomes the test name.
-    # For example, "/path/to/.../testing/corpus/example_005.pdf.0.png"
-    # becomes "example_005.pdf.0".
-    test_name = _GetTestId(img_path)
-    skia_success = skia_tester.UploadTestResultToSkiaGold(test_name, img_path)
+    skia_success = self.GetSkiaGoldTester().UploadTestResultToSkiaGold(
+        test_case.test_id, test_case.input_path)
     sys.stdout.flush()
 
-    return test_name, skia_success, input_filename
+    return test_case.NewResult(
+        result_types.PASS if skia_success else result_types.FAIL)
 
   def GenerateAndTest(self, test_case):
-    """Generate test input and run pdfium_test.
-
-    Returns a tuple ((<success, outputfiles>), <input filename>, <source
-    directory>) where "success" is a boolean indicating whether the tests passed
-    comparison tests and "outputfiles" is a list of tuples (<path to image>,
-    <MD5 hash of pixel buffer>). The "input filename" and "source directory" are
-    copied from the `test_case` argument.
-    """
-    # TODO(crbug.com/pdfium/1916): Replace this with a dataclass.
-    input_filename, source_dir = test_case
-
-    input_root = _GetTestId(input_filename)
-    pdf_path = os.path.join(self.working_dir, input_root + '.pdf')
+    """Generate test input and run pdfium_test."""
+    source_dir, input_filename = os.path.split(test_case.input_path)
+    pdf_path = os.path.join(self.working_dir, f'{test_case.test_id}.pdf')
 
     # Remove any existing generated images from previous runs.
     actual_images = self.image_differ.GetActualFiles(input_filename, source_dir,
@@ -132,40 +105,45 @@ class TestRunner:
 
     sys.stdout.flush()
 
-    raised_exception = self.Generate(source_dir, input_filename, input_root,
-                                     pdf_path)
+    raised_exception = self.Generate(source_dir, input_filename,
+                                     test_case.test_id, pdf_path)
 
     if raised_exception is not None:
       print('FAILURE: {}; {}'.format(input_filename, raised_exception))
-      return (False, []), input_filename, source_dir
+      return test_case.NewResult(result_types.FAIL)
 
-    results = []
+    image_artifacts = None
     if self.test_type in TEXT_TESTS:
-      expected_txt_path = os.path.join(source_dir, input_root + '_expected.txt')
-      raised_exception = self.TestText(input_filename, input_root,
+      expected_txt_path = os.path.join(source_dir,
+                                       f'{test_case.test_id}_expected.txt')
+      raised_exception = self.TestText(input_filename, test_case.test_id,
                                        expected_txt_path, pdf_path)
     else:
-      raised_exception, results = self.TestPixel(pdf_path, source_dir)
+      raised_exception, image_artifacts = self.TestPixel(pdf_path, source_dir)
 
     if raised_exception is not None:
       print('FAILURE: {}; {}'.format(input_filename, raised_exception))
-      return (False, results), input_filename, source_dir
+      return test_case.NewResult(
+          result_types.FAIL, image_artifacts=image_artifacts)
 
     if actual_images:
       if self.image_differ.HasDifferences(input_filename, source_dir,
                                           self.working_dir):
         self.RegenerateIfNeeded_(input_filename, source_dir)
-        return (False, results), input_filename, source_dir
+        return test_case.NewResult(
+            result_types.FAIL, image_artifacts=image_artifacts)
     else:
       if (self.enforce_expected_images and
           not self.test_suppressor.IsImageDiffSuppressed(input_filename)):
         self.RegenerateIfNeeded_(input_filename, source_dir)
         print('FAILURE: {}; Missing expected images'.format(input_filename))
-        return (False, results), input_filename, source_dir
+        return test_case.NewResult(
+            result_types.FAIL, image_artifacts=image_artifacts)
 
     if self.delete_output_on_success:
       DeleteFiles(actual_images)
-    return (True, results), input_filename, source_dir
+    return test_case.NewResult(
+        result_types.PASS, image_artifacts=image_artifacts)
 
   # TODO(crbug.com/pdfium/1508): Add support for an option to automatically
   # generate Skia/SkiaPaths specific expected results.
@@ -274,15 +252,22 @@ class TestRunner:
       cmd_to_run.append('--reverse-byte-order')
 
     cmd_to_run.append(pdf_path)
-    return common.RunCommandExtractHashedFiles(cmd_to_run)
 
-  def HandleResult(self, input_filename, input_path, result):
-    success, _ = result
+    raised_exception, results = common.RunCommandExtractHashedFiles(cmd_to_run)
+    if results:
+      results = [
+          ImageArtifact(image_path=image_path, md5_hash=md5_hash)
+          for image_path, md5_hash in results
+      ]
+    return raised_exception, results
+
+  def HandleResult(self, test_case, test_result):
+    input_filename = os.path.basename(test_case.input_path)
 
     if self.test_suppressor.IsResultSuppressed(input_filename):
       self.result_suppressed_cases.append(input_filename)
-      if success:
-        self.surprises.append(input_path)
+      if test_result.IsPass():
+        self.surprises.append(test_case.input_path)
 
         # There isn't an actual status for succeeded-but-ignored, so use the
         # "abort" status to differentiate this from failed-but-ignored.
@@ -294,16 +279,16 @@ class TestRunner:
         # "skip" status to differentiate this from succeeded-but-ignored.
         result_status = result_types.SKIP
     else:
-      if success:
+      if test_result.IsPass():
         result_status = result_types.PASS
       else:
-        self.failures.append(input_path)
+        self.failures.append(test_case.input_path)
         result_status = result_types.FAIL
 
     if self.resultdb:
       # TODO(crbug.com/pdfium/1916): Populate more ResultDB fields.
       self.resultdb.Post(
-          test_id=_GetTestId(input_filename),
+          test_id=test_result.test_id,
           status=result_status,
           duration=None,
           test_log=None,
@@ -447,20 +432,20 @@ class TestRunner:
     if self.resultdb:
       print('Detected ResultSink environment')
 
+    # Collect test cases.
     walk_from_dir = finder.TestingDir(relative_test_dir)
 
-    self.test_cases = []
+    self.test_cases = TestCaseManager()
     self.execution_suppressed_cases = []
     input_file_re = re.compile('^.+[.](in|pdf)$')
     if self.options.inputted_file_paths:
       for file_name in self.options.inputted_file_paths:
         input_path = os.path.join(walk_from_dir, file_name)
         if not os.path.isfile(input_path):
-          print("Can't find test file '{}'".format(file_name))
+          print(f"Can't find test file '{file_name}'")
           return 1
 
-        self.test_cases.append((os.path.basename(input_path),
-                                os.path.dirname(input_path)))
+        self.test_cases.NewTestCase(input_path)
     else:
       for file_dir, _, filename_list in os.walk(walk_from_dir):
         for input_filename in filename_list:
@@ -468,11 +453,13 @@ class TestRunner:
             input_path = os.path.join(file_dir, input_filename)
             if self.test_suppressor.IsExecutionSuppressed(input_path):
               self.execution_suppressed_cases.append(input_path)
-            else:
-              if os.path.isfile(input_path):
-                self.test_cases.append((input_filename, file_dir))
+              continue
+            if not os.path.isfile(input_path):
+              continue
 
-    self.test_cases.sort()
+            self.test_cases.NewTestCase(input_path)
+
+    # Execute test cases.
     self.failures = []
     self.surprises = []
     self.skia_gold_successes = []
@@ -486,30 +473,31 @@ class TestRunner:
       skia_gold.clear_gold_output_dir(self.options.gold_output_dir)
 
     with multiprocessing.Pool(self.options.num_workers) as pool:
-      skia_gold_parallel_inputs = []
-      for test_result in pool.imap(
+      skia_gold_test_cases = TestCaseManager()
+      for result in pool.imap(
           _WrapKeyboardInterrupt(self.GenerateAndTest), self.test_cases):
-        result, input_filename, source_dir = test_result
-        input_path = os.path.join(source_dir, input_filename)
-
-        self.HandleResult(input_filename, input_path, result)
+        self.HandleResult(self.test_cases.GetTestCase(result.test_id), result)
 
         if self.test_type not in TEXT_TESTS and self.options.run_skia_gold:
-          _, image_paths = result
-          for path, _ in image_paths:
-            skia_gold_parallel_inputs.append((path, input_filename))
+          for artifact in result.image_artifacts:
+            # The output filename without image extension becomes the test ID.
+            # For example, "/path/to/.../testing/corpus/example_005.pdf.0.png"
+            # becomes "example_005.pdf.0".
+            skia_gold_test_cases.NewTestCase(artifact.image_path)
 
-      for skia_gold_result in pool.imap(
-          _WrapKeyboardInterrupt(self.RunSkia), skia_gold_parallel_inputs):
-        test_name, skia_success, input_filename = skia_gold_result
-        if skia_success:
-          if self.test_suppressor.IsResultSuppressed(input_filename):
-            self.skia_gold_unexpected_successes.append(test_name)
+      for result in pool.imap(
+          _WrapKeyboardInterrupt(self.RunSkia), skia_gold_test_cases):
+        if result.IsPass():
+          test_case = skia_gold_test_cases.GetTestCase(result.test_id)
+          if self.test_suppressor.IsResultSuppressed(test_case.input_path):
+            self.skia_gold_unexpected_successes.append(result.test_id)
           else:
-            self.skia_gold_successes.append(test_name)
+            self.skia_gold_successes.append(result.test_id)
         else:
-          self.skia_gold_failures.append(test_name)
+          self.skia_gold_failures.append(result.test_id)
 
+    # Report test results.
+    #
     # For some reason, summary will be cut off from stdout on windows if
     # _PrintSummary() is called at the end
     # TODO(crbug.com/pdfium/1657): Once resolved, move _PrintSummary() back
@@ -582,3 +570,78 @@ class TestRunner:
   def SetEnforceExpectedImages(self, new_value):
     """Set whether to enforce that each test case provide an expected image."""
     self.enforce_expected_images = new_value
+
+
+@dataclass
+class TestCase:
+  """Description of a test case to run.
+
+  Attributes:
+    test_id: A unique identifier for the test.
+    input_path: The absolute path to the test file.
+  """
+  test_id: str
+  input_path: str
+
+  def NewResult(self, status, **kwargs):
+    """Derives a new test result corresponding to this test case."""
+    return TestResult(test_id=self.test_id, status=status, **kwargs)
+
+
+@dataclass
+class TestResult:
+  """Results from running a test case.
+
+  Attributes:
+    test_id: The corresponding test case ID.
+    status: The overall `result_types` status.
+    image_artfacts: Optional list of image artifacts.
+  """
+  test_id: str
+  status: str
+  image_artifacts: list = None
+
+  def IsPass(self):
+    """Whether the test passed."""
+    return self.status == result_types.PASS
+
+
+@dataclass
+class ImageArtifact:
+  """Image artifact for a test result.
+
+  Attributes:
+    image_path: The absolute path to the image file.
+    md5_hash: The MD5 hash of the pixel buffer.
+  """
+  image_path: str
+  md5_hash: str
+
+
+class TestCaseManager:
+  """Manages a collection of test cases."""
+
+  def __init__(self):
+    self.test_cases = {}
+
+  def __len__(self):
+    return len(self.test_cases)
+
+  def __iter__(self):
+    return iter(self.test_cases.values())
+
+  def NewTestCase(self, input_path, **kwargs):
+    """Creates and registers a new test case."""
+    input_basename = os.path.basename(input_path)
+    test_id, _ = os.path.splitext(input_basename)
+    if test_id in self.test_cases:
+      raise ValueError(
+          f'Test ID "{test_id}" derived from "{input_basename}" must be unique')
+
+    test_case = TestCase(test_id=test_id, input_path=input_path, **kwargs)
+    self.test_cases[test_id] = test_case
+    return test_case
+
+  def GetTestCase(self, test_id):
+    """Looks up a test case previously registered by `NewTestCase()`."""
+    return self.test_cases[test_id]
