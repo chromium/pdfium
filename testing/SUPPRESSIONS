@@ -397,10 +397,6 @@ path_5_pattern.pdf mac * * *
 path_6_graphics4.5.5.pdf mac * * *
 path_7.pdf mac * * *
 path_9.pdf mac * * *
-
-# TODO(pdfium:1813): Remove after associated bug is fixed
-path_9.pdf * * * skia
-
 percentage.pdf mac * * *
 push_button.pdf * * * *
 quick_start_guide.pdf mac * * *
