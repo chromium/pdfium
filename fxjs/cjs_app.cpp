@@ -403,7 +403,7 @@ void CJS_App::TimerProc(GlobalTimer* pTimer) {
 }
 
 void CJS_App::CancelProc(GlobalTimer* pTimer) {
-  m_Timers.erase(fxcrt::FakeUniquePtr<GlobalTimer>(pTimer));
+  m_Timers.erase(fxcrt::MakeFakeUniquePtr(pTimer));
 }
 
 void CJS_App::RunJsScript(CJS_Runtime* pRuntime, const WideString& wsScript) {

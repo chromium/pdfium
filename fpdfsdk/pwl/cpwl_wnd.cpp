@@ -402,8 +402,8 @@ void CPWL_Wnd::AddChild(std::unique_ptr<CPWL_Wnd> pWnd) {
 
 void CPWL_Wnd::RemoveChild(CPWL_Wnd* pWnd) {
   DCHECK_EQ(pWnd->m_pParent, this);
-  auto it = std::find(m_Children.begin(), m_Children.end(),
-                      fxcrt::FakeUniquePtr<CPWL_Wnd>(pWnd));
+  auto it =
+      std::find(m_Children.begin(), m_Children.end(), MakeFakeUniquePtr(pWnd));
   if (it == m_Children.end())
     return;
 
