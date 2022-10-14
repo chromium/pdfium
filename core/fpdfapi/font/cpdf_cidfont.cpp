@@ -664,7 +664,7 @@ int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {
     unsigned long length = 0;
     int error = FT_Load_Sfnt_Table(face, kGsubTag, 0, nullptr, &length);
     if (!error)
-      m_Font.SetSubData(FX_Alloc(uint8_t, length));
+      m_Font.AllocSubData(length);
   }
   int error =
       FT_Load_Sfnt_Table(face, kGsubTag, 0, m_Font.GetSubData(), nullptr);

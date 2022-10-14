@@ -128,8 +128,8 @@ class CFX_Font {
   absl::optional<FX_RECT> GetBBox() const;
 
   bool IsEmbedded() const { return m_bEmbedded; }
-  uint8_t* GetSubData() const { return m_pGsubData.get(); }
-  void SetSubData(uint8_t* data) { m_pGsubData.reset(data); }
+  void AllocSubData(size_t size);
+  uint8_t* GetSubData() const { return m_pSubData.get(); }
   FontType GetFontType() const { return m_FontType; }
   void SetFontType(FontType type) { m_FontType = type; }
   uint64_t GetObjectTag() const { return m_ObjectTag; }
@@ -165,7 +165,7 @@ class CFX_Font {
   mutable RetainPtr<CFX_Face> m_Face;
   mutable RetainPtr<CFX_GlyphCache> m_GlyphCache;
   std::unique_ptr<CFX_SubstFont> m_pSubstFont;
-  std::unique_ptr<uint8_t, FxFreeDeleter> m_pGsubData;
+  std::unique_ptr<uint8_t, FxFreeDeleter> m_pSubData;
   DataVector<uint8_t> m_FontDataAllocation;
   pdfium::span<uint8_t> m_FontData;
   FontType m_FontType = FontType::kUnknown;
