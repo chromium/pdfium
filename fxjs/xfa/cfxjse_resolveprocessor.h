@@ -36,15 +36,13 @@ class CFXJSE_ResolveProcessor {
     CFXJSE_Engine::ResolveResult m_Result;
   };
 
-  explicit CFXJSE_ResolveProcessor(CFXJSE_Engine* pEngine);
+  CFXJSE_ResolveProcessor(CFXJSE_Engine* pEngine, CFXJSE_NodeHelper* pHelper);
   ~CFXJSE_ResolveProcessor();
 
   bool Resolve(v8::Isolate* pIsolate, NodeData& rnd);
   int32_t GetFilter(WideStringView wsExpression, int32_t nStart, NodeData& rnd);
   int32_t IndexForDataBind(const WideString& wsNextCondition, int32_t iCount);
   void SetCurStart(int32_t start) { m_iCurStart = start; }
-
-  CFXJSE_NodeHelper* GetNodeHelper() { return m_pNodeHelper.get(); }
 
  private:
   bool ResolveForAttributeRs(CXFA_Object* curNode,
@@ -72,7 +70,7 @@ class CFXJSE_ResolveProcessor {
 
   int32_t m_iCurStart = 0;
   UnownedPtr<CFXJSE_Engine> const m_pEngine;
-  std::unique_ptr<CFXJSE_NodeHelper> const m_pNodeHelper;
+  UnownedPtr<CFXJSE_NodeHelper> const m_pNodeHelper;
 };
 
 #endif  // FXJS_XFA_CFXJSE_RESOLVEPROCESSOR_H_

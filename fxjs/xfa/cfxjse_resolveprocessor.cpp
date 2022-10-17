@@ -25,9 +25,9 @@
 #include "xfa/fxfa/parser/cxfa_occur.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
 
-CFXJSE_ResolveProcessor::CFXJSE_ResolveProcessor(CFXJSE_Engine* pEngine)
-    : m_pEngine(pEngine),
-      m_pNodeHelper(std::make_unique<CFXJSE_NodeHelper>()) {}
+CFXJSE_ResolveProcessor::CFXJSE_ResolveProcessor(CFXJSE_Engine* pEngine,
+                                                 CFXJSE_NodeHelper* pHelper)
+    : m_pEngine(pEngine), m_pNodeHelper(pHelper) {}
 
 CFXJSE_ResolveProcessor::~CFXJSE_ResolveProcessor() = default;
 

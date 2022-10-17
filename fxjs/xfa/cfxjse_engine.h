@@ -27,6 +27,7 @@ class CFXJSE_Class;
 class CFXJSE_Context;
 class CFXJSE_FormCalcContext;
 class CFXJSE_HostObject;
+class CFXJSE_NodeHelper;
 class CFXJSE_ResolveProcessor;
 class CFXJSE_Value;
 class CJS_Runtime;
@@ -187,6 +188,7 @@ class CFXJSE_Engine final : public CFX_V8 {
   UnownedPtr<CXFA_EventParam> m_eventParam;
   std::vector<cppgc::Persistent<CXFA_Node>> m_upObjectArray;
   UnownedPtr<std::vector<cppgc::Persistent<CXFA_Node>>> m_pScriptNodeArray;
+  std::unique_ptr<CFXJSE_NodeHelper> const m_NodeHelper;
   std::unique_ptr<CFXJSE_ResolveProcessor> const m_ResolveProcessor;
   std::unique_ptr<CFXJSE_FormCalcContext> m_FormCalcContext;
   cppgc::Persistent<CXFA_Object> m_pThisObject;

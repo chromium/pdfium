@@ -128,7 +128,9 @@ CFXJSE_Engine::CFXJSE_Engine(CXFA_Document* pDocument,
                                          &kGlobalClassDescriptor,
                                          pDocument->GetRoot()->JSObject(),
                                          nullptr)),
-      m_ResolveProcessor(std::make_unique<CFXJSE_ResolveProcessor>(this)) {
+      m_NodeHelper(std::make_unique<CFXJSE_NodeHelper>()),
+      m_ResolveProcessor(
+          std::make_unique<CFXJSE_ResolveProcessor>(this, m_NodeHelper.get())) {
   RemoveBuiltInObjs(m_JsContext.get());
   m_JsContext->EnableCompatibleMode();
 
@@ -695,12 +697,11 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
 
   ResolveResult result;
   bool bNextCreate = false;
-  CFXJSE_NodeHelper* pNodeHelper = m_ResolveProcessor->GetNodeHelper();
   if (dwStyles & XFA_ResolveFlag::kCreateNode)
-    pNodeHelper->SetCreateNodeType(bindNode);
+    m_NodeHelper->SetCreateNodeType(bindNode);
 
-  pNodeHelper->m_pCreateParent = nullptr;
-  pNodeHelper->m_iCurAllStart = -1;
+  m_NodeHelper->m_pCreateParent = nullptr;
+  m_NodeHelper->m_iCurAllStart = -1;
 
   CFXJSE_ResolveProcessor::NodeData rndFind;
   int32_t nStart = 0;
@@ -719,7 +720,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
     if (nStart < 1) {
       if ((dwStyles & XFA_ResolveFlag::kCreateNode) && !bNextCreate) {
         CXFA_Node* pDataNode = nullptr;
-        nStart = pNodeHelper->m_iCurAllStart;
+        nStart = m_NodeHelper->m_iCurAllStart;
         if (nStart != -1) {
           pDataNode = m_pDocument->GetNotBindNode(findObjects);
           if (pDataNode) {
@@ -735,7 +736,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
         }
         dwStyles |= XFA_ResolveFlag::kBind;
         findObjects.clear();
-        findObjects.emplace_back(pNodeHelper->m_pAllStartParent.Get());
+        findObjects.emplace_back(m_NodeHelper->m_pAllStartParent.Get());
         continue;
       }
       break;
@@ -743,8 +744,8 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
     if (bNextCreate) {
       int32_t checked_length =
           pdfium::base::checked_cast<int32_t>(wsExpression.GetLength());
-      if (pNodeHelper->CreateNode(rndFind.m_wsName, rndFind.m_wsCondition,
-                                  nStart == checked_length, this)) {
+      if (m_NodeHelper->CreateNode(rndFind.m_wsName, rndFind.m_wsCondition,
+                                   nStart == checked_length, this)) {
         continue;
       }
       break;
@@ -793,14 +794,14 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
     if (nNodes < 1) {
       if (dwStyles & XFA_ResolveFlag::kCreateNode) {
         bNextCreate = true;
-        if (!pNodeHelper->m_pCreateParent) {
-          pNodeHelper->m_pCreateParent = ToNode(rndFind.m_CurObject.Get());
-          pNodeHelper->m_iCreateCount = 1;
+        if (!m_NodeHelper->m_pCreateParent) {
+          m_NodeHelper->m_pCreateParent = ToNode(rndFind.m_CurObject.Get());
+          m_NodeHelper->m_iCreateCount = 1;
         }
         int32_t checked_length =
             pdfium::base::checked_cast<int32_t>(wsExpression.GetLength());
-        if (pNodeHelper->CreateNode(rndFind.m_wsName, rndFind.m_wsCondition,
-                                    nStart == checked_length, this)) {
+        if (m_NodeHelper->CreateNode(rndFind.m_wsName, rndFind.m_wsCondition,
+                                     nStart == checked_length, this)) {
           continue;
         }
       }
@@ -830,14 +831,14 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
   if ((dwStyles & XFA_ResolveFlag::kCreateNode) ||
       (dwStyles & XFA_ResolveFlag::kBind) ||
       (dwStyles & XFA_ResolveFlag::kBindNew)) {
-    if (pNodeHelper->m_pCreateParent)
-      result.objects.emplace_back(pNodeHelper->m_pCreateParent.Get());
+    if (m_NodeHelper->m_pCreateParent)
+      result.objects.emplace_back(m_NodeHelper->m_pCreateParent.Get());
     else
-      pNodeHelper->CreateNodeForCondition(rndFind.m_wsCondition);
+      m_NodeHelper->CreateNodeForCondition(rndFind.m_wsCondition);
 
-    result.type = pNodeHelper->m_iCreateFlag;
+    result.type = m_NodeHelper->m_iCreateFlag;
     if (result.type == ResolveResult::Type::kCreateNodeOne) {
-      if (pNodeHelper->m_iCurAllStart != -1)
+      if (m_NodeHelper->m_iCurAllStart != -1)
         result.type = ResolveResult::Type::kCreateNodeMidAll;
     }
 
