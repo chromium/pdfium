@@ -205,6 +205,17 @@ CPDF_Form* CPDF_Annot::GetAPForm(CPDF_Page* pPage, AppearanceMode mode) {
   return pResult;
 }
 
+void CPDF_Annot::SetPopupAnnotOpenState(bool bOpenState) {
+  if (m_pPopupAnnot)
+    m_pPopupAnnot->SetOpenState(bOpenState);
+}
+
+absl::optional<CFX_FloatRect> CPDF_Annot::GetPopupAnnotRect() const {
+  if (!m_pPopupAnnot)
+    return absl::nullopt;
+  return m_pPopupAnnot->GetRect();
+}
+
 // static
 CFX_FloatRect CPDF_Annot::RectFromQuadPointsArray(const CPDF_Array* pArray,
                                                   size_t nIndex) {

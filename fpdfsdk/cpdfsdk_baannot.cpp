@@ -23,6 +23,7 @@
 #include "core/fxge/cfx_drawutils.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
 
@@ -42,10 +43,6 @@ CPDFSDK_Annot::UnsafeInputHandlers* CPDFSDK_BAAnnot::GetUnsafeInputHandlers() {
 
 CPDF_Annot* CPDFSDK_BAAnnot::GetPDFAnnot() const {
   return m_pAnnot.Get();
-}
-
-CPDF_Annot* CPDFSDK_BAAnnot::GetPDFPopupAnnot() const {
-  return m_pAnnot->GetPopupAnnot();
 }
 
 const CPDF_Dictionary* CPDFSDK_BAAnnot::GetAnnotDict() const {
@@ -226,16 +223,16 @@ CPDF_Action CPDFSDK_BAAnnot::GetAAction(CPDF_AAction::AActionType eAAT) {
 }
 
 void CPDFSDK_BAAnnot::SetOpenState(bool bOpenState) {
-  if (CPDF_Annot* pAnnot = m_pAnnot->GetPopupAnnot())
-    pAnnot->SetOpenState(bOpenState);
+  m_pAnnot->SetPopupAnnotOpenState(bOpenState);
 }
 
 void CPDFSDK_BAAnnot::UpdateAnnotRects() {
   std::vector<CFX_FloatRect> rects;
   rects.push_back(GetRect());
-  CPDF_Annot* popup = GetPDFPopupAnnot();
-  if (popup)
-    rects.push_back(popup->GetRect());
+
+  absl::optional<CFX_FloatRect> annot_rect = m_pAnnot->GetPopupAnnotRect();
+  if (annot_rect.has_value())
+    rects.push_back(annot_rect.value());
 
   // Make the rects round up to avoid https://crbug.com/662804
   for (CFX_FloatRect& rect : rects)

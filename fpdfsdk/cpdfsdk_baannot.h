@@ -55,8 +55,6 @@ class CPDFSDK_BAAnnot : public CPDFSDK_Annot,
                               const CFX_Matrix& mtUser2Device,
                               CPDF_Annot::AppearanceMode mode);
 
-  CPDF_Annot* GetPDFPopupAnnot() const;
-
   void SetAnnotName(const WideString& sName);
   WideString GetAnnotName() const;
 
