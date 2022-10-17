@@ -251,36 +251,32 @@ TEST_F(CFWLEditEmbedderTest, DateTimePickerTest) {
 }
 
 TEST_F(CFWLEditEmbedderTest, ImageEditTest) {
-  // TODO(crbug.com/pdfium/11): Fix this test and enable for Skia variants.
-  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
-    return;
-
   CreateAndInitializeFormPDF("xfa/xfa_image_edit.pdf");
   FORM_OnLButtonDown(form_handle(), page(), 0, 115, 58);
-
-  const char kFilledMD5[] = "101cf6223fa2403fba4c413a8310ab02";
-  {
-    ScopedFPDFBitmap page_bitmap =
-        RenderLoadedPageWithFlags(page(), FPDF_ANNOT);
-    CompareBitmap(page_bitmap.get(), 612, 792, kFilledMD5);
-  }
+  const char* filled_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+      return "062ad65614888e4f114b99f3396be3e8";
+    return "101cf6223fa2403fba4c413a8310ab02";
+  }();
+  ScopedFPDFBitmap page_bitmap = RenderLoadedPageWithFlags(page(), FPDF_ANNOT);
+  CompareBitmap(page_bitmap.get(), 612, 792, filled_checksum);
 }
 
 TEST_F(CFWLEditEmbedderTest, ComboBoxTest) {
-  // TODO(crbug.com/pdfium/11): Fix this test and enable for Skia variants.
-  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
-    return;
-
   CreateAndInitializeFormPDF("xfa/xfa_combobox.pdf");
 
   // Give focus to widget.
   FORM_OnLButtonDown(form_handle(), page(), 0, 115, 58);
   FORM_OnLButtonUp(form_handle(), page(), 0, 115, 58);
   {
+    const char* filled_checksum = []() {
+      if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+        return "8c555487e09ee4acf3ace77db5929bdc";
+      return "dad642ae8a5afce2591ffbcabbfc58dd";
+    }();
     ScopedFPDFBitmap page_bitmap =
         RenderLoadedPageWithFlags(page(), FPDF_ANNOT);
-    const char kFilledMD5[] = "dad642ae8a5afce2591ffbcabbfc58dd";
-    CompareBitmap(page_bitmap.get(), 612, 792, kFilledMD5);
+    CompareBitmap(page_bitmap.get(), 612, 792, filled_checksum);
   }
 
   // Click on down-arrow button, dropdown list appears.
