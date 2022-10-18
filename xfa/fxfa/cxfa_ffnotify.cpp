@@ -249,9 +249,17 @@ CXFA_FFApp::CallbackIface* CXFA_FFNotify::GetAppProvider() {
   return m_pDoc->GetApp()->GetAppProvider();
 }
 
-CXFA_FFWidgetHandler* CXFA_FFNotify::GetWidgetHandler() {
+void CXFA_FFNotify::HandleWidgetEvent(CXFA_Node* pNode,
+                                      CXFA_EventParam* pParam) {
   CXFA_FFDocView* pDocView = m_pDoc->GetDocView();
-  return pDocView ? pDocView->GetWidgetHandler() : nullptr;
+  if (!pDocView)
+    return;
+
+  CXFA_FFWidgetHandler* pHandler = pDocView->GetWidgetHandler();
+  if (!pHandler)
+    return;
+
+  pHandler->ProcessEvent(pNode, pParam);
 }
 
 void CXFA_FFNotify::OpenDropDownList(CXFA_Node* pNode) {

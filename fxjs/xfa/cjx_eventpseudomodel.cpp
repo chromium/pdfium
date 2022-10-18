@@ -16,7 +16,6 @@
 #include "v8/include/v8-primitive.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
-#include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/parser/cscript_eventpseudomodel.h"
 
 namespace {
@@ -211,11 +210,7 @@ CJS_Result CJX_EventPseudoModel::emit(
   if (!pNotify)
     return CJS_Result::Success();
 
-  CXFA_FFWidgetHandler* pWidgetHandler = pNotify->GetWidgetHandler();
-  if (!pWidgetHandler)
-    return CJS_Result::Success();
-
-  pWidgetHandler->ProcessEvent(pEventParam->m_pTarget, pEventParam);
+  pNotify->HandleWidgetEvent(pEventParam->m_pTarget, pEventParam);
   return CJS_Result::Success();
 }
 
