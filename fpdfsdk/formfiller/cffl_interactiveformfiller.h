@@ -54,7 +54,6 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
   explicit CFFL_InteractiveFormFiller(CallbackIface* pCallbackIface);
   ~CFFL_InteractiveFormFiller() override;
 
-  CallbackIface* GetCallbackIface() const { return m_pCallbackIface.Get(); }
   bool Annot_HitTest(const CPDFSDK_Widget* pWidget, const CFX_PointF& point);
   FX_RECT GetViewBBox(const CPDFSDK_PageView* pPageView,
                       CPDFSDK_Widget* pWidget);
@@ -112,6 +111,14 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
                   Mask<FWL_EVENTFLAG> nFlag);
   bool OnKillFocus(ObservedPtr<CPDFSDK_Widget>& pWidget,
                    Mask<FWL_EVENTFLAG> nFlag);
+
+  // Wrapper methods for CallbackIface
+  void OnSetFieldInputFocus(const WideString& text);
+  void Invalidate(IPDF_Page* pPage, const FX_RECT& rect);
+  CPDFSDK_PageView* GetOrCreatePageView(IPDF_Page* pPage);
+  CPDFSDK_PageView* GetPageView(IPDF_Page* pPage);
+  CFX_Timer::HandlerIface* GetTimerHandler();
+  void OnChange();
 
   CFFL_FormField* GetFormFieldForTesting(CPDFSDK_Widget* pAnnot) {
     return GetFormField(pAnnot);

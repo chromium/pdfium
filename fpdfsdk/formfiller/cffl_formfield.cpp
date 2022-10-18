@@ -257,8 +257,7 @@ bool CFFL_FormField::Redo() {
 void CFFL_FormField::SetFocusForAnnot(CPDFSDK_Widget* pWidget,
                                       Mask<FWL_EVENTFLAG> nFlag) {
   CPDFSDK_PageView* pPageView =
-      m_pFormFiller->GetCallbackIface()->GetOrCreatePageView(
-          pWidget->GetPage());
+      m_pFormFiller->GetOrCreatePageView(pWidget->GetPage());
   CPWL_Wnd* pWnd = CreateOrUpdatePWLWindow(pPageView);
   if (pWnd)
     pWnd->SetFocus();
@@ -272,7 +271,7 @@ void CFFL_FormField::KillFocusForAnnot(Mask<FWL_EVENTFLAG> nFlag) {
     return;
 
   CPDFSDK_PageView* pPageView =
-      m_pFormFiller->GetCallbackIface()->GetPageView(m_pWidget->GetPage());
+      m_pFormFiller->GetPageView(m_pWidget->GetPage());
   if (!pPageView || !CommitData(pPageView, nFlag))
     return;
   if (CPWL_Wnd* pWnd = GetPWLWindow(pPageView))
@@ -297,9 +296,8 @@ bool CFFL_FormField::IsValid() const {
 }
 
 CPWL_Wnd::CreateParams CFFL_FormField::GetCreateParam() {
-  CPWL_Wnd::CreateParams cp(
-      m_pFormFiller->GetCallbackIface()->GetTimerHandler(), m_pFormFiller,
-      this);
+  CPWL_Wnd::CreateParams cp(m_pFormFiller->GetTimerHandler(), m_pFormFiller,
+                            this);
 
   cp.rcRectWnd = GetPDFAnnotRect();
 
@@ -433,8 +431,7 @@ CFX_FloatRect CFFL_FormField::GetPDFAnnotRect() const {
 }
 
 CPDFSDK_PageView* CFFL_FormField::GetCurPageView() {
-  return m_pFormFiller->GetCallbackIface()->GetOrCreatePageView(
-      m_pWidget->GetPage());
+  return m_pFormFiller->GetOrCreatePageView(m_pWidget->GetPage());
 }
 
 CFX_FloatRect CFFL_FormField::GetFocusBox(const CPDFSDK_PageView* pPageView) {
@@ -515,7 +512,7 @@ bool CFFL_FormField::IsFieldFull(const CPDFSDK_PageView* pPageView) {
 #endif  // PDF_ENABLE_XFA
 
 void CFFL_FormField::SetChangeMark() {
-  m_pFormFiller->GetCallbackIface()->OnChange();
+  m_pFormFiller->OnChange();
 }
 
 void CFFL_FormField::GetActionData(const CPDFSDK_PageView* pPageView,
@@ -578,5 +575,5 @@ void CFFL_FormField::EscapeFiller(CPDFSDK_PageView* pPageView,
 }
 
 void CFFL_FormField::InvalidateRect(const FX_RECT& rect) {
-  m_pFormFiller->GetCallbackIface()->Invalidate(m_pWidget->GetPage(), rect);
+  m_pFormFiller->Invalidate(m_pWidget->GetPage(), rect);
 }

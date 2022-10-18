@@ -432,6 +432,32 @@ bool CFFL_InteractiveFormFiller::OnKillFocus(
   return !!pWidget;
 }
 
+void CFFL_InteractiveFormFiller::OnSetFieldInputFocus(const WideString& text) {
+  m_pCallbackIface->OnSetFieldInputFocus(text);
+}
+
+void CFFL_InteractiveFormFiller::Invalidate(IPDF_Page* pPage,
+                                            const FX_RECT& rect) {
+  m_pCallbackIface->Invalidate(pPage, rect);
+}
+
+CPDFSDK_PageView* CFFL_InteractiveFormFiller::GetOrCreatePageView(
+    IPDF_Page* pPage) {
+  return m_pCallbackIface->GetOrCreatePageView(pPage);
+}
+
+CPDFSDK_PageView* CFFL_InteractiveFormFiller::GetPageView(IPDF_Page* pPage) {
+  return m_pCallbackIface->GetPageView(pPage);
+}
+
+CFX_Timer::HandlerIface* CFFL_InteractiveFormFiller::GetTimerHandler() {
+  return m_pCallbackIface->GetTimerHandler();
+}
+
+void CFFL_InteractiveFormFiller::OnChange() {
+  m_pCallbackIface->OnChange();
+}
+
 bool CFFL_InteractiveFormFiller::IsVisible(CPDFSDK_Widget* pWidget) {
   return pWidget->IsVisible();
 }
@@ -554,7 +580,7 @@ void CFFL_InteractiveFormFiller::InvalidateRect(PerWindowData* pWidgetData,
   if (!pWidget)
     return;
 
-  GetCallbackIface()->InvalidateRect(pWidget, rect);
+  m_pCallbackIface->InvalidateRect(pWidget, rect);
 }
 
 void CFFL_InteractiveFormFiller::OutputSelectedRect(PerWindowData* pWidgetData,
@@ -567,15 +593,15 @@ void CFFL_InteractiveFormFiller::OutputSelectedRect(PerWindowData* pWidgetData,
   if (!pFormField)
     return;
 
-  GetCallbackIface()->OutputSelectedRect(pFormField, rect);
+  m_pCallbackIface->OutputSelectedRect(pFormField, rect);
 }
 
 bool CFFL_InteractiveFormFiller::IsSelectionImplemented() const {
-  return GetCallbackIface()->IsSelectionImplemented();
+  return m_pCallbackIface->IsSelectionImplemented();
 }
 
 void CFFL_InteractiveFormFiller::SetCursor(CursorStyle nCursorStyle) {
-  GetCallbackIface()->SetCursor(nCursorStyle);
+  m_pCallbackIface->SetCursor(nCursorStyle);
 }
 
 void CFFL_InteractiveFormFiller::QueryWherePopup(

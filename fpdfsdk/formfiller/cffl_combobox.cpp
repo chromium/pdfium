@@ -235,7 +235,7 @@ bool CFFL_ComboBox::IsFieldFull(const CPDFSDK_PageView* pPageView) {
 void CFFL_ComboBox::OnSetFocusForEdit(CPWL_Edit* pEdit) {
   pEdit->SetCharSet(FX_Charset::kChineseSimplified);
   pEdit->SetReadyToInput();
-  m_pFormFiller->GetCallbackIface()->OnSetFieldInputFocus(pEdit->GetText());
+  m_pFormFiller->OnSetFieldInputFocus(pEdit->GetText());
 }
 
 WideString CFFL_ComboBox::GetSelectExportText() {
