@@ -198,6 +198,18 @@ TEST_F(FPDFPPOEmbedderTest, ImportPageToXObject) {
       ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
       CompareBitmap(page_bitmap.get(), 612, 792,
                     pdfium::kBlankPage612By792Checksum);
+
+      // TODO(crbug.com/pdfium/1905): These should have non-zero values.
+      float left;
+      float bottom;
+      float right;
+      float top;
+      ASSERT_TRUE(
+          FPDFPageObj_GetBounds(page_object, &left, &bottom, &right, &top));
+      EXPECT_FLOAT_EQ(0.0f, left);
+      EXPECT_FLOAT_EQ(0.0f, bottom);
+      EXPECT_FLOAT_EQ(0.0f, right);
+      EXPECT_FLOAT_EQ(0.0f, top);
     }
 
     EXPECT_TRUE(FPDF_SaveAsCopy(output_doc.get(), this, 0));
@@ -224,6 +236,19 @@ TEST_F(FPDFPPOEmbedderTest, ImportPageToXObject) {
       ScopedFPDFBitmap page_bitmap = RenderPage(saved_pages[i]);
       CompareBitmap(page_bitmap.get(), 612, 792, checksum);
     }
+  }
+
+  for (int i = 0; i < kExpectedPageCount; ++i) {
+    float left;
+    float bottom;
+    float right;
+    float top;
+    ASSERT_TRUE(
+        FPDFPageObj_GetBounds(xobjects[i], &left, &bottom, &right, &top));
+    EXPECT_FLOAT_EQ(-1.0f, left);
+    EXPECT_FLOAT_EQ(-1.0f, bottom);
+    EXPECT_FLOAT_EQ(201.0f, right);
+    EXPECT_FLOAT_EQ(301.0f, top);
   }
 
   // Peek at object internals to make sure the two XObjects use the same stream.
