@@ -68,13 +68,9 @@ class CPWL_MsgControl final : public Observable {
   }
 
   void SetFocus(CPWL_Wnd* pWnd) {
-    m_KeyboardPaths.clear();
+    m_KeyboardPaths = pWnd->GetAncestors();
     m_pMainKeyboardWnd = pWnd;
-    CPWL_Wnd* pParent = pWnd;
-    while (pParent) {
-      m_KeyboardPaths.emplace_back(pParent);
-      pParent = pParent->GetParentWindow();
-    }
+
     // Note, pWnd may get destroyed in the OnSetFocus call.
     pWnd->OnSetFocus();
   }
@@ -93,13 +89,7 @@ class CPWL_MsgControl final : public Observable {
     m_KeyboardPaths.clear();
   }
 
-  void SetCapture(CPWL_Wnd* pWnd) {
-    m_MousePaths.clear();
-    while (pWnd) {
-      m_MousePaths.emplace_back(pWnd);
-      pWnd = pWnd->GetParentWindow();
-    }
-  }
+  void SetCapture(CPWL_Wnd* pWnd) { m_MousePaths = pWnd->GetAncestors(); }
 
   void ReleaseCapture() { m_MousePaths.clear(); }
 
@@ -541,6 +531,14 @@ void CPWL_Wnd::OnKillFocus() {}
 std::unique_ptr<IPWL_FillerNotify::PerWindowData> CPWL_Wnd::CloneAttachedData()
     const {
   return m_pAttachedData ? m_pAttachedData->Clone() : nullptr;
+}
+
+std::vector<UnownedPtr<CPWL_Wnd>> CPWL_Wnd::GetAncestors() {
+  std::vector<UnownedPtr<CPWL_Wnd>> results;
+  for (CPWL_Wnd* pWnd = this; pWnd; pWnd = pWnd->GetParentWindow()) {
+    results.emplace_back(pWnd);
+  }
+  return results;
 }
 
 bool CPWL_Wnd::WndHitTest(const CFX_PointF& point) const {

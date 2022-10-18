@@ -201,11 +201,11 @@ class CPWL_Wnd : public Observable {
   void RemoveFlag(uint32_t dwFlags);
   void SetClipRect(const CFX_FloatRect& rect);
 
-  CPWL_Wnd* GetParentWindow() const { return m_pParent.Get(); }
   IPWL_FillerNotify::PerWindowData* GetAttachedData() const {
     return m_pAttachedData.get();
   }
   std::unique_ptr<IPWL_FillerNotify::PerWindowData> CloneAttachedData() const;
+  std::vector<UnownedPtr<CPWL_Wnd>> GetAncestors();
 
   bool WndHitTest(const CFX_PointF& point) const;
   bool ClientHitTest(const CFX_PointF& point) const;
@@ -241,6 +241,7 @@ class CPWL_Wnd : public Observable {
     return m_CreationParams.pFillerNotify.Get();
   }
 
+  CPWL_Wnd* GetParentWindow() const { return m_pParent.Get(); }
   CPWL_ScrollBar* GetVScrollBar() const;
 
   // Returns |true| iff this instance is still allocated.
