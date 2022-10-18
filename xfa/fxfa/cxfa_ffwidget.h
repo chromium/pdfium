@@ -155,8 +155,8 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   virtual WideString GetText();
   virtual FormFieldType GetFormFieldType();
 
-  CXFA_Node* GetNode() const { return m_pNode.Get(); }
-  CXFA_ContentLayoutItem* GetLayoutItem() const { return m_pLayoutItem.Get(); }
+  CXFA_Node* GetNode() const { return m_pNode; }
+  CXFA_ContentLayoutItem* GetLayoutItem() const { return m_pLayoutItem; }
   void SetLayoutItem(CXFA_ContentLayoutItem* pItem) { m_pLayoutItem = pItem; }
   CXFA_FFPageView* GetPageView() const { return m_pPageView; }
   void SetPageView(CXFA_FFPageView* pPageView) { m_pPageView = pPageView; }

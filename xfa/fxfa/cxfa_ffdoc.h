@@ -165,7 +165,7 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
   FormType GetFormType() const { return m_FormType; }
   cppgc::Heap* GetHeap() const { return m_pHeap.Get(); }
   CXFA_Document* GetXFADoc() const { return m_pDocument; }
-  CXFA_FFApp* GetApp() const { return m_pApp.Get(); }
+  CXFA_FFApp* GetApp() const { return m_pApp; }
   CPDF_Document* GetPDFDoc() const { return m_pPDFDoc.Get(); }
   CXFA_FFDocView* GetDocView(CXFA_LayoutProcessor* pLayout);
   CXFA_FFDocView* GetDocView();

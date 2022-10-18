@@ -48,7 +48,7 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
 
   void Trace(cppgc::Visitor* visitor) const;
 
-  CXFA_FFDoc* GetDoc() const { return m_pDoc.Get(); }
+  CXFA_FFDoc* GetDoc() const { return m_pDoc; }
   int32_t StartLayout();
   int32_t DoLayout();
   void StopLayout();

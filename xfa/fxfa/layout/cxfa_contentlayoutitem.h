@@ -26,8 +26,8 @@ class CXFA_ContentLayoutItem final : public CXFA_LayoutItem {
 
   CXFA_ContentLayoutItem* GetFirst();
   CXFA_ContentLayoutItem* GetLast();
-  CXFA_ContentLayoutItem* GetPrev() const { return m_pPrev.Get(); }
-  CXFA_ContentLayoutItem* GetNext() const { return m_pNext.Get(); }
+  CXFA_ContentLayoutItem* GetPrev() const { return m_pPrev; }
+  CXFA_ContentLayoutItem* GetNext() const { return m_pNext; }
   void InsertAfter(CXFA_ContentLayoutItem* pNext);
 
   CFX_RectF GetRelativeRect() const;

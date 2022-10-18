@@ -95,7 +95,7 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
   // won't have an isolate set into it.
   CFXJSE_Engine* GetScriptContext() const;
 
-  CXFA_FFNotify* GetNotify() const { return notify_.Get(); }
+  CXFA_FFNotify* GetNotify() const { return notify_; }
   CXFA_NodeOwner* GetNodeOwner() { return node_owner_; }
   cppgc::Heap* GetHeap() const;
   CXFA_LocaleMgr* GetLocaleMgr();

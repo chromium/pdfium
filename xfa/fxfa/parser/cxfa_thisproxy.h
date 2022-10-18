@@ -21,8 +21,8 @@ class CXFA_ThisProxy final : public CXFA_Object {
 
   void Trace(cppgc::Visitor* visitor) const override;
 
-  CXFA_Node* GetThisNode() const { return m_pThisNode.Get(); }
-  CXFA_Script* GetScriptNode() const { return m_pScriptNode.Get(); }
+  CXFA_Node* GetThisNode() const { return m_pThisNode; }
+  CXFA_Script* GetScriptNode() const { return m_pScriptNode; }
 
  private:
   CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Script* pScriptNode);

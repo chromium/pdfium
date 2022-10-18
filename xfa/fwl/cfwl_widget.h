@@ -146,7 +146,7 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
     return m_pDelegate ? m_pDelegate.Get() : this;
   }
 
-  CFWL_App* GetFWLApp() const { return m_pFWLApp.Get(); }
+  CFWL_App* GetFWLApp() const { return m_pFWLApp; }
   uint64_t GetEventKey() const { return m_nEventKey; }
   void SetEventKey(uint64_t key) { m_nEventKey = key; }
 

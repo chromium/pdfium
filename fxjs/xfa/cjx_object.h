@@ -110,7 +110,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
 
   CXFA_Document* GetDocument() const;
   CXFA_Node* GetXFANode() const;
-  CXFA_Object* GetXFAObject() const { return object_.Get(); }
+  CXFA_Object* GetXFAObject() const { return object_; }
 
   void SetCalcRecursionCount(size_t count) { calc_recursion_count_ = count; }
   size_t GetCalcRecursionCount() const { return calc_recursion_count_; }

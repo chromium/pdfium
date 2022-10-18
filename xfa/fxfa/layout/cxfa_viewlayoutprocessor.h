@@ -64,7 +64,7 @@ class CXFA_ViewLayoutProcessor
   CXFA_ViewLayoutItem* GetPage(int32_t index) const;
   int32_t GetPageIndex(const CXFA_ViewLayoutItem* pPage) const;
   CXFA_ViewLayoutItem* GetRootLayoutItem() const {
-    return m_pPageSetRootLayoutItem.Get();
+    return m_pPageSetRootLayoutItem;
   }
   absl::optional<BreakData> ProcessBreakBefore(const CXFA_Node* pBreakNode);
   absl::optional<BreakData> ProcessBreakAfter(const CXFA_Node* pBreakNode);

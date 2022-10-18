@@ -38,7 +38,7 @@ class CXFA_LayoutItem : public GCedTreeNode<CXFA_LayoutItem> {
   const CXFA_ContentLayoutItem* AsContentLayoutItem() const;
 
   const CXFA_ViewLayoutItem* GetPage() const;
-  CXFA_Node* GetFormNode() const { return m_pFormNode.Get(); }
+  CXFA_Node* GetFormNode() const { return m_pFormNode; }
   void SetFormNode(CXFA_Node* pNode);
 
  protected:
