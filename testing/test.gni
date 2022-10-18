@@ -14,6 +14,7 @@
 template("test") {
   if (is_android) {
     import("//build/config/android/config.gni")
+    import("//build/config/android/internal_rules.gni")
     import("//build/config/android/rules.gni")
 
     _use_raw_android_executable = defined(invoker.use_raw_android_executable) &&
