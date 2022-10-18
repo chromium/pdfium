@@ -11,10 +11,10 @@
 
 #include <functional>
 
-#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widetext_buffer.h"
 #include "fxjs/xfa/fxjse.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
+#include "v8/include/cppgc/persistent.h"
 #include "v8/include/v8-forward.h"
 #include "v8/include/v8-persistent-handle.h"
 
@@ -307,7 +307,7 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
 
   UnownedPtr<v8::Isolate> const m_pIsolate;
   v8::Global<v8::Value> m_Value;
-  UnownedPtr<CXFA_Document> const m_pDocument;
+  cppgc::WeakPersistent<CXFA_Document> const m_pDocument;
 };
 
 #endif  // FXJS_XFA_CFXJSE_FORMCALC_CONTEXT_H_
