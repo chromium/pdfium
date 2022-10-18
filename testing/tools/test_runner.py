@@ -35,26 +35,7 @@ TEXT_TESTS = ['javascript']
 
 
 class KeyboardInterruptError(Exception):
-  pass
-
-
-# This is a class, rather than a closure, to make it picklable.
-class _WrapKeyboardInterrupt:
-  """Wraps `KeyboardInterrupt` thrown from a callable.
-
-  This wrapper prevents `KeyboardInterrupt` from escaping the wrapped callable,
-  by wrapping the exception in a custom `KeyboardInterruptError` exception
-  instead.
-  """
-
-  def __init__(self, wrapped):
-    self.wrapped = wrapped
-
-  def __call__(self, *args):
-    try:
-      return self.wrapped(*args)
-    except KeyboardInterrupt as exc:
-      raise KeyboardInterruptError() from exc
+  """Custom exception used to wrap `KeyboardInterrupt` exceptions."""
 
 
 def DeleteFiles(files):
@@ -64,7 +45,6 @@ def DeleteFiles(files):
       os.remove(f)
 
 
-# TODO(crbug.com/pdfium/1641): Don't pickle TestRunner.
 class TestRunner:
 
   def __init__(self, dirname):
@@ -72,10 +52,427 @@ class TestRunner:
     # which all correspond directly to the type for the test being run. In the
     # future if there are tests that don't have this clean correspondence, then
     # an argument for the type will need to be added.
-    self.test_dir = dirname
-    self.test_type = dirname
-    self.delete_output_on_success = False
-    self.enforce_expected_images = False
+    self.per_process_config = _PerProcessConfig(
+        test_dir=dirname, test_type=dirname)
+
+  @property
+  def options(self):
+    return self.per_process_config.options
+
+  def IsSkiaGoldEnabled(self):
+    return (self.options.run_skia_gold and
+            not self.per_process_config.test_type in TEXT_TESTS)
+
+  def IsExecutionSuppressed(self, input_path):
+    return self.per_process_state.test_suppressor.IsExecutionSuppressed(
+        input_path)
+
+  def IsResultSuppressed(self, input_filename):
+    return self.per_process_state.test_suppressor.IsResultSuppressed(
+        input_filename)
+
+  def HandleResult(self, test_case, test_result):
+    input_filename = os.path.basename(test_case.input_path)
+
+    if self.IsResultSuppressed(input_filename):
+      self.result_suppressed_cases.append(input_filename)
+      if test_result.IsPass():
+        self.surprises.append(test_case.input_path)
+
+        # There isn't an actual status for succeeded-but-ignored, so use the
+        # "abort" status to differentiate this from failed-but-ignored.
+        #
+        # Note that this appears as a preliminary failure in Gerrit.
+        result_status = result_types.UNKNOWN
+      else:
+        # There isn't an actual status for failed-but-ignored, so use the
+        # "skip" status to differentiate this from succeeded-but-ignored.
+        result_status = result_types.SKIP
+    else:
+      if test_result.IsPass():
+        result_status = result_types.PASS
+      else:
+        self.failures.append(test_case.input_path)
+        result_status = result_types.FAIL
+
+    if self.resultdb:
+      # TODO(crbug.com/pdfium/1916): Populate more ResultDB fields.
+      self.resultdb.Post(
+          test_id=test_result.test_id,
+          status=result_status,
+          duration=None,
+          test_log=None,
+          test_file=None)
+
+  def Run(self):
+    # Running a test defines a number of attributes on the fly.
+    # pylint: disable=attribute-defined-outside-init
+
+    relative_test_dir = self.per_process_config.test_dir
+    if relative_test_dir != 'corpus':
+      relative_test_dir = os.path.join('resources', relative_test_dir)
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        '--build-dir',
+        default=os.path.join('out', 'Debug'),
+        help='relative path from the base source directory')
+
+    parser.add_argument(
+        '-j',
+        default=multiprocessing.cpu_count(),
+        dest='num_workers',
+        type=int,
+        help='run NUM_WORKERS jobs in parallel')
+
+    parser.add_argument(
+        '--disable-javascript',
+        action="store_true",
+        dest="disable_javascript",
+        help='Prevents JavaScript from executing in PDF files.')
+
+    parser.add_argument(
+        '--disable-xfa',
+        action="store_true",
+        dest="disable_xfa",
+        help='Prevents processing XFA forms.')
+
+    parser.add_argument(
+        '--render-oneshot',
+        action="store_true",
+        dest="render_oneshot",
+        help='Sets whether to use the oneshot renderer.')
+
+    parser.add_argument(
+        '--run-skia-gold',
+        action='store_true',
+        default=False,
+        help='When flag is on, skia gold tests will be run.')
+
+    # TODO: Remove when pdfium recipe stops passing this argument
+    parser.add_argument(
+        '--gold_properties',
+        default='',
+        dest="gold_properties",
+        help='Key value pairs that are written to the top level '
+        'of the JSON file that is ingested by Gold.')
+
+    # TODO: Remove when pdfium recipe stops passing this argument
+    parser.add_argument(
+        '--gold_ignore_hashes',
+        default='',
+        dest="gold_ignore_hashes",
+        help='Path to a file with MD5 hashes we wish to ignore.')
+
+    parser.add_argument(
+        '--regenerate_expected',
+        default='',
+        dest="regenerate_expected",
+        help='Regenerates expected images. Valid values are '
+        '"all" to regenerate all expected pngs, and '
+        '"platform" to regenerate only platform-specific '
+        'expected pngs.')
+
+    parser.add_argument(
+        '--reverse-byte-order',
+        action='store_true',
+        dest="reverse_byte_order",
+        help='Run image-based tests using --reverse-byte-order.')
+
+    parser.add_argument(
+        '--ignore_errors',
+        action="store_true",
+        dest="ignore_errors",
+        help='Prevents the return value from being non-zero '
+        'when image comparison fails.')
+
+    parser.add_argument(
+        'inputted_file_paths',
+        nargs='*',
+        help='Path to test files to run, relative to '
+        f'testing/{relative_test_dir}. If omitted, runs all test files under '
+        f'testing/{relative_test_dir}.',
+        metavar='relative/test/path')
+
+    skia_gold.add_skia_gold_args(parser)
+
+    self.per_process_config.options = parser.parse_args()
+
+    if (self.options.regenerate_expected and
+        self.options.regenerate_expected not in ['all', 'platform']):
+      print('FAILURE: --regenerate_expected must be "all" or "platform"')
+      return 1
+
+    finder = self.per_process_config.NewFinder()
+    pdfium_test_path = self.per_process_config.GetPdfiumTestPath(finder)
+    if not os.path.exists(pdfium_test_path):
+      print(f"FAILURE: Can't find test executable '{pdfium_test_path}'")
+      print('Use --build-dir to specify its location.')
+      return 1
+    self.per_process_config.InitializeFeatures(pdfium_test_path)
+
+    self.per_process_state = _PerProcessState(self.per_process_config)
+    shutil.rmtree(self.per_process_state.working_dir, ignore_errors=True)
+    os.makedirs(self.per_process_state.working_dir)
+
+    error_message = self.per_process_state.image_differ.CheckMissingTools(
+        self.options.regenerate_expected)
+    if error_message:
+      print('FAILURE:', error_message)
+      return 1
+
+    self.resultdb = result_sink.TryInitClient()
+    if self.resultdb:
+      print('Detected ResultSink environment')
+
+    # Collect test cases.
+    walk_from_dir = finder.TestingDir(relative_test_dir)
+
+    self.test_cases = TestCaseManager()
+    self.execution_suppressed_cases = []
+    input_file_re = re.compile('^.+[.](in|pdf)$')
+    if self.options.inputted_file_paths:
+      for file_name in self.options.inputted_file_paths:
+        input_path = os.path.join(walk_from_dir, file_name)
+        if not os.path.isfile(input_path):
+          print(f"Can't find test file '{file_name}'")
+          return 1
+
+        self.test_cases.NewTestCase(input_path)
+    else:
+      for file_dir, _, filename_list in os.walk(walk_from_dir):
+        for input_filename in filename_list:
+          if input_file_re.match(input_filename):
+            input_path = os.path.join(file_dir, input_filename)
+            if self.IsExecutionSuppressed(input_path):
+              self.execution_suppressed_cases.append(input_path)
+              continue
+            if not os.path.isfile(input_path):
+              continue
+
+            self.test_cases.NewTestCase(input_path)
+
+    # Execute test cases.
+    self.failures = []
+    self.surprises = []
+    self.skia_gold_successes = []
+    self.skia_gold_unexpected_successes = []
+    self.skia_gold_failures = []
+    self.result_suppressed_cases = []
+
+    if self.IsSkiaGoldEnabled():
+      assert self.options.gold_output_dir
+      # Clear out and create top level gold output directory before starting
+      skia_gold.clear_gold_output_dir(self.options.gold_output_dir)
+
+    with multiprocessing.Pool(
+        processes=self.options.num_workers,
+        initializer=_InitializePerProcessState,
+        initargs=[self.per_process_config]) as pool:
+      skia_gold_test_cases = TestCaseManager()
+      for result in pool.imap(_RunPdfiumTest, self.test_cases):
+        self.HandleResult(self.test_cases.GetTestCase(result.test_id), result)
+
+        if self.IsSkiaGoldEnabled():
+          for artifact in result.image_artifacts:
+            # The output filename without image extension becomes the test ID.
+            # For example, "/path/to/.../testing/corpus/example_005.pdf.0.png"
+            # becomes "example_005.pdf.0".
+            skia_gold_test_cases.NewTestCase(artifact.image_path)
+
+      for result in pool.imap(_RunSkiaTest, skia_gold_test_cases):
+        if result.IsPass():
+          test_case = skia_gold_test_cases.GetTestCase(result.test_id)
+          if self.IsResultSuppressed(test_case.input_path):
+            self.skia_gold_unexpected_successes.append(result.test_id)
+          else:
+            self.skia_gold_successes.append(result.test_id)
+        else:
+          self.skia_gold_failures.append(result.test_id)
+
+    # Report test results.
+    #
+    # For some reason, summary will be cut off from stdout on windows if
+    # _PrintSummary() is called at the end
+    # TODO(crbug.com/pdfium/1657): Once resolved, move _PrintSummary() back
+    # down to the end
+    self._PrintSummary()
+
+    if self.surprises:
+      self.surprises.sort()
+      print('\nUnexpected Successes:')
+      for surprise in self.surprises:
+        print(surprise)
+
+    if self.failures:
+      self.failures.sort()
+      print('\nSummary of Failures:')
+      for failure in self.failures:
+        print(failure)
+
+    if self.skia_gold_unexpected_successes:
+      self.skia_gold_unexpected_successes.sort()
+      print('\nUnexpected Skia Gold Successes:')
+      for surprise in self.skia_gold_unexpected_successes:
+        print(surprise)
+
+    if self.skia_gold_failures:
+      self.skia_gold_failures.sort()
+      print('\nSummary of Skia Gold Failures:')
+      for failure in self.skia_gold_failures:
+        print(failure)
+
+    if self.failures:
+      if not self.options.ignore_errors:
+        return 1
+
+    return 0
+
+  def _PrintSummary(self):
+    number_test_cases = len(self.test_cases)
+    number_failures = len(self.failures)
+    number_suppressed = len(self.result_suppressed_cases)
+    number_successes = number_test_cases - number_failures - number_suppressed
+    number_surprises = len(self.surprises)
+    print('\nTest cases executed:', number_test_cases)
+    print('  Successes:', number_successes)
+    print('  Suppressed:', number_suppressed)
+    print('  Surprises:', number_surprises)
+    print('  Failures:', number_failures)
+    if self.IsSkiaGoldEnabled():
+      number_gold_failures = len(self.skia_gold_failures)
+      number_gold_successes = len(self.skia_gold_successes)
+      number_gold_surprises = len(self.skia_gold_unexpected_successes)
+      number_total_gold_tests = sum(
+          [number_gold_failures, number_gold_successes, number_gold_surprises])
+      print('\nSkia Gold Test cases executed:', number_total_gold_tests)
+      print('  Skia Gold Successes:', number_gold_successes)
+      print('  Skia Gold Surprises:', number_gold_surprises)
+      print('  Skia Gold Failures:', number_gold_failures)
+      skia_tester = self.per_process_state.GetSkiaGoldTester()
+      if self.skia_gold_failures and skia_tester.IsTryjobRun():
+        cl_triage_link = skia_tester.GetCLTriageLink()
+        print('  Triage link for CL:', cl_triage_link)
+        skia_tester.WriteCLTriageLink(cl_triage_link)
+    print()
+    print('Test cases not executed:', len(self.execution_suppressed_cases))
+
+  def SetDeleteOutputOnSuccess(self, new_value):
+    """Set whether to delete generated output if the test passes."""
+    self.per_process_config.delete_output_on_success = new_value
+
+  def SetEnforceExpectedImages(self, new_value):
+    """Set whether to enforce that each test case provide an expected image."""
+    self.per_process_config.enforce_expected_images = new_value
+
+
+def _RunPdfiumTest(test_case):
+  """Runs a PDFium test case."""
+  try:
+    return _per_process_state.GenerateAndTest(test_case)
+  except KeyboardInterrupt as exc:
+    raise KeyboardInterruptError() from exc
+
+
+def _RunSkiaTest(test_case):
+  """Runs a Skia Gold test case."""
+  try:
+    skia_tester = _per_process_state.GetSkiaGoldTester()
+    skia_success = skia_tester.UploadTestResultToSkiaGold(
+        test_case.test_id, test_case.input_path)
+    sys.stdout.flush()
+
+    return test_case.NewResult(
+        result_types.PASS if skia_success else result_types.FAIL)
+  except KeyboardInterrupt as exc:
+    raise KeyboardInterruptError() from exc
+
+
+# `_PerProcessState` singleton. This is initialized when creating the
+# `multiprocessing.Pool()`. `TestRunner.Run()` creates its own separate
+# instance of `_PerProcessState` as well.
+_per_process_state = None
+
+
+def _InitializePerProcessState(config):
+  """Initializes the `_per_process_state` singleton."""
+  global _per_process_state
+  assert not _per_process_state
+  _per_process_state = _PerProcessState(config)
+
+
+@dataclass
+class _PerProcessConfig:
+  """Configuration for initializing `_PerProcessState`.
+
+  Attributes:
+    test_dir: The name of the test directory.
+    test_type: The test type.
+    delete_output_on_success: Whether to delete output on success.
+    enforce_expected_images: Whether to enforce expected images.
+    options: The dictionary of command line options.
+    features: The list of features supported by `pdfium_test`.
+  """
+  test_dir: str
+  test_type: str
+  delete_output_on_success: bool = False
+  enforce_expected_images: bool = False
+  options: dict = None
+  features: list = None
+
+  def NewFinder(self):
+    return common.DirectoryFinder(self.options.build_dir)
+
+  def GetPdfiumTestPath(self, finder):
+    return finder.ExecutablePath('pdfium_test')
+
+  def InitializeFeatures(self, pdfium_test_path):
+    output = subprocess.check_output([pdfium_test_path, '--show-config'])
+    self.features = output.decode('utf-8').strip().split(',')
+
+
+class _PerProcessState:
+  """State defined per process."""
+
+  def __init__(self, config):
+    self.test_dir = config.test_dir
+    self.test_type = config.test_type
+    self.delete_output_on_success = config.delete_output_on_success
+    self.enforce_expected_images = config.enforce_expected_images
+    self.options = config.options
+    self.features = config.features
+
+    finder = config.NewFinder()
+    self.pdfium_test_path = config.GetPdfiumTestPath(finder)
+    self.fixup_path = finder.ScriptPath('fixup_pdf_template.py')
+    self.text_diff_path = finder.ScriptPath('text_diff.py')
+    self.font_dir = os.path.join(finder.TestingDir(), 'resources', 'fonts')
+    self.third_party_font_dir = finder.ThirdPartyFontsDir()
+
+    self.source_dir = finder.TestingDir()
+    self.working_dir = finder.WorkingDir(os.path.join('testing', self.test_dir))
+
+    self.test_suppressor = suppressor.Suppressor(
+        finder, self.features, self.options.disable_javascript,
+        self.options.disable_xfa)
+    self.image_differ = pngdiffer.PNGDiffer(finder, self.features,
+                                            self.options.reverse_byte_order)
+
+    self.process_name = multiprocessing.current_process().name
+    self.skia_tester = None
+
+  def __getstate__(self):
+    raise RuntimeError('Cannot pickle per-process state')
+
+  def GetSkiaGoldTester(self):
+    """Gets the `SkiaGoldTester` singleton for this worker."""
+    if not self.skia_tester:
+      self.skia_tester = skia_gold.SkiaGoldTester(
+          source_type=self.test_type,
+          skia_gold_args=self.options,
+          process_name=self.process_name)
+    return self.skia_tester
 
   def GenerateAndTest(self, test_case):
     """Generate test input and run pdfium_test."""
@@ -244,368 +641,6 @@ class TestRunner:
           for image_path, md5_hash in results
       ]
     return raised_exception, results
-
-  def HandleResult(self, test_case, test_result):
-    input_filename = os.path.basename(test_case.input_path)
-
-    if self.test_suppressor.IsResultSuppressed(input_filename):
-      self.result_suppressed_cases.append(input_filename)
-      if test_result.IsPass():
-        self.surprises.append(test_case.input_path)
-
-        # There isn't an actual status for succeeded-but-ignored, so use the
-        # "abort" status to differentiate this from failed-but-ignored.
-        #
-        # Note that this appears as a preliminary failure in Gerrit.
-        result_status = result_types.UNKNOWN
-      else:
-        # There isn't an actual status for failed-but-ignored, so use the
-        # "skip" status to differentiate this from succeeded-but-ignored.
-        result_status = result_types.SKIP
-    else:
-      if test_result.IsPass():
-        result_status = result_types.PASS
-      else:
-        self.failures.append(test_case.input_path)
-        result_status = result_types.FAIL
-
-    if self.resultdb:
-      # TODO(crbug.com/pdfium/1916): Populate more ResultDB fields.
-      self.resultdb.Post(
-          test_id=test_result.test_id,
-          status=result_status,
-          duration=None,
-          test_log=None,
-          test_file=None)
-
-  def Run(self):
-    # Running a test defines a number of attributes on the fly.
-    # pylint: disable=attribute-defined-outside-init
-
-    if self.test_dir == 'corpus':
-      relative_test_dir = self.test_dir
-    else:
-      relative_test_dir = os.path.join('resources', self.test_dir)
-
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        '--build-dir',
-        default=os.path.join('out', 'Debug'),
-        help='relative path from the base source directory')
-
-    parser.add_argument(
-        '-j',
-        default=multiprocessing.cpu_count(),
-        dest='num_workers',
-        type=int,
-        help='run NUM_WORKERS jobs in parallel')
-
-    parser.add_argument(
-        '--disable-javascript',
-        action="store_true",
-        dest="disable_javascript",
-        help='Prevents JavaScript from executing in PDF files.')
-
-    parser.add_argument(
-        '--disable-xfa',
-        action="store_true",
-        dest="disable_xfa",
-        help='Prevents processing XFA forms.')
-
-    parser.add_argument(
-        '--render-oneshot',
-        action="store_true",
-        dest="render_oneshot",
-        help='Sets whether to use the oneshot renderer.')
-
-    parser.add_argument(
-        '--run-skia-gold',
-        action='store_true',
-        default=False,
-        help='When flag is on, skia gold tests will be run.')
-
-    # TODO: Remove when pdfium recipe stops passing this argument
-    parser.add_argument(
-        '--gold_properties',
-        default='',
-        dest="gold_properties",
-        help='Key value pairs that are written to the top level '
-        'of the JSON file that is ingested by Gold.')
-
-    # TODO: Remove when pdfium recipe stops passing this argument
-    parser.add_argument(
-        '--gold_ignore_hashes',
-        default='',
-        dest="gold_ignore_hashes",
-        help='Path to a file with MD5 hashes we wish to ignore.')
-
-    parser.add_argument(
-        '--regenerate_expected',
-        default='',
-        dest="regenerate_expected",
-        help='Regenerates expected images. Valid values are '
-        '"all" to regenerate all expected pngs, and '
-        '"platform" to regenerate only platform-specific '
-        'expected pngs.')
-
-    parser.add_argument(
-        '--reverse-byte-order',
-        action='store_true',
-        dest="reverse_byte_order",
-        help='Run image-based tests using --reverse-byte-order.')
-
-    parser.add_argument(
-        '--ignore_errors',
-        action="store_true",
-        dest="ignore_errors",
-        help='Prevents the return value from being non-zero '
-        'when image comparison fails.')
-
-    parser.add_argument(
-        'inputted_file_paths',
-        nargs='*',
-        help='Path to test files to run, relative to '
-        f'testing/{relative_test_dir}. If omitted, runs all test files under '
-        f'testing/{relative_test_dir}.',
-        metavar='relative/test/path')
-
-    skia_gold.add_skia_gold_args(parser)
-
-    self.options = parser.parse_args()
-
-    if (self.options.regenerate_expected and
-        self.options.regenerate_expected not in ['all', 'platform']):
-      print('FAILURE: --regenerate_expected must be "all" or "platform"')
-      return 1
-
-    finder = common.DirectoryFinder(self.options.build_dir)
-    self.fixup_path = finder.ScriptPath('fixup_pdf_template.py')
-    self.text_diff_path = finder.ScriptPath('text_diff.py')
-    self.font_dir = os.path.join(finder.TestingDir(), 'resources', 'fonts')
-    self.third_party_font_dir = finder.ThirdPartyFontsDir()
-
-    self.source_dir = finder.TestingDir()
-
-    self.pdfium_test_path = finder.ExecutablePath('pdfium_test')
-    if not os.path.exists(self.pdfium_test_path):
-      print("FAILURE: Can't find test executable '{}'".format(
-          self.pdfium_test_path))
-      print('Use --build-dir to specify its location.')
-      return 1
-
-    self.working_dir = finder.WorkingDir(os.path.join('testing', self.test_dir))
-    shutil.rmtree(self.working_dir, ignore_errors=True)
-    os.makedirs(self.working_dir)
-
-    self.features = subprocess.check_output(
-        [self.pdfium_test_path,
-         '--show-config']).decode('utf-8').strip().split(',')
-    self.test_suppressor = suppressor.Suppressor(
-        finder, self.features, self.options.disable_javascript,
-        self.options.disable_xfa)
-    self.image_differ = pngdiffer.PNGDiffer(finder, self.features,
-                                            self.options.reverse_byte_order)
-    error_message = self.image_differ.CheckMissingTools(
-        self.options.regenerate_expected)
-    if error_message:
-      print('FAILURE:', error_message)
-      return 1
-
-    self.resultdb = result_sink.TryInitClient()
-    if self.resultdb:
-      print('Detected ResultSink environment')
-
-    # Collect test cases.
-    walk_from_dir = finder.TestingDir(relative_test_dir)
-
-    self.test_cases = TestCaseManager()
-    self.execution_suppressed_cases = []
-    input_file_re = re.compile('^.+[.](in|pdf)$')
-    if self.options.inputted_file_paths:
-      for file_name in self.options.inputted_file_paths:
-        input_path = os.path.join(walk_from_dir, file_name)
-        if not os.path.isfile(input_path):
-          print(f"Can't find test file '{file_name}'")
-          return 1
-
-        self.test_cases.NewTestCase(input_path)
-    else:
-      for file_dir, _, filename_list in os.walk(walk_from_dir):
-        for input_filename in filename_list:
-          if input_file_re.match(input_filename):
-            input_path = os.path.join(file_dir, input_filename)
-            if self.test_suppressor.IsExecutionSuppressed(input_path):
-              self.execution_suppressed_cases.append(input_path)
-              continue
-            if not os.path.isfile(input_path):
-              continue
-
-            self.test_cases.NewTestCase(input_path)
-
-    # Execute test cases.
-    self.failures = []
-    self.surprises = []
-    self.skia_gold_successes = []
-    self.skia_gold_unexpected_successes = []
-    self.skia_gold_failures = []
-    self.result_suppressed_cases = []
-
-    if self.test_type not in TEXT_TESTS and self.options.run_skia_gold:
-      assert self.options.gold_output_dir
-      # Clear out and create top level gold output directory before starting
-      skia_gold.clear_gold_output_dir(self.options.gold_output_dir)
-
-    per_process_state_args = [self.test_type, self.options]
-    per_process_state = _PerProcessState(*per_process_state_args)
-    with multiprocessing.Pool(
-        processes=self.options.num_workers,
-        initializer=_InitializePerProcessState,
-        initargs=per_process_state_args) as pool:
-      skia_gold_test_cases = TestCaseManager()
-      for result in pool.imap(
-          _WrapKeyboardInterrupt(self.GenerateAndTest), self.test_cases):
-        self.HandleResult(self.test_cases.GetTestCase(result.test_id), result)
-
-        if self.test_type not in TEXT_TESTS and self.options.run_skia_gold:
-          for artifact in result.image_artifacts:
-            # The output filename without image extension becomes the test ID.
-            # For example, "/path/to/.../testing/corpus/example_005.pdf.0.png"
-            # becomes "example_005.pdf.0".
-            skia_gold_test_cases.NewTestCase(artifact.image_path)
-
-      for result in pool.imap(
-          _WrapKeyboardInterrupt(_RunSkiaTest), skia_gold_test_cases):
-        if result.IsPass():
-          test_case = skia_gold_test_cases.GetTestCase(result.test_id)
-          if self.test_suppressor.IsResultSuppressed(test_case.input_path):
-            self.skia_gold_unexpected_successes.append(result.test_id)
-          else:
-            self.skia_gold_successes.append(result.test_id)
-        else:
-          self.skia_gold_failures.append(result.test_id)
-
-    # Report test results.
-    #
-    # For some reason, summary will be cut off from stdout on windows if
-    # _PrintSummary() is called at the end
-    # TODO(crbug.com/pdfium/1657): Once resolved, move _PrintSummary() back
-    # down to the end
-    self._PrintSummary(per_process_state)
-
-    if self.surprises:
-      self.surprises.sort()
-      print('\nUnexpected Successes:')
-      for surprise in self.surprises:
-        print(surprise)
-
-    if self.failures:
-      self.failures.sort()
-      print('\nSummary of Failures:')
-      for failure in self.failures:
-        print(failure)
-
-    if self.skia_gold_unexpected_successes:
-      self.skia_gold_unexpected_successes.sort()
-      print('\nUnexpected Skia Gold Successes:')
-      for surprise in self.skia_gold_unexpected_successes:
-        print(surprise)
-
-    if self.skia_gold_failures:
-      self.skia_gold_failures.sort()
-      print('\nSummary of Skia Gold Failures:')
-      for failure in self.skia_gold_failures:
-        print(failure)
-
-    if self.failures:
-      if not self.options.ignore_errors:
-        return 1
-
-    return 0
-
-  def _PrintSummary(self, per_process_state):
-    number_test_cases = len(self.test_cases)
-    number_failures = len(self.failures)
-    number_suppressed = len(self.result_suppressed_cases)
-    number_successes = number_test_cases - number_failures - number_suppressed
-    number_surprises = len(self.surprises)
-    print('\nTest cases executed:', number_test_cases)
-    print('  Successes:', number_successes)
-    print('  Suppressed:', number_suppressed)
-    print('  Surprises:', number_surprises)
-    print('  Failures:', number_failures)
-    if self.test_type not in TEXT_TESTS and self.options.run_skia_gold:
-      number_gold_failures = len(self.skia_gold_failures)
-      number_gold_successes = len(self.skia_gold_successes)
-      number_gold_surprises = len(self.skia_gold_unexpected_successes)
-      number_total_gold_tests = sum(
-          [number_gold_failures, number_gold_successes, number_gold_surprises])
-      print('\nSkia Gold Test cases executed:', number_total_gold_tests)
-      print('  Skia Gold Successes:', number_gold_successes)
-      print('  Skia Gold Surprises:', number_gold_surprises)
-      print('  Skia Gold Failures:', number_gold_failures)
-      skia_tester = per_process_state.GetSkiaGoldTester()
-      if self.skia_gold_failures and skia_tester.IsTryjobRun():
-        cl_triage_link = skia_tester.GetCLTriageLink()
-        print('  Triage link for CL:', cl_triage_link)
-        skia_tester.WriteCLTriageLink(cl_triage_link)
-    print()
-    print('Test cases not executed:', len(self.execution_suppressed_cases))
-
-  def SetDeleteOutputOnSuccess(self, new_value):
-    """Set whether to delete generated output if the test passes."""
-    self.delete_output_on_success = new_value
-
-  def SetEnforceExpectedImages(self, new_value):
-    """Set whether to enforce that each test case provide an expected image."""
-    self.enforce_expected_images = new_value
-
-
-def _RunSkiaTest(test_case):
-  """Runs a Skia Gold test case."""
-  skia_tester = _per_process_state.GetSkiaGoldTester()
-  skia_success = skia_tester.UploadTestResultToSkiaGold(test_case.test_id,
-                                                        test_case.input_path)
-  sys.stdout.flush()
-
-  return test_case.NewResult(
-      result_types.PASS if skia_success else result_types.FAIL)
-
-
-# `_PerProcessState` singleton. This is initialized when creating the
-# `multiprocessing.Pool()`. `TestRunner.Run()` creates its own separate
-# instance of `_PerProcessState` as well.
-_per_process_state = None
-
-
-def _InitializePerProcessState(test_type, options):
-  """Initializes the `_per_process_state` singleton."""
-  global _per_process_state
-  assert not _per_process_state
-  _per_process_state = _PerProcessState(test_type, options)
-
-
-class _PerProcessState:
-  """State defined per process."""
-
-  def __init__(self, test_type, options):
-    self.test_type = test_type
-    self.options = options
-    self.process_name = multiprocessing.current_process().name
-
-    self.skia_tester = None
-
-  def __getstate__(self):
-    raise RuntimeError('Cannot pickle per-process state')
-
-  def GetSkiaGoldTester(self):
-    """Gets the `SkiaGoldTester` singleton for this worker."""
-    if not self.skia_tester:
-      self.skia_tester = skia_gold.SkiaGoldTester(
-          source_type=self.test_type,
-          skia_gold_args=self.options,
-          process_name=self.process_name)
-    return self.skia_tester
 
 
 @dataclass
