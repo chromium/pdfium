@@ -159,7 +159,12 @@ def pdfium_internal_builder(name, bucket):
         triggered_by = ["pdfium-gitiles-trigger"]
     else:
         dimensions.update({"pool": "luci.flex.try"})
-        properties.update({"builder_group": "tryserver.client.pdfium"})
+        properties.update({
+            "builder_group": "tryserver.client.pdfium",
+
+            # TODO(crbug.com/pdfium/1664): Re-enable Skia Gold on CQ.
+            "run_skia_gold": False,
+        })
         service_account = "pdfium-try-builder@chops-service-accounts.iam.gserviceaccount.com"
 
     # Set configs depending on the OS.
