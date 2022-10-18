@@ -67,3 +67,12 @@ FX_ARGB CPDF_RenderOptions::TranslateObjectColor(
 uint32_t CPDF_RenderOptions::GetCacheSizeLimit() const {
   return kCacheSizeLimitBytes;
 }
+
+bool CPDF_RenderOptions::CheckOCGDictVisible(const CPDF_Dictionary* pOC) const {
+  return !m_pOCContext || m_pOCContext->CheckOCGDictVisible(pOC);
+}
+
+bool CPDF_RenderOptions::CheckPageObjectVisible(
+    const CPDF_PageObject* pPageObj) const {
+  return !m_pOCContext || m_pOCContext->CheckPageObjectVisible(pPageObj);
+}

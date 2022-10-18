@@ -198,13 +198,13 @@ bool CPDF_ImageRenderer::Start(CPDF_ImageObject* pImageObject,
   m_BlendType = blendType;
   m_mtObj2Device = mtObj2Device;
   RetainPtr<const CPDF_Dictionary> pOC = m_pImageObject->GetImage()->GetOC();
-  if (pOC && GetRenderOptions().GetOCContext() &&
-      !GetRenderOptions().GetOCContext()->CheckOCGVisible(pOC)) {
+  if (pOC && !GetRenderOptions().CheckOCGDictVisible(pOC))
     return false;
-  }
+
   m_ImageMatrix = m_pImageObject->matrix() * mtObj2Device;
   if (StartLoadDIBBase())
     return true;
+
   return StartRenderDIBBase();
 }
 

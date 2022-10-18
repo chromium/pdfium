@@ -172,13 +172,13 @@ bool CPDF_OCContext::GetOCGVisible(const CPDF_Dictionary* pOCGDict) const {
   return bState;
 }
 
-bool CPDF_OCContext::CheckObjectVisible(const CPDF_PageObject* pObj) const {
+bool CPDF_OCContext::CheckPageObjectVisible(const CPDF_PageObject* pObj) const {
   const CPDF_ContentMarks* pMarks = pObj->GetContentMarks();
   for (size_t i = 0; i < pMarks->CountItems(); ++i) {
     const CPDF_ContentMarkItem* item = pMarks->GetItem(i);
     if (item->GetName() == "OC" &&
         item->GetParamType() == CPDF_ContentMarkItem::kPropertiesDict &&
-        !CheckOCGVisible(item->GetParam().Get())) {
+        !CheckOCGDictVisible(item->GetParam().Get())) {
       return false;
     }
   }
@@ -269,7 +269,8 @@ bool CPDF_OCContext::LoadOCMDState(const CPDF_Dictionary* pOCMDDict) const {
   return !bValidEntrySeen || bState;
 }
 
-bool CPDF_OCContext::CheckOCGVisible(const CPDF_Dictionary* pOCGDict) const {
+bool CPDF_OCContext::CheckOCGDictVisible(
+    const CPDF_Dictionary* pOCGDict) const {
   if (!pOCGDict)
     return true;
 

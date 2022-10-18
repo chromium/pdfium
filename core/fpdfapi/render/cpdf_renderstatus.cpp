@@ -255,8 +255,7 @@ void CPDF_RenderStatus::RenderSingleObject(CPDF_PageObject* pObj,
     return;
   }
   m_pCurObj = pObj;
-  if (m_Options.GetOCContext() &&
-      !m_Options.GetOCContext()->CheckObjectVisible(pObj)) {
+  if (!m_Options.CheckPageObjectVisible(pObj)) {
     return;
   }
   ProcessClipPath(pObj->m_ClipPath, mtObj2Device);
@@ -283,10 +282,8 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
   }
 
   m_pCurObj = pObj;
-  if (m_Options.GetOCContext() &&
-      !m_Options.GetOCContext()->CheckObjectVisible(pObj)) {
+  if (!m_Options.CheckPageObjectVisible(pObj))
     return false;
-  }
 
   ProcessClipPath(pObj->m_ClipPath, mtObj2Device);
   if (ProcessTransparency(pObj, mtObj2Device))
@@ -395,10 +392,9 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
 #endif
   RetainPtr<const CPDF_Dictionary> pOC =
       pFormObj->form()->GetDict()->GetDictFor("OC");
-  if (pOC && m_Options.GetOCContext() &&
-      !m_Options.GetOCContext()->CheckOCGVisible(pOC.Get())) {
+  if (pOC && !m_Options.CheckOCGDictVisible(pOC.Get()))
     return true;
-  }
+
   CFX_Matrix matrix = pFormObj->form_matrix() * mtObj2Device;
   RetainPtr<const CPDF_Dictionary> pResources =
       pFormObj->form()->GetDict()->GetDictFor("Resources");

@@ -14,6 +14,8 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
 
+class CPDF_Dictionary;
+
 class CPDF_RenderOptions {
  public:
   enum Type : uint8_t { kNormal = 0, kGray, kAlpha, kForcedColor };
@@ -64,6 +66,8 @@ class CPDF_RenderOptions {
   Options& GetOptions() { return m_Options; }
 
   uint32_t GetCacheSizeLimit() const;
+  bool CheckOCGDictVisible(const CPDF_Dictionary* pOC) const;
+  bool CheckPageObjectVisible(const CPDF_PageObject* pPageObj) const;
 
   void SetDrawAnnots(bool draw) { m_bDrawAnnots = draw; }
   bool GetDrawAnnots() const { return m_bDrawAnnots; }
@@ -71,7 +75,6 @@ class CPDF_RenderOptions {
   void SetOCContext(RetainPtr<CPDF_OCContext> context) {
     m_pOCContext = context;
   }
-  const CPDF_OCContext* GetOCContext() const { return m_pOCContext.Get(); }
 
  private:
   Type m_ColorMode = kNormal;
