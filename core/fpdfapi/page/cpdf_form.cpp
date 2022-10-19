@@ -78,7 +78,7 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
 
   if (GetParseState() == ParseState::kNotParsed) {
     StartParse(std::make_unique<CPDF_ContentParser>(
-        this, pGraphicStates, pParentMatrix, pType3Char,
+        GetStream(), this, pGraphicStates, pParentMatrix, pType3Char,
         pParsedSet ? pParsedSet : &m_ParsedSet));
   }
   DCHECK_EQ(GetParseState(), ParseState::kParsing);

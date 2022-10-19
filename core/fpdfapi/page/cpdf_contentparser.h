@@ -21,7 +21,6 @@
 
 class CPDF_AllStates;
 class CPDF_Array;
-class CPDF_Form;
 class CPDF_Page;
 class CPDF_PageObjectHolder;
 class CPDF_Stream;
@@ -32,7 +31,8 @@ class PauseIndicatorIface;
 class CPDF_ContentParser {
  public:
   explicit CPDF_ContentParser(CPDF_Page* pPage);
-  CPDF_ContentParser(CPDF_Form* pForm,
+  CPDF_ContentParser(RetainPtr<const CPDF_Stream> pStream,
+                     CPDF_PageObjectHolder* pPageObjectHolder,
                      const CPDF_AllStates* pGraphicStates,
                      const CFX_Matrix* pParentMatrix,
                      CPDF_Type3Char* pType3Char,
@@ -77,7 +77,7 @@ class CPDF_ContentParser {
   pdfium::span<const uint8_t> GetData() const;
 
   Stage m_CurrentStage;
-  UnownedPtr<CPDF_PageObjectHolder> const m_pObjectHolder;
+  UnownedPtr<CPDF_PageObjectHolder> const m_pPageObjectHolder;
   UnownedPtr<CPDF_Type3Char> m_pType3Char;  // Only used when parsing forms.
   RetainPtr<CPDF_StreamAcc> m_pSingleStream;
   std::vector<RetainPtr<CPDF_StreamAcc>> m_StreamArray;
