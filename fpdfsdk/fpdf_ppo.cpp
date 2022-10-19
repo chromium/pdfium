@@ -815,6 +815,7 @@ FPDF_NewFormObjectFromXObject(FPDF_XOBJECT xobject) {
   constexpr int kNoContentStream = CPDF_PageObject::kNoContentStream;
   auto form = std::make_unique<CPDF_Form>(xobj->dest_doc, nullptr,
                                           xobj->xobject, nullptr);
+  form->ParseContent(nullptr, nullptr, nullptr);
   auto form_object = std::make_unique<CPDF_FormObject>(
       kNoContentStream, std::move(form), CFX_Matrix());
   return FPDFPageObjectFromCPDFPageObject(form_object.release());

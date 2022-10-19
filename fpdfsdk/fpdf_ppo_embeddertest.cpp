@@ -194,22 +194,19 @@ TEST_F(FPDFPPOEmbedderTest, ImportPageToXObject) {
       FPDFPage_InsertObject(page.get(), page_object);
       EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
 
-      // TODO(thestig): This should have `checksum`.
       ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
-      CompareBitmap(page_bitmap.get(), 612, 792,
-                    pdfium::kBlankPage612By792Checksum);
+      CompareBitmap(page_bitmap.get(), 612, 792, checksum);
 
-      // TODO(crbug.com/pdfium/1905): These should have non-zero values.
       float left;
       float bottom;
       float right;
       float top;
       ASSERT_TRUE(
           FPDFPageObj_GetBounds(page_object, &left, &bottom, &right, &top));
-      EXPECT_FLOAT_EQ(0.0f, left);
-      EXPECT_FLOAT_EQ(0.0f, bottom);
-      EXPECT_FLOAT_EQ(0.0f, right);
-      EXPECT_FLOAT_EQ(0.0f, top);
+      EXPECT_FLOAT_EQ(-1.0f, left);
+      EXPECT_FLOAT_EQ(-1.0f, bottom);
+      EXPECT_FLOAT_EQ(201.0f, right);
+      EXPECT_FLOAT_EQ(301.0f, top);
     }
 
     EXPECT_TRUE(FPDF_SaveAsCopy(output_doc.get(), this, 0));
@@ -301,9 +298,8 @@ TEST_F(FPDFPPOEmbedderTest, ImportPageToXObjectWithSameDoc) {
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
 
   {
-    // TODO(thestig): This should have `checksum`.
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    CompareBitmap(bitmap.get(), 200, 300, pdfium::RectanglesChecksum());
+    CompareBitmap(bitmap.get(), 200, 300, checksum);
   }
 
   FPDF_CloseXObject(xobject);
