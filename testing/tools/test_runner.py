@@ -14,6 +14,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 
 import common
 import pdfium_root
@@ -100,7 +101,7 @@ class TestRunner:
       self.resultdb.Post(
           test_id=test_result.test_id,
           status=result_status,
-          duration=None,
+          duration=test_result.duration_milliseconds,
           test_log=None,
           test_file=None)
 
@@ -370,7 +371,9 @@ class TestRunner:
 def _RunPdfiumTest(test_case):
   """Runs a PDFium test case."""
   try:
-    return _per_process_state.GenerateAndTest(test_case)
+    with _TestTimer() as timer:
+      timer.result = _per_process_state.GenerateAndTest(test_case)
+      return timer.result
   except KeyboardInterrupt as exc:
     raise KeyboardInterruptError() from exc
 
@@ -666,10 +669,12 @@ class TestResult:
   Attributes:
     test_id: The corresponding test case ID.
     status: The overall `result_types` status.
+    duration_milliseconds: Test time in milliseconds.
     image_artfacts: Optional list of image artifacts.
   """
   test_id: str
   status: str
+  duration_milliseconds: float = None
   image_artifacts: list = None
 
   def IsPass(self):
@@ -716,3 +721,19 @@ class TestCaseManager:
   def GetTestCase(self, test_id):
     """Looks up a test case previously registered by `NewTestCase()`."""
     return self.test_cases[test_id]
+
+
+class _TestTimer:
+  """Context manager for measuring the duration of a test."""
+
+  def __init__(self):
+    self.duration_start = 0
+    self.result = None
+
+  def __enter__(self):
+    self.duration_start = time.perf_counter_ns()
+    return self
+
+  def __exit__(self, exc_type, exc_value, traceback):
+    duration = time.perf_counter_ns() - self.duration_start
+    self.result.duration_milliseconds = duration * 1e-6
