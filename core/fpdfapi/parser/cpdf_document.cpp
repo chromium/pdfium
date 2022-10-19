@@ -17,6 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
 #include "core/fxcrt/fx_codepage.h"
@@ -386,6 +387,17 @@ uint32_t CPDF_Document::GetUserPermissions() const {
     return m_pParser->GetPermissions();
 
   return m_pExtension ? m_pExtension->GetUserPermissions() : 0;
+}
+
+RetainPtr<CPDF_StreamAcc> CPDF_Document::GetFontFileStreamAcc(
+    RetainPtr<const CPDF_Stream> pFontStream) {
+  return m_pDocPage->GetFontFileStreamAcc(std::move(pFontStream));
+}
+
+void CPDF_Document::MaybePurgeFontFileStreamAcc(
+    RetainPtr<CPDF_StreamAcc>&& pStreamAcc) {
+  if (m_pDocPage)
+    m_pDocPage->MaybePurgeFontFileStreamAcc(std::move(pStreamAcc));
 }
 
 void CPDF_Document::CreateNewDoc() {

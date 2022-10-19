@@ -106,6 +106,11 @@ class CPDF_Document : public Observable,
   int GetPageIndex(uint32_t objnum);
   uint32_t GetUserPermissions() const;
 
+  // PageDataIface wrappers, try to avoid explicit getter calls.
+  RetainPtr<CPDF_StreamAcc> GetFontFileStreamAcc(
+      RetainPtr<const CPDF_Stream> pFontStream);
+  void MaybePurgeFontFileStreamAcc(RetainPtr<CPDF_StreamAcc>&& pStreamAcc);
+
   // Returns a valid pointer, unless it is called during destruction.
   PageDataIface* GetPageData() const { return m_pDocPage.get(); }
   RenderDataIface* GetRenderData() const { return m_pDocRender.get(); }

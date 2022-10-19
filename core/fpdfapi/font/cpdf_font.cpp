@@ -55,11 +55,8 @@ CPDF_Font::CPDF_Font(CPDF_Document* pDocument,
       m_BaseFontName(m_pFontDict->GetByteStringFor("BaseFont")) {}
 
 CPDF_Font::~CPDF_Font() {
-  if (m_pFontFile) {
-    auto* pPageData = m_pDocument->GetPageData();
-    if (pPageData)
-      pPageData->MaybePurgeFontFileStreamAcc(std::move(m_pFontFile));
-  }
+  if (m_pFontFile)
+    m_pDocument->MaybePurgeFontFileStreamAcc(std::move(m_pFontFile));
 }
 
 bool CPDF_Font::IsType1Font() const {
@@ -209,13 +206,12 @@ void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* pFontDesc) {
     return;
 
   const uint64_t key = pFontFile->KeyForCache();
-  auto* pData = m_pDocument->GetPageData();
-  m_pFontFile = pData->GetFontFileStreamAcc(std::move(pFontFile));
+  m_pFontFile = m_pDocument->GetFontFileStreamAcc(std::move(pFontFile));
   if (!m_pFontFile)
     return;
 
   if (!m_Font.LoadEmbedded(m_pFontFile->GetSpan(), IsVertWriting(), key))
-    pData->MaybePurgeFontFileStreamAcc(std::move(m_pFontFile));
+    m_pDocument->MaybePurgeFontFileStreamAcc(std::move(m_pFontFile));
 }
 
 void CPDF_Font::CheckFontMetrics() {
