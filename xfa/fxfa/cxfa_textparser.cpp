@@ -196,7 +196,7 @@ RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateStyle(
 
 RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::ComputeStyle(
     const CFX_XMLNode* pXMLNode,
-    const CFX_CSSComputedStyle* pParentStyle) {
+    RetainPtr<const CFX_CSSComputedStyle> pParentStyle) {
   auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
   if (it == m_mapXMLNodeToParseContext.end())
     return nullptr;
@@ -634,8 +634,8 @@ CXFA_TextParser::Context::Context() = default;
 CXFA_TextParser::Context::~Context() = default;
 
 void CXFA_TextParser::Context::SetParentStyle(
-    const CFX_CSSComputedStyle* style) {
-  m_pParentStyle.Reset(style);
+    RetainPtr<const CFX_CSSComputedStyle> style) {
+  m_pParentStyle = std::move(style);
 }
 
 void CXFA_TextParser::Context::SetDecls(

@@ -139,7 +139,7 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
   bool LoadRichText(const CFX_XMLNode* pXMLNode,
                     float textWidth,
                     float* pLinePos,
-                    const RetainPtr<CFX_CSSComputedStyle>& pParentStyle,
+                    RetainPtr<CFX_CSSComputedStyle> pParentStyle,
                     bool bSavePieces,
                     RetainPtr<CFGAS_LinkUserData> pLinkData,
                     bool bEndBreak,

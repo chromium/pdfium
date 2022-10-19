@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "core/fxcrt/css/cfx_css.h"
+#include "core/fxcrt/css/cfx_csscomputedstyle.h"
 #include "core/fxcrt/css/cfx_cssdeclaration.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/widestring.h"
@@ -24,7 +25,6 @@
 #include "xfa/fxfa/fxfa_basic.h"
 
 class CFGAS_GEFont;
-class CFX_CSSComputedStyle;
 class CFX_CSSStyleSelector;
 class CFX_CSSStyleSheet;
 class CFX_XMLNode;
@@ -39,9 +39,9 @@ class CXFA_TextParser : public cppgc::GarbageCollected<CXFA_TextParser> {
     Context();
     ~Context();
 
-    void SetParentStyle(const CFX_CSSComputedStyle* style);
-    const CFX_CSSComputedStyle* GetParentStyle() const {
-      return m_pParentStyle.Get();
+    void SetParentStyle(RetainPtr<const CFX_CSSComputedStyle> style);
+    RetainPtr<const CFX_CSSComputedStyle> GetParentStyle() const {
+      return m_pParentStyle;
     }
 
     void SetDisplay(CFX_CSSDisplay eDisplay) { m_eDisplay = eDisplay; }
@@ -71,7 +71,7 @@ class CXFA_TextParser : public cppgc::GarbageCollected<CXFA_TextParser> {
       CXFA_TextProvider* pTextProvider);
   RetainPtr<CFX_CSSComputedStyle> ComputeStyle(
       const CFX_XMLNode* pXMLNode,
-      const CFX_CSSComputedStyle* pParentStyle);
+      RetainPtr<const CFX_CSSComputedStyle> pParentStyle);
 
   bool IsParsed() const { return m_bParsed; }
 
