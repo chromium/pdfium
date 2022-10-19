@@ -148,7 +148,8 @@ void CPDF_PageContentGenerator::UpdateContentStreams(
   if (new_stream_data.empty())
     return;
 
-  CPDF_PageContentManager page_content_manager(m_pObjHolder.Get());
+  CPDF_PageContentManager page_content_manager(m_pObjHolder.Get(),
+                                               m_pDocument.Get());
 
   for (auto& pair : new_stream_data) {
     int32_t stream_index = pair.first;

@@ -12,13 +12,14 @@
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Array;
-class CPDF_Document;
-class CPDF_Stream;
+class CPDF_IndirectObjectHolder;
 class CPDF_PageObjectHolder;
+class CPDF_Stream;
 
 class CPDF_PageContentManager {
  public:
-  explicit CPDF_PageContentManager(CPDF_PageObjectHolder* obj_holder);
+  CPDF_PageContentManager(CPDF_PageObjectHolder* page_obj_holder,
+                          CPDF_IndirectObjectHolder* indirect_obj_holder);
   ~CPDF_PageContentManager();
 
   // Gets the Content stream at a given index. If Contents is a single stream
@@ -39,8 +40,8 @@ class CPDF_PageContentManager {
   void ExecuteScheduledRemovals();
 
  private:
-  UnownedPtr<CPDF_PageObjectHolder> const obj_holder_;
-  UnownedPtr<CPDF_Document> const doc_;
+  UnownedPtr<CPDF_PageObjectHolder> const page_obj_holder_;
+  UnownedPtr<CPDF_IndirectObjectHolder> const indirect_obj_holder_;
   RetainPtr<CPDF_Array> contents_array_;
   RetainPtr<CPDF_Stream> contents_stream_;
   std::set<size_t> streams_to_remove_;
