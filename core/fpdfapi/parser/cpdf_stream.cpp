@@ -211,7 +211,7 @@ bool CPDF_Stream::WriteTo(IFX_ArchiveStream* archive,
   return archive->WriteString("\r\nendstream");
 }
 
-const uint8_t* CPDF_Stream::GetInMemoryRawData() const {
+pdfium::span<const uint8_t> CPDF_Stream::GetInMemoryRawData() const {
   DCHECK(IsMemoryBased());
-  return m_pDataBuf.get();
+  return pdfium::make_span(m_pDataBuf.get(), GetRawSize());
 }
