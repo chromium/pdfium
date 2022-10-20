@@ -400,6 +400,11 @@ void CPDF_Document::MaybePurgeFontFileStreamAcc(
     m_pDocPage->MaybePurgeFontFileStreamAcc(std::move(pStreamAcc));
 }
 
+void CPDF_Document::MaybePurgeImage(uint32_t objnum) {
+  if (m_pDocPage)
+    m_pDocPage->MaybePurgeImage(objnum);
+}
+
 void CPDF_Document::CreateNewDoc() {
   DCHECK(!m_pRootDict);
   DCHECK(!m_pInfoDict);

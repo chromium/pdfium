@@ -82,8 +82,8 @@ void CPDF_ImageObject::MaybePurgeCache() {
   if (!m_pImage)
     return;
 
-  auto* pPageData = CPDF_DocPageData::FromDocument(m_pImage->GetDocument());
-  if (!pPageData)
+  auto* pDoc = m_pImage->GetDocument();
+  if (!pDoc)
     return;
 
   RetainPtr<const CPDF_Stream> pStream = m_pImage->GetStream();
@@ -95,5 +95,5 @@ void CPDF_ImageObject::MaybePurgeCache() {
     return;
 
   m_pImage.Reset();  // Clear my reference before asking the cache.
-  pPageData->MaybePurgeImage(objnum);
+  pDoc->MaybePurgeImage(objnum);
 }

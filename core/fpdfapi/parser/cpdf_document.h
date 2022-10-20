@@ -55,6 +55,7 @@ class CPDF_Document : public Observable,
         RetainPtr<const CPDF_Stream> pFontStream) = 0;
     virtual void MaybePurgeFontFileStreamAcc(
         RetainPtr<CPDF_StreamAcc>&& pStreamAcc) = 0;
+    virtual void MaybePurgeImage(uint32_t objnum) = 0;
 
     void SetDocument(CPDF_Document* pDoc) { m_pDoc = pDoc; }
 
@@ -110,6 +111,7 @@ class CPDF_Document : public Observable,
   RetainPtr<CPDF_StreamAcc> GetFontFileStreamAcc(
       RetainPtr<const CPDF_Stream> pFontStream);
   void MaybePurgeFontFileStreamAcc(RetainPtr<CPDF_StreamAcc>&& pStreamAcc);
+  void MaybePurgeImage(uint32_t objnum);
 
   // Returns a valid pointer, unless it is called during destruction.
   PageDataIface* GetPageData() const { return m_pDocPage.get(); }

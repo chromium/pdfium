@@ -44,6 +44,7 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
       RetainPtr<const CPDF_Stream> pFontStream) override;
   void MaybePurgeFontFileStreamAcc(
       RetainPtr<CPDF_StreamAcc>&& pStreamAcc) override;
+  void MaybePurgeImage(uint32_t dwStreamObjNum) override;
 
   // CPDF_Font::FormFactoryIFace:
   std::unique_ptr<CPDF_Font::FormIface> CreateForm(
@@ -82,7 +83,6 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
                                             const CFX_Matrix& matrix);
 
   RetainPtr<CPDF_Image> GetImage(uint32_t dwStreamObjNum);
-  void MaybePurgeImage(uint32_t dwStreamObjNum);
 
   RetainPtr<CPDF_IccProfile> GetIccProfile(
       RetainPtr<const CPDF_Stream> pProfileStream);
