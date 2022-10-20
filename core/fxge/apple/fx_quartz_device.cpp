@@ -6,6 +6,8 @@
 
 #include "core/fxge/apple/fx_quartz_device.h"
 
+#include <CoreGraphics/CoreGraphics.h>
+
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_path.h"

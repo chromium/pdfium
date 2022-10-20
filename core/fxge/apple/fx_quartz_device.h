@@ -7,7 +7,7 @@
 #ifndef CORE_FXGE_APPLE_FX_QUARTZ_DEVICE_H_
 #define CORE_FXGE_APPLE_FX_QUARTZ_DEVICE_H_
 
-#include <Carbon/Carbon.h>
+#include <CoreGraphics/CoreGraphics.h>
 #include <stdint.h>
 
 #include "core/fxcrt/retain_ptr.h"
