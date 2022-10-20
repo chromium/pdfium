@@ -53,8 +53,7 @@ class CPDF_Stream final : public CPDF_Object {
   void SetDataAndRemoveFilter(pdfium::span<const uint8_t> pData);
   void SetDataFromStringstreamAndRemoveFilter(fxcrt::ostringstream* stream);
 
-  void InitStream(pdfium::span<const uint8_t> pData,
-                  RetainPtr<CPDF_Dictionary> pDict);
+  void InitStreamWithEmptyData(RetainPtr<CPDF_Dictionary> pDict);
   void InitStreamFromFile(RetainPtr<IFX_SeekableReadStream> pFile,
                           RetainPtr<CPDF_Dictionary> pDict);
 

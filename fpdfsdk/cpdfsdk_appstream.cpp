@@ -1862,7 +1862,7 @@ void CPDFSDK_AppStream::Write(const ByteString& sAPType,
         pStreamDict->SetFor("Resources", pResources->Clone());
     }
 
-    pStream->InitStream({}, pStreamDict);
+    pStream->InitStreamWithEmptyData(pStreamDict);
   }
   pStreamDict->SetMatrixFor("Matrix", widget_->GetMatrix());
   pStreamDict->SetRectFor("BBox", widget_->GetRotatedRect());

@@ -307,7 +307,7 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
   RetainPtr<CPDF_Dictionary> pStreamDict = pStream->GetMutableDict();
   if (!pStreamDict) {
     pStreamDict = m_pDocument->New<CPDF_Dictionary>();
-    pStream->InitStream({}, pStreamDict);
+    pStream->InitStreamWithEmptyData(pStreamDict);
   }
 
   RetainPtr<CPDF_Dictionary> pStreamResList =
