@@ -960,8 +960,7 @@ TEST(PDFObjectTest, CloneCheckLoop) {
   {
     // Create a dictionary/stream pair with a reference loop.
     auto dict_obj = pdfium::MakeRetain<CPDF_Dictionary>();
-    auto stream_obj =
-        dict_obj->SetNewFor<CPDF_Stream>("stream", nullptr, 0, dict_obj);
+    auto stream_obj = dict_obj->SetNewFor<CPDF_Stream>("stream", dict_obj);
     // Clone this object to see whether stack overflow will be triggered.
     RetainPtr<CPDF_Stream> cloned_stream = ToStream(stream_obj->Clone());
     // Cloned object should be the same as the original.

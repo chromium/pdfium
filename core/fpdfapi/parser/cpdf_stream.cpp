@@ -38,6 +38,9 @@ bool IsMetaDataStreamDictionary(const CPDF_Dictionary* dict) {
 
 CPDF_Stream::CPDF_Stream() = default;
 
+CPDF_Stream::CPDF_Stream(RetainPtr<CPDF_Dictionary> pDict)
+    : CPDF_Stream(DataVector<uint8_t>(), std::move(pDict)) {}
+
 CPDF_Stream::CPDF_Stream(pdfium::span<const uint8_t> pData,
                          RetainPtr<CPDF_Dictionary> pDict)
     : dict_(std::move(pDict)) {

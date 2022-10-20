@@ -385,8 +385,8 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
 TEST_F(CPDF_PageContentGeneratorTest, ProcessEmptyForm) {
   auto pDoc = std::make_unique<CPDF_TestDocument>();
   pDoc->CreateNewDoc();
-  auto pDict = pdfium::MakeRetain<CPDF_Dictionary>();
-  auto pStream = pdfium::MakeRetain<CPDF_Stream>(nullptr, 0, std::move(pDict));
+  auto pStream =
+      pdfium::MakeRetain<CPDF_Stream>(pdfium::MakeRetain<CPDF_Dictionary>());
 
   // Create an empty form.
   auto pTestForm = std::make_unique<CPDF_Form>(pDoc.get(), nullptr, pStream);
