@@ -96,6 +96,16 @@ class TestRunner:
         self.failures.append(test_case.input_path)
         result_status = result_types.FAIL
 
+    if test_result.image_artifacts:
+      for artifact in test_result.image_artifacts:
+        if artifact.skia_gold_status == result_types.PASS:
+          if self.IsResultSuppressed(artifact.image_path):
+            self.skia_gold_unexpected_successes.append(artifact.GetSkiaGoldId())
+          else:
+            self.skia_gold_successes.append(artifact.GetSkiaGoldId())
+        elif artifact.skia_gold_status == result_types.FAIL:
+          self.skia_gold_failures.append(artifact.GetSkiaGoldId())
+
     if self.resultdb:
       # TODO(crbug.com/pdfium/1916): Populate more ResultDB fields.
       self.resultdb.Post(
@@ -271,26 +281,8 @@ class TestRunner:
         processes=self.options.num_workers,
         initializer=_InitializePerProcessState,
         initargs=[self.per_process_config]) as pool:
-      skia_gold_test_cases = TestCaseManager()
       for result in pool.imap(_RunPdfiumTest, self.test_cases):
         self.HandleResult(self.test_cases.GetTestCase(result.test_id), result)
-
-        if self.IsSkiaGoldEnabled():
-          for artifact in result.image_artifacts:
-            # The output filename without image extension becomes the test ID.
-            # For example, "/path/to/.../testing/corpus/example_005.pdf.0.png"
-            # becomes "example_005.pdf.0".
-            skia_gold_test_cases.NewTestCase(artifact.image_path)
-
-      for result in pool.imap(_RunSkiaTest, skia_gold_test_cases):
-        if result.IsPass():
-          test_case = skia_gold_test_cases.GetTestCase(result.test_id)
-          if self.IsResultSuppressed(test_case.input_path):
-            self.skia_gold_unexpected_successes.append(result.test_id)
-          else:
-            self.skia_gold_successes.append(result.test_id)
-        else:
-          self.skia_gold_failures.append(result.test_id)
 
     # Report test results.
     #
@@ -374,20 +366,6 @@ def _RunPdfiumTest(test_case):
     with _TestTimer() as timer:
       timer.result = _per_process_state.GenerateAndTest(test_case)
       return timer.result
-  except KeyboardInterrupt as exc:
-    raise KeyboardInterruptError() from exc
-
-
-def _RunSkiaTest(test_case):
-  """Runs a Skia Gold test case."""
-  try:
-    skia_tester = _per_process_state.GetSkiaGoldTester()
-    skia_success = skia_tester.UploadTestResultToSkiaGold(
-        test_case.test_id, test_case.input_path)
-    sys.stdout.flush()
-
-    return test_case.NewResult(
-        result_types.PASS if skia_success else result_types.FAIL)
   except KeyboardInterrupt as exc:
     raise KeyboardInterruptError() from exc
 
@@ -640,10 +618,22 @@ class _PerProcessState:
     raised_exception, results = common.RunCommandExtractHashedFiles(cmd_to_run)
     if results:
       results = [
-          ImageArtifact(image_path=image_path, md5_hash=md5_hash)
+          self._NewImageArtifact(image_path=image_path, md5_hash=md5_hash)
           for image_path, md5_hash in results
       ]
     return raised_exception, results
+
+  def _NewImageArtifact(self, *, image_path, md5_hash):
+    artifact = ImageArtifact(image_path=image_path, md5_hash=md5_hash)
+
+    if self.options.run_skia_gold:
+      if self.GetSkiaGoldTester().UploadTestResultToSkiaGold(
+          artifact.GetSkiaGoldId(), artifact.image_path):
+        artifact.skia_gold_status = result_types.PASS
+      else:
+        artifact.skia_gold_status = result_types.FAIL
+
+    return artifact
 
 
 @dataclass
@@ -689,9 +679,17 @@ class ImageArtifact:
   Attributes:
     image_path: The absolute path to the image file.
     md5_hash: The MD5 hash of the pixel buffer.
+    skia_gold_status: Optional Skia Gold status.
   """
   image_path: str
   md5_hash: str
+  skia_gold_status: str = None
+
+  def GetSkiaGoldId(self):
+    # The output filename without image extension becomes the test ID. For
+    # example, "/path/to/.../testing/corpus/example_005.pdf.0.png" becomes
+    # "example_005.pdf.0".
+    return _GetTestId(os.path.basename(self.image_path))
 
 
 class TestCaseManager:
@@ -709,7 +707,7 @@ class TestCaseManager:
   def NewTestCase(self, input_path, **kwargs):
     """Creates and registers a new test case."""
     input_basename = os.path.basename(input_path)
-    test_id, _ = os.path.splitext(input_basename)
+    test_id = _GetTestId(input_basename)
     if test_id in self.test_cases:
       raise ValueError(
           f'Test ID "{test_id}" derived from "{input_basename}" must be unique')
@@ -721,6 +719,11 @@ class TestCaseManager:
   def GetTestCase(self, test_id):
     """Looks up a test case previously registered by `NewTestCase()`."""
     return self.test_cases[test_id]
+
+
+def _GetTestId(input_basename):
+  """Constructs a test ID by stripping the last extension from the basename."""
+  return os.path.splitext(input_basename)[0]
 
 
 class _TestTimer:
@@ -735,5 +738,7 @@ class _TestTimer:
     return self
 
   def __exit__(self, exc_type, exc_value, traceback):
+    if not self.result:
+      return
     duration = time.perf_counter_ns() - self.duration_start
     self.result.duration_milliseconds = duration * 1e-6
