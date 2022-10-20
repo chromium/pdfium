@@ -26,6 +26,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/span_util.h"
@@ -237,19 +238,18 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       pCS->AppendNew<CPDF_Name>("Indexed");
       pCS->AppendNew<CPDF_Name>("DeviceRGB");
       pCS->AppendNew<CPDF_Number>(static_cast<int>(palette_size - 1));
-      std::unique_ptr<uint8_t, FxFreeDeleter> pColorTable(
-          FX_Alloc2D(uint8_t, palette_size, 3));
-      uint8_t* ptr = pColorTable.get();
+      DataVector<uint8_t> color_table(Fx2DSizeOrDie(palette_size, 3));
+      auto color_table_span = pdfium::make_span(color_table);
       for (size_t i = 0; i < palette_size; i++) {
         uint32_t argb = pBitmap->GetPaletteArgb(i);
-        ptr[0] = FXARGB_R(argb);
-        ptr[1] = FXARGB_G(argb);
-        ptr[2] = FXARGB_B(argb);
-        ptr += 3;
+        color_table_span[0] = FXARGB_R(argb);
+        color_table_span[1] = FXARGB_G(argb);
+        color_table_span[2] = FXARGB_B(argb);
+        color_table_span = color_table_span.subspan(3);
       }
       auto pNewDict = m_pDocument->New<CPDF_Dictionary>();
-      auto pCTS = m_pDocument->NewIndirect<CPDF_Stream>(
-          std::move(pColorTable), palette_size * 3, std::move(pNewDict));
+      auto pCTS = m_pDocument->NewIndirect<CPDF_Stream>(std::move(color_table),
+                                                        std::move(pNewDict));
       pCS->AppendNew<CPDF_Reference>(m_pDocument.Get(), pCTS->GetObjNum());
       pDict->SetNewFor<CPDF_Reference>("ColorSpace", m_pDocument.Get(),
                                        pCS->GetObjNum());
@@ -270,25 +270,24 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     pMaskBitmap = pBitmap->CloneAlphaMask();
 
   if (pMaskBitmap) {
-    int32_t maskWidth = pMaskBitmap->GetWidth();
-    int32_t maskHeight = pMaskBitmap->GetHeight();
-    std::unique_ptr<uint8_t, FxFreeDeleter> mask_buf;
-    int32_t mask_size = 0;
+    const int32_t mask_width = pMaskBitmap->GetWidth();
+    const int32_t mask_height = pMaskBitmap->GetHeight();
+    DataVector<uint8_t> mask_buf;
     RetainPtr<CPDF_Dictionary> pMaskDict =
-        CreateXObjectImageDict(maskWidth, maskHeight);
+        CreateXObjectImageDict(mask_width, mask_height);
     pMaskDict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceGray");
     pMaskDict->SetNewFor<CPDF_Number>("BitsPerComponent", 8);
     if (pMaskBitmap->GetFormat() != FXDIB_Format::k1bppMask) {
-      mask_buf.reset(FX_AllocUninit2D(uint8_t, maskHeight, maskWidth));
-      mask_size = maskHeight * maskWidth;  // Safe since checked alloc returned.
-      for (int32_t a = 0; a < maskHeight; a++) {
-        memcpy(mask_buf.get() + a * maskWidth,
-               pMaskBitmap->GetScanline(a).data(), maskWidth);
+      mask_buf.resize(Fx2DSizeOrDie(mask_width, mask_height));
+      for (int32_t a = 0; a < mask_height; a++) {
+        memcpy(mask_buf.data() + a * mask_width,
+               pMaskBitmap->GetScanline(a).data(), mask_width);
       }
     }
-    pMaskDict->SetNewFor<CPDF_Number>("Length", mask_size);
+    pMaskDict->SetNewFor<CPDF_Number>(
+        "Length", pdfium::base::checked_cast<int>(mask_buf.size()));
     auto pNewStream = m_pDocument->NewIndirect<CPDF_Stream>(
-        std::move(mask_buf), mask_size, std::move(pMaskDict));
+        std::move(mask_buf), std::move(pMaskDict));
     pDict->SetNewFor<CPDF_Reference>("SMask", m_pDocument.Get(),
                                      pNewStream->GetObjNum());
   }

@@ -26,6 +26,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcodec/scanlinedecoder.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -175,13 +176,12 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
     return nullptr;
 
   uint32_t dwOrigSize = size.ValueOrDie();
-  std::unique_ptr<uint8_t, FxFreeDeleter> pData;
+  DataVector<uint8_t> data;
   uint32_t dwStreamSize;
   if (decoder.IsEmpty()) {
     dwOrigSize = std::min<uint32_t>(dwOrigSize, m_pBuf.size() - m_Pos);
-    pData.reset(FX_AllocUninit(uint8_t, dwOrigSize));
-    auto dest_span = pdfium::make_span(pData.get(), dwOrigSize);
-    fxcrt::spancpy(dest_span, m_pBuf.subspan(m_Pos, dwOrigSize));
+    auto src_span = m_pBuf.subspan(m_Pos, dwOrigSize);
+    data = DataVector<uint8_t>(src_span.begin(), src_span.end());
     dwStreamSize = dwOrigSize;
     m_Pos += dwOrigSize;
   } else {
@@ -209,14 +209,12 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
       dwStreamSize += m_Pos - dwPrevPos;
     }
     m_Pos = dwSavePos;
-    pData.reset(FX_AllocUninit(uint8_t, dwStreamSize));
-    auto dest_span = pdfium::make_span(pData.get(), dwStreamSize);
-    fxcrt::spancpy(dest_span, m_pBuf.subspan(m_Pos, dwStreamSize));
+    auto src_span = m_pBuf.subspan(m_Pos, dwStreamSize);
+    data = DataVector<uint8_t>(src_span.begin(), src_span.end());
     m_Pos += dwStreamSize;
   }
   pDict->SetNewFor<CPDF_Number>("Length", static_cast<int>(dwStreamSize));
-  return pdfium::MakeRetain<CPDF_Stream>(std::move(pData), dwStreamSize,
-                                         std::move(pDict));
+  return pdfium::MakeRetain<CPDF_Stream>(std::move(data), std::move(pDict));
 }
 
 CPDF_StreamParser::ElementType CPDF_StreamParser::ParseNextElement() {

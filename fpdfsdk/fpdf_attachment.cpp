@@ -23,6 +23,7 @@
 #include "core/fpdfdoc/cpdf_filespec.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fxcrt/cfx_datetime.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -244,10 +245,10 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
       true);
 
   // Create the file stream and have the filespec dictionary link to it.
-  std::unique_ptr<uint8_t, FxFreeDeleter> stream(FX_AllocUninit(uint8_t, len));
-  memcpy(stream.get(), contents, len);
-  auto pFileStream = pDoc->NewIndirect<CPDF_Stream>(std::move(stream), len,
-                                                    std::move(pFileStreamDict));
+  const uint8_t* contents_as_bytes = static_cast<const uint8_t*>(contents);
+  auto pFileStream = pDoc->NewIndirect<CPDF_Stream>(
+      DataVector<uint8_t>(contents_as_bytes, contents_as_bytes + len),
+      std::move(pFileStreamDict));
   auto pEFDict = pFile->AsMutableDictionary()->SetNewFor<CPDF_Dictionary>("EF");
   pEFDict->SetNewFor<CPDF_Reference>("F", pDoc, pFileStream->GetObjNum());
   return true;

@@ -24,7 +24,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_test_document.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -404,15 +404,12 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessEmptyForm) {
 TEST_F(CPDF_PageContentGeneratorTest, ProcessFormWithPath) {
   auto pDoc = std::make_unique<CPDF_TestDocument>();
   pDoc->CreateNewDoc();
-  auto pDict = pdfium::MakeRetain<CPDF_Dictionary>();
-  const char content[] =
+  static constexpr uint8_t kContents[] =
       "q 1 0 0 1 0 0 cm 3.102 4.6700001 m 5.4500012 .28999999 "
       "l 4.2399998 3.1499999 4.65 2.98 3.456 0.24 c 3.102 4.6700001 l h f Q\n";
-  size_t buf_len = std::size(content);
-  std::unique_ptr<uint8_t, FxFreeDeleter> buf(FX_AllocUninit(uint8_t, buf_len));
-  memcpy(buf.get(), content, buf_len);
-  auto pStream = pdfium::MakeRetain<CPDF_Stream>(std::move(buf), buf_len,
-                                                 std::move(pDict));
+  auto pStream = pdfium::MakeRetain<CPDF_Stream>(
+      DataVector<uint8_t>(std::begin(kContents), std::end(kContents)),
+      pdfium::MakeRetain<CPDF_Dictionary>());
 
   // Create a form with a non-empty stream.
   auto pTestForm = std::make_unique<CPDF_Form>(pDoc.get(), nullptr, pStream);

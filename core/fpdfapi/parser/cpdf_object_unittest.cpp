@@ -73,17 +73,14 @@ class PDFObjectsTest : public testing::Test {
     m_DictObj->SetNewFor<CPDF_Boolean>("bool", false);
     m_DictObj->SetNewFor<CPDF_Number>("num", 0.23f);
     // Stream object.
-    const char content[] = "abcdefghijklmnopqrstuvwxyz";
-    size_t buf_len = std::size(content);
-    std::unique_ptr<uint8_t, FxFreeDeleter> buf(
-        FX_AllocUninit(uint8_t, buf_len));
-    memcpy(buf.get(), content, buf_len);
+    static constexpr char kContents[] = "abcdefghijklmnopqrstuvwxyz";
     auto pNewDict = pdfium::MakeRetain<CPDF_Dictionary>();
     m_StreamDictObj = pNewDict;
     m_StreamDictObj->SetNewFor<CPDF_String>("key1", L" test dict");
     m_StreamDictObj->SetNewFor<CPDF_Number>("key2", -1);
-    auto stream_obj = pdfium::MakeRetain<CPDF_Stream>(std::move(buf), buf_len,
-                                                      std::move(pNewDict));
+    auto stream_obj = pdfium::MakeRetain<CPDF_Stream>(
+        DataVector<uint8_t>(std::begin(kContents), std::end(kContents)),
+        std::move(pNewDict));
     // Null Object.
     auto null_obj = pdfium::MakeRetain<CPDF_Null>();
     // All direct objects.
@@ -652,13 +649,10 @@ TEST(PDFArrayTest, GetTypeAt) {
         int value = j + 200;
         vals[i]->SetNewFor<CPDF_Number>(key.c_str(), value);
       }
-      uint8_t content[] = "content: this is a stream";
-      size_t data_size = std::size(content);
-      std::unique_ptr<uint8_t, FxFreeDeleter> data(
-          FX_AllocUninit(uint8_t, data_size));
-      memcpy(data.get(), content, data_size);
-      stream_vals[i] =
-          arr->AppendNew<CPDF_Stream>(std::move(data), data_size, vals[i]);
+      static constexpr uint8_t kContents[] = "content: this is a stream";
+      stream_vals[i] = arr->AppendNew<CPDF_Stream>(
+          DataVector<uint8_t>(std::begin(kContents), std::end(kContents)),
+          vals[i]);
     }
     for (size_t i = 0; i < 3; ++i) {
       TestArrayAccessors(arr.Get(), i,           // Array and index.
@@ -697,15 +691,12 @@ TEST(PDFArrayTest, GetTypeAt) {
     auto stream_dict = pdfium::MakeRetain<CPDF_Dictionary>();
     stream_dict->SetNewFor<CPDF_String>("key1", "John", false);
     stream_dict->SetNewFor<CPDF_String>("key2", "King", false);
-    uint8_t data[] = "A stream for test";
+    static constexpr uint8_t kData[] = "A stream for test";
     // The data buffer will be owned by stream object, so it needs to be
     // dynamically allocated.
-    size_t buf_size = sizeof(data);
-    std::unique_ptr<uint8_t, FxFreeDeleter> buf(
-        FX_AllocUninit(uint8_t, buf_size));
-    memcpy(buf.get(), data, buf_size);
-    auto stream_val = arr->InsertNewAt<CPDF_Stream>(13, std::move(buf),
-                                                    buf_size, stream_dict);
+    CPDF_Stream* stream_val = arr->InsertNewAt<CPDF_Stream>(
+        13, DataVector<uint8_t>(std::begin(kData), std::end(kData)),
+        stream_dict);
     const char* const expected_str[] = {
         "true",          "false", "0",    "-1234", "2345", "0.05", "",
         "It is a test!", "NAME",  "test", "",      "",     "",     ""};
@@ -899,20 +890,16 @@ TEST(PDFStreamTest, LengthInDictionaryOnCreate) {
   static constexpr uint32_t kBufSize = 100;
   // The length field should be created on stream create.
   {
-    std::unique_ptr<uint8_t, FxFreeDeleter> data;
-    data.reset(FX_Alloc(uint8_t, kBufSize));
     auto stream = pdfium::MakeRetain<CPDF_Stream>(
-        std::move(data), kBufSize, pdfium::MakeRetain<CPDF_Dictionary>());
+        DataVector<uint8_t>(kBufSize), pdfium::MakeRetain<CPDF_Dictionary>());
     EXPECT_EQ(static_cast<int>(kBufSize),
               stream->GetDict()->GetIntegerFor(pdfium::stream::kLength));
   }
   // The length field should be corrected on stream create.
   {
-    std::unique_ptr<uint8_t, FxFreeDeleter> data;
-    data.reset(FX_Alloc(uint8_t, kBufSize));
     auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
     dict->SetNewFor<CPDF_Number>(pdfium::stream::kLength, 30000);
-    auto stream = pdfium::MakeRetain<CPDF_Stream>(std::move(data), kBufSize,
+    auto stream = pdfium::MakeRetain<CPDF_Stream>(DataVector<uint8_t>(kBufSize),
                                                   std::move(dict));
     EXPECT_EQ(static_cast<int>(kBufSize),
               stream->GetDict()->GetIntegerFor(pdfium::stream::kLength));
