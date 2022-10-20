@@ -803,8 +803,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     pStream->InitStreamFromFile(std::move(data_as_stream), std::move(pDict));
   } else {
     DCHECK(!len);
-    pStream = pdfium::MakeRetain<CPDF_Stream>(pdfium::span<const uint8_t>(),
-                                              std::move(pDict));
+    pStream = pdfium::MakeRetain<CPDF_Stream>(std::move(pDict));
   }
   const FX_FILESIZE end_stream_offset = GetPos();
   memset(m_WordBuffer, 0, kEndObjStr.GetLength() + 1);

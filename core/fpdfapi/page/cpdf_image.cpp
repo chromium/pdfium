@@ -294,11 +294,8 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
 
   uint8_t* src_buf = pBitmap->GetBuffer();
   int32_t src_pitch = pBitmap->GetPitch();
-  std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf(
-      FX_Alloc2D(uint8_t, dest_pitch, BitmapHeight));
-  // Safe as checked alloc returned.
-  size_t dest_size = dest_pitch * BitmapHeight;
-  auto dest_span = pdfium::make_span(dest_buf.get(), dest_size);
+  DataVector<uint8_t> dest_buf(Fx2DSizeOrDie(dest_pitch, BitmapHeight));
+  auto dest_span = pdfium::make_span(dest_buf);
   size_t dest_span_offset = 0;
   if (bCopyWithoutAlpha) {
     for (int32_t i = 0; i < BitmapHeight; i++) {
@@ -328,7 +325,8 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     }
   }
 
-  m_pStream = pdfium::MakeRetain<CPDF_Stream>(dest_span, std::move(pDict));
+  m_pStream =
+      pdfium::MakeRetain<CPDF_Stream>(std::move(dest_buf), std::move(pDict));
   m_bIsMask = pBitmap->IsMaskFormat();
   m_Width = BitmapWidth;
   m_Height = BitmapHeight;
