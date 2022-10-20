@@ -51,7 +51,6 @@ class CPDF_StreamAcc final : public Retainable {
   void LoadAllData(bool bRawAccess, uint32_t estimated_size, bool bImageAcc);
   void ProcessRawData();
   void ProcessFilteredData(uint32_t estimated_size, bool bImageAcc);
-  const uint8_t* GetData() const;
 
   // Returns the raw data from `m_pStream`, or no data on failure.
   DataVector<uint8_t> ReadRawStream() const;

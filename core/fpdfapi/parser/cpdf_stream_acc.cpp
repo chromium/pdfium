@@ -68,23 +68,16 @@ RetainPtr<const CPDF_Dictionary> CPDF_StreamAcc::GetImageParam() const {
   return m_pImageParam;
 }
 
-const uint8_t* CPDF_StreamAcc::GetData() const {
-  if (is_owned())
-    return absl::get<DataVector<uint8_t>>(m_Data).data();
-  return (m_pStream && m_pStream->IsMemoryBased())
-             ? m_pStream->GetInMemoryRawData().data()
-             : nullptr;
-}
-
 uint32_t CPDF_StreamAcc::GetSize() const {
-  if (is_owned())
-    return absl::get<DataVector<uint8_t>>(m_Data).size();
-  return (m_pStream && m_pStream->IsMemoryBased()) ? m_pStream->GetRawSize()
-                                                   : 0;
+  return GetSpan().size();
 }
 
 pdfium::span<const uint8_t> CPDF_StreamAcc::GetSpan() const {
-  return {GetData(), GetSize()};
+  if (is_owned())
+    return absl::get<DataVector<uint8_t>>(m_Data);
+  if (m_pStream && m_pStream->IsMemoryBased())
+    return m_pStream->GetInMemoryRawData();
+  return {};
 }
 
 uint64_t CPDF_StreamAcc::KeyForCache() const {
@@ -93,7 +86,8 @@ uint64_t CPDF_StreamAcc::KeyForCache() const {
 
 ByteString CPDF_StreamAcc::ComputeDigest() const {
   uint8_t digest[20];
-  CRYPT_SHA1Generate(GetData(), GetSize(), digest);
+  pdfium::span<const uint8_t> span = GetSpan();
+  CRYPT_SHA1Generate(span.data(), span.size(), digest);
   return ByteString(digest, 20);
 }
 
