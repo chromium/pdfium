@@ -67,15 +67,6 @@ class CPDF_Stream final : public CPDF_Object {
   bool HasFilter() const;
 
  private:
-  // TODO(crbug.com/pdfium/1872): Replace with DataVector.
-  struct OwnedData {
-    OwnedData(std::unique_ptr<uint8_t, FxFreeDeleter> buffer, size_t size);
-    ~OwnedData();
-
-    std::unique_ptr<uint8_t, FxFreeDeleter> buffer;
-    size_t size;
-  };
-
   CPDF_Stream();
   CPDF_Stream(pdfium::span<const uint8_t> pData,
               RetainPtr<CPDF_Dictionary> pDict);
@@ -90,11 +81,11 @@ class CPDF_Stream final : public CPDF_Object {
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;
 
-  // TODO(crbug.com/pdfium/1872): Replace with vector version.
-  void TakeDataInternal(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-                        size_t size);
+  void SetLengthInDict(int length);
 
-  absl::variant<absl::monostate, RetainPtr<IFX_SeekableReadStream>, OwnedData>
+  absl::variant<absl::monostate,
+                RetainPtr<IFX_SeekableReadStream>,
+                DataVector<uint8_t>>
       data_;
   RetainPtr<CPDF_Dictionary> dict_;
 };

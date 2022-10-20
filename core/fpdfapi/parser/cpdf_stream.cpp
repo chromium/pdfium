@@ -36,13 +36,6 @@ bool IsMetaDataStreamDictionary(const CPDF_Dictionary* dict) {
 
 }  // namespace
 
-CPDF_Stream::OwnedData::OwnedData(
-    std::unique_ptr<uint8_t, FxFreeDeleter> buffer,
-    size_t size)
-    : buffer(std::move(buffer)), size(size) {}
-
-CPDF_Stream::OwnedData::~OwnedData() = default;
-
 CPDF_Stream::CPDF_Stream() = default;
 
 CPDF_Stream::CPDF_Stream(pdfium::span<const uint8_t> pData,
@@ -53,16 +46,18 @@ CPDF_Stream::CPDF_Stream(pdfium::span<const uint8_t> pData,
 
 CPDF_Stream::CPDF_Stream(DataVector<uint8_t> pData,
                          RetainPtr<CPDF_Dictionary> pDict)
-    : dict_(std::move(pDict)) {
-  // TODO(crbug.com/pdfium/1872): Avoid copying.
-  SetData(pData);
+    : data_(std::move(pData)), dict_(std::move(pDict)) {
+  SetLengthInDict(pdfium::base::checked_cast<int>(
+      absl::get<DataVector<uint8_t>>(data_).size()));
 }
 
 CPDF_Stream::CPDF_Stream(std::unique_ptr<uint8_t, FxFreeDeleter> pData,
                          size_t size,
                          RetainPtr<CPDF_Dictionary> pDict)
-    : dict_(std::move(pDict)) {
-  TakeDataInternal(std::move(pData), size);
+    : data_(DataVector<uint8_t>(pData.get(), pData.get() + size)),
+      dict_(std::move(pDict)) {
+  SetLengthInDict(pdfium::base::checked_cast<int>(
+      absl::get<DataVector<uint8_t>>(data_).size()));
 }
 
 CPDF_Stream::~CPDF_Stream() {
@@ -93,8 +88,7 @@ void CPDF_Stream::InitStreamFromFile(RetainPtr<IFX_SeekableReadStream> pFile,
                                      RetainPtr<CPDF_Dictionary> pDict) {
   data_ = pFile;
   dict_ = std::move(pDict);
-  dict_->SetNewFor<CPDF_Number>(
-      "Length", pdfium::base::checked_cast<int>(pFile->GetSize()));
+  SetLengthInDict(pdfium::base::checked_cast<int>(pFile->GetSize()));
 }
 
 RetainPtr<CPDF_Object> CPDF_Stream::Clone() const {
@@ -138,28 +132,16 @@ void CPDF_Stream::SetDataFromStringstreamAndRemoveFilter(
 }
 
 void CPDF_Stream::SetData(pdfium::span<const uint8_t> pData) {
-  std::unique_ptr<uint8_t, FxFreeDeleter> data_copy;
-  if (!pData.empty()) {
-    data_copy.reset(FX_AllocUninit(uint8_t, pData.size()));
-    auto copy_span = pdfium::make_span(data_copy.get(), pData.size());
-    fxcrt::spancpy(copy_span, pData);
-  }
-  TakeDataInternal(std::move(data_copy), pData.size());
+  DataVector<uint8_t> data_copy(pData.begin(), pData.end());
+  TakeData(std::move(data_copy));
 }
 
 void CPDF_Stream::TakeData(DataVector<uint8_t> data) {
-  // TODO(crbug.com/pdfium/1872): Avoid copying.
-  SetData(data);
-}
-
-void CPDF_Stream::TakeDataInternal(
-    std::unique_ptr<uint8_t, FxFreeDeleter> pData,
-    size_t size) {
-  data_.emplace<OwnedData>(std::move(pData), size);
+  const size_t size = data.size();
+  data_ = std::move(data);
   if (!dict_)
     dict_ = pdfium::MakeRetain<CPDF_Dictionary>();
-  dict_->SetNewFor<CPDF_Number>("Length",
-                                pdfium::base::checked_cast<int>(size));
+  SetLengthInDict(pdfium::base::checked_cast<int>(size));
 }
 
 void CPDF_Stream::SetDataFromStringstream(fxcrt::ostringstream* stream) {
@@ -220,13 +202,16 @@ size_t CPDF_Stream::GetRawSize() const {
         absl::get<RetainPtr<IFX_SeekableReadStream>>(data_)->GetSize());
   }
   if (IsMemoryBased())
-    return absl::get<OwnedData>(data_).size;
+    return absl::get<DataVector<uint8_t>>(data_).size();
   DCHECK(IsUninitialized());
   return 0;
 }
 
 pdfium::span<const uint8_t> CPDF_Stream::GetInMemoryRawData() const {
   DCHECK(IsMemoryBased());
-  const auto& data = absl::get<OwnedData>(data_);
-  return pdfium::make_span(data.buffer.get(), data.size);
+  return absl::get<DataVector<uint8_t>>(data_);
+}
+
+void CPDF_Stream::SetLengthInDict(int length) {
+  dict_->SetNewFor<CPDF_Number>("Length", length);
 }
