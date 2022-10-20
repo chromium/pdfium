@@ -19,6 +19,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fxcrt/cfx_memorystream.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/span_util.h"
@@ -34,6 +35,13 @@ bool IsMetaDataStreamDictionary(const CPDF_Dictionary* dict) {
 }
 
 }  // namespace
+
+CPDF_Stream::OwnedData::OwnedData(
+    std::unique_ptr<uint8_t, FxFreeDeleter> buffer,
+    size_t size)
+    : buffer(std::move(buffer)), size(size) {}
+
+CPDF_Stream::OwnedData::~OwnedData() = default;
 
 CPDF_Stream::CPDF_Stream() = default;
 
@@ -83,13 +91,10 @@ void CPDF_Stream::InitStream(pdfium::span<const uint8_t> pData,
 
 void CPDF_Stream::InitStreamFromFile(RetainPtr<IFX_SeekableReadStream> pFile,
                                      RetainPtr<CPDF_Dictionary> pDict) {
-  m_bMemoryBased = false;
-  m_pDataBuf.reset();
-  m_pFile = std::move(pFile);
+  m_Data = pFile;
   m_pDict = std::move(pDict);
-  m_dwSize = pdfium::base::checked_cast<size_t>(m_pFile->GetSize());
-  m_pDict->SetNewFor<CPDF_Number>("Length",
-                                  pdfium::base::checked_cast<int>(m_dwSize));
+  m_pDict->SetNewFor<CPDF_Number>(
+      "Length", pdfium::base::checked_cast<int>(pFile->GetSize()));
 }
 
 RetainPtr<CPDF_Object> CPDF_Stream::Clone() const {
@@ -150,10 +155,7 @@ void CPDF_Stream::TakeData(DataVector<uint8_t> data) {
 void CPDF_Stream::TakeDataInternal(
     std::unique_ptr<uint8_t, FxFreeDeleter> pData,
     size_t size) {
-  m_bMemoryBased = true;
-  m_pFile = nullptr;
-  m_pDataBuf = std::move(pData);
-  m_dwSize = size;
+  m_Data.emplace<OwnedData>(std::move(pData), size);
   if (!m_pDict)
     m_pDict = pdfium::MakeRetain<CPDF_Dictionary>();
   m_pDict->SetNewFor<CPDF_Number>("Length",
@@ -172,8 +174,9 @@ void CPDF_Stream::SetDataFromStringstream(fxcrt::ostringstream* stream) {
 bool CPDF_Stream::ReadRawData(FX_FILESIZE offset,
                               uint8_t* buf,
                               size_t size) const {
-  CHECK(!m_bMemoryBased);
-  return m_pFile->ReadBlockAtOffset(buf, offset, size);
+  CHECK(IsFileBased());
+  return absl::get<RetainPtr<IFX_SeekableReadStream>>(m_Data)
+      ->ReadBlockAtOffset(buf, offset, size);
 }
 
 bool CPDF_Stream::HasFilter() const {
@@ -211,7 +214,19 @@ bool CPDF_Stream::WriteTo(IFX_ArchiveStream* archive,
   return archive->WriteString("\r\nendstream");
 }
 
+size_t CPDF_Stream::GetRawSize() const {
+  if (IsFileBased()) {
+    return pdfium::base::checked_cast<size_t>(
+        absl::get<RetainPtr<IFX_SeekableReadStream>>(m_Data)->GetSize());
+  }
+  if (IsMemoryBased())
+    return absl::get<OwnedData>(m_Data).size;
+  DCHECK(IsUninitialized());
+  return 0;
+}
+
 pdfium::span<const uint8_t> CPDF_Stream::GetInMemoryRawData() const {
   DCHECK(IsMemoryBased());
-  return pdfium::make_span(m_pDataBuf.get(), GetRawSize());
+  const auto& data = absl::get<OwnedData>(m_Data);
+  return pdfium::make_span(data.buffer.get(), data.size);
 }
