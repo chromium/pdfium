@@ -61,9 +61,9 @@ class CPDF_Stream final : public CPDF_Object {
   // Can only be called when a stream is not memory-based.
   bool ReadRawData(FX_FILESIZE offset, uint8_t* pBuf, size_t buf_size) const;
 
-  bool IsUninitialized() const { return m_Data.index() == 0; }
-  bool IsFileBased() const { return m_Data.index() == 1; }
-  bool IsMemoryBased() const { return m_Data.index() == 2; }
+  bool IsUninitialized() const { return data_.index() == 0; }
+  bool IsFileBased() const { return data_.index() == 1; }
+  bool IsMemoryBased() const { return data_.index() == 2; }
   bool HasFilter() const;
 
  private:
@@ -95,8 +95,8 @@ class CPDF_Stream final : public CPDF_Object {
                         size_t size);
 
   absl::variant<absl::monostate, RetainPtr<IFX_SeekableReadStream>, OwnedData>
-      m_Data;
-  RetainPtr<CPDF_Dictionary> m_pDict;
+      data_;
+  RetainPtr<CPDF_Dictionary> dict_;
 };
 
 inline CPDF_Stream* ToStream(CPDF_Object* obj) {
