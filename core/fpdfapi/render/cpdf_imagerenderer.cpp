@@ -552,7 +552,7 @@ bool CPDF_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
 }
 
 bool CPDF_ImageRenderer::ContinueDefault(PauseIndicatorIface* pPause) {
-  if (m_Loader.Continue(pPause, m_pRenderStatus.Get()))
+  if (m_Loader.Continue(pPause))
     return true;
 
   if (!StartRenderDIBBase())

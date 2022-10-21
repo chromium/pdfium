@@ -29,8 +29,10 @@ bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
   m_pImageObject = pImage;
   bool ret;
   if (m_pCache) {
-    ret = m_pCache->StartGetCachedBitmap(m_pImageObject->GetImage(),
-                                         pRenderStatus, bStdCS);
+    ret = m_pCache->StartGetCachedBitmap(
+        m_pImageObject->GetImage(), pRenderStatus->GetFormResource(),
+        pRenderStatus->GetPageResource(), bStdCS,
+        pRenderStatus->GetGroupFamily(), pRenderStatus->GetLoadMask());
   } else {
     ret = m_pImageObject->GetImage()->StartLoadDIBBase(
         pRenderStatus->GetFormResource(), pRenderStatus->GetPageResource(),
@@ -41,9 +43,8 @@ bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
   return ret;
 }
 
-bool CPDF_ImageLoader::Continue(PauseIndicatorIface* pPause,
-                                CPDF_RenderStatus* pRenderStatus) {
-  bool ret = m_pCache ? m_pCache->Continue(pPause, pRenderStatus)
+bool CPDF_ImageLoader::Continue(PauseIndicatorIface* pPause) {
+  bool ret = m_pCache ? m_pCache->Continue(pPause)
                       : m_pImageObject->GetImage()->Continue(pPause);
   if (!ret)
     HandleFailure();

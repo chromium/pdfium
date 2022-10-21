@@ -22,7 +22,6 @@
 class CPDF_Dictionary;
 class CPDF_Image;
 class CPDF_Page;
-class CPDF_RenderStatus;
 class CPDF_Stream;
 class PauseIndicatorIface;
 
@@ -39,10 +38,13 @@ class CPDF_PageRenderCache final : public CPDF_Page::RenderCacheIface {
   CPDF_Page* GetPage() const { return m_pPage.Get(); }
 
   bool StartGetCachedBitmap(RetainPtr<CPDF_Image> pImage,
-                            const CPDF_RenderStatus* pRenderStatus,
-                            bool bStdCS);
+                            const CPDF_Dictionary* pFormResources,
+                            const CPDF_Dictionary* pPageResources,
+                            bool bStdCS,
+                            CPDF_ColorSpace::Family eFamily,
+                            bool bLoadMask);
 
-  bool Continue(PauseIndicatorIface* pPause, CPDF_RenderStatus* pRenderStatus);
+  bool Continue(PauseIndicatorIface* pPause);
 
   uint32_t GetCurMatteColor() const;
   RetainPtr<CFX_DIBBase> DetachCurBitmap();
@@ -62,19 +64,22 @@ class CPDF_PageRenderCache final : public CPDF_Page::RenderCacheIface {
     CPDF_Image* GetImage() const { return m_pImage.Get(); }
 
     CPDF_DIB::LoadState StartGetCachedBitmap(
+        CPDF_PageRenderCache* pPageRenderCache,
+        const CPDF_Dictionary* pFormResources,
         const CPDF_Dictionary* pPageResources,
-        const CPDF_RenderStatus* pRenderStatus,
-        bool bStdCS);
+        bool bStdCS,
+        CPDF_ColorSpace::Family eFamily,
+        bool bLoadMask);
 
     // Returns whether to Continue() or not.
     bool Continue(PauseIndicatorIface* pPause,
-                  CPDF_RenderStatus* pRenderStatus);
+                  CPDF_PageRenderCache* pPageRenderCache);
 
     RetainPtr<CFX_DIBBase> DetachBitmap();
     RetainPtr<CFX_DIBBase> DetachMask();
 
    private:
-    void ContinueGetCachedBitmap(const CPDF_RenderStatus* pRenderStatus);
+    void ContinueGetCachedBitmap(CPDF_PageRenderCache* pPageRenderCache);
     void CalcSize();
 
     uint32_t m_dwTimeCount = 0;

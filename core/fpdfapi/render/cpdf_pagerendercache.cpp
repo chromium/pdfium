@@ -16,8 +16,6 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
-#include "core/fpdfapi/render/cpdf_rendercontext.h"
-#include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
@@ -80,8 +78,11 @@ void CPDF_PageRenderCache::ClearImageCacheEntry(const CPDF_Stream* pStream) {
 
 bool CPDF_PageRenderCache::StartGetCachedBitmap(
     RetainPtr<CPDF_Image> pImage,
-    const CPDF_RenderStatus* pRenderStatus,
-    bool bStdCS) {
+    const CPDF_Dictionary* pFormResources,
+    const CPDF_Dictionary* pPageResources,
+    bool bStdCS,
+    CPDF_ColorSpace::Family eFamily,
+    bool bLoadMask) {
   // A cross-document image may have come from the embedder.
   if (m_pPage->GetDocument() != pImage->GetDocument())
     return false;
@@ -96,7 +97,7 @@ bool CPDF_PageRenderCache::StartGetCachedBitmap(
         std::make_unique<ImageCacheEntry>(std::move(pImage));
   }
   CPDF_DIB::LoadState ret = m_pCurImageCacheEntry->StartGetCachedBitmap(
-      m_pPage->GetPageResources().Get(), pRenderStatus, bStdCS);
+      this, pFormResources, pPageResources, bStdCS, eFamily, bLoadMask);
   if (ret == CPDF_DIB::LoadState::kContinue)
     return true;
 
@@ -110,9 +111,8 @@ bool CPDF_PageRenderCache::StartGetCachedBitmap(
   return false;
 }
 
-bool CPDF_PageRenderCache::Continue(PauseIndicatorIface* pPause,
-                                    CPDF_RenderStatus* pRenderStatus) {
-  bool ret = m_pCurImageCacheEntry->Continue(pPause, pRenderStatus);
+bool CPDF_PageRenderCache::Continue(PauseIndicatorIface* pPause) {
+  bool ret = m_pCurImageCacheEntry->Continue(pPause, this);
   if (ret)
     return true;
 
@@ -169,9 +169,12 @@ RetainPtr<CFX_DIBBase> CPDF_PageRenderCache::ImageCacheEntry::DetachMask() {
 }
 
 CPDF_DIB::LoadState CPDF_PageRenderCache::ImageCacheEntry::StartGetCachedBitmap(
+    CPDF_PageRenderCache* pPageRenderCache,
+    const CPDF_Dictionary* pFormResources,
     const CPDF_Dictionary* pPageResources,
-    const CPDF_RenderStatus* pRenderStatus,
-    bool bStdCS) {
+    bool bStdCS,
+    CPDF_ColorSpace::Family eFamily,
+    bool bLoadMask) {
   if (m_pCachedBitmap) {
     m_pCurBitmap = m_pCachedBitmap;
     m_pCurMask = m_pCachedMask;
@@ -180,13 +183,12 @@ CPDF_DIB::LoadState CPDF_PageRenderCache::ImageCacheEntry::StartGetCachedBitmap(
 
   m_pCurBitmap = m_pImage->CreateNewDIB();
   CPDF_DIB::LoadState ret = m_pCurBitmap.As<CPDF_DIB>()->StartLoadDIBBase(
-      true, pRenderStatus->GetFormResource(), pPageResources, bStdCS,
-      pRenderStatus->GetGroupFamily(), pRenderStatus->GetLoadMask());
+      true, pFormResources, pPageResources, bStdCS, eFamily, bLoadMask);
   if (ret == CPDF_DIB::LoadState::kContinue)
     return CPDF_DIB::LoadState::kContinue;
 
   if (ret == CPDF_DIB::LoadState::kSuccess)
-    ContinueGetCachedBitmap(pRenderStatus);
+    ContinueGetCachedBitmap(pPageRenderCache);
   else
     m_pCurBitmap.Reset();
   return CPDF_DIB::LoadState::kFail;
@@ -194,25 +196,23 @@ CPDF_DIB::LoadState CPDF_PageRenderCache::ImageCacheEntry::StartGetCachedBitmap(
 
 bool CPDF_PageRenderCache::ImageCacheEntry::Continue(
     PauseIndicatorIface* pPause,
-    CPDF_RenderStatus* pRenderStatus) {
+    CPDF_PageRenderCache* pPageRenderCache) {
   CPDF_DIB::LoadState ret =
       m_pCurBitmap.As<CPDF_DIB>()->ContinueLoadDIBBase(pPause);
   if (ret == CPDF_DIB::LoadState::kContinue)
     return true;
 
   if (ret == CPDF_DIB::LoadState::kSuccess)
-    ContinueGetCachedBitmap(pRenderStatus);
+    ContinueGetCachedBitmap(pPageRenderCache);
   else
     m_pCurBitmap.Reset();
   return false;
 }
 
 void CPDF_PageRenderCache::ImageCacheEntry::ContinueGetCachedBitmap(
-    const CPDF_RenderStatus* pRenderStatus) {
+    CPDF_PageRenderCache* pPageRenderCache) {
   m_MatteColor = m_pCurBitmap.As<CPDF_DIB>()->GetMatteColor();
   m_pCurMask = m_pCurBitmap.As<CPDF_DIB>()->DetachMask();
-  CPDF_RenderContext* pContext = pRenderStatus->GetContext();
-  CPDF_PageRenderCache* pPageRenderCache = pContext->GetPageCache();
   m_dwTimeCount = pPageRenderCache->GetTimeCount();
   if (m_pCurBitmap->GetPitch() * m_pCurBitmap->GetHeight() < kHugeImageSize) {
     m_pCachedBitmap = m_pCurBitmap->Realize();

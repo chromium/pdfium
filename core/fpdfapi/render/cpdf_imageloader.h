@@ -25,7 +25,7 @@ class CPDF_ImageLoader {
   bool Start(const CPDF_ImageObject* pImage,
              const CPDF_RenderStatus* pRenderStatus,
              bool bStdCS);
-  bool Continue(PauseIndicatorIface* pPause, CPDF_RenderStatus* pRenderStatus);
+  bool Continue(PauseIndicatorIface* pPause);
 
   RetainPtr<CFX_DIBBase> TranslateImage(
       RetainPtr<CPDF_TransferFunc> pTransferFunc);
