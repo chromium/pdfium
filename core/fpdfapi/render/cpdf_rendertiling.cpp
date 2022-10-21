@@ -12,7 +12,7 @@
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_tilingpattern.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fpdfapi/render/cpdf_pagerendercache.h"
+#include "core/fpdfapi/render/cpdf_pageimagecache.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
@@ -23,7 +23,7 @@ namespace {
 
 RetainPtr<CFX_DIBitmap> DrawPatternBitmap(
     CPDF_Document* pDoc,
-    CPDF_PageRenderCache* pCache,
+    CPDF_PageImageCache* pCache,
     CPDF_TilingPattern* pPattern,
     CPDF_Form* pPatternForm,
     const CFX_Matrix& mtObject2Device,

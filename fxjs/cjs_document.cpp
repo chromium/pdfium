@@ -17,7 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fpdfapi/render/cpdf_pagerendercache.h"
+#include "core/fpdfapi/render/cpdf_pageimagecache.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "fpdfsdk/cpdfsdk_annotiteration.h"
@@ -1247,7 +1247,7 @@ CJS_Result CJS_Document::getPageNthWord(
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   auto page = pdfium::MakeRetain<CPDF_Page>(pDocument, std::move(pPageDict));
-  page->SetRenderCache(std::make_unique<CPDF_PageRenderCache>(page.Get()));
+  page->SetRenderCache(std::make_unique<CPDF_PageImageCache>(page.Get()));
   page->ParseContent();
 
   int nWords = 0;
@@ -1303,7 +1303,7 @@ CJS_Result CJS_Document::getPageNumWords(
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   auto page = pdfium::MakeRetain<CPDF_Page>(pDocument, std::move(pPageDict));
-  page->SetRenderCache(std::make_unique<CPDF_PageRenderCache>(page.Get()));
+  page->SetRenderCache(std::make_unique<CPDF_PageImageCache>(page.Get()));
   page->ParseContent();
 
   int nWords = 0;

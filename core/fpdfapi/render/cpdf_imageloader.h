@@ -12,7 +12,7 @@
 
 class CFX_DIBBase;
 class CPDF_ImageObject;
-class CPDF_PageRenderCache;
+class CPDF_PageImageCache;
 class CPDF_RenderStatus;
 class CPDF_TransferFunc;
 class PauseIndicatorIface;
@@ -41,7 +41,7 @@ class CPDF_ImageLoader {
   bool m_bCached = false;
   RetainPtr<CFX_DIBBase> m_pBitmap;
   RetainPtr<CFX_DIBBase> m_pMask;
-  UnownedPtr<CPDF_PageRenderCache> m_pCache;
+  UnownedPtr<CPDF_PageImageCache> m_pCache;
   UnownedPtr<const CPDF_ImageObject> m_pImageObject;
 };
 

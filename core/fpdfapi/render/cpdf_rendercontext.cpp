@@ -12,7 +12,7 @@
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fpdfapi/render/cpdf_pagerendercache.h"
+#include "core/fpdfapi/render/cpdf_pageimagecache.h"
 #include "core/fpdfapi/render/cpdf_progressiverenderer.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
@@ -25,7 +25,7 @@
 CPDF_RenderContext::CPDF_RenderContext(
     CPDF_Document* pDoc,
     RetainPtr<CPDF_Dictionary> pPageResources,
-    CPDF_PageRenderCache* pPageCache)
+    CPDF_PageImageCache* pPageCache)
     : m_pDocument(pDoc),
       m_pPageResources(std::move(pPageResources)),
       m_pPageCache(pPageCache) {}

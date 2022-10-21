@@ -13,15 +13,15 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
-class CPDF_Dictionary;
-class CPDF_Document;
-class CPDF_PageObject;
-class CPDF_PageObjectHolder;
-class CPDF_PageRenderCache;
-class CPDF_RenderOptions;
 class CFX_DIBitmap;
 class CFX_Matrix;
 class CFX_RenderDevice;
+class CPDF_Dictionary;
+class CPDF_Document;
+class CPDF_PageImageCache;
+class CPDF_PageObject;
+class CPDF_PageObjectHolder;
+class CPDF_RenderOptions;
 
 class CPDF_RenderContext {
  public:
@@ -44,7 +44,7 @@ class CPDF_RenderContext {
 
   CPDF_RenderContext(CPDF_Document* pDoc,
                      RetainPtr<CPDF_Dictionary> pPageResources,
-                     CPDF_PageRenderCache* pPageCache);
+                     CPDF_PageImageCache* pPageCache);
   ~CPDF_RenderContext();
 
   void AppendLayer(CPDF_PageObjectHolder* pObjectHolder,
@@ -70,12 +70,12 @@ class CPDF_RenderContext {
   RetainPtr<CPDF_Dictionary> GetMutablePageResources() {
     return m_pPageResources;
   }
-  CPDF_PageRenderCache* GetPageCache() const { return m_pPageCache.Get(); }
+  CPDF_PageImageCache* GetPageCache() const { return m_pPageCache.Get(); }
 
  private:
   UnownedPtr<CPDF_Document> const m_pDocument;
   RetainPtr<CPDF_Dictionary> const m_pPageResources;
-  UnownedPtr<CPDF_PageRenderCache> const m_pPageCache;
+  UnownedPtr<CPDF_PageImageCache> const m_pPageCache;
   std::vector<Layer> m_Layers;
 };
 

@@ -9,7 +9,7 @@
 #include <memory>
 #include <utility>
 
-#include "core/fpdfapi/render/cpdf_pagerendercache.h"
+#include "core/fpdfapi/render/cpdf_pageimagecache.h"
 #include "core/fpdfapi/render/cpdf_pagerendercontext.h"
 #include "core/fpdfapi/render/cpdf_progressiverenderer.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
@@ -60,7 +60,7 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
   pContext->m_pDevice->SetClip_Rect(clipping_rect);
   pContext->m_pContext = std::make_unique<CPDF_RenderContext>(
       pPage->GetDocument(), pPage->GetMutablePageResources(),
-      static_cast<CPDF_PageRenderCache*>(pPage->GetRenderCache()));
+      static_cast<CPDF_PageImageCache*>(pPage->GetRenderCache()));
 
   pContext->m_pContext->AppendLayer(pPage, matrix);
 

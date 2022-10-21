@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_RENDER_CPDF_PAGERENDERCACHE_H_
-#define CORE_FPDFAPI_RENDER_CPDF_PAGERENDERCACHE_H_
+#ifndef CORE_FPDFAPI_RENDER_CPDF_PAGEIMAGECACHE_H_
+#define CORE_FPDFAPI_RENDER_CPDF_PAGEIMAGECACHE_H_
 
 #include <stdint.h>
 
@@ -25,10 +25,10 @@ class CPDF_Page;
 class CPDF_Stream;
 class PauseIndicatorIface;
 
-class CPDF_PageRenderCache final : public CPDF_Page::RenderCacheIface {
+class CPDF_PageImageCache final : public CPDF_Page::RenderCacheIface {
  public:
-  explicit CPDF_PageRenderCache(CPDF_Page* pPage);
-  ~CPDF_PageRenderCache() override;
+  explicit CPDF_PageImageCache(CPDF_Page* pPage);
+  ~CPDF_PageImageCache() override;
 
   // CPDF_Page::RenderCacheIface:
   void ResetBitmapForImage(RetainPtr<CPDF_Image> pImage) override;
@@ -64,7 +64,7 @@ class CPDF_PageRenderCache final : public CPDF_Page::RenderCacheIface {
     CPDF_Image* GetImage() const { return m_pImage.Get(); }
 
     CPDF_DIB::LoadState StartGetCachedBitmap(
-        CPDF_PageRenderCache* pPageRenderCache,
+        CPDF_PageImageCache* pPageImageCache,
         const CPDF_Dictionary* pFormResources,
         const CPDF_Dictionary* pPageResources,
         bool bStdCS,
@@ -73,13 +73,13 @@ class CPDF_PageRenderCache final : public CPDF_Page::RenderCacheIface {
 
     // Returns whether to Continue() or not.
     bool Continue(PauseIndicatorIface* pPause,
-                  CPDF_PageRenderCache* pPageRenderCache);
+                  CPDF_PageImageCache* pPageImageCache);
 
     RetainPtr<CFX_DIBBase> DetachBitmap();
     RetainPtr<CFX_DIBBase> DetachMask();
 
    private:
-    void ContinueGetCachedBitmap(CPDF_PageRenderCache* pPageRenderCache);
+    void ContinueGetCachedBitmap(CPDF_PageImageCache* pPageImageCache);
     void CalcSize();
 
     uint32_t m_dwTimeCount = 0;
@@ -105,4 +105,4 @@ class CPDF_PageRenderCache final : public CPDF_Page::RenderCacheIface {
   bool m_bCurFindCache = false;
 };
 
-#endif  // CORE_FPDFAPI_RENDER_CPDF_PAGERENDERCACHE_H_
+#endif  // CORE_FPDFAPI_RENDER_CPDF_PAGEIMAGECACHE_H_
