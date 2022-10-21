@@ -20,7 +20,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_Dictionary;
-class CPDF_Document;
 class CPDF_Image;
 class CPDF_Page;
 class CPDF_RenderStatus;
@@ -52,7 +51,7 @@ class CPDF_PageRenderCache final : public CPDF_Page::RenderCacheIface {
  private:
   class ImageCacheEntry {
    public:
-    ImageCacheEntry(CPDF_Document* pDoc, RetainPtr<CPDF_Image> pImage);
+    explicit ImageCacheEntry(RetainPtr<CPDF_Image> pImage);
     ~ImageCacheEntry();
 
     void Reset();
@@ -81,7 +80,6 @@ class CPDF_PageRenderCache final : public CPDF_Page::RenderCacheIface {
     uint32_t m_dwTimeCount = 0;
     uint32_t m_MatteColor = 0;
     uint32_t m_dwCacheSize = 0;
-    UnownedPtr<CPDF_Document> const m_pDocument;
     RetainPtr<CPDF_Image> const m_pImage;
     RetainPtr<CFX_DIBBase> m_pCurBitmap;
     RetainPtr<CFX_DIBBase> m_pCurMask;

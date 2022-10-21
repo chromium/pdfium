@@ -82,14 +82,18 @@ bool CPDF_PageRenderCache::StartGetCachedBitmap(
     RetainPtr<CPDF_Image> pImage,
     const CPDF_RenderStatus* pRenderStatus,
     bool bStdCS) {
+  // A cross-document image may have come from the embedder.
+  if (m_pPage->GetDocument() != pImage->GetDocument())
+    return false;
+
   RetainPtr<const CPDF_Stream> pStream = pImage->GetStream();
   const auto it = m_ImageCache.find(pStream);
   m_bCurFindCache = it != m_ImageCache.end();
   if (m_bCurFindCache) {
     m_pCurImageCacheEntry = it->second.get();
   } else {
-    m_pCurImageCacheEntry = std::make_unique<ImageCacheEntry>(
-        m_pPage->GetDocument(), std::move(pImage));
+    m_pCurImageCacheEntry =
+        std::make_unique<ImageCacheEntry>(std::move(pImage));
   }
   CPDF_DIB::LoadState ret = m_pCurImageCacheEntry->StartGetCachedBitmap(
       m_pPage->GetPageResources().Get(), pRenderStatus, bStdCS);
@@ -146,9 +150,8 @@ RetainPtr<CFX_DIBBase> CPDF_PageRenderCache::DetachCurMask() {
 }
 
 CPDF_PageRenderCache::ImageCacheEntry::ImageCacheEntry(
-    CPDF_Document* pDoc,
     RetainPtr<CPDF_Image> pImage)
-    : m_pDocument(pDoc), m_pImage(std::move(pImage)) {}
+    : m_pImage(std::move(pImage)) {}
 
 CPDF_PageRenderCache::ImageCacheEntry::~ImageCacheEntry() = default;
 
@@ -174,10 +177,6 @@ CPDF_DIB::LoadState CPDF_PageRenderCache::ImageCacheEntry::StartGetCachedBitmap(
     m_pCurMask = m_pCachedMask;
     return CPDF_DIB::LoadState::kSuccess;
   }
-
-  // A cross-document image may have come from the embedder.
-  if (m_pDocument != m_pImage->GetDocument())
-    return CPDF_DIB::LoadState::kFail;
 
   m_pCurBitmap = m_pImage->CreateNewDIB();
   CPDF_DIB::LoadState ret = m_pCurBitmap.As<CPDF_DIB>()->StartLoadDIBBase(
