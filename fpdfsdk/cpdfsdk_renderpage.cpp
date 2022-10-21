@@ -9,7 +9,7 @@
 #include <memory>
 #include <utility>
 
-#include "core/fpdfapi/render/cpdf_pageimagecache.h"
+#include "core/fpdfapi/page/cpdf_pageimagecache.h"
 #include "core/fpdfapi/render/cpdf_pagerendercontext.h"
 #include "core/fpdfapi/render/cpdf_progressiverenderer.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"

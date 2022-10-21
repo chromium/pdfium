@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_RENDER_CPDF_PAGEIMAGECACHE_H_
-#define CORE_FPDFAPI_RENDER_CPDF_PAGEIMAGECACHE_H_
+#ifndef CORE_FPDFAPI_PAGE_CPDF_PAGEIMAGECACHE_H_
+#define CORE_FPDFAPI_PAGE_CPDF_PAGEIMAGECACHE_H_
 
 #include <stdint.h>
 
@@ -105,4 +105,4 @@ class CPDF_PageImageCache final : public CPDF_Page::RenderCacheIface {
   bool m_bCurFindCache = false;
 };
 
-#endif  // CORE_FPDFAPI_RENDER_CPDF_PAGEIMAGECACHE_H_
+#endif  // CORE_FPDFAPI_PAGE_CPDF_PAGEIMAGECACHE_H_

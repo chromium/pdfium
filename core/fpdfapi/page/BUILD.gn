@@ -59,6 +59,8 @@ source_set("page") {
     "cpdf_occontext.h",
     "cpdf_page.cpp",
     "cpdf_page.h",
+    "cpdf_pageimagecache.cpp",
+    "cpdf_pageimagecache.h",
     "cpdf_pagemodule.cpp",
     "cpdf_pagemodule.h",
     "cpdf_pageobject.cpp",

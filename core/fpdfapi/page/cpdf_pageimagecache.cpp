@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/render/cpdf_pageimagecache.h"
+#include "core/fpdfapi/page/cpdf_pageimagecache.h"
 
 #include <algorithm>
 #include <utility>
