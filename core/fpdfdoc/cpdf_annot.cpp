@@ -53,6 +53,21 @@ CPDF_Form* AnnotGetMatrix(CPDF_Page* pPage,
   CFX_FloatRect form_bbox =
       form_matrix.TransformRect(pForm->GetDict()->GetRectFor("BBox"));
   matrix->MatchRect(pAnnot->GetRect(), form_bbox);
+
+  // Compensate for page rotation.
+  if ((pAnnot->GetFlags() & pdfium::annotation_flags::kNoRotate) &&
+      pPage->GetPageRotation() != 0) {
+    // Rotate annotation rect around top-left angle (according to the
+    // specification).
+    const float offset_x = pAnnot->GetRect().Left();
+    const float offset_y = pAnnot->GetRect().Top();
+    matrix->Concat({1, 0, 0, 1, -offset_x, -offset_y});
+    // GetPageRotation returns value in fractions of pi/2.
+    const float angle = FXSYS_PI / 2 * pPage->GetPageRotation();
+    matrix->Rotate(angle);
+    matrix->Concat({1, 0, 0, 1, offset_x, offset_y});
+  }
+
   matrix->Concat(mtUser2Device);
   return pForm;
 }
