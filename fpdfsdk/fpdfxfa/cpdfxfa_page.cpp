@@ -124,7 +124,7 @@ void CPDFXFA_Page::LoadPDFPageFromDict(RetainPtr<CPDF_Dictionary> pPageDict) {
   DCHECK(pPageDict);
   m_pPDFPage =
       pdfium::MakeRetain<CPDF_Page>(GetDocument(), std::move(pPageDict));
-  m_pPDFPage->SetRenderCache(
+  m_pPDFPage->SetPageImageCache(
       std::make_unique<CPDF_PageImageCache>(m_pPDFPage.Get()));
   m_pPDFPage->ParseContent();
 }

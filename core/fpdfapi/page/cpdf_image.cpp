@@ -15,6 +15,7 @@
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/page/cpdf_dib.h"
 #include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfapi/page/cpdf_pageimagecache.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_boolean.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -334,7 +335,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
 
 void CPDF_Image::ResetCache(CPDF_Page* pPage) {
   RetainPtr<CPDF_Image> pHolder(this);
-  pPage->GetRenderCache()->ResetBitmapForImage(std::move(pHolder));
+  pPage->GetPageImageCache()->ResetBitmapForImage(std::move(pHolder));
 }
 
 RetainPtr<CPDF_DIB> CPDF_Image::CreateNewDIB() const {

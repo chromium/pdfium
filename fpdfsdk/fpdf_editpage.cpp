@@ -221,7 +221,7 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
 #endif  // PDF_ENABLE_XFA
 
   auto pPage = pdfium::MakeRetain<CPDF_Page>(pDoc, pPageDict);
-  pPage->SetRenderCache(std::make_unique<CPDF_PageImageCache>(pPage.Get()));
+  pPage->SetPageImageCache(std::make_unique<CPDF_PageImageCache>(pPage.Get()));
   pPage->ParseContent();
 
   return FPDFPageFromIPDFPage(pPage.Leak());  // Caller takes ownership.

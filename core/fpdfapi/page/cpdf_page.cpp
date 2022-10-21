@@ -11,6 +11,7 @@
 
 #include "constants/page_object.h"
 #include "core/fpdfapi/page/cpdf_contentparser.h"
+#include "core/fpdfapi/page/cpdf_pageimagecache.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -193,6 +194,10 @@ RetainPtr<CPDF_Array> CPDF_Page::GetMutableAnnotsArray() {
 
 RetainPtr<const CPDF_Array> CPDF_Page::GetAnnotsArray() const {
   return GetDict()->GetArrayFor("Annots");
+}
+
+void CPDF_Page::SetPageImageCache(std::unique_ptr<CPDF_PageImageCache> pCache) {
+  m_pPageImageCache = std::move(pCache);
 }
 
 void CPDF_Page::SetRenderContext(std::unique_ptr<RenderContextIface> pContext) {

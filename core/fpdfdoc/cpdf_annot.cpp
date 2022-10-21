@@ -427,9 +427,9 @@ bool CPDF_Annot::DrawAppearance(CPDF_Page* pPage,
   if (!pForm)
     return false;
 
-  CPDF_RenderContext context(
-      pPage->GetDocument(), pPage->GetMutablePageResources(),
-      static_cast<CPDF_PageImageCache*>(pPage->GetRenderCache()));
+  CPDF_RenderContext context(pPage->GetDocument(),
+                             pPage->GetMutablePageResources(),
+                             pPage->GetPageImageCache());
   context.AppendLayer(pForm, matrix);
   context.Render(pDevice, nullptr, nullptr, nullptr);
   return true;

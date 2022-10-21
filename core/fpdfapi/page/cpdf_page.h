@@ -22,8 +22,8 @@
 class CPDF_Array;
 class CPDF_Dictionary;
 class CPDF_Document;
-class CPDF_Image;
 class CPDF_Object;
+class CPDF_PageImageCache;
 
 class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
  public:
@@ -37,13 +37,6 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   class RenderContextIface {
    public:
     virtual ~RenderContextIface() = default;
-  };
-
-  // Cache for the render layer to attach to this page.
-  class RenderCacheIface {
-   public:
-    virtual ~RenderCacheIface() = default;
-    virtual void ResetBitmapForImage(RetainPtr<CPDF_Image> pImage) = 0;
   };
 
   class RenderContextClearer {
@@ -86,10 +79,8 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   RetainPtr<CPDF_Array> GetMutableAnnotsArray();
   RetainPtr<const CPDF_Array> GetAnnotsArray() const;
 
-  RenderCacheIface* GetRenderCache() const { return m_pRenderCache.get(); }
-  void SetRenderCache(std::unique_ptr<RenderCacheIface> pCache) {
-    m_pRenderCache = std::move(pCache);
-  }
+  CPDF_PageImageCache* GetPageImageCache() { return m_pPageImageCache.get(); }
+  void SetPageImageCache(std::unique_ptr<CPDF_PageImageCache> pCache);
 
   RenderContextIface* GetRenderContext() const {
     return m_pRenderContext.get();
@@ -116,7 +107,7 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   CFX_SizeF m_PageSize;
   CFX_Matrix m_PageMatrix;
   UnownedPtr<CPDF_Document> const m_pPDFDocument;
-  std::unique_ptr<RenderCacheIface> m_pRenderCache;
+  std::unique_ptr<CPDF_PageImageCache> m_pPageImageCache;
   std::unique_ptr<RenderContextIface> m_pRenderContext;
   ObservedPtr<View> m_pView;
 };
