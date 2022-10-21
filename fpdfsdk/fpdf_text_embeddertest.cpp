@@ -952,6 +952,37 @@ TEST_F(FPDFTextEmbedderTest, ToUnicode) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFTextEmbedderTest, IsGenerated) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page));
+    ASSERT_TRUE(textpage);
+
+    EXPECT_EQ(static_cast<unsigned int>('H'),
+              FPDFText_GetUnicode(textpage.get(), 0));
+    EXPECT_EQ(0, FPDFText_IsGenerated(textpage.get(), 0));
+    EXPECT_EQ(static_cast<unsigned int>(' '),
+              FPDFText_GetUnicode(textpage.get(), 6));
+    EXPECT_EQ(0, FPDFText_IsGenerated(textpage.get(), 6));
+
+    EXPECT_EQ(static_cast<unsigned int>('\r'),
+              FPDFText_GetUnicode(textpage.get(), 13));
+    EXPECT_EQ(1, FPDFText_IsGenerated(textpage.get(), 13));
+    EXPECT_EQ(static_cast<unsigned int>('\n'),
+              FPDFText_GetUnicode(textpage.get(), 14));
+    EXPECT_EQ(1, FPDFText_IsGenerated(textpage.get(), 14));
+
+    EXPECT_EQ(-1, FPDFText_IsGenerated(textpage.get(), -1));
+    EXPECT_EQ(-1, FPDFText_IsGenerated(textpage.get(), kHelloGoodbyeTextSize));
+    EXPECT_EQ(-1, FPDFText_IsGenerated(nullptr, 6));
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFTextEmbedderTest, Bug_921) {
   ASSERT_TRUE(OpenDocument("bug_921.pdf"));
   FPDF_PAGE page = LoadPage(0);

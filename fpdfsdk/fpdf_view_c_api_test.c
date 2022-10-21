@@ -427,6 +427,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFText_GetText);
     CHK(FPDFText_GetTextRenderMode);
     CHK(FPDFText_GetUnicode);
+    CHK(FPDFText_IsGenerated);
     CHK(FPDFText_LoadPage);
 
     // fpdf_thumbnail.h
