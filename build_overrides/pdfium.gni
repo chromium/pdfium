@@ -17,7 +17,8 @@ pdf_enable_v8_override = true
 # Default: Without XFA support.
 pdf_enable_xfa_override = false
 
-# Build PDFium with PartitionAlloc as the memory allocator.
+# Build PDFium with PartitionAlloc support, directing `fxcrt` to use
+# it as its memory allocator in lieu of `malloc()`.
 # Default: Use PartitionAlloc unless it is a MSVC build.
 pdf_use_partition_alloc_override = !is_win || is_clang
 
