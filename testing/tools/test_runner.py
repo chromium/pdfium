@@ -35,10 +35,6 @@ TEST_SEED_TIME = "1399672130"
 TEXT_TESTS = ['javascript']
 
 
-class KeyboardInterruptError(Exception):
-  """Custom exception used to wrap `KeyboardInterrupt` exceptions."""
-
-
 def DeleteFiles(files):
   """Utility function to delete a list of files"""
   for f in files:
@@ -106,14 +102,24 @@ class TestRunner:
         elif artifact.skia_gold_status == result_types.FAIL:
           self.skia_gold_failures.append(artifact.GetSkiaGoldId())
 
+    # Log test result.
+    print(f'{result_status}: {test_result.test_id}')
+    if result_status != result_types.PASS:
+      if test_result.reason:
+        print(f'Failure reason: {test_result.reason}')
+      if test_result.log:
+        print(f'Test output:\n{test_result.log}')
+
+    # Report test result to ResultDB.
     if self.resultdb:
       # TODO(crbug.com/pdfium/1916): Populate more ResultDB fields.
       self.resultdb.Post(
           test_id=test_result.test_id,
           status=result_status,
           duration=test_result.duration_milliseconds,
-          test_log=None,
-          test_file=None)
+          test_log=test_result.log,
+          test_file=None,
+          failure_reason=test_result.reason)
 
   def Run(self):
     # Running a test defines a number of attributes on the fly.
@@ -285,13 +291,6 @@ class TestRunner:
         self.HandleResult(self.test_cases.GetTestCase(result.test_id), result)
 
     # Report test results.
-    #
-    # For some reason, summary will be cut off from stdout on windows if
-    # _PrintSummary() is called at the end
-    # TODO(crbug.com/pdfium/1657): Once resolved, move _PrintSummary() back
-    # down to the end
-    self._PrintSummary()
-
     if self.surprises:
       self.surprises.sort()
       print('\nUnexpected Successes:')
@@ -315,6 +314,8 @@ class TestRunner:
       print('\nSummary of Skia Gold Failures:')
       for failure in self.skia_gold_failures:
         print(failure)
+
+    self._PrintSummary()
 
     if self.failures:
       if not self.options.ignore_errors:
@@ -362,12 +363,10 @@ class TestRunner:
 
 def _RunPdfiumTest(test_case):
   """Runs a PDFium test case."""
-  try:
-    with _TestTimer() as timer:
-      timer.result = _per_process_state.GenerateAndTest(test_case)
-      return timer.result
-  except KeyboardInterrupt as exc:
-    raise KeyboardInterruptError() from exc
+  test_case_runner = _TestCaseRunner(test_case)
+  with test_case_runner:
+    test_case_runner.test_result = test_case_runner.GenerateAndTest()
+  return test_case_runner.test_result
 
 
 # `_PerProcessState` singleton. This is initialized when creating the
@@ -455,97 +454,157 @@ class _PerProcessState:
           process_name=self.process_name)
     return self.skia_tester
 
-  def GenerateAndTest(self, test_case):
+
+class _TestCaseRunner:
+  """Runner for a single test case."""
+
+  def __init__(self, test_case):
+    self.test_case = test_case
+    self.test_result = None
+    self.duration_start = 0
+
+    self.source_dir, self.input_filename = os.path.split(
+        self.test_case.input_path)
+    self.pdf_path = os.path.join(self.working_dir, f'{self.test_id}.pdf')
+
+  def __enter__(self):
+    self.duration_start = time.perf_counter_ns()
+    return self
+
+  def __exit__(self, exc_type, exc_value, traceback):
+    if not self.test_result:
+      self.test_result = self.test_case.NewResult(
+          result_types.UNKNOWN, reason='No test result recorded')
+    duration = time.perf_counter_ns() - self.duration_start
+    self.test_result.duration_milliseconds = duration * 1e-6
+
+  @property
+  def options(self):
+    return _per_process_state.options
+
+  @property
+  def test_id(self):
+    return self.test_case.test_id
+
+  @property
+  def working_dir(self):
+    return _per_process_state.working_dir
+
+  def IsResultSuppressed(self):
+    return _per_process_state.test_suppressor.IsResultSuppressed(
+        self.input_filename)
+
+  def IsImageDiffSuppressed(self):
+    return _per_process_state.test_suppressor.IsImageDiffSuppressed(
+        self.input_filename)
+
+  def RunCommand(self, command, stdout=None):
+    """Runs a test command.
+
+    Args:
+      command: The list of command arguments.
+      stdout: Optional `file`-like object to send standard output.
+
+    Returns:
+      The test result.
+    """
+    if stdout:
+      stderr = subprocess.PIPE
+    else:
+      stdout = subprocess.PIPE
+      stderr = subprocess.STDOUT
+
+    completed_process = subprocess.run(
+        command, stdout=stdout, stderr=stderr, check=False, encoding='utf-8')
+    if completed_process.returncode != 0:
+      if stdout == subprocess.PIPE:
+        test_log = completed_process.stdout
+      else:
+        test_log = completed_process.stderr
+      return self.test_case.NewResult(
+          result_types.FAIL,
+          log=test_log,
+          reason='Command {} exited with code {}'.format(
+              completed_process.args, completed_process.returncode))
+
+    return self.test_case.NewResult(result_types.PASS)
+
+  def GenerateAndTest(self):
     """Generate test input and run pdfium_test."""
-    source_dir, input_filename = os.path.split(test_case.input_path)
-    pdf_path = os.path.join(self.working_dir, f'{test_case.test_id}.pdf')
 
     # Remove any existing generated images from previous runs.
-    actual_images = self.image_differ.GetActualFiles(input_filename, source_dir,
-                                                     self.working_dir)
+    actual_images = _per_process_state.image_differ.GetActualFiles(
+        self.input_filename, self.source_dir, self.working_dir)
     DeleteFiles(actual_images)
 
-    sys.stdout.flush()
+    test_result = self.Generate()
+    if not test_result.IsPass():
+      return test_result
 
-    raised_exception = self.Generate(source_dir, input_filename,
-                                     test_case.test_id, pdf_path)
-
-    if raised_exception is not None:
-      print('FAILURE: {}; {}'.format(input_filename, raised_exception))
-      return test_case.NewResult(result_types.FAIL)
-
-    image_artifacts = None
-    if self.test_type in TEXT_TESTS:
-      expected_txt_path = os.path.join(source_dir,
-                                       f'{test_case.test_id}_expected.txt')
-      raised_exception = self.TestText(input_filename, test_case.test_id,
-                                       expected_txt_path, pdf_path)
+    if _per_process_state.test_type in TEXT_TESTS:
+      test_result = self.TestText()
     else:
-      raised_exception, image_artifacts = self.TestPixel(pdf_path, source_dir)
+      test_result = self.TestPixel()
+    if not test_result.IsPass():
+      return test_result
 
-    if raised_exception is not None:
-      print('FAILURE: {}; {}'.format(input_filename, raised_exception))
-      return test_case.NewResult(
-          result_types.FAIL, image_artifacts=image_artifacts)
-
+    # TODO(crbug.com/pdfium/1916): Output needs to be captured. Also, this only
+    # applies to pixel tests, not text tests.
     if actual_images:
-      if self.image_differ.HasDifferences(input_filename, source_dir,
-                                          self.working_dir):
-        self.RegenerateIfNeeded_(input_filename, source_dir)
-        return test_case.NewResult(
-            result_types.FAIL, image_artifacts=image_artifacts)
-    else:
-      if (self.enforce_expected_images and
-          not self.test_suppressor.IsImageDiffSuppressed(input_filename)):
-        self.RegenerateIfNeeded_(input_filename, source_dir)
-        print('FAILURE: {}; Missing expected images'.format(input_filename))
-        return test_case.NewResult(
-            result_types.FAIL, image_artifacts=image_artifacts)
+      if _per_process_state.image_differ.HasDifferences(self.input_filename,
+                                                        self.source_dir,
+                                                        self.working_dir):
+        test_result.status = result_types.FAIL
+        test_result.reason = 'Images differ'
+        self._RegenerateIfNeeded()
+        return test_result
+    elif _per_process_state.enforce_expected_images:
+      if not self.IsImageDiffSuppressed():
+        test_result.status = result_types.FAIL
+        test_result.reason = 'Missing expected images'
+        self._RegenerateIfNeeded()
+        return test_result
 
-    if self.delete_output_on_success:
+    if _per_process_state.delete_output_on_success:
       DeleteFiles(actual_images)
-    return test_case.NewResult(
-        result_types.PASS, image_artifacts=image_artifacts)
+    return test_result
 
   # TODO(crbug.com/pdfium/1508): Add support for an option to automatically
   # generate Skia/SkiaPaths specific expected results.
-  def RegenerateIfNeeded_(self, input_filename, source_dir):
-    if (not self.options.regenerate_expected or
-        self.test_suppressor.IsResultSuppressed(input_filename) or
-        self.test_suppressor.IsImageDiffSuppressed(input_filename)):
+  def _RegenerateIfNeeded(self):
+    if not self.options.regenerate_expected:
       return
+    if self.IsResultSuppressed() or self.IsImageDiffSuppressed():
+      return
+    _per_process_state.image_differ.Regenerate(
+        self.input_filename,
+        self.source_dir,
+        self.working_dir,
+        platform_only=self.options.regenerate_expected == 'platform')
 
-    platform_only = (self.options.regenerate_expected == 'platform')
-    self.image_differ.Regenerate(input_filename, source_dir, self.working_dir,
-                                 platform_only)
-
-  def Generate(self, source_dir, input_filename, input_root, pdf_path):
-    original_path = os.path.join(source_dir, input_filename)
-    input_path = os.path.join(source_dir, input_root + '.in')
-
-    input_event_path = os.path.join(source_dir, input_root + '.evt')
+  def Generate(self):
+    input_event_path = os.path.join(self.source_dir, f'{self.test_id}.evt')
     if os.path.exists(input_event_path):
-      output_event_path = os.path.splitext(pdf_path)[0] + '.evt'
+      output_event_path = f'{os.path.splitext(self.pdf_path)[0]}.evt'
       shutil.copyfile(input_event_path, output_event_path)
 
-    if not os.path.exists(input_path):
-      if os.path.exists(original_path):
-        shutil.copyfile(original_path, pdf_path)
-      return None
+    template_path = os.path.join(self.source_dir, f'{self.test_id}.in')
+    if not os.path.exists(template_path):
+      if os.path.exists(self.test_case.input_path):
+        shutil.copyfile(self.test_case.input_path, self.pdf_path)
+      return self.test_case.NewResult(result_types.PASS)
 
-    sys.stdout.flush()
-
-    return common.RunCommand([
-        sys.executable, self.fixup_path, '--output-dir=' + self.working_dir,
-        input_path
+    return self.RunCommand([
+        sys.executable, _per_process_state.fixup_path,
+        f'--output-dir={self.working_dir}', template_path
     ])
 
-  def TestText(self, input_filename, input_root, expected_txt_path, pdf_path):
-    txt_path = os.path.join(self.working_dir, input_root + '.txt')
-
+  def TestText(self):
+    txt_path = os.path.join(self.working_dir, f'{self.test_id}.txt')
     with open(txt_path, 'w') as outfile:
       cmd_to_run = [
-          self.pdfium_test_path, '--send-events', '--time=' + TEST_SEED_TIME
+          _per_process_state.pdfium_test_path, '--send-events',
+          f'--time={TEST_SEED_TIME}'
       ]
 
       if self.options.disable_javascript:
@@ -554,51 +613,50 @@ class _PerProcessState:
       if self.options.disable_xfa:
         cmd_to_run.append('--disable-xfa')
 
-      cmd_to_run.append(pdf_path)
-      try:
-        subprocess.check_call(cmd_to_run, stdout=outfile)
-      except subprocess.CalledProcessError as e:
-        return e
+      cmd_to_run.append(self.pdf_path)
+      test_result = self.RunCommand(cmd_to_run, stdout=outfile)
+      if not test_result.IsPass():
+        return test_result
 
     # If the expected file does not exist, the output is expected to be empty.
+    expected_txt_path = os.path.join(self.source_dir,
+                                     f'{self.test_id}_expected.txt')
     if not os.path.exists(expected_txt_path):
       return self._VerifyEmptyText(txt_path)
 
     # If JavaScript is disabled, the output should be empty.
     # However, if the test is suppressed and JavaScript is disabled, do not
     # verify that the text is empty so the suppressed test does not surprise.
-    if (self.options.disable_javascript and
-        not self.test_suppressor.IsResultSuppressed(input_filename)):
+    if self.options.disable_javascript and not self.IsResultSuppressed():
       return self._VerifyEmptyText(txt_path)
 
-    cmd = [sys.executable, self.text_diff_path, expected_txt_path, txt_path]
-    return common.RunCommand(cmd)
+    return self.RunCommand([
+        sys.executable, _per_process_state.text_diff_path, expected_txt_path,
+        txt_path
+    ])
 
   def _VerifyEmptyText(self, txt_path):
-    try:
-      with open(txt_path, "r") as txt_file:
-        txt_data = txt_file.readlines()
-      if not txt_data:
-        return None
-      sys.stdout.write('Unexpected output:\n')
-      for line in txt_data:
-        sys.stdout.write(line)
-      raise Exception('%s should be empty.' % txt_path)
-    except Exception as e:
-      return e
+    with open(txt_path, "r") as txt_file:
+      txt_data = txt_file.read()
+
+    if txt_data:
+      return self.test_case.NewResult(
+          result_types.FAIL, log=txt_data, reason=f'{txt_path} should be empty')
+
+    return self.test_case.NewResult(result_types.PASS)
 
   # TODO(crbug.com/pdfium/1656): Remove when ready to fully switch over to
   # Skia Gold
-  def TestPixel(self, pdf_path, source_dir):
+  def TestPixel(self):
     cmd_to_run = [
-        self.pdfium_test_path, '--send-events', '--png', '--md5',
-        '--time=' + TEST_SEED_TIME
+        _per_process_state.pdfium_test_path, '--send-events', '--png', '--md5',
+        f'--time={TEST_SEED_TIME}'
     ]
 
-    if 'use_ahem' in source_dir or 'use_symbolneu' in source_dir:
-      cmd_to_run.append('--font-dir=%s' % self.font_dir)
+    if 'use_ahem' in self.source_dir or 'use_symbolneu' in self.source_dir:
+      cmd_to_run.append(f'--font-dir={_per_process_state.font_dir}')
     else:
-      cmd_to_run.append('--font-dir=%s' % self.third_party_font_dir)
+      cmd_to_run.append(f'--font-dir={_per_process_state.third_party_font_dir}')
       cmd_to_run.append('--croscore-font-names')
 
     if self.options.disable_javascript:
@@ -613,21 +671,25 @@ class _PerProcessState:
     if self.options.reverse_byte_order:
       cmd_to_run.append('--reverse-byte-order')
 
-    cmd_to_run.append(pdf_path)
+    cmd_to_run.append(self.pdf_path)
 
     raised_exception, results = common.RunCommandExtractHashedFiles(cmd_to_run)
-    if results:
-      results = [
-          self._NewImageArtifact(image_path=image_path, md5_hash=md5_hash)
-          for image_path, md5_hash in results
-      ]
-    return raised_exception, results
+    if raised_exception:
+      return self.test_case.NewResult(
+          result_types.FAIL, reason=str(raised_exception))
+
+    return self.test_case.NewResult(
+        result_types.PASS,
+        image_artifacts=[
+            self._NewImageArtifact(image_path=image_path, md5_hash=md5_hash)
+            for image_path, md5_hash in results
+        ])
 
   def _NewImageArtifact(self, *, image_path, md5_hash):
     artifact = ImageArtifact(image_path=image_path, md5_hash=md5_hash)
 
     if self.options.run_skia_gold:
-      if self.GetSkiaGoldTester().UploadTestResultToSkiaGold(
+      if _per_process_state.GetSkiaGoldTester().UploadTestResultToSkiaGold(
           artifact.GetSkiaGoldId(), artifact.image_path):
         artifact.skia_gold_status = result_types.PASS
       else:
@@ -660,12 +722,16 @@ class TestResult:
     test_id: The corresponding test case ID.
     status: The overall `result_types` status.
     duration_milliseconds: Test time in milliseconds.
+    log: Optional log of the test's output.
     image_artfacts: Optional list of image artifacts.
+    reason: Optional reason why the test failed.
   """
   test_id: str
   status: str
   duration_milliseconds: float = None
+  log: str = None
   image_artifacts: list = None
+  reason: str = None
 
   def IsPass(self):
     """Whether the test passed."""
@@ -724,21 +790,3 @@ class TestCaseManager:
 def _GetTestId(input_basename):
   """Constructs a test ID by stripping the last extension from the basename."""
   return os.path.splitext(input_basename)[0]
-
-
-class _TestTimer:
-  """Context manager for measuring the duration of a test."""
-
-  def __init__(self):
-    self.duration_start = 0
-    self.result = None
-
-  def __enter__(self):
-    self.duration_start = time.perf_counter_ns()
-    return self
-
-  def __exit__(self, exc_type, exc_value, traceback):
-    if not self.result:
-      return
-    duration = time.perf_counter_ns() - self.duration_start
-    self.result.duration_milliseconds = duration * 1e-6
