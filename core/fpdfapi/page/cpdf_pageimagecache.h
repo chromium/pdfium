@@ -48,10 +48,10 @@ class CPDF_PageImageCache {
   RetainPtr<CFX_DIBBase> DetachCurMask();
 
  private:
-  class ImageCacheEntry {
+  class Entry {
    public:
-    explicit ImageCacheEntry(RetainPtr<CPDF_Image> pImage);
-    ~ImageCacheEntry();
+    explicit Entry(RetainPtr<CPDF_Image> pImage);
+    ~Entry();
 
     void Reset();
     uint32_t EstimateSize() const { return m_dwCacheSize; }
@@ -92,11 +92,9 @@ class CPDF_PageImageCache {
   void ClearImageCacheEntry(const CPDF_Stream* pStream);
 
   UnownedPtr<CPDF_Page> const m_pPage;
-  std::map<RetainPtr<const CPDF_Stream>,
-           std::unique_ptr<ImageCacheEntry>,
-           std::less<>>
+  std::map<RetainPtr<const CPDF_Stream>, std::unique_ptr<Entry>, std::less<>>
       m_ImageCache;
-  MaybeOwned<ImageCacheEntry> m_pCurImageCacheEntry;
+  MaybeOwned<Entry> m_pCurImageCacheEntry;
   uint32_t m_nTimeCount = 0;
   uint32_t m_nCacheSize = 0;
   bool m_bCurFindCache = false;

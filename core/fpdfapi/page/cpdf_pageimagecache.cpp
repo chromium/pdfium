@@ -93,8 +93,7 @@ bool CPDF_PageImageCache::StartGetCachedBitmap(
   if (m_bCurFindCache) {
     m_pCurImageCacheEntry = it->second.get();
   } else {
-    m_pCurImageCacheEntry =
-        std::make_unique<ImageCacheEntry>(std::move(pImage));
+    m_pCurImageCacheEntry = std::make_unique<Entry>(std::move(pImage));
   }
   CPDF_DIB::LoadState ret = m_pCurImageCacheEntry->StartGetCachedBitmap(
       this, pFormResources, pPageResources, bStdCS, eFamily, bLoadMask);
@@ -131,7 +130,7 @@ void CPDF_PageImageCache::ResetBitmapForImage(RetainPtr<CPDF_Image> pImage) {
   if (it == m_ImageCache.end())
     return;
 
-  ImageCacheEntry* pEntry = it->second.get();
+  Entry* pEntry = it->second.get();
   m_nCacheSize -= pEntry->EstimateSize();
   pEntry->Reset();
   m_nCacheSize += pEntry->EstimateSize();
@@ -149,26 +148,25 @@ RetainPtr<CFX_DIBBase> CPDF_PageImageCache::DetachCurMask() {
   return m_pCurImageCacheEntry->DetachMask();
 }
 
-CPDF_PageImageCache::ImageCacheEntry::ImageCacheEntry(
-    RetainPtr<CPDF_Image> pImage)
+CPDF_PageImageCache::Entry::Entry(RetainPtr<CPDF_Image> pImage)
     : m_pImage(std::move(pImage)) {}
 
-CPDF_PageImageCache::ImageCacheEntry::~ImageCacheEntry() = default;
+CPDF_PageImageCache::Entry::~Entry() = default;
 
-void CPDF_PageImageCache::ImageCacheEntry::Reset() {
+void CPDF_PageImageCache::Entry::Reset() {
   m_pCachedBitmap.Reset();
   CalcSize();
 }
 
-RetainPtr<CFX_DIBBase> CPDF_PageImageCache::ImageCacheEntry::DetachBitmap() {
+RetainPtr<CFX_DIBBase> CPDF_PageImageCache::Entry::DetachBitmap() {
   return std::move(m_pCurBitmap);
 }
 
-RetainPtr<CFX_DIBBase> CPDF_PageImageCache::ImageCacheEntry::DetachMask() {
+RetainPtr<CFX_DIBBase> CPDF_PageImageCache::Entry::DetachMask() {
   return std::move(m_pCurMask);
 }
 
-CPDF_DIB::LoadState CPDF_PageImageCache::ImageCacheEntry::StartGetCachedBitmap(
+CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
     CPDF_PageImageCache* pPageImageCache,
     const CPDF_Dictionary* pFormResources,
     const CPDF_Dictionary* pPageResources,
@@ -194,7 +192,7 @@ CPDF_DIB::LoadState CPDF_PageImageCache::ImageCacheEntry::StartGetCachedBitmap(
   return CPDF_DIB::LoadState::kFail;
 }
 
-bool CPDF_PageImageCache::ImageCacheEntry::Continue(
+bool CPDF_PageImageCache::Entry::Continue(
     PauseIndicatorIface* pPause,
     CPDF_PageImageCache* pPageImageCache) {
   CPDF_DIB::LoadState ret =
@@ -209,7 +207,7 @@ bool CPDF_PageImageCache::ImageCacheEntry::Continue(
   return false;
 }
 
-void CPDF_PageImageCache::ImageCacheEntry::ContinueGetCachedBitmap(
+void CPDF_PageImageCache::Entry::ContinueGetCachedBitmap(
     CPDF_PageImageCache* pPageImageCache) {
   m_MatteColor = m_pCurBitmap.As<CPDF_DIB>()->GetMatteColor();
   m_pCurMask = m_pCurBitmap.As<CPDF_DIB>()->DetachMask();
@@ -229,7 +227,7 @@ void CPDF_PageImageCache::ImageCacheEntry::ContinueGetCachedBitmap(
   CalcSize();
 }
 
-void CPDF_PageImageCache::ImageCacheEntry::CalcSize() {
+void CPDF_PageImageCache::Entry::CalcSize() {
   m_dwCacheSize = 0;
   if (m_pCachedBitmap)
     m_dwCacheSize += m_pCachedBitmap->GetEstimatedImageMemoryBurden();
