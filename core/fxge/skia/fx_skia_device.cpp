@@ -841,7 +841,7 @@ class SkiaState {
     if (m_debugDisable)
       return false;
     Dump(__func__);
-    int drawIndex = std::min(m_drawIndex, m_commands.count());
+    int drawIndex = std::min(m_drawIndex, m_commands.size());
     if (Accumulator::kText == m_type || drawIndex != m_commandIndex ||
         (Accumulator::kPath == m_type &&
          DrawChanged(pMatrix, pDrawState, fill_color, stroke_color,
@@ -977,7 +977,7 @@ class SkiaState {
       Flush();
       return false;
     }
-    int drawIndex = std::min(m_drawIndex, m_commands.count());
+    int drawIndex = std::min(m_drawIndex, m_commands.size());
     if (Accumulator::kPath == m_type || drawIndex != m_commandIndex ||
         (Accumulator::kText == m_type &&
          (FontChanged(pFont, matrix, font_size, scaleX, color, options) ||
@@ -1081,7 +1081,7 @@ class SkiaState {
 #if defined(_SKIA_SUPPORT_PATHS_)
     m_pDriver->PreMultiply();
 #endif
-    if (m_rsxform.count()) {
+    if (m_rsxform.size()) {
       sk_sp<SkTextBlob> blob = SkTextBlob::MakeFromRSXform(
           glyphs.begin(), glyphs.size_bytes(), m_rsxform.begin(), font,
           SkTextEncoding::kGlyphID);
@@ -1104,7 +1104,7 @@ class SkiaState {
     m_textOptions = CFX_TextRenderOptions();
   }
 
-  bool IsEmpty() const { return !m_commands.count(); }
+  bool IsEmpty() const { return m_commands.empty(); }
 
   bool SetClipFill(const CFX_Path& path,
                    const CFX_Matrix* pMatrix,
@@ -1138,7 +1138,7 @@ class SkiaState {
 
   bool SetClip(const SkPath& skClipPath) {
     // if a pending draw depends on clip state that is cached, flush it and draw
-    if (m_commandIndex < m_commands.count()) {
+    if (m_commandIndex < m_commands.size()) {
       if (m_commands[m_commandIndex] == Clip::kPath &&
           m_clips[m_commandIndex] == skClipPath) {
         ++m_commandIndex;
@@ -1153,7 +1153,7 @@ class SkiaState {
       } while (m_commands[m_clipIndex] != Clip::kSave);
       m_pDriver->SkiaCanvas()->restore();
     }
-    if (m_commandIndex < m_commands.count()) {
+    if (m_commandIndex < m_commands.size()) {
       m_commands[m_commandIndex] = Clip::kPath;
       m_clips[m_commandIndex] = skClipPath;
     } else {
@@ -1207,7 +1207,7 @@ class SkiaState {
     if (m_debugDisable)
       return false;
     Dump(__func__);
-    int count = m_commands.count();
+    int count = m_commands.size();
     if (m_commandIndex < count) {
       if (Clip::kSave == m_commands[m_commandIndex]) {
         ++m_commandIndex;
@@ -1324,7 +1324,7 @@ class SkiaState {
       return;
     Dump(__func__);
     if (Accumulator::kPath == m_type || Accumulator::kText == m_type) {
-      AdjustClip(std::min(m_drawIndex, m_commands.count()));
+      AdjustClip(std::min(m_drawIndex, m_commands.size()));
       Accumulator::kPath == m_type ? FlushPath() : FlushText();
     }
   }
@@ -1348,7 +1348,7 @@ class SkiaState {
   }
 
   void DumpEndPrefix() const {
-    int index = m_commands.count();
+    int index = m_commands.size();
     if (index != m_commandIndex && index > m_drawIndex && index != m_clipIndex)
       return;
     printf("%c%c%c>\n", index == m_commandIndex ? 'x' : '-',
@@ -1370,7 +1370,7 @@ class SkiaState {
 #if SHOW_SKIA_PATH_SHORTHAND
     bool dumpedPath = false;
 #endif
-    for (int index = 0; index < m_commands.count(); ++index) {
+    for (int index = 0; index < m_commands.size(); ++index) {
 #if SHOW_SKIA_PATH_SHORTHAND
       if (Clip::kSave == m_commands[index] && dumpedPath) {
         printf("\n");
@@ -1401,7 +1401,7 @@ class SkiaState {
     DumpEndPrefix();
     int skCanvasSaveCount = m_pDriver->SkiaCanvas()->getSaveCount();
     int cacheSaveCount = 1;
-    DCHECK(m_clipIndex <= m_commands.count());
+    DCHECK(m_clipIndex <= m_commands.size());
     for (int index = 0; index < m_clipIndex; ++index)
       cacheSaveCount += Clip::kSave == m_commands[index];
     DCHECK_EQ(skCanvasSaveCount, cacheSaveCount);
@@ -1461,7 +1461,7 @@ class SkiaState {
       return;
     int aggSaveCount = AggSaveCount(m_pDriver);
     int cacheSaveCount = CacheSaveCount(m_commands, m_commandIndex);
-    DCHECK(m_clipIndex <= m_commands.count());
+    DCHECK(m_clipIndex <= m_commands.size());
     if (aggSaveCount != cacheSaveCount) {
       // may not signify a bug if counts don't match
       printf("aggSaveCount %d != cacheSaveCount %d\n", aggSaveCount,
@@ -1565,8 +1565,8 @@ class SkiaState {
       m_fontCharWidths[index] = width;
     }
     int Count() const {
-      DCHECK_EQ(m_positions.count(), m_glyphs.count());
-      return m_glyphs.count();
+      DCHECK_EQ(m_positions.size(), m_glyphs.size());
+      return m_glyphs.size();
     }
     void SetCount(int count) {
       DCHECK(count >= 0);
@@ -2289,9 +2289,9 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     float end_y = pCoords->GetFloatAt(3);
     SkPoint pts[] = {{start_x, start_y}, {end_x, end_y}};
     skMatrix.mapPoints(pts, SK_ARRAY_COUNT(pts));
-    paint.setShader(
-        SkGradientShader::MakeLinear(pts, skColors.begin(), skPos.begin(),
-                                     skColors.count(), SkTileMode::kClamp));
+    paint.setShader(SkGradientShader::MakeLinear(pts, skColors.begin(),
+                                                 skPos.begin(), skColors.size(),
+                                                 SkTileMode::kClamp));
     if (clipStart || clipEnd) {
       // if the gradient is horizontal or vertical, modify the draw rectangle
       if (pts[0].fX == pts[1].fX) {  // vertical
@@ -2333,7 +2333,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
 
     paint.setShader(SkGradientShader::MakeTwoPointConical(
         pts[0], start_r, pts[1], end_r, skColors.begin(), skPos.begin(),
-        skColors.count(), SkTileMode::kClamp));
+        skColors.size(), SkTileMode::kClamp));
     if (clipStart || clipEnd) {
       if (clipStart && start_r)
         skClip.addCircle(pts[0].fX, pts[0].fY, start_r);
