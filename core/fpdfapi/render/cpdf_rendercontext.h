@@ -32,9 +32,6 @@ class CPDF_RenderContext {
     ~Layer();
 
     CPDF_PageObjectHolder* GetObjectHolder() { return m_pObjectHolder.Get(); }
-    const CPDF_PageObjectHolder* GetObjectHolder() const {
-      return m_pObjectHolder.Get();
-    }
     const CFX_Matrix& GetMatrix() const { return m_Matrix; }
 
    private:
