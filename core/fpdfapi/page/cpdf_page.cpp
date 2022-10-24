@@ -196,8 +196,8 @@ RetainPtr<const CPDF_Array> CPDF_Page::GetAnnotsArray() const {
   return GetDict()->GetArrayFor("Annots");
 }
 
-void CPDF_Page::SetPageImageCache(std::unique_ptr<CPDF_PageImageCache> pCache) {
-  m_pPageImageCache = std::move(pCache);
+void CPDF_Page::AddPageImageCache() {
+  m_pPageImageCache = std::make_unique<CPDF_PageImageCache>(this);
 }
 
 void CPDF_Page::SetRenderContext(std::unique_ptr<RenderContextIface> pContext) {

@@ -79,12 +79,9 @@ class CPDF_Page final : public IPDF_Page, public CPDF_PageObjectHolder {
   RetainPtr<CPDF_Array> GetMutableAnnotsArray();
   RetainPtr<const CPDF_Array> GetAnnotsArray() const;
 
+  void AddPageImageCache();
   CPDF_PageImageCache* GetPageImageCache() { return m_pPageImageCache.get(); }
-  void SetPageImageCache(std::unique_ptr<CPDF_PageImageCache> pCache);
-
-  RenderContextIface* GetRenderContext() const {
-    return m_pRenderContext.get();
-  }
+  RenderContextIface* GetRenderContext() { return m_pRenderContext.get(); }
 
   // `pContext` cannot be null. `SetRenderContext()` cannot be called if the
   // page already has a render context. Use `ClearRenderContext()` to reset the

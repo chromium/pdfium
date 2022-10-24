@@ -407,7 +407,7 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDF_LoadPage(FPDF_DOCUMENT document,
     return nullptr;
 
   auto pPage = pdfium::MakeRetain<CPDF_Page>(pDoc, std::move(pDict));
-  pPage->SetPageImageCache(std::make_unique<CPDF_PageImageCache>(pPage.Get()));
+  pPage->AddPageImageCache();
   pPage->ParseContent();
 
   return FPDFPageFromIPDFPage(pPage.Leak());
@@ -957,7 +957,7 @@ FPDF_GetPageSizeByIndexF(FPDF_DOCUMENT document,
     return false;
 
   auto page = pdfium::MakeRetain<CPDF_Page>(pDoc, std::move(pDict));
-  page->SetPageImageCache(std::make_unique<CPDF_PageImageCache>(page.Get()));
+  page->AddPageImageCache();
   size->width = page->GetPageWidth();
   size->height = page->GetPageHeight();
   return true;
