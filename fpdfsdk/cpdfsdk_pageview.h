@@ -62,7 +62,6 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
 
   CPDF_Page* GetPDFPage() const;
   CPDF_Document* GetPDFDocument();
-  CPDFSDK_InteractiveForm* GetInteractiveForm() const;
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
     return m_pFormFillEnv.Get();
   }
@@ -112,6 +111,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
 
   std::unique_ptr<CPDFSDK_Annot> NewAnnot(CPDF_Annot* annot);
 
+  CPDFSDK_InteractiveForm* GetInteractiveForm() const;
   CPDFSDK_Annot* GetFXAnnotAtPoint(const CFX_PointF& point);
   CPDFSDK_Annot* GetFXWidgetAtPoint(const CFX_PointF& point);
 
