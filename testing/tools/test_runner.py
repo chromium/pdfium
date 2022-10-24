@@ -35,13 +35,6 @@ TEST_SEED_TIME = "1399672130"
 TEXT_TESTS = ['javascript']
 
 
-def DeleteFiles(files):
-  """Utility function to delete a list of files"""
-  for f in files:
-    if os.path.exists(f):
-      os.remove(f)
-
-
 class TestRunner:
 
   def __init__(self, dirname):
@@ -287,7 +280,11 @@ class TestRunner:
         processes=self.options.num_workers,
         initializer=_InitializePerProcessState,
         initargs=[self.per_process_config]) as pool:
-      for result in pool.imap(_RunPdfiumTest, self.test_cases):
+      if self.per_process_config.test_type in TEXT_TESTS:
+        test_function = _RunTextTest
+      else:
+        test_function = _RunPixelTest
+      for result in pool.imap(test_function, self.test_cases):
         self.HandleResult(self.test_cases.GetTestCase(result.test_id), result)
 
     # Report test results.
@@ -361,11 +358,21 @@ class TestRunner:
     self.per_process_config.enforce_expected_images = new_value
 
 
-def _RunPdfiumTest(test_case):
-  """Runs a PDFium test case."""
+def _RunTextTest(test_case):
+  """Runs a text test case."""
   test_case_runner = _TestCaseRunner(test_case)
   with test_case_runner:
-    test_case_runner.test_result = test_case_runner.GenerateAndTest()
+    test_case_runner.test_result = test_case_runner.GenerateAndTest(
+        test_case_runner.TestText)
+  return test_case_runner.test_result
+
+
+def _RunPixelTest(test_case):
+  """Runs a pixel test case."""
+  test_case_runner = _TestCaseRunner(test_case)
+  with test_case_runner:
+    test_case_runner.test_result = test_case_runner.GenerateAndTest(
+        test_case_runner.TestPixel)
   return test_case_runner.test_result
 
 
@@ -466,6 +473,7 @@ class _TestCaseRunner:
     self.source_dir, self.input_filename = os.path.split(
         self.test_case.input_path)
     self.pdf_path = os.path.join(self.working_dir, f'{self.test_id}.pdf')
+    self.actual_images = None
 
   def __enter__(self):
     self.duration_start = time.perf_counter_ns()
@@ -529,45 +537,13 @@ class _TestCaseRunner:
 
     return self.test_case.NewResult(result_types.PASS)
 
-  def GenerateAndTest(self):
+  def GenerateAndTest(self, test_function):
     """Generate test input and run pdfium_test."""
-
-    # Remove any existing generated images from previous runs.
-    actual_images = _per_process_state.image_differ.GetActualFiles(
-        self.input_filename, self.source_dir, self.working_dir)
-    DeleteFiles(actual_images)
-
     test_result = self.Generate()
     if not test_result.IsPass():
       return test_result
 
-    if _per_process_state.test_type in TEXT_TESTS:
-      test_result = self.TestText()
-    else:
-      test_result = self.TestPixel()
-    if not test_result.IsPass():
-      return test_result
-
-    # TODO(crbug.com/pdfium/1916): Output needs to be captured. Also, this only
-    # applies to pixel tests, not text tests.
-    if actual_images:
-      if _per_process_state.image_differ.HasDifferences(self.input_filename,
-                                                        self.source_dir,
-                                                        self.working_dir):
-        test_result.status = result_types.FAIL
-        test_result.reason = 'Images differ'
-        self._RegenerateIfNeeded()
-        return test_result
-    elif _per_process_state.enforce_expected_images:
-      if not self.IsImageDiffSuppressed():
-        test_result.status = result_types.FAIL
-        test_result.reason = 'Missing expected images'
-        self._RegenerateIfNeeded()
-        return test_result
-
-    if _per_process_state.delete_output_on_success:
-      DeleteFiles(actual_images)
-    return test_result
+    return test_function()
 
   # TODO(crbug.com/pdfium/1508): Add support for an option to automatically
   # generate Skia/SkiaPaths specific expected results.
@@ -648,6 +624,12 @@ class _TestCaseRunner:
   # TODO(crbug.com/pdfium/1656): Remove when ready to fully switch over to
   # Skia Gold
   def TestPixel(self):
+    # Remove any existing generated images from previous runs.
+    self.actual_images = _per_process_state.image_differ.GetActualFiles(
+        self.input_filename, self.source_dir, self.working_dir)
+    self._CleanupPixelTest()
+
+    # Generate images.
     cmd_to_run = [
         _per_process_state.pdfium_test_path, '--send-events', '--png', '--md5',
         f'--time={TEST_SEED_TIME}'
@@ -678,12 +660,32 @@ class _TestCaseRunner:
       return self.test_case.NewResult(
           result_types.FAIL, reason=str(raised_exception))
 
-    return self.test_case.NewResult(
+    test_result = self.test_case.NewResult(
         result_types.PASS,
         image_artifacts=[
             self._NewImageArtifact(image_path=image_path, md5_hash=md5_hash)
             for image_path, md5_hash in results
         ])
+
+    # TODO(crbug.com/pdfium/1916): Output needs to be captured.
+    if self.actual_images:
+      if _per_process_state.image_differ.HasDifferences(self.input_filename,
+                                                        self.source_dir,
+                                                        self.working_dir):
+        test_result.status = result_types.FAIL
+        test_result.reason = 'Images differ'
+    elif _per_process_state.enforce_expected_images:
+      if not self.IsImageDiffSuppressed():
+        test_result.status = result_types.FAIL
+        test_result.reason = 'Missing expected images'
+
+    if not test_result.IsPass():
+      self._RegenerateIfNeeded()
+      return test_result
+
+    if _per_process_state.delete_output_on_success:
+      self._CleanupPixelTest()
+    return test_result
 
   def _NewImageArtifact(self, *, image_path, md5_hash):
     artifact = ImageArtifact(image_path=image_path, md5_hash=md5_hash)
@@ -696,6 +698,11 @@ class _TestCaseRunner:
         artifact.skia_gold_status = result_types.FAIL
 
     return artifact
+
+  def _CleanupPixelTest(self):
+    for image_file in self.actual_images:
+      if os.path.exists(image_file):
+        os.remove(image_file)
 
 
 @dataclass
