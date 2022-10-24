@@ -140,9 +140,6 @@ annotation_highlight_author_content.pdf mac * * *
 annotation_highlight_long_content.pdf mac * * *
 annotation_highlight_no_author.pdf mac * * *
 
-# TODO(pdfium:1803): Remove after associated bug is fixed
-annotation_ink_dot.pdf * * * skia,skiapaths
-
 # TODO(pdfium:1871): Remove after associated bug is fixed
 annotation_square_dash.pdf * * * skia,skiapaths
 

@@ -366,6 +366,20 @@ bool IsEvenOddFillType(SkPathFillType fill) {
          fill == SkPathFillType::kInverseEvenOdd;
 }
 
+bool IsPathAPoint(const SkPath& path) {
+  if (path.isEmpty())
+    return false;
+
+  if (path.countPoints() == 1)
+    return true;
+
+  for (int i = 0; i < path.countPoints() - 1; ++i) {
+    if (path.getPoint(i) != path.getPoint(i + 1))
+      return false;
+  }
+  return true;
+}
+
 SkPath BuildPath(const CFX_Path& path) {
   SkPath sk_path;
   pdfium::span<const CFX_Path::Point> points = path.GetPoints();
@@ -920,8 +934,13 @@ class SkiaState {
 #if defined(_SKIA_SUPPORT_PATHS_)
       m_pDriver->PreMultiply();
 #endif
-      DebugShowSkiaDrawPath(m_pDriver.Get(), skCanvas, skPaint, m_skPath);
-      skCanvas->drawPath(m_skPath, skPaint);
+      if (IsPathAPoint(m_skPath)) {
+        DCHECK_GE(m_skPath.countPoints(), 1);
+        skCanvas->drawPoint(m_skPath.getPoint(0), skPaint);
+      } else {
+        DebugShowSkiaDrawPath(m_pDriver.Get(), skCanvas, skPaint, m_skPath);
+        skCanvas->drawPath(m_skPath, skPaint);
+      }
     }
     m_drawIndex = INT_MAX;
     m_type = Accumulator::kNone;
@@ -2189,8 +2208,13 @@ bool CFX_SkiaDeviceDriver::DrawPath(
 #if defined(_SKIA_SUPPORT_PATHS_)
     m_pBitmap->PreMultiply();
 #endif
-    DebugShowSkiaDrawPath(this, m_pCanvas, skPaint, skPath);
-    m_pCanvas->drawPath(skPath, skPaint);
+    if (IsPathAPoint(skPath)) {
+      DCHECK_GE(skPath.countPoints(), 1);
+      m_pCanvas->drawPoint(skPath.getPoint(0), skPaint);
+    } else {
+      DebugShowSkiaDrawPath(this, m_pCanvas, skPaint, skPath);
+      m_pCanvas->drawPath(skPath, skPaint);
+    }
   }
   return true;
 }
