@@ -907,8 +907,8 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
   }
   bool bAlphaMode = options.ColorModeIs(CPDF_RenderOptions::kAlpha);
   if (pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SHADING &&
-      pDevice->GetDeviceDriver()->DrawShading(
-          pPattern, &mtMatrix, clip_rect_bbox, alpha, bAlphaMode)) {
+      pDevice->DrawShading(pPattern, &mtMatrix, clip_rect_bbox, alpha,
+                           bAlphaMode)) {
     return;
   }
   CPDF_DeviceBuffer buffer(pContext, pDevice, clip_rect_bbox, pCurObj, 150);
