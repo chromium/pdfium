@@ -9,7 +9,6 @@
 
 #include <memory>
 
-#include "core/fpdfapi/page/cpdf_imageloader.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -20,6 +19,7 @@
 class CFX_DIBBase;
 class CFX_DefaultRenderDevice;
 class CFX_ImageTransformer;
+class CPDF_ImageLoader;
 class CPDF_ImageObject;
 class CPDF_Pattern;
 class CPDF_RenderOptions;
@@ -84,7 +84,7 @@ class CPDF_ImageRenderer {
   RetainPtr<CFX_DIBBase> m_pDIBBase;
   CFX_Matrix m_mtObj2Device;
   CFX_Matrix m_ImageMatrix;
-  CPDF_ImageLoader m_Loader;
+  std::unique_ptr<CPDF_ImageLoader> const m_pLoader;
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
   std::unique_ptr<CFX_ImageRenderer> m_DeviceHandle;
   Mode m_Mode = Mode::kNone;
