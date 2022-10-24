@@ -7,13 +7,14 @@
 #ifndef CORE_FPDFAPI_RENDER_CPDF_IMAGELOADER_H_
 #define CORE_FPDFAPI_RENDER_CPDF_IMAGELOADER_H_
 
+#include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CFX_DIBBase;
+class CPDF_Dictionary;
 class CPDF_ImageObject;
 class CPDF_PageImageCache;
-class CPDF_RenderStatus;
 class CPDF_TransferFunc;
 class PauseIndicatorIface;
 
@@ -23,8 +24,12 @@ class CPDF_ImageLoader {
   ~CPDF_ImageLoader();
 
   bool Start(const CPDF_ImageObject* pImage,
-             const CPDF_RenderStatus* pRenderStatus,
-             bool bStdCS);
+             CPDF_PageImageCache* pPageImageCache,
+             const CPDF_Dictionary* pFormResource,
+             const CPDF_Dictionary* pPageResource,
+             bool bStdCS,
+             CPDF_ColorSpace::Family eFamily,
+             bool bLoadMask);
   bool Continue(PauseIndicatorIface* pPause);
 
   RetainPtr<CFX_DIBBase> TranslateImage(

@@ -13,8 +13,6 @@
 #include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_pageimagecache.h"
 #include "core/fpdfapi/page/cpdf_transferfunc.h"
-#include "core/fpdfapi/render/cpdf_rendercontext.h"
-#include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/check.h"
 
@@ -23,20 +21,22 @@ CPDF_ImageLoader::CPDF_ImageLoader() = default;
 CPDF_ImageLoader::~CPDF_ImageLoader() = default;
 
 bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
-                             const CPDF_RenderStatus* pRenderStatus,
-                             bool bStdCS) {
-  m_pCache = pRenderStatus->GetContext()->GetPageCache();
+                             CPDF_PageImageCache* pPageImageCache,
+                             const CPDF_Dictionary* pFormResource,
+                             const CPDF_Dictionary* pPageResource,
+                             bool bStdCS,
+                             CPDF_ColorSpace::Family eFamily,
+                             bool bLoadMask) {
+  m_pCache = pPageImageCache;
   m_pImageObject = pImage;
   bool ret;
   if (m_pCache) {
-    ret = m_pCache->StartGetCachedBitmap(
-        m_pImageObject->GetImage(), pRenderStatus->GetFormResource(),
-        pRenderStatus->GetPageResource(), bStdCS,
-        pRenderStatus->GetGroupFamily(), pRenderStatus->GetLoadMask());
+    ret = m_pCache->StartGetCachedBitmap(m_pImageObject->GetImage(),
+                                         pFormResource, pPageResource, bStdCS,
+                                         eFamily, bLoadMask);
   } else {
     ret = m_pImageObject->GetImage()->StartLoadDIBBase(
-        pRenderStatus->GetFormResource(), pRenderStatus->GetPageResource(),
-        bStdCS, pRenderStatus->GetGroupFamily(), pRenderStatus->GetLoadMask());
+        pFormResource, pPageResource, bStdCS, eFamily, bLoadMask);
   }
   if (!ret)
     HandleFailure();

@@ -90,9 +90,13 @@ bool CPDF_ImageRenderer::StartLoadDIBBase() {
   if (!GetUnitRect().has_value())
     return false;
 
-  if (!m_Loader.Start(m_pImageObject.Get(), m_pRenderStatus.Get(), m_bStdCS))
+  if (!m_Loader.Start(
+          m_pImageObject.Get(), m_pRenderStatus->GetContext()->GetPageCache(),
+          m_pRenderStatus->GetFormResource(),
+          m_pRenderStatus->GetPageResource(), m_bStdCS,
+          m_pRenderStatus->GetGroupFamily(), m_pRenderStatus->GetLoadMask())) {
     return false;
-
+  }
   m_Mode = Mode::kDefault;
   return true;
 }
