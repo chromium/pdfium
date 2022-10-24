@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FPDFAPI_RENDER_CPDF_IMAGELOADER_H_
-#define CORE_FPDFAPI_RENDER_CPDF_IMAGELOADER_H_
+#ifndef CORE_FPDFAPI_PAGE_CPDF_IMAGELOADER_H_
+#define CORE_FPDFAPI_PAGE_CPDF_IMAGELOADER_H_
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -50,4 +50,4 @@ class CPDF_ImageLoader {
   UnownedPtr<const CPDF_ImageObject> m_pImageObject;
 };
 
-#endif  // CORE_FPDFAPI_RENDER_CPDF_IMAGELOADER_H_
+#endif  // CORE_FPDFAPI_PAGE_CPDF_IMAGELOADER_H_

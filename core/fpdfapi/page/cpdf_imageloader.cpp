@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fpdfapi/render/cpdf_imageloader.h"
+#include "core/fpdfapi/page/cpdf_imageloader.h"
 
 #include <utility>
 

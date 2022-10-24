@@ -49,6 +49,8 @@ source_set("page") {
     "cpdf_iccprofile.h",
     "cpdf_image.cpp",
     "cpdf_image.h",
+    "cpdf_imageloader.cpp",
+    "cpdf_imageloader.h",
     "cpdf_imageobject.cpp",
     "cpdf_imageobject.h",
     "cpdf_indexedcs.cpp",

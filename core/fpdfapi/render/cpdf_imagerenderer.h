@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "core/fpdfapi/render/cpdf_imageloader.h"
+#include "core/fpdfapi/page/cpdf_imageloader.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
