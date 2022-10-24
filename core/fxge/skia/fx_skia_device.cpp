@@ -988,7 +988,7 @@ class SkiaState {
       m_italicAngle = pFont->GetSubstFontItalicAngle();
       m_isSubstFontBold = pFont->IsSubstFontBold();
       m_charDetails.SetCount(0);
-      m_rsxform.setCount(0);
+      m_rsxform.resize(0);
       if (pFont->GetFaceRec())
         m_pTypeFace.reset(SkSafeRef(pFont->GetDeviceCache()));
       else
@@ -1008,7 +1008,7 @@ class SkiaState {
     int count = m_charDetails.Count();
     m_charDetails.SetCount(nChars + count);
     if (hasRSX)
-      m_rsxform.setCount(nChars + count);
+      m_rsxform.resize(nChars + count);
 
     const SkScalar flip = m_fontSize < 0 ? -1 : 1;
     const SkScalar vFlip = pFont->IsVertical() ? -1 : 1;
@@ -1570,9 +1570,9 @@ class SkiaState {
     }
     void SetCount(int count) {
       DCHECK(count >= 0);
-      m_positions.setCount(count);
-      m_glyphs.setCount(count);
-      m_fontCharWidths.setCount(count);
+      m_positions.resize(count);
+      m_glyphs.resize(count);
+      m_fontCharWidths.resize(count);
     }
 
    private:
@@ -1809,9 +1809,9 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
   SkMatrix skMatrix = ToFlippedSkMatrix(mtObject2Device, flip);
   m_pCanvas->concat(skMatrix);
   SkTDArray<SkPoint> positions;
-  positions.setCount(nChars);
+  positions.resize(nChars);
   SkTDArray<uint16_t> glyphs;
-  glyphs.setCount(nChars);
+  glyphs.resize(nChars);
   bool useRSXform = false;
   bool oneAtATime = false;
   for (int index = 0; index < nChars; ++index) {
@@ -1837,7 +1837,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
 #endif
   if (useRSXform) {
     SkTDArray<SkRSXform> xforms;
-    xforms.setCount(nChars);
+    xforms.resize(nChars);
     for (int index = 0; index < nChars; ++index) {
       const TextCharPos& cp = pCharPos[index];
       SkRSXform* rsxform = &xforms[index];
