@@ -505,7 +505,7 @@ bug_1846.in * * * agg
 bug_237527_1.in * * * *
 
 # TODO(chromium:451366): Remove after associated bug is fixed
-bug_451366.in * * * *
+bug_451366.in * * * agg
 
 # TODO(pdfium:492): Remove after associated bug is fixed
 bug_492.in * nov8 * *
