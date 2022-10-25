@@ -879,7 +879,7 @@ CPDF_FormControl* CPDF_InteractiveForm::AddControl(
   if (it != m_ControlMap.end())
     return it->second.get();
 
-  auto pNew = std::make_unique<CPDF_FormControl>(pField, pWidgetDict);
+  auto pNew = std::make_unique<CPDF_FormControl>(pField, pWidgetDict, this);
   CPDF_FormControl* pControl = pNew.get();
   m_ControlMap[pWidgetDict] = std::move(pNew);
   m_ControlLists[pdfium::WrapUnowned(pField)].emplace_back(pControl);
