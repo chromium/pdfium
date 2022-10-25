@@ -134,7 +134,8 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   uint32_t GetAppearanceAge() const { return m_nAppearanceAge; }
   uint32_t GetValueAge() const { return m_nValueAge; }
 
-  bool IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode);
+  bool IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode) const;
+  bool IsPushHighlighted() const;
   CFX_Matrix GetMatrix() const;
   CFX_FloatRect GetClientRect() const;
   CFX_FloatRect GetRotatedRect() const;

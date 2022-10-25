@@ -6,7 +6,6 @@
 
 #include "fpdfsdk/formfiller/cffl_button.h"
 
-#include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "third_party/base/check.h"
 
@@ -64,8 +63,7 @@ void CFFL_Button::OnDraw(CPDFSDK_PageView* pPageView,
                          CFX_RenderDevice* pDevice,
                          const CFX_Matrix& mtUser2Device) {
   DCHECK(pPageView);
-  CPDF_FormControl* pCtrl = pWidget->GetFormControl();
-  if (pCtrl->GetHighlightingMode() != CPDF_FormControl::kPush) {
+  if (!pWidget->IsPushHighlighted()) {
     pWidget->DrawAppearance(pDevice, mtUser2Device,
                             CPDF_Annot::AppearanceMode::kNormal);
     return;

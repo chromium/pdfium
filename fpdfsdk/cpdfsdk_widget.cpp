@@ -341,7 +341,8 @@ bool CPDFSDK_Widget::HandleXFAAAction(
 }
 #endif  // PDF_ENABLE_XFA
 
-bool CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode) {
+bool CPDFSDK_Widget::IsWidgetAppearanceValid(
+    CPDF_Annot::AppearanceMode mode) const {
   RetainPtr<const CPDF_Dictionary> pAP =
       GetAnnotDict()->GetDictFor(pdfium::annotation::kAP);
   if (!pAP)
@@ -378,6 +379,10 @@ bool CPDFSDK_Widget::IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode mode) {
     default:
       return true;
   }
+}
+
+bool CPDFSDK_Widget::IsPushHighlighted() const {
+  return GetFormControl()->GetHighlightingMode() == CPDF_FormControl::kPush;
 }
 
 FormFieldType CPDFSDK_Widget::GetFieldType() const {
