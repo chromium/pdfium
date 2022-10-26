@@ -3,6 +3,7 @@
 # found in the LICENSE file.
 
 import("../../pdfium.gni")
+import("../../testing/test.gni")
 
 source_set("formfiller") {
   sources = [
@@ -45,4 +46,13 @@ source_set("formfiller") {
     "../pwl",
   ]
   visibility = [ "../../*" ]
+}
+
+pdfium_embeddertest_source_set("embeddertests") {
+  sources = [ "cffl_combobox_embeddertest.cpp" ]
+  deps = [
+    ":formfiller",
+    "../pwl:embedder_test_support",
+  ]
+  pdfium_root_dir = "../../"
 }

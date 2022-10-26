@@ -51,13 +51,31 @@ source_set("pwl") {
   visibility = [ "../../*" ]
 }
 
-pdfium_embeddertest_source_set("embeddertests") {
+source_set("embedder_test_support") {
+  testonly = true
   sources = [
     "cpwl_combo_box_embeddertest.cpp",
+    "cpwl_combo_box_embeddertest.h",
+  ]
+  configs += [ "../../:pdfium_strict_config" ]
+  deps = [
+    ":pwl",
+    "../:fpdfsdk",
+    "../../:pdfium_public_headers",
+    "../../testing:embedder_test_support",
+    "../formfiller",
+    "//testing/gtest",
+  ]
+}
+
+pdfium_embeddertest_source_set("embeddertests") {
+  sources = [
+    "cpwl_combo_box_edit_embeddertest.cpp",
     "cpwl_edit_embeddertest.cpp",
     "cpwl_special_button_embeddertest.cpp",
   ]
   deps = [
+    ":embedder_test_support",
     ":pwl",
     "../:fpdfsdk",
     "../formfiller",

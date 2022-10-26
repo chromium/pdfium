@@ -502,6 +502,7 @@ test("pdfium_embeddertests") {
     "core/fxcrt",
     "core/fxge:embeddertests",
     "fpdfsdk:embeddertests",
+    "fpdfsdk/formfiller:embeddertests",
     "fpdfsdk/pwl:embeddertests",
     "testing/image_diff",
     "//testing/gmock",

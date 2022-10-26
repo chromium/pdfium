@@ -140,7 +140,7 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
                                  uint32_t nValueAge);
 
  protected:
-  friend class CPWLComboBoxEditEmbedderTest;
+  friend class CPWLComboBoxEmbedderTest;
   friend class CPWLEditEmbedderTest;
   friend class CPWLSpecialButtonEmbedderTest;
 
