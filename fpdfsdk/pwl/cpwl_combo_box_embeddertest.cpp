@@ -30,8 +30,8 @@ void CPWLComboBoxEmbedderTest::CreateAndInitializeFormComboboxPDF() {
   ASSERT_TRUE(m_page);
 
   m_pFormFillEnv = CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
-  CPDFSDK_AnnotIterator iter(m_pFormFillEnv->GetPageViewAtIndex(0),
-                             {CPDF_Annot::Subtype::WIDGET});
+  m_pPageView = m_pFormFillEnv->GetPageViewAtIndex(0);
+  CPDFSDK_AnnotIterator iter(m_pPageView, {CPDF_Annot::Subtype::WIDGET});
 
   // User editable combobox.
   m_pAnnotEditable = ToCPDFSDKWidget(iter.GetFirstAnnot());

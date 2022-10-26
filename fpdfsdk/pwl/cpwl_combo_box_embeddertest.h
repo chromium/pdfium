@@ -12,6 +12,7 @@
 
 class CFFL_FormField;
 class CPDFSDK_FormFillEnvironment;
+class CPDFSDK_PageView;
 class CPDFSDK_Widget;
 class CPWL_ComboBox;
 
@@ -33,6 +34,7 @@ class CPWLComboBoxEmbedderTest : public EmbedderTest {
   CPDFSDK_FormFillEnvironment* GetCPDFSDKFormFillEnv() const {
     return m_pFormFillEnv;
   }
+  CPDFSDK_PageView* GetPageView() const { return m_pPageView; }
 
  private:
   FPDF_PAGE m_page;
@@ -41,6 +43,7 @@ class CPWLComboBoxEmbedderTest : public EmbedderTest {
   CPDFSDK_Widget* m_pAnnotNormal = nullptr;
   CPDFSDK_Widget* m_pAnnotEditable = nullptr;
   CPDFSDK_FormFillEnvironment* m_pFormFillEnv = nullptr;
+  CPDFSDK_PageView* m_pPageView = nullptr;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_COMBO_BOX_EMBEDDERTEST_H_

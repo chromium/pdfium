@@ -55,9 +55,8 @@ class CFFL_ComboBox final : public CFFL_TextObject {
   // CPWL_Wnd::ProviderIface:
   void OnSetFocusForEdit(CPWL_Edit* pEdit) override;
 
-  WideString GetSelectExportText();
-
  private:
+  WideString GetSelectExportText();
   CPWL_ComboBox* GetPWLComboBox(const CPDFSDK_PageView* pPageView) const;
   CPWL_ComboBox* CreateOrUpdatePWLComboBox(const CPDFSDK_PageView* pPageView);
 
