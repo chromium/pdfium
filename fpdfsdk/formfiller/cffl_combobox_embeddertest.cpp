@@ -9,7 +9,9 @@
 
 class CFFLComboBoxEmbedderTest : public CPWLComboBoxEmbedderTest {};
 
-TEST_F(CFFLComboBoxEmbedderTest, PlaceHolder) {
+TEST_F(CFFLComboBoxEmbedderTest, ExportText) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnotNormal());
-  EXPECT_TRUE(GetCFFLFormField());
+  auto* pComboBox = static_cast<CFFL_ComboBox*>(GetCFFLFormField());
+  ASSERT_TRUE(pComboBox);
+  EXPECT_EQ(L"Banana", pComboBox->GetSelectExportText());
 }
