@@ -20,8 +20,8 @@
 namespace {
 
 bool IsTagged(const CPDF_Document* pDoc) {
-  const CPDF_Dictionary* pCatalog = pDoc->GetRoot();
-  RetainPtr<const CPDF_Dictionary> pMarkInfo = pCatalog->GetDictFor("MarkInfo");
+  RetainPtr<const CPDF_Dictionary> pMarkInfo =
+      pDoc->GetRoot()->GetDictFor("MarkInfo");
   return pMarkInfo && pMarkInfo->GetIntegerFor("Marked");
 }
 

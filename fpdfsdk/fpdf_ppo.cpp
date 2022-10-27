@@ -830,9 +830,8 @@ FPDF_CopyViewerPreferences(FPDF_DOCUMENT dest_doc, FPDF_DOCUMENT src_doc) {
   if (!pSrcDoc)
     return false;
 
-  const CPDF_Dictionary* pSrcDict = pSrcDoc->GetRoot();
   RetainPtr<const CPDF_Dictionary> pPrefDict =
-      pSrcDict->GetDictFor("ViewerPreferences");
+      pSrcDoc->GetRoot()->GetDictFor("ViewerPreferences");
   if (!pPrefDict)
     return false;
 
