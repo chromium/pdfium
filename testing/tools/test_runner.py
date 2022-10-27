@@ -7,7 +7,7 @@ from __future__ import print_function
 from __future__ import division
 
 import argparse
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import multiprocessing
 import os
 import re
@@ -64,55 +64,89 @@ class TestRunner:
   def HandleResult(self, test_case, test_result):
     input_filename = os.path.basename(test_case.input_path)
 
-    if self.IsResultSuppressed(input_filename):
+    test_result.status = self._SuppressStatus(input_filename,
+                                              test_result.status)
+    if test_result.status == result_types.UNKNOWN:
       self.result_suppressed_cases.append(input_filename)
-      if test_result.IsPass():
-        self.surprises.append(test_case.input_path)
+      self.surprises.append(test_case.input_path)
+    elif test_result.status == result_types.SKIP:
+      self.result_suppressed_cases.append(input_filename)
+    elif not test_result.IsPass():
+      self.failures.append(test_case.input_path)
 
-        # There isn't an actual status for succeeded-but-ignored, so use the
-        # "abort" status to differentiate this from failed-but-ignored.
-        #
-        # Note that this appears as a preliminary failure in Gerrit.
-        result_status = result_types.UNKNOWN
-      else:
-        # There isn't an actual status for failed-but-ignored, so use the
-        # "skip" status to differentiate this from succeeded-but-ignored.
-        result_status = result_types.SKIP
-    else:
-      if test_result.IsPass():
-        result_status = result_types.PASS
-      else:
-        self.failures.append(test_case.input_path)
-        result_status = result_types.FAIL
-
-    if test_result.image_artifacts:
-      for artifact in test_result.image_artifacts:
-        if artifact.skia_gold_status == result_types.PASS:
-          if self.IsResultSuppressed(artifact.image_path):
-            self.skia_gold_unexpected_successes.append(artifact.GetSkiaGoldId())
-          else:
-            self.skia_gold_successes.append(artifact.GetSkiaGoldId())
-        elif artifact.skia_gold_status == result_types.FAIL:
-          self.skia_gold_failures.append(artifact.GetSkiaGoldId())
+    for artifact in test_result.image_artifacts:
+      if artifact.skia_gold_status == result_types.PASS:
+        if self.IsResultSuppressed(artifact.image_path):
+          self.skia_gold_unexpected_successes.append(artifact.GetSkiaGoldId())
+        else:
+          self.skia_gold_successes.append(artifact.GetSkiaGoldId())
+      elif artifact.skia_gold_status == result_types.FAIL:
+        self.skia_gold_failures.append(artifact.GetSkiaGoldId())
 
     # Log test result.
-    print(f'{result_status}: {test_result.test_id}')
-    if result_status != result_types.PASS:
+    print(f'{test_result.status}: {test_result.test_id}')
+    if not test_result.IsPass():
       if test_result.reason:
         print(f'Failure reason: {test_result.reason}')
       if test_result.log:
         print(f'Test output:\n{test_result.log}')
+      for artifact in test_result.image_artifacts:
+        if artifact.skia_gold_status == result_types.FAIL:
+          print(f'Failed Skia Gold: {artifact.image_path}')
+        if artifact.image_diff:
+          print(f'Failed image diff: {artifact.image_diff.reason}')
 
     # Report test result to ResultDB.
     if self.resultdb:
-      # TODO(crbug.com/pdfium/1916): Populate more ResultDB fields.
+      only_artifacts = None
+      if len(test_result.image_artifacts) == 1:
+        only_artifacts = test_result.image_artifacts[0].GetDiffArtifacts()
       self.resultdb.Post(
           test_id=test_result.test_id,
-          status=result_status,
+          status=test_result.status,
           duration=test_result.duration_milliseconds,
           test_log=test_result.log,
           test_file=None,
+          artifacts=only_artifacts,
           failure_reason=test_result.reason)
+
+      # Milo only supports a single diff per test, so if we have multiple pages,
+      # report each page as its own "test."
+      if len(test_result.image_artifacts) > 1:
+        for page, artifact in enumerate(test_result.image_artifacts):
+          self.resultdb.Post(
+              test_id=f'{test_result.test_id}/{page}',
+              status=self._SuppressArtifactStatus(test_result,
+                                                  artifact.GetDiffStatus()),
+              duration=None,
+              test_log=None,
+              test_file=None,
+              artifacts=artifact.GetDiffArtifacts(),
+              failure_reason=artifact.GetDiffReason())
+
+  def _SuppressStatus(self, input_filename, status):
+    if not self.IsResultSuppressed(input_filename):
+      return status
+
+    if status == result_types.PASS:
+      # There isn't an actual status for succeeded-but-ignored, so use the
+      # "abort" status to differentiate this from failed-but-ignored.
+      #
+      # Note that this appears as a preliminary failure in Gerrit.
+      return result_types.UNKNOWN
+
+    # There isn't an actual status for failed-but-ignored, so use the "skip"
+    # status to differentiate this from succeeded-but-ignored.
+    return result_types.SKIP
+
+  def _SuppressArtifactStatus(self, test_result, status):
+    if status != result_types.FAIL:
+      return status
+
+    if test_result.status != result_types.SKIP:
+      return status
+
+    return result_types.SKIP
 
   def Run(self):
     # Running a test defines a number of attributes on the fly.
@@ -667,13 +701,25 @@ class _TestCaseRunner:
             for image_path, md5_hash in results
         ])
 
-    # TODO(crbug.com/pdfium/1916): Output needs to be captured.
     if self.actual_images:
-      if _per_process_state.image_differ.HasDifferences(self.input_filename,
-                                                        self.source_dir,
-                                                        self.working_dir):
+      image_diffs = _per_process_state.image_differ.ComputeDifferences(
+          self.input_filename, self.source_dir, self.working_dir)
+      if image_diffs:
         test_result.status = result_types.FAIL
         test_result.reason = 'Images differ'
+
+        # Merge image diffs into test result.
+        diff_map = {}
+        diff_log = []
+        for diff in image_diffs:
+          diff_map[diff.actual_path] = diff
+          diff_log.append((f'{os.path.basename(diff.actual_path)} vs. '
+                           f'{os.path.basename(diff.expected_path)}\n'))
+
+        for artifact in test_result.image_artifacts:
+          artifact.image_diff = diff_map.get(artifact.image_path)
+        test_result.log = ''.join(diff_log)
+
     elif _per_process_state.enforce_expected_images:
       if not self.IsImageDiffSuppressed():
         test_result.status = result_types.FAIL
@@ -737,7 +783,7 @@ class TestResult:
   status: str
   duration_milliseconds: float = None
   log: str = None
-  image_artifacts: list = None
+  image_artifacts: list = field(default_factory=list)
   reason: str = None
 
   def IsPass(self):
@@ -753,16 +799,38 @@ class ImageArtifact:
     image_path: The absolute path to the image file.
     md5_hash: The MD5 hash of the pixel buffer.
     skia_gold_status: Optional Skia Gold status.
+    image_diff: Optional image diff.
   """
   image_path: str
   md5_hash: str
   skia_gold_status: str = None
+  image_diff: pngdiffer.ImageDiff = None
 
   def GetSkiaGoldId(self):
     # The output filename without image extension becomes the test ID. For
     # example, "/path/to/.../testing/corpus/example_005.pdf.0.png" becomes
     # "example_005.pdf.0".
     return _GetTestId(os.path.basename(self.image_path))
+
+  def GetDiffStatus(self):
+    return result_types.FAIL if self.image_diff else result_types.PASS
+
+  def GetDiffReason(self):
+    return self.image_diff.reason if self.image_diff else None
+
+  def GetDiffArtifacts(self):
+    if not self.image_diff:
+      return None
+    if not self.image_diff.expected_path or not self.image_diff.diff_path:
+      return None
+    return {
+        'actual_image':
+            _GetArtifactFromFilePath(self.image_path),
+        'expected_image':
+            _GetArtifactFromFilePath(self.image_diff.expected_path),
+        'image_diff':
+            _GetArtifactFromFilePath(self.image_diff.diff_path)
+    }
 
 
 class TestCaseManager:
@@ -797,3 +865,8 @@ class TestCaseManager:
 def _GetTestId(input_basename):
   """Constructs a test ID by stripping the last extension from the basename."""
   return os.path.splitext(input_basename)[0]
+
+
+def _GetArtifactFromFilePath(file_path):
+  """Constructs a ResultSink artifact from a file path."""
+  return {'filePath': file_path}
