@@ -239,20 +239,9 @@ void CFFL_ComboBox::OnSetFocusForEdit(CPWL_Edit* pEdit) {
 }
 
 WideString CFFL_ComboBox::GetSelectExportText() {
-  WideString swRet;
-
   CPWL_ComboBox* pComboBox = GetPWLComboBox(GetCurPageView());
   int nExport = pComboBox ? pComboBox->GetSelect() : -1;
-
-  if (nExport >= 0) {
-    if (CPDF_FormField* pFormField = m_pWidget->GetFormField()) {
-      swRet = pFormField->GetOptionValue(nExport);
-      if (swRet.IsEmpty())
-        swRet = pFormField->GetOptionLabel(nExport);
-    }
-  }
-
-  return swRet;
+  return m_pWidget->GetSelectExportText(nExport);
 }
 
 CPWL_ComboBox* CFFL_ComboBox::GetPWLComboBox(

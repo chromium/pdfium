@@ -10,6 +10,7 @@
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "fpdfsdk/formfiller/cffl_formfield.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
+#include "fpdfsdk/pwl/cpwl_combo_box.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "public/fpdf_fwlevent.h"
 #include "testing/gtest/include/gtest/gtest.h"

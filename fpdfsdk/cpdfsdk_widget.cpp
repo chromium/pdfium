@@ -517,6 +517,21 @@ WideString CPDFSDK_Widget::GetOptionLabel(int nIndex) const {
   return pFormField->GetOptionLabel(nIndex);
 }
 
+WideString CPDFSDK_Widget::GetSelectExportText(int nIndex) const {
+  if (nIndex < 0)
+    return WideString();
+
+  CPDF_FormField* pFormField = GetFormField();
+  if (!pFormField)
+    return WideString();
+
+  WideString swRet = pFormField->GetOptionValue(nIndex);
+  if (!swRet.IsEmpty())
+    return swRet;
+
+  return pFormField->GetOptionLabel(nIndex);
+}
+
 int CPDFSDK_Widget::CountOptions() const {
   CPDF_FormField* pFormField = GetFormField();
   return pFormField->CountOptions();

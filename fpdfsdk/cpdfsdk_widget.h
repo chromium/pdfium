@@ -88,6 +88,8 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   WideString GetValue() const;
   WideString GetExportValue() const;
   WideString GetOptionLabel(int nIndex) const;
+  WideString GetSelectExportText(int nIndex) const;
+
   int CountOptions() const;
   bool IsOptionSelected(int nIndex) const;
   int GetTopVisibleIndex() const;
