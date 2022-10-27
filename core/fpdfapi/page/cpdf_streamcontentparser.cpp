@@ -168,7 +168,7 @@ ByteStringView FindFullName(pdfium::span<const AbbrPair> table,
   return ByteStringView();
 }
 
-void ReplaceAbbr(CPDF_Object* pObj);
+void ReplaceAbbr(RetainPtr<CPDF_Object> pObj);
 
 void ReplaceAbbrInDictionary(CPDF_Dictionary* pDict) {
   std::vector<AbbrReplacementOp> replacements;
@@ -176,7 +176,6 @@ void ReplaceAbbrInDictionary(CPDF_Dictionary* pDict) {
     CPDF_DictionaryLocker locker(pDict);
     for (const auto& it : locker) {
       ByteString key = it.first;
-      CPDF_Object* value = it.second.Get();
       ByteStringView fullname =
           FindFullName(kInlineKeyAbbr, key.AsStringView());
       if (!fullname.IsEmpty()) {
@@ -187,7 +186,7 @@ void ReplaceAbbrInDictionary(CPDF_Dictionary* pDict) {
         replacements.push_back(op);
         key = fullname;
       }
-
+      RetainPtr<CPDF_Object> value = it.second;
       if (value->IsName()) {
         ByteString name = value->GetString();
         fullname = FindFullName(kInlineValueAbbr, name.AsStringView());
@@ -199,7 +198,7 @@ void ReplaceAbbrInDictionary(CPDF_Dictionary* pDict) {
           replacements.push_back(op);
         }
       } else {
-        ReplaceAbbr(value);
+        ReplaceAbbr(std::move(value));
       }
     }
   }
@@ -221,12 +220,12 @@ void ReplaceAbbrInArray(CPDF_Array* pArray) {
       if (!fullname.IsEmpty())
         pArray->SetNewAt<CPDF_Name>(i, ByteString(fullname));
     } else {
-      ReplaceAbbr(pElement.Get());
+      ReplaceAbbr(std::move(pElement));
     }
   }
 }
 
-void ReplaceAbbr(CPDF_Object* pObj) {
+void ReplaceAbbr(RetainPtr<CPDF_Object> pObj) {
   CPDF_Dictionary* pDict = pObj->AsMutableDictionary();
   if (pDict) {
     ReplaceAbbrInDictionary(pDict);
@@ -624,7 +623,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
       pDict->SetFor(key, std::move(pObj));
     }
   }
-  ReplaceAbbr(pDict.Get());
+  ReplaceAbbr(pDict);
   RetainPtr<const CPDF_Object> pCSObj;
   if (pDict->KeyExist("ColorSpace")) {
     pCSObj = pDict->GetDirectObjectFor("ColorSpace");
