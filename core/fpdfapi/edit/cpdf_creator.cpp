@@ -213,8 +213,6 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage1() {
     if (!m_pParser || (m_bSecurityChanged && m_IsOriginal))
       m_IsIncremental = false;
 
-    const CPDF_Dictionary* pDict = m_pDocument->GetRoot();
-    m_pMetadata = pDict ? pDict->GetDirectObjectFor("Metadata") : nullptr;
     m_iStage = Stage::kWriteHeader10;
   }
   if (m_iStage == Stage::kWriteHeader10) {
