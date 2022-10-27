@@ -183,9 +183,9 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
   CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, (float)locX,
                            (float)(locY + iFontSize));
   affine_matrix.Concat(matrix);
-  device->DrawNormalText(pdfium::make_span(pCharPos, str.GetLength()),
-                         m_pFont.Get(), static_cast<float>(iFontSize),
-                         affine_matrix, m_fontColor, GetTextRenderOptions());
+  device->DrawNormalText(pdfium::make_span(pCharPos, str.GetLength()), m_pFont,
+                         static_cast<float>(iFontSize), affine_matrix,
+                         m_fontColor, GetTextRenderOptions());
 }
 
 bool CBC_OneDimWriter::ShowChars(WideStringView contents,
@@ -209,8 +209,7 @@ bool CBC_OneDimWriter::ShowChars(WideStringView contents,
   }
   int32_t iFontSize = static_cast<int32_t>(fabs(m_fFontSize));
   int32_t iTextHeight = iFontSize + 1;
-  CalcTextInfo(str, charpos.data(), m_pFont.Get(), geWidth, iFontSize,
-               charsLen);
+  CalcTextInfo(str, charpos.data(), m_pFont, geWidth, iFontSize, charsLen);
   if (charsLen < 1)
     return true;
 

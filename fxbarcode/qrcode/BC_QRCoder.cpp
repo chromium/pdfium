@@ -33,7 +33,7 @@ CBC_QRCoder::CBC_QRCoder() = default;
 CBC_QRCoder::~CBC_QRCoder() = default;
 
 const CBC_QRCoderErrorCorrectionLevel* CBC_QRCoder::GetECLevel() const {
-  return m_ecLevel.Get();
+  return m_ecLevel;
 }
 
 int32_t CBC_QRCoder::GetVersion() const {

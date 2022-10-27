@@ -75,8 +75,7 @@ int32_t CBC_ReedSolomonGF256Poly::GetCoefficients(int32_t degree) const {
 
 std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Clone()
     const {
-  return std::make_unique<CBC_ReedSolomonGF256Poly>(m_field.Get(),
-                                                    m_coefficients);
+  return std::make_unique<CBC_ReedSolomonGF256Poly>(m_field, m_coefficients);
 }
 
 std::unique_ptr<CBC_ReedSolomonGF256Poly>
@@ -100,7 +99,7 @@ CBC_ReedSolomonGF256Poly::AddOrSubtract(const CBC_ReedSolomonGF256Poly* other) {
     sumDiff[i] = CBC_ReedSolomonGF256::AddOrSubtract(
         smallerCoefficients[i - lengthDiff], largerCoefficients[i]);
   }
-  return std::make_unique<CBC_ReedSolomonGF256Poly>(m_field.Get(), sumDiff);
+  return std::make_unique<CBC_ReedSolomonGF256Poly>(m_field, sumDiff);
 }
 
 std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Multiply(
@@ -120,7 +119,7 @@ std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Multiply(
           product[i + j], m_field->Multiply(aCoeff, bCoefficients[j]));
     }
   }
-  return std::make_unique<CBC_ReedSolomonGF256Poly>(m_field.Get(), product);
+  return std::make_unique<CBC_ReedSolomonGF256Poly>(m_field, product);
 }
 
 std::unique_ptr<CBC_ReedSolomonGF256Poly>
@@ -136,7 +135,7 @@ CBC_ReedSolomonGF256Poly::MultiplyByMonomial(int32_t degree,
   for (size_t i = 0; i < size; i++)
     product[i] = m_field->Multiply(m_coefficients[i], coefficient);
 
-  return std::make_unique<CBC_ReedSolomonGF256Poly>(m_field.Get(), product);
+  return std::make_unique<CBC_ReedSolomonGF256Poly>(m_field, product);
 }
 
 std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Divide(
