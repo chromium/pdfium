@@ -916,7 +916,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     return;
 
   ByteString DA;
-  CPDF_Object* pDAObj = CPDF_FormField::GetFieldAttrForDict(pAnnotDict, "DA");
+  RetainPtr<const CPDF_Object> pDAObj =
+      CPDF_FormField::GetFieldAttrForDict(pAnnotDict, "DA");
   if (pDAObj)
     DA = pDAObj->GetString();
   if (DA.IsEmpty())
@@ -1095,16 +1096,16 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
 
   switch (type) {
     case CPDF_GenerateAP::kTextField: {
-      const CPDF_Object* pV = CPDF_FormField::GetFieldAttrForDict(
+      RetainPtr<const CPDF_Object> pV = CPDF_FormField::GetFieldAttrForDict(
           pAnnotDict, pdfium::form_fields::kV);
       WideString swValue = pV ? pV->GetUnicodeText() : WideString();
-      const CPDF_Object* pQ =
+      RetainPtr<const CPDF_Object> pQ =
           CPDF_FormField::GetFieldAttrForDict(pAnnotDict, "Q");
       int32_t nAlign = pQ ? pQ->GetInteger() : 0;
-      const CPDF_Object* pFf = CPDF_FormField::GetFieldAttrForDict(
+      RetainPtr<const CPDF_Object> pFf = CPDF_FormField::GetFieldAttrForDict(
           pAnnotDict, pdfium::form_fields::kFf);
       uint32_t dwFlags = pFf ? pFf->GetInteger() : 0;
-      const CPDF_Object* pMaxLen =
+      RetainPtr<const CPDF_Object> pMaxLen =
           CPDF_FormField::GetFieldAttrForDict(pAnnotDict, "MaxLen");
       uint32_t dwMaxLen = pMaxLen ? pMaxLen->GetInteger() : 0;
       CPVT_VariableText vt(&prd);
@@ -1159,7 +1160,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
       break;
     }
     case CPDF_GenerateAP::kComboBox: {
-      const CPDF_Object* pV = CPDF_FormField::GetFieldAttrForDict(
+      RetainPtr<const CPDF_Object> pV = CPDF_FormField::GetFieldAttrForDict(
           pAnnotDict, pdfium::form_fields::kV);
       WideString swValue = pV ? pV->GetUnicodeText() : WideString();
       CPVT_VariableText vt(&prd);
@@ -1226,11 +1227,12 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
       break;
     }
     case CPDF_GenerateAP::kListBox: {
-      CPDF_Array* pOpts =
+      RetainPtr<const CPDF_Array> pOpts =
           ToArray(CPDF_FormField::GetFieldAttrForDict(pAnnotDict, "Opt"));
-      CPDF_Array* pSels =
+      RetainPtr<const CPDF_Array> pSels =
           ToArray(CPDF_FormField::GetFieldAttrForDict(pAnnotDict, "I"));
-      CPDF_Object* pTi = CPDF_FormField::GetFieldAttrForDict(pAnnotDict, "TI");
+      RetainPtr<const CPDF_Object> pTi =
+          CPDF_FormField::GetFieldAttrForDict(pAnnotDict, "TI");
       int32_t nTop = pTi ? pTi->GetInteger() : 0;
       fxcrt::ostringstream sBody;
       if (pOpts) {

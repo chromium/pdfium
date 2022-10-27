@@ -49,6 +49,12 @@ const CPDF_Object* GetFieldAttrRecursive(const CPDF_Dictionary* pFieldDict,
       nLevel + 1);
 }
 
+const CPDF_Object* GetFieldAttrForDictInternal(
+    const CPDF_Dictionary* pFieldDict,
+    const ByteString& name) {
+  return GetFieldAttrRecursive(pFieldDict, name, 0);
+}
+
 }  // namespace
 
 // static
@@ -61,17 +67,18 @@ absl::optional<FormFieldType> CPDF_FormField::IntToFormFieldType(int value) {
 }
 
 // static
-const CPDF_Object* CPDF_FormField::GetFieldAttrForDict(
+RetainPtr<const CPDF_Object> CPDF_FormField::GetFieldAttrForDict(
     const CPDF_Dictionary* pFieldDict,
     const ByteString& name) {
-  return GetFieldAttrRecursive(pFieldDict, name, 0);
+  return pdfium::WrapRetain(GetFieldAttrForDictInternal(pFieldDict, name));
 }
 
 // static
-CPDF_Object* CPDF_FormField::GetFieldAttrForDict(CPDF_Dictionary* pFieldDict,
-                                                 const ByteString& name) {
-  return const_cast<CPDF_Object*>(GetFieldAttrRecursive(
-      static_cast<const CPDF_Dictionary*>(pFieldDict), name, 0));
+RetainPtr<CPDF_Object> CPDF_FormField::GetMutableFieldAttrForDict(
+    CPDF_Dictionary* pFieldDict,
+    const ByteString& name) {
+  return pdfium::WrapRetain(
+      const_cast<CPDF_Object*>(GetFieldAttrForDictInternal(pFieldDict, name)));
 }
 
 // static
@@ -105,7 +112,7 @@ CPDF_FormField::CPDF_FormField(CPDF_InteractiveForm* pForm,
 CPDF_FormField::~CPDF_FormField() = default;
 
 void CPDF_FormField::InitFieldFlags() {
-  const CPDF_Object* ft_attr = GetFieldAttr(pdfium::form_fields::kFT);
+  const CPDF_Object* ft_attr = GetFieldAttrInternal(pdfium::form_fields::kFT);
   ByteString type_name = ft_attr ? ft_attr->GetString() : ByteString();
   uint32_t flags = GetFieldFlags();
   m_bRequired = flags & pdfium::form_flags::kRequired;
@@ -143,6 +150,15 @@ void CPDF_FormField::InitFieldFlags() {
 
 WideString CPDF_FormField::GetFullName() const {
   return GetFullNameForDict(m_pDict.Get());
+}
+
+RetainPtr<const CPDF_Object> CPDF_FormField::GetFieldAttr(
+    const ByteString& name) const {
+  return pdfium::WrapRetain(GetFieldAttrInternal(name));
+}
+
+RetainPtr<const CPDF_Dictionary> CPDF_FormField::GetFieldDict() const {
+  return pdfium::WrapRetain(GetFieldDictInternal());
 }
 
 bool CPDF_FormField::ResetField() {
@@ -191,7 +207,7 @@ bool CPDF_FormField::ResetField() {
           csValue = pV->GetUnicodeText();
       }
 
-      bool bHasRV = !!GetFieldAttr(pdfium::form_fields::kRV);
+      bool bHasRV = !!GetFieldAttrInternal(pdfium::form_fields::kRV);
       if (!bHasRV && (csDValue == csValue))
         return false;
 
@@ -267,22 +283,22 @@ FormFieldType CPDF_FormField::GetFieldType() const {
 }
 
 CPDF_AAction CPDF_FormField::GetAdditionalAction() const {
-  const CPDF_Object* pObj = GetFieldAttr(pdfium::form_fields::kAA);
+  const CPDF_Object* pObj = GetFieldAttrInternal(pdfium::form_fields::kAA);
   return CPDF_AAction(pObj ? pObj->GetDict() : nullptr);
 }
 
 WideString CPDF_FormField::GetAlternateName() const {
-  const CPDF_Object* pObj = GetFieldAttr(pdfium::form_fields::kTU);
+  const CPDF_Object* pObj = GetFieldAttrInternal(pdfium::form_fields::kTU);
   return pObj ? pObj->GetUnicodeText() : WideString();
 }
 
 WideString CPDF_FormField::GetMappingName() const {
-  const CPDF_Object* pObj = GetFieldAttr(pdfium::form_fields::kTM);
+  const CPDF_Object* pObj = GetFieldAttrInternal(pdfium::form_fields::kTM);
   return pObj ? pObj->GetUnicodeText() : WideString();
 }
 
 uint32_t CPDF_FormField::GetFieldFlags() const {
-  const CPDF_Object* pObj = GetFieldAttr(pdfium::form_fields::kFf);
+  const CPDF_Object* pObj = GetFieldAttrInternal(pdfium::form_fields::kFf);
   return pObj ? pObj->GetInteger() : 0;
 }
 
@@ -397,7 +413,7 @@ bool CPDF_FormField::SetValue(const WideString& value,
 }
 
 int CPDF_FormField::GetMaxLen() const {
-  const CPDF_Object* pObj = GetFieldAttr("MaxLen");
+  const CPDF_Object* pObj = GetFieldAttrInternal("MaxLen");
   if (pObj)
     return pObj->GetInteger();
 
@@ -547,12 +563,12 @@ int CPDF_FormField::GetDefaultSelectedItem() const {
 }
 
 int CPDF_FormField::CountOptions() const {
-  const CPDF_Array* pArray = ToArray(GetFieldAttr("Opt"));
+  const CPDF_Array* pArray = ToArray(GetFieldAttrInternal("Opt"));
   return pArray ? fxcrt::CollectionSize<int>(*pArray) : 0;
 }
 
 WideString CPDF_FormField::GetOptionText(int index, int sub_index) const {
-  const CPDF_Array* pArray = ToArray(GetFieldAttr("Opt"));
+  const CPDF_Array* pArray = ToArray(GetFieldAttrInternal("Opt"));
   if (!pArray)
     return WideString();
 
@@ -619,7 +635,7 @@ bool CPDF_FormField::CheckControl(int iControlIndex,
     }
   }
 
-  const CPDF_Object* pOpt = GetFieldAttr("Opt");
+  const CPDF_Object* pOpt = GetFieldAttrInternal("Opt");
   if (!ToArray(pOpt)) {
     ByteString csBExport = PDF_EncodeText(csWExport.AsStringView());
     if (bChecked) {
@@ -679,7 +695,7 @@ bool CPDF_FormField::SetCheckValue(const WideString& value,
 }
 
 int CPDF_FormField::GetTopVisibleIndex() const {
-  const CPDF_Object* pObj = GetFieldAttr("TI");
+  const CPDF_Object* pObj = GetFieldAttrInternal("TI");
   return pObj ? pObj->GetInteger() : 0;
 }
 
@@ -853,17 +869,26 @@ void CPDF_FormField::NotifyListOrComboBoxAfterChange() {
   }
 }
 
+const CPDF_Object* CPDF_FormField::GetFieldAttrInternal(
+    const ByteString& name) const {
+  return GetFieldAttrForDictInternal(m_pDict.Get(), name);
+}
+
+const CPDF_Dictionary* CPDF_FormField::GetFieldDictInternal() const {
+  return m_pDict.Get();
+}
+
 const CPDF_Object* CPDF_FormField::GetDefaultValueObject() const {
-  return GetFieldAttr(pdfium::form_fields::kDV);
+  return GetFieldAttrInternal(pdfium::form_fields::kDV);
 }
 
 const CPDF_Object* CPDF_FormField::GetValueObject() const {
-  return GetFieldAttr(pdfium::form_fields::kV);
+  return GetFieldAttrInternal(pdfium::form_fields::kV);
 }
 
 const CPDF_Object* CPDF_FormField::GetSelectedIndicesObject() const {
   DCHECK(GetType() == kComboBox || GetType() == kListBox);
-  return GetFieldAttr("I");
+  return GetFieldAttrInternal("I");
 }
 
 const CPDF_Object* CPDF_FormField::GetValueOrSelectedIndicesObject() const {
