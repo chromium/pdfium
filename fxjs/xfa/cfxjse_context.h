@@ -32,7 +32,7 @@ class CFXJSE_Context {
 
   ~CFXJSE_Context();
 
-  v8::Isolate* GetIsolate() const { return m_pIsolate.Get(); }
+  v8::Isolate* GetIsolate() const { return m_pIsolate; }
   v8::Local<v8::Context> GetContext();
   v8::Local<v8::Object> GetGlobalObject();
 

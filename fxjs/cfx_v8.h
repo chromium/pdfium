@@ -20,7 +20,7 @@ class CFX_V8 {
   explicit CFX_V8(v8::Isolate* pIsolate);
   virtual ~CFX_V8();
 
-  v8::Isolate* GetIsolate() const { return m_pIsolate.Get(); }
+  v8::Isolate* GetIsolate() const { return m_pIsolate; }
 
   v8::Local<v8::Value> NewNull();
   v8::Local<v8::Value> NewUndefined();

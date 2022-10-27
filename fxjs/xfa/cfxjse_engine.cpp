@@ -181,7 +181,7 @@ bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
   if (pThisObject)
     pThisBinding = GetOrCreateJSBindingFromMap(pThisObject);
 
-  IJS_Runtime::ScopedEventContext ctx(m_pSubordinateRuntime.Get());
+  IJS_Runtime::ScopedEventContext ctx(m_pSubordinateRuntime);
   return m_JsContext->ExecuteScript(btScript.AsStringView(), hRetValue,
                                     pThisBinding);
 }
@@ -795,7 +795,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
       if (dwStyles & XFA_ResolveFlag::kCreateNode) {
         bNextCreate = true;
         if (!m_NodeHelper->m_pCreateParent) {
-          m_NodeHelper->m_pCreateParent = ToNode(rndFind.m_CurObject.Get());
+          m_NodeHelper->m_pCreateParent = ToNode(rndFind.m_CurObject);
           m_NodeHelper->m_iCreateCount = 1;
         }
         int32_t checked_length =

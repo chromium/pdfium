@@ -106,7 +106,7 @@ class CJS_EventContext final : public IJS_EventContext {
                         bool* bRc) override;
   void OnExternal_Exec() override;
 
-  CJS_Runtime* GetJSRuntime() const { return m_pRuntime.Get(); }
+  CJS_Runtime* GetJSRuntime() const { return m_pRuntime; }
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
     return m_pFormFillEnv.Get();
   }

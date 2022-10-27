@@ -274,7 +274,7 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
                                                   WideStringView wsFormcalc);
 
   v8::Local<v8::Value> GlobalPropertyGetter();
-  v8::Isolate* GetIsolate() const { return m_pIsolate.Get(); }
+  v8::Isolate* GetIsolate() const { return m_pIsolate; }
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
 
  private:

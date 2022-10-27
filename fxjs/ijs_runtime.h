@@ -38,8 +38,8 @@ class IJS_Runtime {
     explicit ScopedEventContext(IJS_Runtime* pRuntime);
     ~ScopedEventContext();
 
-    IJS_EventContext* Get() const { return m_pContext.Get(); }
-    IJS_EventContext* operator->() const { return m_pContext.Get(); }
+    IJS_EventContext* Get() const { return m_pContext; }
+    IJS_EventContext* operator->() const { return m_pContext; }
 
    private:
     UnownedPtr<IJS_Runtime> const m_pRuntime;

@@ -111,7 +111,7 @@ class CFXJSE_Engine final : public CFX_V8 {
   ~CFXJSE_Engine() override;
 
   void SetEventParam(CXFA_EventParam* param) { m_eventParam = param; }
-  CXFA_EventParam* GetEventParam() const { return m_eventParam.Get(); }
+  CXFA_EventParam* GetEventParam() const { return m_eventParam; }
   bool RunScript(CXFA_Script::Type eScriptType,
                  WideStringView wsScript,
                  CFXJSE_Value* pRetValue,
@@ -130,7 +130,7 @@ class CFXJSE_Engine final : public CFX_V8 {
   v8::Local<v8::Object> GetOrCreateJSBindingFromMap(CXFA_Object* pObject);
 
   CXFA_Object* GetThisObject() const { return m_pThisObject; }
-  CFXJSE_Class* GetJseNormalClass() const { return m_pJsClass.Get(); }
+  CFXJSE_Class* GetJseNormalClass() const { return m_pJsClass; }
   CXFA_Document* GetDocument() const { return m_pDocument.Get(); }
 
   void SetNodesOfRunScript(std::vector<cppgc::Persistent<CXFA_Node>>* pArray);
