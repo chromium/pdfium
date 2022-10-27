@@ -33,3 +33,18 @@ TEST_F(CFFLComboBoxEmbedderTest, GetActionData) {
     EXPECT_EQ(L"", result.sChangeEx);
   }
 }
+
+TEST_F(CFFLComboBoxEmbedderTest, SetActionData) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnotNormal());
+  CFFL_FieldAction input_fa;
+  input_fa.nSelStart = 2;
+  input_fa.nSelEnd = 4;
+  input_fa.sChange = L"Hamster";
+  GetCFFLFormField()->SetActionData(GetPageView(), CPDF_AAction::kKeyStroke,
+                                    input_fa);
+
+  CFFL_FieldAction output_fa;
+  GetCFFLFormField()->GetActionData(GetPageView(), CPDF_AAction::kKeyStroke,
+                                    output_fa);
+  EXPECT_EQ(L"BaHamsterna", output_fa.sValue);
+}
