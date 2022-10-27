@@ -1451,7 +1451,7 @@ CXFA_LocaleMgr* CXFA_Document::GetLocaleMgr() {
 }
 
 cppgc::Heap* CXFA_Document::GetHeap() const {
-  return heap_.Get();
+  return heap_;
 }
 
 CFXJSE_Engine* CXFA_Document::InitScriptContext(CJS_Runtime* fxjs_runtime) {

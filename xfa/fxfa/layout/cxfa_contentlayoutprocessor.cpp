@@ -2430,7 +2430,7 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
     pFormNode =
         m_pViewLayoutProcessor->QueryOverflow(pProcessor->GetFormNode());
     if (!pFormNode && pLayoutContext && pLayoutContext->m_pOverflowProcessor) {
-      pFormNode = pLayoutContext->m_pOverflowNode.Get();
+      pFormNode = pLayoutContext->m_pOverflowNode;
       bUseInherited = true;
     }
     absl::optional<CXFA_ViewLayoutProcessor::OverflowData> overflow_data =

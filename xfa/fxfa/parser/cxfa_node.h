@@ -175,7 +175,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   }
 
   void SetXMLMappingNode(CFX_XMLNode* node) { xml_node_ = node; }
-  CFX_XMLNode* GetXMLMappingNode() const { return xml_node_.Get(); }
+  CFX_XMLNode* GetXMLMappingNode() const { return xml_node_; }
   CFX_XMLNode* CreateXMLMappingNode();
   bool IsNeedSavingXMLNode() const;
 

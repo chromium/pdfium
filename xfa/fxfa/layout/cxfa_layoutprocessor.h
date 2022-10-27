@@ -55,7 +55,7 @@ class CXFA_LayoutProcessor final : public CXFA_Document::LayoutProcessorIface {
  private:
   explicit CXFA_LayoutProcessor(cppgc::Heap* pHeap);
 
-  cppgc::Heap* GetHeap() { return m_pHeap.Get(); }
+  cppgc::Heap* GetHeap() { return m_pHeap; }
   bool NeedLayout() const;
   int32_t RestartLayout();
 

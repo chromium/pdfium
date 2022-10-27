@@ -32,11 +32,11 @@ class CFGAS_GEColor {
   }
   CFGAS_GEPattern* GetPattern() const {
     DCHECK_EQ(m_type, Pattern);
-    return m_pPattern.Get();
+    return m_pPattern;
   }
   CFGAS_GEShading* GetShading() const {
     DCHECK_EQ(m_type, Shading);
-    return m_pShading.Get();
+    return m_pShading;
   }
 
   CFGAS_GEColor& operator=(const CFGAS_GEColor& that);

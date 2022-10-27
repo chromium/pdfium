@@ -19,7 +19,7 @@ CXFA_Node* CXFA_ReadyNodeIterator::MoveToNext() {
   while (pItem) {
     m_pCurNode = pItem->IsWidgetReady() ? pItem : nullptr;
     if (m_pCurNode)
-      return m_pCurNode.Get();
+      return m_pCurNode;
     pItem = m_ContentIterator.MoveToNext();
   }
   return nullptr;

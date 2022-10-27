@@ -1623,8 +1623,8 @@ void CXFA_Node::InsertChildAndNotify(CXFA_Node* pNode, CXFA_Node* pBeforeNode) {
     return;
 
   DCHECK(!pNode->xml_node_->GetParent());
-  xml_node_->InsertBefore(pNode->xml_node_.Get(),
-                          pBeforeNode ? pBeforeNode->xml_node_.Get() : nullptr);
+  xml_node_->InsertBefore(pNode->xml_node_,
+                          pBeforeNode ? pBeforeNode->xml_node_ : nullptr);
 }
 
 void CXFA_Node::RemoveChildAndNotify(CXFA_Node* pNode, bool bNotify) {
@@ -1640,12 +1640,12 @@ void CXFA_Node::RemoveChildAndNotify(CXFA_Node* pNode, bool bNotify) {
     return;
 
   if (!pNode->IsAttributeInXML()) {
-    xml_node_->RemoveChild(pNode->xml_node_.Get());
+    xml_node_->RemoveChild(pNode->xml_node_);
     return;
   }
 
   DCHECK_EQ(pNode->xml_node_, xml_node_);
-  CFX_XMLElement* pXMLElement = ToXMLElement(pNode->xml_node_.Get());
+  CFX_XMLElement* pXMLElement = ToXMLElement(pNode->xml_node_);
   if (pXMLElement) {
     WideString wsAttributeName =
         pNode->JSObject()->GetCData(XFA_Attribute::QualifiedName);
@@ -1850,7 +1850,7 @@ CFX_XMLNode* CXFA_Node::CreateXMLMappingNode() {
     xml_node_ = GetXMLDocument()->CreateNode<CFX_XMLElement>(
         JSObject()->GetCData(XFA_Attribute::Name));
   }
-  return xml_node_.Get();
+  return xml_node_;
 }
 
 bool CXFA_Node::IsNeedSavingXMLNode() const {

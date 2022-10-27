@@ -148,7 +148,7 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
   if (!pConverted)
     return;
 
-  CXFA_ImageRenderer imageRender(m_pDevice.Get(), pConverted, m_ImageMatrix);
+  CXFA_ImageRenderer imageRender(m_pDevice, pConverted, m_ImageMatrix);
   if (!imageRender.Start())
     return;
 

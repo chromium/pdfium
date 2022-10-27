@@ -22,7 +22,7 @@ class CFWL_ThemeText final : public CFWL_ThemePart {
   CFWL_ThemeText(Part iPart, CFWL_Widget* pWidget, CFGAS_GEGraphics* pGraphics);
   ~CFWL_ThemeText();
 
-  CFGAS_GEGraphics* GetGraphics() const { return m_pGraphics.Get(); }
+  CFGAS_GEGraphics* GetGraphics() const { return m_pGraphics; }
 
   FDE_TextAlignment m_iTTOAlign = FDE_TextAlignment::kTopLeft;
   FDE_TextStyle m_dwTTOStyles;

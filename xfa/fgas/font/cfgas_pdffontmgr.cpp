@@ -53,7 +53,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::FindFont(const ByteString& strPsName,
   ByteString name = strPsName;
   name.Remove(' ');
 
-  auto* pData = CPDF_DocPageData::FromDocument(m_pDoc.Get());
+  auto* pData = CPDF_DocPageData::FromDocument(m_pDoc);
   CPDF_DictionaryLocker locker(pFontSetDict);
   for (const auto& it : locker) {
     const ByteString& key = it.first;

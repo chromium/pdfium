@@ -51,9 +51,7 @@ class CFGAS_Break {
   void ClearBreakPieces();
 
   CFGAS_Char* GetLastChar(int32_t index, bool bOmitChar, bool bRichText) const;
-  const CFGAS_BreakLine* GetCurrentLineForTesting() const {
-    return m_pCurLine.Get();
-  }
+  const CFGAS_BreakLine* GetCurrentLineForTesting() const { return m_pCurLine; }
 
  protected:
   struct TPO {

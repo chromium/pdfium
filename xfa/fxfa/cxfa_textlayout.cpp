@@ -525,7 +525,7 @@ bool CXFA_TextLayout::LayoutInternal(size_t szBlockIndex) {
       if (!pContainerNode)
         return true;
 
-      const CFX_XMLNode* pXMLNode = m_pLoader->pXMLNode.Get();
+      const CFX_XMLNode* pXMLNode = m_pLoader->pXMLNode;
       if (!pXMLNode)
         return true;
 

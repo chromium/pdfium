@@ -285,7 +285,7 @@ RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(WideStringView wsName,
     return it->second.pDibSource.As<CFX_DIBitmap>();
   }
 
-  auto name_tree = CPDF_NameTree::Create(m_pPDFDoc.Get(), "XFAImages");
+  auto name_tree = CPDF_NameTree::Create(m_pPDFDoc, "XFAImages");
   size_t count = name_tree ? name_tree->GetCount() : 0;
   if (count == 0)
     return nullptr;
