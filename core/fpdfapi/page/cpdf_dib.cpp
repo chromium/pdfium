@@ -468,7 +468,7 @@ CPDF_DIB::LoadState CPDF_DIB::CreateDecoder(uint8_t resolution_levels_to_skip) {
   }
 
   pdfium::span<const uint8_t> src_span = m_pStreamAcc->GetSpan();
-  const CPDF_Dictionary* pParams = m_pStreamAcc->GetImageParam();
+  RetainPtr<const CPDF_Dictionary> pParams = m_pStreamAcc->GetImageParam();
   if (decoder == "CCITTFaxDecode") {
     m_pDecoder = CreateFaxDecoder(src_span, m_Width, m_Height, pParams);
   } else if (decoder == "FlateDecode") {
