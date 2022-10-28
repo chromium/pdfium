@@ -276,10 +276,6 @@ example_059.pdf mac * * *
 example_060.pdf mac * * *
 example_061.pdf mac * * *
 example_062.pdf mac * * *
-
-# TODO(pdfium:1896): Remove after associated bug is fixed
-example_062.pdf * * * skia,skiapaths
-
 example_063.pdf mac * * *
 example_064.pdf mac * * *
 example_065.pdf mac * * *
@@ -364,13 +360,6 @@ new_pdfsign4.pdf * * * skia
 
 new_signature1.pdf mac * * *
 new_signature2.pdf mac * * *
-
-# TODO(pdfium:1818): Remove after associated bug is fixed
-new_stamp2.pdf * * * skia
-
-# TODO(pdfium:1818): Remove after associated bug is fixed
-new_stamp3.pdf * * * skia
-
 new_stamp4.pdf mac * * *
 new_stamp5.pdf mac * * *
 new_textmarkup1.pdf mac * * *

@@ -3856,7 +3856,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSetMatrix) {
     EXPECT_EQ(FPDFBitmap_BGRA, FPDFBitmap_GetFormat(bitmap.get()));
     const char* checksum = []() {
       if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-        return "3b51fc066ee18efbf70bab0501763603";
+        return "404d679bd7e735543b001565cdbe3bf2";
       return "582ca300e003f512d7b552c7b5b45d2e";
     }();
     CompareBitmap(bitmap.get(), 53, 43, checksum);
@@ -3893,7 +3893,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSetMatrix) {
     EXPECT_EQ(FPDFBitmap_BGRA, FPDFBitmap_GetFormat(bitmap.get()));
     const char* checksum = []() {
       if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-        return "74081c2a48c2fd4f1fde544f056e956b";
+        return "2aec37e653af0780bc5903c34781588c";
       return "0824c16dcf2dfcef44b45d88db1fddce";
     }();
     CompareBitmap(bitmap.get(), 120, 43, checksum);

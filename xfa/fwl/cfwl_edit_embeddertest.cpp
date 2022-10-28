@@ -255,7 +255,7 @@ TEST_F(CFWLEditEmbedderTest, ImageEditTest) {
   FORM_OnLButtonDown(form_handle(), page(), 0, 115, 58);
   const char* filled_checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-      return "062ad65614888e4f114b99f3396be3e8";
+      return "40c1877a7ac5d71e61cc5dbc567576f6";
     return "101cf6223fa2403fba4c413a8310ab02";
   }();
   ScopedFPDFBitmap page_bitmap = RenderLoadedPageWithFlags(page(), FPDF_ANNOT);
