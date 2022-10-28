@@ -219,11 +219,11 @@ class CPDF_PageOrganizer {
 
   bool UpdateReference(RetainPtr<CPDF_Object> pObj);
 
-  CPDF_Document* dest() { return m_pDestDoc.Get(); }
-  const CPDF_Document* dest() const { return m_pDestDoc.Get(); }
+  CPDF_Document* dest() { return m_pDestDoc; }
+  const CPDF_Document* dest() const { return m_pDestDoc; }
 
-  CPDF_Document* src() { return m_pSrcDoc.Get(); }
-  const CPDF_Document* src() const { return m_pSrcDoc.Get(); }
+  CPDF_Document* src() { return m_pSrcDoc; }
+  const CPDF_Document* src() const { return m_pSrcDoc; }
 
   void AddObjectMapping(uint32_t dwOldPageObj, uint32_t dwNewPageObj) {
     m_ObjectNumberMap[dwOldPageObj] = dwNewPageObj;

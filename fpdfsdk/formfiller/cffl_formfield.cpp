@@ -357,7 +357,7 @@ CPWL_Wnd* CFFL_FormField::CreateOrUpdatePWLWindow(
     CPWL_Wnd::CreateParams cp = GetCreateParam();
     // TODO(tsepez): maybe pass widget's value age as 4th arg.
     auto pPrivateData = std::make_unique<CFFL_PerWindowData>(
-        m_pWidget.Get(), pPageView, m_pWidget->GetAppearanceAge(), 0);
+        m_pWidget, pPageView, m_pWidget->GetAppearanceAge(), 0);
     m_Maps[pPageView] = NewPWLWindow(cp, std::move(pPrivateData));
     return m_Maps[pPageView].get();
   }
@@ -465,7 +465,7 @@ bool CFFL_FormField::CommitData(const CPDFSDK_PageView* pPageView,
   if (!IsDataChanged(pPageView))
     return true;
 
-  ObservedPtr<CPDFSDK_Widget> pObserved(m_pWidget.Get());
+  ObservedPtr<CPDFSDK_Widget> pObserved(m_pWidget);
   if (!m_pFormFiller->OnKeyStrokeCommit(pObserved, pPageView, nFlag)) {
     if (!pObserved)
       return false;

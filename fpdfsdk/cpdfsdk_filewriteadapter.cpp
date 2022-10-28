@@ -18,6 +18,6 @@ CPDFSDK_FileWriteAdapter::~CPDFSDK_FileWriteAdapter() = default;
 
 bool CPDFSDK_FileWriteAdapter::WriteBlock(const void* data, size_t size) {
   return file_write_->WriteBlock(
-             file_write_.Get(), data,
+             file_write_, data,
              pdfium::base::checked_cast<unsigned long>(size)) != 0;
 }

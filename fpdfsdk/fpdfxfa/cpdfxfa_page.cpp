@@ -87,7 +87,7 @@ CPDFXFA_Page* CPDFXFA_Page::AsXFAPage() {
 }
 
 CPDF_Document* CPDFXFA_Page::GetDocument() const {
-  return m_pDocument.Get();
+  return m_pDocument;
 }
 
 bool CPDFXFA_Page::LoadPDFPage() {

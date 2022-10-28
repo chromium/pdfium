@@ -107,7 +107,7 @@ class CPDFSDK_FormFillEnvironment final
                     int zoomMode,
                     pdfium::span<float> fPosArray);
 
-  CPDF_Document* GetPDFDocument() const { return m_pCPDFDoc.Get(); }
+  CPDF_Document* GetPDFDocument() const { return m_pCPDFDoc; }
   CPDF_Document::Extension* GetDocExtension() const {
     return m_pCPDFDoc->GetExtension();
   }

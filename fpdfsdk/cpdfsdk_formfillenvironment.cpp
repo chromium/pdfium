@@ -134,7 +134,7 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetCurrentView() {
 IPDF_Page* CPDFSDK_FormFillEnvironment::GetCurrentPage() const {
   if (m_pInfo && m_pInfo->FFI_GetCurrentPage) {
     return IPDFPageFromFPDFPage(m_pInfo->FFI_GetCurrentPage(
-        m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc.Get())));
+        m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc)));
   }
   return nullptr;
 }
@@ -464,14 +464,14 @@ int CPDFSDK_FormFillEnvironment::GetCurrentPageIndex() const {
   if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_GetCurrentPageIndex)
     return -1;
   return m_pInfo->FFI_GetCurrentPageIndex(
-      m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc.Get()));
+      m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc));
 }
 
 void CPDFSDK_FormFillEnvironment::SetCurrentPage(int iCurPage) {
   if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_SetCurrentPage)
     return;
-  m_pInfo->FFI_SetCurrentPage(
-      m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc.Get()), iCurPage);
+  m_pInfo->FFI_SetCurrentPage(m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc),
+                              iCurPage);
 }
 
 void CPDFSDK_FormFillEnvironment::GotoURL(const WideString& wsURL) {
@@ -479,7 +479,7 @@ void CPDFSDK_FormFillEnvironment::GotoURL(const WideString& wsURL) {
     return;
 
   ByteString bsTo = wsURL.ToUTF16LE();
-  m_pInfo->FFI_GotoURL(m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc.Get()),
+  m_pInfo->FFI_GotoURL(m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc),
                        AsFPDFWideString(&bsTo));
 }
 
@@ -642,7 +642,7 @@ CPDFSDK_PageView* CPDFSDK_FormFillEnvironment::GetPageViewAtIndex(int nIndex) {
 }
 
 void CPDFSDK_FormFillEnvironment::ProcJavascriptAction() {
-  auto name_tree = CPDF_NameTree::Create(m_pCPDFDoc.Get(), "JavaScript");
+  auto name_tree = CPDF_NameTree::Create(m_pCPDFDoc, "JavaScript");
   if (!name_tree)
     return;
 
@@ -706,7 +706,7 @@ IPDF_Page* CPDFSDK_FormFillEnvironment::GetPage(int nIndex) const {
   if (!m_pInfo || !m_pInfo->FFI_GetPage)
     return nullptr;
   return IPDFPageFromFPDFPage(m_pInfo->FFI_GetPage(
-      m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc.Get()), nIndex));
+      m_pInfo, FPDFDocumentFromCPDFDocument(m_pCPDFDoc), nIndex));
 }
 
 CPDFSDK_InteractiveForm* CPDFSDK_FormFillEnvironment::GetInteractiveForm() {

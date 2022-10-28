@@ -12,5 +12,5 @@ CPDFSDK_PauseAdapter::CPDFSDK_PauseAdapter(IFSDK_PAUSE* IPause)
 CPDFSDK_PauseAdapter::~CPDFSDK_PauseAdapter() = default;
 
 bool CPDFSDK_PauseAdapter::NeedToPauseNow() {
-  return m_IPause->NeedToPauseNow && m_IPause->NeedToPauseNow(m_IPause.Get());
+  return m_IPause->NeedToPauseNow && m_IPause->NeedToPauseNow(m_IPause);
 }

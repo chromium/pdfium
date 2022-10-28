@@ -37,7 +37,7 @@ class CFFL_PerWindowData final : public IPWL_FillerNotify::PerWindowData {
   uint32_t GetValueAge() const { return m_nValueAge; }
 
   void SetFormField(CFFL_FormField* pFormField) { m_pFormField = pFormField; }
-  CFFL_FormField* GetFormField() { return m_pFormField.Get(); }
+  CFFL_FormField* GetFormField() { return m_pFormField; }
 
  private:
   CFFL_PerWindowData(const CFFL_PerWindowData& that);

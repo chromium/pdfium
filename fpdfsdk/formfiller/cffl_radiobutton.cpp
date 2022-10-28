@@ -51,7 +51,7 @@ bool CFFL_RadioButton::OnChar(CPDFSDK_Widget* pWidget,
       CPDFSDK_PageView* pPageView = pWidget->GetPageView();
       DCHECK(pPageView);
 
-      ObservedPtr<CPDFSDK_Widget> pObserved(m_pWidget.Get());
+      ObservedPtr<CPDFSDK_Widget> pObserved(m_pWidget);
       if (m_pFormFiller->OnButtonUp(pObserved, pPageView, nFlags) ||
           !pObserved) {
         return true;
@@ -95,7 +95,7 @@ void CFFL_RadioButton::SaveData(const CPDFSDK_PageView* pPageView) {
     return;
 
   bool bNewChecked = pWnd->IsChecked();
-  ObservedPtr<CPDFSDK_Widget> observed_widget(m_pWidget.Get());
+  ObservedPtr<CPDFSDK_Widget> observed_widget(m_pWidget);
   ObservedPtr<CFFL_RadioButton> observed_this(this);
   m_pWidget->SetCheck(bNewChecked);
   if (!observed_widget)

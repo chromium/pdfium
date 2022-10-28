@@ -132,7 +132,7 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   CPDFSDK_PageView* GetCurPageView();
   void SetChangeMark();
 
-  CPDFSDK_Widget* GetSDKWidget() const { return m_pWidget.Get(); }
+  CPDFSDK_Widget* GetSDKWidget() const { return m_pWidget; }
 
   CFFL_PerWindowData* GetPerPWLWindowData(const CPDFSDK_PageView* pPageView);
   void ResetPWLWindowForValueAge(const CPDFSDK_PageView* pPageView,

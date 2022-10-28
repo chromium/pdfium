@@ -85,25 +85,25 @@ TEST_F(PDFDocTest, FindBookmark) {
     auto bookmarks = CreateDictObjs(3);
 
     bookmarks[1].obj->SetNewFor<CPDF_String>("Title", L"Chapter 1");
-    bookmarks[1].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs.Get(),
+    bookmarks[1].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs,
                                                 bookmarks[0].num);
-    bookmarks[1].obj->SetNewFor<CPDF_Reference>("Next", m_pIndirectObjs.Get(),
+    bookmarks[1].obj->SetNewFor<CPDF_Reference>("Next", m_pIndirectObjs,
                                                 bookmarks[2].num);
 
     bookmarks[2].obj->SetNewFor<CPDF_String>("Title", L"Chapter 2");
-    bookmarks[2].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs.Get(),
+    bookmarks[2].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs,
                                                 bookmarks[0].num);
-    bookmarks[2].obj->SetNewFor<CPDF_Reference>("Prev", m_pIndirectObjs.Get(),
+    bookmarks[2].obj->SetNewFor<CPDF_Reference>("Prev", m_pIndirectObjs,
                                                 bookmarks[1].num);
 
     bookmarks[0].obj->SetNewFor<CPDF_Name>("Type", "Outlines");
     bookmarks[0].obj->SetNewFor<CPDF_Number>("Count", 2);
-    bookmarks[0].obj->SetNewFor<CPDF_Reference>("First", m_pIndirectObjs.Get(),
+    bookmarks[0].obj->SetNewFor<CPDF_Reference>("First", m_pIndirectObjs,
                                                 bookmarks[1].num);
-    bookmarks[0].obj->SetNewFor<CPDF_Reference>("Last", m_pIndirectObjs.Get(),
+    bookmarks[0].obj->SetNewFor<CPDF_Reference>("Last", m_pIndirectObjs,
                                                 bookmarks[2].num);
 
-    m_pRootObj->SetNewFor<CPDF_Reference>("Outlines", m_pIndirectObjs.Get(),
+    m_pRootObj->SetNewFor<CPDF_Reference>("Outlines", m_pIndirectObjs,
                                           bookmarks[0].num);
 
     // Title with no match.
@@ -129,25 +129,25 @@ TEST_F(PDFDocTest, FindBookmark) {
     auto bookmarks = CreateDictObjs(3);
 
     bookmarks[1].obj->SetNewFor<CPDF_String>("Title", L"Chapter 1");
-    bookmarks[1].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs.Get(),
+    bookmarks[1].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs,
                                                 bookmarks[0].num);
-    bookmarks[1].obj->SetNewFor<CPDF_Reference>("First", m_pIndirectObjs.Get(),
+    bookmarks[1].obj->SetNewFor<CPDF_Reference>("First", m_pIndirectObjs,
                                                 bookmarks[2].num);
 
     bookmarks[2].obj->SetNewFor<CPDF_String>("Title", L"Chapter 2");
-    bookmarks[2].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs.Get(),
+    bookmarks[2].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs,
                                                 bookmarks[1].num);
-    bookmarks[2].obj->SetNewFor<CPDF_Reference>("First", m_pIndirectObjs.Get(),
+    bookmarks[2].obj->SetNewFor<CPDF_Reference>("First", m_pIndirectObjs,
                                                 bookmarks[1].num);
 
     bookmarks[0].obj->SetNewFor<CPDF_Name>("Type", "Outlines");
     bookmarks[0].obj->SetNewFor<CPDF_Number>("Count", 2);
-    bookmarks[0].obj->SetNewFor<CPDF_Reference>("First", m_pIndirectObjs.Get(),
+    bookmarks[0].obj->SetNewFor<CPDF_Reference>("First", m_pIndirectObjs,
                                                 bookmarks[1].num);
-    bookmarks[0].obj->SetNewFor<CPDF_Reference>("Last", m_pIndirectObjs.Get(),
+    bookmarks[0].obj->SetNewFor<CPDF_Reference>("Last", m_pIndirectObjs,
                                                 bookmarks[2].num);
 
-    m_pRootObj->SetNewFor<CPDF_Reference>("Outlines", m_pIndirectObjs.Get(),
+    m_pRootObj->SetNewFor<CPDF_Reference>("Outlines", m_pIndirectObjs,
                                           bookmarks[0].num);
 
     // Title with no match.
@@ -164,31 +164,31 @@ TEST_F(PDFDocTest, FindBookmark) {
     auto bookmarks = CreateDictObjs(4);
 
     bookmarks[1].obj->SetNewFor<CPDF_String>("Title", L"Chapter 1");
-    bookmarks[1].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs.Get(),
+    bookmarks[1].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs,
                                                 bookmarks[0].num);
-    bookmarks[1].obj->SetNewFor<CPDF_Reference>("Next", m_pIndirectObjs.Get(),
+    bookmarks[1].obj->SetNewFor<CPDF_Reference>("Next", m_pIndirectObjs,
                                                 bookmarks[2].num);
 
     bookmarks[2].obj->SetNewFor<CPDF_String>("Title", L"Chapter 2");
-    bookmarks[2].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs.Get(),
+    bookmarks[2].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs,
                                                 bookmarks[0].num);
-    bookmarks[2].obj->SetNewFor<CPDF_Reference>("Next", m_pIndirectObjs.Get(),
+    bookmarks[2].obj->SetNewFor<CPDF_Reference>("Next", m_pIndirectObjs,
                                                 bookmarks[3].num);
 
     bookmarks[3].obj->SetNewFor<CPDF_String>("Title", L"Chapter 3");
-    bookmarks[3].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs.Get(),
+    bookmarks[3].obj->SetNewFor<CPDF_Reference>("Parent", m_pIndirectObjs,
                                                 bookmarks[0].num);
-    bookmarks[3].obj->SetNewFor<CPDF_Reference>("Next", m_pIndirectObjs.Get(),
+    bookmarks[3].obj->SetNewFor<CPDF_Reference>("Next", m_pIndirectObjs,
                                                 bookmarks[1].num);
 
     bookmarks[0].obj->SetNewFor<CPDF_Name>("Type", "Outlines");
     bookmarks[0].obj->SetNewFor<CPDF_Number>("Count", 2);
-    bookmarks[0].obj->SetNewFor<CPDF_Reference>("First", m_pIndirectObjs.Get(),
+    bookmarks[0].obj->SetNewFor<CPDF_Reference>("First", m_pIndirectObjs,
                                                 bookmarks[1].num);
-    bookmarks[0].obj->SetNewFor<CPDF_Reference>("Last", m_pIndirectObjs.Get(),
+    bookmarks[0].obj->SetNewFor<CPDF_Reference>("Last", m_pIndirectObjs,
                                                 bookmarks[2].num);
 
-    m_pRootObj->SetNewFor<CPDF_Reference>("Outlines", m_pIndirectObjs.Get(),
+    m_pRootObj->SetNewFor<CPDF_Reference>("Outlines", m_pIndirectObjs,
                                           bookmarks[0].num);
 
     // Title with no match.
