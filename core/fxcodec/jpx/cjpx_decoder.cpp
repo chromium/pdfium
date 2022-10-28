@@ -442,15 +442,15 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data) {
 
   if (m_ColorSpaceOption == kIndexedColorSpace)
     m_Parameters.flags |= OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
-  opj_set_info_handler(m_Codec.Get(), fx_ignore_callback, nullptr);
-  opj_set_warning_handler(m_Codec.Get(), fx_ignore_callback, nullptr);
-  opj_set_error_handler(m_Codec.Get(), fx_ignore_callback, nullptr);
-  if (!opj_setup_decoder(m_Codec.Get(), &m_Parameters))
+  opj_set_info_handler(m_Codec, fx_ignore_callback, nullptr);
+  opj_set_warning_handler(m_Codec, fx_ignore_callback, nullptr);
+  opj_set_error_handler(m_Codec, fx_ignore_callback, nullptr);
+  if (!opj_setup_decoder(m_Codec, &m_Parameters))
     return false;
 
   m_Image = nullptr;
   opj_image_t* pTempImage = nullptr;
-  if (!opj_read_header(m_Stream.Get(), m_Codec.Get(), &pTempImage))
+  if (!opj_read_header(m_Stream, m_Codec, &pTempImage))
     return false;
 
   m_Image = pTempImage;
@@ -459,18 +459,18 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data) {
 
 bool CJPX_Decoder::StartDecode() {
   if (!m_Parameters.nb_tile_to_decode) {
-    if (!opj_set_decode_area(m_Codec.Get(), m_Image.Get(), m_Parameters.DA_x0,
+    if (!opj_set_decode_area(m_Codec, m_Image, m_Parameters.DA_x0,
                              m_Parameters.DA_y0, m_Parameters.DA_x1,
                              m_Parameters.DA_y1)) {
       opj_image_destroy(m_Image.Release());
       return false;
     }
-    if (!(opj_decode(m_Codec.Get(), m_Stream.Get(), m_Image.Get()) &&
-          opj_end_decompress(m_Codec.Get(), m_Stream.Get()))) {
+    if (!(opj_decode(m_Codec, m_Stream, m_Image) &&
+          opj_end_decompress(m_Codec, m_Stream))) {
       opj_image_destroy(m_Image.Release());
       return false;
     }
-  } else if (!opj_get_decoded_tile(m_Codec.Get(), m_Stream.Get(), m_Image.Get(),
+  } else if (!opj_get_decoded_tile(m_Codec, m_Stream, m_Image,
                                    m_Parameters.tile_index)) {
     return false;
   }
@@ -484,7 +484,7 @@ bool CJPX_Decoder::StartDecode() {
     m_Image->color_space = OPJ_CLRSPC_GRAY;
   }
   if (m_Image->color_space == OPJ_CLRSPC_SYCC)
-    color_sycc_to_rgb(m_Image.Get());
+    color_sycc_to_rgb(m_Image);
 
   if (m_Image->icc_profile_buf) {
     // TODO(palmer): Using |opj_free| here resolves the crash described in

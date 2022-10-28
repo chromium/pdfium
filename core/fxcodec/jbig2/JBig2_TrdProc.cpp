@@ -56,7 +56,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
   SBREG->Fill(SBDEFPIXEL);
   int32_t INITIAL_STRIPT;
   auto pHuffmanDecoder = std::make_unique<CJBig2_HuffmanDecoder>(pStream);
-  if (pHuffmanDecoder->DecodeAValue(SBHUFFDT.Get(), &INITIAL_STRIPT) != 0)
+  if (pHuffmanDecoder->DecodeAValue(SBHUFFDT, &INITIAL_STRIPT) != 0)
     return nullptr;
 
   FX_SAFE_INT32 STRIPT = INITIAL_STRIPT;
@@ -66,7 +66,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
   uint32_t NINSTANCES = 0;
   while (NINSTANCES < SBNUMINSTANCES) {
     int32_t INITIAL_DT;
-    if (pHuffmanDecoder->DecodeAValue(SBHUFFDT.Get(), &INITIAL_DT) != 0)
+    if (pHuffmanDecoder->DecodeAValue(SBHUFFDT, &INITIAL_DT) != 0)
       return nullptr;
 
     FX_SAFE_INT32 DT = INITIAL_DT;
@@ -77,7 +77,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
     for (;;) {
       if (bFirst) {
         int32_t DFS;
-        if (pHuffmanDecoder->DecodeAValue(SBHUFFFS.Get(), &DFS) != 0)
+        if (pHuffmanDecoder->DecodeAValue(SBHUFFFS, &DFS) != 0)
           return nullptr;
 
         FIRSTS += DFS;
@@ -85,7 +85,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
         bFirst = false;
       } else {
         int32_t IDS;
-        int32_t nVal = pHuffmanDecoder->DecodeAValue(SBHUFFDS.Get(), &IDS);
+        int32_t nVal = pHuffmanDecoder->DecodeAValue(SBHUFFDS, &IDS);
         if (nVal == kJBig2OOB)
           break;
 
@@ -146,12 +146,11 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
         int32_t RDXI;
         int32_t RDYI;
         int32_t HUFFRSIZE;
-        if ((pHuffmanDecoder->DecodeAValue(SBHUFFRDW.Get(), &RDWI) != 0) ||
-            (pHuffmanDecoder->DecodeAValue(SBHUFFRDH.Get(), &RDHI) != 0) ||
-            (pHuffmanDecoder->DecodeAValue(SBHUFFRDX.Get(), &RDXI) != 0) ||
-            (pHuffmanDecoder->DecodeAValue(SBHUFFRDY.Get(), &RDYI) != 0) ||
-            (pHuffmanDecoder->DecodeAValue(SBHUFFRSIZE.Get(), &HUFFRSIZE) !=
-             0)) {
+        if ((pHuffmanDecoder->DecodeAValue(SBHUFFRDW, &RDWI) != 0) ||
+            (pHuffmanDecoder->DecodeAValue(SBHUFFRDH, &RDHI) != 0) ||
+            (pHuffmanDecoder->DecodeAValue(SBHUFFRDX, &RDXI) != 0) ||
+            (pHuffmanDecoder->DecodeAValue(SBHUFFRDY, &RDYI) != 0) ||
+            (pHuffmanDecoder->DecodeAValue(SBHUFFRSIZE, &HUFFRSIZE) != 0)) {
           return nullptr;
         }
         pStream->alignByte();

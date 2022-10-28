@@ -19,7 +19,7 @@ class CFX_XMLDocument {
   CFX_XMLDocument();
   ~CFX_XMLDocument();
 
-  CFX_XMLElement* GetRoot() const { return root_.Get(); }
+  CFX_XMLElement* GetRoot() const { return root_; }
 
   template <typename T, typename... Args>
   T* CreateNode(Args&&... args) {

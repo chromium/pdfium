@@ -59,7 +59,8 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
 
   // Copy-construct an UnownedPtr.
   // Required in addition to copy conversion constructor below.
-  constexpr UnownedPtr(const UnownedPtr& that) noexcept : m_pObj(that.Get()) {}
+  constexpr UnownedPtr(const UnownedPtr& that) noexcept
+      : m_pObj(static_cast<T*>(that)) {}
 
   // Move-construct an UnownedPtr. After construction, |that| will be NULL.
   // Required in addition to move conversion constructor below.
@@ -69,7 +70,7 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
   template <class U,
             typename = typename std::enable_if<
                 std::is_convertible<U*, T*>::value>::type>
-  UnownedPtr(const UnownedPtr<U>& that) : UnownedPtr(that.Get()) {}
+  UnownedPtr(const UnownedPtr<U>& that) : UnownedPtr(static_cast<U*>(that)) {}
 
   // Move-conversion constructor.
   template <class U,
@@ -95,7 +96,7 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
   // Required in addition to copy conversion assignment below.
   UnownedPtr& operator=(const UnownedPtr& that) noexcept {
     if (*this != that)
-      Reset(that.Get());
+      Reset(static_cast<T*>(that));
     return *this;
   }
 
@@ -113,7 +114,7 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
                 std::is_convertible<U*, T*>::value>::type>
   UnownedPtr& operator=(const UnownedPtr<U>& that) noexcept {
     if (*this != that)
-      Reset(that.Get());
+      Reset(that);
     return *this;
   }
 
@@ -137,13 +138,15 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
     m_pObj = obj;
   }
 
-  bool operator==(std::nullptr_t ptr) const { return Get() == nullptr; }
-  bool operator==(const UnownedPtr& that) const { return Get() == that.Get(); }
+  bool operator==(std::nullptr_t ptr) const { return m_pObj == nullptr; }
+  bool operator==(const UnownedPtr& that) const {
+    return m_pObj == static_cast<T*>(that);
+  }
   bool operator<(const UnownedPtr& that) const {
-    return std::less<T*>()(Get(), that.Get());
+    return std::less<T*>()(m_pObj, static_cast<T*>(that));
   }
 
-  operator T*() const noexcept { return Get(); }
+  operator T*() const noexcept { return m_pObj; }
   T* Get() const noexcept { return m_pObj; }
 
   T* Release() {

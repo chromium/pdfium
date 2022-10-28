@@ -101,17 +101,17 @@ bool CFX_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
   if (pBitmap->IsMaskFormat()) {
     if (m_BitmapAlpha != 255)
       m_MaskColor = FXARGB_MUL_ALPHA(m_MaskColor, m_BitmapAlpha);
-    m_pDevice->CompositeMask(
-        m_pTransformer->result().left, m_pTransformer->result().top,
-        pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, m_MaskColor, 0, 0,
-        BlendMode::kNormal, m_pClipRgn.Get(), m_bRgbByteOrder);
+    m_pDevice->CompositeMask(m_pTransformer->result().left,
+                             m_pTransformer->result().top, pBitmap->GetWidth(),
+                             pBitmap->GetHeight(), pBitmap, m_MaskColor, 0, 0,
+                             BlendMode::kNormal, m_pClipRgn, m_bRgbByteOrder);
   } else {
     if (m_BitmapAlpha != 255)
       pBitmap->MultiplyAlpha(m_BitmapAlpha);
     m_pDevice->CompositeBitmap(
         m_pTransformer->result().left, m_pTransformer->result().top,
         pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, 0, 0,
-        BlendMode::kNormal, m_pClipRgn.Get(), m_bRgbByteOrder);
+        BlendMode::kNormal, m_pClipRgn, m_bRgbByteOrder);
   }
   return false;
 }

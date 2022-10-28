@@ -925,7 +925,7 @@ class SkiaState {
 #if defined(_SKIA_SUPPORT_PATHS_)
       m_pDriver->PreMultiply();
 #endif
-      DebugShowSkiaDrawPath(m_pDriver.Get(), skCanvas, skPaint, *fillPath);
+      DebugShowSkiaDrawPath(m_pDriver, skCanvas, skPaint, *fillPath);
       skCanvas->drawPath(*fillPath, skPaint);
     }
     if (stroke_alpha && do_stroke) {
@@ -938,7 +938,7 @@ class SkiaState {
         DCHECK_GE(m_skPath.countPoints(), 1);
         skCanvas->drawPoint(m_skPath.getPoint(0), skPaint);
       } else {
-        DebugShowSkiaDrawPath(m_pDriver.Get(), skCanvas, skPaint, m_skPath);
+        DebugShowSkiaDrawPath(m_pDriver, skCanvas, skPaint, m_skPath);
         skCanvas->drawPath(m_skPath, skPaint);
       }
     }

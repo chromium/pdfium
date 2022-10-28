@@ -66,18 +66,18 @@ void ReleaseDangling() {
 
 TEST(UnownedPtr, DefaultCtor) {
   UnownedPtr<Clink> ptr;
-  EXPECT_FALSE(ptr.Get());
+  EXPECT_FALSE(ptr);
 }
 
 TEST(UnownedPtr, NullptrCtor) {
   UnownedPtr<Clink> ptr(nullptr);
-  EXPECT_FALSE(ptr.Get());
+  EXPECT_FALSE(ptr);
 }
 
 TEST(UnownedPtr, RawCtor) {
   auto obj = std::make_unique<Clink>();
   UnownedPtr<Clink> ptr(obj.get());
-  EXPECT_EQ(obj.get(), ptr.Get());
+  EXPECT_EQ(obj.get(), ptr);
 }
 
 TEST(UnownedPtr, CopyCtor) {
@@ -123,7 +123,7 @@ TEST(UnownedPtr, RawAssign) {
   std::unique_ptr<Clink> obj = std::make_unique<Clink>();
   UnownedPtr<Clink> ptr;
   ptr = obj.get();
-  EXPECT_EQ(obj.get(), ptr.Get());
+  EXPECT_EQ(obj.get(), ptr);
 }
 
 TEST(UnownedPtr, CopyAssign) {
@@ -131,8 +131,8 @@ TEST(UnownedPtr, CopyAssign) {
   UnownedPtr<Clink> ptr1(obj.get());
   UnownedPtr<Clink> ptr2;
   ptr2 = ptr1;
-  EXPECT_EQ(obj.get(), ptr1.Get());
-  EXPECT_EQ(obj.get(), ptr2.Get());
+  EXPECT_EQ(obj.get(), ptr1);
+  EXPECT_EQ(obj.get(), ptr2);
 }
 
 TEST(UnownedPtr, MoveAssign) {
@@ -141,7 +141,7 @@ TEST(UnownedPtr, MoveAssign) {
   UnownedPtr<Clink> ptr2;
   ptr2 = std::move(ptr1);
   EXPECT_FALSE(ptr1);
-  EXPECT_EQ(obj.get(), ptr2.Get());
+  EXPECT_EQ(obj.get(), ptr2);
 }
 
 TEST(UnownedPtr, CopyConversionAssign) {
@@ -149,8 +149,8 @@ TEST(UnownedPtr, CopyConversionAssign) {
   UnownedPtr<Clink> ptr1(obj.get());
   UnownedPtr<const Clink> ptr2;
   ptr2 = ptr1;
-  EXPECT_EQ(obj.get(), ptr1.Get());
-  EXPECT_EQ(obj.get(), ptr2.Get());
+  EXPECT_EQ(obj.get(), ptr1);
+  EXPECT_EQ(obj.get(), ptr2);
 }
 
 TEST(UnownedPtr, MoveConversionAssign) {
@@ -159,7 +159,7 @@ TEST(UnownedPtr, MoveConversionAssign) {
   UnownedPtr<const Clink> ptr2;
   ptr2 = std::move(ptr1);
   EXPECT_FALSE(ptr1);
-  EXPECT_EQ(obj.get(), ptr2.Get());
+  EXPECT_EQ(obj.get(), ptr2);
 }
 
 TEST(UnownedPtr, PtrOk) {
