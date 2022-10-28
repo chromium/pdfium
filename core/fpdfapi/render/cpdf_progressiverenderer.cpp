@@ -47,8 +47,8 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
       }
       m_pCurrentLayer = m_pContext->GetLayer(m_LayerIndex);
       m_LastObjectRendered = m_pCurrentLayer->GetObjectHolder()->end();
-      m_pRenderStatus = std::make_unique<CPDF_RenderStatus>(m_pContext.Get(),
-                                                            m_pDevice.Get());
+      m_pRenderStatus =
+          std::make_unique<CPDF_RenderStatus>(m_pContext, m_pDevice);
       if (m_pOptions)
         m_pRenderStatus->SetOptions(*m_pOptions);
       m_pRenderStatus->SetTransparency(

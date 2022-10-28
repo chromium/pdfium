@@ -56,9 +56,7 @@ class CPDF_StreamContentParser {
                  uint32_t start_offset,
                  uint32_t max_cost,
                  const std::vector<uint32_t>& stream_start_offsets);
-  CPDF_PageObjectHolder* GetPageObjectHolder() const {
-    return m_pObjectHolder.Get();
-  }
+  CPDF_PageObjectHolder* GetPageObjectHolder() const { return m_pObjectHolder; }
   CPDF_AllStates* GetCurStates() const { return m_pCurStates.get(); }
   bool IsColored() const { return m_bColored; }
   pdfium::span<const float> GetType3Data() const { return m_Type3Data; }

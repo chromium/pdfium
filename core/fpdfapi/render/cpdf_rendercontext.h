@@ -31,7 +31,7 @@ class CPDF_RenderContext {
     Layer(const Layer& that);
     ~Layer();
 
-    CPDF_PageObjectHolder* GetObjectHolder() { return m_pObjectHolder.Get(); }
+    CPDF_PageObjectHolder* GetObjectHolder() { return m_pObjectHolder; }
     const CFX_Matrix& GetMatrix() const { return m_Matrix; }
 
    private:
@@ -60,14 +60,14 @@ class CPDF_RenderContext {
   size_t CountLayers() const { return m_Layers.size(); }
   Layer* GetLayer(uint32_t index) { return &m_Layers[index]; }
 
-  CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
+  CPDF_Document* GetDocument() const { return m_pDocument; }
   const CPDF_Dictionary* GetPageResources() const {
     return m_pPageResources.Get();
   }
   RetainPtr<CPDF_Dictionary> GetMutablePageResources() {
     return m_pPageResources;
   }
-  CPDF_PageImageCache* GetPageCache() const { return m_pPageCache.Get(); }
+  CPDF_PageImageCache* GetPageCache() const { return m_pPageCache; }
 
  private:
   UnownedPtr<CPDF_Document> const m_pDocument;

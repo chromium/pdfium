@@ -227,7 +227,7 @@ float GetFontSize(const CPDF_TextObject* text_object) {
 }
 
 CFX_FloatRect GetLooseBounds(const CPDF_TextPage::CharInfo& charinfo) {
-  float font_size = GetFontSize(charinfo.m_pTextObj.Get());
+  float font_size = GetFontSize(charinfo.m_pTextObj);
   if (charinfo.m_pTextObj && !FXSYS_IsFloatZero(font_size)) {
     bool is_vert_writing = charinfo.m_pTextObj->GetFont()->IsVertWriting();
     if (is_vert_writing && charinfo.m_pTextObj->GetFont()->IsCIDFont()) {
@@ -368,10 +368,10 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
       continue;
     }
     if (!text_object)
-      text_object = charinfo.m_pTextObj.Get();
+      text_object = charinfo.m_pTextObj;
     if (text_object != charinfo.m_pTextObj) {
       rects.push_back(rect);
-      text_object = charinfo.m_pTextObj.Get();
+      text_object = charinfo.m_pTextObj;
       is_new_rect = true;
     }
     if (is_new_rect) {
@@ -475,7 +475,7 @@ const CPDF_TextPage::CharInfo& CPDF_TextPage::GetCharInfo(size_t index) const {
 
 float CPDF_TextPage::GetCharFontSize(size_t index) const {
   CHECK(index < m_CharList.size());
-  return GetFontSize(m_CharList[index].m_pTextObj.Get());
+  return GetFontSize(m_CharList[index].m_pTextObj);
 }
 
 CFX_FloatRect CPDF_TextPage::GetCharLooseBounds(size_t index) const {
@@ -626,7 +626,7 @@ void CPDF_TextPage::ProcessObject() {
 
     CFX_Matrix matrix;
     if (pObj->IsText())
-      ProcessTextObject(pObj->AsText(), matrix, m_pPage.Get(), it);
+      ProcessTextObject(pObj->AsText(), matrix, m_pPage, it);
     else if (pObj->IsForm())
       ProcessFormObject(pObj->AsForm(), matrix);
   }
@@ -870,7 +870,7 @@ CPDF_TextPage::MarkedContentState CPDF_TextPage::PreMarkedContent(
 }
 
 void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
-  const CPDF_TextObject* pTextObj = obj.m_pTextObj.Get();
+  const CPDF_TextObject* pTextObj = obj.m_pTextObj;
   const CPDF_ContentMarks* pMarks = pTextObj->GetContentMarks();
   const size_t nContentMarks = pMarks->CountItems();
   WideString actText;
@@ -935,14 +935,14 @@ void CPDF_TextPage::SwapTempTextBuf(size_t iCharListStartAppend,
 }
 
 void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
-  const CPDF_TextObject* pTextObj = obj.m_pTextObj.Get();
+  const CPDF_TextObject* pTextObj = obj.m_pTextObj;
   if (fabs(pTextObj->GetRect().Width()) < kSizeEpsilon)
     return;
 
   CFX_Matrix form_matrix = obj.m_formMatrix;
   RetainPtr<CPDF_Font> pFont = pTextObj->GetFont();
   CFX_Matrix matrix = pTextObj->GetTextMatrix() * form_matrix;
-  MarkedContentState ePreMKC = PreMarkedContent(obj.m_pTextObj.Get());
+  MarkedContentState ePreMKC = PreMarkedContent(obj.m_pTextObj);
   if (ePreMKC == MarkedContentState::kDone) {
     m_pPrevTextObj = pTextObj;
     m_PrevMatrix = form_matrix;
@@ -1218,7 +1218,7 @@ CPDF_TextPage::GenerateCharacter CPDF_TextPage::ProcessInsertObject(
   FindPreviousTextObject();
   TextOrientation WritingMode = GetTextObjectWritingMode(pObj);
   if (WritingMode == TextOrientation::kUnknown)
-    WritingMode = GetTextObjectWritingMode(m_pPrevTextObj.Get());
+    WritingMode = GetTextObjectWritingMode(m_pPrevTextObj);
 
   size_t nItem = m_pPrevTextObj->CountItems();
   if (nItem == 0)

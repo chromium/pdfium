@@ -244,7 +244,7 @@ int CPDF_FormField::CountControls() const {
 }
 
 CPDF_FormControl* CPDF_FormField::GetControl(int index) const {
-  return GetControls()[index].Get();
+  return GetControls()[index];
 }
 
 int CPDF_FormField::GetControlIndex(const CPDF_FormControl* pControl) const {

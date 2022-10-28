@@ -301,8 +301,7 @@ bool CPDF_TextPageFind::FindPrev() {
   if (m_strText.IsEmpty() || !m_findPreStart.has_value())
     return false;
 
-  CPDF_TextPageFind find_engine(m_pTextPage.Get(), m_csFindWhatArray, m_options,
-                                0);
+  CPDF_TextPageFind find_engine(m_pTextPage, m_csFindWhatArray, m_options, 0);
   if (!find_engine.FindFirst())
     return false;
 

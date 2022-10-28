@@ -134,7 +134,7 @@ CPDF_Annot::~CPDF_Annot() {
 void CPDF_Annot::GenerateAPIfNeeded() {
   if (!ShouldGenerateAP())
     return;
-  if (!CPDF_GenerateAP::GenerateAnnotAP(m_pDocument.Get(), m_pAnnotDict.Get(),
+  if (!CPDF_GenerateAP::GenerateAnnotAP(m_pDocument, m_pAnnotDict.Get(),
                                         m_nSubtype)) {
     return;
   }
@@ -212,7 +212,7 @@ CPDF_Form* CPDF_Annot::GetAPForm(CPDF_Page* pPage, AppearanceMode mode) {
     return it->second.get();
 
   auto pNewForm = std::make_unique<CPDF_Form>(
-      m_pDocument.Get(), pPage->GetMutableResources(), pStream);
+      m_pDocument, pPage->GetMutableResources(), pStream);
   pNewForm->ParseContent();
 
   CPDF_Form* pResult = pNewForm.get();

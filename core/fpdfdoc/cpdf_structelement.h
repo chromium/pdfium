@@ -37,7 +37,7 @@ class CPDF_StructElement final : public Retainable {
   bool UpdateKidIfElement(const CPDF_Dictionary* pDict,
                           CPDF_StructElement* pElement);
 
-  CPDF_StructElement* GetParent() const { return m_pParentElement.Get(); }
+  CPDF_StructElement* GetParent() const { return m_pParentElement; }
   void SetParent(CPDF_StructElement* pParentElement) {
     m_pParentElement = pParentElement;
   }

@@ -251,8 +251,8 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       auto pNewDict = m_pDocument->New<CPDF_Dictionary>();
       auto pCTS = m_pDocument->NewIndirect<CPDF_Stream>(std::move(color_table),
                                                         std::move(pNewDict));
-      pCS->AppendNew<CPDF_Reference>(m_pDocument.Get(), pCTS->GetObjNum());
-      pDict->SetNewFor<CPDF_Reference>("ColorSpace", m_pDocument.Get(),
+      pCS->AppendNew<CPDF_Reference>(m_pDocument, pCTS->GetObjNum());
+      pDict->SetNewFor<CPDF_Reference>("ColorSpace", m_pDocument,
                                        pCS->GetObjNum());
     } else {
       pDict->SetNewFor<CPDF_Name>("ColorSpace", "DeviceGray");
@@ -289,7 +289,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
         "Length", pdfium::base::checked_cast<int>(mask_buf.size()));
     auto pNewStream = m_pDocument->NewIndirect<CPDF_Stream>(
         std::move(mask_buf), std::move(pMaskDict));
-    pDict->SetNewFor<CPDF_Reference>("SMask", m_pDocument.Get(),
+    pDict->SetNewFor<CPDF_Reference>("SMask", m_pDocument,
                                      pNewStream->GetObjNum());
   }
 

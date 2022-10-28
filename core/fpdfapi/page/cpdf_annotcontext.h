@@ -31,7 +31,7 @@ class CPDF_AnnotContext {
   const CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict.Get(); }
 
   // Never nullptr.
-  IPDF_Page* GetPage() const { return m_pPage.Get(); }
+  IPDF_Page* GetPage() const { return m_pPage; }
 
  private:
   std::unique_ptr<CPDF_Form> m_pAnnotForm;

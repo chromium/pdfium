@@ -60,7 +60,7 @@ class CPDF_Document : public Observable,
     void SetDocument(CPDF_Document* pDoc) { m_pDoc = pDoc; }
 
    protected:
-    CPDF_Document* GetDocument() const { return m_pDoc.Get(); }
+    CPDF_Document* GetDocument() const { return m_pDoc; }
 
    private:
     UnownedPtr<CPDF_Document> m_pDoc;
@@ -74,7 +74,7 @@ class CPDF_Document : public Observable,
     void SetDocument(CPDF_Document* pDoc) { m_pDoc = pDoc; }
 
    protected:
-    CPDF_Document* GetDocument() const { return m_pDoc.Get(); }
+    CPDF_Document* GetDocument() const { return m_pDoc; }
 
    private:
     UnownedPtr<CPDF_Document> m_pDoc;

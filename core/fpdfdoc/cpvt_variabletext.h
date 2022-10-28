@@ -60,7 +60,7 @@ class CPVT_VariableText {
                                      int32_t nFontIndex);
     virtual int32_t GetDefaultFontIndex();
 
-    IPVT_FontMap* GetFontMap() { return m_pFontMap.Get(); }
+    IPVT_FontMap* GetFontMap() { return m_pFontMap; }
 
    private:
     UnownedPtr<IPVT_FontMap> const m_pFontMap;

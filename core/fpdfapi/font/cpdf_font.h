@@ -126,7 +126,7 @@ class CPDF_Font : public Retainable, public Observable {
 
   // Can return nullptr for stock Type1 fonts. Always returns non-null for other
   // font types.
-  CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
+  CPDF_Document* GetDocument() const { return m_pDocument; }
 
   CFX_Font* GetFont() { return &m_Font; }
   const CFX_Font* GetFont() const { return &m_Font; }

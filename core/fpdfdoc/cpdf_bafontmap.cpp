@@ -212,7 +212,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::FindResFontSameCharset(
     if (!ValidateDictType(pElement.Get(), "Font"))
       continue;
 
-    auto* pData = CPDF_DocPageData::FromDocument(m_pDocument.Get());
+    auto* pData = CPDF_DocPageData::FromDocument(m_pDocument);
     RetainPtr<CPDF_Font> pFont = pData->GetFont(std::move(pElement));
     if (!pFont)
       continue;
@@ -282,7 +282,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
   if (!pFontDict)
     return nullptr;
 
-  return CPDF_DocPageData::FromDocument(m_pDocument.Get())->GetFont(pFontDict);
+  return CPDF_DocPageData::FromDocument(m_pDocument)->GetFont(pFontDict);
 }
 
 void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
@@ -300,7 +300,7 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
   RetainPtr<CPDF_Stream> pStream = pAPDict->GetMutableStreamFor(m_sAPType);
   if (!pStream) {
     pStream = m_pDocument->NewIndirect<CPDF_Stream>();
-    pAPDict->SetNewFor<CPDF_Reference>(m_sAPType, m_pDocument.Get(),
+    pAPDict->SetNewFor<CPDF_Reference>(m_sAPType, m_pDocument,
                                        pStream->GetObjNum());
   }
 
@@ -316,14 +316,14 @@ void CPDF_BAFontMap::AddFontToAnnotDict(const RetainPtr<CPDF_Font>& pFont,
       pStreamResList->GetMutableDictFor("Font");
   if (!pStreamResFontList) {
     pStreamResFontList = m_pDocument->NewIndirect<CPDF_Dictionary>();
-    pStreamResList->SetNewFor<CPDF_Reference>("Font", m_pDocument.Get(),
+    pStreamResList->SetNewFor<CPDF_Reference>("Font", m_pDocument,
                                               pStreamResFontList->GetObjNum());
   }
   if (!pStreamResFontList->KeyExist(sAlias)) {
     RetainPtr<const CPDF_Dictionary> pFontDict = pFont->GetFontDict();
     RetainPtr<CPDF_Object> pObject =
         pFontDict->IsInline() ? pFontDict->Clone()
-                              : pFontDict->MakeReference(m_pDocument.Get());
+                              : pFontDict->MakeReference(m_pDocument);
     pStreamResFontList->SetFor(sAlias, std::move(pObject));
   }
 }
@@ -412,7 +412,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::AddFontToDocument(ByteString sFontName,
 }
 
 RetainPtr<CPDF_Font> CPDF_BAFontMap::AddStandardFont(ByteString sFontName) {
-  auto* pPageData = CPDF_DocPageData::FromDocument(m_pDocument.Get());
+  auto* pPageData = CPDF_DocPageData::FromDocument(m_pDocument);
   if (sFontName == "ZapfDingbats")
     return pPageData->AddStandardFont(sFontName, nullptr);
 
@@ -428,5 +428,5 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::AddSystemFont(ByteString sFontName,
   if (nCharset == FX_Charset::kDefault)
     nCharset = GetNativeCharset();
 
-  return AddNativeTrueTypeFontToPDF(m_pDocument.Get(), sFontName, nCharset);
+  return AddNativeTrueTypeFontToPDF(m_pDocument, sFontName, nCharset);
 }

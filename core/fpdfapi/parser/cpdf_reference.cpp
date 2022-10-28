@@ -54,7 +54,7 @@ RetainPtr<CPDF_Object> CPDF_Reference::CloneNonCyclic(
     std::set<const CPDF_Object*>* pVisited) const {
   pVisited->insert(this);
   if (!bDirect) {
-    return pdfium::MakeRetain<CPDF_Reference>(m_pObjList.Get(), m_RefObjNum);
+    return pdfium::MakeRetain<CPDF_Reference>(m_pObjList, m_RefObjNum);
   }
   RetainPtr<const CPDF_Object> pDirect = GetDirect();
   return pDirect && !pdfium::Contains(*pVisited, pDirect.Get())

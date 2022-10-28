@@ -32,7 +32,7 @@ class CPDF_PageImageCache {
   void ResetBitmapForImage(RetainPtr<CPDF_Image> pImage);
   void CacheOptimization(int32_t dwLimitCacheSize);
   uint32_t GetTimeCount() const { return m_nTimeCount; }
-  CPDF_Page* GetPage() const { return m_pPage.Get(); }
+  CPDF_Page* GetPage() const { return m_pPage; }
 
   bool StartGetCachedBitmap(RetainPtr<CPDF_Image> pImage,
                             const CPDF_Dictionary* pFormResources,

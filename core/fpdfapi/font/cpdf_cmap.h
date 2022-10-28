@@ -71,7 +71,7 @@ class CPDF_CMap final : public Retainable {
   void SetMixedFourByteLeadingRanges(std::vector<CodeRange> ranges);
 
   CIDCoding GetCoding() const { return m_Coding; }
-  const FXCMAP_CMap* GetEmbedMap() const { return m_pEmbedMap.Get(); }
+  const FXCMAP_CMap* GetEmbedMap() const { return m_pEmbedMap; }
   CIDSet GetCharset() const { return m_Charset; }
   void SetCharset(CIDSet set) { m_Charset = set; }
 

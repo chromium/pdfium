@@ -937,7 +937,7 @@ RetainPtr<CPDF_Object> CPDF_Parser::ParseIndirectObject(uint32_t objnum) {
   if (!pObjStream)
     return nullptr;
 
-  return pObjStream->ParseObject(m_pObjectsHolder.Get(), objnum,
+  return pObjStream->ParseObject(m_pObjectsHolder, objnum,
                                  info.archive.obj_index);
 }
 
@@ -980,7 +980,7 @@ RetainPtr<CPDF_Object> CPDF_Parser::ParseIndirectObjectAt(FX_FILESIZE pos,
   m_pSyntax->SetPos(pos);
 
   auto result = m_pSyntax->GetIndirectObject(
-      m_pObjectsHolder.Get(), CPDF_SyntaxParser::ParseType::kLoose);
+      m_pObjectsHolder, CPDF_SyntaxParser::ParseType::kLoose);
   m_pSyntax->SetPos(saved_pos);
   if (result && objnum && result->GetObjNum() != objnum)
     return nullptr;
@@ -1012,7 +1012,7 @@ RetainPtr<CPDF_Dictionary> CPDF_Parser::LoadTrailerV4() {
   if (m_pSyntax->GetKeyword() != "trailer")
     return nullptr;
 
-  return ToDictionary(m_pSyntax->GetObjectBody(m_pObjectsHolder.Get()));
+  return ToDictionary(m_pSyntax->GetObjectBody(m_pObjectsHolder));
 }
 
 uint32_t CPDF_Parser::GetPermissions() const {

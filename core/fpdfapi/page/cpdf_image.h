@@ -36,7 +36,7 @@ class CPDF_Image final : public Retainable {
   RetainPtr<const CPDF_Dictionary> GetDict() const;
   RetainPtr<const CPDF_Stream> GetStream() const;
   RetainPtr<const CPDF_Dictionary> GetOC() const;
-  CPDF_Document* GetDocument() const { return m_pDocument.Get(); }
+  CPDF_Document* GetDocument() const { return m_pDocument; }
 
   int32_t GetPixelHeight() const { return m_Height; }
   int32_t GetPixelWidth() const { return m_Width; }

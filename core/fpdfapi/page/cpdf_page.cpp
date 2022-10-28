@@ -49,7 +49,7 @@ CPDFXFA_Page* CPDF_Page::AsXFAPage() {
 }
 
 CPDF_Document* CPDF_Page::GetDocument() const {
-  return m_pPDFDocument.Get();
+  return m_pPDFDocument;
 }
 
 float CPDF_Page::GetPageWidth() const {
