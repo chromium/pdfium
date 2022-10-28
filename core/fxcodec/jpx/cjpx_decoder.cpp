@@ -390,10 +390,11 @@ void color_sycc_to_rgb(opj_image_t* img) {
 // static
 std::unique_ptr<CJPX_Decoder> CJPX_Decoder::Create(
     pdfium::span<const uint8_t> src_span,
-    CJPX_Decoder::ColorSpaceOption option) {
+    CJPX_Decoder::ColorSpaceOption option,
+    uint8_t resolution_levels_to_skip) {
   // Private ctor.
   auto decoder = pdfium::WrapUnique(new CJPX_Decoder(option));
-  if (!decoder->Init(src_span))
+  if (!decoder->Init(src_span, resolution_levels_to_skip))
     return nullptr;
   return decoder;
 }
@@ -415,7 +416,8 @@ CJPX_Decoder::~CJPX_Decoder() {
     opj_image_destroy(m_Image.Release());
 }
 
-bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data) {
+bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
+                        uint8_t resolution_levels_to_skip) {
   static const unsigned char szJP2Header[] = {
       0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50, 0x20, 0x20, 0x0d, 0x0a, 0x87, 0x0a};
   if (src_data.empty() || src_data.size() < sizeof(szJP2Header))
@@ -431,6 +433,7 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data) {
   opj_set_default_decoder_parameters(&m_Parameters);
   m_Parameters.decod_format = 0;
   m_Parameters.cod_format = 3;
+  m_Parameters.cp_reduce = resolution_levels_to_skip;
   if (memcmp(m_SrcData.data(), szJP2Header, sizeof(szJP2Header)) == 0) {
     m_Codec = opj_create_decompress(OPJ_CODEC_JP2);
     m_Parameters.decod_format = 1;
@@ -502,20 +505,18 @@ bool CJPX_Decoder::StartDecode() {
 }
 
 CJPX_Decoder::JpxImageInfo CJPX_Decoder::GetInfo() const {
-  return {m_Image->x1, m_Image->y1, m_Image->numcomps, m_Image->color_space};
+  return {m_Image->comps[0].w, m_Image->comps[0].h, m_Image->numcomps,
+          m_Image->color_space};
 }
 
 bool CJPX_Decoder::Decode(uint8_t* dest_buf, uint32_t pitch, bool swap_rgb) {
-  if (m_Image->comps[0].w != m_Image->x1 || m_Image->comps[0].h != m_Image->y1)
-    return false;
-
   if (pitch < ((m_Image->comps[0].w * 8 * m_Image->numcomps + 31) >> 5) << 2)
     return false;
 
   if (swap_rgb && m_Image->numcomps < 3)
     return false;
 
-  memset(dest_buf, 0xff, m_Image->y1 * pitch);
+  memset(dest_buf, 0xff, m_Image->comps[0].h * pitch);
   std::vector<uint8_t*> channel_bufs(m_Image->numcomps);
   std::vector<int> adjust_comps(m_Image->numcomps);
   for (uint32_t i = 0; i < m_Image->numcomps; i++) {

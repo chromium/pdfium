@@ -31,7 +31,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   std::unique_ptr<CJPX_Decoder> decoder = CJPX_Decoder::Create(
       {data + 1, size - 1},
-      static_cast<CJPX_Decoder::ColorSpaceOption>(data[0] % 3));
+      static_cast<CJPX_Decoder::ColorSpaceOption>(data[0] % 3), 0);
   if (!decoder)
     return 0;
 

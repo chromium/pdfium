@@ -60,7 +60,8 @@ class CPDF_DIB final : public CFX_DIBBase {
                              const CPDF_Dictionary* pPageResources,
                              bool bStdCS,
                              CPDF_ColorSpace::Family GroupFamily,
-                             bool bLoadMask);
+                             bool bLoadMask,
+                             const CFX_Size& max_size_required);
   LoadState ContinueLoadDIBBase(PauseIndicatorIface* pPause);
   RetainPtr<CPDF_DIB> DetachMask();
 
@@ -87,9 +88,9 @@ class CPDF_DIB final : public CFX_DIBBase {
   bool LoadColorInfo(const CPDF_Dictionary* pFormResources,
                      const CPDF_Dictionary* pPageResources);
   bool GetDecodeAndMaskArray();
-  RetainPtr<CFX_DIBitmap> LoadJpxBitmap();
+  RetainPtr<CFX_DIBitmap> LoadJpxBitmap(uint8_t resolution_levels_to_skip);
   void LoadPalette();
-  LoadState CreateDecoder();
+  LoadState CreateDecoder(uint8_t resolution_levels_to_skip);
   bool CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
                         const CPDF_Dictionary* pParams);
   void TranslateScanline24bpp(pdfium::span<uint8_t> dest_scan,

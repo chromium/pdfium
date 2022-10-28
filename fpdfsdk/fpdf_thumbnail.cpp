@@ -67,7 +67,7 @@ FPDFPage_GetThumbnailAsBitmap(FPDF_PAGE page) {
                                                  std::move(thumb_stream));
   const CPDF_DIB::LoadState start_status = dib_source->StartLoadDIBBase(
       false, nullptr, pdf_page->GetPageResources().Get(), false,
-      CPDF_ColorSpace::Family::kUnknown, false);
+      CPDF_ColorSpace::Family::kUnknown, false, {0, 0});
   if (start_status == CPDF_DIB::LoadState::kFail)
     return nullptr;
 

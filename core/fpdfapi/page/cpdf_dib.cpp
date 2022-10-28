@@ -167,7 +167,7 @@ bool CPDF_DIB::Load() {
   if (!LoadInternal(nullptr, nullptr))
     return false;
 
-  if (CreateDecoder() == LoadState::kFail)
+  if (CreateDecoder(0) == LoadState::kFail)
     return false;
 
   return ContinueInternal();
@@ -214,7 +214,8 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
     const CPDF_Dictionary* pPageResources,
     bool bStdCS,
     CPDF_ColorSpace::Family GroupFamily,
-    bool bLoadMask) {
+    bool bLoadMask,
+    const CFX_Size& max_size_required) {
   m_bStdCS = bStdCS;
   m_bHasMask = bHasMask;
   m_GroupFamily = GroupFamily;
@@ -226,7 +227,14 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadDIBBase(
   if (!LoadInternal(pFormResources, pPageResources))
     return LoadState::kFail;
 
-  LoadState iCreatedDecoder = CreateDecoder();
+  uint8_t resolution_levels_to_skip = 0;
+  if (max_size_required.width != 0 && max_size_required.height != 0) {
+    resolution_levels_to_skip = static_cast<uint8_t>(
+        std::log2(std::max(1, std::min(m_Width / max_size_required.width,
+                                       m_Height / max_size_required.height))));
+  }
+
+  LoadState iCreatedDecoder = CreateDecoder(resolution_levels_to_skip);
   if (iCreatedDecoder == LoadState::kFail)
     return LoadState::kFail;
 
@@ -434,7 +442,7 @@ bool CPDF_DIB::GetDecodeAndMaskArray() {
   return true;
 }
 
-CPDF_DIB::LoadState CPDF_DIB::CreateDecoder() {
+CPDF_DIB::LoadState CPDF_DIB::CreateDecoder(uint8_t resolution_levels_to_skip) {
   ByteString decoder = m_pStreamAcc->GetImageDecoder();
   if (decoder.IsEmpty())
     return LoadState::kSuccess;
@@ -443,7 +451,7 @@ CPDF_DIB::LoadState CPDF_DIB::CreateDecoder() {
     return LoadState::kFail;
 
   if (decoder == "JPXDecode") {
-    m_pCachedBitmap = LoadJpxBitmap();
+    m_pCachedBitmap = LoadJpxBitmap(resolution_levels_to_skip);
     return m_pCachedBitmap ? LoadState::kSuccess : LoadState::kFail;
   }
 
@@ -563,12 +571,17 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
   return true;
 }
 
-RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap() {
+RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
+    uint8_t resolution_levels_to_skip) {
   std::unique_ptr<CJPX_Decoder> decoder =
       CJPX_Decoder::Create(m_pStreamAcc->GetSpan(),
-                           ColorSpaceOptionFromColorSpace(m_pColorSpace.Get()));
+                           ColorSpaceOptionFromColorSpace(m_pColorSpace.Get()),
+                           resolution_levels_to_skip);
   if (!decoder)
     return nullptr;
+
+  m_Height >>= resolution_levels_to_skip;
+  m_Width >>= resolution_levels_to_skip;
 
   if (!decoder->StartDecode())
     return nullptr;
@@ -801,8 +814,9 @@ bool CPDF_DIB::IsJBigImage() const {
 CPDF_DIB::LoadState CPDF_DIB::StartLoadMaskDIB(
     RetainPtr<const CPDF_Stream> mask_stream) {
   m_pMask = pdfium::MakeRetain<CPDF_DIB>(m_pDocument, std::move(mask_stream));
-  LoadState ret = m_pMask->StartLoadDIBBase(
-      false, nullptr, nullptr, true, CPDF_ColorSpace::Family::kUnknown, false);
+  LoadState ret = m_pMask->StartLoadDIBBase(false, nullptr, nullptr, true,
+                                            CPDF_ColorSpace::Family::kUnknown,
+                                            false, {0, 0});
   if (ret == LoadState::kContinue) {
     if (m_Status == LoadState::kFail)
       m_Status = LoadState::kContinue;

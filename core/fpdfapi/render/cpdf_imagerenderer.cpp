@@ -96,7 +96,9 @@ bool CPDF_ImageRenderer::StartLoadDIBBase() {
           m_pImageObject, m_pRenderStatus->GetContext()->GetPageCache(),
           m_pRenderStatus->GetFormResource(),
           m_pRenderStatus->GetPageResource(), m_bStdCS,
-          m_pRenderStatus->GetGroupFamily(), m_pRenderStatus->GetLoadMask())) {
+          m_pRenderStatus->GetGroupFamily(), m_pRenderStatus->GetLoadMask(),
+          {m_pRenderStatus->GetRenderDevice()->GetWidth(),
+           m_pRenderStatus->GetRenderDevice()->GetHeight()})) {
     return false;
   }
   m_Mode = Mode::kDefault;
