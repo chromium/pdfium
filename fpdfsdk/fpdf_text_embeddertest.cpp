@@ -983,6 +983,36 @@ TEST_F(FPDFTextEmbedderTest, IsGenerated) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFTextEmbedderTest, IsInvalidUnicode) {
+  ASSERT_TRUE(OpenDocument("bug_1388_2.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    constexpr int kExpectedCharCount = 5;
+    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page));
+    ASSERT_TRUE(textpage);
+    EXPECT_EQ(kExpectedCharCount, FPDFText_CountChars(textpage.get()));
+
+    EXPECT_EQ(static_cast<unsigned int>('X'),
+              FPDFText_GetUnicode(textpage.get(), 0));
+    EXPECT_EQ(0, FPDFText_HasUnicodeMapError(textpage.get(), 0));
+    EXPECT_EQ(static_cast<unsigned int>(' '),
+              FPDFText_GetUnicode(textpage.get(), 1));
+    EXPECT_EQ(0, FPDFText_HasUnicodeMapError(textpage.get(), 1));
+
+    EXPECT_EQ(31u, FPDFText_GetUnicode(textpage.get(), 2));
+    EXPECT_EQ(1, FPDFText_HasUnicodeMapError(textpage.get(), 2));
+
+    EXPECT_EQ(-1, FPDFText_HasUnicodeMapError(textpage.get(), -1));
+    EXPECT_EQ(-1,
+              FPDFText_HasUnicodeMapError(textpage.get(), kExpectedCharCount));
+    EXPECT_EQ(-1, FPDFText_HasUnicodeMapError(nullptr, 0));
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFTextEmbedderTest, Bug_921) {
   ASSERT_TRUE(OpenDocument("bug_921.pdf"));
   FPDF_PAGE page = LoadPage(0);

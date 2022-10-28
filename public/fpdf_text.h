@@ -89,6 +89,21 @@ FPDFText_GetUnicode(FPDF_TEXTPAGE text_page, int index);
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFText_IsGenerated(FPDF_TEXTPAGE text_page, int index);
 
+// Experimental API.
+// Function: FPDFText_HasUnicodeMapError
+//          Get if a character in a page has an invalid unicode mapping.
+// Parameters:
+//          text_page   -   Handle to a text page information structure.
+//                          Returned by FPDFText_LoadPage function.
+//          index       -   Zero-based index of the character.
+// Return value:
+//          1 if the character has an invalid unicode mapping.
+//          0 if the character has no known unicode mapping issues.
+//          -1 if there was an error.
+//
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFText_HasUnicodeMapError(FPDF_TEXTPAGE text_page, int index);
+
 // Function: FPDFText_GetFontSize
 //          Get the font size of a particular character.
 // Parameters:

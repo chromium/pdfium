@@ -81,6 +81,16 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_IsGenerated(FPDF_TEXTPAGE text_page,
   return charinfo.m_CharType == CPDF_TextPage::CharType::kGenerated ? 1 : 0;
 }
 
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFText_HasUnicodeMapError(FPDF_TEXTPAGE text_page, int index) {
+  CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
+  if (!textpage)
+    return -1;
+
+  const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
+  return charinfo.m_CharType == CPDF_TextPage::CharType::kNotUnicode;
+}
+
 FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetFontSize(FPDF_TEXTPAGE text_page,
                                                       int index) {
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
