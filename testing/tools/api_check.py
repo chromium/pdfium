@@ -12,8 +12,6 @@ fpdf_view_c_api_test.c is alphabetical within each section.
 
 """
 
-from __future__ import print_function
-
 import os
 import re
 import sys

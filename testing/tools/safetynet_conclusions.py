@@ -3,8 +3,6 @@
 # found in the LICENSE file.
 """Classes that draw conclusions out of a comparison and represent them."""
 
-from __future__ import print_function
-
 from collections import Counter
 
 FORMAT_RED = '\033[01;31m{0}\033[00m'

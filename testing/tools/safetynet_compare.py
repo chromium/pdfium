@@ -4,8 +4,6 @@
 # found in the LICENSE file.
 """Compares the performance of two versions of the pdfium code."""
 
-from __future__ import print_function
-
 import argparse
 import functools
 import glob

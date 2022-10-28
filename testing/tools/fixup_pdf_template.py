@@ -19,8 +19,6 @@ script replaces {{name}}-style variables in the input with calculated results
   {{streamlen}} - expands to `/Length n`.
 """
 
-from __future__ import print_function
-
 import io
 import optparse
 import os

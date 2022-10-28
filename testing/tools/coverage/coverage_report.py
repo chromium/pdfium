@@ -8,8 +8,6 @@ Requires that 'use_clang_coverage = true' is set in args.gn.
 Prefers that 'is_component_build = false' is set in args.gn.
 """
 
-from __future__ import print_function
-
 import argparse
 from collections import namedtuple
 import fnmatch

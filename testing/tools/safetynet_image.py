@@ -4,8 +4,6 @@
 """Compares pairs of page images and generates an HTML to look at differences.
 """
 
-from __future__ import print_function
-
 import functools
 import glob
 import multiprocessing

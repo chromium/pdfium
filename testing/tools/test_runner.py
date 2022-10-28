@@ -3,9 +3,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from __future__ import print_function
-from __future__ import division
-
 import argparse
 from dataclasses import dataclass, field
 import multiprocessing
