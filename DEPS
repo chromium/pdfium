@@ -122,7 +122,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling nasm_source
   # and whatever else without interference from each other.
-  'nasm_source_revision': '9215e8e1d0fe474ffd3e16c1a07a0f97089e6224',
+  'nasm_source_revision': 'fc8e0bd892ae133602f5a6f7a9a6840aa1b75989',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling partition_allocator
   # and whatever else without interference from each other.
