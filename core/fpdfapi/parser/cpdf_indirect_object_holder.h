@@ -32,33 +32,31 @@ class CPDF_IndirectObjectHolder {
   void DeleteIndirectObject(uint32_t objnum);
 
   // Creates and adds a new object retained by the indirect object holder,
-  // and returns a retained pointer to it.  We have a special case to
-  // handle objects that can intern strings from our ByteStringPool.
+  // and returns a retained pointer to it.
   template <typename T, typename... Args>
-  typename std::enable_if<!CanInternStrings<T>::value, RetainPtr<T>>::type
-  NewIndirect(Args&&... args) {
-    return pdfium::WrapRetain(static_cast<T*>(
-        AddIndirectObject(pdfium::MakeRetain<T>(std::forward<Args>(args)...))));
-  }
-  template <typename T, typename... Args>
-  typename std::enable_if<CanInternStrings<T>::value, RetainPtr<T>>::type
-  NewIndirect(Args&&... args) {
-    return pdfium::WrapRetain(
-        static_cast<T*>(AddIndirectObject(pdfium::MakeRetain<T>(
-            m_pByteStringPool, std::forward<Args>(args)...))));
+  RetainPtr<T> NewIndirect(Args&&... args) {
+    auto obj = New<T>(std::forward<Args>(args)...);
+    AddIndirectObject(obj);
+    return obj;
   }
 
   // Creates and adds a new object not retained by the indirect object holder,
-  // but which can intern strings from it.
+  // but which can intern strings from it. We have a special cast to handle
+  // objects that can intern strings from our ByteStringPool.
   template <typename T, typename... Args>
   typename std::enable_if<CanInternStrings<T>::value, RetainPtr<T>>::type New(
       Args&&... args) {
     return pdfium::MakeRetain<T>(m_pByteStringPool,
                                  std::forward<Args>(args)...);
   }
+  template <typename T, typename... Args>
+  typename std::enable_if<!CanInternStrings<T>::value, RetainPtr<T>>::type New(
+      Args&&... args) {
+    return pdfium::MakeRetain<T>(std::forward<Args>(args)...);
+  }
 
-  // Retains |pObj|, returns unowned pointer to it.
-  CPDF_Object* AddIndirectObject(RetainPtr<CPDF_Object> pObj);
+  // Always Retains |pObj|, returns its new object number.
+  uint32_t AddIndirectObject(RetainPtr<CPDF_Object> pObj);
 
   // If higher generation number, retains |pObj| and returns true.
   bool ReplaceIndirectObjectIfHigherGeneration(uint32_t objnum,

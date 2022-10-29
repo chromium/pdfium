@@ -28,15 +28,14 @@ const int kNumTestPages = 7;
 RetainPtr<CPDF_Dictionary> CreatePageTreeNode(RetainPtr<CPDF_Array> kids,
                                               CPDF_Document* pDoc,
                                               int count) {
-  CPDF_Array* pUnowned =
-      pDoc->AddIndirectObject(std::move(kids))->AsMutableArray();
+  uint32_t new_objnum = pDoc->AddIndirectObject(kids);
   auto pageNode = pDoc->NewIndirect<CPDF_Dictionary>();
   pageNode->SetNewFor<CPDF_Name>("Type", "Pages");
-  pageNode->SetNewFor<CPDF_Reference>("Kids", pDoc, pUnowned->GetObjNum());
+  pageNode->SetNewFor<CPDF_Reference>("Kids", pDoc, new_objnum);
   pageNode->SetNewFor<CPDF_Number>("Count", count);
-  for (size_t i = 0; i < pUnowned->size(); i++) {
-    pUnowned->GetMutableDictAt(i)->SetNewFor<CPDF_Reference>(
-        "Parent", pDoc, pageNode->GetObjNum());
+  for (size_t i = 0; i < kids->size(); i++) {
+    kids->GetMutableDictAt(i)->SetNewFor<CPDF_Reference>("Parent", pDoc,
+                                                         pageNode->GetObjNum());
   }
   return pageNode;
 }
@@ -54,32 +53,32 @@ class CPDF_TestDocumentForPages final : public CPDF_TestDocument {
     // Set up test
     auto zeroToTwo = pdfium::MakeRetain<CPDF_Array>();
     zeroToTwo->AppendNew<CPDF_Reference>(
-        this, AddIndirectObject(CreateNumberedPage(0))->GetObjNum());
+        this, AddIndirectObject(CreateNumberedPage(0)));
     zeroToTwo->AppendNew<CPDF_Reference>(
-        this, AddIndirectObject(CreateNumberedPage(1))->GetObjNum());
+        this, AddIndirectObject(CreateNumberedPage(1)));
     zeroToTwo->AppendNew<CPDF_Reference>(
-        this, AddIndirectObject(CreateNumberedPage(2))->GetObjNum());
+        this, AddIndirectObject(CreateNumberedPage(2)));
     RetainPtr<CPDF_Dictionary> branch1 =
         CreatePageTreeNode(std::move(zeroToTwo), this, 3);
 
     auto zeroToThree = pdfium::MakeRetain<CPDF_Array>();
     zeroToThree->AppendNew<CPDF_Reference>(this, branch1->GetObjNum());
     zeroToThree->AppendNew<CPDF_Reference>(
-        this, AddIndirectObject(CreateNumberedPage(3))->GetObjNum());
+        this, AddIndirectObject(CreateNumberedPage(3)));
     RetainPtr<CPDF_Dictionary> branch2 =
         CreatePageTreeNode(std::move(zeroToThree), this, 4);
 
     auto fourFive = pdfium::MakeRetain<CPDF_Array>();
     fourFive->AppendNew<CPDF_Reference>(
-        this, AddIndirectObject(CreateNumberedPage(4))->GetObjNum());
+        this, AddIndirectObject(CreateNumberedPage(4)));
     fourFive->AppendNew<CPDF_Reference>(
-        this, AddIndirectObject(CreateNumberedPage(5))->GetObjNum());
+        this, AddIndirectObject(CreateNumberedPage(5)));
     RetainPtr<CPDF_Dictionary> branch3 =
         CreatePageTreeNode(std::move(fourFive), this, 2);
 
     auto justSix = pdfium::MakeRetain<CPDF_Array>();
     justSix->AppendNew<CPDF_Reference>(
-        this, AddIndirectObject(CreateNumberedPage(6))->GetObjNum());
+        this, AddIndirectObject(CreateNumberedPage(6)));
     RetainPtr<CPDF_Dictionary> branch4 =
         CreatePageTreeNode(std::move(justSix), this, 1);
 
@@ -108,9 +107,9 @@ class CPDF_TestDocumentWithPageWithoutPageNum final : public CPDF_TestDocument {
     // Set up test
     auto allPages = pdfium::MakeRetain<CPDF_Array>();
     allPages->AppendNew<CPDF_Reference>(
-        this, AddIndirectObject(CreateNumberedPage(0))->GetObjNum());
+        this, AddIndirectObject(CreateNumberedPage(0)));
     allPages->AppendNew<CPDF_Reference>(
-        this, AddIndirectObject(CreateNumberedPage(1))->GetObjNum());
+        this, AddIndirectObject(CreateNumberedPage(1)));
     // Page without pageNum.
     inlined_page_ = CreateNumberedPage(2);
     allPages->Append(inlined_page_);
@@ -226,18 +225,18 @@ TEST_F(DocumentTest, IsValidPageObject) {
 
   auto dict_type_name_page = pdfium::MakeRetain<CPDF_Dictionary>();
   dict_type_name_page->SetNewFor<CPDF_Name>("Type", "Page");
-  EXPECT_TRUE(CPDF_Document::IsValidPageObject(
-      document.AddIndirectObject(dict_type_name_page)));
+  document.AddIndirectObject(dict_type_name_page);
+  EXPECT_TRUE(CPDF_Document::IsValidPageObject(dict_type_name_page.Get()));
 
   auto dict_type_string_page = pdfium::MakeRetain<CPDF_Dictionary>();
   dict_type_string_page->SetNewFor<CPDF_String>("Type", "Page", false);
-  EXPECT_FALSE(CPDF_Document::IsValidPageObject(
-      document.AddIndirectObject(dict_type_string_page)));
+  document.AddIndirectObject(dict_type_string_page);
+  EXPECT_FALSE(CPDF_Document::IsValidPageObject(dict_type_string_page.Get()));
 
   auto dict_type_name_font = pdfium::MakeRetain<CPDF_Dictionary>();
   dict_type_name_font->SetNewFor<CPDF_Name>("Type", "Font");
-  EXPECT_FALSE(CPDF_Document::IsValidPageObject(
-      document.AddIndirectObject(dict_type_name_font)));
+  document.AddIndirectObject(dict_type_name_font);
+  EXPECT_FALSE(CPDF_Document::IsValidPageObject(dict_type_name_font.Get()));
 
   auto obj_no_type = document.NewIndirect<CPDF_Dictionary>();
   EXPECT_FALSE(CPDF_Document::IsValidPageObject(obj_no_type.Get()));
@@ -254,9 +253,10 @@ TEST_F(DocumentTest, UseCachedPageObjNumIfHaveNotPagesDict) {
   CPDF_TestDocumentAllowSetParser document;
 
   {
-    CPDF_Object* first_page = document.AddIndirectObject(CreateNumberedPage(0));
-    DCHECK(first_page);
-    int first_page_obj_num = first_page->GetObjNum();
+    auto first_page = CreateNumberedPage(0);
+    ASSERT_TRUE(first_page);
+
+    int first_page_obj_num = document.AddIndirectObject(first_page);
     ASSERT_NE(kTestPageNum, first_page_obj_num);
 
     linearization_dict->SetNewFor<CPDF_Boolean>("Linearized", true);

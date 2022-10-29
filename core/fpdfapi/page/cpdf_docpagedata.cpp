@@ -552,12 +552,12 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddFont(std::unique_ptr<CFX_Font> pFont,
         nStemV = width;
     }
   }
-  CPDF_Dictionary* pFontDesc =
-      ToDictionary(GetDocument()->AddIndirectObject(CalculateFontDesc(
-          GetDocument(), basefont, flags, italicangle, pFont->GetAscent(),
-          pFont->GetDescent(), std::move(pBBox), nStemV)));
+  RetainPtr<CPDF_Dictionary> pFontDesc = CalculateFontDesc(
+      GetDocument(), basefont, flags, italicangle, pFont->GetAscent(),
+      pFont->GetDescent(), std::move(pBBox), nStemV);
+  uint32_t new_objnum = GetDocument()->AddIndirectObject(std::move(pFontDesc));
   pFontDict->SetNewFor<CPDF_Reference>("FontDescriptor", GetDocument(),
-                                       pFontDesc->GetObjNum());
+                                       new_objnum);
   return GetFont(pBaseDict);
 }
 
@@ -635,10 +635,8 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddWindowsFont(LOGFONTA* pLogFont) {
       CalculateFontDesc(GetDocument(), basefont, flags, italicangle, ascend,
                         descend, std::move(pBBox), pLogFont->lfWeight / 5);
   pFontDesc->SetNewFor<CPDF_Number>("CapHeight", capheight);
-  pFontDict->SetFor("FontDescriptor",
-                    GetDocument()
-                        ->AddIndirectObject(std::move(pFontDesc))
-                        ->MakeReference(GetDocument()));
+  GetDocument()->AddIndirectObject(pFontDesc);
+  pFontDict->SetFor("FontDescriptor", pFontDesc->MakeReference(GetDocument()));
   hFont = SelectObject(hDC, hFont);
   DeleteObject(hFont);
   DeleteDC(hDC);

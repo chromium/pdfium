@@ -84,14 +84,12 @@ RetainPtr<CPDF_Object> CPDF_IndirectObjectHolder::ParseIndirectObject(
   return nullptr;
 }
 
-CPDF_Object* CPDF_IndirectObjectHolder::AddIndirectObject(
+uint32_t CPDF_IndirectObjectHolder::AddIndirectObject(
     RetainPtr<CPDF_Object> pObj) {
   CHECK(!pObj->GetObjNum());
   pObj->SetObjNum(++m_LastObjNum);
-
-  auto& obj_holder = m_IndirectObjs[m_LastObjNum];
-  obj_holder = std::move(pObj);
-  return obj_holder.Get();
+  m_IndirectObjs[m_LastObjNum] = std::move(pObj);
+  return m_LastObjNum;
 }
 
 bool CPDF_IndirectObjectHolder::ReplaceIndirectObjectIfHigherGeneration(

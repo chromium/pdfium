@@ -210,8 +210,8 @@ void CPDF_Array::ConvertToIndirectObjectAt(size_t index,
   if (!m_Objects[index] || m_Objects[index]->IsReference())
     return;
 
-  CPDF_Object* pNew = pHolder->AddIndirectObject(std::move(m_Objects[index]));
-  m_Objects[index] = pNew->MakeReference(pHolder);
+  pHolder->AddIndirectObject(m_Objects[index]);
+  m_Objects[index] = m_Objects[index]->MakeReference(pHolder);
 }
 
 void CPDF_Array::SetAt(size_t index, RetainPtr<CPDF_Object> pObj) {

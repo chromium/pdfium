@@ -99,16 +99,17 @@ class PDFObjectsTest : public testing::Test {
 
     // Indirect references to indirect objects.
     m_ObjHolder = std::make_unique<CPDF_IndirectObjectHolder>();
-    m_IndirectObjs = {m_ObjHolder->AddIndirectObject(boolean_true_obj->Clone()),
-                      m_ObjHolder->AddIndirectObject(number_int_obj->Clone()),
-                      m_ObjHolder->AddIndirectObject(str_spec_obj->Clone()),
-                      m_ObjHolder->AddIndirectObject(name_obj->Clone()),
-                      m_ObjHolder->AddIndirectObject(m_ArrayObj->Clone()),
-                      m_ObjHolder->AddIndirectObject(m_DictObj->Clone()),
-                      m_ObjHolder->AddIndirectObject(stream_obj->Clone())};
-    for (CPDF_Object* pObj : m_IndirectObjs) {
-      m_RefObjs.emplace_back(pdfium::MakeRetain<CPDF_Reference>(
-          m_ObjHolder.get(), pObj->GetObjNum()));
+    m_IndirectObjNums = {
+        m_ObjHolder->AddIndirectObject(boolean_true_obj->Clone()),
+        m_ObjHolder->AddIndirectObject(number_int_obj->Clone()),
+        m_ObjHolder->AddIndirectObject(str_spec_obj->Clone()),
+        m_ObjHolder->AddIndirectObject(name_obj->Clone()),
+        m_ObjHolder->AddIndirectObject(m_ArrayObj->Clone()),
+        m_ObjHolder->AddIndirectObject(m_DictObj->Clone()),
+        m_ObjHolder->AddIndirectObject(stream_obj->Clone())};
+    for (uint32_t objnum : m_IndirectObjNums) {
+      m_RefObjs.emplace_back(
+          pdfium::MakeRetain<CPDF_Reference>(m_ObjHolder.get(), objnum));
     }
   }
 
@@ -194,7 +195,7 @@ class PDFObjectsTest : public testing::Test {
   RetainPtr<CPDF_Dictionary> m_DictObj;
   RetainPtr<CPDF_Dictionary> m_StreamDictObj;
   RetainPtr<CPDF_Array> m_ArrayObj;
-  std::vector<CPDF_Object*> m_IndirectObjs;
+  std::vector<uint32_t> m_IndirectObjNums;
 };
 
 TEST_F(PDFObjectsTest, GetString) {
@@ -336,7 +337,7 @@ TEST_F(PDFObjectsTest, GetDirect) {
 
   // Check indirect references.
   for (size_t i = 0; i < m_RefObjs.size(); ++i)
-    EXPECT_EQ(m_IndirectObjs[i], m_RefObjs[i]->GetDirect());
+    EXPECT_EQ(m_IndirectObjNums[i], m_RefObjs[i]->GetDirect()->GetObjNum());
 }
 
 TEST_F(PDFObjectsTest, SetString) {
