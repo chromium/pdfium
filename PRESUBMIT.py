@@ -1,4 +1,4 @@
-# Copyright 2015 The Chromium Authors. All rights reserved.
+# Copyright 2015 The PDFium Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -7,6 +7,8 @@
 See http://dev.chromium.org/developers/how-tos/depottools/presubmit-scripts
 for more details about the presubmit API built into depot_tools.
 """
+
+PRESUBMIT_VERSION = '2.0.0'
 
 USE_PYTHON3 = True
 
@@ -51,9 +53,11 @@ _BANNED_CPP_FUNCTIONS = (
     (
         r'/\busing namespace ',
         (
-            'Using directives ("using namespace x") are banned by the Google Style',
-            'Guide ( https://google.github.io/styleguide/cppguide.html#Namespaces ).',
-            'Explicitly qualify symbols or use using declarations ("using x::foo").',
+            'Using directives ("using namespace x") are banned by the Google',
+            'Style Guide (',
+            'https://google.github.io/styleguide/cppguide.html#Namespaces ).',
+            'Explicitly qualify symbols or use using declarations ("using',
+            'x::foo").',
         ),
         True,
         [_THIRD_PARTY],
@@ -61,9 +65,10 @@ _BANNED_CPP_FUNCTIONS = (
     (
         r'/v8::Isolate::(?:|Try)GetCurrent()',
         (
-            'v8::Isolate::GetCurrent() and v8::Isolate::TryGetCurrent() are banned. Hold',
-            'a pointer to the v8::Isolate that was entered. Use v8::Isolate::IsCurrent()',
-            'to check whether a given v8::Isolate is entered.',
+            'v8::Isolate::GetCurrent() and v8::Isolate::TryGetCurrent() are',
+            'banned. Hold a pointer to the v8::Isolate that was entered. Use',
+            'v8::Isolate::IsCurrent() to check whether a given v8::Isolate is',
+            'entered.',
         ),
         True,
         (),
@@ -482,6 +487,18 @@ def _CheckUselessForwardDeclarations(input_api, output_api):
                     '%s: %s forward declaration is no longer needed' %
                     (f.LocalPath(), decl)))
             useless_fwd_decls.remove(decl)
+
+  return results
+
+
+def ChecksCommon(input_api, output_api):
+  results = []
+
+  # TODO(crbug.com/pdfium/1884): Fix existing breakage, then remove
+  # license_header='.*' to enable the license check.
+  results.extend(
+      input_api.canned_checks.PanProjectChecks(
+          input_api, output_api, license_header='.*', project_name='PDFium'))
 
   return results
 
