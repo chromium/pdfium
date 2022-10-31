@@ -1560,6 +1560,21 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFViewEmbedderTest, LargeImageDoesNotRenderBlank) {
+  static const char kChecksum[] = "a6056db6961f4e65c42ab2e246171fe1";
+
+  ASSERT_TRUE(OpenDocument("bug_1646.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  constexpr int kWidth = 40000;
+  constexpr int kHeight = 100;
+  TestRenderPageBitmapWithMatrix(page, kWidth, kHeight, {1000, 0, 0, 1, 0, 0},
+                                 {0, 0, kWidth, kHeight}, kChecksum);
+
+  UnloadPage(page);
+}
+
 #if BUILDFLAG(IS_WIN)
 TEST_F(FPDFViewEmbedderTest, FPDFRenderPageEmf) {
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
