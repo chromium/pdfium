@@ -1560,7 +1560,14 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFViewEmbedderTest, LargeImageDoesNotRenderBlank) {
+// Deliberately disabled because this test case renders a large bitmap, which is
+// very slow for debug builds.
+#if defined(NDEBUG)
+#define MAYBE_LargeImageDoesNotRenderBlank LargeImageDoesNotRenderBlank
+#else
+#define MAYBE_LargeImageDoesNotRenderBlank DISABLED_LargeImageDoesNotRenderBlank
+#endif
+TEST_F(FPDFViewEmbedderTest, MAYBE_LargeImageDoesNotRenderBlank) {
   static const char kChecksum[] = "a6056db6961f4e65c42ab2e246171fe1";
 
   ASSERT_TRUE(OpenDocument("bug_1646.pdf"));
