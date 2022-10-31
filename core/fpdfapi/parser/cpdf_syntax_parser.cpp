@@ -44,10 +44,10 @@ enum class ReadStatus {
 
 class ReadableSubStream final : public IFX_SeekableReadStream {
  public:
-  ReadableSubStream(const RetainPtr<IFX_SeekableReadStream>& pFileRead,
+  ReadableSubStream(RetainPtr<IFX_SeekableReadStream> pFileRead,
                     FX_FILESIZE part_offset,
                     FX_FILESIZE part_size)
-      : m_pFileRead(pFileRead),
+      : m_pFileRead(std::move(pFileRead)),
         m_PartOffset(part_offset),
         m_PartSize(part_size) {}
 
