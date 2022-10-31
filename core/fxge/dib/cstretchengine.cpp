@@ -274,11 +274,13 @@ bool CStretchEngine::StartStretchHorz() {
   if (m_DestWidth == 0 || m_InterPitch == 0 || m_DestScanline.empty())
     return false;
 
-  if (m_SrcClip.Height() == 0 ||
-      m_SrcClip.Height() > (1 << 29) / m_InterPitch) {
+  FX_SAFE_SIZE_T safe_size = m_SrcClip.Height();
+  safe_size *= m_InterPitch;
+  const size_t size = safe_size.ValueOrDefault(0);
+  if (size == 0)
     return false;
-  }
-  m_InterBuf.resize(m_SrcClip.Height() * m_InterPitch);
+
+  m_InterBuf.resize(size);
   if (m_pSource && m_bHasAlpha && m_pSource->HasAlphaMask()) {
     m_ExtraAlphaBuf.resize(m_SrcClip.Height(), m_ExtraMaskPitch);
     m_DestMaskScanline.resize(m_ExtraMaskPitch);
