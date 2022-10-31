@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright 2014 The PDFium Authors. All rights reserved.
+# Copyright 2014 The PDFium Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 """Expands a hand-written PDF testcase (template) into a valid PDF file.

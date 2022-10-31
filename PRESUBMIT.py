@@ -494,11 +494,9 @@ def _CheckUselessForwardDeclarations(input_api, output_api):
 def ChecksCommon(input_api, output_api):
   results = []
 
-  # TODO(crbug.com/pdfium/1884): Fix existing breakage, then remove
-  # license_header='.*' to enable the license check.
   results.extend(
       input_api.canned_checks.PanProjectChecks(
-          input_api, output_api, license_header='.*', project_name='PDFium'))
+          input_api, output_api, project_name='PDFium'))
 
   return results
 

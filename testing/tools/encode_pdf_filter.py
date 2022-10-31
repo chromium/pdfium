@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright 2019 The PDFium Authors. All rights reserved.
+# Copyright 2019 The PDFium Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 """Encodes binary data using one or more PDF stream filters.

@@ -3,7 +3,7 @@ new file mode 100644
 --- /dev/null
 +++ b/third_party/libopenjpeg/opj_malloc.cc
 @@ -0,0 +1,42 @@
-+// Copyright 2020 PDFium Authors. All rights reserved.
++// Copyright 2020 The PDFium Authors
 +// Use of this source code is governed by a BSD-style license that can be
 +// found in the LICENSE file.
 +

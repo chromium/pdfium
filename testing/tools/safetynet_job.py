@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright 2017 The PDFium Authors. All rights reserved.
+# Copyright 2017 The PDFium Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 """Looks for performance regressions on all pushes since the last run.
