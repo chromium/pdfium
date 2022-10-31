@@ -51,7 +51,7 @@ class CPDF_ReadValidator : public IFX_SeekableReadStream {
   FX_FILESIZE GetSize() override;
 
  protected:
-  CPDF_ReadValidator(const RetainPtr<IFX_SeekableReadStream>& file_read,
+  CPDF_ReadValidator(RetainPtr<IFX_SeekableReadStream> file_read,
                      CPDF_DataAvail::FileAvail* file_avail);
   ~CPDF_ReadValidator() override;
 

@@ -41,11 +41,11 @@ CPDF_ReadValidator::ScopedSession::~ScopedSession() {
 }
 
 CPDF_ReadValidator::CPDF_ReadValidator(
-    const RetainPtr<IFX_SeekableReadStream>& file_read,
+    RetainPtr<IFX_SeekableReadStream> file_read,
     CPDF_DataAvail::FileAvail* file_avail)
-    : file_read_(file_read),
+    : file_read_(std::move(file_read)),
       file_avail_(file_avail),
-      file_size_(file_read->GetSize()) {}
+      file_size_(file_read_->GetSize()) {}
 
 CPDF_ReadValidator::~CPDF_ReadValidator() = default;
 

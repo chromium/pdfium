@@ -183,9 +183,8 @@ std::vector<XFAPacket> GetXFAPackets(RetainPtr<const CPDF_Object> xfa_object) {
   return packets;
 }
 
-FPDF_DOCUMENT LoadDocumentImpl(
-    const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
-    FPDF_BYTESTRING password) {
+FPDF_DOCUMENT LoadDocumentImpl(RetainPtr<IFX_SeekableReadStream> pFileAccess,
+                               FPDF_BYTESTRING password) {
   if (!pFileAccess) {
     ProcessParseError(CPDF_Parser::FILE_ERROR);
     return nullptr;
@@ -195,7 +194,8 @@ FPDF_DOCUMENT LoadDocumentImpl(
       std::make_unique<CPDF_Document>(std::make_unique<CPDF_DocRenderData>(),
                                       std::make_unique<CPDF_DocPageData>());
 
-  CPDF_Parser::Error error = pDocument->LoadDoc(pFileAccess, password);
+  CPDF_Parser::Error error =
+      pDocument->LoadDoc(std::move(pFileAccess), password);
   if (error != CPDF_Parser::SUCCESS) {
     ProcessParseError(error);
     return nullptr;

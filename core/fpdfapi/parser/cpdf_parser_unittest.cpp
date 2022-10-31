@@ -7,6 +7,7 @@
 #include <limits>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -57,7 +58,8 @@ class CPDF_TestParser final : public CPDF_Parser {
       return false;
 
     // For the test file, the header is set at the beginning.
-    SetSyntaxParserForTesting(std::make_unique<CPDF_SyntaxParser>(pFileAccess));
+    SetSyntaxParserForTesting(
+        std::make_unique<CPDF_SyntaxParser>(std::move(pFileAccess)));
     return true;
   }
 

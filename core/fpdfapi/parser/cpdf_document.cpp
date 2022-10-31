@@ -151,12 +151,13 @@ bool CPDF_Document::TryInit() {
 }
 
 CPDF_Parser::Error CPDF_Document::LoadDoc(
-    const RetainPtr<IFX_SeekableReadStream>& pFileAccess,
+    RetainPtr<IFX_SeekableReadStream> pFileAccess,
     const ByteString& password) {
   if (!m_pParser)
     SetParser(std::make_unique<CPDF_Parser>(this));
 
-  return HandleLoadResult(m_pParser->StartParse(pFileAccess, password));
+  return HandleLoadResult(
+      m_pParser->StartParse(std::move(pFileAccess), password));
 }
 
 CPDF_Parser::Error CPDF_Document::LoadLinearizedDoc(

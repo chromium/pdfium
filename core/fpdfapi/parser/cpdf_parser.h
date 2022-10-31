@@ -65,7 +65,7 @@ class CPDF_Parser {
   CPDF_Parser();
   ~CPDF_Parser();
 
-  Error StartParse(const RetainPtr<IFX_SeekableReadStream>& pFile,
+  Error StartParse(RetainPtr<IFX_SeekableReadStream> pFile,
                    const ByteString& password);
   Error StartLinearizedParse(RetainPtr<CPDF_ReadValidator> validator,
                              const ByteString& password);
