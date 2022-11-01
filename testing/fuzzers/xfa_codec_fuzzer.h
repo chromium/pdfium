@@ -6,6 +6,7 @@
 #define TESTING_FUZZERS_XFA_CODEC_FUZZER_H_
 
 #include <memory>
+#include <utility>
 
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/progressive_decoder.h"
@@ -26,7 +27,8 @@ class XFACodecFuzzer {
     auto source = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
         pdfium::make_span(data, size));
     CFX_DIBAttribute attr;
-    FXCODEC_STATUS status = decoder->LoadImageInfo(source, type, &attr, true);
+    FXCODEC_STATUS status =
+        decoder->LoadImageInfo(std::move(source), type, &attr, true);
     if (status != FXCODEC_STATUS::kFrameReady)
       return 0;
 

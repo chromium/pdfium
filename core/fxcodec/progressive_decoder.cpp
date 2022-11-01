@@ -1491,7 +1491,7 @@ bool ProgressiveDecoder::ReadMoreData(
 }
 
 FXCODEC_STATUS ProgressiveDecoder::LoadImageInfo(
-    const RetainPtr<IFX_SeekableReadStream>& pFile,
+    RetainPtr<IFX_SeekableReadStream> pFile,
     FXCODEC_IMAGE_TYPE imageType,
     CFX_DIBAttribute* pAttribute,
     bool bSkipImageTypeCheck) {
@@ -1506,12 +1506,11 @@ FXCODEC_STATUS ProgressiveDecoder::LoadImageInfo(
     default:
       break;
   }
-  if (!pFile) {
+  m_pFile = std::move(pFile);
+  if (!m_pFile) {
     m_status = FXCODEC_STATUS::kError;
-    m_pFile = nullptr;
     return m_status;
   }
-  m_pFile = pFile;
   m_offSet = 0;
   m_SrcWidth = m_SrcHeight = 0;
   m_SrcComponents = m_SrcBPC = 0;

@@ -144,14 +144,15 @@ void XFA_DrawImage(CFGAS_GEGraphics* pGS,
 }
 
 RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
-    const RetainPtr<IFX_SeekableReadStream>& pImageFileRead,
+    RetainPtr<IFX_SeekableReadStream> pImageFileRead,
     FXCODEC_IMAGE_TYPE type,
     int32_t& iImageXDpi,
     int32_t& iImageYDpi) {
   auto pProgressiveDecoder = std::make_unique<ProgressiveDecoder>();
 
   CFX_DIBAttribute dibAttr;
-  pProgressiveDecoder->LoadImageInfo(pImageFileRead, type, &dibAttr, false);
+  pProgressiveDecoder->LoadImageInfo(std::move(pImageFileRead), type, &dibAttr,
+                                     false);
   switch (dibAttr.m_wDPIUnit) {
     case CFX_DIBAttribute::kResUnitCentimeter:
       dibAttr.m_nXDPI = static_cast<int32_t>(dibAttr.m_nXDPI * 2.54f);
