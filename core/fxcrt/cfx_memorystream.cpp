@@ -56,15 +56,14 @@ bool CFX_MemoryStream::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
   return true;
 }
 
-size_t CFX_MemoryStream::ReadBlock(void* buffer, size_t size) {
+size_t CFX_MemoryStream::ReadBlock(pdfium::span<uint8_t> buffer) {
   if (m_nCurPos >= m_nCurSize)
     return 0;
 
-  size_t nRead = std::min(size, m_nCurSize - m_nCurPos);
-  if (!ReadBlockAtOffset({static_cast<uint8_t*>(buffer), nRead},
-                         static_cast<int32_t>(m_nCurPos))) {
+  size_t nRead = std::min(buffer.size(), m_nCurSize - m_nCurPos);
+  if (!ReadBlockAtOffset(buffer.first(nRead), static_cast<int32_t>(m_nCurPos)))
     return 0;
-  }
+
   return nRead;
 }
 

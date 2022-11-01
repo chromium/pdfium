@@ -22,7 +22,7 @@ class CFX_MemoryStream final : public IFX_SeekableStream {
   bool IsEOF() override;
   bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
                          FX_FILESIZE offset) override;
-  size_t ReadBlock(void* buffer, size_t size) override;
+  size_t ReadBlock(pdfium::span<uint8_t> buffer) override;
   bool WriteBlockAtOffset(const void* buffer,
                           FX_FILESIZE offset,
                           size_t size) override;
