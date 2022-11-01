@@ -74,22 +74,21 @@ class FPDF_FileAccessContext final : public IFX_SeekableReadStream {
   // IFX_SeekableReadStream:
   FX_FILESIZE GetSize() override { return file_->m_FileLen; }
 
-  bool ReadBlockAtOffset(void* buffer,
-                         FX_FILESIZE offset,
-                         size_t size) override {
-    if (!buffer || offset < 0 || !size)
+  bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
+                         FX_FILESIZE offset) override {
+    if (buffer.empty() || offset < 0)
       return false;
 
-    if (!pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(size))
+    if (!pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(buffer.size()))
       return false;
 
-    FX_SAFE_FILESIZE new_pos = size;
+    FX_SAFE_FILESIZE new_pos = buffer.size();
     new_pos += offset;
     return new_pos.IsValid() && new_pos.ValueOrDie() <= GetSize() &&
-           file_->m_GetBlock(file_->m_Param,
-                             pdfium::base::checked_cast<unsigned long>(offset),
-                             static_cast<uint8_t*>(buffer),
-                             pdfium::base::checked_cast<unsigned long>(size));
+           file_->m_GetBlock(
+               file_->m_Param,
+               pdfium::base::checked_cast<unsigned long>(offset), buffer.data(),
+               pdfium::base::checked_cast<unsigned long>(buffer.size()));
   }
 
  private:

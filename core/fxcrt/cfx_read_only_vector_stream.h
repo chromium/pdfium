@@ -20,9 +20,8 @@ class CFX_ReadOnlyVectorStream final : public IFX_SeekableReadStream {
 
   // IFX_SeekableReadStream:
   FX_FILESIZE GetSize() override;
-  bool ReadBlockAtOffset(void* buffer,
-                         FX_FILESIZE offset,
-                         size_t size) override;
+  bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
+                         FX_FILESIZE offset) override;
 
  private:
   explicit CFX_ReadOnlyVectorStream(DataVector<uint8_t> data);

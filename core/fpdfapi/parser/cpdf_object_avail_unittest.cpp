@@ -25,7 +25,7 @@ class TestReadValidator final : public CPDF_ReadValidator {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  void SimulateReadError() { ReadBlockAtOffset(nullptr, 0, 1); }
+  void SimulateReadError() { ReadBlockAtOffset({}, 0); }
 
  private:
   TestReadValidator()

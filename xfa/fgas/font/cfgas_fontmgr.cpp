@@ -383,7 +383,7 @@ unsigned long ftStreamRead(FXFT_StreamRec* stream,
 
   IFX_SeekableReadStream* pFile =
       static_cast<IFX_SeekableReadStream*>(stream->descriptor.pointer);
-  if (!pFile->ReadBlockAtOffset(buffer, offset, count))
+  if (!pFile->ReadBlockAtOffset({buffer, count}, offset))
     return 0;
 
   return count;

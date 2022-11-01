@@ -54,29 +54,28 @@ void CPDF_ReadValidator::ResetErrors() {
   has_unavailable_data_ = false;
 }
 
-bool CPDF_ReadValidator::ReadBlockAtOffset(void* buffer,
-                                           FX_FILESIZE offset,
-                                           size_t size) {
+bool CPDF_ReadValidator::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
+                                           FX_FILESIZE offset) {
   if (offset < 0) {
     NOTREACHED();
     return false;
   }
 
   FX_SAFE_FILESIZE end_offset = offset;
-  end_offset += size;
+  end_offset += buffer.size();
   if (!end_offset.IsValid() || end_offset.ValueOrDie() > file_size_)
     return false;
 
-  if (!IsDataRangeAvailable(offset, size)) {
-    ScheduleDownload(offset, size);
+  if (!IsDataRangeAvailable(offset, buffer.size())) {
+    ScheduleDownload(offset, buffer.size());
     return false;
   }
 
-  if (file_read_->ReadBlockAtOffset(buffer, offset, size))
+  if (file_read_->ReadBlockAtOffset(buffer, offset))
     return true;
 
   read_error_ = true;
-  ScheduleDownload(offset, size);
+  ScheduleDownload(offset, buffer.size());
   return false;
 }
 

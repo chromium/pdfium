@@ -42,7 +42,7 @@ TEST(CFXMemoryStreamTest, ReadWriteBlockAtOffset) {
               testing::ElementsAre('a', 'b', 'c', '\0', '\0', 'a', 'b', 'c'));
 
   uint8_t buffer[4];
-  ASSERT_TRUE(stream->ReadBlockAtOffset(buffer, 2, sizeof(buffer)));
+  ASSERT_TRUE(stream->ReadBlockAtOffset(buffer, 2));
   ASSERT_THAT(buffer, testing::ElementsAre('c', '\0', '\0', 'a'));
 }
 

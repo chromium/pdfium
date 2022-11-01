@@ -9,9 +9,8 @@ InvalidSeekableReadStream::InvalidSeekableReadStream(FX_FILESIZE data_size)
 
 InvalidSeekableReadStream::~InvalidSeekableReadStream() = default;
 
-bool InvalidSeekableReadStream::ReadBlockAtOffset(void* buffer,
-                                                  FX_FILESIZE offset,
-                                                  size_t size) {
+bool InvalidSeekableReadStream::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
+                                                  FX_FILESIZE offset) {
   return false;
 }
 

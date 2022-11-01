@@ -17,9 +17,8 @@ class CFX_ReadOnlyStringStream final : public IFX_SeekableReadStream {
 
   // IFX_SeekableReadStream:
   FX_FILESIZE GetSize() override;
-  bool ReadBlockAtOffset(void* buffer,
-                         FX_FILESIZE offset,
-                         size_t size) override;
+  bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
+                         FX_FILESIZE offset) override;
 
  private:
   explicit CFX_ReadOnlyStringStream(ByteString data);

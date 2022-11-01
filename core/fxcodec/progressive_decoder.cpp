@@ -1147,8 +1147,8 @@ bool ProgressiveDecoder::PngDetectImageTypeInBuffer(
     if (m_pCodecMemory && input_size > m_pCodecMemory->GetSize())
       m_pCodecMemory = pdfium::MakeRetain<CFX_CodecMemory>(input_size);
 
-    if (!m_pFile->ReadBlockAtOffset(m_pCodecMemory->GetBuffer(), m_offSet,
-                                    input_size)) {
+    if (!m_pFile->ReadBlockAtOffset({m_pCodecMemory->GetBuffer(), input_size},
+                                    m_offSet)) {
       m_status = FXCODEC_STATUS::kError;
       return false;
     }
@@ -1216,8 +1216,8 @@ FXCODEC_STATUS ProgressiveDecoder::PngContinueDecode() {
     if (m_pCodecMemory && input_size > m_pCodecMemory->GetSize())
       m_pCodecMemory = pdfium::MakeRetain<CFX_CodecMemory>(input_size);
 
-    bool bResult = m_pFile->ReadBlockAtOffset(m_pCodecMemory->GetBuffer(),
-                                              m_offSet, input_size);
+    bool bResult = m_pFile->ReadBlockAtOffset(
+        {m_pCodecMemory->GetBuffer(), input_size}, m_offSet);
     if (!bResult) {
       m_pDeviceBitmap = nullptr;
       m_pFile = nullptr;
@@ -1409,8 +1409,8 @@ bool ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
       std::min<FX_FILESIZE>(m_pFile->GetSize(), kBlockSize));
   m_pCodecMemory = pdfium::MakeRetain<CFX_CodecMemory>(size);
   m_offSet = 0;
-  if (!m_pFile->ReadBlockAtOffset(m_pCodecMemory->GetBuffer(), m_offSet,
-                                  size)) {
+  if (!m_pFile->ReadBlockAtOffset({m_pCodecMemory->GetBuffer(), size},
+                                  m_offSet)) {
     m_status = FXCODEC_STATUS::kError;
     return false;
   }
@@ -1480,8 +1480,9 @@ bool ProgressiveDecoder::ReadMoreData(
   }
 
   // Append new data past the bytes not yet processed by the codec.
-  if (!m_pFile->ReadBlockAtOffset(m_pCodecMemory->GetBuffer() + dwUnconsumed,
-                                  m_offSet, dwBytesToFetchFromFile)) {
+  if (!m_pFile->ReadBlockAtOffset(
+          {m_pCodecMemory->GetBuffer() + dwUnconsumed, dwBytesToFetchFromFile},
+          m_offSet)) {
     *err_status = FXCODEC_STATUS::kError;
     return false;
   }

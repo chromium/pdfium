@@ -175,7 +175,7 @@ size_t CFX_SeekableStreamProxy::ReadData(uint8_t* pBuffer, size_t iBufferSize) {
   if (iBufferSize <= 0)
     return 0;
 
-  if (!m_pStream->ReadBlockAtOffset(pBuffer, m_iPosition, iBufferSize))
+  if (!m_pStream->ReadBlockAtOffset({pBuffer, iBufferSize}, m_iPosition))
     return 0;
 
   FX_SAFE_FILESIZE new_pos = m_iPosition;

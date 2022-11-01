@@ -45,9 +45,8 @@ class CPDF_ReadValidator : public IFX_SeekableReadStream {
   bool CheckWholeFileAndRequestIfUnavailable();
 
   // IFX_SeekableReadStream overrides:
-  bool ReadBlockAtOffset(void* buffer,
-                         FX_FILESIZE offset,
-                         size_t size) override;
+  bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
+                         FX_FILESIZE offset) override;
   FX_FILESIZE GetSize() override;
 
  protected:

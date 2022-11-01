@@ -80,7 +80,7 @@ absl::optional<FX_FILESIZE> GetHeaderOffset(
   static constexpr size_t kBufSize = 4;
   uint8_t buf[kBufSize];
   for (FX_FILESIZE offset = 0; offset <= 1024; ++offset) {
-    if (!pFile->ReadBlockAtOffset(buf, offset, kBufSize))
+    if (!pFile->ReadBlockAtOffset(buf, offset))
       return absl::nullopt;
 
     if (memcmp(buf, "%PDF", 4) == 0)

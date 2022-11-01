@@ -54,17 +54,16 @@ class ReadableSubStream final : public IFX_SeekableReadStream {
   ~ReadableSubStream() override = default;
 
   // IFX_SeekableReadStream overrides:
-  bool ReadBlockAtOffset(void* buffer,
-                         FX_FILESIZE offset,
-                         size_t size) override {
+  bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
+                         FX_FILESIZE offset) override {
     FX_SAFE_FILESIZE safe_end = offset;
-    safe_end += size;
+    safe_end += buffer.size();
     // Check that requested range is valid, to prevent calling of ReadBlock
     // of original m_pFileRead with incorrect params.
     if (!safe_end.IsValid() || safe_end.ValueOrDie() > m_PartSize)
       return false;
 
-    return m_pFileRead->ReadBlockAtOffset(buffer, m_PartOffset + offset, size);
+    return m_pFileRead->ReadBlockAtOffset(buffer, m_PartOffset + offset);
   }
 
   FX_FILESIZE GetSize() override { return m_PartSize; }
@@ -122,8 +121,7 @@ bool CPDF_SyntaxParser::ReadBlockAt(FX_FILESIZE read_pos) {
     read_size = m_FileLen - read_pos;
 
   m_pFileBuf.resize(read_size);
-  if (!m_pFileAccess->ReadBlockAtOffset(m_pFileBuf.data(), read_pos,
-                                        read_size)) {
+  if (!m_pFileAccess->ReadBlockAtOffset(m_pFileBuf, read_pos)) {
     m_pFileBuf.clear();
     return false;
   }
@@ -166,7 +164,7 @@ bool CPDF_SyntaxParser::GetCharAtBackward(FX_FILESIZE pos, uint8_t* ch) {
 }
 
 bool CPDF_SyntaxParser::ReadBlock(uint8_t* pBuf, uint32_t size) {
-  if (!m_pFileAccess->ReadBlockAtOffset(pBuf, m_Pos + m_HeaderOffset, size))
+  if (!m_pFileAccess->ReadBlockAtOffset({pBuf, size}, m_Pos + m_HeaderOffset))
     return false;
   m_Pos += size;
   return true;
@@ -794,8 +792,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     // changing object lifetimes by handing `substream` to `pStream`, make a
     // copy of the data here.
     FixedUninitDataVector<uint8_t> data(substream->GetSize());
-    bool did_read = substream->ReadBlockAtOffset(data.writable_span().data(), 0,
-                                                 data.size());
+    bool did_read = substream->ReadBlockAtOffset(data.writable_span(), 0);
     CHECK(did_read);
     auto data_as_stream =
         pdfium::MakeRetain<CFX_ReadOnlyVectorStream>(std::move(data));

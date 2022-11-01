@@ -19,8 +19,7 @@ FX_FILESIZE CFX_ReadOnlyStringStream::GetSize() {
   return stream_->GetSize();
 }
 
-bool CFX_ReadOnlyStringStream::ReadBlockAtOffset(void* buffer,
-                                                 FX_FILESIZE offset,
-                                                 size_t size) {
-  return stream_->ReadBlockAtOffset(buffer, offset, size);
+bool CFX_ReadOnlyStringStream::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
+                                                 FX_FILESIZE offset) {
+  return stream_->ReadBlockAtOffset(buffer, offset);
 }

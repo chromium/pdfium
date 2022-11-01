@@ -24,9 +24,8 @@ class CPDF_SeekableMultiStream final : public IFX_SeekableStream {
   // IFX_SeekableReadStream
   FX_FILESIZE GetPosition() override;
   FX_FILESIZE GetSize() override;
-  bool ReadBlockAtOffset(void* buffer,
-                         FX_FILESIZE offset,
-                         size_t size) override;
+  bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
+                         FX_FILESIZE offset) override;
   size_t ReadBlock(void* buffer, size_t size) override;
   bool IsEOF() override;
   bool Flush() override;

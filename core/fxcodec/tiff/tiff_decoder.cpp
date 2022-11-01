@@ -119,9 +119,10 @@ tsize_t tiff_read(thandle_t context, tdata_t buf, tsize_t length) {
     return 0;
 
   FX_FILESIZE offset = pTiffContext->offset();
-  if (!pTiffContext->io_in()->ReadBlockAtOffset(buf, offset, length))
+  if (!pTiffContext->io_in()->ReadBlockAtOffset(
+          {static_cast<uint8_t*>(buf), static_cast<size_t>(length)}, offset)) {
     return 0;
-
+  }
   pTiffContext->set_offset(increment.ValueOrDie());
   if (offset + length > pTiffContext->io_in()->GetSize()) {
     return pdfium::base::checked_cast<tsize_t>(

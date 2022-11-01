@@ -142,7 +142,7 @@ bool CPDF_Stream::ReadRawData(FX_FILESIZE offset,
                               size_t size) const {
   CHECK(IsFileBased());
   return absl::get<RetainPtr<IFX_SeekableReadStream>>(data_)->ReadBlockAtOffset(
-      buf, offset, size);
+      {buf, size}, offset);
 }
 
 bool CPDF_Stream::HasFilter() const {

@@ -145,13 +145,13 @@ void CPDF_Image::SetJpegImage(RetainPtr<IFX_SeekableReadStream> pFile) {
 
   uint32_t dwEstimateSize = std::min(size, 8192U);
   DataVector<uint8_t> data(dwEstimateSize);
-  if (!pFile->ReadBlockAtOffset(data.data(), 0, dwEstimateSize))
+  if (!pFile->ReadBlockAtOffset(data, 0))
     return;
 
   RetainPtr<CPDF_Dictionary> pDict = InitJPEG(data);
   if (!pDict && size > dwEstimateSize) {
     data.resize(size);
-    if (pFile->ReadBlockAtOffset(data.data(), 0, size))
+    if (pFile->ReadBlockAtOffset(data, 0))
       pDict = InitJPEG(data);
   }
   if (!pDict)
@@ -166,7 +166,7 @@ void CPDF_Image::SetJpegImageInline(RetainPtr<IFX_SeekableReadStream> pFile) {
     return;
 
   DataVector<uint8_t> data(size);
-  if (!pFile->ReadBlockAtOffset(data.data(), 0, size))
+  if (!pFile->ReadBlockAtOffset(data, 0))
     return;
 
   RetainPtr<CPDF_Dictionary> pDict = InitJPEG(data);
