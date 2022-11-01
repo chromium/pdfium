@@ -170,28 +170,6 @@ calculate_sum_a_b_c.pdf mac * * *
 calculate_validate.pdf mac * * *
 calculate_validate.pdf * nov8 * *
 ch_1.pdf * * * *
-
-# TODO(pdfium:1819): Remove after associated bug is fixed
-ch_7_0.pdf * * * skia
-
-# TODO(pdfium:1819): Remove after associated bug is fixed
-ch_7_1.pdf * * * skia
-
-# TODO(pdfium:1819): Remove after associated bug is fixed
-ch_7_4.pdf * * * skia
-
-# TODO(pdfium:1819): Remove after associated bug is fixed
-ch_7_5.pdf * * * skia
-
-# TODO(pdfium:1819): Remove after associated bug is fixed
-ch_7_6.pdf * * * skia
-
-# TODO(pdfium:1819): Remove after associated bug is fixed
-ch_7_7.pdf * * * skia
-
-# TODO(pdfium:1819): Remove after associated bug is fixed
-ch_7_8.pdf * * * skia
-
 check_box.pdf * * * *
 color.pdf mac * * *
 colorspace.pdf mac * * *
