@@ -158,9 +158,10 @@ TEST(fxcrt, BitStreamBig) {
   // We can't actually allocate enough memory to test the limits of
   // the bitstream arithmetic, but as long as we don't try to extract
   // any bits, the calculations should be unaffected.
+  const uint8_t kNotReallyBigEnough[32] = {};
   constexpr size_t kAllocationBytes = std::numeric_limits<size_t>::max() / 8;
   constexpr size_t kAllocationBits = kAllocationBytes * 8;
-  CFX_BitStream bitstream({nullptr, kAllocationBytes});
+  CFX_BitStream bitstream({kNotReallyBigEnough, kAllocationBytes});
   EXPECT_FALSE(bitstream.IsEOF());
   EXPECT_EQ(0U, bitstream.GetPos());
   EXPECT_EQ(kAllocationBits, bitstream.BitsRemaining());

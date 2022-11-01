@@ -189,7 +189,9 @@ class TRIVIAL_ABI GSL_POINTER span {
 
   // [span.cons], span constructors, copy, assignment, and destructor
   constexpr span() noexcept : data_(nullptr), size_(0) {}
-  constexpr span(T* data, size_t size) noexcept : data_(data), size_(size) {}
+  constexpr span(T* data, size_t size) noexcept : data_(data), size_(size) {
+    DCHECK(data_ || size_ == 0);
+  }
 
   // TODO(dcheng): Implement construction from a |begin| and |end| pointer.
   template <size_t N>
