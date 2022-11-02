@@ -174,7 +174,7 @@ bool CPDF_Stream::WriteTo(IFX_ArchiveStream* archive,
   if (!archive->WriteString("stream\r\n"))
     return false;
 
-  if (!archive->WriteSpan(data))
+  if (!archive->WriteBlock(data))
     return false;
 
   return archive->WriteString("\r\nendstream");

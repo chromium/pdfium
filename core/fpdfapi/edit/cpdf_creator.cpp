@@ -40,7 +40,7 @@ class CFX_FileBufferArchive final : public IFX_ArchiveStream {
   explicit CFX_FileBufferArchive(RetainPtr<IFX_RetainableWriteStream> file);
   ~CFX_FileBufferArchive() override;
 
-  bool WriteBlock(const void* pBuf, size_t size) override;
+  bool WriteBlock(pdfium::span<const uint8_t> buffer) override;
   FX_FILESIZE CurrentOffset() const override { return offset_; }
 
  private:
@@ -69,16 +69,14 @@ bool CFX_FileBufferArchive::Flush() {
   available_ = pdfium::make_span(buffer_);
   if (!nUsed)
     return true;
-  return backing_file_->WriteBlock(buffer_.data(), nUsed);
+  return backing_file_->WriteBlock(available_.first(nUsed));
 }
 
-bool CFX_FileBufferArchive::WriteBlock(const void* pBuf, size_t size) {
-  if (size == 0)
+bool CFX_FileBufferArchive::WriteBlock(pdfium::span<const uint8_t> buffer) {
+  if (buffer.empty())
     return true;
 
-  DCHECK(pBuf);
-  auto* pSrc = reinterpret_cast<const uint8_t*>(pBuf);
-  pdfium::span<const uint8_t> src_span(pSrc, size);
+  pdfium::span<const uint8_t> src_span = buffer;
   while (!src_span.empty()) {
     size_t copy_size = std::min(available_.size(), src_span.size());
     fxcrt::spancpy(available_, src_span.first(copy_size));
@@ -89,7 +87,7 @@ bool CFX_FileBufferArchive::WriteBlock(const void* pBuf, size_t size) {
   }
 
   FX_SAFE_FILESIZE safe_offset = offset_;
-  safe_offset += size;
+  safe_offset += buffer.size();
   if (!safe_offset.IsValid())
     return false;
 

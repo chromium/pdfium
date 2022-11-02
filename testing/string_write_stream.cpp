@@ -11,7 +11,7 @@ StringWriteStream::StringWriteStream() = default;
 
 StringWriteStream::~StringWriteStream() = default;
 
-bool StringWriteStream::WriteBlock(const void* pData, size_t size) {
-  stream_.write(static_cast<const char*>(pData), size);
+bool StringWriteStream::WriteBlock(pdfium::span<const uint8_t> buffer) {
+  stream_.write(reinterpret_cast<const char*>(buffer.data()), buffer.size());
   return true;
 }

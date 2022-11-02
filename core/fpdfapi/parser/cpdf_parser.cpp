@@ -1203,7 +1203,7 @@ bool CPDF_Parser::WriteToArchive(IFX_ArchiveStream* archive,
         static_cast<uint32_t>(std::min(kBufferSize, src_size));
     if (!m_pSyntax->ReadBlock(buffer.data(), block_size))
       return false;
-    if (!archive->WriteBlock(buffer.data(), block_size))
+    if (!archive->WriteBlock(pdfium::make_span(buffer).first(block_size)))
       return false;
     src_size -= block_size;
   }

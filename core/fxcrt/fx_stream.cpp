@@ -28,10 +28,9 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
   size_t ReadBlock(pdfium::span<uint8_t> buffer) override {
     return m_pFile->Read(buffer.data(), buffer.size());
   }
-  bool WriteBlockAtOffset(const void* buffer,
-                          FX_FILESIZE offset,
-                          size_t size) override {
-    return !!m_pFile->WritePos(buffer, size, offset);
+  bool WriteBlockAtOffset(pdfium::span<const uint8_t> buffer,
+                          FX_FILESIZE offset) override {
+    return !!m_pFile->WritePos(buffer.data(), buffer.size(), offset);
   }
   bool Flush() override { return m_pFile->Flush(); }
 
@@ -45,28 +44,24 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
 
 }  // namespace
 
-bool IFX_WriteStream::WriteSpan(pdfium::span<const uint8_t> data) {
-  return WriteBlock(data.data(), data.size());
-}
-
 bool IFX_WriteStream::WriteString(ByteStringView str) {
-  return WriteBlock(str.unterminated_c_str(), str.GetLength());
+  return WriteBlock(str.raw_span());
 }
 
 bool IFX_WriteStream::WriteByte(uint8_t byte) {
-  return WriteBlock(&byte, 1);
+  return WriteBlock({&byte, 1});
 }
 
 bool IFX_WriteStream::WriteDWord(uint32_t i) {
   char buf[20] = {};
   FXSYS_itoa(i, buf, 10);
-  return WriteBlock(buf, strlen(buf));
+  return WriteBlock({reinterpret_cast<uint8_t*>(buf), strlen(buf)});
 }
 
 bool IFX_WriteStream::WriteFilesize(FX_FILESIZE size) {
   char buf[20] = {};
   FXSYS_i64toa(size, buf, 10);
-  return WriteBlock(buf, strlen(buf));
+  return WriteBlock({reinterpret_cast<uint8_t*>(buf), strlen(buf)});
 }
 
 // static
@@ -78,8 +73,8 @@ RetainPtr<IFX_SeekableReadStream> IFX_SeekableReadStream::CreateFromFilename(
   return pdfium::MakeRetain<CFX_CRTFileStream>(std::move(pFA));
 }
 
-bool IFX_SeekableWriteStream::WriteBlock(const void* pData, size_t size) {
-  return WriteBlockAtOffset(pData, GetSize(), size);
+bool IFX_SeekableWriteStream::WriteBlock(pdfium::span<const uint8_t> buffer) {
+  return WriteBlockAtOffset(buffer, GetSize());
 }
 
 bool IFX_SeekableReadStream::IsEOF() {
@@ -94,6 +89,6 @@ size_t IFX_SeekableReadStream::ReadBlock(pdfium::span<uint8_t> buffer) {
   return 0;
 }
 
-bool IFX_SeekableStream::WriteBlock(const void* buffer, size_t size) {
-  return WriteBlockAtOffset(buffer, GetSize(), size);
+bool IFX_SeekableStream::WriteBlock(pdfium::span<const uint8_t> buffer) {
+  return WriteBlockAtOffset(buffer, GetSize());
 }

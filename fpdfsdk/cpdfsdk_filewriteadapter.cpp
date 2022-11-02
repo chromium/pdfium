@@ -16,8 +16,8 @@ CPDFSDK_FileWriteAdapter::CPDFSDK_FileWriteAdapter(FPDF_FILEWRITE* file_write)
 
 CPDFSDK_FileWriteAdapter::~CPDFSDK_FileWriteAdapter() = default;
 
-bool CPDFSDK_FileWriteAdapter::WriteBlock(const void* data, size_t size) {
+bool CPDFSDK_FileWriteAdapter::WriteBlock(pdfium::span<const uint8_t> buffer) {
   return file_write_->WriteBlock(
-             file_write_, data,
-             pdfium::base::checked_cast<unsigned long>(size)) != 0;
+             file_write_, buffer.data(),
+             pdfium::base::checked_cast<unsigned long>(buffer.size())) != 0;
 }

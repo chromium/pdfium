@@ -17,11 +17,9 @@
 
 class IFX_WriteStream {
  public:
-  // When `size` is 0, treat it as a no-op and return true. That is also the
-  // only time when `pData` can be null.
-  virtual bool WriteBlock(const void* pData, size_t size) = 0;
+  // When `size` is 0, treat it as a no-op and return true.
+  virtual bool WriteBlock(pdfium::span<const uint8_t> data) = 0;
 
-  bool WriteSpan(pdfium::span<const uint8_t> data);
   bool WriteString(ByteStringView str);
   bool WriteByte(uint8_t byte);
   bool WriteDWord(uint32_t i);
@@ -48,12 +46,11 @@ class IFX_SeekableWriteStream : virtual public IFX_StreamWithSize,
                                 public IFX_RetainableWriteStream {
  public:
   // IFX_WriteStream:
-  bool WriteBlock(const void* pData, size_t size) override;
+  bool WriteBlock(pdfium::span<const uint8_t> data) override;
 
   virtual bool Flush() = 0;
-  virtual bool WriteBlockAtOffset(const void* pData,
-                                  FX_FILESIZE offset,
-                                  size_t size) = 0;
+  virtual bool WriteBlockAtOffset(pdfium::span<const uint8_t> data,
+                                  FX_FILESIZE offset) = 0;
 };
 
 class IFX_SeekableReadStream : virtual public Retainable,
@@ -73,7 +70,7 @@ class IFX_SeekableStream : public IFX_SeekableReadStream,
                            public IFX_SeekableWriteStream {
  public:
   // IFX_SeekableWriteStream:
-  bool WriteBlock(const void* buffer, size_t size) override;
+  bool WriteBlock(pdfium::span<const uint8_t> buffer) override;
 };
 
 #endif  // CORE_FXCRT_FX_STREAM_H_

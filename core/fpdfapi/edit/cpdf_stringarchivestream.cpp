@@ -18,7 +18,7 @@ FX_FILESIZE CPDF_StringArchiveStream::CurrentOffset() const {
   return false;
 }
 
-bool CPDF_StringArchiveStream::WriteBlock(const void* pData, size_t size) {
-  stream_->write(static_cast<const char*>(pData), size);
+bool CPDF_StringArchiveStream::WriteBlock(pdfium::span<const uint8_t> buffer) {
+  stream_->write(reinterpret_cast<const char*>(buffer.data()), buffer.size());
   return true;
 }

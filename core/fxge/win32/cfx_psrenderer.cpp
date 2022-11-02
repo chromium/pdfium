@@ -276,15 +276,16 @@ void CFX_PSRenderer::EndRendering() {
   // Flush `m_PreambleOutput` if it is not empty.
   std::streamoff preamble_pos = m_PreambleOutput.tellp();
   if (preamble_pos > 0) {
-    m_pStream->WriteBlock(m_PreambleOutput.str().c_str(),
-                          pdfium::base::checked_cast<size_t>(preamble_pos));
+    m_pStream->WriteBlock(
+        {reinterpret_cast<const uint8_t*>(m_PreambleOutput.str().c_str()),
+         pdfium::base::checked_cast<size_t>(preamble_pos)});
     m_PreambleOutput.str("");
   }
 
   // Flush `m_Output`. It's never empty because of the WriteString() call above.
   m_pStream->WriteBlock(
-      m_Output.str().c_str(),
-      pdfium::base::checked_cast<size_t>(std::streamoff(m_Output.tellp())));
+      {reinterpret_cast<const uint8_t*>(m_Output.str().c_str()),
+       pdfium::base::checked_cast<size_t>(std::streamoff(m_Output.tellp()))});
   m_Output.str("");
 }
 
