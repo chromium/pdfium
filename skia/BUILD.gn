@@ -410,7 +410,14 @@ skia_source_set("skia_core_and_effects") {
   visibility = [ ":skia" ]
 }
 
-# Separated out so it can be compiled with different flags for SSE.
+# Bits that involve special vector-y hardware.
+if (current_cpu == "arm64") {
+  skia_source_set("skia_opts_crc32") {
+    sources = skia_opts.crc32_sources
+    cflags = [ "-march=armv8-a+crc" ]
+    visibility = [ ":skia_opts" ]
+  }
+}
 if (current_cpu == "x86" || current_cpu == "x64") {
   skia_source_set("skia_opts_sse3") {
     sources = skia_opts.ssse3_sources
@@ -498,7 +505,7 @@ skia_source_set("skia_opts") {
       }
     }
   } else if (current_cpu == "arm64") {
-    # Conditional and empty body needed to avoid assert() below.
+    deps = [ ":skia_opts_crc32" ]
   } else if (current_cpu == "mipsel" || current_cpu == "mips64el") {
     cflags += [ "-fomit-frame-pointer" ]
   } else {
