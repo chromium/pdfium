@@ -498,6 +498,19 @@ def ChecksCommon(input_api, output_api):
       input_api.canned_checks.PanProjectChecks(
           input_api, output_api, project_name='PDFium'))
 
+  # PanProjectChecks() doesn't consider .gn/.gni files, so check those, too.
+  files_to_check = (
+      r'.*\.gn$',
+      r'.*\.gni$',
+  )
+  results.extend(
+      input_api.canned_checks.CheckLicense(
+          input_api,
+          output_api,
+          project_name='PDFium',
+          source_file_filter=lambda x: input_api.FilterSourceFile(
+              x, files_to_check=files_to_check)))
+
   return results
 
 
