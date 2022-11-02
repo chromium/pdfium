@@ -142,7 +142,10 @@ RetainPtr<const CPDF_Object> CPDF_ObjectWalker::GetNext() {
         // Schedule walk within composite objects.
         stack_.push(std::move(new_iterator));
       }
-      return std::move(next_object_);  // next_object_ now NULL after move.
+      // TODO(crbug.com/1380478): see if this skirts clang-analyzer issue.
+      // next_object_ will now be NULL after move.
+      auto result = std::move(next_object_);
+      return result;
     }
 
     SubobjectIterator* it = stack_.top().get();
