@@ -22,7 +22,7 @@ class CPDF_ObjectWalker {
     virtual ~SubobjectIterator();
     virtual bool IsFinished() const = 0;
     bool IsStarted() const { return is_started_; }
-    const CPDF_Object* Increment();
+    RetainPtr<const CPDF_Object> Increment();
     const CPDF_Object* object() const { return object_.Get(); }
 
    protected:

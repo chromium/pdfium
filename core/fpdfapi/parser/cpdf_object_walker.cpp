@@ -98,13 +98,13 @@ class ArrayIterator final : public CPDF_ObjectWalker::SubobjectIterator {
 
 CPDF_ObjectWalker::SubobjectIterator::~SubobjectIterator() = default;
 
-const CPDF_Object* CPDF_ObjectWalker::SubobjectIterator::Increment() {
+RetainPtr<const CPDF_Object> CPDF_ObjectWalker::SubobjectIterator::Increment() {
   if (!IsStarted()) {
     Start();
     is_started_ = true;
   }
   while (!IsFinished()) {
-    const CPDF_Object* result = IncrementImpl();
+    RetainPtr<const CPDF_Object> result = IncrementImpl();
     if (result)
       return result;
   }
@@ -142,17 +142,14 @@ RetainPtr<const CPDF_Object> CPDF_ObjectWalker::GetNext() {
         // Schedule walk within composite objects.
         stack_.push(std::move(new_iterator));
       }
-      // TODO(crbug.com/1380478): see if this skirts clang-analyzer issue.
-      // next_object_ will now be NULL after move.
-      auto result = std::move(next_object_);
-      return result;
+      return std::move(next_object_);  // next_object_ is NULL after move.
     }
 
     SubobjectIterator* it = stack_.top().get();
     if (it->IsFinished()) {
       stack_.pop();
     } else {
-      next_object_.Reset(it->Increment());
+      next_object_ = it->Increment();
       parent_object_.Reset(it->object());
       dict_key_ = parent_object_->IsDictionary()
                       ? static_cast<DictionaryIterator*>(it)->dict_key()
