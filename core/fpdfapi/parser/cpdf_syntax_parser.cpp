@@ -163,10 +163,10 @@ bool CPDF_SyntaxParser::GetCharAtBackward(FX_FILESIZE pos, uint8_t* ch) {
   return true;
 }
 
-bool CPDF_SyntaxParser::ReadBlock(uint8_t* pBuf, uint32_t size) {
-  if (!m_pFileAccess->ReadBlockAtOffset({pBuf, size}, m_Pos + m_HeaderOffset))
+bool CPDF_SyntaxParser::ReadBlock(pdfium::span<uint8_t> buffer) {
+  if (!m_pFileAccess->ReadBlockAtOffset(buffer, m_Pos + m_HeaderOffset))
     return false;
-  m_Pos += size;
+  m_Pos += buffer.size();
   return true;
 }
 

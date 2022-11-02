@@ -517,10 +517,9 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
   while (entries_to_read > 0) {
     const uint32_t entries_in_block = std::min(entries_to_read, 1024u);
     const uint32_t bytes_to_read = entries_in_block * kEntrySize;
-    if (!m_pSyntax->ReadBlock(reinterpret_cast<uint8_t*>(buf.data()),
-                              bytes_to_read)) {
+    auto block_span = pdfium::make_span(buf).first(bytes_to_read);
+    if (!m_pSyntax->ReadBlock(pdfium::as_writable_bytes(block_span)))
       return false;
-    }
 
     for (uint32_t i = 0; i < entries_in_block; i++) {
       uint32_t iObjectIndex = count - entries_to_read + i;
@@ -1201,7 +1200,8 @@ bool CPDF_Parser::WriteToArchive(IFX_ArchiveStream* archive,
   while (src_size) {
     const uint32_t block_size =
         static_cast<uint32_t>(std::min(kBufferSize, src_size));
-    if (!m_pSyntax->ReadBlock(buffer.data(), block_size))
+    auto block_span = pdfium::make_span(buffer).first(block_size);
+    if (!m_pSyntax->ReadBlock(block_span))
       return false;
     if (!archive->WriteBlock(pdfium::make_span(buffer).first(block_size)))
       return false;

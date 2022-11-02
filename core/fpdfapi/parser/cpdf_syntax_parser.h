@@ -19,6 +19,7 @@
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/weak_ptr.h"
+#include "third_party/base/span.h"
 
 class CPDF_Dictionary;
 class CPDF_IndirectObjectHolder;
@@ -62,7 +63,7 @@ class CPDF_SyntaxParser {
   void RecordingToNextWord();
   bool BackwardsSearchToWord(ByteStringView word, FX_FILESIZE limit);
   FX_FILESIZE FindTag(ByteStringView tag);
-  bool ReadBlock(uint8_t* pBuf, uint32_t size);
+  bool ReadBlock(pdfium::span<uint8_t> buffer);
   bool GetCharAt(FX_FILESIZE pos, uint8_t& ch);
   WordResult GetNextWord();
   ByteString PeekNextWord();
