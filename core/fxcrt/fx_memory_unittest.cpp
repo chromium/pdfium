@@ -16,6 +16,8 @@ const size_t kMaxIntAlloc = kMaxByteAlloc / sizeof(int);
 const size_t kOverflowIntAlloc = kMaxIntAlloc + 100;
 const size_t kWidth = 640;
 const size_t kOverflowIntAlloc2D = kMaxIntAlloc / kWidth + 10;
+const size_t kCloseToMaxIntAlloc = kMaxIntAlloc - 100;
+const size_t kCloseToMaxByteAlloc = kMaxByteAlloc - 100;
 
 }  // namespace
 
@@ -28,14 +30,13 @@ TEST(fxcrt, FX_AllocZero) {
   FX_Free(ptr);
 }
 
-// TODO(tsepez): re-enable OOM tests if we can find a way to
-// prevent it from hosing the bots.
-TEST(fxcrt, DISABLED_FX_AllocOOM) {
-  EXPECT_DEATH_IF_SUPPORTED((void)FX_Alloc(int, kMaxIntAlloc), "");
+TEST(fxcrt, FXAllocOOM) {
+  EXPECT_DEATH_IF_SUPPORTED((void)FX_Alloc(int, kCloseToMaxIntAlloc), "");
 
   int* ptr = FX_Alloc(int, 1);
   EXPECT_TRUE(ptr);
-  EXPECT_DEATH_IF_SUPPORTED((void)FX_Realloc(int, ptr, kMaxIntAlloc), "");
+  EXPECT_DEATH_IF_SUPPORTED((void)FX_Realloc(int, ptr, kCloseToMaxIntAlloc),
+                            "");
   FX_Free(ptr);
 }
 
@@ -60,12 +61,12 @@ TEST(fxcrt, FX_AllocOverflow2D) {
       << ptr;
 }
 
-TEST(fxcrt, DISABLED_FX_TryAllocOOM) {
-  EXPECT_FALSE(FX_TryAlloc(int, kMaxIntAlloc));
+TEST(fxcrt, FXTryAllocOOM) {
+  EXPECT_FALSE(FX_TryAlloc(int, kCloseToMaxIntAlloc));
 
   int* ptr = FX_Alloc(int, 1);
   EXPECT_TRUE(ptr);
-  EXPECT_FALSE(FX_TryRealloc(int, ptr, kMaxIntAlloc));
+  EXPECT_FALSE(FX_TryRealloc(int, ptr, kCloseToMaxIntAlloc));
   FX_Free(ptr);
 }
 
@@ -85,12 +86,12 @@ TEST(fxcrt, FX_TryAllocOverflow) {
 }
 #endif
 
-TEST(fxcrt, DISABLED_FXMEM_DefaultOOM) {
-  EXPECT_FALSE(FXMEM_DefaultAlloc(kMaxByteAlloc));
+TEST(fxcrt, FXMEMDefaultOOM) {
+  EXPECT_FALSE(FXMEM_DefaultAlloc(kCloseToMaxByteAlloc));
 
   void* ptr = FXMEM_DefaultAlloc(1);
   EXPECT_TRUE(ptr);
-  EXPECT_FALSE(FXMEM_DefaultRealloc(ptr, kMaxByteAlloc));
+  EXPECT_FALSE(FXMEM_DefaultRealloc(ptr, kCloseToMaxByteAlloc));
   FXMEM_DefaultFree(ptr);
 }
 
