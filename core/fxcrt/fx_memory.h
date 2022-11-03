@@ -44,7 +44,7 @@ NOINLINE void FX_OutOfMemoryTerminate(size_t size);
   static_cast<type*>(pdfium::internal::Realloc(ptr, size, sizeof(type)))
 
 // These never return nullptr, but return uninitialized memory.
-// TOOD(thestig): Add FX_TryAllocUninit() if there is a use case.
+// TODO(thestig): Add FX_TryAllocUninit() if there is a use case.
 #define FX_AllocUninit(type, size) \
   static_cast<type*>(pdfium::internal::AllocOrDie(size, sizeof(type)))
 #define FX_AllocUninit2D(type, w, h) \

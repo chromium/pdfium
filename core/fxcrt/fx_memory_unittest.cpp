@@ -11,13 +11,13 @@
 
 namespace {
 
-const size_t kMaxByteAlloc = std::numeric_limits<size_t>::max();
-const size_t kMaxIntAlloc = kMaxByteAlloc / sizeof(int);
-const size_t kOverflowIntAlloc = kMaxIntAlloc + 100;
-const size_t kWidth = 640;
-const size_t kOverflowIntAlloc2D = kMaxIntAlloc / kWidth + 10;
-const size_t kCloseToMaxIntAlloc = kMaxIntAlloc - 100;
-const size_t kCloseToMaxByteAlloc = kMaxByteAlloc - 100;
+constexpr size_t kMaxByteAlloc = std::numeric_limits<size_t>::max();
+constexpr size_t kMaxIntAlloc = kMaxByteAlloc / sizeof(int);
+constexpr size_t kOverflowIntAlloc = kMaxIntAlloc + 100;
+constexpr size_t kWidth = 640;
+constexpr size_t kOverflowIntAlloc2D = kMaxIntAlloc / kWidth + 10;
+constexpr size_t kCloseToMaxIntAlloc = kMaxIntAlloc - 100;
+constexpr size_t kCloseToMaxByteAlloc = kMaxByteAlloc - 100;
 
 }  // namespace
 
