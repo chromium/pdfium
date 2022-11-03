@@ -313,8 +313,10 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
     }
 
     const uint8_t* src_scan = m_pSource->GetScanline(m_CurRow).data();
-    uint8_t* dest_scan =
-        m_InterBuf.data() + (m_CurRow - m_SrcClip.top) * m_InterPitch;
+    pdfium::span<uint8_t> dest_span =
+        pdfium::make_span(m_InterBuf)
+            .subspan((m_CurRow - m_SrcClip.top) * m_InterPitch, m_InterPitch);
+    size_t dest_span_index = 0;
     const uint8_t* src_scan_mask = nullptr;
     uint8_t* dest_scan_mask = nullptr;
     if (!m_ExtraAlphaBuf.empty()) {
@@ -334,7 +336,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             if (src_scan[j / 8] & (1 << (7 - j % 8)))
               dest_a += pixel_weight * 255;
           }
-          *dest_scan++ = PixelFromFixed(dest_a);
+          dest_span[dest_span_index++] = PixelFromFixed(dest_a);
         }
         break;
       }
@@ -346,7 +348,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             uint32_t pixel_weight = pWeights->GetWeightForPosition(j);
             dest_a += pixel_weight * src_scan[j];
           }
-          *dest_scan++ = PixelFromFixed(dest_a);
+          dest_span[dest_span_index++] = PixelFromFixed(dest_a);
         }
         break;
       }
@@ -361,7 +363,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_r += pixel_weight * src_scan[j];
             dest_a += pixel_weight;
           }
-          *dest_scan++ = PixelFromFixed(dest_r);
+          dest_span[dest_span_index++] = PixelFromFixed(dest_r);
           *dest_scan_mask++ = PixelFromFixed(255 * dest_a);
         }
         break;
@@ -385,9 +387,9 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
               dest_r += pixel_weight * static_cast<uint8_t>(argb >> 8);
             }
           }
-          *dest_scan++ = PixelFromFixed(dest_b);
-          *dest_scan++ = PixelFromFixed(dest_g);
-          *dest_scan++ = PixelFromFixed(dest_r);
+          dest_span[dest_span_index++] = PixelFromFixed(dest_b);
+          dest_span[dest_span_index++] = PixelFromFixed(dest_g);
+          dest_span[dest_span_index++] = PixelFromFixed(dest_r);
         }
         break;
       }
@@ -407,9 +409,9 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_r += pixel_weight * static_cast<uint8_t>(argb >> 8);
             dest_a += pixel_weight;
           }
-          *dest_scan++ = PixelFromFixed(dest_b);
-          *dest_scan++ = PixelFromFixed(dest_g);
-          *dest_scan++ = PixelFromFixed(dest_r);
+          dest_span[dest_span_index++] = PixelFromFixed(dest_b);
+          dest_span[dest_span_index++] = PixelFromFixed(dest_g);
+          dest_span[dest_span_index++] = PixelFromFixed(dest_r);
           *dest_scan_mask++ = PixelFromFixed(255 * dest_a);
         }
         break;
@@ -427,10 +429,10 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_g += pixel_weight * (*src_pixel++);
             dest_r += pixel_weight * (*src_pixel);
           }
-          *dest_scan++ = PixelFromFixed(dest_b);
-          *dest_scan++ = PixelFromFixed(dest_g);
-          *dest_scan++ = PixelFromFixed(dest_r);
-          dest_scan += Bpp - 3;
+          dest_span[dest_span_index++] = PixelFromFixed(dest_b);
+          dest_span[dest_span_index++] = PixelFromFixed(dest_g);
+          dest_span[dest_span_index++] = PixelFromFixed(dest_r);
+          dest_span_index += Bpp - 3;
         }
         break;
       }
@@ -454,14 +456,14 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             dest_r += pixel_weight * (*src_pixel);
             dest_a += pixel_weight;
           }
-          *dest_scan++ = PixelFromFixed(dest_b);
-          *dest_scan++ = PixelFromFixed(dest_g);
-          *dest_scan++ = PixelFromFixed(dest_r);
+          dest_span[dest_span_index++] = PixelFromFixed(dest_b);
+          dest_span[dest_span_index++] = PixelFromFixed(dest_g);
+          dest_span[dest_span_index++] = PixelFromFixed(dest_r);
           if (m_DestFormat == FXDIB_Format::kArgb)
-            *dest_scan = PixelFromFixed(255 * dest_a);
+            dest_span[dest_span_index] = PixelFromFixed(255 * dest_a);
           if (dest_scan_mask)
             *dest_scan_mask++ = PixelFromFixed(255 * dest_a);
-          dest_scan += Bpp - 3;
+          dest_span_index += Bpp - 3;
         }
         break;
       }
@@ -492,13 +494,14 @@ void CStretchEngine::StretchVert() {
       case TransformMethod::k1BppToManyBpp:
       case TransformMethod::k8BppTo8Bpp: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
-          unsigned char* src_scan =
-              m_InterBuf.data() + (col - m_DestClip.left) * DestBpp;
+          pdfium::span<const uint8_t> src_span =
+              pdfium::make_span(m_InterBuf)
+                  .subspan((col - m_DestClip.left) * DestBpp);
           uint32_t dest_a = 0;
           for (int j = pWeights->m_SrcStart; j <= pWeights->m_SrcEnd; ++j) {
             uint32_t pixel_weight = pWeights->GetWeightForPosition(j);
             dest_a +=
-                pixel_weight * src_scan[(j - m_SrcClip.top) * m_InterPitch];
+                pixel_weight * src_span[(j - m_SrcClip.top) * m_InterPitch];
           }
           *dest_scan = PixelFromFixed(dest_a);
           dest_scan += DestBpp;
@@ -507,8 +510,9 @@ void CStretchEngine::StretchVert() {
       }
       case TransformMethod::k8BppTo8BppWithAlpha: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
-          unsigned char* src_scan =
-              m_InterBuf.data() + (col - m_DestClip.left) * DestBpp;
+          pdfium::span<const uint8_t> src_span =
+              pdfium::make_span(m_InterBuf)
+                  .subspan((col - m_DestClip.left) * DestBpp);
           unsigned char* src_scan_mask =
               m_ExtraAlphaBuf.data() + (col - m_DestClip.left);
           uint32_t dest_a = 0;
@@ -516,7 +520,7 @@ void CStretchEngine::StretchVert() {
           for (int j = pWeights->m_SrcStart; j <= pWeights->m_SrcEnd; ++j) {
             uint32_t pixel_weight = pWeights->GetWeightForPosition(j);
             dest_k +=
-                pixel_weight * src_scan[(j - m_SrcClip.top) * m_InterPitch];
+                pixel_weight * src_span[(j - m_SrcClip.top) * m_InterPitch];
             dest_a += pixel_weight *
                       src_scan_mask[(j - m_SrcClip.top) * m_ExtraMaskPitch];
           }
@@ -529,18 +533,19 @@ void CStretchEngine::StretchVert() {
       case TransformMethod::k8BppToManyBpp:
       case TransformMethod::kManyBpptoManyBpp: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
-          unsigned char* src_scan =
-              m_InterBuf.data() + (col - m_DestClip.left) * DestBpp;
+          pdfium::span<const uint8_t> src_span =
+              pdfium::make_span(m_InterBuf)
+                  .subspan((col - m_DestClip.left) * DestBpp);
           uint32_t dest_r = 0;
           uint32_t dest_g = 0;
           uint32_t dest_b = 0;
           for (int j = pWeights->m_SrcStart; j <= pWeights->m_SrcEnd; ++j) {
             uint32_t pixel_weight = pWeights->GetWeightForPosition(j);
-            const uint8_t* src_pixel =
-                src_scan + (j - m_SrcClip.top) * m_InterPitch;
-            dest_b += pixel_weight * (*src_pixel++);
-            dest_g += pixel_weight * (*src_pixel++);
-            dest_r += pixel_weight * (*src_pixel);
+            pdfium::span<const uint8_t> src_pixel =
+                src_span.subspan((j - m_SrcClip.top) * m_InterPitch, 3);
+            dest_b += pixel_weight * src_pixel[0];
+            dest_g += pixel_weight * src_pixel[1];
+            dest_r += pixel_weight * src_pixel[2];
           }
           dest_scan[0] = PixelFromFixed(dest_b);
           dest_scan[1] = PixelFromFixed(dest_g);
@@ -552,8 +557,9 @@ void CStretchEngine::StretchVert() {
       case TransformMethod::k8BppToManyBppWithAlpha:
       case TransformMethod::kManyBpptoManyBppWithAlpha: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
-          unsigned char* src_scan =
-              m_InterBuf.data() + (col - m_DestClip.left) * DestBpp;
+          pdfium::span<const uint8_t> src_span =
+              pdfium::make_span(m_InterBuf)
+                  .subspan((col - m_DestClip.left) * DestBpp);
           unsigned char* src_scan_mask = nullptr;
           if (m_DestFormat != FXDIB_Format::kArgb)
             src_scan_mask = m_ExtraAlphaBuf.data() + (col - m_DestClip.left);
@@ -561,18 +567,20 @@ void CStretchEngine::StretchVert() {
           uint32_t dest_r = 0;
           uint32_t dest_g = 0;
           uint32_t dest_b = 0;
+          const size_t pixel_bytes =
+              m_DestFormat == FXDIB_Format::kArgb ? 4 : 3;
           for (int j = pWeights->m_SrcStart; j <= pWeights->m_SrcEnd; ++j) {
             uint32_t pixel_weight = pWeights->GetWeightForPosition(j);
-            const uint8_t* src_pixel =
-                src_scan + (j - m_SrcClip.top) * m_InterPitch;
+            pdfium::span<const uint8_t> src_pixel = src_span.subspan(
+                (j - m_SrcClip.top) * m_InterPitch, pixel_bytes);
             int mask_v = 255;
             if (src_scan_mask)
               mask_v = src_scan_mask[(j - m_SrcClip.top) * m_ExtraMaskPitch];
-            dest_b += pixel_weight * (*src_pixel++);
-            dest_g += pixel_weight * (*src_pixel++);
-            dest_r += pixel_weight * (*src_pixel);
+            dest_b += pixel_weight * src_pixel[0];
+            dest_g += pixel_weight * src_pixel[1];
+            dest_r += pixel_weight * src_pixel[2];
             if (m_DestFormat == FXDIB_Format::kArgb)
-              dest_a += pixel_weight * (*(src_pixel + 1));
+              dest_a += pixel_weight * src_pixel[3];
             else
               dest_a += pixel_weight * mask_v;
           }
