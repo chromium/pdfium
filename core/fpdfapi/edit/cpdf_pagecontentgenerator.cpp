@@ -160,7 +160,7 @@ void CPDF_PageContentGenerator::UpdateContentStreams(
       continue;
     }
 
-    CPDF_Stream* old_stream =
+    RetainPtr<CPDF_Stream> old_stream =
         page_content_manager.GetStreamByIndex(stream_index);
     DCHECK(old_stream);
 

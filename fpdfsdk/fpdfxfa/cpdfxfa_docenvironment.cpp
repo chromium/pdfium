@@ -764,21 +764,21 @@ bool CPDFXFA_DocEnvironment::ExportSubmitFile(FPDF_FILEHANDLER* pFileHandler,
     return false;
   }
 
-  const CPDF_Array* pArray = ToArray(pAcroForm->GetObjectFor("XFA"));
+  RetainPtr<const CPDF_Array> pArray = ToArray(pAcroForm->GetObjectFor("XFA"));
   if (!pArray) {
     fileStream->Flush();
     return false;
   }
 
   for (size_t i = 1; i < pArray->size(); i += 2) {
-    const CPDF_Object* pPDFObj = pArray->GetObjectAt(i);
-    const CPDF_Object* pPrePDFObj = pArray->GetObjectAt(i - 1);
+    RetainPtr<const CPDF_Object> pPDFObj = pArray->GetObjectAt(i);
+    RetainPtr<const CPDF_Object> pPrePDFObj = pArray->GetObjectAt(i - 1);
     if (!pPrePDFObj->IsString())
       continue;
     if (!pPDFObj->IsReference())
       continue;
 
-    const CPDF_Object* pDirectObj = pPDFObj->GetDirect();
+    RetainPtr<const CPDF_Object> pDirectObj = pPDFObj->GetDirect();
     if (!pDirectObj->IsStream())
       continue;
     ByteString bsType = pPrePDFObj->GetString();

@@ -232,7 +232,7 @@ std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
       buf << "<<";
       for (const auto& it : locker) {
         const ByteString& key = it.first;
-        const CPDF_Object* pValue = it.second.Get();
+        const RetainPtr<CPDF_Object>& pValue = it.second;
         buf << "/" << PDF_NameEncode(key);
         if (!pValue->IsInline()) {
           buf << " " << pValue->GetObjNum() << " 0 R ";

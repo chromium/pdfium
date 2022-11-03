@@ -699,7 +699,7 @@ CJS_Result CJS_Document::get_info(CJS_Runtime* pRuntime) {
   CPDF_DictionaryLocker locker(ToDictionary(pDictionary->Clone()));
   for (const auto& it : locker) {
     const ByteString& bsKey = it.first;
-    CPDF_Object* pValueObj = it.second.Get();
+    const RetainPtr<CPDF_Object>& pValueObj = it.second;
     if (pValueObj->IsString() || pValueObj->IsName()) {
       pRuntime->PutObjectProperty(
           pObj, bsKey.AsStringView(),

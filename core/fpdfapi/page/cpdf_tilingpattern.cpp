@@ -39,13 +39,13 @@ std::unique_ptr<CPDF_Form> CPDF_TilingPattern::Load(CPDF_PageObject* pPageObj) {
   m_XStep = fabsf(pDict->GetFloatFor("XStep"));
   m_YStep = fabsf(pDict->GetFloatFor("YStep"));
 
-  CPDF_Stream* pStream = pattern_obj()->AsMutableStream();
+  RetainPtr<CPDF_Stream> pStream = ToStream(pattern_obj());
   if (!pStream)
     return nullptr;
 
   const CFX_Matrix& matrix = parent_matrix();
-  auto form = std::make_unique<CPDF_Form>(document(), nullptr,
-                                          pdfium::WrapRetain(pStream));
+  auto form =
+      std::make_unique<CPDF_Form>(document(), nullptr, std::move(pStream));
 
   CPDF_AllStates allStates;
   allStates.m_ColorState.Emplace();

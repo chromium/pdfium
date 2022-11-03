@@ -41,6 +41,10 @@ inline const CPDF_Name* ToName(const CPDF_Object* obj) {
   return obj ? obj->AsName() : nullptr;
 }
 
+inline RetainPtr<const CPDF_Name> ToName(RetainPtr<CPDF_Object> obj) {
+  return RetainPtr<CPDF_Name>(ToName(obj.Get()));
+}
+
 inline RetainPtr<const CPDF_Name> ToName(RetainPtr<const CPDF_Object> obj) {
   return RetainPtr<const CPDF_Name>(ToName(obj.Get()));
 }

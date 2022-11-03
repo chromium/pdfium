@@ -402,12 +402,11 @@ bool CPDF_PageExporter::ExportPage(pdfium::span<const uint32_t> pageIndices,
     CPDF_DictionaryLocker locker(pSrcPageDict);
     for (const auto& it : locker) {
       const ByteString& cbSrcKeyStr = it.first;
+      const RetainPtr<CPDF_Object>& pObj = it.second;
       if (cbSrcKeyStr == pdfium::page_object::kType ||
           cbSrcKeyStr == pdfium::page_object::kParent) {
         continue;
       }
-
-      CPDF_Object* pObj = it.second.Get();
       pDestPageDict->SetFor(cbSrcKeyStr, pObj->Clone());
     }
 

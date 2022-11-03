@@ -480,7 +480,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
 
     CPDF_DictionaryLocker locker(std::move(pDict));
     for (const auto& it : locker) {
-      CPDF_Name* pValue = ToName(it.second.Get());
+      RetainPtr<const CPDF_Name> pValue = ToName(it.second);
       if (pValue) {
         RetainPtr<CPDF_ColorSpace> pRet =
             GetStockCSForName(pValue->GetString());

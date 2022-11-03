@@ -412,7 +412,7 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage4() {
     CPDF_DictionaryLocker locker(m_pParser->GetCombinedTrailer());
     for (const auto& it : locker) {
       const ByteString& key = it.first;
-      CPDF_Object* pValue = it.second.Get();
+      const RetainPtr<CPDF_Object>& pValue = it.second;
       if (key == "Encrypt" || key == "Size" || key == "Filter" ||
           key == "Index" || key == "Length" || key == "Prev" || key == "W" ||
           key == "XRefStm" || key == "ID" || key == "DecodeParms" ||

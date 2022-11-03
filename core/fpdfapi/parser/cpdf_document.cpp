@@ -239,14 +239,15 @@ RetainPtr<CPDF_Dictionary> CPDF_Document::TraversePDFPages(int iPage,
       if (m_pTreeTraversal.size() == level + 1)
         m_pTreeTraversal.emplace_back(std::move(pKid), 0);
       // Now m_pTreeTraversal[level+1] should exist and be equal to pKid.
-      CPDF_Dictionary* pageKid = TraversePDFPages(iPage, nPagesToGo, level + 1);
+      RetainPtr<CPDF_Dictionary> pPageKid =
+          TraversePDFPages(iPage, nPagesToGo, level + 1);
       // Check if child was completely processed, i.e. it popped itself out
       if (m_pTreeTraversal.size() == level + 1)
         m_pTreeTraversal[level].second++;
       // If child did not finish, no pages to go, or max level reached, end
       if (m_pTreeTraversal.size() != level + 1 || *nPagesToGo == 0 ||
           m_bReachedMaxPageLevel) {
-        page.Reset(pageKid);
+        page = std::move(pPageKid);
         break;
       }
     }
@@ -350,7 +351,7 @@ int CPDF_Document::GetPageIndex(uint32_t objnum) {
       bSkipped = true;
     }
   }
-  const CPDF_Dictionary* pPages = GetPagesDict();
+  RetainPtr<const CPDF_Dictionary> pPages = GetPagesDict();
   if (!pPages)
     return -1;
 
