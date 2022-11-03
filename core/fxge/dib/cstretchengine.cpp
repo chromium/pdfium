@@ -280,7 +280,10 @@ bool CStretchEngine::StartStretchHorz() {
   if (size == 0)
     return false;
 
-  m_InterBuf.resize(size);
+  m_InterBuf = FixedTryAllocZeroedDataVector<uint8_t>(size);
+  if (m_InterBuf.empty())
+    return false;
+
   if (m_pSource && m_bHasAlpha && m_pSource->HasAlphaMask()) {
     m_ExtraAlphaBuf.resize(m_SrcClip.Height(), m_ExtraMaskPitch);
     m_DestMaskScanline.resize(m_ExtraMaskPitch);
@@ -313,9 +316,8 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
     }
 
     const uint8_t* src_scan = m_pSource->GetScanline(m_CurRow).data();
-    pdfium::span<uint8_t> dest_span =
-        pdfium::make_span(m_InterBuf)
-            .subspan((m_CurRow - m_SrcClip.top) * m_InterPitch, m_InterPitch);
+    pdfium::span<uint8_t> dest_span = m_InterBuf.writable_span().subspan(
+        (m_CurRow - m_SrcClip.top) * m_InterPitch, m_InterPitch);
     size_t dest_span_index = 0;
     const uint8_t* src_scan_mask = nullptr;
     uint8_t* dest_scan_mask = nullptr;
@@ -495,8 +497,7 @@ void CStretchEngine::StretchVert() {
       case TransformMethod::k8BppTo8Bpp: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           pdfium::span<const uint8_t> src_span =
-              pdfium::make_span(m_InterBuf)
-                  .subspan((col - m_DestClip.left) * DestBpp);
+              m_InterBuf.span().subspan((col - m_DestClip.left) * DestBpp);
           uint32_t dest_a = 0;
           for (int j = pWeights->m_SrcStart; j <= pWeights->m_SrcEnd; ++j) {
             uint32_t pixel_weight = pWeights->GetWeightForPosition(j);
@@ -511,8 +512,7 @@ void CStretchEngine::StretchVert() {
       case TransformMethod::k8BppTo8BppWithAlpha: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           pdfium::span<const uint8_t> src_span =
-              pdfium::make_span(m_InterBuf)
-                  .subspan((col - m_DestClip.left) * DestBpp);
+              m_InterBuf.span().subspan((col - m_DestClip.left) * DestBpp);
           unsigned char* src_scan_mask =
               m_ExtraAlphaBuf.data() + (col - m_DestClip.left);
           uint32_t dest_a = 0;
@@ -534,8 +534,7 @@ void CStretchEngine::StretchVert() {
       case TransformMethod::kManyBpptoManyBpp: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           pdfium::span<const uint8_t> src_span =
-              pdfium::make_span(m_InterBuf)
-                  .subspan((col - m_DestClip.left) * DestBpp);
+              m_InterBuf.span().subspan((col - m_DestClip.left) * DestBpp);
           uint32_t dest_r = 0;
           uint32_t dest_g = 0;
           uint32_t dest_b = 0;
@@ -558,8 +557,7 @@ void CStretchEngine::StretchVert() {
       case TransformMethod::kManyBpptoManyBppWithAlpha: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           pdfium::span<const uint8_t> src_span =
-              pdfium::make_span(m_InterBuf)
-                  .subspan((col - m_DestClip.left) * DestBpp);
+              m_InterBuf.span().subspan((col - m_DestClip.left) * DestBpp);
           unsigned char* src_scan_mask = nullptr;
           if (m_DestFormat != FXDIB_Format::kArgb)
             src_scan_mask = m_ExtraAlphaBuf.data() + (col - m_DestClip.left);
