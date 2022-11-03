@@ -136,7 +136,7 @@ TEST(RetainPtr, NullptrAssign) {
 TEST(RetainPtr, RawAssign) {
   PseudoRetainable obj;
   RetainPtr<PseudoRetainable> ptr;
-  ptr = &obj;
+  ptr = pdfium::WrapRetain(&obj);
   EXPECT_EQ(&obj, ptr);
 }
 

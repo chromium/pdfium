@@ -67,12 +67,6 @@ class TRIVIAL_ABI RetainPtr {
     return *this;
   }
 
-  // Assign a RetainPtr from a raw ptr.
-  RetainPtr& operator=(T* that) noexcept {
-    Reset(that);
-    return *this;
-  }
-
   // Copy-assign a RetainPtr.
   // Required in addition to copy conversion assignment below.
   RetainPtr& operator=(const RetainPtr& that) {

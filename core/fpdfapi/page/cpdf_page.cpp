@@ -89,7 +89,7 @@ RetainPtr<const CPDF_Object> CPDF_Page::GetPageAttr(
       return pObj;
 
     visited.insert(pPageDict);
-    pPageDict = pPageDict->GetDictFor(pdfium::page_object::kParent).Get();
+    pPageDict = pPageDict->GetDictFor(pdfium::page_object::kParent);
   }
   return nullptr;
 }
