@@ -18,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fxcrt/fixed_try_alloc_zeroed_data_vector.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/pauseindicator_iface.h"
 #include "core/fxcrt/span_util.h"
@@ -25,13 +26,6 @@
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-
-CPDF_ContentParser::OwnedData::OwnedData(
-    std::unique_ptr<uint8_t, FxFreeDeleter> buffer,
-    uint32_t size)
-    : buffer(std::move(buffer)), size(size) {}
-
-CPDF_ContentParser::OwnedData::~OwnedData() = default;
 
 CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
     : m_CurrentStage(Stage::kGetContent), m_pPageObjectHolder(pPage) {
@@ -183,22 +177,21 @@ CPDF_ContentParser::Stage CPDF_ContentParser::PrepareContent() {
   }
 
   const size_t buffer_size = safe_size.ValueOrDie();
-  std::unique_ptr<uint8_t, FxFreeDeleter> buffer(
-      FX_TryAlloc(uint8_t, buffer_size));
-  if (!buffer) {
+  FixedTryAllocZeroedDataVector<uint8_t> buffer(buffer_size);
+  if (buffer.empty()) {
     m_Data.emplace<pdfium::span<const uint8_t>>();
     return Stage::kComplete;
   }
 
   size_t pos = 0;
-  auto data_span = pdfium::make_span(buffer.get(), buffer_size);
+  auto data_span = buffer.writable_span();
   for (const auto& stream : m_StreamArray) {
     fxcrt::spancpy(data_span.subspan(pos), stream->GetSpan());
     pos += stream->GetSize();
     data_span[pos++] = ' ';
   }
   m_StreamArray.clear();
-  m_Data.emplace<OwnedData>(std::move(buffer), buffer_size);
+  m_Data = std::move(buffer);
   return Stage::kParse;
 }
 
@@ -272,9 +265,7 @@ void CPDF_ContentParser::HandlePageContentFailure() {
 }
 
 pdfium::span<const uint8_t> CPDF_ContentParser::GetData() const {
-  if (is_owned()) {
-    const OwnedData& data = absl::get<OwnedData>(m_Data);
-    return pdfium::make_span(data.buffer.get(), data.size);
-  }
+  if (is_owned())
+    return absl::get<FixedTryAllocZeroedDataVector<uint8_t>>(m_Data).span();
   return absl::get<pdfium::span<const uint8_t>>(m_Data);
 }
