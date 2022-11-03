@@ -77,7 +77,7 @@ CFX_FloatRect CPDF_ClipPath::GetClipBox() const {
 void CPDF_ClipPath::AppendPath(CPDF_Path path,
                                CFX_FillRenderOptions::FillType type) {
   PathData* pData = m_Ref.GetPrivateCopy();
-  pData->m_PathAndTypeList.push_back(std::make_pair(path, type));
+  pData->m_PathAndTypeList.emplace_back(path, type);
 }
 
 void CPDF_ClipPath::AppendPathWithAutoMerge(
@@ -131,10 +131,9 @@ void CPDF_ClipPath::Transform(const CFX_Matrix& matrix) {
 
 CPDF_ClipPath::PathData::PathData() = default;
 
-CPDF_ClipPath::PathData::PathData(const PathData& that) {
-  m_PathAndTypeList = that.m_PathAndTypeList;
-
-  m_TextList.resize(that.m_TextList.size());
+CPDF_ClipPath::PathData::PathData(const PathData& that)
+    : m_PathAndTypeList(that.m_PathAndTypeList),
+      m_TextList(that.m_TextList.size()) {
   for (size_t i = 0; i < that.m_TextList.size(); ++i) {
     if (that.m_TextList[i])
       m_TextList[i] = that.m_TextList[i]->Clone();

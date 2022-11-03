@@ -100,7 +100,7 @@ bool CPDF_Color::GetRGB(int* R, int* G, int* B) const {
   return true;
 }
 
-CPDF_Pattern* CPDF_Color::GetPattern() const {
+RetainPtr<CPDF_Pattern> CPDF_Color::GetPattern() const {
   DCHECK(IsPattern());
   return m_pValue ? m_pValue->GetPattern() : nullptr;
 }

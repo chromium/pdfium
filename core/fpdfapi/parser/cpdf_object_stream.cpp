@@ -106,7 +106,7 @@ void CPDF_ObjectStream::Init(const CPDF_Stream* stream) {
     if (!obj_num)
       continue;
 
-    object_info_.push_back({obj_num, obj_offset});
+    object_info_.emplace_back(obj_num, obj_offset);
   }
 }
 

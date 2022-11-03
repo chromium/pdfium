@@ -1216,7 +1216,7 @@ void CPDF_RenderStatus::DrawPathWithPattern(CPDF_PathObject* path_obj,
                                             const CFX_Matrix& mtObj2Device,
                                             const CPDF_Color* pColor,
                                             bool stroke) {
-  CPDF_Pattern* pattern = pColor->GetPattern();
+  RetainPtr<CPDF_Pattern> pattern = pColor->GetPattern();
   if (!pattern)
     return;
 

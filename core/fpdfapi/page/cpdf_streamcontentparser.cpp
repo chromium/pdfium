@@ -700,11 +700,11 @@ void CPDF_StreamContentParser::Handle_SetColorSpace_Stroke() {
 }
 
 void CPDF_StreamContentParser::Handle_SetDash() {
-  CPDF_Array* pArray = ToArray(GetObject(1));
+  RetainPtr<CPDF_Array> pArray = ToArray(GetObject(1));
   if (!pArray)
     return;
 
-  m_pCurStates->SetLineDash(pArray, GetNumber(0), 1.0f);
+  m_pCurStates->SetLineDash(pArray.Get(), GetNumber(0), 1.0f);
 }
 
 void CPDF_StreamContentParser::Handle_SetCharWidth() {
@@ -1035,7 +1035,7 @@ void CPDF_StreamContentParser::Handle_SetColor_Stroke() {
 }
 
 void CPDF_StreamContentParser::Handle_SetColorPS_Fill() {
-  CPDF_Object* pLastParam = GetObject(0);
+  RetainPtr<CPDF_Object> pLastParam = GetObject(0);
   if (!pLastParam)
     return;
 
@@ -1055,7 +1055,7 @@ void CPDF_StreamContentParser::Handle_SetColorPS_Fill() {
 }
 
 void CPDF_StreamContentParser::Handle_SetColorPS_Stroke() {
-  CPDF_Object* pLastParam = GetObject(0);
+  RetainPtr<CPDF_Object> pLastParam = GetObject(0);
   if (!pLastParam)
     return;
 
@@ -1280,7 +1280,7 @@ void CPDF_StreamContentParser::Handle_ShowText() {
 }
 
 void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
-  CPDF_Array* pArray = ToArray(GetObject(0));
+  RetainPtr<CPDF_Array> pArray = ToArray(GetObject(0));
   if (!pArray)
     return;
 
@@ -1435,7 +1435,7 @@ void CPDF_StreamContentParser::AddPathPoint(const CFX_PointF& point,
   } else if (m_PathPoints.empty()) {
     return;
   }
-  m_PathPoints.push_back(CFX_Path::Point(point, type, /*close=*/false));
+  m_PathPoints.emplace_back(point, type, /*close=*/false);
 }
 
 void CPDF_StreamContentParser::AddPathPointAndClose(
@@ -1445,7 +1445,7 @@ void CPDF_StreamContentParser::AddPathPointAndClose(
   if (m_PathPoints.empty())
     return;
 
-  m_PathPoints.push_back(CFX_Path::Point(point, type, /*close=*/true));
+  m_PathPoints.emplace_back(point, type, /*close=*/true);
 }
 
 void CPDF_StreamContentParser::AddPathObject(

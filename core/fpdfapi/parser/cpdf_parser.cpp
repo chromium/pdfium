@@ -306,7 +306,7 @@ CPDF_Parser::Error CPDF_Parser::SetEncryptHandler() {
   if (!GetTrailer())
     return FORMAT_ERROR;
 
-  const CPDF_Dictionary* pEncryptDict = GetEncryptDict();
+  RetainPtr<const CPDF_Dictionary> pEncryptDict = GetEncryptDict();
   if (!pEncryptDict)
     return SUCCESS;
 

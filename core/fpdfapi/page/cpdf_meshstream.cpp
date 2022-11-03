@@ -254,7 +254,7 @@ std::vector<CPDF_MeshVertex> CPDF_MeshStream::ReadVertexRow(
     if (m_BitStream->IsEOF() || !CanReadCoords())
       return std::vector<CPDF_MeshVertex>();
 
-    vertices.push_back(CPDF_MeshVertex());
+    vertices.emplace_back();
     CPDF_MeshVertex& vertex = vertices.back();
     vertex.position = pObject2Bitmap.Transform(ReadCoords());
     if (!CanReadColor())

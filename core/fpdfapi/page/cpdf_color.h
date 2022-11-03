@@ -40,7 +40,7 @@ class CPDF_Color {
   bool GetRGB(int* R, int* G, int* B) const;
 
   // Should only be called if IsPattern() returns true.
-  CPDF_Pattern* GetPattern() const;
+  RetainPtr<CPDF_Pattern> GetPattern() const;
 
  protected:
   bool IsPatternInternal() const;

@@ -237,7 +237,7 @@ RetainPtr<CPDF_Dictionary> CPDF_Document::TraversePDFPages(int iPage,
     } else {
       // If the vector has size level+1, the child is not in yet
       if (m_pTreeTraversal.size() == level + 1)
-        m_pTreeTraversal.push_back(std::make_pair(std::move(pKid), 0));
+        m_pTreeTraversal.emplace_back(std::move(pKid), 0);
       // Now m_pTreeTraversal[level+1] should exist and be equal to pKid.
       CPDF_Dictionary* pageKid = TraversePDFPages(iPage, nPagesToGo, level + 1);
       // Check if child was completely processed, i.e. it popped itself out
@@ -305,7 +305,7 @@ RetainPtr<const CPDF_Dictionary> CPDF_Document::GetPageDictionary(int iPage) {
 
   if (m_pTreeTraversal.empty()) {
     ResetTraversal();
-    m_pTreeTraversal.push_back(std::make_pair(std::move(pPages), 0));
+    m_pTreeTraversal.emplace_back(std::move(pPages), 0);
   }
   int nPagesToGo = iPage - m_iNextPageToTraverse + 1;
   RetainPtr<CPDF_Dictionary> pPage = TraversePDFPages(iPage, &nPagesToGo, 0);

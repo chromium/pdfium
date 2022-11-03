@@ -383,14 +383,14 @@ absl::optional<DecoderArray> GetDecoderArray(
 
     RetainPtr<const CPDF_Array> pParamsArray = ToArray(pParams);
     for (size_t i = 0; i < pDecoders->size(); ++i) {
-      decoder_array.push_back(
-          {pDecoders->GetByteStringAt(i),
-           pParamsArray ? pParamsArray->GetDictAt(i) : nullptr});
+      decoder_array.emplace_back(
+          pDecoders->GetByteStringAt(i),
+          pParamsArray ? pParamsArray->GetDictAt(i) : nullptr);
     }
   } else {
     DCHECK(pFilter->IsName());
-    decoder_array.push_back(
-        {pFilter->GetString(), pParams ? pParams->GetDict() : nullptr});
+    decoder_array.emplace_back(pFilter->GetString(),
+                               pParams ? pParams->GetDict() : nullptr);
   }
 
   return decoder_array;
@@ -412,7 +412,8 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
   for (size_t i = 0; i < nSize; ++i) {
     int estimated_size = i == nSize - 1 ? last_estimated_size : 0;
     ByteString decoder = decoder_array[i].first;
-    const CPDF_Dictionary* pParam = ToDictionary(decoder_array[i].second);
+    RetainPtr<const CPDF_Dictionary> pParam =
+        ToDictionary(decoder_array[i].second);
     std::unique_ptr<uint8_t, FxFreeDeleter> new_buf;
     uint32_t new_size = 0xFFFFFFFF;
     uint32_t offset = FX_INVALID_OFFSET;
@@ -423,7 +424,7 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
         *ImageEncoding = "FlateDecode";
         *dest_buf = std::move(result);
         *dest_size = last_span.size();
-        pImageParams->Reset(pParam);
+        *pImageParams = std::move(pParam);
         return true;
       }
       offset = FlateOrLZWDecode(false, last_span, pParam, estimated_size,
@@ -440,7 +441,7 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
         *ImageEncoding = "RunLengthDecode";
         *dest_buf = std::move(result);
         *dest_size = last_span.size();
-        pImageParams->Reset(pParam);
+        *pImageParams = std::move(pParam);
         return true;
       }
       offset = RunLengthDecode(last_span, &new_buf, &new_size);
@@ -451,7 +452,7 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
       else if (decoder == "CCF")
         decoder = "CCITTFaxDecode";
       *ImageEncoding = std::move(decoder);
-      pImageParams->Reset(pParam);
+      *pImageParams = std::move(pParam);
       *dest_buf = std::move(result);
       *dest_size = last_span.size();
       return true;
