@@ -2,27 +2,28 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcrt/fixed_zeroed_data_vector.h"
+#include "core/fxcrt/fixed_try_alloc_zeroed_data_vector.h"
 
+#include <limits>
 #include <utility>
 
-#include "core/fxcrt/fixed_try_alloc_zeroed_data_vector.h"
 #include "core/fxcrt/fixed_uninit_data_vector.h"
+#include "core/fxcrt/fixed_zeroed_data_vector.h"
 #include "core/fxcrt/span_util.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/span.h"
 
-TEST(FixedZeroedDataVector, NoData) {
-  FixedZeroedDataVector<int> vec;
+TEST(FixedTryAllocZeroedDataVector, NoData) {
+  FixedTryAllocZeroedDataVector<int> vec;
   EXPECT_EQ(0u, vec.size());
   EXPECT_TRUE(vec.empty());
   EXPECT_TRUE(vec.span().empty());
   EXPECT_TRUE(vec.writable_span().empty());
 }
 
-TEST(FixedZeroedDataVector, WithData) {
-  FixedZeroedDataVector<int> vec(4);
+TEST(FixedTryAllocZeroedDataVector, WithData) {
+  FixedTryAllocZeroedDataVector<int> vec(4);
   EXPECT_FALSE(vec.empty());
   EXPECT_EQ(4u, vec.size());
   EXPECT_EQ(4u, vec.span().size());
@@ -34,14 +35,24 @@ TEST(FixedZeroedDataVector, WithData) {
   EXPECT_THAT(vec.span(), testing::ElementsAre(1, 2, 3, 4));
 }
 
-TEST(FixedZeroedDataVector, Move) {
-  FixedZeroedDataVector<int> vec(4);
+TEST(FixedTryAllocZeroedDataVector, AllocFailure) {
+  constexpr size_t kCloseToMaxByteAlloc =
+      std::numeric_limits<size_t>::max() - 100;
+  FixedTryAllocZeroedDataVector<int> vec(kCloseToMaxByteAlloc);
+  EXPECT_TRUE(vec.empty());
+  EXPECT_EQ(0u, vec.size());
+  EXPECT_EQ(0u, vec.span().size());
+  EXPECT_EQ(0u, vec.writable_span().size());
+}
+
+TEST(FixedTryAllocZeroedDataVector, Move) {
+  FixedTryAllocZeroedDataVector<int> vec(4);
   constexpr int kData[] = {1, 2, 3, 4};
   ASSERT_EQ(4u, vec.writable_span().size());
   fxcrt::spancpy(vec.writable_span(), pdfium::make_span(kData));
   const int* const original_data_ptr = vec.span().data();
 
-  FixedZeroedDataVector<int> vec2(std::move(vec));
+  FixedTryAllocZeroedDataVector<int> vec2(std::move(vec));
   EXPECT_FALSE(vec2.empty());
   EXPECT_EQ(4u, vec2.size());
   EXPECT_EQ(4u, vec2.span().size());
@@ -68,10 +79,10 @@ TEST(FixedZeroedDataVector, Move) {
   EXPECT_TRUE(vec2.writable_span().empty());
 }
 
-TEST(FixedZeroedDataVector, AssignFromFixedUninitDataVector) {
-  FixedZeroedDataVector<int> vec;
+TEST(FixedTryAllocZeroedDataVector, AssignFromFixedZeroedDataVector) {
+  FixedTryAllocZeroedDataVector<int> vec;
 
-  FixedUninitDataVector<int> vec2(4);
+  FixedZeroedDataVector<int> vec2(4);
   constexpr int kData[] = {1, 2, 3, 4};
   ASSERT_EQ(4u, vec2.writable_span().size());
   fxcrt::spancpy(vec2.writable_span(), pdfium::make_span(kData));
@@ -82,10 +93,10 @@ TEST(FixedZeroedDataVector, AssignFromFixedUninitDataVector) {
   EXPECT_THAT(vec.span(), testing::ElementsAre(1, 2, 3, 4));
 }
 
-TEST(FixedZeroedDataVector, AssignFromFixedTryAllocZeroedDataVector) {
-  FixedZeroedDataVector<int> vec;
+TEST(FixedTryAllocZeroedDataVector, AssignFromFixedUninitDataVector) {
+  FixedTryAllocZeroedDataVector<int> vec;
 
-  FixedTryAllocZeroedDataVector<int> vec2(4);
+  FixedUninitDataVector<int> vec2(4);
   constexpr int kData[] = {1, 2, 3, 4};
   ASSERT_EQ(4u, vec2.writable_span().size());
   fxcrt::spancpy(vec2.writable_span(), pdfium::make_span(kData));

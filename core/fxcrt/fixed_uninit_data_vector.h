@@ -9,6 +9,6 @@
 
 template <typename T>
 using FixedUninitDataVector =
-    fxcrt::FixedSizeDataVector<T, /*initialize=*/false>;
+    fxcrt::FixedSizeDataVector<T, fxcrt::DataVectorAllocOption::kUninitialized>;
 
 #endif  // CORE_FXCRT_FIXED_UNINIT_DATA_VECTOR_H_

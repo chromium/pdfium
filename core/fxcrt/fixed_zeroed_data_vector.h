@@ -9,6 +9,6 @@
 
 template <typename T>
 using FixedZeroedDataVector =
-    fxcrt::FixedSizeDataVector<T, /*initialize=*/true>;
+    fxcrt::FixedSizeDataVector<T, fxcrt::DataVectorAllocOption::kInitialized>;
 
 #endif  // CORE_FXCRT_FIXED_ZEROED_DATA_VECTOR_H_

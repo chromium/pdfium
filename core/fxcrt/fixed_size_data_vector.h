@@ -15,29 +15,34 @@
 
 namespace fxcrt {
 
+enum class DataVectorAllocOption {
+  kInitialized,
+  kUninitialized,
+  kTryInitialized,
+};
+
 // A simple data container that has a fixed size.
 // Unlike std::vector, it cannot be implicitly copied and its data is only
 // accessible using spans.
 // It can either initialize its data with zeros, or leave its data
 // uninitialized.
-template <typename T, bool INITIALIZE>
+template <typename T, DataVectorAllocOption OPTION>
 class FixedSizeDataVector {
  public:
   FixedSizeDataVector() : FixedSizeDataVector(0) {}
   explicit FixedSizeDataVector(size_t size)
-      : data_(MaybeInit(size, INITIALIZE)), size_(size) {}
+      : data_(MaybeInit(size, OPTION)), size_(CalculateSize(size, OPTION)) {}
   FixedSizeDataVector(const FixedSizeDataVector&) = delete;
   FixedSizeDataVector& operator=(const FixedSizeDataVector&) = delete;
-  template <bool OTHER_INITIALIZE>
-  FixedSizeDataVector(
-      FixedSizeDataVector<T, OTHER_INITIALIZE>&& that) noexcept {
+  template <DataVectorAllocOption OTHER_OPTION>
+  FixedSizeDataVector(FixedSizeDataVector<T, OTHER_OPTION>&& that) noexcept {
     data_ = std::move(that.data_);
     size_ = that.size_;
     that.size_ = 0;
   }
-  template <bool OTHER_INITIALIZE>
+  template <DataVectorAllocOption OTHER_OPTION>
   FixedSizeDataVector& operator=(
-      FixedSizeDataVector<T, OTHER_INITIALIZE>&& that) noexcept {
+      FixedSizeDataVector<T, OTHER_OPTION>&& that) noexcept {
     data_ = std::move(that.data_);
     size_ = that.size_;
     that.size_ = 0;
@@ -59,13 +64,31 @@ class FixedSizeDataVector {
   bool empty() const { return size_ == 0; }
 
  private:
-  friend class FixedSizeDataVector<T, true>;
-  friend class FixedSizeDataVector<T, false>;
+  friend class FixedSizeDataVector<T, DataVectorAllocOption::kInitialized>;
+  friend class FixedSizeDataVector<T, DataVectorAllocOption::kUninitialized>;
+  friend class FixedSizeDataVector<T, DataVectorAllocOption::kTryInitialized>;
 
-  static T* MaybeInit(size_t size, bool initialize) {
+  static T* MaybeInit(size_t size, DataVectorAllocOption alloc_option) {
     if (size == 0)
       return nullptr;
-    return initialize ? FX_Alloc(T, size) : FX_AllocUninit(T, size);
+    switch (alloc_option) {
+      case DataVectorAllocOption::kInitialized:
+        return FX_Alloc(T, size);
+      case DataVectorAllocOption::kUninitialized:
+        return FX_AllocUninit(T, size);
+      case DataVectorAllocOption::kTryInitialized:
+        return FX_TryAlloc(T, size);
+    }
+  }
+
+  size_t CalculateSize(size_t size, DataVectorAllocOption alloc_option) const {
+    switch (alloc_option) {
+      case DataVectorAllocOption::kInitialized:
+      case DataVectorAllocOption::kUninitialized:
+        return size;
+      case DataVectorAllocOption::kTryInitialized:
+        return data_ ? size : 0;
+    }
   }
 
   std::unique_ptr<T, FxFreeDeleter> data_;
