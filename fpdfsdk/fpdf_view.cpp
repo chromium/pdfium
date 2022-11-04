@@ -1003,7 +1003,9 @@ FPDF_VIEWERREF_GetPrintPageRange(FPDF_DOCUMENT document) {
   if (!pDoc)
     return nullptr;
   CPDF_ViewerPreferences viewRef(pDoc);
-  return FPDFPageRangeFromCPDFArray(viewRef.PrintPageRange().Get());
+
+  // Unretained reference in public API. NOLINTNEXTLINE
+  return FPDFPageRangeFromCPDFArray(viewRef.PrintPageRange());
 }
 
 FPDF_EXPORT size_t FPDF_CALLCONV
@@ -1082,9 +1084,10 @@ FPDF_GetNamedDestByName(FPDF_DOCUMENT document, FPDF_BYTESTRING name) {
     return nullptr;
 
   ByteString dest_name(name);
+
   // TODO(tsepez): murky ownership, should caller get a reference?
-  return FPDFDestFromCPDFArray(
-      CPDF_NameTree::LookupNamedDest(pDoc, dest_name).Get());
+  // Unretained reference in public API. NOLINTNEXTLINE
+  return FPDFDestFromCPDFArray(CPDF_NameTree::LookupNamedDest(pDoc, dest_name));
 }
 
 #ifdef PDF_ENABLE_V8

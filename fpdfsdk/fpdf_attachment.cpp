@@ -87,7 +87,8 @@ FPDFDoc_AddAttachment(FPDF_DOCUMENT document, FPDF_WIDESTRING name) {
   if (!name_tree->AddValueAndName(pFile->MakeReference(pDoc), wsName))
     return nullptr;
 
-  return FPDFAttachmentFromCPDFObject(pFile.Get());
+  // Unretained reference in public API. NOLINTNEXTLINE
+  return FPDFAttachmentFromCPDFObject(pFile);
 }
 
 FPDF_EXPORT FPDF_ATTACHMENT FPDF_CALLCONV
@@ -101,8 +102,10 @@ FPDFDoc_GetAttachment(FPDF_DOCUMENT document, int index) {
     return nullptr;
 
   WideString csName;
+
+  // Unretained reference in public API. NOLINTNEXTLINE
   return FPDFAttachmentFromCPDFObject(
-      name_tree->LookupValueAndName(index, &csName).Get());
+      name_tree->LookupValueAndName(index, &csName));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

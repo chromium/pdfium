@@ -317,7 +317,8 @@ FPDF_EXPORT FPDF_LINK FPDF_CALLCONV FPDFLink_GetLinkAtPoint(FPDF_PAGE page,
   CPDF_Link link = pLinkList->GetLinkAtPoint(
       pPage, CFX_PointF(static_cast<float>(x), static_cast<float>(y)), nullptr);
 
-  return FPDFLinkFromCPDFDictionary(link.GetMutableDict().Get());
+  // Unretained reference in public API. NOLINTNEXTLINE
+  return FPDFLinkFromCPDFDictionary(link.GetMutableDict());
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFLink_GetLinkZOrderAtPoint(FPDF_PAGE page,

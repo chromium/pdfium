@@ -1415,8 +1415,9 @@ FPDF_EXPORT FPDF_LINK FPDF_CALLCONV FPDFAnnot_GetLink(FPDF_ANNOTATION annot) {
   if (FPDFAnnot_GetSubtype(annot) != FPDF_ANNOT_LINK)
     return nullptr;
 
+  // Unretained reference in public API. NOLINTNEXTLINE
   return FPDFLinkFromCPDFDictionary(
-      CPDFAnnotContextFromFPDFAnnotation(annot)->GetMutableAnnotDict().Get());
+      CPDFAnnotContextFromFPDFAnnotation(annot)->GetMutableAnnotDict());
 }
 
 FPDF_EXPORT int FPDF_CALLCONV
