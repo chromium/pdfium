@@ -42,10 +42,6 @@ CPDF_Object::Type CPDF_Dictionary::GetType() const {
   return kDictionary;
 }
 
-RetainPtr<const CPDF_Dictionary> CPDF_Dictionary::GetDict() const {
-  return pdfium::WrapRetain(this);
-}
-
 CPDF_Dictionary* CPDF_Dictionary::AsMutableDictionary() {
   return this;
 }
@@ -91,7 +87,7 @@ RetainPtr<CPDF_Object> CPDF_Dictionary::GetMutableObjectFor(
 const CPDF_Object* CPDF_Dictionary::GetDirectObjectForInternal(
     const ByteString& key) const {
   const CPDF_Object* p = GetObjectForInternal(key);
-  return p ? const_cast<CPDF_Object*>(p)->GetMutableDirect().Get() : nullptr;
+  return p ? p->GetDirectInternal() : nullptr;
 }
 
 RetainPtr<const CPDF_Object> CPDF_Dictionary::GetDirectObjectFor(
@@ -119,7 +115,7 @@ ByteString CPDF_Dictionary::GetByteStringFor(const ByteString& key,
 WideString CPDF_Dictionary::GetUnicodeTextFor(const ByteString& key) const {
   const CPDF_Object* p = GetObjectForInternal(key);
   if (const CPDF_Reference* pRef = ToReference(p))
-    p = pRef->GetDirect().Get();
+    p = pRef->GetDirectInternal();
   return p ? p->GetUnicodeText() : WideString();
 }
 
@@ -154,16 +150,14 @@ float CPDF_Dictionary::GetFloatFor(const ByteString& key) const {
   return p ? p->GetNumber() : 0;
 }
 
+const CPDF_Dictionary* CPDF_Dictionary::GetDictInternal() const {
+  return this;
+}
+
 const CPDF_Dictionary* CPDF_Dictionary::GetDictForInternal(
     const ByteString& key) const {
   const CPDF_Object* p = GetDirectObjectForInternal(key);
-  if (!p)
-    return nullptr;
-  if (const CPDF_Dictionary* pDict = p->AsDictionary())
-    return pDict;
-  if (const CPDF_Stream* pStream = p->AsStream())
-    return pStream->GetDict().Get();
-  return nullptr;
+  return p ? p->GetDictInternal() : nullptr;
 }
 
 RetainPtr<const CPDF_Dictionary> CPDF_Dictionary::GetDictFor(

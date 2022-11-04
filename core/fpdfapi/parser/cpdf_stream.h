@@ -29,7 +29,6 @@ class CPDF_Stream final : public CPDF_Object {
   // CPDF_Object:
   Type GetType() const override;
   RetainPtr<CPDF_Object> Clone() const override;
-  RetainPtr<const CPDF_Dictionary> GetDict() const override;
   WideString GetUnicodeText() const override;
   CPDF_Stream* AsMutableStream() override;
   bool WriteTo(IFX_ArchiveStream* archive,
@@ -65,6 +64,8 @@ class CPDF_Stream final : public CPDF_Object {
   bool HasFilter() const;
 
  private:
+  friend class CPDF_Dictionary;
+
   // Uninitialized.
   CPDF_Stream();
 
@@ -74,6 +75,7 @@ class CPDF_Stream final : public CPDF_Object {
   CPDF_Stream(DataVector<uint8_t> pData, RetainPtr<CPDF_Dictionary> pDict);
   ~CPDF_Stream() override;
 
+  const CPDF_Dictionary* GetDictInternal() const override;
   RetainPtr<CPDF_Object> CloneNonCyclic(
       bool bDirect,
       std::set<const CPDF_Object*>* pVisited) const override;

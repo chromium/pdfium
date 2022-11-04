@@ -36,9 +36,9 @@ int CPDF_Reference::GetInteger() const {
   return obj ? obj->GetInteger() : 0;
 }
 
-RetainPtr<const CPDF_Dictionary> CPDF_Reference::GetDict() const {
+const CPDF_Dictionary* CPDF_Reference::GetDictInternal() const {
   const CPDF_Object* obj = FastGetDirect();
-  return obj ? obj->GetDict() : nullptr;
+  return obj ? obj->GetDictInternal() : nullptr;
 }
 
 CPDF_Reference* CPDF_Reference::AsMutableReference() {
@@ -75,8 +75,8 @@ void CPDF_Reference::SetRef(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum) {
   m_RefObjNum = objnum;
 }
 
-RetainPtr<CPDF_Object> CPDF_Reference::GetMutableDirect() {
-  return m_pObjList ? m_pObjList->GetOrParseIndirectObject(m_RefObjNum)
+const CPDF_Object* CPDF_Reference::GetDirectInternal() const {
+  return m_pObjList ? m_pObjList->GetOrParseIndirectObjectInternal(m_RefObjNum)
                     : nullptr;
 }
 

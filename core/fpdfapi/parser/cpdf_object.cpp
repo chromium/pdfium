@@ -33,11 +33,15 @@ uint64_t CPDF_Object::KeyForCache() const {
 }
 
 RetainPtr<CPDF_Object> CPDF_Object::GetMutableDirect() {
-  return pdfium::WrapRetain(this);
+  return pdfium::WrapRetain(const_cast<CPDF_Object*>(GetDirectInternal()));
 }
 
 RetainPtr<const CPDF_Object> CPDF_Object::GetDirect() const {
-  return const_cast<CPDF_Object*>(this)->GetMutableDirect();
+  return pdfium::WrapRetain(GetDirectInternal());
+}
+
+const CPDF_Object* CPDF_Object::GetDirectInternal() const {
+  return this;
 }
 
 RetainPtr<CPDF_Object> CPDF_Object::CloneObjectNonCyclic(bool bDirect) const {
@@ -71,11 +75,15 @@ int CPDF_Object::GetInteger() const {
   return 0;
 }
 
-RetainPtr<CPDF_Dictionary> CPDF_Object::GetMutableDict() {
-  return pdfium::WrapRetain(const_cast<CPDF_Dictionary*>(GetDict().Get()));
+RetainPtr<const CPDF_Dictionary> CPDF_Object::GetDict() const {
+  return pdfium::WrapRetain(GetDictInternal());
 }
 
-RetainPtr<const CPDF_Dictionary> CPDF_Object::GetDict() const {
+RetainPtr<CPDF_Dictionary> CPDF_Object::GetMutableDict() {
+  return pdfium::WrapRetain(const_cast<CPDF_Dictionary*>(GetDictInternal()));
+}
+
+const CPDF_Dictionary* CPDF_Object::GetDictInternal() const {
   return nullptr;
 }
 

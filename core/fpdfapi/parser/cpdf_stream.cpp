@@ -58,8 +58,8 @@ CPDF_Object::Type CPDF_Stream::GetType() const {
   return kStream;
 }
 
-RetainPtr<const CPDF_Dictionary> CPDF_Stream::GetDict() const {
-  return dict_;
+const CPDF_Dictionary* CPDF_Stream::GetDictInternal() const {
+  return dict_.Get();
 }
 
 CPDF_Stream* CPDF_Stream::AsMutableStream() {
