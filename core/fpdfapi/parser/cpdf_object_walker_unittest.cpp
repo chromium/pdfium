@@ -94,7 +94,7 @@ TEST(ObjectWalkerTest, GetParent) {
   CPDF_ObjectWalker walker(level_0);
   while (RetainPtr<const CPDF_Object> obj = walker.GetNext()) {
     EXPECT_EQ(cur_parent, walker.GetParent());
-    cur_parent = obj;
+    cur_parent = std::move(obj);
   }
 }
 
