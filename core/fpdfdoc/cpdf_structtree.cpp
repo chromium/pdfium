@@ -84,7 +84,8 @@ void CPDF_StructTree::LoadPageTree(RetainPtr<const CPDF_Dictionary> pPageDict) {
   if (parents_id < 0)
     return;
 
-  const CPDF_Array* pParentArray = ToArray(parent_tree.LookupValue(parents_id));
+  RetainPtr<const CPDF_Array> pParentArray =
+      ToArray(parent_tree.LookupValue(parents_id));
   if (!pParentArray)
     return;
 
