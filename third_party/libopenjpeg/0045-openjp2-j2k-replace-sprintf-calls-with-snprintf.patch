@@ -1,0 +1,82 @@
+https://github.com/uclouvain/openjpeg/pull/1450
+https://patch-diff.githubusercontent.com/raw/uclouvain/openjpeg/pull/1450.patch
+
+From 093ccb0ecdba7d5c4b5363e7dda33b1769fcc08a Mon Sep 17 00:00:00 2001
+From: Mark Mentovai <mark@chromium.org>
+Date: Mon, 7 Nov 2022 09:32:02 -0500
+Subject: [PATCH] openjp2/j2k: replace sprintf calls with snprintf
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This makes it possible to build j2k.c without warnings using the macOS
+13 SDK. Calls to sprintf are replaced with snprintf, passing appropriate
+buffer sizes.
+
+It doesn’t appear that any of the changed uses of sprintf were actually
+unsafe, so no behavior change is expected aside from SDK compatibility.
+
+The macOS 13 SDK deprecates sprintf as it’s difficult to use safely. The
+deprecation warning message is visible when building C++, but it is not
+normally visible when building plain C code due to a quirk in how
+sprintf is declared in the SDK. However, the deprecation message is
+visible when building plain C under Address Sanitizer
+(-fsanitize=address). This discrepancy was discovered at
+https://crbug.com/1381706 and reported to Apple with a copy at
+https://openradar.appspot.com/FB11761475.
+
+The macOS 13 SDK is packaged in Xcode 14.1, released on 2022-11-01. This
+also affects the iOS 16 SDK and other 2022-era Apple OS SDKs packaged in
+Xcode 14.0, released on 2022-09-12.
+
+j2k.c is visible to the Chromium build via PDFium, and this change is
+needed to allow Chromium to move forward to the macOS 13 SDK.
+
+This change is limited to src/lib/openjp2. Other uses of sprintf were
+found throughout openjpeg.
+---
+ src/lib/openjp2/j2k.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/src/lib/openjp2/j2k.c b/src/lib/openjp2/j2k.c
+index 923bd8916..354415df7 100644
+--- a/src/lib/openjp2/j2k.c
++++ b/src/lib/openjp2/j2k.c
+@@ -7954,21 +7954,24 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
+ 
+         /* UniPG>> */
+ #ifdef USE_JPWL
+-        cp->comment = (char*)opj_malloc(clen + strlen(version) + 11);
++        const size_t cp_comment_buf_size = clen + strlen(version) + 11;
++        cp->comment = (char*)opj_malloc(cp_comment_buf_size);
+         if (!cp->comment) {
+             opj_event_msg(p_manager, EVT_ERROR,
+                           "Not enough memory to allocate comment string\n");
+             return OPJ_FALSE;
+         }
+-        sprintf(cp->comment, "%s%s with JPWL", comment, version);
++        snprintf(cp->comment, cp_comment_buf_size, "%s%s with JPWL",
++                 comment, version);
+ #else
+-        cp->comment = (char*)opj_malloc(clen + strlen(version) + 1);
++        const size_t cp_comment_buf_size = clen + strlen(version) + 1;
++        cp->comment = (char*)opj_malloc(cp_comment_buf_size);
+         if (!cp->comment) {
+             opj_event_msg(p_manager, EVT_ERROR,
+                           "Not enough memory to allocate comment string\n");
+             return OPJ_FALSE;
+         }
+-        sprintf(cp->comment, "%s%s", comment, version);
++        snprintf(cp->comment, cp_comment_buf_size, "%s%s", comment, version);
+ #endif
+         /* <<UniPG */
+     }
+@@ -11973,7 +11976,7 @@ static OPJ_BOOL opj_j2k_move_data_from_codec_to_output_image(opj_j2k_t * p_j2k,
+             p_image->comps[compno].data = p_j2k->m_output_image->comps[compno].data;
+ #if 0
+             char fn[256];
+-            sprintf(fn, "/tmp/%d.raw", compno);
++            snprintf(fn, sizeof fn, "/tmp/%d.raw", compno);
+             FILE *debug = fopen(fn, "wb");
+             fwrite(p_image->comps[compno].data, sizeof(OPJ_INT32),
+                    p_image->comps[compno].w * p_image->comps[compno].h, debug);

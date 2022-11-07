@@ -32,3 +32,4 @@ Local Modifications:
 0042-popcnt-windows-arm64.patch: Backport to fix Windows arm64 build.
 0043-mel_init.patch: Backport fix for assertion failure in mel_init().
 0044-opj_t1_allocate_buffers.patch: Backport fix for malloc size error in opj_t1_allocate_buffers().
+0045-openjp2-j2k-replace-sprintf-calls-with-snprintf.patch: Replace sprintf with snprintf for macOS 13 SDK compatibility, from https://github.com/uclouvain/openjpeg/pull/1450.
