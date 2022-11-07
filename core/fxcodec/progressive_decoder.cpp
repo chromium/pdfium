@@ -264,9 +264,12 @@ bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
   int32_t dest_Bpp = (m_SrcFormat & 0xff) >> 3;
   int32_t src_left = m_startX;
   int32_t dest_left = m_clipBox.left;
-  const uint8_t* src_scan =
-      pDIBitmap->GetScanline(row).subspan(src_left * src_Bpp).data();
-  uint8_t* dest_scan = m_DecodeBuf.data() + dest_left * dest_Bpp;
+  pdfium::span<const uint8_t> src_span =
+      pDIBitmap->GetScanline(row).subspan(src_left * src_Bpp);
+  pdfium::span<uint8_t> dest_span =
+      pdfium::make_span(m_DecodeBuf).subspan(dest_left * dest_Bpp);
+  const uint8_t* src_scan = src_span.data();
+  uint8_t* dest_scan = dest_span.data();
   switch (pDIBitmap->GetFormat()) {
     case FXDIB_Format::k1bppMask:
     case FXDIB_Format::k1bppRgb:
@@ -344,8 +347,7 @@ void ProgressiveDecoder::PngFillScanlineBufCompleted(int pass, int line) {
     if (dest_row >= dest_top + dest_height) {
       return;
     }
-    PngOneOneMapResampleHorz(pDIBitmap, dest_row, m_DecodeBuf.data(),
-                             m_SrcFormat);
+    PngOneOneMapResampleHorz(pDIBitmap, dest_row, m_DecodeBuf, m_SrcFormat);
     if (m_SrcPassNumber == 1 && scale_y > 1.0) {
       ResampleVert(pDIBitmap, scale_y, dest_row);
       return;
@@ -444,28 +446,31 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
   return true;
 }
 
-void ProgressiveDecoder::GifReadScanline(int32_t row_num, uint8_t* row_buf) {
+void ProgressiveDecoder::GifReadScanline(int32_t row_num,
+                                         pdfium::span<uint8_t> row_buf) {
   RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
   DCHECK(pDIBitmap);
   int32_t img_width = m_GifFrameRect.Width();
   if (!pDIBitmap->IsAlphaFormat()) {
-    uint8_t* byte_ptr = row_buf;
+    pdfium::span<uint8_t> byte_span = row_buf;
     for (int i = 0; i < img_width; i++) {
-      if (*byte_ptr == m_GifTransIndex) {
-        *byte_ptr = m_GifBgIndex;
+      if (byte_span.front() == m_GifTransIndex) {
+        byte_span.front() = m_GifBgIndex;
       }
-      byte_ptr++;
+      byte_span = byte_span.subspan(1);
     }
   }
   int32_t pal_index = m_GifBgIndex;
   if (m_GifTransIndex != -1 && m_pDeviceBitmap->IsAlphaFormat()) {
     pal_index = m_GifTransIndex;
   }
-  memset(m_DecodeBuf.data(), pal_index, m_SrcWidth);
+  const int32_t left = m_GifFrameRect.left;
+  const pdfium::span<uint8_t> decode_span = m_DecodeBuf;
+  fxcrt::spanset(decode_span.first(m_SrcWidth), pal_index);
+  fxcrt::spancpy(decode_span.subspan(left), row_buf.first(img_width));
+
   bool bLastPass = (row_num % 2) == 1;
   int32_t line = row_num + m_GifFrameRect.top;
-  int32_t left = m_GifFrameRect.left;
-  memcpy(m_DecodeBuf.data() + left, row_buf, img_width);
   int src_top = m_clipBox.top;
   int src_bottom = m_clipBox.bottom;
   int dest_top = m_startY;
@@ -480,7 +485,7 @@ void ProgressiveDecoder::GifReadScanline(int32_t row_num, uint8_t* row_buf) {
   if (dest_row >= dest_top + dest_height)
     return;
 
-  ResampleScanline(pDIBitmap, dest_row, m_DecodeBuf.data(), m_SrcFormat);
+  ResampleScanline(pDIBitmap, dest_row, decode_span, m_SrcFormat);
   if (scale_y > 1.0 && m_SrcPassNumber == 1) {
     ResampleVert(pDIBitmap, scale_y, dest_row);
     return;
@@ -538,7 +543,7 @@ void ProgressiveDecoder::BmpReadScanline(uint32_t row_num,
   if (dest_row >= dest_top + dest_height)
     return;
 
-  ResampleScanline(pDIBitmap, dest_row, m_DecodeBuf.data(), m_SrcFormat);
+  ResampleScanline(pDIBitmap, dest_row, m_DecodeBuf, m_SrcFormat);
   if (scale_y <= 1.0)
     return;
 
@@ -1058,13 +1063,13 @@ FXCODEC_STATUS ProgressiveDecoder::JpegContinueDecode() {
 void ProgressiveDecoder::PngOneOneMapResampleHorz(
     const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
     int32_t dest_line,
-    uint8_t* src_scan,
+    pdfium::span<uint8_t> src_span,
     FXCodec_Format src_format) {
   int32_t src_Bpp = (m_SrcFormat & 0xff) >> 3;
   int32_t dest_Bpp = pDeviceBitmap->GetBPP() >> 3;
   int32_t src_left = m_clipBox.left;
   int32_t dest_left = m_startX;
-  src_scan += src_left * src_Bpp;
+  uint8_t* src_scan = src_span.subspan(src_left * src_Bpp).data();
   uint8_t* dest_scan = pDeviceBitmap->GetWritableScanline(dest_line)
                            .subspan(dest_left * dest_Bpp)
                            .data();
@@ -1685,8 +1690,9 @@ void ProgressiveDecoder::GetTransMethod(FXDIB_Format dest_format,
 void ProgressiveDecoder::ResampleScanline(
     const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
     int dest_line,
-    uint8_t* src_scan,
+    pdfium::span<uint8_t> src_span,
     FXCodec_Format src_format) {
+  uint8_t* src_scan = src_span.data();
   int src_left = m_clipBox.left;
   int dest_left = m_startX;
   uint8_t* dest_scan = pDeviceBitmap->GetWritableScanline(dest_line).data();
@@ -2034,7 +2040,7 @@ void ProgressiveDecoder::Resample(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
     if (dest_row >= dest_top + dest_height)
       return;
 
-    ResampleScanline(pDeviceBitmap, dest_row, m_DecodeBuf.data(), src_format);
+    ResampleScanline(pDeviceBitmap, dest_row, m_DecodeBuf, src_format);
     if (scale_y > 1.0)
       ResampleVert(pDeviceBitmap, scale_y, dest_row);
   }

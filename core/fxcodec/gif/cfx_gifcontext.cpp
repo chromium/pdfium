@@ -30,7 +30,8 @@ CFX_GifContext::CFX_GifContext(GifDecoder::Delegate* delegate)
 
 CFX_GifContext::~CFX_GifContext() = default;
 
-void CFX_GifContext::ReadScanline(int32_t row_num, uint8_t* row_buf) {
+void CFX_GifContext::ReadScanline(int32_t row_num,
+                                  pdfium::span<uint8_t> row_buf) {
   delegate_->GifReadScanline(row_num, row_buf);
 }
 
@@ -251,7 +252,7 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
 
       while (ret != LZWDecompressor::Status::kError) {
         if (ret == LZWDecompressor::Status::kSuccess) {
-          ReadScanline(gif_image->row_num, gif_image->row_buffer.data());
+          ReadScanline(gif_image->row_num, gif_image->row_buffer);
           gif_image->row_buffer.clear();
           SaveDecodingStatus(GIF_D_STATUS_TAIL);
           return GifDecoder::Status::kSuccess;
@@ -282,7 +283,7 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
 
         if (ret == LZWDecompressor::Status::kInsufficientDestSize) {
           if (gif_image->image_info.local_flags.interlace) {
-            ReadScanline(gif_image->row_num, gif_image->row_buffer.data());
+            ReadScanline(gif_image->row_num, gif_image->row_buffer);
             gif_image->row_num += kGifInterlaceStep[img_pass_num_];
             if (gif_image->row_num >=
                 static_cast<int32_t>(gif_image->image_info.height)) {
@@ -294,7 +295,7 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
               gif_image->row_num = kGifInterlaceStep[img_pass_num_] / 2;
             }
           } else {
-            ReadScanline(gif_image->row_num++, gif_image->row_buffer.data());
+            ReadScanline(gif_image->row_num++, gif_image->row_buffer);
           }
 
           img_row_offset_ = 0;

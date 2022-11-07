@@ -15,6 +15,7 @@
 #include "core/fxcodec/gif/lzw_decompressor.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/base/span.h"
 
 class CFX_CodecMemory;
 
@@ -25,7 +26,7 @@ class CFX_GifContext : public ProgressiveDecoderIface::Context {
   explicit CFX_GifContext(GifDecoder::Delegate* delegate);
   ~CFX_GifContext() override;
 
-  void ReadScanline(int32_t row_num, uint8_t* row_buf);
+  void ReadScanline(int32_t row_num, pdfium::span<uint8_t> row_buf);
   bool GetRecordPosition(uint32_t cur_pos,
                          int32_t left,
                          int32_t top,

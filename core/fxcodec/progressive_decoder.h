@@ -20,6 +20,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cstretchengine.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "third_party/base/span.h"
 
 #ifdef PDF_ENABLE_XFA_BMP
 #include "core/fxcodec/bmp/bmp_decoder.h"
@@ -111,7 +112,7 @@ class ProgressiveDecoder final :
                                  CFX_GifPalette* pal_ptr,
                                  int32_t trans_index,
                                  bool interlace) override;
-  void GifReadScanline(int32_t row_num, uint8_t* row_buf) override;
+  void GifReadScanline(int32_t row_num, pdfium::span<uint8_t> row_buf) override;
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_BMP
@@ -178,7 +179,7 @@ class ProgressiveDecoder final :
 #ifdef PDF_ENABLE_XFA_PNG
   void PngOneOneMapResampleHorz(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                                 int32_t dest_line,
-                                uint8_t* src_scan,
+                                pdfium::span<uint8_t> src_span,
                                 FXCodec_Format src_format);
   bool PngDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
   FXCODEC_STATUS PngStartDecode();
@@ -206,7 +207,7 @@ class ProgressiveDecoder final :
 
   void ResampleScanline(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                         int32_t dest_line,
-                        uint8_t* src_scan,
+                        pdfium::span<uint8_t> src_span,
                         FXCodec_Format src_format);
   void Resample(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                 int32_t src_line,

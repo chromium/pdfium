@@ -13,6 +13,7 @@
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcodec/progressive_decoder_iface.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "third_party/base/span.h"
 
 #ifndef PDF_ENABLE_XFA_GIF
 #error "GIF must be enabled"
@@ -37,7 +38,8 @@ class GifDecoder {
                                            CFX_GifPalette* pal_ptr,
                                            int32_t trans_index,
                                            bool interlace) = 0;
-    virtual void GifReadScanline(int32_t row_num, uint8_t* row_buf) = 0;
+    virtual void GifReadScanline(int32_t row_num,
+                                 pdfium::span<uint8_t> row_buf) = 0;
   };
 
   static std::unique_ptr<ProgressiveDecoderIface::Context> StartDecode(
