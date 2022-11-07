@@ -3449,7 +3449,7 @@ TEST_F(FPDFAnnotEmbedderTest, InkAnnotation) {
     path_buffer[0].y = 43;
     path_size = FPDFAnnot_GetInkListPath(
         annot.get(), kPathIndex, path_buffer.data(), path_buffer.size());
-    EXPECT_EQ(kExpectedSize, size);
+    EXPECT_EQ(kExpectedPathSize, path_size);
     EXPECT_FLOAT_EQ(42, path_buffer[0].x);
     EXPECT_FLOAT_EQ(43, path_buffer[0].y);
   }
