@@ -19,11 +19,7 @@ class CBC_OnedCodaBarWriter final : public CBC_OneDimWriter {
   ~CBC_OnedCodaBarWriter() override;
 
   // CBC_OneDimWriter:
-  uint8_t* EncodeImpl(const ByteString& contents, int32_t& outLength) override;
-  uint8_t* EncodeWithHint(const ByteString& contents,
-                          BC_TYPE format,
-                          int32_t& outWidth,
-                          int32_t hints) override;
+  uint8_t* Encode(const ByteString& contents, int32_t& outLength) override;
   bool RenderResult(WideStringView contents,
                     uint8_t* code,
                     int32_t codeLength) override;

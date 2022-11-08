@@ -16,23 +16,23 @@ TEST(OnedUPCAWriterTest, Encode) {
 
   // UPCA barcodes encode 12-digit numbers into 95 modules in a unidimensional
   // disposition.
-  uint8_t* encoded = writer.Encode("", BC_TYPE::kUPCA, width);
+  uint8_t* encoded = writer.Encode("", width);
   EXPECT_FALSE(encoded);
   FX_Free(encoded);
 
-  encoded = writer.Encode("123", BC_TYPE::kUPCA, width);
+  encoded = writer.Encode("123", width);
   EXPECT_FALSE(encoded);
   FX_Free(encoded);
 
-  encoded = writer.Encode("12345678901", BC_TYPE::kUPCA, width);
+  encoded = writer.Encode("12345678901", width);
   EXPECT_FALSE(encoded);
   FX_Free(encoded);
 
-  encoded = writer.Encode("1234567890123", BC_TYPE::kUPCA, width);
+  encoded = writer.Encode("1234567890123", width);
   EXPECT_FALSE(encoded);
   FX_Free(encoded);
 
-  encoded = writer.Encode("123456789012", BC_TYPE::kUPCA, width);
+  encoded = writer.Encode("123456789012", width);
   const char* expected =
       "# #"      // Start
       "  ##  #"  // 1 L
@@ -56,7 +56,7 @@ TEST(OnedUPCAWriterTest, Encode) {
   }
   FX_Free(encoded);
 
-  encoded = writer.Encode("777666555440", BC_TYPE::kUPCA, width);
+  encoded = writer.Encode("777666555440", width);
   expected =
       "# #"      // Start
       " ### ##"  // 7 L

@@ -47,21 +47,13 @@ class CBC_OneDimWriter : public CBC_Writer {
   void SetFontStyle(int32_t style);
   void SetFontColor(FX_ARGB color);
 
-  uint8_t* Encode(const ByteString& contents,
-                  BC_TYPE format,
-                  int32_t& outWidth);
+  virtual uint8_t* Encode(const ByteString& contents, int32_t& outLength) = 0;
   bool RenderDeviceResult(CFX_RenderDevice* device,
                           const CFX_Matrix& matrix,
                           WideStringView contents);
   bool SetFont(CFX_Font* cFont);
 
  protected:
-  virtual uint8_t* EncodeWithHint(const ByteString& contents,
-                                  BC_TYPE format,
-                                  int32_t& outWidth,
-                                  int32_t hints);
-  virtual uint8_t* EncodeImpl(const ByteString& contents,
-                              int32_t& outLength) = 0;
   virtual bool ShowChars(WideStringView contents,
                          CFX_RenderDevice* device,
                          const CFX_Matrix& matrix,

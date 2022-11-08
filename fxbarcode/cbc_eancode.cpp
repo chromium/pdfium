@@ -26,13 +26,11 @@ bool CBC_EANCode::Encode(WideStringView contents) {
   if (!pWriter->CheckContentValidity(contents))
     return false;
 
-  BC_TYPE format = GetType();
   int32_t out_width = 0;
   m_renderContents = Preprocess(contents);
   ByteString str = m_renderContents.ToUTF8();
   pWriter->InitEANWriter();
-  std::unique_ptr<uint8_t, FxFreeDeleter> data(
-      pWriter->Encode(str, format, out_width));
+  std::unique_ptr<uint8_t, FxFreeDeleter> data(pWriter->Encode(str, out_width));
   return data && pWriter->RenderResult(m_renderContents.AsStringView(),
                                        data.get(), out_width);
 }

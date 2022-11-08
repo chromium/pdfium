@@ -18,23 +18,23 @@ TEST(OnedEAN13WriterTest, Encode) {
 
   // EAN-13 barcodes encode 13-digit numbers into 95 modules in a unidimensional
   // disposition.
-  encoded = writer.Encode("", BC_TYPE::kEAN13, width);
+  encoded = writer.Encode("", width);
   EXPECT_FALSE(encoded);
   FX_Free(encoded);
 
-  encoded = writer.Encode("123", BC_TYPE::kEAN13, width);
+  encoded = writer.Encode("123", width);
   EXPECT_FALSE(encoded);
   FX_Free(encoded);
 
-  encoded = writer.Encode("123456789012", BC_TYPE::kEAN13, width);
+  encoded = writer.Encode("123456789012", width);
   EXPECT_FALSE(encoded);
   FX_Free(encoded);
 
-  encoded = writer.Encode("12345678901234", BC_TYPE::kEAN13, width);
+  encoded = writer.Encode("12345678901234", width);
   EXPECT_FALSE(encoded);
   FX_Free(encoded);
 
-  encoded = writer.Encode("1234567890128", BC_TYPE::kEAN13, width);
+  encoded = writer.Encode("1234567890128", width);
   EXPECT_TRUE(encoded);
   EXPECT_EQ(95, width);
 
@@ -60,7 +60,7 @@ TEST(OnedEAN13WriterTest, Encode) {
   }
   FX_Free(encoded);
 
-  encoded = writer.Encode("7776665554440", BC_TYPE::kEAN13, width);
+  encoded = writer.Encode("7776665554440", width);
   EXPECT_TRUE(encoded);
   EXPECT_EQ(95, width);
 

@@ -119,16 +119,6 @@ bool CBC_OnedCode39Writer::SetWideNarrowRatio(int8_t ratio) {
   return true;
 }
 
-uint8_t* CBC_OnedCode39Writer::EncodeWithHint(const ByteString& contents,
-                                              BC_TYPE format,
-                                              int32_t& outWidth,
-                                              int32_t hints) {
-  if (format != BC_TYPE::kCode39)
-    return nullptr;
-
-  return CBC_OneDimWriter::EncodeWithHint(contents, format, outWidth, hints);
-}
-
 void CBC_OnedCode39Writer::ToIntArray(int16_t a, int8_t* toReturn) {
   for (int32_t i = 0; i < 9; i++) {
     toReturn[i] = (a & (1 << i)) == 0 ? 1 : m_iWideNarrRatio;
@@ -155,8 +145,8 @@ char CBC_OnedCode39Writer::CalcCheckSum(const ByteString& contents) {
   return kOnedCode39Checksum[checksum % std::size(kOnedCode39Checksum)];
 }
 
-uint8_t* CBC_OnedCode39Writer::EncodeImpl(const ByteString& contents,
-                                          int32_t& outlength) {
+uint8_t* CBC_OnedCode39Writer::Encode(const ByteString& contents,
+                                      int32_t& outlength) {
   char checksum = CalcCheckSum(contents);
   if (checksum == '*')
     return nullptr;

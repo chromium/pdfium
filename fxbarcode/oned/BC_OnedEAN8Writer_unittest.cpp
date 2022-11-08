@@ -18,23 +18,23 @@ TEST(OnedEAN8WriterTest, Encode) {
 
   // EAN-8 barcodes encode 8-digit numbers into 67 modules in a unidimensional
   // disposition.
-  encoded = writer.Encode("", BC_TYPE::kEAN8, width);
+  encoded = writer.Encode("", width);
   EXPECT_FALSE(encoded);
   FX_Free(encoded);
 
-  encoded = writer.Encode("123", BC_TYPE::kEAN8, width);
+  encoded = writer.Encode("123", width);
   EXPECT_FALSE(encoded);
   FX_Free(encoded);
 
-  encoded = writer.Encode("1234567", BC_TYPE::kEAN8, width);
+  encoded = writer.Encode("1234567", width);
   EXPECT_FALSE(encoded);
   FX_Free(encoded);
 
-  encoded = writer.Encode("123456789", BC_TYPE::kEAN8, width);
+  encoded = writer.Encode("123456789", width);
   EXPECT_FALSE(encoded);
   FX_Free(encoded);
 
-  encoded = writer.Encode("12345670", BC_TYPE::kEAN8, width);
+  encoded = writer.Encode("12345670", width);
   EXPECT_TRUE(encoded);
   EXPECT_EQ(67, width);
 
@@ -55,7 +55,7 @@ TEST(OnedEAN8WriterTest, Encode) {
   }
   FX_Free(encoded);
 
-  encoded = writer.Encode("99441104", BC_TYPE::kEAN8, width);
+  encoded = writer.Encode("99441104", width);
   EXPECT_TRUE(encoded);
   EXPECT_EQ(67, width);
 

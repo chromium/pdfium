@@ -88,18 +88,8 @@ int32_t CBC_OnedEAN8Writer::CalcChecksum(const ByteString& contents) {
   return EANCalcChecksum(contents);
 }
 
-uint8_t* CBC_OnedEAN8Writer::EncodeWithHint(const ByteString& contents,
-                                            BC_TYPE format,
-                                            int32_t& outWidth,
-                                            int32_t hints) {
-  if (format != BC_TYPE::kEAN8)
-    return nullptr;
-
-  return CBC_OneDimWriter::EncodeWithHint(contents, format, outWidth, hints);
-}
-
-uint8_t* CBC_OnedEAN8Writer::EncodeImpl(const ByteString& contents,
-                                        int32_t& outLength) {
+uint8_t* CBC_OnedEAN8Writer::Encode(const ByteString& contents,
+                                    int32_t& outLength) {
   if (contents.GetLength() != 8)
     return nullptr;
 

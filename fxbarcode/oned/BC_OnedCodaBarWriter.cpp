@@ -120,18 +120,8 @@ WideString CBC_OnedCodaBarWriter::FilterContents(WideStringView contents) {
   return filtercontents;
 }
 
-uint8_t* CBC_OnedCodaBarWriter::EncodeWithHint(const ByteString& contents,
-                                               BC_TYPE format,
-                                               int32_t& outWidth,
-                                               int32_t hints) {
-  if (format != BC_TYPE::kCodabar)
-    return nullptr;
-
-  return CBC_OneDimWriter::EncodeWithHint(contents, format, outWidth, hints);
-}
-
-uint8_t* CBC_OnedCodaBarWriter::EncodeImpl(const ByteString& contents,
-                                           int32_t& outLength) {
+uint8_t* CBC_OnedCodaBarWriter::Encode(const ByteString& contents,
+                                       int32_t& outLength) {
   ByteString data = m_chStart + contents + m_chEnd;
   m_iContentLen = data.GetLength();
   uint8_t* result = FX_Alloc2D(uint8_t, m_iWideNarrRatio * 7, data.GetLength());

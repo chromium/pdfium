@@ -37,12 +37,11 @@ bool CBC_Codabar::Encode(WideStringView contents) {
   if (!pWriter->CheckContentValidity(contents))
     return false;
 
-  BC_TYPE format = BC_TYPE::kCodabar;
   int32_t outWidth = 0;
   m_renderContents = pWriter->FilterContents(contents);
   ByteString byteString = m_renderContents.ToUTF8();
   std::unique_ptr<uint8_t, FxFreeDeleter> data(
-      pWriter->Encode(byteString, format, outWidth));
+      pWriter->Encode(byteString, outWidth));
   return data && pWriter->RenderResult(m_renderContents.AsStringView(),
                                        data.get(), outWidth);
 }

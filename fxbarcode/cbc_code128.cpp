@@ -37,7 +37,6 @@ bool CBC_Code128::Encode(WideStringView contents) {
   if (!pWriter->CheckContentValidity(contents))
     return false;
 
-  BC_TYPE format = BC_TYPE::kCode128;
   int32_t outWidth = 0;
   WideString content(contents);
   if (contents.GetLength() % 2 && pWriter->GetType() == BC_TYPE::kCode128C)
@@ -46,7 +45,7 @@ bool CBC_Code128::Encode(WideStringView contents) {
   m_renderContents = pWriter->FilterContents(content.AsStringView());
   ByteString byteString = m_renderContents.ToUTF8();
   std::unique_ptr<uint8_t, FxFreeDeleter> data(
-      pWriter->Encode(byteString, format, outWidth));
+      pWriter->Encode(byteString, outWidth));
   return data && pWriter->RenderResult(m_renderContents.AsStringView(),
                                        data.get(), outWidth);
 }

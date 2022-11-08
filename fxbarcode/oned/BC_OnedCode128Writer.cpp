@@ -118,18 +118,8 @@ void CBC_OnedCode128Writer::SetTextLocation(BC_TEXT_LOC location) {
   m_locTextLoc = location;
 }
 
-uint8_t* CBC_OnedCode128Writer::EncodeWithHint(const ByteString& contents,
-                                               BC_TYPE format,
-                                               int32_t& outWidth,
-                                               int32_t hints) {
-  if (format != BC_TYPE::kCode128)
-    return nullptr;
-
-  return CBC_OneDimWriter::EncodeWithHint(contents, format, outWidth, hints);
-}
-
-uint8_t* CBC_OnedCode128Writer::EncodeImpl(const ByteString& contents,
-                                           int32_t& outLength) {
+uint8_t* CBC_OnedCode128Writer::Encode(const ByteString& contents,
+                                       int32_t& outLength) {
   if (contents.GetLength() < 1 || contents.GetLength() > 80)
     return nullptr;
 
