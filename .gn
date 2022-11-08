@@ -21,7 +21,6 @@ default_args = {
 }
 
 no_check_targets = [
-  "//third_party/icu/*",
   "//v8:cppgc_base",
   "//v8:v8_internal_headers",
   "//v8/src/inspector:inspector",
