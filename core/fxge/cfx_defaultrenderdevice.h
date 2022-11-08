@@ -7,11 +7,14 @@
 #ifndef CORE_FXGE_CFX_DEFAULTRENDERDEVICE_H_
 #define CORE_FXGE_CFX_DEFAULTRENDERDEVICE_H_
 
+#include <memory>
+
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/fx_dib.h"
 
 class SkPictureRecorder;
+struct SkRect;
 
 class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
  public:
@@ -33,7 +36,7 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
 #if defined(_SKIA_SUPPORT_)
   bool AttachRecorder(SkPictureRecorder* recorder);
   void Clear(uint32_t color);
-  SkPictureRecorder* CreateRecorder(int size_x, int size_y);
+  std::unique_ptr<SkPictureRecorder> CreateRecorder(const SkRect& bounds);
   void DebugVerifyBitmapIsPreMultiplied() const override;
   bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                        const RetainPtr<CFX_DIBBase>& pMask,

@@ -32,7 +32,6 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                        bool bGroupKnockout);
 #if defined(_SKIA_SUPPORT_)
   explicit CFX_SkiaDeviceDriver(SkPictureRecorder* recorder);
-  CFX_SkiaDeviceDriver(int size_x, int size_y);
 #endif
   ~CFX_SkiaDeviceDriver() override;
 
@@ -156,7 +155,6 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                    const SkMatrix& matrix);
   void Clear(uint32_t color);
   void Flush() override;
-  SkPictureRecorder* GetRecorder() const { return m_pRecorder; }
   void PreMultiply();
   static void PreMultiply(const RetainPtr<CFX_DIBitmap>& pDIBitmap);
   SkCanvas* SkiaCanvas() { return m_pCanvas; }

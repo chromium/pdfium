@@ -51,6 +51,11 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 
+#ifdef _SKIA_SUPPORT_
+#include "third_party/skia/include/core/SkPictureRecorder.h"
+#include "third_party/skia/include/core/SkRect.h"
+#endif  // _SKIA_SUPPORT_
+
 #ifdef PDF_ENABLE_V8
 #include "fxjs/cfx_v8_array_buffer_allocator.h"
 #include "third_party/base/no_destructor.h"
@@ -735,14 +740,15 @@ FPDF_EXPORT FPDF_RECORDER FPDF_CALLCONV FPDF_RenderPageSkp(FPDF_PAGE page,
   pPage->SetRenderContext(std::move(pOwnedContext));
 
   auto skDevice = std::make_unique<CFX_DefaultRenderDevice>();
-  FPDF_RECORDER recorder = skDevice->CreateRecorder(size_x, size_y);
+  std::unique_ptr<SkPictureRecorder> recorder =
+      skDevice->CreateRecorder(SkRect::MakeWH(size_x, size_y));
   pContext->m_pDevice = std::move(skDevice);
 
   CPDFSDK_RenderPageWithContext(pContext, pPage, 0, 0, size_x, size_y, 0, 0,
                                 /*color_scheme=*/nullptr,
                                 /*need_to_restore=*/true, /*pause=*/nullptr);
 
-  return recorder;
+  return recorder.release();
 }
 #endif  // defined(_SKIA_SUPPORT_)
 

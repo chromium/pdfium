@@ -97,6 +97,10 @@ source_set("fpdfsdk") {
     ]
     allow_circular_includes_from += [ "fpdfxfa" ]
   }
+
+  if (pdf_use_skia || pdf_use_skia_paths) {
+    deps += [ "//skia" ]
+  }
 }
 
 pdfium_unittest_source_set("unittests") {
@@ -158,4 +162,8 @@ pdfium_embeddertest_source_set("embeddertests") {
     "../core/fxge",
   ]
   pdfium_root_dir = "../"
+
+  if (pdf_use_skia || pdf_use_skia_paths) {
+    deps += [ "//skia" ]
+  }
 }

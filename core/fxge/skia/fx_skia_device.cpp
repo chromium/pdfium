@@ -1740,16 +1740,6 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
 }
 
 #if defined(_SKIA_SUPPORT_)
-CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(int size_x, int size_y)
-    : m_pBitmap(nullptr),
-      m_pBackdropBitmap(nullptr),
-      m_pRecorder(new SkPictureRecorder),
-      m_pCache(std::make_unique<SkiaState>(this)),
-      m_bGroupKnockout(false) {
-  m_pRecorder->beginRecording(SkIntToScalar(size_x), SkIntToScalar(size_y));
-  m_pCanvas = m_pRecorder->getRecordingCanvas();
-}
-
 CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkPictureRecorder* recorder)
     : m_pBitmap(nullptr),
       m_pBackdropBitmap(nullptr),
@@ -2880,11 +2870,12 @@ void CFX_DefaultRenderDevice::Clear(uint32_t color) {
   skDriver->Clear(color);
 }
 
-SkPictureRecorder* CFX_DefaultRenderDevice::CreateRecorder(int size_x,
-                                                           int size_y) {
-  auto driver = std::make_unique<CFX_SkiaDeviceDriver>(size_x, size_y);
-  SkPictureRecorder* recorder = driver->GetRecorder();
-  SetDeviceDriver(std::move(driver));
+std::unique_ptr<SkPictureRecorder> CFX_DefaultRenderDevice::CreateRecorder(
+    const SkRect& bounds) {
+  auto recorder = std::make_unique<SkPictureRecorder>();
+  recorder->beginRecording(bounds);
+
+  SetDeviceDriver(std::make_unique<CFX_SkiaDeviceDriver>(recorder.get()));
   return recorder;
 }
 #endif  // defined(_SKIA_SUPPORT_)

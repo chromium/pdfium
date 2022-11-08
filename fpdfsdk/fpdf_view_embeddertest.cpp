@@ -7,6 +7,7 @@
 #include <limits>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "build/build_config.h"
@@ -25,6 +26,19 @@
 #include "testing/utils/hash.h"
 #include "testing/utils/path_service.h"
 #include "third_party/base/check.h"
+
+#ifdef _SKIA_SUPPORT_
+#include "third_party/skia/include/core/SkCanvas.h"
+#include "third_party/skia/include/core/SkColor.h"
+#include "third_party/skia/include/core/SkColorType.h"
+#include "third_party/skia/include/core/SkImage.h"
+#include "third_party/skia/include/core/SkImageInfo.h"
+#include "third_party/skia/include/core/SkPicture.h"
+#include "third_party/skia/include/core/SkPictureRecorder.h"
+#include "third_party/skia/include/core/SkRefCnt.h"
+#include "third_party/skia/include/core/SkSize.h"
+#include "third_party/skia/include/core/SkSurface.h"
+#endif  // _SKIA_SUPPORT_
 
 using pdfium::ManyRectanglesChecksum;
 
@@ -94,6 +108,48 @@ class MockDownloadHints final : public FX_DOWNLOADHINTS {
 
   ~MockDownloadHints() = default;
 };
+
+#ifdef _SKIA_SUPPORT_
+ScopedFPDFBitmap SkImageToPdfiumBitmap(const SkImage& image) {
+  ScopedFPDFBitmap bitmap(
+      FPDFBitmap_Create(image.width(), image.height(), /*alpha=*/1));
+  if (!bitmap) {
+    ADD_FAILURE() << "Could not create FPDF_BITMAP";
+    return nullptr;
+  }
+
+  if (!image.readPixels(/*context=*/nullptr,
+                        image.imageInfo().makeColorType(kBGRA_8888_SkColorType),
+                        FPDFBitmap_GetBuffer(bitmap.get()),
+                        FPDFBitmap_GetStride(bitmap.get()),
+                        /*srcX=*/0, /*srcY=*/0)) {
+    ADD_FAILURE() << "Could not read pixels from SkImage";
+    return nullptr;
+  }
+
+  return bitmap;
+}
+
+ScopedFPDFBitmap SkPictureToPdfiumBitmap(sk_sp<SkPicture> picture,
+                                         const SkISize& size) {
+  sk_sp<SkSurface> surface =
+      SkSurface::MakeRasterN32Premul(size.width(), size.height());
+  if (!surface) {
+    ADD_FAILURE() << "Could not create SkSurface";
+    return nullptr;
+  }
+
+  surface->getCanvas()->clear(SK_ColorWHITE);
+  surface->getCanvas()->drawPicture(picture);
+  sk_sp<SkImage> image = surface->makeImageSnapshot();
+  if (!image) {
+    ADD_FAILURE() << "Could not snapshot SkSurface";
+    return nullptr;
+  }
+
+  return SkImageToPdfiumBitmap(*image);
+}
+#endif  // _SKIA_SUPPORT_
 
 }  // namespace
 
@@ -1892,3 +1948,35 @@ TEST_F(FPDFViewEmbedderTest, GetTrailerEndsWhitespace) {
   ASSERT_EQ(size, FPDF_GetTrailerEnds(document(), ends.data(), size));
   EXPECT_EQ(kExpectedEnds, ends);
 }
+
+#ifdef _SKIA_SUPPORT_
+TEST_F(FPDFViewEmbedderTest, RenderPageToSkp) {
+  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    GTEST_SKIP() << "FPDF_RenderPageSkp() only makes sense with Skia";
+
+  ASSERT_TRUE(OpenDocument("rectangles.pdf"));
+
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  constexpr SkISize kOutputSize = SkISize::Make(200, 300);
+
+  FPDF_RECORDER opaque_recorder =
+      FPDF_RenderPageSkp(page, kOutputSize.width(), kOutputSize.height());
+  UnloadPage(page);
+  ASSERT_TRUE(opaque_recorder);
+
+  SkPictureRecorder* recorder =
+      reinterpret_cast<SkPictureRecorder*>(opaque_recorder);
+  sk_sp<SkPicture> picture = recorder->finishRecordingAsPicture();
+  delete recorder;
+  ASSERT_TRUE(picture);
+
+  ScopedFPDFBitmap bitmap =
+      SkPictureToPdfiumBitmap(std::move(picture), kOutputSize);
+  ASSERT_TRUE(bitmap);
+
+  CompareBitmap(bitmap.get(), kOutputSize.width(), kOutputSize.height(),
+                pdfium::RectanglesChecksum());
+}
+#endif  // _SKIA_SUPPORT_
