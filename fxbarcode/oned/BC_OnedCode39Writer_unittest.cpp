@@ -37,11 +37,10 @@ TEST(OnedCode39WriterTest, SetWideNarrowRatio) {
   writer.SetWideNarrowRatio(3);
 
   int32_t width;
-  int32_t height;
   uint8_t* encoded;
   const char* expected;
 
-  encoded = writer.Encode("PDFIUM", BC_TYPE::kCode39, width, height);
+  encoded = writer.Encode("PDFIUM", BC_TYPE::kCode39, width);
   expected =
       "#   # ### ### # "  // * Start
       "# ### ### #   # "  // P
@@ -57,7 +56,7 @@ TEST(OnedCode39WriterTest, SetWideNarrowRatio) {
 
   writer.SetWideNarrowRatio(2);
 
-  encoded = writer.Encode("PDFIUM", BC_TYPE::kCode39, width, height);
+  encoded = writer.Encode("PDFIUM", BC_TYPE::kCode39, width);
   expected =
       "#  # ## ## # "  // * Start
       "# ## ## #  # "  // P
@@ -75,12 +74,10 @@ TEST(OnedCode39WriterTest, SetWideNarrowRatio) {
 TEST(OnedCode39WriterTest, Encode) {
   CBC_OnedCode39Writer writer;
   int32_t width;
-  int32_t height;
   uint8_t* encoded;
   const char* expected;
 
-  encoded = writer.Encode("", BC_TYPE::kCode39, width, height);
-  EXPECT_EQ(1, height);
+  encoded = writer.Encode("", BC_TYPE::kCode39, width);
   EXPECT_EQ((0 + DELIMITER_CHARS) * MODULES_PER_CHAR - 1, width);
   expected =
       "#   # ### ### # "  // * Start
@@ -89,8 +86,7 @@ TEST(OnedCode39WriterTest, Encode) {
     EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
   FX_Free(encoded);
 
-  encoded = writer.Encode("123", BC_TYPE::kCode39, width, height);
-  EXPECT_EQ(1, height);
+  encoded = writer.Encode("123", BC_TYPE::kCode39, width);
   EXPECT_EQ((3 + DELIMITER_CHARS) * MODULES_PER_CHAR - 1, width);
   expected =
       "#   # ### ### # "  // * Start
@@ -102,8 +98,7 @@ TEST(OnedCode39WriterTest, Encode) {
     EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
   FX_Free(encoded);
 
-  encoded = writer.Encode("PDFIUM", BC_TYPE::kCode39, width, height);
-  EXPECT_EQ(1, height);
+  encoded = writer.Encode("PDFIUM", BC_TYPE::kCode39, width);
   EXPECT_EQ((6 + DELIMITER_CHARS) * MODULES_PER_CHAR - 1, width);
   expected =
       "#   # ### ### # "  // * Start
@@ -118,8 +113,7 @@ TEST(OnedCode39WriterTest, Encode) {
     EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
   FX_Free(encoded);
 
-  encoded = writer.Encode("A -$%./+Z", BC_TYPE::kCode39, width, height);
-  EXPECT_EQ(1, height);
+  encoded = writer.Encode("A -$%./+Z", BC_TYPE::kCode39, width);
   EXPECT_EQ((9 + DELIMITER_CHARS) * MODULES_PER_CHAR - 1, width);
   expected =
       "#   # ### ### # "  // * Start
@@ -141,14 +135,12 @@ TEST(OnedCode39WriterTest, Encode) {
 TEST(OnedCode39WriterTest, Checksum) {
   CBC_OnedCode39Writer writer;
   int32_t width;
-  int32_t height;
   uint8_t* encoded;
   const char* expected;
 
   writer.SetCalcChecksum(true);
 
-  encoded = writer.Encode("123", BC_TYPE::kCode39, width, height);
-  EXPECT_EQ(1, height);
+  encoded = writer.Encode("123", BC_TYPE::kCode39, width);
   EXPECT_EQ((3 + CHECKSUM_CHARS + DELIMITER_CHARS) * MODULES_PER_CHAR - 1,
             width);
   expected =
@@ -162,8 +154,7 @@ TEST(OnedCode39WriterTest, Checksum) {
     EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
   FX_Free(encoded);
 
-  encoded = writer.Encode("PDFIUM", BC_TYPE::kCode39, width, height);
-  EXPECT_EQ(1, height);
+  encoded = writer.Encode("PDFIUM", BC_TYPE::kCode39, width);
   EXPECT_EQ((6 + CHECKSUM_CHARS + DELIMITER_CHARS) * MODULES_PER_CHAR - 1,
             width);
   expected =

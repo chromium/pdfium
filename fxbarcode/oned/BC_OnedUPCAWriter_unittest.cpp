@@ -13,27 +13,26 @@ TEST(OnedUPCAWriterTest, Encode) {
   CBC_OnedUPCAWriter writer;
   writer.InitEANWriter();
   int32_t width;
-  int32_t height;
 
   // UPCA barcodes encode 12-digit numbers into 95 modules in a unidimensional
   // disposition.
-  uint8_t* encoded = writer.Encode("", BC_TYPE::kUPCA, width, height);
+  uint8_t* encoded = writer.Encode("", BC_TYPE::kUPCA, width);
   EXPECT_FALSE(encoded);
   FX_Free(encoded);
 
-  encoded = writer.Encode("123", BC_TYPE::kUPCA, width, height);
+  encoded = writer.Encode("123", BC_TYPE::kUPCA, width);
   EXPECT_FALSE(encoded);
   FX_Free(encoded);
 
-  encoded = writer.Encode("12345678901", BC_TYPE::kUPCA, width, height);
+  encoded = writer.Encode("12345678901", BC_TYPE::kUPCA, width);
   EXPECT_FALSE(encoded);
   FX_Free(encoded);
 
-  encoded = writer.Encode("1234567890123", BC_TYPE::kUPCA, width, height);
+  encoded = writer.Encode("1234567890123", BC_TYPE::kUPCA, width);
   EXPECT_FALSE(encoded);
   FX_Free(encoded);
 
-  encoded = writer.Encode("123456789012", BC_TYPE::kUPCA, width, height);
+  encoded = writer.Encode("123456789012", BC_TYPE::kUPCA, width);
   const char* expected =
       "# #"      // Start
       "  ##  #"  // 1 L
@@ -51,14 +50,13 @@ TEST(OnedUPCAWriterTest, Encode) {
       "## ##  "  // 2 R
       "# #";     // End
   EXPECT_TRUE(encoded);
-  EXPECT_EQ(1, height);
   EXPECT_EQ(static_cast<int32_t>(strlen(expected)), width);
   for (size_t i = 0; i < strlen(expected); i++) {
     EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
   }
   FX_Free(encoded);
 
-  encoded = writer.Encode("777666555440", BC_TYPE::kUPCA, width, height);
+  encoded = writer.Encode("777666555440", BC_TYPE::kUPCA, width);
   expected =
       "# #"      // Start
       " ### ##"  // 7 L
@@ -76,7 +74,6 @@ TEST(OnedUPCAWriterTest, Encode) {
       "###  # "  // 0 R
       "# #";     // End
   EXPECT_TRUE(encoded);
-  EXPECT_EQ(1, height);
   EXPECT_EQ(static_cast<int32_t>(strlen(expected)), width);
   for (size_t i = 0; i < strlen(expected); i++) {
     EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;

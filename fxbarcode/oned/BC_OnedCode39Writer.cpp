@@ -122,13 +122,11 @@ bool CBC_OnedCode39Writer::SetWideNarrowRatio(int8_t ratio) {
 uint8_t* CBC_OnedCode39Writer::EncodeWithHint(const ByteString& contents,
                                               BC_TYPE format,
                                               int32_t& outWidth,
-                                              int32_t& outHeight,
                                               int32_t hints) {
   if (format != BC_TYPE::kCode39)
     return nullptr;
 
-  return CBC_OneDimWriter::EncodeWithHint(contents, format, outWidth, outHeight,
-                                          hints);
+  return CBC_OneDimWriter::EncodeWithHint(contents, format, outWidth, hints);
 }
 
 void CBC_OnedCode39Writer::ToIntArray(int16_t a, int8_t* toReturn) {

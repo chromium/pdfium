@@ -39,12 +39,11 @@ bool CBC_Code39::Encode(WideStringView contents) {
 
   BC_TYPE format = BC_TYPE::kCode39;
   int32_t outWidth = 0;
-  int32_t outHeight = 0;
   WideString filtercontents = pWriter->FilterContents(contents);
   m_renderContents = pWriter->RenderTextContents(contents);
   ByteString byteString = filtercontents.ToUTF8();
   std::unique_ptr<uint8_t, FxFreeDeleter> data(
-      pWriter->Encode(byteString, format, outWidth, outHeight));
+      pWriter->Encode(byteString, format, outWidth));
   return data && pWriter->RenderResult(m_renderContents.AsStringView(),
                                        data.get(), outWidth);
 }

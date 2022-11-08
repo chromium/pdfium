@@ -49,8 +49,7 @@ class CBC_OneDimWriter : public CBC_Writer {
 
   uint8_t* Encode(const ByteString& contents,
                   BC_TYPE format,
-                  int32_t& outWidth,
-                  int32_t& outHeight);
+                  int32_t& outWidth);
   bool RenderDeviceResult(CFX_RenderDevice* device,
                           const CFX_Matrix& matrix,
                           WideStringView contents);
@@ -60,7 +59,6 @@ class CBC_OneDimWriter : public CBC_Writer {
   virtual uint8_t* EncodeWithHint(const ByteString& contents,
                                   BC_TYPE format,
                                   int32_t& outWidth,
-                                  int32_t& outHeight,
                                   int32_t hints);
   virtual uint8_t* EncodeImpl(const ByteString& contents,
                               int32_t& outLength) = 0;

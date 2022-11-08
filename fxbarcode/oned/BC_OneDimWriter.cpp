@@ -88,17 +88,14 @@ void CBC_OneDimWriter::SetFontColor(FX_ARGB color) {
 uint8_t* CBC_OneDimWriter::EncodeWithHint(const ByteString& contents,
                                           BC_TYPE format,
                                           int32_t& outWidth,
-                                          int32_t& outHeight,
                                           int32_t hints) {
-  outHeight = 1;
   return EncodeImpl(contents, outWidth);
 }
 
 uint8_t* CBC_OneDimWriter::Encode(const ByteString& contents,
                                   BC_TYPE format,
-                                  int32_t& outWidth,
-                                  int32_t& outHeight) {
-  return EncodeWithHint(contents, format, outWidth, outHeight, 0);
+                                  int32_t& outWidth) {
+  return EncodeWithHint(contents, format, outWidth, 0);
 }
 
 int32_t CBC_OneDimWriter::AppendPattern(uint8_t* target,

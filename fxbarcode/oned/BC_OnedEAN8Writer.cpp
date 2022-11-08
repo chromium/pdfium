@@ -91,13 +91,11 @@ int32_t CBC_OnedEAN8Writer::CalcChecksum(const ByteString& contents) {
 uint8_t* CBC_OnedEAN8Writer::EncodeWithHint(const ByteString& contents,
                                             BC_TYPE format,
                                             int32_t& outWidth,
-                                            int32_t& outHeight,
                                             int32_t hints) {
   if (format != BC_TYPE::kEAN8)
     return nullptr;
 
-  return CBC_OneDimWriter::EncodeWithHint(contents, format, outWidth, outHeight,
-                                          hints);
+  return CBC_OneDimWriter::EncodeWithHint(contents, format, outWidth, hints);
 }
 
 uint8_t* CBC_OnedEAN8Writer::EncodeImpl(const ByteString& contents,
