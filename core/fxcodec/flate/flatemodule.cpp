@@ -20,6 +20,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
 #include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
@@ -787,8 +788,8 @@ void FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
     }
     size_t read_bytes =
         m_PredictPitch > bytes_to_go ? bytes_to_go : m_PredictPitch;
-    memcpy(m_Scanline.data() + m_Pitch - bytes_to_go, m_PredictBuffer.data(),
-           read_bytes);
+    fxcrt::spancpy(pdfium::make_span(m_Scanline).subspan(m_Pitch - bytes_to_go),
+                   pdfium::make_span(m_PredictBuffer).first(read_bytes));
     m_LeftOver += m_PredictPitch - read_bytes;
     bytes_to_go -= read_bytes;
   }

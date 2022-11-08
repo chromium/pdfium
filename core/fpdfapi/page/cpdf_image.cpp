@@ -281,8 +281,8 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     if (pMaskBitmap->GetFormat() != FXDIB_Format::k1bppMask) {
       mask_buf.resize(Fx2DSizeOrDie(mask_width, mask_height));
       for (int32_t a = 0; a < mask_height; a++) {
-        memcpy(mask_buf.data() + a * mask_width,
-               pMaskBitmap->GetScanline(a).data(), mask_width);
+        fxcrt::spancpy(pdfium::make_span(mask_buf).subspan(a * mask_width),
+                       pMaskBitmap->GetScanline(a).first(mask_width));
       }
     }
     pMaskDict->SetNewFor<CPDF_Number>(
