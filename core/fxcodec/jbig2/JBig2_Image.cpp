@@ -62,7 +62,7 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h) {
 CJBig2_Image::CJBig2_Image(int32_t w,
                            int32_t h,
                            int32_t stride,
-                           uint8_t* pBuf) {
+                           pdfium::span<uint8_t> pBuf) {
   if (w < 0 || h < 0)
     return;
 
@@ -77,7 +77,7 @@ CJBig2_Image::CJBig2_Image(int32_t w,
   m_nWidth = w;
   m_nHeight = h;
   m_nStride = stride;
-  m_pData.Reset(pBuf);
+  m_pData.Reset(pBuf.data());
 }
 
 CJBig2_Image::CJBig2_Image(const CJBig2_Image& other)

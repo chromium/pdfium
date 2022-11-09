@@ -294,8 +294,7 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
     iDecodeStatus = Jbig2Decoder::StartDecode(
         m_pJbig2Context.get(), m_pDocument->GetOrCreateCodecContext(), m_Width,
         m_Height, pSrcSpan, nSrcKey, pGlobalSpan, nGlobalKey,
-        m_pCachedBitmap->GetBuffer().data(), m_pCachedBitmap->GetPitch(),
-        pPause);
+        m_pCachedBitmap->GetBuffer(), m_pCachedBitmap->GetPitch(), pPause);
   } else {
     iDecodeStatus = Jbig2Decoder::ContinueDecode(m_pJbig2Context.get(), pPause);
   }
@@ -646,8 +645,8 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
     return nullptr;
 
   result_bitmap->Clear(0xFFFFFFFF);
-  if (!decoder->Decode(result_bitmap->GetBuffer().data(),
-                       result_bitmap->GetPitch(), swap_rgb)) {
+  if (!decoder->Decode(result_bitmap->GetBuffer(), result_bitmap->GetPitch(),
+                       swap_rgb)) {
     return nullptr;
   }
 

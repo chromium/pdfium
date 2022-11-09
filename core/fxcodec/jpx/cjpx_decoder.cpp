@@ -15,6 +15,7 @@
 
 #include "core/fxcodec/jpx/jpx_decode_utils.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span_util.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/ptr_util.h"
@@ -509,18 +510,20 @@ CJPX_Decoder::JpxImageInfo CJPX_Decoder::GetInfo() const {
           m_Image->color_space};
 }
 
-bool CJPX_Decoder::Decode(uint8_t* dest_buf, uint32_t pitch, bool swap_rgb) {
+bool CJPX_Decoder::Decode(pdfium::span<uint8_t> dest_buf,
+                          uint32_t pitch,
+                          bool swap_rgb) {
   if (pitch < ((m_Image->comps[0].w * 8 * m_Image->numcomps + 31) >> 5) << 2)
     return false;
 
   if (swap_rgb && m_Image->numcomps < 3)
     return false;
 
-  memset(dest_buf, 0xff, m_Image->comps[0].h * pitch);
+  fxcrt::spanset(dest_buf.first(m_Image->comps[0].h * pitch), 0xff);
   std::vector<uint8_t*> channel_bufs(m_Image->numcomps);
   std::vector<int> adjust_comps(m_Image->numcomps);
   for (uint32_t i = 0; i < m_Image->numcomps; i++) {
-    channel_bufs[i] = dest_buf + i;
+    channel_bufs[i] = dest_buf.subspan(i).data();
     adjust_comps[i] = m_Image->comps[i].prec - 8;
     if (i > 0) {
       if (m_Image->comps[i].dx != m_Image->comps[i - 1].dx ||

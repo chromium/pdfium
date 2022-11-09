@@ -12,6 +12,7 @@
 #include "core/fxcodec/jbig2/JBig2_Define.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/maybe_owned.h"
+#include "third_party/base/span.h"
 
 struct FX_RECT;
 
@@ -26,7 +27,10 @@ enum JBig2ComposeOp {
 class CJBig2_Image {
  public:
   CJBig2_Image(int32_t w, int32_t h);
-  CJBig2_Image(int32_t w, int32_t h, int32_t stride, uint8_t* pBuf);
+  CJBig2_Image(int32_t w,
+               int32_t h,
+               int32_t stride,
+               pdfium::span<uint8_t> pBuf);
   CJBig2_Image(const CJBig2_Image& other);
   ~CJBig2_Image();
 

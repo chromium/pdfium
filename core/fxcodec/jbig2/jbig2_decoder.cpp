@@ -10,6 +10,7 @@
 
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
+#include "core/fxcrt/span_util.h"
 
 namespace fxcodec {
 
@@ -47,7 +48,7 @@ FXCODEC_STATUS Jbig2Decoder::StartDecode(
     uint64_t src_key,
     pdfium::span<const uint8_t> global_span,
     uint64_t global_key,
-    uint8_t* dest_buf,
+    pdfium::span<uint8_t> dest_buf,
     uint32_t dest_pitch,
     PauseIndicatorIface* pPause) {
   pJbig2Context->m_width = width;
@@ -56,9 +57,9 @@ FXCODEC_STATUS Jbig2Decoder::StartDecode(
   pJbig2Context->m_nSrcKey = src_key;
   pJbig2Context->m_pGlobalSpan = global_span;
   pJbig2Context->m_nGlobalKey = global_key;
-  pJbig2Context->m_dest_buf = dest_buf;
+  pJbig2Context->m_dest_buf = dest_buf.data();
   pJbig2Context->m_dest_pitch = dest_pitch;
-  memset(dest_buf, 0, height * dest_pitch);
+  fxcrt::spanset(dest_buf.first(height * dest_pitch), 0);
   pJbig2Context->m_pContext =
       CJBig2_Context::Create(global_span, global_key, src_span, src_key,
                              pJBig2DocumentContext->GetSymbolDictCache());

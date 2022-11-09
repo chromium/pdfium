@@ -45,7 +45,7 @@ class Jbig2Decoder {
       uint64_t src_key,
       pdfium::span<const uint8_t> global_span,
       uint64_t global_key,
-      uint8_t* dest_buf,
+      pdfium::span<uint8_t> dest_buf,
       uint32_t dest_pitch,
       PauseIndicatorIface* pPause);
 
