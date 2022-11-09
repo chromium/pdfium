@@ -95,7 +95,7 @@ bool CFX_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
     return true;
 
   RetainPtr<CFX_DIBitmap> pBitmap = m_pTransformer->DetachBitmap();
-  if (!pBitmap || !pBitmap->GetBuffer())
+  if (!pBitmap || pBitmap->GetBuffer().empty())
     return false;
 
   if (pBitmap->IsMaskFormat()) {

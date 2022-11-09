@@ -134,7 +134,7 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
     RetainPtr<CFX_DIBitmap> pClipMask = m_pClipRgn->GetMask();
     if (pClipMask) {
       CGDataProviderRef pClipMaskDataProvider = CGDataProviderCreateWithData(
-          nullptr, pClipMask->GetBuffer(),
+          nullptr, pClipMask->GetBuffer().data(),
           pClipMask->GetPitch() * pClipMask->GetHeight(), DoNothing);
       CGFloat decode_f[2] = {255.f, 0.f};
       pImageCG = CGImageMaskCreate(

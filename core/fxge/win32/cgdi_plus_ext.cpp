@@ -221,8 +221,10 @@ void OutputImage(Gdiplus::GpGraphics* pGraphics,
     return;
   }
   int src_pitch = pBitmap->GetPitch();
-  uint8_t* scan0 = pBitmap->GetBuffer() + src_rect.top * src_pitch +
-                   pBitmap->GetBPP() * src_rect.left / 8;
+  uint8_t* scan0 = pBitmap->GetBuffer()
+                       .subspan(src_rect.top * src_pitch +
+                                pBitmap->GetBPP() * src_rect.left / 8)
+                       .data();
   Gdiplus::GpBitmap* bitmap = nullptr;
   switch (pBitmap->GetFormat()) {
     case FXDIB_Format::kArgb:

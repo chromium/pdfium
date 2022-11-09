@@ -102,7 +102,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
   FXDIB_Format dest_format = pBitmap->GetFormat();
   FXDIB_Format src_format = pSrcBitmap->GetFormat();
   int pitch = pBitmap->GetPitch();
-  uint8_t* buffer = pBitmap->GetBuffer();
+  uint8_t* buffer = pBitmap->GetBuffer().data();
   if (dest_format == src_format) {
     for (int row = 0; row < height; row++) {
       uint8_t* dest_scan = buffer + (dest_top + row) * pitch + dest_left * Bpp;
@@ -300,7 +300,7 @@ DataVector<uint32_t> Fill32BppDestStorageWithPalette(
     pdfium::span<const uint32_t> palette) {
   int width = source->GetWidth();
   int height = source->GetHeight();
-  void* buffer = source->GetBuffer();
+  void* buffer = source->GetBuffer().data();
   DCHECK(buffer);
   DataVector<uint32_t> dst32_storage(Fx2DSizeOrDie(width, height));
   pdfium::span<SkPMColor> dst32_pixels(dst32_storage);
@@ -714,7 +714,7 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
               int* heightPtr,
               bool forceAlpha,
               bool bRgbByteOrder) {
-  void* buffer = pSource->GetBuffer();
+  void* buffer = pSource->GetBuffer().data();
   if (!buffer)
     return false;
   SkColorType colorType = forceAlpha || pSource->IsMaskFormat()
@@ -1735,7 +1735,8 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
   SkImageInfo imageInfo =
       SkImageInfo::Make(pBitmap->GetWidth(), pBitmap->GetHeight(), color_type,
                         kOpaque_SkAlphaType);
-  skBitmap.installPixels(imageInfo, pBitmap->GetBuffer(), pBitmap->GetPitch());
+  skBitmap.installPixels(imageInfo, pBitmap->GetBuffer().data(),
+                         pBitmap->GetPitch());
   m_pCanvas = new SkCanvas(skBitmap);
 }
 
@@ -2033,7 +2034,7 @@ void CFX_SkiaDeviceDriver::SetClipMask(const FX_RECT& clipBox,
       SkImageInfo::Make(pThisLayer->GetWidth(), pThisLayer->GetHeight(),
                         SkColorType::kAlpha_8_SkColorType, kOpaque_SkAlphaType);
   SkBitmap bitmap;
-  bitmap.installPixels(imageInfo, pThisLayer->GetBuffer(),
+  bitmap.installPixels(imageInfo, pThisLayer->GetBuffer().data(),
                        pThisLayer->GetPitch());
   auto canvas = std::make_unique<SkCanvas>(bitmap);
   canvas->translate(
@@ -2419,7 +2420,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
 }
 
 uint8_t* CFX_SkiaDeviceDriver::GetBuffer() const {
-  return m_pBitmap->GetBuffer();
+  return m_pBitmap->GetBuffer().data();
 }
 
 bool CFX_SkiaDeviceDriver::GetClipBox(FX_RECT* pRect) {
@@ -2447,7 +2448,7 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                      int top) {
   if (!m_pBitmap)
     return true;
-  uint8_t* srcBuffer = m_pBitmap->GetBuffer();
+  uint8_t* srcBuffer = m_pBitmap->GetBuffer().data();
   if (!srcBuffer)
     return true;
 #if defined(_SKIA_SUPPORT_)
@@ -2459,7 +2460,7 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
       srcWidth, srcHeight, SkColorType::kN32_SkColorType, kPremul_SkAlphaType);
   SkBitmap skSrcBitmap;
   skSrcBitmap.installPixels(srcImageInfo, srcBuffer, srcRowBytes);
-  uint8_t* dstBuffer = pBitmap->GetBuffer();
+  uint8_t* dstBuffer = pBitmap->GetBuffer().data();
   DCHECK(dstBuffer);
   int dstWidth = pBitmap->GetWidth();
   int dstHeight = pBitmap->GetHeight();
@@ -2519,7 +2520,7 @@ bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                                      int left,
                                      int top,
                                      BlendMode blend_type) {
-  if (!m_pBitmap || !m_pBitmap->GetBuffer())
+  if (!m_pBitmap || m_pBitmap->GetBuffer().empty())
     return true;
 
 #if defined(_SKIA_SUPPORT_)
@@ -2558,7 +2559,7 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                          BlendMode blend_type) {
 #if defined(_SKIA_SUPPORT_)
   m_pCache->FlushForDraw();
-  if (!m_pBitmap->GetBuffer())
+  if (m_pBitmap->GetBuffer().empty())
     return true;
 
   CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(dest_width, dest_height,
@@ -2614,7 +2615,7 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
 
 #if defined(_SKIA_SUPPORT_PATHS_)
   Flush();
-  if (!m_pBitmap->GetBuffer())
+  if (m_pBitmap->GetBuffer().empty())
     return true;
 
   *handle = std::make_unique<CFX_ImageRenderer>(
@@ -2633,7 +2634,7 @@ bool CFX_SkiaDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
 
 #if defined(_SKIA_SUPPORT_PATHS_)
   Flush();
-  if (!m_pBitmap->GetBuffer()) {
+  if (m_pBitmap->GetBuffer().empty()) {
     return true;
   }
   return handle->Continue(pPause);
@@ -2651,7 +2652,7 @@ void CFX_DIBitmap::PreMultiply() {
   if (this->GetBPP() != 32)
     return;
 
-  void* buffer = this->GetBuffer();
+  void* buffer = this->GetBuffer().data();
   if (!buffer)
     return;
 
@@ -2677,7 +2678,7 @@ void CFX_DIBitmap::UnPreMultiply() {
   if (this->GetBPP() != 32)
     return;
 
-  void* buffer = this->GetBuffer();
+  void* buffer = this->GetBuffer().data();
   if (!buffer)
     return;
 
@@ -2757,7 +2758,7 @@ bool CFX_SkiaDeviceDriver::SetBitsWithMask(
     int dest_top,
     int bitmap_alpha,
     BlendMode blend_type) {
-  if (!m_pBitmap || !m_pBitmap->GetBuffer())
+  if (!m_pBitmap || m_pBitmap->GetBuffer().empty())
     return true;
 
   CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(
@@ -2972,6 +2973,6 @@ void CFX_DIBBase::DebugVerifyBufferIsPreMultiplied(void* arg) const {
 
 void CFX_DIBitmap::DebugVerifyBitmapIsPreMultiplied() const {
 #ifdef SK_DEBUG
-  DebugVerifyBufferIsPreMultiplied(GetBuffer());
+  DebugVerifyBufferIsPreMultiplied(GetBuffer().data());
 #endif  // SK_DEBUG
 }

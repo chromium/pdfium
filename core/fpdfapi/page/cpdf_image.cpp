@@ -293,7 +293,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
                                      pNewStream->GetObjNum());
   }
 
-  uint8_t* src_buf = pBitmap->GetBuffer();
+  uint8_t* src_buf = pBitmap->GetBuffer().data();
   int32_t src_pitch = pBitmap->GetPitch();
   DataVector<uint8_t> dest_buf(Fx2DSizeOrDie(dest_pitch, BitmapHeight));
   auto dest_span = pdfium::make_span(dest_buf);

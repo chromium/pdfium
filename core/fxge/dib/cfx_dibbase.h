@@ -34,7 +34,7 @@ class CFX_DIBBase : public Retainable {
 
   ~CFX_DIBBase() override;
 
-  virtual uint8_t* GetBuffer() const;
+  virtual pdfium::span<uint8_t> GetBuffer() const;
   virtual pdfium::span<const uint8_t> GetScanline(int line) const = 0;
   virtual bool SkipToScanline(int line, PauseIndicatorIface* pPause) const;
   virtual size_t GetEstimatedImageMemoryBurden() const;
@@ -79,7 +79,7 @@ class CFX_DIBBase : public Retainable {
   uint32_t GetAlphaMaskPitch() const;
   pdfium::span<const uint8_t> GetAlphaMaskScanline(int line) const;
   pdfium::span<uint8_t> GetWritableAlphaMaskScanline(int line);
-  uint8_t* GetAlphaMaskBuffer();
+  pdfium::span<uint8_t> GetAlphaMaskBuffer();
   RetainPtr<CFX_DIBitmap> GetAlphaMask();
   RetainPtr<CFX_DIBitmap> CloneAlphaMask() const;
 

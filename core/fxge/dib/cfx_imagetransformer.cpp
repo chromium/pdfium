@@ -246,7 +246,8 @@ void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
   if (!pTransformed->Create(m_result.Width(), m_result.Height(), format))
     return;
 
-  const uint8_t* pSrcMaskBuf = m_Storer.GetBitmap()->GetAlphaMaskBuffer();
+  pdfium::span<const uint8_t> pSrcMaskBuf =
+      m_Storer.GetBitmap()->GetAlphaMaskBuffer();
   pTransformed->Clear(0);
   RetainPtr<CFX_DIBitmap> pDestMask = pTransformed->GetAlphaMask();
   if (pDestMask)
@@ -256,20 +257,20 @@ void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
                             m_result.top);
   result2stretch.Concat(m_dest2stretch);
   result2stretch.Translate(-m_StretchClip.left, -m_StretchClip.top);
-  if (!pSrcMaskBuf && pDestMask) {
+  if (pSrcMaskBuf.empty() && pDestMask) {
     pDestMask->Clear(0xff000000);
   } else if (pDestMask) {
     CalcData calc_data = {
         pDestMask.Get(),
         result2stretch,
-        pSrcMaskBuf,
+        pSrcMaskBuf.data(),
         m_Storer.GetBitmap()->GetAlphaMaskPitch(),
     };
     CalcMask(calc_data);
   }
 
   CalcData calc_data = {pTransformed.Get(), result2stretch,
-                        m_Storer.GetBitmap()->GetBuffer(),
+                        m_Storer.GetBitmap()->GetBuffer().data(),
                         m_Storer.GetBitmap()->GetPitch()};
   if (m_Storer.GetBitmap()->IsMaskFormat()) {
     CalcAlpha(calc_data);

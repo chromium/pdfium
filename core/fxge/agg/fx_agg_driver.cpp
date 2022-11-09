@@ -71,7 +71,7 @@ void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& pBitmap,
   int src_b = FXARGB_B(argb);
   int Bpp = pBitmap->GetBPP() / 8;
   int dib_argb = FXARGB_TOBGRORDERDIB(argb);
-  uint8_t* pBuffer = pBitmap->GetBuffer();
+  uint8_t* pBuffer = pBitmap->GetBuffer().data();
   if (src_alpha == 255) {
     for (int row = rect.top; row < rect.bottom; row++) {
       uint8_t* dest_scan =
@@ -146,7 +146,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
   FXDIB_Format dest_format = pBitmap->GetFormat();
   FXDIB_Format src_format = pSrcBitmap->GetFormat();
   int pitch = pBitmap->GetPitch();
-  uint8_t* buffer = pBitmap->GetBuffer();
+  uint8_t* buffer = pBitmap->GetBuffer().data();
   if (dest_format == src_format) {
     for (int row = 0; row < height; row++) {
       uint8_t* dest_scan = buffer + (dest_top + row) * pitch + dest_left * Bpp;
@@ -844,17 +844,19 @@ void CFX_Renderer::render(const Scanline& sl) {
   if (y < m_ClipBox.top || y >= m_ClipBox.bottom)
     return;
 
-  uint8_t* dest_scan = m_pDevice->GetBuffer() + m_pDevice->GetPitch() * y;
+  uint8_t* dest_scan =
+      m_pDevice->GetBuffer().subspan(m_pDevice->GetPitch() * y).data();
   uint8_t* dest_scan_extra_alpha = nullptr;
   RetainPtr<CFX_DIBitmap> pAlphaMask = m_pDevice->GetAlphaMask();
   if (pAlphaMask) {
     dest_scan_extra_alpha =
-        pAlphaMask->GetBuffer() + pAlphaMask->GetPitch() * y;
+        pAlphaMask->GetBuffer().subspan(pAlphaMask->GetPitch() * y).data();
   }
   uint8_t* backdrop_scan = nullptr;
   if (m_pBackdropDevice) {
-    backdrop_scan =
-        m_pBackdropDevice->GetBuffer() + m_pBackdropDevice->GetPitch() * y;
+    backdrop_scan = m_pBackdropDevice->GetBuffer()
+                        .subspan(m_pBackdropDevice->GetPitch() * y)
+                        .data();
   }
   int Bpp = m_pDevice->GetBPP() / 8;
   bool bDestAlpha = m_pDevice->IsAlphaFormat() || m_pDevice->IsMaskFormat();
@@ -879,7 +881,8 @@ void CFX_Renderer::render(const Scanline& sl) {
     }
     uint8_t* clip_pos = nullptr;
     if (m_pClipMask) {
-      clip_pos = m_pClipMask->GetBuffer() +
+      // TODO(crbug.com/1382604): use subspan arithmetic.
+      clip_pos = m_pClipMask->GetBuffer().data() +
                  (y - m_ClipBox.top) * m_pClipMask->GetPitch() + x -
                  m_ClipBox.left;
     }
@@ -1109,8 +1112,8 @@ void CFX_AggDeviceDriver::SetClipMask(agg::rasterizer_scanline_aa& rasterizer) {
   pThisLayer->Create(path_rect.Width(), path_rect.Height(),
                      FXDIB_Format::k8bppMask);
   pThisLayer->Clear(0);
-  agg::rendering_buffer raw_buf(pThisLayer->GetBuffer(), pThisLayer->GetWidth(),
-                                pThisLayer->GetHeight(),
+  agg::rendering_buffer raw_buf(pThisLayer->GetBuffer().data(),
+                                pThisLayer->GetWidth(), pThisLayer->GetHeight(),
                                 pThisLayer->GetPitch());
   agg::pixfmt_gray8 pixel_buf(raw_buf);
   agg::renderer_base<agg::pixfmt_gray8> base_buf(pixel_buf);
@@ -1204,7 +1207,7 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_Path& path,
   if (blend_type != BlendMode::kNormal)
     return false;
 
-  if (!m_pBitmap->GetBuffer())
+  if (m_pBitmap->GetBuffer().empty())
     return true;
 
   m_FillOptions = fill_options;
@@ -1266,7 +1269,7 @@ bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
   if (blend_type != BlendMode::kNormal)
     return false;
 
-  if (!m_pBitmap->GetBuffer())
+  if (m_pBitmap->GetBuffer().empty())
     return true;
 
   FX_RECT clip_rect;
@@ -1309,7 +1312,7 @@ bool CFX_AggDeviceDriver::GetClipBox(FX_RECT* pRect) {
 bool CFX_AggDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                     int left,
                                     int top) {
-  if (!m_pBitmap->GetBuffer())
+  if (m_pBitmap->GetBuffer().empty())
     return true;
 
   FX_RECT rect(left, top, left + pBitmap->GetWidth(),
@@ -1349,7 +1352,7 @@ bool CFX_AggDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                                     int left,
                                     int top,
                                     BlendMode blend_type) {
-  if (!m_pBitmap->GetBuffer())
+  if (m_pBitmap->GetBuffer().empty())
     return true;
 
   if (pBitmap->IsMaskFormat()) {
@@ -1372,7 +1375,7 @@ bool CFX_AggDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                         const FX_RECT* pClipRect,
                                         const FXDIB_ResampleOptions& options,
                                         BlendMode blend_type) {
-  if (!m_pBitmap->GetBuffer())
+  if (m_pBitmap->GetBuffer().empty())
     return true;
 
   if (dest_width == pSource->GetWidth() &&
@@ -1404,7 +1407,7 @@ bool CFX_AggDeviceDriver::StartDIBits(
     const FXDIB_ResampleOptions& options,
     std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_type) {
-  if (!m_pBitmap->GetBuffer())
+  if (m_pBitmap->GetBuffer().empty())
     return true;
 
   *handle = std::make_unique<CFX_ImageRenderer>(
@@ -1415,7 +1418,7 @@ bool CFX_AggDeviceDriver::StartDIBits(
 
 bool CFX_AggDeviceDriver::ContinueDIBits(CFX_ImageRenderer* pHandle,
                                          PauseIndicatorIface* pPause) {
-  return !m_pBitmap->GetBuffer() || pHandle->Continue(pPause);
+  return m_pBitmap->GetBuffer().empty() || pHandle->Continue(pPause);
 }
 
 }  // namespace pdfium

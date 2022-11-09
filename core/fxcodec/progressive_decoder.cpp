@@ -1285,7 +1285,7 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
 
   auto pDIBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   pDIBitmap->Create(m_SrcWidth, m_SrcHeight, FXDIB_Format::kArgb);
-  if (!pDIBitmap->GetBuffer()) {
+  if (pDIBitmap->GetBuffer().empty()) {
     m_pDeviceBitmap = nullptr;
     m_pFile = nullptr;
     m_status = FXCODEC_STATUS::kError;

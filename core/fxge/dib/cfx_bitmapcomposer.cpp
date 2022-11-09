@@ -141,13 +141,13 @@ void CFX_BitmapComposer::ComposeScanlineV(
   int dest_pitch = m_pBitmap->GetPitch();
   int dest_alpha_pitch = m_pBitmap->GetAlphaMaskPitch();
   int dest_x = m_DestLeft + (m_bFlipX ? (m_DestWidth - line - 1) : line);
-  uint8_t* dest_buf = m_pBitmap->GetBuffer();
+  uint8_t* dest_buf = m_pBitmap->GetBuffer().data();
   if (dest_buf) {
     dest_buf += dest_x * Bpp + m_DestTop * dest_pitch;
     if (m_bFlipY)
       dest_buf += dest_pitch * (m_DestHeight - 1);
   }
-  uint8_t* dest_alpha_buf = m_pBitmap->GetAlphaMaskBuffer();
+  uint8_t* dest_alpha_buf = m_pBitmap->GetAlphaMaskBuffer().data();
   if (dest_alpha_buf) {
     dest_alpha_buf += dest_x + m_DestTop * dest_alpha_pitch;
     if (m_bFlipY)

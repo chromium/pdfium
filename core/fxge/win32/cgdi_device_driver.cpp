@@ -393,7 +393,7 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap1,
     if (!pBitmap)
       return false;
 
-    LPBYTE pBuffer = pBitmap->GetBuffer();
+    LPBYTE pBuffer = pBitmap->GetBuffer().data();
     ByteString info = GetBitmapInfo(pBitmap);
     ((BITMAPINFOHEADER*)info.c_str())->biHeight *= -1;
     FX_RECT dst_rect(0, 0, src_rect.Width(), src_rect.Height());
@@ -407,7 +407,7 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap1,
   }
 
   RetainPtr<CFX_DIBitmap> pBitmap = pBitmap1;
-  LPBYTE pBuffer = pBitmap->GetBuffer();
+  LPBYTE pBuffer = pBitmap->GetBuffer().data();
   ByteString info = GetBitmapInfo(pBitmap);
   ::SetDIBitsToDevice(m_hDC, left, top, src_rect.Width(), src_rect.Height(),
                       src_rect.left, pBitmap->GetHeight() - src_rect.bottom, 0,
@@ -445,7 +445,7 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(
   ByteString toStrechBitmapInfo = GetBitmapInfo(pToStrechBitmap);
   ::StretchDIBits(m_hDC, dest_left, dest_top, dest_width, dest_height, 0, 0,
                   pToStrechBitmap->GetWidth(), pToStrechBitmap->GetHeight(),
-                  pToStrechBitmap->GetBuffer(),
+                  pToStrechBitmap->GetBuffer().data(),
                   (BITMAPINFO*)toStrechBitmapInfo.c_str(), DIB_RGB_COLORS,
                   SRCCOPY);
   return true;
@@ -502,7 +502,7 @@ bool CGdiDeviceDriver::GDI_StretchBitMask(
   // 0xB8074A
 
   ::StretchDIBits(m_hDC, dest_left, dest_top, dest_width, dest_height, 0, 0,
-                  width, height, pBitmap->GetBuffer(), (BITMAPINFO*)&bmi,
+                  width, height, pBitmap->GetBuffer().data(), (BITMAPINFO*)&bmi,
                   DIB_RGB_COLORS, 0xB8074A);
 
   SelectObject(m_hDC, hOld);

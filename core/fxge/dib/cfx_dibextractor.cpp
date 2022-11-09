@@ -10,14 +10,15 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 
 CFX_DIBExtractor::CFX_DIBExtractor(const RetainPtr<CFX_DIBBase>& pSrc) {
-  if (!pSrc->GetBuffer()) {
+  if (pSrc->GetBuffer().empty()) {
     m_pBitmap = pSrc->Realize();
     return;
   }
   RetainPtr<CFX_DIBBase> pOldSrc(pSrc);
   m_pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!m_pBitmap->Create(pOldSrc->GetWidth(), pOldSrc->GetHeight(),
-                         pOldSrc->GetFormat(), pOldSrc->GetBuffer(), 0)) {
+                         pOldSrc->GetFormat(), pOldSrc->GetBuffer().data(),
+                         0)) {
     m_pBitmap.Reset();
     return;
   }

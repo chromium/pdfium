@@ -607,8 +607,8 @@ CFX_DIBBase::CFX_DIBBase() = default;
 
 CFX_DIBBase::~CFX_DIBBase() = default;
 
-uint8_t* CFX_DIBBase::GetBuffer() const {
-  return nullptr;
+pdfium::span<uint8_t> CFX_DIBBase::GetBuffer() const {
+  return pdfium::span<uint8_t>();
 }
 
 bool CFX_DIBBase::SkipToScanline(int line, PauseIndicatorIface* pPause) const {
@@ -880,8 +880,8 @@ pdfium::span<uint8_t> CFX_DIBBase::GetWritableAlphaMaskScanline(int line) {
                       : pdfium::span<uint8_t>();
 }
 
-uint8_t* CFX_DIBBase::GetAlphaMaskBuffer() {
-  return m_pAlphaMask ? m_pAlphaMask->GetBuffer() : nullptr;
+pdfium::span<uint8_t> CFX_DIBBase::GetAlphaMaskBuffer() {
+  return m_pAlphaMask ? m_pAlphaMask->GetBuffer() : pdfium::span<uint8_t>();
 }
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::GetAlphaMask() {
@@ -1037,8 +1037,9 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ConvertTo(FXDIB_Format dest_format) const {
 
   RetainPtr<const CFX_DIBBase> holder(this);
   DataVector<uint32_t> pal_8bpp;
-  if (!ConvertBuffer(dest_format, pClone->GetBuffer(), pClone->GetPitch(),
-                     m_Width, m_Height, holder, 0, 0, &pal_8bpp)) {
+  if (!ConvertBuffer(dest_format, pClone->GetBuffer().data(),
+                     pClone->GetPitch(), m_Width, m_Height, holder, 0, 0,
+                     &pal_8bpp)) {
     return nullptr;
   }
   if (!pal_8bpp.empty())
@@ -1060,7 +1061,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
 
   pTransBitmap->SetPalette(GetPaletteSpan());
   int dest_pitch = pTransBitmap->GetPitch();
-  uint8_t* dest_buf = pTransBitmap->GetBuffer();
+  uint8_t* dest_buf = pTransBitmap->GetBuffer().data();
   int row_start = bXFlip ? m_Height - dest_clip.right : dest_clip.left;
   int row_end = bXFlip ? m_Height - dest_clip.left : dest_clip.right;
   int col_start = bYFlip ? m_Width - dest_clip.bottom : dest_clip.top;
@@ -1121,7 +1122,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
   }
   if (m_pAlphaMask) {
     dest_pitch = pTransBitmap->m_pAlphaMask->GetPitch();
-    dest_buf = pTransBitmap->m_pAlphaMask->GetBuffer();
+    dest_buf = pTransBitmap->m_pAlphaMask->GetBuffer().data();
     int dest_step = bYFlip ? -dest_pitch : dest_pitch;
     for (int row = row_start; row < row_end; ++row) {
       int dest_col = (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -

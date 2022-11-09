@@ -428,8 +428,8 @@ bool CTiffContext::Decode(const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
     uint16_t rotation = ORIENTATION_TOPLEFT;
     TIFFGetField(m_tif_ctx.get(), TIFFTAG_ORIENTATION, &rotation);
     if (TIFFReadRGBAImageOriented(m_tif_ctx.get(), img_width, img_height,
-                                  (uint32*)pDIBitmap->GetBuffer(), rotation,
-                                  1)) {
+                                  (uint32*)pDIBitmap->GetBuffer().data(),
+                                  rotation, 1)) {
       for (uint32_t row = 0; row < img_height; row++) {
         uint8_t* row_buf = pDIBitmap->GetWritableScanline(row).data();
         TiffBGRA2RGBA(row_buf, img_width, 4);

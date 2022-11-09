@@ -77,7 +77,8 @@ void XFA_DrawImage(CFGAS_GEGraphics* pGS,
                    XFA_AttributeValue iVertAlign) {
   if (rtImage.IsEmpty())
     return;
-  if (!pDIBitmap || !pDIBitmap->GetBuffer())
+
+  if (!pDIBitmap || pDIBitmap->GetBuffer().empty())
     return;
 
   CFX_RectF rtFit(rtImage.TopLeft(),

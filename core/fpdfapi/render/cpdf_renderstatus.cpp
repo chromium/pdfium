@@ -769,7 +769,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
   else
     m_pDevice->CreateCompatibleBitmap(pBackdrop, width, height);
 
-  if (!pBackdrop->GetBuffer())
+  if (pBackdrop->GetBuffer().empty())
     return nullptr;
 
   bool bNeedDraw;
@@ -1444,9 +1444,9 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   if (!pMask->Create(width, height, FXDIB_Format::k8bppMask))
     return nullptr;
 
-  uint8_t* dest_buf = pMask->GetBuffer();
+  uint8_t* dest_buf = pMask->GetBuffer().data();
   int dest_pitch = pMask->GetPitch();
-  uint8_t* src_buf = bitmap->GetBuffer();
+  uint8_t* src_buf = bitmap->GetBuffer().data();
   int src_pitch = bitmap->GetPitch();
   DataVector<uint8_t> transfers(256);
   if (pFunc) {
