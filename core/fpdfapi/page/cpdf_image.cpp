@@ -306,22 +306,16 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       src_buf += src_pitch;
     }
   } else {
-    int32_t src_offset = 0;
     for (int32_t row = 0; row < BitmapHeight; row++) {
       size_t dest_span_row_offset = dest_span_offset;
-      src_offset = row * src_pitch;
+      int32_t src_offset = row * src_pitch;
       for (int32_t column = 0; column < BitmapWidth; column++) {
-        float alpha = 1;
-        dest_span[dest_span_row_offset] =
-            static_cast<uint8_t>(src_buf[src_offset + 2] * alpha);
-        dest_span[dest_span_row_offset + 1] =
-            static_cast<uint8_t>(src_buf[src_offset + 1] * alpha);
-        dest_span[dest_span_row_offset + 2] =
-            static_cast<uint8_t>(src_buf[src_offset] * alpha);
+        dest_span[dest_span_row_offset] = src_buf[src_offset + 2];
+        dest_span[dest_span_row_offset + 1] = src_buf[src_offset + 1];
+        dest_span[dest_span_row_offset + 2] = src_buf[src_offset];
         dest_span_row_offset += 3;
         src_offset += bpp == 24 ? 3 : 4;
       }
-
       dest_span_offset += dest_pitch;
     }
   }
