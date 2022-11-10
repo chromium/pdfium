@@ -720,8 +720,7 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
   SkColorType colorType = forceAlpha || pSource->IsMaskFormat()
                               ? SkColorType::kAlpha_8_SkColorType
                               : SkColorType::kGray_8_SkColorType;
-  SkAlphaType alphaType =
-      pSource->IsMaskFormat() ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
+  SkAlphaType alphaType = kPremul_SkAlphaType;
   int width = pSource->GetWidth();
   int height = pSource->GetHeight();
   int rowBytes = pSource->GetPitch();
@@ -808,7 +807,6 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
     }
     case 32:
       colorType = Get32BitSkColorType(bRgbByteOrder);
-      alphaType = kPremul_SkAlphaType;
       pSource->DebugVerifyBufferIsPreMultiplied(buffer);
       break;
     default:
@@ -1734,7 +1732,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
 
   SkImageInfo imageInfo =
       SkImageInfo::Make(pBitmap->GetWidth(), pBitmap->GetHeight(), color_type,
-                        kOpaque_SkAlphaType);
+                        kPremul_SkAlphaType);
   skBitmap.installPixels(imageInfo, pBitmap->GetBuffer().data(),
                          pBitmap->GetPitch());
   m_pCanvas = new SkCanvas(skBitmap);
@@ -2852,7 +2850,7 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
           CStretchEngine::UseInterpolateBilinear(options, dest_width,
                                                  dest_height, width, height)) {
         sampling_options =
-            SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNearest);
+            SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kLinear);
       }
       m_pCanvas->drawImageRect(skBitmap.asImage(),
                                SkRect::MakeWH(width, height), sampling_options,
