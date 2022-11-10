@@ -572,3 +572,16 @@ group("pdfium_all") {
     ]
   }
 }
+
+# Makes additional targets reachable only for "gn check". These are not always
+# built by the "all" Ninja target, which uses the "default" group, which in turn
+# depends on the "pdfium_all" group.
+group("gn_check") {
+  deps = []
+
+  # TODO(crbug.com/pdfium/1832): Remove !is_android when //third_party/expat is
+  # available.
+  if (!is_android) {
+    deps += [ "//skia" ]
+  }
+}
