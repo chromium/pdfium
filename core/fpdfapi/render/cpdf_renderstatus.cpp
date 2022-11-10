@@ -56,6 +56,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
@@ -1444,9 +1445,9 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   if (!pMask->Create(width, height, FXDIB_Format::k8bppMask))
     return nullptr;
 
-  uint8_t* dest_buf = pMask->GetBuffer().data();
+  pdfium::span<uint8_t> dest_buf = pMask->GetBuffer();
+  pdfium::span<const uint8_t> src_buf = bitmap->GetBuffer();
   int dest_pitch = pMask->GetPitch();
-  uint8_t* src_buf = bitmap->GetBuffer().data();
   int src_pitch = bitmap->GetPitch();
   DataVector<uint8_t> transfers(256);
   if (pFunc) {
@@ -1463,8 +1464,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   if (bLuminosity) {
     int Bpp = bitmap->GetBPP() / 8;
     for (int row = 0; row < height; row++) {
-      uint8_t* dest_pos = dest_buf + row * dest_pitch;
-      uint8_t* src_pos = src_buf + row * src_pitch;
+      uint8_t* dest_pos = dest_buf.subspan(row * dest_pitch).data();
+      const uint8_t* src_pos = src_buf.subspan(row * src_pitch).data();
       for (int col = 0; col < width; col++) {
         *dest_pos++ = transfers[FXRGB2GRAY(src_pos[2], src_pos[1], *src_pos)];
         src_pos += Bpp;
@@ -1476,7 +1477,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
       dest_buf[i] = transfers[src_buf[i]];
     }
   } else {
-    memcpy(dest_buf, src_buf, dest_pitch * height);
+    fxcrt::spancpy(dest_buf, src_buf.first(dest_pitch * height));
   }
   return pMask;
 }

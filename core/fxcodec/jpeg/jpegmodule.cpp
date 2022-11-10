@@ -468,23 +468,25 @@ bool JpegModule::JpegEncode(const RetainPtr<CFX_DIBBase>& pSource,
   JSAMPROW row_pointer[1];
   JDIMENSION row;
   while (cinfo.next_scanline < cinfo.image_height) {
-    const uint8_t* src_scan = pSource->GetScanline(cinfo.next_scanline).data();
+    pdfium::span<const uint8_t> src_scan =
+        pSource->GetScanline(cinfo.next_scanline);
     if (nComponents > 1) {
       uint8_t* dest_scan = line_buf;
       if (nComponents == 3) {
         for (uint32_t i = 0; i < width; i++) {
-          ReverseCopy3Bytes(dest_scan, src_scan);
+          ReverseCopy3Bytes(dest_scan, src_scan.data());
           dest_scan += 3;
-          src_scan += Bpp;
+          src_scan = src_scan.subspan(Bpp);
         }
       } else {
         for (uint32_t i = 0; i < pitch; i++) {
-          *dest_scan++ = ~*src_scan++;
+          *dest_scan++ = ~src_scan.front();
+          src_scan = src_scan.subspan(1);
         }
       }
       row_pointer[0] = line_buf;
     } else {
-      row_pointer[0] = const_cast<uint8_t*>(src_scan);
+      row_pointer[0] = const_cast<uint8_t*>(src_scan.data());
     }
     row = cinfo.next_scanline;
     jpeg_write_scanlines(&cinfo, row_pointer, 1);

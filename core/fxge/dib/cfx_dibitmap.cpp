@@ -251,8 +251,8 @@ bool CFX_DIBitmap::TransferWithUnequalFormats(
   if (!offset.IsValid())
     return false;
 
-  uint8_t* dest_buf =
-      m_pBuffer.Get() + dest_top * m_Pitch + offset.ValueOrDie();
+  pdfium::span<uint8_t> dest_buf = GetBuffer().subspan(
+      dest_top * m_Pitch + static_cast<uint32_t>(offset.ValueOrDie()));
   DataVector<uint32_t> d_plt;
   return ConvertBuffer(dest_format, dest_buf, m_Pitch, width, height,
                        pSrcBitmap, src_left, src_top, &d_plt);
@@ -1076,14 +1076,15 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   }
   int dest_bpp = GetBppFromFormat(dest_format);
   int dest_pitch = fxge::CalculatePitch32OrDie(dest_bpp, m_Width);
+  const size_t dest_buf_size = dest_pitch * m_Height + 4;
   std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf(
-      FX_TryAlloc(uint8_t, dest_pitch * m_Height + 4));
+      FX_TryAlloc(uint8_t, dest_buf_size));
   if (!dest_buf)
     return false;
 
   RetainPtr<CFX_DIBitmap> pAlphaMask;
   if (dest_format == FXDIB_Format::kArgb) {
-    memset(dest_buf.get(), 0xff, dest_pitch * m_Height + 4);
+    memset(dest_buf.get(), 0xff, dest_buf_size);
     if (m_pAlphaMask) {
       for (int row = 0; row < m_Height; row++) {
         uint8_t* pDstScanline = dest_buf.get() + row * dest_pitch + 3;
@@ -1112,8 +1113,8 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   bool ret = false;
   RetainPtr<CFX_DIBBase> holder(this);
   DataVector<uint32_t> pal_8bpp;
-  ret = ConvertBuffer(dest_format, dest_buf.get(), dest_pitch, m_Width,
-                      m_Height, holder, 0, 0, &pal_8bpp);
+  ret = ConvertBuffer(dest_format, {dest_buf.get(), dest_buf_size}, dest_pitch,
+                      m_Width, m_Height, holder, 0, 0, &pal_8bpp);
   if (!ret)
     return false;
 

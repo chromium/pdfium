@@ -1933,14 +1933,13 @@ void ProgressiveDecoder::ResampleVert(
   if (dest_row_1 < dest_top) {
     int dest_bottom = dest_top + m_sizeY;
     if (dest_row + (int)scale_y >= dest_bottom - 1) {
-      const uint8_t* scan_src =
-          pDeviceBitmap->GetScanline(dest_row).subspan(dest_ScanOffset).data();
+      pdfium::span<const uint8_t> scan_src =
+          pDeviceBitmap->GetScanline(dest_row).subspan(dest_ScanOffset,
+                                                       m_sizeX * dest_Bpp);
       while (++dest_row < dest_bottom) {
-        uint8_t* scan_des = pDeviceBitmap->GetWritableScanline(dest_row)
-                                .subspan(dest_ScanOffset)
-                                .data();
-        uint32_t size = m_sizeX * dest_Bpp;
-        memmove(scan_des, scan_src, size);
+        fxcrt::spanmove(pDeviceBitmap->GetWritableScanline(dest_row).subspan(
+                            dest_ScanOffset),
+                        scan_src);
       }
     }
     return;
@@ -2013,14 +2012,13 @@ void ProgressiveDecoder::ResampleVert(
   }
   int dest_bottom = dest_top + m_sizeY;
   if (dest_row + (int)scale_y >= dest_bottom - 1) {
-    const uint8_t* scan_src =
-        pDeviceBitmap->GetScanline(dest_row).subspan(dest_ScanOffset).data();
+    pdfium::span<const uint8_t> scan_src =
+        pDeviceBitmap->GetScanline(dest_row).subspan(dest_ScanOffset,
+                                                     m_sizeX * dest_Bpp);
     while (++dest_row < dest_bottom) {
-      uint8_t* scan_des = pDeviceBitmap->GetWritableScanline(dest_row)
-                              .subspan(dest_ScanOffset)
-                              .data();
-      uint32_t size = m_sizeX * dest_Bpp;
-      memmove(scan_des, scan_src, size);
+      fxcrt::spanmove(
+          pDeviceBitmap->GetWritableScanline(dest_row).subspan(dest_ScanOffset),
+          scan_src);
     }
   }
 }

@@ -71,11 +71,11 @@ void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& pBitmap,
   int src_b = FXARGB_B(argb);
   int Bpp = pBitmap->GetBPP() / 8;
   int dib_argb = FXARGB_TOBGRORDERDIB(argb);
-  uint8_t* pBuffer = pBitmap->GetBuffer().data();
+  pdfium::span<uint8_t> pBuffer = pBitmap->GetBuffer();
   if (src_alpha == 255) {
     for (int row = rect.top; row < rect.bottom; row++) {
       uint8_t* dest_scan =
-          pBuffer + row * pBitmap->GetPitch() + rect.left * Bpp;
+          pBuffer.subspan(row * pBitmap->GetPitch() + rect.left * Bpp).data();
       if (Bpp == 4) {
         std::fill_n(reinterpret_cast<uint32_t*>(dest_scan), width, dib_argb);
       } else {
@@ -90,7 +90,8 @@ void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& pBitmap,
   }
   bool bAlpha = pBitmap->IsAlphaFormat();
   for (int row = rect.top; row < rect.bottom; row++) {
-    uint8_t* dest_scan = pBuffer + row * pBitmap->GetPitch() + rect.left * Bpp;
+    uint8_t* dest_scan =
+        pBuffer.subspan(row * pBitmap->GetPitch() + rect.left * Bpp).data();
     if (bAlpha) {
       for (int col = 0; col < width; col++) {
         uint8_t back_alpha = dest_scan[3];
