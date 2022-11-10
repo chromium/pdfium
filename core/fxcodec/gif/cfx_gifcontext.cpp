@@ -333,7 +333,7 @@ bool CFX_GifContext::ReadAllOrNone(uint8_t* dest, uint32_t size) {
     return false;
 
   size_t read_marker = input_buffer_->GetPosition();
-  size_t read = input_buffer_->ReadBlock(dest, size);
+  size_t read = input_buffer_->ReadBlock({dest, size});
   if (read < size) {
     input_buffer_->Seek(read_marker);
     return false;

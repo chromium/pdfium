@@ -661,7 +661,7 @@ bool CFX_BmpDecompressor::ReadAllOrNone(pdfium::span<uint8_t> buf) {
     return false;
 
   size_t original_position = input_buffer_->GetPosition();
-  size_t read = input_buffer_->ReadBlock(buf.data(), buf.size());
+  size_t read = input_buffer_->ReadBlock(buf);
   if (read < buf.size()) {
     input_buffer_->Seek(original_position);
     return false;
