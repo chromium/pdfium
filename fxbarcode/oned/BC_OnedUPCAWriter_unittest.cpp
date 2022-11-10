@@ -4,7 +4,9 @@
 
 #include "fxbarcode/oned/BC_OnedUPCAWriter.h"
 
-#include "core/fxcrt/fx_memory.h"
+#include <string.h>
+
+#include "core/fxcrt/data_vector.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -12,28 +14,15 @@ namespace {
 TEST(OnedUPCAWriterTest, Encode) {
   CBC_OnedUPCAWriter writer;
   writer.InitEANWriter();
-  int32_t width;
 
   // UPCA barcodes encode 12-digit numbers into 95 modules in a unidimensional
   // disposition.
-  uint8_t* encoded = writer.Encode("", width);
-  EXPECT_FALSE(encoded);
-  FX_Free(encoded);
+  EXPECT_TRUE(writer.Encode("").empty());
+  EXPECT_TRUE(writer.Encode("123").empty());
+  EXPECT_TRUE(writer.Encode("12345678901").empty());
+  EXPECT_TRUE(writer.Encode("1234567890123").empty());
 
-  encoded = writer.Encode("123", width);
-  EXPECT_FALSE(encoded);
-  FX_Free(encoded);
-
-  encoded = writer.Encode("12345678901", width);
-  EXPECT_FALSE(encoded);
-  FX_Free(encoded);
-
-  encoded = writer.Encode("1234567890123", width);
-  EXPECT_FALSE(encoded);
-  FX_Free(encoded);
-
-  encoded = writer.Encode("123456789012", width);
-  const char* expected =
+  static const char kExpected1[] =
       "# #"      // Start
       "  ##  #"  // 1 L
       "  #  ##"  // 2 L
@@ -49,15 +38,13 @@ TEST(OnedUPCAWriterTest, Encode) {
       "##  ## "  // 1 R
       "## ##  "  // 2 R
       "# #";     // End
-  EXPECT_TRUE(encoded);
-  EXPECT_EQ(static_cast<int32_t>(strlen(expected)), width);
-  for (size_t i = 0; i < strlen(expected); i++) {
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  }
-  FX_Free(encoded);
+  DataVector<uint8_t> encoded = writer.Encode("123456789012");
+  ASSERT_EQ(strlen(kExpected1), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected1); i++)
+    EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i]) << i;
 
-  encoded = writer.Encode("777666555440", width);
-  expected =
+  encoded = writer.Encode("777666555440");
+  static const char kExpected2[] =
       "# #"      // Start
       " ### ##"  // 7 L
       " ### ##"  // 7 L
@@ -73,12 +60,9 @@ TEST(OnedUPCAWriterTest, Encode) {
       "# ###  "  // 4 R
       "###  # "  // 0 R
       "# #";     // End
-  EXPECT_TRUE(encoded);
-  EXPECT_EQ(static_cast<int32_t>(strlen(expected)), width);
-  for (size_t i = 0; i < strlen(expected); i++) {
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  }
-  FX_Free(encoded);
+  ASSERT_EQ(strlen(kExpected2), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected2); i++)
+    EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i]) << i;
 }
 
 TEST(OnedUPCAWriterTest, Checksum) {

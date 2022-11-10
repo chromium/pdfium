@@ -24,7 +24,6 @@
 #include <memory>
 
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "fxbarcode/oned/BC_OnedCodaBarWriter.h"
 
 CBC_Codabar::CBC_Codabar()
@@ -37,13 +36,10 @@ bool CBC_Codabar::Encode(WideStringView contents) {
   if (!pWriter->CheckContentValidity(contents))
     return false;
 
-  int32_t outWidth = 0;
   m_renderContents = pWriter->FilterContents(contents);
   ByteString byteString = m_renderContents.ToUTF8();
-  std::unique_ptr<uint8_t, FxFreeDeleter> data(
-      pWriter->Encode(byteString, outWidth));
   return pWriter->RenderResult(m_renderContents.AsStringView(),
-                               pdfium::make_span(data.get(), outWidth));
+                               pWriter->Encode(byteString));
 }
 
 bool CBC_Codabar::RenderDevice(CFX_RenderDevice* device,

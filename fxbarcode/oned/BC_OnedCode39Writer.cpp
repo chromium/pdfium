@@ -145,11 +145,10 @@ char CBC_OnedCode39Writer::CalcCheckSum(const ByteString& contents) {
   return kOnedCode39Checksum[checksum % std::size(kOnedCode39Checksum)];
 }
 
-uint8_t* CBC_OnedCode39Writer::Encode(const ByteString& contents,
-                                      int32_t& outlength) {
+DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
   char checksum = CalcCheckSum(contents);
   if (checksum == '*')
-    return nullptr;
+    return DataVector<uint8_t>();
 
   int8_t widths[9] = {0};
   int32_t wideStrideNum = 3;
@@ -170,13 +169,12 @@ uint8_t* CBC_OnedCode39Writer::Encode(const ByteString& contents,
         codeWidth += widths[k];
     }
   }
-  outlength = codeWidth;
-  std::unique_ptr<uint8_t, FxFreeDeleter> result(FX_Alloc(uint8_t, codeWidth));
+  DataVector<uint8_t> result(codeWidth);
   ToIntArray(kOnedCode39CharacterEncoding[39], widths);
-  int32_t pos = AppendPattern(result.get(), 0, widths, 9, true);
+  int32_t pos = AppendPattern(result.data(), 0, widths, 9, true);
 
   int8_t narrowWhite[] = {1};
-  pos += AppendPattern(result.get(), pos, narrowWhite, 1, false);
+  pos += AppendPattern(result.data(), pos, narrowWhite, 1, false);
 
   for (int32_t l = m_iContentLen - 1; l >= 0; l--) {
     for (size_t i = 0; i < kOnedCode39AlphabetLen; i++) {
@@ -184,20 +182,19 @@ uint8_t* CBC_OnedCode39Writer::Encode(const ByteString& contents,
         continue;
 
       ToIntArray(kOnedCode39CharacterEncoding[i], widths);
-      pos += AppendPattern(result.get(), pos, widths, 9, true);
+      pos += AppendPattern(result.data(), pos, widths, 9, true);
     }
-    pos += AppendPattern(result.get(), pos, narrowWhite, 1, false);
+    pos += AppendPattern(result.data(), pos, narrowWhite, 1, false);
   }
   ToIntArray(kOnedCode39CharacterEncoding[39], widths);
-  pos += AppendPattern(result.get(), pos, widths, 9, true);
+  pos += AppendPattern(result.data(), pos, widths, 9, true);
 
-  auto* result_ptr = result.get();
   for (int32_t i = 0; i < codeWidth / 2; i++) {
-    result_ptr[i] ^= result_ptr[codeWidth - 1 - i];
-    result_ptr[codeWidth - 1 - i] ^= result_ptr[i];
-    result_ptr[i] ^= result_ptr[codeWidth - 1 - i];
+    result[i] ^= result[codeWidth - 1 - i];
+    result[codeWidth - 1 - i] ^= result[i];
+    result[i] ^= result[codeWidth - 1 - i];
   }
-  return result.release();
+  return result;
 }
 
 bool CBC_OnedCode39Writer::encodedContents(WideStringView contents,

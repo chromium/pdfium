@@ -21,7 +21,7 @@ class CBC_OnedEAN13Writer final : public CBC_OneDimEANWriter {
   ~CBC_OnedEAN13Writer() override;
 
   // CBC_OneDimEANWriter:
-  uint8_t* Encode(const ByteString& contents, int32_t& outLength) override;
+  DataVector<uint8_t> Encode(const ByteString& contents) override;
   bool CheckContentValidity(WideStringView contents) override;
   WideString FilterContents(WideStringView contents) override;
   int32_t CalcChecksum(const ByteString& contents) override;

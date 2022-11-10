@@ -4,7 +4,9 @@
 
 #include "fxbarcode/oned/BC_OnedEAN13Writer.h"
 
-#include "core/fxcrt/fx_memory.h"
+#include <string.h>
+
+#include "core/fxcrt/data_vector.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -12,33 +14,15 @@ namespace {
 TEST(OnedEAN13WriterTest, Encode) {
   CBC_OnedEAN13Writer writer;
   writer.InitEANWriter();
-  int32_t width;
-  uint8_t* encoded;
-  const char* expected;
 
   // EAN-13 barcodes encode 13-digit numbers into 95 modules in a unidimensional
   // disposition.
-  encoded = writer.Encode("", width);
-  EXPECT_FALSE(encoded);
-  FX_Free(encoded);
+  EXPECT_TRUE(writer.Encode("").empty());
+  EXPECT_TRUE(writer.Encode("123").empty());
+  EXPECT_TRUE(writer.Encode("123456789012").empty());
+  EXPECT_TRUE(writer.Encode("12345678901234").empty());
 
-  encoded = writer.Encode("123", width);
-  EXPECT_FALSE(encoded);
-  FX_Free(encoded);
-
-  encoded = writer.Encode("123456789012", width);
-  EXPECT_FALSE(encoded);
-  FX_Free(encoded);
-
-  encoded = writer.Encode("12345678901234", width);
-  EXPECT_FALSE(encoded);
-  FX_Free(encoded);
-
-  encoded = writer.Encode("1234567890128", width);
-  EXPECT_TRUE(encoded);
-  EXPECT_EQ(95, width);
-
-  expected =
+  static const char kExpected1[] =
       "# #"  // Start
       // 1 implicit by LLGLGG in next 6 digits
       "  #  ##"  // 2 L
@@ -55,16 +39,11 @@ TEST(OnedEAN13WriterTest, Encode) {
       "## ##  "  // 2 R
       "#  #   "  // 8 R
       "# #";     // End
-  for (int i = 0; i < 95; i++) {
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  }
-  FX_Free(encoded);
+  DataVector<uint8_t> encoded = writer.Encode("1234567890128");
+  for (size_t i = 0; i < strlen(kExpected1); i++)
+    EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i]) << i;
 
-  encoded = writer.Encode("7776665554440", width);
-  EXPECT_TRUE(encoded);
-  EXPECT_EQ(95, width);
-
-  expected =
+  static const char kExpected2[] =
       "# #"  // Start
       // 7 implicit by LGLGLG in next 6 digits
       " ### ##"  // 7 L
@@ -81,10 +60,10 @@ TEST(OnedEAN13WriterTest, Encode) {
       "# ###  "  // 4 R
       "###  # "  // 0 R
       "# #";     // End
-  for (int i = 0; i < 95; i++) {
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  }
-  FX_Free(encoded);
+  encoded = writer.Encode("7776665554440");
+  ASSERT_EQ(strlen(kExpected2), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected2); i++)
+    EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i]) << i;
 }
 
 TEST(OnedEAN13WriterTest, Checksum) {

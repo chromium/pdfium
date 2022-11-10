@@ -27,7 +27,7 @@ class CBC_OnedCode128Writer final : public CBC_OneDimWriter {
                             std::vector<int32_t>* patterns);
 
   // CBC_OneDimWriter
-  uint8_t* Encode(const ByteString& contents, int32_t& outLength) override;
+  DataVector<uint8_t> Encode(const ByteString& contents) override;
   bool CheckContentValidity(WideStringView contents) override;
   WideString FilterContents(WideStringView contents) override;
   void SetTextLocation(BC_TEXT_LOC location) override;

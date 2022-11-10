@@ -12,6 +12,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_textrenderoptions.h"
@@ -47,7 +48,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   void SetFontStyle(int32_t style);
   void SetFontColor(FX_ARGB color);
 
-  virtual uint8_t* Encode(const ByteString& contents, int32_t& outLength) = 0;
+  virtual DataVector<uint8_t> Encode(const ByteString& contents) = 0;
   bool RenderDeviceResult(CFX_RenderDevice* device,
                           const CFX_Matrix& matrix,
                           WideStringView contents);

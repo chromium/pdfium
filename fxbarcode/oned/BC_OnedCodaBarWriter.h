@@ -19,7 +19,7 @@ class CBC_OnedCodaBarWriter final : public CBC_OneDimWriter {
   ~CBC_OnedCodaBarWriter() override;
 
   // CBC_OneDimWriter:
-  uint8_t* Encode(const ByteString& contents, int32_t& outLength) override;
+  DataVector<uint8_t> Encode(const ByteString& contents) override;
   bool RenderResult(WideStringView contents,
                     pdfium::span<const uint8_t> code) override;
   bool CheckContentValidity(WideStringView contents) override;

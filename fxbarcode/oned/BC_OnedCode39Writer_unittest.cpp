@@ -6,19 +6,10 @@
 
 #include <string.h>
 
-#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/data_vector.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
-
-// 3 wide and 6 narrow modules per char. 1 space between chars.
-constexpr int MODULES_PER_CHAR = 3 * 3 + 6 + 1;
-
-// '*' is added as the first and last char.
-const int DELIMITER_CHARS = 2;
-
-// Last char may serve as checksum.
-const int CHECKSUM_CHARS = 1;
 
 TEST(OnedCode39WriterTest, SetWideNarrowRatio) {
   // Code 39 barcodes encode strings of any size into modules in a
@@ -36,12 +27,7 @@ TEST(OnedCode39WriterTest, SetWideNarrowRatio) {
 
   writer.SetWideNarrowRatio(3);
 
-  int32_t width;
-  uint8_t* encoded;
-  const char* expected;
-
-  encoded = writer.Encode("PDFIUM", width);
-  expected =
+  static const char kExpected1[] =
       "#   # ### ### # "  // * Start
       "# ### ### #   # "  // P
       "# # ###   # ### "  // D
@@ -50,14 +36,14 @@ TEST(OnedCode39WriterTest, SetWideNarrowRatio) {
       "###   # # # ### "  // U
       "### ### # #   # "  // M
       "#   # ### ### #";  // * End
-  for (size_t i = 0; i < strlen(expected); i++)
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  FX_Free(encoded);
+  DataVector<uint8_t> encoded = writer.Encode("PDFIUM");
+  ASSERT_EQ(strlen(kExpected1), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected1); i++)
+    EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i]) << i;
 
   writer.SetWideNarrowRatio(2);
 
-  encoded = writer.Encode("PDFIUM", width);
-  expected =
+  static const char kExpected2[] =
       "#  # ## ## # "  // * Start
       "# ## ## #  # "  // P
       "# # ##  # ## "  // D
@@ -66,41 +52,35 @@ TEST(OnedCode39WriterTest, SetWideNarrowRatio) {
       "##  # # # ## "  // U
       "## ## # #  # "  // M
       "#  # ## ## #";  // * End
-  for (size_t i = 0; i < strlen(expected); i++)
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  FX_Free(encoded);
+  encoded = writer.Encode("PDFIUM");
+  ASSERT_EQ(strlen(kExpected2), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected2); i++)
+    EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i]) << i;
 }
 
 TEST(OnedCode39WriterTest, Encode) {
   CBC_OnedCode39Writer writer;
-  int32_t width;
-  uint8_t* encoded;
-  const char* expected;
 
-  encoded = writer.Encode("", width);
-  EXPECT_EQ((0 + DELIMITER_CHARS) * MODULES_PER_CHAR - 1, width);
-  expected =
+  static const char kExpected1[] =
       "#   # ### ### # "  // * Start
       "#   # ### ### #";  // * End
-  for (size_t i = 0; i < strlen(expected); i++)
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  FX_Free(encoded);
+  DataVector<uint8_t> encoded = writer.Encode("");
+  ASSERT_EQ(strlen(kExpected1), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected1); i++)
+    EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i]) << i;
 
-  encoded = writer.Encode("123", width);
-  EXPECT_EQ((3 + DELIMITER_CHARS) * MODULES_PER_CHAR - 1, width);
-  expected =
+  static const char kExpected2[] =
       "#   # ### ### # "  // * Start
       "### #   # # ### "  // 1
       "# ###   # # ### "  // 2
       "### ###   # # # "  // 3
       "#   # ### ### #";  // * End
-  for (size_t i = 0; i < strlen(expected); i++)
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  FX_Free(encoded);
+  encoded = writer.Encode("123");
+  ASSERT_EQ(strlen(kExpected2), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected2); i++)
+    EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i]) << i;
 
-  encoded = writer.Encode("PDFIUM", width);
-  EXPECT_EQ((6 + DELIMITER_CHARS) * MODULES_PER_CHAR - 1, width);
-  expected =
+  static const char kExpected3[] =
       "#   # ### ### # "  // * Start
       "# ### ### #   # "  // P
       "# # ###   # ### "  // D
@@ -109,13 +89,12 @@ TEST(OnedCode39WriterTest, Encode) {
       "###   # # # ### "  // U
       "### ### # #   # "  // M
       "#   # ### ### #";  // * End
-  for (size_t i = 0; i < strlen(expected); i++)
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  FX_Free(encoded);
+  encoded = writer.Encode("PDFIUM");
+  ASSERT_EQ(strlen(kExpected3), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected3); i++)
+    EXPECT_EQ(kExpected3[i] != ' ', !!encoded[i]) << i;
 
-  encoded = writer.Encode("A -$%./+Z", width);
-  EXPECT_EQ((9 + DELIMITER_CHARS) * MODULES_PER_CHAR - 1, width);
-  expected =
+  static const char kExpected4[] =
       "#   # ### ### # "  // * Start
       "### # #   # ### "  // A
       "#   ### # ### # "  // Space
@@ -127,37 +106,29 @@ TEST(OnedCode39WriterTest, Encode) {
       "#   # #   #   # "  // +
       "#   ### ### # # "  // Z
       "#   # ### ### #";  // * End
-  for (size_t i = 0; i < strlen(expected); i++)
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  FX_Free(encoded);
+  encoded = writer.Encode("A -$%./+Z");
+  ASSERT_EQ(strlen(kExpected4), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected4); i++)
+    EXPECT_EQ(kExpected4[i] != ' ', !!encoded[i]) << i;
 }
 
 TEST(OnedCode39WriterTest, Checksum) {
   CBC_OnedCode39Writer writer;
-  int32_t width;
-  uint8_t* encoded;
-  const char* expected;
-
   writer.SetCalcChecksum(true);
 
-  encoded = writer.Encode("123", width);
-  EXPECT_EQ((3 + CHECKSUM_CHARS + DELIMITER_CHARS) * MODULES_PER_CHAR - 1,
-            width);
-  expected =
+  static const char kExpected1[] =
       "#   # ### ### # "  // * Start
       "### #   # # ### "  // 1 (1)
       "# ###   # # ### "  // 2 (2)
       "### ###   # # # "  // 3 (3)
       "# ###   ### # # "  // 6 (6 = (1 + 2 + 3) % 43)
       "#   # ### ### #";  // * End
-  for (size_t i = 0; i < strlen(expected); i++)
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  FX_Free(encoded);
+  DataVector<uint8_t> encoded = writer.Encode("123");
+  ASSERT_EQ(strlen(kExpected1), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected1); i++)
+    EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i]) << i;
 
-  encoded = writer.Encode("PDFIUM", width);
-  EXPECT_EQ((6 + CHECKSUM_CHARS + DELIMITER_CHARS) * MODULES_PER_CHAR - 1,
-            width);
-  expected =
+  static const char kExpected2[] =
       "#   # ### ### # "  // * Start
       "# ### ### #   # "  // P (25)
       "# # ###   # ### "  // D (13)
@@ -167,9 +138,10 @@ TEST(OnedCode39WriterTest, Checksum) {
       "### ### # #   # "  // M (22)
       "###   # # ### # "  // . (37 = (25 + 13 + 15 + 18 + 30 + 22) % 43)
       "#   # ### ### #";  // * End
-  for (size_t i = 0; i < strlen(expected); i++)
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  FX_Free(encoded);
+  encoded = writer.Encode("PDFIUM");
+  ASSERT_EQ(strlen(kExpected2), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected2); i++)
+    EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i]) << i;
 }
 
 }  // namespace

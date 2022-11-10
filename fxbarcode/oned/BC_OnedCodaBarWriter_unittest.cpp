@@ -4,52 +4,36 @@
 
 #include "fxbarcode/oned/BC_OnedCodaBarWriter.h"
 
-#include "core/fxcrt/fx_memory.h"
+#include <string.h>
+
+#include "core/fxcrt/data_vector.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
 
-// 3 wide and 4 narrow modules per delimiter. One space between them.
-constexpr int kModulesForDelimiters = (3 * 2 + 4) * 2 + 1;
-
-// 2 wide and 5 narrow modules per number, '_' or '$'. 1 space between chars.
-constexpr int kModulesPerNumber = 2 * 2 + 5 + 1;
-
-// 3 wide and 4 narrow modules per number, '_' or '$'. 1 space between chars.
-constexpr int kModulesPerPunctuation = 3 * 2 + 4 + 1;
-
 TEST(OnedCodaBarWriterTest, Encode) {
   CBC_OnedCodaBarWriter writer;
-  int32_t width;
 
-  uint8_t* encoded = writer.Encode("", width);
-  EXPECT_EQ(kModulesForDelimiters, width);
-  const char* expected =
+  static const char kExpected1[] =
       "# ##  #  # "  // A Start
       "#  #  # ##";  // B End
-  for (size_t i = 0; i < strlen(expected); i++) {
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  }
-  FX_Free(encoded);
+  DataVector<uint8_t> encoded = writer.Encode("");
+  ASSERT_EQ(strlen(kExpected1), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected1); i++)
+    EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i]) << i;
 
-  encoded = writer.Encode("123", width);
-  EXPECT_EQ(kModulesForDelimiters + 3 * kModulesPerNumber, width);
-  expected =
+  static const char kExpected2[] =
       "# ##  #  # "  // A Start
       "# # ##  # "   // 1
       "# #  # ## "   // 2
       "##  # # # "   // 3
       "#  #  # ##";  // B End
-  for (size_t i = 0; i < strlen(expected); i++) {
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  }
-  FX_Free(encoded);
+  encoded = writer.Encode("123");
+  ASSERT_EQ(strlen(kExpected2), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected2); i++)
+    EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i]) << i;
 
-  encoded = writer.Encode("-$./:+", width);
-  EXPECT_EQ(kModulesForDelimiters + 2 * kModulesPerNumber +
-                4 * kModulesPerPunctuation,
-            width);
-  expected =
+  static const char kExpected3[] =
       "# ##  #  # "  // A Start
       "# #  ## # "   // -
       "# ##  # # "   // $
@@ -58,16 +42,12 @@ TEST(OnedCodaBarWriterTest, Encode) {
       "## # ## ## "  // :
       "# ## ## ## "  // +
       "#  #  # ##";  // B End
-  for (size_t i = 0; i < strlen(expected); i++) {
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  }
-  FX_Free(encoded);
+  encoded = writer.Encode("-$./:+");
+  ASSERT_EQ(strlen(kExpected3), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected3); i++)
+    EXPECT_EQ(kExpected3[i] != ' ', !!encoded[i]) << i;
 
-  encoded = writer.Encode("456.987987987/001", width);
-  EXPECT_EQ(kModulesForDelimiters + 15 * kModulesPerNumber +
-                2 * kModulesPerPunctuation,
-            width);
-  expected =
+  static const char kExpected4[] =
       "# ##  #  # "  // A Start
       "# ## #  # "   // 4
       "## # #  # "   // 5
@@ -87,15 +67,14 @@ TEST(OnedCodaBarWriterTest, Encode) {
       "# # #  ## "   // 0
       "# # ##  # "   // 1
       "#  #  # ##";  // B End
-  for (size_t i = 0; i < strlen(expected); i++) {
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  }
-  FX_Free(encoded);
+  encoded = writer.Encode("456.987987987/001");
+  ASSERT_EQ(strlen(kExpected4), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected4); i++)
+    EXPECT_EQ(kExpected4[i] != ' ', !!encoded[i]) << i;
 }
 
 TEST(OnedCodaBarWriterTest, SetDelimiters) {
   CBC_OnedCodaBarWriter writer;
-  int32_t width;
 
   EXPECT_TRUE(writer.SetStartChar('A'));
   EXPECT_TRUE(writer.SetStartChar('B'));
@@ -126,18 +105,16 @@ TEST(OnedCodaBarWriterTest, SetDelimiters) {
   writer.SetStartChar('N');
   writer.SetEndChar('*');
 
-  uint8_t* encoded = writer.Encode("987", width);
-  EXPECT_EQ(kModulesForDelimiters + 3 * kModulesPerNumber, width);
-  const char* expected =
+  static const char kExpected[] =
       "#  #  # ## "  // N (same as B) Start
       "## #  # # "   // 9
       "#  ## # # "   // 8
       "#  # ## # "   // 7
       "# #  #  ##";  // * (same as C) End
-  for (size_t i = 0; i < strlen(expected); i++) {
-    EXPECT_EQ(expected[i] != ' ', !!encoded[i]) << i;
-  }
-  FX_Free(encoded);
+  DataVector<uint8_t> encoded = writer.Encode("987");
+  ASSERT_EQ(strlen(kExpected), encoded.size());
+  for (size_t i = 0; i < strlen(kExpected); i++)
+    EXPECT_EQ(kExpected[i] != ' ', !!encoded[i]) << i;
 }
 
 }  // namespace

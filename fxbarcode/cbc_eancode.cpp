@@ -8,7 +8,6 @@
 
 #include <utility>
 
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "fxbarcode/BC_Library.h"
 #include "fxbarcode/oned/BC_OnedEANWriter.h"
 
@@ -26,13 +25,11 @@ bool CBC_EANCode::Encode(WideStringView contents) {
   if (!pWriter->CheckContentValidity(contents))
     return false;
 
-  int32_t out_width = 0;
   m_renderContents = Preprocess(contents);
   ByteString str = m_renderContents.ToUTF8();
   pWriter->InitEANWriter();
-  std::unique_ptr<uint8_t, FxFreeDeleter> data(pWriter->Encode(str, out_width));
   return pWriter->RenderResult(m_renderContents.AsStringView(),
-                               pdfium::make_span(data.get(), out_width));
+                               pWriter->Encode(str));
 }
 
 bool CBC_EANCode::RenderDevice(CFX_RenderDevice* device,

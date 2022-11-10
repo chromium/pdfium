@@ -84,11 +84,10 @@ int32_t CBC_OnedUPCAWriter::CalcChecksum(const ByteString& contents) {
   return checksum;
 }
 
-uint8_t* CBC_OnedUPCAWriter::Encode(const ByteString& contents,
-                                    int32_t& outLength) {
+DataVector<uint8_t> CBC_OnedUPCAWriter::Encode(const ByteString& contents) {
   ByteString toEAN13String = '0' + contents;
   m_iDataLenth = 13;
-  return m_subWriter->Encode(toEAN13String, outLength);
+  return m_subWriter->Encode(toEAN13String);
 }
 
 bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,

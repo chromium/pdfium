@@ -88,30 +88,28 @@ int32_t CBC_OnedEAN8Writer::CalcChecksum(const ByteString& contents) {
   return EANCalcChecksum(contents);
 }
 
-uint8_t* CBC_OnedEAN8Writer::Encode(const ByteString& contents,
-                                    int32_t& outLength) {
+DataVector<uint8_t> CBC_OnedEAN8Writer::Encode(const ByteString& contents) {
   if (contents.GetLength() != 8)
-    return nullptr;
+    return {};
 
-  outLength = m_codeWidth;
-  std::unique_ptr<uint8_t, FxFreeDeleter> result(
-      FX_Alloc(uint8_t, m_codeWidth));
+  DataVector<uint8_t> result(m_codeWidth);
   int32_t pos = 0;
-  pos += AppendPattern(result.get(), pos, kOnedEAN8StartPattern, 3, true);
+  pos += AppendPattern(result.data(), pos, kOnedEAN8StartPattern, 3, true);
 
   int32_t i = 0;
   for (i = 0; i <= 3; i++) {
     int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
-    pos += AppendPattern(result.get(), pos, kOnedEAN8LPattern[digit], 4, false);
+    pos +=
+        AppendPattern(result.data(), pos, kOnedEAN8LPattern[digit], 4, false);
   }
-  pos += AppendPattern(result.get(), pos, kOnedEAN8MiddlePattern, 5, false);
+  pos += AppendPattern(result.data(), pos, kOnedEAN8MiddlePattern, 5, false);
 
   for (i = 4; i <= 7; i++) {
     int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
-    pos += AppendPattern(result.get(), pos, kOnedEAN8LPattern[digit], 4, true);
+    pos += AppendPattern(result.data(), pos, kOnedEAN8LPattern[digit], 4, true);
   }
-  pos += AppendPattern(result.get(), pos, kOnedEAN8StartPattern, 3, true);
-  return result.release();
+  pos += AppendPattern(result.data(), pos, kOnedEAN8StartPattern, 3, true);
+  return result;
 }
 
 bool CBC_OnedEAN8Writer::ShowChars(WideStringView contents,
