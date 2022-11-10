@@ -28,16 +28,16 @@
 #include "third_party/base/check.h"
 
 #ifdef _SKIA_SUPPORT_
-#include "third_party/skia/include/core/SkCanvas.h"
-#include "third_party/skia/include/core/SkColor.h"
-#include "third_party/skia/include/core/SkColorType.h"
-#include "third_party/skia/include/core/SkImage.h"
-#include "third_party/skia/include/core/SkImageInfo.h"
-#include "third_party/skia/include/core/SkPicture.h"
-#include "third_party/skia/include/core/SkPictureRecorder.h"
-#include "third_party/skia/include/core/SkRefCnt.h"
-#include "third_party/skia/include/core/SkSize.h"
-#include "third_party/skia/include/core/SkSurface.h"
+#include "third_party/skia/include/core/SkCanvas.h"           // nogncheck
+#include "third_party/skia/include/core/SkColor.h"            // nogncheck
+#include "third_party/skia/include/core/SkColorType.h"        // nogncheck
+#include "third_party/skia/include/core/SkImage.h"            // nogncheck
+#include "third_party/skia/include/core/SkImageInfo.h"        // nogncheck
+#include "third_party/skia/include/core/SkPicture.h"          // nogncheck
+#include "third_party/skia/include/core/SkPictureRecorder.h"  // nogncheck
+#include "third_party/skia/include/core/SkRefCnt.h"           // nogncheck
+#include "third_party/skia/include/core/SkSize.h"             // nogncheck
+#include "third_party/skia/include/core/SkSurface.h"          // nogncheck
 #endif  // _SKIA_SUPPORT_
 
 using pdfium::ManyRectanglesChecksum;

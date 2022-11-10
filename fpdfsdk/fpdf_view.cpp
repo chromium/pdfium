@@ -53,8 +53,8 @@
 #include "third_party/base/span.h"
 
 #ifdef _SKIA_SUPPORT_
-#include "third_party/skia/include/core/SkPictureRecorder.h"
-#include "third_party/skia/include/core/SkRect.h"
+#include "third_party/skia/include/core/SkPictureRecorder.h"  // nogncheck
+#include "third_party/skia/include/core/SkRect.h"             // nogncheck
 #endif  // _SKIA_SUPPORT_
 
 #ifdef PDF_ENABLE_V8
