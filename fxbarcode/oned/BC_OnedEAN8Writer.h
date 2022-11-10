@@ -33,8 +33,7 @@ class CBC_OnedEAN8Writer final : public CBC_OneDimEANWriter {
   bool ShowChars(WideStringView contents,
                  CFX_RenderDevice* device,
                  const CFX_Matrix& matrix,
-                 int32_t barWidth,
-                 int32_t multiple) override;
+                 int32_t barWidth) override;
 
   static constexpr int32_t kDefaultCodeWidth = 3 + (7 * 4) + 5 + (7 * 4) + 3;
   int32_t m_codeWidth = kDefaultCodeWidth;

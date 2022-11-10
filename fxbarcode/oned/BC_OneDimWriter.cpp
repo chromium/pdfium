@@ -175,8 +175,7 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
 bool CBC_OneDimWriter::ShowChars(WideStringView contents,
                                  CFX_RenderDevice* device,
                                  const CFX_Matrix& matrix,
-                                 int32_t barWidth,
-                                 int32_t multiple) {
+                                 int32_t barWidth) {
   if (!device || !m_pFont)
     return false;
 
@@ -249,7 +248,7 @@ bool CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
   }
 
   return m_locTextLoc == BC_TEXT_LOC::kNone || !contents.Contains(' ') ||
-         ShowChars(contents, device, matrix, m_barWidth, m_multiple);
+         ShowChars(contents, device, matrix, m_barWidth);
 }
 
 bool CBC_OneDimWriter::RenderResult(WideStringView contents,
@@ -267,26 +266,25 @@ bool CBC_OneDimWriter::RenderResult(WideStringView contents,
   m_outputHScale =
       m_Width > 0 ? static_cast<float>(m_Width) / static_cast<float>(codeLength)
                   : 1.0;
-  m_multiple = 1;
   const int32_t outputWidth = codeLength;
   m_barWidth = m_Width;
 
   m_output.clear();
-  m_output.reserve(codeOldLength * m_multiple);
-  for (int32_t inputX = 0, outputX = leftPadding * m_multiple;
-       inputX < codeOldLength; ++inputX, outputX += m_multiple) {
+  m_output.reserve(codeOldLength);
+  for (int32_t inputX = 0, outputX = leftPadding; inputX < codeOldLength;
+       ++inputX, ++outputX) {
     if (code[inputX] != 1)
       continue;
 
     if (outputX >= outputWidth)
       return true;
 
-    if (outputX + m_multiple > outputWidth && outputWidth - outputX > 0) {
+    if (outputX + 1 > outputWidth && outputWidth - outputX > 0) {
       RenderVerticalBars(outputX, outputWidth - outputX);
       return true;
     }
 
-    RenderVerticalBars(outputX, m_multiple);
+    RenderVerticalBars(outputX, /*width=*/1);
   }
   return true;
 }

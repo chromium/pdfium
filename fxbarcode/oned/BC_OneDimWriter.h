@@ -57,8 +57,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   virtual bool ShowChars(WideStringView contents,
                          CFX_RenderDevice* device,
                          const CFX_Matrix& matrix,
-                         int32_t barWidth,
-                         int32_t multiple);
+                         int32_t barWidth);
   void ShowDeviceChars(CFX_RenderDevice* device,
                        const CFX_Matrix& matrix,
                        const ByteString str,
@@ -97,7 +96,6 @@ class CBC_OneDimWriter : public CBC_Writer {
 
   std::vector<CFX_Path> m_output;
   int32_t m_barWidth;
-  int32_t m_multiple;
   float m_outputHScale;
 };
 
