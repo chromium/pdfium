@@ -60,6 +60,26 @@ bool IsInOnedCode39Alphabet(wchar_t ch) {
          ch == L'+' || ch == L'%';
 }
 
+char CalcCheckSum(const ByteString& contents) {
+  if (contents.GetLength() > 80)
+    return '*';
+
+  int32_t checksum = 0;
+  for (const auto& c : contents) {
+    size_t j = 0;
+    for (; j < kOnedCode39AlphabetLen; j++) {
+      if (kOnedCode39Alphabet[j] == c) {
+        if (c != '*')
+          checksum += j;
+        break;
+      }
+    }
+    if (j >= kOnedCode39AlphabetLen)
+      return '*';
+  }
+  return kOnedCode39Checksum[checksum % std::size(kOnedCode39Checksum)];
+}
+
 }  // namespace
 
 CBC_OnedCode39Writer::CBC_OnedCode39Writer() = default;
@@ -119,30 +139,11 @@ bool CBC_OnedCode39Writer::SetWideNarrowRatio(int8_t ratio) {
   return true;
 }
 
-void CBC_OnedCode39Writer::ToIntArray(int16_t a, int8_t* toReturn) {
-  for (int32_t i = 0; i < 9; i++) {
-    toReturn[i] = (a & (1 << i)) == 0 ? 1 : m_iWideNarrRatio;
+void CBC_OnedCode39Writer::ToIntArray(int16_t value,
+                                      int8_t array[kArraySize]) const {
+  for (size_t i = 0; i < kArraySize; i++) {
+    array[i] = (value & (1 << i)) == 0 ? 1 : m_iWideNarrRatio;
   }
-}
-
-char CBC_OnedCode39Writer::CalcCheckSum(const ByteString& contents) {
-  if (contents.GetLength() > 80)
-    return '*';
-
-  int32_t checksum = 0;
-  for (const auto& c : contents) {
-    size_t j = 0;
-    for (; j < kOnedCode39AlphabetLen; j++) {
-      if (kOnedCode39Alphabet[j] == c) {
-        if (c != '*')
-          checksum += j;
-        break;
-      }
-    }
-    if (j >= kOnedCode39AlphabetLen)
-      return '*';
-  }
-  return kOnedCode39Checksum[checksum % std::size(kOnedCode39Checksum)];
 }
 
 DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
@@ -150,28 +151,29 @@ DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
   if (checksum == '*')
     return DataVector<uint8_t>();
 
-  int8_t widths[9] = {0};
-  int32_t wideStrideNum = 3;
-  int32_t narrStrideNum = 9 - wideStrideNum;
+  int8_t widths[kArraySize] = {0};
+  constexpr int32_t kWideStrideNum = 3;
+  constexpr int32_t kNarrowStrideNum = kArraySize - kWideStrideNum;
   ByteString encodedContents = contents;
   if (m_bCalcChecksum)
     encodedContents += checksum;
   m_iContentLen = encodedContents.GetLength();
-  int32_t codeWidth = (wideStrideNum * m_iWideNarrRatio + narrStrideNum) * 2 +
-                      1 + m_iContentLen;
+  size_t code_width =
+      (kWideStrideNum * m_iWideNarrRatio + kNarrowStrideNum) * 2 + 1 +
+      m_iContentLen;
   for (size_t j = 0; j < m_iContentLen; j++) {
     for (size_t i = 0; i < kOnedCode39AlphabetLen; i++) {
       if (kOnedCode39Alphabet[i] != encodedContents[j])
         continue;
 
       ToIntArray(kOnedCode39CharacterEncoding[i], widths);
-      for (size_t k = 0; k < 9; k++)
-        codeWidth += widths[k];
+      for (size_t k = 0; k < kArraySize; k++)
+        code_width += widths[k];
     }
   }
-  DataVector<uint8_t> result(codeWidth);
+  DataVector<uint8_t> result(code_width);
   ToIntArray(kOnedCode39CharacterEncoding[39], widths);
-  int32_t pos = AppendPattern(result.data(), 0, widths, 9, true);
+  int32_t pos = AppendPattern(result.data(), 0, widths, kArraySize, true);
 
   int8_t narrowWhite[] = {1};
   pos += AppendPattern(result.data(), pos, narrowWhite, 1, false);
@@ -182,17 +184,17 @@ DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
         continue;
 
       ToIntArray(kOnedCode39CharacterEncoding[i], widths);
-      pos += AppendPattern(result.data(), pos, widths, 9, true);
+      pos += AppendPattern(result.data(), pos, widths, kArraySize, true);
     }
     pos += AppendPattern(result.data(), pos, narrowWhite, 1, false);
   }
   ToIntArray(kOnedCode39CharacterEncoding[39], widths);
-  pos += AppendPattern(result.data(), pos, widths, 9, true);
+  pos += AppendPattern(result.data(), pos, widths, kArraySize, true);
 
-  for (int32_t i = 0; i < codeWidth / 2; i++) {
-    result[i] ^= result[codeWidth - 1 - i];
-    result[codeWidth - 1 - i] ^= result[i];
-    result[i] ^= result[codeWidth - 1 - i];
+  for (size_t i = 0; i < code_width / 2; i++) {
+    result[i] ^= result[code_width - 1 - i];
+    result[code_width - 1 - i] ^= result[i];
+    result[i] ^= result[code_width - 1 - i];
   }
   return result;
 }

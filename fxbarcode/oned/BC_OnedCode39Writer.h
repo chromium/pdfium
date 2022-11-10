@@ -7,6 +7,8 @@
 #ifndef FXBARCODE_ONED_BC_ONEDCODE39WRITER_H_
 #define FXBARCODE_ONED_BC_ONEDCODE39WRITER_H_
 
+#include <stddef.h>
+
 #include "fxbarcode/BC_Library.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
 
@@ -28,8 +30,9 @@ class CBC_OnedCode39Writer final : public CBC_OneDimWriter {
   bool encodedContents(WideStringView contents, WideString* result);
 
  private:
-  void ToIntArray(int16_t a, int8_t* toReturn);
-  char CalcCheckSum(const ByteString& contents);
+  static constexpr size_t kArraySize = 9;
+
+  void ToIntArray(int16_t value, int8_t array[kArraySize]) const;
 
   int8_t m_iWideNarrRatio = 3;
 };
