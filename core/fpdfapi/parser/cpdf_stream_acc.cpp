@@ -168,10 +168,5 @@ void CPDF_StreamAcc::ProcessFilteredData(uint32_t estimated_size,
 DataVector<uint8_t> CPDF_StreamAcc::ReadRawStream() const {
   DCHECK(m_pStream);
   DCHECK(m_pStream->IsFileBased());
-
-  DataVector<uint8_t> result(m_pStream->GetRawSize());
-  DCHECK(!result.empty());
-  if (!m_pStream->ReadRawData(result))
-    return DataVector<uint8_t>();
-  return result;
+  return m_pStream->ReadAllRawData();
 }

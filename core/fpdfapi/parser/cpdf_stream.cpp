@@ -137,10 +137,17 @@ void CPDF_Stream::SetDataFromStringstream(fxcrt::ostringstream* stream) {
            static_cast<size_t>(stream->tellp())});
 }
 
-bool CPDF_Stream::ReadRawData(pdfium::span<uint8_t> buffer) const {
+DataVector<uint8_t> CPDF_Stream::ReadAllRawData() const {
   CHECK(IsFileBased());
-  return absl::get<RetainPtr<IFX_SeekableReadStream>>(data_)->ReadBlockAtOffset(
-      buffer, 0);
+
+  DataVector<uint8_t> result(GetRawSize());
+  DCHECK(!result.empty());
+
+  auto underlying_stream = absl::get<RetainPtr<IFX_SeekableReadStream>>(data_);
+  if (!underlying_stream->ReadBlockAtOffset(result, 0))
+    return DataVector<uint8_t>();
+
+  return result;
 }
 
 bool CPDF_Stream::HasFilter() const {
