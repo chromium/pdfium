@@ -217,11 +217,9 @@ bool CBC_OnedCode39Writer::encodedContents(WideStringView contents,
 }
 
 bool CBC_OnedCode39Writer::RenderResult(WideStringView contents,
-                                        uint8_t* code,
-                                        int32_t codeLength) {
+                                        pdfium::span<const uint8_t> code) {
   WideString encodedCon;
   if (!encodedContents(contents, &encodedCon))
     return false;
-  return CBC_OneDimWriter::RenderResult(encodedCon.AsStringView(), code,
-                                        codeLength);
+  return CBC_OneDimWriter::RenderResult(encodedCon.AsStringView(), code);
 }

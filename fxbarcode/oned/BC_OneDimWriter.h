@@ -17,6 +17,7 @@
 #include "core/fxge/cfx_textrenderoptions.h"
 #include "fxbarcode/BC_Library.h"
 #include "fxbarcode/BC_Writer.h"
+#include "third_party/base/span.h"
 
 class CFX_Font;
 class CFX_Matrix;
@@ -35,8 +36,7 @@ class CBC_OneDimWriter : public CBC_Writer {
   ~CBC_OneDimWriter() override;
 
   virtual bool RenderResult(WideStringView contents,
-                            uint8_t* code,
-                            int32_t codeLength);
+                            pdfium::span<const uint8_t> code);
   virtual bool CheckContentValidity(WideStringView contents) = 0;
   virtual WideString FilterContents(WideStringView contents) = 0;
   virtual void SetDataLength(int32_t length);

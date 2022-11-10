@@ -31,8 +31,8 @@ bool CBC_EANCode::Encode(WideStringView contents) {
   ByteString str = m_renderContents.ToUTF8();
   pWriter->InitEANWriter();
   std::unique_ptr<uint8_t, FxFreeDeleter> data(pWriter->Encode(str, out_width));
-  return data && pWriter->RenderResult(m_renderContents.AsStringView(),
-                                       data.get(), out_width);
+  return pWriter->RenderResult(m_renderContents.AsStringView(),
+                               pdfium::make_span(data.get(), out_width));
 }
 
 bool CBC_EANCode::RenderDevice(CFX_RenderDevice* device,

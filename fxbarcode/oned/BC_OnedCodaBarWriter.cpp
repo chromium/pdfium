@@ -182,8 +182,7 @@ WideString CBC_OnedCodaBarWriter::encodedContents(WideStringView contents) {
 }
 
 bool CBC_OnedCodaBarWriter::RenderResult(WideStringView contents,
-                                         uint8_t* code,
-                                         int32_t codeLength) {
+                                         pdfium::span<const uint8_t> code) {
   return CBC_OneDimWriter::RenderResult(
-      encodedContents(contents).AsStringView(), code, codeLength);
+      encodedContents(contents).AsStringView(), code);
 }

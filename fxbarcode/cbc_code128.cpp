@@ -46,8 +46,8 @@ bool CBC_Code128::Encode(WideStringView contents) {
   ByteString byteString = m_renderContents.ToUTF8();
   std::unique_ptr<uint8_t, FxFreeDeleter> data(
       pWriter->Encode(byteString, outWidth));
-  return data && pWriter->RenderResult(m_renderContents.AsStringView(),
-                                       data.get(), outWidth);
+  return pWriter->RenderResult(m_renderContents.AsStringView(),
+                               pdfium::make_span(data.get(), outWidth));
 }
 
 bool CBC_Code128::RenderDevice(CFX_RenderDevice* device,

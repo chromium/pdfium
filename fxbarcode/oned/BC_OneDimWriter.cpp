@@ -252,31 +252,28 @@ bool CBC_OneDimWriter::RenderDeviceResult(CFX_RenderDevice* device,
 }
 
 bool CBC_OneDimWriter::RenderResult(WideStringView contents,
-                                    uint8_t* code,
-                                    int32_t codeLength) {
-  if (codeLength < 1)
+                                    pdfium::span<const uint8_t> code) {
+  if (code.empty())
     return false;
 
   m_ModuleHeight = std::max(m_ModuleHeight, 20);
-  const int32_t codeOldLength = codeLength;
+  const size_t original_codelength = code.size();
   const int32_t leftPadding = m_bLeftPadding ? 7 : 0;
   const int32_t rightPadding = m_bRightPadding ? 7 : 0;
-  codeLength += leftPadding;
-  codeLength += rightPadding;
+  const size_t codelength = code.size() + leftPadding + rightPadding;
   m_outputHScale =
-      m_Width > 0 ? static_cast<float>(m_Width) / static_cast<float>(codeLength)
+      m_Width > 0 ? static_cast<float>(m_Width) / static_cast<float>(codelength)
                   : 1.0;
-  const int32_t outputWidth = codeLength;
   m_barWidth = m_Width;
 
   m_output.clear();
-  m_output.reserve(codeOldLength);
-  for (int32_t inputX = 0, outputX = leftPadding; inputX < codeOldLength;
+  m_output.reserve(original_codelength);
+  for (size_t inputX = 0, outputX = leftPadding; inputX < original_codelength;
        ++inputX, ++outputX) {
     if (code[inputX] != 1)
       continue;
 
-    if (outputX >= outputWidth)
+    if (outputX >= codelength)
       return true;
 
     m_output.emplace_back();

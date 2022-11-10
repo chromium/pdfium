@@ -18,8 +18,7 @@ class CBC_OnedCode39Writer final : public CBC_OneDimWriter {
   // CBC_OneDimWriter
   uint8_t* Encode(const ByteString& contents, int32_t& outLength) override;
   bool RenderResult(WideStringView contents,
-                    uint8_t* code,
-                    int32_t codeLength) override;
+                    pdfium::span<const uint8_t> code) override;
   bool CheckContentValidity(WideStringView contents) override;
   WideString FilterContents(WideStringView contents) override;
   void SetTextLocation(BC_TEXT_LOC location) override;
