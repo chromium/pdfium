@@ -282,7 +282,9 @@ FPDFImageObj_GetImageDataDecoded(FPDF_PAGEOBJECT image_object,
   if (!pImgStream)
     return 0;
 
-  return DecodeStreamMaybeCopyAndReturnLength(pImgStream.Get(), buffer, buflen);
+  return DecodeStreamMaybeCopyAndReturnLength(
+      std::move(pImgStream),
+      {static_cast<uint8_t*>(buffer), static_cast<size_t>(buflen)});
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -301,7 +303,9 @@ FPDFImageObj_GetImageDataRaw(FPDF_PAGEOBJECT image_object,
   if (!pImgStream)
     return 0;
 
-  return GetRawStreamMaybeCopyAndReturnLength(pImgStream.Get(), buffer, buflen);
+  return GetRawStreamMaybeCopyAndReturnLength(
+      std::move(pImgStream),
+      {static_cast<uint8_t*>(buffer), static_cast<size_t>(buflen)});
 }
 
 FPDF_EXPORT int FPDF_CALLCONV

@@ -171,7 +171,7 @@ DataVector<uint8_t> CPDF_StreamAcc::ReadRawStream() const {
 
   DataVector<uint8_t> result(m_pStream->GetRawSize());
   DCHECK(!result.empty());
-  if (!m_pStream->ReadRawData(0, result.data(), result.size()))
+  if (!m_pStream->ReadRawData(result))
     return DataVector<uint8_t>();
   return result;
 }

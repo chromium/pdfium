@@ -40,7 +40,9 @@ FPDFPage_GetDecodedThumbnailData(FPDF_PAGE page,
   if (!thumb_stream)
     return 0u;
 
-  return DecodeStreamMaybeCopyAndReturnLength(thumb_stream, buffer, buflen);
+  return DecodeStreamMaybeCopyAndReturnLength(
+      std::move(thumb_stream),
+      {static_cast<uint8_t*>(buffer), static_cast<size_t>(buflen)});
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -52,7 +54,9 @@ FPDFPage_GetRawThumbnailData(FPDF_PAGE page,
   if (!thumb_stream)
     return 0u;
 
-  return GetRawStreamMaybeCopyAndReturnLength(thumb_stream, buffer, buflen);
+  return GetRawStreamMaybeCopyAndReturnLength(
+      std::move(thumb_stream),
+      {static_cast<uint8_t*>(buffer), static_cast<size_t>(buflen)});
 }
 
 FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV

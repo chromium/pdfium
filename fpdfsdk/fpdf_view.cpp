@@ -1275,8 +1275,9 @@ FPDF_GetXFAPacketContent(FPDF_DOCUMENT document,
   if (static_cast<size_t>(index) >= xfa_packets.size())
     return false;
 
-  *out_buflen = DecodeStreamMaybeCopyAndReturnLength(xfa_packets[index].data,
-                                                     buffer, buflen);
+  *out_buflen = DecodeStreamMaybeCopyAndReturnLength(
+      xfa_packets[index].data,
+      {static_cast<uint8_t*>(buffer), static_cast<size_t>(buflen)});
   return true;
 }
 

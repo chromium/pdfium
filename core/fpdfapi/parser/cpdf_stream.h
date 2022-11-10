@@ -56,7 +56,7 @@ class CPDF_Stream final : public CPDF_Object {
                           RetainPtr<CPDF_Dictionary> pDict);
 
   // Can only be called when a stream is not memory-based.
-  bool ReadRawData(FX_FILESIZE offset, uint8_t* pBuf, size_t buf_size) const;
+  bool ReadRawData(pdfium::span<uint8_t> buffer) const;
 
   bool IsUninitialized() const { return data_.index() == 0; }
   bool IsFileBased() const { return data_.index() == 1; }

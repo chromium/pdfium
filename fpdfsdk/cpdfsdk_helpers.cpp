@@ -20,6 +20,7 @@
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fpdfdoc/cpdf_metadata.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "third_party/base/check.h"
@@ -53,26 +54,22 @@ bool DocHasXFA(const CPDF_Document* doc) {
   return form && form->GetArrayFor("XFA");
 }
 
-unsigned long GetStreamMaybeCopyAndReturnLengthImpl(const CPDF_Stream* stream,
-                                                    void* buffer,
-                                                    unsigned long buflen,
-                                                    bool decode) {
+unsigned long GetStreamMaybeCopyAndReturnLengthImpl(
+    RetainPtr<const CPDF_Stream> stream,
+    pdfium::span<uint8_t> buffer,
+    bool decode) {
   DCHECK(stream);
-  auto stream_acc =
-      pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(stream));
-
+  auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(stream));
   if (decode)
     stream_acc->LoadAllDataFiltered();
   else
     stream_acc->LoadAllDataRaw();
 
-  const auto stream_data_size = stream_acc->GetSize();
-  if (!buffer || buflen < stream_data_size)
-    return stream_data_size;
+  pdfium::span<const uint8_t> stream_data_span = stream_acc->GetSpan();
+  if (!buffer.empty() && buffer.size() <= stream_data_span.size())
+    fxcrt::spancpy(buffer, stream_data_span);
 
-  pdfium::span<const uint8_t> span = stream_acc->GetSpan();
-  memcpy(buffer, span.data(), span.size());
-  return stream_data_size;
+  return pdfium::base::checked_cast<unsigned long>(stream_data_span.size());
 }
 
 #ifdef PDF_ENABLE_XFA
@@ -305,17 +302,17 @@ unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
   return len;
 }
 
-unsigned long GetRawStreamMaybeCopyAndReturnLength(const CPDF_Stream* stream,
-                                                   void* buffer,
-                                                   unsigned long buflen) {
-  return GetStreamMaybeCopyAndReturnLengthImpl(stream, buffer, buflen,
+unsigned long GetRawStreamMaybeCopyAndReturnLength(
+    RetainPtr<const CPDF_Stream> stream,
+    pdfium::span<uint8_t> buffer) {
+  return GetStreamMaybeCopyAndReturnLengthImpl(std::move(stream), buffer,
                                                /*decode=*/false);
 }
 
-unsigned long DecodeStreamMaybeCopyAndReturnLength(const CPDF_Stream* stream,
-                                                   void* buffer,
-                                                   unsigned long buflen) {
-  return GetStreamMaybeCopyAndReturnLengthImpl(stream, buffer, buflen,
+unsigned long DecodeStreamMaybeCopyAndReturnLength(
+    RetainPtr<const CPDF_Stream> stream,
+    pdfium::span<uint8_t> buffer) {
+  return GetStreamMaybeCopyAndReturnLengthImpl(std::move(stream), buffer,
                                                /*decode=*/true);
 }
 

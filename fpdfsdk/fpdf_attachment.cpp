@@ -274,7 +274,8 @@ FPDFAttachment_GetFile(FPDF_ATTACHMENT attachment,
   if (!pFileStream)
     return false;
 
-  *out_buflen =
-      DecodeStreamMaybeCopyAndReturnLength(pFileStream.Get(), buffer, buflen);
+  *out_buflen = DecodeStreamMaybeCopyAndReturnLength(
+      std::move(pFileStream),
+      {static_cast<uint8_t*>(buffer), static_cast<size_t>(buflen)});
   return true;
 }
