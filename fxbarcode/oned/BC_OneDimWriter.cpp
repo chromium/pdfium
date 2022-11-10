@@ -279,20 +279,8 @@ bool CBC_OneDimWriter::RenderResult(WideStringView contents,
     if (outputX >= outputWidth)
       return true;
 
-    if (outputX + 1 > outputWidth && outputWidth - outputX > 0) {
-      RenderVerticalBars(outputX, outputWidth - outputX);
-      return true;
-    }
-
-    RenderVerticalBars(outputX, /*width=*/1);
+    m_output.emplace_back();
+    m_output.back().AppendRect(outputX, 0.0f, outputX + 1, 1.0f);
   }
   return true;
-}
-
-void CBC_OneDimWriter::RenderVerticalBars(int32_t outputX, int32_t width) {
-  for (int i = 0; i < width; ++i) {
-    float x = outputX + i;
-    m_output.emplace_back();
-    m_output.back().AppendRect(x, 0.0f, x + 1, 1.0f);
-  }
 }
