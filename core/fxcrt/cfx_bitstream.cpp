@@ -13,8 +13,8 @@
 #include "third_party/base/check_op.h"
 
 CFX_BitStream::CFX_BitStream(pdfium::span<const uint8_t> pData)
-    : m_BitSize(pData.size() * 8), m_pData(pData.data()) {
-  CHECK_LE(pData.size(), std::numeric_limits<size_t>::max() / 8);
+    : m_BitSize(pData.size() * 8), m_pData(pData) {
+  CHECK_LE(m_pData.size(), std::numeric_limits<size_t>::max() / 8);
 }
 
 CFX_BitStream::~CFX_BitStream() = default;
@@ -31,8 +31,7 @@ uint32_t CFX_BitStream::GetBits(uint32_t nBits) {
 
   const uint32_t bit_pos = m_BitPos % 8;
   size_t byte_pos = m_BitPos / 8;
-  const uint8_t* data = m_pData;
-  uint8_t current_byte = data[byte_pos];
+  uint8_t current_byte = m_pData[byte_pos];
 
   if (nBits == 1) {
     uint32_t bit = (current_byte & (1 << (7 - bit_pos))) ? 1 : 0;
@@ -55,10 +54,10 @@ uint32_t CFX_BitStream::GetBits(uint32_t nBits) {
   }
   while (bit_left >= 8) {
     bit_left -= 8;
-    result |= data[byte_pos++] << bit_left;
+    result |= m_pData[byte_pos++] << bit_left;
   }
   if (bit_left)
-    result |= data[byte_pos] >> (8 - bit_left);
+    result |= m_pData[byte_pos] >> (8 - bit_left);
   m_BitPos += nBits;
   return result;
 }
