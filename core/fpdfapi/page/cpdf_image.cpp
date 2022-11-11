@@ -293,30 +293,30 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
                                      pNewStream->GetObjNum());
   }
 
-  uint8_t* src_buf = pBitmap->GetBuffer().data();
-  int32_t src_pitch = pBitmap->GetPitch();
   DataVector<uint8_t> dest_buf(Fx2DSizeOrDie(dest_pitch, BitmapHeight));
-  auto dest_span = pdfium::make_span(dest_buf);
-  size_t dest_span_offset = 0;
+  pdfium::span<uint8_t> dest_span = pdfium::make_span(dest_buf);
+  pdfium::span<const uint8_t> src_span = pBitmap->GetBuffer();
+  const int32_t src_pitch = pBitmap->GetPitch();
   if (bCopyWithoutAlpha) {
     for (int32_t i = 0; i < BitmapHeight; i++) {
-      fxcrt::spancpy(dest_span.subspan(dest_span_offset),
-                     pdfium::make_span(src_buf, dest_pitch));
-      dest_span_offset += dest_pitch;
-      src_buf += src_pitch;
+      fxcrt::spancpy(dest_span, src_span.first(dest_pitch));
+      dest_span = dest_span.subspan(dest_pitch);
+      src_span = src_span.subspan(src_pitch);
     }
   } else {
+    const size_t src_step = bpp == 24 ? 3 : 4;
     for (int32_t row = 0; row < BitmapHeight; row++) {
-      size_t dest_span_row_offset = dest_span_offset;
-      int32_t src_offset = row * src_pitch;
+      uint8_t* dest_ptr = dest_span.data();
+      const uint8_t* src_ptr = src_span.data();
       for (int32_t column = 0; column < BitmapWidth; column++) {
-        dest_span[dest_span_row_offset] = src_buf[src_offset + 2];
-        dest_span[dest_span_row_offset + 1] = src_buf[src_offset + 1];
-        dest_span[dest_span_row_offset + 2] = src_buf[src_offset];
-        dest_span_row_offset += 3;
-        src_offset += bpp == 24 ? 3 : 4;
+        dest_ptr[0] = src_ptr[2];
+        dest_ptr[1] = src_ptr[1];
+        dest_ptr[2] = src_ptr[0];
+        dest_ptr += 3;
+        src_ptr += src_step;
       }
-      dest_span_offset += dest_pitch;
+      dest_span = dest_span.subspan(dest_pitch);
+      src_span = src_span.subspan(src_pitch);
     }
   }
 
