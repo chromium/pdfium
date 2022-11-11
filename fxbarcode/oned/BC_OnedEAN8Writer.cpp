@@ -93,22 +93,20 @@ DataVector<uint8_t> CBC_OnedEAN8Writer::Encode(const ByteString& contents) {
     return {};
 
   DataVector<uint8_t> result(m_codeWidth);
-  size_t pos = 0;
-  pos += AppendPattern(result.data(), pos, kOnedEAN8StartPattern, 3, true);
+  auto result_span = pdfium::make_span(result);
+  result_span = AppendPattern(result_span, kOnedEAN8StartPattern, true);
 
-  int32_t i = 0;
-  for (i = 0; i <= 3; i++) {
+  for (int i = 0; i <= 3; i++) {
     int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
-    pos +=
-        AppendPattern(result.data(), pos, kOnedEAN8LPattern[digit], 4, false);
+    result_span = AppendPattern(result_span, kOnedEAN8LPattern[digit], false);
   }
-  pos += AppendPattern(result.data(), pos, kOnedEAN8MiddlePattern, 5, false);
+  result_span = AppendPattern(result_span, kOnedEAN8MiddlePattern, false);
 
-  for (i = 4; i <= 7; i++) {
+  for (int i = 4; i <= 7; i++) {
     int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
-    pos += AppendPattern(result.data(), pos, kOnedEAN8LPattern[digit], 4, true);
+    result_span = AppendPattern(result_span, kOnedEAN8LPattern[digit], true);
   }
-  pos += AppendPattern(result.data(), pos, kOnedEAN8StartPattern, 3, true);
+  AppendPattern(result_span, kOnedEAN8StartPattern, true);
   return result;
 }
 
