@@ -1,7 +1,9 @@
 use_relative_paths = True
 
 gclient_gn_args_file = 'build/config/gclient_args.gni'
-gclient_gn_args = []
+gclient_gn_args = [
+  'checkout_skia',
+]
 
 vars = {
   # By default, we should check out everything needed to run on the main
