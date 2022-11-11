@@ -1045,8 +1045,13 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
       if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
         return "34ac4e0f3ba510760be09d0e19c1b43e";
 #if BUILDFLAG(IS_APPLE)
-      if (!CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer())
+      if (!CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+#if defined(ARCH_CPU_ARM64)
+        return "cdc8e22cf1e7e06999dc456288672a3b";
+#else
         return "966579fb98206858ce2f0a1f94a74d05";
+#endif
+      }
 #endif
       return "3d5a3de53d5866044c2b6bf339742c97";
     }();
@@ -1091,18 +1096,28 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
       return "c671fa07b63e85c4201b9926e880fda8";
 #if BUILDFLAG(IS_APPLE)
-    if (!CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer())
+    if (!CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+#if defined(ARCH_CPU_ARM64)
+      return "23c4aec321547f51591fe7363a9ea2d6";
+#else
       return "6e19a4dd674b522cd39cf41956559bd6";
-#endif
+#endif  // defined(ARCH_CPU_ARM64)
+    }
+#endif  // BUILDFLAG(IS_APPLE)
     return "bc8623c052f12376c3d8dd09a6cd27df";
   }();
   const char* non_primes_after_save_checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
       return "c671fa07b63e85c4201b9926e880fda8";
 #if BUILDFLAG(IS_APPLE)
-    if (!CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer())
+    if (!CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+#if defined(ARCH_CPU_ARM64)
+      return "6bb1ea0d0a512f29edabda33064a0725";
+#else
       return "3cb35c681f8fb5a43a49146ac7caa818";
-#endif
+#endif  // defined(ARCH_CPU_ARM64)
+    }
+#endif  // BUILDFLAG(IS_APPLE)
     return "bc8623c052f12376c3d8dd09a6cd27df";
   }();
   {
@@ -1540,9 +1555,14 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromStream) {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
       return "b9bb0acfdba4bb5d2e578e7b73341baf";
 #if BUILDFLAG(IS_APPLE)
-    if (!CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer())
+    if (!CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
+#if defined(ARCH_CPU_ARM64)
+      return "08505db7b598f7397a2260ecb1f6d86d";
+#else
       return "3cdc75af44c15bed80998facd6e674c9";
-#endif
+#endif  // defined(ARCH_CPU_ARM64)
+    }
+#endif  // BUILDFLAG(IS_APPLE)
     return "b474826df1acedb05c7b82e1e49e64a6";
   }();
   {
