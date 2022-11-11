@@ -40,12 +40,12 @@ namespace {
 
 const int8_t kFirstDigitEncodings[10] = {0x00, 0x0B, 0x0D, 0xE,  0x13,
                                          0x19, 0x1C, 0x15, 0x16, 0x1A};
-const int8_t kOnedEAN13StartPattern[3] = {1, 1, 1};
-const int8_t kOnedEAN13MiddlePattern[5] = {1, 1, 1, 1, 1};
-const int8_t kOnedEAN13LPattern[10][4] = {
+const uint8_t kOnedEAN13StartPattern[3] = {1, 1, 1};
+const uint8_t kOnedEAN13MiddlePattern[5] = {1, 1, 1, 1, 1};
+const uint8_t kOnedEAN13LPattern[10][4] = {
     {3, 2, 1, 1}, {2, 2, 2, 1}, {2, 1, 2, 2}, {1, 4, 1, 1}, {1, 1, 3, 2},
     {1, 2, 3, 1}, {1, 1, 1, 4}, {1, 3, 1, 2}, {1, 2, 1, 3}, {3, 1, 1, 2}};
-const int8_t L_AND_G_PATTERNS[20][4] = {
+const uint8_t kOnedEAN13LGPattern[20][4] = {
     {3, 2, 1, 1}, {2, 2, 2, 1}, {2, 1, 2, 2}, {1, 4, 1, 1}, {1, 1, 3, 2},
     {1, 2, 3, 1}, {1, 1, 1, 4}, {1, 3, 1, 2}, {1, 2, 1, 3}, {3, 1, 1, 2},
     {1, 1, 2, 3}, {1, 2, 2, 2}, {2, 2, 1, 2}, {1, 1, 4, 1}, {2, 3, 1, 1},
@@ -93,7 +93,7 @@ DataVector<uint8_t> CBC_OnedEAN13Writer::Encode(const ByteString& contents) {
   int32_t firstDigit = FXSYS_DecimalCharToInt(contents.Front());
   int32_t parities = kFirstDigitEncodings[firstDigit];
   DataVector<uint8_t> result(m_codeWidth);
-  int32_t pos = 0;
+  size_t pos = 0;
   pos += AppendPattern(result.data(), pos, kOnedEAN13StartPattern, 3, true);
 
   int32_t i = 0;
@@ -102,7 +102,8 @@ DataVector<uint8_t> CBC_OnedEAN13Writer::Encode(const ByteString& contents) {
     if ((parities >> (6 - i) & 1) == 1) {
       digit += 10;
     }
-    pos += AppendPattern(result.data(), pos, L_AND_G_PATTERNS[digit], 4, false);
+    pos +=
+        AppendPattern(result.data(), pos, kOnedEAN13LGPattern[digit], 4, false);
   }
   pos += AppendPattern(result.data(), pos, kOnedEAN13MiddlePattern, 5, false);
 

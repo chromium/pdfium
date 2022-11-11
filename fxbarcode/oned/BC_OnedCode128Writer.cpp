@@ -35,7 +35,7 @@ namespace {
 
 constexpr size_t kPatternSize = 7;
 
-const int8_t CODE_PATTERNS[107][kPatternSize] = {
+const uint8_t kCodePatterns[107][kPatternSize] = {
     {2, 1, 2, 2, 2, 2, 0}, {2, 2, 2, 1, 2, 2, 0}, {2, 2, 2, 2, 2, 1, 0},
     {1, 2, 1, 2, 2, 3, 0}, {1, 2, 1, 3, 2, 2, 0}, {1, 3, 1, 2, 2, 2, 0},
     {1, 2, 2, 2, 1, 3, 0}, {1, 2, 2, 3, 1, 2, 0}, {1, 3, 2, 2, 1, 2, 0},
@@ -135,14 +135,14 @@ DataVector<uint8_t> CBC_OnedCode128Writer::Encode(const ByteString& contents) {
   m_iContentLen = contents.GetLength() + 3;
   int32_t codeWidth = 0;
   for (const auto& patternIndex : patterns) {
-    const int8_t* pattern = CODE_PATTERNS[patternIndex];
+    const uint8_t* pattern = kCodePatterns[patternIndex];
     for (size_t i = 0; i < kPatternSize; ++i)
       codeWidth += pattern[i];
   }
   DataVector<uint8_t> result(codeWidth);
-  int32_t pos = 0;
+  size_t pos = 0;
   for (size_t i = 0; i < patterns.size(); ++i) {
-    const int8_t* pattern = CODE_PATTERNS[patterns[i]];
+    const uint8_t* pattern = kCodePatterns[patterns[i]];
     pos += AppendPattern(result.data(), pos, pattern, kPatternSize, true);
   }
   return result;

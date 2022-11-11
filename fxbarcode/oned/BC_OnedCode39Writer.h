@@ -32,7 +32,7 @@ class CBC_OnedCode39Writer final : public CBC_OneDimWriter {
  private:
   static constexpr size_t kArraySize = 9;
 
-  void ToIntArray(int16_t value, int8_t array[kArraySize]) const;
+  void ToIntArray(int16_t value, uint8_t array[kArraySize]) const;
 
   int8_t m_iWideNarrRatio = 3;
 };

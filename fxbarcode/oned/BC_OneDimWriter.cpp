@@ -85,20 +85,20 @@ void CBC_OneDimWriter::SetFontColor(FX_ARGB color) {
   m_fontColor = color;
 }
 
-int32_t CBC_OneDimWriter::AppendPattern(uint8_t* target,
-                                        int32_t pos,
-                                        const int8_t* pattern,
-                                        int32_t patternLength,
-                                        bool startColor) {
+size_t CBC_OneDimWriter::AppendPattern(uint8_t* target,
+                                       size_t pos,
+                                       const uint8_t* pattern,
+                                       int32_t patternLength,
+                                       bool startColor) {
   bool color = startColor;
-  int32_t numAdded = 0;
+  size_t added = 0;
   for (int32_t i = 0; i < patternLength; i++) {
     for (int32_t j = 0; j < pattern[i]; j++)
       target[pos++] = color ? 1 : 0;
-    numAdded += pattern[i];
+    added += pattern[i];
     color = !color;
   }
-  return numAdded;
+  return added;
 }
 
 void CBC_OneDimWriter::CalcTextInfo(const ByteString& text,

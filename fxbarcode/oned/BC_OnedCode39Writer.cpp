@@ -140,7 +140,7 @@ bool CBC_OnedCode39Writer::SetWideNarrowRatio(int8_t ratio) {
 }
 
 void CBC_OnedCode39Writer::ToIntArray(int16_t value,
-                                      int8_t array[kArraySize]) const {
+                                      uint8_t array[kArraySize]) const {
   for (size_t i = 0; i < kArraySize; i++) {
     array[i] = (value & (1 << i)) == 0 ? 1 : m_iWideNarrRatio;
   }
@@ -151,7 +151,7 @@ DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
   if (checksum == '*')
     return DataVector<uint8_t>();
 
-  int8_t widths[kArraySize] = {0};
+  uint8_t widths[kArraySize] = {0};
   constexpr int32_t kWideStrideNum = 3;
   constexpr int32_t kNarrowStrideNum = kArraySize - kWideStrideNum;
   ByteString encodedContents = contents;
@@ -173,10 +173,10 @@ DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
   }
   DataVector<uint8_t> result(code_width);
   ToIntArray(kOnedCode39CharacterEncoding[39], widths);
-  int32_t pos = AppendPattern(result.data(), 0, widths, kArraySize, true);
+  size_t pos = AppendPattern(result.data(), 0, widths, kArraySize, true);
 
-  int8_t narrowWhite[] = {1};
-  pos += AppendPattern(result.data(), pos, narrowWhite, 1, false);
+  static constexpr uint8_t kNarrowWhite[] = {1};
+  pos += AppendPattern(result.data(), pos, kNarrowWhite, 1, false);
 
   for (int32_t l = m_iContentLen - 1; l >= 0; l--) {
     for (size_t i = 0; i < kOnedCode39AlphabetLen; i++) {
@@ -186,7 +186,7 @@ DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
       ToIntArray(kOnedCode39CharacterEncoding[i], widths);
       pos += AppendPattern(result.data(), pos, widths, kArraySize, true);
     }
-    pos += AppendPattern(result.data(), pos, narrowWhite, 1, false);
+    pos += AppendPattern(result.data(), pos, kNarrowWhite, 1, false);
   }
   ToIntArray(kOnedCode39CharacterEncoding[39], widths);
   pos += AppendPattern(result.data(), pos, widths, kArraySize, true);

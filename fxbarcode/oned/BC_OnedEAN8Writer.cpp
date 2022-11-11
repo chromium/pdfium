@@ -39,9 +39,9 @@
 
 namespace {
 
-const int8_t kOnedEAN8StartPattern[3] = {1, 1, 1};
-const int8_t kOnedEAN8MiddlePattern[5] = {1, 1, 1, 1, 1};
-const int8_t kOnedEAN8LPattern[10][4] = {
+const uint8_t kOnedEAN8StartPattern[3] = {1, 1, 1};
+const uint8_t kOnedEAN8MiddlePattern[5] = {1, 1, 1, 1, 1};
+const uint8_t kOnedEAN8LPattern[10][4] = {
     {3, 2, 1, 1}, {2, 2, 2, 1}, {2, 1, 2, 2}, {1, 4, 1, 1}, {1, 1, 3, 2},
     {1, 2, 3, 1}, {1, 1, 1, 4}, {1, 3, 1, 2}, {1, 2, 1, 3}, {3, 1, 1, 2}};
 
@@ -93,7 +93,7 @@ DataVector<uint8_t> CBC_OnedEAN8Writer::Encode(const ByteString& contents) {
     return {};
 
   DataVector<uint8_t> result(m_codeWidth);
-  int32_t pos = 0;
+  size_t pos = 0;
   pos += AppendPattern(result.data(), pos, kOnedEAN8StartPattern, 3, true);
 
   int32_t i = 0;

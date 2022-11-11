@@ -73,11 +73,11 @@ class CBC_OneDimWriter : public CBC_Writer {
                     float geWidth,
                     int32_t fontSize,
                     float& charsLen);
-  int32_t AppendPattern(uint8_t* target,
-                        int32_t pos,
-                        const int8_t* pattern,
-                        int32_t patternLength,
-                        bool startColor);
+  size_t AppendPattern(uint8_t* target,
+                       size_t pos,
+                       const uint8_t* pattern,
+                       int32_t patternLength,
+                       bool startColor);
 
   bool m_bPrintChecksum = true;
   bool m_bCalcChecksum = false;
