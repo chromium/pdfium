@@ -582,7 +582,7 @@ group("gn_check") {
 
   # TODO(crbug.com/pdfium/1832): Remove !is_android when //third_party/expat is
   # available.
-  if (checkout_skia && !is_android) {
+  if (defined(checkout_skia) && checkout_skia && !is_android) {
     deps += [ "//skia" ]
   }
 }
