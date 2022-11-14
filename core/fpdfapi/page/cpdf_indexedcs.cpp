@@ -53,6 +53,7 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
     return 0;
 
   m_nBaseComponents = m_pBaseCS->CountComponents();
+  DCHECK(m_nBaseComponents);
   m_pCompMinMax = DataVector<float>(Fx2DSizeOrDie(m_nBaseComponents, 2));
   float defvalue;
   for (uint32_t i = 0; i < m_nBaseComponents; i++) {
@@ -84,17 +85,19 @@ bool CPDF_IndexedCS::GetRGB(pdfium::span<const float> pBuf,
   if (index < 0 || index > m_MaxIndex)
     return false;
 
-  if (m_nBaseComponents) {
-    FX_SAFE_SIZE_T length = index;
-    length += 1;
-    length *= m_nBaseComponents;
-    if (!length.IsValid() || length.ValueOrDie() > m_Table.GetLength()) {
-      *R = 0;
-      *G = 0;
-      *B = 0;
-      return false;
-    }
+  DCHECK(m_nBaseComponents);
+  DCHECK_EQ(m_nBaseComponents, m_pBaseCS->CountComponents());
+
+  FX_SAFE_SIZE_T length = index;
+  length += 1;
+  length *= m_nBaseComponents;
+  if (!length.IsValid() || length.ValueOrDie() > m_Table.GetLength()) {
+    *R = 0;
+    *G = 0;
+    *B = 0;
+    return false;
   }
+
   std::vector<float> comps(m_nBaseComponents);
   const uint8_t* pTable = m_Table.raw_str();
   for (uint32_t i = 0; i < m_nBaseComponents; ++i) {
@@ -102,6 +105,5 @@ bool CPDF_IndexedCS::GetRGB(pdfium::span<const float> pBuf,
         m_pCompMinMax[i * 2] +
         m_pCompMinMax[i * 2 + 1] * pTable[index * m_nBaseComponents + i] / 255;
   }
-  DCHECK_EQ(m_nBaseComponents, m_pBaseCS->CountComponents());
   return m_pBaseCS->GetRGB(comps, R, G, B);
 }
