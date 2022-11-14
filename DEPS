@@ -126,6 +126,10 @@ vars = {
   # and whatever else without interference from each other.
   'nasm_source_revision': 'fc8e0bd892ae133602f5a6f7a9a6840aa1b75989',
   # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling Ninja CIPD package version
+  # and whatever else without interference from each other.
+  'ninja_version': 'version:2@1.8.2.chromium.3',
+  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling partition_allocator
   # and whatever else without interference from each other.
   'partition_allocator_revision': 'cb1f2e8e09f0fdf1ce32ffbd23960f7811a24582',
@@ -313,6 +317,17 @@ deps = {
   'third_party/nasm':
     Var('chromium_git') + '/chromium/deps/nasm.git@' +
         Var('nasm_source_revision'),
+
+  'third_party/ninja': {
+    'packages': [
+      {
+        # https://chrome-infra-packages.appspot.com/p/infra/3pp/tools/ninja
+        'package': 'infra/3pp/tools/ninja/${{platform}}',
+        'version': Var('ninja_version'),
+      }
+    ],
+    'dep_type': 'cipd',
+  },
 
   'third_party/skia': {
     'url': Var('skia_git') + '/skia.git@' + Var('skia_revision'),

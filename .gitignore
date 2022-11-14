@@ -8,10 +8,10 @@
 /third_party/android_ndk
 /third_party/catapult
 /third_party/depot_tools
+/third_party/freetype/src
 /third_party/fuchsia-sdk/images
 /third_party/fuchsia-sdk/images-internal
 /third_party/fuchsia-sdk/sdk
-/third_party/freetype/src
 /third_party/googletest/src
 /third_party/icu
 /third_party/instrumented_libraries
@@ -22,6 +22,7 @@
 /third_party/lss
 /third_party/markupsafe
 /third_party/nasm
+/third_party/ninja/ninja*
 /third_party/skia
 /third_party/test_fonts
 /third_party/zlib
