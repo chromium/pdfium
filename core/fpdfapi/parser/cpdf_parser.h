@@ -189,7 +189,7 @@ class CPDF_Parser {
   // m_CrossRefTable must be destroyed after m_pSecurityHandler due to the
   // ownership of the ID array data.
   std::unique_ptr<CPDF_CrossRefTable> m_CrossRefTable;
-  FX_FILESIZE m_LastXRefOffset;
+  FX_FILESIZE m_LastXRefOffset = 0;
   ByteString m_Password;
   std::unique_ptr<CPDF_LinearizedHeader> m_pLinearized;
 

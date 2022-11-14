@@ -54,7 +54,7 @@ class CPDF_StreamParser {
   WeakPtr<ByteStringPool> m_pPool;
   RetainPtr<CPDF_Object> m_pLastObj;
   pdfium::span<const uint8_t> m_pBuf;
-  uint8_t m_WordBuffer[kMaxWordLength + 1];  // Include space for NUL.
+  uint8_t m_WordBuffer[kMaxWordLength + 1] = {};  // Include space for NUL.
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_STREAMPARSER_H_

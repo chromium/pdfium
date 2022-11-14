@@ -155,8 +155,8 @@ void CJS_Global::DefineJSObjects(CFXJS_Engine* pEngine) {
 }
 
 CJS_Global::CJS_Global(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
-    : CJS_Object(pObject, pRuntime) {
-  m_pGlobalData = CFX_GlobalData::GetRetainedInstance(nullptr);
+    : CJS_Object(pObject, pRuntime),
+      m_pGlobalData(CFX_GlobalData::GetRetainedInstance(nullptr)) {
   UpdateGlobalPersistentVariables();
 }
 

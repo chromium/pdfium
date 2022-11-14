@@ -33,8 +33,8 @@ class CXFA_Measurement {
   void SetString(WideStringView wsMeasure);
   bool ToUnitInternal(XFA_Unit eUnit, float* fValue) const;
 
-  float m_fValue;
-  XFA_Unit m_eUnit;
+  float m_fValue = 0.0f;
+  XFA_Unit m_eUnit = XFA_Unit::Percent;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_MEASUREMENT_H_

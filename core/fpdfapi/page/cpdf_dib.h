@@ -73,8 +73,8 @@ class CPDF_DIB final : public CFX_DIBBase {
     JpxSMaskInlineData();
     ~JpxSMaskInlineData();
 
-    int width;
-    int height;
+    int width = 0;
+    int height = 0;
     DataVector<uint8_t> data;
   };
 

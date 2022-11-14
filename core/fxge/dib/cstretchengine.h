@@ -161,7 +161,7 @@ class CStretchEngine {
   FXDIB_ResampleOptions m_ResampleOptions;
   TransformMethod m_TransMethod;
   State m_State = State::kInitial;
-  int m_CurRow;
+  int m_CurRow = 0;
   WeightTable m_WeightTable;
 };
 

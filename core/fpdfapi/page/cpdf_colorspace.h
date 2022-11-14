@@ -49,7 +49,7 @@ class PatternValue {
 
  private:
   RetainPtr<CPDF_Pattern> m_pRetainedPattern;
-  std::array<float, kMaxPatternColorComps> m_Comps;
+  std::array<float, kMaxPatternColorComps> m_Comps{};
 };
 
 class CPDF_ColorSpace : public Retainable, public Observable {

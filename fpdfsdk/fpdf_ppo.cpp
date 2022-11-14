@@ -41,7 +41,7 @@
 #include "third_party/base/span.h"
 
 struct XObjectContext {
-  CPDF_Document* dest_doc;
+  UnownedPtr<CPDF_Document> dest_doc;
   RetainPtr<CPDF_Stream> xobject;
 };
 
@@ -52,7 +52,7 @@ namespace {
 // scaled down, and scale is in range of (0, 1) exclusive.
 struct NupPageSettings {
   CFX_PointF subPageStartPoint;
-  float scale;
+  float scale = 0.0f;
 };
 
 // Calculates the N-up parameters.  When importing multiple pages into one page.

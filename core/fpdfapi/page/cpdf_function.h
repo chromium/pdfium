@@ -67,8 +67,8 @@ class CPDF_Function {
                       pdfium::span<float> results) const = 0;
 
   const Type m_Type;
-  uint32_t m_nInputs;
-  uint32_t m_nOutputs;
+  uint32_t m_nInputs = 0;
+  uint32_t m_nOutputs = 0;
   std::vector<float> m_Domains;
   std::vector<float> m_Ranges;
 };

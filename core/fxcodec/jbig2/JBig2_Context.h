@@ -97,7 +97,7 @@ class CJBig2_Context {
   std::unique_ptr<CJBig2_GRDProc> m_pGRD;
   std::unique_ptr<CJBig2_Segment> m_pSegment;
   uint32_t m_nOffset = 0;
-  JBig2RegionInfo m_ri;
+  JBig2RegionInfo m_ri = {};
   UnownedPtr<std::list<CJBig2_CachePair>> const m_pSymbolDictCache;
 };
 

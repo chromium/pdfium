@@ -74,7 +74,7 @@ class CPDF_StreamContentParser {
     ContentParam();
     ~ContentParam();
 
-    Type m_Type;
+    Type m_Type = Type::kObject;
     FX_Number m_Number;
     ByteString m_Name;
     RetainPtr<CPDF_Object> m_pObject;

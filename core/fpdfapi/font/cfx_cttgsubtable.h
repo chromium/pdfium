@@ -102,7 +102,7 @@ class CFX_CTTGSUBTable {
     TSubTable1();
     ~TSubTable1() override;
 
-    int16_t DeltaGlyphID;
+    int16_t DeltaGlyphID = 0;
   };
 
   struct TSubTable2 final : public TSubTableBase {

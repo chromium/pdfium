@@ -53,7 +53,7 @@ class CPDF_FontEncoding {
   RetainPtr<CPDF_Object> Realize(WeakPtr<ByteStringPool> pPool) const;
 
  private:
-  wchar_t m_Unicodes[kEncodingTableSize];
+  wchar_t m_Unicodes[kEncodingTableSize] = {};
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_FONTENCODING_H_

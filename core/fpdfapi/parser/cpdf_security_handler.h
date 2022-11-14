@@ -90,7 +90,7 @@ class CPDF_SecurityHandler final : public Retainable {
   ByteString m_FileId;
   RetainPtr<const CPDF_Dictionary> m_pEncryptDict;
   std::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;
-  uint8_t m_EncryptKey[32];
+  uint8_t m_EncryptKey[32] = {};
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_SECURITY_HANDLER_H_

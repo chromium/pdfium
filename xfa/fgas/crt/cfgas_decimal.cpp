@@ -298,9 +298,6 @@ CFGAS_Decimal::CFGAS_Decimal(WideStringView strObj) {
   bool pointmet = false;
   bool negmet = false;
   uint8_t scale = 0;
-  m_uHi = 0;
-  m_uMid = 0;
-  m_uLo = 0;
   while (str != strBound && *str == ' ')
     str++;
   if (str != strBound && *str == '-') {

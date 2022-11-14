@@ -173,8 +173,8 @@ class CPDF_CalRGB final : public CPDF_ColorSpace {
 
   float m_WhitePoint[kBlackWhitePointCount] = {1.0f, 1.0f, 1.0f};
   float m_BlackPoint[kBlackWhitePointCount] = {0.0f, 0.0f, 0.0f};
-  float m_Gamma[kGammaCount];
-  float m_Matrix[kMatrixCount];
+  float m_Gamma[kGammaCount] = {};
+  float m_Matrix[kMatrixCount] = {};
   bool m_bHasGamma = false;
   bool m_bHasMatrix = false;
 };
@@ -210,7 +210,7 @@ class CPDF_LabCS final : public CPDF_ColorSpace {
 
   float m_WhitePoint[kBlackWhitePointCount] = {1.0f, 1.0f, 1.0f};
   float m_BlackPoint[kBlackWhitePointCount] = {0.0f, 0.0f, 0.0f};
-  float m_Ranges[kRangesCount];
+  float m_Ranges[kRangesCount] = {};
 };
 
 class CPDF_ICCBasedCS final : public CPDF_BasedCS {
@@ -425,9 +425,7 @@ void XYZ_to_sRGB_WhitePoint(float X,
 
 }  // namespace
 
-PatternValue::PatternValue() {
-  std::fill(std::begin(m_Comps), std::end(m_Comps), 0.0f);
-}
+PatternValue::PatternValue() = default;
 
 PatternValue::PatternValue(const PatternValue& that) = default;
 

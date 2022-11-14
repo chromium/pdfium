@@ -33,7 +33,7 @@ class CFX_GlobalData {
     ~Element();
 
     CFX_KeyValue data;
-    bool bPersistent;
+    bool bPersistent = false;
   };
 
   static CFX_GlobalData* GetRetainedInstance(Delegate* pDelegate);

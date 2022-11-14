@@ -1669,8 +1669,6 @@ CPDF_FontEncoding::CPDF_FontEncoding(FontEncoding predefined_encoding) {
   if (pSrc) {
     for (size_t i = 0; i < std::size(m_Unicodes); i++)
       m_Unicodes[i] = pSrc[i];
-  } else {
-    memset(m_Unicodes, 0, sizeof(m_Unicodes));
   }
 }
 

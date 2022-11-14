@@ -28,7 +28,7 @@ class TextCharPos {
   int32_t m_FallbackFontPosition = 0;
   bool m_bGlyphAdjust = false;
   bool m_bFontStyle = false;
-  float m_AdjustMatrix[4];
+  float m_AdjustMatrix[4] = {};
 };
 
 #endif  // CORE_FXGE_TEXT_CHAR_POS_H_

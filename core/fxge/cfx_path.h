@@ -31,8 +31,8 @@ class CFX_Path {
     }
 
     CFX_PointF m_Point;
-    Type m_Type;
-    bool m_CloseFigure;
+    Type m_Type = Type::kLine;
+    bool m_CloseFigure = false;
   };
 
   CFX_Path();

@@ -126,7 +126,7 @@ class CPDF_SyntaxParser {
   DataVector<uint8_t> m_pFileBuf;
   FX_FILESIZE m_BufOffset = 0;
   uint32_t m_WordSize = 0;
-  uint8_t m_WordBuffer[257];
+  uint8_t m_WordBuffer[257] = {};
   uint32_t m_ReadBufferSize = CPDF_Stream::kFileBufSize;
 
   // The syntax parser records traversed trailer end byte offsets here.

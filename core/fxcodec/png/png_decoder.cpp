@@ -30,7 +30,7 @@ class CPngContext final : public ProgressiveDecoderIface::Context {
   png_structp m_pPng = nullptr;
   png_infop m_pInfo = nullptr;
   UnownedPtr<PngDecoder::Delegate> const m_pDelegate;
-  char m_szLastError[PNG_ERROR_SIZE];
+  char m_szLastError[PNG_ERROR_SIZE] = {};
 };
 
 extern "C" {
@@ -172,9 +172,7 @@ void _png_get_row_func(png_structp png_ptr,
 }  // extern "C"
 
 CPngContext::CPngContext(PngDecoder::Delegate* pDelegate)
-    : m_pDelegate(pDelegate) {
-  memset(m_szLastError, 0, sizeof(m_szLastError));
-}
+    : m_pDelegate(pDelegate) {}
 
 CPngContext::~CPngContext() {
   png_destroy_read_struct(m_pPng ? &m_pPng : nullptr,

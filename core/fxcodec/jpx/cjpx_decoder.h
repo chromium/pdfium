@@ -71,7 +71,7 @@ class CJPX_Decoder {
   UnownedPtr<opj_codec_t> m_Codec;
   std::unique_ptr<DecodeData> m_DecodeData;
   UnownedPtr<opj_stream_t> m_Stream;
-  opj_dparameters_t m_Parameters;
+  opj_dparameters_t m_Parameters = {};
 };
 
 }  // namespace fxcodec

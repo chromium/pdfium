@@ -28,8 +28,8 @@ class CFX_Value {
   ~CFX_Value();
 
   DataType nType = DataType::kNull;
-  bool bData;
-  double dData;
+  bool bData = false;
+  double dData = 0.0;
   ByteString sData;
   std::vector<std::unique_ptr<CFX_KeyValue>> objData;
 };

@@ -532,10 +532,8 @@ size_t CFDE_TextOut::GetDisplayPos(const Piece* pPiece) {
 
 CFDE_TextOut::Line::Line() = default;
 
-CFDE_TextOut::Line::Line(const Line& that) {
-  new_reload_ = that.new_reload_;
-  pieces_ = that.pieces_;
-}
+CFDE_TextOut::Line::Line(const Line& that)
+    : new_reload_(that.new_reload_), pieces_(that.pieces_) {}
 
 CFDE_TextOut::Line::~Line() = default;
 

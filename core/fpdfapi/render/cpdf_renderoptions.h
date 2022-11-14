@@ -80,7 +80,7 @@ class CPDF_RenderOptions {
   Type m_ColorMode = kNormal;
   bool m_bDrawAnnots = false;
   Options m_Options;
-  ColorScheme m_ColorScheme;
+  ColorScheme m_ColorScheme = {};
   RetainPtr<CPDF_OCContext> m_pOCContext;
 };
 

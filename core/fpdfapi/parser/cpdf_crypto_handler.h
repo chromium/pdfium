@@ -59,7 +59,7 @@ class CPDF_CryptoHandler {
   const size_t m_KeyLen;
   const Cipher m_Cipher;
   std::unique_ptr<CRYPT_aes_context, FxFreeDeleter> m_pAESContext;
-  uint8_t m_EncryptKey[32];
+  uint8_t m_EncryptKey[32] = {};
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_CRYPTO_HANDLER_H_

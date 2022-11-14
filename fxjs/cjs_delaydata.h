@@ -20,9 +20,9 @@ struct CJS_DelayData {
 
   FIELD_PROP eProp;
   int nControlIndex;
+  int32_t num = 0;
+  bool b = false;
   WideString sFieldName;
-  int32_t num;
-  bool b;
   ByteString bytestring;
   WideString widestring;
   CFX_FloatRect rect;

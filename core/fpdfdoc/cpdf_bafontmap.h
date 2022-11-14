@@ -41,7 +41,7 @@ class CPDF_BAFontMap final : public IPVT_FontMap {
     Data();
     ~Data();
 
-    FX_Charset nCharset;
+    FX_Charset nCharset = FX_Charset::kANSI;
     RetainPtr<CPDF_Font> pFont;
     ByteString sFontName;
   };

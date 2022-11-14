@@ -138,7 +138,7 @@ class ProgressiveDecoder final :
     }
 
    private:
-    int m_ItemSize;
+    int m_ItemSize = 0;
     DataVector<uint8_t> m_pWeightTables;
   };
 
@@ -154,7 +154,7 @@ class ProgressiveDecoder final :
     }
 
    private:
-    int m_ItemSize;
+    int m_ItemSize = 0;
     DataVector<uint8_t> m_pWeightTables;
   };
 

@@ -48,8 +48,8 @@ class CPDF_SampledFunc final : public CPDF_Function {
  private:
   std::vector<SampleEncodeInfo> m_EncodeInfo;
   std::vector<SampleDecodeInfo> m_DecodeInfo;
-  uint32_t m_nBitsPerSample;
-  uint32_t m_SampleMax;
+  uint32_t m_nBitsPerSample = 0;
+  uint32_t m_SampleMax = 0;
   RetainPtr<CPDF_StreamAcc> m_pSampleStream;
 };
 

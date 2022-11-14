@@ -127,7 +127,7 @@ class CPDF_PSEngine {
 
   uint32_t m_StackCount = 0;
   CPDF_PSProc m_MainProc;
-  float m_Stack[kPSEngineStackSize];
+  float m_Stack[kPSEngineStackSize] = {};
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PSENGINE_H_
