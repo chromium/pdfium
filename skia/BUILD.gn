@@ -23,7 +23,7 @@ skia_support_pdf = false
 config("skia_config") {
   include_dirs = [ "//third_party/skia" ]
 
-  defines = [ "SK_USER_CONFIG_HEADER=\"../../skia/config/SkUserConfig.h\"" ]
+  defines = [ "SK_USER_CONFIG_HEADER=\"../../skia/config/SkPdfiumUserConfig.h\"" ]
 
   if (is_win) {
     defines += [ "SK_FREETYPE_MINIMUM_RUNTIME_VERSION=(((FREETYPE_MAJOR) * 0x01000000) | ((FREETYPE_MINOR) * 0x00010000) | ((FREETYPE_PATCH) * 0x00000100))" ]
@@ -165,7 +165,7 @@ source_set("skcms") {
 component("skia") {
   sources = [
     # PDFium sources.
-    "config/SkUserConfig.h",
+    "config/SkPdfiumUserConfig.h",
     "ext/google_logging.cc",
   ]
 
