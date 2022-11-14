@@ -268,16 +268,16 @@ bool CBC_OneDimWriter::RenderResult(WideStringView contents,
 
   m_output.clear();
   m_output.reserve(original_codelength);
-  for (size_t inputX = 0, outputX = leftPadding; inputX < original_codelength;
-       ++inputX, ++outputX) {
-    if (code[inputX] != 1)
+  for (size_t i = 0; i < original_codelength; ++i) {
+    if (code[i] != 1)
       continue;
 
-    if (outputX >= codelength)
+    size_t output_index = i + leftPadding;
+    if (output_index >= codelength)
       return true;
 
     m_output.emplace_back();
-    m_output.back().AppendRect(outputX, 0.0f, outputX + 1, 1.0f);
+    m_output.back().AppendRect(output_index, 0.0f, output_index + 1, 1.0f);
   }
   return true;
 }
