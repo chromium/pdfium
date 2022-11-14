@@ -7,6 +7,8 @@
 #ifndef CORE_FXCODEC_JPX_CJPX_DECODER_H_
 #define CORE_FXCODEC_JPX_CJPX_DECODER_H_
 
+#include <stdint.h>
+
 #include <memory>
 
 #include "core/fxcrt/unowned_ptr.h"
@@ -24,6 +26,10 @@ struct DecodeData;
 
 class CJPX_Decoder {
  public:
+  // Calculated as log2(2^32 / 1), where 2^32 is the largest image dimension and
+  // 1 is the smallest required size.
+  static constexpr uint8_t kMaxResolutionsToSkip = 32;
+
   enum ColorSpaceOption {
     kNoColorSpace,
     kNormalColorSpace,

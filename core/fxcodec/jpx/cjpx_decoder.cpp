@@ -419,10 +419,12 @@ CJPX_Decoder::~CJPX_Decoder() {
 
 bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
                         uint8_t resolution_levels_to_skip) {
-  static const unsigned char szJP2Header[] = {
-      0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50, 0x20, 0x20, 0x0d, 0x0a, 0x87, 0x0a};
-  if (src_data.empty() || src_data.size() < sizeof(szJP2Header))
+  static constexpr uint8_t kJP2Header[] = {0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50,
+                                           0x20, 0x20, 0x0d, 0x0a, 0x87, 0x0a};
+  if (src_data.size() < sizeof(kJP2Header) ||
+      resolution_levels_to_skip > kMaxResolutionsToSkip) {
     return false;
+  }
 
   m_Image = nullptr;
   m_SrcData = src_data;
@@ -435,7 +437,7 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
   m_Parameters.decod_format = 0;
   m_Parameters.cod_format = 3;
   m_Parameters.cp_reduce = resolution_levels_to_skip;
-  if (memcmp(m_SrcData.data(), szJP2Header, sizeof(szJP2Header)) == 0) {
+  if (memcmp(m_SrcData.data(), kJP2Header, sizeof(kJP2Header)) == 0) {
     m_Codec = opj_create_decompress(OPJ_CODEC_JP2);
     m_Parameters.decod_format = 1;
   } else {
