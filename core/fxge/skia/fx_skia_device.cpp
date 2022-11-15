@@ -2840,15 +2840,19 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
         }
       }
     } else {
-      int dest_width =
-          pdfium::base::checked_cast<int>(ceilf(matrix.GetXUnit()));
-      int dest_height =
-          pdfium::base::checked_cast<int>(ceilf(matrix.GetYUnit()));
-
+      bool use_interpolate_bilinear = options.bInterpolateBilinear;
+      if (!use_interpolate_bilinear) {
+        float dest_width = ceilf(matrix.GetXUnit());
+        float dest_height = ceilf(matrix.GetYUnit());
+        if (pdfium::base::IsValueInRangeForNumericType<int>(dest_width) &&
+            pdfium::base::IsValueInRangeForNumericType<int>(dest_height)) {
+          use_interpolate_bilinear = CStretchEngine::UseInterpolateBilinear(
+              options, static_cast<int>(dest_width),
+              static_cast<int>(dest_height), width, height);
+        }
+      }
       SkSamplingOptions sampling_options;
-      if (options.bInterpolateBilinear ||
-          CStretchEngine::UseInterpolateBilinear(options, dest_width,
-                                                 dest_height, width, height)) {
+      if (use_interpolate_bilinear) {
         sampling_options =
             SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kLinear);
       }
