@@ -110,6 +110,10 @@ vars = {
   # and whatever else without interference from each other.
   'libcxxabi_revision': '8dd405113a4f3694e910b79785dd7fb7535a888a',
   # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling libpng
+  # and whatever else without interference from each other.
+  'libpng_revision': 'e541f033515bee926ea3ddc16f67be2188b12c3f',
+  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libunwind
   # and whatever else without interference from each other.
   'libunwind_revision': 'aabcd8753678f1536e15eb6385a948470debdae4',
@@ -304,6 +308,10 @@ deps = {
   'third_party/libjpeg_turbo':
     Var('chromium_git') + '/chromium/deps/libjpeg_turbo.git@' +
         Var('jpeg_turbo_revision'),
+
+  'third_party/libpng':
+    Var('chromium_git') + '/chromium/src/third_party/libpng.git@' +
+        Var('libpng_revision'),
 
   'third_party/lss': {
       'url': Var('chromium_git') + '/linux-syscall-support.git' + '@' + Var('lss_revision'),
