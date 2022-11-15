@@ -16,14 +16,11 @@ import pprint
 import subprocess
 import sys
 
-# Add src dir to path to avoid having to set PYTHONPATH.
+# Add parent dir to avoid having to set PYTHONPATH.
 sys.path.append(
-    os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__), os.path.pardir, os.path.pardir,
-            os.path.pardir)))
+    os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 
-from testing.tools.common import GetBooleanGnArg
+import common
 
 # 'binary' is the file that is to be run for the test.
 # 'use_test_runner' indicates if 'binary' depends on test_runner.py and thus
@@ -91,14 +88,14 @@ class CoverageExecutor:
           'No valid tests in set to be run. This is likely due to bad command '
           'line arguments')
 
-    if not GetBooleanGnArg('use_clang_coverage', self.build_directory,
-                           self.verbose):
+    if not common.GetBooleanGnArg('use_clang_coverage', self.build_directory,
+                                  self.verbose):
       parser.error(
           'use_clang_coverage does not appear to be set to true for build, but '
           'is needed')
 
-    self.use_goma = GetBooleanGnArg('use_goma', self.build_directory,
-                                    self.verbose)
+    self.use_goma = common.GetBooleanGnArg('use_goma', self.build_directory,
+                                           self.verbose)
 
     self.output_directory = args['output_directory']
     if not os.path.exists(self.output_directory):
