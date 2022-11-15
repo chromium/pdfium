@@ -700,6 +700,24 @@ FT_BEGIN_HEADER
 #undef TT_CONFIG_OPTION_BDF
 
 
+  /**************************************************************************
+   *
+   * Define `TT_CONFIG_OPTION_NO_BORING_EXPANSION` if you want to exclude
+   * support for 'boring' OpenType specification expansions.
+   *
+   *   https://github.com/harfbuzz/boring-expansion-spec
+   *
+   * Right now, the following features are covered:
+   *
+   *   - 'avar' version 2.0
+   *
+   * Most likely, this is a temporary configuration option to be removed in
+   * the near future, since it is assumed that eventually those features are
+   * added to the OpenType standard.
+   */
+#define TT_CONFIG_OPTION_NO_BORING_EXPANSION
+
+
   /*************************************************************************/
   /*                                                                       */
   /* Option TT_CONFIG_OPTION_MAX_RUNNABLE_OPCODES controls the maximum     */
