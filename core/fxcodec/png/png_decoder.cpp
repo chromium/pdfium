@@ -17,7 +17,7 @@
 #ifdef USE_SYSTEM_LIBPNG
 #include <png.h>
 #else
-#include "third_party/libpng16/png.h"
+#include "third_party/libpng/png.h"
 #endif
 
 #define PNG_ERROR_SIZE 256

@@ -26,10 +26,7 @@ config("pdfium_common_config") {
   cflags_cc = []
   ldflags = []
   include_dirs = [ "." ]
-  defines = [
-    "PNG_PREFIX",
-    "PNG_USE_READ_MACROS",
-  ]
+  defines = []
 
   if (!use_system_libopenjpeg2) {
     defines += [ "OPJ_STATIC" ]

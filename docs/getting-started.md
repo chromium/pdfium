@@ -75,7 +75,7 @@ the link line in order to compile. My build line was:
 
 ```
 PDF_LIBS="-lpdfium -lfpdfapi -lfxge -lfpdfdoc -lfxcrt -lfx_agg \
--lfxcodec -lfx_lpng -lfx_libopenjpeg -lfx_lcms2 -lfx_freetype -ljpeg \
+-lfxcodec -lpng -lfx_libopenjpeg -lfx_lcms2 -lfx_freetype -ljpeg \
 -lfdrm -lpwl -lbigint -lformfiller -ljavascript -lfxedit"
 PDF_DIR=<path/to/pdfium>
 

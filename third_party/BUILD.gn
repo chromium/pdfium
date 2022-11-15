@@ -443,7 +443,7 @@ group("png") {
   if (use_system_libpng) {
     public_configs = [ ":system_libpng_config" ]
   } else {
-    public_deps = [ ":fx_lpng" ]
+    public_deps = [ "//third_party/libpng" ]
   }
 }
 
