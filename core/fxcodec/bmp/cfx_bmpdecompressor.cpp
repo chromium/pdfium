@@ -17,6 +17,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
 #include "third_party/base/numerics/safe_math.h"
 
@@ -445,9 +446,8 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRGB() {
       case 24:
       case 32:
         // TODO(crbug.com/pdfium/1901): Apply bitfields.
-        uint8_t* dest_buf_data = dest_buf.data();
-        std::copy(dest_buf_data, dest_buf_data + src_row_bytes_,
-                  out_row_buffer_.begin());
+        fxcrt::spancpy(pdfium::make_span(out_row_buffer_),
+                       pdfium::make_span(dest_buf).first(src_row_bytes_));
         idx += src_row_bytes_;
         break;
     }
@@ -478,7 +478,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
 
             ReadNextScanline();
             col_num_ = 0;
-            std::fill(out_row_buffer_.begin(), out_row_buffer_.end(), 0);
+            fxcrt::spanset(pdfium::make_span(out_row_buffer_), 0);
             SaveDecodingStatus(DecodeStatus::kData);
             continue;
           }
@@ -499,7 +499,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
               return BmpDecoder::Status::kFail;
 
             while (row_num_ < bmp_row_num__next) {
-              std::fill(out_row_buffer_.begin(), out_row_buffer_.end(), 0);
+              fxcrt::spanset(pdfium::make_span(out_row_buffer_), 0);
               ReadNextScanline();
             }
             break;
@@ -513,12 +513,12 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
             size_t second_part_size =
                 first_part & 1 ? first_part + 1 : first_part;
             DataVector<uint8_t> second_part(second_part_size);
-            uint8_t* second_part_data = second_part.data();
             if (!ReadAllOrNone(second_part))
               return BmpDecoder::Status::kContinue;
 
-            std::copy(second_part_data, second_part_data + first_part,
-                      out_row_buffer_.begin() + col_num_);
+            fxcrt::spancpy(pdfium::make_span(out_row_buffer_).subspan(col_num_),
+                           pdfium::make_span(second_part).first(first_part));
+
             for (size_t i = col_num_; i < col_num_ + first_part; ++i) {
               if (!ValidateColorIndex(out_row_buffer_[i]))
                 return BmpDecoder::Status::kFail;
@@ -538,8 +538,10 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
         if (!ReadAllOrNone(pdfium::make_span(&second_part, 1)))
           return BmpDecoder::Status::kContinue;
 
-        std::fill(out_row_buffer_.begin() + col_num_,
-                  out_row_buffer_.begin() + col_num_ + first_part, second_part);
+        fxcrt::spanset(
+            pdfium::make_span(out_row_buffer_).subspan(col_num_, first_part),
+            second_part);
+
         if (!ValidateColorIndex(out_row_buffer_[col_num_]))
           return BmpDecoder::Status::kFail;
         col_num_ += first_part;
@@ -569,7 +571,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE4() {
 
             ReadNextScanline();
             col_num_ = 0;
-            std::fill(out_row_buffer_.begin(), out_row_buffer_.end(), 0);
+            fxcrt::spanset(pdfium::make_span(out_row_buffer_), 0);
             SaveDecodingStatus(DecodeStatus::kData);
             continue;
           }
@@ -590,7 +592,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE4() {
               return BmpDecoder::Status::kFail;
 
             while (row_num_ < bmp_row_num__next) {
-              std::fill(out_row_buffer_.begin(), out_row_buffer_.end(), 0);
+              fxcrt::spanset(pdfium::make_span(out_row_buffer_), 0);
               ReadNextScanline();
             }
             break;
