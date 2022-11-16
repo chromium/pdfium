@@ -40,6 +40,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
+#include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
@@ -51,6 +52,7 @@
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkClipOp.h"
 #include "third_party/skia/include/core/SkColorPriv.h"
+#include "third_party/skia/include/core/SkColorType.h"
 #include "third_party/skia/include/core/SkImage.h"
 #include "third_party/skia/include/core/SkPaint.h"
 #include "third_party/skia/include/core/SkPath.h"
@@ -819,6 +821,16 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
   *widthPtr = width;
   *heightPtr = height;
   return true;
+}
+
+// Makes a bitmap filled with a solid color for debugging with `SkPicture`.
+RetainPtr<CFX_DIBitmap> MakeDebugBitmap(int width, int height, uint32_t color) {
+  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  if (!bitmap->Create(width, height, FXDIB_Format::kArgb))
+    return nullptr;
+
+  bitmap->Clear(color);
+  return bitmap;
 }
 #endif  // defined(_SKIA_SUPPORT_)
 
@@ -1740,12 +1752,18 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
 
 #if defined(_SKIA_SUPPORT_)
 CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkPictureRecorder* recorder)
-    : m_pBitmap(nullptr),
-      m_pBackdropBitmap(nullptr),
-      m_pRecorder(recorder),
+    : m_pRecorder(recorder),
       m_pCache(std::make_unique<SkiaState>(this)),
       m_bGroupKnockout(false) {
   m_pCanvas = m_pRecorder->getRecordingCanvas();
+  int width = m_pCanvas->imageInfo().width();
+  int height = m_pCanvas->imageInfo().height();
+  DCHECK_EQ(kUnknown_SkColorType, m_pCanvas->imageInfo().colorType());
+
+  constexpr uint32_t kMagenta = 0xffff00ff;
+  constexpr uint32_t kGreen = 0xff00ff00;
+  m_pBitmap = MakeDebugBitmap(width, height, kMagenta);
+  m_pBackdropBitmap = MakeDebugBitmap(width, height, kGreen);
 }
 #endif  // defined(_SKIA_SUPPORT_)
 
