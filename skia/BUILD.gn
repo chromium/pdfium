@@ -23,7 +23,10 @@ skia_support_pdf = false
 config("skia_config") {
   include_dirs = [ "//third_party/skia" ]
 
-  defines = [ "SK_USER_CONFIG_HEADER=\"../../skia/config/SkPdfiumUserConfig.h\"" ]
+  defines = [
+    "SK_ENCODE_PNG",
+    "SK_USER_CONFIG_HEADER=\"../../skia/config/SkPdfiumUserConfig.h\"",
+  ]
 
   if (is_win) {
     defines += [ "SK_FREETYPE_MINIMUM_RUNTIME_VERSION=(((FREETYPE_MAJOR) * 0x01000000) | ((FREETYPE_MINOR) * 0x00010000) | ((FREETYPE_PATCH) * 0x00000100))" ]
@@ -191,6 +194,7 @@ component("skia") {
     "//third_party/skia/src/fonts/SkFontMgr_indirect.cpp",
     "//third_party/skia/src/fonts/SkRemotableFontMgr.cpp",
     "//third_party/skia/src/images/SkImageEncoder.cpp",
+    "//third_party/skia/src/images/SkPngEncoder.cpp",
     "//third_party/skia/src/ports/SkGlobalInitialization_default.cpp",
     "//third_party/skia/src/ports/SkImageGenerator_none.cpp",
     "//third_party/skia/src/ports/SkOSFile_stdio.cpp",
@@ -329,6 +333,7 @@ component("skia") {
   deps = [
     ":skcms",
     ":skia_opts",
+    "../third_party:png",
     "../third_party:zlib",
     "//:freetype_common",
   ]
