@@ -67,7 +67,7 @@
 FRC_10_8.2.2__T8.3_original_file.pdf * * * *
 
 # TODO(pdfium:1858): Remove after associated bug is fixed
-FRC_10_8.2.4_View_C.pdf * * * skia
+FRC_10_8.2.4_View_C.pdf * * * skiapaths
 
 FRC_11_8.2.2__T8.3_first_last_exchange.pdf * * * *
 
