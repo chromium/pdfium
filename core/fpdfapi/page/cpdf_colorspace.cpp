@@ -38,6 +38,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/scoped_set_insertion.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
@@ -432,8 +433,7 @@ PatternValue::PatternValue(const PatternValue& that) = default;
 PatternValue::~PatternValue() = default;
 
 void PatternValue::SetComps(pdfium::span<const float> comps) {
-  CHECK(comps.size() <= m_Comps.size());
-  std::copy(std::begin(comps), std::end(comps), std::begin(m_Comps));
+  fxcrt::spancpy(pdfium::make_span(m_Comps), comps);
 }
 
 // static

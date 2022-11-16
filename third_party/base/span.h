@@ -160,7 +160,6 @@ using EnableIfConstSpanCompatibleContainer =
 //
 // Differences from [span.cons]:
 // - no constructor from a pointer range
-// - no constructor from std::array
 //
 // Differences from [span.sub]:
 // - no templated first()
@@ -196,7 +195,10 @@ class TRIVIAL_ABI GSL_POINTER span {
   // TODO(dcheng): Implement construction from a |begin| and |end| pointer.
   template <size_t N>
   constexpr span(T (&array)[N]) noexcept : span(array, N) {}
-  // TODO(dcheng): Implement construction from std::array.
+
+  template <size_t N>
+  constexpr span(std::array<T, N>& array) noexcept : span(array.data(), N) {}
+
   // Conversion from a container that provides |T* data()| and |integral_type
   // size()|.
   template <typename Container,
@@ -350,6 +352,11 @@ constexpr span<T> make_span(T* data, size_t size) noexcept {
 
 template <typename T, size_t N>
 constexpr span<T> make_span(T (&array)[N]) noexcept {
+  return span<T>(array);
+}
+
+template <typename T, size_t N>
+constexpr span<T> make_span(std::array<T, N>& array) noexcept {
   return span<T>(array);
 }
 
