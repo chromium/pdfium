@@ -148,7 +148,7 @@ inline bool NextBit(const uint8_t* src_buf, int* bitpos) {
   return !!(src_buf[pos / 8] & (1 << (7 - pos % 8)));
 }
 
-const uint8_t FaxBlackRunIns[] = {
+const uint8_t kFaxBlackRunIns[] = {
     0,          2,          0x02,       3,          0,          0x03,
     2,          0,          2,          0x02,       1,          0,
     0x03,       4,          0,          2,          0x02,       6,
@@ -205,7 +205,7 @@ const uint8_t FaxBlackRunIns[] = {
     1088 / 256, 0x76,       1152 % 256, 1152 / 256, 0x77,       1216 % 256,
     1216 / 256, 0xff};
 
-const uint8_t FaxWhiteRunIns[] = {
+const uint8_t kFaxWhiteRunIns[] = {
     0,          0,          0,          6,          0x07,       2,
     0,          0x08,       3,          0,          0x0B,       4,
     0,          0x0C,       5,          0,          0x0E,       6,
@@ -263,7 +263,7 @@ const uint8_t FaxWhiteRunIns[] = {
     0xff,
 };
 
-int FaxGetRun(const uint8_t* ins_array,
+int FaxGetRun(pdfium::span<const uint8_t> ins_array,
               const uint8_t* src_buf,
               int* bitpos,
               int bitsize) {
@@ -323,7 +323,8 @@ void FaxG4GetRow(const uint8_t* src_buf,
       } else if (bit2) {
         int run_len1 = 0;
         while (true) {
-          int run = FaxGetRun(a0color ? FaxWhiteRunIns : FaxBlackRunIns,
+          int run = FaxGetRun(a0color ? pdfium::make_span(kFaxWhiteRunIns)
+                                      : pdfium::make_span(kFaxBlackRunIns),
                               src_buf, bitpos, bitsize);
           run_len1 += run;
           if (run < 64)
@@ -340,7 +341,8 @@ void FaxG4GetRow(const uint8_t* src_buf,
 
         int run_len2 = 0;
         while (true) {
-          int run = FaxGetRun(a0color ? FaxBlackRunIns : FaxWhiteRunIns,
+          int run = FaxGetRun(a0color ? pdfium::make_span(kFaxBlackRunIns)
+                                      : pdfium::make_span(kFaxWhiteRunIns),
                               src_buf, bitpos, bitsize);
           run_len2 += run;
           if (run < 64)
@@ -440,8 +442,9 @@ void FaxGet1DLine(const uint8_t* src_buf,
 
     int run_len = 0;
     while (true) {
-      int run = FaxGetRun(color ? FaxWhiteRunIns : FaxBlackRunIns, src_buf,
-                          bitpos, bitsize);
+      int run = FaxGetRun(color ? pdfium::make_span(kFaxWhiteRunIns)
+                                : pdfium::make_span(kFaxBlackRunIns),
+                          src_buf, bitpos, bitsize);
       if (run < 0) {
         while (*bitpos < bitsize) {
           if (NextBit(src_buf, bitpos))
