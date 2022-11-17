@@ -141,12 +141,12 @@ bool CPDF_CryptoHandler::DecryptStream(void* context,
     return false;
 
   if (m_Cipher == Cipher::kNone) {
-    dest_buf.AppendBlock(source.data(), source.size());
+    dest_buf.AppendSpan(source);
     return true;
   }
   if (m_Cipher == Cipher::kRC4) {
     size_t old_size = dest_buf.GetSize();
-    dest_buf.AppendBlock(source.data(), source.size());
+    dest_buf.AppendSpan(source);
     CRYPT_ArcFourCrypt(
         static_cast<CRYPT_rc4_context*>(context),
         dest_buf.GetMutableSpan().subspan(old_size, source.size()));
@@ -174,7 +174,7 @@ bool CPDF_CryptoHandler::DecryptStream(void* context,
         uint8_t block_buf[16];
         CRYPT_AESDecrypt(&pContext->m_Context, block_buf, pContext->m_Block,
                          16);
-        dest_buf.AppendBlock(block_buf, 16);
+        dest_buf.AppendSpan(block_buf);
         pContext->m_BlockOffset = 0;
       }
     }
@@ -200,8 +200,9 @@ bool CPDF_CryptoHandler::DecryptFinish(void* context, BinaryBuffer& dest_buf) {
   if (pContext->m_BlockOffset == 16) {
     uint8_t block_buf[16];
     CRYPT_AESDecrypt(&pContext->m_Context, block_buf, pContext->m_Block, 16);
-    if (block_buf[15] <= 16) {
-      dest_buf.AppendBlock(block_buf, 16 - block_buf[15]);
+    if (block_buf[15] < 16) {
+      dest_buf.AppendSpan(
+          pdfium::make_span(block_buf).first(16 - block_buf[15]));
     }
   }
   FX_Free(pContext);

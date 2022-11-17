@@ -22,7 +22,7 @@ TEST(BinaryBuffer, Empty) {
 
 TEST(BinaryBuffer, MoveConstruct) {
   BinaryBuffer buffer;
-  buffer.AppendByte(65u);
+  buffer.AppendUint8(65u);
 
   BinaryBuffer buffer2(std::move(buffer));
 
@@ -40,7 +40,7 @@ TEST(BinaryBuffer, MoveConstruct) {
 TEST(BinaryBuffer, MoveAssign) {
   BinaryBuffer buffer;
   BinaryBuffer buffer2;
-  buffer.AppendByte(65u);
+  buffer.AppendUint8(65u);
   buffer2 = std::move(buffer);
 
   EXPECT_TRUE(buffer.IsEmpty());
@@ -56,7 +56,7 @@ TEST(BinaryBuffer, MoveAssign) {
 
 TEST(BinaryBuffer, Clear) {
   BinaryBuffer buffer;
-  buffer.AppendByte(65u);
+  buffer.AppendUint8(65u);
   buffer.Clear();
   EXPECT_TRUE(buffer.IsEmpty());
   EXPECT_EQ(0u, buffer.GetSize());
@@ -85,8 +85,8 @@ TEST(BinaryBuffer, AppendBlocks) {
   BinaryBuffer buffer;
   std::vector<uint8_t> aaa(3, 65u);
   std::vector<uint8_t> bbb(3, 66u);
-  buffer.AppendBlock(aaa.data(), aaa.size());
-  buffer.AppendBlock(bbb.data(), bbb.size());
+  buffer.AppendSpan(aaa);
+  buffer.AppendSpan(bbb);
   EXPECT_EQ(6u, buffer.GetSize());
   EXPECT_EQ(6u, buffer.GetLength());
   EXPECT_EQ(65u, buffer.GetSpan()[0]);
@@ -111,12 +111,42 @@ TEST(BinaryBuffer, AppendStrings) {
 
 TEST(BinaryBuffer, AppendBytes) {
   BinaryBuffer buffer;
-  buffer.AppendByte(65u);
-  buffer.AppendByte(66u);
+  buffer.AppendUint8(65u);
+  buffer.AppendUint8(66u);
   EXPECT_EQ(2u, buffer.GetSize());
   EXPECT_EQ(2u, buffer.GetLength());
   EXPECT_EQ(65u, buffer.GetSpan()[0]);
   EXPECT_EQ(66u, buffer.GetSpan()[1]);
+}
+
+// Assumes little endian.
+TEST(BinaryBuffer, AppendUint16) {
+  BinaryBuffer buffer;
+  buffer.AppendUint16(0x4321);
+  EXPECT_EQ(2u, buffer.GetSize());
+  EXPECT_EQ(2u, buffer.GetLength());
+  EXPECT_EQ(0x21u, buffer.GetSpan()[0]);
+  EXPECT_EQ(0x43u, buffer.GetSpan()[1]);
+}
+
+// Assumes little endian.
+TEST(BinaryBuffer, AppendUint32) {
+  BinaryBuffer buffer;
+  buffer.AppendUint32(0x87654321);
+  EXPECT_EQ(4u, buffer.GetSize());
+  EXPECT_EQ(4u, buffer.GetLength());
+  EXPECT_EQ(0x21u, buffer.GetSpan()[0]);
+  EXPECT_EQ(0x43u, buffer.GetSpan()[1]);
+  EXPECT_EQ(0x65u, buffer.GetSpan()[2]);
+  EXPECT_EQ(0x87u, buffer.GetSpan()[3]);
+}
+
+TEST(BinaryBuffer, AppendDouble) {
+  BinaryBuffer buffer;
+  buffer.AppendDouble(1234.5678);
+  EXPECT_EQ(8u, buffer.GetSize());
+  EXPECT_EQ(8u, buffer.GetLength());
+  // arch-dependent bit pattern.
 }
 
 }  // namespace fxcrt

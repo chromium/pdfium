@@ -35,6 +35,8 @@ class WideTextBuffer final : public BinaryBuffer {
   WideTextBuffer& operator<<(const WideTextBuffer& buf);
 
  private:
+  void AppendWideString(WideStringView str);
+
   // Returned span is the newly-expanded space.
   pdfium::span<wchar_t> ExpandWideBuf(size_t char_count);
 };

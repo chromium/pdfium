@@ -42,6 +42,10 @@ void WideTextBuffer::Delete(size_t start_index, size_t count) {
   DeleteBuf(start_index * sizeof(wchar_t), count * sizeof(wchar_t));
 }
 
+void WideTextBuffer::AppendWideString(WideStringView str) {
+  AppendSpan(pdfium::as_bytes(str.span()));
+}
+
 WideTextBuffer& WideTextBuffer::operator<<(ByteStringView ascii) {
   pdfium::span<wchar_t> new_span = ExpandWideBuf(ascii.GetLength());
   for (size_t i = 0; i < ascii.GetLength(); ++i)
@@ -50,22 +54,22 @@ WideTextBuffer& WideTextBuffer::operator<<(ByteStringView ascii) {
 }
 
 WideTextBuffer& WideTextBuffer::operator<<(WideStringView str) {
-  AppendBlock(str.unterminated_c_str(), str.GetLength() * sizeof(wchar_t));
+  AppendWideString(str);
   return *this;
 }
 
 WideTextBuffer& WideTextBuffer::operator<<(const WideString& str) {
-  AppendBlock(str.c_str(), str.GetLength() * sizeof(wchar_t));
+  AppendWideString(str.AsStringView());
   return *this;
 }
 
 WideTextBuffer& WideTextBuffer::operator<<(const wchar_t* lpsz) {
-  AppendBlock(lpsz, wcslen(lpsz) * sizeof(wchar_t));
+  AppendWideString(WideStringView(lpsz));
   return *this;
 }
 
 WideTextBuffer& WideTextBuffer::operator<<(const WideTextBuffer& buf) {
-  AppendBlock(buf.m_buffer.data(), buf.GetSize());
+  AppendWideString(buf.AsStringView());
   return *this;
 }
 

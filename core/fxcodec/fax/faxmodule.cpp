@@ -800,17 +800,18 @@ DataVector<uint8_t> FaxEncoder::Encode() {
   m_DestBitpos = 0;
   uint8_t last_byte = 0;
   for (int i = 0; i < m_Rows; ++i) {
+    pdfium::span<uint8_t> buf_span = pdfium::make_span(m_LineBuf);
+    fxcrt::spanset(buf_span, 0);
+    buf_span[0] = last_byte;
     pdfium::span<const uint8_t> scan_line = m_Src->GetScanline(i);
-    std::fill(std::begin(m_LineBuf), std::end(m_LineBuf), 0);
-    m_LineBuf[0] = last_byte;
     FaxEncode2DLine(scan_line);
-    m_DestBuf.AppendBlock(m_LineBuf.data(), m_DestBitpos / 8);
+    m_DestBuf.AppendSpan(buf_span.first(m_DestBitpos / 8));
     last_byte = m_LineBuf[m_DestBitpos / 8];
     m_DestBitpos %= 8;
     m_RefLineSpan = scan_line;
   }
   if (m_DestBitpos)
-    m_DestBuf.AppendByte(last_byte);
+    m_DestBuf.AppendUint8(last_byte);
   return m_DestBuf.DetachBuffer();
 }
 

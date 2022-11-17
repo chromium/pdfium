@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span_util.h"
 
 namespace fxcrt {
 
@@ -42,8 +43,9 @@ void BinaryBuffer::DeleteBuf(size_t start_index, size_t count) {
   if (m_buffer.empty() || count > GetSize() || start_index > GetSize() - count)
     return;
 
-  memmove(m_buffer.data() + start_index, m_buffer.data() + start_index + count,
-          GetSize() - start_index - count);
+  auto buffer_span = pdfium::make_span(m_buffer).first(GetSize());
+  fxcrt::spanmove(buffer_span.subspan(start_index),
+                  buffer_span.subspan(start_index + count));
   m_DataSize -= count;
 }
 
@@ -89,29 +91,32 @@ void BinaryBuffer::ExpandBuf(size_t add_size) {
 }
 
 void BinaryBuffer::AppendSpan(pdfium::span<const uint8_t> span) {
-  return AppendBlock(span.data(), span.size());
-}
-
-void BinaryBuffer::AppendBlock(const void* pBuf, size_t size) {
-  if (size == 0)
+  if (span.empty())
     return;
 
-  ExpandBuf(size);
-  if (pBuf) {
-    memcpy(m_buffer.data() + GetSize(), pBuf, size);
-  } else {
-    memset(m_buffer.data() + GetSize(), 0, size);
-  }
-  m_DataSize += size;
+  ExpandBuf(span.size());
+  fxcrt::spancpy(pdfium::make_span(m_buffer).subspan(GetSize()), span);
+  m_DataSize += span.size();
 }
 
 void BinaryBuffer::AppendString(const ByteString& str) {
-  AppendBlock(str.c_str(), str.GetLength());
+  AppendSpan(str.raw_span());
 }
 
-void BinaryBuffer::AppendByte(uint8_t byte) {
-  ExpandBuf(1);
-  m_buffer[m_DataSize++] = byte;
+void BinaryBuffer::AppendUint8(uint8_t value) {
+  AppendSpan({&value, 1});
+}
+
+void BinaryBuffer::AppendUint16(uint16_t value) {
+  AppendSpan({reinterpret_cast<uint8_t*>(&value), sizeof(value)});
+}
+
+void BinaryBuffer::AppendUint32(uint32_t value) {
+  AppendSpan({reinterpret_cast<uint8_t*>(&value), sizeof(value)});
+}
+
+void BinaryBuffer::AppendDouble(double value) {
+  AppendSpan({reinterpret_cast<uint8_t*>(&value), sizeof(value)});
 }
 
 }  // namespace fxcrt

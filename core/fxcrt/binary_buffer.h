@@ -38,9 +38,11 @@ class BinaryBuffer {
   void SetAllocStep(size_t step) { m_AllocStep = step; }
   void EstimateSize(size_t size);
   void AppendSpan(pdfium::span<const uint8_t> span);
-  void AppendBlock(const void* pBuf, size_t size);
   void AppendString(const ByteString& str);
-  void AppendByte(uint8_t byte);
+  void AppendUint8(uint8_t value);
+  void AppendUint16(uint16_t value);
+  void AppendUint32(uint32_t value);
+  void AppendDouble(double value);
 
   // Releases ownership of `m_pBuffer` and returns it.
   DataVector<uint8_t> DetachBuffer();
