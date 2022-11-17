@@ -6,9 +6,9 @@
 
 #include "core/fdrm/fx_crypt.h"
 
-#include <string.h>
-
 #include <utility>
+
+#include "core/fxcrt/span_util.h"
 
 #define GET_UINT32(n, b, i)                            \
   {                                                    \
@@ -195,21 +195,20 @@ void CRYPT_MD5Update(CRYPT_md5_context* context,
   context->total[1] += data.size() >> 29;
   context->total[0] &= 0xFFFFFFFF;
   context->total[1] += context->total[0] < data.size() << 3;
+
+  const pdfium::span<uint8_t> buffer_span = pdfium::make_span(context->buffer);
   if (left && data.size() >= fill) {
-    auto next_data = data.subspan(fill);
-    memcpy(context->buffer + left, data.data(), fill);
+    fxcrt::spancpy(buffer_span.subspan(left), data.first(fill));
     md5_process(context, context->buffer);
+    data = data.subspan(fill);
     left = 0;
-    data = next_data;
   }
   while (data.size() >= 64) {
-    auto next_data = data.subspan(64);
     md5_process(context, data.data());
-    data = next_data;
+    data = data.subspan(64);
   }
-  size_t remaining = data.size();
-  if (remaining)
-    memcpy(context->buffer + left, data.data(), remaining);
+  if (!data.empty())
+    fxcrt::spancpy(buffer_span.subspan(left), data);
 }
 
 void CRYPT_MD5Finish(CRYPT_md5_context* context, uint8_t digest[16]) {
@@ -218,7 +217,7 @@ void CRYPT_MD5Finish(CRYPT_md5_context* context, uint8_t digest[16]) {
   PUT_UINT32(context->total[1], msglen, 4);
   uint32_t last = (context->total[0] >> 3) & 0x3F;
   uint32_t padn = (last < 56) ? (56 - last) : (120 - last);
-  CRYPT_MD5Update(context, {md5_padding, padn});
+  CRYPT_MD5Update(context, pdfium::make_span(md5_padding).first(padn));
   CRYPT_MD5Update(context, msglen);
   PUT_UINT32(context->state[0], digest, 0);
   PUT_UINT32(context->state[1], digest, 4);
