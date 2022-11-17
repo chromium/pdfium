@@ -12,6 +12,7 @@
 #include "core/fxcrt/cfx_utf8encoder.h"
 #include "core/fxcrt/fx_extension.h"
 #include "third_party/base/compiler_specific.h"
+#include "third_party/base/span.h"
 
 ByteString FX_UTF8Encode(WideStringView wsStr) {
   CFX_UTF8Encoder encoder;
@@ -44,9 +45,7 @@ const double kFractionScalesDouble[] = {
     0.0000001, 0.00000001, 0.000000001, 0.0000000001, 0.00000000001};
 
 template <class T>
-T StringTo(ByteStringView strc,
-           const T fractional_scales[],
-           size_t fractional_scales_size) {
+T StringTo(ByteStringView strc, pdfium::span<const T> fractional_scales) {
   if (strc.IsEmpty())
     return 0;
 
@@ -78,7 +77,7 @@ T StringTo(ByteStringView strc,
       value +=
           fractional_scales[scale] * FXSYS_DecimalCharToInt(strc.CharAt(cc));
       scale++;
-      if (scale == fractional_scales_size)
+      if (scale == fractional_scales.size())
         break;
       cc++;
     }
@@ -137,8 +136,7 @@ size_t ToString(T value, int (*round_func)(T), char* buf) {
 }  // namespace
 
 float StringToFloat(ByteStringView strc) {
-  return StringTo<float>(strc, kFractionScalesFloat,
-                         std::size(kFractionScalesFloat));
+  return StringTo<float>(strc, kFractionScalesFloat);
 }
 
 float StringToFloat(WideStringView wsStr) {
@@ -150,8 +148,7 @@ size_t FloatToString(float f, char* buf) {
 }
 
 double StringToDouble(ByteStringView strc) {
-  return StringTo<double>(strc, kFractionScalesDouble,
-                          std::size(kFractionScalesDouble));
+  return StringTo<double>(strc, kFractionScalesDouble);
 }
 
 double StringToDouble(WideStringView wsStr) {
