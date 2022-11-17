@@ -56,6 +56,16 @@
 #include <valgrind/callgrind.h>
 #endif  // ENABLE_CALLGRIND
 
+#ifdef PDF_ENABLE_SKIA
+#include "third_party/skia/include/core/SkCanvas.h"           // nogncheck
+#include "third_party/skia/include/core/SkColor.h"            // nogncheck
+#include "third_party/skia/include/core/SkPicture.h"          // nogncheck
+#include "third_party/skia/include/core/SkPictureRecorder.h"  // nogncheck
+#include "third_party/skia/include/core/SkPixmap.h"           // nogncheck
+#include "third_party/skia/include/core/SkRefCnt.h"           // nogncheck
+#include "third_party/skia/include/core/SkSurface.h"          // nogncheck
+#endif
+
 #ifdef PDF_ENABLE_V8
 #include "testing/v8_initializer.h"
 #include "v8/include/libplatform/libplatform.h"
@@ -757,7 +767,7 @@ class PageRenderer {
  public:
   virtual ~PageRenderer() = default;
 
-  // Returns `true` if the rendered output exists. Must call `Start()` first.
+  // Returns `true` if the rendered output exists. Must call `Finish()` first.
   virtual bool HasOutput() const = 0;
 
   // Starts rendering the page, returning `false` on failure.
@@ -808,7 +818,7 @@ class BitmapPageRenderer : public PageRenderer {
     bool alpha = FPDFPage_HasTransparency(page());
     bitmap_.reset(FPDFBitmap_Create(/*width=*/width(), /*height=*/height(),
                                     /*alpha=*/alpha));
-    if (!HasOutput())
+    if (!bitmap_)
       return false;
 
     FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
@@ -958,37 +968,54 @@ class SkPicturePageRenderer : public PageRenderer {
                      /*height=*/height,
                      /*flags=*/flags) {}
 
-  bool HasOutput() const override { return !!recorder_; }
+  bool HasOutput() const override { return !!picture_; }
 
   bool Start() override {
     recorder_.reset(reinterpret_cast<SkPictureRecorder*>(
         FPDF_RenderPageSkp(page(), /*size_x=*/width(), /*size_y=*/height())));
-    return HasOutput();
+    return !!recorder_;
   }
 
   void Finish(FPDF_FORMHANDLE form) override {
     FPDF_FFLRecord(form, reinterpret_cast<FPDF_RECORDER>(recorder_.get()),
                    page(), /*start_x=*/0, /*start_y=*/0, /*size_x=*/width(),
                    /*size_y=*/height(), /*rotate=*/0, /*flags=*/0);
+
+    picture_ = recorder_->finishRecordingAsPicture();
+    recorder_.reset();
   }
 
   bool Write(const std::string& name, int page_index, bool md5) override {
-    std::string image_file_name =
-        WriteSkp(name.c_str(), page_index, recorder_.get());
+    std::string image_file_name = WriteSkp(name.c_str(), page_index, *picture_);
     if (image_file_name.empty())
       return false;
 
     if (md5) {
-      // Supporting --md5 would require rasterization.
-      // TODO(crbug.com/pdfium/1929): It may be useful to compute the MD5 of the
-      // replayed SKP, in order to compare with direct rasterization.
-      return false;
+      // Play back the `SkPicture` so we can take a hash of the result.
+      sk_sp<SkSurface> surface = SkSurface::MakeRasterN32Premul(
+          /*width=*/width(), /*height=*/height());
+      if (!surface)
+        return false;
+
+      // Must clear to white before replay to match initial `CFX_DIBitmap`.
+      surface->getCanvas()->clear(SK_ColorWHITE);
+      surface->getCanvas()->drawPicture(picture_);
+
+      // Write the filename and the MD5 of the buffer to stdout.
+      SkPixmap pixmap;
+      if (!surface->peekPixels(&pixmap))
+        return false;
+
+      OutputMD5Hash(image_file_name.c_str(),
+                    {static_cast<const uint8_t*>(pixmap.addr()),
+                     pixmap.computeByteSize()});
     }
     return true;
   }
 
  private:
   std::unique_ptr<SkPictureRecorder> recorder_;
+  sk_sp<SkPicture> picture_;
 };
 #endif  // PDF_ENABLE_SKIA
 

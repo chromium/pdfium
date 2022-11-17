@@ -10,8 +10,7 @@
 #include "public/fpdfview.h"
 
 #ifdef PDF_ENABLE_SKIA
-#include "third_party/skia/include/core/SkPictureRecorder.h"  // nogncheck
-#include "third_party/skia/include/core/SkStream.h"           // nogncheck
+class SkPicture;
 #endif
 
 std::string WritePpm(const char* pdf_name,
@@ -41,9 +40,7 @@ void WritePS(FPDF_PAGE page, const char* pdf_name, int num);
 #endif  // _WIN32
 
 #ifdef PDF_ENABLE_SKIA
-std::string WriteSkp(const char* pdf_name,
-                     int num,
-                     SkPictureRecorder* recorder);
+std::string WriteSkp(const char* pdf_name, int num, const SkPicture& picture);
 #endif  // PDF_ENABLE_SKIA
 
 void WriteAttachments(FPDF_DOCUMENT doc, const std::string& name);
