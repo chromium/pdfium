@@ -54,7 +54,10 @@ constexpr int kFaxMaxImageDimension = 65535;
 constexpr int kFaxBpc = 1;
 constexpr int kFaxComps = 1;
 
-int FindBit(const uint8_t* data_buf, int max_pos, int start_pos, bool bit) {
+int FindBit(pdfium::span<const uint8_t> data_buf,
+            int max_pos,
+            int start_pos,
+            bool bit) {
   DCHECK(start_pos >= 0);
   if (start_pos >= max_pos)
     return max_pos;
@@ -82,7 +85,8 @@ int FindBit(const uint8_t* data_buf, int max_pos, int start_pos, bool bit) {
         0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
     const uint8_t* skip_block = bit ? skip_block_0 : skip_block_1;
     while (byte_pos < max_byte - kBulkReadSize &&
-           memcmp(data_buf + byte_pos, skip_block, kBulkReadSize) == 0) {
+           memcmp(data_buf.subspan(byte_pos).data(), skip_block,
+                  kBulkReadSize) == 0) {
       byte_pos += kBulkReadSize;
     }
   }
@@ -104,20 +108,20 @@ void FaxG4FindB1B2(pdfium::span<const uint8_t> ref_buf,
                    int* b1,
                    int* b2) {
   bool first_bit = a0 < 0 || (ref_buf[a0 / 8] & (1 << (7 - a0 % 8))) != 0;
-  *b1 = FindBit(ref_buf.data(), columns, a0 + 1, !first_bit);
+  *b1 = FindBit(ref_buf, columns, a0 + 1, !first_bit);
   if (*b1 >= columns) {
     *b1 = *b2 = columns;
     return;
   }
   if (first_bit == !a0color) {
-    *b1 = FindBit(ref_buf.data(), columns, *b1 + 1, first_bit);
+    *b1 = FindBit(ref_buf, columns, *b1 + 1, first_bit);
     first_bit = !first_bit;
   }
   if (*b1 >= columns) {
     *b1 = *b2 = columns;
     return;
   }
-  *b2 = FindBit(ref_buf.data(), columns, *b1 + 1, first_bit);
+  *b2 = FindBit(ref_buf, columns, *b1 + 1, first_bit);
 }
 
 void FaxFillBits(uint8_t* dest_buf, int columns, int startpos, int endpos) {
@@ -748,7 +752,7 @@ void FaxEncoder::FaxEncode2DLine(pdfium::span<const uint8_t> src_span) {
   int a0 = -1;
   bool a0color = true;
   while (1) {
-    int a1 = FindBit(src_span.data(), m_Cols, a0 + 1, !a0color);
+    int a1 = FindBit(src_span, m_Cols, a0 + 1, !a0color);
     int b1;
     int b2;
     FaxG4FindB1B2(m_RefLineSpan, m_Cols, a0, a0color, &b1, &b2);
@@ -783,7 +787,7 @@ void FaxEncoder::FaxEncode2DLine(pdfium::span<const uint8_t> src_span) {
       a0 = a1;
       a0color = !a0color;
     } else {
-      int a2 = FindBit(src_span.data(), m_Cols, a1 + 1, a0color);
+      int a2 = FindBit(src_span, m_Cols, a1 + 1, a0color);
       ++m_DestBitpos;
       ++m_DestBitpos;
       m_LineBuf[m_DestBitpos / 8] |= 1 << (7 - m_DestBitpos % 8);
