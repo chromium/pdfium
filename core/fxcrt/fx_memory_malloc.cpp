@@ -8,30 +8,39 @@
 
 #include <stdlib.h>
 
+#include <limits>
+
 #include "build/build_config.h"
 #include "core/fxcrt/fx_safe_types.h"
 
 namespace pdfium {
 namespace internal {
 
+// Slightly less than 2GB, typically.
+constexpr size_t kMallocSizeLimit = std::numeric_limits<int>::max() - (1 << 12);
+
 void* Alloc(size_t num_members, size_t member_size) {
   FX_SAFE_SIZE_T total = member_size;
   total *= num_members;
-  if (!total.IsValid())
+  if (!total.IsValid() || total.ValueOrDie() >= kMallocSizeLimit)
     return nullptr;
   return malloc(total.ValueOrDie());
 }
 
 void* Calloc(size_t num_members, size_t member_size) {
+  FX_SAFE_SIZE_T total = member_size;
+  total *= num_members;
+  if (!total.IsValid() || total.ValueOrDie() >= kMallocSizeLimit)
+    return nullptr;
   return calloc(num_members, member_size);
 }
 
 void* Realloc(void* ptr, size_t num_members, size_t member_size) {
-  FX_SAFE_SIZE_T size = num_members;
-  size *= member_size;
-  if (!size.IsValid())
+  FX_SAFE_SIZE_T total = num_members;
+  total *= member_size;
+  if (!total.IsValid() || total.ValueOrDie() >= kMallocSizeLimit)
     return nullptr;
-  return realloc(ptr, size.ValueOrDie());
+  return realloc(ptr, total.ValueOrDie());
 }
 
 void* StringAlloc(size_t num_members, size_t member_size) {
