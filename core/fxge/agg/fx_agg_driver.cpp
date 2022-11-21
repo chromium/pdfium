@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "build/build_config.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_graphstatedata.h"
@@ -126,9 +127,13 @@ void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& pBitmap,
   }
 }
 
+size_t GetSizeOrDie(int m1, int m2) {
+  FX_SAFE_SIZE_T result = m1;
+  result *= m2;
+  return result.ValueOrDie();
+}
+
 void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
-                                int dest_left,
-                                int dest_top,
                                 int width,
                                 int height,
                                 const RetainPtr<CFX_DIBBase>& pSrcBitmap,
@@ -137,22 +142,30 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
   if (!pBitmap)
     return;
 
+  int dest_left = 0;
+  int dest_top = 0;
   if (!pBitmap->GetOverlapRect(dest_left, dest_top, width, height,
                                pSrcBitmap->GetWidth(), pSrcBitmap->GetHeight(),
                                src_left, src_top, nullptr)) {
     return;
   }
 
-  int Bpp = pBitmap->GetBPP() / 8;
-  FXDIB_Format dest_format = pBitmap->GetFormat();
-  FXDIB_Format src_format = pSrcBitmap->GetFormat();
-  int pitch = pBitmap->GetPitch();
-  uint8_t* buffer = pBitmap->GetBuffer().data();
+  const int Bpp = pBitmap->GetBPP() / 8;
+  const FXDIB_Format dest_format = pBitmap->GetFormat();
+  const FXDIB_Format src_format = pSrcBitmap->GetFormat();
+  const int dest_pitch = pBitmap->GetPitch();
+
+  const size_t dest_x_offset = GetSizeOrDie(dest_left, Bpp);
+  const size_t dest_y_offset = GetSizeOrDie(dest_top, dest_pitch);
+
+  uint8_t* dest_buf =
+      pBitmap->GetBuffer().subspan(dest_y_offset).subspan(dest_x_offset).data();
   if (dest_format == src_format) {
+    const size_t src_x_offset = GetSizeOrDie(src_left, Bpp);
     for (int row = 0; row < height; row++) {
-      uint8_t* dest_scan = buffer + (dest_top + row) * pitch + dest_left * Bpp;
+      uint8_t* dest_scan = dest_buf;
       const uint8_t* src_scan =
-          pSrcBitmap->GetScanline(src_top + row).subspan(src_left * Bpp).data();
+          pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
       if (Bpp == 4) {
         for (int col = 0; col < width; col++) {
           FXARGB_SETRGBORDERDIB(dest_scan,
@@ -168,23 +181,25 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
         *dest_scan++ = src_scan[0];
         src_scan += 3;
       }
+      dest_buf += dest_pitch;
     }
     return;
   }
 
-  uint8_t* dest_buf = buffer + dest_top * pitch + dest_left * Bpp;
   if (dest_format == FXDIB_Format::kRgb) {
     DCHECK_EQ(src_format, FXDIB_Format::kRgb32);
+    const size_t src_x_offset = GetSizeOrDie(src_left, 4);
     for (int row = 0; row < height; row++) {
-      uint8_t* dest_scan = dest_buf + row * pitch;
+      uint8_t* dest_scan = dest_buf;
       const uint8_t* src_scan =
-          pSrcBitmap->GetScanline(src_top + row).subspan(src_left * 4).data();
+          pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
       for (int col = 0; col < width; col++) {
         *dest_scan++ = src_scan[2];
         *dest_scan++ = src_scan[1];
         *dest_scan++ = src_scan[0];
         src_scan += 4;
       }
+      dest_buf += dest_pitch;
     }
     return;
   }
@@ -192,32 +207,36 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
   DCHECK(dest_format == FXDIB_Format::kArgb ||
          dest_format == FXDIB_Format::kRgb32);
   if (src_format == FXDIB_Format::kRgb) {
+    const size_t src_x_offset = GetSizeOrDie(src_left, 3);
     for (int row = 0; row < height; row++) {
-      uint8_t* dest_scan = dest_buf + row * pitch;
+      uint8_t* dest_scan = dest_buf;
       const uint8_t* src_scan =
-          pSrcBitmap->GetScanline(src_top + row).subspan(src_left * 3).data();
+          pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
       for (int col = 0; col < width; col++) {
         FXARGB_SETDIB(dest_scan,
                       ArgbEncode(0xff, src_scan[0], src_scan[1], src_scan[2]));
         dest_scan += 4;
         src_scan += 3;
       }
+      dest_buf += dest_pitch;
     }
     return;
   }
   if (src_format != FXDIB_Format::kRgb32)
     return;
   DCHECK_EQ(dest_format, FXDIB_Format::kArgb);
+  const size_t src_x_offset = GetSizeOrDie(src_left, 4);
   for (int row = 0; row < height; row++) {
-    uint8_t* dest_scan = dest_buf + row * pitch;
+    uint8_t* dest_scan = dest_buf;
     const uint8_t* src_scan =
-        pSrcBitmap->GetScanline(src_top + row).subspan(src_left * 4).data();
+        pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
     for (int col = 0; col < width; col++) {
       FXARGB_SETDIB(dest_scan,
                     ArgbEncode(0xff, src_scan[0], src_scan[1], src_scan[2]));
       src_scan += 4;
       dest_scan += 4;
     }
+    dest_buf += dest_pitch;
   }
 }
 
@@ -1335,8 +1354,8 @@ bool CFX_AggDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   left = std::min(left, 0);
   top = std::min(top, 0);
   if (m_bRgbByteOrder) {
-    RgbByteOrderTransferBitmap(pBitmap, 0, 0, rect.Width(), rect.Height(),
-                               pBack, left, top);
+    RgbByteOrderTransferBitmap(pBitmap, rect.Width(), rect.Height(), pBack,
+                               left, top);
     return true;
   }
   return pBitmap->TransferBitmap(0, 0, rect.Width(), rect.Height(), pBack, left,
