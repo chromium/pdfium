@@ -44,6 +44,7 @@ source_set("fxcrt") {
     "fixed_try_alloc_zeroed_data_vector.h",
     "fixed_uninit_data_vector.h",
     "fixed_zeroed_data_vector.h",
+    "fx_2d_size.h",
     "fx_bidi.cpp",
     "fx_bidi.h",
     "fx_codepage.cpp",

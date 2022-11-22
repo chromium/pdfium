@@ -27,7 +27,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/span_util.h"

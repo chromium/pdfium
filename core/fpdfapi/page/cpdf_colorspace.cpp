@@ -33,7 +33,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
