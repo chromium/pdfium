@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
@@ -80,7 +81,8 @@ void CFX_BitmapComposer::DoCompose(pdfium::span<uint8_t> dest_scan,
       for (int i = 0; i < dest_width; ++i)
         m_pAddClipScan[i] = clip_scan[i] * m_BitmapAlpha / 255;
     } else {
-      memset(m_pAddClipScan.data(), m_BitmapAlpha, dest_width);
+      fxcrt::spanset(pdfium::make_span(m_pAddClipScan).first(dest_width),
+                     m_BitmapAlpha);
     }
     clip_scan = m_pAddClipScan;
   }
@@ -141,18 +143,23 @@ void CFX_BitmapComposer::ComposeScanlineV(
   int dest_pitch = m_pBitmap->GetPitch();
   int dest_alpha_pitch = m_pBitmap->GetAlphaMaskPitch();
   int dest_x = m_DestLeft + (m_bFlipX ? (m_DestWidth - line - 1) : line);
-  uint8_t* dest_buf = m_pBitmap->GetBuffer().data();
-  if (dest_buf) {
-    dest_buf += dest_x * Bpp + m_DestTop * dest_pitch;
+  pdfium::span<uint8_t> dest_span = m_pBitmap->GetBuffer();
+  if (!dest_span.empty()) {
+    dest_span = dest_span.subspan(dest_x * Bpp + m_DestTop * dest_pitch);
     if (m_bFlipY)
-      dest_buf += dest_pitch * (m_DestHeight - 1);
+      dest_span = dest_span.subspan(dest_pitch * (m_DestHeight - 1));
   }
-  uint8_t* dest_alpha_buf = m_pBitmap->GetAlphaMaskBuffer().data();
-  if (dest_alpha_buf) {
-    dest_alpha_buf += dest_x + m_DestTop * dest_alpha_pitch;
-    if (m_bFlipY)
-      dest_alpha_buf += dest_alpha_pitch * (m_DestHeight - 1);
+  uint8_t* dest_buf = dest_span.data();
+  pdfium::span<uint8_t> dest_alpha_span = m_pBitmap->GetAlphaMaskBuffer();
+  if (!dest_alpha_span.empty()) {
+    dest_alpha_span =
+        dest_alpha_span.subspan(dest_x + m_DestTop * dest_alpha_pitch);
+    if (m_bFlipY) {
+      dest_alpha_span =
+          dest_alpha_span.subspan(dest_alpha_pitch * (m_DestHeight - 1));
+    }
   }
+  uint8_t* dest_alpha_buf = dest_alpha_span.data();
   int y_step = dest_pitch;
   int y_alpha_step = dest_alpha_pitch;
   if (m_bFlipY) {
