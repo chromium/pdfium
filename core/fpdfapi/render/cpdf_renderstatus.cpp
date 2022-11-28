@@ -53,6 +53,7 @@
 #include "core/fpdfapi/render/cpdf_type3cache.h"
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
@@ -1462,10 +1463,12 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
     std::iota(transfers.begin(), transfers.end(), 0);
   }
   if (bLuminosity) {
-    int Bpp = bitmap->GetBPP() / 8;
+    const int Bpp = bitmap->GetBPP() / 8;
     for (int row = 0; row < height; row++) {
-      uint8_t* dest_pos = dest_buf.subspan(row * dest_pitch).data();
-      const uint8_t* src_pos = src_buf.subspan(row * src_pitch).data();
+      const size_t dest_offset = Fx2DSizeOrDie(row, dest_pitch);
+      const size_t src_offset = Fx2DSizeOrDie(row, src_pitch);
+      uint8_t* dest_pos = dest_buf.subspan(dest_offset).data();
+      const uint8_t* src_pos = src_buf.subspan(src_offset).data();
       for (int col = 0; col < width; col++) {
         *dest_pos++ = transfers[FXRGB2GRAY(src_pos[2], src_pos[1], *src_pos)];
         src_pos += Bpp;
