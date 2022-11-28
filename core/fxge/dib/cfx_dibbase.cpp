@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -1046,28 +1047,31 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
     return nullptr;
 
   auto pTransBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  int result_height = dest_clip.Height();
-  int result_width = dest_clip.Width();
+  const int result_height = dest_clip.Height();
+  const int result_width = dest_clip.Width();
   if (!pTransBitmap->Create(result_width, result_height, GetFormat()))
     return nullptr;
 
   pTransBitmap->SetPalette(GetPaletteSpan());
-  int dest_pitch = pTransBitmap->GetPitch();
   uint8_t* dest_buf = pTransBitmap->GetBuffer().data();
-  int row_start = bXFlip ? m_Height - dest_clip.right : dest_clip.left;
-  int row_end = bXFlip ? m_Height - dest_clip.left : dest_clip.right;
-  int col_start = bYFlip ? m_Width - dest_clip.bottom : dest_clip.top;
-  int col_end = bYFlip ? m_Width - dest_clip.top : dest_clip.bottom;
+  const int dest_pitch = pTransBitmap->GetPitch();
+  const size_t dest_size = Fx2DSizeOrDie(dest_pitch, result_height);
+  const size_t dest_last_row_offset =
+      Fx2DSizeOrDie(dest_pitch, result_height - 1);
+  const int row_start = bXFlip ? m_Height - dest_clip.right : dest_clip.left;
+  const int row_end = bXFlip ? m_Height - dest_clip.left : dest_clip.right;
+  const int col_start = bYFlip ? m_Width - dest_clip.bottom : dest_clip.top;
+  const int col_end = bYFlip ? m_Width - dest_clip.top : dest_clip.bottom;
   if (GetBPP() == 1) {
-    memset(dest_buf, 0xff, dest_pitch * result_height);
+    memset(dest_buf, 0xff, dest_size);
+    if (bYFlip)
+      dest_buf += dest_last_row_offset;
+    const int dest_step = bYFlip ? -dest_pitch : dest_pitch;
     for (int row = row_start; row < row_end; ++row) {
       const uint8_t* src_scan = GetScanline(row).data();
       int dest_col = (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
                      dest_clip.left;
       uint8_t* dest_scan = dest_buf;
-      if (bYFlip)
-        dest_scan += (result_height - 1) * dest_pitch;
-      int dest_step = bYFlip ? -dest_pitch : dest_pitch;
       for (int col = col_start; col < col_end; ++col) {
         if (!(src_scan[col / 8] & (1 << (7 - col % 8))))
           dest_scan[dest_col / 8] &= ~(1 << (7 - dest_col % 8));
@@ -1079,12 +1083,13 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
     int dest_step = bYFlip ? -dest_pitch : dest_pitch;
     if (nBytes == 3)
       dest_step -= 2;
+    if (bYFlip)
+      dest_buf += dest_last_row_offset;
     for (int row = row_start; row < row_end; ++row) {
       int dest_col = (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
                      dest_clip.left;
-      uint8_t* dest_scan = dest_buf + dest_col * nBytes;
-      if (bYFlip)
-        dest_scan += (result_height - 1) * dest_pitch;
+      size_t dest_offset = Fx2DSizeOrDie(dest_col, nBytes);
+      uint8_t* dest_scan = dest_buf + dest_offset;
       if (nBytes == 4) {
         const uint32_t* src_scan =
             reinterpret_cast<const uint32_t*>(GetScanline(row).data()) +
@@ -1113,20 +1118,22 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
     }
   }
   if (m_pAlphaMask) {
-    dest_pitch = pTransBitmap->m_pAlphaMask->GetPitch();
-    dest_buf = pTransBitmap->m_pAlphaMask->GetBuffer().data();
-    int dest_step = bYFlip ? -dest_pitch : dest_pitch;
+    uint8_t* desk_mask_buf = pTransBitmap->m_pAlphaMask->GetBuffer().data();
+    const int dest_mask_pitch = pTransBitmap->m_pAlphaMask->GetPitch();
+    const int dest_mask_step = bYFlip ? -dest_mask_pitch : dest_mask_pitch;
+    const size_t dest_mask_last_row_offset =
+        Fx2DSizeOrDie(dest_mask_pitch, result_height - 1);
     for (int row = row_start; row < row_end; ++row) {
       int dest_col = (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
                      dest_clip.left;
-      uint8_t* dest_scan = dest_buf + dest_col;
+      uint8_t* desk_mask_scan = desk_mask_buf + dest_col;
       if (bYFlip)
-        dest_scan += (result_height - 1) * dest_pitch;
+        desk_mask_scan += dest_mask_last_row_offset;
       const uint8_t* src_scan =
           m_pAlphaMask->GetScanline(row).subspan(col_start).data();
       for (int col = col_start; col < col_end; ++col) {
-        *dest_scan = *src_scan++;
-        dest_scan += dest_step;
+        *desk_mask_scan = *src_scan++;
+        desk_mask_scan += dest_mask_step;
       }
     }
   }
