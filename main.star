@@ -129,9 +129,6 @@ def get_properties_by_name(name):
     if name.endswith("skia"):
         properties.update({"skia": True, "selected_tests_only": True})
 
-    if name.endswith("skia_paths"):
-        properties.update({"skia_paths": True, "selected_tests_only": True})
-
     return properties
 
 def pdfium_internal_builder(name, bucket):
@@ -438,7 +435,6 @@ add_entries_for_builder(name = "linux_asan_lsan", category = "main|linux", short
 add_entries_for_builder(name = "linux_msan", category = "main|linux", short_name = "msan")
 add_entries_for_builder(name = "linux_no_v8", category = "no v8", short_name = "linux")
 add_entries_for_builder(name = "linux_skia", category = "skia|linux")
-add_entries_for_builder(name = "linux_skia_paths", category = "skia_paths|linux")
 add_entries_for_builder(name = "linux_ubsan", category = "main|linux", short_name = "ubsan")
 add_entries_for_builder(name = "linux_xfa", category = "xfa|linux")
 add_entries_for_builder(name = "linux_xfa_asan_lsan", category = "xfa|linux", short_name = "asan")
@@ -446,25 +442,21 @@ add_entries_for_builder(name = "linux_xfa_component", category = "xfa|linux", sh
 add_entries_for_builder(name = "linux_xfa_msan", category = "xfa|linux", short_name = "msan")
 add_entries_for_builder(name = "linux_xfa_rel", category = "xfa|linux", short_name = "rel")
 add_entries_for_builder(name = "linux_xfa_skia", category = "skia|linux", short_name = "xfa")
-add_entries_for_builder(name = "linux_xfa_skia_paths", category = "skia_paths|linux", short_name = "xfa")
 add_entries_for_builder(name = "linux_xfa_ubsan", category = "xfa|linux", short_name = "ubsan")
 add_entries_for_builder(name = "mac", category = "main|mac")
 add_entries_for_builder(name = "mac_asan", skip_ci_builder = True)
 add_entries_for_builder(name = "mac_no_v8", category = "no v8", short_name = "mac")
 add_entries_for_builder(name = "mac_skia", category = "skia|mac")
-add_entries_for_builder(name = "mac_skia_paths", category = "skia_paths|mac")
 add_entries_for_builder(name = "mac_xfa", category = "xfa|mac")
 add_entries_for_builder(name = "mac_xfa_arm", category = "xfa|mac", skip_ci_builder = True)
 add_entries_for_builder(name = "mac_xfa_asan", skip_ci_builder = True)
 add_entries_for_builder(name = "mac_xfa_component", category = "xfa|mac", short_name = "comp")
 add_entries_for_builder(name = "mac_xfa_rel", category = "xfa|mac", short_name = "rel")
 add_entries_for_builder(name = "mac_xfa_skia", category = "skia|mac", short_name = "xfa")
-add_entries_for_builder(name = "mac_xfa_skia_paths", category = "skia_paths|mac", short_name = "xfa")
 add_entries_for_builder(name = "win", category = "main|win")
 add_entries_for_builder(name = "win_asan", category = "main|win", short_name = "asan")
 add_entries_for_builder(name = "win_no_v8", category = "no v8", short_name = "win")
 add_entries_for_builder(name = "win_skia", category = "skia|win")
-add_entries_for_builder(name = "win_skia_paths", category = "skia_paths|win")
 add_entries_for_builder(name = "win_xfa", category = "xfa|win")
 add_entries_for_builder(name = "win_xfa_32", category = "xfa|win", short_name = "32")
 add_entries_for_builder(name = "win_xfa_asan", category = "xfa|win", short_name = "asan")
@@ -473,7 +465,6 @@ add_entries_for_builder(name = "win_xfa_msvc", category = "xfa|win|msvc", short_
 add_entries_for_builder(name = "win_xfa_msvc_32", category = "xfa|win|msvc", short_name = "32")
 add_entries_for_builder(name = "win_xfa_rel", category = "xfa|win", short_name = "rel")
 add_entries_for_builder(name = "win_xfa_skia", category = "skia|win", short_name = "xfa")
-add_entries_for_builder(name = "win_xfa_skia_paths", category = "skia_paths|win", short_name = "xfa")
 
 # Console Views
 luci.console_view(
