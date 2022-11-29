@@ -46,7 +46,8 @@ declare_args() {
 
   # Build PDFium against Skia (experimental) rather than AGG. Use Skia to draw
   # paths.
-  pdf_use_skia_paths = pdf_use_skia_paths_override
+  # TODO(crbug.com/pdfium/1941): Remove all support for this.
+  pdf_use_skia_paths = false
 
   # Build PDFium standalone
   pdf_is_standalone = false

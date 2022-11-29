@@ -25,11 +25,5 @@ pdf_use_partition_alloc_override = is_clang
 # Build PDFium to use Skia (experimental) for all PDFium graphics.
 # If enabled, coexists in build with AGG graphics and the default
 # renderer is selectable at runtime.
-# The default is to use AGG when both `pdf_use_skia_override` and
-# `pdf_use_skia_paths_override` are set to their defaults of false.
+# The default is to use AGG only when `pdf_use_skia_override` is false.
 pdf_use_skia_override = false
-
-# Build PDFium against skia (experimental) rather than agg, adding only path
-# support.
-# Default: Use agg.
-pdf_use_skia_paths_override = false
