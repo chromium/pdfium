@@ -20,14 +20,10 @@ class PathMode:
     DEFAULT:   Used for default expected paths in the format of
                'NAME_expected(_OSNAME)?.pdf.#.png'. For a test, this path always
                exists.
-    SKIA:      Used when Skia or SkiaPaths is enabled, for paths in the format
-               of 'NAME_expected_skia(_OSNAME)?.pdf.#.png'.
-               Such paths only exist when the expected results of Skia or
-               SkiaPaths are different from those of AGG.
-    SKIAPATHS: Used when SkiaPaths is enabled, for path in the format of
-               'NAME_expected_skiapaths(_OSNAME)?.pdf.#.png'.
-               Such paths only exist when the expected results from using AGG,
-               Skia and SkiaPaths are all different from each other.
+    SKIA:      Used when Skia is enabled, for paths in the format of
+               'NAME_expected_skia(_OSNAME)?.pdf.#.png'.
+               Such paths only exist when the expected results of Skia are
+               different from those of AGG.
 
   Always check PathMode in an incrementing order as the modes are listed in
   order of its matching paths' precedence.
@@ -35,7 +31,6 @@ class PathMode:
 
   DEFAULT = 0
   SKIA = 1
-  SKIAPATHS = 2
 
 
 @dataclass
@@ -60,9 +55,7 @@ class PNGDiffer():
     self.pdfium_diff_path = finder.ExecutablePath('pdfium_diff')
     self.os_name = finder.os_name
     self.reverse_byte_order = reverse_byte_order
-    if 'SKIAPATHS' in features:
-      self.max_path_mode = PathMode.SKIAPATHS
-    elif 'SKIA' in features:
+    if 'SKIA' in features:
       self.max_path_mode = PathMode.SKIA
     else:
       self.max_path_mode = PathMode.DEFAULT
@@ -152,8 +145,8 @@ class PNGDiffer():
 
     return image_diffs
 
-  # TODO(crbug.com/pdfium/1508): Add support to automatically generate
-  # Skia/SkiaPaths specific expected results.
+  # TODO(crbug.com/pdfium/1508): Add support to automatically generate Skia
+  # specific expected results.
   def Regenerate(self, input_filename, source_dir, working_dir, platform_only):
     path_templates = PathTemplates(input_filename, source_dir, working_dir,
                                    self.os_name, self.max_path_mode)
@@ -191,7 +184,7 @@ class PathTemplates:
 
   def __init__(self, input_filename, source_dir, working_dir, os_name,
                max_path_mode):
-    assert PathMode.DEFAULT <= max_path_mode <= PathMode.SKIAPATHS, (
+    assert PathMode.DEFAULT <= max_path_mode <= PathMode.SKIA, (
         'Unexpected Maximum PathMode: %d.' % max_path_mode)
 
     input_root, _ = os.path.splitext(input_filename)
@@ -224,8 +217,6 @@ class PathTemplates:
       pass
     elif mode == PathMode.SKIA:
       expected_str += '_skia'
-    elif mode == PathMode.SKIAPATHS:
-      expected_str += '_skiapaths'
     else:
       assert False, 'Unexpected PathMode: %d.' % mode
 

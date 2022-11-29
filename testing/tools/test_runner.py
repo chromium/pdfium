@@ -577,7 +577,7 @@ class _TestCaseRunner:
     return test_function()
 
   # TODO(crbug.com/pdfium/1508): Add support for an option to automatically
-  # generate Skia/SkiaPaths specific expected results.
+  # generate Skia specific expected results.
   def _RegenerateIfNeeded(self):
     if not self.options.regenerate_expected:
       return

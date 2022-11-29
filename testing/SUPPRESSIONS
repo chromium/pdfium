@@ -10,7 +10,7 @@
 # Column 1: platform: *, win, mac, linux
 # Column 2: v8 support: *, nov8, v8
 # Column 3: xfa support: *, noxfa, xfa
-# Column 4: rendering support: *, agg, skia, skiapaths
+# Column 4: rendering support: *, agg, skia
 #
 # All columns on a line on a line must match, but filenames may be repeated
 # on subsequent lines to suppress more cases.  Within each column, any one of
@@ -31,7 +31,7 @@
 1_3_callout.pdf * * * *
 
 # TODO(pdfium:1805): Remove after associated bug is fixed
-1_matrix.pdf * * * skia,skiapaths
+1_matrix.pdf * * * skia
 
 1_matrix.pdf mac * * *
 1m_diff_lsjdf.pdf mac * * *
@@ -65,12 +65,7 @@
 8.2_outline.pdf mac * * *
 8.3_presentation.pdf mac * * *
 FRC_10_8.2.2__T8.3_original_file.pdf * * * *
-
-# TODO(pdfium:1858): Remove after associated bug is fixed
-FRC_10_8.2.4_View_C.pdf * * * skiapaths
-
 FRC_11_8.2.2__T8.3_first_last_exchange.pdf * * * *
-
 FRC_12_8.2.2__T8.3_first_outline_obj_ID.pdf * * * *
 FRC_13_8.2.2__T8.3_Count_edit300.pdf * * * *
 FRC_14_8.2.2__T8.3_Count_edit0.pdf * * * *
@@ -141,7 +136,7 @@ annotation_highlight_long_content.pdf mac * * *
 annotation_highlight_no_author.pdf mac * * *
 
 # TODO(pdfium:1871): Remove after associated bug is fixed
-annotation_square_dash.pdf * * * skia,skiapaths
+annotation_square_dash.pdf * * * skia
 
 app_launchurl.pdf mac * * *
 appstoredescription3.1_en_updated.pdf mac * * *
@@ -151,7 +146,7 @@ bookmarkgetcolor.pdf mac * * *
 bug_0_length_line.pdf mac * * *
 
 # TODO(pdfium:1812): Remove after associated bug is fixed
-bug_0_length_line.pdf * * * skia,skiapaths
+bug_0_length_line.pdf * * * skia
 
 bug_0_width_line.pdf mac * * *
 bug_440132.pdf mac * * *
@@ -390,7 +385,7 @@ xfermodes2.pdf * * * skia
 
 # TODO(pdfium:1804): Remove after associated bug is fixed
 # TODO(pdfium:1845): Remove after associated bug is fixed
-xfermodes3.pdf * * * skia,skiapaths
+xfermodes3.pdf * * * skia
 
 zh_file1.pdf mac * * *
 zh_function_list.pdf mac * * *
@@ -472,13 +467,13 @@ bug_451366.in * * * agg
 bug_492.in * nov8 * *
 
 # TODO(chromium:725555, skia:9265): Remove after associated bug is fixed
-bug_725555.in * * * skia,skiapaths
+bug_725555.in * * * skia
 
 # TODO(pdfium:983289): Remove after associated bug is fixed
 bug_983289.in * * * agg
 
 # TODO(pdfium:1310): Remove after associated bug is fixed
-radial_shading_point_at_border.in * * * skia,skiapaths
+radial_shading_point_at_border.in * * * skia
 
 # TODO(chromium:1028991): Remove after associated bug is fixed
 reset_button.in * * * *
@@ -490,7 +485,7 @@ bug_997412.in win * * *
 # TODO(pdfium:1107): Remove after associated bug is fixed
 standard_symbols.pdf * * * *
 # TODO(pdfium:1902): Remove after associated bug is fixed
-xfa_bmp_image.in * * * skia,skiapaths
+xfa_bmp_image.in * * * skia
 # TODO(pdfium:1095): Remove after associated bug is fixed
 xfa_example.in win * * *
 # TODO(pdfium:1095): Remove after associated bug is fixed
