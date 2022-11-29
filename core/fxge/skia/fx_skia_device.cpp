@@ -108,12 +108,12 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
   const size_t dest_x_offset = Fx2DSizeOrDie(dest_left, Bpp);
   const size_t dest_y_offset = Fx2DSizeOrDie(dest_top, dest_pitch);
 
-  uint8_t* dest_buf =
-      pBitmap->GetBuffer().subspan(dest_y_offset).subspan(dest_x_offset).data();
+  pdfium::span<uint8_t> dest_span =
+      pBitmap->GetBuffer().subspan(dest_y_offset).subspan(dest_x_offset);
   if (dest_format == src_format) {
     const size_t src_x_offset = Fx2DSizeOrDie(src_left, Bpp);
     for (int row = 0; row < height; row++) {
-      uint8_t* dest_scan = dest_buf;
+      uint8_t* dest_scan = dest_span.data();
       const uint8_t* src_scan =
           pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
       if (Bpp == 4) {
@@ -131,7 +131,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
           src_scan += 3;
         }
       }
-      dest_buf += dest_pitch;
+      dest_span = dest_span.subspan(dest_pitch);
     }
     return;
   }
@@ -140,7 +140,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
     DCHECK_EQ(src_format, FXDIB_Format::kRgb32);
     const size_t src_x_offset = Fx2DSizeOrDie(src_left, 4);
     for (int row = 0; row < height; row++) {
-      uint8_t* dest_scan = dest_buf;
+      uint8_t* dest_scan = dest_span.data();
       const uint8_t* src_scan =
           pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
       for (int col = 0; col < width; col++) {
@@ -149,7 +149,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
         *dest_scan++ = src_scan[0];
         src_scan += 4;
       }
-      dest_buf += dest_pitch;
+      dest_span = dest_span.subspan(dest_pitch);
     }
     return;
   }
@@ -159,7 +159,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
   if (src_format == FXDIB_Format::kRgb) {
     const size_t src_x_offset = Fx2DSizeOrDie(src_left, 3);
     for (int row = 0; row < height; row++) {
-      uint8_t* dest_scan = dest_buf;
+      uint8_t* dest_scan = dest_span.data();
       const uint8_t* src_scan =
           pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
       for (int col = 0; col < width; col++) {
@@ -168,7 +168,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
         dest_scan += 4;
         src_scan += 3;
       }
-      dest_buf += dest_pitch;
+      dest_span = dest_span.subspan(dest_pitch);
     }
     return;
   }
@@ -177,7 +177,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
   DCHECK_EQ(dest_format, FXDIB_Format::kArgb);
   const size_t src_x_offset = Fx2DSizeOrDie(src_left, 4);
   for (int row = 0; row < height; row++) {
-    uint8_t* dest_scan = dest_buf;
+    uint8_t* dest_scan = dest_span.data();
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
     for (int col = 0; col < width; col++) {
@@ -186,7 +186,7 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
       src_scan += 4;
       dest_scan += 4;
     }
-    dest_buf += dest_pitch;
+    dest_span = dest_span.subspan(dest_pitch);
   }
 }
 #endif  // defined(_SKIA_SUPPORT_PATHS_)
