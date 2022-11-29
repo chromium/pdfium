@@ -4,6 +4,7 @@
 
 #include "fxjs/fx_date_helpers.h"
 
+#include "core/fxcrt/fake_time_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -11,6 +12,8 @@ namespace {
 constexpr double kMilliSecondsInADay = 1000 * 60 * 60 * 24;
 
 }  // namespace
+
+using fxjs::ConversionStatus;
 
 TEST(FX_DateHelper, GetYearFromTime) {
   static constexpr struct {
@@ -105,4 +108,48 @@ TEST(FX_DateHelper, GetMonthFromTime) {
     EXPECT_EQ(test.expected_month, FX_GetMonthFromTime(test.time_ms))
         << test.time_ms;
   }
+}
+
+using FXDateHelperFakeTimeTest = FakeTimeTest;
+
+TEST_F(FXDateHelperFakeTimeTest, ParseDateUsingFormatWithEmptyParams) {
+  double result = 0.0;
+  EXPECT_EQ(ConversionStatus::kSuccess,
+            FX_ParseDateUsingFormat(L"", L"", &result));
+  EXPECT_DOUBLE_EQ(1'587'654'321'000, result);
+  EXPECT_EQ(ConversionStatus::kSuccess,
+            FX_ParseDateUsingFormat(L"value", L"", &result));
+  EXPECT_DOUBLE_EQ(1'587'654'321'000, result);
+  EXPECT_EQ(ConversionStatus::kSuccess,
+            FX_ParseDateUsingFormat(L"", L"format", &result));
+  EXPECT_DOUBLE_EQ(1'587'654'321'000, result);
+}
+
+TEST_F(FXDateHelperFakeTimeTest, ParseDateUsingFormatForValidMonthDay) {
+  double result = 0.0;
+  EXPECT_EQ(ConversionStatus::kSuccess,
+            FX_ParseDateUsingFormat(L"01/02/2000", L"mm/dd/yyyy", &result));
+  EXPECT_DOUBLE_EQ(946'825'521'000, result);
+  EXPECT_EQ(ConversionStatus::kSuccess,
+            FX_ParseDateUsingFormat(L"1/2/2000", L"m/d/yyyy", &result));
+  EXPECT_DOUBLE_EQ(946'825'521'000, result);
+  EXPECT_EQ(ConversionStatus::kSuccess,
+            FX_ParseDateUsingFormat(L"1-2-2000", L"m-d-yyyy", &result));
+  EXPECT_DOUBLE_EQ(946'825'521'000, result);
+  EXPECT_EQ(ConversionStatus::kSuccess,
+            FX_ParseDateUsingFormat(L"2-1-2000", L"d-m-yyyy", &result));
+  EXPECT_DOUBLE_EQ(946'825'521'000, result);
+
+  EXPECT_EQ(ConversionStatus::kSuccess,
+            FX_ParseDateUsingFormat(L"11/12/2000", L"mm/dd/yyyy", &result));
+  EXPECT_DOUBLE_EQ(973'955'121'000, result);
+  EXPECT_EQ(ConversionStatus::kSuccess,
+            FX_ParseDateUsingFormat(L"11/12/2000", L"m/d/yyyy", &result));
+  EXPECT_DOUBLE_EQ(973'955'121'000, result);
+  EXPECT_EQ(ConversionStatus::kSuccess,
+            FX_ParseDateUsingFormat(L"11-12-2000", L"m-d-yyyy", &result));
+  EXPECT_DOUBLE_EQ(973'955'121'000, result);
+  EXPECT_EQ(ConversionStatus::kSuccess,
+            FX_ParseDateUsingFormat(L"12-11-2000", L"d-m-yyyy", &result));
+  EXPECT_DOUBLE_EQ(973'955'121'000, result);
 }

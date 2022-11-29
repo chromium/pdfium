@@ -162,6 +162,19 @@ source_set("fxcrt") {
   }
 }
 
+source_set("unit_test_support") {
+  testonly = true
+  sources = [
+    "fake_time_test.cpp",
+    "fake_time_test.h",
+  ]
+  configs += [ "../../:pdfium_strict_config" ]
+  deps = [
+    ":fxcrt",
+    "//testing/gtest",
+  ]
+}
+
 pdfium_unittest_source_set("unittests") {
   sources = [
     "autonuller_unittest.cpp",
@@ -210,7 +223,7 @@ pdfium_unittest_source_set("unittests") {
     "xml/cfx_xmlparser_unittest.cpp",
     "xml/cfx_xmltext_unittest.cpp",
   ]
-  deps = []
+  deps = [ ":unit_test_support" ]
   pdfium_root_dir = "../../"
 
   if (pdf_enable_xfa) {

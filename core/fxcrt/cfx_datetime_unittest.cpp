@@ -4,22 +4,7 @@
 
 #include "core/fxcrt/cfx_datetime.h"
 
-#include "core/fxcrt/fx_extension.h"
-#include "testing/gtest/include/gtest/gtest.h"
-
-class FakeTimeTest : public ::testing::Test {
- public:
-  void SetUp() override {
-    // Arbitrary, picked descending digits, 2020-04-23 15:05:21.
-    FXSYS_SetTimeFunction([]() -> time_t { return 1587654321; });
-    FXSYS_SetLocaltimeFunction([](const time_t* t) { return gmtime(t); });
-  }
-
-  void TearDown() override {
-    FXSYS_SetTimeFunction(nullptr);
-    FXSYS_SetLocaltimeFunction(nullptr);
-  }
-};
+#include "core/fxcrt/fake_time_test.h"
 
 TEST_F(FakeTimeTest, Now) {
   CFX_DateTime dt = CFX_DateTime::Now();
