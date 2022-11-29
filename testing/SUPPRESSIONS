@@ -130,14 +130,9 @@ all_trigger_mailmsg.pdf * * * *
 all_trigger_print.pdf * * * *
 all_trigger_run_js_lunchurl.pdf mac * * *
 all_trigger_run_js_maildoc.pdf mac * * *
-
 annotation_highlight_author_content.pdf mac * * *
 annotation_highlight_long_content.pdf mac * * *
 annotation_highlight_no_author.pdf mac * * *
-
-# TODO(pdfium:1871): Remove after associated bug is fixed
-annotation_square_dash.pdf * * * skia
-
 app_launchurl.pdf mac * * *
 appstoredescription3.1_en_updated.pdf mac * * *
 
