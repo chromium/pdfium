@@ -1053,9 +1053,9 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
     return nullptr;
 
   pTransBitmap->SetPalette(GetPaletteSpan());
-  uint8_t* dest_buf = pTransBitmap->GetBuffer().data();
   const int dest_pitch = pTransBitmap->GetPitch();
-  const size_t dest_size = Fx2DSizeOrDie(dest_pitch, result_height);
+  pdfium::span<uint8_t> dest_span =
+      pTransBitmap->GetBuffer().first(Fx2DSizeOrDie(dest_pitch, result_height));
   const size_t dest_last_row_offset =
       Fx2DSizeOrDie(dest_pitch, result_height - 1);
   const int row_start = bXFlip ? m_Height - dest_clip.right : dest_clip.left;
@@ -1063,15 +1063,15 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
   const int col_start = bYFlip ? m_Width - dest_clip.bottom : dest_clip.top;
   const int col_end = bYFlip ? m_Width - dest_clip.top : dest_clip.bottom;
   if (GetBPP() == 1) {
-    memset(dest_buf, 0xff, dest_size);
+    fxcrt::spanset(dest_span, 0xff);
     if (bYFlip)
-      dest_buf += dest_last_row_offset;
+      dest_span = dest_span.subspan(dest_last_row_offset);
     const int dest_step = bYFlip ? -dest_pitch : dest_pitch;
     for (int row = row_start; row < row_end; ++row) {
       const uint8_t* src_scan = GetScanline(row).data();
       int dest_col = (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
                      dest_clip.left;
-      uint8_t* dest_scan = dest_buf;
+      uint8_t* dest_scan = dest_span.data();
       for (int col = col_start; col < col_end; ++col) {
         if (!(src_scan[col / 8] & (1 << (7 - col % 8))))
           dest_scan[dest_col / 8] &= ~(1 << (7 - dest_col % 8));
@@ -1084,12 +1084,12 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
     if (nBytes == 3)
       dest_step -= 2;
     if (bYFlip)
-      dest_buf += dest_last_row_offset;
+      dest_span = dest_span.subspan(dest_last_row_offset);
     for (int row = row_start; row < row_end; ++row) {
       int dest_col = (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
                      dest_clip.left;
       size_t dest_offset = Fx2DSizeOrDie(dest_col, nBytes);
-      uint8_t* dest_scan = dest_buf + dest_offset;
+      uint8_t* dest_scan = dest_span.subspan(dest_offset).data();
       if (nBytes == 4) {
         const uint32_t* src_scan =
             reinterpret_cast<const uint32_t*>(GetScanline(row).data()) +
