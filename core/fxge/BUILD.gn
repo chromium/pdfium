@@ -142,7 +142,7 @@ source_set("fxge") {
     ]
   }
 
-  if (pdf_use_skia || pdf_use_skia_paths) {
+  if (pdf_use_skia) {
     sources += [ "skia/fx_skia_device.cpp" ]
     deps += [ "//skia" ]
   }
@@ -239,7 +239,7 @@ pdfium_embeddertest_source_set("embeddertests") {
   deps = []
   pdfium_root_dir = "../../"
 
-  if (pdf_use_skia || pdf_use_skia_paths) {
+  if (pdf_use_skia) {
     sources += [ "skia/fx_skia_device_embeddertest.cpp" ]
     deps += [
       ":fxge",
