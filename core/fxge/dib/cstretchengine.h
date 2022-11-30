@@ -132,9 +132,7 @@ class CStretchEngine {
     k1BppTo8Bpp,
     k1BppToManyBpp,
     k8BppTo8Bpp,
-    k8BppTo8BppWithAlpha,
     k8BppToManyBpp,
-    k8BppToManyBppWithAlpha,
     kManyBpptoManyBpp,
     kManyBpptoManyBppWithAlpha
   };
