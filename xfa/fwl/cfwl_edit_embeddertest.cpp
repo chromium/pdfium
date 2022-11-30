@@ -85,7 +85,7 @@ TEST_F(CFWLEditEmbedderTest, LeftClickMouseSelection) {
 
 TEST_F(CFWLEditEmbedderTest, DragMouseSelection) {
   // TODO(crbug.com/pdfium/11): Fix this test and enable for Skia variants.
-  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
     return;
 
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
@@ -115,7 +115,7 @@ TEST_F(CFWLEditEmbedderTest, DragMouseSelection) {
 
 TEST_F(CFWLEditEmbedderTest, SimpleFill) {
   // TODO(crbug.com/pdfium/11): Fix this test and enable for Skia variants.
-  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
     return;
 
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
@@ -139,7 +139,7 @@ TEST_F(CFWLEditEmbedderTest, SimpleFill) {
 
 TEST_F(CFWLEditEmbedderTest, FillWithNewLineWithoutMultiline) {
   // TODO(crbug.com/pdfium/11): Fix this test and enable for Skia variants.
-  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
     return;
 
   CreateAndInitializeFormPDF("xfa/email_recommended.pdf");
@@ -210,7 +210,7 @@ TEST_F(CFWLEditEmbedderTest, DISABLED_FillWithNewLineWithMultiline) {
 
 TEST_F(CFWLEditEmbedderTest, DateTimePickerTest) {
   // TODO(crbug.com/pdfium/11): Fix this test and enable for Skia variants.
-  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
     return;
 
   CreateAndInitializeFormPDF("xfa/xfa_date_time_edit.pdf");
@@ -270,7 +270,7 @@ TEST_F(CFWLEditEmbedderTest, ComboBoxTest) {
   FORM_OnLButtonUp(form_handle(), page(), 0, 115, 58);
   {
     const char* filled_checksum = []() {
-      if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
         return "8c555487e09ee4acf3ace77db5929bdc";
       return "dad642ae8a5afce2591ffbcabbfc58dd";
     }();

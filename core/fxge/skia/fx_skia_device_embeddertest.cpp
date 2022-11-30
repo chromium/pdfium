@@ -145,13 +145,13 @@ void Harness(void (*Test)(CFX_SkiaDeviceDriver*, const State&),
 }  // namespace
 
 TEST(fxge, SkiaStateEmpty) {
-  if (!CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
     return;
   Harness(&EmptyTest, {});
 }
 
 TEST(fxge, SkiaStatePath) {
-  if (!CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
     return;
   Harness(&CommonTest, {State::Change::kNo, State::Save::kYes,
                         State::Clip::kSame, State::Graphic::kPath, 0xFF112233});
@@ -179,7 +179,7 @@ TEST(fxge, DISABLED_SkiaStateText) {
 }
 
 TEST(fxge, SkiaStateOOSClip) {
-  if (!CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
     return;
   Harness(&OutOfSequenceClipTest, {});
 }

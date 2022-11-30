@@ -1322,8 +1322,6 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
   const char* focused_text_form_with_abc_checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
       return "07a179a9dfb8f5462746262984109a99";
-    if (CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer())
-      return "2866312fb36e9afdc0a99d547027d484";
 #if BUILDFLAG(IS_APPLE)
     return "9fb14198d75ca0a107060c60ca21b0c7";
 #else
@@ -1333,8 +1331,6 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
   const char* unfocused_text_form_with_abc_checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
       return "a21b74cc620db8a9891ebd69e1aeda98";
-    if (CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer())
-      return "03216cae48813f71f81f53b49e3a8aaa";
 #if BUILDFLAG(IS_APPLE)
     return "3c3209357e0c057a0620afa7d83eb784";
 #else
@@ -1392,7 +1388,7 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
 // bitmaps should be different.
 TEST_F(FPDFFormFillEmbedderTest, BUG_1281) {
   const char* reverse_byte_order_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
       return "8077970bbd10333f18186a9bb459bbe6";
     return "24fff03d1e663b7ece5f6e69ad837124";
   }();
@@ -1414,7 +1410,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_1281) {
 
 TEST_F(FPDFFormFillEmbedderTest, Bug1302455RenderOnly) {
   const char* checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
       return "520c4415c9977f40d6b4af5a0a94d764";
     return "bbee92af1daec2340c81f482878744d8";
   }();
@@ -1435,7 +1431,7 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1302455RenderOnly) {
 
 TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditFirstForm) {
   const char* checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
       return "29a06da3e47f67535e266b090a5ac82d";
 #if BUILDFLAG(IS_APPLE)
     return "bf5423874f188427d2500a2bc4abebbe";
@@ -1468,7 +1464,7 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditFirstForm) {
 
 TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditSecondForm) {
   const char* checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
       return "19f8574d6378ee36e349376d88b7a2c4";
 #if BUILDFLAG(IS_APPLE)
     return "8a0fd8772dba6e1e952e49d159cc64b5";
@@ -1501,7 +1497,7 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditSecondForm) {
 
 TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditBothForms) {
   const char* checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
       return "edbc9b0e190118a9039fffc11e494081";
 #if BUILDFLAG(IS_APPLE)
     return "1f422ee1c520ad74b1a993b64bd4dc4a";
@@ -1542,7 +1538,7 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditBothForms) {
 TEST_F(FPDFFormFillEmbedderTest, RemoveFormFieldHighlight) {
   const char* no_highlight_checksum = []() {
 #if BUILDFLAG(IS_APPLE)
-    if (!CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer())
+    if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
       return "5c82aa43e3b478aa1e4c94bb9ef1f11f";
 #endif
     return "a6268304f7eedfa9ee98fac3caaf2efb";

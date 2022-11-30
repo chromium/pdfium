@@ -58,12 +58,6 @@ RetainPtr<CFX_DIBitmap> DrawPatternBitmap(
   CPDF_RenderContext context(pDoc, nullptr, pCache);
   context.AppendLayer(pPatternForm, mtPattern2Bitmap);
   context.Render(&bitmap_device, nullptr, &options, nullptr);
-#if defined(_SKIA_SUPPORT_PATHS_)
-  if (CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
-    bitmap_device.Flush(true);
-    pBitmap->UnPreMultiply();
-  }
-#endif
   return pBitmap;
 }
 

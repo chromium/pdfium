@@ -28,20 +28,6 @@ bool CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() {
 #endif
 }
 
-// static
-bool CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer() {
-#if defined(_SKIA_SUPPORT_PATHS_)
-  return true;
-#else
-  return false;
-#endif
-}
-
-// static
-bool CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer() {
-  return SkiaIsDefaultRenderer() || SkiaPathsIsDefaultRenderer();
-}
-
 #if defined(_SKIA_SUPPORT_)
 // static
 void CFX_DefaultRenderDevice::SetDefaultRenderer(RendererType renderer_type) {
@@ -53,7 +39,7 @@ CFX_DefaultRenderDevice::CFX_DefaultRenderDevice() = default;
 
 CFX_DefaultRenderDevice::~CFX_DefaultRenderDevice() {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  if (SkiaVariantIsDefaultRenderer())
+  if (SkiaIsDefaultRenderer())
     Flush(true);
 #endif
 }
@@ -82,7 +68,7 @@ bool CFX_DefaultRenderDevice::CFX_DefaultRenderDevice::AttachImpl(
     RetainPtr<CFX_DIBitmap> pBackdropBitmap,
     bool bGroupKnockout) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  if (SkiaVariantIsDefaultRenderer()) {
+  if (SkiaIsDefaultRenderer()) {
     return AttachSkiaImpl(pBitmap, bRgbByteOrder, pBackdropBitmap,
                           bGroupKnockout);
   }
@@ -95,7 +81,7 @@ bool CFX_DefaultRenderDevice::Create(int width,
                                      FXDIB_Format format,
                                      RetainPtr<CFX_DIBitmap> pBackdropBitmap) {
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  if (SkiaVariantIsDefaultRenderer())
+  if (SkiaIsDefaultRenderer())
     return CreateSkia(width, height, format, pBackdropBitmap);
 #endif
   return CreateAgg(width, height, format, pBackdropBitmap);

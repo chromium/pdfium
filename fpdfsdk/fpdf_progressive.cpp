@@ -18,10 +18,6 @@
 #include "fpdfsdk/cpdfsdk_renderpage.h"
 #include "public/fpdfview.h"
 
-#if defined(_SKIA_SUPPORT_PATHS_)
-#include "core/fxge/cfx_renderdevice.h"
-#endif
-
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(CPDF_ProgressiveRenderer::kReady == FPDF_RENDER_READY,
               "CPDF_ProgressiveRenderer::kReady value mismatch");
@@ -75,7 +71,7 @@ FPDF_RenderPageBitmapWithColorScheme_Start(FPDF_BITMAP bitmap,
                                 /*need_to_restore=*/false, &pause_adapter);
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
     pDevice->Flush(false);
     pBitmap->UnPreMultiply();
   }
@@ -119,7 +115,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
   pContext->m_pRenderer->Continue(&pause_adapter);
 
 #if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
-  if (CFX_DefaultRenderDevice::SkiaVariantIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
     CFX_RenderDevice* pDevice = pContext->m_pDevice.get();
     pDevice->Flush(false);
     pDevice->GetBitmap()->UnPreMultiply();
@@ -130,18 +126,6 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage_Close(FPDF_PAGE page) {
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (pPage) {
-#if defined(_SKIA_SUPPORT_PATHS_)
-    if (CFX_DefaultRenderDevice::SkiaPathsIsDefaultRenderer()) {
-      auto* pContext =
-          static_cast<CPDF_PageRenderContext*>(pPage->GetRenderContext());
-      if (pContext && pContext->m_pRenderer) {
-        CFX_RenderDevice* pDevice = pContext->m_pDevice.get();
-        pDevice->Flush(true);
-        pDevice->GetBitmap()->UnPreMultiply();
-      }
-    }
-#endif
+  if (pPage)
     pPage->ClearRenderContext();
-  }
 }
