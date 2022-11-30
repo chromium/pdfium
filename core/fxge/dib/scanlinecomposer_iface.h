@@ -14,6 +14,7 @@ class ScanlineComposerIface {
  public:
   virtual ~ScanlineComposerIface() = default;
 
+  // TODO(thestig): Check if `scan_extra_alpha` is actually needed.
   virtual void ComposeScanline(
       int line,
       pdfium::span<const uint8_t> scanline,

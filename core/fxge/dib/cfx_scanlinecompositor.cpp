@@ -2976,8 +2976,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
     pdfium::span<const uint8_t> src_scan,
     int width,
     pdfium::span<const uint8_t> clip_scan,
-    pdfium::span<const uint8_t> src_extra_alpha,
-    pdfium::span<uint8_t> dst_extra_alpha) {
+    pdfium::span<const uint8_t> src_extra_alpha) {
   int src_Bpp = GetCompsFromFormat(m_SrcFormat);
   int dest_Bpp = GetCompsFromFormat(m_DestFormat);
   if (m_bRgbByteOrder) {
@@ -3049,16 +3048,18 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
   } else if (GetBppFromFormat(m_DestFormat) == 8) {
     if (GetIsAlphaFromFormat(m_SrcFormat)) {
       if (GetIsAlphaFromFormat(m_DestFormat)) {
+        // TODO(thestig): Check if empty span argument is always empty.
         CompositeRow_Argb2Graya(dest_scan, src_scan, width, m_BlendType,
-                                clip_scan, src_extra_alpha, dst_extra_alpha);
+                                clip_scan, src_extra_alpha, {});
       } else {
         CompositeRow_Argb2Gray(dest_scan, src_scan, width, m_BlendType,
                                clip_scan, src_extra_alpha);
       }
     } else {
       if (GetIsAlphaFromFormat(m_DestFormat)) {
+        // TODO(thestig): Check if empty span argument is always empty.
         CompositeRow_Rgb2Graya(dest_scan, src_scan, src_Bpp, width, m_BlendType,
-                               clip_scan, dst_extra_alpha);
+                               clip_scan, {});
       } else {
         CompositeRow_Rgb2Gray(dest_scan, src_scan, src_Bpp, width, m_BlendType,
                               clip_scan);
@@ -3070,25 +3071,29 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
       case 4:
       case 8:
       case 4 + 8: {
+        // TODO(thestig): Check if empty span argument is always empty.
         CompositeRow_Argb2Argb(dest_scan, src_scan, width, m_BlendType,
-                               clip_scan, dst_extra_alpha, src_extra_alpha);
+                               clip_scan, {}, src_extra_alpha);
       } break;
       case 1:
-        CompositeRow_Rgb2Argb_Blend_NoClip(
-            dest_scan, src_scan, width, m_BlendType, src_Bpp, dst_extra_alpha);
+        // TODO(thestig): Check if empty span argument is always empty.
+        CompositeRow_Rgb2Argb_Blend_NoClip(dest_scan, src_scan, width,
+                                           m_BlendType, src_Bpp, {});
         break;
       case 1 + 8:
+        // TODO(thestig): Check if empty span argument is always empty.
         CompositeRow_Rgb2Argb_Blend_Clip(dest_scan, src_scan, width,
-                                         m_BlendType, src_Bpp, clip_scan,
-                                         dst_extra_alpha);
+                                         m_BlendType, src_Bpp, clip_scan, {});
         break;
       case 1 + 4:
+        // TODO(thestig): Check if empty span argument is always empty.
         CompositeRow_Rgb2Argb_NoBlend_NoClip(dest_scan, src_scan, width,
-                                             src_Bpp, dst_extra_alpha);
+                                             src_Bpp, {});
         break;
       case 1 + 4 + 8:
+        // TODO(thestig): Check if empty span argument is always empty.
         CompositeRow_Rgb2Argb_NoBlend_Clip(dest_scan, src_scan, width, src_Bpp,
-                                           clip_scan, dst_extra_alpha);
+                                           clip_scan, {});
         break;
       case 2:
       case 2 + 8:
@@ -3126,8 +3131,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
     int src_left,
     int width,
     pdfium::span<const uint8_t> clip_scan,
-    pdfium::span<const uint8_t> src_extra_alpha,
-    pdfium::span<uint8_t> dst_extra_alpha) {
+    pdfium::span<const uint8_t> src_extra_alpha) {
   if (m_bRgbByteOrder) {
     if (m_SrcFormat == FXDIB_Format::k1bppRgb) {
       if (m_DestFormat == FXDIB_Format::k8bppRgb) {
@@ -3165,9 +3169,10 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
   if (GetBppFromFormat(m_DestFormat) == 8) {
     if (m_iTransparency & 8) {
       if (GetIsAlphaFromFormat(m_DestFormat)) {
+        // TODO(thestig): Check if empty span argument is always empty.
         CompositeRow_1bppPal2Graya(dest_scan, src_scan, src_left,
                                    m_SrcPalette.Get8BitPalette(), width,
-                                   m_BlendType, clip_scan, dst_extra_alpha);
+                                   m_BlendType, clip_scan, {});
       } else {
         CompositeRow_1bppPal2Gray(dest_scan, src_scan, src_left,
                                   m_SrcPalette.Get8BitPalette(), width,
@@ -3175,9 +3180,10 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
       }
     } else {
       if (GetIsAlphaFromFormat(m_DestFormat)) {
-        CompositeRow_8bppPal2Graya(
-            dest_scan, src_scan, m_SrcPalette.Get8BitPalette(), width,
-            m_BlendType, clip_scan, dst_extra_alpha, src_extra_alpha);
+        // TODO(thestig): Check if empty span argument is always empty.
+        CompositeRow_8bppPal2Graya(dest_scan, src_scan,
+                                   m_SrcPalette.Get8BitPalette(), width,
+                                   m_BlendType, clip_scan, {}, src_extra_alpha);
       } else {
         CompositeRow_8bppPal2Gray(dest_scan, src_scan,
                                   m_SrcPalette.Get8BitPalette(), width,
@@ -3212,9 +3218,10 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
             GetCompsFromFormat(m_DestFormat), clip_scan, src_extra_alpha);
         break;
       case 0 + 2 + 8:
+        // TODO(thestig): Check if empty span argument is always empty.
         CompositeRow_1bppRgb2Rgba_NoBlend(dest_scan, src_scan, src_left, width,
                                           m_SrcPalette.Get32BitPalette(),
-                                          clip_scan, dst_extra_alpha);
+                                          clip_scan, {});
         break;
     }
   }
@@ -3224,15 +3231,15 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(
     pdfium::span<uint8_t> dest_scan,
     pdfium::span<const uint8_t> src_scan,
     int width,
-    pdfium::span<const uint8_t> clip_scan,
-    pdfium::span<uint8_t> dst_extra_alpha) {
+    pdfium::span<const uint8_t> clip_scan) {
   if (m_DestFormat == FXDIB_Format::k8bppMask) {
     CompositeRow_ByteMask2Mask(dest_scan, src_scan, m_MaskAlpha, width,
                                clip_scan);
   } else if (GetBppFromFormat(m_DestFormat) == 8) {
     if (GetIsAlphaFromFormat(m_DestFormat)) {
+      // TODO(thestig): Check if empty span argument is always empty.
       CompositeRow_ByteMask2Graya(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
-                                  width, clip_scan, dst_extra_alpha);
+                                  width, clip_scan, {});
     } else {
       CompositeRow_ByteMask2Gray(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                                  width, clip_scan);
@@ -3264,15 +3271,15 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(
     pdfium::span<const uint8_t> src_scan,
     int src_left,
     int width,
-    pdfium::span<const uint8_t> clip_scan,
-    pdfium::span<uint8_t> dst_extra_alpha) {
+    pdfium::span<const uint8_t> clip_scan) {
   if (m_DestFormat == FXDIB_Format::k8bppMask) {
     CompositeRow_BitMask2Mask(dest_scan, src_scan, m_MaskAlpha, src_left, width,
                               clip_scan);
   } else if (GetBppFromFormat(m_DestFormat) == 8) {
     if (GetIsAlphaFromFormat(m_DestFormat)) {
+      // TODO(thestig): Check if empty span argument is always empty.
       CompositeRow_BitMask2Graya(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
-                                 src_left, width, clip_scan, dst_extra_alpha);
+                                 src_left, width, clip_scan, {});
     } else {
       CompositeRow_BitMask2Gray(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                                 src_left, width, clip_scan);

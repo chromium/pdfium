@@ -51,8 +51,7 @@ class CFX_BitmapComposer final : public ScanlineComposerIface {
                  pdfium::span<const uint8_t> src_scan,
                  int dest_width,
                  pdfium::span<const uint8_t> clip_scan,
-                 pdfium::span<const uint8_t> src_extra_alpha,
-                 pdfium::span<uint8_t> dst_extra_alpha);
+                 pdfium::span<const uint8_t> src_extra_alpha);
   void ComposeScanlineV(int line,
                         pdfium::span<const uint8_t> scanline,
                         pdfium::span<const uint8_t> scan_extra_alpha);
@@ -76,7 +75,6 @@ class CFX_BitmapComposer final : public ScanlineComposerIface {
   DataVector<uint8_t> m_pScanlineV;
   DataVector<uint8_t> m_pClipScanV;
   DataVector<uint8_t> m_pAddClipScan;
-  DataVector<uint8_t> m_pScanlineAlphaV;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_BITMAPCOMPOSER_H_
