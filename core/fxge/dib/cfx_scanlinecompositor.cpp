@@ -12,6 +12,7 @@
 
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 
 #define FXDIB_ALPHA_UNION(dest, src) ((dest) + (src) - (dest) * (src) / 255)
 #define FXARGB_RGBORDERCOPY(dest, src)                  \
@@ -259,58 +260,6 @@ uint8_t GetGrayWithBlend(const uint8_t* src_scan,
   return gray;
 }
 
-void CompositeRow_Argb2Graya(pdfium::span<uint8_t> dest_span,
-                             pdfium::span<const uint8_t> src_span,
-                             int pixel_count,
-                             BlendMode blend_type,
-                             pdfium::span<const uint8_t> clip_span,
-                             pdfium::span<const uint8_t> src_alpha_span,
-                             pdfium::span<uint8_t> dst_alpha_span) {
-  uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  const uint8_t* clip_scan = clip_span.data();
-  const uint8_t* src_alpha_scan = src_alpha_span.data();
-  uint8_t* dst_alpha_scan = dst_alpha_span.data();
-  uint8_t offset = src_alpha_scan ? 3 : 4;
-  for (int col = 0; col < pixel_count; ++col) {
-    const uint8_t* alpha_scan =
-        src_alpha_scan ? src_alpha_scan++ : &src_scan[3];
-    uint8_t back_alpha = *dst_alpha_scan;
-    if (back_alpha == 0) {
-      int src_alpha = GetAlpha(*alpha_scan, clip_scan, col);
-      if (src_alpha) {
-        *dest_scan = GetGray(src_scan);
-        *dst_alpha_scan = src_alpha;
-      }
-      ++dest_scan;
-      ++dst_alpha_scan;
-      src_scan += offset;
-      continue;
-    }
-    uint8_t src_alpha = GetAlpha(*alpha_scan, clip_scan, col);
-    if (src_alpha == 0) {
-      ++dest_scan;
-      ++dst_alpha_scan;
-      src_scan += offset;
-      continue;
-    }
-    *dst_alpha_scan = FXDIB_ALPHA_UNION(back_alpha, src_alpha);
-    int alpha_ratio = src_alpha * 255 / (*dst_alpha_scan);
-    uint8_t gray = GetGray(src_scan);
-    // TODO(npm): Does this if really need src_alpha_scan or was that a bug?
-    if (blend_type != BlendMode::kNormal && src_alpha_scan) {
-      if (IsNonSeparableBlendMode(blend_type))
-        gray = blend_type == BlendMode::kLuminosity ? gray : *dest_scan;
-      else
-        gray = Blend(blend_type, *dest_scan, gray);
-    }
-    *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, alpha_ratio);
-    ++dest_scan;
-    ++dst_alpha_scan;
-    src_scan += offset;
-  }
-}
-
 void CompositeRow_Argb2Gray(pdfium::span<uint8_t> dest_span,
                             pdfium::span<const uint8_t> src_span,
                             int pixel_count,
@@ -350,52 +299,6 @@ void CompositeRow_Rgb2Gray(pdfium::span<uint8_t> dest_span,
       *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, clip_scan[col]);
     else
       *dest_scan = gray;
-    ++dest_scan;
-    src_scan += src_Bpp;
-  }
-}
-
-void CompositeRow_Rgb2Graya(pdfium::span<uint8_t> dest_span,
-                            pdfium::span<const uint8_t> src_span,
-                            int src_Bpp,
-                            int pixel_count,
-                            BlendMode blend_type,
-                            pdfium::span<const uint8_t> clip_span,
-                            pdfium::span<uint8_t> dest_alpha_span) {
-  uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  const uint8_t* clip_scan = clip_span.data();
-  uint8_t* dest_alpha_scan = dest_alpha_span.data();
-  for (int col = 0; col < pixel_count; ++col) {
-    if (blend_type != BlendMode::kNormal && *dest_alpha_scan == 0) {
-      *dest_scan = GetGray(src_scan);
-      ++dest_scan;
-      ++dest_alpha_scan;
-      src_scan += src_Bpp;
-      continue;
-    }
-    int src_alpha = clip_scan ? clip_scan[col] : 255;
-    if (src_alpha == 255) {
-      *dest_scan = GetGrayWithBlend(src_scan, dest_scan, blend_type);
-      ++dest_scan;
-      *dest_alpha_scan = 255;
-      ++dest_alpha_scan;
-      src_scan += src_Bpp;
-      continue;
-    }
-    if (src_alpha == 0) {
-      ++dest_scan;
-      ++dest_alpha_scan;
-      src_scan += src_Bpp;
-      continue;
-    }
-    int back_alpha = *dest_alpha_scan;
-    uint8_t dest_alpha = back_alpha + src_alpha - back_alpha * src_alpha / 255;
-    *dest_alpha_scan = dest_alpha;
-    ++dest_alpha_scan;
-    int alpha_ratio = src_alpha * 255 / dest_alpha;
-    uint8_t gray = GetGrayWithBlend(src_scan, dest_scan, blend_type);
-    *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, alpha_ratio);
     ++dest_scan;
     src_scan += src_Bpp;
   }
@@ -1027,138 +930,6 @@ void CompositeRow_8bppPal2Gray(pdfium::span<uint8_t> dest_span,
   }
 }
 
-void CompositeRow_8bppPal2Graya(pdfium::span<uint8_t> dest_span,
-                                pdfium::span<const uint8_t> src_span,
-                                pdfium::span<const uint8_t> palette_span,
-                                int pixel_count,
-                                BlendMode blend_type,
-                                pdfium::span<const uint8_t> clip_span,
-                                pdfium::span<uint8_t> dest_alpha_span,
-                                pdfium::span<const uint8_t> src_alpha_span) {
-  uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  const uint8_t* pPalette = palette_span.data();
-  const uint8_t* clip_scan = clip_span.data();
-  const uint8_t* src_alpha_scan = src_alpha_span.data();
-  uint8_t* dest_alpha_scan = dest_alpha_span.data();
-  if (src_alpha_scan) {
-    if (blend_type != BlendMode::kNormal) {
-      bool bNonseparableBlend = IsNonSeparableBlendMode(blend_type);
-      for (int col = 0; col < pixel_count; col++) {
-        uint8_t gray = pPalette[*src_scan];
-        src_scan++;
-        uint8_t back_alpha = *dest_alpha_scan;
-        if (back_alpha == 0) {
-          int src_alpha = GetAlpha(*src_alpha_scan++, clip_scan, col);
-          if (src_alpha) {
-            *dest_scan = gray;
-            *dest_alpha_scan = src_alpha;
-          }
-          dest_scan++;
-          dest_alpha_scan++;
-          continue;
-        }
-        uint8_t src_alpha = GetAlpha(*src_alpha_scan++, clip_scan, col);
-        if (src_alpha == 0) {
-          dest_scan++;
-          dest_alpha_scan++;
-          continue;
-        }
-        *dest_alpha_scan =
-            back_alpha + src_alpha - back_alpha * src_alpha / 255;
-        int alpha_ratio = src_alpha * 255 / (*dest_alpha_scan);
-        if (bNonseparableBlend)
-          gray = blend_type == BlendMode::kLuminosity ? gray : *dest_scan;
-        else
-          gray = Blend(blend_type, *dest_scan, gray);
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, alpha_ratio);
-        dest_alpha_scan++;
-        dest_scan++;
-      }
-      return;
-    }
-    for (int col = 0; col < pixel_count; col++) {
-      uint8_t gray = pPalette[*src_scan];
-      src_scan++;
-      uint8_t back_alpha = *dest_alpha_scan;
-      if (back_alpha == 0) {
-        int src_alpha = GetAlpha(*src_alpha_scan++, clip_scan, col);
-        if (src_alpha) {
-          *dest_scan = gray;
-          *dest_alpha_scan = src_alpha;
-        }
-        dest_scan++;
-        dest_alpha_scan++;
-        continue;
-      }
-      uint8_t src_alpha = GetAlpha(*src_alpha_scan++, clip_scan, col);
-      if (src_alpha == 0) {
-        dest_scan++;
-        dest_alpha_scan++;
-        continue;
-      }
-      *dest_alpha_scan = back_alpha + src_alpha - back_alpha * src_alpha / 255;
-      int alpha_ratio = src_alpha * 255 / (*dest_alpha_scan);
-      dest_alpha_scan++;
-      *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, alpha_ratio);
-      dest_scan++;
-    }
-  } else {
-    if (blend_type != BlendMode::kNormal) {
-      bool bNonseparableBlend = IsNonSeparableBlendMode(blend_type);
-      for (int col = 0; col < pixel_count; col++) {
-        uint8_t gray = pPalette[*src_scan];
-        src_scan++;
-        if (!clip_scan || clip_scan[col] == 255) {
-          *dest_scan++ = gray;
-          *dest_alpha_scan++ = 255;
-          continue;
-        }
-        int src_alpha = clip_scan[col];
-        if (src_alpha == 0) {
-          dest_scan++;
-          dest_alpha_scan++;
-          continue;
-        }
-        int back_alpha = *dest_alpha_scan;
-        uint8_t dest_alpha =
-            back_alpha + src_alpha - back_alpha * src_alpha / 255;
-        *dest_alpha_scan++ = dest_alpha;
-        int alpha_ratio = src_alpha * 255 / dest_alpha;
-        if (bNonseparableBlend)
-          gray = blend_type == BlendMode::kLuminosity ? gray : *dest_scan;
-        else
-          gray = Blend(blend_type, *dest_scan, gray);
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, alpha_ratio);
-        dest_scan++;
-      }
-      return;
-    }
-    for (int col = 0; col < pixel_count; col++) {
-      uint8_t gray = pPalette[*src_scan];
-      src_scan++;
-      if (!clip_scan || clip_scan[col] == 255) {
-        *dest_scan++ = gray;
-        *dest_alpha_scan++ = 255;
-        continue;
-      }
-      int src_alpha = clip_scan[col];
-      if (src_alpha == 0) {
-        dest_scan++;
-        dest_alpha_scan++;
-        continue;
-      }
-      int back_alpha = *dest_alpha_scan;
-      uint8_t dest_alpha =
-          back_alpha + src_alpha - back_alpha * src_alpha / 255;
-      *dest_alpha_scan++ = dest_alpha;
-      int alpha_ratio = src_alpha * 255 / dest_alpha;
-      *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, alpha_ratio);
-      dest_scan++;
-    }
-  }
-}
-
 void CompositeRow_1bppPal2Gray(pdfium::span<uint8_t> dest_span,
                                pdfium::span<const uint8_t> src_span,
                                int src_left,
@@ -1201,77 +972,6 @@ void CompositeRow_1bppPal2Gray(pdfium::span<uint8_t> dest_span,
     } else {
       *dest_scan = gray;
     }
-    dest_scan++;
-  }
-}
-
-void CompositeRow_1bppPal2Graya(pdfium::span<uint8_t> dest_span,
-                                pdfium::span<const uint8_t> src_span,
-                                int src_left,
-                                pdfium::span<const uint8_t> src_palette,
-                                int pixel_count,
-                                BlendMode blend_type,
-                                pdfium::span<const uint8_t> clip_span,
-                                pdfium::span<uint8_t> dest_alpha_span) {
-  uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  const uint8_t* clip_scan = clip_span.data();
-  uint8_t* dest_alpha_scan = dest_alpha_span.data();
-  int reset_gray = src_palette[0];
-  int set_gray = src_palette[1];
-  if (blend_type != BlendMode::kNormal) {
-    bool bNonseparableBlend = IsNonSeparableBlendMode(blend_type);
-    for (int col = 0; col < pixel_count; col++) {
-      uint8_t gray =
-          (src_scan[(col + src_left) / 8] & (1 << (7 - (col + src_left) % 8)))
-              ? set_gray
-              : reset_gray;
-      if (!clip_scan || clip_scan[col] == 255) {
-        *dest_scan++ = gray;
-        *dest_alpha_scan++ = 255;
-        continue;
-      }
-      int src_alpha = clip_scan[col];
-      if (src_alpha == 0) {
-        dest_scan++;
-        dest_alpha_scan++;
-        continue;
-      }
-      int back_alpha = *dest_alpha_scan;
-      uint8_t dest_alpha =
-          back_alpha + src_alpha - back_alpha * src_alpha / 255;
-      *dest_alpha_scan++ = dest_alpha;
-      int alpha_ratio = src_alpha * 255 / dest_alpha;
-      if (bNonseparableBlend)
-        gray = blend_type == BlendMode::kLuminosity ? gray : *dest_scan;
-      else
-        gray = Blend(blend_type, *dest_scan, gray);
-      *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, alpha_ratio);
-      dest_scan++;
-    }
-    return;
-  }
-  for (int col = 0; col < pixel_count; col++) {
-    uint8_t gray =
-        (src_scan[(col + src_left) / 8] & (1 << (7 - (col + src_left) % 8)))
-            ? set_gray
-            : reset_gray;
-    if (!clip_scan || clip_scan[col] == 255) {
-      *dest_scan++ = gray;
-      *dest_alpha_scan++ = 255;
-      continue;
-    }
-    int src_alpha = clip_scan[col];
-    if (src_alpha == 0) {
-      dest_scan++;
-      dest_alpha_scan++;
-      continue;
-    }
-    int back_alpha = *dest_alpha_scan;
-    uint8_t dest_alpha = back_alpha + src_alpha - back_alpha * src_alpha / 255;
-    *dest_alpha_scan++ = dest_alpha;
-    int alpha_ratio = src_alpha * 255 / dest_alpha;
-    *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, alpha_ratio);
     dest_scan++;
   }
 }
@@ -1746,38 +1446,6 @@ void CompositeRow_ByteMask2Gray(pdfium::span<uint8_t> dest_span,
   }
 }
 
-void CompositeRow_ByteMask2Graya(pdfium::span<uint8_t> dest_span,
-                                 pdfium::span<const uint8_t> src_span,
-                                 int mask_alpha,
-                                 int src_gray,
-                                 int pixel_count,
-                                 pdfium::span<const uint8_t> clip_span,
-                                 pdfium::span<uint8_t> dest_alpha_span) {
-  uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  const uint8_t* clip_scan = clip_span.data();
-  uint8_t* dest_alpha_scan = dest_alpha_span.data();
-  for (int col = 0; col < pixel_count; col++) {
-    int src_alpha = GetAlphaWithSrc(mask_alpha, clip_scan, src_scan, col);
-    uint8_t back_alpha = *dest_alpha_scan;
-    if (back_alpha == 0) {
-      *dest_scan++ = src_gray;
-      *dest_alpha_scan++ = src_alpha;
-      continue;
-    }
-    if (src_alpha == 0) {
-      dest_scan++;
-      dest_alpha_scan++;
-      continue;
-    }
-    uint8_t dest_alpha = back_alpha + src_alpha - back_alpha * src_alpha / 255;
-    *dest_alpha_scan++ = dest_alpha;
-    int alpha_ratio = src_alpha * 255 / dest_alpha;
-    *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_gray, alpha_ratio);
-    dest_scan++;
-  }
-}
-
 void CompositeRow_BitMask2Argb(pdfium::span<uint8_t> dest_span,
                                pdfium::span<const uint8_t> src_span,
                                int mask_alpha,
@@ -1963,44 +1631,6 @@ void CompositeRow_BitMask2Gray(pdfium::span<uint8_t> dest_span,
     if (src_alpha) {
       *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_gray, src_alpha);
     }
-    dest_scan++;
-  }
-}
-
-void CompositeRow_BitMask2Graya(pdfium::span<uint8_t> dest_span,
-                                pdfium::span<const uint8_t> src_span,
-                                int mask_alpha,
-                                int src_gray,
-                                int src_left,
-                                int pixel_count,
-                                pdfium::span<const uint8_t> clip_span,
-                                pdfium::span<uint8_t> dest_alpha_span) {
-  uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  const uint8_t* clip_scan = clip_span.data();
-  uint8_t* dest_alpha_scan = dest_alpha_span.data();
-  for (int col = 0; col < pixel_count; col++) {
-    if (!(src_scan[(src_left + col) / 8] & (1 << (7 - (src_left + col) % 8)))) {
-      dest_scan++;
-      dest_alpha_scan++;
-      continue;
-    }
-    int src_alpha = GetAlpha(mask_alpha, clip_scan, col);
-    uint8_t back_alpha = *dest_alpha_scan;
-    if (back_alpha == 0) {
-      *dest_scan++ = src_gray;
-      *dest_alpha_scan++ = src_alpha;
-      continue;
-    }
-    if (src_alpha == 0) {
-      dest_scan++;
-      dest_alpha_scan++;
-      continue;
-    }
-    uint8_t dest_alpha = back_alpha + src_alpha - back_alpha * src_alpha / 255;
-    *dest_alpha_scan++ = dest_alpha;
-    int alpha_ratio = src_alpha * 255 / dest_alpha;
-    *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_gray, alpha_ratio);
     dest_scan++;
   }
 }
@@ -3035,35 +2665,20 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
   }
   if (m_DestFormat == FXDIB_Format::k8bppMask) {
     if (GetIsAlphaFromFormat(m_SrcFormat)) {
-      if (m_SrcFormat == FXDIB_Format::kArgb) {
-        CompositeRow_AlphaToMask(dest_scan, src_scan, width, clip_scan, 4);
-      } else {
-        // TODO(thestig): Check if empty span argument is always empty.
-        CompositeRow_AlphaToMask(dest_scan, {}, width, clip_scan, 1);
-      }
+      DCHECK_EQ(m_SrcFormat, FXDIB_Format::kArgb);
+      CompositeRow_AlphaToMask(dest_scan, src_scan, width, clip_scan, 4);
     } else {
       CompositeRow_Rgb2Mask(dest_scan, width, clip_scan);
     }
   } else if (GetBppFromFormat(m_DestFormat) == 8) {
+    DCHECK(!GetIsAlphaFromFormat(m_DestFormat));
     if (GetIsAlphaFromFormat(m_SrcFormat)) {
-      if (GetIsAlphaFromFormat(m_DestFormat)) {
-        // TODO(thestig): Check if empty span arguments are always empty.
-        CompositeRow_Argb2Graya(dest_scan, src_scan, width, m_BlendType,
-                                clip_scan, {}, {});
-      } else {
-        // TODO(thestig): Check if empty span argument is always empty.
-        CompositeRow_Argb2Gray(dest_scan, src_scan, width, m_BlendType,
-                               clip_scan, {});
-      }
+      // TODO(thestig): Check if empty span argument is always empty.
+      CompositeRow_Argb2Gray(dest_scan, src_scan, width, m_BlendType, clip_scan,
+                             {});
     } else {
-      if (GetIsAlphaFromFormat(m_DestFormat)) {
-        // TODO(thestig): Check if empty span argument is always empty.
-        CompositeRow_Rgb2Graya(dest_scan, src_scan, src_Bpp, width, m_BlendType,
-                               clip_scan, {});
-      } else {
-        CompositeRow_Rgb2Gray(dest_scan, src_scan, src_Bpp, width, m_BlendType,
-                              clip_scan);
-      }
+      CompositeRow_Rgb2Gray(dest_scan, src_scan, src_Bpp, width, m_BlendType,
+                            clip_scan);
     }
   } else {
     switch (m_iTransparency) {
@@ -3168,29 +2783,16 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
     return;
   }
   if (GetBppFromFormat(m_DestFormat) == 8) {
+    DCHECK(!GetIsAlphaFromFormat(m_DestFormat));
     if (m_iTransparency & 8) {
-      if (GetIsAlphaFromFormat(m_DestFormat)) {
-        // TODO(thestig): Check if empty span argument is always empty.
-        CompositeRow_1bppPal2Graya(dest_scan, src_scan, src_left,
-                                   m_SrcPalette.Get8BitPalette(), width,
-                                   m_BlendType, clip_scan, {});
-      } else {
-        CompositeRow_1bppPal2Gray(dest_scan, src_scan, src_left,
-                                  m_SrcPalette.Get8BitPalette(), width,
-                                  m_BlendType, clip_scan);
-      }
+      CompositeRow_1bppPal2Gray(dest_scan, src_scan, src_left,
+                                m_SrcPalette.Get8BitPalette(), width,
+                                m_BlendType, clip_scan);
     } else {
-      if (GetIsAlphaFromFormat(m_DestFormat)) {
-        // TODO(thestig): Check if empty span arguments are always empty.
-        CompositeRow_8bppPal2Graya(dest_scan, src_scan,
-                                   m_SrcPalette.Get8BitPalette(), width,
-                                   m_BlendType, clip_scan, {}, {});
-      } else {
-        // TODO(thestig): Check if empty span argument is always empty.
-        CompositeRow_8bppPal2Gray(dest_scan, src_scan,
-                                  m_SrcPalette.Get8BitPalette(), width,
-                                  m_BlendType, clip_scan, {});
-      }
+      // TODO(thestig): Check if empty span argument is always empty.
+      CompositeRow_8bppPal2Gray(dest_scan, src_scan,
+                                m_SrcPalette.Get8BitPalette(), width,
+                                m_BlendType, clip_scan, {});
     }
   } else {
     switch (m_iTransparency) {
@@ -3241,14 +2843,9 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(
     CompositeRow_ByteMask2Mask(dest_scan, src_scan, m_MaskAlpha, width,
                                clip_scan);
   } else if (GetBppFromFormat(m_DestFormat) == 8) {
-    if (GetIsAlphaFromFormat(m_DestFormat)) {
-      // TODO(thestig): Check if empty span argument is always empty.
-      CompositeRow_ByteMask2Graya(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
-                                  width, clip_scan, {});
-    } else {
-      CompositeRow_ByteMask2Gray(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
-                                 width, clip_scan);
-    }
+    DCHECK(!GetIsAlphaFromFormat(m_DestFormat));
+    CompositeRow_ByteMask2Gray(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
+                               width, clip_scan);
   } else if (m_bRgbByteOrder) {
     if (m_DestFormat == FXDIB_Format::kArgb) {
       CompositeRow_ByteMask2Argb_RgbByteOrder(
@@ -3281,14 +2878,9 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(
     CompositeRow_BitMask2Mask(dest_scan, src_scan, m_MaskAlpha, src_left, width,
                               clip_scan);
   } else if (GetBppFromFormat(m_DestFormat) == 8) {
-    if (GetIsAlphaFromFormat(m_DestFormat)) {
-      // TODO(thestig): Check if empty span argument is always empty.
-      CompositeRow_BitMask2Graya(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
-                                 src_left, width, clip_scan, {});
-    } else {
-      CompositeRow_BitMask2Gray(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
-                                src_left, width, clip_scan);
-    }
+    DCHECK(!GetIsAlphaFromFormat(m_DestFormat));
+    CompositeRow_BitMask2Gray(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
+                              src_left, width, clip_scan);
   } else if (m_bRgbByteOrder) {
     if (m_DestFormat == FXDIB_Format::kArgb) {
       CompositeRow_BitMask2Argb_RgbByteOrder(
