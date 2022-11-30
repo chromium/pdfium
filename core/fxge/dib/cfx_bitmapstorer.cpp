@@ -32,11 +32,6 @@ void CFX_BitmapStorer::ComposeScanline(
   pdfium::span<uint8_t> dest_buf = m_pBitmap->GetWritableScanline(line);
   if (!dest_buf.empty())
     fxcrt::spancpy(dest_buf, scanline);
-
-  pdfium::span<uint8_t> dest_alpha_buf =
-      m_pBitmap->GetWritableAlphaMaskScanline(line);
-  if (!dest_alpha_buf.empty())
-    fxcrt::spancpy(dest_alpha_buf, scan_extra_alpha);
 }
 
 bool CFX_BitmapStorer::SetInfo(int width,

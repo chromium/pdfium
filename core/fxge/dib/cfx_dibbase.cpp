@@ -844,20 +844,8 @@ void CFX_DIBBase::SetPalette(pdfium::span<const uint32_t> src_palette) {
     m_palette[i] = src_palette[i];
 }
 
-uint32_t CFX_DIBBase::GetAlphaMaskPitch() const {
-  return 0;
-}
-
 pdfium::span<const uint8_t> CFX_DIBBase::GetAlphaMaskScanline(int line) const {
   return pdfium::span<const uint8_t>();
-}
-
-pdfium::span<uint8_t> CFX_DIBBase::GetWritableAlphaMaskScanline(int line) {
-  return pdfium::span<uint8_t>();
-}
-
-pdfium::span<uint8_t> CFX_DIBBase::GetAlphaMaskBuffer() {
-  return pdfium::span<uint8_t>();
 }
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::GetAlphaMask() {

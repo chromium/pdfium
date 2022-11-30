@@ -299,7 +299,7 @@ bool CFX_DIBitmap::SetChannelFromBitmap(
     if (!pSrcClone)
       return false;
   }
-  int srcOffset = pSrcBitmap->GetFormat() == FXDIB_Format::kArgb ? 3 : 0;
+  const int srcOffset = pSrcBitmap->GetFormat() == FXDIB_Format::kArgb ? 3 : 0;
   int destOffset = 0;
   if (destChannel == Channel::kAlpha) {
     if (IsMaskFormat()) {
@@ -327,21 +327,7 @@ bool CFX_DIBitmap::SetChannelFromBitmap(
     }
     destOffset = 2;
   }
-  if (pSrcClone->HasAlphaMask()) {
-    RetainPtr<CFX_DIBBase> pAlphaMask = pSrcClone->GetAlphaMask();
-    if (pSrcClone->GetWidth() != m_Width ||
-        pSrcClone->GetHeight() != m_Height) {
-      if (pAlphaMask) {
-        pAlphaMask = pAlphaMask->StretchTo(m_Width, m_Height,
-                                           FXDIB_ResampleOptions(), nullptr);
-        if (!pAlphaMask)
-          return false;
-      }
-    }
-    pSrcClone = std::move(pAlphaMask);
-    srcOffset = 0;
-  } else if (pSrcClone->GetWidth() != m_Width ||
-             pSrcClone->GetHeight() != m_Height) {
+  if (pSrcClone->GetWidth() != m_Width || pSrcClone->GetHeight() != m_Height) {
     RetainPtr<CFX_DIBitmap> pSrcMatched = pSrcClone->StretchTo(
         m_Width, m_Height, FXDIB_ResampleOptions(), nullptr);
     if (!pSrcMatched)

@@ -77,10 +77,7 @@ class CFX_DIBBase : public Retainable {
 
   // TODO(thestig): Remove these dummy methods.
   bool HasAlphaMask() const { return false; }
-  uint32_t GetAlphaMaskPitch() const;
   pdfium::span<const uint8_t> GetAlphaMaskScanline(int line) const;
-  pdfium::span<uint8_t> GetWritableAlphaMaskScanline(int line);
-  pdfium::span<uint8_t> GetAlphaMaskBuffer();
   RetainPtr<CFX_DIBitmap> GetAlphaMask();
 
   RetainPtr<CFX_DIBitmap> CloneAlphaMask() const;

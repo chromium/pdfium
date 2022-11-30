@@ -337,15 +337,8 @@ class CFX_Renderer {
   void render(const Scanline& sl);
 
  private:
-  using CompositeSpanFunc = void (CFX_Renderer::*)(uint8_t*,
-                                                   int,
-                                                   int,
-                                                   int,
-                                                   uint8_t*,
-                                                   int,
-                                                   int,
-                                                   uint8_t*,
-                                                   uint8_t*);
+  using CompositeSpanFunc = void (
+      CFX_Renderer::*)(uint8_t*, int, int, int, uint8_t*, int, int, uint8_t*);
 
   void CompositeSpan(uint8_t* dest_scan,
                      uint8_t* backdrop_scan,
@@ -365,8 +358,7 @@ class CFX_Renderer {
                          uint8_t* cover_scan,
                          int clip_left,
                          int clip_right,
-                         uint8_t* clip_scan,
-                         uint8_t* dest_extra_alpha_scan);
+                         uint8_t* clip_scan);
 
   void CompositeSpanGray(uint8_t* dest_scan,
                          int Bpp,
@@ -375,8 +367,7 @@ class CFX_Renderer {
                          uint8_t* cover_scan,
                          int clip_left,
                          int clip_right,
-                         uint8_t* clip_scan,
-                         uint8_t* dest_extra_alpha_scan);
+                         uint8_t* clip_scan);
 
   void CompositeSpanARGB(uint8_t* dest_scan,
                          int Bpp,
@@ -385,8 +376,7 @@ class CFX_Renderer {
                          uint8_t* cover_scan,
                          int clip_left,
                          int clip_right,
-                         uint8_t* clip_scan,
-                         uint8_t* dest_extra_alpha_scan);
+                         uint8_t* clip_scan);
 
   void CompositeSpanRGB(uint8_t* dest_scan,
                         int Bpp,
@@ -395,8 +385,7 @@ class CFX_Renderer {
                         uint8_t* cover_scan,
                         int clip_left,
                         int clip_right,
-                        uint8_t* clip_scan,
-                        uint8_t* dest_extra_alpha_scan);
+                        uint8_t* clip_scan);
 
   void CompositeSpan1bppHelper(uint8_t* dest_scan,
                                int col_start,
@@ -603,8 +592,7 @@ void CFX_Renderer::CompositeSpan1bpp(uint8_t* dest_scan,
                                      uint8_t* cover_scan,
                                      int clip_left,
                                      int clip_right,
-                                     uint8_t* clip_scan,
-                                     uint8_t* dest_extra_alpha_scan) {
+                                     uint8_t* clip_scan) {
   DCHECK(!m_bRgbByteOrder);
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
@@ -620,35 +608,11 @@ void CFX_Renderer::CompositeSpanGray(uint8_t* dest_scan,
                                      uint8_t* cover_scan,
                                      int clip_left,
                                      int clip_right,
-                                     uint8_t* clip_scan,
-                                     uint8_t* dest_extra_alpha_scan) {
+                                     uint8_t* clip_scan) {
   DCHECK(!m_bRgbByteOrder);
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
   dest_scan += col_start;
-  if (dest_extra_alpha_scan) {
-    for (int col = col_start; col < col_end; col++) {
-      int src_alpha = m_bFullCover ? GetSrcAlpha(clip_scan, col)
-                                   : GetSourceAlpha(cover_scan, clip_scan, col);
-      if (src_alpha) {
-        if (src_alpha == 255) {
-          *dest_scan = m_Gray;
-          *dest_extra_alpha_scan = m_Alpha;
-        } else {
-          uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha -
-                               (*dest_extra_alpha_scan) * src_alpha / 255;
-          *dest_extra_alpha_scan++ = dest_alpha;
-          int alpha_ratio = src_alpha * 255 / dest_alpha;
-          *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Gray, alpha_ratio);
-          dest_scan++;
-          continue;
-        }
-      }
-      dest_extra_alpha_scan++;
-      dest_scan++;
-    }
-    return;
-  }
   for (int col = col_start; col < col_end; col++) {
     int src_alpha = GetSourceAlpha(cover_scan, clip_scan, col);
     if (src_alpha) {
@@ -668,8 +632,7 @@ void CFX_Renderer::CompositeSpanARGB(uint8_t* dest_scan,
                                      uint8_t* cover_scan,
                                      int clip_left,
                                      int clip_right,
-                                     uint8_t* clip_scan,
-                                     uint8_t* dest_extra_alpha_scan) {
+                                     uint8_t* clip_scan) {
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
   dest_scan += col_start * Bpp;
@@ -737,8 +700,7 @@ void CFX_Renderer::CompositeSpanRGB(uint8_t* dest_scan,
                                     uint8_t* cover_scan,
                                     int clip_left,
                                     int clip_right,
-                                    uint8_t* clip_scan,
-                                    uint8_t* dest_extra_alpha_scan) {
+                                    uint8_t* clip_scan) {
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
   dest_scan += col_start * Bpp;
@@ -765,35 +727,6 @@ void CFX_Renderer::CompositeSpanRGB(uint8_t* dest_scan,
           continue;
         }
       }
-      dest_scan += Bpp;
-    }
-    return;
-  }
-  if (Bpp == 3 && dest_extra_alpha_scan) {
-    for (int col = col_start; col < col_end; col++) {
-      int src_alpha = m_bFullCover ? GetSrcAlpha(clip_scan, col)
-                                   : GetSourceAlpha(cover_scan, clip_scan, col);
-      if (src_alpha) {
-        if (src_alpha == 255) {
-          *dest_scan++ = static_cast<uint8_t>(m_Blue);
-          *dest_scan++ = static_cast<uint8_t>(m_Green);
-          *dest_scan++ = static_cast<uint8_t>(m_Red);
-          *dest_extra_alpha_scan++ = static_cast<uint8_t>(m_Alpha);
-          continue;
-        }
-        uint8_t dest_alpha = (*dest_extra_alpha_scan) + src_alpha -
-                             (*dest_extra_alpha_scan) * src_alpha / 255;
-        *dest_extra_alpha_scan++ = dest_alpha;
-        int alpha_ratio = src_alpha * 255 / dest_alpha;
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Blue, alpha_ratio);
-        dest_scan++;
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Green, alpha_ratio);
-        dest_scan++;
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, m_Red, alpha_ratio);
-        dest_scan++;
-        continue;
-      }
-      dest_extra_alpha_scan++;
       dest_scan += Bpp;
     }
     return;
@@ -861,12 +794,6 @@ void CFX_Renderer::render(const Scanline& sl) {
 
   uint8_t* dest_scan =
       m_pDevice->GetBuffer().subspan(m_pDevice->GetPitch() * y).data();
-  uint8_t* dest_scan_extra_alpha = nullptr;
-  RetainPtr<CFX_DIBitmap> pAlphaMask = m_pDevice->GetAlphaMask();
-  if (pAlphaMask) {
-    dest_scan_extra_alpha =
-        pAlphaMask->GetBuffer().subspan(pAlphaMask->GetPitch() * y).data();
-  }
   uint8_t* backdrop_scan = nullptr;
   if (m_pBackdropDevice) {
     backdrop_scan = m_pBackdropDevice->GetBuffer()
@@ -883,13 +810,10 @@ void CFX_Renderer::render(const Scanline& sl) {
 
     int x = span->x;
     uint8_t* dest_pos = nullptr;
-    uint8_t* dest_extra_alpha_pos = nullptr;
     uint8_t* backdrop_pos = nullptr;
     if (Bpp) {
       backdrop_pos = backdrop_scan ? backdrop_scan + x * Bpp : nullptr;
       dest_pos = dest_scan + x * Bpp;
-      dest_extra_alpha_pos =
-          dest_scan_extra_alpha ? dest_scan_extra_alpha + x : nullptr;
     } else {
       dest_pos = dest_scan + x / 8;
       backdrop_pos = backdrop_scan ? backdrop_scan + x / 8 : nullptr;
@@ -906,8 +830,7 @@ void CFX_Renderer::render(const Scanline& sl) {
                     span->covers, m_ClipBox.left, m_ClipBox.right, clip_pos);
     } else {
       (this->*m_CompositeSpanFunc)(dest_pos, Bpp, x, span->len, span->covers,
-                                   m_ClipBox.left, m_ClipBox.right, clip_pos,
-                                   dest_extra_alpha_pos);
+                                   m_ClipBox.left, m_ClipBox.right, clip_pos);
     }
     if (--num_spans == 0)
       break;
