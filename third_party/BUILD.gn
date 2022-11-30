@@ -63,6 +63,9 @@ if (pdf_bundle_freetype) {
       "FT_CONFIG_MODULES_H=\"freetype-custom-config/ftmodule.h\"",
       "FT_CONFIG_OPTIONS_H=\"freetype-custom-config/ftoption.h\"",
     ]
+  }
+
+  config("freetype_private_config") {
     if (is_clang) {
       # Multiple functions in freetype/src/src/truetype/ttobjs.h are unused.
       cflags = [ "-Wno-unused-function" ]
@@ -75,6 +78,7 @@ if (pdf_bundle_freetype) {
     configs -= [ "//build/config/compiler:chromium_code" ]
     configs += [
       "//build/config/compiler:no_chromium_code",
+      ":freetype_private_config",
       ":pdfium_third_party_config",
     ]
 
