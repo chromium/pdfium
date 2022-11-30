@@ -8,6 +8,7 @@
 
 #include <string.h>
 
+#include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/span_util.h"
@@ -145,18 +146,24 @@ void CFX_BitmapComposer::ComposeScanlineV(
   int dest_x = m_DestLeft + (m_bFlipX ? (m_DestWidth - line - 1) : line);
   pdfium::span<uint8_t> dest_span = m_pBitmap->GetBuffer();
   if (!dest_span.empty()) {
-    dest_span = dest_span.subspan(dest_x * Bpp + m_DestTop * dest_pitch);
-    if (m_bFlipY)
-      dest_span = dest_span.subspan(dest_pitch * (m_DestHeight - 1));
+    const size_t dest_x_offset = Fx2DSizeOrDie(dest_x, Bpp);
+    const size_t dest_y_offset = Fx2DSizeOrDie(m_DestTop, dest_pitch);
+    dest_span = dest_span.subspan(dest_y_offset).subspan(dest_x_offset);
+    if (m_bFlipY) {
+      const size_t dest_flip_offset =
+          Fx2DSizeOrDie(dest_pitch, m_DestHeight - 1);
+      dest_span = dest_span.subspan(dest_flip_offset);
+    }
   }
   uint8_t* dest_buf = dest_span.data();
   pdfium::span<uint8_t> dest_alpha_span = m_pBitmap->GetAlphaMaskBuffer();
   if (!dest_alpha_span.empty()) {
-    dest_alpha_span =
-        dest_alpha_span.subspan(dest_x + m_DestTop * dest_alpha_pitch);
+    size_t dest_y_offset = Fx2DSizeOrDie(m_DestTop, dest_alpha_pitch);
+    dest_alpha_span = dest_alpha_span.subspan(dest_x).subspan(dest_y_offset);
     if (m_bFlipY) {
-      dest_alpha_span =
-          dest_alpha_span.subspan(dest_alpha_pitch * (m_DestHeight - 1));
+      size_t dest_flip_offset =
+          Fx2DSizeOrDie(dest_alpha_pitch, m_DestHeight - 1);
+      dest_alpha_span = dest_alpha_span.subspan(dest_flip_offset);
     }
   }
   uint8_t* dest_alpha_buf = dest_alpha_span.data();
@@ -190,7 +197,7 @@ void CFX_BitmapComposer::ComposeScanlineV(
             .subspan(dest_x - m_pClipRgn->GetBox().left)
             .data();
     if (m_bFlipY) {
-      src_clip += clip_pitch * (m_DestHeight - 1);
+      src_clip += Fx2DSizeOrDie(clip_pitch, m_DestHeight - 1);
       clip_pitch = -clip_pitch;
     }
     for (int i = 0; i < m_DestHeight; ++i) {
