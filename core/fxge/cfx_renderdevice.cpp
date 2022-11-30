@@ -1034,7 +1034,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
                                       const CFX_Matrix& mtText2Device,
                                       uint32_t fill_color,
                                       const CFX_TextRenderOptions& options) {
-  // |anti_alias| and |normalize| don't affect Skia/SkiaPaths rendering.
+  // `anti_alias` and `normalize` don't affect Skia rendering.
   int anti_alias = FT_RENDER_MODE_MONO;
   bool normalize = false;
   const bool is_text_smooth = options.IsSmooth();

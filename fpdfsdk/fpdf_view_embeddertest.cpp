@@ -1415,8 +1415,8 @@ TEST_F(FPDFViewEmbedderTest, LoadDocumentWithEmptyXRefConsistently) {
 }
 
 TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
-  // For Skia/SkiaPaths, since the font used in bug_664284.pdf is not a CID
-  // font, ShouldDrawDeviceText() will always return true. Therefore
+  // For Skia, since the font used in bug_664284.pdf is not a CID font,
+  // ShouldDrawDeviceText() will always return true. Therefore
   // FPDF_NO_NATIVETEXT and the font widths defined in the PDF determines
   // whether to go through the rendering path in
   // CFX_SkiaDeviceDriver::DrawDeviceText(). In this case, it returns false and
@@ -1524,8 +1524,8 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithAndWithoutExternalMemory) {
     return "b561c11edc44dc3972125a9b8744fa2f";
   }();
 
-  // TODO(crbug.com/pdfium/1489): Add a test for FPDFBitmap_BGR in
-  // Skia/SkiaPaths modes once Skia provides support for BGR24 format.
+  // TODO(crbug.com/pdfium/1489): Add a test for FPDFBitmap_BGR in Skia modes
+  // once Skia provides support for BGR24 format.
   if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
     static const char kBgrChecksum[] = "ab6312e04c0d3f4e46fb302a45173d05";
 

@@ -90,7 +90,7 @@ source_set("parser") {
       "cpdf_seekablemultistream.h",
     ]
   }
-  if (pdf_use_skia || pdf_use_skia_paths) {
+  if (pdf_use_skia) {
     deps += [ "../../fxge" ]
     allow_circular_includes_from += [ "../../fxge" ]
   }
