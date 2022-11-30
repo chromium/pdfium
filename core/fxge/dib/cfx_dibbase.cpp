@@ -634,7 +634,6 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipToInternal(
     return nullptr;
 
   pNewBitmap->SetPalette(GetPaletteSpan());
-  pNewBitmap->SetAlphaMask(m_pAlphaMask, pClip);
   if (GetBPP() == 1 && rect.left % 8 != 0) {
     int left_shift = rect.left % 32;
     int right_shift = 32 - left_shift;
@@ -688,21 +687,6 @@ void CFX_DIBBase::BuildPalette() {
     for (int i = 0; i < 256; ++i)
       m_palette[i] = ArgbEncode(0xff, i, i, i);
   }
-}
-
-bool CFX_DIBBase::BuildAlphaMask() {
-  if (m_pAlphaMask)
-    return true;
-
-  m_pAlphaMask = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!m_pAlphaMask->Create(m_Width, m_Height, FXDIB_Format::k8bppMask)) {
-    m_pAlphaMask = nullptr;
-    return false;
-  }
-  for (int i = 0; i < m_pAlphaMask->GetHeight(); ++i) {
-    fxcrt::spanset(m_pAlphaMask->GetWritableScanline(i), 0xff);
-  }
-  return true;
 }
 
 size_t CFX_DIBBase::GetRequiredPaletteSize() const {
@@ -861,25 +845,23 @@ void CFX_DIBBase::SetPalette(pdfium::span<const uint32_t> src_palette) {
 }
 
 uint32_t CFX_DIBBase::GetAlphaMaskPitch() const {
-  return m_pAlphaMask ? m_pAlphaMask->GetPitch() : 0;
+  return 0;
 }
 
 pdfium::span<const uint8_t> CFX_DIBBase::GetAlphaMaskScanline(int line) const {
-  return m_pAlphaMask ? m_pAlphaMask->GetScanline(line)
-                      : pdfium::span<const uint8_t>();
+  return pdfium::span<const uint8_t>();
 }
 
 pdfium::span<uint8_t> CFX_DIBBase::GetWritableAlphaMaskScanline(int line) {
-  return m_pAlphaMask ? m_pAlphaMask->GetWritableScanline(line)
-                      : pdfium::span<uint8_t>();
+  return pdfium::span<uint8_t>();
 }
 
 pdfium::span<uint8_t> CFX_DIBBase::GetAlphaMaskBuffer() {
-  return m_pAlphaMask ? m_pAlphaMask->GetBuffer() : pdfium::span<uint8_t>();
+  return pdfium::span<uint8_t>();
 }
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::GetAlphaMask() {
-  return m_pAlphaMask;
+  return nullptr;
 }
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneAlphaMask() const {
@@ -899,34 +881,6 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneAlphaMask() const {
     }
   }
   return pMask;
-}
-
-bool CFX_DIBBase::SetAlphaMask(const RetainPtr<CFX_DIBBase>& pAlphaMask,
-                               const FX_RECT* pClip) {
-  if (!IsAlphaFormat() || GetFormat() == FXDIB_Format::kArgb)
-    return false;
-
-  if (!pAlphaMask) {
-    m_pAlphaMask->Clear(0xff000000);
-    return true;
-  }
-  FX_RECT rect(0, 0, pAlphaMask->m_Width, pAlphaMask->m_Height);
-  if (pClip) {
-    rect.Intersect(*pClip);
-    if (rect.IsEmpty() || rect.Width() != m_Width ||
-        rect.Height() != m_Height) {
-      return false;
-    }
-  } else {
-    if (pAlphaMask->m_Width != m_Width || pAlphaMask->m_Height != m_Height)
-      return false;
-  }
-  for (int row = 0; row < m_Height; ++row) {
-    memcpy(m_pAlphaMask->GetWritableScanline(row).data(),
-           pAlphaMask->GetScanline(row + rect.top).subspan(rect.left).data(),
-           m_pAlphaMask->m_Pitch);
-  }
-  return true;
 }
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
@@ -979,26 +933,6 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
       }
     }
   }
-  if (m_pAlphaMask) {
-    uint32_t dest_pitch = pFlipped->m_pAlphaMask->GetPitch();
-    for (int row = 0; row < m_Height; ++row) {
-      const uint8_t* src_scan = m_pAlphaMask->GetScanline(row).data();
-      uint8_t* dest_scan =
-          pFlipped->m_pAlphaMask
-              ->GetWritableScanline(bYFlip ? m_Height - row - 1 : row)
-              .data();
-      if (!bXFlip) {
-        memcpy(dest_scan, src_scan, dest_pitch);
-        continue;
-      }
-      dest_scan += (m_Width - 1);
-      for (int col = 0; col < m_Width; ++col) {
-        *dest_scan = *src_scan;
-        --dest_scan;
-        ++src_scan;
-      }
-    }
-  }
   return pFlipped;
 }
 
@@ -1012,19 +946,13 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ConvertTo(FXDIB_Format dest_format) const {
 
   RetainPtr<CFX_DIBitmap> pSrcAlpha;
   if (IsAlphaFormat()) {
-    pSrcAlpha =
-        (GetFormat() == FXDIB_Format::kArgb) ? CloneAlphaMask() : m_pAlphaMask;
+    pSrcAlpha = CloneAlphaMask();
     if (!pSrcAlpha)
       return nullptr;
   }
   if (GetIsAlphaFromFormat(dest_format)) {
-    bool ret;
-    if (dest_format == FXDIB_Format::kArgb) {
-      ret = pSrcAlpha ? pClone->SetAlphaFromBitmap(pSrcAlpha)
-                      : pClone->SetUniformOpaqueAlpha();
-    } else {
-      ret = pClone->SetAlphaMask(pSrcAlpha, nullptr);
-    }
+    bool ret = pSrcAlpha ? pClone->SetAlphaFromBitmap(pSrcAlpha)
+                         : pClone->SetUniformOpaqueAlpha();
     if (!ret)
       return nullptr;
   }
@@ -1114,26 +1042,6 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
             src_scan += 3;
           }
         }
-      }
-    }
-  }
-  if (m_pAlphaMask) {
-    uint8_t* desk_mask_buf = pTransBitmap->m_pAlphaMask->GetBuffer().data();
-    const int dest_mask_pitch = pTransBitmap->m_pAlphaMask->GetPitch();
-    const int dest_mask_step = bYFlip ? -dest_mask_pitch : dest_mask_pitch;
-    const size_t dest_mask_last_row_offset =
-        Fx2DSizeOrDie(dest_mask_pitch, result_height - 1);
-    for (int row = row_start; row < row_end; ++row) {
-      int dest_col = (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
-                     dest_clip.left;
-      uint8_t* desk_mask_scan = desk_mask_buf + dest_col;
-      if (bYFlip)
-        desk_mask_scan += dest_mask_last_row_offset;
-      const uint8_t* src_scan =
-          m_pAlphaMask->GetScanline(row).subspan(col_start).data();
-      for (int col = col_start; col < col_end; ++col) {
-        *desk_mask_scan = *src_scan++;
-        desk_mask_scan += dest_mask_step;
       }
     }
   }

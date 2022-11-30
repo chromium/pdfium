@@ -75,17 +75,15 @@ class CFX_DIBBase : public Retainable {
   RetainPtr<CFX_DIBitmap> SwapXY(bool bXFlip, bool bYFlip) const;
   RetainPtr<CFX_DIBitmap> FlipImage(bool bXFlip, bool bYFlip) const;
 
-  bool HasAlphaMask() const { return !!m_pAlphaMask; }
+  // TODO(thestig): Remove these dummy methods.
+  bool HasAlphaMask() const { return false; }
   uint32_t GetAlphaMaskPitch() const;
   pdfium::span<const uint8_t> GetAlphaMaskScanline(int line) const;
   pdfium::span<uint8_t> GetWritableAlphaMaskScanline(int line);
   pdfium::span<uint8_t> GetAlphaMaskBuffer();
   RetainPtr<CFX_DIBitmap> GetAlphaMask();
-  RetainPtr<CFX_DIBitmap> CloneAlphaMask() const;
 
-  // Copies into internally-owned mask.
-  bool SetAlphaMask(const RetainPtr<CFX_DIBBase>& pAlphaMask,
-                    const FX_RECT* pClip);
+  RetainPtr<CFX_DIBitmap> CloneAlphaMask() const;
 
   bool GetOverlapRect(int& dest_left,
                       int& dest_top,
@@ -116,14 +114,12 @@ class CFX_DIBBase : public Retainable {
 
   RetainPtr<CFX_DIBitmap> ClipToInternal(const FX_RECT* pClip) const;
   void BuildPalette();
-  bool BuildAlphaMask();
   int FindPalette(uint32_t color) const;
 
   FXDIB_Format m_Format = FXDIB_Format::kInvalid;
   int m_Width = 0;
   int m_Height = 0;
   uint32_t m_Pitch = 0;
-  RetainPtr<CFX_DIBitmap> m_pAlphaMask;
   DataVector<uint32_t> m_palette;
 };
 
