@@ -69,12 +69,10 @@ bool CFX_BitmapComposer::SetInfo(int width,
   return true;
 }
 
-void CFX_BitmapComposer::DoCompose(
-    pdfium::span<uint8_t> dest_scan,
-    pdfium::span<const uint8_t> src_scan,
-    int dest_width,
-    pdfium::span<const uint8_t> clip_scan,
-    pdfium::span<const uint8_t> src_extra_alpha) {
+void CFX_BitmapComposer::DoCompose(pdfium::span<uint8_t> dest_scan,
+                                   pdfium::span<const uint8_t> src_scan,
+                                   int dest_width,
+                                   pdfium::span<const uint8_t> clip_scan) {
   if (m_BitmapAlpha < 255) {
     if (!clip_scan.empty()) {
       for (int i = 0; i < dest_width; ++i)
@@ -90,19 +88,17 @@ void CFX_BitmapComposer::DoCompose(
                                        clip_scan);
   } else if (GetBppFromFormat(m_SrcFormat) == 8) {
     m_Compositor.CompositePalBitmapLine(dest_scan, src_scan, 0, dest_width,
-                                        clip_scan, src_extra_alpha);
+                                        clip_scan);
   } else {
     m_Compositor.CompositeRgbBitmapLine(dest_scan, src_scan, dest_width,
-                                        clip_scan, src_extra_alpha);
+                                        clip_scan);
   }
 }
 
-void CFX_BitmapComposer::ComposeScanline(
-    int line,
-    pdfium::span<const uint8_t> scanline,
-    pdfium::span<const uint8_t> scan_extra_alpha) {
+void CFX_BitmapComposer::ComposeScanline(int line,
+                                         pdfium::span<const uint8_t> scanline) {
   if (m_bVertical) {
-    ComposeScanlineV(line, scanline, scan_extra_alpha);
+    ComposeScanlineV(line, scanline);
     return;
   }
   pdfium::span<const uint8_t> clip_scan;
@@ -123,13 +119,12 @@ void CFX_BitmapComposer::ComposeScanline(
 
     dest_scan = dest_scan.subspan(offset.ValueOrDie());
   }
-  DoCompose(dest_scan, scanline, m_DestWidth, clip_scan, scan_extra_alpha);
+  DoCompose(dest_scan, scanline, m_DestWidth, clip_scan);
 }
 
 void CFX_BitmapComposer::ComposeScanlineV(
     int line,
-    pdfium::span<const uint8_t> scanline,
-    pdfium::span<const uint8_t> scan_extra_alpha) {
+    pdfium::span<const uint8_t> scanline) {
   int Bpp = m_pBitmap->GetBPP() / 8;
   int dest_pitch = m_pBitmap->GetPitch();
   int dest_x = m_DestLeft + (m_bFlipX ? (m_DestWidth - line - 1) : line);
@@ -170,7 +165,7 @@ void CFX_BitmapComposer::ComposeScanlineV(
       src_clip += clip_pitch;
     }
   }
-  DoCompose(m_pScanlineV, scanline, m_DestHeight, clip_scan, scan_extra_alpha);
+  DoCompose(m_pScanlineV, scanline, m_DestHeight, clip_scan);
   src_scan = m_pScanlineV.data();
   dest_scan = dest_buf;
   for (int i = 0; i < m_DestHeight; ++i) {

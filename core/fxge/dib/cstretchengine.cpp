@@ -284,10 +284,6 @@ bool CStretchEngine::StartStretchHorz() {
   if (m_InterBuf.empty())
     return false;
 
-  if (m_pSource && m_bHasAlpha && m_pSource->HasAlphaMask()) {
-    m_ExtraAlphaBuf.resize(m_SrcClip.Height(), m_ExtraMaskPitch);
-    m_DestMaskScanline.resize(m_ExtraMaskPitch);
-  }
   if (!m_WeightTable.CalculateWeights(
           m_DestWidth, m_DestClip.left, m_DestClip.right, m_SrcWidth,
           m_SrcClip.left, m_SrcClip.right, m_ResampleOptions)) {
@@ -319,13 +315,9 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
     pdfium::span<uint8_t> dest_span = m_InterBuf.writable_span().subspan(
         (m_CurRow - m_SrcClip.top) * m_InterPitch, m_InterPitch);
     size_t dest_span_index = 0;
+    // TODO(thestig): Audit suspicious variable usage.
     const uint8_t* src_scan_mask = nullptr;
     uint8_t* dest_scan_mask = nullptr;
-    if (!m_ExtraAlphaBuf.empty()) {
-      src_scan_mask = m_pSource->GetAlphaMaskScanline(m_CurRow).data();
-      dest_scan_mask = m_ExtraAlphaBuf.data() +
-                       (m_CurRow - m_SrcClip.top) * m_ExtraMaskPitch;
-    }
     // TODO(npm): reduce duplicated code here
     switch (m_TransMethod) {
       case TransformMethod::k1BppTo8Bpp:
@@ -489,7 +481,8 @@ void CStretchEngine::StretchVert() {
   const int DestBpp = m_DestBpp / 8;
   for (int row = m_DestClip.top; row < m_DestClip.bottom; ++row) {
     unsigned char* dest_scan = m_DestScanline.data();
-    unsigned char* dest_scan_mask = m_DestMaskScanline.data();
+    // TODO(thestig): Audit suspicious variable usage.
+    unsigned char* dest_scan_mask = nullptr;
     PixelWeight* pWeights = table.GetPixelWeight(row);
     switch (m_TransMethod) {
       case TransformMethod::k1BppTo8Bpp:
@@ -513,8 +506,9 @@ void CStretchEngine::StretchVert() {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           pdfium::span<const uint8_t> src_span =
               m_InterBuf.span().subspan((col - m_DestClip.left) * DestBpp);
+          // TODO(thestig): Audit suspicious variable usage.
           unsigned char* src_scan_mask =
-              m_ExtraAlphaBuf.data() + (col - m_DestClip.left);
+              reinterpret_cast<unsigned char*>(col - m_DestClip.left);
           uint32_t dest_a = 0;
           uint32_t dest_k = 0;
           for (int j = pWeights->m_SrcStart; j <= pWeights->m_SrcEnd; ++j) {
@@ -558,9 +552,12 @@ void CStretchEngine::StretchVert() {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           pdfium::span<const uint8_t> src_span =
               m_InterBuf.span().subspan((col - m_DestClip.left) * DestBpp);
+          // TODO(thestig): Audit suspicious variable usage.
           unsigned char* src_scan_mask = nullptr;
-          if (m_DestFormat != FXDIB_Format::kArgb)
-            src_scan_mask = m_ExtraAlphaBuf.data() + (col - m_DestClip.left);
+          if (m_DestFormat != FXDIB_Format::kArgb) {
+            src_scan_mask =
+                reinterpret_cast<unsigned char*>(col - m_DestClip.left);
+          }
           uint32_t dest_a = 0;
           uint32_t dest_r = 0;
           uint32_t dest_g = 0;
@@ -601,7 +598,6 @@ void CStretchEngine::StretchVert() {
         break;
       }
     }
-    m_pDestBitmap->ComposeScanline(row - m_DestClip.top, m_DestScanline,
-                                   m_DestMaskScanline);
+    m_pDestBitmap->ComposeScanline(row - m_DestClip.top, m_DestScanline);
   }
 }

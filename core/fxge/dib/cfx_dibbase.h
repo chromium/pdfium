@@ -75,11 +75,6 @@ class CFX_DIBBase : public Retainable {
   RetainPtr<CFX_DIBitmap> SwapXY(bool bXFlip, bool bYFlip) const;
   RetainPtr<CFX_DIBitmap> FlipImage(bool bXFlip, bool bYFlip) const;
 
-  // TODO(thestig): Remove these dummy methods.
-  bool HasAlphaMask() const { return false; }
-  pdfium::span<const uint8_t> GetAlphaMaskScanline(int line) const;
-  RetainPtr<CFX_DIBitmap> GetAlphaMask();
-
   RetainPtr<CFX_DIBitmap> CloneAlphaMask() const;
 
   bool GetOverlapRect(int& dest_left,

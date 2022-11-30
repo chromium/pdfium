@@ -25,10 +25,8 @@ void CFX_BitmapStorer::Replace(RetainPtr<CFX_DIBitmap>&& pBitmap) {
   m_pBitmap = std::move(pBitmap);
 }
 
-void CFX_BitmapStorer::ComposeScanline(
-    int line,
-    pdfium::span<const uint8_t> scanline,
-    pdfium::span<const uint8_t> scan_extra_alpha) {
+void CFX_BitmapStorer::ComposeScanline(int line,
+                                       pdfium::span<const uint8_t> scanline) {
   pdfium::span<uint8_t> dest_buf = m_pBitmap->GetWritableScanline(line);
   if (!dest_buf.empty())
     fxcrt::spancpy(dest_buf, scanline);

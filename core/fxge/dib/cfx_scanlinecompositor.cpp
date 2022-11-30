@@ -2975,8 +2975,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
     pdfium::span<uint8_t> dest_scan,
     pdfium::span<const uint8_t> src_scan,
     int width,
-    pdfium::span<const uint8_t> clip_scan,
-    pdfium::span<const uint8_t> src_extra_alpha) {
+    pdfium::span<const uint8_t> clip_scan) {
   int src_Bpp = GetCompsFromFormat(m_SrcFormat);
   int dest_Bpp = GetCompsFromFormat(m_DestFormat);
   if (m_bRgbByteOrder) {
@@ -3039,8 +3038,8 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
       if (m_SrcFormat == FXDIB_Format::kArgb) {
         CompositeRow_AlphaToMask(dest_scan, src_scan, width, clip_scan, 4);
       } else {
-        CompositeRow_AlphaToMask(dest_scan, src_extra_alpha, width, clip_scan,
-                                 1);
+        // TODO(thestig): Check if empty span argument is always empty.
+        CompositeRow_AlphaToMask(dest_scan, {}, width, clip_scan, 1);
       }
     } else {
       CompositeRow_Rgb2Mask(dest_scan, width, clip_scan);
@@ -3048,12 +3047,13 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
   } else if (GetBppFromFormat(m_DestFormat) == 8) {
     if (GetIsAlphaFromFormat(m_SrcFormat)) {
       if (GetIsAlphaFromFormat(m_DestFormat)) {
-        // TODO(thestig): Check if empty span argument is always empty.
+        // TODO(thestig): Check if empty span arguments are always empty.
         CompositeRow_Argb2Graya(dest_scan, src_scan, width, m_BlendType,
-                                clip_scan, src_extra_alpha, {});
+                                clip_scan, {}, {});
       } else {
+        // TODO(thestig): Check if empty span argument is always empty.
         CompositeRow_Argb2Gray(dest_scan, src_scan, width, m_BlendType,
-                               clip_scan, src_extra_alpha);
+                               clip_scan, {});
       }
     } else {
       if (GetIsAlphaFromFormat(m_DestFormat)) {
@@ -3071,9 +3071,9 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
       case 4:
       case 8:
       case 4 + 8: {
-        // TODO(thestig): Check if empty span argument is always empty.
+        // TODO(thestig): Check if empty span arguments are always empty.
         CompositeRow_Argb2Argb(dest_scan, src_scan, width, m_BlendType,
-                               clip_scan, {}, src_extra_alpha);
+                               clip_scan, {}, {});
       } break;
       case 1:
         // TODO(thestig): Check if empty span argument is always empty.
@@ -3097,13 +3097,15 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
         break;
       case 2:
       case 2 + 8:
+        // TODO(thestig): Check if empty span argument is always empty.
         CompositeRow_Argb2Rgb_Blend(dest_scan, src_scan, width, m_BlendType,
-                                    dest_Bpp, clip_scan, src_extra_alpha);
+                                    dest_Bpp, clip_scan, {});
         break;
       case 2 + 4:
       case 2 + 4 + 8:
+        // TODO(thestig): Check if empty span argument is always empty.
         CompositeRow_Argb2Rgb_NoBlend(dest_scan, src_scan, width, dest_Bpp,
-                                      clip_scan, src_extra_alpha);
+                                      clip_scan, {});
         break;
       case 1 + 2:
         CompositeRow_Rgb2Rgb_Blend_NoClip(dest_scan, src_scan, width,
@@ -3130,8 +3132,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
     pdfium::span<const uint8_t> src_scan,
     int src_left,
     int width,
-    pdfium::span<const uint8_t> clip_scan,
-    pdfium::span<const uint8_t> src_extra_alpha) {
+    pdfium::span<const uint8_t> clip_scan) {
   if (m_bRgbByteOrder) {
     if (m_SrcFormat == FXDIB_Format::k1bppRgb) {
       if (m_DestFormat == FXDIB_Format::k8bppRgb) {
@@ -3180,22 +3181,24 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
       }
     } else {
       if (GetIsAlphaFromFormat(m_DestFormat)) {
-        // TODO(thestig): Check if empty span argument is always empty.
+        // TODO(thestig): Check if empty span arguments are always empty.
         CompositeRow_8bppPal2Graya(dest_scan, src_scan,
                                    m_SrcPalette.Get8BitPalette(), width,
-                                   m_BlendType, clip_scan, {}, src_extra_alpha);
+                                   m_BlendType, clip_scan, {}, {});
       } else {
+        // TODO(thestig): Check if empty span argument is always empty.
         CompositeRow_8bppPal2Gray(dest_scan, src_scan,
                                   m_SrcPalette.Get8BitPalette(), width,
-                                  m_BlendType, clip_scan, src_extra_alpha);
+                                  m_BlendType, clip_scan, {});
       }
     }
   } else {
     switch (m_iTransparency) {
       case 1 + 2:
+        // TODO(thestig): Check if empty span argument is always empty.
         CompositeRow_8bppRgb2Argb_NoBlend(dest_scan, src_scan, width,
                                           m_SrcPalette.Get32BitPalette(),
-                                          clip_scan, src_extra_alpha);
+                                          clip_scan, {});
         break;
       case 1 + 2 + 8:
         CompositeRow_1bppRgb2Argb_NoBlend(dest_scan, src_scan, src_left, width,
@@ -3203,9 +3206,10 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
                                           clip_scan);
         break;
       case 0:
+        // TODO(thestig): Check if empty span argument is always empty.
         CompositeRow_8bppRgb2Rgb_NoBlend(
             dest_scan, src_scan, m_SrcPalette.Get32BitPalette(), width,
-            GetCompsFromFormat(m_DestFormat), clip_scan, src_extra_alpha);
+            GetCompsFromFormat(m_DestFormat), clip_scan, {});
         break;
       case 0 + 8:
         CompositeRow_1bppRgb2Rgb_NoBlend(
@@ -3213,9 +3217,10 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
             width, GetCompsFromFormat(m_DestFormat), clip_scan);
         break;
       case 0 + 2:
+        // TODO(thestig): Check if empty span argument is always empty.
         CompositeRow_8bppRgb2Rgb_NoBlend(
             dest_scan, src_scan, m_SrcPalette.Get32BitPalette(), width,
-            GetCompsFromFormat(m_DestFormat), clip_scan, src_extra_alpha);
+            GetCompsFromFormat(m_DestFormat), clip_scan, {});
         break;
       case 0 + 2 + 8:
         // TODO(thestig): Check if empty span argument is always empty.

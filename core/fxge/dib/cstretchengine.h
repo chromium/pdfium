@@ -152,9 +152,7 @@ class CStretchEngine {
   const int m_DestHeight;
   const FX_RECT m_DestClip;
   DataVector<uint8_t> m_DestScanline;
-  DataVector<uint8_t> m_DestMaskScanline;
   FixedTryAllocZeroedDataVector<uint8_t> m_InterBuf;
-  DataVector<uint8_t> m_ExtraAlphaBuf;
   FX_RECT m_SrcClip;
   int m_InterPitch;
   int m_ExtraMaskPitch;

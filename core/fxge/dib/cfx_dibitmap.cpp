@@ -740,27 +740,21 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
   if (!bRgb && !pSrcBitmap->HasPalette())
     return false;
 
-  RetainPtr<CFX_DIBitmap> pSrcAlphaMask = pSrcBitmap->GetAlphaMask();
   for (int row = 0; row < height; row++) {
     pdfium::span<uint8_t> dest_scan =
         GetWritableScanline(dest_top + row).subspan(dest_left * dest_Bpp);
     pdfium::span<const uint8_t> src_scan =
         pSrcBitmap->GetScanline(src_top + row).subspan(src_left * src_Bpp);
-    pdfium::span<const uint8_t> src_scan_extra_alpha =
-        pSrcAlphaMask
-            ? pSrcAlphaMask->GetScanline(src_top + row).subspan(src_left)
-            : pdfium::span<const uint8_t>();
     pdfium::span<const uint8_t> clip_scan;
     if (pClipMask) {
       clip_scan = pClipMask->GetWritableScanline(dest_top + row - clip_box.top)
                       .subspan(dest_left - clip_box.left);
     }
     if (bRgb) {
-      compositor.CompositeRgbBitmapLine(dest_scan, src_scan, width, clip_scan,
-                                        src_scan_extra_alpha);
+      compositor.CompositeRgbBitmapLine(dest_scan, src_scan, width, clip_scan);
     } else {
       compositor.CompositePalBitmapLine(dest_scan, src_scan, src_left, width,
-                                        clip_scan, src_scan_extra_alpha);
+                                        clip_scan);
     }
   }
   return true;
