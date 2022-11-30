@@ -36,7 +36,7 @@
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#ifdef _SKIA_SUPPORT_
 #include "third_party/skia/include/core/SkTypes.h"  // nogncheck
 #endif
 
@@ -487,7 +487,7 @@ CFX_RenderDevice::CFX_RenderDevice() = default;
 
 CFX_RenderDevice::~CFX_RenderDevice() {
   RestoreState(false);
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#ifdef _SKIA_SUPPORT_
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
     Flush(true);
 #endif
@@ -501,7 +501,7 @@ CFX_Matrix CFX_RenderDevice::GetFlipMatrix(float width,
   return CFX_Matrix(width, 0, 0, -height, left, top + height);
 }
 
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#ifdef _SKIA_SUPPORT_
 void CFX_RenderDevice::Flush(bool release) {
   if (release)
     m_pDeviceDriver.reset();
@@ -802,7 +802,7 @@ bool CFX_RenderDevice::DrawFillStrokePath(
                                                  fill_options, blend_type)) {
     return false;
   }
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#ifdef _SKIA_SUPPORT_
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
     bitmap_device.GetDeviceDriver()->Flush();
 #endif

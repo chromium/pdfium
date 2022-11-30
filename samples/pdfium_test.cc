@@ -19,10 +19,6 @@
 #define _SKIA_SUPPORT_
 #endif
 
-#if defined(PDF_ENABLE_SKIA_PATHS) && !defined(_SKIA_SUPPORT_PATHS_)
-#define _SKIA_SUPPORT_PATHS_
-#endif
-
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_annot.h"
 #include "public/fpdf_attachment.h"
@@ -1323,35 +1319,26 @@ void ProcessPdf(const std::string& name,
 
 void ShowConfig() {
   std::string config;
-  std::string maybe_comma;
+  [[maybe_unused]] auto append_config = [&config](const char* name) {
+    if (!config.empty())
+      config += ',';
+    config += name;
+  };
+
 #ifdef PDF_ENABLE_V8
-  config.append(maybe_comma);
-  config.append("V8");
-  maybe_comma = ",";
-#endif  // PDF_ENABLE_V8
+  append_config("V8");
+#endif
 #ifdef V8_USE_EXTERNAL_STARTUP_DATA
-  config.append(maybe_comma);
-  config.append("V8_EXTERNAL");
-  maybe_comma = ",";
-#endif  // V8_USE_EXTERNAL_STARTUP_DATA
+  append_config("V8_EXTERNAL");
+#endif
 #ifdef PDF_ENABLE_XFA
-  config.append(maybe_comma);
-  config.append("XFA");
-  maybe_comma = ",";
-#endif  // PDF_ENABLE_XFA
+  append_config("XFA");
+#endif
 #ifdef PDF_ENABLE_ASAN
-  config.append(maybe_comma);
-  config.append("ASAN");
-  maybe_comma = ",";
-#endif  // PDF_ENABLE_ASAN
-#if defined(PDF_ENABLE_SKIA)
-  config.append(maybe_comma);
-  config.append("SKIA");
-  maybe_comma = ",";
-#elif defined(PDF_ENABLE_SKIA_PATHS)
-  config.append(maybe_comma);
-  config.append("SKIAPATHS");
-  maybe_comma = ",";
+  append_config("ASAN");
+#endif
+#ifdef PDF_ENABLE_SKIA
+  append_config("SKIA");
 #endif
   printf("%s\n", config.c_str());
 }

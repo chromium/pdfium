@@ -161,7 +161,7 @@ bool Type3CharMissingStrokeColor(const CPDF_Type3Char* pChar,
   return pChar && (!pChar->colored() || MissingStrokeColor(pColorState));
 }
 
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#ifdef _SKIA_SUPPORT_
 class ScopedSkiaDeviceFlush {
  public:
   FX_STACK_ALLOCATED();
@@ -715,12 +715,12 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   bitmap_render.SetFormResource(std::move(pFormResource));
   bitmap_render.Initialize(nullptr, nullptr);
   bitmap_render.ProcessObjectNoClip(pPageObj, new_matrix);
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#ifdef _SKIA_SUPPORT_
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
     bitmap_device.Flush(true);
     bitmap->UnPreMultiply();
   }
-#endif  // defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#endif  // _SKIA_SUPPORT_
   m_bStopped = bitmap_render.m_bStopped;
   if (pSMaskDict) {
     CFX_Matrix smask_matrix =
@@ -1194,7 +1194,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pattern,
     return;
 
   CFX_RenderDevice::StateRestorer restorer(m_pDevice);
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATHS_)
+#ifdef _SKIA_SUPPORT_
   ScopedSkiaDeviceFlush scoped_skia_device_flush(m_pDevice);
 #endif
   if (!ClipPattern(pPageObj, mtObj2Device, stroke))
