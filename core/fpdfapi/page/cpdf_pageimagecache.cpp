@@ -183,7 +183,7 @@ CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
   }
 
   m_pCurBitmap = m_pImage->CreateNewDIB();
-  CPDF_DIB::LoadState ret = m_pCurBitmap.As<CPDF_DIB>()->StartLoadDIBBase(
+  CPDF_DIB::LoadState ret = m_pCurBitmap.AsRaw<CPDF_DIB>()->StartLoadDIBBase(
       true, pFormResources, pPageResources, bStdCS, eFamily, bLoadMask,
       max_size_required);
   if (ret == CPDF_DIB::LoadState::kContinue)
@@ -200,7 +200,7 @@ bool CPDF_PageImageCache::Entry::Continue(
     PauseIndicatorIface* pPause,
     CPDF_PageImageCache* pPageImageCache) {
   CPDF_DIB::LoadState ret =
-      m_pCurBitmap.As<CPDF_DIB>()->ContinueLoadDIBBase(pPause);
+      m_pCurBitmap.AsRaw<CPDF_DIB>()->ContinueLoadDIBBase(pPause);
   if (ret == CPDF_DIB::LoadState::kContinue)
     return true;
 
@@ -213,8 +213,8 @@ bool CPDF_PageImageCache::Entry::Continue(
 
 void CPDF_PageImageCache::Entry::ContinueGetCachedBitmap(
     CPDF_PageImageCache* pPageImageCache) {
-  m_MatteColor = m_pCurBitmap.As<CPDF_DIB>()->GetMatteColor();
-  m_pCurMask = m_pCurBitmap.As<CPDF_DIB>()->DetachMask();
+  m_MatteColor = m_pCurBitmap.AsRaw<CPDF_DIB>()->GetMatteColor();
+  m_pCurMask = m_pCurBitmap.AsRaw<CPDF_DIB>()->DetachMask();
   m_dwTimeCount = pPageImageCache->GetTimeCount();
   if (m_pCurBitmap->GetPitch() * m_pCurBitmap->GetHeight() < kHugeImageSize) {
     m_pCachedBitmap = m_pCurBitmap->Realize();

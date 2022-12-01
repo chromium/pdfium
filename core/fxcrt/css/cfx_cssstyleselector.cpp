@@ -178,16 +178,16 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
       case CFX_CSSProperty::Display:
         if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
           pComputedStyle->m_NonInheritedData.m_eDisplay =
-              ToDisplay(pValue.As<CFX_CSSEnumValue>()->Value());
+              ToDisplay(pValue.AsRaw<CFX_CSSEnumValue>()->Value());
         }
         break;
       case CFX_CSSProperty::FontSize: {
         float& fFontSize = pComputedStyle->m_InheritedData.m_fFontSize;
         if (eType == CFX_CSSValue::PrimitiveType::kNumber) {
-          fFontSize = pValue.As<CFX_CSSNumberValue>()->Apply(fFontSize);
+          fFontSize = pValue.AsRaw<CFX_CSSNumberValue>()->Apply(fFontSize);
         } else if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
           fFontSize =
-              ToFontSize(pValue.As<CFX_CSSEnumValue>()->Value(), fFontSize);
+              ToFontSize(pValue.AsRaw<CFX_CSSEnumValue>()->Value(), fFontSize);
         }
       } break;
       case CFX_CSSProperty::LineHeight:
@@ -205,7 +205,7 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
       case CFX_CSSProperty::TextAlign:
         if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
           pComputedStyle->m_InheritedData.m_eTextAlign =
-              ToTextAlign(pValue.As<CFX_CSSEnumValue>()->Value());
+              ToTextAlign(pValue.AsRaw<CFX_CSSEnumValue>()->Value());
         }
         break;
       case CFX_CSSProperty::TextIndent:
@@ -216,11 +216,11 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
       case CFX_CSSProperty::FontWeight:
         if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
           pComputedStyle->m_InheritedData.m_wFontWeight =
-              ToFontWeight(pValue.As<CFX_CSSEnumValue>()->Value());
+              ToFontWeight(pValue.AsRaw<CFX_CSSEnumValue>()->Value());
         } else if (eType == CFX_CSSValue::PrimitiveType::kNumber) {
-          int32_t iValue =
-              static_cast<int32_t>(pValue.As<CFX_CSSNumberValue>()->value()) /
-              100;
+          int32_t iValue = static_cast<int32_t>(
+                               pValue.AsRaw<CFX_CSSNumberValue>()->value()) /
+                           100;
           if (iValue >= 1 && iValue <= 9) {
             pComputedStyle->m_InheritedData.m_wFontWeight = iValue * 100;
           }
@@ -229,13 +229,13 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
       case CFX_CSSProperty::FontStyle:
         if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
           pComputedStyle->m_InheritedData.m_eFontStyle =
-              ToFontStyle(pValue.As<CFX_CSSEnumValue>()->Value());
+              ToFontStyle(pValue.AsRaw<CFX_CSSEnumValue>()->Value());
         }
         break;
       case CFX_CSSProperty::Color:
         if (eType == CFX_CSSValue::PrimitiveType::kRGB) {
           pComputedStyle->m_InheritedData.m_dwFontColor =
-              pValue.As<CFX_CSSColorValue>()->Value();
+              pValue.AsRaw<CFX_CSSColorValue>()->Value();
         }
         break;
       case CFX_CSSProperty::MarginLeft:
@@ -325,19 +325,19 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
       case CFX_CSSProperty::VerticalAlign:
         if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
           pComputedStyle->m_NonInheritedData.m_eVerticalAlignType =
-              ToVerticalAlign(pValue.As<CFX_CSSEnumValue>()->Value());
+              ToVerticalAlign(pValue.AsRaw<CFX_CSSEnumValue>()->Value());
         } else if (eType == CFX_CSSValue::PrimitiveType::kNumber) {
           pComputedStyle->m_NonInheritedData.m_eVerticalAlignType =
               CFX_CSSVerticalAlign::Number;
           pComputedStyle->m_NonInheritedData.m_fVerticalAlign =
-              pValue.As<CFX_CSSNumberValue>()->Apply(
+              pValue.AsRaw<CFX_CSSNumberValue>()->Apply(
                   pComputedStyle->m_InheritedData.m_fFontSize);
         }
         break;
       case CFX_CSSProperty::FontVariant:
         if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
           pComputedStyle->m_InheritedData.m_eFontVariant =
-              ToFontVariant(pValue.As<CFX_CSSEnumValue>()->Value());
+              ToFontVariant(pValue.AsRaw<CFX_CSSEnumValue>()->Value());
         }
         break;
       case CFX_CSSProperty::LetterSpacing:
@@ -345,7 +345,7 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
           pComputedStyle->m_InheritedData.m_LetterSpacing.Set(
               CFX_CSSLengthUnit::Normal);
         } else if (eType == CFX_CSSValue::PrimitiveType::kNumber) {
-          if (pValue.As<CFX_CSSNumberValue>()->unit() ==
+          if (pValue.AsRaw<CFX_CSSNumberValue>()->unit() ==
               CFX_CSSNumberValue::Unit::kPercent) {
             break;
           }
@@ -360,7 +360,7 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
           pComputedStyle->m_InheritedData.m_WordSpacing.Set(
               CFX_CSSLengthUnit::Normal);
         } else if (eType == CFX_CSSValue::PrimitiveType::kNumber) {
-          if (pValue.As<CFX_CSSNumberValue>()->unit() ==
+          if (pValue.AsRaw<CFX_CSSNumberValue>()->unit() ==
               CFX_CSSNumberValue::Unit::kPercent) {
             break;
           }
@@ -479,7 +479,7 @@ bool CFX_CSSStyleSelector::SetLengthWithPercent(
     RetainPtr<CFX_CSSNumberValue> v = pValue.As<CFX_CSSNumberValue>();
     if (v->unit() == CFX_CSSNumberValue::Unit::kPercent) {
       width.Set(CFX_CSSLengthUnit::Percent,
-                pValue.As<CFX_CSSNumberValue>()->value() / 100.0f);
+                pValue.AsRaw<CFX_CSSNumberValue>()->value() / 100.0f);
       return width.NonZero();
     }
 
@@ -487,7 +487,7 @@ bool CFX_CSSStyleSelector::SetLengthWithPercent(
     width.Set(CFX_CSSLengthUnit::Point, fValue);
     return width.NonZero();
   } else if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
-    switch (pValue.As<CFX_CSSEnumValue>()->Value()) {
+    switch (pValue.AsRaw<CFX_CSSEnumValue>()->Value()) {
       case CFX_CSSPropertyValue::Auto:
         width.Set(CFX_CSSLengthUnit::Auto);
         return true;
@@ -567,7 +567,7 @@ Mask<CFX_CSSTEXTDECORATION> CFX_CSSStyleSelector::ToTextDecoration(
     if (val->GetType() != CFX_CSSValue::PrimitiveType::kEnum)
       continue;
 
-    switch (val.As<CFX_CSSEnumValue>()->Value()) {
+    switch (val.AsRaw<CFX_CSSEnumValue>()->Value()) {
       case CFX_CSSPropertyValue::Underline:
         dwDecoration |= CFX_CSSTEXTDECORATION::kUnderline;
         break;

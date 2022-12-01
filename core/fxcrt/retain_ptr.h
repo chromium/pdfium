@@ -104,8 +104,13 @@ class TRIVIAL_ABI RetainPtr {
   ~RetainPtr() = default;
 
   template <class U>
+  U* AsRaw() const {
+    return static_cast<U*>(Get());
+  }
+
+  template <class U>
   RetainPtr<U> As() const {
-    return RetainPtr<U>(static_cast<U*>(Get()));
+    return RetainPtr<U>(AsRaw<U>());
   }
 
   void Reset(T* obj = nullptr) {
