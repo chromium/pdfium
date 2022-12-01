@@ -5,6 +5,7 @@
 #include "core/fpdfapi/parser/cpdf_object_stream.h"
 
 #include <iterator>
+#include <utility>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
@@ -39,7 +40,7 @@ TEST(ObjectStreamTest, StreamDictNormal) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
   ASSERT_TRUE(obj_stream);
 
   EXPECT_THAT(obj_stream->object_info(),
@@ -84,7 +85,7 @@ TEST(ObjectStreamTest, StreamNoDict) {
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()),
       /*pDict=*/nullptr);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(stream.Get()));
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
 }
 
 TEST(ObjectStreamTest, StreamDictNoType) {
@@ -95,7 +96,7 @@ TEST(ObjectStreamTest, StreamDictNoType) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(stream.Get()));
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
 }
 
 TEST(ObjectStreamTest, StreamDictWrongType) {
@@ -107,7 +108,7 @@ TEST(ObjectStreamTest, StreamDictWrongType) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(stream.Get()));
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
 }
 
 TEST(ObjectStreamTest, StreamDictWrongTypeValue) {
@@ -119,7 +120,7 @@ TEST(ObjectStreamTest, StreamDictWrongTypeValue) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(stream.Get()));
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
 }
 
 TEST(ObjectStreamTest, StreamDictNoCount) {
@@ -130,7 +131,7 @@ TEST(ObjectStreamTest, StreamDictNoCount) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(stream.Get()));
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
 }
 
 TEST(ObjectStreamTest, StreamDictFloatCount) {
@@ -142,7 +143,7 @@ TEST(ObjectStreamTest, StreamDictFloatCount) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(stream.Get()));
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
 }
 
 TEST(ObjectStreamTest, StreamDictNegativeCount) {
@@ -154,7 +155,7 @@ TEST(ObjectStreamTest, StreamDictNegativeCount) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(stream.Get()));
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
 }
 
 TEST(ObjectStreamTest, StreamDictCountTooBig) {
@@ -166,7 +167,7 @@ TEST(ObjectStreamTest, StreamDictCountTooBig) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(stream.Get()));
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
 }
 
 TEST(ObjectStreamTest, StreamDictNoOffset) {
@@ -177,7 +178,7 @@ TEST(ObjectStreamTest, StreamDictNoOffset) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(stream.Get()));
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
 }
 
 TEST(ObjectStreamTest, StreamDictFloatOffset) {
@@ -189,7 +190,7 @@ TEST(ObjectStreamTest, StreamDictFloatOffset) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(stream.Get()));
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
 }
 
 TEST(ObjectStreamTest, StreamDictNegativeOffset) {
@@ -201,7 +202,7 @@ TEST(ObjectStreamTest, StreamDictNegativeOffset) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  EXPECT_FALSE(CPDF_ObjectStream::Create(stream.Get()));
+  EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
 }
 
 TEST(ObjectStreamTest, StreamDictOffsetTooBig) {
@@ -214,7 +215,7 @@ TEST(ObjectStreamTest, StreamDictOffsetTooBig) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
   ASSERT_TRUE(obj_stream);
 
   EXPECT_THAT(obj_stream->object_info(),
@@ -237,7 +238,7 @@ TEST(ObjectStreamTest, StreamDictTooFewCount) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
   ASSERT_TRUE(obj_stream);
 
   EXPECT_THAT(obj_stream->object_info(),
@@ -269,7 +270,7 @@ TEST(ObjectStreamTest, StreamDictTooManyObject) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
   ASSERT_TRUE(obj_stream);
 
   // TODO(thestig): Can this avoid finding object 2?
@@ -297,7 +298,7 @@ TEST(ObjectStreamTest, StreamDictGarbageObjNum) {
   ByteStringView contents_view(kStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
   ASSERT_TRUE(obj_stream);
 
   EXPECT_THAT(obj_stream->object_info(),
@@ -315,7 +316,7 @@ TEST(ObjectStreamTest, StreamDictGarbageObjectOffset) {
   ByteStringView contents_view(kStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
   ASSERT_TRUE(obj_stream);
 
   // TODO(thestig): Should object 11 be rejected?
@@ -348,7 +349,7 @@ TEST(ObjectStreamTest, StreamDictNegativeObjectOffset) {
   ByteStringView contents_view(kStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
   ASSERT_TRUE(obj_stream);
 
   // TODO(thestig): Should object 11 be rejected?
@@ -371,7 +372,7 @@ TEST(ObjectStreamTest, StreamDictObjectOffsetTooBig) {
   ByteStringView contents_view(kStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
   ASSERT_TRUE(obj_stream);
 
   // TODO(thestig): Should object 11 be rejected?
@@ -394,7 +395,7 @@ TEST(ObjectStreamTest, StreamDictDuplicateObjNum) {
   ByteStringView contents_view(kStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
   ASSERT_TRUE(obj_stream);
 
   EXPECT_THAT(obj_stream->object_info(),
@@ -437,7 +438,7 @@ TEST(ObjectStreamTest, StreamDictUnorderedObjectNumbers) {
   ByteStringView contents_view(kStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
   ASSERT_TRUE(obj_stream);
 
   EXPECT_THAT(obj_stream->object_info(),
@@ -479,7 +480,7 @@ TEST(ObjectStreamTest, StreamDictUnorderedObjectOffsets) {
   ByteStringView contents_view(kStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()), dict);
-  auto obj_stream = CPDF_ObjectStream::Create(stream.Get());
+  auto obj_stream = CPDF_ObjectStream::Create(std::move(stream));
   ASSERT_TRUE(obj_stream);
 
   EXPECT_THAT(obj_stream->object_info(),

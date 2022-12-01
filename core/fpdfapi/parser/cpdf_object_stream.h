@@ -32,7 +32,8 @@ class CPDF_ObjectStream {
     uint32_t obj_offset;
   };
 
-  static std::unique_ptr<CPDF_ObjectStream> Create(const CPDF_Stream* stream);
+  static std::unique_ptr<CPDF_ObjectStream> Create(
+      RetainPtr<const CPDF_Stream> stream);
 
   ~CPDF_ObjectStream();
 
@@ -42,7 +43,7 @@ class CPDF_ObjectStream {
   const std::vector<ObjectInfo>& object_info() const { return object_info_; }
 
  private:
-  explicit CPDF_ObjectStream(const CPDF_Stream* stream);
+  explicit CPDF_ObjectStream(RetainPtr<const CPDF_Stream> stream);
 
   void Init(const CPDF_Stream* stream);
   RetainPtr<CPDF_Object> ParseObjectAtOffset(
