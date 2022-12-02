@@ -126,7 +126,7 @@ def get_properties_by_name(name):
     if name.find("component") != -1:
         properties.update({"component": True})
 
-    if name.endswith("skia"):
+    if name.find("skia") != -1:
         properties.update({"skia": True, "selected_tests_only": True})
 
     return properties
@@ -442,6 +442,7 @@ add_entries_for_builder(name = "linux_xfa_component", category = "xfa|linux", sh
 add_entries_for_builder(name = "linux_xfa_msan", category = "xfa|linux", short_name = "msan")
 add_entries_for_builder(name = "linux_xfa_rel", category = "xfa|linux", short_name = "rel")
 add_entries_for_builder(name = "linux_xfa_skia", category = "skia|linux", short_name = "xfa")
+add_entries_for_builder(name = "linux_xfa_skia_component", category = "skia|linux", short_name = "comp")
 add_entries_for_builder(name = "linux_xfa_ubsan", category = "xfa|linux", short_name = "ubsan")
 add_entries_for_builder(name = "mac", category = "main|mac")
 add_entries_for_builder(name = "mac_asan", skip_ci_builder = True)
@@ -453,6 +454,7 @@ add_entries_for_builder(name = "mac_xfa_asan", skip_ci_builder = True)
 add_entries_for_builder(name = "mac_xfa_component", category = "xfa|mac", short_name = "comp")
 add_entries_for_builder(name = "mac_xfa_rel", category = "xfa|mac", short_name = "rel")
 add_entries_for_builder(name = "mac_xfa_skia", category = "skia|mac", short_name = "xfa")
+add_entries_for_builder(name = "mac_xfa_skia_component", category = "skia|mac", short_name = "comp")
 add_entries_for_builder(name = "win", category = "main|win")
 add_entries_for_builder(name = "win_asan", category = "main|win", short_name = "asan")
 add_entries_for_builder(name = "win_no_v8", category = "no v8", short_name = "win")
@@ -465,6 +467,7 @@ add_entries_for_builder(name = "win_xfa_msvc", category = "xfa|win|msvc", short_
 add_entries_for_builder(name = "win_xfa_msvc_32", category = "xfa|win|msvc", short_name = "32")
 add_entries_for_builder(name = "win_xfa_rel", category = "xfa|win", short_name = "rel")
 add_entries_for_builder(name = "win_xfa_skia", category = "skia|win", short_name = "xfa")
+add_entries_for_builder(name = "win_xfa_skia_component", category = "skia|win", short_name = "comp")
 
 # Console Views
 luci.console_view(
