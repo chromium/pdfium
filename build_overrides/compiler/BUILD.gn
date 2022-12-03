@@ -1,0 +1,25 @@
+# Copyright 2022 The PDFium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# A simplified config to consistently use C++17 and override the config
+# in //build/config/compiler, which is using C++20 by default on many platforms.
+
+assert(!is_nacl)
+
+config("force_cxx17") {
+  cflags_cc = []
+
+  if (is_linux || is_chromeos || is_android || current_os == "aix") {
+    if (is_clang) {
+      standard_prefix = "c"
+    } else {
+      standard_prefix = "gnu"
+    }
+    cflags_cc += [ "-std=${standard_prefix}++17" ]
+  } else if (is_win) {
+    cflags_cc += [ "/std:c++17" ]
+  } else {
+    cflags_cc += [ "-std=c++17" ]
+  }
+}
