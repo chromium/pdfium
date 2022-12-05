@@ -17,6 +17,10 @@ pdf_enable_v8_override = true
 # Default: Without XFA support.
 pdf_enable_xfa_override = false
 
+# Build PDFium using C++20 if set to true. Otherwise builds with C++17.
+# Default: True for Windows component builds.
+pdf_use_cxx20_override = is_win && is_component_build
+
 # Build PDFium with PartitionAlloc support, directing `fxcrt` to use
 # it as its memory allocator in lieu of `malloc()`.
 # Default: Use PartitionAlloc when building with Clang.
