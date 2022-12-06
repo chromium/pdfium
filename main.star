@@ -19,10 +19,16 @@ _CONSOLE_HEADER = {
 }
 
 # Dicts for OS-specific dimensions.
-_LINUX_DIMENSIONS = {
+# TODO(crbug.com/pdfium/1952): Migrate all Linux builders to Ubuntu 20.04.
+_LINUX_BIONIC_DIMENSIONS = {
     "cores": "8",
     "cpu": "x86-64",
     "os": "Ubuntu-18.04",
+}
+_LINUX_FOCAL_DIMENSIONS = {
+    "cores": "8",
+    "cpu": "x86-64",
+    "os": "Ubuntu-20.04",
 }
 _MACOS_INTEL_DIMENSIONS = {
     "cpu": "x86-64",
@@ -161,7 +167,10 @@ def pdfium_internal_builder(name, bucket):
 
     # Set configs depending on the OS.
     if name.startswith("linux"):
-        dimensions.update(_LINUX_DIMENSIONS)
+        if name.endswith("msan"):
+            dimensions.update(_LINUX_FOCAL_DIMENSIONS)
+        else:
+            dimensions.update(_LINUX_BIONIC_DIMENSIONS)
     elif name.startswith("mac") and "_arm" in name:
         dimensions.update(_MACOS_ARM_DIMENSIONS)
         caches = [swarming.cache("osx_sdk", name = "osx_sdk")]
@@ -171,7 +180,7 @@ def pdfium_internal_builder(name, bucket):
     elif name.startswith("win"):
         dimensions.update(_WINDOWS_DIMENSIONS)
     elif name.startswith("android"):
-        dimensions.update(_LINUX_DIMENSIONS)
+        dimensions.update(_LINUX_BIONIC_DIMENSIONS)
     else:
         fail()
 
