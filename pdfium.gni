@@ -36,8 +36,10 @@ declare_args() {
   # If XFA, also support tiff codec. Ignored if not XFA.
   pdf_enable_xfa_tiff = true
 
-  # Build PDFium with C++20.
-  pdf_use_cxx20 = pdf_use_cxx20_override
+  # Build PDFium using C++20 if set to true. Otherwise builds with C++17.
+  # There is no "pdf_use_cxx20_override" variable because this is only used in
+  # standalone PDFium, and not when PDFium is embedded in our projects.
+  pdf_use_cxx20 = is_win && is_component_build
 
   # Build PDFium with PartitionAlloc as the memory allocator.
   pdf_use_partition_alloc = pdf_use_partition_alloc_override
