@@ -1,0 +1,100 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 200 200]
+  /Resources 5 0 R
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+100 0 0 20 50 50 cm
+/I1 Do
+Q
+q
+80 0 0 20 50 100 cm
+/I2 Do
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /ProcSet [/PDF /ImageB /ImageC /ImageI]
+  /XObject <<
+    /I1 6 0 R
+    /I2 8 0 R
+  >>
+>>
+endobj
+{{object 6 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 1
+  /ColorSpace [/Indexed /DeviceRGB 1 7 0 R]
+  /Filter [/ASCIIHexDecode /FlateDecode]
+  /Height 5
+  /Width 177
+  {{streamlen}}
+>>
+stream
+789cfbff1f1b6860c00eb02afedf80431887215c0094ac4349
+endstream
+endobj
+{{object 7 0}} <<
+  /Filter [/ASCIIHexDecode /FlateDecode]
+  {{streamlen}}
+>>
+stream
+789cbb70e5c6ffffffb90017e80584
+endstream
+endobj
+{{object 8 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace [/Indexed /DeviceRGB 39 9 0 R]
+  /Filter [/ASCIIHexDecode /FlateDecode]
+  /Height 15
+  /Width 58
+  {{streamlen}}
+>>
+stream
+789c9d928b12822010454d7c5510a2166a61befdff3f0c310151a7c93bb0
+ecec70b82c03845c411405f09086b21c0e814e68dba17384ecdf5cfda264
+592a935a818d9b0196b9cd3e39174cd8470830847c9d532ebae74c7ed73c
+a514304ad37ce539c6694e984126711c3f6f3c243ffb945591e49de77997
+2b0f5d0e8dedca77e93925f82185b75f65c793bcce5c808df14564ddf083
+1b9ed57d146062a9d6a418f2f27a0ba03d49b560975cb621442a9cd47e51
+1475822ba236e8e75beab08d8ff4bf3e7d492308
+endstream
+endobj
+{{object 9 0}} <<
+  /Filter [/ASCIIHexDecode /FlateDecode]
+  {{streamlen}}
+>>
+stream
+789c01780087ff2c3339ffcc00ffffcca97600ebd17fe7c855ffdd48cc99
+00f6e9bfffd31dd4a92398873dffffffffee93655e3eb68300ebd067d8bf
+7fdda900ffe361be8b00ffcf0dffd831ffe87ae3bd3dfff3aaddc37fbe91
+18d9a90f333333d5a100fff8beffffddae7b00c89400e7cd7feab600deb2
+24d4a000dba70092a54914
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
