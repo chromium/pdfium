@@ -22,3 +22,4 @@ Local Modifications:
 0036-Replace-sprintf-calls-with-snprintf.patch: Replace sprintf with snprintf for macOS 13 SDK compatibility, from https://gitlab.com/libtiff/libtiff/-/merge_requests/408, edited to apply to PDFium, which does not have libtiff 352cb5a4fb11.
 0037-tiff-read-rgba-tile-ext.patch: Fix (unsigned) integer overflow on strips/tiles > 2 GB.
 0038-fix-ojpeg-hack.patch: Fix OJPEG hack.
+0039-handling-of-tifftag-inknames.patch: Revised handling of TIFFTAG_INKNAMES and related TIFFTAG_NUMBEROFINKS value.

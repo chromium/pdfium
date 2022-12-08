@@ -138,32 +138,30 @@ setExtraSamples(TIFF* tif, va_list ap, uint32* v)
 }
 
 /*
- * Confirm we have "samplesperpixel" ink names separated by \0.  Returns 
+ * Count ink names separated by \0.  Returns
  * zero if the ink names are not as expected.
  */
-static uint32
-checkInkNamesString(TIFF* tif, uint32 slen, const char* s)
+static uint16
+countInkNamesString(TIFF *tif, uint32 slen, const char *s)
 {
-	TIFFDirectory* td = &tif->tif_dir;
-	uint16 i = td->td_samplesperpixel;
+	uint16 i = 0;
+	const char *ep = s + slen;
+	const char *cp = s;
 
 	if (slen > 0) {
-		const char* ep = s+slen;
-		const char* cp = s;
-		for (; i > 0; i--) {
+		do {
 			for (; cp < ep && *cp != '\0'; cp++) {}
 			if (cp >= ep)
 				goto bad;
 			cp++;				/* skip \0 */
-		}
-		return ((uint32)(cp-s));
+			i++;
+		} while (cp < ep);
+		return (i);
 	}
 bad:
 	TIFFErrorExt(tif->tif_clientdata, "TIFFSetField",
-	    "%s: Invalid InkNames value; expecting %d names, found %d",
-	    tif->tif_name,
-	    td->td_samplesperpixel,
-	    td->td_samplesperpixel-i);
+		"%s: Invalid InkNames value; no NUL at given buffer end location %u, after %u ink",
+		tif->tif_name, slen, i);
 	return (0);
 }
 
@@ -477,13 +475,61 @@ _TIFFVSetField(TIFF* tif, uint32 tag, va_list ap)
 		_TIFFsetFloatArray(&td->td_refblackwhite, va_arg(ap, float*), 6);
 		break;
 	case TIFFTAG_INKNAMES:
-		v = (uint16) va_arg(ap, uint16_vap);
-		s = va_arg(ap, char*);
-		v = checkInkNamesString(tif, v, s);
-		status = v > 0;
-		if( v > 0 ) {
-			_TIFFsetNString(&td->td_inknames, s, v);
-			td->td_inknameslen = v;
+		{
+			v = (uint16) va_arg(ap, uint16_vap);
+			s = va_arg(ap, char*);
+			uint16 ninksinstring;
+			ninksinstring = countInkNamesString(tif, v, s);
+			status = ninksinstring > 0;
+			if(ninksinstring > 0 ) {
+				_TIFFsetNString(&td->td_inknames, s, v);
+				td->td_inknameslen = v;
+				/* Set NumberOfInks to the value ninksinstring */
+				if (TIFFFieldSet(tif, FIELD_NUMBEROFINKS))
+				{
+					if (td->td_numberofinks != ninksinstring) {
+						TIFFErrorExt(tif->tif_clientdata, module,
+							"Warning %s; Tag %s:\n  Value %u of NumberOfInks is different from the number of inks %u.\n  -> NumberOfInks value adapted to %u",
+							tif->tif_name, fip->field_name, td->td_numberofinks, ninksinstring, ninksinstring);
+						td->td_numberofinks = ninksinstring;
+					}
+				} else {
+					td->td_numberofinks = ninksinstring;
+					TIFFSetFieldBit(tif, FIELD_NUMBEROFINKS);
+				}
+				if (TIFFFieldSet(tif, FIELD_SAMPLESPERPIXEL))
+				{
+					if (td->td_numberofinks != td->td_samplesperpixel) {
+						TIFFErrorExt(tif->tif_clientdata, module,
+							"Warning %s; Tag %s:\n  Value %u of NumberOfInks is different from the SamplesPerPixel value %u",
+							tif->tif_name, fip->field_name, td->td_numberofinks, td->td_samplesperpixel);
+					}
+				}
+			}
+		}
+		break;
+	case TIFFTAG_NUMBEROFINKS:
+		v = (uint16)va_arg(ap, uint16_vap);
+		/* If InkNames already set also NumberOfInks is set accordingly and should be equal */
+		if (TIFFFieldSet(tif, FIELD_INKNAMES))
+		{
+			if (v != td->td_numberofinks) {
+				TIFFErrorExt(tif->tif_clientdata, module,
+					"Error %s; Tag %s:\n  It is not possible to set the value %u for NumberOfInks\n  which is different from the number of inks in the InkNames tag (%u)",
+					tif->tif_name, fip->field_name, v, td->td_numberofinks);
+				/* Do not set / overwrite number of inks already set by InkNames case accordingly. */
+				status = 0;
+			}
+		} else {
+			td->td_numberofinks = (uint16)v;
+			if (TIFFFieldSet(tif, FIELD_SAMPLESPERPIXEL))
+			{
+				if (td->td_numberofinks != td->td_samplesperpixel) {
+					TIFFErrorExt(tif->tif_clientdata, module,
+						"Warning %s; Tag %s:\n  Value %u of NumberOfInks is different from the SamplesPerPixel value %u",
+						tif->tif_name, fip->field_name, v, td->td_samplesperpixel);
+				}
+			}
 		}
 		break;
 	case TIFFTAG_PERSAMPLE:
@@ -1113,6 +1159,9 @@ _TIFFVGetField(TIFF* tif, uint32 tag, va_list ap)
 			break;
 		case TIFFTAG_INKNAMES:
 			*va_arg(ap, const char**) = td->td_inknames;
+			break;
+		case TIFFTAG_NUMBEROFINKS:
+			*va_arg(ap, uint16_t *) = td->td_numberofinks;
 			break;
 		default:
 			{
