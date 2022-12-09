@@ -13,6 +13,7 @@
 namespace {
 
 constexpr char kArial[] = "Arial";
+constexpr char kCourierNew[] = "Courier New";
 constexpr char kTimesNewRoman[] = "TimesNewRoman";
 constexpr char kSymbol[] = "Symbol";
 constexpr char kBookshelfSymbol7[] = "Bookshelf Symbol 7";
@@ -26,6 +27,7 @@ constexpr char kLato[] = "Lato";
 constexpr char kOxygenSansSansBold[] = "Oxygen-Sans Sans-Bold";
 constexpr char kOxygenSans[] = "Oxygen-Sans";
 constexpr char kOxygen[] = "Oxygen";
+constexpr char kComicSansMS[] = "Comic Sans MS";
 
 }  // namespace
 
@@ -33,12 +35,14 @@ class CFX_FolderFontInfoTest : public ::testing::Test {
  public:
   CFX_FolderFontInfoTest() {
     AddDummyFont(kArial, CHARSET_FLAG_ANSI);
+    AddDummyFont(kCourierNew, CHARSET_FLAG_ANSI);
     AddDummyFont(kTimesNewRoman, 0);
     AddDummyFont(kBookshelfSymbol7, CHARSET_FLAG_SYMBOL);
     AddDummyFont(kSymbol, CHARSET_FLAG_SYMBOL);
     AddDummyFont(kTofuBold, CHARSET_FLAG_SYMBOL);
     AddDummyFont(kLatoUltraBold, CHARSET_FLAG_ANSI);
     AddDummyFont(kOxygenSansSansBold, CHARSET_FLAG_ANSI);
+    AddDummyFont(kComicSansMS, CHARSET_FLAG_ANSI);
   }
 
   void* FindFont(int weight,
@@ -123,4 +127,9 @@ TEST_F(CFX_FolderFontInfoTest, TestFindFont) {
                   FXFONT_FF_ROMAN, kSymbol, /*bMatchName=*/false);
   ASSERT_TRUE(font);
   EXPECT_EQ(GetFaceName(font), kBookshelfSymbol7);
+
+  font = FindFont(700, false, FX_Charset::kANSI, FXFONT_FF_FIXEDPITCH,
+                  kComicSansMS, true);
+  ASSERT_TRUE(font);
+  EXPECT_EQ(GetFaceName(font), kComicSansMS);
 }
