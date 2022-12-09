@@ -404,7 +404,11 @@ if (is_debug) {
 # =============================================================================
 import("//pdfium.gni")
 if (!pdf_use_cxx20) {
-  default_compiler_configs += [ "//build_overrides/compiler:force_cxx17" ]
+  if (is_win && !is_clang) {
+    msvc_use_cxx17 = true
+  } else {
+    default_compiler_configs += [ "//build_overrides/compiler:force_cxx17" ]
+  }
 }
 
 # =============================================================================
