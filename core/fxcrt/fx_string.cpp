@@ -24,13 +24,7 @@ ByteString FX_UTF8Encode(WideStringView wsStr) {
 }
 
 WideString FX_UTF8Decode(ByteStringView bsStr) {
-  if (bsStr.IsEmpty())
-    return WideString();
-
-  CFX_UTF8Decoder decoder;
-  for (size_t i = 0; i < bsStr.GetLength(); i++)
-    decoder.Input(bsStr[i]);
-
+  CFX_UTF8Decoder decoder(bsStr);
   return decoder.TakeResult();
 }
 

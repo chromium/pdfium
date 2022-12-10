@@ -7,17 +7,18 @@
 #ifndef CORE_FXCRT_CFX_UTF8DECODER_H_
 #define CORE_FXCRT_CFX_UTF8DECODER_H_
 
+#include "core/fxcrt/string_view_template.h"
 #include "core/fxcrt/widestring.h"
 
 class CFX_UTF8Decoder {
  public:
-  CFX_UTF8Decoder();
+  explicit CFX_UTF8Decoder(ByteStringView input);
   ~CFX_UTF8Decoder();
 
-  void Input(uint8_t byte);
   WideString TakeResult();
 
  private:
+  void ProcessByte(uint8_t byte);
   void AppendCodePoint(uint32_t ch);
 
   int m_PendingBytes = 0;

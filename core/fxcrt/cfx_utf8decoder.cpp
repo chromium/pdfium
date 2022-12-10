@@ -8,7 +8,11 @@
 
 #include <utility>
 
-CFX_UTF8Decoder::CFX_UTF8Decoder() = default;
+CFX_UTF8Decoder::CFX_UTF8Decoder(ByteStringView input) {
+  for (char c : input) {
+    ProcessByte(c);
+  }
+}
 
 CFX_UTF8Decoder::~CFX_UTF8Decoder() = default;
 
@@ -20,7 +24,7 @@ void CFX_UTF8Decoder::AppendCodePoint(uint32_t ch) {
   m_Buffer += static_cast<wchar_t>(ch);
 }
 
-void CFX_UTF8Decoder::Input(uint8_t byte) {
+void CFX_UTF8Decoder::ProcessByte(uint8_t byte) {
   if (byte < 0x80) {
     m_PendingBytes = 0;
     AppendCodePoint(byte);
