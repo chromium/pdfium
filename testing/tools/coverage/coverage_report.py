@@ -40,6 +40,10 @@ COVERAGE_TESTS = {
         TestSpec('run_corpus_tests.py', True, ['--disable-javascript']),
     'corpus_tests_xfa_disabled':
         TestSpec('run_corpus_tests.py', True, ['--disable-xfa']),
+    'corpus_tests_render_oneshot':
+        TestSpec('run_corpus_tests.py', True, ['--render-oneshot']),
+    'corpus_tests_reverse_byte_order':
+        TestSpec('run_corpus_tests.py', True, ['--reverse-byte-order']),
     'javascript_tests':
         TestSpec('run_javascript_tests.py', True, []),
     'javascript_tests_javascript_disabled':
@@ -52,6 +56,10 @@ COVERAGE_TESTS = {
         TestSpec('run_pixel_tests.py', True, ['--disable-javascript']),
     'pixel_tests_xfa_disabled':
         TestSpec('run_pixel_tests.py', True, ['--disable-xfa']),
+    'pixel_tests_render_oneshot':
+        TestSpec('run_pixel_tests.py', True, ['--render-oneshot']),
+    'pixel_tests_reverse_byte_order':
+        TestSpec('run_pixel_tests.py', True, ['--reverse-byte-order']),
 }
 
 
