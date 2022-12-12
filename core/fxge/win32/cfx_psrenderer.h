@@ -121,7 +121,7 @@ class CFX_PSRenderer {
     ~FaxCompressResult();
 
     DataVector<uint8_t> data;
-    bool compressed;
+    bool compressed = false;
   };
 
   struct PSCompressResult {

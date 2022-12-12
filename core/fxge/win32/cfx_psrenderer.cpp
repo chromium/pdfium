@@ -840,26 +840,30 @@ CFX_PSRenderer::FaxCompressResult CFX_PSRenderer::FaxCompressData(
   DCHECK_EQ(1, src->GetBPP());
 
   FaxCompressResult result;
+  const int width = src->GetWidth();
   const int height = src->GetHeight();
   const int pitch = src->GetPitch();
-  FX_SAFE_UINT32 safe_size = pitch;
-  safe_size *= height;
-  if (!safe_size.IsValid())
+  DCHECK_GE(width, pitch);
+
+  FX_SAFE_UINT32 safe_pixel_count = width;
+  safe_pixel_count *= height;
+  if (!safe_pixel_count.IsValid())
     return result;
 
-  if (safe_size.ValueOrDie() > 128) {
+  if (safe_pixel_count.ValueOrDie() > 128) {
     result.data = m_pEncoderIface->pFaxEncodeFunc(std::move(src));
     result.compressed = true;
     return result;
   }
 
+  FX_SAFE_UINT32 safe_size = pitch;
+  safe_size *= height;
   result.data.resize(safe_size.ValueOrDie());
   auto dest_span = pdfium::make_span(result.data);
   for (int row = 0; row < height; row++) {
     pdfium::span<const uint8_t> src_scan = src->GetScanline(row);
     fxcrt::spancpy(dest_span.subspan(row * pitch, pitch), src_scan);
   }
-  result.compressed = false;
   return result;
 }
 
