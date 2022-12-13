@@ -411,13 +411,10 @@ transparent.pdf mac * * *
 whats_new_in_v3.0.pdf mac * * *
 widget_javascript.pdf mac * * *
 
-# TODO(pdfium:1804): Remove after associated bug is fixed
-xfermodes.pdf * * * skia
-
-# TODO(pdfium:1804): Remove after associated bug is fixed
+# TODO(pdfium:1959): Remove after associated bug is fixed
 xfermodes2.pdf * * * skia
 
-# TODO(pdfium:1804): Remove after associated bug is fixed
+# TODO(pdfium:1959): Remove after associated bug is fixed
 xfermodes3.pdf * * * skia
 
 zh_file1.pdf mac * * *
