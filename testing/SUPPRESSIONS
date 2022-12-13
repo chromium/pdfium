@@ -247,6 +247,37 @@ example_065.pdf mac * * *
 fillform.pdf * * * *
 form_action_trigger.pdf * * * *
 form_button_sign_url.pdf * * * *
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+form_button0.pdf * * * skia
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+form_button1.pdf * * * skia
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+form_button10.pdf * * * skia
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+form_button2.pdf * * * skia
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+form_button3.pdf * * * skia
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+form_button4.pdf * * * skia
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+form_button5.pdf * * * skia
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+form_button7.pdf * * * skia
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+form_button8.pdf * * * skia
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+form_button9.pdf * * * skia
+
 form_combo_sign_url.pdf * * * *
 form_combobox0.pdf * * * *
 form_combobox_actioin_goto.pdf * * * *
@@ -306,6 +337,10 @@ javascriptaction.pdf * * * *
 jetman_std.pdf mac * * *
 jetman_std_fixed.pdf mac * * *
 js_calculate.pdf * * * *
+
+# TODO(pdfium:1957): Remove after associated bug is fixed
+lines.pdf * * * skia
+
 list_box.pdf * * * *
 
 negative.pdf mac * * *
@@ -345,6 +380,10 @@ octest.pdf mac * * *
 open_a_weblink.pdf mac * * *
 path_10_jd.pdf mac * * *
 path_5_pattern.pdf mac * * *
+
+# TODO(pdfium:1867): Remove after associated bug is fixed
+path_5_pattern.pdf * * * skia
+
 path_6_graphics4.5.5.pdf mac * * *
 path_7.pdf mac * * *
 path_9.pdf mac * * *
