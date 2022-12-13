@@ -433,9 +433,9 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
       return "a791fdb4f595bb6c4187cc2aeed5e9e8";
 #if BUILDFLAG(IS_APPLE)
-    return "7a209e29caeeab7d2b25b34570a4ace6";
+    return "8170c539e95f22f14eb8f266a5f1bbed";
 #else
-    return "3bbbfc6cc18801906285a232c4a20617";
+    return "d1fd087e59d4dcebf47b56570bdb8c22";
 #endif
   }();
 

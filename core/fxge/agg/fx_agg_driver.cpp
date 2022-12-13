@@ -942,7 +942,7 @@ agg::path_storage BuildAggPath(const CFX_Path& path,
         agg::curve4 curve(pos0.x, pos0.y, pos.x, pos.y, pos2.x, pos2.y, pos3.x,
                           pos3.y);
         i += 2;
-        agg_path.add_path_curve(curve);
+        agg_path.add_path(curve);
       }
     }
     if (points[i].m_CloseFigure)
