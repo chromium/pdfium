@@ -1324,10 +1324,6 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyAnnotationFlags) {
   UnloadPage(page);
 }
 
-// TODO(crbug.com/pdfium/1541): When Skia is enabled and its cache rendering is
-// disabled (To turn off cache, set `m_debugDisable` to true in
-// core/fxge/skia/fx_skia_device.cpp.), `kMd5NewImage`'s rendering result is
-// incorrect compared to the expectation.
 TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
   const char* md5_new_image = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
