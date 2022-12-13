@@ -2033,6 +2033,8 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
     return false;
   }
   {
+    m_pCache->FlushForDraw();
+
     SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
     SkMatrix skMatrix;
     SetBitmapMatrix(matrix, srcWidth, srcHeight, &skMatrix);

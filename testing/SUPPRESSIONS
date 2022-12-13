@@ -418,7 +418,6 @@ xfermodes.pdf * * * skia
 xfermodes2.pdf * * * skia
 
 # TODO(pdfium:1804): Remove after associated bug is fixed
-# TODO(pdfium:1845): Remove after associated bug is fixed
 xfermodes3.pdf * * * skia
 
 zh_file1.pdf mac * * *
@@ -490,9 +489,6 @@ bug_1571.in * * * *
 
 # TODO(pdfium:1723): Remove after associated bug is fixed
 bug_1723.in * * * *
-
-# TODO(pdfium:1845): Remove after associated bug is fixed
-bug_1845.in * * * skia
 
 # TODO(pdfium:1846): Remove after associated bug is fixed
 bug_1846.in * * * agg
