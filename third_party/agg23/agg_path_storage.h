@@ -76,22 +76,6 @@ public:
             add_vertex(x, y, cmd);
         }
     }
-    template<class VertexSource>
-    void add_path_curve(VertexSource& vs,
-                        unsigned path_id = 0,
-                        bool solid_path = true)
-    {
-        float x, y;
-        unsigned cmd;
-        int flag;
-        vs.rewind(path_id);
-        while(!is_stop(cmd = vs.vertex_curve_flag(&x, &y, flag))) {
-            if(is_move_to(cmd) && solid_path && m_total_vertices) {
-                cmd = path_cmd_line_to | flag;
-            }
-            add_vertex(x, y, cmd | flag);
-        }
-    }
     unsigned total_vertices() const
     {
         return m_total_vertices;

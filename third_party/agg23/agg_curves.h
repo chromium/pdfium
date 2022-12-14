@@ -107,21 +107,6 @@ public:
         *y = p.y;
         return (m_count == 1) ? path_cmd_move_to : path_cmd_line_to;
     }
-    unsigned vertex_flag(float* x, float* y, int& flag)
-    {
-        if(m_count >= m_points.size()) {
-            return path_cmd_stop;
-        }
-        const point_type& p = m_points[m_count++];
-        *x = p.x;
-        *y = p.y;
-        flag = p.flag;
-        return (m_count == 1) ? path_cmd_move_to : path_cmd_line_to;
-    }
-    int count()
-    {
-        return m_points.size();
-    }
 private:
     void bezier(float x1, float y1,
                 float x2, float y2,
@@ -174,14 +159,6 @@ public:
     unsigned vertex(float* x, float* y)
     {
         return m_curve_div.vertex(x, y);
-    }
-    unsigned vertex_curve_flag(float* x, float* y, int& flag)
-    {
-        return m_curve_div.vertex_flag(x, y, flag);
-    }
-    int count()
-    {
-        return m_curve_div.count();
     }
 private:
     curve4_div m_curve_div;
