@@ -60,6 +60,7 @@
 #include "third_party/skia/include/core/SkPaint.h"
 #include "third_party/skia/include/core/SkPath.h"
 #include "third_party/skia/include/core/SkPathEffect.h"
+#include "third_party/skia/include/core/SkPathUtils.h"
 #include "third_party/skia/include/core/SkPictureRecorder.h"
 #include "third_party/skia/include/core/SkRSXform.h"
 #include "third_party/skia/include/core/SkRect.h"
@@ -769,7 +770,7 @@ class SkiaState {
       const SkPath* fillPath = &m_skPath;
       if (stroke_alpha) {
         if (m_groupKnockout) {
-          skPaint.getFillPath(m_skPath, &strokePath);
+          FillPathWithPaint(m_skPath, skPaint, &strokePath);
           if (m_strokeColor == m_fillColor &&
               Op(m_skPath, strokePath, SkPathOp::kUnion_SkPathOp,
                  &strokePath)) {
@@ -1035,7 +1036,7 @@ class SkiaState {
     SkPaint skPaint;
     m_pDriver->PaintStroke(&skPaint, pGraphState, skMatrix);
     SkPath dst_path;
-    skPaint.getFillPath(skPath, &dst_path);
+    FillPathWithPaint(skPath, skPaint, &dst_path);
     dst_path.transform(skMatrix);
     SetClip(dst_path);
   }
@@ -1604,7 +1605,7 @@ bool CFX_SkiaDeviceDriver::SetClip_PathStroke(
   SkPaint skPaint;
   PaintStroke(&skPaint, pGraphState, skMatrix);
   SkPath dst_path;
-  skPaint.getFillPath(skPath, &dst_path);
+  FillPathWithPaint(skPath, skPaint, &dst_path);
   dst_path.transform(skMatrix);
   DebugShowCanvasClip(this, m_pCanvas);
   return true;
