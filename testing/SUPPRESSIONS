@@ -170,6 +170,10 @@ en_diy.pdf mac * * *
 en_foxit.pdf mac * * *
 en_fqa2.pdf mac * * *
 en_introduce.pdf mac * * *
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+en_tem.pdf * * * skia
+
 en_tem.pdf mac * * *
 en_uicase_.pdf mac * * *
 event.change.pdf mac * * *
@@ -389,6 +393,10 @@ path_7.pdf mac * * *
 path_9.pdf mac * * *
 percentage.pdf mac * * *
 push_button.pdf * * * *
+
+# TODO(pdfium:1960): Remove after associated bug is fixed
+quick_start_guide.pdf * * * skia
+
 quick_start_guide.pdf mac * * *
 radio_button.pdf * * * *
 run_custom_validate_script.pdf * * * *
@@ -407,6 +415,9 @@ thread_action.pdf mac * * *
 time.pdf mac * * *
 transformation.pdf mac * * *
 transparent.pdf mac * * *
+
+# TODO(pdfium:1856): Remove after associated bug is fixed
+whats_new_in_v3.0.pdf * * * skia
 
 whats_new_in_v3.0.pdf mac * * *
 widget_javascript.pdf mac * * *
