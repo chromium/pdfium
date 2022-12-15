@@ -63,7 +63,10 @@ class CPDF_ContentParser {
   bool HandlePageContentArray(const CPDF_Array* pArray);
   void HandlePageContentFailure();
 
-  bool is_owned() const { return m_Data.index() == 1; }
+  bool is_owned() const {
+    return absl::holds_alternative<FixedTryAllocZeroedDataVector<uint8_t>>(
+        m_Data);
+  }
   pdfium::span<const uint8_t> GetData() const;
 
   Stage m_CurrentStage;

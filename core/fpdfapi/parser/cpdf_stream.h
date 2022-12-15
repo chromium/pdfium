@@ -58,9 +58,15 @@ class CPDF_Stream final : public CPDF_Object {
   // Can only be called when a stream is not memory-based.
   DataVector<uint8_t> ReadAllRawData() const;
 
-  bool IsUninitialized() const { return data_.index() == 0; }
-  bool IsFileBased() const { return data_.index() == 1; }
-  bool IsMemoryBased() const { return data_.index() == 2; }
+  bool IsUninitialized() const {
+    return absl::holds_alternative<absl::monostate>(data_);
+  }
+  bool IsFileBased() const {
+    return absl::holds_alternative<RetainPtr<IFX_SeekableReadStream>>(data_);
+  }
+  bool IsMemoryBased() const {
+    return absl::holds_alternative<DataVector<uint8_t>>(data_);
+  }
   bool HasFilter() const;
 
  private:

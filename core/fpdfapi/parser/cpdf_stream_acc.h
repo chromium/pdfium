@@ -55,7 +55,9 @@ class CPDF_StreamAcc final : public Retainable {
   // Returns the raw data from `m_pStream`, or no data on failure.
   DataVector<uint8_t> ReadRawStream() const;
 
-  bool is_owned() const { return m_Data.index() == 1; }
+  bool is_owned() const {
+    return absl::holds_alternative<DataVector<uint8_t>>(m_Data);
+  }
 
   ByteString m_ImageDecoder;
   RetainPtr<const CPDF_Dictionary> m_pImageParam;

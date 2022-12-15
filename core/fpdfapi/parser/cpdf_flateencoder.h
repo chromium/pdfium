@@ -32,7 +32,9 @@ class CPDF_FlateEncoder {
   pdfium::span<const uint8_t> GetSpan() const;
 
  private:
-  bool is_owned() const { return m_Data.index() == 1; }
+  bool is_owned() const {
+    return absl::holds_alternative<DataVector<uint8_t>>(m_Data);
+  }
 
   // Returns |m_pClonedDict| if it is valid. Otherwise returns |m_pDict|.
   const CPDF_Dictionary* GetDict() const;
