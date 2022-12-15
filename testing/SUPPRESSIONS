@@ -297,8 +297,16 @@ form_combobox_per.pdf mac * * *
 form_combobox_per.pdf * nov8 * *
 form_combobox_plus.pdf mac * * *
 form_combobox_plus.pdf * nov8 * *
+
+# TODO(pdfium:1963): Remove after associated bug is fixed
+form_combobox_plus.pdf * * * skia
+
 form_combobox_product.pdf mac * * *
 form_combobox_product.pdf * nov8 * *
+
+# TODO(pdfium:1963): Remove after associated bug is fixed
+form_combobox_product.pdf * * * skia
+
 form_combobox_resetform.pdf * * * *
 form_combobox_time.pdf mac * * *
 form_combobox_time.pdf * nov8 * *
