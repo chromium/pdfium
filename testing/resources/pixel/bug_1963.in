@@ -1,0 +1,73 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [300 500 350 530]
+  /Resources <<
+    /XObject <<
+      /X1 5 0 R
+      /X2 6 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+  1 0 0 1 301.65 515.4 cm
+  /X1 Do
+Q
+q
+  1 0 0 1 304.05 503.7 cm
+  /X2 Do
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /XObject
+  /Subtype /Form
+  /BBox [301.65 515.4 342.75 527.4]
+  /Matrix [1 0 0 1 -301.65 -515.4]
+  {{streamlen}}
+>>
+stream
+1 0 0 RG
+2 w
+305.400 521.400 m
+339.000 521.400 l
+S
+endstream
+endobj
+{{object 6 0}} <<
+  /Type /XObject
+  /Subtype /Form
+  /BBox [304.05 503.7 345.15 515.7]
+  /Matrix [1 0 0 1 -304.05 -503.7]
+  {{streamlen}}
+>>
+stream
+1 0 0 RG
+2 w
+307.800 510.000 m
+341.400 509.400 l
+S
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
