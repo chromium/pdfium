@@ -129,6 +129,11 @@ def get_properties_by_name(name):
     if name.find("skia") != -1:
         properties.update({"skia": True})
 
+        # TODO(crbug.com/pdfium/1855): Re-enable corpus tests on Windows Skia
+        # bots. Currently these bots hang while running corpus tests.
+        if name.startswith("win"):
+            properties.update({"selected_tests_only": True})
+
     return properties
 
 def pdfium_internal_builder(name, bucket):
