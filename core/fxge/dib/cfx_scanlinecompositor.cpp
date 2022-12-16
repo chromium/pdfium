@@ -2318,7 +2318,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
     pdfium::span<uint8_t> dest_scan,
     pdfium::span<const uint8_t> src_scan,
     int width,
-    pdfium::span<const uint8_t> clip_scan) {
+    pdfium::span<const uint8_t> clip_scan) const {
   DCHECK(m_SrcFormat == FXDIB_Format::kRgb ||
          m_SrcFormat == FXDIB_Format::kRgb32 ||
          m_SrcFormat == FXDIB_Format::kArgb);
@@ -2467,7 +2467,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
     pdfium::span<const uint8_t> src_scan,
     int src_left,
     int width,
-    pdfium::span<const uint8_t> clip_scan) {
+    pdfium::span<const uint8_t> clip_scan) const {
   DCHECK(m_SrcFormat == FXDIB_Format::k1bppRgb ||
          m_SrcFormat == FXDIB_Format::k8bppRgb);
 
@@ -2558,7 +2558,7 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(
     pdfium::span<uint8_t> dest_scan,
     pdfium::span<const uint8_t> src_scan,
     int width,
-    pdfium::span<const uint8_t> clip_scan) {
+    pdfium::span<const uint8_t> clip_scan) const {
   if (m_DestFormat == FXDIB_Format::k8bppMask) {
     CompositeRow_ByteMask2Mask(dest_scan, src_scan, m_MaskAlpha, width,
                                clip_scan);
@@ -2609,7 +2609,7 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(
     pdfium::span<const uint8_t> src_scan,
     int src_left,
     int width,
-    pdfium::span<const uint8_t> clip_scan) {
+    pdfium::span<const uint8_t> clip_scan) const {
   if (m_DestFormat == FXDIB_Format::k8bppMask) {
     CompositeRow_BitMask2Mask(dest_scan, src_scan, m_MaskAlpha, src_left, width,
                               clip_scan);

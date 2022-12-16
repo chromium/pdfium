@@ -29,24 +29,24 @@ class CFX_ScanlineCompositor {
   void CompositeRgbBitmapLine(pdfium::span<uint8_t> dest_scan,
                               pdfium::span<const uint8_t> src_scan,
                               int width,
-                              pdfium::span<const uint8_t> clip_scan);
+                              pdfium::span<const uint8_t> clip_scan) const;
 
   void CompositePalBitmapLine(pdfium::span<uint8_t> dest_scan,
                               pdfium::span<const uint8_t> src_scan,
                               int src_left,
                               int width,
-                              pdfium::span<const uint8_t> clip_scan);
+                              pdfium::span<const uint8_t> clip_scan) const;
 
   void CompositeByteMaskLine(pdfium::span<uint8_t> dest_scan,
                              pdfium::span<const uint8_t> src_scan,
                              int width,
-                             pdfium::span<const uint8_t> clip_scan);
+                             pdfium::span<const uint8_t> clip_scan) const;
 
   void CompositeBitMaskLine(pdfium::span<uint8_t> dest_scan,
                             pdfium::span<const uint8_t> src_scan,
                             int src_left,
                             int width,
-                            pdfium::span<const uint8_t> clip_scan);
+                            pdfium::span<const uint8_t> clip_scan) const;
 
  private:
   class Palette {
