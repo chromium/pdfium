@@ -69,11 +69,12 @@ bool CFX_DefaultRenderDevice::CFX_DefaultRenderDevice::AttachImpl(
     bool bGroupKnockout) {
 #ifdef _SKIA_SUPPORT_
   if (SkiaIsDefaultRenderer()) {
-    return AttachSkiaImpl(pBitmap, bRgbByteOrder, pBackdropBitmap,
-                          bGroupKnockout);
+    return AttachSkiaImpl(std::move(pBitmap), bRgbByteOrder,
+                          std::move(pBackdropBitmap), bGroupKnockout);
   }
 #endif
-  return AttachAggImpl(pBitmap, bRgbByteOrder, pBackdropBitmap, bGroupKnockout);
+  return AttachAggImpl(std::move(pBitmap), bRgbByteOrder,
+                       std::move(pBackdropBitmap), bGroupKnockout);
 }
 
 bool CFX_DefaultRenderDevice::Create(int width,
