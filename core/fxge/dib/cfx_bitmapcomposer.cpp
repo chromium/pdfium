@@ -86,7 +86,7 @@ void CFX_BitmapComposer::DoCompose(pdfium::span<uint8_t> dest_scan,
   if (m_SrcFormat == FXDIB_Format::k8bppMask) {
     m_Compositor.CompositeByteMaskLine(dest_scan, src_scan, dest_width,
                                        clip_scan);
-  } else if (GetBppFromFormat(m_SrcFormat) == 8) {
+  } else if (m_SrcFormat == FXDIB_Format::k8bppRgb) {
     m_Compositor.CompositePalBitmapLine(dest_scan, src_scan, 0, dest_width,
                                         clip_scan);
   } else {

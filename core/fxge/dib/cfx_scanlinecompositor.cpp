@@ -2232,18 +2232,23 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
   m_BlendType = blend_type;
   m_bRgbByteOrder = bRgbByteOrder;
   m_bClip = bClip;
-  if (GetBppFromFormat(m_DestFormat) == 1)
+  if (m_DestFormat == FXDIB_Format::k1bppMask ||
+      m_DestFormat == FXDIB_Format::k1bppRgb) {
     return false;
+  }
 
-  if (m_bRgbByteOrder && GetBppFromFormat(m_DestFormat) == 8)
+  if (m_bRgbByteOrder && (m_DestFormat == FXDIB_Format::k8bppMask ||
+                          m_DestFormat == FXDIB_Format::k8bppRgb)) {
     return false;
+  }
 
   if (m_SrcFormat == FXDIB_Format::k1bppMask ||
       m_SrcFormat == FXDIB_Format::k8bppMask) {
     InitSourceMask(mask_color);
     return true;
   }
-  if (GetBppFromFormat(m_SrcFormat) <= 8 &&
+  if ((m_SrcFormat == FXDIB_Format::k1bppRgb ||
+       m_SrcFormat == FXDIB_Format::k8bppRgb) &&
       m_DestFormat != FXDIB_Format::k8bppMask) {
     InitSourcePalette(src_palette);
   }
@@ -2258,14 +2263,16 @@ void CFX_ScanlineCompositor::InitSourceMask(uint32_t mask_color) {
   if (m_DestFormat == FXDIB_Format::k8bppMask)
     return;
 
-  if (GetBppFromFormat(m_DestFormat) == 8)
+  if (m_DestFormat == FXDIB_Format::k8bppRgb)
     m_MaskRed = FXRGB2GRAY(m_MaskRed, m_MaskGreen, m_MaskBlue);
 }
 
 void CFX_ScanlineCompositor::InitSourcePalette(
     pdfium::span<const uint32_t> src_palette) {
+  DCHECK_NE(m_DestFormat, FXDIB_Format::k8bppMask);
+
   m_SrcPalette.Reset();
-  const bool bIsDestBpp8 = GetBppFromFormat(m_DestFormat) == 8;
+  const bool bIsDestBpp8 = m_DestFormat == FXDIB_Format::k8bppRgb;
   const size_t pal_count = static_cast<size_t>(1)
                            << GetBppFromFormat(m_SrcFormat);
 
@@ -2312,6 +2319,10 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
     pdfium::span<const uint8_t> src_scan,
     int width,
     pdfium::span<const uint8_t> clip_scan) {
+  DCHECK(m_SrcFormat == FXDIB_Format::kRgb ||
+         m_SrcFormat == FXDIB_Format::kRgb32 ||
+         m_SrcFormat == FXDIB_Format::kArgb);
+
   int src_Bpp = GetCompsFromFormat(m_SrcFormat);
   int dest_Bpp = GetCompsFromFormat(m_DestFormat);
   if (m_bRgbByteOrder) {
@@ -2382,7 +2393,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
     return;
   }
 
-  if (GetBppFromFormat(m_DestFormat) == 8) {
+  if (m_DestFormat == FXDIB_Format::k8bppRgb) {
     if (m_SrcFormat == FXDIB_Format::kArgb) {
       CompositeRow_Argb2Gray(dest_scan, src_scan, width, m_BlendType,
                              clip_scan);
@@ -2392,6 +2403,9 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
     }
     return;
   }
+
+  // TODO(thestig): Tighten this check.
+  DCHECK_NE(GetBppFromFormat(m_DestFormat), 8);
 
   if (m_SrcFormat == FXDIB_Format::kArgb) {
     if (m_DestFormat == FXDIB_Format::kArgb) {
@@ -2454,6 +2468,9 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
     int src_left,
     int width,
     pdfium::span<const uint8_t> clip_scan) {
+  DCHECK(m_SrcFormat == FXDIB_Format::k1bppRgb ||
+         m_SrcFormat == FXDIB_Format::k8bppRgb);
+
   if (m_bRgbByteOrder) {
     if (m_SrcFormat == FXDIB_Format::k1bppRgb) {
       if (m_DestFormat == FXDIB_Format::k8bppRgb) {
@@ -2490,19 +2507,21 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
     return;
   }
 
-  if (GetBppFromFormat(m_DestFormat) == 8) {
+  if (m_DestFormat == FXDIB_Format::k8bppRgb) {
     if (m_SrcFormat == FXDIB_Format::k1bppRgb) {
       CompositeRow_1bppPal2Gray(dest_scan, src_scan, src_left,
                                 m_SrcPalette.Get8BitPalette(), width,
                                 m_BlendType, clip_scan);
       return;
     }
-    DCHECK_EQ(m_SrcFormat, FXDIB_Format::k8bppRgb);
     CompositeRow_8bppPal2Gray(dest_scan, src_scan,
                               m_SrcPalette.Get8BitPalette(), width, m_BlendType,
                               clip_scan);
     return;
   }
+
+  // TODO(thestig): Tighten this check.
+  DCHECK_NE(GetBppFromFormat(m_DestFormat), 8);
 
   if (m_DestFormat == FXDIB_Format::kArgb) {
     if (m_SrcFormat == FXDIB_Format::k1bppRgb) {
@@ -2511,7 +2530,6 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
                                         clip_scan);
       return;
     }
-    DCHECK_EQ(m_SrcFormat, FXDIB_Format::k8bppRgb);
     CompositeRow_8bppRgb2Argb_NoBlend(
         dest_scan, src_scan, width, m_SrcPalette.Get32BitPalette(), clip_scan);
     return;
@@ -2524,7 +2542,6 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
     return;
   }
 
-  DCHECK_EQ(m_SrcFormat, FXDIB_Format::k1bppRgb);
   if (m_DestFormat == FXDIB_Format::kArgb) {
     // TODO(thestig): Check if empty span argument is always empty.
     CompositeRow_1bppRgb2Rgba_NoBlend(dest_scan, src_scan, src_left, width,
@@ -2547,12 +2564,14 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(
                                clip_scan);
     return;
   }
-
-  if (GetBppFromFormat(m_DestFormat) == 8) {
+  if (m_DestFormat == FXDIB_Format::k8bppRgb) {
     CompositeRow_ByteMask2Gray(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                                width, clip_scan);
     return;
   }
+
+  // TODO(thestig): Tighten this check.
+  DCHECK_NE(GetBppFromFormat(m_DestFormat), 8);
 
   if (m_bRgbByteOrder) {
     if (m_DestFormat == FXDIB_Format::kArgb) {
@@ -2597,11 +2616,14 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(
     return;
   }
 
-  if (GetBppFromFormat(m_DestFormat) == 8) {
+  if (m_DestFormat == FXDIB_Format::k8bppRgb) {
     CompositeRow_BitMask2Gray(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                               src_left, width, clip_scan);
     return;
   }
+
+  // TODO(thestig): Tighten this check.
+  DCHECK_NE(GetBppFromFormat(m_DestFormat), 8);
 
   if (m_bRgbByteOrder) {
     if (m_DestFormat == FXDIB_Format::kArgb) {
