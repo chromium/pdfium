@@ -2381,6 +2381,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
     }
     return;
   }
+
   if (m_DestFormat == FXDIB_Format::k8bppMask) {
     if (GetIsAlphaFromFormat(m_SrcFormat)) {
       DCHECK_EQ(m_SrcFormat, FXDIB_Format::kArgb);
@@ -2388,7 +2389,10 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
     } else {
       CompositeRow_Rgb2Mask(dest_scan, width, clip_scan);
     }
-  } else if (GetBppFromFormat(m_DestFormat) == 8) {
+    return;
+  }
+
+  if (GetBppFromFormat(m_DestFormat) == 8) {
     DCHECK(!GetIsAlphaFromFormat(m_DestFormat));
     if (GetIsAlphaFromFormat(m_SrcFormat)) {
       CompositeRow_Argb2Gray(dest_scan, src_scan, width, m_BlendType,
@@ -2397,58 +2401,58 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
       CompositeRow_Rgb2Gray(dest_scan, src_scan, src_Bpp, width, m_BlendType,
                             clip_scan);
     }
-  } else {
-    switch (m_iTransparency) {
-      case 0:
-      case 4:
-      case 8:
-      case 4 + 8: {
-        CompositeRow_Argb2Argb(dest_scan, src_scan, width, m_BlendType,
-                               clip_scan);
-      } break;
-      case 1:
-        CompositeRow_Rgb2Argb_Blend_NoClip(dest_scan, src_scan, width,
-                                           m_BlendType, src_Bpp);
-        break;
-      case 1 + 8:
-        CompositeRow_Rgb2Argb_Blend_Clip(dest_scan, src_scan, width,
-                                         m_BlendType, src_Bpp, clip_scan);
-        break;
-      case 1 + 4:
-        CompositeRow_Rgb2Argb_NoBlend_NoClip(dest_scan, src_scan, width,
-                                             src_Bpp);
-        break;
-      case 1 + 4 + 8:
-        CompositeRow_Rgb2Argb_NoBlend_Clip(dest_scan, src_scan, width, src_Bpp,
-                                           clip_scan);
-        break;
-      case 2:
-      case 2 + 8:
-        CompositeRow_Argb2Rgb_Blend(dest_scan, src_scan, width, m_BlendType,
-                                    dest_Bpp, clip_scan);
-        break;
-      case 2 + 4:
-      case 2 + 4 + 8:
-        CompositeRow_Argb2Rgb_NoBlend(dest_scan, src_scan, width, dest_Bpp,
-                                      clip_scan);
-        break;
-      case 1 + 2:
-        CompositeRow_Rgb2Rgb_Blend_NoClip(dest_scan, src_scan, width,
-                                          m_BlendType, dest_Bpp, src_Bpp);
-        break;
-      case 1 + 2 + 8:
-        CompositeRow_Rgb2Rgb_Blend_Clip(dest_scan, src_scan, width, m_BlendType,
-                                        dest_Bpp, src_Bpp, clip_scan);
-        break;
-      case 1 + 2 + 4:
-        CompositeRow_Rgb2Rgb_NoBlend_NoClip(dest_scan, src_scan, width,
-                                            dest_Bpp, src_Bpp);
-        break;
-      case 1 + 2 + 4 + 8:
-        CompositeRow_Rgb2Rgb_NoBlend_Clip(dest_scan, src_scan, width, dest_Bpp,
-                                          src_Bpp, clip_scan);
-        break;
-    }
+    return;
+  }
+
+  switch (m_iTransparency) {
+    case 0:
+    case 4:
+    case 8:
+    case 4 + 8: {
+      CompositeRow_Argb2Argb(dest_scan, src_scan, width, m_BlendType,
+                             clip_scan);
+    } break;
+    case 1:
+      CompositeRow_Rgb2Argb_Blend_NoClip(dest_scan, src_scan, width,
+                                         m_BlendType, src_Bpp);
+      break;
+    case 1 + 8:
+      CompositeRow_Rgb2Argb_Blend_Clip(dest_scan, src_scan, width, m_BlendType,
+                                       src_Bpp, clip_scan);
+      break;
+    case 1 + 4:
+      CompositeRow_Rgb2Argb_NoBlend_NoClip(dest_scan, src_scan, width, src_Bpp);
+      break;
+    case 1 + 4 + 8:
+      CompositeRow_Rgb2Argb_NoBlend_Clip(dest_scan, src_scan, width, src_Bpp,
+                                         clip_scan);
+      break;
+    case 2:
+    case 2 + 8:
+      CompositeRow_Argb2Rgb_Blend(dest_scan, src_scan, width, m_BlendType,
+                                  dest_Bpp, clip_scan);
+      break;
+    case 2 + 4:
+    case 2 + 4 + 8:
+      CompositeRow_Argb2Rgb_NoBlend(dest_scan, src_scan, width, dest_Bpp,
+                                    clip_scan);
+      break;
+    case 1 + 2:
+      CompositeRow_Rgb2Rgb_Blend_NoClip(dest_scan, src_scan, width, m_BlendType,
+                                        dest_Bpp, src_Bpp);
+      break;
+    case 1 + 2 + 8:
+      CompositeRow_Rgb2Rgb_Blend_Clip(dest_scan, src_scan, width, m_BlendType,
+                                      dest_Bpp, src_Bpp, clip_scan);
+      break;
+    case 1 + 2 + 4:
+      CompositeRow_Rgb2Rgb_NoBlend_NoClip(dest_scan, src_scan, width, dest_Bpp,
+                                          src_Bpp);
+      break;
+    case 1 + 2 + 4 + 8:
+      CompositeRow_Rgb2Rgb_NoBlend_Clip(dest_scan, src_scan, width, dest_Bpp,
+                                        src_Bpp, clip_scan);
+      break;
   }
 }
 
@@ -2488,10 +2492,12 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
     }
     return;
   }
+
   if (m_DestFormat == FXDIB_Format::k8bppMask) {
     CompositeRow_Rgb2Mask(dest_scan, width, clip_scan);
     return;
   }
+
   if (GetBppFromFormat(m_DestFormat) == 8) {
     DCHECK(!GetIsAlphaFromFormat(m_DestFormat));
     if (m_iTransparency & 8) {
@@ -2503,36 +2509,37 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
                                 m_SrcPalette.Get8BitPalette(), width,
                                 m_BlendType, clip_scan);
     }
-  } else {
-    switch (m_iTransparency) {
-      case 1 + 2:
-        CompositeRow_8bppRgb2Argb_NoBlend(dest_scan, src_scan, width,
-                                          m_SrcPalette.Get32BitPalette(),
-                                          clip_scan);
-        break;
-      case 1 + 2 + 8:
-        CompositeRow_1bppRgb2Argb_NoBlend(dest_scan, src_scan, src_left, width,
-                                          m_SrcPalette.Get32BitPalette(),
-                                          clip_scan);
-        break;
-      case 0:
-      case 0 + 2:
-        CompositeRow_8bppRgb2Rgb_NoBlend(
-            dest_scan, src_scan, m_SrcPalette.Get32BitPalette(), width,
-            GetCompsFromFormat(m_DestFormat), clip_scan);
-        break;
-      case 0 + 8:
-        CompositeRow_1bppRgb2Rgb_NoBlend(
-            dest_scan, src_scan, src_left, m_SrcPalette.Get32BitPalette(),
-            width, GetCompsFromFormat(m_DestFormat), clip_scan);
-        break;
-      case 0 + 2 + 8:
-        // TODO(thestig): Check if empty span argument is always empty.
-        CompositeRow_1bppRgb2Rgba_NoBlend(dest_scan, src_scan, src_left, width,
-                                          m_SrcPalette.Get32BitPalette(),
-                                          clip_scan, {});
-        break;
-    }
+    return;
+  }
+
+  switch (m_iTransparency) {
+    case 1 + 2:
+      CompositeRow_8bppRgb2Argb_NoBlend(dest_scan, src_scan, width,
+                                        m_SrcPalette.Get32BitPalette(),
+                                        clip_scan);
+      break;
+    case 1 + 2 + 8:
+      CompositeRow_1bppRgb2Argb_NoBlend(dest_scan, src_scan, src_left, width,
+                                        m_SrcPalette.Get32BitPalette(),
+                                        clip_scan);
+      break;
+    case 0:
+    case 0 + 2:
+      CompositeRow_8bppRgb2Rgb_NoBlend(
+          dest_scan, src_scan, m_SrcPalette.Get32BitPalette(), width,
+          GetCompsFromFormat(m_DestFormat), clip_scan);
+      break;
+    case 0 + 8:
+      CompositeRow_1bppRgb2Rgb_NoBlend(
+          dest_scan, src_scan, src_left, m_SrcPalette.Get32BitPalette(), width,
+          GetCompsFromFormat(m_DestFormat), clip_scan);
+      break;
+    case 0 + 2 + 8:
+      // TODO(thestig): Check if empty span argument is always empty.
+      CompositeRow_1bppRgb2Rgba_NoBlend(dest_scan, src_scan, src_left, width,
+                                        m_SrcPalette.Get32BitPalette(),
+                                        clip_scan, {});
+      break;
   }
 }
 
