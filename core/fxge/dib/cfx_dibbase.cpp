@@ -930,7 +930,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ConvertTo(FXDIB_Format dest_format) const {
     if (!pSrcAlpha)
       return nullptr;
   }
-  if (GetIsAlphaFromFormat(dest_format)) {
+  if (dest_format == FXDIB_Format::kArgb) {
     bool ret = pSrcAlpha ? pClone->SetAlphaFromBitmap(pSrcAlpha)
                          : pClone->SetUniformOpaqueAlpha();
     if (!ret)

@@ -12,6 +12,10 @@
 #include <tuple>
 #include <utility>
 
+// Encoding:
+// - Bits-per-pixel: value & 0xFF
+// - Is mask: value & 0x100
+// - Has alpha: value & 0x200
 enum class FXDIB_Format : uint16_t {
   kInvalid = 0,
   k1bppRgb = 0x001,
@@ -94,10 +98,6 @@ inline int GetCompsFromFormat(FXDIB_Format format) {
 
 inline bool GetIsMaskFromFormat(FXDIB_Format format) {
   return !!(static_cast<uint16_t>(format) & 0x100);
-}
-
-inline bool GetIsAlphaFromFormat(FXDIB_Format format) {
-  return !!(static_cast<uint16_t>(format) & 0x200);
 }
 
 FXDIB_Format MakeRGBFormat(int bpp);

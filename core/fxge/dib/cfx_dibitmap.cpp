@@ -38,8 +38,6 @@ bool CFX_DIBitmap::Create(int width,
                           FXDIB_Format format,
                           uint8_t* pBuffer,
                           uint32_t pitch) {
-  DCHECK(!GetIsAlphaFromFormat(format) || format == FXDIB_Format::kArgb);
-
   m_pBuffer = nullptr;
   m_Format = format;
   m_Width = 0;
