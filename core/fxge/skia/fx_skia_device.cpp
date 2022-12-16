@@ -770,7 +770,7 @@ class SkiaState {
       const SkPath* fillPath = &m_skPath;
       if (stroke_alpha) {
         if (m_groupKnockout) {
-          FillPathWithPaint(m_skPath, skPaint, &strokePath);
+          skpathutils::FillPathWithPaint(m_skPath, skPaint, &strokePath);
           if (m_strokeColor == m_fillColor &&
               Op(m_skPath, strokePath, SkPathOp::kUnion_SkPathOp,
                  &strokePath)) {
