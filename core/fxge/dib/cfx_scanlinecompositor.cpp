@@ -2233,7 +2233,7 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
   m_BlendType = blend_type;
   m_bRgbByteOrder = bRgbByteOrder;
   m_bClip = bClip;
-  if (GetBppFromFormat(dest_format) == 1)
+  if (GetBppFromFormat(m_DestFormat) == 1)
     return false;
 
   if (m_bRgbByteOrder && GetBppFromFormat(m_DestFormat) == 8)
@@ -2245,8 +2245,8 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
     return true;
   }
   if (GetBppFromFormat(m_SrcFormat) <= 8 &&
-      dest_format != FXDIB_Format::k8bppMask) {
-    InitSourcePalette(src_format, dest_format, src_palette);
+      m_DestFormat != FXDIB_Format::k8bppMask) {
+    InitSourcePalette(src_palette);
   }
   return true;
 }
@@ -2264,13 +2264,11 @@ void CFX_ScanlineCompositor::InitSourceMask(uint32_t mask_color) {
 }
 
 void CFX_ScanlineCompositor::InitSourcePalette(
-    FXDIB_Format src_format,
-    FXDIB_Format dest_format,
     pdfium::span<const uint32_t> src_palette) {
   m_SrcPalette.Reset();
-  const bool bIsDestBpp8 = GetBppFromFormat(dest_format) == 8;
+  const bool bIsDestBpp8 = GetBppFromFormat(m_DestFormat) == 8;
   const size_t pal_count = static_cast<size_t>(1)
-                           << GetBppFromFormat(src_format);
+                           << GetBppFromFormat(m_SrcFormat);
 
   if (!src_palette.empty()) {
     if (bIsDestBpp8) {

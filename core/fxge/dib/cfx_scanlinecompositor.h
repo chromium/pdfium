@@ -72,9 +72,7 @@ class CFX_ScanlineCompositor {
     std::unique_ptr<uint32_t, FxFreeDeleter> m_pData;
   };
 
-  void InitSourcePalette(FXDIB_Format src_format,
-                         FXDIB_Format dest_format,
-                         pdfium::span<const uint32_t> src_palette);
+  void InitSourcePalette(pdfium::span<const uint32_t> src_palette);
 
   void InitSourceMask(uint32_t mask_color);
 
