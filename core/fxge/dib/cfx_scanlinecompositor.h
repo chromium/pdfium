@@ -11,7 +11,6 @@
 
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/abseil-cpp/absl/types/variant.h"
 #include "third_party/base/span.h"
 
 class CFX_ScanlineCompositor {
@@ -79,18 +78,6 @@ class CFX_ScanlineCompositor {
 
   void InitSourceMask(uint32_t mask_color);
 
-  struct PalTransform {
-    bool dest_is_argb;
-    bool dest_has_alpha;
-    bool src_is_1_bit;  // False = 8 bit.
-  };
-  struct RgbTransform {
-    bool src_has_alpha;
-    bool dest_has_alpha;
-    bool is_normal_blend;
-    bool clip;
-  };
-  absl::variant<PalTransform, RgbTransform> m_Transform;
   FXDIB_Format m_SrcFormat;
   FXDIB_Format m_DestFormat;
   Palette m_SrcPalette;
@@ -100,6 +87,7 @@ class CFX_ScanlineCompositor {
   int m_MaskBlue;
   BlendMode m_BlendType = BlendMode::kNormal;
   bool m_bRgbByteOrder = false;
+  bool m_bClip = false;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_SCANLINECOMPOSITOR_H_

@@ -2232,6 +2232,7 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
   m_DestFormat = dest_format;
   m_BlendType = blend_type;
   m_bRgbByteOrder = bRgbByteOrder;
+  m_bClip = bClip;
   if (GetBppFromFormat(dest_format) == 1)
     return false;
 
@@ -2243,24 +2244,10 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
     InitSourceMask(mask_color);
     return true;
   }
-  if (GetBppFromFormat(m_SrcFormat) <= 8) {
-    if (dest_format == FXDIB_Format::k8bppMask)
-      return true;
-
+  if (GetBppFromFormat(m_SrcFormat) <= 8 &&
+      dest_format != FXDIB_Format::k8bppMask) {
     InitSourcePalette(src_format, dest_format, src_palette);
-    PalTransform pal_transform;
-    pal_transform.dest_is_argb = dest_format == FXDIB_Format::kArgb;
-    pal_transform.dest_has_alpha = GetIsAlphaFromFormat(dest_format);
-    pal_transform.src_is_1_bit = GetBppFromFormat(src_format) == 1;
-    m_Transform = pal_transform;
-    return true;
   }
-  RgbTransform rgb_transform;
-  rgb_transform.src_has_alpha = GetIsAlphaFromFormat(src_format);
-  rgb_transform.dest_has_alpha = GetIsAlphaFromFormat(dest_format);
-  rgb_transform.is_normal_blend = blend_type == BlendMode::kNormal;
-  rgb_transform.clip = bClip;
-  m_Transform = rgb_transform;
   return true;
 }
 
@@ -2330,15 +2317,14 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
     pdfium::span<const uint8_t> clip_scan) {
   int src_Bpp = GetCompsFromFormat(m_SrcFormat);
   int dest_Bpp = GetCompsFromFormat(m_DestFormat);
-  const auto& rgb_transform = absl::get<RgbTransform>(m_Transform);
   if (m_bRgbByteOrder) {
-    if (rgb_transform.src_has_alpha) {
-      if (rgb_transform.dest_has_alpha) {
+    if (GetIsAlphaFromFormat(m_SrcFormat)) {
+      if (GetIsAlphaFromFormat(m_DestFormat)) {
         CompositeRow_Argb2Argb_RgbByteOrder(dest_scan, src_scan, width,
                                             m_BlendType, clip_scan);
         return;
       }
-      if (rgb_transform.is_normal_blend) {
+      if (m_BlendType == BlendMode::kNormal) {
         CompositeRow_Argb2Rgb_NoBlend_RgbByteOrder(dest_scan, src_scan, width,
                                                    dest_Bpp, clip_scan);
         return;
@@ -2348,9 +2334,9 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
       return;
     }
 
-    if (rgb_transform.dest_has_alpha) {
-      if (rgb_transform.is_normal_blend) {
-        if (rgb_transform.clip) {
+    if (GetIsAlphaFromFormat(m_DestFormat)) {
+      if (m_BlendType == BlendMode::kNormal) {
+        if (m_bClip) {
           CompositeRow_Rgb2Argb_NoBlend_Clip_RgbByteOrder(
               dest_scan, src_scan, width, src_Bpp, clip_scan);
           return;
@@ -2359,7 +2345,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
                                                           width, src_Bpp);
         return;
       }
-      if (rgb_transform.clip) {
+      if (m_bClip) {
         CompositeRow_Rgb2Argb_Blend_Clip_RgbByteOrder(
             dest_scan, src_scan, width, m_BlendType, src_Bpp, clip_scan);
         return;
@@ -2369,8 +2355,8 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
       return;
     }
 
-    if (rgb_transform.is_normal_blend) {
-      if (rgb_transform.clip) {
+    if (m_BlendType == BlendMode::kNormal) {
+      if (m_bClip) {
         CompositeRow_Rgb2Rgb_NoBlend_Clip_RgbByteOrder(
             dest_scan, src_scan, width, dest_Bpp, src_Bpp, clip_scan);
         return;
@@ -2379,7 +2365,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
           dest_scan, src_scan, width, dest_Bpp, src_Bpp);
       return;
     }
-    if (rgb_transform.clip) {
+    if (m_bClip) {
       CompositeRow_Rgb2Rgb_Blend_Clip_RgbByteOrder(dest_scan, src_scan, width,
                                                    m_BlendType, dest_Bpp,
                                                    src_Bpp, clip_scan);
@@ -2412,13 +2398,13 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
     return;
   }
 
-  if (rgb_transform.src_has_alpha) {
-    if (rgb_transform.dest_has_alpha) {
+  if (GetIsAlphaFromFormat(m_SrcFormat)) {
+    if (GetIsAlphaFromFormat(m_DestFormat)) {
       CompositeRow_Argb2Argb(dest_scan, src_scan, width, m_BlendType,
                              clip_scan);
       return;
     }
-    if (rgb_transform.is_normal_blend) {
+    if (m_BlendType == BlendMode::kNormal) {
       CompositeRow_Argb2Rgb_NoBlend(dest_scan, src_scan, width, dest_Bpp,
                                     clip_scan);
       return;
@@ -2428,9 +2414,9 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
     return;
   }
 
-  if (rgb_transform.dest_has_alpha) {
-    if (rgb_transform.is_normal_blend) {
-      if (rgb_transform.clip) {
+  if (GetIsAlphaFromFormat(m_DestFormat)) {
+    if (m_BlendType == BlendMode::kNormal) {
+      if (m_bClip) {
         CompositeRow_Rgb2Argb_NoBlend_Clip(dest_scan, src_scan, width, src_Bpp,
                                            clip_scan);
         return;
@@ -2438,7 +2424,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
       CompositeRow_Rgb2Argb_NoBlend_NoClip(dest_scan, src_scan, width, src_Bpp);
       return;
     }
-    if (rgb_transform.clip) {
+    if (m_bClip) {
       CompositeRow_Rgb2Argb_Blend_Clip(dest_scan, src_scan, width, m_BlendType,
                                        src_Bpp, clip_scan);
       return;
@@ -2448,8 +2434,8 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
     return;
   }
 
-  if (rgb_transform.is_normal_blend) {
-    if (rgb_transform.clip) {
+  if (m_BlendType == BlendMode::kNormal) {
+    if (m_bClip) {
       CompositeRow_Rgb2Rgb_NoBlend_Clip(dest_scan, src_scan, width, dest_Bpp,
                                         src_Bpp, clip_scan);
       return;
@@ -2458,7 +2444,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
                                         src_Bpp);
     return;
   }
-  if (rgb_transform.clip) {
+  if (m_bClip) {
     CompositeRow_Rgb2Rgb_Blend_Clip(dest_scan, src_scan, width, m_BlendType,
                                     dest_Bpp, src_Bpp, clip_scan);
     return;
@@ -2509,44 +2495,46 @@ void CFX_ScanlineCompositor::CompositePalBitmapLine(
     return;
   }
 
-  const auto& pal_transform = absl::get<PalTransform>(m_Transform);
   if (GetBppFromFormat(m_DestFormat) == 8) {
     DCHECK(!GetIsAlphaFromFormat(m_DestFormat));
-    if (pal_transform.src_is_1_bit) {
+    if (m_SrcFormat == FXDIB_Format::k1bppRgb) {
       CompositeRow_1bppPal2Gray(dest_scan, src_scan, src_left,
                                 m_SrcPalette.Get8BitPalette(), width,
                                 m_BlendType, clip_scan);
       return;
     }
+    DCHECK_EQ(m_SrcFormat, FXDIB_Format::k8bppRgb);
     CompositeRow_8bppPal2Gray(dest_scan, src_scan,
                               m_SrcPalette.Get8BitPalette(), width, m_BlendType,
                               clip_scan);
     return;
   }
 
-  if (pal_transform.dest_is_argb) {
-    if (!pal_transform.dest_has_alpha) {
+  if (m_DestFormat == FXDIB_Format::kArgb) {
+    if (!GetIsAlphaFromFormat(m_DestFormat)) {
       return;
     }
-    if (pal_transform.src_is_1_bit) {
+    if (m_SrcFormat == FXDIB_Format::k1bppRgb) {
       CompositeRow_1bppRgb2Argb_NoBlend(dest_scan, src_scan, src_left, width,
                                         m_SrcPalette.Get32BitPalette(),
                                         clip_scan);
       return;
     }
+    DCHECK_EQ(m_SrcFormat, FXDIB_Format::k8bppRgb);
     CompositeRow_8bppRgb2Argb_NoBlend(
         dest_scan, src_scan, width, m_SrcPalette.Get32BitPalette(), clip_scan);
     return;
   }
 
-  if (!pal_transform.src_is_1_bit) {
+  if (m_SrcFormat == FXDIB_Format::k8bppRgb) {
     CompositeRow_8bppRgb2Rgb_NoBlend(
         dest_scan, src_scan, m_SrcPalette.Get32BitPalette(), width,
         GetCompsFromFormat(m_DestFormat), clip_scan);
     return;
   }
 
-  if (pal_transform.dest_has_alpha) {
+  DCHECK_EQ(m_SrcFormat, FXDIB_Format::k1bppRgb);
+  if (GetIsAlphaFromFormat(m_DestFormat)) {
     // TODO(thestig): Check if empty span argument is always empty.
     CompositeRow_1bppRgb2Rgba_NoBlend(dest_scan, src_scan, src_left, width,
                                       m_SrcPalette.Get32BitPalette(), clip_scan,
