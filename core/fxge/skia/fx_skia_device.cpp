@@ -39,7 +39,6 @@
 #include "core/fxge/cfx_textrenderoptions.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
-#include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cstretchengine.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/text_char_pos.h"
@@ -155,11 +154,39 @@ bool IsRGBColorGrayScale(uint32_t color) {
          FXARGB_R(color) == FXARGB_B(color);
 }
 
+// Called by Upsample, return a 32 bit-per-pixel buffer filled with 2 colors
+// from a 1 bit-per-pixel source palette.
+DataVector<uint32_t> Fill32BppDestStorageWith1BppSource(
+    const RetainPtr<CFX_DIBBase>& source) {
+  DCHECK_EQ(1, source->GetBPP());
+  int width = source->GetWidth();
+  int height = source->GetHeight();
+  void* buffer = source->GetBuffer().data();
+  DCHECK(buffer);
+
+  uint32_t color0 = source->GetPaletteArgb(0);
+  uint32_t color1 = source->GetPaletteArgb(1);
+  DataVector<uint32_t> dst32_storage(Fx2DSizeOrDie(width, height));
+  pdfium::span<SkPMColor> dst32_pixels(dst32_storage);
+
+  for (int y = 0; y < height; ++y) {
+    const uint8_t* src_row =
+        static_cast<const uint8_t*>(buffer) + y * source->GetPitch();
+    pdfium::span<uint32_t> dst_row = dst32_pixels.subspan(y * width);
+    for (int x = 0; x < width; ++x) {
+      bool use_color1 = src_row[x / 8] & (1 << (7 - x % 8));
+      dst_row[x] = use_color1 ? color1 : color0;
+    }
+  }
+  return dst32_storage;
+}
+
 // Called by Upsample(), returns a 32 bit-per-pixel buffer filled with colors
 // from `palette`.
 DataVector<uint32_t> Fill32BppDestStorageWithPalette(
     const RetainPtr<CFX_DIBBase>& source,
     pdfium::span<const uint32_t> palette) {
+  DCHECK_EQ(8, source->GetBPP());
   int width = source->GetWidth();
   int height = source->GetHeight();
   void* buffer = source->GetBuffer().data();
@@ -593,22 +620,12 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
 
       if (pSource->GetFormat() == FXDIB_Format::k1bppRgb &&
           pSource->HasPalette()) {
-        // When `pSource` has 1 bit per pixel, its palette will contain 2
-        // colors, and the R,G,B channels of either color will have equal
-        // values. However, there are cases that R,G,B are not all the same and
-        // these 2 colors stand for the boundaries of a range of colors to be
-        // used for bitmap rendering. We need to handle the color palette
-        // differently depending on these conditions.
         uint32_t palette_color0 = pSource->GetPaletteArgb(0);
         uint32_t palette_color1 = pSource->GetPaletteArgb(1);
-        bool use_two_colors = IsRGBColorGrayScale(palette_color0) &&
-                              IsRGBColorGrayScale(palette_color1);
-        if (!use_two_colors) {
-          // If more than 2 colors are provided, calculate the range of colors
-          // and store them in `new_palette`
-          FX_ARGB new_palette[CFX_DIBBase::kPaletteSize];
-          CFX_ImageStretcher::BuildPaletteFrom1BppSource(pSource, new_palette);
-          dst32_storage = Fill32BppDestStorageWithPalette(pSource, new_palette);
+        bool use_gray_colors = IsRGBColorGrayScale(palette_color0) &&
+                               IsRGBColorGrayScale(palette_color1);
+        if (!use_gray_colors) {
+          dst32_storage = Fill32BppDestStorageWith1BppSource(pSource);
           buffer = dst32_storage.data();
           rowBytes = width * sizeof(uint32_t);
           colorType = Get32BitSkColorType(bRgbByteOrder);

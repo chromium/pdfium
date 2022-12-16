@@ -34,31 +34,16 @@ FXDIB_Format GetStretchedFormat(const CFX_DIBBase& src) {
   return format;
 }
 
-}  // namespace
+// Builds a new palette with a size of `CFX_DIBBase::kPaletteSize` from the
+// existing palette in `source`. Note: The caller must make sure that the
+// parameters meet the following conditions:
+//   source       - The format must be `FXDIB_Format::k1bppRgb` and it must
+//                  have a palette.
+//   palette_span - The size must be `CFX_DIBBase::kPaletteSize` to be able
+//                  to hold the new palette.
 
-CFX_ImageStretcher::CFX_ImageStretcher(
-    ScanlineComposerIface* pDest,
-    const RetainPtr<const CFX_DIBBase>& pSource,
-    int dest_width,
-    int dest_height,
-    const FX_RECT& bitmap_rect,
-    const FXDIB_ResampleOptions& options)
-    : m_pDest(pDest),
-      m_pSource(pSource),
-      m_ResampleOptions(options),
-      m_DestWidth(dest_width),
-      m_DestHeight(dest_height),
-      m_ClipRect(bitmap_rect),
-      m_DestFormat(GetStretchedFormat(*pSource)) {
-  DCHECK(m_ClipRect.Valid());
-}
-
-CFX_ImageStretcher::~CFX_ImageStretcher() = default;
-
-// static
-void CFX_ImageStretcher::BuildPaletteFrom1BppSource(
-    const RetainPtr<const CFX_DIBBase>& source,
-    pdfium::span<FX_ARGB> palette_span) {
+void BuildPaletteFrom1BppSource(const RetainPtr<const CFX_DIBBase>& source,
+                                pdfium::span<FX_ARGB> palette_span) {
   DCHECK_EQ(FXDIB_Format::k1bppRgb, source->GetFormat());
   DCHECK(source->HasPalette());
   DCHECK_EQ(CFX_DIBBase::kPaletteSize, palette_span.size());
@@ -83,6 +68,27 @@ void CFX_ImageStretcher::BuildPaletteFrom1BppSource(
     palette_span[i] = ArgbEncode(255, r, g, b);
   }
 }
+
+}  // namespace
+
+CFX_ImageStretcher::CFX_ImageStretcher(
+    ScanlineComposerIface* pDest,
+    const RetainPtr<const CFX_DIBBase>& pSource,
+    int dest_width,
+    int dest_height,
+    const FX_RECT& bitmap_rect,
+    const FXDIB_ResampleOptions& options)
+    : m_pDest(pDest),
+      m_pSource(pSource),
+      m_ResampleOptions(options),
+      m_DestWidth(dest_width),
+      m_DestHeight(dest_height),
+      m_ClipRect(bitmap_rect),
+      m_DestFormat(GetStretchedFormat(*pSource)) {
+  DCHECK(m_ClipRect.Valid());
+}
+
+CFX_ImageStretcher::~CFX_ImageStretcher() = default;
 
 bool CFX_ImageStretcher::Start() {
   if (m_DestWidth == 0 || m_DestHeight == 0)
