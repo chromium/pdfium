@@ -729,7 +729,7 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
     clip_box = pClipRgn->GetBox();
   }
   CFX_ScanlineCompositor compositor;
-  if (!compositor.Init(GetFormat(), pSrcBitmap->GetFormat(), width,
+  if (!compositor.Init(GetFormat(), pSrcBitmap->GetFormat(),
                        pSrcBitmap->GetPaletteSpan(), 0, blend_type,
                        pClipMask != nullptr, bRgbByteOrder)) {
     return false;
@@ -801,8 +801,8 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
   int src_bpp = pMask->GetBPP();
   int Bpp = GetBPP() / 8;
   CFX_ScanlineCompositor compositor;
-  if (!compositor.Init(GetFormat(), pMask->GetFormat(), width, {}, color,
-                       blend_type, pClipMask != nullptr, bRgbByteOrder)) {
+  if (!compositor.Init(GetFormat(), pMask->GetFormat(), {}, color, blend_type,
+                       pClipMask != nullptr, bRgbByteOrder)) {
     return false;
   }
   for (int row = 0; row < height; row++) {
