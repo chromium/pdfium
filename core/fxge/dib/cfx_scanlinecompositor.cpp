@@ -2545,10 +2545,16 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(
   if (m_DestFormat == FXDIB_Format::k8bppMask) {
     CompositeRow_ByteMask2Mask(dest_scan, src_scan, m_MaskAlpha, width,
                                clip_scan);
-  } else if (GetBppFromFormat(m_DestFormat) == 8) {
+    return;
+  }
+
+  if (GetBppFromFormat(m_DestFormat) == 8) {
     CompositeRow_ByteMask2Gray(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                                width, clip_scan);
-  } else if (m_bRgbByteOrder) {
+    return;
+  }
+
+  if (m_bRgbByteOrder) {
     if (m_DestFormat == FXDIB_Format::kArgb) {
       CompositeRow_ByteMask2Argb_RgbByteOrder(
           dest_scan, src_scan, m_MaskAlpha, m_MaskRed, m_MaskGreen, m_MaskBlue,
@@ -2558,16 +2564,25 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(
           dest_scan, src_scan, m_MaskAlpha, m_MaskRed, m_MaskGreen, m_MaskBlue,
           width, m_BlendType, GetCompsFromFormat(m_DestFormat), clip_scan);
     }
-  } else if (m_DestFormat == FXDIB_Format::kArgb) {
+    return;
+  }
+
+  if (m_DestFormat == FXDIB_Format::kArgb) {
     CompositeRow_ByteMask2Argb(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                                m_MaskGreen, m_MaskBlue, width, m_BlendType,
                                clip_scan);
-  } else if (m_DestFormat == FXDIB_Format::kRgb ||
-             m_DestFormat == FXDIB_Format::kRgb32) {
+    return;
+  }
+
+  if (m_DestFormat == FXDIB_Format::kRgb ||
+      m_DestFormat == FXDIB_Format::kRgb32) {
     CompositeRow_ByteMask2Rgb(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                               m_MaskGreen, m_MaskBlue, width, m_BlendType,
                               GetCompsFromFormat(m_DestFormat), clip_scan);
+    return;
   }
+
+  // TODO(thestig): Is this line reachable?
 }
 
 void CFX_ScanlineCompositor::CompositeBitMaskLine(
@@ -2579,10 +2594,16 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(
   if (m_DestFormat == FXDIB_Format::k8bppMask) {
     CompositeRow_BitMask2Mask(dest_scan, src_scan, m_MaskAlpha, src_left, width,
                               clip_scan);
-  } else if (GetBppFromFormat(m_DestFormat) == 8) {
+    return;
+  }
+
+  if (GetBppFromFormat(m_DestFormat) == 8) {
     CompositeRow_BitMask2Gray(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                               src_left, width, clip_scan);
-  } else if (m_bRgbByteOrder) {
+    return;
+  }
+
+  if (m_bRgbByteOrder) {
     if (m_DestFormat == FXDIB_Format::kArgb) {
       CompositeRow_BitMask2Argb_RgbByteOrder(
           dest_scan, src_scan, m_MaskAlpha, m_MaskRed, m_MaskGreen, m_MaskBlue,
@@ -2593,17 +2614,26 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(
           src_left, width, m_BlendType, GetCompsFromFormat(m_DestFormat),
           clip_scan);
     }
-  } else if (m_DestFormat == FXDIB_Format::kArgb) {
+    return;
+  }
+
+  if (m_DestFormat == FXDIB_Format::kArgb) {
     CompositeRow_BitMask2Argb(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                               m_MaskGreen, m_MaskBlue, src_left, width,
                               m_BlendType, clip_scan);
-  } else if (m_DestFormat == FXDIB_Format::kRgb ||
-             m_DestFormat == FXDIB_Format::kRgb32) {
+    return;
+  }
+
+  if (m_DestFormat == FXDIB_Format::kRgb ||
+      m_DestFormat == FXDIB_Format::kRgb32) {
     CompositeRow_BitMask2Rgb(dest_scan, src_scan, m_MaskAlpha, m_MaskRed,
                              m_MaskGreen, m_MaskBlue, src_left, width,
                              m_BlendType, GetCompsFromFormat(m_DestFormat),
                              clip_scan);
+    return;
   }
+
+  // TODO(thestig): Is this line reachable?
 }
 
 CFX_ScanlineCompositor::Palette::Palette() = default;
