@@ -134,9 +134,6 @@ void RgbByteOrderTransferBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                 const RetainPtr<CFX_DIBBase>& pSrcBitmap,
                                 int src_left,
                                 int src_top) {
-  if (!pBitmap)
-    return;
-
   int dest_left = 0;
   int dest_top = 0;
   if (!pBitmap->GetOverlapRect(dest_left, dest_top, width, height,
@@ -963,6 +960,8 @@ CFX_AggDeviceDriver::CFX_AggDeviceDriver(
       m_bGroupKnockout(bGroupKnockout),
       m_pBackdropBitmap(std::move(pBackdropBitmap)) {
   DCHECK(m_pBitmap);
+  DCHECK_NE(m_pBitmap->GetFormat(), FXDIB_Format::k1bppMask);
+  DCHECK_NE(m_pBitmap->GetFormat(), FXDIB_Format::k1bppRgb);
   InitPlatform();
 }
 
