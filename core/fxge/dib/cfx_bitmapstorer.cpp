@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "third_party/base/check_op.h"
 
 CFX_BitmapStorer::CFX_BitmapStorer() = default;
 
@@ -36,6 +37,8 @@ bool CFX_BitmapStorer::SetInfo(int width,
                                int height,
                                FXDIB_Format src_format,
                                pdfium::span<const uint32_t> src_palette) {
+  DCHECK_NE(src_format, FXDIB_Format::k1bppMask);
+  DCHECK_NE(src_format, FXDIB_Format::k1bppRgb);
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pBitmap->Create(width, height, src_format))
     return false;
