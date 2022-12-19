@@ -1053,7 +1053,7 @@ class SkiaState {
     SkPaint skPaint;
     m_pDriver->PaintStroke(&skPaint, pGraphState, skMatrix);
     SkPath dst_path;
-    FillPathWithPaint(skPath, skPaint, &dst_path);
+    skpathutils::FillPathWithPaint(skPath, skPaint, &dst_path);
     dst_path.transform(skMatrix);
     SetClip(dst_path);
   }
@@ -1622,7 +1622,7 @@ bool CFX_SkiaDeviceDriver::SetClip_PathStroke(
   SkPaint skPaint;
   PaintStroke(&skPaint, pGraphState, skMatrix);
   SkPath dst_path;
-  FillPathWithPaint(skPath, skPaint, &dst_path);
+  skpathutils::FillPathWithPaint(skPath, skPaint, &dst_path);
   dst_path.transform(skMatrix);
   DebugShowCanvasClip(this, m_pCanvas);
   return true;
