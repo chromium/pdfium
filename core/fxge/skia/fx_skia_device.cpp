@@ -1338,7 +1338,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
     bool bRgbByteOrder,
     RetainPtr<CFX_DIBitmap> pBackdropBitmap,
     bool bGroupKnockout)
-    : m_pBitmap(pBitmap),
+    : m_pBitmap(std::move(pBitmap)),
       m_pBackdropBitmap(pBackdropBitmap),
       m_pRecorder(nullptr),
       m_pCache(std::make_unique<SkiaState>(this)),
@@ -1346,9 +1346,9 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
       m_bGroupKnockout(bGroupKnockout) {
   SkBitmap skBitmap;
   SkColorType color_type;
-  const int bpp = pBitmap->GetBPP();
+  const int bpp = m_pBitmap->GetBPP();
   if (bpp == 8) {
-    color_type = pBitmap->IsAlphaFormat() || pBitmap->IsMaskFormat()
+    color_type = m_pBitmap->IsAlphaFormat() || m_pBitmap->IsMaskFormat()
                      ? kAlpha_8_SkColorType
                      : kGray_8_SkColorType;
   } else {
@@ -1357,10 +1357,10 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
   }
 
   SkImageInfo imageInfo =
-      SkImageInfo::Make(pBitmap->GetWidth(), pBitmap->GetHeight(), color_type,
-                        kPremul_SkAlphaType);
-  skBitmap.installPixels(imageInfo, pBitmap->GetBuffer().data(),
-                         pBitmap->GetPitch());
+      SkImageInfo::Make(m_pBitmap->GetWidth(), m_pBitmap->GetHeight(),
+                        color_type, kPremul_SkAlphaType);
+  skBitmap.installPixels(imageInfo, m_pBitmap->GetBuffer().data(),
+                         m_pBitmap->GetPitch());
   m_pCanvas = new SkCanvas(skBitmap);
 }
 
