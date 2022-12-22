@@ -6,6 +6,7 @@
 import argparse
 from dataclasses import dataclass, field
 from datetime import timedelta
+from io import BytesIO
 import multiprocessing
 import os
 import re
@@ -555,7 +556,18 @@ class _TestCaseRunner:
     Returns:
       The test result.
     """
+
+    # Standard output and error are directed to the test log. If `stdout` was
+    # provided, redirect standard output to it instead.
     if stdout:
+      assert stdout != subprocess.PIPE
+      try:
+        stdout.fileno()
+      except OSError:
+        # `stdout` doesn't have a file descriptor, so it can't be passed to
+        # `subprocess.run()` directly.
+        original_stdout = stdout
+        stdout = subprocess.PIPE
       stderr = subprocess.PIPE
     else:
       stdout = subprocess.PIPE
@@ -578,8 +590,13 @@ class _TestCaseRunner:
       test_result.status = result_types.TIMEOUT
       test_result.reason = 'Command {} timed out'.format(run_result.cmd)
 
+    if stdout == subprocess.PIPE and stderr == subprocess.PIPE:
+      # Copy captured standard output to the original `stdout`.
+      original_stdout.write(run_result.stdout)
+
     if not test_result.IsPass():
-      if stdout == subprocess.PIPE:
+      # On failure, report captured output to the test log.
+      if stderr == subprocess.STDOUT:
         test_result.log = run_result.stdout
       else:
         test_result.log = run_result.stderr
@@ -703,17 +720,20 @@ class _TestCaseRunner:
 
     cmd_to_run.append(self.pdf_path)
 
-    raised_exception, results = common.RunCommandExtractHashedFiles(cmd_to_run)
-    if raised_exception:
-      return self.test_case.NewResult(
-          result_types.FAIL, reason=str(raised_exception))
+    with BytesIO() as command_output:
+      test_result = self.RunCommand(cmd_to_run, stdout=command_output)
+      if not test_result.IsPass():
+        return test_result
 
-    test_result = self.test_case.NewResult(
-        result_types.PASS,
-        image_artifacts=[
-            self._NewImageArtifact(image_path=image_path, md5_hash=md5_hash)
-            for image_path, md5_hash in results
-        ])
+      test_result.image_artifacts = []
+      for line in command_output.getvalue().splitlines():
+        # Expect this format: MD5:<path to image file>:<hexadecimal MD5 hash>
+        line = bytes.decode(line).strip()
+        if line.startswith('MD5:'):
+          image_path, md5_hash = line[4:].rsplit(':', 1)
+          test_result.image_artifacts.append(
+              self._NewImageArtifact(
+                  image_path=image_path.strip(), md5_hash=md5_hash.strip()))
 
     if self.actual_images:
       image_diffs = _per_process_state.image_differ.ComputeDifferences(

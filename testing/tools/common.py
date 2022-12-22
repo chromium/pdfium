@@ -23,14 +23,6 @@ def os_name():
   raise Exception('Confused, can not determine OS, aborting.')
 
 
-def RunCommand(cmd):
-  try:
-    subprocess.check_call(cmd)
-    return None
-  except subprocess.CalledProcessError as e:
-    return e
-
-
 def RunCommandPropagateErr(cmd,
                            stdout_has_errors=False,
                            exit_status_on_error=None):
@@ -61,25 +53,6 @@ def RunCommandPropagateErr(cmd,
     return None
 
   return output
-
-
-# RunCommandExtractHashedFiles returns a tuple: (raised_exception, hashed_files)
-# It runs the given command. If it fails it will return an exception and None.
-# If it succeeds it will return None and the list of processed files extracted
-# from the output of the command. It expects lines in this format:
-#    MD5:<path_to_image_file>:<md5_hash_in_hex>
-# The returned hashed_files is a list of (file_path, MD5-hash) pairs.
-def RunCommandExtractHashedFiles(cmd):
-  try:
-    output = subprocess.check_output(cmd, universal_newlines=True)
-    ret = []
-    for line in output.split('\n'):
-      line = line.strip()
-      if line.startswith("MD5:"):
-        ret.append([x.strip() for x in line.lstrip("MD5:").rsplit(":", 1)])
-    return None, ret
-  except subprocess.CalledProcessError as e:
-    return e, None
 
 
 class DirectoryFinder:

@@ -8,9 +8,8 @@ import distutils.spawn
 import itertools
 import os
 import shutil
+import subprocess
 import sys
-
-import common
 
 
 class PathMode:
@@ -80,16 +79,23 @@ class PNGDiffer():
         break
     return actual_paths
 
+  def _RunCommand(self, cmd):
+    try:
+      subprocess.run(cmd, capture_output=True, check=True)
+      return None
+    except subprocess.CalledProcessError as e:
+      return e
+
   def _RunImageCompareCommand(self, image_diff):
     cmd = [self.pdfium_diff_path]
     if self.reverse_byte_order:
       cmd.append('--reverse-byte-order')
     cmd.extend([image_diff.actual_path, image_diff.expected_path])
-    return common.RunCommand(cmd)
+    return self._RunCommand(cmd)
 
   def _RunImageDiffCommand(self, image_diff):
     # TODO(crbug.com/pdfium/1925): Diff mode ignores --reverse-byte-order.
-    return common.RunCommand([
+    return self._RunCommand([
         self.pdfium_diff_path, '--subtract', image_diff.actual_path,
         image_diff.expected_path, image_diff.diff_path
     ])
