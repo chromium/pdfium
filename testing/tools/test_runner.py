@@ -5,6 +5,7 @@
 
 import argparse
 from dataclasses import dataclass, field
+from datetime import timedelta
 import multiprocessing
 import os
 import re
@@ -30,6 +31,11 @@ TEST_SEED_TIME = "1399672130"
 
 # List of test types that should run text tests instead of pixel tests.
 TEXT_TESTS = ['javascript']
+
+# Timeout (in seconds) for individual test commands.
+# TODO(crbug.com/pdfium/1967): array_buffer.in is slow under MSan, so need a
+# very generous 5 minute timeout for now.
+TEST_TIMEOUT = timedelta(minutes=5).total_seconds()
 
 
 class TestRunner:
@@ -86,7 +92,8 @@ class TestRunner:
       if test_result.reason:
         print(f'Failure reason: {test_result.reason}')
       if test_result.log:
-        print(f'Test output:\n{test_result.log}')
+        decoded_log = bytes.decode(test_result.log, errors='backslashreplace')
+        print(f'Test output:\n{decoded_log}')
       for artifact in test_result.image_artifacts:
         if artifact.skia_gold_status == result_types.FAIL:
           print(f'Failed Skia Gold: {artifact.image_path}')
@@ -446,7 +453,8 @@ class _PerProcessConfig:
     return finder.ExecutablePath('pdfium_test')
 
   def InitializeFeatures(self, pdfium_test_path):
-    output = subprocess.check_output([pdfium_test_path, '--show-config'])
+    output = subprocess.check_output([pdfium_test_path, '--show-config'],
+                                     timeout=TEST_TIMEOUT)
     self.features = output.decode('utf-8').strip().split(',')
 
 
@@ -553,20 +561,29 @@ class _TestCaseRunner:
       stdout = subprocess.PIPE
       stderr = subprocess.STDOUT
 
-    completed_process = subprocess.run(
-        command, stdout=stdout, stderr=stderr, check=False, encoding='utf-8')
-    if completed_process.returncode != 0:
-      if stdout == subprocess.PIPE:
-        test_log = completed_process.stdout
-      else:
-        test_log = completed_process.stderr
-      return self.test_case.NewResult(
-          result_types.FAIL,
-          log=test_log,
-          reason='Command {} exited with code {}'.format(
-              completed_process.args, completed_process.returncode))
+    test_result = self.test_case.NewResult(result_types.PASS)
+    try:
+      run_result = subprocess.run(
+          command,
+          stdout=stdout,
+          stderr=stderr,
+          timeout=TEST_TIMEOUT,
+          check=False)
+      if run_result.returncode != 0:
+        test_result.status = result_types.FAIL
+        test_result.reason = 'Command {} exited with code {}'.format(
+            run_result.args, run_result.returncode)
+    except subprocess.TimeoutExpired as timeout_expired:
+      run_result = timeout_expired
+      test_result.status = result_types.TIMEOUT
+      test_result.reason = 'Command {} timed out'.format(run_result.cmd)
 
-    return self.test_case.NewResult(result_types.PASS)
+    if not test_result.IsPass():
+      if stdout == subprocess.PIPE:
+        test_result.log = run_result.stdout
+      else:
+        test_result.log = run_result.stderr
+    return test_result
 
   def GenerateAndTest(self, test_function):
     """Generate test input and run pdfium_test."""
@@ -643,7 +660,7 @@ class _TestCaseRunner:
     ])
 
   def _VerifyEmptyText(self, txt_path):
-    with open(txt_path, "r") as txt_file:
+    with open(txt_path, "rb") as txt_file:
       txt_data = txt_file.read()
 
     if txt_data:
@@ -715,7 +732,7 @@ class _TestCaseRunner:
 
         for artifact in test_result.image_artifacts:
           artifact.image_diff = diff_map.get(artifact.image_path)
-        test_result.log = ''.join(diff_log)
+        test_result.log = ''.join(diff_log).encode()
 
     elif _per_process_state.enforce_expected_images:
       if not self.IsImageDiffSuppressed():
