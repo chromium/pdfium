@@ -491,6 +491,9 @@ bug_1331.in * * * *
 # TODO(chromium:1356149): Remove after associated bug is fixed
 bug_1356149.in mac * * agg
 
+# TODO(chromium:1395648): Remove after associated bug is fixed
+bug_1395648.in * * * skia
+
 # TODO(pdfium:1457): Remove after associated bug is fixed
 bug_1457.in * * * *
 
