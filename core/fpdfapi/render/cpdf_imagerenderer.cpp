@@ -366,7 +366,7 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
                              nullptr)) {
     return true;
   }
-  ClearBitmap(bitmap_device1, 0xffffff);
+  ClearBitmap(bitmap_device1, 0xffffffff);
   CPDF_RenderStatus bitmap_render(m_pRenderStatus->GetContext(),
                                   &bitmap_device1);
   bitmap_render.SetDropObjects(m_pRenderStatus->GetDropObjects());
