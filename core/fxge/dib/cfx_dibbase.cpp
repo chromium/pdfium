@@ -81,7 +81,8 @@ CFX_Palette::CFX_Palette(const RetainPtr<const CFX_DIBBase>& pBitmap)
   for (int row = 0; row < height; ++row) {
     pdfium::span<const uint8_t> scan_line = pBitmap->GetScanline(row);
     for (int col = 0; col < width; ++col) {
-      const uint8_t* src_port = scan_line.subspan(col * bpp).data();
+      const uint8_t* src_port =
+          scan_line.subspan(Fx2DSizeOrDie(col, bpp)).data();
       uint32_t b = src_port[0] & 0xf0;
       uint32_t g = src_port[1] & 0xf0;
       uint32_t r = src_port[2] & 0xf0;
@@ -117,7 +118,8 @@ void ConvertBuffer_1bppMask2Gray(pdfium::span<uint8_t> dest_buf,
   static constexpr uint8_t kSetGray = 0xff;
   static constexpr uint8_t kResetGray = 0x00;
   for (int row = 0; row < height; ++row) {
-    pdfium::span<uint8_t> dest_span = dest_buf.subspan(row * dest_pitch);
+    pdfium::span<uint8_t> dest_span =
+        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch));
     pdfium::span<const uint8_t> src_span =
         pSrcBitmap->GetScanline(src_top + row);
     fxcrt::spanset(dest_span.first(width), kResetGray);
@@ -140,7 +142,7 @@ void ConvertBuffer_8bppMask2Gray(pdfium::span<uint8_t> dest_buf,
                                  int src_top) {
   for (int row = 0; row < height; ++row) {
     fxcrt::spancpy(
-        dest_buf.subspan(row * dest_pitch),
+        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)),
         pSrcBitmap->GetScanline(src_top + row).subspan(src_left, width));
   }
 }
@@ -163,7 +165,8 @@ void ConvertBuffer_1bppPlt2Gray(pdfium::span<uint8_t> dest_buf,
   const uint8_t gray1 = FXRGB2GRAY(set_r, set_g, set_b);
 
   for (int row = 0; row < height; ++row) {
-    pdfium::span<uint8_t> dest_span = dest_buf.subspan(row * dest_pitch);
+    pdfium::span<uint8_t> dest_span =
+        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch));
     fxcrt::spanset(dest_span.first(width), gray0);
     uint8_t* dest_scan = dest_span.data();
     const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row).data();
@@ -190,7 +193,8 @@ void ConvertBuffer_8bppPlt2Gray(pdfium::span<uint8_t> dest_buf,
   }
 
   for (int row = 0; row < height; ++row) {
-    uint8_t* dest_scan = dest_buf.subspan(row * dest_pitch).data();
+    uint8_t* dest_scan =
+        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row).subspan(src_left).data();
     for (int col = 0; col < width; ++col)
@@ -207,7 +211,8 @@ void ConvertBuffer_Rgb2Gray(pdfium::span<uint8_t> dest_buf,
                             int src_top) {
   int Bpp = pSrcBitmap->GetBPP() / 8;
   for (int row = 0; row < height; ++row) {
-    uint8_t* dest_scan = dest_buf.subspan(row * dest_pitch).data();
+    uint8_t* dest_scan =
+        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row).subspan(src_left * Bpp).data();
     for (int col = 0; col < width; ++col) {
@@ -226,7 +231,8 @@ void ConvertBuffer_IndexCopy(pdfium::span<uint8_t> dest_buf,
                              int src_top) {
   if (pSrcBitmap->GetBPP() == 1) {
     for (int row = 0; row < height; ++row) {
-      pdfium::span<uint8_t> dest_span = dest_buf.subspan(row * dest_pitch);
+      pdfium::span<uint8_t> dest_span =
+          dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch));
       // Set all destination pixels to be white initially.
       fxcrt::spanset(dest_span.first(width), 255);
       uint8_t* dest_scan = dest_span.data();
@@ -242,7 +248,7 @@ void ConvertBuffer_IndexCopy(pdfium::span<uint8_t> dest_buf,
   } else {
     for (int row = 0; row < height; ++row) {
       fxcrt::spancpy(
-          dest_buf.subspan(row * dest_pitch),
+          dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)),
           pSrcBitmap->GetScanline(src_top + row).subspan(src_left, width));
     }
   }
@@ -309,9 +315,10 @@ void ConvertBuffer_Rgb2PltRgb8(pdfium::span<uint8_t> dest_buf,
   for (int row = 0; row < height; ++row) {
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row).subspan(src_left).data();
-    uint8_t* dest_scan = dest_buf.subspan(row * dest_pitch).data();
+    uint8_t* dest_scan =
+        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
     for (int col = 0; col < width; ++col) {
-      const uint8_t* src_port = src_scan + col * bpp;
+      const uint8_t* src_port = src_scan + Fx2DSizeOrDie(col, bpp);
       int r = src_port[2] & 0xf0;
       int g = src_port[1] & 0xf0;
       int b = src_port[0] & 0xf0;
@@ -339,7 +346,8 @@ void ConvertBuffer_1bppMask2Rgb(FXDIB_Format dest_format,
   static constexpr uint8_t kSetGray = 0xff;
   static constexpr uint8_t kResetGray = 0x00;
   for (int row = 0; row < height; ++row) {
-    uint8_t* dest_scan = dest_buf.subspan(row * dest_pitch).data();
+    uint8_t* dest_scan =
+        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
     const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row).data();
     for (int col = src_left; col < src_left + width; ++col) {
       uint8_t value =
@@ -360,7 +368,8 @@ void ConvertBuffer_8bppMask2Rgb(FXDIB_Format dest_format,
                                 int src_top) {
   int comps = GetCompsFromFormat(dest_format);
   for (int row = 0; row < height; ++row) {
-    uint8_t* dest_scan = dest_buf.subspan(row * dest_pitch).data();
+    uint8_t* dest_scan =
+        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row).subspan(src_left).data();
     for (int col = 0; col < width; ++col) {
@@ -386,7 +395,8 @@ void ConvertBuffer_1bppPlt2Rgb(FXDIB_Format dest_format,
       FXARGB_G(src_palette[1]), FXARGB_R(src_palette[1])};
   int comps = GetCompsFromFormat(dest_format);
   for (int row = 0; row < height; ++row) {
-    uint8_t* dest_scan = dest_buf.subspan(row * dest_pitch).data();
+    uint8_t* dest_scan =
+        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
     const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row).data();
     for (int col = src_left; col < src_left + width; ++col) {
       size_t offset = (src_scan[col / 8] & (1 << (7 - col % 8))) ? 3 : 0;
@@ -413,7 +423,8 @@ void ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dest_format,
   }
   int comps = GetCompsFromFormat(dest_format);
   for (int row = 0; row < height; ++row) {
-    uint8_t* dest_scan = dest_buf.subspan(row * dest_pitch).data();
+    uint8_t* dest_scan =
+        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row).subspan(src_left).data();
     for (int col = 0; col < width; ++col) {
@@ -433,7 +444,7 @@ void ConvertBuffer_24bppRgb2Rgb24(
     int src_left,
     int src_top) {
   for (int row = 0; row < height; ++row) {
-    fxcrt::spancpy(dest_buf.subspan(row * dest_pitch),
+    fxcrt::spancpy(dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)),
                    pSrcBitmap->GetScanline(src_top + row)
                        .subspan(src_left * 3, width * 3));
   }
@@ -448,7 +459,8 @@ void ConvertBuffer_32bppRgb2Rgb24(
     int src_left,
     int src_top) {
   for (int row = 0; row < height; ++row) {
-    uint8_t* dest_scan = dest_buf.subspan(row * dest_pitch).data();
+    uint8_t* dest_scan =
+        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row).subspan(src_left * 4).data();
     for (int col = 0; col < width; ++col) {
@@ -468,7 +480,8 @@ void ConvertBuffer_Rgb2Rgb32(pdfium::span<uint8_t> dest_buf,
                              int src_top) {
   int comps = pSrcBitmap->GetBPP() / 8;
   for (int row = 0; row < height; ++row) {
-    uint8_t* dest_scan = dest_buf.subspan(row * dest_pitch).data();
+    uint8_t* dest_scan =
+        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row).subspan(src_left * comps).data();
     for (int col = 0; col < width; ++col) {
