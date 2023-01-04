@@ -21,10 +21,12 @@ class TextCharPos;
 
 class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
  public:
-  CFX_SkiaDeviceDriver(RetainPtr<CFX_DIBitmap> pBitmap,
-                       bool bRgbByteOrder,
-                       RetainPtr<CFX_DIBitmap> pBackdropBitmap,
-                       bool bGroupKnockout);
+  static std::unique_ptr<CFX_SkiaDeviceDriver> Create(
+      RetainPtr<CFX_DIBitmap> pBitmap,
+      bool bRgbByteOrder,
+      RetainPtr<CFX_DIBitmap> pBackdropBitmap,
+      bool bGroupKnockout);
+
   explicit CFX_SkiaDeviceDriver(SkPictureRecorder* recorder);
   ~CFX_SkiaDeviceDriver() override;
 
@@ -151,6 +153,11 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   bool GetGroupKnockout() const { return m_bGroupKnockout; }
 
  private:
+  CFX_SkiaDeviceDriver(RetainPtr<CFX_DIBitmap> pBitmap,
+                       bool bRgbByteOrder,
+                       RetainPtr<CFX_DIBitmap> pBackdropBitmap,
+                       bool bGroupKnockout);
+
   bool StartDIBitsSkia(const RetainPtr<CFX_DIBBase>& pBitmap,
                        int bitmap_alpha,
                        uint32_t color,

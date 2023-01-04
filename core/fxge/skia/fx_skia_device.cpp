@@ -47,6 +47,7 @@
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
+#include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 #include "third_party/skia/include/core/SkBitmap.h"
 #include "third_party/skia/include/core/SkCanvas.h"
@@ -1333,6 +1334,18 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
   spaint->setStrokeJoin(join);
 }
 
+// static
+std::unique_ptr<CFX_SkiaDeviceDriver> CFX_SkiaDeviceDriver::Create(
+    RetainPtr<CFX_DIBitmap> pBitmap,
+    bool bRgbByteOrder,
+    RetainPtr<CFX_DIBitmap> pBackdropBitmap,
+    bool bGroupKnockout) {
+  auto driver = pdfium::WrapUnique(
+      new CFX_SkiaDeviceDriver(std::move(pBitmap), bRgbByteOrder,
+                               std::move(pBackdropBitmap), bGroupKnockout));
+  return driver;
+}
+
 CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
     RetainPtr<CFX_DIBitmap> pBitmap,
     bool bRgbByteOrder,
@@ -2205,9 +2218,10 @@ bool CFX_DefaultRenderDevice::AttachSkiaImpl(
   if (!pBitmap)
     return false;
   SetBitmap(pBitmap);
-  SetDeviceDriver(std::make_unique<CFX_SkiaDeviceDriver>(
-      std::move(pBitmap), bRgbByteOrder, std::move(pBackdropBitmap),
-      bGroupKnockout));
+  auto driver =
+      CFX_SkiaDeviceDriver::Create(std::move(pBitmap), bRgbByteOrder,
+                                   std::move(pBackdropBitmap), bGroupKnockout);
+  SetDeviceDriver(std::move(driver));
   return true;
 }
 
@@ -2228,8 +2242,9 @@ bool CFX_DefaultRenderDevice::CreateSkia(
     return false;
 
   SetBitmap(pBitmap);
-  SetDeviceDriver(std::make_unique<CFX_SkiaDeviceDriver>(
-      std::move(pBitmap), false, std::move(pBackdropBitmap), false));
+  auto driver = CFX_SkiaDeviceDriver::Create(std::move(pBitmap), false,
+                                             std::move(pBackdropBitmap), false);
+  SetDeviceDriver(std::move(driver));
   return true;
 }
 
