@@ -970,7 +970,8 @@ bool CFX_DIBitmap::CompositeRect(int left,
 bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   DCHECK(dest_format == FXDIB_Format::k8bppMask ||
          dest_format == FXDIB_Format::kArgb ||
-         dest_format == kPlatformRGBFormat);
+         dest_format == FXDIB_Format::kRgb32 ||
+         dest_format == FXDIB_Format::kRgb);
 
   if (dest_format == m_Format)
     return true;
