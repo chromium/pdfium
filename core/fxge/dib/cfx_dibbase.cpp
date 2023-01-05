@@ -859,16 +859,14 @@ void CFX_DIBBase::SetPalette(pdfium::span<const uint32_t> src_palette) {
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneAlphaMask() const {
   DCHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
-  FX_RECT rect(0, 0, m_Width, m_Height);
   auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pMask->Create(rect.Width(), rect.Height(), FXDIB_Format::k8bppMask))
+  if (!pMask->Create(m_Width, m_Height, FXDIB_Format::k8bppMask))
     return nullptr;
 
-  for (int row = rect.top; row < rect.bottom; ++row) {
-    const uint8_t* src_scan =
-        GetScanline(row).subspan(rect.left * 4 + 3).data();
-    uint8_t* dest_scan = pMask->GetWritableScanline(row - rect.top).data();
-    for (int col = rect.left; col < rect.right; ++col) {
+  for (int row = 0; row < m_Height; ++row) {
+    const uint8_t* src_scan = GetScanline(row).subspan(3).data();
+    uint8_t* dest_scan = pMask->GetWritableScanline(row).data();
+    for (int col = 0; col < m_Width; ++col) {
       *dest_scan++ = *src_scan;
       src_scan += 4;
     }
