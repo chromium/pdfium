@@ -145,7 +145,7 @@ the people in the top-level OWNERS file (or another of the owners if already
 discussing with a top-level owner). If the disagreement has moved up through
 all the OWNERS files in the PDFium repo, the escalation should then proceed to
 the Chromium
-[ENG_REVIEW_OWNERS](https://chromium.googlesource.com/chromium/src/+/refs/heads/main/ENG_REVIEW_OWNERS)
+[ATL_OWNERS](https://chromium.googlesource.com/chromium/src/+/refs/heads/main/ATL_OWNERS)
 as the final deciders.
 
 The
