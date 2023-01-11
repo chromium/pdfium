@@ -5,6 +5,7 @@
 import("//build/config/features.gni")
 import("//build/config/ui.gni")
 import("//testing/test.gni")
+import("//third_party/skia/gn/codec.gni")
 import("//third_party/skia/gn/shared_sources.gni")
 import("//third_party/skia/modules/skcms/skcms.gni")
 import("features.gni")
@@ -178,20 +179,9 @@ component("skia") {
   sources += skia_sksl_gpu_sources
   sources += skia_sksl_sources
   sources += skia_utils_sources
+  sources += skia_codec_core
+  sources += skia_codec_decode_bmp
   sources += [
-    "//third_party/skia/src/codec/SkBmpBaseCodec.cpp",
-    "//third_party/skia/src/codec/SkBmpCodec.cpp",
-    "//third_party/skia/src/codec/SkBmpMaskCodec.cpp",
-    "//third_party/skia/src/codec/SkBmpRLECodec.cpp",
-    "//third_party/skia/src/codec/SkBmpStandardCodec.cpp",
-    "//third_party/skia/src/codec/SkCodec.cpp",
-    "//third_party/skia/src/codec/SkCodecImageGenerator.cpp",
-    "//third_party/skia/src/codec/SkColorTable.cpp",
-    "//third_party/skia/src/codec/SkMaskSwizzler.cpp",
-    "//third_party/skia/src/codec/SkMasks.cpp",
-    "//third_party/skia/src/codec/SkSampler.cpp",
-    "//third_party/skia/src/codec/SkSwizzler.cpp",
-    "//third_party/skia/src/codec/SkWbmpCodec.cpp",
     "//third_party/skia/src/fonts/SkFontMgr_indirect.cpp",
     "//third_party/skia/src/fonts/SkRemotableFontMgr.cpp",
     "//third_party/skia/src/images/SkImageEncoder.cpp",
@@ -216,11 +206,13 @@ component("skia") {
 
   # GPU
   if (skia_support_gpu) {
-    sources += skia_gpu_sources
+    sources += skia_gpu_public
+    sources += skia_gpu_private
     sources += skia_null_gpu_sources
     sources += skia_shared_gpu_sources
     if (skia_use_gl) {
-      sources += skia_gl_gpu_sources
+      sources += skia_gpu_gl_public
+      sources += skia_gpu_gl_private
     }
   }
 
