@@ -600,8 +600,7 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
               SkBitmap* skBitmap,
               int* widthPtr,
               int* heightPtr,
-              bool forceAlpha,
-              bool bRgbByteOrder) {
+              bool forceAlpha) {
   void* buffer = pSource->GetBuffer().data();
   if (!buffer)
     return false;
@@ -629,7 +628,7 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
           dst32_storage = Fill32BppDestStorageWith1BppSource(pSource);
           buffer = dst32_storage.data();
           rowBytes = width * sizeof(uint32_t);
-          colorType = Get32BitSkColorType(bRgbByteOrder);
+          colorType = kBGRA_8888_SkColorType;
           break;
         }
 
@@ -662,7 +661,7 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
         dst32_storage = Fill32BppDestStorageWithPalette(pSource, src_palette);
         buffer = dst32_storage.data();
         rowBytes = width * sizeof(uint32_t);
-        colorType = Get32BitSkColorType(bRgbByteOrder);
+        colorType = kBGRA_8888_SkColorType;
       }
       break;
     case 24: {
@@ -679,12 +678,12 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
       }
       buffer = dst32_storage.data();
       rowBytes = width * sizeof(uint32_t);
-      colorType = Get32BitSkColorType(bRgbByteOrder);
+      colorType = kBGRA_8888_SkColorType;
       alphaType = kOpaque_SkAlphaType;
       break;
     }
     case 32:
-      colorType = Get32BitSkColorType(bRgbByteOrder);
+      colorType = kBGRA_8888_SkColorType;
       pSource->DebugVerifyBufferIsPreMultiplied(buffer);
       break;
     default:
@@ -2088,11 +2087,11 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
   int maskWidth;
   int maskHeight;
   if (!Upsample(pSource, src8_storage, src32_storage, &skBitmap, &srcWidth,
-                &srcHeight, /*forceAlpha=*/false, m_bRgbByteOrder)) {
+                &srcHeight, /*forceAlpha=*/false)) {
     return false;
   }
   if (!Upsample(pMask, mask8_storage, mask32_storage, &skMask, &maskWidth,
-                &maskHeight, /*forceAlpha=*/true, m_bRgbByteOrder)) {
+                &maskHeight, /*forceAlpha=*/true)) {
     return false;
   }
   {
@@ -2170,7 +2169,7 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
   int width;
   int height;
   if (!Upsample(pSource, dst8_storage, dst32_storage, &skBitmap, &width,
-                &height, /*forceAlpha=*/false, m_bRgbByteOrder)) {
+                &height, /*forceAlpha=*/false)) {
     return false;
   }
   {

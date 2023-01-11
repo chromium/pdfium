@@ -1448,6 +1448,21 @@ TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
   UnloadPage(page);
 }
 
+// TODO(crbug.com/pdfium/1955): Remove this test once pixel tests can pass with
+// `reverse-byte-order` option.
+TEST_F(FPDFViewEmbedderTest, RenderBlueAndRedImagesWithReverByteOrderFlag) {
+  // When rendering with `FPDF_REVERSE_BYTE_ORDER` flag, the blue and red
+  // channels should be reversed.
+  ASSERT_TRUE(OpenDocument("bug_1396264.pdf"));
+  ScopedFPDFPage page(FPDF_LoadPage(document(), 0));
+  ASSERT_TRUE(page);
+
+  TestRenderPageBitmapWithFlags(page.get(), 0,
+                                "81e7f4498090977c848a21b5c6510d3a");
+  TestRenderPageBitmapWithFlags(page.get(), FPDF_REVERSE_BYTE_ORDER,
+                                "505ba6d1c7f4044c11c91873452a8bde");
+}
+
 TEST_F(FPDFViewEmbedderTest, RenderJpxLzwImageWithFlags) {
   static const char kNormalChecksum[] = "4bcd56cae1ca2622403e8af07242e71a";
   static const char kGrayscaleChecksum[] = "fe45ad56efe868ba82285fa5ffedc0cb";
