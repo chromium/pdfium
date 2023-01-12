@@ -507,6 +507,11 @@ TEST_F(FPDFViewEmbedderTest, DocumentWithNoPageCount) {
   ASSERT_EQ(6, FPDF_GetPageCount(document()));
 }
 
+TEST_F(FPDFViewEmbedderTest, DocumentWithEmptyPageTreeNode) {
+  ASSERT_TRUE(OpenDocument("page_tree_empty_node.pdf"));
+  ASSERT_EQ(2, FPDF_GetPageCount(document()));
+}
+
 // See https://crbug.com/pdfium/465
 TEST_F(FPDFViewEmbedderTest, EmptyDocument) {
   CreateEmptyDocument();
