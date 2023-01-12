@@ -23,6 +23,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/scoped_set_insertion.h"
 #include "core/fxcrt/stl_util.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
 
@@ -30,8 +31,11 @@ namespace {
 
 const int kMaxPageLevel = 1024;
 
-int CountPages(RetainPtr<CPDF_Dictionary> pPages,
-               std::set<RetainPtr<CPDF_Dictionary>>* visited_pages) {
+// Returns a value in the range [0, `CPDF_Document::kPageMaxNum`), or nullopt on
+// error.
+absl::optional<int> CountPages(
+    RetainPtr<CPDF_Dictionary> pPages,
+    std::set<RetainPtr<CPDF_Dictionary>>* visited_pages) {
   int count = pPages->GetIntegerFor("Count");
   if (count > 0 && count < CPDF_Document::kPageMaxNum)
     return count;
@@ -47,10 +51,18 @@ int CountPages(RetainPtr<CPDF_Dictionary> pPages,
       // Use |visited_pages| to help detect circular references of pages.
       ScopedSetInsertion<RetainPtr<CPDF_Dictionary>> local_add(visited_pages,
                                                                pKid);
-      count += CountPages(std::move(pKid), visited_pages);
+      absl::optional<int> local_count =
+          CountPages(std::move(pKid), visited_pages);
+      if (!local_count.has_value()) {
+        return absl::nullopt;  // Propagate error.
+      }
+      count += local_count.value();
     } else {
       // This page is a leaf node.
       count++;
+    }
+    if (count >= CPDF_Document::kPageMaxNum) {
+      return absl::nullopt;  // Error: too many pages.
     }
   }
   pPages->SetNewFor<CPDF_Number>("Count", count);
@@ -381,7 +393,7 @@ int CPDF_Document::RetrievePageCount() {
     return 1;
 
   std::set<RetainPtr<CPDF_Dictionary>> visited_pages = {pPages};
-  return CountPages(std::move(pPages), &visited_pages);
+  return CountPages(std::move(pPages), &visited_pages).value_or(0);
 }
 
 uint32_t CPDF_Document::GetUserPermissions() const {
