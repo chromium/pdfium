@@ -524,9 +524,6 @@ bug_725555.in * * * skia
 # TODO(pdfium:983289): Remove after associated bug is fixed
 bug_983289.in * * * agg
 
-# TODO(pdfium:1310): Remove after associated bug is fixed
-radial_shading_point_at_border.in * * * skia
-
 # TODO(chromium:1028991): Remove after associated bug is fixed
 reset_button.in * * * *
 
