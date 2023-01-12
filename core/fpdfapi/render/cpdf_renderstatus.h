@@ -167,7 +167,7 @@ class CPDF_RenderStatus {
                    const CFX_Matrix& mtObj2Device);
   FX_RECT GetClippedBBox(const FX_RECT& rect) const;
   RetainPtr<CFX_DIBitmap> GetBackdrop(const CPDF_PageObject* pObj,
-                                      const FX_RECT& rect,
+                                      const FX_RECT& bbox,
                                       bool bBackAlphaRequired);
   RetainPtr<CFX_DIBitmap> LoadSMask(CPDF_Dictionary* pSMaskDict,
                                     FX_RECT* pClipRect,

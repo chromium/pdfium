@@ -28,7 +28,7 @@ class CPDF_ToUnicodeMap {
   WideString Lookup(uint32_t charcode) const;
   uint32_t ReverseLookup(wchar_t unicode) const;
 
-  size_t GetUnicodeCountByCharcodeForTesting(uint32_t cid) const;
+  size_t GetUnicodeCountByCharcodeForTesting(uint32_t charcode) const;
 
  private:
   friend class cpdf_tounicodemap_StringToCode_Test;

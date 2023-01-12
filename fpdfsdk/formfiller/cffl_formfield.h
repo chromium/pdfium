@@ -31,11 +31,11 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   ~CFFL_FormField() override;
 
   virtual void OnDraw(CPDFSDK_PageView* pPageView,
-                      CPDFSDK_Widget* pAnnot,
+                      CPDFSDK_Widget* pWidget,
                       CFX_RenderDevice* pDevice,
                       const CFX_Matrix& mtUser2Device);
   virtual void OnDrawDeactive(CPDFSDK_PageView* pPageView,
-                              CPDFSDK_Widget* pAnnot,
+                              CPDFSDK_Widget* pWidget,
                               CFX_RenderDevice* pDevice,
                               const CFX_Matrix& mtUser2Device);
 
@@ -86,7 +86,7 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
   bool Undo();
   bool Redo();
 
-  void SetFocusForAnnot(CPDFSDK_Widget* pAnnot, Mask<FWL_EVENTFLAG> nFlag);
+  void SetFocusForAnnot(CPDFSDK_Widget* pWidget, Mask<FWL_EVENTFLAG> nFlag);
   void KillFocusForAnnot(Mask<FWL_EVENTFLAG> nFlag);
 
   // CFX_Timer::CallbackIface:

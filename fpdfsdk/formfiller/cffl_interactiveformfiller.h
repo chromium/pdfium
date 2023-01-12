@@ -202,7 +202,7 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
 #endif  // PDF_ENABLE_XFA
 
   bool IsFillingAllowed(CPDFSDK_Widget* pWidget) const;
-  CFFL_FormField* GetFormField(CPDFSDK_Widget* pAnnot);
+  CFFL_FormField* GetFormField(CPDFSDK_Widget* pWidget);
   CFFL_FormField* GetOrCreateFormField(CPDFSDK_Widget* pWidget);
   void UnregisterFormField(CPDFSDK_Widget* pWidget);
 

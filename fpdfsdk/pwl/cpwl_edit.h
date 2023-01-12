@@ -40,7 +40,7 @@ class CPWL_Edit final : public CPWL_Wnd {
   bool OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
                     const CFX_PointF& point,
                     const CFX_Vector& delta) override;
-  bool OnKeyDown(FWL_VKEYCODE nChar, Mask<FWL_EVENTFLAG> nFlag) override;
+  bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) override;
   bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) override;
   CFX_FloatRect GetFocusRect() const override;
   void OnSetFocus() override;
