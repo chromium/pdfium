@@ -682,6 +682,33 @@ void CPDF_NPageToOneExporter::FinishPage(
                                            dest(), pStream->GetObjNum());
 }
 
+// Make sure arrays only contain objects of basic types.
+bool IsValidViewerPreferencesArray(const CPDF_Array* array) {
+  CPDF_ArrayLocker locker(array);
+  for (const auto& obj : locker) {
+    if (obj->IsArray() || obj->IsDictionary() || obj->IsReference() ||
+        obj->IsStream()) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool IsValidViewerPreferencesObject(const CPDF_Object* obj) {
+  // Per spec, there are no valid entries of these types.
+  if (obj->IsDictionary() || obj->IsNull() || obj->IsReference() ||
+      obj->IsStream()) {
+    return false;
+  }
+
+  const CPDF_Array* array = obj->AsArray();
+  if (!array) {
+    return true;
+  }
+
+  return IsValidViewerPreferencesArray(array);
+}
+
 }  // namespace
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -836,6 +863,14 @@ FPDF_CopyViewerPreferences(FPDF_DOCUMENT dest_doc, FPDF_DOCUMENT src_doc) {
   if (!pDstDict)
     return false;
 
-  pDstDict->SetFor("ViewerPreferences", pPrefDict->CloneDirectObject());
+  auto cloned_dict = pdfium::MakeRetain<CPDF_Dictionary>();
+  CPDF_DictionaryLocker locker(pPrefDict);
+  for (const auto& it : locker) {
+    if (IsValidViewerPreferencesObject(it.second)) {
+      cloned_dict->SetFor(it.first, it.second->Clone());
+    }
+  }
+
+  pDstDict->SetFor("ViewerPreferences", std::move(cloned_dict));
   return true;
 }

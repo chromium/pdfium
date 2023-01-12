@@ -6,7 +6,13 @@
 
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_formobject.h"
+#include "core/fpdfapi/parser/cpdf_array.h"
+#include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -400,6 +406,46 @@ TEST_F(FPDFPPOEmbedderTest, BadCircularViewerPref) {
 
   EXPECT_TRUE(FPDF_SaveAsCopy(output_doc, &writer, 0));
   FPDF_CloseDocument(output_doc);
+}
+
+TEST_F(FPDFPPOEmbedderTest, CopyViewerPrefTypes) {
+  ASSERT_TRUE(OpenDocument("viewer_pref_types.pdf"));
+
+  ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
+  ASSERT_TRUE(output_doc);
+  EXPECT_TRUE(FPDF_CopyViewerPreferences(output_doc.get(), document()));
+
+  // Peek under the hook to check the result.
+  const CPDF_Document* output_doc_impl =
+      CPDFDocumentFromFPDFDocument(output_doc.get());
+  RetainPtr<const CPDF_Dictionary> prefs =
+      output_doc_impl->GetRoot()->GetDictFor("ViewerPreferences");
+  ASSERT_TRUE(prefs);
+  EXPECT_EQ(6u, prefs->size());
+
+  RetainPtr<const CPDF_Object> bool_obj = prefs->GetObjectFor("Bool");
+  ASSERT_TRUE(bool_obj);
+  EXPECT_TRUE(bool_obj->IsBoolean());
+
+  RetainPtr<const CPDF_Number> num_obj = prefs->GetNumberFor("Num");
+  ASSERT_TRUE(num_obj);
+  EXPECT_TRUE(num_obj->IsInteger());
+  EXPECT_EQ(1, num_obj->GetInteger());
+
+  RetainPtr<const CPDF_String> str_obj = prefs->GetStringFor("Str");
+  ASSERT_TRUE(str_obj);
+  EXPECT_EQ("str", str_obj->GetString());
+
+  EXPECT_EQ("name", prefs->GetNameFor("Name"));
+
+  RetainPtr<const CPDF_Array> empty_array_obj =
+      prefs->GetArrayFor("EmptyArray");
+  ASSERT_TRUE(empty_array_obj);
+  EXPECT_TRUE(empty_array_obj->IsEmpty());
+
+  RetainPtr<const CPDF_Array> good_array_obj = prefs->GetArrayFor("GoodArray");
+  ASSERT_TRUE(good_array_obj);
+  EXPECT_EQ(4u, good_array_obj->size());
 }
 
 TEST_F(FPDFPPOEmbedderTest, BadIndices) {

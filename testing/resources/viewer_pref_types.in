@@ -1,0 +1,36 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /ViewerPreferences <<
+    /Bool true
+    /Num 1
+    /Str (str)
+    /Name /name
+    /Null null
+    /Ref 3 0 R
+    /EmptyArray []
+    /GoodArray [true 1 (str) /name]
+    /BadArray1 [true []]
+    /BadArray2 [1 <<>>]
+    /BadArray3 [/name 3 0 R]
+    /Dict <<
+    >>
+  >>
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

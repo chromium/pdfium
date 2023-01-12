@@ -1,0 +1,46 @@
+%PDF-1.7
+% ò¤ô
+1 0 obj <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /ViewerPreferences <<
+    /Bool true
+    /Num 1
+    /Str (str)
+    /Name /name
+    /Null null
+    /Ref 3 0 R
+    /EmptyArray []
+    /GoodArray [true 1 (str) /name]
+    /BadArray1 [true []]
+    /BadArray2 [1 <<>>]
+    /BadArray3 [/name 3 0 R]
+    /Dict <<
+    >>
+  >>
+>>
+endobj
+2 0 obj <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+3 0 obj <<
+  /Type /Page
+  /Parent 2 0 R
+>>
+endobj
+xref
+0 4
+0000000000 65535 f 
+0000000015 00000 n 
+0000000337 00000 n 
+0000000400 00000 n 
+trailer <<
+  /Root 1 0 R
+  /Size 4
+>>
+startxref
+451
+%%EOF
