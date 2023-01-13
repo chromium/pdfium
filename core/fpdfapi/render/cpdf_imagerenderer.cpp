@@ -73,7 +73,7 @@ RetainPtr<CFX_DIBBase> PreMultiplyBitmapIfAlpha(
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
     RetainPtr<CFX_DIBitmap> premultiplied = base_bitmap->Realize();
     if (base_bitmap->IsAlphaFormat())
-      CFX_SkiaDeviceDriver::PreMultiply(premultiplied);
+      premultiplied->PreMultiply();
     return premultiplied;
   }
 #endif  // defined(_SKIA_SUPPORT_)

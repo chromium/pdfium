@@ -1433,10 +1433,6 @@ void CFX_SkiaDeviceDriver::Flush() {
   m_pCache->Flush();
 }
 
-void CFX_SkiaDeviceDriver::PreMultiply() {
-  m_pBitmap->PreMultiply();
-}
-
 bool CFX_SkiaDeviceDriver::DrawDeviceText(
     pdfium::span<const TextCharPos> pCharPos,
     CFX_Font* pFont,
@@ -2008,11 +2004,6 @@ bool CFX_SkiaDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
                                           PauseIndicatorIface* pPause) {
   m_pCache->FlushForDraw();
   return false;
-}
-
-void CFX_SkiaDeviceDriver::PreMultiply(
-    const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
-  pDIBitmap->PreMultiply();
 }
 
 void CFX_DIBitmap::PreMultiply() {

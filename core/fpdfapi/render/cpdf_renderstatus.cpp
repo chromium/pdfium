@@ -1285,7 +1285,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
       }
 #if defined(_SKIA_SUPPORT_)
       if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-        CFX_SkiaDeviceDriver::PreMultiply(pDIBitmap);
+        pDIBitmap->PreMultiply();
 #endif
       if (m_pDevice->SetDIBits(pDIBitmap, left, top)) {
         return;
