@@ -1106,13 +1106,10 @@ FPDF_EXPORT const char* FPDF_CALLCONV FPDF_GetRecommendedV8Flags() {
   return "--jitless";
 }
 
-#ifndef V8_ENABLE_SANDBOX
-// TODO(crbug.com/1325244): support the v8 sandbox case.
 FPDF_EXPORT void* FPDF_CALLCONV FPDF_GetArrayBufferAllocatorSharedInstance() {
   static pdfium::base::NoDestructor<CFX_V8ArrayBufferAllocator> allocator;
   return allocator.get();
 }
-#endif  // V8_ENABLE_SANDBOX
 #endif  // PDF_ENABLE_V8
 
 #ifdef PDF_ENABLE_XFA
