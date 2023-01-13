@@ -715,7 +715,6 @@ bool CFX_RenderDevice::DrawPathWithBlend(
 
       DCHECK_EQ(point_type, CFX_Path::Point::Type::kLine);
       sub_path.push_back(points[i]);
-      continue;
     }
     // Process the last sub paths.
     DrawZeroAreaPath(sub_path, pObject2Device, adjust,
