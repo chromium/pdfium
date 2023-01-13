@@ -181,7 +181,7 @@ class StringViewTemplate {
     return !m_Span.empty() ? m_Span[m_Span.size() - 1] : 0;
   }
 
-  const CharType CharAt(const size_t index) const {
+  CharType CharAt(const size_t index) const {
     return static_cast<CharType>(m_Span[index]);
   }
 
