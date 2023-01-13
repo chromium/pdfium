@@ -41,9 +41,6 @@
 2_color_calrgb.pdf mac * * *
 2_color_indexed.pdf mac * * *
 
-# TODO(pdfium:1867): Remove after associated bug is fixed
-2_color_tiling.pdf * * * skia
-
 # TODO(pdfium:1860): Remove after associated bug is fixed
 2_halftone.pdf * * * skia
 
