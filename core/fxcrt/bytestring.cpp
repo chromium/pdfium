@@ -183,7 +183,7 @@ ByteString::ByteString(const std::initializer_list<ByteStringView>& list) {
 
 ByteString::ByteString(const fxcrt::ostringstream& outStream) {
   auto str = outStream.str();
-  if (str.size() > 0)
+  if (!str.empty())
     m_pData.Reset(StringData::Create(str.c_str(), str.size()));
 }
 
