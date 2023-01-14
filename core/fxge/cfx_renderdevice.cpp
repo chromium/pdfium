@@ -1216,7 +1216,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
     // DrawNormalTextHelper() can result in unpremultiplied bitmaps for
     // rendering glyphs. Make sure `bitmap` is premultiplied before proceeding
-    // or CFX_DIBBase::DebugVerifyBufferIsPreMultiplied() check will fail.
+    // or CFX_DIBBase::DebugVerifyBitmapIsPreMultiplied() check will fail.
     bitmap->PreMultiply();
   }
 #endif

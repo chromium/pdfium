@@ -684,7 +684,7 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
     }
     case 32:
       colorType = kBGRA_8888_SkColorType;
-      pSource->DebugVerifyBufferIsPreMultiplied(buffer);
+      pSource->DebugVerifyBitmapIsPreMultiplied();
       break;
     default:
       NOTREACHED();  // TODO(bug_11) ensure that all cases are covered
@@ -2294,10 +2294,10 @@ bool CFX_DefaultRenderDevice::SetBitsWithMask(
       ->SetBitsWithMask(pBitmap, pMask, left, top, bitmap_alpha, blend_type);
 }
 
-void CFX_DIBBase::DebugVerifyBufferIsPreMultiplied(void* arg) const {
+void CFX_DIBBase::DebugVerifyBitmapIsPreMultiplied() const {
 #ifdef SK_DEBUG
   DCHECK_EQ(GetBPP(), 32);
-  const uint32_t* buffer = (const uint32_t*)arg;
+  const uint32_t* buffer = reinterpret_cast<uint32_t*>(GetBuffer().data());
   int width = GetWidth();
   int height = GetHeight();
   // verify that input is really premultiplied
@@ -2314,11 +2314,5 @@ void CFX_DIBBase::DebugVerifyBufferIsPreMultiplied(void* arg) const {
       DCHECK(b <= a);
     }
   }
-#endif  // SK_DEBUG
-}
-
-void CFX_DIBitmap::DebugVerifyBitmapIsPreMultiplied() const {
-#ifdef SK_DEBUG
-  DebugVerifyBufferIsPreMultiplied(GetBuffer().data());
 #endif  // SK_DEBUG
 }

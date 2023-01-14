@@ -88,7 +88,7 @@ class CFX_DIBBase : public Retainable {
                       const CFX_ClipRgn* pClipRgn) const;
 
 #ifdef _SKIA_SUPPORT_
-  void DebugVerifyBufferIsPreMultiplied(void* buffer) const;
+  void DebugVerifyBitmapIsPreMultiplied() const;
 #endif
 
  protected:

@@ -108,7 +108,6 @@ class CFX_DIBitmap final : public CFX_DIBBase {
 
 #ifdef _SKIA_SUPPORT_
   void PreMultiply();
-  void DebugVerifyBitmapIsPreMultiplied() const;
   void UnPreMultiply();
 #endif
 
