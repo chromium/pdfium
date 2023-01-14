@@ -9,13 +9,27 @@
 
 #include <stddef.h>
 
+#include <memory>
+
 #include "v8/include/v8-array-buffer.h"
 
 class CFX_V8ArrayBufferAllocator final : public v8::ArrayBuffer::Allocator {
+ public:
   static const size_t kMaxAllowedBytes = 0x10000000;
+
+  CFX_V8ArrayBufferAllocator();
+  CFX_V8ArrayBufferAllocator(const CFX_V8ArrayBufferAllocator&) = delete;
+  CFX_V8ArrayBufferAllocator(CFX_V8ArrayBufferAllocator&&) = delete;
+  ~CFX_V8ArrayBufferAllocator() override;
+
   void* Allocate(size_t length) override;
   void* AllocateUninitialized(size_t length) override;
   void Free(void* data, size_t length) override;
+
+#ifdef V8_ENABLE_SANDBOX
+ private:
+  std::unique_ptr<v8::ArrayBuffer::Allocator> wrapped_;
+#endif  // V8_ENABLE_SANDBOX
 };
 
 #endif  // FXJS_CFX_V8_ARRAY_BUFFER_ALLOCATOR_H_
