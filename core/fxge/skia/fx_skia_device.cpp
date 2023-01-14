@@ -2007,55 +2007,55 @@ bool CFX_SkiaDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
 }
 
 void CFX_DIBitmap::PreMultiply() {
-  if (this->GetBPP() != 32)
+  if (GetBPP() != 32)
     return;
 
-  void* buffer = this->GetBuffer().data();
+  void* buffer = GetBuffer().data();
   if (!buffer)
     return;
 
-  Format priorFormat = m_nFormat;
+  Format prior_format = m_nFormat;
   m_nFormat = Format::kPreMultiplied;
-  if (priorFormat == Format::kPreMultiplied)
+  if (prior_format == Format::kPreMultiplied)
     return;
 
-  int height = this->GetHeight();
-  int width = this->GetWidth();
-  int rowBytes = this->GetPitch();
-  SkImageInfo unpremultipliedInfo =
+  int height = GetHeight();
+  int width = GetWidth();
+  int row_bytes = GetPitch();
+  SkImageInfo unpremultiplied_info =
       SkImageInfo::Make(width, height, kN32_SkColorType, kUnpremul_SkAlphaType);
-  SkPixmap unpremultiplied(unpremultipliedInfo, buffer, rowBytes);
-  SkImageInfo premultipliedInfo =
+  SkPixmap unpremultiplied(unpremultiplied_info, buffer, row_bytes);
+  SkImageInfo premultiplied_info =
       SkImageInfo::Make(width, height, kN32_SkColorType, kPremul_SkAlphaType);
-  SkPixmap premultiplied(premultipliedInfo, buffer, rowBytes);
+  SkPixmap premultiplied(premultiplied_info, buffer, row_bytes);
   unpremultiplied.readPixels(premultiplied);
-  this->DebugVerifyBitmapIsPreMultiplied();
+  DebugVerifyBitmapIsPreMultiplied();
 }
 
 void CFX_DIBitmap::UnPreMultiply() {
-  if (this->GetBPP() != 32)
+  if (GetBPP() != 32)
     return;
 
-  void* buffer = this->GetBuffer().data();
+  void* buffer = GetBuffer().data();
   if (!buffer)
     return;
 
-  Format priorFormat = m_nFormat;
+  Format prior_format = m_nFormat;
   m_nFormat = Format::kUnPreMultiplied;
 
-  if (priorFormat == Format::kUnPreMultiplied)
+  if (prior_format == Format::kUnPreMultiplied)
     return;
 
-  this->DebugVerifyBitmapIsPreMultiplied();
-  int height = this->GetHeight();
-  int width = this->GetWidth();
-  int rowBytes = this->GetPitch();
-  SkImageInfo premultipliedInfo =
+  DebugVerifyBitmapIsPreMultiplied();
+  int height = GetHeight();
+  int width = GetWidth();
+  int row_bytes = GetPitch();
+  SkImageInfo premultiplied_info =
       SkImageInfo::Make(width, height, kN32_SkColorType, kPremul_SkAlphaType);
-  SkPixmap premultiplied(premultipliedInfo, buffer, rowBytes);
-  SkImageInfo unpremultipliedInfo =
+  SkPixmap premultiplied(premultiplied_info, buffer, row_bytes);
+  SkImageInfo unpremultiplied_info =
       SkImageInfo::Make(width, height, kN32_SkColorType, kUnpremul_SkAlphaType);
-  SkPixmap unpremultiplied(unpremultipliedInfo, buffer, rowBytes);
+  SkPixmap unpremultiplied(unpremultiplied_info, buffer, row_bytes);
   premultiplied.readPixels(unpremultiplied);
 }
 
