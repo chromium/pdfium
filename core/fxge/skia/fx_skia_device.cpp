@@ -2218,9 +2218,7 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
 }
 
 void CFX_DefaultRenderDevice::Clear(uint32_t color) {
-  CFX_SkiaDeviceDriver* skDriver =
-      static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver());
-  skDriver->Clear(color);
+  static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver())->Clear(color);
 }
 
 std::unique_ptr<SkPictureRecorder> CFX_DefaultRenderDevice::CreateRecorder(
@@ -2278,10 +2276,8 @@ bool CFX_DefaultRenderDevice::CreateSkia(
 
 void CFX_DefaultRenderDevice::DebugVerifyBitmapIsPreMultiplied() const {
 #ifdef SK_DEBUG
-  CFX_SkiaDeviceDriver* skDriver =
-      static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver());
-  if (skDriver)
-    skDriver->DebugVerifyBitmapIsPreMultiplied();
+  static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver())
+      ->DebugVerifyBitmapIsPreMultiplied();
 #endif  // SK_DEBUG
 }
 
@@ -2292,15 +2288,10 @@ bool CFX_DefaultRenderDevice::SetBitsWithMask(
     int top,
     int bitmap_alpha,
     BlendMode blend_type) {
-  CFX_SkiaDeviceDriver* skDriver =
-      static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver());
-  if (skDriver) {
-    // Finish painting before drawing masks.
-    Flush(false);
-    return skDriver->SetBitsWithMask(pBitmap, pMask, left, top, bitmap_alpha,
-                                     blend_type);
-  }
-  return false;
+  // Finish painting before drawing masks.
+  Flush(false);
+  return static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver())
+      ->SetBitsWithMask(pBitmap, pMask, left, top, bitmap_alpha, blend_type);
 }
 
 void CFX_DIBBase::DebugVerifyBufferIsPreMultiplied(void* arg) const {
