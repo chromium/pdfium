@@ -30,6 +30,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/stl_util.h"
+#include "core/fxge/calculate_pitch.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_graphstatedata.h"
@@ -595,7 +596,6 @@ void SetBitmapPaintForMerge(bool is_mask,
 }
 
 bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
-              DataVector<uint8_t>& dst8_storage,
               DataVector<uint32_t>& dst32_storage,
               SkBitmap* skBitmap,
               bool forceAlpha) {
@@ -624,7 +624,6 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
                                IsRGBColorGrayScale(palette_color1);
         if (!use_gray_colors) {
           dst32_storage = Fill32BppDestStorageWith1BppSource(pSource);
-          buffer = dst32_storage.data();
           rowBytes = width * sizeof(uint32_t);
           colorType = kBGRA_8888_SkColorType;
           break;
@@ -634,17 +633,18 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
         color1 = FXARGB_R(palette_color1);
       }
 
-      dst8_storage = DataVector<uint8_t>(Fx2DSizeOrDie(width, height));
-      pdfium::span<uint8_t> dst8_pixels(dst8_storage);
+      const int src_row_bytes = rowBytes;  // Save original value.
+      rowBytes = fxge::CalculatePitch32OrDie(/*bpp=*/8, width);
+      dst32_storage = DataVector<uint32_t>(Fx2DSizeOrDie(rowBytes / 4, height));
+      pdfium::span<uint8_t> dst8_pixels =
+          pdfium::as_writable_bytes(pdfium::make_span(dst32_storage));
       for (int y = 0; y < height; ++y) {
-        const uint8_t* srcRow =
-            static_cast<const uint8_t*>(buffer) + y * rowBytes;
-        pdfium::span<uint8_t> dst_row = dst8_pixels.subspan(y * width);
+        const uint8_t* src_row =
+            static_cast<const uint8_t*>(buffer) + y * src_row_bytes;
+        pdfium::span<uint8_t> dst_row = dst8_pixels.subspan(y * rowBytes);
         for (int x = 0; x < width; ++x)
-          dst_row[x] = srcRow[x >> 3] & (1 << (~x & 0x07)) ? color1 : color0;
+          dst_row[x] = src_row[x >> 3] & (1 << (~x & 0x07)) ? color1 : color0;
       }
-      buffer = dst8_storage.data();
-      rowBytes = width;
       break;
     }
     case 8:
@@ -657,7 +657,6 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
           src_palette = src_palette.first(src_palette_size);
 
         dst32_storage = Fill32BppDestStorageWithPalette(pSource, src_palette);
-        buffer = dst32_storage.data();
         rowBytes = width * sizeof(uint32_t);
         colorType = kBGRA_8888_SkColorType;
       }
@@ -674,7 +673,6 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
                                     srcRow[x * 3 + 0]);
         }
       }
-      buffer = dst32_storage.data();
       rowBytes = width * sizeof(uint32_t);
       colorType = kBGRA_8888_SkColorType;
       alphaType = kOpaque_SkAlphaType;
@@ -686,6 +684,9 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
       break;
     default:
       NOTREACHED();
+  }
+  if (!dst32_storage.empty()) {
+    buffer = dst32_storage.data();
   }
   SkImageInfo imageInfo =
       SkImageInfo::Make(width, height, colorType, alphaType);
@@ -2062,18 +2063,14 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
     BlendMode blend_type) {
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
   // Storage vectors must outlive `skBitmap` and `skMask`.
-  DataVector<uint8_t> src8_storage;
-  DataVector<uint8_t> mask8_storage;
   DataVector<uint32_t> src32_storage;
   DataVector<uint32_t> mask32_storage;
   SkBitmap skBitmap;
   SkBitmap skMask;
-  if (!Upsample(pSource, src8_storage, src32_storage, &skBitmap,
-                /*forceAlpha=*/false)) {
+  if (!Upsample(pSource, src32_storage, &skBitmap, /*forceAlpha=*/false)) {
     return false;
   }
-  if (!Upsample(pMask, mask8_storage, mask32_storage, &skMask,
-                /*forceAlpha=*/true)) {
+  if (!Upsample(pMask, mask32_storage, &skMask, /*forceAlpha=*/true)) {
     return false;
   }
   {
@@ -2146,12 +2143,10 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
     BlendMode blend_type) {
   m_pCache->FlushForDraw();
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
-  // Storage vectors must outlive `skBitmap`.
-  DataVector<uint8_t> dst8_storage;
+  // Storage vector must outlive `skBitmap`.
   DataVector<uint32_t> dst32_storage;
   SkBitmap skBitmap;
-  if (!Upsample(pSource, dst8_storage, dst32_storage, &skBitmap,
-                /*forceAlpha=*/false)) {
+  if (!Upsample(pSource, dst32_storage, &skBitmap, /*forceAlpha=*/false)) {
     return false;
   }
   {
