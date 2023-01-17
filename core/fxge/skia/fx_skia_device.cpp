@@ -598,8 +598,6 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
               DataVector<uint8_t>& dst8_storage,
               DataVector<uint32_t>& dst32_storage,
               SkBitmap* skBitmap,
-              int* widthPtr,
-              int* heightPtr,
               bool forceAlpha) {
   void* buffer = pSource->GetBuffer().data();
   if (!buffer)
@@ -692,8 +690,6 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
   SkImageInfo imageInfo =
       SkImageInfo::Make(width, height, colorType, alphaType);
   skBitmap->installPixels(imageInfo, buffer, rowBytes);
-  *widthPtr = width;
-  *heightPtr = height;
   return true;
 }
 
@@ -2072,24 +2068,22 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
   DataVector<uint32_t> mask32_storage;
   SkBitmap skBitmap;
   SkBitmap skMask;
-  int srcWidth;
-  int srcHeight;
-  int maskWidth;
-  int maskHeight;
-  if (!Upsample(pSource, src8_storage, src32_storage, &skBitmap, &srcWidth,
-                &srcHeight, /*forceAlpha=*/false)) {
+  if (!Upsample(pSource, src8_storage, src32_storage, &skBitmap,
+                /*forceAlpha=*/false)) {
     return false;
   }
-  if (!Upsample(pMask, mask8_storage, mask32_storage, &skMask, &maskWidth,
-                &maskHeight, /*forceAlpha=*/true)) {
+  if (!Upsample(pMask, mask8_storage, mask32_storage, &skMask,
+                /*forceAlpha=*/true)) {
     return false;
   }
   {
     m_pCache->FlushForDraw();
-
     SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
+
+    const int src_width = pSource->GetWidth();
+    const int src_height = pSource->GetHeight();
     SkMatrix skMatrix;
-    SetBitmapMatrix(matrix, srcWidth, srcHeight, &skMatrix);
+    SetBitmapMatrix(matrix, src_width, src_height, &skMatrix);
     m_pCanvas->concat(skMatrix);
     SkPaint paint;
     SetBitmapPaintForMerge(pSource->IsMaskFormat(), !m_FillOptions.aliased_path,
@@ -2102,7 +2096,7 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
         SkTileMode::kClamp, SkTileMode::kClamp, SkSamplingOptions());
     paint.setShader(
         SkShaders::Blend(SkBlendMode::kSrcIn, skMaskShader, skSrcShader));
-    SkRect r = {0, 0, SkIntToScalar(srcWidth), SkIntToScalar(srcHeight)};
+    SkRect r = {0, 0, SkIntToScalar(src_width), SkIntToScalar(src_height)};
     m_pCanvas->drawRect(r, paint);
   }
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
@@ -2156,14 +2150,15 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
   DataVector<uint8_t> dst8_storage;
   DataVector<uint32_t> dst32_storage;
   SkBitmap skBitmap;
-  int width;
-  int height;
-  if (!Upsample(pSource, dst8_storage, dst32_storage, &skBitmap, &width,
-                &height, /*forceAlpha=*/false)) {
+  if (!Upsample(pSource, dst8_storage, dst32_storage, &skBitmap,
+                /*forceAlpha=*/false)) {
     return false;
   }
   {
     SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
+
+    const int width = pSource->GetWidth();
+    const int height = pSource->GetHeight();
     SkMatrix skMatrix;
     SetBitmapMatrix(matrix, width, height, &skMatrix);
     m_pCanvas->concat(skMatrix);
