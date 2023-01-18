@@ -179,7 +179,7 @@ class PNGDiffer():
         continue
 
       shutil.copyfile(actual_path, expected_path)
-      common.RunCommand(['optipng', expected_path])
+      self._RunCommand(['optipng', expected_path])
 
 
 ACTUAL_TEMPLATE = '.pdf.%d.png'

@@ -70,36 +70,7 @@ FRC_15_8.2.2__T8.3_Count_edit1.pdf * * * *
 FRC_16_8.2.2__T8.3_Count_edit_1.pdf * * * *
 FRC_1_8.2.2__T8.3_First_empty.pdf * * * *
 FRC_2_8.2.2__T8.3_Last_empty.pdf * * * *
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-FRC_3.5_AuthEvent_EFOpen.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-FRC_3.5_CF_EFF_StdCF_Strf_Stmf_Identity.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-FRC_3.5_CF_Strf_stmf_StdCF.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-FRC_3.5_CFM_AESV2__EncryptMetadata_F.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-FRC_3.5_EncryptMetadata_None.pdf * * * skia
-
 FRC_3.5_P__3616_Password_1.pdf * * * *
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-FRC_3.5_V_4_CFM_V2_.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-FRC_3.5_V_5_CFM_AESV3.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-FRC_3.5_v_1_length_40_Filter_standard.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-FRC_3.5_v_2_length_128_AuthEvent_DocOpen_.pdf * * * skia
-
 FRC_3_8.2.2_Type_empty.pdf * * * *
 FRC_4_8.2.2__T8.3_Count_empty.pdf * * * *
 FRC_5_8.2.2__T8.3_First_remove.pdf * * * *
@@ -163,10 +134,6 @@ en_diy.pdf mac * * *
 en_foxit.pdf mac * * *
 en_fqa2.pdf mac * * *
 en_introduce.pdf mac * * *
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-en_tem.pdf * * * skia
-
 en_tem.pdf mac * * *
 en_uicase_.pdf mac * * *
 event.change.pdf mac * * *
@@ -244,37 +211,6 @@ example_065.pdf mac * * *
 fillform.pdf * * * *
 form_action_trigger.pdf * * * *
 form_button_sign_url.pdf * * * *
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-form_button0.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-form_button1.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-form_button10.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-form_button2.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-form_button3.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-form_button4.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-form_button5.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-form_button7.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-form_button8.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-form_button9.pdf * * * skia
-
 form_combo_sign_url.pdf * * * *
 form_combobox0.pdf * * * *
 form_combobox_actioin_goto.pdf * * * *
@@ -319,25 +255,6 @@ format_special.pdf * nov8 * *
 format_text_color.pdf mac * * *
 formfeild.pdf * * * *
 getarray.pdf mac * * *
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-image_bmp.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-image_gif.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-image_ico.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-image_jpg.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-image_png.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-image_tif.pdf * * * skia
-
 javascriptaction.pdf * * * *
 jetman_std.pdf mac * * *
 jetman_std_fixed.pdf mac * * *
@@ -354,13 +271,7 @@ new_certify1.pdf mac * * *
 # TODO(pdfium:1863): Remove after associated bug is fixed
 new_pdfsign1.pdf * * * skia
 
-# TODO(pdfium:1856): Remove after associated bug is fixed
-new_pdfsign2.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-new_pdfsign3.pdf * * * skia
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
+# TODO(pdfium:1976): Remove after associated bug is fixed
 new_pdfsign4.pdf * * * skia
 
 new_signature1.pdf mac * * *
@@ -416,10 +327,6 @@ thread_action.pdf mac * * *
 time.pdf mac * * *
 transformation.pdf mac * * *
 transparent.pdf mac * * *
-
-# TODO(pdfium:1856): Remove after associated bug is fixed
-whats_new_in_v3.0.pdf * * * skia
-
 whats_new_in_v3.0.pdf mac * * *
 widget_javascript.pdf mac * * *
 
