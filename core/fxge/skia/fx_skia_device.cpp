@@ -2163,7 +2163,9 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
     // TODO(caryclark) Once Skia supports 8 bit src to 8 bit dst remove this
     if (m_pBitmap && m_pBitmap->GetBPP() == 8 && pSource->GetBPP() == 8) {
       SkMatrix inv;
-      SkAssertResult(skMatrix.invert(&inv));
+      if (!skMatrix.invert(&inv)) {
+        return false;
+      }
       for (int y = 0; y < m_pBitmap->GetHeight(); ++y) {
         for (int x = 0; x < m_pBitmap->GetWidth(); ++x) {
           SkPoint src = {x + 0.5f, y + 0.5f};
@@ -2264,10 +2266,10 @@ bool CFX_DefaultRenderDevice::CreateSkia(
 }
 
 void CFX_DefaultRenderDevice::DebugVerifyBitmapIsPreMultiplied() const {
-#ifdef SK_DEBUG
+#if !defined(NDEBUG)
   static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver())
       ->DebugVerifyBitmapIsPreMultiplied();
-#endif  // SK_DEBUG
+#endif
 }
 
 bool CFX_DefaultRenderDevice::SetBitsWithMask(
@@ -2284,7 +2286,7 @@ bool CFX_DefaultRenderDevice::SetBitsWithMask(
 }
 
 void CFX_DIBBase::DebugVerifyBitmapIsPreMultiplied() const {
-#ifdef SK_DEBUG
+#if !defined(NDEBUG)
   DCHECK_EQ(GetBPP(), 32);
   const uint32_t* buffer = reinterpret_cast<uint32_t*>(GetBuffer().data());
   int width = GetWidth();
@@ -2297,11 +2299,11 @@ void CFX_DIBBase::DebugVerifyBitmapIsPreMultiplied() const {
       uint8_t r = SkGetPackedR32(srcRow[x]);
       uint8_t g = SkGetPackedG32(srcRow[x]);
       uint8_t b = SkGetPackedB32(srcRow[x]);
-      SkA32Assert(a);
+      DCHECK(static_cast<unsigned>(a) <= SK_A32_MASK);
       DCHECK(r <= a);
       DCHECK(g <= a);
       DCHECK(b <= a);
     }
   }
-#endif  // SK_DEBUG
+#endif
 }
