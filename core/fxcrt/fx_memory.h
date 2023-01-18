@@ -59,6 +59,7 @@ NOINLINE void FX_OutOfMemoryTerminate(size_t size);
 // FX_Free accepts memory from all of the above.
 void FX_Free(void* ptr);
 
+#ifndef V8_ENABLE_SANDBOX
 // V8 Array Buffer Partition Allocators.
 
 // This never returns nullptr, and returns zeroed memory.
@@ -69,6 +70,7 @@ void* FX_ArrayBufferAllocateUninitialized(size_t length);
 
 // FX_ArrayBufferFree accepts memory from both of the above.
 void FX_ArrayBufferFree(void* data);
+#endif  // V8_ENABLE_SANDBOX
 
 namespace pdfium {
 namespace internal {
