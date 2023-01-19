@@ -296,10 +296,6 @@ octest.pdf mac * * *
 open_a_weblink.pdf mac * * *
 path_10_jd.pdf mac * * *
 path_5_pattern.pdf mac * * *
-
-# TODO(pdfium:1867): Remove after associated bug is fixed
-path_5_pattern.pdf * * * skia
-
 path_6_graphics4.5.5.pdf mac * * *
 path_7.pdf mac * * *
 path_9.pdf mac * * *
