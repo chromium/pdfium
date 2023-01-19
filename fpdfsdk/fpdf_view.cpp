@@ -731,19 +731,27 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
 FPDF_EXPORT FPDF_RECORDER FPDF_CALLCONV FPDF_RenderPageSkp(FPDF_PAGE page,
                                                            int size_x,
                                                            int size_y) {
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage)
-    return nullptr;
-
-  auto pOwnedContext = std::make_unique<CPDF_PageRenderContext>();
-  CPDF_PageRenderContext* pContext = pOwnedContext.get();
-  CPDF_Page::RenderContextClearer clearer(pPage);
-  pPage->SetRenderContext(std::move(pOwnedContext));
-
   auto skDevice = std::make_unique<CFX_DefaultRenderDevice>();
   std::unique_ptr<SkPictureRecorder> recorder =
       skDevice->CreateRecorder(SkRect::MakeWH(size_x, size_y));
-  pContext->m_pDevice = std::move(skDevice);
+
+  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
+  if (!pPage) {
+    // The equivalent bitmap APIs don't signal failure in this case, but defer
+    // the real work to a later call to `FPDF_FFLDraw()`. This is the case for
+    // XFA pages, for example.
+    //
+    // The caller still needs the `SkPictureRecorder` in order to call
+    // `FPDF_FFLRecord()` later.
+    return recorder.release();
+  }
+
+  auto pOwnedContext = std::make_unique<CPDF_PageRenderContext>();
+  pOwnedContext->m_pDevice = std::move(skDevice);
+
+  CPDF_Page::RenderContextClearer clearer(pPage);
+  CPDF_PageRenderContext* pContext = pOwnedContext.get();
+  pPage->SetRenderContext(std::move(pOwnedContext));
 
   CPDFSDK_RenderPageWithContext(pContext, pPage, 0, 0, size_x, size_y, 0, 0,
                                 /*color_scheme=*/nullptr,
