@@ -432,8 +432,6 @@ reset_button.in * * * *
 bug_997412.in win * * *
 # TODO(pdfium:1107): Remove after associated bug is fixed
 standard_symbols.pdf * * * *
-# TODO(pdfium:1902): Remove after associated bug is fixed
-xfa_bmp_image.in * * * skia
 # TODO(pdfium:1095): Remove after associated bug is fixed
 xfa_example.in win * * *
 # TODO(pdfium:1095): Remove after associated bug is fixed
