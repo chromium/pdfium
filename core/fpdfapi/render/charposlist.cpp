@@ -10,6 +10,7 @@
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/text_char_pos.h"
 
@@ -35,6 +36,54 @@ bool ShouldUseExistingFont(const CPDF_Font* font,
   // and
   // https://www.freetype.org/freetype2/docs/tutorial/step1.html#section-6)
   return glyph_id != 0 || has_to_unicode;
+}
+
+// The following is not a perfect solution and can be further improved.
+// For example, if `subst_font` is "Book" and the `base_font_name` is "Bookman",
+// this function will return "true" even though the actual font "Bookman"
+// is not loaded.
+// An exact string match is not possible here, because `subst_font_name`
+// will be the same value for different postscript names.
+// For example: "Times New Roman" as `subst_font_name` for all of these
+// `base_font_name` values: "TimesNewRoman,Bold", "TimesNewRomanPS-Bold",
+// "TimesNewRomanBold" and "TimesNewRoman-Bold".
+bool IsActualFontLoaded(const CFX_SubstFont* subst_font,
+                        const ByteString& base_font_name) {
+  // Skip if we loaded the actual font.
+  // example: TimesNewRoman,Bold -> Times New Roman
+  ByteString subst_font_name = subst_font->m_Family;
+  subst_font_name.Remove(' ');
+  subst_font_name.MakeLower();
+
+  absl::optional<size_t> find =
+      base_font_name.Find(subst_font_name.AsStringView());
+  return find.has_value() && find.value() == 0;
+}
+
+bool ApplyGlyphSpacingHeuristic(const CPDF_Font* font,
+                                const CFX_Font* current_font,
+                                bool is_vertical_writing) {
+  if (is_vertical_writing || font->IsEmbedded() || !font->HasFontWidths()) {
+    return false;
+  }
+
+  // Skip if we loaded a standard alternate font.
+  // example: Helvetica -> Arial
+  ByteString base_font_name = font->GetBaseFontName();
+  base_font_name.MakeLower();
+
+  auto standard_font_name =
+      CFX_FontMapper::GetStandardFontName(&base_font_name);
+  if (standard_font_name.has_value()) {
+    return false;
+  }
+
+  CFX_SubstFont* subst_font = current_font->GetSubstFont();
+  if (subst_font->IsBuiltInGenericFont()) {
+    return false;
+  }
+
+  return !IsActualFontLoaded(subst_font, base_font_name);
 }
 
 }  // namespace
@@ -94,8 +143,7 @@ std::vector<TextCharPos> GetCharPosList(pdfium::span<const uint32_t> char_codes,
     text_char_pos.m_bGlyphAdjust = false;
 
     float scaling_factor = 1.0f;
-    if (!font->IsEmbedded() && font->HasFontWidths() && !is_vertical_writing &&
-        !current_font->GetSubstFont()->IsBuiltInGenericFont()) {
+    if (ApplyGlyphSpacingHeuristic(font, current_font, is_vertical_writing)) {
       int pdf_glyph_width = font->GetCharWidthF(char_code);
       int font_glyph_width =
           current_font->GetGlyphWidth(text_char_pos.m_GlyphIndex);
