@@ -1560,12 +1560,35 @@ FORM_GetSelectedText(FPDF_FORMHANDLE hHandle,
                      unsigned long buflen);
 
 /*
+ * Experimental API
+ * Function: FORM_ReplaceAndKeepSelection
+ *       Call this function to replace the selected text in a form
+ *       text field or user-editable form combobox text field with another
+ *       text string (which can be empty or non-empty). If there is no
+ *       selected text, this function will append the replacement text after
+ *       the current caret position. After the insertion, the inserted text
+ *       will be selected.
+ * Parameters:
+ *       hHandle     -   Handle to the form fill module, as returned by
+ *                       FPDFDOC_InitFormFillEnvironment().
+ *       page        -   Handle to the page, as Returned by FPDF_LoadPage().
+ *       wsText      -   The text to be inserted, in UTF-16LE format.
+ * Return Value:
+ *       None.
+ */
+FPDF_EXPORT void FPDF_CALLCONV
+FORM_ReplaceAndKeepSelection(FPDF_FORMHANDLE hHandle,
+                             FPDF_PAGE page,
+                             FPDF_WIDESTRING wsText);
+
+/*
  * Function: FORM_ReplaceSelection
  *       Call this function to replace the selected text in a form
  *       text field or user-editable form combobox text field with another
  *       text string (which can be empty or non-empty). If there is no
  *       selected text, this function will append the replacement text after
- *       the current caret position.
+ *       the current caret position. After the insertion, the selection range
+ *       will be set to empty.
  * Parameters:
  *       hHandle     -   Handle to the form fill module, as returned by
  *                       FPDFDOC_InitFormFillEnvironment().

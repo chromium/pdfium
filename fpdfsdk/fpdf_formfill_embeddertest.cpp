@@ -3197,6 +3197,39 @@ TEST_F(FPDFFormFillListBoxFormEmbedderTest, CheckForNoOverscroll) {
   }
 }
 
+TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceAndKeepSelection) {
+  ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"XYZ");
+  ClickOnFormFieldAtPoint(RegularFormBegin());
+  CheckCanUndo(false);
+  CheckCanRedo(false);
+
+  TypeTextIntoTextField(2, RegularFormBegin());
+  CheckFocusedFieldText(L"AB");
+  CheckSelection(L"");
+  SelectTextWithKeyboard(1, FWL_VKEY_Right, RegularFormBegin());
+  CheckSelection(L"A");
+
+  FORM_ReplaceAndKeepSelection(form_handle(), page(), text_to_insert.get());
+  CheckFocusedFieldText(L"XYZB");
+  CheckSelection(L"XYZ");
+  CheckCanUndo(true);
+  CheckCanRedo(false);
+
+  PerformUndo();
+  CheckFocusedFieldText(L"AB");
+  CheckCanUndo(true);
+  CheckCanRedo(true);
+
+  SelectTextWithKeyboard(1, FWL_VKEY_Left, RegularFormEnd());
+  CheckSelection(L"B");
+
+  FORM_ReplaceAndKeepSelection(form_handle(), page(), text_to_insert.get());
+  CheckFocusedFieldText(L"AXYZ");
+  CheckSelection(L"XYZ");
+  CheckCanUndo(true);
+  CheckCanRedo(false);
+}
+
 TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceSelection) {
   ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"XYZ");
   ClickOnFormFieldAtPoint(RegularFormBegin());

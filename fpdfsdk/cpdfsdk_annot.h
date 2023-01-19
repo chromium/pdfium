@@ -75,6 +75,7 @@ class CPDFSDK_Annot : public Observable {
   virtual bool Redo() = 0;
   virtual WideString GetText() = 0;
   virtual WideString GetSelectedText() = 0;
+  virtual void ReplaceAndKeepSelection(const WideString& text) = 0;
   virtual void ReplaceSelection(const WideString& text) = 0;
   virtual bool SelectAllText() = 0;
   virtual bool SetIndexSelected(int index, bool selected) = 0;

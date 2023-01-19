@@ -99,6 +99,7 @@ class CPWL_EditImpl {
   bool Delete();
   bool ClearSelection();
   bool InsertText(const WideString& sText, FX_Charset charset);
+  void ReplaceAndKeepSelection(const WideString& text);
   void ReplaceSelection(const WideString& text);
   bool Redo();
   bool Undo();

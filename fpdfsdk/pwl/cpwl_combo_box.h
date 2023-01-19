@@ -40,6 +40,7 @@ class CPWL_ComboBox final : public CPWL_Wnd {
   void KillFocus() override;
   WideString GetText() override;
   WideString GetSelectedText() override;
+  void ReplaceAndKeepSelection(const WideString& text) override;
   void ReplaceSelection(const WideString& text) override;
   bool SelectAllText() override;
   bool CanUndo() override;

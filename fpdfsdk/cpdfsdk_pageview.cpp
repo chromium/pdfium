@@ -286,6 +286,12 @@ WideString CPDFSDK_PageView::GetSelectedText() {
   return annot->GetSelectedText();
 }
 
+void CPDFSDK_PageView::ReplaceAndKeepSelection(const WideString& text) {
+  CPDFSDK_Annot* annot = GetFocusAnnot();
+  if (annot)
+    annot->ReplaceAndKeepSelection(text);
+}
+
 void CPDFSDK_PageView::ReplaceSelection(const WideString& text) {
   CPDFSDK_Annot* annot = GetFocusAnnot();
   if (annot)

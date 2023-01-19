@@ -531,6 +531,16 @@ WideString CFFL_InteractiveFormFiller::GetSelectedText(
   return pFormField ? pFormField->GetSelectedText() : WideString();
 }
 
+void CFFL_InteractiveFormFiller::ReplaceAndKeepSelection(
+    CPDFSDK_Widget* pWidget,
+    const WideString& text) {
+  CFFL_FormField* pFormField = GetFormField(pWidget);
+  if (!pFormField)
+    return;
+
+  pFormField->ReplaceAndKeepSelection(text);
+}
+
 void CFFL_InteractiveFormFiller::ReplaceSelection(CPDFSDK_Widget* pWidget,
                                                   const WideString& text) {
   CFFL_FormField* pFormField = GetFormField(pWidget);

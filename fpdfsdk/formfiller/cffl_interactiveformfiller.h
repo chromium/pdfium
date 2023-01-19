@@ -126,6 +126,7 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
 
   WideString GetText(CPDFSDK_Widget* pWidget);
   WideString GetSelectedText(CPDFSDK_Widget* pWidget);
+  void ReplaceAndKeepSelection(CPDFSDK_Widget* pWidget, const WideString& text);
   void ReplaceSelection(CPDFSDK_Widget* pWidget, const WideString& text);
   bool SelectAllText(CPDFSDK_Widget* pWidget);
 

@@ -78,6 +78,7 @@ class CFFL_FormField : public CPWL_Wnd::ProviderIface,
 
   WideString GetText();
   WideString GetSelectedText();
+  void ReplaceAndKeepSelection(const WideString& text);
   void ReplaceSelection(const WideString& text);
   bool SelectAllText();
 

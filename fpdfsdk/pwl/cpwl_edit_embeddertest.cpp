@@ -4,6 +4,8 @@
 
 #include "fpdfsdk/pwl/cpwl_edit.h"
 
+#include <utility>
+
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -419,4 +421,22 @@ TEST_F(CPWLEditEmbedderTest, SetTextWithBodyNewLineAndCarriageFeed) {
   FormFillerAndWindowSetup(GetCPDFSDKAnnot());
   GetCPWLEdit()->SetText(L"Foo\n\rBar");
   EXPECT_STREQ(L"FooBar", GetCPWLEdit()->GetText().c_str());
+}
+
+TEST_F(CPWLEditEmbedderTest, ReplaceAndKeepSelection) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnot());
+  TypeTextIntoTextField(10);
+
+  GetCPWLEdit()->SetSelection(1, 3);
+  EXPECT_STREQ(L"ABCDEFGHIJ", GetCPWLEdit()->GetText().c_str());
+  GetCPWLEdit()->ReplaceAndKeepSelection(L"xyz");
+  EXPECT_STREQ(L"AxyzDEFGHIJ", GetCPWLEdit()->GetText().c_str());
+  EXPECT_STREQ(L"xyz", GetCPWLEdit()->GetSelectedText().c_str());
+  EXPECT_EQ(GetCPWLEdit()->GetSelection(), std::make_pair(1, 4));
+
+  GetCPWLEdit()->SetSelection(4, 1);
+  GetCPWLEdit()->ReplaceAndKeepSelection(L"12");
+  EXPECT_STREQ(L"A12DEFGHIJ", GetCPWLEdit()->GetText().c_str());
+  EXPECT_STREQ(L"12", GetCPWLEdit()->GetSelectedText().c_str());
+  EXPECT_EQ(GetCPWLEdit()->GetSelection(), std::make_pair(1, 3));
 }

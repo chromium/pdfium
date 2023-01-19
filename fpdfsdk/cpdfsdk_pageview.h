@@ -66,6 +66,7 @@ class CPDFSDK_PageView final : public CPDF_Page::View {
 
   WideString GetFocusedFormText();
   WideString GetSelectedText();
+  void ReplaceAndKeepSelection(const WideString& text);
   void ReplaceSelection(const WideString& text);
   bool SelectAllText();
 

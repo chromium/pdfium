@@ -487,6 +487,10 @@ WideString CPWL_Edit::GetSelectedText() {
   return m_pEditImpl->GetSelectedText();
 }
 
+void CPWL_Edit::ReplaceAndKeepSelection(const WideString& text) {
+  m_pEditImpl->ReplaceAndKeepSelection(text);
+}
+
 void CPWL_Edit::ReplaceSelection(const WideString& text) {
   m_pEditImpl->ReplaceSelection(text);
 }

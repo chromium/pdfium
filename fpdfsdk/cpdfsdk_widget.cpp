@@ -877,6 +877,13 @@ WideString CPDFSDK_Widget::GetSelectedText() {
   return GetInteractiveFormFiller()->GetSelectedText(this);
 }
 
+void CPDFSDK_Widget::ReplaceAndKeepSelection(const WideString& text) {
+  if (IsSignatureWidget())
+    return;
+
+  GetInteractiveFormFiller()->ReplaceAndKeepSelection(this, text);
+}
+
 void CPDFSDK_Widget::ReplaceSelection(const WideString& text) {
   if (IsSignatureWidget())
     return;

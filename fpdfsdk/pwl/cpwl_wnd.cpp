@@ -345,6 +345,8 @@ WideString CPWL_Wnd::GetSelectedText() {
   return WideString();
 }
 
+void CPWL_Wnd::ReplaceAndKeepSelection(const WideString& text) {}
+
 void CPWL_Wnd::ReplaceSelection(const WideString& text) {}
 
 bool CPWL_Wnd::SelectAllText() {

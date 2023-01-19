@@ -299,6 +299,7 @@ int CheckPDFiumCApi() {
     CHK(FORM_OnRButtonDown);
     CHK(FORM_OnRButtonUp);
     CHK(FORM_Redo);
+    CHK(FORM_ReplaceAndKeepSelection);
     CHK(FORM_ReplaceSelection);
     CHK(FORM_SelectAllText);
     CHK(FORM_SetFocusedAnnot);

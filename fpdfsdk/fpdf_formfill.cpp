@@ -531,6 +531,17 @@ FORM_GetSelectedText(FPDF_FORMHANDLE hHandle,
                                              buffer, buflen);
 }
 
+FPDF_EXPORT void FPDF_CALLCONV
+FORM_ReplaceAndKeepSelection(FPDF_FORMHANDLE hHandle,
+                             FPDF_PAGE page,
+                             FPDF_WIDESTRING wsText) {
+  CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
+  if (!pPageView)
+    return;
+
+  pPageView->ReplaceAndKeepSelection(WideStringFromFPDFWideString(wsText));
+}
+
 FPDF_EXPORT void FPDF_CALLCONV FORM_ReplaceSelection(FPDF_FORMHANDLE hHandle,
                                                      FPDF_PAGE page,
                                                      FPDF_WIDESTRING wsText) {

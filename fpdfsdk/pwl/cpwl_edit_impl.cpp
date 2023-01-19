@@ -1761,6 +1761,19 @@ void CPWL_EditImpl::PaintInsertText(const CPVT_WordPlace& wpOld,
   }
 }
 
+void CPWL_EditImpl::ReplaceAndKeepSelection(const WideString& text) {
+  AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, false));
+  ClearSelection();
+
+  // Select the inserted text.
+  CPVT_WordPlace caret_before_insert = m_wpCaret;
+  InsertText(text, FX_Charset::kDefault);
+  CPVT_WordPlace caret_after_insert = m_wpCaret;
+  m_SelState.Set(caret_before_insert, caret_after_insert);
+
+  AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, true));
+}
+
 void CPWL_EditImpl::ReplaceSelection(const WideString& text) {
   AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, false));
   ClearSelection();

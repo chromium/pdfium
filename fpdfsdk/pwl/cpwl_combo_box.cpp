@@ -62,6 +62,11 @@ WideString CPWL_ComboBox::GetSelectedText() {
   return WideString();
 }
 
+void CPWL_ComboBox::ReplaceAndKeepSelection(const WideString& text) {
+  if (m_pEdit)
+    m_pEdit->ReplaceAndKeepSelection(text);
+}
+
 void CPWL_ComboBox::ReplaceSelection(const WideString& text) {
   if (m_pEdit)
     m_pEdit->ReplaceSelection(text);

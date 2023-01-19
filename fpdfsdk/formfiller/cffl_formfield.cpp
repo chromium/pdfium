@@ -203,6 +203,17 @@ WideString CFFL_FormField::GetSelectedText() {
   return pWnd ? pWnd->GetSelectedText() : WideString();
 }
 
+void CFFL_FormField::ReplaceAndKeepSelection(const WideString& text) {
+  if (!IsValid())
+    return;
+
+  CPWL_Wnd* pWnd = GetPWLWindow(GetCurPageView());
+  if (!pWnd)
+    return;
+
+  pWnd->ReplaceAndKeepSelection(text);
+}
+
 void CFFL_FormField::ReplaceSelection(const WideString& text) {
   if (!IsValid())
     return;

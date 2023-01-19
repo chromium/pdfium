@@ -265,3 +265,19 @@ TEST_F(CPWLComboBoxEditEmbedderTest,
   GetCPWLComboBox()->ReplaceSelection(L"Hello");
   EXPECT_STREQ(L"ABCDEHello", GetCPWLComboBox()->GetText().c_str());
 }
+
+TEST_F(CPWLComboBoxEditEmbedderTest, ReplaceAndKeepSelection) {
+  FormFillerAndWindowSetup(GetCPDFSDKAnnotUserEditable());
+  TypeTextIntoTextField(10);
+
+  GetCPWLComboBox()->SetEditSelection(1, 3);
+  EXPECT_STREQ(L"ABCDEFGHIJ", GetCPWLComboBox()->GetText().c_str());
+  GetCPWLComboBox()->ReplaceAndKeepSelection(L"xyz");
+  EXPECT_STREQ(L"AxyzDEFGHIJ", GetCPWLComboBox()->GetText().c_str());
+  EXPECT_STREQ(L"xyz", GetCPWLComboBox()->GetSelectedText().c_str());
+
+  GetCPWLComboBox()->SetEditSelection(4, 1);
+  GetCPWLComboBox()->ReplaceAndKeepSelection(L"12");
+  EXPECT_STREQ(L"A12DEFGHIJ", GetCPWLComboBox()->GetText().c_str());
+  EXPECT_STREQ(L"12", GetCPWLComboBox()->GetSelectedText().c_str());
+}

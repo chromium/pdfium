@@ -403,6 +403,8 @@ WideString CPDFSDK_BAAnnot::GetSelectedText() {
   return WideString();
 }
 
+void CPDFSDK_BAAnnot::ReplaceAndKeepSelection(const WideString& text) {}
+
 void CPDFSDK_BAAnnot::ReplaceSelection(const WideString& text) {}
 
 bool CPDFSDK_BAAnnot::SelectAllText() {

@@ -411,6 +411,12 @@ WideString CPDFXFA_Widget::GetSelectedText() {
   return widget_handler->GetSelectedText(GetXFAFFWidget());
 }
 
+void CPDFXFA_Widget::ReplaceAndKeepSelection(const WideString& text) {
+  // XFA does not seem to support IME input at all. Therefore we don't bother
+  // to keep selection for IMEs.
+  ReplaceSelection(text);
+}
+
 void CPDFXFA_Widget::ReplaceSelection(const WideString& text) {
   CXFA_FFWidgetHandler* widget_handler = GetWidgetHandler();
   if (widget_handler)
