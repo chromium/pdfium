@@ -227,6 +227,26 @@ class FPDFViewEmbedderTest : public EmbedderTest {
         page, format, /*bitmap_stride=*/0, expected_checksum);
   }
 
+#ifdef _SKIA_SUPPORT_
+  void TestRenderPageSkp(FPDF_PAGE page, const char* expected_checksum) {
+    int width = static_cast<int>(FPDF_GetPageWidth(page));
+    int height = static_cast<int>(FPDF_GetPageHeight(page));
+
+    FPDF_RECORDER opaque_recorder = FPDF_RenderPageSkp(page, width, height);
+    ASSERT_TRUE(opaque_recorder);
+
+    SkPictureRecorder* recorder =
+        reinterpret_cast<SkPictureRecorder*>(opaque_recorder);
+    sk_sp<SkPicture> picture = recorder->finishRecordingAsPicture();
+    delete recorder;
+    ASSERT_TRUE(picture);
+
+    ScopedFPDFBitmap bitmap = SkPictureToPdfiumBitmap(
+        std::move(picture), SkISize::Make(width, height));
+    CompareBitmap(bitmap.get(), width, height, expected_checksum);
+  }
+#endif  // _SKIA_SUPPORT_
+
  private:
   void TestRenderPageBitmapWithExternalMemoryImpl(
       FPDF_PAGE page,
@@ -1968,34 +1988,47 @@ TEST_F(FPDFViewEmbedderTest, GetTrailerEndsWhitespace) {
   EXPECT_EQ(kExpectedEnds, ends);
 }
 
+TEST_F(FPDFViewEmbedderTest, RenderXfaPage) {
+  ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
+
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Should always be blank, as we're not testing `FPDF_FFLDraw()` here.
+  TestRenderPageBitmapWithFlags(page, 0, pdfium::kBlankPage612By792Checksum);
+
+  UnloadPage(page);
+}
+
 #ifdef _SKIA_SUPPORT_
 TEST_F(FPDFViewEmbedderTest, RenderPageToSkp) {
-  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
     GTEST_SKIP() << "FPDF_RenderPageSkp() only makes sense with Skia";
+  }
 
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
 
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  constexpr SkISize kOutputSize = SkISize::Make(200, 300);
+  TestRenderPageSkp(page, pdfium::RectanglesChecksum());
 
-  FPDF_RECORDER opaque_recorder =
-      FPDF_RenderPageSkp(page, kOutputSize.width(), kOutputSize.height());
   UnloadPage(page);
-  ASSERT_TRUE(opaque_recorder);
+}
 
-  SkPictureRecorder* recorder =
-      reinterpret_cast<SkPictureRecorder*>(opaque_recorder);
-  sk_sp<SkPicture> picture = recorder->finishRecordingAsPicture();
-  delete recorder;
-  ASSERT_TRUE(picture);
+TEST_F(FPDFViewEmbedderTest, RenderXfaPageToSkp) {
+  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+    GTEST_SKIP() << "FPDF_RenderPageSkp() only makes sense with Skia";
+  }
 
-  ScopedFPDFBitmap bitmap =
-      SkPictureToPdfiumBitmap(std::move(picture), kOutputSize);
-  ASSERT_TRUE(bitmap);
+  ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  CompareBitmap(bitmap.get(), kOutputSize.width(), kOutputSize.height(),
-                pdfium::RectanglesChecksum());
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Should always be blank, as we're not testing `FPDF_FFLRecord()` here.
+  TestRenderPageSkp(page, pdfium::kBlankPage612By792Checksum);
+
+  UnloadPage(page);
 }
 #endif  // _SKIA_SUPPORT_
