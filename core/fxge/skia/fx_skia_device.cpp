@@ -344,34 +344,36 @@ SkBlendMode GetSkiaBlendMode(BlendMode blend_type) {
   }
 }
 
-// Add begin & end colors into |skColors| array for each gradient transition.
+// Add begin & end colors into `colors` array for each gradient transition.
 //
-// |is_encode_reversed| must be set to true when the parent function of |pFunc|
-// has an Encode array, and the matching pair of encode values for |pFunc| are
+// `is_encode_reversed` must be set to true when the parent function of `func`
+// has an Encode array, and the matching pair of encode values for `func` are
 // in decreasing order.
-bool AddColors(const CPDF_ExpIntFunc* pFunc,
-               SkTDArray<SkColor>* skColors,
+bool AddColors(const CPDF_ExpIntFunc* func,
+               DataVector<SkColor>& colors,
                bool is_encode_reversed) {
-  if (pFunc->CountInputs() != 1)
+  if (func->CountInputs() != 1) {
     return false;
-  if (pFunc->GetExponent() != 1)
+  }
+  if (func->GetExponent() != 1) {
     return false;
-  if (pFunc->GetOrigOutputs() != 3)
+  }
+  if (func->GetOrigOutputs() != 3) {
     return false;
+  }
 
-  pdfium::span<const float> begin_values = pFunc->GetBeginValues();
-  pdfium::span<const float> end_values = pFunc->GetEndValues();
+  pdfium::span<const float> begin_values = func->GetBeginValues();
+  pdfium::span<const float> end_values = func->GetEndValues();
   if (is_encode_reversed)
     std::swap(begin_values, end_values);
 
-  skColors->push_back(SkColorSetARGB(0xFF,
-                                     SkUnitScalarClampToByte(begin_values[0]),
-                                     SkUnitScalarClampToByte(begin_values[1]),
-                                     SkUnitScalarClampToByte(begin_values[2])));
-  skColors->push_back(SkColorSetARGB(0xFF,
-                                     SkUnitScalarClampToByte(end_values[0]),
-                                     SkUnitScalarClampToByte(end_values[1]),
-                                     SkUnitScalarClampToByte(end_values[2])));
+  colors.push_back(SkColorSetARGB(0xFF,
+                                  SkUnitScalarClampToByte(begin_values[0]),
+                                  SkUnitScalarClampToByte(begin_values[1]),
+                                  SkUnitScalarClampToByte(begin_values[2])));
+  colors.push_back(SkColorSetARGB(0xFF, SkUnitScalarClampToByte(end_values[0]),
+                                  SkUnitScalarClampToByte(end_values[1]),
+                                  SkUnitScalarClampToByte(end_values[2])));
   return true;
 }
 
@@ -381,73 +383,81 @@ uint8_t FloatToByte(float f) {
   return (uint8_t)(f * 255.99f);
 }
 
-bool AddSamples(const CPDF_SampledFunc* pFunc,
-                SkTDArray<SkColor>* skColors,
-                SkTDArray<SkScalar>* skPos) {
-  if (pFunc->CountInputs() != 1)
+bool AddSamples(const CPDF_SampledFunc* func,
+                DataVector<SkColor>& colors,
+                DataVector<SkScalar>& pos) {
+  if (func->CountInputs() != 1) {
     return false;
-  if (pFunc->CountOutputs() != 3)  // expect rgb
-    return false;
-  if (pFunc->GetEncodeInfo().empty())
-    return false;
-  const CPDF_SampledFunc::SampleEncodeInfo& encodeInfo =
-      pFunc->GetEncodeInfo()[0];
-  if (encodeInfo.encode_min != 0)
-    return false;
-  if (encodeInfo.encode_max != encodeInfo.sizes - 1)
-    return false;
-  uint32_t sampleSize = pFunc->GetBitsPerSample();
-  uint32_t sampleCount = encodeInfo.sizes;
-  if (sampleCount != 1U << sampleSize)
-    return false;
-  if (pFunc->GetSampleStream()->GetSize() < sampleCount * 3 * sampleSize / 8)
-    return false;
-
-  float colorsMin[3];
-  float colorsMax[3];
-  for (int i = 0; i < 3; ++i) {
-    colorsMin[i] = pFunc->GetRange(i * 2);
-    colorsMax[i] = pFunc->GetRange(i * 2 + 1);
   }
-  pdfium::span<const uint8_t> pSampleData = pFunc->GetSampleStream()->GetSpan();
-  CFX_BitStream bitstream(pSampleData);
-  for (uint32_t i = 0; i < sampleCount; ++i) {
-    float floatColors[3];
+  if (func->CountOutputs() != 3) {  // expect rgb
+    return false;
+  }
+  if (func->GetEncodeInfo().empty()) {
+    return false;
+  }
+  const CPDF_SampledFunc::SampleEncodeInfo& encode_info =
+      func->GetEncodeInfo()[0];
+  if (encode_info.encode_min != 0) {
+    return false;
+  }
+  if (encode_info.encode_max != encode_info.sizes - 1) {
+    return false;
+  }
+  uint32_t sample_size = func->GetBitsPerSample();
+  uint32_t sample_count = encode_info.sizes;
+  if (sample_count != 1U << sample_size) {
+    return false;
+  }
+  if (func->GetSampleStream()->GetSize() < sample_count * 3 * sample_size / 8) {
+    return false;
+  }
+
+  float colors_min[3];
+  float colors_max[3];
+  for (int i = 0; i < 3; ++i) {
+    colors_min[i] = func->GetRange(i * 2);
+    colors_max[i] = func->GetRange(i * 2 + 1);
+  }
+  pdfium::span<const uint8_t> sample_data = func->GetSampleStream()->GetSpan();
+  CFX_BitStream bitstream(sample_data);
+  for (uint32_t i = 0; i < sample_count; ++i) {
+    float float_colors[3];
     for (uint32_t j = 0; j < 3; ++j) {
-      float sample = static_cast<float>(bitstream.GetBits(sampleSize));
-      float interp = sample / (sampleCount - 1);
-      floatColors[j] = colorsMin[j] + (colorsMax[j] - colorsMin[j]) * interp;
+      float sample = static_cast<float>(bitstream.GetBits(sample_size));
+      float interp = sample / (sample_count - 1);
+      float_colors[j] =
+          colors_min[j] + (colors_max[j] - colors_min[j]) * interp;
     }
-    SkColor color =
-        SkPackARGB32(0xFF, FloatToByte(floatColors[0]),
-                     FloatToByte(floatColors[1]), FloatToByte(floatColors[2]));
-    skColors->push_back(color);
-    skPos->push_back((float)i / (sampleCount - 1));
+    colors.push_back(SkPackARGB32(0xFF, FloatToByte(float_colors[0]),
+                                  FloatToByte(float_colors[1]),
+                                  FloatToByte(float_colors[2])));
+    pos.push_back(static_cast<float>(i) / (sample_count - 1));
   }
   return true;
 }
 
-bool AddStitching(const CPDF_StitchFunc* pFunc,
-                  SkTDArray<SkColor>* skColors,
-                  SkTDArray<SkScalar>* skPos) {
-  float boundsStart = pFunc->GetDomain(0);
+bool AddStitching(const CPDF_StitchFunc* func,
+                  DataVector<SkColor>& colors,
+                  DataVector<SkScalar>& pos) {
+  float bounds_start = func->GetDomain(0);
 
-  const auto& subFunctions = pFunc->GetSubFunctions();
-  size_t subFunctionCount = subFunctions.size();
-  for (size_t i = 0; i < subFunctionCount; ++i) {
-    const CPDF_ExpIntFunc* pSubFunc = subFunctions[i]->ToExpIntFunc();
-    if (!pSubFunc)
+  const auto& sub_functions = func->GetSubFunctions();
+  const size_t sub_function_count = sub_functions.size();
+  for (size_t i = 0; i < sub_function_count; ++i) {
+    const CPDF_ExpIntFunc* sub_func = sub_functions[i]->ToExpIntFunc();
+    if (!sub_func)
       return false;
     // Check if the matching encode values are reversed
     bool is_encode_reversed =
-        pFunc->GetEncode(2 * i) > pFunc->GetEncode(2 * i + 1);
-    if (!AddColors(pSubFunc, skColors, is_encode_reversed))
+        func->GetEncode(2 * i) > func->GetEncode(2 * i + 1);
+    if (!AddColors(sub_func, colors, is_encode_reversed)) {
       return false;
-    float boundsEnd =
-        i < subFunctionCount - 1 ? pFunc->GetBound(i + 1) : pFunc->GetDomain(1);
-    skPos->push_back(boundsStart);
-    skPos->push_back(boundsEnd);
-    boundsStart = boundsEnd;
+    }
+    float bounds_end =
+        i < sub_function_count - 1 ? func->GetBound(i + 1) : func->GetDomain(1);
+    pos.push_back(bounds_start);
+    pos.push_back(bounds_end);
+    bounds_start = bounds_end;
   }
   return true;
 }
@@ -1729,8 +1739,8 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     return false;
   // TODO(caryclark) Respect Domain[0], Domain[1]. (Don't know what they do
   // yet.)
-  SkTDArray<SkColor> skColors;
-  SkTDArray<SkScalar> skPos;
+  DataVector<SkColor> sk_colors;
+  DataVector<SkScalar> sk_pos;
   for (size_t j = 0; j < nFuncs; j++) {
     if (!pFuncs[j])
       continue;
@@ -1740,16 +1750,19 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
          Type 0 Sampled Functions in PostScript can also have an Order integer
          in the dictionary. PDFium doesn't appear to check for this anywhere.
        */
-      if (!AddSamples(pSampledFunc, &skColors, &skPos))
+      if (!AddSamples(pSampledFunc, sk_colors, sk_pos)) {
         return false;
+      }
     } else if (const CPDF_ExpIntFunc* pExpIntFuc = pFuncs[j]->ToExpIntFunc()) {
-      if (!AddColors(pExpIntFuc, &skColors, /*is_encode_reversed=*/false))
+      if (!AddColors(pExpIntFuc, sk_colors, /*is_encode_reversed=*/false)) {
         return false;
-      skPos.push_back(0);
-      skPos.push_back(1);
+      }
+      sk_pos.push_back(0);
+      sk_pos.push_back(1);
     } else if (const CPDF_StitchFunc* pStitchFunc = pFuncs[j]->ToStitchFunc()) {
-      if (!AddStitching(pStitchFunc, &skColors, &skPos))
+      if (!AddStitching(pStitchFunc, sk_colors, sk_pos)) {
         return false;
+      }
     } else {
       return false;
     }
@@ -1772,9 +1785,9 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     float end_y = pCoords->GetFloatAt(3);
     SkPoint pts[] = {{start_x, start_y}, {end_x, end_y}};
     skMatrix.mapPoints(pts, SK_ARRAY_COUNT(pts));
-    paint.setShader(SkGradientShader::MakeLinear(pts, skColors.begin(),
-                                                 skPos.begin(), skColors.size(),
-                                                 SkTileMode::kClamp));
+    paint.setShader(SkGradientShader::MakeLinear(
+        pts, sk_colors.data(), sk_pos.data(),
+        fxcrt::CollectionSize<int>(sk_colors), SkTileMode::kClamp));
     if (clipStart || clipEnd) {
       // if the gradient is horizontal or vertical, modify the draw rectangle
       if (pts[0].fX == pts[1].fX) {  // vertical
@@ -1815,8 +1828,8 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     SkPoint pts[] = {{start_x, start_y}, {end_x, end_y}};
 
     paint.setShader(SkGradientShader::MakeTwoPointConical(
-        pts[0], start_r, pts[1], end_r, skColors.begin(), skPos.begin(),
-        skColors.size(), SkTileMode::kClamp));
+        pts[0], start_r, pts[1], end_r, sk_colors.data(), sk_pos.data(),
+        fxcrt::CollectionSize<int>(sk_colors), SkTileMode::kClamp));
     if (clipStart || clipEnd) {
       if (clipStart && start_r)
         skClip.addCircle(pts[0].fX, pts[0].fY, start_r);
