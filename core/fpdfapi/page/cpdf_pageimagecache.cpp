@@ -176,7 +176,7 @@ CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
     CPDF_ColorSpace::Family eFamily,
     bool bLoadMask,
     const CFX_Size& max_size_required) {
-  if (m_pCachedBitmap) {
+  if (m_pCachedBitmap && IsCacheValid(max_size_required)) {
     m_pCurBitmap = m_pCachedBitmap;
     m_pCurMask = m_pCachedMask;
     return CPDF_DIB::LoadState::kSuccess;
@@ -186,6 +186,8 @@ CPDF_DIB::LoadState CPDF_PageImageCache::Entry::StartGetCachedBitmap(
   CPDF_DIB::LoadState ret = m_pCurBitmap.AsRaw<CPDF_DIB>()->StartLoadDIBBase(
       true, pFormResources, pPageResources, bStdCS, eFamily, bLoadMask,
       max_size_required);
+  m_bCachedSetMaxSizeRequired =
+      (max_size_required.width != 0 && max_size_required.height != 0);
   if (ret == CPDF_DIB::LoadState::kContinue)
     return CPDF_DIB::LoadState::kContinue;
 
@@ -237,4 +239,17 @@ void CPDF_PageImageCache::Entry::CalcSize() {
     m_dwCacheSize += m_pCachedBitmap->GetEstimatedImageMemoryBurden();
   if (m_pCachedMask)
     m_dwCacheSize += m_pCachedMask->GetEstimatedImageMemoryBurden();
+}
+
+bool CPDF_PageImageCache::Entry::IsCacheValid(
+    const CFX_Size& max_size_required) const {
+  if (!m_bCachedSetMaxSizeRequired) {
+    return true;
+  }
+  if (max_size_required.width == 0 && max_size_required.height == 0) {
+    return false;
+  }
+
+  return (m_pCachedBitmap->GetWidth() >= max_size_required.width) &&
+         (m_pCachedBitmap->GetHeight() >= max_size_required.height);
 }
