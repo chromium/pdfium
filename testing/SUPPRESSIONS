@@ -259,10 +259,6 @@ javascriptaction.pdf * * * *
 jetman_std.pdf mac * * *
 jetman_std_fixed.pdf mac * * *
 js_calculate.pdf * * * *
-
-# TODO(pdfium:1957): Remove after associated bug is fixed
-lines.pdf * * * skia
-
 list_box.pdf * * * *
 
 negative.pdf mac * * *
