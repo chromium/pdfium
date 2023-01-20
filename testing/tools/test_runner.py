@@ -591,8 +591,9 @@ class _TestCaseRunner:
       test_result.reason = 'Command {} timed out'.format(run_result.cmd)
 
     if stdout == subprocess.PIPE and stderr == subprocess.PIPE:
-      # Copy captured standard output to the original `stdout`.
-      original_stdout.write(run_result.stdout)
+      # Copy captured standard output, if any, to the original `stdout`.
+      if run_result.stdout:
+        original_stdout.write(run_result.stdout)
 
     if not test_result.IsPass():
       # On failure, report captured output to the test log.
