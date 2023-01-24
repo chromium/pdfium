@@ -905,16 +905,17 @@ class SkiaState {
     if (!hasRSX && !m_rsxform.empty())
       FlushText();
 
-    int count = m_charDetails.Count();
-    m_charDetails.SetCount(nChars + count);
+    const int original_count = m_charDetails.Count();
+    const int total_count = nChars + original_count;
+    m_charDetails.SetCount(total_count);
     if (hasRSX)
-      m_rsxform.resize(nChars + count);
+      m_rsxform.resize(total_count);
 
     const SkScalar flip = m_fontSize < 0 ? -1 : 1;
     const SkScalar vFlip = pFont->IsVertical() ? -1 : 1;
     for (int index = 0; index < nChars; ++index) {
       const TextCharPos& cp = pCharPos[index];
-      int cur_index = index + count;
+      int cur_index = index + original_count;
       m_charDetails.SetPositionAt(
           cur_index, {cp.m_Origin.x * flip, cp.m_Origin.y * vFlip});
       m_charDetails.SetGlyphAt(cur_index,
@@ -928,8 +929,8 @@ class SkiaState {
     }
     SkPoint delta;
     if (MatrixOffset(&matrix, &delta)) {
-      for (int index = 0; index < nChars; ++index) {
-        m_charDetails.OffsetPositionAt(index + count, delta.fX * flip,
+      for (int index = original_count; index < total_count; ++index) {
+        m_charDetails.OffsetPositionAt(index, delta.fX * flip,
                                        -delta.fY * flip);
       }
     }
@@ -937,7 +938,7 @@ class SkiaState {
       const SkTDArray<SkPoint>& positions = m_charDetails.GetPositions();
       for (int index = 0; index < nChars; ++index) {
         const TextCharPos& cp = pCharPos[index];
-        SkRSXform* rsxform = &m_rsxform[index + count];
+        SkRSXform* rsxform = &m_rsxform[index + original_count];
         if (cp.m_bGlyphAdjust) {
           rsxform->fSCos = cp.m_AdjustMatrix[0];
           rsxform->fSSin = cp.m_AdjustMatrix[1];
