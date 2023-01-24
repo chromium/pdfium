@@ -938,17 +938,17 @@ class SkiaState {
       const SkTDArray<SkPoint>& positions = m_charDetails.GetPositions();
       for (int index = 0; index < nChars; ++index) {
         const TextCharPos& cp = pCharPos[index];
-        SkRSXform* rsxform = &m_rsxform[index + original_count];
+        SkRSXform& rsxform = m_rsxform[index + original_count];
         if (cp.m_bGlyphAdjust) {
-          rsxform->fSCos = cp.m_AdjustMatrix[0];
-          rsxform->fSSin = cp.m_AdjustMatrix[1];
-          rsxform->fTx = cp.m_AdjustMatrix[0] * positions[index].fX;
-          rsxform->fTy = -cp.m_AdjustMatrix[3] * positions[index].fY;
+          rsxform.fSCos = cp.m_AdjustMatrix[0];
+          rsxform.fSSin = cp.m_AdjustMatrix[1];
+          rsxform.fTx = cp.m_AdjustMatrix[0] * positions[index].fX;
+          rsxform.fTy = -cp.m_AdjustMatrix[3] * positions[index].fY;
         } else {
-          rsxform->fSCos = 1;
-          rsxform->fSSin = 0;
-          rsxform->fTx = positions[index].fX;
-          rsxform->fTy = positions[index].fY;
+          rsxform.fSCos = 1;
+          rsxform.fSSin = 0;
+          rsxform.fTx = positions[index].fX;
+          rsxform.fTy = positions[index].fY;
         }
       }
     }
@@ -1538,17 +1538,17 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
     xforms.resize(nChars);
     for (int index = 0; index < nChars; ++index) {
       const TextCharPos& cp = pCharPos[index];
-      SkRSXform* rsxform = &xforms[index];
+      SkRSXform& rsxform = xforms[index];
       if (cp.m_bGlyphAdjust) {
-        rsxform->fSCos = cp.m_AdjustMatrix[0];
-        rsxform->fSSin = cp.m_AdjustMatrix[1];
-        rsxform->fTx = cp.m_AdjustMatrix[0] * positions[index].fX;
-        rsxform->fTy = -cp.m_AdjustMatrix[3] * positions[index].fY;
+        rsxform.fSCos = cp.m_AdjustMatrix[0];
+        rsxform.fSSin = cp.m_AdjustMatrix[1];
+        rsxform.fTx = cp.m_AdjustMatrix[0] * positions[index].fX;
+        rsxform.fTy = -cp.m_AdjustMatrix[3] * positions[index].fY;
       } else {
-        rsxform->fSCos = 1;
-        rsxform->fSSin = 0;
-        rsxform->fTx = positions[index].fX;
-        rsxform->fTy = positions[index].fY;
+        rsxform.fSCos = 1;
+        rsxform.fSSin = 0;
+        rsxform.fTx = positions[index].fX;
+        rsxform.fTy = positions[index].fY;
       }
     }
     m_pCanvas->drawTextBlob(
