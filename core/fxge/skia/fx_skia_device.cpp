@@ -74,6 +74,9 @@
 #include "third_party/skia/include/effects/SkGradientShader.h"
 #include "third_party/skia/include/pathops/SkPathOps.h"
 
+// Assumes Skia is not going to add non-data members to its fundamental types.
+FX_DATA_PARTITION_EXCEPTION(SkRSXform);
+
 namespace {
 
 #define SHOW_SKIA_PATH 0  // set to 1 to print the path contents
@@ -976,7 +979,7 @@ class SkiaState {
     const SkTDArray<uint16_t>& glyphs = m_charDetails.GetGlyphs();
     if (m_rsxform.size()) {
       sk_sp<SkTextBlob> blob = SkTextBlob::MakeFromRSXform(
-          glyphs.begin(), glyphs.size_bytes(), m_rsxform.begin(), font,
+          glyphs.begin(), glyphs.size_bytes(), m_rsxform.data(), font,
           SkTextEncoding::kGlyphID);
       skCanvas->drawTextBlob(blob, 0, 0, skPaint);
     } else {
@@ -1247,12 +1250,17 @@ class SkiaState {
     SkTDArray<uint32_t> m_fontCharWidths;
   };
 
-  SkTArray<SkPath> m_clips;        // stack of clips that may be reused
-  DataVector<Clip> m_commands;     // stack of clip-related commands
+  // stack of clips that may be reused
+  std::vector<SkPath> m_clips;
+  // stack of clip-related commands
+  DataVector<Clip> m_commands;
   CharDetail m_charDetails;
-  SkTDArray<SkRSXform> m_rsxform;  // accumulator for txt rotate/scale/translate
-  SkPath m_skPath;                 // accumulator for path contours
-  SkPath m_skEmptyPath;            // used as placehold in the clips array
+  // accumulator for txt rotate/scale/translate
+  DataVector<SkRSXform> m_rsxform;
+  // accumulator for path contours
+  SkPath m_skPath;
+  // used as placehold in the clips array
+  SkPath m_skEmptyPath;
   UnownedPtr<CFX_Font> m_pFont;
   CFX_Matrix m_drawMatrix;
   CFX_GraphStateData m_clipState;
@@ -1268,11 +1276,15 @@ class SkiaState {
   uint32_t m_strokeColor = 0;
   BlendMode m_blendType = BlendMode::kNormal;
   // TODO(thestig): Consider using size_t for these index member variables.
-  int m_commandIndex = 0;     // active position in clip command stack
-  int m_drawIndex = INT_MAX;  // position of the pending path or text draw
-  int m_clipIndex = 0;        // position reflecting depth of canvas clip stack
+  // active position in clip command stack
+  int m_commandIndex = 0;
+  // position of the pending path or text draw
+  int m_drawIndex = INT_MAX;
+  // position reflecting depth of canvas clip stack
+  int m_clipIndex = 0;
   int m_italicAngle = 0;
-  Accumulator m_type = Accumulator::kNone;  // type of pending draw
+  // type of pending draw
+  Accumulator m_type = Accumulator::kNone;
   bool m_fillPath = false;
   bool m_groupKnockout = false;
   bool m_isSubstFontBold = false;
