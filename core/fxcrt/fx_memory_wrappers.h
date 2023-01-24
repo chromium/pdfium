@@ -34,7 +34,7 @@ template <class T, void* F(size_t, size_t)>
 struct FxPartitionAllocAllocator {
  public:
 #if !defined(COMPILER_MSVC) || defined(NDEBUG)
-  static_assert(std::is_arithmetic<T>::value ||
+  static_assert(std::is_arithmetic<T>::value || std::is_enum<T>::value ||
                     IsFXDataPartitionException<T>::value,
                 "Only numeric types allowed in this partition");
 #endif
@@ -90,6 +90,7 @@ struct FxPartitionAllocAllocator {
 // general partition, ensuring they contain data only.
 template <typename T,
           typename = std::enable_if_t<std::is_arithmetic<T>::value ||
+                                      std::is_enum<T>::value ||
                                       IsFXDataPartitionException<T>::value>>
 using FxAllocAllocator =
     FxPartitionAllocAllocator<T, pdfium::internal::AllocOrDie>;
