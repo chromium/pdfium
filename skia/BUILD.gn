@@ -200,10 +200,6 @@ component("skia") {
   # This and skia_opts are really the same conceptual target so share headers.
   allow_circular_includes_from = [ ":skia_opts" ]
 
-  if (current_cpu == "arm") {
-    sources += [ "//third_party/skia/src/core/SkUtilsArm.cpp" ]
-  }
-
   # GPU
   if (skia_support_gpu) {
     sources += skia_gpu_public
