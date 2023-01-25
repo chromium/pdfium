@@ -4,10 +4,10 @@
 
 #include "core/fxge/skia/fx_skia_device.h"
 
-#include <limits.h>
 #include <math.h>
 
 #include <algorithm>
+#include <limits>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -746,8 +746,7 @@ class SkiaState {
                 uint32_t stroke_color,
                 const CFX_FillRenderOptions& fill_options,
                 BlendMode blend_type) {
-    int drawIndex = std::min(
-        m_drawIndex, pdfium::base::checked_cast<int>(m_commands.size()));
+    size_t drawIndex = std::min(m_drawIndex, m_commands.size());
     if (Accumulator::kText == m_type || drawIndex != m_commandIndex ||
         (Accumulator::kPath == m_type &&
          DrawChanged(pMatrix, pDrawState, fill_color, stroke_color,
@@ -826,7 +825,7 @@ class SkiaState {
         skCanvas->drawPath(m_skPath, skPaint);
       }
     }
-    m_drawIndex = INT_MAX;
+    m_drawIndex = std::numeric_limits<size_t>::max();
     m_type = Accumulator::kNone;
     m_drawMatrix = CFX_Matrix();
   }
@@ -874,8 +873,7 @@ class SkiaState {
       Flush();
       return false;
     }
-    int drawIndex = std::min(
-        m_drawIndex, pdfium::base::checked_cast<int>(m_commands.size()));
+    size_t drawIndex = std::min(m_drawIndex, m_commands.size());
     if (Accumulator::kPath == m_type || drawIndex != m_commandIndex ||
         (Accumulator::kText == m_type &&
          (FontChanged(pFont, matrix, font_size, scaleX, color, options) ||
@@ -992,7 +990,7 @@ class SkiaState {
       }
     }
 
-    m_drawIndex = INT_MAX;
+    m_drawIndex = std::numeric_limits<size_t>::max();
     m_type = Accumulator::kNone;
     m_drawMatrix = CFX_Matrix();
     m_pFont = nullptr;
@@ -1093,8 +1091,7 @@ class SkiaState {
   }
 
   void ClipSave() {
-    int count = pdfium::base::checked_cast<int>(m_commands.size());
-    if (m_commandIndex < count) {
+    if (m_commandIndex < m_commands.size()) {
       if (Clip::kSave == m_commands[m_commandIndex]) {
         ++m_commandIndex;
         return;
@@ -1112,7 +1109,7 @@ class SkiaState {
   }
 
   void ClipRestore() {
-    for (int i = m_commandIndex - 1; i > 0; --i) {
+    for (size_t i = m_commandIndex - 1; i > 0; --i) {
       if (m_commands[i] == Clip::kSave) {
         m_commandIndex = i;
         break;
@@ -1177,15 +1174,15 @@ class SkiaState {
            pState->m_DashArray != refState.m_DashArray;
   }
 
-  void AdjustClip(int limit) {
+  void AdjustClip(size_t limit) {
     while (m_clipIndex > limit) {
-      do {
+      while (m_clipIndex > 0) {
         --m_clipIndex;
-      } while (m_clipIndex >= 0 && m_commands[m_clipIndex] != Clip::kSave);
-      if (m_clipIndex >= 0)
-        m_pDriver->SkiaCanvas()->restore();
-      else
-        m_clipIndex = 0;
+        if (m_commands[m_clipIndex] == Clip::kSave) {
+          m_pDriver->SkiaCanvas()->restore();
+          break;
+        }
+      }
     }
     while (m_clipIndex < limit) {
       if (Clip::kSave == m_commands[m_clipIndex]) {
@@ -1201,8 +1198,7 @@ class SkiaState {
 
   void Flush() {
     if (Accumulator::kPath == m_type || Accumulator::kText == m_type) {
-      AdjustClip(std::min(m_drawIndex,
-                          pdfium::base::checked_cast<int>(m_commands.size())));
+      AdjustClip(std::min(m_drawIndex, m_commands.size()));
       Accumulator::kPath == m_type ? FlushPath() : FlushText();
     }
   }
@@ -1275,13 +1271,12 @@ class SkiaState {
   uint32_t m_fillColor = 0;
   uint32_t m_strokeColor = 0;
   BlendMode m_blendType = BlendMode::kNormal;
-  // TODO(thestig): Consider using size_t for these index member variables.
   // active position in clip command stack
-  int m_commandIndex = 0;
+  size_t m_commandIndex = 0;
   // position of the pending path or text draw
-  int m_drawIndex = INT_MAX;
+  size_t m_drawIndex = std::numeric_limits<size_t>::max();
   // position reflecting depth of canvas clip stack
-  int m_clipIndex = 0;
+  size_t m_clipIndex = 0;
   int m_italicAngle = 0;
   // type of pending draw
   Accumulator m_type = Accumulator::kNone;
