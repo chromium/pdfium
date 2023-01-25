@@ -1512,10 +1512,8 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
   const SkScalar vFlip = pFont->IsVertical() ? -1 : 1;
   SkMatrix skMatrix = ToFlippedSkMatrix(mtObject2Device, flip);
   m_pCanvas->concat(skMatrix);
-  SkTDArray<SkPoint> positions;
-  positions.resize(nChars);
-  SkTDArray<uint16_t> glyphs;
-  glyphs.resize(nChars);
+  DataVector<SkPoint> positions(pCharPos.size());
+  DataVector<uint16_t> glyphs(pCharPos.size());
   bool useRSXform = false;
   bool oneAtATime = false;
   for (int index = 0; index < nChars; ++index) {
@@ -1537,8 +1535,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
   if (oneAtATime)
     useRSXform = false;
   if (useRSXform) {
-    SkTDArray<SkRSXform> xforms;
-    xforms.resize(nChars);
+    DataVector<SkRSXform> xforms(pCharPos.size());
     for (int index = 0; index < nChars; ++index) {
       const TextCharPos& cp = pCharPos[index];
       SkRSXform& rsxform = xforms[index];
@@ -1554,10 +1551,10 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
         rsxform.fTy = positions[index].fY;
       }
     }
-    m_pCanvas->drawTextBlob(
-        SkTextBlob::MakeFromRSXform(glyphs.begin(), nChars * 2, xforms.begin(),
-                                    font, SkTextEncoding::kGlyphID),
-        0, 0, paint);
+    m_pCanvas->drawTextBlob(SkTextBlob::MakeFromRSXform(
+                                glyphs.data(), glyphs.size() * sizeof(uint16_t),
+                                xforms.data(), font, SkTextEncoding::kGlyphID),
+                            0, 0, paint);
   } else if (oneAtATime) {
     for (int index = 0; index < nChars; ++index) {
       const TextCharPos& cp = pCharPos[index];
