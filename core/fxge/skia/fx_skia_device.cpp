@@ -831,15 +831,13 @@ class SkiaState {
     m_drawMatrix = CFX_Matrix();
   }
 
-  bool HasRSX(int nChars,
-              const TextCharPos* pCharPos,
+  bool HasRSX(pdfium::span<const TextCharPos> char_pos,
               float* scaleXPtr,
               bool* oneAtATimePtr) const {
     bool useRSXform = false;
     bool oneAtATime = false;
     float scaleX = 1;
-    for (int index = 0; index < nChars; ++index) {
-      const TextCharPos& cp = pCharPos[index];
+    for (const TextCharPos& cp : char_pos) {
       if (!cp.m_bGlyphAdjust)
         continue;
       bool upright = 0 == cp.m_AdjustMatrix[1] && 0 == cp.m_AdjustMatrix[2];
@@ -863,8 +861,7 @@ class SkiaState {
     return oneAtATime ? false : useRSXform;
   }
 
-  bool DrawText(int nChars,
-                const TextCharPos* pCharPos,
+  bool DrawText(pdfium::span<const TextCharPos> char_pos,
                 CFX_Font* pFont,
                 const CFX_Matrix& matrix,
                 float font_size,
@@ -872,7 +869,7 @@ class SkiaState {
                 const CFX_TextRenderOptions& options) {
     float scaleX = 1;
     bool oneAtATime = false;
-    bool hasRSX = HasRSX(nChars, pCharPos, &scaleX, &oneAtATime);
+    bool hasRSX = HasRSX(char_pos, &scaleX, &oneAtATime);
     if (oneAtATime) {
       Flush();
       return false;
@@ -906,10 +903,9 @@ class SkiaState {
     if (!hasRSX && !m_rsxform.empty())
       FlushText();
 
-    const size_t new_count = pdfium::base::checked_cast<size_t>(nChars);
     const size_t original_count = m_charDetails.Count();
     FX_SAFE_SIZE_T safe_count = original_count;
-    safe_count += new_count;
+    safe_count += char_pos.size();
     const size_t total_count = safe_count.ValueOrDie();
     m_charDetails.SetCount(total_count);
     if (hasRSX)
@@ -917,8 +913,8 @@ class SkiaState {
 
     const SkScalar flip = m_fontSize < 0 ? -1 : 1;
     const SkScalar vFlip = pFont->IsVertical() ? -1 : 1;
-    for (size_t index = 0; index < new_count; ++index) {
-      const TextCharPos& cp = pCharPos[index];
+    for (size_t index = 0; index < char_pos.size(); ++index) {
+      const TextCharPos& cp = char_pos[index];
       size_t cur_index = index + original_count;
       m_charDetails.SetPositionAt(
           cur_index, {cp.m_Origin.x * flip, cp.m_Origin.y * vFlip});
@@ -940,8 +936,8 @@ class SkiaState {
     }
     if (hasRSX) {
       const DataVector<SkPoint>& positions = m_charDetails.GetPositions();
-      for (size_t index = 0; index < new_count; ++index) {
-        const TextCharPos& cp = pCharPos[index];
+      for (size_t index = 0; index < char_pos.size(); ++index) {
+        const TextCharPos& cp = char_pos[index];
         SkRSXform& rsxform = m_rsxform[index + original_count];
         if (cp.m_bGlyphAdjust) {
           rsxform.fSCos = cp.m_AdjustMatrix[0];
@@ -1488,9 +1484,8 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
       return false;
   }
 
-  int nChars = fxcrt::CollectionSize<int>(pCharPos);
-  if (m_pCache->DrawText(nChars, pCharPos.data(), pFont, mtObject2Device,
-                         font_size, color, options)) {
+  if (m_pCache->DrawText(pCharPos, pFont, mtObject2Device, font_size, color,
+                         options)) {
     return true;
   }
   sk_sp<SkTypeface> typeface(SkSafeRef(pFont->GetDeviceCache()));
@@ -1516,7 +1511,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
   DataVector<uint16_t> glyphs(pCharPos.size());
   bool useRSXform = false;
   bool oneAtATime = false;
-  for (int index = 0; index < nChars; ++index) {
+  for (size_t index = 0; index < pCharPos.size(); ++index) {
     const TextCharPos& cp = pCharPos[index];
     positions[index] = {cp.m_Origin.x * flip, cp.m_Origin.y * vFlip};
     if (cp.m_bGlyphAdjust) {
@@ -1536,7 +1531,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
     useRSXform = false;
   if (useRSXform) {
     DataVector<SkRSXform> xforms(pCharPos.size());
-    for (int index = 0; index < nChars; ++index) {
+    for (size_t index = 0; index < pCharPos.size(); ++index) {
       const TextCharPos& cp = pCharPos[index];
       SkRSXform& rsxform = xforms[index];
       if (cp.m_bGlyphAdjust) {
@@ -1556,7 +1551,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
                                 xforms.data(), font, SkTextEncoding::kGlyphID),
                             0, 0, paint);
   } else if (oneAtATime) {
-    for (int index = 0; index < nChars; ++index) {
+    for (size_t index = 0; index < pCharPos.size(); ++index) {
       const TextCharPos& cp = pCharPos[index];
       if (cp.m_bGlyphAdjust) {
         if (0 == cp.m_AdjustMatrix[1] && 0 == cp.m_AdjustMatrix[2] &&
@@ -1591,7 +1586,7 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
       }
     }
   } else {
-    for (int index = 0; index < nChars; ++index) {
+    for (size_t index = 0; index < pCharPos.size(); ++index) {
       auto blob =
           SkTextBlob::MakeFromText(&glyphs[index], sizeof(glyphs[index]), font,
                                    SkTextEncoding::kGlyphID);
