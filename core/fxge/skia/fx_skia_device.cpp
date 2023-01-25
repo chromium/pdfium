@@ -895,7 +895,6 @@ class SkiaState {
       m_drawMatrix = matrix;
       m_drawIndex = m_commandIndex;
       m_type = Accumulator::kText;
-      m_pFont = pFont;
       m_textOptions = options;
     }
     if (!hasRSX && !m_rsxform.empty())
@@ -993,7 +992,6 @@ class SkiaState {
     m_drawIndex = std::numeric_limits<size_t>::max();
     m_type = Accumulator::kNone;
     m_drawMatrix = CFX_Matrix();
-    m_pFont = nullptr;
     m_italicAngle = 0;
     m_isSubstFontBold = false;
     m_textOptions = CFX_TextRenderOptions();
@@ -1257,11 +1255,8 @@ class SkiaState {
   SkPath m_skPath;
   // used as placehold in the clips array
   SkPath m_skEmptyPath;
-  UnownedPtr<CFX_Font> m_pFont;
   CFX_Matrix m_drawMatrix;
-  CFX_GraphStateData m_clipState;
   CFX_GraphStateData m_drawState;
-  CFX_Matrix m_clipMatrix;
   CFX_FillRenderOptions m_fillOptions;
   CFX_TextRenderOptions m_textOptions;
   UnownedPtr<CFX_SkiaDeviceDriver> const m_pDriver;
