@@ -75,6 +75,7 @@
 #include "third_party/skia/include/pathops/SkPathOps.h"
 
 // Assumes Skia is not going to add non-data members to its fundamental types.
+FX_DATA_PARTITION_EXCEPTION(SkPoint);
 FX_DATA_PARTITION_EXCEPTION(SkRSXform);
 
 namespace {
@@ -905,17 +906,20 @@ class SkiaState {
     if (!hasRSX && !m_rsxform.empty())
       FlushText();
 
-    const int original_count = m_charDetails.Count();
-    const int total_count = nChars + original_count;
+    const size_t new_count = pdfium::base::checked_cast<size_t>(nChars);
+    const size_t original_count = m_charDetails.Count();
+    FX_SAFE_SIZE_T safe_count = original_count;
+    safe_count += new_count;
+    const size_t total_count = safe_count.ValueOrDie();
     m_charDetails.SetCount(total_count);
     if (hasRSX)
       m_rsxform.resize(total_count);
 
     const SkScalar flip = m_fontSize < 0 ? -1 : 1;
     const SkScalar vFlip = pFont->IsVertical() ? -1 : 1;
-    for (int index = 0; index < nChars; ++index) {
+    for (size_t index = 0; index < new_count; ++index) {
       const TextCharPos& cp = pCharPos[index];
-      int cur_index = index + original_count;
+      size_t cur_index = index + original_count;
       m_charDetails.SetPositionAt(
           cur_index, {cp.m_Origin.x * flip, cp.m_Origin.y * vFlip});
       m_charDetails.SetGlyphAt(cur_index,
@@ -929,14 +933,14 @@ class SkiaState {
     }
     SkPoint delta;
     if (MatrixOffset(&matrix, &delta)) {
-      for (int index = original_count; index < total_count; ++index) {
+      for (size_t index = original_count; index < total_count; ++index) {
         m_charDetails.OffsetPositionAt(index, delta.fX * flip,
                                        -delta.fY * flip);
       }
     }
     if (hasRSX) {
-      const SkTDArray<SkPoint>& positions = m_charDetails.GetPositions();
-      for (int index = 0; index < nChars; ++index) {
+      const DataVector<SkPoint>& positions = m_charDetails.GetPositions();
+      for (size_t index = 0; index < new_count; ++index) {
         const TextCharPos& cp = pCharPos[index];
         SkRSXform& rsxform = m_rsxform[index + original_count];
         if (cp.m_bGlyphAdjust) {
@@ -977,15 +981,15 @@ class SkiaState {
     SkScalar flip = m_fontSize < 0 ? -1 : 1;
     SkMatrix skMatrix = ToFlippedSkMatrix(m_drawMatrix, flip);
     skCanvas->concat(skMatrix);
-    const SkTDArray<uint16_t>& glyphs = m_charDetails.GetGlyphs();
+    const DataVector<uint16_t>& glyphs = m_charDetails.GetGlyphs();
     if (m_rsxform.size()) {
       sk_sp<SkTextBlob> blob = SkTextBlob::MakeFromRSXform(
-          glyphs.begin(), glyphs.size_bytes(), m_rsxform.data(), font,
-          SkTextEncoding::kGlyphID);
+          glyphs.data(), glyphs.size() * sizeof(uint16_t), m_rsxform.data(),
+          font, SkTextEncoding::kGlyphID);
       skCanvas->drawTextBlob(blob, 0, 0, skPaint);
     } else {
-      const SkTDArray<SkPoint>& positions = m_charDetails.GetPositions();
-      for (int i = 0; i < m_charDetails.Count(); ++i) {
+      const DataVector<SkPoint>& positions = m_charDetails.GetPositions();
+      for (size_t i = 0; i < m_charDetails.Count(); ++i) {
         sk_sp<SkTextBlob> blob = SkTextBlob::MakeFromText(
             &glyphs[i], sizeof(glyphs[i]), font, SkTextEncoding::kGlyphID);
         skCanvas->drawTextBlob(blob, positions[i].fX, positions[i].fY, skPaint);
@@ -1218,37 +1222,36 @@ class SkiaState {
     CharDetail() = default;
     ~CharDetail() = default;
 
-    const SkTDArray<SkPoint>& GetPositions() const { return m_positions; }
-    void SetPositionAt(int index, const SkPoint& position) {
+    const DataVector<SkPoint>& GetPositions() const { return m_positions; }
+    void SetPositionAt(size_t index, const SkPoint& position) {
       m_positions[index] = position;
     }
-    void OffsetPositionAt(int index, SkScalar dx, SkScalar dy) {
+    void OffsetPositionAt(size_t index, SkScalar dx, SkScalar dy) {
       m_positions[index].offset(dx, dy);
     }
-    const SkTDArray<uint16_t>& GetGlyphs() const { return m_glyphs; }
-    void SetGlyphAt(int index, uint16_t glyph) { m_glyphs[index] = glyph; }
-    const SkTDArray<uint32_t>& GetFontCharWidths() const {
+    const DataVector<uint16_t>& GetGlyphs() const { return m_glyphs; }
+    void SetGlyphAt(size_t index, uint16_t glyph) { m_glyphs[index] = glyph; }
+    const DataVector<uint32_t>& GetFontCharWidths() const {
       return m_fontCharWidths;
     }
-    void SetFontCharWidthAt(int index, uint32_t width) {
+    void SetFontCharWidthAt(size_t index, uint32_t width) {
       m_fontCharWidths[index] = width;
     }
-    int Count() const {
+    size_t Count() const {
       DCHECK_EQ(m_positions.size(), m_glyphs.size());
       return m_glyphs.size();
     }
-    void SetCount(int count) {
-      DCHECK(count >= 0);
+    void SetCount(size_t count) {
       m_positions.resize(count);
       m_glyphs.resize(count);
       m_fontCharWidths.resize(count);
     }
 
    private:
-    SkTDArray<SkPoint> m_positions;  // accumulator for text positions
-    SkTDArray<uint16_t> m_glyphs;    // accumulator for text glyphs
+    DataVector<SkPoint> m_positions;  // accumulator for text positions
+    DataVector<uint16_t> m_glyphs;    // accumulator for text glyphs
     // accumulator for glyphs' width defined in pdf
-    SkTDArray<uint32_t> m_fontCharWidths;
+    DataVector<uint32_t> m_fontCharWidths;
   };
 
   // stack of clips that may be reused
