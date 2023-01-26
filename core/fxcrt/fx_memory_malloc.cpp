@@ -13,6 +13,10 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_safe_types.h"
 
+#if defined(PDF_USE_PARTITION_ALLOC)
+#error "File compiled under wrong build option."
+#endif
+
 namespace pdfium {
 namespace internal {
 

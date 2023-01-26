@@ -10,6 +10,10 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/no_destructor.h"
 
+#if !defined(PDF_USE_PARTITION_ALLOC)
+#error "File compiled under wrong build option."
+#endif
+
 namespace {
 
 constexpr partition_alloc::PartitionOptions kOptions = {
