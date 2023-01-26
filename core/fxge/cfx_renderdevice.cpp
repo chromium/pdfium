@@ -1148,9 +1148,9 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
         continue;
 
       const RetainPtr<CFX_DIBitmap>& pGlyph = glyph.m_pGlyph->GetBitmap();
-      bitmap->TransferBitmap(point.value().x, point.value().y,
-                             pGlyph->GetWidth(), pGlyph->GetHeight(), pGlyph, 0,
-                             0);
+      bitmap->CompositeOneBPPMask(point.value().x, point.value().y,
+                                  pGlyph->GetWidth(), pGlyph->GetHeight(),
+                                  pGlyph, 0, 0);
     }
     return SetBitMask(bitmap, bmp_rect.left, bmp_rect.top, fill_color);
   }

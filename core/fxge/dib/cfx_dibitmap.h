@@ -86,6 +86,14 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                      const CFX_ClipRgn* pClipRgn,
                      bool bRgbByteOrder);
 
+  void CompositeOneBPPMask(int dest_left,
+                           int dest_top,
+                           int width,
+                           int height,
+                           const RetainPtr<CFX_DIBBase>& pSrcBitmap,
+                           int src_left,
+                           int src_top);
+
   bool CompositeRect(int dest_left,
                      int dest_top,
                      int width,

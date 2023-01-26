@@ -2032,3 +2032,13 @@ TEST_F(FPDFViewEmbedderTest, RenderXfaPageToSkp) {
   UnloadPage(page);
 }
 #endif  // _SKIA_SUPPORT_
+
+TEST_F(FPDFViewEmbedderTest, NoSmoothTextItalicOverlappingGlyphs) {
+  ASSERT_TRUE(OpenDocument("bug_1919.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  TestRenderPageBitmapWithFlags(page, FPDF_RENDER_NO_SMOOTHTEXT,
+                                "4ef1f65ab1ac76acb97a3540dcb10b4e");
+  UnloadPage(page);
+}

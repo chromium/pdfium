@@ -823,6 +823,36 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
   return true;
 }
 
+void CFX_DIBitmap::CompositeOneBPPMask(int dest_left,
+                                       int dest_top,
+                                       int width,
+                                       int height,
+                                       const RetainPtr<CFX_DIBBase>& pSrcBitmap,
+                                       int src_left,
+                                       int src_top) {
+  if (GetBPP() != 1) {
+    return;
+  }
+
+  if (!GetOverlapRect(dest_left, dest_top, width, height,
+                      pSrcBitmap->GetWidth(), pSrcBitmap->GetHeight(), src_left,
+                      src_top, nullptr)) {
+    return;
+  }
+
+  for (int row = 0; row < height; ++row) {
+    uint8_t* dest_scan = m_pBuffer.Get() + (dest_top + row) * m_Pitch;
+    const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row).data();
+    for (int col = 0; col < width; ++col) {
+      int src_idx = src_left + col;
+      int dest_idx = dest_left + col;
+      if (src_scan[src_idx / 8] & (1 << (7 - src_idx % 8))) {
+        dest_scan[dest_idx / 8] |= 1 << (7 - dest_idx % 8);
+      }
+    }
+  }
+}
+
 bool CFX_DIBitmap::CompositeRect(int left,
                                  int top,
                                  int width,
