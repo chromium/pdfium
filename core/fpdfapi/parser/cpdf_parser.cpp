@@ -1058,8 +1058,14 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
 
     m_CrossRefTable->SetTrailer(std::move(trailer));
     const int32_t xrefsize = GetTrailer()->GetDirectIntegerFor("Size");
-    if (xrefsize > 0)
-      ShrinkObjectMap(xrefsize);
+    if (xrefsize > 0) {
+      // Check if `xrefsize` is correct. If it is incorrect, give up and rebuild
+      // the xref table.
+      const uint32_t expected_last_obj_num = xrefsize - 1;
+      if (GetLastObjNum() != expected_last_obj_num && !RebuildCrossRef()) {
+        return FORMAT_ERROR;
+      }
+    }
   }
 
   Error eRet = SetEncryptHandler();
