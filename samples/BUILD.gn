@@ -25,6 +25,9 @@ config("pdfium_samples_config") {
   if (enable_callgrind) {
     defines += [ "ENABLE_CALLGRIND" ]
   }
+  if (build_with_chromium) {
+    defines += [ "BUILD_WITH_CHROMIUM" ]
+  }
 }
 
 executable("pdfium_test") {
@@ -62,5 +65,12 @@ executable("pdfium_test") {
   }
   if (pdf_use_skia) {
     deps += [ "//skia" ]
+    if (build_with_chromium) {
+      sources += [
+        "chromium_support/discardable_memory_allocator.cc",
+        "chromium_support/discardable_memory_allocator.h",
+      ]
+      deps += [ "//base/test:test_support" ]
+    }
   }
 }

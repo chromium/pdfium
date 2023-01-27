@@ -62,7 +62,11 @@
 #include "third_party/skia/include/core/SkPixmap.h"           // nogncheck
 #include "third_party/skia/include/core/SkRefCnt.h"           // nogncheck
 #include "third_party/skia/include/core/SkSurface.h"          // nogncheck
+
+#ifdef BUILD_WITH_CHROMIUM
+#include "samples/chromium_support/discardable_memory_allocator.h"  // nogncheck
 #endif
+#endif  // PDF_ENABLE_SKIA
 
 #ifdef PDF_ENABLE_V8
 #include "testing/v8_initializer.h"
@@ -1462,14 +1466,23 @@ int main(int argc, const char* argv[]) {
     return 1;
   }
 
+  const FPDF_RENDERER_TYPE renderer_type =
+      options.use_renderer_type.value_or(GetDefaultRendererType());
+#if defined(PDF_ENABLE_SKIA) && defined(BUILD_WITH_CHROMIUM)
+  if (renderer_type == FPDF_RENDERERTYPE_SKIA) {
+    // Needed to support Chromium's copy of Skia, which uses a
+    // DiscardableMemoryAllocator.
+    chromium_support::InitializeDiscardableMemoryAllocator();
+  }
+#endif
+
   FPDF_LIBRARY_CONFIG config;
   config.version = 4;
   config.m_pUserFontPaths = nullptr;
   config.m_pIsolate = nullptr;
   config.m_v8EmbedderSlot = 0;
   config.m_pPlatform = nullptr;
-  config.m_RendererType =
-      options.use_renderer_type.value_or(GetDefaultRendererType());
+  config.m_RendererType = renderer_type;
 
   std::function<void()> idler = []() {};
 #ifdef PDF_ENABLE_V8

@@ -1,0 +1,3 @@
+include_rules = [
+  '+base/test/test_discardable_memory_allocator.h',
+]
