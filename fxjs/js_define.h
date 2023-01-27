@@ -75,7 +75,7 @@ void JSPropGetter(const char* prop_name_string,
   if (!pRuntime)
     return;
 
-  CJS_Result result = (pObj->*M)(pRuntime);
+  CJS_Result result = (pObj.get()->*M)(pRuntime);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, prop_name_string,
                                         result.Error()));
@@ -100,7 +100,7 @@ void JSPropSetter(const char* prop_name_string,
   if (!pRuntime)
     return;
 
-  CJS_Result result = (pObj->*M)(pRuntime, value);
+  CJS_Result result = (pObj.get()->*M)(pRuntime, value);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, prop_name_string,
                                         result.Error()));
@@ -125,7 +125,7 @@ void JSMethod(const char* method_name_string,
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++)
     parameters.push_back(info[i]);
 
-  CJS_Result result = (pObj->*M)(pRuntime, parameters);
+  CJS_Result result = (pObj.get()->*M)(pRuntime, parameters);
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, method_name_string,
                                         result.Error()));

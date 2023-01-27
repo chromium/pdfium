@@ -467,7 +467,7 @@ bool CPWL_Edit::OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
 }
 
 void CPWL_Edit::OnDestroy() {
-  m_pCaret.Release();
+  m_pCaret.ExtractAsDangling();
 }
 
 bool CPWL_Edit::IsWndHorV() const {

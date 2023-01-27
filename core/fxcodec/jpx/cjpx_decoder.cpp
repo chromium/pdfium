@@ -410,11 +410,11 @@ CJPX_Decoder::CJPX_Decoder(ColorSpaceOption option)
 
 CJPX_Decoder::~CJPX_Decoder() {
   if (m_Codec)
-    opj_destroy_codec(m_Codec.Release());
+    opj_destroy_codec(m_Codec.ExtractAsDangling());
   if (m_Stream)
-    opj_stream_destroy(m_Stream.Release());
+    opj_stream_destroy(m_Stream.ExtractAsDangling());
   if (m_Image)
-    opj_image_destroy(m_Image.Release());
+    opj_image_destroy(m_Image.ExtractAsDangling());
 }
 
 bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
@@ -468,12 +468,12 @@ bool CJPX_Decoder::StartDecode() {
     if (!opj_set_decode_area(m_Codec, m_Image, m_Parameters.DA_x0,
                              m_Parameters.DA_y0, m_Parameters.DA_x1,
                              m_Parameters.DA_y1)) {
-      opj_image_destroy(m_Image.Release());
+      opj_image_destroy(m_Image.ExtractAsDangling());
       return false;
     }
     if (!(opj_decode(m_Codec, m_Stream, m_Image) &&
           opj_end_decompress(m_Codec, m_Stream))) {
-      opj_image_destroy(m_Image.Release());
+      opj_image_destroy(m_Image.ExtractAsDangling());
       return false;
     }
   } else if (!opj_get_decoded_tile(m_Codec, m_Stream, m_Image,
@@ -481,7 +481,7 @@ bool CJPX_Decoder::StartDecode() {
     return false;
   }
 
-  opj_stream_destroy(m_Stream.Release());
+  opj_stream_destroy(m_Stream.ExtractAsDangling());
   if (m_Image->color_space != OPJ_CLRSPC_SYCC && m_Image->numcomps == 3 &&
       m_Image->comps[0].dx == m_Image->comps[0].dy &&
       m_Image->comps[1].dx != 1) {

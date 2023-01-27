@@ -37,9 +37,9 @@ void CPWL_ComboBox::OnDestroy() {
   // subclasses, implement the virtual OnDestroy method that does the
   // cleanup first, then invokes the superclass OnDestroy ... gee,
   // like a dtor would.
-  m_pList.Release();
-  m_pButton.Release();
-  m_pEdit.Release();
+  m_pList.ExtractAsDangling();
+  m_pButton.ExtractAsDangling();
+  m_pEdit.ExtractAsDangling();
   CPWL_Wnd::OnDestroy();
 }
 

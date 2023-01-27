@@ -119,9 +119,9 @@ void CPWL_ScrollBar::OnDestroy() {
   // subclasses, implement the virtual OnDestroy method that does the
   // cleanup first, then invokes the superclass OnDestroy ... gee,
   // like a dtor would.
-  m_pMinButton.Release();
-  m_pMaxButton.Release();
-  m_pPosButton.Release();
+  m_pMinButton.ExtractAsDangling();
+  m_pMaxButton.ExtractAsDangling();
+  m_pPosButton.ExtractAsDangling();
   CPWL_Wnd::OnDestroy();
 }
 

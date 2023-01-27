@@ -87,5 +87,5 @@ FontRenamer::FontRenamer() : impl_(FPDF_GetDefaultSystemFontInfo()) {
 }
 
 FontRenamer::~FontRenamer() {
-  FPDF_FreeDefaultSystemFontInfo(impl_.Release());
+  FPDF_FreeDefaultSystemFontInfo(impl_.ExtractAsDangling());
 }

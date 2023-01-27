@@ -34,7 +34,7 @@ void CFX_V8::PutObjectProperty(v8::Local<v8::Object> pObj,
 
 void CFX_V8::DisposeIsolate() {
   if (m_pIsolate)
-    m_pIsolate.Release()->Dispose();
+    m_pIsolate.ExtractAsDangling()->Dispose();
 }
 
 v8::Local<v8::Array> CFX_V8::NewArray() {

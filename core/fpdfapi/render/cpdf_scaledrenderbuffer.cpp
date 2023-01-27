@@ -64,7 +64,7 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
 
 CFX_RenderDevice* CPDF_ScaledRenderBuffer::GetDevice() const {
   return m_pBitmapDevice ? static_cast<CFX_RenderDevice*>(m_pBitmapDevice.get())
-                         : m_pDevice;
+                         : m_pDevice.get();
 }
 
 void CPDF_ScaledRenderBuffer::OutputToDevice() {

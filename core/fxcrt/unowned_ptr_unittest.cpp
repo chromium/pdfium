@@ -35,15 +35,6 @@ void DeleteDangling() {
   }
 }
 
-void ResetDangling() {
-  auto ptr2 = std::make_unique<Clink>();
-  {
-    auto ptr1 = std::make_unique<Clink>();
-    ptr2->next_.Reset(ptr1.get());
-  }
-  ptr2->next_.Reset();
-}
-
 void AssignDangling() {
   auto ptr2 = std::make_unique<Clink>();
   {
@@ -59,7 +50,7 @@ void ReleaseDangling() {
     auto ptr1 = std::make_unique<Clink>();
     ptr2->next_ = ptr1.get();
   }
-  ptr2->next_.Release();
+  ptr2->next_.ExtractAsDangling();
 }
 
 }  // namespace
@@ -178,23 +169,6 @@ TEST(UnownedPtr, PtrNotOk) {
 #endif
 }
 
-TEST(UnownedPtr, ResetOk) {
-  auto ptr1 = std::make_unique<Clink>();
-  {
-    auto ptr2 = std::make_unique<Clink>();
-    ptr2->next_.Reset(ptr1.get());
-    ptr2->next_.Reset(nullptr);
-  }
-}
-
-TEST(UnownedPtr, ResetNotOk) {
-#if defined(ADDRESS_SANITIZER)
-  EXPECT_DEATH(ResetDangling(), "");
-#else
-  ResetDangling();
-#endif
-}
-
 TEST(UnownedPtr, AssignOk) {
   auto ptr1 = std::make_unique<Clink>();
   {
@@ -217,7 +191,7 @@ TEST(UnownedPtr, ReleaseOk) {
   {
     auto ptr1 = std::make_unique<Clink>();
     ptr2->next_ = ptr1.get();
-    ptr2->next_.Release();
+    ptr2->next_.ExtractAsDangling();
   }
 }
 

@@ -64,7 +64,8 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
 
   // Move-construct an UnownedPtr. After construction, |that| will be NULL.
   // Required in addition to move conversion constructor below.
-  constexpr UnownedPtr(UnownedPtr&& that) noexcept : m_pObj(that.Release()) {}
+  constexpr UnownedPtr(UnownedPtr&& that) noexcept
+      : m_pObj(that.ExtractAsDangling()) {}
 
   // Copy-conversion constructor.
   template <class U,
@@ -77,7 +78,7 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
             typename = typename std::enable_if<
                 std::is_convertible<U*, T*>::value>::type>
   UnownedPtr(UnownedPtr<U>&& that) noexcept {
-    Reset(that.Release());
+    Reset(that.ExtractAsDangling());
   }
 
   // Assign an UnownedPtr from nullptr.
@@ -104,7 +105,7 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
   // Required in addition to move conversion assignment below.
   UnownedPtr& operator=(UnownedPtr&& that) noexcept {
     if (*this != that)
-      Reset(that.Release());
+      Reset(that.ExtractAsDangling());
     return *this;
   }
 
@@ -124,18 +125,13 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
                 std::is_convertible<U*, T*>::value>::type>
   UnownedPtr& operator=(UnownedPtr<U>&& that) noexcept {
     if (*this != that)
-      Reset(that.Release());
+      Reset(that.ExtractAsDangling());
     return *this;
   }
 
   ~UnownedPtr() {
     ProbeForLowSeverityLifetimeIssue();
     m_pObj = nullptr;
-  }
-
-  void Reset(T* obj = nullptr) {
-    ProbeForLowSeverityLifetimeIssue();
-    m_pObj = obj;
   }
 
   bool operator==(std::nullptr_t ptr) const { return m_pObj == nullptr; }
@@ -147,9 +143,9 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
   }
 
   operator T*() const noexcept { return m_pObj; }
-  T* Get() const noexcept { return m_pObj; }
+  T* get() const noexcept { return m_pObj; }
 
-  T* Release() {
+  T* ExtractAsDangling() {
     ProbeForLowSeverityLifetimeIssue();
     T* pTemp = nullptr;
     std::swap(pTemp, m_pObj);
@@ -162,6 +158,11 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
 
  private:
   friend class pdfium::span<T>;
+
+  void Reset(T* obj = nullptr) {
+    ProbeForLowSeverityLifetimeIssue();
+    m_pObj = obj;
+  }
 
   inline void ProbeForLowSeverityLifetimeIssue() {
 #if defined(ADDRESS_SANITIZER)

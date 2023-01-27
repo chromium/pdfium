@@ -19,7 +19,7 @@ IJS_Runtime::ScopedEventContext::ScopedEventContext(IJS_Runtime* pRuntime)
     : m_pRuntime(pRuntime), m_pContext(pRuntime->NewEventContext()) {}
 
 IJS_Runtime::ScopedEventContext::~ScopedEventContext() {
-  m_pRuntime->ReleaseEventContext(m_pContext.Release());
+  m_pRuntime->ReleaseEventContext(m_pContext.ExtractAsDangling());
 }
 
 // static

@@ -162,7 +162,7 @@ CJS_Global::CJS_Global(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
 
 CJS_Global::~CJS_Global() {
   DestroyGlobalPersisitentVariables();
-  m_pGlobalData.Release()->Release();
+  m_pGlobalData.ExtractAsDangling()->Release();
 }
 
 bool CJS_Global::HasProperty(const ByteString& propname) {
