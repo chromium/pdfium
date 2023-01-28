@@ -342,6 +342,7 @@ group("pdfium_public_headers") {
 }
 
 component("pdfium") {
+  output_name = "pdfium"
   libs = []
   configs += [ ":pdfium_strict_config" ]
   public_configs = [ ":pdfium_public_config" ]
