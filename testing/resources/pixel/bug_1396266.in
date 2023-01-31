@@ -1,0 +1,98 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+
+% A page with scaled copies of a masked image. Any scaled image with an area
+% less than 8 times the stencil mask's original area (64x64 * 8 = 32,768) forces
+% bilinear interpolation of the stencil mask, which triggers the bug.
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 432 288]
+  /Resources <<
+    /XObject <<
+      /Masked 5 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+
+% 32x32 image has an area of 1,024, so it is interpolated.
+q
+  32 0 0 32 64 240 cm
+  /Masked Do
+Q
+
+% 64x64 image has an area of 4,096, so it is interpolated.
+q
+  64 0 0 64 48 160 cm
+  /Masked Do
+Q
+
+% 128x128 image has an area of 16,384, so it is interpolated.
+q
+  128 0 0 128 16 16 cm
+  /Masked Do
+Q
+
+% 256x256 image has an area of 65,536, so it is not interpolated.
+q
+  256 0 0 256 160 16 cm
+  /Masked Do
+Q
+
+endstream
+endobj
+
+% A 3x3 base image with a stencil mask.
+{{object 5 0}} <<
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceRGB
+  /Filter /ASCIIHexDecode
+  /Height 3
+  /Mask 6 0 R
+  /Width 3
+  {{streamlen}}
+>>
+stream
+B8C3E9 7793DB C3CEEF
+8CADF2 1B74E8 BFD5FB
+C2D3FA 9FBDF8 D9E5FC
+endstream
+endobj
+
+% A 64x64 stencil mask with horizontal and vertical lines.
+{{object 6 0}} <<
+  /Subtype /Image
+  /BitsPerComponent 1
+  /Filter [/ASCIIHexDecode /FlateDecode]
+  /Height 64
+  /ImageMask true
+  /Width 64
+  {{streamlen}}
+>>
+stream
+78DA63608080FAFF10E000E5C3687FA8388CF6818A63D0500330E802A83C41BA1EAA9E105D03554F
+36CD0C35876CFA0FD41CDAD3F2FF694D03002512CA0A
+endstream
+endobj
+
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

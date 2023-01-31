@@ -422,6 +422,9 @@ bug_983289.in * * * agg
 # TODO(chromium:1028991): Remove after associated bug is fixed
 reset_button.in * * * *
 
+# TODO(chromium:1396266, skia:14070): Remove after associated bug is fixed
+bug_1396266.in * * * skia
+
 # xfa_specific
 
 # TODO(pdfium:1095): Remove after associated bug is fixed
