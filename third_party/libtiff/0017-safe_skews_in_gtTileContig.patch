@@ -1,39 +1,43 @@
 diff --git a/third_party/libtiff/tif_getimage.c b/third_party/libtiff/tif_getimage.c
-index fc554ccab..fff3f7fde 100644
+index 41f7dfd77..8603ff026 100644
 --- a/third_party/libtiff/tif_getimage.c
 +++ b/third_party/libtiff/tif_getimage.c
-@@ -628,6 +629,7 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
-     uint32 tw, th;
-     unsigned char* buf = NULL;
-     int32 fromskew, toskew;
-+    int64 safeskew;
-     uint32 nrow;
-     int ret = 1, flip;
-     uint32 this_tw, tocol;
-@@ -686,9 +706,24 @@ gtTileContig(TIFFRGBAImage* img, uint32* raster, uint32 w, uint32 h)
- 		/*
- 		 * Rightmost tile is clipped on right side.
- 		 */
--		fromskew = tw - (w - tocol);
-+		safeskew = tw;
-+		safeskew -= w;
-+		safeskew += tocol;
-+		if(safeskew > INT_MAX || safeskew < INT_MIN){
-+		        _TIFFfree(buf);
-+		        TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "%s", "Invalid skew");
-+		        return (0);
-+		}
-+		fromskew = safeskew;
- 		this_tw = tw - fromskew;
--		this_toskew = toskew + fromskew;
-+		safeskew = toskew;
-+		safeskew += fromskew;
-+		if(safeskew > INT_MAX || safeskew < INT_MIN){
-+		        _TIFFfree(buf);
-+		        TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "%s", "Invalid skew");
-+		        return (0);
-+		}
-+		this_toskew = safeskew;
- 	    }
- 	    (*put)(img, raster+y*w+tocol, tocol, y, this_tw, nrow, fromskew, this_toskew, buf + pos);
- 	    tocol += this_tw;
+@@ -723,6 +723,7 @@ static int gtTileContig(TIFFRGBAImage *img, uint32_t *raster, uint32_t w,
+     uint32_t this_tw, tocol;
+     int32_t this_toskew, leftmost_toskew;
+     int32_t leftmost_fromskew;
++    int64_t safeskew;
+     uint32_t leftmost_tw;
+     tmsize_t bufsize;
+ 
+@@ -792,9 +793,28 @@ static int gtTileContig(TIFFRGBAImage *img, uint32_t *raster, uint32_t w,
+                 /*
+                  * Rightmost tile is clipped on right side.
+                  */
+-                fromskew = tw - (w - tocol);
++                safeskew = tw;
++                safeskew -= w;
++                safeskew += tocol;
++                if (safeskew > INT_MAX || safeskew < INT_MIN)
++                {
++                    _TIFFfree(buf);
++                    TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "%s",
++                                 "Invalid skew");
++                    return (0);
++                }
++                fromskew = safeskew;
+                 this_tw = tw - fromskew;
+-                this_toskew = toskew + fromskew;
++                safeskew = toskew;
++                safeskew += fromskew;
++                if (safeskew > INT_MAX || safeskew < INT_MIN)
++                {
++                    _TIFFfree(buf);
++                    TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "%s",
++                                 "Invalid skew");
++                    return (0);
++                }
++                this_toskew = safeskew;
+             }
+             tmsize_t roffset = (tmsize_t)y * w + tocol;
+             (*put)(img, raster + roffset, tocol, y, this_tw, nrow, fromskew,

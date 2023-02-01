@@ -220,7 +220,7 @@ bool CTiffContext::LoadFrameInfo(int32_t frame,
                                  int32_t* comps,
                                  int32_t* bpc,
                                  CFX_DIBAttribute* pAttribute) {
-  if (!TIFFSetDirectory(m_tif_ctx.get(), (uint16)frame))
+  if (!TIFFSetDirectory(m_tif_ctx.get(), (uint16_t)frame))
     return false;
 
   uint32_t tif_width = 0;
@@ -320,7 +320,7 @@ void CTiffContext::SetPalette(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
     uint32_t g = green_orig[index] & 0xFF;
     uint32_t b = blue_orig[index] & 0xFF;
     uint32_t color = (uint32_t)b | ((uint32_t)g << 8) | ((uint32_t)r << 16) |
-                     (((uint32)0xffL) << 24);
+                     (((uint32_t)0xffL) << 24);
     pDIBitmap->SetPaletteArgb(index, color);
   }
 }
@@ -428,7 +428,7 @@ bool CTiffContext::Decode(const RetainPtr<CFX_DIBitmap>& pDIBitmap) {
     uint16_t rotation = ORIENTATION_TOPLEFT;
     TIFFGetField(m_tif_ctx.get(), TIFFTAG_ORIENTATION, &rotation);
     if (TIFFReadRGBAImageOriented(m_tif_ctx.get(), img_width, img_height,
-                                  (uint32*)pDIBitmap->GetBuffer().data(),
+                                  (uint32_t*)pDIBitmap->GetBuffer().data(),
                                   rotation, 1)) {
       for (uint32_t row = 0; row < img_height; row++) {
         uint8_t* row_buf = pDIBitmap->GetWritableScanline(row).data();

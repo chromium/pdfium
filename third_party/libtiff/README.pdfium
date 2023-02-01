@@ -1,7 +1,7 @@
 Name: LibTIFF
 URL: http://www.simplesystems.org/libtiff/
-Version: 4.2.0
-CPEPrefix: cpe:/a:libtiff:libtiff:4.2.0
+Version: 4.5.0
+CPEPrefix: cpe:/a:libtiff:libtiff:4.5.0
 Security Critical: yes
 License: BSD
 
@@ -11,15 +11,7 @@ TIFF library.
 Local Modifications:
 
 0000-build-config.patch: Local build configuration changes.
-0001-unused-variable.patch: Fix -Wunused-but-set-variable.
 0017-safe_skews_in_gtTileContig.patch: return error if to/from skews overflow from int32.
 0028-nstrips-OOM.patch: return error for excess number of tiles/strips.
 0031-safe_size_ingtStripContig.patch: return error if the size to read overflow from int32.
-0032-builtin-codecs.patch: make _TIFFBuiltinCODECS const data.
 0033-avail-out-overflow.patch: signed comparison in PixarLogDecode().
-0034-memcpy-nullptr.patch: Check size before calling memcpy().
-0035-memcpy-nullptr-zero-size.patch: Check for nullptr and zero size before calling memcpy().
-0036-Replace-sprintf-calls-with-snprintf.patch: Replace sprintf with snprintf for macOS 13 SDK compatibility, from https://gitlab.com/libtiff/libtiff/-/merge_requests/408, edited to apply to PDFium, which does not have libtiff 352cb5a4fb11.
-0037-tiff-read-rgba-tile-ext.patch: Fix (unsigned) integer overflow on strips/tiles > 2 GB.
-0038-fix-ojpeg-hack.patch: Fix OJPEG hack.
-0039-handling-of-tifftag-inknames.patch: Revised handling of TIFFTAG_INKNAMES and related TIFFTAG_NUMBEROFINKS value.

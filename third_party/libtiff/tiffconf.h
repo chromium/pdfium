@@ -7,6 +7,8 @@
 #ifndef _TIFFCONF_
 #define _TIFFCONF_
 
+#include <inttypes.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #include "build/build_config.h"
@@ -130,29 +132,17 @@
 #endif
 
 
-/* Signed size type */
-#ifdef _MSC_VER
-
-#if defined(_WIN64)
-#define TIFF_SSIZE_T signed __int64
+/* Signed size type, type formatter, and size of size_t */
+#if defined(ARCH_CPU_64_BITS)
+#define TIFF_SSIZE_T int64_t
+#define TIFF_SSIZE_FORMAT PRId64
 #define TIFF_SSIZE_T_MAX INT64_MAX
+#define SIZEOF_SIZE_T 8
 #else
-#define TIFF_SSIZE_T signed int
-#define TIFF_SSIZE_T_MAX INT_MAX
-#endif
-
-#else
-
-#define TIFF_SSIZE_T signed long
-#define TIFF_SSIZE_T_MAX LONG_MAX
-
-#endif
-
-/* Signed size type formatter */
-#if defined(_WIN64)
-#define TIFF_SSIZE_FORMAT "%I64d"
-#else
-#define TIFF_SSIZE_FORMAT "%ld"
+#define TIFF_SSIZE_T int32_t
+#define TIFF_SSIZE_FORMAT PRId32
+#define TIFF_SSIZE_T_MAX INT32_MAX
+#define SIZEOF_SIZE_T 4
 #endif
 
 /* Pointer difference type */
