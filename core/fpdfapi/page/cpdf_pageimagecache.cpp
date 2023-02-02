@@ -73,6 +73,13 @@ void CPDF_PageImageCache::ClearImageCacheEntry(const CPDF_Stream* pStream) {
     return;
 
   m_nCacheSize -= it->second->EstimateSize();
+
+  // Avoid leaving `m_pCurImageCacheEntry` as a dangling pointer when `it` is
+  // about to be deleted.
+  if (m_pCurImageCacheEntry.Get() == it->second.get()) {
+    DCHECK(!m_pCurImageCacheEntry.IsOwned());
+    m_pCurImageCacheEntry.Reset();
+  }
   m_ImageCache.erase(it);
 }
 
