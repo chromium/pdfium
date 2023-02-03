@@ -98,7 +98,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling jpeg_turbo
   # and whatever else without interference from each other.
-  'jpeg_turbo_revision': 'ed683925e4897a84b3bffc5c1414c85b97a129a3',
+  'jpeg_turbo_revision': '0b6e6a152242c2fa30ffb29633d1b7d7b229b46b',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libc++
   # and whatever else without interference from each other.
