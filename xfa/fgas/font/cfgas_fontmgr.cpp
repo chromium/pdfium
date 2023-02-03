@@ -720,7 +720,7 @@ std::vector<CFGAS_FontDescriptorInfo> CFGAS_FontMgr::MatchFonts(
     if (matched_fonts.size() == 0xffff)
       break;
   }
-  std::sort(matched_fonts.begin(), matched_fonts.end());
+  std::stable_sort(matched_fonts.begin(), matched_fonts.end());
   return matched_fonts;
 }
 
