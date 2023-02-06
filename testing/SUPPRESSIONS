@@ -404,6 +404,9 @@ bug_1963.in * * * skia
 # TODO(pdfium:1973): Remove after associated bug is fixed
 bug_1973.in * * * agg,skia
 
+# TODO(pdfium:1983): Remove after associated bug is fixed
+bug_1983.in * * * *
+
 # TODO(chromium:237527): Remove after associated bug is fixed
 bug_237527_1.in * * * *
 
