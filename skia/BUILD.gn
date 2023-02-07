@@ -349,7 +349,6 @@ component("skia") {
 
   if (is_ios) {
     frameworks += [ "ImageIO.framework" ]
-    sources += [ "//third_party/skia/src/utils/mac/SkCreateCGImageRef.cpp" ]
   }
 
   if (skia_support_pdf) {
