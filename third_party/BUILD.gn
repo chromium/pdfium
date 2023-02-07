@@ -529,6 +529,7 @@ source_set("pdfium_base") {
     "base/bits.h",
     "base/check.h",
     "base/check_op.h",
+    "base/component_export.h",
     "base/containers/adapters.h",
     "base/containers/contains.h",
     "base/cxx17_backports.h",

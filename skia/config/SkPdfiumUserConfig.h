@@ -123,6 +123,7 @@
  */
 // #define SK_HISTOGRAM_BOOLEAN(name, value)
 // #define SK_HISTOGRAM_ENUMERATION(name, value, boundary_value)
+#include "third_party/base/component_export.h"
 
 // ===== Begin Chrome-specific definitions =====
 
@@ -130,6 +131,9 @@
 #undef SK_MSCALAR_IS_DOUBLE
 
 #define GR_MAX_OFFSCREEN_AA_DIM 512
+
+// Handle exporting using base/component_export.h
+#define SK_API COMPONENT_EXPORT(SKIA)
 
 // Log the file and line number for assertions.
 #if defined(SK_BUILD_FOR_WIN) && !defined(__clang__)
