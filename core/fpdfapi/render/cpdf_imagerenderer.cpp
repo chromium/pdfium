@@ -309,11 +309,11 @@ bool CPDF_ImageRenderer::DrawPatternImage() {
 
   CFX_Matrix new_matrix = GetDrawMatrix(rect);
   CFX_DefaultRenderDevice bitmap_device1;
-  if (!bitmap_device1.Create(rect.Width(), rect.Height(), FXDIB_Format::kRgb32,
+  if (!bitmap_device1.Create(rect.Width(), rect.Height(), FXDIB_Format::kArgb,
                              nullptr)) {
     return true;
   }
-  bitmap_device1.GetBitmap()->Clear(0xffffff);
+  bitmap_device1.GetBitmap()->Clear(0);
 
   CPDF_RenderStatus bitmap_render(m_pRenderStatus->GetContext(),
                                   &bitmap_device1);

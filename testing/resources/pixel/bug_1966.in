@@ -1,0 +1,121 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+  /MediaBox [0 0 128.571 128.571]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 7 0 R
+  /Resources <<
+    /XObject <<
+      /Im1 4 0 R
+    >>
+    /Pattern <<
+      /P1 5 0 R
+      /P2 6 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 1
+  /Filter /ASCIIHexDecode
+  /Height 40
+  /ImageMask true
+  /Width 80
+  {{streamlen}}
+>>
+stream
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000FFFF
+FFFF000000000000FFFFFFFF0FFFFFFFFFF0FFFFFFFF0FFFFFFFFFF0FFFF
+FFFF0FFFFFFFFFF0FFFFFFFF0FFFFFFFFFF0FFFFFFFF000000000000FFFF
+FFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+FFFF000000000000FFFFFFFF000000000000FFFFFFFF0FFFFFFFFFF0FFFF
+FFFF0FFFFFFFFFF0FFFFFFFF0FFFFFFFFFF0FFFFFFFF0FFFFFFFFFF0FFFF
+FFFF000000000000FFFFFFFF000000000000FFFFFFFFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFF
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Pattern
+  /PaintType 1
+  /PatternType 1
+  /TilingType 1
+  /BBox [0 0 128.571 128.571]
+  /XStep 128.571
+  /YStep 128.571
+  {{streamlen}}
+>>
+stream
+q
+0.0 0.0 0.0 rg
+0 128.571 m
+128.571 128.571 l
+128.571 64 l
+0 64 l
+f
+Q
+endstream
+endobj
+{{object 6 0}} <<
+  /Type /Pattern
+  /PaintType 1
+  /PatternType 1
+  /TilingType 1
+  /BBox [0 0 128.571 128.571]
+  /XStep 128.571
+  /YStep 128.571
+  {{streamlen}}
+>>
+stream
+% second pattern
+q
+0.0 0.0 0.0 rg
+0 64 m
+128.571 64 l
+128.571 0 l
+0 0 l
+f
+Q
+endstream
+endobj
+{{object 7 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+/Pattern cs
+/P1 scn
+q
+128.571 0 0 128.571 0 0 cm
+/Im1 Do
+Q
+/P2 scn
+q
+128.571 0 0 128.571 0 0 cm
+/Im1 Do
+Q
+Q
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
