@@ -820,6 +820,10 @@ class SkiaState {
       if (!m_skPath.isLastContourClosed() && IsPathAPoint(m_skPath)) {
         DCHECK_GE(m_skPath.countPoints(), 1);
         skCanvas->drawPoint(m_skPath.getPoint(0), skPaint);
+      } else if (IsPathAPoint(m_skPath) &&
+                 skPaint.getStrokeCap() != SkPaint::kRound_Cap) {
+        // Do nothing. A closed 0-length closed path can be rendered only if
+        // its line cap type is round.
       } else {
         DebugShowSkiaDrawPath(m_pDriver, skCanvas, skPaint, m_skPath);
         skCanvas->drawPath(m_skPath, skPaint);

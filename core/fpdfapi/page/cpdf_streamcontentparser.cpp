@@ -38,6 +38,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/scoped_set_insertion.h"
 #include "core/fxcrt/stl_util.h"
+#include "core/fxge/cfx_graphstate.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
@@ -901,7 +902,7 @@ void CPDF_StreamContentParser::Handle_ClosePath() {
 
   if (m_PathStart.x != m_PathCurrent.x || m_PathStart.y != m_PathCurrent.y) {
     AddPathPointAndClose(m_PathStart, CFX_Path::Point::Type::kLine);
-  } else if (m_PathPoints.back().m_Type != CFX_Path::Point::Type::kMove) {
+  } else {
     m_PathPoints.back().m_CloseFigure = true;
   }
 }
@@ -1465,8 +1466,23 @@ void CPDF_StreamContentParser::AddPathObject(
       path.AppendRect(0, 0, 0, 0);
       m_pCurStates->m_ClipPath.AppendPathWithAutoMerge(
           path, CFX_FillRenderOptions::FillType::kWinding);
+      return;
     }
-    return;
+
+    CFX_Path::Point& point = path_points.front();
+    if (point.m_Type != CFX_Path::Point::Type::kMove || !point.m_CloseFigure ||
+        m_pCurStates->m_GraphState.GetLineCap() !=
+            CFX_GraphStateData::LineCap::kRound) {
+      return;
+    }
+
+    // For round line cap only: When a path moves to a point and immediately
+    // gets closed, we can treat it as drawing a path from this point to itself
+    // and closing the path. This should not apply to butt line cap or
+    // projecting square line cap since they should not be rendered.
+    point.m_CloseFigure = false;
+    path_points.emplace_back(point.m_Point, CFX_Path::Point::Type::kLine,
+                             /*close=*/true);
   }
 
   if (path_points.back().IsTypeAndOpen(CFX_Path::Point::Type::kMove))
