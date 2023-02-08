@@ -3907,7 +3907,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSetMatrix) {
     EXPECT_EQ(FPDFBitmap_BGRA, FPDFBitmap_GetFormat(bitmap.get()));
     const char* checksum = []() {
       if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-        return "74081c2a48c2fd4f1fde544f056e956b";
+        return "1003585870ad0fe37baf1c5bb3f5fd76";
       return "0824c16dcf2dfcef44b45d88db1fddce";
     }();
     CompareBitmap(bitmap.get(), 120, 43, checksum);
