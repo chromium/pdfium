@@ -4,6 +4,7 @@
 
 #include "core/fxge/cfx_path.h"
 
+#include "core/fxcrt/fx_coordinates.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(CFX_Path, BasicTest) {
@@ -370,4 +371,37 @@ TEST(CFX_Path, Append) {
   EXPECT_EQ(CFX_PointF(5, 6), path.GetPoint(1));
   EXPECT_EQ(CFX_PointF(65, 82), path.GetPoint(2));
   EXPECT_EQ(CFX_PointF(65, 82), path.GetPoint(3));
+}
+
+TEST(CFX_Path, GetBoundingBoxForStrokePath) {
+  static constexpr float kLineWidth = 1.0f;
+  static constexpr float kMiterLimit = 1.0f;
+
+  {
+    // Test the case that the first/last point is "move" and it closes the
+    // paths.
+    CFX_Path path;
+    path.AppendPoint({2, 0}, CFX_Path::Point::Type::kMove);
+    path.ClosePath();
+    EXPECT_EQ(CFX_FloatRect(2, 0, 2, 0),
+              path.GetBoundingBoxForStrokePath(kLineWidth, kMiterLimit));
+  }
+
+  {
+    // Test on a regular rect path.
+    CFX_Path path;
+    path.AppendPoint({2, 0}, CFX_Path::Point::Type::kMove);
+    path.AppendPoint({2, 1}, CFX_Path::Point::Type::kLine);
+    path.AppendPoint({0, 1}, CFX_Path::Point::Type::kLine);
+    path.AppendPoint({0, 0}, CFX_Path::Point::Type::kLine);
+    path.ClosePath();
+    EXPECT_EQ(CFX_FloatRect(-1, -1, 3, 2),
+              path.GetBoundingBoxForStrokePath(kLineWidth, kMiterLimit));
+
+    // If the final point is "move" and the path remains open, it should not
+    // affect the bounding rect.
+    path.AppendPoint({20, 20}, CFX_Path::Point::Type::kMove);
+    EXPECT_EQ(CFX_FloatRect(-1, -1, 3, 2),
+              path.GetBoundingBoxForStrokePath(kLineWidth, kMiterLimit));
+  }
 }

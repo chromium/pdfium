@@ -340,9 +340,14 @@ CFX_FloatRect CFX_Path::GetBoundingBoxForStrokePath(float line_width,
   size_t iMiddlePoint = 0;
   bool bJoin;
   while (iPoint < m_Points.size()) {
-    if (m_Points[iPoint].IsTypeAndOpen(CFX_Path::Point::Type::kMove)) {
-      if (iPoint + 1 == m_Points.size())
+    if (m_Points[iPoint].m_Type == CFX_Path::Point::Type::kMove) {
+      if (iPoint + 1 == m_Points.size()) {
+        if (m_Points[iPoint].m_CloseFigure) {
+          // Update `rect` right away since this is the final point to be drawn.
+          rect.UpdateRect(m_Points[iPoint].m_Point);
+        }
         break;
+      }
 
       iStartPoint = iPoint + 1;
       iEndPoint = iPoint;
@@ -358,7 +363,7 @@ CFX_FloatRect CFX_Path::GetBoundingBoxForStrokePath(float line_width,
         iPoint += 2;
       }
       if (iPoint == m_Points.size() - 1 ||
-          m_Points[iPoint + 1].IsTypeAndOpen(CFX_Path::Point::Type::kMove)) {
+          m_Points[iPoint + 1].m_Type == CFX_Path::Point::Type::kMove) {
         iStartPoint = iPoint - 1;
         iEndPoint = iPoint;
         bJoin = false;
@@ -380,7 +385,7 @@ CFX_FloatRect CFX_Path::GetBoundingBoxForStrokePath(float line_width,
       UpdateLineEndPoints(&rect, m_Points[iStartPoint].m_Point,
                           m_Points[iEndPoint].m_Point, half_width);
     }
-    iPoint++;
+    ++iPoint;
   }
   return rect;
 }
