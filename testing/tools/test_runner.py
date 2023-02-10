@@ -177,20 +177,17 @@ class TestRunner:
 
     parser.add_argument(
         '--disable-javascript',
-        action="store_true",
-        dest="disable_javascript",
+        action='store_true',
         help='Prevents JavaScript from executing in PDF files.')
 
     parser.add_argument(
         '--disable-xfa',
-        action="store_true",
-        dest="disable_xfa",
+        action='store_true',
         help='Prevents processing XFA forms.')
 
     parser.add_argument(
         '--render-oneshot',
-        action="store_true",
-        dest="render_oneshot",
+        action='store_true',
         help='Sets whether to use the oneshot renderer.')
 
     parser.add_argument(
@@ -203,36 +200,29 @@ class TestRunner:
     parser.add_argument(
         '--gold_properties',
         default='',
-        dest="gold_properties",
-        help='Key value pairs that are written to the top level '
-        'of the JSON file that is ingested by Gold.')
+        help='Key value pairs that are written to the top level of the JSON '
+        'file that is ingested by Gold.')
 
     # TODO: Remove when pdfium recipe stops passing this argument
     parser.add_argument(
         '--gold_ignore_hashes',
         default='',
-        dest="gold_ignore_hashes",
         help='Path to a file with MD5 hashes we wish to ignore.')
 
     parser.add_argument(
         '--regenerate_expected',
-        default='',
-        dest="regenerate_expected",
-        help='Regenerates expected images. Valid values are '
-        '"all" to regenerate all expected pngs, and '
-        '"platform" to regenerate only platform-specific '
-        'expected pngs.')
+        action='store_true',
+        help='Regenerates expected images. For each failing image diff, this '
+        'will regenerate the most specific expected image file that exists.')
 
     parser.add_argument(
         '--reverse-byte-order',
         action='store_true',
-        dest="reverse_byte_order",
         help='Run image-based tests using --reverse-byte-order.')
 
     parser.add_argument(
         '--ignore_errors',
-        action="store_true",
-        dest="ignore_errors",
+        action='store_true',
         help='Prevents the return value from being non-zero '
         'when image comparison fails.')
 
@@ -247,11 +237,6 @@ class TestRunner:
     skia_gold.add_skia_gold_args(parser)
 
     self.per_process_config.options = parser.parse_args()
-
-    if (self.options.regenerate_expected and
-        self.options.regenerate_expected not in ['all', 'platform']):
-      print('FAILURE: --regenerate_expected must be "all" or "platform"')
-      return 1
 
     finder = self.per_process_config.NewFinder()
     pdfium_test_path = self.per_process_config.GetPdfiumTestPath(finder)
@@ -611,18 +596,14 @@ class _TestCaseRunner:
 
     return test_function()
 
-  # TODO(crbug.com/pdfium/1508): Add support for an option to automatically
-  # generate Skia specific expected results.
   def _RegenerateIfNeeded(self):
     if not self.options.regenerate_expected:
       return
     if self.IsResultSuppressed() or self.IsImageDiffSuppressed():
       return
-    _per_process_state.image_differ.Regenerate(
-        self.input_filename,
-        self.source_dir,
-        self.working_dir,
-        platform_only=self.options.regenerate_expected == 'platform')
+    _per_process_state.image_differ.Regenerate(self.input_filename,
+                                               self.source_dir,
+                                               self.working_dir)
 
   def Generate(self):
     input_event_path = os.path.join(self.source_dir, f'{self.test_id}.evt')
@@ -748,8 +729,11 @@ class _TestCaseRunner:
         diff_log = []
         for diff in image_diffs:
           diff_map[diff.actual_path] = diff
-          diff_log.append((f'{os.path.basename(diff.actual_path)} vs. '
-                           f'{os.path.basename(diff.expected_path)}\n'))
+          diff_log.append(f'{os.path.basename(diff.actual_path)} vs. ')
+          if diff.expected_path:
+            diff_log.append(f'{os.path.basename(diff.expected_path)}\n')
+          else:
+            diff_log.append('missing expected file\n')
 
         for artifact in test_result.image_artifacts:
           artifact.image_diff = diff_map.get(artifact.image_path)
