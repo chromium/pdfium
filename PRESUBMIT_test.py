@@ -51,10 +51,12 @@ class BannedTypeCheckTest(unittest.TestCase):
 
 class CheckChangeOnUploadTest(unittest.TestCase):
 
-  def testCheckPNGFormat(self):
+  def testCheckPngNames(self):
     correct_paths = [
         'test_expected.pdf.0.png',
         'test_expected_win.pdf.1.png',
+        'test_expected_agg.pdf.3.png',
+        'test_expected_agg_linux.pdf.3.png',
         'test_expected_skia.pdf.2.png',
         'test_expected_skia_mac.pdf.4.png',
         'notpng.cc',  # Check will be skipped for non-PNG files
@@ -64,6 +66,7 @@ class CheckChangeOnUploadTest(unittest.TestCase):
         'test1_expected.0.png',  # Missing '.pdf'
         'test2_expected.pdf.png',  # Missing page number
         'test3_expected.pdf.x.png',  # Wrong character for page number
+        'test4_expected_linux_agg.pdf.0.png',  # Wrong order of keywords
         'test4_expected_mac_skia.pdf.0.png',  # Wrong order of keywords
         'test5_expected_useskia.pdf.0.png',  # Wrong keyword
     ]
@@ -71,7 +74,7 @@ class CheckChangeOnUploadTest(unittest.TestCase):
     mock_output_api = MockOutputApi()
     mock_input_api.files = map(MockFile, correct_paths + wrong_paths)
     errors = list(
-        map(str, PRESUBMIT._CheckPNGFormat(mock_input_api, mock_output_api)))
+        map(str, PRESUBMIT._CheckPngNames(mock_input_api, mock_output_api)))
 
     self.assertEqual(len(wrong_paths), len(errors))
     self.assertFalse('notpng.cc' in errors[0])

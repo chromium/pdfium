@@ -424,23 +424,25 @@ def _CheckTestDuplicates(input_api, output_api):
   return results
 
 
-def _CheckPNGFormat(input_api, output_api):
-  """Checks that .png files have a format that will be considered valid by our
-  test runners. If a file ends with .png, then it must be of the form
-  NAME_expected(_skia)?(_(win|mac|linux))?.pdf.#.png
-  The expected format used by _CheckPngNames() in testing/corpus/PRESUBMIT.py
-  must be the same as this one.
+def _CheckPngNames(input_api, output_api):
+  """Checks that .png files have the right file name format, which must be in
+  the form:
+
+  NAME_expected(_(agg|skia))?(_(linux|mac|win))?.pdf.\d+.png
+
+  This must be the same format as the one in testing/corpus's PRESUBMIT.py.
   """
   expected_pattern = input_api.re.compile(
-      r'.+_expected(_skia)?(_(win|mac|linux))?\.pdf\.\d+.png')
+      r'.+_expected(_(agg|skia))?(_(linux|mac|win))?\.pdf\.\d+.png')
   results = []
   for f in input_api.AffectedFiles(include_deletes=False):
     if not f.LocalPath().endswith('.png'):
       continue
     if expected_pattern.match(f.LocalPath()):
       continue
-    results.append(output_api.PresubmitError(
-        'PNG file %s does not have the correct format' % f.LocalPath()))
+    results.append(
+        output_api.PresubmitError(
+            'PNG file %s does not have the correct format' % f.LocalPath()))
   return results
 
 
@@ -526,7 +528,7 @@ def CheckChangeOnUpload(input_api, output_api):
   results.extend(_CheckIncludeOrder(input_api, output_api))
   results.extend(_CheckLibcxxRevision(input_api, output_api))
   results.extend(_CheckTestDuplicates(input_api, output_api))
-  results.extend(_CheckPNGFormat(input_api, output_api))
+  results.extend(_CheckPngNames(input_api, output_api))
   results.extend(_CheckUselessForwardDeclarations(input_api, output_api))
 
   author = input_api.change.author_email
