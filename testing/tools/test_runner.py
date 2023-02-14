@@ -104,8 +104,12 @@ class TestRunner:
     # Report test result to ResultDB.
     if self.resultdb:
       only_artifacts = None
+      only_failure_reason = test_result.reason
       if len(test_result.image_artifacts) == 1:
-        only_artifacts = test_result.image_artifacts[0].GetDiffArtifacts()
+        only = test_result.image_artifacts[0]
+        only_artifacts = only.GetDiffArtifacts()
+        if only.GetDiffReason():
+          only_failure_reason += f': {only.GetDiffReason()}'
       self.resultdb.Post(
           test_id=test_result.test_id,
           status=test_result.status,
@@ -113,7 +117,7 @@ class TestRunner:
           test_log=test_result.log,
           test_file=None,
           artifacts=only_artifacts,
-          failure_reason=test_result.reason)
+          failure_reason=only_failure_reason)
 
       # Milo only supports a single diff per test, so if we have multiple pages,
       # report each page as its own "test."
