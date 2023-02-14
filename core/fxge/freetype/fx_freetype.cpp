@@ -6,6 +6,8 @@
 
 #include "core/fxge/freetype/fx_freetype.h"
 
+#include <stdint.h>
+
 #define DEFINE_PS_TABLES
 #include "third_party/freetype/include/pstables.h"
 
