@@ -1318,7 +1318,7 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
   inverse.set(SkMatrix::kMTransX, 0);
   inverse.set(SkMatrix::kMTransY, 0);
   SkVector deviceUnits[2] = {{0, 1}, {1, 0}};
-  inverse.mapPoints(deviceUnits, SK_ARRAY_COUNT(deviceUnits));
+  inverse.mapPoints(deviceUnits, std::size(deviceUnits));
   float width =
       std::max(pGraphState->m_LineWidth,
                std::min(deviceUnits[0].length(), deviceUnits[1].length()));
@@ -1790,7 +1790,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     float end_x = pCoords->GetFloatAt(2);
     float end_y = pCoords->GetFloatAt(3);
     SkPoint pts[] = {{start_x, start_y}, {end_x, end_y}};
-    skMatrix.mapPoints(pts, SK_ARRAY_COUNT(pts));
+    skMatrix.mapPoints(pts, std::size(pts));
     paint.setShader(SkGradientShader::MakeLinear(
         pts, sk_colors.data(), sk_pos.data(),
         fxcrt::CollectionSize<int>(sk_colors), SkTileMode::kClamp));
@@ -1872,7 +1872,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
       int iStartColor = flag ? 2 : 0;
       if (flag) {
         SkPoint tempCubics[4];
-        for (int i = 0; i < (int)SK_ARRAY_COUNT(tempCubics); i++)
+        for (int i = 0; i < (int)std::size(tempCubics); i++)
           tempCubics[i] = cubics[(flag * 3 + i) % 12];
         memcpy(cubics, tempCubics, sizeof(tempCubics));
         SkColor tempColors[2];
@@ -1880,12 +1880,12 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
         tempColors[1] = colors[(flag + 1) % 4];
         memcpy(colors, tempColors, sizeof(tempColors));
       }
-      for (int i = iStartPoint; i < (int)SK_ARRAY_COUNT(cubics); i++) {
+      for (int i = iStartPoint; i < (int)std::size(cubics); i++) {
         CFX_PointF point = stream.ReadCoords();
         cubics[i].fX = point.x;
         cubics[i].fY = point.y;
       }
-      for (int i = iStartColor; i < (int)SK_ARRAY_COUNT(colors); i++) {
+      for (int i = iStartColor; i < (int)std::size(colors); i++) {
         float r;
         float g;
         float b;
