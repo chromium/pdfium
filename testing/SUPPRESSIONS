@@ -297,10 +297,6 @@ path_7.pdf mac * * *
 path_9.pdf mac * * *
 percentage.pdf mac * * *
 push_button.pdf * * * *
-
-# TODO(pdfium:1960): Remove after associated bug is fixed
-quick_start_guide.pdf * * * skia
-
 quick_start_guide.pdf mac * * *
 radio_button.pdf * * * *
 run_custom_validate_script.pdf * * * *
