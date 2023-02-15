@@ -1868,24 +1868,25 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     m_pCanvas->concat(skMatrix);
     while (!stream.IsEOF()) {
       uint32_t flag = stream.ReadFlag();
-      int iStartPoint = flag ? 4 : 0;
-      int iStartColor = flag ? 2 : 0;
+      size_t start_point = flag ? 4 : 0;
+      size_t start_color = flag ? 2 : 0;
       if (flag) {
-        SkPoint tempCubics[4];
-        for (int i = 0; i < (int)std::size(tempCubics); i++)
-          tempCubics[i] = cubics[(flag * 3 + i) % 12];
-        memcpy(cubics, tempCubics, sizeof(tempCubics));
-        SkColor tempColors[2];
-        tempColors[0] = colors[flag];
-        tempColors[1] = colors[(flag + 1) % 4];
-        memcpy(colors, tempColors, sizeof(tempColors));
+        SkPoint temp_cubics[4];
+        for (size_t i = 0; i < std::size(temp_cubics); ++i) {
+          temp_cubics[i] = cubics[(flag * 3 + i) % 12];
+        }
+        std::copy(std::begin(temp_cubics), std::end(temp_cubics),
+                  std::begin(cubics));
+        SkColor temp_colors[2] = {colors[flag], colors[(flag + 1) % 4]};
+        std::copy(std::begin(temp_colors), std::end(temp_colors),
+                  std::begin(colors));
       }
-      for (int i = iStartPoint; i < (int)std::size(cubics); i++) {
+      for (size_t i = start_point; i < std::size(cubics); ++i) {
         CFX_PointF point = stream.ReadCoords();
         cubics[i].fX = point.x;
         cubics[i].fY = point.y;
       }
-      for (int i = iStartColor; i < (int)std::size(colors); i++) {
+      for (size_t i = start_color; i < std::size(colors); ++i) {
         float r;
         float g;
         float b;
