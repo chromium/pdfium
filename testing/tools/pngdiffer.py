@@ -133,15 +133,50 @@ class PNGDiffer():
     path_templates = _PathTemplates(input_filename, source_dir, working_dir,
                                     self.os_name, self.suffix_order)
     for page in itertools.count():
+      expected_paths = path_templates.GetExpectedPaths(page)
+
+      first_match = None
+      last_match = None
       page_diff = ImageDiff(actual_path=path_templates.GetActualPath(page))
-      if not os.path.isfile(page_diff.actual_path):
-        # No more actual pages.
+      if os.path.exists(page_diff.actual_path):
+        # Match against all expected page images.
+        for index, expected_path in enumerate(expected_paths):
+          page_diff.expected_path = expected_path
+          if not self._RunImageCompareCommand(page_diff):
+            if first_match is None:
+              first_match = index
+            last_match = index
+
+        if last_match == 0:
+          # Regeneration not needed. This case may be reached if only some, but
+          # not all, pages need to be regenerated.
+          continue
+      elif expected_paths:
+        # Remove all expected page images.
+        print(f'WARNING: {input_filename} has extra expected page {page}')
+        first_match = 0
+        last_match = len(expected_paths)
+      else:
+        # No more expected or actual pages.
         break
+
+      # Try to reuse expectations by removing intervening non-matches.
+      #
+      # TODO(crbug.com/pdfium/1988): This can make mistakes due to a lack of
+      # global knowledge about other test configurations, which is why it just
+      # creates backup files rather than immediately removing files.
+      if last_match is not None:
+        if first_match > 1:
+          print(f'WARNING: {input_filename}.{page} has non-adjacent match')
+        if first_match != last_match:
+          print(f'WARNING: {input_filename}.{page} has redundant matches')
+
+        for expected_path in expected_paths[:last_match]:
+          os.rename(expected_path, expected_path + '.bak')
+        continue
 
       # Regenerate the most specific expected path that exists. If there are no
       # existing expectations, regenerate the base case.
-      #
-      # TODO(crbug.com/pdfium/1987): Clean up redundant expectations.
       expected_path = path_templates.GetExpectedPath(page)
       shutil.copyfile(page_diff.actual_path, expected_path)
       self._RunCommand([_PNG_OPTIMIZER, expected_path])

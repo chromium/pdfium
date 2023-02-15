@@ -217,7 +217,11 @@ class TestRunner:
         '--regenerate_expected',
         action='store_true',
         help='Regenerates expected images. For each failing image diff, this '
-        'will regenerate the most specific expected image file that exists.')
+        'will regenerate the most specific expected image file that exists. '
+        'This also will suggest removals of unnecessary expected image files '
+        'by renaming them with an additional ".bak" extension, although these '
+        'removals should be reviewed manually. Use "git clean" to quickly deal '
+        'with any ".bak" files.')
 
     parser.add_argument(
         '--reverse-byte-order',
