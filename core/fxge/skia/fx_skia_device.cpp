@@ -1877,7 +1877,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
         }
         std::copy(std::begin(temp_cubics), std::end(temp_cubics),
                   std::begin(cubics));
-        SkColor temp_colors[2] = {colors[flag], colors[(flag + 1) % 4]};
+        SkColor temp_colors[2] = {colors[flag % 4], colors[(flag + 1) % 4]};
         std::copy(std::begin(temp_colors), std::end(temp_colors),
                   std::begin(colors));
       }
