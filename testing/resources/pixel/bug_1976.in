@@ -1,0 +1,83 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 96 96]
+  /Resources <<
+    /XObject <<
+      /X0 5 0 R
+    >>
+  >>
+>>
+endobj
+
+% Green and red checkerboard. When scaled down, the green and red should blend
+% together into a darker yellow.
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+  % Solid green square.
+  0 1 0 rg
+  16 16 64 64 re f
+Q
+q
+  % Transparent and red checkerboard.
+  64 0 0 64 16 16 cm
+  /X0 Do
+Q
+endstream
+endobj
+
+% Single pixel image with /SMask to trigger masked image rendering.
+{{object 5 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceRGB
+  /Filter /ASCIIHexDecode
+  /Height 1
+  /SMask 6 0 R
+  /Width 1
+  {{streamlen}}
+>>
+stream
+FF 00 00
+endstream
+endobj
+
+% Grayscale checkerboard to trigger 8-bit to 8-bit scaling. Scaling down by a
+% multiple of 2 using nearest neighbor gives particularly bad results.
+{{object 6 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceGray
+  /Filter [/ASCII85Decode /FlateDecode]
+  /Height 128
+  /Width 128
+  {{streamlen}}
+>>
+stream
+GhVQ20b"*_#f&.lRiX?CBI7,$dqQl"iofLfkND$kkND$kkND$kkND$kkND$kkND$kkND$kkND$kkND$k
+kND$kkND$kkND$kkND$kkND$kkN@?Q?he3kdJ~>
+endstream
+endobj
+
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
