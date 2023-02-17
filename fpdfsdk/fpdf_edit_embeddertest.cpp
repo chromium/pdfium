@@ -3926,12 +3926,12 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSMask) {
 
   const char* smask_checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-      return "5ddf871ab737746b1b8390f0bc4ec52c";
+      return "0653a18f3bf9b4d8413a2aa10bc11c38";
     return "5a3ae4a660ce919e29c42ec2258142f1";
   }();
   const char* no_smask_checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-      return "6bb3b5bd93e26f4c2e52db64a1f57686";
+      return "d568afc908d595224d804448d5d3672f";
     return "67504e83f5d78214ea00efc19082c5c1";
   }();
 

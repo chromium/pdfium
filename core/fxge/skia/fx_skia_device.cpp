@@ -45,7 +45,6 @@
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"
@@ -2180,49 +2179,26 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
     SkPaint paint;
     SetBitmapPaint(pSource->IsMaskFormat(), !m_FillOptions.aliased_path,
                    bitmap_alpha, argb, blend_type, &paint);
-    // TODO(caryclark) Once Skia supports 8 bit src to 8 bit dst remove this
-    if (m_pBitmap && m_pBitmap->GetBPP() == 8 && pSource->GetBPP() == 8) {
-      SkMatrix inv;
-      if (!skMatrix.invert(&inv)) {
-        return false;
-      }
-      for (int y = 0; y < m_pBitmap->GetHeight(); ++y) {
-        for (int x = 0; x < m_pBitmap->GetWidth(); ++x) {
-          SkPoint src = {x + 0.5f, y + 0.5f};
-          inv.mapPoints(&src, 1);
-          // SkMatrix::mapPoints() can sometimes output NaN values or values
-          // outside the boundary of the `skBitmap`. Therefore clamping these
-          // values is necessary before getting color information within the
-          // `skBitmap`.
-          src.fX =
-              isnan(src.fX) ? 0.5f : pdfium::clamp(src.fX, 0.5f, width - 0.5f);
-          src.fY =
-              isnan(src.fY) ? 0.5f : pdfium::clamp(src.fY, 0.5f, height - 0.5f);
 
-          m_pBitmap->SetPixel(x, y, skBitmap.getColor(src.fX, src.fY));
-        }
+    bool use_interpolate_bilinear = options.bInterpolateBilinear;
+    if (!use_interpolate_bilinear) {
+      float dest_width = ceilf(matrix.GetXUnit());
+      float dest_height = ceilf(matrix.GetYUnit());
+      if (pdfium::base::IsValueInRangeForNumericType<int>(dest_width) &&
+          pdfium::base::IsValueInRangeForNumericType<int>(dest_height)) {
+        use_interpolate_bilinear = CStretchEngine::UseInterpolateBilinear(
+            options, static_cast<int>(dest_width),
+            static_cast<int>(dest_height), width, height);
       }
-    } else {
-      bool use_interpolate_bilinear = options.bInterpolateBilinear;
-      if (!use_interpolate_bilinear) {
-        float dest_width = ceilf(matrix.GetXUnit());
-        float dest_height = ceilf(matrix.GetYUnit());
-        if (pdfium::base::IsValueInRangeForNumericType<int>(dest_width) &&
-            pdfium::base::IsValueInRangeForNumericType<int>(dest_height)) {
-          use_interpolate_bilinear = CStretchEngine::UseInterpolateBilinear(
-              options, static_cast<int>(dest_width),
-              static_cast<int>(dest_height), width, height);
-        }
-      }
-      SkSamplingOptions sampling_options;
-      if (use_interpolate_bilinear) {
-        sampling_options =
-            SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kLinear);
-      }
-      m_pCanvas->drawImageRect(skBitmap.asImage(),
-                               SkRect::MakeWH(width, height), sampling_options,
-                               &paint);
     }
+    SkSamplingOptions sampling_options;
+    if (use_interpolate_bilinear) {
+      sampling_options =
+          SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kLinear);
+    }
+
+    m_pCanvas->drawImageRect(skBitmap.asImage(), SkRect::MakeWH(width, height),
+                             sampling_options, &paint);
   }
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
   return true;

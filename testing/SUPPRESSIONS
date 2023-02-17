@@ -267,9 +267,6 @@ new_certify1.pdf mac * * *
 # TODO(pdfium:1863): Remove after associated bug is fixed
 new_pdfsign1.pdf * * * skia
 
-# TODO(pdfium:1976): Remove after associated bug is fixed
-new_pdfsign4.pdf * * * skia
-
 new_signature1.pdf mac * * *
 new_signature2.pdf mac * * *
 new_stamp4.pdf mac * * *
@@ -402,9 +399,6 @@ bug_1966.in * * * skia
 
 # TODO(pdfium:1973): Remove after associated bug is fixed
 bug_1973.in * * * agg,skia
-
-# TODO(pdfium:1976): Remove after associated bug is fixed
-bug_1976.in * * * skia
 
 # TODO(chromium:237527): Remove after associated bug is fixed
 bug_237527_1.in * * * *
