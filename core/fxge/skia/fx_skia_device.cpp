@@ -569,6 +569,75 @@ void ClipAngledGradient(const SkPoint pts[2],
   clip->lineTo(IntersectSides(rectPts[maxBounds], slope, startEdgePt));
 }
 
+// Converts a stroking path to scanlines
+void PaintStroke(SkPaint* spaint,
+                 const CFX_GraphStateData* graph_state,
+                 const SkMatrix& matrix,
+                 const CFX_FillRenderOptions& fill_options) {
+  SkPaint::Cap cap;
+  switch (graph_state->m_LineCap) {
+    case CFX_GraphStateData::LineCap::kRound:
+      cap = SkPaint::kRound_Cap;
+      break;
+    case CFX_GraphStateData::LineCap::kSquare:
+      cap = SkPaint::kSquare_Cap;
+      break;
+    default:
+      cap = SkPaint::kButt_Cap;
+      break;
+  }
+  SkPaint::Join join;
+  switch (graph_state->m_LineJoin) {
+    case CFX_GraphStateData::LineJoin::kRound:
+      join = SkPaint::kRound_Join;
+      break;
+    case CFX_GraphStateData::LineJoin::kBevel:
+      join = SkPaint::kBevel_Join;
+      break;
+    default:
+      join = SkPaint::kMiter_Join;
+      break;
+  }
+  SkMatrix inverse;
+  if (!matrix.invert(&inverse)) {
+    return;  // give up if the matrix is degenerate, and not invertable
+  }
+  inverse.set(SkMatrix::kMTransX, 0);
+  inverse.set(SkMatrix::kMTransY, 0);
+  SkVector deviceUnits[2] = {{0, 1}, {1, 0}};
+  inverse.mapPoints(deviceUnits, std::size(deviceUnits));
+
+  float width =
+      std::max(graph_state->m_LineWidth,
+               std::min(deviceUnits[0].length(), deviceUnits[1].length()));
+  if (!graph_state->m_DashArray.empty()) {
+    size_t count = (graph_state->m_DashArray.size() + 1) / 2;
+    DataVector<SkScalar> intervals(count * 2);
+    // Set dash pattern
+    for (size_t i = 0; i < count; i++) {
+      float on = graph_state->m_DashArray[i * 2];
+      if (on <= 0.000001f) {
+        on = 0.1f;
+      }
+      float off = i * 2 + 1 == graph_state->m_DashArray.size()
+                      ? on
+                      : graph_state->m_DashArray[i * 2 + 1];
+      off = std::max(off, 0.0f);
+      intervals[i * 2] = on;
+      intervals[i * 2 + 1] = off;
+    }
+    spaint->setPathEffect(SkDashPathEffect::Make(
+        intervals.data(), pdfium::base::checked_cast<int>(intervals.size()),
+        graph_state->m_DashPhase));
+  }
+  spaint->setStyle(SkPaint::kStroke_Style);
+  spaint->setAntiAlias(!fill_options.aliased_path);
+  spaint->setStrokeWidth(width);
+  spaint->setStrokeMiter(graph_state->m_MiterLimit);
+  spaint->setStrokeCap(cap);
+  spaint->setStrokeJoin(join);
+}
+
 void SetBitmapMatrix(const CFX_Matrix& m,
                      int width,
                      int height,
@@ -787,7 +856,7 @@ class SkiaState {
       skPaint.setBlendMode(SkBlendMode::kPlus);
     int stroke_alpha = FXARGB_A(m_strokeColor);
     if (stroke_alpha)
-      m_pDriver->PaintStroke(&skPaint, &m_drawState, skMatrix, m_fillOptions);
+      PaintStroke(&skPaint, &m_drawState, skMatrix, m_fillOptions);
     SkCanvas* skCanvas = m_pDriver->SkiaCanvas();
     SkAutoCanvasRestore scoped_save_restore(skCanvas, /*doSave=*/true);
     skCanvas->concat(skMatrix);
@@ -1064,7 +1133,7 @@ class SkiaState {
     SkPath skPath = BuildPath(path);
     SkMatrix skMatrix = ToSkMatrix(*pMatrix);
     SkPaint skPaint;
-    m_pDriver->PaintStroke(&skPaint, pGraphState, skMatrix, m_fillOptions);
+    PaintStroke(&skPaint, pGraphState, skMatrix, m_fillOptions);
     SkPath dst_path;
     skpathutils::FillPathWithPaint(skPath, skPaint, &dst_path);
     dst_path.transform(skMatrix);
@@ -1286,73 +1355,6 @@ class SkiaState {
   bool m_groupKnockout = false;
   bool m_isSubstFontBold = false;
 };
-
-// convert a stroking path to scanlines
-void CFX_SkiaDeviceDriver::PaintStroke(
-    SkPaint* spaint,
-    const CFX_GraphStateData* pGraphState,
-    const SkMatrix& matrix,
-    const CFX_FillRenderOptions& fill_options) {
-  SkPaint::Cap cap;
-  switch (pGraphState->m_LineCap) {
-    case CFX_GraphStateData::LineCap::kRound:
-      cap = SkPaint::kRound_Cap;
-      break;
-    case CFX_GraphStateData::LineCap::kSquare:
-      cap = SkPaint::kSquare_Cap;
-      break;
-    default:
-      cap = SkPaint::kButt_Cap;
-      break;
-  }
-  SkPaint::Join join;
-  switch (pGraphState->m_LineJoin) {
-    case CFX_GraphStateData::LineJoin::kRound:
-      join = SkPaint::kRound_Join;
-      break;
-    case CFX_GraphStateData::LineJoin::kBevel:
-      join = SkPaint::kBevel_Join;
-      break;
-    default:
-      join = SkPaint::kMiter_Join;
-      break;
-  }
-  SkMatrix inverse;
-  if (!matrix.invert(&inverse))
-    return;  // give up if the matrix is degenerate, and not invertable
-  inverse.set(SkMatrix::kMTransX, 0);
-  inverse.set(SkMatrix::kMTransY, 0);
-  SkVector deviceUnits[2] = {{0, 1}, {1, 0}};
-  inverse.mapPoints(deviceUnits, std::size(deviceUnits));
-  float width =
-      std::max(pGraphState->m_LineWidth,
-               std::min(deviceUnits[0].length(), deviceUnits[1].length()));
-  if (!pGraphState->m_DashArray.empty()) {
-    size_t count = (pGraphState->m_DashArray.size() + 1) / 2;
-    DataVector<SkScalar> intervals(count * 2);
-    // Set dash pattern
-    for (size_t i = 0; i < count; i++) {
-      float on = pGraphState->m_DashArray[i * 2];
-      if (on <= 0.000001f)
-        on = 0.1f;
-      float off = i * 2 + 1 == pGraphState->m_DashArray.size()
-                      ? on
-                      : pGraphState->m_DashArray[i * 2 + 1];
-      off = std::max(off, 0.0f);
-      intervals[i * 2] = on;
-      intervals[i * 2 + 1] = off;
-    }
-    spaint->setPathEffect(SkDashPathEffect::Make(
-        intervals.data(), pdfium::base::checked_cast<int>(intervals.size()),
-        pGraphState->m_DashPhase));
-  }
-  spaint->setStyle(SkPaint::kStroke_Style);
-  spaint->setAntiAlias(!fill_options.aliased_path);
-  spaint->setStrokeWidth(width);
-  spaint->setStrokeMiter(pGraphState->m_MiterLimit);
-  spaint->setStrokeCap(cap);
-  spaint->setStrokeJoin(join);
-}
 
 // static
 std::unique_ptr<CFX_SkiaDeviceDriver> CFX_SkiaDeviceDriver::Create(
