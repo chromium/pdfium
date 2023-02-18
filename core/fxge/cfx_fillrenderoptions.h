@@ -46,6 +46,20 @@ struct CFX_FillRenderOptions {
         text_mode(false),
         zero_area(false) {}
 
+  bool operator==(const CFX_FillRenderOptions& other) const {
+    return fill_type == other.fill_type &&
+           adjust_stroke == other.adjust_stroke &&
+           aliased_path == other.aliased_path &&
+           full_cover == other.full_cover && rect_aa == other.rect_aa &&
+           stroke == other.stroke &&
+           stroke_text_mode == other.stroke_text_mode &&
+           text_mode == other.text_mode && zero_area == other.zero_area;
+  }
+
+  bool operator!=(const CFX_FillRenderOptions& other) const {
+    return !(*this == other);
+  }
+
   // Fill type.
   FillType fill_type;
 

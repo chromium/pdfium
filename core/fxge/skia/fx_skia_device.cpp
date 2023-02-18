@@ -32,6 +32,7 @@
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/calculate_pitch.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
+#include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_path.h"
@@ -749,7 +750,7 @@ class SkiaState {
     if (Accumulator::kText == m_type || drawIndex != m_commandIndex ||
         (Accumulator::kPath == m_type &&
          DrawChanged(pMatrix, pDrawState, fill_color, stroke_color,
-                     fill_options.fill_type, blend_type,
+                     fill_options, blend_type,
                      m_pDriver->GetGroupKnockout()))) {
       Flush();
     }
@@ -786,7 +787,7 @@ class SkiaState {
       skPaint.setBlendMode(SkBlendMode::kPlus);
     int stroke_alpha = FXARGB_A(m_strokeColor);
     if (stroke_alpha)
-      m_pDriver->PaintStroke(&skPaint, &m_drawState, skMatrix);
+      m_pDriver->PaintStroke(&skPaint, &m_drawState, skMatrix, m_fillOptions);
     SkCanvas* skCanvas = m_pDriver->SkiaCanvas();
     SkAutoCanvasRestore scoped_save_restore(skCanvas, /*doSave=*/true);
     skCanvas->concat(skMatrix);
@@ -831,6 +832,7 @@ class SkiaState {
     m_drawIndex = std::numeric_limits<size_t>::max();
     m_type = Accumulator::kNone;
     m_drawMatrix = CFX_Matrix();
+    m_fillOptions = CFX_FillRenderOptions();
   }
 
   bool HasRSX(pdfium::span<const TextCharPos> char_pos,
@@ -1062,7 +1064,7 @@ class SkiaState {
     SkPath skPath = BuildPath(path);
     SkMatrix skMatrix = ToSkMatrix(*pMatrix);
     SkPaint skPaint;
-    m_pDriver->PaintStroke(&skPaint, pGraphState, skMatrix);
+    m_pDriver->PaintStroke(&skPaint, pGraphState, skMatrix, m_fillOptions);
     SkPath dst_path;
     skpathutils::FillPathWithPaint(skPath, skPaint, &dst_path);
     dst_path.transform(skMatrix);
@@ -1122,13 +1124,15 @@ class SkiaState {
                    const CFX_GraphStateData* pState,
                    uint32_t fill_color,
                    uint32_t stroke_color,
-                   CFX_FillRenderOptions::FillType fill_type,
+                   const CFX_FillRenderOptions& fill_options,
                    BlendMode blend_type,
                    bool group_knockout) const {
     return MatrixChanged(pMatrix) || StateChanged(pState, m_drawState) ||
            fill_color != m_fillColor || stroke_color != m_strokeColor ||
            IsEvenOddFillType(m_skPath.getFillType()) ||
-           fill_type == CFX_FillRenderOptions::FillType::kEvenOdd ||
+           fill_options != m_fillOptions ||
+           fill_options.fill_type ==
+               CFX_FillRenderOptions::FillType::kEvenOdd ||
            blend_type != m_blendType || group_knockout != m_groupKnockout;
   }
 
@@ -1284,9 +1288,11 @@ class SkiaState {
 };
 
 // convert a stroking path to scanlines
-void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
-                                       const CFX_GraphStateData* pGraphState,
-                                       const SkMatrix& matrix) {
+void CFX_SkiaDeviceDriver::PaintStroke(
+    SkPaint* spaint,
+    const CFX_GraphStateData* pGraphState,
+    const SkMatrix& matrix,
+    const CFX_FillRenderOptions& fill_options) {
   SkPaint::Cap cap;
   switch (pGraphState->m_LineCap) {
     case CFX_GraphStateData::LineCap::kRound:
@@ -1341,7 +1347,7 @@ void CFX_SkiaDeviceDriver::PaintStroke(SkPaint* spaint,
         pGraphState->m_DashPhase));
   }
   spaint->setStyle(SkPaint::kStroke_Style);
-  spaint->setAntiAlias(!m_FillOptions.aliased_path);
+  spaint->setAntiAlias(!fill_options.aliased_path);
   spaint->setStrokeWidth(width);
   spaint->setStrokeMiter(pGraphState->m_MiterLimit);
   spaint->setStrokeCap(cap);
@@ -1671,7 +1677,7 @@ bool CFX_SkiaDeviceDriver::SetClip_PathStroke(
   SkPath skPath = BuildPath(path);
   SkMatrix skMatrix = ToSkMatrix(*pObject2Device);
   SkPaint skPaint;
-  PaintStroke(&skPaint, pGraphState, skMatrix);
+  PaintStroke(&skPaint, pGraphState, skMatrix, m_FillOptions);
   SkPath dst_path;
   skpathutils::FillPathWithPaint(skPath, skPaint, &dst_path);
   dst_path.transform(skMatrix);
