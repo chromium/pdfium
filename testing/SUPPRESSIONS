@@ -40,10 +40,6 @@
 2_6_textbox.pdf * * * *
 2_color_calrgb.pdf mac * * *
 2_color_indexed.pdf mac * * *
-
-# TODO(pdfium:1860): Remove after associated bug is fixed
-2_halftone.pdf * * * skia
-
 3_4_textbox.pdf * * * *
 3_interpolate_image.pdf mac * * *
 3bigpreview.pdf mac * * *
