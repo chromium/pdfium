@@ -22,9 +22,6 @@
 #
 # Corpus tests
 #
-# TODO(pdfium:1811): Remove after associated bug is fixed
-11.pdf * * * skia
-
 12.pdf mac * * *
 1_1_textbox.pdf * * * *
 1_2_typewriter.pdf * * * *
