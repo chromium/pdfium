@@ -607,9 +607,11 @@ void PaintStroke(SkPaint* spaint,
   SkVector deviceUnits[2] = {{0, 1}, {1, 0}};
   inverse.mapPoints(deviceUnits, std::size(deviceUnits));
 
-  float width =
-      std::max(graph_state->m_LineWidth,
-               std::min(deviceUnits[0].length(), deviceUnits[1].length()));
+  float width = fill_options.zero_area
+                    ? 0.0f
+                    : std::max(graph_state->m_LineWidth,
+                               std::min(deviceUnits[0].length(),
+                                        deviceUnits[1].length()));
   if (!graph_state->m_DashArray.empty()) {
     size_t count = (graph_state->m_DashArray.size() + 1) / 2;
     DataVector<SkScalar> intervals(count * 2);
