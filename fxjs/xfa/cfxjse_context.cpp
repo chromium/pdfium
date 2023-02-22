@@ -250,10 +250,10 @@ bool CFXJSE_Context::ExecuteScript(ByteStringView bsScript,
   if (hNewThis.IsEmpty()) {
     v8::Local<v8::Script> hScript;
     if (v8::Script::Compile(hContext, hScriptString).ToLocal(&hScript)) {
-      DCHECK(!trycatch.HasCaught());
+      CHECK(!trycatch.HasCaught());
       v8::Local<v8::Value> hValue;
       if (hScript->Run(hContext).ToLocal(&hValue)) {
-        DCHECK(!trycatch.HasCaught());
+        CHECK(!trycatch.HasCaught());
         if (pRetValue)
           pRetValue->ForceSetValue(GetIsolate(), hValue);
         return true;
@@ -272,12 +272,12 @@ bool CFXJSE_Context::ExecuteScript(ByteStringView bsScript,
       v8::Script::Compile(hContext, hEval).ToLocalChecked();
   v8::Local<v8::Value> hWrapperValue;
   if (hWrapper->Run(hContext).ToLocal(&hWrapperValue)) {
-    DCHECK(!trycatch.HasCaught());
+    CHECK(!trycatch.HasCaught());
+    CHECK(hWrapperValue->IsFunction());
     v8::Local<v8::Function> hWrapperFn = hWrapperValue.As<v8::Function>();
     v8::Local<v8::Value> rgArgs[] = {hScriptString};
     v8::Local<v8::Value> hValue;
-    if (hWrapperFn->Call(hContext, hNewThis.As<v8::Object>(), 1, rgArgs)
-            .ToLocal(&hValue)) {
+    if (hWrapperFn->Call(hContext, hNewThis, 1, rgArgs).ToLocal(&hValue)) {
       DCHECK(!trycatch.HasCaught());
       if (pRetValue)
         pRetValue->ForceSetValue(GetIsolate(), hValue);
