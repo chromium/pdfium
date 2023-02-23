@@ -26,10 +26,6 @@
 1_1_textbox.pdf * * * *
 1_2_typewriter.pdf * * * *
 1_3_callout.pdf * * * *
-
-# TODO(pdfium:1805): Remove after associated bug is fixed
-1_matrix.pdf * * * skia
-
 1_matrix.pdf mac * * *
 1m_diff_lsjdf.pdf mac * * *
 1m_same_xxxx.pdf mac * * *
