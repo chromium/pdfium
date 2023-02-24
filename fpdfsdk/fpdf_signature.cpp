@@ -17,8 +17,9 @@
 
 namespace {
 
-std::vector<RetainPtr<CPDF_Dictionary>> CollectSignatures(CPDF_Document* doc) {
-  std::vector<RetainPtr<CPDF_Dictionary>> signatures;
+std::vector<RetainPtr<const CPDF_Dictionary>> CollectSignatures(
+    CPDF_Document* doc) {
+  std::vector<RetainPtr<const CPDF_Dictionary>> signatures;
   const CPDF_Dictionary* root = doc->GetRoot();
   if (!root)
     return signatures;
@@ -33,7 +34,7 @@ std::vector<RetainPtr<CPDF_Dictionary>> CollectSignatures(CPDF_Document* doc) {
 
   CPDF_ArrayLocker locker(std::move(fields));
   for (auto& field : locker) {
-    RetainPtr<CPDF_Dictionary> field_dict = field->GetMutableDict();
+    RetainPtr<const CPDF_Dictionary> field_dict = field->GetDict();
     if (field_dict && field_dict->GetNameFor(pdfium::form_fields::kFT) ==
                           pdfium::form_fields::kSig) {
       signatures.push_back(std::move(field_dict));
@@ -58,7 +59,8 @@ FPDF_GetSignatureObject(FPDF_DOCUMENT document, int index) {
   if (!doc)
     return nullptr;
 
-  std::vector<RetainPtr<CPDF_Dictionary>> signatures = CollectSignatures(doc);
+  std::vector<RetainPtr<const CPDF_Dictionary>> signatures =
+      CollectSignatures(doc);
   if (!fxcrt::IndexInBounds(signatures, index))
     return nullptr;
 
