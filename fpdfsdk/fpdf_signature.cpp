@@ -7,6 +7,7 @@
 #include <utility>
 #include <vector>
 
+#include "constants/form_fields.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -33,8 +34,10 @@ std::vector<RetainPtr<CPDF_Dictionary>> CollectSignatures(CPDF_Document* doc) {
   CPDF_ArrayLocker locker(std::move(fields));
   for (auto& field : locker) {
     RetainPtr<CPDF_Dictionary> field_dict = field->GetMutableDict();
-    if (field_dict && field_dict->GetNameFor("FT") == "Sig")
+    if (field_dict && field_dict->GetNameFor(pdfium::form_fields::kFT) ==
+                          pdfium::form_fields::kSig) {
       signatures.push_back(std::move(field_dict));
+    }
   }
   return signatures;
 }
@@ -71,7 +74,8 @@ FPDFSignatureObj_GetContents(FPDF_SIGNATURE signature,
   if (!signature_dict)
     return 0;
 
-  RetainPtr<const CPDF_Dictionary> value_dict = signature_dict->GetDictFor("V");
+  RetainPtr<const CPDF_Dictionary> value_dict =
+      signature_dict->GetDictFor(pdfium::form_fields::kV);
   if (!value_dict)
     return 0;
 
@@ -93,7 +97,8 @@ FPDFSignatureObj_GetByteRange(FPDF_SIGNATURE signature,
   if (!signature_dict)
     return 0;
 
-  RetainPtr<const CPDF_Dictionary> value_dict = signature_dict->GetDictFor("V");
+  RetainPtr<const CPDF_Dictionary> value_dict =
+      signature_dict->GetDictFor(pdfium::form_fields::kV);
   if (!value_dict)
     return 0;
 
@@ -119,7 +124,8 @@ FPDFSignatureObj_GetSubFilter(FPDF_SIGNATURE signature,
   if (!signature_dict)
     return 0;
 
-  RetainPtr<const CPDF_Dictionary> value_dict = signature_dict->GetDictFor("V");
+  RetainPtr<const CPDF_Dictionary> value_dict =
+      signature_dict->GetDictFor(pdfium::form_fields::kV);
   if (!value_dict || !value_dict->KeyExist("SubFilter"))
     return 0;
 
@@ -136,7 +142,8 @@ FPDFSignatureObj_GetReason(FPDF_SIGNATURE signature,
   if (!signature_dict)
     return 0;
 
-  RetainPtr<const CPDF_Dictionary> value_dict = signature_dict->GetDictFor("V");
+  RetainPtr<const CPDF_Dictionary> value_dict =
+      signature_dict->GetDictFor(pdfium::form_fields::kV);
   if (!value_dict)
     return 0;
 
@@ -157,7 +164,8 @@ FPDFSignatureObj_GetTime(FPDF_SIGNATURE signature,
   if (!signature_dict)
     return 0;
 
-  RetainPtr<const CPDF_Dictionary> value_dict = signature_dict->GetDictFor("V");
+  RetainPtr<const CPDF_Dictionary> value_dict =
+      signature_dict->GetDictFor(pdfium::form_fields::kV);
   if (!value_dict)
     return 0;
 
@@ -176,7 +184,8 @@ FPDFSignatureObj_GetDocMDPPermission(FPDF_SIGNATURE signature) {
   if (!signature_dict)
     return permission;
 
-  RetainPtr<const CPDF_Dictionary> value_dict = signature_dict->GetDictFor("V");
+  RetainPtr<const CPDF_Dictionary> value_dict =
+      signature_dict->GetDictFor(pdfium::form_fields::kV);
   if (!value_dict)
     return permission;
 
