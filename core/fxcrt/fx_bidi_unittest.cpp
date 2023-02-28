@@ -166,12 +166,12 @@ TEST(fxcrt, BidiStringAllNeutral) {
     EXPECT_EQ(CFX_BidiChar::Direction::kLeft, bidi.OverallDirection());
 
     auto it = bidi.begin();
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
     EXPECT_EQ(0, it->start);
     EXPECT_EQ(1, it->count);
     EXPECT_EQ(CFX_BidiChar::Direction::kNeutral, it->direction);
     ++it;
-    EXPECT_TRUE(it == bidi.end());
+    EXPECT_EQ(it, bidi.end());
   }
   {
     const wchar_t str[] = {kNeutralChar, kNeutralChar, kNeutralChar, 0};
@@ -179,12 +179,12 @@ TEST(fxcrt, BidiStringAllNeutral) {
     EXPECT_EQ(CFX_BidiChar::Direction::kLeft, bidi.OverallDirection());
 
     auto it = bidi.begin();
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
     EXPECT_EQ(0, it->start);
     EXPECT_EQ(3, it->count);
     EXPECT_EQ(CFX_BidiChar::Direction::kNeutral, it->direction);
     ++it;
-    EXPECT_TRUE(it == bidi.end());
+    EXPECT_EQ(it, bidi.end());
   }
 }
 
@@ -195,20 +195,20 @@ TEST(fxcrt, BidiStringAllLeft) {
     EXPECT_EQ(CFX_BidiChar::Direction::kLeft, bidi.OverallDirection());
 
     auto it = bidi.begin();
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
     EXPECT_EQ(0, it->start);
     EXPECT_EQ(0, it->count);
     EXPECT_EQ(CFX_BidiChar::Direction::kNeutral, it->direction);
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
 
     ++it;
     EXPECT_EQ(0, it->start);
     EXPECT_EQ(1, it->count);
     EXPECT_EQ(CFX_BidiChar::Direction::kLeft, it->direction);
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
 
     ++it;
-    EXPECT_TRUE(it == bidi.end());
+    EXPECT_EQ(it, bidi.end());
   }
   {
     const wchar_t str[] = {kLeftChar, kLeftChar, kLeftChar, 0};
@@ -216,20 +216,20 @@ TEST(fxcrt, BidiStringAllLeft) {
     EXPECT_EQ(CFX_BidiChar::Direction::kLeft, bidi.OverallDirection());
 
     auto it = bidi.begin();
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
     EXPECT_EQ(0, it->start);
     EXPECT_EQ(0, it->count);
     EXPECT_EQ(CFX_BidiChar::Direction::kNeutral, it->direction);
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
 
     ++it;
     EXPECT_EQ(0, it->start);
     EXPECT_EQ(3, it->count);
     EXPECT_EQ(CFX_BidiChar::Direction::kLeft, it->direction);
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
 
     ++it;
-    EXPECT_TRUE(it == bidi.end());
+    EXPECT_EQ(it, bidi.end());
   }
 }
 
@@ -240,19 +240,19 @@ TEST(fxcrt, BidiStringAllLeftWeak) {
     EXPECT_EQ(CFX_BidiChar::Direction::kLeft, bidi.OverallDirection());
 
     auto it = bidi.begin();
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
     EXPECT_EQ(0, it->start);
     EXPECT_EQ(0, it->count);
     EXPECT_EQ(CFX_BidiChar::Direction::kNeutral, it->direction);
 
     ++it;
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
     EXPECT_EQ(0, it->start);
     EXPECT_EQ(1, it->count);
     EXPECT_EQ(CFX_BidiChar::Direction::kLeftWeak, it->direction);
 
     ++it;
-    EXPECT_TRUE(it == bidi.end());
+    EXPECT_EQ(it, bidi.end());
   }
   {
     const wchar_t str[] = {kLeftWeakChar, kLeftWeakChar, kLeftWeakChar, 0};
@@ -260,19 +260,19 @@ TEST(fxcrt, BidiStringAllLeftWeak) {
     EXPECT_EQ(CFX_BidiChar::Direction::kLeft, bidi.OverallDirection());
 
     auto it = bidi.begin();
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
     EXPECT_EQ(0, it->start);
     EXPECT_EQ(0, it->count);
     EXPECT_EQ(CFX_BidiChar::Direction::kNeutral, it->direction);
 
     ++it;
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
     EXPECT_EQ(0, it->start);
     EXPECT_EQ(3, it->count);
     EXPECT_EQ(CFX_BidiChar::Direction::kLeftWeak, it->direction);
 
     ++it;
-    EXPECT_TRUE(it == bidi.end());
+    EXPECT_EQ(it, bidi.end());
   }
 }
 
@@ -286,17 +286,17 @@ TEST(fxcrt, BidiStringAllRight) {
     EXPECT_EQ(0, it->start);
     EXPECT_EQ(1, it->count);
     EXPECT_EQ(CFX_BidiChar::Direction::kRight, it->direction);
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
 
     ++it;
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
     EXPECT_EQ(0, it->start);
     EXPECT_EQ(0, it->count);
     EXPECT_EQ(CFX_BidiChar::Direction::kNeutral, it->direction);
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
 
     ++it;
-    EXPECT_TRUE(it == bidi.end());
+    EXPECT_EQ(it, bidi.end());
   }
   {
     const wchar_t str[] = {kRightChar, kRightChar, kRightChar, 0};
@@ -307,17 +307,17 @@ TEST(fxcrt, BidiStringAllRight) {
     EXPECT_EQ(0, it->start);
     EXPECT_EQ(3, it->count);
     EXPECT_EQ(CFX_BidiChar::Direction::kRight, it->direction);
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
 
     ++it;
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
     EXPECT_EQ(0, it->start);
     EXPECT_EQ(0, it->count);
     EXPECT_EQ(CFX_BidiChar::Direction::kNeutral, it->direction);
-    ASSERT_FALSE(it == bidi.end());
+    ASSERT_NE(it, bidi.end());
 
     ++it;
-    EXPECT_TRUE(it == bidi.end());
+    EXPECT_EQ(it, bidi.end());
   }
 }
 
@@ -327,38 +327,38 @@ TEST(fxcrt, BidiStringLeftNeutralLeftRight) {
   EXPECT_EQ(CFX_BidiChar::Direction::kLeft, bidi.OverallDirection());
 
   auto it = bidi.begin();
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
   EXPECT_EQ(0, it->start);
   EXPECT_EQ(0, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kNeutral, it->direction);
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
 
   ++it;
   EXPECT_EQ(0, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kLeft, it->direction);
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
 
   ++it;
   EXPECT_EQ(1, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kNeutral, it->direction);
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
 
   ++it;
   EXPECT_EQ(2, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kLeft, it->direction);
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
 
   ++it;
   EXPECT_EQ(3, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kRight, it->direction);
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
 
   ++it;
-  EXPECT_TRUE(it == bidi.end());
+  EXPECT_EQ(it, bidi.end());
 }
 
 TEST(fxcrt, BidiStringRightNeutralLeftRight) {
@@ -370,35 +370,35 @@ TEST(fxcrt, BidiStringRightNeutralLeftRight) {
   EXPECT_EQ(3, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kRight, it->direction);
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
 
   ++it;
   EXPECT_EQ(2, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kLeft, it->direction);
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
 
   ++it;
   EXPECT_EQ(1, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kNeutral, it->direction);
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
 
   ++it;
   EXPECT_EQ(0, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kRight, it->direction);
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
 
   ++it;
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
   EXPECT_EQ(0, it->start);
   EXPECT_EQ(0, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kNeutral, it->direction);
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
 
   ++it;
-  EXPECT_TRUE(it == bidi.end());
+  EXPECT_EQ(it, bidi.end());
 }
 
 TEST(fxcrt, BidiStringRightLeftWeakLeftRight) {
@@ -407,37 +407,37 @@ TEST(fxcrt, BidiStringRightLeftWeakLeftRight) {
   EXPECT_EQ(CFX_BidiChar::Direction::kRight, bidi.OverallDirection());
 
   auto it = bidi.begin();
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
   EXPECT_EQ(3, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kRight, it->direction);
 
   ++it;
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
   EXPECT_EQ(2, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kLeft, it->direction);
 
   ++it;
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
   EXPECT_EQ(1, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kLeftWeak, it->direction);
 
   ++it;
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
   EXPECT_EQ(0, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kRight, it->direction);
 
   ++it;
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
   EXPECT_EQ(0, it->start);
   EXPECT_EQ(0, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kNeutral, it->direction);
 
   ++it;
-  EXPECT_TRUE(it == bidi.end());
+  EXPECT_EQ(it, bidi.end());
 }
 
 TEST(fxcrt, BidiStringReverse) {
@@ -448,41 +448,41 @@ TEST(fxcrt, BidiStringReverse) {
   bidi.SetOverallDirectionRight();
 
   auto it = bidi.begin();
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
   EXPECT_EQ(4, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kLeft, it->direction);
 
   ++it;
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
   EXPECT_EQ(3, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kLeftWeak, it->direction);
 
   ++it;
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
   EXPECT_EQ(2, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kRight, it->direction);
 
   ++it;
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
   EXPECT_EQ(1, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kNeutral, it->direction);
 
   ++it;
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
   EXPECT_EQ(0, it->start);
   EXPECT_EQ(1, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kLeft, it->direction);
 
   ++it;
-  ASSERT_FALSE(it == bidi.end());
+  ASSERT_NE(it, bidi.end());
   EXPECT_EQ(0, it->start);
   EXPECT_EQ(0, it->count);
   EXPECT_EQ(CFX_BidiChar::Direction::kNeutral, it->direction);
 
   ++it;
-  EXPECT_TRUE(it == bidi.end());
+  EXPECT_EQ(it, bidi.end());
 }
