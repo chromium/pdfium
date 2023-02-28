@@ -397,12 +397,8 @@ component("pdfium") {
   }
 }
 
-# Targets below this are only visible within this file (and to the
-# top-level gn_visibility target used to help gn_all build everything).
-visibility = [
-  ":*",
-  "//:gn_visibility",
-]
+# Targets below this are only visible within this file.
+visibility = [ ":*" ]
 
 group("pdfium_unittest_deps") {
   testonly = true
