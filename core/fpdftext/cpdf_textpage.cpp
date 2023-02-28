@@ -734,7 +734,9 @@ void CPDF_TextPage::CloseTempLine() {
       for (int m = segment.start + segment.count; m > segment.start; --m)
         AddCharInfoByRLDirection(str[m - 1], m_TempCharList[m - 1]);
     } else {
-      eCurrentDirection = CFX_BidiChar::Direction::kLeft;
+      if (segment.direction != CFX_BidiChar::Direction::kLeftWeak) {
+        eCurrentDirection = CFX_BidiChar::Direction::kLeft;
+      }
       for (int m = segment.start; m < segment.start + segment.count; ++m)
         AddCharInfoByLRDirection(str[m], m_TempCharList[m]);
     }

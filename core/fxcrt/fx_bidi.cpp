@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_unicode.h"
-#include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 
 CFX_BidiChar::CFX_BidiChar()
     : m_CurrentSegment({0, 0, Direction::kNeutral}),
@@ -19,9 +19,16 @@ bool CFX_BidiChar::AppendChar(wchar_t wch) {
   Direction direction;
   switch (pdfium::unicode::GetBidiClass(wch)) {
     case FX_BIDICLASS::kL:
+      direction = Direction::kLeft;
+      break;
     case FX_BIDICLASS::kAN:
     case FX_BIDICLASS::kEN:
-      direction = Direction::kLeft;
+    case FX_BIDICLASS::kNSM:
+    case FX_BIDICLASS::kCS:
+    case FX_BIDICLASS::kES:
+    case FX_BIDICLASS::kET:
+    case FX_BIDICLASS::kBN:
+      direction = Direction::kLeftWeak;
       break;
     case FX_BIDICLASS::kR:
     case FX_BIDICLASS::kAL:
@@ -78,7 +85,8 @@ CFX_BidiString::CFX_BidiString(const WideString& str) : m_Str(str) {
 CFX_BidiString::~CFX_BidiString() = default;
 
 CFX_BidiChar::Direction CFX_BidiString::OverallDirection() const {
-  DCHECK(m_eOverallDirection != CFX_BidiChar::Direction::kNeutral);
+  DCHECK_NE(m_eOverallDirection, CFX_BidiChar::Direction::kNeutral);
+  DCHECK_NE(m_eOverallDirection, CFX_BidiChar::Direction::kLeftWeak);
   return m_eOverallDirection;
 }
 

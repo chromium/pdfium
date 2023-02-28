@@ -16,7 +16,7 @@
 // Processes characters and group them into segments based on text direction.
 class CFX_BidiChar {
  public:
-  enum class Direction { kNeutral, kLeft, kRight };
+  enum class Direction { kNeutral, kLeft, kRight, kLeftWeak };
   struct Segment {
     int32_t start;        // Start position.
     int32_t count;        // Character count.
@@ -25,7 +25,7 @@ class CFX_BidiChar {
 
   CFX_BidiChar();
 
-  // Append a character and classify it as left, right, or neutral.
+  // Append a character and classify it as left, left-weak, right, or neutral.
   // Returns true if the character has a different direction than the
   // existing direction to indicate there is a segment to process.
   bool AppendChar(wchar_t wch);
