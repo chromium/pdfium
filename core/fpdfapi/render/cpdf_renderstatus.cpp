@@ -1440,6 +1440,11 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   status.SetDropObjects(m_bDropObjects);
   status.Initialize(nullptr, nullptr);
   status.RenderObjectList(&form, matrix);
+#ifdef _SKIA_SUPPORT_
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+    bitmap_device.Flush(/*release=*/true);
+  }
+#endif  // _SKIA_SUPPORT_
 
   auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pMask->Create(width, height, FXDIB_Format::k8bppMask))
