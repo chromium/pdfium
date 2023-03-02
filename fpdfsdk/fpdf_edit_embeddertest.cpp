@@ -4243,7 +4243,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForHelloWorldText) {
     ASSERT_TRUE(x10_bitmap);
     const char* x10_checksum = []() {
       if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-        return "bfabf04699139d05c3924526beeb4b95";
+        return "f5e86739b9603838cbfb0c7f8e54e4ae";
       return "149f63de758ab01d3b75605cdfd4c176";
     }();
     CompareBitmap(x10_bitmap.get(), 631, 103, x10_checksum);
@@ -4270,7 +4270,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForHelloWorldText) {
     ASSERT_TRUE(x10_bitmap);
     const char* x10_checksum = []() {
       if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-        return "c7eef7859332c75ab793ebae1c6e7221";
+        return "59d0b5f1fc2a1cc0c392e213909bbbb6";
       return "f5f93bf64de579b59e775d7076ca0a5a";
     }();
     CompareBitmap(x10_bitmap.get(), 1143, 150, x10_checksum);
@@ -4304,7 +4304,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForRotatedText) {
   ASSERT_TRUE(x10_bitmap);
   const char* x10_checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-      return "4816dd6782e9a977c58fb1ca0ced74d3";
+      return "839dc0eed66eab6d545833f25b37031e";
     return "bbd3842a4b50dbfcbce4eee2b067a297";
   }();
   CompareBitmap(x10_bitmap.get(), 275, 275, x10_checksum);
@@ -4325,7 +4325,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForColorText) {
   ASSERT_TRUE(bitmap);
   const char* checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-      return "bb3778ba739c921525de44e9ab412868";
+      return "1d74731d23a056c0e3fb88f2f85b2581";
     return "e8154fa8ededf4d9b8b35b5260897b6c";
   }();
   CompareBitmap(bitmap.get(), 120, 186, checksum);

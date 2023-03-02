@@ -39,7 +39,7 @@ constexpr int kRectanglesMultiPagesPageCount = 2;
 const char* RectanglesMultiPagesExpectedChecksum(int page_index) {
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
     static constexpr const char* kChecksums[kRectanglesMultiPagesPageCount] = {
-        "7a4cddd5a17a60ce50acb53e318d94f8", "4fa6a7507e9f3ef4f28719a7d656c3a5"};
+        "07606a12487bd0c28a88f23fa00fc313", "94ea6e1eef220833a3ec14d6a1c612b0"};
     return kChecksums[page_index];
   }
   static constexpr const char* kChecksums[kRectanglesMultiPagesPageCount] = {

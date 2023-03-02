@@ -1003,7 +1003,7 @@ TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
   }();
   const char* hori_stretched_checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-      return "af6eaa0d3388261693df5390138e4da1";
+      return "6d3776d7bb21cbb7195126b8e95dfba2";
     return "48ef9205941ed19691ccfa00d717187e";
   }();
   const char* rotated_90_clockwise_checksum = []() {
@@ -1038,7 +1038,7 @@ TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
   }();
   const char* larger_rotated_diagonal_checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-      return "1dbf599403c235926d3ddcbc0ea10ee8";
+      return "85c41bb892c1a09882f432aa2f4a5ef6";
     return "3d62417468bdaff0eb14391a0c30a3b1";
   }();
   const char* tile_checksum = []() {
