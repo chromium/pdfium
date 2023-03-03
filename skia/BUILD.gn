@@ -176,11 +176,11 @@ component("skia") {
   sources += skia_utils_sources
   sources += skia_codec_core
   sources += skia_codec_decode_bmp
+  sources += skia_encode_srcs
+  sources += skia_encode_png_srcs
   sources += [
     "//third_party/skia/src/fonts/SkFontMgr_indirect.cpp",
     "//third_party/skia/src/fonts/SkRemotableFontMgr.cpp",
-    "//third_party/skia/src/images/SkImageEncoder.cpp",
-    "//third_party/skia/src/images/SkPngEncoder.cpp",
     "//third_party/skia/src/ports/SkGlobalInitialization_default.cpp",
     "//third_party/skia/src/ports/SkImageGenerator_none.cpp",
     "//third_party/skia/src/ports/SkOSFile_stdio.cpp",
