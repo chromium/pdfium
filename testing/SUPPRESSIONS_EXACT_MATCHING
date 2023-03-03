@@ -1,0 +1,20 @@
+# Copyright 2023 The PDFium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# List of tests to use fuzzy instead of exact matching, one per line.
+# There are four space-separated columns per line
+# Each column (except column 0) can contain a comma-separated list of values.
+#
+# Column 0: test file name
+# Column 1: platform: *, win, mac, linux
+# Column 2: v8 support: *, nov8, v8
+# Column 3: xfa support: *, noxfa, xfa
+# Column 4: rendering support: *, agg, skia
+#
+# All columns on a line on a line must match, but filenames may be repeated
+# on subsequent lines to suppress more cases.  Within each column, any one of
+# the comma-separated values must match in order for the colum to "match".
+# The filenames and keywords are case-sensitive.
+#
+# Try to keep the file alphabetized within each category of test.

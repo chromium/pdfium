@@ -10,6 +10,9 @@ import shutil
 import subprocess
 import sys
 
+EXACT_MATCHING = 'exact'
+FUZZY_MATCHING = 'fuzzy'
+
 _PNG_OPTIMIZER = 'optipng'
 
 _COMMON_SUFFIX_ORDER = ('_{os}', '')
@@ -68,10 +71,12 @@ class PNGDiffer():
     except subprocess.CalledProcessError as e:
       return e
 
-  def _RunImageCompareCommand(self, image_diff):
+  def _RunImageCompareCommand(self, image_diff, image_matching_algorithm):
     cmd = [self.pdfium_diff_path]
     if self.reverse_byte_order:
       cmd.append('--reverse-byte-order')
+    if image_matching_algorithm == FUZZY_MATCHING:
+      cmd.append('--fuzzy')
     cmd.extend([image_diff.actual_path, image_diff.expected_path])
     return self._RunCommand(cmd)
 
@@ -82,7 +87,8 @@ class PNGDiffer():
         image_diff.expected_path, image_diff.diff_path
     ])
 
-  def ComputeDifferences(self, input_filename, source_dir, working_dir):
+  def ComputeDifferences(self, input_filename, source_dir, working_dir,
+                         image_matching_algorithm):
     """Computes differences between actual and expected image files.
 
     Returns:
@@ -102,7 +108,8 @@ class PNGDiffer():
       if os.path.exists(expected_path):
         page_diff.expected_path = expected_path
 
-        compare_error = self._RunImageCompareCommand(page_diff)
+        compare_error = self._RunImageCompareCommand(page_diff,
+                                                     image_matching_algorithm)
         if compare_error:
           page_diff.reason = str(compare_error)
 
@@ -115,7 +122,8 @@ class PNGDiffer():
           # Validate that no other paths match.
           for unexpected_path in path_templates.GetExpectedPaths(page)[1:]:
             page_diff.expected_path = unexpected_path
-            if not self._RunImageCompareCommand(page_diff):
+            if not self._RunImageCompareCommand(page_diff,
+                                                image_matching_algorithm):
               page_diff.reason = f'Also matches {unexpected_path}'
               break
           page_diff.expected_path = expected_path
@@ -129,7 +137,8 @@ class PNGDiffer():
 
     return image_diffs
 
-  def Regenerate(self, input_filename, source_dir, working_dir):
+  def Regenerate(self, input_filename, source_dir, working_dir,
+                 image_matching_algorithm):
     path_templates = _PathTemplates(input_filename, source_dir, working_dir,
                                     self.os_name, self.suffix_order)
     for page in itertools.count():
@@ -142,7 +151,8 @@ class PNGDiffer():
         # Match against all expected page images.
         for index, expected_path in enumerate(expected_paths):
           page_diff.expected_path = expected_path
-          if not self._RunImageCompareCommand(page_diff):
+          if not self._RunImageCompareCommand(page_diff,
+                                              image_matching_algorithm):
             if first_match is None:
               first_match = index
             last_match = index

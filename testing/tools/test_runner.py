@@ -539,6 +539,10 @@ class _TestCaseRunner:
     return _per_process_state.test_suppressor.IsImageDiffSuppressed(
         self.input_filename)
 
+  def GetImageMatchingAlgorithm(self):
+    return _per_process_state.test_suppressor.GetImageMatchingAlgorithm(
+        self.input_filename)
+
   def RunCommand(self, command, stdout=None):
     """Runs a test command.
 
@@ -609,9 +613,11 @@ class _TestCaseRunner:
       return
     if self.IsResultSuppressed() or self.IsImageDiffSuppressed():
       return
-    _per_process_state.image_differ.Regenerate(self.input_filename,
-                                               self.source_dir,
-                                               self.working_dir)
+    _per_process_state.image_differ.Regenerate(
+        self.input_filename,
+        self.source_dir,
+        self.working_dir,
+        image_matching_algorithm=self.GetImageMatchingAlgorithm())
 
   def Generate(self):
     input_event_path = os.path.join(self.source_dir, f'{self.test_id}.evt')
@@ -727,7 +733,10 @@ class _TestCaseRunner:
 
     if self.actual_images:
       image_diffs = _per_process_state.image_differ.ComputeDifferences(
-          self.input_filename, self.source_dir, self.working_dir)
+          self.input_filename,
+          self.source_dir,
+          self.working_dir,
+          image_matching_algorithm=self.GetImageMatchingAlgorithm())
       if image_diffs:
         test_result.status = result_types.FAIL
         test_result.reason = 'Images differ'

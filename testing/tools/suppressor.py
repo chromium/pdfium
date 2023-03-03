@@ -6,6 +6,7 @@
 import os
 
 import common
+import pngdiffer
 
 
 class Suppressor:
@@ -17,6 +18,8 @@ class Suppressor:
     self.suppression_set = self._LoadSuppressedSet('SUPPRESSIONS', finder)
     self.image_suppression_set = self._LoadSuppressedSet(
         'SUPPRESSIONS_IMAGE_DIFF', finder)
+    self.exact_matching_suppression_set = self._LoadSuppressedSet(
+        'SUPPRESSIONS_EXACT_MATCHING', finder)
 
   def _LoadSuppressedSet(self, suppressions_filename, finder):
     v8_option = "v8" if self.has_v8 else "nov8"
@@ -70,3 +73,9 @@ class Suppressor:
       print("%s image diff comparison is suppressed" % input_filename)
       return True
     return False
+
+  def GetImageMatchingAlgorithm(self, input_filename):
+    if input_filename in self.exact_matching_suppression_set:
+      print(f"{input_filename} image diff comparison is fuzzy")
+      return pngdiffer.FUZZY_MATCHING
+    return pngdiffer.EXACT_MATCHING
