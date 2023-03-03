@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include <algorithm>
+#include <cmath>
 #include <map>
 #include <string>
 #include <vector>
@@ -143,7 +144,36 @@ void CountImageSizeMismatchAsPixelDifference(const Image& baseline,
   *pixels_different += (max_h - h) * max_w;
 }
 
-float PercentageDifferent(const Image& baseline, const Image& actual) {
+struct UnpackedPixel {
+  explicit UnpackedPixel(uint32_t packed)
+      : red(packed & 0xff),
+        green((packed >> 8) & 0xff),
+        blue((packed >> 16) & 0xff),
+        alpha((packed >> 24) & 0xff) {}
+
+  uint8_t red;
+  uint8_t green;
+  uint8_t blue;
+  uint8_t alpha;
+};
+
+uint8_t ChannelDelta(uint8_t baseline_channel, uint8_t actual_channel) {
+  // No casts are necessary because arithmetic operators implicitly convert
+  // `uint8_t` to `int` first. The final delta is always in the range 0 to 255.
+  return std::abs(baseline_channel - actual_channel);
+}
+
+uint8_t MaxPixelPerChannelDelta(const UnpackedPixel& baseline_pixel,
+                                const UnpackedPixel& actual_pixel) {
+  return std::max({ChannelDelta(baseline_pixel.red, actual_pixel.red),
+                   ChannelDelta(baseline_pixel.green, actual_pixel.green),
+                   ChannelDelta(baseline_pixel.blue, actual_pixel.blue),
+                   ChannelDelta(baseline_pixel.alpha, actual_pixel.alpha)});
+}
+
+float PercentageDifferent(const Image& baseline,
+                          const Image& actual,
+                          uint8_t max_pixel_per_channel_delta) {
   int w = std::min(baseline.w(), actual.w());
   int h = std::min(baseline.h(), actual.h());
 
@@ -151,8 +181,17 @@ float PercentageDifferent(const Image& baseline, const Image& actual) {
   int pixels_different = 0;
   for (int y = 0; y < h; ++y) {
     for (int x = 0; x < w; ++x) {
-      if (baseline.pixel_at(x, y) != actual.pixel_at(x, y))
+      const uint32_t baseline_pixel = baseline.pixel_at(x, y);
+      const uint32_t actual_pixel = actual.pixel_at(x, y);
+      if (baseline_pixel == actual_pixel) {
+        continue;
+      }
+
+      if (MaxPixelPerChannelDelta(UnpackedPixel(baseline_pixel),
+                                  UnpackedPixel(actual_pixel)) >
+          max_pixel_per_channel_delta) {
         ++pixels_different;
+      }
     }
   }
 
@@ -203,7 +242,9 @@ void PrintHelp(const std::string& binary_name) {
       "    Passing \"--histogram\" additionally calculates a diff of the\n"
       "    RGBA value histograms (which is resistant to shifts in layout).\n"
       "    Passing \"--reverse-byte-order\" additionally assumes the\n"
-      "    compare file has BGRA byte ordering.\n\n"
+      "    compare file has BGRA byte ordering.\n"
+      "    Passing \"--fuzzy\" additionally allows individual pixels to\n"
+      "    differ by at most 1 on each channel.\n\n"
       "  %s --diff <compare_file> <reference_file> <output_file>\n"
       "    Compares two files on disk, and if they differ, outputs an image\n"
       "    to <output_file> that visualizes the differing pixels as red\n"
@@ -219,7 +260,8 @@ int CompareImages(const std::string& binary_name,
                   const std::string& file1,
                   const std::string& file2,
                   bool compare_histograms,
-                  bool reverse_byte_order) {
+                  bool reverse_byte_order,
+                  uint8_t max_pixel_per_channel_delta) {
   Image actual_image;
   Image baseline_image;
 
@@ -245,7 +287,8 @@ int CompareImages(const std::string& binary_name,
   }
 
   const char* const diff_name = compare_histograms ? "exact diff" : "diff";
-  float percent = PercentageDifferent(actual_image, baseline_image);
+  float percent = PercentageDifferent(actual_image, baseline_image,
+                                      max_pixel_per_channel_delta);
   const char* const passed = percent > 0.0 ? "failed" : "passed";
   printf("%s: %01.2f%% %s\n", diff_name, percent, passed);
 
@@ -372,6 +415,7 @@ int main(int argc, const char* argv[]) {
   bool produce_diff_image = false;
   bool produce_image_subtraction = false;
   bool reverse_byte_order = false;
+  uint8_t max_pixel_per_channel_delta = 0;
   std::string filename1;
   std::string filename2;
   std::string diff_filename;
@@ -393,6 +437,8 @@ int main(int argc, const char* argv[]) {
       produce_image_subtraction = true;
     } else if (strcmp(arg, "--reverse-byte-order") == 0) {
       reverse_byte_order = true;
+    } else if (strcmp(arg, "--fuzzy") == 0) {
+      max_pixel_per_channel_delta = 1;
     }
   }
   if (i < argc)
@@ -409,7 +455,7 @@ int main(int argc, const char* argv[]) {
     }
   } else if (!filename2.empty()) {
     return CompareImages(binary_name, filename1, filename2, histograms,
-                         reverse_byte_order);
+                         reverse_byte_order, max_pixel_per_channel_delta);
   }
 
   PrintHelp(binary_name);
