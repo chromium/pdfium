@@ -18,3 +18,11 @@
 # The filenames and keywords are case-sensitive.
 #
 # Try to keep the file alphabetized within each category of test.
+
+#
+# Corpus tests
+#
+
+# Device-specific ColorBurn differences (see pdfium:1959).
+xfermodes2.pdf * * * skia
+xfermodes3.pdf * * * skia
