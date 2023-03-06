@@ -218,6 +218,7 @@ bool CXFA_FFNotify::RunScript(CXFA_Script* script, CXFA_Node* item) {
 
   CXFA_EventParam EventParam;
   EventParam.m_eType = XFA_EVENT_Unknown;
+  EventParam.m_bTargeted = false;
 
   XFA_EventError iRet;
   bool bRet;

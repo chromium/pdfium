@@ -320,7 +320,6 @@ void CXFA_FFTextEdit::OnTextWillChange(CFWL_Widget* pWidget,
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Change;
   eParam.m_wsChange = event->GetChangeText();
-  eParam.m_pTarget = m_pNode.Get();
   eParam.m_wsPrevText = event->GetPreviousText();
   eParam.m_iSelStart = static_cast<int32_t>(event->GetSelectionStart());
   eParam.m_iSelEnd = static_cast<int32_t>(event->GetSelectionEnd());
@@ -337,7 +336,6 @@ void CXFA_FFTextEdit::OnTextWillChange(CFWL_Widget* pWidget,
 void CXFA_FFTextEdit::OnTextFull(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Full;
-  eParam.m_pTarget = m_pNode.Get();
   m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Full, &eParam);
 }
 

@@ -150,6 +150,21 @@ CFXJSE_Engine::~CFXJSE_Engine() {
   }
 }
 
+CFXJSE_Engine::EventParamScope::EventParamScope(CFXJSE_Engine* pEngine,
+                                                CXFA_Node* pTarget,
+                                                CXFA_EventParam* pEventParam)
+    : m_pEngine(pEngine),
+      m_pPrevTarget(pEngine->GetEventTarget()),
+      m_pPrevEventParam(pEngine->GetEventParam()) {
+  m_pEngine->m_pTarget = pTarget;
+  m_pEngine->m_eventParam = pEventParam;
+}
+
+CFXJSE_Engine::EventParamScope::~EventParamScope() {
+  m_pEngine->m_pTarget = m_pPrevTarget;
+  m_pEngine->m_eventParam = m_pPrevEventParam;
+}
+
 bool CFXJSE_Engine::RunScript(CXFA_Script::Type eScriptType,
                               WideStringView wsScript,
                               CFXJSE_Value* hRetValue,

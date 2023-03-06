@@ -340,7 +340,6 @@ bool CXFA_FFWidget::ProcessEventUnderHandler(CXFA_EventParam* params,
   if (!pNode->IsWidgetReady())
     return false;
 
-  params->m_pTarget = pNode;
   return pHandler->ProcessEvent(pNode, params) == XFA_EventError::kSuccess;
 }
 
@@ -433,7 +432,6 @@ bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
 
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Enter;
-  eParam.m_pTarget = m_pNode.Get();
   m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Enter, &eParam);
   return true;
 }
@@ -649,7 +647,6 @@ void CXFA_FFWidget::EventKillFocus() {
   }
   CXFA_EventParam eParam;
   eParam.m_eType = XFA_EVENT_Exit;
-  eParam.m_pTarget = m_pNode.Get();
   m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Exit, &eParam);
 }
 

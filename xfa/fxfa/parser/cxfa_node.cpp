@@ -2490,6 +2490,7 @@ XFA_EventError CXFA_Node::ProcessCalculate(CXFA_FFDocView* pDocView) {
 
   CXFA_EventParam EventParam;
   EventParam.m_eType = XFA_EVENT_Calculate;
+  EventParam.m_bTargeted = false;
   XFA_EventError iRet =
       ExecuteScript(pDocView, calc->GetScriptIfExists(), &EventParam);
   if (iRet != XFA_EventError::kSuccess)
@@ -2682,7 +2683,6 @@ XFA_EventError CXFA_Node::ProcessValidate(CXFA_FFDocView* pDocView,
   if (script) {
     CXFA_EventParam eParam;
     eParam.m_eType = XFA_EVENT_Validate;
-    eParam.m_pTarget = this;
     std::tie(iRet, bRet) = ExecuteBoolScript(pDocView, script, &eParam);
   }
 
@@ -2768,7 +2768,8 @@ std::pair<XFA_EventError, bool> CXFA_Node::ExecuteBoolScript(
 
   CXFA_FFDoc* pDoc = pDocView->GetDoc();
   CFXJSE_Engine* pContext = pDoc->GetXFADoc()->GetScriptContext();
-  pContext->SetEventParam(pEventParam);
+  CFXJSE_Engine::EventParamScope paramScope(
+      pContext, pEventParam->m_bTargeted ? this : nullptr, pEventParam);
   pContext->SetRunAtType(script->GetRunAt());
 
   std::vector<cppgc::Persistent<CXFA_Node>> refNodes;
@@ -2819,7 +2820,6 @@ std::pair<XFA_EventError, bool> CXFA_Node::ExecuteBoolScript(
     }
   }
   pContext->SetNodesOfRunScript(nullptr);
-  pContext->SetEventParam(nullptr);
 
   return {iRet, pTmpRetValue->IsBoolean(pContext->GetIsolate()) &&
                     pTmpRetValue->ToBoolean(pContext->GetIsolate())};
