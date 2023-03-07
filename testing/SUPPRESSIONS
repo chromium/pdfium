@@ -209,16 +209,8 @@ form_combobox_per.pdf mac * * *
 form_combobox_per.pdf * nov8 * *
 form_combobox_plus.pdf mac * * *
 form_combobox_plus.pdf * nov8 * *
-
-# TODO(pdfium:1963): Remove after associated bug is fixed
-form_combobox_plus.pdf * * * skia
-
 form_combobox_product.pdf mac * * *
 form_combobox_product.pdf * nov8 * *
-
-# TODO(pdfium:1963): Remove after associated bug is fixed
-form_combobox_product.pdf * * * skia
-
 form_combobox_resetform.pdf * * * *
 form_combobox_time.pdf mac * * *
 form_combobox_time.pdf * nov8 * *
@@ -365,9 +357,6 @@ bug_1723.in * * * *
 
 # TODO(pdfium:1846): Remove after associated bug is fixed
 bug_1846.in * * * agg
-
-# TODO(pdfium:1963): Remove after associated bug is fixed
-bug_1963.in * * * skia
 
 # TODO(pdfium:1973): Remove after associated bug is fixed
 bug_1973.in * * * *

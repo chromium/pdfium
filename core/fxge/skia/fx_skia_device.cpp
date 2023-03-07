@@ -848,6 +848,9 @@ class SkiaState {
     if (MatrixOffset(pMatrix, &delta))
       skPath.offset(delta.fX, delta.fY);
     m_skPath.addPath(skPath);
+
+    // TODO(crbug.com/pdfium/1963): Simplify code assuming eager flushing.
+    Flush();
   }
 
   void FlushPath() {
@@ -1025,6 +1028,8 @@ class SkiaState {
         }
       }
     }
+
+    // TODO(crbug.com/pdfium/1963): Simplify code assuming eager flushing.
     return true;
   }
 
