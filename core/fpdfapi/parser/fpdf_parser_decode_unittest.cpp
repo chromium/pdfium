@@ -8,7 +8,9 @@
 
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -111,6 +113,62 @@ TEST(ParserDecodeTest, ValidateDecoderPipeline) {
     decoders->AppendNew<CPDF_Name>("RunLengthDecode");
     decoders->AppendNew<CPDF_Name>("FlateDecode");
     decoders->AppendNew<CPDF_String>("RL", false);
+    EXPECT_FALSE(ValidateDecoderPipeline(decoders.Get()));
+  }
+}
+
+TEST(ParserDecodeTest, ValidateDecoderPipelineWithIndirectObjects) {
+  {
+    // Valid 2 decoder pipeline with indirect objects.
+    CPDF_IndirectObjectHolder objects_holder;
+    auto decoder = pdfium::MakeRetain<CPDF_Name>(nullptr, "FlateDecode");
+    uint32_t decoder_number =
+        objects_holder.AddIndirectObject(std::move(decoder));
+
+    auto decoders = pdfium::MakeRetain<CPDF_Array>();
+    decoders->AppendNew<CPDF_Reference>(&objects_holder, decoder_number);
+    decoders->AppendNew<CPDF_Name>("LZW");
+    EXPECT_TRUE(ValidateDecoderPipeline(decoders.Get()));
+  }
+  {
+    // Valid 5 decoder pipeline with indirect objects, with an image decoder at
+    // the end.
+    CPDF_IndirectObjectHolder objects_holder;
+    auto decoder = pdfium::MakeRetain<CPDF_Name>(nullptr, "LZW");
+    uint32_t decoder_number =
+        objects_holder.AddIndirectObject(std::move(decoder));
+
+    auto decoders = pdfium::MakeRetain<CPDF_Array>();
+    decoders->AppendNew<CPDF_Name>("RunLengthDecode");
+    decoders->AppendNew<CPDF_Name>("ASCII85Decode");
+    decoders->AppendNew<CPDF_Name>("FlateDecode");
+    decoders->AppendNew<CPDF_Reference>(&objects_holder, decoder_number);
+    decoders->AppendNew<CPDF_Name>("DCTDecode");
+    EXPECT_TRUE(ValidateDecoderPipeline(decoders.Get()));
+  }
+  {
+    // Invalid 2 decoder pipeline due to wrong type indirect object.
+    CPDF_IndirectObjectHolder objects_holder;
+    auto decoder =
+        pdfium::MakeRetain<CPDF_String>(nullptr, "FlateDecode", false);
+    uint32_t decoder_number =
+        objects_holder.AddIndirectObject(std::move(decoder));
+
+    auto decoders = pdfium::MakeRetain<CPDF_Array>();
+    decoders->AppendNew<CPDF_Reference>(&objects_holder, decoder_number);
+    decoders->AppendNew<CPDF_Name>("LZW");
+    EXPECT_FALSE(ValidateDecoderPipeline(decoders.Get()));
+  }
+  {
+    // Invalid 2 decoder pipeline due to invalid indirect object.
+    CPDF_IndirectObjectHolder objects_holder;
+    auto decoder = pdfium::MakeRetain<CPDF_Name>(nullptr, "DCTDecode");
+    uint32_t decoder_number =
+        objects_holder.AddIndirectObject(std::move(decoder));
+
+    auto decoders = pdfium::MakeRetain<CPDF_Array>();
+    decoders->AppendNew<CPDF_Reference>(&objects_holder, decoder_number);
+    decoders->AppendNew<CPDF_Name>("LZW");
     EXPECT_FALSE(ValidateDecoderPipeline(decoders.Get()));
   }
 }
