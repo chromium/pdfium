@@ -1030,6 +1030,7 @@ class SkiaState {
     }
 
     // TODO(crbug.com/pdfium/1963): Simplify code assuming eager flushing.
+    Flush();
     return true;
   }
 
