@@ -271,12 +271,11 @@ int CPDFXFA_Page::HasFormFieldAtPoint(const CFX_PointF& point) const {
   CXFA_FFWidgetHandler* pWidgetHandler = pDocView->GetWidgetHandler();
   if (!pWidgetHandler)
     return -1;
-
-  CXFA_FFWidget::IteratorIface* pWidgetIterator =
-      pPageView->CreateGCedFormWidgetIterator(XFA_WidgetStatus::kViewable);
+  CXFA_FFPageWidgetIterator pWidgetIterator(pPageView,
+                                            XFA_WidgetStatus::kViewable);
 
   CXFA_FFWidget* pXFAAnnot;
-  while ((pXFAAnnot = pWidgetIterator->MoveToNext()) != nullptr) {
+  while ((pXFAAnnot = pWidgetIterator.MoveToNext()) != nullptr) {
     if (pXFAAnnot->GetFormFieldType() == FormFieldType::kXFA)
       continue;
 
@@ -298,12 +297,12 @@ void CPDFXFA_Page::DrawFocusAnnot(CFX_RenderDevice* pDevice,
   gs.SetClipRect(rectClip);
 
   CXFA_FFPageView* xfaView = GetXFAPageView();
-  CXFA_FFWidget::IteratorIface* pWidgetIterator =
-      xfaView->CreateGCedFormWidgetIterator(Mask<XFA_WidgetStatus>{
-          XFA_WidgetStatus::kVisible, XFA_WidgetStatus::kViewable});
+  CXFA_FFPageWidgetIterator pWidgetIterator(
+      xfaView, Mask<XFA_WidgetStatus>{XFA_WidgetStatus::kVisible,
+                                      XFA_WidgetStatus::kViewable});
 
   while (true) {
-    CXFA_FFWidget* pWidget = pWidgetIterator->MoveToNext();
+    CXFA_FFWidget* pWidget = pWidgetIterator.MoveToNext();
     if (!pWidget)
       break;
 

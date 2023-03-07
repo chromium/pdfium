@@ -261,13 +261,6 @@ CFX_Matrix CXFA_FFPageView::GetDisplayMatrix(const FX_RECT& rtDisp,
   return GetPageMatrix(CFX_RectF(0, 0, pItem->GetPageSize()), rtDisp, iRotate);
 }
 
-CXFA_FFWidget::IteratorIface* CXFA_FFPageView::CreateGCedFormWidgetIterator(
-    Mask<XFA_WidgetStatus> dwWidgetFilter) {
-  return cppgc::MakeGarbageCollected<CXFA_FFPageWidgetIterator>(
-      GetDocView()->GetDoc()->GetHeap()->GetAllocationHandle(), this,
-      dwWidgetFilter);
-}
-
 CXFA_FFWidget::IteratorIface* CXFA_FFPageView::CreateGCedTraverseWidgetIterator(
     Mask<XFA_WidgetStatus> dwWidgetFilter) {
   return cppgc::MakeGarbageCollected<CXFA_FFTabOrderPageWidgetIterator>(

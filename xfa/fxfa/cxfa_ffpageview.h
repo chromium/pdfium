@@ -37,9 +37,7 @@ class CXFA_FFPageView final : public cppgc::GarbageCollected<CXFA_FFPageView> {
   CFX_RectF GetPageViewRect() const;
   CFX_Matrix GetDisplayMatrix(const FX_RECT& rtDisp, int32_t iRotate) const;
 
-  // These always return a non-null iterator from the gc heap.
-  CXFA_FFWidget::IteratorIface* CreateGCedFormWidgetIterator(
-      Mask<XFA_WidgetStatus> dwWidgetFilter);
+  // This always returns a non-null iterator from the gc heap.
   CXFA_FFWidget::IteratorIface* CreateGCedTraverseWidgetIterator(
       Mask<XFA_WidgetStatus> dwWidgetFilter);
 
@@ -51,11 +49,12 @@ class CXFA_FFPageView final : public cppgc::GarbageCollected<CXFA_FFPageView> {
   cppgc::Member<CXFA_ViewLayoutItem> m_pLayoutItem;
 };
 
-class CXFA_FFPageWidgetIterator final
-    : public cppgc::GarbageCollected<CXFA_FFPageWidgetIterator>,
-      public CXFA_FFWidget::IteratorIface {
+class CXFA_FFPageWidgetIterator final : public CXFA_FFWidget::IteratorIface {
+  CPPGC_STACK_ALLOCATED();
+
  public:
-  CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
+  CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView,
+                            Mask<XFA_WidgetStatus> dwFilter);
   ~CXFA_FFPageWidgetIterator() override;
 
   void Trace(cppgc::Visitor* visitor) const {}
@@ -69,9 +68,6 @@ class CXFA_FFPageWidgetIterator final
   bool SetCurrentWidget(CXFA_FFWidget* hWidget) override;
 
  private:
-  CXFA_FFPageWidgetIterator(CXFA_FFPageView* pPageView,
-                            Mask<XFA_WidgetStatus> dwFilter);
-
   CXFA_LayoutItemIterator m_sIterator;
   const Mask<XFA_WidgetStatus> m_dwFilter;
   const bool m_bIgnoreRelevant;
