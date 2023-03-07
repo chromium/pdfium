@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/stl_util.h"
+#include "core/fxcrt/xml/cfx_xmlparser.h"
 #include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cjx_object.h"
@@ -42,6 +43,21 @@
 #include "xfa/fxfa/parser/cxfa_subform.h"
 #include "xfa/fxfa/parser/cxfa_validate.h"
 #include "xfa/fxfa/parser/xfa_utils.h"
+
+namespace {
+
+bool IsValidXMLNameString(const WideString& str) {
+  bool first = true;
+  for (const auto ch : str) {
+    if (!CFX_XMLParser::IsXMLNameChar(ch, first)) {
+      return false;
+    }
+    first = false;
+  }
+  return true;
+}
+
+}  // namespace
 
 const XFA_AttributeValue kXFAEventActivity[] = {
     XFA_AttributeValue::Click,      XFA_AttributeValue::Change,
@@ -443,6 +459,9 @@ XFA_EventError CXFA_FFDocView::ExecEventActivityByDeepFirst(
 
 CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
                                                CXFA_FFWidget* pRefWidget) {
+  if (!IsValidXMLNameString(wsName)) {
+    return nullptr;
+  }
   CFXJSE_Engine* pScriptContext = m_pDoc->GetXFADoc()->GetScriptContext();
   CXFA_Node* pRefNode = nullptr;
   if (pRefWidget) {
