@@ -170,8 +170,6 @@ void CPDF_PageContentGenerator::UpdateContentStreams(
     else
       old_stream->SetDataFromStringstreamAndRemoveFilter(buf);
   }
-
-  page_content_manager.ExecuteScheduledRemovals();
 }
 
 ByteString CPDF_PageContentGenerator::RealizeResource(

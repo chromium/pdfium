@@ -49,7 +49,9 @@ CPDF_PageContentManager::CPDF_PageContentManager(
   }
 }
 
-CPDF_PageContentManager::~CPDF_PageContentManager() = default;
+CPDF_PageContentManager::~CPDF_PageContentManager() {
+  ExecuteScheduledRemovals();
+}
 
 RetainPtr<CPDF_Stream> CPDF_PageContentManager::GetStreamByIndex(
     size_t stream_index) {
@@ -112,8 +114,9 @@ void CPDF_PageContentManager::ExecuteScheduledRemovals() {
   // This method assumes there are no dirty streams in the
   // CPDF_PageObjectHolder. If there were any, their indexes would need to be
   // updated.
-  // Since this is only called by CPDF_PageContentGenerator::GenerateContent(),
-  // which cleans up the dirty streams first, this should always be true.
+  // Since CPDF_PageContentManager is only instantiated in
+  // CPDF_PageContentGenerator::GenerateContent(), which cleans up the dirty
+  // streams first, this should always be true.
   DCHECK(!page_obj_holder_->HasDirtyStreams());
 
   if (contents_stream_) {
@@ -121,39 +124,42 @@ void CPDF_PageContentManager::ExecuteScheduledRemovals() {
     if (streams_to_remove_.find(0) != streams_to_remove_.end()) {
       RetainPtr<CPDF_Dictionary> page_dict = page_obj_holder_->GetMutableDict();
       page_dict->RemoveFor("Contents");
-      contents_stream_ = nullptr;
     }
-  } else if (contents_array_) {
-    // Initialize a vector with the old stream indexes. This will be used to
-    // build a map from the old to the new indexes.
-    std::vector<size_t> streams_left(contents_array_->size());
-    std::iota(streams_left.begin(), streams_left.end(), 0);
-
-    // In reverse order so as to not change the indexes in the middle of the
-    // loop, remove the streams.
-    for (size_t stream_index : pdfium::base::Reversed(streams_to_remove_)) {
-      contents_array_->RemoveAt(stream_index);
-      streams_left.erase(streams_left.begin() + stream_index);
-    }
-
-    // Create a mapping from the old to the new stream indexes, shifted due to
-    // the deletion of the |streams_to_remove_|.
-    std::map<size_t, size_t> stream_index_mapping;
-    for (size_t i = 0; i < streams_left.size(); ++i)
-      stream_index_mapping[streams_left[i]] = i;
-
-    // Update the page objects' content stream indexes.
-    for (const auto& obj : *page_obj_holder_) {
-      int32_t old_stream_index = obj->GetContentStream();
-      int32_t new_stream_index = pdfium::base::checked_cast<int32_t>(
-          stream_index_mapping[old_stream_index]);
-      obj->SetContentStream(new_stream_index);
-    }
-
-    // Even if there is a single content stream now, keep the array with a
-    // single element. It's valid, a second stream might be added soon, and the
-    // complexity of removing it is not worth it.
+    return;
   }
 
-  streams_to_remove_.clear();
+  if (!contents_array_) {
+    return;
+  }
+
+  // Initialize a vector with the old stream indexes. This will be used to build
+  // a map from the old to the new indexes.
+  std::vector<size_t> streams_left(contents_array_->size());
+  std::iota(streams_left.begin(), streams_left.end(), 0);
+
+  // In reverse order so as to not change the indexes in the middle of the loop,
+  // remove the streams.
+  for (size_t stream_index : pdfium::base::Reversed(streams_to_remove_)) {
+    contents_array_->RemoveAt(stream_index);
+    streams_left.erase(streams_left.begin() + stream_index);
+  }
+
+  // Create a mapping from the old to the new stream indexes, shifted due to the
+  // deletion of the |streams_to_remove_|.
+  std::map<size_t, size_t> stream_index_mapping;
+  for (size_t i = 0; i < streams_left.size(); ++i) {
+    stream_index_mapping[streams_left[i]] = i;
+  }
+
+  // Update the page objects' content stream indexes.
+  for (const auto& obj : *page_obj_holder_) {
+    int32_t old_stream_index = obj->GetContentStream();
+    int32_t new_stream_index = pdfium::base::checked_cast<int32_t>(
+        stream_index_mapping[old_stream_index]);
+    obj->SetContentStream(new_stream_index);
+  }
+
+  // Even if there is a single content stream now, keep the array with a single
+  // element. It's valid, a second stream might be added in the near future, and
+  // the complexity of removing it is not worth it.
 }
