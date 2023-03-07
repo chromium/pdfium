@@ -1110,13 +1110,7 @@ void CPDF_StreamContentParser::Handle_MoveTextPoint_SetLeading() {
 }
 
 void CPDF_StreamContentParser::Handle_SetFont() {
-  float fs = GetNumber(0);
-  if (fs == 0) {
-    constexpr float kDefaultFontSize = 0.0f;
-    fs = kDefaultFontSize;
-  }
-
-  m_pCurStates->m_TextState.SetFontSize(fs);
+  m_pCurStates->m_TextState.SetFontSize(GetNumber(0));
   RetainPtr<CPDF_Font> pFont = FindFont(GetString(1));
   if (pFont)
     m_pCurStates->m_TextState.SetFont(std::move(pFont));
