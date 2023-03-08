@@ -65,6 +65,7 @@
 #include "third_party/skia/include/core/SkPictureRecorder.h"
 #include "third_party/skia/include/core/SkRSXform.h"
 #include "third_party/skia/include/core/SkRect.h"
+#include "third_party/skia/include/core/SkRefCnt.h"
 #include "third_party/skia/include/core/SkSamplingOptions.h"
 #include "third_party/skia/include/core/SkShader.h"
 #include "third_party/skia/include/core/SkStream.h"
@@ -798,6 +799,7 @@ class SkiaState {
   // mark all cached state as uninitialized
   explicit SkiaState(CFX_SkiaDeviceDriver* pDriver) : m_pDriver(pDriver) {}
 
+  // TODO(crbug.com/pdfium/1963): `blend_type` isn't used?
   void DrawPath(const CFX_Path& path,
                 const CFX_Matrix* pMatrix,
                 const CFX_GraphStateData* pDrawState,
@@ -805,78 +807,65 @@ class SkiaState {
                 uint32_t stroke_color,
                 const CFX_FillRenderOptions& fill_options,
                 BlendMode blend_type) {
-    m_skPath.reset();
-    m_fillOptions = fill_options;
-    m_fillPath =
-        fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
-        fill_color;
-    m_skPath.setFillType(GetAlternateOrWindingFillType(fill_options));
+    SkPath skia_path = BuildPath(path);
+    skia_path.setFillType(GetAlternateOrWindingFillType(fill_options));
     if (pDrawState) {
       m_drawState = *pDrawState;
     }
-    m_fillColor = fill_color;
-    m_strokeColor = stroke_color;
-    m_blendType = blend_type;
-    m_groupKnockout = m_pDriver->GetGroupKnockout();
 
-    m_skPath.addPath(BuildPath(path));
-
-    // TODO(crbug.com/pdfium/1963): Simplify code assuming eager flushing.
     AdjustClip(m_commandIndex);
-    FlushPath(pMatrix ? *pMatrix : CFX_Matrix());
-  }
 
-  void FlushPath(const CFX_Matrix& matrix) {
-    SkMatrix skMatrix = ToSkMatrix(matrix);
+    SkMatrix skMatrix = pMatrix ? ToSkMatrix(*pMatrix) : SkMatrix();
     SkPaint skPaint;
-    skPaint.setAntiAlias(!m_fillOptions.aliased_path);
-    if (m_fillOptions.full_cover)
+    skPaint.setAntiAlias(!fill_options.aliased_path);
+    if (fill_options.full_cover) {
       skPaint.setBlendMode(SkBlendMode::kPlus);
-    int stroke_alpha = FXARGB_A(m_strokeColor);
+    }
+    int stroke_alpha = FXARGB_A(stroke_color);
     if (stroke_alpha)
-      PaintStroke(&skPaint, &m_drawState, skMatrix, m_fillOptions);
+      PaintStroke(&skPaint, &m_drawState, skMatrix, fill_options);
     SkCanvas* skCanvas = m_pDriver->SkiaCanvas();
     SkAutoCanvasRestore scoped_save_restore(skCanvas, /*doSave=*/true);
     skCanvas->concat(skMatrix);
     bool do_stroke = true;
-    if (m_fillPath) {
+    if (fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
+        fill_color) {
       SkPath strokePath;
-      const SkPath* fillPath = &m_skPath;
+      const SkPath* fillPath = &skia_path;
       if (stroke_alpha) {
-        if (m_groupKnockout) {
-          skpathutils::FillPathWithPaint(m_skPath, skPaint, &strokePath);
-          if (m_strokeColor == m_fillColor &&
-              Op(m_skPath, strokePath, SkPathOp::kUnion_SkPathOp,
+        if (m_pDriver->GetGroupKnockout()) {
+          skpathutils::FillPathWithPaint(skia_path, skPaint, &strokePath);
+          if (stroke_color == fill_color &&
+              Op(skia_path, strokePath, SkPathOp::kUnion_SkPathOp,
                  &strokePath)) {
             fillPath = &strokePath;
             do_stroke = false;
-          } else if (Op(m_skPath, strokePath, SkPathOp::kDifference_SkPathOp,
+          } else if (Op(skia_path, strokePath, SkPathOp::kDifference_SkPathOp,
                         &strokePath)) {
             fillPath = &strokePath;
           }
         }
       }
       skPaint.setStyle(SkPaint::kFill_Style);
-      skPaint.setColor(m_fillColor);
+      skPaint.setColor(fill_color);
       DebugShowSkiaDrawPath(m_pDriver, skCanvas, skPaint, *fillPath);
       skCanvas->drawPath(*fillPath, skPaint);
     }
     if (stroke_alpha && do_stroke) {
       skPaint.setStyle(SkPaint::kStroke_Style);
-      skPaint.setColor(m_strokeColor);
-      if (!m_skPath.isLastContourClosed() && IsPathAPoint(m_skPath)) {
-        DCHECK_GE(m_skPath.countPoints(), 1);
-        skCanvas->drawPoint(m_skPath.getPoint(0), skPaint);
-      } else if (IsPathAPoint(m_skPath) &&
+      skPaint.setColor(stroke_color);
+      if (!skia_path.isLastContourClosed() && IsPathAPoint(skia_path)) {
+        DCHECK_GE(skia_path.countPoints(), 1);
+        skCanvas->drawPoint(skia_path.getPoint(0), skPaint);
+      } else if (IsPathAPoint(skia_path) &&
                  skPaint.getStrokeCap() != SkPaint::kRound_Cap) {
         // Do nothing. A closed 0-length closed path can be rendered only if
         // its line cap type is round.
       } else {
-        DebugShowSkiaDrawPath(m_pDriver, skCanvas, skPaint, m_skPath);
-        skCanvas->drawPath(m_skPath, skPaint);
+        DebugShowSkiaDrawPath(m_pDriver, skCanvas, skPaint, skia_path);
+        skCanvas->drawPath(skia_path, skPaint);
       }
     }
-    m_fillOptions = CFX_FillRenderOptions();
   }
 
   bool HasRSX(pdfium::span<const TextCharPos> char_pos,
@@ -910,7 +899,7 @@ class SkiaState {
   }
 
   bool DrawText(pdfium::span<const TextCharPos> char_pos,
-                CFX_Font* pFont,
+                const CFX_Font* pFont,
                 const CFX_Matrix& matrix,
                 float font_size,
                 uint32_t color,
@@ -922,19 +911,8 @@ class SkiaState {
       return false;
     }
 
-    m_italicAngle = pFont->GetSubstFontItalicAngle();
-    m_isSubstFontBold = pFont->IsSubstFontBold();
     m_charDetails.SetCount(0);
     m_rsxform.resize(0);
-    if (pFont->GetFaceRec()) {
-      m_pTypeFace.reset(SkSafeRef(pFont->GetDeviceCache()));
-    } else {
-      m_pTypeFace.reset();
-    }
-    m_fontSize = font_size;
-    m_scaleX = scaleX;
-    m_fillColor = color;
-    m_textOptions = options;
 
     const size_t original_count = m_charDetails.Count();
     FX_SAFE_SIZE_T safe_count = original_count;
@@ -944,7 +922,7 @@ class SkiaState {
     if (hasRSX)
       m_rsxform.resize(total_count);
 
-    const SkScalar flip = m_fontSize < 0 ? -1 : 1;
+    const SkScalar flip = font_size < 0 ? -1 : 1;
     const SkScalar vFlip = pFont->IsVertical() ? -1 : 1;
     for (size_t index = 0; index < char_pos.size(); ++index) {
       const TextCharPos& cp = char_pos[index];
@@ -979,34 +957,28 @@ class SkiaState {
       }
     }
 
-    // TODO(crbug.com/pdfium/1963): Simplify code assuming eager flushing.
     AdjustClip(m_commandIndex);
-    FlushText(matrix);
-    return true;
-  }
 
-  void FlushText(const CFX_Matrix& matrix) {
     SkPaint skPaint;
     skPaint.setAntiAlias(true);
-    skPaint.setColor(m_fillColor);
+    skPaint.setColor(color);
 
     SkFont font;
-    if (m_pTypeFace) {  // exclude placeholder test fonts
-      font.setTypeface(m_pTypeFace);
+    if (pFont->GetFaceRec()) {  // exclude placeholder test fonts
+      font.setTypeface(sk_ref_sp(pFont->GetDeviceCache()));
     }
-    font.setEmbolden(m_isSubstFontBold);
+    font.setEmbolden(pFont->IsSubstFontBold());
     font.setHinting(SkFontHinting::kNone);
-    font.setScaleX(m_scaleX);
-    font.setSkewX(tanf(m_italicAngle * FXSYS_PI / 180.0));
-    font.setSize(SkTAbs(m_fontSize));
+    font.setScaleX(scaleX);
+    font.setSkewX(tanf(pFont->GetSubstFontItalicAngle() * FXSYS_PI / 180.0));
+    font.setSize(SkTAbs(font_size));
     font.setSubpixel(true);
-    font.setEdging(GetFontEdgingType(m_textOptions));
+    font.setEdging(GetFontEdgingType(options));
 
     SkCanvas* skCanvas = m_pDriver->SkiaCanvas();
     SkAutoCanvasRestore scoped_save_restore(skCanvas, /*doSave=*/true);
-    SkScalar flip = m_fontSize < 0 ? -1 : 1;
-    SkMatrix skMatrix = ToFlippedSkMatrix(matrix, flip);
-    skCanvas->concat(skMatrix);
+    skCanvas->concat(ToFlippedSkMatrix(matrix, flip));
+
     const DataVector<uint16_t>& glyphs = m_charDetails.GetGlyphs();
     if (m_rsxform.size()) {
       sk_sp<SkTextBlob> blob = SkTextBlob::MakeFromRSXform(
@@ -1021,10 +993,7 @@ class SkiaState {
         skCanvas->drawTextBlob(blob, positions[i].fX, positions[i].fY, skPaint);
       }
     }
-
-    m_italicAngle = 0;
-    m_isSubstFontBold = false;
-    m_textOptions = CFX_TextRenderOptions();
+    return true;
   }
 
   bool IsEmpty() const { return m_commands.empty(); }
@@ -1088,7 +1057,7 @@ class SkiaState {
     SkPath skPath = BuildPath(path);
     SkMatrix skMatrix = ToSkMatrix(*pMatrix);
     SkPaint skPaint;
-    PaintStroke(&skPaint, pGraphState, skMatrix, m_fillOptions);
+    PaintStroke(&skPaint, pGraphState, skMatrix, CFX_FillRenderOptions());
     SkPath dst_path;
     skpathutils::FillPathWithPaint(skPath, skPaint, &dst_path);
     dst_path.transform(skMatrix);
@@ -1190,28 +1159,14 @@ class SkiaState {
   CharDetail m_charDetails;
   // accumulator for txt rotate/scale/translate
   DataVector<SkRSXform> m_rsxform;
-  // accumulator for path contours
-  SkPath m_skPath;
   // used as placehold in the clips array
   SkPath m_skEmptyPath;
   CFX_GraphStateData m_drawState;
-  CFX_FillRenderOptions m_fillOptions;
-  CFX_TextRenderOptions m_textOptions;
   UnownedPtr<CFX_SkiaDeviceDriver> const m_pDriver;
-  sk_sp<CFX_TypeFace> m_pTypeFace;
-  float m_fontSize = 0;
-  float m_scaleX = 0;
-  uint32_t m_fillColor = 0;
-  uint32_t m_strokeColor = 0;
-  BlendMode m_blendType = BlendMode::kNormal;
   // active position in clip command stack
   size_t m_commandIndex = 0;
   // position reflecting depth of canvas clip stack
   size_t m_clipIndex = 0;
-  int m_italicAngle = 0;
-  bool m_fillPath = false;
-  bool m_groupKnockout = false;
-  bool m_isSubstFontBold = false;
 };
 
 // static
