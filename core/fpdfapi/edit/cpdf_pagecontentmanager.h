@@ -10,6 +10,7 @@
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/abseil-cpp/absl/types/variant.h"
 
 class CPDF_Array;
 class CPDF_IndirectObjectHolder;
@@ -40,10 +41,14 @@ class CPDF_PageContentManager {
   // indexes.
   void ExecuteScheduledRemovals();
 
+ private:
+  RetainPtr<CPDF_Stream> GetContentsStream();
+  RetainPtr<CPDF_Array> GetContentsArray();
+
   UnownedPtr<CPDF_PageObjectHolder> const page_obj_holder_;
   UnownedPtr<CPDF_IndirectObjectHolder> const indirect_obj_holder_;
-  RetainPtr<CPDF_Array> contents_array_;
-  RetainPtr<CPDF_Stream> contents_stream_;
+  // When holding a CPDF_Stream, the pointer may be null.
+  absl::variant<RetainPtr<CPDF_Stream>, RetainPtr<CPDF_Array>> contents_;
   std::set<size_t> streams_to_remove_;
 };
 

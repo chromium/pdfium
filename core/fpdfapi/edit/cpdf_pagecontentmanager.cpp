@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "third_party/abseil-cpp/absl/types/variant.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/adapters.h"
 #include "third_party/base/numerics/safe_conversions.h"
@@ -30,7 +31,7 @@ CPDF_PageContentManager::CPDF_PageContentManager(
       page_dict->GetMutableObjectFor("Contents");
   RetainPtr<CPDF_Array> contents_array = ToArray(contents_obj);
   if (contents_array) {
-    contents_array_ = std::move(contents_array);
+    contents_ = std::move(contents_array);
     return;
   }
 
@@ -43,9 +44,9 @@ CPDF_PageContentManager::CPDF_PageContentManager(
 
     contents_array.Reset(indirect_obj->AsMutableArray());
     if (contents_array)
-      contents_array_ = std::move(contents_array);
+      contents_ = std::move(contents_array);
     else if (indirect_obj->IsStream())
-      contents_stream_.Reset(indirect_obj->AsMutableStream());
+      contents_ = pdfium::WrapRetain(indirect_obj->AsMutableStream());
   }
 }
 
@@ -55,14 +56,18 @@ CPDF_PageContentManager::~CPDF_PageContentManager() {
 
 RetainPtr<CPDF_Stream> CPDF_PageContentManager::GetStreamByIndex(
     size_t stream_index) {
-  if (contents_stream_)
-    return stream_index == 0 ? contents_stream_ : nullptr;
+  RetainPtr<CPDF_Stream> contents_stream = GetContentsStream();
+  if (contents_stream) {
+    return stream_index == 0 ? contents_stream : nullptr;
+  }
 
-  if (!contents_array_)
+  RetainPtr<CPDF_Array> contents_array = GetContentsArray();
+  if (!contents_array) {
     return nullptr;
+  }
 
   RetainPtr<CPDF_Reference> stream_reference =
-      ToReference(contents_array_->GetMutableObjectAt(stream_index));
+      ToReference(contents_array->GetMutableObjectAt(stream_index));
   if (!stream_reference)
     return nullptr;
 
@@ -75,26 +80,27 @@ size_t CPDF_PageContentManager::AddStream(fxcrt::ostringstream* buf) {
 
   // If there is one Content stream (not in an array), now there will be two, so
   // create an array with the old and the new one. The new one's index is 1.
-  if (contents_stream_) {
+  RetainPtr<CPDF_Stream> contents_stream = GetContentsStream();
+  if (contents_stream) {
     auto new_contents_array = indirect_obj_holder_->NewIndirect<CPDF_Array>();
-    new_contents_array->AppendNew<CPDF_Reference>(
-        indirect_obj_holder_, contents_stream_->GetObjNum());
+    new_contents_array->AppendNew<CPDF_Reference>(indirect_obj_holder_,
+                                                  contents_stream->GetObjNum());
     new_contents_array->AppendNew<CPDF_Reference>(indirect_obj_holder_,
                                                   new_stream->GetObjNum());
 
     RetainPtr<CPDF_Dictionary> page_dict = page_obj_holder_->GetMutableDict();
     page_dict->SetNewFor<CPDF_Reference>("Contents", indirect_obj_holder_,
                                          new_contents_array->GetObjNum());
-    contents_array_ = std::move(new_contents_array);
-    contents_stream_ = nullptr;
+    contents_ = std::move(new_contents_array);
     return 1;
   }
 
   // If there is an array, just add the new stream to it, at the last position.
-  if (contents_array_) {
-    contents_array_->AppendNew<CPDF_Reference>(indirect_obj_holder_,
-                                               new_stream->GetObjNum());
-    return contents_array_->size() - 1;
+  RetainPtr<CPDF_Array> contents_array = GetContentsArray();
+  if (contents_array) {
+    contents_array->AppendNew<CPDF_Reference>(indirect_obj_holder_,
+                                              new_stream->GetObjNum());
+    return contents_array->size() - 1;
   }
 
   // There were no Contents, so add the new stream as the single Content stream.
@@ -102,7 +108,7 @@ size_t CPDF_PageContentManager::AddStream(fxcrt::ostringstream* buf) {
   RetainPtr<CPDF_Dictionary> page_dict = page_obj_holder_->GetMutableDict();
   page_dict->SetNewFor<CPDF_Reference>("Contents", indirect_obj_holder_,
                                        new_stream->GetObjNum());
-  contents_stream_ = std::move(new_stream);
+  contents_ = std::move(new_stream);
   return 0;
 }
 
@@ -119,7 +125,8 @@ void CPDF_PageContentManager::ExecuteScheduledRemovals() {
   // streams first, this should always be true.
   DCHECK(!page_obj_holder_->HasDirtyStreams());
 
-  if (contents_stream_) {
+  RetainPtr<CPDF_Stream> contents_stream = GetContentsStream();
+  if (contents_stream) {
     // Only stream that can be removed is 0.
     if (streams_to_remove_.find(0) != streams_to_remove_.end()) {
       RetainPtr<CPDF_Dictionary> page_dict = page_obj_holder_->GetMutableDict();
@@ -128,19 +135,20 @@ void CPDF_PageContentManager::ExecuteScheduledRemovals() {
     return;
   }
 
-  if (!contents_array_) {
+  RetainPtr<CPDF_Array> contents_array = GetContentsArray();
+  if (!contents_array) {
     return;
   }
 
   // Initialize a vector with the old stream indexes. This will be used to build
   // a map from the old to the new indexes.
-  std::vector<size_t> streams_left(contents_array_->size());
+  std::vector<size_t> streams_left(contents_array->size());
   std::iota(streams_left.begin(), streams_left.end(), 0);
 
   // In reverse order so as to not change the indexes in the middle of the loop,
   // remove the streams.
   for (size_t stream_index : pdfium::base::Reversed(streams_to_remove_)) {
-    contents_array_->RemoveAt(stream_index);
+    contents_array->RemoveAt(stream_index);
     streams_left.erase(streams_left.begin() + stream_index);
   }
 
@@ -162,4 +170,18 @@ void CPDF_PageContentManager::ExecuteScheduledRemovals() {
   // Even if there is a single content stream now, keep the array with a single
   // element. It's valid, a second stream might be added in the near future, and
   // the complexity of removing it is not worth it.
+}
+
+RetainPtr<CPDF_Stream> CPDF_PageContentManager::GetContentsStream() {
+  if (absl::holds_alternative<RetainPtr<CPDF_Stream>>(contents_)) {
+    return absl::get<RetainPtr<CPDF_Stream>>(contents_);
+  }
+  return nullptr;
+}
+
+RetainPtr<CPDF_Array> CPDF_PageContentManager::GetContentsArray() {
+  if (absl::holds_alternative<RetainPtr<CPDF_Array>>(contents_)) {
+    return absl::get<RetainPtr<CPDF_Array>>(contents_);
+  }
+  return nullptr;
 }
