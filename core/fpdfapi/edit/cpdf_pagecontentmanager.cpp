@@ -125,6 +125,10 @@ void CPDF_PageContentManager::ExecuteScheduledRemovals() {
   // streams first, this should always be true.
   DCHECK(!page_obj_holder_->HasDirtyStreams());
 
+  if (streams_to_remove_.empty()) {
+    return;
+  }
+
   RetainPtr<CPDF_Stream> contents_stream = GetContentsStream();
   if (contents_stream) {
     // Only stream that can be removed is 0.
