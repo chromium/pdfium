@@ -255,11 +255,6 @@ SkFont::Edging GetFontEdgingType(const CFX_TextRenderOptions& text_options) {
   return SkFont::Edging::kSubpixelAntiAlias;
 }
 
-bool IsEvenOddFillType(SkPathFillType fill) {
-  return fill == SkPathFillType::kEvenOdd ||
-         fill == SkPathFillType::kInverseEvenOdd;
-}
-
 bool IsPathAPoint(const SkPath& path) {
   if (path.isEmpty())
     return false;
@@ -800,13 +795,6 @@ class SkiaState {
     kPath,
   };
 
-  enum class Accumulator {
-    kNone,
-    kPath,
-    kText,
-    kOther,
-  };
-
   // mark all cached state as uninitialized
   explicit SkiaState(CFX_SkiaDeviceDriver* pDriver) : m_pDriver(pDriver) {}
 
@@ -817,32 +805,23 @@ class SkiaState {
                 uint32_t stroke_color,
                 const CFX_FillRenderOptions& fill_options,
                 BlendMode blend_type) {
-    size_t drawIndex = std::min(m_drawIndex, m_commands.size());
-    if (Accumulator::kText == m_type || drawIndex != m_commandIndex ||
-        (Accumulator::kPath == m_type &&
-         DrawChanged(pMatrix, pDrawState, fill_color, stroke_color,
-                     fill_options, blend_type,
-                     m_pDriver->GetGroupKnockout()))) {
-      Flush();
+    m_skPath.reset();
+    m_fillOptions = fill_options;
+    m_fillPath =
+        fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
+        fill_color;
+    m_skPath.setFillType(GetAlternateOrWindingFillType(fill_options));
+    if (pDrawState) {
+      m_drawState = *pDrawState;
     }
-    if (Accumulator::kPath != m_type) {
-      m_skPath.reset();
-      m_fillOptions = fill_options;
-      m_fillPath =
-          fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
-          fill_color;
-      m_skPath.setFillType(GetAlternateOrWindingFillType(fill_options));
-      if (pDrawState)
-        m_drawState = *pDrawState;
-      m_fillColor = fill_color;
-      m_strokeColor = stroke_color;
-      m_blendType = blend_type;
-      m_groupKnockout = m_pDriver->GetGroupKnockout();
-      if (pMatrix)
-        m_drawMatrix = *pMatrix;
-      m_drawIndex = m_commandIndex;
-      m_type = Accumulator::kPath;
+    m_fillColor = fill_color;
+    m_strokeColor = stroke_color;
+    m_blendType = blend_type;
+    m_groupKnockout = m_pDriver->GetGroupKnockout();
+    if (pMatrix) {
+      m_drawMatrix = *pMatrix;
     }
+
     SkPath skPath = BuildPath(path);
     SkPoint delta;
     if (MatrixOffset(pMatrix, &delta))
@@ -850,7 +829,8 @@ class SkiaState {
     m_skPath.addPath(skPath);
 
     // TODO(crbug.com/pdfium/1963): Simplify code assuming eager flushing.
-    Flush();
+    AdjustClip(m_commandIndex);
+    FlushPath();
   }
 
   void FlushPath() {
@@ -903,8 +883,6 @@ class SkiaState {
         skCanvas->drawPath(m_skPath, skPaint);
       }
     }
-    m_drawIndex = std::numeric_limits<size_t>::max();
-    m_type = Accumulator::kNone;
     m_drawMatrix = CFX_Matrix();
     m_fillOptions = CFX_FillRenderOptions();
   }
@@ -949,35 +927,23 @@ class SkiaState {
     bool oneAtATime = false;
     bool hasRSX = HasRSX(char_pos, &scaleX, &oneAtATime);
     if (oneAtATime) {
-      Flush();
       return false;
     }
-    size_t drawIndex = std::min(m_drawIndex, m_commands.size());
-    if (Accumulator::kPath == m_type || drawIndex != m_commandIndex ||
-        (Accumulator::kText == m_type &&
-         (FontChanged(pFont, matrix, font_size, scaleX, color, options) ||
-          hasRSX == m_rsxform.empty()))) {
-      Flush();
+
+    m_italicAngle = pFont->GetSubstFontItalicAngle();
+    m_isSubstFontBold = pFont->IsSubstFontBold();
+    m_charDetails.SetCount(0);
+    m_rsxform.resize(0);
+    if (pFont->GetFaceRec()) {
+      m_pTypeFace.reset(SkSafeRef(pFont->GetDeviceCache()));
+    } else {
+      m_pTypeFace.reset();
     }
-    if (Accumulator::kText != m_type) {
-      m_italicAngle = pFont->GetSubstFontItalicAngle();
-      m_isSubstFontBold = pFont->IsSubstFontBold();
-      m_charDetails.SetCount(0);
-      m_rsxform.resize(0);
-      if (pFont->GetFaceRec())
-        m_pTypeFace.reset(SkSafeRef(pFont->GetDeviceCache()));
-      else
-        m_pTypeFace.reset();
-      m_fontSize = font_size;
-      m_scaleX = scaleX;
-      m_fillColor = color;
-      m_drawMatrix = matrix;
-      m_drawIndex = m_commandIndex;
-      m_type = Accumulator::kText;
-      m_textOptions = options;
-    }
-    if (!hasRSX && !m_rsxform.empty())
-      FlushText();
+    m_fontSize = font_size;
+    m_scaleX = scaleX;
+    m_fillColor = color;
+    m_drawMatrix = matrix;
+    m_textOptions = options;
 
     const size_t original_count = m_charDetails.Count();
     FX_SAFE_SIZE_T safe_count = original_count;
@@ -1030,7 +996,8 @@ class SkiaState {
     }
 
     // TODO(crbug.com/pdfium/1963): Simplify code assuming eager flushing.
-    Flush();
+    AdjustClip(m_commandIndex);
+    FlushText();
     return true;
   }
 
@@ -1071,8 +1038,6 @@ class SkiaState {
       }
     }
 
-    m_drawIndex = std::numeric_limits<size_t>::max();
-    m_type = Accumulator::kNone;
     m_drawMatrix = CFX_Matrix();
     m_italicAngle = 0;
     m_isSubstFontBold = false;
@@ -1116,7 +1081,6 @@ class SkiaState {
         ++m_commandIndex;
         return;
       }
-      Flush();
     }
     while (m_clipIndex > m_commandIndex) {
       do {
@@ -1176,7 +1140,6 @@ class SkiaState {
         ++m_commandIndex;
         return;
       }
-      Flush();
       AdjustClip(m_commandIndex);
       m_commands[m_commandIndex] = Clip::kSave;
       m_clips[m_commandIndex] = m_skEmptyPath;
@@ -1195,65 +1158,6 @@ class SkiaState {
         break;
       }
     }
-  }
-
-  bool DrawChanged(const CFX_Matrix* pMatrix,
-                   const CFX_GraphStateData* pState,
-                   uint32_t fill_color,
-                   uint32_t stroke_color,
-                   const CFX_FillRenderOptions& fill_options,
-                   BlendMode blend_type,
-                   bool group_knockout) const {
-    return MatrixChanged(pMatrix) || StateChanged(pState, m_drawState) ||
-           fill_color != m_fillColor || stroke_color != m_strokeColor ||
-           IsEvenOddFillType(m_skPath.getFillType()) ||
-           fill_options != m_fillOptions ||
-           fill_options.fill_type ==
-               CFX_FillRenderOptions::FillType::kEvenOdd ||
-           blend_type != m_blendType || group_knockout != m_groupKnockout;
-  }
-
-  bool FontChanged(CFX_Font* pFont,
-                   const CFX_Matrix& matrix,
-                   float font_size,
-                   float scaleX,
-                   uint32_t color,
-                   const CFX_TextRenderOptions& options) const {
-    CFX_TypeFace* typeface =
-        pFont->GetFaceRec() ? pFont->GetDeviceCache() : nullptr;
-    return typeface != m_pTypeFace.get() || MatrixChanged(&matrix) ||
-           font_size != m_fontSize || scaleX != m_scaleX ||
-           color != m_fillColor ||
-           pFont->GetSubstFontItalicAngle() != m_italicAngle ||
-           pFont->IsSubstFontBold() != m_isSubstFontBold ||
-           options != m_textOptions;
-  }
-
-  bool MatrixChanged(const CFX_Matrix* pMatrix) const {
-    return pMatrix ? *pMatrix != m_drawMatrix : m_drawMatrix.IsIdentity();
-  }
-
-  bool StateChanged(const CFX_GraphStateData* pState,
-                    const CFX_GraphStateData& refState) const {
-    CFX_GraphStateData identityState;
-    if (!pState)
-      pState = &identityState;
-    return pState->m_LineWidth != refState.m_LineWidth ||
-           pState->m_LineCap != refState.m_LineCap ||
-           pState->m_LineJoin != refState.m_LineJoin ||
-           pState->m_MiterLimit != refState.m_MiterLimit ||
-           DashChanged(pState, refState);
-  }
-
-  bool DashChanged(const CFX_GraphStateData* pState,
-                   const CFX_GraphStateData& refState) const {
-    bool dashArray = pState && !pState->m_DashArray.empty();
-    if (!dashArray && refState.m_DashArray.empty())
-      return false;
-    if (!dashArray || refState.m_DashArray.empty())
-      return true;
-    return pState->m_DashPhase != refState.m_DashPhase ||
-           pState->m_DashArray != refState.m_DashArray;
   }
 
   void AdjustClip(size_t limit) {
@@ -1278,15 +1182,8 @@ class SkiaState {
     }
   }
 
-  void Flush() {
-    if (Accumulator::kPath == m_type || Accumulator::kText == m_type) {
-      AdjustClip(std::min(m_drawIndex, m_commands.size()));
-      Accumulator::kPath == m_type ? FlushPath() : FlushText();
-    }
-  }
-
+  // TODO(crbug.com/pdfium/1963): Simplify clip handling.
   void FlushForDraw() {
-    Flush();                     // draw any pending text or path
     AdjustClip(m_commandIndex);  // set up clip stack with any pending state
   }
 
@@ -1352,13 +1249,9 @@ class SkiaState {
   BlendMode m_blendType = BlendMode::kNormal;
   // active position in clip command stack
   size_t m_commandIndex = 0;
-  // position of the pending path or text draw
-  size_t m_drawIndex = std::numeric_limits<size_t>::max();
   // position reflecting depth of canvas clip stack
   size_t m_clipIndex = 0;
   int m_italicAngle = 0;
-  // type of pending draw
-  Accumulator m_type = Accumulator::kNone;
   bool m_fillPath = false;
   bool m_groupKnockout = false;
   bool m_isSubstFontBold = false;
@@ -1460,9 +1353,8 @@ CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver() {
     delete m_pCanvas;
 }
 
-void CFX_SkiaDeviceDriver::Flush() {
-  m_pCache->Flush();
-}
+// TODO(crbug.com/pdfium/1963): Remove this API.
+void CFX_SkiaDeviceDriver::Flush() {}
 
 bool CFX_SkiaDeviceDriver::DrawDeviceText(
     pdfium::span<const TextCharPos> pCharPos,
