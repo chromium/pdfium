@@ -37,12 +37,7 @@ void CFX_DefaultRenderDevice::SetDefaultRenderer(RendererType renderer_type) {
 
 CFX_DefaultRenderDevice::CFX_DefaultRenderDevice() = default;
 
-CFX_DefaultRenderDevice::~CFX_DefaultRenderDevice() {
-#ifdef _SKIA_SUPPORT_
-  if (SkiaIsDefaultRenderer())
-    Flush(true);
-#endif
-}
+CFX_DefaultRenderDevice::~CFX_DefaultRenderDevice() = default;
 
 bool CFX_DefaultRenderDevice::Attach(RetainPtr<CFX_DIBitmap> pBitmap) {
   return AttachWithRgbByteOrder(std::move(pBitmap), false);

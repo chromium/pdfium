@@ -54,7 +54,6 @@
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_2d_size.h"
-#include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/span_util.h"
@@ -160,28 +159,6 @@ bool Type3CharMissingStrokeColor(const CPDF_Type3Char* pChar,
                                  const CPDF_ColorState* pColorState) {
   return pChar && (!pChar->colored() || MissingStrokeColor(pColorState));
 }
-
-#ifdef _SKIA_SUPPORT_
-class ScopedSkiaDeviceFlush {
- public:
-  FX_STACK_ALLOCATED();
-
-  explicit ScopedSkiaDeviceFlush(CFX_RenderDevice* pDevice)
-      : m_pDevice(pDevice) {}
-
-  ScopedSkiaDeviceFlush(const ScopedSkiaDeviceFlush&) = delete;
-  ScopedSkiaDeviceFlush& operator=(const ScopedSkiaDeviceFlush&) = delete;
-
-  ~ScopedSkiaDeviceFlush() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
-      m_pDevice->Flush(/*release=*/false);
-    }
-  }
-
- private:
-  UnownedPtr<CFX_RenderDevice> const m_pDevice;
-};
-#endif
 
 }  // namespace
 
@@ -716,7 +693,6 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   bitmap_render.ProcessObjectNoClip(pPageObj, new_matrix);
 #ifdef _SKIA_SUPPORT_
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
-    bitmap_device.Flush(true);
     bitmap->UnPreMultiply();
   }
 #endif  // _SKIA_SUPPORT_
@@ -1193,9 +1169,6 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pattern,
     return;
 
   CFX_RenderDevice::StateRestorer restorer(m_pDevice);
-#ifdef _SKIA_SUPPORT_
-  ScopedSkiaDeviceFlush scoped_skia_device_flush(m_pDevice);
-#endif
   if (!ClipPattern(pPageObj, mtObj2Device, stroke))
     return;
 
@@ -1440,11 +1413,6 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   status.SetDropObjects(m_bDropObjects);
   status.Initialize(nullptr, nullptr);
   status.RenderObjectList(&form, matrix);
-#ifdef _SKIA_SUPPORT_
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
-    bitmap_device.Flush(/*release=*/true);
-  }
-#endif  // _SKIA_SUPPORT_
 
   auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pMask->Create(width, height, FXDIB_Format::k8bppMask))

@@ -138,7 +138,6 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   virtual uint8_t* GetBuffer() const;
 
   void Clear(uint32_t color);
-  void Flush() override;
   SkCanvas* SkiaCanvas() { return m_pCanvas; }
   void DebugVerifyBitmapIsPreMultiplied() const;
   void Dump() const;

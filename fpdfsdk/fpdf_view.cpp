@@ -682,7 +682,6 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
 
 #ifdef _SKIA_SUPPORT_
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
-    pDevice->Flush(true);
     pBitmap->UnPreMultiply();
   }
 #endif

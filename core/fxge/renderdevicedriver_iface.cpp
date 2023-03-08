@@ -84,7 +84,3 @@ bool RenderDeviceDriverIface::SetBitsWithMask(
 
 void RenderDeviceDriverIface::SetGroupKnockout(bool group_knockout) {}
 #endif
-
-#ifdef _SKIA_SUPPORT_
-void RenderDeviceDriverIface::Flush() {}
-#endif

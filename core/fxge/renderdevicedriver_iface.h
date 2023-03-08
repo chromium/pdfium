@@ -117,9 +117,6 @@ class RenderDeviceDriverIface {
                                BlendMode blend_type);
   virtual void SetGroupKnockout(bool group_knockout);
 #endif
-#ifdef _SKIA_SUPPORT_
-  virtual void Flush();
-#endif
 };
 
 #endif  // CORE_FXGE_RENDERDEVICEDRIVER_IFACE_H_

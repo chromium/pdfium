@@ -1334,8 +1334,6 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkPictureRecorder* recorder)
 }
 
 CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver() {
-  Flush();
-
   // Convert and transfer the internal processed result to the original 24 bpp
   // bitmap provided by the render device.
   if (m_pOriginalBitmap && m_pBitmap->ConvertFormat(FXDIB_Format::kRgb)) {
@@ -1352,9 +1350,6 @@ CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver() {
   if (!m_pRecorder)
     delete m_pCanvas;
 }
-
-// TODO(crbug.com/pdfium/1963): Remove this API.
-void CFX_SkiaDeviceDriver::Flush() {}
 
 bool CFX_SkiaDeviceDriver::DrawDeviceText(
     pdfium::span<const TextCharPos> pCharPos,
@@ -2043,12 +2038,6 @@ bool CFX_SkiaDeviceDriver::SetBitsWithMask(
 }
 
 void CFX_SkiaDeviceDriver::SetGroupKnockout(bool group_knockout) {
-  if (group_knockout == m_bGroupKnockout)
-    return;
-
-  // Make sure to flush cached commands before changing `m_bGroupKnockout`
-  // status.
-  Flush();
   m_bGroupKnockout = group_knockout;
 }
 
@@ -2183,8 +2172,6 @@ bool CFX_DefaultRenderDevice::SetBitsWithMask(
     int top,
     int bitmap_alpha,
     BlendMode blend_type) {
-  // Finish painting before drawing masks.
-  Flush(false);
   return static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver())
       ->SetBitsWithMask(pBitmap, pMask, left, top, bitmap_alpha, blend_type);
 }

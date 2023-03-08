@@ -487,10 +487,6 @@ CFX_RenderDevice::CFX_RenderDevice() = default;
 
 CFX_RenderDevice::~CFX_RenderDevice() {
   RestoreState(false);
-#ifdef _SKIA_SUPPORT_
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-    Flush(true);
-#endif
 }
 
 // static
@@ -500,15 +496,6 @@ CFX_Matrix CFX_RenderDevice::GetFlipMatrix(float width,
                                            float top) {
   return CFX_Matrix(width, 0, 0, -height, left, top + height);
 }
-
-#ifdef _SKIA_SUPPORT_
-void CFX_RenderDevice::Flush(bool release) {
-  if (release)
-    m_pDeviceDriver.reset();
-  else
-    m_pDeviceDriver->Flush();
-}
-#endif
 
 void CFX_RenderDevice::SetDeviceDriver(
     std::unique_ptr<RenderDeviceDriverIface> pDriver) {
@@ -801,10 +788,6 @@ bool CFX_RenderDevice::DrawFillStrokePath(
                                                  fill_options, blend_type)) {
     return false;
   }
-#ifdef _SKIA_SUPPORT_
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-    bitmap_device.GetDeviceDriver()->Flush();
-#endif
   FX_RECT src_rect(0, 0, rect.Width(), rect.Height());
   return m_pDeviceDriver->SetDIBits(bitmap, 0, src_rect, rect.left, rect.top,
                                     BlendMode::kNormal);
