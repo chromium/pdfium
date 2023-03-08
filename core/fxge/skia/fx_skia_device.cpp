@@ -818,23 +818,16 @@ class SkiaState {
     m_strokeColor = stroke_color;
     m_blendType = blend_type;
     m_groupKnockout = m_pDriver->GetGroupKnockout();
-    if (pMatrix) {
-      m_drawMatrix = *pMatrix;
-    }
 
-    SkPath skPath = BuildPath(path);
-    SkPoint delta;
-    if (MatrixOffset(pMatrix, &delta))
-      skPath.offset(delta.fX, delta.fY);
-    m_skPath.addPath(skPath);
+    m_skPath.addPath(BuildPath(path));
 
     // TODO(crbug.com/pdfium/1963): Simplify code assuming eager flushing.
     AdjustClip(m_commandIndex);
-    FlushPath();
+    FlushPath(pMatrix ? *pMatrix : CFX_Matrix());
   }
 
-  void FlushPath() {
-    SkMatrix skMatrix = ToSkMatrix(m_drawMatrix);
+  void FlushPath(const CFX_Matrix& matrix) {
+    SkMatrix skMatrix = ToSkMatrix(matrix);
     SkPaint skPaint;
     skPaint.setAntiAlias(!m_fillOptions.aliased_path);
     if (m_fillOptions.full_cover)
@@ -883,7 +876,6 @@ class SkiaState {
         skCanvas->drawPath(m_skPath, skPaint);
       }
     }
-    m_drawMatrix = CFX_Matrix();
     m_fillOptions = CFX_FillRenderOptions();
   }
 
@@ -942,7 +934,6 @@ class SkiaState {
     m_fontSize = font_size;
     m_scaleX = scaleX;
     m_fillColor = color;
-    m_drawMatrix = matrix;
     m_textOptions = options;
 
     const size_t original_count = m_charDetails.Count();
@@ -969,13 +960,6 @@ class SkiaState {
       }
 #endif
     }
-    SkPoint delta;
-    if (MatrixOffset(&matrix, &delta)) {
-      for (size_t index = original_count; index < total_count; ++index) {
-        m_charDetails.OffsetPositionAt(index, delta.fX * flip,
-                                       -delta.fY * flip);
-      }
-    }
     if (hasRSX) {
       const DataVector<SkPoint>& positions = m_charDetails.GetPositions();
       for (size_t index = 0; index < char_pos.size(); ++index) {
@@ -997,11 +981,11 @@ class SkiaState {
 
     // TODO(crbug.com/pdfium/1963): Simplify code assuming eager flushing.
     AdjustClip(m_commandIndex);
-    FlushText();
+    FlushText(matrix);
     return true;
   }
 
-  void FlushText() {
+  void FlushText(const CFX_Matrix& matrix) {
     SkPaint skPaint;
     skPaint.setAntiAlias(true);
     skPaint.setColor(m_fillColor);
@@ -1021,7 +1005,7 @@ class SkiaState {
     SkCanvas* skCanvas = m_pDriver->SkiaCanvas();
     SkAutoCanvasRestore scoped_save_restore(skCanvas, /*doSave=*/true);
     SkScalar flip = m_fontSize < 0 ? -1 : 1;
-    SkMatrix skMatrix = ToFlippedSkMatrix(m_drawMatrix, flip);
+    SkMatrix skMatrix = ToFlippedSkMatrix(matrix, flip);
     skCanvas->concat(skMatrix);
     const DataVector<uint16_t>& glyphs = m_charDetails.GetGlyphs();
     if (m_rsxform.size()) {
@@ -1038,7 +1022,6 @@ class SkiaState {
       }
     }
 
-    m_drawMatrix = CFX_Matrix();
     m_italicAngle = 0;
     m_isSubstFontBold = false;
     m_textOptions = CFX_TextRenderOptions();
@@ -1112,28 +1095,6 @@ class SkiaState {
     SetClip(dst_path);
   }
 
-  bool MatrixOffset(const CFX_Matrix* pMatrix, SkPoint* delta) {
-    CFX_Matrix identityMatrix;
-    if (!pMatrix)
-      pMatrix = &identityMatrix;
-    delta->set(pMatrix->e - m_drawMatrix.e, pMatrix->f - m_drawMatrix.f);
-    if (!delta->fX && !delta->fY)
-      return true;
-    SkMatrix drawMatrix = ToSkMatrix(m_drawMatrix);
-    if (!(drawMatrix.getType() & ~SkMatrix::kTranslate_Mask))
-      return true;
-    SkMatrix invDrawMatrix;
-    if (!drawMatrix.invert(&invDrawMatrix))
-      return false;
-    SkMatrix invNewMatrix;
-    SkMatrix newMatrix = ToSkMatrix(*pMatrix);
-    if (!newMatrix.invert(&invNewMatrix))
-      return false;
-    delta->set(invDrawMatrix.getTranslateX() - invNewMatrix.getTranslateX(),
-               invDrawMatrix.getTranslateY() - invNewMatrix.getTranslateY());
-    return true;
-  }
-
   void ClipSave() {
     if (m_commandIndex < m_commands.size()) {
       if (Clip::kSave == m_commands[m_commandIndex]) {
@@ -1197,9 +1158,6 @@ class SkiaState {
     void SetPositionAt(size_t index, const SkPoint& position) {
       m_positions[index] = position;
     }
-    void OffsetPositionAt(size_t index, SkScalar dx, SkScalar dy) {
-      m_positions[index].offset(dx, dy);
-    }
     const DataVector<uint16_t>& GetGlyphs() const { return m_glyphs; }
     void SetGlyphAt(size_t index, uint16_t glyph) { m_glyphs[index] = glyph; }
     const DataVector<uint32_t>& GetFontCharWidths() const {
@@ -1236,7 +1194,6 @@ class SkiaState {
   SkPath m_skPath;
   // used as placehold in the clips array
   SkPath m_skEmptyPath;
-  CFX_Matrix m_drawMatrix;
   CFX_GraphStateData m_drawState;
   CFX_FillRenderOptions m_fillOptions;
   CFX_TextRenderOptions m_textOptions;
