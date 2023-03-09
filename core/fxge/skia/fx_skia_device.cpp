@@ -791,74 +791,7 @@ RetainPtr<CFX_DIBitmap> MakeDebugBitmap(int width, int height, uint32_t color) {
 class SkiaState {
  public:
   // mark all cached state as uninitialized
-  explicit SkiaState(CFX_SkiaDeviceDriver* pDriver) : m_pDriver(pDriver) {}
-
-  // TODO(crbug.com/pdfium/1963): `blend_type` isn't used?
-  void DrawPath(const CFX_Path& path,
-                const CFX_Matrix* pMatrix,
-                const CFX_GraphStateData* pDrawState,
-                uint32_t fill_color,
-                uint32_t stroke_color,
-                const CFX_FillRenderOptions& fill_options,
-                BlendMode blend_type) {
-    SkPath skia_path = BuildPath(path);
-    skia_path.setFillType(GetAlternateOrWindingFillType(fill_options));
-    if (pDrawState) {
-      m_drawState = *pDrawState;
-    }
-
-    SkMatrix skMatrix = pMatrix ? ToSkMatrix(*pMatrix) : SkMatrix();
-    SkPaint skPaint;
-    skPaint.setAntiAlias(!fill_options.aliased_path);
-    if (fill_options.full_cover) {
-      skPaint.setBlendMode(SkBlendMode::kPlus);
-    }
-    int stroke_alpha = FXARGB_A(stroke_color);
-    if (stroke_alpha)
-      PaintStroke(&skPaint, &m_drawState, skMatrix, fill_options);
-    SkCanvas* skCanvas = m_pDriver->SkiaCanvas();
-    SkAutoCanvasRestore scoped_save_restore(skCanvas, /*doSave=*/true);
-    skCanvas->concat(skMatrix);
-    bool do_stroke = true;
-    if (fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
-        fill_color) {
-      SkPath strokePath;
-      const SkPath* fillPath = &skia_path;
-      if (stroke_alpha) {
-        if (m_pDriver->GetGroupKnockout()) {
-          skpathutils::FillPathWithPaint(skia_path, skPaint, &strokePath);
-          if (stroke_color == fill_color &&
-              Op(skia_path, strokePath, SkPathOp::kUnion_SkPathOp,
-                 &strokePath)) {
-            fillPath = &strokePath;
-            do_stroke = false;
-          } else if (Op(skia_path, strokePath, SkPathOp::kDifference_SkPathOp,
-                        &strokePath)) {
-            fillPath = &strokePath;
-          }
-        }
-      }
-      skPaint.setStyle(SkPaint::kFill_Style);
-      skPaint.setColor(fill_color);
-      DebugShowSkiaDrawPath(m_pDriver, skCanvas, skPaint, *fillPath);
-      skCanvas->drawPath(*fillPath, skPaint);
-    }
-    if (stroke_alpha && do_stroke) {
-      skPaint.setStyle(SkPaint::kStroke_Style);
-      skPaint.setColor(stroke_color);
-      if (!skia_path.isLastContourClosed() && IsPathAPoint(skia_path)) {
-        DCHECK_GE(skia_path.countPoints(), 1);
-        skCanvas->drawPoint(skia_path.getPoint(0), skPaint);
-      } else if (IsPathAPoint(skia_path) &&
-                 skPaint.getStrokeCap() != SkPaint::kRound_Cap) {
-        // Do nothing. A closed 0-length closed path can be rendered only if
-        // its line cap type is round.
-      } else {
-        DebugShowSkiaDrawPath(m_pDriver, skCanvas, skPaint, skia_path);
-        skCanvas->drawPath(skia_path, skPaint);
-      }
-    }
-  }
+  explicit SkiaState(SkCanvas* pCanvas) : m_pCanvas(pCanvas) {}
 
   bool HasRSX(pdfium::span<const TextCharPos> char_pos,
               float* scaleXPtr,
@@ -965,22 +898,22 @@ class SkiaState {
     font.setSubpixel(true);
     font.setEdging(GetFontEdgingType(options));
 
-    SkCanvas* skCanvas = m_pDriver->SkiaCanvas();
-    SkAutoCanvasRestore scoped_save_restore(skCanvas, /*doSave=*/true);
-    skCanvas->concat(ToFlippedSkMatrix(matrix, flip));
+    SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
+    m_pCanvas->concat(ToFlippedSkMatrix(matrix, flip));
 
     const DataVector<uint16_t>& glyphs = m_charDetails.GetGlyphs();
     if (m_rsxform.size()) {
       sk_sp<SkTextBlob> blob = SkTextBlob::MakeFromRSXform(
           glyphs.data(), glyphs.size() * sizeof(uint16_t), m_rsxform.data(),
           font, SkTextEncoding::kGlyphID);
-      skCanvas->drawTextBlob(blob, 0, 0, skPaint);
+      m_pCanvas->drawTextBlob(blob, 0, 0, skPaint);
     } else {
       const DataVector<SkPoint>& positions = m_charDetails.GetPositions();
       for (size_t i = 0; i < m_charDetails.Count(); ++i) {
         sk_sp<SkTextBlob> blob = SkTextBlob::MakeFromText(
             &glyphs[i], sizeof(glyphs[i]), font, SkTextEncoding::kGlyphID);
-        skCanvas->drawTextBlob(blob, positions[i].fX, positions[i].fY, skPaint);
+        m_pCanvas->drawTextBlob(blob, positions[i].fX, positions[i].fY,
+                                skPaint);
       }
     }
     return true;
@@ -1024,8 +957,7 @@ class SkiaState {
   CharDetail m_charDetails;
   // accumulator for txt rotate/scale/translate
   DataVector<SkRSXform> m_rsxform;
-  CFX_GraphStateData m_drawState;
-  UnownedPtr<CFX_SkiaDeviceDriver> const m_pDriver;
+  UnownedPtr<SkCanvas> const m_pCanvas;
 };
 
 // static
@@ -1037,8 +969,9 @@ std::unique_ptr<CFX_SkiaDeviceDriver> CFX_SkiaDeviceDriver::Create(
   auto driver = pdfium::WrapUnique(
       new CFX_SkiaDeviceDriver(std::move(pBitmap), bRgbByteOrder,
                                std::move(pBackdropBitmap), bGroupKnockout));
-  if (!driver->SkiaCanvas())
+  if (!driver->m_pCanvas) {
     return nullptr;
+  }
 
   return driver;
 }
@@ -1051,7 +984,6 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
     : m_pBitmap(std::move(pBitmap)),
       m_pBackdropBitmap(pBackdropBitmap),
       m_pRecorder(nullptr),
-      m_pCache(std::make_unique<SkiaState>(this)),
       m_bRgbByteOrder(bRgbByteOrder),
       m_bGroupKnockout(bGroupKnockout) {
   SkBitmap skBitmap;
@@ -1087,13 +1019,13 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
   skBitmap.installPixels(imageInfo, m_pBitmap->GetBuffer().data(),
                          m_pBitmap->GetPitch());
   m_pCanvas = new SkCanvas(skBitmap);
+  m_pCache = std::make_unique<SkiaState>(m_pCanvas);
 }
 
 CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkPictureRecorder* recorder)
-    : m_pRecorder(recorder),
-      m_pCache(std::make_unique<SkiaState>(this)),
-      m_bGroupKnockout(false) {
+    : m_pRecorder(recorder), m_bGroupKnockout(false) {
   m_pCanvas = m_pRecorder->getRecordingCanvas();
+  m_pCache = std::make_unique<SkiaState>(m_pCanvas);
   int width = m_pCanvas->imageInfo().width();
   int height = m_pCanvas->imageInfo().height();
   DCHECK_EQ(kUnknown_SkColorType, m_pCanvas->imageInfo().colorType());
@@ -1118,8 +1050,10 @@ CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver() {
                                       /*src_top=*/0);
   }
 
-  if (!m_pRecorder)
+  if (!m_pRecorder) {
+    m_pCache.reset();
     delete m_pCanvas;
+  }
 }
 
 bool CFX_SkiaDeviceDriver::DrawDeviceText(
@@ -1355,6 +1289,7 @@ bool CFX_SkiaDeviceDriver::SetClip_PathStroke(
   return true;
 }
 
+// TODO(crbug.com/pdfium/1963): `blend_type` isn't used?
 bool CFX_SkiaDeviceDriver::DrawPath(
     const CFX_Path& path,                   // path info
     const CFX_Matrix* pObject2Device,       // optional transformation
@@ -1364,8 +1299,63 @@ bool CFX_SkiaDeviceDriver::DrawPath(
     const CFX_FillRenderOptions& fill_options,
     BlendMode blend_type) {
   m_FillOptions = fill_options;
-  m_pCache->DrawPath(path, pObject2Device, pGraphState, fill_color,
-                     stroke_color, fill_options, blend_type);
+
+  SkPath skia_path = BuildPath(path);
+  skia_path.setFillType(GetAlternateOrWindingFillType(fill_options));
+
+  SkMatrix skMatrix = pObject2Device ? ToSkMatrix(*pObject2Device) : SkMatrix();
+  SkPaint skPaint;
+  skPaint.setAntiAlias(!fill_options.aliased_path);
+  if (fill_options.full_cover) {
+    skPaint.setBlendMode(SkBlendMode::kPlus);
+  }
+  int stroke_alpha = FXARGB_A(stroke_color);
+  if (stroke_alpha) {
+    const CFX_GraphStateData& graph_state =
+        pGraphState ? *pGraphState : CFX_GraphStateData();
+    PaintStroke(&skPaint, &graph_state, skMatrix, fill_options);
+  }
+
+  SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
+  m_pCanvas->concat(skMatrix);
+  bool do_stroke = true;
+  if (fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&
+      fill_color) {
+    SkPath strokePath;
+    const SkPath* fillPath = &skia_path;
+    if (stroke_alpha) {
+      if (m_bGroupKnockout) {
+        skpathutils::FillPathWithPaint(skia_path, skPaint, &strokePath);
+        if (stroke_color == fill_color &&
+            Op(skia_path, strokePath, SkPathOp::kUnion_SkPathOp, &strokePath)) {
+          fillPath = &strokePath;
+          do_stroke = false;
+        } else if (Op(skia_path, strokePath, SkPathOp::kDifference_SkPathOp,
+                      &strokePath)) {
+          fillPath = &strokePath;
+        }
+      }
+    }
+    skPaint.setStyle(SkPaint::kFill_Style);
+    skPaint.setColor(fill_color);
+    DebugShowSkiaDrawPath(this, m_pCanvas, skPaint, *fillPath);
+    m_pCanvas->drawPath(*fillPath, skPaint);
+  }
+  if (stroke_alpha && do_stroke) {
+    skPaint.setStyle(SkPaint::kStroke_Style);
+    skPaint.setColor(stroke_color);
+    if (!skia_path.isLastContourClosed() && IsPathAPoint(skia_path)) {
+      DCHECK_GE(skia_path.countPoints(), 1);
+      m_pCanvas->drawPoint(skia_path.getPoint(0), skPaint);
+    } else if (IsPathAPoint(skia_path) &&
+               skPaint.getStrokeCap() != SkPaint::kRound_Cap) {
+      // Do nothing. A closed 0-length closed path can be rendered only if
+      // its line cap type is round.
+    } else {
+      DebugShowSkiaDrawPath(this, m_pCanvas, skPaint, skia_path);
+      m_pCanvas->drawPath(skia_path, skPaint);
+    }
+  }
   return true;
 }
 
