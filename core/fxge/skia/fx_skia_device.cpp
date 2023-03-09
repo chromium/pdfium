@@ -27,7 +27,6 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/calculate_pitch.h"
@@ -74,10 +73,6 @@
 #include "third_party/skia/include/effects/SkDashPathEffect.h"
 #include "third_party/skia/include/effects/SkGradientShader.h"
 #include "third_party/skia/include/pathops/SkPathOps.h"
-
-// Assumes Skia is not going to add non-data members to its fundamental types.
-FX_DATA_PARTITION_EXCEPTION(SkPoint);
-FX_DATA_PARTITION_EXCEPTION(SkRSXform);
 
 namespace {
 
@@ -785,180 +780,39 @@ RetainPtr<CFX_DIBitmap> MakeDebugBitmap(int width, int height, uint32_t color) {
   return bitmap;
 }
 
-}  // namespace
-
-// TODO(crbug.com/pdfium/1936): Inline remaining methods.
-class SkiaState {
- public:
-  // mark all cached state as uninitialized
-  explicit SkiaState(SkCanvas* pCanvas) : m_pCanvas(pCanvas) {}
-
-  bool HasRSX(pdfium::span<const TextCharPos> char_pos,
-              float* scaleXPtr,
-              bool* oneAtATimePtr) const {
-    bool useRSXform = false;
-    bool oneAtATime = false;
-    float scaleX = 1;
-    for (const TextCharPos& cp : char_pos) {
-      if (!cp.m_bGlyphAdjust)
-        continue;
-      bool upright = 0 == cp.m_AdjustMatrix[1] && 0 == cp.m_AdjustMatrix[2];
-      if (cp.m_AdjustMatrix[0] != cp.m_AdjustMatrix[3]) {
-        if (upright && 1 == cp.m_AdjustMatrix[3]) {
-          if (1 == scaleX)
-            scaleX = cp.m_AdjustMatrix[0];
-          else if (scaleX != cp.m_AdjustMatrix[0])
-            oneAtATime = true;
-        } else {
+bool HasRSX(pdfium::span<const TextCharPos> char_pos,
+            float* scaleXPtr,
+            bool* oneAtATimePtr) {
+  bool useRSXform = false;
+  bool oneAtATime = false;
+  float scaleX = 1;
+  for (const TextCharPos& cp : char_pos) {
+    if (!cp.m_bGlyphAdjust) {
+      continue;
+    }
+    bool upright = 0 == cp.m_AdjustMatrix[1] && 0 == cp.m_AdjustMatrix[2];
+    if (cp.m_AdjustMatrix[0] != cp.m_AdjustMatrix[3]) {
+      if (upright && 1 == cp.m_AdjustMatrix[3]) {
+        if (1 == scaleX) {
+          scaleX = cp.m_AdjustMatrix[0];
+        } else if (scaleX != cp.m_AdjustMatrix[0]) {
           oneAtATime = true;
         }
-      } else if (cp.m_AdjustMatrix[1] != -cp.m_AdjustMatrix[2]) {
-        oneAtATime = true;
       } else {
-        useRSXform = true;
+        oneAtATime = true;
       }
-    }
-    *oneAtATimePtr = oneAtATime;
-    *scaleXPtr = oneAtATime ? 1 : scaleX;
-    return oneAtATime ? false : useRSXform;
-  }
-
-  bool DrawText(pdfium::span<const TextCharPos> char_pos,
-                const CFX_Font* pFont,
-                const CFX_Matrix& matrix,
-                float font_size,
-                uint32_t color,
-                const CFX_TextRenderOptions& options) {
-    float scaleX = 1;
-    bool oneAtATime = false;
-    bool hasRSX = HasRSX(char_pos, &scaleX, &oneAtATime);
-    if (oneAtATime) {
-      return false;
-    }
-
-    m_charDetails.SetCount(0);
-    m_rsxform.resize(0);
-
-    const size_t original_count = m_charDetails.Count();
-    FX_SAFE_SIZE_T safe_count = original_count;
-    safe_count += char_pos.size();
-    const size_t total_count = safe_count.ValueOrDie();
-    m_charDetails.SetCount(total_count);
-    if (hasRSX)
-      m_rsxform.resize(total_count);
-
-    const SkScalar flip = font_size < 0 ? -1 : 1;
-    const SkScalar vFlip = pFont->IsVertical() ? -1 : 1;
-    for (size_t index = 0; index < char_pos.size(); ++index) {
-      const TextCharPos& cp = char_pos[index];
-      size_t cur_index = index + original_count;
-      m_charDetails.SetPositionAt(
-          cur_index, {cp.m_Origin.x * flip, cp.m_Origin.y * vFlip});
-      m_charDetails.SetGlyphAt(cur_index,
-                               static_cast<uint16_t>(cp.m_GlyphIndex));
-      m_charDetails.SetFontCharWidthAt(cur_index, cp.m_FontCharWidth);
-#if BUILDFLAG(IS_APPLE)
-      if (cp.m_ExtGID) {
-        m_charDetails.SetGlyphAt(cur_index, static_cast<uint16_t>(cp.m_ExtGID));
-      }
-#endif
-    }
-    if (hasRSX) {
-      const DataVector<SkPoint>& positions = m_charDetails.GetPositions();
-      for (size_t index = 0; index < char_pos.size(); ++index) {
-        const TextCharPos& cp = char_pos[index];
-        SkRSXform& rsxform = m_rsxform[index + original_count];
-        if (cp.m_bGlyphAdjust) {
-          rsxform.fSCos = cp.m_AdjustMatrix[0];
-          rsxform.fSSin = cp.m_AdjustMatrix[1];
-          rsxform.fTx = cp.m_AdjustMatrix[0] * positions[index].fX;
-          rsxform.fTy = -cp.m_AdjustMatrix[3] * positions[index].fY;
-        } else {
-          rsxform.fSCos = 1;
-          rsxform.fSSin = 0;
-          rsxform.fTx = positions[index].fX;
-          rsxform.fTy = positions[index].fY;
-        }
-      }
-    }
-
-    SkPaint skPaint;
-    skPaint.setAntiAlias(true);
-    skPaint.setColor(color);
-
-    SkFont font;
-    if (pFont->GetFaceRec()) {  // exclude placeholder test fonts
-      font.setTypeface(sk_ref_sp(pFont->GetDeviceCache()));
-    }
-    font.setEmbolden(pFont->IsSubstFontBold());
-    font.setHinting(SkFontHinting::kNone);
-    font.setScaleX(scaleX);
-    font.setSkewX(tanf(pFont->GetSubstFontItalicAngle() * FXSYS_PI / 180.0));
-    font.setSize(SkTAbs(font_size));
-    font.setSubpixel(true);
-    font.setEdging(GetFontEdgingType(options));
-
-    SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
-    m_pCanvas->concat(ToFlippedSkMatrix(matrix, flip));
-
-    const DataVector<uint16_t>& glyphs = m_charDetails.GetGlyphs();
-    if (m_rsxform.size()) {
-      sk_sp<SkTextBlob> blob = SkTextBlob::MakeFromRSXform(
-          glyphs.data(), glyphs.size() * sizeof(uint16_t), m_rsxform.data(),
-          font, SkTextEncoding::kGlyphID);
-      m_pCanvas->drawTextBlob(blob, 0, 0, skPaint);
+    } else if (cp.m_AdjustMatrix[1] != -cp.m_AdjustMatrix[2]) {
+      oneAtATime = true;
     } else {
-      const DataVector<SkPoint>& positions = m_charDetails.GetPositions();
-      for (size_t i = 0; i < m_charDetails.Count(); ++i) {
-        sk_sp<SkTextBlob> blob = SkTextBlob::MakeFromText(
-            &glyphs[i], sizeof(glyphs[i]), font, SkTextEncoding::kGlyphID);
-        m_pCanvas->drawTextBlob(blob, positions[i].fX, positions[i].fY,
-                                skPaint);
-      }
+      useRSXform = true;
     }
-    return true;
   }
+  *oneAtATimePtr = oneAtATime;
+  *scaleXPtr = oneAtATime ? 1 : scaleX;
+  return oneAtATime ? false : useRSXform;
+}
 
- private:
-  class CharDetail {
-   public:
-    CharDetail() = default;
-    ~CharDetail() = default;
-
-    const DataVector<SkPoint>& GetPositions() const { return m_positions; }
-    void SetPositionAt(size_t index, const SkPoint& position) {
-      m_positions[index] = position;
-    }
-    const DataVector<uint16_t>& GetGlyphs() const { return m_glyphs; }
-    void SetGlyphAt(size_t index, uint16_t glyph) { m_glyphs[index] = glyph; }
-    const DataVector<uint32_t>& GetFontCharWidths() const {
-      return m_fontCharWidths;
-    }
-    void SetFontCharWidthAt(size_t index, uint32_t width) {
-      m_fontCharWidths[index] = width;
-    }
-    size_t Count() const {
-      DCHECK_EQ(m_positions.size(), m_glyphs.size());
-      return m_glyphs.size();
-    }
-    void SetCount(size_t count) {
-      m_positions.resize(count);
-      m_glyphs.resize(count);
-      m_fontCharWidths.resize(count);
-    }
-
-   private:
-    DataVector<SkPoint> m_positions;  // accumulator for text positions
-    DataVector<uint16_t> m_glyphs;    // accumulator for text glyphs
-    // accumulator for glyphs' width defined in pdf
-    DataVector<uint32_t> m_fontCharWidths;
-  };
-
-  CharDetail m_charDetails;
-  // accumulator for txt rotate/scale/translate
-  DataVector<SkRSXform> m_rsxform;
-  UnownedPtr<SkCanvas> const m_pCanvas;
-};
+}  // namespace
 
 // static
 std::unique_ptr<CFX_SkiaDeviceDriver> CFX_SkiaDeviceDriver::Create(
@@ -1019,13 +873,11 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
   skBitmap.installPixels(imageInfo, m_pBitmap->GetBuffer().data(),
                          m_pBitmap->GetPitch());
   m_pCanvas = new SkCanvas(skBitmap);
-  m_pCache = std::make_unique<SkiaState>(m_pCanvas);
 }
 
 CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkPictureRecorder* recorder)
     : m_pRecorder(recorder), m_bGroupKnockout(false) {
   m_pCanvas = m_pRecorder->getRecordingCanvas();
-  m_pCache = std::make_unique<SkiaState>(m_pCanvas);
   int width = m_pCanvas->imageInfo().width();
   int height = m_pCanvas->imageInfo().height();
   DCHECK_EQ(kUnknown_SkColorType, m_pCanvas->imageInfo().colorType());
@@ -1051,7 +903,6 @@ CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver() {
   }
 
   if (!m_pRecorder) {
-    m_pCache.reset();
     delete m_pCanvas;
   }
 }
@@ -1085,8 +936,8 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
       return false;
   }
 
-  if (m_pCache->DrawText(pCharPos, pFont, mtObject2Device, font_size, color,
-                         options)) {
+  if (TryDrawText(pCharPos, pFont, mtObject2Device, font_size, color,
+                  options)) {
     return true;
   }
   sk_sp<SkTypeface> typeface(SkSafeRef(pFont->GetDeviceCache()));
@@ -1110,6 +961,8 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
   m_pCanvas->concat(skMatrix);
   DataVector<SkPoint> positions(pCharPos.size());
   DataVector<uint16_t> glyphs(pCharPos.size());
+
+  // TODO(crbug.com/pdfium/1936): Reuse `HasRSX()` result.
   bool useRSXform = false;
   bool oneAtATime = false;
   for (size_t index = 0; index < pCharPos.size(); ++index) {
@@ -1196,6 +1049,101 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
     }
   }
 
+  return true;
+}
+
+bool CFX_SkiaDeviceDriver::TryDrawText(pdfium::span<const TextCharPos> char_pos,
+                                       const CFX_Font* pFont,
+                                       const CFX_Matrix& matrix,
+                                       float font_size,
+                                       uint32_t color,
+                                       const CFX_TextRenderOptions& options) {
+  float scaleX = 1;
+  bool oneAtATime = false;
+  bool hasRSX = HasRSX(char_pos, &scaleX, &oneAtATime);
+  if (oneAtATime) {
+    return false;
+  }
+
+  m_charDetails.SetCount(0);
+  m_rsxform.resize(0);
+
+  const size_t original_count = m_charDetails.Count();
+  FX_SAFE_SIZE_T safe_count = original_count;
+  safe_count += char_pos.size();
+  const size_t total_count = safe_count.ValueOrDie();
+  m_charDetails.SetCount(total_count);
+  if (hasRSX) {
+    m_rsxform.resize(total_count);
+  }
+
+  const SkScalar flip = font_size < 0 ? -1 : 1;
+  const SkScalar vFlip = pFont->IsVertical() ? -1 : 1;
+  for (size_t index = 0; index < char_pos.size(); ++index) {
+    const TextCharPos& cp = char_pos[index];
+    size_t cur_index = index + original_count;
+    m_charDetails.SetPositionAt(cur_index,
+                                {cp.m_Origin.x * flip, cp.m_Origin.y * vFlip});
+    m_charDetails.SetGlyphAt(cur_index, static_cast<uint16_t>(cp.m_GlyphIndex));
+    m_charDetails.SetFontCharWidthAt(cur_index, cp.m_FontCharWidth);
+#if BUILDFLAG(IS_APPLE)
+    if (cp.m_ExtGID) {
+      m_charDetails.SetGlyphAt(cur_index, static_cast<uint16_t>(cp.m_ExtGID));
+    }
+#endif
+  }
+  if (hasRSX) {
+    const DataVector<SkPoint>& positions = m_charDetails.GetPositions();
+    for (size_t index = 0; index < char_pos.size(); ++index) {
+      const TextCharPos& cp = char_pos[index];
+      SkRSXform& rsxform = m_rsxform[index + original_count];
+      if (cp.m_bGlyphAdjust) {
+        rsxform.fSCos = cp.m_AdjustMatrix[0];
+        rsxform.fSSin = cp.m_AdjustMatrix[1];
+        rsxform.fTx = cp.m_AdjustMatrix[0] * positions[index].fX;
+        rsxform.fTy = -cp.m_AdjustMatrix[3] * positions[index].fY;
+      } else {
+        rsxform.fSCos = 1;
+        rsxform.fSSin = 0;
+        rsxform.fTx = positions[index].fX;
+        rsxform.fTy = positions[index].fY;
+      }
+    }
+  }
+
+  SkPaint skPaint;
+  skPaint.setAntiAlias(true);
+  skPaint.setColor(color);
+
+  SkFont font;
+  if (pFont->GetFaceRec()) {  // exclude placeholder test fonts
+    font.setTypeface(sk_ref_sp(pFont->GetDeviceCache()));
+  }
+  font.setEmbolden(pFont->IsSubstFontBold());
+  font.setHinting(SkFontHinting::kNone);
+  font.setScaleX(scaleX);
+  font.setSkewX(tanf(pFont->GetSubstFontItalicAngle() * FXSYS_PI / 180.0));
+  font.setSize(SkTAbs(font_size));
+  font.setSubpixel(true);
+  font.setEdging(GetFontEdgingType(options));
+
+  SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
+  m_pCanvas->concat(ToFlippedSkMatrix(matrix, flip));
+
+  const DataVector<uint16_t>& glyphs = m_charDetails.GetGlyphs();
+  if (m_rsxform.size()) {
+    sk_sp<SkTextBlob> blob = SkTextBlob::MakeFromRSXform(
+        glyphs.data(), glyphs.size() * sizeof(uint16_t), m_rsxform.data(), font,
+        SkTextEncoding::kGlyphID);
+    m_pCanvas->drawTextBlob(blob, 0, 0, skPaint);
+  } else {
+    const DataVector<SkPoint>& positions = m_charDetails.GetPositions();
+    for (size_t i = 0; i < m_charDetails.Count(); ++i) {
+      sk_sp<SkTextBlob> blob = SkTextBlob::MakeFromText(
+          &glyphs[i], sizeof(glyphs[i]), font, SkTextEncoding::kGlyphID);
+      m_pCanvas->drawTextBlob(blob, positions[i].fX, positions[i].fY, skPaint);
+    }
+  }
   return true;
 }
 
@@ -1856,6 +1804,9 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
   return true;
 }
+
+CFX_SkiaDeviceDriver::CharDetail::CharDetail() = default;
+CFX_SkiaDeviceDriver::CharDetail::~CharDetail() = default;
 
 void CFX_DefaultRenderDevice::Clear(uint32_t color) {
   static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver())->Clear(color);
