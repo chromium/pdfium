@@ -962,85 +962,43 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
   DataVector<SkPoint> positions(pCharPos.size());
   DataVector<uint16_t> glyphs(pCharPos.size());
 
-  // TODO(crbug.com/pdfium/1936): Reuse `HasRSX()` result.
-  bool useRSXform = false;
-  bool oneAtATime = false;
   for (size_t index = 0; index < pCharPos.size(); ++index) {
     const TextCharPos& cp = pCharPos[index];
     positions[index] = {cp.m_Origin.x * flip, cp.m_Origin.y * vFlip};
-    if (cp.m_bGlyphAdjust) {
-      useRSXform = true;
-      if (cp.m_AdjustMatrix[0] != cp.m_AdjustMatrix[3] ||
-          cp.m_AdjustMatrix[1] != -cp.m_AdjustMatrix[2]) {
-        oneAtATime = true;
-      }
-    }
     glyphs[index] = static_cast<uint16_t>(cp.m_GlyphIndex);
 #if BUILDFLAG(IS_APPLE)
     if (cp.m_ExtGID)
       glyphs[index] = static_cast<uint16_t>(cp.m_ExtGID);
 #endif
   }
-  if (oneAtATime)
-    useRSXform = false;
-  if (useRSXform) {
-    DataVector<SkRSXform> xforms(pCharPos.size());
-    for (size_t index = 0; index < pCharPos.size(); ++index) {
-      const TextCharPos& cp = pCharPos[index];
-      SkRSXform& rsxform = xforms[index];
-      if (cp.m_bGlyphAdjust) {
-        rsxform.fSCos = cp.m_AdjustMatrix[0];
-        rsxform.fSSin = cp.m_AdjustMatrix[1];
-        rsxform.fTx = cp.m_AdjustMatrix[0] * positions[index].fX;
-        rsxform.fTy = -cp.m_AdjustMatrix[3] * positions[index].fY;
-      } else {
-        rsxform.fSCos = 1;
-        rsxform.fSSin = 0;
-        rsxform.fTx = positions[index].fX;
-        rsxform.fTy = positions[index].fY;
-      }
-    }
-    m_pCanvas->drawTextBlob(SkTextBlob::MakeFromRSXform(
-                                glyphs.data(), glyphs.size() * sizeof(uint16_t),
-                                xforms.data(), font, SkTextEncoding::kGlyphID),
-                            0, 0, paint);
-  } else if (oneAtATime) {
-    for (size_t index = 0; index < pCharPos.size(); ++index) {
-      const TextCharPos& cp = pCharPos[index];
-      if (cp.m_bGlyphAdjust) {
-        if (0 == cp.m_AdjustMatrix[1] && 0 == cp.m_AdjustMatrix[2] &&
-            1 == cp.m_AdjustMatrix[3]) {
-          font.setScaleX(cp.m_AdjustMatrix[0]);
-          auto blob =
-              SkTextBlob::MakeFromText(&glyphs[index], sizeof(glyphs[index]),
-                                       font, SkTextEncoding::kGlyphID);
-          m_pCanvas->drawTextBlob(blob, positions[index].fX,
-                                  positions[index].fY, paint);
-          font.setScaleX(SkIntToScalar(1));
-        } else {
-          SkAutoCanvasRestore scoped_save_restore2(m_pCanvas, /*doSave=*/true);
-          SkMatrix adjust;
-          adjust.preTranslate(positions[index].fX, -positions[index].fY);
-          adjust.setScaleX(cp.m_AdjustMatrix[0]);
-          adjust.setSkewX(cp.m_AdjustMatrix[1]);
-          adjust.setSkewY(cp.m_AdjustMatrix[2]);
-          adjust.setScaleY(cp.m_AdjustMatrix[3]);
-          m_pCanvas->concat(adjust);
-          auto blob =
-              SkTextBlob::MakeFromText(&glyphs[index], sizeof(glyphs[index]),
-                                       font, SkTextEncoding::kGlyphID);
-          m_pCanvas->drawTextBlob(blob, 0, 0, paint);
-        }
-      } else {
+
+  for (size_t index = 0; index < pCharPos.size(); ++index) {
+    const TextCharPos& cp = pCharPos[index];
+    if (cp.m_bGlyphAdjust) {
+      if (0 == cp.m_AdjustMatrix[1] && 0 == cp.m_AdjustMatrix[2] &&
+          1 == cp.m_AdjustMatrix[3]) {
+        font.setScaleX(cp.m_AdjustMatrix[0]);
         auto blob =
             SkTextBlob::MakeFromText(&glyphs[index], sizeof(glyphs[index]),
                                      font, SkTextEncoding::kGlyphID);
         m_pCanvas->drawTextBlob(blob, positions[index].fX, positions[index].fY,
                                 paint);
+        font.setScaleX(SkIntToScalar(1));
+      } else {
+        SkAutoCanvasRestore scoped_save_restore2(m_pCanvas, /*doSave=*/true);
+        SkMatrix adjust;
+        adjust.preTranslate(positions[index].fX, -positions[index].fY);
+        adjust.setScaleX(cp.m_AdjustMatrix[0]);
+        adjust.setSkewX(cp.m_AdjustMatrix[1]);
+        adjust.setSkewY(cp.m_AdjustMatrix[2]);
+        adjust.setScaleY(cp.m_AdjustMatrix[3]);
+        m_pCanvas->concat(adjust);
+        auto blob =
+            SkTextBlob::MakeFromText(&glyphs[index], sizeof(glyphs[index]),
+                                     font, SkTextEncoding::kGlyphID);
+        m_pCanvas->drawTextBlob(blob, 0, 0, paint);
       }
-    }
-  } else {
-    for (size_t index = 0; index < pCharPos.size(); ++index) {
+    } else {
       auto blob =
           SkTextBlob::MakeFromText(&glyphs[index], sizeof(glyphs[index]), font,
                                    SkTextEncoding::kGlyphID);
@@ -1048,10 +1006,11 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
                               paint);
     }
   }
-
   return true;
 }
 
+// TODO(crbug.com/pdfium/1999): Merge with `DrawDeviceText()` and refactor
+// common logic.
 bool CFX_SkiaDeviceDriver::TryDrawText(pdfium::span<const TextCharPos> char_pos,
                                        const CFX_Font* pFont,
                                        const CFX_Matrix& matrix,
