@@ -236,9 +236,11 @@ class CFXJS_ObjDefinition {
     return scope.Escape(m_Signature.Get(GetIsolate()));
   }
 
-  void RunConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
+  void RunConstructor(CFXJS_Engine* pEngine,
+                      v8::Local<v8::Object> obj,
+                      v8::Local<v8::Object> proxy) {
     if (m_pConstructor)
-      m_pConstructor(pEngine, obj);
+      m_pConstructor(pEngine, obj, proxy);
   }
 
   void RunDestructor(v8::Local<v8::Object> obj) {
@@ -522,15 +524,8 @@ void CFXJS_Engine::InitializeEngine() {
   for (uint32_t i = 1; i <= maxID; ++i) {
     CFXJS_ObjDefinition* pObjDef = pIsolateData->ObjDefinitionForID(i);
     if (pObjDef->GetObjType() == FXJSOBJTYPE_GLOBAL) {
-      CFXJS_PerObjectData::SetInObject(new CFXJS_PerObjectData(i),
-                                       v8Context->Global()
-                                           ->GetPrototype()
-                                           ->ToObject(v8Context)
-                                           .ToLocalChecked());
-      pObjDef->RunConstructor(this, v8Context->Global()
-                                        ->GetPrototype()
-                                        ->ToObject(v8Context)
-                                        .ToLocalChecked());
+      CFXJS_PerObjectData::SetInObject(new CFXJS_PerObjectData(i), pThis);
+      pObjDef->RunConstructor(this, pThis, pThisProxy);
     } else if (pObjDef->GetObjType() == FXJSOBJTYPE_STATIC) {
       v8::Local<v8::String> pObjName = NewString(pObjDef->GetObjName());
       v8::Local<v8::Object> obj = NewFXJSBoundObject(i, FXJSOBJTYPE_STATIC);
@@ -625,7 +620,7 @@ v8::Local<v8::Object> CFXJS_Engine::NewFXJSBoundObject(uint32_t nObjDefnID,
 
   CFXJS_PerObjectData* pObjData = new CFXJS_PerObjectData(nObjDefnID);
   CFXJS_PerObjectData::SetInObject(pObjData, obj);
-  pObjDef->RunConstructor(this, obj);
+  pObjDef->RunConstructor(this, obj, obj);
   if (type == FXJSOBJTYPE_DYNAMIC) {
     auto* pIsolateData = FXJS_PerIsolateData::Get(GetIsolate());
     V8TemplateMap* pObjsMap = pIsolateData->GetDynamicObjsMap();

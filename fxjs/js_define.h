@@ -42,9 +42,11 @@ bool IsExpandedParamKnown(v8::Local<v8::Value> value);
 // to construct native object state.
 
 template <class T>
-static void JSConstructor(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj) {
+static void JSConstructor(CFXJS_Engine* pEngine,
+                          v8::Local<v8::Object> obj,
+                          v8::Local<v8::Object> proxy) {
   pEngine->SetObjectPrivate(
-      obj, std::make_unique<T>(obj, static_cast<CJS_Runtime*>(pEngine)));
+      obj, std::make_unique<T>(proxy, static_cast<CJS_Runtime*>(pEngine)));
 }
 
 // CJS_Object has virtual dtor, template not required.

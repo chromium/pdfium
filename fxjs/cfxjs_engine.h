@@ -85,8 +85,9 @@ class CFXJS_Engine : public CFX_V8 {
   explicit CFXJS_Engine(v8::Isolate* pIsolate);
   ~CFXJS_Engine() override;
 
-  using Constructor =
-      std::function<void(CFXJS_Engine* pEngine, v8::Local<v8::Object> obj)>;
+  using Constructor = std::function<void(CFXJS_Engine* pEngine,
+                                         v8::Local<v8::Object> obj,
+                                         v8::Local<v8::Object> proxy)>;
   using Destructor = std::function<void(v8::Local<v8::Object> obj)>;
 
   static uint32_t GetObjDefnID(v8::Local<v8::Object> pObj);
