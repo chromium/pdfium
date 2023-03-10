@@ -25,8 +25,6 @@
 #include "v8/include/v8-script.h"
 #include "v8/include/v8-util.h"
 
-class CFXJS_PerObjectData;
-
 namespace {
 
 unsigned int g_embedderDataSlot = 1u;
@@ -56,6 +54,41 @@ std::pair<int, int> GetLineAndColumnFromError(v8::Local<v8::Message> message,
 }
 
 }  // namespace
+
+class CFXJS_PerObjectData {
+ public:
+  ~CFXJS_PerObjectData() = default;
+
+  static void SetNewDataInObject(uint32_t nObjDefnID,
+                                 v8::Local<v8::Object> pObj) {
+    if (pObj->InternalFieldCount() == 2) {
+      pObj->SetAlignedPointerInInternalField(
+          0, GetAlignedPointerForPerObjectDataTag());
+      pObj->SetAlignedPointerInInternalField(
+          1, new CFXJS_PerObjectData(nObjDefnID));
+    }
+  }
+
+  static CFXJS_PerObjectData* GetFromObject(v8::Local<v8::Object> pObj) {
+    if (pObj.IsEmpty() || pObj->InternalFieldCount() != 2 ||
+        pObj->GetAlignedPointerFromInternalField(0) !=
+            GetAlignedPointerForPerObjectDataTag()) {
+      return nullptr;
+    }
+    return static_cast<CFXJS_PerObjectData*>(
+        pObj->GetAlignedPointerFromInternalField(1));
+  }
+
+  uint32_t GetObjDefnID() const { return m_ObjDefnID; }
+  CJS_Object* GetPrivate() { return m_pPrivate.get(); }
+  void SetPrivate(std::unique_ptr<CJS_Object> p) { m_pPrivate = std::move(p); }
+
+ private:
+  explicit CFXJS_PerObjectData(uint32_t nObjDefnID) : m_ObjDefnID(nObjDefnID) {}
+
+  const uint32_t m_ObjDefnID;
+  std::unique_ptr<CJS_Object> m_pPrivate;
+};
 
 // Global weak map to save dynamic objects.
 class V8TemplateMapTraits final
@@ -99,7 +132,8 @@ class V8TemplateMap {
   explicit V8TemplateMap(v8::Isolate* isolate) : m_map(isolate) {}
   ~V8TemplateMap() = default;
 
-  void SetAndMakeWeak(WeakCallbackDataType* key, v8::Local<v8::Object> handle) {
+  void SetAndMakeWeak(v8::Local<v8::Object> handle) {
+    WeakCallbackDataType* key = CFXJS_PerObjectData::GetFromObject(handle);
     DCHECK(!m_map.Contains(key));
 
     // Inserting an object into a GlobalValueMap with the appropriate traits
@@ -112,40 +146,6 @@ class V8TemplateMap {
 
  private:
   MapType m_map;
-};
-
-class CFXJS_PerObjectData {
- public:
-  explicit CFXJS_PerObjectData(uint32_t nObjDefnID) : m_ObjDefnID(nObjDefnID) {}
-
-  ~CFXJS_PerObjectData() = default;
-
-  static void SetInObject(CFXJS_PerObjectData* pData,
-                          v8::Local<v8::Object> pObj) {
-    if (pObj->InternalFieldCount() == 2) {
-      pObj->SetAlignedPointerInInternalField(
-          0, GetAlignedPointerForPerObjectDataTag());
-      pObj->SetAlignedPointerInInternalField(1, pData);
-    }
-  }
-
-  static CFXJS_PerObjectData* GetFromObject(v8::Local<v8::Object> pObj) {
-    if (pObj.IsEmpty() || pObj->InternalFieldCount() != 2 ||
-        pObj->GetAlignedPointerFromInternalField(0) !=
-            GetAlignedPointerForPerObjectDataTag()) {
-      return nullptr;
-    }
-    return static_cast<CFXJS_PerObjectData*>(
-        pObj->GetAlignedPointerFromInternalField(1));
-  }
-
-  uint32_t GetObjDefnID() const { return m_ObjDefnID; }
-  CJS_Object* GetPrivate() { return m_pPrivate.get(); }
-  void SetPrivate(std::unique_ptr<CJS_Object> p) { m_pPrivate = std::move(p); }
-
- private:
-  const uint32_t m_ObjDefnID;
-  std::unique_ptr<CJS_Object> m_pPrivate;
 };
 
 class CFXJS_ObjDefinition {
@@ -524,7 +524,7 @@ void CFXJS_Engine::InitializeEngine() {
   for (uint32_t i = 1; i <= maxID; ++i) {
     CFXJS_ObjDefinition* pObjDef = pIsolateData->ObjDefinitionForID(i);
     if (pObjDef->GetObjType() == FXJSOBJTYPE_GLOBAL) {
-      CFXJS_PerObjectData::SetInObject(new CFXJS_PerObjectData(i), pThis);
+      CFXJS_PerObjectData::SetNewDataInObject(i, pThis);
       pObjDef->RunConstructor(this, pThis, pThisProxy);
     } else if (pObjDef->GetObjType() == FXJSOBJTYPE_STATIC) {
       v8::Local<v8::String> pObjName = NewString(pObjDef->GetObjName());
@@ -618,14 +618,13 @@ v8::Local<v8::Object> CFXJS_Engine::NewFXJSBoundObject(uint32_t nObjDefnID,
   if (!pObjDef->GetInstanceTemplate()->NewInstance(context).ToLocal(&obj))
     return v8::Local<v8::Object>();
 
-  CFXJS_PerObjectData* pObjData = new CFXJS_PerObjectData(nObjDefnID);
-  CFXJS_PerObjectData::SetInObject(pObjData, obj);
+  CFXJS_PerObjectData::SetNewDataInObject(nObjDefnID, obj);
   pObjDef->RunConstructor(this, obj, obj);
   if (type == FXJSOBJTYPE_DYNAMIC) {
     auto* pIsolateData = FXJS_PerIsolateData::Get(GetIsolate());
     V8TemplateMap* pObjsMap = pIsolateData->GetDynamicObjsMap();
     if (pObjsMap)
-      pObjsMap->SetAndMakeWeak(pObjData, obj);
+      pObjsMap->SetAndMakeWeak(obj);
   }
   return obj;
 }
