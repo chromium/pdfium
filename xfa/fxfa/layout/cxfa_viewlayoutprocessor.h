@@ -193,7 +193,7 @@ class CXFA_ViewLayoutProcessor
   int32_t m_nCurPageCount = 0;
   XFA_AttributeValue m_ePageSetMode = XFA_AttributeValue::OrderedOccurrence;
   bool m_bCreateOverFlowPage = false;
-  std::map<CXFA_Node*, int32_t> m_pPageSetMap;
+  std::map<cppgc::Member<CXFA_Node>, int32_t> m_pPageSetMap;
   std::vector<cppgc::Member<CXFA_ViewLayoutItem>> m_PageArray;
 };
 

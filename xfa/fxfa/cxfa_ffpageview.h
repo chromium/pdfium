@@ -57,8 +57,6 @@ class CXFA_FFPageWidgetIterator final : public CXFA_FFWidget::IteratorIface {
                             Mask<XFA_WidgetStatus> dwFilter);
   ~CXFA_FFPageWidgetIterator() override;
 
-  void Trace(cppgc::Visitor* visitor) const {}
-
   // CXFA_FFWidget::IteratorIface:
   CXFA_FFWidget* MoveToFirst() override;
   CXFA_FFWidget* MoveToLast() override;

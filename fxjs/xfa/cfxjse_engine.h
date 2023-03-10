@@ -199,8 +199,10 @@ class CFXJSE_Engine final : public CFX_V8 {
   CXFA_Script::Type m_eScriptType = CXFA_Script::Type::Unknown;
   // |m_mapObjectToValue| is what ensures the v8 object bound to a
   // CJX_Object remains valid for the lifetime of the engine.
-  std::map<CJX_Object*, v8::Global<v8::Object>> m_mapObjectToObject;
-  std::map<CJX_Object*, std::unique_ptr<CFXJSE_Context>> m_mapVariableToContext;
+  std::map<cppgc::Persistent<CJX_Object>, v8::Global<v8::Object>>
+      m_mapObjectToObject;
+  std::map<cppgc::Persistent<CJX_Object>, std::unique_ptr<CFXJSE_Context>>
+      m_mapVariableToContext;
   cppgc::Persistent<CXFA_Node> m_pTarget;
   UnownedPtr<CXFA_EventParam> m_eventParam;
   std::vector<cppgc::Persistent<CXFA_Node>> m_upObjectArray;

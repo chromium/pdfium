@@ -652,6 +652,7 @@ void CXFA_ContentLayoutProcessor::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pViewLayoutProcessor);
   ContainerTrace(visitor, m_ArrayKeepItems);
   ContainerTrace(visitor, m_PendingNodes);
+  ContainerTrace(visitor, m_PendingNodesCount);
 }
 
 CXFA_ContentLayoutItem* CXFA_ContentLayoutProcessor::CreateContentLayoutItem(

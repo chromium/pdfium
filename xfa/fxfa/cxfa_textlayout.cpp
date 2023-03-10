@@ -100,8 +100,7 @@ void CXFA_TextLayout::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pTextProvider);
   visitor->Trace(m_pTextDataNode);
   visitor->Trace(m_pTextParser);
-  if (m_pLoader)
-    m_pLoader->Trace(visitor);
+  visitor->Trace(m_pLoader);
 }
 
 void CXFA_TextLayout::Unload() {
@@ -331,7 +330,8 @@ float CXFA_TextLayout::GetLayoutHeight() {
 
 float CXFA_TextLayout::StartLayout(float fWidth) {
   if (!m_pLoader)
-    m_pLoader = std::make_unique<LoaderContext>();
+    m_pLoader = cppgc::MakeGarbageCollected<LoaderContext>(
+        m_pDoc->GetHeap()->GetAllocationHandle());
 
   if (fWidth < 0 ||
       (m_pLoader->fWidth > -1 && fabs(fWidth - m_pLoader->fWidth) > 0)) {
@@ -615,7 +615,7 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
     for (size_t i = 0; i < szBlockCount; ++i)
       LayoutInternal(i);
     m_pTabstopContext.reset();
-    m_pLoader.reset();
+    m_pLoader.Clear();
   }
 
   std::vector<TextCharPos> char_pos(1);

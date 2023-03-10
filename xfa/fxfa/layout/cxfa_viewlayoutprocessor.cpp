@@ -359,13 +359,13 @@ void CXFA_ViewLayoutProcessor::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pCurPageArea);
   visitor->Trace(m_pPageSetRootLayoutItem);
   visitor->Trace(m_pPageSetCurLayoutItem);
-  for (const auto& record : m_ProposedViewRecords)
-    visitor->Trace(*record);
+  ContainerTrace(visitor, m_ProposedViewRecords);
 
   if (m_CurrentViewRecordIter != m_ProposedViewRecords.end())
     visitor->Trace(*m_CurrentViewRecordIter);
 
   ContainerTrace(visitor, m_PageArray);
+  ContainerTrace(visitor, m_pPageSetMap);
 }
 
 bool CXFA_ViewLayoutProcessor::InitLayoutPage(CXFA_Node* pFormNode) {

@@ -43,13 +43,31 @@ TEST(ContainerTrace, ActualListTrace) {
   EXPECT_EQ(1, cv.call_count());
 }
 
-TEST(ContainerTrace, ActualMapTrace) {
+TEST(ContainerTrace, ActualMapTraceFirst) {
+  std::map<cppgc::Member<Thing>, int> thing;
+  thing[nullptr] = 42;
+
+  CountingVisitor cv;
+  ContainerTrace(&cv, thing);
+  EXPECT_EQ(1, cv.call_count());
+}
+
+TEST(ContainerTrace, ActualMapTraceSecond) {
   std::map<int, cppgc::Member<Thing>> thing;
   thing[42] = nullptr;
 
   CountingVisitor cv;
   ContainerTrace(&cv, thing);
   EXPECT_EQ(1, cv.call_count());
+}
+
+TEST(ContainerTrace, ActualMapTraceBoth) {
+  std::map<cppgc::Member<Thing>, cppgc::Member<Thing>> thing;
+  thing[nullptr] = nullptr;
+
+  CountingVisitor cv;
+  ContainerTrace(&cv, thing);
+  EXPECT_EQ(2, cv.call_count());
 }
 
 TEST(ContainerTrace, ActualSetTrace) {

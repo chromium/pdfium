@@ -18,7 +18,8 @@ CFWL_App::CFWL_App(AdapterIface* pAdapter)
           pAdapter->GetWidgetMgrAdapter(),
           this)),
       m_pNoteDriver(cppgc::MakeGarbageCollected<CFWL_NoteDriver>(
-          pAdapter->GetHeap()->GetAllocationHandle())) {}
+          pAdapter->GetHeap()->GetAllocationHandle(),
+          this)) {}
 
 CFWL_App::~CFWL_App() = default;
 

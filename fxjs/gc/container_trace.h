@@ -23,9 +23,27 @@ void ContainerTrace(V* visitor, const std::list<cppgc::Member<T>>& container) {
 
 template <typename T, typename U, typename V = cppgc::Visitor>
 void ContainerTrace(V* visitor,
+                    const std::map<cppgc::Member<T>, U>& container) {
+  for (const auto& item : container) {
+    visitor->Trace(item.first);
+  }
+}
+
+template <typename T, typename U, typename V = cppgc::Visitor>
+void ContainerTrace(V* visitor,
                     const std::map<U, cppgc::Member<T>>& container) {
   for (const auto& item : container)
     visitor->Trace(item.second);
+}
+
+template <typename T, typename U, typename V = cppgc::Visitor>
+void ContainerTrace(
+    V* visitor,
+    const std::map<cppgc::Member<U>, cppgc::Member<T>>& container) {
+  for (const auto& item : container) {
+    visitor->Trace(item.first);
+    visitor->Trace(item.second);
+  }
 }
 
 template <typename T, typename V = cppgc::Visitor>

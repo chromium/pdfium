@@ -13,7 +13,7 @@
 class GCedLocaleIface : public cppgc::GarbageCollected<GCedLocaleIface>,
                         public LocaleIface {
  public:
-  virtual void Trace(cppgc::Visitor* visitor) const = 0;
+  virtual void Trace(cppgc::Visitor* visitor) const {}
 };
 
 #endif  // XFA_FXFA_PARSER_GCED_LOCALE_IFACE_H_

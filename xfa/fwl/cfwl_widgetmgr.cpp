@@ -7,6 +7,7 @@
 #include "xfa/fwl/cfwl_widgetmgr.h"
 
 #include "build/build_config.h"
+#include "fxjs/gc/container_trace.h"
 #include "third_party/base/check.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_message.h"
@@ -25,8 +26,7 @@ CFWL_WidgetMgr::~CFWL_WidgetMgr() = default;
 void CFWL_WidgetMgr::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pApp);
   visitor->Trace(m_pAdapter);
-  for (auto& item : m_mapWidgetItem)
-    visitor->Trace(item.second);
+  ContainerTrace(visitor, m_mapWidgetItem);
 }
 
 CFWL_Widget* CFWL_WidgetMgr::GetParentWidget(const CFWL_Widget* pWidget) const {

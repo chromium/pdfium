@@ -98,7 +98,7 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
     float fHeight;
   };
 
-  struct LoaderContext {
+  struct LoaderContext : public cppgc::GarbageCollected<LoaderContext> {
     LoaderContext();
     ~LoaderContext();
 
@@ -183,8 +183,8 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
   cppgc::Member<CXFA_TextProvider> const m_pTextProvider;
   cppgc::Member<CXFA_Node> m_pTextDataNode;
   cppgc::Member<CXFA_TextParser> m_pTextParser;
+  cppgc::Member<LoaderContext> m_pLoader;
   std::unique_ptr<CFGAS_RTFBreak> m_pBreak;
-  std::unique_ptr<LoaderContext> m_pLoader;
   std::vector<std::unique_ptr<PieceLine>> m_pieceLines;
   std::unique_ptr<CXFA_TextTabstopsContext> m_pTabstopContext;
 };
