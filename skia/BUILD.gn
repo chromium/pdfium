@@ -17,7 +17,7 @@ if (current_cpu == "mipsel" || current_cpu == "mips64el") {
   import("//build/config/mips.gni")
 }
 
-skia_support_gpu = !is_ios
+skia_use_ganesh_backend = !is_ios
 skia_support_pdf = false
 
 # External-facing config for dependent code.
@@ -40,10 +40,8 @@ config("skia_config") {
     ]
   }
 
-  if (skia_support_gpu) {
-    defines += [ "SK_SUPPORT_GPU=1" ]
-  } else {
-    defines += [ "SK_SUPPORT_GPU=0" ]
+  if (skia_use_ganesh_backend) {
+    defines += [ "SK_GANESH" ]
   }
 
   if (skia_use_gl) {
@@ -196,7 +194,7 @@ component("skia") {
   allow_circular_includes_from = [ ":skia_opts" ]
 
   # GPU
-  if (skia_support_gpu) {
+  if (skia_use_ganesh_backend) {
     sources += skia_gpu_public
     sources += skia_gpu_private
     sources += skia_null_gpu_sources
