@@ -378,6 +378,8 @@ bug_983289.in * * * agg
 
 # TODO(pdfium:1747): Remove after associated bug is fixed
 jpxdecode.in * * * *
+jpxdecode_without_bitspercomponent.in * * * *
+jpxdecode_without_colorspace.in * * * *
 
 # TODO(chromium:1028991): Remove after associated bug is fixed
 reset_button.in * * * *
