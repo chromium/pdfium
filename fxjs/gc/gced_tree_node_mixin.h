@@ -16,22 +16,29 @@ namespace fxjs {
 // usable by classes that are already garbage collected themselves.
 template <typename T>
 class GCedTreeNodeMixin : public cppgc::GarbageCollectedMixin,
-                          public TreeNode<T, cppgc::Member<T>> {
+                          public fxcrt::TreeNodeBase<T> {
  public:
-  using TreeNode<T, cppgc::Member<T>>::RemoveChild;
-
   virtual void Trace(cppgc::Visitor* visitor) const {
-    visitor->Trace(TreeNode<T, cppgc::Member<T>>::RawParent());
-    visitor->Trace(TreeNode<T, cppgc::Member<T>>::RawFirstChild());
-    visitor->Trace(TreeNode<T, cppgc::Member<T>>::RawLastChild());
-    visitor->Trace(TreeNode<T, cppgc::Member<T>>::RawNextSibling());
-    visitor->Trace(TreeNode<T, cppgc::Member<T>>::RawPrevSibling());
+    visitor->Trace(m_pParent);
+    visitor->Trace(m_pFirstChild);
+    visitor->Trace(m_pLastChild);
+    visitor->Trace(m_pNextSibling);
+    visitor->Trace(m_pPrevSibling);
   }
 
  protected:
   GCedTreeNodeMixin() = default;
   GCedTreeNodeMixin(const GCedTreeNodeMixin& that) = delete;
   GCedTreeNodeMixin& operator=(const GCedTreeNodeMixin& that) = delete;
+
+ private:
+  friend class fxcrt::TreeNodeBase<T>;
+
+  cppgc::Member<T> m_pParent;
+  cppgc::Member<T> m_pFirstChild;
+  cppgc::Member<T> m_pLastChild;
+  cppgc::Member<T> m_pNextSibling;
+  cppgc::Member<T> m_pPrevSibling;
 };
 
 }  // namespace fxjs

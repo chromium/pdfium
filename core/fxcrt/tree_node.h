@@ -11,21 +11,23 @@
 
 namespace fxcrt {
 
-// Implements the usual DOM/XML-ish trees.
-template <typename T, typename PtrType = T*>
-class TreeNode {
- public:
-  TreeNode() = default;
-  virtual ~TreeNode() = default;
+// Implements the usual DOM/XML-ish trees allowing for a variety of
+// pointer types with which to connect the nodes.
 
-  T* GetParent() const { return m_pParent; }
-  T* GetFirstChild() const { return m_pFirstChild; }
-  T* GetLastChild() const { return m_pLastChild; }
-  T* GetNextSibling() const { return m_pNextSibling; }
-  T* GetPrevSibling() const { return m_pPrevSibling; }
+template <typename T>
+class TreeNodeBase {
+ public:
+  TreeNodeBase() = default;
+  virtual ~TreeNodeBase() = default;
+
+  T* GetParent() const { return actual().m_pParent; }
+  T* GetFirstChild() const { return actual().m_pFirstChild; }
+  T* GetLastChild() const { return actual().m_pLastChild; }
+  T* GetNextSibling() const { return actual().m_pNextSibling; }
+  T* GetPrevSibling() const { return actual().m_pPrevSibling; }
 
   bool HasChild(const T* child) const {
-    return child != this && child->m_pParent == this;
+    return child != this && child->GetParent() == this;
   }
 
   T* GetNthChild(int32_t n) {
@@ -40,29 +42,29 @@ class TreeNode {
 
   void AppendFirstChild(T* child) {
     BecomeParent(child);
-    if (m_pFirstChild) {
-      CHECK(m_pLastChild);
-      m_pFirstChild->m_pPrevSibling = child;
-      child->m_pNextSibling = m_pFirstChild;
-      m_pFirstChild = child;
+    if (actual().m_pFirstChild) {
+      CHECK(actual().m_pLastChild);
+      actual().m_pFirstChild->m_pPrevSibling = child;
+      child->m_pNextSibling = actual().m_pFirstChild;
+      actual().m_pFirstChild = child;
     } else {
-      CHECK(!m_pLastChild);
-      m_pFirstChild = child;
-      m_pLastChild = child;
+      CHECK(!actual().m_pLastChild);
+      actual().m_pFirstChild = child;
+      actual().m_pLastChild = child;
     }
   }
 
   void AppendLastChild(T* child) {
     BecomeParent(child);
-    if (m_pLastChild) {
-      CHECK(m_pFirstChild);
-      m_pLastChild->m_pNextSibling = child;
-      child->m_pPrevSibling = m_pLastChild;
-      m_pLastChild = child;
+    if (actual().m_pLastChild) {
+      CHECK(actual().m_pFirstChild);
+      actual().m_pLastChild->m_pNextSibling = child;
+      child->m_pPrevSibling = actual().m_pLastChild;
+      actual().m_pLastChild = child;
     } else {
-      CHECK(!m_pFirstChild);
-      m_pFirstChild = child;
-      m_pLastChild = child;
+      CHECK(!actual().m_pFirstChild);
+      actual().m_pFirstChild = child;
+      actual().m_pLastChild = child;
     }
   }
 
@@ -75,9 +77,9 @@ class TreeNode {
     CHECK(HasChild(other));
     child->m_pNextSibling = other;
     child->m_pPrevSibling = other->m_pPrevSibling;
-    if (m_pFirstChild == other) {
+    if (actual().m_pFirstChild == other) {
       CHECK(!other->m_pPrevSibling);
-      m_pFirstChild = child;
+      actual().m_pFirstChild = child;
     } else {
       other->m_pPrevSibling->m_pNextSibling = child;
     }
@@ -93,9 +95,9 @@ class TreeNode {
     CHECK(HasChild(other));
     child->m_pNextSibling = other->m_pNextSibling;
     child->m_pPrevSibling = other;
-    if (m_pLastChild == other) {
+    if (actual().m_pLastChild == other) {
       CHECK(!other->m_pNextSibling);
-      m_pLastChild = child;
+      actual().m_pLastChild = child;
     } else {
       other->m_pNextSibling->m_pPrevSibling = child;
     }
@@ -104,15 +106,15 @@ class TreeNode {
 
   void RemoveChild(T* child) {
     CHECK(HasChild(child));
-    if (m_pLastChild == child) {
+    if (actual().m_pLastChild == child) {
       CHECK(!child->m_pNextSibling);
-      m_pLastChild = child->m_pPrevSibling;
+      actual().m_pLastChild = child->m_pPrevSibling;
     } else {
       child->m_pNextSibling->m_pPrevSibling = child->m_pPrevSibling;
     }
-    if (m_pFirstChild == child) {
+    if (actual().m_pFirstChild == child) {
       CHECK(!child->m_pPrevSibling);
-      m_pFirstChild = child->m_pNextSibling;
+      actual().m_pFirstChild = child->m_pNextSibling;
     } else {
       child->m_pPrevSibling->m_pNextSibling = child->m_pNextSibling;
     }
@@ -131,29 +133,36 @@ class TreeNode {
       parent->RemoveChild(static_cast<T*>(this));
   }
 
- protected:
-  const PtrType& RawParent() const { return m_pParent; }
-  const PtrType& RawFirstChild() const { return m_pFirstChild; }
-  const PtrType& RawLastChild() const { return m_pLastChild; }
-  const PtrType& RawNextSibling() const { return m_pNextSibling; }
-  const PtrType& RawPrevSibling() const { return m_pPrevSibling; }
-
  private:
+  inline T& actual() { return static_cast<T&>(*this); }
+  inline const T& actual() const { return static_cast<const T&>(*this); }
+
   // Child left in state where sibling members need subsequent adjustment.
   void BecomeParent(T* child) {
     CHECK(child != this);  // Detect attempts at self-insertion.
     if (child->m_pParent)
-      child->m_pParent->TreeNode<T, PtrType>::RemoveChild(child);
+      child->m_pParent->TreeNodeBase<T>::RemoveChild(child);
     child->m_pParent = static_cast<T*>(this);
     CHECK(!child->m_pNextSibling);
     CHECK(!child->m_pPrevSibling);
   }
+};
 
-  PtrType m_pParent = nullptr;       // Default: Raw, intra-tree pointer.
-  PtrType m_pFirstChild = nullptr;   // Default: Raw, intra-tree pointer.
-  PtrType m_pLastChild = nullptr;    // Default: Raw, intra-tree pointer.
-  PtrType m_pNextSibling = nullptr;  // Default: Raw, intra-tree pointer
-  PtrType m_pPrevSibling = nullptr;  // Default: Raw, intra-tree pointer
+// Tree connected using C-style pointers.
+template <typename T>
+class TreeNode : public TreeNodeBase<T> {
+ public:
+  TreeNode() = default;
+  virtual ~TreeNode() = default;
+
+ private:
+  friend class TreeNodeBase<T>;
+
+  T* m_pParent = nullptr;       // Raw, intra-tree pointer.
+  T* m_pFirstChild = nullptr;   // Raw, intra-tree pointer.
+  T* m_pLastChild = nullptr;    // Raw, intra-tree pointer.
+  T* m_pNextSibling = nullptr;  // Raw, intra-tree pointer
+  T* m_pPrevSibling = nullptr;  // Raw, intra-tree pointer
 };
 
 }  // namespace fxcrt
