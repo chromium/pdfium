@@ -230,6 +230,10 @@ format_special.pdf * nov8 * *
 format_text_color.pdf mac * * *
 formfeild.pdf * * * *
 getarray.pdf mac * * *
+
+# TODO(pdfium:489): Remove after associated bug is fixed.
+gradient_many_stops.pdf * * * agg
+
 javascriptaction.pdf * * * *
 jetman_std.pdf mac * * *
 jetman_std_fixed.pdf mac * * *
