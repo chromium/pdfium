@@ -142,26 +142,29 @@ bool CFFL_TextField::IsDataChanged(const CPDFSDK_PageView* pPageView) {
 }
 
 void CFFL_TextField::SaveData(const CPDFSDK_PageView* pPageView) {
-  CPWL_Edit* pWnd = GetPWLEdit(pPageView);
-  if (!pWnd)
+  ObservedPtr<CPWL_Edit> observed_edit(GetPWLEdit(pPageView));
+  if (!observed_edit) {
     return;
-
+  }
   WideString sOldValue = m_pWidget->GetValue();
-  WideString sNewValue = pWnd->GetText();
+  if (!observed_edit) {
+    return;
+  }
+  WideString sNewValue = observed_edit->GetText();
   ObservedPtr<CPDFSDK_Widget> observed_widget(m_pWidget);
   ObservedPtr<CFFL_TextField> observed_this(this);
   m_pWidget->SetValue(sNewValue);
-  if (!observed_widget)
+  if (!observed_widget) {
     return;
-
+  }
   m_pWidget->ResetFieldAppearance();
-  if (!observed_widget)
+  if (!observed_widget) {
     return;
-
+  }
   m_pWidget->UpdateField();
-  if (!observed_widget || !observed_this)
+  if (!observed_widget || !observed_this) {
     return;
-
+  }
   SetChangeMark();
 }
 
@@ -172,9 +175,7 @@ void CFFL_TextField::GetActionData(const CPDFSDK_PageView* pPageView,
     case CPDF_AAction::kKeyStroke:
       if (CPWL_Edit* pWnd = GetPWLEdit(pPageView)) {
         fa.bFieldFull = pWnd->IsTextFull();
-
         fa.sValue = pWnd->GetText();
-
         if (fa.bFieldFull) {
           fa.sChange.clear();
           fa.sChangeEx.clear();
