@@ -12,7 +12,8 @@
 namespace fxcrt {
 
 // Implements the usual DOM/XML-ish trees allowing for a variety of
-// pointer types with which to connect the nodes.
+// pointer types with which to connect the nodes. Public methods maintain
+// the invariants of the tree.
 
 template <typename T>
 class TreeNodeBase {
@@ -20,11 +21,19 @@ class TreeNodeBase {
   TreeNodeBase() = default;
   virtual ~TreeNodeBase() = default;
 
-  T* GetParent() const { return actual().m_pParent; }
-  T* GetFirstChild() const { return actual().m_pFirstChild; }
-  T* GetLastChild() const { return actual().m_pLastChild; }
-  T* GetNextSibling() const { return actual().m_pNextSibling; }
-  T* GetPrevSibling() const { return actual().m_pPrevSibling; }
+  inline T* GetParent() const { return static_cast<const T*>(this)->m_pParent; }
+  inline T* GetFirstChild() const {
+    return static_cast<const T*>(this)->m_pFirstChild;
+  }
+  inline T* GetLastChild() const {
+    return static_cast<const T*>(this)->m_pLastChild;
+  }
+  inline T* GetNextSibling() const {
+    return static_cast<const T*>(this)->m_pNextSibling;
+  }
+  inline T* GetPrevSibling() const {
+    return static_cast<const T*>(this)->m_pPrevSibling;
+  }
 
   bool HasChild(const T* child) const {
     return child != this && child->GetParent() == this;
@@ -42,29 +51,29 @@ class TreeNodeBase {
 
   void AppendFirstChild(T* child) {
     BecomeParent(child);
-    if (actual().m_pFirstChild) {
-      CHECK(actual().m_pLastChild);
-      actual().m_pFirstChild->m_pPrevSibling = child;
-      child->m_pNextSibling = actual().m_pFirstChild;
-      actual().m_pFirstChild = child;
+    if (GetFirstChild()) {
+      CHECK(GetLastChild());
+      GetFirstChild()->SetPrevSibling(child);
+      child->SetNextSibling(GetFirstChild());
+      SetFirstChild(child);
     } else {
-      CHECK(!actual().m_pLastChild);
-      actual().m_pFirstChild = child;
-      actual().m_pLastChild = child;
+      CHECK(!GetLastChild());
+      SetFirstChild(child);
+      SetLastChild(child);
     }
   }
 
   void AppendLastChild(T* child) {
     BecomeParent(child);
-    if (actual().m_pLastChild) {
-      CHECK(actual().m_pFirstChild);
-      actual().m_pLastChild->m_pNextSibling = child;
-      child->m_pPrevSibling = actual().m_pLastChild;
-      actual().m_pLastChild = child;
+    if (GetLastChild()) {
+      CHECK(GetFirstChild());
+      GetLastChild()->SetNextSibling(child);
+      child->SetPrevSibling(GetLastChild());
+      SetLastChild(child);
     } else {
-      CHECK(!actual().m_pFirstChild);
-      actual().m_pFirstChild = child;
-      actual().m_pLastChild = child;
+      CHECK(!GetFirstChild());
+      SetFirstChild(child);
+      SetLastChild(child);
     }
   }
 
@@ -75,13 +84,13 @@ class TreeNodeBase {
     }
     BecomeParent(child);
     CHECK(HasChild(other));
-    child->m_pNextSibling = other;
-    child->m_pPrevSibling = other->m_pPrevSibling;
-    if (actual().m_pFirstChild == other) {
-      CHECK(!other->m_pPrevSibling);
-      actual().m_pFirstChild = child;
+    child->SetNextSibling(other);
+    child->SetPrevSibling(other->GetPrevSibling());
+    if (GetFirstChild() == other) {
+      CHECK(!other->GetPrevSibling());
+      SetFirstChild(child);
     } else {
-      other->m_pPrevSibling->m_pNextSibling = child;
+      other->GetPrevSibling()->SetNextSibling(child);
     }
     other->m_pPrevSibling = child;
   }
@@ -93,34 +102,34 @@ class TreeNodeBase {
     }
     BecomeParent(child);
     CHECK(HasChild(other));
-    child->m_pNextSibling = other->m_pNextSibling;
-    child->m_pPrevSibling = other;
-    if (actual().m_pLastChild == other) {
-      CHECK(!other->m_pNextSibling);
-      actual().m_pLastChild = child;
+    child->SetNextSibling(other->GetNextSibling());
+    child->SetPrevSibling(other);
+    if (GetLastChild() == other) {
+      CHECK(!other->GetNextSibling());
+      SetLastChild(child);
     } else {
-      other->m_pNextSibling->m_pPrevSibling = child;
+      other->GetNextSibling()->SetPrevSibling(child);
     }
-    other->m_pNextSibling = child;
+    other->SetNextSibling(child);
   }
 
   void RemoveChild(T* child) {
     CHECK(HasChild(child));
-    if (actual().m_pLastChild == child) {
-      CHECK(!child->m_pNextSibling);
-      actual().m_pLastChild = child->m_pPrevSibling;
+    if (GetLastChild() == child) {
+      CHECK(!child->GetNextSibling());
+      SetLastChild(child->GetPrevSibling());
     } else {
-      child->m_pNextSibling->m_pPrevSibling = child->m_pPrevSibling;
+      child->GetNextSibling()->SetPrevSibling(child->GetPrevSibling());
     }
-    if (actual().m_pFirstChild == child) {
-      CHECK(!child->m_pPrevSibling);
-      actual().m_pFirstChild = child->m_pNextSibling;
+    if (GetFirstChild() == child) {
+      CHECK(!child->GetPrevSibling());
+      SetFirstChild(child->GetNextSibling());
     } else {
-      child->m_pPrevSibling->m_pNextSibling = child->m_pNextSibling;
+      child->GetPrevSibling()->SetNextSibling(child->GetNextSibling());
     }
-    child->m_pParent = nullptr;
-    child->m_pPrevSibling = nullptr;
-    child->m_pNextSibling = nullptr;
+    child->SetParent(nullptr);
+    child->SetPrevSibling(nullptr);
+    child->SetNextSibling(nullptr);
   }
 
   void RemoveAllChildren() {
@@ -134,8 +143,23 @@ class TreeNodeBase {
   }
 
  private:
-  inline T& actual() { return static_cast<T&>(*this); }
-  inline const T& actual() const { return static_cast<const T&>(*this); }
+  // These are private because they may leave the tree in an invalid state
+  // until subsequent operations restore it.
+  inline void SetParent(T* pParent) {
+    static_cast<T*>(this)->m_pParent = pParent;
+  }
+  inline void SetFirstChild(T* pChild) {
+    static_cast<T*>(this)->m_pFirstChild = pChild;
+  }
+  inline void SetLastChild(T* pChild) {
+    static_cast<T*>(this)->m_pLastChild = pChild;
+  }
+  inline void SetNextSibling(T* pSibling) {
+    static_cast<T*>(this)->m_pNextSibling = pSibling;
+  }
+  inline void SetPrevSibling(T* pSibling) {
+    static_cast<T*>(this)->m_pPrevSibling = pSibling;
+  }
 
   // Child left in state where sibling members need subsequent adjustment.
   void BecomeParent(T* child) {
