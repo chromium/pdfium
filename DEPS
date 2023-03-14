@@ -164,7 +164,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling v8
   # and whatever else without interference from each other.
-  'v8_revision': 'b1f01d3ab3e10ac96f7a12321d201e193fe3bb43',
+  'v8_revision': '8a4efd3dfa931f8bb16f2e0918756fa5d485c4ec',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling zlib
   # and whatever else without interference from each other.
