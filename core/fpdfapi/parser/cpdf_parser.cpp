@@ -70,11 +70,32 @@ CPDF_Parser::ObjectType GetObjectTypeFromCrossRefStreamType(
   }
 }
 
+// Use the Get*XRefStreamEntry() functions below, instead of calling this
+// directly.
 uint32_t GetVarInt(pdfium::span<const uint8_t> input) {
   uint32_t result = 0;
   for (uint8_t c : input)
     result = result * 256 + c;
   return result;
+}
+
+// The following 3 functions retrieve variable length entries from
+// cross-reference streams, as described in ISO 32000-1:2008 table 18. There are
+// only 3 fields for any given entry.
+uint32_t GetFirstXRefStreamEntry(pdfium::span<const uint8_t> entry_span,
+                                 pdfium::span<const uint32_t> field_widths) {
+  return GetVarInt(entry_span.first(field_widths[0]));
+}
+
+uint32_t GetSecondXRefStreamEntry(pdfium::span<const uint8_t> entry_span,
+                                  pdfium::span<const uint32_t> field_widths) {
+  return GetVarInt(entry_span.subspan(field_widths[0], field_widths[1]));
+}
+
+uint32_t GetThirdXRefStreamEntry(pdfium::span<const uint8_t> entry_span,
+                                 pdfium::span<const uint32_t> field_widths) {
+  return GetVarInt(
+      entry_span.subspan(field_widths[0] + field_widths[1], field_widths[2]));
 }
 
 std::vector<CrossRefV5IndexEntry> GetCrossRefV5Indices(const CPDF_Array* array,
@@ -809,7 +830,7 @@ void CPDF_Parser::ProcessCrossRefV5Entry(
   ObjectType type = ObjectType::kNotCompressed;
   if (field_widths[0]) {
     const uint32_t cross_ref_stream_obj_type =
-        GetVarInt(entry_span.first(field_widths[0]));
+        GetFirstXRefStreamEntry(entry_span, field_widths);
     type = GetObjectTypeFromCrossRefStreamType(cross_ref_stream_obj_type);
     if (type == ObjectType::kNull)
       return;
@@ -817,8 +838,7 @@ void CPDF_Parser::ProcessCrossRefV5Entry(
 
   const ObjectType existing_type = GetObjectType(obj_num);
   if (existing_type == ObjectType::kNull) {
-    uint32_t offset =
-        GetVarInt(entry_span.subspan(field_widths[0], field_widths[1]));
+    const uint32_t offset = GetSecondXRefStreamEntry(entry_span, field_widths);
     if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
       m_CrossRefTable->AddNormal(obj_num, 0, offset);
     return;
@@ -832,22 +852,22 @@ void CPDF_Parser::ProcessCrossRefV5Entry(
     return;
   }
 
-  const uint32_t entry_value =
-      GetVarInt(entry_span.subspan(field_widths[0], field_widths[1]));
   if (type == ObjectType::kNotCompressed) {
-    const uint32_t offset = entry_value;
+    const uint32_t offset = GetSecondXRefStreamEntry(entry_span, field_widths);
     if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
       m_CrossRefTable->AddNormal(obj_num, 0, offset);
     return;
   }
 
   DCHECK_EQ(type, ObjectType::kCompressed);
-  const uint32_t archive_obj_num = entry_value;
-  if (!IsValidObjectNumber(archive_obj_num))
+  const uint32_t archive_obj_num =
+      GetSecondXRefStreamEntry(entry_span, field_widths);
+  if (!IsValidObjectNumber(archive_obj_num)) {
     return;
+  }
 
-  const uint32_t archive_obj_index = GetVarInt(
-      entry_span.subspan(field_widths[0] + field_widths[1], field_widths[2]));
+  const uint32_t archive_obj_index =
+      GetThirdXRefStreamEntry(entry_span, field_widths);
   m_CrossRefTable->AddCompressed(obj_num, archive_obj_num, archive_obj_index);
 }
 
