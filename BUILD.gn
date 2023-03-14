@@ -229,6 +229,10 @@ config("pdfium_common_config") {
         "-add-plugin",
         "-Xclang",
         "blink-gc-plugin",
+        "-Xclang",
+        "-plugin-arg-blink-gc-plugin",
+        "-Xclang",
+        "enable-checks-for-pdfium-directory",
       ]
     }
   }
