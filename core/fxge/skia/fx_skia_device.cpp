@@ -215,15 +215,9 @@ static void DebugValidate(const RetainPtr<CFX_DIBitmap>& bitmap,
                           const RetainPtr<CFX_DIBitmap>& device) {
   if (bitmap) {
     DCHECK(bitmap->GetBPP() == 8 || bitmap->GetBPP() == 32);
-    if (bitmap->GetBPP() == 32) {
-      bitmap->DebugVerifyBitmapIsPreMultiplied();
-    }
   }
   if (device) {
     DCHECK(device->GetBPP() == 8 || device->GetBPP() == 32);
-    if (device->GetBPP() == 32) {
-      device->DebugVerifyBitmapIsPreMultiplied();
-    }
   }
 }
 
@@ -756,7 +750,6 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
     }
     case 32:
       colorType = kBGRA_8888_SkColorType;
-      pSource->DebugVerifyBitmapIsPreMultiplied();
       break;
     default:
       NOTREACHED();
@@ -1612,7 +1605,6 @@ void CFX_DIBitmap::PreMultiply() {
       SkImageInfo::Make(width, height, kN32_SkColorType, kPremul_SkAlphaType);
   SkPixmap premultiplied(premultiplied_info, buffer, row_bytes);
   unpremultiplied.readPixels(premultiplied);
-  DebugVerifyBitmapIsPreMultiplied();
 }
 
 void CFX_DIBitmap::UnPreMultiply() {
@@ -1629,7 +1621,6 @@ void CFX_DIBitmap::UnPreMultiply() {
   if (prior_format == Format::kUnPreMultiplied)
     return;
 
-  DebugVerifyBitmapIsPreMultiplied();
   int height = GetHeight();
   int width = GetWidth();
   int row_bytes = GetPitch();
@@ -1707,11 +1698,6 @@ void CFX_SkiaDeviceDriver::SetGroupKnockout(bool group_knockout) {
 
 void CFX_SkiaDeviceDriver::Clear(uint32_t color) {
   m_pCanvas->clear(color);
-}
-
-void CFX_SkiaDeviceDriver::DebugVerifyBitmapIsPreMultiplied() const {
-  if (m_pBackdropBitmap)
-    m_pBackdropBitmap->DebugVerifyBitmapIsPreMultiplied();
 }
 
 bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
@@ -1824,13 +1810,6 @@ bool CFX_DefaultRenderDevice::CreateSkia(
   return true;
 }
 
-void CFX_DefaultRenderDevice::DebugVerifyBitmapIsPreMultiplied() const {
-#if !defined(NDEBUG)
-  static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver())
-      ->DebugVerifyBitmapIsPreMultiplied();
-#endif
-}
-
 bool CFX_DefaultRenderDevice::SetBitsWithMask(
     const RetainPtr<CFX_DIBBase>& pBitmap,
     const RetainPtr<CFX_DIBBase>& pMask,
@@ -1840,31 +1819,4 @@ bool CFX_DefaultRenderDevice::SetBitsWithMask(
     BlendMode blend_type) {
   return static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver())
       ->SetBitsWithMask(pBitmap, pMask, left, top, bitmap_alpha, blend_type);
-}
-
-void CFX_DIBBase::DebugVerifyBitmapIsPreMultiplied() const {
-#if !defined(NDEBUG)
-  DCHECK_EQ(GetBPP(), 32);
-  const int width = GetWidth();
-  const int height = GetHeight();
-  const size_t pitch = Fx2DSizeOrDie(width, 4);
-  for (int y = 0; y < height; ++y) {
-    pdfium::span<const uint8_t> line = GetScanline(y);
-    DCHECK_LE(pitch, line.size());
-
-    // Using `line` directly in the inner-loop is too slow under ASAN.
-    const uint8_t* line_ptr = line.data();
-    for (int x = 0; x < width; ++x) {
-      uint8_t a = line_ptr[3];
-      uint8_t r = line_ptr[2];
-      uint8_t g = line_ptr[1];
-      uint8_t b = line_ptr[0];
-      DCHECK_LE(a, SK_A32_MASK);
-      DCHECK_LE(r, a);
-      DCHECK_LE(g, a);
-      DCHECK_LE(b, a);
-      line_ptr += 4;
-    }
-  }
-#endif
 }

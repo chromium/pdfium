@@ -33,7 +33,6 @@
 #include "core/fxge/text_glyph_pos.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
 
 #ifdef _SKIA_SUPPORT_
@@ -995,10 +994,6 @@ bool CFX_RenderDevice::ContinueDIBits(CFX_ImageRenderer* handle,
 }
 
 #if defined(_SKIA_SUPPORT_)
-void CFX_RenderDevice::DebugVerifyBitmapIsPreMultiplied() const {
-  NOTREACHED();
-}
-
 bool CFX_RenderDevice::SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                                        const RetainPtr<CFX_DIBBase>& pMask,
                                        int left,
@@ -1195,11 +1190,10 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
                          end_col, normalize, x_subpixel, a, r, g, b);
   }
 
-#if defined(_SKIA_SUPPORT_) || defined(_SKIA_SUPPORT_PATH_)
+#if defined(_SKIA_SUPPORT_)
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
     // DrawNormalTextHelper() can result in unpremultiplied bitmaps for
-    // rendering glyphs. Make sure `bitmap` is premultiplied before proceeding
-    // or CFX_DIBBase::DebugVerifyBitmapIsPreMultiplied() check will fail.
+    // rendering glyphs. Make sure `bitmap` is premultiplied before proceeding.
     bitmap->PreMultiply();
   }
 #endif

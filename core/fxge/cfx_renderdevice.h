@@ -209,7 +209,6 @@ class CFX_RenderDevice {
                    bool bAlphaMode);
 
 #if defined(_SKIA_SUPPORT_)
-  virtual void DebugVerifyBitmapIsPreMultiplied() const;
   virtual bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                                const RetainPtr<CFX_DIBBase>& pMask,
                                int left,

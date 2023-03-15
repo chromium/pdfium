@@ -152,7 +152,6 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   virtual uint8_t* GetBuffer() const;
 
   void Clear(uint32_t color);
-  void DebugVerifyBitmapIsPreMultiplied() const;
   void Dump() const;
 
  private:

@@ -34,10 +34,6 @@ class CFX_WindowsRenderDevice : public CFX_RenderDevice {
                           CFX_PSFontTracker* ps_font_tracker,
                           const EncoderIface* encoder_iface);
   ~CFX_WindowsRenderDevice() override;
-
-#if defined(_SKIA_SUPPORT_)
-  void DebugVerifyBitmapIsPreMultiplied() const override;
-#endif
 };
 
 #endif  // CORE_FXGE_CFX_WINDOWSRENDERDEVICE_H_

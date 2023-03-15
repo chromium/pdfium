@@ -37,7 +37,6 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
   bool AttachRecorder(SkPictureRecorder* recorder);
   void Clear(uint32_t color);
   std::unique_ptr<SkPictureRecorder> CreateRecorder(const SkRect& bounds);
-  void DebugVerifyBitmapIsPreMultiplied() const override;
   bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                        const RetainPtr<CFX_DIBBase>& pMask,
                        int left,
