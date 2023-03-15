@@ -359,8 +359,10 @@ bug_1571.in * * * *
 # TODO(pdfium:1723): Remove after associated bug is fixed
 bug_1723.in * * * *
 
-# TODO(pdfium:1846): Remove after associated bug is fixed
-bug_1846.in * * * agg
+# TODO(pdfium:1972): Remove after associated bug is fixed
+bug_1972_1.in * * * agg
+bug_1972_2.in * * * agg
+bug_1972_3.in * * * agg
 
 # TODO(pdfium:1973): Remove after associated bug is fixed
 bug_1973.in * * * *
