@@ -1173,8 +1173,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
 //          then manipulate any color and/or alpha values for any pixels in the
 //          bitmap.
 //
-//          The data is in BGRA format. Where the A maybe unused if alpha was
-//          not specified.
+//          Use FPDFBitmap_GetFormat() to find out the format of the data.
 FPDF_EXPORT void* FPDF_CALLCONV FPDFBitmap_GetBuffer(FPDF_BITMAP bitmap);
 
 // Function: FPDFBitmap_GetWidth
