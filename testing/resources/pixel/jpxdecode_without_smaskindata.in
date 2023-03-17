@@ -1,0 +1,111 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 48 128]
+  /Resources <<
+    /XObject <<
+      /ImGrayAlpha 5 0 R
+      /ImRGBAlpha 6 0 R
+      /ImCMYKAlpha 7 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+
+% 50% gray background rectangle
+q
+  0.5 0.5 0.5 rg
+  0 0 48 128 re
+  f
+Q
+
+% grayscale with ignored alpha
+q
+  32 0 0 32 8 88 cm
+  /ImGrayAlpha Do
+Q
+
+% RGB with ignored alpha
+q
+  32 0 0 32 8 48 cm
+  /ImRGBAlpha Do
+Q
+
+% CMYK with ignored alpha
+q
+  32 0 0 32 8 8 cm
+  /ImCMYKAlpha Do
+Q
+
+endstream
+endobj
+
+% grayscale with opacity, but the soft-mask information is not used.
+{{object 5 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceGray
+  /Filter /JPXDecode
+  /Height 4
+  /Width 4
+  {{streamlen}}
+>>
+stream
+{{include ../gray-alpha.jp2}}
+endstream
+endobj
+
+% RGB with opacity, but the soft-mask information is not used.
+{{object 6 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceRGB
+  /Filter /JPXDecode
+  /Height 4
+  /Width 4
+  {{streamlen}}
+>>
+stream
+{{include ../RGB-alpha.jp2}}
+endstream
+endobj
+
+% CMYK with opacity, but the soft-mask information is not used.
+{{object 7 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceCMYK
+  /Filter /JPXDecode
+  /Height 4
+  /Width 4
+  {{streamlen}}
+>>
+stream
+{{include ../CMYK-alpha.jpf}}
+endstream
+endobj
+
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
