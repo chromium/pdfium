@@ -11,7 +11,6 @@
 
 #include <algorithm>
 #include <memory>
-#include <vector>
 
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"

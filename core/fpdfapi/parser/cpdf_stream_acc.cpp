@@ -7,7 +7,6 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 
 #include <utility>
-#include <vector>
 
 #include "core/fdrm/fx_crypt.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"

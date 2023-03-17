@@ -8,7 +8,6 @@
 #define CORE_FPDFAPI_PAGE_CPDF_STITCHFUNC_H_
 
 #include <memory>
-#include <set>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_function.h"

@@ -4,8 +4,6 @@
 
 #include "testing/fake_file_access.h"
 
-#include <algorithm>
-#include <set>
 #include <utility>
 
 #include "core/fxcrt/fx_system.h"

@@ -7,7 +7,6 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_SAMPLEDFUNC_H_
 #define CORE_FPDFAPI_PAGE_CPDF_SAMPLEDFUNC_H_
 
-#include <set>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_function.h"

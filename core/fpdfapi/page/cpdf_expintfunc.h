@@ -7,8 +7,6 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_EXPINTFUNC_H_
 #define CORE_FPDFAPI_PAGE_CPDF_EXPINTFUNC_H_
 
-#include <set>
-
 #include "core/fpdfapi/page/cpdf_function.h"
 #include "core/fxcrt/data_vector.h"
 

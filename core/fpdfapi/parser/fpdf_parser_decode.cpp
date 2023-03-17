@@ -11,7 +11,6 @@
 
 #include <algorithm>
 #include <utility>
-#include <vector>
 
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/parser/cpdf_array.h"

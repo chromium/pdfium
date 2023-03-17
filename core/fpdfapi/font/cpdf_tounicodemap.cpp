@@ -6,7 +6,6 @@
 
 #include "core/fpdfapi/font/cpdf_tounicodemap.h"
 
-#include <map>
 #include <set>
 #include <utility>
 
