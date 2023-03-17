@@ -395,7 +395,7 @@ luci.builder(
     dimensions = {
         "cores": "8",
         "cpu": "x86-64",
-        "os": "Ubuntu-18.04",
+        "os": "Ubuntu-20.04",
         "pool": "luci.flex.try",
     },
     properties = {
@@ -412,7 +412,7 @@ luci.builder(
     dimensions = {
         "cores": "8",
         "cpu": "x86-64",
-        "os": "Ubuntu-18.04",
+        "os": "Ubuntu-20.04",
         "pool": "luci.flex.try",
     },
     properties = {
