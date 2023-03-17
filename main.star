@@ -19,12 +19,6 @@ _CONSOLE_HEADER = {
 }
 
 # Dicts for OS-specific dimensions.
-# TODO(crbug.com/pdfium/1952): Migrate all Linux builders to Ubuntu 20.04.
-_LINUX_BIONIC_DIMENSIONS = {
-    "cores": "8",
-    "cpu": "x86-64",
-    "os": "Ubuntu-18.04",
-}
 _LINUX_FOCAL_DIMENSIONS = {
     "cores": "8",
     "cpu": "x86-64",
@@ -177,7 +171,7 @@ def pdfium_internal_builder(name, bucket):
     elif name.startswith("win"):
         dimensions.update(_WINDOWS_DIMENSIONS)
     elif name.startswith("android"):
-        dimensions.update(_LINUX_BIONIC_DIMENSIONS)
+        dimensions.update(_LINUX_FOCAL_DIMENSIONS)
     else:
         fail()
 
