@@ -167,10 +167,7 @@ def pdfium_internal_builder(name, bucket):
 
     # Set configs depending on the OS.
     if name.startswith("linux"):
-        if name.endswith("msan"):
-            dimensions.update(_LINUX_FOCAL_DIMENSIONS)
-        else:
-            dimensions.update(_LINUX_BIONIC_DIMENSIONS)
+        dimensions.update(_LINUX_FOCAL_DIMENSIONS)
     elif name.startswith("mac") and "_arm" in name:
         dimensions.update(_MACOS_ARM_DIMENSIONS)
         caches = [swarming.cache("osx_sdk", name = "osx_sdk")]
