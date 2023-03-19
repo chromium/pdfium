@@ -1,0 +1,133 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 44 24]
+  /Resources <<
+    /ExtGState <<
+      /GSHalfAlphaConstant 5 0 R
+      /GSHalfAlphaMask 6 0 R
+    >>
+    /XObject <<
+      /HalfAlphaSquare 8 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+
+% Opaque black background.
+q
+  0 0 0 rg
+  0 0 44 24 re
+  f
+Q
+
+% Transparency group drawn with constant alpha.
+q
+  1 0 0 1 4 4 cm
+  /GSHalfAlphaConstant gs
+
+  /HalfAlphaSquare Do
+Q
+
+% Transparency group drawn with a soft mask.
+q
+  1 0 0 1 24 4 cm
+  /GSHalfAlphaMask gs
+
+  /HalfAlphaSquare Do
+Q
+
+endstream
+endobj
+
+% Graphics state with a 0.5 non-stroking alpha constant.
+{{object 5 0}} <<
+  /Type /ExtGState
+  /ca 0.5
+>>
+endobj
+
+% Graphics state with a soft mask containing a 0.5 alpha central hole.
+{{object 6 0}} <<
+  /Type /ExtGState
+  /SMask <<
+    /Type /Mask
+    /S /Luminosity
+    /G 7 0 R
+  >>
+>>
+endobj
+{{object 7 0}} <<
+  /Type /XObject
+  /Subtype /Form
+  /BBox [0 0 16 16]
+  /Group <<
+    /Type /Group
+    /S /Transparency
+    /CS /DeviceGray
+    /I true
+  >>
+  {{streamlen}}
+>>
+stream
+q
+  1 g
+  0 0 16 16 re
+  f
+
+  0.5 g
+  4 4 8 8 re
+  f
+Q
+endstream
+endobj
+
+% Transparency group containing a 0.5 alpha white square.
+{{object 8 0}} <<
+  /Type /XObject
+  /Subtype /Form
+  /BBox [0 0 16 16]
+  /Group <<
+    /Type /Group
+    /S /Transparency
+    /I true
+  >>
+  /Resources <<
+    /ExtGState <<
+      /GSHalfAlphaConstant 5 0 R
+    >>
+  >>
+  {{streamlen}}
+>>
+stream
+q
+  /GSHalfAlphaConstant gs
+
+  1 1 1 rg
+  0 0 16 16 re
+  f
+Q
+endstream
+endobj
+
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
