@@ -1596,7 +1596,7 @@ void CFX_DIBitmap::PreMultiply() {
     return;
 
   Format prior_format = m_nFormat;
-  m_nFormat = Format::kPreMultiplied;
+  ForcePreMultiply();
   if (prior_format == Format::kPreMultiplied)
     return;
 
@@ -1621,8 +1621,7 @@ void CFX_DIBitmap::UnPreMultiply() {
     return;
 
   Format prior_format = m_nFormat;
-  m_nFormat = Format::kUnPreMultiplied;
-
+  ForceUnPreMultiply();
   if (prior_format == Format::kUnPreMultiplied)
     return;
 
@@ -1636,6 +1635,14 @@ void CFX_DIBitmap::UnPreMultiply() {
       SkImageInfo::Make(width, height, kN32_SkColorType, kUnpremul_SkAlphaType);
   SkPixmap unpremultiplied(unpremultiplied_info, buffer, row_bytes);
   premultiplied.readPixels(unpremultiplied);
+}
+
+void CFX_DIBitmap::ForcePreMultiply() {
+  m_nFormat = Format::kPreMultiplied;
+}
+
+void CFX_DIBitmap::ForceUnPreMultiply() {
+  m_nFormat = Format::kUnPreMultiplied;
 }
 
 bool CFX_SkiaDeviceDriver::DrawBitsWithMask(

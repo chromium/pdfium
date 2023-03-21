@@ -524,9 +524,7 @@ uint32_t CFX_DIBitmap::GetPixel(int x, int y) const {
   }
   return 0;
 }
-#endif  // _SKIA_SUPPORT_
 
-#if defined(_SKIA_SUPPORT_)
 void CFX_DIBitmap::SetPixel(int x, int y, uint32_t color) {
   if (!m_pBuffer)
     return;
@@ -597,7 +595,7 @@ void CFX_DIBitmap::SetPixel(int x, int y, uint32_t color) {
       break;
   }
 }
-#endif  // defined(_SKIA_SUPPORT_)
+#endif  // _SKIA_SUPPORT_
 
 void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
                                         uint32_t backcolor) {

@@ -43,10 +43,8 @@ class CFX_DIBitmap final : public CFX_DIBBase {
 
 #ifdef _SKIA_SUPPORT_
   uint32_t GetPixel(int x, int y) const;
-#endif
-#if defined(_SKIA_SUPPORT_)
   void SetPixel(int x, int y, uint32_t color);
-#endif
+#endif  // _SKIA_SUPPORT_
 
   bool SetRedFromBitmap(const RetainPtr<CFX_DIBBase>& pSrcBitmap);
   bool SetAlphaFromBitmap(const RetainPtr<CFX_DIBBase>& pSrcBitmap);
@@ -116,8 +114,19 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                                                             uint32_t pitch);
 
 #ifdef _SKIA_SUPPORT_
+  // Converts to pre-multiplied alpha if necessary.
   void PreMultiply();
+
+  // Converts to un-pre-multiplied alpha if necessary.
   void UnPreMultiply();
+
+  // Forces pre-multiplied alpha without conversion.
+  // TODO(crbug.com/pdfium/2011): Remove the need for this.
+  void ForcePreMultiply();
+
+  // Forces un-pre-multiplied alpha without conversion.
+  // TODO(crbug.com/pdfium/2011): Remove the need for this.
+  void ForceUnPreMultiply();
 #endif
 
  private:
