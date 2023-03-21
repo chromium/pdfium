@@ -1039,7 +1039,7 @@ void CPDFSDK_FormFillEnvironment::DoActionNoJs(const CPDF_Action& action,
       DoActionResetForm(action);
       break;
     case CPDF_Action::Type::kJavaScript:
-      NOTREACHED();
+      NOTREACHED_NORETURN();
       break;
     case CPDF_Action::Type::kSetOCGState:
     case CPDF_Action::Type::kThread:
@@ -1122,7 +1122,7 @@ void CPDFSDK_FormFillEnvironment::RunFieldJavaScript(
                                   pFormField, &data->sValue, &data->bRC);
         break;
       default:
-        NOTREACHED();
+        NOTREACHED_NORETURN();
         break;
     }
   });
@@ -1169,7 +1169,7 @@ void CPDFSDK_FormFillEnvironment::RunDocumentPageJavaScript(
         context->OnPage_OutView();
         break;
       default:
-        NOTREACHED();
+        NOTREACHED_NORETURN();
         break;
     }
   });

@@ -150,7 +150,7 @@ float GetMinMaxValue(const std::vector<CFX_FloatRect>& array,
         pArray[i] = array[i].bottom;
       break;
     default:
-      NOTREACHED();
+      NOTREACHED_NORETURN();
       return 0.0f;
   }
 
