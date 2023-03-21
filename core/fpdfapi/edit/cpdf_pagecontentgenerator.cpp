@@ -77,9 +77,6 @@ void CPDF_PageContentGenerator::GenerateContent() {
 
 std::map<int32_t, fxcrt::ostringstream>
 CPDF_PageContentGenerator::GenerateModifiedStreams() {
-  // Make sure default graphics are created.
-  GetOrCreateDefaultGraphics();
-
   // Figure out which streams are dirty.
   std::set<int32_t> all_dirty_streams;
   for (auto& pPageObj : m_pageObjects) {
@@ -147,6 +144,9 @@ void CPDF_PageContentGenerator::UpdateContentStreams(
   // If no streams were regenerated or removed, nothing to do here.
   if (new_stream_data.empty())
     return;
+
+  // Make sure default graphics are created.
+  GetOrCreateDefaultGraphics();
 
   CPDF_PageContentManager page_content_manager(m_pObjHolder, m_pDocument);
   for (auto& pair : new_stream_data) {
