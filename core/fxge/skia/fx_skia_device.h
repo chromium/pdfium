@@ -149,7 +149,8 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                    int alpha,
                    bool bAlphaMode) override;
 
-  virtual uint8_t* GetBuffer() const;
+  bool MultiplyAlpha(float alpha) override;
+  bool MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) override;
 
   void Clear(uint32_t color);
   void Dump() const;

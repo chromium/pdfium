@@ -45,6 +45,8 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
                         uint32_t color,
                         BlendMode blend_type) override;
   bool GetClipBox(FX_RECT* pRect) override;
+  bool MultiplyAlpha(float alpha) override;
+  bool MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) override;
 
   void DrawLine(float x1, float y1, float x2, float y2);
 

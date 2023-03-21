@@ -210,3 +210,17 @@ bool CPSPrinterDriver::DrawDeviceText(
   return m_PSRenderer.DrawText(pCharPos.size(), pCharPos.data(), pFont,
                                mtObject2Device, font_size, color);
 }
+
+bool CPSPrinterDriver::MultiplyAlpha(float alpha) {
+  // PostScript doesn't support transparency. All callers are using
+  // `CFX_DIBitmap`-backed raster devices anyway.
+  NOTREACHED();
+  return false;
+}
+
+bool CPSPrinterDriver::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) {
+  // PostScript doesn't support transparency. All callers are using
+  // `CFX_DIBitmap`-backed raster devices anyway.
+  NOTREACHED();
+  return false;
+}

@@ -676,14 +676,14 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     RetainPtr<CFX_DIBBase> pSMaskSource =
         LoadSMask(pSMaskDict.Get(), &rect, smask_matrix);
     if (pSMaskSource)
-      bitmap->MultiplyAlpha(pSMaskSource);
+      bitmap_device.MultiplyAlpha(pSMaskSource);
   }
   if (pTextMask) {
-    bitmap->MultiplyAlpha(pTextMask);
+    bitmap_device.MultiplyAlpha(pTextMask);
     pTextMask.Reset();
   }
   if (group_alpha != 1.0f && transparency.IsGroup()) {
-    bitmap->MultiplyAlpha(static_cast<int32_t>(group_alpha * 255));
+    bitmap_device.MultiplyAlpha(group_alpha);
   }
 #if defined(_SKIA_SUPPORT_)
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())

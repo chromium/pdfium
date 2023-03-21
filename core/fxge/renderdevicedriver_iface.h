@@ -117,6 +117,12 @@ class RenderDeviceDriverIface {
                                BlendMode blend_type);
   virtual void SetGroupKnockout(bool group_knockout);
 #endif
+
+  // Multiplies the device by a constant alpha, returning `true` on success.
+  virtual bool MultiplyAlpha(float alpha) = 0;
+
+  // Multiplies the device by an alpha mask, returning `true` on success.
+  virtual bool MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) = 0;
 };
 
 #endif  // CORE_FXGE_RENDERDEVICEDRIVER_IFACE_H_

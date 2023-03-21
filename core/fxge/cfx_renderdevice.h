@@ -208,6 +208,12 @@ class CFX_RenderDevice {
                    int alpha,
                    bool bAlphaMode);
 
+  // Multiplies the device by a constant alpha, returning `true` on success.
+  bool MultiplyAlpha(float alpha);
+
+  // Multiplies the device by an alpha mask, returning `true` on success.
+  bool MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask);
+
 #if defined(_SKIA_SUPPORT_)
   virtual bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                                const RetainPtr<CFX_DIBBase>& pMask,

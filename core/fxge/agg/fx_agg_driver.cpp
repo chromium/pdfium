@@ -7,6 +7,7 @@
 #include "core/fxge/agg/fx_agg_driver.h"
 
 #include <math.h>
+#include <stdint.h>
 
 #include <algorithm>
 #include <utility>
@@ -1119,6 +1120,14 @@ bool CFX_AggDeviceDriver::SetClip_PathStroke(
 
 int CFX_AggDeviceDriver::GetDriverType() const {
   return 1;
+}
+
+bool CFX_AggDeviceDriver::MultiplyAlpha(float alpha) {
+  return m_pBitmap->MultiplyAlpha(static_cast<int32_t>(alpha * 255));
+}
+
+bool CFX_AggDeviceDriver::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) {
+  return m_pBitmap->MultiplyAlpha(mask);
 }
 
 void CFX_AggDeviceDriver::RenderRasterizer(

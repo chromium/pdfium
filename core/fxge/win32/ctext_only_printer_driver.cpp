@@ -178,3 +178,17 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(
   }
   return true;
 }
+
+bool CTextOnlyPrinterDriver::MultiplyAlpha(float alpha) {
+  // Not needed. All callers are using `CFX_DIBitmap`-backed raster devices
+  // anyway.
+  NOTREACHED();
+  return false;
+}
+
+bool CTextOnlyPrinterDriver::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) {
+  // Not needed. All callers are using `CFX_DIBitmap`-backed raster devices
+  // anyway.
+  NOTREACHED();
+  return false;
+}

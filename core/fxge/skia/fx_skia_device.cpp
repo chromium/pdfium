@@ -5,6 +5,7 @@
 #include "core/fxge/skia/fx_skia_device.h"
 
 #include <math.h>
+#include <stdint.h>
 
 #include <algorithm>
 #include <limits>
@@ -1103,6 +1104,14 @@ int CFX_SkiaDeviceDriver::GetDriverType() const {
   return 1;
 }
 
+bool CFX_SkiaDeviceDriver::MultiplyAlpha(float alpha) {
+  return m_pBitmap->MultiplyAlpha(static_cast<int32_t>(alpha * 255));
+}
+
+bool CFX_SkiaDeviceDriver::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) {
+  return m_pBitmap->MultiplyAlpha(mask);
+}
+
 DeviceType CFX_SkiaDeviceDriver::GetDeviceType() const {
   return DeviceType::kDisplay;
 }
@@ -1468,10 +1477,6 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
   m_pCanvas->concat(skMatrix);
   m_pCanvas->drawPath(skPath, paint);
   return true;
-}
-
-uint8_t* CFX_SkiaDeviceDriver::GetBuffer() const {
-  return m_pBitmap->GetBuffer().data();
 }
 
 bool CFX_SkiaDeviceDriver::GetClipBox(FX_RECT* pRect) {

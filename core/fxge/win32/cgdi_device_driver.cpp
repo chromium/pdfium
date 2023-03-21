@@ -515,6 +515,20 @@ bool CGdiDeviceDriver::GetClipBox(FX_RECT* pRect) {
   return !!(::GetClipBox(m_hDC, (RECT*)pRect));
 }
 
+bool CGdiDeviceDriver::MultiplyAlpha(float alpha) {
+  // Not implemented. All callers are using `CFX_DIBitmap`-backed raster devices
+  // anyway.
+  NOTREACHED();
+  return false;
+}
+
+bool CGdiDeviceDriver::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) {
+  // Not implemented. All callers are using `CFX_DIBitmap`-backed raster devices
+  // anyway.
+  NOTREACHED();
+  return false;
+}
+
 void CGdiDeviceDriver::DrawLine(float x1, float y1, float x2, float y2) {
   if (!m_bMetafileDCType) {  // EMF drawing is not bound to the DC.
     int startOutOfBoundsFlag = (x1 < 0) | ((x1 > m_Width) << 1) |

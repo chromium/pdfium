@@ -52,6 +52,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   bool SetAlphaFromBitmap(const RetainPtr<CFX_DIBBase>& pSrcBitmap);
   bool SetUniformOpaqueAlpha();
 
+  // TODO(crbug.com/pdfium/2007): Migrate callers to `CFX_RenderDevice`.
   bool MultiplyAlpha(int alpha);
   bool MultiplyAlpha(const RetainPtr<CFX_DIBBase>& pSrcBitmap);
 
