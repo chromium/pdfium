@@ -887,7 +887,7 @@ TEST_F(FPDFEditEmbedderTest, BUG_1574) {
   CloseSavedDocument();
 }
 
-TEST_F(FPDFEditEmbedderTest, RemovePageObject) {
+TEST_F(FPDFEditEmbedderTest, RemoveTextObject) {
   // Load document with some text.
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -901,19 +901,31 @@ TEST_F(FPDFEditEmbedderTest, RemovePageObject) {
 
   // Get the "Hello, world!" text object and remove it.
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
-  FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page, 0);
-  ASSERT_TRUE(page_object);
-  EXPECT_TRUE(FPDFPage_RemoveObject(page, page_object));
+  {
+    ScopedFPDFPageObject page_object(FPDFPage_GetObject(page, 0));
+    ASSERT_TRUE(page_object);
+    EXPECT_TRUE(FPDFPage_RemoveObject(page, page_object.get()));
+  }
+  ASSERT_EQ(1, FPDFPage_CountObjects(page));
 
   // Verify the "Hello, world!" text is gone.
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 200, 200, FirstRemovedChecksum());
   }
-  ASSERT_EQ(1, FPDFPage_CountObjects(page));
+
+  // Verify the rendering again after calling FPDFPage_GenerateContent().
+  ASSERT_TRUE(FPDFPage_GenerateContent(page));
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPage(page);
+    CompareBitmap(page_bitmap.get(), 200, 200, FirstRemovedChecksum());
+  }
+
+  // Save the document and verify it after reloading.
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedDocument(200, 200, FirstRemovedChecksum());
 
   UnloadPage(page);
-  FPDFPageObj_Destroy(page_object);
 }
 
 void CheckMarkCounts(FPDF_PAGE page,
