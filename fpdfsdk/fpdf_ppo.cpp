@@ -833,14 +833,11 @@ FPDF_NewFormObjectFromXObject(FPDF_XOBJECT xobject) {
   if (!xobj)
     return nullptr;
 
-  // If used directly with std::make_unique(), linking fails.
-  // Build toolchain bug?
-  constexpr int kNoContentStream = CPDF_PageObject::kNoContentStream;
   auto form = std::make_unique<CPDF_Form>(xobj->dest_doc, nullptr,
                                           xobj->xobject, nullptr);
   form->ParseContent(nullptr, nullptr, nullptr);
   auto form_object = std::make_unique<CPDF_FormObject>(
-      kNoContentStream, std::move(form), CFX_Matrix());
+      CPDF_PageObject::kNoContentStream, std::move(form), CFX_Matrix());
   return FPDFPageObjectFromCPDFPageObject(form_object.release());
 }
 
