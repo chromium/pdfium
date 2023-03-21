@@ -11,11 +11,11 @@
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/immediate_crash.h"
 
-#define CHECK(condition)          \
-  do {                            \
-    if (UNLIKELY(!(condition))) { \
-      IMMEDIATE_CRASH();          \
-    }                             \
+#define CHECK(condition)              \
+  do {                                \
+    if (UNLIKELY(!(condition))) {     \
+      pdfium::base::ImmediateCrash(); \
+    }                                 \
   } while (0)
 
 #if defined(NDEBUG) && !defined(DCHECK_ALWAYS_ON)
