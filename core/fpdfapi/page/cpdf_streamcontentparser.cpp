@@ -650,7 +650,7 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     if (m_pSyntax->GetWord() == "EI")
       break;
   }
-  CPDF_ImageObject* pObj = AddImage(std::move(pStream));
+  CPDF_ImageObject* pObj = AddImageFromStream(std::move(pStream));
   // Record the bounding box of this image, so rendering code can draw it
   // properly.
   if (pObj && pObj->GetImage()->IsMask())
@@ -725,7 +725,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
   ByteString name = GetString(0);
   if (name == m_LastImageName && m_pLastImage && m_pLastImage->GetStream() &&
       m_pLastImage->GetStream()->GetObjNum()) {
-    CPDF_ImageObject* pObj = AddImage(m_pLastImage);
+    CPDF_ImageObject* pObj = AddLastImage();
     // Record the bounding box of this image, so rendering code can draw it
     // properly.
     if (pObj && pObj->GetImage()->IsMask())
@@ -747,9 +747,9 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
   }
 
   if (type == "Image") {
-    CPDF_ImageObject* pObj = pXObject->IsInline()
-                                 ? AddImage(ToStream(pXObject->Clone()))
-                                 : AddImage(pXObject->GetObjNum());
+    CPDF_ImageObject* pObj =
+        pXObject->IsInline() ? AddImageFromStream(ToStream(pXObject->Clone()))
+                             : AddImageFromStreamObjNum(pXObject->GetObjNum());
 
     m_LastImageName = std::move(name);
     if (pObj) {
@@ -782,7 +782,7 @@ void CPDF_StreamContentParser::AddForm(RetainPtr<CPDF_Stream> pStream) {
   m_pObjectHolder->AppendPageObject(std::move(pFormObj));
 }
 
-CPDF_ImageObject* CPDF_StreamContentParser::AddImage(
+CPDF_ImageObject* CPDF_StreamContentParser::AddImageFromStream(
     RetainPtr<CPDF_Stream> pStream) {
   if (!pStream)
     return nullptr;
@@ -794,22 +794,21 @@ CPDF_ImageObject* CPDF_StreamContentParser::AddImage(
   return AddImageObject(std::move(pImageObj));
 }
 
-CPDF_ImageObject* CPDF_StreamContentParser::AddImage(uint32_t streamObjNum) {
+CPDF_ImageObject* CPDF_StreamContentParser::AddImageFromStreamObjNum(
+    uint32_t stream_obj_num) {
   auto pImageObj = std::make_unique<CPDF_ImageObject>(GetCurrentStreamIndex());
   pImageObj->SetImage(
-      CPDF_DocPageData::FromDocument(m_pDocument)->GetImage(streamObjNum));
+      CPDF_DocPageData::FromDocument(m_pDocument)->GetImage(stream_obj_num));
 
   return AddImageObject(std::move(pImageObj));
 }
 
-CPDF_ImageObject* CPDF_StreamContentParser::AddImage(
-    const RetainPtr<CPDF_Image>& pImage) {
-  if (!pImage)
-    return nullptr;
+CPDF_ImageObject* CPDF_StreamContentParser::AddLastImage() {
+  DCHECK(m_pLastImage);
 
   auto pImageObj = std::make_unique<CPDF_ImageObject>(GetCurrentStreamIndex());
   pImageObj->SetImage(CPDF_DocPageData::FromDocument(m_pDocument)
-                          ->GetImage(pImage->GetStream()->GetObjNum()));
+                          ->GetImage(m_pLastImage->GetStream()->GetObjNum()));
 
   return AddImageObject(std::move(pImageObj));
 }
