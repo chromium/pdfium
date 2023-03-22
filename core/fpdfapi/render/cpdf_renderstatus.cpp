@@ -627,9 +627,6 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   if (!bitmap_device.Create(width, height, FXDIB_Format::kArgb, backdrop))
     return true;
 
-  RetainPtr<CFX_DIBitmap> bitmap = bitmap_device.GetBitmap();
-  bitmap->Clear(0);
-
   CFX_Matrix new_matrix = mtObj2Device;
   new_matrix.Translate(-rect.left, -rect.top);
 
@@ -639,7 +636,6 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     if (!pTextMask->Create(width, height, FXDIB_Format::k8bppMask))
       return true;
 
-    pTextMask->Clear(0);
     CFX_DefaultRenderDevice text_device;
     text_device.Attach(pTextMask);
     for (size_t i = 0; i < pPageObj->m_ClipPath.GetTextCount(); ++i) {
@@ -668,7 +664,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
     // Safe because `CFX_SkiaDeviceDriver` always uses pre-multiplied alpha.
     // TODO(crbug.com/pdfium/2011): Remove the need for this.
-    bitmap->ForcePreMultiply();
+    bitmap_device.GetBitmap()->ForcePreMultiply();
   }
 #endif  // _SKIA_SUPPORT
   m_bStopped = bitmap_render.m_bStopped;
@@ -691,8 +687,8 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   if (pPageObj->IsForm()) {
     transparency.SetGroup();
   }
-  CompositeDIBitmap(bitmap, rect.left, rect.top, 0, 255, blend_type,
-                    transparency);
+  CompositeDIBitmap(bitmap_device.GetBitmap(), rect.left, rect.top, 0, 255,
+                    blend_type, transparency);
   return true;
 }
 
@@ -949,7 +945,6 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
                                   FXDIB_Format::kArgb, nullptr)) {
           return true;
         }
-        bitmap_device.GetBitmap()->Clear(0);
         CPDF_RenderStatus status(m_pContext, &bitmap_device);
         status.SetOptions(options);
         status.SetTransparency(pForm->GetTransparency());
@@ -1015,7 +1010,6 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
   if (!pBitmap->Create(rect.Width(), rect.Height(), FXDIB_Format::k8bppMask))
     return true;
 
-  pBitmap->Clear(0);
   for (const TextGlyphPos& glyph : glyphs) {
     if (!glyph.m_pGlyph || !glyph.m_pGlyph->GetBitmap()->IsMaskFormat())
       continue;
