@@ -1126,6 +1126,7 @@ bool CFX_SkiaDeviceDriver::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) {
   if (!Upsample(mask, dst32_storage, &skia_mask, /*forceAlpha=*/true)) {
     return false;
   }
+  skia_mask.setImmutable();
 
   SkPaint paint;
   paint.setBlendMode(SkBlendMode::kDstIn);
@@ -1517,9 +1518,11 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                      int top) {
   if (!m_pBitmap)
     return true;
+
   uint8_t* srcBuffer = m_pBitmap->GetBuffer().data();
   if (!srcBuffer)
     return true;
+
   int srcWidth = m_pBitmap->GetWidth();
   int srcHeight = m_pBitmap->GetHeight();
   size_t srcRowBytes = m_pBitmap->GetPitch();
@@ -1527,8 +1530,11 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
       srcWidth, srcHeight, SkColorType::kN32_SkColorType, kPremul_SkAlphaType);
   SkBitmap skSrcBitmap;
   skSrcBitmap.installPixels(srcImageInfo, srcBuffer, srcRowBytes);
+  skSrcBitmap.setImmutable();
+
   uint8_t* dstBuffer = pBitmap->GetBuffer().data();
   DCHECK(dstBuffer);
+
   int dstWidth = pBitmap->GetWidth();
   int dstHeight = pBitmap->GetHeight();
   size_t dstRowBytes = pBitmap->GetPitch();
@@ -1537,6 +1543,7 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
       kPremul_SkAlphaType);
   SkBitmap skDstBitmap;
   skDstBitmap.installPixels(dstImageInfo, dstBuffer, dstRowBytes);
+
   SkCanvas canvas(skDstBitmap);
   canvas.drawImageRect(skSrcBitmap.asImage(),
                        SkRect::MakeXYWH(left, top, dstWidth, dstHeight),
@@ -1743,12 +1750,15 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
     const FXDIB_ResampleOptions& options,
     BlendMode blend_type) {
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
+
   // Storage vector must outlive `skBitmap`.
   DataVector<uint32_t> dst32_storage;
   SkBitmap skBitmap;
   if (!Upsample(pSource, dst32_storage, &skBitmap, /*forceAlpha=*/false)) {
     return false;
   }
+  skBitmap.setImmutable();
+
   {
     SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
 
