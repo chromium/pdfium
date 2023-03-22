@@ -666,9 +666,11 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   bitmap_render.ProcessObjectNoClip(pPageObj, new_matrix);
 #ifdef _SKIA_SUPPORT_
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
-    bitmap->UnPreMultiply();
+    // Safe because `CFX_SkiaDeviceDriver` always uses pre-multiplied alpha.
+    // TODO(crbug.com/pdfium/2011): Remove the need for this.
+    bitmap->ForcePreMultiply();
   }
-#endif  // _SKIA_SUPPORT_
+#endif  // _SKIA_SUPPORT
   m_bStopped = bitmap_render.m_bStopped;
   if (pSMaskDict) {
     CFX_Matrix smask_matrix =
@@ -685,10 +687,6 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   if (group_alpha != 1.0f && transparency.IsGroup()) {
     bitmap_device.MultiplyAlpha(group_alpha);
   }
-#if defined(_SKIA_SUPPORT_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-    bitmap->PreMultiply();
-#endif
   transparency = m_Transparency;
   if (pPageObj->IsForm()) {
     transparency.SetGroup();

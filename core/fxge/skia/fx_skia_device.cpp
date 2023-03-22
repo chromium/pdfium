@@ -51,12 +51,14 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 #include "third_party/skia/include/core/SkBitmap.h"
+#include "third_party/skia/include/core/SkBlendMode.h"
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkClipOp.h"
 #include "third_party/skia/include/core/SkColorFilter.h"
 #include "third_party/skia/include/core/SkColorPriv.h"
 #include "third_party/skia/include/core/SkColorType.h"
 #include "third_party/skia/include/core/SkImage.h"
+#include "third_party/skia/include/core/SkImageInfo.h"
 #include "third_party/skia/include/core/SkMaskFilter.h"
 #include "third_party/skia/include/core/SkPaint.h"
 #include "third_party/skia/include/core/SkPath.h"
@@ -1105,11 +1107,32 @@ int CFX_SkiaDeviceDriver::GetDriverType() const {
 }
 
 bool CFX_SkiaDeviceDriver::MultiplyAlpha(float alpha) {
-  return m_pBitmap->MultiplyAlpha(static_cast<int32_t>(alpha * 255));
+  SkPaint paint;
+  paint.setAlphaf(alpha);
+  paint.setBlendMode(SkBlendMode::kDstIn);
+  m_pCanvas->drawPaint(paint);
+  return true;
 }
 
 bool CFX_SkiaDeviceDriver::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) {
-  return m_pBitmap->MultiplyAlpha(mask);
+  if (!mask->IsMaskFormat()) {
+    NOTREACHED();
+    return false;
+  }
+
+  // Storage vector must outlive `skia_mask`.
+  DataVector<uint32_t> dst32_storage;
+  SkBitmap skia_mask;
+  if (!Upsample(mask, dst32_storage, &skia_mask, /*forceAlpha=*/true)) {
+    return false;
+  }
+
+  SkPaint paint;
+  paint.setBlendMode(SkBlendMode::kDstIn);
+  m_pCanvas->drawImageRect(skia_mask.asImage(),
+                           SkRect::Make(m_pCanvas->imageInfo().bounds()),
+                           SkSamplingOptions(), &paint);
+  return true;
 }
 
 DeviceType CFX_SkiaDeviceDriver::GetDeviceType() const {
