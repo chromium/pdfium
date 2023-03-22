@@ -19,6 +19,9 @@ class CPDF_PathObject;
 class CPDF_ShadingObject;
 class CPDF_TextObject;
 
+// Represents an object within the page, like a form or image. Not to be
+// confused with the PDF spec's page object that lives in a page tree, which is
+// represented by CPDF_Page.
 class CPDF_PageObject : public CPDF_GraphicStates {
  public:
   // Values must match corresponding values in //public.
