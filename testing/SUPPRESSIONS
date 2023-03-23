@@ -362,6 +362,9 @@ bug_1972_3.in * * * agg
 # TODO(pdfium:1973): Remove after associated bug is fixed
 bug_1973.in * * * *
 
+# TODO(pdfium:2001): Remove after associated bug is fixed
+bug_2001.pdf * * * *
+
 # TODO(chromium:237527): Remove after associated bug is fixed
 bug_237527_1.in * * * *
 
