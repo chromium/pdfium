@@ -670,16 +670,12 @@ absl::optional<CFX_DIBitmap::PitchAndSize> CFX_DIBitmap::CalculatePitchAndSize(
 
   uint32_t actual_pitch = pitch;
   if (actual_pitch == 0) {
-    FX_SAFE_UINT32 safe_pitch = width;
-    safe_pitch *= bpp;
-    safe_pitch += 31;
-    // Note: This is not the same as /8 due to truncation.
-    safe_pitch /= 32;
-    safe_pitch *= 4;
-    if (!safe_pitch.IsValid())
+    absl::optional<uint32_t> pitch32 = fxge::CalculatePitch32(bpp, width);
+    if (!pitch32.has_value()) {
       return absl::nullopt;
+    }
 
-    actual_pitch = safe_pitch.ValueOrDie();
+    actual_pitch = pitch32.value();
   }
 
   FX_SAFE_UINT32 safe_size = actual_pitch;
