@@ -420,9 +420,9 @@ bool AddSamples(const CPDF_SampledFunc* func,
       float_colors[j] =
           colors_min[j] + (colors_max[j] - colors_min[j]) * interp;
     }
-    colors.push_back(SkPackARGB32(0xFF, FloatToByte(float_colors[0]),
-                                  FloatToByte(float_colors[1]),
-                                  FloatToByte(float_colors[2])));
+    colors.push_back(SkPackARGB32NoCheck(0xFF, FloatToByte(float_colors[0]),
+                                         FloatToByte(float_colors[1]),
+                                         FloatToByte(float_colors[2])));
     pos.push_back(static_cast<float>(i) / (sample_count - 1));
   }
   return true;
@@ -742,8 +742,8 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
             static_cast<const uint8_t*>(buffer) + y * rowBytes;
         pdfium::span<uint32_t> dst_row = dst32_pixels.subspan(y * width);
         for (int x = 0; x < width; ++x) {
-          dst_row[x] = SkPackARGB32(0xFF, srcRow[x * 3 + 2], srcRow[x * 3 + 1],
-                                    srcRow[x * 3 + 0]);
+          dst_row[x] = SkPackARGB32NoCheck(
+              0xFF, srcRow[x * 3 + 2], srcRow[x * 3 + 1], srcRow[x * 3 + 0]);
         }
       }
       rowBytes = width * sizeof(uint32_t);
