@@ -30,6 +30,7 @@
 #include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
+#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -561,13 +562,14 @@ CPDF_TextPage::TextOrientation CPDF_TextPage::FindTextlineFlowOrientation()
     if (!pPageObj->IsText())
       continue;
 
-    int32_t minH = std::max(static_cast<int32_t>(pPageObj->GetRect().left), 0);
-    int32_t maxH =
-        std::min(static_cast<int32_t>(pPageObj->GetRect().right), nPageWidth);
-    int32_t minV =
-        std::max(static_cast<int32_t>(pPageObj->GetRect().bottom), 0);
-    int32_t maxV =
-        std::min(static_cast<int32_t>(pPageObj->GetRect().top), nPageHeight);
+    int32_t minH = static_cast<int32_t>(
+        pdfium::clamp<float>(pPageObj->GetRect().left, 0.0f, nPageWidth));
+    int32_t maxH = static_cast<int32_t>(
+        pdfium::clamp<float>(pPageObj->GetRect().right, 0.0f, nPageWidth));
+    int32_t minV = static_cast<int32_t>(
+        pdfium::clamp<float>(pPageObj->GetRect().bottom, 0.0f, nPageHeight));
+    int32_t maxV = static_cast<int32_t>(
+        pdfium::clamp<float>(pPageObj->GetRect().top, 0.0f, nPageHeight));
     if (minH >= maxH || minV >= maxV)
       continue;
 
