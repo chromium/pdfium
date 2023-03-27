@@ -19,7 +19,7 @@ bool CheckImageSize(const CJPX_Decoder::JpxImageInfo& image_info) {
   static constexpr uint32_t kMemLimitBytes = 1024 * 1024 * 1024;  // 1 GB.
   FX_SAFE_UINT32 mem = image_info.width;
   mem *= image_info.height;
-  mem *= image_info.components;
+  mem *= image_info.channels;
   return mem.IsValid() && mem.ValueOrDie() <= kMemLimitBytes;
 }
 
@@ -50,14 +50,14 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
     return 0;
 
   FXDIB_Format format;
-  if (image_info.components == 1) {
+  if (image_info.channels == 1) {
     format = FXDIB_Format::k8bppRgb;
-  } else if (image_info.components <= 3) {
+  } else if (image_info.channels <= 3) {
     format = FXDIB_Format::kRgb;
-  } else if (image_info.components == 4) {
+  } else if (image_info.channels == 4) {
     format = FXDIB_Format::kRgb32;
   } else {
-    image_info.width = (image_info.width * image_info.components + 2) / 3;
+    image_info.width = (image_info.width * image_info.channels + 2) / 3;
     format = FXDIB_Format::kRgb;
   }
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
