@@ -20,10 +20,6 @@
 #define BASE_HAS_OPTIMIZED_SAFE_CONVERSIONS (0)
 #endif
 
-#if !BASE_NUMERICS_DISABLE_OSTREAM_OPERATORS
-#include <ostream>
-#endif
-
 namespace pdfium {
 namespace base {
 namespace internal {
@@ -121,21 +117,27 @@ constexpr Dst checked_cast(Src value) {
 template <typename T>
 struct SaturationDefaultLimits : public std::numeric_limits<T> {
   static constexpr T NaN() {
-    return std::numeric_limits<T>::has_quiet_NaN
-               ? std::numeric_limits<T>::quiet_NaN()
-               : T();
+    if constexpr (std::numeric_limits<T>::has_quiet_NaN) {
+      return std::numeric_limits<T>::quiet_NaN();
+    } else {
+      return T();
+    }
   }
   using std::numeric_limits<T>::max;
   static constexpr T Overflow() {
-    return std::numeric_limits<T>::has_infinity
-               ? std::numeric_limits<T>::infinity()
-               : std::numeric_limits<T>::max();
+    if constexpr (std::numeric_limits<T>::has_infinity) {
+      return std::numeric_limits<T>::infinity();
+    } else {
+      return std::numeric_limits<T>::max();
+    }
   }
   using std::numeric_limits<T>::lowest;
   static constexpr T Underflow() {
-    return std::numeric_limits<T>::has_infinity
-               ? std::numeric_limits<T>::infinity() * -1
-               : std::numeric_limits<T>::lowest();
+    if constexpr (std::numeric_limits<T>::has_infinity) {
+      return std::numeric_limits<T>::infinity() * -1;
+    } else {
+      return std::numeric_limits<T>::lowest();
+    }
   }
 };
 
@@ -279,11 +281,17 @@ class StrictNumeric {
   constexpr StrictNumeric(const StrictNumeric<Src>& rhs)
       : value_(strict_cast<T>(rhs.value_)) {}
 
+  // Strictly speaking, this is not necessary, but declaring this allows class
+  // template argument deduction to be used so that it is possible to simply
+  // write `StrictNumeric(777)` instead of `StrictNumeric<int>(777)`.
+  // NOLINTNEXTLINE(google-explicit-constructor)
+  constexpr StrictNumeric(T value) : value_(value) {}
+
   // This is not an explicit constructor because we implicitly upgrade regular
   // numerics to StrictNumerics to make them easier to use.
   template <typename Src>
-  constexpr StrictNumeric(Src value)  // NOLINT(runtime/explicit)
-      : value_(strict_cast<T>(value)) {}
+  // NOLINTNEXTLINE(google-explicit-constructor)
+  constexpr StrictNumeric(Src value) : value_(strict_cast<T>(value)) {}
 
   // If you got here from a compiler error, it's because you tried to assign
   // from a source type to a destination type that has insufficient range.
