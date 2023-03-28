@@ -110,8 +110,7 @@ float CPDF_PSOP::GetFloatValue() const {
   if (m_op == PSOP_CONST)
     return m_value;
 
-  NOTREACHED();
-  return 0;
+  NOTREACHED_NORETURN();
 }
 
 bool CPDF_PSEngine::Execute() {

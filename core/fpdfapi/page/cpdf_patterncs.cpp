@@ -45,8 +45,7 @@ bool CPDF_PatternCS::GetRGB(pdfium::span<const float> pBuf,
                             float* R,
                             float* G,
                             float* B) const {
-  NOTREACHED();
-  return false;
+  NOTREACHED_NORETURN();
 }
 
 const CPDF_PatternCS* CPDF_PatternCS::AsPatternCS() const {

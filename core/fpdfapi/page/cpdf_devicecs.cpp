@@ -40,8 +40,7 @@ uint32_t CPDF_DeviceCS::v_Load(CPDF_Document* pDoc,
                                std::set<const CPDF_Object*>* pVisited) {
   // Unlike other classes that inherit from CPDF_ColorSpace, CPDF_DeviceCS is
   // never loaded by CPDF_ColorSpace.
-  NOTREACHED();
-  return 0;
+  NOTREACHED_NORETURN();
 }
 
 bool CPDF_DeviceCS::GetRGB(pdfium::span<const float> pBuf,
@@ -72,8 +71,7 @@ bool CPDF_DeviceCS::GetRGB(pdfium::span<const float> pBuf,
       }
       return true;
     default:
-      NOTREACHED();
-      return false;
+      NOTREACHED_NORETURN();
   }
 }
 
@@ -141,7 +139,6 @@ void CPDF_DeviceCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
       }
       break;
     default:
-      NOTREACHED();
-      break;
+      NOTREACHED_NORETURN();
   }
 }

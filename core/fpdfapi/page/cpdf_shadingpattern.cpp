@@ -120,8 +120,7 @@ bool CPDF_ShadingPattern::Validate() const {
       break;
     }
     default: {
-      NOTREACHED();
-      return false;
+      NOTREACHED_NORETURN();
     }
   }
 
@@ -148,10 +147,8 @@ bool CPDF_ShadingPattern::Validate() const {
              ValidateFunctions(nNumColorSpaceComponents, 1, 1);
     }
     default:
-      break;
+      NOTREACHED_NORETURN();
   }
-  NOTREACHED();
-  return false;
 }
 
 bool CPDF_ShadingPattern::ValidateFunctions(
