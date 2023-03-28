@@ -57,7 +57,7 @@ class CPDF_Object : public Retainable {
 
   // Create a deep copy of the object except any reference object be
   // copied to the object it points to directly.
-  virtual RetainPtr<CPDF_Object> CloneDirectObject() const;
+  RetainPtr<CPDF_Object> CloneDirectObject() const;
 
   virtual ByteString GetString() const;
   virtual WideString GetUnicodeText() const;
