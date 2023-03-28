@@ -65,9 +65,13 @@ bool CFFL_CheckBox::OnChar(CPDFSDK_Widget* pWidget,
       CFFL_FormField::OnChar(pWidget, nChar, nFlags);
 
       CPWL_CheckBox* pWnd = CreateOrUpdatePWLCheckBox(pPageView);
-      if (pWnd && !pWnd->IsReadOnly())
-        pWnd->SetCheck(!pWidget->IsChecked());
-
+      if (pWnd && !pWnd->IsReadOnly()) {
+        ObservedPtr<CPWL_CheckBox> pObservedBox(pWnd);
+        const bool is_checked = pWidget->IsChecked();
+        if (pObservedBox) {
+          pObservedBox->SetCheck(!is_checked);
+        }
+      }
       return CommitData(pPageView, nFlags);
     }
     default:
@@ -80,14 +84,17 @@ bool CFFL_CheckBox::OnLButtonUp(CPDFSDK_PageView* pPageView,
                                 Mask<FWL_EVENTFLAG> nFlags,
                                 const CFX_PointF& point) {
   CFFL_Button::OnLButtonUp(pPageView, pWidget, nFlags, point);
-
-  if (!IsValid())
+  if (!IsValid()) {
     return true;
-
+  }
   CPWL_CheckBox* pWnd = CreateOrUpdatePWLCheckBox(pPageView);
-  if (pWnd)
-    pWnd->SetCheck(!pWidget->IsChecked());
-
+  if (pWnd) {
+    ObservedPtr<CPWL_CheckBox> pObservedBox(pWnd);
+    const bool is_checked = pWidget->IsChecked();
+    if (pObservedBox) {
+      pObservedBox->SetCheck(!is_checked);
+    }
+  }
   return CommitData(pPageView, nFlags);
 }
 
