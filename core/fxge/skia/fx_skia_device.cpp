@@ -1704,10 +1704,10 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
     SkPaint paint;
     SetBitmapPaintForMerge(pSource->IsMaskFormat(), !m_FillOptions.aliased_path,
                            0xFFFFFFFF, bitmap_alpha, blend_type, &paint);
-    sk_sp<SkImage> skSrc = SkImage::MakeFromBitmap(skBitmap);
+    sk_sp<SkImage> skSrc = SkImages::RasterFromBitmap(skBitmap);
     sk_sp<SkShader> skSrcShader = skSrc->makeShader(
         SkTileMode::kClamp, SkTileMode::kClamp, SkSamplingOptions());
-    sk_sp<SkImage> skMaskImage = SkImage::MakeFromBitmap(skMask);
+    sk_sp<SkImage> skMaskImage = SkImages::RasterFromBitmap(skMask);
     sk_sp<SkShader> skMaskShader = skMaskImage->makeShader(
         SkTileMode::kClamp, SkTileMode::kClamp, SkSamplingOptions());
     paint.setShader(
