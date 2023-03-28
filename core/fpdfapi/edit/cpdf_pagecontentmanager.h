@@ -31,17 +31,16 @@ class CPDF_PageContentManager {
   // if Contents is not an array, but only a single stream.
   size_t AddStream(fxcrt::ostringstream* buf);
 
-  // Schedule the removal of the Content stream at a given index. It will be
+  // Schedules the removal of the Content stream at a given index. It will be
   // removed upon CPDF_PageContentManager destruction.
   void ScheduleRemoveStreamByIndex(size_t stream_index);
 
  private:
-  // Remove all Content streams for which ScheduleRemoveStreamByIndex() was
+  // Removes all Content streams for which ScheduleRemoveStreamByIndex() was
   // called. Update the content stream of all page objects with the shifted
   // indexes.
   void ExecuteScheduledRemovals();
 
- private:
   RetainPtr<CPDF_Stream> GetContentsStream();
   RetainPtr<CPDF_Array> GetContentsArray();
 
