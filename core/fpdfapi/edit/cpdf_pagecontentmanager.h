@@ -13,14 +13,14 @@
 #include "third_party/abseil-cpp/absl/types/variant.h"
 
 class CPDF_Array;
-class CPDF_IndirectObjectHolder;
+class CPDF_Document;
 class CPDF_PageObjectHolder;
 class CPDF_Stream;
 
 class CPDF_PageContentManager {
  public:
   CPDF_PageContentManager(CPDF_PageObjectHolder* page_obj_holder,
-                          CPDF_IndirectObjectHolder* indirect_obj_holder);
+                          CPDF_Document* document);
   ~CPDF_PageContentManager();
 
   // Gets the Content stream at a given index. If Contents is a single stream
@@ -45,7 +45,7 @@ class CPDF_PageContentManager {
   RetainPtr<CPDF_Array> GetContentsArray();
 
   UnownedPtr<CPDF_PageObjectHolder> const page_obj_holder_;
-  UnownedPtr<CPDF_IndirectObjectHolder> const indirect_obj_holder_;
+  UnownedPtr<CPDF_Document> const document_;
   // When holding a CPDF_Stream, the pointer may be null.
   absl::variant<RetainPtr<CPDF_Stream>, RetainPtr<CPDF_Array>> contents_;
   std::set<size_t> streams_to_remove_;

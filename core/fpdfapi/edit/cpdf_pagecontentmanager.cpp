@@ -23,9 +23,8 @@
 
 CPDF_PageContentManager::CPDF_PageContentManager(
     CPDF_PageObjectHolder* page_obj_holder,
-    CPDF_IndirectObjectHolder* indirect_obj_holder)
-    : page_obj_holder_(page_obj_holder),
-      indirect_obj_holder_(indirect_obj_holder) {
+    CPDF_Document* document)
+    : page_obj_holder_(page_obj_holder), document_(document) {
   RetainPtr<CPDF_Dictionary> page_dict = page_obj_holder_->GetMutableDict();
   RetainPtr<CPDF_Object> contents_obj =
       page_dict->GetMutableObjectFor("Contents");
@@ -75,21 +74,21 @@ RetainPtr<CPDF_Stream> CPDF_PageContentManager::GetStreamByIndex(
 }
 
 size_t CPDF_PageContentManager::AddStream(fxcrt::ostringstream* buf) {
-  auto new_stream = indirect_obj_holder_->NewIndirect<CPDF_Stream>();
+  auto new_stream = document_->NewIndirect<CPDF_Stream>();
   new_stream->SetDataFromStringstream(buf);
 
   // If there is one Content stream (not in an array), now there will be two, so
   // create an array with the old and the new one. The new one's index is 1.
   RetainPtr<CPDF_Stream> contents_stream = GetContentsStream();
   if (contents_stream) {
-    auto new_contents_array = indirect_obj_holder_->NewIndirect<CPDF_Array>();
-    new_contents_array->AppendNew<CPDF_Reference>(indirect_obj_holder_,
+    auto new_contents_array = document_->NewIndirect<CPDF_Array>();
+    new_contents_array->AppendNew<CPDF_Reference>(document_,
                                                   contents_stream->GetObjNum());
-    new_contents_array->AppendNew<CPDF_Reference>(indirect_obj_holder_,
+    new_contents_array->AppendNew<CPDF_Reference>(document_,
                                                   new_stream->GetObjNum());
 
     RetainPtr<CPDF_Dictionary> page_dict = page_obj_holder_->GetMutableDict();
-    page_dict->SetNewFor<CPDF_Reference>("Contents", indirect_obj_holder_,
+    page_dict->SetNewFor<CPDF_Reference>("Contents", document_,
                                          new_contents_array->GetObjNum());
     contents_ = std::move(new_contents_array);
     return 1;
@@ -98,7 +97,7 @@ size_t CPDF_PageContentManager::AddStream(fxcrt::ostringstream* buf) {
   // If there is an array, just add the new stream to it, at the last position.
   RetainPtr<CPDF_Array> contents_array = GetContentsArray();
   if (contents_array) {
-    contents_array->AppendNew<CPDF_Reference>(indirect_obj_holder_,
+    contents_array->AppendNew<CPDF_Reference>(document_,
                                               new_stream->GetObjNum());
     return contents_array->size() - 1;
   }
@@ -106,7 +105,7 @@ size_t CPDF_PageContentManager::AddStream(fxcrt::ostringstream* buf) {
   // There were no Contents, so add the new stream as the single Content stream.
   // Its index is 0.
   RetainPtr<CPDF_Dictionary> page_dict = page_obj_holder_->GetMutableDict();
-  page_dict->SetNewFor<CPDF_Reference>("Contents", indirect_obj_holder_,
+  page_dict->SetNewFor<CPDF_Reference>("Contents", document_,
                                        new_stream->GetObjNum());
   contents_ = std::move(new_stream);
   return 0;
