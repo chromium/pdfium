@@ -37,6 +37,7 @@
 #include "third_party/base/check.h"
 
 using pdfium::HelloWorldChecksum;
+using testing::HasSubstr;
 
 namespace {
 
@@ -904,6 +905,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveTextObject) {
   {
     ScopedFPDFPageObject page_object(FPDFPage_GetObject(page, 0));
     ASSERT_TRUE(page_object);
+    ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(page_object.get()));
     EXPECT_TRUE(FPDFPage_RemoveObject(page, page_object.get()));
   }
   ASSERT_EQ(1, FPDFPage_CountObjects(page));
@@ -924,6 +926,12 @@ TEST_F(FPDFEditEmbedderTest, RemoveTextObject) {
   // Save the document and verify it after reloading.
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedDocument(200, 200, FirstRemovedChecksum());
+
+  // Verify removed/renamed resources are no longer there.
+  // TODO(crbug.com/1428724): Negate these checks.
+  EXPECT_THAT(GetString(), HasSubstr("/F1"));
+  EXPECT_THAT(GetString(), HasSubstr("/F2"));
+  EXPECT_THAT(GetString(), HasSubstr("/Times-Roman"));
 
   UnloadPage(page);
 }
