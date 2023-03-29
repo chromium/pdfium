@@ -6,6 +6,7 @@
 
 #include <map>
 #include <numeric>
+#include <sstream>
 #include <utility>
 #include <vector>
 
@@ -109,6 +110,18 @@ size_t CPDF_PageContentManager::AddStream(fxcrt::ostringstream* buf) {
                                        new_stream->GetObjNum());
   contents_ = std::move(new_stream);
   return 0;
+}
+
+void CPDF_PageContentManager::UpdateStream(size_t stream_index,
+                                           fxcrt::ostringstream* buf) {
+  // If `buf` is now empty, remove the stream instead of setting the data.
+  if (buf->tellp() <= 0) {
+    ScheduleRemoveStreamByIndex(stream_index);
+    return;
+  }
+
+  RetainPtr<CPDF_Stream> existing_stream = GetStreamByIndex(stream_index);
+  existing_stream->SetDataFromStringstreamAndRemoveFilter(buf);
 }
 
 void CPDF_PageContentManager::ScheduleRemoveStreamByIndex(size_t stream_index) {

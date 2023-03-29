@@ -160,15 +160,7 @@ void CPDF_PageContentGenerator::UpdateContentStreams(
       continue;
     }
 
-    RetainPtr<CPDF_Stream> old_stream =
-        page_content_manager.GetStreamByIndex(stream_index);
-    DCHECK(old_stream);
-
-    // If buf is now empty, remove the stream instead of setting the data.
-    if (buf->tellp() <= 0)
-      page_content_manager.ScheduleRemoveStreamByIndex(stream_index);
-    else
-      old_stream->SetDataFromStringstreamAndRemoveFilter(buf);
+    page_content_manager.UpdateStream(stream_index, buf);
   }
 }
 

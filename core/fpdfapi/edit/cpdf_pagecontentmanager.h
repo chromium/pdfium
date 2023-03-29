@@ -23,19 +23,23 @@ class CPDF_PageContentManager {
                           CPDF_Document* document);
   ~CPDF_PageContentManager();
 
-  // Gets the Content stream at a given index. If Contents is a single stream
-  // rather than an array, it is retrievable at index 0.
-  RetainPtr<CPDF_Stream> GetStreamByIndex(size_t stream_index);
-
   // Adds a new Content stream. Its index in the array will be returned, or 0
   // if Contents is not an array, but only a single stream.
   size_t AddStream(fxcrt::ostringstream* buf);
+
+  // Changes the stream at `stream_index` to contain the data in `buf`. If `buf`
+  // is empty, then schedule the removal of the stream instead.
+  void UpdateStream(size_t stream_index, fxcrt::ostringstream* buf);
+
+ private:
+  // Gets the Content stream at a given index. If Contents is a single stream
+  // rather than an array, it is retrievable at index 0.
+  RetainPtr<CPDF_Stream> GetStreamByIndex(size_t stream_index);
 
   // Schedules the removal of the Content stream at a given index. It will be
   // removed upon CPDF_PageContentManager destruction.
   void ScheduleRemoveStreamByIndex(size_t stream_index);
 
- private:
   // Removes all Content streams for which ScheduleRemoveStreamByIndex() was
   // called. Update the content stream of all page objects with the shifted
   // indexes.
