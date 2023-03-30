@@ -113,12 +113,12 @@ TEST_F(FPDFSaveEmbedderTest, SaveLinearizedDoc) {
   EXPECT_THAT(GetString(), StartsWith("%PDF-1.6\r\n"));
   EXPECT_THAT(GetString(), HasSubstr("/Root "));
   EXPECT_THAT(GetString(), HasSubstr("/Info "));
-  EXPECT_THAT(GetString(), HasSubstr("/Size 38"));
+  EXPECT_THAT(GetString(), HasSubstr("/Size 37"));
   EXPECT_THAT(GetString(), HasSubstr("35 0 obj"));
   EXPECT_THAT(GetString(), HasSubstr("36 0 obj"));
-  EXPECT_THAT(GetString(), HasSubstr("37 0 obj"));
+  EXPECT_THAT(GetString(), Not(HasSubstr("37 0 obj")));
   EXPECT_THAT(GetString(), Not(HasSubstr("38 0 obj")));
-  EXPECT_EQ(8219u, GetString().size());
+  EXPECT_EQ(7908u, GetString().size());
 
   // Make sure new document renders the same as the old one.
   ASSERT_TRUE(OpenSavedDocument());
