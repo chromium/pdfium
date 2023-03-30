@@ -28,6 +28,25 @@ class CPDF_Stream;
 class CPDF_String;
 class IFX_ArchiveStream;
 
+// ISO 32000-1:2008 defines PDF objects. When CPDF_Parser parses a PDF object,
+// it represents the PDF object using CPDF_Objects. Take this PDF object for
+// example:
+//
+// 4 0 obj <<
+//   /Type /Pages
+//   /Count 1
+//   /Kids [9 0 R]
+// >>
+//
+// Multiple CPDF_Objects instances are necessary to represent this PDF object:
+// 1) A CPDF_Dictionary with object number 4 that contains 3 elements.
+// 2) A CPDF_Name for /Pages.
+// 3) A CPDF_Number for the count of 1.
+// 4) A CPDF_Array for [9 0 R], which contains 1 element.
+// 5) A CPDF_Reference that references object 9 0.
+//
+// CPDF_Object (1) has an object number of 4. All the other CPDF_Objects are
+// inline objects. CPDF_Object represent that by using an object number of 0.
 class CPDF_Object : public Retainable {
  public:
   static constexpr uint32_t kInvalidObjNum = static_cast<uint32_t>(-1);
