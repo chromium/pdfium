@@ -32,6 +32,7 @@ class CPDF_Reference final : public CPDF_Object {
       CPDF_IndirectObjectHolder* holder) const override;
 
   uint32_t GetRefObjNum() const { return m_RefObjNum; }
+  bool HasIndirectObjectHolder() const { return !!m_pObjList; }
   void SetRef(CPDF_IndirectObjectHolder* pDoc, uint32_t objnum);
 
  private:
