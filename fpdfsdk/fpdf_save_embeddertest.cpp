@@ -157,10 +157,8 @@ TEST_F(FPDFSaveEmbedderTest, Bug1409) {
 
   EXPECT_THAT(GetString(), StartsWith("%PDF-1.7\r\n"));
   EXPECT_THAT(GetString(), HasSubstr("/Root "));
-  // TODO(crbug.com/pdfium/1409): The PDF should not have any images, given it
-  // is rendering blank. The file size should also be a lot smaller.
-  EXPECT_THAT(GetString(), HasSubstr("/Image"));
-  EXPECT_LT(GetString().size(), 1300u);
+  EXPECT_THAT(GetString(), Not(HasSubstr("/Image")));
+  EXPECT_LT(GetString().size(), 600u);
 }
 
 #ifdef PDF_ENABLE_XFA

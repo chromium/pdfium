@@ -133,6 +133,9 @@ class CPDF_Font : public Retainable, public Observable {
 
   CFX_Font* GetFontFallback(int position);
 
+  const ByteString& GetResourceName() const { return m_ResourceName; }
+  void SetResourceName(const ByteString& name) { m_ResourceName = name; }
+
  protected:
   CPDF_Font(CPDF_Document* pDocument, RetainPtr<CPDF_Dictionary> pFontDict);
 
@@ -163,6 +166,7 @@ class CPDF_Font : public Retainable, public Observable {
   void CheckFontMetrics();
 
   UnownedPtr<CPDF_Document> const m_pDocument;
+  ByteString m_ResourceName;  // The resource name for this font.
   CFX_Font m_Font;
   std::vector<std::unique_ptr<CFX_Font>> m_FontFallbacks;
   RetainPtr<CPDF_StreamAcc> m_pFontFile;

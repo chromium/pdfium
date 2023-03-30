@@ -38,6 +38,7 @@
 
 using pdfium::HelloWorldChecksum;
 using testing::HasSubstr;
+using testing::Not;
 
 namespace {
 
@@ -928,10 +929,9 @@ TEST_F(FPDFEditEmbedderTest, RemoveTextObject) {
   VerifySavedDocument(200, 200, FirstRemovedChecksum());
 
   // Verify removed/renamed resources are no longer there.
-  // TODO(crbug.com/1428724): Negate these checks.
-  EXPECT_THAT(GetString(), HasSubstr("/F1"));
-  EXPECT_THAT(GetString(), HasSubstr("/F2"));
-  EXPECT_THAT(GetString(), HasSubstr("/Times-Roman"));
+  EXPECT_THAT(GetString(), Not(HasSubstr("/F1")));
+  EXPECT_THAT(GetString(), Not(HasSubstr("/F2")));
+  EXPECT_THAT(GetString(), Not(HasSubstr("/Times-Roman")));
 
   UnloadPage(page);
 }
@@ -1114,10 +1114,8 @@ TEST_F(FPDFEditEmbedderTest, RemoveTextObjectWithTwoPagesSharingResources) {
   std::vector<std::string> split_saved_data = StringSplit(GetString(), '\n');
   // Verify removed/renamed resources are in the save PDF the correct number of
   // times.
-  // TODO(crbug.com/1428724): Should only be in the PDF once.
-  EXPECT_THAT(split_saved_data, Contains(HasSubstr("/F1")).Times(2));
-  EXPECT_THAT(split_saved_data, Contains(HasSubstr("/F2")).Times(2));
-
+  EXPECT_THAT(split_saved_data, Contains(HasSubstr("/F1")).Times(1));
+  EXPECT_THAT(split_saved_data, Contains(HasSubstr("/F2")).Times(1));
   EXPECT_THAT(split_saved_data, Contains(HasSubstr("/Times-Roman")).Times(1));
 
   UnloadPage(page1);
