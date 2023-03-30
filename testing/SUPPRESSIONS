@@ -334,7 +334,7 @@ resolve_nodes_1.pdf * * * *
 #
 
 # TODO(pdfium:1747): Remove after associated bug is fixed
-bug_1258634.in * * * skia
+bug_1258634.in * * * *
 
 # TODO(pdfium:1331): Remove after associated bug is fixed
 bug_1331.in * * * *
@@ -384,7 +384,6 @@ bug_983289.in * * * agg
 jpxdecode.in * * * *
 jpxdecode_without_bitspercomponent.in * * * *
 jpxdecode_without_colorspace.in * * * *
-jpxdecode_without_smaskindata.in * * * *
 
 # TODO(chromium:1028991): Remove after associated bug is fixed
 reset_button.in * * * *
