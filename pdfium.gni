@@ -58,9 +58,6 @@ declare_args() {
   # Enable callgrind for performance profiling
   enable_callgrind = false
 
-  # Don't build against bundled zlib.
-  use_system_zlib = false
-
   # Don't build against bundled lcms2.
   use_system_lcms2 = false
 
@@ -69,6 +66,12 @@ declare_args() {
 
   # Don't build against bundled libpng.
   use_system_libpng = false
+
+  # Don't build against bundled libtiff.
+  use_system_libtiff = false
+
+  # Don't build against bundled zlib.
+  use_system_zlib = false
 
   # Enable SSE2 for MSVC builds. Ignored if it's not a MSVC build.
   msvc_use_sse2 = true

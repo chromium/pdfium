@@ -130,7 +130,7 @@ source_set("fxcodec") {
         "tiff/tiff_decoder.cpp",
         "tiff/tiff_decoder.h",
       ]
-      deps += [ "../../third_party:fx_tiff" ]
+      deps += [ "../../third_party:tiff" ]
     }
   }
 
