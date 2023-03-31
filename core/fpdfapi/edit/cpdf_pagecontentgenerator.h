@@ -71,6 +71,7 @@ class CPDF_PageContentGenerator {
   UnownedPtr<CPDF_PageObjectHolder> const m_pObjHolder;
   UnownedPtr<CPDF_Document> const m_pDocument;
   std::vector<UnownedPtr<CPDF_PageObject>> m_pageObjects;
+  ByteString m_DefaultGraphicsName;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTGENERATOR_H_

@@ -94,6 +94,13 @@ class CPDF_PageObject : public CPDF_GraphicStates {
     m_ResourceName = resource_name;
   }
 
+  const ByteString& GetGraphicsResourceName() const {
+    return m_GraphicsResourceName;
+  }
+  void SetGraphicsResourceName(const ByteString& resource_name) {
+    m_GraphicsResourceName = resource_name;
+  }
+
  protected:
   void CopyData(const CPDF_PageObject* pSrcObject);
 
@@ -103,7 +110,8 @@ class CPDF_PageObject : public CPDF_GraphicStates {
   CPDF_ContentMarks m_ContentMarks;
   bool m_bDirty = false;
   int32_t m_ContentStream;
-  ByteString m_ResourceName;  // The resource name for this object.
+  ByteString m_ResourceName;          // The resource name for this object.
+  ByteString m_GraphicsResourceName;  // Like `m_ResourceName` but for graphics.
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PAGEOBJECT_H_

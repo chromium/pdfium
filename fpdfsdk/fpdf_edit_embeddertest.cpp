@@ -3068,10 +3068,11 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
                   "5384da3406d62360ffb5cac4476fff1c");
   }
 
-  // Never mind, my new favorite color is blue, increase alpha
+  // Never mind, my new favorite color is blue, increase alpha.
+  // The red graphics state goes away.
   EXPECT_TRUE(FPDFPageObj_SetFillColor(rect, 0, 0, 255, 180));
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  EXPECT_EQ(3u, graphics_dict->size());
+  EXPECT_EQ(2u, graphics_dict->size());
 
   // Check that bitmap displays changed content
   {
@@ -3082,7 +3083,7 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
 
   // And now generate, without changes
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  EXPECT_EQ(3u, graphics_dict->size());
+  EXPECT_EQ(2u, graphics_dict->size());
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 612, 792,
@@ -3105,7 +3106,7 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
 
   // Generate yet again, check dicts are reasonably sized
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  EXPECT_EQ(3u, graphics_dict->size());
+  EXPECT_EQ(2u, graphics_dict->size());
   EXPECT_EQ(1u, font_dict->size());
   FPDF_ClosePage(page);
 }
