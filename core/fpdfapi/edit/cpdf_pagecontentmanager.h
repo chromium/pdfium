@@ -5,6 +5,8 @@
 #ifndef CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTMANAGER_H_
 #define CORE_FPDFAPI_EDIT_CPDF_PAGECONTENTMANAGER_H_
 
+#include <stdint.h>
+
 #include <set>
 
 #include "core/fxcrt/fx_string_wrappers.h"
@@ -50,6 +52,7 @@ class CPDF_PageContentManager {
 
   UnownedPtr<CPDF_PageObjectHolder> const page_obj_holder_;
   UnownedPtr<CPDF_Document> const document_;
+  const std::set<uint32_t> objects_with_multi_refs_;
   // When holding a CPDF_Stream, the pointer may be null.
   absl::variant<RetainPtr<CPDF_Stream>, RetainPtr<CPDF_Array>> contents_;
   std::set<size_t> streams_to_remove_;

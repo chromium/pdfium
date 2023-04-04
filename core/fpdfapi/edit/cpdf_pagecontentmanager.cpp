@@ -4,8 +4,11 @@
 
 #include "core/fpdfapi/edit/cpdf_pagecontentmanager.h"
 
+#include <stdint.h>
+
 #include <map>
 #include <numeric>
+#include <set>
 #include <sstream>
 #include <utility>
 #include <vector>
@@ -17,20 +20,25 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fpdfapi/parser/object_tree_traversal_util.h"
 #include "third_party/abseil-cpp/absl/types/variant.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/adapters.h"
+#include "third_party/base/containers/contains.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 CPDF_PageContentManager::CPDF_PageContentManager(
     CPDF_PageObjectHolder* page_obj_holder,
     CPDF_Document* document)
-    : page_obj_holder_(page_obj_holder), document_(document) {
+    : page_obj_holder_(page_obj_holder),
+      document_(document),
+      objects_with_multi_refs_(GetObjectsWithMultipleReferences(document_)) {
   RetainPtr<CPDF_Dictionary> page_dict = page_obj_holder_->GetMutableDict();
   RetainPtr<CPDF_Object> contents_obj =
       page_dict->GetMutableObjectFor("Contents");
   RetainPtr<CPDF_Array> contents_array = ToArray(contents_obj);
   if (contents_array) {
+    CHECK(contents_array->IsInline());
     contents_ = std::move(contents_array);
     return;
   }
@@ -43,10 +51,19 @@ CPDF_PageContentManager::CPDF_PageContentManager(
       return;
 
     contents_array.Reset(indirect_obj->AsMutableArray());
-    if (contents_array)
-      contents_ = std::move(contents_array);
-    else if (indirect_obj->IsStream())
+    if (contents_array) {
+      if (pdfium::Contains(objects_with_multi_refs_,
+                           contents_array->GetObjNum())) {
+        RetainPtr<CPDF_Array> cloned_contents_array =
+            pdfium::WrapRetain(contents_array->Clone()->AsMutableArray());
+        page_dict->SetFor("Contents", cloned_contents_array);
+        contents_ = std::move(cloned_contents_array);
+      } else {
+        contents_ = std::move(contents_array);
+      }
+    } else if (indirect_obj->IsStream()) {
       contents_ = pdfium::WrapRetain(indirect_obj->AsMutableStream());
+    }
   }
 }
 
@@ -121,7 +138,35 @@ void CPDF_PageContentManager::UpdateStream(size_t stream_index,
   }
 
   RetainPtr<CPDF_Stream> existing_stream = GetStreamByIndex(stream_index);
-  existing_stream->SetDataFromStringstreamAndRemoveFilter(buf);
+  CHECK(existing_stream);
+  if (!pdfium::Contains(objects_with_multi_refs_,
+                        existing_stream->GetObjNum())) {
+    existing_stream->SetDataFromStringstreamAndRemoveFilter(buf);
+    return;
+  }
+
+  if (GetContentsStream()) {
+    auto new_stream = document_->NewIndirect<CPDF_Stream>();
+    new_stream->SetDataFromStringstream(buf);
+    RetainPtr<CPDF_Dictionary> page_dict = page_obj_holder_->GetMutableDict();
+    page_dict->SetNewFor<CPDF_Reference>("Contents", document_,
+                                         new_stream->GetObjNum());
+  }
+
+  RetainPtr<CPDF_Array> contents_array = GetContentsArray();
+  if (!contents_array) {
+    return;
+  }
+
+  RetainPtr<CPDF_Reference> stream_reference =
+      ToReference(contents_array->GetMutableObjectAt(stream_index));
+  if (!stream_reference) {
+    return;
+  }
+
+  auto new_stream = document_->NewIndirect<CPDF_Stream>();
+  new_stream->SetDataFromStringstream(buf);
+  stream_reference->SetRef(document_, new_stream->GetObjNum());
 }
 
 void CPDF_PageContentManager::ScheduleRemoveStreamByIndex(size_t stream_index) {

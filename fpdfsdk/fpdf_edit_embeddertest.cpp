@@ -987,8 +987,7 @@ TEST_F(FPDFEditEmbedderTest,
   VerifySavedRendering(saved_page1, 200, 200, FirstRemovedChecksum());
   CloseSavedPage(saved_page1);
   FPDF_PAGE saved_page2 = LoadSavedPage(1);
-  // TODO(crbug.com/pdfium/2012): Should be `HelloWorldChecksum()`.
-  VerifySavedRendering(saved_page2, 200, 200, FirstRemovedChecksum());
+  VerifySavedRendering(saved_page2, 200, 200, HelloWorldChecksum());
   CloseSavedPage(saved_page2);
   CloseSavedDocument();
 
@@ -1054,8 +1053,7 @@ TEST_F(FPDFEditEmbedderTest,
   VerifySavedRendering(saved_page1, 200, 200, FirstRemovedChecksum());
   CloseSavedPage(saved_page1);
   FPDF_PAGE saved_page2 = LoadSavedPage(1);
-  // TODO(crbug.com/pdfium/2012): Should be `HelloWorldChecksum()`.
-  VerifySavedRendering(saved_page2, 200, 200, FirstRemovedChecksum());
+  VerifySavedRendering(saved_page2, 200, 200, HelloWorldChecksum());
   CloseSavedPage(saved_page2);
   CloseSavedDocument();
 
@@ -1113,8 +1111,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveTextObjectWithTwoPagesSharingResourcesDict) {
   VerifySavedRendering(saved_page1, 200, 200, FirstRemovedChecksum());
   CloseSavedPage(saved_page1);
   FPDF_PAGE saved_page2 = LoadSavedPage(1);
-  // TODO(crbug.com/pdfium/2012): Should be HelloWorldChecksum().
-  VerifySavedRendering(saved_page2, 200, 200, FirstRemovedChecksum());
+  VerifySavedRendering(saved_page2, 200, 200, HelloWorldChecksum());
   CloseSavedPage(saved_page2);
   CloseSavedDocument();
 
