@@ -59,14 +59,19 @@ class CPDF_PageContentGenerator {
   // streams are not touched.
   std::map<int32_t, fxcrt::ostringstream> GenerateModifiedStreams();
 
-  // Add buffer as a stream in page's 'Contents'
+  // For each entry in `new_stream_data`, adds the string buffer to the page's
+  // content stream.
   void UpdateContentStreams(
       std::map<int32_t, fxcrt::ostringstream>&& new_stream_data);
 
-  // Set the stream index of all page objects with stream index ==
+  // Sets the stream index of all page objects with stream index ==
   // |CPDF_PageObject::kNoContentStream|. These are new objects that had not
   // been parsed from or written to any content stream yet.
   void UpdateStreamlessPageObjects(int new_content_stream_index);
+
+  // Updates the resource dictionary for `m_pObjHolder` to account for all the
+  // changes.
+  void UpdateResourcesDict();
 
   UnownedPtr<CPDF_PageObjectHolder> const m_pObjHolder;
   UnownedPtr<CPDF_Document> const m_pDocument;

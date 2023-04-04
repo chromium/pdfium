@@ -138,7 +138,15 @@ CPDF_PageContentGenerator::~CPDF_PageContentGenerator() = default;
 
 void CPDF_PageContentGenerator::GenerateContent() {
   DCHECK(m_pObjHolder->IsPage());
-  UpdateContentStreams(GenerateModifiedStreams());
+  std::map<int32_t, fxcrt::ostringstream> new_stream_data =
+      GenerateModifiedStreams();
+  // If no streams were regenerated or removed, nothing to do here.
+  if (new_stream_data.empty()) {
+    return;
+  }
+
+  UpdateContentStreams(std::move(new_stream_data));
+  UpdateResourcesDict();
 }
 
 std::map<int32_t, fxcrt::ostringstream>
@@ -207,9 +215,7 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
 
 void CPDF_PageContentGenerator::UpdateContentStreams(
     std::map<int32_t, fxcrt::ostringstream>&& new_stream_data) {
-  // If no streams were regenerated or removed, nothing to do here.
-  if (new_stream_data.empty())
-    return;
+  CHECK(!new_stream_data.empty());
 
   // Make sure default graphics are created.
   m_DefaultGraphicsName = GetOrCreateDefaultGraphics();
@@ -228,7 +234,9 @@ void CPDF_PageContentGenerator::UpdateContentStreams(
 
     page_content_manager.UpdateStream(stream_index, buf);
   }
+}
 
+void CPDF_PageContentGenerator::UpdateResourcesDict() {
   RetainPtr<CPDF_Dictionary> resources = m_pObjHolder->GetMutableResources();
   if (!resources) {
     return;
