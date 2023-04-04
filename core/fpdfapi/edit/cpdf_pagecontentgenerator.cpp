@@ -13,6 +13,7 @@
 #include <tuple>
 #include <utility>
 
+#include "constants/page_object.h"
 #include "core/fpdfapi/edit/cpdf_contentstream_write_utils.h"
 #include "core/fpdfapi/edit/cpdf_pagecontentmanager.h"
 #include "core/fpdfapi/edit/cpdf_stringarchivestream.h"
@@ -37,6 +38,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fpdfapi/parser/object_tree_traversal_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/notreached.h"
@@ -242,6 +244,21 @@ void CPDF_PageContentGenerator::UpdateResourcesDict() {
     return;
   }
 
+  const uint32_t resources_object_number = resources->GetObjNum();
+  if (resources_object_number) {
+    // If `resources` is not an inline object, then do not modify it directly if
+    // it has multiple references.
+    if (pdfium::Contains(GetObjectsWithMultipleReferences(m_pDocument),
+                         resources_object_number)) {
+      resources = pdfium::WrapRetain(resources->Clone()->AsMutableDictionary());
+      const uint32_t clone_object_number =
+          m_pDocument->AddIndirectObject(resources);
+      m_pObjHolder->SetResources(resources);
+      m_pObjHolder->GetMutableDict()->SetNewFor<CPDF_Reference>(
+          pdfium::page_object::kResources, m_pDocument, clone_object_number);
+    }
+  }
+
   ResourcesMap seen_resources;
   for (auto& page_object : m_pageObjects) {
     RecordPageObjectResourceUsage(page_object, seen_resources);
@@ -260,7 +277,8 @@ ByteString CPDF_PageContentGenerator::RealizeResource(
   if (!m_pObjHolder->GetResources()) {
     m_pObjHolder->SetResources(m_pDocument->NewIndirect<CPDF_Dictionary>());
     m_pObjHolder->GetMutableDict()->SetNewFor<CPDF_Reference>(
-        "Resources", m_pDocument, m_pObjHolder->GetResources()->GetObjNum());
+        pdfium::page_object::kResources, m_pDocument,
+        m_pObjHolder->GetResources()->GetObjNum());
   }
 
   RetainPtr<CPDF_Dictionary> pResList =
