@@ -39,6 +39,7 @@
 using pdfium::HelloWorldChecksum;
 using testing::HasSubstr;
 using testing::Not;
+using testing::UnorderedElementsAreArray;
 
 namespace {
 
@@ -3002,7 +3003,8 @@ TEST_F(FPDFEditEmbedderTest, GraphicsData) {
   RetainPtr<const CPDF_Dictionary> graphics_dict =
       cpage->GetResources()->GetDictFor("ExtGState");
   ASSERT_TRUE(graphics_dict);
-  EXPECT_EQ(2u, graphics_dict->size());
+  EXPECT_THAT(graphics_dict->GetKeys(),
+              UnorderedElementsAreArray({"FXE1", "FXE2"}));
 
   // Add a text object causing no change to the graphics dictionary
   FPDF_PAGEOBJECT text1 = FPDFPageObj_NewTextObj(document(), "Arial", 12.0f);
@@ -3011,7 +3013,8 @@ TEST_F(FPDFEditEmbedderTest, GraphicsData) {
   EXPECT_TRUE(FPDFPageObj_SetFillColor(text1, 100, 100, 100, 255));
   FPDFPage_InsertObject(page.get(), text1);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
-  EXPECT_EQ(2u, graphics_dict->size());
+  EXPECT_THAT(graphics_dict->GetKeys(),
+              UnorderedElementsAreArray({"FXE1", "FXE2"}));
 
   // Add a text object increasing the size of the graphics dictionary
   FPDF_PAGEOBJECT text2 =
@@ -3020,7 +3023,8 @@ TEST_F(FPDFEditEmbedderTest, GraphicsData) {
   FPDFPageObj_SetBlendMode(text2, "Darken");
   EXPECT_TRUE(FPDFPageObj_SetFillColor(text2, 0, 0, 255, 150));
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
-  EXPECT_EQ(3u, graphics_dict->size());
+  EXPECT_THAT(graphics_dict->GetKeys(),
+              UnorderedElementsAreArray({"FXE1", "FXE2", "FXE3"}));
 
   // Add a path that should reuse graphics
   FPDF_PAGEOBJECT path = FPDFPageObj_CreateNewPath(400, 100);
@@ -3028,7 +3032,8 @@ TEST_F(FPDFEditEmbedderTest, GraphicsData) {
   EXPECT_TRUE(FPDFPageObj_SetFillColor(path, 200, 200, 100, 150));
   FPDFPage_InsertObject(page.get(), path);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
-  EXPECT_EQ(3u, graphics_dict->size());
+  EXPECT_THAT(graphics_dict->GetKeys(),
+              UnorderedElementsAreArray({"FXE1", "FXE2", "FXE3"}));
 
   // Add a rect increasing the size of the graphics dictionary
   FPDF_PAGEOBJECT rect2 = FPDFPageObj_CreateNewRect(10, 10, 100, 100);
@@ -3037,7 +3042,8 @@ TEST_F(FPDFEditEmbedderTest, GraphicsData) {
   EXPECT_TRUE(FPDFPageObj_SetStrokeColor(rect2, 0, 0, 0, 200));
   FPDFPage_InsertObject(page.get(), rect2);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
-  EXPECT_EQ(4u, graphics_dict->size());
+  EXPECT_THAT(graphics_dict->GetKeys(),
+              UnorderedElementsAreArray({"FXE1", "FXE2", "FXE3", "FXE4"}));
 }
 
 TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
@@ -3056,7 +3062,8 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
   RetainPtr<const CPDF_Dictionary> graphics_dict =
       cpage->GetResources()->GetDictFor("ExtGState");
   ASSERT_TRUE(graphics_dict);
-  EXPECT_EQ(2u, graphics_dict->size());
+  EXPECT_THAT(graphics_dict->GetKeys(),
+              UnorderedElementsAreArray({"FXE1", "FXE2"}));
 
   // Check the bitmap
   {
@@ -3069,7 +3076,8 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
   // The red graphics state goes away.
   EXPECT_TRUE(FPDFPageObj_SetFillColor(rect, 0, 0, 255, 180));
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  EXPECT_EQ(2u, graphics_dict->size());
+  EXPECT_THAT(graphics_dict->GetKeys(),
+              UnorderedElementsAreArray({"FXE1", "FXE3"}));
 
   // Check that bitmap displays changed content
   {
@@ -3080,14 +3088,18 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
 
   // And now generate, without changes
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  EXPECT_EQ(2u, graphics_dict->size());
+  EXPECT_THAT(graphics_dict->GetKeys(),
+              UnorderedElementsAreArray({"FXE1", "FXE3"}));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 612, 792,
                   "2e51656f5073b0bee611d9cd086aa09c");
   }
 
-  // Add some text to the page
+  // Add some text to the page, which starts out with no fonts.
+  RetainPtr<const CPDF_Dictionary> font_dict =
+      cpage->GetResources()->GetDictFor("Font");
+  EXPECT_FALSE(font_dict);
   FPDF_PAGEOBJECT text_object =
       FPDFPageObj_NewTextObj(document(), "Arial", 12.0f);
   ScopedFPDFWideString text =
@@ -3096,15 +3108,19 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
   FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 300, 300);
   FPDFPage_InsertObject(page, text_object);
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  RetainPtr<const CPDF_Dictionary> font_dict =
-      cpage->GetResources()->GetDictFor("Font");
+
+  // After generating the content, there should now be a font resource.
+  font_dict = cpage->GetResources()->GetDictFor("Font");
   ASSERT_TRUE(font_dict);
-  EXPECT_EQ(1u, font_dict->size());
+  EXPECT_THAT(graphics_dict->GetKeys(),
+              UnorderedElementsAreArray({"FXE1", "FXE3"}));
+  EXPECT_THAT(font_dict->GetKeys(), UnorderedElementsAreArray({"FXF1"}));
 
   // Generate yet again, check dicts are reasonably sized
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  EXPECT_EQ(2u, graphics_dict->size());
-  EXPECT_EQ(1u, font_dict->size());
+  EXPECT_THAT(graphics_dict->GetKeys(),
+              UnorderedElementsAreArray({"FXE1", "FXE3"}));
+  EXPECT_THAT(font_dict->GetKeys(), UnorderedElementsAreArray({"FXF1"}));
   FPDF_ClosePage(page);
 }
 
