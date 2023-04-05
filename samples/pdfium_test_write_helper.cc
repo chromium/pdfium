@@ -179,6 +179,37 @@ int CALLBACK EnhMetaFileProc(HDC hdc,
 }
 #endif  // _WIN32
 
+std::string GeneratePageOutputFilename(const char* pdf_name,
+                                       int page_num,
+                                       const char* extension) {
+  char filename[256];
+  int chars_formatted = snprintf(filename, sizeof(filename), "%s.%d.%s",
+                                 pdf_name, page_num, extension);
+  if (chars_formatted < 0 ||
+      static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
+    fprintf(stderr, "Filename %s is too long\n", filename);
+    return std::string();
+  }
+
+  return std::string(filename);
+}
+
+std::string GenerateImageOutputFilename(const char* pdf_name,
+                                        int page_num,
+                                        int image_num,
+                                        const char* extension) {
+  char filename[256];
+  int chars_formatted = snprintf(filename, sizeof(filename), "%s.%d.%d.%s",
+                                 pdf_name, page_num, image_num, extension);
+  if (chars_formatted < 0 ||
+      static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
+    fprintf(stderr, "Filename %s for saving image is too long.\n", filename);
+    return std::string();
+  }
+
+  return std::string(filename);
+}
+
 }  // namespace
 
 std::string WritePpm(const char* pdf_name,
@@ -187,20 +218,25 @@ std::string WritePpm(const char* pdf_name,
                      int stride,
                      int width,
                      int height) {
-  if (!CheckDimensions(stride, width, height))
+  if (!CheckDimensions(stride, width, height)) {
     return "";
+  }
 
   int out_len = width * height;
-  if (out_len > INT_MAX / 3)
+  if (out_len > INT_MAX / 3) {
     return "";
+  }
 
   out_len *= 3;
 
-  char filename[256];
-  snprintf(filename, sizeof(filename), "%s.%d.ppm", pdf_name, num);
-  FILE* fp = fopen(filename, "wb");
-  if (!fp)
-    return "";
+  std::string filename = GeneratePageOutputFilename(pdf_name, num, "ppm");
+  if (filename.empty()) {
+    return std::string();
+  }
+  FILE* fp = fopen(filename.c_str(), "wb");
+  if (!fp) {
+    return std::string();
+  }
 
   fprintf(fp, "P6\n# PDF test render\n%d %d\n255\n", width, height);
   // Source data is B, G, R, unused.
@@ -219,33 +255,29 @@ std::string WritePpm(const char* pdf_name,
       dest_line[(w * 3) + 2] = src_line[w * 4];
     }
   }
-  if (fwrite(result.data(), out_len, 1, fp) != 1)
-    fprintf(stderr, "Failed to write to %s\n", filename);
+  if (fwrite(result.data(), out_len, 1, fp) != 1) {
+    fprintf(stderr, "Failed to write to %s\n", filename.c_str());
+  }
 
   fclose(fp);
-  return std::string(filename);
+  return filename;
 }
 
 void WriteText(FPDF_TEXTPAGE textpage, const char* pdf_name, int num) {
-  char filename[256];
-  int chars_formatted =
-      snprintf(filename, sizeof(filename), "%s.%d.txt", pdf_name, num);
-  if (chars_formatted < 0 ||
-      static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
-    fprintf(stderr, "Filename %s is too long\n", filename);
+  std::string filename = GeneratePageOutputFilename(pdf_name, num, "txt");
+  if (filename.empty()) {
     return;
   }
-
-  FILE* fp = fopen(filename, "w");
+  FILE* fp = fopen(filename.c_str(), "w");
   if (!fp) {
-    fprintf(stderr, "Failed to open %s for output\n", filename);
+    fprintf(stderr, "Failed to open %s for output\n", filename.c_str());
     return;
   }
 
   // Output in UTF32-LE.
   uint32_t bom = 0x0000FEFF;
   if (fwrite(&bom, sizeof(bom), 1, fp) != 1) {
-    fprintf(stderr, "Failed to write to %s\n", filename);
+    fprintf(stderr, "Failed to write to %s\n", filename.c_str());
     (void)fclose(fp);
     return;
   }
@@ -253,7 +285,7 @@ void WriteText(FPDF_TEXTPAGE textpage, const char* pdf_name, int num) {
   for (int i = 0; i < FPDFText_CountChars(textpage); i++) {
     uint32_t c = FPDFText_GetUnicode(textpage, i);
     if (fwrite(&c, sizeof(c), 1, fp) != 1) {
-      fprintf(stderr, "Failed to write to %s\n", filename);
+      fprintf(stderr, "Failed to write to %s\n", filename.c_str());
       break;
     }
   }
@@ -262,18 +294,13 @@ void WriteText(FPDF_TEXTPAGE textpage, const char* pdf_name, int num) {
 
 void WriteAnnot(FPDF_PAGE page, const char* pdf_name, int num) {
   // Open the output text file.
-  char filename[256];
-  int chars_formatted =
-      snprintf(filename, sizeof(filename), "%s.%d.annot.txt", pdf_name, num);
-  if (chars_formatted < 0 ||
-      static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
-    fprintf(stderr, "Filename %s is too long\n", filename);
+  std::string filename = GeneratePageOutputFilename(pdf_name, num, "annot.txt");
+  if (filename.empty()) {
     return;
   }
-
-  FILE* fp = fopen(filename, "w");
+  FILE* fp = fopen(filename.c_str(), "w");
   if (!fp) {
-    fprintf(stderr, "Failed to open %s for output\n", filename);
+    fprintf(stderr, "Failed to open %s for output\n", filename.c_str());
     return;
   }
 
@@ -383,8 +410,9 @@ std::string WritePng(const char* pdf_name,
                      int stride,
                      int width,
                      int height) {
-  if (!CheckDimensions(stride, width, height))
+  if (!CheckDimensions(stride, width, height)) {
     return "";
+  }
 
   auto input =
       pdfium::make_span(static_cast<uint8_t*>(buffer), stride * height);
@@ -395,28 +423,24 @@ std::string WritePng(const char* pdf_name,
     return "";
   }
 
-  char filename[256];
-  int chars_formatted =
-      snprintf(filename, sizeof(filename), "%s.%d.png", pdf_name, num);
-  if (chars_formatted < 0 ||
-      static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
-    fprintf(stderr, "Filename %s is too long\n", filename);
-    return "";
+  std::string filename = GeneratePageOutputFilename(pdf_name, num, "png");
+  if (filename.empty()) {
+    return std::string();
   }
-
-  FILE* fp = fopen(filename, "wb");
+  FILE* fp = fopen(filename.c_str(), "wb");
   if (!fp) {
-    fprintf(stderr, "Failed to open %s for output\n", filename);
-    return "";
+    fprintf(stderr, "Failed to open %s for output\n", filename.c_str());
+    return std::string();
   }
 
   size_t bytes_written =
       fwrite(&png_encoding.front(), 1, png_encoding.size(), fp);
-  if (bytes_written != png_encoding.size())
-    fprintf(stderr, "Failed to write to %s\n", filename);
+  if (bytes_written != png_encoding.size()) {
+    fprintf(stderr, "Failed to write to %s\n", filename.c_str());
+  }
 
   (void)fclose(fp);
-  return std::string(filename);
+  return filename;
 }
 
 #ifdef _WIN32
@@ -426,18 +450,23 @@ std::string WriteBmp(const char* pdf_name,
                      int stride,
                      int width,
                      int height) {
-  if (!CheckDimensions(stride, width, height))
-    return "";
+  if (!CheckDimensions(stride, width, height)) {
+    return std::string();
+  }
 
   int out_len = stride * height;
-  if (out_len > INT_MAX / 3)
-    return "";
+  if (out_len > INT_MAX / 3) {
+    return std::string();
+  }
 
-  char filename[256];
-  snprintf(filename, sizeof(filename), "%s.%d.bmp", pdf_name, num);
-  FILE* fp = fopen(filename, "wb");
-  if (!fp)
-    return "";
+  std::string filename = GeneratePageOutputFilename(pdf_name, num, "bmp");
+  if (filename.empty()) {
+    return std::string();
+  }
+  FILE* fp = fopen(filename.c_str(), "wb");
+  if (!fp) {
+    return std::string();
+  }
 
   BITMAPINFO bmi = {};
   bmi.bmiHeader.biSize = sizeof(bmi) - sizeof(RGBQUAD);
@@ -456,17 +485,19 @@ std::string WriteBmp(const char* pdf_name,
   if (fwrite(&file_header, sizeof(file_header), 1, fp) != 1 ||
       fwrite(&bmi, bmi.bmiHeader.biSize, 1, fp) != 1 ||
       fwrite(buffer, out_len, 1, fp) != 1) {
-    fprintf(stderr, "Failed to write to %s\n", filename);
+    fprintf(stderr, "Failed to write to %s\n", filename.c_str());
   }
   fclose(fp);
-  return std::string(filename);
+  return filename;
 }
 
 void WriteEmf(FPDF_PAGE page, const char* pdf_name, int num) {
-  char filename[256];
-  snprintf(filename, sizeof(filename), "%s.%d.emf", pdf_name, num);
+  std::string filename = GeneratePageOutputFilename(pdf_name, num, "emf");
+  if (filename.empty()) {
+    return;
+  }
 
-  HDC dc = CreateEnhMetaFileA(nullptr, filename, nullptr, nullptr);
+  HDC dc = CreateEnhMetaFileA(nullptr, filename.c_str(), nullptr, nullptr);
 
   int width = static_cast<int>(FPDF_GetPageWidthF(page));
   int height = static_cast<int>(FPDF_GetPageHeightF(page));
@@ -485,9 +516,11 @@ void WriteEmf(FPDF_PAGE page, const char* pdf_name, int num) {
 }
 
 void WritePS(FPDF_PAGE page, const char* pdf_name, int num) {
-  char filename[256];
-  snprintf(filename, sizeof(filename), "%s.%d.ps", pdf_name, num);
-  FILE* fp = fopen(filename, "wb");
+  std::string filename = GeneratePageOutputFilename(pdf_name, num, "ps");
+  if (filename.empty()) {
+    return;
+  }
+  FILE* fp = fopen(filename.c_str(), "wb");
   if (!fp)
     return;
 
@@ -508,7 +541,7 @@ void WritePS(FPDF_PAGE page, const char* pdf_name, int num) {
     const char* data = reinterpret_cast<const char*>(comment->Data);
     uint16_t size = *reinterpret_cast<const uint16_t*>(data);
     if (fwrite(data + sizeof(uint16_t), size, 1, fp) != 1) {
-      fprintf(stderr, "Failed to write to %s\n", filename);
+      fprintf(stderr, "Failed to write to %s\n", filename.c_str());
       break;
     }
   }
@@ -519,19 +552,13 @@ void WritePS(FPDF_PAGE page, const char* pdf_name, int num) {
 
 #ifdef PDF_ENABLE_SKIA
 std::string WriteSkp(const char* pdf_name, int num, const SkPicture& picture) {
-  char filename[256];
-  int chars_formatted =
-      snprintf(filename, sizeof(filename), "%s.%d.skp", pdf_name, num);
-
-  if (chars_formatted < 0 ||
-      static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
-    fprintf(stderr, "Filename %s is too long\n", filename);
-    return "";
+  std::string filename = GeneratePageOutputFilename(pdf_name, num, "skp");
+  if (filename.empty()) {
+    return filename;
   }
-
-  SkFILEWStream wStream(filename);
+  SkFILEWStream wStream(filename.c_str());
   picture.serialize(&wStream);
-  return std::string(filename);
+  return filename;
 }
 #endif
 
@@ -661,8 +688,9 @@ void WriteAttachments(FPDF_DOCUMENT doc, const std::string& name) {
 void WriteImages(FPDF_PAGE page, const char* pdf_name, int page_num) {
   for (int i = 0; i < FPDFPage_CountObjects(page); ++i) {
     FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, i);
-    if (FPDFPageObj_GetType(obj) != FPDF_PAGEOBJ_IMAGE)
+    if (FPDFPageObj_GetType(obj) != FPDF_PAGEOBJ_IMAGE) {
       continue;
+    }
 
     ScopedFPDFBitmap bitmap(FPDFImageObj_GetBitmap(obj));
     if (!bitmap) {
@@ -671,12 +699,9 @@ void WriteImages(FPDF_PAGE page, const char* pdf_name, int page_num) {
       continue;
     }
 
-    char filename[256];
-    int chars_formatted = snprintf(filename, sizeof(filename), "%s.%d.%d.png",
-                                   pdf_name, page_num, i);
-    if (chars_formatted < 0 ||
-        static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
-      fprintf(stderr, "Filename %s for saving image is too long.\n", filename);
+    std::string filename =
+        GenerateImageOutputFilename(pdf_name, page_num, i, "png");
+    if (filename.empty()) {
       continue;
     }
 
@@ -688,8 +713,8 @@ void WriteImages(FPDF_PAGE page, const char* pdf_name, int page_num) {
       continue;
     }
 
-    WriteBufferToFile(&png_encoding.front(), png_encoding.size(), filename,
-                      "image");
+    WriteBufferToFile(&png_encoding.front(), png_encoding.size(),
+                      filename.c_str(), "image");
   }
 }
 
@@ -699,8 +724,9 @@ void WriteRenderedImages(FPDF_DOCUMENT doc,
                          int page_num) {
   for (int i = 0; i < FPDFPage_CountObjects(page); ++i) {
     FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, i);
-    if (FPDFPageObj_GetType(obj) != FPDF_PAGEOBJ_IMAGE)
+    if (FPDFPageObj_GetType(obj) != FPDF_PAGEOBJ_IMAGE) {
       continue;
+    }
 
     ScopedFPDFBitmap bitmap(FPDFImageObj_GetRenderedBitmap(doc, page, obj));
     if (!bitmap) {
@@ -709,12 +735,9 @@ void WriteRenderedImages(FPDF_DOCUMENT doc,
       continue;
     }
 
-    char filename[256];
-    int chars_formatted = snprintf(filename, sizeof(filename), "%s.%d.%d.png",
-                                   pdf_name, page_num, i);
-    if (chars_formatted < 0 ||
-        static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
-      fprintf(stderr, "Filename %s for saving image is too long.\n", filename);
+    std::string filename =
+        GenerateImageOutputFilename(pdf_name, page_num, i, "png");
+    if (filename.empty()) {
       continue;
     }
 
@@ -726,8 +749,8 @@ void WriteRenderedImages(FPDF_DOCUMENT doc,
       continue;
     }
 
-    WriteBufferToFile(&png_encoding.front(), png_encoding.size(), filename,
-                      "image");
+    WriteBufferToFile(&png_encoding.front(), png_encoding.size(),
+                      filename.c_str(), "image");
   }
 }
 
