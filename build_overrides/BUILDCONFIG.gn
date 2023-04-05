@@ -442,7 +442,7 @@ if (is_win) {
     "//build/config/win:console",
   ]
 } else if (is_mac) {
-  _linker_configs = [ "//build/config/mac:strip_all" ]
+  _linker_configs = [ "//build/config/apple:strip_all" ]
 } else {
   _linker_configs = []
 }
