@@ -161,6 +161,8 @@ source_set("skcms") {
 }
 
 component("skia") {
+  deps = []
+
   sources = [
     # PDFium sources.
     "config/SkPdfiumUserConfig.h",
@@ -297,6 +299,24 @@ component("skia") {
     ]
   }
 
+  if (is_fuchsia) {
+    sources += [
+      # TODO(crbug.com/pdfium/2019): Consider using SkFontMgr_fuchsia.cpp
+      # instead of SkFontMgr_custom_empty.cpp.
+      "//third_party/skia/src/ports/SkFontMgr_custom.cpp",
+      "//third_party/skia/src/ports/SkFontMgr_custom_empty.cpp",
+      "//third_party/skia/src/ports/SkFontMgr_custom_empty_factory.cpp",
+    ]
+    deps += [
+      "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.fonts:fuchsia.fonts_hlcpp",
+      "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.io:fuchsia.io_hlcpp",
+      "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.sys:fuchsia.sys_hlcpp",
+      "//third_party/fuchsia-sdk/sdk/pkg/sys_cpp",
+      "//third_party/fuchsia-sdk/sdk/pkg/zx",
+      "//third_party/icu:icuuc",
+    ]
+  }
+
   if (is_clang && !is_nacl) {
     # Skia won't compile with some of the more strict clang warnings.
     # e.g. it does:
@@ -312,7 +332,7 @@ component("skia") {
   ]
   public_configs = [ ":skia_config" ]
 
-  deps = [
+  deps += [
     ":skcms",
     ":skia_opts",
     "../third_party:png",
