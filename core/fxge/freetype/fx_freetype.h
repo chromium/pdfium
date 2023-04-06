@@ -37,7 +37,6 @@ using ScopedFXFTLibraryRec =
 
 #define FXFT_Select_Charmap(face, encoding) \
   FT_Select_Charmap(face, static_cast<FT_Encoding>(encoding))
-#define FXFT_Get_Glyph_Outline(face) &((face)->glyph->outline)
 #define FXFT_Render_Glyph(face, mode) \
   FT_Render_Glyph((face)->glyph, static_cast<enum FT_Render_Mode_>(mode))
 
