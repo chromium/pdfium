@@ -125,22 +125,34 @@ JpxDecodeAction GetJpxDecodeActionFromColorSpaces(
     const CPDF_ColorSpace* pdf_colorspace) {
   if (pdf_colorspace ==
       CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceGray)) {
+    if (jpx_info.colorspace != OPJ_CLRSPC_GRAY &&
+        jpx_info.colorspace != OPJ_CLRSPC_UNSPECIFIED) {
+      return JpxDecodeAction::kFail;
+    }
     return JpxDecodeAction::kUseGray;
   }
 
   if (pdf_colorspace ==
       CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceRGB)) {
+    if (jpx_info.colorspace != OPJ_CLRSPC_SRGB &&
+        jpx_info.colorspace != OPJ_CLRSPC_UNSPECIFIED) {
+      return JpxDecodeAction::kFail;
+    }
+
     // The channel count of a JPX image can be different from the PDF color
     // space's component count.
     if (jpx_info.channels > 3) {
       return JpxDecodeAction::kConvertArgbToRgb;
     }
-
     return JpxDecodeAction::kUseRgb;
   }
 
   if (pdf_colorspace ==
       CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceCMYK)) {
+    if (jpx_info.colorspace != OPJ_CLRSPC_CMYK &&
+        jpx_info.colorspace != OPJ_CLRSPC_UNSPECIFIED) {
+      return JpxDecodeAction::kFail;
+    }
     return JpxDecodeAction::kUseCmyk;
   }
 
