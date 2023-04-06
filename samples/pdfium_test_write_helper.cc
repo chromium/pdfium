@@ -6,6 +6,7 @@
 
 #include <limits.h>
 
+#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -182,32 +183,31 @@ int CALLBACK EnhMetaFileProc(HDC hdc,
 std::string GeneratePageOutputFilename(const char* pdf_name,
                                        int page_num,
                                        const char* extension) {
-  char filename[256];
-  int chars_formatted = snprintf(filename, sizeof(filename), "%s.%d.%s",
-                                 pdf_name, page_num, extension);
-  if (chars_formatted < 0 ||
-      static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
-    fprintf(stderr, "Filename %s is too long\n", filename);
+  std::ostringstream stream;
+  stream << pdf_name << "." << page_num << "." << extension;
+  std::string filename = stream.str();
+  if (filename.size() >= 256) {
+    fprintf(stderr, "Filename %s is too long\n", filename.c_str());
     return std::string();
   }
 
-  return std::string(filename);
+  return filename;
 }
 
 std::string GenerateImageOutputFilename(const char* pdf_name,
                                         int page_num,
                                         int image_num,
                                         const char* extension) {
-  char filename[256];
-  int chars_formatted = snprintf(filename, sizeof(filename), "%s.%d.%d.%s",
-                                 pdf_name, page_num, image_num, extension);
-  if (chars_formatted < 0 ||
-      static_cast<size_t>(chars_formatted) >= sizeof(filename)) {
-    fprintf(stderr, "Filename %s for saving image is too long.\n", filename);
+  std::ostringstream stream;
+  stream << pdf_name << "." << page_num << "." << image_num << "." << extension;
+  std::string filename = stream.str();
+  if (filename.size() >= 256) {
+    fprintf(stderr, "Filename %s for saving image is too long.\n",
+            filename.c_str());
     return std::string();
   }
 
-  return std::string(filename);
+  return filename;
 }
 
 }  // namespace
