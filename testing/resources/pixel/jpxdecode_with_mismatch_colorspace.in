@@ -1,0 +1,180 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 88 128]
+  /Resources <<
+    /XObject <<
+      /ImGrayCsRGB 5 0 R
+      /ImGrayCsCMYK 6 0 R
+      /ImRGBCsGray 7 0 R
+      /ImRGBCsCMYK 8 0 R
+      /ImCMYKCsGray 9 0 R
+      /ImCMYKCsRGB 10 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+
+% 50% gray background rectangle
+q
+  0.5 0.5 0.5 rg
+  0 0 88 128 re
+  f
+Q
+
+% grayscale image with RGB /ColorSpace entry
+q
+  32 0 0 32 8 88 cm
+  /ImGrayCsRGB Do
+Q
+
+% grayscale image with CMYK /ColorSpace entry
+q
+  32 0 0 32 48 88 cm
+  /ImGrayCsCMYK Do
+Q
+
+% RGB image with grayscale /ColorSpace entry
+q
+  32 0 0 32 8 48 cm
+  /ImRGBCsGray Do
+Q
+
+% RGB image with CMYK /ColorSpace entry
+q
+  32 0 0 32 48 48 cm
+  /ImRGBCsCMYK Do
+Q
+
+% CMYK image with grayscale /ColorSpace entry
+q
+  32 0 0 32 8 8 cm
+  /ImCMYKCsGray Do
+Q
+
+% CMYK image with RGB /ColorSpace entry
+q
+  32 0 0 32 48 8 cm
+  /ImCMYKCsRGB Do
+Q
+
+endstream
+endobj
+
+% grayscale image with RGB /ColorSpace
+{{object 5 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceRGB
+  /Filter /JPXDecode
+  /Height 4
+  /Width 4
+  {{streamlen}}
+>>
+stream
+{{include ../gray.jp2}}
+endstream
+endobj
+
+% grayscale image with CMYK /ColorSpace
+{{object 6 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceCMYK
+  /Filter /JPXDecode
+  /Height 4
+  /Width 4
+  {{streamlen}}
+>>
+stream
+{{include ../gray.jp2}}
+endstream
+endobj
+
+% RGB image with grayscale /ColorSpace
+{{object 7 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceGray
+  /Filter /JPXDecode
+  /Height 4
+  /Width 4
+  {{streamlen}}
+>>
+stream
+{{include ../RGB.jp2}}
+endstream
+endobj
+
+% RGB image with CMYK /ColorSpace
+{{object 8 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceCMYK
+  /Filter /JPXDecode
+  /Height 4
+  /Width 4
+  {{streamlen}}
+>>
+stream
+{{include ../RGB.jp2}}
+endstream
+endobj
+
+% CMYK image with grayscale /ColorSpace
+{{object 9 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceGray
+  /Filter /JPXDecode
+  /Height 4
+  /Width 4
+  {{streamlen}}
+>>
+stream
+{{include ../CMYK.jpf}}
+endstream
+endobj
+
+% CMYK image with RGB /ColorSpace
+{{object 10 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceRGB
+  /Filter /JPXDecode
+  /Height 4
+  /Width 4
+  {{streamlen}}
+>>
+stream
+{{include ../CMYK.jpf}}
+endstream
+endobj
+
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
