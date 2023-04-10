@@ -226,8 +226,7 @@ bool ProgressiveDecoder::PngReadHeader(int width,
   switch (format) {
     case FXDIB_Format::k1bppMask:
     case FXDIB_Format::k1bppRgb:
-      NOTREACHED();
-      return false;
+      NOTREACHED_NORETURN();
     case FXDIB_Format::k8bppMask:
     case FXDIB_Format::k8bppRgb:
       *color_type = 0;
@@ -240,8 +239,7 @@ bool ProgressiveDecoder::PngReadHeader(int width,
       *color_type = 6;
       break;
     default:
-      NOTREACHED();
-      return false;
+      NOTREACHED_NORETURN();
   }
   *gamma = kPngGamma;
   return true;
@@ -249,10 +247,7 @@ bool ProgressiveDecoder::PngReadHeader(int width,
 
 bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
   RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
-  if (!pDIBitmap) {
-    NOTREACHED();
-    return false;
-  }
+  CHECK(pDIBitmap);
   if (line < m_clipBox.top || line >= m_clipBox.bottom)
     return true;
 
@@ -277,8 +272,7 @@ bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
         PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(src_col);
         if (pPixelWeights->m_SrcStart != pPixelWeights->m_SrcEnd)
           continue;
-        NOTREACHED();
-        return false;
+        NOTREACHED_NORETURN();
       }
       return true;
     case FXDIB_Format::k8bppMask:
@@ -1076,8 +1070,7 @@ void ProgressiveDecoder::PngOneOneMapResampleHorz(
   switch (pDeviceBitmap->GetFormat()) {
     case FXDIB_Format::k1bppMask:
     case FXDIB_Format::k1bppRgb:
-      NOTREACHED();
-      return;
+      NOTREACHED_NORETURN();
     case FXDIB_Format::k8bppMask:
     case FXDIB_Format::k8bppRgb:
       if (pDeviceBitmap->HasPalette())

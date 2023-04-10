@@ -762,9 +762,8 @@ void FlatePredictorScanlineDecoder::GetNextLineWithPredictedPitch() {
       TIFF_PredictLine(m_Scanline.data(), m_PredictPitch, m_bpc, m_nComps,
                        m_OutputWidth);
       break;
-    default:
-      NOTREACHED();
-      break;
+    case PredictorType::kNone:
+      NOTREACHED_NORETURN();
   }
 }
 
@@ -790,9 +789,8 @@ void FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
         TIFF_PredictLine(m_PredictBuffer.data(), m_PredictPitch,
                          m_BitsPerComponent, m_Colors, m_Columns);
         break;
-      default:
-        NOTREACHED();
-        break;
+      case PredictorType::kNone:
+        NOTREACHED_NORETURN();
     }
     size_t read_bytes =
         m_PredictPitch > bytes_to_go ? bytes_to_go : m_PredictPitch;
@@ -865,9 +863,6 @@ uint32_t FlateModule::FlateOrLZWDecode(
     case PredictorType::kFlate:
       ret = TIFF_Predictor(Colors, BitsPerComponent, Columns, dest_buf,
                            dest_size);
-      break;
-    default:
-      NOTREACHED();
       break;
   }
   return ret ? offset : FX_INVALID_OFFSET;

@@ -23,7 +23,7 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
-#include "third_party/base/notreached.h"
+#include "third_party/base/check_op.h"
 
 static pdfium::span<const uint8_t> JpegScanSOI(
     pdfium::span<const uint8_t> src_span) {
@@ -288,10 +288,7 @@ bool JpegDecoder::Rewind() {
     jpeg_destroy_decompress(&m_Cinfo);
     return false;
   }
-  if (static_cast<int>(m_Cinfo.output_width) > m_OrigWidth) {
-    NOTREACHED();
-    return false;
-  }
+  CHECK_LE(static_cast<int>(m_Cinfo.output_width), m_OrigWidth);
   m_bStarted = true;
   return true;
 }
