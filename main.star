@@ -415,6 +415,10 @@ luci.builder(
         "os": "Ubuntu-20.04",
         "pool": "luci.flex.try",
     },
+    # Give this the highest priority, so CLs that are waiting to land can get
+    # through the presubmit earlier. Presubmit builds run quickly, so they will
+    # not have a big effect on other pending builds.
+    priority = 20,
     properties = {
         "builder_group": "tryserver.client.pdfium",
         "repo_name": "pdfium",
