@@ -68,18 +68,6 @@ index eb3dd881c..6e36cf462 100644
  
      _cmsFree(ContextID, Curve);
  }
-@@ -799,7 +814,10 @@ void CMSEXPORT cmsFreeToneCurveTriple(cmsToneCurve* Curve[3])
- // Duplicate a gamma table
- cmsToneCurve* CMSEXPORT cmsDupToneCurve(const cmsToneCurve* In)
- {
--    if (In == NULL || In ->Segments == NULL || In ->Table16 == NULL) return NULL;
-+    // Xiaochuan Liu
-+    // fix openpdf bug(mantis id:0055683, google id:360198)
-+    // the function CurveSetElemTypeFree in cmslut.c also needs to check pointer
-+    if (In == NULL || In ->InterpParams == NULL || In ->Segments == NULL || In ->Table16 == NULL) return NULL;
- 
-     return  AllocateToneCurveStruct(In ->InterpParams ->ContextID, In ->nEntries, In ->nSegments, In ->Segments, In ->Table16);
- }
 diff --git a/third_party/lcms/src/cmsio0.c b/third_party/lcms/src/cmsio0.c
 index 1b026488d..cc5f89064 100644
 --- a/third_party/lcms/src/cmsio0.c

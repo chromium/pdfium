@@ -11,7 +11,6 @@ Local Modifications:
 
 0000-cmserr-changes.patch: change LCMS memory management methods to use PDFium's.
 0001-fix-include.patch: fix include in lcms2_internal.h.
-0002-old-performance-fix.patch: https://codereview.chromium.org/534363002/
 0003-old-uninitialized-in-LUTevalFloat.patch: https://codereview.chromium.org/380293002/
 0004-old-uninitialized-in-LUTeval16.patch: https://codereview.chromium.org/387273002/
 0006-tag-type-confusion.patch: Fix a type confusion.

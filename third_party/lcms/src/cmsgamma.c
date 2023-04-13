@@ -969,10 +969,7 @@ void CMSEXPORT cmsFreeToneCurveTriple(cmsToneCurve* Curve[3])
 // Duplicate a gamma table
 cmsToneCurve* CMSEXPORT cmsDupToneCurve(const cmsToneCurve* In)
 {
-    // Xiaochuan Liu
-    // fix openpdf bug(mantis id:0055683, google id:360198)
-    // the function CurveSetElemTypeFree in cmslut.c also needs to check pointer
-    if (In == NULL || In ->InterpParams == NULL || In ->Segments == NULL || In ->Table16 == NULL) return NULL;
+    if (In == NULL) return NULL;
 
     return  AllocateToneCurveStruct(In ->InterpParams ->ContextID, In ->nEntries, In ->nSegments, In ->Segments, In ->Table16);
 }
