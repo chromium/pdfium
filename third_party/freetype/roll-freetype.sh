@@ -19,12 +19,12 @@ FT_CPE_VERSION=$(echo ${FT_VERSION} | sed -r -e's/^VER-([0-9]+)-([0-9]+)-([0-9]+
 cp third_party/freetype/src/src/psnames/pstables.h \
   third_party/freetype/include/pstables.h
 
-sed -i '' -e "s/^Version: .*\$/Version: ${FT_VERSION%-*}/" \
-  third_party/freetype/README.pdfium
-sed -i '' -e "s/^Revision: .*\$/Revision: ${FT_COMMIT}/" \
-  third_party/freetype/README.pdfium
-sed -i '' -e "s@^CPEPrefix: cpe:/a:freetype:freetype:.*\$@CPEPrefix: cpe:/a:freetype:freetype:${FT_CPE_VERSION}@" \
-  third_party/freetype/README.pdfium
+sed \
+  -e "s/^Version: .*\$/Version: ${FT_VERSION%-*}/" \
+  -e "s/^Revision: .*\$/Revision: ${FT_COMMIT}/" \
+  -e "s@^CPEPrefix: cpe:/a:freetype:freetype:.*\$@CPEPrefix: cpe:/a:freetype:freetype:${FT_CPE_VERSION}@" \
+  third_party/freetype/README.pdfium > third_party/freetype/README.pdfium.new
+mv third_party/freetype/README.pdfium.new third_party/freetype/README.pdfium
 
 git add third_party/freetype/README.pdfium
 git add third_party/freetype/include/pstables.h
