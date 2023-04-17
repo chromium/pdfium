@@ -6,7 +6,7 @@ import("//build/config/freetype/freetype.gni")
 import("../../pdfium.gni")
 import("../../testing/test.gni")
 
-config("fxge_warnings") {
+config("fxge_windows_warnings") {
   visibility = [ ":*" ]
   if (is_clang) {
     cflags = [
@@ -119,7 +119,7 @@ source_set("fxge") {
   ]
 
   configs += [
-    ":fxge_warnings",
+    ":fxge_windows_warnings",
     "../../:pdfium_strict_config",
     "../../:pdfium_noshorten_config",
   ]

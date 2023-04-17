@@ -119,8 +119,9 @@ uint32_t FPF_SkiaGetCharset(FX_Charset uCharset) {
       return FPF_SKIACHARSET_Thai;
     case FX_Charset::kMSWin_EasternEuropean:
       return FPF_SKIACHARSET_EeasternEuropean;
+    default:
+      return FPF_SKIACHARSET_Default;
   }
-  return FPF_SKIACHARSET_Default;
 }
 
 uint32_t FPF_SKIANormalizeFontName(ByteStringView bsFamily) {
