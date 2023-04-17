@@ -12,6 +12,8 @@
 #include <time.h>
 #include <wctype.h>
 
+#include "build/build_config.h"
+
 #if defined(USE_SYSTEM_ICUUC)
 #include <unicode/uchar.h>
 #else
