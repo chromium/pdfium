@@ -49,7 +49,8 @@ class CPDF_CrossRefTable {
       std::unique_ptr<CPDF_CrossRefTable> top);
 
   CPDF_CrossRefTable();
-  explicit CPDF_CrossRefTable(RetainPtr<CPDF_Dictionary> trailer);
+  CPDF_CrossRefTable(RetainPtr<CPDF_Dictionary> trailer,
+                     uint32_t trailer_object_number);
   ~CPDF_CrossRefTable();
 
   void AddCompressed(uint32_t obj_num,
@@ -58,7 +59,9 @@ class CPDF_CrossRefTable {
   void AddNormal(uint32_t obj_num, uint16_t gen_num, FX_FILESIZE pos);
   void SetFree(uint32_t obj_num);
 
-  void SetTrailer(RetainPtr<CPDF_Dictionary> trailer);
+  void SetTrailer(RetainPtr<CPDF_Dictionary> trailer,
+                  uint32_t trailer_object_number);
+  uint32_t trailer_object_number() const { return trailer_object_number_; }
   const CPDF_Dictionary* trailer() const { return trailer_.Get(); }
   CPDF_Dictionary* GetMutableTrailerForTesting() { return trailer_.Get(); }
 
@@ -77,6 +80,10 @@ class CPDF_CrossRefTable {
   void UpdateTrailer(RetainPtr<CPDF_Dictionary> new_trailer);
 
   RetainPtr<CPDF_Dictionary> trailer_;
+  // `trailer_` can be the dictionary part of a XRef stream object. Since it is
+  // inline, it has no object number. Store the stream's object number, or 0 if
+  // there is none.
+  uint32_t trailer_object_number_ = 0;
   std::map<uint32_t, ObjectInfo> objects_info_;
 };
 

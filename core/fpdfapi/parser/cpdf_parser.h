@@ -79,6 +79,7 @@ class CPDF_Parser {
 
   const CPDF_Dictionary* GetTrailer() const;
   CPDF_Dictionary* GetMutableTrailerForTesting();
+  uint32_t GetTrailerObjectNumber() const;
 
   // Returns a new trailer which combines the last read trailer with the /Root
   // and /Info from previous ones.

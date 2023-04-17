@@ -9,6 +9,7 @@
 #include <stdint.h>
 
 #include <algorithm>
+#include <set>
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -22,6 +23,7 @@
 #include "core/fpdfapi/parser/cpdf_security_handler.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fpdfapi/parser/object_tree_traversal_util.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_random.h"
@@ -163,13 +165,30 @@ bool CPDF_Creator::WriteOldIndirectObject(uint32_t objnum) {
 }
 
 bool CPDF_Creator::WriteOldObjs() {
-  uint32_t nLastObjNum = m_pParser->GetLastObjNum();
-  if (!m_pParser->IsValidObjectNumber(nLastObjNum))
+  const uint32_t nLastObjNum = m_pParser->GetLastObjNum();
+  if (!m_pParser->IsValidObjectNumber(nLastObjNum)) {
     return true;
+  }
+  if (m_CurObjNum > nLastObjNum) {
+    return true;
+  }
 
+  const std::set<uint32_t> objects_with_refs =
+      GetObjectsWithReferences(m_pDocument);
+  uint32_t last_object_number_written = 0;
   for (uint32_t objnum = m_CurObjNum; objnum <= nLastObjNum; ++objnum) {
-    if (!WriteOldIndirectObject(objnum))
+    if (!pdfium::Contains(objects_with_refs, objnum)) {
+      continue;
+    }
+    if (!WriteOldIndirectObject(objnum)) {
       return false;
+    }
+    last_object_number_written = objnum;
+  }
+  // If there are no new objects to write, then adjust `m_dwLastObjNum` if
+  // needed to reflect the actual last object number.
+  if (m_NewObjNumArray.empty()) {
+    m_dwLastObjNum = last_object_number_written;
   }
   return true;
 }

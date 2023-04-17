@@ -102,6 +102,10 @@ TEST(ParserTest, RebuildCrossRefCorrectly) {
     EXPECT_EQ(offsets[i], GetObjInfo(parser, i).pos);
   for (size_t i = 0; i < std::size(versions); ++i)
     EXPECT_EQ(versions[i], GetObjInfo(parser, i).gennum);
+
+  const CPDF_CrossRefTable* cross_ref_table = parser.GetCrossRefTable();
+  ASSERT_TRUE(cross_ref_table);
+  EXPECT_EQ(0u, cross_ref_table->trailer_object_number());
 }
 
 TEST(ParserTest, RebuildCrossRefFailed) {
@@ -334,6 +338,10 @@ TEST(ParserTest, ParseLinearizedWithHeaderOffset) {
   CPDF_TestParser parser;
   parser.InitTestFromBufferWithOffset(data, kTestHeaderOffset);
   EXPECT_TRUE(parser.ParseLinearizedHeader());
+
+  const CPDF_CrossRefTable* cross_ref_table = parser.GetCrossRefTable();
+  ASSERT_TRUE(cross_ref_table);
+  EXPECT_EQ(0u, cross_ref_table->trailer_object_number());
 }
 
 TEST(ParserTest, BadStartXrefShouldNotBuildCrossRefTable) {
@@ -434,8 +442,11 @@ TEST(ParserTest, XrefHasInvalidArchiveObjectNumber) {
       "%%EOF\n";
   ASSERT_TRUE(parser.InitTestFromBuffer(kData));
   EXPECT_EQ(CPDF_Parser::SUCCESS, parser.StartParseInternal());
-  ASSERT_TRUE(parser.GetCrossRefTable());
-  const auto& objects_info = parser.GetCrossRefTable()->objects_info();
+
+  const CPDF_CrossRefTable* cross_ref_table = parser.GetCrossRefTable();
+  ASSERT_TRUE(cross_ref_table);
+  EXPECT_EQ(7u, cross_ref_table->trailer_object_number());
+  const auto& objects_info = cross_ref_table->objects_info();
   EXPECT_EQ(2u, objects_info.size());
 
   // Skip over the first object, and continue parsing the remaining objects.

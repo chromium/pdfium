@@ -119,11 +119,13 @@ class CPDF_StreamContentParser {
   void AddPathRect(float x, float y, float w, float h);
   void AddPathObject(CFX_FillRenderOptions::FillType fill_type,
                      RenderType render_type);
-  CPDF_ImageObject* AddImageFromStream(RetainPtr<CPDF_Stream> pStream);
-  CPDF_ImageObject* AddImageFromStreamObjNum(uint32_t stream_obj_num);
+  CPDF_ImageObject* AddImageFromStream(RetainPtr<CPDF_Stream> pStream,
+                                       const ByteString& name);
+  CPDF_ImageObject* AddImageFromStreamObjNum(uint32_t stream_obj_num,
+                                             const ByteString& name);
   CPDF_ImageObject* AddLastImage();
 
-  void AddForm(RetainPtr<CPDF_Stream> pStream);
+  void AddForm(RetainPtr<CPDF_Stream> pStream, const ByteString& name);
   void SetGraphicStates(CPDF_PageObject* pObj,
                         bool bColor,
                         bool bText,

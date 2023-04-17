@@ -37,6 +37,8 @@
 #include "third_party/base/check.h"
 
 using pdfium::HelloWorldChecksum;
+using testing::HasSubstr;
+using testing::Not;
 
 namespace {
 
@@ -904,6 +906,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveTextObject) {
   {
     ScopedFPDFPageObject page_object(FPDFPage_GetObject(page, 0));
     ASSERT_TRUE(page_object);
+    ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(page_object.get()));
     EXPECT_TRUE(FPDFPage_RemoveObject(page, page_object.get()));
   }
   ASSERT_EQ(1, FPDFPage_CountObjects(page));
@@ -925,7 +928,195 @@ TEST_F(FPDFEditEmbedderTest, RemoveTextObject) {
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   VerifySavedDocument(200, 200, FirstRemovedChecksum());
 
+  // Verify removed/renamed resources are no longer there.
+  EXPECT_THAT(GetString(), Not(HasSubstr("/F1")));
+  EXPECT_THAT(GetString(), Not(HasSubstr("/F2")));
+  EXPECT_THAT(GetString(), Not(HasSubstr("/Times-Roman")));
+
   UnloadPage(page);
+}
+
+TEST_F(FPDFEditEmbedderTest,
+       RemoveTextObjectWithTwoPagesSharingContentStreamAndResources) {
+  // Load document with some text.
+  ASSERT_TRUE(OpenDocument("hello_world_2_pages.pdf"));
+  FPDF_PAGE page1 = LoadPage(0);
+  ASSERT_TRUE(page1);
+  FPDF_PAGE page2 = LoadPage(1);
+  ASSERT_TRUE(page2);
+
+  // Show what the original file looks like.
+  {
+    ScopedFPDFBitmap page1_bitmap = RenderPage(page1);
+    CompareBitmap(page1_bitmap.get(), 200, 200, HelloWorldChecksum());
+    ScopedFPDFBitmap page2_bitmap = RenderPage(page2);
+    CompareBitmap(page2_bitmap.get(), 200, 200, HelloWorldChecksum());
+  }
+
+  // Get the "Hello, world!" text object from page 1 and remove it.
+  ASSERT_EQ(2, FPDFPage_CountObjects(page1));
+  {
+    ScopedFPDFPageObject page_object(FPDFPage_GetObject(page1, 0));
+    ASSERT_TRUE(page_object);
+    ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(page_object.get()));
+    EXPECT_TRUE(FPDFPage_RemoveObject(page1, page_object.get()));
+  }
+  ASSERT_EQ(1, FPDFPage_CountObjects(page1));
+
+  // Verify the "Hello, world!" text is gone from page 1.
+  {
+    ScopedFPDFBitmap page1_bitmap = RenderPage(page1);
+    CompareBitmap(page1_bitmap.get(), 200, 200, FirstRemovedChecksum());
+    ScopedFPDFBitmap page2_bitmap = RenderPage(page2);
+    CompareBitmap(page2_bitmap.get(), 200, 200, HelloWorldChecksum());
+  }
+
+  // Verify the rendering again after calling FPDFPage_GenerateContent().
+  ASSERT_TRUE(FPDFPage_GenerateContent(page1));
+  {
+    ScopedFPDFBitmap page1_bitmap = RenderPage(page1);
+    CompareBitmap(page1_bitmap.get(), 200, 200, FirstRemovedChecksum());
+    ScopedFPDFBitmap page2_bitmap = RenderPage(page2);
+    CompareBitmap(page2_bitmap.get(), 200, 200, HelloWorldChecksum());
+  }
+
+  // Save the document and verify it after reloading.
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  ASSERT_TRUE(OpenSavedDocument());
+  FPDF_PAGE saved_page1 = LoadSavedPage(0);
+  VerifySavedRendering(saved_page1, 200, 200, FirstRemovedChecksum());
+  CloseSavedPage(saved_page1);
+  FPDF_PAGE saved_page2 = LoadSavedPage(1);
+  VerifySavedRendering(saved_page2, 200, 200, HelloWorldChecksum());
+  CloseSavedPage(saved_page2);
+  CloseSavedDocument();
+
+  std::vector<std::string> split_saved_data = StringSplit(GetString(), '\n');
+  // Verify removed/renamed resources are in the save PDF the correct number of
+  // times.
+  EXPECT_THAT(split_saved_data, Contains(HasSubstr("/F1")).Times(1));
+  EXPECT_THAT(split_saved_data, Contains(HasSubstr("/F2")).Times(1));
+  EXPECT_THAT(split_saved_data, Contains(HasSubstr("/Times-Roman")).Times(1));
+
+  UnloadPage(page1);
+  UnloadPage(page2);
+}
+
+TEST_F(FPDFEditEmbedderTest,
+       RemoveTextObjectWithTwoPagesSharingContentArrayAndResources) {
+  // Load document with some text.
+  ASSERT_TRUE(OpenDocument("hello_world_2_pages_split_streams.pdf"));
+  FPDF_PAGE page1 = LoadPage(0);
+  ASSERT_TRUE(page1);
+  FPDF_PAGE page2 = LoadPage(1);
+  ASSERT_TRUE(page2);
+
+  // Show what the original file looks like.
+  {
+    ScopedFPDFBitmap page1_bitmap = RenderPage(page1);
+    CompareBitmap(page1_bitmap.get(), 200, 200, HelloWorldChecksum());
+    ScopedFPDFBitmap page2_bitmap = RenderPage(page2);
+    CompareBitmap(page2_bitmap.get(), 200, 200, HelloWorldChecksum());
+  }
+
+  // Get the "Hello, world!" text object from page 1 and remove it.
+  ASSERT_EQ(2, FPDFPage_CountObjects(page1));
+  {
+    ScopedFPDFPageObject page_object(FPDFPage_GetObject(page1, 0));
+    ASSERT_TRUE(page_object);
+    ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(page_object.get()));
+    EXPECT_TRUE(FPDFPage_RemoveObject(page1, page_object.get()));
+  }
+  ASSERT_EQ(1, FPDFPage_CountObjects(page1));
+
+  // Verify the "Hello, world!" text is gone from page 1.
+  {
+    ScopedFPDFBitmap page1_bitmap = RenderPage(page1);
+    CompareBitmap(page1_bitmap.get(), 200, 200, FirstRemovedChecksum());
+    ScopedFPDFBitmap page2_bitmap = RenderPage(page2);
+    CompareBitmap(page2_bitmap.get(), 200, 200, HelloWorldChecksum());
+  }
+
+  // Verify the rendering again after calling FPDFPage_GenerateContent().
+  ASSERT_TRUE(FPDFPage_GenerateContent(page1));
+  {
+    ScopedFPDFBitmap page1_bitmap = RenderPage(page1);
+    CompareBitmap(page1_bitmap.get(), 200, 200, FirstRemovedChecksum());
+    ScopedFPDFBitmap page2_bitmap = RenderPage(page2);
+    CompareBitmap(page2_bitmap.get(), 200, 200, HelloWorldChecksum());
+  }
+
+  // Save the document and verify it after reloading.
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  ASSERT_TRUE(OpenSavedDocument());
+  FPDF_PAGE saved_page1 = LoadSavedPage(0);
+  VerifySavedRendering(saved_page1, 200, 200, FirstRemovedChecksum());
+  CloseSavedPage(saved_page1);
+  FPDF_PAGE saved_page2 = LoadSavedPage(1);
+  VerifySavedRendering(saved_page2, 200, 200, HelloWorldChecksum());
+  CloseSavedPage(saved_page2);
+  CloseSavedDocument();
+
+  UnloadPage(page1);
+  UnloadPage(page2);
+}
+
+TEST_F(FPDFEditEmbedderTest, RemoveTextObjectWithTwoPagesSharingResourcesDict) {
+  // Load document with some text.
+  ASSERT_TRUE(OpenDocument("hello_world_2_pages_shared_resources_dict.pdf"));
+  FPDF_PAGE page1 = LoadPage(0);
+  ASSERT_TRUE(page1);
+  FPDF_PAGE page2 = LoadPage(1);
+  ASSERT_TRUE(page2);
+
+  // Show what the original file looks like.
+  {
+    ScopedFPDFBitmap page1_bitmap = RenderPage(page1);
+    CompareBitmap(page1_bitmap.get(), 200, 200, HelloWorldChecksum());
+    ScopedFPDFBitmap page2_bitmap = RenderPage(page2);
+    CompareBitmap(page2_bitmap.get(), 200, 200, HelloWorldChecksum());
+  }
+
+  // Get the "Hello, world!" text object from page 1 and remove it.
+  ASSERT_EQ(2, FPDFPage_CountObjects(page1));
+  {
+    ScopedFPDFPageObject page_object(FPDFPage_GetObject(page1, 0));
+    ASSERT_TRUE(page_object);
+    ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(page_object.get()));
+    EXPECT_TRUE(FPDFPage_RemoveObject(page1, page_object.get()));
+  }
+  ASSERT_EQ(1, FPDFPage_CountObjects(page1));
+
+  // Verify the "Hello, world!" text is gone from page 1
+  {
+    ScopedFPDFBitmap page1_bitmap = RenderPage(page1);
+    CompareBitmap(page1_bitmap.get(), 200, 200, FirstRemovedChecksum());
+    ScopedFPDFBitmap page2_bitmap = RenderPage(page2);
+    CompareBitmap(page2_bitmap.get(), 200, 200, HelloWorldChecksum());
+  }
+
+  // Verify the rendering again after calling FPDFPage_GenerateContent().
+  ASSERT_TRUE(FPDFPage_GenerateContent(page1));
+  {
+    ScopedFPDFBitmap page1_bitmap = RenderPage(page1);
+    CompareBitmap(page1_bitmap.get(), 200, 200, FirstRemovedChecksum());
+    ScopedFPDFBitmap page2_bitmap = RenderPage(page2);
+    CompareBitmap(page2_bitmap.get(), 200, 200, HelloWorldChecksum());
+  }
+
+  // Save the document and verify it after reloading.
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  ASSERT_TRUE(OpenSavedDocument());
+  FPDF_PAGE saved_page1 = LoadSavedPage(0);
+  VerifySavedRendering(saved_page1, 200, 200, FirstRemovedChecksum());
+  CloseSavedPage(saved_page1);
+  FPDF_PAGE saved_page2 = LoadSavedPage(1);
+  VerifySavedRendering(saved_page2, 200, 200, HelloWorldChecksum());
+  CloseSavedPage(saved_page2);
+  CloseSavedDocument();
+
+  UnloadPage(page1);
+  UnloadPage(page2);
 }
 
 void CheckMarkCounts(FPDF_PAGE page,
@@ -2874,10 +3065,11 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
                   "5384da3406d62360ffb5cac4476fff1c");
   }
 
-  // Never mind, my new favorite color is blue, increase alpha
+  // Never mind, my new favorite color is blue, increase alpha.
+  // The red graphics state goes away.
   EXPECT_TRUE(FPDFPageObj_SetFillColor(rect, 0, 0, 255, 180));
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  EXPECT_EQ(3u, graphics_dict->size());
+  EXPECT_EQ(2u, graphics_dict->size());
 
   // Check that bitmap displays changed content
   {
@@ -2888,7 +3080,7 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
 
   // And now generate, without changes
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  EXPECT_EQ(3u, graphics_dict->size());
+  EXPECT_EQ(2u, graphics_dict->size());
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 612, 792,
@@ -2911,7 +3103,7 @@ TEST_F(FPDFEditEmbedderTest, DoubleGenerating) {
 
   // Generate yet again, check dicts are reasonably sized
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
-  EXPECT_EQ(3u, graphics_dict->size());
+  EXPECT_EQ(2u, graphics_dict->size());
   EXPECT_EQ(1u, font_dict->size());
   FPDF_ClosePage(page);
 }

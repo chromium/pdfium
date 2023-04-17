@@ -11,6 +11,7 @@
 
 #include "core/fpdfapi/page/cpdf_contentmarks.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_coordinates.h"
 
 class CPDF_FormObject;
@@ -88,6 +89,18 @@ class CPDF_PageObject : public CPDF_GraphicStates {
     m_ContentStream = new_content_stream;
   }
 
+  const ByteString& GetResourceName() const { return m_ResourceName; }
+  void SetResourceName(const ByteString& resource_name) {
+    m_ResourceName = resource_name;
+  }
+
+  const ByteString& GetGraphicsResourceName() const {
+    return m_GraphicsResourceName;
+  }
+  void SetGraphicsResourceName(const ByteString& resource_name) {
+    m_GraphicsResourceName = resource_name;
+  }
+
  protected:
   void CopyData(const CPDF_PageObject* pSrcObject);
 
@@ -97,6 +110,8 @@ class CPDF_PageObject : public CPDF_GraphicStates {
   CPDF_ContentMarks m_ContentMarks;
   bool m_bDirty = false;
   int32_t m_ContentStream;
+  ByteString m_ResourceName;          // The resource name for this object.
+  ByteString m_GraphicsResourceName;  // Like `m_ResourceName` but for graphics.
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PAGEOBJECT_H_

@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fxcrt/bytestring.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "third_party/base/cxx17_backports.h"
 
@@ -25,6 +26,7 @@ CPDF_AllStates::~CPDF_AllStates() = default;
 
 void CPDF_AllStates::Copy(const CPDF_AllStates& src) {
   CopyStates(src);
+  m_GraphicsResourceName = src.m_GraphicsResourceName;
   m_TextMatrix = src.m_TextMatrix;
   m_ParentMatrix = src.m_ParentMatrix;
   m_CTM = src.m_CTM;
