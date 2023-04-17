@@ -6,16 +6,6 @@ import("//build/config/freetype/freetype.gni")
 import("../../pdfium.gni")
 import("../../testing/test.gni")
 
-config("fxge_windows_warnings") {
-  visibility = [ ":*" ]
-  if (is_clang) {
-    cflags = [
-      # http://code.google.com/p/pdfium/issues/detail?id=188
-      "-Wno-switch",
-    ]
-  }
-}
-
 source_set("fxge") {
   sources = [
     "agg/fx_agg_driver.cpp",
@@ -119,7 +109,6 @@ source_set("fxge") {
   ]
 
   configs += [
-    ":fxge_windows_warnings",
     "../../:pdfium_strict_config",
     "../../:pdfium_noshorten_config",
   ]

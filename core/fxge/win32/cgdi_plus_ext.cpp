@@ -25,6 +25,7 @@
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/win32/cwin32_platform.h"
+#include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/span.h"
 
@@ -257,6 +258,10 @@ void OutputImage(Gdiplus::GpGraphics* pGraphics,
                                           &bitmap);
       break;
     }
+    case FXDIB_Format::kInvalid:
+    case FXDIB_Format::k1bppMask:
+    case FXDIB_Format::k8bppMask:
+      NOTREACHED_NORETURN();
   }
   if (dest_height < 0) {
     dest_height--;
