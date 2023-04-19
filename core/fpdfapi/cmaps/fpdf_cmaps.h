@@ -19,7 +19,7 @@ struct DWordCIDMap {
 };
 
 struct CMap {
-  enum class Type : uint8_t { kSingle, kRange };
+  enum class Type : bool { kSingle, kRange };
 
   const char* m_Name;              // Raw, POD struct.
   const uint16_t* m_pWordMap;      // Raw, POD struct.

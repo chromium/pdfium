@@ -9,7 +9,6 @@
 #include <algorithm>
 
 #include "third_party/base/check.h"
-#include "third_party/base/notreached.h"
 
 namespace fxcmap {
 
@@ -84,10 +83,6 @@ uint16_t CIDFromCharCode(const CMap* pMap, uint32_t charcode) {
           return found->cid + loword - found->low;
         break;
       }
-      default: {
-        NOTREACHED();
-        break;
-      }
     }
     pMap = FindNextCMap(pMap);
   }
@@ -123,10 +118,6 @@ uint32_t CharCodeFromCID(const CMap* pMap, uint16_t cid) {
             return pCur->low + cid - pCur->cid;
           ++pCur;
         }
-        break;
-      }
-      default: {
-        NOTREACHED();
         break;
       }
     }
