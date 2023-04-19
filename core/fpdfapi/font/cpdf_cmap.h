@@ -17,7 +17,9 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/span.h"
 
-struct FXCMAP_CMap;
+namespace fxcmap {
+struct CMap;
+}
 
 enum class CIDCoding : uint8_t {
   kUNKNOWN = 0,
@@ -71,7 +73,7 @@ class CPDF_CMap final : public Retainable {
   void SetMixedFourByteLeadingRanges(std::vector<CodeRange> ranges);
 
   CIDCoding GetCoding() const { return m_Coding; }
-  const FXCMAP_CMap* GetEmbedMap() const { return m_pEmbedMap; }
+  const fxcmap::CMap* GetEmbedMap() const { return m_pEmbedMap; }
   CIDSet GetCharset() const { return m_Charset; }
   void SetCharset(CIDSet set) { m_Charset = set; }
 
@@ -96,7 +98,7 @@ class CPDF_CMap final : public Retainable {
   std::vector<CodeRange> m_MixedFourByteLeadingRanges;
   FixedZeroedDataVector<uint16_t> m_DirectCharcodeToCIDTable;
   std::vector<CIDRange> m_AdditionalCharcodeToCIDMappings;
-  UnownedPtr<const FXCMAP_CMap> m_pEmbedMap;
+  UnownedPtr<const fxcmap::CMap> m_pEmbedMap;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_CMAP_H_

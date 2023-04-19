@@ -280,8 +280,8 @@ size_t GetFourByteCharSizeImpl(
   return 1;
 }
 
-const FXCMAP_CMap* FindEmbeddedCMap(pdfium::span<const FXCMAP_CMap> pCMaps,
-                                    ByteStringView bsName) {
+const fxcmap::CMap* FindEmbeddedCMap(pdfium::span<const fxcmap::CMap> pCMaps,
+                                     ByteStringView bsName) {
   for (size_t i = 0; i < pCMaps.size(); i++) {
     if (bsName == pCMaps[i].m_Name)
       return &pCMaps[i];
@@ -337,7 +337,7 @@ uint16_t CPDF_CMap::CIDFromCharCode(uint32_t charcode) const {
     return static_cast<uint16_t>(charcode);
 
   if (m_pEmbedMap)
-    return ::CIDFromCharCode(m_pEmbedMap, charcode);
+    return fxcmap::CIDFromCharCode(m_pEmbedMap, charcode);
 
   if (m_DirectCharcodeToCIDTable.empty())
     return static_cast<uint16_t>(charcode);

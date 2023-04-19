@@ -9,26 +9,30 @@
 
 #include <stdint.h>
 
-struct FXCMAP_DWordCIDMap {
+namespace fxcmap {
+
+struct DWordCIDMap {
   uint16_t m_HiWord;
   uint16_t m_LoWordLow;
   uint16_t m_LoWordHigh;
   uint16_t m_CID;
 };
 
-struct FXCMAP_CMap {
+struct CMap {
   enum MapType : uint8_t { Single, Range };
 
-  const char* m_Name;                     // Raw, POD struct.
-  const uint16_t* m_pWordMap;             // Raw, POD struct.
-  const FXCMAP_DWordCIDMap* m_pDWordMap;  // Raw, POD struct.
+  const char* m_Name;              // Raw, POD struct.
+  const uint16_t* m_pWordMap;      // Raw, POD struct.
+  const DWordCIDMap* m_pDWordMap;  // Raw, POD struct.
   uint16_t m_WordCount;
   uint16_t m_DWordCount;
   MapType m_WordMapType;
   int8_t m_UseOffset;
 };
 
-uint16_t CIDFromCharCode(const FXCMAP_CMap* pMap, uint32_t charcode);
-uint32_t CharCodeFromCID(const FXCMAP_CMap* pMap, uint16_t cid);
+uint16_t CIDFromCharCode(const CMap* pMap, uint32_t charcode);
+uint32_t CharCodeFromCID(const CMap* pMap, uint16_t cid);
+
+}  // namespace fxcmap
 
 #endif  // CORE_FPDFAPI_CMAPS_FPDF_CMAPS_H_

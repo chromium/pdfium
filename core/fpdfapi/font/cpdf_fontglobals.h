@@ -37,10 +37,10 @@ class CPDF_FontGlobals {
            CFX_FontMapper::StandardFont index,
            RetainPtr<CPDF_Font> pFont);
 
-  void SetEmbeddedCharset(CIDSet idx, pdfium::span<const FXCMAP_CMap> map) {
+  void SetEmbeddedCharset(CIDSet idx, pdfium::span<const fxcmap::CMap> map) {
     m_EmbeddedCharsets[idx] = map;
   }
-  pdfium::span<const FXCMAP_CMap> GetEmbeddedCharset(CIDSet idx) const {
+  pdfium::span<const fxcmap::CMap> GetEmbeddedCharset(CIDSet idx) const {
     return m_EmbeddedCharsets[idx];
   }
   void SetEmbeddedToUnicode(CIDSet idx, pdfium::span<const uint16_t> map) {
@@ -64,7 +64,7 @@ class CPDF_FontGlobals {
 
   std::map<ByteString, RetainPtr<const CPDF_CMap>> m_CMaps;
   std::unique_ptr<CPDF_CID2UnicodeMap> m_CID2UnicodeMaps[CIDSET_NUM_SETS];
-  pdfium::span<const FXCMAP_CMap> m_EmbeddedCharsets[CIDSET_NUM_SETS];
+  pdfium::span<const fxcmap::CMap> m_EmbeddedCharsets[CIDSET_NUM_SETS];
   pdfium::span<const uint16_t> m_EmbeddedToUnicodes[CIDSET_NUM_SETS];
   std::map<UnownedPtr<CPDF_Document>,
            std::unique_ptr<CFX_StockFontArray>,

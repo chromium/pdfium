@@ -159,13 +159,13 @@ bool IsValidEmbeddedCharcodeFromUnicodeCharset(CIDSet charset) {
   }
 }
 
-wchar_t EmbeddedUnicodeFromCharcode(const FXCMAP_CMap* pEmbedMap,
+wchar_t EmbeddedUnicodeFromCharcode(const fxcmap::CMap* pEmbedMap,
                                     CIDSet charset,
                                     uint32_t charcode) {
   if (!IsValidEmbeddedCharcodeFromUnicodeCharset(charset))
     return 0;
 
-  uint16_t cid = CIDFromCharCode(pEmbedMap, charcode);
+  uint16_t cid = fxcmap::CIDFromCharCode(pEmbedMap, charcode);
   if (!cid)
     return 0;
 
@@ -174,7 +174,7 @@ wchar_t EmbeddedUnicodeFromCharcode(const FXCMAP_CMap* pEmbedMap,
   return cid < map.size() ? map[cid] : 0;
 }
 
-uint32_t EmbeddedCharcodeFromUnicode(const FXCMAP_CMap* pEmbedMap,
+uint32_t EmbeddedCharcodeFromUnicode(const fxcmap::CMap* pEmbedMap,
                                      CIDSet charset,
                                      wchar_t unicode) {
   if (!IsValidEmbeddedCharcodeFromUnicodeCharset(charset))
@@ -184,7 +184,7 @@ uint32_t EmbeddedCharcodeFromUnicode(const FXCMAP_CMap* pEmbedMap,
       CPDF_FontGlobals::GetInstance()->GetEmbeddedToUnicode(charset);
   for (uint32_t i = 0; i < map.size(); ++i) {
     if (map[i] == unicode) {
-      uint32_t charCode = CharCodeFromCID(pEmbedMap, i);
+      uint32_t charCode = fxcmap::CharCodeFromCID(pEmbedMap, i);
       if (charCode)
         return charCode;
     }
