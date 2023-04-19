@@ -203,6 +203,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                    const CFX_TextRenderOptions& options);
 
   bool StartDIBitsSkia(const RetainPtr<CFX_DIBBase>& pBitmap,
+                       const FX_RECT& src_rect,
                        int bitmap_alpha,
                        uint32_t color,
                        const CFX_Matrix& matrix,

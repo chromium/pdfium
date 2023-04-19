@@ -1571,7 +1571,8 @@ bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
   FXDIB_ResampleOptions sampling_options;
   sampling_options.bNoSmoothing = true;
 
-  return StartDIBitsSkia(pBitmap, 0xFF, argb, m, sampling_options, blend_type);
+  return StartDIBitsSkia(pBitmap, src_rect, 0xFF, argb, m, sampling_options,
+                         blend_type);
 }
 
 bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
@@ -1597,7 +1598,9 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   FXDIB_ResampleOptions sampling_options;
   sampling_options.bNoSmoothing = true;
 
-  return StartDIBitsSkia(pSource, 0xFF, argb, m, sampling_options, blend_type);
+  return StartDIBitsSkia(
+      pSource, FX_RECT(0, 0, pSource->GetWidth(), pSource->GetHeight()), 0xFF,
+      argb, m, sampling_options, blend_type);
 }
 
 bool CFX_SkiaDeviceDriver::StartDIBits(
@@ -1608,8 +1611,9 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
     const FXDIB_ResampleOptions& options,
     std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_type) {
-  return StartDIBitsSkia(pSource, bitmap_alpha, argb, matrix, options,
-                         blend_type);
+  return StartDIBitsSkia(
+      pSource, FX_RECT(0, 0, pSource->GetWidth(), pSource->GetHeight()),
+      bitmap_alpha, argb, matrix, options, blend_type);
 }
 
 bool CFX_SkiaDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
@@ -1744,6 +1748,7 @@ void CFX_SkiaDeviceDriver::Clear(uint32_t color) {
 
 bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
     const RetainPtr<CFX_DIBBase>& pSource,
+    const FX_RECT& src_rect,
     int bitmap_alpha,
     uint32_t argb,
     const CFX_Matrix& matrix,
@@ -1788,8 +1793,12 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
           SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kLinear);
     }
 
-    m_pCanvas->drawImageRect(skBitmap.asImage(), SkRect::MakeWH(width, height),
-                             sampling_options, &paint);
+    m_pCanvas->drawImageRect(
+        skBitmap.asImage(),
+        SkRect::MakeLTRB(src_rect.left, src_rect.top, src_rect.right,
+                         src_rect.bottom),
+        SkRect::MakeWH(src_rect.Width(), src_rect.Height()), sampling_options,
+        &paint, SkCanvas::kFast_SrcRectConstraint);
   }
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
   return true;
