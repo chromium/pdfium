@@ -113,7 +113,7 @@ TEST(CFX_DIBitmap, CalculatePitchAndSizeBoundary) {
                                                    FXDIB_Format::k8bppRgb, 0));
 }
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 TEST(CFX_DIBitmap, PreMultiply_FromCleared) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
@@ -199,4 +199,4 @@ TEST(CFX_DIBitmap, ForceUnPreMultiply) {
   bitmap->UnPreMultiply();
   EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0xff, 0xff, 0xff, 0x7f));
 }
-#endif  // _SKIA_SUPPORT_
+#endif  // defined(_SKIA_SUPPORT_)

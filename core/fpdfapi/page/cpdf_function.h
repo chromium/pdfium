@@ -48,11 +48,11 @@ class CPDF_Function {
                     float ymin,
                     float ymax) const;
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   const CPDF_SampledFunc* ToSampledFunc() const;
   const CPDF_ExpIntFunc* ToExpIntFunc() const;
   const CPDF_StitchFunc* ToStitchFunc() const;
-#endif  // _SKIA_SUPPORT_
+#endif  // defined(_SKIA_SUPPORT_)
 
  protected:
   explicit CPDF_Function(Type type);

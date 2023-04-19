@@ -10,7 +10,7 @@
 #include "core/fpdfapi/page/cpdf_function.h"
 #include "core/fxcrt/data_vector.h"
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 #include "third_party/base/span.h"
 #endif
 
@@ -27,7 +27,7 @@ class CPDF_ExpIntFunc final : public CPDF_Function {
   uint32_t GetOrigOutputs() const { return m_nOrigOutputs; }
   float GetExponent() const { return m_Exponent; }
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   pdfium::span<const float> GetBeginValues() const { return m_BeginValues; }
   pdfium::span<const float> GetEndValues() const { return m_EndValues; }
 #endif

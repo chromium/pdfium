@@ -27,7 +27,7 @@
 #include "core/fxge/scoped_font_transform.h"
 #include "third_party/base/numerics/safe_math.h"
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 #include "third_party/skia/include/core/SkStream.h"  // nogncheck
 #include "third_party/skia/include/core/SkTypeface.h"  // nogncheck
 
@@ -312,7 +312,7 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
 #endif  // BUILDFLAG(IS_APPLE)
 }
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 CFX_TypeFace* CFX_GlyphCache::GetDeviceCache(const CFX_Font* pFont) {
   if (!m_pTypeface) {
     pdfium::span<const uint8_t> span = pFont->GetFontSpan();
@@ -329,7 +329,7 @@ CFX_TypeFace* CFX_GlyphCache::GetDeviceCache(const CFX_Font* pFont) {
 #endif  // BUILDFLAG(IS_WIN)
   return m_pTypeface.get();
 }
-#endif  // _SKIA_SUPPORT_
+#endif  // defined(_SKIA_SUPPORT_)
 
 #if !BUILDFLAG(IS_APPLE)
 void CFX_GlyphCache::InitPlatform() {}

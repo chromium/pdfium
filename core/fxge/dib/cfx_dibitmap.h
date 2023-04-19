@@ -41,10 +41,10 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   bool ConvertFormat(FXDIB_Format format);
   void Clear(uint32_t color);
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   uint32_t GetPixel(int x, int y) const;
   void SetPixel(int x, int y, uint32_t color);
-#endif  // _SKIA_SUPPORT_
+#endif  // defined(_SKIA_SUPPORT_)
 
   bool SetRedFromBitmap(const RetainPtr<CFX_DIBBase>& pSrcBitmap);
   bool SetAlphaFromBitmap(const RetainPtr<CFX_DIBBase>& pSrcBitmap);
@@ -113,7 +113,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                                                             FXDIB_Format format,
                                                             uint32_t pitch);
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   // Converts to pre-multiplied alpha if necessary.
   void PreMultiply();
 
@@ -132,7 +132,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
  private:
   enum class Channel : uint8_t { kRed, kAlpha };
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   enum class Format { kCleared, kPreMultiplied, kUnPreMultiplied };
 #endif
 
@@ -167,7 +167,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                                   int src_top);
 
   MaybeOwned<uint8_t, FxFreeDeleter> m_pBuffer;
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   Format m_nFormat = Format::kCleared;
 #endif
 };

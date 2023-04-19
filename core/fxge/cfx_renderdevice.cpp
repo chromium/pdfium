@@ -35,7 +35,7 @@
 #include "third_party/base/check_op.h"
 #include "third_party/base/span.h"
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 #include "third_party/skia/include/core/SkTypes.h"  // nogncheck
 #endif
 

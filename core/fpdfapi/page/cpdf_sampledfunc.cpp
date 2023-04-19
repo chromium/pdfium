@@ -176,7 +176,7 @@ bool CPDF_SampledFunc::v_Call(pdfium::span<const float> inputs,
   return true;
 }
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 RetainPtr<CPDF_StreamAcc> CPDF_SampledFunc::GetSampleStream() const {
   return m_pSampleStream;
 }

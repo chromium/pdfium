@@ -10,7 +10,7 @@ CFX_SubstFont::CFX_SubstFont() = default;
 
 CFX_SubstFont::~CFX_SubstFont() = default;
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 int CFX_SubstFont::GetOriginalWeight() const {
   int weight = m_Weight;
 

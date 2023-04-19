@@ -170,7 +170,7 @@ float CPDF_Function::Interpolate(float x,
   return ymin + (divisor ? (x - xmin) * (ymax - ymin) / divisor : 0);
 }
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 const CPDF_SampledFunc* CPDF_Function::ToSampledFunc() const {
   return m_Type == Type::kType0Sampled
              ? static_cast<const CPDF_SampledFunc*>(this)
@@ -188,4 +188,4 @@ const CPDF_StitchFunc* CPDF_Function::ToStitchFunc() const {
              ? static_cast<const CPDF_StitchFunc*>(this)
              : nullptr;
 }
-#endif  // _SKIA_SUPPORT_
+#endif  // defined(_SKIA_SUPPORT_)

@@ -27,7 +27,7 @@
 #include "testing/utils/path_service.h"
 #include "third_party/base/check.h"
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 #include "third_party/skia/include/core/SkCanvas.h"           // nogncheck
 #include "third_party/skia/include/core/SkColor.h"            // nogncheck
 #include "third_party/skia/include/core/SkColorType.h"        // nogncheck
@@ -38,7 +38,7 @@
 #include "third_party/skia/include/core/SkRefCnt.h"           // nogncheck
 #include "third_party/skia/include/core/SkSize.h"             // nogncheck
 #include "third_party/skia/include/core/SkSurface.h"          // nogncheck
-#endif  // _SKIA_SUPPORT_
+#endif  // defined(_SKIA_SUPPORT_)
 
 using pdfium::ManyRectanglesChecksum;
 
@@ -109,7 +109,7 @@ class MockDownloadHints final : public FX_DOWNLOADHINTS {
   ~MockDownloadHints() = default;
 };
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 ScopedFPDFBitmap SkImageToPdfiumBitmap(const SkImage& image) {
   ScopedFPDFBitmap bitmap(
       FPDFBitmap_Create(image.width(), image.height(), /*alpha=*/1));
@@ -149,7 +149,7 @@ ScopedFPDFBitmap SkPictureToPdfiumBitmap(sk_sp<SkPicture> picture,
 
   return SkImageToPdfiumBitmap(*image);
 }
-#endif  // _SKIA_SUPPORT_
+#endif  // defined(_SKIA_SUPPORT_)
 
 }  // namespace
 
@@ -227,7 +227,7 @@ class FPDFViewEmbedderTest : public EmbedderTest {
         page, format, /*bitmap_stride=*/0, expected_checksum);
   }
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   void TestRenderPageSkp(FPDF_PAGE page, const char* expected_checksum) {
     int width = static_cast<int>(FPDF_GetPageWidth(page));
     int height = static_cast<int>(FPDF_GetPageHeight(page));
@@ -245,7 +245,7 @@ class FPDFViewEmbedderTest : public EmbedderTest {
         std::move(picture), SkISize::Make(width, height));
     CompareBitmap(bitmap.get(), width, height, expected_checksum);
   }
-#endif  // _SKIA_SUPPORT_
+#endif  // defined(_SKIA_SUPPORT_)
 
  private:
   void TestRenderPageBitmapWithExternalMemoryImpl(
@@ -2000,7 +2000,7 @@ TEST_F(FPDFViewEmbedderTest, RenderXfaPage) {
   UnloadPage(page);
 }
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 TEST_F(FPDFViewEmbedderTest, RenderPageToSkp) {
   if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
     GTEST_SKIP() << "FPDF_RenderPageSkp() only makes sense with Skia";
@@ -2031,7 +2031,7 @@ TEST_F(FPDFViewEmbedderTest, RenderXfaPageToSkp) {
 
   UnloadPage(page);
 }
-#endif  // _SKIA_SUPPORT_
+#endif  // defined(_SKIA_SUPPORT_)
 
 TEST_F(FPDFViewEmbedderTest, NoSmoothTextItalicOverlappingGlyphs) {
   ASSERT_TRUE(OpenDocument("bug_1919.pdf"));

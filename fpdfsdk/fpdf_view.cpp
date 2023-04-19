@@ -52,10 +52,10 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
 #include "third_party/skia/include/core/SkPictureRecorder.h"  // nogncheck
 #include "third_party/skia/include/core/SkRect.h"             // nogncheck
-#endif  // _SKIA_SUPPORT_
+#endif  // defined(_SKIA_SUPPORT_)
 
 #ifdef PDF_ENABLE_V8
 #include "fxjs/cfx_v8_array_buffer_allocator.h"
@@ -680,7 +680,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
                                 /*need_to_restore=*/true,
                                 /*pause=*/nullptr);
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
     pBitmap->UnPreMultiply();
   }

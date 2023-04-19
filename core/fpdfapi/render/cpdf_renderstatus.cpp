@@ -660,7 +660,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   bitmap_render.SetFormResource(std::move(pFormResource));
   bitmap_render.Initialize(nullptr, nullptr);
   bitmap_render.ProcessObjectNoClip(pPageObj, new_matrix);
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
     // Safe because `CFX_SkiaDeviceDriver` always uses pre-multiplied alpha.
     // TODO(crbug.com/pdfium/2011): Remove the need for this.

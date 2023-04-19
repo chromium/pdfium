@@ -62,7 +62,7 @@ bool CFX_DefaultRenderDevice::CFX_DefaultRenderDevice::AttachImpl(
     bool bRgbByteOrder,
     RetainPtr<CFX_DIBitmap> pBackdropBitmap,
     bool bGroupKnockout) {
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   if (SkiaIsDefaultRenderer()) {
     return AttachSkiaImpl(std::move(pBitmap), bRgbByteOrder,
                           std::move(pBackdropBitmap), bGroupKnockout);
@@ -76,7 +76,7 @@ bool CFX_DefaultRenderDevice::Create(int width,
                                      int height,
                                      FXDIB_Format format,
                                      RetainPtr<CFX_DIBitmap> pBackdropBitmap) {
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   if (SkiaIsDefaultRenderer())
     return CreateSkia(width, height, format, pBackdropBitmap);
 #endif

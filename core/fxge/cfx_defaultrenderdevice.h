@@ -78,7 +78,7 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
                  FXDIB_Format format,
                  RetainPtr<CFX_DIBitmap> pBackdropBitmap);
 
-#ifdef _SKIA_SUPPORT_
+#if defined(_SKIA_SUPPORT_)
   bool AttachSkiaImpl(RetainPtr<CFX_DIBitmap> pBitmap,
                       bool bRgbByteOrder,
                       RetainPtr<CFX_DIBitmap> pBackdropBitmap,
