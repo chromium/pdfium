@@ -19,14 +19,14 @@ struct DWordCIDMap {
 };
 
 struct CMap {
-  enum MapType : uint8_t { Single, Range };
+  enum class Type : uint8_t { kSingle, kRange };
 
   const char* m_Name;              // Raw, POD struct.
   const uint16_t* m_pWordMap;      // Raw, POD struct.
   const DWordCIDMap* m_pDWordMap;  // Raw, POD struct.
   uint16_t m_WordCount;
   uint16_t m_DWordCount;
-  MapType m_WordMapType;
+  Type m_WordMapType;
   int8_t m_UseOffset;
 };
 

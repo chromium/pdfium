@@ -11,17 +11,20 @@
 namespace fxcmap {
 
 const CMap kKorea1_cmaps[] = {
-    {"KSC-EUC-H", kKSC_EUC_H_0, nullptr, 467, 0, CMap::Range, 0},
-    {"KSC-EUC-V", kKSC_EUC_V_0, nullptr, 16, 0, CMap::Range, -1},
-    {"KSCms-UHC-H", kKSCms_UHC_H_1, nullptr, 675, 0, CMap::Range, -2},
-    {"KSCms-UHC-V", kKSCms_UHC_V_1, nullptr, 16, 0, CMap::Range, -1},
-    {"KSCms-UHC-HW-H", kKSCms_UHC_HW_H_1, nullptr, 675, 0, CMap::Range, 0},
-    {"KSCms-UHC-HW-V", kKSCms_UHC_HW_V_1, nullptr, 16, 0, CMap::Range, -1},
-    {"KSCpc-EUC-H", kKSCpc_EUC_H_0, nullptr, 509, 0, CMap::Range, -6},
-    {"UniKS-UCS2-H", kUniKS_UCS2_H_1, nullptr, 8394, 0, CMap::Range, 0},
-    {"UniKS-UCS2-V", kUniKS_UCS2_V_1, nullptr, 18, 0, CMap::Range, -1},
-    {"UniKS-UTF16-H", kUniKS_UTF16_H_0, nullptr, 158, 0, CMap::Single, -2},
-    {"UniKS-UTF16-V", kUniKS_UCS2_V_1, nullptr, 18, 0, CMap::Range, -1},
+    {"KSC-EUC-H", kKSC_EUC_H_0, nullptr, 467, 0, CMap::Type::kRange, 0},
+    {"KSC-EUC-V", kKSC_EUC_V_0, nullptr, 16, 0, CMap::Type::kRange, -1},
+    {"KSCms-UHC-H", kKSCms_UHC_H_1, nullptr, 675, 0, CMap::Type::kRange, -2},
+    {"KSCms-UHC-V", kKSCms_UHC_V_1, nullptr, 16, 0, CMap::Type::kRange, -1},
+    {"KSCms-UHC-HW-H", kKSCms_UHC_HW_H_1, nullptr, 675, 0, CMap::Type::kRange,
+     0},
+    {"KSCms-UHC-HW-V", kKSCms_UHC_HW_V_1, nullptr, 16, 0, CMap::Type::kRange,
+     -1},
+    {"KSCpc-EUC-H", kKSCpc_EUC_H_0, nullptr, 509, 0, CMap::Type::kRange, -6},
+    {"UniKS-UCS2-H", kUniKS_UCS2_H_1, nullptr, 8394, 0, CMap::Type::kRange, 0},
+    {"UniKS-UCS2-V", kUniKS_UCS2_V_1, nullptr, 18, 0, CMap::Type::kRange, -1},
+    {"UniKS-UTF16-H", kUniKS_UTF16_H_0, nullptr, 158, 0, CMap::Type::kSingle,
+     -2},
+    {"UniKS-UTF16-V", kUniKS_UCS2_V_1, nullptr, 18, 0, CMap::Type::kRange, -1},
 };
 
 const size_t kKorea1_cmaps_size = std::size(kKorea1_cmaps);

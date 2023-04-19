@@ -60,7 +60,7 @@ uint16_t CIDFromCharCode(const CMap* pMap, uint32_t charcode) {
 
   while (pMap && pMap->m_pWordMap) {
     switch (pMap->m_WordMapType) {
-      case CMap::Single: {
+      case CMap::Type::kSingle: {
         const auto* begin =
             reinterpret_cast<const SingleCmap*>(pMap->m_pWordMap);
         const auto* end = begin + pMap->m_WordCount;
@@ -72,7 +72,7 @@ uint16_t CIDFromCharCode(const CMap* pMap, uint32_t charcode) {
           return found->cid;
         break;
       }
-      case CMap::Range: {
+      case CMap::Type::kRange: {
         const auto* begin =
             reinterpret_cast<const RangeCmap*>(pMap->m_pWordMap);
         const auto* end = begin + pMap->m_WordCount;
@@ -104,7 +104,7 @@ uint32_t CharCodeFromCID(const CMap* pMap, uint16_t cid) {
   DCHECK(pMap);
   while (pMap) {
     switch (pMap->m_WordMapType) {
-      case CMap::Single: {
+      case CMap::Type::kSingle: {
         const auto* pCur =
             reinterpret_cast<const SingleCmap*>(pMap->m_pWordMap);
         const auto* pEnd = pCur + pMap->m_WordCount;
@@ -115,7 +115,7 @@ uint32_t CharCodeFromCID(const CMap* pMap, uint16_t cid) {
         }
         break;
       }
-      case CMap::Range: {
+      case CMap::Type::kRange: {
         const auto* pCur = reinterpret_cast<const RangeCmap*>(pMap->m_pWordMap);
         const auto* pEnd = pCur + pMap->m_WordCount;
         while (pCur < pEnd) {
