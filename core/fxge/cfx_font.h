@@ -137,6 +137,7 @@ class CFX_Font {
   void AdjustMMParams(int glyph_index, int dest_width, int weight) const;
   std::unique_ptr<CFX_Path> LoadGlyphPathImpl(uint32_t glyph_index,
                                               int dest_width) const;
+  int GetGlyphWidthImpl(uint32_t glyph_index, int dest_width, int weight) const;
 
 #if defined(_SKIA_SUPPORT_)
   CFX_TypeFace* GetDeviceCache() const;

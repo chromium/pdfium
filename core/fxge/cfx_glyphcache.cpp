@@ -312,6 +312,20 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
 #endif  // BUILDFLAG(IS_APPLE)
 }
 
+int CFX_GlyphCache::GetGlyphWidth(const CFX_Font* font,
+                                  uint32_t glyph_index,
+                                  int dest_width,
+                                  int weight) {
+  const WidthMapKey key = std::make_tuple(glyph_index, dest_width, weight);
+  auto it = m_WidthMap.find(key);
+  if (it != m_WidthMap.end()) {
+    return it->second;
+  }
+
+  m_WidthMap[key] = font->GetGlyphWidthImpl(glyph_index, dest_width, weight);
+  return m_WidthMap[key];
+}
+
 #if defined(_SKIA_SUPPORT_)
 CFX_TypeFace* CFX_GlyphCache::GetDeviceCache(const CFX_Font* pFont) {
   if (!m_pTypeface) {

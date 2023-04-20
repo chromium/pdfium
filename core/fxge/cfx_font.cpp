@@ -418,6 +418,13 @@ int CFX_Font::GetGlyphWidth(uint32_t glyph_index) const {
 int CFX_Font::GetGlyphWidth(uint32_t glyph_index,
                             int dest_width,
                             int weight) const {
+  return GetOrCreateGlyphCache()->GetGlyphWidth(this, glyph_index, dest_width,
+                                                weight);
+}
+
+int CFX_Font::GetGlyphWidthImpl(uint32_t glyph_index,
+                                int dest_width,
+                                int weight) const {
   if (!m_Face)
     return 0;
   if (m_pSubstFont && m_pSubstFont->IsBuiltInGenericFont())
