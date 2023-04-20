@@ -4433,6 +4433,38 @@ TEST_F(FPDFEditEmbedderTest, GetImageMetadataJpxLzw) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFEditEmbedderTest, GetImagePixelSize) {
+  ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Check that getting the size of a null object would fail.
+  unsigned int width = 0;
+  unsigned int height = 0;
+  EXPECT_FALSE(FPDFImageObj_GetImagePixelSize(nullptr, &width, &height));
+
+  // Check that receiving the size with a null width and height pointers would
+  // fail.
+  FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, 35);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+  EXPECT_FALSE(FPDFImageObj_GetImagePixelSize(obj, nullptr, nullptr));
+  EXPECT_FALSE(FPDFImageObj_GetImagePixelSize(obj, nullptr, &height));
+  EXPECT_FALSE(FPDFImageObj_GetImagePixelSize(obj, &width, nullptr));
+
+  // Verify the pixel size of image.
+  ASSERT_TRUE(FPDFImageObj_GetImagePixelSize(obj, &width, &height));
+  EXPECT_EQ(92u, width);
+  EXPECT_EQ(68u, height);
+
+  obj = FPDFPage_GetObject(page, 37);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+  ASSERT_TRUE(FPDFImageObj_GetImagePixelSize(obj, &width, &height));
+  EXPECT_EQ(126u, width);
+  EXPECT_EQ(106u, height);
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForHelloWorldText) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);

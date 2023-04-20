@@ -179,6 +179,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFImageObj_GetImageFilter);
     CHK(FPDFImageObj_GetImageFilterCount);
     CHK(FPDFImageObj_GetImageMetadata);
+    CHK(FPDFImageObj_GetImagePixelSize);
     CHK(FPDFImageObj_GetRenderedBitmap);
     CHK(FPDFImageObj_LoadJpegFile);
     CHK(FPDFImageObj_LoadJpegFileInline);

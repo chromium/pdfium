@@ -731,6 +731,19 @@ FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
                               FPDF_PAGE page,
                               FPDF_IMAGEOBJ_METADATA* metadata);
 
+// Experimental API.
+// Get the image size in pixels. Faster method to get only image size.
+//
+//   image_object - handle to an image object.
+//   width        - receives the image width in pixels; must not be NULL.
+//   height       - receives the image height in pixels; must not be NULL.
+//
+// Returns true if successful.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFImageObj_GetImagePixelSize(FPDF_PAGEOBJECT image_object,
+                               unsigned int* width,
+                               unsigned int* height);
+
 // Create a new path object at an initial position.
 //
 //   x - initial horizontal position.

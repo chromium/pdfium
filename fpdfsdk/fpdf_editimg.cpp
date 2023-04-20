@@ -407,3 +407,22 @@ FPDFImageObj_GetImageMetadata(FPDF_PAGEOBJECT image_object,
   }
   return true;
 }
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFImageObj_GetImagePixelSize(FPDF_PAGEOBJECT image_object,
+                               unsigned int* width,
+                               unsigned int* height) {
+  CPDF_ImageObject* pImgObj = CPDFImageObjectFromFPDFPageObject(image_object);
+  if (!pImgObj || !width || !height) {
+    return false;
+  }
+
+  RetainPtr<CPDF_Image> pImg = pImgObj->GetImage();
+  if (!pImg) {
+    return false;
+  }
+
+  *width = pImg->GetPixelWidth();
+  *height = pImg->GetPixelHeight();
+  return true;
+}
