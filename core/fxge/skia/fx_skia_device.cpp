@@ -1504,12 +1504,11 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
 }
 
 bool CFX_SkiaDeviceDriver::GetClipBox(FX_RECT* pRect) {
-  // TODO(caryclark) call m_canvas->getClipDeviceBounds() instead
-  pRect->left = 0;
-  pRect->top = 0;
-  const SkImageInfo& canvasSize = m_pCanvas->imageInfo();
-  pRect->right = canvasSize.width();
-  pRect->bottom = canvasSize.height();
+  SkIRect clip = m_pCanvas->getDeviceClipBounds();
+  pRect->left = clip.fLeft;
+  pRect->top = clip.fTop;
+  pRect->right = clip.fRight;
+  pRect->bottom = clip.fBottom;
   return true;
 }
 

@@ -204,6 +204,7 @@ source_set("fxge") {
 
 pdfium_unittest_source_set("unittests") {
   sources = [
+    "cfx_defaultrenderdevice_unittest.cpp",
     "cfx_folderfontinfo_unittest.cpp",
     "cfx_fontmapper_unittest.cpp",
     "cfx_path_unittest.cpp",
