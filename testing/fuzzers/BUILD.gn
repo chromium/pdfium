@@ -2,6 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("//build_overrides/build.gni")
 import("../../pdfium.gni")
 
 config("fuzzer_config") {
@@ -149,6 +150,7 @@ source_set("fuzzer_init_public") {
 
 if (is_component_build) {
   group("fuzzer_impls") {
+    testonly = true
     deps = []
     foreach(fuzzer, fuzzer_list) {
       deps += [ ":${fuzzer}_impl" ]
@@ -218,6 +220,7 @@ template("pdfium_fuzzer") {
     impl_name = target_name + "_src"
   }
   source_set(impl_name) {
+    testonly = true
     sources = invoker.sources
     deps = []
     if (defined(invoker.deps)) {
@@ -613,5 +616,11 @@ pdfium_fuzzer("pdf_xml_fuzzer") {
 pdfium_fuzzer("pdfium_fuzzer") {
   sources = [ "pdfium_fuzzer.cc" ]
   deps = [ ":fuzzer_helper" ]
+  if (build_with_chromium) {
+    deps += [
+      "//base",
+      "//base/test:test_support",
+    ]
+  }
   public_fuzzer = true
 }
