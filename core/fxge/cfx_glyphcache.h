@@ -82,9 +82,6 @@ class CFX_GlyphCache final : public Retainable, public Observable {
                                      bool bFontStyle,
                                      int dest_width,
                                      int anti_alias);
-  void InitPlatform();
-  void DestroyPlatform();
-
   RetainPtr<CFX_Face> const m_Face;
   std::map<ByteString, SizeGlyphCache> m_SizeMap;
   std::map<PathMapKey, std::unique_ptr<CFX_Path>> m_PathMap;

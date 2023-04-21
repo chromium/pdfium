@@ -101,7 +101,8 @@ void GenKey(UniqueKeyGen* pKeyGen,
 
 }  // namespace
 
-CFX_GlyphCache::CFX_GlyphCache(RetainPtr<CFX_Face> face) : m_Face(face) {}
+CFX_GlyphCache::CFX_GlyphCache(RetainPtr<CFX_Face> face)
+    : m_Face(std::move(face)) {}
 
 CFX_GlyphCache::~CFX_GlyphCache() = default;
 
@@ -344,10 +345,6 @@ CFX_TypeFace* CFX_GlyphCache::GetDeviceCache(const CFX_Font* pFont) {
   return m_pTypeface.get();
 }
 #endif  // defined(_SKIA_SUPPORT_)
-
-#if !BUILDFLAG(IS_APPLE)
-void CFX_GlyphCache::InitPlatform() {}
-#endif
 
 CFX_GlyphBitmap* CFX_GlyphCache::LookUpGlyphBitmap(
     const CFX_Font* pFont,

@@ -161,10 +161,6 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
 
 }  // namespace pdfium
 
-void CFX_GlyphCache::InitPlatform() {}
-
-void CFX_GlyphCache::DestroyPlatform() {}
-
 std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph_Nativetext(
     const CFX_Font* pFont,
     uint32_t glyph_index,
