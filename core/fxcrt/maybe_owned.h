@@ -46,7 +46,11 @@ class MaybeOwned {
       Reset();
   }
 
-  T* Get() const { return m_pObj; }
+  T* Get() const& { return m_pObj.get(); }
+  T* Get() && {
+    auto local_variable_preventing_move_elision = std::move(m_pObj);
+    return local_variable_preventing_move_elision.get();
+  }
   bool IsOwned() const { return !!m_pOwnedObj; }
 
   // Downgrades to unowned, caller takes ownership.

@@ -192,4 +192,42 @@ TEST(MaybeOwned, Move) {
   EXPECT_EQ(1, delete_count);
 }
 
+namespace {
+
+class Thing {
+ public:
+  int x = 42;
+};
+
+class Owner {
+ public:
+  explicit Owner(std::unique_ptr<Thing> thing) : thing_(std::move(thing)) {}
+
+ private:
+  std::unique_ptr<Thing> thing_;
+};
+
+class Manager {
+ public:
+  Manager()
+      : transient_(std::make_unique<Thing>()),
+        owner_(std::make_unique<Owner>(transient_.Release())),
+        thing_(std::move(transient_).Get()) {}
+
+  bool has_transient() const { return !!transient_.Get(); }
+
+ private:
+  MaybeOwned<Thing> transient_;         // For initializng next two members.
+  const std::unique_ptr<Owner> owner_;  // Must outlive thing_.
+  const UnownedPtr<Thing> thing_;
+};
+
+}  // namespace
+
+TEST(MaybeOwned, MoveElisionThwarted) {
+  // Test fails if the std::move() in Manager::Manager() is elided.
+  Manager manager;
+  EXPECT_FALSE(manager.has_transient());
+}
+
 }  // namespace fxcrt
