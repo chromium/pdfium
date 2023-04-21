@@ -246,6 +246,9 @@ template("pdfium_fuzzer") {
     if (is_public && pdf_enable_xfa) {
       deps += [ ":fuzzer_xfa_process_state" ]
     }
+    if (build_with_chromium) {
+      defines += [ "BUILD_WITH_CHROMIUM" ]
+    }
   }
 }
 
