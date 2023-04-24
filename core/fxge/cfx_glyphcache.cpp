@@ -76,6 +76,7 @@ void GenKey(UniqueKeyGen* pKeyGen,
   int nMatrixC = static_cast<int>(matrix.c * 10000);
   int nMatrixD = static_cast<int>(matrix.d * 10000);
 
+#if BUILDFLAG(IS_APPLE)
   if (bNative) {
     if (pFont->GetSubstFont()) {
       pKeyGen->Generate(10, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
@@ -86,16 +87,20 @@ void GenKey(UniqueKeyGen* pKeyGen,
       pKeyGen->Generate(7, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
                         anti_alias, 3);
     }
+    return;
+  }
+#else
+  CHECK(!bNative);
+#endif
+
+  if (pFont->GetSubstFont()) {
+    pKeyGen->Generate(9, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
+                      anti_alias, pFont->GetSubstFont()->m_Weight,
+                      pFont->GetSubstFont()->m_ItalicAngle,
+                      pFont->IsVertical());
   } else {
-    if (pFont->GetSubstFont()) {
-      pKeyGen->Generate(9, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                        anti_alias, pFont->GetSubstFont()->m_Weight,
-                        pFont->GetSubstFont()->m_ItalicAngle,
-                        pFont->IsVertical());
-    } else {
-      pKeyGen->Generate(6, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                        anti_alias);
-    }
+    pKeyGen->Generate(6, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
+                      anti_alias);
   }
 }
 
