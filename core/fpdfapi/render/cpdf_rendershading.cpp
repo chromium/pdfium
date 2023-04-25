@@ -921,7 +921,9 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
   if (pBitmap->GetBuffer().empty())
     return;
 
-  pBitmap->Clear(background);
+  if (background != 0) {
+    pBitmap->Clear(background);
+  }
   const CFX_Matrix final_matrix = mtMatrix * buffer.GetMatrix();
   const auto& funcs = pPattern->GetFuncs();
   switch (pPattern->GetShadingType()) {

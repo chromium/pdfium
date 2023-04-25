@@ -167,6 +167,8 @@ void CFX_DIBitmap::Clear(uint32_t color) {
     case FXDIB_Format::kArgb: {
       if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() &&
           FXDIB_Format::kRgb32 == GetFormat()) {
+        // TODO(crbug.com/pdfium/2016): This is not reliable because alpha may
+        // be modified outside of this operation.
         color |= 0xFF000000;
       }
       for (int i = 0; i < m_Width; i++)

@@ -246,8 +246,6 @@ void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
   if (!pTransformed->Create(m_result.Width(), m_result.Height(), format))
     return;
 
-  pTransformed->Clear(0);
-
   CFX_Matrix result2stretch(1.0f, 0.0f, 0.0f, 1.0f, m_result.left,
                             m_result.top);
   result2stretch.Concat(m_dest2stretch);

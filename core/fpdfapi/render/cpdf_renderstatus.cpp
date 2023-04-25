@@ -725,7 +725,9 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
   }
   CFX_Matrix FinalMatrix = m_DeviceMatrix;
   FinalMatrix.Translate(-bbox.left, -bbox.top);
-  pBackdrop->Clear(pBackdrop->IsAlphaFormat() ? 0 : 0xffffffff);
+  if (!pBackdrop->IsAlphaFormat()) {
+    pBackdrop->Clear(0xffffffff);
+  }
 
   CFX_DefaultRenderDevice device;
   device.Attach(pBackdrop);

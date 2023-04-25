@@ -39,7 +39,6 @@ RetainPtr<CFX_DIBitmap> DrawPatternBitmap(
   CFX_DefaultRenderDevice bitmap_device;
   bitmap_device.AttachWithBackdropAndGroupKnockout(
       pBitmap, /*pBackdropBitmap=*/nullptr, /*bGroupKnockout=*/true);
-  pBitmap->Clear(0);
   CFX_FloatRect cell_bbox =
       pPattern->pattern_to_form().TransformRect(pPattern->bbox());
   cell_bbox = mtObject2Device.TransformRect(cell_bbox);
@@ -195,7 +194,6 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
   if (!pScreen->Create(clip_width, clip_height, FXDIB_Format::kArgb))
     return nullptr;
 
-  pScreen->Clear(0);
   pdfium::span<const uint8_t> src_buf = pPatternBitmap->GetBuffer();
   for (int col = min_col; col <= max_col; col++) {
     for (int row = min_row; row <= max_row; row++) {

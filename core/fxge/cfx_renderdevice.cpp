@@ -767,7 +767,6 @@ bool CFX_RenderDevice::DrawFillStrokePath(
     return false;
 
   if (bitmap->IsAlphaFormat()) {
-    bitmap->Clear(0);
     backdrop->Copy(bitmap);
   } else {
     if (!m_pDeviceDriver->GetDIBits(bitmap, rect.left, rect.top))
@@ -1115,7 +1114,6 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!bitmap->Create(pixel_width, pixel_height, FXDIB_Format::k1bppMask))
       return false;
-    bitmap->Clear(0);
     for (const TextGlyphPos& glyph : glyphs) {
       if (!glyph.m_pGlyph)
         continue;
@@ -1144,8 +1142,6 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
     bitmap->Clear(0xFFFFFFFF);
     if (!GetDIBits(bitmap, bmp_rect.left, bmp_rect.top))
       return false;
-  } else {
-    bitmap->Clear(0);
   }
   int dest_width = pixel_width;
   int a = 0;

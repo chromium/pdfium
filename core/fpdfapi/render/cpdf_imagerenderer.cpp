@@ -313,7 +313,6 @@ bool CPDF_ImageRenderer::DrawPatternImage() {
                              nullptr)) {
     return true;
   }
-  bitmap_device1.GetBitmap()->Clear(0);
 
   CPDF_RenderStatus bitmap_render(m_pRenderStatus->GetContext(),
                                   &bitmap_device1);
@@ -339,7 +338,6 @@ bool CPDF_ImageRenderer::DrawPatternImage() {
                              FXDIB_Format::k8bppRgb, nullptr)) {
     return true;
   }
-  bitmap_device2.GetBitmap()->Clear(0);
   CalculateDrawImage(&bitmap_device1, &bitmap_device2, m_pDIBBase, new_matrix,
                      rect);
   bitmap_device2.GetBitmap()->ConvertFormat(FXDIB_Format::k8bppMask);
@@ -381,7 +379,6 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
                              FXDIB_Format::k8bppRgb, nullptr)) {
     return true;
   }
-  ClearBitmap(bitmap_device2, 0);
   CalculateDrawImage(&bitmap_device1, &bitmap_device2, m_pLoader->GetMask(),
                      new_matrix, rect);
 #if defined(_SKIA_SUPPORT_)
