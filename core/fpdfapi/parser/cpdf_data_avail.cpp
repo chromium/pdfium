@@ -193,9 +193,6 @@ bool CPDF_DataAvail::CheckAndLoadAllXref() {
     case kDataError:
       m_internalStatus = InternalStatus::kError;
       return false;
-    default:
-      NOTREACHED();
-      return false;
   }
 
   if (!m_parser.LoadAllCrossRefV4(m_pCrossRefAvail->last_crossref_offset()) &&
@@ -421,9 +418,6 @@ bool CPDF_DataAvail::CheckHeader() {
     case kDataError:
       m_internalStatus = InternalStatus::kError;
       return true;
-    default:
-      NOTREACHED();
-      return false;
   }
 }
 
@@ -488,9 +482,6 @@ CPDF_DataAvail::DocLinearizationStatus CPDF_DataAvail::IsLinearizedPDF() {
       return kLinearizationUnknown;
     case kDataError:
       return kNotLinearized;
-    default:
-      NOTREACHED();
-      return kLinearizationUnknown;
   }
 }
 
@@ -1002,10 +993,7 @@ CPDF_DataAvail::DocFormStatus CPDF_DataAvail::CheckAcroForm() {
       return kFormNotAvailable;
     case kDataAvailable:
       return kFormAvailable;
-    default:
-      NOTREACHED();
   }
-  return kFormError;
 }
 
 bool CPDF_DataAvail::ValidatePage(uint32_t dwPage) const {
