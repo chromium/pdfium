@@ -260,7 +260,6 @@ CFGAS_Char::BreakType CFGAS_TxtBreak::AppendChar(wchar_t wch) {
       case FX_CHARTYPE::kSpace:
       case FX_CHARTYPE::kNumeric:
       case FX_CHARTYPE::kNormal:
-      default:
         dwRet2 = AppendChar_Others(pCurChar);
         break;
     }

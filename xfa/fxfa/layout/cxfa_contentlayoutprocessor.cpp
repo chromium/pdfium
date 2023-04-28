@@ -1849,7 +1849,6 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
             case Result::kRowFullBreak:
               goto SuspendAndCreateNewRow;
             case Result::kDone:
-            default:
               fContentCurRowY +=
                   pProcessor->InsertPendingItems(m_pCurChildNode);
               pProcessor = nullptr;
@@ -1858,8 +1857,6 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
           break;
         }
         case Stage::kDone:
-          break;
-        default:
           break;
       }
       GotoNextContainerNodeSimple();

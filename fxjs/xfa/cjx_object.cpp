@@ -241,8 +241,6 @@ void CJX_Object::SetAttributeByEnum(XFA_Attribute eAttr,
     case XFA_AttributeType::Measure:
       SetMeasure(eAttr, CXFA_Measurement(wsValue.AsStringView()), bNotify);
       break;
-    default:
-      break;
   }
 }
 
@@ -301,8 +299,6 @@ absl::optional<WideString> CJX_Object::TryAttribute(XFA_Attribute eAttr,
         return absl::nullopt;
       return value->ToString();
     }
-    default:
-      break;
   }
   return absl::nullopt;
 }

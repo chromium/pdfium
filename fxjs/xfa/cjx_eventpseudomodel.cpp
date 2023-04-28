@@ -309,7 +309,6 @@ void CJX_EventPseudoModel::Property(v8::Isolate* pIsolate,
                      bSetting);
       break;
     case XFA_Event::Target:
-    default:
       break;
   }
 }

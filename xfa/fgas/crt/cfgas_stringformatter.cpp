@@ -1735,7 +1735,6 @@ bool CFGAS_StringFormatter::ParseDateTime(LocaleMgrIface* pLocaleMgr,
              ParseLocaleDate(wsSrcDateTime, wsDatePattern, pLocale, dtValue,
                              &iStart);
     case DateTimeType::kUnknown:
-    default:
       return false;
   }
 }

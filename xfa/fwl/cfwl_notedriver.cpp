@@ -131,8 +131,6 @@ bool CFWL_NoteDriver::DispatchMessage(CFWL_Message* pMessage,
         return false;
       break;
     }
-    default:
-      break;
   }
   IFWL_WidgetDelegate* pDelegate = pMessage->GetDstTarget()->GetDelegate();
   if (pDelegate)

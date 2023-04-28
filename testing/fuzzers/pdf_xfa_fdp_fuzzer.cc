@@ -159,9 +159,6 @@ class PDFiumXFAFuzzer : public PDFiumFuzzerHelper {
           FORM_GetFocusedText(form, page, local_buf, sizeof(local_buf));
           break;
         }
-        default: {
-          break;
-        }
       }
     }
   }

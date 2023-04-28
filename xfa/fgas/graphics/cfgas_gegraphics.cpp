@@ -390,10 +390,6 @@ void CFGAS_GEGraphics::FillPathWithShading(
       result = true;
       break;
     }
-    default: {
-      result = false;
-      break;
-    }
   }
   if (result) {
     CFX_RenderDevice::StateRestorer restorer(m_renderDevice);

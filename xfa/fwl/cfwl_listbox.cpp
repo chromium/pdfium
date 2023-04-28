@@ -617,8 +617,6 @@ void CFWL_ListBox::OnProcessMessage(CFWL_Message* pMessage) {
         OnKeyDown(pMsg);
       break;
     }
-    default:
-      break;
   }
   // Dst target could be |this|, continue only if not destroyed by above.
   if (pMessage->GetDstTarget())
