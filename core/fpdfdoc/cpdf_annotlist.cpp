@@ -64,7 +64,6 @@ bool PopupAppearsForAnnotType(CPDF_Annot::Subtype subtype) {
     case CPDF_Annot::Subtype::THREED:
     case CPDF_Annot::Subtype::RICHMEDIA:
     case CPDF_Annot::Subtype::XFAWIDGET:
-    default:
       return false;
   }
 }

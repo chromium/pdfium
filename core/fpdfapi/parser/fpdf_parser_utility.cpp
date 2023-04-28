@@ -21,7 +21,6 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_stream.h"
 #include "third_party/base/check.h"
-#include "third_party/base/notreached.h"
 
 // Indexed by 8-bit character code, contains either:
 //   'W' - for whitespace: NUL, TAB, CR, LF, FF, SPACE, 0x80, 0xff
@@ -253,9 +252,6 @@ std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
       buf << "\r\nendstream";
       break;
     }
-    default:
-      NOTREACHED();
-      break;
   }
   return buf;
 }

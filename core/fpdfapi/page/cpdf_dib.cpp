@@ -40,7 +40,6 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/cxx17_backports.h"
-#include "third_party/base/notreached.h"
 
 namespace {
 
@@ -180,9 +179,6 @@ JpxDecodeAction GetJpxDecodeActionFromImageColorSpace(
 
     case OPJ_CLRSPC_CMYK:
       return JpxDecodeAction::kUseCmyk;
-
-    default:
-      NOTREACHED_NORETURN();
   }
 }
 

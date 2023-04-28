@@ -1349,7 +1349,6 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
   const float fHalfWidth = fWidth / 2.0f;
 
   switch (nStyle) {
-    default:
     case BorderStyle::kSolid: {
       CFX_Path path;
       path.AppendRect(fLeft, fBottom, fRight, fTop);

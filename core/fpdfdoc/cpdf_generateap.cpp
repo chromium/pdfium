@@ -218,7 +218,6 @@ ByteString GenerateBorderAP(const CFX_FloatRect& rect,
   if (fWidth > 0.0f) {
     float fHalfWidth = fWidth / 2.0f;
     switch (nStyle) {
-      default:
       case BorderStyle::kSolid:
         sColor = GenerateColorAP(color, PaintOperation::kFill);
         if (sColor.GetLength() > 0) {

@@ -648,8 +648,6 @@ void CPDF_Parser::MergeCrossRefObjectsData(
         m_CrossRefTable->AddCompressed(obj.obj_num, obj.info.archive.obj_num,
                                        obj.info.archive.obj_index);
         break;
-      default:
-        NOTREACHED();
     }
   }
 }

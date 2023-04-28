@@ -633,8 +633,6 @@ void ProgressiveDecoder::ResampleVertBT(
           *scan_des++ = CStretchEngine::PixelFromFixed(dest_a);
         }
         break;
-      default:
-        return;
     }
   }
 }
@@ -908,8 +906,6 @@ void ProgressiveDecoder::GifDoubleLineResampleVert(
           *scan_des++ = CStretchEngine::PixelFromFixed(dest_a);
         }
         break;
-      default:
-        return;
     }
   }
   int dest_bottom = dest_top + m_sizeY - 1;
@@ -1999,8 +1995,6 @@ void ProgressiveDecoder::ResampleVert(
           *scan_des++ = CStretchEngine::PixelFromFixed(dest_a);
         }
         break;
-      default:
-        return;
     }
   }
   int dest_bottom = dest_top + m_sizeY;

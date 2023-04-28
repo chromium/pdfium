@@ -22,7 +22,6 @@ RetainPtr<const CPDF_Dictionary> CPDF_ContentMarkItem::GetParam() const {
     case kDirectDict:
       return m_pDirectDict;
     case kNone:
-    default:
       return nullptr;
   }
 }

@@ -458,8 +458,6 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
             current_buffer_idx++;
           }
           break;
-        default:
-          break;
       }
     }
   }
