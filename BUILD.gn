@@ -288,6 +288,9 @@ config("pdfium_core_config") {
       "/wd4577",
     ]
   }
+  if (is_clang) {
+    cflags += [ "-Wcovered-switch-default" ]
+  }
 }
 
 config("pdfium_strict_config") {

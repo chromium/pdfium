@@ -235,7 +235,7 @@ void SetBorderStyle(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                     const ByteString& bsString) {
   DCHECK(pFormFillEnv);
 
-  BorderStyle nBorderStyle = BorderStyle::kSolid;
+  BorderStyle nBorderStyle;
   if (bsString == "solid")
     nBorderStyle = BorderStyle::kSolid;
   else if (bsString == "beveled")
@@ -2022,8 +2022,10 @@ CJS_Result CJS_Field::get_type(CJS_Runtime* pRuntime) {
       return CJS_Result::Success(pRuntime->NewString("text"));
     case FormFieldType::kSignature:
       return CJS_Result::Success(pRuntime->NewString("signature"));
+#ifdef PDF_ENABLE_XFA
     default:
       return CJS_Result::Success(pRuntime->NewString("unknown"));
+#endif
   }
 }
 

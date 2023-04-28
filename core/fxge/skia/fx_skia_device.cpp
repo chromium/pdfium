@@ -331,7 +331,6 @@ SkBlendMode GetSkiaBlendMode(BlendMode blend_type) {
     case BlendMode::kLuminosity:
       return SkBlendMode::kLuminosity;
     case BlendMode::kNormal:
-    default:
       return SkBlendMode::kSrcOver;
   }
 }
