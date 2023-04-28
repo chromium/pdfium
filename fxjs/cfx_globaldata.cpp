@@ -75,7 +75,6 @@ bool MakeByteString(const ByteString& name,
     }
     // Arrays don't get persisted per JS spec page 484.
     case CFX_Value::DataType::kObject:
-    default:
       break;
   }
   return false;
@@ -346,8 +345,7 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
         SetGlobalVariablePersistent(sEntry, true);
       } break;
       case CFX_Value::DataType::kObject:
-      default:
-        // Arrays aren't allowed in these buffers, nor are unrecoginzed tags.
+        // Arrays aren't allowed in these buffers, nor are unrecognized tags.
         return false;
     }
   }

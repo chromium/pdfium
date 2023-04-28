@@ -149,9 +149,6 @@ float GetMinMaxValue(const std::vector<CFX_FloatRect>& array,
       for (size_t i = 0; i < nRects; i++)
         pArray[i] = array[i].bottom;
       break;
-    default:
-      NOTREACHED_NORETURN();
-      return 0.0f;
   }
 
   float fRet = pArray[0];

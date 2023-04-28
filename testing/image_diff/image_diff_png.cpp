@@ -609,10 +609,6 @@ std::vector<uint8_t> EncodeWithCompressionLevel(
       output_color_components = 1;
       png_output_color_type = PNG_COLOR_TYPE_GRAY;
       break;
-
-    default:
-      NOTREACHED();
-      return output;
   }
 
   // Row stride should be at least as long as the length of the data.

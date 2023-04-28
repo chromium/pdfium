@@ -6,8 +6,6 @@
 
 #include "fxjs/js_resources.h"
 
-#include "third_party/base/notreached.h"
-
 WideString JSGetStringFromID(JSMessage msg) {
   const char* msg_string = "";
   switch (msg) {
@@ -91,9 +89,6 @@ WideString JSGetStringFromID(JSMessage msg) {
       break;
     case JSMessage::kWouldBeCyclic:
       msg_string = "Operation would create a cycle.";
-      break;
-    default:
-      NOTREACHED();
       break;
   }
   return WideString::FromASCII(msg_string);

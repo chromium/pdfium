@@ -465,7 +465,6 @@ ByteString GetCircleBorderAppStream(const CFX_FloatRect& rect,
     float div = fHalfWidth * 0.75f;
     CFX_FloatRect rect_by_75 = rect.GetDeflated(div, div);
     switch (nStyle) {
-      default:
       case BorderStyle::kSolid:
       case BorderStyle::kUnderline: {
         sColor = GetStrokeColorAppStream(color);
@@ -545,7 +544,6 @@ ByteString GetCheckBoxAppStream(const CFX_FloatRect& rcBBox,
                                 const CFX_Color& crText) {
   CFX_FloatRect rcCenter = rcBBox.GetCenterSquare();
   switch (nStyle) {
-    default:
     case CheckStyle::kCheck:
       return GetAppStream_Check(rcCenter, crText);
     case CheckStyle::kCircle:
@@ -570,7 +568,6 @@ ByteString GetRadioButtonAppStream(const CFX_FloatRect& rcBBox,
                                    const CFX_Color& crText) {
   CFX_FloatRect rcCenter = rcBBox.GetCenterSquare();
   switch (nStyle) {
-    default:
     case CheckStyle::kCheck:
       return GetAppStream_Check(rcCenter, crText);
     case CheckStyle::kCircle:
@@ -957,7 +954,6 @@ ByteString GetBorderAppStreamInternal(const CFX_FloatRect& rect,
     AutoClosedQCommand q(&sAppStream);
 
     switch (nStyle) {
-      default:
       case BorderStyle::kSolid:
         sColor = GetFillColorAppStream(color);
         if (sColor.GetLength() > 0) {

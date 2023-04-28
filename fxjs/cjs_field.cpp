@@ -2633,7 +2633,5 @@ void CJS_Field::DoDelay(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       SetFieldValue(pFormFillEnv, pData->sFieldName, pData->nControlIndex,
                     pData->widestringarray);
       break;
-    default:
-      NOTREACHED();
   }
 }

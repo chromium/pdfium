@@ -161,8 +161,6 @@ void CPDFSDK_BAAnnot::SetBorderStyle(BorderStyle nStyle) {
     case BorderStyle::kUnderline:
       name = "U";
       break;
-    default:
-      return;
   }
   pBSDict->SetNewFor<CPDF_Name>("S", name);
 }

@@ -201,10 +201,7 @@ CJS_Result CJS_Global::GetProperty(CJS_Runtime* pRuntime,
           v8::Local<v8::Object>::New(pRuntime->GetIsolate(), pData->pData));
     case CFX_Value::DataType::kNull:
       return CJS_Result::Success(pRuntime->NewNull());
-    default:
-      break;
   }
-  return CJS_Result::Failure(JSMessage::kObjectTypeError);
 }
 
 CJS_Result CJS_Global::SetProperty(CJS_Runtime* pRuntime,
@@ -491,8 +488,6 @@ CJS_Result CJS_Global::SetGlobalVariables(const ByteString& propname,
         break;
       case CFX_Value::DataType::kNull:
         break;
-      default:
-        return CJS_Result::Failure(JSMessage::kObjectTypeError);
     }
     return CJS_Result::Success();
   }
@@ -523,8 +518,6 @@ CJS_Result CJS_Global::SetGlobalVariables(const ByteString& propname,
       pNewData->nType = CFX_Value::DataType::kNull;
       pNewData->bPersistent = bDefaultPersistent;
       break;
-    default:
-      return CJS_Result::Failure(JSMessage::kObjectTypeError);
   }
   m_MapGlobal[propname] = std::move(pNewData);
   return CJS_Result::Success();
