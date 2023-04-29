@@ -97,6 +97,7 @@ pdfium_unittest_source_set("unittests") {
   sources = [
     "cpdf_action_unittest.cpp",
     "cpdf_annot_unittest.cpp",
+    "cpdf_annotlist_unittest.cpp",
     "cpdf_bafontmap_unittest.cpp",
     "cpdf_defaultappearance_unittest.cpp",
     "cpdf_dest_unittest.cpp",

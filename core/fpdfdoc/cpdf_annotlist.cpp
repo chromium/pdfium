@@ -23,6 +23,7 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
@@ -78,12 +79,13 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Document* pDocument,
   if (!pParentDict)
     return nullptr;
 
-  // TODO(jaepark): We shouldn't strip BOM for some strings and not for others.
-  // See pdfium:593.
-  WideString sContents =
-      pParentDict->GetUnicodeTextFor(pdfium::annotation::kContents);
-  if (sContents.IsEmpty())
+  // TODO(crbug.com/pdfium/1098): Determine if we really need to check if
+  // /Contents is empty or not. If so, optimize decoding for empty check.
+  ByteString contents =
+      pParentDict->GetByteStringFor(pdfium::annotation::kContents);
+  if (PDF_DecodeText(contents.raw_span()).IsEmpty()) {
     return nullptr;
+  }
 
   auto pAnnotDict = pDocument->New<CPDF_Dictionary>();
   pAnnotDict->SetNewFor<CPDF_Name>(pdfium::annotation::kType, "Annot");
@@ -91,8 +93,8 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Document* pDocument,
   pAnnotDict->SetNewFor<CPDF_String>(
       pdfium::form_fields::kT,
       pParentDict->GetByteStringFor(pdfium::form_fields::kT), false);
-  pAnnotDict->SetNewFor<CPDF_String>(pdfium::annotation::kContents,
-                                     sContents.ToUTF8(), false);
+  pAnnotDict->SetNewFor<CPDF_String>(pdfium::annotation::kContents, contents,
+                                     /*bHex=*/false);
 
   CFX_FloatRect rect = pParentDict->GetRectFor(pdfium::annotation::kRect);
   rect.Normalize();
