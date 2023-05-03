@@ -66,7 +66,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling depot_tools
   # and whatever else without interference from each other.
-  'depot_tools_revision': 'ab117384e6c0384ba5aab66c13d8f1008d964655',
+  'depot_tools_revision': '13878e1f729d01c7215590e0d8b5beb5851fe126',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling freetype
   # and whatever else without interference from each other.
