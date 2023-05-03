@@ -12,6 +12,10 @@
 
 #include "third_party/base/compiler_specific.h"
 
+#if defined(ADDRESS_SANITIZER)
+#include <cstdint>
+#endif
+
 // UnownedPtr is a smart pointer class that behaves very much like a
 // standard C-style pointer. The advantages of using it over raw
 // pointers are:
