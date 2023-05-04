@@ -286,6 +286,13 @@ inline ByteString operator+(ByteStringView str1, const ByteString& str2) {
 std::ostream& operator<<(std::ostream& os, const ByteString& str);
 std::ostream& operator<<(std::ostream& os, ByteStringView str);
 
+// This is declared here for use in gtest-based tests but is defined in a test
+// support target. This should not be used in production code. Just use
+// operator<< from above instead.
+// In some cases, gtest will automatically use operator<< as well, but in this
+// case, it needs PrintTo() because ByteString looks like a container to gtest.
+void PrintTo(const ByteString& str, std::ostream* os);
+
 }  // namespace fxcrt
 
 using ByteString = fxcrt::ByteString;

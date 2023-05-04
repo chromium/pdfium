@@ -159,6 +159,7 @@ pdfium_embeddertest_source_set("embeddertests") {
     "../core/fpdfapi/font",
     "../core/fpdfapi/page",
     "../core/fpdfapi/parser",
+    "../core/fxcrt:test_support",
     "../core/fxge",
   ]
   pdfium_root_dir = "../"

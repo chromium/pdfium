@@ -162,6 +162,13 @@ source_set("fxcrt") {
   }
 }
 
+source_set("test_support") {
+  testonly = true
+  sources = [ "string_test_support.cpp" ]
+  configs += [ "../../:pdfium_strict_config" ]
+  deps = [ ":fxcrt" ]
+}
+
 source_set("unit_test_support") {
   testonly = true
   sources = [
@@ -171,6 +178,7 @@ source_set("unit_test_support") {
   configs += [ "../../:pdfium_strict_config" ]
   deps = [
     ":fxcrt",
+    ":test_support",
     "//testing/gtest",
   ]
 }
