@@ -5,10 +5,15 @@
 #include <ostream>
 
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/widestring.h"
 
 namespace fxcrt {
 
 void PrintTo(const ByteString& str, std::ostream* os) {
+  *os << str;
+}
+
+void PrintTo(const WideString& str, std::ostream* os) {
   *os << str;
 }
 
