@@ -10,6 +10,8 @@
 
 #include <utility>
 
+#include "build/build_config.h"
+
 CFX_UTF8Decoder::CFX_UTF8Decoder(ByteStringView input) {
   int remaining = 0;
   char32_t code_point = 0;
@@ -54,5 +56,16 @@ void CFX_UTF8Decoder::AppendCodePoint(char32_t code_point) {
     return;
   }
 
+#if defined(WCHAR_T_IS_UTF16)
+  if (code_point < 0x10000) {
+    buffer_ += static_cast<wchar_t>(code_point);
+  } else {
+    // Encode as UTF-16 surrogate pair.
+    code_point -= 0x10000;
+    buffer_ += 0xd800 | (code_point >> 10);
+    buffer_ += 0xdc00 | (code_point & 0x3ff);
+  }
+#else
   buffer_ += static_cast<wchar_t>(code_point);
+#endif  // defined(WCHAR_T_IS_UTF16)
 }

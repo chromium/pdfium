@@ -4,6 +4,7 @@
 
 #include <limits>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/span.h"
@@ -41,6 +42,25 @@ TEST(fxstring, FXUTF8Encode) {
                     L"y"));
 }
 
+TEST(fxstring, FXUTF8EncodeSupplementary) {
+  EXPECT_EQ(
+      "\xf0\x90\x80\x80"
+      "🎨"
+      "\xf4\x8f\xbf\xbf",
+      FX_UTF8Encode(L"\U00010000"
+                    L"\U0001f3a8"
+                    L"\U0010ffff"));
+}
+
+#if defined(WCHAR_T_IS_UTF16)
+TEST(fxstring, FXUTF8EncodeSurrogateErrorRecovery) {
+  EXPECT_EQ("()", FX_UTF8Encode(L"(\xd800)")) << "High";
+  EXPECT_EQ("()", FX_UTF8Encode(L"(\xdc00)")) << "Low";
+  EXPECT_EQ("(🎨)", FX_UTF8Encode(L"(\xd800\xd83c\xdfa8)")) << "High-high";
+  EXPECT_EQ("(🎨)", FX_UTF8Encode(L"(\xd83c\xdfa8\xdc00)")) << "Low-low";
+}
+#endif  // defined(WCHAR_T_IS_UTF16)
+
 TEST(fxstring, FXUTF8Decode) {
   EXPECT_EQ(L"", FX_UTF8Decode(ByteStringView()));
   EXPECT_EQ(
@@ -60,6 +80,16 @@ TEST(fxstring, FXUTF8Decode) {
                     "\xef\xbc\xac"
                     "\xef\xbf\xbf"
                     "y"));
+}
+
+TEST(fxstring, FXUTF8DecodeSupplementary) {
+  EXPECT_EQ(
+      L"\U00010000"
+      L"\U0001f3a8"
+      L"\U0010ffff",
+      FX_UTF8Decode("\xf0\x90\x80\x80"
+                    "🎨"
+                    "\xf4\x8f\xbf\xbf"));
 }
 
 TEST(fxstring, FXUTF8DecodeErrorRecovery) {
