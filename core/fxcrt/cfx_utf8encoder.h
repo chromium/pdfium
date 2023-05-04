@@ -7,26 +7,26 @@
 #ifndef CORE_FXCRT_CFX_UTF8ENCODER_H_
 #define CORE_FXCRT_CFX_UTF8ENCODER_H_
 
-#include <stdint.h>
-
-#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/string_view_template.h"
 
 class CFX_UTF8Encoder {
  public:
   CFX_UTF8Encoder();
   ~CFX_UTF8Encoder();
 
-  void Input(wchar_t unicodeAsWchar);
+  // `code_unit` may be UTF-16 or UTF-32, depending on the platform.
+  // TODO(crbug.com/pdfium/2031): Accept `char16_t` instead of `wchar_t`.
+  void Input(wchar_t code_unit);
 
-  // The data returned by GetResult() is invalidated when this is modified by
+  // The data returned by `GetResult()` is invalidated when this is modified by
   // appending any data.
   ByteStringView GetResult() const {
-    return ByteStringView(m_Buffer.data(), m_Buffer.size());
+    return ByteStringView(buffer_.data(), buffer_.size());
   }
 
  private:
-  DataVector<uint8_t> m_Buffer;
+  DataVector<char> buffer_;
 };
 
 #endif  // CORE_FXCRT_CFX_UTF8ENCODER_H_

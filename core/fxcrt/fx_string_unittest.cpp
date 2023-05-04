@@ -20,52 +20,75 @@ char* TerminatedDoubleToString(double value, pdfium::span<char> buf) {
   return buf.data();
 }
 
-TEST(fxstring, FX_UTF8Encode) {
+TEST(fxstring, FXUTF8Encode) {
   EXPECT_EQ("", FX_UTF8Encode(WideStringView()));
   EXPECT_EQ(
       "x"
       "\xc2\x80"
       "\xc3\xbf"
+      "\xed\x9f\xbf"
+      "\xee\x80\x80"
       "\xef\xbc\xac"
+      "\xef\xbf\xbf"
       "y",
       FX_UTF8Encode(L"x"
                     L"\u0080"
                     L"\u00ff"
+                    L"\ud7ff"
+                    L"\ue000"
                     L"\uff2c"
+                    L"\uffff"
                     L"y"));
 }
 
-TEST(fxstring, FX_UTF8Decode) {
+TEST(fxstring, FXUTF8Decode) {
   EXPECT_EQ(L"", FX_UTF8Decode(ByteStringView()));
   EXPECT_EQ(
       L"x"
       L"\u0080"
       L"\u00ff"
+      L"\ud7ff"
+      L"\ue000"
       L"\uff2c"
+      L"\uffff"
       L"y",
       FX_UTF8Decode("x"
                     "\xc2\x80"
                     "\xc3\xbf"
+                    "\xed\x9f\xbf"
+                    "\xee\x80\x80"
                     "\xef\xbc\xac"
+                    "\xef\xbf\xbf"
                     "y"));
-  EXPECT_EQ(L"a(A) b() c() d() e().",
-            FX_UTF8Decode("a(\xc2\x41) "      // Invalid continuation.
-                          "b(\xc2\xc2) "      // Invalid continuation.
-                          "c(\xc2\xff\x80) "  // Invalid continuation.
-                          "d(\x80\x80) "      // Invalid leading.
-                          "e(\xff\x80\x80)"   // Invalid leading.
-                          "."));
 }
 
-TEST(fxstring, FX_UTF8EncodeDecodeConsistency) {
+TEST(fxstring, FXUTF8DecodeErrorRecovery) {
+  EXPECT_EQ(L"(A)", FX_UTF8Decode("(\xc2\x41)")) << "Invalid continuation";
+  EXPECT_EQ(L"()", FX_UTF8Decode("(\xc2\xc2)")) << "Invalid continuation";
+  EXPECT_EQ(L"()", FX_UTF8Decode("(\xc2\xff\x80)")) << "Invalid continuation";
+  EXPECT_EQ(L"()", FX_UTF8Decode("(\x80\x80)")) << "Invalid leading";
+  EXPECT_EQ(L"()", FX_UTF8Decode("(\xff\x80\x80)")) << "Invalid leading";
+  EXPECT_EQ(L"()", FX_UTF8Decode("(\xf8\x80\x80\x80\x80)"))
+      << "Invalid leading";
+  EXPECT_EQ(L"()", FX_UTF8Decode("(\xf8\x88\x80\x80\x80)"))
+      << "Invalid leading";
+  EXPECT_EQ(L"()", FX_UTF8Decode("(\xf4\x90\x80\x80)"))
+      << "Code point greater than U+10FFFF";
+}
+
+TEST(fxstring, FXUTF8EncodeDecodeConsistency) {
   WideString wstr;
   wstr.Reserve(0x10000);
-  for (int w = 0; w < 0x10000; ++w)
-    wstr += static_cast<wchar_t>(w);
+  for (int w = 0; w < 0x10000; ++w) {
+    // Skip UTF-16 surrogates.
+    if (w < 0xD800 || w >= 0xE000) {
+      wstr += static_cast<wchar_t>(w);
+    }
+  }
+  ASSERT_EQ(0xF800u, wstr.GetLength());
 
   ByteString bstr = FX_UTF8Encode(wstr.AsStringView());
   WideString wstr2 = FX_UTF8Decode(bstr.AsStringView());
-  EXPECT_EQ(0x10000u, wstr2.GetLength());
   EXPECT_EQ(wstr, wstr2);
 }
 

@@ -6,53 +6,53 @@
 
 #include "core/fxcrt/cfx_utf8decoder.h"
 
+#include <stdint.h>
+
 #include <utility>
 
 CFX_UTF8Decoder::CFX_UTF8Decoder(ByteStringView input) {
-  for (char c : input) {
-    ProcessByte(c);
+  int remaining = 0;
+  char32_t code_point = 0;
+
+  for (char byte : input) {
+    uint8_t code_unit = static_cast<uint8_t>(byte);
+    if (code_unit < 0x80) {
+      remaining = 0;
+      AppendCodePoint(code_unit);
+    } else if (code_unit < 0xc0) {
+      if (remaining > 0) {
+        --remaining;
+        code_point = (code_point << 6) | (code_unit & 0x3f);
+        if (remaining == 0) {
+          AppendCodePoint(code_point);
+        }
+      }
+    } else if (code_unit < 0xe0) {
+      remaining = 1;
+      code_point = code_unit & 0x1f;
+    } else if (code_unit < 0xf0) {
+      remaining = 2;
+      code_point = code_unit & 0x0f;
+    } else if (code_unit < 0xf8) {
+      remaining = 3;
+      code_point = code_unit & 0x07;
+    } else {
+      remaining = 0;
+    }
   }
 }
 
 CFX_UTF8Decoder::~CFX_UTF8Decoder() = default;
 
 WideString CFX_UTF8Decoder::TakeResult() {
-  return std::move(m_Buffer);
+  return std::move(buffer_);
 }
 
-void CFX_UTF8Decoder::AppendCodePoint(uint32_t ch) {
-  m_Buffer += static_cast<wchar_t>(ch);
-}
-
-void CFX_UTF8Decoder::ProcessByte(uint8_t byte) {
-  if (byte < 0x80) {
-    m_PendingBytes = 0;
-    AppendCodePoint(byte);
-  } else if (byte < 0xc0) {
-    if (m_PendingBytes == 0) {
-      return;
-    }
-    m_PendingBytes--;
-    m_PendingChar |= (byte & 0x3f) << (m_PendingBytes * 6);
-    if (m_PendingBytes == 0) {
-      AppendCodePoint(m_PendingChar);
-    }
-  } else if (byte < 0xe0) {
-    m_PendingBytes = 1;
-    m_PendingChar = (byte & 0x1f) << 6;
-  } else if (byte < 0xf0) {
-    m_PendingBytes = 2;
-    m_PendingChar = (byte & 0x0f) << 12;
-  } else if (byte < 0xf8) {
-    m_PendingBytes = 3;
-    m_PendingChar = (byte & 0x07) << 18;
-  } else if (byte < 0xfc) {
-    m_PendingBytes = 4;
-    m_PendingChar = (byte & 0x03) << 24;
-  } else if (byte < 0xfe) {
-    m_PendingBytes = 5;
-    m_PendingChar = (byte & 0x01) << 30;
-  } else {
-    m_PendingBytes = 0;
+void CFX_UTF8Decoder::AppendCodePoint(char32_t code_point) {
+  if (code_point > 0x10ffff) {
+    // Invalid code point above U+10FFFF.
+    return;
   }
+
+  buffer_ += static_cast<wchar_t>(code_point);
 }

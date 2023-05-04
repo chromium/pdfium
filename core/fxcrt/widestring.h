@@ -32,6 +32,7 @@ class ByteString;
 // avoids the cost of std::string's iterator stability guarantees.
 class WideString {
  public:
+  // TODO(crbug.com/pdfium/2031): Consider switching to `char16_t` instead.
   using CharType = wchar_t;
   using const_iterator = const CharType*;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
