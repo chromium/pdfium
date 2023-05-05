@@ -8,24 +8,22 @@
 
 #include <iterator>
 
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/cfx_utf8decoder.h"
 #include "core/fxcrt/cfx_utf8encoder.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/string_view_template.h"
+#include "core/fxcrt/widestring.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/span.h"
 
 ByteString FX_UTF8Encode(WideStringView wsStr) {
-  CFX_UTF8Encoder encoder;
-  for (size_t i = 0; i < wsStr.GetLength(); ++i)
-    encoder.Input(wsStr[i]);
-
-  return ByteString(encoder.GetResult());
+  return CFX_UTF8Encoder(wsStr).TakeResult();
 }
 
 WideString FX_UTF8Decode(ByteStringView bsStr) {
-  CFX_UTF8Decoder decoder(bsStr);
-  return decoder.TakeResult();
+  return CFX_UTF8Decoder(bsStr).TakeResult();
 }
 
 namespace {

@@ -25,12 +25,12 @@ TEST(fxstring, FXUTF8Encode) {
   EXPECT_EQ("", FX_UTF8Encode(WideStringView()));
   EXPECT_EQ(
       "x"
-      "\xc2\x80"
-      "\xc3\xbf"
-      "\xed\x9f\xbf"
-      "\xee\x80\x80"
-      "\xef\xbc\xac"
-      "\xef\xbf\xbf"
+      "\u0080"
+      "\u00ff"
+      "\ud7ff"
+      "\ue000"
+      "\uff2c"
+      "\uffff"
       "y",
       FX_UTF8Encode(L"x"
                     L"\u0080"
@@ -44,9 +44,9 @@ TEST(fxstring, FXUTF8Encode) {
 
 TEST(fxstring, FXUTF8EncodeSupplementary) {
   EXPECT_EQ(
-      "\xf0\x90\x80\x80"
+      "\U00010000"
       "🎨"
-      "\xf4\x8f\xbf\xbf",
+      "\U0010ffff",
       FX_UTF8Encode(L"\U00010000"
                     L"\U0001f3a8"
                     L"\U0010ffff"));
@@ -54,10 +54,12 @@ TEST(fxstring, FXUTF8EncodeSupplementary) {
 
 #if defined(WCHAR_T_IS_UTF16)
 TEST(fxstring, FXUTF8EncodeSurrogateErrorRecovery) {
-  EXPECT_EQ("()", FX_UTF8Encode(L"(\xd800)")) << "High";
-  EXPECT_EQ("()", FX_UTF8Encode(L"(\xdc00)")) << "Low";
-  EXPECT_EQ("(🎨)", FX_UTF8Encode(L"(\xd800\xd83c\xdfa8)")) << "High-high";
-  EXPECT_EQ("(🎨)", FX_UTF8Encode(L"(\xd83c\xdfa8\xdc00)")) << "Low-low";
+  EXPECT_EQ("(\xed\xa0\x80)", FX_UTF8Encode(L"(\xd800)")) << "High";
+  EXPECT_EQ("(\xed\xb0\x80)", FX_UTF8Encode(L"(\xdc00)")) << "Low";
+  EXPECT_EQ("(\xed\xa0\x80🎨)", FX_UTF8Encode(L"(\xd800\xd83c\xdfa8)"))
+      << "High-high";
+  EXPECT_EQ("(🎨\xed\xb0\x80)", FX_UTF8Encode(L"(\xd83c\xdfa8\xdc00)"))
+      << "Low-low";
 }
 #endif  // defined(WCHAR_T_IS_UTF16)
 
@@ -73,12 +75,12 @@ TEST(fxstring, FXUTF8Decode) {
       L"\uffff"
       L"y",
       FX_UTF8Decode("x"
-                    "\xc2\x80"
-                    "\xc3\xbf"
-                    "\xed\x9f\xbf"
-                    "\xee\x80\x80"
-                    "\xef\xbc\xac"
-                    "\xef\xbf\xbf"
+                    "\u0080"
+                    "\u00ff"
+                    "\ud7ff"
+                    "\ue000"
+                    "\uff2c"
+                    "\uffff"
                     "y"));
 }
 
@@ -87,9 +89,9 @@ TEST(fxstring, FXUTF8DecodeSupplementary) {
       L"\U00010000"
       L"\U0001f3a8"
       L"\U0010ffff",
-      FX_UTF8Decode("\xf0\x90\x80\x80"
+      FX_UTF8Decode("\U00010000"
                     "🎨"
-                    "\xf4\x8f\xbf\xbf"));
+                    "\U0010ffff"));
 }
 
 TEST(fxstring, FXUTF8DecodeErrorRecovery) {
@@ -111,11 +113,37 @@ TEST(fxstring, FXUTF8EncodeDecodeConsistency) {
   wstr.Reserve(0x10000);
   for (int w = 0; w < 0x10000; ++w) {
     // Skip UTF-16 surrogates.
-    if (w < 0xD800 || w >= 0xE000) {
+    if (w < 0xd800 || w >= 0xe000) {
       wstr += static_cast<wchar_t>(w);
     }
   }
-  ASSERT_EQ(0xF800u, wstr.GetLength());
+  ASSERT_EQ(0xf800u, wstr.GetLength());
+
+  ByteString bstr = FX_UTF8Encode(wstr.AsStringView());
+  WideString wstr2 = FX_UTF8Decode(bstr.AsStringView());
+  EXPECT_EQ(wstr, wstr2);
+}
+
+TEST(fxstring, FXUTF8EncodeDecodeConsistencyUnpairedHighSurrogates) {
+  WideString wstr;
+  wstr.Reserve(0x400);
+  for (wchar_t w = 0xd800; w < 0xdc00; ++w) {
+    wstr += w;
+  }
+  ASSERT_EQ(0x400u, wstr.GetLength());
+
+  ByteString bstr = FX_UTF8Encode(wstr.AsStringView());
+  WideString wstr2 = FX_UTF8Decode(bstr.AsStringView());
+  EXPECT_EQ(wstr, wstr2);
+}
+
+TEST(fxstring, FXUTF8EncodeDecodeConsistencyUnpairedLowSurrogates) {
+  WideString wstr;
+  wstr.Reserve(0x400);
+  for (wchar_t w = 0xdc00; w < 0xe000; ++w) {
+    wstr += w;
+  }
+  ASSERT_EQ(0x400u, wstr.GetLength());
 
   ByteString bstr = FX_UTF8Encode(wstr.AsStringView());
   WideString wstr2 = FX_UTF8Decode(bstr.AsStringView());

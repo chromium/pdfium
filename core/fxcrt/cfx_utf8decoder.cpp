@@ -11,6 +11,8 @@
 #include <utility>
 
 #include "build/build_config.h"
+#include "core/fxcrt/string_view_template.h"
+#include "core/fxcrt/widestring.h"
 
 CFX_UTF8Decoder::CFX_UTF8Decoder(ByteStringView input) {
   int remaining = 0;
