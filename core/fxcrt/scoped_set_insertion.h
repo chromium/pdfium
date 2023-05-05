@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/check.h"
 
 namespace fxcrt {
@@ -29,7 +30,7 @@ class ScopedSetInsertion {
   ~ScopedSetInsertion() { set_->erase(insert_results_.first); }
 
  private:
-  std::set<T>* const set_;
+  UnownedPtr<std::set<T>> const set_;
   const std::pair<typename std::set<T>::iterator, bool> insert_results_;
 };
 

@@ -6,6 +6,7 @@
 #define CORE_FXCRT_AUTONULLER_H_
 
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 namespace fxcrt {
 
@@ -22,7 +23,7 @@ class AutoNuller {
   void AbandonNullification() { m_Location = nullptr; }
 
  private:
-  T* m_Location;
+  UnownedPtr<T> m_Location;
 };
 
 }  // namespace fxcrt
