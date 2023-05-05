@@ -53,7 +53,7 @@ class CPDF_ProgressiveRenderer {
   std::unique_ptr<CPDF_RenderStatus> m_pRenderStatus;
   CFX_FloatRect m_ClipRect;
   uint32_t m_LayerIndex = 0;
-  CPDF_RenderContext::Layer* m_pCurrentLayer = nullptr;
+  UnownedPtr<CPDF_RenderContext::Layer> m_pCurrentLayer;
   CPDF_PageObjectHolder::const_iterator m_LastObjectRendered;
 };
 

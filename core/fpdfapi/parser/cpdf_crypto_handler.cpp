@@ -232,7 +232,7 @@ bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
     return false;
 
   struct MayBeSignature {
-    const CPDF_Dictionary* parent;
+    RetainPtr<const CPDF_Dictionary> parent;
     RetainPtr<CPDF_Object> contents;
   };
 
@@ -255,7 +255,8 @@ bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
         // Temporary skip it, to prevent signature corruption.
         // It will be decrypted on next interations, if this is not contents of
         // signature dictionary.
-        may_be_sign_dictionaries.push({parent_dict.Get(), std::move(child)});
+        may_be_sign_dictionaries.push(
+            {std::move(parent_dict), std::move(child)});
         walker.SkipWalkIntoCurrentObject();
         continue;
       }

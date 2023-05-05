@@ -7,6 +7,7 @@
 
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_string_wrappers.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CPDF_StringArchiveStream final : public IFX_ArchiveStream {
  public:
@@ -18,7 +19,7 @@ class CPDF_StringArchiveStream final : public IFX_ArchiveStream {
   FX_FILESIZE CurrentOffset() const override;
 
  private:
-  fxcrt::ostringstream* stream_;
+  UnownedPtr<fxcrt::ostringstream> stream_;
 };
 
 #endif  // CORE_FPDFAPI_EDIT_CPDF_STRINGARCHIVESTREAM_H_

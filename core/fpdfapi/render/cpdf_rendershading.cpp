@@ -27,6 +27,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_path.h"
@@ -767,7 +768,7 @@ struct PatchDrawer {
 
   int max_delta;
   CFX_Path path;
-  CFX_RenderDevice* pDevice;
+  UnownedPtr<CFX_RenderDevice> pDevice;
   int bNoPathSmooth;
   int alpha;
   CoonColor patch_colors[4];

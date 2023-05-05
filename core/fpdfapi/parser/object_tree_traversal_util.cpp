@@ -17,6 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
 
@@ -169,7 +170,7 @@ class ObjectTreeTraverser {
     return it != object_number_map_.end() ? it->second : 0;
   }
 
-  const CPDF_Document* const document_;
+  UnownedPtr<const CPDF_Document> const document_;
 
   // Queue of objects to traverse.
   // - Pointers in the queue are non-null.
