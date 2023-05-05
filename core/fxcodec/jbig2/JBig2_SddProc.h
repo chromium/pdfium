@@ -14,6 +14,7 @@
 
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "third_party/base/span.h"
 
 class CJBig2_BitStream;
@@ -43,7 +44,7 @@ class CJBig2_SDDProc {
   uint32_t SDNUMINSYMS;
   uint32_t SDNUMNEWSYMS;
   uint32_t SDNUMEXSYMS;
-  CJBig2_Image** SDINSYMS;
+  UNOWNED_PTR_EXCLUSION CJBig2_Image** SDINSYMS;
   UnownedPtr<const CJBig2_HuffmanTable> SDHUFFDH;
   UnownedPtr<const CJBig2_HuffmanTable> SDHUFFDW;
   UnownedPtr<const CJBig2_HuffmanTable> SDHUFFBMSIZE;

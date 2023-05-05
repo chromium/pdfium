@@ -12,6 +12,7 @@
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "third_party/base/check.h"
 
 namespace {
@@ -24,7 +25,7 @@ struct JBig2TableLine {
 
 struct HuffmanTable {
   bool HTOOB;
-  const JBig2TableLine* lines;
+  UNOWNED_PTR_EXCLUSION const JBig2TableLine* lines;
   size_t size;
 };
 

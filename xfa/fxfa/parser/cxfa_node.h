@@ -17,6 +17,7 @@
 #include "core/fxcrt/mask.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "fxjs/gc/gced_tree_node_mixin.h"
@@ -108,7 +109,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   struct AttributeData {
     XFA_Attribute attribute;
     XFA_AttributeType type;
-    void* default_value;
+    UNOWNED_PTR_EXCLUSION void* default_value;  // POD type.
   };
 
   // Node is created from cppgc heap.

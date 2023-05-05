@@ -9,6 +9,7 @@
 
 #include <set>
 
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "third_party/base/check.h"
 
 namespace fxcrt {
@@ -91,7 +92,7 @@ class ObservedPtr final : public Observable::ObserverIface {
   T* operator->() const { return m_pObservable; }
 
  private:
-  T* m_pObservable = nullptr;
+  UNOWNED_PTR_EXCLUSION T* m_pObservable = nullptr;
 };
 
 template <typename T, typename U>

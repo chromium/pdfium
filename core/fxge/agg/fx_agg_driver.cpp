@@ -15,6 +15,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_graphstatedata.h"
@@ -902,7 +903,7 @@ class RendererScanLineAaOffset {
   }
 
  private:
-  base_ren_type* m_ren;
+  UNOWNED_PTR_EXCLUSION base_ren_type* m_ren;
   color_type m_color;
   unsigned m_left;
   unsigned m_top;

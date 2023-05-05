@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include "core/fxcrt/unowned_ptr_exclusion.h"
+
 namespace fxcmap {
 
 struct DWordCIDMap {
@@ -21,9 +23,9 @@ struct DWordCIDMap {
 struct CMap {
   enum class Type : bool { kSingle, kRange };
 
-  const char* m_Name;              // Raw, POD struct.
-  const uint16_t* m_pWordMap;      // Raw, POD struct.
-  const DWordCIDMap* m_pDWordMap;  // Raw, POD struct.
+  UNOWNED_PTR_EXCLUSION const char* m_Name;              // POD struct.
+  UNOWNED_PTR_EXCLUSION const uint16_t* m_pWordMap;      // POD struct.
+  UNOWNED_PTR_EXCLUSION const DWordCIDMap* m_pDWordMap;  // POD struct.
   uint16_t m_WordCount;
   uint16_t m_DWordCount;
   Type m_WordMapType;

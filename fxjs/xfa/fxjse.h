@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "v8/include/v8-forward.h"
 
 namespace pdfium {
@@ -78,7 +79,7 @@ struct FXJSE_FUNCTION_DESCRIPTOR {
 struct FXJSE_CLASS_DESCRIPTOR {
   const char* tag;  // `pdfium::fxjse::kClassTag` always.
   const char* name;
-  const FXJSE_FUNCTION_DESCRIPTOR* methods;
+  UNOWNED_PTR_EXCLUSION const FXJSE_FUNCTION_DESCRIPTOR* methods;
   int32_t methNum;
   FXJSE_PropTypeGetter dynPropTypeGetter;
   FXJSE_PropGetter dynPropGetter;

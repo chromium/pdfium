@@ -10,6 +10,8 @@
 #include <type_traits>
 #include <utility>
 
+#include "build/build_config.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "third_party/base/compiler_specific.h"
 
 #if defined(ADDRESS_SANITIZER)
@@ -181,7 +183,7 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
 #endif
   }
 
-  T* m_pObj = nullptr;
+  UNOWNED_PTR_EXCLUSION T* m_pObj = nullptr;
 };
 
 }  // namespace fxcrt

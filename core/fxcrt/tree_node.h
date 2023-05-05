@@ -7,6 +7,7 @@
 
 #include <stdint.h>
 
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "third_party/base/check.h"
 
 namespace fxcrt {
@@ -182,11 +183,11 @@ class TreeNode : public TreeNodeBase<T> {
  private:
   friend class TreeNodeBase<T>;
 
-  T* m_pParent = nullptr;       // Raw, intra-tree pointer.
-  T* m_pFirstChild = nullptr;   // Raw, intra-tree pointer.
-  T* m_pLastChild = nullptr;    // Raw, intra-tree pointer.
-  T* m_pNextSibling = nullptr;  // Raw, intra-tree pointer
-  T* m_pPrevSibling = nullptr;  // Raw, intra-tree pointer
+  UNOWNED_PTR_EXCLUSION T* m_pParent = nullptr;       // intra-tree pointer.
+  UNOWNED_PTR_EXCLUSION T* m_pFirstChild = nullptr;   // intra-tree pointer.
+  UNOWNED_PTR_EXCLUSION T* m_pLastChild = nullptr;    // intra-tree pointer.
+  UNOWNED_PTR_EXCLUSION T* m_pNextSibling = nullptr;  // intra-tree pointer.
+  UNOWNED_PTR_EXCLUSION T* m_pPrevSibling = nullptr;  // intra-tree pointer.
 };
 
 }  // namespace fxcrt

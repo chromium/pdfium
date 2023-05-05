@@ -231,6 +231,22 @@ config("pdfium_common_config") {
         "blink-gc-plugin",
       ]
     }
+
+    if (pdf_enable_unowned_ptr_exclusion) {
+      cflags += [
+        "-Xclang",
+        "-plugin-arg-find-bad-constructs",
+        "-Xclang",
+        "check-raw-ptr-fields",
+
+        # TODO(tsepez): enforce raw_ref<> as well.
+        # "-Xclang",
+        # "-plugin-arg-find-bad-constructs",
+        # "-Xclang",
+        # "check-raw-ref-fields",
+      ]
+      defines += [ "PDF_ENABLE_UNOWNED_PTR_EXCLUSION" ]
+    }
   }
 
   if (!is_win && !is_clang) {

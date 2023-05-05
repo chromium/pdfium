@@ -18,6 +18,7 @@
 #include "core/fxcodec/progressive_decoder_iface.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxge/dib/cstretchengine.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/span.h"
@@ -263,7 +264,7 @@ class ProgressiveDecoder final :
   size_t m_FrameCur = 0;
 #ifdef PDF_ENABLE_XFA_GIF
   int m_GifBgIndex = 0;
-  CFX_GifPalette* m_pGifPalette = nullptr;
+  UNOWNED_PTR_EXCLUSION CFX_GifPalette* m_pGifPalette = nullptr;
   int32_t m_GifPltNumber = 0;
   int m_GifTransIndex = -1;
   FX_RECT m_GifFrameRect;
