@@ -61,6 +61,7 @@ config("gmock_config") {
 source_set("gtest") {
   testonly = true
   sources = [
+    "custom/gtest/internal/custom/gtest-printers.h",
     "custom/gtest/internal/custom/gtest.h",
     "custom/gtest/internal/custom/stack_trace_getter.cc",
     "custom/gtest/internal/custom/stack_trace_getter.h",
@@ -127,7 +128,7 @@ source_set("gtest") {
   ]
 
   deps = []
-  public_deps = []
+  public_deps = [ "../../core/fxcrt" ]
 
   if (is_fuchsia) {
     deps += [
