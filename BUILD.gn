@@ -254,6 +254,11 @@ config("pdfium_common_config") {
         "-Xclang",
         "raw-ptr-exclude-path=unittest",
 
+        "-Xclang",
+        "-plugin-arg-find-bad-constructs",
+        "-Xclang",
+        "raw-ptr-exclude-path=embeddertest",
+
         # TODO(tsepez): enforce raw_ref<> as well.
         # "-Xclang",
         # "-plugin-arg-find-bad-constructs",
