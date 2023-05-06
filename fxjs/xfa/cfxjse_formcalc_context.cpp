@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "core/fxcrt/cfx_datetime.h"
+#include "core/fxcrt/code_point_view.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_random.h"
@@ -967,18 +968,20 @@ WideString DecodeXML(const WideString& wsXML) {
 }
 
 WideString EncodeURL(const ByteString& bsURL) {
-  static const wchar_t kStrUnsafe[] = {' ', '<',  '>', '"', '#', '%', '{', '}',
-                                       '|', '\\', '^', '~', '[', ']', '`'};
-  static const wchar_t kStrReserved[] = {';', '/', '?', ':', '@', '=', '&'};
-  static const wchar_t kStrSpecial[] = {'$',  '-', '+', '!', '*',
-                                        '\'', '(', ')', ','};
+  static constexpr char32_t kStrUnsafe[] = {' ', '<', '>', '"', '#',
+                                            '%', '{', '}', '|', '\\',
+                                            '^', '~', '[', ']', '`'};
+  static constexpr char32_t kStrReserved[] = {';', '/', '?', ':',
+                                              '@', '=', '&'};
+  static constexpr char32_t kStrSpecial[] = {'$',  '-', '+', '!', '*',
+                                             '\'', '(', ')', ','};
 
   WideString wsURL = WideString::FromUTF8(bsURL.AsStringView());
   WideTextBuffer wsResultBuf;
   wchar_t szEncode[4];
   szEncode[0] = '%';
   szEncode[3] = 0;
-  for (wchar_t ch : wsURL) {
+  for (char32_t ch : pdfium::CodePointView(wsURL.AsStringView())) {
     size_t i = 0;
     size_t iCount = std::size(kStrUnsafe);
     while (i < iCount) {
@@ -1070,7 +1073,7 @@ WideString EncodeHTML(const ByteString& bsHTML) {
   szEncode[1] = '#';
   szEncode[2] = 'x';
   WideTextBuffer wsResultBuf;
-  for (uint32_t ch : wsHTML) {
+  for (char32_t ch : pdfium::CodePointView(wsHTML.AsStringView())) {
     WideString htmlReserve;
     if (HTMLCode2STR(ch, &htmlReserve)) {
       wsResultBuf.AppendChar(L'&');
@@ -1109,7 +1112,7 @@ WideString EncodeXML(const ByteString& bsXML) {
   szEncode[0] = '&';
   szEncode[1] = '#';
   szEncode[2] = 'x';
-  for (uint32_t ch : wsXML) {
+  for (char32_t ch : pdfium::CodePointView(wsXML.AsStringView())) {
     switch (ch) {
       case '"':
         wsResultBuf.AppendChar('&');

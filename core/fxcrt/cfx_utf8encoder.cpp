@@ -10,48 +10,14 @@
 
 #include <utility>
 
-#include "build/build_config.h"
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/code_point_view.h"
 #include "core/fxcrt/string_view_template.h"
 
 CFX_UTF8Encoder::CFX_UTF8Encoder(WideStringView input) {
-#if defined(WCHAR_T_IS_UTF16)
-  char16_t high_surrogate = 0;
-
-  for (wchar_t code_unit : input) {
-    if (high_surrogate) {
-      if (code_unit >= 0xdc00 && code_unit < 0xe000) {
-        // Paired low surrogate.
-        char32_t code_point = code_unit & 0x3ff;
-        code_point |= (high_surrogate & 0x3ff) << 10;
-        code_point += 0x10000;
-        high_surrogate = 0;
-        AppendCodePoint(code_point);
-        continue;
-      }
-
-      // Unpaired high surrogate.
-      AppendCodePoint(high_surrogate);
-    }
-
-    if (code_unit >= 0xd800 && code_unit < 0xdc00) {
-      // Pending high surrogate.
-      high_surrogate = code_unit;
-    } else {
-      high_surrogate = 0;
-      AppendCodePoint(code_unit);
-    }
+  for (char32_t code_point : pdfium::CodePointView(input)) {
+    AppendCodePoint(code_point);
   }
-
-  if (high_surrogate) {
-    // Unpaired high surrogate.
-    AppendCodePoint(high_surrogate);
-  }
-#else
-  for (wchar_t code_unit : input) {
-    AppendCodePoint(code_unit);
-  }
-#endif  // defined(WCHAR_T_IS_UTF16)
 }
 
 CFX_UTF8Encoder::~CFX_UTF8Encoder() = default;

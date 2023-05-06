@@ -4,7 +4,6 @@
 
 #include <math.h>
 
-#include "build/build_config.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_isolatetracker.h"
@@ -718,12 +717,9 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Encode) {
   ExecuteExpectString("Encode(\"\\u0022\\u00f5\\ufed0\", \"html\")",
                       "&quot;&otilde;&#xfed0;");
 
-#if defined(WCHAR_T_IS_UTF32)
-  // TODO(crbug.com/pdfium/2029): Support UTF-16.
   ExecuteExpectString("Encode(\"\\uD83D\\uDCA9\", \"url\")", "%01%f4%a9");
   ExecuteExpectString("Encode(\"\\uD83D\\uDCA9\", \"xml\")", "");
   ExecuteExpectString("Encode(\"\\uD83D\\uDCA9\", \"html\")", "");
-#endif  // defined(WCHAR_T_IS_UTF32)
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Format) {
