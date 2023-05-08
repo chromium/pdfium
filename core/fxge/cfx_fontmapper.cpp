@@ -19,6 +19,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/stl_util.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
@@ -390,7 +391,7 @@ class ScopedFontDeleter {
 
  private:
   UnownedPtr<SystemFontInfoIface> const font_info_;
-  void* const font_;
+  UNOWNED_PTR_EXCLUSION void* const font_;  // void type incompatible.
 };
 
 }  // namespace

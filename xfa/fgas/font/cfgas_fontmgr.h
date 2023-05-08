@@ -66,9 +66,9 @@ class CFGAS_FontDescriptor {
   uint32_t m_dwCsb[2] = {};
 };
 
-class CFGAS_FontDescriptorInfo {
+struct CFGAS_FontDescriptorInfo {
  public:
-  CFGAS_FontDescriptor* pFont;
+  UNOWNED_PTR_EXCLUSION CFGAS_FontDescriptor* pFont;  // POD struct.
   int32_t nPenalty;
 
   bool operator>(const CFGAS_FontDescriptorInfo& other) const {

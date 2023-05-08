@@ -14,6 +14,7 @@
 #include "core/fxcrt/mask.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/cfx_color.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -118,7 +119,8 @@ class CPWL_Wnd : public Observable {
     CPWL_Dash sDash;
 
     // Ignore, used internally only:
-    CPWL_MsgControl* pMsgControl = nullptr;
+    // TODO(tsepez): fix murky ownership, bare delete.
+    UNOWNED_PTR_EXCLUSION CPWL_MsgControl* pMsgControl = nullptr;
     IPWL_FillerNotify::CursorStyle eCursorType =
         IPWL_FillerNotify::CursorStyle::kArrow;
   };

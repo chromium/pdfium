@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_Image.h"
+#include "core/fxcrt/unowned_ptr.h"
 
 class CJBig2_ArithDecoder;
 class CJBig2_BitStream;
@@ -21,6 +22,9 @@ class PauseIndicatorIface;
 
 class CJBig2_HTRDProc {
  public:
+  CJBig2_HTRDProc();
+  ~CJBig2_HTRDProc();
+
   std::unique_ptr<CJBig2_Image> DecodeArith(CJBig2_ArithDecoder* pArithDecoder,
                                             JBig2ArithCtx* gbContext,
                                             PauseIndicatorIface* pPause);
@@ -33,7 +37,7 @@ class CJBig2_HTRDProc {
   bool HMMR;
   uint8_t HTEMPLATE;
   uint32_t HNUMPATS;
-  const std::vector<std::unique_ptr<CJBig2_Image>>* HPATS;
+  UnownedPtr<const std::vector<std::unique_ptr<CJBig2_Image>>> HPATS;
   bool HDEFPIXEL;
   JBig2ComposeOp HCOMBOP;
   bool HENABLESKIP;

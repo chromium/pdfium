@@ -17,6 +17,7 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/numerics/safe_conversions.h"
@@ -64,7 +65,8 @@ class FPDF_FileAvailContext final : public CPDF_DataAvail::FileAvail {
   }
 
  private:
-  FX_FILEAVAIL* const avail_;
+  // TODO(tsepez): fix murky ownership in tests.
+  UNOWNED_PTR_EXCLUSION FX_FILEAVAIL* const avail_;
 };
 
 class FPDF_FileAccessContext final : public IFX_SeekableReadStream {
@@ -95,7 +97,8 @@ class FPDF_FileAccessContext final : public IFX_SeekableReadStream {
   explicit FPDF_FileAccessContext(FPDF_FILEACCESS* file) : file_(file) {}
   ~FPDF_FileAccessContext() override = default;
 
-  FPDF_FILEACCESS* const file_;
+  // TODO(tsepez): fix murky ownership in tests.
+  UNOWNED_PTR_EXCLUSION FPDF_FILEACCESS* const file_;
 };
 
 class FPDF_DownloadHintsContext final : public CPDF_DataAvail::DownloadHints {

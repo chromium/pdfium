@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxge/dib/cfx_bitmapstorer.h"
 
 class CFX_DIBBase;
@@ -32,7 +33,7 @@ class CFX_ImageTransformer {
   };
 
   struct CalcData {
-    CFX_DIBitmap* bitmap;
+    UNOWNED_PTR_EXCLUSION CFX_DIBitmap* bitmap;  // POD struct.
     const CFX_Matrix& matrix;
     const uint8_t* buf;
     uint32_t pitch;

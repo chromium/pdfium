@@ -29,7 +29,7 @@ class CJBig2_GRDProc {
     ProgressiveArithDecodeState();
     ~ProgressiveArithDecodeState();
 
-    std::unique_ptr<CJBig2_Image>* pImage;
+    UnownedPtr<std::unique_ptr<CJBig2_Image>> pImage;
     UnownedPtr<CJBig2_ArithDecoder> pArithDecoder;
     UnownedPtr<JBig2ArithCtx> gbContext;
     UnownedPtr<PauseIndicatorIface> pPause;

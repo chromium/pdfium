@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "build/build_config.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 
 #if BUILDFLAG(IS_APPLE)
 #include "third_party/base/span.h"
@@ -52,7 +53,9 @@ class CFX_GEModule {
   std::unique_ptr<PlatformIface> const m_pPlatform;
   std::unique_ptr<CFX_FontMgr> const m_pFontMgr;
   std::unique_ptr<CFX_FontCache> const m_pFontCache;
-  const char** const m_pUserFontPaths;
+
+  // Exclude because taken from public API.
+  UNOWNED_PTR_EXCLUSION const char** const m_pUserFontPaths;
 };
 
 #endif  // CORE_FXGE_CFX_GEMODULE_H_

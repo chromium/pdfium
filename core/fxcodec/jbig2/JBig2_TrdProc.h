@@ -14,6 +14,7 @@
 
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 
 class CJBig2_ArithDecoder;
 class CJBig2_ArithIaidDecoder;
@@ -71,7 +72,7 @@ class CJBig2_TRDProc {
   uint32_t SBSTRIPS;
   uint32_t SBNUMSYMS;
   std::vector<JBig2HuffmanCode> SBSYMCODES;
-  CJBig2_Image** SBSYMS;
+  UNOWNED_PTR_EXCLUSION CJBig2_Image** SBSYMS;
   JBig2ComposeOp SBCOMBOP;
   JBig2Corner REFCORNER;
   UnownedPtr<const CJBig2_HuffmanTable> SBHUFFFS;

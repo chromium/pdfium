@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "fxjs/gc/heap.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "v8/include/cppgc/garbage-collected.h"
@@ -33,16 +34,16 @@ class CXFA_ViewLayoutProcessor
   struct BreakData {
     CPPGC_STACK_ALLOCATED();  // Raw/Unowned pointers allowed.
    public:
-    CXFA_Node* pLeader;
-    CXFA_Node* pTrailer;
+    UNOWNED_PTR_EXCLUSION CXFA_Node* pLeader;   // POD struct.
+    UNOWNED_PTR_EXCLUSION CXFA_Node* pTrailer;  // POD struct.
     bool bCreatePage;
   };
 
   struct OverflowData {
     CPPGC_STACK_ALLOCATED();  // Raw/Unowned pointers allowed.
    public:
-    CXFA_Node* pLeader;
-    CXFA_Node* pTrailer;
+    UNOWNED_PTR_EXCLUSION CXFA_Node* pLeader;   // POD struct.
+    UNOWNED_PTR_EXCLUSION CXFA_Node* pTrailer;  // POD struct.
   };
 
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
