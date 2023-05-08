@@ -44,3 +44,5 @@ void CFX_CSSRuleCollection::AddRule(CFX_CSSStyleRule* pStyleRule) {
 CFX_CSSRuleCollection::Data::Data(CFX_CSSSelector* pSel,
                                   CFX_CSSDeclaration* pDecl)
     : pSelector(pSel), pDeclaration(pDecl) {}
+
+CFX_CSSRuleCollection::Data::~Data() = default;
