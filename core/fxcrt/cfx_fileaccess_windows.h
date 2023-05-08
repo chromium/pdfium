@@ -13,6 +13,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fileaccess_iface.h"
 #include "core/fxcrt/fx_types.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 
 #if !BUILDFLAG(IS_WIN)
 #error "Included on the wrong platform"
@@ -39,7 +40,7 @@ class CFX_FileAccess_Windows final : public FileAccessIface {
   bool Truncate(FX_FILESIZE szFile) override;
 
  private:
-  void* m_hFile = nullptr;
+  UNOWNED_PTR_EXCLUSION void* m_hFile = nullptr;  // void type incompatible.
 };
 
 #endif  // CORE_FXCRT_CFX_FILEACCESS_WINDOWS_H_

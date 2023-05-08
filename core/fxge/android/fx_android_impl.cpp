@@ -7,6 +7,7 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/android/cfpf_skiadevicemodule.h"
 #include "core/fxge/android/cfx_androidfontinfo.h"
 #include "core/fxge/cfx_fontmgr.h"
@@ -33,7 +34,7 @@ class CAndroidPlatform : public CFX_GEModule::PlatformIface {
   }
 
  private:
-  CFPF_SkiaDeviceModule* m_pDeviceModule = nullptr;
+  UnownedPtr<CFPF_SkiaDeviceModule> m_pDeviceModule;
 };
 
 // static
