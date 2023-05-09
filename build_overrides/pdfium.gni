@@ -9,10 +9,6 @@
 # Default: Use a bundled FreeType.
 pdf_bundle_freetype_override = true
 
-# Build PDFium with Chromium's raw_ptr restriction enforcing clang plugin.
-# Default: Do not enforce this restriction
-pdf_enable_unowned_ptr_exclusion_override = false
-
 # Build PDFium either with or without v8 support.
 # Default: With V8 support.
 pdf_enable_v8_override = true

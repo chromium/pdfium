@@ -222,42 +222,34 @@ config("pdfium_common_config") {
     # May flag some issues when converting int to size_t.
     cflags += [ "-Wtautological-unsigned-zero-compare" ]
 
-    # Catch misuse of cppgc in XFA.
-    if (pdf_enable_xfa && clang_use_chrome_plugins) {
+    if (clang_use_chrome_plugins) {
+      # Catch misuse of C-style pointers.
       cflags += [
-        "-Xclang",
-        "-add-plugin",
-        "-Xclang",
-        "blink-gc-plugin",
-      ]
-    }
+        # TODO(tsepez): enable these tests.
+        #"-Xclang",
+        #"-plugin-arg-find-bad-constructs",
+        #"-Xclang",
+        #"check-raw-ptr-fields",
 
-    if (pdf_enable_unowned_ptr_exclusion) {
-      cflags += [
-        "-Xclang",
-        "-plugin-arg-find-bad-constructs",
-        "-Xclang",
-        "check-raw-ptr-fields",
+        #"-Xclang",
+        #"-plugin-arg-find-bad-constructs",
+        #"-Xclang",
+        #"raw-ptr-exclude-path=public",
 
-        "-Xclang",
-        "-plugin-arg-find-bad-constructs",
-        "-Xclang",
-        "raw-ptr-exclude-path=public/",
+        #"-Xclang",
+        #"-plugin-arg-find-bad-constructs",
+        #"-Xclang",
+        #"raw-ptr-exclude-path=testing",
 
-        "-Xclang",
-        "-plugin-arg-find-bad-constructs",
-        "-Xclang",
-        "raw-ptr-exclude-path=testing/",
+        #"-Xclang",
+        #"-plugin-arg-find-bad-constructs",
+        #"-Xclang",
+        #"raw-ptr-exclude-path=unittest",
 
-        "-Xclang",
-        "-plugin-arg-find-bad-constructs",
-        "-Xclang",
-        "raw-ptr-exclude-path=unittest",
-
-        "-Xclang",
-        "-plugin-arg-find-bad-constructs",
-        "-Xclang",
-        "raw-ptr-exclude-path=embeddertest",
+        #"-Xclang",
+        #"-plugin-arg-find-bad-constructs",
+        #"-Xclang",
+        #"raw-ptr-exclude-path=embeddertest",
 
         # TODO(tsepez): enforce raw_ref<> as well.
         # "-Xclang",
@@ -265,7 +257,19 @@ config("pdfium_common_config") {
         # "-Xclang",
         # "check-raw-ref-fields",
       ]
-      defines += [ "PDF_ENABLE_UNOWNED_PTR_EXCLUSION" ]
+      defines += [
+        #"PDF_ENABLE_UNOWNED_PTR_EXCLUSION",
+      ]
+
+      # Catch misuse of cppgc in XFA.
+      if (pdf_enable_xfa) {
+        cflags += [
+          "-Xclang",
+          "-add-plugin",
+          "-Xclang",
+          "blink-gc-plugin",
+        ]
+      }
     }
   }
 

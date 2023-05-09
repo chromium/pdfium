@@ -95,6 +95,11 @@ For sample applications like `pdfium_test` to build, one must set
 
 By default, the entire project builds with C++17.
 
+By default, PDFium expects to build with a clang compiler that provides
+additional chrome plugins. To build against a vanilla one lacking these,
+one must set
+`clang_use_chrome_plugins = false`.
+
 When complete the arguments will be stored in `<directory>/args.gn`, and
 GN will automatically use the new arguments to generate build files.
 Should your files fail to generate, please double-check that you have set
