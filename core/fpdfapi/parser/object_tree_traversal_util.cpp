@@ -81,7 +81,6 @@ class ObjectTreeTraverser {
           const CPDF_Reference* ref_object = current_object->AsReference();
           const uint32_t ref_object_number = GetObjectNumber(ref_object);
           const uint32_t referenced_object_number = ref_object->GetRefObjNum();
-          CHECK(referenced_object_number);
 
           RetainPtr<const CPDF_Object> referenced_object;
           if (ref_object->HasIndirectObjectHolder()) {
@@ -94,6 +93,7 @@ class ObjectTreeTraverser {
           }
           // Unlike the other object types, CPDF_Reference can point at nullptr.
           if (referenced_object) {
+            CHECK(referenced_object_number);
             reference_entries.push_back(
                 {ref_object_number, referenced_object_number});
             PushNewObject(ref_object, referenced_object);

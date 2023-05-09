@@ -64,6 +64,14 @@ TEST_F(ObjectTreeTraversalUtilEmbedderTest,
 }
 
 TEST_F(ObjectTreeTraversalUtilEmbedderTest,
+       GetObjectsWithReferencesObjectZero) {
+  ASSERT_TRUE(OpenDocument("rectangles_object_zero.pdf"));
+  CPDF_Document* doc = GetCPDFDocument(document());
+  std::set<uint32_t> referenced_objects = GetObjectsWithReferences(doc);
+  EXPECT_THAT(referenced_objects, UnorderedElementsAreArray({1, 2, 3, 4}));
+}
+
+TEST_F(ObjectTreeTraversalUtilEmbedderTest,
        GetObjectsWithMultipleReferencesBasic) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   CPDF_Document* doc = GetCPDFDocument(document());
@@ -93,4 +101,12 @@ TEST_F(ObjectTreeTraversalUtilEmbedderTest,
   CPDF_Document* doc = GetCPDFDocument(document());
   std::set<uint32_t> referenced_objects = GetObjectsWithMultipleReferences(doc);
   EXPECT_THAT(referenced_objects, UnorderedElementsAreArray({5, 6, 7}));
+}
+
+TEST_F(ObjectTreeTraversalUtilEmbedderTest,
+       GetObjectsWithMultipleReferencesObjectZero) {
+  ASSERT_TRUE(OpenDocument("rectangles_object_zero.pdf"));
+  CPDF_Document* doc = GetCPDFDocument(document());
+  std::set<uint32_t> referenced_objects = GetObjectsWithMultipleReferences(doc);
+  EXPECT_TRUE(referenced_objects.empty());
 }
