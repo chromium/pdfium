@@ -12,6 +12,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/renderdevicedriver_iface.h"
@@ -217,8 +218,8 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   // bitmap is 24 bpp and cannot be directly used as the back of a SkCanvas.
   RetainPtr<CFX_DIBitmap> m_pOriginalBitmap;
 
-  SkCanvas* m_pCanvas;
-  SkPictureRecorder* const m_pRecorder;
+  UnownedPtr<SkCanvas> m_pCanvas;
+  UnownedPtr<SkPictureRecorder> const m_pRecorder;
   CFX_FillRenderOptions m_FillOptions;
   bool m_bRgbByteOrder;
   bool m_bGroupKnockout;

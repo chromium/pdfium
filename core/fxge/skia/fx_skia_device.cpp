@@ -898,7 +898,7 @@ CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver() {
   }
 
   if (!m_pRecorder) {
-    delete m_pCanvas;
+    delete m_pCanvas.ExtractAsDangling();
   }
 }
 
