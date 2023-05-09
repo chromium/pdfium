@@ -18,6 +18,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxge/cfx_face.h"
 #include "core/fxge/freetype/fx_freetype.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
@@ -174,7 +175,7 @@ class CFX_Font {
   bool m_bEmbedded = false;
   bool m_bVertical = false;
 #if BUILDFLAG(IS_APPLE)
-  void* m_pPlatformFont = nullptr;
+  UNOWNED_PTR_EXCLUSION void* m_pPlatformFont = nullptr;
 #endif
 };
 
