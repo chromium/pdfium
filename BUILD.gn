@@ -221,56 +221,6 @@ config("pdfium_common_config") {
 
     # May flag some issues when converting int to size_t.
     cflags += [ "-Wtautological-unsigned-zero-compare" ]
-
-    if (clang_use_chrome_plugins) {
-      # Catch misuse of C-style pointers.
-      cflags += [
-        # TODO(tsepez): enable these tests.
-        #"-Xclang",
-        #"-plugin-arg-find-bad-constructs",
-        #"-Xclang",
-        #"check-raw-ptr-fields",
-
-        #"-Xclang",
-        #"-plugin-arg-find-bad-constructs",
-        #"-Xclang",
-        #"raw-ptr-exclude-path=public",
-
-        #"-Xclang",
-        #"-plugin-arg-find-bad-constructs",
-        #"-Xclang",
-        #"raw-ptr-exclude-path=testing",
-
-        #"-Xclang",
-        #"-plugin-arg-find-bad-constructs",
-        #"-Xclang",
-        #"raw-ptr-exclude-path=unittest",
-
-        #"-Xclang",
-        #"-plugin-arg-find-bad-constructs",
-        #"-Xclang",
-        #"raw-ptr-exclude-path=embeddertest",
-
-        # TODO(tsepez): enforce raw_ref<> as well.
-        # "-Xclang",
-        # "-plugin-arg-find-bad-constructs",
-        # "-Xclang",
-        # "check-raw-ref-fields",
-      ]
-      defines += [
-        #"PDF_ENABLE_UNOWNED_PTR_EXCLUSION",
-      ]
-
-      # Catch misuse of cppgc in XFA.
-      if (pdf_enable_xfa) {
-        cflags += [
-          "-Xclang",
-          "-add-plugin",
-          "-Xclang",
-          "blink-gc-plugin",
-        ]
-      }
-    }
   }
 
   if (!is_win && !is_clang) {
@@ -333,9 +283,54 @@ config("pdfium_core_config") {
   }
 }
 
+config("pdfium_plugin_config") {
+  cflags = []
+  defines = []
+  if (clang_use_chrome_plugins) {
+    # Catch misuse of C-style pointers.
+    # TODO(tsepez): enable for windows, too.
+    if (!is_win) {
+      cflags += [
+        "-Xclang",
+        "-plugin-arg-find-bad-constructs",
+        "-Xclang",
+        "check-raw-ptr-fields",
+
+        "-Xclang",
+        "-plugin-arg-find-bad-constructs",
+        "-Xclang",
+        "raw-ptr-exclude-path=public",
+
+        "-Xclang",
+        "-plugin-arg-find-bad-constructs",
+        "-Xclang",
+        "raw-ptr-exclude-path=test",
+
+        # TODO(tsepez): enforce raw_ref<> as well.
+        # "-Xclang",
+        # "-plugin-arg-find-bad-constructs",
+        # "-Xclang",
+        # "check-raw-ref-fields",
+      ]
+      defines += [ "PDF_ENABLE_UNOWNED_PTR_EXCLUSION" ]
+    }
+
+    # Catch misuse of cppgc in XFA.
+    if (pdf_enable_xfa) {
+      cflags += [
+        "-Xclang",
+        "-add-plugin",
+        "-Xclang",
+        "blink-gc-plugin",
+      ]
+    }
+  }
+}
+
 config("pdfium_strict_config") {
   configs = [
     ":pdfium_core_config",
+    ":pdfium_plugin_config",
     "//build/config/compiler:wexit_time_destructors",
     "//build/config/compiler:wglobal_constructors",
   ]
