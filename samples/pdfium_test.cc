@@ -994,8 +994,8 @@ class SkPicturePageRenderer : public PageRenderer {
 
     if (md5) {
       // Play back the `SkPicture` so we can take a hash of the result.
-      sk_sp<SkSurface> surface = SkSurface::MakeRasterN32Premul(
-          /*width=*/width(), /*height=*/height());
+      sk_sp<SkSurface> surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(
+          /*width=*/width(), /*height=*/height()));
       if (!surface)
         return false;
 

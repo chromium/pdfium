@@ -133,7 +133,7 @@ ScopedFPDFBitmap SkImageToPdfiumBitmap(const SkImage& image) {
 ScopedFPDFBitmap SkPictureToPdfiumBitmap(sk_sp<SkPicture> picture,
                                          const SkISize& size) {
   sk_sp<SkSurface> surface =
-      SkSurface::MakeRasterN32Premul(size.width(), size.height());
+      SkSurfaces::Raster(SkImageInfo::MakeN32Premul(size));
   if (!surface) {
     ADD_FAILURE() << "Could not create SkSurface";
     return nullptr;
