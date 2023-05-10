@@ -15,6 +15,10 @@
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/renderdevicedriver_iface.h"
 
+#if BUILDFLAG(IS_APPLE)
+#include "core/fxcrt/unowned_ptr_exclusion.h"
+#endif
+
 class CFX_ClipRgn;
 class CFX_GraphStateData;
 class CFX_Matrix;
@@ -109,7 +113,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
   std::unique_ptr<CFX_ClipRgn> m_pClipRgn;
   std::vector<std::unique_ptr<CFX_ClipRgn>> m_StateStack;
 #if BUILDFLAG(IS_APPLE)
-  void* m_pPlatformGraphics = nullptr;
+  UNOWNED_PTR_EXCLUSION void* m_pPlatformGraphics = nullptr;
 #endif
   CFX_FillRenderOptions m_FillOptions;
   const bool m_bRgbByteOrder;
