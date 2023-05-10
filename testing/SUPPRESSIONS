@@ -345,6 +345,11 @@ bug_1331.in * * * *
 # TODO(chromium:1356149): Remove after associated bug is fixed
 bug_1356149.in mac * * agg
 
+# This test is intentionally suppressed on Windows. Normally, Windows provides
+# the Symbol font, so this PDF would render correctly. However, in the hermetic
+# test environment, there is no Symbol font and the rendering is incorrect.
+bug_1442723.in win * * *
+
 # TODO(pdfium:1457): Remove after associated bug is fixed
 bug_1457.in * * * *
 

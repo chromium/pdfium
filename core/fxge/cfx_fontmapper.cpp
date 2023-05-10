@@ -716,7 +716,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   }
 
   if (Charset == FX_Charset::kSymbol) {
-#if BUILDFLAG(IS_APPLE) || BUILDFLAG(IS_ANDROID)
+#if !BUILDFLAG(IS_WIN)
     if (subst_name == "Symbol") {
       subst_font->m_Family = "Chrome Symbol";
       subst_font->m_Charset = FX_Charset::kSymbol;
