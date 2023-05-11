@@ -663,13 +663,17 @@ int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {
   if (!m_Font.GetSubData()) {
     unsigned long length = 0;
     int error = FT_Load_Sfnt_Table(face, kGsubTag, 0, nullptr, &length);
-    if (!error)
-      m_Font.AllocSubData(length);
+    if (error || !length) {
+      return index;
+    }
+
+    m_Font.AllocSubData(length);
   }
   int error =
       FT_Load_Sfnt_Table(face, kGsubTag, 0, m_Font.GetSubData(), nullptr);
-  if (error || !m_Font.GetSubData())
+  if (error) {
     return index;
+  }
 
   m_pTTGSUBTable = std::make_unique<CFX_CTTGSUBTable>(m_Font.GetSubData());
   return GetVerticalGlyph(index, pVertGlyph);
