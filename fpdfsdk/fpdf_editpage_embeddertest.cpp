@@ -457,3 +457,50 @@ TEST_F(FPDFEditPageEmbedderTest, GetBoundsForRotatedImage) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFEditPageEmbedderTest, VerifyDashArraySaved) {
+  constexpr float kDashArray[] = {2.5, 3.6};
+  constexpr float kDashPhase = 1.2;
+
+  CreateEmptyDocument();
+  {
+    ScopedFPDFPage page(FPDFPage_New(document(), 0, 612, 792));
+
+    FPDF_PAGEOBJECT path = FPDFPageObj_CreateNewPath(400, 100);
+    EXPECT_TRUE(FPDFPageObj_SetStrokeWidth(path, 2));
+    EXPECT_TRUE(FPDFPageObj_SetStrokeColor(path, 255, 0, 0, 255));
+    EXPECT_TRUE(FPDFPath_SetDrawMode(path, FPDF_FILLMODE_NONE, 1));
+    EXPECT_TRUE(FPDFPath_LineTo(path, 200, 200));
+    EXPECT_TRUE(FPDFPageObj_SetDashArray(path, kDashArray,
+                                         std::size(kDashArray), kDashPhase));
+    FPDFPage_InsertObject(page.get(), path);
+
+    EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+    path = FPDFPage_GetObject(page.get(), 0);
+    ASSERT_TRUE(path);
+    ASSERT_EQ(2, FPDFPageObj_GetDashCount(path));
+
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  }
+
+  ASSERT_TRUE(OpenSavedDocument());
+  FPDF_PAGE page = LoadSavedPage(0);
+  ASSERT_TRUE(page);
+
+  FPDF_PAGEOBJECT path = FPDFPage_GetObject(page, 0);
+  ASSERT_TRUE(path);
+
+  float dash_array[] = {0, 0};
+  ASSERT_EQ(static_cast<int>(std::size(dash_array)),
+            FPDFPageObj_GetDashCount(path));
+  ASSERT_TRUE(
+      FPDFPageObj_GetDashArray(path, dash_array, std::size(dash_array)));
+  ASSERT_EQ(kDashArray[0], dash_array[0]);
+  ASSERT_EQ(kDashArray[1], dash_array[1]);
+  float dash_phase = 0;
+  ASSERT_TRUE(FPDFPageObj_GetDashPhase(path, &dash_phase));
+  ASSERT_EQ(kDashPhase, dash_phase);
+
+  CloseSavedPage(page);
+  CloseSavedDocument();
+}
