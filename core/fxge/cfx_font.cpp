@@ -637,10 +637,6 @@ absl::optional<FX_RECT> CFX_Font::GetBBox() const {
   return result;
 }
 
-void CFX_Font::AllocSubData(size_t size) {
-  m_pSubData.reset(FX_Alloc(uint8_t, size));
-}
-
 RetainPtr<CFX_GlyphCache> CFX_Font::GetOrCreateGlyphCache() const {
   if (!m_GlyphCache)
     m_GlyphCache = CFX_GEModule::Get()->GetFontCache()->GetGlyphCache(this);
