@@ -350,8 +350,6 @@ CFX_CTTGSUBTable::TCoverageFormat2::TCoverageFormat2(size_t initial_size)
 
 CFX_CTTGSUBTable::TCoverageFormat2::~TCoverageFormat2() = default;
 
-CFX_CTTGSUBTable::TDevice::TDevice() = default;
-
 CFX_CTTGSUBTable::TSubTableBase::TSubTableBase(uint16_t format)
     : SubstFormat(format) {}
 

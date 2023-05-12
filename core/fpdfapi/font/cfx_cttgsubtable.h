@@ -65,14 +65,6 @@ class CFX_CTTGSUBTable {
     std::vector<TRangeRecord> RangeRecords;
   };
 
-  struct TDevice {
-    TDevice();
-
-    uint16_t StartSize = 0;
-    uint16_t EndSize = 0;
-    uint16_t DeltaFormat = 0;
-  };
-
   struct TSubTableBase {
     explicit TSubTableBase(uint16_t format);
     virtual ~TSubTableBase();
