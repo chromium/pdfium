@@ -33,7 +33,7 @@ CFX_CTTGSUBTable::CFX_CTTGSUBTable(FT_Bytes gsub) {
 
   for (const TScriptRecord& script : ScriptList) {
     for (const auto& record : script.LangSysRecords) {
-      for (uint16_t index : record.FeatureIndices) {
+      for (uint16_t index : record) {
         if (IsVerticalFeatureTag(FeatureList[index].FeatureTag))
           m_featureSet.insert(index);
       }
@@ -194,20 +194,22 @@ void CFX_CTTGSUBTable::ParseScriptList(FT_Bytes raw) {
 void CFX_CTTGSUBTable::ParseScript(FT_Bytes raw, TScriptRecord* rec) {
   FT_Bytes sp = raw;
   rec->DefaultLangSys = GetUInt16(sp);
-  rec->LangSysRecords = std::vector<TLangSysRecord>(GetUInt16(sp));
-  for (auto& sysRecord : rec->LangSysRecords) {
-    sysRecord.LangSysTag = GetUInt32(sp);
-    ParseLangSys(&raw[GetUInt16(sp)], &sysRecord);
+  rec->LangSysRecords = std::vector<FeatureIndices>(GetUInt16(sp));
+  for (auto& sys_record : rec->LangSysRecords) {
+    // Skip over "LangSysTag" field.
+    sp += 4;
+    sys_record = ParseLangSys(&raw[GetUInt16(sp)]);
   }
 }
 
-void CFX_CTTGSUBTable::ParseLangSys(FT_Bytes raw, TLangSysRecord* rec) {
-  FT_Bytes sp = raw;
-  rec->LookupOrder = GetUInt16(sp);
-  rec->ReqFeatureIndex = GetUInt16(sp);
-  rec->FeatureIndices = DataVector<uint16_t>(GetUInt16(sp));
-  for (auto& element : rec->FeatureIndices)
+CFX_CTTGSUBTable::FeatureIndices CFX_CTTGSUBTable::ParseLangSys(FT_Bytes raw) {
+  // Skip over "LookupOrder" and "ReqFeatureIndex" fields.
+  FT_Bytes sp = raw + 4;
+  FeatureIndices result(GetUInt16(sp));
+  for (auto& element : result) {
     element = GetUInt16(sp);
+  }
+  return result;
 }
 
 void CFX_CTTGSUBTable::ParseFeatureList(FT_Bytes raw) {
@@ -314,10 +316,6 @@ CFX_CTTGSUBTable::ParseSingleSubstFormat2(FT_Bytes raw) {
     substitute = GetUInt16(sp);
   return rec;
 }
-
-CFX_CTTGSUBTable::TLangSysRecord::TLangSysRecord() = default;
-
-CFX_CTTGSUBTable::TLangSysRecord::~TLangSysRecord() = default;
 
 CFX_CTTGSUBTable::TScriptRecord::TScriptRecord() = default;
 

@@ -25,15 +25,7 @@ class CFX_CTTGSUBTable {
   uint32_t GetVerticalGlyph(uint32_t glyphnum) const;
 
  private:
-  struct TLangSysRecord {
-    TLangSysRecord();
-    ~TLangSysRecord();
-
-    uint32_t LangSysTag = 0;
-    uint16_t LookupOrder = 0;
-    uint16_t ReqFeatureIndex = 0;
-    DataVector<uint16_t> FeatureIndices;
-  };
+  using FeatureIndices = DataVector<uint16_t>;
 
   struct TScriptRecord {
     TScriptRecord();
@@ -41,7 +33,7 @@ class CFX_CTTGSUBTable {
 
     uint32_t ScriptTag = 0;
     uint16_t DefaultLangSys = 0;
-    std::vector<TLangSysRecord> LangSysRecords;
+    std::vector<FeatureIndices> LangSysRecords;
   };
 
   struct TFeatureRecord {
@@ -125,7 +117,7 @@ class CFX_CTTGSUBTable {
   bool Parse(FT_Bytes scriptlist, FT_Bytes featurelist, FT_Bytes lookuplist);
   void ParseScriptList(FT_Bytes raw);
   void ParseScript(FT_Bytes raw, TScriptRecord* rec);
-  void ParseLangSys(FT_Bytes raw, TLangSysRecord* rec);
+  FeatureIndices ParseLangSys(FT_Bytes raw);
   void ParseFeatureList(FT_Bytes raw);
   void ParseFeature(FT_Bytes raw, TFeatureRecord* rec);
   void ParseLookupList(FT_Bytes raw);
