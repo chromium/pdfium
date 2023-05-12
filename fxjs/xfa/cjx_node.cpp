@@ -19,7 +19,6 @@
 #include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
-#include "third_party/base/check_op.h"
 #include "v8/include/v8-object.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
@@ -134,14 +133,11 @@ CJS_Result CJX_Node::assignNode(
 
 CJS_Result CJX_Node::clone(CFXJSE_Engine* runtime,
                            const std::vector<v8::Local<v8::Value>>& params) {
-  CHECK_EQ(runtime, GetDocument()->GetScriptContext());
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
   CXFA_Node* pCloneNode = GetXFANode()->Clone(runtime->ToBoolean(params[0]));
-  return CJS_Result::Success(
-      GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(
-          pCloneNode));
+  return CJS_Result::Success(runtime->GetOrCreateJSBindingFromMap(pCloneNode));
 }
 
 CJS_Result CJX_Node::getAttribute(
@@ -158,7 +154,6 @@ CJS_Result CJX_Node::getAttribute(
 CJS_Result CJX_Node::getElement(
     CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  CHECK_EQ(runtime, GetDocument()->GetScriptContext());
   if (params.empty() || params.size() > 2)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -172,8 +167,7 @@ CJS_Result CJX_Node::getElement(
   if (!pNode)
     return CJS_Result::Success(runtime->NewNull());
 
-  return CJS_Result::Success(
-      GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(pNode));
+  return CJS_Result::Success(runtime->GetOrCreateJSBindingFromMap(pNode));
 }
 
 CJS_Result CJX_Node::isPropertySpecified(

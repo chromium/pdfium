@@ -11,7 +11,6 @@
 #include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
-#include "third_party/base/check_op.h"
 #include "v8/include/cppgc/allocation.h"
 #include "v8/include/v8-object.h"
 #include "v8/include/v8-primitive.h"
@@ -83,9 +82,7 @@ CJS_Result CJX_Form::execInitialize(
 CJS_Result CJX_Form::recalculate(
     CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  CHECK_EQ(runtime, GetDocument()->GetScriptContext());
-  CXFA_EventParam* pEventParam =
-      GetDocument()->GetScriptContext()->GetEventParam();
+  CXFA_EventParam* pEventParam = runtime->GetEventParam();
   if (pEventParam && (pEventParam->m_eType == XFA_EVENT_Calculate ||
                       pEventParam->m_eType == XFA_EVENT_InitCalculate)) {
     return CJS_Result::Success();

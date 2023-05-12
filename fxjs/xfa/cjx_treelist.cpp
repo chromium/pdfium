@@ -11,7 +11,6 @@
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
-#include "third_party/base/check_op.h"
 #include "v8/include/v8-object.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
@@ -37,7 +36,6 @@ CXFA_TreeList* CJX_TreeList::GetXFATreeList() {
 CJS_Result CJX_TreeList::namedItem(
     CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
-  CHECK_EQ(runtime, GetDocument()->GetScriptContext());
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -46,6 +44,5 @@ CJS_Result CJX_TreeList::namedItem(
   if (!pNode)
     return CJS_Result::Success();
 
-  return CJS_Result::Success(
-      GetDocument()->GetScriptContext()->GetOrCreateJSBindingFromMap(pNode));
+  return CJS_Result::Success(runtime->GetOrCreateJSBindingFromMap(pNode));
 }
