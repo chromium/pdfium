@@ -31,21 +31,22 @@ CFX_CTTGSUBTable::CFX_CTTGSUBTable(FT_Bytes gsub) {
   if (!LoadGSUBTable(gsub))
     return;
 
-  for (const TScriptRecord& script : ScriptList) {
-    for (const auto& record : script.LangSysRecords) {
+  for (const auto& script : script_list_) {
+    for (const auto& record : script) {
       for (uint16_t index : record) {
         if (IsVerticalFeatureTag(FeatureList[index].FeatureTag))
-          m_featureSet.insert(index);
+          feature_set_.insert(index);
       }
     }
   }
-  if (!m_featureSet.empty())
+  if (!feature_set_.empty()) {
     return;
+  }
 
   int i = 0;
   for (const TFeatureRecord& feature : FeatureList) {
     if (IsVerticalFeatureTag(feature.FeatureTag))
-      m_featureSet.insert(i);
+      feature_set_.insert(i);
     ++i;
   }
 }
@@ -56,13 +57,14 @@ bool CFX_CTTGSUBTable::LoadGSUBTable(FT_Bytes gsub) {
   if (FXSYS_UINT32_GET_MSBFIRST(gsub) != 0x00010000)
     return false;
 
-  return Parse(&gsub[FXSYS_UINT16_GET_MSBFIRST(gsub + 4)],
-               &gsub[FXSYS_UINT16_GET_MSBFIRST(gsub + 6)],
-               &gsub[FXSYS_UINT16_GET_MSBFIRST(gsub + 8)]);
+  Parse(&gsub[FXSYS_UINT16_GET_MSBFIRST(gsub + 4)],
+        &gsub[FXSYS_UINT16_GET_MSBFIRST(gsub + 6)],
+        &gsub[FXSYS_UINT16_GET_MSBFIRST(gsub + 8)]);
+  return true;
 }
 
 uint32_t CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum) const {
-  for (uint32_t item : m_featureSet) {
+  for (uint32_t item : feature_set_) {
     absl::optional<uint32_t> result =
         GetVerticalGlyphSub(FeatureList[item], glyphnum);
     if (result.has_value())
@@ -173,33 +175,34 @@ uint32_t CFX_CTTGSUBTable::GetUInt32(FT_Bytes& p) const {
   return ret;
 }
 
-bool CFX_CTTGSUBTable::Parse(FT_Bytes scriptlist,
+void CFX_CTTGSUBTable::Parse(FT_Bytes scriptlist,
                              FT_Bytes featurelist,
                              FT_Bytes lookuplist) {
   ParseScriptList(scriptlist);
   ParseFeatureList(featurelist);
   ParseLookupList(lookuplist);
-  return true;
 }
 
 void CFX_CTTGSUBTable::ParseScriptList(FT_Bytes raw) {
   FT_Bytes sp = raw;
-  ScriptList = std::vector<TScriptRecord>(GetUInt16(sp));
-  for (auto& scriptRec : ScriptList) {
-    scriptRec.ScriptTag = GetUInt32(sp);
-    ParseScript(&raw[GetUInt16(sp)], &scriptRec);
+  script_list_ = std::vector<ScriptRecord>(GetUInt16(sp));
+  for (auto& script : script_list_) {
+    // Skip over "ScriptTag" field.
+    sp += 4;
+    script = ParseScript(&raw[GetUInt16(sp)]);
   }
 }
 
-void CFX_CTTGSUBTable::ParseScript(FT_Bytes raw, TScriptRecord* rec) {
-  FT_Bytes sp = raw;
-  rec->DefaultLangSys = GetUInt16(sp);
-  rec->LangSysRecords = std::vector<FeatureIndices>(GetUInt16(sp));
-  for (auto& sys_record : rec->LangSysRecords) {
+CFX_CTTGSUBTable::ScriptRecord CFX_CTTGSUBTable::ParseScript(FT_Bytes raw) {
+  // Skip over "DefaultLangSys" field.
+  FT_Bytes sp = raw + 2;
+  ScriptRecord result(GetUInt16(sp));
+  for (auto& record : result) {
     // Skip over "LangSysTag" field.
     sp += 4;
-    sys_record = ParseLangSys(&raw[GetUInt16(sp)]);
+    record = ParseLangSys(&raw[GetUInt16(sp)]);
   }
+  return result;
 }
 
 CFX_CTTGSUBTable::FeatureIndices CFX_CTTGSUBTable::ParseLangSys(FT_Bytes raw) {
@@ -316,10 +319,6 @@ CFX_CTTGSUBTable::ParseSingleSubstFormat2(FT_Bytes raw) {
     substitute = GetUInt16(sp);
   return rec;
 }
-
-CFX_CTTGSUBTable::TScriptRecord::TScriptRecord() = default;
-
-CFX_CTTGSUBTable::TScriptRecord::~TScriptRecord() = default;
 
 CFX_CTTGSUBTable::TFeatureRecord::TFeatureRecord() = default;
 

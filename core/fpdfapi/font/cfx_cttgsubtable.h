@@ -26,15 +26,7 @@ class CFX_CTTGSUBTable {
 
  private:
   using FeatureIndices = DataVector<uint16_t>;
-
-  struct TScriptRecord {
-    TScriptRecord();
-    ~TScriptRecord();
-
-    uint32_t ScriptTag = 0;
-    uint16_t DefaultLangSys = 0;
-    std::vector<FeatureIndices> LangSysRecords;
-  };
+  using ScriptRecord = std::vector<FeatureIndices>;
 
   struct TFeatureRecord {
     TFeatureRecord();
@@ -114,9 +106,9 @@ class CFX_CTTGSUBTable {
   };
 
   bool LoadGSUBTable(FT_Bytes gsub);
-  bool Parse(FT_Bytes scriptlist, FT_Bytes featurelist, FT_Bytes lookuplist);
+  void Parse(FT_Bytes scriptlist, FT_Bytes featurelist, FT_Bytes lookuplist);
   void ParseScriptList(FT_Bytes raw);
-  void ParseScript(FT_Bytes raw, TScriptRecord* rec);
+  ScriptRecord ParseScript(FT_Bytes raw);
   FeatureIndices ParseLangSys(FT_Bytes raw);
   void ParseFeatureList(FT_Bytes raw);
   void ParseFeature(FT_Bytes raw, TFeatureRecord* rec);
@@ -141,8 +133,8 @@ class CFX_CTTGSUBTable {
   int32_t GetInt32(FT_Bytes& p) const;
   uint32_t GetUInt32(FT_Bytes& p) const;
 
-  std::set<uint32_t> m_featureSet;
-  std::vector<TScriptRecord> ScriptList;
+  std::set<uint32_t> feature_set_;
+  std::vector<ScriptRecord> script_list_;
   std::vector<TFeatureRecord> FeatureList;
   std::vector<TLookup> LookupList;
 };
