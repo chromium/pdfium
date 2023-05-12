@@ -12,6 +12,7 @@
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "v8/include/v8-object.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
@@ -259,6 +260,7 @@ void CJX_HostPseudoModel::name(v8::Isolate* pIsolate,
 CJS_Result CJX_HostPseudoModel::gotoURL(
     CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CHECK_EQ(runtime, GetDocument()->GetScriptContext());
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return CJS_Result::Success();
 
@@ -276,6 +278,7 @@ CJS_Result CJX_HostPseudoModel::gotoURL(
 CJS_Result CJX_HostPseudoModel::openList(
     CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CHECK_EQ(runtime, GetDocument()->GetScriptContext());
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return CJS_Result::Success();
 
@@ -354,6 +357,7 @@ CJS_Result CJX_HostPseudoModel::documentInBatch(
 CJS_Result CJX_HostPseudoModel::resetData(
     CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CHECK_EQ(runtime, GetDocument()->GetScriptContext());
   if (params.size() > 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -402,6 +406,7 @@ CJS_Result CJX_HostPseudoModel::resetData(
 CJS_Result CJX_HostPseudoModel::beep(
     CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CHECK_EQ(runtime, GetDocument()->GetScriptContext());
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return CJS_Result::Success();
 
@@ -423,6 +428,7 @@ CJS_Result CJX_HostPseudoModel::beep(
 CJS_Result CJX_HostPseudoModel::setFocus(
     CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CHECK_EQ(runtime, GetDocument()->GetScriptContext());
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return CJS_Result::Success();
 
@@ -463,6 +469,7 @@ CJS_Result CJX_HostPseudoModel::setFocus(
 CJS_Result CJX_HostPseudoModel::getFocus(
     CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CHECK_EQ(runtime, GetDocument()->GetScriptContext());
   CXFA_FFNotify* pNotify = GetDocument()->GetNotify();
   if (!pNotify)
     return CJS_Result::Success();
@@ -480,6 +487,7 @@ CJS_Result CJX_HostPseudoModel::getFocus(
 CJS_Result CJX_HostPseudoModel::messageBox(
     CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CHECK_EQ(runtime, GetDocument()->GetScriptContext());
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return CJS_Result::Success();
 
@@ -526,6 +534,7 @@ CJS_Result CJX_HostPseudoModel::documentCountInBatch(
 CJS_Result CJX_HostPseudoModel::print(
     CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CHECK_EQ(runtime, GetDocument()->GetScriptContext());
   if (!GetDocument()->GetScriptContext()->IsRunAtClient())
     return CJS_Result::Success();
 

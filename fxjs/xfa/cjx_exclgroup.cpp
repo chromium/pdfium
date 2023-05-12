@@ -13,6 +13,7 @@
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "v8/include/v8-object.h"
 #include "v8/include/v8-primitive.h"
+#include "third_party/base/check_op.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/fxfa.h"
@@ -92,6 +93,7 @@ CJS_Result CJX_ExclGroup::execValidate(
 CJS_Result CJX_ExclGroup::selectedMember(
     CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CHECK_EQ(runtime, GetDocument()->GetScriptContext());
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
 

@@ -11,6 +11,7 @@
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
+#include "third_party/base/check_op.h"
 #include "v8/include/v8-object.h"
 #include "xfa/fxfa/parser/cxfa_delta.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -40,6 +41,7 @@ CJS_Result CJX_Model::clearErrorList(
 CJS_Result CJX_Model::createNode(
     CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CHECK_EQ(runtime, GetDocument()->GetScriptContext());
   if (params.empty() || params.size() > 3)
     return CJS_Result::Failure(JSMessage::kParamError);
 

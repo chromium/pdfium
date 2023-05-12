@@ -12,6 +12,7 @@
 #include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 #include "v8/include/v8-object.h"
 #include "v8/include/v8-primitive.h"
@@ -220,6 +221,7 @@ CJS_Result CJX_InstanceManager::setInstances(
 CJS_Result CJX_InstanceManager::addInstance(
     CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CHECK_EQ(runtime, GetDocument()->GetScriptContext());
   CXFA_Document* doc = runtime->GetDocument();
   if (doc->GetFormType() != FormType::kXFAFull)
     return CJS_Result::Failure(JSMessage::kNotSupportedError);
@@ -257,6 +259,7 @@ CJS_Result CJX_InstanceManager::addInstance(
 CJS_Result CJX_InstanceManager::insertInstance(
     CFXJSE_Engine* runtime,
     const std::vector<v8::Local<v8::Value>>& params) {
+  CHECK_EQ(runtime, GetDocument()->GetScriptContext());
   CXFA_Document* doc = runtime->GetDocument();
   if (doc->GetFormType() != FormType::kXFAFull)
     return CJS_Result::Failure(JSMessage::kNotSupportedError);
