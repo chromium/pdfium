@@ -28,13 +28,12 @@ class CFX_CTTGSUBTable {
   using FeatureIndices = DataVector<uint16_t>;
   using ScriptRecord = std::vector<FeatureIndices>;
 
-  struct TFeatureRecord {
-    TFeatureRecord();
-    ~TFeatureRecord();
+  struct FeatureRecord {
+    FeatureRecord();
+    ~FeatureRecord();
 
-    uint32_t FeatureTag = 0;
-    uint16_t FeatureParams = 0;
-    DataVector<uint16_t> LookupListIndices;
+    uint32_t feature_tag = 0;
+    DataVector<uint16_t> lookup_list_indices;
   };
 
   struct TRangeRecord {
@@ -96,13 +95,18 @@ class CFX_CTTGSUBTable {
     DataVector<uint16_t> Substitutes;
   };
 
-  struct TLookup {
-    TLookup();
-    ~TLookup();
+  struct Lookup {
+    using SubTables = std::vector<std::unique_ptr<TSubTableBase>>;
 
-    uint16_t LookupType = 0;
-    uint16_t LookupFlag = 0;
-    std::vector<std::unique_ptr<TSubTableBase>> SubTables;
+    Lookup();
+    Lookup(const Lookup& that) = delete;
+    Lookup& operator=(const Lookup& that) = delete;
+    Lookup(Lookup&& that) noexcept;
+    Lookup& operator=(Lookup&& that) noexcept;
+    ~Lookup();
+
+    uint16_t lookup_type = 0;
+    SubTables sub_tables;
   };
 
   bool LoadGSUBTable(FT_Bytes gsub);
@@ -111,9 +115,9 @@ class CFX_CTTGSUBTable {
   ScriptRecord ParseScript(FT_Bytes raw);
   FeatureIndices ParseLangSys(FT_Bytes raw);
   void ParseFeatureList(FT_Bytes raw);
-  void ParseFeature(FT_Bytes raw, TFeatureRecord* rec);
+  DataVector<uint16_t> ParseFeatureLookupListIndices(FT_Bytes raw);
   void ParseLookupList(FT_Bytes raw);
-  void ParseLookup(FT_Bytes raw, TLookup* rec);
+  Lookup ParseLookup(FT_Bytes raw);
   std::unique_ptr<TCoverageFormatBase> ParseCoverage(FT_Bytes raw);
   std::unique_ptr<TCoverageFormat1> ParseCoverageFormat1(FT_Bytes raw);
   std::unique_ptr<TCoverageFormat2> ParseCoverageFormat2(FT_Bytes raw);
@@ -121,9 +125,9 @@ class CFX_CTTGSUBTable {
   std::unique_ptr<TSubTable1> ParseSingleSubstFormat1(FT_Bytes raw);
   std::unique_ptr<TSubTable2> ParseSingleSubstFormat2(FT_Bytes raw);
 
-  absl::optional<uint32_t> GetVerticalGlyphSub(const TFeatureRecord& feature,
+  absl::optional<uint32_t> GetVerticalGlyphSub(const FeatureRecord& feature,
                                                uint32_t glyphnum) const;
-  absl::optional<uint32_t> GetVerticalGlyphSub2(const TLookup& lookup,
+  absl::optional<uint32_t> GetVerticalGlyphSub2(const Lookup& lookup,
                                                 uint32_t glyphnum) const;
   int GetCoverageIndex(TCoverageFormatBase* Coverage, uint32_t g) const;
 
@@ -135,8 +139,8 @@ class CFX_CTTGSUBTable {
 
   std::set<uint32_t> feature_set_;
   std::vector<ScriptRecord> script_list_;
-  std::vector<TFeatureRecord> FeatureList;
-  std::vector<TLookup> LookupList;
+  std::vector<FeatureRecord> feature_list_;
+  std::vector<Lookup> lookup_list_;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CFX_CTTGSUBTABLE_H_

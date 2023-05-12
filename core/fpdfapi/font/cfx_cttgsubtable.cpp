@@ -34,8 +34,9 @@ CFX_CTTGSUBTable::CFX_CTTGSUBTable(FT_Bytes gsub) {
   for (const auto& script : script_list_) {
     for (const auto& record : script) {
       for (uint16_t index : record) {
-        if (IsVerticalFeatureTag(FeatureList[index].FeatureTag))
+        if (IsVerticalFeatureTag(feature_list_[index].feature_tag)) {
           feature_set_.insert(index);
+        }
       }
     }
   }
@@ -44,9 +45,10 @@ CFX_CTTGSUBTable::CFX_CTTGSUBTable(FT_Bytes gsub) {
   }
 
   int i = 0;
-  for (const TFeatureRecord& feature : FeatureList) {
-    if (IsVerticalFeatureTag(feature.FeatureTag))
+  for (const FeatureRecord& feature : feature_list_) {
+    if (IsVerticalFeatureTag(feature.feature_tag)) {
       feature_set_.insert(i);
+    }
     ++i;
   }
 }
@@ -66,7 +68,7 @@ bool CFX_CTTGSUBTable::LoadGSUBTable(FT_Bytes gsub) {
 uint32_t CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum) const {
   for (uint32_t item : feature_set_) {
     absl::optional<uint32_t> result =
-        GetVerticalGlyphSub(FeatureList[item], glyphnum);
+        GetVerticalGlyphSub(feature_list_[item], glyphnum);
     if (result.has_value())
       return result.value();
   }
@@ -74,15 +76,17 @@ uint32_t CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum) const {
 }
 
 absl::optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub(
-    const TFeatureRecord& feature,
+    const FeatureRecord& feature,
     uint32_t glyphnum) const {
-  for (int index : feature.LookupListIndices) {
-    if (!fxcrt::IndexInBounds(LookupList, index))
+  for (int index : feature.lookup_list_indices) {
+    if (!fxcrt::IndexInBounds(lookup_list_, index)) {
       continue;
-    if (LookupList[index].LookupType != 1)
+    }
+    if (lookup_list_[index].lookup_type != 1) {
       continue;
+    }
     absl::optional<uint32_t> result =
-        GetVerticalGlyphSub2(LookupList[index], glyphnum);
+        GetVerticalGlyphSub2(lookup_list_[index], glyphnum);
     if (result.has_value())
       return result.value();
   }
@@ -90,19 +94,19 @@ absl::optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub(
 }
 
 absl::optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub2(
-    const TLookup& lookup,
+    const Lookup& lookup,
     uint32_t glyphnum) const {
-  for (const auto& subTable : lookup.SubTables) {
-    switch (subTable->SubstFormat) {
+  for (const auto& sub_table : lookup.sub_tables) {
+    switch (sub_table->SubstFormat) {
       case 1: {
-        auto* tbl1 = static_cast<TSubTable1*>(subTable.get());
+        auto* tbl1 = static_cast<TSubTable1*>(sub_table.get());
         if (GetCoverageIndex(tbl1->Coverage.get(), glyphnum) >= 0) {
           return glyphnum + tbl1->DeltaGlyphID;
         }
         break;
       }
       case 2: {
-        auto* tbl2 = static_cast<TSubTable2*>(subTable.get());
+        auto* tbl2 = static_cast<TSubTable2*>(sub_table.get());
         int index = GetCoverageIndex(tbl2->Coverage.get(), glyphnum);
         if (fxcrt::IndexInBounds(tbl2->Substitutes, index)) {
           return tbl2->Substitutes[index];
@@ -217,38 +221,48 @@ CFX_CTTGSUBTable::FeatureIndices CFX_CTTGSUBTable::ParseLangSys(FT_Bytes raw) {
 
 void CFX_CTTGSUBTable::ParseFeatureList(FT_Bytes raw) {
   FT_Bytes sp = raw;
-  FeatureList = std::vector<TFeatureRecord>(GetUInt16(sp));
-  for (auto& featureRec : FeatureList) {
-    featureRec.FeatureTag = GetUInt32(sp);
-    ParseFeature(&raw[GetUInt16(sp)], &featureRec);
+  feature_list_ = std::vector<FeatureRecord>(GetUInt16(sp));
+  for (auto& record : feature_list_) {
+    record.feature_tag = GetUInt32(sp);
+    record.lookup_list_indices =
+        ParseFeatureLookupListIndices(&raw[GetUInt16(sp)]);
   }
 }
 
-void CFX_CTTGSUBTable::ParseFeature(FT_Bytes raw, TFeatureRecord* rec) {
-  FT_Bytes sp = raw;
-  rec->FeatureParams = GetUInt16(sp);
-  rec->LookupListIndices = DataVector<uint16_t>(GetUInt16(sp));
-  for (auto& listIndex : rec->LookupListIndices)
-    listIndex = GetUInt16(sp);
+DataVector<uint16_t> CFX_CTTGSUBTable::ParseFeatureLookupListIndices(
+    FT_Bytes raw) {
+  // Skip over "FeatureParams" field.
+  FT_Bytes sp = raw + 2;
+  DataVector<uint16_t> result(GetUInt16(sp));
+  for (auto& index : result) {
+    index = GetUInt16(sp);
+  }
+  return result;
 }
 
 void CFX_CTTGSUBTable::ParseLookupList(FT_Bytes raw) {
   FT_Bytes sp = raw;
-  LookupList = std::vector<TLookup>(GetUInt16(sp));
-  for (auto& lookup : LookupList)
-    ParseLookup(&raw[GetUInt16(sp)], &lookup);
+  lookup_list_ = std::vector<Lookup>(GetUInt16(sp));
+  for (auto& lookup : lookup_list_) {
+    lookup = ParseLookup(&raw[GetUInt16(sp)]);
+  }
 }
 
-void CFX_CTTGSUBTable::ParseLookup(FT_Bytes raw, TLookup* rec) {
+CFX_CTTGSUBTable::Lookup CFX_CTTGSUBTable::ParseLookup(FT_Bytes raw) {
   FT_Bytes sp = raw;
-  rec->LookupType = GetUInt16(sp);
-  rec->LookupFlag = GetUInt16(sp);
-  rec->SubTables = std::vector<std::unique_ptr<TSubTableBase>>(GetUInt16(sp));
-  if (rec->LookupType != 1)
-    return;
+  CFX_CTTGSUBTable::Lookup result;
+  result.lookup_type = GetUInt16(sp);
+  // Skip over "LookupFlag" field.
+  sp += 2;
+  result.sub_tables = Lookup::SubTables(GetUInt16(sp));
+  if (result.lookup_type != 1) {
+    return result;
+  }
 
-  for (auto& subTable : rec->SubTables)
-    subTable = ParseSingleSubst(&raw[GetUInt16(sp)]);
+  for (auto& sub_table : result.sub_tables) {
+    sub_table = ParseSingleSubst(&raw[GetUInt16(sp)]);
+  }
+  return result;
 }
 
 std::unique_ptr<CFX_CTTGSUBTable::TCoverageFormatBase>
@@ -320,9 +334,9 @@ CFX_CTTGSUBTable::ParseSingleSubstFormat2(FT_Bytes raw) {
   return rec;
 }
 
-CFX_CTTGSUBTable::TFeatureRecord::TFeatureRecord() = default;
+CFX_CTTGSUBTable::FeatureRecord::FeatureRecord() = default;
 
-CFX_CTTGSUBTable::TFeatureRecord::~TFeatureRecord() = default;
+CFX_CTTGSUBTable::FeatureRecord::~FeatureRecord() = default;
 
 CFX_CTTGSUBTable::TRangeRecord::TRangeRecord() = default;
 
@@ -351,6 +365,11 @@ CFX_CTTGSUBTable::TSubTable2::TSubTable2() : TSubTableBase(2) {}
 
 CFX_CTTGSUBTable::TSubTable2::~TSubTable2() = default;
 
-CFX_CTTGSUBTable::TLookup::TLookup() = default;
+CFX_CTTGSUBTable::Lookup::Lookup() = default;
 
-CFX_CTTGSUBTable::TLookup::~TLookup() = default;
+CFX_CTTGSUBTable::Lookup::~Lookup() = default;
+
+CFX_CTTGSUBTable::Lookup::Lookup(Lookup&& that) noexcept = default;
+
+CFX_CTTGSUBTable::Lookup& CFX_CTTGSUBTable::Lookup::operator=(
+    Lookup&& that) noexcept = default;
