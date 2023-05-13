@@ -134,11 +134,11 @@ int CFX_CTTGSUBTable::GetCoverageIndex(const CoverageFormat& coverage,
     return -1;
   }
 
-  const auto& range_records = absl::get<std::vector<TRangeRecord>>(coverage);
-  for (const auto& rangeRec : range_records) {
-    uint32_t s = rangeRec.Start;
-    uint32_t e = rangeRec.End;
-    uint32_t si = rangeRec.StartCoverageIndex;
+  const auto& range_records = absl::get<std::vector<RangeRecord>>(coverage);
+  for (const auto& range_rec : range_records) {
+    uint32_t s = range_rec.start;
+    uint32_t e = range_rec.end;
+    uint32_t si = range_rec.start_coverage_index;
     if (s <= g && g <= e) {
       return si + g - s;
     }
@@ -155,7 +155,7 @@ uint8_t CFX_CTTGSUBTable::GetUInt8(FT_Bytes& p) const {
 int16_t CFX_CTTGSUBTable::GetInt16(FT_Bytes& p) const {
   uint16_t ret = FXSYS_UINT16_GET_MSBFIRST(p);
   p += 2;
-  return *(int16_t*)&ret;
+  return *reinterpret_cast<int16_t*>(&ret);
 }
 
 uint16_t CFX_CTTGSUBTable::GetUInt16(FT_Bytes& p) const {
@@ -167,7 +167,7 @@ uint16_t CFX_CTTGSUBTable::GetUInt16(FT_Bytes& p) const {
 int32_t CFX_CTTGSUBTable::GetInt32(FT_Bytes& p) const {
   uint32_t ret = FXSYS_UINT32_GET_MSBFIRST(p);
   p += 4;
-  return *(int32_t*)&ret;
+  return *reinterpret_cast<int32_t*>(&ret);
 }
 
 uint32_t CFX_CTTGSUBTable::GetUInt32(FT_Bytes& p) const {
@@ -277,11 +277,11 @@ CFX_CTTGSUBTable::CoverageFormat CFX_CTTGSUBTable::ParseCoverage(FT_Bytes raw) {
     return glyph_array;
   }
 
-  std::vector<TRangeRecord> range_records(GetUInt16(sp));
+  std::vector<RangeRecord> range_records(GetUInt16(sp));
   for (auto& range_rec : range_records) {
-    range_rec.Start = GetUInt16(sp);
-    range_rec.End = GetUInt16(sp);
-    range_rec.StartCoverageIndex = GetUInt16(sp);
+    range_rec.start = GetUInt16(sp);
+    range_rec.end = GetUInt16(sp);
+    range_rec.start_coverage_index = GetUInt16(sp);
   }
   return range_records;
 }
@@ -312,7 +312,7 @@ CFX_CTTGSUBTable::FeatureRecord::FeatureRecord() = default;
 
 CFX_CTTGSUBTable::FeatureRecord::~FeatureRecord() = default;
 
-CFX_CTTGSUBTable::TRangeRecord::TRangeRecord() = default;
+CFX_CTTGSUBTable::RangeRecord::RangeRecord() = default;
 
 CFX_CTTGSUBTable::SubTable::SubTable() = default;
 

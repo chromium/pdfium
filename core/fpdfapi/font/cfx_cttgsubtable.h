@@ -36,18 +36,18 @@ class CFX_CTTGSUBTable {
     DataVector<uint16_t> lookup_list_indices;
   };
 
-  struct TRangeRecord {
-    TRangeRecord();
+  struct RangeRecord {
+    RangeRecord();
 
-    uint16_t Start = 0;
-    uint16_t End = 0;
-    uint16_t StartCoverageIndex = 0;
+    uint16_t start = 0;
+    uint16_t end = 0;
+    uint16_t start_coverage_index = 0;
   };
 
   // GlyphArray for format 1.
   // RangeRecords for format 2.
   using CoverageFormat = absl::
-      variant<absl::monostate, DataVector<uint16_t>, std::vector<TRangeRecord>>;
+      variant<absl::monostate, DataVector<uint16_t>, std::vector<RangeRecord>>;
 
   struct SubTable {
     SubTable();
