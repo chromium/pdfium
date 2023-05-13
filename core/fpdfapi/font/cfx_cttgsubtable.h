@@ -19,7 +19,7 @@
 
 class CFX_CTTGSUBTable {
  public:
-  explicit CFX_CTTGSUBTable(FT_Bytes gsub);
+  explicit CFX_CTTGSUBTable(const uint8_t* gsub);
   ~CFX_CTTGSUBTable();
 
   uint32_t GetVerticalGlyph(uint32_t glyphnum) const;
@@ -77,17 +77,19 @@ class CFX_CTTGSUBTable {
     SubTables sub_tables;
   };
 
-  bool LoadGSUBTable(FT_Bytes gsub);
-  void Parse(FT_Bytes scriptlist, FT_Bytes featurelist, FT_Bytes lookuplist);
-  void ParseScriptList(FT_Bytes raw);
-  ScriptRecord ParseScript(FT_Bytes raw);
-  FeatureIndices ParseLangSys(FT_Bytes raw);
-  void ParseFeatureList(FT_Bytes raw);
-  DataVector<uint16_t> ParseFeatureLookupListIndices(FT_Bytes raw);
-  void ParseLookupList(FT_Bytes raw);
-  Lookup ParseLookup(FT_Bytes raw);
-  CoverageFormat ParseCoverage(FT_Bytes raw);
-  SubTable ParseSingleSubst(FT_Bytes raw);
+  bool LoadGSUBTable(const uint8_t* gsub);
+  void Parse(const uint8_t* scriptlist,
+             const uint8_t* featurelist,
+             const uint8_t* lookuplist);
+  void ParseScriptList(const uint8_t* raw);
+  ScriptRecord ParseScript(const uint8_t* raw);
+  FeatureIndices ParseLangSys(const uint8_t* raw);
+  void ParseFeatureList(const uint8_t* raw);
+  DataVector<uint16_t> ParseFeatureLookupListIndices(const uint8_t* raw);
+  void ParseLookupList(const uint8_t* raw);
+  Lookup ParseLookup(const uint8_t* raw);
+  CoverageFormat ParseCoverage(const uint8_t* raw);
+  SubTable ParseSingleSubst(const uint8_t* raw);
 
   absl::optional<uint32_t> GetVerticalGlyphSub(const FeatureRecord& feature,
                                                uint32_t glyphnum) const;
@@ -95,11 +97,11 @@ class CFX_CTTGSUBTable {
                                                 uint32_t glyphnum) const;
   int GetCoverageIndex(const CoverageFormat& coverage, uint32_t g) const;
 
-  uint8_t GetUInt8(FT_Bytes& p) const;
-  int16_t GetInt16(FT_Bytes& p) const;
-  uint16_t GetUInt16(FT_Bytes& p) const;
-  int32_t GetInt32(FT_Bytes& p) const;
-  uint32_t GetUInt32(FT_Bytes& p) const;
+  uint8_t GetUInt8(const uint8_t*& p) const;
+  int16_t GetInt16(const uint8_t*& p) const;
+  uint16_t GetUInt16(const uint8_t*& p) const;
+  int32_t GetInt32(const uint8_t*& p) const;
+  uint32_t GetUInt32(const uint8_t*& p) const;
 
   std::set<uint32_t> feature_set_;
   std::vector<ScriptRecord> script_list_;
