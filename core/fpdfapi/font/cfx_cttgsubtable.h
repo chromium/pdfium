@@ -9,7 +9,6 @@
 
 #include <stdint.h>
 
-#include <memory>
 #include <set>
 #include <vector>
 
@@ -45,26 +44,10 @@ class CFX_CTTGSUBTable {
     uint16_t StartCoverageIndex = 0;
   };
 
-  struct TCoverageFormatBase {
-    explicit TCoverageFormatBase(uint16_t format) : CoverageFormat(format) {}
-    virtual ~TCoverageFormatBase() = default;
-
-    const uint16_t CoverageFormat;
-  };
-
-  struct TCoverageFormat1 final : public TCoverageFormatBase {
-    explicit TCoverageFormat1(size_t initial_size);
-    ~TCoverageFormat1() override;
-
-    DataVector<uint16_t> GlyphArray;
-  };
-
-  struct TCoverageFormat2 final : public TCoverageFormatBase {
-    explicit TCoverageFormat2(size_t initial_size);
-    ~TCoverageFormat2() override;
-
-    std::vector<TRangeRecord> RangeRecords;
-  };
+  // GlyphArray for format 1.
+  // RangeRecords for format 2.
+  using CoverageFormat = absl::
+      variant<absl::monostate, DataVector<uint16_t>, std::vector<TRangeRecord>>;
 
   struct SubTable {
     SubTable();
@@ -74,7 +57,7 @@ class CFX_CTTGSUBTable {
     SubTable& operator=(SubTable&& that) noexcept;
     ~SubTable();
 
-    std::unique_ptr<TCoverageFormatBase> coverage;
+    CoverageFormat coverage;
     // DeltaGlyphID for format 1.
     // Substitutes for format 2.
     absl::variant<absl::monostate, int16_t, DataVector<uint16_t>> table_data;
@@ -103,16 +86,14 @@ class CFX_CTTGSUBTable {
   DataVector<uint16_t> ParseFeatureLookupListIndices(FT_Bytes raw);
   void ParseLookupList(FT_Bytes raw);
   Lookup ParseLookup(FT_Bytes raw);
-  std::unique_ptr<TCoverageFormatBase> ParseCoverage(FT_Bytes raw);
-  std::unique_ptr<TCoverageFormat1> ParseCoverageFormat1(FT_Bytes raw);
-  std::unique_ptr<TCoverageFormat2> ParseCoverageFormat2(FT_Bytes raw);
+  CoverageFormat ParseCoverage(FT_Bytes raw);
   SubTable ParseSingleSubst(FT_Bytes raw);
 
   absl::optional<uint32_t> GetVerticalGlyphSub(const FeatureRecord& feature,
                                                uint32_t glyphnum) const;
   absl::optional<uint32_t> GetVerticalGlyphSub2(const Lookup& lookup,
                                                 uint32_t glyphnum) const;
-  int GetCoverageIndex(TCoverageFormatBase* Coverage, uint32_t g) const;
+  int GetCoverageIndex(const CoverageFormat& coverage, uint32_t g) const;
 
   uint8_t GetUInt8(FT_Bytes& p) const;
   int16_t GetInt16(FT_Bytes& p) const;
