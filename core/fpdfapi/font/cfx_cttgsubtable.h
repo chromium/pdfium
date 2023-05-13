@@ -16,6 +16,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxge/freetype/fx_freetype.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
+#include "third_party/abseil-cpp/absl/types/variant.h"
 
 class CFX_CTTGSUBTable {
  public:
@@ -65,30 +66,22 @@ class CFX_CTTGSUBTable {
     std::vector<TRangeRecord> RangeRecords;
   };
 
-  struct TSubTableBase {
-    explicit TSubTableBase(uint16_t format);
-    virtual ~TSubTableBase();
+  struct SubTable {
+    SubTable();
+    SubTable(const SubTable& that) = delete;
+    SubTable& operator=(const SubTable& that) = delete;
+    SubTable(SubTable&& that) noexcept;
+    SubTable& operator=(SubTable&& that) noexcept;
+    ~SubTable();
 
-    const uint16_t SubstFormat;
-    std::unique_ptr<TCoverageFormatBase> Coverage;
-  };
-
-  struct TSubTable1 final : public TSubTableBase {
-    TSubTable1();
-    ~TSubTable1() override;
-
-    int16_t DeltaGlyphID = 0;
-  };
-
-  struct TSubTable2 final : public TSubTableBase {
-    TSubTable2();
-    ~TSubTable2() override;
-
-    DataVector<uint16_t> Substitutes;
+    std::unique_ptr<TCoverageFormatBase> coverage;
+    // DeltaGlyphID for format 1.
+    // Substitutes for format 2.
+    absl::variant<absl::monostate, int16_t, DataVector<uint16_t>> table_data;
   };
 
   struct Lookup {
-    using SubTables = std::vector<std::unique_ptr<TSubTableBase>>;
+    using SubTables = std::vector<SubTable>;
 
     Lookup();
     Lookup(const Lookup& that) = delete;
@@ -113,9 +106,7 @@ class CFX_CTTGSUBTable {
   std::unique_ptr<TCoverageFormatBase> ParseCoverage(FT_Bytes raw);
   std::unique_ptr<TCoverageFormat1> ParseCoverageFormat1(FT_Bytes raw);
   std::unique_ptr<TCoverageFormat2> ParseCoverageFormat2(FT_Bytes raw);
-  std::unique_ptr<TSubTableBase> ParseSingleSubst(FT_Bytes raw);
-  std::unique_ptr<TSubTable1> ParseSingleSubstFormat1(FT_Bytes raw);
-  std::unique_ptr<TSubTable2> ParseSingleSubstFormat2(FT_Bytes raw);
+  SubTable ParseSingleSubst(FT_Bytes raw);
 
   absl::optional<uint32_t> GetVerticalGlyphSub(const FeatureRecord& feature,
                                                uint32_t glyphnum) const;
