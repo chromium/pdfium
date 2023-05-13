@@ -27,7 +27,7 @@ bool IsVerticalFeatureTag(uint32_t tag) {
 
 }  // namespace
 
-CFX_CTTGSUBTable::CFX_CTTGSUBTable(const uint8_t* gsub) {
+CFX_CTTGSUBTable::CFX_CTTGSUBTable(pdfium::span<const uint8_t> gsub) {
   if (!LoadGSUBTable(gsub))
     return;
 
@@ -55,13 +55,18 @@ CFX_CTTGSUBTable::CFX_CTTGSUBTable(const uint8_t* gsub) {
 
 CFX_CTTGSUBTable::~CFX_CTTGSUBTable() = default;
 
-bool CFX_CTTGSUBTable::LoadGSUBTable(const uint8_t* gsub) {
+bool CFX_CTTGSUBTable::LoadGSUBTable(pdfium::span<const uint8_t> gsub) {
   if (FXSYS_UINT32_GET_MSBFIRST(gsub) != 0x00010000)
     return false;
 
-  Parse(&gsub[FXSYS_UINT16_GET_MSBFIRST(gsub + 4)],
-        &gsub[FXSYS_UINT16_GET_MSBFIRST(gsub + 6)],
-        &gsub[FXSYS_UINT16_GET_MSBFIRST(gsub + 8)]);
+  auto scriptlist_span = gsub.subspan(4, 2);
+  auto featurelist_span = gsub.subspan(6, 2);
+  auto lookuplist_span = gsub.subspan(8, 2);
+  size_t scriptlist_index = FXSYS_UINT16_GET_MSBFIRST(scriptlist_span);
+  size_t featurelist_index = FXSYS_UINT16_GET_MSBFIRST(featurelist_span);
+  size_t lookuplist_index = FXSYS_UINT16_GET_MSBFIRST(lookuplist_span);
+  Parse(gsub.subspan(scriptlist_index), gsub.subspan(featurelist_index),
+        gsub.subspan(lookuplist_index));
   return true;
 }
 
@@ -176,16 +181,16 @@ uint32_t CFX_CTTGSUBTable::GetUInt32(const uint8_t*& p) const {
   return ret;
 }
 
-void CFX_CTTGSUBTable::Parse(const uint8_t* scriptlist,
-                             const uint8_t* featurelist,
-                             const uint8_t* lookuplist) {
+void CFX_CTTGSUBTable::Parse(pdfium::span<const uint8_t> scriptlist,
+                             pdfium::span<const uint8_t> featurelist,
+                             pdfium::span<const uint8_t> lookuplist) {
   ParseScriptList(scriptlist);
   ParseFeatureList(featurelist);
   ParseLookupList(lookuplist);
 }
 
-void CFX_CTTGSUBTable::ParseScriptList(const uint8_t* raw) {
-  const uint8_t* sp = raw;
+void CFX_CTTGSUBTable::ParseScriptList(pdfium::span<const uint8_t> raw) {
+  const uint8_t* sp = raw.data();
   script_list_ = std::vector<ScriptRecord>(GetUInt16(sp));
   for (auto& script : script_list_) {
     // Skip over "ScriptTag" field.
@@ -218,8 +223,8 @@ CFX_CTTGSUBTable::FeatureIndices CFX_CTTGSUBTable::ParseLangSys(
   return result;
 }
 
-void CFX_CTTGSUBTable::ParseFeatureList(const uint8_t* raw) {
-  const uint8_t* sp = raw;
+void CFX_CTTGSUBTable::ParseFeatureList(pdfium::span<const uint8_t> raw) {
+  const uint8_t* sp = raw.data();
   feature_list_ = std::vector<FeatureRecord>(GetUInt16(sp));
   for (auto& record : feature_list_) {
     record.feature_tag = GetUInt32(sp);
@@ -239,8 +244,8 @@ DataVector<uint16_t> CFX_CTTGSUBTable::ParseFeatureLookupListIndices(
   return result;
 }
 
-void CFX_CTTGSUBTable::ParseLookupList(const uint8_t* raw) {
-  const uint8_t* sp = raw;
+void CFX_CTTGSUBTable::ParseLookupList(pdfium::span<const uint8_t> raw) {
+  const uint8_t* sp = raw.data();
   lookup_list_ = std::vector<Lookup>(GetUInt16(sp));
   for (auto& lookup : lookup_list_) {
     lookup = ParseLookup(&raw[GetUInt16(sp)]);

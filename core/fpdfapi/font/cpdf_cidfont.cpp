@@ -676,7 +676,7 @@ int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {
 
   // CFX_CTTGSUBTable parses the data and stores all the values in its structs.
   // It does not store pointers into `sub_data`.
-  m_pTTGSUBTable = std::make_unique<CFX_CTTGSUBTable>(sub_data.span().data());
+  m_pTTGSUBTable = std::make_unique<CFX_CTTGSUBTable>(sub_data.span());
   return GetVerticalGlyph(index, pVertGlyph);
 }
 

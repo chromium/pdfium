@@ -16,10 +16,11 @@
 #include "core/fxge/freetype/fx_freetype.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/abseil-cpp/absl/types/variant.h"
+#include "third_party/base/span.h"
 
 class CFX_CTTGSUBTable {
  public:
-  explicit CFX_CTTGSUBTable(const uint8_t* gsub);
+  explicit CFX_CTTGSUBTable(pdfium::span<const uint8_t> gsub);
   ~CFX_CTTGSUBTable();
 
   uint32_t GetVerticalGlyph(uint32_t glyphnum) const;
@@ -77,16 +78,16 @@ class CFX_CTTGSUBTable {
     SubTables sub_tables;
   };
 
-  bool LoadGSUBTable(const uint8_t* gsub);
-  void Parse(const uint8_t* scriptlist,
-             const uint8_t* featurelist,
-             const uint8_t* lookuplist);
-  void ParseScriptList(const uint8_t* raw);
+  bool LoadGSUBTable(pdfium::span<const uint8_t> gsub);
+  void Parse(pdfium::span<const uint8_t> scriptlist,
+             pdfium::span<const uint8_t> featurelist,
+             pdfium::span<const uint8_t> lookuplist);
+  void ParseScriptList(pdfium::span<const uint8_t> raw);
   ScriptRecord ParseScript(const uint8_t* raw);
   FeatureIndices ParseLangSys(const uint8_t* raw);
-  void ParseFeatureList(const uint8_t* raw);
+  void ParseFeatureList(pdfium::span<const uint8_t> raw);
   DataVector<uint16_t> ParseFeatureLookupListIndices(const uint8_t* raw);
-  void ParseLookupList(const uint8_t* raw);
+  void ParseLookupList(pdfium::span<const uint8_t> raw);
   Lookup ParseLookup(const uint8_t* raw);
   CoverageFormat ParseCoverage(const uint8_t* raw);
   SubTable ParseSingleSubst(const uint8_t* raw);
