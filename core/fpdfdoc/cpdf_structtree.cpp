@@ -15,7 +15,6 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfdoc/cpdf_numbertree.h"
 #include "core/fpdfdoc/cpdf_structelement.h"
-#include "core/fxcrt/stl_util.h"
 
 namespace {
 
@@ -63,16 +62,16 @@ void CPDF_StructTree::LoadPageTree(RetainPtr<const CPDF_Dictionary> pPageDict) {
   if (!pKids)
     return;
 
-  uint32_t dwKids = 0;
+  size_t kids_count;
   if (pKids->IsDictionary())
-    dwKids = 1;
+    kids_count = 1;
   else if (const CPDF_Array* pArray = pKids->AsArray())
-    dwKids = fxcrt::CollectionSize<uint32_t>(*pArray);
+    kids_count = pArray->size();
   else
     return;
 
   m_Kids.clear();
-  m_Kids.resize(dwKids);
+  m_Kids.resize(kids_count);
 
   RetainPtr<const CPDF_Dictionary> pParentTree =
       m_pTreeRoot->GetDictFor("ParentTree");
