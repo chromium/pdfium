@@ -1,0 +1,217 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /StructTreeRoot 8 0 R
+  /Lang (en-US)
+  /MarkInfo <<
+    /Marked true
+  >>
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 612 792]
+  /Group <<
+    /CS /DeviceRGB
+    /I true
+    /S /Transparency
+  >>
+  /Resources <<
+    /ProcSet [/PDF /ImageC /ImageI /ImageB]
+    /XObject <<
+      /Tr8 5 0 R
+      /Im7 6 0 R
+    >>
+    /ExtGState <<
+      /EGS9 7 0 R
+    >>
+  >>
+  /StructParents 0
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+0.1 w
+/Artifact
+BMC
+q
+0 0 612 792 re
+W* n
+EMC
+/Figure<</MCID 0>>
+BDC
+Q
+q
+281 685.3 50 50 re
+W* n
+q
+49.9 0 0 50 281.1 685.4 cm
+/Im7 Do
+Q
+EMC
+Q
+q
+EGS9 gs /Tr8 Do
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /XObject
+  /Subtype /Form
+  /BBox [-140 395 753 395.1]
+  /Group <<
+    /CS /DeviceRGB
+    /K true
+    /S /Transparency
+  >>
+  {{streamlen}}
+>>
+stream
+endstream
+endobj
+{{object 6 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /Width 50
+  /Height 50
+  /BitsPerComponent 8
+  /ColorSpace /DeviceRGB
+  /Filter [/ASCIIHexDecode /FlateDecode]
+  {{streamlen}}
+>>
+stream
+789cedc13101000000c2a0f54fed6f06a00000000000000078031d4c0001
+endstream
+endobj
+{{object 7 0}} <<
+  /ca 0.5
+  /CA 0.5
+>>
+endobj
+{{object 8 0}} <<
+  /Type /StructTreeRoot
+  /ParentTree 9 0 R
+  /K [10 0 R]
+  /RoleMap <<
+    /Document /Document
+    /Standard /P
+    /Figure /Figure
+  >>
+>>
+endobj
+{{object 9 0}} <<
+  /Nums [
+    0
+    [10 0 R 11 0 R 12 0 R 13 0 R 14 0 R 15 0 R 16 0 R 17 0 R]
+  ]
+>>
+endobj
+{{object 10 0}} <<
+  /Type /StructElem
+  /S /Document
+  /K [11 0 R]
+  /P 8 0 R
+  /T (TitleText)
+  /Pg 3 0 R
+  /Lang (en-US)
+>>
+endobj
+{{object 11 0}} <<
+  /Type /StructElem
+  /S /Table
+  /K [12 0 R] % Deliberately left off object 13 0.
+  /P 10 0 R
+  /Pg 3 0 R
+  /A [<<
+        /O /Table
+        /Summary ()
+      >>]
+  /ID (node12)
+  /Lang (hu)
+>>
+endobj
+{{object 12 0}} <<
+  /Type /StructElem
+  /S /TR
+  /K [14 0 R 15 0 R]
+  /P 11 0 R
+  /Pg 3 0 R
+  /ID ()
+>>
+endobj
+{{object 13 0}} <<
+  /Type /StructElem
+  /S /TR
+  /K [16 0 R] % Deliberately left off object 17 0.
+  /P 11 0 R
+  /Pg 3 0 R
+  /A <<
+      /O /Table
+     >>
+  /ID (node14)
+>>
+endobj
+{{object 14 0}} <<
+  /Type /StructElem
+  /S /TH
+  /P 12 0 R
+  /Pg 3 0 R
+  /A [<<
+        /O /Table
+        /Scope /Row
+      >>
+      <<
+        /O /Table
+        /ColSpan 2
+      >>]
+  /ID (node15)
+>>
+endobj
+{{object 15 0}} <<
+  /Type /StructElem
+  /S /TD
+  /P 12 0 R
+  /Pg 3 0 R
+  /ID (node16)
+>>
+endobj
+{{object 16 0}} <<
+  /Type /StructElem
+  /S /TH
+  /P 13 0 R
+  /Pg 3 0 R
+  /A [<<
+        /O /Table
+        /Scope /Row
+      >>]
+  /ID (node17)
+>>
+endobj
+{{object 17 0}} <<
+  /Type /StructElem
+  /S /TD
+  /P 13 0 R
+  /Pg 3 0 R
+  /A [<<
+        /O /Table
+        /ColProp (Sum)
+        /CurUSD true
+     >>]
+  /ID (node18)
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

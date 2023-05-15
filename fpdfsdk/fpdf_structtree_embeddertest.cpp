@@ -831,3 +831,18 @@ TEST_F(FPDFStructTreeEmbedderTest, Bug1296920) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFStructTreeEmbedderTest, Bug1443100) {
+  ASSERT_TRUE(OpenDocument("tagged_table_bad_parent.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    // Calling these APIs should not trigger a dangling pointer.
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ASSERT_TRUE(struct_tree);
+    ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
+  }
+
+  UnloadPage(page);
+}
