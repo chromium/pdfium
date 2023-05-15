@@ -204,7 +204,7 @@ bool CPWL_ListBox::RePosChildWnd() {
 
 bool CPWL_ListBox::OnNotifySelectionChanged(bool bKeyDown,
                                             Mask<FWL_EVENTFLAG> nFlag) {
-  ObservedPtr<CPWL_Wnd> thisObserved(this);
+  ObservedPtr<CPWL_Wnd> this_observed(this);
 
   WideString swChange = GetText();
   WideString strChangeEx;
@@ -216,8 +216,9 @@ bool CPWL_ListBox::OnNotifySelectionChanged(bool bKeyDown,
       GetAttachedData(), swChange, strChangeEx, nSelStart, nSelEnd, bKeyDown,
       nFlag);
 
-  if (!thisObserved)
+  if (!this_observed) {
     return false;
+  }
 
   return bExit;
 }

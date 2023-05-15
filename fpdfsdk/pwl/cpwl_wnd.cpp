@@ -258,7 +258,7 @@ bool CPWL_Wnd::InvalidateRect(const CFX_FloatRect* pRect) {
   if (!IsValid())
     return true;
 
-  ObservedPtr<CPWL_Wnd> thisObserved(this);
+  ObservedPtr<CPWL_Wnd> this_observed(this);
   CFX_FloatRect rcRefresh = pRect ? *pRect : GetWindowRect();
   if (!HasFlag(PWS_NOREFRESHCLIP)) {
     CFX_FloatRect rcClip = GetClipRect();
@@ -270,7 +270,7 @@ bool CPWL_Wnd::InvalidateRect(const CFX_FloatRect* pRect) {
   rcWin.Inflate(1, 1);
   rcWin.Normalize();
   GetFillerNotify()->InvalidateRect(m_pAttachedData.get(), rcWin);
-  return !!thisObserved;
+  return !!this_observed;
 }
 
 bool CPWL_Wnd::OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) {
@@ -555,11 +555,12 @@ bool CPWL_Wnd::SetVisible(bool bVisible) {
   if (!IsValid())
     return true;
 
-  ObservedPtr<CPWL_Wnd> thisObserved(this);
+  ObservedPtr<CPWL_Wnd> this_observed(this);
   for (const auto& pChild : m_Children) {
     pChild->SetVisible(bVisible);
-    if (!thisObserved)
+    if (!this_observed) {
       return false;
+    }
   }
 
   if (bVisible != m_bVisible) {
@@ -601,10 +602,11 @@ bool CPWL_Wnd::RePosChildWnd() {
       CFX_FloatRect(rcContent.right - CPWL_ScrollBar::kWidth, rcContent.bottom,
                     rcContent.right - 1.0f, rcContent.top);
 
-  ObservedPtr<CPWL_Wnd> thisObserved(this);
+  ObservedPtr<CPWL_Wnd> this_observed(this);
   pVSB->Move(rcVScroll, true, false);
-  if (!thisObserved)
+  if (!this_observed) {
     return false;
+  }
 
   return true;
 }
