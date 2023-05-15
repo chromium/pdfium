@@ -159,14 +159,14 @@ bool CJX_Object::HasMethod(const WideString& func) const {
 }
 
 CJS_Result CJX_Object::RunMethod(
+    CFXJSE_Engine* pScriptContext,
     const WideString& func,
     const std::vector<v8::Local<v8::Value>>& params) {
   auto it = method_specs_.find(func.ToUTF8());
   if (it == method_specs_.end())
     return CJS_Result::Failure(JSMessage::kUnknownMethod);
 
-  return it->second(this, GetXFAObject()->GetDocument()->GetScriptContext(),
-                    params);
+  return it->second(this, pScriptContext, params);
 }
 
 void CJX_Object::ThrowTooManyOccurrencesException(v8::Isolate* pIsolate,

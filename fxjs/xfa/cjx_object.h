@@ -119,7 +119,8 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   CXFA_LayoutItem* GetLayoutItem() const { return layout_item_; }
 
   bool HasMethod(const WideString& func) const;
-  CJS_Result RunMethod(const WideString& func,
+  CJS_Result RunMethod(CFXJSE_Engine* pScriptContext,
+                       const WideString& func,
                        const std::vector<v8::Local<v8::Value>>& params);
 
   bool HasAttribute(XFA_Attribute eAttr) const;

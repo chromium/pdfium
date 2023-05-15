@@ -547,7 +547,8 @@ CJS_Result CFXJSE_Engine::NormalMethodCall(
   for (int i = 0; i < info.Length(); i++)
     parameters.push_back(info[i]);
 
-  return pObject->JSObject()->RunMethod(functionName, parameters);
+  return pObject->JSObject()->RunMethod(pScriptContext, functionName,
+                                        parameters);
 }
 
 bool CFXJSE_Engine::IsStrictScopeInJavaScript() {
