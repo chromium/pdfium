@@ -344,31 +344,42 @@ bool CPWL_ComboBox::OnKeyDown(FWL_VKEYCODE nKeyCode,
   if (!m_pEdit)
     return false;
 
+  ObservedPtr<CPWL_Wnd> thisObserved(this);
   m_nSelectItem = -1;
 
   switch (nKeyCode) {
     case FWL_VKEY_Up:
       if (m_pList->GetCurSel() > 0) {
-        if (GetFillerNotify()->OnPopupPreOpen(GetAttachedData(), nFlag))
+        if (GetFillerNotify()->OnPopupPreOpen(GetAttachedData(), nFlag) ||
+            !thisObserved) {
           return false;
-        if (GetFillerNotify()->OnPopupPostOpen(GetAttachedData(), nFlag))
+        }
+        if (GetFillerNotify()->OnPopupPostOpen(GetAttachedData(), nFlag) ||
+            !thisObserved) {
           return false;
+        }
         if (m_pList->IsMovementKey(nKeyCode)) {
-          if (m_pList->OnMovementKeyDown(nKeyCode, nFlag))
+          if (m_pList->OnMovementKeyDown(nKeyCode, nFlag) || !thisObserved) {
             return false;
+          }
           SetSelectText();
         }
       }
       return true;
     case FWL_VKEY_Down:
       if (m_pList->GetCurSel() < m_pList->GetCount() - 1) {
-        if (GetFillerNotify()->OnPopupPreOpen(GetAttachedData(), nFlag))
+        if (GetFillerNotify()->OnPopupPreOpen(GetAttachedData(), nFlag) ||
+            !thisObserved) {
           return false;
-        if (GetFillerNotify()->OnPopupPostOpen(GetAttachedData(), nFlag))
+        }
+        if (GetFillerNotify()->OnPopupPostOpen(GetAttachedData(), nFlag) ||
+            !thisObserved) {
           return false;
+        }
         if (m_pList->IsMovementKey(nKeyCode)) {
-          if (m_pList->OnMovementKeyDown(nKeyCode, nFlag))
+          if (m_pList->OnMovementKeyDown(nKeyCode, nFlag) || !thisObserved) {
             return false;
+          }
           SetSelectText();
         }
       }
@@ -420,10 +431,15 @@ bool CPWL_ComboBox::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
   if (HasFlag(PCBS_ALLOWCUSTOMTEXT))
     return m_pEdit->OnChar(nChar, nFlag);
 
-  if (GetFillerNotify()->OnPopupPreOpen(GetAttachedData(), nFlag))
+  ObservedPtr<CPWL_Wnd> thisObserved(this);
+  if (GetFillerNotify()->OnPopupPreOpen(GetAttachedData(), nFlag) ||
+      !thisObserved) {
     return false;
-  if (GetFillerNotify()->OnPopupPostOpen(GetAttachedData(), nFlag))
+  }
+  if (GetFillerNotify()->OnPopupPostOpen(GetAttachedData(), nFlag) ||
+      !thisObserved) {
     return false;
+  }
   if (!m_pList->IsChar(nChar, nFlag))
     return false;
   return m_pList->OnCharNotify(nChar, nFlag);
