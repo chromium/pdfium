@@ -50,8 +50,7 @@ source_set("test_support") {
     "../:pdfium_noshorten_config",
   ]
   visibility = [ "../*" ]
-  if (pdf_use_partition_alloc && is_linux && !is_asan && !is_msan &&
-      !is_ubsan) {
+  if (pdf_use_partition_alloc && !is_win && !is_asan && !is_msan && !is_ubsan) {
     sources += [ "utils/malloc_shim.cpp" ]
     deps += [ "//base/allocator/partition_allocator:partition_alloc" ]
   }
