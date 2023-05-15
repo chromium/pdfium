@@ -9,6 +9,13 @@ source_set("unowned_ptr") {
   sources = [ "unowned_ptr.h" ]
   deps = [ "../../third_party:pdfium_compiler_specific" ]
   configs += [ "../../:pdfium_strict_config" ]
+
+  if (pdf_use_partition_alloc) {
+    deps += [
+      "//base/allocator/partition_allocator:partition_alloc_buildflags",
+      "//base/allocator/partition_allocator:raw_ptr",
+    ]
+  }
 }
 
 source_set("fxcrt") {
@@ -138,7 +145,11 @@ source_set("fxcrt") {
   ]
   if (pdf_use_partition_alloc) {
     sources += [ "fx_memory_pa.cpp" ]
-    deps += [ "//base/allocator/partition_allocator:partition_alloc" ]
+    deps += [
+      "//base/allocator/partition_allocator:partition_alloc",
+      "//base/allocator/partition_allocator:partition_alloc_buildflags",
+      "//base/allocator/partition_allocator:raw_ptr",
+    ]
   } else {
     sources += [ "fx_memory_malloc.cpp" ]
   }
