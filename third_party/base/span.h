@@ -300,7 +300,7 @@ class TRIVIAL_ABI GSL_POINTER span {
 
  private:
   void ReleaseEmptySpan() noexcept {
-#if defined(ADDRESS_SANITIZER) && !defined(PDFIUM_USE_RAW_PTR)
+#if defined(ADDRESS_SANITIZER) && !defined(UNOWNED_PTR_IS_BASE_RAW_PTR)
     // Empty spans might point to byte N+1 of a N-byte object, legal for
     // C pointers but not UnownedPtrs.
     if (!size_)
@@ -308,7 +308,7 @@ class TRIVIAL_ABI GSL_POINTER span {
 #endif
   }
 
-#if defined(PDFIUM_USE_RAW_PTR)
+#if defined(UNOWNED_PTR_IS_BASE_RAW_PTR)
   raw_ptr<T, AllowPtrArithmetic> data_ = nullptr;
 #else
   UnownedPtr<T> data_;

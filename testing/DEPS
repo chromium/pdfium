@@ -1,4 +1,5 @@
 include_rules = [
+  '+base',
   '+core',
   '+fpdfsdk',
   '+fxjs',

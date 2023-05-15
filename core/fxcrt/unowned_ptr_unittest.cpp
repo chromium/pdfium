@@ -162,7 +162,7 @@ TEST(UnownedPtr, PtrOk) {
 }
 
 TEST(UnownedPtr, PtrNotOk) {
-#if defined(ADDRESS_SANITIZER)
+#if defined(UNOWNED_PTR_DANGLING_CHECKS)
   EXPECT_DEATH(DeleteDangling(), "");
 #else
   DeleteDangling();
@@ -179,7 +179,7 @@ TEST(UnownedPtr, AssignOk) {
 }
 
 TEST(UnownedPtr, AssignNotOk) {
-#if defined(ADDRESS_SANITIZER)
+#if defined(UNOWNED_PTR_DANGLING_CHECKS)
   EXPECT_DEATH(AssignDangling(), "");
 #else
   AssignDangling();
@@ -196,7 +196,7 @@ TEST(UnownedPtr, ReleaseOk) {
 }
 
 TEST(UnownedPtr, ReleaseNotOk) {
-#if defined(ADDRESS_SANITIZER)
+#if defined(UNOWNED_PTR_DANGLING_CHECKS)
   EXPECT_DEATH(ReleaseDangling(), "");
 #else
   ReleaseDangling();
