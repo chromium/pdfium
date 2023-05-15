@@ -22,8 +22,6 @@ class CPDF_Pattern : public Retainable, public Observable {
   // Values used in PDFs. Do not change.
   enum PatternType { kTiling = 1, kShading = 2 };
 
-  ~CPDF_Pattern() override;
-
   virtual CPDF_TilingPattern* AsTilingPattern();
   virtual CPDF_ShadingPattern* AsShadingPattern();
 
@@ -33,6 +31,7 @@ class CPDF_Pattern : public Retainable, public Observable {
   CPDF_Pattern(CPDF_Document* pDoc,
                RetainPtr<CPDF_Object> pObj,
                const CFX_Matrix& parentMatrix);
+  ~CPDF_Pattern() override;
 
   // All the getters that return pointers return non-NULL pointers.
   CPDF_Document* document() const { return m_pDocument; }

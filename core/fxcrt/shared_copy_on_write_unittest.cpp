@@ -31,6 +31,11 @@ class Observer {
 
 class Object final : public Retainable {
  public:
+  CONSTRUCT_VIA_MAKE_RETAIN;
+
+  RetainPtr<Object> Clone() const { return pdfium::MakeRetain<Object>(*this); }
+
+ private:
   Object(Observer* observer, const std::string& name)
       : name_(name), observer_(observer) {
     observer->OnConstruct(name_);
@@ -40,9 +45,6 @@ class Object final : public Retainable {
   }
   ~Object() override { observer_->OnDestruct(name_); }
 
-  RetainPtr<Object> Clone() const { return pdfium::MakeRetain<Object>(*this); }
-
- private:
   std::string name_;
   Observer* observer_;
 };

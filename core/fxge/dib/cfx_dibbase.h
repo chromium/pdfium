@@ -32,8 +32,6 @@ class CFX_DIBBase : public Retainable {
 
   static constexpr uint32_t kPaletteSize = 256;
 
-  ~CFX_DIBBase() override;
-
   virtual pdfium::span<uint8_t> GetBuffer() const;
   virtual pdfium::span<const uint8_t> GetScanline(int line) const = 0;
   virtual bool SkipToScanline(int line, PauseIndicatorIface* pPause) const;
@@ -89,6 +87,7 @@ class CFX_DIBBase : public Retainable {
 
  protected:
   CFX_DIBBase();
+  ~CFX_DIBBase() override;
 
   static bool ConvertBuffer(FXDIB_Format dest_format,
                             pdfium::span<uint8_t> dest_buf,

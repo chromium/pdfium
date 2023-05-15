@@ -29,7 +29,6 @@ class CFX_FontMgr {
   class FontDesc final : public Retainable, public Observable {
    public:
     CONSTRUCT_VIA_MAKE_RETAIN;
-    ~FontDesc() override;
 
     pdfium::span<const uint8_t> FontData() const { return m_pFontData; }
     void SetFace(size_t index, CFX_Face* face);
@@ -37,6 +36,7 @@ class CFX_FontMgr {
 
    private:
     explicit FontDesc(FixedUninitDataVector<uint8_t> data);
+    ~FontDesc() override;
 
     const FixedUninitDataVector<uint8_t> m_pFontData;
     ObservedPtr<CFX_Face> m_TTCFaces[16];

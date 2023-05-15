@@ -68,8 +68,6 @@ class CPDF_Font : public Retainable, public Observable {
   static RetainPtr<CPDF_Font> GetStockFont(CPDF_Document* pDoc,
                                            ByteStringView fontname);
 
-  ~CPDF_Font() override;
-
   virtual bool IsType1Font() const;
   virtual bool IsTrueTypeFont() const;
   virtual bool IsType3Font() const;
@@ -138,6 +136,7 @@ class CPDF_Font : public Retainable, public Observable {
 
  protected:
   CPDF_Font(CPDF_Document* pDocument, RetainPtr<CPDF_Dictionary> pFontDict);
+  ~CPDF_Font() override;
 
   static int TT2PDF(FT_Pos m, FXFT_FaceRec* face);
 

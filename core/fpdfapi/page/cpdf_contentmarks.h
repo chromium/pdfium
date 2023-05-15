@@ -42,9 +42,7 @@ class CPDF_ContentMarks {
  private:
   class MarkData final : public Retainable {
    public:
-    MarkData();
-    MarkData(const MarkData& src);
-    ~MarkData() override;
+    CONSTRUCT_VIA_MAKE_RETAIN;
 
     size_t CountItems() const;
     bool ContainsItem(const CPDF_ContentMarkItem* pItem) const;
@@ -61,6 +59,10 @@ class CPDF_ContentMarks {
     bool RemoveMark(CPDF_ContentMarkItem* pMarkItem);
 
    private:
+    MarkData();
+    MarkData(const MarkData& src);
+    ~MarkData() override;
+
     std::vector<RetainPtr<CPDF_ContentMarkItem>> m_Marks;
   };
 

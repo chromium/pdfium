@@ -30,7 +30,6 @@ struct CFX_TextRenderOptions;
 class CFX_GlyphCache final : public Retainable, public Observable {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
-  ~CFX_GlyphCache() override;
 
   const CFX_GlyphBitmap* LoadGlyphBitmap(const CFX_Font* pFont,
                                          uint32_t glyph_index,
@@ -56,6 +55,7 @@ class CFX_GlyphCache final : public Retainable, public Observable {
 
  private:
   explicit CFX_GlyphCache(RetainPtr<CFX_Face> face);
+  ~CFX_GlyphCache() override;
 
   using SizeGlyphCache = std::map<uint32_t, std::unique_ptr<CFX_GlyphBitmap>>;
   // <glyph_index, width, weight, angle, vertical>
