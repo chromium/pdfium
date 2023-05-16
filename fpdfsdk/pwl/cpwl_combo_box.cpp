@@ -389,7 +389,9 @@ bool CPWL_ComboBox::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
   // options.
   switch (nChar) {
     case pdfium::ascii::kReturn:
-      SetPopup(!IsPopup());
+      if (!SetPopup(!IsPopup())) {
+        return false;
+      }
       SetSelectText();
       return true;
     case pdfium::ascii::kSpace:
@@ -397,7 +399,9 @@ bool CPWL_ComboBox::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
       // editable
       if (!HasFlag(PCBS_ALLOWCUSTOMTEXT)) {
         if (!IsPopup()) {
-          SetPopup(/*bPopUp=*/true);
+          if (!SetPopup(/*bPopUp=*/true)) {
+            return false;
+          }
           SetSelectText();
         }
         return true;
@@ -422,7 +426,7 @@ bool CPWL_ComboBox::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
 
 void CPWL_ComboBox::NotifyLButtonDown(CPWL_Wnd* child, const CFX_PointF& pos) {
   if (child == m_pButton) {
-    SetPopup(!m_bPopup);
+    (void)SetPopup(!m_bPopup);
     // Note, |this| may no longer be viable at this point. If more work needs to
     // be done, check the return value of SetPopup().
   }
@@ -435,7 +439,7 @@ void CPWL_ComboBox::NotifyLButtonUp(CPWL_Wnd* child, const CFX_PointF& pos) {
   SetSelectText();
   SelectAllText();
   m_pEdit->SetFocus();
-  SetPopup(false);
+  (void)SetPopup(false);
   // Note, |this| may no longer be viable at this point. If more work needs to
   // be done, check the return value of SetPopup().
 }
