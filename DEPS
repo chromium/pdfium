@@ -42,7 +42,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
-  'build_revision': '64c99419f9adaa5c7705100ad32ef4efa95853f1',
+  'build_revision': '3c905595655049cd3c7001e18ee07d860452f206',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
