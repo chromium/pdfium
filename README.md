@@ -78,7 +78,7 @@ support code only works if one follows this convention.
 A typical `<directory>` name is `out/Debug`.
 
 ```
-use_goma = true  # Googlers only. Make sure goma is installed and running first.
+use_goma = false  # Googlers only. Ensure goma is installed and running first.
 is_debug = true  # Enable debugging features.
 
 # Set true to enable experimental Skia backend.
