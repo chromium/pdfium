@@ -3,25 +3,12 @@
 # found in the LICENSE file.
 """PDFium implementation of //build/skia_gold_common/skia_gold_properties.py."""
 
-import subprocess
-import sys
-
 import pdfium_root
 from skia_gold_common import skia_gold_properties
 
 
 class PDFiumSkiaGoldProperties(skia_gold_properties.SkiaGoldProperties):
 
-  @staticmethod
-  def _GetGitOriginMainHeadSha1():
+  def _GetGitRepoDirectory(self):
     root_finder = pdfium_root.RootDirectoryFinder()
-    try:
-      return subprocess.check_output(['git', 'rev-parse', 'origin/main'],
-                                     shell=_IsWin(),
-                                     cwd=root_finder.pdfium_root).strip()
-    except subprocess.CalledProcessError:
-      return None
-
-
-def _IsWin():
-  return sys.platform == 'win32'
+    return root_finder.pdfium_root
