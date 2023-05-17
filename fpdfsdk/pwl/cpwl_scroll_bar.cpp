@@ -338,7 +338,7 @@ void CPWL_ScrollBar::SetScrollRange(float fMin,
   m_sData.SetClientWidth(fClientWidth);
 
   if (FXSYS_IsFloatSmaller(m_sData.ScrollRange.GetWidth(), 0.0f)) {
-    m_pPosButton->SetVisible(false);
+    (void)m_pPosButton->SetVisible(false);
     // Note, |this| may no longer be viable at this point. If more work needs
     // to be done, check this_observed.
     return;
@@ -348,7 +348,7 @@ void CPWL_ScrollBar::SetScrollRange(float fMin,
     return;
   }
 
-  MovePosButton(true);
+  (void)MovePosButton(true);
   // Note, |this| may no longer be viable at this point. If more work needs
   // to be done, check the return value of MovePosButton().
 }
@@ -357,7 +357,7 @@ void CPWL_ScrollBar::SetScrollPos(float fPos) {
   float fOldPos = m_sData.fScrollPos;
   m_sData.SetPos(fPos);
   if (!FXSYS_IsFloatEqual(m_sData.fScrollPos, fOldPos)) {
-    MovePosButton(true);
+    (void)MovePosButton(true);
     // Note, |this| may no longer be viable at this point. If more work needs
     // to be done, check the return value of MovePosButton().
   }

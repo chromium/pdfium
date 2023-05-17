@@ -124,7 +124,7 @@ class CPWL_ScrollBar final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
   void SetScrollPos(float fPos);
 
   // Returns |true| iff this instance is still allocated.
-  bool MovePosButton(bool bRefresh);
+  [[nodiscard]] bool MovePosButton(bool bRefresh);
   void SetScrollStep(float fBigStep, float fSmallStep);
   void NotifyScrollWindow();
   CFX_FloatRect GetScrollArea() const;

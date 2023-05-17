@@ -238,12 +238,15 @@ void CPWL_Edit::OnKillFocus() {
   ObservedPtr<CPWL_Edit> observed_ptr(this);
   CPWL_ScrollBar* pScroll = GetVScrollBar();
   if (pScroll && pScroll->IsVisible()) {
-    pScroll->SetVisible(false);
-    if (!observed_ptr)
+    if (!pScroll->SetVisible(false)) {
       return;
-
-    if (!Move(m_rcOldWindow, true, true))
+    }
+    if (!observed_ptr) {
       return;
+    }
+    if (!Move(m_rcOldWindow, true, true)) {
+      return;
+    }
   }
 
   m_pEditImpl->SelectNone();

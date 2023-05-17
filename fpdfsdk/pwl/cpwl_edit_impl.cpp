@@ -1232,9 +1232,12 @@ void CPWL_EditImpl::Refresh() {
       if (!m_bNotifyFlag) {
         AutoRestorer<bool> restorer(&m_bNotifyFlag);
         m_bNotifyFlag = true;
-        if (std::vector<CFX_FloatRect>* pRects = m_Refresh.GetRefreshRects()) {
-          for (auto& rect : *pRects)
-            m_pNotify->InvalidateRect(&rect);
+        std::vector<CFX_FloatRect>* pRects = m_Refresh.GetRefreshRects();
+        for (auto& rect : *pRects) {
+          if (!m_pNotify->InvalidateRect(&rect)) {
+            m_pNotify = nullptr;  // Gone, dangling even.
+            break;
+          }
         }
       }
     }
@@ -1302,7 +1305,9 @@ void CPWL_EditImpl::RefreshWordRange(const CPVT_WordRange& wr) {
           AutoRestorer<bool> restorer(&m_bNotifyFlag);
           m_bNotifyFlag = true;
           CFX_FloatRect rcRefresh = VTToEdit(rcWord);
-          m_pNotify->InvalidateRect(&rcRefresh);
+          if (!m_pNotify->InvalidateRect(&rcRefresh)) {
+            m_pNotify = nullptr;  // Gone, dangling even.
+          }
         }
       }
     } else {
@@ -1316,7 +1321,9 @@ void CPWL_EditImpl::RefreshWordRange(const CPVT_WordRange& wr) {
           AutoRestorer<bool> restorer(&m_bNotifyFlag);
           m_bNotifyFlag = true;
           CFX_FloatRect rcRefresh = VTToEdit(rcLine);
-          m_pNotify->InvalidateRect(&rcRefresh);
+          if (!m_pNotify->InvalidateRect(&rcRefresh)) {
+            m_pNotify = nullptr;  // Gone, dangling even.
+          }
         }
       }
 

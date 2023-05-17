@@ -138,7 +138,7 @@ class CPWL_Wnd : public Observable {
   virtual ~CPWL_Wnd();
 
   // Returns |true| iff this instance is still allocated.
-  virtual bool InvalidateRect(const CFX_FloatRect* pRect);
+  [[nodiscard]] virtual bool InvalidateRect(const CFX_FloatRect* pRect);
 
   virtual bool OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag);
   virtual bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag);
@@ -165,7 +165,7 @@ class CPWL_Wnd : public Observable {
   virtual void SetCursor();
 
   // Returns |true| iff this instance is still allocated.
-  virtual bool SetVisible(bool bVisible);
+  [[nodiscard]] virtual bool SetVisible(bool bVisible);
   virtual void SetFontSize(float fFontSize);
   virtual float GetFontSize() const;
 
@@ -224,7 +224,7 @@ class CPWL_Wnd : public Observable {
   virtual void CreateChildWnd(const CreateParams& cp);
 
   // Returns |true| iff this instance is still allocated.
-  virtual bool RePosChildWnd();
+  [[nodiscard]] virtual bool RePosChildWnd();
 
   virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
                                   const CFX_Matrix& mtUser2Device);
@@ -248,8 +248,8 @@ class CPWL_Wnd : public Observable {
   CPWL_ScrollBar* GetVScrollBar() const;
 
   // Returns |true| iff this instance is still allocated.
-  bool InvalidateRectMove(const CFX_FloatRect& rcOld,
-                          const CFX_FloatRect& rcNew);
+  [[nodiscard]] bool InvalidateRectMove(const CFX_FloatRect& rcOld,
+                                        const CFX_FloatRect& rcNew);
 
   void SetCapture();
   void ReleaseCapture();

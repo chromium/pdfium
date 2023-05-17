@@ -271,15 +271,13 @@ void CPWL_ListBox::OnSetScrollInfoY(float fPlateMin,
                           Info.fContentMax - Info.fContentMin) ||
       FXSYS_IsFloatEqual(Info.fPlateWidth,
                          Info.fContentMax - Info.fContentMin)) {
-    if (pScroll->IsVisible()) {
-      pScroll->SetVisible(false);
+    if (pScroll->IsVisible() && pScroll->SetVisible(false)) {
       RePosChildWnd();
     }
-  } else {
-    if (!pScroll->IsVisible()) {
-      pScroll->SetVisible(true);
-      RePosChildWnd();
-    }
+    return;
+  }
+  if (!pScroll->IsVisible() && pScroll->SetVisible(true)) {
+    RePosChildWnd();
   }
 }
 
@@ -287,8 +285,8 @@ void CPWL_ListBox::OnSetScrollPosY(float fy) {
   SetScrollPosition(fy);
 }
 
-void CPWL_ListBox::OnInvalidateRect(const CFX_FloatRect& rect) {
-  InvalidateRect(&rect);
+bool CPWL_ListBox::OnInvalidateRect(const CFX_FloatRect& rect) {
+  return InvalidateRect(&rect);
 }
 
 void CPWL_ListBox::Select(int32_t nItemIndex) {
