@@ -6,24 +6,122 @@
 
 #include "core/fxcrt/fx_string.h"
 
+#include <stdint.h>
+
 #include <iterator>
 
+#include "build/build_config.h"
 #include "core/fxcrt/bytestring.h"
-#include "core/fxcrt/cfx_utf8decoder.h"
-#include "core/fxcrt/cfx_utf8encoder.h"
+#include "core/fxcrt/code_point_view.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/string_view_template.h"
+#include "core/fxcrt/utf16.h"
 #include "core/fxcrt/widestring.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/span.h"
 
+namespace {
+
+// Appends a Unicode code point to a `ByteString` using UTF-8.
+void AppendCodePointToByteString(char32_t code_point, ByteString& buffer) {
+  if (code_point > pdfium::kMaximumSupplementaryCodePoint) {
+    // Invalid code point above U+10FFFF.
+    return;
+  }
+
+  if (code_point < 0x80) {
+    // 7-bit code points are unchanged in UTF-8.
+    buffer += code_point;
+    return;
+  }
+
+  int byte_size;
+  if (code_point < 0x800) {
+    byte_size = 2;
+  } else if (code_point < 0x10000) {
+    byte_size = 3;
+  } else {
+    byte_size = 4;
+  }
+
+  static constexpr uint8_t kPrefix[] = {0xc0, 0xe0, 0xf0};
+  int order = 1 << ((byte_size - 1) * 6);
+  buffer += kPrefix[byte_size - 2] | (code_point / order);
+  for (int i = 0; i < byte_size - 1; i++) {
+    code_point = code_point % order;
+    order >>= 6;
+    buffer += 0x80 | (code_point / order);
+  }
+}
+
+// Appends a Unicode code point to a `WideString` using either UTF-16 or UTF-32,
+// depending on the platform's definition of `wchar_t`.
+//
+// TODO(crbug.com/pdfium/2031): Always use UTF-16.
+void AppendCodePointToWideString(char32_t code_point, WideString& buffer) {
+  if (code_point > pdfium::kMaximumSupplementaryCodePoint) {
+    // Invalid code point above U+10FFFF.
+    return;
+  }
+
+#if defined(WCHAR_T_IS_UTF16)
+  if (code_point < pdfium::kMinimumSupplementaryCodePoint) {
+    buffer += static_cast<wchar_t>(code_point);
+  } else {
+    // Encode as UTF-16 surrogate pair.
+    pdfium::SurrogatePair surrogate_pair(code_point);
+    buffer += surrogate_pair.high();
+    buffer += surrogate_pair.low();
+  }
+#else
+  buffer += static_cast<wchar_t>(code_point);
+#endif  // defined(WCHAR_T_IS_UTF16)
+}
+
+}  // namespace
+
 ByteString FX_UTF8Encode(WideStringView wsStr) {
-  return CFX_UTF8Encoder(wsStr).TakeResult();
+  ByteString buffer;
+  for (char32_t code_point : pdfium::CodePointView(wsStr)) {
+    AppendCodePointToByteString(code_point, buffer);
+  }
+  return buffer;
 }
 
 WideString FX_UTF8Decode(ByteStringView bsStr) {
-  return CFX_UTF8Decoder(bsStr).TakeResult();
+  WideString buffer;
+
+  int remaining = 0;
+  char32_t code_point = 0;
+  for (char byte : bsStr) {
+    uint8_t code_unit = static_cast<uint8_t>(byte);
+    if (code_unit < 0x80) {
+      remaining = 0;
+      AppendCodePointToWideString(code_unit, buffer);
+    } else if (code_unit < 0xc0) {
+      if (remaining > 0) {
+        --remaining;
+        code_point = (code_point << 6) | (code_unit & 0x3f);
+        if (remaining == 0) {
+          AppendCodePointToWideString(code_point, buffer);
+        }
+      }
+    } else if (code_unit < 0xe0) {
+      remaining = 1;
+      code_point = code_unit & 0x1f;
+    } else if (code_unit < 0xf0) {
+      remaining = 2;
+      code_point = code_unit & 0x0f;
+    } else if (code_unit < 0xf8) {
+      remaining = 3;
+      code_point = code_unit & 0x07;
+    } else {
+      remaining = 0;
+    }
+  }
+
+  return buffer;
 }
 
 namespace {
