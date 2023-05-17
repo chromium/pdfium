@@ -10,6 +10,7 @@
 #include <limits>
 
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/utf16.h"
 #include "third_party/base/check.h"
 
 namespace {
@@ -150,16 +151,17 @@ void FXSYS_IntToFourHexChars(uint16_t n, char* buf) {
 }
 
 size_t FXSYS_ToUTF16BE(uint32_t unicode, char* buf) {
-  DCHECK(unicode <= 0xD7FF || (unicode > 0xDFFF && unicode <= 0x10FFFF));
+  DCHECK(unicode <= pdfium::kMaximumSupplementaryCodePoint);
+  DCHECK(!pdfium::IsHighSurrogate(unicode));
+  DCHECK(!pdfium::IsLowSurrogate(unicode));
+
   if (unicode <= 0xFFFF) {
     FXSYS_IntToFourHexChars(unicode, buf);
     return 4;
   }
-  unicode -= 0x010000;
-  // High ten bits plus 0xD800
-  FXSYS_IntToFourHexChars(0xD800 + unicode / 0x400, buf);
-  // Low ten bits plus 0xDC00
-  FXSYS_IntToFourHexChars(0xDC00 + unicode % 0x400, buf + 4);
+  pdfium::SurrogatePair surrogate_pair(unicode);
+  FXSYS_IntToFourHexChars(surrogate_pair.high(), buf);
+  FXSYS_IntToFourHexChars(surrogate_pair.low(), buf + 4);
   return 8;
 }
 

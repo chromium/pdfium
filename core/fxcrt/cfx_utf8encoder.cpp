@@ -13,6 +13,7 @@
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/code_point_view.h"
 #include "core/fxcrt/string_view_template.h"
+#include "core/fxcrt/utf16.h"
 
 CFX_UTF8Encoder::CFX_UTF8Encoder(WideStringView input) {
   for (char32_t code_point : pdfium::CodePointView(input)) {
@@ -27,7 +28,7 @@ ByteString CFX_UTF8Encoder::TakeResult() {
 }
 
 void CFX_UTF8Encoder::AppendCodePoint(char32_t code_point) {
-  if (code_point > 0x10ffff) {
+  if (code_point > pdfium::kMaximumSupplementaryCodePoint) {
     // Invalid code point above U+10FFFF.
     return;
   }

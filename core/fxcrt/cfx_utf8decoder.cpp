@@ -12,6 +12,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/string_view_template.h"
+#include "core/fxcrt/utf16.h"
 #include "core/fxcrt/widestring.h"
 
 CFX_UTF8Decoder::CFX_UTF8Decoder(ByteStringView input) {
@@ -53,19 +54,19 @@ WideString CFX_UTF8Decoder::TakeResult() {
 }
 
 void CFX_UTF8Decoder::AppendCodePoint(char32_t code_point) {
-  if (code_point > 0x10ffff) {
+  if (code_point > pdfium::kMaximumSupplementaryCodePoint) {
     // Invalid code point above U+10FFFF.
     return;
   }
 
 #if defined(WCHAR_T_IS_UTF16)
-  if (code_point < 0x10000) {
+  if (code_point < pdfium::kMinimumSupplementaryCodePoint) {
     buffer_ += static_cast<wchar_t>(code_point);
   } else {
     // Encode as UTF-16 surrogate pair.
-    code_point -= 0x10000;
-    buffer_ += 0xd800 | (code_point >> 10);
-    buffer_ += 0xdc00 | (code_point & 0x3ff);
+    pdfium::SurrogatePair surrogate_pair(code_point);
+    buffer_ += surrogate_pair.high();
+    buffer_ += surrogate_pair.low();
   }
 #else
   buffer_ += static_cast<wchar_t>(code_point);

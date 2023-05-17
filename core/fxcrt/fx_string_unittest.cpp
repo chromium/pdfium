@@ -6,6 +6,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/utf16.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/span.h"
 
@@ -111,11 +112,12 @@ TEST(fxstring, FXUTF8DecodeErrorRecovery) {
 TEST(fxstring, FXUTF8EncodeDecodeConsistency) {
   WideString wstr;
   wstr.Reserve(0x10000);
-  for (int w = 0; w < 0x10000; ++w) {
-    // Skip UTF-16 surrogates.
-    if (w < 0xd800 || w >= 0xe000) {
-      wstr += static_cast<wchar_t>(w);
+  for (char32_t w = 0; w < pdfium::kMinimumSupplementaryCodePoint; ++w) {
+    if (pdfium::IsHighSurrogate(w) || pdfium::IsLowSurrogate(w)) {
+      // Skip UTF-16 surrogates.
+      continue;
     }
+    wstr += static_cast<wchar_t>(w);
   }
   ASSERT_EQ(0xf800u, wstr.GetLength());
 
@@ -127,7 +129,8 @@ TEST(fxstring, FXUTF8EncodeDecodeConsistency) {
 TEST(fxstring, FXUTF8EncodeDecodeConsistencyUnpairedHighSurrogates) {
   WideString wstr;
   wstr.Reserve(0x400);
-  for (wchar_t w = 0xd800; w < 0xdc00; ++w) {
+  for (wchar_t w = pdfium::kMinimumHighSurrogateCodeUnit;
+       w <= pdfium::kMaximumHighSurrogateCodeUnit; ++w) {
     wstr += w;
   }
   ASSERT_EQ(0x400u, wstr.GetLength());
@@ -140,7 +143,8 @@ TEST(fxstring, FXUTF8EncodeDecodeConsistencyUnpairedHighSurrogates) {
 TEST(fxstring, FXUTF8EncodeDecodeConsistencyUnpairedLowSurrogates) {
   WideString wstr;
   wstr.Reserve(0x400);
-  for (wchar_t w = 0xdc00; w < 0xe000; ++w) {
+  for (wchar_t w = pdfium::kMinimumLowSurrogateCodeUnit;
+       w <= pdfium::kMaximumLowSurrogateCodeUnit; ++w) {
     wstr += w;
   }
   ASSERT_EQ(0x400u, wstr.GetLength());

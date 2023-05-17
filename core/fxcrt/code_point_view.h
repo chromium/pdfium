@@ -7,6 +7,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/string_view_template.h"
+#include "core/fxcrt/utf16.h"
 #include "third_party/base/check_op.h"
 
 namespace pdfium {
@@ -28,7 +29,7 @@ class CodePointView final {
 
     Iterator& operator++() {
       DCHECK_LT(current_, end_);
-      current_ += code_point_ < kFirstSupplementary ? 1 : 2;
+      current_ += IsSupplementary(code_point_) ? 2 : 1;
       code_point_ = Decode();
       return *this;
     }
@@ -42,26 +43,20 @@ class CodePointView final {
     friend class CodePointView;
 
     static constexpr char32_t kSentinel = -1;
-    static constexpr char32_t kFirstSupplementary = 0x10000;
 
     Iterator(const wchar_t* begin, const wchar_t* end)
         : current_(begin), end_(end), code_point_(Decode()) {}
 
     char32_t Decode() {
       if (current_ >= end_) {
-        // No remaining code units.
         return kSentinel;
       }
 
       char32_t code_point = *current_;
-      if (code_point >= 0xd800 && code_point < 0xdc00) {
-        // First code unit is a high surrogate.
+      if (IsHighSurrogate(code_point)) {
         const wchar_t* next = current_ + 1;
-        if (next < end_ && *next >= 0xdc00 && *next < 0xe000) {
-          // Second code unit is a low surrogate.
-          code_point = (code_point & 0x3ff) << 10;
-          code_point |= *next & 0x3ff;
-          code_point += kFirstSupplementary;
+        if (next < end_ && IsLowSurrogate(*next)) {
+          code_point = SurrogatePair(code_point, *next).ToCodePoint();
         }
       }
 

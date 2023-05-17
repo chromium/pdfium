@@ -31,6 +31,7 @@
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
+#include "core/fxcrt/utf16.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/fx_font.h"
@@ -166,8 +167,9 @@ void AddCharcode(fxcrt::ostringstream* pBuffer, uint32_t number) {
 // PDF spec 1.7 Section 5.9.2: "Unicode character sequences as expressed in
 // UTF-16BE encoding." See https://en.wikipedia.org/wiki/UTF-16#Description
 void AddUnicode(fxcrt::ostringstream* pBuffer, uint32_t unicode) {
-  if (unicode >= 0xD800 && unicode <= 0xDFFF)
+  if (pdfium::IsHighSurrogate(unicode) || pdfium::IsLowSurrogate(unicode)) {
     unicode = 0;
+  }
 
   char ans[8];
   *pBuffer << "<";
@@ -369,16 +371,18 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
   uint32_t dwGlyphIndex;
   uint32_t dwCurrentChar = static_cast<uint32_t>(
       FT_Get_First_Char(pFont->GetFaceRec(), &dwGlyphIndex));
-  static constexpr uint32_t kMaxUnicode = 0x10FFFF;
   // If it doesn't have a single char, just fail
-  if (dwGlyphIndex == 0 || dwCurrentChar > kMaxUnicode)
+  if (dwGlyphIndex == 0 ||
+      dwCurrentChar > pdfium::kMaximumSupplementaryCodePoint) {
     return nullptr;
+  }
 
   std::multimap<uint32_t, uint32_t> to_unicode;
   std::map<uint32_t, uint32_t> widths;
   while (true) {
-    if (dwCurrentChar > kMaxUnicode)
+    if (dwCurrentChar > pdfium::kMaximumSupplementaryCodePoint) {
       break;
+    }
 
     if (!pdfium::Contains(widths, dwGlyphIndex))
       widths[dwGlyphIndex] = pFont->GetGlyphWidth(dwGlyphIndex);
