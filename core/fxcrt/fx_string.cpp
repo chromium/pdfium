@@ -24,6 +24,8 @@
 namespace {
 
 // Appends a Unicode code point to a `ByteString` using UTF-8.
+//
+// TODO(crbug.com/pdfium/2041): Migrate to `ByteString`.
 void AppendCodePointToByteString(char32_t code_point, ByteString& buffer) {
   if (code_point > pdfium::kMaximumSupplementaryCodePoint) {
     // Invalid code point above U+10FFFF.
@@ -59,6 +61,7 @@ void AppendCodePointToByteString(char32_t code_point, ByteString& buffer) {
 // depending on the platform's definition of `wchar_t`.
 //
 // TODO(crbug.com/pdfium/2031): Always use UTF-16.
+// TODO(crbug.com/pdfium/2041): Migrate to `WideString`.
 void AppendCodePointToWideString(char32_t code_point, WideString& buffer) {
   if (code_point > pdfium::kMaximumSupplementaryCodePoint) {
     // Invalid code point above U+10FFFF.

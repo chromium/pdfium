@@ -4,6 +4,9 @@
 
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <iterator>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -12,9 +15,29 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/string_view_template.h"
+#include "core/fxcrt/widestring.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
+#include "third_party/base/span.h"
+
+namespace {
+
+// Converts a string literal into a `uint8_t` span.
+template <size_t N>
+pdfium::span<const uint8_t> ToSpan(const char (&array)[N]) {
+  return pdfium::span(reinterpret_cast<const uint8_t*>(array), N - 1);
+}
+
+// Converts a string literal into a `ByteString`.
+template <size_t N>
+ByteString ToByteString(const char (&array)[N]) {
+  return ByteString(array, N - 1);
+}
+
+}  // namespace
 
 TEST(ParserDecodeTest, ValidateDecoderPipeline) {
   {
@@ -379,82 +402,90 @@ TEST(ParserDecodeTest, HexDecode) {
 }
 
 TEST(ParserDecodeTest, DecodeText) {
-  const struct DecodeTestData {
-    const char* input;
-    size_t input_length;
-    const wchar_t* expected_output;
-    size_t expected_length;
-  } kTestData[] = {
-      // Empty src string.
-      {"", 0, L"", 0},
-      // ASCII text.
-      {"the quick\tfox", 13, L"the quick\tfox", 13},
-      // Unicode text.
-      {"\xFE\xFF\x03\x30\x03\x31", 6, L"\x0330\x0331", 2},
-      // More Unicode text.
-      {"\xFE\xFF\x7F\x51\x98\x75\x00\x20\x56\xFE\x72\x47\x00"
-       "\x20\x8D\x44\x8B\xAF\x66\xF4\x59\x1A\x00\x20\x00\xBB",
-       26,
-       L"\x7F51\x9875\x0020\x56FE\x7247\x0020"
-       L"\x8D44\x8BAF\x66F4\x591A\x0020\x00BB",
-       12},
-      // Unicode escape sequence. https://crbug.com/pdfium/182
-      {"\xFE\xFF\x00\x1B\x6A\x61\x00\x1B\x00\x20\x53\x70\x52\x37", 14,
-       L"\x0020\x5370\x5237", 3},
-      {"\xFE\xFF\x00\x1B\x6A\x61\x00\x1B\x00\x20\x53\x70\x52\x37\x29", 15,
-       L"\x0020\x5370\x5237", 3},
-      {"\xFE\xFF\x00\x1B\x6A\x61\x4A\x50\x00\x1B\x00\x20\x53\x70\x52\x37", 16,
-       L"\x0020\x5370\x5237", 3},
-      {"\xFE\xFF\x00\x20\x00\x1B\x6A\x61\x4A\x50\x00\x1B\x52\x37", 14,
-       L"\x0020\x5237", 2},
-      // https://crbug.com/1001159
-      {"\xFE\xFF\x00\x1B\x00\x1B", 6, L"", 0},
-      {"\xFE\xFF\x00\x1B\x00\x1B\x20", 7, L"", 0},
-      {"\xFE\xFF\x00\x1B\x00\x1B\x00\x20", 8, L"\x0020", 1},
-  };
+  // Empty src string.
+  EXPECT_EQ(L"", PDF_DecodeText(ToSpan("")));
 
-  for (const auto& test_case : kTestData) {
-    WideString output = PDF_DecodeText(
-        pdfium::make_span(reinterpret_cast<const uint8_t*>(test_case.input),
-                          test_case.input_length));
-    ASSERT_EQ(test_case.expected_length, output.GetLength())
-        << "for case " << test_case.input;
-    const wchar_t* str_ptr = output.c_str();
-    for (size_t i = 0; i < test_case.expected_length; ++i) {
-      EXPECT_EQ(test_case.expected_output[i], str_ptr[i])
-          << "for case " << test_case.input << " char " << i;
-    }
-  }
+  // ASCII text.
+  EXPECT_EQ(L"the quick\tfox", PDF_DecodeText(ToSpan("the quick\tfox")));
+
+  // Unicode text.
+  EXPECT_EQ(L"\x0330\x0331",
+            PDF_DecodeText(ToSpan("\xFE\xFF\x03\x30\x03\x31")));
+
+  // More Unicode text.
+  EXPECT_EQ(
+      L"\x7F51\x9875\x0020\x56FE\x7247\x0020"
+      L"\x8D44\x8BAF\x66F4\x591A\x0020\x00BB",
+      PDF_DecodeText(
+          ToSpan("\xFE\xFF\x7F\x51\x98\x75\x00\x20\x56\xFE\x72\x47\x00"
+                 "\x20\x8D\x44\x8B\xAF\x66\xF4\x59\x1A\x00\x20\x00\xBB")));
+}
+
+// https://crbug.com/pdfium/182
+TEST(ParserDecodeTest, DecodeTextWithUnicodeEscapes) {
+  EXPECT_EQ(L"\x0020\x5370\x5237",
+            PDF_DecodeText(ToSpan(
+                "\xFE\xFF\x00\x1B\x6A\x61\x00\x1B\x00\x20\x53\x70\x52\x37")));
+  EXPECT_EQ(
+      L"\x0020\x5370\x5237",
+      PDF_DecodeText(ToSpan(
+          "\xFE\xFF\x00\x1B\x6A\x61\x00\x1B\x00\x20\x53\x70\x52\x37\x29")));
+  EXPECT_EQ(
+      L"\x0020\x5370\x5237",
+      PDF_DecodeText(ToSpan(
+          "\xFE\xFF\x00\x1B\x6A\x61\x4A\x50\x00\x1B\x00\x20\x53\x70\x52\x37")));
+  EXPECT_EQ(L"\x0020\x5237",
+            PDF_DecodeText(ToSpan(
+                "\xFE\xFF\x00\x20\x00\x1B\x6A\x61\x4A\x50\x00\x1B\x52\x37")));
+}
+
+// https://crbug.com/1001159
+TEST(ParserDecodeTest, DecodeTextWithInvalidUnicodeEscapes) {
+  EXPECT_EQ(L"", PDF_DecodeText(ToSpan("\xFE\xFF\x00\x1B\x00\x1B")));
+  EXPECT_EQ(L"", PDF_DecodeText(ToSpan("\xFE\xFF\x00\x1B\x00\x1B\x20")));
+  EXPECT_EQ(L"\x0020",
+            PDF_DecodeText(ToSpan("\xFE\xFF\x00\x1B\x00\x1B\x00\x20")));
+}
+
+TEST(ParserDecodeTest, DecodeTextWithUnpairedSurrogates) {
+  EXPECT_EQ(L"\xD800", PDF_DecodeText(ToSpan("\xFE\xFF\xD8\x00"))) << "High";
+  EXPECT_EQ(L"\xDC00", PDF_DecodeText(ToSpan("\xFE\xFF\xDC\x00"))) << "Low";
 }
 
 TEST(ParserDecodeTest, EncodeText) {
-  const struct EncodeTestData {
-    const wchar_t* input;
-    const char* expected_output;
-    size_t expected_length;
-  } kTestData[] = {
-      // Empty src string.
-      {L"", "", 0},
-      // ASCII text.
-      {L"the quick\tfox", "the quick\tfox", 13},
-      // Unicode text.
-      {L"\x0330\x0331", "\xFE\xFF\x03\x30\x03\x31", 6},
-      // More Unicode text.
-      {L"\x7F51\x9875\x0020\x56FE\x7247\x0020"
-       L"\x8D44\x8BAF\x66F4\x591A\x0020\x00BB",
-       "\xFE\xFF\x7F\x51\x98\x75\x00\x20\x56\xFE\x72\x47\x00"
-       "\x20\x8D\x44\x8B\xAF\x66\xF4\x59\x1A\x00\x20\x00\xBB",
-       26},
-  };
+  // Empty src string.
+  EXPECT_EQ("", PDF_EncodeText(L""));
 
-  for (const auto& test_case : kTestData) {
-    ByteString output = PDF_EncodeText(test_case.input);
-    ASSERT_EQ(test_case.expected_length, output.GetLength())
-        << "for case " << test_case.input;
-    const char* str_ptr = output.c_str();
-    for (size_t j = 0; j < test_case.expected_length; ++j) {
-      EXPECT_EQ(test_case.expected_output[j], str_ptr[j])
-          << "for case " << test_case.input << " char " << j;
+  // ASCII text.
+  EXPECT_EQ("the quick\tfox", PDF_EncodeText(L"the quick\tfox"));
+
+  // Unicode text.
+  EXPECT_EQ("\xFE\xFF\x03\x30\x03\x31", PDF_EncodeText(L"\x0330\x0331"));
+
+  // More Unicode text.
+  EXPECT_EQ(
+      ToByteString("\xFE\xFF\x7F\x51\x98\x75\x00\x20\x56\xFE\x72\x47\x00"
+                   "\x20\x8D\x44\x8B\xAF\x66\xF4\x59\x1A\x00\x20\x00\xBB"),
+      PDF_EncodeText(L"\x7F51\x9875\x0020\x56FE\x7247\x0020"
+                     L"\x8D44\x8BAF\x66F4\x591A\x0020\x00BB"));
+}
+
+TEST(ParserDecodeTest, RoundTripText) {
+  for (int pdf_code_point = 0; pdf_code_point < 256; ++pdf_code_point) {
+    ByteString original(static_cast<char>(pdf_code_point));
+    ByteString reencoded =
+        PDF_EncodeText(PDF_DecodeText(original.raw_span()).AsStringView());
+
+    switch (pdf_code_point) {
+      case 0x7F:
+      case 0x9F:
+      case 0xAD:
+        EXPECT_EQ(ByteString('\0'), reencoded) << "PDFDocEncoding undefined";
+        break;
+
+      default:
+        EXPECT_EQ(original, reencoded) << "PDFDocEncoding: " << pdf_code_point;
+        break;
     }
   }
 }
