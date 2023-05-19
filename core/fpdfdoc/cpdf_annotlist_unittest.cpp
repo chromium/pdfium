@@ -86,7 +86,7 @@ TEST_F(CPDFAnnotListTest, CreatePopupAnnotFromPdfEncoded) {
 TEST_F(CPDFAnnotListTest, CreatePopupAnnotFromUnicode) {
   const ByteString kContents =
       MakeByteString({0xFE, 0xFF, 0x00, 'A', 0x00, 'a', 0x00, 0xE4, 0x20, 0xAC,
-                      0xD8, 0x3D, 0xDC, 0xC4});
+                      0xD8, 0x3C, 0xDF, 0xA8});
   AddTextAnnotation(kContents);
 
   CPDF_AnnotList list(page_);
@@ -94,9 +94,7 @@ TEST_F(CPDFAnnotListTest, CreatePopupAnnotFromUnicode) {
   ASSERT_EQ(2u, list.Count());
   EXPECT_EQ(kContents, GetRawContents(list.GetAt(1)));
 
-  // TODO(crbug.com/pdfium/2029): `WideString::FromUTF8()` mishandles '📄'.
-  EXPECT_EQ(WideString::FromUTF8("Aaä€\xED\xA0\xBD\xED\xB3\x84"),
-            GetDecodedContents(list.GetAt(1)));
+  EXPECT_EQ(WideString::FromUTF8("Aaä€🎨"), GetDecodedContents(list.GetAt(1)));
 }
 
 TEST_F(CPDFAnnotListTest, CreatePopupAnnotFromEmptyPdfEncoded) {

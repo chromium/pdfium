@@ -8,10 +8,12 @@
 
 #include <ctype.h>
 #include <limits.h>
+#include <stddef.h>
 
 #include <algorithm>
 #include <utility>
 
+#include "build/build_config.h"
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -22,6 +24,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/utf16.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
 
@@ -472,7 +475,7 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
 }
 
 WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
-  int dest_pos = 0;
+  size_t dest_pos = 0;
   WideString result;
   if (span.size() >= 2 && ((span[0] == 0xfe && span[1] == 0xff) ||
                            (span[0] == 0xff && span[1] == 0xfe))) {
@@ -485,6 +488,10 @@ WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
         span[0] == 0xfe ? GetUnicodeFromBigEndianBytes
                         : GetUnicodeFromLittleEndianBytes;
     const uint8_t* unicode_str = &span[2];
+
+#if defined(WCHAR_T_IS_UTF32)
+    char16_t high_surrogate = 0;
+#endif  // defined(WCHAR_T_IS_UTF32)
     for (size_t i = 0; i < max_chars * 2; i += 2) {
       uint16_t unicode = GetUnicodeFromBytes(unicode_str + i);
 
@@ -505,8 +512,34 @@ WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
           break;
       }
 
+#if defined(WCHAR_T_IS_UTF32)
+      // TODO(crbug.com/pdfium/2031): Always use UTF-16.
+      if (high_surrogate) {
+        char16_t previous_high_surrogate = high_surrogate;
+        high_surrogate = 0;
+
+        if (pdfium::IsLowSurrogate(unicode)) {
+          dest_buf[dest_pos++] =
+              pdfium::SurrogatePair(previous_high_surrogate, unicode)
+                  .ToCodePoint();
+          continue;
+        }
+        dest_buf[dest_pos++] = previous_high_surrogate;
+      }
+
+      if (pdfium::IsHighSurrogate(unicode)) {
+        high_surrogate = unicode;
+        continue;
+      }
+#endif  // defined(WCHAR_T_IS_UTF32)
       dest_buf[dest_pos++] = unicode;
     }
+
+#if defined(WCHAR_T_IS_UTF32)
+    if (high_surrogate) {
+      dest_buf[dest_pos++] = high_surrogate;
+    }
+#endif  // defined(WCHAR_T_IS_UTF32)
   } else {
     pdfium::span<wchar_t> dest_buf = result.GetBuffer(span.size());
     for (size_t i = 0; i < span.size(); ++i)
@@ -545,18 +578,35 @@ ByteString PDF_EncodeText(WideStringView str) {
   }
 
   size_t dest_index = 0;
-  size_t encLen = len * 2 + 2;
   {
+#if defined(WCHAR_T_IS_UTF32)
+    // 2 or 4 bytes required per UTF-32 code unit.
     pdfium::span<uint8_t> dest_buf =
-        pdfium::as_writable_bytes(result.GetBuffer(encLen));
+        pdfium::as_writable_bytes(result.GetBuffer(len * 4 + 2));
+#else
+    // 2 bytes required per UTF-16 code unit.
+    pdfium::span<uint8_t> dest_buf =
+        pdfium::as_writable_bytes(result.GetBuffer(len * 2 + 2));
+#endif  // defined(WCHAR_T_IS_UTF32)
+
     dest_buf[dest_index++] = 0xfe;
     dest_buf[dest_index++] = 0xff;
     for (size_t j = 0; j < len; ++j) {
+#if defined(WCHAR_T_IS_UTF32)
+      if (pdfium::IsSupplementary(str[j])) {
+        pdfium::SurrogatePair pair(str[j]);
+        dest_buf[dest_index++] = pair.high() >> 8;
+        dest_buf[dest_index++] = static_cast<uint8_t>(pair.high());
+        dest_buf[dest_index++] = pair.low() >> 8;
+        dest_buf[dest_index++] = static_cast<uint8_t>(pair.low());
+        continue;
+      }
+#endif  // defined(WCHAR_T_IS_UTF32)
       dest_buf[dest_index++] = str[j] >> 8;
       dest_buf[dest_index++] = static_cast<uint8_t>(str[j]);
     }
   }
-  result.ReleaseBuffer(encLen);
+  result.ReleaseBuffer(dest_index);
   return result;
 }
 

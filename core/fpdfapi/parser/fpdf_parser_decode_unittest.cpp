@@ -419,6 +419,9 @@ TEST(ParserDecodeTest, DecodeText) {
       PDF_DecodeText(
           ToSpan("\xFE\xFF\x7F\x51\x98\x75\x00\x20\x56\xFE\x72\x47\x00"
                  "\x20\x8D\x44\x8B\xAF\x66\xF4\x59\x1A\x00\x20\x00\xBB")));
+
+  // Supplementary Unicode text.
+  EXPECT_EQ(L"🎨", PDF_DecodeText(ToSpan("\xFE\xFF\xD8\x3C\xDF\xA8")));
 }
 
 // https://crbug.com/pdfium/182
@@ -450,6 +453,12 @@ TEST(ParserDecodeTest, DecodeTextWithInvalidUnicodeEscapes) {
 TEST(ParserDecodeTest, DecodeTextWithUnpairedSurrogates) {
   EXPECT_EQ(L"\xD800", PDF_DecodeText(ToSpan("\xFE\xFF\xD8\x00"))) << "High";
   EXPECT_EQ(L"\xDC00", PDF_DecodeText(ToSpan("\xFE\xFF\xDC\x00"))) << "Low";
+  EXPECT_EQ(L"\xD800🎨",
+            PDF_DecodeText(ToSpan("\xFE\xFF\xD8\x00\xD8\x3C\xDF\xA8")))
+      << "High-high";
+  EXPECT_EQ(L"🎨\xDC00",
+            PDF_DecodeText(ToSpan("\xFE\xFF\xD8\x3C\xDF\xA8\xDC\x00")))
+      << "Low-low";
 }
 
 TEST(ParserDecodeTest, EncodeText) {
@@ -468,6 +477,9 @@ TEST(ParserDecodeTest, EncodeText) {
                    "\x20\x8D\x44\x8B\xAF\x66\xF4\x59\x1A\x00\x20\x00\xBB"),
       PDF_EncodeText(L"\x7F51\x9875\x0020\x56FE\x7247\x0020"
                      L"\x8D44\x8BAF\x66F4\x591A\x0020\x00BB"));
+
+  // Supplementary Unicode text.
+  EXPECT_EQ("\xFE\xFF\xD8\x3C\xDF\xA8", PDF_EncodeText(L"🎨"));
 }
 
 TEST(ParserDecodeTest, RoundTripText) {
