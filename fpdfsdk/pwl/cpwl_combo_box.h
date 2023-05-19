@@ -65,7 +65,7 @@ class CPWL_ComboBox final : public CPWL_Wnd {
   void CreateListBox(const CreateParams& cp);
 
   // Returns |true| iff this instance is still allocated.
-  bool SetPopup(bool bPopup);
+  [[nodiscard]] bool SetPopup(bool bPopup);
 
   UnownedPtr<CPWL_Edit> m_pEdit;
   UnownedPtr<CPWL_CBButton> m_pButton;
