@@ -7,7 +7,9 @@
 
 #include <string>
 
-#include "core/fxcrt/bytestring.h"
+namespace fxcrt {
+class ByteString;
+}
 
 namespace testing {
 

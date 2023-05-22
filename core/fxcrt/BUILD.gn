@@ -134,7 +134,6 @@ source_set("fxcrt") {
     "../../third_party:fx_lcms2",
     "../../third_party:fx_libopenjpeg",
     "../../third_party:fx_tiff",
-    "../../third_party/googletest:gtest",
     "../../xfa/*",
   ]
   deps = [ "../../third_party:pdfium_base" ]
