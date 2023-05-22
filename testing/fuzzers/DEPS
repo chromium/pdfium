@@ -1,7 +1,4 @@
 include_rules = [
   '+fxbarcode',
   '+xfa',
-
-  # Only used when the fuzzer is embedded in Chromium.
-  '+base',
 ]

@@ -2,7 +2,6 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import("//build_overrides/build.gni")
 import("../../pdfium.gni")
 
 config("fuzzer_config") {
@@ -246,9 +245,6 @@ template("pdfium_fuzzer") {
     }
     if (is_public && pdf_enable_xfa) {
       deps += [ ":fuzzer_xfa_process_state" ]
-    }
-    if (build_with_chromium) {
-      defines += [ "BUILD_WITH_CHROMIUM" ]
     }
   }
 }
@@ -620,11 +616,5 @@ pdfium_fuzzer("pdf_xml_fuzzer") {
 pdfium_fuzzer("pdfium_fuzzer") {
   sources = [ "pdfium_fuzzer.cc" ]
   deps = [ ":fuzzer_helper" ]
-  if (build_with_chromium) {
-    deps += [
-      "//base",
-      "//base/test:test_support",
-    ]
-  }
   public_fuzzer = true
 }
