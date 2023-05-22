@@ -333,6 +333,9 @@ resolve_nodes_1.pdf * * * *
 # Pixel tests
 #
 
+# TODO(pdfium:1098): Remove after associated bug is fixed
+bug_1098.in * * * *
+
 # TODO(chromium:1131694): Remove after associated bug is fixed
 bug_1131694.in * * * *
 

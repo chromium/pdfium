@@ -1,0 +1,60 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /AcroForm 2 0 R
+  /Pages 3 0 R
+>>
+{{object 2 0}} <<
+  /Fields [6 0 R]
+  /NeedAppearances true
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [4 0 R]
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Page
+  /Parent 3 0 R
+  /Annots [5 0 R 6 0 R]
+  /MediaBox [0 0 220 270]
+>>
+endobj
+
+% Text annotation with a pop-up containing the test string.
+{{object 5 0}} <<
+  /Type /Annot
+  /Subtype /Text
+  /Contents 7 0 R
+
+  % GenerateTextAP() always uses a 20x20 rectangle for the note icon.
+  % CreatePopupAnnot() always uses a 200x200 rectangle for the pop-up.
+  /Rect [10 240 30 260]
+>>
+endobj
+
+% Text field widget annotation with a black border containing the test string.
+{{object 6 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Tx
+  /MK <<
+    /BC [0]
+  >>
+  /Rect [10 10 210 30]
+  /T (FieldName)
+  /V 7 0 R
+>>
+endobj
+
+% Test string "AaÄäКк€🎨!" in UTF-16BE.
+{{object 7 0}}
+<feff 0041 0061 00c4 00e4 041a 043a 20ac d83cdfa8 0021>
+endobj
+
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
