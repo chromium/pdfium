@@ -89,8 +89,25 @@ class CPWL_MsgControl final : public Observable {
     m_KeyboardPaths.clear();
   }
 
-  void SetCapture(CPWL_Wnd* pWnd) { m_MousePaths = pWnd->GetAncestors(); }
+  void RemoveWnd(CPWL_Wnd* pWnd) {
+    if (pWnd == m_pCreatedWnd) {
+      m_pCreatedWnd = nullptr;
+    }
+    if (pWnd == m_pMainKeyboardWnd) {
+      m_pMainKeyboardWnd = nullptr;
+    }
+    auto mouse_it = std::find(m_MousePaths.begin(), m_MousePaths.end(), pWnd);
+    if (mouse_it != m_MousePaths.end()) {
+      m_MousePaths.erase(mouse_it);
+    }
+    auto keyboard_it =
+        std::find(m_KeyboardPaths.begin(), m_KeyboardPaths.end(), pWnd);
+    if (keyboard_it != m_KeyboardPaths.end()) {
+      m_KeyboardPaths.erase(keyboard_it);
+    }
+  }
 
+  void SetCapture(CPWL_Wnd* pWnd) { m_MousePaths = pWnd->GetAncestors(); }
   void ReleaseCapture() { m_MousePaths.clear(); }
 
  private:
@@ -630,8 +647,14 @@ void CPWL_Wnd::CreateMsgControl() {
 
 void CPWL_Wnd::DestroyMsgControl() {
   CPWL_MsgControl* pMsgControl = GetMsgControl();
-  if (pMsgControl && pMsgControl->IsWndCreated(this))
+  if (!pMsgControl) {
+    return;
+  }
+  const bool owned = pMsgControl->IsWndCreated(this);
+  pMsgControl->RemoveWnd(this);
+  if (owned) {
     delete pMsgControl;
+  }
 }
 
 CPWL_MsgControl* CPWL_Wnd::GetMsgControl() const {

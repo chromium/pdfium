@@ -1,0 +1,209 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /AcroForm 4 0 R
+  /OpenAction 40 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 5
+  /Kids [
+    30 0 R
+    31 0 R
+    32 0 R
+    33 0 R
+    34 0 R
+  ]
+>>
+endobj
+% Forms
+{{object 4 0}} <<
+  /Fields [
+    5 0 R
+    8 0 R
+    9 0 R
+    10 0 R
+    11 0 R
+  ]
+>>
+endobj
+% Fields
+{{object 5 0}} <<
+  /T (Field)
+  /Kids [6 0 R]
+  /V (my_field)
+>>
+endobj
+{{object 6 0}} <<
+  /FT /Tx
+  /Parent 5 0 R
+  /Kids [7 0 R]
+  /Rect [200 200 220 220]
+>>
+endobj
+{{object 7 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /Parent 6 0 R
+  /Rect [0 500 600 600]
+
+>>
+endobj
+{{object 8 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Tx
+  /T (Field2)
+  /V (Field_2)
+  /Rect [0 500 600 600]
+>>
+endobj
+{{object 9 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Tx
+  /T (Field4)
+  /V (Field_4)
+  /Rect [0 500 600 600]
+  /AA << /F 24 0 R >>
+>>
+endobj
+{{object 10 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Tx
+  /T (Field5)
+  /V (Field_5)
+  /Rect [0 500 600 600]
+>>
+endobj
+{{object 11 0}} <<
+  /T (Field3)
+  /Parent 4 0 R
+  /Kids [12 0 R]
+  /Opt [(aa) (bb) (cc) (dd) (ee)]
+  /V [(aa) (bb) (cc) (dd) (ee)]
+>>
+endobj
+{{object 12 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Ch
+  /Ff 131072
+  /Parent 11 0 R
+  /Kids [13 0 R]
+>>
+endobj
+{{object 13 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /Parent 12 0 R
+  /Rect [0 400 600 600]
+>>
+endobj
+{{object 14 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /Parent 12 0 R
+  /Rect [100 400 500 500]
+>>
+endobj
+% OpenAction action
+{{object 22 0}} <<
+  /S /JavaScript
+  /JS 23 0 R
+>>
+endobj
+{{object 23 0}} <<
+  {{streamlen}}
+>>
+stream
+doc = this;
+function cb_func() {
+    doc.pageNum = 1;
+    doc.getField("Field" ).setFocus();
+    doc.getField("Field1").setFocus();
+    doc.getField("Field2").setFocus();
+    doc.getField("Field3").setFocus();
+    doc.getField("Field4").setFocus();
+    doc.getField("Field5").setFocus();
+    return 0;
+}
+doc.getField("Field").checkThisBox ({valueOf: cb_func});
+doc.getField("Field1").checkThisBox({valueOf: cb_func});
+doc.getField("Field2").checkThisBox({valueOf: cb_func});
+doc.getField("Field3").checkThisBox({valueOf: cb_func});
+doc.getField("Field4").checkThisBox({valueOf: cb_func});
+doc.getField("Field5").checkThisBox({valueOf: cb_func});
+endstream
+endobj
+% OpenAction action
+{{object 24 0}} <<
+  /S /JavaScript
+  /JS 25 0 R
+>>
+endobj
+{{object 25 0}} <<
+  {{streamlen}}
+>>
+stream
+this.pageNum = 2;
+this.pageNum = 3;
+endstream
+endobj
+% Pages
+{{object 30 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 612 792]
+>>
+endobj
+{{object 31 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 612 792]
+  /Annots [9 0 R]
+>>
+endobj
+{{object 32 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 612 792]
+  /Annots [13 0 R]
+>>
+endobj
+{{object 33 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 612 792]
+  /AA <</C 22 0 R>>
+>>
+endobj
+{{object 34 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 612 792]
+  /Annots [10 0 R]
+>>
+endobj
+% Document JS Action
+{{object 40 0}} <<
+  /Type /Action
+  /S /JavaScript
+  /JS 41 0 R
+>>
+endobj
+{{object 41 0}} <<
+  {{streamlen}}
+>>
+stream
+var f = this.getField("Field4");
+f.setFocus();
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
