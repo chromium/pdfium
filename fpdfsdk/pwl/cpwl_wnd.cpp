@@ -169,7 +169,7 @@ void CPWL_Wnd::Realize() {
 
   CreateParams ccp = m_CreationParams;
   ccp.dwFlags &= 0xFFFF0000L;  // remove sub styles
-  CreateScrollBar(ccp);
+  CreateVScrollBar(ccp);
   CreateChildWnd(ccp);
   m_bVisible = HasFlag(PWS_VISIBLE);
   OnCreated();
@@ -495,10 +495,6 @@ const CPWL_Dash& CPWL_Wnd::GetBorderDash() const {
 
 CPWL_ScrollBar* CPWL_Wnd::GetVScrollBar() const {
   return HasFlag(PWS_VSCROLL) ? m_pVScrollBar : nullptr;
-}
-
-void CPWL_Wnd::CreateScrollBar(const CreateParams& cp) {
-  CreateVScrollBar(cp);
 }
 
 void CPWL_Wnd::CreateVScrollBar(const CreateParams& cp) {

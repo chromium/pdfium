@@ -277,7 +277,6 @@ class CPWL_Wnd : public Observable {
 
   CFX_FloatRect PWLtoWnd(const CFX_FloatRect& rect) const;
 
-  void CreateScrollBar(const CreateParams& cp);
   void CreateVScrollBar(const CreateParams& cp);
 
   void AdjustStyle();
