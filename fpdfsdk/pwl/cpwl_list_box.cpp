@@ -194,9 +194,10 @@ void CPWL_ListBox::ScrollWindowVertically(float pos) {
   m_pListCtrl->SetScrollPos(CFX_PointF(0, pos));
 }
 
-bool CPWL_ListBox::RePosChildWnd() {
-  if (!CPWL_Wnd::RePosChildWnd())
+bool CPWL_ListBox::RepositionChildWnd() {
+  if (!CPWL_Wnd::RepositionChildWnd()) {
     return false;
+  }
 
   m_pListCtrl->SetPlateRect(GetListRect());
   return true;
@@ -272,12 +273,12 @@ void CPWL_ListBox::OnSetScrollInfoY(float fPlateMin,
       FXSYS_IsFloatEqual(Info.fPlateWidth,
                          Info.fContentMax - Info.fContentMin)) {
     if (pScroll->IsVisible() && pScroll->SetVisible(false)) {
-      RePosChildWnd();
+      RepositionChildWnd();
     }
     return;
   }
   if (!pScroll->IsVisible() && pScroll->SetVisible(true)) {
-    RePosChildWnd();
+    RepositionChildWnd();
   }
 }
 

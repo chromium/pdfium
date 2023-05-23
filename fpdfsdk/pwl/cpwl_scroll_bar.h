@@ -101,7 +101,7 @@ class CPWL_ScrollBar final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
 
   // CPWL_Wnd:
   void OnDestroy() override;
-  bool RePosChildWnd() override;
+  bool RepositionChildWnd() override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;
   bool OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,

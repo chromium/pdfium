@@ -46,7 +46,7 @@ void CPWL_Edit::SetText(const WideString& csText) {
   m_pEditImpl->Paint();
 }
 
-bool CPWL_Edit::RePosChildWnd() {
+bool CPWL_Edit::RepositionChildWnd() {
   if (CPWL_ScrollBar* pVSB = GetVScrollBar()) {
     CFX_FloatRect rcWindow = m_rcOldWindow;
     CFX_FloatRect rcVScroll =

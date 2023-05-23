@@ -33,7 +33,7 @@ class CPWL_Edit final : public CPWL_Wnd {
   ~CPWL_Edit() override;
 
   // CPWL_Wnd:
-  bool RePosChildWnd() override;
+  bool RepositionChildWnd() override;
   CFX_FloatRect GetClientRect() const override;
   void DrawThisAppearance(CFX_RenderDevice* pDevice,
                           const CFX_Matrix& mtUser2Device) override;

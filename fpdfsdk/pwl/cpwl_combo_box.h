@@ -34,7 +34,7 @@ class CPWL_ComboBox final : public CPWL_Wnd {
   void NotifyLButtonDown(CPWL_Wnd* child, const CFX_PointF& pos) override;
   void NotifyLButtonUp(CPWL_Wnd* child, const CFX_PointF& pos) override;
   void CreateChildWnd(const CreateParams& cp) override;
-  bool RePosChildWnd() override;
+  bool RepositionChildWnd() override;
   CFX_FloatRect GetFocusRect() const override;
   void SetFocus() override;
   void KillFocus() override;

@@ -224,7 +224,7 @@ class CPWL_Wnd : public Observable {
   virtual void CreateChildWnd(const CreateParams& cp);
 
   // Returns |true| iff this instance is still allocated.
-  [[nodiscard]] virtual bool RePosChildWnd();
+  [[nodiscard]] virtual bool RepositionChildWnd();
 
   virtual void DrawThisAppearance(CFX_RenderDevice* pDevice,
                                   const CFX_Matrix& mtUser2Device);

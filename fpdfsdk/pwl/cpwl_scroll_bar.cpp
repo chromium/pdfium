@@ -125,7 +125,7 @@ void CPWL_ScrollBar::OnDestroy() {
   CPWL_Wnd::OnDestroy();
 }
 
-bool CPWL_ScrollBar::RePosChildWnd() {
+bool CPWL_ScrollBar::RepositionChildWnd() {
   CFX_FloatRect rcClient = GetClientRect();
   CFX_FloatRect rcMinButton;
   CFX_FloatRect rcMaxButton;

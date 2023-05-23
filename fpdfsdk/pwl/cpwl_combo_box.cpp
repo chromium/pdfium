@@ -202,7 +202,7 @@ void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
   m_pList->Realize();
 }
 
-bool CPWL_ComboBox::RePosChildWnd() {
+bool CPWL_ComboBox::RepositionChildWnd() {
   ObservedPtr<CPWL_ComboBox> this_observed(this);
   const CFX_FloatRect rcClient = GetClientRect();
   if (m_bPopup) {
