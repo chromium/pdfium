@@ -51,13 +51,11 @@ CPWL_Wnd::CreateParams::~CreateParams() = default;
 // shared amongst the parent and children.
 class CPWL_Wnd::SharedCaptureFocusState final : public Observable {
  public:
-  explicit SharedCaptureFocusState(const CPWL_Wnd* pWnd)
-      : m_pCreatedWnd(pWnd) {}
+  explicit SharedCaptureFocusState(const CPWL_Wnd* pOwnerWnd)
+      : m_pOwnerWnd(pOwnerWnd) {}
   ~SharedCaptureFocusState() = default;
 
-  bool IsWndCreated(const CPWL_Wnd* pWnd) const {
-    return m_pCreatedWnd == pWnd;
-  }
+  bool IsOwnedByWnd(const CPWL_Wnd* pWnd) const { return m_pOwnerWnd == pWnd; }
 
   bool IsWndCaptureMouse(const CPWL_Wnd* pWnd) const {
     return pWnd && pdfium::Contains(m_MousePaths, pWnd);
@@ -71,6 +69,9 @@ class CPWL_Wnd::SharedCaptureFocusState final : public Observable {
     return pWnd && pdfium::Contains(m_KeyboardPaths, pWnd);
   }
 
+  void SetCapture(CPWL_Wnd* pWnd) { m_MousePaths = pWnd->GetAncestors(); }
+  void ReleaseCapture() { m_MousePaths.clear(); }
+
   void SetFocus(CPWL_Wnd* pWnd) {
     m_KeyboardPaths = pWnd->GetAncestors();
     m_pMainKeyboardWnd = pWnd;
@@ -79,7 +80,7 @@ class CPWL_Wnd::SharedCaptureFocusState final : public Observable {
     pWnd->OnSetFocus();
   }
 
-  void KillFocus() {
+  void ReleaseFocus() {
     ObservedPtr<SharedCaptureFocusState> observed_ptr(this);
     if (!m_KeyboardPaths.empty()) {
       CPWL_Wnd* pWnd = m_KeyboardPaths.front();
@@ -94,8 +95,8 @@ class CPWL_Wnd::SharedCaptureFocusState final : public Observable {
   }
 
   void RemoveWnd(CPWL_Wnd* pWnd) {
-    if (pWnd == m_pCreatedWnd) {
-      m_pCreatedWnd = nullptr;
+    if (pWnd == m_pOwnerWnd) {
+      m_pOwnerWnd = nullptr;
     }
     if (pWnd == m_pMainKeyboardWnd) {
       m_pMainKeyboardWnd = nullptr;
@@ -111,14 +112,11 @@ class CPWL_Wnd::SharedCaptureFocusState final : public Observable {
     }
   }
 
-  void SetCapture(CPWL_Wnd* pWnd) { m_MousePaths = pWnd->GetAncestors(); }
-  void ReleaseCapture() { m_MousePaths.clear(); }
-
  private:
+  UnownedPtr<const CPWL_Wnd> m_pOwnerWnd;
+  UnownedPtr<const CPWL_Wnd> m_pMainKeyboardWnd;
   std::vector<UnownedPtr<CPWL_Wnd>> m_MousePaths;
   std::vector<UnownedPtr<CPWL_Wnd>> m_KeyboardPaths;
-  UnownedPtr<const CPWL_Wnd> m_pCreatedWnd;
-  UnownedPtr<const CPWL_Wnd> m_pMainKeyboardWnd;
 };
 
 // static
@@ -518,8 +516,8 @@ void CPWL_Wnd::CreateVScrollBar(const CreateParams& cp) {
 }
 
 void CPWL_Wnd::SetCapture() {
-  if (SharedCaptureFocusState* pMsgCtrl = GetSharedCaptureFocusState()) {
-    pMsgCtrl->SetCapture(this);
+  if (SharedCaptureFocusState* pSharedState = GetSharedCaptureFocusState()) {
+    pSharedState->SetCapture(this);
   }
 }
 
@@ -527,23 +525,25 @@ void CPWL_Wnd::ReleaseCapture() {
   for (const auto& pChild : m_Children)
     pChild->ReleaseCapture();
 
-  if (SharedCaptureFocusState* pMsgCtrl = GetSharedCaptureFocusState()) {
-    pMsgCtrl->ReleaseCapture();
+  if (SharedCaptureFocusState* pSharedState = GetSharedCaptureFocusState()) {
+    pSharedState->ReleaseCapture();
   }
 }
 
 void CPWL_Wnd::SetFocus() {
-  if (SharedCaptureFocusState* pMsgCtrl = GetSharedCaptureFocusState()) {
-    if (!pMsgCtrl->IsMainCaptureKeyboard(this))
-      pMsgCtrl->KillFocus();
-    pMsgCtrl->SetFocus(this);
+  if (SharedCaptureFocusState* pSharedState = GetSharedCaptureFocusState()) {
+    if (!pSharedState->IsMainCaptureKeyboard(this)) {
+      pSharedState->ReleaseFocus();
+    }
+    pSharedState->SetFocus(this);
   }
 }
 
 void CPWL_Wnd::KillFocus() {
-  if (SharedCaptureFocusState* pMsgCtrl = GetSharedCaptureFocusState()) {
-    if (pMsgCtrl->IsWndCaptureKeyboard(this))
-      pMsgCtrl->KillFocus();
+  if (SharedCaptureFocusState* pSharedState = GetSharedCaptureFocusState()) {
+    if (pSharedState->IsWndCaptureKeyboard(this)) {
+      pSharedState->ReleaseFocus();
+    }
   }
 }
 
@@ -655,7 +655,7 @@ void CPWL_Wnd::DestroySharedCaptureFocusState() {
   if (!pSharedCaptureFocusState) {
     return;
   }
-  const bool owned = pSharedCaptureFocusState->IsWndCreated(this);
+  const bool owned = pSharedCaptureFocusState->IsOwnedByWnd(this);
   pSharedCaptureFocusState->RemoveWnd(this);
   if (owned) {
     delete pSharedCaptureFocusState;
