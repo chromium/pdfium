@@ -46,10 +46,14 @@ CPWL_Wnd::CreateParams::CreateParams(const CreateParams& other) = default;
 
 CPWL_Wnd::CreateParams::~CreateParams() = default;
 
-class CPWL_MsgControl final : public Observable {
+// For a compound window (a window containing a child window as occurs in a
+// list box, combo box, or even a scroll bar), this class contains information
+// shared amongst the parent and children.
+class CPWL_Wnd::SharedCaptureFocusState final : public Observable {
  public:
-  explicit CPWL_MsgControl(const CPWL_Wnd* pWnd) : m_pCreatedWnd(pWnd) {}
-  ~CPWL_MsgControl() = default;
+  explicit SharedCaptureFocusState(const CPWL_Wnd* pWnd)
+      : m_pCreatedWnd(pWnd) {}
+  ~SharedCaptureFocusState() = default;
 
   bool IsWndCreated(const CPWL_Wnd* pWnd) const {
     return m_pCreatedWnd == pWnd;
@@ -76,7 +80,7 @@ class CPWL_MsgControl final : public Observable {
   }
 
   void KillFocus() {
-    ObservedPtr<CPWL_MsgControl> observed_ptr(this);
+    ObservedPtr<SharedCaptureFocusState> observed_ptr(this);
     if (!m_KeyboardPaths.empty()) {
       CPWL_Wnd* pWnd = m_KeyboardPaths.front();
       if (pWnd)
@@ -165,7 +169,7 @@ void CPWL_Wnd::Realize() {
     m_rcClip.Inflate(1.0f, 1.0f);
     m_rcClip.Normalize();
   }
-  CreateMsgControl();
+  CreateSharedCaptureFocusState();
 
   CreateParams ccp = m_CreationParams;
   ccp.dwFlags &= 0xFFFF0000L;  // remove sub styles
@@ -203,7 +207,7 @@ void CPWL_Wnd::Destroy() {
       m_pParent->RemoveChild(this);
     m_bCreated = false;
   }
-  DestroyMsgControl();
+  DestroySharedCaptureFocusState();
 }
 
 bool CPWL_Wnd::Move(const CFX_FloatRect& rcNew, bool bReset, bool bRefresh) {
@@ -514,20 +518,22 @@ void CPWL_Wnd::CreateVScrollBar(const CreateParams& cp) {
 }
 
 void CPWL_Wnd::SetCapture() {
-  if (CPWL_MsgControl* pMsgCtrl = GetMsgControl())
+  if (SharedCaptureFocusState* pMsgCtrl = GetSharedCaptureFocusState()) {
     pMsgCtrl->SetCapture(this);
+  }
 }
 
 void CPWL_Wnd::ReleaseCapture() {
   for (const auto& pChild : m_Children)
     pChild->ReleaseCapture();
 
-  if (CPWL_MsgControl* pMsgCtrl = GetMsgControl())
+  if (SharedCaptureFocusState* pMsgCtrl = GetSharedCaptureFocusState()) {
     pMsgCtrl->ReleaseCapture();
+  }
 }
 
 void CPWL_Wnd::SetFocus() {
-  if (CPWL_MsgControl* pMsgCtrl = GetMsgControl()) {
+  if (SharedCaptureFocusState* pMsgCtrl = GetSharedCaptureFocusState()) {
     if (!pMsgCtrl->IsMainCaptureKeyboard(this))
       pMsgCtrl->KillFocus();
     pMsgCtrl->SetFocus(this);
@@ -535,7 +541,7 @@ void CPWL_Wnd::SetFocus() {
 }
 
 void CPWL_Wnd::KillFocus() {
-  if (CPWL_MsgControl* pMsgCtrl = GetMsgControl()) {
+  if (SharedCaptureFocusState* pMsgCtrl = GetSharedCaptureFocusState()) {
     if (pMsgCtrl->IsWndCaptureKeyboard(this))
       pMsgCtrl->KillFocus();
   }
@@ -636,25 +642,29 @@ void CPWL_Wnd::SetCursor() {
     GetFillerNotify()->SetCursor(GetCreationParams()->eCursorType);
 }
 
-void CPWL_Wnd::CreateMsgControl() {
-  if (!m_CreationParams.pMsgControl)
-    m_CreationParams.pMsgControl = new CPWL_MsgControl(this);
+void CPWL_Wnd::CreateSharedCaptureFocusState() {
+  if (!m_CreationParams.pSharedCaptureFocusState) {
+    m_CreationParams.pSharedCaptureFocusState =
+        new SharedCaptureFocusState(this);
+  }
 }
 
-void CPWL_Wnd::DestroyMsgControl() {
-  CPWL_MsgControl* pMsgControl = GetMsgControl();
-  if (!pMsgControl) {
+void CPWL_Wnd::DestroySharedCaptureFocusState() {
+  SharedCaptureFocusState* pSharedCaptureFocusState =
+      GetSharedCaptureFocusState();
+  if (!pSharedCaptureFocusState) {
     return;
   }
-  const bool owned = pMsgControl->IsWndCreated(this);
-  pMsgControl->RemoveWnd(this);
+  const bool owned = pSharedCaptureFocusState->IsWndCreated(this);
+  pSharedCaptureFocusState->RemoveWnd(this);
   if (owned) {
-    delete pMsgControl;
+    delete pSharedCaptureFocusState;
   }
 }
 
-CPWL_MsgControl* CPWL_Wnd::GetMsgControl() const {
-  return m_CreationParams.pMsgControl;
+CPWL_Wnd::SharedCaptureFocusState* CPWL_Wnd::GetSharedCaptureFocusState()
+    const {
+  return m_CreationParams.pSharedCaptureFocusState;
 }
 
 bool CPWL_Wnd::IsCaptureMouse() const {
@@ -662,17 +672,17 @@ bool CPWL_Wnd::IsCaptureMouse() const {
 }
 
 bool CPWL_Wnd::IsWndCaptureMouse(const CPWL_Wnd* pWnd) const {
-  CPWL_MsgControl* pCtrl = GetMsgControl();
+  SharedCaptureFocusState* pCtrl = GetSharedCaptureFocusState();
   return pCtrl && pCtrl->IsWndCaptureMouse(pWnd);
 }
 
 bool CPWL_Wnd::IsWndCaptureKeyboard(const CPWL_Wnd* pWnd) const {
-  CPWL_MsgControl* pCtrl = GetMsgControl();
+  SharedCaptureFocusState* pCtrl = GetSharedCaptureFocusState();
   return pCtrl && pCtrl->IsWndCaptureKeyboard(pWnd);
 }
 
 bool CPWL_Wnd::IsFocused() const {
-  CPWL_MsgControl* pCtrl = GetMsgControl();
+  SharedCaptureFocusState* pCtrl = GetSharedCaptureFocusState();
   return pCtrl && pCtrl->IsMainCaptureKeyboard(this);
 }
 

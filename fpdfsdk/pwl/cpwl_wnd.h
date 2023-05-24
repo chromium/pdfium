@@ -22,7 +22,6 @@
 #include "public/fpdf_fwlevent.h"
 
 class CPWL_Edit;
-class CPWL_MsgControl;
 class CPWL_ScrollBar;
 class IPVT_FontMap;
 struct PWL_SCROLL_INFO;
@@ -80,6 +79,8 @@ class CPWL_Wnd : public Observable {
   static const CFX_Color kDefaultBlackColor;
   static const CFX_Color kDefaultWhiteColor;
 
+  class SharedCaptureFocusState;
+
   class ProviderIface : public Observable {
    public:
     virtual ~ProviderIface() = default;
@@ -120,7 +121,8 @@ class CPWL_Wnd : public Observable {
 
     // Ignore, used internally only:
     // TODO(tsepez): fix murky ownership, bare delete.
-    UNOWNED_PTR_EXCLUSION CPWL_MsgControl* pMsgControl = nullptr;
+    UNOWNED_PTR_EXCLUSION SharedCaptureFocusState* pSharedCaptureFocusState =
+        nullptr;
     IPWL_FillerNotify::CursorStyle eCursorType =
         IPWL_FillerNotify::CursorStyle::kArrow;
   };
@@ -280,9 +282,9 @@ class CPWL_Wnd : public Observable {
   void CreateVScrollBar(const CreateParams& cp);
 
   void AdjustStyle();
-  void CreateMsgControl();
-  void DestroyMsgControl();
-  CPWL_MsgControl* GetMsgControl() const;
+  void CreateSharedCaptureFocusState();
+  void DestroySharedCaptureFocusState();
+  SharedCaptureFocusState* GetSharedCaptureFocusState() const;
 
   CreateParams m_CreationParams;
   std::unique_ptr<IPWL_FillerNotify::PerWindowData> m_pAttachedData;
