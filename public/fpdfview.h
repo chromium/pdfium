@@ -4,6 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+// This is the main header file for embedders of PDFium. It provides APIs to
+// initialize the library, load documents, and render pages, amongst other
+// things.
+//
+// NOTE: None of the PDFium APIs are thread-safe. They expect to be called
+// from a single thread. Barring that, embedders are required to ensure (via
+// a mutex or similar) that only a single PDFium call can be made at a time.
+//
 // NOTE: External docs refer to this file as "fpdfview.h", so do not rename
 // despite lack of consistency with other public files.
 
