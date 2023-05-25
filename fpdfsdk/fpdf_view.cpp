@@ -731,8 +731,9 @@ FPDF_EXPORT FPDF_RECORDER FPDF_CALLCONV FPDF_RenderPageSkp(FPDF_PAGE page,
                                                            int size_x,
                                                            int size_y) {
   auto skDevice = std::make_unique<CFX_DefaultRenderDevice>();
-  std::unique_ptr<SkPictureRecorder> recorder =
-      skDevice->CreateRecorder(SkRect::MakeWH(size_x, size_y));
+  auto recorder = std::make_unique<SkPictureRecorder>();
+  recorder->beginRecording(SkRect::MakeWH(size_x, size_y));
+  skDevice->AttachCanvas(recorder->getRecordingCanvas());
 
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
   if (!pPage) {

@@ -64,13 +64,13 @@
 #include "third_party/skia/include/core/SkPath.h"
 #include "third_party/skia/include/core/SkPathEffect.h"
 #include "third_party/skia/include/core/SkPathUtils.h"
-#include "third_party/skia/include/core/SkPictureRecorder.h"
 #include "third_party/skia/include/core/SkRSXform.h"
 #include "third_party/skia/include/core/SkRect.h"
 #include "third_party/skia/include/core/SkRefCnt.h"
 #include "third_party/skia/include/core/SkSamplingOptions.h"
 #include "third_party/skia/include/core/SkShader.h"
 #include "third_party/skia/include/core/SkStream.h"
+#include "third_party/skia/include/core/SkSurface.h"
 #include "third_party/skia/include/core/SkTextBlob.h"
 #include "third_party/skia/include/core/SkTypeface.h"
 #include "third_party/skia/include/effects/SkDashPathEffect.h"
@@ -832,10 +832,8 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
     bool bGroupKnockout)
     : m_pBitmap(std::move(pBitmap)),
       m_pBackdropBitmap(pBackdropBitmap),
-      m_pRecorder(nullptr),
       m_bRgbByteOrder(bRgbByteOrder),
       m_bGroupKnockout(bGroupKnockout) {
-  SkBitmap skBitmap;
   SkColorType color_type;
   const int bpp = m_pBitmap->GetBPP();
   if (bpp == 8) {
@@ -865,14 +863,13 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
   SkImageInfo imageInfo =
       SkImageInfo::Make(m_pBitmap->GetWidth(), m_pBitmap->GetHeight(),
                         color_type, kPremul_SkAlphaType);
-  skBitmap.installPixels(imageInfo, m_pBitmap->GetBuffer().data(),
-                         m_pBitmap->GetPitch());
-  m_pCanvas = new SkCanvas(skBitmap);
+  surface_ = SkSurfaces::WrapPixels(imageInfo, m_pBitmap->GetBuffer().data(),
+                                    m_pBitmap->GetPitch());
+  m_pCanvas = surface_->getCanvas();
 }
 
-CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkPictureRecorder* recorder)
-    : m_pRecorder(recorder), m_bGroupKnockout(false) {
-  m_pCanvas = m_pRecorder->getRecordingCanvas();
+CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkCanvas* canvas)
+    : m_pCanvas(canvas), m_bGroupKnockout(false) {
   int width = m_pCanvas->imageInfo().width();
   int height = m_pCanvas->imageInfo().height();
   DCHECK_EQ(kUnknown_SkColorType, m_pCanvas->imageInfo().colorType());
@@ -895,10 +892,6 @@ CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver() {
     m_pOriginalBitmap->TransferBitmap(/*dest_left=*/0, /*dest_top=*/0, width,
                                       height, m_pBitmap, /*src_left=*/0,
                                       /*src_top=*/0);
-  }
-
-  if (!m_pRecorder) {
-    delete m_pCanvas.ExtractAsDangling();
   }
 }
 
@@ -1809,15 +1802,6 @@ void CFX_DefaultRenderDevice::Clear(uint32_t color) {
   static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver())->Clear(color);
 }
 
-std::unique_ptr<SkPictureRecorder> CFX_DefaultRenderDevice::CreateRecorder(
-    const SkRect& bounds) {
-  auto recorder = std::make_unique<SkPictureRecorder>();
-  recorder->beginRecording(bounds);
-
-  SetDeviceDriver(std::make_unique<CFX_SkiaDeviceDriver>(recorder.get()));
-  return recorder;
-}
-
 bool CFX_DefaultRenderDevice::AttachSkiaImpl(
     RetainPtr<CFX_DIBitmap> pBitmap,
     bool bRgbByteOrder,
@@ -1836,10 +1820,11 @@ bool CFX_DefaultRenderDevice::AttachSkiaImpl(
   return true;
 }
 
-bool CFX_DefaultRenderDevice::AttachRecorder(SkPictureRecorder* recorder) {
-  if (!recorder)
+bool CFX_DefaultRenderDevice::AttachCanvas(SkCanvas* canvas) {
+  if (!canvas) {
     return false;
-  SetDeviceDriver(std::make_unique<CFX_SkiaDeviceDriver>(recorder));
+  }
+  SetDeviceDriver(std::make_unique<CFX_SkiaDeviceDriver>(canvas));
   return true;
 }
 

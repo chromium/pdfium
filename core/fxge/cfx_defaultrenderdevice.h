@@ -13,8 +13,7 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/fx_dib.h"
 
-class SkPictureRecorder;
-struct SkRect;
+class SkCanvas;
 
 class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
  public:
@@ -34,9 +33,8 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
               RetainPtr<CFX_DIBitmap> pBackdropBitmap);
 
 #if defined(_SKIA_SUPPORT_)
-  bool AttachRecorder(SkPictureRecorder* recorder);
+  bool AttachCanvas(SkCanvas* canvas);
   void Clear(uint32_t color);
-  std::unique_ptr<SkPictureRecorder> CreateRecorder(const SkRect& bounds);
   bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                        const RetainPtr<CFX_DIBBase>& pMask,
                        int left,
