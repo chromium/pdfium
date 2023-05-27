@@ -236,6 +236,8 @@ pdfium_embeddertest_source_set("embeddertests") {
     deps += [
       ":fxge",
       "../../fpdfsdk",
+      "../fpdfapi/page",
+      "../fpdfapi/render",
       "//skia",
     ]
   }

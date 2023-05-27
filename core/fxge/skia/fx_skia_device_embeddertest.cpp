@@ -5,7 +5,11 @@
 #include "core/fxge/skia/fx_skia_device.h"
 
 #include <memory>
+#include <set>
+#include <utility>
 
+#include "core/fpdfapi/page/cpdf_page.h"
+#include "core/fpdfapi/render/cpdf_pagerendercontext.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_font.h"
@@ -15,12 +19,21 @@
 #include "core/fxge/cfx_textrenderoptions.h"
 #include "core/fxge/text_char_pos.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
+#include "fpdfsdk/cpdfsdk_renderpage.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdfview.h"
+#include "testing/embedder_test.h"
+#include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/skia/include/core/SkPictureRecorder.h"
+#include "third_party/skia/include/core/SkCanvas.h"
+#include "third_party/skia/include/core/SkImage.h"
+#include "third_party/skia/include/utils/SkNoDrawCanvas.h"
 
 namespace {
+
+using ::testing::NiceMock;
+using ::testing::SizeIs;
+using ::testing::WithArg;
 
 struct State {
   enum class Change { kNo, kYes };
@@ -141,6 +154,47 @@ void Harness(void (*Test)(CFX_SkiaDeviceDriver*, const State&),
   EXPECT_EQ(state.m_pixel, pixel);
 }
 
+void RenderPageToSkCanvas(FPDF_PAGE page,
+                          int start_x,
+                          int start_y,
+                          int size_x,
+                          int size_y,
+                          SkCanvas* canvas) {
+  CPDF_Page* cpdf_page = CPDFPageFromFPDFPage(page);
+
+  auto context = std::make_unique<CPDF_PageRenderContext>();
+  CPDF_PageRenderContext* unowned_context = context.get();
+
+  CPDF_Page::RenderContextClearer clearer(cpdf_page);
+  cpdf_page->SetRenderContext(std::move(context));
+
+  auto default_device = std::make_unique<CFX_DefaultRenderDevice>();
+  default_device->AttachCanvas(canvas);
+  unowned_context->m_pDevice = std::move(default_device);
+
+  CPDFSDK_RenderPageWithContext(unowned_context, cpdf_page, start_x, start_y,
+                                size_x, size_y, /*rotate=*/0, /*flags=*/0,
+                                /*color_scheme=*/nullptr,
+                                /*need_to_restore=*/true, /*pause=*/nullptr);
+}
+
+class MockCanvas : public SkNoDrawCanvas {
+ public:
+  MockCanvas(int width, int height) : SkNoDrawCanvas(width, height) {}
+
+  MOCK_METHOD(void,
+              onDrawImageRect2,
+              (const SkImage*,
+               const SkRect&,
+               const SkRect&,
+               const SkSamplingOptions&,
+               const SkPaint*,
+               SrcRectConstraint),
+              (override));
+};
+
+using FxgeSkiaEmbedderTest = EmbedderTest;
+
 }  // namespace
 
 TEST(fxge, SkiaStateEmpty) {
@@ -181,4 +235,37 @@ TEST(fxge, SkiaStateOOSClip) {
   if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
     return;
   Harness(&OutOfSequenceClipTest, {});
+}
+
+TEST_F(FxgeSkiaEmbedderTest, RenderBigImageTwice) {
+  static constexpr int kCanvasWidth = 306;
+  static constexpr int kCanvasHeight = 396;
+
+  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+    GTEST_SKIP() << "Skia is not the default renderer";
+  }
+
+  ASSERT_TRUE(OpenDocument("bug_2034.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  std::set<int> image_ids;
+  NiceMock<MockCanvas> canvas(kCanvasWidth, kCanvasHeight);
+  EXPECT_CALL(canvas, onDrawImageRect2)
+      .WillRepeatedly(WithArg<0>([&image_ids](const SkImage* image) {
+        ASSERT_TRUE(image);
+        image_ids.insert(image->uniqueID());
+      }));
+
+  RenderPageToSkCanvas(page, /*start_x=*/0, /*start_y=*/0,
+                       /*size_x=*/kCanvasWidth, /*size_y=*/kCanvasHeight / 2,
+                       &canvas);
+  RenderPageToSkCanvas(page, /*start_x=*/0, /*start_y=*/kCanvasHeight / 2,
+                       /*size_x=*/kCanvasWidth, /*size_y=*/kCanvasHeight / 2,
+                       &canvas);
+
+  // TODO(crbug.com/pdfium/2034): This should be 1, not 2.
+  EXPECT_THAT(image_ids, SizeIs(2));
+
+  UnloadPage(page);
 }
