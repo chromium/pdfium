@@ -1,0 +1,1449 @@
+diff --git a/third_party/libopenjpeg/j2k.c b/third_party/libopenjpeg/j2k.c
+index 9b06e7ec8..e2e048760 100644
+--- a/third_party/libopenjpeg/j2k.c
++++ b/third_party/libopenjpeg/j2k.c
+@@ -6685,8 +6685,9 @@ static OPJ_BOOL opj_j2k_read_cpf(opj_j2k_t *p_j2k,
+ /* J2K / JPT decoder interface                                             */
+ /* ----------------------------------------------------------------------- */
+ 
+-void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters)
++void opj_j2k_setup_decoder(void *p_j2k, opj_dparameters_t *parameters)
+ {
++    opj_j2k_t* j2k = (opj_j2k_t*)p_j2k;
+     if (j2k && parameters) {
+         j2k->m_cp.m_specific_param.m_dec.m_layer = parameters->cp_layer;
+         j2k->m_cp.m_specific_param.m_dec.m_reduce = parameters->cp_reduce;
+@@ -6700,15 +6701,17 @@ void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters)
+     }
+ }
+ 
+-void opj_j2k_decoder_set_strict_mode(opj_j2k_t *j2k, OPJ_BOOL strict)
++void opj_j2k_decoder_set_strict_mode(void *p_j2k, OPJ_BOOL strict)
+ {
++    opj_j2k_t* j2k = (opj_j2k_t*)p_j2k;
+     if (j2k) {
+         j2k->m_cp.strict = strict;
+     }
+ }
+ 
+-OPJ_BOOL opj_j2k_set_threads(opj_j2k_t *j2k, OPJ_UINT32 num_threads)
++OPJ_BOOL opj_j2k_set_threads(void *p_j2k, OPJ_UINT32 num_threads)
+ {
++    opj_j2k_t* j2k = (opj_j2k_t*)p_j2k;
+     /* Currently we pass the thread-pool to the tcd, so we cannot re-set it */
+     /* afterwards */
+     if (opj_has_thread_support() && j2k->m_tcd == NULL) {
+@@ -7613,11 +7616,12 @@ static OPJ_BOOL opj_j2k_is_imf_compliant(opj_cparameters_t *parameters,
+ }
+ 
+ 
+-OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
++OPJ_BOOL opj_j2k_setup_encoder(void *p_j2k,
+                                opj_cparameters_t *parameters,
+                                opj_image_t *image,
+                                opj_event_mgr_t * p_manager)
+ {
++    opj_j2k_t* j2k = (opj_j2k_t*)p_j2k;
+     OPJ_UINT32 i, j, tileno, numpocs_tile;
+     opj_cp_t *cp = 00;
+     OPJ_UINT32 cblkw, cblkh;
+@@ -7666,10 +7670,10 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
+         return OPJ_FALSE;
+     }
+ 
+-    p_j2k->m_specific_param.m_encoder.m_nb_comps = image->numcomps;
++    j2k->m_specific_param.m_encoder.m_nb_comps = image->numcomps;
+ 
+     /* keep a link to cp so that we can destroy it later in j2k_destroy_compress */
+-    cp = &(p_j2k->m_cp);
++    cp = &(j2k->m_cp);
+ 
+     /* set default values for cp */
+     cp->tw = 1;
+@@ -7834,7 +7838,7 @@ OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
+     }
+ 
+     if (OPJ_IS_CINEMA(parameters->rsiz) || OPJ_IS_IMF(parameters->rsiz)) {
+-        p_j2k->m_specific_param.m_encoder.m_TLM = OPJ_TRUE;
++        j2k->m_specific_param.m_encoder.m_TLM = OPJ_TRUE;
+     }
+ 
+     /* Manage profiles and applications and set RSIZ */
+@@ -8379,7 +8383,7 @@ static OPJ_BOOL opj_j2k_add_tlmarker(OPJ_UINT32 tileno,
+  * -----------------------------------------------------------------------
+  */
+ 
+-OPJ_BOOL opj_j2k_end_decompress(opj_j2k_t *p_j2k,
++OPJ_BOOL opj_j2k_end_decompress(void *p_j2k,
+                                 opj_stream_private_t *p_stream,
+                                 opj_event_mgr_t * p_manager
+                                )
+@@ -8391,10 +8395,11 @@ OPJ_BOOL opj_j2k_end_decompress(opj_j2k_t *p_j2k,
+ }
+ 
+ OPJ_BOOL opj_j2k_read_header(opj_stream_private_t *p_stream,
+-                             opj_j2k_t* p_j2k,
++                             void* j2k,
+                              opj_image_t** p_image,
+                              opj_event_mgr_t* p_manager)
+ {
++    opj_j2k_t *p_j2k = (opj_j2k_t*)j2k;
+     /* preconditions */
+     assert(p_j2k != 00);
+     assert(p_stream != 00);
+@@ -9178,8 +9183,9 @@ static const opj_dec_memory_marker_handler_t * opj_j2k_get_marker_handler(
+     return e;
+ }
+ 
+-void opj_j2k_destroy(opj_j2k_t *p_j2k)
++void opj_j2k_destroy(void *j2k)
+ {
++    opj_j2k_t *p_j2k = (opj_j2k_t*)j2k;
+     if (p_j2k == 00) {
+         return;
+     }
+@@ -9518,7 +9524,7 @@ static OPJ_BOOL opj_j2k_need_nb_tile_parts_correction(opj_stream_private_t
+     return OPJ_TRUE;
+ }
+ 
+-OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
++OPJ_BOOL opj_j2k_read_tile_header(void * j2k,
+                                   OPJ_UINT32 * p_tile_index,
+                                   OPJ_UINT32 * p_data_size,
+                                   OPJ_INT32 * p_tile_x0, OPJ_INT32 * p_tile_y0,
+@@ -9528,6 +9534,7 @@ OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
+                                   opj_stream_private_t *p_stream,
+                                   opj_event_mgr_t * p_manager)
+ {
++    opj_j2k_t* p_j2k = (opj_j2k_t*)j2k;
+     OPJ_UINT32 l_current_marker = J2K_MS_SOT;
+     OPJ_UINT32 l_marker_size;
+     const opj_dec_memory_marker_handler_t * l_marker_handler = 00;
+@@ -9827,13 +9834,14 @@ OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
+     return OPJ_TRUE;
+ }
+ 
+-OPJ_BOOL opj_j2k_decode_tile(opj_j2k_t * p_j2k,
++OPJ_BOOL opj_j2k_decode_tile(void * j2k,
+                              OPJ_UINT32 p_tile_index,
+                              OPJ_BYTE * p_data,
+                              OPJ_UINT32 p_data_size,
+                              opj_stream_private_t *p_stream,
+                              opj_event_mgr_t * p_manager)
+ {
++    opj_j2k_t* p_j2k = (opj_j2k_t*)j2k;
+     OPJ_UINT32 l_current_marker;
+     OPJ_BYTE l_data [2];
+     opj_tcp_t * l_tcp;
+@@ -10200,11 +10208,12 @@ static OPJ_BOOL opj_j2k_update_image_dimensions(opj_image_t* p_image,
+     return OPJ_TRUE;
+ }
+ 
+-OPJ_BOOL opj_j2k_set_decoded_components(opj_j2k_t *p_j2k,
++OPJ_BOOL opj_j2k_set_decoded_components(void *j2k,
+                                         OPJ_UINT32 numcomps,
+                                         const OPJ_UINT32* comps_indices,
+                                         opj_event_mgr_t * p_manager)
+ {
++    opj_j2k_t* p_j2k = (opj_j2k_t*)j2k;
+     OPJ_UINT32 i;
+     OPJ_BOOL* already_mapped;
+ 
+@@ -10260,12 +10269,13 @@ OPJ_BOOL opj_j2k_set_decoded_components(opj_j2k_t *p_j2k,
+ }
+ 
+ 
+-OPJ_BOOL opj_j2k_set_decode_area(opj_j2k_t *p_j2k,
++OPJ_BOOL opj_j2k_set_decode_area(void *j2k,
+                                  opj_image_t* p_image,
+                                  OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
+                                  OPJ_INT32 p_end_x, OPJ_INT32 p_end_y,
+                                  opj_event_mgr_t * p_manager)
+ {
++    opj_j2k_t* p_j2k = (opj_j2k_t*)j2k;
+     opj_cp_t * l_cp = &(p_j2k->m_cp);
+     opj_image_t * l_image = p_j2k->m_private_image;
+     OPJ_BOOL ret;
+@@ -11200,8 +11210,9 @@ static void opj_j2k_dump_tile_info(opj_tcp_t * l_default_tile,
+     }
+ }
+ 
+-void j2k_dump(opj_j2k_t* p_j2k, OPJ_INT32 flag, FILE* out_stream)
++void j2k_dump(void* j2k, OPJ_INT32 flag, FILE* out_stream)
+ {
++    opj_j2k_t* p_j2k = (opj_j2k_t*)j2k;
+     /* Check if the flag is compatible with j2k file*/
+     if ((flag & OPJ_JP2_INFO) || (flag & OPJ_JP2_IND)) {
+         fprintf(out_stream, "Wrong flag\n");
+@@ -11391,8 +11402,9 @@ void j2k_dump_image_comp_header(opj_image_comp_t* comp_header,
+     }
+ }
+ 
+-opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_t* p_j2k)
++opj_codestream_info_v2_t* j2k_get_cstr_info(void* j2k)
+ {
++    opj_j2k_t* p_j2k = (opj_j2k_t*)j2k;
+     OPJ_UINT32 compno;
+     OPJ_UINT32 numcomps = p_j2k->m_private_image->numcomps;
+     opj_tcp_t *l_default_tile;
+@@ -11467,8 +11479,9 @@ opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_t* p_j2k)
+     return cstr_info;
+ }
+ 
+-opj_codestream_index_t* j2k_get_cstr_index(opj_j2k_t* p_j2k)
++opj_codestream_index_t* j2k_get_cstr_index(void* j2k)
+ {
++    opj_j2k_t* p_j2k = (opj_j2k_t*)j2k;
+     opj_codestream_index_t* l_cstr_index = (opj_codestream_index_t*)
+                                            opj_calloc(1, sizeof(opj_codestream_index_t));
+     if (!l_cstr_index) {
+@@ -11972,11 +11985,12 @@ static OPJ_BOOL opj_j2k_move_data_from_codec_to_output_image(opj_j2k_t * p_j2k,
+     return OPJ_TRUE;
+ }
+ 
+-OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
++OPJ_BOOL opj_j2k_decode(void * j2k,
+                         opj_stream_private_t * p_stream,
+                         opj_image_t * p_image,
+                         opj_event_mgr_t * p_manager)
+ {
++    opj_j2k_t* p_j2k = (opj_j2k_t*)j2k;
+     if (!p_image) {
+         return OPJ_FALSE;
+     }
+@@ -12030,12 +12044,13 @@ OPJ_BOOL opj_j2k_decode(opj_j2k_t * p_j2k,
+     return opj_j2k_move_data_from_codec_to_output_image(p_j2k, p_image);
+ }
+ 
+-OPJ_BOOL opj_j2k_get_tile(opj_j2k_t *p_j2k,
++OPJ_BOOL opj_j2k_get_tile(void *j2k,
+                           opj_stream_private_t *p_stream,
+                           opj_image_t* p_image,
+                           opj_event_mgr_t * p_manager,
+                           OPJ_UINT32 tile_index)
+ {
++    opj_j2k_t* p_j2k = (opj_j2k_t*)j2k;
+     OPJ_UINT32 compno;
+     OPJ_UINT32 l_tile_x, l_tile_y;
+     opj_image_comp_t* l_img_comp;
+@@ -12143,10 +12158,11 @@ OPJ_BOOL opj_j2k_get_tile(opj_j2k_t *p_j2k,
+     return opj_j2k_move_data_from_codec_to_output_image(p_j2k, p_image);
+ }
+ 
+-OPJ_BOOL opj_j2k_set_decoded_resolution_factor(opj_j2k_t *p_j2k,
++OPJ_BOOL opj_j2k_set_decoded_resolution_factor(void *j2k,
+         OPJ_UINT32 res_factor,
+         opj_event_mgr_t * p_manager)
+ {
++    opj_j2k_t* p_j2k = (opj_j2k_t*)j2k;
+     OPJ_UINT32 it_comp;
+ 
+     p_j2k->m_cp.m_specific_param.m_dec.m_reduce = res_factor;
+@@ -12177,10 +12193,11 @@ OPJ_BOOL opj_j2k_set_decoded_resolution_factor(opj_j2k_t *p_j2k,
+ /* ----------------------------------------------------------------------- */
+ 
+ OPJ_BOOL opj_j2k_encoder_set_extra_options(
+-    opj_j2k_t *p_j2k,
++    void *j2k,
+     const char* const* p_options,
+     opj_event_mgr_t * p_manager)
+ {
++    opj_j2k_t* p_j2k = (opj_j2k_t*)j2k;
+     const char* const* p_option_iter;
+ 
+     if (p_options == NULL) {
+@@ -12239,10 +12256,11 @@ OPJ_BOOL opj_j2k_encoder_set_extra_options(
+ 
+ /* ----------------------------------------------------------------------- */
+ 
+-OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
++OPJ_BOOL opj_j2k_encode(void * j2k,
+                         opj_stream_private_t *p_stream,
+                         opj_event_mgr_t * p_manager)
+ {
++    opj_j2k_t* p_j2k = (opj_j2k_t*)j2k;
+     OPJ_UINT32 i, j;
+     OPJ_UINT32 l_nb_tiles;
+     OPJ_SIZE_T l_max_tile_size = 0, l_current_tile_size;
+@@ -12347,10 +12365,11 @@ OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
+     return OPJ_TRUE;
+ }
+ 
+-OPJ_BOOL opj_j2k_end_compress(opj_j2k_t *p_j2k,
++OPJ_BOOL opj_j2k_end_compress(void *j2k,
+                               opj_stream_private_t *p_stream,
+                               opj_event_mgr_t * p_manager)
+ {
++    opj_j2k_t* p_j2k = (opj_j2k_t*)j2k;
+     /* customization of the encoding */
+     if (! opj_j2k_setup_end_compress(p_j2k, p_manager)) {
+         return OPJ_FALSE;
+@@ -12363,11 +12382,12 @@ OPJ_BOOL opj_j2k_end_compress(opj_j2k_t *p_j2k,
+     return OPJ_TRUE;
+ }
+ 
+-OPJ_BOOL opj_j2k_start_compress(opj_j2k_t *p_j2k,
++OPJ_BOOL opj_j2k_start_compress(void *j2k,
+                                 opj_stream_private_t *p_stream,
+                                 opj_image_t * p_image,
+                                 opj_event_mgr_t * p_manager)
+ {
++    opj_j2k_t* p_j2k = (opj_j2k_t*)j2k;
+     /* preconditions */
+     assert(p_j2k != 00);
+     assert(p_stream != 00);
+@@ -13154,13 +13174,14 @@ static OPJ_BOOL opj_j2k_create_tcd(opj_j2k_t *p_j2k,
+     return OPJ_TRUE;
+ }
+ 
+-OPJ_BOOL opj_j2k_write_tile(opj_j2k_t * p_j2k,
++OPJ_BOOL opj_j2k_write_tile(void * j2k,
+                             OPJ_UINT32 p_tile_index,
+                             OPJ_BYTE * p_data,
+                             OPJ_UINT32 p_data_size,
+                             opj_stream_private_t *p_stream,
+                             opj_event_mgr_t * p_manager)
+ {
++    opj_j2k_t* p_j2k = (opj_j2k_t*)j2k;
+     if (! opj_j2k_pre_write_tile(p_j2k, p_tile_index, p_stream, p_manager)) {
+         opj_event_msg(p_manager, EVT_ERROR,
+                       "Error while opj_j2k_pre_write_tile with tile index = %d\n", p_tile_index);
+diff --git a/third_party/libopenjpeg/j2k.h b/third_party/libopenjpeg/j2k.h
+index 04fba645a..1d824c019 100644
+--- a/third_party/libopenjpeg/j2k.h
++++ b/third_party/libopenjpeg/j2k.h
+@@ -621,15 +621,15 @@ opj_j2k_t;
+ 
+ /**
+ Setup the decoder decoding parameters using user parameters.
+-Decoding parameters are returned in j2k->cp.
+-@param j2k J2K decompressor handle
++Decoding parameters are returned in p_j2k->cp.
++@param p_j2k J2K decompressor handle
+ @param parameters decompression parameters
+ */
+-void opj_j2k_setup_decoder(opj_j2k_t *j2k, opj_dparameters_t *parameters);
++void opj_j2k_setup_decoder(void *p_j2k, opj_dparameters_t *parameters);
+ 
+-void opj_j2k_decoder_set_strict_mode(opj_j2k_t *j2k, OPJ_BOOL strict);
++void opj_j2k_decoder_set_strict_mode(void *j2k, OPJ_BOOL strict);
+ 
+-OPJ_BOOL opj_j2k_set_threads(opj_j2k_t *j2k, OPJ_UINT32 num_threads);
++OPJ_BOOL opj_j2k_set_threads(void *j2k, OPJ_UINT32 num_threads);
+ 
+ /**
+  * Creates a J2K compression structure
+@@ -639,7 +639,7 @@ OPJ_BOOL opj_j2k_set_threads(opj_j2k_t *j2k, OPJ_UINT32 num_threads);
+ opj_j2k_t* opj_j2k_create_compress(void);
+ 
+ 
+-OPJ_BOOL opj_j2k_setup_encoder(opj_j2k_t *p_j2k,
++OPJ_BOOL opj_j2k_setup_encoder(void *p_j2k,
+                                opj_cparameters_t *parameters,
+                                opj_image_t *image,
+                                opj_event_mgr_t * p_manager);
+@@ -658,7 +658,7 @@ const char *opj_j2k_convert_progression_order(OPJ_PROG_ORDER prg_order);
+  * Ends the decompression procedures and possibiliy add data to be read after the
+  * codestream.
+  */
+-OPJ_BOOL opj_j2k_end_decompress(opj_j2k_t *j2k,
++OPJ_BOOL opj_j2k_end_decompress(void *j2k,
+                                 opj_stream_private_t *p_stream,
+                                 opj_event_mgr_t * p_manager);
+ 
+@@ -666,14 +666,14 @@ OPJ_BOOL opj_j2k_end_decompress(opj_j2k_t *j2k,
+  * Reads a jpeg2000 codestream header structure.
+  *
+  * @param p_stream the stream to read data from.
+- * @param p_j2k the jpeg2000 codec.
++ * @param j2k the jpeg2000 codec.
+  * @param p_image FIXME DOC
+  * @param p_manager the user event manager.
+  *
+  * @return true if the box is valid.
+  */
+ OPJ_BOOL opj_j2k_read_header(opj_stream_private_t *p_stream,
+-                             opj_j2k_t* p_j2k,
++                             void* j2k,
+                              opj_image_t** p_image,
+                              opj_event_mgr_t* p_manager);
+ 
+@@ -681,9 +681,9 @@ OPJ_BOOL opj_j2k_read_header(opj_stream_private_t *p_stream,
+ /**
+  * Destroys a jpeg2000 codec.
+  *
+- * @param   p_j2k   the jpeg20000 structure to destroy.
++ * @param   j2k   the jpeg20000 structure to destroy.
+  */
+-void opj_j2k_destroy(opj_j2k_t *p_j2k);
++void opj_j2k_destroy(void *j2k);
+ 
+ /**
+  * Destroys a codestream index structure.
+@@ -694,14 +694,14 @@ void j2k_destroy_cstr_index(opj_codestream_index_t *p_cstr_ind);
+ 
+ /**
+  * Decode tile data.
+- * @param   p_j2k       the jpeg2000 codec.
++ * @param   j2k       the jpeg2000 codec.
+  * @param   p_tile_index
+  * @param p_data       FIXME DOC
+  * @param p_data_size  FIXME DOC
+  * @param   p_stream            the stream to write data to.
+  * @param   p_manager   the user event manager.
+  */
+-OPJ_BOOL opj_j2k_decode_tile(opj_j2k_t * p_j2k,
++OPJ_BOOL opj_j2k_decode_tile(void * j2k,
+                              OPJ_UINT32 p_tile_index,
+                              OPJ_BYTE * p_data,
+                              OPJ_UINT32 p_data_size,
+@@ -710,7 +710,7 @@ OPJ_BOOL opj_j2k_decode_tile(opj_j2k_t * p_j2k,
+ 
+ /**
+  * Reads a tile header.
+- * @param   p_j2k       the jpeg2000 codec.
++ * @param   j2k       the jpeg2000 codec.
+  * @param   p_tile_index FIXME DOC
+  * @param   p_data_size FIXME DOC
+  * @param   p_tile_x0 FIXME DOC
+@@ -722,7 +722,7 @@ OPJ_BOOL opj_j2k_decode_tile(opj_j2k_t * p_j2k,
+  * @param   p_stream            the stream to write data to.
+  * @param   p_manager   the user event manager.
+  */
+-OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
++OPJ_BOOL opj_j2k_read_tile_header(void * j2k,
+                                   OPJ_UINT32 * p_tile_index,
+                                   OPJ_UINT32 * p_data_size,
+                                   OPJ_INT32 * p_tile_x0,
+@@ -737,7 +737,7 @@ OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
+ 
+ /** Sets the indices of the components to decode.
+  *
+- * @param p_j2k         the jpeg2000 codec.
++ * @param j2k         the jpeg2000 codec.
+  * @param numcomps      Number of components to decode.
+  * @param comps_indices Array of num_compts indices (numbering starting at 0)
+  *                      corresponding to the components to decode.
+@@ -745,7 +745,7 @@ OPJ_BOOL opj_j2k_read_tile_header(opj_j2k_t * p_j2k,
+  *
+  * @return OPJ_TRUE in case of success.
+  */
+-OPJ_BOOL opj_j2k_set_decoded_components(opj_j2k_t *p_j2k,
++OPJ_BOOL opj_j2k_set_decoded_components(void *j2k,
+                                         OPJ_UINT32 numcomps,
+                                         const OPJ_UINT32* comps_indices,
+                                         opj_event_mgr_t * p_manager);
+@@ -753,7 +753,7 @@ OPJ_BOOL opj_j2k_set_decoded_components(opj_j2k_t *p_j2k,
+ /**
+  * Sets the given area to be decoded. This function should be called right after opj_read_header and before any tile header reading.
+  *
+- * @param   p_j2k           the jpeg2000 codec.
++ * @param   j2k           the jpeg2000 codec.
+  * @param   p_image     FIXME DOC
+  * @param   p_start_x       the left position of the rectangle to decode (in image coordinates).
+  * @param   p_start_y       the up position of the rectangle to decode (in image coordinates).
+@@ -763,7 +763,7 @@ OPJ_BOOL opj_j2k_set_decoded_components(opj_j2k_t *p_j2k,
+  *
+  * @return  true            if the area could be set.
+  */
+-OPJ_BOOL opj_j2k_set_decode_area(opj_j2k_t *p_j2k,
++OPJ_BOOL opj_j2k_set_decode_area(void *j2k,
+                                  opj_image_t* p_image,
+                                  OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
+                                  OPJ_INT32 p_end_x, OPJ_INT32 p_end_y,
+@@ -780,12 +780,12 @@ opj_j2k_t* opj_j2k_create_decompress(void);
+ /**
+  * Dump some elements from the J2K decompression structure .
+  *
+- *@param p_j2k              the jpeg2000 codec.
++ *@param j2k                the jpeg2000 codec.
+  *@param flag               flag to describe what elements are dump.
+  *@param out_stream         output stream where dump the elements.
+  *
+ */
+-void j2k_dump(opj_j2k_t* p_j2k, OPJ_INT32 flag, FILE* out_stream);
++void j2k_dump(void* j2k, OPJ_INT32 flag, FILE* out_stream);
+ 
+ 
+ 
+@@ -812,20 +812,20 @@ void j2k_dump_image_comp_header(opj_image_comp_t* comp, OPJ_BOOL dev_dump_flag,
+ /**
+  * Get the codestream info from a JPEG2000 codec.
+  *
+- *@param    p_j2k               the component image header to dump.
++ *@param    j2k               the component image header to dump.
+  *
+  *@return   the codestream information extract from the jpg2000 codec
+  */
+-opj_codestream_info_v2_t* j2k_get_cstr_info(opj_j2k_t* p_j2k);
++opj_codestream_info_v2_t* j2k_get_cstr_info(void* j2k);
+ 
+ /**
+  * Get the codestream index from a JPEG2000 codec.
+  *
+- *@param    p_j2k               the component image header to dump.
++ *@param    j2k               the component image header to dump.
+  *
+  *@return   the codestream index extract from the jpg2000 codec
+  */
+-opj_codestream_index_t* j2k_get_cstr_index(opj_j2k_t* p_j2k);
++opj_codestream_index_t* j2k_get_cstr_index(void* j2k);
+ 
+ /**
+  * Decode an image from a JPEG-2000 codestream
+@@ -835,46 +835,46 @@ opj_codestream_index_t* j2k_get_cstr_index(opj_j2k_t* p_j2k);
+  * @param p_manager FIXME DOC
+  * @return FIXME DOC
+ */
+-OPJ_BOOL opj_j2k_decode(opj_j2k_t *j2k,
++OPJ_BOOL opj_j2k_decode(void *j2k,
+                         opj_stream_private_t *p_stream,
+                         opj_image_t *p_image,
+                         opj_event_mgr_t *p_manager);
+ 
+ 
+-OPJ_BOOL opj_j2k_get_tile(opj_j2k_t *p_j2k,
++OPJ_BOOL opj_j2k_get_tile(void *j2k,
+                           opj_stream_private_t *p_stream,
+                           opj_image_t* p_image,
+                           opj_event_mgr_t * p_manager,
+                           OPJ_UINT32 tile_index);
+ 
+-OPJ_BOOL opj_j2k_set_decoded_resolution_factor(opj_j2k_t *p_j2k,
++OPJ_BOOL opj_j2k_set_decoded_resolution_factor(void *j2k,
+         OPJ_UINT32 res_factor,
+         opj_event_mgr_t * p_manager);
+ 
+ /**
+  * Specify extra options for the encoder.
+  *
+- * @param  p_j2k        the jpeg2000 codec.
++ * @param  j2k          the jpeg2000 codec.
+  * @param  p_options    options
+  * @param  p_manager    the user event manager
+  *
+  * @see opj_encoder_set_extra_options() for more details.
+  */
+ OPJ_BOOL opj_j2k_encoder_set_extra_options(
+-    opj_j2k_t *p_j2k,
++    void *j2k,
+     const char* const* p_options,
+     opj_event_mgr_t * p_manager);
+ 
+ /**
+  * Writes a tile.
+- * @param   p_j2k       the jpeg2000 codec.
++ * @param   j2k         the jpeg2000 codec.
+  * @param p_tile_index FIXME DOC
+  * @param p_data FIXME DOC
+  * @param p_data_size FIXME DOC
+  * @param   p_stream            the stream to write data to.
+  * @param   p_manager   the user event manager.
+  */
+-OPJ_BOOL opj_j2k_write_tile(opj_j2k_t * p_j2k,
++OPJ_BOOL opj_j2k_write_tile(void * j2k,
+                             OPJ_UINT32 p_tile_index,
+                             OPJ_BYTE * p_data,
+                             OPJ_UINT32 p_data_size,
+@@ -884,21 +884,21 @@ OPJ_BOOL opj_j2k_write_tile(opj_j2k_t * p_j2k,
+ /**
+  * Encodes an image into a JPEG-2000 codestream
+  */
+-OPJ_BOOL opj_j2k_encode(opj_j2k_t * p_j2k,
++OPJ_BOOL opj_j2k_encode(void * j2k,
+                         opj_stream_private_t *cio,
+                         opj_event_mgr_t * p_manager);
+ 
+ /**
+  * Starts a compression scheme, i.e. validates the codec parameters, writes the header.
+  *
+- * @param   p_j2k       the jpeg2000 codec.
++ * @param   j2k         the jpeg2000 codec.
+  * @param   p_stream            the stream object.
+  * @param   p_image FIXME DOC
+  * @param   p_manager   the user event manager.
+  *
+  * @return true if the codec is valid.
+  */
+-OPJ_BOOL opj_j2k_start_compress(opj_j2k_t *p_j2k,
++OPJ_BOOL opj_j2k_start_compress(void *j2k,
+                                 opj_stream_private_t *p_stream,
+                                 opj_image_t * p_image,
+                                 opj_event_mgr_t * p_manager);
+@@ -907,7 +907,7 @@ OPJ_BOOL opj_j2k_start_compress(opj_j2k_t *p_j2k,
+  * Ends the compression procedures and possibiliy add data to be read after the
+  * codestream.
+  */
+-OPJ_BOOL opj_j2k_end_compress(opj_j2k_t *p_j2k,
++OPJ_BOOL opj_j2k_end_compress(void *j2k,
+                               opj_stream_private_t *cio,
+                               opj_event_mgr_t * p_manager);
+ 
+diff --git a/third_party/libopenjpeg/jp2.c b/third_party/libopenjpeg/jp2.c
+index 44d0c98e5..6db728d18 100644
+--- a/third_party/libopenjpeg/jp2.c
++++ b/third_party/libopenjpeg/jp2.c
+@@ -1609,11 +1609,12 @@ static OPJ_BOOL opj_jp2_read_colr(opj_jp2_t *jp2,
+     return OPJ_TRUE;
+ }
+ 
+-OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
++OPJ_BOOL opj_jp2_decode(void *p_jp2,
+                         opj_stream_private_t *p_stream,
+                         opj_image_t* p_image,
+                         opj_event_mgr_t * p_manager)
+ {
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
+     if (!p_image) {
+         return OPJ_FALSE;
+     }
+@@ -1905,8 +1906,9 @@ static OPJ_BOOL opj_jp2_write_jp(opj_jp2_t *jp2,
+ /* JP2 decoder interface                                             */
+ /* ----------------------------------------------------------------------- */
+ 
+-void opj_jp2_setup_decoder(opj_jp2_t *jp2, opj_dparameters_t *parameters)
++void opj_jp2_setup_decoder(void *p_jp2, opj_dparameters_t *parameters)
+ {
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
+     /* setup the J2K codec */
+     opj_j2k_setup_decoder(jp2->j2k, parameters);
+ 
+@@ -1917,13 +1919,15 @@ void opj_jp2_setup_decoder(opj_jp2_t *jp2, opj_dparameters_t *parameters)
+                                  OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
+ }
+ 
+-void opj_jp2_decoder_set_strict_mode(opj_jp2_t *jp2, OPJ_BOOL strict)
++void opj_jp2_decoder_set_strict_mode(void *p_jp2, OPJ_BOOL strict)
+ {
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
+     opj_j2k_decoder_set_strict_mode(jp2->j2k, strict);
+ }
+ 
+-OPJ_BOOL opj_jp2_set_threads(opj_jp2_t *jp2, OPJ_UINT32 num_threads)
++OPJ_BOOL opj_jp2_set_threads(void *p_jp2, OPJ_UINT32 num_threads)
+ {
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
+     return opj_j2k_set_threads(jp2->j2k, num_threads);
+ }
+ 
+@@ -1931,11 +1935,12 @@ OPJ_BOOL opj_jp2_set_threads(opj_jp2_t *jp2, OPJ_UINT32 num_threads)
+ /* JP2 encoder interface                                             */
+ /* ----------------------------------------------------------------------- */
+ 
+-OPJ_BOOL opj_jp2_setup_encoder(opj_jp2_t *jp2,
++OPJ_BOOL opj_jp2_setup_encoder(void *p_jp2,
+                                opj_cparameters_t *parameters,
+                                opj_image_t *image,
+                                opj_event_mgr_t * p_manager)
+ {
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
+     OPJ_UINT32 i;
+     OPJ_UINT32 depth_0;
+     OPJ_UINT32 sign;
+@@ -2118,18 +2123,20 @@ OPJ_BOOL opj_jp2_setup_encoder(opj_jp2_t *jp2,
+     return OPJ_TRUE;
+ }
+ 
+-OPJ_BOOL opj_jp2_encode(opj_jp2_t *jp2,
++OPJ_BOOL opj_jp2_encode(void *p_jp2,
+                         opj_stream_private_t *stream,
+                         opj_event_mgr_t * p_manager)
+ {
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
+     return opj_j2k_encode(jp2->j2k, stream, p_manager);
+ }
+ 
+-OPJ_BOOL opj_jp2_end_decompress(opj_jp2_t *jp2,
++OPJ_BOOL opj_jp2_end_decompress(void *p_jp2,
+                                 opj_stream_private_t *cio,
+                                 opj_event_mgr_t * p_manager
+                                )
+ {
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
+     /* preconditions */
+     assert(jp2 != 00);
+     assert(cio != 00);
+@@ -2148,11 +2155,12 @@ OPJ_BOOL opj_jp2_end_decompress(opj_jp2_t *jp2,
+     return opj_j2k_end_decompress(jp2->j2k, cio, p_manager);
+ }
+ 
+-OPJ_BOOL opj_jp2_end_compress(opj_jp2_t *jp2,
++OPJ_BOOL opj_jp2_end_compress(void *p_jp2,
+                               opj_stream_private_t *cio,
+                               opj_event_mgr_t * p_manager
+                              )
+ {
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
+     /* preconditions */
+     assert(jp2 != 00);
+     assert(cio != 00);
+@@ -2476,12 +2484,13 @@ static OPJ_BOOL opj_jp2_exec(opj_jp2_t * jp2,
+     return l_result;
+ }
+ 
+-OPJ_BOOL opj_jp2_start_compress(opj_jp2_t *jp2,
++OPJ_BOOL opj_jp2_start_compress(void *p_jp2,
+                                 opj_stream_private_t *stream,
+                                 opj_image_t * p_image,
+                                 opj_event_mgr_t * p_manager
+                                )
+ {
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
+     /* preconditions */
+     assert(jp2 != 00);
+     assert(stream != 00);
+@@ -2854,11 +2863,12 @@ static OPJ_BOOL opj_jp2_read_boxhdr_char(opj_jp2_box_t *box,
+ }
+ 
+ OPJ_BOOL opj_jp2_read_header(opj_stream_private_t *p_stream,
+-                             opj_jp2_t *jp2,
++                             void *p_jp2,
+                              opj_image_t ** p_image,
+                              opj_event_mgr_t * p_manager
+                             )
+ {
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
+     /* preconditions */
+     assert(jp2 != 00);
+     assert(p_stream != 00);
+@@ -2981,7 +2991,7 @@ static OPJ_BOOL opj_jp2_setup_header_reading(opj_jp2_t *jp2,
+     return OPJ_TRUE;
+ }
+ 
+-OPJ_BOOL opj_jp2_read_tile_header(opj_jp2_t * p_jp2,
++OPJ_BOOL opj_jp2_read_tile_header(void *p_jp2,
+                                   OPJ_UINT32 * p_tile_index,
+                                   OPJ_UINT32 * p_data_size,
+                                   OPJ_INT32 * p_tile_x0,
+@@ -2994,7 +3004,8 @@ OPJ_BOOL opj_jp2_read_tile_header(opj_jp2_t * p_jp2,
+                                   opj_event_mgr_t * p_manager
+                                  )
+ {
+-    return opj_j2k_read_tile_header(p_jp2->j2k,
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
++    return opj_j2k_read_tile_header(jp2->j2k,
+                                     p_tile_index,
+                                     p_data_size,
+                                     p_tile_x0, p_tile_y0,
+@@ -3005,7 +3016,7 @@ OPJ_BOOL opj_jp2_read_tile_header(opj_jp2_t * p_jp2,
+                                     p_manager);
+ }
+ 
+-OPJ_BOOL opj_jp2_write_tile(opj_jp2_t *p_jp2,
++OPJ_BOOL opj_jp2_write_tile(void *p_jp2,
+                             OPJ_UINT32 p_tile_index,
+                             OPJ_BYTE * p_data,
+                             OPJ_UINT32 p_data_size,
+@@ -3014,11 +3025,12 @@ OPJ_BOOL opj_jp2_write_tile(opj_jp2_t *p_jp2,
+                            )
+ 
+ {
+-    return opj_j2k_write_tile(p_jp2->j2k, p_tile_index, p_data, p_data_size,
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
++    return opj_j2k_write_tile(jp2->j2k, p_tile_index, p_data, p_data_size,
+                               p_stream, p_manager);
+ }
+ 
+-OPJ_BOOL opj_jp2_decode_tile(opj_jp2_t * p_jp2,
++OPJ_BOOL opj_jp2_decode_tile(void *p_jp2,
+                              OPJ_UINT32 p_tile_index,
+                              OPJ_BYTE * p_data,
+                              OPJ_UINT32 p_data_size,
+@@ -3026,12 +3038,14 @@ OPJ_BOOL opj_jp2_decode_tile(opj_jp2_t * p_jp2,
+                              opj_event_mgr_t * p_manager
+                             )
+ {
+-    return opj_j2k_decode_tile(p_jp2->j2k, p_tile_index, p_data, p_data_size,
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
++    return opj_j2k_decode_tile(jp2->j2k, p_tile_index, p_data, p_data_size,
+                                p_stream, p_manager);
+ }
+ 
+-void opj_jp2_destroy(opj_jp2_t *jp2)
++void opj_jp2_destroy(void *p_jp2)
+ {
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
+     if (jp2) {
+         /* destroy the J2K codec */
+         opj_j2k_destroy(jp2->j2k);
+@@ -3098,34 +3112,37 @@ void opj_jp2_destroy(opj_jp2_t *jp2)
+     }
+ }
+ 
+-OPJ_BOOL opj_jp2_set_decoded_components(opj_jp2_t *p_jp2,
++OPJ_BOOL opj_jp2_set_decoded_components(void *p_jp2,
+                                         OPJ_UINT32 numcomps,
+                                         const OPJ_UINT32* comps_indices,
+                                         opj_event_mgr_t * p_manager)
+ {
+-    return opj_j2k_set_decoded_components(p_jp2->j2k,
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
++    return opj_j2k_set_decoded_components(jp2->j2k,
+                                           numcomps, comps_indices,
+                                           p_manager);
+ }
+ 
+-OPJ_BOOL opj_jp2_set_decode_area(opj_jp2_t *p_jp2,
++OPJ_BOOL opj_jp2_set_decode_area(void *p_jp2,
+                                  opj_image_t* p_image,
+                                  OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
+                                  OPJ_INT32 p_end_x, OPJ_INT32 p_end_y,
+                                  opj_event_mgr_t * p_manager
+                                 )
+ {
+-    return opj_j2k_set_decode_area(p_jp2->j2k, p_image, p_start_x, p_start_y,
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
++    return opj_j2k_set_decode_area(jp2->j2k, p_image, p_start_x, p_start_y,
+                                    p_end_x, p_end_y, p_manager);
+ }
+ 
+-OPJ_BOOL opj_jp2_get_tile(opj_jp2_t *p_jp2,
++OPJ_BOOL opj_jp2_get_tile(void *jp2,
+                           opj_stream_private_t *p_stream,
+                           opj_image_t* p_image,
+                           opj_event_mgr_t * p_manager,
+                           OPJ_UINT32 tile_index
+                          )
+ {
++    opj_jp2_t *p_jp2 = (opj_jp2_t*)jp2;
+     if (!p_image) {
+         return OPJ_FALSE;
+     }
+@@ -3234,41 +3251,46 @@ opj_jp2_t* opj_jp2_create(OPJ_BOOL p_is_decoder)
+     return jp2;
+ }
+ 
+-void jp2_dump(opj_jp2_t* p_jp2, OPJ_INT32 flag, FILE* out_stream)
++void jp2_dump(void* p_jp2, OPJ_INT32 flag, FILE* out_stream)
+ {
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
+     /* preconditions */
+     assert(p_jp2 != 00);
+ 
+-    j2k_dump(p_jp2->j2k,
++    j2k_dump(jp2->j2k,
+              flag,
+              out_stream);
+ }
+ 
+-opj_codestream_index_t* jp2_get_cstr_index(opj_jp2_t* p_jp2)
++opj_codestream_index_t* jp2_get_cstr_index(void* p_jp2)
+ {
+-    return j2k_get_cstr_index(p_jp2->j2k);
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
++    return j2k_get_cstr_index(jp2->j2k);
+ }
+ 
+-opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_t* p_jp2)
++opj_codestream_info_v2_t* jp2_get_cstr_info(void* p_jp2)
+ {
+-    return j2k_get_cstr_info(p_jp2->j2k);
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
++    return j2k_get_cstr_info(jp2->j2k);
+ }
+ 
+-OPJ_BOOL opj_jp2_set_decoded_resolution_factor(opj_jp2_t *p_jp2,
++OPJ_BOOL opj_jp2_set_decoded_resolution_factor(void *p_jp2,
+         OPJ_UINT32 res_factor,
+         opj_event_mgr_t * p_manager)
+ {
+-    return opj_j2k_set_decoded_resolution_factor(p_jp2->j2k, res_factor, p_manager);
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
++    return opj_j2k_set_decoded_resolution_factor(jp2->j2k, res_factor, p_manager);
+ }
+ 
+ /* ----------------------------------------------------------------------- */
+ 
+ OPJ_BOOL opj_jp2_encoder_set_extra_options(
+-    opj_jp2_t *p_jp2,
++    void *p_jp2,
+     const char* const* p_options,
+     opj_event_mgr_t * p_manager)
+ {
+-    return opj_j2k_encoder_set_extra_options(p_jp2->j2k, p_options, p_manager);
++    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
++    return opj_j2k_encoder_set_extra_options(jp2->j2k, p_options, p_manager);
+ }
+ 
+ /* ----------------------------------------------------------------------- */
+diff --git a/third_party/libopenjpeg/jp2.h b/third_party/libopenjpeg/jp2.h
+index 173f25119..fd9175a4e 100644
+--- a/third_party/libopenjpeg/jp2.h
++++ b/third_party/libopenjpeg/jp2.h
+@@ -230,38 +230,38 @@ opj_jp2_img_header_writer_handler_t;
+ /**
+ Setup the decoder decoding parameters using user parameters.
+ Decoding parameters are returned in jp2->j2k->cp.
+-@param jp2 JP2 decompressor handle
++@param p_jp2 JP2 decompressor handle
+ @param parameters decompression parameters
+ */
+-void opj_jp2_setup_decoder(opj_jp2_t *jp2, opj_dparameters_t *parameters);
++void opj_jp2_setup_decoder(void *p_jp2, opj_dparameters_t *parameters);
+ 
+ /**
+ Set the strict mode parameter.  When strict mode is enabled, the entire
+ bitstream must be decoded or an error is returned.  When it is disabled,
+ the decoder will decode partial bitstreams.
+-@param jp2 JP2 decompressor handle
++@param p_jp2 JP2 decompressor handle
+ @param strict OPJ_TRUE for strict mode
+ */
+-void opj_jp2_decoder_set_strict_mode(opj_jp2_t *jp2, OPJ_BOOL strict);
++void opj_jp2_decoder_set_strict_mode(void *p_jp2, OPJ_BOOL strict);
+ 
+ /** Allocates worker threads for the compressor/decompressor.
+  *
+- * @param jp2 JP2 decompressor handle
++ * @param p_jp2 JP2 decompressor handle
+  * @param num_threads Number of threads.
+  * @return OPJ_TRUE in case of success.
+  */
+-OPJ_BOOL opj_jp2_set_threads(opj_jp2_t *jp2, OPJ_UINT32 num_threads);
++OPJ_BOOL opj_jp2_set_threads(void *p_jp2, OPJ_UINT32 num_threads);
+ 
+ /**
+  * Decode an image from a JPEG-2000 file stream
+- * @param jp2 JP2 decompressor handle
++ * @param p_jp2 JP2 decompressor handle
+  * @param p_stream  FIXME DOC
+  * @param p_image   FIXME DOC
+  * @param p_manager FIXME DOC
+  *
+  * @return Returns a decoded image if successful, returns NULL otherwise
+ */
+-OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
++OPJ_BOOL opj_jp2_decode(void *p_jp2,
+                         opj_stream_private_t *p_stream,
+                         opj_image_t* p_image,
+                         opj_event_mgr_t * p_manager);
+@@ -270,25 +270,25 @@ OPJ_BOOL opj_jp2_decode(opj_jp2_t *jp2,
+  * Setup the encoder parameters using the current image and using user parameters.
+  * Coding parameters are returned in jp2->j2k->cp.
+  *
+- * @param jp2 JP2 compressor handle
++ * @param p_jp2 JP2 compressor handle
+  * @param parameters compression parameters
+  * @param image input filled image
+  * @param p_manager  FIXME DOC
+  * @return OPJ_TRUE if successful, OPJ_FALSE otherwise
+ */
+-OPJ_BOOL opj_jp2_setup_encoder(opj_jp2_t *jp2,
++OPJ_BOOL opj_jp2_setup_encoder(void *p_jp2,
+                                opj_cparameters_t *parameters,
+                                opj_image_t *image,
+                                opj_event_mgr_t * p_manager);
+ 
+ /**
+ Encode an image into a JPEG-2000 file stream
+-@param jp2      JP2 compressor handle
++@param p_jp2      JP2 compressor handle
+ @param stream    Output buffer stream
+ @param p_manager  event manager
+ @return Returns true if successful, returns false otherwise
+ */
+-OPJ_BOOL opj_jp2_encode(opj_jp2_t *jp2,
++OPJ_BOOL opj_jp2_encode(void *p_jp2,
+                         opj_stream_private_t *stream,
+                         opj_event_mgr_t * p_manager);
+ 
+@@ -296,14 +296,14 @@ OPJ_BOOL opj_jp2_encode(opj_jp2_t *jp2,
+ /**
+  * Starts a compression scheme, i.e. validates the codec parameters, writes the header.
+  *
+- * @param  jp2    the jpeg2000 file codec.
++ * @param  p_jp2    the jpeg2000 file codec.
+  * @param  stream    the stream object.
+  * @param  p_image   FIXME DOC
+  * @param p_manager FIXME DOC
+  *
+  * @return true if the codec is valid.
+  */
+-OPJ_BOOL opj_jp2_start_compress(opj_jp2_t *jp2,
++OPJ_BOOL opj_jp2_start_compress(void *p_jp2,
+                                 opj_stream_private_t *stream,
+                                 opj_image_t * p_image,
+                                 opj_event_mgr_t * p_manager);
+@@ -313,7 +313,7 @@ OPJ_BOOL opj_jp2_start_compress(opj_jp2_t *jp2,
+  * Ends the compression procedures and possibiliy add data to be read after the
+  * codestream.
+  */
+-OPJ_BOOL opj_jp2_end_compress(opj_jp2_t *jp2,
++OPJ_BOOL opj_jp2_end_compress(void *p_jp2,
+                               opj_stream_private_t *cio,
+                               opj_event_mgr_t * p_manager);
+ 
+@@ -323,7 +323,7 @@ OPJ_BOOL opj_jp2_end_compress(opj_jp2_t *jp2,
+  * Ends the decompression procedures and possibiliy add data to be read after the
+  * codestream.
+  */
+-OPJ_BOOL opj_jp2_end_decompress(opj_jp2_t *jp2,
++OPJ_BOOL opj_jp2_end_decompress(void *p_jp2,
+                                 opj_stream_private_t *cio,
+                                 opj_event_mgr_t * p_manager);
+ 
+@@ -331,20 +331,20 @@ OPJ_BOOL opj_jp2_end_decompress(opj_jp2_t *jp2,
+  * Reads a jpeg2000 file header structure.
+  *
+  * @param p_stream the stream to read data from.
+- * @param jp2 the jpeg2000 file header structure.
++ * @param p_jp2 the jpeg2000 file header structure.
+  * @param p_image   FIXME DOC
+  * @param p_manager the user event manager.
+  *
+  * @return true if the box is valid.
+  */
+ OPJ_BOOL opj_jp2_read_header(opj_stream_private_t *p_stream,
+-                             opj_jp2_t *jp2,
++                             void *p_jp2,
+                              opj_image_t ** p_image,
+                              opj_event_mgr_t * p_manager);
+ 
+ /** Sets the indices of the components to decode.
+  *
+- * @param jp2 JP2 decompressor handle
++ * @param p_jp2 JP2 decompressor handle
+  * @param numcomps Number of components to decode.
+  * @param comps_indices Array of num_compts indices (numbering starting at 0)
+  *                     corresponding to the components to decode.
+@@ -352,7 +352,7 @@ OPJ_BOOL opj_jp2_read_header(opj_stream_private_t *p_stream,
+  *
+  * @return OPJ_TRUE in case of success.
+  */
+-OPJ_BOOL opj_jp2_set_decoded_components(opj_jp2_t *jp2,
++OPJ_BOOL opj_jp2_set_decoded_components(void *p_jp2,
+                                         OPJ_UINT32 numcomps,
+                                         const OPJ_UINT32* comps_indices,
+                                         opj_event_mgr_t * p_manager);
+@@ -371,7 +371,7 @@ OPJ_BOOL opj_jp2_set_decoded_components(opj_jp2_t *jp2,
+  * @param  p_stream      the stream to write data to.
+  * @param  p_manager     the user event manager.
+  */
+-OPJ_BOOL opj_jp2_read_tile_header(opj_jp2_t * p_jp2,
++OPJ_BOOL opj_jp2_read_tile_header(void * p_jp2,
+                                   OPJ_UINT32 * p_tile_index,
+                                   OPJ_UINT32 * p_data_size,
+                                   OPJ_INT32 * p_tile_x0,
+@@ -393,7 +393,7 @@ OPJ_BOOL opj_jp2_read_tile_header(opj_jp2_t * p_jp2,
+  * @param  p_stream      the stream to write data to.
+  * @param  p_manager  the user event manager.
+  */
+-OPJ_BOOL opj_jp2_write_tile(opj_jp2_t *p_jp2,
++OPJ_BOOL opj_jp2_write_tile(void *p_jp2,
+                             OPJ_UINT32 p_tile_index,
+                             OPJ_BYTE * p_data,
+                             OPJ_UINT32 p_data_size,
+@@ -411,7 +411,7 @@ OPJ_BOOL opj_jp2_write_tile(opj_jp2_t *p_jp2,
+  *
+  * @return FIXME DOC
+  */
+-OPJ_BOOL opj_jp2_decode_tile(opj_jp2_t * p_jp2,
++OPJ_BOOL opj_jp2_decode_tile(void * p_jp2,
+                              OPJ_UINT32 p_tile_index,
+                              OPJ_BYTE * p_data,
+                              OPJ_UINT32 p_data_size,
+@@ -427,9 +427,9 @@ opj_jp2_t* opj_jp2_create(OPJ_BOOL p_is_decoder);
+ 
+ /**
+ Destroy a JP2 decompressor handle
+-@param jp2 JP2 decompressor handle to destroy
++@param p_jp2 JP2 decompressor handle to destroy
+ */
+-void opj_jp2_destroy(opj_jp2_t *jp2);
++void opj_jp2_destroy(void *p_jp2);
+ 
+ 
+ /**
+@@ -445,7 +445,7 @@ void opj_jp2_destroy(opj_jp2_t *jp2);
+  *
+  * @return  true      if the area could be set.
+  */
+-OPJ_BOOL opj_jp2_set_decode_area(opj_jp2_t *p_jp2,
++OPJ_BOOL opj_jp2_set_decode_area(void *p_jp2,
+                                  opj_image_t* p_image,
+                                  OPJ_INT32 p_start_x, OPJ_INT32 p_start_y,
+                                  OPJ_INT32 p_end_x, OPJ_INT32 p_end_y,
+@@ -454,7 +454,7 @@ OPJ_BOOL opj_jp2_set_decode_area(opj_jp2_t *p_jp2,
+ /**
+ *
+ */
+-OPJ_BOOL opj_jp2_get_tile(opj_jp2_t *p_jp2,
++OPJ_BOOL opj_jp2_get_tile(void *jp2,
+                           opj_stream_private_t *p_stream,
+                           opj_image_t* p_image,
+                           opj_event_mgr_t * p_manager,
+@@ -464,7 +464,7 @@ OPJ_BOOL opj_jp2_get_tile(opj_jp2_t *p_jp2,
+ /**
+  *
+  */
+-OPJ_BOOL opj_jp2_set_decoded_resolution_factor(opj_jp2_t *p_jp2,
++OPJ_BOOL opj_jp2_set_decoded_resolution_factor(void *p_jp2,
+         OPJ_UINT32 res_factor,
+         opj_event_mgr_t * p_manager);
+ 
+@@ -478,7 +478,7 @@ OPJ_BOOL opj_jp2_set_decoded_resolution_factor(opj_jp2_t *p_jp2,
+  * @see opj_encoder_set_extra_options() for more details.
+  */
+ OPJ_BOOL opj_jp2_encoder_set_extra_options(
+-    opj_jp2_t *p_jp2,
++    void *p_jp2,
+     const char* const* p_options,
+     opj_event_mgr_t * p_manager);
+ 
+@@ -492,7 +492,7 @@ OPJ_BOOL opj_jp2_encoder_set_extra_options(
+  *@param out_stream      output stream where dump the elements.
+  *
+ */
+-void jp2_dump(opj_jp2_t* p_jp2, OPJ_INT32 flag, FILE* out_stream);
++void jp2_dump(void* p_jp2, OPJ_INT32 flag, FILE* out_stream);
+ 
+ /**
+  * Get the codestream info from a JPEG2000 codec.
+@@ -501,7 +501,7 @@ void jp2_dump(opj_jp2_t* p_jp2, OPJ_INT32 flag, FILE* out_stream);
+  *
+  *@return  the codestream information extract from the jpg2000 codec
+  */
+-opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_t* p_jp2);
++opj_codestream_info_v2_t* jp2_get_cstr_info(void* p_jp2);
+ 
+ /**
+  * Get the codestream index from a JPEG2000 codec.
+@@ -510,7 +510,7 @@ opj_codestream_info_v2_t* jp2_get_cstr_info(opj_jp2_t* p_jp2);
+  *
+  *@return  the codestream index extract from the jpg2000 codec
+  */
+-opj_codestream_index_t* jp2_get_cstr_index(opj_jp2_t* p_jp2);
++opj_codestream_index_t* jp2_get_cstr_index(void* p_jp2);
+ 
+ 
+ /*@}*/
+diff --git a/third_party/libopenjpeg/openjpeg.c b/third_party/libopenjpeg/openjpeg.c
+index 29d3ee528..9dd4256d7 100644
+--- a/third_party/libopenjpeg/openjpeg.c
++++ b/third_party/libopenjpeg/openjpeg.c
+@@ -189,85 +189,48 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT p_format)
+ 
+     switch (p_format) {
+     case OPJ_CODEC_J2K:
+-        l_codec->opj_dump_codec = (void (*)(void*, OPJ_INT32, FILE*)) j2k_dump;
++        l_codec->opj_dump_codec = j2k_dump;
+ 
+-        l_codec->opj_get_codec_info = (opj_codestream_info_v2_t* (*)(
+-                                           void*)) j2k_get_cstr_info;
++        l_codec->opj_get_codec_info = j2k_get_cstr_info;
+ 
+-        l_codec->opj_get_codec_index = (opj_codestream_index_t* (*)(
+-                                            void*)) j2k_get_cstr_index;
++        l_codec->opj_get_codec_index = j2k_get_cstr_index;
+ 
+-        l_codec->m_codec_data.m_decompression.opj_decode =
+-            (OPJ_BOOL(*)(void *,
+-                         struct opj_stream_private *,
+-                         opj_image_t*, struct opj_event_mgr *)) opj_j2k_decode;
++        l_codec->m_codec_data.m_decompression.opj_decode = opj_j2k_decode;
+ 
+         l_codec->m_codec_data.m_decompression.opj_end_decompress =
+-            (OPJ_BOOL(*)(void *,
+-                         struct opj_stream_private *,
+-                         struct opj_event_mgr *)) opj_j2k_end_decompress;
++            opj_j2k_end_decompress;
+ 
+         l_codec->m_codec_data.m_decompression.opj_read_header =
+-            (OPJ_BOOL(*)(struct opj_stream_private *,
+-                         void *,
+-                         opj_image_t **,
+-                         struct opj_event_mgr *)) opj_j2k_read_header;
++            opj_j2k_read_header;
+ 
+-        l_codec->m_codec_data.m_decompression.opj_destroy =
+-            (void (*)(void *))opj_j2k_destroy;
++        l_codec->m_codec_data.m_decompression.opj_destroy = opj_j2k_destroy;
+ 
+         l_codec->m_codec_data.m_decompression.opj_setup_decoder =
+-            (void (*)(void *, opj_dparameters_t *)) opj_j2k_setup_decoder;
++            opj_j2k_setup_decoder;
+ 
+         l_codec->m_codec_data.m_decompression.opj_decoder_set_strict_mode =
+-            (void (*)(void *, OPJ_BOOL)) opj_j2k_decoder_set_strict_mode;
++            opj_j2k_decoder_set_strict_mode;
+ 
+ 
+         l_codec->m_codec_data.m_decompression.opj_read_tile_header =
+-            (OPJ_BOOL(*)(void *,
+-                         OPJ_UINT32*,
+-                         OPJ_UINT32*,
+-                         OPJ_INT32*, OPJ_INT32*,
+-                         OPJ_INT32*, OPJ_INT32*,
+-                         OPJ_UINT32*,
+-                         OPJ_BOOL*,
+-                         struct opj_stream_private *,
+-                         struct opj_event_mgr *)) opj_j2k_read_tile_header;
++            opj_j2k_read_tile_header;
+ 
+         l_codec->m_codec_data.m_decompression.opj_decode_tile_data =
+-            (OPJ_BOOL(*)(void *,
+-                         OPJ_UINT32,
+-                         OPJ_BYTE*,
+-                         OPJ_UINT32,
+-                         struct opj_stream_private *,
+-                         struct opj_event_mgr *)) opj_j2k_decode_tile;
++            opj_j2k_decode_tile;
+ 
+         l_codec->m_codec_data.m_decompression.opj_set_decode_area =
+-            (OPJ_BOOL(*)(void *,
+-                         opj_image_t*,
+-                         OPJ_INT32, OPJ_INT32, OPJ_INT32, OPJ_INT32,
+-                         struct opj_event_mgr *)) opj_j2k_set_decode_area;
++            opj_j2k_set_decode_area;
+ 
+         l_codec->m_codec_data.m_decompression.opj_get_decoded_tile =
+-            (OPJ_BOOL(*)(void *p_codec,
+-                         opj_stream_private_t *p_cio,
+-                         opj_image_t *p_image,
+-                         struct opj_event_mgr * p_manager,
+-                         OPJ_UINT32 tile_index)) opj_j2k_get_tile;
++            opj_j2k_get_tile;
+ 
+         l_codec->m_codec_data.m_decompression.opj_set_decoded_resolution_factor =
+-            (OPJ_BOOL(*)(void * p_codec,
+-                         OPJ_UINT32 res_factor,
+-                         struct opj_event_mgr * p_manager)) opj_j2k_set_decoded_resolution_factor;
++            opj_j2k_set_decoded_resolution_factor;
+ 
+         l_codec->m_codec_data.m_decompression.opj_set_decoded_components =
+-            (OPJ_BOOL(*)(void * p_codec,
+-                         OPJ_UINT32 numcomps,
+-                         const OPJ_UINT32 * comps_indices,
+-                         struct opj_event_mgr * p_manager)) opj_j2k_set_decoded_components;
++            opj_j2k_set_decoded_components;
+ 
+-        l_codec->opj_set_threads =
+-            (OPJ_BOOL(*)(void * p_codec, OPJ_UINT32 num_threads)) opj_j2k_set_threads;
++        l_codec->opj_set_threads = opj_j2k_set_threads;
+ 
+         l_codec->m_codec = opj_j2k_create_decompress();
+ 
+@@ -280,85 +243,47 @@ opj_codec_t* OPJ_CALLCONV opj_create_decompress(OPJ_CODEC_FORMAT p_format)
+ 
+     case OPJ_CODEC_JP2:
+         /* get a JP2 decoder handle */
+-        l_codec->opj_dump_codec = (void (*)(void*, OPJ_INT32, FILE*)) jp2_dump;
++        l_codec->opj_dump_codec = jp2_dump;
+ 
+-        l_codec->opj_get_codec_info = (opj_codestream_info_v2_t* (*)(
+-                                           void*)) jp2_get_cstr_info;
++        l_codec->opj_get_codec_info = jp2_get_cstr_info;
+ 
+-        l_codec->opj_get_codec_index = (opj_codestream_index_t* (*)(
+-                                            void*)) jp2_get_cstr_index;
++        l_codec->opj_get_codec_index = jp2_get_cstr_index;
+ 
+-        l_codec->m_codec_data.m_decompression.opj_decode =
+-            (OPJ_BOOL(*)(void *,
+-                         struct opj_stream_private *,
+-                         opj_image_t*,
+-                         struct opj_event_mgr *)) opj_jp2_decode;
++        l_codec->m_codec_data.m_decompression.opj_decode = opj_jp2_decode;
+ 
+         l_codec->m_codec_data.m_decompression.opj_end_decompress =
+-            (OPJ_BOOL(*)(void *,
+-                         struct opj_stream_private *,
+-                         struct opj_event_mgr *)) opj_jp2_end_decompress;
++            opj_jp2_end_decompress;
+ 
+         l_codec->m_codec_data.m_decompression.opj_read_header =
+-            (OPJ_BOOL(*)(struct opj_stream_private *,
+-                         void *,
+-                         opj_image_t **,
+-                         struct opj_event_mgr *)) opj_jp2_read_header;
++            opj_jp2_read_header;
+ 
+         l_codec->m_codec_data.m_decompression.opj_read_tile_header =
+-            (OPJ_BOOL(*)(void *,
+-                         OPJ_UINT32*,
+-                         OPJ_UINT32*,
+-                         OPJ_INT32*,
+-                         OPJ_INT32*,
+-                         OPJ_INT32 *,
+-                         OPJ_INT32 *,
+-                         OPJ_UINT32 *,
+-                         OPJ_BOOL *,
+-                         struct opj_stream_private *,
+-                         struct opj_event_mgr *)) opj_jp2_read_tile_header;
++            opj_jp2_read_tile_header;
+ 
+         l_codec->m_codec_data.m_decompression.opj_decode_tile_data =
+-            (OPJ_BOOL(*)(void *,
+-                         OPJ_UINT32, OPJ_BYTE*, OPJ_UINT32,
+-                         struct opj_stream_private *,
+-                         struct opj_event_mgr *)) opj_jp2_decode_tile;
++            opj_jp2_decode_tile;
+ 
+-        l_codec->m_codec_data.m_decompression.opj_destroy = (void (*)(
+-                    void *))opj_jp2_destroy;
++        l_codec->m_codec_data.m_decompression.opj_destroy = opj_jp2_destroy;
+ 
+         l_codec->m_codec_data.m_decompression.opj_setup_decoder =
+-            (void (*)(void *, opj_dparameters_t *)) opj_jp2_setup_decoder;
++             opj_jp2_setup_decoder;
+ 
+         l_codec->m_codec_data.m_decompression.opj_decoder_set_strict_mode =
+-            (void (*)(void *, OPJ_BOOL)) opj_jp2_decoder_set_strict_mode;
++            opj_jp2_decoder_set_strict_mode;
+ 
+         l_codec->m_codec_data.m_decompression.opj_set_decode_area =
+-            (OPJ_BOOL(*)(void *,
+-                         opj_image_t*,
+-                         OPJ_INT32, OPJ_INT32, OPJ_INT32, OPJ_INT32,
+-                         struct opj_event_mgr *)) opj_jp2_set_decode_area;
++            opj_jp2_set_decode_area;
+ 
+         l_codec->m_codec_data.m_decompression.opj_get_decoded_tile =
+-            (OPJ_BOOL(*)(void *p_codec,
+-                         opj_stream_private_t *p_cio,
+-                         opj_image_t *p_image,
+-                         struct opj_event_mgr * p_manager,
+-                         OPJ_UINT32 tile_index)) opj_jp2_get_tile;
++            opj_jp2_get_tile;
+ 
+         l_codec->m_codec_data.m_decompression.opj_set_decoded_resolution_factor =
+-            (OPJ_BOOL(*)(void * p_codec,
+-                         OPJ_UINT32 res_factor,
+-                         opj_event_mgr_t * p_manager)) opj_jp2_set_decoded_resolution_factor;
++            opj_jp2_set_decoded_resolution_factor;
+ 
+         l_codec->m_codec_data.m_decompression.opj_set_decoded_components =
+-            (OPJ_BOOL(*)(void * p_codec,
+-                         OPJ_UINT32 numcomps,
+-                         const OPJ_UINT32 * comps_indices,
+-                         struct opj_event_mgr * p_manager)) opj_jp2_set_decoded_components;
++            opj_jp2_set_decoded_components;
+ 
+-        l_codec->opj_set_threads =
+-            (OPJ_BOOL(*)(void * p_codec, OPJ_UINT32 num_threads)) opj_jp2_set_threads;
++        l_codec->opj_set_threads = opj_jp2_set_threads;
+ 
+         l_codec->m_codec = opj_jp2_create(OPJ_TRUE);
+ 
+@@ -662,41 +587,25 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
+ 
+     switch (p_format) {
+     case OPJ_CODEC_J2K:
+-        l_codec->m_codec_data.m_compression.opj_encode = (OPJ_BOOL(*)(void *,
+-                struct opj_stream_private *,
+-                struct opj_event_mgr *)) opj_j2k_encode;
+-
+-        l_codec->m_codec_data.m_compression.opj_end_compress = (OPJ_BOOL(*)(void *,
+-                struct opj_stream_private *,
+-                struct opj_event_mgr *)) opj_j2k_end_compress;
+-
+-        l_codec->m_codec_data.m_compression.opj_start_compress = (OPJ_BOOL(*)(void *,
+-                struct opj_stream_private *,
+-                struct opj_image *,
+-                struct opj_event_mgr *)) opj_j2k_start_compress;
+-
+-        l_codec->m_codec_data.m_compression.opj_write_tile = (OPJ_BOOL(*)(void *,
+-                OPJ_UINT32,
+-                OPJ_BYTE*,
+-                OPJ_UINT32,
+-                struct opj_stream_private *,
+-                struct opj_event_mgr *)) opj_j2k_write_tile;
+-
+-        l_codec->m_codec_data.m_compression.opj_destroy = (void (*)(
+-                    void *)) opj_j2k_destroy;
+-
+-        l_codec->m_codec_data.m_compression.opj_setup_encoder = (OPJ_BOOL(*)(void *,
+-                opj_cparameters_t *,
+-                struct opj_image *,
+-                struct opj_event_mgr *)) opj_j2k_setup_encoder;
+-
+-        l_codec->m_codec_data.m_compression.opj_encoder_set_extra_options = (OPJ_BOOL(
+-                    *)(void *,
+-                       const char* const*,
+-                       struct opj_event_mgr *)) opj_j2k_encoder_set_extra_options;
+-
+-        l_codec->opj_set_threads =
+-            (OPJ_BOOL(*)(void * p_codec, OPJ_UINT32 num_threads)) opj_j2k_set_threads;
++        l_codec->m_codec_data.m_compression.opj_encode = opj_j2k_encode;
++
++        l_codec->m_codec_data.m_compression.opj_end_compress =
++            opj_j2k_end_compress;
++
++        l_codec->m_codec_data.m_compression.opj_start_compress =
++            opj_j2k_start_compress;
++
++        l_codec->m_codec_data.m_compression.opj_write_tile = opj_j2k_write_tile;
++
++        l_codec->m_codec_data.m_compression.opj_destroy = opj_j2k_destroy;
++
++        l_codec->m_codec_data.m_compression.opj_setup_encoder =
++            opj_j2k_setup_encoder;
++
++        l_codec->m_codec_data.m_compression.opj_encoder_set_extra_options =
++            opj_j2k_encoder_set_extra_options;
++
++        l_codec->opj_set_threads = opj_j2k_set_threads;
+ 
+         l_codec->m_codec = opj_j2k_create_compress();
+         if (! l_codec->m_codec) {
+@@ -708,41 +617,25 @@ opj_codec_t* OPJ_CALLCONV opj_create_compress(OPJ_CODEC_FORMAT p_format)
+ 
+     case OPJ_CODEC_JP2:
+         /* get a JP2 decoder handle */
+-        l_codec->m_codec_data.m_compression.opj_encode = (OPJ_BOOL(*)(void *,
+-                struct opj_stream_private *,
+-                struct opj_event_mgr *)) opj_jp2_encode;
+-
+-        l_codec->m_codec_data.m_compression.opj_end_compress = (OPJ_BOOL(*)(void *,
+-                struct opj_stream_private *,
+-                struct opj_event_mgr *)) opj_jp2_end_compress;
+-
+-        l_codec->m_codec_data.m_compression.opj_start_compress = (OPJ_BOOL(*)(void *,
+-                struct opj_stream_private *,
+-                struct opj_image *,
+-                struct opj_event_mgr *))  opj_jp2_start_compress;
+-
+-        l_codec->m_codec_data.m_compression.opj_write_tile = (OPJ_BOOL(*)(void *,
+-                OPJ_UINT32,
+-                OPJ_BYTE*,
+-                OPJ_UINT32,
+-                struct opj_stream_private *,
+-                struct opj_event_mgr *)) opj_jp2_write_tile;
+-
+-        l_codec->m_codec_data.m_compression.opj_destroy = (void (*)(
+-                    void *)) opj_jp2_destroy;
+-
+-        l_codec->m_codec_data.m_compression.opj_setup_encoder = (OPJ_BOOL(*)(void *,
+-                opj_cparameters_t *,
+-                struct opj_image *,
+-                struct opj_event_mgr *)) opj_jp2_setup_encoder;
+-
+-        l_codec->m_codec_data.m_compression.opj_encoder_set_extra_options = (OPJ_BOOL(
+-                    *)(void *,
+-                       const char* const*,
+-                       struct opj_event_mgr *)) opj_jp2_encoder_set_extra_options;
+-
+-        l_codec->opj_set_threads =
+-            (OPJ_BOOL(*)(void * p_codec, OPJ_UINT32 num_threads)) opj_jp2_set_threads;
++        l_codec->m_codec_data.m_compression.opj_encode = opj_jp2_encode;
++
++        l_codec->m_codec_data.m_compression.opj_end_compress =
++            opj_jp2_end_compress;
++
++        l_codec->m_codec_data.m_compression.opj_start_compress =
++            opj_jp2_start_compress;
++
++        l_codec->m_codec_data.m_compression.opj_write_tile = opj_jp2_write_tile;
++
++        l_codec->m_codec_data.m_compression.opj_destroy = opj_jp2_destroy;
++
++        l_codec->m_codec_data.m_compression.opj_setup_encoder =
++            opj_jp2_setup_encoder;
++
++        l_codec->m_codec_data.m_compression.opj_encoder_set_extra_options =
++            opj_jp2_encoder_set_extra_options;
++
++        l_codec->opj_set_threads = opj_jp2_set_threads;
+ 
+         l_codec->m_codec = opj_jp2_create(OPJ_FALSE);
+         if (! l_codec->m_codec) {
