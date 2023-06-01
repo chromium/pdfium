@@ -250,7 +250,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
     RetainPtr<CPDF_Dictionary> pResources,
     const CFX_FloatRect& rcBBox,
     const CPDF_AllStates* pStates,
-    std::set<const uint8_t*>* pParsedSet)
+    CPDF_Form::RecursionState* recursion_state)
     : m_pDocument(pDocument),
       m_pPageResources(pPageResources),
       m_pParentResources(pParentResources),
@@ -258,7 +258,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
                                                   pParentResources.Get(),
                                                   pPageResources.Get())),
       m_pObjectHolder(pObjHolder),
-      m_ParsedSet(pParsedSet),
+      m_RecursionState(recursion_state),
       m_BBox(rcBBox),
       m_pCurStates(std::make_unique<CPDF_AllStates>()) {
   if (pmtContentToUser)
@@ -772,7 +772,7 @@ void CPDF_StreamContentParser::AddForm(RetainPtr<CPDF_Stream> pStream,
   status.m_TextState = m_pCurStates->m_TextState;
   auto form = std::make_unique<CPDF_Form>(
       m_pDocument, m_pPageResources, std::move(pStream), m_pResources.Get());
-  form->ParseContent(&status, nullptr, m_ParsedSet);
+  form->ParseContent(&status, nullptr, m_RecursionState);
 
   CFX_Matrix matrix = m_pCurStates->m_CTM * m_mtContentToUser;
   auto pFormObj = std::make_unique<CPDF_FormObject>(GetCurrentStreamIndex(),
@@ -1535,15 +1535,15 @@ uint32_t CPDF_StreamContentParser::Parse(
   // Parsing will be done from within |pDataStart|.
   pdfium::span<const uint8_t> pDataStart = pData.subspan(start_offset);
   m_StartParseOffset = start_offset;
-  if (m_ParsedSet->size() > kMaxFormLevel ||
-      pdfium::Contains(*m_ParsedSet, pDataStart.data())) {
+  if (m_RecursionState->parsed_set.size() > kMaxFormLevel ||
+      pdfium::Contains(m_RecursionState->parsed_set, pDataStart.data())) {
     return fxcrt::CollectionSize<uint32_t>(pDataStart);
   }
 
   m_StreamStartOffsets = stream_start_offsets;
 
-  ScopedSetInsertion<const uint8_t*> scopedInsert(m_ParsedSet,
-                                                  pDataStart.data());
+  ScopedSetInsertion<const uint8_t*> scoped_insert(
+      &m_RecursionState->parsed_set, pDataStart.data());
 
   uint32_t init_obj_count = m_pObjectHolder->GetPageObjectCount();
   AutoNuller<std::unique_ptr<CPDF_StreamParser>> auto_clearer(&m_pSyntax);

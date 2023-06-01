@@ -56,12 +56,13 @@ CPDF_ContentParser::CPDF_ContentParser(CPDF_Page* pPage)
   HandlePageContentFailure();
 }
 
-CPDF_ContentParser::CPDF_ContentParser(RetainPtr<const CPDF_Stream> pStream,
-                                       CPDF_PageObjectHolder* pPageObjectHolder,
-                                       const CPDF_AllStates* pGraphicStates,
-                                       const CFX_Matrix* pParentMatrix,
-                                       CPDF_Type3Char* pType3Char,
-                                       std::set<const uint8_t*>* pParsedSet)
+CPDF_ContentParser::CPDF_ContentParser(
+    RetainPtr<const CPDF_Stream> pStream,
+    CPDF_PageObjectHolder* pPageObjectHolder,
+    const CPDF_AllStates* pGraphicStates,
+    const CFX_Matrix* pParentMatrix,
+    CPDF_Type3Char* pType3Char,
+    CPDF_Form::RecursionState* recursion_state)
     : m_CurrentStage(Stage::kParse),
       m_pPageObjectHolder(pPageObjectHolder),
       m_pType3Char(pType3Char) {
@@ -95,7 +96,7 @@ CPDF_ContentParser::CPDF_ContentParser(RetainPtr<const CPDF_Stream> pStream,
       m_pPageObjectHolder->GetMutablePageResources(),
       m_pPageObjectHolder->GetMutableResources(), pParentMatrix,
       m_pPageObjectHolder, std::move(pResources), form_bbox, pGraphicStates,
-      pParsedSet);
+      recursion_state);
   m_pParser->GetCurStates()->m_CTM = form_matrix;
   m_pParser->GetCurStates()->m_ParentMatrix = form_matrix;
   if (ClipPath.HasRef()) {
@@ -197,12 +198,12 @@ CPDF_ContentParser::Stage CPDF_ContentParser::PrepareContent() {
 
 CPDF_ContentParser::Stage CPDF_ContentParser::Parse() {
   if (!m_pParser) {
-    m_ParsedSet.clear();
+    m_RecursionState.parsed_set.clear();
     m_pParser = std::make_unique<CPDF_StreamContentParser>(
         m_pPageObjectHolder->GetDocument(),
         m_pPageObjectHolder->GetMutablePageResources(), nullptr, nullptr,
         m_pPageObjectHolder, m_pPageObjectHolder->GetMutableResources(),
-        m_pPageObjectHolder->GetBBox(), nullptr, &m_ParsedSet);
+        m_pPageObjectHolder->GetBBox(), nullptr, &m_RecursionState);
     m_pParser->GetCurStates()->m_ColorState.SetDefault();
   }
   if (m_CurrentOffset >= GetData().size())

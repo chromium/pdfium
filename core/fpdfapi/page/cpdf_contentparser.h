@@ -10,9 +10,9 @@
 #include <stdint.h>
 
 #include <memory>
-#include <set>
 #include <vector>
 
+#include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_streamcontentparser.h"
 #include "core/fxcrt/fixed_try_alloc_zeroed_data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -36,7 +36,7 @@ class CPDF_ContentParser {
                      const CPDF_AllStates* pGraphicStates,
                      const CFX_Matrix* pParentMatrix,
                      CPDF_Type3Char* pType3Char,
-                     std::set<const uint8_t*>* pParsedSet);
+                     CPDF_Form::RecursionState* recursion_state);
   ~CPDF_ContentParser();
 
   const CPDF_AllStates* GetCurStates() const {
@@ -80,9 +80,10 @@ class CPDF_ContentParser {
       m_Data;
   uint32_t m_nStreams = 0;
   uint32_t m_CurrentOffset = 0;
-  std::set<const uint8_t*> m_ParsedSet;  // Only used when parsing pages.
+  // Only used when parsing pages.
+  CPDF_Form::RecursionState m_RecursionState;
 
-  // Must not outlive |m_pParsedSet|.
+  // Must not outlive |m_RecursionState|.
   std::unique_ptr<CPDF_StreamContentParser> m_pParser;
 };
 

@@ -9,11 +9,11 @@
 
 #include <map>
 #include <memory>
-#include <set>
 #include <stack>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_contentmarks.h"
+#include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_number.h"
@@ -49,7 +49,7 @@ class CPDF_StreamContentParser {
                            RetainPtr<CPDF_Dictionary> pResources,
                            const CFX_FloatRect& rcBBox,
                            const CPDF_AllStates* pStates,
-                           std::set<const uint8_t*>* pParsedSet);
+                           CPDF_Form::RecursionState* parse_state);
   ~CPDF_StreamContentParser();
 
   uint32_t Parse(pdfium::span<const uint8_t> pData,
@@ -222,7 +222,7 @@ class CPDF_StreamContentParser {
   RetainPtr<CPDF_Dictionary> const m_pParentResources;
   RetainPtr<CPDF_Dictionary> const m_pResources;
   UnownedPtr<CPDF_PageObjectHolder> const m_pObjectHolder;
-  UnownedPtr<std::set<const uint8_t*>> const m_ParsedSet;
+  UnownedPtr<CPDF_Form::RecursionState> const m_RecursionState;
   CFX_Matrix m_mtContentToUser;
   const CFX_FloatRect m_BBox;
   uint32_t m_ParamStartPos = 0;

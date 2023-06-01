@@ -18,6 +18,10 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/check_op.h"
 
+CPDF_Form::RecursionState::RecursionState() = default;
+
+CPDF_Form::RecursionState::~RecursionState() = default;
+
 // static
 CPDF_Dictionary* CPDF_Form::ChooseResourcesDict(
     CPDF_Dictionary* pResources,
@@ -61,8 +65,8 @@ void CPDF_Form::ParseContent() {
 
 void CPDF_Form::ParseContent(const CPDF_AllStates* pGraphicStates,
                              const CFX_Matrix* pParentMatrix,
-                             std::set<const uint8_t*>* pParsedSet) {
-  ParseContentInternal(pGraphicStates, pParentMatrix, nullptr, pParsedSet);
+                             RecursionState* recursion_state) {
+  ParseContentInternal(pGraphicStates, pParentMatrix, nullptr, recursion_state);
 }
 
 void CPDF_Form::ParseContentForType3Char(CPDF_Type3Char* pType3Char) {
@@ -72,14 +76,14 @@ void CPDF_Form::ParseContentForType3Char(CPDF_Type3Char* pType3Char) {
 void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
                                      const CFX_Matrix* pParentMatrix,
                                      CPDF_Type3Char* pType3Char,
-                                     std::set<const uint8_t*>* pParsedSet) {
+                                     RecursionState* recursion_state) {
   if (GetParseState() == ParseState::kParsed)
     return;
 
   if (GetParseState() == ParseState::kNotParsed) {
     StartParse(std::make_unique<CPDF_ContentParser>(
         GetStream(), this, pGraphicStates, pParentMatrix, pType3Char,
-        pParsedSet ? pParsedSet : &m_ParsedSet));
+        recursion_state ? recursion_state : &m_RecursionState));
   }
   DCHECK_EQ(GetParseState(), ParseState::kParsing);
   ContinueParse(nullptr);
