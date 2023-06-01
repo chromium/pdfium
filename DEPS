@@ -64,6 +64,10 @@ vars = {
   # and whatever else without interference from each other.
   'code_coverage_revision': 'de759c9da8369a18036f56bb9d7be57543c88057',
   # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling code_coverage
+  # and whatever else without interference from each other.
+  'cpu_features_revision': '936b9ab5515dead115606559502e3864958f7f6e',
+  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling depot_tools
   # and whatever else without interference from each other.
   'depot_tools_revision': '79f13899e6a718f6b4ab526fc5b4dcd547f90bbe',
@@ -267,6 +271,13 @@ deps = {
 
   'third_party/catapult': {
     'url': Var('chromium_git') + '/catapult.git@' + Var('catapult_revision'),
+    'condition': 'checkout_android',
+  },
+
+  'third_party/cpu_features/src': {
+    'url': Var('chromium_git') +
+        '/external/github.com/google/cpu_features.git@' +
+        Var('cpu_features_revision'),
     'condition': 'checkout_android',
   },
 
