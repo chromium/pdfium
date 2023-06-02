@@ -34,7 +34,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling abseil
   # and whatever else without interference from each other.
-  'abseil_revision': 'c7a5260448b1c15492f4c7a09cb3b17b1a592150',
+  'abseil_revision': 'd27fcebaf6851323d12ac63af3c9ac3581f7c8bd',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling android_ndk
   # and whatever else without interference from each other.
@@ -46,7 +46,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
-  'buildtools_revision': 'cb7297fa0dbd64da8d2e45849bced29cf4e4f757',
+  'buildtools_revision': 'edbefcee3d2cc45cdb0c60c2b01b673f8ba728bc',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling catapult
   # and whatever else without interference from each other.
@@ -108,7 +108,7 @@ vars = {
   # and whatever else without interference from each other.
   # If you change this, also update the libc++ revision in
   # //buildtools/deps_revisions.gni.
-  'libcxx_revision': 'd756fe5d807bc308102bd9426d52bf382683256b',
+  'libcxx_revision': 'f8279b01085b800724f5c5629dc365b9f040dc53',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libc++abi
   # and whatever else without interference from each other.
