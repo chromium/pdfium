@@ -199,6 +199,7 @@ CPDF_ContentParser::Stage CPDF_ContentParser::PrepareContent() {
 CPDF_ContentParser::Stage CPDF_ContentParser::Parse() {
   if (!m_pParser) {
     m_RecursionState.parsed_set.clear();
+    m_RecursionState.form_count = 0;
     m_pParser = std::make_unique<CPDF_StreamContentParser>(
         m_pPageObjectHolder->GetDocument(),
         m_pPageObjectHolder->GetMutablePageResources(), nullptr, nullptr,

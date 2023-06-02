@@ -49,13 +49,16 @@
 
 namespace {
 
-const int kMaxFormLevel = 40;
+constexpr int kMaxFormLevel = 40;
 
-const int kSingleCoordinatePair = 1;
-const int kTensorCoordinatePairs = 16;
-const int kCoonsCoordinatePairs = 12;
-const int kSingleColorPerPatch = 1;
-const int kQuadColorsPerPatch = 4;
+// Upper limit for the number of form XObjects within a form XObject.
+constexpr int kFormCountLimit = 4096;
+
+constexpr int kSingleCoordinatePair = 1;
+constexpr int kTensorCoordinatePairs = 16;
+constexpr int kCoonsCoordinatePairs = 12;
+constexpr int kSingleColorPerPatch = 1;
+constexpr int kQuadColorsPerPatch = 4;
 
 const char kPathOperatorSubpath = 'm';
 const char kPathOperatorLine = 'l';
@@ -744,7 +747,16 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
     type = pXObject->GetDict()->GetByteStringFor("Subtype");
 
   if (type == "Form") {
+    if (m_RecursionState->form_count > kFormCountLimit) {
+      return;
+    }
+
+    const bool is_first = m_RecursionState->form_count == 0;
+    ++m_RecursionState->form_count;
     AddForm(std::move(pXObject), name);
+    if (is_first) {
+      m_RecursionState->form_count = 0;
+    }
     return;
   }
 
