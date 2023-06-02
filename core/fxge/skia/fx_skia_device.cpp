@@ -64,6 +64,7 @@
 #include "third_party/skia/include/core/SkPath.h"
 #include "third_party/skia/include/core/SkPathEffect.h"
 #include "third_party/skia/include/core/SkPathUtils.h"
+#include "third_party/skia/include/core/SkPixmap.h"
 #include "third_party/skia/include/core/SkRSXform.h"
 #include "third_party/skia/include/core/SkRect.h"
 #include "third_party/skia/include/core/SkRefCnt.h"
@@ -667,36 +668,37 @@ void SetBitmapPaintForMerge(bool is_mask,
   paint->setBlendMode(GetSkiaBlendMode(blend_type));
 }
 
-bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
-              DataVector<uint32_t>& dst32_storage,
-              SkBitmap* skBitmap,
-              bool forceAlpha) {
-  // TODO(crbug.com/pdfium/2034): Does not need to use `GetWritableBuffer()`.
-  void* buffer = pSource->GetWritableBuffer().data();
-  if (!buffer)
-    return false;
-  SkColorType colorType = forceAlpha || pSource->IsMaskFormat()
+// TODO(crbug.com/pdfium/2034): Eliminate the need for `dst32_storage`.
+sk_sp<SkImage> Upsample(const RetainPtr<CFX_DIBBase>& source,
+                        DataVector<uint32_t>& dst32_storage,
+                        bool force_alpha) {
+  const void* buffer = source->GetBuffer().data();
+  if (!buffer) {
+    return nullptr;
+  }
+
+  SkColorType colorType = force_alpha || source->IsMaskFormat()
                               ? SkColorType::kAlpha_8_SkColorType
                               : SkColorType::kGray_8_SkColorType;
   SkAlphaType alphaType = kPremul_SkAlphaType;
-  int width = pSource->GetWidth();
-  int height = pSource->GetHeight();
-  int rowBytes = pSource->GetPitch();
-  switch (pSource->GetBPP()) {
+  int width = source->GetWidth();
+  int height = source->GetHeight();
+  int rowBytes = source->GetPitch();
+  switch (source->GetBPP()) {
     case 1: {
       // By default, the two colors for grayscale are 0xFF and 0x00 unless they
       // are specified in the palette.
       uint8_t color0 = 0x00;
       uint8_t color1 = 0xFF;
 
-      if (pSource->GetFormat() == FXDIB_Format::k1bppRgb &&
-          pSource->HasPalette()) {
-        uint32_t palette_color0 = pSource->GetPaletteArgb(0);
-        uint32_t palette_color1 = pSource->GetPaletteArgb(1);
+      if (source->GetFormat() == FXDIB_Format::k1bppRgb &&
+          source->HasPalette()) {
+        uint32_t palette_color0 = source->GetPaletteArgb(0);
+        uint32_t palette_color1 = source->GetPaletteArgb(1);
         bool use_gray_colors = IsRGBColorGrayScale(palette_color0) &&
                                IsRGBColorGrayScale(palette_color1);
         if (!use_gray_colors) {
-          dst32_storage = Fill32BppDestStorageWith1BppSource(pSource);
+          dst32_storage = Fill32BppDestStorageWith1BppSource(source);
           rowBytes = width * sizeof(uint32_t);
           colorType = kBGRA_8888_SkColorType;
           break;
@@ -722,14 +724,14 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
     }
     case 8:
       // we upscale ctables to 32bit.
-      if (pSource->HasPalette()) {
-        const size_t src_palette_size = pSource->GetRequiredPaletteSize();
-        pdfium::span<const uint32_t> src_palette = pSource->GetPaletteSpan();
+      if (source->HasPalette()) {
+        const size_t src_palette_size = source->GetRequiredPaletteSize();
+        pdfium::span<const uint32_t> src_palette = source->GetPaletteSpan();
         CHECK_LE(src_palette_size, src_palette.size());
         if (src_palette_size < src_palette.size())
           src_palette = src_palette.first(src_palette_size);
 
-        dst32_storage = Fill32BppDestStorageWithPalette(pSource, src_palette);
+        dst32_storage = Fill32BppDestStorageWithPalette(source, src_palette);
         rowBytes = width * sizeof(uint32_t);
         colorType = kBGRA_8888_SkColorType;
       }
@@ -762,8 +764,9 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
   }
   SkImageInfo imageInfo =
       SkImageInfo::Make(width, height, colorType, alphaType);
-  skBitmap->installPixels(imageInfo, buffer, rowBytes);
-  return true;
+  return SkImages::RasterFromPixmap(SkPixmap(imageInfo, buffer, rowBytes),
+                                    /*rasterReleaseProc=*/nullptr,
+                                    /*releaseContext=*/nullptr);
 }
 
 // Makes a bitmap filled with a solid color for debugging with `SkPicture`.
@@ -1115,15 +1118,15 @@ bool CFX_SkiaDeviceDriver::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) {
 
   // Storage vector must outlive `skia_mask`.
   DataVector<uint32_t> dst32_storage;
-  SkBitmap skia_mask;
-  if (!Upsample(mask, dst32_storage, &skia_mask, /*forceAlpha=*/true)) {
+  sk_sp<SkImage> skia_mask =
+      Upsample(mask, dst32_storage, /*force_alpha=*/true);
+  if (!skia_mask) {
     return false;
   }
-  skia_mask.setImmutable();
 
   SkPaint paint;
   paint.setBlendMode(SkBlendMode::kDstIn);
-  m_pCanvas->drawImageRect(skia_mask.asImage(),
+  m_pCanvas->drawImageRect(skia_mask,
                            SkRect::Make(m_pCanvas->imageInfo().bounds()),
                            SkSamplingOptions(), &paint);
   return true;
@@ -1511,19 +1514,16 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   if (!m_pBitmap)
     return true;
 
-  // TODO(crbug.com/pdfium/2034): Does not need to use `GetWritableBuffer()`.
-  uint8_t* srcBuffer = m_pBitmap->GetWritableBuffer().data();
+  const uint8_t* srcBuffer = m_pBitmap->GetBuffer().data();
   if (!srcBuffer)
     return true;
 
-  int srcWidth = m_pBitmap->GetWidth();
-  int srcHeight = m_pBitmap->GetHeight();
-  size_t srcRowBytes = m_pBitmap->GetPitch();
-  SkImageInfo srcImageInfo = SkImageInfo::Make(
-      srcWidth, srcHeight, SkColorType::kN32_SkColorType, kPremul_SkAlphaType);
-  SkBitmap skSrcBitmap;
-  skSrcBitmap.installPixels(srcImageInfo, srcBuffer, srcRowBytes);
-  skSrcBitmap.setImmutable();
+  SkImageInfo srcImageInfo =
+      SkImageInfo::Make(m_pBitmap->GetWidth(), m_pBitmap->GetHeight(),
+                        SkColorType::kN32_SkColorType, kPremul_SkAlphaType);
+  sk_sp<SkImage> source = SkImages::RasterFromPixmap(
+      SkPixmap(srcImageInfo, srcBuffer, m_pBitmap->GetPitch()),
+      /*rasterReleaseProc=*/nullptr, /*releaseContext=*/nullptr);
 
   uint8_t* dstBuffer = pBitmap->GetWritableBuffer().data();
   DCHECK(dstBuffer);
@@ -1538,8 +1538,7 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   skDstBitmap.installPixels(dstImageInfo, dstBuffer, dstRowBytes);
 
   SkCanvas canvas(skDstBitmap);
-  canvas.drawImageRect(skSrcBitmap.asImage(),
-                       SkRect::MakeXYWH(left, top, dstWidth, dstHeight),
+  canvas.drawImageRect(source, SkRect::MakeXYWH(left, top, dstWidth, dstHeight),
                        SkSamplingOptions(), /*paint=*/nullptr);
   return true;
 }
@@ -1679,17 +1678,22 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
     const CFX_Matrix& matrix,
     BlendMode blend_type) {
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
-  // Storage vectors must outlive `skBitmap` and `skMask`.
+
+  // Storage vectors must outlive `skia_source` and `skia_mask`.
   DataVector<uint32_t> src32_storage;
+  sk_sp<SkImage> skia_source =
+      Upsample(pSource, src32_storage, /*force_alpha=*/false);
+  if (!skia_source) {
+    return false;
+  }
+
   DataVector<uint32_t> mask32_storage;
-  SkBitmap skBitmap;
-  SkBitmap skMask;
-  if (!Upsample(pSource, src32_storage, &skBitmap, /*forceAlpha=*/false)) {
+  sk_sp<SkImage> skia_mask =
+      Upsample(pMask, mask32_storage, /*force_alpha=*/true);
+  if (!skia_mask) {
     return false;
   }
-  if (!Upsample(pMask, mask32_storage, &skMask, /*forceAlpha=*/true)) {
-    return false;
-  }
+
   {
     SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
 
@@ -1701,17 +1705,17 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
     SkPaint paint;
     SetBitmapPaintForMerge(pSource->IsMaskFormat(), !m_FillOptions.aliased_path,
                            0xFFFFFFFF, bitmap_alpha, blend_type, &paint);
-    sk_sp<SkImage> skSrc = SkImages::RasterFromBitmap(skBitmap);
-    sk_sp<SkShader> skSrcShader = skSrc->makeShader(
+    sk_sp<SkShader> source_shader = skia_source->makeShader(
         SkTileMode::kClamp, SkTileMode::kClamp, SkSamplingOptions());
-    sk_sp<SkImage> skMaskImage = SkImages::RasterFromBitmap(skMask);
-    sk_sp<SkShader> skMaskShader = skMaskImage->makeShader(
+    sk_sp<SkShader> mask_shader = skia_mask->makeShader(
         SkTileMode::kClamp, SkTileMode::kClamp, SkSamplingOptions());
-    paint.setShader(
-        SkShaders::Blend(SkBlendMode::kSrcIn, skMaskShader, skSrcShader));
-    SkRect r = {0, 0, SkIntToScalar(src_width), SkIntToScalar(src_height)};
-    m_pCanvas->drawRect(r, paint);
+    paint.setShader(SkShaders::Blend(
+        SkBlendMode::kSrcIn, std::move(mask_shader), std::move(source_shader)));
+    m_pCanvas->drawRect(
+        SkRect::MakeWH(SkIntToScalar(src_width), SkIntToScalar(src_height)),
+        paint);
   }
+
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
   return true;
 }
@@ -1749,13 +1753,13 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
     BlendMode blend_type) {
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
 
-  // Storage vector must outlive `skBitmap`.
+  // Storage vector must outlive `skia_source`.
   DataVector<uint32_t> dst32_storage;
-  SkBitmap skBitmap;
-  if (!Upsample(pSource, dst32_storage, &skBitmap, /*forceAlpha=*/false)) {
+  sk_sp<SkImage> skia_source =
+      Upsample(pSource, dst32_storage, /*force_alpha=*/false);
+  if (!skia_source) {
     return false;
   }
-  skBitmap.setImmutable();
 
   {
     SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
@@ -1787,12 +1791,13 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
     }
 
     m_pCanvas->drawImageRect(
-        skBitmap.asImage(),
+        skia_source,
         SkRect::MakeLTRB(src_rect.left, src_rect.top, src_rect.right,
                          src_rect.bottom),
         SkRect::MakeWH(src_rect.Width(), src_rect.Height()), sampling_options,
         &paint, SkCanvas::kFast_SrcRectConstraint);
   }
+
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
   return true;
 }
