@@ -14,7 +14,7 @@
 
 #include "core/fxcrt/retain_ptr.h"
 
-class CFX_DIBitmap;
+class CFX_DIBBase;
 class CFX_GraphStateData;
 class CFX_Matrix;
 class CFX_Path;
@@ -30,7 +30,7 @@ class CGdiplusExt {
   void Load();
   bool IsAvailable() { return !!m_hModule; }
   bool StretchDIBits(HDC hDC,
-                     const RetainPtr<CFX_DIBitmap>& pBitmap,
+                     const RetainPtr<CFX_DIBBase>& source,
                      int dest_left,
                      int dest_top,
                      int dest_width,

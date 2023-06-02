@@ -8,7 +8,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/dib/cfx_dibextractor.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/render_defines.h"
 #include "core/fxge/win32/cwin32_platform.h"
@@ -115,11 +115,7 @@ bool CGdiDisplayDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     FX_RECT alpha_src_rect(0, 0, width, height);
     return SetDIBits(bitmap, 0, alpha_src_rect, left, top, BlendMode::kNormal);
   }
-  CFX_DIBExtractor temp(pSource);
-  RetainPtr<CFX_DIBitmap> pBitmap = temp.GetBitmap();
-  if (!pBitmap)
-    return false;
-  return GDI_SetDIBits(pBitmap, src_rect, left, top);
+  return GDI_SetDIBits(pSource, src_rect, left, top);
 }
 
 bool CGdiDisplayDriver::UseFoxitStretchEngine(
@@ -139,7 +135,7 @@ bool CGdiDisplayDriver::UseFoxitStretchEngine(
     dest_top += dest_height;
 
   bitmap_clip.Offset(-dest_left, -dest_top);
-  RetainPtr<CFX_DIBitmap> pStretched =
+  RetainPtr<CFX_DIBBase> pStretched =
       pSource->StretchTo(dest_width, dest_height, options, &bitmap_clip);
   if (!pStretched)
     return true;
@@ -199,23 +195,15 @@ bool CGdiDisplayDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     auto* pPlatform =
         static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
     if (pPlatform->m_GdiplusExt.IsAvailable()) {
-      CFX_DIBExtractor temp(pSource);
-      RetainPtr<CFX_DIBitmap> pBitmap = temp.GetBitmap();
-      if (!pBitmap)
-        return false;
       return pPlatform->m_GdiplusExt.StretchDIBits(
-          m_hDC, pBitmap, dest_left, dest_top, dest_width, dest_height,
+          m_hDC, pSource, dest_left, dest_top, dest_width, dest_height,
           pClipRect, FXDIB_ResampleOptions());
     }
     return UseFoxitStretchEngine(pSource, color, dest_left, dest_top,
                                  dest_width, dest_height, pClipRect,
                                  FXDIB_ResampleOptions());
   }
-  CFX_DIBExtractor temp(pSource);
-  RetainPtr<CFX_DIBitmap> pBitmap = temp.GetBitmap();
-  if (!pBitmap)
-    return false;
-  return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width,
+  return GDI_StretchDIBits(pSource, dest_left, dest_top, dest_width,
                            dest_height, FXDIB_ResampleOptions());
 }
 

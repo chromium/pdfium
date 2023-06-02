@@ -29,7 +29,7 @@
 #include "core/fxge/cfx_glyphcache.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "core/fxge/dib/cfx_dibextractor.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/freetype/fx_freetype.h"
@@ -555,10 +555,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     WriteStream(buf);
     WritePSBinary(compress_result.data);
   } else {
-    CFX_DIBExtractor source_extractor(pSource);
-    RetainPtr<CFX_DIBBase> pConverted = source_extractor.GetBitmap();
-    if (!pConverted)
-      return false;
+    RetainPtr<CFX_DIBBase> pConverted = pSource;
     switch (pSource->GetFormat()) {
       case FXDIB_Format::k1bppRgb:
       case FXDIB_Format::kRgb32:

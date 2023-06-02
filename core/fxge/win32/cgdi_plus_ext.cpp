@@ -23,6 +23,7 @@
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_path.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/win32/cwin32_platform.h"
 #include "third_party/base/notreached.h"
@@ -203,7 +204,7 @@ Gdiplus::GpBrush* GdipCreateBrushImpl(DWORD argb) {
 }
 
 void OutputImage(Gdiplus::GpGraphics* pGraphics,
-                 const RetainPtr<CFX_DIBitmap>& pBitmap,
+                 const RetainPtr<CFX_DIBBase>& source,
                  const FX_RECT& src_rect,
                  int dest_left,
                  int dest_top,
@@ -212,22 +213,27 @@ void OutputImage(Gdiplus::GpGraphics* pGraphics,
   int src_width = src_rect.Width();
   int src_height = src_rect.Height();
   const CGdiplusExt& GdiplusExt = GetGdiplusExt();
-  if (pBitmap->GetBPP() == 1 && (src_rect.left % 8)) {
+  if (source->GetBPP() == 1 && (src_rect.left % 8)) {
     FX_RECT new_rect(0, 0, src_width, src_height);
-    RetainPtr<CFX_DIBitmap> pCloned = pBitmap->ClipTo(src_rect);
+    RetainPtr<CFX_DIBBase> pCloned = source->ClipTo(src_rect);
     if (!pCloned)
       return;
     OutputImage(pGraphics, pCloned, new_rect, dest_left, dest_top, dest_width,
                 dest_height);
     return;
   }
-  int src_pitch = pBitmap->GetPitch();
-  uint8_t* scan0 = pBitmap->GetWritableBuffer()
-                       .subspan(src_rect.top * src_pitch +
-                                pBitmap->GetBPP() * src_rect.left / 8)
-                       .data();
+  int src_pitch = source->GetPitch();
+
+  // `GdipCreateBitmapFromScan0()` requires a `BYTE*` scanline buffer, but in
+  // this case, the bitmap only gets read by `GdipDrawImagePointsI()`, then
+  // disposed of, so it's safe to cast away `const` here.
+  uint8_t* scan0 =
+      const_cast<uint8_t*>(source->GetBuffer()
+                               .subspan(src_rect.top * src_pitch +
+                                        source->GetBPP() * src_rect.left / 8)
+                               .data());
   Gdiplus::GpBitmap* bitmap = nullptr;
-  switch (pBitmap->GetFormat()) {
+  switch (source->GetFormat()) {
     case FXDIB_Format::kArgb:
       CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
                                           PixelFormat32bppARGB, scan0, &bitmap);
@@ -248,7 +254,7 @@ void OutputImage(Gdiplus::GpGraphics* pGraphics,
       pal[0] = 0;
       pal[1] = 256;
       for (int i = 0; i < 256; i++)
-        pal[i + 2] = pBitmap->GetPaletteArgb(i);
+        pal[i + 2] = source->GetPaletteArgb(i);
       CallFunc(GdipSetImagePalette)(bitmap, (Gdiplus::ColorPalette*)pal);
       break;
     }
@@ -575,7 +581,7 @@ void CGdiplusExt::Load() {
 }
 
 bool CGdiplusExt::StretchDIBits(HDC hDC,
-                                const RetainPtr<CFX_DIBitmap>& pBitmap,
+                                const RetainPtr<CFX_DIBBase>& source,
                                 int dest_left,
                                 int dest_top,
                                 int dest_width,
@@ -589,16 +595,16 @@ bool CGdiplusExt::StretchDIBits(HDC hDC,
   if (options.bNoSmoothing) {
     CallFunc(GdipSetInterpolationMode)(
         pGraphics, Gdiplus::InterpolationModeNearestNeighbor);
-  } else if (pBitmap->GetWidth() > abs(dest_width) / 2 ||
-             pBitmap->GetHeight() > abs(dest_height) / 2) {
+  } else if (source->GetWidth() > abs(dest_width) / 2 ||
+             source->GetHeight() > abs(dest_height) / 2) {
     CallFunc(GdipSetInterpolationMode)(pGraphics,
                                        Gdiplus::InterpolationModeHighQuality);
   } else {
     CallFunc(GdipSetInterpolationMode)(pGraphics,
                                        Gdiplus::InterpolationModeBilinear);
   }
-  FX_RECT src_rect(0, 0, pBitmap->GetWidth(), pBitmap->GetHeight());
-  OutputImage(pGraphics, pBitmap, src_rect, dest_left, dest_top, dest_width,
+  FX_RECT src_rect(0, 0, source->GetWidth(), source->GetHeight());
+  OutputImage(pGraphics, source, src_rect, dest_left, dest_top, dest_width,
               dest_height);
   CallFunc(GdipDeleteGraphics)(pGraphics);
   CallFunc(GdipDeleteGraphics)(pGraphics);

@@ -17,7 +17,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_windowsrenderdevice.h"
-#include "core/fxge/dib/cfx_dibextractor.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/render_defines.h"
 #include "core/fxge/text_char_pos.h"
@@ -59,12 +59,7 @@ bool CGdiPrinterDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   if (pSource->IsAlphaFormat())
     return false;
 
-  CFX_DIBExtractor temp(pSource);
-  RetainPtr<CFX_DIBitmap> pBitmap = temp.GetBitmap();
-  if (!pBitmap)
-    return false;
-
-  return GDI_SetDIBits(pBitmap, src_rect, left, top);
+  return GDI_SetDIBits(pSource, src_rect, left, top);
 }
 
 bool CGdiPrinterDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
@@ -82,7 +77,7 @@ bool CGdiPrinterDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
       return false;
 
     if (dest_width < 0 || dest_height < 0) {
-      RetainPtr<CFX_DIBitmap> pFlipped =
+      RetainPtr<CFX_DIBBase> pFlipped =
           pSource->FlipImage(dest_width < 0, dest_height < 0);
       if (!pFlipped)
         return false;
@@ -96,11 +91,7 @@ bool CGdiPrinterDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                                 abs(dest_height), color);
     }
 
-    CFX_DIBExtractor temp(pSource);
-    RetainPtr<CFX_DIBitmap> pBitmap = temp.GetBitmap();
-    if (!pBitmap)
-      return false;
-    return GDI_StretchBitMask(pBitmap, dest_left, dest_top, dest_width,
+    return GDI_StretchBitMask(pSource, dest_left, dest_top, dest_width,
                               dest_height, color);
   }
 
@@ -108,7 +99,7 @@ bool CGdiPrinterDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     return false;
 
   if (dest_width < 0 || dest_height < 0) {
-    RetainPtr<CFX_DIBitmap> pFlipped =
+    RetainPtr<CFX_DIBBase> pFlipped =
         pSource->FlipImage(dest_width < 0, dest_height < 0);
     if (!pFlipped)
       return false;
@@ -122,11 +113,7 @@ bool CGdiPrinterDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                              abs(dest_height), options);
   }
 
-  CFX_DIBExtractor temp(pSource);
-  RetainPtr<CFX_DIBitmap> pBitmap = temp.GetBitmap();
-  if (!pBitmap)
-    return false;
-  return GDI_StretchDIBits(pBitmap, dest_left, dest_top, dest_width,
+  return GDI_StretchDIBits(pSource, dest_left, dest_top, dest_width,
                            dest_height, options);
 }
 
@@ -157,7 +144,7 @@ bool CGdiPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   if (fabs(matrix.a) >= 0.5f || fabs(matrix.d) >= 0.5f)
     return false;
 
-  RetainPtr<CFX_DIBitmap> pTransformed =
+  RetainPtr<CFX_DIBBase> pTransformed =
       pSource->SwapXY(matrix.c > 0, matrix.b < 0);
   if (!pTransformed)
     return false;

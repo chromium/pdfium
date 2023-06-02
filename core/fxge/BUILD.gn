@@ -173,8 +173,6 @@ source_set("fxge") {
     sources += [
       "cfx_windowsrenderdevice.cpp",
       "cfx_windowsrenderdevice.h",
-      "dib/cfx_dibextractor.cpp",
-      "dib/cfx_dibextractor.h",
       "win32/cfx_psfonttracker.cpp",
       "win32/cfx_psfonttracker.h",
       "win32/cfx_psrenderer.cpp",
