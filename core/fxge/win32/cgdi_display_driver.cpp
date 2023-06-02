@@ -51,14 +51,15 @@ bool CGdiDisplayDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   bmi.bmiHeader.biPlanes = 1;
   bmi.bmiHeader.biWidth = width;
   if (pBitmap->GetBPP() > 8) {
-    ret = ::GetDIBits(hDCMemory, hbmp, 0, height, pBitmap->GetBuffer().data(),
-                      &bmi, DIB_RGB_COLORS) == height;
+    ret = ::GetDIBits(hDCMemory, hbmp, 0, height,
+                      pBitmap->GetWritableBuffer().data(), &bmi,
+                      DIB_RGB_COLORS) == height;
   } else {
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (bitmap->Create(width, height, FXDIB_Format::kRgb)) {
       bmi.bmiHeader.biBitCount = 24;
-      ::GetDIBits(hDCMemory, hbmp, 0, height, bitmap->GetBuffer().data(), &bmi,
-                  DIB_RGB_COLORS);
+      ::GetDIBits(hDCMemory, hbmp, 0, height,
+                  bitmap->GetWritableBuffer().data(), &bmi, DIB_RGB_COLORS);
       ret = pBitmap->TransferBitmap(0, 0, width, height, bitmap, 0, 0);
     } else {
       ret = false;

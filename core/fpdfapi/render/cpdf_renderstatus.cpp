@@ -1375,7 +1375,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   if (!pMask->Create(width, height, FXDIB_Format::k8bppMask))
     return nullptr;
 
-  pdfium::span<uint8_t> dest_buf = pMask->GetBuffer();
+  pdfium::span<uint8_t> dest_buf = pMask->GetWritableBuffer();
   pdfium::span<const uint8_t> src_buf = bitmap->GetBuffer();
   int dest_pitch = pMask->GetPitch();
   int src_pitch = bitmap->GetPitch();

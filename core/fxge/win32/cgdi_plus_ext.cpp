@@ -222,7 +222,7 @@ void OutputImage(Gdiplus::GpGraphics* pGraphics,
     return;
   }
   int src_pitch = pBitmap->GetPitch();
-  uint8_t* scan0 = pBitmap->GetBuffer()
+  uint8_t* scan0 = pBitmap->GetWritableBuffer()
                        .subspan(src_rect.top * src_pitch +
                                 pBitmap->GetBPP() * src_rect.left / 8)
                        .data();

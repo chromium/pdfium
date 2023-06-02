@@ -261,7 +261,7 @@ void CFGAS_GEGraphics::FillPathWithPattern(
   auto mask = pdfium::MakeRetain<CFX_DIBitmap>();
   mask->Create(data.width, data.height, FXDIB_Format::k1bppMask);
   fxcrt::spancpy(
-      mask->GetBuffer(),
+      mask->GetWritableBuffer(),
       pdfium::make_span(data.maskBits).first(mask->GetPitch() * data.height));
   const CFX_FloatRect rectf =
       matrix.TransformRect(path.GetPath().GetBoundingBox());

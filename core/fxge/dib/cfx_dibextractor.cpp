@@ -16,7 +16,7 @@ CFX_DIBExtractor::CFX_DIBExtractor(const RetainPtr<CFX_DIBBase>& pSrc) {
   }
   m_pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!m_pBitmap->Create(pSrc->GetWidth(), pSrc->GetHeight(), pSrc->GetFormat(),
-                         pSrc->GetBuffer().data(),
+                         pSrc->GetWritableBuffer().data(),
                          /*pitch=*/0)) {
     m_pBitmap.Reset();
     return;

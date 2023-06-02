@@ -352,7 +352,8 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
     iDecodeStatus = Jbig2Decoder::StartDecode(
         m_pJbig2Context.get(), m_pDocument->GetOrCreateCodecContext(), m_Width,
         m_Height, pSrcSpan, nSrcKey, pGlobalSpan, nGlobalKey,
-        m_pCachedBitmap->GetBuffer(), m_pCachedBitmap->GetPitch(), pPause);
+        m_pCachedBitmap->GetWritableBuffer(), m_pCachedBitmap->GetPitch(),
+        pPause);
   } else {
     iDecodeStatus = Jbig2Decoder::ContinueDecode(m_pJbig2Context.get(), pPause);
   }
@@ -715,8 +716,8 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
     return nullptr;
 
   result_bitmap->Clear(0xFFFFFFFF);
-  if (!decoder->Decode(result_bitmap->GetBuffer(), result_bitmap->GetPitch(),
-                       swap_rgb, m_nComponents)) {
+  if (!decoder->Decode(result_bitmap->GetWritableBuffer(),
+                       result_bitmap->GetPitch(), swap_rgb, m_nComponents)) {
     return nullptr;
   }
 
@@ -1131,9 +1132,9 @@ bool CPDF_DIB::TranslateScanline24bppDefaultDecode(
   return true;
 }
 
-pdfium::span<uint8_t> CPDF_DIB::GetBuffer() const {
+pdfium::span<const uint8_t> CPDF_DIB::GetBuffer() const {
   return m_pCachedBitmap ? m_pCachedBitmap->GetBuffer()
-                         : pdfium::span<uint8_t>();
+                         : pdfium::span<const uint8_t>();
 }
 
 pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {

@@ -85,9 +85,9 @@ bool CFX_DIBitmap::Copy(const RetainPtr<CFX_DIBBase>& pSrc) {
 
 CFX_DIBitmap::~CFX_DIBitmap() = default;
 
-pdfium::span<uint8_t> CFX_DIBitmap::GetBuffer() const {
+pdfium::span<const uint8_t> CFX_DIBitmap::GetBuffer() const {
   if (!m_pBuffer)
-    return pdfium::span<uint8_t>();
+    return pdfium::span<const uint8_t>();
 
   return {m_pBuffer.Get(), m_Height * m_Pitch};
 }
@@ -237,7 +237,7 @@ bool CFX_DIBitmap::TransferWithUnequalFormats(
   if (!offset.IsValid())
     return false;
 
-  pdfium::span<uint8_t> dest_buf = GetBuffer().subspan(
+  pdfium::span<uint8_t> dest_buf = GetWritableBuffer().subspan(
       dest_top * m_Pitch + static_cast<uint32_t>(offset.ValueOrDie()));
   DataVector<uint32_t> d_plt;
   return ConvertBuffer(dest_format, dest_buf, m_Pitch, width, height,

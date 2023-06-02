@@ -32,15 +32,21 @@ class CFX_DIBBase : public Retainable {
 
   static constexpr uint32_t kPaletteSize = 256;
 
-  virtual pdfium::span<uint8_t> GetBuffer() const;
-  virtual pdfium::span<const uint8_t> GetScanline(int line) const = 0;
-  virtual bool SkipToScanline(int line, PauseIndicatorIface* pPause) const;
-  virtual size_t GetEstimatedImageMemoryBurden() const;
+  virtual pdfium::span<const uint8_t> GetBuffer() const;
+  pdfium::span<uint8_t> GetWritableBuffer() {
+    pdfium::span<const uint8_t> src = GetBuffer();
+    return {const_cast<uint8_t*>(src.data()), src.size()};
+  }
 
+  virtual pdfium::span<const uint8_t> GetScanline(int line) const = 0;
   pdfium::span<uint8_t> GetWritableScanline(int line) {
     pdfium::span<const uint8_t> src = GetScanline(line);
     return {const_cast<uint8_t*>(src.data()), src.size()};
   }
+
+  virtual bool SkipToScanline(int line, PauseIndicatorIface* pPause) const;
+  virtual size_t GetEstimatedImageMemoryBurden() const;
+
   int GetWidth() const { return m_Width; }
   int GetHeight() const { return m_Height; }
   uint32_t GetPitch() const { return m_Pitch; }

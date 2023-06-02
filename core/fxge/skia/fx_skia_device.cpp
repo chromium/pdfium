@@ -166,7 +166,7 @@ DataVector<uint32_t> Fill32BppDestStorageWith1BppSource(
   DCHECK_EQ(1, source->GetBPP());
   int width = source->GetWidth();
   int height = source->GetHeight();
-  void* buffer = source->GetBuffer().data();
+  const void* buffer = source->GetBuffer().data();
   DCHECK(buffer);
 
   uint32_t color0 = source->GetPaletteArgb(0);
@@ -194,7 +194,7 @@ DataVector<uint32_t> Fill32BppDestStorageWithPalette(
   DCHECK_EQ(8, source->GetBPP());
   int width = source->GetWidth();
   int height = source->GetHeight();
-  void* buffer = source->GetBuffer().data();
+  const void* buffer = source->GetBuffer().data();
   DCHECK(buffer);
   DataVector<uint32_t> dst32_storage(Fx2DSizeOrDie(width, height));
   pdfium::span<SkPMColor> dst32_pixels(dst32_storage);
@@ -671,7 +671,8 @@ bool Upsample(const RetainPtr<CFX_DIBBase>& pSource,
               DataVector<uint32_t>& dst32_storage,
               SkBitmap* skBitmap,
               bool forceAlpha) {
-  void* buffer = pSource->GetBuffer().data();
+  // TODO(crbug.com/pdfium/2034): Does not need to use `GetWritableBuffer()`.
+  void* buffer = pSource->GetWritableBuffer().data();
   if (!buffer)
     return false;
   SkColorType colorType = forceAlpha || pSource->IsMaskFormat()
@@ -863,8 +864,8 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
   SkImageInfo imageInfo =
       SkImageInfo::Make(m_pBitmap->GetWidth(), m_pBitmap->GetHeight(),
                         color_type, kPremul_SkAlphaType);
-  surface_ = SkSurfaces::WrapPixels(imageInfo, m_pBitmap->GetBuffer().data(),
-                                    m_pBitmap->GetPitch());
+  surface_ = SkSurfaces::WrapPixels(
+      imageInfo, m_pBitmap->GetWritableBuffer().data(), m_pBitmap->GetPitch());
   m_pCanvas = surface_->getCanvas();
 }
 
@@ -1510,7 +1511,8 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   if (!m_pBitmap)
     return true;
 
-  uint8_t* srcBuffer = m_pBitmap->GetBuffer().data();
+  // TODO(crbug.com/pdfium/2034): Does not need to use `GetWritableBuffer()`.
+  uint8_t* srcBuffer = m_pBitmap->GetWritableBuffer().data();
   if (!srcBuffer)
     return true;
 
@@ -1523,7 +1525,7 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   skSrcBitmap.installPixels(srcImageInfo, srcBuffer, srcRowBytes);
   skSrcBitmap.setImmutable();
 
-  uint8_t* dstBuffer = pBitmap->GetBuffer().data();
+  uint8_t* dstBuffer = pBitmap->GetWritableBuffer().data();
   DCHECK(dstBuffer);
 
   int dstWidth = pBitmap->GetWidth();
@@ -1616,7 +1618,7 @@ void CFX_DIBitmap::PreMultiply() {
   if (GetBPP() != 32)
     return;
 
-  void* buffer = GetBuffer().data();
+  void* buffer = GetWritableBuffer().data();
   if (!buffer)
     return;
 
@@ -1641,7 +1643,7 @@ void CFX_DIBitmap::UnPreMultiply() {
   if (GetBPP() != 32)
     return;
 
-  void* buffer = GetBuffer().data();
+  void* buffer = GetWritableBuffer().data();
   if (!buffer)
     return;
 

@@ -204,7 +204,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph(
                                         : FXDIB_Format::k8bppMask);
   int dest_pitch = pGlyphBitmap->GetBitmap()->GetPitch();
   int src_pitch = FXFT_Get_Bitmap_Pitch(FXFT_Get_Glyph_Bitmap(GetFaceRec()));
-  uint8_t* pDestBuf = pGlyphBitmap->GetBitmap()->GetBuffer().data();
+  uint8_t* pDestBuf = pGlyphBitmap->GetBitmap()->GetWritableBuffer().data();
   uint8_t* pSrcBuf = static_cast<uint8_t*>(
       FXFT_Get_Bitmap_Buffer(FXFT_Get_Glyph_Bitmap(GetFaceRec())));
   if (anti_alias != FT_RENDER_MODE_MONO &&

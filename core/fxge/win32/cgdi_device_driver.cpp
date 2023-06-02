@@ -393,7 +393,7 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap1,
     if (!pBitmap)
       return false;
 
-    LPBYTE pBuffer = pBitmap->GetBuffer().data();
+    LPBYTE pBuffer = pBitmap->GetWritableBuffer().data();
     ByteString info = GetBitmapInfo(pBitmap);
     ((BITMAPINFOHEADER*)info.c_str())->biHeight *= -1;
     FX_RECT dst_rect(0, 0, src_rect.Width(), src_rect.Height());
@@ -407,12 +407,11 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap1,
   }
 
   RetainPtr<CFX_DIBitmap> pBitmap = pBitmap1;
-  LPBYTE pBuffer = pBitmap->GetBuffer().data();
   ByteString info = GetBitmapInfo(pBitmap);
   ::SetDIBitsToDevice(m_hDC, left, top, src_rect.Width(), src_rect.Height(),
                       src_rect.left, pBitmap->GetHeight() - src_rect.bottom, 0,
-                      pBitmap->GetHeight(), pBuffer, (BITMAPINFO*)info.c_str(),
-                      DIB_RGB_COLORS);
+                      pBitmap->GetHeight(), pBitmap->GetBuffer().data(),
+                      (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS);
   return true;
 }
 

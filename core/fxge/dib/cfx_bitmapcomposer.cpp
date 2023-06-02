@@ -131,7 +131,7 @@ void CFX_BitmapComposer::ComposeScanlineV(
   int Bpp = m_pBitmap->GetBPP() / 8;
   int dest_pitch = m_pBitmap->GetPitch();
   int dest_x = m_DestLeft + (m_bFlipX ? (m_DestWidth - line - 1) : line);
-  pdfium::span<uint8_t> dest_span = m_pBitmap->GetBuffer();
+  pdfium::span<uint8_t> dest_span = m_pBitmap->GetWritableBuffer();
   if (!dest_span.empty()) {
     const size_t dest_x_offset = Fx2DSizeOrDie(dest_x, Bpp);
     const size_t dest_y_offset = Fx2DSizeOrDie(m_DestTop, dest_pitch);
