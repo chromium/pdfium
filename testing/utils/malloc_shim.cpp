@@ -21,10 +21,8 @@ constexpr partition_alloc::PartitionOptions kOptions = {
     partition_alloc::PartitionOptions::Cookie::kAllowed,
 #if BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
     partition_alloc::PartitionOptions::BackupRefPtr::kEnabled,
-    partition_alloc::PartitionOptions::BackupRefPtrZapping::kEnabled,
 #else
     partition_alloc::PartitionOptions::BackupRefPtr::kDisabled,
-    partition_alloc::PartitionOptions::BackupRefPtrZapping::kDisabled,
 #endif
     partition_alloc::PartitionOptions::UseConfigurablePool::kNo,
 };
