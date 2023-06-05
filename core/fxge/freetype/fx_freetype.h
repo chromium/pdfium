@@ -76,7 +76,6 @@ using ScopedFXFTLibraryRec =
 #define FXFT_Get_MM_Axis_Min(axis) (axis).minimum
 #define FXFT_Get_MM_Axis_Max(axis) (axis).maximum
 #define FXFT_Get_MM_Axis_Def(axis) (axis).def
-#define FXFT_Free(face, p) (face)->memory->free((face)->memory, p)
 #define FXFT_Get_Glyph_Outline(face) &((face)->glyph->outline)
 #define FXFT_Get_Glyph_Bitmap(face) (face)->glyph->bitmap
 #define FXFT_Get_Bitmap_Width(bitmap) (bitmap).width
