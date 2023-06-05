@@ -627,24 +627,23 @@ void CFX_Font::AdjustMMParams(int glyph_index,
                               int dest_width,
                               int weight) const {
   DCHECK(dest_width >= 0);
-  FXFT_MM_VarPtr pMasters = nullptr;
-  FT_Get_MM_Var(m_Face->GetRec(), &pMasters);
-  if (!pMasters)
+  ScopedFXFTMMVar variation_desc(m_Face->GetRec());
+  if (!variation_desc) {
     return;
+  }
 
   FT_Pos coords[2];
-  if (weight == 0)
-    coords[0] = FXFT_Get_MM_Axis_Def(FXFT_Get_MM_Axis(pMasters, 0)) / 65536;
-  else
+  if (weight == 0) {
+    coords[0] = variation_desc.GetAxisDefault(0) / 65536;
+  } else {
     coords[0] = weight;
+  }
 
   if (dest_width == 0) {
-    coords[1] = FXFT_Get_MM_Axis_Def(FXFT_Get_MM_Axis(pMasters, 1)) / 65536;
+    coords[1] = variation_desc.GetAxisDefault(1) / 65536;
   } else {
-    FT_Long min_param =
-        FXFT_Get_MM_Axis_Min(FXFT_Get_MM_Axis(pMasters, 1)) / 65536;
-    FT_Long max_param =
-        FXFT_Get_MM_Axis_Max(FXFT_Get_MM_Axis(pMasters, 1)) / 65536;
+    FT_Long min_param = variation_desc.GetAxisMin(1) / 65536;
+    FT_Long max_param = variation_desc.GetAxisMax(1) / 65536;
     coords[1] = min_param;
     FT_Set_MM_Design_Coordinates(m_Face->GetRec(), 2, coords);
     FT_Load_Glyph(m_Face->GetRec(), glyph_index,
@@ -658,8 +657,6 @@ void CFX_Font::AdjustMMParams(int glyph_index,
     FT_Pos max_width = FXFT_Get_Glyph_HoriAdvance(m_Face->GetRec()) * 1000 /
                        FXFT_Get_Face_UnitsPerEM(m_Face->GetRec());
     if (max_width == min_width) {
-      FT_Done_MM_Var(CFX_GEModule::Get()->GetFontMgr()->GetFTLibrary(),
-                     pMasters);
       return;
     }
     FT_Pos param = min_param + (max_param - min_param) *
@@ -667,7 +664,6 @@ void CFX_Font::AdjustMMParams(int glyph_index,
                                    (max_width - min_width);
     coords[1] = param;
   }
-  FT_Done_MM_Var(CFX_GEModule::Get()->GetFontMgr()->GetFTLibrary(), pMasters);
   FT_Set_MM_Design_Coordinates(m_Face->GetRec(), 2, coords);
 }
 
