@@ -1,3 +1,5 @@
-include_rules = [
-  '+third_party/skia/include'
-]
+specific_include_rules = {
+  'cfx_glyphcache\.(cpp|h)|cfx_renderdevice\.cpp': [
+    '+third_party/skia/include',
+  ],
+}
