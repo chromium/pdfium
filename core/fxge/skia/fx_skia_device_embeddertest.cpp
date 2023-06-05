@@ -28,6 +28,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkImage.h"
+#include "third_party/skia/include/core/SkSize.h"
 #include "third_party/skia/include/utils/SkNoDrawCanvas.h"
 
 namespace {
@@ -239,8 +240,14 @@ TEST(fxge, SkiaStateOOSClip) {
 }
 
 TEST_F(FxgeSkiaEmbedderTest, RenderBigImageTwice) {
-  static constexpr int kCanvasWidth = 306;
-  static constexpr int kCanvasHeight = 396;
+  static constexpr int kImageWidth = 5100;
+  static constexpr int kImageHeight = 6600;
+
+  // Page size that renders 20 image pixels per output pixel. This value evenly
+  // divides both the image width and half the image height.
+  static constexpr int kPageToImageFactor = 20;
+  static constexpr int kPageWidth = kImageWidth / kPageToImageFactor;
+  static constexpr int kPageHeight = kImageHeight / kPageToImageFactor;
 
   if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
     GTEST_SKIP() << "Skia is not the default renderer";
@@ -251,19 +258,26 @@ TEST_F(FxgeSkiaEmbedderTest, RenderBigImageTwice) {
   ASSERT_TRUE(page);
 
   std::set<int> image_ids;
-  NiceMock<MockCanvas> canvas(kCanvasWidth, kCanvasHeight);
+  NiceMock<MockCanvas> canvas(kPageWidth, kPageHeight / 2);
   EXPECT_CALL(canvas, onDrawImageRect2)
       .WillRepeatedly(WithArg<0>([&image_ids](const SkImage* image) {
         ASSERT_TRUE(image);
         image_ids.insert(image->uniqueID());
+
+        // TODO(crbug.com/pdfium/2034): Image dimensions should be clipped to
+        // 5100x3320. The extra `kPageToImageFactor` accounts for anti-aliasing.
+        EXPECT_EQ(SkISize::Make(kImageWidth, kImageHeight), image->dimensions())
+            << "Actual image dimensions: " << image->width() << "x"
+            << image->height();
       }));
 
+  // Render top half.
   RenderPageToSkCanvas(page, /*start_x=*/0, /*start_y=*/0,
-                       /*size_x=*/kCanvasWidth, /*size_y=*/kCanvasHeight / 2,
-                       &canvas);
-  RenderPageToSkCanvas(page, /*start_x=*/0, /*start_y=*/kCanvasHeight / 2,
-                       /*size_x=*/kCanvasWidth, /*size_y=*/kCanvasHeight / 2,
-                       &canvas);
+                       /*size_x=*/kPageWidth, /*size_y=*/kPageHeight, &canvas);
+
+  // Render bottom half.
+  RenderPageToSkCanvas(page, /*start_x=*/0, /*start_y=*/-kPageHeight / 2,
+                       /*size_x=*/kPageWidth, /*size_y=*/kPageHeight, &canvas);
 
   // TODO(crbug.com/pdfium/2034): This should be 1, not 2.
   EXPECT_THAT(image_ids, SizeIs(2));
