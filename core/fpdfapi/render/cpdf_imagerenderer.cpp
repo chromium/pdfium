@@ -42,10 +42,6 @@
 #include "third_party/base/check.h"
 #include "third_party/base/cxx17_backports.h"
 
-#if defined(_SKIA_SUPPORT_)
-#include "core/fxge/skia/fx_skia_device.h"
-#endif
-
 namespace {
 
 bool IsImageValueTooBig(int val) {

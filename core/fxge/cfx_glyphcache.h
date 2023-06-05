@@ -18,7 +18,7 @@
 
 #if defined(_SKIA_SUPPORT_)
 #include "core/fxge/fx_font.h"
-#include "third_party/skia/include/core/SkTypeface.h"  // nogncheck
+#include "third_party/skia/include/core/SkRefCnt.h"  // nogncheck
 #endif
 
 class CFX_Font;

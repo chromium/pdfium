@@ -108,11 +108,11 @@ source_set("page") {
     "ipdf_page.h",
   ]
   configs += [ "../../../:pdfium_strict_config" ]
+  public_deps = [ "../../fxge" ]
   deps = [
     "../../../constants",
     "../../fxcodec",
     "../../fxcrt",
-    "../../fxge",
     "../font",
     "../parser",
   ]

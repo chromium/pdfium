@@ -8,8 +8,8 @@
 #define CORE_FPDFAPI_RENDER_CPDF_RENDERTILING_H_
 
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxge/dib/cfx_dibitmap.h"
 
+class CFX_DIBitmap;
 class CFX_Matrix;
 class CPDF_Form;
 class CPDF_PageObject;
