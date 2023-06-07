@@ -26,7 +26,7 @@ CPDF_AllStates::~CPDF_AllStates() = default;
 
 void CPDF_AllStates::Copy(const CPDF_AllStates& src) {
   CopyStates(src);
-  m_GraphicsResourceName = src.m_GraphicsResourceName;
+  m_GraphicsResourceNames = src.m_GraphicsResourceNames;
   m_TextMatrix = src.m_TextMatrix;
   m_ParentMatrix = src.m_ParentMatrix;
   m_CTM = src.m_CTM;

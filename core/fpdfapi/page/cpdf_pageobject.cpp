@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 
+#include <utility>
+
 #include "core/fxcrt/fx_coordinates.h"
 
 CPDF_PageObject::CPDF_PageObject(int32_t content_stream)
@@ -71,6 +73,11 @@ CPDF_FormObject* CPDF_PageObject::AsForm() {
 
 const CPDF_FormObject* CPDF_PageObject::AsForm() const {
   return nullptr;
+}
+
+void CPDF_PageObject::SetGraphicsResourceNames(
+    std::vector<ByteString> resource_names) {
+  m_GraphicsResourceNames = std::move(resource_names);
 }
 
 void CPDF_PageObject::CopyData(const CPDF_PageObject* pSrc) {

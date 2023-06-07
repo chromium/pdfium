@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include <vector>
+
 #include "core/fpdfapi/page/cpdf_contentmarks.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
 #include "core/fxcrt/bytestring.h"
@@ -94,12 +96,10 @@ class CPDF_PageObject : public CPDF_GraphicStates {
     m_ResourceName = resource_name;
   }
 
-  const ByteString& GetGraphicsResourceName() const {
-    return m_GraphicsResourceName;
+  const std::vector<ByteString>& GetGraphicsResourceNames() const {
+    return m_GraphicsResourceNames;
   }
-  void SetGraphicsResourceName(const ByteString& resource_name) {
-    m_GraphicsResourceName = resource_name;
-  }
+  void SetGraphicsResourceNames(std::vector<ByteString> resource_names);
 
  protected:
   void CopyData(const CPDF_PageObject* pSrcObject);
@@ -110,8 +110,11 @@ class CPDF_PageObject : public CPDF_GraphicStates {
   CPDF_ContentMarks m_ContentMarks;
   bool m_bDirty = false;
   int32_t m_ContentStream;
-  ByteString m_ResourceName;          // The resource name for this object.
-  ByteString m_GraphicsResourceName;  // Like `m_ResourceName` but for graphics.
+  // The resource name for this object.
+  ByteString m_ResourceName;
+  // Like `m_ResourceName` but for graphics. Though unlike the resource name,
+  // multiple graphics states can apply at once.
+  std::vector<ByteString> m_GraphicsResourceNames;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PAGEOBJECT_H_

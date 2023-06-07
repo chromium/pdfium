@@ -4647,3 +4647,33 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForTextWithBadParameters) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFEditEmbedderTest, MultipleGraphicsStates) {
+  ASSERT_TRUE(OpenDocument("multiple_graphics_states.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFPageObject path(FPDFPageObj_CreateNewPath(400, 100));
+    EXPECT_TRUE(FPDFPageObj_SetFillColor(path.get(), 255, 0, 0, 255));
+    EXPECT_TRUE(FPDFPath_SetDrawMode(path.get(), FPDF_FILLMODE_ALTERNATE, 0));
+    EXPECT_TRUE(FPDFPath_MoveTo(path.get(), 100, 100));
+    EXPECT_TRUE(FPDFPath_LineTo(path.get(), 100, 125));
+    EXPECT_TRUE(FPDFPath_Close(path.get()));
+
+    FPDFPage_InsertObject(page, path.release());
+    EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  }
+
+  const char* checksum = CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()
+                             ? "7ebec75d95c64b522999a710de76c52c"
+                             : "f4b36616a7fea81a4f06cc7b01a55ac1";
+
+  ScopedFPDFBitmap bitmap = RenderPage(page);
+  CompareBitmap(bitmap.get(), 200, 300, checksum);
+
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedDocument(200, 300, checksum);
+
+  UnloadPage(page);
+}
