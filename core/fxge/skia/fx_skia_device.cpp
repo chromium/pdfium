@@ -5,6 +5,7 @@
 #include "core/fxge/skia/fx_skia_device.h"
 
 #include <math.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #include <algorithm>
@@ -28,9 +29,11 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/stl_util.h"
-#include "core/fxge/calculate_pitch.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_font.h"
@@ -44,6 +47,7 @@
 #include "core/fxge/dib/cstretchengine.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/text_char_pos.h"
+#include "third_party/abseil-cpp/absl/types/variant.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
@@ -161,9 +165,109 @@ bool IsRGBColorGrayScale(uint32_t color) {
          FXARGB_R(color) == FXARGB_B(color);
 }
 
-// Called by Upsample, return a 32 bit-per-pixel buffer filled with 2 colors
-// from a 1 bit-per-pixel source palette.
-DataVector<uint32_t> Fill32BppDestStorageWith1BppSource(
+// A builder that can create an `SkImage` either from a `CFX_DIBBase`, or from
+// newly-allocated memory.
+class SkiaImageBuilder {
+ public:
+  SkiaImageBuilder() = default;
+
+  // Constructs a builder backed by pixels shared with a `CFX_DIBBase`. The
+  // pixels are not accessible from the builder. The `CFX_DIBBase` must outlive
+  // the builder, as the reference count on the `CFX_DIBBase` is not incremented
+  // until `Build()` is called.
+  SkiaImageBuilder(CFX_DIBBase* source, SkColorType color_type)
+      : info_(SkImageInfo::Make(source->GetWidth(),
+                                source->GetHeight(),
+                                color_type,
+                                kPremul_SkAlphaType)),
+        data_(UnownedType(source)) {
+    // TODO(crbug.com/pdfium/2047): `Realize()` if there's no buffer?
+    row_bytes_ = source->GetPitch();
+  }
+
+  // Constructs a builder backed by allocated pixels.
+  explicit SkiaImageBuilder(const SkImageInfo& info) : info_(info) {
+    row_bytes_ = info_.minRowBytes();
+    data_size_ = Fx2DSizeOrDie(row_bytes_, info_.height());
+    data_ = AllocatedType(FX_Alloc(uint8_t, data_size_));
+  }
+
+  SkiaImageBuilder(SkiaImageBuilder&&) = default;
+  SkiaImageBuilder& operator=(SkiaImageBuilder&&) = default;
+
+  // Gets the number of bytes per row.
+  size_t row_bytes() const { return row_bytes_; }
+
+  // Gets the 8-bit pixels (if using allocated memory).
+  pdfium::span<uint8_t> allocated_pixels8() {
+    DCHECK_EQ(static_cast<size_t>(info_.bytesPerPixel()), sizeof(uint8_t));
+    return pdfium::make_span(
+        reinterpret_cast<uint8_t*>(absl::get<AllocatedType>(data_).get()),
+        data_size_);
+  }
+
+  // Gets the 32-bit pixels (if using allocated memory).
+  pdfium::span<uint32_t> allocated_pixels32() {
+    DCHECK_EQ(static_cast<size_t>(info_.bytesPerPixel()), sizeof(uint32_t));
+    return pdfium::make_span(
+        reinterpret_cast<uint32_t*>(absl::get<AllocatedType>(data_).get()),
+        data_size_ / sizeof(uint32_t));
+  }
+
+  // Builds an `SkImage` that takes ownership of the pixels. If sharing pixels
+  // with a `CFX_DIBBase`, this increments the reference count on the
+  // `CFX_DIBBase`.
+  //
+  // Note that an `SkImage` must be immutable, so the pixels must not be
+  // modified during the lifetime of the `SkImage`.
+  sk_sp<SkImage> Build() && {
+    if (absl::holds_alternative<AllocatedType>(data_)) {
+      // "Leak" allocated memory to `SkImage`.
+      return SkImages::RasterFromPixmap(
+          SkPixmap(info_, absl::get<AllocatedType>(data_).release(),
+                   row_bytes_),
+          /*rasterReleaseProc=*/ReleaseAllocated,
+          /*releaseContext=*/nullptr);
+    }
+
+    // Convert unowned pointer to a retained pointer, then "leak" to `SkImage`.
+    RetainPtr<CFX_DIBBase> retained =
+        pdfium::WrapRetain(absl::get<UnownedType>(data_).ExtractAsDangling());
+    CFX_DIBBase* source = retained.Leak();
+    return SkImages::RasterFromPixmap(
+        SkPixmap(info_, source->GetBuffer().data(), row_bytes_),
+        /*rasterReleaseProc=*/ReleaseRetained,
+        /*releaseContext=*/source);
+  }
+
+ private:
+  using UnownedType = UnownedPtr<CFX_DIBBase>;
+  using AllocatedType = std::unique_ptr<void, FxFreeDeleter>;
+
+  // Releases `CFX_DIBBase` "leaked" by `Build()`.
+  static void ReleaseRetained(const void* /*pixels*/,
+                              SkImages::ReleaseContext context) {
+    RetainPtr<CFX_DIBBase> retained;
+    retained.Unleak(reinterpret_cast<CFX_DIBBase*>(context));
+  }
+
+  // Releases allocated memory "leaked" by `Build()`.
+  static void ReleaseAllocated(const void* pixels,
+                               SkImages::ReleaseContext /*context*/) {
+    FX_Free(const_cast<void*>(pixels));
+  }
+
+  SkImageInfo info_;
+  size_t row_bytes_;
+
+  // Similar to `MaybeOwned<uint32_t, FxFreeDeleter>`, but holds either an
+  // unowned `CFX_DIBBase` pointer or an owned `void` pointer.
+  absl::variant<UnownedType, AllocatedType> data_;
+  size_t data_size_;
+};
+
+// Creates a `SkiaImageBuilder` using colors from a 1-bit-per-pixel palette.
+SkiaImageBuilder CreateSkiaImageBuilderUsingSingleBitPalette(
     const RetainPtr<CFX_DIBBase>& source) {
   DCHECK_EQ(1, source->GetBPP());
   int width = source->GetWidth();
@@ -173,8 +277,9 @@ DataVector<uint32_t> Fill32BppDestStorageWith1BppSource(
 
   uint32_t color0 = source->GetPaletteArgb(0);
   uint32_t color1 = source->GetPaletteArgb(1);
-  DataVector<uint32_t> dst32_storage(Fx2DSizeOrDie(width, height));
-  pdfium::span<SkPMColor> dst32_pixels(dst32_storage);
+  SkiaImageBuilder image_builder(SkImageInfo::Make(
+      width, height, kBGRA_8888_SkColorType, kPremul_SkAlphaType));
+  pdfium::span<SkPMColor> dst32_pixels(image_builder.allocated_pixels32());
 
   for (int y = 0; y < height; ++y) {
     const uint8_t* src_row =
@@ -185,12 +290,11 @@ DataVector<uint32_t> Fill32BppDestStorageWith1BppSource(
       dst_row[x] = use_color1 ? color1 : color0;
     }
   }
-  return dst32_storage;
+  return image_builder;
 }
 
-// Called by Upsample(), returns a 32 bit-per-pixel buffer filled with colors
-// from `palette`.
-DataVector<uint32_t> Fill32BppDestStorageWithPalette(
+// Creates a `SkiaImageBuilder` using colors from `palette`.
+SkiaImageBuilder CreateSkiaImageBuilderUsingPalette(
     const RetainPtr<CFX_DIBBase>& source,
     pdfium::span<const uint32_t> palette) {
   DCHECK_EQ(8, source->GetBPP());
@@ -198,8 +302,9 @@ DataVector<uint32_t> Fill32BppDestStorageWithPalette(
   int height = source->GetHeight();
   const void* buffer = source->GetBuffer().data();
   DCHECK(buffer);
-  DataVector<uint32_t> dst32_storage(Fx2DSizeOrDie(width, height));
-  pdfium::span<SkPMColor> dst32_pixels(dst32_storage);
+  SkiaImageBuilder image_builder(SkImageInfo::Make(
+      width, height, kBGRA_8888_SkColorType, kPremul_SkAlphaType));
+  pdfium::span<SkPMColor> dst32_pixels(image_builder.allocated_pixels32());
 
   for (int y = 0; y < height; ++y) {
     const uint8_t* src_row =
@@ -213,7 +318,7 @@ DataVector<uint32_t> Fill32BppDestStorageWithPalette(
       dst_row[x] = palette[index];
     }
   }
-  return dst32_storage;
+  return image_builder;
 }
 
 static void DebugValidate(const RetainPtr<CFX_DIBitmap>& bitmap,
@@ -669,22 +774,20 @@ void SetBitmapPaintForMerge(bool is_mask,
   paint->setBlendMode(GetSkiaBlendMode(blend_type));
 }
 
-// TODO(crbug.com/pdfium/2034): Eliminate the need for `dst32_storage`.
 sk_sp<SkImage> Upsample(const RetainPtr<CFX_DIBBase>& source,
-                        DataVector<uint32_t>& dst32_storage,
                         bool force_alpha) {
-  const void* buffer = source->GetBuffer().data();
+  const uint8_t* const buffer = source->GetBuffer().data();
   if (!buffer) {
     return nullptr;
   }
 
-  SkColorType colorType = force_alpha || source->IsMaskFormat()
-                              ? SkColorType::kAlpha_8_SkColorType
-                              : SkColorType::kGray_8_SkColorType;
-  SkAlphaType alphaType = kPremul_SkAlphaType;
-  int width = source->GetWidth();
-  int height = source->GetHeight();
-  int rowBytes = source->GetPitch();
+  const SkColorType color_type = force_alpha || source->IsMaskFormat()
+                                     ? SkColorType::kAlpha_8_SkColorType
+                                     : SkColorType::kGray_8_SkColorType;
+  const int width = source->GetWidth();
+  const int height = source->GetHeight();
+  const int row_bytes = source->GetPitch();
+  SkiaImageBuilder image_builder(source, color_type);
   switch (source->GetBPP()) {
     case 1: {
       // By default, the two colors for grayscale are 0xFF and 0x00 unless they
@@ -699,9 +802,7 @@ sk_sp<SkImage> Upsample(const RetainPtr<CFX_DIBBase>& source,
         bool use_gray_colors = IsRGBColorGrayScale(palette_color0) &&
                                IsRGBColorGrayScale(palette_color1);
         if (!use_gray_colors) {
-          dst32_storage = Fill32BppDestStorageWith1BppSource(source);
-          rowBytes = width * sizeof(uint32_t);
-          colorType = kBGRA_8888_SkColorType;
+          image_builder = CreateSkiaImageBuilderUsingSingleBitPalette(source);
           break;
         }
 
@@ -709,15 +810,13 @@ sk_sp<SkImage> Upsample(const RetainPtr<CFX_DIBBase>& source,
         color1 = FXARGB_R(palette_color1);
       }
 
-      const int src_row_bytes = rowBytes;  // Save original value.
-      rowBytes = fxge::CalculatePitch32OrDie(/*bpp=*/8, width);
-      dst32_storage = DataVector<uint32_t>(Fx2DSizeOrDie(rowBytes / 4, height));
-      pdfium::span<uint8_t> dst8_pixels =
-          pdfium::as_writable_bytes(pdfium::make_span(dst32_storage));
+      image_builder = SkiaImageBuilder(
+          SkImageInfo::Make(width, height, color_type, kPremul_SkAlphaType));
+      pdfium::span<uint8_t> dst8_pixels = image_builder.allocated_pixels8();
       for (int y = 0; y < height; ++y) {
-        const uint8_t* src_row =
-            static_cast<const uint8_t*>(buffer) + y * src_row_bytes;
-        pdfium::span<uint8_t> dst_row = dst8_pixels.subspan(y * rowBytes);
+        const uint8_t* src_row = buffer + y * row_bytes;
+        pdfium::span<uint8_t> dst_row =
+            dst8_pixels.subspan(y * image_builder.row_bytes());
         for (int x = 0; x < width; ++x)
           dst_row[x] = src_row[x >> 3] & (1 << (~x & 0x07)) ? color1 : color0;
       }
@@ -732,42 +831,31 @@ sk_sp<SkImage> Upsample(const RetainPtr<CFX_DIBBase>& source,
         if (src_palette_size < src_palette.size())
           src_palette = src_palette.first(src_palette_size);
 
-        dst32_storage = Fill32BppDestStorageWithPalette(source, src_palette);
-        rowBytes = width * sizeof(uint32_t);
-        colorType = kBGRA_8888_SkColorType;
+        image_builder = CreateSkiaImageBuilderUsingPalette(source, src_palette);
       }
       break;
     case 24: {
-      dst32_storage = DataVector<uint32_t>(Fx2DSizeOrDie(width, height));
-      pdfium::span<uint32_t> dst32_pixels(dst32_storage);
+      image_builder = SkiaImageBuilder(SkImageInfo::Make(
+          width, height, kBGRA_8888_SkColorType, kOpaque_SkAlphaType));
+      pdfium::span<uint32_t> dst32_pixels = image_builder.allocated_pixels32();
       for (int y = 0; y < height; ++y) {
-        const uint8_t* srcRow =
-            static_cast<const uint8_t*>(buffer) + y * rowBytes;
+        const uint8_t* src_row = buffer + y * row_bytes;
         pdfium::span<uint32_t> dst_row = dst32_pixels.subspan(y * width);
         for (int x = 0; x < width; ++x) {
           dst_row[x] = SkPackARGB32NoCheck(
-              0xFF, srcRow[x * 3 + 2], srcRow[x * 3 + 1], srcRow[x * 3 + 0]);
+              0xFF, src_row[x * 3 + 2], src_row[x * 3 + 1], src_row[x * 3 + 0]);
         }
       }
-      rowBytes = width * sizeof(uint32_t);
-      colorType = kBGRA_8888_SkColorType;
-      alphaType = kOpaque_SkAlphaType;
       break;
     }
     case 32:
-      colorType = kBGRA_8888_SkColorType;
+      image_builder = SkiaImageBuilder(source, kBGRA_8888_SkColorType);
       break;
     default:
       NOTREACHED();
   }
-  if (!dst32_storage.empty()) {
-    buffer = dst32_storage.data();
-  }
-  SkImageInfo imageInfo =
-      SkImageInfo::Make(width, height, colorType, alphaType);
-  return SkImages::RasterFromPixmap(SkPixmap(imageInfo, buffer, rowBytes),
-                                    /*rasterReleaseProc=*/nullptr,
-                                    /*releaseContext=*/nullptr);
+
+  return std::move(image_builder).Build();
 }
 
 // Makes a bitmap filled with a solid color for debugging with `SkPicture`.
@@ -1117,10 +1205,7 @@ bool CFX_SkiaDeviceDriver::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) {
     return false;
   }
 
-  // Storage vector must outlive `skia_mask`.
-  DataVector<uint32_t> dst32_storage;
-  sk_sp<SkImage> skia_mask =
-      Upsample(mask, dst32_storage, /*force_alpha=*/true);
+  sk_sp<SkImage> skia_mask = Upsample(mask, /*force_alpha=*/true);
   if (!skia_mask) {
     return false;
   }
@@ -1680,17 +1765,12 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
     BlendMode blend_type) {
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
 
-  // Storage vectors must outlive `skia_source` and `skia_mask`.
-  DataVector<uint32_t> src32_storage;
-  sk_sp<SkImage> skia_source =
-      Upsample(pSource, src32_storage, /*force_alpha=*/false);
+  sk_sp<SkImage> skia_source = Upsample(pSource, /*force_alpha=*/false);
   if (!skia_source) {
     return false;
   }
 
-  DataVector<uint32_t> mask32_storage;
-  sk_sp<SkImage> skia_mask =
-      Upsample(pMask, mask32_storage, /*force_alpha=*/true);
+  sk_sp<SkImage> skia_mask = Upsample(pMask, /*force_alpha=*/true);
   if (!skia_mask) {
     return false;
   }
@@ -1754,10 +1834,7 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
     BlendMode blend_type) {
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
 
-  // Storage vector must outlive `skia_source`.
-  DataVector<uint32_t> dst32_storage;
-  sk_sp<SkImage> skia_source =
-      Upsample(pSource, dst32_storage, /*force_alpha=*/false);
+  sk_sp<SkImage> skia_source = Upsample(pSource, /*force_alpha=*/false);
   if (!skia_source) {
     return false;
   }
