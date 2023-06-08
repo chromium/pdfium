@@ -14,11 +14,19 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/span.h"
 
+#if defined(_SKIA_SUPPORT_)
+#include "third_party/skia/include/core/SkRefCnt.h"  // nogncheck
+#endif
+
 class CFX_ClipRgn;
 class CFX_DIBitmap;
 class CFX_Matrix;
 class PauseIndicatorIface;
 struct FX_RECT;
+
+#if defined(_SKIA_SUPPORT_)
+class SkImage;
+#endif  // defined(_SKIA_SUPPORT_)
 
 // Base class for all Device-Independent Bitmaps.
 class CFX_DIBBase : public Retainable {
@@ -80,6 +88,12 @@ class CFX_DIBBase : public Retainable {
                       int& src_left,
                       int& src_top,
                       const CFX_ClipRgn* pClipRgn) const;
+
+#if defined(_SKIA_SUPPORT_)
+  // Realizes an `SkImage` from this DIB. Changes to the DIB do not affect the
+  // `SkImage`. `force_alpha` forces gray images to be treated as 8-bit alpha.
+  virtual sk_sp<SkImage> RealizeSkImage(bool force_alpha) const;
+#endif  // defined(_SKIA_SUPPORT_)
 
  protected:
   CFX_DIBBase();

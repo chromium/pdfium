@@ -134,7 +134,10 @@ source_set("fxge") {
   }
 
   if (pdf_use_skia) {
-    sources += [ "skia/fx_skia_device.cpp" ]
+    sources += [
+      "skia/cfx_dibbase_skia.cpp",
+      "skia/fx_skia_device.cpp",
+    ]
     public_deps += [ "//skia" ]
   }
 
