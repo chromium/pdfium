@@ -231,8 +231,8 @@ class SkiaImageBuilder {
     }
 
     // Convert unowned pointer to a retained pointer, then "leak" to `SkImage`.
-    RetainPtr<CFX_DIBBase> retained =
-        pdfium::WrapRetain(absl::get<UnownedType>(data_).ExtractAsDangling());
+    RetainPtr<CFX_DIBBase> retained(
+        absl::get<UnownedType>(data_).ExtractAsDangling());
     CFX_DIBBase* source = retained.Leak();
     return SkImages::RasterFromPixmap(
         SkPixmap(info_, source->GetBuffer().data(), row_bytes_),
