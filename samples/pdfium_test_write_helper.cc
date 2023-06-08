@@ -90,8 +90,7 @@ const char* AnnotSubtypeToCString(FPDF_ANNOTATION_SUBTYPE subtype) {
     return "RichMedia";
   if (subtype == FPDF_ANNOT_XFAWIDGET)
     return "XFAWidget";
-  NOTREACHED();
-  return "";
+  NOTREACHED_NORETURN();
 }
 
 void AppendFlagString(const char* flag, std::string* output) {
@@ -134,8 +133,7 @@ const char* PageObjectTypeToCString(int type) {
     return "Shading";
   if (type == FPDF_PAGEOBJ_FORM)
     return "Form";
-  NOTREACHED();
-  return "";
+  NOTREACHED_NORETURN();
 }
 
 std::vector<uint8_t> EncodePng(pdfium::span<const uint8_t> input,
@@ -162,7 +160,7 @@ std::vector<uint8_t> EncodePng(pdfium::span<const uint8_t> input,
                                           /*discard_transparency=*/false);
       break;
     default:
-      NOTREACHED();
+      NOTREACHED_NORETURN();
   }
   return png;
 }

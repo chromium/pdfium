@@ -24,8 +24,10 @@
 #include "testing/utils/hash.h"
 #include "testing/utils/path_service.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/notreached.h"
+#include "third_party/base/numerics/checked_math.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
@@ -540,10 +542,8 @@ void EmbedderTest::UnloadPageNoEvents(FPDF_PAGE page) {
 void EmbedderTest::UnloadPageCommon(FPDF_PAGE page, bool do_events) {
   DCHECK(form_handle());
   int page_number = GetPageNumberForLoadedPage(page);
-  if (page_number < 0) {
-    NOTREACHED();
-    return;
-  }
+  CHECK_GE(page_number, 0);
+
   if (do_events) {
     FORM_DoPageAAction(page, form_handle(), FPDFPAGE_AACTION_CLOSE);
     FORM_OnBeforeClosePage(page, form_handle());
@@ -563,10 +563,8 @@ ScopedFPDFBitmap EmbedderTest::RenderLoadedPage(FPDF_PAGE page) {
 
 ScopedFPDFBitmap EmbedderTest::RenderLoadedPageWithFlags(FPDF_PAGE page,
                                                          int flags) {
-  if (GetPageNumberForLoadedPage(page) < 0) {
-    NOTREACHED();
-    return nullptr;
-  }
+  int page_number = GetPageNumberForLoadedPage(page);
+  CHECK_GE(page_number, 0);
   return RenderPageWithFlags(page, form_handle(), flags);
 }
 
@@ -576,10 +574,8 @@ ScopedFPDFBitmap EmbedderTest::RenderSavedPage(FPDF_PAGE page) {
 
 ScopedFPDFBitmap EmbedderTest::RenderSavedPageWithFlags(FPDF_PAGE page,
                                                         int flags) {
-  if (GetPageNumberForSavedPage(page) < 0) {
-    NOTREACHED();
-    return nullptr;
-  }
+  int page_number = GetPageNumberForSavedPage(page);
+  CHECK_GE(page_number, 0);
   return RenderPageWithFlags(page, saved_form_handle(), flags);
 }
 
@@ -681,7 +677,7 @@ int EmbedderTest::BytesPerPixelForFormat(int format) {
     case FPDFBitmap_BGRA:
       return 4;
     default:
-      NOTREACHED();
+      NOTREACHED_NORETURN();
       return 0;
   }
 }
@@ -733,10 +729,7 @@ void EmbedderTest::CloseSavedPage(FPDF_PAGE page) {
   DCHECK(saved_form_handle());
 
   int page_number = GetPageNumberForSavedPage(page);
-  if (page_number < 0) {
-    NOTREACHED();
-    return;
-  }
+  CHECK_GE(page_number, 0);
 
   FORM_DoPageAAction(page, saved_form_handle(), FPDFPAGE_AACTION_CLOSE);
   FORM_OnBeforeClosePage(page, saved_form_handle());
@@ -853,15 +846,11 @@ int EmbedderTest::GetBlockFromString(void* param,
                                      unsigned char* buf,
                                      unsigned long size) {
   std::string* new_file = static_cast<std::string*>(param);
-  if (!new_file || pos + size < pos) {
-    NOTREACHED();
-    return 0;
-  }
+  CHECK(new_file);
 
-  if (pos + size > new_file->size()) {
-    NOTREACHED();
-    return 0;
-  }
+  pdfium::base::CheckedNumeric<size_t> end = pos;
+  end += size;
+  CHECK_LE(end.ValueOrDie(), new_file->size());
 
   memcpy(buf, new_file->data() + pos, size);
   return 1;

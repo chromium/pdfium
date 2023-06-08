@@ -16,6 +16,7 @@
 
 #include <string>
 
+#include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 
 #ifdef USE_SYSTEM_ZLIB
@@ -253,7 +254,7 @@ void DecodeInfoCallback(png_struct* png_ptr, png_info* info_ptr) {
         state->output_channels = 1;
         break;
       default:
-        NOTREACHED();
+        NOTREACHED_NORETURN();
         break;
     }
   } else if (channels == 4) {
@@ -271,12 +272,11 @@ void DecodeInfoCallback(png_struct* png_ptr, png_info* info_ptr) {
         state->output_channels = 4;
         break;
       default:
-        NOTREACHED();
+        NOTREACHED_NORETURN();
         break;
     }
   } else {
-    NOTREACHED();
-    longjmp(png_jmpbuf(png_ptr), 1);
+    NOTREACHED_NORETURN();
   }
 
   state->output->resize(state->width * state->output_channels * state->height);
@@ -288,11 +288,7 @@ void DecodeRowCallback(png_struct* png_ptr,
                        int pass) {
   PngDecoderState* state =
       static_cast<PngDecoderState*>(png_get_progressive_ptr(png_ptr));
-
-  if (static_cast<int>(row_num) > state->height) {
-    NOTREACHED();
-    return;
-  }
+  CHECK_LE(static_cast<int>(row_num), state->height);
 
   uint8_t* base = nullptr;
   base = &state->output->front();

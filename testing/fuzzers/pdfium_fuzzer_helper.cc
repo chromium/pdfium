@@ -20,7 +20,8 @@
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_text.h"
-#include "third_party/base/notreached.h"
+#include "third_party/base/check_op.h"
+#include "third_party/base/numerics/checked_math.h"
 #include "third_party/base/span.h"
 
 namespace {
@@ -34,10 +35,9 @@ class FuzzerTestLoader {
                       unsigned char* pBuf,
                       unsigned long size) {
     FuzzerTestLoader* pLoader = static_cast<FuzzerTestLoader*>(param);
-    if (pos + size < pos || pos + size > pLoader->m_Span.size()) {
-      NOTREACHED();
-      return 0;
-    }
+    pdfium::base::CheckedNumeric<size_t> end = pos;
+    end += size;
+    CHECK_LE(end.ValueOrDie(), pLoader->m_Span.size());
 
     memcpy(pBuf, &pLoader->m_Span[pos], size);
     return 1;
