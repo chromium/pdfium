@@ -8,16 +8,17 @@
 #include <stdint.h>
 
 #include <memory>
+#include <type_traits>
 #include <utility>
 
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxcrt/unowned_ptr.h"
+#include "core/fxge/calculate_pitch.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/abseil-cpp/absl/types/variant.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/span.h"
@@ -32,160 +33,179 @@
 
 namespace {
 
-// A builder that can create an `SkImage` either from a `CFX_DIBBase`, or from
-// newly-allocated memory.
-class SkiaImageBuilder {
- public:
-  SkiaImageBuilder() = default;
-
-  // Constructs a builder backed by pixels shared with a `CFX_DIBBase`. The
-  // pixels are not accessible from the builder. The `CFX_DIBBase` must outlive
-  // the builder, as the reference count on the `CFX_DIBBase` is not incremented
-  // until `Build()` is called.
-  SkiaImageBuilder(const CFX_DIBBase* source, SkColorType color_type)
-      : info_(SkImageInfo::Make(source->GetWidth(),
-                                source->GetHeight(),
-                                color_type,
-                                kPremul_SkAlphaType)),
-        data_(UnownedType(source)) {
-    // TODO(crbug.com/pdfium/2047): `Realize()` if there's no buffer?
-    row_bytes_ = source->GetPitch();
-  }
-
-  // Constructs a builder backed by allocated pixels.
-  explicit SkiaImageBuilder(const SkImageInfo& info) : info_(info) {
-    row_bytes_ = info_.minRowBytes();
-    data_size_ = Fx2DSizeOrDie(row_bytes_, info_.height());
-    data_ = AllocatedType(FX_Alloc(uint8_t, data_size_));
-  }
-
-  SkiaImageBuilder(SkiaImageBuilder&&) = default;
-  SkiaImageBuilder& operator=(SkiaImageBuilder&&) = default;
-
-  // Gets the number of bytes per row.
-  size_t row_bytes() const { return row_bytes_; }
-
-  // Gets the 8-bit pixels (if using allocated memory).
-  pdfium::span<uint8_t> allocated_pixels8() {
-    DCHECK_EQ(static_cast<size_t>(info_.bytesPerPixel()), sizeof(uint8_t));
-    return pdfium::make_span(
-        reinterpret_cast<uint8_t*>(absl::get<AllocatedType>(data_).get()),
-        data_size_);
-  }
-
-  // Gets the 32-bit pixels (if using allocated memory).
-  pdfium::span<uint32_t> allocated_pixels32() {
-    DCHECK_EQ(static_cast<size_t>(info_.bytesPerPixel()), sizeof(uint32_t));
-    return pdfium::make_span(
-        reinterpret_cast<uint32_t*>(absl::get<AllocatedType>(data_).get()),
-        data_size_ / sizeof(uint32_t));
-  }
-
-  // Builds an `SkImage` that takes ownership of the pixels. If sharing pixels
-  // with a `CFX_DIBBase`, this increments the reference count on the
-  // `CFX_DIBBase`.
-  //
-  // Note that an `SkImage` must be immutable, so the pixels must not be
-  // modified during the lifetime of the `SkImage`.
-  sk_sp<SkImage> Build() && {
-    if (absl::holds_alternative<AllocatedType>(data_)) {
-      // "Leak" allocated memory to `SkImage`.
-      return SkImages::RasterFromPixmap(
-          SkPixmap(info_, absl::get<AllocatedType>(data_).release(),
-                   row_bytes_),
-          /*rasterReleaseProc=*/ReleaseAllocated,
-          /*releaseContext=*/nullptr);
-    }
-
-    // Convert unowned pointer to a retained pointer, then "leak" to `SkImage`.
-    RetainPtr<const CFX_DIBBase> retained(
-        absl::get<UnownedType>(data_).ExtractAsDangling());
-    const CFX_DIBBase* source = retained.Leak();
-    return SkImages::RasterFromPixmap(
-        SkPixmap(info_, source->GetBuffer().data(), row_bytes_),
-        /*rasterReleaseProc=*/ReleaseRetained,
-        /*releaseContext=*/const_cast<CFX_DIBBase*>(source));
-  }
-
- private:
-  using UnownedType = UnownedPtr<const CFX_DIBBase>;
-  using AllocatedType = std::unique_ptr<void, FxFreeDeleter>;
-
-  // Releases `CFX_DIBBase` "leaked" by `Build()`.
-  static void ReleaseRetained(const void* /*pixels*/,
-                              SkImages::ReleaseContext context) {
-    RetainPtr<const CFX_DIBBase> retained;
-    retained.Unleak(reinterpret_cast<const CFX_DIBBase*>(context));
-  }
-
-  // Releases allocated memory "leaked" by `Build()`.
-  static void ReleaseAllocated(const void* pixels,
-                               SkImages::ReleaseContext /*context*/) {
-    FX_Free(const_cast<void*>(pixels));
-  }
-
-  SkImageInfo info_;
-  size_t row_bytes_;
-
-  // Similar to `MaybeOwned<uint32_t, FxFreeDeleter>`, but holds either an
-  // unowned `CFX_DIBBase` pointer or an owned `void` pointer.
-  absl::variant<UnownedType, AllocatedType> data_;
-  size_t data_size_;
-};
-
-// Creates a `SkiaImageBuilder` using colors from a 1-bit-per-pixel palette.
-SkiaImageBuilder CreateSkiaImageBuilderUsingSingleBitPalette(
-    const CFX_DIBBase* source) {
-  DCHECK_EQ(1, source->GetBPP());
-  int width = source->GetWidth();
-  int height = source->GetHeight();
-  const void* buffer = source->GetBuffer().data();
-  DCHECK(buffer);
-
-  uint32_t color0 = source->GetPaletteArgb(0);
-  uint32_t color1 = source->GetPaletteArgb(1);
-  SkiaImageBuilder image_builder(SkImageInfo::Make(
-      width, height, kBGRA_8888_SkColorType, kPremul_SkAlphaType));
-  pdfium::span<SkPMColor> dst32_pixels(image_builder.allocated_pixels32());
-
-  for (int y = 0; y < height; ++y) {
-    const uint8_t* src_row =
-        static_cast<const uint8_t*>(buffer) + y * source->GetPitch();
-    pdfium::span<uint32_t> dst_row = dst32_pixels.subspan(y * width);
-    for (int x = 0; x < width; ++x) {
-      bool use_color1 = src_row[x / 8] & (1 << (7 - x % 8));
-      dst_row[x] = use_color1 ? color1 : color0;
-    }
-  }
-  return image_builder;
+// Releases `CFX_DIBBase` "leaked" by `CreateSkiaImageFromDib()`.
+void ReleaseRetainedHeldBySkImage(const void* /*pixels*/,
+                                  SkImages::ReleaseContext context) {
+  RetainPtr<const CFX_DIBBase> retained;
+  retained.Unleak(reinterpret_cast<const CFX_DIBBase*>(context));
 }
 
-// Creates a `SkiaImageBuilder` using colors from `palette`.
-SkiaImageBuilder CreateSkiaImageBuilderUsingPalette(
-    const CFX_DIBBase* source,
-    pdfium::span<const uint32_t> palette) {
-  DCHECK_EQ(8, source->GetBPP());
-  int width = source->GetWidth();
-  int height = source->GetHeight();
-  const void* buffer = source->GetBuffer().data();
-  DCHECK(buffer);
-  SkiaImageBuilder image_builder(SkImageInfo::Make(
-      width, height, kBGRA_8888_SkColorType, kPremul_SkAlphaType));
-  pdfium::span<SkPMColor> dst32_pixels(image_builder.allocated_pixels32());
+// Creates an `SkImage` from a `CFX_DIBBase`, sharing the underlying pixels if
+// possible.
+//
+// Note that an `SkImage` must be immutable, so if sharing pixels, they must not
+// be modified during the lifetime of the `SkImage`.
+sk_sp<SkImage> CreateSkiaImageFromDib(const CFX_DIBBase* source,
+                                      SkColorType color_type) {
+  // Make sure the DIB is backed by a buffer.
+  RetainPtr<const CFX_DIBBase> retained;
+  if (source->GetBuffer().empty()) {
+    retained = source->Realize();
+    if (!retained) {
+      return nullptr;
+    }
+    DCHECK(!source->GetBuffer().empty());
+  } else {
+    retained.Reset(source);
+  }
 
-  for (int y = 0; y < height; ++y) {
-    const uint8_t* src_row =
-        static_cast<const uint8_t*>(buffer) + y * source->GetPitch();
-    pdfium::span<uint32_t> dst_row = dst32_pixels.subspan(y * width);
-    for (int x = 0; x < width; ++x) {
-      unsigned index = src_row[x];
-      if (index >= palette.size()) {
-        index = 0;
+  // Convert unowned pointer to a retained pointer, then "leak" to `SkImage`.
+  source = retained.Leak();
+  SkImageInfo info = SkImageInfo::Make(source->GetWidth(), source->GetHeight(),
+                                       color_type, kPremul_SkAlphaType);
+  return SkImages::RasterFromPixmap(
+      SkPixmap(info, source->GetBuffer().data(), source->GetPitch()),
+      /*rasterReleaseProc=*/ReleaseRetainedHeldBySkImage,
+      /*releaseContext=*/const_cast<CFX_DIBBase*>(source));
+}
+
+// Releases allocated memory "leaked" by `CreateSkiaImageFromTransformedDib()`.
+void ReleaseAllocatedHeldBySkImage(const void* pixels,
+                                   SkImages::ReleaseContext /*context*/) {
+  FX_Free(const_cast<void*>(pixels));
+}
+
+// Template defining traits of a pixel transform function.
+template <size_t source_bits_per_pixel, typename PixelTransform>
+class PixelTransformTraits;
+
+template <typename PixelTransform>
+class PixelTransformTraits<1, PixelTransform> {
+ public:
+  using Result = std::invoke_result_t<PixelTransform, bool>;
+
+  static Result Invoke(PixelTransform&& pixel_transform,
+                       const uint8_t* scanline,
+                       size_t column) {
+    uint8_t kMask = 1 << (7 - column % 8);
+    return pixel_transform(!!(scanline[column / 8] & kMask));
+  }
+};
+
+template <typename PixelTransform>
+class PixelTransformTraits<8, PixelTransform> {
+ public:
+  using Result = std::invoke_result_t<PixelTransform, uint8_t>;
+
+  static Result Invoke(PixelTransform&& pixel_transform,
+                       const uint8_t* scanline,
+                       size_t column) {
+    return pixel_transform(scanline[column]);
+  }
+};
+
+template <typename PixelTransform>
+class PixelTransformTraits<24, PixelTransform> {
+ public:
+  using Result =
+      std::invoke_result_t<PixelTransform, uint8_t, uint8_t, uint8_t>;
+
+  static Result Invoke(PixelTransform&& pixel_transform,
+                       const uint8_t* scanline,
+                       size_t column) {
+    size_t offset = column * 3;
+    return pixel_transform(scanline[offset + 2], scanline[offset + 1],
+                           scanline[offset]);
+  }
+};
+
+void ValidateScanlineSize(pdfium::span<const uint8_t> scanline,
+                          size_t min_row_bytes) {
+  DCHECK_GE(scanline.size(), min_row_bytes);
+}
+
+void ValidateBufferSize(pdfium::span<const uint8_t> buffer,
+                        const CFX_DIBBase& source) {
+#if DCHECK_IS_ON()
+  if (source.GetHeight() == 0) {
+    return;
+  }
+
+  FX_SAFE_SIZE_T buffer_size = source.GetHeight() - 1;
+  buffer_size *= source.GetPitch();
+  buffer_size += fxge::CalculatePitch8OrDie(source.GetBPP(), /*components=*/1,
+                                            source.GetWidth());
+
+  DCHECK_GE(buffer.size(), buffer_size.ValueOrDie());
+#endif  // DCHECK_IS_ON()
+}
+
+// Creates an `SkImage` from a `CFX_DIBBase`, transforming the source pixels
+// using `pixel_transform`.
+template <size_t source_bits_per_pixel, typename PixelTransform>
+sk_sp<SkImage> CreateSkiaImageFromTransformedDib(
+    const CFX_DIBBase& source,
+    SkColorType color_type,
+    SkAlphaType alpha_type,
+    PixelTransform&& pixel_transform) {
+  using Traits = PixelTransformTraits<source_bits_per_pixel, PixelTransform>;
+  using Result = typename Traits::Result;
+
+  // Allocate output buffer.
+  const int width = source.GetWidth();
+  const int height = source.GetHeight();
+  SkImageInfo info = SkImageInfo::Make(width, height, color_type, alpha_type);
+  DCHECK_EQ(info.minRowBytes(), width * sizeof(Result));
+
+  size_t output_size = Fx2DSizeOrDie(info.minRowBytes(), height);
+  std::unique_ptr<void, FxFreeDeleter> output(
+      FX_TryAlloc(uint8_t, output_size));
+  if (!output) {
+    return nullptr;
+  }
+
+  // Transform source pixels to output pixels.
+  pdfium::span<const uint8_t> source_buffer = source.GetBuffer();
+  Result* output_cursor = reinterpret_cast<Result*>(output.get());
+  if (source_buffer.empty()) {
+    // No buffer; iterate by individual scanline.
+    const size_t min_row_bytes =
+        fxge::CalculatePitch8OrDie(source.GetBPP(), /*components=*/1, width);
+    DCHECK_LE(min_row_bytes, source.GetPitch());
+
+    int line = 0;
+    for (int row = 0; row < height; ++row) {
+      pdfium::span<const uint8_t> scanline = source.GetScanline(line++);
+      ValidateScanlineSize(scanline, min_row_bytes);
+
+      for (int column = 0; column < width; ++column) {
+        *output_cursor++ =
+            Traits::Invoke(std::forward<PixelTransform>(pixel_transform),
+                           scanline.data(), column);
       }
-      dst_row[x] = palette[index];
+    }
+  } else {
+    // Iterate over the entire buffer.
+    ValidateBufferSize(source_buffer, source);
+    const size_t row_bytes = source.GetPitch();
+
+    const uint8_t* next_scanline = source_buffer.data();
+    for (int row = 0; row < height; ++row) {
+      const uint8_t* scanline = next_scanline;
+      next_scanline += row_bytes;
+
+      for (int column = 0; column < width; ++column) {
+        *output_cursor++ = Traits::Invoke(
+            std::forward<PixelTransform>(pixel_transform), scanline, column);
+      }
     }
   }
-  return image_builder;
+
+  // "Leak" allocated memory to `SkImage`.
+  return SkImages::RasterFromPixmap(
+      SkPixmap(info, output.release(), info.minRowBytes()),
+      /*rasterReleaseProc=*/ReleaseAllocatedHeldBySkImage,
+      /*releaseContext=*/nullptr);
 }
 
 bool IsRGBColorGrayScale(uint32_t color) {
@@ -196,18 +216,9 @@ bool IsRGBColorGrayScale(uint32_t color) {
 }  // namespace
 
 sk_sp<SkImage> CFX_DIBBase::RealizeSkImage(bool force_alpha) const {
-  const uint8_t* const buffer = GetBuffer().data();
-  if (!buffer) {
-    return nullptr;
-  }
-
   const SkColorType color_type = force_alpha || IsMaskFormat()
                                      ? SkColorType::kAlpha_8_SkColorType
                                      : SkColorType::kGray_8_SkColorType;
-  const int width = GetWidth();
-  const int height = GetHeight();
-  const int row_bytes = GetPitch();
-  SkiaImageBuilder image_builder(this, color_type);
   switch (GetBPP()) {
     case 1: {
       // By default, the two colors for grayscale are 0xFF and 0x00 unless they
@@ -221,60 +232,48 @@ sk_sp<SkImage> CFX_DIBBase::RealizeSkImage(bool force_alpha) const {
         bool use_gray_colors = IsRGBColorGrayScale(palette_color0) &&
                                IsRGBColorGrayScale(palette_color1);
         if (!use_gray_colors) {
-          image_builder = CreateSkiaImageBuilderUsingSingleBitPalette(this);
-          break;
+          return CreateSkiaImageFromTransformedDib</*source_bits_per_pixel=*/1>(
+              *this, kBGRA_8888_SkColorType, kPremul_SkAlphaType,
+              [palette_color0, palette_color1](bool bit) {
+                return bit ? palette_color1 : palette_color0;
+              });
         }
 
         color0 = FXARGB_R(palette_color0);
         color1 = FXARGB_R(palette_color1);
       }
 
-      image_builder = SkiaImageBuilder(
-          SkImageInfo::Make(width, height, color_type, kPremul_SkAlphaType));
-      pdfium::span<uint8_t> dst8_pixels = image_builder.allocated_pixels8();
-      for (int y = 0; y < height; ++y) {
-        const uint8_t* src_row = buffer + y * row_bytes;
-        pdfium::span<uint8_t> dst_row =
-            dst8_pixels.subspan(y * image_builder.row_bytes());
-        for (int x = 0; x < width; ++x) {
-          dst_row[x] = src_row[x >> 3] & (1 << (~x & 0x07)) ? color1 : color0;
-        }
-      }
-      break;
+      return CreateSkiaImageFromTransformedDib</*source_bits_per_pixel=*/1>(
+          *this, color_type, kPremul_SkAlphaType,
+          [color0, color1](bool bit) { return bit ? color1 : color0; });
     }
+
     case 8:
       // we upscale ctables to 32bit.
       if (HasPalette()) {
-        const size_t src_palette_size = GetRequiredPaletteSize();
-        pdfium::span<const uint32_t> src_palette = GetPaletteSpan();
-        CHECK_LE(src_palette_size, src_palette.size());
-        if (src_palette_size < src_palette.size()) {
-          src_palette = src_palette.first(src_palette_size);
-        }
+        return CreateSkiaImageFromTransformedDib</*source_bits_per_pixel=*/8>(
+            *this, kBGRA_8888_SkColorType, kPremul_SkAlphaType,
+            [palette = GetPaletteSpan().first(GetRequiredPaletteSize())](
+                uint8_t index) {
+              if (index >= palette.size()) {
+                index = 0;
+              }
+              return palette[index];
+            });
+      }
+      return CreateSkiaImageFromDib(this, color_type);
 
-        image_builder = CreateSkiaImageBuilderUsingPalette(this, src_palette);
-      }
-      break;
-    case 24: {
-      image_builder = SkiaImageBuilder(SkImageInfo::Make(
-          width, height, kBGRA_8888_SkColorType, kOpaque_SkAlphaType));
-      pdfium::span<uint32_t> dst32_pixels = image_builder.allocated_pixels32();
-      for (int y = 0; y < height; ++y) {
-        const uint8_t* src_row = buffer + y * row_bytes;
-        pdfium::span<uint32_t> dst_row = dst32_pixels.subspan(y * width);
-        for (int x = 0; x < width; ++x) {
-          dst_row[x] = SkPackARGB32NoCheck(
-              0xFF, src_row[x * 3 + 2], src_row[x * 3 + 1], src_row[x * 3 + 0]);
-        }
-      }
-      break;
-    }
+    case 24:
+      return CreateSkiaImageFromTransformedDib</*source_bits_per_pixel=*/24>(
+          *this, kBGRA_8888_SkColorType, kOpaque_SkAlphaType,
+          [](uint8_t red, uint8_t green, uint8_t blue) {
+            return SkPackARGB32NoCheck(0xFF, red, green, blue);
+          });
+
     case 32:
-      image_builder = SkiaImageBuilder(this, kBGRA_8888_SkColorType);
-      break;
-    default:
-      NOTREACHED();
-  }
+      return CreateSkiaImageFromDib(this, kBGRA_8888_SkColorType);
 
-  return std::move(image_builder).Build();
+    default:
+      NOTREACHED_NORETURN();
+  }
 }
