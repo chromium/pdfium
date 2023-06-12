@@ -36,8 +36,9 @@
 namespace {
 
 // pdf_fuzzer_init.cc and pdf_fuzzer_init_public.cc are mutually exclusive
-// and should not be built together.
-PDFFuzzerInitPublic* g_instance = new PDFFuzzerInitPublic();
+// and should not be built together. Static initializers and destructors
+// avoid problems with fuzzer initialization and termination.
+PDFFuzzerInitPublic g_instance;
 
 #ifdef PDF_ENABLE_V8
 std::string ProgramPath() {
