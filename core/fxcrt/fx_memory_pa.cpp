@@ -16,9 +16,7 @@
 
 namespace {
 
-constexpr partition_alloc::PartitionOptions kOptions = {
-    .cookie = partition_alloc::PartitionOptions::Cookie::kAllowed,
-};
+constexpr partition_alloc::PartitionOptions kOptions = {};
 
 #ifndef V8_ENABLE_SANDBOX
 partition_alloc::PartitionAllocator& GetArrayBufferPartitionAllocator() {
