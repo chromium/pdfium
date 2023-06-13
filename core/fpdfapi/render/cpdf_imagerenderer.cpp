@@ -364,6 +364,8 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
   }
   CalculateDrawImage(&bitmap_device1, &bitmap_device2, m_pLoader->GetMask(),
                      new_matrix, rect);
+  DCHECK(!bitmap_device2.GetBitmap()->HasPalette());
+  bitmap_device2.GetBitmap()->ConvertFormat(FXDIB_Format::k8bppMask);
 #if defined(_SKIA_SUPPORT_)
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
     m_pRenderStatus->GetRenderDevice()->SetBitsWithMask(
@@ -372,7 +374,6 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
     return false;
   }
 #endif
-  bitmap_device2.GetBitmap()->ConvertFormat(FXDIB_Format::k8bppMask);
   bitmap_device1.GetBitmap()->MultiplyAlpha(bitmap_device2.GetBitmap());
   if (m_BitmapAlpha < 255)
     bitmap_device1.GetBitmap()->MultiplyAlpha(m_BitmapAlpha);

@@ -35,12 +35,6 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
 #if defined(_SKIA_SUPPORT_)
   bool AttachCanvas(SkCanvas* canvas);
   void Clear(uint32_t color);
-  bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
-                       const RetainPtr<CFX_DIBBase>& pMask,
-                       int left,
-                       int top,
-                       int bitmap_alpha,
-                       BlendMode blend_type) override;
 #endif
 
   // Runtime check to see if Skia is the renderer variant in use.

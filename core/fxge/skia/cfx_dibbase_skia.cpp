@@ -218,10 +218,7 @@ bool IsRGBColorGrayScale(uint32_t color) {
 
 }  // namespace
 
-sk_sp<SkImage> CFX_DIBBase::RealizeSkImage(bool force_alpha) const {
-  const SkColorType color_type = force_alpha || IsMaskFormat()
-                                     ? SkColorType::kAlpha_8_SkColorType
-                                     : SkColorType::kGray_8_SkColorType;
+sk_sp<SkImage> CFX_DIBBase::RealizeSkImage() const {
   switch (GetBPP()) {
     case 1: {
       // By default, the two colors for grayscale are 0xFF and 0x00 unless they
@@ -247,7 +244,8 @@ sk_sp<SkImage> CFX_DIBBase::RealizeSkImage(bool force_alpha) const {
       }
 
       return CreateSkiaImageFromTransformedDib</*source_bits_per_pixel=*/1>(
-          *this, color_type, kPremul_SkAlphaType,
+          *this, IsMaskFormat() ? kAlpha_8_SkColorType : kGray_8_SkColorType,
+          kPremul_SkAlphaType,
           [color0, color1](bool bit) { return bit ? color1 : color0; });
     }
 
@@ -264,7 +262,9 @@ sk_sp<SkImage> CFX_DIBBase::RealizeSkImage(bool force_alpha) const {
               return palette[index];
             });
       }
-      return CreateSkiaImageFromDib(this, color_type, kPremul_SkAlphaType);
+      return CreateSkiaImageFromDib(
+          this, IsMaskFormat() ? kAlpha_8_SkColorType : kGray_8_SkColorType,
+          kPremul_SkAlphaType);
 
     case 24:
       return CreateSkiaImageFromTransformedDib</*source_bits_per_pixel=*/24>(

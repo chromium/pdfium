@@ -215,12 +215,12 @@ class CFX_RenderDevice {
   bool MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask);
 
 #if defined(_SKIA_SUPPORT_)
-  virtual bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
-                               const RetainPtr<CFX_DIBBase>& pMask,
-                               int left,
-                               int top,
-                               int bitmap_alpha,
-                               BlendMode blend_type);
+  bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
+                       const RetainPtr<CFX_DIBBase>& pMask,
+                       int left,
+                       int top,
+                       int bitmap_alpha,
+                       BlendMode blend_type);
 #endif
 
  protected:

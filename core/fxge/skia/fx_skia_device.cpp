@@ -956,10 +956,11 @@ bool CFX_SkiaDeviceDriver::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) {
     return false;
   }
 
-  sk_sp<SkImage> skia_mask = mask->RealizeSkImage(/*force_alpha=*/true);
+  sk_sp<SkImage> skia_mask = mask->RealizeSkImage();
   if (!skia_mask) {
     return false;
   }
+  DCHECK_EQ(skia_mask->colorType(), kAlpha_8_SkColorType);
 
   SkPaint paint;
   paint.setBlendMode(SkBlendMode::kDstIn);
@@ -1487,15 +1488,17 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
     BlendMode blend_type) {
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
 
-  sk_sp<SkImage> skia_source = pSource->RealizeSkImage(/*force_alpha=*/false);
+  sk_sp<SkImage> skia_source = pSource->RealizeSkImage();
   if (!skia_source) {
     return false;
   }
 
-  sk_sp<SkImage> skia_mask = pMask->RealizeSkImage(/*force_alpha=*/true);
+  DCHECK(pMask->IsMaskFormat());
+  sk_sp<SkImage> skia_mask = pMask->RealizeSkImage();
   if (!skia_mask) {
     return false;
   }
+  DCHECK_EQ(skia_mask->colorType(), kAlpha_8_SkColorType);
 
   {
     SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
@@ -1556,7 +1559,7 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
     BlendMode blend_type) {
   DebugValidate(m_pBitmap, m_pBackdropBitmap);
 
-  sk_sp<SkImage> skia_source = pSource->RealizeSkImage(/*force_alpha=*/false);
+  sk_sp<SkImage> skia_source = pSource->RealizeSkImage();
   if (!skia_source) {
     return false;
   }
@@ -1652,15 +1655,4 @@ bool CFX_DefaultRenderDevice::CreateSkia(
 
   SetDeviceDriver(std::move(driver));
   return true;
-}
-
-bool CFX_DefaultRenderDevice::SetBitsWithMask(
-    const RetainPtr<CFX_DIBBase>& pBitmap,
-    const RetainPtr<CFX_DIBBase>& pMask,
-    int left,
-    int top,
-    int bitmap_alpha,
-    BlendMode blend_type) {
-  return static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver())
-      ->SetBitsWithMask(pBitmap, pMask, left, top, bitmap_alpha, blend_type);
 }
