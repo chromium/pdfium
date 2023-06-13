@@ -51,7 +51,6 @@
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
-#include "third_party/skia/include/core/SkBitmap.h"
 #include "third_party/skia/include/core/SkBlendMode.h"
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkClipOp.h"
@@ -1352,32 +1351,28 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   if (!m_pBitmap)
     return true;
 
-  const uint8_t* srcBuffer = m_pBitmap->GetBuffer().data();
-  if (!srcBuffer)
+  const uint8_t* input_buffer = m_pBitmap->GetBuffer().data();
+  if (!input_buffer) {
     return true;
+  }
 
-  SkImageInfo srcImageInfo =
+  uint8_t* output_buffer = pBitmap->GetWritableBuffer().data();
+  DCHECK(output_buffer);
+
+  SkImageInfo input_info =
       SkImageInfo::Make(m_pBitmap->GetWidth(), m_pBitmap->GetHeight(),
                         SkColorType::kN32_SkColorType, kPremul_SkAlphaType);
-  sk_sp<SkImage> source = SkImages::RasterFromPixmap(
-      SkPixmap(srcImageInfo, srcBuffer, m_pBitmap->GetPitch()),
+  sk_sp<SkImage> input = SkImages::RasterFromPixmap(
+      SkPixmap(input_info, input_buffer, m_pBitmap->GetPitch()),
       /*rasterReleaseProc=*/nullptr, /*releaseContext=*/nullptr);
 
-  uint8_t* dstBuffer = pBitmap->GetWritableBuffer().data();
-  DCHECK(dstBuffer);
+  SkImageInfo output_info = SkImageInfo::Make(
+      pBitmap->GetWidth(), pBitmap->GetHeight(),
+      Get32BitSkColorType(m_bRgbByteOrder), kPremul_SkAlphaType);
+  sk_sp<SkSurface> output =
+      SkSurfaces::WrapPixels(output_info, output_buffer, pBitmap->GetPitch());
 
-  int dstWidth = pBitmap->GetWidth();
-  int dstHeight = pBitmap->GetHeight();
-  size_t dstRowBytes = pBitmap->GetPitch();
-  SkImageInfo dstImageInfo = SkImageInfo::Make(
-      dstWidth, dstHeight, Get32BitSkColorType(m_bRgbByteOrder),
-      kPremul_SkAlphaType);
-  SkBitmap skDstBitmap;
-  skDstBitmap.installPixels(dstImageInfo, dstBuffer, dstRowBytes);
-
-  SkCanvas canvas(skDstBitmap);
-  canvas.drawImageRect(source, SkRect::MakeXYWH(left, top, dstWidth, dstHeight),
-                       SkSamplingOptions(), /*paint=*/nullptr);
+  output->getCanvas()->drawImage(input, left, top, SkSamplingOptions());
   return true;
 }
 
