@@ -90,8 +90,11 @@ class CFX_DIBBase : public Retainable {
                       const CFX_ClipRgn* pClipRgn) const;
 
 #if defined(_SKIA_SUPPORT_)
-  // Realizes an `SkImage` from this DIB. Changes to the DIB do not affect the
-  // `SkImage`. `force_alpha` forces gray images to be treated as 8-bit alpha.
+  // Realizes an `SkImage` from this DIB. `force_alpha` forces gray images to be
+  // treated as 8-bit alpha.
+  //
+  // This may share the underlying pixels, in which case, this DIB should not be
+  // modified during the lifetime of the `SkImage`.
   virtual sk_sp<SkImage> RealizeSkImage(bool force_alpha) const;
 #endif  // defined(_SKIA_SUPPORT_)
 
@@ -108,6 +111,11 @@ class CFX_DIBBase : public Retainable {
                             int src_left,
                             int src_top,
                             DataVector<uint32_t>* pal);
+
+#if defined(_SKIA_SUPPORT_)
+  // Whether alpha is premultiplied (if `IsAlphaFormat()`).
+  virtual bool IsPremultiplied() const;
+#endif  // defined(_SKIA_SUPPORT_)
 
   RetainPtr<CFX_DIBitmap> ClipToInternal(const FX_RECT* pClip) const;
   void BuildPalette();

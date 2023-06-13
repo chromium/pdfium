@@ -114,16 +114,6 @@ TEST(CFX_DIBitmap, CalculatePitchAndSizeBoundary) {
 }
 
 #if defined(_SKIA_SUPPORT_)
-TEST(CFX_DIBitmap, PreMultiply_FromCleared) {
-  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
-  FXARGB_SETDIB(bitmap->GetBuffer().data(), 0x7f'ff'ff'ff);
-
-  bitmap->PreMultiply();
-
-  EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0x7f, 0x7f, 0x7f, 0x7f));
-}
-
 TEST(CFX_DIBitmap, UnPreMultiply_FromCleared) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
@@ -134,37 +124,15 @@ TEST(CFX_DIBitmap, UnPreMultiply_FromCleared) {
   EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0xff, 0xff, 0xff, 0x7f));
 }
 
-TEST(CFX_DIBitmap, PreMultiply_FromPreMultiplied) {
-  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
-  bitmap->PreMultiply();
-  FXARGB_SETDIB(bitmap->GetBuffer().data(), 0x7f'7f'7f'7f);
-
-  bitmap->PreMultiply();
-
-  EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0x7f, 0x7f, 0x7f, 0x7f));
-}
-
 TEST(CFX_DIBitmap, UnPreMultiply_FromPreMultiplied) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
-  bitmap->PreMultiply();
+  bitmap->ForcePreMultiply();
   FXARGB_SETDIB(bitmap->GetBuffer().data(), 0x7f'7f'7f'7f);
 
   bitmap->UnPreMultiply();
 
   EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0xff, 0xff, 0xff, 0x7f));
-}
-
-TEST(CFX_DIBitmap, PreMultiply_FromUnPreMultiplied) {
-  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
-  bitmap->UnPreMultiply();
-  FXARGB_SETDIB(bitmap->GetBuffer().data(), 0x7f'ff'ff'ff);
-
-  bitmap->PreMultiply();
-
-  EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0x7f, 0x7f, 0x7f, 0x7f));
 }
 
 TEST(CFX_DIBitmap, UnPreMultiply_FromUnPreMultiplied) {
@@ -175,28 +143,6 @@ TEST(CFX_DIBitmap, UnPreMultiply_FromUnPreMultiplied) {
 
   bitmap->UnPreMultiply();
 
-  EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0xff, 0xff, 0xff, 0x7f));
-}
-
-TEST(CFX_DIBitmap, ForcePreMultiply) {
-  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
-  FXARGB_SETDIB(bitmap->GetBuffer().data(), 0x7f'7f'7f'7f);
-
-  bitmap->ForcePreMultiply();
-
-  bitmap->PreMultiply();
-  EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0x7f, 0x7f, 0x7f, 0x7f));
-}
-
-TEST(CFX_DIBitmap, ForceUnPreMultiply) {
-  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
-  FXARGB_SETDIB(bitmap->GetBuffer().data(), 0x7f'ff'ff'ff);
-
-  bitmap->ForceUnPreMultiply();
-
-  bitmap->UnPreMultiply();
   EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0xff, 0xff, 0xff, 0x7f));
 }
 #endif  // defined(_SKIA_SUPPORT_)

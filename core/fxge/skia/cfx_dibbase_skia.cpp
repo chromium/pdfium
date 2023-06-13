@@ -46,7 +46,8 @@ void ReleaseRetainedHeldBySkImage(const void* /*pixels*/,
 // Note that an `SkImage` must be immutable, so if sharing pixels, they must not
 // be modified during the lifetime of the `SkImage`.
 sk_sp<SkImage> CreateSkiaImageFromDib(const CFX_DIBBase* source,
-                                      SkColorType color_type) {
+                                      SkColorType color_type,
+                                      SkAlphaType alpha_type) {
   // Make sure the DIB is backed by a buffer.
   RetainPtr<const CFX_DIBBase> retained;
   if (source->GetBuffer().empty()) {
@@ -54,7 +55,7 @@ sk_sp<SkImage> CreateSkiaImageFromDib(const CFX_DIBBase* source,
     if (!retained) {
       return nullptr;
     }
-    DCHECK(!source->GetBuffer().empty());
+    DCHECK(!retained->GetBuffer().empty());
   } else {
     retained.Reset(source);
   }
@@ -62,7 +63,7 @@ sk_sp<SkImage> CreateSkiaImageFromDib(const CFX_DIBBase* source,
   // Convert unowned pointer to a retained pointer, then "leak" to `SkImage`.
   source = retained.Leak();
   SkImageInfo info = SkImageInfo::Make(source->GetWidth(), source->GetHeight(),
-                                       color_type, kPremul_SkAlphaType);
+                                       color_type, alpha_type);
   return SkImages::RasterFromPixmap(
       SkPixmap(info, source->GetBuffer().data(), source->GetPitch()),
       /*rasterReleaseProc=*/ReleaseRetainedHeldBySkImage,
@@ -142,6 +143,8 @@ void ValidateBufferSize(pdfium::span<const uint8_t> buffer,
 
 // Creates an `SkImage` from a `CFX_DIBBase`, transforming the source pixels
 // using `pixel_transform`.
+//
+// TODO(crbug.com/pdfium/2048): Consolidate with `CFX_DIBBase::ConvertBuffer()`.
 template <size_t source_bits_per_pixel, typename PixelTransform>
 sk_sp<SkImage> CreateSkiaImageFromTransformedDib(
     const CFX_DIBBase& source,
@@ -261,7 +264,7 @@ sk_sp<SkImage> CFX_DIBBase::RealizeSkImage(bool force_alpha) const {
               return palette[index];
             });
       }
-      return CreateSkiaImageFromDib(this, color_type);
+      return CreateSkiaImageFromDib(this, color_type, kPremul_SkAlphaType);
 
     case 24:
       return CreateSkiaImageFromTransformedDib</*source_bits_per_pixel=*/24>(
@@ -271,9 +274,15 @@ sk_sp<SkImage> CFX_DIBBase::RealizeSkImage(bool force_alpha) const {
           });
 
     case 32:
-      return CreateSkiaImageFromDib(this, kBGRA_8888_SkColorType);
+      return CreateSkiaImageFromDib(
+          this, kBGRA_8888_SkColorType,
+          IsPremultiplied() ? kPremul_SkAlphaType : kUnpremul_SkAlphaType);
 
     default:
       NOTREACHED_NORETURN();
   }
+}
+
+bool CFX_DIBBase::IsPremultiplied() const {
+  return false;
 }

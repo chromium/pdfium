@@ -1186,14 +1186,6 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
                          end_col, normalize, x_subpixel, a, r, g, b);
   }
 
-#if defined(_SKIA_SUPPORT_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
-    // DrawNormalTextHelper() can result in unpremultiplied bitmaps for
-    // rendering glyphs. Make sure `bitmap` is premultiplied before proceeding.
-    bitmap->PreMultiply();
-  }
-#endif
-
   if (bitmap->IsMaskFormat())
     SetBitMask(bitmap, bmp_rect.left, bmp_rect.top, fill_color);
   else

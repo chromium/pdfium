@@ -63,19 +63,6 @@ void ClearBitmap(CFX_DefaultRenderDevice& bitmap_device, uint32_t color) {
   bitmap_device.GetBitmap()->Clear(color);
 }
 
-RetainPtr<CFX_DIBBase> PreMultiplyBitmapIfAlpha(
-    RetainPtr<CFX_DIBBase> base_bitmap) {
-#if defined(_SKIA_SUPPORT_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
-    RetainPtr<CFX_DIBitmap> premultiplied = base_bitmap->Realize();
-    if (base_bitmap->IsAlphaFormat())
-      premultiplied->PreMultiply();
-    return premultiplied;
-  }
-#endif  // defined(_SKIA_SUPPORT_)
-  return base_bitmap;
-}
-
 }  // namespace
 
 CPDF_ImageRenderer::CPDF_ImageRenderer(CPDF_RenderStatus* pStatus)
@@ -408,10 +395,9 @@ bool CPDF_ImageRenderer::StartDIBBase() {
       m_ResampleOptions.bInterpolateBilinear = true;
     }
   }
-  RetainPtr<CFX_DIBBase> bitmap = PreMultiplyBitmapIfAlpha(m_pDIBBase);
   if (m_pRenderStatus->GetRenderDevice()->StartDIBitsWithBlend(
-          bitmap, m_BitmapAlpha, m_FillArgb, m_ImageMatrix, m_ResampleOptions,
-          &m_DeviceHandle, m_BlendType)) {
+          m_pDIBBase, m_BitmapAlpha, m_FillArgb, m_ImageMatrix,
+          m_ResampleOptions, &m_DeviceHandle, m_BlendType)) {
     if (m_DeviceHandle) {
       m_Mode = Mode::kBlend;
       return true;

@@ -415,8 +415,9 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderInkWithColorScheme) {
   // Test rendering of multiple ink with forced color scheme on.
   const char* content_with_ink_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-      return "ebc57721e4c8da34156e09b9b2e62fb0";
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+      return "5108aa537b6ecc37b3f0a35b76c1b379";
+    }
     return "797bce7dc6c50ee86b095405df9fe5aa";
   }();
 

@@ -117,8 +117,9 @@ class CFDETextOutLargeBitmapTest : public CFDETextOutTest {
   }
 
   const char* GetLargeTextBlobChecksum() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-      return "6181929583fd7651169306852397806f";
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+      return "cd357c6afbf17bb2ac48817df5d9eaad";
+    }
     return "268b71a8660b51e31c6bf30fc7ff1e08";
   }
 };

@@ -1451,31 +1451,6 @@ bool CFX_SkiaDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
   return false;
 }
 
-void CFX_DIBitmap::PreMultiply() {
-  if (GetBPP() != 32)
-    return;
-
-  void* buffer = GetWritableBuffer().data();
-  if (!buffer)
-    return;
-
-  Format prior_format = m_nFormat;
-  ForcePreMultiply();
-  if (prior_format == Format::kPreMultiplied)
-    return;
-
-  int height = GetHeight();
-  int width = GetWidth();
-  int row_bytes = GetPitch();
-  SkImageInfo unpremultiplied_info =
-      SkImageInfo::Make(width, height, kN32_SkColorType, kUnpremul_SkAlphaType);
-  SkPixmap unpremultiplied(unpremultiplied_info, buffer, row_bytes);
-  SkImageInfo premultiplied_info =
-      SkImageInfo::Make(width, height, kN32_SkColorType, kPremul_SkAlphaType);
-  SkPixmap premultiplied(premultiplied_info, buffer, row_bytes);
-  unpremultiplied.readPixels(premultiplied);
-}
-
 void CFX_DIBitmap::UnPreMultiply() {
   if (GetBPP() != 32)
     return;
@@ -1485,7 +1460,7 @@ void CFX_DIBitmap::UnPreMultiply() {
     return;
 
   Format prior_format = m_nFormat;
-  ForceUnPreMultiply();
+  m_nFormat = Format::kUnPreMultiplied;
   if (prior_format == Format::kUnPreMultiplied)
     return;
 
@@ -1505,8 +1480,8 @@ void CFX_DIBitmap::ForcePreMultiply() {
   m_nFormat = Format::kPreMultiplied;
 }
 
-void CFX_DIBitmap::ForceUnPreMultiply() {
-  m_nFormat = Format::kUnPreMultiplied;
+bool CFX_DIBitmap::IsPremultiplied() const {
+  return m_nFormat == Format::kPreMultiplied;
 }
 
 bool CFX_SkiaDeviceDriver::DrawBitsWithMask(

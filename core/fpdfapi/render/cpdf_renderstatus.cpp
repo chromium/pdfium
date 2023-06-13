@@ -1209,10 +1209,6 @@ void CPDF_RenderStatus::CompositeDIBitmap(
         }
         pDIBitmap->MultiplyAlpha(bitmap_alpha);
       }
-#if defined(_SKIA_SUPPORT_)
-      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-        pDIBitmap->PreMultiply();
-#endif
       if (m_pDevice->SetDIBits(pDIBitmap, left, top)) {
         return;
       }

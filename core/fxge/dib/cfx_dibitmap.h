@@ -125,20 +125,18 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                                                             uint32_t pitch);
 
 #if defined(_SKIA_SUPPORT_)
-  // Converts to pre-multiplied alpha if necessary.
-  void PreMultiply();
-
   // Converts to un-pre-multiplied alpha if necessary.
   void UnPreMultiply();
 
   // Forces pre-multiplied alpha without conversion.
   // TODO(crbug.com/pdfium/2011): Remove the need for this.
   void ForcePreMultiply();
-
-  // Forces un-pre-multiplied alpha without conversion.
-  // TODO(crbug.com/pdfium/2011): Remove the need for this.
-  void ForceUnPreMultiply();
 #endif
+
+ protected:
+#if defined(_SKIA_SUPPORT_)
+  bool IsPremultiplied() const override;
+#endif  // defined(_SKIA_SUPPORT_)
 
  private:
   enum class Channel : uint8_t { kRed, kAlpha };
