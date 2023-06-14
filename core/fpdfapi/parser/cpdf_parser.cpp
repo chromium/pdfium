@@ -839,13 +839,18 @@ void CPDF_Parser::ProcessCrossRefV5Entry(
     pdfium::span<const uint32_t> field_widths,
     uint32_t obj_num) {
   DCHECK_GE(field_widths.size(), kMinFieldCount);
-  ObjectType type = ObjectType::kNotCompressed;
+  ObjectType type;
   if (field_widths[0]) {
     const uint32_t cross_ref_stream_obj_type =
         GetFirstXRefStreamEntry(entry_span, field_widths);
     type = GetObjectTypeFromCrossRefStreamType(cross_ref_stream_obj_type);
     if (type == ObjectType::kNull)
       return;
+  } else {
+    // Per ISO 32000-1:2008 table 17, use the default value of 1 for the xref
+    // stream entry when it is not specified. The `type` assignment is the
+    // equivalent to calling GetObjectTypeFromCrossRefStreamType(1).
+    type = ObjectType::kNotCompressed;
   }
 
   const ObjectType existing_type = GetObjectType(obj_num);
