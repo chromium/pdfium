@@ -6,6 +6,9 @@
 
 #include "core/fpdfapi/page/cpdf_pageimagecache.h"
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <algorithm>
 #include <utility>
 #include <vector>
@@ -16,8 +19,19 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/stl_util.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "third_party/base/check.h"
+
+#if defined(_SKIA_SUPPORT_)
+#include "core/fxcrt/data_vector.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
+#include "third_party/base/notreached.h"
+#include "third_party/skia/include/core/SkImage.h"   // nogncheck
+#include "third_party/skia/include/core/SkRefCnt.h"  // nogncheck
+#endif
 
 namespace {
 
@@ -30,6 +44,81 @@ struct CacheInfo {
 
   bool operator<(const CacheInfo& other) const { return time < other.time; }
 };
+
+#if defined(_SKIA_SUPPORT_)
+// Wrapper around a `CFX_DIBBase` that memoizes `RealizeSkImage()`. This is only
+// safe if the underlying `CFX_DIBBase` is not mutable.
+class CachedImage final : public CFX_DIBBase {
+ public:
+  explicit CachedImage(RetainPtr<CFX_DIBBase> image)
+      : image_(std::move(image)) {
+    m_Format = image_->GetFormat();
+    m_Width = image_->GetWidth();
+    m_Height = image_->GetHeight();
+    m_Pitch = image_->GetPitch();
+
+    if (image_->HasPalette()) {
+      pdfium::span<const uint32_t> palette = image_->GetPaletteSpan();
+      m_palette = DataVector<uint32_t>(palette.begin(), palette.end());
+    }
+  }
+
+  pdfium::span<const uint8_t> GetBuffer() const override {
+    // TODO(crbug.com/pdfium/2051): `CachedImage` is only used by Skia, which
+    // should call `RealizeSkImage()` instead. Consider removing this, or at
+    // least making it `NOTREACHED_NORETURN()`.
+    NOTREACHED();
+    return image_->GetBuffer();
+  }
+
+  pdfium::span<const uint8_t> GetScanline(int line) const override {
+    // TODO(crbug.com/pdfium/2050): Still needed for `Realize()` call in
+    // `CPDF_ImageRenderer`.
+    return image_->GetScanline(line);
+  }
+
+  bool SkipToScanline(int line, PauseIndicatorIface* pause) const override {
+    // TODO(crbug.com/pdfium/2051): `CachedImage` is only used by Skia, which
+    // should call `RealizeSkImage()` instead. Consider removing this, or at
+    // least making it `NOTREACHED_NORETURN()`.
+    NOTREACHED();
+    return image_->SkipToScanline(line, pause);
+  }
+
+  size_t GetEstimatedImageMemoryBurden() const override {
+    // A better estimate would account for realizing the `SkImage`.
+    return image_->GetEstimatedImageMemoryBurden();
+  }
+
+  sk_sp<SkImage> RealizeSkImage() const override {
+    if (!cached_skia_image_) {
+      cached_skia_image_ = image_->RealizeSkImage();
+    }
+    return cached_skia_image_;
+  }
+
+ private:
+  RetainPtr<CFX_DIBBase> image_;
+  mutable sk_sp<SkImage> cached_skia_image_;
+};
+#endif  // defined(_SKIA_SUPPORT_)
+
+// Makes a `CachedImage` backed by `image` if Skia is the default renderer,
+// otherwise return the image itself. `realize_hint` indicates whether it would
+// be beneficial to realize `image` before caching.
+RetainPtr<CFX_DIBBase> MakeCachedImage(RetainPtr<CFX_DIBBase> image,
+                                       bool realize_hint) {
+#if defined(_SKIA_SUPPORT_)
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+    // TODO(crbug.com/pdfium/2050): Ignore `realize_hint`, as `RealizeSkImage()`
+    // doesn't benefit from it. The current behavior masks a bug in `CPDF_DIB`
+    // in which `GetBuffer()` and `GetScanline()` don't give the same answer.
+    return pdfium::MakeRetain<CachedImage>(realize_hint ? image->Realize()
+                                                        : std::move(image));
+  }
+#endif  // defined(_SKIA_SUPPORT_)
+  return realize_hint ? image->Realize() : image;
+}
 
 }  // namespace
 
@@ -226,13 +315,13 @@ void CPDF_PageImageCache::Entry::ContinueGetCachedBitmap(
   m_pCurMask = m_pCurBitmap.AsRaw<CPDF_DIB>()->DetachMask();
   m_dwTimeCount = pPageImageCache->GetTimeCount();
   if (m_pCurBitmap->GetPitch() * m_pCurBitmap->GetHeight() < kHugeImageSize) {
-    m_pCachedBitmap = m_pCurBitmap->Realize();
+    m_pCachedBitmap = MakeCachedImage(m_pCurBitmap, /*realize_hint=*/true);
     m_pCurBitmap.Reset();
   } else {
-    m_pCachedBitmap = m_pCurBitmap;
+    m_pCachedBitmap = MakeCachedImage(m_pCurBitmap, /*realize_hint=*/false);
   }
   if (m_pCurMask) {
-    m_pCachedMask = m_pCurMask->Realize();
+    m_pCachedMask = MakeCachedImage(m_pCurMask, /*realize_hint=*/true);
     m_pCurMask.Reset();
   }
   m_pCurBitmap = m_pCachedBitmap;
