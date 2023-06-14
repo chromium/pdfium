@@ -159,7 +159,6 @@ class CPDF_Parser {
   bool LoadLinearizedAllCrossRefV5(FX_FILESIZE main_xref_offset);
   Error LoadLinearizedMainXRefTable();
   const CPDF_ObjectStream* GetObjectStream(uint32_t object_number);
-  void ShrinkObjectMap(uint32_t size);
   // A simple check whether the cross reference table matches with
   // the objects.
   bool VerifyCrossRefV4();

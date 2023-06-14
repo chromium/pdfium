@@ -200,10 +200,6 @@ bool CPDF_Parser::IsObjectFree(uint32_t objnum) const {
   return GetObjectType(objnum) == ObjectType::kFree;
 }
 
-void CPDF_Parser::ShrinkObjectMap(uint32_t size) {
-  m_CrossRefTable->ShrinkObjectMap(size);
-}
-
 bool CPDF_Parser::InitSyntaxParser(RetainPtr<CPDF_ReadValidator> validator) {
   const absl::optional<FX_FILESIZE> header_offset = GetHeaderOffset(validator);
   if (!header_offset.has_value())
@@ -384,7 +380,7 @@ bool CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xref_offset) {
   m_CrossRefTable->SetTrailer(std::move(trailer), kNoV4TrailerObjectNumber);
   const int32_t xrefsize = GetTrailer()->GetDirectIntegerFor("Size");
   if (xrefsize > 0 && xrefsize <= kMaxXRefSize)
-    ShrinkObjectMap(xrefsize);
+    m_CrossRefTable->ShrinkObjectMap(xrefsize);
 
   FX_FILESIZE xref_stm = GetTrailer()->GetDirectIntegerFor("XRefStm");
   std::vector<FX_FILESIZE> xref_stream_list{xref_stm};

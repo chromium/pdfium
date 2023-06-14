@@ -110,16 +110,17 @@ void CPDF_CrossRefTable::Update(
   UpdateTrailer(std::move(new_cross_ref->trailer_));
 }
 
-void CPDF_CrossRefTable::ShrinkObjectMap(uint32_t objnum) {
-  if (objnum == 0) {
+void CPDF_CrossRefTable::ShrinkObjectMap(uint32_t size) {
+  if (size == 0) {
     objects_info_.clear();
     return;
   }
 
-  objects_info_.erase(objects_info_.lower_bound(objnum), objects_info_.end());
+  objects_info_.erase(objects_info_.lower_bound(size), objects_info_.end());
 
-  if (!pdfium::Contains(objects_info_, objnum - 1))
-    objects_info_[objnum - 1].pos = 0;
+  if (!pdfium::Contains(objects_info_, size - 1)) {
+    objects_info_[size - 1].pos = 0;
+  }
 }
 
 void CPDF_CrossRefTable::UpdateInfo(
