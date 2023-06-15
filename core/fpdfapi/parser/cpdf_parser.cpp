@@ -381,7 +381,7 @@ bool CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xref_offset) {
   m_CrossRefTable->SetTrailer(std::move(trailer), kNoV4TrailerObjectNumber);
   const int32_t xrefsize = GetTrailer()->GetDirectIntegerFor("Size");
   if (xrefsize > 0 && xrefsize <= kMaxXRefSize)
-    m_CrossRefTable->ShrinkObjectMap(xrefsize);
+    m_CrossRefTable->SetObjectMapSize(xrefsize);
 
   FX_FILESIZE xref_stm = GetTrailer()->GetDirectIntegerFor("XRefStm");
   std::vector<FX_FILESIZE> xref_stream_list{xref_stm};
@@ -773,7 +773,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
   if (bMainXRef) {
     m_CrossRefTable = std::make_unique<CPDF_CrossRefTable>(
         std::move(pNewTrailer), pStream->GetObjNum());
-    m_CrossRefTable->ShrinkObjectMap(size);
+    m_CrossRefTable->SetObjectMapSize(size);
   } else {
     m_CrossRefTable = CPDF_CrossRefTable::MergeUp(
         std::make_unique<CPDF_CrossRefTable>(std::move(pNewTrailer),

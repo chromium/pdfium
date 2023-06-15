@@ -73,7 +73,8 @@ class CPDF_CrossRefTable {
 
   void Update(std::unique_ptr<CPDF_CrossRefTable> new_cross_ref);
 
-  void ShrinkObjectMap(uint32_t size);
+  // Objects with object number >= `size` will be removed.
+  void SetObjectMapSize(uint32_t size);
 
  private:
   void UpdateInfo(std::map<uint32_t, ObjectInfo>&& new_objects_info);

@@ -110,7 +110,7 @@ void CPDF_CrossRefTable::Update(
   UpdateTrailer(std::move(new_cross_ref->trailer_));
 }
 
-void CPDF_CrossRefTable::ShrinkObjectMap(uint32_t size) {
+void CPDF_CrossRefTable::SetObjectMapSize(uint32_t size) {
   if (size == 0) {
     objects_info_.clear();
     return;
