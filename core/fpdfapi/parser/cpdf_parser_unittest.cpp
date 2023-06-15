@@ -6,6 +6,7 @@
 
 #include <limits>
 #include <memory>
+#include <ostream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -22,14 +23,16 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
 
+using testing::ElementsAre;
+using testing::Pair;
 using testing::Return;
 
 namespace {
 
-CPDF_CrossRefTable::ObjectInfo GetObjInfo(const CPDF_Parser& parser,
-                                          uint32_t obj_num) {
+CPDF_Parser::ObjectInfo GetObjInfo(const CPDF_Parser& parser,
+                                   uint32_t obj_num) {
   const auto* info = parser.GetCrossRefTable()->GetObjectInfo(obj_num);
-  return info ? *info : CPDF_CrossRefTable::ObjectInfo();
+  return info ? *info : CPDF_Parser::ObjectInfo();
 }
 
 class TestObjectsHolder final : public CPDF_Parser::ParsedObjectsHolder {
@@ -43,6 +46,54 @@ class TestObjectsHolder final : public CPDF_Parser::ParsedObjectsHolder {
 };
 
 }  // namespace
+
+// Test-only helper to support Gmock. Cannot be in an anonymous namespace.
+bool operator==(const CPDF_Parser::ObjectInfo& lhs,
+                const CPDF_Parser::ObjectInfo& rhs) {
+  if (lhs.type != rhs.type) {
+    return false;
+  }
+
+  if (lhs.gennum != rhs.gennum) {
+    return false;
+  }
+
+  switch (lhs.type) {
+    case CPDF_Parser::ObjectType::kFree:
+      return true;
+    case CPDF_Parser::ObjectType::kNormal:
+      return lhs.pos == rhs.pos;
+    case CPDF_Parser::ObjectType::kCompressed:
+      return lhs.archive.obj_num == rhs.archive.obj_num &&
+             lhs.archive.obj_index == rhs.archive.obj_index;
+    case CPDF_Parser::ObjectType::kObjStream:
+      return false;
+  }
+}
+
+// Test-only helper to let Gmock pretty-print `info`. Cannot be in an anonymous
+// namespace.
+std::ostream& operator<<(std::ostream& os,
+                         const CPDF_Parser::ObjectInfo& info) {
+  os << "(";
+  switch (info.type) {
+    case CPDF_Parser::ObjectType::kFree:
+      os << "Free object";
+      break;
+    case CPDF_Parser::ObjectType::kNormal:
+      os << "Normal object, pos: " << info.pos;
+      break;
+    case CPDF_Parser::ObjectType::kCompressed:
+      os << "Compressed object, archive obj_num: " << info.archive.obj_num
+         << ", archive obj_index: " << info.archive.obj_index;
+      break;
+    case CPDF_Parser::ObjectType::kObjStream:
+      os << "ObjectStream object";
+      break;
+  }
+  os << ", gennum: " << info.gennum << ")";
+  return os;
+}
 
 // A wrapper class to help test member functions of CPDF_Parser.
 class CPDF_TestParser final : public CPDF_Parser {
@@ -409,21 +460,22 @@ TEST_F(ParserXRefTest, XrefObjectIndicesTooBig) {
   EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
   ASSERT_TRUE(parser().GetCrossRefTable());
   const auto& objects_info = parser().GetCrossRefTable()->objects_info();
-  EXPECT_EQ(2u, objects_info.size());
 
   // This should be the only object from table. Subsequent objects have object
   // numbers that are too big.
-  auto first_object_it = objects_info.find(4194303);
-  ASSERT_NE(first_object_it, objects_info.end());
-  EXPECT_EQ(CPDF_Parser::ObjectType::kNormal, first_object_it->second.type);
-  EXPECT_EQ(0, first_object_it->second.pos);
+  CPDF_Parser::ObjectInfo only_valid_object;
+  only_valid_object.type = CPDF_Parser::ObjectType::kNormal;
+  only_valid_object.pos = 0;
 
   // TODO(thestig): Should the xref table contain object 4194305?
   // Consider reworking CPDF_Parser's object representation to avoid having to
   // store this placeholder object.
-  auto placeholder_object_it = objects_info.find(4194305);
-  ASSERT_NE(placeholder_object_it, objects_info.end());
-  EXPECT_EQ(CPDF_Parser::ObjectType::kFree, placeholder_object_it->second.type);
+  CPDF_Parser::ObjectInfo placeholder_object;
+  placeholder_object.type = CPDF_Parser::ObjectType::kFree;
+  placeholder_object.pos = 0;
+
+  EXPECT_THAT(objects_info, ElementsAre(Pair(4194303, only_valid_object),
+                                        Pair(4194305, placeholder_object)));
 }
 
 TEST_F(ParserXRefTest, XrefHasInvalidArchiveObjectNumber) {
@@ -452,16 +504,16 @@ TEST_F(ParserXRefTest, XrefHasInvalidArchiveObjectNumber) {
   ASSERT_TRUE(cross_ref_table);
   EXPECT_EQ(7u, cross_ref_table->trailer_object_number());
   const auto& objects_info = cross_ref_table->objects_info();
-  EXPECT_EQ(2u, objects_info.size());
 
-  // Skip over the first object, and continue parsing the remaining objects.
-  auto second_object_it = objects_info.find(1);
-  ASSERT_NE(second_object_it, objects_info.end());
-  EXPECT_EQ(CPDF_Parser::ObjectType::kNormal, second_object_it->second.type);
-  EXPECT_EQ(15, second_object_it->second.pos);
+  // The expectation is for the parser to skip over the first object, and
+  // continue parsing the remaining objects. So these are the second and third
+  // objects.
+  CPDF_Parser::ObjectInfo expected_objects[2];
+  expected_objects[0].type = CPDF_Parser::ObjectType::kNormal;
+  expected_objects[0].pos = 15;
+  expected_objects[1].type = CPDF_Parser::ObjectType::kNormal;
+  expected_objects[1].pos = 18;
 
-  auto third_object_it = objects_info.find(2);
-  ASSERT_NE(third_object_it, objects_info.end());
-  EXPECT_EQ(CPDF_Parser::ObjectType::kNormal, third_object_it->second.type);
-  EXPECT_EQ(18, third_object_it->second.pos);
+  EXPECT_THAT(objects_info, ElementsAre(Pair(1, expected_objects[0]),
+                                        Pair(2, expected_objects[1])));
 }
