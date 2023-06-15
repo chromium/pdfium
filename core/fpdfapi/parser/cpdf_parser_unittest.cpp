@@ -361,15 +361,28 @@ TEST(ParserTest, BadStartXrefShouldNotBuildCrossRefTable) {
   EXPECT_EQ(0u, parser.GetCrossRefTable()->objects_info().size());
 }
 
-TEST(ParserTest, XrefObjectIndicesTooBig) {
-  CPDF_TestParser parser;
+class ParserXRefTest : public testing::Test {
+ public:
+  ParserXRefTest() = default;
+  ~ParserXRefTest() override = default;
 
-  // Satisfy CPDF_Parser's checks, so the test data below can concentrate on the
-  // /XRef stream and avoid also providing other valid dictionaries.
-  auto dummy_root = pdfium::MakeRetain<CPDF_Dictionary>();
-  EXPECT_CALL(parser.object_holder(), ParseIndirectObject)
-      .WillRepeatedly(Return(dummy_root));
+  // testing::Test:
+  void SetUp() override {
+    // Satisfy CPDF_Parser's checks, so the test data below can concentrate on
+    // the /XRef stream and avoid also providing other valid dictionaries.
+    dummy_root_ = pdfium::MakeRetain<CPDF_Dictionary>();
+    EXPECT_CALL(parser().object_holder(), ParseIndirectObject)
+        .WillRepeatedly(Return(dummy_root_));
+  }
 
+  CPDF_TestParser& parser() { return parser_; }
+
+ private:
+  RetainPtr<CPDF_Dictionary> dummy_root_;
+  CPDF_TestParser parser_;
+};
+
+TEST_F(ParserXRefTest, XrefObjectIndicesTooBig) {
   // Since /Index starts at 4194303, the object number will go past
   // `kMaxObjectNumber`.
   static_assert(CPDF_Parser::kMaxObjectNumber == 4194304,
@@ -392,10 +405,10 @@ TEST(ParserTest, XrefObjectIndicesTooBig) {
       "startxref\n"
       "14\n"
       "%%EOF\n";
-  ASSERT_TRUE(parser.InitTestFromBuffer(kData));
-  EXPECT_EQ(CPDF_Parser::SUCCESS, parser.StartParseInternal());
-  ASSERT_TRUE(parser.GetCrossRefTable());
-  const auto& objects_info = parser.GetCrossRefTable()->objects_info();
+  ASSERT_TRUE(parser().InitTestFromBuffer(kData));
+  EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
+  ASSERT_TRUE(parser().GetCrossRefTable());
+  const auto& objects_info = parser().GetCrossRefTable()->objects_info();
   EXPECT_EQ(2u, objects_info.size());
 
   // This should be the only object from table. Subsequent objects have object
@@ -413,15 +426,7 @@ TEST(ParserTest, XrefObjectIndicesTooBig) {
   EXPECT_EQ(CPDF_Parser::ObjectType::kFree, placeholder_object_it->second.type);
 }
 
-TEST(ParserTest, XrefHasInvalidArchiveObjectNumber) {
-  CPDF_TestParser parser;
-
-  // Satisfy CPDF_Parser's checks, so the test data below can concentrate on the
-  // /XRef stream and avoid also providing other valid dictionaries.
-  auto dummy_root = pdfium::MakeRetain<CPDF_Dictionary>();
-  EXPECT_CALL(parser.object_holder(), ParseIndirectObject)
-      .WillRepeatedly(Return(dummy_root));
-
+TEST_F(ParserXRefTest, XrefHasInvalidArchiveObjectNumber) {
   // 0xFF in the first object in the xref object stream is invalid.
   const unsigned char kData[] =
       "%PDF1-7\n%\xa0\xf2\xa4\xf4\n"
@@ -440,10 +445,10 @@ TEST(ParserTest, XrefHasInvalidArchiveObjectNumber) {
       "startxref\n"
       "14\n"
       "%%EOF\n";
-  ASSERT_TRUE(parser.InitTestFromBuffer(kData));
-  EXPECT_EQ(CPDF_Parser::SUCCESS, parser.StartParseInternal());
+  ASSERT_TRUE(parser().InitTestFromBuffer(kData));
+  EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
 
-  const CPDF_CrossRefTable* cross_ref_table = parser.GetCrossRefTable();
+  const CPDF_CrossRefTable* cross_ref_table = parser().GetCrossRefTable();
   ASSERT_TRUE(cross_ref_table);
   EXPECT_EQ(7u, cross_ref_table->trailer_object_number());
   const auto& objects_info = cross_ref_table->objects_info();
