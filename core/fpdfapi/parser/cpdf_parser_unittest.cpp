@@ -809,12 +809,14 @@ TEST_F(ParserXRefTest, XrefWithIndexAndWrongSize) {
   ASSERT_TRUE(parser().GetCrossRefTable());
   const auto& objects_info = parser().GetCrossRefTable()->objects_info();
 
-  // TODO(crbug.com/1288804): This expectation is wrong. Other PDF parsers
-  // tolerate the incorrect /Size.
-  CPDF_Parser::ObjectInfo expected_result[2];
+  CPDF_Parser::ObjectInfo expected_result[3];
   expected_result[0].type = CPDF_Parser::ObjectType::kNormal;
   expected_result[0].pos = 0;
-  expected_result[1].type = CPDF_Parser::ObjectType::kFree;
+  expected_result[1].type = CPDF_Parser::ObjectType::kNormal;
+  expected_result[1].pos = 15;
+  expected_result[2].type = CPDF_Parser::ObjectType::kNormal;
+  expected_result[2].pos = 18;
   EXPECT_THAT(objects_info, ElementsAre(Pair(2, expected_result[0]),
-                                        Pair(80, expected_result[1])));
+                                        Pair(80, expected_result[1]),
+                                        Pair(81, expected_result[2])));
 }

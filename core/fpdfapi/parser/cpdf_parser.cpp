@@ -810,17 +810,33 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool bMainXRef) {
 
     pdfium::span<const uint8_t> seg_span = data_span.subspan(
         segindex * total_width, index.obj_count * total_width);
-    FX_SAFE_UINT32 dwMaxObjNum = index.start_obj_num;
-    dwMaxObjNum += index.obj_count;
-    uint32_t dwV5Size =
-        m_CrossRefTable->objects_info().empty() ? 0 : GetLastObjNum() + 1;
-    if (!dwMaxObjNum.IsValid() || dwMaxObjNum.ValueOrDie() > dwV5Size)
+    FX_SAFE_UINT32 safe_new_size = index.start_obj_num;
+    safe_new_size += index.obj_count;
+    if (!safe_new_size.IsValid()) {
       continue;
+    }
+
+    // Until SetObjectMapSize() below has been called by a prior loop iteration,
+    // `current_size` is based on the /Size value parsed in LoadCrossRefV5().
+    // PDFs may not always have the correct /Size. In this case, other PDF
+    // implementations ignore the incorrect size, and PDFium also ignores
+    // incorrect size in trailers for V4 xrefs.
+    const uint32_t current_size =
+        m_CrossRefTable->objects_info().empty() ? 0 : GetLastObjNum() + 1;
+    // So allow `new_size` to be greater than `current_size`, but avoid going
+    // over `kMaxXRefSize`. This works just fine because the loop below checks
+    // against `kMaxObjectNumber`, and the two "max" constants are in sync.
+    const uint32_t new_size =
+        std::min<uint32_t>(safe_new_size.ValueOrDie(), kMaxXRefSize);
+    if (new_size > current_size) {
+      m_CrossRefTable->SetObjectMapSize(new_size);
+    }
 
     for (uint32_t i = 0; i < index.obj_count; ++i) {
       const uint32_t obj_num = index.start_obj_num + i;
-      if (obj_num >= CPDF_Parser::kMaxObjectNumber)
+      if (obj_num >= kMaxObjectNumber) {
         break;
+      }
 
       ProcessCrossRefV5Entry(seg_span.subspan(i * total_width, total_width),
                              field_widths, obj_num);
