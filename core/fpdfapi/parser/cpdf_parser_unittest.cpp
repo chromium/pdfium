@@ -458,6 +458,7 @@ TEST_F(ParserXRefTest, XrefObjectIndicesTooBig) {
       "%%EOF\n";
   ASSERT_TRUE(parser().InitTestFromBuffer(kData));
   EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
+  EXPECT_FALSE(parser().xref_table_rebuilt());
   ASSERT_TRUE(parser().GetCrossRefTable());
   const auto& objects_info = parser().GetCrossRefTable()->objects_info();
 
@@ -499,6 +500,7 @@ TEST_F(ParserXRefTest, XrefHasInvalidArchiveObjectNumber) {
       "%%EOF\n";
   ASSERT_TRUE(parser().InitTestFromBuffer(kData));
   EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
+  EXPECT_FALSE(parser().xref_table_rebuilt());
 
   const CPDF_CrossRefTable* cross_ref_table = parser().GetCrossRefTable();
   ASSERT_TRUE(cross_ref_table);
@@ -516,4 +518,137 @@ TEST_F(ParserXRefTest, XrefHasInvalidArchiveObjectNumber) {
 
   EXPECT_THAT(objects_info, ElementsAre(Pair(1, expected_objects[0]),
                                         Pair(2, expected_objects[1])));
+}
+
+TEST_F(ParserXRefTest, XrefHasInvalidObjectType) {
+  // The XRef object is a dictionary and not a stream.
+  const unsigned char kData[] =
+      "%PDF1-7\n%\xa0\xf2\xa4\xf4\n"
+      "7 0 obj <<\n"
+      "  /Filter /ASCIIHexDecode\n"
+      "  /Root 1 0 R\n"
+      "  /Size 3\n"
+      "  /W [1 1 1]\n"
+      ">>\n"
+      "endobj\n"
+      "startxref\n"
+      "14\n"
+      "%%EOF\n";
+
+  ASSERT_TRUE(parser().InitTestFromBuffer(kData));
+  EXPECT_EQ(CPDF_Parser::FORMAT_ERROR, parser().StartParseInternal());
+}
+
+TEST_F(ParserXRefTest, XrefHasInvalidPrevValue) {
+  // The /Prev value is an absolute offset, so it should never be negative.
+  const unsigned char kData[] =
+      "%PDF1-7\n%\xa0\xf2\xa4\xf4\n"
+      "7 0 obj <<\n"
+      "  /Filter /ASCIIHexDecode\n"
+      "  /Root 1 0 R\n"
+      "  /Size 3\n"
+      "  /W [1 1 1]\n"
+      "  /Prev -1\n"
+      ">>\n"
+      "stream\n"
+      "02 FF 00\n"
+      "01 0F 00\n"
+      "01 12 00\n"
+      "endstream\n"
+      "endobj\n"
+      "startxref\n"
+      "14\n"
+      "%%EOF\n";
+
+  ASSERT_TRUE(parser().InitTestFromBuffer(kData));
+  EXPECT_EQ(CPDF_Parser::FORMAT_ERROR, parser().StartParseInternal());
+}
+
+TEST_F(ParserXRefTest, XrefHasInvalidSizeValue) {
+  // The /Size value should never be negative.
+  const unsigned char kData[] =
+      "%PDF1-7\n%\xa0\xf2\xa4\xf4\n"
+      "7 0 obj <<\n"
+      "  /Filter /ASCIIHexDecode\n"
+      "  /Root 1 0 R\n"
+      "  /Size 3\n"
+      "  /W [1 1 1]\n"
+      "  /Size -1\n"
+      ">>\n"
+      "stream\n"
+      "02 FF 00\n"
+      "01 0F 00\n"
+      "01 12 00\n"
+      "endstream\n"
+      "endobj\n"
+      "startxref\n"
+      "14\n"
+      "%%EOF\n";
+
+  ASSERT_TRUE(parser().InitTestFromBuffer(kData));
+  EXPECT_EQ(CPDF_Parser::FORMAT_ERROR, parser().StartParseInternal());
+}
+
+TEST_F(ParserXRefTest, XrefHasInvalidWidth) {
+  // The /W array needs to have at least 3 values.
+  const unsigned char kData[] =
+      "%PDF1-7\n%\xa0\xf2\xa4\xf4\n"
+      "7 0 obj <<\n"
+      "  /Filter /ASCIIHexDecode\n"
+      "  /Root 1 0 R\n"
+      "  /Size 3\n"
+      "  /W [1 1]\n"
+      ">>\n"
+      "stream\n"
+      "02 FF 00\n"
+      "01 0F 00\n"
+      "01 12 00\n"
+      "endstream\n"
+      "endobj\n"
+      "startxref\n"
+      "14\n"
+      "%%EOF\n";
+
+  ASSERT_TRUE(parser().InitTestFromBuffer(kData));
+
+  // StartParseInternal() succeeded not because XRef parsing succeeded, but
+  // because RebuildCrossRef() got lucky with the data stream. Therefore, don't
+  // bother checking the garbage output.
+  EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
+  EXPECT_TRUE(parser().xref_table_rebuilt());
+}
+
+TEST_F(ParserXRefTest, XrefFirstWidthEntryIsZero) {
+  // When the first /W array entry is 0, it implies the objects are all of the
+  // normal type.
+  const unsigned char kData[] =
+      "%PDF1-7\n%\xa0\xf2\xa4\xf4\n"
+      "7 0 obj <<\n"
+      "  /Filter /ASCIIHexDecode\n"
+      "  /Root 1 0 R\n"
+      "  /Size 2\n"
+      "  /W [0 1 1]\n"
+      ">>\n"
+      "stream\n"
+      "0F 00\n"
+      "12 00\n"
+      "endstream\n"
+      "endobj\n"
+      "startxref\n"
+      "14\n"
+      "%%EOF\n";
+
+  ASSERT_TRUE(parser().InitTestFromBuffer(kData));
+  EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
+  EXPECT_FALSE(parser().xref_table_rebuilt());
+  ASSERT_TRUE(parser().GetCrossRefTable());
+  const auto& objects_info = parser().GetCrossRefTable()->objects_info();
+
+  CPDF_Parser::ObjectInfo expected_result[2];
+  expected_result[0].type = CPDF_Parser::ObjectType::kNormal;
+  expected_result[0].pos = 15;
+  expected_result[1].type = CPDF_Parser::ObjectType::kNormal;
+  expected_result[1].pos = 18;
+  EXPECT_THAT(objects_info, ElementsAre(Pair(0, expected_result[0]),
+                                        Pair(1, expected_result[1])));
 }
