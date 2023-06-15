@@ -780,3 +780,41 @@ TEST_F(ParserXRefTest, XrefIndexWithOutOfOrderObjects) {
                                         Pair(3, expected_result[1]),
                                         Pair(4, expected_result[2])));
 }
+
+TEST_F(ParserXRefTest, XrefWithIndexAndWrongSize) {
+  // The /Index specifies objects (2), (80, 81), so the /Size should be 82,
+  // but is actually 81.
+  const unsigned char kData[] =
+      "%PDF1-7\n%\xa0\xf2\xa4\xf4\n"
+      "7 0 obj <<\n"
+      "  /Filter /ASCIIHexDecode\n"
+      "  /Root 1 0 R\n"
+      "  /Size 81\n"
+      "  /Index [2 1 80 2]\n"
+      "  /W [1 1 1]\n"
+      ">>\n"
+      "stream\n"
+      "01 00 00\n"
+      "01 0F 00\n"
+      "01 12 00\n"
+      "endstream\n"
+      "endobj\n"
+      "startxref\n"
+      "14\n"
+      "%%EOF\n";
+
+  ASSERT_TRUE(parser().InitTestFromBuffer(kData));
+  EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
+  EXPECT_FALSE(parser().xref_table_rebuilt());
+  ASSERT_TRUE(parser().GetCrossRefTable());
+  const auto& objects_info = parser().GetCrossRefTable()->objects_info();
+
+  // TODO(crbug.com/1288804): This expectation is wrong. Other PDF parsers
+  // tolerate the incorrect /Size.
+  CPDF_Parser::ObjectInfo expected_result[2];
+  expected_result[0].type = CPDF_Parser::ObjectType::kNormal;
+  expected_result[0].pos = 0;
+  expected_result[1].type = CPDF_Parser::ObjectType::kFree;
+  EXPECT_THAT(objects_info, ElementsAre(Pair(2, expected_result[0]),
+                                        Pair(80, expected_result[1])));
+}
