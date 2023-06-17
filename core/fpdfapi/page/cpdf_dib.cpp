@@ -1133,8 +1133,10 @@ bool CPDF_DIB::TranslateScanline24bppDefaultDecode(
 }
 
 pdfium::span<const uint8_t> CPDF_DIB::GetBuffer() const {
-  return m_pCachedBitmap ? m_pCachedBitmap->GetBuffer()
-                         : pdfium::span<const uint8_t>();
+  // TODO(crbug.com/pdfium/2050): Reuse buffer from `m_pCachedBitmap`. This
+  // doesn't work right now because `LoadJpxBitmap()` doesn't generate a bitmap
+  // in the same format as `GetScanline()`.
+  return pdfium::span<const uint8_t>();
 }
 
 pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
