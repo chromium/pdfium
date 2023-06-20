@@ -200,19 +200,6 @@ class TestRunner:
         default=False,
         help='When flag is on, skia gold tests will be run.')
 
-    # TODO: Remove when pdfium recipe stops passing this argument
-    parser.add_argument(
-        '--gold_properties',
-        default='',
-        help='Key value pairs that are written to the top level of the JSON '
-        'file that is ingested by Gold.')
-
-    # TODO: Remove when pdfium recipe stops passing this argument
-    parser.add_argument(
-        '--gold_ignore_hashes',
-        default='',
-        help='Path to a file with MD5 hashes we wish to ignore.')
-
     parser.add_argument(
         '--regenerate_expected',
         action='store_true',
@@ -235,6 +222,11 @@ class TestRunner:
         'when image comparison fails.')
 
     parser.add_argument(
+        '--use-renderer',
+        choices=('agg', 'skia'),
+        help='Forces the renderer to use.')
+
+    parser.add_argument(
         'inputted_file_paths',
         nargs='*',
         help='Path to test files to run, relative to '
@@ -252,7 +244,11 @@ class TestRunner:
       print(f"FAILURE: Can't find test executable '{pdfium_test_path}'")
       print('Use --build-dir to specify its location.')
       return 1
-    self.per_process_config.InitializeFeatures(pdfium_test_path)
+
+    error_message = self.per_process_config.InitializeFeatures(pdfium_test_path)
+    if error_message:
+      print('FAILURE:', error_message)
+      return 1
 
     self.per_process_state = _PerProcessState(self.per_process_config)
     shutil.rmtree(self.per_process_state.working_dir, ignore_errors=True)
@@ -431,14 +427,14 @@ class _PerProcessConfig:
     delete_output_on_success: Whether to delete output on success.
     enforce_expected_images: Whether to enforce expected images.
     options: The dictionary of command line options.
-    features: The list of features supported by `pdfium_test`.
+    features: The set of features supported by `pdfium_test`.
   """
   test_dir: str
   test_type: str
   delete_output_on_success: bool = False
   enforce_expected_images: bool = False
   options: dict = None
-  features: list = None
+  features: set = None
 
   def NewFinder(self):
     return common.DirectoryFinder(self.options.build_dir)
@@ -449,7 +445,15 @@ class _PerProcessConfig:
   def InitializeFeatures(self, pdfium_test_path):
     output = subprocess.check_output([pdfium_test_path, '--show-config'],
                                      timeout=TEST_TIMEOUT)
-    self.features = output.decode('utf-8').strip().split(',')
+    self.features = set(output.decode('utf-8').strip().split(','))
+
+    if self.options.use_renderer == 'agg':
+      self.features.discard('SKIA')
+    elif self.options.use_renderer == 'skia':
+      if 'SKIA' not in self.features:
+        return 'pdfium_test does not support the Skia renderer'
+
+    return None
 
 
 class _PerProcessState:
@@ -713,6 +717,9 @@ class _TestCaseRunner:
 
     if self.options.reverse_byte_order:
       cmd_to_run.append('--reverse-byte-order')
+
+    if self.options.use_renderer:
+      cmd_to_run.append(f'--use-renderer={self.options.use_renderer}')
 
     cmd_to_run.append(self.pdf_path)
 
