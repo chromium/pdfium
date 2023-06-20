@@ -801,16 +801,73 @@ class PageRenderer {
 // Page renderer with bitmap output.
 class BitmapPageRenderer : public PageRenderer {
  public:
-  // Function type that writes a bitmap to an image file. The function returns
-  // the name of the image file on success, or an empty name on failure.
+  // Function type that writes rendered output to a file, returning `false` on
+  // failure.
   //
-  // Intended for use with some of the `pdfium_test_write_helper.h` functions.
-  using BitmapWriter = std::string (*)(const char* pdf_name,
-                                       int num,
-                                       void* buffer,
-                                       int stride,
-                                       int width,
-                                       int height);
+  // Intended to wrap functions from `pdfium_test_write_helper.h`.
+  using PageWriter = std::function<bool(BitmapPageRenderer& renderer,
+                                        const std::string& name,
+                                        int page_index,
+                                        bool md5)>;
+
+  // Wraps a `PageWriter` around a function pointer that writes the text page.
+  static PageWriter WrapPageWriter(
+      void (*text_page_writer)(FPDF_TEXTPAGE text_page,
+                               const char* pdf_name,
+                               int num)) {
+    return [text_page_writer](BitmapPageRenderer& renderer,
+                              const std::string& name, int page_index,
+                              bool /*md5*/) {
+      ScopedFPDFTextPage text_page(FPDFText_LoadPage(renderer.page()));
+      if (!text_page) {
+        return false;
+      }
+
+      text_page_writer(text_page.get(), name.c_str(), page_index);
+      return true;
+    };
+  }
+
+  // Wraps a `PageWriter` around a function pointer that writes the page.
+  static PageWriter WrapPageWriter(void (*page_writer)(FPDF_PAGE page,
+                                                       const char* pdf_name,
+                                                       int num)) {
+    return [page_writer](BitmapPageRenderer& renderer, const std::string& name,
+                         int page_index, bool /*md5*/) {
+      page_writer(renderer.page(), name.c_str(), page_index);
+      return true;
+    };
+  }
+
+  // Wraps a `PageWriter` around a function pointer that writes the rasterized
+  // bitmap to an image file.
+  static PageWriter WrapPageWriter(
+      std::string (*bitmap_writer)(const char* pdf_name,
+                                   int num,
+                                   void* buffer,
+                                   int stride,
+                                   int width,
+                                   int height)) {
+    return [bitmap_writer](BitmapPageRenderer& renderer,
+                           const std::string& name, int page_index, bool md5) {
+      int stride = FPDFBitmap_GetStride(renderer.bitmap());
+      void* buffer = FPDFBitmap_GetBuffer(renderer.bitmap());
+      std::string image_file_name = bitmap_writer(
+          name.c_str(), page_index, buffer, /*stride=*/stride,
+          /*width=*/renderer.width(), /*height=*/renderer.height());
+      if (image_file_name.empty()) {
+        return false;
+      }
+
+      if (md5) {
+        // Write the filename and the MD5 of the buffer to stdout.
+        OutputMD5Hash(image_file_name.c_str(),
+                      {static_cast<const uint8_t*>(buffer),
+                       static_cast<size_t>(stride) * renderer.height()});
+      }
+      return true;
+    };
+  }
 
   bool HasOutput() const override { return !!bitmap_; }
 
@@ -835,24 +892,7 @@ class BitmapPageRenderer : public PageRenderer {
   }
 
   bool Write(const std::string& name, int page_index, bool md5) override {
-    if (!writer_)
-      return false;
-
-    int stride = FPDFBitmap_GetStride(bitmap());
-    void* buffer = FPDFBitmap_GetBuffer(bitmap());
-    std::string image_file_name =
-        writer_(name.c_str(), /*num=*/page_index, buffer, /*stride=*/stride,
-                /*width=*/width(), /*height=*/height());
-    if (image_file_name.empty())
-      return false;
-
-    if (md5) {
-      // Write the filename and the MD5 of the buffer to stdout.
-      OutputMD5Hash(image_file_name.c_str(),
-                    {static_cast<const uint8_t*>(buffer),
-                     static_cast<size_t>(stride) * height()});
-    }
-    return true;
+    return writer_ && writer_(*this, name, page_index, md5);
   }
 
  protected:
@@ -861,17 +901,17 @@ class BitmapPageRenderer : public PageRenderer {
                      int height,
                      int flags,
                      const std::function<void()>& idler,
-                     BitmapWriter writer)
+                     PageWriter writer)
       : PageRenderer(page, /*width=*/width, /*height=*/height, /*flags=*/flags),
         idler_(idler),
-        writer_(writer) {}
+        writer_(std::move(writer)) {}
 
   void Idle() const { idler_(); }
   FPDF_BITMAP bitmap() { return bitmap_.get(); }
 
  private:
   const std::function<void()>& idler_;
-  BitmapWriter writer_;
+  PageWriter writer_;
   ScopedFPDFBitmap bitmap_;
 };
 
@@ -883,13 +923,13 @@ class OneShotBitmapPageRenderer : public BitmapPageRenderer {
                             int height,
                             int flags,
                             const std::function<void()>& idler,
-                            BitmapWriter writer)
+                            PageWriter writer)
       : BitmapPageRenderer(page,
                            /*width=*/width,
                            /*height=*/height,
                            /*flags=*/flags,
                            idler,
-                           writer) {}
+                           std::move(writer)) {}
 
   bool Start() override {
     if (!BitmapPageRenderer::Start())
@@ -913,14 +953,14 @@ class ProgressiveBitmapPageRenderer : public BitmapPageRenderer {
                                 int height,
                                 int flags,
                                 const std::function<void()>& idler,
-                                BitmapWriter writer,
+                                PageWriter writer,
                                 const FPDF_COLORSCHEME* color_scheme)
       : BitmapPageRenderer(page,
                            /*width=*/width,
                            /*height=*/height,
                            /*flags=*/flags,
                            idler,
-                           writer),
+                           std::move(writer)),
         color_scheme_(color_scheme) {
     pause_.version = 1;
     pause_.NeedToPauseNow = &NeedToPauseNow;
@@ -1061,40 +1101,59 @@ bool ProcessPage(const std::string& name,
   int flags = PageRenderFlagsFromOptions(options);
 
   std::unique_ptr<PageRenderer> renderer;
-#ifdef PDF_ENABLE_SKIA
-  if (options.output_format == OutputFormat::kSkp) {
-    renderer = std::make_unique<SkPicturePageRenderer>(
-        page, /*width=*/width, /*height=*/height, /*flags=*/flags);
-  } else {
-#else
-  {
-#endif  // PDF_ENABLE_SKIA
-    BitmapPageRenderer::BitmapWriter writer;
-    switch (options.output_format) {
+  BitmapPageRenderer::PageWriter writer;
+  switch (options.output_format) {
+    case OutputFormat::kText:
+      writer = BitmapPageRenderer::WrapPageWriter(WriteText);
+      break;
+
+    case OutputFormat::kAnnot:
+      writer = BitmapPageRenderer::WrapPageWriter(WriteAnnot);
+      break;
+
+    case OutputFormat::kPpm:
+      writer = BitmapPageRenderer::WrapPageWriter(WritePpm);
+      break;
+
+    case OutputFormat::kPng:
+      writer = BitmapPageRenderer::WrapPageWriter(WritePng);
+      break;
+
 #ifdef _WIN32
-      case OutputFormat::kBmp:
-        writer = WriteBmp;
-        break;
+    case OutputFormat::kBmp:
+      writer = BitmapPageRenderer::WrapPageWriter(WriteBmp);
+      break;
+
+    case OutputFormat::kEmf:
+      // TODO(crbug.com/pdfium/2054): Render directly to DC.
+      writer = BitmapPageRenderer::WrapPageWriter(WriteEmf);
+      break;
+
+    case OutputFormat::kPs2:
+    case OutputFormat::kPs3:
+      // TODO(crbug.com/pdfium/2054): Render directly to DC.
+      writer = BitmapPageRenderer::WrapPageWriter(WritePS);
+      break;
 #endif  // _WIN32
 
-      case OutputFormat::kPng:
-        writer = WritePng;
-        break;
+#ifdef PDF_ENABLE_SKIA
+    case OutputFormat::kSkp:
+      renderer = std::make_unique<SkPicturePageRenderer>(
+          page, /*width=*/width, /*height=*/height, /*flags=*/flags);
+      break;
+#endif  // PDF_ENABLE_SKIA
 
-      case OutputFormat::kPpm:
-        writer = WritePpm;
-        break;
+    default:
+      // Other formats won't write the output to a file, but still rasterize.
+      break;
+  }
 
-      default:
-        // Other formats won't write the output to a file, but still rasterize.
-        writer = nullptr;
-        break;
-    }
-
+  if (!renderer) {
+    // Use a rasterizing page renderer by default.
     if (options.render_oneshot) {
       renderer = std::make_unique<OneShotBitmapPageRenderer>(
           page, /*width=*/width, /*height=*/height, /*flags=*/flags, idler,
-          writer);
+          std::move(writer));
     } else {
       // Client programs will be setting these values when rendering.
       // This is a sample color scheme with distinct colors.
@@ -1107,7 +1166,7 @@ bool ProcessPage(const std::string& name,
 
       renderer = std::make_unique<ProgressiveBitmapPageRenderer>(
           page, /*width=*/width, /*height=*/height, /*flags=*/flags, idler,
-          writer, options.forced_color ? &color_scheme : nullptr);
+          std::move(writer), options.forced_color ? &color_scheme : nullptr);
     }
   }
 
@@ -1115,31 +1174,7 @@ bool ProcessPage(const std::string& name,
     while (renderer->Continue())
       continue;
     renderer->Finish(form);
-
-    switch (options.output_format) {
-#ifdef _WIN32
-      case OutputFormat::kEmf:
-        WriteEmf(page, name.c_str(), page_index);
-        break;
-
-      case OutputFormat::kPs2:
-      case OutputFormat::kPs3:
-        WritePS(page, name.c_str(), page_index);
-        break;
-#endif  // _WIN32
-
-      case OutputFormat::kText:
-        WriteText(text_page.get(), name.c_str(), page_index);
-        break;
-
-      case OutputFormat::kAnnot:
-        WriteAnnot(page, name.c_str(), page_index);
-        break;
-
-      default:
-        renderer->Write(name, page_index, /*md5=*/options.md5);
-        break;
-    }
+    renderer->Write(name, page_index, /*md5=*/options.md5);
   } else {
     fprintf(stderr, "Page was too large to be rendered.\n");
   }
