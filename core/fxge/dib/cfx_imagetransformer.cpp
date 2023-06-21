@@ -157,7 +157,7 @@ CFX_ImageTransformer::CFX_ImageTransformer(
         &m_Storer, m_pSrc, dest_height, dest_width, result_clip,
         m_ResampleOptions);
     m_Stretcher->Start();
-    m_type = kRotate;
+    m_type = StretchType::kRotate;
     return;
   }
   if (fabs(m_matrix.b) < kFix16 && fabs(m_matrix.c) < kFix16) {
@@ -170,7 +170,7 @@ CFX_ImageTransformer::CFX_ImageTransformer(
         &m_Storer, m_pSrc, dest_width, dest_height, result_clip,
         m_ResampleOptions);
     m_Stretcher->Start();
-    m_type = kNormal;
+    m_type = StretchType::kNormal;
     return;
   }
 
@@ -200,25 +200,26 @@ CFX_ImageTransformer::CFX_ImageTransformer(
       &m_Storer, m_pSrc, stretch_width, stretch_height, m_StretchClip,
       m_ResampleOptions);
   m_Stretcher->Start();
-  m_type = kOther;
+  m_type = StretchType::kOther;
 }
 
 CFX_ImageTransformer::~CFX_ImageTransformer() = default;
 
 bool CFX_ImageTransformer::Continue(PauseIndicatorIface* pPause) {
-  if (m_type == kNone)
+  if (m_type == StretchType::kNone) {
     return false;
+  }
 
   if (m_Stretcher->Continue(pPause))
     return true;
 
   switch (m_type) {
-    case kNormal:
+    case StretchType::kNormal:
       break;
-    case kRotate:
+    case StretchType::kRotate:
       ContinueRotate(pPause);
       break;
-    case kOther:
+    case StretchType::kOther:
       ContinueOther(pPause);
       break;
     default:

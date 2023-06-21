@@ -51,7 +51,7 @@ class CFX_ImageTransformer {
   RetainPtr<CFX_DIBitmap> DetachBitmap();
 
  private:
-  enum StretchType {
+  enum class StretchType {
     kNone,
     kNormal,
     kRotate,
@@ -73,7 +73,7 @@ class CFX_ImageTransformer {
   std::unique_ptr<CFX_ImageStretcher> m_Stretcher;
   CFX_BitmapStorer m_Storer;
   const FXDIB_ResampleOptions m_ResampleOptions;
-  StretchType m_type = kNone;
+  StretchType m_type = StretchType::kNone;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_IMAGETRANSFORMER_H_
