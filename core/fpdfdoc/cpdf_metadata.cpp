@@ -20,8 +20,15 @@
 
 namespace {
 
-void CheckForSharedFormInternal(CFX_XMLElement* element,
+constexpr int kMaxMetaDataDepth = 128;
+
+bool CheckForSharedFormInternal(int depth,
+                                CFX_XMLElement* element,
                                 std::vector<UnsupportedFeature>* unsupported) {
+  if (depth >= kMaxMetaDataDepth) {
+    return false;
+  }
+
   WideString attr =
       element->GetAttribute(WideString::FromASCII("xmlns:adhocwf"));
   if (attr.EqualsASCII("http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/")) {
@@ -54,10 +61,13 @@ void CheckForSharedFormInternal(CFX_XMLElement* element,
 
   for (auto* child = element->GetFirstChild(); child;
        child = child->GetNextSibling()) {
-    CFX_XMLElement* pElement = ToXMLElement(child);
-    if (pElement)
-      CheckForSharedFormInternal(pElement, unsupported);
+    CFX_XMLElement* xml_element = ToXMLElement(child);
+    if (xml_element &&
+        !CheckForSharedFormInternal(depth + 1, xml_element, unsupported)) {
+      return false;
+    }
   }
+  return true;
 }
 
 }  // namespace
@@ -80,6 +90,6 @@ std::vector<UnsupportedFeature> CPDF_Metadata::CheckForSharedForm() const {
     return {};
 
   std::vector<UnsupportedFeature> unsupported;
-  CheckForSharedFormInternal(doc->GetRoot(), &unsupported);
+  CheckForSharedFormInternal(/*depth=*/0, doc->GetRoot(), &unsupported);
   return unsupported;
 }

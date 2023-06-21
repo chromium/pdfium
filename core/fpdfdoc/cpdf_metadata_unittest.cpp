@@ -106,6 +106,39 @@ TEST(CPDF_MetadataTest, CheckSharedFormAsNoAdhoc) {
   EXPECT_EQ(0U, results.size());
 }
 
+TEST(CPDF_MetadataTest, CheckSharedFormExceedMaxDepth) {
+  // Node <parent> has the depth of 130, which exceeds the maximum node depth of
+  // `kMaxMetaDataDepth`.
+  static const char kData[] =
+      "<?xml charset=\"utf-8\"?>\n"
+      "<node><node><node><node><node><node><node><node><node><node>\n"
+      "<node><node><node><node><node><node><node><node><node><node>\n"
+      "<node><node><node><node><node><node><node><node><node><node>\n"
+      "<node><node><node><node><node><node><node><node><node><node>\n"
+      "<node><node><node><node><node><node><node><node><node><node>\n"
+      "<node><node><node><node><node><node><node><node><node><node>\n"
+      "<node><node><node><node><node><node><node><node><node><node>\n"
+      "<node><node><node><node><node><node><node><node><node><node>\n"
+      "<node><node><node><node><node><node><node><node><node><node>\n"
+      "<node><node><node><node><node><node><node><node><node><node>\n"
+      "<node><node><node><node><node><node><node><node><node><node>\n"
+      "<node><node><node><node><node><node><node><node><node><node>\n"
+      "<node><node><node><node><node><node><node><node><node><node>\n"
+      "<parent>\n"
+      "<node xmlns:adhocwf=\"http://ns.adobe.com/AcrobatAdhocWorkflow/1.0/\">\n"
+      "<adhocwf:workflowType>0</adhocwf:workflowType>\n"
+      "<adhocwf:version>1.1</adhocwf:version>\n"
+      "</node>"
+      "</parent>";
+
+  auto stream = pdfium::MakeRetain<CPDF_Stream>();
+  stream->SetData(ByteStringView(kData).raw_span());
+  CPDF_Metadata metadata(stream);
+
+  auto results = metadata.CheckForSharedForm();
+  ASSERT_EQ(0U, results.size());
+}
+
 TEST(CPDF_MetadataTest, CheckSharedFormWrongNamespace) {
   static const char data[] =
       "<?xml charset=\"utf-8\"?>\n"
