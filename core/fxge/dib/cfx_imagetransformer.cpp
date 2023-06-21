@@ -214,19 +214,18 @@ bool CFX_ImageTransformer::Continue(PauseIndicatorIface* pPause) {
     return true;
 
   switch (m_type) {
+    case StretchType::kNone:
+      // Already handled separately at the beginning of this method.
+      NOTREACHED_NORETURN();
     case StretchType::kNormal:
-      break;
+      return false;
     case StretchType::kRotate:
       ContinueRotate(pPause);
-      break;
+      return false;
     case StretchType::kOther:
       ContinueOther(pPause);
-      break;
-    default:
-      NOTREACHED();
-      break;
+      return false;
   }
-  return false;
 }
 
 void CFX_ImageTransformer::ContinueRotate(PauseIndicatorIface* pPause) {

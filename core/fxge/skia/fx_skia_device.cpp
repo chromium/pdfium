@@ -951,10 +951,7 @@ bool CFX_SkiaDeviceDriver::MultiplyAlpha(float alpha) {
 }
 
 bool CFX_SkiaDeviceDriver::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) {
-  if (!mask->IsMaskFormat()) {
-    NOTREACHED();
-    return false;
-  }
+  CHECK(mask->IsMaskFormat());
 
   sk_sp<SkImage> skia_mask = mask->RealizeSkImage();
   if (!skia_mask) {
@@ -990,8 +987,7 @@ int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id) const {
              FXRC_BLEND_MODE | FXRC_SOFT_CLIP | FXRC_ALPHA_OUTPUT |
              FXRC_FILLSTROKE_PATH | FXRC_SHADING;
     default:
-      NOTREACHED();
-      return 0;
+      NOTREACHED_NORETURN();
   }
 }
 

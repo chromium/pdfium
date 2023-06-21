@@ -1129,7 +1129,6 @@ bool CFX_DIBBase::ConvertBuffer(FXDIB_Format dest_format,
                                 height, pSrcBitmap, src_left, src_top);
     }
     default:
-      NOTREACHED();
-      return false;
+      NOTREACHED_NORETURN();
   }
 }

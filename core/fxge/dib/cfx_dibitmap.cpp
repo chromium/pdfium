@@ -389,11 +389,9 @@ bool CFX_DIBitmap::SetUniformOpaqueAlpha() {
 }
 
 bool CFX_DIBitmap::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& pSrcBitmap) {
-  if (!m_pBuffer)
-    return false;
+  CHECK(pSrcBitmap->IsMaskFormat());
 
-  if (!pSrcBitmap->IsMaskFormat()) {
-    NOTREACHED();
+  if (!m_pBuffer) {
     return false;
   }
 
@@ -698,11 +696,8 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
                                    BlendMode blend_type,
                                    const CFX_ClipRgn* pClipRgn,
                                    bool bRgbByteOrder) {
-  if (pSrcBitmap->IsMaskFormat()) {
-    // Should have called CompositeMask().
-    NOTREACHED();
-    return false;
-  }
+  // Should have called CompositeMask().
+  CHECK(!pSrcBitmap->IsMaskFormat());
 
   if (!m_pBuffer)
     return false;
@@ -765,11 +760,8 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
                                  BlendMode blend_type,
                                  const CFX_ClipRgn* pClipRgn,
                                  bool bRgbByteOrder) {
-  if (!pMask->IsMaskFormat()) {
-    // Should have called CompositeBitmap().
-    NOTREACHED();
-    return false;
-  }
+  // Should have called CompositeBitmap().
+  CHECK(pMask->IsMaskFormat());
 
   if (!m_pBuffer)
     return false;
@@ -926,11 +918,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
     return true;
   }
 
-  if (GetBppFromFormat(m_Format) < 24) {
-    NOTREACHED();
-    return false;
-  }
-
+  CHECK_GE(GetBppFromFormat(m_Format), 24);
   color_p[3] = static_cast<uint8_t>(src_alpha);
   int Bpp = GetBppFromFormat(m_Format) / 8;
   const bool bAlpha = IsAlphaFormat();
