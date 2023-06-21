@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 #include <locale.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,11 +43,15 @@
 #include "testing/utils/hash.h"
 #include "testing/utils/path_service.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
+#include "third_party/base/check_op.h"
 
 #ifdef _WIN32
 #include <crtdbg.h>
 #include <errhandlingapi.h>
 #include <io.h>
+#include <wingdi.h>
+
+#include "third_party/base/win/scoped_select_object.h"
 #else
 #include <unistd.h>
 #endif  // _WIN32
@@ -95,6 +101,17 @@
 
 namespace {
 
+enum class RendererType {
+  kDefault,
+  kAgg,
+#ifdef _WIN32
+  kGdi,
+#endif  // _WIN32
+#if defined(PDF_ENABLE_SKIA)
+  kSkia,
+#endif  // defined(PDF_ENABLE_SKIA)
+};
+
 enum class OutputFormat {
   kNone,
   kPageInfo,
@@ -141,7 +158,7 @@ struct Options {
   bool save_thumbnails = false;
   bool save_thumbnails_decoded = false;
   bool save_thumbnails_raw = false;
-  absl::optional<FPDF_RENDERER_TYPE> use_renderer_type;
+  RendererType use_renderer_type = RendererType::kDefault;
 #ifdef PDF_ENABLE_V8
   bool disable_javascript = false;
   std::string js_flags;  // Extra flags to pass to v8 init.
@@ -487,15 +504,19 @@ bool ParseCommandLine(const std::vector<std::string>& args,
     } else if (cur_arg == "--save-thumbs-raw") {
       options->save_thumbnails_raw = true;
     } else if (ParseSwitchKeyValue(cur_arg, "--use-renderer=", &value)) {
-      if (options->use_renderer_type.has_value()) {
+      if (options->use_renderer_type != RendererType::kDefault) {
         fprintf(stderr, "Duplicate --use-renderer argument\n");
         return false;
       }
       if (value == "agg") {
-        options->use_renderer_type = FPDF_RENDERERTYPE_AGG;
+        options->use_renderer_type = RendererType::kAgg;
+#ifdef _WIN32
+      } else if (value == "gdi") {
+        options->use_renderer_type = RendererType::kGdi;
+#endif  // _WIN32
 #if defined(PDF_ENABLE_SKIA)
       } else if (value == "skia") {
-        options->use_renderer_type = FPDF_RENDERERTYPE_SKIA;
+        options->use_renderer_type = RendererType::kSkia;
 #endif  // defined(PDF_ENABLE_SKIA)
       } else {
         fprintf(stderr, "Invalid --use-renderer argument\n");
@@ -871,19 +892,6 @@ class BitmapPageRenderer : public PageRenderer {
 
   bool HasOutput() const override { return !!bitmap_; }
 
-  bool Start() override {
-    bool alpha = FPDFPage_HasTransparency(page());
-    bitmap_.reset(FPDFBitmap_Create(/*width=*/width(), /*height=*/height(),
-                                    /*alpha=*/alpha));
-    if (!bitmap_)
-      return false;
-
-    FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
-    FPDFBitmap_FillRect(bitmap(), /*left=*/0, /*top=*/0, /*width=*/width(),
-                        /*height=*/height(), /*color=*/fill_color);
-    return true;
-  }
-
   void Finish(FPDF_FORMHANDLE form) override {
     FPDF_FFLDraw(form, bitmap(), page(), /*start_x=*/0, /*start_y=*/0,
                  /*size_x=*/width(), /*size_y=*/height(), /*rotate=*/0,
@@ -905,6 +913,22 @@ class BitmapPageRenderer : public PageRenderer {
       : PageRenderer(page, /*width=*/width, /*height=*/height, /*flags=*/flags),
         idler_(idler),
         writer_(std::move(writer)) {}
+
+  bool InitializeBitmap(void* first_scan) {
+    bool alpha = FPDFPage_HasTransparency(page());
+    bitmap_.reset(FPDFBitmap_CreateEx(
+        /*width=*/width(), /*height=*/height(),
+        /*format=*/alpha ? FPDFBitmap_BGRA : FPDFBitmap_BGRx, first_scan,
+        /*stride=*/width() * sizeof(uint32_t)));
+    if (!bitmap()) {
+      return false;
+    }
+
+    FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
+    FPDFBitmap_FillRect(bitmap(), /*left=*/0, /*top=*/0, /*width=*/width(),
+                        /*height=*/height(), /*color=*/fill_color);
+    return true;
+  }
 
   void Idle() const { idler_(); }
   FPDF_BITMAP bitmap() { return bitmap_.get(); }
@@ -932,8 +956,9 @@ class OneShotBitmapPageRenderer : public BitmapPageRenderer {
                            std::move(writer)) {}
 
   bool Start() override {
-    if (!BitmapPageRenderer::Start())
+    if (!InitializeBitmap(/*first_scan=*/nullptr)) {
       return false;
+    }
 
     // Note, client programs probably want to use this method instead of the
     // progressive calls. The progressive calls are if you need to pause the
@@ -967,8 +992,9 @@ class ProgressiveBitmapPageRenderer : public BitmapPageRenderer {
   }
 
   bool Start() override {
-    if (!BitmapPageRenderer::Start())
+    if (!InitializeBitmap(/*first_scan=*/nullptr)) {
       return false;
+    }
 
     if (FPDF_RenderPageBitmapWithColorScheme_Start(
             bitmap(), page(), /*start_x=*/0, /*start_y=*/0, /*size_x=*/width(),
@@ -998,6 +1024,117 @@ class ProgressiveBitmapPageRenderer : public BitmapPageRenderer {
   IFSDK_PAUSE pause_;
   bool to_be_continued_ = false;
 };
+
+#ifdef _WIN32
+class ScopedGdiDc final {
+ public:
+  ~ScopedGdiDc() { Reset(nullptr); }
+
+  void Reset(HDC dc) {
+    if (dc_) {
+      [[maybe_unused]] BOOL success = DeleteDC(dc_);
+      DCHECK(success);
+    }
+    dc_ = dc;
+  }
+
+  HDC Get() const { return dc_; }
+
+ private:
+  HDC dc_ = nullptr;
+};
+
+class ScopedGdiObject final {
+ public:
+  ~ScopedGdiObject() { Reset(nullptr); }
+
+  void Reset(HGDIOBJ object) {
+    if (object_) {
+      [[maybe_unused]] BOOL success = DeleteObject(object_);
+      DCHECK(success);
+    }
+    object_ = object;
+  }
+
+  HGDIOBJ Get() const { return object_; }
+
+ private:
+  HGDIOBJ object_ = nullptr;
+};
+
+class GdiDisplayPageRenderer : public BitmapPageRenderer {
+ public:
+  GdiDisplayPageRenderer(FPDF_PAGE page,
+                         int width,
+                         int height,
+                         int flags,
+                         const std::function<void()>& idler,
+                         PageWriter writer)
+      : BitmapPageRenderer(page,
+                           /*width=*/width,
+                           /*height=*/height,
+                           /*flags=*/flags,
+                           idler,
+                           std::move(writer)) {}
+
+  bool Start() override {
+    // Create an in-memory DC compatible with the display.
+    dc_.Reset(CreateCompatibleDC(/*hdc=*/nullptr));
+    if (!dc_.Get()) {
+      return false;
+    }
+
+    // Create a BGRA DIB and select it into the in-memory DC.
+    BITMAPINFO dib_info;
+    memset(&dib_info, 0, sizeof(BITMAPINFO));
+    dib_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    dib_info.bmiHeader.biWidth = width();
+    dib_info.bmiHeader.biHeight = -height();  // top-down
+    dib_info.bmiHeader.biPlanes = 1;
+    dib_info.bmiHeader.biBitCount = 32;
+    dib_info.bmiHeader.biCompression = BI_RGB;
+
+    VOID* dib_pixels;
+    dib_.Reset(CreateDIBSection(dc_.Get(), &dib_info, DIB_RGB_COLORS,
+                                &dib_pixels, /*hSection=*/nullptr,
+                                /*offset=*/0));
+    if (!dib_.Get() || !InitializeBitmap(dib_pixels)) {
+      return false;
+    }
+    pdfium::base::win::ScopedSelectObject select_dib(dc_.Get(), dib_.Get());
+
+    // Render into the in-memory DC.
+    FPDF_RenderPage(dc_.Get(), page(), /*start_x=*/0, /*start_y=*/0,
+                    /*size_x=*/width(), /*size_y=*/height(), /*rotate=*/0,
+                    /*flags=*/flags());
+
+    return !!GdiFlush();
+  }
+
+  void Finish(FPDF_FORMHANDLE /*form*/) override {
+    // Note that `fpdf_formfill.h` does not support GDI.
+
+    // The GDI backend doesn't support alpha and clears the alpha component to
+    // transparent, so clear the alpha component back to opaque.
+    const int stride = FPDFBitmap_GetStride(bitmap());
+    DCHECK_EQ(width() * sizeof(uint32_t), static_cast<size_t>(stride));
+    const int pixel_stride = stride / sizeof(uint32_t);
+
+    uint32_t* scanline =
+        reinterpret_cast<uint32_t*>(FPDFBitmap_GetBuffer(bitmap()));
+    for (int row = 0; row < height(); ++row) {
+      for (int column = 0; column < width(); ++column) {
+        scanline[column] |= 0xFF000000;
+      }
+      scanline += pixel_stride;
+    }
+  }
+
+ private:
+  ScopedGdiDc dc_;
+  ScopedGdiObject dib_;
+};
+#endif  // _WIN32
 
 #ifdef PDF_ENABLE_SKIA
 class SkPicturePageRenderer : public PageRenderer {
@@ -1147,6 +1284,14 @@ bool ProcessPage(const std::string& name,
       // Other formats won't write the output to a file, but still rasterize.
       break;
   }
+
+#ifdef _WIN32
+  if (!renderer && options.use_renderer_type == RendererType::kGdi) {
+    renderer = std::make_unique<GdiDisplayPageRenderer>(
+        page, /*width=*/width, /*height=*/height, /*flags=*/flags, idler,
+        std::move(writer));
+  }
+#endif  // _WIN32
 
   if (!renderer) {
     // Use a rasterizing page renderer by default.
@@ -1418,11 +1563,21 @@ constexpr char kUsageString[] =
     "<pdf-name>.thumbnail.decoded.<page-number>.png\n"
     "  --save-thumbs-raw      - write page thumbnails' raw stream data"
     "<pdf-name>.thumbnail.raw.<page-number>.png\n"
+
 #if defined(PDF_ENABLE_SKIA)
+#ifdef _WIN32
+    "  --use-renderer         - renderer to use, one of [agg | gdi | skia]\n"
+#else
     "  --use-renderer         - renderer to use, one of [agg | skia]\n"
+#endif  // _WIN32
+#else
+#ifdef _WIN32
+    "  --use-renderer         - renderer to use, one of [agg | gdi]\n"
 #else
     "  --use-renderer         - renderer to use, one of [agg]\n"
+#endif  // _WIN32
 #endif  // defined(PDF_ENABLE_SKIA)
+
 #ifdef PDF_ENABLE_V8
     "  --disable-javascript   - do not execute JS in PDF files\n"
     "  --js-flags=<flags>     - additional flags to pass to V8\n"
@@ -1501,23 +1656,40 @@ int main(int argc, const char* argv[]) {
     return 1;
   }
 
-  const FPDF_RENDERER_TYPE renderer_type =
-      options.use_renderer_type.value_or(GetDefaultRendererType());
-#if defined(PDF_ENABLE_SKIA) && defined(BUILD_WITH_CHROMIUM)
-  if (renderer_type == FPDF_RENDERERTYPE_SKIA) {
-    // Needed to support Chromium's copy of Skia, which uses a
-    // DiscardableMemoryAllocator.
-    chromium_support::InitializeDiscardableMemoryAllocator();
-  }
-#endif
-
   FPDF_LIBRARY_CONFIG config;
   config.version = 4;
   config.m_pUserFontPaths = nullptr;
   config.m_pIsolate = nullptr;
   config.m_v8EmbedderSlot = 0;
   config.m_pPlatform = nullptr;
-  config.m_RendererType = renderer_type;
+
+  switch (options.use_renderer_type) {
+    case RendererType::kDefault:
+      config.m_RendererType = GetDefaultRendererType();
+      break;
+
+    case RendererType::kAgg:
+      config.m_RendererType = FPDF_RENDERERTYPE_AGG;
+      break;
+
+#ifdef _WIN32
+    case RendererType::kGdi:
+      // GDI renderer uses `FPDF_RenderPage()`, rather than a renderer type.
+      config.m_RendererType = GetDefaultRendererType();
+      break;
+#endif  // _WIN32
+
+#if defined(PDF_ENABLE_SKIA)
+    case RendererType::kSkia:
+#if defined(BUILD_WITH_CHROMIUM)
+      // Needed to support Chromium's copy of Skia, which uses a
+      // `DiscardableMemoryAllocator`.
+      chromium_support::InitializeDiscardableMemoryAllocator();
+#endif  // defined(BUILD_WITH_CHROMIUM)
+      config.m_RendererType = FPDF_RENDERERTYPE_SKIA;
+      break;
+#endif  // defined(PDF_ENABLE_SKIA)
+  }
 
   std::function<void()> idler = []() {};
 #ifdef PDF_ENABLE_V8
