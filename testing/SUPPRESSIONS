@@ -10,7 +10,7 @@
 # Column 1: platform: *, win, mac, linux
 # Column 2: v8 support: *, nov8, v8
 # Column 3: xfa support: *, noxfa, xfa
-# Column 4: rendering support: *, agg, skia
+# Column 4: rendering support: *, agg, gdi, skia
 #
 # All columns on a line on a line must match, but filenames may be repeated
 # on subsequent lines to suppress more cases.  Within each column, any one of

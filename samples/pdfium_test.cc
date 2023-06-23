@@ -1524,6 +1524,9 @@ void ShowConfig() {
 #ifdef PDF_ENABLE_SKIA
   append_config("SKIA");
 #endif
+#ifdef _WIN32
+  append_config("GDI");
+#endif
   printf("%s\n", config.c_str());
 }
 
