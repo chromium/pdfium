@@ -618,21 +618,18 @@ bool IsIsoTimeFormat(pdfium::span<const char> pData,
   if (i == pData.size())
     iZone = pData.size();
 
-  char szBuffer[3] = {};
+  char szBuffer[3] = {};  // Last char always stays NUL for termination.
   size_t iPos = 0;
   size_t iIndex = 0;
-  while (iIndex < iZone) {
-    if (!isdigit(pData[iIndex]))
-      return false;
-
+  while (iIndex + 1 < iZone) {
     szBuffer[0] = pData[iIndex];
-    if (!isdigit(pData[iIndex + 1]))
-      return false;
-
     szBuffer[1] = pData[iIndex + 1];
-    if (FXSYS_atoi(szBuffer) > 60)
+    if (!isdigit(szBuffer[0]) || !isdigit(szBuffer[1])) {
       return false;
-
+    }
+    if (FXSYS_atoi(szBuffer) > 60) {
+      return false;
+    }
     if (pData[2] == ':') {
       if (iPos == 0) {
         iHour = FXSYS_atoi(szBuffer);
@@ -695,18 +692,15 @@ bool IsIsoTimeFormat(pdfium::span<const char> pData,
     }
   }
   iPos = 0;
-  while (iIndex < pData.size()) {
-    if (!isdigit(pData[iIndex]))
-      return false;
-
+  while (iIndex + 1 < pData.size()) {
     szBuffer[0] = pData[iIndex];
-    if (!isdigit(pData[iIndex + 1]))
-      return false;
-
     szBuffer[1] = pData[iIndex + 1];
-    if (FXSYS_atoi(szBuffer) > 60)
+    if (!isdigit(szBuffer[0]) || !isdigit(szBuffer[1])) {
       return false;
-
+    }
+    if (FXSYS_atoi(szBuffer) > 60) {
+      return false;
+    }
     if (pData[2] == ':') {
       if (iPos == 0) {
         iZoneHour = FXSYS_atoi(szBuffer);
