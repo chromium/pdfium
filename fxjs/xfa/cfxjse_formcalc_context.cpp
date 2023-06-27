@@ -578,27 +578,7 @@ bool IsIsoDateFormat(pdfium::span<const char> pData,
   return iDay <= (iMonth % 2 == 0 ? 31 : 30);
 }
 
-bool IsIsoTimeFormat(pdfium::span<const char> pData,
-                     int32_t* pHour,
-                     int32_t* pMinute,
-                     int32_t* pSecond,
-                     int32_t* pMilliSecond,
-                     int32_t* pZoneHour,
-                     int32_t* pZoneMinute) {
-  int32_t& iHour = *pHour;
-  int32_t& iMinute = *pMinute;
-  int32_t& iSecond = *pSecond;
-  int32_t& iMilliSecond = *pMilliSecond;
-  int32_t& iZoneHour = *pZoneHour;
-  int32_t& iZoneMinute = *pZoneMinute;
-
-  iHour = 0;
-  iMinute = 0;
-  iSecond = 0;
-  iMilliSecond = 0;
-  iZoneHour = 0;
-  iZoneMinute = 0;
-
+bool IsIsoTimeFormat(pdfium::span<const char> pData) {
   if (pData.empty())
     return false;
 
@@ -627,25 +607,12 @@ bool IsIsoTimeFormat(pdfium::span<const char> pData,
       return false;
     }
     if (iIndex + 2 < iZone && pData[iIndex + 2] == ':') {
-      if (iPos == 0) {
-        iHour = FXSYS_atoi(szBuffer);
+      if (iPos == 0 || iPos == 1) {
         ++iPos;
-      } else if (iPos == 1) {
-        iMinute = FXSYS_atoi(szBuffer);
-        ++iPos;
-      } else {
-        iSecond = FXSYS_atoi(szBuffer);
       }
       iIndex += 3;
     } else {
-      if (iPos == 0) {
-        iHour = FXSYS_atoi(szBuffer);
-        ++iPos;
-      } else if (iPos == 1) {
-        iMinute = FXSYS_atoi(szBuffer);
-        ++iPos;
-      } else if (iPos == 2) {
-        iSecond = FXSYS_atoi(szBuffer);
+      if (iPos == 0 || iPos == 1 || iPos == 2) {
         ++iPos;
       }
       iIndex += 2;
@@ -665,9 +632,7 @@ bool IsIsoTimeFormat(pdfium::span<const char> pData,
         return false;
       szMilliSeconds[j] = c;
     }
-    iMilliSecond = FXSYS_atoi(szMilliSeconds);
-    if (iMilliSecond >= 1000) {
-      iMilliSecond = 0;
+    if (FXSYS_atoi(szMilliSeconds) >= 1000) {
       return false;
     }
     iIndex += kSubSecondLength;
@@ -676,12 +641,10 @@ bool IsIsoTimeFormat(pdfium::span<const char> pData,
   if (iIndex < pData.size() && FXSYS_towlower(pData[iIndex]) == 'z')
     return true;
 
-  int32_t iSign = 1;
   if (iIndex < pData.size()) {
     if (pData[iIndex] == '+') {
       ++iIndex;
     } else if (pData[iIndex] == '-') {
-      iSign = -1;
       ++iIndex;
     }
   }
@@ -696,18 +659,9 @@ bool IsIsoTimeFormat(pdfium::span<const char> pData,
       return false;
     }
     if (iIndex + 2 < pData.size() && pData[iIndex + 2] == ':') {
-      if (iPos == 0) {
-        iZoneHour = FXSYS_atoi(szBuffer);
-      } else if (iPos == 1) {
-        iZoneMinute = FXSYS_atoi(szBuffer);
-      }
       iIndex += 3;
     } else {
-      if (!iPos) {
-        iZoneHour = FXSYS_atoi(szBuffer);
-        ++iPos;
-      } else if (iPos == 1) {
-        iZoneMinute = FXSYS_atoi(szBuffer);
+      if (iPos == 0 || iPos == 1) {
         ++iPos;
       }
       iIndex += 2;
@@ -716,7 +670,6 @@ bool IsIsoTimeFormat(pdfium::span<const char> pData,
   if (iIndex < pData.size())
     return false;
 
-  iZoneHour *= iSign;
   return true;
 }
 
@@ -737,18 +690,10 @@ bool IsIsoDateTimeFormat(pdfium::span<const char> pData,
   if (iIndex == pData.size() || (iIndex != 8 && iIndex != 10))
     return false;
 
-  int32_t iHour = 0;
-  int32_t iMinute = 0;
-  int32_t iSecond = 0;
-  int32_t iMilliSecond = 0;
-  int32_t iZoneHour = 0;
-  int32_t iZoneMinute = 0;
-
   pdfium::span<const char> pDateSpan = pData.subspan(0, iIndex);
   pdfium::span<const char> pTimeSpan = pData.subspan(iIndex + 1);
   return IsIsoDateFormat(pDateSpan, pYear, pMonth, pDay) &&
-         IsIsoTimeFormat(pTimeSpan, &iHour, &iMinute, &iSecond, &iMilliSecond,
-                         &iZoneHour, &iZoneMinute);
+         IsIsoTimeFormat(pTimeSpan);
 }
 
 int32_t DateString2Num(ByteStringView bsDate) {
