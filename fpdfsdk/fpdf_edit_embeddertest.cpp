@@ -4195,13 +4195,15 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSMask) {
   ASSERT_EQ(kExpectedObjects, FPDFPage_CountObjects(page));
 
   const char* smask_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
       return "0653a18f3bf9b4d8413a2aa10bc11c38";
+    }
     return "5a3ae4a660ce919e29c42ec2258142f1";
   }();
   const char* no_smask_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-      return "d568afc908d595224d804448d5d3672f";
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+      return "0da49e63e7d6337aca78b19938e3bf65";
+    }
     return "67504e83f5d78214ea00efc19082c5c1";
   }();
 
