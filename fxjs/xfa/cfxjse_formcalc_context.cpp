@@ -723,19 +723,10 @@ bool IsIsoTimeFormat(pdfium::span<const char> pData,
 bool IsIsoDateTimeFormat(pdfium::span<const char> pData,
                          int32_t* pYear,
                          int32_t* pMonth,
-                         int32_t* pDay,
-                         int32_t* pHour,
-                         int32_t* pMinute,
-                         int32_t* pSecond,
-                         int32_t* pMilliSecond,
-                         int32_t* pZoneHour,
-                         int32_t* pZoneMinute) {
+                         int32_t* pDay) {
   *pYear = 0;
   *pMonth = 0;
   *pDay = 0;
-  *pHour = 0;
-  *pMinute = 0;
-  *pSecond = 0;
 
   size_t iIndex = 0;
   while (iIndex < pData.size()) {
@@ -746,11 +737,18 @@ bool IsIsoDateTimeFormat(pdfium::span<const char> pData,
   if (iIndex == pData.size() || (iIndex != 8 && iIndex != 10))
     return false;
 
+  int32_t iHour = 0;
+  int32_t iMinute = 0;
+  int32_t iSecond = 0;
+  int32_t iMilliSecond = 0;
+  int32_t iZoneHour = 0;
+  int32_t iZoneMinute = 0;
+
   pdfium::span<const char> pDateSpan = pData.subspan(0, iIndex);
   pdfium::span<const char> pTimeSpan = pData.subspan(iIndex + 1);
   return IsIsoDateFormat(pDateSpan, pYear, pMonth, pDay) &&
-         IsIsoTimeFormat(pTimeSpan, pHour, pMinute, pSecond, pMilliSecond,
-                         pZoneHour, pZoneMinute);
+         IsIsoTimeFormat(pTimeSpan, &iHour, &iMinute, &iSecond, &iMilliSecond,
+                         &iZoneHour, &iZoneMinute);
 }
 
 int32_t DateString2Num(ByteStringView bsDate) {
@@ -763,15 +761,7 @@ int32_t DateString2Num(ByteStringView bsDate) {
       return 0;
     }
   } else {
-    int32_t iHour = 0;
-    int32_t iMinute = 0;
-    int32_t iSecond = 0;
-    int32_t iMilliSecond = 0;
-    int32_t iZoneHour = 0;
-    int32_t iZoneMinute = 0;
-    if (!IsIsoDateTimeFormat(bsDate.span(), &iYear, &iMonth, &iDay, &iHour,
-                             &iMinute, &iSecond, &iMilliSecond, &iZoneHour,
-                             &iZoneMinute)) {
+    if (!IsIsoDateTimeFormat(bsDate.span(), &iYear, &iMonth, &iDay)) {
       return 0;
     }
   }
