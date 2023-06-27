@@ -630,7 +630,7 @@ bool IsIsoTimeFormat(pdfium::span<const char> pData,
     if (FXSYS_atoi(szBuffer) > 60) {
       return false;
     }
-    if (pData[2] == ':') {
+    if (iIndex + 2 < iZone && pData[iIndex + 2] == ':') {
       if (iPos == 0) {
         iHour = FXSYS_atoi(szBuffer);
         ++iPos;
@@ -701,7 +701,7 @@ bool IsIsoTimeFormat(pdfium::span<const char> pData,
     if (FXSYS_atoi(szBuffer) > 60) {
       return false;
     }
-    if (pData[2] == ':') {
+    if (iIndex + 2 < pData.size() && pData[iIndex + 2] == ':') {
       if (iPos == 0) {
         iZoneHour = FXSYS_atoi(szBuffer);
       } else if (iPos == 1) {
