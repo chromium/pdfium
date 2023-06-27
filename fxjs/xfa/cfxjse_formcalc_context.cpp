@@ -658,17 +658,15 @@ bool IsIsoTimeFormat(pdfium::span<const char> pData,
       return false;
 
     ++iIndex;
-    char szMilliSeconds[kSubSecondLength + 1];
+    char szMilliSeconds[kSubSecondLength + 1] = {};
     for (int j = 0; j < kSubSecondLength; ++j) {
       char c = pData[iIndex + j];
       if (!isdigit(c))
         return false;
       szMilliSeconds[j] = c;
     }
-    szMilliSeconds[kSubSecondLength] = '\0';
-
     iMilliSecond = FXSYS_atoi(szMilliSeconds);
-    if (iMilliSecond > 100) {
+    if (iMilliSecond >= 1000) {
       iMilliSecond = 0;
       return false;
     }
