@@ -460,13 +460,15 @@ void CJX_Object::SetCDataImpl(XFA_Attribute eAttr,
     return;
   }
 
+  CFX_XMLElement* elem = ToXMLElement(xfaObj->GetXMLMappingNode());
+  if (!elem) {
+    return;
+  }
+
   WideString wsAttrName = WideString::FromASCII(XFA_AttributeToName(eAttr));
   if (eAttr == XFA_Attribute::ContentType)
     wsAttrName = L"xfa:" + wsAttrName;
-
-  CFX_XMLElement* elem = ToXMLElement(xfaObj->GetXMLMappingNode());
   elem->SetAttribute(wsAttrName, wsValue);
-  return;
 }
 
 void CJX_Object::SetAttributeValue(const WideString& wsValue,
