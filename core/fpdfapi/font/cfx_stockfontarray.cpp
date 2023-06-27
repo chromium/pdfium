@@ -11,7 +11,7 @@
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "third_party/base/notreached.h"
+#include "third_party/base/check_op.h"
 
 CFX_StockFontArray::CFX_StockFontArray() = default;
 
@@ -29,10 +29,8 @@ CFX_StockFontArray::~CFX_StockFontArray() {
 
 RetainPtr<CPDF_Font> CFX_StockFontArray::GetFont(
     CFX_FontMapper::StandardFont index) const {
-  if (index < std::size(m_StockFonts))
-    return m_StockFonts[index];
-  NOTREACHED();
-  return nullptr;
+  CHECK_LT(index, std::size(m_StockFonts));
+  return m_StockFonts[index];
 }
 
 void CFX_StockFontArray::SetFont(CFX_FontMapper::StandardFont index,

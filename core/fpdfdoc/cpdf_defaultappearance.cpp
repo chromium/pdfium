@@ -135,8 +135,7 @@ absl::optional<CFX_Color::TypeAndARGB> CPDF_DefaultAppearance::GetColorARGB()
                    static_cast<int>(g * 255 + 0.5f),
                    static_cast<int>(b * 255 + 0.5f)));
   }
-  NOTREACHED();
-  return absl::nullopt;
+  NOTREACHED_NORETURN();
 }
 
 // static
