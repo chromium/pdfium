@@ -512,11 +512,9 @@ ByteString GUIDString(bool bSeparator) {
 }
 
 bool IsIsoDateFormat(pdfium::span<const char> pData,
-                     int32_t* pStyle,
                      int32_t* pYear,
                      int32_t* pMonth,
                      int32_t* pDay) {
-  int32_t& iStyle = *pStyle;
   int32_t& iYear = *pYear;
   int32_t& iMonth = *pMonth;
   int32_t& iDay = *pDay;
@@ -537,12 +535,10 @@ bool IsIsoDateFormat(pdfium::span<const char> pData,
     szYear[i] = pData[i];
   }
   iYear = FXSYS_atoi(szYear);
-  iStyle = 0;
   if (pData.size() == 4)
     return true;
 
-  iStyle = pData[4] == '-' ? 1 : 0;
-
+  int32_t iStyle = pData[4] == '-' ? 1 : 0;
   size_t iPosOff = iStyle == 0 ? 4 : 5;
   if (!isdigit(pData[iPosOff]) || !isdigit(pData[iPosOff + 1]))
     return false;
@@ -754,9 +750,7 @@ bool IsIsoDateTimeFormat(pdfium::span<const char> pData,
 
   pdfium::span<const char> pDateSpan = pData.subspan(0, iIndex);
   pdfium::span<const char> pTimeSpan = pData.subspan(iIndex + 1);
-
-  int32_t iStyle = -1;
-  return IsIsoDateFormat(pDateSpan, &iStyle, pYear, pMonth, pDay) &&
+  return IsIsoDateFormat(pDateSpan, pYear, pMonth, pDay) &&
          IsIsoTimeFormat(pTimeSpan, pHour, pMinute, pSecond, pMilliSecond,
                          pZoneHour, pZoneMinute);
 }
@@ -767,9 +761,9 @@ int32_t DateString2Num(ByteStringView bsDate) {
   int32_t iMonth = 0;
   int32_t iDay = 0;
   if (iLength <= 10) {
-    int32_t iStyle = -1;
-    if (!IsIsoDateFormat(bsDate.span(), &iStyle, &iYear, &iMonth, &iDay))
+    if (!IsIsoDateFormat(bsDate.span(), &iYear, &iMonth, &iDay)) {
       return 0;
+    }
   } else {
     int32_t iHour = 0;
     int32_t iMinute = 0;
