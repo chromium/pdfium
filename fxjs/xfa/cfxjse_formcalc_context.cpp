@@ -511,237 +511,6 @@ ByteString GUIDString(bool bSeparator) {
   return bsGUID;
 }
 
-bool IsIsoDateFormat(pdfium::span<const char> pData,
-                     int32_t* pYear,
-                     int32_t* pMonth,
-                     int32_t* pDay) {
-  int32_t& iYear = *pYear;
-  int32_t& iMonth = *pMonth;
-  int32_t& iDay = *pDay;
-
-  iYear = 0;
-  iMonth = 1;
-  iDay = 1;
-
-  if (pData.size() < 4)
-    return false;
-
-  char szYear[5];
-  szYear[4] = '\0';
-  for (int32_t i = 0; i < 4; ++i) {
-    if (!isdigit(pData[i]))
-      return false;
-
-    szYear[i] = pData[i];
-  }
-  iYear = FXSYS_atoi(szYear);
-  if (pData.size() == 4)
-    return true;
-
-  int32_t iStyle = pData[4] == '-' ? 1 : 0;
-  size_t iPosOff = iStyle == 0 ? 4 : 5;
-  if (!isdigit(pData[iPosOff]) || !isdigit(pData[iPosOff + 1]))
-    return false;
-
-  char szBuffer[3] = {};
-  szBuffer[0] = pData[iPosOff];
-  szBuffer[1] = pData[iPosOff + 1];
-  iMonth = FXSYS_atoi(szBuffer);
-  if (iMonth > 12 || iMonth < 1)
-    return false;
-
-  if (iStyle == 0) {
-    iPosOff += 2;
-    if (pData.size() == 6)
-      return true;
-  } else {
-    iPosOff += 3;
-    if (pData.size() == 7)
-      return true;
-  }
-  if (!isdigit(pData[iPosOff]) || !isdigit(pData[iPosOff + 1]))
-    return false;
-
-  szBuffer[0] = pData[iPosOff];
-  szBuffer[1] = pData[iPosOff + 1];
-  iDay = FXSYS_atoi(szBuffer);
-  if (iPosOff + 2 < pData.size())
-    return false;
-
-  if (iMonth == 2) {
-    bool bIsLeap = (!(iYear % 4) && (iYear % 100)) || !(iYear % 400);
-    return iDay <= (bIsLeap ? 29 : 28);
-  }
-
-  if (iMonth < 8)
-    return iDay <= (iMonth % 2 == 0 ? 30 : 31);
-  return iDay <= (iMonth % 2 == 0 ? 31 : 30);
-}
-
-bool IsIsoTimeFormat(pdfium::span<const char> pData) {
-  if (pData.empty())
-    return false;
-
-  size_t iZone = 0;
-  size_t i = 0;
-  while (i < pData.size()) {
-    if (!isdigit(pData[i]) && pData[i] != ':') {
-      iZone = i;
-      break;
-    }
-    ++i;
-  }
-  if (i == pData.size())
-    iZone = pData.size();
-
-  char szBuffer[3] = {};  // Last char always stays NUL for termination.
-  size_t iPos = 0;
-  size_t iIndex = 0;
-  while (iIndex + 1 < iZone) {
-    szBuffer[0] = pData[iIndex];
-    szBuffer[1] = pData[iIndex + 1];
-    if (!isdigit(szBuffer[0]) || !isdigit(szBuffer[1])) {
-      return false;
-    }
-    if (FXSYS_atoi(szBuffer) > 60) {
-      return false;
-    }
-    if (iIndex + 2 < iZone && pData[iIndex + 2] == ':') {
-      if (iPos == 0 || iPos == 1) {
-        ++iPos;
-      }
-      iIndex += 3;
-    } else {
-      if (iPos == 0 || iPos == 1 || iPos == 2) {
-        ++iPos;
-      }
-      iIndex += 2;
-    }
-  }
-
-  if (iIndex < pData.size() && pData[iIndex] == '.') {
-    constexpr int kSubSecondLength = 3;
-    if (iIndex + kSubSecondLength >= pData.size())
-      return false;
-
-    ++iIndex;
-    char szMilliSeconds[kSubSecondLength + 1] = {};
-    for (int j = 0; j < kSubSecondLength; ++j) {
-      char c = pData[iIndex + j];
-      if (!isdigit(c))
-        return false;
-      szMilliSeconds[j] = c;
-    }
-    if (FXSYS_atoi(szMilliSeconds) >= 1000) {
-      return false;
-    }
-    iIndex += kSubSecondLength;
-  }
-
-  if (iIndex < pData.size() && FXSYS_towlower(pData[iIndex]) == 'z')
-    return true;
-
-  if (iIndex < pData.size()) {
-    if (pData[iIndex] == '+') {
-      ++iIndex;
-    } else if (pData[iIndex] == '-') {
-      ++iIndex;
-    }
-  }
-  iPos = 0;
-  while (iIndex + 1 < pData.size()) {
-    szBuffer[0] = pData[iIndex];
-    szBuffer[1] = pData[iIndex + 1];
-    if (!isdigit(szBuffer[0]) || !isdigit(szBuffer[1])) {
-      return false;
-    }
-    if (FXSYS_atoi(szBuffer) > 60) {
-      return false;
-    }
-    if (iIndex + 2 < pData.size() && pData[iIndex + 2] == ':') {
-      iIndex += 3;
-    } else {
-      if (iPos == 0 || iPos == 1) {
-        ++iPos;
-      }
-      iIndex += 2;
-    }
-  }
-  if (iIndex < pData.size())
-    return false;
-
-  return true;
-}
-
-bool IsIsoDateTimeFormat(pdfium::span<const char> pData,
-                         int32_t* pYear,
-                         int32_t* pMonth,
-                         int32_t* pDay) {
-  *pYear = 0;
-  *pMonth = 0;
-  *pDay = 0;
-
-  size_t iIndex = 0;
-  while (iIndex < pData.size()) {
-    if (pData[iIndex] == 'T' || pData[iIndex] == 't')
-      break;
-    ++iIndex;
-  }
-  if (iIndex == pData.size() || (iIndex != 8 && iIndex != 10))
-    return false;
-
-  pdfium::span<const char> pDateSpan = pData.subspan(0, iIndex);
-  pdfium::span<const char> pTimeSpan = pData.subspan(iIndex + 1);
-  return IsIsoDateFormat(pDateSpan, pYear, pMonth, pDay) &&
-         IsIsoTimeFormat(pTimeSpan);
-}
-
-int32_t DateString2Num(ByteStringView bsDate) {
-  int32_t iLength = bsDate.GetLength();
-  int32_t iYear = 0;
-  int32_t iMonth = 0;
-  int32_t iDay = 0;
-  if (iLength <= 10) {
-    if (!IsIsoDateFormat(bsDate.span(), &iYear, &iMonth, &iDay)) {
-      return 0;
-    }
-  } else {
-    if (!IsIsoDateTimeFormat(bsDate.span(), &iYear, &iMonth, &iDay)) {
-      return 0;
-    }
-  }
-
-  float dDays = 0;
-  int32_t i = 1;
-  if (iYear < 1900)
-    return 0;
-
-  while (iYear - i >= 1900) {
-    dDays +=
-        ((!((iYear - i) % 4) && ((iYear - i) % 100)) || !((iYear - i) % 400))
-            ? 366
-            : 365;
-    ++i;
-  }
-  i = 1;
-  while (i < iMonth) {
-    if (i == 2)
-      dDays += ((!(iYear % 4) && (iYear % 100)) || !(iYear % 400)) ? 29 : 28;
-    else if (i <= 7)
-      dDays += (i % 2 == 0) ? 30 : 31;
-    else
-      dDays += (i % 2 == 0) ? 31 : 30;
-
-    ++i;
-  }
-  i = 0;
-  while (iDay - i > 0) {
-    ++dDays;
-    ++i;
-  }
-  return static_cast<int32_t>(dDays);
-}
-
 void GetLocalTimeZone(int32_t* pHour, int32_t* pMin, int32_t* pSec) {
   time_t now;
   FXSYS_time(&now);
@@ -5362,6 +5131,262 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
     values[i + 2] = resolveValues[i];
 
   info.GetReturnValue().Set(fxv8::NewArrayHelper(pIsolate, values));
+}
+
+// static
+bool CFXJSE_FormCalcContext::IsIsoDateFormat(ByteStringView bsData,
+                                             int32_t* pYear,
+                                             int32_t* pMonth,
+                                             int32_t* pDay) {
+  pdfium::span<const char> pData = bsData.span();
+
+  int32_t& iYear = *pYear;
+  int32_t& iMonth = *pMonth;
+  int32_t& iDay = *pDay;
+
+  iYear = 0;
+  iMonth = 1;
+  iDay = 1;
+
+  if (pData.size() < 4) {
+    return false;
+  }
+
+  char szYear[5];
+  szYear[4] = '\0';
+  for (int32_t i = 0; i < 4; ++i) {
+    if (!isdigit(pData[i])) {
+      return false;
+    }
+
+    szYear[i] = pData[i];
+  }
+  iYear = FXSYS_atoi(szYear);
+  if (pData.size() == 4) {
+    return true;
+  }
+
+  int32_t iStyle = pData[4] == '-' ? 1 : 0;
+  size_t iPosOff = iStyle == 0 ? 4 : 5;
+  if (!isdigit(pData[iPosOff]) || !isdigit(pData[iPosOff + 1])) {
+    return false;
+  }
+
+  char szBuffer[3] = {};
+  szBuffer[0] = pData[iPosOff];
+  szBuffer[1] = pData[iPosOff + 1];
+  iMonth = FXSYS_atoi(szBuffer);
+  if (iMonth > 12 || iMonth < 1) {
+    return false;
+  }
+
+  if (iStyle == 0) {
+    iPosOff += 2;
+    if (pData.size() == 6) {
+      return true;
+    }
+  } else {
+    iPosOff += 3;
+    if (pData.size() == 7) {
+      return true;
+    }
+  }
+  if (!isdigit(pData[iPosOff]) || !isdigit(pData[iPosOff + 1])) {
+    return false;
+  }
+
+  szBuffer[0] = pData[iPosOff];
+  szBuffer[1] = pData[iPosOff + 1];
+  iDay = FXSYS_atoi(szBuffer);
+  if (iPosOff + 2 < pData.size()) {
+    return false;
+  }
+
+  if (iMonth == 2) {
+    bool bIsLeap = (!(iYear % 4) && (iYear % 100)) || !(iYear % 400);
+    return iDay <= (bIsLeap ? 29 : 28);
+  }
+
+  if (iMonth < 8) {
+    return iDay <= (iMonth % 2 == 0 ? 30 : 31);
+  }
+  return iDay <= (iMonth % 2 == 0 ? 31 : 30);
+}
+
+// static
+bool CFXJSE_FormCalcContext::IsIsoTimeFormat(ByteStringView bsData) {
+  pdfium::span<const char> pData = bsData.span();
+  if (pData.empty()) {
+    return false;
+  }
+
+  size_t iZone = 0;
+  size_t i = 0;
+  while (i < pData.size()) {
+    if (!isdigit(pData[i]) && pData[i] != ':') {
+      iZone = i;
+      break;
+    }
+    ++i;
+  }
+  if (i == pData.size()) {
+    iZone = pData.size();
+  }
+
+  char szBuffer[3] = {};  // Last char always stays NUL for termination.
+  size_t iPos = 0;
+  size_t iIndex = 0;
+  while (iIndex + 1 < iZone) {
+    szBuffer[0] = pData[iIndex];
+    szBuffer[1] = pData[iIndex + 1];
+    if (!isdigit(szBuffer[0]) || !isdigit(szBuffer[1])) {
+      return false;
+    }
+    if (FXSYS_atoi(szBuffer) > 60) {
+      return false;
+    }
+    if (iIndex + 2 < iZone && pData[iIndex + 2] == ':') {
+      if (iPos == 0 || iPos == 1) {
+        ++iPos;
+      }
+      iIndex += 3;
+    } else {
+      if (iPos == 0 || iPos == 1 || iPos == 2) {
+        ++iPos;
+      }
+      iIndex += 2;
+    }
+  }
+
+  if (iIndex < pData.size() && pData[iIndex] == '.') {
+    constexpr int kSubSecondLength = 3;
+    if (iIndex + kSubSecondLength >= pData.size()) {
+      return false;
+    }
+
+    ++iIndex;
+    char szMilliSeconds[kSubSecondLength + 1] = {};
+    for (int j = 0; j < kSubSecondLength; ++j) {
+      char c = pData[iIndex + j];
+      if (!isdigit(c)) {
+        return false;
+      }
+      szMilliSeconds[j] = c;
+    }
+    if (FXSYS_atoi(szMilliSeconds) >= 1000) {
+      return false;
+    }
+    iIndex += kSubSecondLength;
+  }
+
+  if (iIndex < pData.size() && FXSYS_towlower(pData[iIndex]) == 'z') {
+    return true;
+  }
+
+  if (iIndex < pData.size()) {
+    if (pData[iIndex] == '+') {
+      ++iIndex;
+    } else if (pData[iIndex] == '-') {
+      ++iIndex;
+    }
+  }
+  iPos = 0;
+  while (iIndex + 1 < pData.size()) {
+    szBuffer[0] = pData[iIndex];
+    szBuffer[1] = pData[iIndex + 1];
+    if (!isdigit(szBuffer[0]) || !isdigit(szBuffer[1])) {
+      return false;
+    }
+    if (FXSYS_atoi(szBuffer) > 60) {
+      return false;
+    }
+    if (iIndex + 2 < pData.size() && pData[iIndex + 2] == ':') {
+      iIndex += 3;
+    } else {
+      if (iPos == 0 || iPos == 1) {
+        ++iPos;
+      }
+      iIndex += 2;
+    }
+  }
+  if (iIndex < pData.size()) {
+    return false;
+  }
+
+  return true;
+}
+
+bool CFXJSE_FormCalcContext::IsIsoDateTimeFormat(ByteStringView bsData,
+                                                 int32_t* pYear,
+                                                 int32_t* pMonth,
+                                                 int32_t* pDay) {
+  *pYear = 0;
+  *pMonth = 0;
+  *pDay = 0;
+
+  size_t iIndex = 0;
+  while (iIndex < bsData.GetLength()) {
+    if (bsData[iIndex] == 'T' || bsData[iIndex] == 't') {
+      break;
+    }
+    ++iIndex;
+  }
+  if (iIndex == bsData.GetLength() || (iIndex != 8 && iIndex != 10)) {
+    return false;
+  }
+
+  ByteStringView date_part = bsData.First(iIndex);
+  ByteStringView time_part = bsData.Substr(iIndex + 1);
+  return IsIsoDateFormat(date_part, pYear, pMonth, pDay) &&
+         IsIsoTimeFormat(time_part);
+}
+
+// static
+int32_t CFXJSE_FormCalcContext::DateString2Num(ByteStringView bsDate) {
+  int32_t iYear = 0;
+  int32_t iMonth = 0;
+  int32_t iDay = 0;
+  if (bsDate.GetLength() <= 10) {
+    if (!IsIsoDateFormat(bsDate, &iYear, &iMonth, &iDay)) {
+      return 0;
+    }
+  } else {
+    if (!IsIsoDateTimeFormat(bsDate, &iYear, &iMonth, &iDay)) {
+      return 0;
+    }
+  }
+
+  float dDays = 0;
+  int32_t i = 1;
+  if (iYear < 1900) {
+    return 0;
+  }
+
+  while (iYear - i >= 1900) {
+    dDays +=
+        ((!((iYear - i) % 4) && ((iYear - i) % 100)) || !((iYear - i) % 400))
+            ? 366
+            : 365;
+    ++i;
+  }
+  i = 1;
+  while (i < iMonth) {
+    if (i == 2) {
+      dDays += ((!(iYear % 4) && (iYear % 100)) || !(iYear % 400)) ? 29 : 28;
+    } else if (i <= 7) {
+      dDays += (i % 2 == 0) ? 30 : 31;
+    } else {
+      dDays += (i % 2 == 0) ? 31 : 30;
+    }
+
+    ++i;
+  }
+  i = 0;
+  while (iDay - i > 0) {
+    ++dDays;
+    ++i;
+  }
+  return static_cast<int32_t>(dDays);
 }
 
 bool CFXJSE_FormCalcContext::ApplyToExpansion(
