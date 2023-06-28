@@ -930,6 +930,8 @@ class BitmapPageRenderer : public PageRenderer {
     return true;
   }
 
+  void ResetBitmap() { bitmap_.reset(); }
+
   void Idle() const { idler_(); }
   FPDF_BITMAP bitmap() { return bitmap_.get(); }
 
@@ -1076,6 +1078,11 @@ class GdiDisplayPageRenderer : public BitmapPageRenderer {
                            /*flags=*/flags,
                            idler,
                            std::move(writer)) {}
+
+  ~GdiDisplayPageRenderer() override {
+    // Need to free `bitmap()` first, in case it points at `dib_` memory.
+    ResetBitmap();
+  }
 
   bool Start() override {
     // Create an in-memory DC compatible with the display.
