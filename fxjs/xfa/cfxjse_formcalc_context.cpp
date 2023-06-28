@@ -5215,6 +5215,8 @@ bool CFXJSE_FormCalcContext::IsIsoDateFormat(ByteStringView bsData,
 
 // static
 bool CFXJSE_FormCalcContext::IsIsoTimeFormat(ByteStringView bsData) {
+  enum State { kHour, kMinute, kSecond, kZoneHour, kZoneMinute, kFinished };
+
   pdfium::span<const char> pData = bsData.span();
   if (pData.empty()) {
     return false;
@@ -5234,7 +5236,7 @@ bool CFXJSE_FormCalcContext::IsIsoTimeFormat(ByteStringView bsData) {
   }
 
   char szBuffer[3] = {};  // Last char always stays NUL for termination.
-  size_t iPos = 0;
+  State state = kHour;
   size_t iIndex = 0;
   while (iIndex + 1 < iZone) {
     szBuffer[0] = pData[iIndex];
@@ -5242,19 +5244,29 @@ bool CFXJSE_FormCalcContext::IsIsoTimeFormat(ByteStringView bsData) {
     if (!isdigit(szBuffer[0]) || !isdigit(szBuffer[1])) {
       return false;
     }
-    if (FXSYS_atoi(szBuffer) > 60) {
+    int32_t value = FXSYS_atoi(szBuffer);
+    if (state == kHour) {
+      if (value >= 24) {
+        return false;
+      }
+      state = kMinute;
+    } else if (state == kMinute) {
+      if (value >= 60) {
+        return false;
+      }
+      state = kSecond;
+    } else if (state == kSecond) {
+      // Allow leap second.
+      if (value > 60) {
+        return false;
+      }
+      state = kFinished;
+    } else {
       return false;
     }
-    if (iIndex + 2 < iZone && pData[iIndex + 2] == ':') {
-      if (iPos == 0 || iPos == 1) {
-        ++iPos;
-      }
-      iIndex += 3;
-    } else {
-      if (iPos == 0 || iPos == 1 || iPos == 2) {
-        ++iPos;
-      }
-      iIndex += 2;
+    iIndex += 2;
+    if (iIndex < iZone && pData[iIndex] == ':') {
+      ++iIndex;
     }
   }
 
@@ -5290,30 +5302,35 @@ bool CFXJSE_FormCalcContext::IsIsoTimeFormat(ByteStringView bsData) {
       ++iIndex;
     }
   }
-  iPos = 0;
+  state = kZoneHour;
   while (iIndex + 1 < pData.size()) {
     szBuffer[0] = pData[iIndex];
     szBuffer[1] = pData[iIndex + 1];
     if (!isdigit(szBuffer[0]) || !isdigit(szBuffer[1])) {
       return false;
     }
-    if (FXSYS_atoi(szBuffer) > 60) {
+    int32_t value = FXSYS_atoi(szBuffer);
+    if (state == kZoneHour) {
+      if (value >= 24) {
+        return false;
+      }
+      state = kZoneMinute;
+    } else if (state == kZoneMinute) {
+      if (value >= 60) {
+        return false;
+      }
+      state = kFinished;
+    } else {
       return false;
     }
-    if (iIndex + 2 < pData.size() && pData[iIndex + 2] == ':') {
-      iIndex += 3;
-    } else {
-      if (iPos == 0 || iPos == 1) {
-        ++iPos;
-      }
-      iIndex += 2;
+    iIndex += 2;
+    if (iIndex < pData.size() && pData[iIndex] == ':') {
+      ++iIndex;
     }
   }
-  if (iIndex < pData.size()) {
-    return false;
-  }
 
-  return true;
+  // Success if all input was processed.
+  return iIndex == pData.size();
 }
 
 bool CFXJSE_FormCalcContext::IsIsoDateTimeFormat(ByteStringView bsData,

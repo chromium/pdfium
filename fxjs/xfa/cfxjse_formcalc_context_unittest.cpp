@@ -124,4 +124,20 @@ TEST(FormCalcContextTest, IsIsoTimeFormat) {
 
   EXPECT_TRUE(CFXJSE_FormCalcContext::IsIsoTimeFormat("203040-07:30"));
   EXPECT_TRUE(CFXJSE_FormCalcContext::IsIsoTimeFormat("20:30:40-07:30"));
+
+  // Range errors.
+  EXPECT_FALSE(CFXJSE_FormCalcContext::IsIsoTimeFormat("243040-07:30"));
+  EXPECT_FALSE(CFXJSE_FormCalcContext::IsIsoTimeFormat("24:30:40-07:30"));
+
+  EXPECT_FALSE(CFXJSE_FormCalcContext::IsIsoTimeFormat("206040-07:30"));
+  EXPECT_FALSE(CFXJSE_FormCalcContext::IsIsoTimeFormat("20:60:40-07:30"));
+
+  EXPECT_FALSE(CFXJSE_FormCalcContext::IsIsoTimeFormat("203061-07:30"));
+  EXPECT_FALSE(CFXJSE_FormCalcContext::IsIsoTimeFormat("20:30:61-07:30"));
+
+  EXPECT_FALSE(CFXJSE_FormCalcContext::IsIsoTimeFormat("203040-24:30"));
+  EXPECT_FALSE(CFXJSE_FormCalcContext::IsIsoTimeFormat("20:30:40-24:30"));
+
+  EXPECT_FALSE(CFXJSE_FormCalcContext::IsIsoTimeFormat("203040-07:60"));
+  EXPECT_FALSE(CFXJSE_FormCalcContext::IsIsoTimeFormat("20:30:40-07:60"));
 }
