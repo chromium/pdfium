@@ -25,7 +25,7 @@ vars = {
   'checkout_v8': 'checkout_configuration != "minimal"',
 
   # By default, download the fuchsia sdk from the public sdk directory.
-  'fuchsia_sdk_cipd_prefix': 'fuchsia/sdk/gn/',
+  'fuchsia_sdk_cipd_prefix': 'fuchsia/sdk/core/',
 
   'chromium_git': 'https://chromium.googlesource.com',
   'pdfium_git': 'https://pdfium.googlesource.com',
@@ -75,6 +75,10 @@ vars = {
   # the commit queue can handle CLs rolling freetype
   # and whatever else without interference from each other.
   'freetype_revision': '80a507a6b8e3d2906ad2c8ba69329bd2fb2a85ef',
+  # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling freetype
+  # and whatever else without interference from each other.
+  'fuchsia_gn_sdk_revision': '0d6902558d92fe3d49ba9a8f638ddea829be595b',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Fuchsia sdk
   # and whatever else without interference from each other.
@@ -289,15 +293,11 @@ deps = {
     Var('chromium_git') + '/chromium/src/third_party/freetype2.git@' +
         Var('freetype_revision'),
 
-  'third_party/fuchsia-sdk/sdk': {
-      'packages': [
-          {
-              'package': Var('fuchsia_sdk_cipd_prefix') + '${{platform}}',
-              'version': Var('fuchsia_version'),
-          },
-      ],
-      'condition': 'checkout_fuchsia',
-      'dep_type': 'cipd',
+  'third_party/fuchsia-gn-sdk': {
+    'url': Var('chromium_git') +
+        '/chromium/src/third_party/fuchsia-gn-sdk.git@' +
+        Var('fuchsia_gn_sdk_revision'),
+    'condition': 'checkout_fuchsia',
   },
 
   'third_party/googletest/src':
@@ -661,5 +661,16 @@ hooks = [
     'pattern': '.',
     'action': ['python3', 'build/util/lastchange.py',
                '-o', 'build/util/LASTCHANGE'],
+  },
+  {
+    'name': 'Download Fuchsia SDK from GCS',
+    'pattern': '.',
+    'condition': 'checkout_fuchsia',
+    'action': [
+      'python3',
+      'build/fuchsia/update_sdk.py',
+      '--cipd-prefix={fuchsia_sdk_cipd_prefix}',
+      '--version={fuchsia_version}',
+    ],
   },
 ]

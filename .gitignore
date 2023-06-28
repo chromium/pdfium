@@ -10,6 +10,7 @@
 /third_party/cpu_features/src
 /third_party/depot_tools
 /third_party/freetype/src
+/third_party/fuchsia-gn-sdk
 /third_party/fuchsia-sdk/images
 /third_party/fuchsia-sdk/images-internal
 /third_party/fuchsia-sdk/sdk
