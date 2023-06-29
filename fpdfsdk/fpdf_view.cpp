@@ -53,11 +53,6 @@
 #include "third_party/base/ptr_util.h"
 #include "third_party/base/span.h"
 
-#if defined(_SKIA_SUPPORT_)
-#include "third_party/skia/include/core/SkPictureRecorder.h"  // nogncheck
-#include "third_party/skia/include/core/SkRect.h"             // nogncheck
-#endif  // defined(_SKIA_SUPPORT_)
-
 #ifdef PDF_ENABLE_V8
 #include "fxjs/cfx_v8_array_buffer_allocator.h"
 #include "third_party/base/no_destructor.h"
@@ -72,6 +67,10 @@
 #include "core/fpdfapi/render/cpdf_progressiverenderer.h"
 #include "core/fpdfapi/render/cpdf_windowsrenderdevice.h"
 #include "public/fpdf_edit.h"
+
+#if defined(_SKIA_SUPPORT_)
+class SkCanvas;
+#endif  // defined(_SKIA_SUPPORT_)
 
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(static_cast<int>(WindowsPrintMode::kEmf) == FPDF_PRINTMODE_EMF,
@@ -728,37 +727,32 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
 }
 
 #if defined(_SKIA_SUPPORT_)
-FPDF_EXPORT FPDF_RECORDER FPDF_CALLCONV FPDF_RenderPageSkp(FPDF_PAGE page,
-                                                           int size_x,
-                                                           int size_y) {
-  auto skDevice = std::make_unique<CFX_DefaultRenderDevice>();
-  auto recorder = std::make_unique<SkPictureRecorder>();
-  recorder->beginRecording(SkRect::MakeWH(size_x, size_y));
-  skDevice->AttachCanvas(recorder->getRecordingCanvas());
-
-  CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage) {
-    // The equivalent bitmap APIs don't signal failure in this case, but defer
-    // the real work to a later call to `FPDF_FFLDraw()`. This is the case for
-    // XFA pages, for example.
-    //
-    // The caller still needs the `SkPictureRecorder` in order to call
-    // `FPDF_FFLRecord()` later.
-    return recorder.release();
+FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageSkia(FPDF_SKIA_CANVAS canvas,
+                                                   FPDF_PAGE page,
+                                                   int size_x,
+                                                   int size_y) {
+  if (!canvas) {
+    return;
   }
 
-  auto pOwnedContext = std::make_unique<CPDF_PageRenderContext>();
-  pOwnedContext->m_pDevice = std::move(skDevice);
+  CPDF_Page* cpdf_page = CPDFPageFromFPDFPage(page);
+  if (!cpdf_page) {
+    return;
+  }
 
-  CPDF_Page::RenderContextClearer clearer(pPage);
-  CPDF_PageRenderContext* pContext = pOwnedContext.get();
-  pPage->SetRenderContext(std::move(pOwnedContext));
+  auto owned_context = std::make_unique<CPDF_PageRenderContext>();
+  CPDF_PageRenderContext* context = owned_context.get();
+  CPDF_Page::RenderContextClearer clearer(cpdf_page);
+  cpdf_page->SetRenderContext(std::move(owned_context));
 
-  CPDFSDK_RenderPageWithContext(pContext, pPage, 0, 0, size_x, size_y, 0, 0,
+  auto owned_device = std::make_unique<CFX_DefaultRenderDevice>();
+  CFX_DefaultRenderDevice& device = *owned_device;
+  context->m_pDevice = std::move(owned_device);
+
+  device.AttachCanvas(reinterpret_cast<SkCanvas*>(canvas));
+  CPDFSDK_RenderPageWithContext(context, cpdf_page, 0, 0, size_x, size_y, 0, 0,
                                 /*color_scheme=*/nullptr,
                                 /*need_to_restore=*/true, /*pause=*/nullptr);
-
-  return recorder.release();
 }
 #endif  // defined(_SKIA_SUPPORT_)
 

@@ -29,14 +29,16 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "public/fpdfview.h"
 
-#if defined(_SKIA_SUPPORT_)
-#include "third_party/skia/include/core/SkPictureRecorder.h"  // nogncheck
-#endif  // defined(_SKIA_SUPPORT_)
-
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
+#endif  // PDF_ENABLE_XFA
 
+#if defined(_SKIA_SUPPORT_)
+class SkCanvas;
+#endif  // defined(_SKIA_SUPPORT_)
+
+#ifdef PDF_ENABLE_XFA
 static_assert(static_cast<int>(AlertButton::kDefault) ==
                   JSPLATFORM_ALERT_BUTTON_DEFAULT,
               "Default alert button types must match");
@@ -176,7 +178,7 @@ CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
 
 void FFLCommon(FPDF_FORMHANDLE hHandle,
                FPDF_BITMAP bitmap,
-               FPDF_RECORDER recorder,
+               FPDF_SKIA_CANVAS canvas,
                FPDF_PAGE fpdf_page,
                int start_x,
                int start_y,
@@ -199,9 +201,8 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
 
   auto pDevice = std::make_unique<CFX_DefaultRenderDevice>();
 #if defined(_SKIA_SUPPORT_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() && recorder) {
-    pDevice->AttachCanvas(
-        static_cast<SkPictureRecorder*>(recorder)->getRecordingCanvas());
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() && canvas) {
+    pDevice->AttachCanvas(reinterpret_cast<SkCanvas*>(canvas));
   }
 #endif
 
@@ -689,16 +690,16 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
 }
 
 #if defined(_SKIA_SUPPORT_)
-FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLRecord(FPDF_FORMHANDLE hHandle,
-                                              FPDF_RECORDER recorder,
-                                              FPDF_PAGE page,
-                                              int start_x,
-                                              int start_y,
-                                              int size_x,
-                                              int size_y,
-                                              int rotate,
-                                              int flags) {
-  FFLCommon(hHandle, nullptr, recorder, page, start_x, start_y, size_x, size_y,
+FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLDrawSkia(FPDF_FORMHANDLE hHandle,
+                                                FPDF_SKIA_CANVAS canvas,
+                                                FPDF_PAGE page,
+                                                int start_x,
+                                                int start_y,
+                                                int size_x,
+                                                int size_y,
+                                                int rotate,
+                                                int flags) {
+  FFLCommon(hHandle, nullptr, canvas, page, start_x, start_y, size_x, size_y,
             rotate, flags);
 }
 #endif

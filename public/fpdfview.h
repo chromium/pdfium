@@ -79,9 +79,9 @@ typedef struct fpdf_pageobject_t__* FPDF_PAGEOBJECT;  // (text, path, etc.)
 typedef struct fpdf_pageobjectmark_t__* FPDF_PAGEOBJECTMARK;
 typedef const struct fpdf_pagerange_t__* FPDF_PAGERANGE;
 typedef const struct fpdf_pathsegment_t* FPDF_PATHSEGMENT;
-typedef void* FPDF_RECORDER;  // Passed into Skia as a SkPictureRecorder.
 typedef struct fpdf_schhandle_t__* FPDF_SCHHANDLE;
 typedef const struct fpdf_signature_t__* FPDF_SIGNATURE;
+typedef void* FPDF_SKIA_CANVAS;  // Passed into Skia as an SkCanvas.
 typedef struct fpdf_structelement_t__* FPDF_STRUCTELEMENT;
 typedef const struct fpdf_structelement_attr_t__* FPDF_STRUCTELEMENT_ATTR;
 typedef struct fpdf_structtree_t__* FPDF_STRUCTTREE;
@@ -278,7 +278,6 @@ typedef struct FPDF_LIBRARY_CONFIG_ {
   // corresponding render library is not included in the build will similarly
   // fail with an immediate crash.
   FPDF_RENDERER_TYPE m_RendererType;
-
 } FPDF_LIBRARY_CONFIG;
 
 // Function: FPDF_InitLibraryWithConfig
@@ -926,18 +925,19 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
 
 #if defined(_SKIA_SUPPORT_)
 // Experimental API.
-// Function: FPDF_RenderPageSkp
-//          Render contents of a page to a Skia SkPictureRecorder.
+// Function: FPDF_RenderPageSkia
+//          Render contents of a page to a Skia SkCanvas.
 // Parameters:
+//          canvas      -   SkCanvas to render to.
 //          page        -   Handle to the page.
 //          size_x      -   Horizontal size (in pixels) for displaying the page.
 //          size_y      -   Vertical size (in pixels) for displaying the page.
 // Return value:
-//          The SkPictureRecorder that holds the rendering of the page, or NULL
-//          on failure. Caller takes ownership of the returned result.
-FPDF_EXPORT FPDF_RECORDER FPDF_CALLCONV FPDF_RenderPageSkp(FPDF_PAGE page,
-                                                           int size_x,
-                                                           int size_y);
+//          None.
+FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageSkia(FPDF_SKIA_CANVAS canvas,
+                                                   FPDF_PAGE page,
+                                                   int size_x,
+                                                   int size_y);
 #endif
 
 // Function: FPDF_ClosePage

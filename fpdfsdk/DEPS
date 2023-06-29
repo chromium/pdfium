@@ -10,7 +10,7 @@ include_rules = [
 ]
 
 specific_include_rules = {
-  'fpdf_formfill\.cpp|fpdf_view(_embeddertest)?\.cpp': [
+  'fpdf_view_embeddertest\.cpp': [
     '+third_party/skia/include',
   ],
 }
