@@ -129,6 +129,12 @@ def get_properties_by_name(name):
     if name.find("skia") != -1:
         properties.update({"skia": True})
 
+    renderers = []
+    if "gdi" in name:
+        renderers.append("gdi")
+    if renderers:
+        properties.update({"renderers": renderers})
+
     return properties
 
 def pdfium_internal_builder(name, bucket):
@@ -317,8 +323,8 @@ luci.notifier(
     name = "pdfium main notifier",
     on_new_status = ["FAILURE"],
     notify_emails = [
+        "andyphan@chromium.org",
         "awscreen@chromium.org",
-        "dhoss@chromium.org",
         "kmoon@chromium.org",
         "nigi@chromium.org",
         "thestig@chromium.org",
@@ -474,12 +480,14 @@ add_entries_for_builder(name = "win_xfa", category = "xfa|win")
 add_entries_for_builder(name = "win_xfa_32", category = "xfa|win", short_name = "32")
 add_entries_for_builder(name = "win_xfa_asan", category = "xfa|win", short_name = "asan")
 add_entries_for_builder(name = "win_xfa_component", category = "xfa|win", short_name = "comp")
+add_entries_for_builder(name = "win_xfa_gdi", category = "xfa|win", short_name = "gdi")
 add_entries_for_builder(name = "win_xfa_msvc", category = "xfa|win|msvc", short_name = "64")
 add_entries_for_builder(name = "win_xfa_msvc_32", category = "xfa|win|msvc", short_name = "32")
 add_entries_for_builder(name = "win_xfa_rel", category = "xfa|win", short_name = "rel")
 add_entries_for_builder(name = "win_xfa_skia", category = "skia|win", short_name = "xfa")
 add_entries_for_builder(name = "win_xfa_skia_asan", category = "skia|win", short_name = "asan")
 add_entries_for_builder(name = "win_xfa_skia_component", category = "skia|win", short_name = "comp")
+add_entries_for_builder(name = "win_xfa_skia_gdi", category = "skia|win", short_name = "gdi")
 
 # Console Views
 luci.console_view(
