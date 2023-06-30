@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef SAMPLES_PDFIUM_TEST_WRITE_HELPER_H_
-#define SAMPLES_PDFIUM_TEST_WRITE_HELPER_H_
+#ifndef SAMPLES_HELPERS_WRITE_H_
+#define SAMPLES_HELPERS_WRITE_H_
 
 #include <string>
 
@@ -57,4 +57,4 @@ void WriteRawThumbnailStream(FPDF_PAGE page,
                              int page_num);
 void WriteThumbnail(FPDF_PAGE page, const char* pdf_name, int page_num);
 
-#endif  // SAMPLES_PDFIUM_TEST_WRITE_HELPER_H_
+#endif  // SAMPLES_HELPERS_WRITE_H_

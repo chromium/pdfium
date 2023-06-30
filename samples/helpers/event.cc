@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "samples/pdfium_test_event_helper.h"
+#include "samples/helpers/event.h"
 
 #include <stdio.h>
 
@@ -17,12 +17,15 @@ namespace {
 
 uint32_t GetModifiers(std::string modifiers_string) {
   uint32_t modifiers = 0;
-  if (modifiers_string.find("shift") != std::string::npos)
+  if (modifiers_string.find("shift") != std::string::npos) {
     modifiers |= FWL_EVENTFLAG_ShiftKey;
-  if (modifiers_string.find("control") != std::string::npos)
+  }
+  if (modifiers_string.find("control") != std::string::npos) {
     modifiers |= FWL_EVENTFLAG_ControlKey;
-  if (modifiers_string.find("alt") != std::string::npos)
+  }
+  if (modifiers_string.find("alt") != std::string::npos) {
     modifiers |= FWL_EVENTFLAG_AltKey;
+  }
 
   return modifiers;
 }
@@ -65,12 +68,13 @@ void SendMouseDownEvent(FPDF_FORMHANDLE form,
   int y = atoi(tokens[3].c_str());
   uint32_t modifiers = tokens.size() >= 5 ? GetModifiers(tokens[4]) : 0;
 
-  if (tokens[1] == "left")
+  if (tokens[1] == "left") {
     FORM_OnLButtonDown(form, page, modifiers, x, y);
-  else if (tokens[1] == "right")
+  } else if (tokens[1] == "right") {
     FORM_OnRButtonDown(form, page, modifiers, x, y);
-  else
+  } else {
     fprintf(stderr, "mousedown: bad button name\n");
+  }
 }
 
 void SendMouseUpEvent(FPDF_FORMHANDLE form,
@@ -84,12 +88,13 @@ void SendMouseUpEvent(FPDF_FORMHANDLE form,
   int x = atoi(tokens[2].c_str());
   int y = atoi(tokens[3].c_str());
   int modifiers = tokens.size() >= 5 ? GetModifiers(tokens[4]) : 0;
-  if (tokens[1] == "left")
+  if (tokens[1] == "left") {
     FORM_OnLButtonUp(form, page, modifiers, x, y);
-  else if (tokens[1] == "right")
+  } else if (tokens[1] == "right") {
     FORM_OnRButtonUp(form, page, modifiers, x, y);
-  else
+  } else {
     fprintf(stderr, "mouseup: bad button name\n");
+  }
 }
 
 void SendMouseDoubleClickEvent(FPDF_FORMHANDLE form,
@@ -161,8 +166,9 @@ void SendPageEvents(FPDF_FORMHANDLE form,
   auto lines = StringSplit(events, '\n');
   for (const auto& line : lines) {
     auto command = StringSplit(line, '#');
-    if (command[0].empty())
+    if (command[0].empty()) {
       continue;
+    }
     auto tokens = StringSplit(command[0], ',');
     if (tokens[0] == "charcode") {
       SendCharCodeEvent(form, page, tokens);

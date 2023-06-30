@@ -32,9 +32,10 @@
 #include "public/fpdf_structtree.h"
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
-#include "samples/pdfium_test_dump_helper.h"
-#include "samples/pdfium_test_event_helper.h"
-#include "samples/pdfium_test_write_helper.h"
+#include "samples/helpers/dump.h"
+#include "samples/helpers/event.h"
+#include "samples/helpers/page_renderer.h"
+#include "samples/helpers/write.h"
 #include "testing/command_line_helpers.h"
 #include "testing/font_renamer.h"
 #include "testing/fx_string_testhelpers.h"
@@ -855,42 +856,6 @@ class PdfProcessor final {
   FPDF_DOCUMENT doc_;
   FPDF_FORMHANDLE form_;
   FPDF_FORMFILLINFO_PDFiumTest* form_fill_info_;
-};
-
-// Renderer for a single page.
-class PageRenderer {
- public:
-  virtual ~PageRenderer() = default;
-
-  // Returns `true` if the rendered output exists. Must call `Finish()` first.
-  virtual bool HasOutput() const = 0;
-
-  // Starts rendering the page, returning `false` on failure.
-  virtual bool Start() = 0;
-
-  // Continues rendering the page, returning `false` when complete.
-  virtual bool Continue() { return false; }
-
-  // Finishes rendering the page.
-  virtual void Finish(FPDF_FORMHANDLE form) = 0;
-
-  // Writes rendered output to a file, returning `false` on failure.
-  virtual bool Write(const std::string& name, int page_index, bool md5) = 0;
-
- protected:
-  PageRenderer(FPDF_PAGE page, int width, int height, int flags)
-      : page_(page), width_(width), height_(height), flags_(flags) {}
-
-  FPDF_PAGE page() { return page_; }
-  int width() const { return width_; }
-  int height() const { return height_; }
-  int flags() const { return flags_; }
-
- private:
-  FPDF_PAGE page_;
-  int width_;
-  int height_;
-  int flags_;
 };
 
 // Page renderer with bitmap output.

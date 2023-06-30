@@ -33,13 +33,15 @@ config("pdfium_samples_config") {
 executable("pdfium_test") {
   testonly = true
   sources = [
+    "helpers/dump.cc",
+    "helpers/dump.h",
+    "helpers/event.cc",
+    "helpers/event.h",
+    "helpers/page_renderer.cc",
+    "helpers/page_renderer.h",
+    "helpers/write.cc",
+    "helpers/write.h",
     "pdfium_test.cc",
-    "pdfium_test_dump_helper.cc",
-    "pdfium_test_dump_helper.h",
-    "pdfium_test_event_helper.cc",
-    "pdfium_test_event_helper.h",
-    "pdfium_test_write_helper.cc",
-    "pdfium_test_write_helper.h",
   ]
 
   # Note: One should write programs that depend on ../:pdfium. Whereas this

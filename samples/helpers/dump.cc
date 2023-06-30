@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "samples/pdfium_test_dump_helper.h"
+#include "samples/helpers/dump.h"
 
 #include <limits.h>
 #include <string.h>
@@ -98,15 +98,17 @@ void DumpChildStructure(FPDF_STRUCTELEMENT child, int indent) {
   static const size_t kBufSize = 1024;
   unsigned short buf[kBufSize];
   unsigned long len = FPDF_StructElement_GetType(child, buf, kBufSize);
-  if (len > 0)
+  if (len > 0) {
     printf("%*s S: %ls\n", indent * 2, "", ConvertToWString(buf, len).c_str());
+  }
 
   int attr_count = FPDF_StructElement_GetAttributeCount(child);
   for (int i = 0; i < attr_count; i++) {
     FPDF_STRUCTELEMENT_ATTR child_attr =
         FPDF_StructElement_GetAttributeAtIndex(child, i);
-    if (!child_attr)
+    if (!child_attr) {
       continue;
+    }
     printf("%*s A[%d]:\n", indent * 2, "", i);
     DumpStructureElementAttributes(child_attr, indent * 2 + 2);
   }
@@ -127,8 +129,9 @@ void DumpChildStructure(FPDF_STRUCTELEMENT child, int indent) {
 
   memset(buf, 0, sizeof(buf));
   len = FPDF_StructElement_GetID(child, buf, kBufSize);
-  if (len > 0)
+  if (len > 0) {
     printf("%*s ID: %ls\n", indent * 2, "", ConvertToWString(buf, len).c_str());
+  }
 
   memset(buf, 0, sizeof(buf));
   len = FPDF_StructElement_GetLang(child, buf, kBufSize);
@@ -138,8 +141,9 @@ void DumpChildStructure(FPDF_STRUCTELEMENT child, int indent) {
   }
 
   int mcid = FPDF_StructElement_GetMarkedContentID(child);
-  if (mcid != -1)
+  if (mcid != -1) {
     printf("%*s MCID: %d\n", indent * 2, "", mcid);
+  }
 
   FPDF_STRUCTELEMENT parent = FPDF_StructElement_GetParent(child);
   if (parent) {
@@ -169,8 +173,9 @@ void DumpChildStructure(FPDF_STRUCTELEMENT child, int indent) {
     FPDF_STRUCTELEMENT sub_child = FPDF_StructElement_GetChildAtIndex(child, i);
     // If the child is not an Element then this will return null. This can
     // happen if the element is things like an object reference or a stream.
-    if (!sub_child)
+    if (!sub_child) {
       continue;
+    }
 
     DumpChildStructure(sub_child, indent + 1);
   }
@@ -211,8 +216,9 @@ void DumpMetaData(FPDF_DOCUMENT doc) {
     char meta_buffer[4096];
     unsigned long len =
         FPDF_GetMetaText(doc, meta_tag, meta_buffer, sizeof(meta_buffer));
-    if (!len)
+    if (!len) {
       continue;
+    }
 
     auto* meta_string = reinterpret_cast<unsigned short*>(meta_buffer);
     printf("%-12s = %ls (%lu bytes)\n", meta_tag,

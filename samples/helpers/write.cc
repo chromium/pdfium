@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "samples/pdfium_test_write_helper.h"
+#include "samples/helpers/write.h"
 
 #include <limits.h>
 
@@ -28,111 +28,155 @@
 namespace {
 
 bool CheckDimensions(int stride, int width, int height) {
-  if (stride < 0 || width < 0 || height < 0)
+  if (stride < 0 || width < 0 || height < 0) {
     return false;
-  if (height > 0 && stride > INT_MAX / height)
+  }
+  if (height > 0 && stride > INT_MAX / height) {
     return false;
+  }
   return true;
 }
 
 const char* AnnotSubtypeToCString(FPDF_ANNOTATION_SUBTYPE subtype) {
-  if (subtype == FPDF_ANNOT_TEXT)
+  if (subtype == FPDF_ANNOT_TEXT) {
     return "Text";
-  if (subtype == FPDF_ANNOT_LINK)
+  }
+  if (subtype == FPDF_ANNOT_LINK) {
     return "Link";
-  if (subtype == FPDF_ANNOT_FREETEXT)
+  }
+  if (subtype == FPDF_ANNOT_FREETEXT) {
     return "FreeText";
-  if (subtype == FPDF_ANNOT_LINE)
+  }
+  if (subtype == FPDF_ANNOT_LINE) {
     return "Line";
-  if (subtype == FPDF_ANNOT_SQUARE)
+  }
+  if (subtype == FPDF_ANNOT_SQUARE) {
     return "Square";
-  if (subtype == FPDF_ANNOT_CIRCLE)
+  }
+  if (subtype == FPDF_ANNOT_CIRCLE) {
     return "Circle";
-  if (subtype == FPDF_ANNOT_POLYGON)
+  }
+  if (subtype == FPDF_ANNOT_POLYGON) {
     return "Polygon";
-  if (subtype == FPDF_ANNOT_POLYLINE)
+  }
+  if (subtype == FPDF_ANNOT_POLYLINE) {
     return "PolyLine";
-  if (subtype == FPDF_ANNOT_HIGHLIGHT)
+  }
+  if (subtype == FPDF_ANNOT_HIGHLIGHT) {
     return "Highlight";
-  if (subtype == FPDF_ANNOT_UNDERLINE)
+  }
+  if (subtype == FPDF_ANNOT_UNDERLINE) {
     return "Underline";
-  if (subtype == FPDF_ANNOT_SQUIGGLY)
+  }
+  if (subtype == FPDF_ANNOT_SQUIGGLY) {
     return "Squiggly";
-  if (subtype == FPDF_ANNOT_STRIKEOUT)
+  }
+  if (subtype == FPDF_ANNOT_STRIKEOUT) {
     return "StrikeOut";
-  if (subtype == FPDF_ANNOT_STAMP)
+  }
+  if (subtype == FPDF_ANNOT_STAMP) {
     return "Stamp";
-  if (subtype == FPDF_ANNOT_CARET)
+  }
+  if (subtype == FPDF_ANNOT_CARET) {
     return "Caret";
-  if (subtype == FPDF_ANNOT_INK)
+  }
+  if (subtype == FPDF_ANNOT_INK) {
     return "Ink";
-  if (subtype == FPDF_ANNOT_POPUP)
+  }
+  if (subtype == FPDF_ANNOT_POPUP) {
     return "Popup";
-  if (subtype == FPDF_ANNOT_FILEATTACHMENT)
+  }
+  if (subtype == FPDF_ANNOT_FILEATTACHMENT) {
     return "FileAttachment";
-  if (subtype == FPDF_ANNOT_SOUND)
+  }
+  if (subtype == FPDF_ANNOT_SOUND) {
     return "Sound";
-  if (subtype == FPDF_ANNOT_MOVIE)
+  }
+  if (subtype == FPDF_ANNOT_MOVIE) {
     return "Movie";
-  if (subtype == FPDF_ANNOT_WIDGET)
+  }
+  if (subtype == FPDF_ANNOT_WIDGET) {
     return "Widget";
-  if (subtype == FPDF_ANNOT_SCREEN)
+  }
+  if (subtype == FPDF_ANNOT_SCREEN) {
     return "Screen";
-  if (subtype == FPDF_ANNOT_PRINTERMARK)
+  }
+  if (subtype == FPDF_ANNOT_PRINTERMARK) {
     return "PrinterMark";
-  if (subtype == FPDF_ANNOT_TRAPNET)
+  }
+  if (subtype == FPDF_ANNOT_TRAPNET) {
     return "TrapNet";
-  if (subtype == FPDF_ANNOT_WATERMARK)
+  }
+  if (subtype == FPDF_ANNOT_WATERMARK) {
     return "Watermark";
-  if (subtype == FPDF_ANNOT_THREED)
+  }
+  if (subtype == FPDF_ANNOT_THREED) {
     return "3D";
-  if (subtype == FPDF_ANNOT_RICHMEDIA)
+  }
+  if (subtype == FPDF_ANNOT_RICHMEDIA) {
     return "RichMedia";
-  if (subtype == FPDF_ANNOT_XFAWIDGET)
+  }
+  if (subtype == FPDF_ANNOT_XFAWIDGET) {
     return "XFAWidget";
+  }
   NOTREACHED_NORETURN();
 }
 
 void AppendFlagString(const char* flag, std::string* output) {
-  if (!output->empty())
+  if (!output->empty()) {
     *output += ", ";
+  }
   *output += flag;
 }
 
 std::string AnnotFlagsToString(int flags) {
   std::string str;
-  if (flags & FPDF_ANNOT_FLAG_INVISIBLE)
+  if (flags & FPDF_ANNOT_FLAG_INVISIBLE) {
     AppendFlagString("Invisible", &str);
-  if (flags & FPDF_ANNOT_FLAG_HIDDEN)
+  }
+  if (flags & FPDF_ANNOT_FLAG_HIDDEN) {
     AppendFlagString("Hidden", &str);
-  if (flags & FPDF_ANNOT_FLAG_PRINT)
+  }
+  if (flags & FPDF_ANNOT_FLAG_PRINT) {
     AppendFlagString("Print", &str);
-  if (flags & FPDF_ANNOT_FLAG_NOZOOM)
+  }
+  if (flags & FPDF_ANNOT_FLAG_NOZOOM) {
     AppendFlagString("NoZoom", &str);
-  if (flags & FPDF_ANNOT_FLAG_NOROTATE)
+  }
+  if (flags & FPDF_ANNOT_FLAG_NOROTATE) {
     AppendFlagString("NoRotate", &str);
-  if (flags & FPDF_ANNOT_FLAG_NOVIEW)
+  }
+  if (flags & FPDF_ANNOT_FLAG_NOVIEW) {
     AppendFlagString("NoView", &str);
-  if (flags & FPDF_ANNOT_FLAG_READONLY)
+  }
+  if (flags & FPDF_ANNOT_FLAG_READONLY) {
     AppendFlagString("ReadOnly", &str);
-  if (flags & FPDF_ANNOT_FLAG_LOCKED)
+  }
+  if (flags & FPDF_ANNOT_FLAG_LOCKED) {
     AppendFlagString("Locked", &str);
-  if (flags & FPDF_ANNOT_FLAG_TOGGLENOVIEW)
+  }
+  if (flags & FPDF_ANNOT_FLAG_TOGGLENOVIEW) {
     AppendFlagString("ToggleNoView", &str);
+  }
   return str;
 }
 
 const char* PageObjectTypeToCString(int type) {
-  if (type == FPDF_PAGEOBJ_TEXT)
+  if (type == FPDF_PAGEOBJ_TEXT) {
     return "Text";
-  if (type == FPDF_PAGEOBJ_PATH)
+  }
+  if (type == FPDF_PAGEOBJ_PATH) {
     return "Path";
-  if (type == FPDF_PAGEOBJ_IMAGE)
+  }
+  if (type == FPDF_PAGEOBJ_IMAGE) {
     return "Image";
-  if (type == FPDF_PAGEOBJ_SHADING)
+  }
+  if (type == FPDF_PAGEOBJ_SHADING) {
     return "Shading";
-  if (type == FPDF_PAGEOBJ_FORM)
+  }
+  if (type == FPDF_PAGEOBJ_FORM) {
     return "Form";
+  }
   NOTREACHED_NORETURN();
 }
 
@@ -519,8 +563,9 @@ void WritePS(FPDF_PAGE page, const char* pdf_name, int num) {
     return;
   }
   FILE* fp = fopen(filename.c_str(), "wb");
-  if (!fp)
+  if (!fp) {
     return;
+  }
 
   HDC dc = CreateEnhMetaFileA(nullptr, nullptr, nullptr, nullptr);
 
@@ -532,8 +577,9 @@ void WritePS(FPDF_PAGE page, const char* pdf_name, int num) {
   std::vector<const ENHMETARECORD*> items;
   EnumEnhMetaFile(nullptr, emf, &EnhMetaFileProc, &items, nullptr);
   for (const ENHMETARECORD* record : items) {
-    if (record->iType != EMR_GDICOMMENT)
+    if (record->iType != EMR_GDICOMMENT) {
       continue;
+    }
 
     const auto* comment = reinterpret_cast<const EMRGDICOMMENT*>(record);
     const char* data = reinterpret_cast<const char*>(comment->Data);
@@ -602,24 +648,27 @@ void WriteBufferToFile(const void* buf,
   }
 
   size_t bytes_written = fwrite(buf, 1, buflen, fp);
-  if (bytes_written == buflen)
+  if (bytes_written == buflen) {
     fprintf(stderr, "Successfully wrote %s %s.\n", filetype, filename);
-  else
+  } else {
     fprintf(stderr, "Failed to write to %s.\n", filename);
+  }
   fclose(fp);
 }
 
 std::vector<uint8_t> EncodeBitmapToPng(ScopedFPDFBitmap bitmap) {
   std::vector<uint8_t> png_encoding;
   int format = FPDFBitmap_GetFormat(bitmap.get());
-  if (format == FPDFBitmap_Unknown)
+  if (format == FPDFBitmap_Unknown) {
     return png_encoding;
+  }
 
   int width = FPDFBitmap_GetWidth(bitmap.get());
   int height = FPDFBitmap_GetHeight(bitmap.get());
   int stride = FPDFBitmap_GetStride(bitmap.get());
-  if (!CheckDimensions(stride, width, height))
+  if (!CheckDimensions(stride, width, height)) {
     return png_encoding;
+  }
 
   auto input = pdfium::make_span(
       static_cast<const uint8_t*>(FPDFBitmap_GetBuffer(bitmap.get())),
@@ -640,8 +689,9 @@ void WriteAttachments(FPDF_DOCUMENT doc, const std::string& name) {
       std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
       unsigned long actual_length_bytes =
           FPDFAttachment_GetName(attachment, buf.data(), length_bytes);
-      if (actual_length_bytes == length_bytes)
+      if (actual_length_bytes == length_bytes) {
         attachment_name = GetPlatformString(buf.data());
+      }
     }
     if (attachment_name.empty()) {
       fprintf(stderr, "Attachment #%d has an empty file name.\n", i + 1);
