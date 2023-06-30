@@ -546,10 +546,10 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   if (!pPage)
     return;
 
-  auto pOwnedContext = std::make_unique<CPDF_PageRenderContext>();
-  CPDF_PageRenderContext* pContext = pOwnedContext.get();
+  auto owned_context = std::make_unique<CPDF_PageRenderContext>();
+  CPDF_PageRenderContext* context = owned_context.get();
   CPDF_Page::RenderContextClearer clearer(pPage);
-  pPage->SetRenderContext(std::move(pOwnedContext));
+  pPage->SetRenderContext(std::move(owned_context));
 
   // Don't render the full page to bitmap for a mask unless there are a lot
   // of masks. Full page bitmaps result in large spool sizes, so they should
@@ -564,9 +564,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   const bool bHasMask = pPage->HasImageMask() && !bNewBitmap;
   auto* render_data = CPDF_DocRenderData::FromDocument(pPage->GetDocument());
   if (!bNewBitmap && !bHasMask) {
-    pContext->m_pDevice = std::make_unique<CPDF_WindowsRenderDevice>(
+    context->m_pDevice = std::make_unique<CPDF_WindowsRenderDevice>(
         dc, render_data->GetPSFontTracker());
-    CPDFSDK_RenderPageWithContext(pContext, pPage, start_x, start_y, size_x,
+    CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
                                   size_y, rotate, flags,
                                   /*color_scheme=*/nullptr,
                                   /*need_to_restore=*/true, /*pause=*/nullptr);
@@ -575,18 +575,18 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
 
   RetainPtr<CFX_DIBitmap> pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   // Create will probably work fine even if it fails here: we will just attach
-  // a zero-sized bitmap to |pDevice|.
+  // a zero-sized bitmap to `device`.
   pBitmap->Create(size_x, size_y, FXDIB_Format::kArgb);
   pBitmap->Clear(0x00ffffff);
-  CFX_DefaultRenderDevice* pDevice = new CFX_DefaultRenderDevice;
-  pContext->m_pDevice = pdfium::WrapUnique(pDevice);
-  pDevice->Attach(pBitmap);
+  auto device = std::make_unique<CFX_DefaultRenderDevice>();
+  device->Attach(pBitmap);
+  context->m_pDevice = std::move(device);
   if (bHasMask) {
-    pContext->m_pOptions = std::make_unique<CPDF_RenderOptions>();
-    pContext->m_pOptions->GetOptions().bBreakForMasks = true;
+    context->m_pOptions = std::make_unique<CPDF_RenderOptions>();
+    context->m_pOptions->GetOptions().bBreakForMasks = true;
   }
 
-  CPDFSDK_RenderPageWithContext(pContext, pPage, start_x, start_y, size_x,
+  CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
                                 size_y, rotate, flags, /*color_scheme=*/nullptr,
                                 /*need_to_restore=*/true,
                                 /*pause=*/nullptr);
@@ -618,21 +618,21 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   for (size_t i = 0; i < mask_boxes.size(); i++) {
     bitmaps[i] = GetMaskBitmap(pPage, start_x, start_y, size_x, size_y, rotate,
                                pBitmap, mask_boxes[i], &bitmap_areas[i]);
-    pContext->m_pRenderer->Continue(nullptr);
+    context->m_pRenderer->Continue(nullptr);
   }
 
   // Begin rendering to the printer. Add flag to indicate the renderer should
   // pause after each image mask.
   pPage->ClearRenderContext();
-  pOwnedContext = std::make_unique<CPDF_PageRenderContext>();
-  pContext = pOwnedContext.get();
-  pPage->SetRenderContext(std::move(pOwnedContext));
-  pContext->m_pDevice = std::make_unique<CPDF_WindowsRenderDevice>(
+  owned_context = std::make_unique<CPDF_PageRenderContext>();
+  context = owned_context.get();
+  pPage->SetRenderContext(std::move(owned_context));
+  context->m_pDevice = std::make_unique<CPDF_WindowsRenderDevice>(
       dc, render_data->GetPSFontTracker());
-  pContext->m_pOptions = std::make_unique<CPDF_RenderOptions>();
-  pContext->m_pOptions->GetOptions().bBreakForMasks = true;
+  context->m_pOptions = std::make_unique<CPDF_RenderOptions>();
+  context->m_pOptions->GetOptions().bBreakForMasks = true;
 
-  CPDFSDK_RenderPageWithContext(pContext, pPage, start_x, start_y, size_x,
+  CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
                                 size_y, rotate, flags, /*color_scheme=*/nullptr,
                                 /*need_to_restore=*/true,
                                 /*pause=*/nullptr);
@@ -641,10 +641,10 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   for (size_t i = 0; i < mask_boxes.size(); i++) {
     // Render the bitmap for the mask and free the bitmap.
     if (bitmaps[i]) {  // will be null if mask has zero area
-      RenderBitmap(pContext->m_pDevice.get(), bitmaps[i], bitmap_areas[i]);
+      RenderBitmap(context->m_pDevice.get(), bitmaps[i], bitmap_areas[i]);
     }
     // Render the next portion of page.
-    pContext->m_pRenderer->Continue(nullptr);
+    context->m_pRenderer->Continue(nullptr);
   }
 }
 #endif  // BUILDFLAG(IS_WIN)
@@ -664,18 +664,17 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   if (!pPage)
     return;
 
-  auto pOwnedContext = std::make_unique<CPDF_PageRenderContext>();
-  CPDF_PageRenderContext* pContext = pOwnedContext.get();
+  auto owned_context = std::make_unique<CPDF_PageRenderContext>();
+  CPDF_PageRenderContext* context = owned_context.get();
   CPDF_Page::RenderContextClearer clearer(pPage);
-  pPage->SetRenderContext(std::move(pOwnedContext));
-
-  auto pOwnedDevice = std::make_unique<CFX_DefaultRenderDevice>();
-  CFX_DefaultRenderDevice* pDevice = pOwnedDevice.get();
-  pContext->m_pDevice = std::move(pOwnedDevice);
+  pPage->SetRenderContext(std::move(owned_context));
 
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
-  pDevice->AttachWithRgbByteOrder(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER));
-  CPDFSDK_RenderPageWithContext(pContext, pPage, start_x, start_y, size_x,
+  auto device = std::make_unique<CFX_DefaultRenderDevice>();
+  device->AttachWithRgbByteOrder(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER));
+  context->m_pDevice = std::move(device);
+
+  CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
                                 size_y, rotate, flags, /*color_scheme=*/nullptr,
                                 /*need_to_restore=*/true,
                                 /*pause=*/nullptr);
@@ -700,18 +699,16 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   if (!pPage)
     return;
 
-  auto pOwnedContext = std::make_unique<CPDF_PageRenderContext>();
-  CPDF_PageRenderContext* pContext = pOwnedContext.get();
+  auto owned_context = std::make_unique<CPDF_PageRenderContext>();
+  CPDF_PageRenderContext* context = owned_context.get();
   CPDF_Page::RenderContextClearer clearer(pPage);
-  pPage->SetRenderContext(std::move(pOwnedContext));
-
-  auto pOwnedDevice = std::make_unique<CFX_DefaultRenderDevice>();
-  CFX_DefaultRenderDevice* pDevice = pOwnedDevice.get();
-  pContext->m_pDevice = std::move(pOwnedDevice);
+  pPage->SetRenderContext(std::move(owned_context));
 
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
-  pDevice->AttachWithRgbByteOrder(std::move(pBitmap),
-                                  !!(flags & FPDF_REVERSE_BYTE_ORDER));
+  auto device = std::make_unique<CFX_DefaultRenderDevice>();
+  device->AttachWithRgbByteOrder(std::move(pBitmap),
+                                 !!(flags & FPDF_REVERSE_BYTE_ORDER));
+  context->m_pDevice = std::move(device);
 
   CFX_FloatRect clipping_rect;
   if (clipping)
@@ -722,7 +719,7 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   CFX_Matrix transform_matrix = pPage->GetDisplayMatrix(rect, 0);
   if (matrix)
     transform_matrix *= CFXMatrixFromFSMatrix(*matrix);
-  CPDFSDK_RenderPage(pContext, pPage, transform_matrix, clip_rect, flags,
+  CPDFSDK_RenderPage(context, pPage, transform_matrix, clip_rect, flags,
                      /*color_scheme=*/nullptr);
 }
 
@@ -745,11 +742,10 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageSkia(FPDF_SKIA_CANVAS canvas,
   CPDF_Page::RenderContextClearer clearer(cpdf_page);
   cpdf_page->SetRenderContext(std::move(owned_context));
 
-  auto owned_device = std::make_unique<CFX_DefaultRenderDevice>();
-  CFX_DefaultRenderDevice& device = *owned_device;
-  context->m_pDevice = std::move(owned_device);
+  auto device = std::make_unique<CFX_DefaultRenderDevice>();
+  device->AttachCanvas(reinterpret_cast<SkCanvas*>(canvas));
+  context->m_pDevice = std::move(device);
 
-  device.AttachCanvas(reinterpret_cast<SkCanvas*>(canvas));
   CPDFSDK_RenderPageWithContext(context, cpdf_page, 0, 0, size_x, size_y, 0, 0,
                                 /*color_scheme=*/nullptr,
                                 /*need_to_restore=*/true, /*pause=*/nullptr);

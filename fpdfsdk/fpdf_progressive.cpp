@@ -56,18 +56,17 @@ FPDF_RenderPageBitmapWithColorScheme_Start(FPDF_BITMAP bitmap,
   if (!pPage)
     return FPDF_RENDER_FAILED;
 
-  auto pOwnedContext = std::make_unique<CPDF_PageRenderContext>();
-  CPDF_PageRenderContext* pContext = pOwnedContext.get();
-  pPage->SetRenderContext(std::move(pOwnedContext));
+  auto owned_context = std::make_unique<CPDF_PageRenderContext>();
+  CPDF_PageRenderContext* context = owned_context.get();
+  pPage->SetRenderContext(std::move(owned_context));
 
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
-  auto pOwnedDevice = std::make_unique<CFX_DefaultRenderDevice>();
-  CFX_DefaultRenderDevice* pDevice = pOwnedDevice.get();
-  pContext->m_pDevice = std::move(pOwnedDevice);
-  pDevice->AttachWithRgbByteOrder(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER));
+  auto device = std::make_unique<CFX_DefaultRenderDevice>();
+  device->AttachWithRgbByteOrder(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER));
+  context->m_pDevice = std::move(device);
 
   CPDFSDK_PauseAdapter pause_adapter(pause);
-  CPDFSDK_RenderPageWithContext(pContext, pPage, start_x, start_y, size_x,
+  CPDFSDK_RenderPageWithContext(context, pPage, start_x, start_y, size_x,
                                 size_y, rotate, flags, color_scheme,
                                 /*need_to_restore=*/false, &pause_adapter);
 
@@ -77,10 +76,11 @@ FPDF_RenderPageBitmapWithColorScheme_Start(FPDF_BITMAP bitmap,
   }
 #endif  // defined(_SKIA_SUPPORT_)
 
-  if (!pContext->m_pRenderer)
+  if (!context->m_pRenderer) {
     return FPDF_RENDER_FAILED;
+  }
 
-  return ToFPDFStatus(pContext->m_pRenderer->GetStatus());
+  return ToFPDFStatus(context->m_pRenderer->GetStatus());
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPageBitmap_Start(FPDF_BITMAP bitmap,
