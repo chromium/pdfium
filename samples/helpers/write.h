@@ -5,13 +5,15 @@
 #ifndef SAMPLES_HELPERS_WRITE_H_
 #define SAMPLES_HELPERS_WRITE_H_
 
+#include <memory>
 #include <string>
 
 #include "public/fpdfview.h"
 
 #ifdef PDF_ENABLE_SKIA
 class SkPicture;
-#endif
+class SkWStream;
+#endif  // PDF_ENABLE_SKIA
 
 std::string WritePpm(const char* pdf_name,
                      int num,
@@ -40,6 +42,13 @@ void WritePS(FPDF_PAGE page, const char* pdf_name, int num);
 #endif  // _WIN32
 
 #ifdef PDF_ENABLE_SKIA
+std::unique_ptr<SkWStream> WriteToSkWStream(const std::string& pdf_name,
+                                            int num,
+                                            const std::string& extension);
+std::unique_ptr<SkWStream> WriteToSkWStream(const std::string& pdf_name,
+                                            int num,
+                                            const std::string& extension,
+                                            std::string& filename);
 std::string WriteSkp(const char* pdf_name, int num, const SkPicture& picture);
 #endif  // PDF_ENABLE_SKIA
 

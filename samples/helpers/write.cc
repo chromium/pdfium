@@ -595,16 +595,43 @@ void WritePS(FPDF_PAGE page, const char* pdf_name, int num) {
 #endif  // _WIN32
 
 #ifdef PDF_ENABLE_SKIA
-std::string WriteSkp(const char* pdf_name, int num, const SkPicture& picture) {
-  std::string filename = GeneratePageOutputFilename(pdf_name, num, "skp");
+std::unique_ptr<SkWStream> WriteToSkWStream(const std::string& pdf_name,
+                                            int num,
+                                            const std::string& extension) {
+  std::string discarded_filename;
+  return WriteToSkWStream(pdf_name, num, extension, discarded_filename);
+}
+
+std::unique_ptr<SkWStream> WriteToSkWStream(const std::string& pdf_name,
+                                            int num,
+                                            const std::string& extension,
+                                            std::string& filename) {
+  filename =
+      GeneratePageOutputFilename(pdf_name.c_str(), num, extension.c_str());
   if (filename.empty()) {
-    return filename;
+    return nullptr;
   }
-  SkFILEWStream wStream(filename.c_str());
-  picture.serialize(&wStream);
+
+  auto stream = std::make_unique<SkFILEWStream>(filename.c_str());
+  if (!stream->isValid()) {
+    return nullptr;
+  }
+
+  return stream;
+}
+
+std::string WriteSkp(const char* pdf_name, int num, const SkPicture& picture) {
+  std::string filename;
+  std::unique_ptr<SkWStream> stream =
+      WriteToSkWStream(pdf_name, num, "skp", filename);
+  if (!stream) {
+    return "";
+  }
+
+  picture.serialize(stream.get());
   return filename;
 }
-#endif
+#endif  // PDF_ENABLE_SKIA
 
 enum class ThumbnailDecodeType { kBitmap, kRawStream, kDecodedStream };
 

@@ -52,6 +52,7 @@
 #include <io.h>
 #include <wingdi.h>
 
+#include "samples/helpers/win32/com_factory.h"
 #include "third_party/base/win/scoped_select_object.h"
 #else
 #include <unistd.h>
@@ -64,11 +65,17 @@
 #ifdef PDF_ENABLE_SKIA
 #include "third_party/skia/include/core/SkCanvas.h"           // nogncheck
 #include "third_party/skia/include/core/SkColor.h"            // nogncheck
+#include "third_party/skia/include/core/SkDocument.h"         // nogncheck
 #include "third_party/skia/include/core/SkPicture.h"          // nogncheck
 #include "third_party/skia/include/core/SkPictureRecorder.h"  // nogncheck
 #include "third_party/skia/include/core/SkPixmap.h"           // nogncheck
 #include "third_party/skia/include/core/SkRefCnt.h"           // nogncheck
+#include "third_party/skia/include/core/SkStream.h"           // nogncheck
 #include "third_party/skia/include/core/SkSurface.h"          // nogncheck
+
+#ifdef _WIN32
+#include "third_party/skia/include/docs/SkXPSDocument.h"  // nogncheck
+#endif
 
 #ifdef BUILD_WITH_CHROMIUM
 #include "samples/chromium_support/discardable_memory_allocator.h"  // nogncheck
@@ -130,7 +137,10 @@ enum class OutputFormat {
 #endif
 #ifdef PDF_ENABLE_SKIA
   kSkp,
-#endif
+#ifdef _WIN32
+  kXps,
+#endif  // _WIN32
+#endif  // PDF_ENABLE_SKIA
 };
 
 struct Options {
@@ -578,6 +588,14 @@ bool ParseCommandLine(const std::vector<std::string>& args,
         return false;
       }
       options->output_format = OutputFormat::kSkp;
+#ifdef _WIN32
+    } else if (cur_arg == "--xps") {
+      if (options->output_format != OutputFormat::kNone) {
+        fprintf(stderr, "Duplicate or conflicting --xps argument\n");
+        return false;
+      }
+      options->output_format = OutputFormat::kXps;
+#endif  // _WIN32
 #endif  // PDF_ENABLE_SKIA
     } else if (ParseSwitchKeyValue(cur_arg, "--font-dir=", &value)) {
       if (!options->font_directory.empty()) {
@@ -795,6 +813,10 @@ class Processor final {
   const Options& options() const { return *options_; }
   const std::function<void()>& idler() const { return *idler_; }
 
+#ifdef _WIN32
+  ComFactory& com_factory() { return com_factory_; }
+#endif  // _WIN32
+
   // Invokes `idler()`.
   void Idle() const { idler()(); }
 
@@ -806,6 +828,10 @@ class Processor final {
  private:
   const Options* options_;
   const std::function<void()>* idler_;
+
+#ifdef _WIN32
+  ComFactory com_factory_;
+#endif  // _WIN32
 };
 
 class PdfProcessor final {
@@ -836,6 +862,10 @@ class PdfProcessor final {
   // Per processor state.
   const Options& options() const { return processor_->options(); }
   const std::function<void()>& idler() const { return processor_->idler(); }
+
+#ifdef _WIN32
+  ComFactory& com_factory() { return processor_->com_factory(); }
+#endif  // _WIN32
 
   // Per PDF state.
   const std::string& name() const { return *name_; }
@@ -1183,33 +1213,42 @@ class GdiDisplayPageRenderer : public BitmapPageRenderer {
 #endif  // _WIN32
 
 #ifdef PDF_ENABLE_SKIA
-class SkPicturePageRenderer : public PageRenderer {
+class SkCanvasPageRenderer : public PageRenderer {
+ public:
+  bool Start() override {
+    FPDF_RenderPageSkia(reinterpret_cast<FPDF_SKIA_CANVAS>(canvas()), page(),
+                        width(), height());
+    return true;
+  }
+
+  void Finish(FPDF_FORMHANDLE form) override {
+    FPDF_FFLDrawSkia(form, reinterpret_cast<FPDF_SKIA_CANVAS>(canvas()), page(),
+                     /*start_x=*/0, /*start_y=*/0, width(), height(),
+                     /*rotate=*/0, flags());
+  }
+
+ protected:
+  SkCanvasPageRenderer(FPDF_PAGE page, int width, int height, int flags)
+      : PageRenderer(page, width, height, flags) {}
+
+  virtual SkCanvas* canvas() = 0;
+};
+
+class SkPicturePageRenderer final : public SkCanvasPageRenderer {
  public:
   SkPicturePageRenderer(FPDF_PAGE page, int width, int height, int flags)
-      : PageRenderer(page,
-                     /*width=*/width,
-                     /*height=*/height,
-                     /*flags=*/flags) {}
+      : SkCanvasPageRenderer(page, width, height, flags) {}
 
   bool HasOutput() const override { return !!picture_; }
 
   bool Start() override {
     recorder_ = std::make_unique<SkPictureRecorder>();
     recorder_->beginRecording(width(), height());
-
-    FPDF_RenderPageSkia(
-        reinterpret_cast<FPDF_SKIA_CANVAS>(recorder_->getRecordingCanvas()),
-        page(), /*size_x=*/width(), /*size_y=*/height());
-    return true;
+    return SkCanvasPageRenderer::Start();
   }
 
   void Finish(FPDF_FORMHANDLE form) override {
-    FPDF_FFLDrawSkia(
-        form,
-        reinterpret_cast<FPDF_SKIA_CANVAS>(recorder_->getRecordingCanvas()),
-        page(), /*start_x=*/0, /*start_y=*/0, /*size_x=*/width(),
-        /*size_y=*/height(), /*rotate=*/0, /*flags=*/0);
-
+    SkCanvasPageRenderer::Finish(form);
     picture_ = recorder_->finishRecordingAsPicture();
     recorder_.reset();
   }
@@ -1242,9 +1281,79 @@ class SkPicturePageRenderer : public PageRenderer {
     return true;
   }
 
+ protected:
+  SkCanvas* canvas() override { return recorder_->getRecordingCanvas(); }
+
  private:
   std::unique_ptr<SkPictureRecorder> recorder_;
   sk_sp<SkPicture> picture_;
+};
+
+class SkDocumentPageRenderer final : public SkCanvasPageRenderer {
+ public:
+  SkDocumentPageRenderer(std::unique_ptr<SkWStream> stream,
+                         sk_sp<SkDocument> document,
+                         FPDF_PAGE page,
+                         int width,
+                         int height,
+                         int flags)
+      : SkCanvasPageRenderer(page, width, height, flags),
+        stream_(std::move(stream)),
+        document_(std::move(document)) {
+    DCHECK(stream_);
+    DCHECK(document_);
+  }
+
+  bool HasOutput() const override { return has_output_; }
+
+  bool Start() override {
+    if (!document_) {
+      return false;
+    }
+
+    DCHECK(!canvas_);
+    canvas_ = document_->beginPage(width(), height());
+    if (!canvas_) {
+      return false;
+    }
+
+    return SkCanvasPageRenderer::Start();
+  }
+
+  void Finish(FPDF_FORMHANDLE form) override {
+    SkCanvasPageRenderer::Finish(form);
+
+    DCHECK(canvas_);
+    canvas_ = nullptr;
+    document_->endPage();
+
+    has_output_ = true;
+  }
+
+  bool Write(const std::string& /*name*/,
+             int /*page_index*/,
+             bool /*md5*/) override {
+    bool success = HasOutput();
+    if (success) {
+      document_->close();
+    } else {
+      document_->abort();
+    }
+
+    document_.reset();
+    stream_.reset();
+    return success;
+  }
+
+ protected:
+  SkCanvas* canvas() override { return canvas_; }
+
+ private:
+  std::unique_ptr<SkWStream> stream_;
+  sk_sp<SkDocument> document_;
+
+  SkCanvas* canvas_ = nullptr;
+  bool has_output_ = false;
 };
 #endif  // PDF_ENABLE_SKIA
 
@@ -1332,6 +1441,31 @@ bool PdfProcessor::ProcessPage(const int page_index) {
       renderer = std::make_unique<SkPicturePageRenderer>(
           page, /*width=*/width, /*height=*/height, /*flags=*/flags);
       break;
+
+#ifdef _WIN32
+    case OutputFormat::kXps: {
+      IXpsOMObjectFactory* xps_factory = com_factory().GetXpsOMObjectFactory();
+      if (!xps_factory) {
+        break;
+      }
+
+      std::unique_ptr<SkWStream> stream =
+          WriteToSkWStream(name(), page_index, "xps");
+      if (!stream) {
+        break;
+      }
+
+      sk_sp<SkDocument> document =
+          SkXPS::MakeDocument(stream.get(), xps_factory);
+      if (!document) {
+        break;
+      }
+
+      renderer = std::make_unique<SkDocumentPageRenderer>(
+          std::move(stream), std::move(document), page, width, height, flags);
+      break;
+    }
+#endif  // _WIN32
 #endif  // PDF_ENABLE_SKIA
 
     default:
@@ -1674,7 +1808,10 @@ constexpr char kUsageString[] =
     "  --annot - write annotation info <pdf-name>.<page-number>.annot.txt\n"
 #ifdef PDF_ENABLE_SKIA
     "  --skp   - write page images <pdf-name>.<page-number>.skp\n"
-#endif
+#ifdef _WIN32
+    "  --xps   - write page images <pdf-name>.<page-number>.xps\n"
+#endif  // _WIN32
+#endif  // PDF_ENABLE_SKIA
     "  --md5   - write output image paths and their md5 hashes to stdout.\n"
     "  --time=<number> - Seconds since the epoch to set system time.\n"
     "";
