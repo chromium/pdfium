@@ -369,11 +369,17 @@ int DiffImages(const std::string& binary_name,
                const std::string& file1,
                const std::string& file2,
                const std::string& out_file,
-               bool do_subtraction) {
+               bool do_subtraction,
+               bool reverse_byte_order) {
   Image actual_image;
   Image baseline_image;
 
-  if (!actual_image.CreateFromFilename(file1)) {
+  bool actual_load_result =
+      reverse_byte_order
+          ? actual_image.CreateFromFilenameWithReverseByteOrder(file1)
+          : actual_image.CreateFromFilename(file1);
+
+  if (!actual_load_result) {
     fprintf(stderr, "%s: Unable to open file \"%s\"\n", binary_name.c_str(),
             file1.c_str());
     return kStatusError;
@@ -451,7 +457,7 @@ int main(int argc, const char* argv[]) {
   if (produce_diff_image || produce_image_subtraction) {
     if (!diff_filename.empty()) {
       return DiffImages(binary_name, filename1, filename2, diff_filename,
-                        produce_image_subtraction);
+                        produce_image_subtraction, reverse_byte_order);
     }
   } else if (!filename2.empty()) {
     return CompareImages(binary_name, filename1, filename2, histograms,
