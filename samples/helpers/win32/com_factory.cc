@@ -25,8 +25,8 @@ ComFactory::~ComFactory() {
 
 bool ComFactory::Initialize() {
   if (!initialized_) {
-    HRESULT result = CoInitializeEx(
-        nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    HRESULT result =
+        CoInitializeEx(nullptr, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE);
     DCHECK_NE(RPC_E_CHANGED_MODE, result);
     initialized_ = SUCCEEDED(result);
   }
