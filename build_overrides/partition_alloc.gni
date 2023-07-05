@@ -3,6 +3,7 @@
 # found in the LICENSE file.
 
 # See base/allocator/partition_allocator/external_builds.md
+use_allocator_shim_default = false
 use_partition_alloc_as_malloc_default = false
 enable_mte_checked_ptr_support_default = false
 enable_backup_ref_ptr_support_default = false
