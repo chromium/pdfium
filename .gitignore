@@ -5,7 +5,7 @@
 /out
 /testing/corpus
 /third_party/abseil-cpp
-/third_party/android_ndk
+/third_party/android_toolchain
 /third_party/catapult
 /third_party/cpu_features/src
 /third_party/depot_tools

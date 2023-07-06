@@ -36,9 +36,9 @@ vars = {
   # and whatever else without interference from each other.
   'abseil_revision': '6b7d3f3b0917593809b40c76cca3946473c82a5b',
   # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling android_ndk
+  # the commit queue can handle CLs rolling android_toolchain
   # and whatever else without interference from each other.
-  'android_ndk_revision': '310956bd122ec2b96049f8d7398de6b717f3452e',
+  'android_toolchain_version': 'R_8suM8m0oHbZ1awdxGXvKEFpAOETscbfZxkkMthyk8C',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
@@ -267,10 +267,15 @@ deps = {
     Var('chromium_git') + '/chromium/src/third_party/abseil-cpp.git@' +
         Var('abseil_revision'),
 
-  'third_party/android_ndk': {
-    'url': Var('chromium_git') + '/android_ndk.git@' +
-        Var('android_ndk_revision'),
-    'condition': 'checkout_android',
+  'third_party/android_toolchain': {
+    'packages': [
+      {
+        'package': 'chromium/third_party/android_toolchain/android_toolchain',
+        'version': Var('android_toolchain_version'),
+      },
+    ],
+    'condition': 'checkout_android_native_support',
+    'dep_type': 'cipd',
   },
 
   'third_party/catapult': {
