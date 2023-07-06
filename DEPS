@@ -27,6 +27,18 @@ vars = {
   # By default, download the fuchsia sdk from the public sdk directory.
   'fuchsia_sdk_cipd_prefix': 'fuchsia/sdk/core/',
 
+  # Fetch configuration files required for the 'use_remoteexec' gn arg
+  'download_remoteexec_cfg': False,
+  # RBE instance to use for running remote builds
+  'rbe_instance': Str('projects/rbe-chrome-untrusted/instances/default_instance'),
+  # RBE project to download rewrapper config files for. Only needed if
+  # different from the project used in 'rbe_instance'
+  'rewrapper_cfg_project': Str(''),
+  # reclient CIPD package
+  'reclient_package': 'infra/rbe/client/',
+  # reclient CIPD package version
+  'reclient_version': 're_client_version:0.109.0.927890d-gomaip',
+
   'chromium_git': 'https://chromium.googlesource.com',
   'pdfium_git': 'https://pdfium.googlesource.com',
   'skia_git': 'https://skia.googlesource.com',
@@ -230,6 +242,16 @@ deps = {
     ],
     'dep_type': 'cipd',
     'condition': 'host_os == "mac"',
+  },
+
+  'buildtools/reclient': {
+    'packages': [
+      {
+        'package': Var('reclient_package') + '${{platform}}',
+        'version': Var('reclient_version'),
+      }
+    ],
+    'dep_type': 'cipd',
   },
 
   'buildtools/third_party/libc++/trunk':
@@ -677,5 +699,22 @@ hooks = [
       '--cipd-prefix={fuchsia_sdk_cipd_prefix}',
       '--version={fuchsia_version}',
     ],
+  },
+  # Download remote exec cfg files
+  {
+    'name': 'fetch_reclient_cfgs',
+    'pattern': '.',
+    'condition': 'download_remoteexec_cfg',
+    'action': ['python3',
+               'buildtools/reclient_cfgs/fetch_reclient_cfgs.py',
+               '--rbe_instance',
+               Var('rbe_instance'),
+               '--reproxy_cfg_template',
+               'reproxy.cfg.template',
+               '--rewrapper_cfg_project',
+               Var('rewrapper_cfg_project'),
+               '--quiet',
+               '--hook',
+               ],
   },
 ]
