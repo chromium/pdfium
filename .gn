@@ -11,6 +11,9 @@ buildconfig = "//build_overrides/BUILDCONFIG.gn"
 script_executable = "python3"
 
 default_args = {
+  # Required for the Fuchsia SDK
+  fuchsia_target_api_level = 11
+
   # PDFs only need to run JavaScript.
   v8_enable_webassembly = false
 
