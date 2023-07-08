@@ -1,0 +1,65 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /MediaBox [0 0 400 400]
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Annots [4 0 R]
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Annot
+  /Subtype /Highlight
+  /AP <<
+    /N 5 0 R
+  >>
+  /F 8
+  /P 3 0 R
+  /Rect 6 0 R
+>>
+endobj
+{{object 5 0}} <<
+  /Type /XObject
+  /Subtype /Form
+  /FormType 1
+  /BBox 6 0 R
+  /ProcSet [/PDF]
+  /Resources <<
+    /ExtGState <<
+      /R0 <<
+        /Type /ExtGState
+        /AIS false
+        /BM /Multiply
+      >>
+    >>
+  >>
+  {{streamlen}}
+>>
+stream
+/R0 gs
+1 1 0 rg
+1 w
+72 305 m
+68 309 68 317 72 321 c
+132 321 l
+136 317 136 309 132 305 c
+f
+endstream
+endobj
+{{object 6 0}}
+[67 304 137 322]
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

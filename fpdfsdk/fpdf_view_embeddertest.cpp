@@ -1479,6 +1479,27 @@ TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFViewEmbedderTest, RenderAnnotationWithPrintingFlag) {
+  const char* annotation_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+      return "eaece6b8041c0cb9b33398e5b6d5ddda";
+    }
+    return "c108ba6e0a9743652f12e4bc223f9b32";
+  }();
+  static const char kPrintingChecksum[] = "3e235b9f88f652f2b97b1fc393924849";
+  ASSERT_TRUE(OpenDocument("bug_1658.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // A yellow highlight is rendered with `FPDF_ANNOT` flag.
+  TestRenderPageBitmapWithFlags(page, FPDF_ANNOT, annotation_checksum);
+
+  // After adding `FPDF_PRINTING` flag, the yellow highlight is not rendered.
+  TestRenderPageBitmapWithFlags(page, FPDF_PRINTING | FPDF_ANNOT,
+                                kPrintingChecksum);
+  UnloadPage(page);
+}
+
 // TODO(crbug.com/pdfium/1955): Remove this test once pixel tests can pass with
 // `reverse-byte-order` option.
 TEST_F(FPDFViewEmbedderTest, RenderBlueAndRedImagesWithReverByteOrderFlag) {
