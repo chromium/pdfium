@@ -303,6 +303,17 @@ luci.project(
             ],
         ),
     ],
+    bindings = [
+        # TODO(crbug.com/pdfium/1933): Revert once swarming work is complete.
+        luci.binding(
+            roles = [
+                "role/swarming.poolOwner",
+                "role/swarming.poolUser",
+                "role/swarming.taskTriggerer",
+            ],
+            users = "kmoon@google.com",
+        ),
+    ],
 )
 
 luci.logdog(gs_bucket = "chromium-luci-logdog")
