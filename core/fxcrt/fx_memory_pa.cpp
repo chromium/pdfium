@@ -21,20 +21,20 @@ constexpr partition_alloc::PartitionOptions kOptions = {};
 #ifndef V8_ENABLE_SANDBOX
 partition_alloc::PartitionAllocator& GetArrayBufferPartitionAllocator() {
   static pdfium::base::NoDestructor<partition_alloc::PartitionAllocator>
-      s_array_buffer_allocator;
+      s_array_buffer_allocator(kOptions);
   return *s_array_buffer_allocator;
 }
 #endif  //  V8_ENABLE_SANDBOX
 
 partition_alloc::PartitionAllocator& GetGeneralPartitionAllocator() {
   static pdfium::base::NoDestructor<partition_alloc::PartitionAllocator>
-      s_general_allocator;
+      s_general_allocator(kOptions);
   return *s_general_allocator;
 }
 
 partition_alloc::PartitionAllocator& GetStringPartitionAllocator() {
   static pdfium::base::NoDestructor<partition_alloc::PartitionAllocator>
-      s_string_allocator;
+      s_string_allocator(kOptions);
   return *s_string_allocator;
 }
 
@@ -95,11 +95,13 @@ void FX_InitializeMemoryAllocators() {
   static bool s_partition_allocators_initialized = false;
   if (!s_partition_allocators_initialized) {
     partition_alloc::PartitionAllocGlobalInit(FX_OutOfMemoryTerminate);
+    // These calls force the allocators to be created and initialized (via magic
+    // of static local variables).
 #ifndef V8_ENABLE_SANDBOX
-    GetArrayBufferPartitionAllocator().init(kOptions);
+    GetArrayBufferPartitionAllocator();
 #endif  // V8_ENABLE_SANDBOX
-    GetGeneralPartitionAllocator().init(kOptions);
-    GetStringPartitionAllocator().init(kOptions);
+    GetGeneralPartitionAllocator();
+    GetStringPartitionAllocator();
     s_partition_allocators_initialized = true;
   }
 }
