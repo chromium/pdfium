@@ -1,0 +1,17 @@
+# Copyright 2023 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Metadata for CVEs that are fixed or don't affect libtiff.
+
+third_party {
+  security {
+    # PDFium's copy of libtiff does not ship tools like tiffcrop.
+    mitigated_security_patch: "CVE-2022-48281"
+    mitigated_security_patch: "CVE-2023-1916"
+    mitigated_security_patch: "CVE-2023-25433"
+    mitigated_security_patch: "CVE-2023-25434"
+    mitigated_security_patch: "CVE-2023-25435"
+    mitigated_security_patch: "CVE-2023-26965"
+  }
+}
