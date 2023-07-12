@@ -81,3 +81,7 @@ void FX_ArrayBufferFree(void* data) {
 void FX_Free(void* ptr) {
   free(ptr);
 }
+
+void FX_StringFree(void* ptr) {
+  free(ptr);
+}

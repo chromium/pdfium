@@ -50,14 +50,16 @@ NOINLINE void FX_OutOfMemoryTerminate(size_t size);
 #define FX_AllocUninit2D(type, w, h) \
   static_cast<type*>(pdfium::internal::AllocOrDie2D(w, h, sizeof(type)))
 
+// FX_Free accepts memory from all of the above.
+void FX_Free(void* ptr);
+
 // String Partition Allocators.
 
 // This never returns nullptr, but returns uninitialized memory.
 #define FX_StringAlloc(type, size) \
   static_cast<type*>(pdfium::internal::StringAllocOrDie(size, sizeof(type)))
 
-// FX_Free accepts memory from all of the above.
-void FX_Free(void* ptr);
+void FX_StringFree(void* ptr);
 
 #ifndef V8_ENABLE_SANDBOX
 // V8 Array Buffer Partition Allocators.

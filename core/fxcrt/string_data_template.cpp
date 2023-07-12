@@ -57,7 +57,7 @@ StringDataTemplate<CharType>* StringDataTemplate<CharType>::Create(
 template <typename CharType>
 void StringDataTemplate<CharType>::Release() {
   if (--m_nRefs <= 0)
-    FX_Free(this);
+    FX_StringFree(this);
 }
 
 template <typename CharType>
