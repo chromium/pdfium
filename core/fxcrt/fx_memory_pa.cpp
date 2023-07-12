@@ -77,6 +77,20 @@ void* Realloc(void* ptr, size_t num_members, size_t member_size) {
       "GeneralPartition");
 }
 
+void Dealloc(void* ptr) {
+  // TODO(palmer): Removing this check exposes crashes when PDFium callers
+  // attempt to free |nullptr|. Although libc's |free| allows freeing |NULL|, no
+  // other Partition Alloc callers need this tolerant behavior. Additionally,
+  // checking for |nullptr| adds a branch to |PartitionFree|, and it's nice to
+  // not have to have that.
+  //
+  // So this check is hiding (what I consider to be) bugs, and we should try to
+  // fix them. https://bugs.chromium.org/p/pdfium/issues/detail?id=690
+  if (ptr) {
+    GetGeneralPartitionAllocator().root()->Free(ptr);
+  }
+}
+
 void* StringAlloc(size_t num_members, size_t member_size) {
   FX_SAFE_SIZE_T total = member_size;
   total *= num_members;
@@ -86,6 +100,20 @@ void* StringAlloc(size_t num_members, size_t member_size) {
   return GetStringPartitionAllocator().root()->AllocWithFlags(
       partition_alloc::AllocFlags::kReturnNull, total.ValueOrDie(),
       "StringPartition");
+}
+
+void StringDealloc(void* ptr) {
+  // TODO(palmer): Removing this check exposes crashes when PDFium callers
+  // attempt to free |nullptr|. Although libc's |free| allows freeing |NULL|, no
+  // other Partition Alloc callers need this tolerant behavior. Additionally,
+  // checking for |nullptr| adds a branch to |PartitionFree|, and it's nice to
+  // not have to have that.
+  //
+  // So this check is hiding (what I consider to be) bugs, and we should try to
+  // fix them. https://bugs.chromium.org/p/pdfium/issues/detail?id=690
+  if (ptr) {
+    GetStringPartitionAllocator().root()->Free(ptr);
+  }
 }
 
 }  // namespace internal
@@ -121,31 +149,3 @@ void FX_ArrayBufferFree(void* data) {
   GetArrayBufferPartitionAllocator().root()->Free(data);
 }
 #endif  // V8_ENABLE_SANDBOX
-
-void FX_Free(void* ptr) {
-  // TODO(palmer): Removing this check exposes crashes when PDFium callers
-  // attempt to free |nullptr|. Although libc's |free| allows freeing |NULL|, no
-  // other Partition Alloc callers need this tolerant behavior. Additionally,
-  // checking for |nullptr| adds a branch to |PartitionFree|, and it's nice to
-  // not have to have that.
-  //
-  // So this check is hiding (what I consider to be) bugs, and we should try to
-  // fix them. https://bugs.chromium.org/p/pdfium/issues/detail?id=690
-  if (ptr) {
-    GetGeneralPartitionAllocator().root()->Free(ptr);
-  }
-}
-
-void FX_StringFree(void* ptr) {
-  // TODO(palmer): Removing this check exposes crashes when PDFium callers
-  // attempt to free |nullptr|. Although libc's |free| allows freeing |NULL|, no
-  // other Partition Alloc callers need this tolerant behavior. Additionally,
-  // checking for |nullptr| adds a branch to |PartitionFree|, and it's nice to
-  // not have to have that.
-  //
-  // So this check is hiding (what I consider to be) bugs, and we should try to
-  // fix them. https://bugs.chromium.org/p/pdfium/issues/detail?id=690
-  if (ptr) {
-    GetStringPartitionAllocator().root()->Free(ptr);
-  }
-}

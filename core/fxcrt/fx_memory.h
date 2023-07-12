@@ -50,8 +50,8 @@ NOINLINE void FX_OutOfMemoryTerminate(size_t size);
 #define FX_AllocUninit2D(type, w, h) \
   static_cast<type*>(pdfium::internal::AllocOrDie2D(w, h, sizeof(type)))
 
-// FX_Free accepts memory from all of the above.
-void FX_Free(void* ptr);
+// FX_Free frees memory from the above.
+#define FX_Free(ptr) pdfium::internal::Dealloc(ptr)
 
 // String Partition Allocators.
 
@@ -59,7 +59,8 @@ void FX_Free(void* ptr);
 #define FX_StringAlloc(type, size) \
   static_cast<type*>(pdfium::internal::StringAllocOrDie(size, sizeof(type)))
 
-void FX_StringFree(void* ptr);
+// FX_StringFree frees memory from FX_StringAlloc.
+#define FX_StringFree(ptr) pdfium::internal::StringDealloc(ptr)
 
 #ifndef V8_ENABLE_SANDBOX
 // V8 Array Buffer Partition Allocators.
@@ -86,10 +87,12 @@ void* Realloc(void* ptr, size_t num_members, size_t member_size);
 void* CallocOrDie(size_t num_members, size_t member_size);
 void* CallocOrDie2D(size_t w, size_t h, size_t member_size);
 void* ReallocOrDie(void* ptr, size_t num_members, size_t member_size);
+void Dealloc(void* ptr);
 
 // String partition.
 void* StringAlloc(size_t num_members, size_t member_size);
 void* StringAllocOrDie(size_t num_members, size_t member_size);
+void StringDealloc(void* ptr);
 
 }  // namespace internal
 }  // namespace pdfium

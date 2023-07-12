@@ -47,12 +47,20 @@ void* Realloc(void* ptr, size_t num_members, size_t member_size) {
   return realloc(ptr, total.ValueOrDie());
 }
 
+void Dealloc(void* ptr) {
+  free(ptr);
+}
+
 void* StringAlloc(size_t num_members, size_t member_size) {
   FX_SAFE_SIZE_T total = member_size;
   total *= num_members;
   if (!total.IsValid())
     return nullptr;
   return malloc(total.ValueOrDie());
+}
+
+void StringDealloc(void* ptr) {
+  free(ptr);
 }
 
 }  // namespace internal
@@ -76,12 +84,4 @@ void* FX_ArrayBufferAllocateUninitialized(size_t length) {
 
 void FX_ArrayBufferFree(void* data) {
   free(data);
-}
-
-void FX_Free(void* ptr) {
-  free(ptr);
-}
-
-void FX_StringFree(void* ptr) {
-  free(ptr);
 }
