@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright 2023 The PDFium Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -35,11 +36,12 @@ def resolve_paths(root, initial_paths):
       # Expand specific children if any are excluded.
       child_paths = expand_dir(path)
       if child_paths:
-        unvisited_paths += child_paths
+        unvisited_paths.extendleft(child_paths)
         continue
 
     resolved_paths.append(os.path.relpath(path, start=absolute_root))
 
+  resolved_paths.sort()
   return [[absolute_root, path] for path in resolved_paths]
 
 
