@@ -1,0 +1,40 @@
+# Copyright 2023 The PDFium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Generates the list of inputs required by `test_runner.py` tests.
+action("test_runner_py") {
+  testonly = true
+
+  write_runtime_deps = "${root_out_dir}/${target_name}.runtime_deps"
+
+  sources = [ write_runtime_deps ]
+  outputs = [ "${root_out_dir}/${target_name}.json" ]
+
+  script = "generate_cas_paths.py"
+  args = [
+           "--root",
+           rebase_path("../..", root_build_dir),
+         ] + rebase_path(sources + outputs, root_build_dir)
+
+  # Unbuilt runtime dependencies.
+  data = [
+    ".",
+    "../SUPPRESSIONS",
+    "../SUPPRESSIONS_EXACT_MATCHING",
+    "../SUPPRESSIONS_IMAGE_DIFF",
+    "../corpus/",
+    "../../.vpython3",
+    "../../build/skia_gold_common/",
+    "../../build/util/lib/",
+    "../../third_party/test_fonts/",
+    "../../tools/resultdb/",
+    "../../tools/skia_goldctl/",
+  ]
+
+  # Built runtime dependencies.
+  data_deps = [
+    "../../:pdfium_diff",
+    "../../samples:pdfium_test",
+  ]
+}
