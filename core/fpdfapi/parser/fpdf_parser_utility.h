@@ -19,20 +19,20 @@ class CPDF_Dictionary;
 class CPDF_Object;
 class IFX_SeekableReadStream;
 
-// Use the accessors below instead of directly accessing PDF_CharType.
-extern const char PDF_CharType[256];
+// Use the accessors below instead of directly accessing kPDFCharTypes.
+extern const char kPDFCharTypes[256];
 
 inline bool PDFCharIsWhitespace(uint8_t c) {
-  return PDF_CharType[c] == 'W';
+  return kPDFCharTypes[c] == 'W';
 }
 inline bool PDFCharIsNumeric(uint8_t c) {
-  return PDF_CharType[c] == 'N';
+  return kPDFCharTypes[c] == 'N';
 }
 inline bool PDFCharIsDelimiter(uint8_t c) {
-  return PDF_CharType[c] == 'D';
+  return kPDFCharTypes[c] == 'D';
 }
 inline bool PDFCharIsOther(uint8_t c) {
-  return PDF_CharType[c] == 'R';
+  return kPDFCharTypes[c] == 'R';
 }
 
 inline bool PDFCharIsLineEnding(uint8_t c) {

@@ -27,7 +27,7 @@
 //   'N' - for numeric: 0123456789+-.
 //   'D' - for delimiter: %()/<>[]{}
 //   'R' - otherwise.
-const char PDF_CharType[256] = {
+const char kPDFCharTypes[256] = {
     // NUL  SOH  STX  ETX  EOT  ENQ  ACK  BEL  BS   HT   LF   VT   FF   CR   SO
     // SI
     'W', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'W', 'W', 'R', 'W', 'W', 'R',
