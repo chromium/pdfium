@@ -4,9 +4,9 @@
 
 #include "core/fxcodec/cfx_codec_memory.h"
 
-#include <string.h>
-
 #include <algorithm>
+
+#include "core/fxcrt/span_util.h"
 
 CFX_CodecMemory::CFX_CodecMemory(size_t buffer_size)
     : buffer_(FX_Alloc(uint8_t, buffer_size)), size_(buffer_size) {}
@@ -26,7 +26,7 @@ size_t CFX_CodecMemory::ReadBlock(pdfium::span<uint8_t> buffer) {
     return 0;
 
   size_t bytes_to_read = std::min(buffer.size(), size_ - pos_);
-  memcpy(buffer.data(), buffer_.get() + pos_, bytes_to_read);
+  fxcrt::spancpy(buffer, GetBufferSpan().subspan(pos_, bytes_to_read));
   pos_ += bytes_to_read;
   return bytes_to_read;
 }
@@ -44,6 +44,5 @@ bool CFX_CodecMemory::TryResize(size_t new_buffer_size) {
 }
 
 void CFX_CodecMemory::Consume(size_t consumed) {
-  size_t unconsumed = size_ - consumed;
-  memmove(buffer_.get(), buffer_.get() + consumed, unconsumed);
+  fxcrt::spanmove(GetBufferSpan(), GetBufferSpan().subspan(consumed));
 }
