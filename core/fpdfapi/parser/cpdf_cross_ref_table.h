@@ -77,7 +77,7 @@ class CPDF_CrossRefTable {
   void SetObjectMapSize(uint32_t size);
 
  private:
-  void UpdateInfo(std::map<uint32_t, ObjectInfo>&& new_objects_info);
+  void UpdateInfo(std::map<uint32_t, ObjectInfo> new_objects_info);
   void UpdateTrailer(RetainPtr<CPDF_Dictionary> new_trailer);
 
   RetainPtr<CPDF_Dictionary> trailer_;

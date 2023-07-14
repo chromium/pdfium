@@ -124,7 +124,16 @@ void CPDF_CrossRefTable::SetObjectMapSize(uint32_t size) {
 }
 
 void CPDF_CrossRefTable::UpdateInfo(
-    std::map<uint32_t, ObjectInfo>&& new_objects_info) {
+    std::map<uint32_t, ObjectInfo> new_objects_info) {
+  if (new_objects_info.empty()) {
+    return;
+  }
+
+  if (objects_info_.empty()) {
+    objects_info_ = std::move(new_objects_info);
+    return;
+  }
+
   auto cur_it = objects_info_.begin();
   auto new_it = new_objects_info.begin();
   while (cur_it != objects_info_.end() && new_it != new_objects_info.end()) {
