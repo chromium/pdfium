@@ -166,7 +166,7 @@ uint32_t CJBig2_BitStream::getLength() const {
 }
 
 const uint8_t* CJBig2_BitStream::getPointer() const {
-  return getBuf() + m_dwByteIdx;
+  return m_Span.subspan(m_dwByteIdx).data();
 }
 
 void CJBig2_BitStream::offset(uint32_t dwOffset) {
