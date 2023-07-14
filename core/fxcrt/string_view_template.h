@@ -214,7 +214,7 @@ class StringViewTemplate {
     if (!IsValidIndex(first + count - 1))
       return StringViewTemplate();
 
-    return StringViewTemplate(m_Span.data() + first, count);
+    return StringViewTemplate(m_Span.subspan(first, count));
   }
 
   StringViewTemplate First(size_t count) const {
