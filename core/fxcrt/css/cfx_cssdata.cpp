@@ -18,19 +18,19 @@ namespace {
 
 #undef CSS_PROP____
 #define CSS_PROP____(a, b, c, d) {CFX_CSSProperty::a, c, d},
-const CFX_CSSData::Property propertyTable[] = {
+const CFX_CSSData::Property kPropertyTable[] = {
 #include "core/fxcrt/css/properties.inc"
 };
 #undef CSS_PROP____
 
 #undef CSS_PROP_VALUE____
 #define CSS_PROP_VALUE____(a, b, c) {CFX_CSSPropertyValue::a, c},
-const CFX_CSSData::PropertyValue propertyValueTable[] = {
+const CFX_CSSData::PropertyValue kPropertyValueTable[] = {
 #include "core/fxcrt/css/property_values.inc"
 };
 #undef CSS_PROP_VALUE____
 
-const CFX_CSSData::LengthUnit lengthUnitTable[] = {
+const CFX_CSSData::LengthUnit kLengthUnitTable[] = {
     {L"cm", CFX_CSSNumberValue::Unit::kCentiMeters},
     {L"em", CFX_CSSNumberValue::Unit::kEMS},
     {L"ex", CFX_CSSNumberValue::Unit::kEXS},
@@ -42,7 +42,7 @@ const CFX_CSSData::LengthUnit lengthUnitTable[] = {
 };
 
 // 16 colours from CSS 2.0 + alternate spelling of grey/gray.
-const CFX_CSSData::Color colorTable[] = {
+const CFX_CSSData::Color kColorTable[] = {
     {L"aqua", 0xff00ffff},    {L"black", 0xff000000}, {L"blue", 0xff0000ff},
     {L"fuchsia", 0xffff00ff}, {L"gray", 0xff808080},  {L"green", 0xff008000},
     {L"grey", 0xff808080},    {L"lime", 0xff00ff00},  {L"maroon", 0xff800000},
@@ -59,19 +59,21 @@ const CFX_CSSData::Property* CFX_CSSData::GetPropertyByName(
     return nullptr;
 
   uint32_t hash = FX_HashCode_GetLoweredW(name);
-  auto* result =
-      std::lower_bound(std::begin(propertyTable), std::end(propertyTable), hash,
-                       [](const CFX_CSSData::Property& iter,
-                          const uint32_t& hash) { return iter.dwHash < hash; });
+  auto* result = std::lower_bound(
+      std::begin(kPropertyTable), std::end(kPropertyTable), hash,
+      [](const CFX_CSSData::Property& iter, const uint32_t& hash) {
+        return iter.dwHash < hash;
+      });
 
-  if (result != std::end(propertyTable) && result->dwHash == hash)
+  if (result != std::end(kPropertyTable) && result->dwHash == hash) {
     return result;
+  }
   return nullptr;
 }
 
 const CFX_CSSData::Property* CFX_CSSData::GetPropertyByEnum(
     CFX_CSSProperty property) {
-  return &propertyTable[static_cast<uint8_t>(property)];
+  return &kPropertyTable[static_cast<uint8_t>(property)];
 }
 
 const CFX_CSSData::PropertyValue* CFX_CSSData::GetPropertyValueByName(
@@ -81,13 +83,14 @@ const CFX_CSSData::PropertyValue* CFX_CSSData::GetPropertyValueByName(
 
   uint32_t hash = FX_HashCode_GetLoweredW(wsName);
   auto* result = std::lower_bound(
-      std::begin(propertyValueTable), std::end(propertyValueTable), hash,
+      std::begin(kPropertyValueTable), std::end(kPropertyValueTable), hash,
       [](const PropertyValue& iter, const uint32_t& hash) {
         return iter.dwHash < hash;
       });
 
-  if (result != std::end(propertyValueTable) && result->dwHash == hash)
+  if (result != std::end(kPropertyValueTable) && result->dwHash == hash) {
     return result;
+  }
   return nullptr;
 }
 
@@ -99,8 +102,8 @@ const CFX_CSSData::LengthUnit* CFX_CSSData::GetLengthUnitByName(
   WideString lowerName = WideString(wsName);
   lowerName.MakeLower();
 
-  for (auto* iter = std::begin(lengthUnitTable);
-       iter != std::end(lengthUnitTable); ++iter) {
+  for (auto* iter = std::begin(kLengthUnitTable);
+       iter != std::end(kLengthUnitTable); ++iter) {
     if (lowerName == iter->value)
       return iter;
   }
@@ -115,7 +118,7 @@ const CFX_CSSData::Color* CFX_CSSData::GetColorByName(WideStringView wsName) {
   WideString lowerName = WideString(wsName);
   lowerName.MakeLower();
 
-  for (auto* iter = std::begin(colorTable); iter != std::end(colorTable);
+  for (auto* iter = std::begin(kColorTable); iter != std::end(kColorTable);
        ++iter) {
     if (lowerName == iter->name)
       return iter;
