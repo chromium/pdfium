@@ -50,10 +50,7 @@ CPDF_FontGlobals* CPDF_FontGlobals::GetInstance() {
   return g_FontGlobals;
 }
 
-CPDF_FontGlobals::CPDF_FontGlobals() {
-  memset(m_EmbeddedCharsets, 0, sizeof(m_EmbeddedCharsets));
-  memset(m_EmbeddedToUnicodes, 0, sizeof(m_EmbeddedToUnicodes));
-}
+CPDF_FontGlobals::CPDF_FontGlobals() = default;
 
 CPDF_FontGlobals::~CPDF_FontGlobals() = default;
 

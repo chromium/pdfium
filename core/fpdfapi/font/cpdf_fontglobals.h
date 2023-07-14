@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_FONT_CPDF_FONTGLOBALS_H_
 #define CORE_FPDFAPI_FONT_CPDF_FONTGLOBALS_H_
 
+#include <array>
 #include <functional>
 #include <map>
 #include <memory>
@@ -63,9 +64,12 @@ class CPDF_FontGlobals {
   void LoadEmbeddedKorea1CMaps();
 
   std::map<ByteString, RetainPtr<const CPDF_CMap>> m_CMaps;
-  std::unique_ptr<CPDF_CID2UnicodeMap> m_CID2UnicodeMaps[CIDSET_NUM_SETS];
-  pdfium::span<const fxcmap::CMap> m_EmbeddedCharsets[CIDSET_NUM_SETS];
-  pdfium::span<const uint16_t> m_EmbeddedToUnicodes[CIDSET_NUM_SETS];
+  std::array<std::unique_ptr<CPDF_CID2UnicodeMap>, CIDSET_NUM_SETS>
+      m_CID2UnicodeMaps;
+  std::array<pdfium::span<const fxcmap::CMap>, CIDSET_NUM_SETS>
+      m_EmbeddedCharsets;
+  std::array<pdfium::span<const uint16_t>, CIDSET_NUM_SETS>
+      m_EmbeddedToUnicodes;
   std::map<UnownedPtr<CPDF_Document>,
            std::unique_ptr<CFX_StockFontArray>,
            std::less<>>
