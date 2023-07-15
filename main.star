@@ -322,17 +322,6 @@ luci.project(
             ],
         ),
     ],
-    bindings = [
-        # TODO(crbug.com/pdfium/1933): Revert once swarming work is complete.
-        luci.binding(
-            roles = [
-                "role/swarming.poolOwner",
-                "role/swarming.poolUser",
-                "role/swarming.taskTriggerer",
-            ],
-            users = "kmoon@google.com",
-        ),
-    ],
 )
 
 luci.logdog(gs_bucket = "chromium-luci-logdog")
@@ -420,6 +409,22 @@ luci.bucket(
             groups = "project-pdfium-admins",
         ),
     ],
+)
+
+luci.bucket(
+    name = "try.shadow",
+    shadows = "try",
+    constraints = luci.bucket_constraints(
+        pools = ["luci.flex.try"],
+        service_accounts = ["pdfium-try-builder@chops-service-accounts.iam.gserviceaccount.com"],
+    ),
+    bindings = [
+        luci.binding(
+            roles = "role/buildbucket.creator",
+            groups = "project-pdfium-tryjob-access",
+        ),
+    ],
+    dynamic = True,
 )
 
 # Builders
