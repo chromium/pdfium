@@ -4,6 +4,7 @@ Version: VER-2-13-1-0
 Revision: e4586d960f339cf75e2e0b34aee30a0ed8353c0d
 CPEPrefix: cpe:/a:freetype:freetype:2.13.1
 Security Critical: yes
+Shipped: yes
 License: FreeType License (FTL)
 License File: FTL.TXT
 

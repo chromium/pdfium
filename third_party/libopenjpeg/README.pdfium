@@ -2,6 +2,7 @@ Name: OpenJPEG
 URL: http://www.openjpeg.org/
 Version: 2.5.0 (also update in opj_config*)
 Security Critical: yes
+Shipped: yes
 License: 2-clause BSD
 CPEPrefix: cpe:/a:uclouvain:openjpeg:2.5.0
 

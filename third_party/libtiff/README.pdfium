@@ -3,6 +3,7 @@ URL: http://www.simplesystems.org/libtiff/
 Version: 4.5.1
 CPEPrefix: cpe:/a:libtiff:libtiff:4.5.1
 Security Critical: yes
+Shipped: yes
 License: BSD
 
 Description:
