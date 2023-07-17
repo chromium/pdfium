@@ -172,13 +172,10 @@ def pdfium_internal_builder(name, bucket):
         service_account = "pdfium-ci-builder@chops-service-accounts.iam.gserviceaccount.com"
         triggered_by = ["pdfium-gitiles-trigger"]
 
-        # Adding Reclient properties switches pdfium recipe to use Reclient
-        # instead of Goma. Migrating one builder per platform first.
-        # Once these 3 are migrated, will follow-up with migrating all CI builders to Reclient
-        if name in ["linux", "mac", "win"]:
-            properties.update({
-                "$build/reclient": _RECLIENT_CI_PROPERTIES if name != "mac" else _RECLIENT_CI_PROPERTIES_MAC,
-            })
+        # Adding Reclient properties switches pdfium recipe to use Reclient instead of Goma.
+        properties.update({
+            "$build/reclient": _RECLIENT_CI_PROPERTIES_MAC if name.startswith("mac") else _RECLIENT_CI_PROPERTIES,
+        })
     else:
         dimensions.update({"pool": "luci.flex.try"})
         properties.update({"builder_group": "tryserver.client.pdfium"})
@@ -202,6 +199,10 @@ def pdfium_internal_builder(name, bucket):
 
     # Update properties based on the builder name.
     properties.update(get_properties_by_name(name))
+    if "$build/reclient" in properties and \
+       (not "$build/goma" in properties or
+        not "server_host" in properties["$build/goma"]):
+        properties["$build/reclient"] = {}
 
     return luci.builder(
         name = name,
