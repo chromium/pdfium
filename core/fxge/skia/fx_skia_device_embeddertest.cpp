@@ -10,6 +10,7 @@
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/render/cpdf_pagerendercontext.h"
+#include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_font.h"
@@ -59,11 +60,14 @@ void EmptyTest(CFX_SkiaDeviceDriver* driver, const State&) {
 void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
   TextCharPos charPos[1];
   charPos[0].m_Origin = CFX_PointF(0, 1);
-  charPos[0].m_GlyphIndex = 1;
+  charPos[0].m_GlyphIndex = 0;
   charPos[0].m_FontCharWidth = 4;
 
   CFX_Font font;
-  float fontSize = 1;
+  font.LoadSubst("Courier", /*bTrueType=*/true, /*flags=*/0,
+                 /*weight=*/400, /*italic_angle=*/0, FX_CodePage::kShiftJIS,
+                 /*bVertical=*/false);
+  float fontSize = 20;
   CFX_Path clipPath;
   CFX_Path clipPath2;
   clipPath.AppendRect(0, 0, 3, 1);
@@ -78,7 +82,10 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
   CFX_Matrix matrix2;
   matrix2.Translate(1, 0);
   CFX_GraphStateData graphState;
-  static constexpr CFX_TextRenderOptions kTextOptions;
+  // Turn off anti-aliasing so that pixels with transitional colors can be
+  // avoided.
+  static constexpr CFX_TextRenderOptions kTextOptions(
+      CFX_TextRenderOptions::kAliasing);
   if (state.m_save == State::Save::kYes)
     driver->SaveState();
   if (state.m_clip != State::Clip::kNo)
@@ -221,8 +228,7 @@ TEST(fxge, SkiaStatePath) {
                         State::Graphic::kPath, 0xFF112233});
 }
 
-// TODO(crbug.com/pdfium/11): Fix this test and enable.
-TEST(fxge, DISABLED_SkiaStateText) {
+TEST(fxge, SkiaStateText) {
   if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
     return;
 
