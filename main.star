@@ -51,17 +51,6 @@ _GOMA_ATS_DISABLED = {
     "use_luci_auth": True,
 }
 
-_RECLIENT_CI_PROPERTIES = {
-    "instance": "rbe-chromium-trusted",
-    "metrics_project": "chromium-reclient-metrics",
-}
-
-_RECLIENT_CI_PROPERTIES_MAC = {
-    "instance": "rbe-chromium-trusted",
-    "metrics_project": "chromium-reclient-metrics",
-    "scandeps_server": True,
-}
-
 # Dicts for OS-specifc properties.
 _ANDROID_PROPERTIES = {
     "$build/goma": _GOMA_ATS_ENABLED,
@@ -148,6 +137,29 @@ def get_properties_by_name(name):
 
     return properties
 
+def get_reclient_properties(name, bucket):
+    """Returns reclient properties for a given builder name and bucket
+
+    Args:
+        name: name of the builder
+        bucket: builder's bucket
+
+    Returns:
+        Reclient properties if the builder should use remote execution; empty dict otherwise.
+    """
+    if name.find("msvc") != -1:
+        return {}
+
+    props = {
+        "instance": "rbe-chromium-trusted" if bucket == "ci" else "rbe-chromium-untrusted",
+        "metrics_project": "chromium-reclient-metrics",
+    }
+    if name.startswith("mac"):
+        props.update({"scandeps_server": True})
+    return {
+        "$build/reclient": props,
+    }
+
 def pdfium_internal_builder(name, bucket):
     """Creates a builder based on the builder name and the bucket name.
 
@@ -171,11 +183,6 @@ def pdfium_internal_builder(name, bucket):
         properties.update({"builder_group": "client.pdfium"})
         service_account = "pdfium-ci-builder@chops-service-accounts.iam.gserviceaccount.com"
         triggered_by = ["pdfium-gitiles-trigger"]
-
-        # Adding Reclient properties switches pdfium recipe to use Reclient instead of Goma.
-        properties.update({
-            "$build/reclient": _RECLIENT_CI_PROPERTIES_MAC if name.startswith("mac") else _RECLIENT_CI_PROPERTIES,
-        })
     else:
         dimensions.update({"pool": "luci.flex.try"})
         properties.update({"builder_group": "tryserver.client.pdfium"})
@@ -199,10 +206,8 @@ def pdfium_internal_builder(name, bucket):
 
     # Update properties based on the builder name.
     properties.update(get_properties_by_name(name))
-    if "$build/reclient" in properties and \
-       (not "$build/goma" in properties or
-        not "server_host" in properties["$build/goma"]):
-        properties["$build/reclient"] = {}
+
+    properties.update(get_reclient_properties(name, bucket))
 
     return luci.builder(
         name = name,
