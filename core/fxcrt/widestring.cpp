@@ -14,6 +14,7 @@
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/string_pool_template.h"
@@ -465,7 +466,7 @@ bool WideString::operator==(const wchar_t* ptr) const {
     return m_pData->m_nDataLength == 0;
 
   return wcslen(ptr) == m_pData->m_nDataLength &&
-         wmemcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
+         FXSYS_wmemcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
 }
 
 bool WideString::operator==(WideStringView str) const {
@@ -473,8 +474,8 @@ bool WideString::operator==(WideStringView str) const {
     return str.IsEmpty();
 
   return m_pData->m_nDataLength == str.GetLength() &&
-         wmemcmp(m_pData->m_String, str.unterminated_c_str(),
-                 str.GetLength()) == 0;
+         FXSYS_wmemcmp(m_pData->m_String, str.unterminated_c_str(),
+                       str.GetLength()) == 0;
 }
 
 bool WideString::operator==(const WideString& other) const {
@@ -504,8 +505,8 @@ bool WideString::operator<(WideStringView str) const {
 
   size_t len = GetLength();
   size_t other_len = str.GetLength();
-  int result =
-      wmemcmp(c_str(), str.unterminated_c_str(), std::min(len, other_len));
+  int result = FXSYS_wmemcmp(c_str(), str.unterminated_c_str(),
+                             std::min(len, other_len));
   return result < 0 || (result == 0 && len < other_len);
 }
 
@@ -769,8 +770,8 @@ size_t WideString::Insert(size_t index, wchar_t ch) {
 
   const size_t new_length = cur_length + 1;
   ReallocBeforeWrite(new_length);
-  wmemmove(m_pData->m_String + index + 1, m_pData->m_String + index,
-           new_length - index);
+  FXSYS_wmemmove(m_pData->m_String + index + 1, m_pData->m_String + index,
+                 new_length - index);
   m_pData->m_String[index] = ch;
   m_pData->m_nDataLength = new_length;
   return new_length;
@@ -783,8 +784,8 @@ absl::optional<size_t> WideString::Find(wchar_t ch, size_t start) const {
   if (!IsValidIndex(start))
     return absl::nullopt;
 
-  const wchar_t* pStr =
-      wmemchr(m_pData->m_String + start, ch, m_pData->m_nDataLength - start);
+  const wchar_t* pStr = FXSYS_wmemchr(m_pData->m_String + start, ch,
+                                      m_pData->m_nDataLength - start);
   return pStr ? absl::optional<size_t>(
                     static_cast<size_t>(pStr - m_pData->m_String))
               : absl::nullopt;
@@ -905,13 +906,13 @@ size_t WideString::Replace(WideStringView pOld, WideStringView pNew) {
     const wchar_t* pTarget =
         FX_wcsstr(pStart, static_cast<size_t>(pEnd - pStart),
                   pOld.unterminated_c_str(), nSourceLen);
-    wmemcpy(pDest, pStart, pTarget - pStart);
+    FXSYS_wmemcpy(pDest, pStart, pTarget - pStart);
     pDest += pTarget - pStart;
-    wmemcpy(pDest, pNew.unterminated_c_str(), pNew.GetLength());
+    FXSYS_wmemcpy(pDest, pNew.unterminated_c_str(), pNew.GetLength());
     pDest += pNew.GetLength();
     pStart = pTarget + nSourceLen;
   }
-  wmemcpy(pDest, pStart, pEnd - pStart);
+  FXSYS_wmemcpy(pDest, pStart, pEnd - pStart);
   m_pData.Swap(pNewData);
   return count;
 }
@@ -1010,7 +1011,7 @@ int WideString::Compare(const WideString& str) const {
   size_t this_len = m_pData->m_nDataLength;
   size_t that_len = str.m_pData->m_nDataLength;
   size_t min_len = std::min(this_len, that_len);
-  int result = wmemcmp(m_pData->m_String, str.m_pData->m_String, min_len);
+  int result = FXSYS_wmemcmp(m_pData->m_String, str.m_pData->m_String, min_len);
   if (result != 0)
     return result;
   if (this_len == that_len)

@@ -9,6 +9,7 @@
 
 #include "core/fxcodec/jpx/cjpx_decoder.h"
 #include "core/fxcodec/jpx/jpx_decode_utils.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_memory.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/libopenjpeg/opj_malloc.h"
@@ -424,9 +425,9 @@ TEST(fxcodec, YUV420ToRGB) {
         opj_image_data_alloc(v.w * v.h * sizeof(OPJ_INT32)));
     u.data = static_cast<OPJ_INT32*>(
         opj_image_data_alloc(u.w * u.h * sizeof(OPJ_INT32)));
-    memset(y.data, 1, y.w * y.h * sizeof(OPJ_INT32));
-    memset(u.data, 0, u.w * u.h * sizeof(OPJ_INT32));
-    memset(v.data, 0, v.w * v.h * sizeof(OPJ_INT32));
+    FXSYS_memset(y.data, 1, y.w * y.h * sizeof(OPJ_INT32));
+    FXSYS_memset(u.data, 0, u.w * u.h * sizeof(OPJ_INT32));
+    FXSYS_memset(v.data, 0, v.w * v.h * sizeof(OPJ_INT32));
     img.comps[0] = y;
     img.comps[1] = u;
     img.comps[2] = v;

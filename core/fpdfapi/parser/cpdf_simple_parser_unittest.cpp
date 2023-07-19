@@ -7,6 +7,7 @@
 #include <iterator>
 
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 #include "third_party/base/span.h"
@@ -57,8 +58,8 @@ TEST(SimpleParserTest, GetWord) {
     EXPECT_EQ(data.expected_size, word.GetLength()) << " for case " << i;
     if (data.expected_size != word.GetLength())
       continue;
-    EXPECT_EQ(
-        0, memcmp(data.expected, word.unterminated_c_str(), data.expected_size))
+    EXPECT_EQ(0, FXSYS_memcmp(data.expected, word.unterminated_c_str(),
+                              data.expected_size))
         << " for case " << i;
   }
 }

@@ -92,31 +92,6 @@ float FXSYS_sqrt2(float a, float b);
 
 // C++-only section
 
-// Overloaded functions for C++ templates
-inline size_t FXSYS_len(const char* ptr) {
-  return strlen(ptr);
-}
-
-inline size_t FXSYS_len(const wchar_t* ptr) {
-  return wcslen(ptr);
-}
-
-inline int FXSYS_cmp(const char* ptr1, const char* ptr2, size_t len) {
-  return memcmp(ptr1, ptr2, len);
-}
-
-inline int FXSYS_cmp(const wchar_t* ptr1, const wchar_t* ptr2, size_t len) {
-  return wmemcmp(ptr1, ptr2, len);
-}
-
-inline const char* FXSYS_chr(const char* ptr, char ch, size_t len) {
-  return reinterpret_cast<const char*>(memchr(ptr, ch, len));
-}
-
-inline const wchar_t* FXSYS_chr(const wchar_t* ptr, wchar_t ch, size_t len) {
-  return wmemchr(ptr, ch, len);
-}
-
 // Could be C, but uses C++-style casting.
 #define FXSYS_UINT16_GET_LSBFIRST(p)                               \
   (static_cast<uint16_t>(                                          \

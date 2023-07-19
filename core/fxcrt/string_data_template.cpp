@@ -10,6 +10,7 @@
 
 #include <new>
 
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/check.h"
@@ -73,7 +74,7 @@ void StringDataTemplate<CharType>::CopyContents(const CharType* pStr,
                                                 size_t nLen) {
   DCHECK_GE(nLen, 0);
   DCHECK_LE(nLen, m_nAllocLength);
-  memcpy(m_String, pStr, nLen * sizeof(CharType));
+  FXSYS_memcpy(m_String, pStr, nLen * sizeof(CharType));
   m_String[nLen] = 0;
 }
 
@@ -84,7 +85,7 @@ void StringDataTemplate<CharType>::CopyContentsAt(size_t offset,
   DCHECK_GE(offset, 0);
   DCHECK_GE(nLen, 0);
   DCHECK_LE(offset + nLen, m_nAllocLength);
-  memcpy(m_String + offset, pStr, nLen * sizeof(CharType));
+  FXSYS_memcpy(m_String + offset, pStr, nLen * sizeof(CharType));
   m_String[offset + nLen] = 0;
 }
 

@@ -16,6 +16,7 @@
 
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/string_pool_template.h"
@@ -262,7 +263,7 @@ bool ByteString::operator==(const char* ptr) const {
     return m_pData->m_nDataLength == 0;
 
   return strlen(ptr) == m_pData->m_nDataLength &&
-         memcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
+         FXSYS_memcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
 }
 
 bool ByteString::operator==(ByteStringView str) const {
@@ -270,8 +271,8 @@ bool ByteString::operator==(ByteStringView str) const {
     return str.IsEmpty();
 
   return m_pData->m_nDataLength == str.GetLength() &&
-         memcmp(m_pData->m_String, str.unterminated_c_str(), str.GetLength()) ==
-             0;
+         FXSYS_memcmp(m_pData->m_String, str.unterminated_c_str(),
+                      str.GetLength()) == 0;
 }
 
 bool ByteString::operator==(const ByteString& other) const {
@@ -297,7 +298,7 @@ bool ByteString::operator<(const char* ptr) const {
 
   size_t len = GetLength();
   size_t other_len = ptr ? strlen(ptr) : 0;
-  int result = memcmp(c_str(), ptr, std::min(len, other_len));
+  int result = FXSYS_memcmp(c_str(), ptr, std::min(len, other_len));
   return result < 0 || (result == 0 && len < other_len);
 }
 
@@ -311,7 +312,7 @@ bool ByteString::operator<(const ByteString& other) const {
 
   size_t len = GetLength();
   size_t other_len = other.GetLength();
-  int result = memcmp(c_str(), other.c_str(), std::min(len, other_len));
+  int result = FXSYS_memcmp(c_str(), other.c_str(), std::min(len, other_len));
   return result < 0 || (result == 0 && len < other_len);
 }
 
@@ -441,8 +442,8 @@ size_t ByteString::Delete(size_t index, size_t count) {
 
   ReallocBeforeWrite(old_length);
   size_t chars_to_copy = old_length - removal_length + 1;
-  memmove(m_pData->m_String + index, m_pData->m_String + removal_length,
-          chars_to_copy);
+  FXSYS_memmove(m_pData->m_String + index, m_pData->m_String + removal_length,
+                chars_to_copy);
   m_pData->m_nDataLength = old_length - count;
   return m_pData->m_nDataLength;
 }
@@ -534,8 +535,8 @@ size_t ByteString::Insert(size_t index, char ch) {
 
   const size_t new_length = cur_length + 1;
   ReallocBeforeWrite(new_length);
-  memmove(m_pData->m_String + index + 1, m_pData->m_String + index,
-          new_length - index);
+  FXSYS_memmove(m_pData->m_String + index + 1, m_pData->m_String + index,
+                new_length - index);
   m_pData->m_String[index] = ch;
   m_pData->m_nDataLength = new_length;
   return new_length;
@@ -548,8 +549,8 @@ absl::optional<size_t> ByteString::Find(char ch, size_t start) const {
   if (!IsValidIndex(start))
     return absl::nullopt;
 
-  const char* pStr = static_cast<const char*>(
-      memchr(m_pData->m_String + start, ch, m_pData->m_nDataLength - start));
+  const char* pStr = static_cast<const char*>(FXSYS_memchr(
+      m_pData->m_String + start, ch, m_pData->m_nDataLength - start));
   return pStr ? absl::optional<size_t>(
                     static_cast<size_t>(pStr - m_pData->m_String))
               : absl::nullopt;
@@ -668,13 +669,13 @@ size_t ByteString::Replace(ByteStringView pOld, ByteStringView pNew) {
   for (size_t i = 0; i < nCount; i++) {
     const char* pTarget = FX_strstr(pStart, static_cast<int>(pEnd - pStart),
                                     pOld.unterminated_c_str(), nSourceLen);
-    memcpy(pDest, pStart, pTarget - pStart);
+    FXSYS_memcpy(pDest, pStart, pTarget - pStart);
     pDest += pTarget - pStart;
-    memcpy(pDest, pNew.unterminated_c_str(), pNew.GetLength());
+    FXSYS_memcpy(pDest, pNew.unterminated_c_str(), pNew.GetLength());
     pDest += pNew.GetLength();
     pStart = pTarget + nSourceLen;
   }
-  memcpy(pDest, pStart, pEnd - pStart);
+  FXSYS_memcpy(pDest, pStart, pEnd - pStart);
   m_pData.Swap(pNewData);
   return nCount;
 }
@@ -686,7 +687,8 @@ int ByteString::Compare(ByteStringView str) const {
   size_t this_len = m_pData->m_nDataLength;
   size_t that_len = str.GetLength();
   size_t min_len = std::min(this_len, that_len);
-  int result = memcmp(m_pData->m_String, str.unterminated_c_str(), min_len);
+  int result =
+      FXSYS_memcmp(m_pData->m_String, str.unterminated_c_str(), min_len);
   if (result != 0)
     return result;
   if (this_len == that_len)
@@ -738,8 +740,8 @@ void ByteString::TrimLeft(ByteStringView targets) {
   if (pos) {
     ReallocBeforeWrite(len);
     size_t nDataLength = len - pos;
-    memmove(m_pData->m_String, m_pData->m_String + pos,
-            (nDataLength + 1) * sizeof(char));
+    FXSYS_memmove(m_pData->m_String, m_pData->m_String + pos,
+                  (nDataLength + 1) * sizeof(char));
     m_pData->m_nDataLength = nDataLength;
   }
 }
