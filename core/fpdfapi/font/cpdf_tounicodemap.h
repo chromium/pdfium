@@ -34,7 +34,7 @@ class CPDF_ToUnicodeMap {
   friend class cpdf_tounicodemap_StringToCode_Test;
   friend class cpdf_tounicodemap_StringToWideString_Test;
 
-  static absl::optional<uint32_t> StringToCode(ByteStringView str);
+  static absl::optional<uint32_t> StringToCode(ByteStringView input);
   static WideString StringToWideString(ByteStringView str);
 
   void Load(RetainPtr<const CPDF_Stream> pStream);
