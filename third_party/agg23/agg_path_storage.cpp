@@ -25,6 +25,8 @@
 
 #include "agg_path_storage.h"
 
+#include <string.h>
+
 #include "agg_math.h"
 #include "core/fxcrt/fx_memory.h"
 

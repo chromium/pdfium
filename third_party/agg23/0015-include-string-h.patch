@@ -1,0 +1,26 @@
+diff --git a/third_party/agg23/agg_array.h b/third_party/agg23/agg_array.h
+index b82d95296..ed22c40e9 100644
+--- a/third_party/agg23/agg_array.h
++++ b/third_party/agg23/agg_array.h
+@@ -16,6 +16,8 @@
+ #ifndef AGG_ARRAY_INCLUDED
+ #define AGG_ARRAY_INCLUDED
+ 
++#include <string.h>
++
+ #include "agg_basics.h"
+ #include "core/fxcrt/fx_memory.h"  // For FXSYS_* macros.
+ 
+diff --git a/third_party/agg23/agg_path_storage.cpp b/third_party/agg23/agg_path_storage.cpp
+index 2981e9c0c..d4225124d 100644
+--- a/third_party/agg23/agg_path_storage.cpp
++++ b/third_party/agg23/agg_path_storage.cpp
+@@ -25,6 +25,8 @@
+ 
+ #include "agg_path_storage.h"
+ 
++#include <string.h>
++
+ #include "agg_math.h"
+ #include "core/fxcrt/fx_memory.h"
+ 

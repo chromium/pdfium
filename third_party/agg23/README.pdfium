@@ -33,3 +33,4 @@ shadow variable.
 0013-cxx20.patch: C++20 support.
 0014-ubsan-render-line.patch: Fix some integer overflows in
 outline_aa::render_line().
+0015-include-string-h.patch: IWYU for <string.h>
