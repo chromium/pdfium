@@ -34,6 +34,7 @@
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_annotlist.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_formfill.h"
@@ -967,7 +968,8 @@ FPDFPageObj_GetDashArray(FPDF_PAGEOBJECT page_object,
   if (dash_vector.size() > dash_count)
     return false;
 
-  memcpy(dash_array, dash_vector.data(), dash_vector.size() * sizeof(float));
+  FXSYS_memcpy(dash_array, dash_vector.data(),
+               dash_vector.size() * sizeof(float));
   return true;
 }
 
