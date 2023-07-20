@@ -292,10 +292,12 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
     return false;
 
   for (int32_t i = 0, sz = dwCount; i < sz; i++) {
-    if (p > buffer.end())
+    if (p + sizeof(uint32_t) >= buffer.end()) {
       break;
+    }
 
-    uint32_t dwNameLen = *((uint32_t*)p);
+    uint32_t dwNameLen = 0;
+    memcpy(&dwNameLen, p, sizeof(uint32_t));
     p += sizeof(uint32_t);
     if (p + dwNameLen > buffer.end())
       break;
@@ -303,21 +305,25 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
     ByteString sEntry = ByteString(p, dwNameLen);
     p += sizeof(char) * dwNameLen;
 
-    CFX_Value::DataType wDataType =
-        static_cast<CFX_Value::DataType>(*((uint16_t*)p));
+    uint16_t wDataType = 0;
+    memcpy(&wDataType, p, sizeof(uint16_t));
     p += sizeof(uint16_t);
 
-    switch (wDataType) {
+    CFX_Value::DataType eDataType = static_cast<CFX_Value::DataType>(wDataType);
+
+    switch (eDataType) {
       case CFX_Value::DataType::kNumber: {
         double dData = 0;
         switch (wVersion) {
           case 1: {
-            uint32_t dwData = *((uint32_t*)p);
+            uint32_t dwData = 0;
+            memcpy(&dwData, p, sizeof(uint32_t));
             p += sizeof(uint32_t);
             dData = dwData;
           } break;
           case 2: {
-            dData = *((double*)p);
+            dData = 0;
+            memcpy(&dData, p, sizeof(double));
             p += sizeof(double);
           } break;
         }
@@ -325,13 +331,15 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
         SetGlobalVariablePersistent(sEntry, true);
       } break;
       case CFX_Value::DataType::kBoolean: {
-        uint16_t wData = *((uint16_t*)p);
+        uint16_t wData = 0;
+        memcpy(&wData, p, sizeof(uint16_t));
         p += sizeof(uint16_t);
         SetGlobalVariableBoolean(sEntry, (bool)(wData == 1));
         SetGlobalVariablePersistent(sEntry, true);
       } break;
       case CFX_Value::DataType::kString: {
-        uint32_t dwLength = *((uint32_t*)p);
+        uint32_t dwLength = 0;
+        memcpy(&dwLength, p, sizeof(uint32_t));
         p += sizeof(uint32_t);
         if (p + dwLength > buffer.end())
           break;
