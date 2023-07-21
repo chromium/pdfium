@@ -49,7 +49,8 @@ declare_args() {
   # renderer is selectable at runtime.
   pdf_use_skia = pdf_use_skia_override
 
-  # Build PDFium standalone
+  # Build PDFium standalone. Now only controls whether the test binaries
+  # are built. Most logic is conditioned by build_with_chromium.
   pdf_is_standalone = false
 
   # Build a complete static library
