@@ -444,6 +444,9 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(const RetainPtr<CFX_DIBBase>& source,
        (int64_t)abs(dest_width) * abs(dest_height))) {
     stretch_source = source->StretchTo(dest_width, dest_height,
                                        FXDIB_ResampleOptions(), nullptr);
+    if (!stretch_source) {
+      return false;
+    }
     info = GetBitmapInfo(stretch_source);
   }
   ::StretchDIBits(m_hDC, dest_left, dest_top, dest_width, dest_height, 0, 0,
