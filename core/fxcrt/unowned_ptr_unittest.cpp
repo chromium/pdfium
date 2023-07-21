@@ -266,7 +266,21 @@ TEST(UnownedPtr, NewOperatorResultIsBRP) {
   EXPECT_TRUE(partition_alloc::IsManagedByPartitionAllocBRPPool(
       reinterpret_cast<uintptr_t>(obj.get())));
 }
-#endif
-#endif
+
+// TODO(tsepez): requires full-up PA-E shim.
+TEST(UnownedPtr, DISABLED_MalocResultIsBRP) {
+  void* obj = malloc(16);
+  EXPECT_TRUE(partition_alloc::IsManagedByPartitionAllocBRPPool(
+      reinterpret_cast<uintptr_t>(obj)));
+  free(obj);
+}
+
+TEST(UnownedPtr, StackObjectIsNotBRP) {
+  int x = 3;
+  EXPECT_FALSE(partition_alloc::IsManagedByPartitionAllocBRPPool(
+      reinterpret_cast<uintptr_t>(&x)));
+}
+#endif  // BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
+#endif  // defined(PDF_USE_PARTITION_ALLOC)
 
 }  // namespace fxcrt
