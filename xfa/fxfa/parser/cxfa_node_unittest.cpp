@@ -411,3 +411,14 @@ TEST_F(CXFANodeTest, AncestorOf) {
   EXPECT_TRUE(GetNode()->IsAncestorOf(grandchild));
   EXPECT_FALSE(child1->IsAncestorOf(grandchild));
 }
+
+TEST_F(CXFANodeTest, DeltaObjectIsNode) {
+  CXFA_Node* delta =
+      CXFA_Node::Create(GetDoc(), XFA_Element::Delta, XFA_PacketType::Form);
+  ASSERT_TRUE(delta);
+  ASSERT_TRUE(delta->IsNode());
+
+  // This call should not crash, like in crbug.com/1465239.
+  delta->JSObject()->SetAttributeByEnum(XFA_Attribute::Name, L"delta",
+                                        /*bNotify=*/false);
+}

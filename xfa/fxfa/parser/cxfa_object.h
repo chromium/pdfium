@@ -59,7 +59,8 @@ class CXFA_Object : public cppgc::GarbageCollected<CXFA_Object> {
            m_objectType == XFA_ObjectType::ModelNode ||
            m_objectType == XFA_ObjectType::TextNode ||
            m_objectType == XFA_ObjectType::ContainerNode ||
-           m_objectType == XFA_ObjectType::ContentNode;
+           m_objectType == XFA_ObjectType::ContentNode ||
+           m_elementType == XFA_Element::Delta;
   }
   bool IsTreeList() const { return m_objectType == XFA_ObjectType::TreeList; }
   bool IsContentNode() const {
