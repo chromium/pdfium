@@ -113,8 +113,13 @@ RetainPtr<CFX_DIBBase> MakeCachedImage(RetainPtr<CFX_DIBBase> image,
     // TODO(crbug.com/pdfium/2050): Ignore `realize_hint`, as `RealizeSkImage()`
     // doesn't benefit from it. The current behavior masks a bug in `CPDF_DIB`
     // in which `GetBuffer()` and `GetScanline()` don't give the same answer.
-    return pdfium::MakeRetain<CachedImage>(realize_hint ? image->Realize()
-                                                        : std::move(image));
+    if (realize_hint) {
+      image = image->Realize();
+      if (!image) {
+        return nullptr;
+      }
+    }
+    return pdfium::MakeRetain<CachedImage>(std::move(image));
   }
 #endif  // defined(_SKIA_SUPPORT_)
   return realize_hint ? image->Realize() : image;
