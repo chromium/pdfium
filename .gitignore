@@ -18,6 +18,7 @@
 /third_party/icu
 /third_party/instrumented_libraries
 /third_party/jinja2
+/third_party/libcxx
 /third_party/libjpeg_turbo
 /third_party/libpng
 /third_party/llvm
