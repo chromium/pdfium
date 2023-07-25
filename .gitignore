@@ -23,7 +23,6 @@
 /third_party/libpng
 /third_party/llvm
 /third_party/llvm-build
-/third_party/lss
 /third_party/markupsafe
 /third_party/nasm
 /third_party/ninja/ninja*

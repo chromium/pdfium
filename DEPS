@@ -138,10 +138,6 @@ vars = {
   # and whatever else without interference from each other.
   'libunwind_revision': 'f1c687e0aaf0d70b9a53a150e9be5cb63af9215f',
   # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling lss
-  # and whatever else without interference from each other.
-  'lss_revision': 'ce877209e11aa69dcfffbd53ef90ea1d07136521',
-  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling markupsafe
   # and whatever else without interference from each other.
   'markupsafe_revision': '006709ba3ed87660a17bd4548c45663628f5ed85',
@@ -367,11 +363,6 @@ deps = {
   'third_party/libpng':
     Var('chromium_git') + '/chromium/src/third_party/libpng.git@' +
         Var('libpng_revision'),
-
-  'third_party/lss': {
-      'url': Var('chromium_git') + '/linux-syscall-support.git' + '@' + Var('lss_revision'),
-      'condition': 'checkout_android or checkout_linux',
-  },
 
   'third_party/markupsafe':
     Var('chromium_git') + '/chromium/src/third_party/markupsafe.git@' +
