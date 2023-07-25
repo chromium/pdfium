@@ -41,7 +41,11 @@ declare_args() {
   # standalone PDFium, and not when PDFium is embedded in our projects.
   pdf_use_cxx20 = (is_win && is_component_build) || is_fuchsia
 
-  # Build PDFium with PartitionAlloc as the memory allocator.
+  # Build PDFium against PartitionAlloc. When false, PDFium must build without
+  # requiring any PartitionAlloc headers or code to be present. When true,
+  # PDFium will use PartitionAlloc partitions to separate strings, scalars,
+  # etc. from other allocations. However, the use of PartitionAlloc for new or
+  # malloc is controlled by args in build_overrides/partition_alloc.gni.
   pdf_use_partition_alloc = pdf_use_partition_alloc_override
 
   # Build PDFium to use Skia (experimental) for all PDFium graphics.
