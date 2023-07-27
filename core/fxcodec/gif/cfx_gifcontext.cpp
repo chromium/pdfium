@@ -7,6 +7,7 @@
 #include "core/fxcodec/gif/cfx_gifcontext.h"
 
 #include <stdint.h>
+#include <string.h>
 
 #include <algorithm>
 #include <iterator>
