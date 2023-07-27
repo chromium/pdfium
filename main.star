@@ -18,6 +18,8 @@ _CONSOLE_HEADER = {
     "tree_status_host": "pdfium-status.appspot.com",
 }
 
+_SWARMING_TEST_TIMEOUT = 20 * time.minute
+
 # Dicts for OS-specific dimensions.
 _LINUX_FOCAL_DIMENSIONS = {
     "cores": "8",
@@ -131,12 +133,13 @@ def get_reclient_properties(name, bucket):
         "$build/reclient": props,
     }
 
-def pdfium_internal_builder(name, bucket):
+def pdfium_internal_builder(name, bucket, swarm_tests):
     """Creates a builder based on the builder name and the bucket name.
 
     Args:
       name: The builder name.
       bucket: The name of the bucket that the builder belongs to.
+      swarm_tests: Whether to enable swarming for test tasks.
 
     Returns:
       The desired builder.
@@ -180,6 +183,18 @@ def pdfium_internal_builder(name, bucket):
 
     properties.update(get_reclient_properties(name, bucket))
 
+    if swarm_tests:
+        properties.update({
+            "swarming": {
+                "dimensions": dimensions,
+                "execution_timeout_secs": _SWARMING_TEST_TIMEOUT / time.second,
+                "expiration_secs": luci.builder.defaults.execution_timeout.get() / time.second,
+
+                # TODO(crbug.com/1465963): Ideally would be a test-only account.
+                "service_account": service_account,
+            },
+        })
+
     return luci.builder(
         name = name,
         bucket = bucket,
@@ -197,7 +212,8 @@ def add_entries_for_builder(
         name,
         category = None,
         short_name = None,
-        skip_ci_builder = False):
+        skip_ci_builder = False,
+        swarm_tests = False):
     """Creates builder, tryjob verifier and view entries for a given builder name.
 
     Args:
@@ -207,6 +223,7 @@ def add_entries_for_builder(
       skip_ci_builder: Whether to skip creating a builder in the "ci" bucket.
           When set to True, it will also skip making the matching console view
           entry for that "ci" builder.
+      swarm_tests: Whether to enable swarming for test tasks.
     """
 
     # Add builders in buckets.
@@ -214,6 +231,7 @@ def add_entries_for_builder(
         pdfium_internal_builder(
             name,
             bucket = "ci",
+            swarm_tests = swarm_tests,
         )
 
         # Add the matching console view entry.
@@ -233,6 +251,7 @@ def add_entries_for_builder(
     pdfium_internal_builder(
         name,
         bucket = "try",
+        swarm_tests = swarm_tests,
     )
 
     # Add the matching list view entry.
@@ -450,7 +469,7 @@ add_entries_for_builder(name = "android", category = "main|android")
 add_entries_for_builder(name = "android_32", category = "main|android")
 add_entries_for_builder(name = "android_no_v8", category = "no v8", short_name = "android")
 add_entries_for_builder(name = "android_no_v8_32", category = "no v8", short_name = "android_32")
-add_entries_for_builder(name = "linux", category = "main|linux")
+add_entries_for_builder(name = "linux", category = "main|linux", swarm_tests = True)
 add_entries_for_builder(name = "linux_asan_lsan", category = "main|linux", short_name = "asan")
 add_entries_for_builder(name = "linux_msan", category = "main|linux", short_name = "msan")
 add_entries_for_builder(name = "linux_no_v8", category = "no v8", short_name = "linux")
@@ -470,7 +489,7 @@ add_entries_for_builder(name = "linux_xfa_skia_component", category = "skia|linu
 add_entries_for_builder(name = "linux_xfa_skia_msan", category = "skia|linux", short_name = "msan")
 add_entries_for_builder(name = "linux_xfa_skia_ubsan", category = "skia|linux", short_name = "ubsan")
 add_entries_for_builder(name = "linux_xfa_ubsan", category = "xfa|linux", short_name = "ubsan")
-add_entries_for_builder(name = "mac", category = "main|mac")
+add_entries_for_builder(name = "mac", category = "main|mac", swarm_tests = True)
 add_entries_for_builder(name = "mac_asan", skip_ci_builder = True)
 add_entries_for_builder(name = "mac_no_v8", category = "no v8", short_name = "mac")
 add_entries_for_builder(name = "mac_skia", category = "skia|mac")
@@ -481,7 +500,7 @@ add_entries_for_builder(name = "mac_xfa_component", category = "xfa|mac", short_
 add_entries_for_builder(name = "mac_xfa_rel", category = "xfa|mac", short_name = "rel")
 add_entries_for_builder(name = "mac_xfa_skia", category = "skia|mac", short_name = "xfa")
 add_entries_for_builder(name = "mac_xfa_skia_component", category = "skia|mac", short_name = "comp")
-add_entries_for_builder(name = "win", category = "main|win")
+add_entries_for_builder(name = "win", category = "main|win", swarm_tests = True)
 add_entries_for_builder(name = "win_asan", category = "main|win", short_name = "asan")
 add_entries_for_builder(name = "win_no_v8", category = "no v8", short_name = "win")
 add_entries_for_builder(name = "win_skia", category = "skia|win")
