@@ -471,18 +471,18 @@ test("pdfium_unittests") {
     "//testing/gtest",
   ]
   configs += [ ":pdfium_core_config" ]
-
   if (is_android) {
     use_raw_android_executable = true
   }
-
+  if (pdf_use_partition_alloc) {
+    deps += [ "//base/allocator/partition_allocator:partition_alloc" ]
+  }
   if (pdf_enable_v8) {
     configs += [ "//v8:external_startup_data" ]
     deps += [
       "fxjs:unittests",
       "//v8",
     ]
-
     if (pdf_enable_xfa) {
       deps += [
         "core/fxcrt/css:unittests",

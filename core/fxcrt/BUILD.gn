@@ -246,7 +246,9 @@ pdfium_unittest_source_set("unittests") {
   ]
   deps = [ ":unit_test_support" ]
   pdfium_root_dir = "../../"
-
+  if (pdf_use_partition_alloc) {
+    deps += [ "//base/allocator/partition_allocator:partition_alloc" ]
+  }
   if (pdf_enable_xfa) {
     sources += [ "cfx_memorystream_unittest.cpp" ]
     deps += [ "../fpdfapi/parser" ]

@@ -7,6 +7,11 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/pdf_test_environment.h"
 
+#if defined(PDF_USE_PARTITION_ALLOC)
+#include "base/allocator/partition_allocator/partition_alloc_buildflags.h"
+#include "base/allocator/partition_allocator/shim/allocator_shim.h"
+#endif
+
 #ifdef PDF_ENABLE_V8
 #include "testing/v8_test_environment.h"
 #ifdef PDF_ENABLE_XFA
@@ -17,6 +22,17 @@
 // Can't use gtest-provided main since we need to initialize partition
 // alloc before invoking any test, and add test environments.
 int main(int argc, char** argv) {
+#if defined(PDF_USE_PARTITION_ALLOC)
+#if BUILDFLAG(USE_PARTITION_ALLOC_AS_MALLOC)
+  allocator_shim::ConfigurePartitions(
+      allocator_shim::EnableBrp(true),
+      allocator_shim::EnableMemoryTagging(false),
+      allocator_shim::SplitMainPartition(true),
+      allocator_shim::UseDedicatedAlignedPartition(true), 0,
+      allocator_shim::AlternateBucketDistribution::kDefault);
+#endif  // BUILDFLAG(USE_PARTITION_ALLOC_AS_MALLOC)
+#endif  // defined(PDF_USE_PARTITION_ALLOC)
+
   FX_InitializeMemoryAllocators();
 
   // PDF test environment will be deleted by gtest.
