@@ -37,4 +37,7 @@ action("test_runner_py") {
     "../../:pdfium_diff",
     "../../samples:pdfium_test",
   ]
+
+  # Force `data_deps` to be built before this target, rather than in parallel.
+  deps = data_deps
 }
