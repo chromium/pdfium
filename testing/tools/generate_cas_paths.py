@@ -8,7 +8,6 @@ import argparse
 from collections import deque
 import filecmp
 import json
-import logging
 from pathlib import Path
 import os
 
@@ -32,10 +31,6 @@ def resolve_paths(root, initial_paths):
   unvisited_paths = deque(map(Path, initial_paths))
   while unvisited_paths:
     path = unvisited_paths.popleft()
-
-    if not path.exists():
-      logging.warning('"%(path)s" does not exist', {'path': path})
-      continue
 
     if path.is_dir():
       # Expand specific children if any are excluded.
