@@ -218,7 +218,7 @@ if (is_linux || is_chromeos) {
 }
 
 config("fx_agg_warnings") {
-  visibility = [ ":*" ]
+  visibility = [ ":fx_agg" ]
   if (is_clang) {
     # calc_butt_cap() in agg_vcgen_stroke.cpp is unused.
     cflags = [ "-Wno-unused-function" ]
@@ -234,21 +234,33 @@ source_set("fx_agg") {
     ":fx_agg_warnings",
   ]
   sources = [
+    "agg23/agg_array.h",
     "agg23/agg_basics.h",
     "agg23/agg_clip_liang_barsky.h",
+    "agg23/agg_color_gray.h",
+    "agg23/agg_conv_adaptor_vcgen.h",
     "agg23/agg_conv_dash.h",
     "agg23/agg_conv_stroke.h",
     "agg23/agg_curves.cpp",
     "agg23/agg_curves.h",
+    "agg23/agg_math.h",
+    "agg23/agg_math_stroke.h",
     "agg23/agg_path_storage.cpp",
     "agg23/agg_path_storage.h",
+    "agg23/agg_pixfmt_gray.h",
     "agg23/agg_rasterizer_scanline_aa.cpp",
     "agg23/agg_rasterizer_scanline_aa.h",
+    "agg23/agg_render_scanlines.h",
+    "agg23/agg_renderer_base.h",
     "agg23/agg_renderer_scanline.h",
     "agg23/agg_rendering_buffer.h",
     "agg23/agg_scanline_u.h",
+    "agg23/agg_shorten_path.h",
     "agg23/agg_vcgen_dash.cpp",
+    "agg23/agg_vcgen_dash.h",
     "agg23/agg_vcgen_stroke.cpp",
+    "agg23/agg_vcgen_stroke.h",
+    "agg23/agg_vertex_sequence.h",
   ]
   deps = [ "../core/fxcrt" ]
 }
