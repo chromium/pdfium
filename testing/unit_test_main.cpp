@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
       allocator_shim::EnableMemoryTagging(false),
       allocator_shim::SplitMainPartition(true),
       allocator_shim::UseDedicatedAlignedPartition(true), 0,
-      allocator_shim::AlternateBucketDistribution::kDefault);
+      allocator_shim::BucketDistribution::kNeutral);
 #endif  // BUILDFLAG(USE_PARTITION_ALLOC_AS_MALLOC)
 #endif  // defined(PDF_USE_PARTITION_ALLOC)
 
