@@ -93,8 +93,7 @@ class TestRunner:
       if test_result.reason:
         print(f'Failure reason: {test_result.reason}')
       if test_result.log:
-        decoded_log = bytes.decode(test_result.log, errors='backslashreplace')
-        print(f'Test output:\n{decoded_log}')
+        print(f'Test output:\n{test_result.log}')
       for artifact in test_result.image_artifacts:
         if artifact.skia_gold_status == result_types.FAIL:
           print(f'Failed Skia Gold: {artifact.image_path}')
@@ -615,6 +614,7 @@ class _TestCaseRunner:
         test_result.log = run_result.stdout
       else:
         test_result.log = run_result.stderr
+      test_result.log = test_result.log.decode(errors='backslashreplace')
     return test_result
 
   def GenerateAndTest(self, test_function):
@@ -774,7 +774,7 @@ class _TestCaseRunner:
 
         for artifact in test_result.image_artifacts:
           artifact.image_diff = diff_map.get(artifact.image_path)
-        test_result.log = ''.join(diff_log).encode()
+        test_result.log = ''.join(diff_log)
 
     elif _per_process_state.enforce_expected_images:
       if not self.IsImageDiffSuppressed():
