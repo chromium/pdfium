@@ -62,6 +62,10 @@
 #include <valgrind/callgrind.h>
 #endif  // ENABLE_CALLGRIND
 
+#if defined(PDF_USE_PARTITION_ALLOC)
+#include "testing/allocator_shim_config.h"
+#endif
+
 #ifdef PDF_ENABLE_SKIA
 #include "third_party/skia/include/core/SkCanvas.h"           // nogncheck
 #include "third_party/skia/include/core/SkColor.h"            // nogncheck
@@ -1832,6 +1836,10 @@ void SetUpErrorHandling() {
 }  // namespace
 
 int main(int argc, const char* argv[]) {
+#if defined(PDF_USE_PARTITION_ALLOC)
+  pdfium::ConfigurePartitionAllocShimPartitionForTest();
+#endif
+
   SetUpErrorHandling();
   setlocale(LC_CTYPE, "en_US.UTF-8");  // For printf() of high-characters.
 

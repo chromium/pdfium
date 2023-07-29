@@ -21,7 +21,9 @@ config("pdfium_samples_config") {
   if (is_asan) {
     defines += [ "PDF_ENABLE_ASAN" ]
   }
-
+  if (pdf_use_partition_alloc) {
+    defines += [ "PDF_USE_PARTITION_ALLOC" ]
+  }
   if (enable_callgrind) {
     defines += [ "ENABLE_CALLGRIND" ]
   }

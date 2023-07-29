@@ -474,9 +474,6 @@ test("pdfium_unittests") {
   if (is_android) {
     use_raw_android_executable = true
   }
-  if (pdf_use_partition_alloc) {
-    deps += [ "//base/allocator/partition_allocator:partition_alloc" ]
-  }
   if (pdf_enable_v8) {
     configs += [ "//v8:external_startup_data" ]
     deps += [

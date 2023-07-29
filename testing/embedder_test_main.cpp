@@ -12,10 +12,18 @@
 #include "testing/v8_test_environment.h"
 #endif  // PDF_ENABLE_V8
 
+#if defined(PDF_USE_PARTITION_ALLOC)
+#include "testing/allocator_shim_config.h"
+#endif
+
 // Can't use gtest-provided main since we need to create our own
 // testing environment which needs the executable path in order to
 // find the external V8 binary data files.
 int main(int argc, char** argv) {
+#if defined(PDF_USE_PARTITION_ALLOC)
+  pdfium::ConfigurePartitionAllocShimPartitionForTest();
+#endif
+
   FX_InitializeMemoryAllocators();
 
 #ifdef PDF_ENABLE_V8
