@@ -255,7 +255,6 @@ void DecodeInfoCallback(png_struct* png_ptr, png_info* info_ptr) {
         break;
       default:
         NOTREACHED_NORETURN();
-        break;
     }
   } else if (channels == 4) {
     switch (state->output_format) {
@@ -273,7 +272,6 @@ void DecodeInfoCallback(png_struct* png_ptr, png_info* info_ptr) {
         break;
       default:
         NOTREACHED_NORETURN();
-        break;
     }
   } else {
     NOTREACHED_NORETURN();

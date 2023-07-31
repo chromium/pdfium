@@ -75,7 +75,6 @@ bool CPWL_CBListBox::OnMovementKeyDown(FWL_VKEYCODE nKeyCode,
       break;
     default:
       NOTREACHED_NORETURN();
-      break;
   }
   return OnNotifySelectionChanged(true, nFlag);
 }

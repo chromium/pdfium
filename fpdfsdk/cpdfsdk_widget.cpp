@@ -177,7 +177,6 @@ static XFA_EVENTTYPE GetXFAEventType(CPDF_AAction::AActionType eAAT,
     case CPDF_AAction::kDocumentOpen:
     case CPDF_AAction::kNumberOfActions:
       NOTREACHED_NORETURN();
-      break;
   }
 
   return eEventType;

@@ -678,7 +678,6 @@ int EmbedderTest::BytesPerPixelForFormat(int format) {
       return 4;
     default:
       NOTREACHED_NORETURN();
-      return 0;
   }
 }
 

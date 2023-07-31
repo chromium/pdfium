@@ -1040,7 +1040,6 @@ void CPDFSDK_FormFillEnvironment::DoActionNoJs(const CPDF_Action& action,
       break;
     case CPDF_Action::Type::kJavaScript:
       NOTREACHED_NORETURN();
-      break;
     case CPDF_Action::Type::kSetOCGState:
     case CPDF_Action::Type::kThread:
     case CPDF_Action::Type::kSound:
@@ -1123,7 +1122,6 @@ void CPDFSDK_FormFillEnvironment::RunFieldJavaScript(
         break;
       default:
         NOTREACHED_NORETURN();
-        break;
     }
   });
 }
@@ -1170,7 +1168,6 @@ void CPDFSDK_FormFillEnvironment::RunDocumentPageJavaScript(
         break;
       default:
         NOTREACHED_NORETURN();
-        break;
     }
   });
 }
