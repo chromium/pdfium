@@ -695,7 +695,9 @@ class _TestCaseRunner:
 
     if txt_data:
       return self.test_case.NewResult(
-          result_types.FAIL, log=txt_data, reason=f'{txt_path} should be empty')
+          result_types.FAIL,
+          log=txt_data.decode(errors='backslashreplace'),
+          reason=f'{txt_path} should be empty')
 
     return self.test_case.NewResult(result_types.PASS)
 
