@@ -108,13 +108,15 @@ source_set("page") {
     "ipdf_page.h",
   ]
   configs += [ "../../../:pdfium_strict_config" ]
-  public_deps = [ "../../fxge" ]
+  public_deps = [
+    "../../fxge",
+    "../parser",
+  ]
   deps = [
     "../../../constants",
     "../../fxcodec",
     "../../fxcrt",
     "../font",
-    "../parser",
   ]
   allow_circular_includes_from = []
   if (pdf_use_skia) {

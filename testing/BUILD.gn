@@ -179,7 +179,6 @@ source_set("embedder_test_support") {
   deps = [
     "../:pdfium_public_headers",
     "../core/fdrm",
-    "../core/fxcrt",
     "../core/fxge",
     "../third_party:pdfium_base",
     "//testing/gmock",
@@ -188,6 +187,7 @@ source_set("embedder_test_support") {
   public_deps = [
     ":test_environments",
     ":test_support",
+    "../core/fxcrt",
   ]
   configs += [
     "../:pdfium_strict_config",
