@@ -26,7 +26,6 @@
 #include "core/fxge/systemfontinfo_iface.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 

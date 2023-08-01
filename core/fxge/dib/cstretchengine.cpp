@@ -21,7 +21,6 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/dib/scanlinecomposer_iface.h"
 #include "third_party/base/check.h"
-#include "third_party/base/cxx17_backports.h"
 
 static_assert(
     std::is_trivially_destructible<CStretchEngine::PixelWeight>::value,
@@ -500,9 +499,9 @@ void CStretchEngine::StretchVert() {
             int r = static_cast<uint32_t>(dest_r) * 255 / dest_a;
             int g = static_cast<uint32_t>(dest_g) * 255 / dest_a;
             int b = static_cast<uint32_t>(dest_b) * 255 / dest_a;
-            dest_scan[0] = pdfium::clamp(b, 0, 255);
-            dest_scan[1] = pdfium::clamp(g, 0, 255);
-            dest_scan[2] = pdfium::clamp(r, 0, 255);
+            dest_scan[0] = std::clamp(b, 0, 255);
+            dest_scan[1] = std::clamp(g, 0, 255);
+            dest_scan[2] = std::clamp(r, 0, 255);
           }
           dest_scan[3] = PixelFromFixed(dest_a);
           dest_scan += DestBpp;

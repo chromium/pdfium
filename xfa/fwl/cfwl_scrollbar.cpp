@@ -10,7 +10,6 @@
 #include <memory>
 #include <utility>
 
-#include "third_party/base/cxx17_backports.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_messagemousewheel.h"
@@ -200,7 +199,7 @@ CFX_RectF CFWL_ScrollBar::CalcThumbButtonRect(const CFX_RectF& rtThumb) {
   fThumbSize = std::max(fThumbSize, kMinThumbSize);
 
   float fDiff = std::max(fLength - fThumbSize, 0.0f);
-  float fTrackPos = pdfium::clamp(m_fTrackPos, m_fRangeMin, m_fRangeMax);
+  float fTrackPos = std::clamp(m_fTrackPos, m_fRangeMin, m_fRangeMax);
   if (!fRange)
     return rect;
 
@@ -268,7 +267,7 @@ float CFWL_ScrollBar::GetTrackPointPos(const CFX_PointF& point) {
   }
 
   fPos += m_fLastTrackPos;
-  return pdfium::clamp(fPos, m_fRangeMin, m_fRangeMax);
+  return std::clamp(fPos, m_fRangeMin, m_fRangeMax);
 }
 
 bool CFWL_ScrollBar::SendEvent() {

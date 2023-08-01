@@ -23,7 +23,6 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/span.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 #if BUILDFLAG(IS_WIN)
@@ -127,7 +126,7 @@ void FaxG4FindB1B2(pdfium::span<const uint8_t> ref_buf,
 
 void FaxFillBits(uint8_t* dest_buf, int columns, int startpos, int endpos) {
   startpos = std::max(startpos, 0);
-  endpos = pdfium::clamp(endpos, 0, columns);
+  endpos = std::clamp(endpos, 0, columns);
   if (startpos >= endpos)
     return;
 

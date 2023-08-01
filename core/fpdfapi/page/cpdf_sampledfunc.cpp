@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_sampledfunc.h"
 
+#include <algorithm>
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -15,7 +16,6 @@
 #include "core/fxcrt/cfx_bitstream.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/small_buffer.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -116,8 +116,8 @@ bool CPDF_SampledFunc::v_Call(pdfium::span<const float> inputs,
     encoded_input[i] =
         Interpolate(inputs[i], m_Domains[i * 2], m_Domains[i * 2 + 1],
                     m_EncodeInfo[i].encode_min, m_EncodeInfo[i].encode_max);
-    index[i] = pdfium::clamp(static_cast<uint32_t>(encoded_input[i]), 0U,
-                             m_EncodeInfo[i].sizes - 1);
+    index[i] = std::clamp(static_cast<uint32_t>(encoded_input[i]), 0U,
+                          m_EncodeInfo[i].sizes - 1);
     pos += index[i] * blocksize[i];
   }
   FX_SAFE_INT32 bits_to_output = m_nOutputs;

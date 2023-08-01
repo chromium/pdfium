@@ -18,7 +18,6 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "third_party/base/cxx17_backports.h"
 
 CPDF_AllStates::CPDF_AllStates() = default;
 
@@ -117,11 +116,11 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
       }
       case FXBSTR_ID('C', 'A', 0, 0):
         m_GeneralState.SetStrokeAlpha(
-            pdfium::clamp(pObject->GetNumber(), 0.0f, 1.0f));
+            std::clamp(pObject->GetNumber(), 0.0f, 1.0f));
         break;
       case FXBSTR_ID('c', 'a', 0, 0):
         m_GeneralState.SetFillAlpha(
-            pdfium::clamp(pObject->GetNumber(), 0.0f, 1.0f));
+            std::clamp(pObject->GetNumber(), 0.0f, 1.0f));
         break;
       case FXBSTR_ID('O', 'P', 0, 0):
         m_GeneralState.SetStrokeOP(!!pObject->GetInteger());

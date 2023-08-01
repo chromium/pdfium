@@ -11,7 +11,6 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/scoped_set_tz.h"
 #include "testing/xfa_js_embedder_test.h"
-#include "third_party/base/cxx17_backports.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 
 class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {

@@ -26,7 +26,6 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/span.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
 
 // Ignore fallthrough warnings in agg23 headers.
@@ -53,8 +52,8 @@ namespace {
 const float kMaxPos = 32000.0f;
 
 CFX_PointF HardClip(const CFX_PointF& pos) {
-  return CFX_PointF(pdfium::clamp(pos.x, -kMaxPos, kMaxPos),
-                    pdfium::clamp(pos.y, -kMaxPos, kMaxPos));
+  return CFX_PointF(std::clamp(pos.x, -kMaxPos, kMaxPos),
+                    std::clamp(pos.y, -kMaxPos, kMaxPos));
 }
 
 void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& pBitmap,

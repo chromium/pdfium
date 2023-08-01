@@ -11,7 +11,6 @@
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxge/fx_font.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 

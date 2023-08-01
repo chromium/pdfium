@@ -39,7 +39,6 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -1058,9 +1057,9 @@ void CPDF_DIB::TranslateScanline24bpp(
     } else if (m_Family != CPDF_ColorSpace::Family::kPattern) {
       m_pColorSpace->GetRGB(color_values, &R, &G, &B);
     }
-    R = pdfium::clamp(R, 0.0f, 1.0f);
-    G = pdfium::clamp(G, 0.0f, 1.0f);
-    B = pdfium::clamp(B, 0.0f, 1.0f);
+    R = std::clamp(R, 0.0f, 1.0f);
+    G = std::clamp(G, 0.0f, 1.0f);
+    B = std::clamp(B, 0.0f, 1.0f);
     dest_scan[dest_byte_pos] = static_cast<uint8_t>(B * 255);
     dest_scan[dest_byte_pos + 1] = static_cast<uint8_t>(G * 255);
     dest_scan[dest_byte_pos + 2] = static_cast<uint8_t>(R * 255);

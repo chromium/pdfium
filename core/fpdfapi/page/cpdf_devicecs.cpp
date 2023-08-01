@@ -16,13 +16,12 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxge/dib/cfx_cmyk_to_srgb.h"
 #include "third_party/base/check.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
 
 namespace {
 
 float NormalizeChannel(float fVal) {
-  return pdfium::clamp(fVal, 0.0f, 1.0f);
+  return std::clamp(fVal, 0.0f, 1.0f);
 }
 
 }  // namespace

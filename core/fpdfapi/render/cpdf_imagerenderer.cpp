@@ -40,7 +40,6 @@
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
 #include "third_party/base/check.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -266,11 +265,11 @@ void CPDF_ImageRenderer::CalculateDrawImage(
         continue;
       }
       int orig = (*dest_scan - matte_b) * 255 / alpha + matte_b;
-      *dest_scan++ = pdfium::clamp(orig, 0, 255);
+      *dest_scan++ = std::clamp(orig, 0, 255);
       orig = (*dest_scan - matte_g) * 255 / alpha + matte_g;
-      *dest_scan++ = pdfium::clamp(orig, 0, 255);
+      *dest_scan++ = std::clamp(orig, 0, 255);
       orig = (*dest_scan - matte_r) * 255 / alpha + matte_r;
-      *dest_scan++ = pdfium::clamp(orig, 0, 255);
+      *dest_scan++ = std::clamp(orig, 0, 255);
       dest_scan++;
     }
   }

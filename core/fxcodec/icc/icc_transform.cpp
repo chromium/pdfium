@@ -12,7 +12,6 @@
 #include <memory>
 
 #include "core/fxcrt/data_vector.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/ptr_util.h"
@@ -128,8 +127,7 @@ void IccTransform::Translate(pdfium::span<const float> pSrcValues,
   } else {
     DataVector<uint8_t> inputs(std::max<size_t>(pSrcValues.size(), 16));
     for (size_t i = 0; i < pSrcValues.size(); ++i) {
-      inputs[i] =
-          pdfium::clamp(static_cast<int>(pSrcValues[i] * 255.0f), 0, 255);
+      inputs[i] = std::clamp(static_cast<int>(pSrcValues[i] * 255.0f), 0, 255);
     }
     cmsDoTransform(m_hTransform, inputs.data(), output, 1);
   }

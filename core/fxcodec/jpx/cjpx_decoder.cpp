@@ -18,7 +18,6 @@
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/ptr_util.h"
 
 #if !defined(USE_SYSTEM_LIBOPENJPEG2)
@@ -88,9 +87,9 @@ void sycc_to_rgb(int offset,
                  int* out_b) {
   cb -= offset;
   cr -= offset;
-  *out_r = pdfium::clamp(y + static_cast<int>(1.402 * cr), 0, upb);
-  *out_g = pdfium::clamp(y - static_cast<int>(0.344 * cb + 0.714 * cr), 0, upb);
-  *out_b = pdfium::clamp(y + static_cast<int>(1.772 * cb), 0, upb);
+  *out_r = std::clamp(y + static_cast<int>(1.402 * cr), 0, upb);
+  *out_g = std::clamp(y - static_cast<int>(0.344 * cb + 0.714 * cr), 0, upb);
+  *out_b = std::clamp(y + static_cast<int>(1.772 * cb), 0, upb);
 }
 
 void sycc444_to_rgb(opj_image_t* img) {
@@ -594,7 +593,7 @@ bool CJPX_Decoder::Decode(pdfium::span<uint8_t> dest_buf,
           uint8_t* pPixel = pScanline + col * channel_count;
           int src = comps.data[row * width + col] + src_offset;
           int pixel = (src >> adjust) + ((src >> (adjust - 1)) % 2);
-          pixel = pdfium::clamp(pixel, 0, 255);
+          pixel = std::clamp(pixel, 0, 255);
           *pPixel = static_cast<uint8_t>(pixel);
         }
       }

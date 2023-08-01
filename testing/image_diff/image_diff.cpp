@@ -21,7 +21,6 @@
 #include "core/fxcrt/fx_memory.h"
 #include "testing/image_diff/image_diff_png.h"
 #include "testing/utils/path_service.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 #if BUILDFLAG(IS_WIN)
@@ -351,9 +350,9 @@ bool SubtractImages(const Image& image1, const Image& image2, Image* out) {
       int32_t delta_b = b1 - b2;
       same &= (delta_r == 0 && delta_g == 0 && delta_b == 0);
 
-      delta_r = pdfium::clamp(128 + delta_r * 8, 0, 255);
-      delta_g = pdfium::clamp(128 + delta_g * 8, 0, 255);
-      delta_b = pdfium::clamp(128 + delta_b * 8, 0, 255);
+      delta_r = std::clamp(128 + delta_r * 8, 0, 255);
+      delta_g = std::clamp(128 + delta_g * 8, 0, 255);
+      delta_b = std::clamp(128 + delta_b * 8, 0, 255);
 
       uint32_t new_pixel = RGBA_ALPHA;
       new_pixel |= delta_r;

@@ -6,6 +6,8 @@
 
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 
+#include <algorithm>
+
 #include "constants/access_permissions.h"
 #include "constants/ascii.h"
 #include "constants/form_flags.h"
@@ -24,7 +26,6 @@
 #include "fpdfsdk/formfiller/cffl_textfield.h"
 #include "public/fpdf_fwlevent.h"
 #include "third_party/base/check.h"
-#include "third_party/base/cxx17_backports.h"
 
 CFFL_InteractiveFormFiller::CFFL_InteractiveFormFiller(
     CallbackIface* pCallbackIface)
@@ -652,7 +653,7 @@ void CFFL_InteractiveFormFiller::QueryWherePopup(
 
   constexpr float kMaxListBoxHeight = 140;
   const float fMaxListBoxHeight =
-      pdfium::clamp(kMaxListBoxHeight, fPopupMin, fPopupMax);
+      std::clamp(kMaxListBoxHeight, fPopupMin, fPopupMax);
 
   if (fBottom > fMaxListBoxHeight) {
     *fPopupRet = fMaxListBoxHeight;

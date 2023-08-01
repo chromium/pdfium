@@ -18,7 +18,6 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -156,8 +155,7 @@ void CFX_SeekableStreamProxy::Seek(From eSeek, FX_FILESIZE iOffset) {
           new_pos.ValueOrDefault(std::numeric_limits<FX_FILESIZE>::max());
     } break;
   }
-  m_iPosition =
-      pdfium::clamp(m_iPosition, static_cast<FX_FILESIZE>(0), GetSize());
+  m_iPosition = std::clamp(m_iPosition, static_cast<FX_FILESIZE>(0), GetSize());
 }
 
 void CFX_SeekableStreamProxy::SetCodePage(FX_CodePage wCodePage) {

@@ -43,7 +43,6 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/notreached.h"
 
 namespace {
@@ -373,7 +372,7 @@ class Matrix_3by3 {
 };
 
 float RGB_Conversion(float colorComponent) {
-  colorComponent = pdfium::clamp(colorComponent, 0.0f, 1.0f);
+  colorComponent = std::clamp(colorComponent, 0.0f, 1.0f);
   int scale = std::max(static_cast<int>(colorComponent * 1023), 0);
   if (scale < 192)
     return kSRGBSamples1[scale] / 255.0f;
@@ -794,7 +793,7 @@ void CPDF_LabCS::GetDefaultValue(int iComponent,
     if (range_min <= range_max) {
       *min = range_min;
       *max = range_max;
-      *value = pdfium::clamp(0.0f, *min, *max);
+      *value = std::clamp(0.0f, *min, *max);
       return;
     }
   }

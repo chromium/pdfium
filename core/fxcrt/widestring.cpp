@@ -20,7 +20,6 @@
 #include "core/fxcrt/string_pool_template.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_math.h"
 
 template class fxcrt::StringDataTemplate<wchar_t>;
@@ -608,8 +607,9 @@ size_t WideString::Delete(size_t index, size_t count) {
     return 0;
 
   size_t old_length = m_pData->m_nDataLength;
-  if (count == 0 || index != pdfium::clamp<size_t>(index, 0, old_length))
+  if (count == 0 || index != std::clamp<size_t>(index, 0, old_length)) {
     return old_length;
+  }
 
   size_t removal_length = index + count;
   if (removal_length > old_length)

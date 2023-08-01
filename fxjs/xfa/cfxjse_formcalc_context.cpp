@@ -32,7 +32,6 @@
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/v8-container.h"
 #include "v8/include/v8-function-callback.h"
@@ -1578,7 +1577,7 @@ void CFXJSE_FormCalcContext::Round(
       return;
     }
     double dPrecision = maybe_precision.value();
-    uPrecision = static_cast<uint8_t>(pdfium::clamp(dPrecision, 0.0, 12.0));
+    uPrecision = static_cast<uint8_t>(std::clamp(dPrecision, 0.0, 12.0));
   }
 
   CFGAS_Decimal decimalValue(static_cast<float>(dValue), uPrecision);
@@ -4014,10 +4013,10 @@ void CFXJSE_FormCalcContext::Stuff(
   ByteString bsSource = ValueToUTF8String(info.GetIsolate(), sourceValue);
   int32_t iLength = pdfium::base::checked_cast<int32_t>(bsSource.GetLength());
   if (iLength) {
-    iStart = pdfium::clamp(
+    iStart = std::clamp(
         static_cast<int32_t>(ValueToFloat(info.GetIsolate(), startValue)), 1,
         iLength);
-    iDelete = pdfium::clamp(
+    iDelete = std::clamp(
         static_cast<int32_t>(ValueToFloat(info.GetIsolate(), deleteValue)), 0,
         iLength - iStart + 1);
   }

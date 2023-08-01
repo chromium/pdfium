@@ -36,7 +36,6 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/span.h"
-#include "third_party/base/cxx17_backports.h"
 
 namespace {
 
@@ -391,8 +390,8 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
       end_index = 0;
     }
 
-    int start_x = pdfium::clamp(min_x, 0, pBitmap->GetWidth());
-    int end_x = pdfium::clamp(max_x, 0, pBitmap->GetWidth());
+    int start_x = std::clamp(min_x, 0, pBitmap->GetWidth());
+    int end_x = std::clamp(max_x, 0, pBitmap->GetWidth());
     float r_unit = (r[end_index] - r[start_index]) / (max_x - min_x);
     float g_unit = (g[end_index] - g[start_index]) / (max_x - min_x);
     float b_unit = (b[end_index] - b[start_index]) / (max_x - min_x);
