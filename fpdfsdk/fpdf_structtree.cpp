@@ -288,8 +288,9 @@ FPDF_StructElement_Attr_GetName(FPDF_STRUCTELEMENT_ATTR struct_attribute,
                                 void* buffer,
                                 unsigned long buflen,
                                 unsigned long* out_buflen) {
-  if (!out_buflen || !buffer)
+  if (!out_buflen) {
     return false;
+  }
 
   const CPDF_Dictionary* dict =
       CPDFDictionaryFromFPDFStructElementAttr(struct_attribute);

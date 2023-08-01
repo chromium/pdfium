@@ -595,6 +595,11 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAttributes) {
       ASSERT_EQ(2, FPDF_StructElement_Attr_GetCount(attr));
       ASSERT_FALSE(
           FPDF_StructElement_Attr_GetName(attr, 1, nullptr, 0U, nullptr));
+      unsigned long buffer_len_needed = ULONG_MAX;
+      // Pass buffer = nullptr to obtain the size of the buffer needed,
+      ASSERT_TRUE(FPDF_StructElement_Attr_GetName(attr, 1, nullptr, 0,
+                                                  &buffer_len_needed));
+      EXPECT_EQ(2U, buffer_len_needed);
       char buffer[8] = {};
       unsigned long out_len = ULONG_MAX;
       // Deliberately pass in a small buffer size to make sure `buffer` remains
