@@ -391,7 +391,6 @@ component("pdfium") {
     "fpdfsdk/formfiller",
     "fxjs",
     "third_party:pdfium_base",
-    "third_party:skia_shared",
   ]
 
   public_deps = [

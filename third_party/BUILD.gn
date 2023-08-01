@@ -9,10 +9,7 @@ import("//build_overrides/build.gni")
 import("../pdfium.gni")
 
 group("third_party") {
-  deps = [
-    ":pdfium_base",
-    ":skia_shared",
-  ]
+  deps = [ ":pdfium_base" ]
   if (pdf_bundle_freetype) {
     deps += [ ":fx_freetype" ]
   }
@@ -609,15 +606,4 @@ source_set("pdfium_base_test_support") {
     ]
     deps += [ "//testing/gtest" ]
   }
-}
-
-source_set("skia_shared") {
-  sources = [
-    "skia_shared/SkFloatToDecimal.cpp",
-    "skia_shared/SkFloatToDecimal.h",
-  ]
-  configs += [
-    "../:pdfium_strict_config",
-    "../:pdfium_noshorten_config",
-  ]
 }

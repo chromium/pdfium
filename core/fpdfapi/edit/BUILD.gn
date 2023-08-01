@@ -24,7 +24,6 @@ source_set("edit") {
   ]
   deps = [
     "../../../constants",
-    "../../../third_party:skia_shared",
     "../../fxcrt",
     "../font",
     "../page",
