@@ -558,6 +558,7 @@ source_set("pdfium_base") {
     "base/component_export.h",
     "base/containers/adapters.h",
     "base/containers/contains.h",
+    "base/containers/span.h",
     "base/cxx17_backports.h",
     "base/debug/alias.cc",
     "base/debug/alias.h",
@@ -577,7 +578,6 @@ source_set("pdfium_base") {
     "base/numerics/safe_math_arm_impl.h",
     "base/numerics/safe_math_clang_gcc_impl.h",
     "base/numerics/safe_math_shared_impl.h",
-    "base/span.h",
     "base/sys_byteorder.h",
     "base/template_util.h",
   ]

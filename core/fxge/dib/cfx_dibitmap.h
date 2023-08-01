@@ -13,7 +13,7 @@
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class CFX_DIBitmap final : public CFX_DIBBase {
  public:

@@ -14,7 +14,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 #include "xfa/fde/cfde_data.h"
 #include "xfa/fgas/layout/cfgas_break.h"
 #include "xfa/fgas/layout/cfgas_char.h"

@@ -29,7 +29,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/hash.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 using pdfium::AnnotationStampWithApChecksum;
 

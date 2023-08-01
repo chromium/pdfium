@@ -26,8 +26,8 @@
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_path.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
+#include "third_party/base/containers/span.h"
 #include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/span.h"
 
 namespace {
 

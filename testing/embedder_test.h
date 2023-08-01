@@ -21,7 +21,7 @@
 #include "testing/fake_file_access.h"
 #include "testing/free_deleter.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class TestLoader;
 

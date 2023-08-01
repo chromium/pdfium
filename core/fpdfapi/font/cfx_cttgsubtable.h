@@ -16,7 +16,7 @@
 #include "core/fxge/freetype/fx_freetype.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/abseil-cpp/absl/types/variant.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class CFX_CTTGSUBTable {
  public:

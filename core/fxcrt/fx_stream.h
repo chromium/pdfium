@@ -13,7 +13,7 @@
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_types.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class IFX_WriteStream {
  public:

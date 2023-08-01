@@ -5,7 +5,7 @@
 #include <cstdint>
 
 #include "core/fxcodec/icc/icc_transform.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   std::unique_ptr<fxcodec::IccTransform> transform =

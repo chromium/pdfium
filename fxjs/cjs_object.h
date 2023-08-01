@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cjs_runtime.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class CFXJS_Engine;
 

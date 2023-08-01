@@ -14,7 +14,7 @@
 #include "core/fxge/win32/cfx_psfonttracker.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 namespace {
 

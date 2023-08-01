@@ -11,7 +11,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "fxbarcode/BC_Writer.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class CBC_CommonBitMatrix;
 class CFX_RenderDevice;

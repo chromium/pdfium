@@ -21,7 +21,7 @@
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxge/dib/cstretchengine.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 #ifdef PDF_ENABLE_XFA_BMP
 #include "core/fxcodec/bmp/bmp_decoder.h"

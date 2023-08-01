@@ -12,7 +12,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 #if defined(_SKIA_SUPPORT_)
 #include "third_party/skia/include/core/SkRefCnt.h"  // nogncheck

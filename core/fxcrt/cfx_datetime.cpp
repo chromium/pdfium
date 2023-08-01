@@ -10,7 +10,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/check.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 namespace {
 

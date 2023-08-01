@@ -9,7 +9,7 @@
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/scanlinecomposer_iface.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class CFX_DIBitmap;
 

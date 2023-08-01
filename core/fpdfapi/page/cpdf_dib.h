@@ -17,7 +17,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/cfx_dibbase.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class CPDF_Dictionary;
 class CPDF_Document;

@@ -41,9 +41,9 @@
 #include "core/fpdfapi/parser/object_tree_traversal_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
+#include "third_party/base/containers/span.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/span.h"
 
 namespace {
 

@@ -22,7 +22,7 @@
 #include "core/fxcrt/string_view_template.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 namespace fxcrt {
 

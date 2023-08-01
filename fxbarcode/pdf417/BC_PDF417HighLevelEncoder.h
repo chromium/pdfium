@@ -10,7 +10,7 @@
 #include "core/fxcrt/widestring.h"
 #include "fxbarcode/pdf417/BC_PDF417.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class CBC_PDF417HighLevelEncoder {
  public:

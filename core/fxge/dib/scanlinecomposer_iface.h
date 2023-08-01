@@ -8,7 +8,7 @@
 #define CORE_FXGE_DIB_SCANLINECOMPOSER_IFACE_H_
 
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class ScanlineComposerIface {
  public:

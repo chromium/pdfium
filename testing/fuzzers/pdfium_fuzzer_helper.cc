@@ -21,8 +21,8 @@
 #include "public/fpdf_ext.h"
 #include "public/fpdf_text.h"
 #include "third_party/base/check_op.h"
+#include "third_party/base/containers/span.h"
 #include "third_party/base/numerics/checked_math.h"
-#include "third_party/base/span.h"
 
 namespace {
 

@@ -13,7 +13,7 @@
 #include "core/fxcodec/progressive_decoder_iface.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 #ifndef PDF_ENABLE_XFA_BMP
 #error "BMP must be enabled"

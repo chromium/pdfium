@@ -69,8 +69,8 @@
 #include "core/fxge/text_glyph_pos.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
+#include "third_party/base/containers/span.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/span.h"
 
 namespace {
 

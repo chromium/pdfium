@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr_exclusion.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 enum class FX_CodePage : uint16_t {
   kDefANSI = 0,

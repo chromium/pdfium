@@ -24,9 +24,9 @@
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
 #include "third_party/base/check.h"
+#include "third_party/base/containers/span.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/span.h"
 
 #if defined(USE_SYSTEM_ZLIB)
 #include <zlib.h>

@@ -12,7 +12,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/systemfontinfo_iface.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class CFPF_SkiaFontMgr;
 

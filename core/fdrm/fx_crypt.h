@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 struct CRYPT_rc4_context {
   static constexpr int32_t kPermutationLength = 256;

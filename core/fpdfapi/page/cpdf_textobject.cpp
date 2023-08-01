@@ -12,7 +12,7 @@
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "third_party/base/check.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 #define ISLATINWORD(u) (u != 0x20 && u <= 0x28FF)
 

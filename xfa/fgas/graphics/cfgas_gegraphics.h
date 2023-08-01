@@ -16,7 +16,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 #include "xfa/fgas/graphics/cfgas_gecolor.h"
 
 class CFGAS_GEPath;

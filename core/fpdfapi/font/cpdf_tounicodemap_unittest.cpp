@@ -8,7 +8,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 TEST(cpdf_tounicodemap, StringToCode) {
   EXPECT_THAT(CPDF_ToUnicodeMap::StringToCode("<0001>"), testing::Optional(1u));

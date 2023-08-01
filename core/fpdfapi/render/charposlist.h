@@ -11,7 +11,7 @@
 
 #include <vector>
 
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class CPDF_Font;
 class TextCharPos;

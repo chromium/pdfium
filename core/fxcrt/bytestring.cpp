@@ -22,9 +22,9 @@
 #include "core/fxcrt/string_pool_template.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
+#include "third_party/base/containers/span.h"
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_math.h"
-#include "third_party/base/span.h"
 
 template class fxcrt::StringDataTemplate<char>;
 template class fxcrt::StringViewTemplate<char>;

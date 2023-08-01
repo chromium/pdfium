@@ -13,7 +13,7 @@
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxge/cfx_fontmapper.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 constexpr uint32_t kTableNAME = CFX_FontMapper::MakeTag('n', 'a', 'm', 'e');
 constexpr uint32_t kTableTTCF = CFX_FontMapper::MakeTag('t', 't', 'c', 'f');

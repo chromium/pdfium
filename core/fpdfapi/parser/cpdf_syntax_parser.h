@@ -19,7 +19,7 @@
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/weak_ptr.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class CPDF_Dictionary;
 class CPDF_IndirectObjectHolder;

@@ -12,7 +12,7 @@
 #include <memory>
 
 #include "core/fxcodec/fx_codec_def.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 #if defined(USE_SYSTEM_LCMS2)
 #include <lcms2.h>

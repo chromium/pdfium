@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 std::string CryptToBase16(const uint8_t* digest);
 std::string GenerateMD5Base16(pdfium::span<const uint8_t> data);

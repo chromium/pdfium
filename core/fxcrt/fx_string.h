@@ -13,7 +13,7 @@
 
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/widestring.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 constexpr uint32_t FXBSTR_ID(uint8_t c1, uint8_t c2, uint8_t c3, uint8_t c4) {
   return static_cast<uint32_t>(c1) << 24 | static_cast<uint32_t>(c2) << 16 |

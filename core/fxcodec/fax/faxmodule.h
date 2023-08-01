@@ -12,7 +12,7 @@
 #include <memory>
 
 #include "build/build_config.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 #if BUILDFLAG(IS_WIN)
 #include "core/fxcrt/data_vector.h"

@@ -28,8 +28,8 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/scoped_font_transform.h"
 #include "third_party/base/check.h"
+#include "third_party/base/containers/span.h"
 #include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/span.h"
 
 #define EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
 

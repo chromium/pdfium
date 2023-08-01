@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #include "core/fxcrt/fx_system.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 CPSOutput::CPSOutput(HDC hDC, OutputMode mode) : m_hDC(hDC), m_mode(mode) {}
 

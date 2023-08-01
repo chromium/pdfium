@@ -7,7 +7,7 @@
 #include <utility>
 
 #include "core/fxcrt/cfx_read_only_span_stream.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 CFX_ReadOnlyStringStream::CFX_ReadOnlyStringStream(ByteString data)
     : data_(std::move(data)),

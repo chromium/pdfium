@@ -13,7 +13,7 @@
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcodec/progressive_decoder_iface.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 #ifndef PDF_ENABLE_XFA_GIF
 #error "GIF must be enabled"

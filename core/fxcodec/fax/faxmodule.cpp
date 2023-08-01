@@ -22,9 +22,9 @@
 #include "core/fxge/calculate_pitch.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
+#include "third_party/base/containers/span.h"
 #include "third_party/base/cxx17_backports.h"
 #include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/span.h"
 
 #if BUILDFLAG(IS_WIN)
 #include "core/fxcrt/span_util.h"

@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(static_cast<int>(CFX_GraphStateData::LineCap::kButt) ==

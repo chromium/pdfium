@@ -12,7 +12,7 @@
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class CFX_DIBitmap;
 class CFX_Matrix;

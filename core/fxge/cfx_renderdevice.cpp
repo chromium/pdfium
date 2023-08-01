@@ -33,7 +33,7 @@
 #include "core/fxge/text_glyph_pos.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 #if defined(_SKIA_SUPPORT_)
 #include "third_party/skia/include/core/SkTypes.h"  // nogncheck

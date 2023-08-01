@@ -18,7 +18,7 @@
 #include "core/fxge/cfx_textrenderoptions.h"
 #include "fxbarcode/BC_Library.h"
 #include "fxbarcode/BC_Writer.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class CFX_Font;
 class CFX_Matrix;

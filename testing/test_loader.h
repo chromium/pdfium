@@ -5,7 +5,7 @@
 #ifndef TESTING_TEST_LOADER_H_
 #define TESTING_TEST_LOADER_H_
 
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class TestLoader {
  public:

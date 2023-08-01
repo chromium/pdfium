@@ -19,7 +19,7 @@
 #include "core/fxcrt/utf16.h"
 #include "core/fxcrt/widestring.h"
 #include "third_party/base/compiler_specific.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 namespace {
 

@@ -14,7 +14,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfx_keyvalue.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
-#include "third_party/base/span.h"
+#include "third_party/base/containers/span.h"
 
 class CFX_GlobalData {
  public:

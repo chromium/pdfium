@@ -43,9 +43,9 @@
 #include "core/fxge/cfx_graphstatedata.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
+#include "third_party/base/containers/span.h"
 #include "third_party/base/no_destructor.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/span.h"
 
 namespace {
 
