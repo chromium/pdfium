@@ -49,7 +49,7 @@ bool IsValidDimension(int value) {
 
 unsigned int GetBits8(const uint8_t* pData, uint64_t bitpos, size_t nbits) {
   DCHECK(nbits == 1 || nbits == 2 || nbits == 4 || nbits == 8 || nbits == 16);
-  DCHECK_EQ((bitpos & (nbits - 1)), 0);
+  DCHECK_EQ((bitpos & (nbits - 1)), 0u);
   unsigned int byte = pData[bitpos / 8];
   if (nbits == 8)
     return byte;
@@ -686,9 +686,9 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
   // If |original_colorspace| exists, then LoadColorInfo() already set
   // |m_nComponents|.
   if (original_colorspace) {
-    DCHECK_NE(0, m_nComponents);
+    DCHECK_NE(0u, m_nComponents);
   } else {
-    DCHECK_EQ(0, m_nComponents);
+    DCHECK_EQ(0u, m_nComponents);
     m_nComponents = GetComponentCountFromOpjColorSpace(image_info.colorspace);
     if (m_nComponents == 0) {
       return nullptr;
@@ -721,7 +721,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
   }
 
   if (convert_argb_to_rgb) {
-    DCHECK_EQ(3, m_nComponents);
+    DCHECK_EQ(3u, m_nComponents);
     auto rgb_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!rgb_bitmap->Create(image_info.width, image_info.height,
                             FXDIB_Format::kRgb)) {

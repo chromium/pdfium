@@ -3368,7 +3368,7 @@ class FPDFFormFillActionUriTest : public EmbedderTest {
   }
 
   void SetFocusOnNthAnnot(size_t n) {
-    DCHECK_NE(n, 0);
+    DCHECK_NE(n, 0u);
     // Setting focus on first annot.
     FORM_OnMouseMove(form_handle(), page(), /*modifier=*/0, 100, 680);
     FORM_OnLButtonDown(form_handle(), page(), /*modifier=*/0, 100, 680);

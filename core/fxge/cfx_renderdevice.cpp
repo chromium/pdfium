@@ -426,7 +426,7 @@ bool GetZeroAreaPath(pdfium::span<const CFX_Path::Point> points,
   for (size_t i = 0; i < points.size(); i++) {
     CFX_Path::Point::Type point_type = points[i].m_Type;
     if (point_type == CFX_Path::Point::Type::kMove) {
-      DCHECK_EQ(0, i);
+      DCHECK_EQ(0u, i);
       continue;
     }
 

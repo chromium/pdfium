@@ -72,7 +72,7 @@ static_assert(sizeof(wchar_t) > 2, "wchar_t is too small");
 
 void UTF16ToWChar(void* pBuffer, size_t iLength) {
   DCHECK(pBuffer);
-  DCHECK_GT(iLength, 0);
+  DCHECK_GT(iLength, 0u);
 
   uint16_t* pSrc = static_cast<uint16_t*>(pBuffer);
   wchar_t* pDst = static_cast<wchar_t*>(pBuffer);
