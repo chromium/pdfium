@@ -5,9 +5,14 @@
 #include "core/fxcrt/fx_memory.h"
 
 #include <limits>
+#include <memory>
 
 #include "build/build_config.h"
 #include "testing/gtest/include/gtest/gtest.h"
+
+#if defined(PDF_USE_PARTITION_ALLOC)
+#include "base/allocator/partition_allocator/partition_address_space.h"
+#endif
 
 namespace {
 
@@ -125,3 +130,39 @@ TEST(fxcrt, FXAlign) {
   EXPECT_EQ(512, FxAlignToBoundary<512>(i512));
   EXPECT_EQ(-512, FxAlignToBoundary<512>(ineg));
 }
+
+#if defined(PDF_USE_PARTITION_ALLOC)
+#if BUILDFLAG(USE_PARTITION_ALLOC_AS_MALLOC) && BUILDFLAG(HAS_64_BIT_POINTERS)
+TEST(FxMemory, NewOperatorResultIsPA) {
+  auto obj = std::make_unique<double>(4.0);
+  EXPECT_TRUE(partition_alloc::IsManagedByPartitionAlloc(
+      reinterpret_cast<uintptr_t>(obj.get())));
+#if BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
+  EXPECT_TRUE(partition_alloc::IsManagedByPartitionAllocBRPPool(
+      reinterpret_cast<uintptr_t>(obj.get())));
+#endif  // BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
+}
+
+TEST(FxMemory, MallocResultIsPA) {
+  void* obj = malloc(16);
+  EXPECT_TRUE(partition_alloc::IsManagedByPartitionAlloc(
+      reinterpret_cast<uintptr_t>(obj)));
+#if BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
+  EXPECT_TRUE(partition_alloc::IsManagedByPartitionAllocBRPPool(
+      reinterpret_cast<uintptr_t>(obj)));
+#endif  // BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
+  free(obj);
+}
+
+TEST(FxMemory, StackObjectIsNotPA) {
+  int x = 3;
+  EXPECT_FALSE(partition_alloc::IsManagedByPartitionAlloc(
+      reinterpret_cast<uintptr_t>(&x)));
+#if BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
+  EXPECT_FALSE(partition_alloc::IsManagedByPartitionAllocBRPPool(
+      reinterpret_cast<uintptr_t>(&x)));
+#endif  // BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
+}
+#endif  // BUILDFLAG(USE_PARTITION_ALLOC_AS_MALLOC) &&
+        // BUILDFLAG(HAS_64_BIT_POINTERS)
+#endif  // defined(PDF_USE_PARTITION_ALLOC)

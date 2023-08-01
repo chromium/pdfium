@@ -4,6 +4,7 @@
 
 #include "core/fxcrt/unowned_ptr.h"
 
+#include <atomic>
 #include <functional>
 #include <memory>
 #include <set>
@@ -13,7 +14,7 @@
 #include "third_party/base/containers/contains.h"
 
 #if defined(PDF_USE_PARTITION_ALLOC)
-#include "base/allocator/partition_allocator/partition_address_space.h"
+#include "base/allocator/partition_allocator/shim/allocator_shim_default_dispatch_to_partition_alloc.h"
 #endif
 
 namespace fxcrt {
@@ -264,39 +265,33 @@ TEST(UnownedPtr, TransparentCompare) {
 }
 
 #if defined(PDF_USE_PARTITION_ALLOC)
-#if BUILDFLAG(USE_PARTITION_ALLOC_AS_MALLOC) && BUILDFLAG(HAS_64_BIT_POINTERS)
-TEST(UnownedPtr, NewOperatorResultIsPA) {
-  auto obj = std::make_unique<Clink>();
-  EXPECT_TRUE(partition_alloc::IsManagedByPartitionAlloc(
-      reinterpret_cast<uintptr_t>(obj.get())));
-#if BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
-  EXPECT_TRUE(partition_alloc::IsManagedByPartitionAllocBRPPool(
-      reinterpret_cast<uintptr_t>(obj.get())));
-#endif  // BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
+#if BUILDFLAG(USE_PARTITION_ALLOC_AS_MALLOC) && \
+    BUILDFLAG(HAS_64_BIT_POINTERS) && BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
+
+TEST(UnownedPtr, DanglingGetsQuarantined) {
+  partition_alloc::PartitionRoot* root =
+      allocator_shim::internal::PartitionAllocMalloc::Allocator();
+  size_t original_byte_count =
+      root->total_size_of_brp_quarantined_bytes.load(std::memory_order_relaxed);
+
+  auto ptr = std::make_unique<double>(4.0);
+  UnownedPtr<double> dangler = ptr.get();
+  EXPECT_EQ(
+      root->total_size_of_brp_quarantined_bytes.load(std::memory_order_relaxed),
+      original_byte_count);
+
+  ptr.reset();
+  EXPECT_GE(
+      root->total_size_of_brp_quarantined_bytes.load(std::memory_order_relaxed),
+      original_byte_count + sizeof(double));
+
+  dangler = nullptr;
+  EXPECT_EQ(
+      root->total_size_of_brp_quarantined_bytes.load(std::memory_order_relaxed),
+      original_byte_count);
 }
 
-TEST(UnownedPtr, MalocResultIsPA) {
-  void* obj = malloc(16);
-  EXPECT_TRUE(partition_alloc::IsManagedByPartitionAlloc(
-      reinterpret_cast<uintptr_t>(obj)));
-#if BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
-  EXPECT_TRUE(partition_alloc::IsManagedByPartitionAllocBRPPool(
-      reinterpret_cast<uintptr_t>(obj)));
-#endif  // BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
-  free(obj);
-}
-
-TEST(UnownedPtr, StackObjectIsNotPA) {
-  int x = 3;
-  EXPECT_FALSE(partition_alloc::IsManagedByPartitionAlloc(
-      reinterpret_cast<uintptr_t>(&x)));
-#if BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
-  EXPECT_FALSE(partition_alloc::IsManagedByPartitionAllocBRPPool(
-      reinterpret_cast<uintptr_t>(&x)));
-#endif  // BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
-}
-#endif  // BUILDFLAG(USE_PARTITION_ALLOC_AS_MALLOC) &&
-        // BUILDFLAG(HAS_64_BIT_POINTERS)
-#endif  // defined(PDF_USE_PARTITION_ALLOC)
+#endif  // BUILDFLAG(USE_PARTITION_ALLOC_AS_MALLOC) ...
+#endif  // PDF_USE_PARTITION_ALLOC
 
 }  // namespace fxcrt
