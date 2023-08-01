@@ -8,13 +8,6 @@ import("//build/config/mips.gni")
 import("//build_overrides/build.gni")
 import("../pdfium.gni")
 
-group("third_party") {
-  deps = [ ":pdfium_base" ]
-  if (pdf_bundle_freetype) {
-    deps += [ ":fx_freetype" ]
-  }
-}
-
 config("pdfium_third_party_config") {
   configs = [
     "..:pdfium_common_config",
