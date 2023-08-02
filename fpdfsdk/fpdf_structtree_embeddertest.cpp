@@ -648,11 +648,12 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAttributes) {
       FPDF_STRUCTELEMENT td = FPDF_StructElement_GetChildAtIndex(tr, 1);
       ASSERT_TRUE(td);
       {
+        // Test counting and obtaining attributes via reference
         ASSERT_EQ(1, FPDF_StructElement_GetAttributeCount(td));
         FPDF_STRUCTELEMENT_ATTR attr =
             FPDF_StructElement_GetAttributeAtIndex(td, 0);
         ASSERT_TRUE(attr);
-        ASSERT_EQ(3, FPDF_StructElement_Attr_GetCount(attr));
+        ASSERT_EQ(4, FPDF_StructElement_Attr_GetCount(attr));
         // Test string and blob type
         {
           char buffer[16] = {};
@@ -695,6 +696,23 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAttributes) {
           ASSERT_TRUE(
               FPDF_StructElement_Attr_GetBooleanValue(attr, buffer, &val));
           EXPECT_TRUE(val);
+        }
+
+        // Test reference to number
+        {
+          char buffer[16] = {};
+          unsigned long out_len = ULONG_MAX;
+          ASSERT_TRUE(FPDF_StructElement_Attr_GetName(
+              attr, 3, buffer, sizeof(buffer), &out_len));
+          EXPECT_EQ(8U, out_len);
+          EXPECT_STREQ("RowSpan", buffer);
+
+          EXPECT_EQ(FPDF_OBJECT_REFERENCE,
+                    FPDF_StructElement_Attr_GetType(attr, buffer));
+          float val;
+          ASSERT_TRUE(
+              FPDF_StructElement_Attr_GetNumberValue(attr, buffer, &val));
+          EXPECT_FLOAT_EQ(3, val);
         }
       }
     }

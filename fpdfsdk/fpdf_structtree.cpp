@@ -135,6 +135,10 @@ FPDF_StructElement_GetAttributeCount(FPDF_STRUCTELEMENT struct_element) {
   if (!elem)
     return -1;
   RetainPtr<const CPDF_Object> attr_obj = elem->GetA();
+  if (!attr_obj) {
+    return -1;
+  }
+  attr_obj = attr_obj->GetDirect();
   if (!attr_obj)
     return -1;
   if (attr_obj->IsArray())
@@ -154,6 +158,10 @@ FPDF_StructElement_GetAttributeAtIndex(FPDF_STRUCTELEMENT struct_element,
   if (!attr_obj)
     return nullptr;
 
+  attr_obj = attr_obj->GetDirect();
+  if (!attr_obj) {
+    return nullptr;
+  }
   if (attr_obj->IsDictionary()) {
     return index == 0 ? FPDFStructElementAttrFromCPDFDictionary(
                             attr_obj->AsDictionary())
@@ -353,7 +361,7 @@ FPDF_StructElement_Attr_GetNumberValue(FPDF_STRUCTELEMENT_ATTR struct_attribute,
   if (!dict)
     return false;
 
-  RetainPtr<const CPDF_Object> obj = dict->GetObjectFor(name);
+  RetainPtr<const CPDF_Object> obj = dict->GetDirectObjectFor(name);
   if (!obj || !obj->IsNumber())
     return false;
 
