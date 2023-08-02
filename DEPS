@@ -251,7 +251,7 @@ deps = {
   },
 
   # TODO(chromium:1458042): Remove these paths, when chromium builds files
-  # have moved to third_party/libcxx/lib*/trunk paths.
+  # have moved to third_party/lib*/src paths.
   'buildtools/third_party/libc++/trunk':
     Var('chromium_git') +
         '/external/github.com/llvm/llvm-project/libcxx.git@' +
@@ -341,17 +341,17 @@ deps = {
     Var('chromium_git') + '/chromium/src/third_party/jinja2.git@' +
         Var('jinja2_revision'),
 
-  'third_party/libcxx/libc++/trunk':
+  'third_party/libc++/src':
     Var('chromium_git') +
         '/external/github.com/llvm/llvm-project/libcxx.git@' +
         Var('libcxx_revision'),
 
-  'third_party/libcxx/libc++abi/trunk':
+  'third_party/libc++abi/src':
     Var('chromium_git') +
         '/external/github.com/llvm/llvm-project/libcxxabi.git@' +
         Var('libcxxabi_revision'),
 
-  'third_party/libcxx/libunwind/trunk':
+  'third_party/libunwind/src':
     Var('chromium_git') +
         '/external/github.com/llvm/llvm-project/libunwind.git@' +
         Var('libunwind_revision'),
