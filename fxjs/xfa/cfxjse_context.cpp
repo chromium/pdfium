@@ -17,7 +17,7 @@
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/ptr_util.h"
+#include "third_party/base/memory/ptr_util.h"
 #include "v8/include/v8-exception.h"
 #include "v8/include/v8-function.h"
 #include "v8/include/v8-message.h"

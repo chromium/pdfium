@@ -17,7 +17,7 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
-#include "third_party/base/ptr_util.h"
+#include "third_party/base/memory/ptr_util.h"
 
 class CJpegContext final : public ProgressiveDecoderIface::Context {
  public:

@@ -50,8 +50,8 @@
 #include "public/fpdf_formfill.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/span.h"
+#include "third_party/base/memory/ptr_util.h"
 #include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/ptr_util.h"
 
 #ifdef PDF_ENABLE_V8
 #include "fxjs/cfx_v8_array_buffer_allocator.h"
