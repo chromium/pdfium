@@ -50,8 +50,7 @@ WideString GetAbbreviatedDayOfWeek(int day) {
     case 6:
       return L"Sat";
     default:
-      NOTREACHED();
-      return L"";
+      NOTREACHED_NORETURN();
   }
 }
 
@@ -82,8 +81,7 @@ WideString GetMonth(int month) {
     case 11:
       return L"December";
     default:
-      NOTREACHED();
-      return L"";
+      NOTREACHED_NORETURN();
   }
 }
 

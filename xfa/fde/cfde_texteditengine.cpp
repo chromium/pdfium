@@ -13,7 +13,7 @@
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/check.h"
-#include "third_party/base/notreached.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fde/cfde_wordbreak_data.h"
@@ -1130,11 +1130,7 @@ std::pair<int32_t, CFX_RectF> CFDE_TextEditEngine::GetCharacterInfo(
     if (it->nStart <= start_idx && start_idx < it->nStart + it->nCount)
       break;
   }
-  if (it == text_piece_info_.end()) {
-    NOTREACHED();
-    return {0, CFX_RectF()};
-  }
-
+  CHECK_NE(it, text_piece_info_.end());
   return {it->nBidiLevel, GetCharRects(*it)[start_idx - it->nStart]};
 }
 
