@@ -45,23 +45,23 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
                         nTransparency, 80, 220);
     // draw arrow
     if (rectWnd.top - rectWnd.bottom > 6.0f) {
-      float fX = rectWnd.left + 1.5f;
-      float fY = rectWnd.bottom;
       std::vector<CFX_PointF> pts;
-      static constexpr float kOffsetsX[] = {2.5f, 2.5f, 4.5f, 6.5f,
-                                            6.5f, 4.5f, 2.5f};
-      static constexpr float kOffsetsY[] = {5.0f, 6.0f, 4.0f, 6.0f,
-                                            5.0f, 3.0f, 5.0f};
-      static constexpr float kOffsetsMinY[] = {4.0f, 3.0f, 5.0f, 3.0f,
-                                               4.0f, 6.0f, 4.0f};
-      static_assert(std::size(kOffsetsX) == std::size(kOffsetsY),
-                    "Wrong offset count");
-      static_assert(std::size(kOffsetsX) == std::size(kOffsetsMinY),
-                    "Wrong offset count");
-      const float* pOffsetsY =
-          m_eSBButtonType == Type::kMinButton ? kOffsetsMinY : kOffsetsY;
-      for (size_t i = 0; i < std::size(kOffsetsX); ++i)
-        pts.push_back(CFX_PointF(fX + kOffsetsX[i], fY + pOffsetsY[i]));
+      CFX_PointF origin(rectWnd.left + 1.5f, rectWnd.bottom);
+      if (m_eSBButtonType == Type::kMinButton) {
+        static constexpr CFX_PointF kOffsetsMin[] = {
+            {2.5f, 4.0f}, {2.5f, 3.0f}, {4.5f, 5.0f}, {6.5f, 3.0f},
+            {6.5f, 4.0f}, {4.5f, 6.0f}, {2.5f, 4.0f}};
+        for (const auto& offset : kOffsetsMin) {
+          pts.push_back(origin + offset);
+        }
+      } else {
+        static constexpr CFX_PointF kOffsets[] = {
+            {2.5f, 5.0f}, {2.5f, 6.0f}, {4.5f, 4.0f}, {6.5f, 6.0f},
+            {6.5f, 5.0f}, {4.5f, 3.0f}, {2.5f, 5.0f}};
+        for (const auto& offset : kOffsets) {
+          pts.push_back(origin + offset);
+        }
+      }
       pDevice->DrawFillArea(mtUser2Device, pts,
                             ArgbEncode(nTransparency, 255, 255, 255));
     }
