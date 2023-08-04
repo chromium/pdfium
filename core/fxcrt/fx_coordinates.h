@@ -18,17 +18,12 @@
 template <class BaseType>
 class CFX_PTemplate {
  public:
-  CFX_PTemplate() : x(0), y(0) {}
-  CFX_PTemplate(BaseType new_x, BaseType new_y) : x(new_x), y(new_y) {}
-  CFX_PTemplate(const CFX_PTemplate& other) : x(other.x), y(other.y) {}
+  constexpr CFX_PTemplate() = default;
+  constexpr CFX_PTemplate(BaseType new_x, BaseType new_y)
+      : x(new_x), y(new_y) {}
+  CFX_PTemplate(const CFX_PTemplate& other) = default;
+  CFX_PTemplate& operator=(const CFX_PTemplate& other) = default;
 
-  CFX_PTemplate& operator=(const CFX_PTemplate& other) {
-    if (this != &other) {
-      x = other.x;
-      y = other.y;
-    }
-    return *this;
-  }
   bool operator==(const CFX_PTemplate& other) const {
     return x == other.x && y == other.y;
   }
@@ -52,8 +47,8 @@ class CFX_PTemplate {
     return CFX_PTemplate(x - other.x, y - other.y);
   }
 
-  BaseType x;
-  BaseType y;
+  BaseType x = 0;
+  BaseType y = 0;
 };
 using CFX_Point16 = CFX_PTemplate<int16_t>;
 using CFX_Point = CFX_PTemplate<int32_t>;
@@ -62,13 +57,11 @@ using CFX_PointF = CFX_PTemplate<float>;
 template <class BaseType>
 class CFX_STemplate {
  public:
-  CFX_STemplate() : width(0), height(0) {}
-
-  CFX_STemplate(BaseType new_width, BaseType new_height)
+  constexpr CFX_STemplate() = default;
+  constexpr CFX_STemplate(BaseType new_width, BaseType new_height)
       : width(new_width), height(new_height) {}
-
-  CFX_STemplate(const CFX_STemplate& other)
-      : width(other.width), height(other.height) {}
+  CFX_STemplate(const CFX_STemplate& other) = default;
+  CFX_STemplate& operator=(const CFX_STemplate& other) = default;
 
   template <typename OtherType>
   CFX_STemplate<OtherType> As() const {
@@ -79,13 +72,6 @@ class CFX_STemplate {
   void clear() {
     width = 0;
     height = 0;
-  }
-  CFX_STemplate& operator=(const CFX_STemplate& other) {
-    if (this != &other) {
-      width = other.width;
-      height = other.height;
-    }
-    return *this;
   }
   bool operator==(const CFX_STemplate& other) const {
     return width == other.width && height == other.height;
@@ -126,8 +112,8 @@ class CFX_STemplate {
     return CFX_STemplate(width / divisor, height / divisor);
   }
 
-  BaseType width;
-  BaseType height;
+  BaseType width = 0;
+  BaseType height = 0;
 };
 using CFX_Size = CFX_STemplate<int32_t>;
 using CFX_SizeF = CFX_STemplate<float>;
@@ -160,8 +146,11 @@ using CFX_VectorF = CFX_VTemplate<float>;
 // LTRB rectangles (y-axis runs downwards).
 // Struct layout is compatible with win32 RECT.
 struct FX_RECT {
-  FX_RECT() = default;
-  FX_RECT(int l, int t, int r, int b) : left(l), top(t), right(r), bottom(b) {}
+  constexpr FX_RECT() = default;
+  constexpr FX_RECT(int l, int t, int r, int b)
+      : left(l), top(t), right(r), bottom(b) {}
+  FX_RECT(const FX_RECT& that) = default;
+  FX_RECT& operator=(const FX_RECT& that) = default;
 
   int Width() const { return right - left; }
   int Height() const { return bottom - top; }
@@ -202,6 +191,8 @@ class CFX_FloatRect {
   constexpr CFX_FloatRect() = default;
   constexpr CFX_FloatRect(float l, float b, float r, float t)
       : left(l), bottom(b), right(r), top(t) {}
+  CFX_FloatRect(const CFX_FloatRect& that) = default;
+  CFX_FloatRect& operator=(const CFX_FloatRect& that) = default;
 
   explicit CFX_FloatRect(const FX_RECT& rect);
   explicit CFX_FloatRect(const CFX_PointF& point);
@@ -295,9 +286,15 @@ class CFX_RectF {
   using PointType = CFX_PointF;
   using SizeType = CFX_SizeF;
 
-  CFX_RectF() = default;
-  CFX_RectF(float dst_left, float dst_top, float dst_width, float dst_height)
+  constexpr CFX_RectF() = default;
+  constexpr CFX_RectF(float dst_left,
+                      float dst_top,
+                      float dst_width,
+                      float dst_height)
       : left(dst_left), top(dst_top), width(dst_width), height(dst_height) {}
+  CFX_RectF(const CFX_RectF& other) = default;
+  CFX_RectF& operator=(const CFX_RectF& other) = default;
+
   CFX_RectF(float dst_left, float dst_top, const SizeType& dst_size)
       : left(dst_left),
         top(dst_top),
@@ -312,11 +309,6 @@ class CFX_RectF {
         top(static_cast<float>(that.top)),
         width(static_cast<float>(that.Width())),
         height(static_cast<float>(that.Height())) {}
-
-  // NOLINTNEXTLINE(runtime/explicit)
-  CFX_RectF(const CFX_RectF& other) = default;
-
-  CFX_RectF& operator=(const CFX_RectF& other) = default;
 
   CFX_RectF& operator+=(const PointType& p) {
     left += p.x;
