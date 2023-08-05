@@ -45,6 +45,15 @@ TEST(fxnumber, FromFloat) {
   EXPECT_FLOAT_EQ(-100.001f, number2.GetFloat());
 }
 
+TEST(fxnumberDeathTest, FromFloatOutOfIntegerRange) {
+  FX_Number number(1e17f);
+  EXPECT_FALSE(number.IsInteger());
+  EXPECT_TRUE(number.IsSigned());
+  ASSERT_DEATH({ number.GetSigned(); },
+               // The CHECK macro doesn't produce useful error messages
+               "");
+}
+
 TEST(fxnumber, FromStringUnsigned) {
   struct TestCase {
     const char* input;
