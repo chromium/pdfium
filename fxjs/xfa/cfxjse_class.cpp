@@ -103,7 +103,7 @@ void DynPropGetterAdapter_MethodCallback(
   }
 
   v8::Local<v8::String> hPropName =
-      hCallBackInfo->GetInternalField(1).As<v8::String>();
+      hCallBackInfo->GetInternalField(1).As<v8::Value>().As<v8::String>();
   if (hPropName.IsEmpty())
     return;
 
