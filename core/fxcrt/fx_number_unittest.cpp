@@ -43,15 +43,18 @@ TEST(fxnumber, FromFloat) {
   EXPECT_TRUE(number2.IsSigned());
   EXPECT_EQ(-100, number2.GetSigned());
   EXPECT_FLOAT_EQ(-100.001f, number2.GetFloat());
-}
 
-TEST(fxnumberDeathTest, FromFloatOutOfIntegerRange) {
-  FX_Number number(1e17f);
-  EXPECT_FALSE(number.IsInteger());
-  EXPECT_TRUE(number.IsSigned());
-  ASSERT_DEATH({ number.GetSigned(); },
-               // The CHECK macro doesn't produce useful error messages
-               "");
+  // Show positive saturation.
+  FX_Number number3(1e17f);
+  EXPECT_FALSE(number3.IsInteger());
+  EXPECT_TRUE(number3.IsSigned());
+  EXPECT_EQ(std::numeric_limits<int32_t>::max(), number3.GetSigned());
+
+  // Show negative saturation.
+  FX_Number number4(-1e17f);
+  EXPECT_FALSE(number4.IsInteger());
+  EXPECT_TRUE(number4.IsSigned());
+  EXPECT_EQ(std::numeric_limits<int32_t>::min(), number4.GetSigned());
 }
 
 TEST(fxnumber, FromStringUnsigned) {

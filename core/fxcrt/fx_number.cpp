@@ -93,7 +93,7 @@ int32_t FX_Number::GetSigned() const {
     return m_SignedValue;
   }
 
-  return pdfium::base::checked_cast<int32_t>(m_FloatValue);
+  return pdfium::base::saturated_cast<int32_t>(m_FloatValue);
 }
 
 float FX_Number::GetFloat() const {
