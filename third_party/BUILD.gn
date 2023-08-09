@@ -541,7 +541,6 @@ source_set("pdfium_base") {
     ":pdfium_third_party_config",
   ]
   sources = [
-    "base/base_export.h",
     "base/bits.h",
     "base/check.h",
     "base/check_op.h",
