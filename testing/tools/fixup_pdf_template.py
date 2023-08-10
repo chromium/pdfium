@@ -182,7 +182,7 @@ def insert_includes(input_path, output_file, visited_set):
           if override_line_endings:
             # Replace CRLF with LF line endings for .in files.
             if line.endswith(WINDOWS_LINE_ENDING):
-              line = line.removesuffix(WINDOWS_LINE_ENDING) + UNIX_LINE_ENDING
+              line = line[:-len(WINDOWS_LINE_ENDING)] + UNIX_LINE_ENDING
               end_of_file_line_ending = True
             else:
               end_of_file_line_ending = line.endswith(UNIX_LINE_ENDING)
