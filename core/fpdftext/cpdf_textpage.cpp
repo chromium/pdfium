@@ -887,7 +887,18 @@ void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
     return;
 
   RetainPtr<CPDF_Font> pFont = pTextObj->GetFont();
+  const bool bR2L = IsRightToLeft(*pTextObj, *pFont);
   CFX_Matrix matrix = pTextObj->GetTextMatrix() * obj.m_formMatrix;
+  CFX_FloatRect rect = pTextObj->GetRect();
+  float step = 0;
+
+  if (bR2L) {
+    rect.left = rect.right - (rect.Width() / actText.GetLength());
+    step = -rect.Width();
+  } else {
+    rect.right = rect.left + (rect.Width() / actText.GetLength());
+    step = rect.Width();
+  }
 
   for (size_t k = 0; k < actText.GetLength(); ++k) {
     wchar_t wChar = actText[k];
@@ -903,7 +914,8 @@ void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
     charinfo.m_CharCode = pFont->CharCodeFromUnicode(wChar);
     charinfo.m_CharType = CPDF_TextPage::CharType::kPiece;
     charinfo.m_pTextObj = pTextObj;
-    charinfo.m_CharBox = pTextObj->GetRect();
+    charinfo.m_CharBox = CFX_FloatRect(rect);
+    charinfo.m_CharBox.Translate(k * step, 0);
     charinfo.m_Matrix = matrix;
     m_TempTextBuf.AppendChar(wChar);
     m_TempCharList.push_back(charinfo);
