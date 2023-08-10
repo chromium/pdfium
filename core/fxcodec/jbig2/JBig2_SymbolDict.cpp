@@ -8,7 +8,7 @@
 
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 
-CJBig2_SymbolDict::CJBig2_SymbolDict() {}
+CJBig2_SymbolDict::CJBig2_SymbolDict() = default;
 
 CJBig2_SymbolDict::~CJBig2_SymbolDict() = default;
 

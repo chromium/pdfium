@@ -142,7 +142,7 @@ void CPWL_EditImpl::RefreshState::BeginRefresh() {
 
 void CPWL_EditImpl::RefreshState::Push(const CPVT_WordRange& linerange,
                                        const CFX_FloatRect& rect) {
-  m_NewLineRects.emplace_back(LineRect(linerange, rect));
+  m_NewLineRects.emplace_back(linerange, rect);
 }
 
 void CPWL_EditImpl::RefreshState::NoAnalyse() {
@@ -167,7 +167,7 @@ void CPWL_EditImpl::RefreshState::Add(const CFX_FloatRect& new_rect) {
     if (rect.Contains(new_rect))
       return;
   }
-  m_RefreshRects.emplace_back(CFX_FloatRect(new_rect));
+  m_RefreshRects.push_back(new_rect);
 }
 
 CPWL_EditImpl::UndoStack::UndoStack() = default;

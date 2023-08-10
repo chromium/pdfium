@@ -529,8 +529,7 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
          ++it) {
       if (it->first == key) {
         pSegment->m_SymbolDict = it->second->DeepCopy();
-        m_pSymbolDictCache->push_front(
-            CJBig2_CachePair(key, std::move(it->second)));
+        m_pSymbolDictCache->emplace_front(key, std::move(it->second));
         m_pSymbolDictCache->erase(it);
         cache_hit = true;
         break;
@@ -563,7 +562,7 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
         m_pSymbolDictCache->pop_back();
         --size;
       }
-      m_pSymbolDictCache->push_front(CJBig2_CachePair(key, std::move(value)));
+      m_pSymbolDictCache->emplace_front(key, std::move(value));
     }
   }
   if (wFlags & 0x0200) {

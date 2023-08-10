@@ -71,8 +71,7 @@ BlendMode GetBlendTypeInternal(const ByteString& mode) {
 
 CPDF_GeneralState::CPDF_GeneralState() = default;
 
-CPDF_GeneralState::CPDF_GeneralState(const CPDF_GeneralState& that)
-    : m_Ref(that.m_Ref) {}
+CPDF_GeneralState::CPDF_GeneralState(const CPDF_GeneralState& that) = default;
 
 CPDF_GeneralState::~CPDF_GeneralState() = default;
 

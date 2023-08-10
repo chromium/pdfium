@@ -8,7 +8,7 @@
 
 CPDF_Path::CPDF_Path() = default;
 
-CPDF_Path::CPDF_Path(const CPDF_Path& that) : m_Ref(that.m_Ref) {}
+CPDF_Path::CPDF_Path(const CPDF_Path& that) = default;
 
 CPDF_Path::~CPDF_Path() = default;
 

@@ -4,8 +4,7 @@
 
 #include "constants/transparency.h"
 
-namespace pdfium {
-namespace transparency {
+namespace pdfium::transparency {
 
 // PDF 1.7 spec, table 7.2.
 // Standard separable blend modes.
@@ -44,5 +43,4 @@ const char kTransparency[] = "Transparency";
 const char kCS[] = "CS";
 const char kI[] = "I";
 
-}  // namespace transparency
-}  // namespace pdfium
+}  // namespace pdfium::transparency

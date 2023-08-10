@@ -40,8 +40,7 @@ partition_alloc::PartitionAllocator& GetStringPartitionAllocator() {
 
 }  // namespace
 
-namespace pdfium {
-namespace internal {
+namespace pdfium::internal {
 
 void* Alloc(size_t num_members, size_t member_size) {
   FX_SAFE_SIZE_T total = member_size;
@@ -116,8 +115,7 @@ void StringDealloc(void* ptr) {
   }
 }
 
-}  // namespace internal
-}  // namespace pdfium
+}  // namespace pdfium::internal
 
 void FX_InitializeMemoryAllocators() {
   static bool s_partition_allocators_initialized = false;

@@ -138,8 +138,7 @@ constexpr size_t kFXTextLayoutBidiMirrorSize =
 
 }  // namespace
 
-namespace pdfium {
-namespace unicode {
+namespace pdfium::unicode {
 
 wchar_t GetMirrorChar(wchar_t wch) {
   uint16_t prop = GetUnicodeProperties(wch);
@@ -173,5 +172,4 @@ FX_BREAKPROPERTY GetBreakProperty(wchar_t wch) {
 }
 #endif  // PDF_ENABLE_XFA
 
-}  // namespace unicode
-}  // namespace pdfium
+}  // namespace pdfium::unicode

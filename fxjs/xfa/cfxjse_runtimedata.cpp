@@ -36,7 +36,7 @@ std::unique_ptr<CFXJSE_RuntimeData> CFXJSE_RuntimeData::Create(
                        fxv8::NewStringHelper(pIsolate, "global"));
 
   v8::Local<v8::Context> hContext =
-      v8::Context::New(pIsolate, 0, hGlobalTemplate);
+      v8::Context::New(pIsolate, nullptr, hGlobalTemplate);
 
   DCHECK_EQ(hContext->Global()->InternalFieldCount(), 0);
   DCHECK_EQ(

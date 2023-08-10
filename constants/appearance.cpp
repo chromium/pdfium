@@ -4,8 +4,7 @@
 
 #include "constants/appearance.h"
 
-namespace pdfium {
-namespace appearance {
+namespace pdfium::appearance {
 
 // ISO 32000-1:2008 spec, table 189.
 // Entries in an appearance characteristics dictionary.
@@ -19,5 +18,4 @@ const char kI[] = "I";
 const char kRI[] = "RI";
 const char kIX[] = "IX";
 
-}  // namespace appearance
-}  // namespace pdfium
+}  // namespace pdfium::appearance

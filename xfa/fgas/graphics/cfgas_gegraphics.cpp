@@ -412,22 +412,10 @@ void CFGAS_GEGraphics::SetDIBitsWithMatrix(RetainPtr<CFX_DIBBase> source,
 
 CFGAS_GEGraphics::TInfo::TInfo() = default;
 
-CFGAS_GEGraphics::TInfo::TInfo(const TInfo& info)
-    : graphState(info.graphState),
-      CTM(info.CTM),
-      isActOnDash(info.isActOnDash),
-      strokeColor(info.strokeColor),
-      fillColor(info.fillColor) {}
+CFGAS_GEGraphics::TInfo::TInfo(const TInfo& info) = default;
 
 CFGAS_GEGraphics::TInfo& CFGAS_GEGraphics::TInfo::operator=(
-    const TInfo& other) {
-  graphState = other.graphState;
-  CTM = other.CTM;
-  isActOnDash = other.isActOnDash;
-  strokeColor = other.strokeColor;
-  fillColor = other.fillColor;
-  return *this;
-}
+    const TInfo& other) = default;
 
 CFGAS_GEGraphics::StateRestorer::StateRestorer(CFGAS_GEGraphics* graphics)
     : graphics_(graphics) {

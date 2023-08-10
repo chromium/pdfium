@@ -126,7 +126,7 @@ ByteString::ByteString(const uint8_t* pStr, size_t nLen) {
 
 ByteString::ByteString() = default;
 
-ByteString::ByteString(const ByteString& other) : m_pData(other.m_pData) {}
+ByteString::ByteString(const ByteString& other) = default;
 
 ByteString::ByteString(ByteString&& other) noexcept {
   m_pData.Swap(other.m_pData);

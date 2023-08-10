@@ -59,7 +59,7 @@ uint32_t GenerateSeedFromEnvironment() {
   seed ^= GetCurrentProcessId();
 #else
   struct timeval tv;
-  gettimeofday(&tv, 0);
+  gettimeofday(&tv, nullptr);
   seed ^= static_cast<uint32_t>(tv.tv_sec) * 1000000;
   seed ^= static_cast<uint32_t>(tv.tv_usec);
   seed ^= static_cast<uint32_t>(getpid());

@@ -52,8 +52,7 @@ NOINLINE void FX_OutOfMemoryTerminate(size_t size) {
   abort();
 }
 
-namespace pdfium {
-namespace internal {
+namespace pdfium::internal {
 
 void* AllocOrDie(size_t num_members, size_t member_size) {
   void* result = Alloc(num_members, member_size);
@@ -99,5 +98,5 @@ void* StringAllocOrDie(size_t num_members, size_t member_size) {
 
   return result;
 }
-}  // namespace internal
-}  // namespace pdfium
+
+}  // namespace pdfium::internal

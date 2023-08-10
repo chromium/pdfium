@@ -330,7 +330,7 @@ WideString WideString::Format(const wchar_t* pFormat, ...) {
 
 WideString::WideString() = default;
 
-WideString::WideString(const WideString& other) : m_pData(other.m_pData) {}
+WideString::WideString(const WideString& other) = default;
 
 WideString::WideString(WideString&& other) noexcept {
   m_pData.Swap(other.m_pData);

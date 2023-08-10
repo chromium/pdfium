@@ -7,13 +7,13 @@
 #include "fxjs/cjs_position.h"
 
 const JSConstSpec CJS_Position::ConstSpecs[] = {
-    {"textOnly", JSConstSpec::Number, 0, 0},
-    {"iconOnly", JSConstSpec::Number, 1, 0},
-    {"iconTextV", JSConstSpec::Number, 2, 0},
-    {"textIconV", JSConstSpec::Number, 3, 0},
-    {"iconTextH", JSConstSpec::Number, 4, 0},
-    {"textIconH", JSConstSpec::Number, 5, 0},
-    {"overlay", JSConstSpec::Number, 6, 0}};
+    {"textOnly", JSConstSpec::Number, 0, nullptr},
+    {"iconOnly", JSConstSpec::Number, 1, nullptr},
+    {"iconTextV", JSConstSpec::Number, 2, nullptr},
+    {"textIconV", JSConstSpec::Number, 3, nullptr},
+    {"iconTextH", JSConstSpec::Number, 4, nullptr},
+    {"textIconH", JSConstSpec::Number, 5, nullptr},
+    {"overlay", JSConstSpec::Number, 6, nullptr}};
 
 uint32_t CJS_Position::ObjDefnID = 0;
 

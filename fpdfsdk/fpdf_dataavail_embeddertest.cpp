@@ -114,7 +114,7 @@ class TestAsyncLoader final : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
   }
 
   void AddSegmentImpl(size_t offset, size_t size) {
-    requested_segments_.push_back(std::make_pair(offset, size));
+    requested_segments_.emplace_back(offset, size);
     max_requested_bound_ = std::max(max_requested_bound_, offset + size);
   }
 

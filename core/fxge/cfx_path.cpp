@@ -288,11 +288,11 @@ void CFX_Path::Append(const CFX_Path& src, const CFX_Matrix* matrix) {
 }
 
 void CFX_Path::AppendPoint(const CFX_PointF& point, Point::Type type) {
-  m_Points.push_back(Point(point, type, /*close=*/false));
+  m_Points.emplace_back(point, type, /*close=*/false);
 }
 
 void CFX_Path::AppendPointAndClose(const CFX_PointF& point, Point::Type type) {
-  m_Points.push_back(Point(point, type, /*close=*/true));
+  m_Points.emplace_back(point, type, /*close=*/true);
 }
 
 void CFX_Path::AppendLine(const CFX_PointF& pt1, const CFX_PointF& pt2) {

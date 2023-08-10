@@ -39,7 +39,7 @@ int AdjustBlueHelper(float pos, std::vector<int>* blues) {
 
 }  // namespace
 
-CPDF_Type3GlyphMap::CPDF_Type3GlyphMap() {}
+CPDF_Type3GlyphMap::CPDF_Type3GlyphMap() = default;
 
 CPDF_Type3GlyphMap::~CPDF_Type3GlyphMap() = default;
 

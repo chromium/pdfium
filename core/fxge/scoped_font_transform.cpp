@@ -16,7 +16,7 @@ void ResetTransform(FT_Face face) {
   matrix.xy = 0;
   matrix.yx = 0;
   matrix.yy = 0x10000L;
-  FT_Set_Transform(face, &matrix, 0);
+  FT_Set_Transform(face, &matrix, nullptr);
 }
 
 }  // namespace
@@ -24,7 +24,7 @@ void ResetTransform(FT_Face face) {
 ScopedFontTransform::ScopedFontTransform(RetainPtr<CFX_Face> face,
                                          FT_Matrix* matrix)
     : m_Face(std::move(face)) {
-  FT_Set_Transform(m_Face->GetRec(), matrix, 0);
+  FT_Set_Transform(m_Face->GetRec(), matrix, nullptr);
 }
 
 ScopedFontTransform::~ScopedFontTransform() {

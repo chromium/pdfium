@@ -1042,7 +1042,7 @@ bool CXFA_FMWhileExpression::ToJavaScript(WideTextBuffer* js,
   return !CXFA_IsTooBig(*js);
 }
 
-CXFA_FMBreakExpression::CXFA_FMBreakExpression() : CXFA_FMExpression() {}
+CXFA_FMBreakExpression::CXFA_FMBreakExpression() = default;
 
 CXFA_FMBreakExpression::~CXFA_FMBreakExpression() = default;
 
@@ -1056,7 +1056,7 @@ bool CXFA_FMBreakExpression::ToJavaScript(WideTextBuffer* js,
   return !CXFA_IsTooBig(*js);
 }
 
-CXFA_FMContinueExpression::CXFA_FMContinueExpression() : CXFA_FMExpression() {}
+CXFA_FMContinueExpression::CXFA_FMContinueExpression() = default;
 
 CXFA_FMContinueExpression::~CXFA_FMContinueExpression() = default;
 

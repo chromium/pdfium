@@ -4,8 +4,7 @@
 
 #include "constants/page_object.h"
 
-namespace pdfium {
-namespace page_object {
+namespace pdfium::page_object {
 
 // PDF 1.7 spec, table 3.27.
 // Entries in a page object.
@@ -20,5 +19,4 @@ const char kArtBox[] = "ArtBox";
 const char kContents[] = "Contents";
 const char kRotate[] = "Rotate";
 
-}  // namespace page_object
-}  // namespace pdfium
+}  // namespace pdfium::page_object

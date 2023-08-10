@@ -10,8 +10,7 @@
 
 CFX_GraphState::CFX_GraphState() = default;
 
-CFX_GraphState::CFX_GraphState(const CFX_GraphState& that)
-    : m_Ref(that.m_Ref) {}
+CFX_GraphState::CFX_GraphState(const CFX_GraphState& that) = default;
 
 CFX_GraphState::~CFX_GraphState() = default;
 
