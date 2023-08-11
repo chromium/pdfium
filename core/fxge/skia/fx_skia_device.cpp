@@ -909,7 +909,7 @@ bool CFX_SkiaDeviceDriver::TryDrawText(pdfium::span<const TextCharPos> char_pos,
   m_pCanvas->concat(ToFlippedSkMatrix(matrix, flip));
 
   const DataVector<uint16_t>& glyphs = m_charDetails.GetGlyphs();
-  if (m_rsxform.size()) {
+  if (!m_rsxform.empty()) {
     sk_sp<SkTextBlob> blob = SkTextBlob::MakeFromRSXform(
         glyphs.data(), glyphs.size() * sizeof(uint16_t), m_rsxform.data(), font,
         SkTextEncoding::kGlyphID);
@@ -1378,7 +1378,7 @@ RetainPtr<CFX_DIBitmap> CFX_SkiaDeviceDriver::GetBackDrop() {
 }
 
 bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
-                                     uint32_t argb,
+                                     uint32_t color,
                                      const FX_RECT& src_rect,
                                      int left,
                                      int top,
@@ -1393,12 +1393,12 @@ bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
   FXDIB_ResampleOptions sampling_options;
   sampling_options.bNoSmoothing = true;
 
-  return StartDIBitsSkia(pBitmap, src_rect, 0xFF, argb, m, sampling_options,
+  return StartDIBitsSkia(pBitmap, src_rect, 0xFF, color, m, sampling_options,
                          blend_type);
 }
 
 bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
-                                         uint32_t argb,
+                                         uint32_t color,
                                          int dest_left,
                                          int dest_top,
                                          int dest_width,
@@ -1422,20 +1422,20 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
 
   return StartDIBitsSkia(
       pSource, FX_RECT(0, 0, pSource->GetWidth(), pSource->GetHeight()), 0xFF,
-      argb, m, sampling_options, blend_type);
+      color, m, sampling_options, blend_type);
 }
 
 bool CFX_SkiaDeviceDriver::StartDIBits(
     const RetainPtr<CFX_DIBBase>& pSource,
     int bitmap_alpha,
-    uint32_t argb,
+    uint32_t color,
     const CFX_Matrix& matrix,
     const FXDIB_ResampleOptions& options,
     std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_type) {
   return StartDIBitsSkia(
       pSource, FX_RECT(0, 0, pSource->GetWidth(), pSource->GetHeight()),
-      bitmap_alpha, argb, matrix, options, blend_type);
+      bitmap_alpha, color, matrix, options, blend_type);
 }
 
 bool CFX_SkiaDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
@@ -1549,7 +1549,7 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
     const RetainPtr<CFX_DIBBase>& pSource,
     const FX_RECT& src_rect,
     int bitmap_alpha,
-    uint32_t argb,
+    uint32_t color,
     const CFX_Matrix& matrix,
     const FXDIB_ResampleOptions& options,
     BlendMode blend_type) {
@@ -1570,7 +1570,7 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
     m_pCanvas->concat(skMatrix);
     SkPaint paint;
     SetBitmapPaint(pSource->IsMaskFormat(), !m_FillOptions.aliased_path,
-                   bitmap_alpha, argb, blend_type, &paint);
+                   bitmap_alpha, color, blend_type, &paint);
 
     bool use_interpolate_bilinear = options.bInterpolateBilinear;
     if (!use_interpolate_bilinear) {

@@ -130,7 +130,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   bool ContinueDIBits(CFX_ImageRenderer* handle,
                       PauseIndicatorIface* pPause) override;
 
-  bool DrawBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
+  bool DrawBitsWithMask(const RetainPtr<CFX_DIBBase>& pSource,
                         const RetainPtr<CFX_DIBBase>& pMask,
                         int bitmap_alpha,
                         const CFX_Matrix& matrix,
@@ -204,7 +204,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                    uint32_t color,
                    const CFX_TextRenderOptions& options);
 
-  bool StartDIBitsSkia(const RetainPtr<CFX_DIBBase>& pBitmap,
+  bool StartDIBitsSkia(const RetainPtr<CFX_DIBBase>& pSource,
                        const FX_RECT& src_rect,
                        int bitmap_alpha,
                        uint32_t color,
