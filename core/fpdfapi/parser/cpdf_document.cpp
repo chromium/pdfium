@@ -397,10 +397,7 @@ int CPDF_Document::RetrievePageCount() {
 }
 
 uint32_t CPDF_Document::GetUserPermissions() const {
-  if (m_pParser)
-    return m_pParser->GetPermissions();
-
-  return m_pExtension ? m_pExtension->GetUserPermissions() : 0;
+  return m_pParser ? m_pParser->GetPermissions() : 0;
 }
 
 RetainPtr<CPDF_StreamAcc> CPDF_Document::GetFontFileStreamAcc(

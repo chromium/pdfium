@@ -543,14 +543,7 @@ TEST_F(FPDFViewEmbedderTest, EmptyDocument) {
     EXPECT_FALSE(FPDF_GetFileVersion(document(), &version));
     EXPECT_EQ(0, version);
   }
-  {
-#ifdef PDF_ENABLE_XFA
-    const unsigned long kExpected = static_cast<uint32_t>(-1);
-#else   // PDF_ENABLE_XFA
-    const unsigned long kExpected = 0;
-#endif  // PDF_ENABLE_XFA
-    EXPECT_EQ(kExpected, FPDF_GetDocPermissions(document()));
-  }
+  EXPECT_EQ(0U, FPDF_GetDocPermissions(document()));
   EXPECT_EQ(-1, FPDF_GetSecurityHandlerRevision(document()));
   EXPECT_EQ(0, FPDF_GetPageCount(document()));
   EXPECT_TRUE(FPDF_VIEWERREF_GetPrintScaling(document()));
