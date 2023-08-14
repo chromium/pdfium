@@ -1590,8 +1590,6 @@ void Processor::ProcessPdf(const std::string& name,
   if (!FPDF_DocumentHasValidCrossReferenceTable(doc.get()))
     fprintf(stderr, "Document has invalid cross reference table\n");
 
-  (void)FPDF_GetDocPermissions(doc.get());
-
   if (options().show_metadata) {
     DumpMetaData(doc.get());
   }

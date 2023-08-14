@@ -175,8 +175,6 @@ void PDFiumFuzzerHelper::RenderPdf(const char* data, size_t len) {
   if (!doc)
     return;
 
-  (void)FPDF_GetDocPermissions(doc.get());
-
   ScopedFPDFFormHandle form(
       FPDFDOC_InitFormFillEnvironment(doc.get(), &form_callbacks));
   if (!OnFormFillEnvLoaded(doc.get()))
