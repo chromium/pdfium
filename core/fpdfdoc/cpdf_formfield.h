@@ -147,7 +147,6 @@ class CPDF_FormField {
   void InitFieldFlags();
   int FindListSel(CPDF_String* str);
   WideString GetOptionText(int index, int sub_index) const;
-  void LoadDA();
   bool SetCheckValue(const WideString& value,
                      bool bDefault,
                      NotificationOption notify);
