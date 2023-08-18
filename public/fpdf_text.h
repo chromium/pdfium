@@ -90,6 +90,21 @@ FPDF_EXPORT int FPDF_CALLCONV
 FPDFText_IsGenerated(FPDF_TEXTPAGE text_page, int index);
 
 // Experimental API.
+// Function: FPDFText_IsHyphen
+//          Get if a character in a page is a hyphen.
+// Parameters:
+//          text_page   -   Handle to a text page information structure.
+//                          Returned by FPDFText_LoadPage function.
+//          index       -   Zero-based index of the character.
+// Return value:
+//          1 if the character is a hyphen.
+//          0 if the character is not a hyphen.
+//          -1 if there was an error.
+//
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFText_IsHyphen(FPDF_TEXTPAGE text_page, int index);
+
+// Experimental API.
 // Function: FPDFText_HasUnicodeMapError
 //          Get if a character in a page has an invalid unicode mapping.
 // Parameters:

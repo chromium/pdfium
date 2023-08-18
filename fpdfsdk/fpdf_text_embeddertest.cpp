@@ -983,6 +983,37 @@ TEST_F(FPDFTextEmbedderTest, IsGenerated) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFTextEmbedderTest, IsHyphen) {
+  ASSERT_TRUE(OpenDocument("bug_781804.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page));
+    ASSERT_TRUE(textpage);
+
+    EXPECT_EQ(static_cast<unsigned int>('V'),
+              FPDFText_GetUnicode(textpage.get(), 0));
+    EXPECT_EQ(0, FPDFText_IsHyphen(textpage.get(), 0));
+    EXPECT_EQ(static_cast<unsigned int>('\2'),
+              FPDFText_GetUnicode(textpage.get(), 6));
+    EXPECT_EQ(1, FPDFText_IsHyphen(textpage.get(), 6));
+
+    EXPECT_EQ(static_cast<unsigned int>('U'),
+              FPDFText_GetUnicode(textpage.get(), 14));
+    EXPECT_EQ(0, FPDFText_IsHyphen(textpage.get(), 14));
+    EXPECT_EQ(static_cast<unsigned int>(L'\u2010'),
+              FPDFText_GetUnicode(textpage.get(), 18));
+    EXPECT_EQ(0, FPDFText_IsHyphen(textpage.get(), 18));
+
+    EXPECT_EQ(-1, FPDFText_IsHyphen(textpage.get(), -1));
+    EXPECT_EQ(-1, FPDFText_IsHyphen(textpage.get(), 1000));
+    EXPECT_EQ(-1, FPDFText_IsHyphen(nullptr, 6));
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFTextEmbedderTest, IsInvalidUnicode) {
   ASSERT_TRUE(OpenDocument("bug_1388_2.pdf"));
   FPDF_PAGE page = LoadPage(0);

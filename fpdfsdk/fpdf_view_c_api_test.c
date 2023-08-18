@@ -431,6 +431,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFText_GetUnicode);
     CHK(FPDFText_HasUnicodeMapError);
     CHK(FPDFText_IsGenerated);
+    CHK(FPDFText_IsHyphen);
     CHK(FPDFText_LoadPage);
 
     // fpdf_thumbnail.h
