@@ -18,7 +18,13 @@ _CONSOLE_HEADER = {
     "tree_status_host": "pdfium-status.appspot.com",
 }
 
-_SWARMING_TEST_TIMEOUT = 20 * time.minute
+# How long to wait for a swarmed test task to start executing. If the task fails
+# to schedule, the swarming pool probably is busy, and the PDFium recipe falls
+# back to executing the test locally.
+_SWARMING_TEST_SCHEDULE_TIMEOUT = 5 * time.minute
+
+# How long to wait for a swarmed test task to finish executing.
+_SWARMING_TEST_EXECUTION_TIMEOUT = 20 * time.minute
 
 # Dicts for OS-specific dimensions.
 _LINUX_FOCAL_DIMENSIONS = {
@@ -187,8 +193,8 @@ def pdfium_internal_builder(name, bucket, swarm_tests):
         properties.update({
             "swarming": {
                 "dimensions": dimensions,
-                "execution_timeout_secs": _SWARMING_TEST_TIMEOUT / time.second,
-                "expiration_secs": luci.builder.defaults.execution_timeout.get() / time.second,
+                "execution_timeout_secs": _SWARMING_TEST_EXECUTION_TIMEOUT / time.second,
+                "expiration_secs": _SWARMING_TEST_SCHEDULE_TIMEOUT / time.second,
 
                 # TODO(crbug.com/1465963): Ideally would be a test-only account.
                 "service_account": service_account,
