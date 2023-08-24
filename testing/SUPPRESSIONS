@@ -411,7 +411,6 @@ mask_array.pdf * * * gdi
 new_stamp2.pdf * * * gdi
 quick_start_guide.pdf * * * gdi
 whats_new_in_v3.0.pdf * * * gdi
-xfermodeimagefilter.pdf * * * gdi
 
 # TODO(pdfium:2055): Remove after associated bug is fixed
 Date_FormCale.pdf * * * gdi
