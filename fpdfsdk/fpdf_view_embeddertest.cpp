@@ -1906,10 +1906,6 @@ restore
 }
 
 TEST_F(FPDFViewEmbedderTest, ImageMask) {
-  // TODO(crbug.com/pdfium/1500): Fix this test and enable.
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-    return;
-
   ASSERT_TRUE(OpenDocument("bug_674771.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
