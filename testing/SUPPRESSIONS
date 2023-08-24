@@ -320,7 +320,6 @@ Test_CheckBox.pdf * * * *
 123.pdf * * * gdi
 1_image.pdf * * * gdi
 2_halftone.pdf * * * gdi
-3_alternate.pdf * * * gdi
 3_interpolate_image.pdf * * * gdi
 3bigpreview.pdf * * * gdi
 4_3.pdf * * * gdi
@@ -408,7 +407,6 @@ image_foxit.pdf * * * gdi
 image_jpg.pdf * * * gdi
 image_png.pdf * * * gdi
 image_tif.pdf * * * gdi
-lines.pdf * * * gdi
 mask_array.pdf * * * gdi
 new_stamp2.pdf * * * gdi
 quick_start_guide.pdf * * * gdi
