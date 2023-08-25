@@ -19,6 +19,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxge/calculate_pitch.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_bitmapstorer.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -669,14 +670,13 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipToInternal(
       }
     }
   } else {
-    FX_SAFE_UINT32 copy_len = pNewBitmap->GetWidth();
-    copy_len *= pNewBitmap->GetBPP();
-    copy_len += 7;
-    copy_len /= 8;
-    if (!copy_len.IsValid())
+    absl::optional<uint32_t> copy_len = fxge::CalculatePitch8(
+        pNewBitmap->GetBPP(), /*components=*/1, pNewBitmap->GetWidth());
+    if (!copy_len.has_value()) {
       return nullptr;
+    }
 
-    copy_len = std::min<uint32_t>(m_Pitch, copy_len.ValueOrDie());
+    copy_len = std::min<uint32_t>(m_Pitch, copy_len.value());
 
     FX_SAFE_UINT32 offset = rect.left;
     offset *= GetBppFromFormat(m_Format);
@@ -689,7 +689,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipToInternal(
           GetScanline(row).subspan(offset.ValueOrDie()).data();
       uint8_t* dest_scan =
           pNewBitmap->GetWritableScanline(row - rect.top).data();
-      memcpy(dest_scan, src_scan, copy_len.ValueOrDie());
+      memcpy(dest_scan, src_scan, copy_len.value());
     }
   }
   return pNewBitmap;
