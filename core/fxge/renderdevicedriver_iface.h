@@ -116,6 +116,11 @@ class RenderDeviceDriverIface {
                                int bitmap_alpha,
                                BlendMode blend_type);
   virtual void SetGroupKnockout(bool group_knockout);
+
+  // For `CFX_SkiaDeviceDriver` only:
+  // Syncs the current rendering result from the internal buffer to the output
+  // bitmap if such internal buffer exists.
+  virtual bool SyncInternalBitmaps();
 #endif
 
   // Multiplies the device by a constant alpha, returning `true` on success.

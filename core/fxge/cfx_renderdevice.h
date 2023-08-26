@@ -221,6 +221,7 @@ class CFX_RenderDevice {
                        int top,
                        int bitmap_alpha,
                        BlendMode blend_type);
+  bool SyncInternalBitmaps();
 #endif
 
  protected:

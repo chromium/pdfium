@@ -704,21 +704,12 @@ xfa_textfield.in win * * *
 # GDI
 
 # TODO(pdfium:2054): Remove after associated bug is fixed
-bug_1012369.in * * * gdi
 bug_1258968.in * * * gdi
 bug_1383708.in * * * gdi
-bug_1469.in * * * gdi
-bug_1693.in * * * gdi
-bug_1733.in * * * gdi
-bug_1750.in * * * gdi
-bug_512557.pdf * * * gdi
-bug_71.in * * * gdi
 bug_718762.in * * * gdi
-bug_867501.pdf * * * gdi
 bug_966263.in * * * gdi
 bug_986108.in * * * gdi
 image_transformer_other.in * * * gdi
-jpxdecode_without_smaskindata.in * * * gdi
 
 # TODO(pdfium:2055): Remove after associated bug is fixed
 barcode_test.pdf * * * gdi
@@ -761,7 +752,6 @@ xfa_tiff_packbits_image.in * * * gdi
 
 # TODO(pdfium:2056): Remove after associated bug is fixed
 bug_1015233.in * * * gdi
-bug_1087.pdf * * * gdi
 bug_1099446.in * * * gdi
 bug_1161.in * * * gdi
 bug_1236.in * * * gdi
@@ -771,13 +761,11 @@ bug_1395648.in * * * gdi
 bug_1396266.in * * * gdi
 bug_1430333.in * * * gdi
 bug_1822.in * * * gdi
-bug_1845.in * * * gdi
 bug_1847.in * * * gdi
 bug_1949.in * * * gdi
 bug_1966.in * * * gdi
 bug_1972_1.in * * * gdi
 bug_1972_3.in * * * gdi
-bug_1976.in * * * gdi
 bug_1995.in * * * gdi
 bug_451366.in * * * gdi
 bug_632.in * * * gdi

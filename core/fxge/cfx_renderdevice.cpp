@@ -1002,6 +1002,10 @@ bool CFX_RenderDevice::SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
   return m_pDeviceDriver->SetBitsWithMask(pBitmap, pMask, left, top,
                                           bitmap_alpha, blend_type);
 }
+
+bool CFX_RenderDevice::SyncInternalBitmaps() {
+  return m_pDeviceDriver->SyncInternalBitmaps();
+}
 #endif
 
 bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,

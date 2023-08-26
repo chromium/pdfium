@@ -13,7 +13,6 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
-class CFX_DIBitmap;
 class CFX_Matrix;
 class CFX_RenderDevice;
 class CPDF_Dictionary;
@@ -52,7 +51,7 @@ class CPDF_RenderContext {
               const CPDF_RenderOptions* pOptions,
               const CFX_Matrix* pLastMatrix);
 
-  void GetBackground(RetainPtr<CFX_DIBitmap> pBuffer,
+  void GetBackground(CFX_RenderDevice* pDevice,
                      const CPDF_PageObject* pObj,
                      const CPDF_RenderOptions* pOptions,
                      const CFX_Matrix& mtFinal);
