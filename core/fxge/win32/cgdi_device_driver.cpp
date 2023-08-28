@@ -153,7 +153,7 @@ void SetPathToDC(HDC hDC, const CFX_Path& path, const CFX_Matrix* pMatrix) {
   EndPath(hDC);
 }
 
-ByteString GetBitmapInfo(const RetainPtr<CFX_DIBBase>& source) {
+ByteString GetBitmapInfo(const RetainPtr<const CFX_DIBBase>& source) {
   int len = sizeof(BITMAPINFOHEADER);
   if (source->GetBPP() == 1 || source->GetBPP() == 8) {
     len += sizeof(DWORD) * (int)(1 << source->GetBPP());
@@ -399,24 +399,34 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const RetainPtr<CFX_DIBBase>& source,
       return false;
     }
 
-    ByteString info = GetBitmapInfo(flipped_source);
+    RetainPtr<const CFX_DIBBase> realized_source =
+        flipped_source->RealizeIfNeeded();
+    if (!realized_source) {
+      return false;
+    }
+    ByteString info = GetBitmapInfo(realized_source);
     ((BITMAPINFOHEADER*)info.c_str())->biHeight *= -1;
     FX_RECT dst_rect(0, 0, src_rect.Width(), src_rect.Height());
-    dst_rect.Intersect(0, 0, flipped_source->GetWidth(),
-                       flipped_source->GetHeight());
+    dst_rect.Intersect(0, 0, realized_source->GetWidth(),
+                       realized_source->GetHeight());
     int dst_width = dst_rect.Width();
     int dst_height = dst_rect.Height();
     ::StretchDIBits(m_hDC, left, top, dst_width, dst_height, 0, 0, dst_width,
-                    dst_height, flipped_source->GetBuffer().data(),
+                    dst_height, realized_source->GetBuffer().data(),
                     (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS, SRCCOPY);
     return true;
   }
 
-  ByteString info = GetBitmapInfo(source);
-  ::SetDIBitsToDevice(m_hDC, left, top, src_rect.Width(), src_rect.Height(),
-                      src_rect.left, source->GetHeight() - src_rect.bottom, 0,
-                      source->GetHeight(), source->GetBuffer().data(),
-                      (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS);
+  RetainPtr<const CFX_DIBBase> realized_source = source->RealizeIfNeeded();
+  if (!realized_source) {
+    return false;
+  }
+  ByteString info = GetBitmapInfo(realized_source);
+  ::SetDIBitsToDevice(
+      m_hDC, left, top, src_rect.Width(), src_rect.Height(), src_rect.left,
+      realized_source->GetHeight() - src_rect.bottom, 0,
+      realized_source->GetHeight(), realized_source->GetBuffer().data(),
+      (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS);
   return true;
 }
 
@@ -430,7 +440,6 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(const RetainPtr<CFX_DIBBase>& source,
     return false;
   }
 
-  ByteString info = GetBitmapInfo(source);
   if ((int64_t)abs(dest_width) * abs(dest_height) <
           (int64_t)source->GetWidth() * source->GetHeight() * 4 ||
       options.bInterpolateBilinear) {
@@ -438,21 +447,29 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(const RetainPtr<CFX_DIBBase>& source,
   } else {
     SetStretchBltMode(m_hDC, COLORONCOLOR);
   }
-  RetainPtr<CFX_DIBBase> stretch_source = source;
+
+  RetainPtr<const CFX_DIBBase> realized_source;
   if (m_DeviceType == DeviceType::kPrinter &&
       ((int64_t)source->GetWidth() * source->GetHeight() >
        (int64_t)abs(dest_width) * abs(dest_height))) {
-    stretch_source = source->StretchTo(dest_width, dest_height,
-                                       FXDIB_ResampleOptions(), nullptr);
+    RetainPtr<CFX_DIBBase> stretch_source = source->StretchTo(
+        dest_width, dest_height, FXDIB_ResampleOptions(), nullptr);
     if (!stretch_source) {
       return false;
     }
-    info = GetBitmapInfo(stretch_source);
+    realized_source = stretch_source->RealizeIfNeeded();
+  } else {
+    realized_source = source->RealizeIfNeeded();
   }
+  if (!realized_source) {
+    return false;
+  }
+
+  ByteString info = GetBitmapInfo(realized_source);
   ::StretchDIBits(m_hDC, dest_left, dest_top, dest_width, dest_height, 0, 0,
-                  stretch_source->GetWidth(), stretch_source->GetHeight(),
-                  stretch_source->GetBuffer().data(), (BITMAPINFO*)info.c_str(),
-                  DIB_RGB_COLORS, SRCCOPY);
+                  realized_source->GetWidth(), realized_source->GetHeight(),
+                  realized_source->GetBuffer().data(),
+                  (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS, SRCCOPY);
   return true;
 }
 
@@ -466,8 +483,13 @@ bool CGdiDeviceDriver::GDI_StretchBitMask(const RetainPtr<CFX_DIBBase>& source,
     return false;
   }
 
-  int width = source->GetWidth();
-  int height = source->GetHeight();
+  RetainPtr<const CFX_DIBBase> realized_source = source->RealizeIfNeeded();
+  if (!realized_source) {
+    return false;
+  }
+
+  int width = realized_source->GetWidth();
+  int height = realized_source->GetHeight();
   struct {
     BITMAPINFOHEADER bmiHeader;
     uint32_t bmiColors[2];
@@ -507,8 +529,8 @@ bool CGdiDeviceDriver::GDI_StretchBitMask(const RetainPtr<CFX_DIBBase>& source,
   // 0xB8074A
 
   ::StretchDIBits(m_hDC, dest_left, dest_top, dest_width, dest_height, 0, 0,
-                  width, height, source->GetBuffer().data(), (BITMAPINFO*)&bmi,
-                  DIB_RGB_COLORS, 0xB8074A);
+                  width, height, realized_source->GetBuffer().data(),
+                  (BITMAPINFO*)&bmi, DIB_RGB_COLORS, 0xB8074A);
 
   SelectObject(m_hDC, hOld);
   DeleteObject(hPattern);

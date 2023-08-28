@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include "build/build_config.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -63,6 +64,11 @@ class CFX_DIBBase : public Retainable {
 
   // Copies into internally-owned palette.
   void SetPalette(pdfium::span<const uint32_t> src_palette);
+
+#if BUILDFLAG(IS_WIN)
+  // Calls Realize() if needed. Otherwise, return `this`.
+  RetainPtr<const CFX_DIBBase> RealizeIfNeeded() const;
+#endif
 
   RetainPtr<CFX_DIBitmap> Realize() const;
   RetainPtr<CFX_DIBitmap> ClipTo(const FX_RECT& rect) const;

@@ -633,6 +633,15 @@ size_t CFX_DIBBase::GetEstimatedImageMemoryBurden() const {
   return GetRequiredPaletteSize() * sizeof(uint32_t);
 }
 
+#if BUILDFLAG(IS_WIN)
+RetainPtr<const CFX_DIBBase> CFX_DIBBase::RealizeIfNeeded() const {
+  if (GetBuffer().empty()) {
+    return Realize();
+  }
+  return pdfium::WrapRetain(this);
+}
+#endif
+
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::Realize() const {
   return ClipToInternal(nullptr);
 }
