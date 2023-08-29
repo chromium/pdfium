@@ -6,7 +6,11 @@
 
 #include "core/fxcrt/fx_memory.h"
 
+#if defined(PDF_USE_PARTITION_ALLOC_NEW_LOCATION)
+#include "base/allocator/partition_allocator/src/partition_alloc/partition_alloc.h"
+#else
 #include "base/allocator/partition_allocator/partition_alloc.h"
+#endif
 #include "core/fxcrt/fx_safe_types.h"
 #include "third_party/base/no_destructor.h"
 

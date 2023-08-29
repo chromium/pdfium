@@ -11,7 +11,7 @@ _is_using_sanitizers = is_asan || is_hwasan || is_lsan || is_tsan || is_msan
 # TODO(https://crbug.com/pdfium/2068) - make work with windows.
 _use_shim = !_is_using_sanitizers && !is_win
 
-# See base/allocator/partition_allocator/external_builds.md
+# See base/allocator/partition_allocator/src/partition_alloc/external_builds.md
 use_allocator_shim_default = _use_shim
 use_partition_alloc_as_malloc_default = _use_shim
 enable_backup_ref_ptr_support_default = _use_shim

@@ -11,7 +11,11 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 #if defined(PDF_USE_PARTITION_ALLOC)
+#if defined(PDF_USE_PARTITION_ALLOC_NEW_LOCATION)
+#include "base/allocator/partition_allocator/src/partition_alloc/partition_address_space.h"
+#else
 #include "base/allocator/partition_allocator/partition_address_space.h"
+#endif
 #endif
 
 namespace {

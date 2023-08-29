@@ -4,8 +4,13 @@
 
 #include "testing/allocator_shim_config.h"
 
+#if defined(PDF_USE_PARTITION_ALLOC_NEW_LOCATION)
+#include "base/allocator/partition_allocator/src/partition_alloc/partition_alloc_buildflags.h"
+#include "base/allocator/partition_allocator/src/partition_alloc/shim/allocator_shim.h"
+#else
 #include "base/allocator/partition_allocator/partition_alloc_buildflags.h"
 #include "base/allocator/partition_allocator/shim/allocator_shim.h"
+#endif
 
 namespace pdfium {
 
