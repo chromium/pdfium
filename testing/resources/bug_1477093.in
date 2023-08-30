@@ -1,0 +1,66 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /OpenAction 7 0 R
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Kids [3 0 R]
+  /Count 1
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Annots [6 0 R]
+  /MediaBox [0 0 612 792]
+  /Contents [4 0 R]
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+% start the stream
+1 0 0 1 50 700 cm % text area（50,700）
+BT  % start  the text content
+ /F0 36 Tf         % font size
+ (Hope u are UseFul!) Tj % font content
+ET  % end the text content
+endstream
+endobj
+{{object 5 0}}  <<
+  {{streamlen}}
+>>
+stream
+  function run() {
+    this.getField('bad_field').value = 'Apple';
+  }
+  app.setTimeOut('run()', 1000 );
+endstream
+endobj
+{{object 6 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /F 4
+  /FT /Tx
+  /Opt [(Apple) (Banana)]
+  /Rect [200 200 400 400]
+  /T (bad_field)
+  /V <<
+    /A (b)
+  >>
+>>
+endobj
+{{object 7 0}} <<
+  /Type /Action
+  /JS 5 0 R
+  /S /JavaScript
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

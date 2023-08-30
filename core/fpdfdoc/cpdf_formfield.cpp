@@ -493,20 +493,24 @@ bool CPDF_FormField::ClearSelection(NotificationOption notify) {
 }
 
 bool CPDF_FormField::IsItemSelected(int index) const {
-  DCHECK(GetType() == kComboBox || GetType() == kListBox);
-  if (index < 0 || index >= CountOptions())
+  if (GetType() != kComboBox && GetType() != kListBox) {
     return false;
-
+  }
+  if (index < 0 || index >= CountOptions()) {
+    return false;
+  }
   // First consider the /I entry if it is valid, then fall back to the /V entry.
   return m_bUseSelectedIndices ? IsSelectedIndex(index)
                                : IsSelectedOption(GetOptionValue(index));
 }
 
 bool CPDF_FormField::SetItemSelection(int index, NotificationOption notify) {
-  DCHECK(GetType() == kComboBox || GetType() == kListBox);
-  if (index < 0 || index >= CountOptions())
+  if (GetType() != kComboBox && GetType() != kListBox) {
     return false;
-
+  }
+  if (index < 0 || index >= CountOptions()) {
+    return false;
+  }
   WideString opt_value = GetOptionValue(index);
   if (notify == NotificationOption::kNotify &&
       !NotifyListOrComboBoxBeforeChange(opt_value)) {

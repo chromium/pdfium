@@ -1316,6 +1316,22 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_765384) {
   FORM_OnLButtonUp(form_handle(), page, 0, 140, 590);
   UnloadPage(page);
 }
+
+// Test passes if DCHECK() not hit.
+TEST_F(FPDFFormFillEmbedderTest, BUG_1477093) {
+  EmbedderTestTimerHandlingDelegate delegate;
+  SetDelegate(&delegate);
+
+  ASSERT_TRUE(OpenDocument("bug_1477093.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+
+  DoOpenActions();
+  delegate.AdvanceTime(1000);
+  delegate.AdvanceTime(1000);
+  UnloadPage(page);
+}
+
 #endif  // PDF_ENABLE_V8
 
 TEST_F(FPDFFormFillEmbedderTest, FormText) {
