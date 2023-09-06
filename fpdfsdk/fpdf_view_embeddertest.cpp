@@ -1392,10 +1392,11 @@ TEST_F(FPDFViewEmbedderTest, UnSupportedOperations_LoadDocument) {
 
   RecordUnsupportedErrorDelegate delegate;
   SetDelegate(&delegate);
-  FPDF_DOCUMENT doc = FPDF_LoadDocument(file_path.c_str(), "");
-  EXPECT_TRUE(doc != nullptr);
-  EXPECT_EQ(FPDF_UNSP_DOC_PORTABLECOLLECTION, delegate.type_);
-  FPDF_CloseDocument(doc);
+  {
+    ScopedFPDFDocument doc(FPDF_LoadDocument(file_path.c_str(), ""));
+    EXPECT_TRUE(doc);
+    EXPECT_EQ(FPDF_UNSP_DOC_PORTABLECOLLECTION, delegate.type_);
+  }
   SetDelegate(nullptr);
 }
 

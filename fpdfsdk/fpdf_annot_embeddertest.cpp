@@ -1088,29 +1088,27 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveAnnotation) {
   file_access.m_FileLen = new_file.size();
   file_access.m_GetBlock = GetBlockFromString;
   file_access.m_Param = &new_file;
-  FPDF_DOCUMENT new_doc = FPDF_LoadCustomDocument(&file_access, nullptr);
+  ScopedFPDFDocument new_doc(FPDF_LoadCustomDocument(&file_access, nullptr));
   ASSERT_TRUE(new_doc);
-  FPDF_PAGE new_page = FPDF_LoadPage(new_doc, 0);
+  ScopedFPDFPage new_page(FPDF_LoadPage(new_doc.get(), 0));
   ASSERT_TRUE(new_page);
 
   // Check that the saved document has 2 annotations on the first page.
-  EXPECT_EQ(2, FPDFPage_GetAnnotCount(new_page));
+  EXPECT_EQ(2, FPDFPage_GetAnnotCount(new_page.get()));
 
   // Check that the remaining 2 annotations are the original 1st and 3rd ones
   // by verifying their rectangle coordinates.
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(new_page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(new_page.get(), 0));
     ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
     EXPECT_NEAR(86.1971f, rect.left, 0.001f);
   }
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(new_page, 1));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(new_page.get(), 1));
     ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
     EXPECT_NEAR(351.8204f, rect.left, 0.001f);
   }
-  FPDF_ClosePage(new_page);
-  FPDF_CloseDocument(new_doc);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {

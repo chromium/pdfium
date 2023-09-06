@@ -700,10 +700,9 @@ TEST_F(FPDFDocEmbedderTest, GetMetaTextInAttachmentFile) {
 }
 
 TEST_F(FPDFDocEmbedderTest, GetMetaTextFromNewDocument) {
-  FPDF_DOCUMENT empty_doc = FPDF_CreateNewDocument();
+  ScopedFPDFDocument empty_doc(FPDF_CreateNewDocument());
   unsigned short buf[128];
-  EXPECT_EQ(2u, FPDF_GetMetaText(empty_doc, "Title", buf, sizeof(buf)));
-  FPDF_CloseDocument(empty_doc);
+  EXPECT_EQ(2u, FPDF_GetMetaText(empty_doc.get(), "Title", buf, sizeof(buf)));
 }
 
 TEST_F(FPDFDocEmbedderTest, GetPageAAction) {

@@ -85,11 +85,10 @@ TEST_F(FPDFSaveEmbedderTest, SaveCopiedDoc) {
   FPDF_PAGE page = LoadPage(0);
   EXPECT_TRUE(page);
 
-  FPDF_DOCUMENT output_doc = FPDF_CreateNewDocument();
+  ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
   EXPECT_TRUE(output_doc);
-  EXPECT_TRUE(FPDF_ImportPages(output_doc, document(), "1", 0));
-  EXPECT_TRUE(FPDF_SaveAsCopy(output_doc, this, 0));
-  FPDF_CloseDocument(output_doc);
+  EXPECT_TRUE(FPDF_ImportPages(output_doc.get(), document(), "1", 0));
+  EXPECT_TRUE(FPDF_SaveAsCopy(output_doc.get(), this, 0));
 
   UnloadPage(page);
 }

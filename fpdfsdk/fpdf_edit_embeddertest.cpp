@@ -359,21 +359,20 @@ TEST_F(FPDFEditEmbedderTest, RasterizePDF) {
 
   // Create a new document from |orig_bitmap| and save it.
   {
-    FPDF_DOCUMENT temp_doc = FPDF_CreateNewDocument();
-    FPDF_PAGE temp_page = FPDFPage_New(temp_doc, 0, 612, 792);
+    ScopedFPDFDocument temp_doc(FPDF_CreateNewDocument());
+    ScopedFPDFPage temp_page(FPDFPage_New(temp_doc.get(), 0, 612, 792));
 
     // Add the bitmap to an image object and add the image object to the output
     // page.
-    FPDF_PAGEOBJECT temp_img = FPDFPageObj_NewImageObj(temp_doc);
-    EXPECT_TRUE(
-        FPDFImageObj_SetBitmap(&temp_page, 1, temp_img, orig_bitmap.get()));
+    ScopedFPDFPageObject temp_img(FPDFPageObj_NewImageObj(temp_doc.get()));
+    FPDF_PAGE pages_array[] = {temp_page.get()};
+    EXPECT_TRUE(FPDFImageObj_SetBitmap(pages_array, 1, temp_img.get(),
+                                       orig_bitmap.get()));
     static constexpr FS_MATRIX kLetterScaleMatrix{612, 0, 0, 792, 0, 0};
-    EXPECT_TRUE(FPDFPageObj_SetMatrix(temp_img, &kLetterScaleMatrix));
-    FPDFPage_InsertObject(temp_page, temp_img);
-    EXPECT_TRUE(FPDFPage_GenerateContent(temp_page));
-    EXPECT_TRUE(FPDF_SaveAsCopy(temp_doc, this, 0));
-    FPDF_ClosePage(temp_page);
-    FPDF_CloseDocument(temp_doc);
+    EXPECT_TRUE(FPDFPageObj_SetMatrix(temp_img.get(), &kLetterScaleMatrix));
+    FPDFPage_InsertObject(temp_page.get(), temp_img.release());
+    EXPECT_TRUE(FPDFPage_GenerateContent(temp_page.get()));
+    EXPECT_TRUE(FPDF_SaveAsCopy(temp_doc.get(), this, 0));
   }
 
   // Get the generated content. Make sure it is at least as big as the original
