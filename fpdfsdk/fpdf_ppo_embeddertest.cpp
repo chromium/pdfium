@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 #include <iterator>
+#include <memory>
+#include <string>
 
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_formobject.h"
@@ -23,6 +25,8 @@
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_constants.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "testing/utils/file_util.h"
+#include "testing/utils/path_service.h"
 
 namespace {
 
@@ -621,4 +625,28 @@ TEST_F(FPDFPPOEmbedderTest, ImportWithZeroLengthStream) {
   ASSERT_TRUE(new_page);
   ScopedFPDFBitmap new_bitmap = RenderPage(new_page.get());
   CompareBitmap(new_bitmap.get(), 200, 200, pdfium::HelloWorldChecksum());
+}
+
+TEST_F(FPDFPPOEmbedderTest, ImportIntoDestDocWithoutInfo) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  EXPECT_EQ(1, FPDF_GetPageCount(document()));
+
+  std::string file_path;
+  ASSERT_TRUE(PathService::GetTestFilePath("rectangles.pdf", &file_path));
+  size_t file_length = 0;
+  std::unique_ptr<char, pdfium::FreeDeleter> file_contents =
+      GetFileContents(file_path.c_str(), &file_length);
+  DCHECK(file_contents);
+  ScopedFPDFDocument src_doc(
+      FPDF_LoadMemDocument(file_contents.get(), file_length, nullptr));
+  ASSERT_TRUE(src_doc);
+
+  // TODO(crbug.com/pdfium/2049): The import should succeed.
+  static constexpr int kIndices[] = {0};
+  EXPECT_FALSE(FPDF_ImportPagesByIndex(document(), src_doc.get(), kIndices,
+                                       std::size(kIndices), 0));
+  EXPECT_EQ(1, FPDF_GetPageCount(document()));
+
+  EXPECT_FALSE(FPDF_ImportPages(document(), src_doc.get(), "1", 0));
+  EXPECT_EQ(1, FPDF_GetPageCount(document()));
 }
