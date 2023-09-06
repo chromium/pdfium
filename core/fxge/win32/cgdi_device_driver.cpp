@@ -394,25 +394,22 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const RetainPtr<CFX_DIBBase>& source,
                                      int left,
                                      int top) {
   if (m_DeviceType == DeviceType::kPrinter) {
-    RetainPtr<CFX_DIBBase> flipped_source = source->FlipImage(false, true);
+    RetainPtr<const CFX_DIBBase> flipped_source =
+        source->FlipImage(/*bXFlip=*/false, /*bYFlip=*/true);
     if (!flipped_source) {
       return false;
     }
 
-    RetainPtr<const CFX_DIBBase> realized_source =
-        flipped_source->RealizeIfNeeded();
-    if (!realized_source) {
-      return false;
-    }
-    ByteString info = GetBitmapInfo(realized_source);
+    CHECK(!flipped_source->GetBuffer().empty());
+    ByteString info = GetBitmapInfo(flipped_source);
     ((BITMAPINFOHEADER*)info.c_str())->biHeight *= -1;
     FX_RECT dst_rect(0, 0, src_rect.Width(), src_rect.Height());
-    dst_rect.Intersect(0, 0, realized_source->GetWidth(),
-                       realized_source->GetHeight());
+    dst_rect.Intersect(0, 0, flipped_source->GetWidth(),
+                       flipped_source->GetHeight());
     int dst_width = dst_rect.Width();
     int dst_height = dst_rect.Height();
     ::StretchDIBits(m_hDC, left, top, dst_width, dst_height, 0, 0, dst_width,
-                    dst_height, realized_source->GetBuffer().data(),
+                    dst_height, flipped_source->GetBuffer().data(),
                     (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS, SRCCOPY);
     return true;
   }
@@ -452,12 +449,8 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(const RetainPtr<CFX_DIBBase>& source,
   if (m_DeviceType == DeviceType::kPrinter &&
       ((int64_t)source->GetWidth() * source->GetHeight() >
        (int64_t)abs(dest_width) * abs(dest_height))) {
-    RetainPtr<CFX_DIBBase> stretch_source = source->StretchTo(
-        dest_width, dest_height, FXDIB_ResampleOptions(), nullptr);
-    if (!stretch_source) {
-      return false;
-    }
-    realized_source = stretch_source->RealizeIfNeeded();
+    realized_source = source->StretchTo(dest_width, dest_height,
+                                        FXDIB_ResampleOptions(), nullptr);
   } else {
     realized_source = source->RealizeIfNeeded();
   }
@@ -465,6 +458,7 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(const RetainPtr<CFX_DIBBase>& source,
     return false;
   }
 
+  CHECK(!realized_source->GetBuffer().empty());
   ByteString info = GetBitmapInfo(realized_source);
   ::StretchDIBits(m_hDC, dest_left, dest_top, dest_width, dest_height, 0, 0,
                   realized_source->GetWidth(), realized_source->GetHeight(),
