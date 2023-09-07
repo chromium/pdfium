@@ -250,23 +250,6 @@ deps = {
     'dep_type': 'cipd',
   },
 
-  # TODO(chromium:1458042): Remove these paths, when chromium builds files
-  # have moved to third_party/lib*/src paths.
-  'buildtools/third_party/libc++/trunk':
-    Var('chromium_git') +
-        '/external/github.com/llvm/llvm-project/libcxx.git@' +
-        Var('libcxx_revision'),
-
-  'buildtools/third_party/libc++abi/trunk':
-    Var('chromium_git') +
-        '/external/github.com/llvm/llvm-project/libcxxabi.git@' +
-        Var('libcxxabi_revision'),
-
-  'buildtools/third_party/libunwind/trunk':
-    Var('chromium_git') +
-        '/external/github.com/llvm/llvm-project/libunwind.git@' +
-        Var('libunwind_revision'),
-
   'buildtools/win': {
     'packages': [
       {
