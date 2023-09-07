@@ -21,8 +21,10 @@
 #include "third_party/base/notreached.h"
 
 #ifdef PDF_ENABLE_SKIA
-#include "third_party/skia/include/core/SkPicture.h"  // nogncheck
-#include "third_party/skia/include/core/SkStream.h"   // nogncheck
+#include "third_party/skia/include/core/SkPicture.h"       // nogncheck
+#include "third_party/skia/include/core/SkSerialProcs.h"   // nogncheck
+#include "third_party/skia/include/core/SkStream.h"        // nogncheck
+#include "third_party/skia/include/encode/SkPngEncoder.h"  // nogncheck
 #endif
 
 namespace {
@@ -627,8 +629,12 @@ std::string WriteSkp(const char* pdf_name, int num, const SkPicture& picture) {
   if (!stream) {
     return "";
   }
+  SkSerialProcs procs;
+  procs.fImageProc = [](SkImage* img, void*) -> sk_sp<SkData> {
+      return SkPngEncoder::Encode(nullptr, img, SkPngEncoder::Options{});
+  };
 
-  picture.serialize(stream.get());
+  picture.serialize(stream.get(), &procs);
   return filename;
 }
 #endif  // PDF_ENABLE_SKIA
