@@ -641,12 +641,11 @@ TEST_F(FPDFPPOEmbedderTest, ImportIntoDestDocWithoutInfo) {
       FPDF_LoadMemDocument(file_contents.get(), file_length, nullptr));
   ASSERT_TRUE(src_doc);
 
-  // TODO(crbug.com/pdfium/2049): The import should succeed.
   static constexpr int kIndices[] = {0};
-  EXPECT_FALSE(FPDF_ImportPagesByIndex(document(), src_doc.get(), kIndices,
-                                       std::size(kIndices), 0));
-  EXPECT_EQ(1, FPDF_GetPageCount(document()));
+  EXPECT_TRUE(FPDF_ImportPagesByIndex(document(), src_doc.get(), kIndices,
+                                      std::size(kIndices), 0));
+  EXPECT_EQ(2, FPDF_GetPageCount(document()));
 
-  EXPECT_FALSE(FPDF_ImportPages(document(), src_doc.get(), "1", 0));
-  EXPECT_EQ(1, FPDF_GetPageCount(document()));
+  EXPECT_TRUE(FPDF_ImportPages(document(), src_doc.get(), "1", 0));
+  EXPECT_EQ(3, FPDF_GetPageCount(document()));
 }

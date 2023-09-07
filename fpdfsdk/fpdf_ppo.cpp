@@ -256,10 +256,9 @@ bool CPDF_PageOrganizer::Init() {
     return false;
 
   RetainPtr<CPDF_Dictionary> pDocInfoDict = dest()->GetInfo();
-  if (!pDocInfoDict)
-    return false;
-
-  pDocInfoDict->SetNewFor<CPDF_String>("Producer", "PDFium", false);
+  if (pDocInfoDict) {
+    pDocInfoDict->SetNewFor<CPDF_String>("Producer", "PDFium", false);
+  }
 
   ByteString cbRootType = pNewRoot->GetByteStringFor("Type", ByteString());
   if (cbRootType.IsEmpty())
