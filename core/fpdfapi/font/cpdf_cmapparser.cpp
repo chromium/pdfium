@@ -100,10 +100,7 @@ void CPDF_CMapParser::HandleCid(ByteStringView word) {
     StartCID = static_cast<uint16_t>(m_CodePoints[2]);
   }
   if (EndCode < CPDF_CMap::kDirectMapTableSize) {
-    for (uint32_t code = StartCode; code <= EndCode; code++) {
-      m_pCMap->SetDirectCharcodeToCIDTable(
-          code, static_cast<uint16_t>(StartCID + code - StartCode));
-    }
+    m_pCMap->SetDirectCharcodeToCIDTableRange(StartCode, EndCode, StartCID);
   } else {
     m_AdditionalCharcodeToCIDMappings.push_back({StartCode, EndCode, StartCID});
   }

@@ -77,9 +77,9 @@ class CPDF_CMap final : public Retainable {
   CIDSet GetCharset() const { return m_Charset; }
   void SetCharset(CIDSet set) { m_Charset = set; }
 
-  void SetDirectCharcodeToCIDTable(size_t idx, uint16_t val) {
-    m_DirectCharcodeToCIDTable.writable_span()[idx] = val;
-  }
+  void SetDirectCharcodeToCIDTableRange(uint32_t start_code,
+                                        uint32_t end_code,
+                                        uint16_t start_cid);
   bool IsDirectCharcodeToCIDTableIsEmpty() const {
     return m_DirectCharcodeToCIDTable.empty();
   }
