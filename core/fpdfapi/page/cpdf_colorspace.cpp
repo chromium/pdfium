@@ -894,21 +894,15 @@ uint32_t CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc,
   // PDF viewers tolerate invalid values, Acrobat does not, so be consistent
   // with Acrobat and reject bad values.
   RetainPtr<const CPDF_Dictionary> pDict = pStream->GetDict();
-  int32_t nDictComponents = pDict ? pDict->GetIntegerFor("N") : 0;
+  const int32_t nDictComponents = pDict ? pDict->GetIntegerFor("N") : 0;
   if (!fxcodec::IccTransform::IsValidIccComponents(nDictComponents)) {
     return 0;
   }
 
-  uint32_t nComponents = static_cast<uint32_t>(nDictComponents);
+  // Safe to cast, as the value just got validated.
+  const uint32_t nComponents = static_cast<uint32_t>(nDictComponents);
   m_pProfile = CPDF_DocPageData::FromDocument(pDoc)->GetIccProfile(pStream);
   if (!m_pProfile)
-    return 0;
-
-  // The PDF 1.7 spec also says the number of components in the ICC profile
-  // must match the N value. However, that assumes the viewer actually
-  // understands the ICC profile.
-  // If the valid ICC profile has a mismatch, fail.
-  if (m_pProfile->IsValid() && m_pProfile->GetComponents() != nComponents)
     return 0;
 
   // If PDFium does not understand the ICC profile format at all, or if it's

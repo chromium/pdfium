@@ -21,16 +21,26 @@ bool DetectSRGB(pdfium::span<const uint8_t> span) {
 }  // namespace
 
 CPDF_IccProfile::CPDF_IccProfile(RetainPtr<const CPDF_Stream> pStream,
-                                 pdfium::span<const uint8_t> span)
+                                 pdfium::span<const uint8_t> span,
+                                 uint32_t expected_components)
     : m_bsRGB(DetectSRGB(span)), m_pStream(std::move(pStream)) {
   if (m_bsRGB) {
     m_nSrcComponents = 3;
     return;
   }
 
-  m_Transform = fxcodec::IccTransform::CreateTransformSRGB(span);
-  if (m_Transform)
-    m_nSrcComponents = m_Transform->components();
+  auto transform = fxcodec::IccTransform::CreateTransformSRGB(span);
+  if (!transform) {
+    return;
+  }
+
+  uint32_t components = transform->components();
+  if (components != expected_components) {
+    return;
+  }
+
+  m_nSrcComponents = components;
+  m_Transform = std::move(transform);
 }
 
 CPDF_IccProfile::~CPDF_IccProfile() = default;

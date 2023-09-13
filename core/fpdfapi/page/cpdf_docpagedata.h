@@ -88,6 +88,16 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
       RetainPtr<const CPDF_Stream> pProfileStream);
 
  private:
+  struct HashIccProfileKey {
+    HashIccProfileKey(ByteString digest, uint32_t components);
+    ~HashIccProfileKey();
+
+    bool operator<(const HashIccProfileKey& other) const;
+
+    ByteString digest;
+    uint32_t components;
+  };
+
   // Loads a colorspace in a context that might be while loading another
   // colorspace, or even in a recursive call from this method itself. |pVisited|
   // is passed recursively to avoid circular calls involving
@@ -109,7 +119,7 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
   bool m_bForceClear = false;
 
   // Specific destruction order may be required between maps.
-  std::map<ByteString, RetainPtr<const CPDF_Stream>> m_HashProfileMap;
+  std::map<HashIccProfileKey, RetainPtr<const CPDF_Stream>> m_HashIccProfileMap;
   std::map<RetainPtr<const CPDF_Array>, ObservedPtr<CPDF_ColorSpace>>
       m_ColorSpaceMap;
   std::map<RetainPtr<const CPDF_Stream>, RetainPtr<CPDF_StreamAcc>>

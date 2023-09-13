@@ -1,0 +1,64 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents [4 0 R]
+  /MediaBox [0 0 100 100]
+  /Resources <<
+    /XObject <<
+      /X0 6 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+50 0 0 50 0 0 cm
+/X0 Do
+endstream
+endobj
+{{object 5 0}} <<
+  /Alternate /DeviceGray
+  /Filter [/ASCII85Decode /FlateDecode]
+  /N 1 % Should be 3. Deliberately wrong.
+  {{streamlen}}
+>>
+stream
+GhQY8@,aa/.*,h+?sq(#.k(gGG>a6QN)F%Jc+q7?`k]Wf`1W<]>[62(&E!Xi_>mKW^qdh.!!,b)lJ!$X
+YfLBm#1<Nb8nr?$OT#6uKge8M)&O2hJ8C?i#eL/V:4f]s5jY5,+D2gD!KbQm%Uj8UZ'-<s"!Dc48O3ZE
+I0$--\Y'5HIKF&\6gXpUECZ[/;ABV"PnZKt%PC>s91^[,6#miO'ncV7h4X7jE0@aK(ej`C(mkaD@_oJ]
+%-u+T(duOY@Leq;$o7,d(j7b_QPPiP9k%WqP?a!;*ta>`j0LR%:)MHPQ_[ZHJ4(*Ao*[%+1=J$O'HeH<
+cHe'j/P.ND<\Unf1h#;D!28(Hn,~>
+endstream
+endobj
+{{object 6 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /Width 50
+  /Height 50
+  /BitsPerComponent 8
+  /ColorSpace [/ICCBased 5 0 R]
+  /Filter [/ASCIIHexDecode /FlateDecode]
+  {{streamlen}}
+>>
+stream
+789cedc2310d00000c03a07f2aaab3ea7bcf03842655555555555555f5bf01cc7818dc
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
