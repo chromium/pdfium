@@ -32,6 +32,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcodec/icc/icc_transform.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
@@ -553,11 +554,6 @@ uint32_t CPDF_ColorSpace::ComponentsForFamily(Family family) {
   }
 }
 
-// static
-bool CPDF_ColorSpace::IsValidIccComponents(int components) {
-  return components == 1 || components == 3 || components == 4;
-}
-
 std::vector<float> CPDF_ColorSpace::CreateBufAndSetDefaultColor() const {
   DCHECK(m_Family != Family::kPattern);
 
@@ -899,8 +895,9 @@ uint32_t CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc,
   // with Acrobat and reject bad values.
   RetainPtr<const CPDF_Dictionary> pDict = pStream->GetDict();
   int32_t nDictComponents = pDict ? pDict->GetIntegerFor("N") : 0;
-  if (!IsValidIccComponents(nDictComponents))
+  if (!fxcodec::IccTransform::IsValidIccComponents(nDictComponents)) {
     return 0;
+  }
 
   uint32_t nComponents = static_cast<uint32_t>(nDictComponents);
   m_pProfile = CPDF_DocPageData::FromDocument(pDoc)->GetIccProfile(pStream);
@@ -977,7 +974,7 @@ void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
 
   // |nMaxColors| will not overflow since |nComponents| is limited in size.
   const uint32_t nComponents = CountComponents();
-  DCHECK(IsValidIccComponents(nComponents));
+  DCHECK(fxcodec::IccTransform::IsValidIccComponents(nComponents));
   int nMaxColors = 1;
   for (uint32_t i = 0; i < nComponents; i++)
     nMaxColors *= 52;
@@ -1074,7 +1071,7 @@ RetainPtr<CPDF_ColorSpace> CPDF_ICCBasedCS::GetStockAlternateProfile(
 // static
 std::vector<float> CPDF_ICCBasedCS::GetRanges(const CPDF_Dictionary* pDict,
                                               uint32_t nComponents) {
-  DCHECK(IsValidIccComponents(nComponents));
+  DCHECK(fxcodec::IccTransform::IsValidIccComponents(nComponents));
   RetainPtr<const CPDF_Array> pRanges = pDict->GetArrayFor("Range");
   if (pRanges && pRanges->size() >= nComponents * 2)
     return ReadArrayElementsToVector(pRanges.Get(), nComponents * 2);

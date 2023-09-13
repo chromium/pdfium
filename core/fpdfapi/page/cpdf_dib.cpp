@@ -28,6 +28,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcodec/basic/basicmodule.h"
+#include "core/fxcodec/icc/icc_transform.h"
 #include "core/fxcodec/jbig2/jbig2_decoder.h"
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcodec/jpx/cjpx_decoder.h"
@@ -603,8 +604,8 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
         break;
       }
       case CPDF_ColorSpace::Family::kICCBased: {
-        if (!CPDF_ColorSpace::IsValidIccComponents(colorspace_comps) ||
-            !CPDF_ColorSpace::IsValidIccComponents(m_nComponents) ||
+        if (!fxcodec::IccTransform::IsValidIccComponents(colorspace_comps) ||
+            !fxcodec::IccTransform::IsValidIccComponents(m_nComponents) ||
             colorspace_comps < m_nComponents) {
           return false;
         }

@@ -67,9 +67,9 @@ std::unique_ptr<IccTransform> IccTransform::CreateTransformSRGB(
   cmsColorSpaceSignature srcCS = cmsGetColorSpace(srcProfile.get());
   uint32_t nSrcComponents = cmsChannelsOf(srcCS);
 
-  // According to PDF spec, number of components must be 1, 3, or 4.
-  if (nSrcComponents != 1 && nSrcComponents != 3 && nSrcComponents != 4)
+  if (!IsValidIccComponents(nSrcComponents)) {
     return nullptr;
+  }
 
   int srcFormat;
   bool bLab = false;
@@ -140,6 +140,12 @@ void IccTransform::TranslateScanline(pdfium::span<uint8_t> pDest,
                                      pdfium::span<const uint8_t> pSrc,
                                      int32_t pixels) {
   cmsDoTransform(m_hTransform, pSrc.data(), pDest.data(), pixels);
+}
+
+// static
+bool IccTransform::IsValidIccComponents(int components) {
+  // According to PDF spec, number of components must be 1, 3, or 4.
+  return components == 1 || components == 3 || components == 4;
 }
 
 }  // namespace fxcodec

@@ -81,7 +81,6 @@ class CPDF_ColorSpace : public Retainable, public Observable {
       uint32_t family_id);
 
   static uint32_t ComponentsForFamily(Family family);
-  static bool IsValidIccComponents(int components);
 
   // Should only be called if this colorspace is not a pattern.
   std::vector<float> CreateBufAndSetDefaultColor() const;
