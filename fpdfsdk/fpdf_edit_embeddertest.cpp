@@ -4004,8 +4004,8 @@ TEST_F(FPDFEditEmbedderTest, GetBitmap) {
     obj = FPDFPage_GetObject(page, 35);
     ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
     ScopedFPDFBitmap bitmap(FPDFImageObj_GetBitmap(obj));
-    EXPECT_EQ(FPDFBitmap_Gray, FPDFBitmap_GetFormat(bitmap.get()));
-    CompareBitmap(bitmap.get(), 92, 68, "9c6d76cb1e37ef8514f9455d759391f3");
+    EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(bitmap.get()));
+    CompareBitmap(bitmap.get(), 92, 68, "7e34551035943e30a9f353db17de62ab");
   }
 
   {
@@ -4096,8 +4096,8 @@ TEST_F(FPDFEditEmbedderTest, GetBitmapForJBigImage) {
   {
     ScopedFPDFBitmap bitmap(FPDFImageObj_GetBitmap(obj));
     ASSERT_TRUE(bitmap);
-    EXPECT_EQ(FPDFBitmap_Gray, FPDFBitmap_GetFormat(bitmap.get()));
-    CompareBitmap(bitmap.get(), 1152, 720, "3f6a48e2b3e91b799bf34567f55cb4de");
+    EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(bitmap.get()));
+    CompareBitmap(bitmap.get(), 1152, 720, "0b67a5d69f3f1052abddd5cdd882a126");
   }
 
   UnloadPage(page);

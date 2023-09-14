@@ -27,6 +27,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "fpdfsdk/cpdfsdk_customaccess.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
+#include "third_party/base/notreached.h"
 
 namespace {
 
@@ -198,13 +199,35 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
   if (!pSource)
     return nullptr;
 
-  // If the source image has a representation of 1 bit per pixel, then convert
-  // it to a grayscale bitmap having 1 byte per pixel, since bitmaps have no
-  // concept of bits. Otherwise, convert the source image to a bitmap directly,
+  // If the source image has a representation of 1 bit per pixel, or if the
+  // source image has a color palette, convert it to a color representation if
+  // needed to get rid of the palette, as there is no public API to access to
+  // palette.
+  //
+  // Otherwise, convert the source image to a bitmap directly,
   // retaining its color representation.
-  RetainPtr<CFX_DIBitmap> pBitmap =
-      pSource->GetBPP() == 1 ? pSource->ConvertTo(FXDIB_Format::k8bppRgb)
-                             : pSource->Realize();
+  //
+  // Only return FPDF_BITMAPs in formats that FPDFBitmap_CreateEx() would
+  // return.
+  RetainPtr<CFX_DIBitmap> pBitmap;
+  switch (pSource->GetFormat()) {
+    case FXDIB_Format::k1bppMask:
+    case FXDIB_Format::k1bppRgb:
+    case FXDIB_Format::k8bppMask:
+    case FXDIB_Format::k8bppRgb:
+      pBitmap = pSource->ConvertTo(FXDIB_Format::kRgb);
+      break;
+
+    case FXDIB_Format::kArgb:
+    case FXDIB_Format::kRgb:
+    case FXDIB_Format::kRgb32:
+      pBitmap = pSource->Realize();
+      break;
+
+    case FXDIB_Format::kInvalid: {
+      NOTREACHED_NORETURN();
+    }
+  }
 
   return FPDFBitmapFromCFXDIBitmap(pBitmap.Leak());
 }
