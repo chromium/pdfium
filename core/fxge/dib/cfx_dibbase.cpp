@@ -46,10 +46,10 @@ class CFX_Palette {
   explicit CFX_Palette(const RetainPtr<const CFX_DIBBase>& pBitmap);
   ~CFX_Palette();
 
-  const uint32_t* GetPalette() { return m_Palette.data(); }
-  const LutsData* GetLuts() const { return m_Luts.data(); }
-  uint32_t GetLutCount() const { return m_lut; }
-  void SetAmountLut(uint32_t row, uint32_t value) { m_Luts[row].first = value; }
+  pdfium::span<const uint32_t> GetPalette() { return m_Palette; }
+  pdfium::span<const LutsData> GetValidLuts() {
+    return pdfium::make_span(m_Luts).first(m_lut);
+  }
 
  private:
   void ObtainPalette();
@@ -84,7 +84,8 @@ CFX_Palette::CFX_Palette(const RetainPtr<const CFX_DIBBase>& pBitmap)
       ++m_lut;
     }
   }
-  std::sort(m_Luts.begin(), m_Luts.begin() + m_lut,
+  pdfium::span<LutsData> lut_span = pdfium::make_span(m_Luts).first(m_lut);
+  std::sort(lut_span.begin(), lut_span.end(),
             [](const LutsData& arg1, const LutsData& arg2) {
               return arg1.first < arg2.first;
             });
@@ -104,6 +105,31 @@ void CFX_Palette::ObtainPalette() {
     m_Palette[row] = (static_cast<uint32_t>(r) << 16) |
                      (static_cast<uint32_t>(g) << 8) | b | 0xff000000;
     m_Luts[lut_offset].first = row;
+  }
+  if (m_lut > 256) {
+    int err;
+    int min_err;
+    const uint32_t lut_256 = m_lut - 256;
+    for (uint32_t row = 0; row < lut_256; ++row) {
+      min_err = 1000000;
+      uint8_t r;
+      uint8_t g;
+      uint8_t b;
+      ColorDecode(m_Luts[row].second, &r, &g, &b);
+      uint32_t clrindex = 0;
+      for (int col = 0; col < 256; ++col) {
+        uint32_t p_color = m_Palette[col];
+        int d_r = r - static_cast<uint8_t>(p_color >> 16);
+        int d_g = g - static_cast<uint8_t>(p_color >> 8);
+        int d_b = b - static_cast<uint8_t>(p_color);
+        err = d_r * d_r + d_g * d_g + d_b * d_b;
+        if (err < min_err) {
+          min_err = err;
+          clrindex = col;
+        }
+      }
+      m_Luts[row].first = clrindex;
+    }
   }
 }
 
@@ -283,34 +309,7 @@ void ConvertBuffer_Rgb2PltRgb8(pdfium::span<uint8_t> dest_buf,
                                pdfium::span<uint32_t> dst_plt) {
   int bpp = pSrcBitmap->GetBPP() / 8;
   CFX_Palette palette(pSrcBitmap);
-  const CFX_Palette::LutsData* luts = palette.GetLuts();
-  const uint32_t lut_count = palette.GetLutCount();
-  const uint32_t* pal = palette.GetPalette();
-  if (lut_count > 256) {
-    int err;
-    int min_err;
-    const uint32_t lut_256 = lut_count - 256;
-    for (uint32_t row = 0; row < lut_256; ++row) {
-      min_err = 1000000;
-      uint8_t r;
-      uint8_t g;
-      uint8_t b;
-      ColorDecode(luts[row].second, &r, &g, &b);
-      uint32_t clrindex = 0;
-      for (int col = 0; col < 256; ++col) {
-        uint32_t p_color = pal[col];
-        int d_r = r - static_cast<uint8_t>(p_color >> 16);
-        int d_g = g - static_cast<uint8_t>(p_color >> 8);
-        int d_b = b - static_cast<uint8_t>(p_color);
-        err = d_r * d_r + d_g * d_g + d_b * d_b;
-        if (err < min_err) {
-          min_err = err;
-          clrindex = col;
-        }
-      }
-      palette.SetAmountLut(row, clrindex);
-    }
-  }
+  pdfium::span<const CFX_Palette::LutsData> luts = palette.GetValidLuts();
   for (int row = 0; row < height; ++row) {
     pdfium::span<const uint8_t> src_span =
         pSrcBitmap->GetScanline(src_top + row).subspan(src_left);
@@ -323,7 +322,7 @@ void ConvertBuffer_Rgb2PltRgb8(pdfium::span<uint8_t> dest_buf,
       int g = src_port[1] & 0xf0;
       int b = src_port[0] & 0xf0;
       uint32_t clrindex = (r << 4) + g + (b >> 4);
-      for (uint32_t i = lut_count; i > 0; --i) {
+      for (size_t i = luts.size(); i > 0; --i) {
         if (clrindex == luts[i - 1].second) {
           *(dest_scan + col) = static_cast<uint8_t>(luts[i - 1].first);
           break;
@@ -331,8 +330,7 @@ void ConvertBuffer_Rgb2PltRgb8(pdfium::span<uint8_t> dest_buf,
       }
     }
   }
-  for (size_t i = 0; i < 256; ++i)
-    dst_plt[i] = pal[i];
+  fxcrt::spancpy(dst_plt, palette.GetPalette());
 }
 
 void ConvertBuffer_1bppMask2Rgb(FXDIB_Format dest_format,
