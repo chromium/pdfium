@@ -1019,10 +1019,8 @@ int CFX_AggDeviceDriver::GetDeviceCaps(int caps_id) const {
       if (m_pBitmap->IsAlphaFormat()) {
         flags |= FXRC_ALPHA_OUTPUT;
       } else if (m_pBitmap->IsMaskFormat()) {
-        if (m_pBitmap->GetBPP() == 1)
-          flags |= FXRC_BITMASK_OUTPUT;
-        else
-          flags |= FXRC_BYTEMASK_OUTPUT;
+        CHECK_NE(m_pBitmap->GetBPP(), 1);  // Matches format CHECKs in the ctor.
+        flags |= FXRC_BYTEMASK_OUTPUT;
       }
       return flags;
     }
