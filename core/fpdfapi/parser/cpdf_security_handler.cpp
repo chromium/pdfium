@@ -535,8 +535,7 @@ ByteString CPDF_SecurityHandler::GetEncodedPassword(
     case kUtf8toLatin1:
       return WideString::FromUTF8(password).ToLatin1();
     default:
-      NOTREACHED();
-      return ByteString(password);
+      NOTREACHED_NORETURN();
   }
 }
 

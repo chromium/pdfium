@@ -97,8 +97,7 @@ class CPDF_ObjectAvailFailOnExclude final : public CPDF_ObjectAvail {
   using CPDF_ObjectAvail::CPDF_ObjectAvail;
   ~CPDF_ObjectAvailFailOnExclude() override = default;
   bool ExcludeObject(const CPDF_Object* object) const override {
-    NOTREACHED();
-    return false;
+    NOTREACHED_NORETURN();
   }
 };
 

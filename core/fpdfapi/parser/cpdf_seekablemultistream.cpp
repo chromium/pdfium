@@ -61,8 +61,7 @@ bool CPDF_SeekableMultiStream::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
 }
 
 size_t CPDF_SeekableMultiStream::ReadBlock(pdfium::span<uint8_t> buffer) {
-  NOTREACHED();
-  return 0;
+  NOTREACHED_NORETURN();
 }
 
 FX_FILESIZE CPDF_SeekableMultiStream::GetPosition() {
@@ -74,13 +73,11 @@ bool CPDF_SeekableMultiStream::IsEOF() {
 }
 
 bool CPDF_SeekableMultiStream::Flush() {
-  NOTREACHED();
-  return false;
+  NOTREACHED_NORETURN();
 }
 
 bool CPDF_SeekableMultiStream::WriteBlockAtOffset(
     pdfium::span<const uint8_t> buffer,
     FX_FILESIZE offset) {
-  NOTREACHED();
-  return false;
+  NOTREACHED_NORETURN();
 }
