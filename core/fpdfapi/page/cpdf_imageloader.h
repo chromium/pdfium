@@ -41,7 +41,7 @@ class CPDF_ImageLoader {
   uint32_t MatteColor() const { return m_MatteColor; }
 
  private:
-  void HandleFailure();
+  void Finish();
 
   uint32_t m_MatteColor = 0;
   bool m_bCached = false;

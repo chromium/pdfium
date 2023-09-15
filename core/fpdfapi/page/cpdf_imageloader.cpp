@@ -30,27 +30,30 @@ bool CPDF_ImageLoader::Start(const CPDF_ImageObject* pImage,
                              const CFX_Size& max_size_required) {
   m_pCache = pPageImageCache;
   m_pImageObject = pImage;
-  bool ret;
+  bool should_continue;
   if (m_pCache) {
-    ret = m_pCache->StartGetCachedBitmap(m_pImageObject->GetImage(),
-                                         pFormResource, pPageResource, bStdCS,
-                                         eFamily, bLoadMask, max_size_required);
+    should_continue = m_pCache->StartGetCachedBitmap(
+        m_pImageObject->GetImage(), pFormResource, pPageResource, bStdCS,
+        eFamily, bLoadMask, max_size_required);
   } else {
-    ret = m_pImageObject->GetImage()->StartLoadDIBBase(
+    should_continue = m_pImageObject->GetImage()->StartLoadDIBBase(
         pFormResource, pPageResource, bStdCS, eFamily, bLoadMask,
         max_size_required);
   }
-  if (!ret)
-    HandleFailure();
-  return ret;
+  if (!should_continue) {
+    Finish();
+  }
+  return should_continue;
 }
 
 bool CPDF_ImageLoader::Continue(PauseIndicatorIface* pPause) {
-  bool ret = m_pCache ? m_pCache->Continue(pPause)
-                      : m_pImageObject->GetImage()->Continue(pPause);
-  if (!ret)
-    HandleFailure();
-  return ret;
+  bool should_continue = m_pCache
+                             ? m_pCache->Continue(pPause)
+                             : m_pImageObject->GetImage()->Continue(pPause);
+  if (!should_continue) {
+    Finish();
+  }
+  return should_continue;
 }
 
 RetainPtr<CFX_DIBBase> CPDF_ImageLoader::TranslateImage(
@@ -64,7 +67,7 @@ RetainPtr<CFX_DIBBase> CPDF_ImageLoader::TranslateImage(
   return m_pBitmap;
 }
 
-void CPDF_ImageLoader::HandleFailure() {
+void CPDF_ImageLoader::Finish() {
   if (m_pCache) {
     m_bCached = true;
     m_pBitmap = m_pCache->DetachCurBitmap();
