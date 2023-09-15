@@ -1,0 +1,59 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 200 300]
+  /Resources <<
+    /Font <<
+      /F0 5 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+1 0 0 -1 0 300 cm
+q
+0 0 0 rg
+40 100 140 1 re f
+Q
+q
+0 0 0 rg
+BT
+12 0 0 -12 150 100 Tm
+/F0 1 Tf
+(Hello) Tj
+ET
+q
+BT
+12 0 0 -12 100 200 Tm
+/F0 1 Tf
+(world!) Tj
+ET
+Q
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Times-Roman
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

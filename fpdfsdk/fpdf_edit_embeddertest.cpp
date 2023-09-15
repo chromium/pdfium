@@ -922,6 +922,76 @@ TEST_F(FPDFEditEmbedderTest, BUG_1574) {
   CloseSavedDocument();
 }
 
+TEST_F(FPDFEditEmbedderTest, BUG_1893) {
+  ASSERT_TRUE(OpenDocument("bug_1893.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  {
+    const char* original_checksum = []() {
+      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+        return "d8be4379e729242785945458924318a3";
+      }
+#if BUILDFLAG(IS_APPLE)
+      return "0964322399241618539b474dbf9d40c6";
+#else
+      return "c3672f206e47d98677401f1617ad56eb";
+#endif
+    }();
+
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    CompareBitmap(bitmap.get(), 200, 300, original_checksum);
+  }
+
+  EXPECT_EQ(3, FPDFPage_CountObjects(page));
+
+  const char* removed_checksum = []() {
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+      return "4a02191e033dddeb2110d55af3f14544";
+    }
+#if BUILDFLAG(IS_APPLE)
+    return "d0837f2b8809a5902d3c4219441fbafe";
+#else
+    return "e9c0cbd6adcb2151b4e36a61ab26a20a";
+#endif
+  }();
+
+  // Remove the underline and regenerate the page content.
+  {
+    ScopedFPDFPageObject object(FPDFPage_GetObject(page, 0));
+    ASSERT_TRUE(FPDFPage_RemoveObject(page, object.get()));
+    ASSERT_TRUE(FPDFPage_GenerateContent(page));
+
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    CompareBitmap(bitmap.get(), 200, 300, removed_checksum);
+  }
+
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  UnloadPage(page);
+
+  {
+    // TODO(crbug.com/pdfium/1893): The saved result should match
+    // `removed_checksum`. But in the actual saved result, the remaining text
+    // objects were upside down. Remove `wrong_checksum` after fixing this
+    // issue.
+    const char* wrong_checksum = []() {
+      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+        return "57da26dcb24503403cadb27ed8bb46c6";
+      }
+#if BUILDFLAG(IS_APPLE)
+      return "c3b6a8ecd863914044f5f79137c606b5";
+#else
+      return "cb19480a846e4efd36418cbd7412118e";
+#endif
+    }();
+
+    ASSERT_TRUE(OpenSavedDocument());
+    FPDF_PAGE saved_page = LoadSavedPage(0);
+    ScopedFPDFBitmap bitmap = RenderSavedPageWithFlags(saved_page, FPDF_ANNOT);
+    CompareBitmap(bitmap.get(), 200, 300, wrong_checksum);
+    CloseSavedPage(saved_page);
+    CloseSavedDocument();
+  }
+}
+
 TEST_F(FPDFEditEmbedderTest, RemoveTextObject) {
   // Load document with some text.
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
