@@ -379,35 +379,47 @@ bool PNG_Predictor(int Colors,
                    int Columns,
                    std::unique_ptr<uint8_t, FxFreeDeleter>* data_buf,
                    uint32_t* data_size) {
-  // TODO(thestig): Look into using CalculatePitch8() here.
-  const int BytesPerPixel = (Colors * BitsPerComponent + 7) / 8;
-  const int row_size = (Colors * BitsPerComponent * Columns + 7) / 8;
-  if (row_size <= 0)
+  const uint32_t row_size =
+      fxge::CalculatePitch8(BitsPerComponent, Colors, Columns).value_or(0);
+  if (row_size == 0) {
     return false;
-  const int row_count = (*data_size + row_size) / (row_size + 1);
-  if (row_count <= 0)
+  }
+
+  const uint32_t src_row_size = row_size + 1;
+  if (src_row_size == 0) {
+    // Avoid divide by 0.
     return false;
-  const int last_row_size = *data_size % (row_size + 1);
+  }
+  const uint32_t row_count = (*data_size + row_size) / src_row_size;
+  if (row_count == 0) {
+    return false;
+  }
+
+  const uint32_t last_row_size = *data_size % src_row_size;
   std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf(
       FX_Alloc2D(uint8_t, row_size, row_count));
   uint32_t byte_cnt = 0;
-  uint8_t* pSrcData = data_buf->get();
+  const uint8_t* pSrcData = data_buf->get();
   uint8_t* pDestData = dest_buf.get();
-  for (int row = 0; row < row_count; row++) {
+  const uint8_t* pPrevDestData = nullptr;
+  for (uint32_t row = 0; row < row_count; row++) {
     uint8_t tag = pSrcData[0];
     byte_cnt++;
     if (tag == 0) {
-      int move_size = row_size;
-      if ((row + 1) * (move_size + 1) > static_cast<int>(*data_size)) {
+      uint32_t move_size = row_size;
+      if ((row + 1) * (move_size + 1) > *data_size) {
         move_size = last_row_size - 1;
       }
       memcpy(pDestData, pSrcData + 1, move_size);
       pSrcData += move_size + 1;
+      pPrevDestData = pDestData;
       pDestData += move_size;
       byte_cnt += move_size;
       continue;
     }
-    for (int byte = 0; byte < row_size && byte_cnt < *data_size;
+
+    const uint32_t BytesPerPixel = (Colors * BitsPerComponent + 7) / 8;
+    for (uint32_t byte = 0; byte < row_size && byte_cnt < *data_size;
          ++byte, ++byte_cnt) {
       uint8_t raw_byte = pSrcData[byte + 1];
       switch (tag) {
@@ -421,8 +433,8 @@ bool PNG_Predictor(int Colors,
         }
         case 2: {
           uint8_t up = 0;
-          if (row) {
-            up = pDestData[byte - row_size];
+          if (pPrevDestData) {
+            up = pPrevDestData[byte];
           }
           pDestData[byte] = raw_byte + up;
           break;
@@ -433,8 +445,8 @@ bool PNG_Predictor(int Colors,
             left = pDestData[byte - BytesPerPixel];
           }
           uint8_t up = 0;
-          if (row) {
-            up = pDestData[byte - row_size];
+          if (pPrevDestData) {
+            up = pPrevDestData[byte];
           }
           pDestData[byte] = raw_byte + (up + left) / 2;
           break;
@@ -445,12 +457,12 @@ bool PNG_Predictor(int Colors,
             left = pDestData[byte - BytesPerPixel];
           }
           uint8_t up = 0;
-          if (row) {
-            up = pDestData[byte - row_size];
+          if (pPrevDestData) {
+            up = pPrevDestData[byte];
           }
           uint8_t upper_left = 0;
-          if (byte >= BytesPerPixel && row) {
-            upper_left = pDestData[byte - row_size - BytesPerPixel];
+          if (pPrevDestData && byte >= BytesPerPixel) {
+            upper_left = pPrevDestData[byte - BytesPerPixel];
           }
           pDestData[byte] = raw_byte + PathPredictor(left, up, upper_left);
           break;
@@ -460,12 +472,13 @@ bool PNG_Predictor(int Colors,
           break;
       }
     }
-    pSrcData += row_size + 1;
+    pSrcData += src_row_size;
+    pPrevDestData = pDestData;
     pDestData += row_size;
   }
   *data_buf = std::move(dest_buf);
   *data_size = row_size * row_count -
-               (last_row_size > 0 ? (row_size + 1 - last_row_size) : 0);
+               (last_row_size > 0 ? (src_row_size - last_row_size) : 0);
   return true;
 }
 
@@ -514,14 +527,16 @@ bool TIFF_Predictor(int Colors,
                     int Columns,
                     std::unique_ptr<uint8_t, FxFreeDeleter>* data_buf,
                     uint32_t* data_size) {
-  int row_size = (Colors * BitsPerComponent * Columns + 7) / 8;
+  uint32_t row_size =
+      fxge::CalculatePitch8(BitsPerComponent, Colors, Columns).value_or(0);
   if (row_size == 0)
     return false;
-  const int row_count = (*data_size + row_size - 1) / row_size;
-  const int last_row_size = *data_size % row_size;
-  for (int row = 0; row < row_count; row++) {
+
+  const uint32_t row_count = (*data_size + row_size - 1) / row_size;
+  const uint32_t last_row_size = *data_size % row_size;
+  for (uint32_t row = 0; row < row_count; row++) {
     uint8_t* scan_line = data_buf->get() + row * row_size;
-    if ((row + 1) * row_size > static_cast<int>(*data_size)) {
+    if ((row + 1) * row_size > *data_size) {
       row_size = last_row_size;
     }
     TIFF_PredictLine(scan_line, row_size, BitsPerComponent, Colors, Columns);
