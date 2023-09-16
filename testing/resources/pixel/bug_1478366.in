@@ -1,0 +1,56 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents [4 0 R]
+  /MediaBox [0 0 200 200]
+  /Resources <<
+    /XObject <<
+      /X1 5 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+200 0 0 200 0 0 cm
+/X1 Do
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  % The image needs to have a bitmap size that's at least `kHugeImageSize`.
+  /Width 4000
+  /Height 4000
+  /BitsPerComponent 1
+  /ColorSpace /DeviceGray
+  /Filter [/ASCIIHexDecode /JBIG2Decode]
+  /Mask [255 255]
+  {{streamlen}}
+>>
+stream
+000000003000010000001300000dea00000353000017110000171151000000000001260001000000
+3500000dea000003530000000000000000020003fffdff02fefefeff7f86530fb6c922cfff7fff7f
+ff7fff7fff7fff7fff7fff7fffac
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

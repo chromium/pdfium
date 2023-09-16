@@ -223,7 +223,7 @@ void OutputImage(Gdiplus::GpGraphics* pGraphics,
     return;
   }
 
-  RetainPtr<const CFX_DIBBase> realized_source = source->RealizeIfNeeded();
+  RetainPtr<const CFX_DIBitmap> realized_source = source->RealizeIfNeeded();
   if (!realized_source) {
     return;
   }

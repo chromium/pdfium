@@ -394,7 +394,7 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const RetainPtr<CFX_DIBBase>& source,
                                      int left,
                                      int top) {
   if (m_DeviceType == DeviceType::kPrinter) {
-    RetainPtr<const CFX_DIBBase> flipped_source =
+    RetainPtr<const CFX_DIBitmap> flipped_source =
         source->FlipImage(/*bXFlip=*/false, /*bYFlip=*/true);
     if (!flipped_source) {
       return false;
@@ -414,7 +414,7 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const RetainPtr<CFX_DIBBase>& source,
     return true;
   }
 
-  RetainPtr<const CFX_DIBBase> realized_source = source->RealizeIfNeeded();
+  RetainPtr<const CFX_DIBitmap> realized_source = source->RealizeIfNeeded();
   if (!realized_source) {
     return false;
   }
@@ -445,7 +445,7 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(const RetainPtr<CFX_DIBBase>& source,
     SetStretchBltMode(m_hDC, COLORONCOLOR);
   }
 
-  RetainPtr<const CFX_DIBBase> realized_source;
+  RetainPtr<const CFX_DIBitmap> realized_source;
   if (m_DeviceType == DeviceType::kPrinter &&
       ((int64_t)source->GetWidth() * source->GetHeight() >
        (int64_t)abs(dest_width) * abs(dest_height))) {
@@ -477,7 +477,7 @@ bool CGdiDeviceDriver::GDI_StretchBitMask(const RetainPtr<CFX_DIBBase>& source,
     return false;
   }
 
-  RetainPtr<const CFX_DIBBase> realized_source = source->RealizeIfNeeded();
+  RetainPtr<const CFX_DIBitmap> realized_source = source->RealizeIfNeeded();
   if (!realized_source) {
     return false;
   }

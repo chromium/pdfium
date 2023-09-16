@@ -41,10 +41,13 @@ class CFX_DIBBase : public Retainable {
 
   static constexpr uint32_t kPaletteSize = 256;
 
-  virtual pdfium::span<const uint8_t> GetBuffer() const;
   virtual pdfium::span<const uint8_t> GetScanline(int line) const = 0;
   virtual bool SkipToScanline(int line, PauseIndicatorIface* pPause) const;
   virtual size_t GetEstimatedImageMemoryBurden() const;
+#if BUILDFLAG(IS_WIN) || defined(_SKIA_SUPPORT_)
+  // Calls Realize() if needed. Otherwise, return `this`.
+  virtual RetainPtr<const CFX_DIBitmap> RealizeIfNeeded() const;
+#endif
 
   int GetWidth() const { return m_Width; }
   int GetHeight() const { return m_Height; }
@@ -64,11 +67,6 @@ class CFX_DIBBase : public Retainable {
 
   // Copies into internally-owned palette.
   void SetPalette(pdfium::span<const uint32_t> src_palette);
-
-#if BUILDFLAG(IS_WIN)
-  // Calls Realize() if needed. Otherwise, return `this`.
-  RetainPtr<const CFX_DIBBase> RealizeIfNeeded() const;
-#endif
 
   RetainPtr<CFX_DIBitmap> Realize() const;
   RetainPtr<CFX_DIBitmap> ClipTo(const FX_RECT& rect) const;

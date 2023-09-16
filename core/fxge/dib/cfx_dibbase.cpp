@@ -617,10 +617,6 @@ CFX_DIBBase::CFX_DIBBase() = default;
 
 CFX_DIBBase::~CFX_DIBBase() = default;
 
-pdfium::span<const uint8_t> CFX_DIBBase::GetBuffer() const {
-  return pdfium::span<const uint8_t>();
-}
-
 bool CFX_DIBBase::SkipToScanline(int line, PauseIndicatorIface* pPause) const {
   return false;
 }
@@ -629,12 +625,9 @@ size_t CFX_DIBBase::GetEstimatedImageMemoryBurden() const {
   return GetRequiredPaletteSize() * sizeof(uint32_t);
 }
 
-#if BUILDFLAG(IS_WIN)
-RetainPtr<const CFX_DIBBase> CFX_DIBBase::RealizeIfNeeded() const {
-  if (GetBuffer().empty()) {
-    return Realize();
-  }
-  return pdfium::WrapRetain(this);
+#if BUILDFLAG(IS_WIN) || defined(_SKIA_SUPPORT_)
+RetainPtr<const CFX_DIBitmap> CFX_DIBBase::RealizeIfNeeded() const {
+  return Realize();
 }
 #endif
 

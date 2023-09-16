@@ -34,10 +34,13 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   bool Copy(const RetainPtr<CFX_DIBBase>& pSrc);
 
   // CFX_DIBBase
-  pdfium::span<const uint8_t> GetBuffer() const override;
   pdfium::span<const uint8_t> GetScanline(int line) const override;
   size_t GetEstimatedImageMemoryBurden() const override;
+#if BUILDFLAG(IS_WIN) || defined(_SKIA_SUPPORT_)
+  RetainPtr<const CFX_DIBitmap> RealizeIfNeeded() const override;
+#endif
 
+  pdfium::span<const uint8_t> GetBuffer() const;
   pdfium::span<uint8_t> GetWritableBuffer() {
     pdfium::span<const uint8_t> src = GetBuffer();
     return {const_cast<uint8_t*>(src.data()), src.size()};

@@ -110,6 +110,15 @@ size_t CFX_DIBitmap::GetEstimatedImageMemoryBurden() const {
   return result;
 }
 
+#if BUILDFLAG(IS_WIN) || defined(_SKIA_SUPPORT_)
+RetainPtr<const CFX_DIBitmap> CFX_DIBitmap::RealizeIfNeeded() const {
+  if (GetBuffer().empty()) {
+    return Realize();
+  }
+  return pdfium::WrapRetain(this);
+}
+#endif
+
 void CFX_DIBitmap::TakeOver(RetainPtr<CFX_DIBitmap>&& pSrcBitmap) {
   m_pBuffer = std::move(pSrcBitmap->m_pBuffer);
   m_palette = std::move(pSrcBitmap->m_palette);

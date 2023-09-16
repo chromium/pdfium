@@ -45,7 +45,6 @@ class CPDF_DIB final : public CFX_DIBBase {
   CONSTRUCT_VIA_MAKE_RETAIN;
 
   // CFX_DIBBase:
-  pdfium::span<const uint8_t> GetBuffer() const override;
   pdfium::span<const uint8_t> GetScanline(int line) const override;
   bool SkipToScanline(int line, PauseIndicatorIface* pPause) const override;
   size_t GetEstimatedImageMemoryBurden() const override;
