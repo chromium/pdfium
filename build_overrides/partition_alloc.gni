@@ -2,6 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("//build/config/c++/c++.gni")
 import("//build/config/sanitizers/sanitizers.gni")
 
 # Sanitizers replace the allocator, don't use our own allocator.
@@ -9,7 +10,7 @@ _is_using_sanitizers = is_asan || is_hwasan || is_lsan || is_tsan || is_msan
 
 # The allocator shim isn't working standalone on Windows at the moment.
 # TODO(https://crbug.com/pdfium/2068) - make work with windows.
-_use_shim = !_is_using_sanitizers && !is_win
+_use_shim = !_is_using_sanitizers && (!is_mac || use_custom_libcxx) && !is_win
 
 # See base/allocator/partition_allocator/src/partition_alloc/external_builds.md
 use_allocator_shim_default = _use_shim
