@@ -609,7 +609,7 @@ void CPDF_PageContentGenerator::ProcessGraphics(fxcrt::ostringstream* buf,
     }
     m_pDocument->AddIndirectObject(gsDict);
     name = RealizeResource(std::move(gsDict), "ExtGState");
-    pPageObj->SetGraphicsResourceNames({name});
+    pPageObj->m_GeneralState.SetGraphicsResourceNames({name});
     m_pObjHolder->GraphicsMapInsert(graphD, name);
   }
   *buf << "/" << PDF_NameEncode(name) << " gs ";

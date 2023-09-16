@@ -262,6 +262,24 @@ CFX_Matrix* CPDF_GeneralState::GetMutableMatrix() {
   return &m_Ref.GetPrivateCopy()->m_Matrix;
 }
 
+void CPDF_GeneralState::SetGraphicsResourceNames(
+    std::vector<ByteString> names) {
+  m_Ref.GetPrivateCopy()->m_GraphicsResourceNames = std::move(names);
+}
+
+void CPDF_GeneralState::AppendGraphicsResourceName(ByteString name) {
+  m_Ref.GetPrivateCopy()->m_GraphicsResourceNames.push_back(std::move(name));
+}
+
+pdfium::span<const ByteString> CPDF_GeneralState::GetGraphicsResourceNames()
+    const {
+  const StateData* data = m_Ref.GetObject();
+  if (!data) {
+    return {};
+  }
+  return data->m_GraphicsResourceNames;
+}
+
 CPDF_GeneralState::StateData::StateData() = default;
 
 CPDF_GeneralState::StateData::StateData(const StateData& that)

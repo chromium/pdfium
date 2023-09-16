@@ -75,9 +75,9 @@ const CPDF_FormObject* CPDF_PageObject::AsForm() const {
   return nullptr;
 }
 
-void CPDF_PageObject::SetGraphicsResourceNames(
-    std::vector<ByteString> resource_names) {
-  m_GraphicsResourceNames = std::move(resource_names);
+pdfium::span<const ByteString> CPDF_PageObject::GetGraphicsResourceNames()
+    const {
+  return m_GeneralState.GetGraphicsResourceNames();
 }
 
 void CPDF_PageObject::CopyData(const CPDF_PageObject* pSrc) {

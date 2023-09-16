@@ -7,10 +7,7 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_ALLSTATES_H_
 #define CORE_FPDFAPI_PAGE_CPDF_ALLSTATES_H_
 
-#include <vector>
-
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
-#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_coordinates.h"
 
 class CPDF_Array;
@@ -27,7 +24,6 @@ class CPDF_AllStates final : public CPDF_GraphicStates {
                     CPDF_StreamContentParser* pParser);
   void SetLineDash(const CPDF_Array* pArray, float phase, float scale);
 
-  std::vector<ByteString> m_GraphicsResourceNames;
   CFX_Matrix m_TextMatrix;
   CFX_Matrix m_CTM;
   CFX_Matrix m_ParentMatrix;
