@@ -200,33 +200,68 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
     return nullptr;
 
   // If the source image has a representation of 1 bit per pixel, or if the
-  // source image has a color palette, convert it to a color representation if
-  // needed to get rid of the palette, as there is no public API to access to
-  // palette.
+  // source image has a color palette, convert it to a representation that does
+  // not have a color palette, as there is no public API to access the palette.
   //
   // Otherwise, convert the source image to a bitmap directly,
   // retaining its color representation.
   //
   // Only return FPDF_BITMAPs in formats that FPDFBitmap_CreateEx() would
   // return.
-  RetainPtr<CFX_DIBitmap> pBitmap;
+  enum class ConversionOp {
+    kRealize,
+    kConvertTo8bppRgb,
+    kConvertToRgb,
+  };
+
+  ConversionOp op;
   switch (pSource->GetFormat()) {
     case FXDIB_Format::k1bppMask:
-    case FXDIB_Format::k1bppRgb:
     case FXDIB_Format::k8bppMask:
+      // Masks do not have palettes, so they can be safely converted to
+      // `FXDIB_Format::k8bppRgb`.
+      CHECK(!pSource->HasPalette());
+      op = ConversionOp::kConvertTo8bppRgb;
+      break;
+    case FXDIB_Format::k1bppRgb:
+      // If there is a palette, then convert to `FXDIB_Format::kRgb` to avoid
+      // creating a bitmap with a palette.
+      op = pSource->HasPalette() ? ConversionOp::kConvertToRgb
+                                 : ConversionOp::kConvertTo8bppRgb;
+      break;
     case FXDIB_Format::k8bppRgb:
-      pBitmap = pSource->ConvertTo(FXDIB_Format::kRgb);
+      // If there is a palette, then convert to `FXDIB_Format::kRgb` to avoid
+      // creating a bitmap with a palette.
+      op = pSource->HasPalette() ? ConversionOp::kConvertToRgb
+                                 : ConversionOp::kRealize;
       break;
 
     case FXDIB_Format::kArgb:
     case FXDIB_Format::kRgb:
     case FXDIB_Format::kRgb32:
-      pBitmap = pSource->Realize();
+      CHECK(!pSource->HasPalette());
+      op = ConversionOp::kRealize;
       break;
 
     case FXDIB_Format::kInvalid: {
       NOTREACHED_NORETURN();
     }
+  }
+
+  RetainPtr<CFX_DIBitmap> pBitmap;
+  switch (op) {
+    case ConversionOp::kRealize:
+      pBitmap = pSource->Realize();
+      break;
+    case ConversionOp::kConvertTo8bppRgb:
+      pBitmap = pSource->ConvertTo(FXDIB_Format::k8bppRgb);
+      break;
+    case ConversionOp::kConvertToRgb:
+      pBitmap = pSource->ConvertTo(FXDIB_Format::kRgb);
+      break;
+  }
+  if (pBitmap) {
+    CHECK(!pBitmap->HasPalette());
   }
 
   return FPDFBitmapFromCFXDIBitmap(pBitmap.Leak());

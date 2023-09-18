@@ -4166,8 +4166,8 @@ TEST_F(FPDFEditEmbedderTest, GetBitmapForJBigImage) {
   {
     ScopedFPDFBitmap bitmap(FPDFImageObj_GetBitmap(obj));
     ASSERT_TRUE(bitmap);
-    EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(bitmap.get()));
-    CompareBitmap(bitmap.get(), 1152, 720, "0b67a5d69f3f1052abddd5cdd882a126");
+    EXPECT_EQ(FPDFBitmap_Gray, FPDFBitmap_GetFormat(bitmap.get()));
+    CompareBitmap(bitmap.get(), 1152, 720, "3f6a48e2b3e91b799bf34567f55cb4de");
   }
 
   UnloadPage(page);
