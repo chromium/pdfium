@@ -14,7 +14,9 @@
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
+#include "third_party/base/containers/adapters.h"
 #include "third_party/base/containers/contains.h"
+#include "third_party/base/containers/span.h"
 
 namespace {
 
@@ -80,23 +82,25 @@ void CPDFSDK_AnnotIterator::CollectAnnots(
 }
 
 CFX_FloatRect CPDFSDK_AnnotIterator::AddToAnnotsList(
-    std::vector<UnownedPtr<CPDFSDK_Annot>>* sa,
+    std::vector<UnownedPtr<CPDFSDK_Annot>>& sa,
     size_t idx) {
-  CPDFSDK_Annot* pLeftTopAnnot = sa->at(idx);
+  CPDFSDK_Annot* pLeftTopAnnot = sa[idx];
   CFX_FloatRect rcLeftTop = GetAnnotRect(pLeftTopAnnot);
   m_Annots.emplace_back(pLeftTopAnnot);
-  sa->erase(sa->begin() + idx);
+  sa.erase(sa.begin() + idx);
   return rcLeftTop;
 }
 
 void CPDFSDK_AnnotIterator::AddSelectedToAnnots(
-    std::vector<UnownedPtr<CPDFSDK_Annot>>* sa,
-    std::vector<size_t>* aSelect) {
-  for (size_t i = 0; i < aSelect->size(); ++i)
-    m_Annots.emplace_back(sa->at(aSelect->at(i)));
+    std::vector<UnownedPtr<CPDFSDK_Annot>>& sa,
+    pdfium::span<const size_t> aSelect) {
+  for (size_t select_idx : aSelect) {
+    m_Annots.emplace_back(sa[select_idx]);
+  }
 
-  for (size_t i = aSelect->size(); i > 0; --i)
-    sa->erase(sa->begin() + aSelect->at(i - 1));
+  for (size_t select_idx : pdfium::base::Reversed(aSelect)) {
+    sa.erase(sa.begin() + select_idx);
+  }
 }
 
 // static
@@ -105,19 +109,19 @@ CPDFSDK_AnnotIterator::TabOrder CPDFSDK_AnnotIterator::GetTabOrder(
   CPDF_Page* pPDFPage = pPageView->GetPDFPage();
   ByteString sTabs = pPDFPage->GetDict()->GetByteStringFor("Tabs");
   if (sTabs == "R")
-    return kRow;
+    return TabOrder::kRow;
   if (sTabs == "C")
-    return kColumn;
-  return kStructure;
+    return TabOrder::kColumn;
+  return TabOrder::kStructure;
 }
 
 void CPDFSDK_AnnotIterator::GenerateResults() {
   switch (m_eTabOrder) {
-    case kStructure:
+    case TabOrder::kStructure:
       CollectAnnots(&m_Annots);
       break;
 
-    case kRow: {
+    case TabOrder::kRow: {
       std::vector<UnownedPtr<CPDFSDK_Annot>> sa;
       CollectAnnots(&sa);
       std::sort(sa.begin(), sa.end(), CompareByLeftAscending);
@@ -135,7 +139,7 @@ void CPDFSDK_AnnotIterator::GenerateResults() {
         if (nLeftTopIndex < 0)
           continue;
 
-        CFX_FloatRect rcLeftTop = AddToAnnotsList(&sa, nLeftTopIndex);
+        CFX_FloatRect rcLeftTop = AddToAnnotsList(sa, nLeftTopIndex);
 
         std::vector<size_t> aSelect;
         for (size_t i = 0; i < sa.size(); ++i) {
@@ -144,12 +148,12 @@ void CPDFSDK_AnnotIterator::GenerateResults() {
           if (fCenterY > rcLeftTop.bottom && fCenterY < rcLeftTop.top)
             aSelect.push_back(i);
         }
-        AddSelectedToAnnots(&sa, &aSelect);
+        AddSelectedToAnnots(sa, aSelect);
       }
       break;
     }
 
-    case kColumn: {
+    case TabOrder::kColumn: {
       std::vector<UnownedPtr<CPDFSDK_Annot>> sa;
       CollectAnnots(&sa);
       std::sort(sa.begin(), sa.end(), CompareByTopDescending);
@@ -170,7 +174,7 @@ void CPDFSDK_AnnotIterator::GenerateResults() {
         if (nLeftTopIndex < 0)
           continue;
 
-        CFX_FloatRect rcLeftTop = AddToAnnotsList(&sa, nLeftTopIndex);
+        CFX_FloatRect rcLeftTop = AddToAnnotsList(sa, nLeftTopIndex);
 
         std::vector<size_t> aSelect;
         for (size_t i = 0; i < sa.size(); ++i) {
@@ -179,7 +183,7 @@ void CPDFSDK_AnnotIterator::GenerateResults() {
           if (fCenterX > rcLeftTop.left && fCenterX < rcLeftTop.right)
             aSelect.push_back(i);
         }
-        AddSelectedToAnnots(&sa, &aSelect);
+        AddSelectedToAnnots(sa, aSelect);
       }
       break;
     }

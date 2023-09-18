@@ -12,6 +12,7 @@
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "third_party/base/containers/span.h"
 
 class CPDFSDK_Annot;
 class CPDFSDK_PageView;
@@ -29,16 +30,16 @@ class CPDFSDK_AnnotIterator {
   CPDFSDK_Annot* GetPrevAnnot(CPDFSDK_Annot* pAnnot);
 
  private:
-  enum TabOrder : uint8_t { kStructure = 0, kRow, kColumn };
+  enum class TabOrder : uint8_t { kStructure = 0, kRow, kColumn };
 
   static TabOrder GetTabOrder(CPDFSDK_PageView* pPageView);
 
   void GenerateResults();
   void CollectAnnots(std::vector<UnownedPtr<CPDFSDK_Annot>>* pArray);
-  CFX_FloatRect AddToAnnotsList(std::vector<UnownedPtr<CPDFSDK_Annot>>* sa,
+  CFX_FloatRect AddToAnnotsList(std::vector<UnownedPtr<CPDFSDK_Annot>>& sa,
                                 size_t idx);
-  void AddSelectedToAnnots(std::vector<UnownedPtr<CPDFSDK_Annot>>* sa,
-                           std::vector<size_t>* aSelect);
+  void AddSelectedToAnnots(std::vector<UnownedPtr<CPDFSDK_Annot>>& sa,
+                           pdfium::span<const size_t> aSelect);
 
   UnownedPtr<CPDFSDK_PageView> const m_pPageView;
   const std::vector<CPDF_Annot::Subtype> m_subtypes;
