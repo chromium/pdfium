@@ -40,8 +40,8 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
       bool bRgbByteOrder,
       RetainPtr<CFX_DIBitmap> pBackdropBitmap,
       bool bGroupKnockout);
+  static std::unique_ptr<CFX_SkiaDeviceDriver> Create(SkCanvas* canvas);
 
-  explicit CFX_SkiaDeviceDriver(SkCanvas* canvas);
   ~CFX_SkiaDeviceDriver() override;
 
   /** Options */
@@ -193,10 +193,12 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
     DataVector<uint32_t> m_fontCharWidths;
   };
 
+  // Use the public creation methods instead.
   CFX_SkiaDeviceDriver(RetainPtr<CFX_DIBitmap> pBitmap,
                        bool bRgbByteOrder,
                        RetainPtr<CFX_DIBitmap> pBackdropBitmap,
                        bool bGroupKnockout);
+  explicit CFX_SkiaDeviceDriver(SkCanvas* canvas);
 
   bool TryDrawText(pdfium::span<const TextCharPos> char_pos,
                    const CFX_Font* pFont,

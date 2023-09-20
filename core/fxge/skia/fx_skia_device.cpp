@@ -158,9 +158,8 @@ void DebugShowSkiaDrawRect(CFX_SkiaDeviceDriver* driver,
 
 void DebugValidate(const RetainPtr<CFX_DIBitmap>& bitmap) {
 #if DCHECK_IS_ON()
-  if (bitmap) {
-    DCHECK(bitmap->GetBPP() == 8 || bitmap->GetBPP() == 32);
-  }
+  DCHECK(bitmap);
+  DCHECK(bitmap->GetBPP() == 8 || bitmap->GetBPP() == 32);
 #endif
 }
 
@@ -667,6 +666,21 @@ std::unique_ptr<CFX_SkiaDeviceDriver> CFX_SkiaDeviceDriver::Create(
   return driver;
 }
 
+// static
+std::unique_ptr<CFX_SkiaDeviceDriver> CFX_SkiaDeviceDriver::Create(
+    SkCanvas* canvas) {
+  if (!canvas) {
+    return nullptr;
+  }
+
+  auto driver = pdfium::WrapUnique(new CFX_SkiaDeviceDriver(canvas));
+  if (!driver->m_pBitmap || !driver->m_pBackdropBitmap) {
+    return nullptr;
+  }
+
+  return driver;
+}
+
 CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
     RetainPtr<CFX_DIBitmap> pBitmap,
     bool bRgbByteOrder,
@@ -691,8 +705,12 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
     m_pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!m_pBitmap->Copy(m_pOriginalBitmap) ||
         !m_pBitmap->ConvertFormat(FXDIB_Format::kArgb)) {
-      // Skip creating SkCanvas if we fail to create the 32 bpp bitmap to back
-      // it.
+      // Skip creating SkCanvas if the 32-bpp bitmap creation fails.
+      // CFX_SkiaDeviceDriver::Create() will check for the missing `m_pCanvas`
+      // and not use `this`.
+      // Also reset `m_pOriginalBitmap` so the dtor does not try to transfer
+      // `m_pBitmap` back to `m_pOriginalBitmap`.
+      m_pOriginalBitmap.Reset();
       return;
     }
 
@@ -1343,9 +1361,6 @@ bool CFX_SkiaDeviceDriver::GetClipBox(FX_RECT* pRect) {
 bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
                                      int left,
                                      int top) {
-  if (!m_pBitmap)
-    return true;
-
   const uint8_t* input_buffer = m_pBitmap->GetBuffer().data();
   if (!input_buffer) {
     return true;
@@ -1381,8 +1396,9 @@ bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                                      int left,
                                      int top,
                                      BlendMode blend_type) {
-  if (!m_pBitmap || m_pBitmap->GetBuffer().empty())
+  if (m_pBitmap->GetBuffer().empty()) {
     return true;
+  }
 
   CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(
       pBitmap->GetWidth(), pBitmap->GetHeight(), left, top);
@@ -1527,8 +1543,9 @@ bool CFX_SkiaDeviceDriver::SetBitsWithMask(
     int dest_top,
     int bitmap_alpha,
     BlendMode blend_type) {
-  if (!m_pBitmap || m_pBitmap->GetBuffer().empty())
+  if (m_pBitmap->GetBuffer().empty()) {
     return true;
+  }
 
   CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(
       pBitmap->GetWidth(), pBitmap->GetHeight(), dest_left, dest_top);
@@ -1641,10 +1658,11 @@ bool CFX_DefaultRenderDevice::AttachSkiaImpl(
 }
 
 bool CFX_DefaultRenderDevice::AttachCanvas(SkCanvas* canvas) {
-  if (!canvas) {
+  auto driver = CFX_SkiaDeviceDriver::Create(canvas);
+  if (!driver) {
     return false;
   }
-  SetDeviceDriver(std::make_unique<CFX_SkiaDeviceDriver>(canvas));
+  SetDeviceDriver(std::move(driver));
   return true;
 }
 
