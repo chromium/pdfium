@@ -319,7 +319,6 @@ Test_CheckBox.pdf * * * *
 1.pdf * * * gdi
 123.pdf * * * gdi
 1_image.pdf * * * gdi
-2_halftone.pdf * * * gdi
 3_interpolate_image.pdf * * * gdi
 3bigpreview.pdf * * * gdi
 4_3.pdf * * * gdi
@@ -332,7 +331,6 @@ FRC_8.5_URI_IsMap.pdf * * * gdi
 bug_691967.pdf * * * gdi
 bug_86459.pdf * * * gdi
 bug_880920.pdf * * * gdi
-bug_898443.pdf * * * gdi
 ch_7_0.pdf * * * gdi
 ch_7_1.pdf * * * gdi
 ch_7_4.pdf * * * gdi
@@ -403,7 +401,6 @@ example_064.pdf * * * gdi
 example_065.pdf * * * gdi
 image_8bit_devicergb_dctdecode.pdf * * * gdi
 image_bmp.pdf * * * gdi
-image_foxit.pdf * * * gdi
 image_jpg.pdf * * * gdi
 image_png.pdf * * * gdi
 image_tif.pdf * * * gdi
@@ -706,10 +703,7 @@ xfa_textfield.in win * * *
 # TODO(pdfium:2054): Remove after associated bug is fixed
 bug_1258968.in * * * gdi
 bug_1383708.in * * * gdi
-bug_718762.in * * * gdi
-bug_966263.in * * * gdi
 bug_986108.in * * * gdi
-image_transformer_other.in * * * gdi
 
 # TODO(pdfium:2055): Remove after associated bug is fixed
 barcode_test.pdf * * * gdi
