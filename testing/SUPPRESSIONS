@@ -703,7 +703,6 @@ xfa_textfield.in win * * *
 # TODO(pdfium:2054): Remove after associated bug is fixed
 bug_1258968.in * * * gdi
 bug_1383708.in * * * gdi
-bug_986108.in * * * gdi
 
 # TODO(pdfium:2055): Remove after associated bug is fixed
 barcode_test.pdf * * * gdi

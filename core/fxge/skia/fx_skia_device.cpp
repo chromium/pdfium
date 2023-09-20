@@ -156,14 +156,12 @@ void DebugShowSkiaDrawRect(CFX_SkiaDeviceDriver* driver,
 #endif  // SHOW_SKIA_PATH
 }
 
-static void DebugValidate(const RetainPtr<CFX_DIBitmap>& bitmap,
-                          const RetainPtr<CFX_DIBitmap>& device) {
+void DebugValidate(const RetainPtr<CFX_DIBitmap>& bitmap) {
+#if DCHECK_IS_ON()
   if (bitmap) {
     DCHECK(bitmap->GetBPP() == 8 || bitmap->GetBPP() == 32);
   }
-  if (device) {
-    DCHECK(device->GetBPP() == 8 || device->GetBPP() == 32);
-  }
+#endif
 }
 
 SkColorType Get32BitSkColorType(bool is_rgb_byte_order) {
@@ -1482,7 +1480,7 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
     int bitmap_alpha,
     const CFX_Matrix& matrix,
     BlendMode blend_type) {
-  DebugValidate(m_pBitmap, m_pBackdropBitmap);
+  DebugValidate(m_pBitmap);
 
   sk_sp<SkImage> skia_source = pSource->RealizeSkImage();
   if (!skia_source) {
@@ -1518,7 +1516,7 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
         paint);
   }
 
-  DebugValidate(m_pBitmap, m_pBackdropBitmap);
+  DebugValidate(m_pBitmap);
   return true;
 }
 
@@ -1569,7 +1567,7 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
     const CFX_Matrix& matrix,
     const FXDIB_ResampleOptions& options,
     BlendMode blend_type) {
-  DebugValidate(m_pBitmap, m_pBackdropBitmap);
+  DebugValidate(m_pBitmap);
 
   sk_sp<SkImage> skia_source = pSource->RealizeSkImage();
   if (!skia_source) {
@@ -1613,7 +1611,7 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
         &paint, SkCanvas::kFast_SrcRectConstraint);
   }
 
-  DebugValidate(m_pBitmap, m_pBackdropBitmap);
+  DebugValidate(m_pBitmap);
   return true;
 }
 
