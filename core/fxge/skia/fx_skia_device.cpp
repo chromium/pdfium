@@ -744,14 +744,7 @@ CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver() {
   // Convert and transfer the internal processed result to the original 24 bpp
   // bitmap provided by the render device.
   if (m_pOriginalBitmap && m_pBitmap->ConvertFormat(FXDIB_Format::kRgb)) {
-    int width = m_pOriginalBitmap->GetWidth();
-    int height = m_pOriginalBitmap->GetHeight();
-    DCHECK_EQ(width, m_pBitmap->GetWidth());
-    DCHECK_EQ(height, m_pBitmap->GetHeight());
-    DCHECK_EQ(FXDIB_Format::kRgb, m_pOriginalBitmap->GetFormat());
-    m_pOriginalBitmap->TransferBitmap(/*dest_left=*/0, /*dest_top=*/0, width,
-                                      height, m_pBitmap, /*src_left=*/0,
-                                      /*src_top=*/0);
+    CHECK(SyncInternalBitmaps());
   }
 }
 
