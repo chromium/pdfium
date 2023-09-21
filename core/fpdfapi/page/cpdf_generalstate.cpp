@@ -123,7 +123,9 @@ BlendMode CPDF_GeneralState::GetBlendType() const {
 }
 
 void CPDF_GeneralState::SetBlendType(BlendMode type) {
-  m_Ref.GetPrivateCopy()->m_BlendType = type;
+  if (GetBlendType() != type) {
+    m_Ref.GetPrivateCopy()->m_BlendType = type;
+  }
 }
 
 float CPDF_GeneralState::GetFillAlpha() const {
@@ -132,7 +134,9 @@ float CPDF_GeneralState::GetFillAlpha() const {
 }
 
 void CPDF_GeneralState::SetFillAlpha(float alpha) {
-  m_Ref.GetPrivateCopy()->m_FillAlpha = alpha;
+  if (GetFillAlpha() != alpha) {
+    m_Ref.GetPrivateCopy()->m_FillAlpha = alpha;
+  }
 }
 
 float CPDF_GeneralState::GetStrokeAlpha() const {
@@ -141,7 +145,9 @@ float CPDF_GeneralState::GetStrokeAlpha() const {
 }
 
 void CPDF_GeneralState::SetStrokeAlpha(float alpha) {
-  m_Ref.GetPrivateCopy()->m_StrokeAlpha = alpha;
+  if (GetStrokeAlpha() != alpha) {
+    m_Ref.GetPrivateCopy()->m_StrokeAlpha = alpha;
+  }
 }
 
 RetainPtr<const CPDF_Dictionary> CPDF_GeneralState::GetSoftMask() const {
