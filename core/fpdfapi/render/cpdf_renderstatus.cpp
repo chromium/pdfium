@@ -701,21 +701,19 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
   int width = bbox.Width();
   int height = bbox.Height();
   auto pBackdrop = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (bBackAlphaRequired && !m_bDropObjects)
-    pBackdrop->Create(width, height, FXDIB_Format::kArgb);
-  else
-    m_pDevice->CreateCompatibleBitmap(pBackdrop, width, height);
+  if (bBackAlphaRequired && !m_bDropObjects) {
+    if (!pBackdrop->Create(width, height, FXDIB_Format::kArgb)) {
+      return nullptr;
+    }
+  } else {
+    if (!m_pDevice->CreateCompatibleBitmap(pBackdrop, width, height)) {
+      return nullptr;
+    }
+  }
 
-  if (pBackdrop->GetBuffer().empty())
-    return nullptr;
-
-  bool bNeedDraw;
-  if (pBackdrop->IsAlphaFormat())
-    bNeedDraw = !(m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT);
-  else
-    bNeedDraw = !(m_pDevice->GetRenderCaps() & FXRC_GET_BITS);
-
-  if (!bNeedDraw) {
+  const int cap_to_check =
+      pBackdrop->IsAlphaFormat() ? FXRC_ALPHA_OUTPUT : FXRC_GET_BITS;
+  if (m_pDevice->GetRenderCaps() & cap_to_check) {
     m_pDevice->GetDIBits(pBackdrop, bbox.left, bbox.top);
     return pBackdrop;
   }

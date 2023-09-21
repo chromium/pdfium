@@ -82,8 +82,10 @@ void CPDF_DeviceBuffer::OutputToDevice() {
     return;
   }
   auto pBuffer = pdfium::MakeRetain<CFX_DIBitmap>();
-  m_pDevice->CreateCompatibleBitmap(pBuffer, m_pBitmap->GetWidth(),
-                                    m_pBitmap->GetHeight());
+  if (!m_pDevice->CreateCompatibleBitmap(pBuffer, m_pBitmap->GetWidth(),
+                                         m_pBitmap->GetHeight())) {
+    return;
+  }
   m_pContext->GetBackground(m_pDevice, m_pObject, nullptr, m_Matrix);
   pBuffer->CompositeBitmap(0, 0, pBuffer->GetWidth(), pBuffer->GetHeight(),
                            m_pBitmap, 0, 0, BlendMode::kNormal, nullptr, false);
