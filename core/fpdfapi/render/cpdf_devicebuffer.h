@@ -30,9 +30,10 @@ class CPDF_DeviceBuffer {
                     int max_dpi);
   ~CPDF_DeviceBuffer();
 
-  bool Initialize();
+  // On success, the returned bitmap will already have its buffer allocated.
+  // On failure, the returned result is null.
+  [[nodiscard]] RetainPtr<CFX_DIBitmap> Initialize();
   void OutputToDevice();
-  RetainPtr<CFX_DIBitmap> GetBitmap() const { return m_pBitmap; }
   const CFX_Matrix& GetMatrix() const { return m_Matrix; }
 
  private:

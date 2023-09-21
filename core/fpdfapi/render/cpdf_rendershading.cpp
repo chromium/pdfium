@@ -914,12 +914,10 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
     return;
   }
   CPDF_DeviceBuffer buffer(pContext, pDevice, clip_rect_bbox, pCurObj, 150);
-  if (!buffer.Initialize())
+  RetainPtr<CFX_DIBitmap> pBitmap = buffer.Initialize();
+  if (!pBitmap) {
     return;
-
-  RetainPtr<CFX_DIBitmap> pBitmap = buffer.GetBitmap();
-  if (pBitmap->GetBuffer().empty())
-    return;
+  }
 
   if (background != 0) {
     pBitmap->Clear(background);
