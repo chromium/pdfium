@@ -79,8 +79,7 @@ class ProgressiveDecoder final :
   FXCODEC_IMAGE_TYPE GetType() const { return m_imageType; }
   int32_t GetWidth() const { return m_SrcWidth; }
   int32_t GetHeight() const { return m_SrcHeight; }
-  int32_t GetNumComponents() const { return m_SrcComponents; }
-  int32_t GetBPC() const { return m_SrcBPC; }
+  int32_t GetBitsPerPixel() const { return m_SrcComponents * m_SrcBPC; }
   void SetClipBox(FX_RECT* clip);
 
   std::pair<FXCODEC_STATUS, size_t> GetFrames();

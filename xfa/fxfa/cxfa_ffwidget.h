@@ -51,8 +51,8 @@ void XFA_DrawImage(CFGAS_GEGraphics* pGS,
                    RetainPtr<CFX_DIBitmap> pDIBitmap,
                    XFA_AttributeValue iAspect,
                    const CFX_Size& dpi,
-                   XFA_AttributeValue iHorzAlign = XFA_AttributeValue::Left,
-                   XFA_AttributeValue iVertAlign = XFA_AttributeValue::Top);
+                   XFA_AttributeValue iHorzAlign,
+                   XFA_AttributeValue iVertAlign);
 
 RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
     RetainPtr<IFX_SeekableReadStream> pImageFileRead,
