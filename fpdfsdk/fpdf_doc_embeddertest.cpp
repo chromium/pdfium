@@ -7,6 +7,7 @@
 
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/bytestring.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_doc.h"
@@ -589,6 +590,97 @@ TEST_F(FPDFDocEmbedderTest, DeletePage) {
 
   FPDFPage_Delete(document(), 0);
   EXPECT_EQ(0, FPDF_GetPageCount(document()));
+}
+
+TEST_F(FPDFDocEmbedderTest, DeletePageAndRender) {
+  struct PageData {
+    int width;
+    int height;
+    const char* checksum;
+  };
+  const PageData expected_page_data[5] = {
+      {200, 250,
+       []() {
+         return CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()
+                    ? "4b6590a267eae90b8be1607e808fb57f"
+                    : "1e5d1cf19ffbb9cf9dbf099483cea327";
+       }()},
+      {250, 200,
+       []() {
+         return CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()
+                    ? "e8edd3655f6629ff489bd8c3bb110c82"
+                    : "65c80685916aa36e767dd2270ba4d72b";
+       }()},
+      {200, 250,
+       []() {
+         return CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()
+                    ? "a2bde6b68d7981e665ab25bc633746aa"
+                    : "a53b21c68edf43c1cddb5c06e361bb45";
+       }()},
+      {200, 250,
+       []() {
+         return CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()
+                    ? "a8c5b3e626f665eddf593c6d4c32ae9e"
+                    : "dcd768be15efb9c6e5093cf74508752c";
+       }()},
+      {200, 250, []() {
+         return CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()
+                    ? "72eb157853ae2d19b70ea62e3f5ac202"
+                    : "7a3f8f79ebcb350854c0d69607729ec5";
+       }()}};
+
+  // Render the original document. (page indices 0-4)
+  ASSERT_TRUE(OpenDocument("rectangles_multi_pages.pdf"));
+  EXPECT_EQ(5, FPDF_GetPageCount(document()));
+  for (int i = 0; i < 5; ++i) {
+    FPDF_PAGE page = LoadPage(i);
+    ASSERT_TRUE(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    const PageData& expected = expected_page_data[i];
+    CompareBitmap(bitmap.get(), expected.width, expected.height,
+                  expected.checksum);
+    UnloadPage(page);
+  }
+
+  // Delete the first page and render again. (original page indices 1-4)
+  FPDFPage_Delete(document(), 0);
+  EXPECT_EQ(4, FPDF_GetPageCount(document()));
+  for (int i = 0; i < 4; ++i) {
+    FPDF_PAGE page = LoadPage(i);
+    ASSERT_TRUE(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    const PageData& expected = expected_page_data[i + 1];
+    CompareBitmap(bitmap.get(), expected.width, expected.height,
+                  expected.checksum);
+    UnloadPage(page);
+  }
+
+  // Delete the last page and render again. (original page indices 1-3)
+  FPDFPage_Delete(document(), 3);
+  EXPECT_EQ(3, FPDF_GetPageCount(document()));
+  for (int i = 0; i < 3; ++i) {
+    FPDF_PAGE page = LoadPage(i);
+    ASSERT_TRUE(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    const PageData& expected = expected_page_data[i + 1];
+    CompareBitmap(bitmap.get(), expected.width, expected.height,
+                  expected.checksum);
+    UnloadPage(page);
+  }
+
+  // Delete the middle page and render again. (original page indices 1, 3)
+  FPDFPage_Delete(document(), 1);
+  EXPECT_EQ(2, FPDF_GetPageCount(document()));
+  for (int i = 0; i < 2; ++i) {
+    FPDF_PAGE page = LoadPage(i);
+    ASSERT_TRUE(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    int adjusted_index = i == 0 ? 1 : 3;
+    const PageData& expected = expected_page_data[adjusted_index];
+    CompareBitmap(bitmap.get(), expected.width, expected.height,
+                  expected.checksum);
+    UnloadPage(page);
+  }
 }
 
 TEST_F(FPDFDocEmbedderTest, GetFileIdentifier) {
