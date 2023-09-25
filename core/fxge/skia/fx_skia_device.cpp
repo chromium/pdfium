@@ -1451,18 +1451,16 @@ bool CFX_SkiaDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
 }
 
 void CFX_DIBitmap::UnPreMultiply() {
-  if (GetBPP() != 32)
+  if (m_nFormat == Format::kUnPreMultiplied || GetBPP() != 32) {
     return;
+  }
 
   void* buffer = GetWritableBuffer().data();
-  if (!buffer)
+  if (!buffer) {
     return;
+  }
 
-  Format prior_format = m_nFormat;
   m_nFormat = Format::kUnPreMultiplied;
-  if (prior_format == Format::kUnPreMultiplied)
-    return;
-
   int height = GetHeight();
   int width = GetWidth();
   int row_bytes = GetPitch();
