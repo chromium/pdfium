@@ -91,7 +91,7 @@ struct FPDFEditMoveEmbedderTestCase {
   std::vector<int> page_indices;
   int page_indices_len;
   int dest_page_index;
-  // whether FPDFPage_Move() will succeed or fail
+  // whether FPDF_MovePages() will succeed or fail
   bool expected_result;
   // expected order of pages if `expected_result` is true
   std::vector<int> expected_order;
@@ -4918,8 +4918,8 @@ TEST_F(FPDFEditMoveEmbedderTest, MovePagesTest) {
     std::vector<std::string> orig_hashes = HashesForDocument(page_count);
     ASSERT_THAT(orig_hashes, testing::SizeIs(page_count));
 
-    EXPECT_EQ(FPDFPage_Move(document(), &tc.page_indices[0],
-                            tc.page_indices_len, tc.dest_page_index),
+    EXPECT_EQ(FPDF_MovePages(document(), &tc.page_indices[0],
+                             tc.page_indices_len, tc.dest_page_index),
               tc.expected_result)
         << tc;
 

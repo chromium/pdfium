@@ -196,10 +196,10 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_Delete(FPDF_DOCUMENT document,
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFPage_Move(FPDF_DOCUMENT document,
-              const int* page_indices,
-              unsigned long page_indices_len,
-              int dest_page_index) {
+FPDF_MovePages(FPDF_DOCUMENT document,
+               const int* page_indices,
+               unsigned long page_indices_len,
+               int dest_page_index) {
   auto* doc = CPDFDocumentFromFPDFDocument(document);
   if (!doc) {
     return false;

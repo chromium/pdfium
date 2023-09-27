@@ -236,7 +236,6 @@ int CheckPDFiumCApi() {
     CHK(FPDFPage_GetRotation);
     CHK(FPDFPage_HasTransparency);
     CHK(FPDFPage_InsertObject);
-    CHK(FPDFPage_Move);
     CHK(FPDFPage_New);
     CHK(FPDFPage_RemoveObject);
     CHK(FPDFPage_SetRotation);
@@ -263,6 +262,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFText_SetCharcodes);
     CHK(FPDFText_SetText);
     CHK(FPDF_CreateNewDocument);
+    CHK(FPDF_MovePages);
 
     // fpdf_ext.h
     CHK(FPDFDoc_GetPageMode);

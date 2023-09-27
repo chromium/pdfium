@@ -153,10 +153,10 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_Delete(FPDF_DOCUMENT document,
 // >  // Returned false because [2, 2] contains duplicates.
 //
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFPage_Move(FPDF_DOCUMENT document,
-              const int* page_indices,
-              unsigned long page_indices_len,
-              int dest_page_index);
+FPDF_MovePages(FPDF_DOCUMENT document,
+               const int* page_indices,
+               unsigned long page_indices_len,
+               int dest_page_index);
 
 // Get the rotation of |page|.
 //
