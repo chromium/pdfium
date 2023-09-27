@@ -126,6 +126,38 @@ FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
 FPDF_EXPORT void FPDF_CALLCONV FPDFPage_Delete(FPDF_DOCUMENT document,
                                                int page_index);
 
+// Experimental API.
+// Move the given pages to a new index position.
+//
+//  page_indices     - the ordered list of pages to move. No duplicates allowed.
+//  page_indices_len - the number of elements in |page_indices|
+//  dest_page_index  - the new index position to which the pages in
+//                     |page_indices| are moved.
+//
+// Returns TRUE on success. If it returns FALSE, the document may be left in an
+// indeterminate state.
+//
+// Example: The PDF document starts out with pages [A, B, C, D], with indices
+// [0, 1, 2, 3].
+//
+// >  Move(doc, [3, 2], 2, 1); // returns true
+// >  // The document has pages [A, D, C, B].
+// >
+// >  Move(doc, [0, 4, 3], 3, 1); // returns false
+// >  // Returned false because index 4 is out of range.
+// >
+// >  Move(doc, [0, 3, 1], 3, 2); // returns false
+// >  // Returned false because index 2 is out of range for 3 page indices.
+// >
+// >  Move(doc, [2, 2], 2, 0); // returns false
+// >  // Returned false because [2, 2] contains duplicates.
+//
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPage_Move(FPDF_DOCUMENT document,
+              const int* page_indices,
+              unsigned long page_indices_len,
+              int dest_page_index);
+
 // Get the rotation of |page|.
 //
 //   page - handle to a page

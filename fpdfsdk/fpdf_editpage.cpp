@@ -38,6 +38,7 @@
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_formfill.h"
+#include "third_party/base/containers/span.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 #ifdef PDF_ENABLE_XFA
@@ -192,6 +193,19 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_Delete(FPDF_DOCUMENT document,
   }
 
   pDoc->DeletePage(page_index);
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPage_Move(FPDF_DOCUMENT document,
+              const int* page_indices,
+              unsigned long page_indices_len,
+              int dest_page_index) {
+  auto* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
+    return false;
+  }
+
+  return doc->MovePages({page_indices, page_indices_len}, dest_page_index);
 }
 
 FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,
