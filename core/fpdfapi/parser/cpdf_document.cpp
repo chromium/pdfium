@@ -399,8 +399,8 @@ int CPDF_Document::RetrievePageCount() {
   return CountPages(std::move(pPages), &visited_pages).value_or(0);
 }
 
-uint32_t CPDF_Document::GetUserPermissions() const {
-  return m_pParser ? m_pParser->GetPermissions() : 0;
+uint32_t CPDF_Document::GetUserPermissions(bool get_owner_perms) const {
+  return m_pParser ? m_pParser->GetPermissions(get_owner_perms) : 0;
 }
 
 RetainPtr<CPDF_StreamAcc> CPDF_Document::GetFontFileStreamAcc(

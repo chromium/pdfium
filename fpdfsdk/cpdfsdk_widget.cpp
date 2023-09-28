@@ -713,7 +713,8 @@ bool CPDFSDK_Widget::DoHitTest(const CFX_PointF& point) {
 
   bool do_hit_test = GetFieldType() == FormFieldType::kPushButton;
   if (!do_hit_test) {
-    uint32_t perms = GetPDFPage()->GetDocument()->GetUserPermissions();
+    uint32_t perms = GetPDFPage()->GetDocument()->GetUserPermissions(
+        /*get_owner_perms=*/true);
     do_hit_test = (perms & pdfium::access_permissions::kFillForm) ||
                   (perms & pdfium::access_permissions::kModifyAnnotation);
   }

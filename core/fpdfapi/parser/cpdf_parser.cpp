@@ -1069,8 +1069,10 @@ RetainPtr<CPDF_Dictionary> CPDF_Parser::LoadTrailerV4() {
   return ToDictionary(m_pSyntax->GetObjectBody(m_pObjectsHolder));
 }
 
-uint32_t CPDF_Parser::GetPermissions() const {
-  return m_pSecurityHandler ? m_pSecurityHandler->GetPermissions() : 0xFFFFFFFF;
+uint32_t CPDF_Parser::GetPermissions(bool get_owner_perms) const {
+  return m_pSecurityHandler
+             ? m_pSecurityHandler->GetPermissions(get_owner_perms)
+             : 0xFFFFFFFF;
 }
 
 std::unique_ptr<CPDF_LinearizedHeader> CPDF_Parser::ParseLinearizedHeader() {

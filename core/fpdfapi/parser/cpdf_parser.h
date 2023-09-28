@@ -87,7 +87,7 @@ class CPDF_Parser {
 
   FX_FILESIZE GetLastXRefOffset() const { return m_LastXRefOffset; }
 
-  uint32_t GetPermissions() const;
+  uint32_t GetPermissions(bool get_owner_perms) const;
   uint32_t GetRootObjNum() const;
   uint32_t GetInfoObjNum() const;
   RetainPtr<const CPDF_Array> GetIDArray() const;

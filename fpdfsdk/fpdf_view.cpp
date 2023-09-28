@@ -368,7 +368,13 @@ FPDF_DocumentHasValidCrossReferenceTable(FPDF_DOCUMENT document) {
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDF_GetDocPermissions(FPDF_DOCUMENT document) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  return pDoc ? pDoc->GetUserPermissions() : 0;
+  return pDoc ? pDoc->GetUserPermissions(/*get_owner_perms=*/true) : 0;
+}
+
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDF_GetDocUserPermissions(FPDF_DOCUMENT document) {
+  CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
+  return pDoc ? pDoc->GetUserPermissions(/*get_owner_perms=*/false) : 0;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV

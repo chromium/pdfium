@@ -108,12 +108,16 @@ class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, Unencrypted) {
   ASSERT_TRUE(OpenDocument("about_blank.pdf"));
+  // parser is missing a security handler, so always results in 0xFFFFFFFF
   EXPECT_EQ(0xFFFFFFFF, FPDF_GetDocPermissions(document()));
+  EXPECT_EQ(0xFFFFFFFF, FPDF_GetDocUserPermissions(document()));
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, UnencryptedWithPassword) {
   ASSERT_TRUE(OpenDocumentWithPassword("about_blank.pdf", "foobar"));
+  // parser is missing a security handler, so always results in 0xFFFFFFFF
   EXPECT_EQ(0xFFFFFFFF, FPDF_GetDocPermissions(document()));
+  EXPECT_EQ(0xFFFFFFFF, FPDF_GetDocUserPermissions(document()));
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, NoPassword) {
@@ -127,11 +131,13 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, BadPassword) {
 TEST_F(CPDFSecurityHandlerEmbedderTest, UserPassword) {
   ASSERT_TRUE(OpenDocumentWithPassword("encrypted.pdf", "1234"));
   EXPECT_EQ(0xFFFFF2C0, FPDF_GetDocPermissions(document()));
+  EXPECT_EQ(0xFFFFF2C0, FPDF_GetDocUserPermissions(document()));
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPassword) {
   ASSERT_TRUE(OpenDocumentWithPassword("encrypted.pdf", "5678"));
   EXPECT_EQ(0xFFFFFFFC, FPDF_GetDocPermissions(document()));
+  EXPECT_EQ(0xFFFFF2C0, FPDF_GetDocUserPermissions(document()));
 }
 
 TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {

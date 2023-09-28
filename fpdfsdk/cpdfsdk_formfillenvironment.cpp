@@ -802,7 +802,7 @@ int CPDFSDK_FormFillEnvironment::GetPageCount() const {
 }
 
 bool CPDFSDK_FormFillEnvironment::HasPermissions(uint32_t flags) const {
-  return !!(m_pCPDFDoc->GetUserPermissions() & flags);
+  return !!(m_pCPDFDoc->GetUserPermissions(/*get_owner_perms=*/true) & flags);
 }
 
 void CPDFSDK_FormFillEnvironment::SendOnFocusChange(

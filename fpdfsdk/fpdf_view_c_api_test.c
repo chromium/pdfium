@@ -486,6 +486,7 @@ int CheckPDFiumCApi() {
     CHK(FPDF_GetArrayBufferAllocatorSharedInstance);
 #endif
     CHK(FPDF_GetDocPermissions);
+    CHK(FPDF_GetDocUserPermissions);
     CHK(FPDF_GetFileVersion);
     CHK(FPDF_GetLastError);
     CHK(FPDF_GetNamedDest);

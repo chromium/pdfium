@@ -34,7 +34,9 @@ class CPDF_SecurityHandler final : public Retainable {
                 const CPDF_Array* pIdArray,
                 const ByteString& user_password);
 
-  uint32_t GetPermissions() const;
+  // When `get_owner_perms` is true, returns full permissions if unlocked by
+  // owner.
+  uint32_t GetPermissions(bool get_owner_perms) const;
   bool IsMetadataEncrypted() const;
 
   CPDF_CryptoHandler* GetCryptoHandler() const {

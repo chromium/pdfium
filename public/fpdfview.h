@@ -652,16 +652,28 @@ FPDF_GetTrailerEnds(FPDF_DOCUMENT document,
                     unsigned int* buffer,
                     unsigned long length);
 
-// Function: FPDF_GetDocPermission
+// Function: FPDF_GetDocPermissions
 //          Get file permission flags of the document.
 // Parameters:
 //          document    -   Handle to a document. Returned by FPDF_LoadDocument.
 // Return value:
 //          A 32-bit integer indicating permission flags. Please refer to the
 //          PDF Reference for detailed descriptions. If the document is not
-//          protected, 0xffffffff will be returned.
+//          protected or was unlocked by the owner, 0xffffffff will be returned.
 FPDF_EXPORT unsigned long FPDF_CALLCONV
 FPDF_GetDocPermissions(FPDF_DOCUMENT document);
+
+// Function: FPDF_GetDocUserPermissions
+//          Get user file permission flags of the document.
+// Parameters:
+//          document    -   Handle to a document. Returned by FPDF_LoadDocument.
+// Return value:
+//          A 32-bit integer indicating permission flags. Please refer to the
+//          PDF Reference for detailed descriptions. If the document is not
+//          protected, 0xffffffff will be returned. Always returns user
+//          permissions, even if the document was unlocked by the owner.
+FPDF_EXPORT unsigned long FPDF_CALLCONV
+FPDF_GetDocUserPermissions(FPDF_DOCUMENT document);
 
 // Function: FPDF_GetSecurityHandlerRevision
 //          Get the revision for the security handler.

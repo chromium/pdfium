@@ -484,7 +484,9 @@ TEST_F(FPDFViewEmbedderTest, Document) {
   EXPECT_TRUE(FPDF_GetFileVersion(document(), &version));
   EXPECT_EQ(14, version);
 
+  // 0xFFFFFFFF because no security handler present
   EXPECT_EQ(0xFFFFFFFF, FPDF_GetDocPermissions(document()));
+  EXPECT_EQ(0xFFFFFFFF, FPDF_GetDocUserPermissions(document()));
   EXPECT_EQ(-1, FPDF_GetSecurityHandlerRevision(document()));
   CloseDocument();
 
@@ -497,7 +499,9 @@ TEST_F(FPDFViewEmbedderTest, Document) {
   EXPECT_TRUE(FPDF_GetFileVersion(document(), &version));
   EXPECT_EQ(14, version);
 
+  // 0xFFFFFFFF because no security handler present
   EXPECT_EQ(0xFFFFFFFF, FPDF_GetDocPermissions(document()));
+  EXPECT_EQ(0xFFFFFFFF, FPDF_GetDocUserPermissions(document()));
   EXPECT_EQ(-1, FPDF_GetSecurityHandlerRevision(document()));
   // CloseDocument() called by TearDown().
 }
