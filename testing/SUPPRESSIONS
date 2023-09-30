@@ -536,14 +536,12 @@ validate_alert_box.pdf * * * gdi
 widget_javascript.pdf * * * gdi
 
 # TODO(pdfium:2056): Remove after associated bug is fixed
-11.pdf * * * gdi
 1_10_watermark.pdf * * * gdi
 1_matrix.pdf * * * gdi
 2_color_tiling.pdf * * * gdi
 2_shading_type_6_00.pdf * * * gdi
 2_shading_type_6_001.pdf * * * gdi
 2_uncolor_tiling.pdf * * * gdi
-3_image_imagemask.pdf * * * gdi
 FRC_11_8.2.4_View_edit.pdf * * * gdi
 FRC_12_8.2.4_View_remove_all.pdf * * * gdi
 FRC_13_8.2.4_View_remove_value.pdf * * * gdi
@@ -595,7 +593,6 @@ path_5_pattern.pdf * * * gdi
 path_7.pdf * * * gdi
 path_9.pdf * * * gdi
 transformation.pdf * * * gdi
-transparent.pdf * * * gdi
 transparent1.pdf * * * gdi
 xfermodes.pdf * * * gdi
 xfermodes2.pdf * * * gdi
@@ -756,7 +753,6 @@ bug_1430333.in * * * gdi
 bug_1822.in * * * gdi
 bug_1847.in * * * gdi
 bug_1949.in * * * gdi
-bug_1966.in * * * gdi
 bug_1972_1.in * * * gdi
 bug_1972_3.in * * * gdi
 bug_1995.in * * * gdi

@@ -428,12 +428,12 @@ def _CheckPngNames(input_api, output_api):
   """Checks that .png files have the right file name format, which must be in
   the form:
 
-  NAME_expected(_(agg|gdi|skia))?(_(linux|mac|win))?.pdf.\d+.png
+  NAME_expected(_gdi)?(_(agg|skia))?(_(linux|mac|win))?.pdf.\d+.png
 
   This must be the same format as the one in testing/corpus's PRESUBMIT.py.
   """
   expected_pattern = input_api.re.compile(
-      r'.+_expected(_(agg|gdi|skia))?(_(linux|mac|win))?\.pdf\.\d+.png')
+      r'.+_expected(_gdi)?(_(agg|skia))?(_(linux|mac|win))?\.pdf\.\d+.png')
   results = []
   for f in input_api.AffectedFiles(include_deletes=False):
     if not f.LocalPath().endswith('.png'):

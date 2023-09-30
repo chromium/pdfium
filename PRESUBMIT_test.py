@@ -59,6 +59,12 @@ class CheckChangeOnUploadTest(unittest.TestCase):
         'test_expected_agg_linux.pdf.3.png',
         'test_expected_skia.pdf.2.png',
         'test_expected_skia_mac.pdf.4.png',
+        'test_expected_gdi_agg.pdf.3.png',
+        'test_expected_gdi_agg_win.pdf.4.png',
+        'test_expected_gdi_skia.pdf.10.png',
+        'test_expected_gdi_skia_linux.pdf.5.png',
+        'test_expected_gdi.pdf.99.png',
+        'test_expected_gdi_mac.pdf.0.png',
         'notpng.cc',  # Check will be skipped for non-PNG files
     ]
     wrong_paths = [
@@ -66,9 +72,13 @@ class CheckChangeOnUploadTest(unittest.TestCase):
         'test1_expected.0.png',  # Missing '.pdf'
         'test2_expected.pdf.png',  # Missing page number
         'test3_expected.pdf.x.png',  # Wrong character for page number
+        'test4_expected_agg_gdi.pdf.0.png',  # Wrong order of keywords
         'test4_expected_linux_agg.pdf.0.png',  # Wrong order of keywords
         'test4_expected_mac_skia.pdf.0.png',  # Wrong order of keywords
+        'test4_expected_skia_gdi.pdf.0.png',  # Wrong order of keywords
         'test5_expected_useskia.pdf.0.png',  # Wrong keyword
+        'test6_expected_win_mac.pdf.0.png',  # Too many platforms
+        'test7_expected_agg_skia.pdf.0.png',  # Too many renderers
     ]
     mock_input_api = MockInputApi()
     mock_output_api = MockOutputApi()
