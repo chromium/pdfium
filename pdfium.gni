@@ -48,10 +48,6 @@ declare_args() {
   # malloc is controlled by args in build_overrides/partition_alloc.gni.
   pdf_use_partition_alloc = pdf_use_partition_alloc_override
 
-  # Temporary config allowing chromium to switch its location of the
-  # partition_alloc library. https://crbug.com/1467773
-  pdf_use_partition_alloc_new_location = false
-
   # Build PDFium to use Skia (experimental) for all PDFium graphics.
   # If enabled, coexists in build with AGG graphics and the default
   # renderer is selectable at runtime.

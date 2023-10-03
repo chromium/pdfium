@@ -14,11 +14,7 @@
 #include "third_party/base/containers/contains.h"
 
 #if defined(PDF_USE_PARTITION_ALLOC)
-#if defined(PDF_USE_PARTITION_ALLOC_NEW_LOCATION)
 #include "base/allocator/partition_allocator/src/partition_alloc/shim/allocator_shim_default_dispatch_to_partition_alloc.h"
-#else
-#include "base/allocator/partition_allocator/shim/allocator_shim_default_dispatch_to_partition_alloc.h"
-#endif
 #endif
 
 namespace fxcrt {

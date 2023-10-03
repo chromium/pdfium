@@ -24,9 +24,6 @@ config("pdfium_samples_config") {
   if (pdf_use_partition_alloc) {
     defines += [ "PDF_USE_PARTITION_ALLOC" ]
   }
-  if (pdf_use_partition_alloc_new_location) {
-    defines += [ "PDF_USE_PARTITION_ALLOC_NEW_LOCATION" ]
-  }
   if (enable_callgrind) {
     defines += [ "ENABLE_CALLGRIND" ]
   }

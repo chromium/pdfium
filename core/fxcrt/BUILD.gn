@@ -11,17 +11,10 @@ source_set("unowned_ptr") {
   deps = [ "../../third_party:pdfium_compiler_specific" ]
   configs += [ "../../:pdfium_strict_config" ]
   if (pdf_use_partition_alloc) {
-    if (pdf_use_partition_alloc_new_location) {
-      public_deps = [
-        "//base/allocator/partition_allocator/src/partition_alloc:partition_alloc_buildflags",
-        "//base/allocator/partition_allocator/src/partition_alloc:raw_ptr",
-      ]
-    } else {
-      public_deps = [
-        "//base/allocator/partition_allocator:partition_alloc_buildflags",
-        "//base/allocator/partition_allocator:raw_ptr",
-      ]
-    }
+    public_deps = [
+      "//base/allocator/partition_allocator/src/partition_alloc:partition_alloc_buildflags",
+      "//base/allocator/partition_allocator/src/partition_alloc:raw_ptr",
+    ]
   }
 }
 
@@ -149,19 +142,11 @@ source_set("fxcrt") {
   ]
   if (pdf_use_partition_alloc) {
     sources += [ "fx_memory_pa.cpp" ]
-    if (pdf_use_partition_alloc_new_location) {
-      deps += [
-        "//base/allocator/partition_allocator/src/partition_alloc",
-        "//base/allocator/partition_allocator/src/partition_alloc:partition_alloc_buildflags",
-        "//base/allocator/partition_allocator/src/partition_alloc:raw_ptr",
-      ]
-    } else {
-      deps += [
-        "//base/allocator/partition_allocator:partition_alloc",
-        "//base/allocator/partition_allocator:partition_alloc_buildflags",
-        "//base/allocator/partition_allocator:raw_ptr",
-      ]
-    }
+    deps += [
+      "//base/allocator/partition_allocator/src/partition_alloc",
+      "//base/allocator/partition_allocator/src/partition_alloc:partition_alloc_buildflags",
+      "//base/allocator/partition_allocator/src/partition_alloc:raw_ptr",
+    ]
   } else {
     sources += [ "fx_memory_malloc.cpp" ]
   }
@@ -262,11 +247,7 @@ pdfium_unittest_source_set("unittests") {
   deps = [ ":unit_test_support" ]
   pdfium_root_dir = "../../"
   if (pdf_use_partition_alloc) {
-    if (pdf_use_partition_alloc_new_location) {
-      deps += [ "//base/allocator/partition_allocator/src/partition_alloc" ]
-    } else {
-      deps += [ "//base/allocator/partition_allocator:partition_alloc" ]
-    }
+    deps += [ "//base/allocator/partition_allocator/src/partition_alloc" ]
   }
   if (pdf_enable_xfa) {
     sources += [ "cfx_memorystream_unittest.cpp" ]

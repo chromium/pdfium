@@ -56,11 +56,7 @@ source_set("test_support") {
       "allocator_shim_config.cpp",
       "allocator_shim_config.h",
     ]
-    if (pdf_use_partition_alloc_new_location) {
-      deps += [ "//base/allocator/partition_allocator/src/partition_alloc" ]
-    } else {
-      deps += [ "//base/allocator/partition_allocator:partition_alloc" ]
-    }
+    deps += [ "//base/allocator/partition_allocator/src/partition_alloc" ]
   }
   if (pdf_enable_v8) {
     sources += [

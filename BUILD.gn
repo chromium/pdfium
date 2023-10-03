@@ -46,9 +46,6 @@ config("pdfium_common_config") {
   if (pdf_use_partition_alloc) {
     defines += [ "PDF_USE_PARTITION_ALLOC" ]
   }
-  if (pdf_use_partition_alloc_new_location) {
-    defines += [ "PDF_USE_PARTITION_ALLOC_NEW_LOCATION" ]
-  }
 
   if (is_win) {
     # Assume UTF-8 by default to avoid code page dependencies.
