@@ -46,7 +46,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling abseil
   # and whatever else without interference from each other.
-  'abseil_revision': '7affa303ea4ebf4d4de65b3f20f230c7bb16a2ed',
+  'abseil_revision': '0f519c0d9cbc89a51e0e3841cd519acfde70214c',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling android_toolchain
   # and whatever else without interference from each other.
@@ -54,11 +54,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
-  'build_revision': 'b421a9339c245a9b2146bcc50bb3e213b4fcc38c',
+  'build_revision': '4905e9939010fd5cab3d161a563428109367fb2f',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
-  'buildtools_revision': 'b2043d4f435131d0a1bdd5342c17753ef9236572',
+  'buildtools_revision': 'c8bee3e69d439a3fb2a444da9dda1492d0807084',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling catapult
   # and whatever else without interference from each other.
@@ -70,7 +70,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang
   # and whatever else without interference from each other.
-  'clang_revision': '9fc887ccded86c9355f1abbe80c651271c59632f',
+  'clang_revision': 'f775f73afa543b4b1285aa65ca0cd9c395d07a3e',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling code_coverage
   # and whatever else without interference from each other.
@@ -124,7 +124,7 @@ vars = {
   # and whatever else without interference from each other.
   # If you change this, also update the libc++ revision in
   # //buildtools/deps_revisions.gni.
-  'libcxx_revision': '84fb809dd6dae36d556dc0bb702c6cc2ce9d4b80',
+  'libcxx_revision': 'a094e2535c54dd295d22c56bd088691459708b46',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libc++abi
   # and whatever else without interference from each other.
