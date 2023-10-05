@@ -662,7 +662,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     // TODO(crbug.com/pdfium/2011): Remove the need for this.
     bitmap_device.GetBitmap()->ForcePreMultiply();
   }
-#endif  // _SKIA_SUPPORT
+#endif
   m_bStopped = bitmap_render.m_bStopped;
   if (pSMaskDict) {
     CFX_Matrix smask_matrix =
@@ -683,6 +683,11 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   if (pPageObj->IsForm()) {
     transparency.SetGroup();
   }
+#if defined(_SKIA_SUPPORT_)
+  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+    bitmap_device.GetBitmap()->UnPreMultiply();
+  }
+#endif
   CompositeDIBitmap(bitmap_device.GetBitmap(), rect.left, rect.top, 0, 255,
                     blend_type, transparency);
   return true;
