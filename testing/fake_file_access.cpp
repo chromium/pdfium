@@ -9,8 +9,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/check.h"
 
-namespace {
-
 class FileAccessWrapper final : public FPDF_FILEACCESS {
  public:
   explicit FileAccessWrapper(FakeFileAccess* simulator)
@@ -69,8 +67,6 @@ class DownloadHintsImpl final : public FX_DOWNLOADHINTS {
   UnownedPtr<FakeFileAccess> simulator_;
 };
 
-}  // namespace
-
 FakeFileAccess::FakeFileAccess(FPDF_FILEACCESS* file_access)
     : file_access_(file_access),
       file_access_wrapper_(std::make_unique<FileAccessWrapper>(this)),
@@ -80,6 +76,18 @@ FakeFileAccess::FakeFileAccess(FPDF_FILEACCESS* file_access)
 }
 
 FakeFileAccess::~FakeFileAccess() = default;
+
+FPDF_FILEACCESS* FakeFileAccess::GetFileAccess() const {
+  return file_access_wrapper_.get();
+}
+
+FX_FILEAVAIL* FakeFileAccess::GetFileAvail() const {
+  return file_avail_.get();
+}
+
+FX_DOWNLOADHINTS* FakeFileAccess::GetDownloadHints() const {
+  return download_hints_.get();
+}
 
 FPDF_BOOL FakeFileAccess::IsDataAvail(size_t offset, size_t size) const {
   return available_data_.Contains(RangeSet::Range(offset, offset + size));

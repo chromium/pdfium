@@ -12,14 +12,18 @@
 #include "public/fpdfview.h"
 #include "testing/range_set.h"
 
+class DownloadHintsImpl;
+class FileAccessWrapper;
+class FileAvailImpl;
+
 class FakeFileAccess {
  public:
   explicit FakeFileAccess(FPDF_FILEACCESS* file_access);
   ~FakeFileAccess();
 
-  FPDF_FILEACCESS* GetFileAccess() const { return file_access_wrapper_.get(); }
-  FX_FILEAVAIL* GetFileAvail() const { return file_avail_.get(); }
-  FX_DOWNLOADHINTS* GetDownloadHints() const { return download_hints_.get(); }
+  FPDF_FILEACCESS* GetFileAccess() const;
+  FX_FILEAVAIL* GetFileAvail() const;
+  FX_DOWNLOADHINTS* GetDownloadHints() const;
 
   FPDF_BOOL IsDataAvail(size_t offset, size_t size) const;
   void AddSegment(size_t offset, size_t size);
@@ -32,9 +36,9 @@ class FakeFileAccess {
 
  private:
   UnownedPtr<FPDF_FILEACCESS> file_access_;
-  std::unique_ptr<FPDF_FILEACCESS> file_access_wrapper_;
-  std::unique_ptr<FX_FILEAVAIL> file_avail_;
-  std::unique_ptr<FX_DOWNLOADHINTS> download_hints_;
+  std::unique_ptr<FileAccessWrapper> file_access_wrapper_;
+  std::unique_ptr<FileAvailImpl> file_avail_;
+  std::unique_ptr<DownloadHintsImpl> download_hints_;
   RangeSet available_data_;
   RangeSet requested_data_;
 };
