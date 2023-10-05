@@ -57,7 +57,8 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
     }
     m_Matrix.Scale(0.5f, 0.5f);
   }
-  pContext->GetBackground(m_pBitmapDevice.get(), pObj, pOptions, m_Matrix);
+  pContext->GetBackground(m_pBitmapDevice->GetBitmap(), pObj, pOptions,
+                          m_Matrix);
   return true;
 }
 
