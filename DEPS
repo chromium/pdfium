@@ -2,6 +2,7 @@ use_relative_paths = True
 
 gclient_gn_args_file = 'build/config/gclient_args.gni'
 gclient_gn_args = [
+  'checkout_android',
   'checkout_skia',
 ]
 
@@ -15,6 +16,15 @@ vars = {
   # checkouts for the smallest possible checkout, where some features will not
   # work.
   'checkout_configuration': 'default',
+
+  # By default, don't check out android. Will be overridden by gclient
+  # variables.
+  # TODO(crbug.com/875037): Remove this once the bug in gclient is fixed.
+  'checkout_android': False,
+
+  # Pull in Android native toolchain dependencies, so we can build ARC++
+  # support libraries.
+  'checkout_android_native_support': 'checkout_android',
 
   'checkout_instrumented_libraries': 'checkout_linux and checkout_configuration != "small" and checkout_configuration != "minimal"',
 
@@ -50,7 +60,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling android_toolchain
   # and whatever else without interference from each other.
-  'android_toolchain_version': 'R_8suM8m0oHbZ1awdxGXvKEFpAOETscbfZxkkMthyk8C',
+  'android_toolchain_version': 'NSOM616pOQCfRfDAhC72ltgjyUQp9lAWCMzlmgB18dAC',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
