@@ -128,6 +128,7 @@ source_set("fuzzer_init_public") {
   testonly = true
   sources = [ "pdf_fuzzer_init_public.cc" ]
   include_dirs = [ "../.." ]
+  configs += [ "../../:pdfium_core_config" ]
   deps = [
     ":fuzzer_utils",
     "../../:pdfium_public_headers",
