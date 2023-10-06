@@ -68,13 +68,6 @@ using UnownedPtr = raw_ptr<T>;
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "third_party/base/compiler_specific.h"
 
-namespace pdfium {
-
-template <typename T>
-class span;
-
-}  // namespace pdfium
-
 namespace fxcrt {
 
 template <class T>
@@ -161,7 +154,6 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
   }
 
   ~UnownedPtr() {
-    ProbeForLowSeverityLifetimeIssue();
     m_pObj = nullptr;
   }
 
@@ -177,7 +169,6 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
   T* get() const noexcept { return m_pObj; }
 
   T* ExtractAsDangling() {
-    ProbeForLowSeverityLifetimeIssue();
     T* pTemp = nullptr;
     std::swap(pTemp, m_pObj);
     return pTemp;
@@ -188,24 +179,8 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
   T* operator->() const { return m_pObj; }
 
  private:
-  friend class pdfium::span<T>;
-
   void Reset(T* obj = nullptr) {
-    ProbeForLowSeverityLifetimeIssue();
     m_pObj = obj;
-  }
-
-  inline void ProbeForLowSeverityLifetimeIssue() {
-#if defined(ADDRESS_SANITIZER)
-    if (m_pObj)
-      reinterpret_cast<const volatile uint8_t*>(m_pObj)[0];
-#endif
-  }
-
-  inline void ReleaseBadPointer() {
-#if defined(ADDRESS_SANITIZER)
-    m_pObj = nullptr;
-#endif
   }
 
   UNOWNED_PTR_EXCLUSION T* m_pObj = nullptr;
