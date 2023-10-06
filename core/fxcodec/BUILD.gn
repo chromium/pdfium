@@ -74,6 +74,7 @@ source_set("fxcodec") {
     "../../:pdfium_noshorten_config",
   ]
   include_dirs = []
+  public_deps = [ "../fxcrt:unowned_ptr" ]
   deps = [
     "../../third_party:lcms2",
     "../../third_party:libopenjpeg2",

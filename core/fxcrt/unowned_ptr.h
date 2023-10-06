@@ -39,7 +39,7 @@
 #include "build/build_config.h"
 
 #if defined(PDF_USE_PARTITION_ALLOC)
-#include "base/allocator/partition_allocator/src/partition_alloc/partition_alloc_buildflags.h"
+#include "partition_alloc/partition_alloc_buildflags.h"
 
 // Can only use base::raw_ptr<> impls that force nullptr initialization.
 #if BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT) || BUILDFLAG(USE_ASAN_UNOWNED_PTR)
@@ -52,7 +52,7 @@
 #endif  // PDF_USE_PARTITION_ALLOC
 
 #if defined(UNOWNED_PTR_IS_BASE_RAW_PTR)
-#include "base/allocator/partition_allocator/src/partition_alloc/pointers/raw_ptr.h"
+#include "partition_alloc/pointers/raw_ptr.h"
 
 template <typename T>
 using UnownedPtr = raw_ptr<T>;

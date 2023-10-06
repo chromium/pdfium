@@ -1,8 +1,8 @@
 include_rules = [
-  '+base',
   '+core',
   '+fpdfsdk',
   '+fxjs',
+  '+partition_alloc',
   '+public',
   '+v8',
   '+xfa'

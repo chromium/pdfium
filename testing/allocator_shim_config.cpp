@@ -4,8 +4,8 @@
 
 #include "testing/allocator_shim_config.h"
 
-#include "base/allocator/partition_allocator/src/partition_alloc/partition_alloc_buildflags.h"
-#include "base/allocator/partition_allocator/src/partition_alloc/shim/allocator_shim.h"
+#include "partition_alloc/partition_alloc_buildflags.h"
+#include "partition_alloc/shim/allocator_shim.h"
 
 namespace pdfium {
 

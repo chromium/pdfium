@@ -11,7 +11,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 #if defined(PDF_USE_PARTITION_ALLOC)
-#include "base/allocator/partition_allocator/src/partition_alloc/partition_address_space.h"
+#include "partition_alloc/partition_address_space.h"
 #endif
 
 namespace {
