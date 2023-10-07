@@ -83,8 +83,7 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
 
   // Copy-construct an UnownedPtr.
   // Required in addition to copy conversion constructor below.
-  constexpr UnownedPtr(const UnownedPtr& that) noexcept
-      : m_pObj(static_cast<T*>(that)) {}
+  constexpr UnownedPtr(const UnownedPtr& that) noexcept = default;
 
   // Move-construct an UnownedPtr. After construction, |that| will be NULL.
   // Required in addition to move conversion constructor below.
@@ -95,41 +94,37 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
   template <class U,
             typename = typename std::enable_if<
                 std::is_convertible<U*, T*>::value>::type>
-  UnownedPtr(const UnownedPtr<U>& that) : UnownedPtr(static_cast<U*>(that)) {}
+  UnownedPtr(const UnownedPtr<U>& that) : m_pObj(static_cast<U*>(that)) {}
 
   // Move-conversion constructor.
   template <class U,
             typename = typename std::enable_if<
                 std::is_convertible<U*, T*>::value>::type>
-  UnownedPtr(UnownedPtr<U>&& that) noexcept {
-    Reset(that.ExtractAsDangling());
-  }
+  UnownedPtr(UnownedPtr<U>&& that) noexcept
+      : m_pObj(that.ExtractAsDangling()) {}
 
   // Assign an UnownedPtr from nullptr.
   UnownedPtr& operator=(std::nullptr_t) noexcept {
-    Reset();
+    m_pObj = nullptr;
     return *this;
   }
 
   // Assign an UnownedPtr from a raw ptr.
   UnownedPtr& operator=(T* that) noexcept {
-    Reset(that);
+    m_pObj = that;
     return *this;
   }
 
   // Copy-assign an UnownedPtr.
   // Required in addition to copy conversion assignment below.
-  UnownedPtr& operator=(const UnownedPtr& that) noexcept {
-    if (*this != that)
-      Reset(static_cast<T*>(that));
-    return *this;
-  }
+  UnownedPtr& operator=(const UnownedPtr& that) noexcept = default;
 
   // Move-assign an UnownedPtr. After assignment, |that| will be NULL.
   // Required in addition to move conversion assignment below.
   UnownedPtr& operator=(UnownedPtr&& that) noexcept {
-    if (*this != that)
-      Reset(that.ExtractAsDangling());
+    if (*this != that) {
+      m_pObj = that.ExtractAsDangling();
+    }
     return *this;
   }
 
@@ -138,8 +133,9 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
             typename = typename std::enable_if<
                 std::is_convertible<U*, T*>::value>::type>
   UnownedPtr& operator=(const UnownedPtr<U>& that) noexcept {
-    if (*this != that)
-      Reset(that);
+    if (*this != that) {
+      m_pObj = static_cast<U*>(that);
+    }
     return *this;
   }
 
@@ -148,8 +144,9 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
             typename = typename std::enable_if<
                 std::is_convertible<U*, T*>::value>::type>
   UnownedPtr& operator=(UnownedPtr<U>&& that) noexcept {
-    if (*this != that)
-      Reset(that.ExtractAsDangling());
+    if (*this != that) {
+      m_pObj = that.ExtractAsDangling();
+    }
     return *this;
   }
 
@@ -168,21 +165,13 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
   operator T*() const noexcept { return m_pObj; }
   T* get() const noexcept { return m_pObj; }
 
-  T* ExtractAsDangling() {
-    T* pTemp = nullptr;
-    std::swap(pTemp, m_pObj);
-    return pTemp;
-  }
+  T* ExtractAsDangling() { return std::exchange(m_pObj, nullptr); }
 
   explicit operator bool() const { return !!m_pObj; }
   T& operator*() const { return *m_pObj; }
   T* operator->() const { return m_pObj; }
 
  private:
-  void Reset(T* obj = nullptr) {
-    m_pObj = obj;
-  }
-
   UNOWNED_PTR_EXCLUSION T* m_pObj = nullptr;
 };
 
