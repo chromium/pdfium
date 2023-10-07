@@ -4,6 +4,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/containers/span.h"
 
@@ -52,7 +53,7 @@ TEST(PdfiumSpanDeathTest, EmptySpanBack) {
   EXPECT_DEATH(empty_span.back() += 1, ".*");
 }
 
-#if defined(ADDRESS_SANITIZER)
+#if defined(UNOWNED_PTR_DANGLING_CHECKS)
 namespace {
 
 void CreateDanglingSpan() {
@@ -68,4 +69,4 @@ void CreateDanglingSpan() {
 TEST(PdfiumSpanDeathTest, DanglingReference) {
   EXPECT_DEATH(CreateDanglingSpan(), ".*");
 }
-#endif  // defined(ADDRESS_SANITIZER)
+#endif  // defined(UNOWNED_PTR_DANGLING_CHECKS)
