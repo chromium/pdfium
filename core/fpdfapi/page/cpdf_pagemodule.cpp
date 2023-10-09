@@ -45,7 +45,3 @@ CPDF_PageModule::~CPDF_PageModule() {
   CPDF_FontGlobals::Destroy();
   CPDF_ColorSpace::DestroyGlobals();
 }
-
-void CPDF_PageModule::ClearStockFont(CPDF_Document* pDoc) {
-  CPDF_FontGlobals::GetInstance()->Clear(pDoc);
-}

@@ -7,16 +7,12 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_PAGEMODULE_H_
 #define CORE_FPDFAPI_PAGE_CPDF_PAGEMODULE_H_
 
-class CPDF_Document;
-
 class CPDF_PageModule {
  public:
   // Per-process singleton managed by callers.
   static void Create();
   static void Destroy();
   static CPDF_PageModule* GetInstance();
-
-  void ClearStockFont(CPDF_Document* pDoc);
 
  private:
   CPDF_PageModule();

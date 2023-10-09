@@ -14,11 +14,11 @@
 
 #include "build/build_config.h"
 #include "constants/font_encodings.h"
+#include "core/fpdfapi/font/cpdf_fontglobals.h"
 #include "core/fpdfapi/font/cpdf_type1font.h"
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_iccprofile.h"
 #include "core/fpdfapi/page/cpdf_image.h"
-#include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fpdfapi/page/cpdf_pattern.h"
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
 #include "core/fpdfapi/page/cpdf_tilingpattern.h"
@@ -189,7 +189,7 @@ bool CPDF_DocPageData::HashIccProfileKey::operator<(
 }
 
 void CPDF_DocPageData::ClearStockFont() {
-  CPDF_PageModule::GetInstance()->ClearStockFont(GetDocument());
+  CPDF_FontGlobals::GetInstance()->Clear(GetDocument());
 }
 
 RetainPtr<CPDF_Font> CPDF_DocPageData::GetFont(
