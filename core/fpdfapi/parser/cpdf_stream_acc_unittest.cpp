@@ -22,8 +22,8 @@ TEST(StreamAccTest, ReadRawDataFailed) {
   EXPECT_TRUE(stream_acc->GetSpan().empty());
 }
 
-// Regression test for crbug.com/1361849. Should not trigger
-// ProbeForLowSeverityLifetimeIssue() failure.
+// Regression test for crbug.com/1361849. Should not trigger dangling pointer
+// failure with UnownedPtr.
 TEST(StreamAccTest, DataStreamLifeTime) {
   constexpr uint8_t kData[] = {'a', 'b', 'c'};
   auto stream = pdfium::MakeRetain<CPDF_Stream>();
