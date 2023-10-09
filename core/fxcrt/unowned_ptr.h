@@ -15,13 +15,15 @@
 // 2. An attempt to delete an unowned ptr will fail to compile rather
 //    than silently succeeding, since it is a class and not a raw pointer.
 //
-// 3. When built using the memory tool ASAN, the class provides a destructor
-//    which checks that the object being pointed to is still alive.
+// 3. It is initialized to nullptr by default.
 //
-// 4. When built against PartitionAlloc's BRP feature, it provides the same
+// When implemented via PartitionAlloc, additional properties apply.
+//
+// 4. When built using one of the dangling pointer detectors, the class
+//    detects that the object being pointed to remains alive.
+//
+// 5. When built against PartitionAlloc's BRP feature, it provides the same
 //    UaF protections as base::raw_ptr<T>
-//
-// 5. It is initialized to nullptr by default.
 //
 // Hence, when using UnownedPtr, no dangling pointers are ever permitted,
 // even if they are not de-referenced after becoming dangling. The style of
@@ -29,9 +31,9 @@
 // UnownedPtr must be strictly less than the object to which it points.
 //
 // The same checks are also performed at assignment time to prove that the
-// old value was not a dangling pointer, either.
+// old value was not a dangling pointer.
 //
-// The array indexing operation [] is not supported on an unowned ptr,
+// The array indexing operator[] is not supported on an unowned ptr,
 // because an unowned ptr expresses a one to one relationship with some
 // other heap object. Use pdfium::span<> for the cases where indexing
 // into an unowned array is desired, which performs the same checks.
