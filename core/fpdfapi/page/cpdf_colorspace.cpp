@@ -21,7 +21,6 @@
 #include "core/fpdfapi/page/cpdf_function.h"
 #include "core/fpdfapi/page/cpdf_iccprofile.h"
 #include "core/fpdfapi/page/cpdf_indexedcs.h"
-#include "core/fpdfapi/page/cpdf_pagemodule.h"
 #include "core/fpdfapi/page/cpdf_pattern.h"
 #include "core/fpdfapi/page/cpdf_patterncs.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -424,6 +423,47 @@ void XYZ_to_sRGB_WhitePoint(float X,
   *B = RGB_Conversion(RGB.c);
 }
 
+class StockColorSpaces {
+ public:
+  StockColorSpaces()
+      : gray_(pdfium::MakeRetain<CPDF_DeviceCS>(
+            CPDF_ColorSpace::Family::kDeviceGray)),
+        rgb_(pdfium::MakeRetain<CPDF_DeviceCS>(
+            CPDF_ColorSpace::Family::kDeviceRGB)),
+        cmyk_(pdfium::MakeRetain<CPDF_DeviceCS>(
+            CPDF_ColorSpace::Family::kDeviceCMYK)),
+        pattern_(pdfium::MakeRetain<CPDF_PatternCS>()) {
+    pattern_->InitializeStockPattern();
+  }
+  StockColorSpaces(const StockColorSpaces&) = delete;
+  StockColorSpaces& operator=(const StockColorSpaces&) = delete;
+  ~StockColorSpaces() = default;
+
+  RetainPtr<CPDF_ColorSpace> GetStockCS(CPDF_ColorSpace::Family family) {
+    if (family == CPDF_ColorSpace::Family::kDeviceGray) {
+      return gray_;
+    }
+    if (family == CPDF_ColorSpace::Family::kDeviceRGB) {
+      return rgb_;
+    }
+    if (family == CPDF_ColorSpace::Family::kDeviceCMYK) {
+      return cmyk_;
+    }
+    if (family == CPDF_ColorSpace::Family::kPattern) {
+      return pattern_;
+    }
+    NOTREACHED_NORETURN();
+  }
+
+ private:
+  RetainPtr<CPDF_DeviceCS> gray_;
+  RetainPtr<CPDF_DeviceCS> rgb_;
+  RetainPtr<CPDF_DeviceCS> cmyk_;
+  RetainPtr<CPDF_PatternCS> pattern_;
+};
+
+StockColorSpaces* g_stock_colorspaces = nullptr;
+
 }  // namespace
 
 PatternValue::PatternValue() = default;
@@ -434,6 +474,23 @@ PatternValue::~PatternValue() = default;
 
 void PatternValue::SetComps(pdfium::span<const float> comps) {
   fxcrt::spancpy(pdfium::make_span(m_Comps), comps);
+}
+
+// static
+void CPDF_ColorSpace::InitializeGlobals() {
+  CHECK(!g_stock_colorspaces);
+  g_stock_colorspaces = new StockColorSpaces();
+}
+
+// static
+void CPDF_ColorSpace::DestroyGlobals() {
+  delete g_stock_colorspaces;
+  g_stock_colorspaces = nullptr;
+}
+
+// static
+RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::GetStockCS(Family family) {
+  return g_stock_colorspaces->GetStockCS(family);
 }
 
 // static
@@ -448,11 +505,6 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::GetStockCSForName(
   if (name == "Pattern")
     return GetStockCS(Family::kPattern);
   return nullptr;
-}
-
-// static
-RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::GetStockCS(Family family) {
-  return CPDF_PageModule::GetInstance()->GetStockCS(family);
 }
 
 // static

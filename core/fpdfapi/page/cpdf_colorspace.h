@@ -69,6 +69,14 @@ class CPDF_ColorSpace : public Retainable, public Observable {
     kPattern = 11,
   };
 
+  static void InitializeGlobals();
+  static void DestroyGlobals();
+
+  // `family` must be one of the following:
+  // - `kDeviceGray`
+  // - `kDeviceRGB`
+  // - `kDeviceCMYK`
+  // - `kPattern`
   static RetainPtr<CPDF_ColorSpace> GetStockCS(Family family);
   static RetainPtr<CPDF_ColorSpace> GetStockCSForName(const ByteString& name);
   static RetainPtr<CPDF_ColorSpace> Load(

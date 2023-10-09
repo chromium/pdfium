@@ -8,8 +8,6 @@
 
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
 #include "core/fpdfapi/page/cpdf_colorspace.h"
-#include "core/fpdfapi/page/cpdf_devicecs.h"
-#include "core/fpdfapi/page/cpdf_patterncs.h"
 #include "third_party/base/check.h"
 
 namespace {
@@ -37,34 +35,15 @@ CPDF_PageModule* CPDF_PageModule::GetInstance() {
   return g_PageModule;
 }
 
-CPDF_PageModule::CPDF_PageModule()
-    : m_StockGrayCS(pdfium::MakeRetain<CPDF_DeviceCS>(
-          CPDF_ColorSpace::Family::kDeviceGray)),
-      m_StockRGBCS(pdfium::MakeRetain<CPDF_DeviceCS>(
-          CPDF_ColorSpace::Family::kDeviceRGB)),
-      m_StockCMYKCS(pdfium::MakeRetain<CPDF_DeviceCS>(
-          CPDF_ColorSpace::Family::kDeviceCMYK)),
-      m_StockPatternCS(pdfium::MakeRetain<CPDF_PatternCS>()) {
-  m_StockPatternCS->InitializeStockPattern();
+CPDF_PageModule::CPDF_PageModule() {
+  CPDF_ColorSpace::InitializeGlobals();
   CPDF_FontGlobals::Create();
   CPDF_FontGlobals::GetInstance()->LoadEmbeddedMaps();
 }
 
 CPDF_PageModule::~CPDF_PageModule() {
   CPDF_FontGlobals::Destroy();
-}
-
-RetainPtr<CPDF_ColorSpace> CPDF_PageModule::GetStockCS(
-    CPDF_ColorSpace::Family family) {
-  if (family == CPDF_ColorSpace::Family::kDeviceGray)
-    return m_StockGrayCS;
-  if (family == CPDF_ColorSpace::Family::kDeviceRGB)
-    return m_StockRGBCS;
-  if (family == CPDF_ColorSpace::Family::kDeviceCMYK)
-    return m_StockCMYKCS;
-  if (family == CPDF_ColorSpace::Family::kPattern)
-    return m_StockPatternCS;
-  return nullptr;
+  CPDF_ColorSpace::DestroyGlobals();
 }
 
 void CPDF_PageModule::ClearStockFont(CPDF_Document* pDoc) {
