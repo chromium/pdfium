@@ -7,16 +7,12 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_PAGEMODULE_H_
 #define CORE_FPDFAPI_PAGE_CPDF_PAGEMODULE_H_
 
+// TODO(thestig): Replace with class with standalone functions without polluting
+// the global namespace.
 class CPDF_PageModule {
  public:
-  // Per-process singleton managed by callers.
   static void Create();
   static void Destroy();
-  static CPDF_PageModule* GetInstance();
-
- private:
-  CPDF_PageModule();
-  ~CPDF_PageModule();
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PAGEMODULE_H_
