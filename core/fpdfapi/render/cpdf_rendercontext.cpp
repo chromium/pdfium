@@ -21,7 +21,6 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/base/check.h"
 
 CPDF_RenderContext::CPDF_RenderContext(
     CPDF_Document* pDoc,
@@ -33,14 +32,15 @@ CPDF_RenderContext::CPDF_RenderContext(
 
 CPDF_RenderContext::~CPDF_RenderContext() = default;
 
-void CPDF_RenderContext::GetBackground(CFX_RenderDevice* pDevice,
+void CPDF_RenderContext::GetBackground(RetainPtr<CFX_DIBitmap> pBuffer,
                                        const CPDF_PageObject* pObj,
                                        const CPDF_RenderOptions* pOptions,
                                        const CFX_Matrix& mtFinal) {
-  CHECK(pDevice);
-  pDevice->FillRect(FX_RECT(0, 0, pDevice->GetWidth(), pDevice->GetHeight()),
-                    0xffffffff);
-  Render(pDevice, pObj, pOptions, &mtFinal);
+  CFX_DefaultRenderDevice device;
+  device.Attach(std::move(pBuffer));
+  device.FillRect(FX_RECT(0, 0, device.GetWidth(), device.GetHeight()),
+                  0xffffffff);
+  Render(&device, pObj, pOptions, &mtFinal);
 }
 
 void CPDF_RenderContext::AppendLayer(CPDF_PageObjectHolder* pObjectHolder,
