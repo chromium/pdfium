@@ -7,7 +7,6 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_STREAMCONTENTPARSER_H_
 #define CORE_FPDFAPI_PAGE_CPDF_STREAMCONTENTPARSER_H_
 
-#include <map>
 #include <memory>
 #include <stack>
 #include <vector>
@@ -41,6 +40,9 @@ class CPDF_TextObject;
 
 class CPDF_StreamContentParser {
  public:
+  static void InitializeGlobals();
+  static void DestroyGlobals();
+
   CPDF_StreamContentParser(CPDF_Document* pDoc,
                            RetainPtr<CPDF_Dictionary> pPageResources,
                            RetainPtr<CPDF_Dictionary> pParentResources,
@@ -81,9 +83,6 @@ class CPDF_StreamContentParser {
   };
 
   static constexpr int kParamBufSize = 16;
-
-  using OpCodes = std::map<uint32_t, void (CPDF_StreamContentParser::*)()>;
-  static OpCodes InitializeOpCodes();
 
   void AddNameParam(ByteStringView bsName);
   void AddNumberParam(ByteStringView str);
