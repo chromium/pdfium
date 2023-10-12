@@ -667,18 +667,17 @@ WideString EncodeURL(const ByteString& bsURL) {
 
   WideString wsURL = WideString::FromUTF8(bsURL.AsStringView());
   WideTextBuffer wsResultBuf;
-  wchar_t szEncode[4];
-  szEncode[0] = '%';
-  szEncode[3] = 0;
+  wchar_t encode_buffer[3];
+  encode_buffer[0] = '%';
   for (char32_t ch : pdfium::CodePointView(wsURL.AsStringView())) {
     size_t i = 0;
     size_t iCount = std::size(kStrUnsafe);
     while (i < iCount) {
       if (ch == kStrUnsafe[i]) {
         int32_t iIndex = ch / 16;
-        szEncode[1] = kStrCode[iIndex];
-        szEncode[2] = kStrCode[ch - iIndex * 16];
-        wsResultBuf << szEncode;
+        encode_buffer[1] = kStrCode[iIndex];
+        encode_buffer[2] = kStrCode[ch - iIndex * 16];
+        wsResultBuf << WideStringView(encode_buffer, 3);
         break;
       }
       ++i;
@@ -691,9 +690,9 @@ WideString EncodeURL(const ByteString& bsURL) {
     while (i < iCount) {
       if (ch == kStrReserved[i]) {
         int32_t iIndex = ch / 16;
-        szEncode[1] = kStrCode[iIndex];
-        szEncode[2] = kStrCode[ch - iIndex * 16];
-        wsResultBuf << szEncode;
+        encode_buffer[1] = kStrCode[iIndex];
+        encode_buffer[2] = kStrCode[ch - iIndex * 16];
+        wsResultBuf << WideStringView(encode_buffer, 3);
         break;
       }
       ++i;
@@ -715,9 +714,9 @@ WideString EncodeURL(const ByteString& bsURL) {
 
     if ((ch >= 0x80 && ch <= 0xff) || ch <= 0x1f || ch == 0x7f) {
       int32_t iIndex = ch / 16;
-      szEncode[1] = kStrCode[iIndex];
-      szEncode[2] = kStrCode[ch - iIndex * 16];
-      wsResultBuf << szEncode;
+      encode_buffer[1] = kStrCode[iIndex];
+      encode_buffer[2] = kStrCode[ch - iIndex * 16];
+      wsResultBuf << WideStringView(encode_buffer, 3);
     } else if (ch >= 0x20 && ch <= 0x7e) {
       wsResultBuf.AppendChar(ch);
     } else {
@@ -735,20 +734,20 @@ WideString EncodeURL(const ByteString& bsURL) {
 
       int32_t iIndex = 0;
       if (iLen % 2 != 0) {
-        szEncode[1] = '0';
-        szEncode[2] = wsBuffer[iLen - 1];
+        encode_buffer[1] = '0';
+        encode_buffer[2] = wsBuffer[iLen - 1];
         iIndex = iLen - 2;
       } else {
-        szEncode[1] = wsBuffer[iLen - 1];
-        szEncode[2] = wsBuffer[iLen - 2];
+        encode_buffer[1] = wsBuffer[iLen - 1];
+        encode_buffer[2] = wsBuffer[iLen - 2];
         iIndex = iLen - 3;
       }
-      wsResultBuf << szEncode;
+      wsResultBuf << WideStringView(encode_buffer, 3);
       while (iIndex > 0) {
-        szEncode[1] = wsBuffer[iIndex];
-        szEncode[2] = wsBuffer[iIndex - 1];
+        encode_buffer[1] = wsBuffer[iIndex];
+        encode_buffer[2] = wsBuffer[iIndex - 1];
         iIndex -= 2;
-        wsResultBuf << szEncode;
+        wsResultBuf << WideStringView(encode_buffer, 3);
       }
     }
   }
@@ -757,10 +756,10 @@ WideString EncodeURL(const ByteString& bsURL) {
 
 WideString EncodeHTML(const ByteString& bsHTML) {
   WideString wsHTML = WideString::FromUTF8(bsHTML.AsStringView());
-  wchar_t szEncode[9];
-  szEncode[0] = '&';
-  szEncode[1] = '#';
-  szEncode[2] = 'x';
+  wchar_t encode_buffer[8];
+  encode_buffer[0] = '&';
+  encode_buffer[1] = '#';
+  encode_buffer[2] = 'x';
   WideTextBuffer wsResultBuf;
   for (char32_t ch : pdfium::CodePointView(wsHTML.AsStringView())) {
     WideString htmlReserve;
@@ -772,21 +771,19 @@ WideString EncodeHTML(const ByteString& bsHTML) {
       wsResultBuf.AppendChar(static_cast<wchar_t>(ch));
     } else if (ch < 256) {
       int32_t iIndex = ch / 16;
-      szEncode[3] = kStrCode[iIndex];
-      szEncode[4] = kStrCode[ch - iIndex * 16];
-      szEncode[5] = ';';
-      szEncode[6] = 0;
-      wsResultBuf << szEncode;
+      encode_buffer[3] = kStrCode[iIndex];
+      encode_buffer[4] = kStrCode[ch - iIndex * 16];
+      encode_buffer[5] = ';';
+      wsResultBuf << WideStringView(encode_buffer, 6);
     } else if (ch < 65536) {
       int32_t iBigByte = ch / 256;
       int32_t iLittleByte = ch % 256;
-      szEncode[3] = kStrCode[iBigByte / 16];
-      szEncode[4] = kStrCode[iBigByte % 16];
-      szEncode[5] = kStrCode[iLittleByte / 16];
-      szEncode[6] = kStrCode[iLittleByte % 16];
-      szEncode[7] = ';';
-      szEncode[8] = 0;
-      wsResultBuf << szEncode;
+      encode_buffer[3] = kStrCode[iBigByte / 16];
+      encode_buffer[4] = kStrCode[iBigByte % 16];
+      encode_buffer[5] = kStrCode[iLittleByte / 16];
+      encode_buffer[6] = kStrCode[iLittleByte % 16];
+      encode_buffer[7] = ';';
+      wsResultBuf << WideStringView(encode_buffer, 8);
     } else {
       // TODO(tsepez): Handle codepoint not in BMP.
     }
@@ -797,10 +794,10 @@ WideString EncodeHTML(const ByteString& bsHTML) {
 WideString EncodeXML(const ByteString& bsXML) {
   WideString wsXML = WideString::FromUTF8(bsXML.AsStringView());
   WideTextBuffer wsResultBuf;
-  wchar_t szEncode[9];
-  szEncode[0] = '&';
-  szEncode[1] = '#';
-  szEncode[2] = 'x';
+  wchar_t encode_buffer[8];
+  encode_buffer[0] = '&';
+  encode_buffer[1] = '#';
+  encode_buffer[2] = 'x';
   for (char32_t ch : pdfium::CodePointView(wsXML.AsStringView())) {
     switch (ch) {
       case '"':
@@ -833,21 +830,19 @@ WideString EncodeXML(const ByteString& bsXML) {
           wsResultBuf.AppendChar(static_cast<wchar_t>(ch));
         } else if (ch < 256) {
           int32_t iIndex = ch / 16;
-          szEncode[3] = kStrCode[iIndex];
-          szEncode[4] = kStrCode[ch - iIndex * 16];
-          szEncode[5] = ';';
-          szEncode[6] = 0;
-          wsResultBuf << szEncode;
+          encode_buffer[3] = kStrCode[iIndex];
+          encode_buffer[4] = kStrCode[ch - iIndex * 16];
+          encode_buffer[5] = ';';
+          wsResultBuf << WideStringView(encode_buffer, 6);
         } else if (ch < 65536) {
           int32_t iBigByte = ch / 256;
           int32_t iLittleByte = ch % 256;
-          szEncode[3] = kStrCode[iBigByte / 16];
-          szEncode[4] = kStrCode[iBigByte % 16];
-          szEncode[5] = kStrCode[iLittleByte / 16];
-          szEncode[6] = kStrCode[iLittleByte % 16];
-          szEncode[7] = ';';
-          szEncode[8] = 0;
-          wsResultBuf << szEncode;
+          encode_buffer[3] = kStrCode[iBigByte / 16];
+          encode_buffer[4] = kStrCode[iBigByte % 16];
+          encode_buffer[5] = kStrCode[iLittleByte / 16];
+          encode_buffer[6] = kStrCode[iLittleByte % 16];
+          encode_buffer[7] = ';';
+          wsResultBuf << WideStringView(encode_buffer, 8);
         } else {
           // TODO(tsepez): Handle codepoint not in BMP.
         }
