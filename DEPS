@@ -477,6 +477,7 @@ include_rules = [
   # explicitly here.
   '-absl',
   '-third_party/abseil-cpp',
+  '+third_party/abseil-cpp/absl/container/inlined_vector.h',
   '+third_party/abseil-cpp/absl/types/optional.h',
   '+third_party/abseil-cpp/absl/types/variant.h',
 ]

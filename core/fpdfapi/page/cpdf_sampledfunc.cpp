@@ -14,8 +14,9 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/cfx_bitstream.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxcrt/small_buffer.h"
+#include "third_party/abseil-cpp/absl/container/inlined_vector.h"
 
 namespace {
 
@@ -103,8 +104,10 @@ bool CPDF_SampledFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
 bool CPDF_SampledFunc::v_Call(pdfium::span<const float> inputs,
                               pdfium::span<float> results) const {
   int pos = 0;
-  fxcrt::SmallBuffer<float, 16> encoded_input_buf(m_nInputs);
-  fxcrt::SmallBuffer<uint32_t, 32> int_buf(m_nInputs * 2);
+  absl::InlinedVector<float, 16, FxAllocAllocator<float>> encoded_input_buf(
+      m_nInputs);
+  absl::InlinedVector<uint32_t, 32, FxAllocAllocator<uint32_t>> int_buf(
+      m_nInputs * 2);
   float* encoded_input = encoded_input_buf.data();
   uint32_t* index = int_buf.data();
   uint32_t* blocksize = index + m_nInputs;
