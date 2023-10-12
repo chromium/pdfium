@@ -55,8 +55,6 @@
 static_assert(raw_ptr<int>::kZeroOnConstruct, "Unsafe build arguments");
 static_assert(raw_ptr<int>::kZeroOnMove, "Unsafe build arguments");
 
-#define UNOWNED_PTR_IS_BASE_RAW_PTR
-
 template <typename T>
 using UnownedPtr = raw_ptr<T>;
 

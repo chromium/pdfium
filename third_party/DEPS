@@ -3,5 +3,5 @@ include_rules = [
   '+core/fxcrt/fx_coordinates.h',
   '+core/fxcrt/fx_memory.h',
   '+core/fxcrt/fx_system.h',
-  '+core/fxcrt/unowned_ptr.h',
+  '+partition_alloc/pointers',
 ]

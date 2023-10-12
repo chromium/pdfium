@@ -73,8 +73,7 @@ source_set("fxcodec") {
     "../../:pdfium_strict_config",
     "../../:pdfium_noshorten_config",
   ]
-  include_dirs = []
-  public_deps = [ "../fxcrt:unowned_ptr" ]
+  public_deps = [ "../../third_party:pdfium_base" ]
   deps = [
     "../../third_party:lcms2",
     "../../third_party:libopenjpeg2",
@@ -83,7 +82,6 @@ source_set("fxcodec") {
     "../fxge",
     "//third_party:jpeg",
   ]
-
   if (pdf_enable_xfa) {
     sources += [
       "jpeg/jpeg_progressive_decoder.cpp",
