@@ -3017,6 +3017,12 @@ TEST_F(FPDFEditEmbedderTest, FormGetObjects) {
   // FPDFPageObj_GetMatrix() negative testing for forms.
   EXPECT_FALSE(FPDFPageObj_GetMatrix(form, nullptr));
 
+  // Show that FPDFPage_RemoveObject() cannot remove page objects from within
+  // `form`. This is working as intended, as FPDFPage_RemoveObject() only works
+  // for page object within `page`.
+  EXPECT_FALSE(FPDFPage_RemoveObject(page, text1));
+  EXPECT_FALSE(FPDFPage_RemoveObject(page, text2));
+
   UnloadPage(page);
 }
 
