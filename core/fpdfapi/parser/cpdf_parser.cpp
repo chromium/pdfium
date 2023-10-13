@@ -66,7 +66,7 @@ CPDF_Parser::ObjectType GetObjectTypeFromCrossRefStreamType(
     case 0:
       return CPDF_Parser::ObjectType::kFree;
     case 1:
-      return CPDF_Parser::ObjectType::kNotCompressed;
+      return CPDF_Parser::ObjectType::kNormal;
     case 2:
       return CPDF_Parser::ObjectType::kCompressed;
     default:
@@ -189,7 +189,7 @@ bool CPDF_Parser::IsObjectFreeOrNull(uint32_t objnum) const {
     case ObjectType::kFree:
     case ObjectType::kNull:
       return true;
-    case ObjectType::kNotCompressed:
+    case ObjectType::kNormal:
     case ObjectType::kCompressed:
       return false;
   }
@@ -575,7 +575,7 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
         // greated than max<uint16_t>. Needs solve this issue.
         const int32_t version = FXSYS_atoi(pEntry + 11);
         info.gennum = version;
-        info.type = ObjectType::kNotCompressed;
+        info.type = ObjectType::kNormal;
       }
     }
     entries_to_read -= entries_in_block;
@@ -863,7 +863,7 @@ void CPDF_Parser::ProcessCrossRefV5Entry(
     // Per ISO 32000-1:2008 table 17, use the default value of 1 for the xref
     // stream entry when it is not specified. The `type` assignment is the
     // equivalent to calling GetObjectTypeFromCrossRefStreamType(1).
-    type = ObjectType::kNotCompressed;
+    type = ObjectType::kNormal;
   }
 
   const ObjectType existing_type = GetObjectType(obj_num);
@@ -882,7 +882,7 @@ void CPDF_Parser::ProcessCrossRefV5Entry(
     return;
   }
 
-  if (type == ObjectType::kNotCompressed) {
+  if (type == ObjectType::kNormal) {
     const uint32_t offset = GetSecondXRefStreamEntry(entry_span, field_widths);
     if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
       m_CrossRefTable->AddNormal(obj_num, 0, offset);
@@ -977,7 +977,7 @@ RetainPtr<CPDF_Object> CPDF_Parser::ParseIndirectObject(uint32_t objnum) {
     return nullptr;
 
   ScopedSetInsertion<uint32_t> local_insert(&m_ParsingObjNums, objnum);
-  if (GetObjectType(objnum) == ObjectType::kNotCompressed) {
+  if (GetObjectType(objnum) == ObjectType::kNormal) {
     FX_FILESIZE pos = GetObjectPositionOrZero(objnum);
     if (pos <= 0)
       return nullptr;

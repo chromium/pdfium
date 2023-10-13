@@ -188,11 +188,11 @@ TEST(ParserTest, LoadCrossRefV4) {
     static const FX_FILESIZE kOffsets[] = {0, 17, 81, 0, 331, 409};
     static const CPDF_TestParser::ObjectType kTypes[] = {
         CPDF_TestParser::ObjectType::kFree,
-        CPDF_TestParser::ObjectType::kNotCompressed,
-        CPDF_TestParser::ObjectType::kNotCompressed,
+        CPDF_TestParser::ObjectType::kNormal,
+        CPDF_TestParser::ObjectType::kNormal,
         CPDF_TestParser::ObjectType::kFree,
-        CPDF_TestParser::ObjectType::kNotCompressed,
-        CPDF_TestParser::ObjectType::kNotCompressed};
+        CPDF_TestParser::ObjectType::kNormal,
+        CPDF_TestParser::ObjectType::kNormal};
     static_assert(std::size(kOffsets) == std::size(kTypes),
                   "kOffsets / kTypes size mismatch");
     for (size_t i = 0; i < std::size(kOffsets); ++i) {
@@ -223,16 +223,16 @@ TEST(ParserTest, LoadCrossRefV4) {
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
-        CPDF_TestParser::ObjectType::kNotCompressed,
+        CPDF_TestParser::ObjectType::kNormal,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
-        CPDF_TestParser::ObjectType::kNotCompressed,
-        CPDF_TestParser::ObjectType::kNotCompressed,
+        CPDF_TestParser::ObjectType::kNormal,
+        CPDF_TestParser::ObjectType::kNormal,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
-        CPDF_TestParser::ObjectType::kNotCompressed};
+        CPDF_TestParser::ObjectType::kNormal};
     static_assert(std::size(kOffsets) == std::size(kTypes),
                   "kOffsets / kTypes size mismatch");
     for (size_t i = 0; i < std::size(kOffsets); ++i) {
@@ -263,16 +263,16 @@ TEST(ParserTest, LoadCrossRefV4) {
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
-        CPDF_TestParser::ObjectType::kNotCompressed,
+        CPDF_TestParser::ObjectType::kNormal,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
-        CPDF_TestParser::ObjectType::kNotCompressed,
+        CPDF_TestParser::ObjectType::kNormal,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
-        CPDF_TestParser::ObjectType::kNotCompressed};
+        CPDF_TestParser::ObjectType::kNormal};
     static_assert(std::size(kOffsets) == std::size(kTypes),
                   "kOffsets / kTypes size mismatch");
     for (size_t i = 0; i < std::size(kOffsets); ++i) {
@@ -299,12 +299,12 @@ TEST(ParserTest, LoadCrossRefV4) {
     static const FX_FILESIZE kOffsets[] = {0, 23, 0, 0, 0, 45, 179};
     static const CPDF_TestParser::ObjectType kTypes[] = {
         CPDF_TestParser::ObjectType::kFree,
-        CPDF_TestParser::ObjectType::kNotCompressed,
+        CPDF_TestParser::ObjectType::kNormal,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
         CPDF_TestParser::ObjectType::kFree,
-        CPDF_TestParser::ObjectType::kNotCompressed,
-        CPDF_TestParser::ObjectType::kNotCompressed};
+        CPDF_TestParser::ObjectType::kNormal,
+        CPDF_TestParser::ObjectType::kNormal};
     static_assert(std::size(kOffsets) == std::size(kTypes),
                   "kOffsets / kTypes size mismatch");
     for (size_t i = 0; i < std::size(kOffsets); ++i) {
@@ -332,7 +332,7 @@ TEST(ParserTest, LoadCrossRefV4) {
     ASSERT_TRUE(parser.LoadCrossRefV4(0, false));
     for (size_t i = 0; i < 2048; ++i) {
       EXPECT_EQ(static_cast<int>(i) + 1, GetObjInfo(parser, i).pos);
-      EXPECT_EQ(CPDF_TestParser::ObjectType::kNotCompressed,
+      EXPECT_EQ(CPDF_TestParser::ObjectType::kNormal,
                 GetObjInfo(parser, i).type);
     }
   }

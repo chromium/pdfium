@@ -20,7 +20,6 @@ class CPDF_CrossRefTable {
   enum class ObjectType : uint8_t {
     kFree = 0x00,
     kNormal = 0x01,
-    kNotCompressed = kNormal,
     kCompressed = 0x02,
     kObjStream = 0xFF,
     kNull = kObjStream,
@@ -30,7 +29,7 @@ class CPDF_CrossRefTable {
     ObjectInfo() = default;
 
     // If `type` is `ObjectType::kCompressed`, `archive` should be used.
-    // If `type` is `ObjectType::kNotCompressed`, `pos` should be used.
+    // If `type` is `ObjectType::kNormal`, `pos` should be used.
     // In other cases, it is unused.
     union {
       FX_FILESIZE pos = 0;
