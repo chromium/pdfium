@@ -145,17 +145,19 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       return;
   }
   if (FXFT_Select_Charmap(face, FT_ENCODING_UNICODE) == 0) {
-    const uint16_t* pUnicodes = UnicodesForPredefinedCharSet(base_encoding);
+    pdfium::span<const uint16_t> unicodes =
+        UnicodesForPredefinedCharSet(base_encoding);
     for (uint32_t charcode = 0; charcode < 256; charcode++) {
       if (m_pFontFile) {
         m_Encoding.SetUnicode(charcode, charcode);
       } else {
         const char* name =
             GetAdobeCharName(FontEncoding::kBuiltin, m_CharNames, charcode);
-        if (name)
+        if (name) {
           m_Encoding.SetUnicode(charcode, UnicodeFromAdobeName(name));
-        else if (pUnicodes)
-          m_Encoding.SetUnicode(charcode, pUnicodes[charcode]);
+        } else if (!unicodes.empty()) {
+          m_Encoding.SetUnicode(charcode, unicodes[charcode]);
+        }
       }
       m_GlyphIndex[charcode] =
           FT_Get_Char_Index(face, m_Encoding.UnicodeFromCharCode(charcode));

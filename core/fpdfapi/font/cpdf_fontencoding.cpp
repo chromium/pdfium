@@ -1665,10 +1665,14 @@ int CPDF_FontEncoding::CharCodeFromUnicode(wchar_t unicode) const {
 }
 
 CPDF_FontEncoding::CPDF_FontEncoding(FontEncoding predefined_encoding) {
-  const uint16_t* pSrc = UnicodesForPredefinedCharSet(predefined_encoding);
-  if (pSrc) {
-    for (size_t i = 0; i < std::size(m_Unicodes); i++)
-      m_Unicodes[i] = pSrc[i];
+  pdfium::span<const uint16_t> src =
+      UnicodesForPredefinedCharSet(predefined_encoding);
+  if (src.empty()) {
+    return;
+  }
+
+  for (size_t i = 0; i < std::size(m_Unicodes); i++) {
+    m_Unicodes[i] = src[i];
   }
 }
 
@@ -1686,10 +1690,10 @@ RetainPtr<CPDF_Object> CPDF_FontEncoding::Realize(
 
   absl::optional<FontEncoding> predefined;
   for (FontEncoding cs : kEncodings) {
-    const uint16_t* pSrc = UnicodesForPredefinedCharSet(cs);
+    pdfium::span<const uint16_t> src = UnicodesForPredefinedCharSet(cs);
     bool match = true;
     for (size_t i = 0; i < std::size(m_Unicodes); i++) {
-      if (m_Unicodes[i] != pSrc[i]) {
+      if (m_Unicodes[i] != src[i]) {
         match = false;
         break;
       }
@@ -1712,12 +1716,13 @@ RetainPtr<CPDF_Object> CPDF_FontEncoding::Realize(
 
     return pdfium::MakeRetain<CPDF_Name>(pPool, pName);
   }
-  const uint16_t* pStandard =
+  pdfium::span<const uint16_t> standard =
       UnicodesForPredefinedCharSet(FontEncoding::kWinAnsi);
   auto pDiff = pdfium::MakeRetain<CPDF_Array>();
   for (size_t i = 0; i < std::size(m_Unicodes); i++) {
-    if (pStandard[i] == m_Unicodes[i])
+    if (standard[i] == m_Unicodes[i]) {
       continue;
+    }
 
     pDiff->AppendNew<CPDF_Number>(static_cast<int>(i));
     pDiff->AppendNew<CPDF_Name>(AdobeNameFromUnicode(m_Unicodes[i]));
@@ -1754,10 +1759,11 @@ wchar_t UnicodeFromAppleRomanCharCode(uint8_t charcode) {
   return kMacRomanEncoding[charcode];
 }
 
-const uint16_t* UnicodesForPredefinedCharSet(FontEncoding encoding) {
+pdfium::span<const uint16_t> UnicodesForPredefinedCharSet(
+    FontEncoding encoding) {
   switch (encoding) {
     case FontEncoding::kBuiltin:
-      return nullptr;
+      return {};
     case FontEncoding::kWinAnsi:
       return kAdobeWinAnsiEncoding;
     case FontEncoding::kMacRoman:

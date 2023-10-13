@@ -11,6 +11,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/weak_ptr.h"
+#include "third_party/base/containers/span.h"
 
 enum class FontEncoding {
   kBuiltin = 0,
@@ -27,7 +28,8 @@ enum class FontEncoding {
 uint32_t CharCodeFromUnicodeForFreetypeEncoding(int encoding, wchar_t unicode);
 wchar_t UnicodeFromAppleRomanCharCode(uint8_t charcode);
 
-const uint16_t* UnicodesForPredefinedCharSet(FontEncoding encoding);
+pdfium::span<const uint16_t> UnicodesForPredefinedCharSet(
+    FontEncoding encoding);
 const char* CharNameFromPredefinedCharSet(FontEncoding encoding,
                                           uint8_t charcode);
 
