@@ -56,7 +56,7 @@ TEST(FXCRYPT, MD5GenerateEmtpyData) {
 
 TEST(FXCRYPT, MD5GenerateOneByteData) {
   uint8_t digest[16];
-  CRYPT_MD5Generate(pdfium::as_bytes(pdfium::make_span("a", 1)), digest);
+  CRYPT_MD5Generate(pdfium::as_bytes(pdfium::make_span("a", 1u)), digest);
 
   static constexpr uint8_t kExpected[] = {0x0c, 0xc1, 0x75, 0xb9, 0xc0, 0xf1,
                                           0xb6, 0xa8, 0x31, 0xc3, 0x99, 0xe2,
@@ -181,7 +181,7 @@ TEST(FXCRYPT, MD5StringTestSuite7) {
 
 TEST(FXCRYPT, ContextWithStringData) {
   CRYPT_md5_context ctx = CRYPT_MD5Start();
-  CRYPT_MD5Update(&ctx, pdfium::as_bytes(pdfium::make_span("abc", 3)));
+  CRYPT_MD5Update(&ctx, pdfium::as_bytes(pdfium::make_span("abc", 3u)));
 
   uint8_t digest[16];
   CRYPT_MD5Finish(&ctx, digest);

@@ -49,7 +49,7 @@ bool IFX_WriteStream::WriteString(ByteStringView str) {
 }
 
 bool IFX_WriteStream::WriteByte(uint8_t byte) {
-  return WriteBlock({&byte, 1});
+  return WriteBlock({&byte, 1u});
 }
 
 bool IFX_WriteStream::WriteDWord(uint32_t i) {

@@ -115,7 +115,7 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
           samples[i][v] = v;
           continue;
         }
-        pFuncs[i]->Call(pdfium::make_span(&input, 1), output);
+        pFuncs[i]->Call(pdfium::make_span(&input, 1u), output);
         size_t o = FXSYS_roundf(output[0] * 255);
         if (o != v)
           bIdentity = false;
@@ -126,7 +126,7 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
     for (size_t v = 0; v < CPDF_TransferFunc::kChannelSampleSize; ++v) {
       float input = static_cast<float>(v) / 255.0f;
       if (pFuncs[0]->CountOutputs() <= kMaxOutputs)
-        pFuncs[0]->Call(pdfium::make_span(&input, 1), output);
+        pFuncs[0]->Call(pdfium::make_span(&input, 1u), output);
       size_t o = FXSYS_roundf(output[0] * 255);
       if (o != v)
         bIdentity = false;

@@ -36,15 +36,15 @@ TEST(CFX_GifContext, SetInputBuffer) {
   uint8_t buffer[] = {0x00, 0x01, 0x02};
   CFX_GifContextForTest context;
 
-  context.SetTestInputBuffer({nullptr, 0});
+  context.SetTestInputBuffer({nullptr, 0u});
   EXPECT_EQ(0u, context.InputBuffer()->GetSize());
   EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
 
-  context.SetTestInputBuffer({buffer, 0});
+  context.SetTestInputBuffer({buffer, 0u});
   EXPECT_EQ(0u, context.InputBuffer()->GetSize());
   EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
 
-  context.SetTestInputBuffer({buffer, 3});
+  context.SetTestInputBuffer({buffer, 3u});
   EXPECT_EQ(3u, context.InputBuffer()->GetSize());
   EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
 }
@@ -55,18 +55,18 @@ TEST(CFX_GifContext, ReadAllOrNone) {
                           0x05, 0x06, 0x07, 0x08, 0x09};
   CFX_GifContextForTest context;
 
-  context.SetTestInputBuffer({nullptr, 0});
+  context.SetTestInputBuffer({nullptr, 0u});
   EXPECT_FALSE(context.ReadAllOrNone(nullptr, 0));
   EXPECT_FALSE(context.ReadAllOrNone(nullptr, 10));
 
   EXPECT_FALSE(context.ReadAllOrNone(dest_buffer.data(), 0));
   EXPECT_FALSE(context.ReadAllOrNone(dest_buffer.data(), 10));
 
-  context.SetTestInputBuffer({src_buffer, 0});
+  context.SetTestInputBuffer({src_buffer, 0u});
   dest_buffer.resize(sizeof(src_buffer));
   EXPECT_FALSE(context.ReadAllOrNone(dest_buffer.data(), sizeof(src_buffer)));
 
-  context.SetTestInputBuffer({src_buffer, 1});
+  context.SetTestInputBuffer({src_buffer, 1u});
   EXPECT_FALSE(context.ReadAllOrNone(dest_buffer.data(), sizeof(src_buffer)));
   EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
   EXPECT_FALSE(context.ReadAllOrNone(nullptr, sizeof(src_buffer)));
@@ -91,7 +91,7 @@ TEST(CFX_GifContext, ReadGifSignature) {
   CFX_GifContextForTest context;
   {
     uint8_t data[1];
-    context.SetTestInputBuffer({data, 0});
+    context.SetTestInputBuffer({data, 0u});
     EXPECT_EQ(GifDecoder::Status::kUnfinished, context.ReadGifSignature());
     EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
     context.SetTestInputBuffer({});
@@ -149,7 +149,7 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
   CFX_GifContextForTest context;
   {
     uint8_t data[1];
-    context.SetTestInputBuffer({data, 0});
+    context.SetTestInputBuffer({data, 0u});
     EXPECT_EQ(GifDecoder::Status::kUnfinished,
               context.ReadLogicalScreenDescriptor());
     context.SetTestInputBuffer({});

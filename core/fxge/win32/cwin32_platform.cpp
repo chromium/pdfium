@@ -159,7 +159,7 @@ bool CFX_Win32FontInfo::IsSupportedFont(const LOGFONTA* plf) {
   size_t font_size = GetFontData(hFont, 0, {});
   if (font_size != GDI_ERROR && font_size >= sizeof(uint32_t)) {
     uint32_t header;
-    auto span = pdfium::as_writable_bytes(pdfium::make_span(&header, 1));
+    auto span = pdfium::as_writable_bytes(pdfium::make_span(&header, 1u));
     GetFontData(hFont, 0, span);
     header = FXSYS_UINT32_GET_MSBFIRST(span);
     ret = header == FXBSTR_ID('O', 'T', 'T', 'O') ||

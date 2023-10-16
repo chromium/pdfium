@@ -458,8 +458,8 @@ std::string WritePng(const char* pdf_name,
     return "";
   }
 
-  auto input =
-      pdfium::make_span(static_cast<uint8_t*>(buffer), stride * height);
+  auto input = pdfium::make_span(static_cast<uint8_t*>(buffer),
+                                 static_cast<size_t>(stride) * height);
   std::vector<uint8_t> png_encoding =
       EncodePng(input, width, height, stride, FPDFBitmap_BGRA);
   if (png_encoding.empty()) {
@@ -705,7 +705,7 @@ std::vector<uint8_t> EncodeBitmapToPng(ScopedFPDFBitmap bitmap) {
 
   auto input = pdfium::make_span(
       static_cast<const uint8_t*>(FPDFBitmap_GetBuffer(bitmap.get())),
-      stride * height);
+      static_cast<size_t>(stride) * height);
 
   png_encoding = EncodePng(input, width, height, stride, format);
   return png_encoding;

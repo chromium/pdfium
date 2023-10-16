@@ -77,7 +77,7 @@ std::array<FX_ARGB, kShadingSteps> GetShadingSteps(
       if (!func)
         continue;
       absl::optional<uint32_t> nresults =
-          func->Call(pdfium::make_span(&input, 1), result_span);
+          func->Call(pdfium::make_span(&input, 1u), result_span);
       if (nresults.has_value())
         result_span = result_span.subspan(nresults.value());
     }

@@ -55,14 +55,14 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
   ByteString okey = pEncrypt->GetByteStringFor("O");
   CRYPT_MD5Update(&md5, okey.raw_span());
   uint32_t perm = pEncrypt->GetIntegerFor("P");
-  CRYPT_MD5Update(&md5, pdfium::as_bytes(pdfium::make_span(&perm, 1)));
+  CRYPT_MD5Update(&md5, pdfium::as_bytes(pdfium::make_span(&perm, 1u)));
   if (!file_id.IsEmpty())
     CRYPT_MD5Update(&md5, file_id.raw_span());
   const bool is_revision_3_or_greater = pEncrypt->GetIntegerFor("R") >= 3;
   if (!ignore_metadata && is_revision_3_or_greater &&
       !pEncrypt->GetBooleanFor("EncryptMetadata", true)) {
     constexpr uint32_t tag = 0xFFFFFFFF;
-    CRYPT_MD5Update(&md5, pdfium::as_bytes(pdfium::make_span(&tag, 1)));
+    CRYPT_MD5Update(&md5, pdfium::as_bytes(pdfium::make_span(&tag, 1u)));
   }
   uint8_t digest[16];
   CRYPT_MD5Finish(&md5, digest);
@@ -613,7 +613,7 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
 
     uint8_t digest[32];
     CRYPT_MD5Finish(&md5, digest);
-    pdfium::span<uint8_t> partial_digest_span(digest, 16);
+    pdfium::span<uint8_t> partial_digest_span(digest, 16u);
     CRYPT_ArcFourCryptBlock(partial_digest_span, {m_EncryptKey, key_len});
     uint8_t tempkey[32];
     for (uint8_t i = 1; i <= 19; i++) {
@@ -621,7 +621,7 @@ void CPDF_SecurityHandler::OnCreateInternal(CPDF_Dictionary* pEncryptDict,
         tempkey[j] = m_EncryptKey[j] ^ i;
       CRYPT_ArcFourCryptBlock(partial_digest_span, {tempkey, key_len});
     }
-    CRYPT_MD5Generate({digest, 16}, digest + 16);
+    CRYPT_MD5Generate({digest, 16u}, digest + 16);
     pEncryptDict->SetNewFor<CPDF_String>("U", ByteString(digest, 32), false);
   }
 }

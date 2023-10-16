@@ -221,7 +221,7 @@ std::tuple<float, float, float> CPDF_MeshStream::ReadColor() {
   float result[kMaxComponents] = {};
   for (const auto& func : m_funcs) {
     if (func && func->CountOutputs() <= kMaxComponents)
-      func->Call(pdfium::make_span(color_value, 1), result);
+      func->Call(pdfium::make_span(color_value, 1u), result);
   }
 
   m_pCS->GetRGB(result, &r, &g, &b);

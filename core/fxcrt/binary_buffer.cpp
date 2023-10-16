@@ -104,7 +104,7 @@ void BinaryBuffer::AppendString(const ByteString& str) {
 }
 
 void BinaryBuffer::AppendUint8(uint8_t value) {
-  AppendSpan({&value, 1});
+  AppendSpan({&value, 1u});
 }
 
 void BinaryBuffer::AppendUint16(uint16_t value) {

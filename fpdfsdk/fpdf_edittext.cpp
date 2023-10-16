@@ -829,7 +829,7 @@ FPDFFont_GetGlyphPath(FPDF_FONT font, uint32_t glyph, float font_size) {
 
   uint32_t charcode = pFont->CharCodeFromUnicode(static_cast<wchar_t>(glyph));
   std::vector<TextCharPos> pos =
-      GetCharPosList(pdfium::make_span(&charcode, 1),
+      GetCharPosList(pdfium::make_span(&charcode, 1u),
                      pdfium::span<const float>(), pFont, font_size);
   if (pos.empty())
     return nullptr;

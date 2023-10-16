@@ -783,8 +783,9 @@ std::string EmbedderTest::HashBitmap(FPDF_BITMAP bitmap) {
   int usable_bytes_per_row =
       GetBitmapBytesPerPixel(bitmap) * FPDFBitmap_GetWidth(bitmap);
   int height = FPDFBitmap_GetHeight(bitmap);
-  auto span = pdfium::make_span(
-      static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)), stride * height);
+  auto span =
+      pdfium::make_span(static_cast<uint8_t*>(FPDFBitmap_GetBuffer(bitmap)),
+                        static_cast<size_t>(stride) * height);
 
   CRYPT_md5_context context = CRYPT_MD5Start();
   for (int i = 0; i < height; ++i)

@@ -316,9 +316,13 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_LoadXFA(FPDF_DOCUMENT document) {
 
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDF_LoadMemDocument(const void* data_buf, int size, FPDF_BYTESTRING password) {
+  if (size < 0) {
+    return nullptr;
+  }
+
   return LoadDocumentImpl(
-      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
-          pdfium::make_span(static_cast<const uint8_t*>(data_buf), size)),
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pdfium::make_span(
+          static_cast<const uint8_t*>(data_buf), static_cast<size_t>(size))),
       password);
 }
 
