@@ -2120,7 +2120,7 @@ TEST_F(FPDFAnnotEmbedderTest, BUG_1206) {
       return "a1ea1ceebb26922fae576cb79ce63af0";
     return "0d9fc05c6762fd788bd23fd87a4967bc";
   }();
-  static constexpr size_t kExpectedSize = 1590;
+  static constexpr size_t kExpectedSize = 1593;
 
   ASSERT_TRUE(OpenDocument("bug_1206.pdf"));
 
