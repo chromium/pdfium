@@ -4,6 +4,7 @@
 
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 
+#include <algorithm>
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -31,5 +32,7 @@ TEST(StreamAccTest, DataStreamLifeTime) {
   auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(stream);
   stream_acc->LoadAllDataRaw();
   stream.Reset();
-  EXPECT_EQ(pdfium::make_span(kData), stream_acc->GetSpan());
+  auto span = stream_acc->GetSpan();
+  EXPECT_TRUE(
+      std::equal(std::begin(kData), std::end(kData), span.begin(), span.end()));
 }

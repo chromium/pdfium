@@ -309,40 +309,6 @@ class TRIVIAL_ABI GSL_POINTER span {
   size_t size_ = 0;
 };
 
-// [span.comparison], span comparison operators
-// Relational operators. Equality is a element-wise comparison.
-template <typename T>
-constexpr bool operator==(span<T> lhs, span<T> rhs) noexcept {
-  return lhs.size() == rhs.size() &&
-         std::equal(lhs.cbegin(), lhs.cend(), rhs.cbegin());
-}
-
-template <typename T>
-constexpr bool operator!=(span<T> lhs, span<T> rhs) noexcept {
-  return !(lhs == rhs);
-}
-
-template <typename T>
-constexpr bool operator<(span<T> lhs, span<T> rhs) noexcept {
-  return std::lexicographical_compare(lhs.cbegin(), lhs.cend(), rhs.cbegin(),
-                                      rhs.cend());
-}
-
-template <typename T>
-constexpr bool operator<=(span<T> lhs, span<T> rhs) noexcept {
-  return !(rhs < lhs);
-}
-
-template <typename T>
-constexpr bool operator>(span<T> lhs, span<T> rhs) noexcept {
-  return rhs < lhs;
-}
-
-template <typename T>
-constexpr bool operator>=(span<T> lhs, span<T> rhs) noexcept {
-  return !(lhs < rhs);
-}
-
 // [span.objectrep], views of object representation
 template <typename T>
 span<const uint8_t> as_bytes(span<T> s) noexcept {

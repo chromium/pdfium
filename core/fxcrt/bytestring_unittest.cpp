@@ -1520,7 +1520,9 @@ TEST(ByteStringView, OperatorEQ) {
 
   pdfium::span<const uint8_t> span5(
       pdfium::as_bytes(pdfium::make_span("hello", 5u)));
-  EXPECT_EQ(byte_string_c.raw_span(), span5);
+  auto raw_span = byte_string_c.raw_span();
+  EXPECT_TRUE(
+      std::equal(raw_span.begin(), raw_span.end(), span5.begin(), span5.end()));
 }
 
 TEST(ByteStringView, OperatorNE) {

@@ -101,7 +101,8 @@ class StringViewTemplate {
   }
 
   bool operator==(const StringViewTemplate& other) const {
-    return m_Span == other.m_Span;
+    return std::equal(m_Span.begin(), m_Span.end(), other.m_Span.begin(),
+                      other.m_Span.end());
   }
   bool operator==(const CharType* ptr) const {
     StringViewTemplate other(ptr);
