@@ -14,6 +14,7 @@
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fxcrt/fx_string.h"
+#include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 
 CPDF_Object::~CPDF_Object() = default;
@@ -88,7 +89,7 @@ const CPDF_Dictionary* CPDF_Object::GetDictInternal() const {
 }
 
 void CPDF_Object::SetString(const ByteString& str) {
-  NOTREACHED();
+  NOTREACHED_NORETURN();
 }
 
 CPDF_Array* CPDF_Object::AsMutableArray() {
@@ -165,9 +166,6 @@ const CPDF_String* CPDF_Object::AsString() const {
 
 RetainPtr<CPDF_Reference> CPDF_Object::MakeReference(
     CPDF_IndirectObjectHolder* holder) const {
-  if (IsInline()) {
-    NOTREACHED();
-    return nullptr;
-  }
+  CHECK(!IsInline());
   return pdfium::MakeRetain<CPDF_Reference>(holder, GetObjNum());
 }

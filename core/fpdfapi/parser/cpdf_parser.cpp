@@ -193,8 +193,7 @@ bool CPDF_Parser::IsObjectFreeOrNull(uint32_t objnum) const {
     case ObjectType::kCompressed:
       return false;
   }
-  NOTREACHED();
-  return false;
+  NOTREACHED_NORETURN();
 }
 
 bool CPDF_Parser::IsObjectFree(uint32_t objnum) const {

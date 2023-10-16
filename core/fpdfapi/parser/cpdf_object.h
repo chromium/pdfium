@@ -83,6 +83,8 @@ class CPDF_Object : public Retainable {
   virtual float GetNumber() const;
   virtual int GetInteger() const;
 
+  // Can only be called for objects of types: `kBoolean`, `kNumber`, `kName`,
+  // and `kString`.
   virtual void SetString(const ByteString& str);
 
   virtual CPDF_Array* AsMutableArray();
