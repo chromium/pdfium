@@ -14,7 +14,7 @@
 TEST(SeekableStreamProxyTest, NullStream) {
   auto proxy_stream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(
       pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
-          pdfium::make_span<const uint8_t>(nullptr, 0)));
+          pdfium::span<const uint8_t>()));
 
   wchar_t buffer[16];
   EXPECT_EQ(0u, proxy_stream->ReadBlock(buffer, std::size(buffer)));

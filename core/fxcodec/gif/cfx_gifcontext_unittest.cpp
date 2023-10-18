@@ -25,7 +25,7 @@ class CFX_GifContextForTest final : public CFX_GifContext {
   using CFX_GifContext::ReadLogicalScreenDescriptor;
 
   CFX_CodecMemory* InputBuffer() const { return input_buffer_.Get(); }
-  void SetTestInputBuffer(pdfium::span<uint8_t> input) {
+  void SetTestInputBuffer(pdfium::span<const uint8_t> input) {
     auto pMemory = pdfium::MakeRetain<CFX_CodecMemory>(input.size());
     fxcrt::spancpy(pMemory->GetBufferSpan(), input);
     SetInputBuffer(std::move(pMemory));
@@ -36,7 +36,7 @@ TEST(CFX_GifContext, SetInputBuffer) {
   uint8_t buffer[] = {0x00, 0x01, 0x02};
   CFX_GifContextForTest context;
 
-  context.SetTestInputBuffer({nullptr, 0u});
+  context.SetTestInputBuffer({});
   EXPECT_EQ(0u, context.InputBuffer()->GetSize());
   EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
 
@@ -55,7 +55,7 @@ TEST(CFX_GifContext, ReadAllOrNone) {
                           0x05, 0x06, 0x07, 0x08, 0x09};
   CFX_GifContextForTest context;
 
-  context.SetTestInputBuffer({nullptr, 0u});
+  context.SetTestInputBuffer({});
   EXPECT_FALSE(context.ReadAllOrNone(nullptr, 0));
   EXPECT_FALSE(context.ReadAllOrNone(nullptr, 10));
 

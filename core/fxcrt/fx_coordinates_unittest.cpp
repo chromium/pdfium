@@ -30,7 +30,7 @@ TEST(CFX_FloatRect, FromFXRect) {
 }
 
 TEST(CFX_FloatRect, GetBBox) {
-  CFX_FloatRect rect = CFX_FloatRect::GetBBox({nullptr, 0});
+  CFX_FloatRect rect = CFX_FloatRect::GetBBox({});
   EXPECT_FLOAT_EQ(0.0f, rect.left);
   EXPECT_FLOAT_EQ(0.0f, rect.bottom);
   EXPECT_FLOAT_EQ(0.0f, rect.right);
