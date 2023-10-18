@@ -39,7 +39,7 @@ declare_args() {
   # Build PDFium using C++20 if set to true. Otherwise builds with C++17.
   # There is no "pdf_use_cxx20_override" variable because this is only used in
   # standalone PDFium, and not when PDFium is embedded in our projects.
-  pdf_use_cxx20 = (is_win && is_component_build) || is_fuchsia
+  pdf_use_cxx20 = true
 
   # Build PDFium against PartitionAlloc. When false, PDFium must build without
   # requiring any PartitionAlloc headers or code to be present. When true,
