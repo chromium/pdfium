@@ -97,6 +97,9 @@ config("skia_library_config") {
   if (use_blink) {
     defines += [ "SK_TYPEFACE_FACTORY_FREETYPE" ]
   }
+  if (is_apple) {
+    defines += [ "SK_TYPEFACE_FACTORY_CORETEXT" ]
+  }
 
   if (current_cpu == "arm") {
     if (arm_use_neon) {
@@ -286,13 +289,11 @@ component("skia") {
 
   frameworks = []
   if (is_apple) {
+    # See SK_TYPEFACE_FACTORY_CORETEXT
     sources += [
-      # TODO(crbug.com/pdfium/1830)  Consider using SkFontMgr_mac_ct instead of
-      # SkFontMgr_custom_empty (which is what the embedder test hashes are
-      # based upon).
-      "//third_party/skia/src/ports/SkFontMgr_custom.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_custom_empty.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_custom_empty_factory.cpp",
+      "//third_party/skia/include/ports/SkFontMgr_mac_ct.h",
+      "//third_party/skia/src/ports/SkFontMgr_mac_ct.cpp",
+      "//third_party/skia/src/ports/SkFontMgr_mac_ct_factory.cpp",
       "//third_party/skia/src/ports/SkScalerContext_mac_ct.cpp",
       "//third_party/skia/src/ports/SkScalerContext_mac_ct.h",
       "//third_party/skia/src/ports/SkTypeface_mac_ct.cpp",
@@ -343,6 +344,14 @@ component("skia") {
       "//third_party/fuchsia-sdk/sdk/pkg/sys_cpp",
       "//third_party/fuchsia-sdk/sdk/pkg/zx",
       "//third_party/icu:icuuc",
+    ]
+  }
+
+  if (is_apple && use_blink) {
+    sources += [
+      # Add the FreeType custom font manager as a fallback backend for variable fonts.
+      "//third_party/skia/src/ports/SkFontMgr_custom.cpp",
+      "//third_party/skia/src/ports/SkFontMgr_custom_empty.cpp",
     ]
   }
 

@@ -25,7 +25,11 @@ constexpr FX_ARGB kWhite = 0xFFFFFFFF;
 
 const char* AnnotationStampWithApBaseContentChecksum() {
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+#if BUILDFLAG(IS_APPLE)
+    return "346c4463cf822e39e29a602a504b9153";
+#else
     return "4fedc838daa6762cf7eee180986a0f1b";
+#endif
   }
 #if BUILDFLAG(IS_APPLE)
   return "243f3d6267d9db09198fed9f8c4957fd";
@@ -315,8 +319,13 @@ void FPDFProgressiveRenderEmbedderTest::VerifyRenderingWithColorScheme(
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderTextWithColorScheme) {
   // Test rendering of text with forced color scheme on.
   const char* content_with_text_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+#if BUILDFLAG(IS_APPLE)
+      return "9eba0a0147f1d9685514d274e03d574e";
+#else
       return "edd919ec8b59fab1f16b5f2adb1175f3";
+#endif
+    }
 #if BUILDFLAG(IS_APPLE)
     return "ee4ec12f54ce8d117a73bd9b85a8954d";
 #else
@@ -371,8 +380,13 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderHighlightWithColorScheme) {
   // path since highlights have Multiply blend mode, while the other path has
   // Normal blend mode.
   const char* content_with_highlight_fill_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+#if BUILDFLAG(IS_APPLE)
+      return "fcd4dd021656f692f346780acaa24895";
+#else
       return "49dcfcfdc38d200bb3d57a2ca3086034";
+#endif
+    }
 #if BUILDFLAG(IS_APPLE)
     return "a820afec9b99d3d3f2e9e9382bbad7c1";
 #else
@@ -398,8 +412,13 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
   // Normal blend mode.
 
   const char* md5_content_with_highlight = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+#if BUILDFLAG(IS_APPLE)
+      return "b7039f73f2d8a3ac3e1ef1492e425b99";
+#else
       return "c609e8810fba2f12db8f8a2b043d97bd";
+#endif
+    }
 #if BUILDFLAG(IS_APPLE)
     return "8837bea0b3520164b1784e513c882a2d";
 #else
@@ -438,8 +457,13 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderInkWithColorScheme) {
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
   // Test rendering of static annotation with forced color scheme on.
   const char* content_with_stamp_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+#if BUILDFLAG(IS_APPLE)
+      return "42d4d73d939cb4a1b40d003985eaf11e";
+#else
       return "6e028012a4854ebfd9ee92da862bf679";
+#endif
+    }
 #if BUILDFLAG(IS_APPLE)
     return "8170c539e95f22f14eb8f266a5f1bbed";
 #else
