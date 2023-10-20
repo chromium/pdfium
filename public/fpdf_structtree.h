@@ -255,6 +255,23 @@ FPDF_StructElement_GetChildAtIndex(FPDF_STRUCTELEMENT struct_element,
                                    int index);
 
 // Experimental API.
+// Function: FPDF_StructElement_GetChildMarkedContentID
+//          Get the child's content id
+// Parameters:
+//          struct_element -   Handle to the struct element.
+//          index          -   The index for the child, 0-based.
+// Return value:
+//          The marked content ID of the child. If no ID exists, returns -1.
+// Comments:
+//          If the child exists but is not a stream or object, then this
+//          function will return -1. This will also return -1 for out of bounds
+//          indices. Compared to FPDF_StructElement_GetMarkedContentIdAtIndex,
+//          it is scoped to the current page.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDF_StructElement_GetChildMarkedContentID(FPDF_STRUCTELEMENT struct_element,
+                                           int index);
+
+// Experimental API.
 // Function: FPDF_StructElement_GetParent
 //          Get the parent of the structure element.
 // Parameters:

@@ -389,6 +389,53 @@ TEST_F(FPDFStructTreeEmbedderTest, GetMarkedContentIdAtIndex) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFStructTreeEmbedderTest, GetChildMarkedContentID) {
+  ASSERT_TRUE(OpenDocument("tagged_mcr_multipage.pdf"));
+
+  // Using the loop to make difference clear
+  for (int page_i : {0, 1}) {
+    FPDF_PAGE page = LoadPage(page_i);
+    ASSERT_TRUE(page);
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ASSERT_TRUE(struct_tree);
+    ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
+
+    FPDF_STRUCTELEMENT struct_doc =
+        FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
+    ASSERT_TRUE(struct_doc);
+    EXPECT_EQ(-1, FPDF_StructElement_GetMarkedContentID(struct_doc));
+
+    ASSERT_EQ(2, FPDF_StructElement_CountChildren(struct_doc));
+    FPDF_STRUCTELEMENT child1 =
+        FPDF_StructElement_GetChildAtIndex(struct_doc, 0);
+    EXPECT_FALSE(child1);
+    FPDF_STRUCTELEMENT child2 =
+        FPDF_StructElement_GetChildAtIndex(struct_doc, 1);
+    EXPECT_FALSE(child2);
+
+    EXPECT_EQ(2, FPDF_StructElement_GetMarkedContentIdCount(struct_doc));
+
+    // Both MCID are returned as if part of this page, while they are not.
+    // So `FPDF_StructElement_GetMarkedContentIdAtIndex(...)` does not work
+    // for StructElement spanning multiple pages.
+    EXPECT_EQ(0, FPDF_StructElement_GetMarkedContentIdAtIndex(struct_doc, 0));
+    EXPECT_EQ(0, FPDF_StructElement_GetMarkedContentIdAtIndex(struct_doc, 1));
+
+    // One MCR is pointing to page 1, another to page2, so those are different
+    // for different pages.
+    EXPECT_EQ(page_i == 0 ? 0 : -1,
+              FPDF_StructElement_GetChildMarkedContentID(struct_doc, 0));
+    EXPECT_EQ(page_i == 1 ? 0 : -1,
+              FPDF_StructElement_GetChildMarkedContentID(struct_doc, 1));
+    // Invalid index
+    EXPECT_EQ(-1, FPDF_StructElement_GetChildMarkedContentID(struct_doc, -1));
+    EXPECT_EQ(-1, FPDF_StructElement_GetChildMarkedContentID(struct_doc, 2));
+    // Invalid element
+    EXPECT_EQ(-1, FPDF_StructElement_GetChildMarkedContentID(nullptr, 0));
+    UnloadPage(page);
+  }
+}
+
 TEST_F(FPDFStructTreeEmbedderTest, GetType) {
   ASSERT_TRUE(OpenDocument("tagged_alt_text.pdf"));
   FPDF_PAGE page = LoadPage(0);

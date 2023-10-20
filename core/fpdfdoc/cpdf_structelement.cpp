@@ -87,6 +87,13 @@ CPDF_StructElement* CPDF_StructElement::GetKidIfElement(size_t index) const {
                                                : nullptr;
 }
 
+int CPDF_StructElement::GetKidContentId(size_t index) const {
+  return m_Kids[index].m_Type == Kid::kStreamContent ||
+                 m_Kids[index].m_Type == Kid::kPageContent
+             ? m_Kids[index].m_ContentId
+             : -1;
+}
+
 bool CPDF_StructElement::UpdateKidIfElement(const CPDF_Dictionary* pDict,
                                             CPDF_StructElement* pElement) {
   bool bSave = false;

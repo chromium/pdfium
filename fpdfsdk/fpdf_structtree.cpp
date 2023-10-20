@@ -270,6 +270,18 @@ FPDF_StructElement_GetChildAtIndex(FPDF_STRUCTELEMENT struct_element,
   return FPDFStructElementFromCPDFStructElement(elem->GetKidIfElement(index));
 }
 
+FPDF_EXPORT int FPDF_CALLCONV
+FPDF_StructElement_GetChildMarkedContentID(FPDF_STRUCTELEMENT struct_element,
+                                           int index) {
+  CPDF_StructElement* elem =
+      CPDFStructElementFromFPDFStructElement(struct_element);
+  if (!elem || index < 0 || static_cast<size_t>(index) >= elem->CountKids()) {
+    return -1;
+  }
+
+  return elem->GetKidContentId(index);
+}
+
 FPDF_EXPORT FPDF_STRUCTELEMENT FPDF_CALLCONV
 FPDF_StructElement_GetParent(FPDF_STRUCTELEMENT struct_element) {
   CPDF_StructElement* elem =
