@@ -88,8 +88,9 @@ TEST_F(CFDETextOutTest, DrawLogicTextBasic) {
   text_out().DrawLogicText(device(), L"foo", CFX_RectF(0, 0, 2100, 100));
   const char* checksum = []() {
 #if BUILDFLAG(IS_WIN)
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
-      return "76fd535f7d490d963598474494d0701e";
+    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+      return "cdd8f00144e421bf18f22d09896838b0";
+    }
 #endif
     return "b26f1c171fcdbf185823364185adacf0";
   }();

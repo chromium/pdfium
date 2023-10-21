@@ -25,7 +25,9 @@ constexpr FX_ARGB kWhite = 0xFFFFFFFF;
 
 const char* AnnotationStampWithApBaseContentChecksum() {
   if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
-#if BUILDFLAG(IS_APPLE)
+#if BUILDFLAG(IS_WIN)
+    return "7f8437212ef1cd33ff505ece5a7e99f8";
+#elif BUILDFLAG(IS_APPLE)
     return "346c4463cf822e39e29a602a504b9153";
 #else
     return "4fedc838daa6762cf7eee180986a0f1b";
@@ -320,7 +322,9 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderTextWithColorScheme) {
   // Test rendering of text with forced color scheme on.
   const char* content_with_text_checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
-#if BUILDFLAG(IS_APPLE)
+#if BUILDFLAG(IS_WIN)
+      return "e970b97a719ce4d8efdfcbc316255aac";
+#elif BUILDFLAG(IS_APPLE)
       return "9eba0a0147f1d9685514d274e03d574e";
 #else
       return "edd919ec8b59fab1f16b5f2adb1175f3";
@@ -381,7 +385,9 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderHighlightWithColorScheme) {
   // Normal blend mode.
   const char* content_with_highlight_fill_checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
-#if BUILDFLAG(IS_APPLE)
+#if BUILDFLAG(IS_WIN)
+      return "8ed2cbc6a362752fabdf9b50d3358c96";
+#elif BUILDFLAG(IS_APPLE)
       return "fcd4dd021656f692f346780acaa24895";
 #else
       return "49dcfcfdc38d200bb3d57a2ca3086034";
@@ -413,7 +419,9 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
 
   const char* md5_content_with_highlight = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
-#if BUILDFLAG(IS_APPLE)
+#if BUILDFLAG(IS_WIN)
+      return "9389330c006d3e6054057992624684a8";
+#elif BUILDFLAG(IS_APPLE)
       return "b7039f73f2d8a3ac3e1ef1492e425b99";
 #else
       return "c609e8810fba2f12db8f8a2b043d97bd";
@@ -438,7 +446,9 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderInkWithColorScheme) {
   // Test rendering of multiple ink with forced color scheme on.
   const char* content_with_ink_checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
-#if BUILDFLAG(IS_APPLE)
+#if BUILDFLAG(IS_WIN)
+      return "f6dfec1a38800973e57bba5da4fe77fe";
+#elif BUILDFLAG(IS_APPLE)
       return "5108aa537b6ecc37b3f0a35b76c1b379";
 #else
       return "b39d9f68ff71963d82c43eb20caa8f4d";
@@ -458,7 +468,9 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
   // Test rendering of static annotation with forced color scheme on.
   const char* content_with_stamp_checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
-#if BUILDFLAG(IS_APPLE)
+#if BUILDFLAG(IS_WIN)
+      return "9365cd179a0109640bb2b7456f211524";
+#elif BUILDFLAG(IS_APPLE)
       return "42d4d73d939cb4a1b40d003985eaf11e";
 #else
       return "6e028012a4854ebfd9ee92da862bf679";

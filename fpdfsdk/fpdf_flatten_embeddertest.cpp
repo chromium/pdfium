@@ -75,7 +75,9 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_861842) {
 TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
   const char* page_checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
-#if BUILDFLAG(IS_APPLE)
+#if BUILDFLAG(IS_WIN)
+      return "1d83328d2d1ca12b9c9ea5faa62ac515";
+#elif BUILDFLAG(IS_APPLE)
       return "3b6f937deec2d27029cbce02111dc065";
 #else
       return "de7119d99f42deab2f4215017bdb16af";
@@ -89,7 +91,9 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
   }();
   const char* flattened_page_checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
-#if BUILDFLAG(IS_APPLE)
+#if BUILDFLAG(IS_WIN)
+      return "07deccbd4a42aaf6bf45a525f0be388e";
+#elif BUILDFLAG(IS_APPLE)
       return "f1bbe115355a2ad6d8ac34c7ff14ba75";
 #else
       return "7978c7b3d643a5f0ac0f03ce759c55fe";

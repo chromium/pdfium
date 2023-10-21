@@ -143,7 +143,9 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, OwnerPassword) {
 TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
   const char* checksum = []() {
     if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
-#if BUILDFLAG(IS_APPLE)
+#if BUILDFLAG(IS_WIN)
+      return "caa4bfda016a9c48a540ff7c6716468c";
+#elif BUILDFLAG(IS_APPLE)
       return "6c1a242ce886df5cf578401eeeaa1929";
 #else
       return "ad97491cab71c02f1f4ef5ba0a7b5593";
