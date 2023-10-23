@@ -781,16 +781,17 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
   font.setEdging(GetFontEdgingType(options));
 
   SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
-  const SkScalar flip = font_size < 0 ? -1 : 1;
-  const SkScalar vFlip = pFont->IsVertical() ? -1 : 1;
-  SkMatrix skMatrix = ToFlippedSkMatrix(mtObject2Device, flip);
+  const SkScalar horizontal_flip = font_size < 0 ? -1 : 1;
+  const SkScalar vertical_flip = pFont->IsVertical() ? -1 : 1;
+  SkMatrix skMatrix = ToFlippedSkMatrix(mtObject2Device, horizontal_flip);
   m_pCanvas->concat(skMatrix);
   DataVector<SkPoint> positions(pCharPos.size());
   DataVector<uint16_t> glyphs(pCharPos.size());
 
   for (size_t index = 0; index < pCharPos.size(); ++index) {
     const TextCharPos& cp = pCharPos[index];
-    positions[index] = {cp.m_Origin.x * flip, cp.m_Origin.y * vFlip};
+    positions[index] = {cp.m_Origin.x * horizontal_flip,
+                        cp.m_Origin.y * vertical_flip};
     glyphs[index] = static_cast<uint16_t>(cp.m_GlyphIndex);
 #if BUILDFLAG(IS_APPLE)
     if (cp.m_ExtGID)
@@ -864,13 +865,13 @@ bool CFX_SkiaDeviceDriver::TryDrawText(pdfium::span<const TextCharPos> char_pos,
     m_rsxform.resize(total_count);
   }
 
-  const SkScalar flip = font_size < 0 ? -1 : 1;
-  const SkScalar vFlip = pFont->IsVertical() ? -1 : 1;
+  const SkScalar horizontal_flip = font_size < 0 ? -1 : 1;
+  const SkScalar vertical_flip = pFont->IsVertical() ? -1 : 1;
   for (size_t index = 0; index < char_pos.size(); ++index) {
     const TextCharPos& cp = char_pos[index];
     size_t cur_index = index + original_count;
-    m_charDetails.SetPositionAt(cur_index,
-                                {cp.m_Origin.x * flip, cp.m_Origin.y * vFlip});
+    m_charDetails.SetPositionAt(cur_index, {cp.m_Origin.x * horizontal_flip,
+                                            cp.m_Origin.y * vertical_flip});
     m_charDetails.SetGlyphAt(cur_index, static_cast<uint16_t>(cp.m_GlyphIndex));
     m_charDetails.SetFontCharWidthAt(cur_index, cp.m_FontCharWidth);
 #if BUILDFLAG(IS_APPLE)
@@ -915,7 +916,7 @@ bool CFX_SkiaDeviceDriver::TryDrawText(pdfium::span<const TextCharPos> char_pos,
   font.setEdging(GetFontEdgingType(options));
 
   SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
-  m_pCanvas->concat(ToFlippedSkMatrix(matrix, flip));
+  m_pCanvas->concat(ToFlippedSkMatrix(matrix, horizontal_flip));
 
   const DataVector<uint16_t>& glyphs = m_charDetails.GetGlyphs();
   if (!m_rsxform.empty()) {
@@ -928,8 +929,7 @@ bool CFX_SkiaDeviceDriver::TryDrawText(pdfium::span<const TextCharPos> char_pos,
   const DataVector<SkPoint>& positions = m_charDetails.GetPositions();
   const DataVector<uint32_t>& widths = m_charDetails.GetFontCharWidths();
   for (size_t i = 0; i < m_charDetails.Count(); ++i) {
-    const uint32_t font_glyph_width =
-        pFont ? pFont->GetGlyphWidth(glyphs[i]) : 0;
+    const uint32_t font_glyph_width = pFont->GetGlyphWidth(glyphs[i]);
     const uint32_t pdf_glyph_width = widths[i];
     if (pdf_glyph_width > 0 && font_glyph_width > 0) {
       // Scale the glyph from its default width `pdf_glyph_width` to the
