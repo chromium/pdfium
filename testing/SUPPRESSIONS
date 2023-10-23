@@ -596,24 +596,6 @@ xfermodes.pdf * * * gdi
 xfermodes2.pdf * * * gdi
 xfermodes3.pdf * * * gdi
 
-# TODO(pdfium:2086): Remove this group after associated bug is fixed
-FRC_3.5_AuthEvent_EFOpen.pdf mac * * skia
-FRC_3.5_CFM_AESV2__EncryptMetadata_F.pdf mac * * skia
-FRC_3.5_CF_EFF_StdCF_Strf_Stmf_Identity.pdf mac * * skia
-FRC_3.5_CF_Strf_stmf_StdCF.pdf mac * * skia
-FRC_3.5_EncryptMetadata_None.pdf mac * * skia
-FRC_3.5_V_4_CFM_V2_.pdf mac * * skia
-FRC_3.5_V_5_CFM_AESV3.pdf mac * * skia
-FRC_3.5_v_1_length_40_Filter_standard.pdf mac * * skia
-FRC_3.5_v_2_length_128_AuthEvent_DocOpen_.pdf mac * * skia
-FRC_8.5_Bl_Hide.pdf mac * * skia
-FRC_8.5_Fo_URI_Base.pdf mac * * skia
-FRC_8.5_U_GoToR_NewWindow.pdf mac * * skia
-FRC_8.5_U_GoToR_NewWindow_2.pdf mac * * skia
-bookmarkgetcolor.pdf mac * * skia
-5.5_simple_font.pdf mac * * skia
-en_diy.pdf mac * * skia
-
 #
 # JavaScript tests
 #
@@ -691,12 +673,6 @@ bug_492.in * nov8 * *
 
 # TODO(chromium:725555, skia:9265): Remove after associated bug is fixed
 bug_725555.in * * * skia
-
-# TODO(pdfium:2086): Remove after associated bug is fixed
-bug_736703.in mac * * skia
-
-# TODO(pdfium:2086): Remove after associated bug is fixed
-bug_846.in mac * * skia
 
 # TODO(chromium:983289): Remove after associated bug is fixed
 bug_983289.in * * * agg
