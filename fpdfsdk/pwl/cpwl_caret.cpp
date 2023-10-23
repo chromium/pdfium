@@ -50,7 +50,7 @@ void CPWL_Caret::DrawThisAppearance(CFX_RenderDevice* pDevice,
   CFX_GraphStateData gsd;
   gsd.m_LineWidth = m_fWidth;
   pDevice->DrawPath(path, &mtUser2Device, &gsd, 0, ArgbEncode(255, 0, 0, 0),
-                    CFX_FillRenderOptions::EvenOddOptions());
+                    {.fill_type = CFX_FillRenderOptions::FillType::kEvenOdd});
 }
 
 void CPWL_Caret::OnTimerFired() {

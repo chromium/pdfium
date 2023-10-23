@@ -710,11 +710,11 @@ struct PatchDrawer {
       D2.GetPoints(points.subspan(3, 4));
       C2.GetPointsReverse(points.subspan(6, 4));
       D1.GetPointsReverse(points.subspan(9, 4));
-      CFX_FillRenderOptions fill_options(
-          CFX_FillRenderOptions::WindingOptions());
-      fill_options.full_cover = true;
-      if (bNoPathSmooth)
-        fill_options.aliased_path = true;
+      const CFX_FillRenderOptions fill_options = {
+          .fill_type = CFX_FillRenderOptions::FillType::kWinding,
+          .aliased_path = static_cast<bool>(bNoPathSmooth),
+          .full_cover = true,
+      };
       pDevice->DrawPath(
           path, nullptr, nullptr,
           ArgbEncode(alpha, div_colors[0].comp[0], div_colors[0].comp[1],

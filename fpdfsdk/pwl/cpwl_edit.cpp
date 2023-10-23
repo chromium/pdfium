@@ -199,9 +199,9 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
       path.AppendPoint(top, CFX_Path::Point::Type::kLine);
     }
     if (!path.GetPoints().empty()) {
-      pDevice->DrawPath(path, &mtUser2Device, &gsd, 0,
-                        GetBorderColor().ToFXColor(255),
-                        CFX_FillRenderOptions::EvenOddOptions());
+      pDevice->DrawPath(
+          path, &mtUser2Device, &gsd, 0, GetBorderColor().ToFXColor(255),
+          {.fill_type = CFX_FillRenderOptions::FillType::kEvenOdd});
     }
   }
 

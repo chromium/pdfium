@@ -81,8 +81,9 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
                           static_cast<float>(pRect->right),
                           static_cast<float>(pRect->top));
         }
-        m_PSRenderer.SetClip_PathFill(path, nullptr,
-                                      CFX_FillRenderOptions::WindingOptions());
+        m_PSRenderer.SetClip_PathFill(
+            path, nullptr,
+            {.fill_type = CFX_FillRenderOptions::FillType::kWinding});
       }
     }
   }

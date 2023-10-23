@@ -23,19 +23,6 @@ struct CFX_FillRenderOptions {
     kWinding = 2,
   };
 
-  static constexpr CFX_FillRenderOptions EvenOddOptions() {
-    return CFX_FillRenderOptions(FillType::kEvenOdd);
-  }
-  static constexpr CFX_FillRenderOptions WindingOptions() {
-    return CFX_FillRenderOptions(FillType::kWinding);
-  }
-
-  constexpr CFX_FillRenderOptions()
-      : CFX_FillRenderOptions(FillType::kNoFill) {}
-
-  constexpr explicit CFX_FillRenderOptions(FillType fill_type)
-      : fill_type(fill_type) {}
-
   bool operator==(const CFX_FillRenderOptions& other) const {
     return fill_type == other.fill_type &&
            adjust_stroke == other.adjust_stroke &&
@@ -51,7 +38,7 @@ struct CFX_FillRenderOptions {
   }
 
   // Fill type.
-  FillType fill_type;
+  FillType fill_type = FillType::kNoFill;
 
   // Adjusted stroke rendering is enabled.
   bool adjust_stroke : 1 = false;

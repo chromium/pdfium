@@ -55,7 +55,7 @@ void CPWL_CBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
   pDevice->DrawPath(path, &mtUser2Device, nullptr,
                     kDefaultBlackColor.ToFXColor(GetTransparency()), 0,
-                    CFX_FillRenderOptions::EvenOddOptions());
+                    {.fill_type = CFX_FillRenderOptions::FillType::kEvenOdd});
 }
 
 bool CPWL_CBButton::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,

@@ -483,7 +483,7 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
         ArgbEncode(0xff, m_BitmapAlpha, m_BitmapAlpha, m_BitmapAlpha);
     m_pRenderStatus->GetRenderDevice()->DrawPath(
         path, nullptr, nullptr, fill_color, 0,
-        CFX_FillRenderOptions::WindingOptions());
+        {.fill_type = CFX_FillRenderOptions::FillType::kWinding});
     return false;
   }
   RetainPtr<CFX_DIBBase> pAlphaMask;

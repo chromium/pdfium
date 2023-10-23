@@ -221,7 +221,7 @@ void CFGAS_GEGraphics::RenderDeviceFillPath(
   CFX_Matrix m = m_info.CTM;
   m.Concat(matrix);
 
-  const CFX_FillRenderOptions fill_options(fill_type);
+  const CFX_FillRenderOptions fill_options = {.fill_type = fill_type};
   switch (m_info.fillColor.GetType()) {
     case CFGAS_GEColor::Solid:
       m_renderDevice->DrawPath(path.GetPath(), &m, &m_info.graphState,

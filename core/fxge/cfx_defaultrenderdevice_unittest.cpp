@@ -25,17 +25,15 @@ TEST(CFX_DefaultRenderDeviceTest, GetClipBox_PathFill) {
   // Matrix that transposes and translates by 1 unit on each axis.
   const CFX_Matrix object_to_device(0, 1, 1, 0, 1, -1);
 
-  // Fill type cannot be none.
-  const CFX_FillRenderOptions fill_options(
-      CFX_FillRenderOptions::FillType::kEvenOdd);
-
   CFX_DefaultRenderDevice device;
   ASSERT_TRUE(device.Create(/*width=*/16, /*height=*/16, FXDIB_Format::kArgb,
                             /*pBackdropBitmap=*/nullptr));
 
   CFX_Path path;
   path.AppendRect(2, 4, 14, 12);
-  EXPECT_TRUE(device.SetClip_PathFill(path, &object_to_device, fill_options));
+  EXPECT_TRUE(device.SetClip_PathFill(
+      path, &object_to_device,
+      {.fill_type = CFX_FillRenderOptions::FillType::kEvenOdd}));
 
   EXPECT_EQ(FX_RECT(5, 1, 13, 13), device.GetClipBox());
 }
