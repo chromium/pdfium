@@ -116,7 +116,7 @@ namespace {
 
 bool g_bLibraryInitialized = false;
 
-void UseRendererType(FPDF_RENDERER_TYPE public_type) {
+void SetRendererType(FPDF_RENDERER_TYPE public_type) {
   // Internal definition of renderer types must stay updated with respect to
   // the public definition, such that all public definitions can be mapped to
   // an internal definition in `CFX_DefaultRenderDevice`. A public definition
@@ -137,6 +137,13 @@ void UseRendererType(FPDF_RENDERER_TYPE public_type) {
 #else
   // `FPDF_RENDERERTYPE_AGG` is used for fully AGG builds.
   CHECK_EQ(public_type, FPDF_RENDERERTYPE_AGG);
+#endif
+}
+
+void ResetRendererType() {
+#if defined(_SKIA_SUPPORT_)
+  CFX_DefaultRenderDevice::SetRendererType(
+      CFX_DefaultRenderDevice::kDefaultRenderer);
 #endif
 }
 
@@ -235,7 +242,7 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* config) {
                             platform);
 
     if (config->version >= 4)
-      UseRendererType(config->m_RendererType);
+      SetRendererType(config->m_RendererType);
   }
   g_bLibraryInitialized = true;
 }
@@ -244,13 +251,16 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyLibrary() {
   if (!g_bLibraryInitialized)
     return;
 
+  ResetRendererType();
+
+  IJS_Runtime::Destroy();
+
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_ModuleDestroy();
 #endif  // PDF_ENABLE_XFA
 
   CPDF_PageModule::Destroy();
   CFX_GEModule::Destroy();
-  IJS_Runtime::Destroy();
 
   g_bLibraryInitialized = false;
 }
