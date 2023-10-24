@@ -13,7 +13,6 @@
 
 #include "core/fxcrt/fx_system.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/numerics/safe_math.h"
 
 namespace {
 

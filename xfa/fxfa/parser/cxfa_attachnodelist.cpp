@@ -6,7 +6,6 @@
 
 #include "xfa/fxfa/parser/cxfa_attachnodelist.h"
 
-#include "third_party/base/numerics/safe_conversions.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_AttachNodeList::CXFA_AttachNodeList(CXFA_Document* pDocument,
