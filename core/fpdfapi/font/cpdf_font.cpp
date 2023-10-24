@@ -415,6 +415,15 @@ int CPDF_Font::TT2PDF(FT_Pos m, FXFT_FaceRec* face) {
 }
 
 // static
+FX_RECT CPDF_Font::GetCharBBoxForFace(FXFT_FaceRec* face) {
+  FT_Pos iHoriBearingX = FXFT_Get_Glyph_HoriBearingX(face);
+  FT_Pos iHoriBearingY = FXFT_Get_Glyph_HoriBearingY(face);
+  return FX_RECT(TT2PDF(iHoriBearingX, face), TT2PDF(iHoriBearingY, face),
+                 TT2PDF(iHoriBearingX + FXFT_Get_Glyph_Width(face), face),
+                 TT2PDF(iHoriBearingY - FXFT_Get_Glyph_Height(face), face));
+}
+
+// static
 bool CPDF_Font::UseTTCharmap(FXFT_FaceRec* face,
                              int platform_id,
                              int encoding_id) {

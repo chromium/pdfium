@@ -556,14 +556,7 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
     } else {
       int err = FT_Load_Glyph(face, glyph_index, FT_LOAD_NO_SCALE);
       if (err == 0) {
-        rect = FX_RECT(TT2PDF(FXFT_Get_Glyph_HoriBearingX(face), face),
-                       TT2PDF(FXFT_Get_Glyph_HoriBearingY(face), face),
-                       TT2PDF(FXFT_Get_Glyph_HoriBearingX(face) +
-                                  FXFT_Get_Glyph_Width(face),
-                              face),
-                       TT2PDF(FXFT_Get_Glyph_HoriBearingY(face) -
-                                  FXFT_Get_Glyph_Height(face),
-                              face));
+        rect = GetCharBBoxForFace(face);
         if (rect.top <= kMaxRectTop)
           rect.top += rect.top / 64;
         else

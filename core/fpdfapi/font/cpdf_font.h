@@ -16,6 +16,7 @@
 #include "build/build_config.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -139,6 +140,7 @@ class CPDF_Font : public Retainable, public Observable {
   ~CPDF_Font() override;
 
   static int TT2PDF(FT_Pos m, FXFT_FaceRec* face);
+  static FX_RECT GetCharBBoxForFace(FXFT_FaceRec* face);
 
   // Commonly used wrappers for UseTTCharmap().
   static bool UseTTCharmapMSUnicode(FXFT_FaceRec* face) {
