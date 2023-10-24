@@ -712,7 +712,7 @@ struct PatchDrawer {
       D1.GetPointsReverse(points.subspan(9, 4));
       const CFX_FillRenderOptions fill_options = {
           .fill_type = CFX_FillRenderOptions::FillType::kWinding,
-          .aliased_path = static_cast<bool>(bNoPathSmooth),
+          .aliased_path = bNoPathSmooth,
           .full_cover = true,
       };
       pDevice->DrawPath(
@@ -768,7 +768,7 @@ struct PatchDrawer {
   int max_delta;
   CFX_Path path;
   UnownedPtr<CFX_RenderDevice> pDevice;
-  int bNoPathSmooth;
+  bool bNoPathSmooth;
   int alpha;
   CoonColor patch_colors[4];
 };

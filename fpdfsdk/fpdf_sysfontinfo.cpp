@@ -186,14 +186,15 @@ static void DefaultEnumFonts(struct _FPDF_SYSFONTINFO* pThis, void* pMapper) {
 
 static void* DefaultMapFont(struct _FPDF_SYSFONTINFO* pThis,
                             int weight,
-                            int bItalic,
+                            FPDF_BOOL use_italic,
                             int charset,
                             int pitch_family,
                             const char* family,
-                            int* bExact) {
+                            FPDF_BOOL* /*exact*/) {
   auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
-  return pDefault->m_pFontInfo->MapFont(
-      weight, !!bItalic, FX_GetCharsetFromInt(charset), pitch_family, family);
+  return pDefault->m_pFontInfo->MapFont(weight, !!use_italic,
+                                        FX_GetCharsetFromInt(charset),
+                                        pitch_family, family);
 }
 
 void* DefaultGetFont(struct _FPDF_SYSFONTINFO* pThis, const char* family) {

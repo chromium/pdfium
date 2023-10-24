@@ -327,10 +327,11 @@ bool ByteString::EqualNoCase(ByteStringView str) const {
   const uint8_t* pThat = str.raw_str();
   for (size_t i = 0; i < len; i++) {
     if ((*pThis) != (*pThat)) {
-      uint8_t bThis = tolower(*pThis);
-      uint8_t bThat = tolower(*pThat);
-      if (bThis != bThat)
+      uint8_t this_char = tolower(*pThis);
+      uint8_t that_char = tolower(*pThat);
+      if (this_char != that_char) {
         return false;
+      }
     }
     pThis++;
     pThat++;
