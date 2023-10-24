@@ -71,7 +71,7 @@ FPDF_RenderPageBitmapWithColorScheme_Start(FPDF_BITMAP bitmap,
                                 /*need_to_restore=*/false, &pause_adapter);
 
 #if defined(_SKIA_SUPPORT_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     pBitmap->UnPreMultiply();
   }
 #endif  // defined(_SKIA_SUPPORT_)
@@ -115,7 +115,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDF_RenderPage_Continue(FPDF_PAGE page,
   pContext->m_pRenderer->Continue(&pause_adapter);
 
 #if defined(_SKIA_SUPPORT_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     pContext->m_pDevice->GetBitmap()->UnPreMultiply();
   }
 #endif  // defined(_SKIA_SUPPORT_)

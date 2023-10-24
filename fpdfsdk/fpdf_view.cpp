@@ -129,7 +129,7 @@ void UseRendererType(FPDF_RENDERER_TYPE public_type) {
   // This build configuration has the option for runtime renderer selection.
   if (public_type == FPDF_RENDERERTYPE_AGG ||
       public_type == FPDF_RENDERERTYPE_SKIA) {
-    CFX_DefaultRenderDevice::SetDefaultRenderer(
+    CFX_DefaultRenderDevice::SetRendererType(
         static_cast<CFX_DefaultRenderDevice::RendererType>(public_type));
     return;
   }
@@ -587,7 +587,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   // Create will probably work fine even if it fails here: we will just attach
   // a zero-sized bitmap to `device`.
   pBitmap->Create(size_x, size_y, FXDIB_Format::kArgb);
-  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (!CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     // Not needed by Skia. Call it for AGG to preserve pre-existing behavior.
     pBitmap->Clear(0x00ffffff);
   }
@@ -606,7 +606,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
                                 /*pause=*/nullptr);
 
 #if defined(_SKIA_SUPPORT_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     pBitmap->UnPreMultiply();
   }
 #endif
@@ -700,7 +700,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
                                 /*pause=*/nullptr);
 
 #if defined(_SKIA_SUPPORT_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     pBitmap->UnPreMultiply();
   }
 #endif

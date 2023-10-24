@@ -18,8 +18,9 @@ using pdfium::RectanglesChecksum;
 namespace {
 
 const char* ShrunkChecksum() {
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     return "78c52d6029283090036e6db6683401e2";
+  }
   return "f4136cc9209207ab60eb8381a3df2e69";
 }
 
@@ -210,8 +211,9 @@ TEST_F(FPDFTransformEmbedderTest, NoArtBox) {
 
 TEST_F(FPDFTransformEmbedderTest, SetCropBox) {
   const char* cropped_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "4b9d2d2246be61c583f454245fe3172f";
+    }
     return "9937883715d5144c079fb8f7e3d4f395";
   }();
   {
@@ -286,8 +288,9 @@ TEST_F(FPDFTransformEmbedderTest, SetCropBox) {
 
 TEST_F(FPDFTransformEmbedderTest, SetMediaBox) {
   const char* shrunk_checksum_set_media_box = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "9f28f0610a7f789c24cfd5f9bd5dc3de";
+    }
     return "eab5958f62f7ce65d7c32de98389fee1";
   }();
 

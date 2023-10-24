@@ -38,7 +38,7 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
 #endif
 
   // Runtime check to see if Skia is the renderer variant in use.
-  static bool SkiaIsDefaultRenderer();
+  static bool UseSkiaRenderer();
 
 #if defined(_SKIA_SUPPORT_)
   // This internal definition of renderer types must stay updated with respect
@@ -50,8 +50,11 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
     kSkia = 1,
   };
 
-  // Update default renderer.
-  static void SetDefaultRenderer(RendererType renderer_type);
+  // When Skia is enabled at compile time, this constant is assigned as the
+  // default value UseSkiaRenderer() returns. SetRendererType() may override it.
+  static constexpr RendererType kDefaultRenderer = RendererType::kSkia;
+
+  static void SetRendererType(RendererType renderer_type);
 #endif  // defined(_SKIA_SUPPORT_)
 
  private:

@@ -13,16 +13,16 @@ namespace {
 // When build variant is Skia then it is assumed as the default, but might be
 // overridden at runtime.
 #if defined(_SKIA_SUPPORT_)
-CFX_DefaultRenderDevice::RendererType g_default_renderer_type =
-    CFX_DefaultRenderDevice::RendererType::kSkia;
+CFX_DefaultRenderDevice::RendererType g_renderer_type =
+    CFX_DefaultRenderDevice::kDefaultRenderer;
 #endif
 
 }  // namespace
 
 // static
-bool CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() {
+bool CFX_DefaultRenderDevice::UseSkiaRenderer() {
 #if defined(_SKIA_SUPPORT_)
-  return g_default_renderer_type == RendererType::kSkia;
+  return g_renderer_type == RendererType::kSkia;
 #else
   return false;
 #endif
@@ -30,8 +30,8 @@ bool CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() {
 
 #if defined(_SKIA_SUPPORT_)
 // static
-void CFX_DefaultRenderDevice::SetDefaultRenderer(RendererType renderer_type) {
-  g_default_renderer_type = renderer_type;
+void CFX_DefaultRenderDevice::SetRendererType(RendererType renderer_type) {
+  g_renderer_type = renderer_type;
 }
 #endif
 
@@ -63,7 +63,7 @@ bool CFX_DefaultRenderDevice::CFX_DefaultRenderDevice::AttachImpl(
     RetainPtr<CFX_DIBitmap> pBackdropBitmap,
     bool bGroupKnockout) {
 #if defined(_SKIA_SUPPORT_)
-  if (SkiaIsDefaultRenderer()) {
+  if (UseSkiaRenderer()) {
     return AttachSkiaImpl(std::move(pBitmap), bRgbByteOrder,
                           std::move(pBackdropBitmap), bGroupKnockout);
   }
@@ -77,8 +77,9 @@ bool CFX_DefaultRenderDevice::Create(int width,
                                      FXDIB_Format format,
                                      RetainPtr<CFX_DIBitmap> pBackdropBitmap) {
 #if defined(_SKIA_SUPPORT_)
-  if (SkiaIsDefaultRenderer())
+  if (UseSkiaRenderer()) {
     return CreateSkia(width, height, format, pBackdropBitmap);
+  }
 #endif
   return CreateAgg(width, height, format, pBackdropBitmap);
 }

@@ -201,7 +201,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
 
   auto pDevice = std::make_unique<CFX_DefaultRenderDevice>();
 #if defined(_SKIA_SUPPORT_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() && canvas) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer() && canvas) {
     pDevice->AttachCanvas(reinterpret_cast<SkCanvas*>(canvas));
   }
 #endif

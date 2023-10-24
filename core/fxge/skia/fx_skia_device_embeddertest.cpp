@@ -207,14 +207,16 @@ using FxgeSkiaEmbedderTest = EmbedderTest;
 }  // namespace
 
 TEST(fxge, SkiaStateEmpty) {
-  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+  if (!CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     return;
+  }
   Harness(&EmptyTest, {});
 }
 
 TEST(fxge, SkiaStatePath) {
-  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+  if (!CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     return;
+  }
   Harness(&CommonTest, {State::Change::kNo, State::Save::kYes,
                         State::Clip::kSame, State::Graphic::kPath, 0xFF112233});
   Harness(&CommonTest,
@@ -229,8 +231,9 @@ TEST(fxge, SkiaStatePath) {
 }
 
 TEST(fxge, SkiaStateText) {
-  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+  if (!CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     return;
+  }
 
   Harness(&CommonTest,
           {State::Change::kNo, State::Save::kYes, State::Clip::kDifferentMatrix,
@@ -240,8 +243,9 @@ TEST(fxge, SkiaStateText) {
 }
 
 TEST(fxge, SkiaStateOOSClip) {
-  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+  if (!CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     return;
+  }
   Harness(&OutOfSequenceClipTest, {});
 }
 
@@ -255,7 +259,7 @@ TEST_F(FxgeSkiaEmbedderTest, RenderBigImageTwice) {
   static constexpr int kPageWidth = kImageWidth / kPageToImageFactor;
   static constexpr int kPageHeight = kImageHeight / kPageToImageFactor;
 
-  if (!CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (!CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     GTEST_SKIP() << "Skia is not the default renderer";
   }
 

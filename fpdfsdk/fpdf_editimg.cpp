@@ -317,8 +317,9 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
     return nullptr;
 
 #if defined(_SKIA_SUPPORT_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     result_bitmap->UnPreMultiply();
+  }
 #endif
 
   // Caller takes ownership.

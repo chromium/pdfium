@@ -317,7 +317,7 @@ unsigned LineClip(float w,
                   float* x,
                   float* y) {
 #if defined(_SKIA_SUPPORT_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     // TODO(caryclark) temporary replacement of antigrain in line function to
     // permit removing antigrain altogether
     rect_base rect = {0.0f, 0.0f, w, h};

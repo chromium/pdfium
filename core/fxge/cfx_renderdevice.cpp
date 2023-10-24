@@ -713,7 +713,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(
   if (fill && fill_alpha && stroke_alpha < 0xff && fill_options.stroke) {
     if (m_RenderCaps & FXRC_FILLSTROKE_PATH) {
 #if defined(_SKIA_SUPPORT_)
-      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+      if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
         m_pDeviceDriver->SetGroupKnockout(true);
       }
 #endif
@@ -722,7 +722,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(
           fill_options, blend_type);
 
 #if defined(_SKIA_SUPPORT_)
-      if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+      if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
         // Restore the group knockout status for `m_pDeviceDriver` after
         // finishing painting a fill-and-stroke path.
         m_pDeviceDriver->SetGroupKnockout(false);
@@ -1032,7 +1032,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
         // one expires 10/7/19.  This makes LCD anti-aliasing very ugly, so we
         // instead fall back on NORMAL anti-aliasing.
         anti_alias = FT_RENDER_MODE_NORMAL;
-        if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+        if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
           // Since |anti_alias| doesn't affect Skia rendering, and Skia only
           // follows strictly to the options provided by |text_options|, we need
           // to update |text_options| so that Skia falls back on normal

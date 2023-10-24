@@ -24,7 +24,7 @@ constexpr FX_ARGB kRed = 0xFFFF0000;
 constexpr FX_ARGB kWhite = 0xFFFFFFFF;
 
 const char* AnnotationStampWithApBaseContentChecksum() {
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
     return "7f8437212ef1cd33ff505ece5a7e99f8";
 #elif BUILDFLAG(IS_APPLE)
@@ -321,7 +321,7 @@ void FPDFProgressiveRenderEmbedderTest::VerifyRenderingWithColorScheme(
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderTextWithColorScheme) {
   // Test rendering of text with forced color scheme on.
   const char* content_with_text_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
       return "e970b97a719ce4d8efdfcbc316255aac";
 #elif BUILDFLAG(IS_APPLE)
@@ -347,8 +347,9 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderTextWithColorScheme) {
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderPathWithColorScheme) {
   // Test rendering of paths with forced color scheme on.
   const char* rectangles_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "4b0f850a94698d07b6cd2814d1b4ccb7";
+    }
     return "249f59b0d066c4f6bd89782a80822219";
   }();
 
@@ -364,8 +365,9 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
   // Test rendering of paths with forced color scheme on and conversion from
   // fill to stroke enabled. The fill paths should be rendered as stroke.
   const char* rectangles_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "c1cbbd2ce6921f608a3c55140592419b";
+    }
     return "0ebcc11e617635eca1fa9ce475383a80";
   }();
 
@@ -384,7 +386,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderHighlightWithColorScheme) {
   // path since highlights have Multiply blend mode, while the other path has
   // Normal blend mode.
   const char* content_with_highlight_fill_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
       return "8ed2cbc6a362752fabdf9b50d3358c96";
 #elif BUILDFLAG(IS_APPLE)
@@ -418,7 +420,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
   // Normal blend mode.
 
   const char* md5_content_with_highlight = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
       return "9389330c006d3e6054057992624684a8";
 #elif BUILDFLAG(IS_APPLE)
@@ -445,7 +447,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderInkWithColorScheme) {
   // Test rendering of multiple ink with forced color scheme on.
   const char* content_with_ink_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
       return "f6dfec1a38800973e57bba5da4fe77fe";
 #elif BUILDFLAG(IS_APPLE)
@@ -467,7 +469,7 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderInkWithColorScheme) {
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
   // Test rendering of static annotation with forced color scheme on.
   const char* content_with_stamp_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
       return "9365cd179a0109640bb2b7456f211524";
 #elif BUILDFLAG(IS_APPLE)
@@ -493,8 +495,9 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderFormWithColorScheme) {
   // Test rendering of form does not change with forced color scheme on.
   const char* content_with_form_checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "9f75d98afc6d6313bd87e6562ea6df15";
+    }
     return "080f7a4381606659301440e1b14dca35";
   }();
 

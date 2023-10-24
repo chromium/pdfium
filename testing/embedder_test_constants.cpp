@@ -10,7 +10,7 @@
 namespace pdfium {
 
 const char* AnnotationStampWithApChecksum() {
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
     return "f7f3a1029cea01cc993fa7770feebdc1";
 #elif BUILDFLAG(IS_APPLE)
@@ -29,13 +29,14 @@ const char* AnnotationStampWithApChecksum() {
 const char kBlankPage612By792Checksum[] = "1940568c9ba33bac5d0b1ee9558c76b3";
 
 const char* Bug890322Checksum() {
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     return "793689536cf64fe792c2f241888c0cf3";
+  }
   return "6c674642154408e877d88c6c082d67e9";
 }
 
 const char* HelloWorldChecksum() {
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
     return "6023c7d8b7258cc686a1d1dbd0f4d6d0";
 #elif BUILDFLAG(IS_APPLE)
@@ -52,7 +53,7 @@ const char* HelloWorldChecksum() {
 }
 
 const char* HelloWorldRemovedChecksum() {
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
     return "7db00f520f0838da10ef45373af3f6aa";
 #elif BUILDFLAG(IS_APPLE)
@@ -69,19 +70,21 @@ const char* HelloWorldRemovedChecksum() {
 }
 
 const char* ManyRectanglesChecksum() {
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     return "4e7e280c1597222afcb0ee3bb90ec119";
+  }
   return "b0170c575b65ecb93ebafada0ff0f038";
 }
 
 const char* RectanglesChecksum() {
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     return "b4e411a6b5ffa59a50efede2efece597";
+  }
   return "0a90de37f52127619c3dfb642b5fa2fe";
 }
 
 const char* TextFormChecksum() {
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
     return "e83f49ddea0822734a16b986e9935732";
 #elif BUILDFLAG(IS_APPLE)

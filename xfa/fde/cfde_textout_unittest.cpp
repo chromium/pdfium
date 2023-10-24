@@ -88,7 +88,7 @@ TEST_F(CFDETextOutTest, DrawLogicTextBasic) {
   text_out().DrawLogicText(device(), L"foo", CFX_RectF(0, 0, 2100, 100));
   const char* checksum = []() {
 #if BUILDFLAG(IS_WIN)
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "cdd8f00144e421bf18f22d09896838b0";
     }
 #endif
@@ -125,7 +125,7 @@ class CFDETextOutLargeBitmapTest : public CFDETextOutTest {
   }
 
   const char* GetLargeTextBlobChecksum() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "cd357c6afbf17bb2ac48817df5d9eaad";
     }
     return "268b71a8660b51e31c6bf30fc7ff1e08";

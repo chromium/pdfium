@@ -41,7 +41,7 @@ int FakeBlockWriter(FPDF_FILEWRITE* pThis,
 constexpr int kRectanglesMultiPagesPageCount = 2;
 
 const char* RectanglesMultiPagesExpectedChecksum(int page_index) {
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     static constexpr const char* kChecksums[kRectanglesMultiPagesPageCount] = {
         "07606a12487bd0c28a88f23fa00fc313", "94ea6e1eef220833a3ec14d6a1c612b0"};
     return kChecksums[page_index];
@@ -53,7 +53,7 @@ const char* RectanglesMultiPagesExpectedChecksum(int page_index) {
 
 const char* Bug750568PageHash(int page_index) {
   constexpr int kBug750568PageCount = 4;
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     static constexpr const char* kChecksums[kBug750568PageCount] = {
         "eaa139e944eafb43d31e8742a0e158de", "226485e9d4fa6a67dfe0a88723f12060",
         "c5601a3492ae5dcc5dd25140fc463bfe", "1f60055b54de4fac8a59c65e90da156e"};
@@ -176,8 +176,9 @@ TEST_F(FPDFPPOEmbedderTest, NupRenderImage) {
 
 TEST_F(FPDFPPOEmbedderTest, ImportPageToXObject) {
   const char* checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "d6ebc0a8afc22fe0137f54ce54e1a19c";
+    }
     return "2d88d180af7109eb346439f7c855bb29";
   }();
 
@@ -276,8 +277,9 @@ TEST_F(FPDFPPOEmbedderTest, ImportPageToXObject) {
 
 TEST_F(FPDFPPOEmbedderTest, ImportPageToXObjectWithSameDoc) {
   const char* checksum = []() {
-    if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "8e7d672f49f9ca98fb9157824cefc204";
+    }
     return "4d5ca14827b7707f8283e639b33c121a";
   }();
 

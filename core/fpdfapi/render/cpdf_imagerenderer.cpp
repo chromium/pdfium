@@ -54,7 +54,7 @@ bool IsImageValueTooBig(int val) {
 
 void ClearBitmap(CFX_DefaultRenderDevice& bitmap_device, uint32_t color) {
 #if defined(_SKIA_SUPPORT_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     bitmap_device.Clear(color);
     return;
   }
@@ -366,7 +366,7 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
   DCHECK(!bitmap_device2.GetBitmap()->HasPalette());
   bitmap_device2.GetBitmap()->ConvertFormat(FXDIB_Format::k8bppMask);
 #if defined(_SKIA_SUPPORT_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer() &&
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer() &&
       m_pRenderStatus->GetRenderDevice()->SetBitsWithMask(
           bitmap_device1.GetBitmap(), bitmap_device2.GetBitmap(), rect.left,
           rect.top, m_BitmapAlpha, m_BlendType)) {

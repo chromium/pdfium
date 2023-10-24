@@ -114,8 +114,9 @@ FXDIB_Format GetFormatForLuminosity(bool is_luminosity) {
 #if BUILDFLAG(IS_APPLE)
   return FXDIB_Format::kRgb32;
 #else
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer())
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     return FXDIB_Format::kRgb32;
+  }
   return FXDIB_Format::kRgb;
 #endif
 }
@@ -650,7 +651,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   bitmap_render.Initialize(nullptr, nullptr);
   bitmap_render.ProcessObjectNoClip(pPageObj, new_matrix);
 #if defined(_SKIA_SUPPORT_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     // Safe because `CFX_SkiaDeviceDriver` always uses pre-multiplied alpha.
     // TODO(crbug.com/pdfium/2011): Remove the need for this.
     bitmap_device.GetBitmap()->ForcePreMultiply();
@@ -677,7 +678,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     transparency.SetGroup();
   }
 #if defined(_SKIA_SUPPORT_)
-  if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     bitmap_device.GetBitmap()->UnPreMultiply();
   }
 #endif
@@ -1195,7 +1196,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
   if (blend_mode == BlendMode::kNormal) {
     if (!pDIBitmap->IsMaskFormat()) {
       if (bitmap_alpha < 255) {
-        if (CFX_DefaultRenderDevice::SkiaIsDefaultRenderer()) {
+        if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
           std::unique_ptr<CFX_ImageRenderer> dummy;
           CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(
               pDIBitmap->GetWidth(), pDIBitmap->GetHeight(), left, top);
