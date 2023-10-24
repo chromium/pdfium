@@ -93,7 +93,7 @@ is_component_build = false # Disable component build (Though it should work)
 For sample applications like `pdfium_test` to build, one must set
 `pdf_is_standalone = true`.
 
-By default, the entire project builds with C++17.
+By default, the entire project builds with C++20.
 
 By default, PDFium expects to build with a clang compiler that provides
 additional chrome plugins. To build against a vanilla one lacking these,
