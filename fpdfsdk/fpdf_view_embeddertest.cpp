@@ -2089,6 +2089,55 @@ TEST_F(FPDFViewEmbedderTest, RenderXfaPageToSkp) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFViewEmbedderTest, Bug2087) {
+  FPDF_DestroyLibrary();
+
+  std::string agg_checksum;
+  {
+    FPDF_LIBRARY_CONFIG config = {
+        .version = 4,
+        .m_pUserFontPaths = nullptr,
+        .m_pIsolate = nullptr,
+        .m_v8EmbedderSlot = 0,
+        .m_pPlatform = nullptr,
+        .m_RendererType = FPDF_RENDERERTYPE_AGG,
+    };
+    FPDF_InitLibraryWithConfig(&config);
+
+    ASSERT_TRUE(OpenDocument("rectangles.pdf"));
+    FPDF_PAGE page = LoadPage(0);
+    ScopedFPDFBitmap bitmap = RenderPage(page);
+    agg_checksum = HashBitmap(bitmap.get());
+    UnloadPage(page);
+    CloseDocument();
+    FPDF_DestroyLibrary();
+  }
+
+  std::string skia_checksum;
+  {
+    FPDF_LIBRARY_CONFIG config = {
+        .version = 2,
+        .m_pUserFontPaths = nullptr,
+        .m_pIsolate = nullptr,
+        .m_v8EmbedderSlot = 0,
+    };
+    FPDF_InitLibraryWithConfig(&config);
+
+    ASSERT_TRUE(OpenDocument("rectangles.pdf"));
+    FPDF_PAGE page = LoadPage(0);
+    ScopedFPDFBitmap bitmap = RenderPage(page);
+    skia_checksum = HashBitmap(bitmap.get());
+    UnloadPage(page);
+    CloseDocument();
+  }
+
+  // TODO(pdfium:2087): These checksums should not be equal.
+  EXPECT_EQ(agg_checksum, skia_checksum);
+
+  EmbedderTestEnvironment::GetInstance()->TearDown();
+  EmbedderTestEnvironment::GetInstance()->SetUp();
+}
 #endif  // defined(_SKIA_SUPPORT_)
 
 TEST_F(FPDFViewEmbedderTest, NoSmoothTextItalicOverlappingGlyphs) {
