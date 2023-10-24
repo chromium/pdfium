@@ -28,11 +28,7 @@ class CPDF_SecurityHandler final : public Retainable {
               const ByteString& password);
   void OnCreate(CPDF_Dictionary* pEncryptDict,
                 const CPDF_Array* pIdArray,
-                const ByteString& user_password,
-                const ByteString& owner_password);
-  void OnCreate(CPDF_Dictionary* pEncryptDict,
-                const CPDF_Array* pIdArray,
-                const ByteString& user_password);
+                const ByteString& password);
 
   // When `get_owner_perms` is true, returns full permissions if unlocked by
   // owner.
@@ -70,14 +66,8 @@ class CPDF_SecurityHandler final : public Retainable {
   bool CheckOwnerPassword(const ByteString& password);
   bool AES256_CheckPassword(const ByteString& password, bool bOwner);
   void AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
-                          const ByteString& password,
-                          bool bOwner);
+                          const ByteString& password);
   void AES256_SetPerms(CPDF_Dictionary* pEncryptDict);
-  void OnCreateInternal(CPDF_Dictionary* pEncryptDict,
-                        const CPDF_Array* pIdArray,
-                        const ByteString& user_password,
-                        const ByteString& owner_password,
-                        bool bDefault);
   bool CheckSecurity(const ByteString& password);
 
   void InitCryptoHandler();
