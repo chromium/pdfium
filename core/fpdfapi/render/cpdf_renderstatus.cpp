@@ -790,13 +790,11 @@ bool CPDF_RenderStatus::ProcessText(CPDF_TextObject* textobj,
       case TextRenderingMode::MODE_INVISIBLE:
         // Already handled above, but the compiler is not smart enough to
         // realize it.
-        NOTREACHED();
-        return true;
+        NOTREACHED_NORETURN();
       case TextRenderingMode::MODE_CLIP:
         return true;
       case TextRenderingMode::MODE_UNKNOWN:
-        NOTREACHED();
-        return false;
+        NOTREACHED_NORETURN();
     }
   }
   FX_ARGB stroke_argb = 0;
