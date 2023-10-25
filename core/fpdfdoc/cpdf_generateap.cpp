@@ -393,16 +393,20 @@ ByteString GetPopupContentsString(CPDF_Document* pDoc,
                     "ET\n", "Q\n"};
 }
 
+RetainPtr<CPDF_Dictionary> GenerateFallbackFontDict(CPDF_Document* doc) {
+  auto font_dict = doc->NewIndirect<CPDF_Dictionary>();
+  font_dict->SetNewFor<CPDF_Name>("Type", "Font");
+  font_dict->SetNewFor<CPDF_Name>("Subtype", "Type1");
+  font_dict->SetNewFor<CPDF_Name>("BaseFont", CFX_Font::kDefaultAnsiFontName);
+  font_dict->SetNewFor<CPDF_Name>("Encoding",
+                                  pdfium::font_encodings::kWinAnsiEncoding);
+  return font_dict;
+}
+
 RetainPtr<CPDF_Dictionary> GenerateResourceFontDict(
     CPDF_Document* pDoc,
     const ByteString& sFontDictName) {
-  auto pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
-  pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
-  pFontDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
-  pFontDict->SetNewFor<CPDF_Name>("BaseFont", CFX_Font::kDefaultAnsiFontName);
-  pFontDict->SetNewFor<CPDF_Name>("Encoding",
-                                  pdfium::font_encodings::kWinAnsiEncoding);
-
+  auto pFontDict = GenerateFallbackFontDict(pDoc);
   auto pResourceFontDict = pDoc->New<CPDF_Dictionary>();
   pResourceFontDict->SetNewFor<CPDF_Reference>(sFontDictName, pDoc,
                                                pFontDict->GetObjNum());
@@ -945,12 +949,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
   RetainPtr<CPDF_Dictionary> pFontDict =
       pDRFontDict->GetMutableDictFor(font_name);
   if (!pFontDict) {
-    pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
-    pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
-    pFontDict->SetNewFor<CPDF_Name>("Subtype", "Type1");
-    pFontDict->SetNewFor<CPDF_Name>("BaseFont", CFX_Font::kDefaultAnsiFontName);
-    pFontDict->SetNewFor<CPDF_Name>("Encoding",
-                                    pdfium::font_encodings::kWinAnsiEncoding);
+    pFontDict = GenerateFallbackFontDict(pDoc);
     pDRFontDict->SetNewFor<CPDF_Reference>(font_name, pDoc,
                                            pFontDict->GetObjNum());
   }
