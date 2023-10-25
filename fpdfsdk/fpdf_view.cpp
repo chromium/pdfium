@@ -31,6 +31,7 @@
 #include "core/fpdfdoc/cpdf_nametree.h"
 #include "core/fpdfdoc/cpdf_viewerpreferences.h"
 #include "core/fxcrt/cfx_read_only_span_stream.h"
+#include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
@@ -229,6 +230,7 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* config) {
     return;
 
   FX_InitializeMemoryAllocators();
+  CFX_Timer::InitializeGlobals();
   CFX_GEModule::Create(config ? config->m_pUserFontPaths : nullptr);
   CPDF_PageModule::Create();
 
@@ -261,6 +263,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyLibrary() {
 
   CPDF_PageModule::Destroy();
   CFX_GEModule::Destroy();
+  CFX_Timer::DestroyGlobals();
 
   g_bLibraryInitialized = false;
 }

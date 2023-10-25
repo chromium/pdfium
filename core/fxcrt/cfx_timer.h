@@ -35,6 +35,9 @@ class CFX_Timer {
     virtual void OnTimerFired() = 0;
   };
 
+  static void InitializeGlobals();
+  static void DestroyGlobals();
+
   CFX_Timer(HandlerIface* pHandlerIface,
             CallbackIface* pCallbackIface,
             int32_t nInterval);

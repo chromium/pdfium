@@ -19,6 +19,9 @@ class GlobalTimer {
     kOneShot = true,
   };
 
+  static void InitializeGlobals();
+  static void DestroyGlobals();
+
   GlobalTimer(CJS_App* pObj,
               CJS_Runtime* pRuntime,
               Type nType,
