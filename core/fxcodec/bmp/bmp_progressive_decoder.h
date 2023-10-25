@@ -8,7 +8,6 @@
 #define CORE_FXCODEC_BMP_BMP_PROGRESSIVE_DECODER_H_
 
 #include "core/fxcodec/progressive_decoder_iface.h"
-#include "third_party/base/no_destructor.h"
 
 #ifndef PDF_ENABLE_XFA_BMP
 #error "BMP must be enabled"
@@ -18,6 +17,9 @@ namespace fxcodec {
 
 class BmpProgressiveDecoder final : public ProgressiveDecoderIface {
  public:
+  static void InitializeGlobals();
+  static void DestroyGlobals();
+
   static BmpProgressiveDecoder* GetInstance();
 
   // ProgressiveDecoderIface:
@@ -26,8 +28,6 @@ class BmpProgressiveDecoder final : public ProgressiveDecoderIface {
              RetainPtr<CFX_CodecMemory> codec_memory) override;
 
  private:
-  friend pdfium::base::NoDestructor<BmpProgressiveDecoder>;
-
   BmpProgressiveDecoder();
   ~BmpProgressiveDecoder() override;
 };

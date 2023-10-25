@@ -27,6 +27,7 @@ source_set("fpdfxfa") {
     "../../core/fpdfapi/page",
     "../../core/fpdfapi/parser",
     "../../core/fpdfapi/render",
+    "../../core/fxcodec",
     "../../core/fxcrt",
     "../../fxbarcode",
     "../../fxjs",

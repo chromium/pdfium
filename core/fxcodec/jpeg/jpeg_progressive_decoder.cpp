@@ -84,10 +84,27 @@ CJpegContext::~CJpegContext() {
 
 namespace fxcodec {
 
+namespace {
+
+JpegProgressiveDecoder* g_jpeg_decoder = nullptr;
+
+}  // namespace
+
+// static
+void JpegProgressiveDecoder::InitializeGlobals() {
+  CHECK(!g_jpeg_decoder);
+  g_jpeg_decoder = new JpegProgressiveDecoder();
+}
+
+// static
+void JpegProgressiveDecoder::DestroyGlobals() {
+  delete g_jpeg_decoder;
+  g_jpeg_decoder = nullptr;
+}
+
 // static
 JpegProgressiveDecoder* JpegProgressiveDecoder::GetInstance() {
-  static pdfium::base::NoDestructor<JpegProgressiveDecoder> s;
-  return s.get();
+  return g_jpeg_decoder;
 }
 
 // static
