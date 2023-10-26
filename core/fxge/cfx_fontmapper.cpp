@@ -18,13 +18,13 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
-#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
 #include "third_party/base/check_op.h"
+#include "third_party/base/containers/adapters.h"
 #include "third_party/base/containers/contains.h"
 
 namespace {
@@ -476,14 +476,15 @@ void CFX_FontMapper::LoadInstalledFonts() {
 
 ByteString CFX_FontMapper::MatchInstalledFonts(const ByteString& norm_name) {
   LoadInstalledFonts();
-  int i;
-  for (i = fxcrt::CollectionSize<int>(m_InstalledTTFonts) - 1; i >= 0; i--) {
-    if (TT_NormalizeName(m_InstalledTTFonts[i]) == norm_name)
-      return m_InstalledTTFonts[i];
+  for (const ByteString& font : pdfium::base::Reversed(m_InstalledTTFonts)) {
+    if (TT_NormalizeName(font) == norm_name) {
+      return font;
+    }
   }
-  for (i = fxcrt::CollectionSize<int>(m_LocalizedTTFonts) - 1; i >= 0; i--) {
-    if (TT_NormalizeName(m_LocalizedTTFonts[i].first) == norm_name)
-      return m_LocalizedTTFonts[i].second;
+  for (const auto& font_data : pdfium::base::Reversed(m_LocalizedTTFonts)) {
+    if (TT_NormalizeName(font_data.first) == norm_name) {
+      return font_data.second;
+    }
   }
   return ByteString();
 }
