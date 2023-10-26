@@ -2195,14 +2195,14 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsComboBox) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbedderTest, BUG_1206) {
+TEST_F(FPDFAnnotEmbedderTest, Bug1206) {
   const char* expected_bitmap = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "a1ea1ceebb26922fae576cb79ce63af0";
     }
     return "0d9fc05c6762fd788bd23fd87a4967bc";
   }();
-  static constexpr size_t kExpectedSize = 1593;
+  static constexpr size_t kExpectedSize = 1601;
 
   ASSERT_TRUE(OpenDocument("bug_1206.pdf"));
 

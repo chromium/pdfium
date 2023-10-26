@@ -404,13 +404,13 @@ RetainPtr<CPDF_Dictionary> GenerateFallbackFontDict(CPDF_Document* doc) {
 }
 
 RetainPtr<CPDF_Dictionary> GenerateResourceFontDict(
-    CPDF_Document* pDoc,
-    const ByteString& sFontDictName) {
-  auto pFontDict = GenerateFallbackFontDict(pDoc);
-  auto pResourceFontDict = pDoc->New<CPDF_Dictionary>();
-  pResourceFontDict->SetNewFor<CPDF_Reference>(sFontDictName, pDoc,
-                                               pFontDict->GetObjNum());
-  return pResourceFontDict;
+    CPDF_Document* doc,
+    const ByteString& font_name,
+    uint32_t font_dict_obj_num) {
+  auto resource_font_dict = doc->New<CPDF_Dictionary>();
+  resource_font_dict->SetNewFor<CPDF_Reference>(font_name, doc,
+                                                font_dict_obj_num);
+  return resource_font_dict;
 }
 
 ByteString GetPaintOperatorString(bool bIsStrokeRect, bool bIsFillRect) {
@@ -755,22 +755,22 @@ bool GeneratePopupAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
   sAppStream << rect.left << " " << rect.bottom << " " << rect.Width() << " "
              << rect.Height() << " re b\n";
 
-  ByteString sFontName = "FONT";
-  RetainPtr<CPDF_Dictionary> pResourceFontDict =
-      GenerateResourceFontDict(pDoc, sFontName);
-
+  RetainPtr<CPDF_Dictionary> font_dict = GenerateFallbackFontDict(pDoc);
   auto* pData = CPDF_DocPageData::FromDocument(pDoc);
-  RetainPtr<CPDF_Font> pDefFont = pData->GetFont(pResourceFontDict);
+  RetainPtr<CPDF_Font> pDefFont = pData->GetFont(font_dict);
   if (!pDefFont)
     return false;
 
+  const ByteString font_name = "FONT";
+  RetainPtr<CPDF_Dictionary> resource_font_dict =
+      GenerateResourceFontDict(pDoc, font_name, font_dict->GetObjNum());
   RetainPtr<CPDF_Dictionary> pExtGStateDict =
       GenerateExtGStateDict(*pAnnotDict, sExtGSDictName, "Normal");
   RetainPtr<CPDF_Dictionary> pResourceDict = GenerateResourceDict(
-      pDoc, std::move(pExtGStateDict), std::move(pResourceFontDict));
+      pDoc, std::move(pExtGStateDict), std::move(resource_font_dict));
 
   sAppStream << GetPopupContentsString(pDoc, *pAnnotDict, std::move(pDefFont),
-                                       sFontName);
+                                       font_name);
   GenerateAndSetAPDict(pDoc, pAnnotDict, &sAppStream, std::move(pResourceDict),
                        false /*IsTextMarkupAnnotation*/);
   return true;
