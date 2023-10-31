@@ -4,6 +4,7 @@
 /compile_commands.json
 /out
 /testing/corpus
+/testing/scripts/rust
 /third_party/abseil-cpp
 /third_party/android_toolchain
 /third_party/catapult
@@ -28,6 +29,7 @@
 /third_party/markupsafe
 /third_party/nasm
 /third_party/ninja/ninja*
+/third_party/rust-toolchain
 /third_party/skia
 /third_party/test_fonts
 /third_party/zlib
@@ -35,6 +37,7 @@
 /tools/code_coverage
 /tools/memory
 /tools/resultdb
+/tools/rust
 /tools/skia_goldctl
 /v8
 /xcodebuild

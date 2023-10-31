@@ -28,6 +28,14 @@ vars = {
 
   'checkout_instrumented_libraries': 'checkout_linux and checkout_configuration != "small" and checkout_configuration != "minimal"',
 
+  # Fetch the rust toolchain.
+  #
+  # Use a custom_vars section to enable it:
+  # "custom_vars": {
+  #   "checkout_rust": True,
+  # }
+  'checkout_rust': False,
+
   'checkout_skia': 'checkout_configuration != "minimal"',
 
   'checkout_testing_corpus': 'checkout_configuration != "small" and checkout_configuration != "minimal"',
@@ -172,6 +180,10 @@ vars = {
   # and whatever else without interference from each other.
   'resultdb_version': 'git_revision:ebc74d10fa0d64057daa6f128e89f3672eeeec95',
   # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling clang
+  # and whatever else without interference from each other.
+  'rust_revision': 'c2a0e44aaa68e02826feea4a4e152bdd8b897266',
+  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling skia
   # and whatever else without interference from each other.
   'skia_revision': 'e8c78601ecf626902a0ba74f7a7c1bccc90c354f',
@@ -179,6 +191,10 @@ vars = {
   # the commit queue can handle CLs rolling test_fonts
   # and whatever else without interference from each other.
   'test_fonts_revision': '7f51783942943e965cd56facf786544ccfc07713',
+  # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling clang
+  # and whatever else without interference from each other.
+  'testing_rust_revision': '1938e1e7b5fa41992992e9f2fceff9b8a77de6c3',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling tools_memory
   # and whatever else without interference from each other.
@@ -274,6 +290,12 @@ deps = {
   'testing/corpus': {
     'url': Var('pdfium_git') + '/pdfium_tests@' + Var('pdfium_tests_revision'),
     'condition': 'checkout_testing_corpus',
+  },
+
+  'testing/scripts/rust': {
+    'url': Var('chromium_git') + '/chromium/src/testing/scripts/rust.git@' +
+        Var('testing_rust_revision'),
+    'condition': 'checkout_rust',
   },
 
   'third_party/abseil-cpp':
@@ -408,6 +430,12 @@ deps = {
       },
     ],
     'dep_type': 'cipd',
+  },
+
+  'tools/rust': {
+    'url': Var('chromium_git') + '/chromium/src/tools/rust@' +
+        Var('rust_revision'),
+    'condition': 'checkout_rust',
   },
 
   # TODO(crbug.com/pdfium/1650): Set up autorollers for goldctl.
@@ -612,6 +640,14 @@ hooks = [
     'action': ['python3',
                'tools/clang/scripts/update.py'
     ],
+  },
+  {
+    'name': 'rust',
+    'pattern': '.',
+    'action': ['python3',
+               'tools/rust/update_rust.py'
+    ],
+    'condition': 'checkout_rust',
   },
   {
     'name': 'sysroot_arm',

@@ -52,3 +52,9 @@ wheel: <
   name: "infra/python/wheels/urllib3-py2_py3"
   version: "version:1.26.6"
 >
+
+# Used by //testing/scripts/rust unit tests.
+wheel: <
+  name: "infra/python/wheels/pyfakefs-py2_py3"
+  version: "version:3.7.2"
+>

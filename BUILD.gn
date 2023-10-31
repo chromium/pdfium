@@ -4,6 +4,7 @@
 
 import("//build/config/clang/clang.gni")
 import("//build/config/gclient_args.gni")
+import("//build/config/rust.gni")
 import("//testing/test.gni")
 import("pdfium.gni")
 
@@ -595,5 +596,12 @@ group("gn_check") {
   # available.
   if (defined(checkout_skia) && checkout_skia && !is_android) {
     deps += [ "//skia" ]
+  }
+}
+
+if (enable_rust) {
+  group("rust_build_tests") {
+    testonly = true
+    deps = [ "//build/rust/tests" ]
   }
 }
