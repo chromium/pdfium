@@ -578,11 +578,11 @@ bool CFX_RenderDevice::SetClip_PathStroke(
 bool CFX_RenderDevice::SetClip_Rect(const FX_RECT& rect) {
   CFX_Path path;
   path.AppendRect(rect.left, rect.bottom, rect.right, rect.top);
-  if (!SetClip_PathFill(
-          path, nullptr,
-          {.fill_type = CFX_FillRenderOptions::FillType::kWinding})) {
+  if (!SetClip_PathFill(path, nullptr,
+                        CFX_FillRenderOptions::WindingOptions())) {
     return false;
   }
+
   UpdateClipBox();
   return true;
 }
@@ -865,10 +865,10 @@ void CFX_RenderDevice::DrawZeroAreaPath(
   if (matrix && !matrix->IsIdentity() && !set_identity)
     new_matrix = matrix;
 
-  const CFX_FillRenderOptions path_options = {
-      .aliased_path = aliased_path,
-      .zero_area = true,
-  };
+  CFX_FillRenderOptions path_options;
+  path_options.zero_area = true;
+  path_options.aliased_path = aliased_path;
+
   m_pDeviceDriver->DrawPath(new_path, new_matrix, &graph_state, 0, stroke_color,
                             path_options, blend_type);
 }
@@ -1081,9 +1081,8 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   if (fabs(char2device.a) + fabs(char2device.b) > 50 * 1.0f ||
       GetDeviceType() == DeviceType::kPrinter) {
     if (pFont->GetFaceRec()) {
-      const CFX_FillRenderOptions path_options = {
-          .aliased_path = !is_text_smooth,
-      };
+      CFX_FillRenderOptions path_options;
+      path_options.aliased_path = !is_text_smooth;
       return DrawTextPath(pCharPos, pFont, font_size, mtText2Device, nullptr,
                           nullptr, fill_color, 0, nullptr, path_options);
     }
@@ -1224,13 +1223,11 @@ bool CFX_RenderDevice::DrawTextPath(pdfium::span<const TextCharPos> pCharPos,
     CFX_Path transformed_path(*pPath);
     transformed_path.Transform(matrix);
     if (fill_color || stroke_color) {
-      const CFX_FillRenderOptions::FillType fill_type =
-          fill_color ? CFX_FillRenderOptions::FillType::kWinding
-                     : CFX_FillRenderOptions::FillType::kNoFill;
-      const CFX_FillRenderOptions options = {
-          .fill_type = fill_type,
-          .text_mode = true,
-      };
+      CFX_FillRenderOptions options(fill_options);
+      if (fill_color) {
+        options.fill_type = CFX_FillRenderOptions::FillType::kWinding;
+      }
+      options.text_mode = true;
       if (!DrawPathWithBlend(transformed_path, pUser2Device, pGraphState,
                              fill_color, stroke_color, options,
                              BlendMode::kNormal)) {
@@ -1249,7 +1246,7 @@ void CFX_RenderDevice::DrawFillRect(const CFX_Matrix* pUser2Device,
   CFX_Path path;
   path.AppendFloatRect(rect);
   DrawPath(path, pUser2Device, nullptr, color, 0,
-           {.fill_type = CFX_FillRenderOptions::FillType::kWinding});
+           CFX_FillRenderOptions::WindingOptions());
 }
 
 void CFX_RenderDevice::DrawFillArea(const CFX_Matrix& mtUser2Device,
@@ -1262,7 +1259,7 @@ void CFX_RenderDevice::DrawFillArea(const CFX_Matrix& mtUser2Device,
     path.AppendPoint(points[i], CFX_Path::Point::Type::kLine);
 
   DrawPath(path, &mtUser2Device, nullptr, color, 0,
-           {.fill_type = CFX_FillRenderOptions::FillType::kEvenOdd});
+           CFX_FillRenderOptions::EvenOddOptions());
 }
 
 void CFX_RenderDevice::DrawStrokeRect(const CFX_Matrix& mtUser2Device,
@@ -1275,7 +1272,7 @@ void CFX_RenderDevice::DrawStrokeRect(const CFX_Matrix& mtUser2Device,
   CFX_Path path;
   path.AppendFloatRect(rect);
   DrawPath(path, &mtUser2Device, &gsd, 0, color,
-           {.fill_type = CFX_FillRenderOptions::FillType::kEvenOdd});
+           CFX_FillRenderOptions::EvenOddOptions());
 }
 
 void CFX_RenderDevice::DrawStrokeLine(const CFX_Matrix* pUser2Device,
@@ -1291,7 +1288,7 @@ void CFX_RenderDevice::DrawStrokeLine(const CFX_Matrix* pUser2Device,
   gsd.m_LineWidth = fWidth;
 
   DrawPath(path, pUser2Device, &gsd, 0, color,
-           {.fill_type = CFX_FillRenderOptions::FillType::kEvenOdd});
+           CFX_FillRenderOptions::EvenOddOptions());
 }
 
 void CFX_RenderDevice::DrawFillRect(const CFX_Matrix* pUser2Device,
@@ -1357,7 +1354,7 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
       path.AppendRect(fLeft + fWidth, fBottom + fWidth, fRight - fWidth,
                       fTop - fWidth);
       DrawPath(path, pUser2Device, nullptr, color.ToFXColor(nTransparency), 0,
-               {.fill_type = CFX_FillRenderOptions::FillType::kEvenOdd});
+               CFX_FillRenderOptions::EvenOddOptions());
       break;
     }
     case BorderStyle::kDash: {
@@ -1378,7 +1375,7 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
       path.AppendPoint(CFX_PointF(fLeft + fHalfWidth, fBottom + fHalfWidth),
                        CFX_Path::Point::Type::kLine);
       DrawPath(path, pUser2Device, &gsd, 0, color.ToFXColor(nTransparency),
-               {.fill_type = CFX_FillRenderOptions::FillType::kWinding});
+               CFX_FillRenderOptions::WindingOptions());
       break;
     }
     case BorderStyle::kBeveled:
@@ -1407,7 +1404,7 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
           CFX_Path::Point::Type::kLine);
       DrawPath(path_left_top, pUser2Device, &gsd,
                crLeftTop.ToFXColor(nTransparency), 0,
-               {.fill_type = CFX_FillRenderOptions::FillType::kEvenOdd});
+               CFX_FillRenderOptions::EvenOddOptions());
 
       CFX_Path path_right_bottom;
       path_right_bottom.AppendPoint(
@@ -1432,14 +1429,14 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
           CFX_Path::Point::Type::kLine);
       DrawPath(path_right_bottom, pUser2Device, &gsd,
                crRightBottom.ToFXColor(nTransparency), 0,
-               {.fill_type = CFX_FillRenderOptions::FillType::kEvenOdd});
+               CFX_FillRenderOptions::EvenOddOptions());
 
       CFX_Path path;
       path.AppendRect(fLeft, fBottom, fRight, fTop);
       path.AppendRect(fLeft + fHalfWidth, fBottom + fHalfWidth,
                       fRight - fHalfWidth, fTop - fHalfWidth);
       DrawPath(path, pUser2Device, &gsd, color.ToFXColor(nTransparency), 0,
-               {.fill_type = CFX_FillRenderOptions::FillType::kEvenOdd});
+               CFX_FillRenderOptions::EvenOddOptions());
       break;
     }
     case BorderStyle::kUnderline: {
@@ -1452,7 +1449,7 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
       path.AppendPoint(CFX_PointF(fRight, fBottom + fHalfWidth),
                        CFX_Path::Point::Type::kLine);
       DrawPath(path, pUser2Device, &gsd, 0, color.ToFXColor(nTransparency),
-               {.fill_type = CFX_FillRenderOptions::FillType::kEvenOdd});
+               CFX_FillRenderOptions::EvenOddOptions());
       break;
     }
   }

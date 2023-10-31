@@ -120,8 +120,8 @@ void XFA_DrawImage(CFGAS_GEGraphics* pGS,
   CFX_RenderDevice::StateRestorer restorer(pRenderDevice);
   CFX_Path path;
   path.AppendRect(rtImage.left, rtImage.bottom(), rtImage.right(), rtImage.top);
-  pRenderDevice->SetClip_PathFill(
-      path, &matrix, {.fill_type = CFX_FillRenderOptions::FillType::kWinding});
+  pRenderDevice->SetClip_PathFill(path, &matrix,
+                                  CFX_FillRenderOptions::WindingOptions());
 
   CFX_Matrix mtImage(1, 0, 0, -1, 0, 1);
   mtImage.Concat(

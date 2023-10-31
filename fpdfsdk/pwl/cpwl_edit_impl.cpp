@@ -642,9 +642,8 @@ void CPWL_EditImpl::DrawEdit(CFX_RenderDevice* pDevice,
                                word.ptWord.x + word.fWidth,
                                line.ptLine.y + line.fLineAscent);
 
-          pDevice->DrawPath(
-              pathSelBK, &mtUser2Device, nullptr, crSelBK, 0,
-              {.fill_type = CFX_FillRenderOptions::FillType::kWinding});
+          pDevice->DrawPath(pathSelBK, &mtUser2Device, nullptr, crSelBK, 0,
+                            CFX_FillRenderOptions::WindingOptions());
         }
       }
       if (bContinuous) {
