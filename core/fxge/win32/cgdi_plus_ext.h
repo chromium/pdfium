@@ -49,7 +49,6 @@ class CGdiplusExt {
 
  private:
   HMODULE m_hModule = nullptr;
-  HMODULE m_GdiModule = nullptr;
 };
 
 #endif  // CORE_FXGE_WIN32_CGDI_PLUS_EXT_H_

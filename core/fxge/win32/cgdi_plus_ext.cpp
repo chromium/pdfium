@@ -557,7 +557,6 @@ class GpStream final : public IStream {
 CGdiplusExt::CGdiplusExt() = default;
 
 CGdiplusExt::~CGdiplusExt() {
-  FreeLibrary(m_GdiModule);
   FreeLibrary(m_hModule);
 }
 
@@ -583,7 +582,6 @@ void CGdiplusExt::Load() {
   Gdiplus::GdiplusStartupInput gdiplus_startup_input;
   ((FuncType_GdiplusStartup)m_Functions[FuncId_GdiplusStartup])(
       &gdiplus_token, &gdiplus_startup_input, nullptr);
-  m_GdiModule = LoadLibraryA("GDI32.DLL");
 }
 
 bool CGdiplusExt::StretchDIBits(HDC hDC,
