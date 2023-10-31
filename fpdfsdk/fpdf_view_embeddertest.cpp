@@ -2160,3 +2160,23 @@ TEST_F(FPDFViewEmbedderTest, NoSmoothTextItalicOverlappingGlyphs) {
   TestRenderPageBitmapWithFlags(page, FPDF_RENDER_NO_SMOOTHTEXT, checksum);
   UnloadPage(page);
 }
+
+TEST_F(FPDFViewEmbedderTest, RenderTransparencyOnWhiteBackground) {
+  ASSERT_TRUE(OpenDocument("bug_1302355.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  constexpr int kWidth = 200;
+  constexpr int kHeight = 200;
+  EXPECT_EQ(kWidth, static_cast<int>(FPDF_GetPageWidthF(page)));
+  EXPECT_EQ(kHeight, static_cast<int>(FPDF_GetPageHeightF(page)));
+  EXPECT_TRUE(FPDFPage_HasTransparency(page));
+  ScopedFPDFBitmap bitmap(FPDFBitmap_Create(kWidth, kHeight, /*alpha=*/true));
+  FPDFBitmap_FillRect(bitmap.get(), 0, 0, kWidth, kHeight, 0xFFFFFFFF);
+  FPDF_RenderPageBitmap(bitmap.get(), page, /*start_x=*/0, /*start_y=*/0,
+                        kWidth, kHeight, /*rotate=*/0, /*flags=*/0);
+  // TODO(crbug.com/1302355): This page should not render blank.
+  EXPECT_EQ("eee4600ac08b458ac7ac2320e225674c", HashBitmap(bitmap.get()));
+
+  UnloadPage(page);
+}
