@@ -203,7 +203,7 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFSimple_CalculateSum) {
   runtime.PutArrayElement(ary, 0, runtime.NewString("Calc1_A"));
   runtime.PutArrayElement(ary, 1, runtime.NewString("Calc1_B"));
 
-  std::vector<v8::Local<v8::Value>> params;
+  v8::LocalVector<v8::Value> params(runtime.GetIsolate());
   params.push_back(runtime.NewString("SUM"));
   params.push_back(ary);
 
@@ -244,7 +244,7 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFNumber_Keystroke) {
   handler->SetSelStart(0);
   handler->SetSelEnd(0);
 
-  std::vector<v8::Local<v8::Value>> params;
+  v8::LocalVector<v8::Value> params(runtime.GetIsolate());
   params.push_back(runtime.NewString("-10"));
   params.push_back(runtime.NewString(""));
 

@@ -60,14 +60,14 @@ double JS_DateParse(v8::Isolate* pIsolate, const WideString& str) {
   return isfinite(date) ? FX_LocalTime(date) : date;
 }
 
-std::vector<v8::Local<v8::Value>> ExpandKeywordParams(
+v8::LocalVector<v8::Value> ExpandKeywordParams(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> originals,
     size_t nKeywords,
     ...) {
   DCHECK(nKeywords);
 
-  std::vector<v8::Local<v8::Value>> result(nKeywords, v8::Local<v8::Value>());
+  v8::LocalVector<v8::Value> result(pRuntime->GetIsolate(), nKeywords);
   size_t size = std::min(originals.size(), nKeywords);
   for (size_t i = 0; i < size; ++i)
     result[i] = originals[i];

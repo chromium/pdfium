@@ -153,7 +153,7 @@ void JSGlobalFunc(const char* func_name_string,
   if (!pRuntime)
     return;
 
-  std::vector<v8::Local<v8::Value>> parameters;
+  v8::LocalVector<v8::Value> parameters(info.GetIsolate());
   for (int i = 0; i < info.Length(); ++i)
     parameters.push_back(info[i]);
 
@@ -993,7 +993,7 @@ CJS_Result CJS_PublicMethods::AFDate_Format(
 
   int iIndex =
       WithinBoundsOrZero(pRuntime->ToInt32(params[0]), std::size(kDateFormats));
-  std::vector<v8::Local<v8::Value>> newParams;
+  v8::LocalVector<v8::Value> newParams(pRuntime->GetIsolate());
   newParams.push_back(pRuntime->NewString(kDateFormats[iIndex]));
   return AFDate_FormatEx(pRuntime, newParams);
 }
@@ -1007,7 +1007,7 @@ CJS_Result CJS_PublicMethods::AFDate_Keystroke(
 
   int iIndex =
       WithinBoundsOrZero(pRuntime->ToInt32(params[0]), std::size(kDateFormats));
-  std::vector<v8::Local<v8::Value>> newParams;
+  v8::LocalVector<v8::Value> newParams(pRuntime->GetIsolate());
   newParams.push_back(pRuntime->NewString(kDateFormats[iIndex]));
   return AFDate_KeystrokeEx(pRuntime, newParams);
 }
@@ -1021,7 +1021,7 @@ CJS_Result CJS_PublicMethods::AFTime_Format(
 
   int iIndex =
       WithinBoundsOrZero(pRuntime->ToInt32(params[0]), std::size(kTimeFormats));
-  std::vector<v8::Local<v8::Value>> newParams;
+  v8::LocalVector<v8::Value> newParams(pRuntime->GetIsolate());
   newParams.push_back(pRuntime->NewString(kTimeFormats[iIndex]));
   return AFDate_FormatEx(pRuntime, newParams);
 }
@@ -1034,7 +1034,7 @@ CJS_Result CJS_PublicMethods::AFTime_Keystroke(
 
   int iIndex =
       WithinBoundsOrZero(pRuntime->ToInt32(params[0]), std::size(kTimeFormats));
-  std::vector<v8::Local<v8::Value>> newParams;
+  v8::LocalVector<v8::Value> newParams(pRuntime->GetIsolate());
   newParams.push_back(pRuntime->NewString(kTimeFormats[iIndex]));
   return AFDate_KeystrokeEx(pRuntime, newParams);
 }
@@ -1199,7 +1199,7 @@ CJS_Result CJS_PublicMethods::AFSpecial_Keystroke(
       break;
   }
 
-  std::vector<v8::Local<v8::Value>> params2;
+  v8::LocalVector<v8::Value> params2(pRuntime->GetIsolate());
   params2.push_back(pRuntime->NewString(cFormat));
   return AFSpecial_KeystrokeEx(pRuntime, params2);
 }

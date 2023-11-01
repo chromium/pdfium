@@ -220,7 +220,7 @@ CJS_Result CJS_App::openFDF(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_App::alert(CJS_Runtime* pRuntime,
                           pdfium::span<v8::Local<v8::Value>> params) {
-  std::vector<v8::Local<v8::Value>> newParams = ExpandKeywordParams(
+  v8::LocalVector<v8::Value> newParams = ExpandKeywordParams(
       pRuntime, params, 4, "cMsg", "nIcon", "nType", "cTitle");
 
   if (!IsExpandedParamKnown(newParams[0]))
@@ -423,7 +423,7 @@ CJS_Result CJS_App::goForward(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_App::mailMsg(CJS_Runtime* pRuntime,
                             pdfium::span<v8::Local<v8::Value>> params) {
-  std::vector<v8::Local<v8::Value>> newParams = ExpandKeywordParams(
+  v8::LocalVector<v8::Value> newParams = ExpandKeywordParams(
       pRuntime, params, 6, "bUI", "cTo", "cCc", "cBcc", "cSubject", "cMsg");
 
   if (!IsExpandedParamKnown(newParams[0]))
@@ -519,7 +519,7 @@ CJS_Result CJS_App::openDoc(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_App::response(CJS_Runtime* pRuntime,
                              pdfium::span<v8::Local<v8::Value>> params) {
-  std::vector<v8::Local<v8::Value>> newParams =
+  v8::LocalVector<v8::Value> newParams =
       ExpandKeywordParams(pRuntime, params, 5, "cQuestion", "cTitle",
                           "cDefault", "bPassword", "cLabel");
 

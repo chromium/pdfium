@@ -315,7 +315,7 @@ CJS_Result CJS_Document::mailDoc(CJS_Runtime* pRuntime,
   if (!m_pFormFillEnv)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
-  std::vector<v8::Local<v8::Value>> newParams = ExpandKeywordParams(
+  v8::LocalVector<v8::Value> newParams = ExpandKeywordParams(
       pRuntime, params, 6, "bUI", "cTo", "cCc", "cBcc", "cSubject", "cMsg");
 
   bool bUI = true;
@@ -366,7 +366,7 @@ CJS_Result CJS_Document::mailForm(CJS_Runtime* pRuntime,
   if (sTextBuf.IsEmpty())
     return CJS_Result::Failure(L"Bad FDF format.");
 
-  std::vector<v8::Local<v8::Value>> newParams = ExpandKeywordParams(
+  v8::LocalVector<v8::Value> newParams = ExpandKeywordParams(
       pRuntime, params, 6, "bUI", "cTo", "cCc", "cBcc", "cSubject", "cMsg");
 
   bool bUI = true;
@@ -402,7 +402,7 @@ CJS_Result CJS_Document::mailForm(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_Document::print(CJS_Runtime* pRuntime,
                                pdfium::span<v8::Local<v8::Value>> params) {
-  std::vector<v8::Local<v8::Value>> newParams = ExpandKeywordParams(
+  v8::LocalVector<v8::Value> newParams = ExpandKeywordParams(
       pRuntime, params, 8, "bUI", "nStart", "nEnd", "bSilent", "bShrinkToFit",
       "bPrintAsImage", "bReverse", "bAnnotations");
 

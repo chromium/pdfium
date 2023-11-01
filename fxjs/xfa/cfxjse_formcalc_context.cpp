@@ -35,6 +35,7 @@
 #include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/v8-container.h"
 #include "v8/include/v8-function-callback.h"
+#include "v8/include/v8-local-handle.h"
 #include "v8/include/v8-object.h"
 #include "v8/include/v8-primitive.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
@@ -1186,9 +1187,9 @@ bool SimpleValueCompare(v8::Isolate* pIsolate,
   return fxv8::IsNull(firstValue) && fxv8::IsNull(secondValue);
 }
 
-std::vector<v8::Local<v8::Value>> UnfoldArgs(
+v8::LocalVector<v8::Value> UnfoldArgs(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
-  std::vector<v8::Local<v8::Value>> results;
+  v8::LocalVector<v8::Value> results(info.GetIsolate());
   v8::Isolate* pIsolate = info.GetIsolate();
   for (int i = 1; i < info.Length(); ++i) {
     v8::Local<v8::Value> arg = info[i];
@@ -1303,14 +1304,14 @@ absl::optional<CFXJSE_Engine::ResolveResult> ResolveObjects(
                                         dwFlags);
 }
 
-std::vector<v8::Local<v8::Value>> ParseResolveResult(
+v8::LocalVector<v8::Value> ParseResolveResult(
     CFXJSE_HostObject* pHostObject,
     const CFXJSE_Engine::ResolveResult& resolveNodeRS,
     v8::Local<v8::Value> pParentValue,
     bool* bAttribute) {
-  std::vector<v8::Local<v8::Value>> resultValues;
   CFXJSE_FormCalcContext* pContext = ToFormCalcContext(pHostObject);
   v8::Isolate* pIsolate = pContext->GetIsolate();
+  v8::LocalVector<v8::Value> resultValues(pIsolate);
 
   if (resolveNodeRS.type == CFXJSE_Engine::ResolveResult::Type::kNodes) {
     *bAttribute = false;
@@ -3016,7 +3017,7 @@ void CFXJSE_FormCalcContext::Ref(
     return;
   }
 
-  std::vector<v8::Local<v8::Value>> values(3);
+  v8::LocalVector<v8::Value> values(info.GetIsolate(), 3);
   int intVal = 3;
   if (fxv8::IsNull(argOne)) {
     // TODO(dsinclair): Why is this 4 when the others are all 3?
@@ -4900,7 +4901,7 @@ void CFXJSE_FormCalcContext::fm_var_filter(
   }
 
   if (iFlags == 4) {
-    std::vector<v8::Local<v8::Value>> values(3);
+    v8::LocalVector<v8::Value> values(info.GetIsolate(), 3);
     values[0] = fxv8::NewNumberHelper(info.GetIsolate(), 3);
     values[1] = fxv8::NewNullHelper(info.GetIsolate());
     values[2] = fxv8::NewNullHelper(info.GetIsolate());
@@ -4922,7 +4923,7 @@ void CFXJSE_FormCalcContext::concat_fm_object(
     CFXJSE_HostObject* pThis,
     const v8::FunctionCallbackInfo<v8::Value>& info) {
   v8::Isolate* pIsolate = ToFormCalcContext(pThis)->GetIsolate();
-  std::vector<v8::Local<v8::Value>> returnValues;
+  v8::LocalVector<v8::Value> returnValues(pIsolate);
   for (int i = 0; i < info.Length(); ++i) {
     if (fxv8::IsArray(info[i])) {
       v8::Local<v8::Array> arr = info[i].As<v8::Array>();
@@ -5053,7 +5054,10 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
       return;
     }
 
-    std::vector<std::vector<v8::Local<v8::Value>>> resolveValues(iLength - 2);
+    // TODO(crbug.com/pdfium/2090) - doublecheck use of std::vector
+    std::vector<v8::LocalVector<v8::Value>> resolveValues(
+        iLength - 2, v8::LocalVector<v8::Value>(info.GetIsolate()));
+
     bool bAttribute = false;
     bool bAllEmpty = true;
     for (uint32_t i = 2; i < iLength; i++) {
@@ -5074,7 +5078,7 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
       return;
     }
 
-    std::vector<v8::Local<v8::Value>> values;
+    v8::LocalVector<v8::Value> values(pIsolate);
     values.push_back(fxv8::NewNumberHelper(pIsolate, 1));
     values.push_back(
         bAttribute ? fxv8::NewStringHelper(pIsolate, bsName.AsStringView())
@@ -5111,10 +5115,10 @@ void CFXJSE_FormCalcContext::DotAccessorCommon(
   }
 
   bool bAttribute = false;
-  std::vector<v8::Local<v8::Value>> resolveValues =
+  v8::LocalVector<v8::Value> resolveValues =
       ParseResolveResult(pThis, maybeResult.value(), argAccessor, &bAttribute);
 
-  std::vector<v8::Local<v8::Value>> values(resolveValues.size() + 2);
+  v8::LocalVector<v8::Value> values(pIsolate, resolveValues.size() + 2);
   values[0] = fxv8::NewNumberHelper(pIsolate, 1);
   values[1] = bAttribute
                   ? fxv8::NewStringHelper(pIsolate, bsName.AsStringView())

@@ -25,6 +25,7 @@
 #include "third_party/base/containers/contains.h"
 #include "v8/include/v8-function-callback.h"
 #include "v8/include/v8-function.h"
+#include "v8/include/v8-local-handle.h"
 #include "v8/include/v8-object.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
@@ -543,7 +544,7 @@ CJS_Result CFXJSE_Engine::NormalMethodCall(
   CFXJSE_Engine* pScriptContext = pObject->GetDocument()->GetScriptContext();
   pObject = pScriptContext->GetVariablesThis(pObject);
 
-  std::vector<v8::Local<v8::Value>> parameters;
+  v8::LocalVector<v8::Value> parameters(info.GetIsolate());
   for (int i = 0; i < info.Length(); i++)
     parameters.push_back(info[i]);
 
