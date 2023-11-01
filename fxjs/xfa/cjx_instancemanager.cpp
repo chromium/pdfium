@@ -13,6 +13,7 @@
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "third_party/base/check_op.h"
+#include "third_party/base/containers/span.h"
 #include "v8/include/v8-object.h"
 #include "v8/include/v8-primitive.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
@@ -133,7 +134,7 @@ int32_t CJX_InstanceManager::MoveInstance(v8::Isolate* pIsolate,
 
 CJS_Result CJX_InstanceManager::moveInstance(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   CXFA_Document* doc = runtime->GetDocument();
   if (doc->GetFormType() != FormType::kXFAFull)
     return CJS_Result::Failure(JSMessage::kNotSupportedError);
@@ -163,7 +164,7 @@ CJS_Result CJX_InstanceManager::moveInstance(
 
 CJS_Result CJX_InstanceManager::removeInstance(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   CXFA_Document* doc = runtime->GetDocument();
   if (doc->GetFormType() != FormType::kXFAFull)
     return CJS_Result::Failure(JSMessage::kNotSupportedError);
@@ -202,7 +203,7 @@ CJS_Result CJX_InstanceManager::removeInstance(
 
 CJS_Result CJX_InstanceManager::setInstances(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   CXFA_Document* doc = runtime->GetDocument();
   if (doc->GetFormType() != FormType::kXFAFull)
     return CJS_Result::Failure(JSMessage::kNotSupportedError);
@@ -216,7 +217,7 @@ CJS_Result CJX_InstanceManager::setInstances(
 
 CJS_Result CJX_InstanceManager::addInstance(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   CXFA_Document* doc = runtime->GetDocument();
   if (doc->GetFormType() != FormType::kXFAFull)
     return CJS_Result::Failure(JSMessage::kNotSupportedError);
@@ -252,7 +253,7 @@ CJS_Result CJX_InstanceManager::addInstance(
 
 CJS_Result CJX_InstanceManager::insertInstance(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   CXFA_Document* doc = runtime->GetDocument();
   if (doc->GetFormType() != FormType::kXFAFull)
     return CJS_Result::Failure(JSMessage::kNotSupportedError);

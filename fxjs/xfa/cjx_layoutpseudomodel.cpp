@@ -84,7 +84,7 @@ void CJX_LayoutPseudoModel::ready(v8::Isolate* pIsolate,
 
 CJS_Result CJX_LayoutPseudoModel::DoHWXYInternal(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params,
+    pdfium::span<v8::Local<v8::Value>> params,
     HWXY layoutModel) {
   if (params.empty() || params.size() > 3)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -140,27 +140,23 @@ CJS_Result CJX_LayoutPseudoModel::DoHWXYInternal(
       runtime->NewNumber(FXSYS_roundf(fValue * 1000) / 1000.0f));
 }
 
-CJS_Result CJX_LayoutPseudoModel::h(
-    CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJX_LayoutPseudoModel::h(CFXJSE_Engine* runtime,
+                                    pdfium::span<v8::Local<v8::Value>> params) {
   return DoHWXYInternal(runtime, params, HWXY::kH);
 }
 
-CJS_Result CJX_LayoutPseudoModel::w(
-    CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJX_LayoutPseudoModel::w(CFXJSE_Engine* runtime,
+                                    pdfium::span<v8::Local<v8::Value>> params) {
   return DoHWXYInternal(runtime, params, HWXY::kW);
 }
 
-CJS_Result CJX_LayoutPseudoModel::x(
-    CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJX_LayoutPseudoModel::x(CFXJSE_Engine* runtime,
+                                    pdfium::span<v8::Local<v8::Value>> params) {
   return DoHWXYInternal(runtime, params, HWXY::kX);
 }
 
-CJS_Result CJX_LayoutPseudoModel::y(
-    CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJX_LayoutPseudoModel::y(CFXJSE_Engine* runtime,
+                                    pdfium::span<v8::Local<v8::Value>> params) {
   return DoHWXYInternal(runtime, params, HWXY::kY);
 }
 
@@ -187,13 +183,13 @@ CJS_Result CJX_LayoutPseudoModel::NumberedPageCount(CFXJSE_Engine* runtime) {
 
 CJS_Result CJX_LayoutPseudoModel::pageCount(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   return NumberedPageCount(runtime);
 }
 
 CJS_Result CJX_LayoutPseudoModel::pageSpan(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -215,7 +211,7 @@ CJS_Result CJX_LayoutPseudoModel::pageSpan(
 
 CJS_Result CJX_LayoutPseudoModel::page(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   return PageInternals(runtime, params, false);
 }
 
@@ -352,7 +348,7 @@ std::vector<CXFA_Node*> CJX_LayoutPseudoModel::GetObjArray(
 
 CJS_Result CJX_LayoutPseudoModel::pageContent(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.empty() || params.size() > 3)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -384,25 +380,25 @@ CJS_Result CJX_LayoutPseudoModel::pageContent(
 
 CJS_Result CJX_LayoutPseudoModel::absPageCount(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   return AllPageCount(runtime);
 }
 
 CJS_Result CJX_LayoutPseudoModel::absPageCountInBatch(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   return CJS_Result::Success(runtime->NewNumber(0));
 }
 
 CJS_Result CJX_LayoutPseudoModel::sheetCountInBatch(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   return CJS_Result::Success(runtime->NewNumber(0));
 }
 
 CJS_Result CJX_LayoutPseudoModel::relayout(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   CXFA_Node* pRootNode = GetDocument()->GetRoot();
   auto* pLayoutProcessor = GetDocument()->GetLayoutProcessor();
   CXFA_Form* pFormRoot =
@@ -417,13 +413,13 @@ CJS_Result CJX_LayoutPseudoModel::relayout(
 
 CJS_Result CJX_LayoutPseudoModel::absPageSpan(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   return pageSpan(runtime, params);
 }
 
 CJS_Result CJX_LayoutPseudoModel::absPageInBatch(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -432,7 +428,7 @@ CJS_Result CJX_LayoutPseudoModel::absPageInBatch(
 
 CJS_Result CJX_LayoutPseudoModel::sheetInBatch(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -441,31 +437,31 @@ CJS_Result CJX_LayoutPseudoModel::sheetInBatch(
 
 CJS_Result CJX_LayoutPseudoModel::sheet(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   return PageInternals(runtime, params, true);
 }
 
 CJS_Result CJX_LayoutPseudoModel::relayoutPageArea(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   return CJS_Result::Success();
 }
 
 CJS_Result CJX_LayoutPseudoModel::sheetCount(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   return AllPageCount(runtime);
 }
 
 CJS_Result CJX_LayoutPseudoModel::absPage(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   return PageInternals(runtime, params, true);
 }
 
 CJS_Result CJX_LayoutPseudoModel::PageInternals(
     CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params,
+    pdfium::span<v8::Local<v8::Value>> params,
     bool bAbsPage) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);

@@ -11,6 +11,7 @@
 
 #include "fxjs/cjs_object.h"
 #include "fxjs/cjs_result.h"
+#include "third_party/base/containers/span.h"
 
 class CJS_PublicMethods final : public CJS_Object {
  public:
@@ -32,71 +33,57 @@ class CJS_PublicMethods final : public CJS_Object {
                                          const WideString& format);
   static bool IsNumber(const WideString& str);
 
-  static CJS_Result AFNumber_Format(
-      CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
+  static CJS_Result AFNumber_Format(CJS_Runtime* pRuntime,
+                                    pdfium::span<v8::Local<v8::Value>> params);
   static CJS_Result AFNumber_Keystroke(
       CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
-  static CJS_Result AFPercent_Format(
-      CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
+      pdfium::span<v8::Local<v8::Value>> params);
+  static CJS_Result AFPercent_Format(CJS_Runtime* pRuntime,
+                                     pdfium::span<v8::Local<v8::Value>> params);
   static CJS_Result AFPercent_Keystroke(
       CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
-  static CJS_Result AFDate_FormatEx(
-      CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
+      pdfium::span<v8::Local<v8::Value>> params);
+  static CJS_Result AFDate_FormatEx(CJS_Runtime* pRuntime,
+                                    pdfium::span<v8::Local<v8::Value>> params);
   static CJS_Result AFDate_KeystrokeEx(
       CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
-  static CJS_Result AFDate_Format(
-      CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
-  static CJS_Result AFDate_Keystroke(
-      CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
-  static CJS_Result AFTime_FormatEx(
-      CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
+      pdfium::span<v8::Local<v8::Value>> params);
+  static CJS_Result AFDate_Format(CJS_Runtime* pRuntime,
+                                  pdfium::span<v8::Local<v8::Value>> params);
+  static CJS_Result AFDate_Keystroke(CJS_Runtime* pRuntime,
+                                     pdfium::span<v8::Local<v8::Value>> params);
+  static CJS_Result AFTime_FormatEx(CJS_Runtime* pRuntime,
+                                    pdfium::span<v8::Local<v8::Value>> params);
   static CJS_Result AFTime_KeystrokeEx(
       CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
-  static CJS_Result AFTime_Format(
-      CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
-  static CJS_Result AFTime_Keystroke(
-      CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
-  static CJS_Result AFSpecial_Format(
-      CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
+      pdfium::span<v8::Local<v8::Value>> params);
+  static CJS_Result AFTime_Format(CJS_Runtime* pRuntime,
+                                  pdfium::span<v8::Local<v8::Value>> params);
+  static CJS_Result AFTime_Keystroke(CJS_Runtime* pRuntime,
+                                     pdfium::span<v8::Local<v8::Value>> params);
+  static CJS_Result AFSpecial_Format(CJS_Runtime* pRuntime,
+                                     pdfium::span<v8::Local<v8::Value>> params);
   static CJS_Result AFSpecial_Keystroke(
       CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
+      pdfium::span<v8::Local<v8::Value>> params);
   static CJS_Result AFSpecial_KeystrokeEx(
       CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
+      pdfium::span<v8::Local<v8::Value>> params);
   static CJS_Result AFSimple(CJS_Runtime* pRuntime,
-                             const std::vector<v8::Local<v8::Value>>& params);
-  static CJS_Result AFMakeNumber(
-      CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
+                             pdfium::span<v8::Local<v8::Value>> params);
+  static CJS_Result AFMakeNumber(CJS_Runtime* pRuntime,
+                                 pdfium::span<v8::Local<v8::Value>> params);
   static CJS_Result AFSimple_Calculate(
       CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
-  static CJS_Result AFRange_Validate(
-      CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
-  static CJS_Result AFMergeChange(
-      CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
-  static CJS_Result AFParseDateEx(
-      CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
-  static CJS_Result AFExtractNums(
-      CJS_Runtime* pRuntime,
-      const std::vector<v8::Local<v8::Value>>& params);
+      pdfium::span<v8::Local<v8::Value>> params);
+  static CJS_Result AFRange_Validate(CJS_Runtime* pRuntime,
+                                     pdfium::span<v8::Local<v8::Value>> params);
+  static CJS_Result AFMergeChange(CJS_Runtime* pRuntime,
+                                  pdfium::span<v8::Local<v8::Value>> params);
+  static CJS_Result AFParseDateEx(CJS_Runtime* pRuntime,
+                                  pdfium::span<v8::Local<v8::Value>> params);
+  static CJS_Result AFExtractNums(CJS_Runtime* pRuntime,
+                                  pdfium::span<v8::Local<v8::Value>> params);
 
   static void AFNumber_Format_static(
       const v8::FunctionCallbackInfo<v8::Value>& info);

@@ -11,6 +11,7 @@
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
+#include "third_party/base/containers/span.h"
 #include "v8/include/cppgc/allocation.h"
 #include "v8/include/v8-object.h"
 #include "xfa/fxfa/parser/cxfa_arraynodelist.h"
@@ -31,15 +32,13 @@ bool CJX_Container::DynamicTypeIs(TypeTag eType) const {
   return eType == static_type__ || ParentType__::DynamicTypeIs(eType);
 }
 
-CJS_Result CJX_Container::getDelta(
-    CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJX_Container::getDelta(CFXJSE_Engine* runtime,
+                                   pdfium::span<v8::Local<v8::Value>> params) {
   return CJS_Result::Success();
 }
 
-CJS_Result CJX_Container::getDeltas(
-    CFXJSE_Engine* runtime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJX_Container::getDeltas(CFXJSE_Engine* runtime,
+                                    pdfium::span<v8::Local<v8::Value>> params) {
   CXFA_Document* pDoc = GetDocument();
   auto* pList = cppgc::MakeGarbageCollected<CXFA_ArrayNodeList>(
       pDoc->GetHeap()->GetAllocationHandle(), pDoc);

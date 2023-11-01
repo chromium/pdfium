@@ -12,6 +12,7 @@
 #include "core/fxcrt/widestring.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
+#include "third_party/base/containers/span.h"
 #include "v8/include/v8-forward.h"
 
 class CJS_Util final : public CJS_Object {
@@ -54,15 +55,15 @@ class CJS_Util final : public CJS_Object {
   static const JSMethodSpec MethodSpecs[];
 
   CJS_Result printd(CJS_Runtime* pRuntime,
-                    const std::vector<v8::Local<v8::Value>>& params);
+                    pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result printf(CJS_Runtime* pRuntime,
-                    const std::vector<v8::Local<v8::Value>>& params);
+                    pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result printx(CJS_Runtime* pRuntime,
-                    const std::vector<v8::Local<v8::Value>>& params);
+                    pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result scand(CJS_Runtime* pRuntime,
-                   const std::vector<v8::Local<v8::Value>>& params);
+                   pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result byteToChar(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params);
+                        pdfium::span<v8::Local<v8::Value>> params);
 };
 
 #endif  // FXJS_CJS_UTIL_H_

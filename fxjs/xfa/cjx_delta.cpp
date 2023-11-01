@@ -10,6 +10,7 @@
 
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_value.h"
+#include "third_party/base/containers/span.h"
 #include "xfa/fxfa/parser/cxfa_delta.h"
 
 const CJX_MethodSpec CJX_Delta::MethodSpecs[] = {{"restore", restore_static}};
@@ -25,7 +26,7 @@ bool CJX_Delta::DynamicTypeIs(TypeTag eType) const {
 }
 
 CJS_Result CJX_Delta::restore(CFXJSE_Engine* runtime,
-                              const std::vector<v8::Local<v8::Value>>& params) {
+                              pdfium::span<v8::Local<v8::Value>> params) {
   if (!params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
 

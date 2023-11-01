@@ -15,6 +15,7 @@
 #include "fxjs/cjs_result.h"
 #include "fxjs/cjs_runtime.h"
 #include "fxjs/js_resources.h"
+#include "third_party/base/containers/span.h"
 
 class CJS_Object;
 
@@ -28,7 +29,7 @@ double JS_DateParse(v8::Isolate* pIsolate, const WideString& str);
 // ones in the result using IsExpandedParamKnown() below.
 std::vector<v8::Local<v8::Value>> ExpandKeywordParams(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& originals,
+    pdfium::span<v8::Local<v8::Value>> originals,
     size_t nKeywords,
     ...);
 
@@ -110,8 +111,7 @@ void JSPropSetter(const char* prop_name_string,
 }
 
 template <class C,
-          CJS_Result (C::*M)(CJS_Runtime*,
-                             const std::vector<v8::Local<v8::Value>>&)>
+          CJS_Result (C::*M)(CJS_Runtime*, pdfium::span<v8::Local<v8::Value>>)>
 void JSMethod(const char* method_name_string,
               const char* class_name_string,
               const v8::FunctionCallbackInfo<v8::Value>& info) {

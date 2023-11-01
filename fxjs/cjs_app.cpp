@@ -20,6 +20,7 @@
 #include "fxjs/global_timer.h"
 #include "fxjs/ijs_event_context.h"
 #include "fxjs/js_resources.h"
+#include "third_party/base/containers/span.h"
 #include "v8/include/v8-container.h"
 
 namespace {
@@ -201,7 +202,7 @@ CJS_Result CJS_App::set_language(CJS_Runtime* pRuntime,
 // note:
 // CFDF_Document * CPDFSDK_FormFillEnvironment::NewFDF();
 CJS_Result CJS_App::newFDF(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params) {
+                           pdfium::span<v8::Local<v8::Value>> params) {
   return CJS_Result::Success();
 }
 
@@ -213,12 +214,12 @@ CJS_Result CJS_App::newFDF(CJS_Runtime* pRuntime,
 // bUserConv);
 
 CJS_Result CJS_App::openFDF(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params) {
+                            pdfium::span<v8::Local<v8::Value>> params) {
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_App::alert(CJS_Runtime* pRuntime,
-                          const std::vector<v8::Local<v8::Value>>& params) {
+                          pdfium::span<v8::Local<v8::Value>> params) {
   std::vector<v8::Local<v8::Value>> newParams = ExpandKeywordParams(
       pRuntime, params, 4, "cMsg", "nIcon", "nType", "cTitle");
 
@@ -268,7 +269,7 @@ CJS_Result CJS_App::alert(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_App::beep(CJS_Runtime* pRuntime,
-                         const std::vector<v8::Local<v8::Value>>& params) {
+                         pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -280,15 +281,13 @@ CJS_Result CJS_App::beep(CJS_Runtime* pRuntime,
   return CJS_Result::Success();
 }
 
-CJS_Result CJS_App::findComponent(
-    CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJS_App::findComponent(CJS_Runtime* pRuntime,
+                                  pdfium::span<v8::Local<v8::Value>> params) {
   return CJS_Result::Success();
 }
 
-CJS_Result CJS_App::popUpMenuEx(
-    CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJS_App::popUpMenuEx(CJS_Runtime* pRuntime,
+                                pdfium::span<v8::Local<v8::Value>> params) {
   return CJS_Result::Failure(JSMessage::kNotSupportedError);
 }
 
@@ -300,9 +299,8 @@ CJS_Result CJS_App::set_fs(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   return CJS_Result::Failure(JSMessage::kNotSupportedError);
 }
 
-CJS_Result CJS_App::setInterval(
-    CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJS_App::setInterval(CJS_Runtime* pRuntime,
+                                pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() == 0 || params.size() > 2)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -328,9 +326,8 @@ CJS_Result CJS_App::setInterval(
   return CJS_Result::Success(pRetObj);
 }
 
-CJS_Result CJS_App::setTimeOut(
-    CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJS_App::setTimeOut(CJS_Runtime* pRuntime,
+                               pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() == 0 || params.size() > 2)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -357,9 +354,8 @@ CJS_Result CJS_App::setTimeOut(
   return CJS_Result::Success(pRetObj);
 }
 
-CJS_Result CJS_App::clearTimeOut(
-    CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJS_App::clearTimeOut(CJS_Runtime* pRuntime,
+                                 pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -367,9 +363,8 @@ CJS_Result CJS_App::clearTimeOut(
   return CJS_Result::Success();
 }
 
-CJS_Result CJS_App::clearInterval(
-    CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJS_App::clearInterval(CJS_Runtime* pRuntime,
+                                  pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -390,9 +385,8 @@ void CJS_App::ClearTimerCommon(CJS_Runtime* pRuntime,
   GlobalTimer::Cancel(pTimer->GetTimerID());
 }
 
-CJS_Result CJS_App::execMenuItem(
-    CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJS_App::execMenuItem(CJS_Runtime* pRuntime,
+                                 pdfium::span<v8::Local<v8::Value>> params) {
   return CJS_Result::Failure(JSMessage::kNotSupportedError);
 }
 
@@ -416,19 +410,19 @@ void CJS_App::RunJsScript(CJS_Runtime* pRuntime, const WideString& wsScript) {
 }
 
 CJS_Result CJS_App::goBack(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params) {
+                           pdfium::span<v8::Local<v8::Value>> params) {
   // Not supported, but do not return error.
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_App::goForward(CJS_Runtime* pRuntime,
-                              const std::vector<v8::Local<v8::Value>>& params) {
+                              pdfium::span<v8::Local<v8::Value>> params) {
   // Not supported, but do not return error.
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_App::mailMsg(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params) {
+                            pdfium::span<v8::Local<v8::Value>> params) {
   std::vector<v8::Local<v8::Value>> newParams = ExpandKeywordParams(
       pRuntime, params, 6, "bUI", "cTo", "cCc", "cBcc", "cSubject", "cMsg");
 
@@ -469,7 +463,7 @@ CJS_Result CJS_App::mailMsg(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_App::launchURL(CJS_Runtime* pRuntime,
-                              const std::vector<v8::Local<v8::Value>>& params) {
+                              pdfium::span<v8::Local<v8::Value>> params) {
   // Unsafe, not supported, but do not return error.
   return CJS_Result::Success();
 }
@@ -494,13 +488,12 @@ CJS_Result CJS_App::set_fullscreen(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_App::popUpMenu(CJS_Runtime* pRuntime,
-                              const std::vector<v8::Local<v8::Value>>& params) {
+                              pdfium::span<v8::Local<v8::Value>> params) {
   return CJS_Result::Failure(JSMessage::kNotSupportedError);
 }
 
-CJS_Result CJS_App::browseForDoc(
-    CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJS_App::browseForDoc(CJS_Runtime* pRuntime,
+                                 pdfium::span<v8::Local<v8::Value>> params) {
   // Unsafe, not supported, but do not return an error.
   return CJS_Result::Success();
 }
@@ -515,17 +508,17 @@ WideString CJS_App::SysPathToPDFPath(const WideString& sOldPath) {
 }
 
 CJS_Result CJS_App::newDoc(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params) {
+                           pdfium::span<v8::Local<v8::Value>> params) {
   return CJS_Result::Failure(JSMessage::kNotSupportedError);
 }
 
 CJS_Result CJS_App::openDoc(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params) {
+                            pdfium::span<v8::Local<v8::Value>> params) {
   return CJS_Result::Failure(JSMessage::kNotSupportedError);
 }
 
 CJS_Result CJS_App::response(CJS_Runtime* pRuntime,
-                             const std::vector<v8::Local<v8::Value>>& params) {
+                             pdfium::span<v8::Local<v8::Value>> params) {
   std::vector<v8::Local<v8::Value>> newParams =
       ExpandKeywordParams(pRuntime, params, 5, "cQuestion", "cTitle",
                           "cDefault", "bPassword", "cLabel");
@@ -575,8 +568,7 @@ CJS_Result CJS_App::set_media(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {
   return CJS_Result::Failure(JSMessage::kNotSupportedError);
 }
 
-CJS_Result CJS_App::execDialog(
-    CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJS_App::execDialog(CJS_Runtime* pRuntime,
+                               pdfium::span<v8::Local<v8::Value>> params) {
   return CJS_Result::Success();
 }

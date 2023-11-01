@@ -13,6 +13,7 @@
 
 #include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
+#include "third_party/base/containers/span.h"
 
 class CJS_Runtime;
 class GlobalTimer;
@@ -110,47 +111,47 @@ class CJS_App final : public CJS_Object {
   CJS_Result set_viewer_version(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
   CJS_Result alert(CJS_Runtime* pRuntime,
-                   const std::vector<v8::Local<v8::Value>>& params);
+                   pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result beep(CJS_Runtime* pRuntime,
-                  const std::vector<v8::Local<v8::Value>>& params);
+                  pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result browseForDoc(CJS_Runtime* pRuntime,
-                          const std::vector<v8::Local<v8::Value>>& params);
+                          pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result clearInterval(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params);
+                           pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result clearTimeOut(CJS_Runtime* pRuntime,
-                          const std::vector<v8::Local<v8::Value>>& params);
+                          pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result execDialog(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params);
+                        pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result execMenuItem(CJS_Runtime* pRuntime,
-                          const std::vector<v8::Local<v8::Value>>& params);
+                          pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result findComponent(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params);
+                           pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result goBack(CJS_Runtime* pRuntime,
-                    const std::vector<v8::Local<v8::Value>>& params);
+                    pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result goForward(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params);
+                       pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result launchURL(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params);
+                       pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result mailMsg(CJS_Runtime* pRuntime,
-                     const std::vector<v8::Local<v8::Value>>& params);
+                     pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result newFDF(CJS_Runtime* pRuntime,
-                    const std::vector<v8::Local<v8::Value>>& params);
+                    pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result newDoc(CJS_Runtime* pRuntime,
-                    const std::vector<v8::Local<v8::Value>>& params);
+                    pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result openDoc(CJS_Runtime* pRuntime,
-                     const std::vector<v8::Local<v8::Value>>& params);
+                     pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result openFDF(CJS_Runtime* pRuntime,
-                     const std::vector<v8::Local<v8::Value>>& params);
+                     pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result popUpMenuEx(CJS_Runtime* pRuntime,
-                         const std::vector<v8::Local<v8::Value>>& params);
+                         pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result popUpMenu(CJS_Runtime* pRuntime,
-                       const std::vector<v8::Local<v8::Value>>& params);
+                       pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result response(CJS_Runtime* pRuntime,
-                      const std::vector<v8::Local<v8::Value>>& params);
+                      pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result setInterval(CJS_Runtime* pRuntime,
-                         const std::vector<v8::Local<v8::Value>>& params);
+                         pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result setTimeOut(CJS_Runtime* pRuntime,
-                        const std::vector<v8::Local<v8::Value>>& params);
+                        pdfium::span<v8::Local<v8::Value>> params);
 
   void RunJsScript(CJS_Runtime* pRuntime, const WideString& wsScript);
   void ClearTimerCommon(CJS_Runtime* pRuntime, v8::Local<v8::Value> param);

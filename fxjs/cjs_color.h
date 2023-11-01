@@ -12,6 +12,7 @@
 #include "core/fxge/cfx_color.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
+#include "third_party/base/containers/span.h"
 
 class CJS_Color final : public CJS_Object {
  public:
@@ -84,9 +85,9 @@ class CJS_Color final : public CJS_Object {
   CJS_Result set_yellow(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
   CJS_Result convert(CJS_Runtime* pRuntime,
-                     const std::vector<v8::Local<v8::Value>>& params);
+                     pdfium::span<v8::Local<v8::Value>> params);
   CJS_Result equal(CJS_Runtime* pRuntime,
-                   const std::vector<v8::Local<v8::Value>>& params);
+                   pdfium::span<v8::Local<v8::Value>> params);
 
   CJS_Result GetPropertyHelper(CJS_Runtime* pRuntime, CFX_Color* val);
   CJS_Result SetPropertyHelper(CJS_Runtime* pRuntime,

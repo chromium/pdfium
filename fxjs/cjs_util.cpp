@@ -24,6 +24,7 @@
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
 #include "third_party/base/check_op.h"
+#include "third_party/base/containers/span.h"
 #include "v8/include/v8-date.h"
 
 #if BUILDFLAG(IS_ANDROID)
@@ -98,7 +99,7 @@ CJS_Util::CJS_Util(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
 CJS_Util::~CJS_Util() = default;
 
 CJS_Result CJS_Util::printf(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params) {
+                            pdfium::span<v8::Local<v8::Value>> params) {
   const size_t num_params = params.size();
   if (num_params < 1)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -161,7 +162,7 @@ CJS_Result CJS_Util::printf(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params) {
+                            pdfium::span<v8::Local<v8::Value>> params) {
   const size_t iSize = params.size();
   if (iSize < 2)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -268,7 +269,7 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Util::printx(CJS_Runtime* pRuntime,
-                            const std::vector<v8::Local<v8::Value>>& params) {
+                            pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() < 2)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -369,7 +370,7 @@ WideString CJS_Util::StringPrintx(const WideString& wsFormat,
 }
 
 CJS_Result CJS_Util::scand(CJS_Runtime* pRuntime,
-                           const std::vector<v8::Local<v8::Value>>& params) {
+                           pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() < 2)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -385,9 +386,8 @@ CJS_Result CJS_Util::scand(CJS_Runtime* pRuntime,
   return CJS_Result::Success(pRuntime->NewDate(dDate));
 }
 
-CJS_Result CJS_Util::byteToChar(
-    CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJS_Util::byteToChar(CJS_Runtime* pRuntime,
+                                pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() < 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 

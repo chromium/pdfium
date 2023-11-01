@@ -37,6 +37,7 @@
 #include "fxjs/js_resources.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
+#include "third_party/base/containers/span.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/v8-container.h"
 
@@ -140,8 +141,7 @@ WideString CalcMergedString(const CJS_EventContext* event,
   return prefix + change + postfix;
 }
 
-template <CJS_Result (*F)(CJS_Runtime*,
-                          const std::vector<v8::Local<v8::Value>>&)>
+template <CJS_Result (*F)(CJS_Runtime*, pdfium::span<v8::Local<v8::Value>>)>
 void JSGlobalFunc(const char* func_name_string,
                   const v8::FunctionCallbackInfo<v8::Value>& info) {
   CJS_Object* pObj =
@@ -592,7 +592,7 @@ WideString CJS_PublicMethods::PrintDateUsingFormat(double dDate,
 // bCurrencyPrepend)
 CJS_Result CJS_PublicMethods::AFNumber_Format(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
 #if !BUILDFLAG(IS_ANDROID)
   if (params.size() != 6)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -699,7 +699,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Format(
 // bCurrencyPrepend)
 CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() < 2)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -786,7 +786,7 @@ CJS_Result CJS_PublicMethods::AFNumber_Keystroke(
 // function AFPercent_Format(nDec, sepStyle, bPercentPrepend)
 CJS_Result CJS_PublicMethods::AFPercent_Format(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
 #if !BUILDFLAG(IS_ANDROID)
   if (params.size() < 2)
     return CJS_Result::Failure(JSMessage::kParamError);
@@ -874,14 +874,14 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
 // AFPercent_Keystroke(nDec, sepStyle)
 CJS_Result CJS_PublicMethods::AFPercent_Keystroke(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   return AFNumber_Keystroke(pRuntime, params);
 }
 
 // function AFDate_FormatEx(cFormat)
 CJS_Result CJS_PublicMethods::AFDate_FormatEx(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -955,7 +955,7 @@ double CJS_PublicMethods::ParseDateAsGMT(v8::Isolate* isolate,
 // AFDate_KeystrokeEx(cFormat)
 CJS_Result CJS_PublicMethods::AFDate_KeystrokeEx(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1) {
     return CJS_Result::Failure(WideString::FromASCII(
         "AFDate_KeystrokeEx's parameter size not correct"));
@@ -987,7 +987,7 @@ CJS_Result CJS_PublicMethods::AFDate_KeystrokeEx(
 
 CJS_Result CJS_PublicMethods::AFDate_Format(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -1001,7 +1001,7 @@ CJS_Result CJS_PublicMethods::AFDate_Format(
 // AFDate_KeystrokeEx(cFormat)
 CJS_Result CJS_PublicMethods::AFDate_Keystroke(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -1015,7 +1015,7 @@ CJS_Result CJS_PublicMethods::AFDate_Keystroke(
 // function AFTime_Format(ptf)
 CJS_Result CJS_PublicMethods::AFTime_Format(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -1028,7 +1028,7 @@ CJS_Result CJS_PublicMethods::AFTime_Format(
 
 CJS_Result CJS_PublicMethods::AFTime_Keystroke(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -1041,20 +1041,20 @@ CJS_Result CJS_PublicMethods::AFTime_Keystroke(
 
 CJS_Result CJS_PublicMethods::AFTime_FormatEx(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   return AFDate_FormatEx(pRuntime, params);
 }
 
 CJS_Result CJS_PublicMethods::AFTime_KeystrokeEx(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   return AFDate_KeystrokeEx(pRuntime, params);
 }
 
 // function AFSpecial_Format(psf)
 CJS_Result CJS_PublicMethods::AFSpecial_Format(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -1089,7 +1089,7 @@ CJS_Result CJS_PublicMethods::AFSpecial_Format(
 // function AFSpecial_KeystrokeEx(mask)
 CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() < 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -1172,7 +1172,7 @@ CJS_Result CJS_PublicMethods::AFSpecial_KeystrokeEx(
 // function AFSpecial_Keystroke(psf)
 CJS_Result CJS_PublicMethods::AFSpecial_Keystroke(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -1206,7 +1206,7 @@ CJS_Result CJS_PublicMethods::AFSpecial_Keystroke(
 
 CJS_Result CJS_PublicMethods::AFMergeChange(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -1225,7 +1225,7 @@ CJS_Result CJS_PublicMethods::AFMergeChange(
 
 CJS_Result CJS_PublicMethods::AFParseDateEx(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 2)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -1245,7 +1245,7 @@ CJS_Result CJS_PublicMethods::AFParseDateEx(
 
 CJS_Result CJS_PublicMethods::AFSimple(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 3)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -1268,7 +1268,7 @@ CJS_Result CJS_PublicMethods::AFSimple(
 
 CJS_Result CJS_PublicMethods::AFMakeNumber(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -1285,7 +1285,7 @@ CJS_Result CJS_PublicMethods::AFMakeNumber(
 
 CJS_Result CJS_PublicMethods::AFSimple_Calculate(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 2)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -1380,7 +1380,7 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
 // within the specified range.
 CJS_Result CJS_PublicMethods::AFRange_Validate(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 4)
     return CJS_Result::Failure(JSMessage::kParamError);
 
@@ -1425,7 +1425,7 @@ CJS_Result CJS_PublicMethods::AFRange_Validate(
 
 CJS_Result CJS_PublicMethods::AFExtractNums(
     CJS_Runtime* pRuntime,
-    const std::vector<v8::Local<v8::Value>>& params) {
+    pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 

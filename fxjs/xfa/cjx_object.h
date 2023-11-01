@@ -35,7 +35,7 @@ class CXFA_Object;
 using CJX_MethodCall =
     CJS_Result (*)(CJX_Object* obj,
                    CFXJSE_Engine* runtime,
-                   const std::vector<v8::Local<v8::Value>>& params);
+                   pdfium::span<v8::Local<v8::Value>> params);
 
 struct CJX_MethodSpec {
   const char* pName;
@@ -121,7 +121,7 @@ class CJX_Object : public cppgc::GarbageCollected<CJX_Object>,
   bool HasMethod(const WideString& func) const;
   CJS_Result RunMethod(CFXJSE_Engine* pScriptContext,
                        const WideString& func,
-                       const std::vector<v8::Local<v8::Value>>& params);
+                       pdfium::span<v8::Local<v8::Value>> params);
 
   bool HasAttribute(XFA_Attribute eAttr) const;
   WideString GetAttributeByString(WideStringView attr) const;

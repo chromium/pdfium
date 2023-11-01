@@ -26,6 +26,7 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/contains.h"
+#include "third_party/base/containers/span.h"
 #include "v8/include/v8-forward.h"
 #include "v8/include/v8-object.h"
 #include "v8/include/v8-primitive.h"
@@ -158,10 +159,9 @@ bool CJX_Object::HasMethod(const WideString& func) const {
   return pdfium::Contains(method_specs_, func.ToUTF8());
 }
 
-CJS_Result CJX_Object::RunMethod(
-    CFXJSE_Engine* pScriptContext,
-    const WideString& func,
-    const std::vector<v8::Local<v8::Value>>& params) {
+CJS_Result CJX_Object::RunMethod(CFXJSE_Engine* pScriptContext,
+                                 const WideString& func,
+                                 pdfium::span<v8::Local<v8::Value>> params) {
   auto it = method_specs_.find(func.ToUTF8());
   if (it == method_specs_.end())
     return CJS_Result::Failure(JSMessage::kUnknownMethod);

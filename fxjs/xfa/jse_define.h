@@ -10,19 +10,20 @@
 #include <vector>
 
 #include "fxjs/cjs_result.h"
+#include "third_party/base/containers/span.h"
 
 class CFXJSE_Engine;
 
 #define JSE_METHOD(method_name)                                      \
   static CJS_Result method_name##_static(                            \
       CJX_Object* node, CFXJSE_Engine* runtime,                      \
-      const std::vector<v8::Local<v8::Value>>& params) {             \
+      pdfium::span<v8::Local<v8::Value>> params) {                   \
     if (!node->DynamicTypeIs(static_type__))                         \
       return CJS_Result::Failure(JSMessage::kBadObjectError);        \
     return static_cast<Type__*>(node)->method_name(runtime, params); \
   }                                                                  \
   CJS_Result method_name(CFXJSE_Engine* runtime,                     \
-                         const std::vector<v8::Local<v8::Value>>& params)
+                         pdfium::span<v8::Local<v8::Value>> params)
 
 #define JSE_PROP(prop_name)                                                 \
   static void prop_name##_static(v8::Isolate* pIsolate, CJX_Object* node,   \
