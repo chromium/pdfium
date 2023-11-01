@@ -182,7 +182,7 @@ using FuncType_GdipSetPixelOffsetMode =
     decltype(&Gdiplus::DllExports::GdipSetPixelOffsetMode);
 #define CallFunc(funcname)               \
   reinterpret_cast<FuncType_##funcname>( \
-      GdiplusExt.m_Functions[FuncId_##funcname])
+      GdiplusExt.functions()[FuncId_##funcname])
 
 Gdiplus::GpFillMode FillType2Gdip(CFX_FillRenderOptions::FillType fill_type) {
   return fill_type == CFX_FillRenderOptions::FillType::kEvenOdd
@@ -557,7 +557,7 @@ class GpStream final : public IStream {
 CGdiplusExt::CGdiplusExt() = default;
 
 CGdiplusExt::~CGdiplusExt() {
-  FreeLibrary(m_hModule);
+  FreeLibrary(gdiplus_module_);
 }
 
 void CGdiplusExt::Load() {
@@ -565,22 +565,24 @@ void CGdiplusExt::Load() {
   GetSystemDirectoryA(buf, MAX_PATH);
   ByteString dllpath = buf;
   dllpath += "\\GDIPLUS.DLL";
-  m_hModule = LoadLibraryA(dllpath.c_str());
-  if (!m_hModule)
+  gdiplus_module_ = LoadLibraryA(dllpath.c_str());
+  if (!gdiplus_module_) {
     return;
+  }
 
-  m_Functions.resize(std::size(g_GdipFuncNames));
+  gdiplus_functions_.resize(std::size(g_GdipFuncNames));
   for (size_t i = 0; i < std::size(g_GdipFuncNames); ++i) {
-    m_Functions[i] = GetProcAddress(m_hModule, g_GdipFuncNames[i]);
-    if (!m_Functions[i]) {
-      m_hModule = nullptr;
+    gdiplus_functions_[i] = GetProcAddress(gdiplus_module_, g_GdipFuncNames[i]);
+    if (!gdiplus_functions_[i]) {
+      FreeLibrary(gdiplus_module_);
+      gdiplus_module_ = nullptr;
       return;
     }
   }
 
   ULONG_PTR gdiplus_token;
   Gdiplus::GdiplusStartupInput gdiplus_startup_input;
-  ((FuncType_GdiplusStartup)m_Functions[FuncId_GdiplusStartup])(
+  ((FuncType_GdiplusStartup)gdiplus_functions_[FuncId_GdiplusStartup])(
       &gdiplus_token, &gdiplus_startup_input, nullptr);
 }
 

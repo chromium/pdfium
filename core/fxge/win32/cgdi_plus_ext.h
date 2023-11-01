@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "core/fxcrt/retain_ptr.h"
+#include "third_party/base/containers/span.h"
 
 class CFX_DIBBase;
 class CFX_GraphStateData;
@@ -28,7 +29,7 @@ class CGdiplusExt {
   ~CGdiplusExt();
 
   void Load();
-  bool IsAvailable() { return !!m_hModule; }
+  bool IsAvailable() { return !!gdiplus_module_; }
   bool StretchDIBits(HDC hDC,
                      const RetainPtr<CFX_DIBBase>& source,
                      int dest_left,
@@ -45,10 +46,11 @@ class CGdiplusExt {
                 uint32_t stroke_argb,
                 const CFX_FillRenderOptions& fill_options);
 
-  std::vector<FARPROC> m_Functions;
+  pdfium::span<const FARPROC> functions() const { return gdiplus_functions_; }
 
  private:
-  HMODULE m_hModule = nullptr;
+  HMODULE gdiplus_module_ = nullptr;
+  std::vector<FARPROC> gdiplus_functions_;
 };
 
 #endif  // CORE_FXGE_WIN32_CGDI_PLUS_EXT_H_
