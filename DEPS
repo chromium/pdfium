@@ -108,11 +108,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling freetype
   # and whatever else without interference from each other.
-  'fuchsia_gn_sdk_revision': 'd1e0ff4350f77c7f6b246ff62c232318a73c8176',
+  'fuchsia_gn_sdk_revision': '3f588d789b567e53fa284be308db4dbf3787d8f3',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling Fuchsia sdk
   # and whatever else without interference from each other.
-  'fuchsia_version': 'version:15.20230930.1.1',
+  'fuchsia_version': 'version:16.20231030.2.1',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling GN CIPD package version
   # and whatever else without interference from each other.
