@@ -584,6 +584,11 @@ group("pdfium_all") {
   if (pdf_is_standalone) {
     deps += [ "testing/tools:test_runner_py" ]
   }
+  if (enable_rust) {
+    # Until there's actual Rust code to use, include the rust_build_tests in the
+    # all group to verify the language keeps working here.
+    deps += [ ":rust_build_tests" ]
+  }
 }
 
 # Makes additional targets reachable only for "gn check". These are not always
