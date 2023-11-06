@@ -89,8 +89,8 @@ bool AreColorIndicesOutOfBounds(const uint8_t* indices,
 }
 
 int CalculateBitsPerPixel(uint32_t bpc, uint32_t comps) {
-  // TODO(thestig): Can |bpp| be 0 here? Add an DCHECK() or handle it?
   uint32_t bpp = bpc * comps;
+  CHECK(bpp);
   if (bpp == 1)
     return 1;
   if (bpp <= 8)
