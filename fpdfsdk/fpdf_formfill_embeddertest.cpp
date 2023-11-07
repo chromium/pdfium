@@ -3292,6 +3292,41 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceAndKeepSelection) {
   CheckCanRedo(false);
 }
 
+TEST_F(FPDFFormFillTextFormEmbedderTest, ContinuouslyReplaceAndKeepSelection) {
+  ScopedFPDFWideString text_to_insert1 = GetFPDFWideString(L"UVW");
+
+  ClickOnFormFieldAtPoint(RegularFormBegin());
+  CheckFocusedFieldText(L"");
+  CheckCanUndo(false);
+  CheckCanRedo(false);
+
+  FORM_ReplaceAndKeepSelection(form_handle(), page(), text_to_insert1.get());
+  CheckFocusedFieldText(L"UVW");
+  CheckSelection(L"UVW");
+
+  CheckCanUndo(true);
+  CheckCanRedo(false);
+
+  PerformUndo();
+  CheckFocusedFieldText(L"");
+
+  CheckCanUndo(false);
+  CheckCanRedo(true);
+  PerformRedo();
+  CheckFocusedFieldText(L"UVW");
+  CheckSelection(L"");
+
+  ScopedFPDFWideString text_to_insert2 = GetFPDFWideString(L"XYZ");
+  FORM_ReplaceAndKeepSelection(form_handle(), page(), text_to_insert2.get());
+  CheckFocusedFieldText(L"UVWXYZ");
+  CheckSelection(L"XYZ");
+
+  CheckCanUndo(true);
+  PerformUndo();
+  CheckFocusedFieldText(L"UVW");
+  CheckSelection(L"");
+}
+
 TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceSelection) {
   ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"XYZ");
   ClickOnFormFieldAtPoint(RegularFormBegin());
@@ -3338,6 +3373,42 @@ TEST_F(FPDFFormFillTextFormEmbedderTest, ReplaceSelection) {
   CheckFocusedFieldText(L"XYZB");
   CheckCanUndo(true);
   CheckCanRedo(false);
+}
+
+TEST_F(FPDFFormFillTextFormEmbedderTest, ContinuouslyReplaceSelection) {
+  ScopedFPDFWideString text_to_insert1 = GetFPDFWideString(L"UVW");
+
+  ClickOnFormFieldAtPoint(RegularFormBegin());
+  CheckFocusedFieldText(L"");
+  CheckCanUndo(false);
+  CheckCanRedo(false);
+
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert1.get());
+  CheckFocusedFieldText(L"UVW");
+  CheckSelection(L"");
+
+  CheckCanUndo(true);
+  CheckCanRedo(false);
+
+  PerformUndo();
+  CheckFocusedFieldText(L"");
+
+  CheckCanUndo(false);
+  CheckCanRedo(true);
+  PerformRedo();
+  CheckFocusedFieldText(L"UVW");
+  CheckSelection(L"");
+
+  ScopedFPDFWideString text_to_insert2 = GetFPDFWideString(L"XYZ");
+  FORM_ReplaceSelection(form_handle(), page(), text_to_insert2.get());
+  CheckFocusedFieldText(L"UVWXYZ");
+
+  CheckCanUndo(true);
+  CheckCanRedo(false);
+
+  PerformUndo();
+  CheckFocusedFieldText(L"UVW");
+  CheckSelection(L"");
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, SelectAllWithKeyboardShortcut) {

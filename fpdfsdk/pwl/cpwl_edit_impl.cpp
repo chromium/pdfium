@@ -196,6 +196,11 @@ bool CPWL_EditImpl::UndoStack::CanRedo() const {
   return m_nCurUndoPos < m_UndoItemStack.size();
 }
 
+CPWL_EditImpl::UndoItemIface* CPWL_EditImpl::UndoStack::GetLastAddItem() {
+  CHECK(!m_UndoItemStack.empty());
+  return m_UndoItemStack.back().get();
+}
+
 void CPWL_EditImpl::UndoStack::Redo() {
   DCHECK(!m_bWorking);
   m_bWorking = true;
@@ -349,25 +354,32 @@ CPWL_EditImpl::UndoReplaceSelection::UndoReplaceSelection(CPWL_EditImpl* pEdit,
                                                           bool bIsEnd)
     : m_pEdit(pEdit), m_bEnd(bIsEnd) {
   DCHECK(m_pEdit);
+  // Redo ClearSelection, InsertText and ReplaceSelection's end marker
+  // Undo InsertText, ClearSelection and ReplaceSelection's beginning
+  // marker
+  set_undo_remaining(3);
 }
 
 CPWL_EditImpl::UndoReplaceSelection::~UndoReplaceSelection() = default;
 
 int CPWL_EditImpl::UndoReplaceSelection::Redo() {
   m_pEdit->SelectNone();
-  if (IsEnd())
+  if (IsEnd()) {
     return 0;
-  // Redo ClearSelection, InsertText and ReplaceSelection's end marker
-  return 3;
+  }
+  // Redo ClearSelection, InsertText and ReplaceSelection's end
+  // marker. (ClearSelection may not exist)
+  return undo_remaining();
 }
 
 int CPWL_EditImpl::UndoReplaceSelection::Undo() {
   m_pEdit->SelectNone();
-  if (!IsEnd())
+  if (!IsEnd()) {
     return 0;
+  }
   // Undo InsertText, ClearSelection and ReplaceSelection's beginning
-  // marker
-  return 3;
+  // marker. (ClearSelection may not exist)
+  return undo_remaining();
 }
 
 class CPWL_EditImpl::UndoBackspace final : public CPWL_EditImpl::UndoItemIface {
@@ -1770,8 +1782,12 @@ void CPWL_EditImpl::PaintInsertText(const CPVT_WordPlace& wpOld,
 
 void CPWL_EditImpl::ReplaceAndKeepSelection(const WideString& text) {
   AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, false));
-  ClearSelection();
-
+  bool is_insert_undo_clear = ClearSelection();
+  // It is necessary to determine whether the value of `m_nUndoRemain` is 2 or 3
+  // based on ClearSelection().
+  if (!is_insert_undo_clear) {
+    m_Undo.GetLastAddItem()->set_undo_remaining(2);
+  }
   // Select the inserted text.
   CPVT_WordPlace caret_before_insert = m_wpCaret;
   InsertText(text, FX_Charset::kDefault);
@@ -1779,13 +1795,24 @@ void CPWL_EditImpl::ReplaceAndKeepSelection(const WideString& text) {
   m_SelState.Set(caret_before_insert, caret_after_insert);
 
   AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, true));
+  if (!is_insert_undo_clear) {
+    m_Undo.GetLastAddItem()->set_undo_remaining(2);
+  }
 }
 
 void CPWL_EditImpl::ReplaceSelection(const WideString& text) {
   AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, false));
-  ClearSelection();
+  bool is_insert_undo_clear = ClearSelection();
+  // It is necessary to determine whether the value of `m_nUndoRemain` is 2 or 3
+  // based on ClearSelection().
+  if (!is_insert_undo_clear) {
+    m_Undo.GetLastAddItem()->set_undo_remaining(2);
+  }
   InsertText(text, FX_Charset::kDefault);
   AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, true));
+  if (!is_insert_undo_clear) {
+    m_Undo.GetLastAddItem()->set_undo_remaining(2);
+  }
 }
 
 bool CPWL_EditImpl::Redo() {
