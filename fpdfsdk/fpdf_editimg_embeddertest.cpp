@@ -59,11 +59,13 @@ TEST_F(PDFEditImgTest, NewImageObjGenerateContent) {
 }
 
 TEST_F(PDFEditImgTest, NewImageObjLoadJpeg) {
-  ScopedFPDFDocument doc(FPDF_CreateNewDocument());
-  ScopedFPDFPage page(FPDFPage_New(doc.get(), 0, 200, 200));
+  CreateEmptyDocumentWithoutFormFillEnvironment();
+  constexpr int kPageWidth = 200;
+  constexpr int kPageHeight = 200;
+  ScopedFPDFPage page(FPDFPage_New(document(), 0, kPageWidth, kPageHeight));
   ASSERT_TRUE(page);
 
-  ScopedFPDFPageObject image(FPDFPageObj_NewImageObj(doc.get()));
+  ScopedFPDFPageObject image(FPDFPageObj_NewImageObj(document()));
   ASSERT_TRUE(image);
 
   FileAccessForTesting file_access("mona_lisa.jpg");
@@ -71,18 +73,36 @@ TEST_F(PDFEditImgTest, NewImageObjLoadJpeg) {
   EXPECT_TRUE(
       FPDFImageObj_LoadJpegFile(&temp_page, 1, image.get(), &file_access));
 
-  ScopedFPDFBitmap bitmap(FPDFImageObj_GetBitmap(image.get()));
-  EXPECT_TRUE(bitmap);
-  EXPECT_EQ(120, FPDFBitmap_GetWidth(bitmap.get()));
-  EXPECT_EQ(120, FPDFBitmap_GetHeight(bitmap.get()));
+  constexpr int kImageWidth = 120;
+  constexpr int kImageHeight = 120;
+  const char kImageChecksum[] = "58589c36b3b27a0058f5ca1fbed4d5e5";
+  const char kPageChecksum[] = "52b3a852f39c5fa9143e59d805dcb343";
+  {
+    ScopedFPDFBitmap image_bitmap(FPDFImageObj_GetBitmap(image.get()));
+    CompareBitmap(image_bitmap.get(), kImageWidth, kImageHeight,
+                  kImageChecksum);
+  }
+
+  FPDFImageObj_SetMatrix(image.get(), kImageWidth, 0, 0, kImageHeight, 0, 0);
+  FPDFPage_InsertObject(page.get(), image.release());
+  FPDFPage_GenerateContent(page.get());
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
+    CompareBitmap(page_bitmap.get(), kPageWidth, kPageHeight, kPageChecksum);
+  }
+
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedDocument(kPageWidth, kPageHeight, kPageChecksum);
 }
 
 TEST_F(PDFEditImgTest, NewImageObjLoadJpegInline) {
-  ScopedFPDFDocument doc(FPDF_CreateNewDocument());
-  ScopedFPDFPage page(FPDFPage_New(doc.get(), 0, 200, 200));
+  CreateEmptyDocumentWithoutFormFillEnvironment();
+  constexpr int kPageWidth = 200;
+  constexpr int kPageHeight = 200;
+  ScopedFPDFPage page(FPDFPage_New(document(), 0, kPageWidth, kPageHeight));
   ASSERT_TRUE(page);
 
-  ScopedFPDFPageObject image(FPDFPageObj_NewImageObj(doc.get()));
+  ScopedFPDFPageObject image(FPDFPageObj_NewImageObj(document()));
   ASSERT_TRUE(image);
 
   FileAccessForTesting file_access("mona_lisa.jpg");
@@ -90,10 +110,26 @@ TEST_F(PDFEditImgTest, NewImageObjLoadJpegInline) {
   EXPECT_TRUE(FPDFImageObj_LoadJpegFileInline(&temp_page, 1, image.get(),
                                               &file_access));
 
-  ScopedFPDFBitmap bitmap(FPDFImageObj_GetBitmap(image.get()));
-  EXPECT_TRUE(bitmap);
-  EXPECT_EQ(120, FPDFBitmap_GetWidth(bitmap.get()));
-  EXPECT_EQ(120, FPDFBitmap_GetHeight(bitmap.get()));
+  constexpr int kImageWidth = 120;
+  constexpr int kImageHeight = 120;
+  const char kImageChecksum[] = "58589c36b3b27a0058f5ca1fbed4d5e5";
+  const char kPageChecksum[] = "52b3a852f39c5fa9143e59d805dcb343";
+  {
+    ScopedFPDFBitmap image_bitmap(FPDFImageObj_GetBitmap(image.get()));
+    CompareBitmap(image_bitmap.get(), kImageWidth, kImageHeight,
+                  kImageChecksum);
+  }
+
+  FPDFImageObj_SetMatrix(image.get(), kImageWidth, 0, 0, kImageHeight, 0, 0);
+  FPDFPage_InsertObject(page.get(), image.release());
+  FPDFPage_GenerateContent(page.get());
+  {
+    ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
+    CompareBitmap(page_bitmap.get(), kPageWidth, kPageHeight, kPageChecksum);
+  }
+
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedDocument(kPageWidth, kPageHeight, kPageChecksum);
 }
 
 TEST_F(PDFEditImgTest, SetBitmap) {
