@@ -189,17 +189,17 @@ void CXFA_FFDocView::ShowNullTestMsg() {
   CXFA_FFApp* pApp = m_pDoc->GetApp();
   CXFA_FFApp::CallbackIface* pAppProvider = pApp->GetAppProvider();
   if (pAppProvider && iCount) {
-    int32_t iRemain = iCount > 7 ? iCount - 7 : 0;
-    iCount -= iRemain;
+    int32_t remaining = iCount > 7 ? iCount - 7 : 0;
+    iCount -= remaining;
     WideString wsMsg;
     for (int32_t i = 0; i < iCount; i++)
       wsMsg += m_NullTestMsgArray[i] + L"\n";
 
-    if (iRemain > 0) {
+    if (remaining > 0) {
       wsMsg += L"\n" + WideString::Format(
                            L"Message limit exceeded. Remaining %d "
                            L"validation errors not reported.",
-                           iRemain);
+                           remaining);
     }
     pAppProvider->MsgBox(wsMsg, pAppProvider->GetAppTitle(),
                          static_cast<uint32_t>(AlertIcon::kStatus),

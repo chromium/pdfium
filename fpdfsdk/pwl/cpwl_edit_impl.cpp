@@ -181,13 +181,13 @@ bool CPWL_EditImpl::UndoStack::CanUndo() const {
 void CPWL_EditImpl::UndoStack::Undo() {
   DCHECK(!m_bWorking);
   m_bWorking = true;
-  int nUndoRemain = 1;
-  while (CanUndo() && nUndoRemain > 0) {
-    nUndoRemain += m_UndoItemStack[m_nCurUndoPos - 1]->Undo();
+  int undo_remaining = 1;
+  while (CanUndo() && undo_remaining > 0) {
+    undo_remaining += m_UndoItemStack[m_nCurUndoPos - 1]->Undo();
     m_nCurUndoPos--;
-    nUndoRemain--;
+    undo_remaining--;
   }
-  DCHECK_EQ(nUndoRemain, 0);
+  DCHECK_EQ(undo_remaining, 0);
   DCHECK(m_bWorking);
   m_bWorking = false;
 }
@@ -1783,8 +1783,8 @@ void CPWL_EditImpl::PaintInsertText(const CPVT_WordPlace& wpOld,
 void CPWL_EditImpl::ReplaceAndKeepSelection(const WideString& text) {
   AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, false));
   bool is_insert_undo_clear = ClearSelection();
-  // It is necessary to determine whether the value of `m_nUndoRemain` is 2 or 3
-  // based on ClearSelection().
+  // It is necessary to determine whether the value of `undo_remaining_` is 2 or
+  // 3 based on ClearSelection().
   if (!is_insert_undo_clear) {
     m_Undo.GetLastAddItem()->set_undo_remaining(2);
   }
@@ -1803,8 +1803,8 @@ void CPWL_EditImpl::ReplaceAndKeepSelection(const WideString& text) {
 void CPWL_EditImpl::ReplaceSelection(const WideString& text) {
   AddEditUndoItem(std::make_unique<UndoReplaceSelection>(this, false));
   bool is_insert_undo_clear = ClearSelection();
-  // It is necessary to determine whether the value of `m_nUndoRemain` is 2 or 3
-  // based on ClearSelection().
+  // It is necessary to determine whether the value of `undo_remaining_` is 2 or
+  // 3 based on ClearSelection().
   if (!is_insert_undo_clear) {
     m_Undo.GetLastAddItem()->set_undo_remaining(2);
   }
