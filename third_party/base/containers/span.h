@@ -6,6 +6,7 @@
 #define THIRD_PARTY_BASE_CONTAINERS_SPAN_H_
 
 #include <stddef.h>
+#include <stdint.h>
 
 #include <algorithm>
 #include <array>
