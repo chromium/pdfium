@@ -48,7 +48,7 @@ FileAccessForTesting::FileAccessForTesting(const std::string& file_name) {
   if (!file_contents_)
     return;
 
-  m_FileLen = static_cast<unsigned long>(file_length_);
+  m_FileLen = pdfium::base::checked_cast<unsigned long>(file_length_);
   m_GetBlock = SGetBlock;
   m_Param = this;
 }

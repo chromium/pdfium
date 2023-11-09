@@ -342,7 +342,8 @@ bool EmbedderTest::OpenDocumentWithOptions(const std::string& filename,
       pdfium::make_span(file_contents_.get(), file_length_));
 
   memset(&file_access_, 0, sizeof(file_access_));
-  file_access_.m_FileLen = static_cast<unsigned long>(file_length_);
+  file_access_.m_FileLen =
+      pdfium::base::checked_cast<unsigned long>(file_length_);
   file_access_.m_GetBlock = TestLoader::GetBlock;
   file_access_.m_Param = loader_.get();
 

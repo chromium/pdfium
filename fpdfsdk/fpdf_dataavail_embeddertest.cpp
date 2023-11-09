@@ -17,6 +17,7 @@
 #include "testing/range_set.h"
 #include "testing/utils/file_util.h"
 #include "testing/utils/path_service.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -44,7 +45,8 @@ class TestAsyncLoader final : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
     if (!file_contents_)
       return;
 
-    file_access_.m_FileLen = static_cast<unsigned long>(file_length_);
+    file_access_.m_FileLen =
+        pdfium::base::checked_cast<unsigned long>(file_length_);
     file_access_.m_GetBlock = SGetBlock;
     file_access_.m_Param = this;
 
@@ -105,8 +107,8 @@ class TestAsyncLoader final : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
   int GetBlockImpl(unsigned long pos, unsigned char* pBuf, unsigned long size) {
     if (!IsDataAvailImpl(pos, size))
       return 0;
-    const unsigned long end =
-        std::min(static_cast<unsigned long>(file_length_), pos + size);
+    const unsigned long end = std::min(
+        pdfium::base::checked_cast<unsigned long>(file_length_), pos + size);
     if (end <= pos)
       return 0;
     memcpy(pBuf, file_contents_.get() + pos, end - pos);
