@@ -28,9 +28,8 @@ namespace {
 
 RetainPtr<CPDF_ReadValidator> MakeValidatorFromFile(
     const std::string& file_name) {
-  std::string file_path;
-  PathService::GetTestFilePath(file_name, &file_path);
-  DCHECK(!file_path.empty());
+  std::string file_path = PathService::GetTestFilePath(file_name);
+  CHECK(!file_path.empty());
   return pdfium::MakeRetain<CPDF_ReadValidator>(
       IFX_SeekableReadStream::CreateFromFilename(file_path.c_str()), nullptr);
 }

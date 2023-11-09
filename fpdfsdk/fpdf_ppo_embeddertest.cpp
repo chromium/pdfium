@@ -633,8 +633,8 @@ TEST_F(FPDFPPOEmbedderTest, ImportIntoDestDocWithoutInfo) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_EQ(1, FPDF_GetPageCount(document()));
 
-  std::string file_path;
-  ASSERT_TRUE(PathService::GetTestFilePath("rectangles.pdf", &file_path));
+  std::string file_path = PathService::GetTestFilePath("rectangles.pdf");
+  ASSERT_FALSE(file_path.empty());
   size_t file_length = 0;
   std::unique_ptr<char, pdfium::FreeDeleter> file_contents =
       GetFileContents(file_path.c_str(), &file_length);

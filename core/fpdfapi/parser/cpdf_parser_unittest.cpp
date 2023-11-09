@@ -141,9 +141,9 @@ class CPDF_TestParser final : public CPDF_Parser {
 
 TEST(ParserTest, RebuildCrossRefCorrectly) {
   CPDF_TestParser parser;
-  std::string test_file;
-  ASSERT_TRUE(PathService::GetTestFilePath("parser_rebuildxref_correct.pdf",
-                                           &test_file));
+  std::string test_file =
+      PathService::GetTestFilePath("parser_rebuildxref_correct.pdf");
+  ASSERT_FALSE(test_file.empty());
   ASSERT_TRUE(parser.InitTestFromFile(test_file.c_str())) << test_file;
 
   ASSERT_TRUE(parser.RebuildCrossRef());
@@ -161,9 +161,9 @@ TEST(ParserTest, RebuildCrossRefCorrectly) {
 
 TEST(ParserTest, RebuildCrossRefFailed) {
   CPDF_TestParser parser;
-  std::string test_file;
-  ASSERT_TRUE(PathService::GetTestFilePath(
-      "parser_rebuildxref_error_notrailer.pdf", &test_file));
+  std::string test_file =
+      PathService::GetTestFilePath("parser_rebuildxref_error_notrailer.pdf");
+  ASSERT_FALSE(test_file.empty());
   ASSERT_TRUE(parser.InitTestFromFile(test_file.c_str())) << test_file;
 
   ASSERT_FALSE(parser.RebuildCrossRef());
@@ -340,9 +340,9 @@ TEST(ParserTest, LoadCrossRefV4) {
 
 TEST(ParserTest, ParseStartXRef) {
   CPDF_TestParser parser;
-  std::string test_file;
-  ASSERT_TRUE(
-      PathService::GetTestFilePath("annotation_stamp_with_ap.pdf", &test_file));
+  std::string test_file =
+      PathService::GetTestFilePath("annotation_stamp_with_ap.pdf");
+  ASSERT_FALSE(test_file.empty());
   ASSERT_TRUE(parser.InitTestFromFile(test_file.c_str())) << test_file;
 
   EXPECT_EQ(100940, parser.ParseStartXRef());
@@ -354,9 +354,9 @@ TEST(ParserTest, ParseStartXRef) {
 
 TEST(ParserTest, ParseStartXRefWithHeaderOffset) {
   static constexpr FX_FILESIZE kTestHeaderOffset = 765;
-  std::string test_file;
-  ASSERT_TRUE(
-      PathService::GetTestFilePath("annotation_stamp_with_ap.pdf", &test_file));
+  std::string test_file =
+      PathService::GetTestFilePath("annotation_stamp_with_ap.pdf");
+  ASSERT_FALSE(test_file.empty());
   RetainPtr<IFX_SeekableReadStream> pFileAccess =
       IFX_SeekableReadStream::CreateFromFilename(test_file.c_str());
   ASSERT_TRUE(pFileAccess);
@@ -376,8 +376,8 @@ TEST(ParserTest, ParseStartXRefWithHeaderOffset) {
 
 TEST(ParserTest, ParseLinearizedWithHeaderOffset) {
   static constexpr FX_FILESIZE kTestHeaderOffset = 765;
-  std::string test_file;
-  ASSERT_TRUE(PathService::GetTestFilePath("linearized.pdf", &test_file));
+  std::string test_file = PathService::GetTestFilePath("linearized.pdf");
+  ASSERT_FALSE(test_file.empty());
   RetainPtr<IFX_SeekableReadStream> pFileAccess =
       IFX_SeekableReadStream::CreateFromFilename(test_file.c_str());
   ASSERT_TRUE(pFileAccess);

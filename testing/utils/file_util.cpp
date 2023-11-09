@@ -39,9 +39,10 @@ std::unique_ptr<char, pdfium::FreeDeleter> GetFileContents(const char* filename,
 }
 
 FileAccessForTesting::FileAccessForTesting(const std::string& file_name) {
-  std::string file_path;
-  if (!PathService::GetTestFilePath(file_name, &file_path))
+  std::string file_path = PathService::GetTestFilePath(file_name);
+  if (file_path.empty()) {
     return;
+  }
 
   file_contents_ = GetFileContents(file_path.c_str(), &file_length_);
   if (!file_contents_)

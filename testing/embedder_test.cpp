@@ -328,9 +328,10 @@ bool EmbedderTest::OpenDocumentWithOptions(const std::string& filename,
                                            const char* password,
                                            LinearizeOption linearize_option,
                                            JavaScriptOption javascript_option) {
-  std::string file_path;
-  if (!PathService::GetTestFilePath(filename, &file_path))
+  std::string file_path = PathService::GetTestFilePath(filename);
+  if (file_path.empty()) {
     return false;
+  }
 
   file_contents_ = GetFileContents(file_path.c_str(), &file_length_);
   if (!file_contents_)

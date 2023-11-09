@@ -27,8 +27,8 @@ TEST(CPDFPageImageCache, RenderBug1924) {
 
   CPDF_PageModule::Create();
   {
-    std::string file_path;
-    ASSERT_TRUE(PathService::GetTestFilePath("jpx_lzw.pdf", &file_path));
+    std::string file_path = PathService::GetTestFilePath("jpx_lzw.pdf");
+    ASSERT_FALSE(file_path.empty());
     auto document =
         std::make_unique<CPDF_Document>(std::make_unique<CPDF_DocRenderData>(),
                                         std::make_unique<CPDF_DocPageData>());

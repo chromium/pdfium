@@ -157,15 +157,17 @@ bool PathService::GetTestDataDir(std::string* path) {
 }
 
 // static
-bool PathService::GetTestFilePath(const std::string& file_name,
-                                  std::string* path) {
-  if (!GetTestDataDir(path))
-    return false;
+std::string PathService::GetTestFilePath(const std::string& file_name) {
+  std::string path;
+  if (!GetTestDataDir(&path)) {
+    return std::string();
+  }
 
-  if (!EndsWithSeparator(*path))
-    path->push_back(PATH_SEPARATOR);
-  path->append(file_name);
-  return true;
+  if (!EndsWithSeparator(path)) {
+    path.push_back(PATH_SEPARATOR);
+  }
+  path.append(file_name);
+  return path;
 }
 
 // static

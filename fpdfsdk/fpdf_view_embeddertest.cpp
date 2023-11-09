@@ -507,8 +507,8 @@ TEST_F(FPDFViewEmbedderTest, Document) {
 }
 
 TEST_F(FPDFViewEmbedderTest, LoadDocument64) {
-  std::string file_path;
-  ASSERT_TRUE(PathService::GetTestFilePath("about_blank.pdf", &file_path));
+  std::string file_path = PathService::GetTestFilePath("about_blank.pdf");
+  ASSERT_FALSE(file_path.empty());
 
   size_t file_length = 0;
   std::unique_ptr<char, pdfium::FreeDeleter> file_contents =
@@ -610,9 +610,9 @@ TEST_F(FPDFViewEmbedderTest, LoadCustomDocumentWithShortLivedFileAccess) {
   ScopedFPDFDocument doc;
   {
     // Read a PDF, and copy it into |file_contents_string|.
-    std::string pdf_path;
     size_t pdf_length;
-    ASSERT_TRUE(PathService::GetTestFilePath("rectangles.pdf", &pdf_path));
+    std::string pdf_path = PathService::GetTestFilePath("rectangles.pdf");
+    ASSERT_FALSE(pdf_path.empty());
     auto file_contents = GetFileContents(pdf_path.c_str(), &pdf_length);
     ASSERT_TRUE(file_contents);
     for (size_t i = 0; i < pdf_length; ++i)
@@ -1401,9 +1401,9 @@ TEST_F(FPDFViewEmbedderTest, UnSupportedOperations_LoadCustomDocument) {
 }
 
 TEST_F(FPDFViewEmbedderTest, UnSupportedOperations_LoadDocument) {
-  std::string file_path;
-  ASSERT_TRUE(
-      PathService::GetTestFilePath("unsupported_feature.pdf", &file_path));
+  std::string file_path =
+      PathService::GetTestFilePath("unsupported_feature.pdf");
+  ASSERT_FALSE(file_path.empty());
 
   RecordUnsupportedErrorDelegate delegate;
   SetDelegate(&delegate);
@@ -1432,8 +1432,8 @@ TEST_F(FPDFViewEmbedderTest, LoadDocumentWithEmptyXRefConsistently) {
   ASSERT_TRUE(OpenDocument("empty_xref.pdf"));
   EXPECT_TRUE(FPDF_DocumentHasValidCrossReferenceTable(document()));
 
-  std::string file_path;
-  ASSERT_TRUE(PathService::GetTestFilePath("empty_xref.pdf", &file_path));
+  std::string file_path = PathService::GetTestFilePath("empty_xref.pdf");
+  ASSERT_FALSE(file_path.empty());
   {
     ScopedFPDFDocument doc(FPDF_LoadDocument(file_path.c_str(), ""));
     ASSERT_TRUE(doc);

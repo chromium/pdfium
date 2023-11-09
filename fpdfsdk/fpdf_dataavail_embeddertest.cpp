@@ -36,9 +36,10 @@ class MockDownloadHints final : public FX_DOWNLOADHINTS {
 class TestAsyncLoader final : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
  public:
   explicit TestAsyncLoader(const std::string& file_name) {
-    std::string file_path;
-    if (!PathService::GetTestFilePath(file_name, &file_path))
+    std::string file_path = PathService::GetTestFilePath(file_name);
+    if (file_path.empty()) {
       return;
+    }
     file_contents_ = GetFileContents(file_path.c_str(), &file_length_);
     if (!file_contents_)
       return;
