@@ -825,8 +825,7 @@ class Processor final {
   void Idle() const { idler()(); }
 
   void ProcessPdf(const std::string& name,
-                  const char* buf,
-                  size_t len,
+                  pdfium::span<const char> data,
                   const std::string& events);
 
  private:
@@ -1526,13 +1525,12 @@ bool PdfProcessor::ProcessPage(const int page_index) {
 }
 
 void Processor::ProcessPdf(const std::string& name,
-                           const char* buf,
-                           size_t len,
+                           pdfium::span<const char> data,
                            const std::string& events) {
-  TestLoader loader({buf, len});
+  TestLoader loader(data);
 
   FPDF_FILEACCESS file_access = {};
-  file_access.m_FileLen = static_cast<unsigned long>(len);
+  file_access.m_FileLen = static_cast<unsigned long>(data.size());
   file_access.m_GetBlock = TestLoader::GetBlock;
   file_access.m_Param = &loader;
 
@@ -1554,7 +1552,7 @@ void Processor::ProcessPdf(const std::string& name,
       options().password.empty() ? nullptr : options().password.c_str();
   bool is_linearized = false;
   if (options().use_load_mem_document) {
-    doc.reset(FPDF_LoadMemDocument(buf, len, password));
+    doc.reset(FPDF_LoadMemDocument(data.data(), data.size(), password));
   } else {
     if (FPDFAvail_IsLinearized(pdf_avail.get()) == PDF_LINEARIZED) {
       int avail_status = PDF_DATA_NOTAVAIL;
@@ -1991,7 +1989,7 @@ int main(int argc, const char* argv[]) {
       }
     }
 
-    processor.ProcessPdf(filename, file_contents.get(), file_length, events);
+    processor.ProcessPdf(filename, {file_contents.get(), file_length}, events);
 
 #ifdef ENABLE_CALLGRIND
     if (options.callgrind_delimiters)
