@@ -43,7 +43,7 @@ TEST(CodePointViewTest, UnpairedLowSurrogate) {
   EXPECT_EQ(U"\xdc00", Materialize(CodePointView(L"\xdc00")));
 }
 
-#if defined(WCHAR_T_IS_UTF16)
+#if defined(WCHAR_T_IS_16_BIT)
 TEST(CodePointViewTest, SurrogateErrorRecovery) {
   EXPECT_EQ(U"(\xd800)", Materialize(CodePointView(L"(\xd800)"))) << "High";
   EXPECT_EQ(U"(\xdc00)", Materialize(CodePointView(L"(\xdc00)"))) << "Low";
@@ -52,4 +52,4 @@ TEST(CodePointViewTest, SurrogateErrorRecovery) {
   EXPECT_EQ(U"(🎨\xdc00)", Materialize(CodePointView(L"(\xd83c\xdfa8\xdc00)")))
       << "Low-low";
 }
-#endif  // defined(WCHAR_T_IS_UTF16)
+#endif  // defined(WCHAR_T_IS_16_BIT)

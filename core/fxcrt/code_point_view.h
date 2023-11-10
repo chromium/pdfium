@@ -12,7 +12,7 @@
 
 namespace pdfium {
 
-#if defined(WCHAR_T_IS_UTF16)
+#if defined(WCHAR_T_IS_16_BIT)
 // A view over a UTF-16 `WideStringView` suitable for iterating by code point
 // using a range-based `for` loop.
 class CodePointView final {
@@ -84,7 +84,7 @@ class CodePointView final {
 };
 #else
 using CodePointView = WideStringView;
-#endif  // defined(WCHAR_T_IS_UTF16)
+#endif  // defined(WCHAR_T_IS_16_BIT)
 
 }  // namespace pdfium
 

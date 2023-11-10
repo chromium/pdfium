@@ -67,7 +67,7 @@ std::pair<size_t, size_t> UTF8Decode(pdfium::span<const uint8_t> pSrc,
   return {iSrcNum, iDstNum};
 }
 
-#if defined(WCHAR_T_IS_UTF32)
+#if defined(WCHAR_T_IS_32_BIT)
 static_assert(sizeof(wchar_t) > 2, "wchar_t is too small");
 
 void UTF16ToWChar(void* pBuffer, size_t iLength) {
@@ -81,7 +81,7 @@ void UTF16ToWChar(void* pBuffer, size_t iLength) {
   for (size_t i = iLength; i > 0; --i)
     pDst[i - 1] = static_cast<wchar_t>(pSrc[i - 1]);
 }
-#endif  // defined(WCHAR_T_IS_UTF32)
+#endif  // defined(WCHAR_T_IS_32_BIT)
 
 void SwapByteOrder(uint16_t* pStr, size_t iLength) {
   while (iLength-- > 0) {
@@ -194,7 +194,7 @@ size_t CFX_SeekableStreamProxy::ReadBlock(wchar_t* pStr, size_t size) {
     if (m_wCodePage == FX_CodePage::kUTF16BE)
       SwapByteOrder(reinterpret_cast<uint16_t*>(pStr), size);
 
-#if defined(WCHAR_T_IS_UTF32)
+#if defined(WCHAR_T_IS_32_BIT)
     if (size > 0)
       UTF16ToWChar(pStr, size);
 #endif

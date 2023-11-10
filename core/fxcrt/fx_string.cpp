@@ -68,7 +68,7 @@ void AppendCodePointToWideString(char32_t code_point, WideString& buffer) {
     return;
   }
 
-#if defined(WCHAR_T_IS_UTF16)
+#if defined(WCHAR_T_IS_16_BIT)
   if (code_point < pdfium::kMinimumSupplementaryCodePoint) {
     buffer += static_cast<wchar_t>(code_point);
   } else {
@@ -79,7 +79,7 @@ void AppendCodePointToWideString(char32_t code_point, WideString& buffer) {
   }
 #else
   buffer += static_cast<wchar_t>(code_point);
-#endif  // defined(WCHAR_T_IS_UTF16)
+#endif  // defined(WCHAR_T_IS_16_BIT)
 }
 
 }  // namespace

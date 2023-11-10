@@ -53,7 +53,7 @@ TEST(fxstring, FXUTF8EncodeSupplementary) {
                     L"\U0010ffff"));
 }
 
-#if defined(WCHAR_T_IS_UTF16)
+#if defined(WCHAR_T_IS_16_BIT)
 TEST(fxstring, FXUTF8EncodeSurrogateErrorRecovery) {
   EXPECT_EQ("(\xed\xa0\x80)", FX_UTF8Encode(L"(\xd800)")) << "High";
   EXPECT_EQ("(\xed\xb0\x80)", FX_UTF8Encode(L"(\xdc00)")) << "Low";
@@ -62,7 +62,7 @@ TEST(fxstring, FXUTF8EncodeSurrogateErrorRecovery) {
   EXPECT_EQ("(🎨\xed\xb0\x80)", FX_UTF8Encode(L"(\xd83c\xdfa8\xdc00)"))
       << "Low-low";
 }
-#endif  // defined(WCHAR_T_IS_UTF16)
+#endif  // defined(WCHAR_T_IS_16_BIT)
 
 TEST(fxstring, FXUTF8Decode) {
   EXPECT_EQ(L"", FX_UTF8Decode(ByteStringView()));
