@@ -5,36 +5,33 @@
 #include "testing/utils/file_util.h"
 
 #include <stdio.h>
-#include <string.h>
 
+#include <utility>
+#include <vector>
+
+#include "core/fxcrt/span_util.h"
 #include "testing/utils/path_service.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
-std::unique_ptr<char, pdfium::FreeDeleter> GetFileContents(const char* filename,
-                                                           size_t* retlen) {
+std::vector<uint8_t> GetFileContents(const char* filename) {
   FILE* file = fopen(filename, "rb");
   if (!file) {
     fprintf(stderr, "Failed to open: %s\n", filename);
-    return nullptr;
+    return {};
   }
   (void)fseek(file, 0, SEEK_END);
   size_t file_length = ftell(file);
   if (!file_length) {
-    return nullptr;
+    return {};
   }
   (void)fseek(file, 0, SEEK_SET);
-  std::unique_ptr<char, pdfium::FreeDeleter> buffer(
-      static_cast<char*>(malloc(file_length)));
-  if (!buffer) {
-    return nullptr;
-  }
-  size_t bytes_read = fread(buffer.get(), 1, file_length, file);
+  std::vector<uint8_t> buffer(file_length);
+  size_t bytes_read = fread(buffer.data(), 1, file_length, file);
   (void)fclose(file);
   if (bytes_read != file_length) {
     fprintf(stderr, "Failed to read: %s\n", filename);
-    return nullptr;
+    return {};
   }
-  *retlen = bytes_read;
   return buffer;
 }
 
@@ -44,11 +41,12 @@ FileAccessForTesting::FileAccessForTesting(const std::string& file_name) {
     return;
   }
 
-  file_contents_ = GetFileContents(file_path.c_str(), &file_length_);
-  if (!file_contents_)
+  file_contents_ = GetFileContents(file_path.c_str());
+  if (file_contents_.empty()) {
     return;
+  }
 
-  m_FileLen = pdfium::base::checked_cast<unsigned long>(file_length_);
+  m_FileLen = pdfium::base::checked_cast<unsigned long>(file_contents_.size());
   m_GetBlock = SGetBlock;
   m_Param = this;
 }
@@ -56,8 +54,9 @@ FileAccessForTesting::FileAccessForTesting(const std::string& file_name) {
 int FileAccessForTesting::GetBlockImpl(unsigned long pos,
                                        unsigned char* pBuf,
                                        unsigned long size) {
-  memcpy(pBuf, file_contents_.get() + pos, size);
-  return pdfium::base::checked_cast<int>(size);
+  fxcrt::spancpy(pdfium::make_span(pBuf, size),
+                 pdfium::make_span(file_contents_).subspan(pos, size));
+  return size ? 1 : 0;
 }
 
 // static

@@ -333,17 +333,17 @@ bool EmbedderTest::OpenDocumentWithOptions(const std::string& filename,
     return false;
   }
 
-  file_contents_ = GetFileContents(file_path.c_str(), &file_length_);
-  if (!file_contents_)
+  file_contents_ = GetFileContents(file_path.c_str());
+  if (file_contents_.empty()) {
     return false;
+  }
 
   EXPECT_TRUE(!loader_);
-  loader_ = std::make_unique<TestLoader>(
-      pdfium::make_span(file_contents_.get(), file_length_));
+  loader_ = std::make_unique<TestLoader>(file_contents_);
 
   memset(&file_access_, 0, sizeof(file_access_));
   file_access_.m_FileLen =
-      pdfium::base::checked_cast<unsigned long>(file_length_);
+      pdfium::base::checked_cast<unsigned long>(file_contents_.size());
   file_access_.m_GetBlock = TestLoader::GetBlock;
   file_access_.m_Param = loader_.get();
 
@@ -428,7 +428,7 @@ void EmbedderTest::CloseDocument() {
   fake_file_access_.reset();
   memset(&file_access_, 0, sizeof(file_access_));
   loader_.reset();
-  file_contents_.reset();
+  file_contents_ = {};
 }
 
 FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(

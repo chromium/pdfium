@@ -5,17 +5,17 @@
 #ifndef TESTING_UTILS_FILE_UTIL_H_
 #define TESTING_UTILS_FILE_UTIL_H_
 
-#include <stdlib.h>
+#include <stdint.h>
 
-#include <memory>
 #include <string>
+#include <vector>
 
 #include "public/fpdfview.h"
-#include "testing/free_deleter.h"
 
-// Reads the entire contents of a file into a newly alloc'd buffer.
-std::unique_ptr<char, pdfium::FreeDeleter> GetFileContents(const char* filename,
-                                                           size_t* retlen);
+// Reads the entire contents of a file into a vector. Returns an empty vector on
+// failure. Note that this function assumes reading an empty file is not a valid
+// use case, and treats such an action as a failure.
+std::vector<uint8_t> GetFileContents(const char* filename);
 
 // Use an ordinary file anywhere a FPDF_FILEACCESS is required.
 class FileAccessForTesting final : public FPDF_FILEACCESS {
@@ -30,8 +30,7 @@ class FileAccessForTesting final : public FPDF_FILEACCESS {
 
   int GetBlockImpl(unsigned long pos, unsigned char* pBuf, unsigned long size);
 
-  size_t file_length_;
-  std::unique_ptr<char, pdfium::FreeDeleter> file_contents_;
+  std::vector<uint8_t> file_contents_;
 };
 
 #endif  // TESTING_UTILS_FILE_UTIL_H_

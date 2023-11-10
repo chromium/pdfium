@@ -5,6 +5,7 @@
 #include <iterator>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_formobject.h"
@@ -635,12 +636,11 @@ TEST_F(FPDFPPOEmbedderTest, ImportIntoDestDocWithoutInfo) {
 
   std::string file_path = PathService::GetTestFilePath("rectangles.pdf");
   ASSERT_FALSE(file_path.empty());
-  size_t file_length = 0;
-  std::unique_ptr<char, pdfium::FreeDeleter> file_contents =
-      GetFileContents(file_path.c_str(), &file_length);
-  DCHECK(file_contents);
-  ScopedFPDFDocument src_doc(
-      FPDF_LoadMemDocument(file_contents.get(), file_length, nullptr));
+  std::vector<uint8_t> file_contents = GetFileContents(file_path.c_str());
+  ASSERT_FALSE(file_contents.empty());
+
+  ScopedFPDFDocument src_doc(FPDF_LoadMemDocument(
+      file_contents.data(), file_contents.size(), nullptr));
   ASSERT_TRUE(src_doc);
 
   static constexpr int kIndices[] = {0};

@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <algorithm>
 #include <functional>
 #include <iterator>
 #include <map>
@@ -825,7 +826,7 @@ class Processor final {
   void Idle() const { idler()(); }
 
   void ProcessPdf(const std::string& name,
-                  pdfium::span<const char> data,
+                  pdfium::span<const uint8_t> data,
                   const std::string& events);
 
  private:
@@ -1525,7 +1526,7 @@ bool PdfProcessor::ProcessPage(const int page_index) {
 }
 
 void Processor::ProcessPdf(const std::string& name,
-                           pdfium::span<const char> data,
+                           pdfium::span<const uint8_t> data,
                            const std::string& events) {
   TestLoader loader(data);
 
@@ -1957,11 +1958,10 @@ int main(int argc, const char* argv[]) {
 
   Processor processor(&options, &idler);
   for (const std::string& filename : files) {
-    size_t file_length = 0;
-    std::unique_ptr<char, pdfium::FreeDeleter> file_contents =
-        GetFileContents(filename.c_str(), &file_length);
-    if (!file_contents)
+    std::vector<uint8_t> file_contents = GetFileContents(filename.c_str());
+    if (file_contents.empty()) {
       continue;
+    }
     fprintf(stderr, "Processing PDF file %s.\n", filename.c_str());
 
 #ifdef ENABLE_CALLGRIND
@@ -1972,24 +1972,24 @@ int main(int argc, const char* argv[]) {
     std::string events;
     if (options.send_events) {
       std::string event_filename = filename;
-      size_t event_length = 0;
       size_t extension_pos = event_filename.find(".pdf");
       if (extension_pos != std::string::npos) {
         event_filename.replace(extension_pos, 4, ".evt");
         if (access(event_filename.c_str(), R_OK) == 0) {
           fprintf(stderr, "Using event file %s.\n", event_filename.c_str());
-          std::unique_ptr<char, pdfium::FreeDeleter> event_contents =
-              GetFileContents(event_filename.c_str(), &event_length);
-          if (event_contents) {
+          std::vector<uint8_t> event_contents =
+              GetFileContents(event_filename.c_str());
+          if (!event_contents.empty()) {
             fprintf(stderr, "Sending events from: %s\n",
                     event_filename.c_str());
-            events = std::string(event_contents.get(), event_length);
+            std::copy(event_contents.begin(), event_contents.end(),
+                      std::back_inserter(events));
           }
         }
       }
     }
 
-    processor.ProcessPdf(filename, {file_contents.get(), file_length}, events);
+    processor.ProcessPdf(filename, file_contents, events);
 
 #ifdef ENABLE_CALLGRIND
     if (options.callgrind_delimiters)

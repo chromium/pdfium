@@ -4,6 +4,7 @@
 
 #include <math.h>
 
+#include <algorithm>
 #include <limits>
 #include <memory>
 #include <string>
@@ -25,7 +26,6 @@
 #include "testing/utils/file_util.h"
 #include "testing/utils/hash.h"
 #include "testing/utils/path_service.h"
-#include "third_party/base/check.h"
 
 #if defined(_SKIA_SUPPORT_)
 #include "third_party/skia/include/core/SkCanvas.h"           // nogncheck
@@ -510,12 +510,10 @@ TEST_F(FPDFViewEmbedderTest, LoadDocument64) {
   std::string file_path = PathService::GetTestFilePath("about_blank.pdf");
   ASSERT_FALSE(file_path.empty());
 
-  size_t file_length = 0;
-  std::unique_ptr<char, pdfium::FreeDeleter> file_contents =
-      GetFileContents(file_path.c_str(), &file_length);
-  DCHECK(file_contents);
-  ScopedFPDFDocument doc(
-      FPDF_LoadMemDocument64(file_contents.get(), file_length, nullptr));
+  std::vector<uint8_t> file_contents = GetFileContents(file_path.c_str());
+  ASSERT_FALSE(file_contents.empty());
+  ScopedFPDFDocument doc(FPDF_LoadMemDocument64(file_contents.data(),
+                                                file_contents.size(), nullptr));
   ASSERT_TRUE(doc);
 
   int version;
@@ -610,18 +608,17 @@ TEST_F(FPDFViewEmbedderTest, LoadCustomDocumentWithShortLivedFileAccess) {
   ScopedFPDFDocument doc;
   {
     // Read a PDF, and copy it into |file_contents_string|.
-    size_t pdf_length;
     std::string pdf_path = PathService::GetTestFilePath("rectangles.pdf");
     ASSERT_FALSE(pdf_path.empty());
-    auto file_contents = GetFileContents(pdf_path.c_str(), &pdf_length);
-    ASSERT_TRUE(file_contents);
-    for (size_t i = 0; i < pdf_length; ++i)
-      file_contents_string.push_back(file_contents.get()[i]);
+    std::vector<uint8_t> file_contents = GetFileContents(pdf_path.c_str());
+    ASSERT_FALSE(file_contents.empty());
+    std::copy(file_contents.begin(), file_contents.end(),
+              std::back_inserter(file_contents_string));
 
     // Define a FPDF_FILEACCESS object that will go out of scope, while the
     // loaded document in |doc| remains valid.
     FPDF_FILEACCESS file_access = {};
-    file_access.m_FileLen = pdf_length;
+    file_access.m_FileLen = file_contents_string.size();
     file_access.m_GetBlock = GetBlockFromString;
     file_access.m_Param = &file_contents_string;
     doc.reset(FPDF_LoadCustomDocument(&file_access, nullptr));
@@ -1440,12 +1437,10 @@ TEST_F(FPDFViewEmbedderTest, LoadDocumentWithEmptyXRefConsistently) {
     EXPECT_TRUE(FPDF_DocumentHasValidCrossReferenceTable(doc.get()));
   }
   {
-    size_t file_length = 0;
-    std::unique_ptr<char, pdfium::FreeDeleter> file_contents =
-        GetFileContents(file_path.c_str(), &file_length);
-    DCHECK(file_contents);
+    std::vector<uint8_t> file_contents = GetFileContents(file_path.c_str());
+    ASSERT_FALSE(file_contents.empty());
     ScopedFPDFDocument doc(
-        FPDF_LoadMemDocument(file_contents.get(), file_length, ""));
+        FPDF_LoadMemDocument(file_contents.data(), file_contents.size(), ""));
     ASSERT_TRUE(doc);
     EXPECT_TRUE(FPDF_DocumentHasValidCrossReferenceTable(doc.get()));
   }

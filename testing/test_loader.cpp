@@ -9,7 +9,7 @@
 #include "third_party/base/check_op.h"
 #include "third_party/base/numerics/checked_math.h"
 
-TestLoader::TestLoader(pdfium::span<const char> span) : m_Span(span) {}
+TestLoader::TestLoader(pdfium::span<const uint8_t> span) : m_Span(span) {}
 
 // static
 int TestLoader::GetBlock(void* param,
