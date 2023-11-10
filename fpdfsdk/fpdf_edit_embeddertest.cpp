@@ -386,8 +386,7 @@ TEST_F(FPDFEditEmbedderTest, Bug2094) {
   ScopedFPDFFont font(FPDFText_LoadFont(document(), font_data.data(),
                                         font_data.size(), FPDF_FONT_TRUETYPE,
                                         /*cid=*/true));
-  // TODO(crbug.com/pdfium/2094): Make FPDFText_LoadFont() succeed.
-  EXPECT_FALSE(font);
+  EXPECT_TRUE(font);
 }
 
 TEST_F(FPDFEditEmbedderTest, EmptyCreation) {

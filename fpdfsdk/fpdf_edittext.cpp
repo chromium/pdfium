@@ -302,12 +302,18 @@ RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* pDoc,
   ByteString name = BaseFontNameForType(pFont.get(), font_type);
   pFontDict->SetNewFor<CPDF_Name>("BaseFont", name);
 
+  // If it doesn't have a single char, just fail.
+  if (pFont->GetFaceRec()->num_glyphs <= 0) {
+    return nullptr;
+  }
+
   uint32_t dwGlyphIndex;
   uint32_t dwCurrentChar = static_cast<uint32_t>(
       FT_Get_First_Char(pFont->GetFaceRec(), &dwGlyphIndex));
   static constexpr uint32_t kMaxSimpleFontChar = 0xFF;
-  if (dwCurrentChar > kMaxSimpleFontChar || dwGlyphIndex == 0)
+  if (dwCurrentChar > kMaxSimpleFontChar) {
     return nullptr;
+  }
   pFontDict->SetNewFor<CPDF_Number>("FirstChar",
                                     static_cast<int>(dwCurrentChar));
   auto widthsArray = pDoc->NewIndirect<CPDF_Array>();
@@ -369,12 +375,15 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
   pCIDFont->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc,
                                       pFontDesc->GetObjNum());
 
+  // If it doesn't have a single char, just fail.
+  if (pFont->GetFaceRec()->num_glyphs <= 0) {
+    return nullptr;
+  }
+
   uint32_t dwGlyphIndex;
   uint32_t dwCurrentChar = static_cast<uint32_t>(
       FT_Get_First_Char(pFont->GetFaceRec(), &dwGlyphIndex));
-  // If it doesn't have a single char, just fail
-  if (dwGlyphIndex == 0 ||
-      dwCurrentChar > pdfium::kMaximumSupplementaryCodePoint) {
+  if (dwCurrentChar > pdfium::kMaximumSupplementaryCodePoint) {
     return nullptr;
   }
 
