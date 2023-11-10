@@ -374,6 +374,22 @@ TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFontWithCharcodes) {
   VerifySavedDocument(400, 400, checksum);
 }
 
+TEST_F(FPDFEditEmbedderTest, Bug2094) {
+  CreateEmptyDocument();
+  ScopedFPDFPage page(FPDFPage_New(document(), 0, 400, 400));
+  std::string font_path = PathService::GetTestFilePath("fonts/bug_2094.ttf");
+  ASSERT_FALSE(font_path.empty());
+
+  std::vector<uint8_t> font_data = GetFileContents(font_path.c_str());
+  ASSERT_FALSE(font_data.empty());
+
+  ScopedFPDFFont font(FPDFText_LoadFont(document(), font_data.data(),
+                                        font_data.size(), FPDF_FONT_TRUETYPE,
+                                        /*cid=*/true));
+  // TODO(crbug.com/pdfium/2094): Make FPDFText_LoadFont() succeed.
+  EXPECT_FALSE(font);
+}
+
 TEST_F(FPDFEditEmbedderTest, EmptyCreation) {
   CreateEmptyDocument();
   FPDF_PAGE page = FPDFPage_New(document(), 0, 640.0, 480.0);
