@@ -180,12 +180,12 @@ FPDFText_GetFillColor(FPDF_TEXTPAGE text_page,
   if (!charinfo.m_pTextObj)
     return false;
 
-  FX_COLORREF fill_color = charinfo.m_pTextObj->m_ColorState.GetFillColorRef();
+  FX_COLORREF fill_color = charinfo.m_pTextObj->color_state().GetFillColorRef();
   *R = FXSYS_GetRValue(fill_color);
   *G = FXSYS_GetGValue(fill_color);
   *B = FXSYS_GetBValue(fill_color);
   *A = FXSYS_GetUnsignedAlpha(
-      charinfo.m_pTextObj->m_GeneralState.GetFillAlpha());
+      charinfo.m_pTextObj->general_state().GetFillAlpha());
   return true;
 }
 
@@ -205,12 +205,12 @@ FPDFText_GetStrokeColor(FPDF_TEXTPAGE text_page,
     return false;
 
   FX_COLORREF stroke_color =
-      charinfo.m_pTextObj->m_ColorState.GetStrokeColorRef();
+      charinfo.m_pTextObj->color_state().GetStrokeColorRef();
   *R = FXSYS_GetRValue(stroke_color);
   *G = FXSYS_GetGValue(stroke_color);
   *B = FXSYS_GetBValue(stroke_color);
   *A = FXSYS_GetUnsignedAlpha(
-      charinfo.m_pTextObj->m_GeneralState.GetStrokeAlpha());
+      charinfo.m_pTextObj->general_state().GetStrokeAlpha());
   return true;
 }
 

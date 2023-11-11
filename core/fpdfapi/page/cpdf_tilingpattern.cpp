@@ -47,12 +47,12 @@ std::unique_ptr<CPDF_Form> CPDF_TilingPattern::Load(CPDF_PageObject* pPageObj) {
   auto form =
       std::make_unique<CPDF_Form>(document(), nullptr, std::move(pStream));
 
-  CPDF_AllStates allStates;
-  allStates.m_ColorState.Emplace();
-  allStates.m_GraphState.Emplace();
-  allStates.m_TextState.Emplace();
-  allStates.m_GeneralState = pPageObj->m_GeneralState;
-  form->ParseContent(&allStates, &matrix, nullptr);
+  CPDF_AllStates all_states;
+  all_states.mutable_color_state().Emplace();
+  all_states.mutable_graph_state().Emplace();
+  all_states.mutable_text_state().Emplace();
+  all_states.mutable_general_state() = pPageObj->general_state();
+  form->ParseContent(&all_states, &matrix, nullptr);
   m_BBox = pDict->GetRectFor("BBox");
   return form;
 }

@@ -55,17 +55,18 @@ float NormalizeThreshold(float threshold, int t1, int t2, int t3) {
 float CalculateBaseSpace(const CPDF_TextObject* pTextObj,
                          const CFX_Matrix& matrix) {
   const size_t nItems = pTextObj->CountItems();
-  if (!pTextObj->m_TextState.GetCharSpace() || nItems < 3)
+  if (!pTextObj->text_state().GetCharSpace() || nItems < 3) {
     return 0.0f;
+  }
 
   bool bAllChar = true;
   float spacing =
-      matrix.TransformDistance(pTextObj->m_TextState.GetCharSpace());
+      matrix.TransformDistance(pTextObj->text_state().GetCharSpace());
   float baseSpace = spacing;
   for (size_t i = 0; i < nItems; ++i) {
     CPDF_TextObject::Item item = pTextObj->GetItemInfo(i);
     if (item.m_CharCode == 0xffffffff) {
-      float fontsize_h = pTextObj->m_TextState.GetFontSizeH();
+      float fontsize_h = pTextObj->text_state().GetFontSizeH();
       float kerning = -fontsize_h * item.m_Origin.x / 1000;
       baseSpace = std::min(baseSpace, kerning + spacing);
       bAllChar = false;
@@ -1046,18 +1047,18 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
       if (str.IsEmpty() || str.Back() == L' ')
         continue;
 
-      float fontsize_h = pTextObj->m_TextState.GetFontSizeH();
+      float fontsize_h = pTextObj->text_state().GetFontSizeH();
       spacing = -fontsize_h * item.m_Origin.x / 1000;
       continue;
     }
-    float charSpace = pTextObj->m_TextState.GetCharSpace();
+    float charSpace = pTextObj->text_state().GetCharSpace();
     if (charSpace > 0.001)
       spacing += matrix.TransformDistance(charSpace);
     else if (charSpace < -0.001)
       spacing -= matrix.TransformDistance(fabs(charSpace));
     spacing -= baseSpace;
     if (spacing && i > 0) {
-      float fontsize_h = pTextObj->m_TextState.GetFontSizeH();
+      float fontsize_h = pTextObj->text_state().GetFontSizeH();
       uint32_t space_charcode = pFont->CharCodeFromUnicode(' ');
       float threshold = 0;
       if (space_charcode != CPDF_Font::kInvalidCharCode)

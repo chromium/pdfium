@@ -21,6 +21,22 @@ class CPDF_GraphicStates {
   void CopyStates(const CPDF_GraphicStates& src);
   void DefaultStates();
 
+  const CPDF_ClipPath& clip_path() const { return m_ClipPath; }
+  CPDF_ClipPath& mutable_clip_path() { return m_ClipPath; }
+
+  const CFX_GraphState& graph_state() const { return m_GraphState; }
+  CFX_GraphState& mutable_graph_state() { return m_GraphState; }
+
+  const CPDF_ColorState& color_state() const { return m_ColorState; }
+  CPDF_ColorState& mutable_color_state() { return m_ColorState; }
+
+  const CPDF_TextState& text_state() const { return m_TextState; }
+  CPDF_TextState& mutable_text_state() { return m_TextState; }
+
+  const CPDF_GeneralState& general_state() const { return m_GeneralState; }
+  CPDF_GeneralState& mutable_general_state() { return m_GeneralState; }
+
+ private:
   CPDF_ClipPath m_ClipPath;
   CFX_GraphState m_GraphState;
   CPDF_ColorState m_ColorState;

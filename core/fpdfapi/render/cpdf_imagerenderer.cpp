@@ -91,7 +91,7 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   if (!m_pLoader->GetBitmap())
     return false;
 
-  CPDF_GeneralState& state = m_pImageObject->m_GeneralState;
+  CPDF_GeneralState& state = m_pImageObject->mutable_general_state();
   m_BitmapAlpha = FXSYS_roundf(255 * state.GetFillAlpha());
   m_pDIBBase = m_pLoader->GetBitmap();
   if (GetRenderOptions().ColorModeIs(CPDF_RenderOptions::kAlpha) &&
@@ -110,7 +110,7 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   m_bPatternColor = false;
   m_pPattern = nullptr;
   if (m_pDIBBase->IsMaskFormat()) {
-    const CPDF_Color* pColor = m_pImageObject->m_ColorState.GetFillColor();
+    const CPDF_Color* pColor = m_pImageObject->color_state().GetFillColor();
     if (pColor && pColor->IsPattern()) {
       m_pPattern = pColor->GetPattern();
       if (m_pPattern)

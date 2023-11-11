@@ -490,27 +490,30 @@ FPDFPageObjMark_GetParamBlobValue(FPDF_PAGEOBJECTMARK mark,
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT page_object) {
   CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!pPageObj)
+  if (!pPageObj) {
     return false;
-
-  if (pPageObj->m_GeneralState.GetBlendType() != BlendMode::kNormal)
+  }
+  if (pPageObj->general_state().GetBlendType() != BlendMode::kNormal) {
     return true;
-
-  if (pPageObj->m_GeneralState.GetSoftMask())
+  }
+  if (pPageObj->general_state().GetSoftMask()) {
     return true;
-
-  if (pPageObj->m_GeneralState.GetFillAlpha() != 1.0f)
+  }
+  if (pPageObj->general_state().GetFillAlpha() != 1.0f) {
     return true;
-
-  if (pPageObj->IsPath() && pPageObj->m_GeneralState.GetStrokeAlpha() != 1.0f)
+  }
+  if (pPageObj->IsPath() &&
+      pPageObj->general_state().GetStrokeAlpha() != 1.0f) {
     return true;
-
-  if (!pPageObj->IsForm())
+  }
+  if (!pPageObj->IsForm()) {
     return false;
+  }
 
   const CPDF_Form* pForm = pPageObj->AsForm()->form();
-  if (!pForm)
+  if (!pForm) {
     return false;
+  }
 
   const CPDF_Transparency& trans = pForm->GetTransparency();
   return trans.IsGroup() || trans.IsIsolated();
@@ -691,7 +694,7 @@ FPDFPageObj_SetBlendMode(FPDF_PAGEOBJECT page_object,
   if (!pPageObj)
     return;
 
-  pPageObj->m_GeneralState.SetBlendMode(blend_mode);
+  pPageObj->mutable_general_state().SetBlendMode(blend_mode);
   pPageObj->SetDirty(true);
 }
 
@@ -751,8 +754,8 @@ FPDF_BOOL FPDFPageObj_SetFillColor(FPDF_PAGEOBJECT page_object,
     return false;
 
   std::vector<float> rgb = {R / 255.f, G / 255.f, B / 255.f};
-  pPageObj->m_GeneralState.SetFillAlpha(A / 255.f);
-  pPageObj->m_ColorState.SetFillColor(
+  pPageObj->mutable_general_state().SetFillAlpha(A / 255.f);
+  pPageObj->mutable_color_state().SetFillColor(
       CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceRGB),
       std::move(rgb));
   pPageObj->SetDirty(true);
@@ -769,14 +772,15 @@ FPDFPageObj_GetFillColor(FPDF_PAGEOBJECT page_object,
   if (!pPageObj || !R || !G || !B || !A)
     return false;
 
-  if (!pPageObj->m_ColorState.HasRef())
+  if (!pPageObj->color_state().HasRef()) {
     return false;
+  }
 
-  FX_COLORREF fill_color = pPageObj->m_ColorState.GetFillColorRef();
+  FX_COLORREF fill_color = pPageObj->color_state().GetFillColorRef();
   *R = FXSYS_GetRValue(fill_color);
   *G = FXSYS_GetGValue(fill_color);
   *B = FXSYS_GetBValue(fill_color);
-  *A = FXSYS_GetUnsignedAlpha(pPageObj->m_GeneralState.GetFillAlpha());
+  *A = FXSYS_GetUnsignedAlpha(pPageObj->general_state().GetFillAlpha());
   return true;
 }
 
@@ -847,8 +851,8 @@ FPDFPageObj_SetStrokeColor(FPDF_PAGEOBJECT page_object,
     return false;
 
   std::vector<float> rgb = {R / 255.f, G / 255.f, B / 255.f};
-  pPageObj->m_GeneralState.SetStrokeAlpha(A / 255.f);
-  pPageObj->m_ColorState.SetStrokeColor(
+  pPageObj->mutable_general_state().SetStrokeAlpha(A / 255.f);
+  pPageObj->mutable_color_state().SetStrokeColor(
       CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceRGB),
       std::move(rgb));
   pPageObj->SetDirty(true);
@@ -862,17 +866,18 @@ FPDFPageObj_GetStrokeColor(FPDF_PAGEOBJECT page_object,
                            unsigned int* B,
                            unsigned int* A) {
   auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!pPageObj || !R || !G || !B || !A)
+  if (!pPageObj || !R || !G || !B || !A) {
     return false;
-
-  if (!pPageObj->m_ColorState.HasRef())
+  }
+  if (!pPageObj->color_state().HasRef()) {
     return false;
+  }
 
-  FX_COLORREF stroke_color = pPageObj->m_ColorState.GetStrokeColorRef();
+  FX_COLORREF stroke_color = pPageObj->color_state().GetStrokeColorRef();
   *R = FXSYS_GetRValue(stroke_color);
   *G = FXSYS_GetGValue(stroke_color);
   *B = FXSYS_GetBValue(stroke_color);
-  *A = FXSYS_GetUnsignedAlpha(pPageObj->m_GeneralState.GetStrokeAlpha());
+  *A = FXSYS_GetUnsignedAlpha(pPageObj->general_state().GetStrokeAlpha());
   return true;
 }
 
@@ -882,7 +887,7 @@ FPDFPageObj_SetStrokeWidth(FPDF_PAGEOBJECT page_object, float width) {
   if (!pPageObj || width < 0.0f)
     return false;
 
-  pPageObj->m_GraphState.SetLineWidth(width);
+  pPageObj->mutable_graph_state().SetLineWidth(width);
   pPageObj->SetDirty(true);
   return true;
 }
@@ -893,14 +898,15 @@ FPDFPageObj_GetStrokeWidth(FPDF_PAGEOBJECT page_object, float* width) {
   if (!pPageObj || !width)
     return false;
 
-  *width = pPageObj->m_GraphState.GetLineWidth();
+  *width = pPageObj->graph_state().GetLineWidth();
   return true;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFPageObj_GetLineJoin(FPDF_PAGEOBJECT page_object) {
   auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  return pPageObj ? static_cast<int>(pPageObj->m_GraphState.GetLineJoin()) : -1;
+  return pPageObj ? static_cast<int>(pPageObj->graph_state().GetLineJoin())
+                  : -1;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -912,7 +918,7 @@ FPDFPageObj_SetLineJoin(FPDF_PAGEOBJECT page_object, int line_join) {
   if (line_join < FPDF_LINEJOIN_MITER || line_join > FPDF_LINEJOIN_BEVEL)
     return false;
 
-  pPageObj->m_GraphState.SetLineJoin(
+  pPageObj->mutable_graph_state().SetLineJoin(
       static_cast<CFX_GraphStateData::LineJoin>(line_join));
   pPageObj->SetDirty(true);
   return true;
@@ -921,7 +927,7 @@ FPDFPageObj_SetLineJoin(FPDF_PAGEOBJECT page_object, int line_join) {
 FPDF_EXPORT int FPDF_CALLCONV
 FPDFPageObj_GetLineCap(FPDF_PAGEOBJECT page_object) {
   auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  return pPageObj ? static_cast<int>(pPageObj->m_GraphState.GetLineCap()) : -1;
+  return pPageObj ? static_cast<int>(pPageObj->graph_state().GetLineCap()) : -1;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -934,7 +940,7 @@ FPDFPageObj_SetLineCap(FPDF_PAGEOBJECT page_object, int line_cap) {
       line_cap > FPDF_LINECAP_PROJECTING_SQUARE) {
     return false;
   }
-  pPageObj->m_GraphState.SetLineCap(
+  pPageObj->mutable_graph_state().SetLineCap(
       static_cast<CFX_GraphStateData::LineCap>(line_cap));
   pPageObj->SetDirty(true);
   return true;
@@ -946,7 +952,7 @@ FPDFPageObj_GetDashPhase(FPDF_PAGEOBJECT page_object, float* phase) {
   if (!pPageObj || !phase)
     return false;
 
-  *phase = pPageObj->m_GraphState.GetLineDashPhase();
+  *phase = pPageObj->graph_state().GetLineDashPhase();
   return true;
 }
 
@@ -956,7 +962,7 @@ FPDFPageObj_SetDashPhase(FPDF_PAGEOBJECT page_object, float phase) {
   if (!pPageObj)
     return false;
 
-  pPageObj->m_GraphState.SetLineDashPhase(phase);
+  pPageObj->mutable_graph_state().SetLineDashPhase(phase);
   pPageObj->SetDirty(true);
   return true;
 }
@@ -965,7 +971,7 @@ FPDF_EXPORT int FPDF_CALLCONV
 FPDFPageObj_GetDashCount(FPDF_PAGEOBJECT page_object) {
   auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
   return pPageObj ? pdfium::base::checked_cast<int>(
-                        pPageObj->m_GraphState.GetLineDashSize())
+                        pPageObj->graph_state().GetLineDashSize())
                   : -1;
 }
 
@@ -977,7 +983,7 @@ FPDFPageObj_GetDashArray(FPDF_PAGEOBJECT page_object,
   if (!pPageObj || !dash_array)
     return false;
 
-  auto dash_vector = pPageObj->m_GraphState.GetLineDashArray();
+  auto dash_vector = pPageObj->graph_state().GetLineDashArray();
   if (dash_vector.size() > dash_count)
     return false;
 
@@ -1004,7 +1010,7 @@ FPDFPageObj_SetDashArray(FPDF_PAGEOBJECT page_object,
     dashes.assign(dash_array, dash_array + dash_count);
   }
 
-  pPageObj->m_GraphState.SetLineDash(dashes, phase, 1.0f);
+  pPageObj->mutable_graph_state().SetLineDash(dashes, phase, 1.0f);
 
   pPageObj->SetDirty(true);
   return true;

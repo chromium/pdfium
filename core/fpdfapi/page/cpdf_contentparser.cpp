@@ -100,15 +100,16 @@ CPDF_ContentParser::CPDF_ContentParser(
   m_pParser->GetCurStates()->set_current_transformation_matrix(form_matrix);
   m_pParser->GetCurStates()->set_parent_matrix(form_matrix);
   if (ClipPath.HasRef()) {
-    m_pParser->GetCurStates()->m_ClipPath.AppendPathWithAutoMerge(
+    m_pParser->GetCurStates()->mutable_clip_path().AppendPathWithAutoMerge(
         ClipPath, CFX_FillRenderOptions::FillType::kWinding);
   }
   if (m_pPageObjectHolder->GetTransparency().IsGroup()) {
-    CPDF_GeneralState* pState = &m_pParser->GetCurStates()->m_GeneralState;
-    pState->SetBlendType(BlendMode::kNormal);
-    pState->SetStrokeAlpha(1.0f);
-    pState->SetFillAlpha(1.0f);
-    pState->SetSoftMask(nullptr);
+    CPDF_GeneralState& state =
+        m_pParser->GetCurStates()->mutable_general_state();
+    state.SetBlendType(BlendMode::kNormal);
+    state.SetStrokeAlpha(1.0f);
+    state.SetFillAlpha(1.0f);
+    state.SetSoftMask(nullptr);
   }
   m_pSingleStream = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pStream));
   m_pSingleStream->LoadAllDataFiltered();
@@ -205,7 +206,7 @@ CPDF_ContentParser::Stage CPDF_ContentParser::Parse() {
         m_pPageObjectHolder->GetMutablePageResources(), nullptr, nullptr,
         m_pPageObjectHolder, m_pPageObjectHolder->GetMutableResources(),
         m_pPageObjectHolder->GetBBox(), nullptr, &m_RecursionState);
-    m_pParser->GetCurStates()->m_ColorState.SetDefault();
+    m_pParser->GetCurStates()->mutable_color_state().SetDefault();
   }
   if (m_CurrentOffset >= GetData().size())
     return Stage::kCheckClip;
@@ -226,22 +227,27 @@ CPDF_ContentParser::Stage CPDF_ContentParser::CheckClip() {
   }
 
   for (auto& pObj : *m_pPageObjectHolder) {
-    if (!pObj->m_ClipPath.HasRef())
+    CPDF_ClipPath& clip_path = pObj->mutable_clip_path();
+    if (!clip_path.HasRef()) {
       continue;
-    if (pObj->m_ClipPath.GetPathCount() != 1)
+    }
+    if (clip_path.GetPathCount() != 1) {
       continue;
-    if (pObj->m_ClipPath.GetTextCount() > 0)
+    }
+    if (clip_path.GetTextCount() > 0) {
       continue;
+    }
 
-    CPDF_Path ClipPath = pObj->m_ClipPath.GetPath(0);
-    if (!ClipPath.IsRect() || pObj->IsShading())
+    CPDF_Path path = clip_path.GetPath(0);
+    if (!path.IsRect() || pObj->IsShading()) {
       continue;
+    }
 
-    CFX_PointF point0 = ClipPath.GetPoint(0);
-    CFX_PointF point2 = ClipPath.GetPoint(2);
+    CFX_PointF point0 = path.GetPoint(0);
+    CFX_PointF point2 = path.GetPoint(2);
     CFX_FloatRect old_rect(point0.x, point0.y, point2.x, point2.y);
     if (old_rect.Contains(pObj->GetRect()))
-      pObj->m_ClipPath.SetNull();
+      clip_path.SetNull();
   }
   return Stage::kComplete;
 }

@@ -24,14 +24,17 @@ CPDF_PageObject::Type CPDF_ShadingObject::GetType() const {
 }
 
 void CPDF_ShadingObject::Transform(const CFX_Matrix& matrix) {
-  if (m_ClipPath.HasRef())
-    m_ClipPath.Transform(matrix);
+  CPDF_ClipPath& clip_path = mutable_clip_path();
+  if (clip_path.HasRef()) {
+    clip_path.Transform(matrix);
+  }
 
   m_Matrix.Concat(matrix);
-  if (m_ClipPath.HasRef())
+  if (clip_path.HasRef()) {
     CalcBoundingBox();
-  else
+  } else {
     SetRect(matrix.TransformRect(GetRect()));
+  }
   SetDirty(true);
 }
 
@@ -48,7 +51,8 @@ const CPDF_ShadingObject* CPDF_ShadingObject::AsShading() const {
 }
 
 void CPDF_ShadingObject::CalcBoundingBox() {
-  if (!m_ClipPath.HasRef())
+  if (!clip_path().HasRef()) {
     return;
-  SetRect(m_ClipPath.GetClipBox());
+  }
+  SetRect(clip_path().GetClipBox());
 }

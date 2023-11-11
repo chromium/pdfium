@@ -308,7 +308,7 @@ FPDFPageObj_GetClipPath(FPDF_PAGEOBJECT page_object) {
   if (!pPageObj)
     return nullptr;
 
-  return FPDFClipPathFromCPDFClipPath(&pPageObj->m_ClipPath);
+  return FPDFClipPathFromCPDFClipPath(&pPageObj->mutable_clip_path());
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFClipPath_CountPaths(FPDF_CLIPPATH clip_path) {
