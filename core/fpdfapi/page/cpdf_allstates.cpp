@@ -170,3 +170,31 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
   }
   m_GeneralState.SetMatrix(m_CTM);
 }
+
+void CPDF_AllStates::ResetTextPosition() {
+  m_TextLinePos = CFX_PointF();
+  m_TextPos = CFX_PointF();
+}
+
+CFX_PointF CPDF_AllStates::GetTransformedTextPosition() const {
+  return m_CTM.Transform(m_TextMatrix.Transform(
+      CFX_PointF(m_TextPos.x, m_TextPos.y + m_TextRise)));
+}
+
+void CPDF_AllStates::MoveTextPoint(const CFX_PointF& point) {
+  m_TextLinePos += point;
+  m_TextPos = m_TextLinePos;
+}
+
+void CPDF_AllStates::MoveTextToNextLine() {
+  m_TextLinePos.y -= m_TextLeading;
+  m_TextPos = m_TextLinePos;
+}
+
+void CPDF_AllStates::IncrementTextPositionX(float value) {
+  m_TextPos.x += value;
+}
+
+void CPDF_AllStates::IncrementTextPositionY(float value) {
+  m_TextPos.y += value;
+}

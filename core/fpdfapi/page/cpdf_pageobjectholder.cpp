@@ -69,8 +69,9 @@ void CPDF_PageObjectHolder::ContinueParse(PauseIndicatorIface* pPause) {
 
   m_ParseState = ParseState::kParsed;
   m_pDocument->IncrementParsedPageCount();
-  if (m_pParser->GetCurStates())
-    m_LastCTM = m_pParser->GetCurStates()->m_CTM;
+  if (m_pParser->GetCurStates()) {
+    m_LastCTM = m_pParser->GetCurStates()->current_transformation_matrix();
+  }
 
   m_pParser.reset();
 }

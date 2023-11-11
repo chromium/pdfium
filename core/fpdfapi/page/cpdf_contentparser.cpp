@@ -70,7 +70,7 @@ CPDF_ContentParser::CPDF_ContentParser(
   CFX_Matrix form_matrix =
       m_pPageObjectHolder->GetDict()->GetMatrixFor("Matrix");
   if (pGraphicStates)
-    form_matrix.Concat(pGraphicStates->m_CTM);
+    form_matrix.Concat(pGraphicStates->current_transformation_matrix());
 
   RetainPtr<const CPDF_Array> pBBox =
       m_pPageObjectHolder->GetDict()->GetArrayFor("BBox");
@@ -97,8 +97,8 @@ CPDF_ContentParser::CPDF_ContentParser(
       m_pPageObjectHolder->GetMutableResources(), pParentMatrix,
       m_pPageObjectHolder, std::move(pResources), form_bbox, pGraphicStates,
       recursion_state);
-  m_pParser->GetCurStates()->m_CTM = form_matrix;
-  m_pParser->GetCurStates()->m_ParentMatrix = form_matrix;
+  m_pParser->GetCurStates()->set_current_transformation_matrix(form_matrix);
+  m_pParser->GetCurStates()->set_parent_matrix(form_matrix);
   if (ClipPath.HasRef()) {
     m_pParser->GetCurStates()->m_ClipPath.AppendPathWithAutoMerge(
         ClipPath, CFX_FillRenderOptions::FillType::kWinding);
