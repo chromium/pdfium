@@ -21,6 +21,13 @@
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/containers/span.h"
 
+#if !defined(WCHAR_T_IS_16_BIT) && !defined(WCHAR_T_IS_32_BIT)
+#error "Unknown wchar_t size"
+#endif
+#if defined(WCHAR_T_IS_16_BIT) && defined(WCHAR_T_IS_32_BIT)
+#error "Conflicting wchar_t sizes"
+#endif
+
 namespace {
 
 // Appends a Unicode code point to a `ByteString` using UTF-8.
