@@ -132,7 +132,7 @@ class CPDF_PageObject {
 
   const CPDF_GraphicStates& graphic_states() const { return m_GraphicStates; }
 
-  void DefaultStates();
+  void SetDefaultStates();
 
  protected:
   void CopyData(const CPDF_PageObject* pSrcObject);

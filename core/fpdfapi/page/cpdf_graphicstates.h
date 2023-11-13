@@ -19,7 +19,7 @@ class CPDF_GraphicStates {
   ~CPDF_GraphicStates();
 
   void CopyStates(const CPDF_GraphicStates& src);
-  void DefaultStates();
+  void SetDefaultStates();
 
   const CPDF_ClipPath& clip_path() const { return m_ClipPath; }
   CPDF_ClipPath& mutable_clip_path() { return m_ClipPath; }

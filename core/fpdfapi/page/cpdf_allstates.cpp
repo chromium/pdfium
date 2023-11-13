@@ -35,8 +35,8 @@ void CPDF_AllStates::Copy(const CPDF_AllStates& src) {
   m_TextHorzScale = src.m_TextHorzScale;
 }
 
-void CPDF_AllStates::DefaultStates() {
-  m_GraphicStates.DefaultStates();
+void CPDF_AllStates::SetDefaultStates() {
+  m_GraphicStates.SetDefaultStates();
 }
 
 void CPDF_AllStates::SetLineDash(const CPDF_Array* pArray,

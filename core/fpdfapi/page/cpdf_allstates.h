@@ -20,7 +20,7 @@ class CPDF_AllStates {
   ~CPDF_AllStates();
 
   void Copy(const CPDF_AllStates& src);
-  void DefaultStates();
+  void SetDefaultStates();
 
   void ProcessExtGS(const CPDF_Dictionary* pGS,
                     CPDF_StreamContentParser* pParser);

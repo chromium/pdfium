@@ -493,7 +493,7 @@ FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
   auto pTextObj = std::make_unique<CPDF_TextObject>();
   pTextObj->mutable_text_state().SetFont(std::move(pFont));
   pTextObj->mutable_text_state().SetFontSize(font_size);
-  pTextObj->DefaultStates();
+  pTextObj->SetDefaultStates();
 
   // Caller takes ownership.
   return FPDFPageObjectFromCPDFPageObject(pTextObj.release());
@@ -686,7 +686,7 @@ FPDFPageObj_CreateTextObj(FPDF_DOCUMENT document,
       CPDF_DocPageData::FromDocument(pDoc)->GetFont(
           pFont->GetMutableFontDict()));
   pTextObj->mutable_text_state().SetFontSize(font_size);
-  pTextObj->DefaultStates();
+  pTextObj->SetDefaultStates();
   return FPDFPageObjectFromCPDFPageObject(pTextObj.release());
 }
 

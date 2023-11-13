@@ -194,7 +194,7 @@ void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentStatus,
       }
     }
   } else {
-    m_InitialStates.DefaultStates();
+    m_InitialStates.SetDefaultStates();
   }
 }
 
