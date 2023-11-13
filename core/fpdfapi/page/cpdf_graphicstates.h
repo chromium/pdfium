@@ -16,7 +16,7 @@
 class CPDF_GraphicStates {
  public:
   CPDF_GraphicStates();
-  virtual ~CPDF_GraphicStates();
+  ~CPDF_GraphicStates();
 
   void CopyStates(const CPDF_GraphicStates& src);
   void DefaultStates();

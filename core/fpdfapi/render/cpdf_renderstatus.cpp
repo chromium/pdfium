@@ -366,7 +366,7 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
   status.SetTransparency(m_Transparency);
   status.SetDropObjects(m_bDropObjects);
   status.SetFormResource(std::move(pResources));
-  status.Initialize(this, pFormObj);
+  status.Initialize(this, &pFormObj->graphic_states());
   status.m_curBlend = m_curBlend;
   {
     CFX_RenderDevice::StateRestorer restorer(m_pDevice);
@@ -924,7 +924,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
       }
 
       std::unique_ptr<CPDF_GraphicStates> pStates =
-          CloneObjStates(textobj, false);
+          CloneObjStates(&textobj->graphic_states(), false);
       CPDF_RenderOptions options = m_Options;
       options.GetOptions().bForceHalftone = true;
       options.GetOptions().bRectAA = true;

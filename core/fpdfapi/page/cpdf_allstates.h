@@ -14,12 +14,14 @@ class CPDF_Array;
 class CPDF_Dictionary;
 class CPDF_StreamContentParser;
 
-class CPDF_AllStates final : public CPDF_GraphicStates {
+class CPDF_AllStates {
  public:
   CPDF_AllStates();
-  ~CPDF_AllStates() override;
+  ~CPDF_AllStates();
 
   void Copy(const CPDF_AllStates& src);
+  void DefaultStates();
+
   void ProcessExtGS(const CPDF_Dictionary* pGS,
                     CPDF_StreamContentParser* pParser);
   void SetLineDash(const CPDF_Array* pArray, float phase, float scale);
@@ -52,7 +54,43 @@ class CPDF_AllStates final : public CPDF_GraphicStates {
   float text_horz_scale() const { return m_TextHorzScale; }
   void set_text_horz_scale(float value) { m_TextHorzScale = value; }
 
+  const CPDF_ClipPath& clip_path() const { return m_GraphicStates.clip_path(); }
+  CPDF_ClipPath& mutable_clip_path() {
+    return m_GraphicStates.mutable_clip_path();
+  }
+
+  const CFX_GraphState& graph_state() const {
+    return m_GraphicStates.graph_state();
+  }
+  CFX_GraphState& mutable_graph_state() {
+    return m_GraphicStates.mutable_graph_state();
+  }
+
+  const CPDF_ColorState& color_state() const {
+    return m_GraphicStates.color_state();
+  }
+  CPDF_ColorState& mutable_color_state() {
+    return m_GraphicStates.mutable_color_state();
+  }
+
+  const CPDF_TextState& text_state() const {
+    return m_GraphicStates.text_state();
+  }
+  CPDF_TextState& mutable_text_state() {
+    return m_GraphicStates.mutable_text_state();
+  }
+
+  const CPDF_GeneralState& general_state() const {
+    return m_GraphicStates.general_state();
+  }
+  CPDF_GeneralState& mutable_general_state() {
+    return m_GraphicStates.mutable_general_state();
+  }
+
+  const CPDF_GraphicStates& graphic_states() const { return m_GraphicStates; }
+
  private:
+  CPDF_GraphicStates m_GraphicStates;
   CFX_Matrix m_TextMatrix;
   CFX_Matrix m_CTM;
   CFX_Matrix m_ParentMatrix;

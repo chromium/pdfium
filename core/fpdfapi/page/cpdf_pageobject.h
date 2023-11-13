@@ -24,7 +24,7 @@ class CPDF_TextObject;
 // Represents an object within the page, like a form or image. Not to be
 // confused with the PDF spec's page object that lives in a page tree, which is
 // represented by CPDF_Page.
-class CPDF_PageObject : public CPDF_GraphicStates {
+class CPDF_PageObject {
  public:
   // Values must match corresponding values in //public.
   enum class Type {
@@ -40,7 +40,7 @@ class CPDF_PageObject : public CPDF_GraphicStates {
   explicit CPDF_PageObject(int32_t content_stream);
   CPDF_PageObject(const CPDF_PageObject& src) = delete;
   CPDF_PageObject& operator=(const CPDF_PageObject& src) = delete;
-  ~CPDF_PageObject() override;
+  virtual ~CPDF_PageObject();
 
   virtual Type GetType() const = 0;
   virtual void Transform(const CFX_Matrix& matrix) = 0;
@@ -97,10 +97,48 @@ class CPDF_PageObject : public CPDF_GraphicStates {
 
   pdfium::span<const ByteString> GetGraphicsResourceNames() const;
 
+  const CPDF_ClipPath& clip_path() const { return m_GraphicStates.clip_path(); }
+  CPDF_ClipPath& mutable_clip_path() {
+    return m_GraphicStates.mutable_clip_path();
+  }
+
+  const CFX_GraphState& graph_state() const {
+    return m_GraphicStates.graph_state();
+  }
+  CFX_GraphState& mutable_graph_state() {
+    return m_GraphicStates.mutable_graph_state();
+  }
+
+  const CPDF_ColorState& color_state() const {
+    return m_GraphicStates.color_state();
+  }
+  CPDF_ColorState& mutable_color_state() {
+    return m_GraphicStates.mutable_color_state();
+  }
+
+  const CPDF_TextState& text_state() const {
+    return m_GraphicStates.text_state();
+  }
+  CPDF_TextState& mutable_text_state() {
+    return m_GraphicStates.mutable_text_state();
+  }
+
+  const CPDF_GeneralState& general_state() const {
+    return m_GraphicStates.general_state();
+  }
+  CPDF_GeneralState& mutable_general_state() {
+    return m_GraphicStates.mutable_general_state();
+  }
+
+  const CPDF_GraphicStates& graphic_states() const { return m_GraphicStates; }
+
+  void DefaultStates();
+
  protected:
   void CopyData(const CPDF_PageObject* pSrcObject);
 
  private:
+  CPDF_GraphicStates m_GraphicStates;
   CFX_FloatRect m_Rect;
   CFX_FloatRect m_OriginalRect;
   CPDF_ContentMarks m_ContentMarks;

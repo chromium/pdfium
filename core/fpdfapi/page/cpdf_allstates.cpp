@@ -24,7 +24,7 @@ CPDF_AllStates::CPDF_AllStates() = default;
 CPDF_AllStates::~CPDF_AllStates() = default;
 
 void CPDF_AllStates::Copy(const CPDF_AllStates& src) {
-  CopyStates(src);
+  m_GraphicStates.CopyStates(src.graphic_states());
   m_TextMatrix = src.m_TextMatrix;
   m_ParentMatrix = src.m_ParentMatrix;
   m_CTM = src.m_CTM;
@@ -33,6 +33,10 @@ void CPDF_AllStates::Copy(const CPDF_AllStates& src) {
   m_TextLeading = src.m_TextLeading;
   m_TextRise = src.m_TextRise;
   m_TextHorzScale = src.m_TextHorzScale;
+}
+
+void CPDF_AllStates::DefaultStates() {
+  m_GraphicStates.DefaultStates();
 }
 
 void CPDF_AllStates::SetLineDash(const CPDF_Array* pArray,

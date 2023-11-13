@@ -121,7 +121,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
       width * height > clip_box.Width() * clip_box.Height()) {
     std::unique_ptr<CPDF_GraphicStates> pStates;
     if (!pPattern->colored())
-      pStates = CPDF_RenderStatus::CloneObjStates(pPageObj, bStroke);
+      pStates = CPDF_RenderStatus::CloneObjStates(&pPageObj->graphic_states(),
+                                                  bStroke);
 
     RetainPtr<const CPDF_Dictionary> pFormResource =
         pPatternForm->GetDict()->GetDictFor("Resources");
