@@ -22,28 +22,28 @@
 # Read more about `vpython` and how to modify this file here:
 #   https://chromium.googlesource.com/infra/infra/+/main/doc/users/vpython.md
 
-python_version: "3.8"
+python_version: "3.11"
 
 # Used by build/util/lib/results/result_sink.py
 wheel: <
-  name: "infra/python/wheels/certifi-py2_py3"
-  version: "version:2021.5.30"
+  name: "infra/python/wheels/certifi-py3"
+  version: "version:2023.7.22"
 >
 wheel: <
   name: "infra/python/wheels/charset_normalizer-py3"
-  version: "version:2.0.4"
+  version: "version:3.1.0"
 >
 wheel: <
-  name: "infra/python/wheels/idna-py2_py3"
-  version: "version:2.10"
+  name: "infra/python/wheels/idna-py3"
+  version: "version:3.4"
 >
 wheel: <
   name: "infra/python/wheels/requests-py3"
   version: "version:2.31.0"
 >
 wheel: <
-  name: "infra/python/wheels/urllib3-py2_py3"
-  version: "version:1.26.6"
+  name: "infra/python/wheels/urllib3-py3"
+  version: "version:2.0.3"
 >
 
 # Used by //testing/scripts/rust unit tests.
