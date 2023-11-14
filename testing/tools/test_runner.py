@@ -718,8 +718,12 @@ class _TestCaseRunner:
         f'--time={TEST_SEED_TIME}'
     ]
 
-    if 'use_ahem' in self.source_dir or 'use_symbolneu' in self.source_dir:
-      cmd_to_run.append(f'--font-dir={_per_process_state.font_dir}')
+    if 'use_ahem' in self.source_dir:
+      font_path = os.path.join(_per_process_state.font_dir, 'ahem')
+      cmd_to_run.append(f'--font-dir={font_path}')
+    elif 'use_symbolneu' in self.source_dir:
+      font_path = os.path.join(_per_process_state.font_dir, 'symbolneu')
+      cmd_to_run.append(f'--font-dir={font_path}')
     else:
       cmd_to_run.append(f'--font-dir={_per_process_state.third_party_font_dir}')
       cmd_to_run.append('--croscore-font-names')
