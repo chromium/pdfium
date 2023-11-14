@@ -176,7 +176,7 @@ struct FPDF_SYSFONTINFO_DEFAULT final : public FPDF_SYSFONTINFO {
 
 static void DefaultRelease(struct _FPDF_SYSFONTINFO* pThis) {
   auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
-  delete pDefault->m_pFontInfo.ExtractAsDangling();
+  pDefault->m_pFontInfo.ClearAndDelete();
 }
 
 static void DefaultEnumFonts(struct _FPDF_SYSFONTINFO* pThis, void* pMapper) {

@@ -166,6 +166,7 @@ class TRIVIAL_ABI GSL_POINTER UnownedPtr {
   T* get() const noexcept { return m_pObj; }
 
   T* ExtractAsDangling() { return std::exchange(m_pObj, nullptr); }
+  void ClearAndDelete() { delete std::exchange(m_pObj, nullptr); }
 
   explicit operator bool() const { return !!m_pObj; }
   T& operator*() const { return *m_pObj; }
