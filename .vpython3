@@ -24,13 +24,6 @@
 
 python_version: "3.8"
 
-# Used by build/skia_gold_common/output_managerless_skia_gold_session.py
-# Used by tools/code_coverage/coverage.py
-wheel: <
-  name: "infra/python/wheels/six-py2_py3"
-  version: "version:1.15.0"
->
-
 # Used by build/util/lib/results/result_sink.py
 wheel: <
   name: "infra/python/wheels/certifi-py2_py3"
