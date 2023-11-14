@@ -85,7 +85,7 @@ void CPDF_PageObject::SetDefaultStates() {
 }
 
 void CPDF_PageObject::CopyData(const CPDF_PageObject* pSrc) {
-  m_GraphicStates.CopyStates(pSrc->graphic_states());
+  m_GraphicStates = pSrc->m_GraphicStates;
   m_Rect = pSrc->m_Rect;
   m_bDirty = true;
 }

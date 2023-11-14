@@ -21,19 +21,11 @@
 
 CPDF_AllStates::CPDF_AllStates() = default;
 
-CPDF_AllStates::~CPDF_AllStates() = default;
+CPDF_AllStates::CPDF_AllStates(const CPDF_AllStates& that) = default;
 
-void CPDF_AllStates::Copy(const CPDF_AllStates& src) {
-  m_GraphicStates.CopyStates(src.graphic_states());
-  m_TextMatrix = src.m_TextMatrix;
-  m_ParentMatrix = src.m_ParentMatrix;
-  m_CTM = src.m_CTM;
-  m_TextPos = src.m_TextPos;
-  m_TextLinePos = src.m_TextLinePos;
-  m_TextLeading = src.m_TextLeading;
-  m_TextRise = src.m_TextRise;
-  m_TextHorzScale = src.m_TextHorzScale;
-}
+CPDF_AllStates& CPDF_AllStates::operator=(const CPDF_AllStates& that) = default;
+
+CPDF_AllStates::~CPDF_AllStates() = default;
 
 void CPDF_AllStates::SetDefaultStates() {
   m_GraphicStates.SetDefaultStates();

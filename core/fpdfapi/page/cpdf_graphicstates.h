@@ -16,9 +16,10 @@
 class CPDF_GraphicStates {
  public:
   CPDF_GraphicStates();
+  CPDF_GraphicStates(const CPDF_GraphicStates& that);
+  CPDF_GraphicStates& operator=(const CPDF_GraphicStates& that);
   ~CPDF_GraphicStates();
 
-  void CopyStates(const CPDF_GraphicStates& src);
   void SetDefaultStates();
 
   const CPDF_ClipPath& clip_path() const { return m_ClipPath; }

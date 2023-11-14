@@ -8,17 +8,15 @@
 
 CPDF_GraphicStates::CPDF_GraphicStates() = default;
 
+CPDF_GraphicStates::CPDF_GraphicStates(const CPDF_GraphicStates& that) =
+    default;
+
+CPDF_GraphicStates& CPDF_GraphicStates::operator=(
+    const CPDF_GraphicStates& that) = default;
+
 CPDF_GraphicStates::~CPDF_GraphicStates() = default;
 
 void CPDF_GraphicStates::SetDefaultStates() {
   m_ColorState.Emplace();
   m_ColorState.SetDefault();
-}
-
-void CPDF_GraphicStates::CopyStates(const CPDF_GraphicStates& src) {
-  m_ClipPath = src.m_ClipPath;
-  m_GraphState = src.m_GraphState;
-  m_ColorState = src.m_ColorState;
-  m_TextState = src.m_TextState;
-  m_GeneralState = src.m_GeneralState;
 }

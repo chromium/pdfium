@@ -15,6 +15,10 @@
 
 CPDF_TextState::CPDF_TextState() = default;
 
+CPDF_TextState::CPDF_TextState(const CPDF_TextState&) = default;
+
+CPDF_TextState& CPDF_TextState::operator=(const CPDF_TextState&) = default;
+
 CPDF_TextState::~CPDF_TextState() = default;
 
 void CPDF_TextState::Emplace() {

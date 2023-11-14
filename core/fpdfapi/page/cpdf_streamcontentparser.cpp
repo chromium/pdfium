@@ -397,7 +397,7 @@ CPDF_StreamContentParser::CPDF_StreamContentParser(
   if (pmtContentToUser)
     m_mtContentToUser = *pmtContentToUser;
   if (pStates) {
-    m_pCurStates->Copy(*pStates);
+    *m_pCurStates = *pStates;
   } else {
     m_pCurStates->mutable_general_state().Emplace();
     m_pCurStates->mutable_graph_state().Emplace();
@@ -998,17 +998,14 @@ void CPDF_StreamContentParser::Handle_EndPath() {
 }
 
 void CPDF_StreamContentParser::Handle_SaveGraphState() {
-  auto pStates = std::make_unique<CPDF_AllStates>();
-  pStates->Copy(*m_pCurStates);
-  m_StateStack.push_back(std::move(pStates));
+  m_StateStack.push_back(std::make_unique<CPDF_AllStates>(*m_pCurStates));
 }
 
 void CPDF_StreamContentParser::Handle_RestoreGraphState() {
   if (m_StateStack.empty())
     return;
-  std::unique_ptr<CPDF_AllStates> pStates = std::move(m_StateStack.back());
+  *m_pCurStates = *m_StateStack.back();
   m_StateStack.pop_back();
-  m_pCurStates->Copy(*pStates);
 }
 
 void CPDF_StreamContentParser::Handle_Rectangle() {

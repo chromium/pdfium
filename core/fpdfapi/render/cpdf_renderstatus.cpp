@@ -178,7 +178,7 @@ void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentStatus,
   m_bPrint = m_pDevice->GetDeviceType() != DeviceType::kDisplay;
   m_pPageResource.Reset(m_pContext->GetPageResources());
   if (pInitialStates && !m_pType3Char) {
-    m_InitialStates.CopyStates(*pInitialStates);
+    m_InitialStates = *pInitialStates;
     if (pParentStatus) {
       if (!m_InitialStates.color_state().HasFillColor()) {
         m_InitialStates.mutable_color_state().SetFillColorRef(
@@ -753,8 +753,7 @@ std::unique_ptr<CPDF_GraphicStates> CPDF_RenderStatus::CloneObjStates(
   if (!pSrcStates)
     return nullptr;
 
-  auto pStates = std::make_unique<CPDF_GraphicStates>();
-  pStates->CopyStates(*pSrcStates);
+  auto pStates = std::make_unique<CPDF_GraphicStates>(*pSrcStates);
   const CPDF_Color* pObjColor = stroke
                                     ? pSrcStates->color_state().GetStrokeColor()
                                     : pSrcStates->color_state().GetFillColor();

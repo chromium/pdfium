@@ -32,6 +32,8 @@ enum class TextRenderingMode {
 class CPDF_TextState {
  public:
   CPDF_TextState();
+  CPDF_TextState(const CPDF_TextState& that);
+  CPDF_TextState& operator=(const CPDF_TextState& that);
   ~CPDF_TextState();
 
   void Emplace();
