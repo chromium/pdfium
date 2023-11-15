@@ -639,9 +639,6 @@ bug_1442723.in win * * *
 # TODO(pdfium:1457): Remove after associated bug is fixed
 bug_1457.in * * * *
 
-# TODO(chromium:1484283): Remove after associated bug is fixed
-bug_1484283.pdf * * * *
-
 # TODO(pdfium:1519): Remove after associated bug is fixed
 bug_1519.in * * * *
 
