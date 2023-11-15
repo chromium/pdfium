@@ -53,6 +53,8 @@ typedef enum {
 //
 // Returns a handle to the first child of |bookmark| or the first top-level
 // bookmark item. NULL if no child or top-level bookmark found.
+// Note that another name for the bookmarks is the document outline, as
+// described in ISO 32000-1:2008, section 12.3.3.
 FPDF_EXPORT FPDF_BOOKMARK FPDF_CALLCONV
 FPDFBookmark_GetFirstChild(FPDF_DOCUMENT document, FPDF_BOOKMARK bookmark);
 
