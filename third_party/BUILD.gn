@@ -457,6 +457,7 @@ if (pdf_enable_xfa_tiff) {
   if (use_system_libtiff) {
     config("system_tiff_config") {
       libs = [ "tiff" ]
+      defines = [ "USE_SYSTEM_LIBTIFF" ]
     }
   } else {
     source_set("fx_tiff") {

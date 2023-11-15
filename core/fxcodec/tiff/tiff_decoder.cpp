@@ -23,7 +23,11 @@
 #include "third_party/base/numerics/safe_conversions.h"
 
 extern "C" {
+#if defined(USE_SYSTEM_LIBTIFF)
+#include <tiffio.h>
+#else
 #include "third_party/libtiff/tiffio.h"
+#endif
 }  // extern C
 
 namespace {
