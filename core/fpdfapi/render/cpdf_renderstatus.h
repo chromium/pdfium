@@ -112,6 +112,7 @@ class CPDF_RenderStatus {
                           const CPDF_PageObject* pPageObj,
                           const CFX_Matrix& mtObj2Device,
                           bool stroke);
+  // `pDIBitmap` must be non-null.
   void CompositeDIBitmap(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
                          int left,
                          int top,

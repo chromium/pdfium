@@ -1207,8 +1207,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
     int bitmap_alpha,
     BlendMode blend_mode,
     const CPDF_Transparency& transparency) {
-  if (!pDIBitmap)
-    return;
+  CHECK(pDIBitmap);
 
   if (blend_mode == BlendMode::kNormal) {
     if (!pDIBitmap->IsMaskFormat()) {
