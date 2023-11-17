@@ -232,6 +232,8 @@ class CPDF_PageOrganizer {
   void ClearObjectNumberMap() { m_ObjectNumberMap.clear(); }
 
  private:
+  bool InitDestDoc();
+
   uint32_t GetNewObjId(CPDF_Reference* pRef);
 
   UnownedPtr<CPDF_Document> const m_pDestDoc;
@@ -251,36 +253,41 @@ bool CPDF_PageOrganizer::Init() {
   DCHECK(m_pDestDoc);
   DCHECK(m_pSrcDoc);
 
-  RetainPtr<CPDF_Dictionary> pNewRoot = dest()->GetMutableRoot();
-  if (!pNewRoot)
+  return InitDestDoc();
+}
+
+bool CPDF_PageOrganizer::InitDestDoc() {
+  RetainPtr<CPDF_Dictionary> root = dest()->GetMutableRoot();
+  if (!root) {
     return false;
-
-  RetainPtr<CPDF_Dictionary> pDocInfoDict = dest()->GetInfo();
-  if (pDocInfoDict) {
-    pDocInfoDict->SetNewFor<CPDF_String>("Producer", "PDFium", false);
   }
 
-  ByteString cbRootType = pNewRoot->GetByteStringFor("Type", ByteString());
-  if (cbRootType.IsEmpty())
-    pNewRoot->SetNewFor<CPDF_Name>("Type", "Catalog");
-
-  RetainPtr<CPDF_Object> pElement = pNewRoot->GetMutableObjectFor("Pages");
-  RetainPtr<CPDF_Dictionary> pNewPages =
-      pElement ? ToDictionary(pElement->GetMutableDirect()) : nullptr;
-  if (!pNewPages) {
-    pNewPages = dest()->NewIndirect<CPDF_Dictionary>();
-    pNewRoot->SetNewFor<CPDF_Reference>("Pages", dest(),
-                                        pNewPages->GetObjNum());
+  RetainPtr<CPDF_Dictionary> info = dest()->GetInfo();
+  if (info) {
+    info->SetNewFor<CPDF_String>("Producer", "PDFium", false);
   }
-  ByteString cbPageType = pNewPages->GetByteStringFor("Type", ByteString());
-  if (cbPageType.IsEmpty())
-    pNewPages->SetNewFor<CPDF_Name>("Type", "Pages");
 
-  if (!pNewPages->GetArrayFor("Kids")) {
-    auto pNewArray = dest()->NewIndirect<CPDF_Array>();
-    pNewPages->SetNewFor<CPDF_Number>("Count", 0);
-    pNewPages->SetNewFor<CPDF_Reference>("Kids", dest(),
-                                         pNewArray->GetObjNum());
+  if (root->GetByteStringFor("Type", ByteString()).IsEmpty()) {
+    root->SetNewFor<CPDF_Name>("Type", "Catalog");
+  }
+
+  RetainPtr<CPDF_Dictionary> pages;
+  if (RetainPtr<CPDF_Object> current_pages = root->GetMutableObjectFor("Pages");
+      current_pages) {
+    pages = ToDictionary(current_pages->GetMutableDirect());
+  }
+  if (!pages) {
+    pages = dest()->NewIndirect<CPDF_Dictionary>();
+    root->SetNewFor<CPDF_Reference>("Pages", dest(), pages->GetObjNum());
+  }
+  if (pages->GetByteStringFor("Type", ByteString()).IsEmpty()) {
+    pages->SetNewFor<CPDF_Name>("Type", "Pages");
+  }
+
+  if (!pages->GetArrayFor("Kids")) {
+    auto kids_array = dest()->NewIndirect<CPDF_Array>();
+    pages->SetNewFor<CPDF_Number>("Count", 0);
+    pages->SetNewFor<CPDF_Reference>("Kids", dest(), kids_array->GetObjNum());
   }
   return true;
 }
