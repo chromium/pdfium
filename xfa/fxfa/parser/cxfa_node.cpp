@@ -1007,9 +1007,9 @@ void CXFA_Node::Trace(cppgc::Visitor* visitor) const {
   CXFA_Object::Trace(visitor);
   GCedTreeNodeMixin<CXFA_Node>::Trace(visitor);
   visitor->Trace(m_pAuxNode);
-  ContainerTrace(visitor, binding_nodes_);
   visitor->Trace(m_pLayoutData);
   visitor->Trace(ui_);
+  ContainerTrace(visitor, binding_nodes_);
 }
 
 CXFA_Node* CXFA_Node::Clone(bool bRecursive) {

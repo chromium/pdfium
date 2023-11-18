@@ -34,10 +34,10 @@ CFWL_NoteDriver::~CFWL_NoteDriver() = default;
 
 void CFWL_NoteDriver::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pApp);
-  ContainerTrace(visitor, m_eventTargets);
   visitor->Trace(m_pHover);
   visitor->Trace(m_pFocus);
   visitor->Trace(m_pGrab);
+  ContainerTrace(visitor, m_eventTargets);
 }
 
 void CFWL_NoteDriver::SendEvent(CFWL_Event* pNote) {

@@ -65,10 +65,10 @@ class CFWL_NoteDriver final : public cppgc::GarbageCollected<CFWL_NoteDriver> {
   void MouseSecondary(CFWL_Message* pMsg);
 
   cppgc::Member<CFWL_App> m_pApp;
-  std::map<uint64_t, cppgc::Member<Target>> m_eventTargets;
   cppgc::Member<CFWL_Widget> m_pHover;
   cppgc::Member<CFWL_Widget> m_pFocus;
   cppgc::Member<CFWL_Widget> m_pGrab;
+  std::map<uint64_t, cppgc::Member<Target>> m_eventTargets;
 };
 
 #endif  // XFA_FWL_CFWL_NOTEDRIVER_H_

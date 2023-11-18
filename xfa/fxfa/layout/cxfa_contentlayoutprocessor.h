@@ -234,11 +234,11 @@ class CXFA_ContentLayoutProcessor
   cppgc::Member<CXFA_ContentLayoutItem> m_pLayoutItem;
   cppgc::Member<CXFA_ContentLayoutItem> m_pOldLayoutItem;
   cppgc::Member<CXFA_ViewLayoutProcessor> m_pViewLayoutProcessor;
+  cppgc::Member<CXFA_ContentLayoutProcessor> m_pCurChildPreprocessor;
   std::vector<float> m_rgSpecifiedColumnWidths;
   std::vector<cppgc::Member<CXFA_ContentLayoutItem>> m_ArrayKeepItems;
   std::list<cppgc::Member<CXFA_Node>> m_PendingNodes;
   std::map<cppgc::Member<CXFA_Node>, int32_t> m_PendingNodesCount;
-  cppgc::Member<CXFA_ContentLayoutProcessor> m_pCurChildPreprocessor;
 };
 
 #endif  // XFA_FXFA_LAYOUT_CXFA_CONTENTLAYOUTPROCESSOR_H_

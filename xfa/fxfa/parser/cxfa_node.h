@@ -531,9 +531,9 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   Mask<XFA_NodeFlag> m_uNodeFlags = XFA_NodeFlag::kNone;
   uint32_t m_dwNameHash = 0;
   cppgc::Member<CXFA_Node> m_pAuxNode;
-  std::vector<cppgc::Member<CXFA_Node>> binding_nodes_;
   cppgc::Member<CXFA_WidgetLayoutData> m_pLayoutData;
   cppgc::Member<CXFA_Ui> ui_;
+  std::vector<cppgc::Member<CXFA_Node>> binding_nodes_;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NODE_H_

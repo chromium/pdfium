@@ -164,10 +164,10 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
                 LayoutProcessorIface* pLayout);
 
   UnownedPtr<cppgc::Heap> heap_;
+  std::unique_ptr<CFXJSE_Engine> m_pScriptContext;
   cppgc::Member<CXFA_FFNotify> const notify_;
   cppgc::Member<CXFA_NodeOwner> const node_owner_;
   cppgc::Member<CXFA_Node> m_pRootNode;
-  std::unique_ptr<CFXJSE_Engine> m_pScriptContext;
   cppgc::Member<LayoutProcessorIface> m_pLayoutProcessor;
   cppgc::Member<CXFA_LocaleMgr> m_pLocaleMgr;
   cppgc::Member<CScript_DataWindow> m_pScriptDataWindow;
