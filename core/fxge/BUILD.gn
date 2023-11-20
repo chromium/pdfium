@@ -52,6 +52,8 @@ source_set("fxge") {
     "cfx_textrenderoptions.h",
     "cfx_unicodeencoding.cpp",
     "cfx_unicodeencoding.h",
+    "dib/blend.cpp",
+    "dib/blend.h",
     "dib/cfx_bitmapcomposer.cpp",
     "dib/cfx_bitmapcomposer.h",
     "dib/cfx_bitmapstorer.cpp",
