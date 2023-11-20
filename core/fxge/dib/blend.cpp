@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fxge/dib/fx_dib.h"
+#include "third_party/base/notreached.h"
 
 namespace fxge {
 
@@ -51,28 +52,25 @@ int Blend(BlendMode blend_mode, int back_color, int src_color) {
     case BlendMode::kOverlay:
       return Blend(BlendMode::kHardLight, src_color, back_color);
     case BlendMode::kDarken:
-      return src_color < back_color ? src_color : back_color;
+      return std::min(src_color, back_color);
     case BlendMode::kLighten:
-      return src_color > back_color ? src_color : back_color;
+      return std::max(src_color, back_color);
     case BlendMode::kColorDodge: {
       if (src_color == 255) {
-        return src_color;
+        return 255;
       }
-
       return std::min(back_color * 255 / (255 - src_color), 255);
     }
     case BlendMode::kColorBurn: {
       if (src_color == 0) {
-        return src_color;
+        return 0;
       }
-
       return 255 - std::min((255 - back_color) * 255 / src_color, 255);
     }
     case BlendMode::kHardLight:
       if (src_color < 128) {
         return (src_color * back_color * 2) / 255;
       }
-
       return Blend(BlendMode::kScreen, back_color, 2 * src_color - 255);
     case BlendMode::kSoftLight: {
       if (src_color < 128) {
@@ -83,12 +81,12 @@ int Blend(BlendMode blend_mode, int back_color, int src_color) {
                               (kColorSqrt[back_color] - back_color) / 255;
     }
     case BlendMode::kDifference:
-      return back_color < src_color ? src_color - back_color
-                                    : back_color - src_color;
+      return std::abs(back_color - src_color);
     case BlendMode::kExclusion:
       return back_color + src_color - 2 * back_color * src_color / 255;
     default:
-      return src_color;
+      // This function does not handle non-separable blend modes.
+      NOTREACHED_NORETURN();
   }
 }
 
