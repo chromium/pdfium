@@ -474,6 +474,37 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
   return true;
 }
 
+#if defined(WCHAR_T_IS_32_BIT)
+static size_t FuseSurrogates(pdfium::span<wchar_t>& s, size_t n) {
+  size_t dest_pos = 0;
+  char16_t high_surrogate = 0;
+  for (size_t i = 0; i < n; ++i) {
+    uint16_t unicode = s[i];
+
+    // TODO(crbug.com/pdfium/2031): Always use UTF-16.
+    if (high_surrogate) {
+      char16_t previous_high_surrogate = high_surrogate;
+      high_surrogate = 0;
+      if (pdfium::IsLowSurrogate(unicode)) {
+        s[dest_pos++] = pdfium::SurrogatePair(previous_high_surrogate, unicode)
+                            .ToCodePoint();
+        continue;
+      }
+      s[dest_pos++] = previous_high_surrogate;
+    }
+    if (pdfium::IsHighSurrogate(unicode)) {
+      high_surrogate = unicode;
+      continue;
+    }
+    s[dest_pos++] = unicode;
+  }
+  if (high_surrogate) {
+    s[dest_pos++] = high_surrogate;
+  }
+  return dest_pos;
+}
+#endif  // defined(WCHAR_T_IS_UTF32)
+
 WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
   size_t dest_pos = 0;
   WideString result;
@@ -489,9 +520,6 @@ WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
                         : GetUnicodeFromLittleEndianBytes;
     const uint8_t* unicode_str = &span[2];
 
-#if defined(WCHAR_T_IS_32_BIT)
-    char16_t high_surrogate = 0;
-#endif  // defined(WCHAR_T_IS_32_BIT)
     for (size_t i = 0; i < max_chars * 2; i += 2) {
       uint16_t unicode = GetUnicodeFromBytes(unicode_str + i);
 
@@ -512,34 +540,12 @@ WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
           break;
       }
 
-#if defined(WCHAR_T_IS_32_BIT)
-      // TODO(crbug.com/pdfium/2031): Always use UTF-16.
-      if (high_surrogate) {
-        char16_t previous_high_surrogate = high_surrogate;
-        high_surrogate = 0;
-
-        if (pdfium::IsLowSurrogate(unicode)) {
-          dest_buf[dest_pos++] =
-              pdfium::SurrogatePair(previous_high_surrogate, unicode)
-                  .ToCodePoint();
-          continue;
-        }
-        dest_buf[dest_pos++] = previous_high_surrogate;
-      }
-
-      if (pdfium::IsHighSurrogate(unicode)) {
-        high_surrogate = unicode;
-        continue;
-      }
-#endif  // defined(WCHAR_T_IS_32_BIT)
       dest_buf[dest_pos++] = unicode;
     }
 
 #if defined(WCHAR_T_IS_32_BIT)
-    if (high_surrogate) {
-      dest_buf[dest_pos++] = high_surrogate;
-    }
-#endif  // defined(WCHAR_T_IS_32_BIT)
+    dest_pos = FuseSurrogates(dest_buf, dest_pos);
+#endif
   } else {
     pdfium::span<wchar_t> dest_buf = result.GetBuffer(span.size());
     for (size_t i = 0; i < span.size(); ++i)
