@@ -475,7 +475,7 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
 }
 
 #if defined(WCHAR_T_IS_32_BIT)
-static size_t FuseSurrogates(pdfium::span<wchar_t>& s, size_t n) {
+static size_t FuseSurrogates(pdfium::span<wchar_t> s, size_t n) {
   size_t dest_pos = 0;
   char16_t high_surrogate = 0;
   for (size_t i = 0; i < n; ++i) {
@@ -505,6 +505,35 @@ static size_t FuseSurrogates(pdfium::span<wchar_t>& s, size_t n) {
 }
 #endif  // defined(WCHAR_T_IS_UTF32)
 
+static size_t StripLanguageCodes(pdfium::span<wchar_t> s, size_t n) {
+  size_t dest_pos = 0;
+  for (size_t i = 0; i < n; ++i) {
+    uint16_t unicode = s[i];
+
+    // 0x001B is a begin/end marker for language metadata region that
+    // should not be in the decoded text.
+    if (unicode == 0x001B) {
+      ++i;
+      for (; i < n; ++i) {
+        unicode = s[i];
+        if (unicode == 0x001B) {
+          ++i;
+          if (i < n) {
+            unicode = s[i];
+          }
+          break;
+        }
+      }
+      if (i >= n) {
+        break;
+      }
+    }
+
+    s[dest_pos++] = unicode;
+  }
+  return dest_pos;
+}
+
 WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
   size_t dest_pos = 0;
   WideString result;
@@ -521,27 +550,10 @@ WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
     const uint8_t* unicode_str = &span[2];
 
     for (size_t i = 0; i < max_chars * 2; i += 2) {
-      uint16_t unicode = GetUnicodeFromBytes(unicode_str + i);
-
-      // 0x001B is a begin/end marker for language metadata region that
-      // should not be in the decoded text.
-      if (unicode == 0x001B) {
-        i += 2;
-        for (; i < max_chars * 2; i += 2) {
-          unicode = GetUnicodeFromBytes(unicode_str + i);
-          if (unicode == 0x001B) {
-            i += 2;
-            if (i < max_chars * 2)
-              unicode = GetUnicodeFromBytes(unicode_str + i);
-            break;
-          }
-        }
-        if (i >= max_chars * 2)
-          break;
-      }
-
-      dest_buf[dest_pos++] = unicode;
+      dest_buf[dest_pos++] = GetUnicodeFromBytes(unicode_str + i);
     }
+
+    dest_pos = StripLanguageCodes(dest_buf, dest_pos);
 
 #if defined(WCHAR_T_IS_32_BIT)
     dest_pos = FuseSurrogates(dest_buf, dest_pos);
