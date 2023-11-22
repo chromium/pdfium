@@ -40,6 +40,7 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_gemodule.h"
+#include "core/fxge/cfx_glyphcache.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "fpdfsdk/cpdfsdk_customaccess.h"
@@ -234,6 +235,10 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* config) {
   CFX_GEModule::Create(config ? config->m_pUserFontPaths : nullptr);
   CPDF_PageModule::Create();
 
+#if defined(_SKIA_SUPPORT_)
+  CFX_GlyphCache::InitializeGlobals();
+#endif
+
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_ModuleInit();
 #endif  // PDF_ENABLE_XFA
@@ -253,6 +258,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyLibrary() {
   if (!g_bLibraryInitialized)
     return;
 
+  // Note: we teardown/destroy things in reverse order.
   ResetRendererType();
 
   IJS_Runtime::Destroy();
@@ -260,6 +266,10 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyLibrary() {
 #ifdef PDF_ENABLE_XFA
   CPDFXFA_ModuleDestroy();
 #endif  // PDF_ENABLE_XFA
+
+#if defined(_SKIA_SUPPORT_)
+  CFX_GlyphCache::DestroyGlobals();
+#endif
 
   CPDF_PageModule::Destroy();
   CFX_GEModule::Destroy();

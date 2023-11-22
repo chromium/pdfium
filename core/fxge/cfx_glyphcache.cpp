@@ -31,11 +31,15 @@
 #if defined(_SKIA_SUPPORT_)
 #include "third_party/skia/include/core/SkStream.h"  // nogncheck
 #include "third_party/skia/include/core/SkTypeface.h"  // nogncheck
-
-#if BUILDFLAG(IS_WIN) || BUILDFLAG(IS_APPLE)
 #include "third_party/skia/include/core/SkFontMgr.h"  // nogncheck
 #include "third_party/skia/include/ports/SkFontMgr_empty.h"  // nogncheck
+
+#if BUILDFLAG(IS_WIN)
+#include "include/ports/SkTypeface_win.h"  // nogncheck
+#elif BUILDFLAG(IS_APPLE)
+#include "include/ports/SkFontMgr_mac_ct.h"  // nogncheck
 #endif
+
 #endif
 
 #if BUILDFLAG(IS_APPLE)
@@ -336,17 +340,45 @@ int CFX_GlyphCache::GetGlyphWidth(const CFX_Font* font,
 }
 
 #if defined(_SKIA_SUPPORT_)
+
+namespace {
+// A singleton SkFontMgr which can be used to decode raw font data or
+// otherwise get access to system fonts.
+SkFontMgr* g_fontmgr = nullptr;
+}  // namespace
+
+// static
+void CFX_GlyphCache::InitializeGlobals() {
+  CHECK(!g_fontmgr);
+#if BUILDFLAG(IS_WIN)
+  g_fontmgr = SkFontMgr_New_DirectWrite().release();
+#elif BUILDFLAG(IS_APPLE)
+  g_fontmgr = SkFontMgr_New_CoreText(nullptr).release();
+#else
+  // This is a SkFontMgr which will use FreeType to decode font data.
+  g_fontmgr = SkFontMgr_New_Custom_Empty().release();
+#endif
+}
+
+// static
+void CFX_GlyphCache::DestroyGlobals() {
+  CHECK(g_fontmgr);
+  delete g_fontmgr;
+  g_fontmgr = nullptr;
+}
+
 CFX_TypeFace* CFX_GlyphCache::GetDeviceCache(const CFX_Font* pFont) {
-  if (!m_pTypeface) {
+  if (!m_pTypeface && g_fontmgr) {
     pdfium::span<const uint8_t> span = pFont->GetFontSpan();
-    m_pTypeface = SkTypeface::MakeFromStream(
+    m_pTypeface = g_fontmgr->makeFromStream(
         std::make_unique<SkMemoryStream>(span.data(), span.size()));
   }
 #if BUILDFLAG(IS_WIN) || BUILDFLAG(IS_APPLE)
+  // If DirectWrite or CoreText didn't work, try FreeType.
   if (!m_pTypeface) {
-    sk_sp<SkFontMgr> customMgr(SkFontMgr_New_Custom_Empty());
+    sk_sp<SkFontMgr> freetype_mgr = SkFontMgr_New_Custom_Empty();
     pdfium::span<const uint8_t> span = pFont->GetFontSpan();
-    m_pTypeface = customMgr->makeFromStream(
+    m_pTypeface = freetype_mgr->makeFromStream(
         std::make_unique<SkMemoryStream>(span.data(), span.size()));
   }
 #endif  // BUILDFLAG(IS_WIN) || BUILDFLAG(IS_APPLE)

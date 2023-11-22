@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
+#include "core/fxge/cfx_glyphcache.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/hash.h"
@@ -26,6 +27,9 @@ class CFDETextOutTest : public testing::Test {
   ~CFDETextOutTest() override = default;
 
   void SetUp() override {
+#if defined(_SKIA_SUPPORT_)
+  CFX_GlyphCache::InitializeGlobals();
+#endif
     CFX_Size bitmap_size = GetBitmapSize();
     bitmap_ = pdfium::MakeRetain<CFX_DIBitmap>();
     ASSERT_TRUE(bitmap_->Create(bitmap_size.width, bitmap_size.height,
@@ -45,10 +49,14 @@ class CFDETextOutTest : public testing::Test {
   }
 
   void TearDown() override {
+    // reverse order form SetUp()
     text_out_.reset();
     font_.Reset();
     device_.reset();
     bitmap_.Reset();
+#if defined(_SKIA_SUPPORT_)
+  CFX_GlyphCache::DestroyGlobals();
+#endif
   }
 
   virtual RetainPtr<CFGAS_GEFont> LoadFont() {

@@ -51,6 +51,8 @@ class CFX_GlyphCache final : public Retainable, public Observable {
 
 #if defined(_SKIA_SUPPORT_)
   CFX_TypeFace* GetDeviceCache(const CFX_Font* pFont);
+  static void InitializeGlobals();
+  static void DestroyGlobals();
 #endif
 
  private:
