@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fxge/dib/fx_dib.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
 
 namespace fxge {
@@ -42,6 +43,13 @@ constexpr uint8_t kColorSqrt[256] = {
 }  // namespace
 
 int Blend(BlendMode blend_mode, int back_color, int src_color) {
+  // Intentionally using DCHECKs, as Blend() is oftentimes called 3 times per
+  // pixel.
+  DCHECK_GE(back_color, 0);
+  DCHECK_LE(back_color, 255);
+  DCHECK_GE(src_color, 0);
+  DCHECK_LE(src_color, 255);
+
   switch (blend_mode) {
     case BlendMode::kNormal:
       return src_color;
