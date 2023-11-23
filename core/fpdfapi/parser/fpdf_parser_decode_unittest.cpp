@@ -409,11 +409,15 @@ TEST(ParserDecodeTest, DecodeText) {
   // ASCII text.
   EXPECT_EQ(L"the quick\tfox", PDF_DecodeText(ToSpan("the quick\tfox")));
 
-  // Unicode text.
+  // UTF-8 text.
+  EXPECT_EQ(L"\x0330\x0331",
+            PDF_DecodeText(ToSpan("\xEF\xBB\xBF\xCC\xB0\xCC\xB1")));
+
+  // UTF-16BE text.
   EXPECT_EQ(L"\x0330\x0331",
             PDF_DecodeText(ToSpan("\xFE\xFF\x03\x30\x03\x31")));
 
-  // More Unicode text.
+  // More UTF-16BE text.
   EXPECT_EQ(
       L"\x7F51\x9875\x0020\x56FE\x7247\x0020"
       L"\x8D44\x8BAF\x66F4\x591A\x0020\x00BB",
@@ -421,12 +425,18 @@ TEST(ParserDecodeTest, DecodeText) {
           ToSpan("\xFE\xFF\x7F\x51\x98\x75\x00\x20\x56\xFE\x72\x47\x00"
                  "\x20\x8D\x44\x8B\xAF\x66\xF4\x59\x1A\x00\x20\x00\xBB")));
 
-  // Supplementary Unicode text.
+  // Supplementary UTF-8 text.
+  EXPECT_EQ(L"🎨", PDF_DecodeText(ToSpan("\xEF\xBB\xBF\xF0\x9F\x8E\xA8")));
+
+  // Supplementary UTF-16BE text.
   EXPECT_EQ(L"🎨", PDF_DecodeText(ToSpan("\xFE\xFF\xD8\x3C\xDF\xA8")));
 }
 
 // https://crbug.com/pdfium/182
 TEST(ParserDecodeTest, DecodeTextWithUnicodeEscapes) {
+  EXPECT_EQ(L"\x0020\x5370\x5237",
+            PDF_DecodeText(ToSpan(
+                "\xEF\xBB\xBF\x1B\x6A\x61\x1B\x20\xE5\x8D\xB0\xE5\x88\xB7")));
   EXPECT_EQ(L"\x0020\x5370\x5237",
             PDF_DecodeText(ToSpan(
                 "\xFE\xFF\x00\x1B\x6A\x61\x00\x1B\x00\x20\x53\x70\x52\x37")));
@@ -445,8 +455,10 @@ TEST(ParserDecodeTest, DecodeTextWithUnicodeEscapes) {
 
 // https://crbug.com/1001159
 TEST(ParserDecodeTest, DecodeTextWithInvalidUnicodeEscapes) {
+  EXPECT_EQ(L"", PDF_DecodeText(ToSpan("\xEF\xBB\xBF\x1B\x1B")));
   EXPECT_EQ(L"", PDF_DecodeText(ToSpan("\xFE\xFF\x00\x1B\x00\x1B")));
   EXPECT_EQ(L"", PDF_DecodeText(ToSpan("\xFE\xFF\x00\x1B\x00\x1B\x20")));
+  EXPECT_EQ(L"\x0020", PDF_DecodeText(ToSpan("\xEF\xBB\xBF\x1B\x1B\x20")));
   EXPECT_EQ(L"\x0020",
             PDF_DecodeText(ToSpan("\xFE\xFF\x00\x1B\x00\x1B\x00\x20")));
 }

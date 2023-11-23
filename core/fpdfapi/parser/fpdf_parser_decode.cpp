@@ -520,6 +520,11 @@ WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
 #if defined(WCHAR_T_IS_32_BIT)
     dest_pos = FuseSurrogates(dest_buf, dest_pos);
 #endif
+  } else if (span.size() >= 3 && span[0] == 0xef && span[1] == 0xbb &&
+             span[2] == 0xbf) {
+    result = FX_UTF8Decode(span.subspan(3));
+    pdfium::span<wchar_t> dest_buf = result.GetBuffer(result.GetLength());
+    dest_pos = StripLanguageCodes(dest_buf, result.GetLength());
   } else {
     pdfium::span<wchar_t> dest_buf = result.GetBuffer(span.size());
     for (size_t i = 0; i < span.size(); ++i)

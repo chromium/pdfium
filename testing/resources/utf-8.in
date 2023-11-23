@@ -1,0 +1,58 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /Outlines 6 0 R
+>>
+endobj
+
+{{object 2 0}} <<
+  /Type /Pages
+  /Kids [3 0 R]
+  /Count 1
+>>
+endobj
+
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 525 250]
+  /Contents 4 0 R
+>>
+endobj
+
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+endstream
+endobj
+
+{{object 5 0}} <<
+  /Producer (\357\273\277Man\303\274ally Created)
+>>
+endobj
+
+{{object 6 0}} <<
+  /Count 1
+  /First 7 0 R
+  /Last 7 0 R
+>>
+endobj
+
+{{object 7 0}} <<
+  /Title <EFBBBF5469746CC3A82031>
+  /Parent 6 0 R
+>>
+endobj
+
+{{xref}}
+
+trailer <<
+  {{trailersize}}
+  /Info 5 0 R
+  /Root 1 0 R
+>>
+
+{{startxref}}
+%%EOF
