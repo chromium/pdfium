@@ -32,14 +32,6 @@ namespace {
 
 const uint32_t kMaxStreamSize = 20 * 1024 * 1024;
 
-uint16_t GetUnicodeFromBigEndianBytes(const uint8_t* bytes) {
-  return bytes[0] << 8 | bytes[1];
-}
-
-uint16_t GetUnicodeFromLittleEndianBytes(const uint8_t* bytes) {
-  return bytes[1] << 8 | bytes[0];
-}
-
 bool CheckFlateDecodeParams(int Colors, int BitsPerComponent, int Columns) {
   if (Colors < 0 || BitsPerComponent < 0 || Columns < 0)
     return false;
@@ -477,29 +469,15 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
 #if defined(WCHAR_T_IS_32_BIT)
 static size_t FuseSurrogates(pdfium::span<wchar_t> s, size_t n) {
   size_t dest_pos = 0;
-  char16_t high_surrogate = 0;
   for (size_t i = 0; i < n; ++i) {
-    uint16_t unicode = s[i];
-
     // TODO(crbug.com/pdfium/2031): Always use UTF-16.
-    if (high_surrogate) {
-      char16_t previous_high_surrogate = high_surrogate;
-      high_surrogate = 0;
-      if (pdfium::IsLowSurrogate(unicode)) {
-        s[dest_pos++] = pdfium::SurrogatePair(previous_high_surrogate, unicode)
-                            .ToCodePoint();
-        continue;
-      }
-      s[dest_pos++] = previous_high_surrogate;
-    }
-    if (pdfium::IsHighSurrogate(unicode)) {
-      high_surrogate = unicode;
+    if (pdfium::IsHighSurrogate(s[i]) && i + 1 < n &&
+        pdfium::IsLowSurrogate(s[i + 1])) {
+      s[dest_pos++] = pdfium::SurrogatePair(s[i], s[i + 1]).ToCodePoint();
+      ++i;
       continue;
     }
-    s[dest_pos++] = unicode;
-  }
-  if (high_surrogate) {
-    s[dest_pos++] = high_surrogate;
+    s[dest_pos++] = s[i];
   }
   return dest_pos;
 }
@@ -508,28 +486,15 @@ static size_t FuseSurrogates(pdfium::span<wchar_t> s, size_t n) {
 static size_t StripLanguageCodes(pdfium::span<wchar_t> s, size_t n) {
   size_t dest_pos = 0;
   for (size_t i = 0; i < n; ++i) {
-    uint16_t unicode = s[i];
-
     // 0x001B is a begin/end marker for language metadata region that
     // should not be in the decoded text.
-    if (unicode == 0x001B) {
-      ++i;
-      for (; i < n; ++i) {
-        unicode = s[i];
-        if (unicode == 0x001B) {
-          ++i;
-          if (i < n) {
-            unicode = s[i];
-          }
-          break;
-        }
+    if (s[i] == 0x001B) {
+      for (++i; i < n && s[i] != 0x001B; ++i) {
+        // No for-loop body. The loop searches for the terminating 0x001B.
       }
-      if (i >= n) {
-        break;
-      }
+      continue;
     }
-
-    s[dest_pos++] = unicode;
+    s[dest_pos++] = s[i];
   }
   return dest_pos;
 }
@@ -539,18 +504,15 @@ WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
   WideString result;
   if (span.size() >= 2 && ((span[0] == 0xfe && span[1] == 0xff) ||
                            (span[0] == 0xff && span[1] == 0xfe))) {
-    size_t max_chars = (span.size() - 2) / 2;
-    if (!max_chars)
-      return result;
-
-    pdfium::span<wchar_t> dest_buf = result.GetBuffer(max_chars);
-    uint16_t (*GetUnicodeFromBytes)(const uint8_t*) =
-        span[0] == 0xfe ? GetUnicodeFromBigEndianBytes
-                        : GetUnicodeFromLittleEndianBytes;
-    const uint8_t* unicode_str = &span[2];
-
-    for (size_t i = 0; i < max_chars * 2; i += 2) {
-      dest_buf[dest_pos++] = GetUnicodeFromBytes(unicode_str + i);
+    pdfium::span<wchar_t> dest_buf = result.GetBuffer((span.size() - 2) / 2);
+    if (span[0] == 0xfe) {
+      for (size_t i = 2; i < span.size() - 1; i += 2) {
+        dest_buf[dest_pos++] = span[i] << 8 | span[i + 1];
+      }
+    } else {
+      for (size_t i = 2; i < span.size() - 1; i += 2) {
+        dest_buf[dest_pos++] = span[i + 1] << 8 | span[i];
+      }
     }
 
     dest_pos = StripLanguageCodes(dest_buf, dest_pos);
