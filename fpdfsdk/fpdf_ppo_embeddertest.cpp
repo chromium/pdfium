@@ -679,6 +679,7 @@ TEST_F(FPDFPPOEmbedderTest, ImportIntoDocWithWrongPageType) {
     }
     return "0a90de37f52127619c3dfb642b5fa2fe";
   }();
+  const char new_page_2_checksum[] = "39336760026e7f3d26135e3b765125c3";
   {
     FPDF_PAGE page = LoadPage(0);
     ASSERT_TRUE(page);
@@ -688,27 +689,28 @@ TEST_F(FPDFPPOEmbedderTest, ImportIntoDocWithWrongPageType) {
   }
   {
     FPDF_PAGE page = LoadPage(1);
-    // TODO(crbug.com/pdfium/2098): This page should be valid.
-    EXPECT_FALSE(page);
+    ASSERT_TRUE(page);
+    ScopedFPDFBitmap bitmap = RenderPage(page);
+    CompareBitmap(bitmap.get(), 200, 100, new_page_2_checksum);
+    UnloadPage(page);
   }
 
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
   ASSERT_TRUE(OpenSavedDocument());
-  // TODO(crbug.com/pdfium/2098): The saved doc should have 2 pages.
-  EXPECT_EQ(1, FPDF_GetPageCount(saved_document()));
+  EXPECT_EQ(2, FPDF_GetPageCount(saved_document()));
   {
     FPDF_PAGE page = LoadSavedPage(0);
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap = RenderPage(page);
-    // TODO(crbug.com/pdfium/2098): This bitmap's checksum should be
-    // `new_page_1_checksum`.
-    CompareBitmap(bitmap.get(), 200, 100, "39336760026e7f3d26135e3b765125c3");
+    CompareBitmap(bitmap.get(), 200, 300, new_page_1_checksum);
     CloseSavedPage(page);
   }
   {
     FPDF_PAGE page = LoadSavedPage(1);
-    // TODO(crbug.com/pdfium/2098): This page should be valid.
-    EXPECT_FALSE(page);
+    ASSERT_TRUE(page);
+    ScopedFPDFBitmap bitmap = RenderPage(page);
+    CompareBitmap(bitmap.get(), 200, 100, new_page_2_checksum);
+    CloseSavedPage(page);
   }
 }

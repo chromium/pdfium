@@ -27,6 +27,7 @@
 #include "core/fxcrt/stl_util.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/containers/span.h"
 
@@ -455,8 +456,28 @@ bool CPDF_Document::InsertDeletePDFPage(
     return false;
 
   for (size_t i = 0; i < pKidList->size(); i++) {
+    enum class NodeType : bool {
+      kBranch,  // /Type /Pages, AKA page tree node.
+      kLeaf,    // /Type /Page, AKA page object.
+    };
+
     RetainPtr<CPDF_Dictionary> pKid = pKidList->GetMutableDictAt(i);
-    if (pKid->GetNameFor("Type") == "Page") {
+    const ByteString kid_type_value = pKid->GetNameFor("Type");
+    NodeType kid_type;
+    if (kid_type_value == "Pages") {
+      kid_type = NodeType::kBranch;
+    } else if (kid_type_value == "Page") {
+      kid_type = NodeType::kLeaf;
+    } else {
+      // Even though /Type is required for page tree nodes and page objects,
+      // PDFs may not have them or have the wrong type. Tolerate these errors
+      // and guess the type. Then fix the in-memory representation.
+      const bool has_kids = pKid->KeyExist("Kids");
+      kid_type = has_kids ? NodeType::kBranch : NodeType::kLeaf;
+      pKid->SetNewFor<CPDF_Name>("Type", has_kids ? "Pages" : "Page");
+    }
+
+    if (kid_type == NodeType::kLeaf) {
       if (nPagesToGo != 0) {
         nPagesToGo--;
         continue;
@@ -473,6 +494,8 @@ bool CPDF_Document::InsertDeletePDFPage(
       ResetTraversal();
       break;
     }
+
+    CHECK_EQ(kid_type, NodeType::kBranch);
     int nPages = pKid->GetIntegerFor("Count");
     if (nPagesToGo >= nPages) {
       nPagesToGo -= nPages;
