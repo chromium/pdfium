@@ -36,27 +36,37 @@ namespace {
 const int kMaxPageLevel = 1024;
 
 // Returns a value in the range [0, `CPDF_Document::kPageMaxNum`), or nullopt on
-// error.
+// error. Note that this function may modify `pages_dict` to correct PDF spec
+// violations. By normalizing the in-memory representation, other code that
+// reads the object do not have to deal with the same spec violations again.
+// If the PDF gets saved, the saved copy will also be more spec-compliant.
 absl::optional<int> CountPages(
-    RetainPtr<CPDF_Dictionary> pPages,
+    RetainPtr<CPDF_Dictionary> pages_dict,
     std::set<RetainPtr<CPDF_Dictionary>>* visited_pages) {
-  int count = pPages->GetIntegerFor("Count");
-  if (count > 0 && count < CPDF_Document::kPageMaxNum)
-    return count;
-  RetainPtr<CPDF_Array> pKidList = pPages->GetMutableArrayFor("Kids");
-  if (!pKidList)
+  // Required. See ISO 32000-1:2008 spec, table 29, but tolerate page tree nodes
+  // that violate the spec.
+  int count_from_dict = pages_dict->GetIntegerFor("Count");
+  if (count_from_dict > 0 && count_from_dict < CPDF_Document::kPageMaxNum) {
+    return count_from_dict;
+  }
+
+  RetainPtr<CPDF_Array> kids_array = pages_dict->GetMutableArrayFor("Kids");
+  if (!kids_array) {
     return 0;
-  count = 0;
-  for (size_t i = 0; i < pKidList->size(); i++) {
-    RetainPtr<CPDF_Dictionary> pKid = pKidList->GetMutableDictAt(i);
-    if (!pKid || pdfium::Contains(*visited_pages, pKid))
+  }
+
+  int count = 0;
+  for (size_t i = 0; i < kids_array->size(); i++) {
+    RetainPtr<CPDF_Dictionary> kid_dict = kids_array->GetMutableDictAt(i);
+    if (!kid_dict || pdfium::Contains(*visited_pages, kid_dict)) {
       continue;
-    if (pKid->KeyExist("Kids")) {
+    }
+    if (kid_dict->KeyExist("Kids")) {
       // Use |visited_pages| to help detect circular references of pages.
       ScopedSetInsertion<RetainPtr<CPDF_Dictionary>> local_add(visited_pages,
-                                                               pKid);
+                                                               kid_dict);
       absl::optional<int> local_count =
-          CountPages(std::move(pKid), visited_pages);
+          CountPages(std::move(kid_dict), visited_pages);
       if (!local_count.has_value()) {
         return absl::nullopt;  // Propagate error.
       }
@@ -69,7 +79,8 @@ absl::optional<int> CountPages(
       return absl::nullopt;  // Error: too many pages.
     }
   }
-  pPages->SetNewFor<CPDF_Number>("Count", count);
+  // Fix the in-memory representation for page tree nodes that violate the spec.
+  pages_dict->SetNewFor<CPDF_Number>("Count", count);
   return count;
 }
 
