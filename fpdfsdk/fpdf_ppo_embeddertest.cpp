@@ -651,3 +651,64 @@ TEST_F(FPDFPPOEmbedderTest, ImportIntoDestDocWithoutInfo) {
   EXPECT_TRUE(FPDF_ImportPages(document(), src_doc.get(), "1", 0));
   EXPECT_EQ(3, FPDF_GetPageCount(document()));
 }
+
+TEST_F(FPDFPPOEmbedderTest, ImportIntoDocWithWrongPageType) {
+  ASSERT_TRUE(OpenDocument("bad_page_type.pdf"));
+  EXPECT_EQ(2, FPDF_GetPageCount(document()));
+
+  std::string file_path = PathService::GetTestFilePath("rectangles.pdf");
+  ASSERT_FALSE(file_path.empty());
+  std::vector<uint8_t> file_contents = GetFileContents(file_path.c_str());
+  ASSERT_FALSE(file_contents.empty());
+
+  ScopedFPDFDocument src_doc(FPDF_LoadMemDocument(
+      file_contents.data(), file_contents.size(), nullptr));
+  ASSERT_TRUE(src_doc);
+  EXPECT_EQ(1, FPDF_GetPageCount(src_doc.get()));
+
+  FPDFPage_Delete(document(), 0);
+  EXPECT_EQ(1, FPDF_GetPageCount(document()));
+
+  static constexpr int kPageIndices[] = {0};
+  ASSERT_TRUE(FPDF_ImportPagesByIndex(document(), src_doc.get(), kPageIndices,
+                                      std::size(kPageIndices), 0));
+  EXPECT_EQ(2, FPDF_GetPageCount(document()));
+  const char* const new_page_1_checksum = []() {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+      return "b4e411a6b5ffa59a50efede2efece597";
+    }
+    return "0a90de37f52127619c3dfb642b5fa2fe";
+  }();
+  {
+    FPDF_PAGE page = LoadPage(0);
+    ASSERT_TRUE(page);
+    ScopedFPDFBitmap bitmap = RenderPage(page);
+    CompareBitmap(bitmap.get(), 200, 300, new_page_1_checksum);
+    UnloadPage(page);
+  }
+  {
+    FPDF_PAGE page = LoadPage(1);
+    // TODO(crbug.com/pdfium/2098): This page should be valid.
+    EXPECT_FALSE(page);
+  }
+
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  ASSERT_TRUE(OpenSavedDocument());
+  // TODO(crbug.com/pdfium/2098): The saved doc should have 2 pages.
+  EXPECT_EQ(1, FPDF_GetPageCount(saved_document()));
+  {
+    FPDF_PAGE page = LoadSavedPage(0);
+    ASSERT_TRUE(page);
+    ScopedFPDFBitmap bitmap = RenderPage(page);
+    // TODO(crbug.com/pdfium/2098): This bitmap's checksum should be
+    // `new_page_1_checksum`.
+    CompareBitmap(bitmap.get(), 200, 100, "39336760026e7f3d26135e3b765125c3");
+    CloseSavedPage(page);
+  }
+  {
+    FPDF_PAGE page = LoadSavedPage(1);
+    // TODO(crbug.com/pdfium/2098): This page should be valid.
+    EXPECT_FALSE(page);
+  }
+}
