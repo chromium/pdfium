@@ -514,12 +514,11 @@ WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
         dest_buf[dest_pos++] = span[i + 1] << 8 | span[i];
       }
     }
-
-    dest_pos = StripLanguageCodes(dest_buf, dest_pos);
-
 #if defined(WCHAR_T_IS_32_BIT)
     dest_pos = FuseSurrogates(dest_buf, dest_pos);
 #endif
+
+    dest_pos = StripLanguageCodes(dest_buf, dest_pos);
   } else if (span.size() >= 3 && span[0] == 0xef && span[1] == 0xbb &&
              span[2] == 0xbf) {
     result = FX_UTF8Decode(span.subspan(3));
