@@ -35,6 +35,30 @@ namespace {
 
 const int kMaxPageLevel = 1024;
 
+enum class NodeType : bool {
+  kBranch,  // /Type /Pages, AKA page tree node.
+  kLeaf,    // /Type /Page, AKA page object.
+};
+
+// Note that this function may modify `kid_dict` to correct PDF spec violations.
+// Same reasoning as CountPages() below.
+NodeType GetNodeType(RetainPtr<CPDF_Dictionary> kid_dict) {
+  const ByteString kid_type_value = kid_dict->GetNameFor("Type");
+  if (kid_type_value == "Pages") {
+    return NodeType::kBranch;
+  }
+  if (kid_type_value == "Page") {
+    return NodeType::kLeaf;
+  }
+
+  // Even though /Type is required for page tree nodes and page objects, PDFs
+  // may not have them or have the wrong type. Tolerate these errors and guess
+  // the type. Then fix the in-memory representation.
+  const bool has_kids = kid_dict->KeyExist("Kids");
+  kid_dict->SetNewFor<CPDF_Name>("Type", has_kids ? "Pages" : "Page");
+  return has_kids ? NodeType::kBranch : NodeType::kLeaf;
+}
+
 // Returns a value in the range [0, `CPDF_Document::kPageMaxNum`), or nullopt on
 // error. Note that this function may modify `pages_dict` to correct PDF spec
 // violations. By normalizing the in-memory representation, other code that
@@ -61,7 +85,9 @@ absl::optional<int> CountPages(
     if (!kid_dict || pdfium::Contains(*visited_pages, kid_dict)) {
       continue;
     }
-    if (kid_dict->KeyExist("Kids")) {
+
+    NodeType kid_type = GetNodeType(kid_dict);
+    if (kid_type == NodeType::kBranch) {
       // Use |visited_pages| to help detect circular references of pages.
       ScopedSetInsertion<RetainPtr<CPDF_Dictionary>> local_add(visited_pages,
                                                                kid_dict);
@@ -72,9 +98,10 @@ absl::optional<int> CountPages(
       }
       count += local_count.value();
     } else {
-      // This page is a leaf node.
+      CHECK_EQ(kid_type, NodeType::kLeaf);
       count++;
     }
+
     if (count >= CPDF_Document::kPageMaxNum) {
       return absl::nullopt;  // Error: too many pages.
     }
@@ -468,27 +495,8 @@ bool CPDF_Document::InsertDeletePDFPage(
   }
 
   for (size_t i = 0; i < kids_list->size(); i++) {
-    enum class NodeType : bool {
-      kBranch,  // /Type /Pages, AKA page tree node.
-      kLeaf,    // /Type /Page, AKA page object.
-    };
-
     RetainPtr<CPDF_Dictionary> kid_dict = kids_list->GetMutableDictAt(i);
-    const ByteString kid_type_value = kid_dict->GetNameFor("Type");
-    NodeType kid_type;
-    if (kid_type_value == "Pages") {
-      kid_type = NodeType::kBranch;
-    } else if (kid_type_value == "Page") {
-      kid_type = NodeType::kLeaf;
-    } else {
-      // Even though /Type is required for page tree nodes and page objects,
-      // PDFs may not have them or have the wrong type. Tolerate these errors
-      // and guess the type. Then fix the in-memory representation.
-      const bool has_kids = kid_dict->KeyExist("Kids");
-      kid_type = has_kids ? NodeType::kBranch : NodeType::kLeaf;
-      kid_dict->SetNewFor<CPDF_Name>("Type", has_kids ? "Pages" : "Page");
-    }
-
+    NodeType kid_type = GetNodeType(kid_dict);
     if (kid_type == NodeType::kLeaf) {
       if (pages_to_go != 0) {
         pages_to_go--;
