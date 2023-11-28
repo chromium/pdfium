@@ -183,11 +183,11 @@ class CPDF_Document : public Observable,
   RetainPtr<const CPDF_Dictionary> GetPagesDict() const;
   RetainPtr<CPDF_Dictionary> GetMutablePagesDict();
 
-  bool InsertDeletePDFPage(RetainPtr<CPDF_Dictionary> pPages,
-                           int nPagesToGo,
-                           RetainPtr<CPDF_Dictionary> pPageDict,
-                           bool bInsert,
-                           std::set<RetainPtr<CPDF_Dictionary>>* pVisited);
+  bool InsertDeletePDFPage(RetainPtr<CPDF_Dictionary> pages_dict,
+                           int pages_to_go,
+                           RetainPtr<CPDF_Dictionary> page_dict,
+                           bool is_insert,
+                           std::set<RetainPtr<CPDF_Dictionary>>* visited);
 
   bool InsertNewPage(int iPage, RetainPtr<CPDF_Dictionary> pPageDict);
   void ResetTraversal();

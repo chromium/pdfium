@@ -457,23 +457,24 @@ RetainPtr<CPDF_Dictionary> CPDF_Document::CreateNewPage(int iPage) {
 }
 
 bool CPDF_Document::InsertDeletePDFPage(
-    RetainPtr<CPDF_Dictionary> pPages,
-    int nPagesToGo,
-    RetainPtr<CPDF_Dictionary> pPageDict,
-    bool bInsert,
-    std::set<RetainPtr<CPDF_Dictionary>>* pVisited) {
-  RetainPtr<CPDF_Array> pKidList = pPages->GetMutableArrayFor("Kids");
-  if (!pKidList)
+    RetainPtr<CPDF_Dictionary> pages_dict,
+    int pages_to_go,
+    RetainPtr<CPDF_Dictionary> page_dict,
+    bool is_insert,
+    std::set<RetainPtr<CPDF_Dictionary>>* visited) {
+  RetainPtr<CPDF_Array> kids_list = pages_dict->GetMutableArrayFor("Kids");
+  if (!kids_list) {
     return false;
+  }
 
-  for (size_t i = 0; i < pKidList->size(); i++) {
+  for (size_t i = 0; i < kids_list->size(); i++) {
     enum class NodeType : bool {
       kBranch,  // /Type /Pages, AKA page tree node.
       kLeaf,    // /Type /Page, AKA page object.
     };
 
-    RetainPtr<CPDF_Dictionary> pKid = pKidList->GetMutableDictAt(i);
-    const ByteString kid_type_value = pKid->GetNameFor("Type");
+    RetainPtr<CPDF_Dictionary> kid_dict = kids_list->GetMutableDictAt(i);
+    const ByteString kid_type_value = kid_dict->GetNameFor("Type");
     NodeType kid_type;
     if (kid_type_value == "Pages") {
       kid_type = NodeType::kBranch;
@@ -483,45 +484,46 @@ bool CPDF_Document::InsertDeletePDFPage(
       // Even though /Type is required for page tree nodes and page objects,
       // PDFs may not have them or have the wrong type. Tolerate these errors
       // and guess the type. Then fix the in-memory representation.
-      const bool has_kids = pKid->KeyExist("Kids");
+      const bool has_kids = kid_dict->KeyExist("Kids");
       kid_type = has_kids ? NodeType::kBranch : NodeType::kLeaf;
-      pKid->SetNewFor<CPDF_Name>("Type", has_kids ? "Pages" : "Page");
+      kid_dict->SetNewFor<CPDF_Name>("Type", has_kids ? "Pages" : "Page");
     }
 
     if (kid_type == NodeType::kLeaf) {
-      if (nPagesToGo != 0) {
-        nPagesToGo--;
+      if (pages_to_go != 0) {
+        pages_to_go--;
         continue;
       }
-      if (bInsert) {
-        pKidList->InsertNewAt<CPDF_Reference>(i, this, pPageDict->GetObjNum());
-        pPageDict->SetNewFor<CPDF_Reference>("Parent", this,
-                                             pPages->GetObjNum());
+      if (is_insert) {
+        kids_list->InsertNewAt<CPDF_Reference>(i, this, page_dict->GetObjNum());
+        page_dict->SetNewFor<CPDF_Reference>("Parent", this,
+                                             pages_dict->GetObjNum());
       } else {
-        pKidList->RemoveAt(i);
+        kids_list->RemoveAt(i);
       }
-      pPages->SetNewFor<CPDF_Number>(
-          "Count", pPages->GetIntegerFor("Count") + (bInsert ? 1 : -1));
+      pages_dict->SetNewFor<CPDF_Number>(
+          "Count", pages_dict->GetIntegerFor("Count") + (is_insert ? 1 : -1));
       ResetTraversal();
       break;
     }
 
     CHECK_EQ(kid_type, NodeType::kBranch);
-    int nPages = pKid->GetIntegerFor("Count");
-    if (nPagesToGo >= nPages) {
-      nPagesToGo -= nPages;
+    int page_count = kid_dict->GetIntegerFor("Count");
+    if (pages_to_go >= page_count) {
+      pages_to_go -= page_count;
       continue;
     }
-    if (pdfium::Contains(*pVisited, pKid))
-      return false;
-
-    ScopedSetInsertion<RetainPtr<CPDF_Dictionary>> insertion(pVisited, pKid);
-    if (!InsertDeletePDFPage(std::move(pKid), nPagesToGo, pPageDict, bInsert,
-                             pVisited)) {
+    if (pdfium::Contains(*visited, kid_dict)) {
       return false;
     }
-    pPages->SetNewFor<CPDF_Number>(
-        "Count", pPages->GetIntegerFor("Count") + (bInsert ? 1 : -1));
+
+    ScopedSetInsertion<RetainPtr<CPDF_Dictionary>> insertion(visited, kid_dict);
+    if (!InsertDeletePDFPage(std::move(kid_dict), pages_to_go, page_dict,
+                             is_insert, visited)) {
+      return false;
+    }
+    pages_dict->SetNewFor<CPDF_Number>(
+        "Count", pages_dict->GetIntegerFor("Count") + (is_insert ? 1 : -1));
     break;
   }
   return true;
