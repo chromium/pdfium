@@ -48,15 +48,15 @@ class CXFA_DocumentBuilderTest : public FXGCUnitTest {
 
 TEST_F(CXFA_DocumentBuilderTest, EmptyInput) {
   static const char kInput[] = "";
-  auto stream = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
-      pdfium::as_bytes(pdfium::make_span(kInput)));
+  auto stream =
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pdfium::as_byte_span(kInput));
   EXPECT_FALSE(ParseAndBuild(stream));
 }
 
 TEST_F(CXFA_DocumentBuilderTest, BadInput) {
   static const char kInput[] = "<<<>bar?>>>>>>>";
-  auto stream = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
-      pdfium::as_bytes(pdfium::make_span(kInput)));
+  auto stream =
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pdfium::as_byte_span(kInput));
   EXPECT_FALSE(ParseAndBuild(stream));
 }
 
@@ -68,8 +68,8 @@ TEST_F(CXFA_DocumentBuilderTest, XMLInstructionsScriptOff) {
       "</config>";
   EXPECT_FALSE(GetDoc()->is_scripting());
 
-  auto stream = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
-      pdfium::as_bytes(pdfium::make_span(kInput)));
+  auto stream =
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pdfium::as_byte_span(kInput));
 
   CXFA_Node* root = ParseAndBuild(stream);
   ASSERT_TRUE(root);
@@ -85,8 +85,8 @@ TEST_F(CXFA_DocumentBuilderTest, XMLInstructionsScriptOn) {
 
   EXPECT_FALSE(GetDoc()->is_scripting());
 
-  auto stream = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
-      pdfium::as_bytes(pdfium::make_span(kInput)));
+  auto stream =
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pdfium::as_byte_span(kInput));
 
   CXFA_Node* root = ParseAndBuild(stream);
   ASSERT_TRUE(root);
@@ -101,8 +101,8 @@ TEST_F(CXFA_DocumentBuilderTest, XMLInstructionsStrictScope) {
 
   EXPECT_FALSE(GetDoc()->is_strict_scoping());
 
-  auto stream = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
-      pdfium::as_bytes(pdfium::make_span(kInput)));
+  auto stream =
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pdfium::as_byte_span(kInput));
 
   CXFA_Node* root = ParseAndBuild(stream);
   ASSERT_TRUE(root);
@@ -117,8 +117,8 @@ TEST_F(CXFA_DocumentBuilderTest, XMLInstructionsStrictScopeBad) {
 
   EXPECT_FALSE(GetDoc()->is_strict_scoping());
 
-  auto stream = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
-      pdfium::as_bytes(pdfium::make_span(kInput)));
+  auto stream =
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pdfium::as_byte_span(kInput));
 
   CXFA_Node* root = ParseAndBuild(stream);
   ASSERT_TRUE(root);
@@ -136,8 +136,8 @@ TEST_F(CXFA_DocumentBuilderTest, MultipleXMLInstructions) {
   EXPECT_FALSE(GetDoc()->is_scripting());
   EXPECT_FALSE(GetDoc()->is_strict_scoping());
 
-  auto stream = pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
-      pdfium::as_bytes(pdfium::make_span(kInput)));
+  auto stream =
+      pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pdfium::as_byte_span(kInput));
 
   CXFA_Node* root = ParseAndBuild(stream);
   ASSERT_TRUE(root);

@@ -171,7 +171,7 @@ TEST(CrossRefAvailTest, ThreeCrossRefV4) {
            FXSYS_itoa(static_cast<int>(prev_offset), int_buffer, 10) + ">>\n";
   const FX_FILESIZE last_crossref_offset = static_cast<FX_FILESIZE>(cur_offset);
 
-  auto parser = MakeParserForBuffer(pdfium::as_bytes(pdfium::make_span(table)));
+  auto parser = MakeParserForBuffer(pdfium::as_byte_span(table));
   auto cross_ref_avail =
       std::make_unique<CPDF_CrossRefAvail>(parser.get(), last_crossref_offset);
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, cross_ref_avail->CheckAvail());
@@ -215,7 +215,7 @@ TEST(CrossRefAvailTest, ThreeCrossRefV5) {
            "endobj\n";
   const FX_FILESIZE last_crossref_offset = static_cast<FX_FILESIZE>(cur_offset);
 
-  auto parser = MakeParserForBuffer(pdfium::as_bytes(pdfium::make_span(table)));
+  auto parser = MakeParserForBuffer(pdfium::as_byte_span(table));
   auto cross_ref_avail =
       std::make_unique<CPDF_CrossRefAvail>(parser.get(), last_crossref_offset);
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, cross_ref_avail->CheckAvail());
@@ -264,7 +264,7 @@ TEST(CrossRefAvailTest, Mixed) {
            FXSYS_itoa(first_v5_table_offset, int_buffer, 10) + ">>\n";
   const FX_FILESIZE last_crossref_offset = last_v4_table_offset;
 
-  auto parser = MakeParserForBuffer(pdfium::as_bytes(pdfium::make_span(table)));
+  auto parser = MakeParserForBuffer(pdfium::as_byte_span(table));
   auto cross_ref_avail =
       std::make_unique<CPDF_CrossRefAvail>(parser.get(), last_crossref_offset);
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, cross_ref_avail->CheckAvail());

@@ -177,6 +177,9 @@ using EnableIfConstSpanCompatibleContainer =
 // Differences from [span.elem]:
 // - no operator ()()
 // - using size_t instead of ptrdiff_t for indexing
+//
+// Additions beyond the C++ standard draft
+// - as_byte_span() function.
 
 // [span], class template span
 template <typename T>
@@ -351,6 +354,16 @@ template <
     typename = internal::EnableIfConstSpanCompatibleContainer<Container, T>>
 constexpr span<T> make_span(const Container& container) {
   return span<T>(container);
+}
+
+// Convenience function for converting an object which is itself convertible
+// to span into a span of bytes (i.e. span of const uint8_t). Typically used
+// to convert std::string or string-objects holding chars, or std::vector
+// or vector-like objects holding other scalar types, prior to passing them
+// into an API that requires byte spans.
+template <typename T>
+span<const uint8_t> as_byte_span(const T& arg) {
+  return as_bytes(make_span(arg));
 }
 
 }  // namespace pdfium
