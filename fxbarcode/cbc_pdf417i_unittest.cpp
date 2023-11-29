@@ -16,5 +16,5 @@ TEST(CBC_PDF417ITest, Normal) {
 TEST(CBC_PDF417ITest, MaxLength) {
   std::vector<wchar_t> input(2711, L'1');
   CBC_PDF417I encoder;
-  EXPECT_FALSE(encoder.Encode(WideStringView(input.data(), input.size())));
+  EXPECT_FALSE(encoder.Encode(WideStringView(input)));
 }

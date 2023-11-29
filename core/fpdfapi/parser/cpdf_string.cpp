@@ -68,7 +68,7 @@ bool CPDF_String::WriteTo(IFX_ArchiveStream* archive,
     encrypted_data = encryptor->Encrypt(data);
     data = encrypted_data;
   }
-  ByteStringView raw(data.data(), data.size());
+  ByteStringView raw(data);
   ByteString content =
       m_bHex ? PDF_HexEncodeString(raw) : PDF_EncodeString(raw);
   return archive->WriteString(content.AsStringView());
