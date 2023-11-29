@@ -122,13 +122,11 @@ void DynPropGetterAdapter_MethodCallback(
     info.GetReturnValue().Set(result.Return());
 }
 
-void DynPropGetterAdapter(v8::Isolate* pIsolate,
-                          const FXJSE_CLASS_DESCRIPTOR* pClassDescriptor,
-                          v8::Local<v8::Object> pObject,
-                          ByteStringView szPropName,
-                          CFXJSE_Value* pValue) {
-  DCHECK(pClassDescriptor);
-
+std::unique_ptr<CFXJSE_Value> DynPropGetterAdapter(
+    v8::Isolate* pIsolate,
+    const FXJSE_CLASS_DESCRIPTOR* pClassDescriptor,
+    v8::Local<v8::Object> pObject,
+    ByteStringView szPropName) {
   FXJSE_ClassPropType nPropType =
       pClassDescriptor->dynPropTypeGetter
           ? pClassDescriptor->dynPropTypeGetter(pIsolate, pObject, szPropName,
@@ -136,11 +134,12 @@ void DynPropGetterAdapter(v8::Isolate* pIsolate,
           : FXJSE_ClassPropType::kProperty;
   if (nPropType == FXJSE_ClassPropType::kProperty) {
     if (pClassDescriptor->dynPropGetter) {
-      pValue->ForceSetValue(pIsolate, pClassDescriptor->dynPropGetter(
-                                          pIsolate, pObject, szPropName));
+      return std::make_unique<CFXJSE_Value>(
+          pIsolate,
+          pClassDescriptor->dynPropGetter(pIsolate, pObject, szPropName));
     }
   } else if (nPropType == FXJSE_ClassPropType::kMethod) {
-    if (pClassDescriptor->dynMethodCall && pValue) {
+    if (pClassDescriptor->dynMethodCall) {
       v8::HandleScope hscope(pIsolate);
       v8::Local<v8::ObjectTemplate> hCallBackInfoTemplate =
           v8::ObjectTemplate::New(pIsolate);
@@ -152,7 +151,7 @@ void DynPropGetterAdapter(v8::Isolate* pIsolate,
           0, const_cast<FXJSE_CLASS_DESCRIPTOR*>(pClassDescriptor));
       hCallBackInfo->SetInternalField(
           1, fxv8::NewStringHelper(pIsolate, szPropName));
-      pValue->ForceSetValue(
+      return std::make_unique<CFXJSE_Value>(
           pIsolate,
           v8::Function::New(pIsolate->GetCurrentContext(),
                             DynPropGetterAdapter_MethodCallback, hCallBackInfo,
@@ -160,6 +159,7 @@ void DynPropGetterAdapter(v8::Isolate* pIsolate,
               .ToLocalChecked());
     }
   }
+  return std::make_unique<CFXJSE_Value>();
 }
 
 void DynPropSetterAdapter(v8::Isolate* pIsolate,
@@ -222,9 +222,8 @@ void NamedPropertyGetterCallback(
 
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   ByteStringView szFxPropName(*szPropName, szPropName.length());
-  auto pNewValue = std::make_unique<CFXJSE_Value>();
-  DynPropGetterAdapter(info.GetIsolate(), pClass, info.Holder(), szFxPropName,
-                       pNewValue.get());
+  std::unique_ptr<CFXJSE_Value> pNewValue = DynPropGetterAdapter(
+      info.GetIsolate(), pClass, info.Holder(), szFxPropName);
   info.GetReturnValue().Set(pNewValue->DirectGetValue());
 }
 
