@@ -24,8 +24,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   barcode->SetHeight(298);
   barcode->SetWidth(418);
 
-  WideString content = WideString::FromUTF16LE(
-      reinterpret_cast<const uint16_t*>(data), size / sizeof(uint16_t));
+  WideString content = WideString::FromUTF16LE({data, size});
 
   if (!barcode->Encode(content.AsStringView()))
     return 0;

@@ -27,9 +27,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   rtf_break.SetFont(CFGAS_GEFont::LoadFont(std::move(font)));
   rtf_break.SetFontSize(12);
 
-  WideString input =
-      WideString::FromUTF16LE(reinterpret_cast<const unsigned short*>(data),
-                              size / sizeof(unsigned short));
+  WideString input = WideString::FromUTF16LE({data, size});
   for (wchar_t ch : input)
     rtf_break.AppendChar(ch);
 

@@ -154,8 +154,8 @@ WideString CPDFSDK_FormFillEnvironment::GetLanguage() {
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
     return WideString();
 
-  return WideString::FromUTF16LE(reinterpret_cast<uint16_t*>(pBuff.data()),
-                                 nActualLen / sizeof(uint16_t));
+  return WideString::FromUTF16LE(
+      {pBuff.data(), static_cast<size_t>(nActualLen)});
 #else   // PDF_ENABLE_XFA
   return WideString();
 #endif  // PDF_ENABLE_XFA
@@ -176,8 +176,8 @@ WideString CPDFSDK_FormFillEnvironment::GetPlatform() {
   if (nActualLen <= 0 || nActualLen > nRequiredLen)
     return WideString();
 
-  return WideString::FromUTF16LE(reinterpret_cast<uint16_t*>(pBuff.data()),
-                                 nActualLen / sizeof(uint16_t));
+  return WideString::FromUTF16LE(
+      {pBuff.data(), static_cast<size_t>(nActualLen)});
 #else   // PDF_ENABLE_XFA
   return WideString();
 #endif  // PDF_ENABLE_XFA
@@ -570,8 +570,8 @@ WideString CPDFSDK_FormFillEnvironment::PostRequestURL(
       AsFPDFWideString(&bsHeader), &response);
 
   WideString wsRet =
-      WideString::FromUTF16LE(reinterpret_cast<FPDF_WIDESTRING>(response.str),
-                              response.len / sizeof(FPDF_WCHAR));
+      WideString::FromUTF16LE({reinterpret_cast<const uint8_t*>(response.str),
+                               static_cast<size_t>(response.len)});
 
   FPDF_BStr_Clear(&response);
   return wsRet;

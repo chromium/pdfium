@@ -957,36 +957,39 @@ WideString WideString::FromUTF8(ByteStringView str) {
 }
 
 // static
-WideString WideString::FromUTF16LE(const unsigned short* wstr, size_t wlen) {
-  if (!wstr || wlen == 0)
+WideString WideString::FromUTF16LE(pdfium::span<const uint8_t> data) {
+  if (data.empty()) {
     return WideString();
+  }
 
   WideString result;
+  size_t length = 0;
   {
     // Span's lifetime must end before ReleaseBuffer() below.
-    pdfium::span<wchar_t> buf = result.GetBuffer(wlen);
-    for (size_t i = 0; i < wlen; i++)
-      buf[i] = wstr[i];
+    pdfium::span<wchar_t> buf = result.GetBuffer(data.size() / 2);
+    for (size_t i = 0; i < data.size() - 1; i += 2) {
+      buf[length++] = data[i] | data[i + 1] << 8;
+    }
   }
-  result.ReleaseBuffer(wlen);
+  result.ReleaseBuffer(length);
   return result;
 }
 
-WideString WideString::FromUTF16BE(const unsigned short* wstr, size_t wlen) {
-  if (!wstr || wlen == 0)
+WideString WideString::FromUTF16BE(pdfium::span<const uint8_t> data) {
+  if (data.empty()) {
     return WideString();
+  }
 
   WideString result;
+  size_t length = 0;
   {
     // Span's lifetime must end before ReleaseBuffer() below.
-    pdfium::span<wchar_t> buf = result.GetBuffer(wlen);
-    for (size_t i = 0; i < wlen; i++) {
-      auto wch = wstr[i];
-      wch = (wch >> 8) | (wch << 8);
-      buf[i] = wch;
+    pdfium::span<wchar_t> buf = result.GetBuffer(data.size() / 2);
+    for (size_t i = 0; i < data.size() - 1; i += 2) {
+      buf[length++] = data[i] << 8 | data[i + 1];
     }
   }
-  result.ReleaseBuffer(wlen);
+  result.ReleaseBuffer(length);
   return result;
 }
 

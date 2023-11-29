@@ -44,6 +44,7 @@ source_set("test_support") {
     "../core/fdrm",
     "../core/fxcrt",
     "../core/fxge",
+    "../fpdfsdk",
     "image_diff",
   ]
   configs += [

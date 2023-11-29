@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/fx_string.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/span.h"
 
@@ -38,8 +39,7 @@ std::vector<std::string> StringSplit(const std::string& str, char delimiter) {
 }
 
 std::string GetPlatformString(FPDF_WIDESTRING wstr) {
-  WideString wide_string =
-      WideString::FromUTF16LE(wstr, WideString::WStringLength(wstr));
+  WideString wide_string = WideStringFromFPDFWideString(wstr);
   return std::string(wide_string.ToUTF8().c_str());
 }
 

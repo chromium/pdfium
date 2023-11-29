@@ -503,9 +503,7 @@ void CPDFXFA_DocEnvironment::ExportData(CXFA_FFDoc* hDoc,
         continue;
       }
       if (i == pArray->size() - 1) {
-        WideString wPath = WideString::FromUTF16LE(
-            reinterpret_cast<const unsigned short*>(bs.c_str()),
-            bs.GetLength() / sizeof(unsigned short));
+        WideString wPath = WideString::FromUTF16LE(bs.raw_span());
         ByteString bPath = wPath.ToUTF8();
         static const char kFormat[] =
             "\n<pdf href=\"%s\" xmlns=\"http://ns.adobe.com/xdp/pdf/\"/>";

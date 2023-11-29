@@ -28,8 +28,7 @@ std::vector<WideString> GetNames(uint8_t count,
     constexpr size_t kMaxNameLen = 10;
     std::string str = data_provider->ConsumeRandomLengthString(kMaxNameLen);
     names.push_back(WideString::FromUTF16LE(
-        reinterpret_cast<const unsigned short*>(str.data()),
-        str.size() / sizeof(unsigned short)));
+        {reinterpret_cast<const uint8_t*>(str.data()), str.size()}));
   }
   return names;
 }

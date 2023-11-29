@@ -133,12 +133,12 @@ class FPDFFormFillInteractiveEmbedderTest : public FPDFFormFillEmbedderTest {
     ASSERT_NE(actual_len, 0U);
     ASSERT_LT(actual_len, 1000U);
 
-    std::vector<unsigned short> buf(actual_len);
+    std::vector<uint8_t> buf(actual_len);
     ASSERT_EQ(actual_len, FORM_GetSelectedText(form_handle(), page_, buf.data(),
                                                actual_len));
 
-    int num_chars = (actual_len / sizeof(unsigned short)) - 1;
-    EXPECT_EQ(expected_string, WideString::FromUTF16LE(buf.data(), num_chars));
+    EXPECT_EQ(expected_string,
+              WideString::FromUTF16LE({buf.data(), actual_len - 2}));
   }
 
   void FocusOnPoint(const CFX_PointF& point) {
@@ -151,12 +151,12 @@ class FPDFFormFillInteractiveEmbedderTest : public FPDFFormFillEmbedderTest {
     ASSERT_NE(actual_len, 0U);
     ASSERT_LT(actual_len, 1000U);
 
-    std::vector<unsigned short> buf(actual_len);
+    std::vector<uint8_t> buf(actual_len);
     ASSERT_EQ(actual_len, FORM_GetFocusedText(form_handle(), page_, buf.data(),
                                               actual_len));
 
-    int num_chars = (actual_len / sizeof(unsigned short)) - 1;
-    EXPECT_EQ(expected_string, WideString::FromUTF16LE(buf.data(), num_chars));
+    EXPECT_EQ(expected_string,
+              WideString::FromUTF16LE({buf.data(), actual_len - 2}));
   }
 
   void CheckCanUndo(bool expected_result) {

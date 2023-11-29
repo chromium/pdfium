@@ -71,10 +71,8 @@ class WideString {
   [[nodiscard]] static WideString FromLatin1(ByteStringView str);
   [[nodiscard]] static WideString FromDefANSI(ByteStringView str);
   [[nodiscard]] static WideString FromUTF8(ByteStringView str);
-  [[nodiscard]] static WideString FromUTF16LE(const unsigned short* str,
-                                              size_t len);
-  [[nodiscard]] static WideString FromUTF16BE(const unsigned short* wstr,
-                                              size_t wlen);
+  [[nodiscard]] static WideString FromUTF16LE(pdfium::span<const uint8_t> data);
+  [[nodiscard]] static WideString FromUTF16BE(pdfium::span<const uint8_t> data);
 
   [[nodiscard]] static size_t WStringLength(const unsigned short* str);
 

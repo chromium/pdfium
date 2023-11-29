@@ -25,11 +25,11 @@ using ScopedSelectObject = pdfium::base::win::ScopedSelectObject;
 
 struct Variant {
   const char* m_pFaceName;
-  const char* m_pVariantName;  // Note: UTF-16LE terminator required.
+  pdfium::span<const char> m_pVariantName;
 };
 
 constexpr Variant kVariantNames[] = {
-    {"DFKai-SB", "\x19\x6A\x77\x69\xD4\x9A\x00\x00"},
+    {"DFKai-SB", pdfium::make_span("\x19\x6A\x77\x69\xD4\x9A")},
 };
 
 struct Substs {
@@ -375,10 +375,8 @@ void* CFX_Win32FontInfo::MapFont(int weight,
     if (new_face != variant.m_pFaceName)
       continue;
 
-    const auto* pName =
-        reinterpret_cast<const unsigned short*>(variant.m_pVariantName);
-    size_t len = WideString::WStringLength(pName);
-    WideString wsName = WideString::FromUTF16LE(pName, len);
+    WideString wsName =
+        WideString::FromUTF16LE(pdfium::as_bytes(variant.m_pVariantName));
     if (wsFace == wsName)
       return hFont;
   }

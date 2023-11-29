@@ -78,9 +78,9 @@ TEST_F(CFWLEditEmbedderTest, LeftClickMouseSelection) {
   // 12 == (2 * strlen(defgh)) + 2 (for \0\0)
   EXPECT_EQ(12UL, FORM_GetSelectedText(form_handle(), page(), nullptr, 0));
 
-  unsigned short buf[128];
+  uint8_t buf[128];
   unsigned long len = FORM_GetSelectedText(form_handle(), page(), &buf, 128);
-  EXPECT_STREQ(L"defgh", WideString::FromUTF16LE(buf, len).c_str());
+  EXPECT_STREQ(L"defgh", WideString::FromUTF16LE({buf, len}).c_str());
 }
 
 TEST_F(CFWLEditEmbedderTest, DragMouseSelection) {
@@ -101,9 +101,9 @@ TEST_F(CFWLEditEmbedderTest, DragMouseSelection) {
   // 12 == (2 * strlen(defgh)) + 2 (for \0\0)
   EXPECT_EQ(12UL, FORM_GetSelectedText(form_handle(), page(), nullptr, 0));
 
-  unsigned short buf[128];
+  uint8_t buf[128];
   unsigned long len = FORM_GetSelectedText(form_handle(), page(), &buf, 128);
-  EXPECT_STREQ(L"defgh", WideString::FromUTF16LE(buf, len).c_str());
+  EXPECT_STREQ(L"defgh", WideString::FromUTF16LE({buf, len}).c_str());
 
   // TODO(hnakashima): This is incorrect. Visually 'abcdefgh' are selected.
   const char kDraggedMD5[] = "f131526c8edd04e44de17b2647ec54c8";

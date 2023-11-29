@@ -545,19 +545,16 @@ CJS_Result CJS_App::response(CJS_Runtime* pRuntime,
 
   constexpr int kMaxWideChars = 1024;
   constexpr int kMaxBytes = kMaxWideChars * sizeof(uint16_t);
-  FixedZeroedDataVector<uint16_t> buffer(kMaxWideChars);
-  pdfium::span<uint16_t> buffer_span = buffer.writable_span();
+  FixedZeroedDataVector<uint8_t> buffer(kMaxBytes);
+  pdfium::span<uint8_t> buffer_span = buffer.writable_span();
   int byte_length = pRuntime->GetFormFillEnv()->JS_appResponse(
-      swQuestion, swTitle, swDefault, swLabel, bPassword,
-      pdfium::as_writable_bytes(buffer_span));
+      swQuestion, swTitle, swDefault, swLabel, bPassword, buffer_span);
   if (byte_length < 0 || byte_length > kMaxBytes)
     return CJS_Result::Failure(JSMessage::kParamTooLongError);
 
-  buffer_span = buffer_span.first(
-      std::min<size_t>(kMaxWideChars, byte_length / sizeof(uint16_t)));
-  return CJS_Result::Success(pRuntime->NewString(
-      WideString::FromUTF16LE(buffer_span.data(), buffer_span.size())
-          .AsStringView()));
+  buffer_span = buffer_span.first(std::min<size_t>(kMaxBytes, byte_length));
+  return CJS_Result::Success(
+      pRuntime->NewString(WideString::FromUTF16LE(buffer_span).AsStringView()));
 }
 
 CJS_Result CJS_App::get_media(CJS_Runtime* pRuntime) {

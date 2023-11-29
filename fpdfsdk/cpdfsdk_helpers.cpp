@@ -210,8 +210,8 @@ ByteString ByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
 }
 
 WideString WideStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
-  return WideString::FromUTF16LE(wide_string,
-                                 WideString::WStringLength(wide_string));
+  return WideString::FromUTF16LE({reinterpret_cast<const uint8_t*>(wide_string),
+                                  WideString::WStringLength(wide_string) * 2});
 }
 
 #ifdef PDF_ENABLE_XFA
