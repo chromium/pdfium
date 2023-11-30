@@ -2778,24 +2778,24 @@ std::pair<XFA_EventError, bool> CXFA_Node::ExecuteBoolScript(
     pContext->SetNodesOfRunScript(&refNodes);
   }
 
-  auto pTmpRetValue = std::make_unique<CFXJSE_Value>();
-  bool bRet = false;
+  CFXJSE_Context::ExecutionResult exec_result;
   {
     AutoRestorer<uint8_t> restorer(&m_ExecuteRecursionDepth);
     ++m_ExecuteRecursionDepth;
-    bRet = pContext->RunScript(eScriptType, wsExpression.AsStringView(),
-                               pTmpRetValue.get(), this);
+    exec_result =
+        pContext->RunScript(eScriptType, wsExpression.AsStringView(), this);
   }
 
   XFA_EventError iRet = XFA_EventError::kError;
-  if (bRet) {
+  if (exec_result.status) {
     iRet = XFA_EventError::kSuccess;
     if (pEventParam->m_eType == XFA_EVENT_Calculate ||
         pEventParam->m_eType == XFA_EVENT_InitCalculate) {
-      if (!pTmpRetValue->IsUndefined(pContext->GetIsolate())) {
-        if (!pTmpRetValue->IsNull(pContext->GetIsolate()))
+      if (!exec_result.value->IsUndefined(pContext->GetIsolate())) {
+        if (!exec_result.value->IsNull(pContext->GetIsolate())) {
           pEventParam->m_wsResult =
-              pTmpRetValue->ToWideString(pContext->GetIsolate());
+              exec_result.value->ToWideString(pContext->GetIsolate());
+        }
 
         iRet = XFA_EventError::kSuccess;
       } else {
@@ -2821,8 +2821,8 @@ std::pair<XFA_EventError, bool> CXFA_Node::ExecuteBoolScript(
   }
   pContext->SetNodesOfRunScript(nullptr);
 
-  return {iRet, pTmpRetValue->IsBoolean(pContext->GetIsolate()) &&
-                    pTmpRetValue->ToBoolean(pContext->GetIsolate())};
+  return {iRet, exec_result.value->IsBoolean(pContext->GetIsolate()) &&
+                    exec_result.value->ToBoolean(pContext->GetIsolate())};
 }
 
 std::pair<XFA_FFWidgetType, CXFA_Ui*>

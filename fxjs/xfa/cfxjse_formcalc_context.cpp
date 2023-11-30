@@ -2992,12 +2992,11 @@ void CFXJSE_FormCalcContext::Eval(
   std::unique_ptr<CFXJSE_Context> pNewContext =
       CFXJSE_Context::Create(pIsolate, nullptr, nullptr, nullptr);
 
-  auto returnValue = std::make_unique<CFXJSE_Value>();
   ByteString bsScript = FX_UTF8Encode(wsJavaScriptBuf.value().AsStringView());
-  pNewContext->ExecuteScript(bsScript.AsStringView(), returnValue.get(),
-                             v8::Local<v8::Object>());
+  CFXJSE_Context::ExecutionResult result = pNewContext->ExecuteScript(
+      bsScript.AsStringView(), v8::Local<v8::Object>());
 
-  info.GetReturnValue().Set(returnValue->DirectGetValue());
+  info.GetReturnValue().Set(result.value->DirectGetValue());
 }
 
 // static

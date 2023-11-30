@@ -24,6 +24,17 @@ struct FXJSE_CLASS_DESCRIPTOR;
 
 class CFXJSE_Context {
  public:
+  struct ExecutionResult {
+    ExecutionResult();
+    ExecutionResult(bool sts, std::unique_ptr<CFXJSE_Value> val);
+    ExecutionResult(ExecutionResult&& that) noexcept;
+    ExecutionResult& operator=(ExecutionResult&& that) noexcept;
+    ~ExecutionResult();
+
+    bool status = false;
+    std::unique_ptr<CFXJSE_Value> value;
+  };
+
   static std::unique_ptr<CFXJSE_Context> Create(
       v8::Isolate* pIsolate,
       const FXJSE_CLASS_DESCRIPTOR* pGlobalClass,
@@ -41,9 +52,8 @@ class CFXJSE_Context {
   void EnableCompatibleMode();
 
   // Note: `pNewThisObject` may be empty.
-  bool ExecuteScript(ByteStringView bsScript,
-                     CFXJSE_Value* pRetValue,
-                     v8::Local<v8::Object> pNewThisObject);
+  ExecutionResult ExecuteScript(ByteStringView bsScript,
+                                v8::Local<v8::Object> pNewThisObject);
 
  private:
   CFXJSE_Context(v8::Isolate* pIsolate, CXFA_ThisProxy* pProxy);

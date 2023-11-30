@@ -15,6 +15,7 @@
 #include "core/fxcrt/mask.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfx_v8.h"
+#include "fxjs/xfa/cfxjse_context.h"
 #include "v8/include/cppgc/persistent.h"
 #include "v8/include/v8-forward.h"
 #include "v8/include/v8-persistent-handle.h"
@@ -24,7 +25,6 @@
 #include "xfa/fxfa/parser/xfa_basic_data.h"
 
 class CFXJSE_Class;
-class CFXJSE_Context;
 class CFXJSE_FormCalcContext;
 class CFXJSE_HostObject;
 class CFXJSE_NodeHelper;
@@ -128,10 +128,10 @@ class CFXJSE_Engine final : public CFX_V8 {
 
   CXFA_Node* GetEventTarget() const { return m_pTarget; }
   CXFA_EventParam* GetEventParam() const { return m_eventParam; }
-  bool RunScript(CXFA_Script::Type eScriptType,
-                 WideStringView wsScript,
-                 CFXJSE_Value* pRetValue,
-                 CXFA_Object* pThisObject);
+
+  CFXJSE_Context::ExecutionResult RunScript(CXFA_Script::Type eScriptType,
+                                            WideStringView wsScript,
+                                            CXFA_Object* pThisObject);
 
   absl::optional<ResolveResult> ResolveObjects(CXFA_Object* refObject,
                                                WideStringView wsExpression,

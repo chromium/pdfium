@@ -724,12 +724,12 @@ void CFXJSE_ResolveProcessor::DoPredicateFilter(v8::Isolate* pIsolate,
 
   WideString wsExpression = wsCondition.Substr(2, wsCondition.GetLength() - 3);
   for (size_t i = iFoundCount; i > 0; --i) {
-    auto pRetValue = std::make_unique<CFXJSE_Value>();
-    bool bRet = m_pEngine->RunScript(eLangType, wsExpression.AsStringView(),
-                                     pRetValue.get(),
-                                     pRnd->m_Result.objects[i - 1].Get());
-    if (!bRet || !pRetValue->ToBoolean(pIsolate))
+    CFXJSE_Context::ExecutionResult exec_result =
+        m_pEngine->RunScript(eLangType, wsExpression.AsStringView(),
+                             pRnd->m_Result.objects[i - 1].Get());
+    if (!exec_result.status || !exec_result.value->ToBoolean(pIsolate)) {
       pRnd->m_Result.objects.erase(pRnd->m_Result.objects.begin() + i - 1);
+    }
   }
 }
 
