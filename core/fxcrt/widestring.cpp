@@ -298,6 +298,66 @@ absl::optional<WideString> TryVSWPrintf(size_t size,
   return str;
 }
 
+// Appends a Unicode code point to a `WideString` using either UTF-16 or UTF-32,
+// depending on the platform's definition of `wchar_t`.
+//
+// TODO(crbug.com/pdfium/2031): Always use UTF-16.
+// TODO(crbug.com/pdfium/2041): Migrate to `WideString`.
+void AppendCodePointToWideString(char32_t code_point, WideString& buffer) {
+  if (code_point > pdfium::kMaximumSupplementaryCodePoint) {
+    // Invalid code point above U+10FFFF.
+    return;
+  }
+
+#if defined(WCHAR_T_IS_16_BIT)
+  if (code_point < pdfium::kMinimumSupplementaryCodePoint) {
+    buffer += static_cast<wchar_t>(code_point);
+  } else {
+    // Encode as UTF-16 surrogate pair.
+    pdfium::SurrogatePair surrogate_pair(code_point);
+    buffer += surrogate_pair.high();
+    buffer += surrogate_pair.low();
+  }
+#else
+  buffer += static_cast<wchar_t>(code_point);
+#endif  // defined(WCHAR_T_IS_16_BIT)
+}
+
+WideString UTF8Decode(ByteStringView bsStr) {
+  WideString buffer;
+
+  int remaining = 0;
+  char32_t code_point = 0;
+  for (char byte : bsStr) {
+    uint8_t code_unit = static_cast<uint8_t>(byte);
+    if (code_unit < 0x80) {
+      remaining = 0;
+      AppendCodePointToWideString(code_unit, buffer);
+    } else if (code_unit < 0xc0) {
+      if (remaining > 0) {
+        --remaining;
+        code_point = (code_point << 6) | (code_unit & 0x3f);
+        if (remaining == 0) {
+          AppendCodePointToWideString(code_point, buffer);
+        }
+      }
+    } else if (code_unit < 0xe0) {
+      remaining = 1;
+      code_point = code_unit & 0x1f;
+    } else if (code_unit < 0xf0) {
+      remaining = 2;
+      code_point = code_unit & 0x0f;
+    } else if (code_unit < 0xf8) {
+      remaining = 3;
+      code_point = code_unit & 0x07;
+    } else {
+      remaining = 0;
+    }
+  }
+
+  return buffer;
+}
+
 }  // namespace
 
 namespace fxcrt {
@@ -971,7 +1031,7 @@ WideString WideString::FromDefANSI(ByteStringView bstr) {
 
 // static
 WideString WideString::FromUTF8(ByteStringView str) {
-  return FX_UTF8Decode(str);
+  return UTF8Decode(str);
 }
 
 // static

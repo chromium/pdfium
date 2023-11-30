@@ -26,7 +26,7 @@ bool CFX_FileAccess_Windows::Open(ByteStringView fileName) {
   if (m_hFile)
     return false;
 
-  WideString wname = FX_UTF8Decode(fileName);
+  WideString wname = WideString::FromUTF8(fileName);
   m_hFile = ::CreateFileW(wname.c_str(), GENERIC_READ,
                           FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr,
                           OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);

@@ -10,6 +10,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/utf16.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/containers/span.h"
@@ -1134,6 +1135,99 @@ TEST(WideString, MultiCharReverseIterator) {
   EXPECT_EQ(iter, multi_str.rbegin());
   EXPECT_EQ(4, multi_str.rend() - iter);
   EXPECT_EQ(0, iter - multi_str.rbegin());
+}
+
+TEST(WideString, FromUTF8) {
+  EXPECT_EQ(L"", WideString::FromUTF8(ByteStringView()));
+  EXPECT_EQ(
+      L"x"
+      L"\u0080"
+      L"\u00ff"
+      L"\ud7ff"
+      L"\ue000"
+      L"\uff2c"
+      L"\uffff"
+      L"y",
+      WideString::FromUTF8("x"
+                           "\u0080"
+                           "\u00ff"
+                           "\ud7ff"
+                           "\ue000"
+                           "\uff2c"
+                           "\uffff"
+                           "y"));
+}
+
+TEST(WideString, FromUTF8Supplementary) {
+  EXPECT_EQ(
+      L"\U00010000"
+      L"\U0001f3a8"
+      L"\U0010ffff",
+      WideString::FromUTF8("\U00010000"
+                           "🎨"
+                           "\U0010ffff"));
+}
+
+TEST(WideString, FromUTF8ErrorRecovery) {
+  EXPECT_EQ(L"(A)", WideString::FromUTF8("(\xc2\x41)"))
+      << "Invalid continuation";
+  EXPECT_EQ(L"()", WideString::FromUTF8("(\xc2\xc2)"))
+      << "Invalid continuation";
+  EXPECT_EQ(L"()", WideString::FromUTF8("(\xc2\xff\x80)"))
+      << "Invalid continuation";
+  EXPECT_EQ(L"()", WideString::FromUTF8("(\x80\x80)")) << "Invalid leading";
+  EXPECT_EQ(L"()", WideString::FromUTF8("(\xff\x80\x80)")) << "Invalid leading";
+  EXPECT_EQ(L"()", WideString::FromUTF8("(\xf8\x80\x80\x80\x80)"))
+      << "Invalid leading";
+  EXPECT_EQ(L"()", WideString::FromUTF8("(\xf8\x88\x80\x80\x80)"))
+      << "Invalid leading";
+  EXPECT_EQ(L"()", WideString::FromUTF8("(\xf4\x90\x80\x80)"))
+      << "Code point greater than U+10FFFF";
+}
+
+TEST(WideString, UTF8EncodeDecodeConsistency) {
+  WideString wstr;
+  wstr.Reserve(0x10000);
+  for (char32_t w = 0; w < pdfium::kMinimumSupplementaryCodePoint; ++w) {
+    if (pdfium::IsHighSurrogate(w) || pdfium::IsLowSurrogate(w)) {
+      // Skip UTF-16 surrogates.
+      continue;
+    }
+    wstr += static_cast<wchar_t>(w);
+  }
+  ASSERT_EQ(0xf800u, wstr.GetLength());
+
+  ByteString bstr = FX_UTF8Encode(wstr.AsStringView());
+  WideString wstr2 = WideString::FromUTF8(bstr.AsStringView());
+  EXPECT_EQ(wstr, wstr2);
+}
+
+TEST(WideString, UTF8EncodeDecodeConsistencyUnpairedHighSurrogates) {
+  WideString wstr;
+  wstr.Reserve(0x400);
+  for (wchar_t w = pdfium::kMinimumHighSurrogateCodeUnit;
+       w <= pdfium::kMaximumHighSurrogateCodeUnit; ++w) {
+    wstr += w;
+  }
+  ASSERT_EQ(0x400u, wstr.GetLength());
+
+  ByteString bstr = FX_UTF8Encode(wstr.AsStringView());
+  WideString wstr2 = WideString::FromUTF8(bstr.AsStringView());
+  EXPECT_EQ(wstr, wstr2);
+}
+
+TEST(WideString, UTF8EncodeDecodeConsistencyUnpairedLowSurrogates) {
+  WideString wstr;
+  wstr.Reserve(0x400);
+  for (wchar_t w = pdfium::kMinimumLowSurrogateCodeUnit;
+       w <= pdfium::kMaximumLowSurrogateCodeUnit; ++w) {
+    wstr += w;
+  }
+  ASSERT_EQ(0x400u, wstr.GetLength());
+
+  ByteString bstr = FX_UTF8Encode(wstr.AsStringView());
+  WideString wstr2 = WideString::FromUTF8(bstr.AsStringView());
+  EXPECT_EQ(wstr, wstr2);
 }
 
 TEST(WideString, FromUTF16BE) {
