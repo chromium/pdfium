@@ -2676,14 +2676,13 @@ XFA_EventError CXFA_Node::ProcessValidate(CXFA_FFDocView* pDocView,
       pDocView->GetLayoutStatus() != CXFA_FFDocView::LayoutStatus::kEnd;
 
   XFA_EventError iFormat = XFA_EventError::kNotExist;
-  XFA_EventError iRet = XFA_EventError::kNotExist;
   CXFA_Script* script = validate->GetScriptIfExists();
-  bool bRet = false;
   bool hasBoolResult = (bInitDoc || bStatus) && GetRawValue().IsEmpty();
+  CXFA_Node::BoolScriptResult result = {XFA_EventError::kNotExist, false};
   if (script) {
     CXFA_EventParam eParam;
     eParam.m_eType = XFA_EVENT_Validate;
-    std::tie(iRet, bRet) = ExecuteBoolScript(pDocView, script, &eParam);
+    result = ExecuteBoolScript(pDocView, script, &eParam);
   }
 
   XFA_VERSION version = pDocView->GetDoc()->GetXFADoc()->GetCurVersionMode();
@@ -2696,15 +2695,16 @@ XFA_EventError CXFA_Node::ProcessValidate(CXFA_FFDocView* pDocView,
     if (!bVersionFlag)
       bVersionFlag = pDocView->GetDoc()->GetXFADoc()->is_scripting();
     XFA_EventErrorAccumulate(
-        &iRet,
+        &result.xfa_event_result,
         ProcessNullTestValidate(pDocView, validate, iFlags, bVersionFlag));
   }
-  if (iRet == XFA_EventError::kSuccess && iFormat != XFA_EventError::kSuccess &&
-      hasBoolResult && !bRet) {
+  if (result.xfa_event_result == XFA_EventError::kSuccess &&
+      iFormat != XFA_EventError::kSuccess && hasBoolResult &&
+      !result.script_result) {
     ProcessScriptTestValidate(pDocView, validate, bVersionFlag);
   }
-  XFA_EventErrorAccumulate(&iRet, iFormat);
-  return iRet;
+  XFA_EventErrorAccumulate(&result.xfa_event_result, iFormat);
+  return result.xfa_event_result;
 }
 
 WideString CXFA_Node::GetValidateCaptionName(bool bVersionFlag) {
@@ -2742,10 +2742,10 @@ WideString CXFA_Node::GetValidateMessage(bool bError, bool bVersionFlag) {
 XFA_EventError CXFA_Node::ExecuteScript(CXFA_FFDocView* pDocView,
                                         CXFA_Script* script,
                                         CXFA_EventParam* pEventParam) {
-  return ExecuteBoolScript(pDocView, script, pEventParam).first;
+  return ExecuteBoolScript(pDocView, script, pEventParam).xfa_event_result;
 }
 
-std::pair<XFA_EventError, bool> CXFA_Node::ExecuteBoolScript(
+CXFA_Node::BoolScriptResult CXFA_Node::ExecuteBoolScript(
     CXFA_FFDocView* pDocView,
     CXFA_Script* script,
     CXFA_EventParam* pEventParam) {

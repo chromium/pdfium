@@ -220,10 +220,10 @@ bool CXFA_FFNotify::RunScript(CXFA_Script* script, CXFA_Node* item) {
   EventParam.m_eType = XFA_EVENT_Unknown;
   EventParam.m_bTargeted = false;
 
-  XFA_EventError iRet;
-  bool bRet;
-  std::tie(iRet, bRet) = item->ExecuteBoolScript(pDocView, script, &EventParam);
-  return iRet == XFA_EventError::kSuccess && bRet;
+  CXFA_Node::BoolScriptResult result =
+      item->ExecuteBoolScript(pDocView, script, &EventParam);
+  return result.xfa_event_result == XFA_EventError::kSuccess &&
+         result.script_result;
 }
 
 XFA_EventError CXFA_FFNotify::ExecEventByDeepFirst(CXFA_Node* pFormNode,
