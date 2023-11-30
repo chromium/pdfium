@@ -1136,6 +1136,44 @@ TEST(WideString, MultiCharReverseIterator) {
   EXPECT_EQ(0, iter - multi_str.rbegin());
 }
 
+TEST(WideString, FromUTF16BE) {
+  struct UTF16BEDecodeCase {
+    ByteString in;
+    WideString out;
+  } const utf16be_decode_cases[] = {
+      {"", L""},
+      {ByteString("\0a\0b\0c", 6), L"abc"},
+      {ByteString("\0a\0b\0c\0\0\0d\0e\0f", 14), WideString(L"abc\0def", 7)},
+      {ByteString(" &", 2), L"…"},
+      {ByteString("\xD8\x3C\xDF\xA8", 4), L"🎨"},
+  };
+
+  for (size_t i = 0; i < std::size(utf16be_decode_cases); ++i) {
+    EXPECT_EQ(WideString::FromUTF16BE(utf16be_decode_cases[i].in.raw_span()),
+              utf16be_decode_cases[i].out)
+        << " for case number " << i;
+  }
+}
+
+TEST(WideString, FromUTF16LE) {
+  struct UTF16LEDecodeCase {
+    ByteString in;
+    WideString out;
+  } const utf16le_decode_cases[] = {
+      {"", L""},
+      {ByteString("a\0b\0c\0", 6), L"abc"},
+      {ByteString("a\0b\0c\0\0\0d\0e\0f\0", 14), WideString(L"abc\0def", 7)},
+      {ByteString("& ", 2), L"…"},
+      {ByteString("\x3C\xD8\xA8\xDF", 4), L"🎨"},
+  };
+
+  for (size_t i = 0; i < std::size(utf16le_decode_cases); ++i) {
+    EXPECT_EQ(WideString::FromUTF16LE(utf16le_decode_cases[i].in.raw_span()),
+              utf16le_decode_cases[i].out)
+        << " for case number " << i;
+  }
+}
+
 TEST(WideString, ToUTF16LE) {
   struct UTF16LEEncodeCase {
     WideString ws;

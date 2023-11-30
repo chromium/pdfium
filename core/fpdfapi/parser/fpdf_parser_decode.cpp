@@ -466,23 +466,6 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
   return true;
 }
 
-#if defined(WCHAR_T_IS_32_BIT)
-static size_t FuseSurrogates(pdfium::span<wchar_t> s, size_t n) {
-  size_t dest_pos = 0;
-  for (size_t i = 0; i < n; ++i) {
-    // TODO(crbug.com/pdfium/2031): Always use UTF-16.
-    if (pdfium::IsHighSurrogate(s[i]) && i + 1 < n &&
-        pdfium::IsLowSurrogate(s[i + 1])) {
-      s[dest_pos++] = pdfium::SurrogatePair(s[i], s[i + 1]).ToCodePoint();
-      ++i;
-      continue;
-    }
-    s[dest_pos++] = s[i];
-  }
-  return dest_pos;
-}
-#endif  // defined(WCHAR_T_IS_UTF32)
-
 static size_t StripLanguageCodes(pdfium::span<wchar_t> s, size_t n) {
   size_t dest_pos = 0;
   for (size_t i = 0; i < n; ++i) {
@@ -504,24 +487,16 @@ WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
   WideString result;
   if (span.size() >= 2 && ((span[0] == 0xfe && span[1] == 0xff) ||
                            (span[0] == 0xff && span[1] == 0xfe))) {
-    pdfium::span<wchar_t> dest_buf = result.GetBuffer((span.size() - 2) / 2);
     if (span[0] == 0xfe) {
-      for (size_t i = 2; i < span.size() - 1; i += 2) {
-        dest_buf[dest_pos++] = span[i] << 8 | span[i + 1];
-      }
+      result = WideString::FromUTF16BE(span.subspan(2));
     } else {
-      for (size_t i = 2; i < span.size() - 1; i += 2) {
-        dest_buf[dest_pos++] = span[i + 1] << 8 | span[i];
-      }
+      result = WideString::FromUTF16LE(span.subspan(2));
     }
-#if defined(WCHAR_T_IS_32_BIT)
-    dest_pos = FuseSurrogates(dest_buf, dest_pos);
-#endif
-
-    dest_pos = StripLanguageCodes(dest_buf, dest_pos);
+    pdfium::span<wchar_t> dest_buf = result.GetBuffer(result.GetLength());
+    dest_pos = StripLanguageCodes(dest_buf, result.GetLength());
   } else if (span.size() >= 3 && span[0] == 0xef && span[1] == 0xbb &&
              span[2] == 0xbf) {
-    result = FX_UTF8Decode(span.subspan(3));
+    result = WideString::FromUTF8(span.subspan(3));
     pdfium::span<wchar_t> dest_buf = result.GetBuffer(result.GetLength());
     dest_pos = StripLanguageCodes(dest_buf, result.GetLength());
   } else {
