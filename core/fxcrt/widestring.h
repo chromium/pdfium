@@ -184,9 +184,15 @@ class WideString {
 
   void Reserve(size_t len);
 
+  // Increase the backing store of the string so that it is capable of storing
+  // at least `nMinBufLength` wchars. Returns a span to the entire buffer,
+  // which may be larger than `nMinBufLength` due to rounding by allocators.
   // Note: any modification of the string (including ReleaseBuffer()) may
   // invalidate the span, which must not outlive its buffer.
   pdfium::span<wchar_t> GetBuffer(size_t nMinBufLength);
+
+  // Sets the size of the string to `nNewLength` wchars. Call this after a call
+  // to GetBuffer(), to indicate how much of the buffer was actually used.
   void ReleaseBuffer(size_t nNewLength);
 
   int GetInteger() const;
