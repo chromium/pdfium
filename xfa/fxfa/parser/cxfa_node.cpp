@@ -2488,8 +2488,7 @@ XFA_EventError CXFA_Node::ProcessCalculate(CXFA_FFDocView* pDocView) {
   if (IsUserInteractive())
     return XFA_EventError::kDisabled;
 
-  CXFA_EventParam EventParam;
-  EventParam.m_eType = XFA_EVENT_Calculate;
+  CXFA_EventParam EventParam(XFA_EVENT_Calculate);
   EventParam.m_bTargeted = false;
   XFA_EventError iRet =
       ExecuteScript(pDocView, calc->GetScriptIfExists(), &EventParam);
@@ -2680,8 +2679,7 @@ XFA_EventError CXFA_Node::ProcessValidate(CXFA_FFDocView* pDocView,
   bool hasBoolResult = (bInitDoc || bStatus) && GetRawValue().IsEmpty();
   CXFA_Node::BoolScriptResult result = {XFA_EventError::kNotExist, false};
   if (script) {
-    CXFA_EventParam eParam;
-    eParam.m_eType = XFA_EVENT_Validate;
+    CXFA_EventParam eParam(XFA_EVENT_Validate);
     result = ExecuteBoolScript(pDocView, script, &eParam);
   }
 

@@ -224,8 +224,7 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
   if (!pXFAWidgetHandler)
     return false;
 
-  CXFA_EventParam param;
-  param.m_eType = eEventType;
+  CXFA_EventParam param(eEventType);
   param.m_wsChange = data->sChange;
   param.m_iCommitKey = 0;
   param.m_bShift = data->bShift;
@@ -320,8 +319,7 @@ bool CPDFSDK_Widget::HandleXFAAAction(
   if (!pXFAWidgetHandler)
     return false;
 
-  CXFA_EventParam param;
-  param.m_eType = eEventType;
+  CXFA_EventParam param(eEventType);
   param.m_wsChange = data->sChange;
   param.m_iCommitKey = 0;
   param.m_bShift = data->bShift;

@@ -427,8 +427,7 @@ XFA_EventError CXFA_FFDocView::ExecEventActivityByDeepFirst(
     if (!pFormNode->IsWidgetReady())
       return XFA_EventError::kNotExist;
 
-    CXFA_EventParam eParam;
-    eParam.m_eType = eEventType;
+    CXFA_EventParam eParam(eEventType);
     eParam.m_bIsFormReady = bIsFormReady;
     return XFA_ProcessEvent(this, pFormNode, &eParam);
   }
@@ -449,8 +448,7 @@ XFA_EventError CXFA_FFDocView::ExecEventActivityByDeepFirst(
   if (!pFormNode->IsWidgetReady())
     return iRet;
 
-  CXFA_EventParam eParam;
-  eParam.m_eType = eEventType;
+  CXFA_EventParam eParam(eEventType);
   eParam.m_bIsFormReady = bIsFormReady;
 
   XFA_EventErrorAccumulate(&iRet, XFA_ProcessEvent(this, pFormNode, &eParam));
@@ -525,8 +523,7 @@ void CXFA_FFDocView::RunSubformIndexChange() {
     if (!bInserted || !pSubformNode->IsWidgetReady())
       continue;
 
-    CXFA_EventParam eParam;
-    eParam.m_eType = XFA_EVENT_IndexChange;
+    CXFA_EventParam eParam(XFA_EVENT_IndexChange);
     pSubformNode->ProcessEvent(this, XFA_AttributeValue::IndexChange, &eParam);
   }
 }

@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/cxfa_eventparam.h"
 
-CXFA_EventParam::CXFA_EventParam() = default;
+CXFA_EventParam::CXFA_EventParam(XFA_EVENTTYPE type) : m_eType(type) {}
 
 CXFA_EventParam::CXFA_EventParam(const CXFA_EventParam& other) = default;
 

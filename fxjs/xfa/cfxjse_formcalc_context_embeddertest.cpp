@@ -1025,7 +1025,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, MethodCall) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, GetXFAEventChange) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  CXFA_EventParam params;
+  CXFA_EventParam params(XFA_EVENT_Unknown);
   params.m_wsChange = L"changed";
 
   CFXJSE_Engine* context = GetScriptContext();
@@ -1038,7 +1038,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, GetXFAEventChange) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, SetXFAEventChange) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  CXFA_EventParam params;
+  CXFA_EventParam params(XFA_EVENT_Unknown);
   CFXJSE_Engine* context = GetScriptContext();
   CFXJSE_Engine::EventParamScope event_scope(context, nullptr, &params);
 
@@ -1050,7 +1050,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, SetXFAEventChange) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, SetXFAEventFullTextFails) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  CXFA_EventParam params;
+  CXFA_EventParam params(XFA_EVENT_Unknown);
   params.m_wsFullText = L"Original Full Text";
 
   CFXJSE_Engine* context = GetScriptContext();
@@ -1064,7 +1064,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, SetXFAEventFullTextFails) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, EventChangeSelection) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  CXFA_EventParam params;
+  CXFA_EventParam params(XFA_EVENT_Unknown);
   params.m_wsPrevText = L"1234";
   params.m_iSelStart = 1;
   params.m_iSelEnd = 3;
@@ -1118,7 +1118,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, EventChangeSelection) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, XFAEventCancelAction) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  CXFA_EventParam params;
+  CXFA_EventParam params(XFA_EVENT_Unknown);
   params.m_bCancelAction = false;
 
   CFXJSE_Engine* context = GetScriptContext();
@@ -1131,7 +1131,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, XFAEventCancelAction) {
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, ComplexTextChangeEvent) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
-  CXFA_EventParam params;
+  CXFA_EventParam params(XFA_EVENT_Unknown);
   params.m_wsChange = L"g";
   params.m_wsPrevText = L"abcd";
   params.m_iSelStart = 1;

@@ -216,12 +216,12 @@ bool CXFA_FFNotify::RunScript(CXFA_Script* script, CXFA_Node* item) {
   if (!pDocView)
     return false;
 
-  CXFA_EventParam EventParam;
-  EventParam.m_eType = XFA_EVENT_Unknown;
+  CXFA_EventParam EventParam(XFA_EVENT_Unknown);
   EventParam.m_bTargeted = false;
 
   CXFA_Node::BoolScriptResult result =
       item->ExecuteBoolScript(pDocView, script, &EventParam);
+
   return result.xfa_event_result == XFA_EventError::kSuccess &&
          result.script_result;
 }

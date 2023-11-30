@@ -48,7 +48,7 @@ enum XFA_EVENTTYPE : uint8_t {
 
 class CXFA_EventParam {
  public:
-  CXFA_EventParam();
+  explicit CXFA_EventParam(XFA_EVENTTYPE type);
   CXFA_EventParam(const CXFA_EventParam& other);
   ~CXFA_EventParam();
 
@@ -57,7 +57,7 @@ class CXFA_EventParam {
 
   WideString GetNewText() const;
 
-  XFA_EVENTTYPE m_eType = XFA_EVENT_Unknown;
+  XFA_EVENTTYPE m_eType;
   bool m_bCancelAction = false;
   bool m_bKeyDown = false;
   bool m_bModifier = false;

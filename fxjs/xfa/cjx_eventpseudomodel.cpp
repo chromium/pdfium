@@ -219,7 +219,7 @@ CJS_Result CJX_EventPseudoModel::reset(
     pdfium::span<v8::Local<v8::Value>> params) {
   CXFA_EventParam* pEventParam = runtime->GetEventParam();
   if (pEventParam)
-    *pEventParam = CXFA_EventParam();
+    *pEventParam = CXFA_EventParam(XFA_EVENT_Unknown);
 
   return CJS_Result::Success();
 }

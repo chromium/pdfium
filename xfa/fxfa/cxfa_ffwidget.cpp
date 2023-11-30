@@ -424,8 +424,7 @@ bool CXFA_FFWidget::OnSetFocus(CXFA_FFWidget* pOldWidget) {
   }
   GetLayoutItem()->SetStatusBits(XFA_WidgetStatus::kFocused);
 
-  CXFA_EventParam eParam;
-  eParam.m_eType = XFA_EVENT_Enter;
+  CXFA_EventParam eParam(XFA_EVENT_Enter);
   m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Enter, &eParam);
   return true;
 }
@@ -639,8 +638,7 @@ void CXFA_FFWidget::EventKillFocus() {
     pItem->ClearStatusBits(XFA_WidgetStatus::kAccess);
     return;
   }
-  CXFA_EventParam eParam;
-  eParam.m_eType = XFA_EVENT_Exit;
+  CXFA_EventParam eParam(XFA_EVENT_Exit);
   m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Exit, &eParam);
 }
 

@@ -725,31 +725,26 @@ void CXFA_FFField::OnProcessEvent(CFWL_Event* pEvent) {
       CFWL_EventMouse* event = static_cast<CFWL_EventMouse*>(pEvent);
       CFWL_MessageMouse::MouseCommand cmd = event->GetCommand();
       if (cmd == CFWL_MessageMouse::MouseCommand::kEnter) {
-        CXFA_EventParam eParam;
-        eParam.m_eType = XFA_EVENT_MouseEnter;
+        CXFA_EventParam eParam(XFA_EVENT_MouseEnter);
         m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::MouseEnter,
                               &eParam);
       } else if (cmd == CFWL_MessageMouse::MouseCommand::kLeave) {
-        CXFA_EventParam eParam;
-        eParam.m_eType = XFA_EVENT_MouseExit;
+        CXFA_EventParam eParam(XFA_EVENT_MouseExit);
         m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::MouseExit,
                               &eParam);
       } else if (cmd == CFWL_MessageMouse::MouseCommand::kLeftButtonDown) {
-        CXFA_EventParam eParam;
-        eParam.m_eType = XFA_EVENT_MouseDown;
+        CXFA_EventParam eParam(XFA_EVENT_MouseDown);
         m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::MouseDown,
                               &eParam);
       } else if (cmd == CFWL_MessageMouse::MouseCommand::kLeftButtonUp) {
-        CXFA_EventParam eParam;
-        eParam.m_eType = XFA_EVENT_MouseUp;
+        CXFA_EventParam eParam(XFA_EVENT_MouseUp);
         m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::MouseUp,
                               &eParam);
       }
       break;
     }
     case CFWL_Event::Type::Click: {
-      CXFA_EventParam eParam;
-      eParam.m_eType = XFA_EVENT_Click;
+      CXFA_EventParam eParam(XFA_EVENT_Click);
       m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Click, &eParam);
       break;
     }
