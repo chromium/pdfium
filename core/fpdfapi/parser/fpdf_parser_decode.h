@@ -52,12 +52,6 @@ std::unique_ptr<fxcodec::ScanlineDecoder> CreateFlateDecoder(
     int bpc,
     const CPDF_Dictionary* pParams);
 
-DataVector<uint8_t> FlateEncode(pdfium::span<const uint8_t> src_span);
-
-uint32_t FlateDecode(pdfium::span<const uint8_t> src_span,
-                     std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                     uint32_t* dest_size);
-
 uint32_t RunLengthDecode(pdfium::span<const uint8_t> src_span,
                          std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                          uint32_t* dest_size);

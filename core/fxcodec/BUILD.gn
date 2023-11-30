@@ -140,6 +140,7 @@ pdfium_unittest_source_set("unittests") {
   sources = [
     "basic/a85_unittest.cpp",
     "basic/rle_unittest.cpp",
+    "flate/flatemodule_unittest.cpp",
     "jbig2/JBig2_BitStream_unittest.cpp",
     "jbig2/JBig2_Image_unittest.cpp",
     "jpx/jpx_unittest.cpp",

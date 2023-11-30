@@ -13,6 +13,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "core/fxcodec/flate/flatemodule.h"
 #include "third_party/base/check.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
@@ -40,7 +41,7 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(RetainPtr<const CPDF_Stream> pStream,
   }
 
   // TODO(thestig): Move to Init() and check for empty return value?
-  m_Data = ::FlateEncode(m_pAcc->GetSpan());
+  m_Data = FlateModule::Encode(m_pAcc->GetSpan());
   m_pClonedDict = ToDictionary(pStream->GetDict()->Clone());
   m_pClonedDict->SetNewFor<CPDF_Number>(
       "Length", pdfium::base::checked_cast<int>(GetSpan().size()));

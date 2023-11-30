@@ -604,14 +604,3 @@ ByteString PDF_HexEncodeString(ByteStringView src) {
   result += '>';
   return result;
 }
-
-DataVector<uint8_t> FlateEncode(pdfium::span<const uint8_t> src_span) {
-  return FlateModule::Encode(src_span);
-}
-
-uint32_t FlateDecode(pdfium::span<const uint8_t> src_span,
-                     std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                     uint32_t* dest_size) {
-  return FlateModule::FlateOrLZWDecode(false, src_span, false, 0, 0, 0, 0, 0,
-                                       dest_buf, dest_size);
-}
