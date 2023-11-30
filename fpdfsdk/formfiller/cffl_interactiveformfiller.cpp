@@ -896,7 +896,8 @@ bool CFFL_InteractiveFormFiller::IsValidAnnot(const CPDFSDK_PageView* pPageView,
   return pPageView && pPageView->IsValidAnnot(pWidget->GetPDFAnnot());
 }
 
-std::pair<bool, bool> CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
+IPWL_FillerNotify::BeforeKeystrokeResult
+CFFL_InteractiveFormFiller::OnBeforeKeyStroke(
     const IPWL_FillerNotify::PerWindowData* pAttached,
     WideString& strChange,
     const WideString& strChangeEx,

@@ -211,17 +211,15 @@ bool CPWL_ListBox::OnNotifySelectionChanged(bool bKeyDown,
   WideString strChangeEx;
   int nSelStart = 0;
   int nSelEnd = pdfium::base::checked_cast<int>(swChange.GetLength());
-  bool bRC;
-  bool bExit;
-  std::tie(bRC, bExit) = GetFillerNotify()->OnBeforeKeyStroke(
-      GetAttachedData(), swChange, strChangeEx, nSelStart, nSelEnd, bKeyDown,
-      nFlag);
+  IPWL_FillerNotify::BeforeKeystrokeResult result =
+      GetFillerNotify()->OnBeforeKeyStroke(GetAttachedData(), swChange,
+                                           strChangeEx, nSelStart, nSelEnd,
+                                           bKeyDown, nFlag);
 
   if (!this_observed) {
     return false;
   }
-
-  return bExit;
+  return result.exit;
 }
 
 CFX_FloatRect CPWL_ListBox::GetFocusRect() const {

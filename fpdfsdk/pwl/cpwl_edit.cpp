@@ -348,20 +348,20 @@ bool CPWL_Edit::OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) {
 
     ObservedPtr<CPWL_Wnd> this_observed(this);
 
-    bool bRC;
-    bool bExit;
-    std::tie(bRC, bExit) = GetFillerNotify()->OnBeforeKeyStroke(
-        GetAttachedData(), strChange, strChangeEx, nSelStart, nSelEnd, true,
-        nFlag);
+    IPWL_FillerNotify::BeforeKeystrokeResult result =
+        GetFillerNotify()->OnBeforeKeyStroke(GetAttachedData(), strChange,
+                                             strChangeEx, nSelStart, nSelEnd,
+                                             true, nFlag);
 
     if (!this_observed) {
       return false;
     }
-
-    if (!bRC)
+    if (!result.rc) {
       return false;
-    if (bExit)
+    }
+    if (result.exit) {
       return false;
+    }
   }
 
   bool bRet = OnKeyDownInternal(nKeyCode, nFlag);
@@ -407,9 +407,6 @@ bool CPWL_Edit::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
   if (m_bMouseDown)
     return true;
 
-  bool bRC = true;
-  bool bExit = false;
-
   if (!IsCTRLKeyDown(nFlag)) {
     WideString swChange;
     int nSelStart;
@@ -431,19 +428,21 @@ bool CPWL_Edit::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
     ObservedPtr<CPWL_Wnd> this_observed(this);
 
     WideString strChangeEx;
-    std::tie(bRC, bExit) = GetFillerNotify()->OnBeforeKeyStroke(
-        GetAttachedData(), swChange, strChangeEx, nSelStart, nSelEnd, true,
-        nFlag);
+    IPWL_FillerNotify::BeforeKeystrokeResult result =
+        GetFillerNotify()->OnBeforeKeyStroke(GetAttachedData(), swChange,
+                                             strChangeEx, nSelStart, nSelEnd,
+                                             true, nFlag);
 
     if (!this_observed) {
       return false;
     }
+    if (!result.rc) {
+      return true;
+    }
+    if (result.exit) {
+      return false;
+    }
   }
-
-  if (!bRC)
-    return true;
-  if (bExit)
-    return false;
 
   if (IPVT_FontMap* pFontMap = GetFontMap()) {
     FX_Charset nOldCharSet = GetCharSet();

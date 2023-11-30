@@ -173,8 +173,7 @@ class CFFL_InteractiveFormFiller final : public IPWL_FillerNotify {
                        float fPopupMax,
                        bool* bBottom,
                        float* fPopupRet) override;
-  // Returns {bRC, bExit}.
-  std::pair<bool, bool> OnBeforeKeyStroke(const PerWindowData* pAttached,
+  BeforeKeystrokeResult OnBeforeKeyStroke(const PerWindowData* pAttached,
                                           WideString& strChange,
                                           const WideString& strChangeEx,
                                           int nSelStart,
