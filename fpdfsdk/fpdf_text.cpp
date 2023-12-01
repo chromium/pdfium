@@ -338,8 +338,6 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE page,
   if (str.GetLength() > static_cast<size_t>(char_count))
     str = str.First(static_cast<size_t>(char_count));
 
-  // UFT16LE_Encode doesn't handle surrogate pairs properly, so it is expected
-  // the number of items to stay the same.
   ByteString byte_str = str.ToUTF16LE();
   size_t byte_str_len = byte_str.GetLength();
   size_t ret_count = byte_str_len / kBytesPerCharacter;

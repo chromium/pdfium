@@ -1279,6 +1279,7 @@ TEST(WideString, ToUTF16LE) {
       {L"abc\0def", ByteString("a\0b\0c\0\0\0", 8)},
       {L"\xaabb\xccdd", ByteString("\xbb\xaa\xdd\xcc\0\0", 6)},
       {L"\x3132\x6162", ByteString("\x32\x31\x62\x61\0\0", 6)},
+      {L"🎨", ByteString("\x3C\xD8\xA8\xDF\0\0", 6)},
   };
 
   for (size_t i = 0; i < std::size(utf16le_encode_cases); ++i) {
