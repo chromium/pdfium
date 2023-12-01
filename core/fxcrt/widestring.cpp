@@ -35,11 +35,11 @@ template struct std::hash<WideString>;
 namespace {
 
 #if defined(WCHAR_T_IS_32_BIT)
-size_t FuseSurrogates(pdfium::span<wchar_t> s, size_t n) {
+size_t FuseSurrogates(pdfium::span<wchar_t> s) {
   size_t dest_pos = 0;
-  for (size_t i = 0; i < n; ++i) {
+  for (size_t i = 0; i < s.size(); ++i) {
     // TODO(crbug.com/pdfium/2031): Always use UTF-16.
-    if (pdfium::IsHighSurrogate(s[i]) && i + 1 < n &&
+    if (pdfium::IsHighSurrogate(s[i]) && i + 1 < s.size() &&
         pdfium::IsLowSurrogate(s[i + 1])) {
       s[dest_pos++] = pdfium::SurrogatePair(s[i], s[i + 1]).ToCodePoint();
       ++i;
@@ -1050,7 +1050,7 @@ WideString WideString::FromUTF16LE(pdfium::span<const uint8_t> data) {
     }
 
 #if defined(WCHAR_T_IS_32_BIT)
-    length = FuseSurrogates(buf, length);
+    length = FuseSurrogates(buf.first(length));
 #endif
   }
   result.ReleaseBuffer(length);
@@ -1072,7 +1072,7 @@ WideString WideString::FromUTF16BE(pdfium::span<const uint8_t> data) {
     }
 
 #if defined(WCHAR_T_IS_32_BIT)
-    length = FuseSurrogates(buf, length);
+    length = FuseSurrogates(buf.first(length));
 #endif
   }
   result.ReleaseBuffer(length);
