@@ -24,12 +24,7 @@ unsigned long WideStringToBuffer(const WideString& str,
   if (str.IsEmpty())
     return 0;
 
-  ByteString encodedStr = str.ToUTF16LE();
-  const unsigned long len =
-      pdfium::base::checked_cast<unsigned long>(encodedStr.GetLength());
-  if (buffer && len <= buflen)
-    memcpy(buffer, encodedStr.c_str(), len);
-  return len;
+  return Utf16EncodeMaybeCopyAndReturnLength(str, buffer, buflen);
 }
 
 int GetMcidFromDict(const CPDF_Dictionary* dict) {
