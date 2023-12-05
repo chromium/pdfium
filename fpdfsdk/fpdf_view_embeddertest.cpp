@@ -1696,7 +1696,7 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
 #if BUILDFLAG(IS_APPLE)
     return "6eef7237f7591f07616e238422086737";
 #else
-    return "46dee4253a63a7b06b2faa2865a30b79";
+    return "6dec98c848028fa4be3ad38d6782e304";
 #endif
   }();
 
