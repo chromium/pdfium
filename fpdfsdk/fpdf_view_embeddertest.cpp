@@ -1696,7 +1696,7 @@ TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
 #if BUILDFLAG(IS_APPLE)
     return "6eef7237f7591f07616e238422086737";
 #else
-    return "37d0b34e1762fdda4c05ce7ea357b828";
+    return "46dee4253a63a7b06b2faa2865a30b79";
 #endif
   }();
 
@@ -2149,7 +2149,7 @@ TEST_F(FPDFViewEmbedderTest, NoSmoothTextItalicOverlappingGlyphs) {
       return "ceeb93d2bcdb586d62c95b33cadcd873";
     }
 #endif
-    return "4ef1f65ab1ac76acb97a3540dcb10b4e";
+    return "5f99e2fa2bad09393d6428e105a83c96";
   }();
 
   TestRenderPageBitmapWithFlags(page, FPDF_RENDER_NO_SMOOTHTEXT, checksum);
