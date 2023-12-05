@@ -1,7 +1,7 @@
 Name: FreeType
 URL: http://www.freetype.org/
-Version: VER-2-13-2-62
-Revision: 028b0d5c1be1b1fe9305e073760ba6ac614ba6d8
+Version: VER-2-13-2-85
+Revision: 8f255c89e14219ca2489043f699797ee106ec6e9
 CPEPrefix: cpe:/a:freetype:freetype:2.13.2
 Security Critical: yes
 Shipped: yes
