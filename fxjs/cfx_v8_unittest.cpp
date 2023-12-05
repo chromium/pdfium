@@ -235,15 +235,15 @@ TEST_F(CFXV8UnitTest, ThrowFromGetter) {
 
   v8::Local<v8::Object> object = cfx_v8()->NewObject();
   v8::Local<v8::String> name = cfx_v8()->NewString("clams");
-  EXPECT_TRUE(
-      object
-          ->SetAccessor(context, name,
-                        [](v8::Local<v8::Name> property,
-                           const v8::PropertyCallbackInfo<v8::Value>& info) {
-                          getter_sentinel = true;
-                          info.GetIsolate()->ThrowException(property);
-                        })
-          .FromJust());
+  EXPECT_TRUE(object
+                  ->SetNativeDataProperty(
+                      context, name,
+                      [](v8::Local<v8::Name> property,
+                         const v8::PropertyCallbackInfo<v8::Value>& info) {
+                        getter_sentinel = true;
+                        info.GetIsolate()->ThrowException(property);
+                      })
+                  .FromJust());
   getter_sentinel = false;
   EXPECT_TRUE(cfx_v8()->GetObjectProperty(object, "clams").IsEmpty());
   EXPECT_TRUE(getter_sentinel);
@@ -257,15 +257,16 @@ TEST_F(CFXV8UnitTest, ThrowFromSetter) {
 
   v8::Local<v8::Object> object = cfx_v8()->NewObject();
   v8::Local<v8::String> name = cfx_v8()->NewString("clams");
-  EXPECT_TRUE(object
-                  ->SetAccessor(context, name, nullptr,
-                                [](v8::Local<v8::Name> property,
-                                   v8::Local<v8::Value> value,
-                                   const v8::PropertyCallbackInfo<void>& info) {
-                                  setter_sentinel = true;
-                                  info.GetIsolate()->ThrowException(property);
-                                })
-                  .FromJust());
+  EXPECT_TRUE(
+      object
+          ->SetNativeDataProperty(
+              context, name, nullptr,
+              [](v8::Local<v8::Name> property, v8::Local<v8::Value> value,
+                 const v8::PropertyCallbackInfo<void>& info) {
+                setter_sentinel = true;
+                info.GetIsolate()->ThrowException(property);
+              })
+          .FromJust());
   setter_sentinel = false;
   cfx_v8()->PutObjectProperty(object, "clams", name);
   EXPECT_TRUE(setter_sentinel);
