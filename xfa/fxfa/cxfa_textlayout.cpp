@@ -1228,8 +1228,8 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
       return;
 
     bHasCount = false;
-    while (szPieceNext < pPieceLine->m_textPieces.size() - 1) {
-      szPieceNext++;
+    while (szPieceNext + 1 < pPieceLine->m_textPieces.size()) {
+      ++szPieceNext;
       if (pPieceLine->m_charCounts[szPieceNext] > 0) {
         bHasCount = true;
         break;

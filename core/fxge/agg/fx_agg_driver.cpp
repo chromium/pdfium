@@ -930,7 +930,7 @@ agg::path_storage BuildAggPath(const CFX_Path& path,
       agg_path.move_to(pos.x, pos.y);
     } else if (point_type == CFX_Path::Point::Type::kLine) {
       if (i > 0 && points[i - 1].IsTypeAndOpen(CFX_Path::Point::Type::kMove) &&
-          (i == points.size() - 1 ||
+          (i + 1 == points.size() ||
            points[i + 1].IsTypeAndOpen(CFX_Path::Point::Type::kMove)) &&
           points[i].m_Point == points[i - 1].m_Point) {
         pos.x += 1;

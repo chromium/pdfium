@@ -344,10 +344,11 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
     for (size_t i = 0; i < pGraphState->m_DashArray.size(); i += 2) {
       float on_phase = pGraphState->m_DashArray[i];
       float off_phase;
-      if (i == pGraphState->m_DashArray.size() - 1)
-        off_phase = on_phase;
-      else
+      if (i + 1 < pGraphState->m_DashArray.size()) {
         off_phase = pGraphState->m_DashArray[i + 1];
+      } else {
+        off_phase = on_phase;
+      }
       on_phase /= width;
       off_phase /= width;
       if (on_phase + off_phase <= 0.00002f) {
@@ -673,7 +674,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
     } else if (point_type == CFX_Path::Point::Type::kLine) {
       gp_types[i] = Gdiplus::PathPointTypeLine;
       if (points[i - 1].IsTypeAndOpen(CFX_Path::Point::Type::kMove) &&
-          (i == points.size() - 1 ||
+          (i + 1 == points.size() ||
            points[i + 1].IsTypeAndOpen(CFX_Path::Point::Type::kMove)) &&
           gp_points[i].Y == gp_points[i - 1].Y &&
           gp_points[i].X == gp_points[i - 1].X) {
@@ -759,7 +760,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
     } else {
       size_t iStart = 0;
       for (size_t i = 0; i < points.size(); ++i) {
-        if (i == points.size() - 1 ||
+        if (i + 1 == points.size() ||
             gp_types[i + 1] == Gdiplus::PathPointTypeStart) {
           Gdiplus::GpPath* pSubPath;
           CallFunc(GdipCreatePath2)(

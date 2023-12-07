@@ -276,7 +276,7 @@ uint32_t RunLengthDecode(pdfium::span<const uint8_t> src_span,
       dest_count += src_span[i] + 1;
       i += src_span[i] + 2;
     } else {
-      const uint8_t fill = i < src_span.size() - 1 ? src_span[i + 1] : 0;
+      const uint8_t fill = i + 1 < src_span.size() ? src_span[i + 1] : 0;
       const size_t fill_size = 257 - src_span[i];
       fxcrt::spanset(dest_span.subspan(dest_count, fill_size), fill);
       dest_count += fill_size;

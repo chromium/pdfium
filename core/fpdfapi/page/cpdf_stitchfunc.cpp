@@ -110,7 +110,7 @@ bool CPDF_StitchFunc::v_Call(pdfium::span<const float> inputs,
                              pdfium::span<float> results) const {
   float input = inputs[0];
   size_t i;
-  for (i = 0; i < m_pSubFunctions.size() - 1; i++) {
+  for (i = 0; i + 1 < m_pSubFunctions.size(); i++) {
     if (input < m_bounds[i + 1])
       break;
   }

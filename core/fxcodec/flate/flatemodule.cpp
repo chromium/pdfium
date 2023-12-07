@@ -605,9 +605,9 @@ void FlateUncompress(pdfium::span<const uint8_t> src_buf,
     std::unique_ptr<uint8_t, FxFreeDeleter> tmp_buf =
         std::move(result_tmp_bufs[i]);
     uint32_t tmp_buf_size = buf_size;
-    if (i == result_tmp_bufs.size() - 1)
+    if (i + 1 == result_tmp_bufs.size()) {
       tmp_buf_size = last_buf_size;
-
+    }
     uint32_t cp_size = std::min(tmp_buf_size, remaining);
     memcpy(result_buf.get() + result_pos, tmp_buf.get(), cp_size);
     result_pos += cp_size;
