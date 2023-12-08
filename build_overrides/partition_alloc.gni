@@ -8,14 +8,46 @@ import("//build/config/sanitizers/sanitizers.gni")
 # Sanitizers replace the allocator, don't use our own allocator.
 _is_using_sanitizers = is_asan || is_hwasan || is_lsan || is_tsan || is_msan
 
-# The allocator shim isn't working standalone on Windows at the moment.
-# TODO(https://crbug.com/pdfium/2068) - make work with windows.
-_use_shim = !_is_using_sanitizers && (!is_mac || use_custom_libcxx) && !is_win
+# - Component build support is disabled on all platforms except Linux. It is
+#   known to cause issues on some (e.g. Windows with shims, Android with
+#   non-universal symbol wrapping), and has not been validated on others.
+# - Windows: debug CRT is not compatible, see below.
+_disable_partition_alloc_everywhere =
+    (!is_linux && is_component_build) || (is_win && is_debug)
 
-# See base/allocator/partition_allocator/src/partition_alloc/external_builds.md
+# Under Windows debug build, the allocator shim is not compatible with CRT.
+# Under Fuchsia, the allocator shim is only required for PA-E.
+# For all other platforms & configurations, the shim is required, to replace
+#     the default system allocators, e.g. with Partition Alloc.
+
+# Additionally:
+# - The allocator shim does not work with macOS with use_custom_libcxx=false.
+# - The allocator shim isn't working standalone on Windows at the moment.
+#   See crbug.com/pdfium/2068.
+if ((is_linux || is_chromeos || is_android || is_apple ||
+     (is_fuchsia && !_disable_partition_alloc_everywhere) ||
+     (is_win && !is_component_build && !is_debug)) && !_is_using_sanitizers &&
+    (!is_mac || use_custom_libcxx) && !is_win) {
+  _use_shim = true
+} else {
+  _use_shim = false
+}
+
+if (_use_shim && !_disable_partition_alloc_everywhere) {
+  _default_allocator = "partition"
+} else {
+  _default_allocator = "none"
+}
+
+# See base/allocator/partition_allocator/external_builds.md
 use_allocator_shim_default = _use_shim
-use_partition_alloc_as_malloc_default = _use_shim
-enable_backup_ref_ptr_support_default = _use_shim
+use_partition_alloc_as_malloc_default = _default_allocator == "partition"
+
+_is_brp_supported = (is_win || is_android || is_linux || is_mac ||
+                     is_chromeos) && use_partition_alloc_as_malloc_default
+
+enable_backup_ref_ptr_support_default = _is_brp_supported
+
 enable_mte_checked_ptr_support_default = false
 put_ref_count_in_previous_slot_default = false
 enable_backup_ref_ptr_slow_checks_default = false
