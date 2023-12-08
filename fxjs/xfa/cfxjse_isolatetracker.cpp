@@ -29,9 +29,8 @@ CFXJSE_ScopeUtil_IsolateHandleContext::
 
 CFXJSE_ScopeUtil_RootContext::CFXJSE_ScopeUtil_RootContext(
     v8::Isolate* pIsolate)
-    : context_scope_(v8::Local<v8::Context>::New(
-          pIsolate,
-          CFXJSE_RuntimeData::Get(pIsolate)->GetRootContext())) {}
+    : context_scope_(
+          CFXJSE_RuntimeData::Get(pIsolate)->GetRootContext(pIsolate)) {}
 
 CFXJSE_ScopeUtil_RootContext::~CFXJSE_ScopeUtil_RootContext() = default;
 

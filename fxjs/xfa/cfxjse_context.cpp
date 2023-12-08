@@ -195,8 +195,8 @@ std::unique_ptr<CFXJSE_Context> CFXJSE_Context::Create(
   v8::Local<v8::Object> pThis = pThisProxy->GetPrototype().As<v8::Object>();
   FXJSE_UpdateObjectBinding(pThis, pGlobalObject);
 
-  v8::Local<v8::Context> hRootContext = v8::Local<v8::Context>::New(
-      pIsolate, CFXJSE_RuntimeData::Get(pIsolate)->GetRootContext());
+  v8::Local<v8::Context> hRootContext =
+      CFXJSE_RuntimeData::Get(pIsolate)->GetRootContext(pIsolate);
   hNewContext->SetSecurityToken(hRootContext->GetSecurityToken());
   pContext->m_hContext.Reset(pIsolate, hNewContext);
   return pContext;

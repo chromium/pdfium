@@ -44,8 +44,8 @@ std::unique_ptr<CFXJSE_RuntimeData> CFXJSE_RuntimeData::Create(
       0);
 
   hContext->SetSecurityToken(v8::External::New(pIsolate, pIsolate));
-  pRuntimeData->m_hRootContextGlobalTemplate.Reset(pIsolate, hFuncTemplate);
-  pRuntimeData->m_hRootContext.Reset(pIsolate, hContext);
+  pRuntimeData->root_context_global_template_.Reset(pIsolate, hFuncTemplate);
+  pRuntimeData->root_context_.Reset(pIsolate, hContext);
   return pRuntimeData;
 }
 
@@ -55,4 +55,9 @@ CFXJSE_RuntimeData* CFXJSE_RuntimeData::Get(v8::Isolate* pIsolate) {
   if (!pData->GetExtension())
     pData->SetExtension(CFXJSE_RuntimeData::Create(pIsolate));
   return static_cast<CFXJSE_RuntimeData*>(pData->GetExtension());
+}
+
+v8::Local<v8::Context> CFXJSE_RuntimeData::GetRootContext(
+    v8::Isolate* pIsolate) {
+  return v8::Local<v8::Context>::New(pIsolate, root_context_);
 }
