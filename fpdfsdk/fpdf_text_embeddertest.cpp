@@ -492,6 +492,33 @@ TEST_F(FPDFTextEmbedderTest, TextSearchConsecutive) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFTextEmbedderTest, TextSearchTrailingSpace) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page));
+    ASSERT_TRUE(textpage);
+
+    ScopedFPDFWideString search_term = GetFPDFWideString(L"ld! ");
+    ScopedFPDFTextFind search(
+        FPDFText_FindStart(textpage.get(), search_term.get(), 0, 0));
+    ASSERT_TRUE(search);
+    EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
+
+    EXPECT_TRUE(FPDFText_FindNext(search.get()));
+    EXPECT_EQ(10, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(4, FPDFText_GetSchCount(search.get()));
+
+    // TODO(crbug.com/pdfium/2104): Enable the code below. It should not crash.
+    // EXPECT_FALSE(FPDFText_FindNext(search.get()));
+  }
+
+  UnloadPage(page);
+}
+
 // Fails on Windows. https://crbug.com/pdfium/1370
 #if BUILDFLAG(IS_WIN)
 #define MAYBE_TextSearchLatinExtended DISABLED_TextSearchLatinExtended
