@@ -26,8 +26,8 @@ class CPDF_CrossRefTable {
   };
 
   struct ObjectInfo {
-    ObjectInfo() = default;
-
+    ObjectType type = ObjectType::kFree;
+    uint16_t gennum = 0;
     // If `type` is `ObjectType::kCompressed`, `archive` should be used.
     // If `type` is `ObjectType::kNormal`, `pos` should be used.
     // In other cases, it is unused.
@@ -38,8 +38,6 @@ class CPDF_CrossRefTable {
         uint32_t obj_index;
       } archive;
     };
-    ObjectType type = ObjectType::kFree;
-    uint16_t gennum = 0;
   };
 
   // Merge cross reference tables.  Apply top on current.

@@ -38,6 +38,9 @@
 #include "third_party/base/containers/span.h"
 #include "third_party/base/notreached.h"
 
+using ObjectType = CPDF_CrossRefTable::ObjectType;
+using ObjectInfo = CPDF_CrossRefTable::ObjectInfo;
+
 namespace {
 
 // A limit on the size of the xref table. Theoretical limits are higher, but
@@ -60,17 +63,16 @@ struct CrossRefV5IndexEntry {
   uint32_t obj_count;
 };
 
-CPDF_Parser::ObjectType GetObjectTypeFromCrossRefStreamType(
-    uint32_t cross_ref_stream_type) {
+ObjectType GetObjectTypeFromCrossRefStreamType(uint32_t cross_ref_stream_type) {
   switch (cross_ref_stream_type) {
     case 0:
-      return CPDF_Parser::ObjectType::kFree;
+      return ObjectType::kFree;
     case 1:
-      return CPDF_Parser::ObjectType::kNormal;
+      return ObjectType::kNormal;
     case 2:
-      return CPDF_Parser::ObjectType::kCompressed;
+      return ObjectType::kCompressed;
     default:
-      return CPDF_Parser::ObjectType::kNull;
+      return ObjectType::kNull;
   }
 }
 
@@ -178,7 +180,7 @@ FX_FILESIZE CPDF_Parser::GetObjectPositionOrZero(uint32_t objnum) const {
   return (info && info->type == ObjectType::kNormal) ? info->pos : 0;
 }
 
-CPDF_Parser::ObjectType CPDF_Parser::GetObjectType(uint32_t objnum) const {
+ObjectType CPDF_Parser::GetObjectType(uint32_t objnum) const {
   DCHECK(IsValidObjectNumber(objnum));
   const auto* info = m_CrossRefTable->GetObjectInfo(objnum);
   return info ? info->type : ObjectType::kFree;
@@ -875,8 +877,9 @@ void CPDF_Parser::ProcessCrossRefV5Entry(
     const uint32_t cross_ref_stream_obj_type =
         GetFirstXRefStreamEntry(entry_span, field_widths);
     type = GetObjectTypeFromCrossRefStreamType(cross_ref_stream_obj_type);
-    if (type == ObjectType::kNull)
+    if (type == ObjectType::kNull) {
       return;
+    }
   } else {
     // Per ISO 32000-1:2008 table 17, use the default value of 1 for the xref
     // stream entry when it is not specified. The `type` assignment is the
@@ -1002,10 +1005,11 @@ RetainPtr<CPDF_Object> CPDF_Parser::ParseIndirectObject(uint32_t objnum) {
       return nullptr;
     return ParseIndirectObjectAt(pos, objnum);
   }
-  if (GetObjectType(objnum) != ObjectType::kCompressed)
+  if (GetObjectType(objnum) != ObjectType::kCompressed) {
     return nullptr;
+  }
 
-  const ObjectInfo& info = *m_CrossRefTable->GetObjectInfo(objnum);
+  const auto& info = *m_CrossRefTable->GetObjectInfo(objnum);
   const CPDF_ObjectStream* pObjStream = GetObjectStream(info.archive.obj_num);
   if (!pObjStream)
     return nullptr;
@@ -1024,8 +1028,9 @@ const CPDF_ObjectStream* CPDF_Parser::GetObjectStream(uint32_t object_number) {
     return it->second.get();
 
   const auto* info = m_CrossRefTable->GetObjectInfo(object_number);
-  if (!info || info->type != ObjectType::kObjStream)
+  if (!info || info->type != ObjectType::kObjStream) {
     return nullptr;
+  }
 
   const FX_FILESIZE object_pos = info->pos;
   if (object_pos <= 0)

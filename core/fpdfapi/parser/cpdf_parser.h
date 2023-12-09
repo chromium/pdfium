@@ -36,9 +36,6 @@ class IFX_SeekableReadStream;
 
 class CPDF_Parser {
  public:
-  using ObjectType = CPDF_CrossRefTable::ObjectType;
-  using ObjectInfo = CPDF_CrossRefTable::ObjectInfo;
-
   class ParsedObjectsHolder : public CPDF_IndirectObjectHolder {
    public:
     virtual bool TryInit() = 0;
@@ -143,7 +140,7 @@ class CPDF_Parser {
 
   struct CrossRefObjData {
     uint32_t obj_num = 0;
-    ObjectInfo info;
+    CPDF_CrossRefTable::ObjectInfo info;
   };
 
   bool LoadAllCrossRefV4(FX_FILESIZE xref_offset);
@@ -178,7 +175,7 @@ class CPDF_Parser {
   bool InitSyntaxParser(RetainPtr<CPDF_ReadValidator> validator);
   bool ParseFileVersion();
 
-  ObjectType GetObjectType(uint32_t objnum) const;
+  CPDF_CrossRefTable::ObjectType GetObjectType(uint32_t objnum) const;
 
   std::unique_ptr<CPDF_SyntaxParser> m_pSyntax;
   std::unique_ptr<ParsedObjectsHolder> m_pOwnedObjectsHolder;
