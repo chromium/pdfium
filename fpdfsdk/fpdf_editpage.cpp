@@ -246,9 +246,9 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetRotation(FPDF_PAGE page) {
   return IsPageObject(pPage) ? pPage->GetPageRotation() : -1;
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertObject(FPDF_PAGE page,
-                                                     FPDF_PAGEOBJECT page_obj) {
-  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_obj);
+FPDF_EXPORT void FPDF_CALLCONV
+FPDFPage_InsertObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_object) {
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
   if (!pPageObj)
     return;
 
@@ -263,8 +263,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertObject(FPDF_PAGE page,
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFPage_RemoveObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_obj) {
-  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_obj);
+FPDFPage_RemoveObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_object) {
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
   if (!pPageObj)
     return false;
 
@@ -298,8 +298,9 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_HasTransparency(FPDF_PAGE page) {
   return pPage && pPage->BackgroundAlphaNeeded();
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDFPageObj_Destroy(FPDF_PAGEOBJECT page_obj) {
-  delete CPDFPageObjectFromFPDFPageObject(page_obj);
+FPDF_EXPORT void FPDF_CALLCONV
+FPDFPageObj_Destroy(FPDF_PAGEOBJECT page_object) {
+  delete CPDFPageObjectFromFPDFPageObject(page_object);
 }
 
 FPDF_EXPORT int FPDF_CALLCONV

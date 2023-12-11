@@ -179,26 +179,26 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetRotation(FPDF_PAGE page);
 //              3 - Rotated 270 degrees clockwise.
 FPDF_EXPORT void FPDF_CALLCONV FPDFPage_SetRotation(FPDF_PAGE page, int rotate);
 
-// Insert |page_obj| into |page|.
+// Insert |page_object| into |page|.
 //
-//   page     - handle to a page
-//   page_obj - handle to a page object. The |page_obj| will be automatically
-//              freed.
-FPDF_EXPORT void FPDF_CALLCONV FPDFPage_InsertObject(FPDF_PAGE page,
-                                                     FPDF_PAGEOBJECT page_obj);
+//   page        - handle to a page
+//   page_object - handle to a page object. The |page_object| will be
+//                 automatically freed.
+FPDF_EXPORT void FPDF_CALLCONV
+FPDFPage_InsertObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_object);
 
 // Experimental API.
-// Remove |page_obj| from |page|.
+// Remove |page_object| from |page|.
 //
-//   page     - handle to a page
-//   page_obj - handle to a page object to be removed.
+//   page        - handle to a page
+//   page_object - handle to a page object to be removed.
 //
 // Returns TRUE on success.
 //
 // Ownership is transferred to the caller. Call FPDFPageObj_Destroy() to free
 // it.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFPage_RemoveObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_obj);
+FPDFPage_RemoveObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_object);
 
 // Get number of page objects inside |page|.
 //
@@ -233,14 +233,14 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_HasTransparency(FPDF_PAGE page);
 // |FPDFPage_GenerateContent| or any changes to |page| will be lost.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFPage_GenerateContent(FPDF_PAGE page);
 
-// Destroy |page_obj| by releasing its resources. |page_obj| must have been
-// created by FPDFPageObj_CreateNew{Path|Rect}() or
+// Destroy |page_object| by releasing its resources. |page_object| must have
+// been created by FPDFPageObj_CreateNew{Path|Rect}() or
 // FPDFPageObj_New{Text|Image}Obj(). This function must be called on
 // newly-created objects if they are not added to a page through
 // FPDFPage_InsertObject() or to an annotation through FPDFAnnot_AppendObject().
 //
-//   page_obj - handle to a page object.
-FPDF_EXPORT void FPDF_CALLCONV FPDFPageObj_Destroy(FPDF_PAGEOBJECT page_obj);
+//   page_object - handle to a page object.
+FPDF_EXPORT void FPDF_CALLCONV FPDFPageObj_Destroy(FPDF_PAGEOBJECT page_object);
 
 // Checks if |page_object| contains transparency.
 //
@@ -309,7 +309,7 @@ FPDFPageObj_GetMatrix(FPDF_PAGEOBJECT page_object, FS_MATRIX* matrix);
 //
 // Returns TRUE on success.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
-FPDFPageObj_SetMatrix(FPDF_PAGEOBJECT path, const FS_MATRIX* matrix);
+FPDFPageObj_SetMatrix(FPDF_PAGEOBJECT page_object, const FS_MATRIX* matrix);
 
 // Transform all annotations in |page|.
 //
