@@ -766,36 +766,17 @@ ByteString WideString::ToUTF8() const {
 }
 
 ByteString WideString::ToUTF16LE() const {
-  if (!m_pData)
-    return ByteString("\0\0", 2);
-
+  std::u16string utf16 = FX_UTF16Encode(AsStringView());
   ByteString result;
-  size_t len = m_pData->m_nDataLength;
   size_t output_length = 0;
   {
     // Span's lifetime must end before ReleaseBuffer() below.
-#if defined(WCHAR_T_IS_32_BIT)
-    // 2 or 4 bytes required per UTF-32 code unit.
-    pdfium::span<uint8_t> buffer =
-        pdfium::as_writable_bytes(result.GetBuffer(len * 4 + 2));
-#else
     // 2 bytes required per UTF-16 code unit.
     pdfium::span<uint8_t> buffer =
-        pdfium::as_writable_bytes(result.GetBuffer(len * 2 + 2));
-#endif
-    for (size_t i = 0; i < len; i++) {
-#if defined(WCHAR_T_IS_32_BIT)
-      if (pdfium::IsSupplementary(m_pData->m_String[i])) {
-        pdfium::SurrogatePair pair(m_pData->m_String[i]);
-        buffer[output_length++] = pair.high() & 0xff;
-        buffer[output_length++] = pair.high() >> 8;
-        buffer[output_length++] = pair.low() & 0xff;
-        buffer[output_length++] = pair.low() >> 8;
-        continue;
-      }
-#endif  // defined(WCHAR_T_IS_32_BIT)
-      buffer[output_length++] = m_pData->m_String[i] & 0xff;
-      buffer[output_length++] = m_pData->m_String[i] >> 8;
+        pdfium::as_writable_bytes(result.GetBuffer(utf16.size() * 2 + 2));
+    for (char16_t c : utf16) {
+      buffer[output_length++] = c & 0xff;
+      buffer[output_length++] = c >> 8;
     }
     buffer[output_length++] = 0;
     buffer[output_length++] = 0;

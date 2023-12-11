@@ -74,6 +74,29 @@ ByteString FX_UTF8Encode(WideStringView wsStr) {
   return buffer;
 }
 
+std::u16string FX_UTF16Encode(WideStringView wsStr) {
+  if (wsStr.IsEmpty()) {
+    return {};
+  }
+
+  std::u16string result;
+  result.reserve(wsStr.GetLength());
+
+  for (wchar_t c : wsStr) {
+#if defined(WCHAR_T_IS_32_BIT)
+    if (pdfium::IsSupplementary(c)) {
+      pdfium::SurrogatePair pair(c);
+      result.push_back(pair.high());
+      result.push_back(pair.low());
+      continue;
+    }
+#endif  // defined(WCHAR_T_IS_32_BIT)
+    result.push_back(c);
+  }
+
+  return result;
+}
+
 namespace {
 
 constexpr float kFractionScalesFloat[] = {

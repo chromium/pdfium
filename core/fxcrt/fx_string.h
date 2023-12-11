@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include <string>
 #include <vector>
 
 #include "core/fxcrt/bytestring.h"
@@ -21,6 +22,7 @@ constexpr uint32_t FXBSTR_ID(uint8_t c1, uint8_t c2, uint8_t c3, uint8_t c4) {
 }
 
 ByteString FX_UTF8Encode(WideStringView wsStr);
+std::u16string FX_UTF16Encode(WideStringView wsStr);
 
 float StringToFloat(ByteStringView str);
 float StringToFloat(WideStringView wsStr);
