@@ -10,29 +10,24 @@
 #include <stdint.h>
 
 #include "core/fxcrt/bytestring.h"
+#include "third_party/abseil-cpp/absl/types/variant.h"
 
 class FX_Number {
  public:
   FX_Number();
-  explicit FX_Number(uint32_t value) = delete;
+  explicit FX_Number(uint32_t value) = delete;  // catch misuse.
   explicit FX_Number(int32_t value);
   explicit FX_Number(float value);
   explicit FX_Number(ByteStringView str);
 
-  bool IsInteger() const { return m_bIsInteger; }
-  bool IsSigned() const { return m_bIsSigned; }
+  bool IsInteger() const;
+  bool IsSigned() const;
 
   int32_t GetSigned() const;  // Underflow/Overflow possible.
   float GetFloat() const;
 
  private:
-  bool m_bIsInteger;  // One of the two integers vs. float type.
-  bool m_bIsSigned;   // Only valid if |m_bInteger|.
-  union {
-    uint32_t m_UnsignedValue;
-    int32_t m_SignedValue;
-    float m_FloatValue;
-  };
+  absl::variant<uint32_t, int32_t, float> value_ = 0u;
 };
 
 #endif  // CORE_FXCRT_FX_NUMBER_H_

@@ -15,24 +15,18 @@
 #include "core/fxcrt/fx_string.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
-FX_Number::FX_Number()
-    : m_bIsInteger(true), m_bIsSigned(false), m_UnsignedValue(0) {}
+FX_Number::FX_Number() = default;
 
-FX_Number::FX_Number(int32_t value)
-    : m_bIsInteger(true), m_bIsSigned(true), m_SignedValue(value) {}
+FX_Number::FX_Number(int32_t value) : value_(value) {}
 
-FX_Number::FX_Number(float value)
-    : m_bIsInteger(false), m_bIsSigned(true), m_FloatValue(value) {}
+FX_Number::FX_Number(float value) : value_(value) {}
 
-FX_Number::FX_Number(ByteStringView strc)
-    : m_bIsInteger(true), m_bIsSigned(false), m_UnsignedValue(0) {
+FX_Number::FX_Number(ByteStringView strc) {
   if (strc.IsEmpty())
     return;
 
   if (strc.Contains('.')) {
-    m_bIsInteger = false;
-    m_bIsSigned = true;
-    m_FloatValue = StringToFloat(strc);
+    value_ = StringToFloat(strc);
     return;
   }
 
@@ -42,14 +36,15 @@ FX_Number::FX_Number(ByteStringView strc)
   // unsigned and then check for overflow if the user actually signed the value.
   // The Permissions flag is listed in Table 3.20 PDF 1.7 spec.
   FX_SAFE_UINT32 unsigned_val = 0;
+  bool bIsSigned = false;
   bool bNegative = false;
   size_t cc = 0;
   if (strc[0] == '+') {
+    bIsSigned = true;
     cc++;
-    m_bIsSigned = true;
   } else if (strc[0] == '-') {
+    bIsSigned = true;
     bNegative = true;
-    m_bIsSigned = true;
     cc++;
   }
 
@@ -61,8 +56,8 @@ FX_Number::FX_Number(ByteStringView strc)
   }
 
   uint32_t uValue = unsigned_val.ValueOrDefault(0);
-  if (!m_bIsSigned) {
-    m_UnsignedValue = uValue;
+  if (!bIsSigned) {
+    value_ = uValue;
     return;
   }
 
@@ -82,24 +77,38 @@ FX_Number::FX_Number(ByteStringView strc)
     // becomes -2147483648. For this case, avoid undefined behavior, because
     // an int32_t cannot represent 2147483648.
     static constexpr int kMinInt = std::numeric_limits<int>::min();
-    m_SignedValue = LIKELY(value != kMinInt) ? -value : kMinInt;
+    value_ = LIKELY(value != kMinInt) ? -value : kMinInt;
   } else {
-    m_SignedValue = value;
+    value_ = value;
   }
+}
+
+bool FX_Number::IsInteger() const {
+  return absl::holds_alternative<uint32_t>(value_) ||
+         absl::holds_alternative<int32_t>(value_);
+}
+
+bool FX_Number::IsSigned() const {
+  return absl::holds_alternative<int32_t>(value_) ||
+         absl::holds_alternative<float>(value_);
 }
 
 int32_t FX_Number::GetSigned() const {
-  if (m_bIsInteger) {
-    return m_SignedValue;
+  if (absl::holds_alternative<uint32_t>(value_)) {
+    return static_cast<int32_t>(absl::get<uint32_t>(value_));
   }
-
-  return pdfium::base::saturated_cast<int32_t>(m_FloatValue);
+  if (absl::holds_alternative<int32_t>(value_)) {
+    return absl::get<int32_t>(value_);
+  }
+  return pdfium::base::saturated_cast<int32_t>(absl::get<float>(value_));
 }
 
 float FX_Number::GetFloat() const {
-  if (!m_bIsInteger)
-    return m_FloatValue;
-
-  return m_bIsSigned ? static_cast<float>(m_SignedValue)
-                     : static_cast<float>(m_UnsignedValue);
+  if (absl::holds_alternative<uint32_t>(value_)) {
+    return static_cast<float>(absl::get<uint32_t>(value_));
+  }
+  if (absl::holds_alternative<int32_t>(value_)) {
+    return static_cast<float>(absl::get<int32_t>(value_));
+  }
+  return absl::get<float>(value_);
 }
