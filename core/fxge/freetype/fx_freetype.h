@@ -62,8 +62,6 @@ class ScopedFXFTMMVar {
 #define FXFT_Get_Face_Stream_Size(face) (face)->stream->size
 #define FXFT_Get_Face_Family_Name(face) (face)->family_name
 #define FXFT_Get_Face_Style_Name(face) (face)->style_name
-#define FXFT_Is_Face_Italic(face) (((face)->style_flags) & FT_STYLE_FLAG_ITALIC)
-#define FXFT_Is_Face_Bold(face) (((face)->style_flags) & FT_STYLE_FLAG_BOLD)
 #define FXFT_Get_Glyph_HoriBearingX(face) (face)->glyph->metrics.horiBearingX
 #define FXFT_Get_Glyph_HoriBearingY(face) (face)->glyph->metrics.horiBearingY
 #define FXFT_Get_Glyph_Width(face) (face)->glyph->metrics.width

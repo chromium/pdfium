@@ -551,11 +551,10 @@ RetainPtr<CFX_Face> CFX_FontMapper::UseExternalSubst(
 
   subst_font->m_Family = face_name;
   subst_font->m_Charset = charset;
-  int face_weight =
-      FXFT_Is_Face_Bold(face->GetRec()) ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
+  int face_weight = face->IsBold() ? FXFONT_FW_BOLD : FXFONT_FW_NORMAL;
   if (weight != face_weight)
     subst_font->m_Weight = weight;
-  if (is_italic && !FXFT_Is_Face_Italic(face->GetRec())) {
+  if (is_italic && !face->IsItalic()) {
     if (italic_angle == 0)
       italic_angle = -12;
     else if (abs(italic_angle) < 5)

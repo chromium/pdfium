@@ -31,6 +31,9 @@ class CFX_Face final : public Retainable, public Observable {
   void ClearExternalStream();
 #endif
 
+  bool IsItalic() const;
+  bool IsBold() const;
+
   FXFT_FaceRec* GetRec() { return m_pRec.get(); }
   const FXFT_FaceRec* GetRec() const { return m_pRec.get(); }
 

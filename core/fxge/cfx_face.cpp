@@ -62,6 +62,14 @@ void CFX_Face::ClearExternalStream() {
 }
 #endif
 
+bool CFX_Face::IsItalic() const {
+  return !!(GetRec()->style_flags & FT_STYLE_FLAG_ITALIC);
+}
+
+bool CFX_Face::IsBold() const {
+  return !!(GetRec()->style_flags & FT_STYLE_FLAG_BOLD);
+}
+
 CFX_Face::CFX_Face(FXFT_FaceRec* rec, RetainPtr<Retainable> pDesc)
     : m_pRec(rec), m_pDesc(std::move(pDesc)) {
   DCHECK(m_pRec);

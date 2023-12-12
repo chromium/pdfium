@@ -510,8 +510,9 @@ absl::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
 bool CFX_Font::IsItalic() const {
   if (!m_Face)
     return false;
-  if (FXFT_Is_Face_Italic(m_Face->GetRec()) == FT_STYLE_FLAG_ITALIC)
+  if (m_Face->IsItalic()) {
     return true;
+  }
 
   ByteString str(FXFT_Get_Face_Style_Name(m_Face->GetRec()));
   str.MakeLower();
@@ -519,7 +520,7 @@ bool CFX_Font::IsItalic() const {
 }
 
 bool CFX_Font::IsBold() const {
-  return m_Face && FXFT_Is_Face_Bold(m_Face->GetRec()) == FT_STYLE_FLAG_BOLD;
+  return m_Face && m_Face->IsBold();
 }
 
 bool CFX_Font::IsFixedWidth() const {

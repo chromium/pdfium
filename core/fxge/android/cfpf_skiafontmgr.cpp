@@ -381,10 +381,12 @@ std::unique_ptr<CFPF_SkiaPathFont> CFPF_SkiaFontMgr::ReportFace(
     RetainPtr<CFX_Face> face,
     const ByteString& file) {
   uint32_t dwStyle = 0;
-  if (FXFT_Is_Face_Bold(face->GetRec()))
+  if (face->IsBold()) {
     dwStyle |= FXFONT_FORCE_BOLD;
-  if (FXFT_Is_Face_Italic(face->GetRec()))
+  }
+  if (face->IsItalic()) {
     dwStyle |= FXFONT_ITALIC;
+  }
   if (face->IsFixedWidth()) {
     dwStyle |= FXFONT_FIXED_PITCH;
   }

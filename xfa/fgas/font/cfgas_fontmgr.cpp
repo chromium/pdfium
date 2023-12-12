@@ -451,10 +451,10 @@ void GetUSBCSB(FXFT_FaceRec* pFace, uint32_t* USB, uint32_t* CSB) {
 
 uint32_t GetFlags(const RetainPtr<CFX_Face>& face) {
   uint32_t flags = 0;
-  if (FXFT_Is_Face_Bold(face->GetRec())) {
+  if (face->IsBold()) {
     flags |= FXFONT_FORCE_BOLD;
   }
-  if (FXFT_Is_Face_Italic(face->GetRec())) {
+  if (face->IsItalic()) {
     flags |= FXFONT_ITALIC;
   }
   if (face->IsFixedWidth()) {
