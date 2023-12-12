@@ -63,7 +63,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
   const FontEncoding base_encoding = DetermineEncoding();
   if ((IsWinAnsiOrMacRomanEncoding(base_encoding) && m_CharNames.empty()) ||
       FontStyleIsNonSymbolic(m_Flags)) {
-    if (!FXFT_Has_Glyph_Names(face) &&
+    if (m_Font.GetFace()->HasGlyphNames() &&
         (!face->num_charmaps || !face->charmaps)) {
       SetGlyphIndicesFromFirstChar();
       return;

@@ -36,6 +36,32 @@ RetainPtr<CFX_Face> CFX_Face::Open(FT_Library library,
   return pdfium::WrapRetain(new CFX_Face(pRec, nullptr));
 }
 
+bool CFX_Face::HasGlyphNames() const {
+  return !!(GetRec()->face_flags & FT_FACE_FLAG_GLYPH_NAMES);
+}
+
+bool CFX_Face::IsTtOt() const {
+  return !!(GetRec()->face_flags & FT_FACE_FLAG_SFNT);
+}
+
+bool CFX_Face::IsTricky() const {
+  return !!(GetRec()->face_flags & FT_FACE_FLAG_TRICKY);
+}
+
+bool CFX_Face::IsFixedWidth() const {
+  return !!(GetRec()->face_flags & FT_FACE_FLAG_FIXED_WIDTH);
+}
+
+#if defined(PDF_ENABLE_XFA)
+bool CFX_Face::IsScalable() const {
+  return !!(GetRec()->face_flags & FT_FACE_FLAG_SCALABLE);
+}
+
+void CFX_Face::ClearExternalStream() {
+  GetRec()->face_flags &= ~FT_FACE_FLAG_EXTERNAL_STREAM;
+}
+#endif
+
 CFX_Face::CFX_Face(FXFT_FaceRec* rec, RetainPtr<Retainable> pDesc)
     : m_pRec(rec), m_pDesc(std::move(pDesc)) {
   DCHECK(m_pRec);

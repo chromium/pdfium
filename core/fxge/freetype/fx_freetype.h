@@ -58,16 +58,6 @@ class ScopedFXFTMMVar {
 #define FXFT_Render_Glyph(face, mode) \
   FT_Render_Glyph((face)->glyph, static_cast<enum FT_Render_Mode_>(mode))
 
-#define FXFT_Has_Glyph_Names(face) \
-  (((face)->face_flags) & FT_FACE_FLAG_GLYPH_NAMES)
-#define FXFT_Clear_Face_External_Stream(face) \
-  ((face)->face_flags &= ~FT_FACE_FLAG_EXTERNAL_STREAM)
-#define FXFT_Get_Face_External_Stream(face) \
-  (((face)->face_flags) & FT_FACE_FLAG_EXTERNAL_STREAM)
-#define FXFT_Is_Face_TT_OT(face) (((face)->face_flags) & FT_FACE_FLAG_SFNT)
-#define FXFT_Is_Face_Tricky(face) (((face)->face_flags) & FT_FACE_FLAG_TRICKY)
-#define FXFT_Is_Face_fixedwidth(face) \
-  (((face)->face_flags) & FT_FACE_FLAG_FIXED_WIDTH)
 #define FXFT_Get_Face_Stream_Base(face) (face)->stream->base
 #define FXFT_Get_Face_Stream_Size(face) (face)->stream->size
 #define FXFT_Get_Face_Family_Name(face) (face)->family_name

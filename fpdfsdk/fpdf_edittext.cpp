@@ -96,8 +96,9 @@ RetainPtr<CPDF_Dictionary> LoadFontDesc(CPDF_Document* pDoc,
   pFontDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
   pFontDesc->SetNewFor<CPDF_Name>("FontName", font_name);
   int flags = 0;
-  if (FXFT_Is_Face_fixedwidth(pFont->GetFaceRec()))
+  if (pFont->GetFace()->IsFixedWidth()) {
     flags |= FXFONT_FIXED_PITCH;
+  }
   if (font_name.Contains("Serif"))
     flags |= FXFONT_SERIF;
   if (FXFT_Is_Face_Italic(pFont->GetFaceRec()))

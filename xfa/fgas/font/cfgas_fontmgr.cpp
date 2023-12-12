@@ -449,16 +449,20 @@ void GetUSBCSB(FXFT_FaceRec* pFace, uint32_t* USB, uint32_t* CSB) {
   CSB[1] = static_cast<uint32_t>(pOS2->ulCodePageRange2);
 }
 
-uint32_t GetFlags(FXFT_FaceRec* pFace) {
+uint32_t GetFlags(const RetainPtr<CFX_Face>& face) {
   uint32_t flags = 0;
-  if (FXFT_Is_Face_Bold(pFace))
+  if (FXFT_Is_Face_Bold(face->GetRec())) {
     flags |= FXFONT_FORCE_BOLD;
-  if (FXFT_Is_Face_Italic(pFace))
+  }
+  if (FXFT_Is_Face_Italic(face->GetRec())) {
     flags |= FXFONT_ITALIC;
-  if (FT_IS_FIXED_WIDTH(pFace))
+  }
+  if (face->IsFixedWidth()) {
     flags |= FXFONT_FIXED_PITCH;
+  }
 
-  TT_OS2* pOS2 = static_cast<TT_OS2*>(FT_Get_Sfnt_Table(pFace, ft_sfnt_os2));
+  TT_OS2* pOS2 =
+      static_cast<TT_OS2*>(FT_Get_Sfnt_Table(face->GetRec(), ft_sfnt_os2));
   if (!pOS2)
     return flags;
 
@@ -548,8 +552,7 @@ bool VerifyUnicodeForFontDescriptor(CFGAS_FontDescriptor* pDesc,
       FXFT_Select_Charmap(pFace->GetRec(), FT_ENCODING_UNICODE);
   FT_Error retIndex = FT_Get_Char_Index(pFace->GetRec(), wcUnicode);
 
-  if (FXFT_Get_Face_External_Stream(pFace->GetRec()))
-    FXFT_Clear_Face_External_Stream(pFace->GetRec());
+  pFace->ClearExternalStream();
 
   return !retCharmap && retIndex;
 }
@@ -726,11 +729,12 @@ std::vector<CFGAS_FontDescriptorInfo> CFGAS_FontMgr::MatchFonts(
 
 void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
                                  const WideString& wsFaceName) {
-  if ((pFace->GetRec()->face_flags & FT_FACE_FLAG_SCALABLE) == 0)
+  if (!pFace->IsScalable()) {
     return;
+  }
 
   auto pFont = std::make_unique<CFGAS_FontDescriptor>();
-  pFont->m_dwFontStyles |= GetFlags(pFace->GetRec());
+  pFont->m_dwFontStyles |= GetFlags(pFace);
 
   GetUSBCSB(pFace->GetRec(), pFont->m_dwUsb, pFont->m_dwCsb);
 
@@ -770,8 +774,7 @@ void CFGAS_FontMgr::RegisterFaces(
           pdfium::base::checked_cast<int32_t>(pFace->GetRec()->num_faces);
     }
     RegisterFace(pFace, wsFaceName);
-    if (FXFT_Get_Face_External_Stream(pFace->GetRec()))
-      FXFT_Clear_Face_External_Stream(pFace->GetRec());
+    pFace->ClearExternalStream();
   } while (index < num_faces);
 }
 

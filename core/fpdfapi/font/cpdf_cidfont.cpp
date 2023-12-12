@@ -524,7 +524,7 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
   int glyph_index = GlyphFromCharCode(charcode, &bVert);
   FXFT_FaceRec* face = m_Font.GetFaceRec();
   if (face) {
-    if (FXFT_Is_Face_Tricky(face)) {
+    if (m_Font.GetFace()->IsTricky()) {
       int err =
           FT_Load_Glyph(face, glyph_index, FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
       if (!err) {

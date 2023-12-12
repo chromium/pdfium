@@ -21,12 +21,22 @@ class CFX_Face final : public Retainable, public Observable {
                                   const FT_Open_Args* args,
                                   FT_Long face_index);
 
-  ~CFX_Face() override;
+  bool HasGlyphNames() const;
+  bool IsTtOt() const;
+  bool IsTricky() const;
+  bool IsFixedWidth() const;
+
+#if defined(PDF_ENABLE_XFA)
+  bool IsScalable() const;
+  void ClearExternalStream();
+#endif
 
   FXFT_FaceRec* GetRec() { return m_pRec.get(); }
+  const FXFT_FaceRec* GetRec() const { return m_pRec.get(); }
 
  private:
   CFX_Face(FXFT_FaceRec* pRec, RetainPtr<Retainable> pDesc);
+  ~CFX_Face() override;
 
   ScopedFXFTFaceRec const m_pRec;
   RetainPtr<Retainable> const m_pDesc;

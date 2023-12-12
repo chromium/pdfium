@@ -433,7 +433,7 @@ bool CFX_Font::LoadEmbedded(pdfium::span<const uint8_t> src_span,
 }
 
 bool CFX_Font::IsTTFont() const {
-  return m_Face && FXFT_Is_Face_TT_OT(m_Face->GetRec()) == FT_FACE_FLAG_SFNT;
+  return m_Face && m_Face->IsTtOt();
 }
 
 int CFX_Font::GetAscent() const {
@@ -462,7 +462,7 @@ absl::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
   if (!m_Face)
     return absl::nullopt;
 
-  if (FXFT_Is_Face_Tricky(m_Face->GetRec())) {
+  if (m_Face->IsTricky()) {
     int error = FT_Set_Char_Size(m_Face->GetRec(), 0, 1000 * 64, 72, 72);
     if (error)
       return absl::nullopt;
@@ -523,7 +523,7 @@ bool CFX_Font::IsBold() const {
 }
 
 bool CFX_Font::IsFixedWidth() const {
-  return m_Face && FXFT_Is_Face_fixedwidth(m_Face->GetRec()) != 0;
+  return m_Face && m_Face->IsFixedWidth();
 }
 
 #if defined(_SKIA_SUPPORT_)
@@ -687,9 +687,9 @@ std::unique_ptr<CFX_Path> CFX_Font::LoadGlyphPathImpl(uint32_t glyph_index,
   }
   ScopedFontTransform scoped_transform(m_Face, &ft_matrix);
   int load_flags = FT_LOAD_NO_BITMAP;
-  if (!(m_Face->GetRec()->face_flags & FT_FACE_FLAG_SFNT) ||
-      !FT_IS_TRICKY(m_Face->GetRec()))
+  if (!m_Face->IsTtOt() || !m_Face->IsTricky()) {
     load_flags |= FT_LOAD_NO_HINTING;
+  }
   if (FT_Load_Glyph(m_Face->GetRec(), glyph_index, load_flags))
     return nullptr;
   if (m_pSubstFont && !m_pSubstFont->IsBuiltInGenericFont() &&

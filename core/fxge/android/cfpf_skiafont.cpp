@@ -79,7 +79,7 @@ int32_t CFPF_SkiaFont::GetDescent() const {
 bool CFPF_SkiaFont::GetGlyphBBox(int32_t iGlyphIndex, FX_RECT& rtBBox) {
   if (!m_Face)
     return false;
-  if (FXFT_Is_Face_Tricky(GetFaceRec())) {
+  if (m_Face->IsTricky()) {
     if (FT_Set_Char_Size(GetFaceRec(), 0, 1000 * 64, 72, 72))
       return false;
     if (FT_Load_Glyph(GetFaceRec(), iGlyphIndex,

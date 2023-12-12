@@ -385,8 +385,9 @@ std::unique_ptr<CFPF_SkiaPathFont> CFPF_SkiaFontMgr::ReportFace(
     dwStyle |= FXFONT_FORCE_BOLD;
   if (FXFT_Is_Face_Italic(face->GetRec()))
     dwStyle |= FXFONT_ITALIC;
-  if (FT_IS_FIXED_WIDTH(face->GetRec()))
+  if (face->IsFixedWidth()) {
     dwStyle |= FXFONT_FIXED_PITCH;
+  }
   TT_OS2* pOS2 =
       static_cast<TT_OS2*>(FT_Get_Sfnt_Table(face->GetRec(), ft_sfnt_os2));
   if (pOS2) {

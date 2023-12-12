@@ -155,8 +155,9 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_GlyphCache::RenderGlyph(
 
   ScopedFontTransform scoped_transform(GetFace(), &ft_matrix);
   int load_flags = FT_LOAD_NO_BITMAP | FT_LOAD_PEDANTIC;
-  if (!(GetFaceRec()->face_flags & FT_FACE_FLAG_SFNT))
+  if (!GetFace()->IsTtOt()) {
     load_flags |= FT_LOAD_NO_HINTING;
+  }
   int error = FT_Load_Glyph(GetFaceRec(), glyph_index, load_flags);
   if (error) {
     // if an error is returned, try to reload glyphs without hinting.
