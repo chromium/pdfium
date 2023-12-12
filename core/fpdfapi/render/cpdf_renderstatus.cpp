@@ -447,9 +447,8 @@ FX_ARGB CPDF_RenderStatus::GetFillArgbForType3(CPDF_PageObject* pObj) const {
           pObj->general_state().GetTransferFunc()->TranslateColor(colorref);
     }
   }
-  return m_Options.TranslateObjectColor(AlphaAndColorRefToArgb(alpha, colorref),
-                                        pObj->GetType(),
-                                        CPDF_RenderOptions::RenderType::kFill);
+  return m_Options.TranslateObjectFillColor(
+      AlphaAndColorRefToArgb(alpha, colorref), pObj->GetType());
 }
 
 FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
@@ -477,9 +476,8 @@ FX_ARGB CPDF_RenderStatus::GetStrokeArgb(CPDF_PageObject* pObj) const {
           pObj->general_state().GetTransferFunc()->TranslateColor(colorref);
     }
   }
-  return m_Options.TranslateObjectColor(
-      AlphaAndColorRefToArgb(alpha, colorref), pObj->GetType(),
-      CPDF_RenderOptions::RenderType::kStroke);
+  return m_Options.TranslateObjectStrokeColor(
+      AlphaAndColorRefToArgb(alpha, colorref), pObj->GetType());
 }
 
 void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
