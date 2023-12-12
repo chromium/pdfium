@@ -405,7 +405,6 @@ std::unique_ptr<CFPF_SkiaPathFont> CFPF_SkiaFontMgr::ReportFace(
     dwStyle |= FXFONT_SYMBOLIC;
 
   return std::make_unique<CFPF_SkiaPathFont>(
-      file, FXFT_Get_Face_Family_Name(face->GetRec()), dwStyle,
-      face->GetRec()->face_index, FPF_SkiaGetFaceCharset(pOS2),
-      face->GetRec()->num_glyphs);
+      file, face->GetFamilyName(), dwStyle, face->GetRec()->face_index,
+      FPF_SkiaGetFaceCharset(pOS2), face->GetRec()->num_glyphs);
 }

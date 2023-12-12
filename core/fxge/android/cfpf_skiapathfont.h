@@ -14,7 +14,7 @@
 class CFPF_SkiaPathFont {
  public:
   CFPF_SkiaPathFont(const ByteString& path,
-                    const char* pFamily,
+                    const ByteString& family,
                     uint32_t dwStyle,
                     int32_t iFaceIndex,
                     uint32_t dwCharsets,

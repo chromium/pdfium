@@ -70,6 +70,14 @@ bool CFX_Face::IsBold() const {
   return !!(GetRec()->style_flags & FT_STYLE_FLAG_BOLD);
 }
 
+ByteString CFX_Face::GetFamilyName() const {
+  return ByteString(GetRec()->family_name);
+}
+
+ByteString CFX_Face::GetStyleName() const {
+  return ByteString(GetRec()->style_name);
+}
+
 pdfium::span<uint8_t> CFX_Face::GetData() const {
   return {GetRec()->stream->base, GetRec()->stream->size};
 }

@@ -33,7 +33,7 @@ CFPF_SkiaFont::~CFPF_SkiaFont() = default;
 ByteString CFPF_SkiaFont::GetFamilyName() {
   if (!m_Face)
     return ByteString();
-  return ByteString(FXFT_Get_Face_Family_Name(GetFaceRec()));
+  return m_Face->GetFamilyName();
 }
 
 ByteString CFPF_SkiaFont::GetPsName() {

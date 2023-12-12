@@ -5,6 +5,7 @@
 #ifndef CORE_FXGE_CFX_FACE_H_
 #define CORE_FXGE_CFX_FACE_H_
 
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/freetype/fx_freetype.h"
@@ -33,6 +34,9 @@ class CFX_Face final : public Retainable, public Observable {
 
   bool IsItalic() const;
   bool IsBold() const;
+
+  ByteString GetFamilyName() const;
+  ByteString GetStyleName() const;
 
   pdfium::span<uint8_t> GetData() const;
 

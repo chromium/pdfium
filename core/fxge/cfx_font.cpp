@@ -513,7 +513,7 @@ bool CFX_Font::IsItalic() const {
     return true;
   }
 
-  ByteString str(FXFT_Get_Face_Style_Name(m_Face->GetRec()));
+  ByteString str = m_Face->GetStyleName();
   str.MakeLower();
   return str.Contains("italic");
 }
@@ -547,7 +547,7 @@ ByteString CFX_Font::GetFamilyName() const {
   if (!m_Face && !m_pSubstFont)
     return ByteString();
   if (m_Face)
-    return ByteString(FXFT_Get_Face_Family_Name(m_Face->GetRec()));
+    return m_Face->GetFamilyName();
   return m_pSubstFont->m_Family;
 }
 
@@ -560,7 +560,7 @@ ByteString CFX_Font::GetFaceName() const {
   if (!m_Face && !m_pSubstFont)
     return ByteString();
   if (m_Face) {
-    ByteString style = ByteString(FXFT_Get_Face_Style_Name(m_Face->GetRec()));
+    ByteString style = m_Face->GetStyleName();
     ByteString facename = GetFamilyNameOrUntitled();
     if (ShouldAppendStyle(style))
       facename += " " + style;
@@ -574,7 +574,7 @@ ByteString CFX_Font::GetBaseFontName() const {
   if (!psname.IsEmpty() && psname != kUntitledFontName)
     return psname;
   if (m_Face) {
-    ByteString style = ByteString(FXFT_Get_Face_Style_Name(m_Face->GetRec()));
+    ByteString style = m_Face->GetStyleName();
     ByteString facename = GetFamilyNameOrUntitled();
     if (IsTTFont())
       facename.Remove(' ');
