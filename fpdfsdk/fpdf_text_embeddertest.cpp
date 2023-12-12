@@ -512,8 +512,7 @@ TEST_F(FPDFTextEmbedderTest, TextSearchTrailingSpace) {
     EXPECT_EQ(10, FPDFText_GetSchResultIndex(search.get()));
     EXPECT_EQ(4, FPDFText_GetSchCount(search.get()));
 
-    // TODO(crbug.com/pdfium/2104): Enable the code below. It should not crash.
-    // EXPECT_FALSE(FPDFText_FindNext(search.get()));
+    EXPECT_FALSE(FPDFText_FindNext(search.get()));
   }
 
   UnloadPage(page);

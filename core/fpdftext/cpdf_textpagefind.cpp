@@ -287,6 +287,9 @@ bool CPDF_TextPageFind::FindNext() {
       size_t index = bSpaceStart ? 1 : 0;
       nStartPos = m_resStart + m_csFindWhatArray[index].GetLength();
     }
+    if (nStartPos >= strLen) {
+      return false;
+    }
   }
   m_resEnd = nResultPos.value() + m_csFindWhatArray.back().GetLength() - 1;
   if (m_options.bConsecutive) {
