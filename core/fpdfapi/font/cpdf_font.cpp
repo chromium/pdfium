@@ -220,10 +220,12 @@ void CPDF_Font::CheckFontMetrics() {
       m_FontBBox.right == 0) {
     FXFT_FaceRec* face = m_Font.GetFaceRec();
     if (face) {
-      m_FontBBox.left = TT2PDF(FXFT_Get_Face_xMin(face), face);
-      m_FontBBox.bottom = TT2PDF(FXFT_Get_Face_yMin(face), face);
-      m_FontBBox.right = TT2PDF(FXFT_Get_Face_xMax(face), face);
-      m_FontBBox.top = TT2PDF(FXFT_Get_Face_yMax(face), face);
+      // Note that `m_FontBBox` is deliberately flipped.
+      const FX_RECT raw_bbox = m_Font.GetFace()->GetBBox();
+      m_FontBBox.left = TT2PDF(raw_bbox.left, face);
+      m_FontBBox.bottom = TT2PDF(raw_bbox.top, face);
+      m_FontBBox.right = TT2PDF(raw_bbox.right, face);
+      m_FontBBox.top = TT2PDF(raw_bbox.bottom, face);
       m_Ascent = TT2PDF(FXFT_Get_Face_Ascender(face), face);
       m_Descent = TT2PDF(FXFT_Get_Face_Descender(face), face);
     } else {

@@ -590,11 +590,7 @@ ByteString CFX_Font::GetBaseFontName() const {
 absl::optional<FX_RECT> CFX_Font::GetRawBBox() const {
   if (!m_Face)
     return absl::nullopt;
-
-  return FXRectFromFTPos(FXFT_Get_Face_xMin(m_Face->GetRec()),
-                         FXFT_Get_Face_yMin(m_Face->GetRec()),
-                         FXFT_Get_Face_xMax(m_Face->GetRec()),
-                         FXFT_Get_Face_yMax(m_Face->GetRec()));
+  return m_Face->GetBBox();
 }
 
 absl::optional<FX_RECT> CFX_Font::GetBBox() const {

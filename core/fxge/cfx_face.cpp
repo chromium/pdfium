@@ -78,6 +78,13 @@ ByteString CFX_Face::GetStyleName() const {
   return ByteString(GetRec()->style_name);
 }
 
+FX_RECT CFX_Face::GetBBox() const {
+  return FX_RECT(pdfium::base::checked_cast<int32_t>(GetRec()->bbox.xMin),
+                 pdfium::base::checked_cast<int32_t>(GetRec()->bbox.yMin),
+                 pdfium::base::checked_cast<int32_t>(GetRec()->bbox.xMax),
+                 pdfium::base::checked_cast<int32_t>(GetRec()->bbox.yMax));
+}
+
 pdfium::span<uint8_t> CFX_Face::GetData() const {
   return {GetRec()->stream->base, GetRec()->stream->size};
 }

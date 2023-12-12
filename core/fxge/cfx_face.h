@@ -6,6 +6,7 @@
 #define CORE_FXGE_CFX_FACE_H_
 
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/freetype/fx_freetype.h"
@@ -37,6 +38,8 @@ class CFX_Face final : public Retainable, public Observable {
 
   ByteString GetFamilyName() const;
   ByteString GetStyleName() const;
+
+  FX_RECT GetBBox() const;
 
   pdfium::span<uint8_t> GetData() const;
 

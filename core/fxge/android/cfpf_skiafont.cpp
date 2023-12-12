@@ -109,20 +109,17 @@ bool CFPF_SkiaFont::GetGlyphBBox(int32_t iGlyphIndex, FX_RECT& rtBBox) {
                     FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH)) {
     return false;
   }
+  const FT_UShort em = FXFT_Get_Face_UnitsPerEM(GetFaceRec());
   rtBBox.left = static_cast<int32_t>(
-      FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                    FXFT_Get_Glyph_HoriBearingX(GetFaceRec())));
+      FPF_EM_ADJUST(em, FXFT_Get_Glyph_HoriBearingX(GetFaceRec())));
   rtBBox.bottom = static_cast<int32_t>(
-      FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                    FXFT_Get_Glyph_HoriBearingY(GetFaceRec())));
+      FPF_EM_ADJUST(em, FXFT_Get_Glyph_HoriBearingY(GetFaceRec())));
   rtBBox.right = static_cast<int32_t>(
-      FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                    FXFT_Get_Glyph_HoriBearingX(GetFaceRec()) +
-                        FXFT_Get_Glyph_Width(GetFaceRec())));
+      FPF_EM_ADJUST(em, FXFT_Get_Glyph_HoriBearingX(GetFaceRec()) +
+                            FXFT_Get_Glyph_Width(GetFaceRec())));
   rtBBox.top = static_cast<int32_t>(
-      FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                    FXFT_Get_Glyph_HoriBearingY(GetFaceRec()) -
-                        FXFT_Get_Glyph_Height(GetFaceRec())));
+      FPF_EM_ADJUST(em, FXFT_Get_Glyph_HoriBearingY(GetFaceRec()) -
+                            FXFT_Get_Glyph_Height(GetFaceRec())));
   return true;
 }
 
@@ -130,18 +127,13 @@ bool CFPF_SkiaFont::GetBBox(FX_RECT& rtBBox) {
   if (!m_Face) {
     return false;
   }
-  rtBBox.left =
-      static_cast<int32_t>(FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                                         FXFT_Get_Face_xMin(GetFaceRec())));
-  rtBBox.top =
-      static_cast<int32_t>(FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                                         FXFT_Get_Face_yMin(GetFaceRec())));
-  rtBBox.right =
-      static_cast<int32_t>(FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                                         FXFT_Get_Face_xMax(GetFaceRec())));
-  rtBBox.bottom =
-      static_cast<int32_t>(FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                                         FXFT_Get_Face_yMax(GetFaceRec())));
+
+  const FT_UShort em = FXFT_Get_Face_UnitsPerEM(GetFaceRec());
+  const FX_RECT raw_bbox = m_Face->GetBBox();
+  rtBBox.left = static_cast<int32_t>(FPF_EM_ADJUST(em, raw_bbox.left));
+  rtBBox.top = static_cast<int32_t>(FPF_EM_ADJUST(em, raw_bbox.top));
+  rtBBox.right = static_cast<int32_t>(FPF_EM_ADJUST(em, raw_bbox.right));
+  rtBBox.bottom = static_cast<int32_t>(FPF_EM_ADJUST(em, raw_bbox.bottom));
   return true;
 }
 

@@ -66,10 +66,6 @@ class ScopedFXFTMMVar {
 #define FXFT_Get_Charmap_PlatformID(charmap) (charmap)->platform_id
 #define FXFT_Get_Charmap_EncodingID(charmap) (charmap)->encoding_id
 #define FXFT_Get_Face_UnitsPerEM(face) (face)->units_per_EM
-#define FXFT_Get_Face_xMin(face) (face)->bbox.xMin
-#define FXFT_Get_Face_xMax(face) (face)->bbox.xMax
-#define FXFT_Get_Face_yMin(face) (face)->bbox.yMin
-#define FXFT_Get_Face_yMax(face) (face)->bbox.yMax
 #define FXFT_Get_Face_Height(face) (face)->height
 #define FXFT_Get_Face_Ascender(face) (face)->ascender
 #define FXFT_Get_Face_Descender(face) (face)->descender
