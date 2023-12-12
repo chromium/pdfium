@@ -382,8 +382,7 @@ void CFX_Font::LoadSubst(const ByteString& face_name,
       face_name, bTrueType, flags, weight, italic_angle, code_page,
       m_pSubstFont.get());
   if (m_Face) {
-    m_FontData = {FXFT_Get_Face_Stream_Base(m_Face->GetRec()),
-                  FXFT_Get_Face_Stream_Size(m_Face->GetRec())};
+    m_FontData = m_Face->GetData();
   }
 }
 

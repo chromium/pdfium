@@ -70,6 +70,10 @@ bool CFX_Face::IsBold() const {
   return !!(GetRec()->style_flags & FT_STYLE_FLAG_BOLD);
 }
 
+pdfium::span<uint8_t> CFX_Face::GetData() const {
+  return {GetRec()->stream->base, GetRec()->stream->size};
+}
+
 CFX_Face::CFX_Face(FXFT_FaceRec* rec, RetainPtr<Retainable> pDesc)
     : m_pRec(rec), m_pDesc(std::move(pDesc)) {
   DCHECK(m_pRec);

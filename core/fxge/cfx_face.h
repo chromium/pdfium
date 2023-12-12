@@ -34,6 +34,8 @@ class CFX_Face final : public Retainable, public Observable {
   bool IsItalic() const;
   bool IsBold() const;
 
+  pdfium::span<uint8_t> GetData() const;
+
   FXFT_FaceRec* GetRec() { return m_pRec.get(); }
   const FXFT_FaceRec* GetRec() const { return m_pRec.get(); }
 

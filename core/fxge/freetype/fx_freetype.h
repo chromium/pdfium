@@ -58,8 +58,6 @@ class ScopedFXFTMMVar {
 #define FXFT_Render_Glyph(face, mode) \
   FT_Render_Glyph((face)->glyph, static_cast<enum FT_Render_Mode_>(mode))
 
-#define FXFT_Get_Face_Stream_Base(face) (face)->stream->base
-#define FXFT_Get_Face_Stream_Size(face) (face)->stream->size
 #define FXFT_Get_Face_Family_Name(face) (face)->family_name
 #define FXFT_Get_Face_Style_Name(face) (face)->style_name
 #define FXFT_Get_Glyph_HoriBearingX(face) (face)->glyph->metrics.horiBearingX
