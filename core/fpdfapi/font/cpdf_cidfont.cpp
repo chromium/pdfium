@@ -522,14 +522,15 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
   FX_RECT rect;
   bool bVert = false;
   int glyph_index = GlyphFromCharCode(charcode, &bVert);
-  FXFT_FaceRec* face = m_Font.GetFaceRec();
+  RetainPtr<CFX_Face> face = m_Font.GetFace();
   if (face) {
-    if (m_Font.GetFace()->IsTricky()) {
-      int err =
-          FT_Load_Glyph(face, glyph_index, FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
+    FXFT_FaceRec* face_rec = face->GetRec();
+    if (face->IsTricky()) {
+      int err = FT_Load_Glyph(face_rec, glyph_index,
+                              FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
       if (!err) {
         FT_Glyph glyph;
-        err = FT_Get_Glyph(face->glyph, &glyph);
+        err = FT_Get_Glyph(face_rec->glyph, &glyph);
         if (!err) {
           FT_BBox cbox;
           FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_PIXELS, &cbox);
@@ -537,8 +538,8 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
           const int xMax = FTPosToCBoxInt(cbox.xMax);
           const int yMin = FTPosToCBoxInt(cbox.yMin);
           const int yMax = FTPosToCBoxInt(cbox.yMax);
-          const int pixel_size_x = face->size->metrics.x_ppem;
-          const int pixel_size_y = face->size->metrics.y_ppem;
+          const int pixel_size_x = face_rec->size->metrics.x_ppem;
+          const int pixel_size_y = face_rec->size->metrics.y_ppem;
           if (pixel_size_x == 0 || pixel_size_y == 0) {
             rect = FX_RECT(xMin, yMax, xMax, yMin);
           } else {
@@ -546,15 +547,14 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
                 FX_RECT(xMin * 1000 / pixel_size_x, yMax * 1000 / pixel_size_y,
                         xMax * 1000 / pixel_size_x, yMin * 1000 / pixel_size_y);
           }
-          rect.top = std::min(rect.top,
-                              static_cast<int>(FXFT_Get_Face_Ascender(face)));
-          rect.bottom = std::max(
-              rect.bottom, static_cast<int>(FXFT_Get_Face_Descender(face)));
+          rect.top = std::min(rect.top, static_cast<int>(face->GetAscender()));
+          rect.bottom =
+              std::max(rect.bottom, static_cast<int>(face->GetDescender()));
           FT_Done_Glyph(glyph);
         }
       }
     } else {
-      int err = FT_Load_Glyph(face, glyph_index, FT_LOAD_NO_SCALE);
+      int err = FT_Load_Glyph(face_rec, glyph_index, FT_LOAD_NO_SCALE);
       if (err == 0) {
         rect = GetCharBBoxForFace(face);
         if (rect.top <= kMaxRectTop)

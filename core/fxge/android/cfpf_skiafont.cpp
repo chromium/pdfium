@@ -57,23 +57,20 @@ int32_t CFPF_SkiaFont::GetGlyphWidth(int32_t iGlyphIndex) {
                     FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH)) {
     return 0;
   }
-  return static_cast<int32_t>(
-      FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                    FXFT_Get_Glyph_HoriAdvance(GetFaceRec())));
+  return static_cast<int32_t>(FPF_EM_ADJUST(
+      m_Face->GetUnitsPerEm(), FXFT_Get_Glyph_HoriAdvance(GetFaceRec())));
 }
 
 int32_t CFPF_SkiaFont::GetAscent() const {
   if (!m_Face)
     return 0;
-  return FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                       FXFT_Get_Face_Ascender(GetFaceRec()));
+  return FPF_EM_ADJUST(m_Face->GetUnitsPerEm(), m_Face->GetAscender());
 }
 
 int32_t CFPF_SkiaFont::GetDescent() const {
   if (!m_Face)
     return 0;
-  return FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                       FXFT_Get_Face_Descender(GetFaceRec()));
+  return FPF_EM_ADJUST(m_Face->GetUnitsPerEm(), m_Face->GetDescender());
 }
 
 bool CFPF_SkiaFont::GetGlyphBBox(int32_t iGlyphIndex, FX_RECT& rtBBox) {
@@ -109,7 +106,7 @@ bool CFPF_SkiaFont::GetGlyphBBox(int32_t iGlyphIndex, FX_RECT& rtBBox) {
                     FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH)) {
     return false;
   }
-  const FT_UShort em = FXFT_Get_Face_UnitsPerEM(GetFaceRec());
+  const uint16_t em = m_Face->GetUnitsPerEm();
   rtBBox.left = static_cast<int32_t>(
       FPF_EM_ADJUST(em, FXFT_Get_Glyph_HoriBearingX(GetFaceRec())));
   rtBBox.bottom = static_cast<int32_t>(
@@ -128,7 +125,7 @@ bool CFPF_SkiaFont::GetBBox(FX_RECT& rtBBox) {
     return false;
   }
 
-  const FT_UShort em = FXFT_Get_Face_UnitsPerEM(GetFaceRec());
+  const uint16_t em = m_Face->GetUnitsPerEm();
   const FX_RECT raw_bbox = m_Face->GetBBox();
   rtBBox.left = static_cast<int32_t>(FPF_EM_ADJUST(em, raw_bbox.left));
   rtBBox.top = static_cast<int32_t>(FPF_EM_ADJUST(em, raw_bbox.top));
@@ -140,8 +137,7 @@ bool CFPF_SkiaFont::GetBBox(FX_RECT& rtBBox) {
 int32_t CFPF_SkiaFont::GetHeight() const {
   if (!m_Face)
     return 0;
-  return FPF_EM_ADJUST(FXFT_Get_Face_UnitsPerEM(GetFaceRec()),
-                       FXFT_Get_Face_Height(GetFaceRec()));
+  return FPF_EM_ADJUST(m_Face->GetUnitsPerEm(), m_Face->GetHeight());
 }
 
 int32_t CFPF_SkiaFont::GetItalicAngle() const {

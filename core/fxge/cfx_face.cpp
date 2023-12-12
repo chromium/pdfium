@@ -85,6 +85,24 @@ FX_RECT CFX_Face::GetBBox() const {
                  pdfium::base::checked_cast<int32_t>(GetRec()->bbox.yMax));
 }
 
+uint16_t CFX_Face::GetUnitsPerEm() const {
+  return pdfium::base::checked_cast<uint16_t>(GetRec()->units_per_EM);
+}
+
+int16_t CFX_Face::GetAscender() const {
+  return pdfium::base::checked_cast<int16_t>(GetRec()->ascender);
+}
+
+int16_t CFX_Face::GetDescender() const {
+  return pdfium::base::checked_cast<int16_t>(GetRec()->descender);
+}
+
+#if BUILDFLAG(IS_ANDROID)
+int16_t CFX_Face::GetHeight() const {
+  return pdfium::base::checked_cast<int16_t>(GetRec()->height);
+}
+#endif
+
 pdfium::span<uint8_t> CFX_Face::GetData() const {
   return {GetRec()->stream->base, GetRec()->stream->size};
 }

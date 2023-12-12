@@ -218,16 +218,16 @@ void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* pFontDesc) {
 void CPDF_Font::CheckFontMetrics() {
   if (m_FontBBox.top == 0 && m_FontBBox.bottom == 0 && m_FontBBox.left == 0 &&
       m_FontBBox.right == 0) {
-    FXFT_FaceRec* face = m_Font.GetFaceRec();
+    RetainPtr<CFX_Face> face = m_Font.GetFace();
     if (face) {
       // Note that `m_FontBBox` is deliberately flipped.
-      const FX_RECT raw_bbox = m_Font.GetFace()->GetBBox();
+      const FX_RECT raw_bbox = face->GetBBox();
       m_FontBBox.left = TT2PDF(raw_bbox.left, face);
       m_FontBBox.bottom = TT2PDF(raw_bbox.top, face);
       m_FontBBox.right = TT2PDF(raw_bbox.right, face);
       m_FontBBox.top = TT2PDF(raw_bbox.bottom, face);
-      m_Ascent = TT2PDF(FXFT_Get_Face_Ascender(face), face);
-      m_Descent = TT2PDF(FXFT_Get_Face_Descender(face), face);
+      m_Ascent = TT2PDF(face->GetAscender(), face);
+      m_Descent = TT2PDF(face->GetDescender(), face);
     } else {
       bool bFirst = true;
       for (int i = 0; i < 256; i++) {
@@ -408,8 +408,8 @@ CFX_Font* CPDF_Font::GetFontFallback(int position) {
 }
 
 // static
-int CPDF_Font::TT2PDF(FT_Pos m, FXFT_FaceRec* face) {
-  int upm = FXFT_Get_Face_UnitsPerEM(face);
+int CPDF_Font::TT2PDF(FT_Pos m, const RetainPtr<CFX_Face>& face) {
+  int upm = face->GetUnitsPerEm();
   if (upm == 0)
     return pdfium::base::saturated_cast<int>(m);
 
@@ -418,12 +418,13 @@ int CPDF_Font::TT2PDF(FT_Pos m, FXFT_FaceRec* face) {
 }
 
 // static
-FX_RECT CPDF_Font::GetCharBBoxForFace(FXFT_FaceRec* face) {
-  pdfium::base::ClampedNumeric<FT_Pos> left = FXFT_Get_Glyph_HoriBearingX(face);
-  pdfium::base::ClampedNumeric<FT_Pos> top = FXFT_Get_Glyph_HoriBearingY(face);
+FX_RECT CPDF_Font::GetCharBBoxForFace(const RetainPtr<CFX_Face>& face) {
+  FXFT_FaceRec* rec = face->GetRec();
+  pdfium::base::ClampedNumeric<FT_Pos> left = FXFT_Get_Glyph_HoriBearingX(rec);
+  pdfium::base::ClampedNumeric<FT_Pos> top = FXFT_Get_Glyph_HoriBearingY(rec);
   return FX_RECT(TT2PDF(left, face), TT2PDF(top, face),
-                 TT2PDF(left + FXFT_Get_Glyph_Width(face), face),
-                 TT2PDF(top - FXFT_Get_Glyph_Height(face), face));
+                 TT2PDF(left + FXFT_Get_Glyph_Width(rec), face),
+                 TT2PDF(top - FXFT_Get_Glyph_Height(rec), face));
 }
 
 // static

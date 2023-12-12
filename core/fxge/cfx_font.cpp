@@ -414,8 +414,7 @@ int CFX_Font::GetGlyphWidthImpl(uint32_t glyph_index,
   if (horiAdvance < kThousandthMinInt || horiAdvance > kThousandthMaxInt)
     return 0;
 
-  return static_cast<int>(
-      EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face->GetRec()), horiAdvance));
+  return static_cast<int>(EM_ADJUST(m_Face->GetUnitsPerEm(), horiAdvance));
 }
 
 bool CFX_Font::LoadEmbedded(pdfium::span<const uint8_t> src_span,
@@ -439,22 +438,22 @@ int CFX_Font::GetAscent() const {
   if (!m_Face)
     return 0;
 
-  int ascender = FXFT_Get_Face_Ascender(m_Face->GetRec());
+  int ascender = m_Face->GetAscender();
   if (ascender < kThousandthMinInt || ascender > kThousandthMaxInt)
     return 0;
 
-  return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face->GetRec()), ascender);
+  return EM_ADJUST(m_Face->GetUnitsPerEm(), ascender);
 }
 
 int CFX_Font::GetDescent() const {
   if (!m_Face)
     return 0;
 
-  int descender = FXFT_Get_Face_Descender(m_Face->GetRec());
+  int descender = m_Face->GetDescender();
   if (descender < kThousandthMinInt || descender > kThousandthMaxInt)
     return 0;
 
-  return EM_ADJUST(FXFT_Get_Face_UnitsPerEM(m_Face->GetRec()), descender);
+  return EM_ADJUST(m_Face->GetUnitsPerEm(), descender);
 }
 
 absl::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
@@ -482,12 +481,9 @@ absl::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
     int pixel_size_y = m_Face->GetRec()->size->metrics.y_ppem;
     FX_RECT result = ScaledFXRectFromFTPos(
         cbox.xMin, cbox.yMax, cbox.xMax, cbox.yMin, pixel_size_x, pixel_size_y);
-    result.top =
-        std::min(result.top, pdfium::base::checked_cast<int32_t>(
-                                 FXFT_Get_Face_Ascender(m_Face->GetRec())));
+    result.top = std::min(result.top, static_cast<int>(m_Face->GetAscender()));
     result.bottom =
-        std::max(result.bottom, pdfium::base::checked_cast<int32_t>(
-                                    FXFT_Get_Face_Descender(m_Face->GetRec())));
+        std::max(result.bottom, static_cast<int>(m_Face->GetDescender()));
     FT_Done_Glyph(glyph);
     if (FT_Set_Pixel_Sizes(m_Face->GetRec(), 0, 64) != 0)
       return absl::nullopt;
@@ -496,7 +492,7 @@ absl::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
   constexpr int kFlag = FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH;
   if (FT_Load_Glyph(m_Face->GetRec(), glyph_index, kFlag) != 0)
     return absl::nullopt;
-  int em = FXFT_Get_Face_UnitsPerEM(m_Face->GetRec());
+  int em = m_Face->GetUnitsPerEm();
   return ScaledFXRectFromFTPos(FXFT_Get_Glyph_HoriBearingX(m_Face->GetRec()),
                                FXFT_Get_Glyph_HoriBearingY(m_Face->GetRec()) -
                                    FXFT_Get_Glyph_Height(m_Face->GetRec()),
@@ -598,7 +594,7 @@ absl::optional<FX_RECT> CFX_Font::GetBBox() const {
   if (!result.has_value())
     return result;
 
-  int em = FXFT_Get_Face_UnitsPerEM(m_Face->GetRec());
+  int em = m_Face->GetUnitsPerEm();
   if (em != 0) {
     FX_RECT& bbox = result.value();
     bbox.left = (bbox.left * 1000) / em;
@@ -645,13 +641,13 @@ void CFX_Font::AdjustMMParams(int glyph_index,
     FT_Load_Glyph(m_Face->GetRec(), glyph_index,
                   FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
     FT_Pos min_width = FXFT_Get_Glyph_HoriAdvance(m_Face->GetRec()) * 1000 /
-                       FXFT_Get_Face_UnitsPerEM(m_Face->GetRec());
+                       m_Face->GetUnitsPerEm();
     coords[1] = max_param;
     FT_Set_MM_Design_Coordinates(m_Face->GetRec(), 2, coords);
     FT_Load_Glyph(m_Face->GetRec(), glyph_index,
                   FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
     FT_Pos max_width = FXFT_Get_Glyph_HoriAdvance(m_Face->GetRec()) * 1000 /
-                       FXFT_Get_Face_UnitsPerEM(m_Face->GetRec());
+                       m_Face->GetUnitsPerEm();
     if (max_width == min_width) {
       return;
     }
