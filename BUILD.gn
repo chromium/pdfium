@@ -318,6 +318,14 @@ config("pdfium_plugin_config") {
         "-Xclang",
         "blink-gc-plugin",
       ]
+
+      # Disable GC plugin forbidding off-heap collections of GCed:
+      cflags += [
+        "-Xclang",
+        "-plugin-arg-blink-gc-plugin",
+        "-Xclang",
+        "disable-off-heap-collections-of-gced-check",
+      ]
     }
   }
 }
