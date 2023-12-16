@@ -7,6 +7,8 @@
 
 #include <stdint.h>
 
+#include <memory>
+
 #include "build/build_config.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_coordinates.h"
@@ -18,6 +20,9 @@
 namespace fxge {
 enum class FontEncoding : uint32_t;
 }
+
+class CFX_Font;
+class CFX_GlyphBitmap;
 
 class CFX_Face final : public Retainable, public Observable {
  public:
@@ -55,6 +60,13 @@ class CFX_Face final : public Retainable, public Observable {
 #endif
 
   pdfium::span<uint8_t> GetData() const;
+
+  std::unique_ptr<CFX_GlyphBitmap> RenderGlyph(const CFX_Font* pFont,
+                                               uint32_t glyph_index,
+                                               bool bFontStyle,
+                                               const CFX_Matrix& matrix,
+                                               int dest_width,
+                                               int anti_alias);
 
   bool SelectCharMap(fxge::FontEncoding encoding);
 

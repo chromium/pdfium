@@ -53,9 +53,6 @@ class ScopedFXFTMMVar {
   std::unique_ptr<FT_MM_Var, FXFTMMVarDeleter> const variation_desc_;
 };
 
-#define FXFT_Render_Glyph(face, mode) \
-  FT_Render_Glyph((face)->glyph, static_cast<enum FT_Render_Mode_>(mode))
-
 #define FXFT_Get_Glyph_HoriBearingX(face) (face)->glyph->metrics.horiBearingX
 #define FXFT_Get_Glyph_HoriBearingY(face) (face)->glyph->metrics.horiBearingY
 #define FXFT_Get_Glyph_Width(face) (face)->glyph->metrics.width
@@ -65,14 +62,6 @@ class ScopedFXFTMMVar {
 #define FXFT_Get_Charmap_EncodingID(charmap) (charmap)->encoding_id
 #define FXFT_Get_Glyph_HoriAdvance(face) (face)->glyph->metrics.horiAdvance
 #define FXFT_Get_Glyph_Outline(face) &((face)->glyph->outline)
-#define FXFT_Get_Glyph_Bitmap(face) (face)->glyph->bitmap
-#define FXFT_Get_Bitmap_Width(bitmap) (bitmap).width
-#define FXFT_Get_Bitmap_Rows(bitmap) (bitmap).rows
-#define FXFT_Get_Bitmap_PixelMode(bitmap) (bitmap).pixel_mode
-#define FXFT_Get_Bitmap_Pitch(bitmap) (bitmap).pitch
-#define FXFT_Get_Bitmap_Buffer(bitmap) (bitmap).buffer
-#define FXFT_Get_Glyph_BitmapLeft(face) (face)->glyph->bitmap_left
-#define FXFT_Get_Glyph_BitmapTop(face) (face)->glyph->bitmap_top
 
 int FXFT_unicode_from_adobe_name(const char* glyph_name);
 void FXFT_adobe_name_from_unicode(char* name, wchar_t unicode);
