@@ -31,12 +31,7 @@
 #include "third_party/base/containers/span.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
-#define EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
-
 namespace {
-
-constexpr int kThousandthMinInt = std::numeric_limits<int>::min() / 1000;
-constexpr int kThousandthMaxInt = std::numeric_limits<int>::max() / 1000;
 
 FX_RECT FXRectFromFTPos(FT_Pos left, FT_Pos top, FT_Pos right, FT_Pos bottom) {
   return FX_RECT(pdfium::base::checked_cast<int32_t>(left),
@@ -280,25 +275,11 @@ bool CFX_Font::IsTTFont() const {
 }
 
 int CFX_Font::GetAscent() const {
-  if (!m_Face)
-    return 0;
-
-  int ascender = m_Face->GetAscender();
-  if (ascender < kThousandthMinInt || ascender > kThousandthMaxInt)
-    return 0;
-
-  return EM_ADJUST(m_Face->GetUnitsPerEm(), ascender);
+  return m_Face ? m_Face->GetAdjustedAscender() : 0;
 }
 
 int CFX_Font::GetDescent() const {
-  if (!m_Face)
-    return 0;
-
-  int descender = m_Face->GetDescender();
-  if (descender < kThousandthMinInt || descender > kThousandthMaxInt)
-    return 0;
-
-  return EM_ADJUST(m_Face->GetUnitsPerEm(), descender);
+  return m_Face ? m_Face->GetAdjustedDescender() : 0;
 }
 
 absl::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {

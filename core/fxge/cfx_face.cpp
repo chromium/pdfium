@@ -20,6 +20,7 @@
 #include "core/fxge/fx_fontencoding.h"
 #include "core/fxge/scoped_font_transform.h"
 #include "third_party/base/check.h"
+#include "third_party/base/check_op.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/numerics/safe_math.h"
 
@@ -287,6 +288,20 @@ int16_t CFX_Face::GetAscender() const {
 
 int16_t CFX_Face::GetDescender() const {
   return pdfium::base::checked_cast<int16_t>(GetRec()->descender);
+}
+
+int CFX_Face::GetAdjustedAscender() const {
+  int ascender = GetAscender();
+  CHECK_GE(ascender, kThousandthMinInt);
+  CHECK_LE(ascender, kThousandthMaxInt);
+  return EM_ADJUST(GetUnitsPerEm(), ascender);
+}
+
+int CFX_Face::GetAdjustedDescender() const {
+  int descender = GetDescender();
+  CHECK_GE(descender, kThousandthMinInt);
+  CHECK_LE(descender, kThousandthMaxInt);
+  return EM_ADJUST(GetUnitsPerEm(), descender);
 }
 
 #if BUILDFLAG(IS_ANDROID)
