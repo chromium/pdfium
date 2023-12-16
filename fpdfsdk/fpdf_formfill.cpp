@@ -34,9 +34,9 @@
 #include "fpdfsdk/fpdfxfa/cpdfxfa_page.h"
 #endif  // PDF_ENABLE_XFA
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 class SkCanvas;
-#endif  // defined(_SKIA_SUPPORT_)
+#endif  // defined(PDF_USE_SKIA)
 
 #ifdef PDF_ENABLE_XFA
 static_assert(static_cast<int>(AlertButton::kDefault) ==
@@ -200,7 +200,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   CFX_Matrix matrix = pPage->GetDisplayMatrix(rect, rotate);
 
   auto pDevice = std::make_unique<CFX_DefaultRenderDevice>();
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   if (CFX_DefaultRenderDevice::UseSkiaRenderer() && canvas) {
     pDevice->AttachCanvas(reinterpret_cast<SkCanvas*>(canvas));
   }
@@ -689,7 +689,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
             rotate, flags);
 }
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLDrawSkia(FPDF_FORMHANDLE hHandle,
                                                 FPDF_SKIA_CANVAS canvas,
                                                 FPDF_PAGE page,

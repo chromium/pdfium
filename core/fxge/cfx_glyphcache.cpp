@@ -28,7 +28,7 @@
 #include "core/fxge/scoped_font_transform.h"
 #include "third_party/base/numerics/safe_math.h"
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 #include "third_party/skia/include/core/SkStream.h"  // nogncheck
 #include "third_party/skia/include/core/SkTypeface.h"  // nogncheck
 #include "third_party/skia/include/core/SkFontMgr.h"  // nogncheck
@@ -340,7 +340,7 @@ int CFX_GlyphCache::GetGlyphWidth(const CFX_Font* font,
   return m_WidthMap[key];
 }
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 
 namespace {
 // A singleton SkFontMgr which can be used to decode raw font data or
@@ -385,7 +385,7 @@ CFX_TypeFace* CFX_GlyphCache::GetDeviceCache(const CFX_Font* pFont) {
 #endif  // BUILDFLAG(IS_WIN) || BUILDFLAG(IS_APPLE)
   return m_pTypeface.get();
 }
-#endif  // defined(_SKIA_SUPPORT_)
+#endif  // defined(PDF_USE_SKIA)
 
 CFX_GlyphBitmap* CFX_GlyphCache::LookUpGlyphBitmap(
     const CFX_Font* pFont,

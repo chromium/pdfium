@@ -8,7 +8,7 @@
 
 class JBig2EmbedderTest : public EmbedderTest {};
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 // TODO(crbug.com/pdfium/11): Fix this test and enable.
 #define MAYBE_Bug_631912 DISABLED_Bug_631912
 #else

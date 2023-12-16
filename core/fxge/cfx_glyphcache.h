@@ -16,7 +16,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_face.h"
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 #include "core/fxge/fx_font.h"
 #include "third_party/skia/include/core/SkRefCnt.h"  // nogncheck
 #endif
@@ -49,7 +49,7 @@ class CFX_GlyphCache final : public Retainable, public Observable {
   RetainPtr<CFX_Face> GetFace() { return m_Face; }
   FXFT_FaceRec* GetFaceRec() { return m_Face ? m_Face->GetRec() : nullptr; }
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   CFX_TypeFace* GetDeviceCache(const CFX_Font* pFont);
   static void InitializeGlobals();
   static void DestroyGlobals();
@@ -88,7 +88,7 @@ class CFX_GlyphCache final : public Retainable, public Observable {
   std::map<ByteString, SizeGlyphCache> m_SizeMap;
   std::map<PathMapKey, std::unique_ptr<CFX_Path>> m_PathMap;
   std::map<WidthMapKey, int> m_WidthMap;
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   sk_sp<SkTypeface> m_pTypeface;
 #endif
 };

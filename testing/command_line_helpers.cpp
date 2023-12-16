@@ -15,7 +15,7 @@ bool ParseSwitchKeyValue(const std::string& arg,
 }
 
 FPDF_RENDERER_TYPE GetDefaultRendererType() {
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   return FPDF_RENDERERTYPE_SKIA;
 #else
   return FPDF_RENDERERTYPE_AGG;

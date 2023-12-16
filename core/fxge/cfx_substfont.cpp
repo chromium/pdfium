@@ -10,7 +10,7 @@ CFX_SubstFont::CFX_SubstFont() = default;
 
 CFX_SubstFont::~CFX_SubstFont() = default;
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 int CFX_SubstFont::GetOriginalWeight() const {
   int weight = m_Weight;
 

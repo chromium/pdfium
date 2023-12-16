@@ -74,7 +74,7 @@ void EmbedderTestEnvironment::AddFlag(const std::string& flag) {
     write_pngs_ = true;
     return;
   }
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   std::string value;
   if (ParseSwitchKeyValue(flag, "--use-renderer=", &value)) {
     if (value == "agg") {
@@ -87,7 +87,7 @@ void EmbedderTestEnvironment::AddFlag(const std::string& flag) {
     }
     return;
   }
-#endif  // defined(_SKIA_SUPPORT_)
+#endif  // defined(PDF_USE_SKIA)
 
   std::cerr << "Unknown flag: " << flag << "\n";
 }

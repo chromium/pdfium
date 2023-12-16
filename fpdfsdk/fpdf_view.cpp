@@ -70,9 +70,9 @@
 #include "core/fpdfapi/render/cpdf_windowsrenderdevice.h"
 #include "public/fpdf_edit.h"
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 class SkCanvas;
-#endif  // defined(_SKIA_SUPPORT_)
+#endif  // defined(PDF_USE_SKIA)
 
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(static_cast<int>(WindowsPrintMode::kEmf) == FPDF_PRINTMODE_EMF,
@@ -104,7 +104,7 @@ static_assert(
     "WindowsPrintMode::kPostScript3Type42PassThrough value mismatch");
 #endif  // BUILDFLAG(IS_WIN)
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(static_cast<int>(CFX_DefaultRenderDevice::RendererType::kAgg) ==
                   FPDF_RENDERERTYPE_AGG,
@@ -112,7 +112,7 @@ static_assert(static_cast<int>(CFX_DefaultRenderDevice::RendererType::kAgg) ==
 static_assert(static_cast<int>(CFX_DefaultRenderDevice::RendererType::kSkia) ==
                   FPDF_RENDERERTYPE_SKIA,
               "CFX_DefaultRenderDevice::RendererType::kSkia value mismatch");
-#endif  // defined(_SKIA_SUPPORT_)
+#endif  // defined(PDF_USE_SKIA)
 
 namespace {
 
@@ -127,7 +127,7 @@ void SetRendererType(FPDF_RENDERER_TYPE public_type) {
 
   // AGG is always present in a build. |FPDF_RENDERERTYPE_SKIA| is valid to use
   // only if it is included in the build.
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   // This build configuration has the option for runtime renderer selection.
   if (public_type == FPDF_RENDERERTYPE_AGG ||
       public_type == FPDF_RENDERERTYPE_SKIA) {
@@ -143,7 +143,7 @@ void SetRendererType(FPDF_RENDERER_TYPE public_type) {
 }
 
 void ResetRendererType() {
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   CFX_DefaultRenderDevice::SetRendererType(
       CFX_DefaultRenderDevice::kDefaultRenderer);
 #endif
@@ -235,7 +235,7 @@ FPDF_InitLibraryWithConfig(const FPDF_LIBRARY_CONFIG* config) {
   CFX_GEModule::Create(config ? config->m_pUserFontPaths : nullptr);
   CPDF_PageModule::Create();
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   CFX_GlyphCache::InitializeGlobals();
 #endif
 
@@ -267,7 +267,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyLibrary() {
   CPDFXFA_ModuleDestroy();
 #endif  // PDF_ENABLE_XFA
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   CFX_GlyphCache::DestroyGlobals();
 #endif
 
@@ -628,7 +628,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
                                 /*need_to_restore=*/true,
                                 /*pause=*/nullptr);
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     pBitmap->UnPreMultiply();
   }
@@ -722,7 +722,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
                                 /*need_to_restore=*/true,
                                 /*pause=*/nullptr);
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     pBitmap->UnPreMultiply();
   }
@@ -766,7 +766,7 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
                      /*color_scheme=*/nullptr);
 }
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageSkia(FPDF_SKIA_CANVAS canvas,
                                                    FPDF_PAGE page,
                                                    int size_x,
@@ -793,7 +793,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageSkia(FPDF_SKIA_CANVAS canvas,
                                 /*color_scheme=*/nullptr,
                                 /*need_to_restore=*/true, /*pause=*/nullptr);
 }
-#endif  // defined(_SKIA_SUPPORT_)
+#endif  // defined(PDF_USE_SKIA)
 
 FPDF_EXPORT void FPDF_CALLCONV FPDF_ClosePage(FPDF_PAGE page) {
   if (!page)

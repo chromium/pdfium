@@ -312,7 +312,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPage_FormFieldZOrderAtPoint);
     CHK(FPDFPage_HasFormFieldAtPoint);
     CHK(FPDF_FFLDraw);
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
     CHK(FPDF_FFLDrawSkia);
 #endif
     CHK(FPDF_GetFormType);
@@ -521,7 +521,7 @@ int CheckPDFiumCApi() {
 #endif
     CHK(FPDF_RenderPageBitmap);
     CHK(FPDF_RenderPageBitmapWithMatrix);
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
     CHK(FPDF_RenderPageSkia);
 #endif
 #if defined(_WIN32)

@@ -15,7 +15,7 @@ class CFX_SubstFont {
   CFX_SubstFont();
   ~CFX_SubstFont();
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   int GetOriginalWeight() const;
 #endif
   void UseChromeSerif();

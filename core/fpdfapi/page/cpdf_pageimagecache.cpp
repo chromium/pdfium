@@ -25,7 +25,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "third_party/base/check.h"
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 #include "core/fxcrt/data_vector.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "third_party/skia/include/core/SkImage.h"   // nogncheck
@@ -44,7 +44,7 @@ struct CacheInfo {
   bool operator<(const CacheInfo& other) const { return time < other.time; }
 };
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 // Wrapper around a `CFX_DIBBase` that memoizes `RealizeSkImage()`. This is only
 // safe if the underlying `CFX_DIBBase` is not mutable.
 class CachedImage final : public CFX_DIBBase {
@@ -77,7 +77,7 @@ class CachedImage final : public CFX_DIBBase {
     return image_->GetEstimatedImageMemoryBurden();
   }
 
-#if BUILDFLAG(IS_WIN) || defined(_SKIA_SUPPORT_)
+#if BUILDFLAG(IS_WIN) || defined(PDF_USE_SKIA)
   RetainPtr<const CFX_DIBitmap> RealizeIfNeeded() const override {
     return image_->RealizeIfNeeded();
   }
@@ -94,19 +94,19 @@ class CachedImage final : public CFX_DIBBase {
   RetainPtr<CFX_DIBBase> image_;
   mutable sk_sp<SkImage> cached_skia_image_;
 };
-#endif  // defined(_SKIA_SUPPORT_)
+#endif  // defined(PDF_USE_SKIA)
 
 // Makes a `CachedImage` backed by `image` if Skia is the default renderer,
 // otherwise return the image itself. `realize_hint` indicates whether it would
 // be beneficial to realize `image` before caching.
 RetainPtr<CFX_DIBBase> MakeCachedImage(RetainPtr<CFX_DIBBase> image,
                                        bool realize_hint) {
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     // Ignore `realize_hint`, as `RealizeSkImage()` doesn't benefit from it.
     return pdfium::MakeRetain<CachedImage>(std::move(image));
   }
-#endif  // defined(_SKIA_SUPPORT_)
+#endif  // defined(PDF_USE_SKIA)
   return realize_hint ? image->Realize() : image;
 }
 

@@ -32,7 +32,7 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
               FXDIB_Format format,
               RetainPtr<CFX_DIBitmap> pBackdropBitmap);
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   bool AttachCanvas(SkCanvas* canvas);
   void Clear(uint32_t color);
 #endif
@@ -40,7 +40,7 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
   // Runtime check to see if Skia is the renderer variant in use.
   static bool UseSkiaRenderer();
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   // This internal definition of renderer types must stay updated with respect
   // to the public definition of `FPDF_RENDERER_TYPE`, so that all public
   // definition values can be mapped to a value in
@@ -55,7 +55,7 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
   static constexpr RendererType kDefaultRenderer = RendererType::kSkia;
 
   static void SetRendererType(RendererType renderer_type);
-#endif  // defined(_SKIA_SUPPORT_)
+#endif  // defined(PDF_USE_SKIA)
 
  private:
   bool AttachImpl(RetainPtr<CFX_DIBitmap> pBitmap,
@@ -73,7 +73,7 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
                  FXDIB_Format format,
                  RetainPtr<CFX_DIBitmap> pBackdropBitmap);
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   bool AttachSkiaImpl(RetainPtr<CFX_DIBitmap> pBitmap,
                       bool bRgbByteOrder,
                       RetainPtr<CFX_DIBitmap> pBackdropBitmap,

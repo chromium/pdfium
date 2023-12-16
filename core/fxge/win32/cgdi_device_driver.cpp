@@ -200,7 +200,7 @@ ByteString GetBitmapInfo(const RetainPtr<const CFX_DIBBase>& source) {
   return result;
 }
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 // TODO(caryclark)  This antigrain function is duplicated here to permit
 // removing the last remaining dependency. Eventually, this will be elminiated
 // altogether and replace by Skia code.
@@ -306,7 +306,7 @@ unsigned clip_liang_barsky(float x1,
   }
   return np;
 }
-#endif  //  defined(_SKIA_SUPPORT_)
+#endif  //  defined(PDF_USE_SKIA)
 
 unsigned LineClip(float w,
                   float h,
@@ -316,7 +316,7 @@ unsigned LineClip(float w,
                   float y2,
                   float* x,
                   float* y) {
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     // TODO(caryclark) temporary replacement of antigrain in line function to
     // permit removing antigrain altogether

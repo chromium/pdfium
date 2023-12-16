@@ -108,7 +108,7 @@ class RenderDeviceDriverIface {
                            const FX_RECT& clip_rect,
                            int alpha,
                            bool bAlphaMode);
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   virtual bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                                const RetainPtr<CFX_DIBBase>& pMask,
                                int left,

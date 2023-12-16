@@ -27,8 +27,8 @@ class CFDETextOutTest : public testing::Test {
   ~CFDETextOutTest() override = default;
 
   void SetUp() override {
-#if defined(_SKIA_SUPPORT_)
-  CFX_GlyphCache::InitializeGlobals();
+#if defined(PDF_USE_SKIA)
+    CFX_GlyphCache::InitializeGlobals();
 #endif
     CFX_Size bitmap_size = GetBitmapSize();
     bitmap_ = pdfium::MakeRetain<CFX_DIBitmap>();
@@ -54,8 +54,8 @@ class CFDETextOutTest : public testing::Test {
     font_.Reset();
     device_.reset();
     bitmap_.Reset();
-#if defined(_SKIA_SUPPORT_)
-  CFX_GlyphCache::DestroyGlobals();
+#if defined(PDF_USE_SKIA)
+    CFX_GlyphCache::DestroyGlobals();
 #endif
   }
 

@@ -18,8 +18,8 @@
 #include <string>
 #include <vector>
 
-#if defined(PDF_ENABLE_SKIA) && !defined(_SKIA_SUPPORT_)
-#define _SKIA_SUPPORT_
+#if defined(PDF_ENABLE_SKIA) && !defined(PDF_USE_SKIA)
+#define PDF_USE_SKIA
 #endif
 
 #include "public/cpp/fpdf_scopers.h"

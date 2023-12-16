@@ -40,7 +40,7 @@ class CPDF_SampledFunc final : public CPDF_Function {
   }
   uint32_t GetBitsPerSample() const { return m_nBitsPerSample; }
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   RetainPtr<CPDF_StreamAcc> GetSampleStream() const;
 #endif
 

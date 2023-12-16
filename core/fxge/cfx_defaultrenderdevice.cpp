@@ -12,7 +12,7 @@ namespace {
 
 // When build variant is Skia then it is assumed as the default, but might be
 // overridden at runtime.
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 CFX_DefaultRenderDevice::RendererType g_renderer_type =
     CFX_DefaultRenderDevice::kDefaultRenderer;
 #endif
@@ -21,14 +21,14 @@ CFX_DefaultRenderDevice::RendererType g_renderer_type =
 
 // static
 bool CFX_DefaultRenderDevice::UseSkiaRenderer() {
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   return g_renderer_type == RendererType::kSkia;
 #else
   return false;
 #endif
 }
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 // static
 void CFX_DefaultRenderDevice::SetRendererType(RendererType renderer_type) {
   g_renderer_type = renderer_type;
@@ -62,7 +62,7 @@ bool CFX_DefaultRenderDevice::CFX_DefaultRenderDevice::AttachImpl(
     bool bRgbByteOrder,
     RetainPtr<CFX_DIBitmap> pBackdropBitmap,
     bool bGroupKnockout) {
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   if (UseSkiaRenderer()) {
     return AttachSkiaImpl(std::move(pBitmap), bRgbByteOrder,
                           std::move(pBackdropBitmap), bGroupKnockout);
@@ -76,7 +76,7 @@ bool CFX_DefaultRenderDevice::Create(int width,
                                      int height,
                                      FXDIB_Format format,
                                      RetainPtr<CFX_DIBitmap> pBackdropBitmap) {
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   if (UseSkiaRenderer()) {
     return CreateSkia(width, height, format, pBackdropBitmap);
   }

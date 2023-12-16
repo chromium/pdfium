@@ -36,7 +36,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   // CFX_DIBBase
   pdfium::span<const uint8_t> GetScanline(int line) const override;
   size_t GetEstimatedImageMemoryBurden() const override;
-#if BUILDFLAG(IS_WIN) || defined(_SKIA_SUPPORT_)
+#if BUILDFLAG(IS_WIN) || defined(PDF_USE_SKIA)
   RetainPtr<const CFX_DIBitmap> RealizeIfNeeded() const override;
 #endif
 
@@ -55,10 +55,10 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   bool ConvertFormat(FXDIB_Format format);
   void Clear(uint32_t color);
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   uint32_t GetPixel(int x, int y) const;
   void SetPixel(int x, int y, uint32_t color);
-#endif  // defined(_SKIA_SUPPORT_)
+#endif  // defined(PDF_USE_SKIA)
 
   bool SetRedFromBitmap(const RetainPtr<CFX_DIBBase>& pSrcBitmap);
   bool SetAlphaFromBitmap(const RetainPtr<CFX_DIBBase>& pSrcBitmap);
@@ -127,7 +127,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                                                             FXDIB_Format format,
                                                             uint32_t pitch);
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   // Converts to un-pre-multiplied alpha if necessary.
   void UnPreMultiply();
 
@@ -137,14 +137,14 @@ class CFX_DIBitmap final : public CFX_DIBBase {
 #endif
 
  protected:
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   bool IsPremultiplied() const override;
-#endif  // defined(_SKIA_SUPPORT_)
+#endif  // defined(PDF_USE_SKIA)
 
  private:
   enum class Channel : uint8_t { kRed, kAlpha };
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   enum class Format { kCleared, kPreMultiplied, kUnPreMultiplied };
 #endif
 
@@ -179,7 +179,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                                   int src_top);
 
   MaybeOwned<uint8_t, FxFreeDeleter> m_pBuffer;
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   Format m_nFormat = Format::kCleared;
 #endif
 };

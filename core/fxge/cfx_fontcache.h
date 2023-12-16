@@ -22,7 +22,7 @@ class CFX_FontCache {
   ~CFX_FontCache();
 
   RetainPtr<CFX_GlyphCache> GetGlyphCache(const CFX_Font* pFont);
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
   CFX_TypeFace* GetDeviceCache(const CFX_Font* pFont);
 #endif
 

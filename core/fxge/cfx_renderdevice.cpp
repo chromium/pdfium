@@ -35,7 +35,7 @@
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/span.h"
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 #include "third_party/skia/include/core/SkTypes.h"  // nogncheck
 #endif
 
@@ -712,7 +712,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(
 
   if (fill && fill_alpha && stroke_alpha < 0xff && fill_options.stroke) {
     if (m_RenderCaps & FXRC_FILLSTROKE_PATH) {
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
         m_pDeviceDriver->SetGroupKnockout(true);
       }
@@ -721,7 +721,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(
           path, pObject2Device, pGraphState, fill_color, stroke_color,
           fill_options, blend_type);
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
         // Restore the group knockout status for `m_pDeviceDriver` after
         // finishing painting a fill-and-stroke path.
@@ -994,7 +994,7 @@ bool CFX_RenderDevice::ContinueDIBits(CFX_ImageRenderer* handle,
   return m_pDeviceDriver->ContinueDIBits(handle, pPause);
 }
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 bool CFX_RenderDevice::SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                                        const RetainPtr<CFX_DIBBase>& pMask,
                                        int left,

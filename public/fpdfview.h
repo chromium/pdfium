@@ -935,7 +935,7 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
                                 const FS_RECTF* clipping,
                                 int flags);
 
-#if defined(_SKIA_SUPPORT_)
+#if defined(PDF_USE_SKIA)
 // Experimental API.
 // Function: FPDF_RenderPageSkia
 //          Render contents of a page to a Skia SkCanvas.

@@ -41,7 +41,7 @@ config("pdfium_common_config") {
   }
 
   if (pdf_use_skia) {
-    defines += [ "_SKIA_SUPPORT_" ]
+    defines += [ "PDF_USE_SKIA" ]
   }
 
   if (pdf_use_partition_alloc) {
