@@ -14,6 +14,7 @@
 #include "core/fxge/android/cfpf_skiafontmgr.h"
 #include "core/fxge/android/cfpf_skiapathfont.h"
 #include "core/fxge/freetype/fx_freetype.h"
+#include "core/fxge/fx_fontencoding.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 #define FPF_EM_ADJUST(em, a) (em == 0 ? (a) : (a)*1000 / em)
@@ -45,8 +46,10 @@ ByteString CFPF_SkiaFont::GetPsName() {
 int32_t CFPF_SkiaFont::GetGlyphIndex(wchar_t wUnicode) {
   if (!m_Face)
     return wUnicode;
-  if (FXFT_Select_Charmap(GetFaceRec(), FT_ENCODING_UNICODE))
+  if (FXFT_Select_Charmap(GetFaceRec(), static_cast<FT_Encoding>(
+                                            fxge::FontEncoding::kUnicode))) {
     return 0;
+  }
   return FT_Get_Char_Index(GetFaceRec(), wUnicode);
 }
 

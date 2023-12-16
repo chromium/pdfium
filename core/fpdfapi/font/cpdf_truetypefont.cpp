@@ -86,8 +86,8 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
           m_GlyphIndex[charcode] =
               FT_Get_Char_Index(face, m_Encoding.UnicodeFromCharCode(charcode));
         } else if (charmap_type == CharmapType::kMacRoman) {
-          uint32_t maccode = CharCodeFromUnicodeForFreetypeEncoding(
-              FT_ENCODING_APPLE_ROMAN,
+          uint32_t maccode = CharCodeFromUnicodeForEncoding(
+              fxge::FontEncoding::kAppleRoman,
               m_Encoding.UnicodeFromCharCode(charcode));
           if (!maccode) {
             m_GlyphIndex[charcode] = FT_Get_Name_Index(face, name);
@@ -144,7 +144,8 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
     if (m_pFontFile || HasAnyGlyphIndex())
       return;
   }
-  if (FXFT_Select_Charmap(face, FT_ENCODING_UNICODE) == 0) {
+  if (FXFT_Select_Charmap(
+          face, static_cast<FT_Encoding>(fxge::FontEncoding::kUnicode)) == 0) {
     pdfium::span<const uint16_t> unicodes =
         UnicodesForPredefinedCharSet(base_encoding);
     for (uint32_t charcode = 0; charcode < 256; charcode++) {

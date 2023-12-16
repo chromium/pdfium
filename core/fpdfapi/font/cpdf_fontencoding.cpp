@@ -14,8 +14,8 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
-#include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/fx_font.h"
+#include "core/fxge/fx_fontencoding.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
 namespace {
@@ -1735,24 +1735,26 @@ RetainPtr<CPDF_Object> CPDF_FontEncoding::Realize(
   return pDict;
 }
 
-uint32_t CharCodeFromUnicodeForFreetypeEncoding(int encoding, wchar_t unicode) {
+uint32_t CharCodeFromUnicodeForEncoding(fxge::FontEncoding encoding,
+                                        wchar_t unicode) {
   switch (encoding) {
-    case FT_ENCODING_UNICODE:
+    case fxge::FontEncoding::kUnicode:
       return unicode;
-    case FT_ENCODING_ADOBE_STANDARD:
+    case fxge::FontEncoding::kAdobeStandard:
       return PDF_FindCode(kStandardEncoding, unicode);
-    case FT_ENCODING_ADOBE_EXPERT:
+    case fxge::FontEncoding::kAdobeExpert:
       return PDF_FindCode(kMacExpertEncoding, unicode);
-    case FT_ENCODING_ADOBE_LATIN_1:
+    case fxge::FontEncoding::kLatin1:
       return PDF_FindCode(kAdobeWinAnsiEncoding, unicode);
-    case FT_ENCODING_APPLE_ROMAN:
+    case fxge::FontEncoding::kAppleRoman:
       return PDF_FindCode(kMacRomanEncoding, unicode);
-    case FT_ENCODING_ADOBE_CUSTOM:
+    case fxge::FontEncoding::kAdobeCustom:
       return PDF_FindCode(kPDFDocEncoding, unicode);
-    case FT_ENCODING_MS_SYMBOL:
+    case fxge::FontEncoding::kSymbol:
       return PDF_FindCode(kMSSymbolEncoding, unicode);
+    default:
+      return 0;
   }
-  return 0;
 }
 
 wchar_t UnicodeFromAppleRomanCharCode(uint8_t charcode) {

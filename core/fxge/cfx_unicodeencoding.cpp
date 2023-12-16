@@ -11,6 +11,7 @@
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/fx_font.h"
+#include "core/fxge/fx_fontencoding.h"
 
 CFX_UnicodeEncoding::CFX_UnicodeEncoding(const CFX_Font* pFont)
     : m_pFont(pFont) {}
@@ -22,16 +23,23 @@ uint32_t CFX_UnicodeEncoding::GlyphFromCharCode(uint32_t charcode) {
   if (!face)
     return charcode;
 
-  if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) == 0)
+  if (FT_Select_Charmap(
+          face, static_cast<FT_Encoding>(fxge::FontEncoding::kUnicode)) == 0) {
     return FT_Get_Char_Index(face, charcode);
+  }
 
   if (m_pFont->GetSubstFont() &&
       m_pFont->GetSubstFont()->m_Charset == FX_Charset::kSymbol) {
     uint32_t index = 0;
-    if (FT_Select_Charmap(face, FT_ENCODING_MS_SYMBOL) == 0)
+    if (FT_Select_Charmap(
+            face, static_cast<FT_Encoding>(fxge::FontEncoding::kSymbol)) == 0) {
       index = FT_Get_Char_Index(face, charcode);
-    if (!index && !FT_Select_Charmap(face, FT_ENCODING_APPLE_ROMAN))
+    }
+    if (!index &&
+        !FT_Select_Charmap(
+            face, static_cast<FT_Encoding>(fxge::FontEncoding::kAppleRoman))) {
       return FT_Get_Char_Index(face, charcode);
+    }
   }
   return charcode;
 }

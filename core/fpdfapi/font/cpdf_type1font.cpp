@@ -53,7 +53,8 @@ bool FT_UseType1Charmap(FXFT_FaceRec* face) {
     return false;
 
   bool is_first_charmap_unicode =
-      FXFT_Get_Charmap_Encoding(face->charmaps[0]) == FT_ENCODING_UNICODE;
+      FXFT_Get_Charmap_Encoding(face->charmaps[0]) ==
+      static_cast<FT_Encoding>(fxge::FontEncoding::kUnicode);
   if (face->num_charmaps == 1 && is_first_charmap_unicode)
     return false;
 
@@ -165,7 +166,8 @@ void CPDF_Type1Font::LoadGlyphMap() {
         return;
       }
     }
-    FXFT_Select_Charmap(m_Font.GetFaceRec(), FT_ENCODING_UNICODE);
+    FXFT_Select_Charmap(m_Font.GetFaceRec(),
+                        static_cast<FT_Encoding>(fxge::FontEncoding::kUnicode));
     if (m_BaseEncoding == FontEncoding::kBuiltin)
       m_BaseEncoding = FontEncoding::kStandard;
 
@@ -225,7 +227,9 @@ void CPDF_Type1Font::LoadGlyphMap() {
     }
 
     bool bUnicode =
-        FXFT_Select_Charmap(m_Font.GetFaceRec(), FT_ENCODING_UNICODE) == 0;
+        FXFT_Select_Charmap(
+            m_Font.GetFaceRec(),
+            static_cast<FT_Encoding>(fxge::FontEncoding::kUnicode)) == 0;
     for (uint32_t charcode = 0; charcode < kInternalTableSize; charcode++) {
       const char* name =
           GetAdobeCharName(m_BaseEncoding, m_CharNames, charcode);
@@ -286,7 +290,9 @@ void CPDF_Type1Font::LoadGlyphMap() {
   }
 
   bool bUnicode =
-      FXFT_Select_Charmap(m_Font.GetFaceRec(), FT_ENCODING_UNICODE) == 0;
+      FXFT_Select_Charmap(
+          m_Font.GetFaceRec(),
+          static_cast<FT_Encoding>(fxge::FontEncoding::kUnicode)) == 0;
   for (size_t charcode = 0; charcode < kInternalTableSize; charcode++) {
     const char* name = GetAdobeCharName(m_BaseEncoding, m_CharNames,
                                         static_cast<uint32_t>(charcode));

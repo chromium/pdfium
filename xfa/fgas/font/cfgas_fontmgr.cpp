@@ -26,6 +26,7 @@
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/fx_font.h"
+#include "core/fxge/fx_fontencoding.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/containers/span.h"
@@ -42,8 +43,10 @@ bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& pFont, wchar_t wcUnicode) {
 
   FXFT_FaceRec* pFaceRec = pFace->GetRec();
   FT_CharMap charmap = pFaceRec->charmap;
-  if (FXFT_Select_Charmap(pFaceRec, FT_ENCODING_UNICODE) != 0)
+  if (FXFT_Select_Charmap(pFaceRec, static_cast<FT_Encoding>(
+                                        fxge::FontEncoding::kUnicode)) != 0) {
     return false;
+  }
 
   if (FT_Get_Char_Index(pFaceRec, wcUnicode) == 0) {
     FT_Set_Charmap(pFaceRec, charmap);
@@ -548,8 +551,8 @@ bool VerifyUnicodeForFontDescriptor(CFGAS_FontDescriptor* pDesc,
   if (!pFace)
     return false;
 
-  FT_Error retCharmap =
-      FXFT_Select_Charmap(pFace->GetRec(), FT_ENCODING_UNICODE);
+  FT_Error retCharmap = FXFT_Select_Charmap(
+      pFace->GetRec(), static_cast<FT_Encoding>(fxge::FontEncoding::kUnicode));
   FT_Error retIndex = FT_Get_Char_Index(pFace->GetRec(), wcUnicode);
 
   pFace->ClearExternalStream();

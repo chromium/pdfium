@@ -11,6 +11,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/weak_ptr.h"
+#include "core/fxge/fx_fontencoding.h"
 #include "third_party/base/containers/span.h"
 
 enum class FontEncoding {
@@ -25,7 +26,13 @@ enum class FontEncoding {
   kMsSymbol = 8,
 };
 
-uint32_t CharCodeFromUnicodeForFreetypeEncoding(int encoding, wchar_t unicode);
+// For `encoding`, the caller can safely cast any FreeType FT_ENCODING_* value
+// into fxge::FontEncoding.
+// TODO(crbug.com/pdfium/2037): Always pass in fxge::FontEncoding values and
+// remove this comment.
+uint32_t CharCodeFromUnicodeForEncoding(fxge::FontEncoding encoding,
+                                        wchar_t unicode);
+
 wchar_t UnicodeFromAppleRomanCharCode(uint8_t charcode);
 
 pdfium::span<const uint16_t> UnicodesForPredefinedCharSet(

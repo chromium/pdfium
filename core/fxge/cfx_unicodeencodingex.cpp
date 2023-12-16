@@ -11,48 +11,35 @@
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/fx_font.h"
-
-#define ENC_TAG(a, b, c, d)                                               \
-  (((uint32_t)(a) << 24) | ((uint32_t)(b) << 16) | ((uint32_t)(c) << 8) | \
-   (uint32_t)(d))
+#include "core/fxge/fx_fontencoding.h"
 
 namespace {
 
-constexpr uint32_t kEncodingExSymbol = ENC_TAG('s', 'y', 'm', 'b');
-constexpr uint32_t kEncodingExUnicode = ENC_TAG('u', 'n', 'i', 'c');
-constexpr uint32_t kEncodingExSjis = ENC_TAG('s', 'j', 'i', 's');
-constexpr uint32_t kEncodingExGB2312 = ENC_TAG('g', 'b', ' ', ' ');
-constexpr uint32_t kEncodingExBig5 = ENC_TAG('b', 'i', 'g', '5');
-constexpr uint32_t kEncodingExWansung = ENC_TAG('w', 'a', 'n', 's');
-constexpr uint32_t kEncodingExJohab = ENC_TAG('j', 'o', 'h', 'a');
-constexpr uint32_t kEncodingExAdobeStandard = ENC_TAG('A', 'D', 'O', 'B');
-constexpr uint32_t kEncodingExAdobeExpert = ENC_TAG('A', 'D', 'B', 'E');
-constexpr uint32_t kEncodingExAdobeCustom = ENC_TAG('A', 'D', 'B', 'C');
-constexpr uint32_t kEncodingExLatin1 = ENC_TAG('l', 'a', 't', '1');
-constexpr uint32_t kEncodingExOldLatin2 = ENC_TAG('l', 'a', 't', '2');
-constexpr uint32_t kEncodingExAppleRoman = ENC_TAG('a', 'r', 'm', 'n');
-
-constexpr uint32_t kEncodingID[] = {
-    kEncodingExSymbol,      kEncodingExUnicode,       kEncodingExSjis,
-    kEncodingExGB2312,      kEncodingExBig5,          kEncodingExWansung,
-    kEncodingExJohab,       kEncodingExAdobeStandard, kEncodingExAdobeExpert,
-    kEncodingExAdobeCustom, kEncodingExLatin1,        kEncodingExOldLatin2,
-    kEncodingExAppleRoman,
+constexpr fxge::FontEncoding kEncodingIDs[] = {
+    fxge::FontEncoding::kSymbol,      fxge::FontEncoding::kUnicode,
+    fxge::FontEncoding::kSjis,        fxge::FontEncoding::kGB2312,
+    fxge::FontEncoding::kBig5,        fxge::FontEncoding::kWansung,
+    fxge::FontEncoding::kJohab,       fxge::FontEncoding::kAdobeStandard,
+    fxge::FontEncoding::kAdobeExpert, fxge::FontEncoding::kAdobeCustom,
+    fxge::FontEncoding::kLatin1,      fxge::FontEncoding::kOldLatin2,
+    fxge::FontEncoding::kAppleRoman,
 };
 
 std::unique_ptr<CFX_UnicodeEncodingEx> FXFM_CreateFontEncoding(
     CFX_Font* pFont,
-    uint32_t nEncodingID) {
-  if (FXFT_Select_Charmap(pFont->GetFaceRec(), nEncodingID))
+    fxge::FontEncoding encoding_id) {
+  if (FXFT_Select_Charmap(pFont->GetFaceRec(),
+                          static_cast<FT_Encoding>(encoding_id))) {
     return nullptr;
-  return std::make_unique<CFX_UnicodeEncodingEx>(pFont, nEncodingID);
+  }
+  return std::make_unique<CFX_UnicodeEncodingEx>(pFont, encoding_id);
 }
 
 }  // namespace
 
 CFX_UnicodeEncodingEx::CFX_UnicodeEncodingEx(CFX_Font* pFont,
-                                             uint32_t EncodingID)
-    : CFX_UnicodeEncoding(pFont), m_nEncodingID(EncodingID) {}
+                                             fxge::FontEncoding encoding_id)
+    : CFX_UnicodeEncoding(pFont), encoding_id_(encoding_id) {}
 
 CFX_UnicodeEncodingEx::~CFX_UnicodeEncodingEx() = default;
 
@@ -63,31 +50,36 @@ uint32_t CFX_UnicodeEncodingEx::GlyphFromCharCode(uint32_t charcode) {
     return nIndex;
   int m = 0;
   while (m < face->num_charmaps) {
-    uint32_t nEncodingID = FXFT_Get_Charmap_Encoding(face->charmaps[m++]);
-    if (m_nEncodingID == nEncodingID)
+    auto encoding_id = static_cast<fxge::FontEncoding>(
+        FXFT_Get_Charmap_Encoding(face->charmaps[m++]));
+    if (encoding_id_ == encoding_id) {
       continue;
-    int error = FXFT_Select_Charmap(face, nEncodingID);
+    }
+    int error =
+        FXFT_Select_Charmap(face, static_cast<FT_Encoding>(encoding_id));
     if (error)
       continue;
     nIndex = FT_Get_Char_Index(face, charcode);
     if (nIndex > 0) {
-      m_nEncodingID = nEncodingID;
+      encoding_id_ = encoding_id;
       return nIndex;
     }
   }
-  FXFT_Select_Charmap(face, m_nEncodingID);
+  FXFT_Select_Charmap(face, static_cast<FT_Encoding>(encoding_id_));
   return 0;
 }
 
 uint32_t CFX_UnicodeEncodingEx::CharCodeFromUnicode(wchar_t Unicode) const {
-  if (m_nEncodingID == kEncodingExUnicode ||
-      m_nEncodingID == kEncodingExSymbol) {
+  if (encoding_id_ == fxge::FontEncoding::kUnicode ||
+      encoding_id_ == fxge::FontEncoding::kSymbol) {
     return Unicode;
   }
   FXFT_FaceRec* face = m_pFont->GetFaceRec();
   for (int i = 0; i < face->num_charmaps; i++) {
-    int nEncodingID = FXFT_Get_Charmap_Encoding(face->charmaps[i]);
-    if (nEncodingID == kEncodingExUnicode || nEncodingID == kEncodingExSymbol) {
+    auto encoding_id = static_cast<fxge::FontEncoding>(
+        FXFT_Get_Charmap_Encoding(face->charmaps[i]));
+    if (encoding_id == fxge::FontEncoding::kUnicode ||
+        encoding_id == fxge::FontEncoding::kSymbol) {
       return Unicode;
     }
   }
@@ -99,7 +91,7 @@ std::unique_ptr<CFX_UnicodeEncodingEx> FX_CreateFontEncodingEx(
   if (!pFont || !pFont->GetFaceRec())
     return nullptr;
 
-  for (uint32_t id : kEncodingID) {
+  for (fxge::FontEncoding id : kEncodingIDs) {
     auto pFontEncoding = FXFM_CreateFontEncoding(pFont, id);
     if (pFontEncoding)
       return pFontEncoding;
