@@ -312,8 +312,7 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(ByteStringView bsFamilyname,
   if (!pBestFont)
     return nullptr;
 
-  auto font =
-      std::make_unique<CFPF_SkiaFont>(this, pBestFont, dwStyle, uCharset);
+  auto font = std::make_unique<CFPF_SkiaFont>(this, pBestFont, uCharset);
   if (!font->IsValid())
     return nullptr;
 
