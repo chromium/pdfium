@@ -8,7 +8,6 @@
 
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_glyphcache.h"
-#include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/fx_font.h"
 
 CFX_FontCache::CFX_FontCache() = default;
