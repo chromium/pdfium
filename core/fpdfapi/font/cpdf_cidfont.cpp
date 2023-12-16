@@ -194,7 +194,7 @@ uint32_t EmbeddedCharcodeFromUnicode(const fxcmap::CMap* pEmbedMap,
 
 #endif  // !BUILDFLAG(IS_WIN)
 
-void FT_UseCIDCharmap(FXFT_FaceRec* face, CIDCoding coding) {
+void FT_UseCIDCharmap(const RetainPtr<CFX_Face>& face, CIDCoding coding) {
   fxge::FontEncoding encoding;
   switch (coding) {
     case CIDCoding::kGB:
@@ -212,12 +212,14 @@ void FT_UseCIDCharmap(FXFT_FaceRec* face, CIDCoding coding) {
     default:
       encoding = fxge::FontEncoding::kUnicode;
   }
-  int err = FXFT_Select_Charmap(face, encoding);
-  if (err)
-    err = FXFT_Select_Charmap(
-        face, static_cast<FT_Encoding>(fxge::FontEncoding::kUnicode));
-  if (err && face->charmaps)
-    FT_Set_Charmap(face, face->charmaps[0]);
+  bool result = face->SelectCharMap(encoding);
+  if (!result) {
+    result = face->SelectCharMap(fxge::FontEncoding::kUnicode);
+  }
+  FXFT_FaceRec* face_rec = face->GetRec();
+  if (!result && face_rec->charmaps) {
+    FT_Set_Charmap(face_rec, face_rec->charmaps[0]);
+  }
 }
 
 bool IsMetricForCID(const int* pEntry, uint16_t cid) {
@@ -470,11 +472,9 @@ bool CPDF_CIDFont::Load() {
   }
   if (m_Font.GetFaceRec()) {
     if (m_FontType == CIDFontType::kType1)
-      FXFT_Select_Charmap(
-          m_Font.GetFaceRec(),
-          static_cast<FT_Encoding>(fxge::FontEncoding::kUnicode));
+      m_Font.GetFace()->SelectCharMap(fxge::FontEncoding::kUnicode);
     else
-      FT_UseCIDCharmap(m_Font.GetFaceRec(), m_pCMap->GetCoding());
+      FT_UseCIDCharmap(m_Font.GetFace(), m_pCMap->GetCoding());
   }
   m_DefaultWidth = pCIDFontDict->GetIntegerFor("DW", 1000);
   RetainPtr<const CPDF_Array> pWidthArray = pCIDFontDict->GetArrayFor("W");
@@ -717,14 +717,14 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
           unicode = unicode_str[0];
       }
     }
-    FXFT_FaceRec* face = m_Font.GetFaceRec();
+    FXFT_FaceRec* face_rec = m_Font.GetFaceRec();
     if (unicode == 0) {
       if (!m_bAdobeCourierStd)
         return charcode ? static_cast<int>(charcode) : -1;
 
       charcode += 31;
-      bool bMSUnicode = UseTTCharmapMSUnicode(face);
-      bool bMacRoman = !bMSUnicode && UseTTCharmapMacRoman(face);
+      bool bMSUnicode = UseTTCharmapMSUnicode(face_rec);
+      bool bMacRoman = !bMSUnicode && UseTTCharmapMacRoman(face_rec);
       FontEncoding base_encoding = FontEncoding::kStandard;
       if (bMSUnicode)
         base_encoding = FontEncoding::kWinAnsi;
@@ -741,16 +741,16 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
         return charcode ? static_cast<int>(charcode) : -1;
 
       if (base_encoding == FontEncoding::kStandard)
-        return FT_Get_Char_Index(face, name_unicode);
+        return FT_Get_Char_Index(face_rec, name_unicode);
 
       if (base_encoding == FontEncoding::kWinAnsi) {
-        index = FT_Get_Char_Index(face, name_unicode);
+        index = FT_Get_Char_Index(face_rec, name_unicode);
       } else {
         DCHECK_EQ(base_encoding, FontEncoding::kMacRoman);
         uint32_t maccode = CharCodeFromUnicodeForEncoding(
             fxge::FontEncoding::kAppleRoman, name_unicode);
-        index = maccode ? FT_Get_Char_Index(face, maccode)
-                        : FT_Get_Name_Index(face, name);
+        index = maccode ? FT_Get_Char_Index(face_rec, maccode)
+                        : FT_Get_Name_Index(face_rec, name);
       }
       if (index == 0 || index == 0xffff)
         return charcode ? static_cast<int>(charcode) : -1;
@@ -765,30 +765,29 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
 #endif
       }
     }
-    if (!face)
+    if (!face_rec) {
       return unicode;
+    }
 
-    int err = FXFT_Select_Charmap(
-        face, static_cast<FT_Encoding>(fxge::FontEncoding::kUnicode));
-    if (err) {
+    if (!m_Font.GetFace()->SelectCharMap(fxge::FontEncoding::kUnicode)) {
       int i;
-      for (i = 0; i < face->num_charmaps; i++) {
+      for (i = 0; i < face_rec->num_charmaps; i++) {
         uint32_t ret = CharCodeFromUnicodeForEncoding(
             static_cast<fxge::FontEncoding>(
-                FXFT_Get_Charmap_Encoding(face->charmaps[i])),
+                FXFT_Get_Charmap_Encoding(face_rec->charmaps[i])),
             static_cast<wchar_t>(charcode));
         if (ret == 0)
           continue;
-        FT_Set_Charmap(face, face->charmaps[i]);
+        FT_Set_Charmap(face_rec, face_rec->charmaps[i]);
         unicode = static_cast<wchar_t>(ret);
         break;
       }
-      if (i == face->num_charmaps && i) {
-        FT_Set_Charmap(face, face->charmaps[0]);
+      if (i == face_rec->num_charmaps && i) {
+        FT_Set_Charmap(face_rec, face_rec->charmaps[0]);
         unicode = static_cast<wchar_t>(charcode);
       }
     }
-    if (face->charmap) {
+    if (face_rec->charmap) {
       int index = GetGlyphIndex(unicode, pVertGlyph);
       return index != 0 ? index : -1;
     }

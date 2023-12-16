@@ -23,21 +23,18 @@ uint32_t CFX_UnicodeEncoding::GlyphFromCharCode(uint32_t charcode) {
   if (!face)
     return charcode;
 
-  if (FT_Select_Charmap(
-          face, static_cast<FT_Encoding>(fxge::FontEncoding::kUnicode)) == 0) {
+  if (m_pFont->GetFace()->SelectCharMap(fxge::FontEncoding::kUnicode)) {
     return FT_Get_Char_Index(face, charcode);
   }
 
   if (m_pFont->GetSubstFont() &&
       m_pFont->GetSubstFont()->m_Charset == FX_Charset::kSymbol) {
     uint32_t index = 0;
-    if (FT_Select_Charmap(
-            face, static_cast<FT_Encoding>(fxge::FontEncoding::kSymbol)) == 0) {
+    if (m_pFont->GetFace()->SelectCharMap(fxge::FontEncoding::kSymbol)) {
       index = FT_Get_Char_Index(face, charcode);
     }
     if (!index &&
-        !FT_Select_Charmap(
-            face, static_cast<FT_Encoding>(fxge::FontEncoding::kAppleRoman))) {
+        m_pFont->GetFace()->SelectCharMap(fxge::FontEncoding::kAppleRoman)) {
       return FT_Get_Char_Index(face, charcode);
     }
   }

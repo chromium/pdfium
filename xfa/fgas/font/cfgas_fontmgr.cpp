@@ -43,8 +43,7 @@ bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& pFont, wchar_t wcUnicode) {
 
   FXFT_FaceRec* pFaceRec = pFace->GetRec();
   FT_CharMap charmap = pFaceRec->charmap;
-  if (FXFT_Select_Charmap(pFaceRec, static_cast<FT_Encoding>(
-                                        fxge::FontEncoding::kUnicode)) != 0) {
+  if (!pFace->SelectCharMap(fxge::FontEncoding::kUnicode)) {
     return false;
   }
 
@@ -551,13 +550,13 @@ bool VerifyUnicodeForFontDescriptor(CFGAS_FontDescriptor* pDesc,
   if (!pFace)
     return false;
 
-  FT_Error retCharmap = FXFT_Select_Charmap(
-      pFace->GetRec(), static_cast<FT_Encoding>(fxge::FontEncoding::kUnicode));
-  FT_Error retIndex = FT_Get_Char_Index(pFace->GetRec(), wcUnicode);
+  bool select_charmap_result =
+      pFace->SelectCharMap(fxge::FontEncoding::kUnicode);
+  FT_Error ret_index = FT_Get_Char_Index(pFace->GetRec(), wcUnicode);
 
   pFace->ClearExternalStream();
 
-  return !retCharmap && retIndex;
+  return select_charmap_result && ret_index;
 }
 
 bool IsPartName(const WideString& name1, const WideString& name2) {

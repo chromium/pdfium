@@ -53,8 +53,6 @@ class ScopedFXFTMMVar {
   std::unique_ptr<FT_MM_Var, FXFTMMVarDeleter> const variation_desc_;
 };
 
-#define FXFT_Select_Charmap(face, encoding) \
-  FT_Select_Charmap(face, static_cast<FT_Encoding>(encoding))
 #define FXFT_Render_Glyph(face, mode) \
   FT_Render_Glyph((face)->glyph, static_cast<enum FT_Render_Mode_>(mode))
 

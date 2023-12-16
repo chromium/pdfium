@@ -46,8 +46,7 @@ ByteString CFPF_SkiaFont::GetPsName() {
 int32_t CFPF_SkiaFont::GetGlyphIndex(wchar_t wUnicode) {
   if (!m_Face)
     return wUnicode;
-  if (FXFT_Select_Charmap(GetFaceRec(), static_cast<FT_Encoding>(
-                                            fxge::FontEncoding::kUnicode))) {
+  if (!m_Face->SelectCharMap(fxge::FontEncoding::kUnicode)) {
     return 0;
   }
   return FT_Get_Char_Index(GetFaceRec(), wUnicode);

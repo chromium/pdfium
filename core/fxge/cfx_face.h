@@ -15,6 +15,10 @@
 #include "core/fxge/freetype/fx_freetype.h"
 #include "third_party/base/containers/span.h"
 
+namespace fxge {
+enum class FontEncoding : uint32_t;
+}
+
 class CFX_Face final : public Retainable, public Observable {
  public:
   static RetainPtr<CFX_Face> New(FT_Library library,
@@ -51,6 +55,8 @@ class CFX_Face final : public Retainable, public Observable {
 #endif
 
   pdfium::span<uint8_t> GetData() const;
+
+  bool SelectCharMap(fxge::FontEncoding encoding);
 
   FXFT_FaceRec* GetRec() { return m_pRec.get(); }
   const FXFT_FaceRec* GetRec() const { return m_pRec.get(); }

@@ -144,8 +144,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
     if (m_pFontFile || HasAnyGlyphIndex())
       return;
   }
-  if (FXFT_Select_Charmap(
-          face, static_cast<FT_Encoding>(fxge::FontEncoding::kUnicode)) == 0) {
+  if (m_Font.GetFace()->SelectCharMap(fxge::FontEncoding::kUnicode)) {
     pdfium::span<const uint16_t> unicodes =
         UnicodesForPredefinedCharSet(base_encoding);
     for (uint32_t charcode = 0; charcode < 256; charcode++) {

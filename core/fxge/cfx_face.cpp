@@ -6,6 +6,7 @@
 
 #include <utility>
 
+#include "core/fxge/fx_fontencoding.h"
 #include "third_party/base/check.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
@@ -105,6 +106,12 @@ int16_t CFX_Face::GetHeight() const {
 
 pdfium::span<uint8_t> CFX_Face::GetData() const {
   return {GetRec()->stream->base, GetRec()->stream->size};
+}
+
+bool CFX_Face::SelectCharMap(fxge::FontEncoding encoding) {
+  FT_Error error =
+      FT_Select_Charmap(GetRec(), static_cast<FT_Encoding>(encoding));
+  return !error;
 }
 
 CFX_Face::CFX_Face(FXFT_FaceRec* rec, RetainPtr<Retainable> pDesc)

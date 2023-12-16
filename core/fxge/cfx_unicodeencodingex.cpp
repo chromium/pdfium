@@ -28,8 +28,7 @@ constexpr fxge::FontEncoding kEncodingIDs[] = {
 std::unique_ptr<CFX_UnicodeEncodingEx> FXFM_CreateFontEncoding(
     CFX_Font* pFont,
     fxge::FontEncoding encoding_id) {
-  if (FXFT_Select_Charmap(pFont->GetFaceRec(),
-                          static_cast<FT_Encoding>(encoding_id))) {
+  if (!pFont->GetFace()->SelectCharMap(encoding_id)) {
     return nullptr;
   }
   return std::make_unique<CFX_UnicodeEncodingEx>(pFont, encoding_id);
@@ -55,17 +54,16 @@ uint32_t CFX_UnicodeEncodingEx::GlyphFromCharCode(uint32_t charcode) {
     if (encoding_id_ == encoding_id) {
       continue;
     }
-    int error =
-        FXFT_Select_Charmap(face, static_cast<FT_Encoding>(encoding_id));
-    if (error)
+    if (!m_pFont->GetFace()->SelectCharMap(encoding_id)) {
       continue;
+    }
     nIndex = FT_Get_Char_Index(face, charcode);
     if (nIndex > 0) {
       encoding_id_ = encoding_id;
       return nIndex;
     }
   }
-  FXFT_Select_Charmap(face, static_cast<FT_Encoding>(encoding_id_));
+  m_pFont->GetFace()->SelectCharMap(encoding_id_);
   return 0;
 }
 
