@@ -61,7 +61,6 @@ class ScopedFXFTMMVar {
 #define FXFT_Get_Charmap_PlatformID(charmap) (charmap)->platform_id
 #define FXFT_Get_Charmap_EncodingID(charmap) (charmap)->encoding_id
 #define FXFT_Get_Glyph_HoriAdvance(face) (face)->glyph->metrics.horiAdvance
-#define FXFT_Get_Glyph_Outline(face) &((face)->glyph->outline)
 
 int FXFT_unicode_from_adobe_name(const char* glyph_name);
 void FXFT_adobe_name_from_unicode(char* name, wchar_t unicode);

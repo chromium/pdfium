@@ -5,6 +5,7 @@
 #include "core/fxge/cfx_face.h"
 
 #include <algorithm>
+#include <limits>
 #include <memory>
 #include <utility>
 
@@ -12,6 +13,7 @@
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_glyphbitmap.h"
+#include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -21,9 +23,181 @@
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/numerics/safe_math.h"
 
+#define EM_ADJUST(em, a) (em == 0 ? (a) : (a) * 1000 / em)
+
 namespace {
 
+struct OUTLINE_PARAMS {
+  UnownedPtr<CFX_Path> m_pPath;
+  FT_Pos m_CurX;
+  FT_Pos m_CurY;
+  float m_CoordUnit;
+};
+
+constexpr int kThousandthMinInt = std::numeric_limits<int>::min() / 1000;
+constexpr int kThousandthMaxInt = std::numeric_limits<int>::max() / 1000;
+
 constexpr int kMaxGlyphDimension = 2048;
+
+constexpr uint8_t kWeightPow[] = {
+    0,   6,   12,  14,  16,  18,  22,  24,  28,  30,  32,  34,  36,  38,  40,
+    42,  44,  46,  48,  50,  52,  54,  56,  58,  60,  62,  64,  66,  68,  70,
+    70,  72,  72,  74,  74,  74,  76,  76,  76,  78,  78,  78,  80,  80,  80,
+    82,  82,  82,  84,  84,  84,  84,  86,  86,  86,  88,  88,  88,  88,  90,
+    90,  90,  90,  92,  92,  92,  92,  94,  94,  94,  94,  96,  96,  96,  96,
+    96,  98,  98,  98,  98,  100, 100, 100, 100, 100, 102, 102, 102, 102, 102,
+    104, 104, 104, 104, 104, 106, 106, 106, 106, 106,
+};
+
+constexpr uint8_t kWeightPow11[] = {
+    0,  4,  7,  8,  9,  10, 12, 13, 15, 17, 18, 19, 20, 21, 22, 23, 24,
+    25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 39, 39, 40, 40, 41,
+    41, 41, 42, 42, 42, 43, 43, 43, 44, 44, 44, 45, 45, 45, 46, 46, 46,
+    46, 43, 47, 47, 48, 48, 48, 48, 45, 50, 50, 50, 46, 51, 51, 51, 52,
+    52, 52, 52, 53, 53, 53, 53, 53, 54, 54, 54, 54, 55, 55, 55, 55, 55,
+    56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58,
+};
+
+constexpr uint8_t kWeightPowShiftJis[] = {
+    0,   0,   2,   4,   6,   8,   10,  14,  16,  20,  22,  26,  28,  32,  34,
+    38,  42,  44,  48,  52,  56,  60,  64,  66,  70,  74,  78,  82,  86,  90,
+    96,  96,  96,  96,  98,  98,  98,  100, 100, 100, 100, 102, 102, 102, 102,
+    104, 104, 104, 104, 104, 106, 106, 106, 106, 106, 108, 108, 108, 108, 108,
+    110, 110, 110, 110, 110, 112, 112, 112, 112, 112, 112, 114, 114, 114, 114,
+    114, 114, 114, 116, 116, 116, 116, 116, 116, 116, 118, 118, 118, 118, 118,
+    118, 118, 120, 120, 120, 120, 120, 120, 120, 120,
+};
+
+constexpr size_t kWeightPowArraySize = 100;
+static_assert(kWeightPowArraySize == std::size(kWeightPow), "Wrong size");
+static_assert(kWeightPowArraySize == std::size(kWeightPow11), "Wrong size");
+static_assert(kWeightPowArraySize == std::size(kWeightPowShiftJis),
+              "Wrong size");
+
+// Returns negative values on failure.
+int GetWeightLevel(FX_Charset charset, size_t index) {
+  if (index >= kWeightPowArraySize) {
+    return -1;
+  }
+
+  if (charset == FX_Charset::kShiftJIS) {
+    return kWeightPowShiftJis[index];
+  }
+  return kWeightPow11[index];
+}
+
+int GetSkewFromAngle(int angle) {
+  static constexpr int8_t kAngleSkew[] = {
+      -0,  -2,  -3,  -5,  -7,  -9,  -11, -12, -14, -16, -18, -19, -21, -23, -25,
+      -27, -29, -31, -32, -34, -36, -38, -40, -42, -45, -47, -49, -51, -53, -55,
+  };
+
+  // |angle| is non-positive so |-angle| is used as the index. Need to make sure
+  // |angle| != INT_MIN since -INT_MIN is undefined.
+  if (angle > 0 || angle == std::numeric_limits<int>::min() ||
+      static_cast<size_t>(-angle) >= std::size(kAngleSkew)) {
+    return -58;
+  }
+  return kAngleSkew[-angle];
+}
+
+void Outline_CheckEmptyContour(OUTLINE_PARAMS* param) {
+  size_t size;
+  {
+    pdfium::span<const CFX_Path::Point> points = param->m_pPath->GetPoints();
+    size = points.size();
+
+    if (size >= 2 &&
+        points[size - 2].IsTypeAndOpen(CFX_Path::Point::Type::kMove) &&
+        points[size - 2].m_Point == points[size - 1].m_Point) {
+      size -= 2;
+    }
+    if (size >= 4 &&
+        points[size - 4].IsTypeAndOpen(CFX_Path::Point::Type::kMove) &&
+        points[size - 3].IsTypeAndOpen(CFX_Path::Point::Type::kBezier) &&
+        points[size - 3].m_Point == points[size - 4].m_Point &&
+        points[size - 2].m_Point == points[size - 4].m_Point &&
+        points[size - 1].m_Point == points[size - 4].m_Point) {
+      size -= 4;
+    }
+  }
+  // Only safe after |points| has been destroyed.
+  param->m_pPath->GetPoints().resize(size);
+}
+
+int Outline_MoveTo(const FT_Vector* to, void* user) {
+  OUTLINE_PARAMS* param = static_cast<OUTLINE_PARAMS*>(user);
+
+  Outline_CheckEmptyContour(param);
+
+  param->m_pPath->ClosePath();
+  param->m_pPath->AppendPoint(
+      CFX_PointF(to->x / param->m_CoordUnit, to->y / param->m_CoordUnit),
+      CFX_Path::Point::Type::kMove);
+
+  param->m_CurX = to->x;
+  param->m_CurY = to->y;
+  return 0;
+}
+
+int Outline_LineTo(const FT_Vector* to, void* user) {
+  OUTLINE_PARAMS* param = static_cast<OUTLINE_PARAMS*>(user);
+
+  param->m_pPath->AppendPoint(
+      CFX_PointF(to->x / param->m_CoordUnit, to->y / param->m_CoordUnit),
+      CFX_Path::Point::Type::kLine);
+
+  param->m_CurX = to->x;
+  param->m_CurY = to->y;
+  return 0;
+}
+
+int Outline_ConicTo(const FT_Vector* control, const FT_Vector* to, void* user) {
+  OUTLINE_PARAMS* param = static_cast<OUTLINE_PARAMS*>(user);
+
+  param->m_pPath->AppendPoint(
+      CFX_PointF((param->m_CurX + (control->x - param->m_CurX) * 2 / 3) /
+                     param->m_CoordUnit,
+                 (param->m_CurY + (control->y - param->m_CurY) * 2 / 3) /
+                     param->m_CoordUnit),
+      CFX_Path::Point::Type::kBezier);
+
+  param->m_pPath->AppendPoint(
+      CFX_PointF((control->x + (to->x - control->x) / 3) / param->m_CoordUnit,
+                 (control->y + (to->y - control->y) / 3) / param->m_CoordUnit),
+      CFX_Path::Point::Type::kBezier);
+
+  param->m_pPath->AppendPoint(
+      CFX_PointF(to->x / param->m_CoordUnit, to->y / param->m_CoordUnit),
+      CFX_Path::Point::Type::kBezier);
+
+  param->m_CurX = to->x;
+  param->m_CurY = to->y;
+  return 0;
+}
+
+int Outline_CubicTo(const FT_Vector* control1,
+                    const FT_Vector* control2,
+                    const FT_Vector* to,
+                    void* user) {
+  OUTLINE_PARAMS* param = static_cast<OUTLINE_PARAMS*>(user);
+
+  param->m_pPath->AppendPoint(CFX_PointF(control1->x / param->m_CoordUnit,
+                                         control1->y / param->m_CoordUnit),
+                              CFX_Path::Point::Type::kBezier);
+
+  param->m_pPath->AppendPoint(CFX_PointF(control2->x / param->m_CoordUnit,
+                                         control2->y / param->m_CoordUnit),
+                              CFX_Path::Point::Type::kBezier);
+
+  param->m_pPath->AppendPoint(
+      CFX_PointF(to->x / param->m_CoordUnit, to->y / param->m_CoordUnit),
+      CFX_Path::Point::Type::kBezier);
+
+  param->m_CurX = to->x;
+  param->m_CurY = to->y;
+  return 0;
+}
 
 }  // namespace
 
@@ -147,7 +321,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* pFont,
       angle = pSubstFont->m_ItalicAngle;
     }
     if (angle) {
-      int skew = CFX_Font::GetSkewFromAngle(angle);
+      int skew = GetSkewFromAngle(angle);
       if (pFont->IsVertical()) {
         ft_matrix.yx += ft_matrix.yy * skew / 100;
       } else {
@@ -155,8 +329,8 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* pFont,
       }
     }
     if (pSubstFont->IsBuiltInGenericFont()) {
-      pFont->AdjustMMParams(glyph_index, dest_width,
-                            pFont->GetSubstFont()->m_Weight);
+      pFont->GetFace()->AdjustVariationParams(glyph_index, dest_width,
+                                              pFont->GetSubstFont()->m_Weight);
     }
   }
 
@@ -191,7 +365,7 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* pFont,
   if (pSubstFont && !pSubstFont->IsBuiltInGenericFont() && weight > 400) {
     uint32_t index = (weight - 400) / 10;
     pdfium::base::CheckedNumeric<signed long> level =
-        CFX_Font::GetWeightLevel(pSubstFont->m_Charset, index);
+        GetWeightLevel(pSubstFont->m_Charset, index);
     if (level.ValueOrDefault(-1) < 0) {
       return nullptr;
     }
@@ -246,6 +420,96 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* pFont,
   return pGlyphBitmap;
 }
 
+std::unique_ptr<CFX_Path> CFX_Face::LoadGlyphPath(
+    uint32_t glyph_index,
+    int dest_width,
+    bool is_vertical,
+    const CFX_SubstFont* subst_font) {
+  FXFT_FaceRec* rec = GetRec();
+  FT_Set_Pixel_Sizes(rec, 0, 64);
+  FT_Matrix ft_matrix = {65536, 0, 0, 65536};
+  if (subst_font) {
+    if (subst_font->m_ItalicAngle) {
+      int skew = GetSkewFromAngle(subst_font->m_ItalicAngle);
+      if (is_vertical) {
+        ft_matrix.yx += ft_matrix.yy * skew / 100;
+      } else {
+        ft_matrix.xy -= ft_matrix.xx * skew / 100;
+      }
+    }
+    if (subst_font->IsBuiltInGenericFont()) {
+      AdjustVariationParams(glyph_index, dest_width, subst_font->m_Weight);
+    }
+  }
+  ScopedFontTransform scoped_transform(pdfium::WrapRetain(this), &ft_matrix);
+  int load_flags = FT_LOAD_NO_BITMAP;
+  if (!IsTtOt() || !IsTricky()) {
+    load_flags |= FT_LOAD_NO_HINTING;
+  }
+  if (FT_Load_Glyph(rec, glyph_index, load_flags)) {
+    return nullptr;
+  }
+  if (subst_font && !subst_font->IsBuiltInGenericFont() &&
+      subst_font->m_Weight > 400) {
+    uint32_t index = std::min<uint32_t>((subst_font->m_Weight - 400) / 10,
+                                        kWeightPowArraySize - 1);
+    int level;
+    if (subst_font->m_Charset == FX_Charset::kShiftJIS) {
+      level = kWeightPowShiftJis[index] * 65536 / 36655;
+    } else {
+      level = kWeightPow[index];
+    }
+    FT_Outline_Embolden(&rec->glyph->outline, level);
+  }
+
+  FT_Outline_Funcs funcs;
+  funcs.move_to = Outline_MoveTo;
+  funcs.line_to = Outline_LineTo;
+  funcs.conic_to = Outline_ConicTo;
+  funcs.cubic_to = Outline_CubicTo;
+  funcs.shift = 0;
+  funcs.delta = 0;
+
+  auto pPath = std::make_unique<CFX_Path>();
+  OUTLINE_PARAMS params;
+  params.m_pPath = pPath.get();
+  params.m_CurX = params.m_CurY = 0;
+  params.m_CoordUnit = 64 * 64.0;
+
+  FT_Outline_Decompose(&rec->glyph->outline, &funcs, &params);
+  if (pPath->GetPoints().empty()) {
+    return nullptr;
+  }
+
+  Outline_CheckEmptyContour(&params);
+  pPath->ClosePath();
+  return pPath;
+}
+
+int CFX_Face::GetGlyphWidth(uint32_t glyph_index,
+                            int dest_width,
+                            int weight,
+                            const CFX_SubstFont* subst_font) {
+  if (subst_font && subst_font->IsBuiltInGenericFont()) {
+    AdjustVariationParams(glyph_index, dest_width, weight);
+  }
+
+  FXFT_FaceRec* rec = GetRec();
+  int err = FT_Load_Glyph(
+      rec, glyph_index, FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
+  if (err) {
+    return 0;
+  }
+
+  FT_Pos horizontal_advance = rec->glyph->metrics.horiAdvance;
+  if (horizontal_advance < kThousandthMinInt ||
+      horizontal_advance > kThousandthMaxInt) {
+    return 0;
+  }
+
+  return static_cast<int>(EM_ADJUST(GetUnitsPerEm(), horizontal_advance));
+}
+
 bool CFX_Face::SelectCharMap(fxge::FontEncoding encoding) {
   FT_Error error =
       FT_Select_Charmap(GetRec(), static_cast<FT_Encoding>(encoding));
@@ -258,3 +522,47 @@ CFX_Face::CFX_Face(FXFT_FaceRec* rec, RetainPtr<Retainable> pDesc)
 }
 
 CFX_Face::~CFX_Face() = default;
+
+void CFX_Face::AdjustVariationParams(int glyph_index,
+                                     int dest_width,
+                                     int weight) {
+  DCHECK(dest_width >= 0);
+
+  FXFT_FaceRec* rec = GetRec();
+  ScopedFXFTMMVar variation_desc(rec);
+  if (!variation_desc) {
+    return;
+  }
+
+  FT_Pos coords[2];
+  if (weight == 0) {
+    coords[0] = variation_desc.GetAxisDefault(0) / 65536;
+  } else {
+    coords[0] = weight;
+  }
+
+  if (dest_width == 0) {
+    coords[1] = variation_desc.GetAxisDefault(1) / 65536;
+  } else {
+    FT_Long min_param = variation_desc.GetAxisMin(1) / 65536;
+    FT_Long max_param = variation_desc.GetAxisMax(1) / 65536;
+    coords[1] = min_param;
+    FT_Set_MM_Design_Coordinates(rec, 2, coords);
+    FT_Load_Glyph(rec, glyph_index,
+                  FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
+    FT_Pos min_width = rec->glyph->metrics.horiAdvance * 1000 / GetUnitsPerEm();
+    coords[1] = max_param;
+    FT_Set_MM_Design_Coordinates(rec, 2, coords);
+    FT_Load_Glyph(rec, glyph_index,
+                  FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
+    FT_Pos max_width = rec->glyph->metrics.horiAdvance * 1000 / GetUnitsPerEm();
+    if (max_width == min_width) {
+      return;
+    }
+    FT_Pos param = min_param + (max_param - min_param) *
+                                   (dest_width - min_width) /
+                                   (max_width - min_width);
+    coords[1] = param;
+  }
+  FT_Set_MM_Design_Coordinates(rec, 2, coords);
+}

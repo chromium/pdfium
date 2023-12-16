@@ -23,6 +23,8 @@ enum class FontEncoding : uint32_t;
 
 class CFX_Font;
 class CFX_GlyphBitmap;
+class CFX_Path;
+class CFX_SubstFont;
 
 class CFX_Face final : public Retainable, public Observable {
  public:
@@ -67,6 +69,14 @@ class CFX_Face final : public Retainable, public Observable {
                                                const CFX_Matrix& matrix,
                                                int dest_width,
                                                int anti_alias);
+  std::unique_ptr<CFX_Path> LoadGlyphPath(uint32_t glyph_index,
+                                          int dest_width,
+                                          bool is_vertical,
+                                          const CFX_SubstFont* subst_font);
+  int GetGlyphWidth(uint32_t glyph_index,
+                    int dest_width,
+                    int weight,
+                    const CFX_SubstFont* subst_font);
 
   bool SelectCharMap(fxge::FontEncoding encoding);
 
@@ -76,6 +86,8 @@ class CFX_Face final : public Retainable, public Observable {
  private:
   CFX_Face(FXFT_FaceRec* pRec, RetainPtr<Retainable> pDesc);
   ~CFX_Face() override;
+
+  void AdjustVariationParams(int glyph_index, int dest_width, int weight);
 
   ScopedFXFTFaceRec const m_pRec;
   RetainPtr<Retainable> const m_pDesc;
