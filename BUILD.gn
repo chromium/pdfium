@@ -42,6 +42,10 @@ config("pdfium_common_config") {
 
   if (pdf_use_skia) {
     defines += [ "PDF_USE_SKIA" ]
+
+    if (pdf_enable_fontations) {
+      defines += [ "PDF_ENABLE_FONTATIONS" ]
+    }
   }
 
   if (pdf_use_partition_alloc) {

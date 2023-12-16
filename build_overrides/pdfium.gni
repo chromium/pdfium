@@ -25,5 +25,11 @@ pdf_use_partition_alloc_override = is_clang
 # Build PDFium to use Skia (experimental) for all PDFium graphics.
 # If enabled, coexists in build with AGG graphics and the default
 # renderer is selectable at runtime.
-# The default is to use AGG only when `pdf_use_skia_override` is false.
+# The default is to use AGG when `pdf_use_skia_override` is false.
 pdf_use_skia_override = false
+
+# Build PDFium with experimental Fontations library support.
+# If enabled, coexists in build with FreeType library and the default font
+# library is selectable at runtime.
+# The default is to use FreeType when `pdf_enable_fontations_override` is false.
+pdf_enable_fontations_override = false

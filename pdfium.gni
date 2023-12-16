@@ -2,6 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("//build/config/rust.gni")
 import("//build_overrides/pdfium.gni")
 
 # This file contains PDFium-related build flags.
@@ -48,6 +49,12 @@ declare_args() {
   # renderer is selectable at runtime.
   pdf_use_skia = pdf_use_skia_override
 
+  # Build PDFium with experimental Fontations library support.
+  # If enabled, coexists in build with FreeType library and the default font
+  # library is selectable at runtime.
+  # Note that Fontations requires Skia and Rust support.
+  pdf_enable_fontations = pdf_enable_fontations_override
+
   # Build PDFium standalone. Now only controls whether the test binaries
   # are built. Most logic is conditioned by build_with_chromium.
   pdf_is_standalone = false
@@ -79,3 +86,7 @@ declare_args() {
 
 assert(!pdf_is_complete_lib || !is_component_build,
        "pdf_is_complete_lib=true requires is_component_build=false")
+
+assert(
+    !pdf_enable_fontations || (enable_rust && pdf_use_skia),
+    "pdf_enable_fontations=true requires enable_rust=true and pdf_use_skia=true")

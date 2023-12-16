@@ -84,6 +84,9 @@ is_debug = true  # Enable debugging features.
 # Set true to enable experimental Skia backend.
 pdf_use_skia = false
 
+# Set true to enable experimental Fontations backend.
+pdf_enable_fontations = false
+
 pdf_enable_xfa = true  # Set false to remove XFA support (implies JS support).
 pdf_enable_v8 = true  # Set false to remove Javascript support.
 pdf_is_standalone = true  # Set for a non-embedded build.
