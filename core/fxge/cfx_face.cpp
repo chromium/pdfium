@@ -314,6 +314,24 @@ pdfium::span<uint8_t> CFX_Face::GetData() const {
   return {GetRec()->stream->base, GetRec()->stream->size};
 }
 
+size_t CFX_Face::GetSfntTable(uint32_t table, pdfium::span<uint8_t> buffer) {
+  unsigned long length =
+      pdfium::base::checked_cast<unsigned long>(buffer.size());
+  if (length) {
+    int error = FT_Load_Sfnt_Table(GetRec(), table, 0, buffer.data(), &length);
+    if (error || length != buffer.size()) {
+      return 0;
+    }
+    return buffer.size();
+  }
+
+  int error = FT_Load_Sfnt_Table(GetRec(), table, 0, nullptr, &length);
+  if (error || !length) {
+    return 0;
+  }
+  return pdfium::base::checked_cast<size_t>(length);
+}
+
 std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* pFont,
                                                        uint32_t glyph_index,
                                                        bool bFontStyle,

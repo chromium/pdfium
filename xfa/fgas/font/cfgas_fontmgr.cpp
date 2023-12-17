@@ -739,17 +739,16 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
 
   GetUSBCSB(pFace->GetRec(), pFont->m_dwUsb, pFont->m_dwCsb);
 
-  FT_ULong dwTag;
-  FT_ENC_TAG(dwTag, 'n', 'a', 'm', 'e');
+  static constexpr uint32_t kNameTag =
+      CFX_FontMapper::MakeTag('n', 'a', 'm', 'e');
 
   DataVector<uint8_t> table;
-  unsigned long nLength = 0;
-  unsigned int error =
-      FT_Load_Sfnt_Table(pFace->GetRec(), dwTag, 0, nullptr, &nLength);
-  if (error == 0 && nLength != 0) {
-    table.resize(nLength);
-    if (FT_Load_Sfnt_Table(pFace->GetRec(), dwTag, 0, table.data(), nullptr))
+  size_t table_size = pFace->GetSfntTable(kNameTag, table);
+  if (table_size) {
+    table.resize(table_size);
+    if (!pFace->GetSfntTable(kNameTag, table)) {
       table.clear();
+    }
   }
   pFont->m_wsFamilyNames = GetNames(table);
   pFont->m_wsFamilyNames.push_back(

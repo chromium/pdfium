@@ -654,17 +654,14 @@ int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {
 
   static constexpr uint32_t kGsubTag =
       CFX_FontMapper::MakeTag('G', 'S', 'U', 'B');
-  FXFT_FaceRec* face = m_Font.GetFaceRec();
-  unsigned long length = 0;
-  int error = FT_Load_Sfnt_Table(face, kGsubTag, 0, nullptr, &length);
-  if (error || !length) {
+  RetainPtr<CFX_Face> face = m_Font.GetFace();
+  size_t length = face->GetSfntTable(kGsubTag, {});
+  if (!length) {
     return index;
   }
 
   FixedUninitDataVector<uint8_t> sub_data(length);
-  error = FT_Load_Sfnt_Table(face, kGsubTag, 0, sub_data.writable_span().data(),
-                             nullptr);
-  if (error) {
+  if (!face->GetSfntTable(kGsubTag, sub_data.writable_span())) {
     return index;
   }
 

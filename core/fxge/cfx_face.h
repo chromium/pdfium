@@ -68,6 +68,10 @@ class CFX_Face final : public Retainable, public Observable {
 
   pdfium::span<uint8_t> GetData() const;
 
+  // Returns the size of the data, or 0 on failure. Only write into `buffer` if
+  // it is large enough to hold the data.
+  size_t GetSfntTable(uint32_t table, pdfium::span<uint8_t> buffer);
+
   std::unique_ptr<CFX_GlyphBitmap> RenderGlyph(const CFX_Font* pFont,
                                                uint32_t glyph_index,
                                                bool bFontStyle,

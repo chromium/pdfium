@@ -13,7 +13,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/android/cfpf_skiafontmgr.h"
 #include "core/fxge/android/cfpf_skiapathfont.h"
-#include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/fx_fontencoding.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
@@ -38,10 +37,6 @@ uint32_t CFPF_SkiaFont::GetFontData(uint32_t dwTable,
   if (!m_Face)
     return 0;
 
-  FT_ULong ulSize = pdfium::base::checked_cast<FT_ULong>(pBuffer.size());
-  if (FT_Load_Sfnt_Table(m_Face->GetRec(), dwTable, 0, pBuffer.data(),
-                         &ulSize)) {
-    return 0;
-  }
-  return pdfium::base::checked_cast<uint32_t>(ulSize);
+  return pdfium::base::checked_cast<uint32_t>(
+      m_Face->GetSfntTable(dwTable, pBuffer));
 }
