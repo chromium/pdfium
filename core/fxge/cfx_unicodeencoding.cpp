@@ -9,7 +9,6 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_substfont.h"
-#include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_fontencoding.h"
 
@@ -19,23 +18,22 @@ CFX_UnicodeEncoding::CFX_UnicodeEncoding(const CFX_Font* pFont)
 CFX_UnicodeEncoding::~CFX_UnicodeEncoding() = default;
 
 uint32_t CFX_UnicodeEncoding::GlyphFromCharCode(uint32_t charcode) {
-  FXFT_FaceRec* face = m_pFont->GetFaceRec();
+  RetainPtr<CFX_Face> face = m_pFont->GetFace();
   if (!face)
     return charcode;
 
-  if (m_pFont->GetFace()->SelectCharMap(fxge::FontEncoding::kUnicode)) {
-    return FT_Get_Char_Index(face, charcode);
+  if (face->SelectCharMap(fxge::FontEncoding::kUnicode)) {
+    return face->GetCharIndex(charcode);
   }
 
   if (m_pFont->GetSubstFont() &&
       m_pFont->GetSubstFont()->m_Charset == FX_Charset::kSymbol) {
     uint32_t index = 0;
-    if (m_pFont->GetFace()->SelectCharMap(fxge::FontEncoding::kSymbol)) {
-      index = FT_Get_Char_Index(face, charcode);
+    if (face->SelectCharMap(fxge::FontEncoding::kSymbol)) {
+      index = face->GetCharIndex(charcode);
     }
-    if (!index &&
-        m_pFont->GetFace()->SelectCharMap(fxge::FontEncoding::kAppleRoman)) {
-      return FT_Get_Char_Index(face, charcode);
+    if (!index && face->SelectCharMap(fxge::FontEncoding::kAppleRoman)) {
+      return face->GetCharIndex(charcode);
     }
   }
   return charcode;

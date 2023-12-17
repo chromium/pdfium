@@ -525,6 +525,14 @@ int CFX_Face::GetGlyphWidth(uint32_t glyph_index,
   return static_cast<int>(EM_ADJUST(GetUnitsPerEm(), horizontal_advance));
 }
 
+int CFX_Face::GetCharIndex(uint32_t code) {
+  return FT_Get_Char_Index(GetRec(), code);
+}
+
+int CFX_Face::GetNameIndex(const char* name) {
+  return FT_Get_Name_Index(GetRec(), name);
+}
+
 CFX_Face::CharMap CFX_Face::GetCurrentCharMap() const {
   return GetRec()->charmap;
 }

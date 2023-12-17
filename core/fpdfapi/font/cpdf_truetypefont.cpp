@@ -16,10 +16,11 @@ namespace {
 
 constexpr uint8_t kPrefix[4] = {0x00, 0xf0, 0xf1, 0xf2};
 
-uint16_t GetGlyphIndexForMSSymbol(FXFT_FaceRec* face, uint32_t charcode) {
+uint16_t GetGlyphIndexForMSSymbol(const RetainPtr<CFX_Face>& face,
+                                  uint32_t charcode) {
   for (uint8_t c : kPrefix) {
     uint16_t unicode = c * 256 + charcode;
-    uint16_t val = FT_Get_Char_Index(face, unicode);
+    uint16_t val = face->GetCharIndex(unicode);
     if (val)
       return val;
   }
@@ -56,12 +57,11 @@ bool CPDF_TrueTypeFont::Load() {
 }
 
 void CPDF_TrueTypeFont::LoadGlyphMap() {
-  FXFT_FaceRec* face_rec = m_Font.GetFaceRec();
-  if (!face_rec) {
+  RetainPtr<CFX_Face> face = m_Font.GetFace();
+  if (!face) {
     return;
   }
 
-  RetainPtr<CFX_Face> face = m_Font.GetFace();
   const FontEncoding base_encoding = DetermineEncoding();
   if ((IsWinAnsiOrMacRomanEncoding(base_encoding) && m_CharNames.empty()) ||
       FontStyleIsNonSymbolic(m_Flags)) {
@@ -76,24 +76,24 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
       const char* name = GetAdobeCharName(base_encoding, m_CharNames, charcode);
       if (!name) {
         m_GlyphIndex[charcode] =
-            m_pFontFile ? FT_Get_Char_Index(face_rec, charcode) : -1;
+            m_pFontFile ? face->GetCharIndex(charcode) : -1;
         continue;
       }
       m_Encoding.SetUnicode(charcode, UnicodeFromAdobeName(name));
       if (charmap_type == CharmapType::kMSSymbol) {
-        m_GlyphIndex[charcode] = GetGlyphIndexForMSSymbol(face_rec, charcode);
+        m_GlyphIndex[charcode] = GetGlyphIndexForMSSymbol(face, charcode);
       } else if (m_Encoding.UnicodeFromCharCode(charcode)) {
         if (charmap_type == CharmapType::kMSUnicode) {
-          m_GlyphIndex[charcode] = FT_Get_Char_Index(
-              face_rec, m_Encoding.UnicodeFromCharCode(charcode));
+          m_GlyphIndex[charcode] =
+              face->GetCharIndex(m_Encoding.UnicodeFromCharCode(charcode));
         } else if (charmap_type == CharmapType::kMacRoman) {
           uint32_t maccode = CharCodeFromUnicodeForEncoding(
               fxge::FontEncoding::kAppleRoman,
               m_Encoding.UnicodeFromCharCode(charcode));
           if (!maccode) {
-            m_GlyphIndex[charcode] = FT_Get_Name_Index(face_rec, name);
+            m_GlyphIndex[charcode] = face->GetNameIndex(name);
           } else {
-            m_GlyphIndex[charcode] = FT_Get_Char_Index(face_rec, maccode);
+            m_GlyphIndex[charcode] = face->GetCharIndex(maccode);
           }
         }
       }
@@ -102,16 +102,16 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
         continue;
       }
       if (strcmp(name, ".notdef") == 0) {
-        m_GlyphIndex[charcode] = FT_Get_Char_Index(face_rec, 32);
+        m_GlyphIndex[charcode] = face->GetCharIndex(32);
         continue;
       }
-      m_GlyphIndex[charcode] = FT_Get_Name_Index(face_rec, name);
+      m_GlyphIndex[charcode] = face->GetNameIndex(name);
       if (m_GlyphIndex[charcode] != 0 || !bToUnicode)
         continue;
 
       WideString wsUnicode = UnicodeFromCharCode(charcode);
       if (!wsUnicode.IsEmpty()) {
-        m_GlyphIndex[charcode] = FT_Get_Char_Index(face_rec, wsUnicode[0]);
+        m_GlyphIndex[charcode] = face->GetCharIndex(wsUnicode[0]);
         m_Encoding.SetUnicode(charcode, wsUnicode[0]);
       }
     }
@@ -119,7 +119,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
   }
   if (UseTTCharmapMSSymbol(face)) {
     for (uint32_t charcode = 0; charcode < 256; charcode++)
-      m_GlyphIndex[charcode] = GetGlyphIndexForMSSymbol(face_rec, charcode);
+      m_GlyphIndex[charcode] = GetGlyphIndexForMSSymbol(face, charcode);
     if (HasAnyGlyphIndex()) {
       if (base_encoding != FontEncoding::kBuiltin) {
         for (uint32_t charcode = 0; charcode < 256; charcode++) {
@@ -139,7 +139,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
   }
   if (UseTTCharmapMacRoman(face)) {
     for (uint32_t charcode = 0; charcode < 256; charcode++) {
-      m_GlyphIndex[charcode] = FT_Get_Char_Index(face_rec, charcode);
+      m_GlyphIndex[charcode] = face->GetCharIndex(charcode);
       m_Encoding.SetUnicode(charcode, UnicodeFromAppleRomanCharCode(charcode));
     }
     if (m_pFontFile || HasAnyGlyphIndex())
@@ -161,7 +161,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
         }
       }
       m_GlyphIndex[charcode] =
-          FT_Get_Char_Index(face_rec, m_Encoding.UnicodeFromCharCode(charcode));
+          face->GetCharIndex(m_Encoding.UnicodeFromCharCode(charcode));
     }
     if (HasAnyGlyphIndex())
       return;

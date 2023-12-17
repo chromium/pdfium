@@ -46,8 +46,7 @@ bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& pFont, wchar_t wcUnicode) {
     return false;
   }
 
-  FXFT_FaceRec* pFaceRec = pFace->GetRec();
-  if (FT_Get_Char_Index(pFaceRec, wcUnicode) == 0) {
+  if (pFace->GetCharIndex(wcUnicode) == 0) {
     pFace->SetCharMap(charmap);
     return false;
   }
@@ -552,7 +551,7 @@ bool VerifyUnicodeForFontDescriptor(CFGAS_FontDescriptor* pDesc,
 
   bool select_charmap_result =
       pFace->SelectCharMap(fxge::FontEncoding::kUnicode);
-  FT_Error ret_index = FT_Get_Char_Index(pFace->GetRec(), wcUnicode);
+  int ret_index = pFace->GetCharIndex(wcUnicode);
 
   pFace->ClearExternalStream();
 

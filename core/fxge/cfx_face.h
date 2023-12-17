@@ -83,6 +83,9 @@ class CFX_Face final : public Retainable, public Observable {
                     int weight,
                     const CFX_SubstFont* subst_font);
 
+  int GetCharIndex(uint32_t code);
+  int GetNameIndex(const char* name);
+
   CharMap GetCurrentCharMap() const;
   absl::optional<fxge::FontEncoding> GetCurrentCharMapEncoding() const;
   int GetCharMapPlatformIdByIndex(size_t index) const;

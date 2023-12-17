@@ -642,8 +642,7 @@ int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {
   if (pVertGlyph)
     *pVertGlyph = false;
 
-  FXFT_FaceRec* face = m_Font.GetFaceRec();
-  int index = FT_Get_Char_Index(face, unicode);
+  int index = m_Font.GetFace()->GetCharIndex(unicode);
   if (unicode == pdfium::unicode::kBoxDrawingsLightVerical)
     return index;
 
@@ -655,6 +654,7 @@ int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {
 
   static constexpr uint32_t kGsubTag =
       CFX_FontMapper::MakeTag('G', 'S', 'U', 'B');
+  FXFT_FaceRec* face = m_Font.GetFaceRec();
   unsigned long length = 0;
   int error = FT_Load_Sfnt_Table(face, kGsubTag, 0, nullptr, &length);
   if (error || !length) {
@@ -740,17 +740,18 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
       if (!name_unicode)
         return charcode ? static_cast<int>(charcode) : -1;
 
-      if (base_encoding == FontEncoding::kStandard)
-        return FT_Get_Char_Index(face_rec, name_unicode);
+      if (base_encoding == FontEncoding::kStandard) {
+        return face->GetCharIndex(name_unicode);
+      }
 
       if (base_encoding == FontEncoding::kWinAnsi) {
-        index = FT_Get_Char_Index(face_rec, name_unicode);
+        index = face->GetCharIndex(name_unicode);
       } else {
         DCHECK_EQ(base_encoding, FontEncoding::kMacRoman);
         uint32_t maccode = CharCodeFromUnicodeForEncoding(
             fxge::FontEncoding::kAppleRoman, name_unicode);
-        index = maccode ? FT_Get_Char_Index(face_rec, maccode)
-                        : FT_Get_Name_Index(face_rec, name);
+        index =
+            maccode ? face->GetCharIndex(maccode) : face->GetNameIndex(name);
       }
       if (index == 0 || index == 0xffff)
         return charcode ? static_cast<int>(charcode) : -1;

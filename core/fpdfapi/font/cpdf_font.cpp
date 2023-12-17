@@ -393,8 +393,7 @@ int CPDF_Font::FallbackGlyphFromCharcode(int fallbackFont, uint32_t charcode) {
 
   WideString str = UnicodeFromCharCode(charcode);
   uint32_t unicode = !str.IsEmpty() ? str[0] : charcode;
-  int glyph =
-      FT_Get_Char_Index(m_FontFallbacks[fallbackFont]->GetFaceRec(), unicode);
+  int glyph = m_FontFallbacks[fallbackFont]->GetFace()->GetCharIndex(unicode);
   if (glyph == 0)
     return -1;
 
