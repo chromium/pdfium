@@ -7,6 +7,7 @@
 
 #include <stdint.h>
 
+#include <array>
 #include <memory>
 
 #include "build/build_config.h"
@@ -71,6 +72,10 @@ class CFX_Face final : public Retainable, public Observable {
   // Returns the size of the data, or 0 on failure. Only write into `buffer` if
   // it is large enough to hold the data.
   size_t GetSfntTable(uint32_t table, pdfium::span<uint8_t> buffer);
+
+  absl::optional<std::array<uint32_t, 4>> GetOs2UnicodeRange();
+  absl::optional<std::array<uint32_t, 2>> GetOs2CodePageRange();
+  absl::optional<std::array<uint8_t, 2>> GetOs2Panose();
 
   std::unique_ptr<CFX_GlyphBitmap> RenderGlyph(const CFX_Font* pFont,
                                                uint32_t glyph_index,

@@ -199,16 +199,14 @@ const uint32_t kFPFSkiaFontCharsets[] = {
     FPF_SKIACHARSET_Symbol,
 };
 
-uint32_t FPF_SkiaGetFaceCharset(TT_OS2* pOS2) {
-  uint32_t dwCharset = 0;
-  if (pOS2) {
-    for (int32_t i = 0; i < 32; i++) {
-      if (pOS2->ulCodePageRange1 & (1 << i))
-        dwCharset |= kFPFSkiaFontCharsets[i];
+uint32_t FPF_SkiaGetFaceCharset(uint32_t code_range) {
+  uint32_t charset = 0;
+  for (int32_t i = 0; i < 32; i++) {
+    if (code_range & (1 << i)) {
+      charset |= kFPFSkiaFontCharsets[i];
     }
   }
-  dwCharset |= FPF_SKIACHARSET_Default;
-  return dwCharset;
+  return charset;
 }
 
 }  // namespace
@@ -389,21 +387,26 @@ std::unique_ptr<CFPF_SkiaPathFont> CFPF_SkiaFontMgr::ReportFace(
   if (face->IsFixedWidth()) {
     dwStyle |= FXFONT_FIXED_PITCH;
   }
-  TT_OS2* pOS2 =
-      static_cast<TT_OS2*>(FT_Get_Sfnt_Table(face->GetRec(), ft_sfnt_os2));
-  if (pOS2) {
-    if (pOS2->ulCodePageRange1 & (1 << 31))
+
+  uint32_t charset = FPF_SKIACHARSET_Default;
+  absl::optional<std::array<uint32_t, 2>> code_page_range =
+      face->GetOs2CodePageRange();
+  if (code_page_range.has_value()) {
+    if (code_page_range.value()[0] & (1 << 31)) {
       dwStyle |= FXFONT_SYMBOLIC;
-    if (pOS2->panose[0] == 2) {
-      uint8_t uSerif = pOS2->panose[1];
-      if ((uSerif > 1 && uSerif < 10) || uSerif > 13)
-        dwStyle |= FXFONT_SERIF;
+    }
+    charset |= FPF_SkiaGetFaceCharset(code_page_range.value()[0]);
+  }
+
+  absl::optional<std::array<uint8_t, 2>> panose = face->GetOs2Panose();
+  if (panose.has_value() && panose.value()[0] == 2) {
+    uint8_t serif = panose.value()[1];
+    if ((serif > 1 && serif < 10) || serif > 13) {
+      dwStyle |= FXFONT_SERIF;
     }
   }
-  if (pOS2 && (pOS2->ulCodePageRange1 & (1 << 31)))
-    dwStyle |= FXFONT_SYMBOLIC;
 
   return std::make_unique<CFPF_SkiaPathFont>(
-      file, face->GetFamilyName(), dwStyle, face->GetRec()->face_index,
-      FPF_SkiaGetFaceCharset(pOS2), face->GetRec()->num_glyphs);
+      file, face->GetFamilyName(), dwStyle, face->GetRec()->face_index, charset,
+      face->GetRec()->num_glyphs);
 }
