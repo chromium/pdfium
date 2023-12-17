@@ -428,13 +428,13 @@ FX_RECT CPDF_Font::GetCharBBoxForFace(const RetainPtr<CFX_Face>& face) {
 }
 
 // static
-bool CPDF_Font::UseTTCharmap(FXFT_FaceRec* face,
+bool CPDF_Font::UseTTCharmap(const RetainPtr<CFX_Face>& face,
                              int platform_id,
                              int encoding_id) {
-  for (int i = 0; i < face->num_charmaps; i++) {
-    if (FXFT_Get_Charmap_PlatformID(face->charmaps[i]) == platform_id &&
-        FXFT_Get_Charmap_EncodingID(face->charmaps[i]) == encoding_id) {
-      FT_Set_Charmap(face, face->charmaps[i]);
+  for (size_t i = 0; i < face->GetCharMapCount(); i++) {
+    if (face->GetCharMapPlatformIdByIndex(i) == platform_id &&
+        face->GetCharMapEncodingIdByIndex(i) == encoding_id) {
+      face->SetCharMapByIndex(i);
       return true;
     }
   }

@@ -15,6 +15,7 @@
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/freetype/fx_freetype.h"
+#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/containers/span.h"
 
 namespace fxge {
@@ -28,6 +29,8 @@ class CFX_SubstFont;
 
 class CFX_Face final : public Retainable, public Observable {
  public:
+  using CharMap = void*;
+
   static RetainPtr<CFX_Face> New(FT_Library library,
                                  RetainPtr<Retainable> pDesc,
                                  pdfium::span<const FT_Byte> data,
@@ -80,6 +83,14 @@ class CFX_Face final : public Retainable, public Observable {
                     int weight,
                     const CFX_SubstFont* subst_font);
 
+  CharMap GetCurrentCharMap() const;
+  absl::optional<fxge::FontEncoding> GetCurrentCharMapEncoding() const;
+  int GetCharMapPlatformIdByIndex(size_t index) const;
+  int GetCharMapEncodingIdByIndex(size_t index) const;
+  fxge::FontEncoding GetCharMapEncodingByIndex(size_t index) const;
+  size_t GetCharMapCount() const;
+  void SetCharMap(CharMap map);
+  void SetCharMapByIndex(size_t index);
   bool SelectCharMap(fxge::FontEncoding encoding);
 
   FXFT_FaceRec* GetRec() { return m_pRec.get(); }

@@ -26,10 +26,6 @@ enum class FontEncoding {
   kMsSymbol = 8,
 };
 
-// For `encoding`, the caller can safely cast any FreeType FT_ENCODING_* value
-// into fxge::FontEncoding.
-// TODO(crbug.com/pdfium/2037): Always pass in fxge::FontEncoding values and
-// remove this comment.
 uint32_t CharCodeFromUnicodeForEncoding(fxge::FontEncoding encoding,
                                         wchar_t unicode);
 

@@ -57,9 +57,6 @@ class ScopedFXFTMMVar {
 #define FXFT_Get_Glyph_HoriBearingY(face) (face)->glyph->metrics.horiBearingY
 #define FXFT_Get_Glyph_Width(face) (face)->glyph->metrics.width
 #define FXFT_Get_Glyph_Height(face) (face)->glyph->metrics.height
-#define FXFT_Get_Charmap_Encoding(charmap) (charmap)->encoding
-#define FXFT_Get_Charmap_PlatformID(charmap) (charmap)->platform_id
-#define FXFT_Get_Charmap_EncodingID(charmap) (charmap)->encoding_id
 #define FXFT_Get_Glyph_HoriAdvance(face) (face)->glyph->metrics.horiAdvance
 
 int FXFT_unicode_from_adobe_name(const char* glyph_name);

@@ -143,16 +143,16 @@ class CPDF_Font : public Retainable, public Observable {
   static FX_RECT GetCharBBoxForFace(const RetainPtr<CFX_Face>& face);
 
   // Commonly used wrappers for UseTTCharmap().
-  static bool UseTTCharmapMSUnicode(FXFT_FaceRec* face) {
+  static bool UseTTCharmapMSUnicode(const RetainPtr<CFX_Face>& face) {
     return UseTTCharmap(face, 3, 1);
   }
-  static bool UseTTCharmapMSSymbol(FXFT_FaceRec* face) {
+  static bool UseTTCharmapMSSymbol(const RetainPtr<CFX_Face>& face) {
     return UseTTCharmap(face, 3, 0);
   }
-  static bool UseTTCharmapMacRoman(FXFT_FaceRec* face) {
+  static bool UseTTCharmapMacRoman(const RetainPtr<CFX_Face>& face) {
     return UseTTCharmap(face, 1, 0);
   }
-  static bool UseTTCharmap(FXFT_FaceRec* face,
+  static bool UseTTCharmap(const RetainPtr<CFX_Face>& face,
                            int platform_id,
                            int encoding_id);
 

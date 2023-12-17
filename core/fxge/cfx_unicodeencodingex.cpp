@@ -43,27 +43,29 @@ CFX_UnicodeEncodingEx::CFX_UnicodeEncodingEx(CFX_Font* pFont,
 CFX_UnicodeEncodingEx::~CFX_UnicodeEncodingEx() = default;
 
 uint32_t CFX_UnicodeEncodingEx::GlyphFromCharCode(uint32_t charcode) {
-  FXFT_FaceRec* face = m_pFont->GetFaceRec();
-  FT_UInt nIndex = FT_Get_Char_Index(face, charcode);
+  FXFT_FaceRec* face_rec = m_pFont->GetFaceRec();
+  FT_UInt nIndex = FT_Get_Char_Index(face_rec, charcode);
   if (nIndex > 0)
     return nIndex;
-  int m = 0;
-  while (m < face->num_charmaps) {
-    auto encoding_id = static_cast<fxge::FontEncoding>(
-        FXFT_Get_Charmap_Encoding(face->charmaps[m++]));
+
+  RetainPtr<CFX_Face> face = m_pFont->GetFace();
+  size_t map_index = 0;
+  while (map_index < face->GetCharMapCount()) {
+    fxge::FontEncoding encoding_id =
+        face->GetCharMapEncodingByIndex(map_index++);
     if (encoding_id_ == encoding_id) {
       continue;
     }
-    if (!m_pFont->GetFace()->SelectCharMap(encoding_id)) {
+    if (!face->SelectCharMap(encoding_id)) {
       continue;
     }
-    nIndex = FT_Get_Char_Index(face, charcode);
+    nIndex = FT_Get_Char_Index(face_rec, charcode);
     if (nIndex > 0) {
       encoding_id_ = encoding_id;
       return nIndex;
     }
   }
-  m_pFont->GetFace()->SelectCharMap(encoding_id_);
+  face->SelectCharMap(encoding_id_);
   return 0;
 }
 
@@ -72,10 +74,9 @@ uint32_t CFX_UnicodeEncodingEx::CharCodeFromUnicode(wchar_t Unicode) const {
       encoding_id_ == fxge::FontEncoding::kSymbol) {
     return Unicode;
   }
-  FXFT_FaceRec* face = m_pFont->GetFaceRec();
-  for (int i = 0; i < face->num_charmaps; i++) {
-    auto encoding_id = static_cast<fxge::FontEncoding>(
-        FXFT_Get_Charmap_Encoding(face->charmaps[i]));
+  RetainPtr<CFX_Face> face = m_pFont->GetFace();
+  for (size_t i = 0; i < face->GetCharMapCount(); i++) {
+    fxge::FontEncoding encoding_id = face->GetCharMapEncodingByIndex(i);
     if (encoding_id == fxge::FontEncoding::kUnicode ||
         encoding_id == fxge::FontEncoding::kSymbol) {
       return Unicode;

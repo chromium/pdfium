@@ -48,18 +48,20 @@ const char* GlyphNameRemap(const char* pStrAdobe) {
 
 #endif  // BUILDFLAG(IS_APPLE)
 
-bool FT_UseType1Charmap(FXFT_FaceRec* face) {
-  if (face->num_charmaps == 0)
+bool UseType1Charmap(const RetainPtr<CFX_Face>& face) {
+  size_t num_charmaps = face->GetCharMapCount();
+  if (num_charmaps == 0) {
     return false;
+  }
 
   bool is_first_charmap_unicode =
-      FXFT_Get_Charmap_Encoding(face->charmaps[0]) ==
-      static_cast<FT_Encoding>(fxge::FontEncoding::kUnicode);
-  if (face->num_charmaps == 1 && is_first_charmap_unicode)
+      face->GetCharMapEncodingByIndex(0) == fxge::FontEncoding::kUnicode;
+  if (num_charmaps == 1 && is_first_charmap_unicode) {
     return false;
+  }
 
   int index = is_first_charmap_unicode ? 1 : 0;
-  FT_Set_Charmap(face, face->charmaps[index]);
+  face->SetCharMapByIndex(index);
   return true;
 }
 
@@ -141,7 +143,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
   }
 #endif
   if (!IsEmbedded() && !IsSymbolicFont() && m_Font.IsTTFont()) {
-    if (UseTTCharmapMSSymbol(m_Font.GetFaceRec())) {
+    if (UseTTCharmapMSSymbol(m_Font.GetFace())) {
       bool bGotOne = false;
       for (uint32_t charcode = 0; charcode < kInternalTableSize; charcode++) {
         const uint8_t prefix[4] = {0x00, 0xf0, 0xf1, 0xf2};
@@ -198,7 +200,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
 #endif
     return;
   }
-  FT_UseType1Charmap(m_Font.GetFaceRec());
+  UseType1Charmap(m_Font.GetFace());
 #if BUILDFLAG(IS_APPLE)
   if (bCoreText) {
     if (FontStyleIsSymbolic(m_Flags)) {

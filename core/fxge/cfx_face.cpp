@@ -525,6 +525,47 @@ int CFX_Face::GetGlyphWidth(uint32_t glyph_index,
   return static_cast<int>(EM_ADJUST(GetUnitsPerEm(), horizontal_advance));
 }
 
+CFX_Face::CharMap CFX_Face::GetCurrentCharMap() const {
+  return GetRec()->charmap;
+}
+
+absl::optional<fxge::FontEncoding> CFX_Face::GetCurrentCharMapEncoding() const {
+  if (!GetRec()->charmap) {
+    return absl::nullopt;
+  }
+  return static_cast<fxge::FontEncoding>(GetRec()->charmap->encoding);
+}
+
+int CFX_Face::GetCharMapPlatformIdByIndex(size_t index) const {
+  CHECK_LT(index, GetCharMapCount());
+  return GetRec()->charmaps[index]->platform_id;
+}
+
+int CFX_Face::GetCharMapEncodingIdByIndex(size_t index) const {
+  CHECK_LT(index, GetCharMapCount());
+  return GetRec()->charmaps[index]->encoding_id;
+}
+
+fxge::FontEncoding CFX_Face::GetCharMapEncodingByIndex(size_t index) const {
+  CHECK_LT(index, GetCharMapCount());
+  return static_cast<fxge::FontEncoding>(GetRec()->charmaps[index]->encoding);
+}
+
+size_t CFX_Face::GetCharMapCount() const {
+  return GetRec()->charmaps
+             ? pdfium::base::checked_cast<size_t>(GetRec()->num_charmaps)
+             : 0;
+}
+
+void CFX_Face::SetCharMap(CharMap map) {
+  FT_Set_Charmap(GetRec(), static_cast<FT_CharMap>(map));
+}
+
+void CFX_Face::SetCharMapByIndex(size_t index) {
+  CHECK_LT(index, GetCharMapCount());
+  SetCharMap(GetRec()->charmaps[index]);
+}
+
 bool CFX_Face::SelectCharMap(fxge::FontEncoding encoding) {
   FT_Error error =
       FT_Select_Charmap(GetRec(), static_cast<FT_Encoding>(encoding));

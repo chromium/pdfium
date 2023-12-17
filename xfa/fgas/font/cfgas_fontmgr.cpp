@@ -41,14 +41,14 @@ bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& pFont, wchar_t wcUnicode) {
   if (!pFace)
     return false;
 
-  FXFT_FaceRec* pFaceRec = pFace->GetRec();
-  FT_CharMap charmap = pFaceRec->charmap;
+  CFX_Face::CharMap charmap = pFace->GetCurrentCharMap();
   if (!pFace->SelectCharMap(fxge::FontEncoding::kUnicode)) {
     return false;
   }
 
+  FXFT_FaceRec* pFaceRec = pFace->GetRec();
   if (FT_Get_Char_Index(pFaceRec, wcUnicode) == 0) {
-    FT_Set_Charmap(pFaceRec, charmap);
+    pFace->SetCharMap(charmap);
     return false;
   }
   return true;
