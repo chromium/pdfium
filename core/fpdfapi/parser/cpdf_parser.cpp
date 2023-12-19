@@ -652,12 +652,16 @@ void CPDF_Parser::MergeCrossRefObjectsData(
           m_CrossRefTable->SetFree(obj.obj_num);
         break;
       case ObjectType::kNormal:
-      case ObjectType::kObjStream:
-        m_CrossRefTable->AddNormal(obj.obj_num, obj.info.gennum, obj.info.pos);
+        m_CrossRefTable->AddNormal(obj.obj_num, obj.info.gennum,
+                                   obj.info.is_object_stream_flag,
+                                   obj.info.pos);
         break;
       case ObjectType::kCompressed:
         m_CrossRefTable->AddCompressed(obj.obj_num, obj.info.archive.obj_num,
                                        obj.info.archive.obj_index);
+        break;
+      case ObjectType::kNull:
+        // Ignored.
         break;
     }
   }
@@ -745,7 +749,8 @@ bool CPDF_Parser::RebuildCrossRef() {
       }
 
       if (obj_num < kMaxObjectNumber) {
-        cross_ref_table->AddNormal(obj_num, gen_num, obj_pos);
+        cross_ref_table->AddNormal(obj_num, gen_num, /*is_object_stream=*/false,
+                                   obj_pos);
         const auto object_stream =
             CPDF_ObjectStream::Create(std::move(pStream));
         if (object_stream) {
@@ -891,7 +896,8 @@ void CPDF_Parser::ProcessCrossRefV5Entry(
   if (existing_type == ObjectType::kNull) {
     const uint32_t offset = GetSecondXRefStreamEntry(entry_span, field_widths);
     if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
-      m_CrossRefTable->AddNormal(obj_num, 0, offset);
+      m_CrossRefTable->AddNormal(obj_num, 0, /*is_object_stream=*/false,
+                                 offset);
     return;
   }
 
@@ -907,7 +913,8 @@ void CPDF_Parser::ProcessCrossRefV5Entry(
   if (type == ObjectType::kNormal) {
     const uint32_t offset = GetSecondXRefStreamEntry(entry_span, field_widths);
     if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
-      m_CrossRefTable->AddNormal(obj_num, 0, offset);
+      m_CrossRefTable->AddNormal(obj_num, 0, /*is_object_stream=*/false,
+                                 offset);
     return;
   }
 
@@ -1028,7 +1035,7 @@ const CPDF_ObjectStream* CPDF_Parser::GetObjectStream(uint32_t object_number) {
     return it->second.get();
 
   const auto* info = m_CrossRefTable->GetObjectInfo(object_number);
-  if (!info || info->type != ObjectType::kObjStream) {
+  if (!info || !info->is_object_stream_flag) {
     return nullptr;
   }
 

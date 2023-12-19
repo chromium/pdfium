@@ -44,19 +44,22 @@ void CPDF_CrossRefTable::AddCompressed(uint32_t obj_num,
   if (info.gennum > 0)
     return;
 
-  if (info.type == ObjectType::kObjStream)
+  // Don't add known object streams to object streams.
+  if (info.is_object_stream_flag) {
     return;
+  }
 
   info.type = ObjectType::kCompressed;
   info.archive.obj_num = archive_obj_num;
   info.archive.obj_index = archive_obj_index;
   info.gennum = 0;
 
-  objects_info_[archive_obj_num].type = ObjectType::kObjStream;
+  objects_info_[archive_obj_num].is_object_stream_flag = true;
 }
 
 void CPDF_CrossRefTable::AddNormal(uint32_t obj_num,
                                    uint16_t gen_num,
+                                   bool is_object_stream,
                                    FX_FILESIZE pos) {
   CHECK_LT(obj_num, CPDF_Parser::kMaxObjectNumber);
 
@@ -67,9 +70,8 @@ void CPDF_CrossRefTable::AddNormal(uint32_t obj_num,
   if (info.type == ObjectType::kCompressed && gen_num == 0)
     return;
 
-  if (info.type != ObjectType::kObjStream)
-    info.type = ObjectType::kNormal;
-
+  info.type = ObjectType::kNormal;
+  info.is_object_stream_flag |= is_object_stream;
   info.gennum = gen_num;
   info.pos = pos;
 }
@@ -129,9 +131,10 @@ void CPDF_CrossRefTable::UpdateInfo(
   auto new_it = new_objects_info.begin();
   while (cur_it != objects_info_.end() && new_it != new_objects_info.end()) {
     if (cur_it->first == new_it->first) {
-      if (cur_it->second.type == ObjectType::kObjStream &&
-          new_it->second.type == ObjectType::kNormal) {
-        new_it->second.type = ObjectType::kObjStream;
+      if (new_it->second.type == ObjectType::kNormal &&
+          cur_it->second.type == ObjectType::kNormal &&
+          cur_it->second.is_object_stream_flag) {
+        new_it->second.is_object_stream_flag = true;
       }
       ++cur_it;
       ++new_it;
