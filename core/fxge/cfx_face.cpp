@@ -22,6 +22,7 @@
 #include "core/fxge/scoped_font_transform.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
+#include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/numerics/safe_math.h"
 
@@ -199,6 +200,69 @@ int Outline_CubicTo(const FT_Vector* control1,
   param->m_CurX = to->x;
   param->m_CurY = to->y;
   return 0;
+}
+
+FT_Encoding ToFTEncoding(fxge::FontEncoding encoding) {
+  switch (encoding) {
+    case fxge::FontEncoding::kAdobeCustom:
+      return FT_ENCODING_ADOBE_CUSTOM;
+    case fxge::FontEncoding::kAdobeExpert:
+      return FT_ENCODING_ADOBE_EXPERT;
+    case fxge::FontEncoding::kAdobeStandard:
+      return FT_ENCODING_ADOBE_STANDARD;
+    case fxge::FontEncoding::kAppleRoman:
+      return FT_ENCODING_APPLE_ROMAN;
+    case fxge::FontEncoding::kBig5:
+      return FT_ENCODING_BIG5;
+    case fxge::FontEncoding::kGB2312:
+      return FT_ENCODING_PRC;
+    case fxge::FontEncoding::kJohab:
+      return FT_ENCODING_JOHAB;
+    case fxge::FontEncoding::kLatin1:
+      return FT_ENCODING_ADOBE_LATIN_1;
+    case fxge::FontEncoding::kOldLatin2:
+      return FT_ENCODING_OLD_LATIN_2;
+    case fxge::FontEncoding::kSjis:
+      return FT_ENCODING_SJIS;
+    case fxge::FontEncoding::kSymbol:
+      return FT_ENCODING_MS_SYMBOL;
+    case fxge::FontEncoding::kUnicode:
+      return FT_ENCODING_UNICODE;
+    case fxge::FontEncoding::kWansung:
+      return FT_ENCODING_WANSUNG;
+  }
+}
+
+fxge::FontEncoding ToFontEncoding(uint32_t ft_encoding) {
+  switch (ft_encoding) {
+    case FT_ENCODING_ADOBE_CUSTOM:
+      return fxge::FontEncoding::kAdobeCustom;
+    case FT_ENCODING_ADOBE_EXPERT:
+      return fxge::FontEncoding::kAdobeExpert;
+    case FT_ENCODING_ADOBE_STANDARD:
+      return fxge::FontEncoding::kAdobeStandard;
+    case FT_ENCODING_APPLE_ROMAN:
+      return fxge::FontEncoding::kAppleRoman;
+    case FT_ENCODING_BIG5:
+      return fxge::FontEncoding::kBig5;
+    case FT_ENCODING_PRC:
+      return fxge::FontEncoding::kGB2312;
+    case FT_ENCODING_JOHAB:
+      return fxge::FontEncoding::kJohab;
+    case FT_ENCODING_ADOBE_LATIN_1:
+      return fxge::FontEncoding::kLatin1;
+    case FT_ENCODING_OLD_LATIN_2:
+      return fxge::FontEncoding::kOldLatin2;
+    case FT_ENCODING_SJIS:
+      return fxge::FontEncoding::kSjis;
+    case FT_ENCODING_MS_SYMBOL:
+      return fxge::FontEncoding::kSymbol;
+    case FT_ENCODING_UNICODE:
+      return fxge::FontEncoding::kUnicode;
+    case FT_ENCODING_WANSUNG:
+      return fxge::FontEncoding::kWansung;
+  }
+  NOTREACHED_NORETURN();
 }
 
 }  // namespace
@@ -608,7 +672,7 @@ absl::optional<fxge::FontEncoding> CFX_Face::GetCurrentCharMapEncoding() const {
   if (!GetRec()->charmap) {
     return absl::nullopt;
   }
-  return static_cast<fxge::FontEncoding>(GetRec()->charmap->encoding);
+  return ToFontEncoding(GetRec()->charmap->encoding);
 }
 
 int CFX_Face::GetCharMapPlatformIdByIndex(size_t index) const {
@@ -623,7 +687,7 @@ int CFX_Face::GetCharMapEncodingIdByIndex(size_t index) const {
 
 fxge::FontEncoding CFX_Face::GetCharMapEncodingByIndex(size_t index) const {
   CHECK_LT(index, GetCharMapCount());
-  return static_cast<fxge::FontEncoding>(GetRec()->charmaps[index]->encoding);
+  return ToFontEncoding(GetRec()->charmaps[index]->encoding);
 }
 
 size_t CFX_Face::GetCharMapCount() const {
@@ -642,8 +706,7 @@ void CFX_Face::SetCharMapByIndex(size_t index) {
 }
 
 bool CFX_Face::SelectCharMap(fxge::FontEncoding encoding) {
-  FT_Error error =
-      FT_Select_Charmap(GetRec(), static_cast<FT_Encoding>(encoding));
+  FT_Error error = FT_Select_Charmap(GetRec(), ToFTEncoding(encoding));
   return !error;
 }
 

@@ -7,25 +7,22 @@
 
 #include <stdint.h>
 
-#include "core/fxcrt/fx_string.h"
-
 namespace fxge {
 
-// The values here match FreeType FT_Encoding values with similar names.
 enum class FontEncoding : uint32_t {
-  kAdobeCustom = FXBSTR_ID('A', 'D', 'B', 'C'),
-  kAdobeExpert = FXBSTR_ID('A', 'D', 'B', 'E'),
-  kAdobeStandard = FXBSTR_ID('A', 'D', 'O', 'B'),
-  kAppleRoman = FXBSTR_ID('a', 'r', 'm', 'n'),
-  kBig5 = FXBSTR_ID('b', 'i', 'g', '5'),
-  kGB2312 = FXBSTR_ID('g', 'b', ' ', ' '),
-  kJohab = FXBSTR_ID('j', 'o', 'h', 'a'),
-  kLatin1 = FXBSTR_ID('l', 'a', 't', '1'),
-  kOldLatin2 = FXBSTR_ID('l', 'a', 't', '2'),
-  kSjis = FXBSTR_ID('s', 'j', 'i', 's'),
-  kSymbol = FXBSTR_ID('s', 'y', 'm', 'b'),
-  kUnicode = FXBSTR_ID('u', 'n', 'i', 'c'),
-  kWansung = FXBSTR_ID('w', 'a', 'n', 's'),
+  kAdobeCustom,
+  kAdobeExpert,
+  kAdobeStandard,
+  kAppleRoman,
+  kBig5,
+  kGB2312,
+  kJohab,
+  kLatin1,
+  kOldLatin2,
+  kSjis,
+  kSymbol,
+  kUnicode,
+  kWansung,
 };
 
 }  // namespace fxge

@@ -98,7 +98,6 @@ source_set("fxge") {
     "freetype/fx_freetype.h",
     "fx_font.cpp",
     "fx_font.h",
-    "fx_fontencoding.cpp",
     "fx_fontencoding.h",
     "render_defines.h",
     "renderdevicedriver_iface.cpp",
