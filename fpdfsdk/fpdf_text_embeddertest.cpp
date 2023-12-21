@@ -520,6 +520,32 @@ TEST_F(FPDFTextEmbedderTest, TextSearchTermAtEnd) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFTextEmbedderTest, TextSearchLeadingSpace) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page));
+    ASSERT_TRUE(textpage);
+
+    ScopedFPDFWideString search_term = GetFPDFWideString(L" Good");
+    ScopedFPDFTextFind search(
+        FPDFText_FindStart(textpage.get(), search_term.get(), 0, 0));
+    ASSERT_TRUE(search);
+    EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
+
+    EXPECT_TRUE(FPDFText_FindNext(search.get()));
+    EXPECT_EQ(14, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(5, FPDFText_GetSchCount(search.get()));
+
+    EXPECT_FALSE(FPDFText_FindNext(search.get()));
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFTextEmbedderTest, TextSearchTrailingSpace) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -539,6 +565,35 @@ TEST_F(FPDFTextEmbedderTest, TextSearchTrailingSpace) {
     EXPECT_TRUE(FPDFText_FindNext(search.get()));
     EXPECT_EQ(10, FPDFText_GetSchResultIndex(search.get()));
     EXPECT_EQ(4, FPDFText_GetSchCount(search.get()));
+
+    EXPECT_FALSE(FPDFText_FindNext(search.get()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFTextEmbedderTest, TextSearchSpaceInSearchTerm) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page));
+    ASSERT_TRUE(textpage);
+
+    ScopedFPDFWideString search_term = GetFPDFWideString(L"ld! G");
+    ScopedFPDFTextFind search(
+        FPDFText_FindStart(textpage.get(), search_term.get(), 0, 0));
+    ASSERT_TRUE(search);
+    EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
+
+    EXPECT_TRUE(FPDFText_FindNext(search.get()));
+    EXPECT_EQ(10, FPDFText_GetSchResultIndex(search.get()));
+    // Note: Even though `search_term` contains 5 characters,
+    // FPDFText_FindNext() matched "\r\n" in `textpage` against the space in
+    // `search_term`.
+    EXPECT_EQ(6, FPDFText_GetSchCount(search.get()));
 
     EXPECT_FALSE(FPDFText_FindNext(search.get()));
   }
