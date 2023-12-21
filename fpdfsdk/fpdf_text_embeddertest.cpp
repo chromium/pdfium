@@ -512,9 +512,9 @@ TEST_F(FPDFTextEmbedderTest, TextSearchTermAtEnd) {
     EXPECT_EQ(7, FPDFText_GetSchResultIndex(search.get()));
     EXPECT_EQ(6, FPDFText_GetSchCount(search.get()));
 
-    // TODO(crbug.com/pdfium/2111): This should return true, and the result has
-    // index = 24 and count = 6.
-    EXPECT_FALSE(FPDFText_FindNext(search.get()));
+    EXPECT_TRUE(FPDFText_FindNext(search.get()));
+    EXPECT_EQ(24, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(6, FPDFText_GetSchCount(search.get()));
   }
 
   UnloadPage(page);

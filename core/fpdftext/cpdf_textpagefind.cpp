@@ -227,6 +227,9 @@ bool CPDF_TextPageFind::FindNext() {
     WideString csWord = m_csFindWhatArray[iWord];
     if (csWord.IsEmpty()) {
       if (iWord == nCount - 1) {
+        if (nStartPos >= strLen) {
+          return false;
+        }
         wchar_t strInsert = m_strText[nStartPos];
         if (strInsert == L'\n' || strInsert == L' ' || strInsert == L'\r' ||
             strInsert == kNonBreakingSpace) {
@@ -286,9 +289,6 @@ bool CPDF_TextPageFind::FindNext() {
       iWord = -1;
       size_t index = bSpaceStart ? 1 : 0;
       nStartPos = m_resStart + m_csFindWhatArray[index].GetLength();
-    }
-    if (nStartPos >= strLen) {
-      return false;
     }
   }
   m_resEnd = nResultPos.value() + m_csFindWhatArray.back().GetLength() - 1;
