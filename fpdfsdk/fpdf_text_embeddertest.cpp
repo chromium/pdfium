@@ -492,6 +492,34 @@ TEST_F(FPDFTextEmbedderTest, TextSearchConsecutive) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFTextEmbedderTest, TextSearchTermAtEnd) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page));
+    ASSERT_TRUE(textpage);
+
+    ScopedFPDFWideString search_term = GetFPDFWideString(L"world!");
+    ScopedFPDFTextFind search(
+        FPDFText_FindStart(textpage.get(), search_term.get(), 0, 0));
+    ASSERT_TRUE(search);
+    EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
+
+    EXPECT_TRUE(FPDFText_FindNext(search.get()));
+    EXPECT_EQ(7, FPDFText_GetSchResultIndex(search.get()));
+    EXPECT_EQ(6, FPDFText_GetSchCount(search.get()));
+
+    // TODO(crbug.com/pdfium/2111): This should return true, and the result has
+    // index = 24 and count = 6.
+    EXPECT_FALSE(FPDFText_FindNext(search.get()));
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFTextEmbedderTest, TextSearchTrailingSpace) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
