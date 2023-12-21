@@ -8,6 +8,7 @@
 #include <limits>
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontmgr.h"
@@ -577,6 +578,26 @@ int CFX_Face::GetCharIndex(uint32_t code) {
 
 int CFX_Face::GetNameIndex(const char* name) {
   return FT_Get_Name_Index(GetRec(), name);
+}
+
+std::vector<CFX_Face::CharCodeAndIndex> CFX_Face::GetCharCodesAndIndices(
+    char32_t max_char) {
+  CharCodeAndIndex char_code_and_index;
+  char_code_and_index.char_code = static_cast<uint32_t>(
+      FT_Get_First_Char(GetRec(), &char_code_and_index.glyph_index));
+  if (char_code_and_index.char_code > max_char) {
+    return {};
+  }
+  std::vector<CharCodeAndIndex> results = {char_code_and_index};
+  while (true) {
+    char_code_and_index.char_code = static_cast<uint32_t>(FT_Get_Next_Char(
+        GetRec(), results.back().char_code, &char_code_and_index.glyph_index));
+    if (char_code_and_index.char_code > max_char ||
+        char_code_and_index.glyph_index == 0) {
+      return results;
+    }
+    results.push_back(char_code_and_index);
+  }
 }
 
 CFX_Face::CharMap CFX_Face::GetCurrentCharMap() const {

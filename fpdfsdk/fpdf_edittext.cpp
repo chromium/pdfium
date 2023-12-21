@@ -310,31 +310,31 @@ RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* pDoc,
     return nullptr;
   }
 
-  uint32_t dwGlyphIndex;
-  uint32_t dwCurrentChar = static_cast<uint32_t>(
-      FT_Get_First_Char(pFont->GetFaceRec(), &dwGlyphIndex));
+  // Simple fonts have 1-byte charcodes only.
   static constexpr uint32_t kMaxSimpleFontChar = 0xFF;
-  if (dwCurrentChar > kMaxSimpleFontChar) {
+  auto char_codes_and_indices =
+      pFont->GetFace()->GetCharCodesAndIndices(kMaxSimpleFontChar);
+  if (char_codes_and_indices.empty()) {
     return nullptr;
   }
-  pFontDict->SetNewFor<CPDF_Number>("FirstChar",
-                                    static_cast<int>(dwCurrentChar));
-  auto widthsArray = pDoc->NewIndirect<CPDF_Array>();
-  while (true) {
-    widthsArray->AppendNew<CPDF_Number>(pFont->GetGlyphWidth(dwGlyphIndex));
-    uint32_t nextChar = static_cast<uint32_t>(
-        FT_Get_Next_Char(pFont->GetFaceRec(), dwCurrentChar, &dwGlyphIndex));
-    // Simple fonts have 1-byte charcodes only.
-    if (nextChar > kMaxSimpleFontChar || dwGlyphIndex == 0)
-      break;
-    for (uint32_t i = dwCurrentChar + 1; i < nextChar; i++)
-      widthsArray->AppendNew<CPDF_Number>(0);
-    dwCurrentChar = nextChar;
+
+  pFontDict->SetNewFor<CPDF_Number>(
+      "FirstChar", static_cast<int>(char_codes_and_indices[0].char_code));
+  auto widths_array = pDoc->NewIndirect<CPDF_Array>();
+  for (size_t i = 0; i < char_codes_and_indices.size(); ++i) {
+    widths_array->AppendNew<CPDF_Number>(
+        pFont->GetGlyphWidth(char_codes_and_indices[i].glyph_index));
+    if (i > 0 && i < char_codes_and_indices.size() - 1) {
+      for (uint32_t j = char_codes_and_indices[i - 1].char_code + 1;
+           j < char_codes_and_indices[i].char_code; ++j) {
+        widths_array->AppendNew<CPDF_Number>(0);
+      }
+    }
   }
-  pFontDict->SetNewFor<CPDF_Number>("LastChar",
-                                    static_cast<int>(dwCurrentChar));
+  pFontDict->SetNewFor<CPDF_Number>(
+      "LastChar", static_cast<int>(char_codes_and_indices.back().char_code));
   pFontDict->SetNewFor<CPDF_Reference>("Widths", pDoc,
-                                       widthsArray->GetObjNum());
+                                       widths_array->GetObjNum());
   RetainPtr<CPDF_Dictionary> pFontDesc =
       LoadFontDesc(pDoc, name, pFont.get(), span, font_type);
 
@@ -383,27 +383,19 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
     return nullptr;
   }
 
-  uint32_t dwGlyphIndex;
-  uint32_t dwCurrentChar = static_cast<uint32_t>(
-      FT_Get_First_Char(pFont->GetFaceRec(), &dwGlyphIndex));
-  if (dwCurrentChar > pdfium::kMaximumSupplementaryCodePoint) {
+  auto char_codes_and_indices = pFont->GetFace()->GetCharCodesAndIndices(
+      pdfium::kMaximumSupplementaryCodePoint);
+  if (char_codes_and_indices.empty()) {
     return nullptr;
   }
 
   std::multimap<uint32_t, uint32_t> to_unicode;
   std::map<uint32_t, uint32_t> widths;
-  while (true) {
-    if (dwCurrentChar > pdfium::kMaximumSupplementaryCodePoint) {
-      break;
+  for (const auto& item : char_codes_and_indices) {
+    if (!pdfium::Contains(widths, item.glyph_index)) {
+      widths[item.glyph_index] = pFont->GetGlyphWidth(item.glyph_index);
     }
-
-    if (!pdfium::Contains(widths, dwGlyphIndex))
-      widths[dwGlyphIndex] = pFont->GetGlyphWidth(dwGlyphIndex);
-    to_unicode.emplace(dwGlyphIndex, dwCurrentChar);
-    dwCurrentChar = static_cast<uint32_t>(
-        FT_Get_Next_Char(pFont->GetFaceRec(), dwCurrentChar, &dwGlyphIndex));
-    if (dwGlyphIndex == 0)
-      break;
+    to_unicode.emplace(item.glyph_index, item.char_code);
   }
   auto widthsArray = pDoc->NewIndirect<CPDF_Array>();
   for (auto it = widths.begin(); it != widths.end(); ++it) {
