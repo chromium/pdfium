@@ -41,19 +41,19 @@ TEST(CFX_DIBitmap, CalculatePitchAndSizeGood) {
   EXPECT_EQ(100u, result.value().pitch);
   EXPECT_EQ(20000u, result.value().size);
 
-  // Simple case with provided pitch.
+  // Simple case with provided pitch matching width * bpp.
   result =
       CFX_DIBitmap::CalculatePitchAndSize(100, 200, FXDIB_Format::kArgb, 400);
   ASSERT_TRUE(result.has_value());
   EXPECT_EQ(400u, result.value().pitch);
   EXPECT_EQ(80000u, result.value().size);
 
-  // Simple case with provided pitch, but pitch does not match width * bpp.
+  // Simple case with provided pitch, where pitch exceeds width * bpp.
   result =
-      CFX_DIBitmap::CalculatePitchAndSize(100, 200, FXDIB_Format::kArgb, 355);
+      CFX_DIBitmap::CalculatePitchAndSize(100, 200, FXDIB_Format::kArgb, 455);
   ASSERT_TRUE(result.has_value());
-  EXPECT_EQ(355u, result.value().pitch);
-  EXPECT_EQ(71000u, result.value().size);
+  EXPECT_EQ(455u, result.value().pitch);
+  EXPECT_EQ(91000u, result.value().size);
 }
 
 TEST(CFX_DIBitmap, CalculatePitchAndSizeBad) {
@@ -74,6 +74,10 @@ TEST(CFX_DIBitmap, CalculatePitchAndSizeBad) {
       CFX_DIBitmap::CalculatePitchAndSize(100, 200, FXDIB_Format::kInvalid, 0));
   EXPECT_FALSE(CFX_DIBitmap::CalculatePitchAndSize(
       100, 200, FXDIB_Format::kInvalid, 800));
+
+  // Width too wide for claimed pitch.
+  EXPECT_FALSE(
+      CFX_DIBitmap::CalculatePitchAndSize(101, 200, FXDIB_Format::kArgb, 400));
 
   // Overflow cases with calculated pitch.
   EXPECT_FALSE(CFX_DIBitmap::CalculatePitchAndSize(1073747000, 1,
