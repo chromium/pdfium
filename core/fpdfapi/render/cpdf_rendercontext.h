@@ -52,10 +52,13 @@ class CPDF_RenderContext {
               const CPDF_RenderOptions* pOptions,
               const CFX_Matrix* pLastMatrix);
 
-  void GetBackground(RetainPtr<CFX_DIBitmap> pBuffer,
-                     const CPDF_PageObject* pObj,
-                     const CPDF_RenderOptions* pOptions,
-                     const CFX_Matrix& mtFinal);
+  void GetBackgroundToDevice(CFX_RenderDevice* device,
+                             const CPDF_PageObject* object,
+                             const CPDF_RenderOptions* options,
+                             const CFX_Matrix& matrix);
+  void GetBackgroundToBitmap(RetainPtr<CFX_DIBitmap> bitmap,
+                             const CPDF_PageObject* object,
+                             const CFX_Matrix& matrix);
 
   size_t CountLayers() const { return m_Layers.size(); }
   Layer* GetLayer(uint32_t index) { return &m_Layers[index]; }

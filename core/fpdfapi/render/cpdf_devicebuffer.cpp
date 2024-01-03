@@ -89,7 +89,7 @@ void CPDF_DeviceBuffer::OutputToDevice() {
                                          m_pBitmap->GetHeight())) {
     return;
   }
-  m_pContext->GetBackground(pBuffer, m_pObject, nullptr, m_Matrix);
+  m_pContext->GetBackgroundToBitmap(pBuffer, m_pObject, m_Matrix);
   pBuffer->CompositeBitmap(0, 0, pBuffer->GetWidth(), pBuffer->GetHeight(),
                            m_pBitmap, 0, 0, BlendMode::kNormal, nullptr, false);
   m_pDevice->StretchDIBits(pBuffer, m_Rect.left, m_Rect.top, m_Rect.Width(),

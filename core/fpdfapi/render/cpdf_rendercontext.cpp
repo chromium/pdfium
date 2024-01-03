@@ -21,6 +21,7 @@
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "third_party/base/check.h"
 
 CPDF_RenderContext::CPDF_RenderContext(
     CPDF_Document* pDoc,
@@ -32,15 +33,22 @@ CPDF_RenderContext::CPDF_RenderContext(
 
 CPDF_RenderContext::~CPDF_RenderContext() = default;
 
-void CPDF_RenderContext::GetBackground(RetainPtr<CFX_DIBitmap> pBuffer,
-                                       const CPDF_PageObject* pObj,
-                                       const CPDF_RenderOptions* pOptions,
-                                       const CFX_Matrix& mtFinal) {
+void CPDF_RenderContext::GetBackgroundToDevice(
+    CFX_RenderDevice* device,
+    const CPDF_PageObject* object,
+    const CPDF_RenderOptions* options,
+    const CFX_Matrix& matrix) {
+  device->FillRect(FX_RECT(0, 0, device->GetWidth(), device->GetHeight()),
+                   0xffffffff);
+  Render(device, object, options, &matrix);
+}
+
+void CPDF_RenderContext::GetBackgroundToBitmap(RetainPtr<CFX_DIBitmap> bitmap,
+                                               const CPDF_PageObject* object,
+                                               const CFX_Matrix& matrix) {
   CFX_DefaultRenderDevice device;
-  device.Attach(std::move(pBuffer));
-  device.FillRect(FX_RECT(0, 0, device.GetWidth(), device.GetHeight()),
-                  0xffffffff);
-  Render(&device, pObj, pOptions, &mtFinal);
+  device.Attach(std::move(bitmap));
+  GetBackgroundToDevice(&device, object, /*options=*/nullptr, matrix);
 }
 
 void CPDF_RenderContext::AppendLayer(CPDF_PageObjectHolder* pObjectHolder,
