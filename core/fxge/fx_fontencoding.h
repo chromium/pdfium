@@ -18,6 +18,7 @@ enum class FontEncoding : uint32_t {
   kGB2312,
   kJohab,
   kLatin1,
+  kNone,
   kOldLatin2,
   kSjis,
   kSymbol,

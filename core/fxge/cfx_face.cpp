@@ -220,6 +220,8 @@ FT_Encoding ToFTEncoding(fxge::FontEncoding encoding) {
       return FT_ENCODING_JOHAB;
     case fxge::FontEncoding::kLatin1:
       return FT_ENCODING_ADOBE_LATIN_1;
+    case fxge::FontEncoding::kNone:
+      return FT_ENCODING_NONE;
     case fxge::FontEncoding::kOldLatin2:
       return FT_ENCODING_OLD_LATIN_2;
     case fxge::FontEncoding::kSjis:
@@ -251,6 +253,8 @@ fxge::FontEncoding ToFontEncoding(uint32_t ft_encoding) {
       return fxge::FontEncoding::kJohab;
     case FT_ENCODING_ADOBE_LATIN_1:
       return fxge::FontEncoding::kLatin1;
+    case FT_ENCODING_NONE:
+      return fxge::FontEncoding::kNone;
     case FT_ENCODING_OLD_LATIN_2:
       return fxge::FontEncoding::kOldLatin2;
     case FT_ENCODING_SJIS:
