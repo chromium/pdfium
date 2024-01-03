@@ -182,7 +182,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang
   # and whatever else without interference from each other.
-  'rust_revision': '9f2ba7f84988470627950863df3e2961ff3cc0d0',
+  'rust_revision': 'e721a72ada161eee9693d6d96fcbdb6155c7a8b1',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling skia
   # and whatever else without interference from each other.
