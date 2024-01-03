@@ -23,7 +23,7 @@ TEST(WideString, ElementAccess) {
   EXPECT_EQ(L'b', abc[1]);
   EXPECT_EQ(L'c', abc[2]);
 #ifndef NDEBUG
-  EXPECT_DEATH({ abc[4]; }, ".*");
+  EXPECT_DEATH({ abc[4]; }, "");
 #endif
 
   pdfium::span<const wchar_t> abc_span = abc.span();
@@ -53,7 +53,7 @@ TEST(WideString, ElementAccess) {
   EXPECT_EQ(L"abc", abc);
   EXPECT_EQ(L"def", mutable_abc);
 #ifndef NDEBUG
-  EXPECT_DEATH({ mutable_abc.SetAt(3, L'g'); }, ".*");
+  EXPECT_DEATH({ mutable_abc.SetAt(3, L'g'); }, "");
   EXPECT_EQ(L"abc", abc);
 #endif
 }
@@ -1452,7 +1452,7 @@ TEST(WideStringView, ElementAccess) {
   EXPECT_EQ(L'b', static_cast<wchar_t>(abc[1]));
   EXPECT_EQ(L'c', static_cast<wchar_t>(abc[2]));
 #ifndef NDEBUG
-  EXPECT_DEATH({ abc[4]; }, ".*");
+  EXPECT_DEATH({ abc[4]; }, "");
 #endif
 }
 
