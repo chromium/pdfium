@@ -2175,3 +2175,14 @@ TEST_F(FPDFViewEmbedderTest, RenderTransparencyOnWhiteBackground) {
 
   UnloadPage(page);
 }
+
+TEST_F(FPDFViewEmbedderTest, Bug2112) {
+  constexpr int kWidth = 595;
+  constexpr int kHeight = 842;
+  constexpr int kStride = kWidth * 3;
+  std::vector<uint8_t> vec(kStride * kHeight);
+  ScopedFPDFBitmap bitmap(FPDFBitmap_CreateEx(kWidth, kHeight, FPDFBitmap_BGR,
+                                              vec.data(), kStride));
+  // TODO(crbug.com/pdfium/2112): Should return FPDFBitmap_BGR.
+  EXPECT_EQ(FPDFBitmap_Unknown, FPDFBitmap_GetFormat(bitmap.get()));
+}
