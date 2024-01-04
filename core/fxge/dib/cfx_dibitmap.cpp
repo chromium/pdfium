@@ -677,14 +677,16 @@ absl::optional<CFX_DIBitmap::PitchAndSize> CFX_DIBitmap::CalculatePitchAndSize(
   if (!bpp) {
     return absl::nullopt;
   }
-  absl::optional<uint32_t> pitch32 = fxge::CalculatePitch32(bpp, width);
-  if (!pitch32.has_value()) {
-    return absl::nullopt;
-  }
   if (pitch == 0) {
+    absl::optional<uint32_t> pitch32 = fxge::CalculatePitch32(bpp, width);
+    if (!pitch32.has_value()) {
+      return absl::nullopt;
+    }
     pitch = pitch32.value();
   } else {
-    if (pitch < pitch32.value()) {
+    absl::optional<uint32_t> actual_pitch =
+        fxge::CalculatePitch8(bpp, /*components=*/1, width);
+    if (!actual_pitch.has_value() || pitch < actual_pitch.value()) {
       return absl::nullopt;
     }
   }

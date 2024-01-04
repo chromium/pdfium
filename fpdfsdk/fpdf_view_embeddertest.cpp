@@ -2183,6 +2183,5 @@ TEST_F(FPDFViewEmbedderTest, Bug2112) {
   std::vector<uint8_t> vec(kStride * kHeight);
   ScopedFPDFBitmap bitmap(FPDFBitmap_CreateEx(kWidth, kHeight, FPDFBitmap_BGR,
                                               vec.data(), kStride));
-  // TODO(crbug.com/pdfium/2112): Should return FPDFBitmap_BGR.
-  EXPECT_EQ(FPDFBitmap_Unknown, FPDFBitmap_GetFormat(bitmap.get()));
+  EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(bitmap.get()));
 }
