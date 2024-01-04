@@ -807,8 +807,7 @@ FixedUninitDataVector<uint8_t> CFX_FontMapper::RawBytesForIndex(size_t index) {
     return FixedUninitDataVector<uint8_t>();
 
   FixedUninitDataVector<uint8_t> result(required_size);
-  size_t actual_size =
-      m_pFontInfo->GetFontData(font_handle, 0, result.writable_span());
+  size_t actual_size = m_pFontInfo->GetFontData(font_handle, 0, result.span());
   if (actual_size != required_size)
     return FixedUninitDataVector<uint8_t>();
 
@@ -825,8 +824,8 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedTTCFace(void* font_handle,
       m_pFontMgr->GetCachedTTCFontDesc(ttc_size, checksum);
   if (!pFontDesc) {
     FixedUninitDataVector<uint8_t> font_data(ttc_size);
-    size_t size = m_pFontInfo->GetFontData(font_handle, kTableTTCF,
-                                           font_data.writable_span());
+    size_t size =
+        m_pFontInfo->GetFontData(font_handle, kTableTTCF, font_data.span());
     if (size != ttc_size)
       return nullptr;
 
@@ -858,8 +857,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* font_handle,
       m_pFontMgr->GetCachedFontDesc(subst_name, weight, is_italic);
   if (!pFontDesc) {
     FixedUninitDataVector<uint8_t> font_data(data_size);
-    size_t size =
-        m_pFontInfo->GetFontData(font_handle, 0, font_data.writable_span());
+    size_t size = m_pFontInfo->GetFontData(font_handle, 0, font_data.span());
     if (size != data_size)
       return nullptr;
 

@@ -313,7 +313,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
     }
 
     const uint8_t* src_scan = m_pSource->GetScanline(m_CurRow).data();
-    pdfium::span<uint8_t> dest_span = m_InterBuf.writable_span().subspan(
+    pdfium::span<uint8_t> dest_span = m_InterBuf.subspan(
         (m_CurRow - m_SrcClip.top) * m_InterPitch, m_InterPitch);
     size_t dest_span_index = 0;
     // TODO(npm): reduce duplicated code here
@@ -441,7 +441,7 @@ void CStretchEngine::StretchVert() {
       case TransformMethod::k8BppTo8Bpp: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           pdfium::span<const uint8_t> src_span =
-              m_InterBuf.span().subspan((col - m_DestClip.left) * DestBpp);
+              m_InterBuf.subspan((col - m_DestClip.left) * DestBpp);
           uint32_t dest_a = 0;
           for (int j = pWeights->m_SrcStart; j <= pWeights->m_SrcEnd; ++j) {
             uint32_t pixel_weight = pWeights->GetWeightForPosition(j);
@@ -457,7 +457,7 @@ void CStretchEngine::StretchVert() {
       case TransformMethod::kManyBpptoManyBpp: {
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           pdfium::span<const uint8_t> src_span =
-              m_InterBuf.span().subspan((col - m_DestClip.left) * DestBpp);
+              m_InterBuf.subspan((col - m_DestClip.left) * DestBpp);
           uint32_t dest_r = 0;
           uint32_t dest_g = 0;
           uint32_t dest_b = 0;
@@ -480,7 +480,7 @@ void CStretchEngine::StretchVert() {
         DCHECK(m_bHasAlpha);
         for (int col = m_DestClip.left; col < m_DestClip.right; ++col) {
           pdfium::span<const uint8_t> src_span =
-              m_InterBuf.span().subspan((col - m_DestClip.left) * DestBpp);
+              m_InterBuf.subspan((col - m_DestClip.left) * DestBpp);
           uint32_t dest_a = 0;
           uint32_t dest_r = 0;
           uint32_t dest_g = 0;

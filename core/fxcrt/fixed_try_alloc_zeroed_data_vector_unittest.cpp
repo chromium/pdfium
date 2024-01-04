@@ -19,7 +19,6 @@ TEST(FixedTryAllocZeroedDataVector, NoData) {
   EXPECT_EQ(0u, vec.size());
   EXPECT_TRUE(vec.empty());
   EXPECT_TRUE(vec.span().empty());
-  EXPECT_TRUE(vec.writable_span().empty());
 }
 
 TEST(FixedTryAllocZeroedDataVector, WithData) {
@@ -27,11 +26,10 @@ TEST(FixedTryAllocZeroedDataVector, WithData) {
   EXPECT_FALSE(vec.empty());
   EXPECT_EQ(4u, vec.size());
   EXPECT_EQ(4u, vec.span().size());
-  EXPECT_EQ(4u, vec.writable_span().size());
   EXPECT_THAT(vec.span(), testing::ElementsAre(0, 0, 0, 0));
 
   constexpr int kData[] = {1, 2, 3, 4};
-  fxcrt::spancpy(vec.writable_span(), pdfium::make_span(kData));
+  fxcrt::spancpy(vec.span(), pdfium::make_span(kData));
   EXPECT_THAT(vec.span(), testing::ElementsAre(1, 2, 3, 4));
 }
 
@@ -42,41 +40,36 @@ TEST(FixedTryAllocZeroedDataVector, AllocFailure) {
   EXPECT_TRUE(vec.empty());
   EXPECT_EQ(0u, vec.size());
   EXPECT_EQ(0u, vec.span().size());
-  EXPECT_EQ(0u, vec.writable_span().size());
 }
 
 TEST(FixedTryAllocZeroedDataVector, Move) {
   FixedTryAllocZeroedDataVector<int> vec(4);
   constexpr int kData[] = {1, 2, 3, 4};
-  ASSERT_EQ(4u, vec.writable_span().size());
-  fxcrt::spancpy(vec.writable_span(), pdfium::make_span(kData));
+  ASSERT_EQ(4u, vec.span().size());
+  fxcrt::spancpy(vec.span(), pdfium::make_span(kData));
   const int* const original_data_ptr = vec.span().data();
 
   FixedTryAllocZeroedDataVector<int> vec2(std::move(vec));
   EXPECT_FALSE(vec2.empty());
   EXPECT_EQ(4u, vec2.size());
   EXPECT_EQ(4u, vec2.span().size());
-  EXPECT_EQ(4u, vec2.writable_span().size());
   EXPECT_THAT(vec2.span(), testing::ElementsAre(1, 2, 3, 4));
   EXPECT_EQ(vec2.span().data(), original_data_ptr);
 
   EXPECT_EQ(0u, vec.size());
   EXPECT_TRUE(vec.empty());
   EXPECT_TRUE(vec.span().empty());
-  EXPECT_TRUE(vec.writable_span().empty());
 
   vec = std::move(vec2);
   EXPECT_FALSE(vec.empty());
   EXPECT_EQ(4u, vec.size());
   EXPECT_EQ(4u, vec.span().size());
-  EXPECT_EQ(4u, vec.writable_span().size());
   EXPECT_THAT(vec.span(), testing::ElementsAre(1, 2, 3, 4));
   EXPECT_EQ(vec.span().data(), original_data_ptr);
 
   EXPECT_EQ(0u, vec2.size());
   EXPECT_TRUE(vec2.empty());
   EXPECT_TRUE(vec2.span().empty());
-  EXPECT_TRUE(vec2.writable_span().empty());
 }
 
 TEST(FixedTryAllocZeroedDataVector, AssignFromFixedZeroedDataVector) {
@@ -84,8 +77,8 @@ TEST(FixedTryAllocZeroedDataVector, AssignFromFixedZeroedDataVector) {
 
   FixedZeroedDataVector<int> vec2(4);
   constexpr int kData[] = {1, 2, 3, 4};
-  ASSERT_EQ(4u, vec2.writable_span().size());
-  fxcrt::spancpy(vec2.writable_span(), pdfium::make_span(kData));
+  ASSERT_EQ(4u, vec2.span().size());
+  fxcrt::spancpy(vec2.span(), pdfium::make_span(kData));
 
   vec = std::move(vec2);
   EXPECT_TRUE(vec2.empty());
@@ -98,8 +91,8 @@ TEST(FixedTryAllocZeroedDataVector, AssignFromFixedUninitDataVector) {
 
   FixedUninitDataVector<int> vec2(4);
   constexpr int kData[] = {1, 2, 3, 4};
-  ASSERT_EQ(4u, vec2.writable_span().size());
-  fxcrt::spancpy(vec2.writable_span(), pdfium::make_span(kData));
+  ASSERT_EQ(4u, vec2.span().size());
+  fxcrt::spancpy(vec2.span(), pdfium::make_span(kData));
 
   vec = std::move(vec2);
   EXPECT_TRUE(vec2.empty());

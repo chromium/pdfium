@@ -41,5 +41,5 @@ bool CBC_CommonBitMatrix::Get(size_t x, size_t y) const {
 
 void CBC_CommonBitMatrix::Set(size_t x, size_t y) {
   size_t offset = y * m_rowSize + (x >> 5);
-  m_bits.writable_span()[offset] |= 1u << (x & 0x1f);
+  m_bits.span()[offset] |= 1u << (x & 0x1f);
 }

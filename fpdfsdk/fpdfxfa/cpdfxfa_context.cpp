@@ -366,7 +366,7 @@ WideString CPDFXFA_Context::Response(const WideString& wsQuestion,
   constexpr int kMaxWideChars = 1024;
   constexpr int kMaxBytes = kMaxWideChars * sizeof(uint16_t);
   FixedZeroedDataVector<uint8_t> buffer(kMaxBytes);
-  pdfium::span<uint8_t> buffer_span = buffer.writable_span();
+  pdfium::span<uint8_t> buffer_span = buffer.span();
   int byte_length = m_pFormFillEnv->JS_appResponse(
       wsQuestion, wsTitle, wsDefaultAnswer, WideString(), bMark, buffer_span);
   if (byte_length <= 0)

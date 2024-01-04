@@ -104,9 +104,8 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
       CPDF_TransferFunc::kChannelSampleSize);
   FixedUninitDataVector<uint8_t> samples_b(
       CPDF_TransferFunc::kChannelSampleSize);
-  std::array<pdfium::span<uint8_t>, 3> samples = {samples_r.writable_span(),
-                                                  samples_g.writable_span(),
-                                                  samples_b.writable_span()};
+  std::array<pdfium::span<uint8_t>, 3> samples = {
+      samples_r.span(), samples_g.span(), samples_b.span()};
   if (pArray) {
     for (size_t v = 0; v < CPDF_TransferFunc::kChannelSampleSize; ++v) {
       float input = static_cast<float>(v) / 255.0f;

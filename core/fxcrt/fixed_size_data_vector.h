@@ -34,34 +34,51 @@ class FixedSizeDataVector {
       : data_(MaybeInit(size, OPTION)), size_(CalculateSize(size, OPTION)) {}
   FixedSizeDataVector(const FixedSizeDataVector&) = delete;
   FixedSizeDataVector& operator=(const FixedSizeDataVector&) = delete;
+
   template <DataVectorAllocOption OTHER_OPTION>
-  FixedSizeDataVector(FixedSizeDataVector<T, OTHER_OPTION>&& that) noexcept {
-    data_ = std::move(that.data_);
-    size_ = that.size_;
-    that.size_ = 0;
-  }
+  FixedSizeDataVector(FixedSizeDataVector<T, OTHER_OPTION>&& that) noexcept
+      : data_(std::move(that.data_)), size_(std::exchange(that.size_, 0)) {}
+
   template <DataVectorAllocOption OTHER_OPTION>
   FixedSizeDataVector& operator=(
       FixedSizeDataVector<T, OTHER_OPTION>&& that) noexcept {
     data_ = std::move(that.data_);
-    size_ = that.size_;
-    that.size_ = 0;
+    size_ = std::exchange(that.size_, 0);
     return *this;
   }
+
   ~FixedSizeDataVector() = default;
 
+  bool empty() const { return size_ == 0; }
+  size_t size() const { return size_; }
+
+  // Implicit access to data via span.
+  operator pdfium::span<T>() { return span(); }
   operator pdfium::span<const T>() const { return span(); }
 
-  pdfium::span<T> writable_span() {
-    return pdfium::make_span(data_.get(), size_);
-  }
-
+  // Explicit access to data via span.
+  pdfium::span<T> span() { return pdfium::span<T>(data_.get(), size_); }
   pdfium::span<const T> span() const {
-    return pdfium::make_span(data_.get(), size_);
+    return pdfium::span<const T>(data_.get(), size_);
   }
 
-  size_t size() const { return size_; }
-  bool empty() const { return size_ == 0; }
+  // Convenience methods to slice the vector into spans.
+  pdfium::span<T> subspan(size_t offset,
+                          size_t count = pdfium::dynamic_extent) {
+    return span().subspan(offset, count);
+  }
+  pdfium::span<const T> subspan(size_t offset,
+                                size_t count = pdfium::dynamic_extent) const {
+    return span().subspan(offset, count);
+  }
+
+  pdfium::span<T> first(size_t count) { return span().first(count); }
+  pdfium::span<const T> first(size_t count) const {
+    return span().first(count);
+  }
+
+  pdfium::span<T> last(size_t count) { return span().last(count); }
+  pdfium::span<const T> last(size_t count) const { return span().last(count); }
 
  private:
   friend class FixedSizeDataVector<T, DataVectorAllocOption::kInitialized>;

@@ -661,7 +661,7 @@ int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {
   }
 
   FixedUninitDataVector<uint8_t> sub_data(length);
-  if (!face->GetSfntTable(kGsubTag, sub_data.writable_span())) {
+  if (!face->GetSfntTable(kGsubTag, sub_data.span())) {
     return index;
   }
 

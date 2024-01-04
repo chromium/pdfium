@@ -186,7 +186,7 @@ CPDF_ContentParser::Stage CPDF_ContentParser::PrepareContent() {
   }
 
   size_t pos = 0;
-  auto data_span = buffer.writable_span();
+  auto data_span = buffer.span();
   for (const auto& stream : m_StreamArray) {
     fxcrt::spancpy(data_span.subspan(pos), stream->GetSpan());
     pos += stream->GetSize();

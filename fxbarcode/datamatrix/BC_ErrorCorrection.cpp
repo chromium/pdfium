@@ -157,7 +157,7 @@ WideString CreateECCBlock(const WideString& codewords, size_t numECWords) {
     return WideString();
 
   FixedZeroedDataVector<uint16_t> ecc(numECWords);
-  pdfium::span<uint16_t> ecc_span = ecc.writable_span();
+  pdfium::span<uint16_t> ecc_span = ecc.span();
   for (size_t i = 0; i < len; ++i) {
     uint16_t m = ecc_span[numECWords - 1] ^ codewords[i];
     for (int32_t j = numECWords - 1; j > 0; --j) {

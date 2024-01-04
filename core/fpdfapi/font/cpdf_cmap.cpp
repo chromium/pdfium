@@ -519,7 +519,7 @@ void CPDF_CMap::SetMixedFourByteLeadingRanges(std::vector<CodeRange> ranges) {
 void CPDF_CMap::SetDirectCharcodeToCIDTableRange(uint32_t start_code,
                                                  uint32_t end_code,
                                                  uint16_t start_cid) {
-  pdfium::span<uint16_t> span = m_DirectCharcodeToCIDTable.writable_span();
+  pdfium::span<uint16_t> span = m_DirectCharcodeToCIDTable.span();
   for (uint32_t code = start_code; code <= end_code; ++code) {
     span[code] = static_cast<uint16_t>(start_cid + code - start_code);
   }
