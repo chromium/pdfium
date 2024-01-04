@@ -5,23 +5,22 @@
 #ifndef TESTING_TEST_FONTS_H_
 #define TESTING_TEST_FONTS_H_
 
-#include <memory>
 #include <string>
+#include <vector>
 
 class TestFonts {
  public:
   TestFonts();
   ~TestFonts();
 
-  const char** font_paths() const { return font_paths_.get(); }
-
+  const char** font_paths() { return font_paths_.data(); }
   void InstallFontMapper();
 
   static std::string RenameFont(const char* face);
 
  private:
   std::string font_path_;
-  std::unique_ptr<const char*[]> font_paths_;
+  std::vector<const char*> font_paths_;
 };
 
 #endif  // TESTING_TEST_FONTS_H_

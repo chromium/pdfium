@@ -4,6 +4,7 @@
 
 #include "testing/test_fonts.h"
 
+#include <memory>
 #include <set>
 #include <utility>
 
@@ -96,9 +97,7 @@ TestFonts::TestFonts() {
     return;
   font_path_.push_back(PATH_SEPARATOR);
   font_path_.append("test_fonts");
-  font_paths_ = std::make_unique<const char*[]>(2);
-  font_paths_[0] = font_path_.c_str();
-  font_paths_[1] = nullptr;
+  font_paths_ = std::vector<const char*>{font_path_.c_str(), nullptr};
 }
 
 TestFonts::~TestFonts() = default;
