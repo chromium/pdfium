@@ -242,7 +242,7 @@ void CFGAS_GEGraphics::FillPathWithPattern(
     const CFGAS_GEPath& path,
     const CFX_FillRenderOptions& fill_options,
     const CFX_Matrix& matrix) {
-  RetainPtr<CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();
+  RetainPtr<const CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();
   int32_t width = bitmap->GetWidth();
   int32_t height = bitmap->GetHeight();
   auto bmp = pdfium::MakeRetain<CFX_DIBitmap>();
@@ -281,7 +281,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
     const CFGAS_GEPath& path,
     const CFX_FillRenderOptions& fill_options,
     const CFX_Matrix& matrix) {
-  RetainPtr<CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();
+  RetainPtr<const CFX_DIBitmap> bitmap = m_renderDevice->GetBitmap();
   int32_t width = bitmap->GetWidth();
   int32_t height = bitmap->GetHeight();
   float start_x = m_info.fillColor.GetShading()->GetBeginPoint().x;

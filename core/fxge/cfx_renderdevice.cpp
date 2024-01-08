@@ -533,7 +533,11 @@ int CFX_RenderDevice::GetDeviceCaps(int caps_id) const {
   return m_pDeviceDriver->GetDeviceCaps(caps_id);
 }
 
-RetainPtr<CFX_DIBitmap> CFX_RenderDevice::GetBitmap() const {
+RetainPtr<CFX_DIBitmap> CFX_RenderDevice::GetBitmap() {
+  return m_pBitmap;
+}
+
+RetainPtr<const CFX_DIBitmap> CFX_RenderDevice::GetBitmap() const {
   return m_pBitmap;
 }
 
