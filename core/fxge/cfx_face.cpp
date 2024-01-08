@@ -429,6 +429,10 @@ absl::optional<std::array<uint8_t, 2>> CFX_Face::GetOs2Panose() {
   return std::array<uint8_t, 2>{os2->panose[0], os2->panose[1]};
 }
 
+int CFX_Face::GetGlyphCount() const {
+  return pdfium::base::checked_cast<int>(GetRec()->num_glyphs);
+}
+
 std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* pFont,
                                                        uint32_t glyph_index,
                                                        bool bFontStyle,
@@ -713,6 +717,14 @@ bool CFX_Face::SelectCharMap(fxge::FontEncoding encoding) {
   FT_Error error = FT_Select_Charmap(GetRec(), ToFTEncoding(encoding));
   return !error;
 }
+
+#if BUILDFLAG(IS_WIN)
+bool CFX_Face::CanEmbed() {
+  FT_UShort fstype = FT_Get_FSType_Flags(GetRec());
+  return (fstype & (FT_FSTYPE_RESTRICTED_LICENSE_EMBEDDING |
+                    FT_FSTYPE_BITMAP_EMBEDDING_ONLY)) == 0;
+}
+#endif
 
 CFX_Face::CFX_Face(FXFT_FaceRec* rec, RetainPtr<Retainable> pDesc)
     : m_pRec(rec), m_pDesc(std::move(pDesc)) {

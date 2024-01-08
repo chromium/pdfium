@@ -32,19 +32,12 @@
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/win32/cfx_psfonttracker.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
-
-bool CanEmbed(CFX_Font* font) {
-  FT_UShort fstype = FT_Get_FSType_Flags(font->GetFaceRec());
-  return (fstype & (FT_FSTYPE_RESTRICTED_LICENSE_EMBEDDING |
-                    FT_FSTYPE_BITMAP_EMBEDDING_ONLY)) == 0;
-}
 
 absl::optional<ByteString> GenerateType42SfntData(
     const ByteString& psname,
@@ -164,9 +157,15 @@ ByteString GenerateType42FontDictionary(const ByteString& psname,
 }
 
 ByteString GenerateType42FontData(const CFX_Font* font) {
-  const FXFT_FaceRec* font_face_rec = font->GetFaceRec();
-  if (!font_face_rec)
+  RetainPtr<const CFX_Face> face = font->GetFace();
+  if (!face) {
     return ByteString();
+  }
+
+  int num_glyphs = face->GetGlyphCount();
+  if (num_glyphs < 0) {
+    return ByteString();
+  }
 
   const ByteString psname = font->GetPsName();
   DCHECK(!psname.IsEmpty());
@@ -181,8 +180,7 @@ ByteString GenerateType42FontData(const CFX_Font* font) {
   output += "\n";
   output += sfnt_data.value();
   output += GenerateType42FontDictionary(psname, font->GetRawBBox().value(),
-                                         font_face_rec->num_glyphs,
-                                         kGlyphsPerDescendantFont);
+                                         num_glyphs, kGlyphsPerDescendantFont);
   return output;
 }
 
@@ -766,8 +764,14 @@ bool CFX_PSRenderer::DrawTextAsType42Font(int char_count,
                                           CFX_Font* font,
                                           float font_size,
                                           fxcrt::ostringstream& buf) {
-  if (m_Level != RenderingLevel::kLevel3Type42 || !CanEmbed(font))
+  if (m_Level != RenderingLevel::kLevel3Type42) {
     return false;
+  }
+
+  RetainPtr<CFX_Face> face = font->GetFace();
+  if (!face || !face->CanEmbed()) {
+    return false;
+  }
 
   if (font->GetFontType() != CFX_Font::FontType::kCIDTrueType)
     return false;

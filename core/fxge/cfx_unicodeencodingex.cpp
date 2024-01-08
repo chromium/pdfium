@@ -86,8 +86,9 @@ uint32_t CFX_UnicodeEncodingEx::CharCodeFromUnicode(wchar_t Unicode) const {
 
 std::unique_ptr<CFX_UnicodeEncodingEx> FX_CreateFontEncodingEx(
     CFX_Font* pFont) {
-  if (!pFont || !pFont->GetFaceRec())
+  if (!pFont || !pFont->GetFace()) {
     return nullptr;
+  }
 
   for (fxge::FontEncoding id : kEncodingIDs) {
     auto pFontEncoding = FXFM_CreateFontEncoding(pFont, id);

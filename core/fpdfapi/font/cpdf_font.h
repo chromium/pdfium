@@ -107,7 +107,7 @@ class CPDF_Font : public Retainable, public Observable {
   }
   void ClearFontDict() { m_pFontDict = nullptr; }
   bool IsStandardFont() const;
-  bool HasFace() const { return !!m_Font.GetFaceRec(); }
+  bool HasFace() const { return !!m_Font.GetFace(); }
   void AppendChar(ByteString* str, uint32_t charcode) const;
 
   const FX_RECT& GetFontBBox() const { return m_FontBBox; }

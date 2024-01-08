@@ -306,14 +306,15 @@ RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* pDoc,
   pFontDict->SetNewFor<CPDF_Name>("BaseFont", name);
 
   // If it doesn't have a single char, just fail.
-  if (pFont->GetFaceRec()->num_glyphs <= 0) {
+  RetainPtr<CFX_Face> face = pFont->GetFace();
+  if (face->GetGlyphCount() <= 0) {
     return nullptr;
   }
 
   // Simple fonts have 1-byte charcodes only.
   static constexpr uint32_t kMaxSimpleFontChar = 0xFF;
   auto char_codes_and_indices =
-      pFont->GetFace()->GetCharCodesAndIndices(kMaxSimpleFontChar);
+      face->GetCharCodesAndIndices(kMaxSimpleFontChar);
   if (char_codes_and_indices.empty()) {
     return nullptr;
   }
@@ -379,12 +380,13 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
                                       pFontDesc->GetObjNum());
 
   // If it doesn't have a single char, just fail.
-  if (pFont->GetFaceRec()->num_glyphs <= 0) {
+  RetainPtr<CFX_Face> face = pFont->GetFace();
+  if (face->GetGlyphCount() <= 0) {
     return nullptr;
   }
 
-  auto char_codes_and_indices = pFont->GetFace()->GetCharCodesAndIndices(
-      pdfium::kMaximumSupplementaryCodePoint);
+  auto char_codes_and_indices =
+      face->GetCharCodesAndIndices(pdfium::kMaximumSupplementaryCodePoint);
   if (char_codes_and_indices.empty()) {
     return nullptr;
   }

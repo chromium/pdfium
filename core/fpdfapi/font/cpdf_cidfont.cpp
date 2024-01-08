@@ -194,7 +194,7 @@ uint32_t EmbeddedCharcodeFromUnicode(const fxcmap::CMap* pEmbedMap,
 
 #endif  // !BUILDFLAG(IS_WIN)
 
-void FT_UseCIDCharmap(const RetainPtr<CFX_Face>& face, CIDCoding coding) {
+void UseCIDCharmap(const RetainPtr<CFX_Face>& face, CIDCoding coding) {
   fxge::FontEncoding encoding;
   switch (coding) {
     case CIDCoding::kGB:
@@ -469,11 +469,13 @@ bool CPDF_CIDFont::Load() {
   if (m_Charset != CIDSET_UNKNOWN) {
     m_pCID2UnicodeMap = pFontGlobals->GetCID2UnicodeMap(m_Charset);
   }
-  if (m_Font.GetFaceRec()) {
-    if (m_FontType == CIDFontType::kType1)
-      m_Font.GetFace()->SelectCharMap(fxge::FontEncoding::kUnicode);
-    else
-      FT_UseCIDCharmap(m_Font.GetFace(), m_pCMap->GetCoding());
+  RetainPtr<CFX_Face> face = m_Font.GetFace();
+  if (face) {
+    if (m_FontType == CIDFontType::kType1) {
+      face->SelectCharMap(fxge::FontEncoding::kUnicode);
+    } else {
+      UseCIDCharmap(face, m_pCMap->GetCoding());
+    }
   }
   m_DefaultWidth = pCIDFontDict->GetIntegerFor("DW", 1000);
   RetainPtr<const CPDF_Array> pWidthArray = pCIDFontDict->GetArrayFor("W");
@@ -713,7 +715,6 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
           unicode = unicode_str[0];
       }
     }
-    FXFT_FaceRec* face_rec = m_Font.GetFaceRec();
     if (unicode == 0) {
       if (!m_bAdobeCourierStd)
         return charcode ? static_cast<int>(charcode) : -1;
@@ -763,11 +764,12 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
 #endif
       }
     }
-    if (!face_rec) {
+
+    RetainPtr<CFX_Face> face = m_Font.GetFace();
+    if (!face) {
       return unicode;
     }
 
-    RetainPtr<CFX_Face> face = m_Font.GetFace();
     size_t num_charmaps = face->GetCharMapCount();
     if (!face->SelectCharMap(fxge::FontEncoding::kUnicode)) {
       size_t i;
@@ -792,8 +794,10 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
     return unicode;
   }
 
-  if (!m_Font.GetFaceRec())
+  RetainPtr<CFX_Face> face = m_Font.GetFace();
+  if (!face) {
     return -1;
+  }
 
   uint16_t cid = CIDFromCharCode(charcode);
   if (!m_pStreamAcc) {
@@ -808,7 +812,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
     }
 
     absl::optional<fxge::FontEncoding> charmap =
-        m_Font.GetFace()->GetCurrentCharMapEncoding();
+        face->GetCurrentCharMapEncoding();
     if (!charmap.has_value()) {
       return cid;
     }

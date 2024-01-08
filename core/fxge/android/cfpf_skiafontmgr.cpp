@@ -408,5 +408,5 @@ std::unique_ptr<CFPF_SkiaPathFont> CFPF_SkiaFontMgr::ReportFace(
 
   return std::make_unique<CFPF_SkiaPathFont>(
       file, face->GetFamilyName(), dwStyle, face->GetRec()->face_index, charset,
-      face->GetRec()->num_glyphs);
+      face->GetGlyphCount());
 }

@@ -237,8 +237,9 @@ bool CPDF_SimpleFont::LoadCommon() {
   LoadPDFEncoding(!!m_pFontFile, m_Font.IsTTFont());
   LoadGlyphMap();
   m_CharNames.clear();
-  if (!m_Font.GetFaceRec())
+  if (!HasFace()) {
     return true;
+  }
 
   if (FontStyleIsAllCaps(m_Flags)) {
     static const unsigned char kLowercases[][2] = {

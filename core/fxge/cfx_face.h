@@ -83,6 +83,7 @@ class CFX_Face final : public Retainable, public Observable {
   absl::optional<std::array<uint32_t, 2>> GetOs2CodePageRange();
   absl::optional<std::array<uint8_t, 2>> GetOs2Panose();
 
+  int GetGlyphCount() const;
   std::unique_ptr<CFX_GlyphBitmap> RenderGlyph(const CFX_Font* pFont,
                                                uint32_t glyph_index,
                                                bool bFontStyle,
@@ -112,6 +113,10 @@ class CFX_Face final : public Retainable, public Observable {
   void SetCharMap(CharMap map);
   void SetCharMapByIndex(size_t index);
   bool SelectCharMap(fxge::FontEncoding encoding);
+
+#if BUILDFLAG(IS_WIN)
+  bool CanEmbed();
+#endif
 
   FXFT_FaceRec* GetRec() { return m_pRec.get(); }
   const FXFT_FaceRec* GetRec() const { return m_pRec.get(); }
