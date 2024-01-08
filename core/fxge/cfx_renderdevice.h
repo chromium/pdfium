@@ -63,7 +63,6 @@ class CFX_RenderDevice {
   int GetRenderCaps() const { return m_RenderCaps; }
   int GetDeviceCaps(int id) const;
   RetainPtr<CFX_DIBitmap> GetBitmap() const;
-  void SetBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap);
   [[nodiscard]] bool CreateCompatibleBitmap(const RetainPtr<CFX_DIBitmap>& pDIB,
                                             int width,
                                             int height) const;
@@ -226,6 +225,8 @@ class CFX_RenderDevice {
 
  protected:
   CFX_RenderDevice();
+
+  void SetBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap);
 
   void SetDeviceDriver(std::unique_ptr<RenderDeviceDriverIface> pDriver);
   RenderDeviceDriverIface* GetDeviceDriver() const {
