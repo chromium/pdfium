@@ -1382,9 +1382,8 @@ bool CFX_DefaultRenderDevice::AttachAggImpl(
     bool bRgbByteOrder,
     RetainPtr<CFX_DIBitmap> pBackdropBitmap,
     bool bGroupKnockout) {
-  if (!pBitmap)
-    return false;
-
+  // Unlike the Skia version, all callers pass in a non-null `pBitmap`.
+  CHECK(pBitmap);
   SetBitmap(pBitmap);
   SetDeviceDriver(std::make_unique<pdfium::CFX_AggDeviceDriver>(
       std::move(pBitmap), bRgbByteOrder, std::move(pBackdropBitmap),

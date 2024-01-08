@@ -1635,6 +1635,8 @@ bool CFX_DefaultRenderDevice::AttachSkiaImpl(
     bool bRgbByteOrder,
     RetainPtr<CFX_DIBitmap> pBackdropBitmap,
     bool bGroupKnockout) {
+  // FPDF_FFLDrawSkia() ends up calling this method with a deliberately null
+  // `pBitmap`.
   if (!pBitmap)
     return false;
   SetBitmap(pBitmap);
