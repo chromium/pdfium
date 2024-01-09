@@ -399,7 +399,7 @@ bool CFX_DIBitmap::SetUniformOpaqueAlpha() {
   return true;
 }
 
-bool CFX_DIBitmap::MultiplyAlpha(
+bool CFX_DIBitmap::MultiplyAlphaMask(
     const RetainPtr<const CFX_DIBBase>& pSrcBitmap) {
   CHECK(pSrcBitmap->IsMaskFormat());
 

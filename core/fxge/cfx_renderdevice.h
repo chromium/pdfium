@@ -215,7 +215,7 @@ class CFX_RenderDevice {
   bool MultiplyAlpha(float alpha);
 
   // Multiplies the device by an alpha mask, returning `true` on success.
-  bool MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask);
+  bool MultiplyAlphaMask(const RetainPtr<CFX_DIBBase>& mask);
 
 #if defined(PDF_USE_SKIA)
   bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,

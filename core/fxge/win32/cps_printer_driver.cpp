@@ -219,7 +219,7 @@ bool CPSPrinterDriver::MultiplyAlpha(float alpha) {
   return false;
 }
 
-bool CPSPrinterDriver::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) {
+bool CPSPrinterDriver::MultiplyAlphaMask(const RetainPtr<CFX_DIBBase>& mask) {
   // PostScript doesn't support transparency. All callers are using
   // `CFX_DIBitmap`-backed raster devices anyway.
   NOTREACHED();

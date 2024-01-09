@@ -681,10 +681,10 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     RetainPtr<CFX_DIBBase> pSMaskSource =
         LoadSMask(pSMaskDict.Get(), &rect, smask_matrix);
     if (pSMaskSource)
-      bitmap_device.MultiplyAlpha(pSMaskSource);
+      bitmap_device.MultiplyAlphaMask(pSMaskSource);
   }
   if (pTextMask) {
-    bitmap_device.MultiplyAlpha(pTextMask);
+    bitmap_device.MultiplyAlphaMask(pTextMask);
     pTextMask.Reset();
   }
   if (group_alpha != 1.0f && transparency.IsGroup()) {

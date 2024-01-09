@@ -545,7 +545,7 @@ bool CGdiDeviceDriver::MultiplyAlpha(float alpha) {
   return false;
 }
 
-bool CGdiDeviceDriver::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) {
+bool CGdiDeviceDriver::MultiplyAlphaMask(const RetainPtr<CFX_DIBBase>& mask) {
   // Not implemented. All callers are using `CFX_DIBitmap`-backed raster devices
   // anyway.
   NOTREACHED();
