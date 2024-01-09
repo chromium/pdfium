@@ -1383,12 +1383,13 @@ RetainPtr<CFX_DIBitmap> CFX_SkiaDeviceDriver::GetBackDrop() {
   return m_pBackdropBitmap;
 }
 
-bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
-                                     uint32_t color,
-                                     const FX_RECT& src_rect,
-                                     int left,
-                                     int top,
-                                     BlendMode blend_type) {
+bool CFX_SkiaDeviceDriver::SetDIBits(
+    const RetainPtr<const CFX_DIBBase>& pBitmap,
+    uint32_t color,
+    const FX_RECT& src_rect,
+    int left,
+    int top,
+    BlendMode blend_type) {
   if (m_pBitmap->GetBuffer().empty()) {
     return true;
   }
@@ -1404,15 +1405,16 @@ bool CFX_SkiaDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
                          blend_type);
 }
 
-bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
-                                         uint32_t color,
-                                         int dest_left,
-                                         int dest_top,
-                                         int dest_width,
-                                         int dest_height,
-                                         const FX_RECT* pClipRect,
-                                         const FXDIB_ResampleOptions& options,
-                                         BlendMode blend_type) {
+bool CFX_SkiaDeviceDriver::StretchDIBits(
+    const RetainPtr<const CFX_DIBBase>& pSource,
+    uint32_t color,
+    int dest_left,
+    int dest_top,
+    int dest_width,
+    int dest_height,
+    const FX_RECT* pClipRect,
+    const FXDIB_ResampleOptions& options,
+    BlendMode blend_type) {
   if (m_pBitmap->GetBuffer().empty())
     return true;
 
@@ -1433,7 +1435,7 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
 }
 
 bool CFX_SkiaDeviceDriver::StartDIBits(
-    const RetainPtr<CFX_DIBBase>& pSource,
+    const RetainPtr<const CFX_DIBBase>& pSource,
     int bitmap_alpha,
     uint32_t color,
     const CFX_Matrix& matrix,
@@ -1568,7 +1570,7 @@ void CFX_SkiaDeviceDriver::Clear(uint32_t color) {
 }
 
 bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
-    const RetainPtr<CFX_DIBBase>& pSource,
+    const RetainPtr<const CFX_DIBBase>& pSource,
     const FX_RECT& src_rect,
     int bitmap_alpha,
     uint32_t color,

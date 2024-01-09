@@ -15,14 +15,15 @@
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
 
-CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
-                                     const CFX_ClipRgn* pClipRgn,
-                                     const RetainPtr<CFX_DIBBase>& pSource,
-                                     int bitmap_alpha,
-                                     uint32_t mask_color,
-                                     const CFX_Matrix& matrix,
-                                     const FXDIB_ResampleOptions& options,
-                                     bool bRgbByteOrder)
+CFX_ImageRenderer::CFX_ImageRenderer(
+    const RetainPtr<CFX_DIBitmap>& pDevice,
+    const CFX_ClipRgn* pClipRgn,
+    const RetainPtr<const CFX_DIBBase>& pSource,
+    int bitmap_alpha,
+    uint32_t mask_color,
+    const CFX_Matrix& matrix,
+    const FXDIB_ResampleOptions& options,
+    bool bRgbByteOrder)
     : m_pDevice(pDevice),
       m_pClipRgn(pClipRgn),
       m_Matrix(matrix),

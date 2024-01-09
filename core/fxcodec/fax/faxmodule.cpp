@@ -688,7 +688,7 @@ const uint8_t WhiteRunMarkup[80] = {
 
 class FaxEncoder {
  public:
-  explicit FaxEncoder(RetainPtr<CFX_DIBBase> src);
+  explicit FaxEncoder(RetainPtr<const CFX_DIBBase> src);
   ~FaxEncoder();
   DataVector<uint8_t> Encode();
 
@@ -698,7 +698,7 @@ class FaxEncoder {
   void AddBitStream(int data, int bitlen);
 
   // Must outlive `m_RefLineSpan`.
-  RetainPtr<CFX_DIBBase> const m_Src;
+  RetainPtr<const CFX_DIBBase> const m_Src;
   int m_DestBitpos = 0;
   const int m_Cols;
   const int m_Rows;
@@ -710,7 +710,7 @@ class FaxEncoder {
   pdfium::span<const uint8_t> m_RefLineSpan;
 };
 
-FaxEncoder::FaxEncoder(RetainPtr<CFX_DIBBase> src)
+FaxEncoder::FaxEncoder(RetainPtr<const CFX_DIBBase> src)
     : m_Src(std::move(src)),
       m_Cols(m_Src->GetWidth()),
       m_Rows(m_Src->GetHeight()),
@@ -825,7 +825,7 @@ DataVector<uint8_t> FaxEncoder::Encode() {
 }  // namespace
 
 // static
-DataVector<uint8_t> FaxModule::FaxEncode(RetainPtr<CFX_DIBBase> src) {
+DataVector<uint8_t> FaxModule::FaxEncode(RetainPtr<const CFX_DIBBase> src) {
   DCHECK_EQ(1, src->GetBPP());
   FaxEncoder encoder(std::move(src));
   return encoder.Encode();

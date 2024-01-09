@@ -888,10 +888,11 @@ RetainPtr<CFX_DIBitmap> CFX_RenderDevice::GetBackDrop() {
   return m_pDeviceDriver->GetBackDrop();
 }
 
-bool CFX_RenderDevice::SetDIBitsWithBlend(const RetainPtr<CFX_DIBBase>& pBitmap,
-                                          int left,
-                                          int top,
-                                          BlendMode blend_mode) {
+bool CFX_RenderDevice::SetDIBitsWithBlend(
+    const RetainPtr<const CFX_DIBBase>& pBitmap,
+    int left,
+    int top,
+    BlendMode blend_mode) {
   DCHECK(!pBitmap->IsMaskFormat());
   FX_RECT dest_rect(left, top, left + pBitmap->GetWidth(),
                     top + pBitmap->GetHeight());
@@ -931,7 +932,7 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(const RetainPtr<CFX_DIBBase>& pBitmap,
 }
 
 bool CFX_RenderDevice::StretchDIBitsWithFlagsAndBlend(
-    const RetainPtr<CFX_DIBBase>& pBitmap,
+    const RetainPtr<const CFX_DIBBase>& pBitmap,
     int left,
     int top,
     int dest_width,

@@ -72,13 +72,13 @@ class RenderDeviceDriverIface {
                          int left,
                          int top);
   virtual RetainPtr<CFX_DIBitmap> GetBackDrop();
-  virtual bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
+  virtual bool SetDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
                          uint32_t color,
                          const FX_RECT& src_rect,
                          int dest_left,
                          int dest_top,
                          BlendMode blend_type) = 0;
-  virtual bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
+  virtual bool StretchDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
                              uint32_t color,
                              int dest_left,
                              int dest_top,
@@ -87,7 +87,7 @@ class RenderDeviceDriverIface {
                              const FX_RECT* pClipRect,
                              const FXDIB_ResampleOptions& options,
                              BlendMode blend_type) = 0;
-  virtual bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
+  virtual bool StartDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
                            int bitmap_alpha,
                            uint32_t color,
                            const CFX_Matrix& matrix,

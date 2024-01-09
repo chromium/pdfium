@@ -52,17 +52,17 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
 
   void DrawLine(float x1, float y1, float x2, float y2);
 
-  bool GDI_SetDIBits(const RetainPtr<CFX_DIBBase>& source,
+  bool GDI_SetDIBits(const RetainPtr<const CFX_DIBBase>& source,
                      const FX_RECT& src_rect,
                      int left,
                      int top);
-  bool GDI_StretchDIBits(const RetainPtr<CFX_DIBBase>& source,
+  bool GDI_StretchDIBits(const RetainPtr<const CFX_DIBBase>& source,
                          int dest_left,
                          int dest_top,
                          int dest_width,
                          int dest_height,
                          const FXDIB_ResampleOptions& options);
-  bool GDI_StretchBitMask(const RetainPtr<CFX_DIBBase>& source,
+  bool GDI_StretchBitMask(const RetainPtr<const CFX_DIBBase>& source,
                           int dest_left,
                           int dest_top,
                           int dest_width,

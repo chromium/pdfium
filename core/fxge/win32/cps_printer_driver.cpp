@@ -157,7 +157,7 @@ bool CPSPrinterDriver::GetClipBox(FX_RECT* pRect) {
   return true;
 }
 
-bool CPSPrinterDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
+bool CPSPrinterDriver::SetDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
                                  uint32_t color,
                                  const FX_RECT& src_rect,
                                  int left,
@@ -168,22 +168,23 @@ bool CPSPrinterDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
   return m_PSRenderer.SetDIBits(pBitmap, color, left, top);
 }
 
-bool CPSPrinterDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
-                                     uint32_t color,
-                                     int dest_left,
-                                     int dest_top,
-                                     int dest_width,
-                                     int dest_height,
-                                     const FX_RECT* pClipRect,
-                                     const FXDIB_ResampleOptions& options,
-                                     BlendMode blend_type) {
+bool CPSPrinterDriver::StretchDIBits(
+    const RetainPtr<const CFX_DIBBase>& pBitmap,
+    uint32_t color,
+    int dest_left,
+    int dest_top,
+    int dest_width,
+    int dest_height,
+    const FX_RECT* pClipRect,
+    const FXDIB_ResampleOptions& options,
+    BlendMode blend_type) {
   if (blend_type != BlendMode::kNormal)
     return false;
   return m_PSRenderer.StretchDIBits(pBitmap, color, dest_left, dest_top,
                                     dest_width, dest_height, options);
 }
 
-bool CPSPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
+bool CPSPrinterDriver::StartDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
                                    int bitmap_alpha,
                                    uint32_t color,
                                    const CFX_Matrix& matrix,

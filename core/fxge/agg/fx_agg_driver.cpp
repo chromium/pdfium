@@ -1300,7 +1300,7 @@ RetainPtr<CFX_DIBitmap> CFX_AggDeviceDriver::GetBackDrop() {
   return m_pBackdropBitmap;
 }
 
-bool CFX_AggDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
+bool CFX_AggDeviceDriver::SetDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
                                     uint32_t argb,
                                     const FX_RECT& src_rect,
                                     int left,
@@ -1320,15 +1320,16 @@ bool CFX_AggDeviceDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
       src_rect.top, blend_type, m_pClipRgn.get(), m_bRgbByteOrder);
 }
 
-bool CFX_AggDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
-                                        uint32_t argb,
-                                        int dest_left,
-                                        int dest_top,
-                                        int dest_width,
-                                        int dest_height,
-                                        const FX_RECT* pClipRect,
-                                        const FXDIB_ResampleOptions& options,
-                                        BlendMode blend_type) {
+bool CFX_AggDeviceDriver::StretchDIBits(
+    const RetainPtr<const CFX_DIBBase>& pSource,
+    uint32_t argb,
+    int dest_left,
+    int dest_top,
+    int dest_width,
+    int dest_height,
+    const FX_RECT* pClipRect,
+    const FXDIB_ResampleOptions& options,
+    BlendMode blend_type) {
   if (m_pBitmap->GetBuffer().empty())
     return true;
 
@@ -1354,7 +1355,7 @@ bool CFX_AggDeviceDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
 }
 
 bool CFX_AggDeviceDriver::StartDIBits(
-    const RetainPtr<CFX_DIBBase>& pSource,
+    const RetainPtr<const CFX_DIBBase>& pSource,
     int bitmap_alpha,
     uint32_t argb,
     const CFX_Matrix& matrix,

@@ -39,7 +39,7 @@ int CGdiPrinterDriver::GetDeviceCaps(int caps_id) const {
   return CGdiDeviceDriver::GetDeviceCaps(caps_id);
 }
 
-bool CGdiPrinterDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
+bool CGdiPrinterDriver::SetDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
                                   uint32_t color,
                                   const FX_RECT& src_rect,
                                   int left,
@@ -62,15 +62,16 @@ bool CGdiPrinterDriver::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   return GDI_SetDIBits(pSource, src_rect, left, top);
 }
 
-bool CGdiPrinterDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
-                                      uint32_t color,
-                                      int dest_left,
-                                      int dest_top,
-                                      int dest_width,
-                                      int dest_height,
-                                      const FX_RECT* pClipRect,
-                                      const FXDIB_ResampleOptions& options,
-                                      BlendMode blend_type) {
+bool CGdiPrinterDriver::StretchDIBits(
+    const RetainPtr<const CFX_DIBBase>& pSource,
+    uint32_t color,
+    int dest_left,
+    int dest_top,
+    int dest_width,
+    int dest_height,
+    const FX_RECT* pClipRect,
+    const FXDIB_ResampleOptions& options,
+    BlendMode blend_type) {
   if (pSource->IsMaskFormat()) {
     int alpha = FXARGB_A(color);
     if (pSource->GetBPP() != 1 || alpha != 255)
@@ -117,7 +118,7 @@ bool CGdiPrinterDriver::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
                            dest_height, options);
 }
 
-bool CGdiPrinterDriver::StartDIBits(const RetainPtr<CFX_DIBBase>& pSource,
+bool CGdiPrinterDriver::StartDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
                                     int bitmap_alpha,
                                     uint32_t color,
                                     const CFX_Matrix& matrix,

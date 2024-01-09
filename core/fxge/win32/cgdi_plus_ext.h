@@ -31,7 +31,7 @@ class CGdiplusExt {
   void Load();
   bool IsAvailable() { return !!gdiplus_module_; }
   bool StretchDIBits(HDC hDC,
-                     const RetainPtr<CFX_DIBBase>& source,
+                     const RetainPtr<const CFX_DIBBase>& source,
                      int dest_left,
                      int dest_top,
                      int dest_width,

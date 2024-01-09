@@ -49,7 +49,7 @@ class FaxModule {
 
 #if BUILDFLAG(IS_WIN)
   // `src` must have a BPP value of 1.
-  static DataVector<uint8_t> FaxEncode(RetainPtr<CFX_DIBBase> src);
+  static DataVector<uint8_t> FaxEncode(RetainPtr<const CFX_DIBBase> src);
 #endif  // BUILDFLAG(IS_WIN)
 
   FaxModule() = delete;

@@ -95,7 +95,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
 
   RetainPtr<CFX_DIBitmap> GetBackDrop() override;
 
-  bool SetDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
+  bool SetDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
                  uint32_t color,
                  const FX_RECT& src_rect,
                  int dest_left,
@@ -110,7 +110,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   void SetGroupKnockout(bool group_knockout) override;
   bool SyncInternalBitmaps() override;
 
-  bool StretchDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
+  bool StretchDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
                      uint32_t color,
                      int dest_left,
                      int dest_top,
@@ -120,7 +120,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                      const FXDIB_ResampleOptions& options,
                      BlendMode blend_type) override;
 
-  bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
+  bool StartDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
                    int bitmap_alpha,
                    uint32_t color,
                    const CFX_Matrix& matrix,
@@ -207,7 +207,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                    uint32_t color,
                    const CFX_TextRenderOptions& options);
 
-  bool StartDIBitsSkia(const RetainPtr<CFX_DIBBase>& pSource,
+  bool StartDIBitsSkia(const RetainPtr<const CFX_DIBBase>& pSource,
                        const FX_RECT& src_rect,
                        int bitmap_alpha,
                        uint32_t color,

@@ -478,7 +478,7 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
   WriteStream(buf);
 }
 
-bool CFX_PSRenderer::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
+bool CFX_PSRenderer::SetDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
                                uint32_t color,
                                int left,
                                int top) {
@@ -488,7 +488,7 @@ bool CFX_PSRenderer::SetDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   return DrawDIBits(pSource, color, matrix, FXDIB_ResampleOptions());
 }
 
-bool CFX_PSRenderer::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
+bool CFX_PSRenderer::StretchDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
                                    uint32_t color,
                                    int dest_left,
                                    int dest_top,
@@ -501,7 +501,7 @@ bool CFX_PSRenderer::StretchDIBits(const RetainPtr<CFX_DIBBase>& pSource,
   return DrawDIBits(pSource, color, matrix, options);
 }
 
-bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
+bool CFX_PSRenderer::DrawDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
                                 uint32_t color,
                                 const CFX_Matrix& matrix,
                                 const FXDIB_ResampleOptions& options) {
@@ -553,7 +553,7 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<CFX_DIBBase>& pSource,
     WriteStream(buf);
     WritePSBinary(compress_result.data);
   } else {
-    RetainPtr<CFX_DIBBase> pConverted = pSource;
+    RetainPtr<const CFX_DIBBase> pConverted = pSource;
     switch (pSource->GetFormat()) {
       case FXDIB_Format::k1bppRgb:
       case FXDIB_Format::kRgb32:
@@ -837,7 +837,7 @@ bool CFX_PSRenderer::DrawText(int nChars,
 }
 
 CFX_PSRenderer::FaxCompressResult CFX_PSRenderer::FaxCompressData(
-    RetainPtr<CFX_DIBBase> src) const {
+    RetainPtr<const CFX_DIBBase> src) const {
   DCHECK_EQ(1, src->GetBPP());
 
   FaxCompressResult result;
