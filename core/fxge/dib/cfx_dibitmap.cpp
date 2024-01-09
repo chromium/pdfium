@@ -68,7 +68,7 @@ bool CFX_DIBitmap::Create(int width,
   return true;
 }
 
-bool CFX_DIBitmap::Copy(const RetainPtr<CFX_DIBBase>& pSrc) {
+bool CFX_DIBitmap::Copy(const RetainPtr<const CFX_DIBBase>& pSrc) {
   if (m_pBuffer)
     return false;
 
@@ -191,13 +191,14 @@ void CFX_DIBitmap::Clear(uint32_t color) {
   }
 }
 
-bool CFX_DIBitmap::TransferBitmap(int dest_left,
-                                  int dest_top,
-                                  int width,
-                                  int height,
-                                  const RetainPtr<CFX_DIBBase>& pSrcBitmap,
-                                  int src_left,
-                                  int src_top) {
+bool CFX_DIBitmap::TransferBitmap(
+    int dest_left,
+    int dest_top,
+    int width,
+    int height,
+    const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
+    int src_left,
+    int src_top) {
   if (!m_pBuffer)
     return false;
 
@@ -231,7 +232,7 @@ bool CFX_DIBitmap::TransferWithUnequalFormats(
     int dest_top,
     int width,
     int height,
-    const RetainPtr<CFX_DIBBase>& pSrcBitmap,
+    const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
     int src_left,
     int src_top) {
   if (HasPalette())
@@ -258,7 +259,7 @@ void CFX_DIBitmap::TransferWithMultipleBPP(
     int dest_top,
     int width,
     int height,
-    const RetainPtr<CFX_DIBBase>& pSrcBitmap,
+    const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
     int src_left,
     int src_top) {
   int Bpp = GetBPP() / 8;
@@ -276,7 +277,7 @@ void CFX_DIBitmap::TransferEqualFormatsOneBPP(
     int dest_top,
     int width,
     int height,
-    const RetainPtr<CFX_DIBBase>& pSrcBitmap,
+    const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
     int src_left,
     int src_top) {
   for (int row = 0; row < height; ++row) {
@@ -295,11 +296,11 @@ void CFX_DIBitmap::TransferEqualFormatsOneBPP(
 
 bool CFX_DIBitmap::SetChannelFromBitmap(
     Channel destChannel,
-    const RetainPtr<CFX_DIBBase>& pSrcBitmap) {
+    const RetainPtr<const CFX_DIBBase>& pSrcBitmap) {
   if (!m_pBuffer)
     return false;
 
-  RetainPtr<CFX_DIBBase> pSrcClone = pSrcBitmap;
+  RetainPtr<const CFX_DIBBase> pSrcClone = pSrcBitmap;
   if (!pSrcBitmap->IsAlphaFormat() && !pSrcBitmap->IsMaskFormat())
     return false;
 
@@ -362,11 +363,12 @@ bool CFX_DIBitmap::SetChannelFromBitmap(
 }
 
 bool CFX_DIBitmap::SetAlphaFromBitmap(
-    const RetainPtr<CFX_DIBBase>& pSrcBitmap) {
+    const RetainPtr<const CFX_DIBBase>& pSrcBitmap) {
   return SetChannelFromBitmap(Channel::kAlpha, pSrcBitmap);
 }
 
-bool CFX_DIBitmap::SetRedFromBitmap(const RetainPtr<CFX_DIBBase>& pSrcBitmap) {
+bool CFX_DIBitmap::SetRedFromBitmap(
+    const RetainPtr<const CFX_DIBBase>& pSrcBitmap) {
   return SetChannelFromBitmap(Channel::kRed, pSrcBitmap);
 }
 
@@ -397,7 +399,8 @@ bool CFX_DIBitmap::SetUniformOpaqueAlpha() {
   return true;
 }
 
-bool CFX_DIBitmap::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& pSrcBitmap) {
+bool CFX_DIBitmap::MultiplyAlpha(
+    const RetainPtr<const CFX_DIBBase>& pSrcBitmap) {
   CHECK(pSrcBitmap->IsMaskFormat());
 
   if (!m_pBuffer) {
@@ -407,7 +410,7 @@ bool CFX_DIBitmap::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& pSrcBitmap) {
   if (IsOpaqueImage())
     return SetAlphaFromBitmap(pSrcBitmap);
 
-  RetainPtr<CFX_DIBitmap> pSrcClone = pSrcBitmap.As<CFX_DIBitmap>();
+  RetainPtr<const CFX_DIBitmap> pSrcClone = pSrcBitmap.As<const CFX_DIBitmap>();
   if (pSrcBitmap->GetWidth() != m_Width ||
       pSrcBitmap->GetHeight() != m_Height) {
     pSrcClone = pSrcBitmap->StretchTo(m_Width, m_Height,
@@ -698,16 +701,17 @@ absl::optional<CFX_DIBitmap::PitchAndSize> CFX_DIBitmap::CalculatePitchAndSize(
   return PitchAndSize{pitch, safe_size.ValueOrDie()};
 }
 
-bool CFX_DIBitmap::CompositeBitmap(int dest_left,
-                                   int dest_top,
-                                   int width,
-                                   int height,
-                                   const RetainPtr<CFX_DIBBase>& pSrcBitmap,
-                                   int src_left,
-                                   int src_top,
-                                   BlendMode blend_type,
-                                   const CFX_ClipRgn* pClipRgn,
-                                   bool bRgbByteOrder) {
+bool CFX_DIBitmap::CompositeBitmap(
+    int dest_left,
+    int dest_top,
+    int width,
+    int height,
+    const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
+    int src_left,
+    int src_top,
+    BlendMode blend_type,
+    const CFX_ClipRgn* pClipRgn,
+    bool bRgbByteOrder) {
   // Should have called CompositeMask().
   CHECK(!pSrcBitmap->IsMaskFormat());
 
@@ -823,13 +827,14 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
   return true;
 }
 
-void CFX_DIBitmap::CompositeOneBPPMask(int dest_left,
-                                       int dest_top,
-                                       int width,
-                                       int height,
-                                       const RetainPtr<CFX_DIBBase>& pSrcBitmap,
-                                       int src_left,
-                                       int src_top) {
+void CFX_DIBitmap::CompositeOneBPPMask(
+    int dest_left,
+    int dest_top,
+    int width,
+    int height,
+    const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
+    int src_left,
+    int src_top) {
   if (GetBPP() != 1) {
     return;
   }
