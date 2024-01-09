@@ -6,7 +6,12 @@
 
 #include <utility>
 
+#include "core/fxge/agg/fx_agg_driver.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+
+#if defined(PDF_USE_SKIA)
+#include "core/fxge/skia/fx_skia_device.h"
+#endif
 
 namespace {
 
@@ -82,4 +87,14 @@ bool CFX_DefaultRenderDevice::Create(int width,
   }
 #endif
   return CreateAgg(width, height, format, pBackdropBitmap);
+}
+
+void CFX_DefaultRenderDevice::Clear(uint32_t color) {
+#if defined(PDF_USE_SKIA)
+  if (UseSkiaRenderer()) {
+    static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver())->Clear(color);
+    return;
+  }
+#endif
+  static_cast<pdfium::CFX_AggDeviceDriver*>(GetDeviceDriver())->Clear(color);
 }

@@ -174,9 +174,9 @@ class CPDF_RenderStatus {
                                     FX_RECT* pClipRect,
                                     const CFX_Matrix& mtMatrix);
   // Optionally write the colorspace family value into |pCSFamily|.
-  FX_ARGB GetBackColor(const CPDF_Dictionary* pSMaskDict,
-                       const CPDF_Dictionary* pGroupDict,
-                       CPDF_ColorSpace::Family* pCSFamily);
+  FX_ARGB GetBackgroundColor(const CPDF_Dictionary* pSMaskDict,
+                             const CPDF_Dictionary* pGroupDict,
+                             CPDF_ColorSpace::Family* pCSFamily);
   FX_ARGB GetStrokeArgb(CPDF_PageObject* pObj) const;
   FX_RECT GetObjectClippedRect(const CPDF_PageObject* pObj,
                                const CFX_Matrix& mtObj2Device) const;

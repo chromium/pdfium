@@ -1628,10 +1628,6 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
 CFX_SkiaDeviceDriver::CharDetail::CharDetail() = default;
 CFX_SkiaDeviceDriver::CharDetail::~CharDetail() = default;
 
-void CFX_DefaultRenderDevice::Clear(uint32_t color) {
-  static_cast<CFX_SkiaDeviceDriver*>(GetDeviceDriver())->Clear(color);
-}
-
 bool CFX_DefaultRenderDevice::AttachSkiaImpl(
     RetainPtr<CFX_DIBitmap> pBitmap,
     bool bRgbByteOrder,

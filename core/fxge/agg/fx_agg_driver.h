@@ -101,6 +101,8 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
   bool MultiplyAlpha(float alpha) override;
   bool MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) override;
 
+  void Clear(uint32_t color);
+
  private:
   void RenderRasterizer(pdfium::agg::rasterizer_scanline_aa& rasterizer,
                         uint32_t color,

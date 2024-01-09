@@ -1138,6 +1138,10 @@ bool CFX_AggDeviceDriver::MultiplyAlpha(const RetainPtr<CFX_DIBBase>& mask) {
   return m_pBitmap->MultiplyAlpha(mask);
 }
 
+void CFX_AggDeviceDriver::Clear(uint32_t color) {
+  m_pBitmap->Clear(color);
+}
+
 void CFX_AggDeviceDriver::RenderRasterizer(
     agg::rasterizer_scanline_aa& rasterizer,
     uint32_t color,

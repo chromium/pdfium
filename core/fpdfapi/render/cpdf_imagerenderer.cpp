@@ -52,16 +52,6 @@ bool IsImageValueTooBig(int val) {
   return safe_val.ValueOrDefault(kLimit) >= kLimit;
 }
 
-void ClearBitmap(CFX_DefaultRenderDevice& bitmap_device, uint32_t color) {
-#if defined(PDF_USE_SKIA)
-  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    bitmap_device.Clear(color);
-    return;
-  }
-#endif
-  bitmap_device.GetBitmap()->Clear(color);
-}
-
 }  // namespace
 
 CPDF_ImageRenderer::CPDF_ImageRenderer(CPDF_RenderStatus* pStatus)
@@ -346,7 +336,7 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
                              nullptr)) {
     return true;
   }
-  ClearBitmap(bitmap_device1, 0xffffffff);
+  bitmap_device1.Clear(0xffffffff);
   CPDF_RenderStatus bitmap_render(m_pRenderStatus->GetContext(),
                                   &bitmap_device1);
   bitmap_render.SetDropObjects(m_pRenderStatus->GetDropObjects());

@@ -31,10 +31,10 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
               int height,
               FXDIB_Format format,
               RetainPtr<CFX_DIBitmap> pBackdropBitmap);
+  void Clear(uint32_t color);
 
 #if defined(PDF_USE_SKIA)
   bool AttachCanvas(SkCanvas* canvas);
-  void Clear(uint32_t color);
 #endif
 
   // Runtime check to see if Skia is the renderer variant in use.

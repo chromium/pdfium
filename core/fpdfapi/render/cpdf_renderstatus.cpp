@@ -1349,15 +1349,12 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   if (!bitmap_device.Create(width, height, format, nullptr))
     return nullptr;
 
-  RetainPtr<CFX_DIBitmap> bitmap = bitmap_device.GetBitmap();
   CPDF_ColorSpace::Family nCSFamily = CPDF_ColorSpace::Family::kUnknown;
-  if (bLuminosity) {
-    FX_ARGB back_color =
-        GetBackColor(pSMaskDict, pGroup->GetDict().Get(), &nCSFamily);
-    bitmap->Clear(back_color);
-  } else {
-    bitmap->Clear(0);
-  }
+  const FX_ARGB background_color =
+      bLuminosity
+          ? GetBackgroundColor(pSMaskDict, pGroup->GetDict().Get(), &nCSFamily)
+          : 0;
+  bitmap_device.Clear(background_color);
 
   RetainPtr<const CPDF_Dictionary> pFormResource =
       form.GetDict()->GetDictFor("Resources");
@@ -1379,6 +1376,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
     return nullptr;
 
   pdfium::span<uint8_t> dest_buf = pMask->GetWritableBuffer();
+  RetainPtr<const CFX_DIBitmap> bitmap = bitmap_device.GetBitmap();
   pdfium::span<const uint8_t> src_buf = bitmap->GetBuffer();
   int dest_pitch = pMask->GetPitch();
   int src_pitch = bitmap->GetPitch();
@@ -1417,9 +1415,10 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   return pMask;
 }
 
-FX_ARGB CPDF_RenderStatus::GetBackColor(const CPDF_Dictionary* pSMaskDict,
-                                        const CPDF_Dictionary* pGroupDict,
-                                        CPDF_ColorSpace::Family* pCSFamily) {
+FX_ARGB CPDF_RenderStatus::GetBackgroundColor(
+    const CPDF_Dictionary* pSMaskDict,
+    const CPDF_Dictionary* pGroupDict,
+    CPDF_ColorSpace::Family* pCSFamily) {
   static constexpr FX_ARGB kDefaultColor = ArgbEncode(255, 0, 0, 0);
   RetainPtr<const CPDF_Array> pBC =
       pSMaskDict->GetArrayFor(pdfium::transparency::kBC);
