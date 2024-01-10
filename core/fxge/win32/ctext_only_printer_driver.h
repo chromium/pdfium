@@ -52,7 +52,7 @@ class CTextOnlyPrinterDriver final : public RenderDeviceDriverIface {
                      const FXDIB_ResampleOptions& options,
                      BlendMode blend_type) override;
   bool StartDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
-                   int bitmap_alpha,
+                   float alpha,
                    uint32_t color,
                    const CFX_Matrix& matrix,
                    const FXDIB_ResampleOptions& options,

@@ -185,17 +185,15 @@ bool CPSPrinterDriver::StretchDIBits(
 }
 
 bool CPSPrinterDriver::StartDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
-                                   int bitmap_alpha,
+                                   float alpha,
                                    uint32_t color,
                                    const CFX_Matrix& matrix,
                                    const FXDIB_ResampleOptions& options,
                                    std::unique_ptr<CFX_ImageRenderer>* handle,
                                    BlendMode blend_type) {
-  if (blend_type != BlendMode::kNormal)
+  if (blend_type != BlendMode::kNormal || alpha != 1.0f) {
     return false;
-
-  if (bitmap_alpha < 255)
-    return false;
+  }
 
   *handle = nullptr;
   return m_PSRenderer.DrawDIBits(pBitmap, color, matrix, options);

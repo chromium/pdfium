@@ -990,8 +990,8 @@ bool CFX_RenderDevice::StartDIBitsWithBlend(
     const FXDIB_ResampleOptions& options,
     std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_mode) {
-  return m_pDeviceDriver->StartDIBits(pBitmap, bitmap_alpha, argb, matrix,
-                                      options, handle, blend_mode);
+  return m_pDeviceDriver->StartDIBits(pBitmap, bitmap_alpha / 255.0f, argb,
+                                      matrix, options, handle, blend_mode);
 }
 
 bool CFX_RenderDevice::ContinueDIBits(CFX_ImageRenderer* handle,

@@ -116,7 +116,7 @@ bool CTextOnlyPrinterDriver::StretchDIBits(
 
 bool CTextOnlyPrinterDriver::StartDIBits(
     const RetainPtr<const CFX_DIBBase>& pBitmap,
-    int bitmap_alpha,
+    float alpha,
     uint32_t color,
     const CFX_Matrix& matrix,
     const FXDIB_ResampleOptions& options,

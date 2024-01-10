@@ -119,13 +119,13 @@ bool CGdiPrinterDriver::StretchDIBits(
 }
 
 bool CGdiPrinterDriver::StartDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
-                                    int bitmap_alpha,
+                                    float alpha,
                                     uint32_t color,
                                     const CFX_Matrix& matrix,
                                     const FXDIB_ResampleOptions& options,
                                     std::unique_ptr<CFX_ImageRenderer>* handle,
                                     BlendMode blend_type) {
-  if (bitmap_alpha < 255 || pSource->IsAlphaFormat() ||
+  if (alpha != 1.0f || pSource->IsAlphaFormat() ||
       (pSource->IsMaskFormat() && (pSource->GetBPP() != 1))) {
     return false;
   }

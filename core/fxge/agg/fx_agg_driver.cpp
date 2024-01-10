@@ -1361,7 +1361,7 @@ bool CFX_AggDeviceDriver::StretchDIBits(
 
 bool CFX_AggDeviceDriver::StartDIBits(
     const RetainPtr<const CFX_DIBBase>& pSource,
-    int bitmap_alpha,
+    float alpha,
     uint32_t argb,
     const CFX_Matrix& matrix,
     const FXDIB_ResampleOptions& options,
@@ -1371,8 +1371,8 @@ bool CFX_AggDeviceDriver::StartDIBits(
     return true;
 
   *handle = std::make_unique<CFX_ImageRenderer>(
-      m_pBitmap, m_pClipRgn.get(), pSource, bitmap_alpha, argb, matrix, options,
-      m_bRgbByteOrder);
+      m_pBitmap, m_pClipRgn.get(), pSource, FXSYS_roundf(alpha * 255), argb,
+      matrix, options, m_bRgbByteOrder);
   return true;
 }
 
