@@ -1004,10 +1004,10 @@ bool CFX_RenderDevice::SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                                        const RetainPtr<CFX_DIBBase>& pMask,
                                        int left,
                                        int top,
-                                       int bitmap_alpha,
+                                       float alpha,
                                        BlendMode blend_type) {
-  return m_pDeviceDriver->SetBitsWithMask(pBitmap, pMask, left, top,
-                                          bitmap_alpha, blend_type);
+  return m_pDeviceDriver->SetBitsWithMask(pBitmap, pMask, left, top, alpha,
+                                          blend_type);
 }
 
 bool CFX_RenderDevice::SyncInternalBitmaps() {

@@ -595,14 +595,14 @@ void SetBitmapPaint(bool is_mask,
 
 void SetBitmapPaintForMerge(bool is_mask,
                             bool anti_alias,
-                            uint32_t argb,
-                            int bitmap_alpha,
+                            float alpha,
                             BlendMode blend_type,
                             SkPaint* paint) {
-  if (is_mask)
-    paint->setColorFilter(SkColorFilters::Blend(argb, SkBlendMode::kSrc));
+  if (is_mask) {
+    paint->setColorFilter(SkColorFilters::Blend(0xFFFFFFFF, SkBlendMode::kSrc));
+  }
 
-  paint->setAlpha(bitmap_alpha);
+  paint->setAlphaf(alpha);
   paint->setAntiAlias(anti_alias);
   paint->setBlendMode(GetSkiaBlendMode(blend_type));
 }
@@ -1488,7 +1488,7 @@ bool CFX_DIBitmap::IsPremultiplied() const {
 bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
     const RetainPtr<CFX_DIBBase>& pSource,
     const RetainPtr<CFX_DIBBase>& pMask,
-    int bitmap_alpha,
+    float alpha,
     const CFX_Matrix& matrix,
     BlendMode blend_type) {
   DebugValidate(m_pBitmap);
@@ -1515,7 +1515,7 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
     m_pCanvas->concat(skMatrix);
     SkPaint paint;
     SetBitmapPaintForMerge(pSource->IsMaskFormat(), !m_FillOptions.aliased_path,
-                           0xFFFFFFFF, bitmap_alpha, blend_type, &paint);
+                           alpha, blend_type, &paint);
     sk_sp<SkShader> source_shader = skia_source->makeShader(
         SkTileMode::kClamp, SkTileMode::kClamp, SkSamplingOptions());
     sk_sp<SkShader> mask_shader = skia_mask->makeShader(
@@ -1536,15 +1536,15 @@ bool CFX_SkiaDeviceDriver::SetBitsWithMask(
     const RetainPtr<CFX_DIBBase>& pMask,
     int dest_left,
     int dest_top,
-    int bitmap_alpha,
+    float alpha,
     BlendMode blend_type) {
   if (m_pBitmap->GetBuffer().empty()) {
     return true;
   }
 
-  CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(
+  CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(
       pBitmap->GetWidth(), pBitmap->GetHeight(), dest_left, dest_top);
-  return DrawBitsWithMask(pBitmap, pMask, bitmap_alpha, m, blend_type);
+  return DrawBitsWithMask(pBitmap, pMask, alpha, matrix, blend_type);
 }
 
 void CFX_SkiaDeviceDriver::SetGroupKnockout(bool group_knockout) {

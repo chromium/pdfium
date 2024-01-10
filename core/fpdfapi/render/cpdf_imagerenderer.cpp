@@ -359,7 +359,7 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
   if (CFX_DefaultRenderDevice::UseSkiaRenderer() &&
       m_pRenderStatus->GetRenderDevice()->SetBitsWithMask(
           bitmap_device1.GetBitmap(), bitmap_device2.GetBitmap(), rect.left,
-          rect.top, m_BitmapAlpha, m_BlendType)) {
+          rect.top, m_BitmapAlpha / 255.0f, m_BlendType)) {
     return false;
   }
 #endif

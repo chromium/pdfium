@@ -77,7 +77,7 @@ bool RenderDeviceDriverIface::SetBitsWithMask(
     const RetainPtr<CFX_DIBBase>& pMask,
     int left,
     int top,
-    int bitmap_alpha,
+    float alpha,
     BlendMode blend_type) {
   return false;
 }

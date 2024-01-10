@@ -113,7 +113,7 @@ class RenderDeviceDriverIface {
                                const RetainPtr<CFX_DIBBase>& pMask,
                                int left,
                                int top,
-                               int bitmap_alpha,
+                               float alpha,
                                BlendMode blend_type);
   virtual void SetGroupKnockout(bool group_knockout);
 

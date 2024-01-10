@@ -105,7 +105,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                        const RetainPtr<CFX_DIBBase>& pMask,
                        int dest_left,
                        int dest_top,
-                       int bitmap_alpha,
+                       float alpha,
                        BlendMode blend_type) override;
   void SetGroupKnockout(bool group_knockout) override;
   bool SyncInternalBitmaps() override;
@@ -133,7 +133,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
 
   bool DrawBitsWithMask(const RetainPtr<CFX_DIBBase>& pSource,
                         const RetainPtr<CFX_DIBBase>& pMask,
-                        int bitmap_alpha,
+                        float alpha,
                         const CFX_Matrix& matrix,
                         BlendMode blend_type);
 
