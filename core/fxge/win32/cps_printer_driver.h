@@ -74,7 +74,7 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
                       uint32_t color,
                       const CFX_TextRenderOptions& options) override;
   bool MultiplyAlpha(float alpha) override;
-  bool MultiplyAlphaMask(const RetainPtr<CFX_DIBBase>& mask) override;
+  bool MultiplyAlphaMask(const RetainPtr<const CFX_DIBBase>& mask) override;
 
   HDC m_hDC;
   int m_Width;

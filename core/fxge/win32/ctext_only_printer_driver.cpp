@@ -188,7 +188,7 @@ bool CTextOnlyPrinterDriver::MultiplyAlpha(float alpha) {
 }
 
 bool CTextOnlyPrinterDriver::MultiplyAlphaMask(
-    const RetainPtr<CFX_DIBBase>& mask) {
+    const RetainPtr<const CFX_DIBBase>& mask) {
   // Not needed. All callers are using `CFX_DIBitmap`-backed raster devices
   // anyway.
   NOTREACHED();

@@ -1464,7 +1464,8 @@ bool CFX_RenderDevice::MultiplyAlpha(float alpha) {
   return m_pDeviceDriver->MultiplyAlpha(alpha);
 }
 
-bool CFX_RenderDevice::MultiplyAlphaMask(const RetainPtr<CFX_DIBBase>& mask) {
+bool CFX_RenderDevice::MultiplyAlphaMask(
+    const RetainPtr<const CFX_DIBBase>& mask) {
   return m_pDeviceDriver->MultiplyAlphaMask(mask);
 }
 

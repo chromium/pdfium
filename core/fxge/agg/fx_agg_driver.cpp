@@ -1135,7 +1135,7 @@ bool CFX_AggDeviceDriver::MultiplyAlpha(float alpha) {
 }
 
 bool CFX_AggDeviceDriver::MultiplyAlphaMask(
-    const RetainPtr<CFX_DIBBase>& mask) {
+    const RetainPtr<const CFX_DIBBase>& mask) {
   return m_pBitmap->MultiplyAlphaMask(mask);
 }
 
