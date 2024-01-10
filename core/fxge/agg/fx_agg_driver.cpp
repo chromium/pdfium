@@ -1349,8 +1349,9 @@ bool CFX_AggDeviceDriver::StretchDIBits(
   FX_RECT dest_clip = dest_rect;
   dest_clip.Intersect(*pClipRect);
   CFX_BitmapComposer composer;
-  composer.Compose(m_pBitmap, m_pClipRgn.get(), 255, argb, dest_clip, false,
-                   false, false, m_bRgbByteOrder, blend_type);
+  composer.Compose(m_pBitmap, m_pClipRgn.get(), /*alpha=*/1.0f, argb, dest_clip,
+                   /*bVertical=*/false, /*bFlipX=*/false, /*bFlipY=*/false,
+                   m_bRgbByteOrder, blend_type);
   dest_clip.Offset(-dest_rect.left, -dest_rect.top);
   CFX_ImageStretcher stretcher(&composer, pSource, dest_width, dest_height,
                                dest_clip, options);

@@ -11,6 +11,7 @@
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -22,7 +23,7 @@ CFX_BitmapComposer::~CFX_BitmapComposer() = default;
 
 void CFX_BitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
                                  const CFX_ClipRgn* pClipRgn,
-                                 int bitmap_alpha,
+                                 float alpha,
                                  uint32_t mask_color,
                                  const FX_RECT& dest_rect,
                                  bool bVertical,
@@ -36,7 +37,7 @@ void CFX_BitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
   m_DestTop = dest_rect.top;
   m_DestWidth = dest_rect.Width();
   m_DestHeight = dest_rect.Height();
-  m_BitmapAlpha = bitmap_alpha;
+  m_Alpha = alpha;
   m_MaskColor = mask_color;
   m_pClipMask = nullptr;
   if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::kRectI)
@@ -57,15 +58,14 @@ bool CFX_BitmapComposer::SetInfo(int width,
   m_SrcFormat = src_format;
   if (!m_Compositor.Init(m_pBitmap->GetFormat(), src_format, src_palette,
                          m_MaskColor, m_BlendMode,
-                         m_pClipMask != nullptr || (m_BitmapAlpha < 255),
-                         m_bRgbByteOrder)) {
+                         m_pClipMask || m_Alpha != 1.0f, m_bRgbByteOrder)) {
     return false;
   }
   if (m_bVertical) {
     m_pScanlineV.resize(m_pBitmap->GetBPP() / 8 * width + 4);
     m_pClipScanV.resize(m_pBitmap->GetHeight());
   }
-  if (m_BitmapAlpha < 255) {
+  if (m_Alpha != 1.0f) {
     m_pAddClipScan.resize(m_bVertical ? m_pBitmap->GetHeight()
                                       : m_pBitmap->GetWidth());
   }
@@ -76,13 +76,14 @@ void CFX_BitmapComposer::DoCompose(pdfium::span<uint8_t> dest_scan,
                                    pdfium::span<const uint8_t> src_scan,
                                    int dest_width,
                                    pdfium::span<const uint8_t> clip_scan) {
-  if (m_BitmapAlpha < 255) {
+  if (m_Alpha != 1.0f) {
     if (!clip_scan.empty()) {
-      for (int i = 0; i < dest_width; ++i)
-        m_pAddClipScan[i] = clip_scan[i] * m_BitmapAlpha / 255;
+      for (int i = 0; i < dest_width; ++i) {
+        m_pAddClipScan[i] = clip_scan[i] * m_Alpha;
+      }
     } else {
       fxcrt::spanset(pdfium::make_span(m_pAddClipScan).first(dest_width),
-                     m_BitmapAlpha);
+                     FXSYS_roundf(m_Alpha * 255));
     }
     clip_scan = m_pAddClipScan;
   }

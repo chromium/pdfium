@@ -49,9 +49,11 @@ CFX_ImageRenderer::CFX_ImageRenderer(
       bitmap_clip.Offset(-image_rect.left, -image_rect.top);
       bitmap_clip = bitmap_clip.SwappedClipBox(dest_width, dest_height,
                                                m_Matrix.c > 0, m_Matrix.b < 0);
-      m_Composer.Compose(pDevice, pClipRgn, bitmap_alpha, mask_color, m_ClipBox,
-                         true, m_Matrix.c > 0, m_Matrix.b < 0, m_bRgbByteOrder,
-                         BlendMode::kNormal);
+      const bool flip_x = m_Matrix.c > 0;
+      const bool flip_y = m_Matrix.b < 0;
+      m_Composer.Compose(pDevice, pClipRgn, bitmap_alpha / 255.0f, mask_color,
+                         m_ClipBox, /*bVertical=*/true, flip_x, flip_y,
+                         m_bRgbByteOrder, BlendMode::kNormal);
       m_Stretcher = std::make_unique<CFX_ImageStretcher>(
           &m_Composer, pSource, dest_height, dest_width, bitmap_clip, options);
       if (m_Stretcher->Start())
@@ -77,8 +79,10 @@ CFX_ImageRenderer::CFX_ImageRenderer(
 
   FX_RECT bitmap_clip = m_ClipBox;
   bitmap_clip.Offset(-image_rect.left, -image_rect.top);
-  m_Composer.Compose(pDevice, pClipRgn, bitmap_alpha, mask_color, m_ClipBox,
-                     false, false, false, m_bRgbByteOrder, BlendMode::kNormal);
+  m_Composer.Compose(pDevice, pClipRgn, bitmap_alpha / 255.0f, mask_color,
+                     m_ClipBox,
+                     /*bVertical=*/false, /*bFlipX=*/false, /*bFlipY=*/false,
+                     m_bRgbByteOrder, BlendMode::kNormal);
   m_State = State::kStretching;
   m_Stretcher = std::make_unique<CFX_ImageStretcher>(
       &m_Composer, pSource, dest_width, dest_height, bitmap_clip, options);
