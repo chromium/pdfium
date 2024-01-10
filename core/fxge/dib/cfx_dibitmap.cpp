@@ -455,7 +455,7 @@ bool CFX_DIBitmap::MultiplyAlphaMask(
   return true;
 }
 
-bool CFX_DIBitmap::MultiplyAlpha(int alpha) {
+bool CFX_DIBitmap::MultiplyAlpha(float alpha) {
   if (!m_pBuffer)
     return false;
 
@@ -467,19 +467,21 @@ bool CFX_DIBitmap::MultiplyAlpha(int alpha) {
       MultiplyAlpha(alpha);
       break;
     case FXDIB_Format::k8bppMask: {
+      const int bitmap_alpha = static_cast<int>(alpha * 255);
       for (int row = 0; row < m_Height; row++) {
         uint8_t* scan_line = m_pBuffer.Get() + row * m_Pitch;
         for (int col = 0; col < m_Width; col++) {
-          scan_line[col] = scan_line[col] * alpha / 255;
+          scan_line[col] = scan_line[col] * bitmap_alpha / 255;
         }
       }
       break;
     }
     case FXDIB_Format::kArgb: {
+      const int bitmap_alpha = static_cast<int>(alpha * 255);
       for (int row = 0; row < m_Height; row++) {
         uint8_t* scan_line = m_pBuffer.Get() + row * m_Pitch + 3;
         for (int col = 0; col < m_Width; col++) {
-          *scan_line = (*scan_line) * alpha / 255;
+          *scan_line = (*scan_line) * bitmap_alpha / 255;
           scan_line += 4;
         }
       }

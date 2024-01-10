@@ -108,7 +108,7 @@ bool CFX_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
                              BlendMode::kNormal, m_pClipRgn, m_bRgbByteOrder);
   } else {
     if (m_BitmapAlpha != 255)
-      pBitmap->MultiplyAlpha(m_BitmapAlpha);
+      pBitmap->MultiplyAlpha(m_BitmapAlpha / 255.0f);
     m_pDevice->CompositeBitmap(
         m_pTransformer->result().left, m_pTransformer->result().top,
         pBitmap->GetWidth(), pBitmap->GetHeight(), pBitmap, 0, 0,

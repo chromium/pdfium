@@ -1131,7 +1131,7 @@ int CFX_AggDeviceDriver::GetDriverType() const {
 }
 
 bool CFX_AggDeviceDriver::MultiplyAlpha(float alpha) {
-  return m_pBitmap->MultiplyAlpha(static_cast<int32_t>(alpha * 255));
+  return m_pBitmap->MultiplyAlpha(alpha);
 }
 
 bool CFX_AggDeviceDriver::MultiplyAlphaMask(

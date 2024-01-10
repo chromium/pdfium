@@ -1218,7 +1218,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
                                  FXDIB_ResampleOptions(), &dummy);
           return;
         }
-        pDIBitmap->MultiplyAlpha(bitmap_alpha);
+        pDIBitmap->MultiplyAlpha(bitmap_alpha / 255.0f);
       }
       if (m_pDevice->SetDIBits(pDIBitmap, left, top)) {
         return;
