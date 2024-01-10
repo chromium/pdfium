@@ -1371,9 +1371,9 @@ bool CFX_AggDeviceDriver::StartDIBits(
   if (m_pBitmap->GetBuffer().empty())
     return true;
 
-  *handle = std::make_unique<CFX_ImageRenderer>(
-      m_pBitmap, m_pClipRgn.get(), pSource, FXSYS_roundf(alpha * 255), argb,
-      matrix, options, m_bRgbByteOrder);
+  *handle = std::make_unique<CFX_ImageRenderer>(m_pBitmap, m_pClipRgn.get(),
+                                                pSource, alpha, argb, matrix,
+                                                options, m_bRgbByteOrder);
   return true;
 }
 
