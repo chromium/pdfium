@@ -50,8 +50,7 @@ int CTextOnlyPrinterDriver::GetDeviceCaps(int caps_id) const {
     case FXDC_VERT_SIZE:
       return m_VertSize;
     default:
-      NOTREACHED();
-      return 0;
+      NOTREACHED_NORETURN();
   }
 }
 
@@ -183,14 +182,12 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(
 bool CTextOnlyPrinterDriver::MultiplyAlpha(float alpha) {
   // Not needed. All callers are using `CFX_DIBitmap`-backed raster devices
   // anyway.
-  NOTREACHED();
-  return false;
+  NOTREACHED_NORETURN();
 }
 
 bool CTextOnlyPrinterDriver::MultiplyAlphaMask(
     const RetainPtr<const CFX_DIBBase>& mask) {
   // Not needed. All callers are using `CFX_DIBitmap`-backed raster devices
   // anyway.
-  NOTREACHED();
-  return false;
+  NOTREACHED_NORETURN();
 }

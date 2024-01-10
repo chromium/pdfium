@@ -36,8 +36,7 @@ CFX_PSRenderer::RenderingLevel RenderingLevelFromWindowsPrintMode(
       return CFX_PSRenderer::RenderingLevel::kLevel3Type42;
     default:
       // |mode| should be PostScript.
-      NOTREACHED();
-      return CFX_PSRenderer::RenderingLevel::kLevel2;
+      NOTREACHED_NORETURN();
   }
 }
 
@@ -110,8 +109,7 @@ int CPSPrinterDriver::GetDeviceCaps(int caps_id) const {
     case FXDC_VERT_SIZE:
       return m_VertSize;
     default:
-      NOTREACHED();
-      return 0;
+      NOTREACHED_NORETURN();
   }
 }
 
@@ -213,14 +211,12 @@ bool CPSPrinterDriver::DrawDeviceText(
 bool CPSPrinterDriver::MultiplyAlpha(float alpha) {
   // PostScript doesn't support transparency. All callers are using
   // `CFX_DIBitmap`-backed raster devices anyway.
-  NOTREACHED();
-  return false;
+  NOTREACHED_NORETURN();
 }
 
 bool CPSPrinterDriver::MultiplyAlphaMask(
     const RetainPtr<const CFX_DIBBase>& mask) {
   // PostScript doesn't support transparency. All callers are using
   // `CFX_DIBitmap`-backed raster devices anyway.
-  NOTREACHED();
-  return false;
+  NOTREACHED_NORETURN();
 }
