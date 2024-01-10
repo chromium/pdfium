@@ -117,7 +117,7 @@ class CPDF_RenderStatus {
                          int left,
                          int top,
                          FX_ARGB mask_argb,
-                         int bitmap_alpha,
+                         float alpha,
                          BlendMode blend_mode,
                          const CPDF_Transparency& transparency);
 

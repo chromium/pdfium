@@ -699,8 +699,8 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     bitmap_device.GetBitmap()->UnPreMultiply();
   }
 #endif
-  CompositeDIBitmap(bitmap_device.GetBitmap(), rect.left, rect.top, 0, 255,
-                    blend_type, transparency);
+  CompositeDIBitmap(bitmap_device.GetBitmap(), rect.left, rect.top,
+                    /*mask_argb=*/0, /*alpha=*/1.0f, blend_type, transparency);
   return true;
 }
 
@@ -1147,7 +1147,8 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pattern,
   if (!pScreen)
     return;
 
-  CompositeDIBitmap(pScreen, clip_box.left, clip_box.top, 0, 255,
+  constexpr FX_ARGB kMask = 0;
+  CompositeDIBitmap(pScreen, clip_box.left, clip_box.top, kMask, /*alpha=*/1.0f,
                     BlendMode::kNormal, CPDF_Transparency());
 }
 
@@ -1202,32 +1203,33 @@ void CPDF_RenderStatus::CompositeDIBitmap(
     int left,
     int top,
     FX_ARGB mask_argb,
-    int bitmap_alpha,
+    float alpha,
     BlendMode blend_mode,
     const CPDF_Transparency& transparency) {
   CHECK(pDIBitmap);
 
   if (blend_mode == BlendMode::kNormal) {
     if (!pDIBitmap->IsMaskFormat()) {
-      if (bitmap_alpha < 255) {
+      if (alpha != 1.0f) {
         if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
           std::unique_ptr<CFX_ImageRenderer> dummy;
-          CFX_Matrix m = CFX_RenderDevice::GetFlipMatrix(
+          CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(
               pDIBitmap->GetWidth(), pDIBitmap->GetHeight(), left, top);
-          m_pDevice->StartDIBits(pDIBitmap, bitmap_alpha, 0, m,
+          const int bitmap_alpha = FXSYS_roundf(alpha * 255);
+          m_pDevice->StartDIBits(pDIBitmap, bitmap_alpha, /*color=*/0, matrix,
                                  FXDIB_ResampleOptions(), &dummy);
           return;
         }
-        pDIBitmap->MultiplyAlpha(bitmap_alpha / 255.0f);
+        pDIBitmap->MultiplyAlpha(alpha);
       }
       if (m_pDevice->SetDIBits(pDIBitmap, left, top)) {
         return;
       }
     } else {
       uint32_t fill_argb = m_Options.TranslateColor(mask_argb);
-      if (bitmap_alpha < 255) {
+      if (alpha != 1.0f) {
         uint8_t* fill_argb8 = reinterpret_cast<uint8_t*>(&fill_argb);
-        fill_argb8[3] *= bitmap_alpha / 255;
+        fill_argb8[3] *= FXSYS_roundf(alpha * 255) / 255;
       }
       if (m_pDevice->SetBitMask(pDIBitmap, left, top, fill_argb)) {
         return;
