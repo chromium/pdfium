@@ -88,7 +88,7 @@ class CPDF_ImageRenderer {
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
   std::unique_ptr<CFX_ImageRenderer> m_DeviceHandle;
   Mode m_Mode = Mode::kNone;
-  int m_BitmapAlpha = 0;
+  float m_Alpha = 0.0f;
   BlendMode m_BlendType = BlendMode::kNormal;
   FX_ARGB m_FillArgb = 0;
   FXDIB_ResampleOptions m_ResampleOptions;
