@@ -105,7 +105,7 @@ class CFX_DIBBase : public Retainable {
   CFX_DIBBase();
   ~CFX_DIBBase() override;
 
-  static bool ConvertBuffer(FXDIB_Format dest_format,
+  static void ConvertBuffer(FXDIB_Format dest_format,
                             pdfium::span<uint8_t> dest_buf,
                             int dest_pitch,
                             int width,
