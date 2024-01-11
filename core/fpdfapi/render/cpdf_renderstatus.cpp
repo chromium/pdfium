@@ -1258,9 +1258,8 @@ void CPDF_RenderStatus::CompositeDIBitmap(
       if (!pClone)
         return;
 
-      RetainPtr<CFX_DIBitmap> pForeBitmap = m_pDevice->GetBitmap();
       pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
-                              pForeBitmap, rect.left, rect.top,
+                              m_pDevice->GetBitmap(), rect.left, rect.top,
                               BlendMode::kNormal, nullptr, false);
       left = std::min(left, 0);
       top = std::min(top, 0);

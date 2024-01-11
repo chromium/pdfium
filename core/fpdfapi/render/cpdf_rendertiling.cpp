@@ -8,6 +8,7 @@
 
 #include <limits>
 #include <memory>
+#include <utility>
 
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_pageimagecache.h"

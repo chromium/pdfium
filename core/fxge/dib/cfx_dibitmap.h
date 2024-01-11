@@ -31,7 +31,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
               uint8_t* pBuffer,
               uint32_t pitch);
 
-  bool Copy(const RetainPtr<const CFX_DIBBase>& pSrc);
+  bool Copy(RetainPtr<const CFX_DIBBase> source);
 
   // CFX_DIBBase
   pdfium::span<const uint8_t> GetScanline(int line) const override;
@@ -60,19 +60,19 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   void SetPixel(int x, int y, uint32_t color);
 #endif  // defined(PDF_USE_SKIA)
 
-  bool SetRedFromBitmap(const RetainPtr<const CFX_DIBBase>& pSrcBitmap);
-  bool SetAlphaFromBitmap(const RetainPtr<const CFX_DIBBase>& pSrcBitmap);
+  bool SetRedFromBitmap(RetainPtr<const CFX_DIBBase> source);
+  bool SetAlphaFromBitmap(RetainPtr<const CFX_DIBBase> source);
   bool SetUniformOpaqueAlpha();
 
   // TODO(crbug.com/pdfium/2007): Migrate callers to `CFX_RenderDevice`.
   bool MultiplyAlpha(float alpha);
-  bool MultiplyAlphaMask(const RetainPtr<const CFX_DIBBase>& pSrcBitmap);
+  bool MultiplyAlphaMask(RetainPtr<const CFX_DIBBase> source);
 
   bool TransferBitmap(int dest_left,
                       int dest_top,
                       int width,
                       int height,
-                      const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
+                      RetainPtr<const CFX_DIBBase> source,
                       int src_left,
                       int src_top);
 
@@ -80,7 +80,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                        int dest_top,
                        int width,
                        int height,
-                       const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
+                       RetainPtr<const CFX_DIBBase> source,
                        int src_left,
                        int src_top,
                        BlendMode blend_type,
@@ -103,7 +103,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                            int dest_top,
                            int width,
                            int height,
-                           const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
+                           RetainPtr<const CFX_DIBBase> source,
                            int src_left,
                            int src_top);
 
@@ -152,33 +152,31 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   CFX_DIBitmap(const CFX_DIBitmap& src);
   ~CFX_DIBitmap() override;
 
-  bool SetChannelFromBitmap(Channel destChannel,
-                            const RetainPtr<const CFX_DIBBase>& pSrcBitmap);
+  bool SetChannelFromBitmap(Channel dest_channel,
+                            RetainPtr<const CFX_DIBBase> source);
   void ConvertBGRColorScale(uint32_t forecolor, uint32_t backcolor);
-  bool TransferWithUnequalFormats(
-      FXDIB_Format dest_format,
-      int dest_left,
-      int dest_top,
-      int width,
-      int height,
-      const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
-      int src_left,
-      int src_top);
+  bool TransferWithUnequalFormats(FXDIB_Format dest_format,
+                                  int dest_left,
+                                  int dest_top,
+                                  int width,
+                                  int height,
+                                  RetainPtr<const CFX_DIBBase> source,
+                                  int src_left,
+                                  int src_top);
   void TransferWithMultipleBPP(int dest_left,
                                int dest_top,
                                int width,
                                int height,
-                               const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
+                               RetainPtr<const CFX_DIBBase> source,
                                int src_left,
                                int src_top);
-  void TransferEqualFormatsOneBPP(
-      int dest_left,
-      int dest_top,
-      int width,
-      int height,
-      const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
-      int src_left,
-      int src_top);
+  void TransferEqualFormatsOneBPP(int dest_left,
+                                  int dest_top,
+                                  int width,
+                                  int height,
+                                  RetainPtr<const CFX_DIBBase> source,
+                                  int src_left,
+                                  int src_top);
 
   MaybeOwned<uint8_t, FxFreeDeleter> m_pBuffer;
 #if defined(PDF_USE_SKIA)

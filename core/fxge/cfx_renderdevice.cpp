@@ -541,8 +541,8 @@ RetainPtr<const CFX_DIBitmap> CFX_RenderDevice::GetBitmap() const {
   return m_pBitmap;
 }
 
-void CFX_RenderDevice::SetBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap) {
-  m_pBitmap = pBitmap;
+void CFX_RenderDevice::SetBitmap(RetainPtr<CFX_DIBitmap> bitmap) {
+  m_pBitmap = std::move(bitmap);
 }
 
 bool CFX_RenderDevice::CreateCompatibleBitmap(
@@ -793,8 +793,8 @@ bool CFX_RenderDevice::DrawFillStrokePath(
     return false;
   }
   FX_RECT src_rect(0, 0, rect.Width(), rect.Height());
-  return m_pDeviceDriver->SetDIBits(bitmap, 0, src_rect, rect.left, rect.top,
-                                    BlendMode::kNormal);
+  return m_pDeviceDriver->SetDIBits(std::move(bitmap), 0, src_rect, rect.left,
+                                    rect.top, BlendMode::kNormal);
 }
 
 bool CFX_RenderDevice::FillRectWithBlend(const FX_RECT& rect,
@@ -905,8 +905,9 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(
                    dest_rect.top - top + dest_rect.Height());
   if ((blend_mode == BlendMode::kNormal || (m_RenderCaps & FXRC_BLEND_MODE)) &&
       (!pBitmap->IsAlphaFormat() || (m_RenderCaps & FXRC_ALPHA_IMAGE))) {
-    return m_pDeviceDriver->SetDIBits(pBitmap, 0, src_rect, dest_rect.left,
-                                      dest_rect.top, blend_mode);
+    return m_pDeviceDriver->SetDIBits(std::move(pBitmap), 0, src_rect,
+                                      dest_rect.left, dest_rect.top,
+                                      blend_mode);
   }
   if (!(m_RenderCaps & FXRC_GET_BITS))
     return false;
@@ -922,8 +923,8 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(
     return false;
 
   if (!background->CompositeBitmap(0, 0, bg_pixel_width, bg_pixel_height,
-                                   pBitmap, src_rect.left, src_rect.top,
-                                   blend_mode, nullptr, false)) {
+                                   std::move(pBitmap), src_rect.left,
+                                   src_rect.top, blend_mode, nullptr, false)) {
     return false;
   }
   FX_RECT rect(0, 0, bg_pixel_width, bg_pixel_height);

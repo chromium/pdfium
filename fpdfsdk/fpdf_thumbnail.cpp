@@ -76,8 +76,9 @@ FPDFPage_GetThumbnailAsBitmap(FPDF_PAGE page) {
     return nullptr;
 
   auto thumb_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!thumb_bitmap->Copy(dib_source))
+  if (!thumb_bitmap->Copy(std::move(dib_source))) {
     return nullptr;
+  }
 
   return FPDFBitmapFromCFXDIBitmap(thumb_bitmap.Leak());
 }

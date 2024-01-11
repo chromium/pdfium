@@ -513,7 +513,7 @@ RetainPtr<CFX_DIBitmap> GetMaskBitmap(CPDF_Page* pPage,
                                       int size_x,
                                       int size_y,
                                       int rotate,
-                                      const RetainPtr<CFX_DIBitmap>& pSrc,
+                                      RetainPtr<const CFX_DIBitmap> source,
                                       const CFX_FloatRect& mask_box,
                                       FX_RECT* bitmap_area) {
   if (IsPageTooSmall(pPage))
@@ -535,13 +535,13 @@ RetainPtr<CFX_DIBitmap> GetMaskBitmap(CPDF_Page* pPage,
     return nullptr;
   }
   pDst->Clear(0x00ffffff);
-  pDst->TransferBitmap(0, 0, bitmap_area->Width(), bitmap_area->Height(), pSrc,
-                       bitmap_area->left, bitmap_area->top);
+  pDst->TransferBitmap(0, 0, bitmap_area->Width(), bitmap_area->Height(),
+                       std::move(source), bitmap_area->left, bitmap_area->top);
   return pDst;
 }
 
 void RenderBitmap(CFX_RenderDevice* device,
-                  const RetainPtr<CFX_DIBitmap>& pSrc,
+                  RetainPtr<const CFX_DIBitmap> source,
                   const FX_RECT& mask_area) {
   int size_x_bm = mask_area.Width();
   int size_y_bm = mask_area.Height();
@@ -549,19 +549,20 @@ void RenderBitmap(CFX_RenderDevice* device,
     return;
 
   // Create a new bitmap from the old one
-  RetainPtr<CFX_DIBitmap> pDst = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pDst->Create(size_x_bm, size_y_bm, FXDIB_Format::kRgb32))
+  RetainPtr<CFX_DIBitmap> dest = pdfium::MakeRetain<CFX_DIBitmap>();
+  if (!dest->Create(size_x_bm, size_y_bm, FXDIB_Format::kRgb32)) {
     return;
+  }
 
-  pDst->Clear(0xffffffff);
-  pDst->CompositeBitmap(0, 0, size_x_bm, size_y_bm, pSrc, 0, 0,
+  dest->Clear(0xffffffff);
+  dest->CompositeBitmap(0, 0, size_x_bm, size_y_bm, std::move(source), 0, 0,
                         BlendMode::kNormal, nullptr, false);
 
   if (device->GetDeviceType() == DeviceType::kPrinter) {
-    device->StretchDIBits(pDst, mask_area.left, mask_area.top, size_x_bm,
-                          size_y_bm);
+    device->StretchDIBits(std::move(dest), mask_area.left, mask_area.top,
+                          size_x_bm, size_y_bm);
   } else {
-    device->SetDIBits(pDst, mask_area.left, mask_area.top);
+    device->SetDIBits(std::move(dest), mask_area.left, mask_area.top);
   }
 }
 
@@ -649,7 +650,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
       }
     }
     if (!bitsStretched)
-      win_dc.SetDIBits(pBitmap, 0, 0);
+      win_dc.SetDIBits(std::move(pBitmap), 0, 0);
     return;
   }
 
@@ -684,7 +685,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   for (size_t i = 0; i < mask_boxes.size(); i++) {
     // Render the bitmap for the mask and free the bitmap.
     if (bitmaps[i]) {  // will be null if mask has zero area
-      RenderBitmap(context->m_pDevice.get(), bitmaps[i], bitmap_areas[i]);
+      RenderBitmap(context->m_pDevice.get(), std::move(bitmaps[i]),
+                   bitmap_areas[i]);
     }
     // Render the next portion of page.
     context->m_pRenderer->Continue(nullptr);

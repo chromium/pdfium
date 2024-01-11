@@ -230,7 +230,7 @@ class CFX_RenderDevice {
  protected:
   CFX_RenderDevice();
 
-  void SetBitmap(const RetainPtr<CFX_DIBitmap>& pBitmap);
+  void SetBitmap(RetainPtr<CFX_DIBitmap> bitmap);
 
   void SetDeviceDriver(std::unique_ptr<RenderDeviceDriverIface> pDriver);
   RenderDeviceDriverIface* GetDeviceDriver() const {
