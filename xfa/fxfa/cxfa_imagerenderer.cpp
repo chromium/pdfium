@@ -24,8 +24,8 @@ CXFA_ImageRenderer::~CXFA_ImageRenderer() = default;
 bool CXFA_ImageRenderer::Start() {
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
-  if (m_pDevice->StartDIBits(m_pDIBBase, 255, 0, m_ImageMatrix, options,
-                             &m_DeviceHandle)) {
+  if (m_pDevice->StartDIBits(m_pDIBBase, /*alpha=*/1.0f, /*argb=*/0,
+                             m_ImageMatrix, options, &m_DeviceHandle)) {
     if (m_DeviceHandle) {
       m_State = State::kStarted;
       return true;

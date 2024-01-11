@@ -1215,8 +1215,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
           std::unique_ptr<CFX_ImageRenderer> dummy;
           CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(
               pDIBitmap->GetWidth(), pDIBitmap->GetHeight(), left, top);
-          const int bitmap_alpha = FXSYS_roundf(alpha * 255);
-          m_pDevice->StartDIBits(pDIBitmap, bitmap_alpha, /*color=*/0, matrix,
+          m_pDevice->StartDIBits(pDIBitmap, alpha, /*argb=*/0, matrix,
                                  FXDIB_ResampleOptions(), &dummy);
           return;
         }

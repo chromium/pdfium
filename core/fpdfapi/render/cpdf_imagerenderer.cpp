@@ -386,7 +386,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
     }
   }
   if (m_pRenderStatus->GetRenderDevice()->StartDIBitsWithBlend(
-          m_pDIBBase, m_BitmapAlpha, m_FillArgb, m_ImageMatrix,
+          m_pDIBBase, m_BitmapAlpha / 255.0f, m_FillArgb, m_ImageMatrix,
           m_ResampleOptions, &m_DeviceHandle, m_BlendType)) {
     if (m_DeviceHandle) {
       m_Mode = Mode::kBlend;
