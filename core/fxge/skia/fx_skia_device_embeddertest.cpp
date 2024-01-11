@@ -159,7 +159,7 @@ void Harness(void (*Test)(CFX_SkiaDeviceDriver*, const State&),
   auto driver = CFX_SkiaDeviceDriver::Create(pBitmap, false, nullptr, false);
   ASSERT_TRUE(driver);
   (*Test)(driver.get(), state);
-  uint32_t pixel = pBitmap->GetPixel(0, 0);
+  uint32_t pixel = pBitmap->GetPixelForTesting(0, 0);
   EXPECT_EQ(state.m_pixel, pixel);
 }
 

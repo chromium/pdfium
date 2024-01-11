@@ -494,7 +494,7 @@ bool CFX_DIBitmap::MultiplyAlpha(float alpha) {
 }
 
 #if defined(PDF_USE_SKIA)
-uint32_t CFX_DIBitmap::GetPixel(int x, int y) const {
+uint32_t CFX_DIBitmap::GetPixelForTesting(int x, int y) const {
   if (!m_pBuffer)
     return 0;
 
@@ -532,77 +532,6 @@ uint32_t CFX_DIBitmap::GetPixel(int x, int y) const {
       break;
   }
   return 0;
-}
-
-void CFX_DIBitmap::SetPixel(int x, int y, uint32_t color) {
-  if (!m_pBuffer)
-    return;
-
-  if (x < 0 || x >= m_Width || y < 0 || y >= m_Height)
-    return;
-
-  FX_SAFE_UINT32 offset = x;
-  offset *= GetBPP();
-  offset /= 8;
-  if (!offset.IsValid())
-    return;
-
-  uint8_t* pos = m_pBuffer.Get() + y * m_Pitch + offset.ValueOrDie();
-  switch (GetFormat()) {
-    case FXDIB_Format::k1bppMask:
-      if (color >> 24) {
-        *pos |= 1 << (7 - x % 8);
-      } else {
-        *pos &= ~(1 << (7 - x % 8));
-      }
-      break;
-    case FXDIB_Format::k1bppRgb:
-      if (HasPalette()) {
-        if (color == GetPaletteSpan()[1]) {
-          *pos |= 1 << (7 - x % 8);
-        } else {
-          *pos &= ~(1 << (7 - x % 8));
-        }
-      } else {
-        if (color == 0xffffffff) {
-          *pos |= 1 << (7 - x % 8);
-        } else {
-          *pos &= ~(1 << (7 - x % 8));
-        }
-      }
-      break;
-    case FXDIB_Format::k8bppMask:
-      *pos = (uint8_t)(color >> 24);
-      break;
-    case FXDIB_Format::k8bppRgb: {
-      if (HasPalette()) {
-        pdfium::span<const uint32_t> palette = GetPaletteSpan();
-        for (int i = 0; i < 256; i++) {
-          if (palette[i] == color) {
-            *pos = (uint8_t)i;
-            return;
-          }
-        }
-        *pos = 0;
-      } else {
-        *pos = FXRGB2GRAY(FXARGB_R(color), FXARGB_G(color), FXARGB_B(color));
-      }
-      break;
-    }
-    case FXDIB_Format::kRgb:
-    case FXDIB_Format::kRgb32: {
-      int alpha = FXARGB_A(color);
-      pos[0] = (FXARGB_B(color) * alpha + pos[0] * (255 - alpha)) / 255;
-      pos[1] = (FXARGB_G(color) * alpha + pos[1] * (255 - alpha)) / 255;
-      pos[2] = (FXARGB_R(color) * alpha + pos[2] * (255 - alpha)) / 255;
-      break;
-    }
-    case FXDIB_Format::kArgb:
-      FXARGB_SETDIB(pos, color);
-      break;
-    default:
-      break;
-  }
 }
 #endif  // defined(PDF_USE_SKIA)
 

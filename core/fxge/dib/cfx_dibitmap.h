@@ -56,8 +56,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   void Clear(uint32_t color);
 
 #if defined(PDF_USE_SKIA)
-  uint32_t GetPixel(int x, int y) const;
-  void SetPixel(int x, int y, uint32_t color);
+  uint32_t GetPixelForTesting(int x, int y) const;
 #endif  // defined(PDF_USE_SKIA)
 
   bool SetRedFromBitmap(RetainPtr<const CFX_DIBBase> source);
