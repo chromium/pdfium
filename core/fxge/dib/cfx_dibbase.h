@@ -105,15 +105,16 @@ class CFX_DIBBase : public Retainable {
   CFX_DIBBase();
   ~CFX_DIBBase() override;
 
-  static void ConvertBuffer(FXDIB_Format dest_format,
-                            pdfium::span<uint8_t> dest_buf,
-                            int dest_pitch,
-                            int width,
-                            int height,
-                            const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
-                            int src_left,
-                            int src_top,
-                            DataVector<uint32_t>* pal);
+  // Returns the color palette, or an empty vector if there is no palette.
+  static DataVector<uint32_t> ConvertBuffer(
+      FXDIB_Format dest_format,
+      pdfium::span<uint8_t> dest_buf,
+      int dest_pitch,
+      int width,
+      int height,
+      const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
+      int src_left,
+      int src_top);
 
 #if defined(PDF_USE_SKIA)
   // Whether alpha is premultiplied (if `IsAlphaFormat()`).

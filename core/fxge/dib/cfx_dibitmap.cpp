@@ -249,9 +249,9 @@ bool CFX_DIBitmap::TransferWithUnequalFormats(
 
   pdfium::span<uint8_t> dest_buf = GetWritableBuffer().subspan(
       dest_top * m_Pitch + static_cast<uint32_t>(offset.ValueOrDie()));
-  DataVector<uint32_t> unused_dest_palette;
-  ConvertBuffer(dest_format, dest_buf, m_Pitch, width, height, source, src_left,
-                src_top, &unused_dest_palette);
+  DataVector<uint32_t> dest_palette = ConvertBuffer(
+      dest_format, dest_buf, m_Pitch, width, height, source, src_left, src_top);
+  CHECK(dest_palette.empty());
   return true;
 }
 
@@ -959,11 +959,9 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
     memset(dest_buf.get(), 0xff, dest_buf_size);
   }
   RetainPtr<CFX_DIBBase> holder(this);
-  DataVector<uint32_t> pal_8bpp;
-  ConvertBuffer(dest_format, {dest_buf.get(), dest_buf_size}, dest_pitch,
-                m_Width, m_Height, holder, 0, 0, &pal_8bpp);
-
-  m_palette = std::move(pal_8bpp);
+  m_palette =
+      ConvertBuffer(dest_format, {dest_buf.get(), dest_buf_size}, dest_pitch,
+                    m_Width, m_Height, holder, /*src_left=*/0, /*src_top=*/0);
   m_pBuffer = std::move(dest_buf);
   m_Format = dest_format;
   m_Pitch = dest_pitch;
