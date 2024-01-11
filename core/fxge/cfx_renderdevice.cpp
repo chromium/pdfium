@@ -1001,14 +1001,14 @@ bool CFX_RenderDevice::ContinueDIBits(CFX_ImageRenderer* handle,
 }
 
 #if defined(PDF_USE_SKIA)
-bool CFX_RenderDevice::SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
-                                       const RetainPtr<CFX_DIBBase>& pMask,
+bool CFX_RenderDevice::SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
+                                       RetainPtr<const CFX_DIBBase> mask,
                                        int left,
                                        int top,
                                        float alpha,
                                        BlendMode blend_type) {
-  return m_pDeviceDriver->SetBitsWithMask(pBitmap, pMask, left, top, alpha,
-                                          blend_type);
+  return m_pDeviceDriver->SetBitsWithMask(std::move(bitmap), std::move(mask),
+                                          left, top, alpha, blend_type);
 }
 
 bool CFX_RenderDevice::SyncInternalBitmaps() {

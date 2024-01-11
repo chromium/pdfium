@@ -101,8 +101,8 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                  int dest_left,
                  int dest_top,
                  BlendMode blend_type) override;
-  bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
-                       const RetainPtr<CFX_DIBBase>& pMask,
+  bool SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
+                       RetainPtr<const CFX_DIBBase> mask,
                        int dest_left,
                        int dest_top,
                        float alpha,
@@ -131,8 +131,8 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   bool ContinueDIBits(CFX_ImageRenderer* handle,
                       PauseIndicatorIface* pPause) override;
 
-  bool DrawBitsWithMask(const RetainPtr<CFX_DIBBase>& pSource,
-                        const RetainPtr<CFX_DIBBase>& pMask,
+  bool DrawBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
+                        RetainPtr<const CFX_DIBBase> mask,
                         float alpha,
                         const CFX_Matrix& matrix,
                         BlendMode blend_type);

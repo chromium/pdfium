@@ -218,8 +218,8 @@ class CFX_RenderDevice {
   bool MultiplyAlphaMask(const RetainPtr<const CFX_DIBBase>& mask);
 
 #if defined(PDF_USE_SKIA)
-  bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
-                       const RetainPtr<CFX_DIBBase>& pMask,
+  bool SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
+                       RetainPtr<const CFX_DIBBase> mask,
                        int left,
                        int top,
                        float alpha,

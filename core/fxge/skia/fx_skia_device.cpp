@@ -1485,21 +1485,20 @@ bool CFX_DIBitmap::IsPremultiplied() const {
   return m_nFormat == Format::kPreMultiplied;
 }
 
-bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
-    const RetainPtr<CFX_DIBBase>& pSource,
-    const RetainPtr<CFX_DIBBase>& pMask,
-    float alpha,
-    const CFX_Matrix& matrix,
-    BlendMode blend_type) {
+bool CFX_SkiaDeviceDriver::DrawBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
+                                            RetainPtr<const CFX_DIBBase> mask,
+                                            float alpha,
+                                            const CFX_Matrix& matrix,
+                                            BlendMode blend_type) {
   DebugValidate(m_pBitmap);
 
-  sk_sp<SkImage> skia_source = pSource->RealizeSkImage();
+  sk_sp<SkImage> skia_source = bitmap->RealizeSkImage();
   if (!skia_source) {
     return false;
   }
 
-  DCHECK(pMask->IsMaskFormat());
-  sk_sp<SkImage> skia_mask = pMask->RealizeSkImage();
+  DCHECK(mask->IsMaskFormat());
+  sk_sp<SkImage> skia_mask = mask->RealizeSkImage();
   if (!skia_mask) {
     return false;
   }
@@ -1508,13 +1507,13 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
   {
     SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
 
-    const int src_width = pSource->GetWidth();
-    const int src_height = pSource->GetHeight();
+    const int src_width = bitmap->GetWidth();
+    const int src_height = bitmap->GetHeight();
     SkMatrix skMatrix;
     SetBitmapMatrix(matrix, src_width, src_height, &skMatrix);
     m_pCanvas->concat(skMatrix);
     SkPaint paint;
-    SetBitmapPaintForMerge(pSource->IsMaskFormat(), !m_FillOptions.aliased_path,
+    SetBitmapPaintForMerge(bitmap->IsMaskFormat(), !m_FillOptions.aliased_path,
                            alpha, blend_type, &paint);
     sk_sp<SkShader> source_shader = skia_source->makeShader(
         SkTileMode::kClamp, SkTileMode::kClamp, SkSamplingOptions());
@@ -1531,20 +1530,20 @@ bool CFX_SkiaDeviceDriver::DrawBitsWithMask(
   return true;
 }
 
-bool CFX_SkiaDeviceDriver::SetBitsWithMask(
-    const RetainPtr<CFX_DIBBase>& pBitmap,
-    const RetainPtr<CFX_DIBBase>& pMask,
-    int dest_left,
-    int dest_top,
-    float alpha,
-    BlendMode blend_type) {
+bool CFX_SkiaDeviceDriver::SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
+                                           RetainPtr<const CFX_DIBBase> mask,
+                                           int dest_left,
+                                           int dest_top,
+                                           float alpha,
+                                           BlendMode blend_type) {
   if (m_pBitmap->GetBuffer().empty()) {
     return true;
   }
 
   CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(
-      pBitmap->GetWidth(), pBitmap->GetHeight(), dest_left, dest_top);
-  return DrawBitsWithMask(pBitmap, pMask, alpha, matrix, blend_type);
+      bitmap->GetWidth(), bitmap->GetHeight(), dest_left, dest_top);
+  return DrawBitsWithMask(std::move(bitmap), std::move(mask), alpha, matrix,
+                          blend_type);
 }
 
 void CFX_SkiaDeviceDriver::SetGroupKnockout(bool group_knockout) {

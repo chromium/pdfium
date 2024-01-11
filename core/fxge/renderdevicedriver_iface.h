@@ -109,8 +109,8 @@ class RenderDeviceDriverIface {
                            int alpha,
                            bool bAlphaMode);
 #if defined(PDF_USE_SKIA)
-  virtual bool SetBitsWithMask(const RetainPtr<CFX_DIBBase>& pBitmap,
-                               const RetainPtr<CFX_DIBBase>& pMask,
+  virtual bool SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
+                               RetainPtr<const CFX_DIBBase> mask,
                                int left,
                                int top,
                                float alpha,
