@@ -314,7 +314,6 @@ bool CPDF_ImageRenderer::DrawPatternImage() {
                      rect);
   bitmap_device2.GetBitmap()->ConvertFormat(FXDIB_Format::k8bppMask);
   bitmap_device1.GetBitmap()->MultiplyAlphaMask(bitmap_device2.GetBitmap());
-  bitmap_device1.GetBitmap()->MultiplyAlpha(1.0f);
   m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
       bitmap_device1.GetBitmap(), rect.left, rect.top, m_BlendType);
   return false;
@@ -364,9 +363,7 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
   }
 #endif
   bitmap_device1.GetBitmap()->MultiplyAlphaMask(bitmap_device2.GetBitmap());
-  if (m_Alpha != 1.0f) {
-    bitmap_device1.GetBitmap()->MultiplyAlpha(m_Alpha);
-  }
+  bitmap_device1.GetBitmap()->MultiplyAlpha(m_Alpha);
   m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
       bitmap_device1.GetBitmap(), rect.left, rect.top, m_BlendType);
   return false;
@@ -567,9 +564,7 @@ bool CPDF_ImageRenderer::ContinueTransform(PauseIndicatorIface* pPause) {
         pBitmap, m_pTransformer->result().left, m_pTransformer->result().top,
         m_FillArgb);
   } else {
-    if (m_Alpha != 1.0f) {
-      pBitmap->MultiplyAlpha(m_Alpha);
-    }
+    pBitmap->MultiplyAlpha(m_Alpha);
     m_Result = m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
         pBitmap, m_pTransformer->result().left, m_pTransformer->result().top,
         m_BlendType);

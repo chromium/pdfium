@@ -953,10 +953,15 @@ int CFX_SkiaDeviceDriver::GetDriverType() const {
 }
 
 bool CFX_SkiaDeviceDriver::MultiplyAlpha(float alpha) {
-  SkPaint paint;
-  paint.setAlphaf(alpha);
-  paint.setBlendMode(SkBlendMode::kDstIn);
-  m_pCanvas->drawPaint(paint);
+  CHECK_GE(alpha, 0.0f);
+  CHECK_LE(alpha, 1.0f);
+
+  if (alpha != 1.0f) {
+    SkPaint paint;
+    paint.setAlphaf(alpha);
+    paint.setBlendMode(SkBlendMode::kDstIn);
+    m_pCanvas->drawPaint(paint);
+  }
   return true;
 }
 

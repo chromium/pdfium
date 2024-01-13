@@ -687,7 +687,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     bitmap_device.MultiplyAlphaMask(pTextMask);
     pTextMask.Reset();
   }
-  if (group_alpha != 1.0f && transparency.IsGroup()) {
+  if (transparency.IsGroup()) {
     bitmap_device.MultiplyAlpha(group_alpha);
   }
   transparency = m_Transparency;
