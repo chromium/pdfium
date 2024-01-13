@@ -4,6 +4,8 @@
 
 #include "core/fxge/win32/cfx_psrenderer.h"
 
+#include <utility>
+
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_coordinates.h"
@@ -204,8 +206,8 @@ restore
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     bool result = bitmap->Create(kWidth, kHeight, FXDIB_Format::k1bppRgb);
     ASSERT_TRUE(result);
-    ASSERT_TRUE(renderer.DrawDIBits(bitmap, /*color=*/0, CFX_Matrix(),
-                                    FXDIB_ResampleOptions()));
+    ASSERT_TRUE(renderer.DrawDIBits(std::move(bitmap), /*color=*/0,
+                                    CFX_Matrix(), FXDIB_ResampleOptions()));
   }
 
   ByteString output(output_stream->GetSpan());

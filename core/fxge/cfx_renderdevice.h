@@ -138,16 +138,13 @@ class CFX_RenderDevice {
                                int dest_height,
                                uint32_t argb,
                                const FXDIB_ResampleOptions& options);
-  bool StartDIBits(const RetainPtr<CFX_DIBBase>& pBitmap,
+  bool StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                    float alpha,
                    uint32_t argb,
                    const CFX_Matrix& matrix,
                    const FXDIB_ResampleOptions& options,
-                   std::unique_ptr<CFX_ImageRenderer>* handle) {
-    return StartDIBitsWithBlend(pBitmap, alpha, argb, matrix, options, handle,
-                                BlendMode::kNormal);
-  }
-  bool StartDIBitsWithBlend(const RetainPtr<CFX_DIBBase>& pBitmap,
+                   std::unique_ptr<CFX_ImageRenderer>* handle);
+  bool StartDIBitsWithBlend(RetainPtr<const CFX_DIBBase> bitmap,
                             float alpha,
                             uint32_t argb,
                             const CFX_Matrix& matrix,

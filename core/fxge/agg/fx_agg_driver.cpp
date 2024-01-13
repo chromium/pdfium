@@ -1354,15 +1354,15 @@ bool CFX_AggDeviceDriver::StretchDIBits(
                    /*bVertical=*/false, /*bFlipX=*/false, /*bFlipY=*/false,
                    m_bRgbByteOrder, blend_type);
   dest_clip.Offset(-dest_rect.left, -dest_rect.top);
-  CFX_ImageStretcher stretcher(&composer, pSource, dest_width, dest_height,
-                               dest_clip, options);
+  CFX_ImageStretcher stretcher(&composer, std::move(pSource), dest_width,
+                               dest_height, dest_clip, options);
   if (stretcher.Start())
     stretcher.Continue(nullptr);
   return true;
 }
 
 bool CFX_AggDeviceDriver::StartDIBits(
-    const RetainPtr<const CFX_DIBBase>& pSource,
+    RetainPtr<const CFX_DIBBase> bitmap,
     float alpha,
     uint32_t argb,
     const CFX_Matrix& matrix,
@@ -1372,9 +1372,9 @@ bool CFX_AggDeviceDriver::StartDIBits(
   if (m_pBitmap->GetBuffer().empty())
     return true;
 
-  *handle = std::make_unique<CFX_ImageRenderer>(m_pBitmap, m_pClipRgn.get(),
-                                                pSource, alpha, argb, matrix,
-                                                options, m_bRgbByteOrder);
+  *handle = std::make_unique<CFX_ImageRenderer>(
+      m_pBitmap, m_pClipRgn.get(), std::move(bitmap), alpha, argb, matrix,
+      options, m_bRgbByteOrder);
   return true;
 }
 

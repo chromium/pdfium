@@ -82,7 +82,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
                      const FX_RECT* pClipRect,
                      const FXDIB_ResampleOptions& options,
                      BlendMode blend_type) override;
-  bool StartDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
+  bool StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                    float alpha,
                    uint32_t argb,
                    const CFX_Matrix& matrix,

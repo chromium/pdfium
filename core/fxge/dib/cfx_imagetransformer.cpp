@@ -130,12 +130,11 @@ void DoBilinearLoop(const CFX_ImageTransformer::CalcData& calc_data,
 
 }  // namespace
 
-CFX_ImageTransformer::CFX_ImageTransformer(
-    const RetainPtr<const CFX_DIBBase>& pSrc,
-    const CFX_Matrix& matrix,
-    const FXDIB_ResampleOptions& options,
-    const FX_RECT* pClip)
-    : m_pSrc(pSrc), m_matrix(matrix), m_ResampleOptions(options) {
+CFX_ImageTransformer::CFX_ImageTransformer(RetainPtr<const CFX_DIBBase> source,
+                                           const CFX_Matrix& matrix,
+                                           const FXDIB_ResampleOptions& options,
+                                           const FX_RECT* pClip)
+    : m_pSrc(std::move(source)), m_matrix(matrix), m_ResampleOptions(options) {
   FX_RECT result_rect = m_matrix.GetUnitRect().GetClosestRect();
   FX_RECT result_clip = result_rect;
   if (pClip)

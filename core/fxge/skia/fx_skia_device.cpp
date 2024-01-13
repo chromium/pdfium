@@ -1408,8 +1408,8 @@ bool CFX_SkiaDeviceDriver::SetDIBits(
   FXDIB_ResampleOptions sampling_options;
   sampling_options.bNoSmoothing = true;
 
-  return StartDIBitsSkia(pBitmap, src_rect, /*alpha=*/1.0f, color, matrix,
-                         sampling_options, blend_type);
+  return StartDIBitsSkia(std::move(pBitmap), src_rect, /*alpha=*/1.0f, color,
+                         matrix, sampling_options, blend_type);
 }
 
 bool CFX_SkiaDeviceDriver::StretchDIBits(
@@ -1436,22 +1436,22 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(
   FXDIB_ResampleOptions sampling_options;
   sampling_options.bNoSmoothing = true;
 
-  return StartDIBitsSkia(
-      pSource, FX_RECT(0, 0, pSource->GetWidth(), pSource->GetHeight()),
-      /*alpha=*/1.0f, color, matrix, sampling_options, blend_type);
+  FX_RECT rect(0, 0, pSource->GetWidth(), pSource->GetHeight());
+  return StartDIBitsSkia(std::move(pSource), rect, /*alpha=*/1.0f, color,
+                         matrix, sampling_options, blend_type);
 }
 
 bool CFX_SkiaDeviceDriver::StartDIBits(
-    const RetainPtr<const CFX_DIBBase>& pSource,
+    RetainPtr<const CFX_DIBBase> bitmap,
     float alpha,
     uint32_t color,
     const CFX_Matrix& matrix,
     const FXDIB_ResampleOptions& options,
     std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_type) {
-  return StartDIBitsSkia(
-      pSource, FX_RECT(0, 0, pSource->GetWidth(), pSource->GetHeight()), alpha,
-      color, matrix, options, blend_type);
+  FX_RECT rect(0, 0, bitmap->GetWidth(), bitmap->GetHeight());
+  return StartDIBitsSkia(std::move(bitmap), rect, alpha, color, matrix, options,
+                         blend_type);
 }
 
 bool CFX_SkiaDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
@@ -1575,17 +1575,16 @@ void CFX_SkiaDeviceDriver::Clear(uint32_t color) {
   m_pCanvas->clear(color);
 }
 
-bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
-    const RetainPtr<const CFX_DIBBase>& pSource,
-    const FX_RECT& src_rect,
-    float alpha,
-    uint32_t color,
-    const CFX_Matrix& matrix,
-    const FXDIB_ResampleOptions& options,
-    BlendMode blend_type) {
+bool CFX_SkiaDeviceDriver::StartDIBitsSkia(RetainPtr<const CFX_DIBBase> bitmap,
+                                           const FX_RECT& src_rect,
+                                           float alpha,
+                                           uint32_t color,
+                                           const CFX_Matrix& matrix,
+                                           const FXDIB_ResampleOptions& options,
+                                           BlendMode blend_type) {
   DebugValidate(m_pBitmap);
 
-  sk_sp<SkImage> skia_source = pSource->RealizeSkImage();
+  sk_sp<SkImage> skia_source = bitmap->RealizeSkImage();
   if (!skia_source) {
     return false;
   }
@@ -1593,13 +1592,13 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(
   {
     SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
 
-    const int width = pSource->GetWidth();
-    const int height = pSource->GetHeight();
+    const int width = bitmap->GetWidth();
+    const int height = bitmap->GetHeight();
     SkMatrix skMatrix;
     SetBitmapMatrix(matrix, width, height, &skMatrix);
     m_pCanvas->concat(skMatrix);
     SkPaint paint;
-    SetBitmapPaint(pSource->IsMaskFormat(), !m_FillOptions.aliased_path, alpha,
+    SetBitmapPaint(bitmap->IsMaskFormat(), !m_FillOptions.aliased_path, alpha,
                    color, blend_type, &paint);
 
     bool use_interpolate_bilinear = options.bInterpolateBilinear;

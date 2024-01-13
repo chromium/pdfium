@@ -9,12 +9,14 @@
 #include <stdint.h>
 
 #include <sstream>
+#include <utility>
 
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_path.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/win32/cpsoutput.h"
 #include "third_party/base/check.h"
@@ -182,7 +184,7 @@ bool CPSPrinterDriver::StretchDIBits(
                                     dest_width, dest_height, options);
 }
 
-bool CPSPrinterDriver::StartDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
+bool CPSPrinterDriver::StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                    float alpha,
                                    uint32_t color,
                                    const CFX_Matrix& matrix,
@@ -194,7 +196,7 @@ bool CPSPrinterDriver::StartDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
   }
 
   *handle = nullptr;
-  return m_PSRenderer.DrawDIBits(pBitmap, color, matrix, options);
+  return m_PSRenderer.DrawDIBits(std::move(bitmap), color, matrix, options);
 }
 
 bool CPSPrinterDriver::DrawDeviceText(

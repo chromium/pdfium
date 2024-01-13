@@ -39,7 +39,7 @@ class CFX_ImageTransformer {
     uint32_t pitch;
   };
 
-  CFX_ImageTransformer(const RetainPtr<const CFX_DIBBase>& pSrc,
+  CFX_ImageTransformer(RetainPtr<const CFX_DIBBase> source,
                        const CFX_Matrix& matrix,
                        const FXDIB_ResampleOptions& options,
                        const FX_RECT* pClip);

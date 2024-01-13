@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
@@ -118,15 +119,15 @@ bool CGdiPrinterDriver::StretchDIBits(
                            dest_height, options);
 }
 
-bool CGdiPrinterDriver::StartDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
+bool CGdiPrinterDriver::StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                     float alpha,
                                     uint32_t color,
                                     const CFX_Matrix& matrix,
                                     const FXDIB_ResampleOptions& options,
                                     std::unique_ptr<CFX_ImageRenderer>* handle,
                                     BlendMode blend_type) {
-  if (alpha != 1.0f || pSource->IsAlphaFormat() ||
-      (pSource->IsMaskFormat() && (pSource->GetBPP() != 1))) {
+  if (alpha != 1.0f || bitmap->IsAlphaFormat() ||
+      (bitmap->IsMaskFormat() && (bitmap->GetBPP() != 1))) {
     return false;
   }
   CFX_FloatRect unit_rect = matrix.GetUnitRect();
@@ -135,7 +136,7 @@ bool CGdiPrinterDriver::StartDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
       matrix.d != 0) {
     bool bFlipX = matrix.a < 0;
     bool bFlipY = matrix.d > 0;
-    return StretchDIBits(pSource, color,
+    return StretchDIBits(std::move(bitmap), color,
                          bFlipX ? full_rect.right : full_rect.left,
                          bFlipY ? full_rect.bottom : full_rect.top,
                          bFlipX ? -full_rect.Width() : full_rect.Width(),
@@ -145,12 +146,14 @@ bool CGdiPrinterDriver::StartDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
   if (fabs(matrix.a) >= 0.5f || fabs(matrix.d) >= 0.5f)
     return false;
 
-  RetainPtr<CFX_DIBBase> pTransformed =
-      pSource->SwapXY(matrix.c > 0, matrix.b < 0);
-  if (!pTransformed)
+  const bool flip_x = matrix.c > 0;
+  const bool flip_y = matrix.b < 0;
+  bitmap = bitmap->SwapXY(flip_x, flip_y);
+  if (!bitmap) {
     return false;
+  }
 
-  return StretchDIBits(pTransformed, color, full_rect.left, full_rect.top,
+  return StretchDIBits(std::move(bitmap), color, full_rect.left, full_rect.top,
                        full_rect.Width(), full_rect.Height(), nullptr,
                        FXDIB_ResampleOptions(), blend_type);
 }

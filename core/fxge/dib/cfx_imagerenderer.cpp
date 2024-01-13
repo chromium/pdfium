@@ -9,6 +9,7 @@
 #include <math.h>
 
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_cliprgn.h"
@@ -16,15 +17,14 @@
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
 
-CFX_ImageRenderer::CFX_ImageRenderer(
-    const RetainPtr<CFX_DIBitmap>& pDevice,
-    const CFX_ClipRgn* pClipRgn,
-    const RetainPtr<const CFX_DIBBase>& pSource,
-    float alpha,
-    uint32_t mask_color,
-    const CFX_Matrix& matrix,
-    const FXDIB_ResampleOptions& options,
-    bool bRgbByteOrder)
+CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
+                                     const CFX_ClipRgn* pClipRgn,
+                                     RetainPtr<const CFX_DIBBase> source,
+                                     float alpha,
+                                     uint32_t mask_color,
+                                     const CFX_Matrix& matrix,
+                                     const FXDIB_ResampleOptions& options,
+                                     bool bRgbByteOrder)
     : m_pDevice(pDevice),
       m_pClipRgn(pClipRgn),
       m_Matrix(matrix),
@@ -56,14 +56,15 @@ CFX_ImageRenderer::CFX_ImageRenderer(
                          /*bVertical=*/true, flip_x, flip_y, m_bRgbByteOrder,
                          BlendMode::kNormal);
       m_Stretcher = std::make_unique<CFX_ImageStretcher>(
-          &m_Composer, pSource, dest_height, dest_width, bitmap_clip, options);
+          &m_Composer, std::move(source), dest_height, dest_width, bitmap_clip,
+          options);
       if (m_Stretcher->Start())
         m_State = State::kStretching;
       return;
     }
     m_State = State::kTransforming;
     m_pTransformer = std::make_unique<CFX_ImageTransformer>(
-        pSource, m_Matrix, options, &m_ClipBox);
+        std::move(source), m_Matrix, options, &m_ClipBox);
     return;
   }
 
@@ -85,7 +86,8 @@ CFX_ImageRenderer::CFX_ImageRenderer(
                      m_bRgbByteOrder, BlendMode::kNormal);
   m_State = State::kStretching;
   m_Stretcher = std::make_unique<CFX_ImageStretcher>(
-      &m_Composer, pSource, dest_width, dest_height, bitmap_clip, options);
+      &m_Composer, std::move(source), dest_width, dest_height, bitmap_clip,
+      options);
   m_Stretcher->Start();
 }
 

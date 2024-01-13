@@ -22,7 +22,7 @@ class PauseIndicatorIface;
 class CFX_ImageStretcher {
  public:
   CFX_ImageStretcher(ScanlineComposerIface* pDest,
-                     const RetainPtr<const CFX_DIBBase>& pSource,
+                     RetainPtr<const CFX_DIBBase> source,
                      int dest_width,
                      int dest_height,
                      const FX_RECT& bitmap_rect,

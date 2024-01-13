@@ -24,7 +24,7 @@ class CFX_ImageRenderer {
  public:
   CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
                     const CFX_ClipRgn* pClipRgn,
-                    const RetainPtr<const CFX_DIBBase>& pSource,
+                    RetainPtr<const CFX_DIBBase> source,
                     float alpha,
                     uint32_t mask_color,
                     const CFX_Matrix& matrix,

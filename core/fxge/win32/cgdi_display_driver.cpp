@@ -213,7 +213,7 @@ bool CGdiDisplayDriver::StretchDIBits(
                            dest_height, FXDIB_ResampleOptions());
 }
 
-bool CGdiDisplayDriver::StartDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
+bool CGdiDisplayDriver::StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                     float alpha,
                                     uint32_t color,
                                     const CFX_Matrix& matrix,

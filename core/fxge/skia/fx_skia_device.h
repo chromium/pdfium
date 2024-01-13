@@ -120,7 +120,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                      const FXDIB_ResampleOptions& options,
                      BlendMode blend_type) override;
 
-  bool StartDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
+  bool StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                    float alpha,
                    uint32_t color,
                    const CFX_Matrix& matrix,
@@ -207,7 +207,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                    uint32_t color,
                    const CFX_TextRenderOptions& options);
 
-  bool StartDIBitsSkia(const RetainPtr<const CFX_DIBBase>& pSource,
+  bool StartDIBitsSkia(RetainPtr<const CFX_DIBBase> bitmap,
                        const FX_RECT& src_rect,
                        float alpha,
                        uint32_t color,

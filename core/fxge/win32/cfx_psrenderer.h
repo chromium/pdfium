@@ -88,7 +88,7 @@ class CFX_PSRenderer {
                      int dest_width,
                      int dest_height,
                      const FXDIB_ResampleOptions& options);
-  bool DrawDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
+  bool DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                   uint32_t color,
                   const CFX_Matrix& matrix,
                   const FXDIB_ResampleOptions& options);

@@ -87,7 +87,7 @@ class RenderDeviceDriverIface {
                              const FX_RECT* pClipRect,
                              const FXDIB_ResampleOptions& options,
                              BlendMode blend_type) = 0;
-  virtual bool StartDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
+  virtual bool StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                            float alpha,
                            uint32_t color,
                            const CFX_Matrix& matrix,

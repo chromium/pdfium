@@ -485,7 +485,7 @@ bool CFX_PSRenderer::SetDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
   StartRendering();
   CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(
       pSource->GetWidth(), pSource->GetHeight(), left, top);
-  return DrawDIBits(pSource, color, matrix, FXDIB_ResampleOptions());
+  return DrawDIBits(std::move(pSource), color, matrix, FXDIB_ResampleOptions());
 }
 
 bool CFX_PSRenderer::StretchDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
@@ -498,10 +498,10 @@ bool CFX_PSRenderer::StretchDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
   StartRendering();
   CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(dest_width, dest_height,
                                                       dest_left, dest_top);
-  return DrawDIBits(pSource, color, matrix, options);
+  return DrawDIBits(std::move(pSource), color, matrix, options);
 }
 
-bool CFX_PSRenderer::DrawDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
+bool CFX_PSRenderer::DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                 uint32_t color,
                                 const CFX_Matrix& matrix,
                                 const FXDIB_ResampleOptions& options) {
@@ -509,12 +509,14 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
   if ((matrix.a == 0 && matrix.b == 0) || (matrix.c == 0 && matrix.d == 0))
     return true;
 
-  if (pSource->IsAlphaFormat())
+  if (bitmap->IsAlphaFormat()) {
     return false;
+  }
 
   int alpha = FXARGB_A(color);
-  if (pSource->IsMaskFormat() && (alpha < 255 || pSource->GetBPP() != 1))
+  if (bitmap->IsMaskFormat() && (alpha < 255 || bitmap->GetBPP() != 1)) {
     return false;
+  }
 
   WriteString("q\n");
 
@@ -522,16 +524,16 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
   buf << "[" << matrix.a << " " << matrix.b << " " << matrix.c << " "
       << matrix.d << " " << matrix.e << " " << matrix.f << "]cm ";
 
-  const int width = pSource->GetWidth();
-  const int height = pSource->GetHeight();
+  const int width = bitmap->GetWidth();
+  const int height = bitmap->GetHeight();
   buf << width << " " << height;
 
-  if (pSource->GetBPP() == 1 && !pSource->HasPalette()) {
-    FaxCompressResult compress_result = FaxCompressData(pSource);
+  if (bitmap->GetBPP() == 1 && !bitmap->HasPalette()) {
+    FaxCompressResult compress_result = FaxCompressData(bitmap);
     if (compress_result.data.empty())
       return false;
 
-    if (pSource->IsMaskFormat()) {
+    if (bitmap->IsMaskFormat()) {
       SetColor(color);
       m_bColorSet = false;
       buf << " true[";
@@ -545,48 +547,48 @@ bool CFX_PSRenderer::DrawDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
       buf << "<</K -1/EndOfBlock false/Columns " << width << "/Rows " << height
           << ">>/CCITTFaxDecode filter ";
     }
-    if (pSource->IsMaskFormat())
+    if (bitmap->IsMaskFormat()) {
       buf << "iM\n";
-    else
+    } else {
       buf << "false 1 colorimage\n";
+    }
 
     WriteStream(buf);
     WritePSBinary(compress_result.data);
   } else {
-    RetainPtr<const CFX_DIBBase> pConverted = pSource;
-    switch (pSource->GetFormat()) {
+    switch (bitmap->GetFormat()) {
       case FXDIB_Format::k1bppRgb:
       case FXDIB_Format::kRgb32:
-        pConverted = pConverted->ConvertTo(FXDIB_Format::kRgb);
+        bitmap = bitmap->ConvertTo(FXDIB_Format::kRgb);
         break;
       case FXDIB_Format::k8bppRgb:
-        if (pSource->HasPalette())
-          pConverted = pConverted->ConvertTo(FXDIB_Format::kRgb);
+        if (bitmap->HasPalette()) {
+          bitmap = bitmap->ConvertTo(FXDIB_Format::kRgb);
+        }
         break;
       default:
         break;
     }
-    if (!pConverted) {
+    if (!bitmap) {
       WriteString("\nQ\n");
       return false;
     }
 
-    int bpp = pConverted->GetBPP() / 8;
+    int bpp = bitmap->GetBPP() / 8;
     uint8_t* output_buf = nullptr;
     size_t output_size = 0;
     bool output_buf_is_owned = true;
     absl::optional<PSCompressResult> compress_result;
     ByteString filter;
     if ((m_Level.value() == RenderingLevel::kLevel2 || options.bLossy) &&
-        m_pEncoderIface->pJpegEncodeFunc(pConverted, &output_buf,
-                                         &output_size)) {
+        m_pEncoderIface->pJpegEncodeFunc(bitmap, &output_buf, &output_size)) {
       filter = "/DCTDecode filter ";
     } else {
       int src_pitch = width * bpp;
       output_size = height * src_pitch;
       output_buf = FX_Alloc(uint8_t, output_size);
       for (int row = 0; row < height; row++) {
-        const uint8_t* src_scan = pConverted->GetScanline(row).data();
+        const uint8_t* src_scan = bitmap->GetScanline(row).data();
         uint8_t* dest_scan = output_buf + row * src_pitch;
         if (bpp == 3) {
           for (int col = 0; col < width; col++) {

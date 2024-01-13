@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_font.h"
+#include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
@@ -114,7 +115,7 @@ bool CTextOnlyPrinterDriver::StretchDIBits(
 }
 
 bool CTextOnlyPrinterDriver::StartDIBits(
-    const RetainPtr<const CFX_DIBBase>& pBitmap,
+    RetainPtr<const CFX_DIBBase> bitmap,
     float alpha,
     uint32_t color,
     const CFX_Matrix& matrix,

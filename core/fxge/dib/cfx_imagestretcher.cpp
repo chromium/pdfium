@@ -6,6 +6,8 @@
 
 #include "core/fxge/dib/cfx_imagestretcher.h"
 
+#include <utility>
+
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -71,20 +73,19 @@ void BuildPaletteFrom1BppSource(const RetainPtr<const CFX_DIBBase>& source,
 
 }  // namespace
 
-CFX_ImageStretcher::CFX_ImageStretcher(
-    ScanlineComposerIface* pDest,
-    const RetainPtr<const CFX_DIBBase>& pSource,
-    int dest_width,
-    int dest_height,
-    const FX_RECT& bitmap_rect,
-    const FXDIB_ResampleOptions& options)
+CFX_ImageStretcher::CFX_ImageStretcher(ScanlineComposerIface* pDest,
+                                       RetainPtr<const CFX_DIBBase> source,
+                                       int dest_width,
+                                       int dest_height,
+                                       const FX_RECT& bitmap_rect,
+                                       const FXDIB_ResampleOptions& options)
     : m_pDest(pDest),
-      m_pSource(pSource),
+      m_pSource(std::move(source)),
       m_ResampleOptions(options),
       m_DestWidth(dest_width),
       m_DestHeight(dest_height),
       m_ClipRect(bitmap_rect),
-      m_DestFormat(GetStretchedFormat(*pSource)) {
+      m_DestFormat(GetStretchedFormat(*m_pSource)) {
   DCHECK(m_ClipRect.Valid());
 }
 
