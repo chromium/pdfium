@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -37,18 +38,11 @@ FXDIB_Format GetStretchedFormat(const CFX_DIBBase& src) {
 }
 
 // Builds a new palette with a size of `CFX_DIBBase::kPaletteSize` from the
-// existing palette in `source`. Note: The caller must make sure that the
-// parameters meet the following conditions:
-//   source       - The format must be `FXDIB_Format::k1bppRgb` and it must
-//                  have a palette.
-//   palette_span - The size must be `CFX_DIBBase::kPaletteSize` to be able
-//                  to hold the new palette.
-
-void BuildPaletteFrom1BppSource(const RetainPtr<const CFX_DIBBase>& source,
-                                pdfium::span<FX_ARGB> palette_span) {
+// existing palette in `source`.
+DataVector<uint32_t> BuildPaletteFrom1BppSource(
+    const RetainPtr<const CFX_DIBBase>& source) {
   DCHECK_EQ(FXDIB_Format::k1bppRgb, source->GetFormat());
   DCHECK(source->HasPalette());
-  DCHECK_EQ(CFX_DIBBase::kPaletteSize, palette_span.size());
 
   int a0;
   int r0;
@@ -63,12 +57,14 @@ void BuildPaletteFrom1BppSource(const RetainPtr<const CFX_DIBBase>& source,
   DCHECK_EQ(255, a0);
   DCHECK_EQ(255, a1);
 
+  DataVector<uint32_t> palette(CFX_DIBBase::kPaletteSize);
   for (int i = 0; i < static_cast<int>(CFX_DIBBase::kPaletteSize); ++i) {
     int r = r0 + (r1 - r0) * i / 255;
     int g = g0 + (g1 - g0) * i / 255;
     int b = b0 + (b1 - b0) * i / 255;
-    palette_span[i] = ArgbEncode(255, r, g, b);
+    palette[i] = ArgbEncode(255, r, g, b);
   }
+  return palette;
 }
 
 }  // namespace
@@ -97,10 +93,8 @@ bool CFX_ImageStretcher::Start() {
 
   if (m_pSource->GetFormat() == FXDIB_Format::k1bppRgb &&
       m_pSource->HasPalette()) {
-    FX_ARGB pal[CFX_DIBBase::kPaletteSize];
-    BuildPaletteFrom1BppSource(m_pSource, pal);
     if (!m_pDest->SetInfo(m_ClipRect.Width(), m_ClipRect.Height(), m_DestFormat,
-                          pal)) {
+                          BuildPaletteFrom1BppSource(m_pSource))) {
       return false;
     }
   } else if (!m_pDest->SetInfo(m_ClipRect.Width(), m_ClipRect.Height(),

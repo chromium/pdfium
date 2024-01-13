@@ -36,15 +36,16 @@ void CFX_BitmapStorer::ComposeScanline(int line,
 bool CFX_BitmapStorer::SetInfo(int width,
                                int height,
                                FXDIB_Format src_format,
-                               pdfium::span<const uint32_t> src_palette) {
+                               DataVector<uint32_t> src_palette) {
   DCHECK_NE(src_format, FXDIB_Format::k1bppMask);
   DCHECK_NE(src_format, FXDIB_Format::k1bppRgb);
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pBitmap->Create(width, height, src_format))
     return false;
 
-  if (!src_palette.empty())
-    pBitmap->SetPalette(src_palette);
+  if (!src_palette.empty()) {
+    pBitmap->TakePalette(std::move(src_palette));
+  }
 
   m_pBitmap = std::move(pBitmap);
   return true;

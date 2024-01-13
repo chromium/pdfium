@@ -68,6 +68,9 @@ class CFX_DIBBase : public Retainable {
   // Copies into internally-owned palette.
   void SetPalette(pdfium::span<const uint32_t> src_palette);
 
+  // Moves palette into internally-owned palette.
+  void TakePalette(DataVector<uint32_t> src_palette);
+
   RetainPtr<CFX_DIBitmap> Realize() const;
   RetainPtr<CFX_DIBitmap> ClipTo(const FX_RECT& rect) const;
   RetainPtr<CFX_DIBitmap> ConvertTo(FXDIB_Format format) const;

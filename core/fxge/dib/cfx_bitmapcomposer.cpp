@@ -52,7 +52,7 @@ void CFX_BitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
 bool CFX_BitmapComposer::SetInfo(int width,
                                  int height,
                                  FXDIB_Format src_format,
-                                 pdfium::span<const uint32_t> src_palette) {
+                                 DataVector<uint32_t> src_palette) {
   DCHECK_NE(src_format, FXDIB_Format::k1bppMask);
   DCHECK_NE(src_format, FXDIB_Format::k1bppRgb);
   m_SrcFormat = src_format;

@@ -40,7 +40,7 @@ class CFX_BitmapComposer final : public ScanlineComposerIface {
   bool SetInfo(int width,
                int height,
                FXDIB_Format src_format,
-               pdfium::span<const uint32_t> src_palette) override;
+               DataVector<uint32_t> src_palette) override;
   void ComposeScanline(int line, pdfium::span<const uint8_t> scanline) override;
 
  private:

@@ -295,9 +295,8 @@ DataVector<uint32_t> ConvertBuffer_Plt2PltRgb8(
   pdfium::span<const uint32_t> src_span = pSrcBitmap->GetPaletteSpan();
   CHECK_LE(plt_size, src_span.size());
 
-  DataVector<uint32_t> dest_palette(256);
-  fxcrt::spancpy(pdfium::make_span(dest_palette), src_span.first(plt_size));
-  return dest_palette;
+  pdfium::span<const uint32_t> src_palette_span = src_span.first(plt_size);
+  return DataVector<uint32_t>(src_palette_span.begin(), src_palette_span.end());
 }
 
 DataVector<uint32_t> ConvertBuffer_Rgb2PltRgb8(
@@ -331,9 +330,9 @@ DataVector<uint32_t> ConvertBuffer_Rgb2PltRgb8(
       }
     }
   }
-  DataVector<uint32_t> dest_palette(256);
-  fxcrt::spancpy(pdfium::make_span(dest_palette), src_palette.GetPalette());
-  return dest_palette;
+
+  pdfium::span<const uint32_t> src_palette_span = src_palette.GetPalette();
+  return DataVector<uint32_t>(src_palette_span.begin(), src_palette_span.end());
 }
 
 void ConvertBuffer_1bppMask2Rgb(FXDIB_Format dest_format,
@@ -852,16 +851,19 @@ bool CFX_DIBBase::GetOverlapRect(int& dest_left,
 }
 
 void CFX_DIBBase::SetPalette(pdfium::span<const uint32_t> src_palette) {
+  TakePalette(DataVector<uint32_t>(src_palette.begin(), src_palette.end()));
+}
+
+void CFX_DIBBase::TakePalette(DataVector<uint32_t> src_palette) {
   if (src_palette.empty() || GetBPP() > 8) {
     m_palette.clear();
     return;
   }
+
+  m_palette = std::move(src_palette);
   uint32_t pal_size = 1 << GetBPP();
-  if (m_palette.empty())
-    m_palette.resize(pal_size);
-  pal_size = std::min(pal_size, kPaletteSize);
-  for (size_t i = 0; i < pal_size; ++i)
-    m_palette[i] = src_palette[i];
+  CHECK_LE(pal_size, kPaletteSize);
+  m_palette.resize(pal_size);
 }
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneAlphaMask() const {
@@ -953,7 +955,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ConvertTo(FXDIB_Format dest_format) const {
       ConvertBuffer(dest_format, pClone->GetWritableBuffer(),
                     pClone->GetPitch(), m_Width, m_Height, holder, 0, 0);
   if (!pal_8bpp.empty()) {
-    pClone->SetPalette(pal_8bpp);
+    pClone->TakePalette(std::move(pal_8bpp));
   }
   return pClone;
 }
