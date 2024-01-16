@@ -1,3 +1,6 @@
+#!special-case-list-v1
+# TODO(https://crbug.com/1515966): update to glob patterns
+
 # This ignore  list is a merge of ignorelist.txt and vptr_ignorelist.txt.
 
 #############################################################################
