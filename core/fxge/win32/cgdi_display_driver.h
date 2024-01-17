@@ -36,7 +36,7 @@ class CGdiDisplayDriver final : public CGdiDeviceDriver {
                  int left,
                  int top,
                  BlendMode blend_type) override;
-  bool StretchDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
+  bool StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                      uint32_t color,
                      int dest_left,
                      int dest_top,
@@ -53,7 +53,7 @@ class CGdiDisplayDriver final : public CGdiDeviceDriver {
                    std::unique_ptr<CFX_ImageRenderer>* handle,
                    BlendMode blend_type) override;
 
-  bool UseFoxitStretchEngine(const RetainPtr<const CFX_DIBBase>& pSource,
+  bool UseFoxitStretchEngine(RetainPtr<const CFX_DIBBase> bitmap,
                              uint32_t color,
                              int dest_left,
                              int dest_top,

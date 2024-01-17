@@ -488,7 +488,7 @@ bool CFX_PSRenderer::SetDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
   return DrawDIBits(std::move(pSource), color, matrix, FXDIB_ResampleOptions());
 }
 
-bool CFX_PSRenderer::StretchDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
+bool CFX_PSRenderer::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                    uint32_t color,
                                    int dest_left,
                                    int dest_top,
@@ -498,7 +498,7 @@ bool CFX_PSRenderer::StretchDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
   StartRendering();
   CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(dest_width, dest_height,
                                                       dest_left, dest_top);
-  return DrawDIBits(std::move(pSource), color, matrix, options);
+  return DrawDIBits(std::move(bitmap), color, matrix, options);
 }
 
 bool CFX_PSRenderer::DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,

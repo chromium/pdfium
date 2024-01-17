@@ -110,7 +110,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   void SetGroupKnockout(bool group_knockout) override;
   bool SyncInternalBitmaps() override;
 
-  bool StretchDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
+  bool StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                      uint32_t color,
                      int dest_left,
                      int dest_top,

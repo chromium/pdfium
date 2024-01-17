@@ -81,7 +81,7 @@ class CFX_PSRenderer {
                  uint32_t color,
                  int dest_left,
                  int dest_top);
-  bool StretchDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
+  bool StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                      uint32_t color,
                      int dest_left,
                      int dest_top,

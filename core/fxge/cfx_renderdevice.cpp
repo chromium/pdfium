@@ -932,8 +932,18 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(
                                     dest_rect.top, BlendMode::kNormal);
 }
 
+bool CFX_RenderDevice::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
+                                     int left,
+                                     int top,
+                                     int dest_width,
+                                     int dest_height) {
+  return StretchDIBitsWithFlagsAndBlend(
+      std::move(bitmap), left, top, dest_width, dest_height,
+      FXDIB_ResampleOptions(), BlendMode::kNormal);
+}
+
 bool CFX_RenderDevice::StretchDIBitsWithFlagsAndBlend(
-    const RetainPtr<const CFX_DIBBase>& pBitmap,
+    RetainPtr<const CFX_DIBBase> bitmap,
     int left,
     int top,
     int dest_width,
@@ -944,7 +954,7 @@ bool CFX_RenderDevice::StretchDIBitsWithFlagsAndBlend(
   FX_RECT clip_box = m_ClipBox;
   clip_box.Intersect(dest_rect);
   return clip_box.IsEmpty() || m_pDeviceDriver->StretchDIBits(
-                                   pBitmap, 0, left, top, dest_width,
+                                   std::move(bitmap), 0, left, top, dest_width,
                                    dest_height, &clip_box, options, blend_mode);
 }
 
@@ -978,9 +988,9 @@ bool CFX_RenderDevice::StretchBitMaskWithFlags(
   FX_RECT dest_rect(left, top, left + dest_width, top + dest_height);
   FX_RECT clip_box = m_ClipBox;
   clip_box.Intersect(dest_rect);
-  return m_pDeviceDriver->StretchDIBits(pBitmap, argb, left, top, dest_width,
-                                        dest_height, &clip_box, options,
-                                        BlendMode::kNormal);
+  return m_pDeviceDriver->StretchDIBits(std::move(pBitmap), argb, left, top,
+                                        dest_width, dest_height, &clip_box,
+                                        options, BlendMode::kNormal);
 }
 
 bool CFX_RenderDevice::StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,

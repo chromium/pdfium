@@ -1326,23 +1326,22 @@ bool CFX_AggDeviceDriver::SetDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
                                     m_pClipRgn.get(), m_bRgbByteOrder);
 }
 
-bool CFX_AggDeviceDriver::StretchDIBits(
-    const RetainPtr<const CFX_DIBBase>& pSource,
-    uint32_t argb,
-    int dest_left,
-    int dest_top,
-    int dest_width,
-    int dest_height,
-    const FX_RECT* pClipRect,
-    const FXDIB_ResampleOptions& options,
-    BlendMode blend_type) {
+bool CFX_AggDeviceDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
+                                        uint32_t argb,
+                                        int dest_left,
+                                        int dest_top,
+                                        int dest_width,
+                                        int dest_height,
+                                        const FX_RECT* pClipRect,
+                                        const FXDIB_ResampleOptions& options,
+                                        BlendMode blend_type) {
   if (m_pBitmap->GetBuffer().empty())
     return true;
 
-  if (dest_width == pSource->GetWidth() &&
-      dest_height == pSource->GetHeight()) {
+  if (dest_width == bitmap->GetWidth() && dest_height == bitmap->GetHeight()) {
     FX_RECT rect(0, 0, dest_width, dest_height);
-    return SetDIBits(pSource, argb, rect, dest_left, dest_top, blend_type);
+    return SetDIBits(std::move(bitmap), argb, rect, dest_left, dest_top,
+                     blend_type);
   }
   FX_RECT dest_rect(dest_left, dest_top, dest_left + dest_width,
                     dest_top + dest_height);
@@ -1354,7 +1353,7 @@ bool CFX_AggDeviceDriver::StretchDIBits(
                    /*bVertical=*/false, /*bFlipX=*/false, /*bFlipY=*/false,
                    m_bRgbByteOrder, blend_type);
   dest_clip.Offset(-dest_rect.left, -dest_rect.top);
-  CFX_ImageStretcher stretcher(&composer, std::move(pSource), dest_width,
+  CFX_ImageStretcher stretcher(&composer, std::move(bitmap), dest_width,
                                dest_height, dest_clip, options);
   if (stretcher.Start())
     stretcher.Continue(nullptr);

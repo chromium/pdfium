@@ -73,7 +73,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
                  int left,
                  int top,
                  BlendMode blend_type) override;
-  bool StretchDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
+  bool StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                      uint32_t argb,
                      int dest_left,
                      int dest_top,

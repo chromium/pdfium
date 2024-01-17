@@ -1412,16 +1412,15 @@ bool CFX_SkiaDeviceDriver::SetDIBits(
                          matrix, sampling_options, blend_type);
 }
 
-bool CFX_SkiaDeviceDriver::StretchDIBits(
-    const RetainPtr<const CFX_DIBBase>& pSource,
-    uint32_t color,
-    int dest_left,
-    int dest_top,
-    int dest_width,
-    int dest_height,
-    const FX_RECT* pClipRect,
-    const FXDIB_ResampleOptions& options,
-    BlendMode blend_type) {
+bool CFX_SkiaDeviceDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
+                                         uint32_t color,
+                                         int dest_left,
+                                         int dest_top,
+                                         int dest_width,
+                                         int dest_height,
+                                         const FX_RECT* pClipRect,
+                                         const FXDIB_ResampleOptions& options,
+                                         BlendMode blend_type) {
   if (m_pBitmap->GetBuffer().empty())
     return true;
 
@@ -1436,9 +1435,9 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(
   FXDIB_ResampleOptions sampling_options;
   sampling_options.bNoSmoothing = true;
 
-  FX_RECT rect(0, 0, pSource->GetWidth(), pSource->GetHeight());
-  return StartDIBitsSkia(std::move(pSource), rect, /*alpha=*/1.0f, color,
-                         matrix, sampling_options, blend_type);
+  FX_RECT rect(0, 0, bitmap->GetWidth(), bitmap->GetHeight());
+  return StartDIBitsSkia(std::move(bitmap), rect, /*alpha=*/1.0f, color, matrix,
+                         sampling_options, blend_type);
 }
 
 bool CFX_SkiaDeviceDriver::StartDIBits(

@@ -426,13 +426,12 @@ bool CGdiDeviceDriver::GDI_SetDIBits(const RetainPtr<const CFX_DIBBase>& source,
   return true;
 }
 
-bool CGdiDeviceDriver::GDI_StretchDIBits(
-    const RetainPtr<const CFX_DIBBase>& source,
-    int dest_left,
-    int dest_top,
-    int dest_width,
-    int dest_height,
-    const FXDIB_ResampleOptions& options) {
+bool CGdiDeviceDriver::GDI_StretchDIBits(RetainPtr<const CFX_DIBBase> source,
+                                         int dest_left,
+                                         int dest_top,
+                                         int dest_width,
+                                         int dest_height,
+                                         const FXDIB_ResampleOptions& options) {
   if (!source || dest_width == 0 || dest_height == 0) {
     return false;
   }
@@ -467,13 +466,12 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(
   return true;
 }
 
-bool CGdiDeviceDriver::GDI_StretchBitMask(
-    const RetainPtr<const CFX_DIBBase>& source,
-    int dest_left,
-    int dest_top,
-    int dest_width,
-    int dest_height,
-    uint32_t bitmap_color) {
+bool CGdiDeviceDriver::GDI_StretchBitMask(RetainPtr<const CFX_DIBBase> source,
+                                          int dest_left,
+                                          int dest_top,
+                                          int dest_width,
+                                          int dest_height,
+                                          uint32_t bitmap_color) {
   if (!source || dest_width == 0 || dest_height == 0) {
     return false;
   }

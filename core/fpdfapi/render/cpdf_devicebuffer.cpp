@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/render/cpdf_devicebuffer.h"
 
+#include <utility>
+
 #include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -84,14 +86,14 @@ void CPDF_DeviceBuffer::OutputToDevice() {
     }
     return;
   }
-  auto pBuffer = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!m_pDevice->CreateCompatibleBitmap(pBuffer, m_pBitmap->GetWidth(),
+  auto buffer = pdfium::MakeRetain<CFX_DIBitmap>();
+  if (!m_pDevice->CreateCompatibleBitmap(buffer, m_pBitmap->GetWidth(),
                                          m_pBitmap->GetHeight())) {
     return;
   }
-  m_pContext->GetBackgroundToBitmap(pBuffer, m_pObject, m_Matrix);
-  pBuffer->CompositeBitmap(0, 0, pBuffer->GetWidth(), pBuffer->GetHeight(),
-                           m_pBitmap, 0, 0, BlendMode::kNormal, nullptr, false);
-  m_pDevice->StretchDIBits(pBuffer, m_Rect.left, m_Rect.top, m_Rect.Width(),
-                           m_Rect.Height());
+  m_pContext->GetBackgroundToBitmap(buffer, m_pObject, m_Matrix);
+  buffer->CompositeBitmap(0, 0, buffer->GetWidth(), buffer->GetHeight(),
+                          m_pBitmap, 0, 0, BlendMode::kNormal, nullptr, false);
+  m_pDevice->StretchDIBits(std::move(buffer), m_Rect.left, m_Rect.top,
+                           m_Rect.Width(), m_Rect.Height());
 }

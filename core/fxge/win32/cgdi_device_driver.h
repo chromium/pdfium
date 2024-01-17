@@ -56,13 +56,13 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
                      const FX_RECT& src_rect,
                      int left,
                      int top);
-  bool GDI_StretchDIBits(const RetainPtr<const CFX_DIBBase>& source,
+  bool GDI_StretchDIBits(RetainPtr<const CFX_DIBBase> source,
                          int dest_left,
                          int dest_top,
                          int dest_width,
                          int dest_height,
                          const FXDIB_ResampleOptions& options);
-  bool GDI_StretchBitMask(const RetainPtr<const CFX_DIBBase>& source,
+  bool GDI_StretchBitMask(RetainPtr<const CFX_DIBBase> source,
                           int dest_left,
                           int dest_top,
                           int dest_width,

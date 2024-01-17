@@ -78,7 +78,7 @@ class RenderDeviceDriverIface {
                          int dest_left,
                          int dest_top,
                          BlendMode blend_type) = 0;
-  virtual bool StretchDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
+  virtual bool StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                              uint32_t color,
                              int dest_left,
                              int dest_top,

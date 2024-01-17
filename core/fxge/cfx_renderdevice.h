@@ -104,23 +104,18 @@ class CFX_RenderDevice {
                           int left,
                           int top,
                           BlendMode blend_mode);
-  bool StretchDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
+  bool StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                      int left,
                      int top,
                      int dest_width,
-                     int dest_height) {
-    return StretchDIBitsWithFlagsAndBlend(pBitmap, left, top, dest_width,
-                                          dest_height, FXDIB_ResampleOptions(),
-                                          BlendMode::kNormal);
-  }
-  bool StretchDIBitsWithFlagsAndBlend(
-      const RetainPtr<const CFX_DIBBase>& pBitmap,
-      int left,
-      int top,
-      int dest_width,
-      int dest_height,
-      const FXDIB_ResampleOptions& options,
-      BlendMode blend_mode);
+                     int dest_height);
+  bool StretchDIBitsWithFlagsAndBlend(RetainPtr<const CFX_DIBBase> bitmap,
+                                      int left,
+                                      int top,
+                                      int dest_width,
+                                      int dest_height,
+                                      const FXDIB_ResampleOptions& options,
+                                      BlendMode blend_mode);
   bool SetBitMask(const RetainPtr<CFX_DIBBase>& pBitmap,
                   int left,
                   int top,

@@ -639,13 +639,14 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     CPDF_WindowsRenderDevice win_dc(dc, render_data->GetPSFontTracker());
     bool bitsStretched = false;
     if (win_dc.GetDeviceType() == DeviceType::kPrinter) {
-      auto pDst = pdfium::MakeRetain<CFX_DIBitmap>();
-      if (pDst->Create(size_x, size_y, FXDIB_Format::kRgb32)) {
-        fxcrt::spanset(
-            pDst->GetWritableBuffer().first(pBitmap->GetPitch() * size_y), -1);
-        pDst->CompositeBitmap(0, 0, size_x, size_y, pBitmap, 0, 0,
-                              BlendMode::kNormal, nullptr, false);
-        win_dc.StretchDIBits(pDst, 0, 0, size_x, size_y);
+      auto dest_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+      if (dest_bitmap->Create(size_x, size_y, FXDIB_Format::kRgb32)) {
+        fxcrt::spanset(dest_bitmap->GetWritableBuffer().first(
+                           pBitmap->GetPitch() * size_y),
+                       -1);
+        dest_bitmap->CompositeBitmap(0, 0, size_x, size_y, pBitmap, 0, 0,
+                                     BlendMode::kNormal, nullptr, false);
+        win_dc.StretchDIBits(std::move(dest_bitmap), 0, 0, size_x, size_y);
         bitsStretched = true;
       }
     }

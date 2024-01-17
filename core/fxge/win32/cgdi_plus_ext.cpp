@@ -204,7 +204,7 @@ Gdiplus::GpBrush* GdipCreateBrushImpl(DWORD argb) {
 }
 
 void OutputImage(Gdiplus::GpGraphics* pGraphics,
-                 const RetainPtr<const CFX_DIBBase>& source,
+                 RetainPtr<const CFX_DIBBase> source,
                  const FX_RECT& src_rect,
                  int dest_left,
                  int dest_top,
@@ -215,11 +215,12 @@ void OutputImage(Gdiplus::GpGraphics* pGraphics,
   const CGdiplusExt& GdiplusExt = GetGdiplusExt();
   if (source->GetBPP() == 1 && (src_rect.left % 8)) {
     FX_RECT new_rect(0, 0, src_width, src_height);
-    RetainPtr<CFX_DIBBase> pCloned = source->ClipTo(src_rect);
-    if (!pCloned)
+    source = source->ClipTo(src_rect);
+    if (!source) {
       return;
-    OutputImage(pGraphics, pCloned, new_rect, dest_left, dest_top, dest_width,
-                dest_height);
+    }
+    OutputImage(pGraphics, std::move(source), new_rect, dest_left, dest_top,
+                dest_width, dest_height);
     return;
   }
 
@@ -588,7 +589,7 @@ void CGdiplusExt::Load() {
 }
 
 bool CGdiplusExt::StretchDIBits(HDC hDC,
-                                const RetainPtr<const CFX_DIBBase>& source,
+                                RetainPtr<const CFX_DIBBase> source,
                                 int dest_left,
                                 int dest_top,
                                 int dest_width,
@@ -611,8 +612,8 @@ bool CGdiplusExt::StretchDIBits(HDC hDC,
                                        Gdiplus::InterpolationModeBilinear);
   }
   FX_RECT src_rect(0, 0, source->GetWidth(), source->GetHeight());
-  OutputImage(pGraphics, source, src_rect, dest_left, dest_top, dest_width,
-              dest_height);
+  OutputImage(pGraphics, std::move(source), src_rect, dest_left, dest_top,
+              dest_width, dest_height);
   CallFunc(GdipDeleteGraphics)(pGraphics);
   CallFunc(GdipDeleteGraphics)(pGraphics);
   return true;

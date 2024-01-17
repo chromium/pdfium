@@ -101,16 +101,15 @@ bool CTextOnlyPrinterDriver::GetClipBox(FX_RECT* pRect) {
   return true;
 }
 
-bool CTextOnlyPrinterDriver::StretchDIBits(
-    const RetainPtr<const CFX_DIBBase>& pBitmap,
-    uint32_t color,
-    int dest_left,
-    int dest_top,
-    int dest_width,
-    int dest_height,
-    const FX_RECT* pClipRect,
-    const FXDIB_ResampleOptions& options,
-    BlendMode blend_type) {
+bool CTextOnlyPrinterDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
+                                           uint32_t color,
+                                           int dest_left,
+                                           int dest_top,
+                                           int dest_width,
+                                           int dest_height,
+                                           const FX_RECT* pClipRect,
+                                           const FXDIB_ResampleOptions& options,
+                                           BlendMode blend_type) {
   return false;
 }
 
