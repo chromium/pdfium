@@ -476,23 +476,20 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
         CFX_FillRenderOptions::WindingOptions());
     return false;
   }
-  RetainPtr<CFX_DIBBase> pAlphaMask;
-  if (m_pDIBBase->IsMaskFormat())
-    pAlphaMask = m_pDIBBase;
-  else
-    pAlphaMask = m_pDIBBase->CloneAlphaMask();
 
+  RetainPtr<CFX_DIBBase> alpha_mask =
+      m_pDIBBase->IsMaskFormat() ? m_pDIBBase : m_pDIBBase->CloneAlphaMask();
   if (fabs(m_ImageMatrix.b) >= 0.5f || fabs(m_ImageMatrix.c) >= 0.5f) {
     int left;
     int top;
-    RetainPtr<CFX_DIBitmap> pTransformed =
-        pAlphaMask->TransformTo(m_ImageMatrix, &left, &top);
-    if (!pTransformed)
+    alpha_mask = alpha_mask->TransformTo(m_ImageMatrix, &left, &top);
+    if (!alpha_mask) {
       return true;
+    }
 
     const int bitmap_alpha = FXSYS_roundf(m_Alpha * 255);
     m_pRenderStatus->GetRenderDevice()->SetBitMask(
-        pTransformed, left, top,
+        std::move(alpha_mask), left, top,
         ArgbEncode(0xff, bitmap_alpha, bitmap_alpha, bitmap_alpha));
     return false;
   }
@@ -512,7 +509,7 @@ bool CPDF_ImageRenderer::StartBitmapAlpha() {
 
   const int bitmap_alpha = FXSYS_roundf(m_Alpha * 255);
   m_pRenderStatus->GetRenderDevice()->StretchBitMask(
-      pAlphaMask, left, top, dest_width, dest_height,
+      std::move(alpha_mask), left, top, dest_width, dest_height,
       ArgbEncode(0xff, bitmap_alpha, bitmap_alpha, bitmap_alpha));
   return false;
 }

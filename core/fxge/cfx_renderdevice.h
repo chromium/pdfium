@@ -120,13 +120,13 @@ class CFX_RenderDevice {
                   int left,
                   int top,
                   uint32_t argb);
-  bool StretchBitMask(const RetainPtr<CFX_DIBBase>& pBitmap,
+  bool StretchBitMask(RetainPtr<CFX_DIBBase> bitmap,
                       int left,
                       int top,
                       int dest_width,
                       int dest_height,
                       uint32_t color);
-  bool StretchBitMaskWithFlags(const RetainPtr<CFX_DIBBase>& pBitmap,
+  bool StretchBitMaskWithFlags(RetainPtr<CFX_DIBBase> bitmap,
                                int left,
                                int top,
                                int dest_width,
