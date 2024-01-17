@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/font/cpdf_tounicodemap.h"
 
+#include <limits>
 #include <set>
 #include <utility>
 
@@ -202,9 +203,11 @@ void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
 
     ByteStringView start = pParser->GetWord();
     if (start == "[") {
-      for (FX_SAFE_UINT32 code = lowcode;
-           code.IsValid() && code.ValueOrDie() <= highcode; code++) {
-        SetCode(code.ValueOrDie(), StringToWideString(pParser->GetWord()));
+      for (uint32_t code = lowcode; code <= highcode; ++code) {
+        SetCode(code, StringToWideString(pParser->GetWord()));
+        if (code == std::numeric_limits<uint32_t>::max()) {
+          break;
+        }
       }
       pParser->GetWord();
       continue;
@@ -217,19 +220,22 @@ void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
         return;
 
       uint32_t value = value_or_error.value();
-      for (FX_SAFE_UINT32 code = lowcode;
-           code.IsValid() && code.ValueOrDie() <= highcode; code++) {
-        InsertIntoMultimap(code.ValueOrDie(), value++);
+      for (uint32_t code = lowcode; code <= highcode; ++code) {
+        InsertIntoMultimap(code, value++);
+        if (code == std::numeric_limits<uint32_t>::max()) {
+          break;
+        }
       }
     } else {
-      for (FX_SAFE_UINT32 code = lowcode;
-           code.IsValid() && code.ValueOrDie() <= highcode; code++) {
-        uint32_t code_value = code.ValueOrDie();
+      for (uint32_t code = lowcode; code <= highcode; ++code) {
         WideString retcode =
-            code_value == lowcode ? destcode : StringDataAdd(destcode);
-        InsertIntoMultimap(code_value, GetMultiCharIndexIndicator());
+            code == lowcode ? destcode : StringDataAdd(destcode);
+        InsertIntoMultimap(code, GetMultiCharIndexIndicator());
         m_MultiCharVec.push_back(retcode);
         destcode = std::move(retcode);
+        if (code == std::numeric_limits<uint32_t>::max()) {
+          break;
+        }
       }
     }
   }
