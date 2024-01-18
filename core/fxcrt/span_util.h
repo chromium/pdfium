@@ -5,6 +5,8 @@
 #ifndef CORE_FXCRT_SPAN_UTIL_H_
 #define CORE_FXCRT_SPAN_UTIL_H_
 
+#include <stdint.h>
+
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/span.h"
@@ -39,6 +41,16 @@ void spanset(pdfium::span<T> dst, uint8_t val) {
 template <typename T>
 void spanclr(pdfium::span<T> dst) {
   FXSYS_memset(dst.data(), 0, dst.size_bytes());
+}
+
+template <typename T,
+          typename U,
+          typename = typename std::enable_if_t<std::is_const_v<T> ||
+                                               !std::is_const_v<U>>>
+inline pdfium::span<T> reinterpret_span(pdfium::span<U> s) noexcept {
+  CHECK_EQ(s.size_bytes() % sizeof(T), 0u);
+  CHECK_EQ(reinterpret_cast<uintptr_t>(s.data()) % alignof(T), 0u);
+  return {reinterpret_cast<T*>(s.data()), s.size_bytes() / sizeof(T)};
 }
 
 }  // namespace fxcrt

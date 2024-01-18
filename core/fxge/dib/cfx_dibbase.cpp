@@ -659,13 +659,15 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipToInternal(
     int right_shift = 32 - left_shift;
     int dword_count = pNewBitmap->m_Pitch / 4;
     for (int row = rect.top; row < rect.bottom; ++row) {
+      auto src_span = fxcrt::reinterpret_span<const uint32_t>(GetScanline(row));
+      auto dst_span = fxcrt::reinterpret_span<uint32_t>(
+          pNewBitmap->GetWritableScanline(row - rect.top));
+      // Bounds check for free with first/subspan.
       const uint32_t* src_scan =
-          reinterpret_cast<const uint32_t*>(GetScanline(row).data()) +
-          rect.left / 32;
-      uint32_t* dest_scan = reinterpret_cast<uint32_t*>(
-          pNewBitmap->GetWritableScanline(row - rect.top).data());
+          src_span.subspan(rect.left / 32, dword_count + 1).data();
+      uint32_t* dst_scan = dst_span.first(dword_count).data();
       for (int i = 0; i < dword_count; ++i) {
-        dest_scan[i] =
+        dst_scan[i] =
             (src_scan[i] << left_shift) | (src_scan[i + 1] >> right_shift);
       }
     }
@@ -1011,8 +1013,9 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
       uint8_t* dest_scan = dest_span.subspan(dest_offset).data();
       if (nBytes == 4) {
         const uint32_t* src_scan =
-            reinterpret_cast<const uint32_t*>(GetScanline(row).data()) +
-            col_start;
+            fxcrt::reinterpret_span<const uint32_t>(GetScanline(row))
+                .subspan(col_start)
+                .data();
         for (int col = col_start; col < col_end; ++col) {
           uint32_t* dest_scan32 = reinterpret_cast<uint32_t*>(dest_scan);
           *dest_scan32 = *src_scan++;

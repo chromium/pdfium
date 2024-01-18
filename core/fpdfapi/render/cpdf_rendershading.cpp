@@ -134,7 +134,8 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   CFX_Matrix matrix = mtObject2Bitmap.GetInverse();
   for (int row = 0; row < height; row++) {
     uint32_t* dib_buf =
-        reinterpret_cast<uint32_t*>(pBitmap->GetWritableScanline(row).data());
+        fxcrt::reinterpret_span<uint32_t>(pBitmap->GetWritableScanline(row))
+            .data();
     for (int column = 0; column < width; column++) {
       CFX_PointF pos = matrix.Transform(
           CFX_PointF(static_cast<float>(column), static_cast<float>(row)));
@@ -207,7 +208,8 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   CFX_Matrix matrix = mtObject2Bitmap.GetInverse();
   for (int row = 0; row < height; row++) {
     uint32_t* dib_buf =
-        reinterpret_cast<uint32_t*>(pBitmap->GetWritableScanline(row).data());
+        fxcrt::reinterpret_span<uint32_t>(pBitmap->GetWritableScanline(row))
+            .data();
     for (int column = 0; column < width; column++) {
       CFX_PointF pos = matrix.Transform(
           CFX_PointF(static_cast<float>(column), static_cast<float>(row)));
@@ -288,7 +290,8 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   std::vector<float> result_array(total_results);
   for (int row = 0; row < height; ++row) {
     uint32_t* dib_buf =
-        reinterpret_cast<uint32_t*>(pBitmap->GetWritableScanline(row).data());
+        fxcrt::reinterpret_span<uint32_t>(pBitmap->GetWritableScanline(row))
+            .data();
     for (int column = 0; column < width; column++) {
       CFX_PointF pos = matrix.Transform(
           CFX_PointF(static_cast<float>(column), static_cast<float>(row)));

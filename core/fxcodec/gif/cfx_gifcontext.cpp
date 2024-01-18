@@ -369,10 +369,10 @@ GifDecoder::Status CFX_GifContext::ReadLogicalScreenDescriptor() {
       return GifDecoder::Status::kError;
     bc_index_ = lsd.bc_index;
 
-    uint32_t palette_size = palette_count * sizeof(CFX_GifPalette);
     std::vector<CFX_GifPalette> palette(palette_count);
-    if (!ReadAllOrNone(reinterpret_cast<uint8_t*>(palette.data()),
-                       palette_size)) {
+    auto bytes = pdfium::as_writable_bytes(pdfium::make_span(palette));
+    if (!ReadAllOrNone(bytes.data(),
+                       pdfium::base::checked_cast<uint32_t>(bytes.size()))) {
       // Roll back the read for the LSD
       input_buffer_->Seek(read_marker);
       return GifDecoder::Status::kUnfinished;
@@ -476,8 +476,9 @@ GifDecoder::Status CFX_GifContext::DecodeImageInfo() {
     gif_image->local_palette_exp = gif_img_info_lf->pal_bits;
     uint32_t loc_pal_count = unsigned(2 << gif_img_info_lf->pal_bits);
     std::vector<CFX_GifPalette> loc_pal(loc_pal_count);
-    if (!ReadAllOrNone(reinterpret_cast<uint8_t*>(loc_pal.data()),
-                       loc_pal_count * sizeof(CFX_GifPalette))) {
+    auto bytes = pdfium::as_writable_bytes(pdfium::make_span(loc_pal));
+    if (!ReadAllOrNone(bytes.data(),
+                       pdfium::base::checked_cast<uint32_t>(bytes.size()))) {
       input_buffer_->Seek(read_marker);
       return GifDecoder::Status::kUnfinished;
     }

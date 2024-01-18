@@ -19,6 +19,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
@@ -26,7 +27,6 @@
 #include "third_party/base/numerics/safe_conversions.h"
 
 #if BUILDFLAG(IS_WIN)
-#include "core/fxcrt/span_util.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #endif
 
@@ -584,11 +584,11 @@ uint32_t FaxDecoder::GetSrcOffset() {
 }
 
 void FaxDecoder::InvertBuffer() {
-  DCHECK_EQ(m_Pitch, m_ScanlineBuf.size());
-  DCHECK_EQ(m_Pitch % 4, 0u);
-  uint32_t* data = reinterpret_cast<uint32_t*>(m_ScanlineBuf.data());
-  for (size_t i = 0; i < m_ScanlineBuf.size() / 4; ++i)
-    data[i] = ~data[i];
+  auto byte_span = pdfium::make_span(m_ScanlineBuf);
+  auto data = fxcrt::reinterpret_span<uint32_t>(byte_span);
+  for (auto& datum : data) {
+    datum = ~datum;
+  }
 }
 
 }  // namespace

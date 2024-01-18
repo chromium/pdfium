@@ -89,3 +89,33 @@ TEST(Span, AssignOverOnePastEnd) {
   span = pdfium::make_span(src);
   EXPECT_EQ(span.size(), 2u);
 }
+
+TEST(ReinterpretSpan, Empty) {
+  pdfium::span<uint8_t> empty;
+  pdfium::span<uint32_t> converted = fxcrt::reinterpret_span<uint32_t>(empty);
+  EXPECT_EQ(converted.data(), nullptr);
+  EXPECT_EQ(converted.size(), 0u);
+}
+
+TEST(ReinterpretSpan, LegalConversions) {
+  uint8_t aaaabbbb[8] = {0x61, 0x61, 0x61, 0x61, 0x62, 0x62, 0x62, 0x62};
+  pdfium::span<uint8_t> original = pdfium::make_span(aaaabbbb);
+  pdfium::span<uint32_t> converted =
+      fxcrt::reinterpret_span<uint32_t>(original);
+  ASSERT_NE(converted.data(), nullptr);
+  ASSERT_EQ(converted.size(), 2u);
+  EXPECT_EQ(converted[0], 0x61616161u);
+  EXPECT_EQ(converted[1], 0x62626262u);
+}
+
+TEST(ReinterpretSpan, BadLength) {
+  uint8_t ab[2] = {0x61, 0x62};
+  EXPECT_DEATH(fxcrt::reinterpret_span<uint32_t>(pdfium::make_span(ab)), "");
+}
+
+TEST(ReinterpretSpan, BadAlignment) {
+  uint8_t abcabc[6] = {0x61, 0x62, 0x63, 0x61, 0x62, 0x63};
+  EXPECT_DEATH(fxcrt::reinterpret_span<uint32_t>(
+                   pdfium::make_span(abcabc).subspan(1, 4)),
+               "");
+}
