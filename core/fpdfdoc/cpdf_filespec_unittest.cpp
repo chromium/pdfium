@@ -10,8 +10,10 @@
 
 #include "build/build_config.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fpdfapi/parser/cpdf_indirect_object_holder.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
+#include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/data_vector.h"
@@ -156,6 +158,7 @@ TEST(cpdf_filespec, GetFileStream) {
     EXPECT_FALSE(file_spec.GetFileStream());
   }
   {
+    CPDF_IndirectObjectHolder object_holder;
     // Dictionary object with a non-empty embedded files dictionary.
     auto dict_obj = pdfium::MakeRetain<CPDF_Dictionary>();
     dict_obj->SetNewFor<CPDF_Dictionary>("EF");
@@ -173,11 +176,15 @@ TEST(cpdf_filespec, GetFileStream) {
       dict_obj->SetNewFor<CPDF_String>(keys[i], file_name);
 
       // Set the file stream.
-      auto pDict = pdfium::MakeRetain<CPDF_Dictionary>();
       size_t buf_len = strlen(streams[i]) + 1;
-      file_dict->SetNewFor<CPDF_Stream>(
-          keys[i], DataVector<uint8_t>(streams[i], streams[i] + buf_len),
-          std::move(pDict));
+      auto stream_object = object_holder.NewIndirect<CPDF_Stream>(
+          DataVector<uint8_t>(streams[i], streams[i] + buf_len),
+          pdfium::MakeRetain<CPDF_Dictionary>());
+      ASSERT_TRUE(stream_object);
+      const uint32_t stream_object_number = stream_object->GetObjNum();
+      ASSERT_GT(stream_object_number, 0u);
+      file_dict->SetNewFor<CPDF_Reference>(keys[i], &object_holder,
+                                           stream_object_number);
 
       // Check that the file content stream is as expected.
       EXPECT_STREQ(
@@ -200,6 +207,8 @@ TEST(cpdf_filespec, GetParamsDict) {
     EXPECT_FALSE(file_spec.GetParamsDict());
   }
   {
+    CPDF_IndirectObjectHolder object_holder;
+
     // Dictionary object.
     auto dict_obj = pdfium::MakeRetain<CPDF_Dictionary>();
     dict_obj->SetNewFor<CPDF_Dictionary>("EF");
@@ -209,11 +218,15 @@ TEST(cpdf_filespec, GetParamsDict) {
 
     // Add a file stream to the embedded files dictionary.
     RetainPtr<CPDF_Dictionary> file_dict = dict_obj->GetMutableDictFor("EF");
-    auto pDict = pdfium::MakeRetain<CPDF_Dictionary>();
     static constexpr char kHello[] = "hello";
-    file_dict->SetNewFor<CPDF_Stream>(
-        "UF", DataVector<uint8_t>(std::begin(kHello), std::end(kHello)),
-        std::move(pDict));
+    auto stream_object = object_holder.NewIndirect<CPDF_Stream>(
+        DataVector<uint8_t>(std::begin(kHello), std::end(kHello)),
+        pdfium::MakeRetain<CPDF_Dictionary>());
+    ASSERT_TRUE(stream_object);
+    const uint32_t stream_object_number = stream_object->GetObjNum();
+    ASSERT_GT(stream_object_number, 0u);
+    file_dict->SetNewFor<CPDF_Reference>("UF", &object_holder,
+                                         stream_object_number);
 
     // Add a params dictionary to the file stream.
     RetainPtr<CPDF_Stream> stream = file_dict->GetMutableStreamFor("UF");

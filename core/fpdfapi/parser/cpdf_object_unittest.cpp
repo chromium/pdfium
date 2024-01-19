@@ -946,21 +946,6 @@ TEST(PDFObjectTest, CloneCheckLoop) {
     dict_obj->RemoveFor("arr");  // Break deliberate cycle for cleanup.
   }
   {
-    // Create a dictionary/stream pair with a reference loop.
-    auto dict_obj = pdfium::MakeRetain<CPDF_Dictionary>();
-    auto stream_obj = dict_obj->SetNewFor<CPDF_Stream>("stream", dict_obj);
-    // Clone this object to see whether stack overflow will be triggered.
-    RetainPtr<CPDF_Stream> cloned_stream = ToStream(stream_obj->Clone());
-    // Cloned object should be the same as the original.
-    ASSERT_TRUE(cloned_stream);
-    RetainPtr<const CPDF_Object> cloned_dict = cloned_stream->GetDict();
-    ASSERT_TRUE(cloned_dict);
-    ASSERT_TRUE(cloned_dict->IsDictionary());
-    // Recursively referenced object is not cloned.
-    EXPECT_FALSE(cloned_dict->AsDictionary()->GetObjectFor("stream"));
-    dict_obj->RemoveFor("stream");  // Break deliberate cycle for cleanup.
-  }
-  {
     CPDF_IndirectObjectHolder objects_holder;
     // Create an object with a reference loop.
     auto dict_obj = objects_holder.NewIndirect<CPDF_Dictionary>();

@@ -10,6 +10,7 @@
 #include <functional>
 #include <map>
 #include <set>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -86,8 +87,11 @@ class CPDF_Dictionary final : public CPDF_Object {
   // Prefer using these templates over calls to SetFor(), since by creating
   // a new object with no previous references, they ensure cycles can not be
   // introduced.
+  // A stream must be indirect and added as a `CPDF_Reference` instead.
   template <typename T, typename... Args>
-  typename std::enable_if<!CanInternStrings<T>::value, RetainPtr<T>>::type
+  typename std::enable_if<!CanInternStrings<T>::value &&
+                              !std::is_same<T, CPDF_Stream>::value,
+                          RetainPtr<T>>::type
   SetNewFor(const ByteString& key, Args&&... args) {
     return pdfium::WrapRetain(static_cast<T*>(SetForInternal(
         key, pdfium::MakeRetain<T>(std::forward<Args>(args)...))));
