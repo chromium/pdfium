@@ -18,7 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "core/fxcrt/fixed_try_alloc_zeroed_data_vector.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/pauseindicator_iface.h"
 #include "core/fxcrt/span_util.h"
@@ -179,7 +179,7 @@ CPDF_ContentParser::Stage CPDF_ContentParser::PrepareContent() {
   }
 
   const size_t buffer_size = safe_size.ValueOrDie();
-  FixedTryAllocZeroedDataVector<uint8_t> buffer(buffer_size);
+  auto buffer = FixedSizeDataVector<uint8_t>::TryZeroed(buffer_size);
   if (buffer.empty()) {
     m_Data.emplace<pdfium::span<const uint8_t>>();
     return Stage::kComplete;
@@ -273,7 +273,8 @@ void CPDF_ContentParser::HandlePageContentFailure() {
 }
 
 pdfium::span<const uint8_t> CPDF_ContentParser::GetData() const {
-  if (is_owned())
-    return absl::get<FixedTryAllocZeroedDataVector<uint8_t>>(m_Data).span();
+  if (is_owned()) {
+    return absl::get<FixedSizeDataVector<uint8_t>>(m_Data).span();
+  }
   return absl::get<pdfium::span<const uint8_t>>(m_Data);
 }

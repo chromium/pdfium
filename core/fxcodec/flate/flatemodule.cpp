@@ -17,7 +17,7 @@
 
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/fixed_zeroed_data_vector.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -137,19 +137,19 @@ class CLZWDecoder {
   uint32_t dest_buf_size_ = 0;  // Actual allocated size.
   uint32_t dest_byte_pos_ = 0;  // Size used.
   uint32_t stack_len_ = 0;
-  FixedZeroedDataVector<uint8_t> decode_stack_;
+  FixedSizeDataVector<uint8_t> decode_stack_;
   const uint8_t early_change_;
   uint8_t code_len_ = 9;
   uint32_t current_code_ = 0;
-  FixedZeroedDataVector<uint32_t> codes_;
+  FixedSizeDataVector<uint32_t> codes_;
 };
 
 CLZWDecoder::CLZWDecoder(pdfium::span<const uint8_t> src_span,
                          bool early_change)
     : src_span_(src_span),
-      decode_stack_(4000),
+      decode_stack_(FixedSizeDataVector<uint8_t>::Zeroed(4000)),
       early_change_(early_change ? 1 : 0),
-      codes_(5021) {}
+      codes_(FixedSizeDataVector<uint32_t>::Zeroed(5021)) {}
 
 void CLZWDecoder::AddCode(uint32_t prefix_code, uint8_t append_char) {
   if (current_code_ + early_change_ == 4094)

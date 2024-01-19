@@ -15,33 +15,50 @@
 
 namespace fxcrt {
 
-enum class DataVectorAllocOption {
-  kInitialized,
-  kUninitialized,
-  kTryInitialized,
-};
-
 // A simple data container that has a fixed size.
 // Unlike std::vector, it cannot be implicitly copied and its data is only
 // accessible using spans.
 // It can either initialize its data with zeros, or leave its data
 // uninitialized.
-template <typename T, DataVectorAllocOption OPTION>
+template <typename T>
 class FixedSizeDataVector {
  public:
-  FixedSizeDataVector() : FixedSizeDataVector(0) {}
-  explicit FixedSizeDataVector(size_t size)
-      : data_(MaybeInit(size, OPTION)), size_(CalculateSize(size, OPTION)) {}
+  FixedSizeDataVector() = default;
+
+  // Allocates a vector of the given size with uninitialized memory.
+  // A CHECK() failure occurs when insufficient memory.
+  static FixedSizeDataVector Uninit(size_t size) {
+    if (size == 0) {
+      return FixedSizeDataVector();
+    }
+    return FixedSizeDataVector(FX_AllocUninit(T, size), size);
+  }
+
+  // Allocates a vector of the given size with zeroed memory.
+  // A CHECK() failure occurs when insufficient memory.
+  static FixedSizeDataVector Zeroed(size_t size) {
+    if (size == 0) {
+      return FixedSizeDataVector();
+    }
+    return FixedSizeDataVector(FX_Alloc(T, size), size);
+  }
+
+  // Same as above, but return an empty vector when insufficient memory.
+  static FixedSizeDataVector TryZeroed(size_t size) {
+    if (size == 0) {
+      return FixedSizeDataVector();
+    }
+    T* ptr = FX_TryAlloc(T, size);
+    return FixedSizeDataVector(ptr, ptr ? size : 0u);
+  }
+
   FixedSizeDataVector(const FixedSizeDataVector&) = delete;
   FixedSizeDataVector& operator=(const FixedSizeDataVector&) = delete;
 
-  template <DataVectorAllocOption OTHER_OPTION>
-  FixedSizeDataVector(FixedSizeDataVector<T, OTHER_OPTION>&& that) noexcept
+  FixedSizeDataVector(FixedSizeDataVector<T>&& that) noexcept
       : data_(std::move(that.data_)), size_(std::exchange(that.size_, 0)) {}
 
-  template <DataVectorAllocOption OTHER_OPTION>
-  FixedSizeDataVector& operator=(
-      FixedSizeDataVector<T, OTHER_OPTION>&& that) noexcept {
+  FixedSizeDataVector& operator=(FixedSizeDataVector<T>&& that) noexcept {
     data_ = std::move(that.data_);
     size_ = std::exchange(that.size_, 0);
     return *this;
@@ -81,37 +98,14 @@ class FixedSizeDataVector {
   pdfium::span<const T> last(size_t count) const { return span().last(count); }
 
  private:
-  friend class FixedSizeDataVector<T, DataVectorAllocOption::kInitialized>;
-  friend class FixedSizeDataVector<T, DataVectorAllocOption::kUninitialized>;
-  friend class FixedSizeDataVector<T, DataVectorAllocOption::kTryInitialized>;
-
-  static T* MaybeInit(size_t size, DataVectorAllocOption alloc_option) {
-    if (size == 0)
-      return nullptr;
-    switch (alloc_option) {
-      case DataVectorAllocOption::kInitialized:
-        return FX_Alloc(T, size);
-      case DataVectorAllocOption::kUninitialized:
-        return FX_AllocUninit(T, size);
-      case DataVectorAllocOption::kTryInitialized:
-        return FX_TryAlloc(T, size);
-    }
-  }
-
-  size_t CalculateSize(size_t size, DataVectorAllocOption alloc_option) const {
-    switch (alloc_option) {
-      case DataVectorAllocOption::kInitialized:
-      case DataVectorAllocOption::kUninitialized:
-        return size;
-      case DataVectorAllocOption::kTryInitialized:
-        return data_ ? size : 0;
-    }
-  }
+  FixedSizeDataVector(T* ptr, size_t size) : data_(ptr), size_(size) {}
 
   std::unique_ptr<T, FxFreeDeleter> data_;
-  size_t size_;
+  size_t size_ = 0;
 };
 
 }  // namespace fxcrt
+
+using fxcrt::FixedSizeDataVector;
 
 #endif  // CORE_FXCRT_FIXED_SIZE_DATA_VECTOR_H_

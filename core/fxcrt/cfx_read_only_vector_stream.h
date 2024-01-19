@@ -8,7 +8,7 @@
 #include <stdint.h>
 
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/fixed_uninit_data_vector.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
 
@@ -25,11 +25,11 @@ class CFX_ReadOnlyVectorStream final : public IFX_SeekableReadStream {
 
  private:
   explicit CFX_ReadOnlyVectorStream(DataVector<uint8_t> data);
-  explicit CFX_ReadOnlyVectorStream(FixedUninitDataVector<uint8_t> data);
+  explicit CFX_ReadOnlyVectorStream(FixedSizeDataVector<uint8_t> data);
   ~CFX_ReadOnlyVectorStream() override;
 
   const DataVector<uint8_t> data_;
-  const FixedUninitDataVector<uint8_t> fixed_data_;
+  const FixedSizeDataVector<uint8_t> fixed_data_;
   // Spans over either `data_` or `fixed_data_`.
   const RetainPtr<CFX_ReadOnlySpanStream> stream_;
 };

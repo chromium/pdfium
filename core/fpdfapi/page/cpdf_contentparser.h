@@ -14,7 +14,7 @@
 
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_streamcontentparser.h"
-#include "core/fxcrt/fixed_try_alloc_zeroed_data_vector.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/abseil-cpp/absl/types/variant.h"
@@ -64,8 +64,7 @@ class CPDF_ContentParser {
   void HandlePageContentFailure();
 
   bool is_owned() const {
-    return absl::holds_alternative<FixedTryAllocZeroedDataVector<uint8_t>>(
-        m_Data);
+    return absl::holds_alternative<FixedSizeDataVector<uint8_t>>(m_Data);
   }
   pdfium::span<const uint8_t> GetData() const;
 
@@ -75,8 +74,7 @@ class CPDF_ContentParser {
   RetainPtr<CPDF_StreamAcc> m_pSingleStream;
   std::vector<RetainPtr<CPDF_StreamAcc>> m_StreamArray;
   std::vector<uint32_t> m_StreamSegmentOffsets;
-  absl::variant<pdfium::span<const uint8_t>,
-                FixedTryAllocZeroedDataVector<uint8_t>>
+  absl::variant<pdfium::span<const uint8_t>, FixedSizeDataVector<uint8_t>>
       m_Data;
   uint32_t m_nStreams = 0;
   uint32_t m_CurrentOffset = 0;

@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/fixed_try_alloc_zeroed_data_vector.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -150,7 +150,7 @@ class CStretchEngine {
   const int m_DestHeight;
   const FX_RECT m_DestClip;
   DataVector<uint8_t> m_DestScanline;
-  FixedTryAllocZeroedDataVector<uint8_t> m_InterBuf;
+  FixedSizeDataVector<uint8_t> m_InterBuf;
   FX_RECT m_SrcClip;
   int m_InterPitch;
   int m_ExtraMaskPitch;

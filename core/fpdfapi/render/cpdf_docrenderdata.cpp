@@ -20,7 +20,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/render/cpdf_type3cache.h"
-#include "core/fxcrt/fixed_uninit_data_vector.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 
 #if BUILDFLAG(IS_WIN)
 #include "core/fxge/win32/cfx_psfonttracker.h"
@@ -98,12 +98,13 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
   std::fill(std::begin(output), std::end(output), 0.0f);
 
   bool bIdentity = true;
-  FixedUninitDataVector<uint8_t> samples_r(
+  auto samples_r = FixedSizeDataVector<uint8_t>::Uninit(
       CPDF_TransferFunc::kChannelSampleSize);
-  FixedUninitDataVector<uint8_t> samples_g(
+  auto samples_g = FixedSizeDataVector<uint8_t>::Uninit(
       CPDF_TransferFunc::kChannelSampleSize);
-  FixedUninitDataVector<uint8_t> samples_b(
+  auto samples_b = FixedSizeDataVector<uint8_t>::Uninit(
       CPDF_TransferFunc::kChannelSampleSize);
+
   std::array<pdfium::span<uint8_t>, 3> samples = {
       samples_r.span(), samples_g.span(), samples_b.span()};
   if (pArray) {

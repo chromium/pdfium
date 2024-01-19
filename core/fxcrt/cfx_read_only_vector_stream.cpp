@@ -14,7 +14,7 @@ CFX_ReadOnlyVectorStream::CFX_ReadOnlyVectorStream(DataVector<uint8_t> data)
       stream_(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(data_)) {}
 
 CFX_ReadOnlyVectorStream::CFX_ReadOnlyVectorStream(
-    FixedUninitDataVector<uint8_t> data)
+    FixedSizeDataVector<uint8_t> data)
     : fixed_data_(std::move(data)),
       stream_(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(fixed_data_)) {}
 

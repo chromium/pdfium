@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <utility>
 
-#include "core/fxcrt/fixed_zeroed_data_vector.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
@@ -545,7 +545,7 @@ CJS_Result CJS_App::response(CJS_Runtime* pRuntime,
 
   constexpr int kMaxWideChars = 1024;
   constexpr int kMaxBytes = kMaxWideChars * sizeof(uint16_t);
-  FixedZeroedDataVector<uint8_t> buffer(kMaxBytes);
+  auto buffer = FixedSizeDataVector<uint8_t>::Zeroed(kMaxBytes);
   int byte_length = pRuntime->GetFormFillEnv()->JS_appResponse(
       swQuestion, swTitle, swDefault, swLabel, bPassword, buffer.span());
 

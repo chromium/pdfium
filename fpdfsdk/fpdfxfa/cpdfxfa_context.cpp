@@ -17,7 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_seekablemultistream.h"
 #include "core/fxcodec/jpeg/jpeg_progressive_decoder.h"
 #include "core/fxcrt/autonuller.h"
-#include "core/fxcrt/fixed_zeroed_data_vector.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlparser.h"
@@ -365,7 +365,7 @@ WideString CPDFXFA_Context::Response(const WideString& wsQuestion,
 
   constexpr int kMaxWideChars = 1024;
   constexpr int kMaxBytes = kMaxWideChars * sizeof(uint16_t);
-  FixedZeroedDataVector<uint8_t> buffer(kMaxBytes);
+  auto buffer = FixedSizeDataVector<uint8_t>::Zeroed(kMaxBytes);
   pdfium::span<uint8_t> buffer_span = buffer.span();
   int byte_length = m_pFormFillEnv->JS_appResponse(
       wsQuestion, wsTitle, wsDefaultAnswer, WideString(), bMark, buffer_span);

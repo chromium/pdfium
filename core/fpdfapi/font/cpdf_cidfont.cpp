@@ -23,7 +23,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
-#include "core/fxcrt/fixed_uninit_data_vector.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -662,7 +662,7 @@ int CPDF_CIDFont::GetGlyphIndex(uint32_t unicode, bool* pVertGlyph) {
     return index;
   }
 
-  FixedUninitDataVector<uint8_t> sub_data(length);
+  auto sub_data = FixedSizeDataVector<uint8_t>::Uninit(length);
   if (!face->GetSfntTable(kGsubTag, sub_data.span())) {
     return index;
   }

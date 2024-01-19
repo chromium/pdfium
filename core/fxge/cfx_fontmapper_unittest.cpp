@@ -153,14 +153,14 @@ TEST_F(CFXFontMapperSystemFontInfoTest, RawBytesForIndex) {
     EXPECT_CALL(system_font_info(), DeleteFont(kFontHandle));
   }
 
-  FixedUninitDataVector<uint8_t> data = font_mapper().RawBytesForIndex(0);
+  FixedSizeDataVector<uint8_t> data = font_mapper().RawBytesForIndex(0);
   EXPECT_THAT(data.span(), ElementsAre('0', '1'));
 }
 
 TEST_F(CFXFontMapperSystemFontInfoTest, RawBytesForIndexFailToMap) {
   EXPECT_CALL(system_font_info(), MapFont).WillOnce(Return(nullptr));
 
-  FixedUninitDataVector<uint8_t> data = font_mapper().RawBytesForIndex(0);
+  FixedSizeDataVector<uint8_t> data = font_mapper().RawBytesForIndex(0);
   EXPECT_TRUE(data.empty());
 }
 
@@ -175,7 +175,7 @@ TEST_F(CFXFontMapperSystemFontInfoTest, RawBytesForIndexFailToGetDataSize) {
     EXPECT_CALL(system_font_info(), DeleteFont(kFontHandle));
   }
 
-  FixedUninitDataVector<uint8_t> data = font_mapper().RawBytesForIndex(0);
+  FixedSizeDataVector<uint8_t> data = font_mapper().RawBytesForIndex(0);
   EXPECT_TRUE(data.empty());
 }
 
@@ -192,7 +192,7 @@ TEST_F(CFXFontMapperSystemFontInfoTest, RawBytesForIndexFailToGetData) {
     EXPECT_CALL(system_font_info(), DeleteFont(kFontHandle));
   }
 
-  FixedUninitDataVector<uint8_t> data = font_mapper().RawBytesForIndex(0);
+  FixedSizeDataVector<uint8_t> data = font_mapper().RawBytesForIndex(0);
   EXPECT_TRUE(data.empty());
 }
 #endif  // PDF_ENABLE_XFA

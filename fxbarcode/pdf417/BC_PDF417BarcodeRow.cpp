@@ -25,7 +25,8 @@
 #include "core/fxcrt/span_util.h"
 #include "third_party/base/check_op.h"
 
-CBC_BarcodeRow::CBC_BarcodeRow(size_t width) : row_(width) {}
+CBC_BarcodeRow::CBC_BarcodeRow(size_t width)
+    : row_(FixedSizeDataVector<uint8_t>::Zeroed(width)) {}
 
 CBC_BarcodeRow::~CBC_BarcodeRow() = default;
 

@@ -10,7 +10,7 @@
 #include <memory>
 #include <utility>
 
-#include "core/fxcrt/fixed_uninit_data_vector.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fontdata/chromefontdata/chromefontdata.h"
@@ -55,7 +55,7 @@ FXFT_LibraryRec* FTLibraryInitHelper() {
 
 }  // namespace
 
-CFX_FontMgr::FontDesc::FontDesc(FixedUninitDataVector<uint8_t> data)
+CFX_FontMgr::FontDesc::FontDesc(FixedSizeDataVector<uint8_t> data)
     : m_pFontData(std::move(data)) {}
 
 CFX_FontMgr::FontDesc::~FontDesc() = default;
@@ -90,7 +90,7 @@ RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::AddCachedFontDesc(
     const ByteString& face_name,
     int weight,
     bool bItalic,
-    FixedUninitDataVector<uint8_t> data) {
+    FixedSizeDataVector<uint8_t> data) {
   auto pFontDesc = pdfium::MakeRetain<FontDesc>(std::move(data));
   m_FaceMap[{face_name, weight, bItalic}].Reset(pFontDesc.Get());
   return pFontDesc;
@@ -107,7 +107,7 @@ RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::GetCachedTTCFontDesc(
 RetainPtr<CFX_FontMgr::FontDesc> CFX_FontMgr::AddCachedTTCFontDesc(
     size_t ttc_size,
     uint32_t checksum,
-    FixedUninitDataVector<uint8_t> data) {
+    FixedSizeDataVector<uint8_t> data) {
   auto pNewDesc = pdfium::MakeRetain<FontDesc>(std::move(data));
   m_TTCFaceMap[{ttc_size, checksum}].Reset(pNewDesc.Get());
   return pNewDesc;

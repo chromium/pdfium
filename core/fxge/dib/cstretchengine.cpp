@@ -278,13 +278,13 @@ bool CStretchEngine::StartStretchHorz() {
   FX_SAFE_SIZE_T safe_size = m_SrcClip.Height();
   safe_size *= m_InterPitch;
   const size_t size = safe_size.ValueOrDefault(0);
-  if (size == 0)
+  if (size == 0) {
     return false;
-
-  m_InterBuf = FixedTryAllocZeroedDataVector<uint8_t>(size);
-  if (m_InterBuf.empty())
+  }
+  m_InterBuf = FixedSizeDataVector<uint8_t>::TryZeroed(size);
+  if (m_InterBuf.empty()) {
     return false;
-
+  }
   if (!m_WeightTable.CalculateWeights(
           m_DestWidth, m_DestClip.left, m_DestClip.right, m_SrcWidth,
           m_SrcClip.left, m_SrcClip.right, m_ResampleOptions)) {

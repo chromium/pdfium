@@ -27,7 +27,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "core/fxcrt/fixed_zeroed_data_vector.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 #include "third_party/base/check.h"
@@ -156,7 +156,7 @@ WideString CreateECCBlock(const WideString& codewords, size_t numECWords) {
   if (table >= kFactorTableNum)
     return WideString();
 
-  FixedZeroedDataVector<uint16_t> ecc(numECWords);
+  auto ecc = FixedSizeDataVector<uint16_t>::Zeroed(numECWords);
   pdfium::span<uint16_t> ecc_span = ecc.span();
   for (size_t i = 0; i < len; ++i) {
     uint16_t m = ecc_span[numECWords - 1] ^ codewords[i];

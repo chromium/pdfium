@@ -12,14 +12,14 @@
 
 #include "core/fpdfapi/page/cpdf_transferfuncdib.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
-#include "core/fxcrt/fixed_uninit_data_vector.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "third_party/base/check_op.h"
 
 CPDF_TransferFunc::CPDF_TransferFunc(bool bIdentify,
-                                     FixedUninitDataVector<uint8_t> samples_r,
-                                     FixedUninitDataVector<uint8_t> samples_g,
-                                     FixedUninitDataVector<uint8_t> samples_b)
+                                     FixedSizeDataVector<uint8_t> samples_r,
+                                     FixedSizeDataVector<uint8_t> samples_g,
+                                     FixedSizeDataVector<uint8_t> samples_b)
     : m_bIdentity(bIdentify),
       m_SamplesR(std::move(samples_r)),
       m_SamplesG(std::move(samples_g)),

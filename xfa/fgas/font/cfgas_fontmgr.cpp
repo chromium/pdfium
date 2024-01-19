@@ -16,7 +16,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/cfx_read_only_vector_stream.h"
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/fixed_uninit_data_vector.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
@@ -462,10 +462,10 @@ uint32_t GetFlags(const RetainPtr<CFX_Face>& face) {
 
 RetainPtr<IFX_SeekableReadStream> CreateFontStream(CFX_FontMapper* pFontMapper,
                                                    size_t index) {
-  FixedUninitDataVector<uint8_t> buffer = pFontMapper->RawBytesForIndex(index);
-  if (buffer.empty())
+  FixedSizeDataVector<uint8_t> buffer = pFontMapper->RawBytesForIndex(index);
+  if (buffer.empty()) {
     return nullptr;
-
+  }
   return pdfium::MakeRetain<CFX_ReadOnlyVectorStream>(std::move(buffer));
 }
 

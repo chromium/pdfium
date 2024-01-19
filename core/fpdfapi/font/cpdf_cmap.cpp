@@ -318,14 +318,15 @@ CPDF_CMap::CPDF_CMap(ByteStringView bsPredefinedName)
 }
 
 CPDF_CMap::CPDF_CMap(pdfium::span<const uint8_t> spEmbeddedData)
-    : m_DirectCharcodeToCIDTable(kDirectMapTableSize) {
+    : m_DirectCharcodeToCIDTable(
+          FixedSizeDataVector<uint16_t>::Zeroed(kDirectMapTableSize)) {
   CPDF_CMapParser parser(this);
   CPDF_SimpleParser syntax(spEmbeddedData);
   while (true) {
     ByteStringView word = syntax.GetWord();
-    if (word.IsEmpty())
+    if (word.IsEmpty()) {
       break;
-
+    }
     parser.ParseWord(word);
   }
 }

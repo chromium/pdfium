@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "core/fpdfapi/font/cpdf_cidfont.h"
-#include "core/fxcrt/fixed_zeroed_data_vector.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "third_party/base/containers/span.h"
@@ -96,7 +96,7 @@ class CPDF_CMap final : public Retainable {
   CIDCoding m_Coding = CIDCoding::kUNKNOWN;
   std::vector<bool> m_MixedTwoByteLeadingBytes;
   std::vector<CodeRange> m_MixedFourByteLeadingRanges;
-  FixedZeroedDataVector<uint16_t> m_DirectCharcodeToCIDTable;
+  FixedSizeDataVector<uint16_t> m_DirectCharcodeToCIDTable;
   std::vector<CIDRange> m_AdditionalCharcodeToCIDMappings;
   UnownedPtr<const fxcmap::CMap> m_pEmbedMap;
 };
