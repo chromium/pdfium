@@ -265,8 +265,8 @@ std::vector<ByteString> CPDF_Dictionary::GetKeys() const {
 }
 
 void CPDF_Dictionary::SetFor(const ByteString& key,
-                             RetainPtr<CPDF_Object> pObj) {
-  (void)SetForInternal(key, std::move(pObj));
+                             RetainPtr<CPDF_Object> object) {
+  (void)SetForInternal(key, std::move(object));
 }
 
 CPDF_Object* CPDF_Dictionary::SetForInternal(const ByteString& key,

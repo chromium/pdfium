@@ -11,6 +11,7 @@
 #include "core/fpdfapi/page/test_with_page_module.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_test_document.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -38,13 +39,17 @@ TEST_F(CPDFSimpleFontTest, BaseFontNameWithSubsetting) {
   CPDF_TestDocument doc;
 
   // The code being exercised requires valid font data.
-  auto font_file_stream = pdfium::MakeRetain<CPDF_Stream>(
+  auto font_file_stream = doc.NewIndirect<CPDF_Stream>(
       DataVector<uint8_t>(std::begin(kFoxitFixedFontData),
                           std::end(kFoxitFixedFontData)),
       pdfium::MakeRetain<CPDF_Dictionary>());
+  ASSERT_TRUE(font_file_stream);
+  const uint32_t stream_object_number = font_file_stream->GetObjNum();
+  ASSERT_GT(stream_object_number, 0u);
 
   auto font_descriptor_dict = pdfium::MakeRetain<CPDF_Dictionary>();
-  font_descriptor_dict->SetFor("FontFile", std::move(font_file_stream));
+  font_descriptor_dict->SetFor("FontFile", pdfium::MakeRetain<CPDF_Reference>(
+                                               &doc, stream_object_number));
 
   auto font_dict = pdfium::MakeRetain<CPDF_Dictionary>();
   font_dict->SetNewFor<CPDF_Name>("BaseFont", "CHEESE+Swiss");
