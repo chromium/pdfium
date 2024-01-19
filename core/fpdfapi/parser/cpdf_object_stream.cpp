@@ -21,8 +21,7 @@
 
 namespace {
 
-bool IsObjectStream(const CPDF_Object* object) {
-  const CPDF_Stream* stream = ToStream(object);
+bool IsObjectStream(const CPDF_Stream* stream) {
   if (!stream)
     return false;
 
