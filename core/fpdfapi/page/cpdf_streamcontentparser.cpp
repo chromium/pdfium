@@ -52,7 +52,7 @@ namespace {
 constexpr int kMaxFormLevel = 40;
 
 // Upper limit for the number of form XObjects within a form XObject.
-constexpr int kFormCountLimit = 4096;
+constexpr int kFormCountLimit = 8192;
 
 constexpr int kSingleCoordinatePair = 1;
 constexpr int kTensorCoordinatePairs = 16;
