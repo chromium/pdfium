@@ -587,7 +587,8 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
       }
 
       // `key` has to be "/X" at the minimum.
-      if (key.GetLength() > 1) {
+      // `pObj` cannot be a stream, per ISO 32000-1:2008 section 7.3.8.1.
+      if (key.GetLength() > 1 && !pObj->IsStream()) {
         pDict->SetFor(key.Substr(1), std::move(pObj));
       }
     }

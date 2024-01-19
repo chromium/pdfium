@@ -1,0 +1,51 @@
+%PDF-1.1
+1 0 obj
+<<
+	/Type /Catalog
+	/Pages 2 0 R
+>>
+endobj
+
+2 0 obj
+<<
+	/Type /Pages
+	/Count 1
+	/Kids [ 3 0 R ]
+>>
+endobj
+
+3 0 obj
+<<
+	/Type /Page
+	/Contents << /Length 47>>
+		stream
+		BT
+		/F1 50 Tf
+	 	40 500 Td
+		(direct content stream!!)Tj
+		ET
+		endstream
+	/Parent 2 0 R
+	/Resources <<
+		/Font <<
+			/F1 <<
+				/Type /Font
+				/Subtype /Type1
+				/BaseFont /Arial
+			>>
+		>>
+	>>
+>>
+endobj
+
+xref
+0 1
+0000000000 65535 f
+0000000010 00000 n
+
+trailer
+<<
+	/Root 1 0 R
+>>
+%%EOF
+

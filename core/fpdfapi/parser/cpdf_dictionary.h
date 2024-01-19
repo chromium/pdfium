@@ -106,7 +106,6 @@ class CPDF_Dictionary final : public CPDF_Object {
   // If `object` is null, then `key` is erased from the map. Otherwise, takes
   // ownership of `object` and stores in in the map. Invalidates iterators for
   // the element with the key `key`.
-  // TODO(crbug.com/pdfium/2119): Ensure `object` is not a `CPDF_Stream`.
   void SetFor(const ByteString& key, RetainPtr<CPDF_Object> object);
   // A stream must be indirect and added as a `CPDF_Reference` instead.
   void SetFor(const ByteString& key, RetainPtr<CPDF_Stream> stream) = delete;
