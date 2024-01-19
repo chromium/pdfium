@@ -55,14 +55,14 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
   ByteString okey = pEncrypt->GetByteStringFor("O");
   CRYPT_MD5Update(&md5, okey.raw_span());
   uint32_t perm = pEncrypt->GetIntegerFor("P");
-  CRYPT_MD5Update(&md5, pdfium::as_bytes(pdfium::make_span(&perm, 1u)));
+  CRYPT_MD5Update(&md5, pdfium::as_bytes(pdfium::span_from_ref(perm)));
   if (!file_id.IsEmpty())
     CRYPT_MD5Update(&md5, file_id.raw_span());
   const bool is_revision_3_or_greater = pEncrypt->GetIntegerFor("R") >= 3;
   if (!ignore_metadata && is_revision_3_or_greater &&
       !pEncrypt->GetBooleanFor("EncryptMetadata", true)) {
     constexpr uint32_t tag = 0xFFFFFFFF;
-    CRYPT_MD5Update(&md5, pdfium::as_bytes(pdfium::make_span(&tag, 1u)));
+    CRYPT_MD5Update(&md5, pdfium::as_bytes(pdfium::span_from_ref(tag)));
   }
   uint8_t digest[16];
   CRYPT_MD5Finish(&md5, digest);

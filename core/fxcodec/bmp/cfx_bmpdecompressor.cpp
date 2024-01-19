@@ -90,7 +90,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadHeader() {
 BmpDecoder::Status CFX_BmpDecompressor::ReadBmpHeader() {
   BmpFileHeader bmp_header;
   if (!ReadAllOrNone(
-          pdfium::as_writable_bytes(pdfium::make_span(&bmp_header, 1u)))) {
+          pdfium::as_writable_bytes(pdfium::span_from_ref(bmp_header)))) {
     return BmpDecoder::Status::kContinue;
   }
 
@@ -105,7 +105,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpHeader() {
 
   size_t pos = input_buffer_->GetPosition();
   if (!ReadAllOrNone(
-          pdfium::as_writable_bytes(pdfium::make_span(&img_ifh_size_, 1u)))) {
+          pdfium::as_writable_bytes(pdfium::span_from_ref(img_ifh_size_)))) {
     return BmpDecoder::Status::kContinue;
   }
   if (!input_buffer_->Seek(pos))
@@ -126,7 +126,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpHeaderIfh() {
     pal_type_ = PalType::kOld;
     BmpCoreHeader bmp_core_header;
     if (!ReadAllOrNone(pdfium::as_writable_bytes(
-            pdfium::make_span(&bmp_core_header, 1u)))) {
+            pdfium::span_from_ref(bmp_core_header)))) {
       return BmpDecoder::Status::kContinue;
     }
 
@@ -144,7 +144,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpHeaderIfh() {
   if (img_ifh_size_ == kBmpInfoHeaderSize) {
     BmpInfoHeader bmp_info_header;
     if (!ReadAllOrNone(pdfium::as_writable_bytes(
-            pdfium::make_span(&bmp_info_header, 1u)))) {
+            pdfium::span_from_ref(bmp_info_header)))) {
       return BmpDecoder::Status::kContinue;
     }
 
@@ -173,7 +173,7 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpHeaderIfh() {
   FX_SAFE_SIZE_T new_pos = input_buffer_->GetPosition();
   BmpInfoHeader bmp_info_header;
   if (!ReadAllOrNone(
-          pdfium::as_writable_bytes(pdfium::make_span(&bmp_info_header, 1u)))) {
+          pdfium::as_writable_bytes(pdfium::span_from_ref(bmp_info_header)))) {
     return BmpDecoder::Status::kContinue;
   }
 
@@ -461,13 +461,13 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
   uint8_t first_part;
   col_num_ = 0;
   while (true) {
-    if (!ReadAllOrNone(pdfium::make_span(&first_part, 1u))) {
+    if (!ReadAllOrNone(pdfium::span_from_ref(first_part))) {
       return BmpDecoder::Status::kContinue;
     }
 
     switch (first_part) {
       case kRleMarker: {
-        if (!ReadAllOrNone(pdfium::make_span(&first_part, 1u))) {
+        if (!ReadAllOrNone(pdfium::span_from_ref(first_part))) {
           return BmpDecoder::Status::kContinue;
         }
 
@@ -537,7 +537,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
           return BmpDecoder::Status::kFail;
 
         uint8_t second_part;
-        if (!ReadAllOrNone(pdfium::make_span(&second_part, 1u))) {
+        if (!ReadAllOrNone(pdfium::span_from_ref(second_part))) {
           return BmpDecoder::Status::kContinue;
         }
 
@@ -557,13 +557,13 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE4() {
   uint8_t first_part;
   col_num_ = 0;
   while (true) {
-    if (!ReadAllOrNone(pdfium::make_span(&first_part, 1u))) {
+    if (!ReadAllOrNone(pdfium::span_from_ref(first_part))) {
       return BmpDecoder::Status::kContinue;
     }
 
     switch (first_part) {
       case kRleMarker: {
-        if (!ReadAllOrNone(pdfium::make_span(&first_part, 1u))) {
+        if (!ReadAllOrNone(pdfium::span_from_ref(first_part))) {
           return BmpDecoder::Status::kContinue;
         }
 
@@ -646,7 +646,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE4() {
           first_part = avail_size - 1;
         }
         uint8_t second_part;
-        if (!ReadAllOrNone(pdfium::make_span(&second_part, 1u))) {
+        if (!ReadAllOrNone(pdfium::span_from_ref(second_part))) {
           return BmpDecoder::Status::kContinue;
         }
 

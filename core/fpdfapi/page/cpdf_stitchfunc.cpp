@@ -117,6 +117,6 @@ bool CPDF_StitchFunc::v_Call(pdfium::span<const float> inputs,
   input = Interpolate(input, m_bounds[i], m_bounds[i + 1], m_encode[i * 2],
                       m_encode[i * 2 + 1]);
   return m_pSubFunctions[i]
-      ->Call(pdfium::make_span(&input, 1u), results)
+      ->Call(pdfium::span_from_ref(input), results)
       .has_value();
 }

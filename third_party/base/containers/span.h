@@ -180,6 +180,7 @@ using EnableIfConstSpanCompatibleContainer =
 //
 // Additions beyond the C++ standard draft
 // - as_byte_span() function.
+// - span_from_ref() function.
 
 // [span], class template span
 template <typename T>
@@ -354,6 +355,14 @@ template <
     typename = internal::EnableIfConstSpanCompatibleContainer<Container, T>>
 constexpr span<T> make_span(const Container& container) {
   return span<T>(container);
+}
+
+// `span_from_ref` converts a reference to T into a span of length 1.  This is a
+// non-std helper that is inspired by the `std::slice::from_ref()` function from
+// Rust.
+template <typename T>
+static constexpr span<T> span_from_ref(T& single_object) noexcept {
+  return span<T>(&single_object, 1u);
 }
 
 // Convenience function for converting an object which is itself convertible

@@ -104,19 +104,19 @@ void BinaryBuffer::AppendString(const ByteString& str) {
 }
 
 void BinaryBuffer::AppendUint8(uint8_t value) {
-  AppendSpan({&value, 1u});
+  AppendSpan(pdfium::span_from_ref(value));
 }
 
 void BinaryBuffer::AppendUint16(uint16_t value) {
-  AppendSpan({reinterpret_cast<uint8_t*>(&value), sizeof(value)});
+  AppendSpan(pdfium::as_bytes(pdfium::span_from_ref(value)));
 }
 
 void BinaryBuffer::AppendUint32(uint32_t value) {
-  AppendSpan({reinterpret_cast<uint8_t*>(&value), sizeof(value)});
+  AppendSpan(pdfium::as_bytes(pdfium::span_from_ref(value)));
 }
 
 void BinaryBuffer::AppendDouble(double value) {
-  AppendSpan({reinterpret_cast<uint8_t*>(&value), sizeof(value)});
+  AppendSpan(pdfium::as_bytes(pdfium::span_from_ref(value)));
 }
 
 }  // namespace fxcrt
