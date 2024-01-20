@@ -214,16 +214,16 @@ void CPDF_Array::ConvertToIndirectObjectAt(size_t index,
   m_Objects[index] = m_Objects[index]->MakeReference(pHolder);
 }
 
-void CPDF_Array::SetAt(size_t index, RetainPtr<CPDF_Object> pObj) {
-  (void)SetAtInternal(index, std::move(pObj));
+void CPDF_Array::SetAt(size_t index, RetainPtr<CPDF_Object> object) {
+  (void)SetAtInternal(index, std::move(object));
 }
 
-void CPDF_Array::InsertAt(size_t index, RetainPtr<CPDF_Object> pObj) {
-  (void)InsertAtInternal(index, std::move(pObj));
+void CPDF_Array::InsertAt(size_t index, RetainPtr<CPDF_Object> object) {
+  (void)InsertAtInternal(index, std::move(object));
 }
 
-void CPDF_Array::Append(RetainPtr<CPDF_Object> pObj) {
-  (void)AppendInternal(std::move(pObj));
+void CPDF_Array::Append(RetainPtr<CPDF_Object> object) {
+  (void)AppendInternal(std::move(object));
 }
 
 CPDF_Object* CPDF_Array::SetAtInternal(size_t index,

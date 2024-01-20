@@ -117,19 +117,22 @@ class CPDF_Array final : public CPDF_Object {
         index, pdfium::MakeRetain<T>(m_pPool, std::forward<Args>(args)...))));
   }
 
-  // Adds non-null `pObj` to the end of the array, growing as appropriate.
-  void Append(RetainPtr<CPDF_Object> pObj);
+  // Adds non-null `object` to the end of the array, growing as appropriate.
+  void Append(RetainPtr<CPDF_Object> object);
+  void Append(RetainPtr<CPDF_Stream> stream) = delete;
 
-  // Overwrites the object at `index` with non-null `pObj`, if it is
-  // in bounds. Otherwise, `index` is out of bounds, and `pObj` is
+  // Overwrites the object at `index` with non-null `object`, if it is
+  // in bounds. Otherwise, `index` is out of bounds, and `object` is
   // not stored.
-  void SetAt(size_t index, RetainPtr<CPDF_Object> pObj);
+  void SetAt(size_t index, RetainPtr<CPDF_Object> object);
+  void SetAt(size_t index, RetainPtr<CPDF_Stream> stream) = delete;
 
-  // Inserts non-null `pObj` at `index` and shifts by one position all of the
+  // Inserts non-null `object` at `index` and shifts by one position all of the
   // objects beyond it like std::vector::insert(), if `index` is less than or
   // equal to the current array size. Otherwise, `index` is out of bounds,
-  // and `pObj` is not stored.
-  void InsertAt(size_t index, RetainPtr<CPDF_Object> pObj);
+  // and `object` is not stored.
+  void InsertAt(size_t index, RetainPtr<CPDF_Object> object);
+  void InsertAt(size_t index, RetainPtr<CPDF_Stream> stream) = delete;
 
   void Clear();
   void RemoveAt(size_t index);

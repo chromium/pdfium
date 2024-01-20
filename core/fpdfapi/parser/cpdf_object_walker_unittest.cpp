@@ -64,26 +64,36 @@ TEST(ObjectWalkerTest, Simple) {
 }
 
 TEST(ObjectWalkerTest, CombinedObject) {
+  CPDF_IndirectObjectHolder holder;
   auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
   dict->SetFor("1", pdfium::MakeRetain<CPDF_String>());
   dict->SetFor("2", pdfium::MakeRetain<CPDF_Boolean>());
   auto array = pdfium::MakeRetain<CPDF_Array>();
   array->Append(pdfium::MakeRetain<CPDF_Reference>(nullptr, 0));
   array->Append(pdfium::MakeRetain<CPDF_Null>());
+  auto stream =
+      holder.NewIndirect<CPDF_Stream>(pdfium::MakeRetain<CPDF_Dictionary>());
+  ASSERT_TRUE(stream);
+  const uint32_t stream_object_number = stream->GetObjNum();
+  ASSERT_GT(stream_object_number, 0u);
   array->Append(
-      pdfium::MakeRetain<CPDF_Stream>(pdfium::MakeRetain<CPDF_Dictionary>()));
+      pdfium::MakeRetain<CPDF_Reference>(&holder, stream_object_number));
   dict->SetFor("3", std::move(array));
-  // The last number for stream length.
-  EXPECT_EQ(Walk(dict), "Dict Str Bool Arr Ref Null Stream Dict Num");
+  EXPECT_EQ(Walk(dict), "Dict Str Bool Arr Ref Null Ref");
 }
 
 TEST(ObjectWalkerTest, GetParent) {
+  CPDF_IndirectObjectHolder holder;
   auto level_4 = pdfium::MakeRetain<CPDF_Number>(0);
   auto level_3 = pdfium::MakeRetain<CPDF_Dictionary>();
   level_3->SetFor("Length", std::move(level_4));
-  auto level_2 = pdfium::MakeRetain<CPDF_Stream>(std::move(level_3));
+  auto level_2 = holder.NewIndirect<CPDF_Stream>(std::move(level_3));
+  ASSERT_TRUE(level_2);
+  const uint32_t level_2_object_number = level_2->GetObjNum();
+  ASSERT_GT(level_2_object_number, 0u);
   auto level_1 = pdfium::MakeRetain<CPDF_Array>();
-  level_1->Append(std::move(level_2));
+  level_1->Append(
+      pdfium::MakeRetain<CPDF_Reference>(&holder, level_2_object_number));
   auto level_0 = pdfium::MakeRetain<CPDF_Dictionary>();
   level_0->SetFor("Array", std::move(level_1));
 
