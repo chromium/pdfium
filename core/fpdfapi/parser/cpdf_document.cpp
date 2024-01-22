@@ -383,8 +383,9 @@ JBig2_DocumentContext* CPDF_Document::GetOrCreateCodecContext() {
   return m_pCodecContext.get();
 }
 
-RetainPtr<CPDF_Stream> CPDF_Document::CreateModifiedAPStream() {
-  auto stream = NewIndirect<CPDF_Stream>();
+RetainPtr<CPDF_Stream> CPDF_Document::CreateModifiedAPStream(
+    RetainPtr<CPDF_Dictionary> dict) {
+  auto stream = NewIndirect<CPDF_Stream>(std::move(dict));
   m_ModifiedAPStreamIDs.insert(stream->GetObjNum());
   return stream;
 }

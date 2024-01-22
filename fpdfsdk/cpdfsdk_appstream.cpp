@@ -1821,48 +1821,44 @@ void CPDFSDK_AppStream::AddImage(const ByteString& sAPType,
 void CPDFSDK_AppStream::Write(const ByteString& sAPType,
                               const ByteString& sContents,
                               const ByteString& sAPState) {
-  RetainPtr<CPDF_Dictionary> pParentDict;
+  RetainPtr<CPDF_Dictionary> parent_dict;
   ByteString key;
   if (sAPState.IsEmpty()) {
-    pParentDict = dict_;
+    parent_dict = dict_;
     key = sAPType;
   } else {
-    pParentDict = dict_->GetOrCreateDictFor(sAPType);
+    parent_dict = dict_->GetOrCreateDictFor(sAPType);
     key = sAPState;
   }
 
-  RetainPtr<CPDF_Dictionary> pOrigStreamDict;
-
-  // If `pStream` is created by CreateModifiedAPStream(), then it is safe to
+  // If `stream` is created by CreateModifiedAPStream(), then it is safe to
   // edit, as it is not shared.
-  RetainPtr<CPDF_Stream> pStream = pParentDict->GetMutableStreamFor(key);
+  RetainPtr<CPDF_Stream> stream = parent_dict->GetMutableStreamFor(key);
   CPDF_Document* doc = widget_->GetPageView()->GetPDFDocument();
-  if (!doc->IsModifiedAPStream(pStream.Get())) {
-    if (pStream)
-      pOrigStreamDict = pStream->GetMutableDict();
-    pStream.Reset(doc->CreateModifiedAPStream());
-    pParentDict->SetNewFor<CPDF_Reference>(key, doc, pStream->GetObjNum());
-  }
+  if (!doc->IsModifiedAPStream(stream.Get())) {
+    auto new_stream_dict = doc->New<CPDF_Dictionary>();
+    new_stream_dict->SetNewFor<CPDF_Name>("Type", "XObject");
+    new_stream_dict->SetNewFor<CPDF_Name>("Subtype", "Form");
+    new_stream_dict->SetNewFor<CPDF_Number>("FormType", 1);
 
-  RetainPtr<CPDF_Dictionary> pStreamDict = pStream->GetMutableDict();
-  if (!pStreamDict) {
-    pStreamDict = doc->New<CPDF_Dictionary>();
-    pStreamDict->SetNewFor<CPDF_Name>("Type", "XObject");
-    pStreamDict->SetNewFor<CPDF_Name>("Subtype", "Form");
-    pStreamDict->SetNewFor<CPDF_Number>("FormType", 1);
-
-    if (pOrigStreamDict) {
-      RetainPtr<const CPDF_Dictionary> pResources =
-          pOrigStreamDict->GetDictFor("Resources");
-      if (pResources)
-        pStreamDict->SetFor("Resources", pResources->Clone());
+    if (stream) {
+      RetainPtr<const CPDF_Dictionary> original_stream_dict = stream->GetDict();
+      if (original_stream_dict) {
+        RetainPtr<const CPDF_Dictionary> resources_dict =
+            original_stream_dict->GetDictFor("Resources");
+        if (resources_dict) {
+          new_stream_dict->SetFor("Resources", resources_dict->Clone());
+        }
+      }
     }
-
-    pStream->InitStreamWithEmptyData(pStreamDict);
+    stream = doc->CreateModifiedAPStream(std::move(new_stream_dict));
+    parent_dict->SetNewFor<CPDF_Reference>(key, doc, stream->GetObjNum());
   }
-  pStreamDict->SetMatrixFor("Matrix", widget_->GetMatrix());
-  pStreamDict->SetRectFor("BBox", widget_->GetRotatedRect());
-  pStream->SetDataAndRemoveFilter(sContents.raw_span());
+
+  RetainPtr<CPDF_Dictionary> stream_dict = stream->GetMutableDict();
+  stream_dict->SetMatrixFor("Matrix", widget_->GetMatrix());
+  stream_dict->SetRectFor("BBox", widget_->GetRotatedRect());
+  stream->SetDataAndRemoveFilter(sContents.raw_span());
 }
 
 void CPDFSDK_AppStream::Remove(ByteStringView sAPType) {

@@ -129,8 +129,10 @@ class CPDF_Document : public Observable,
     m_pLinksContext = std::move(pContext);
   }
 
-  // Behaves like NewIndirect<CPDF_Stream>(), but keeps track of the new stream.
-  RetainPtr<CPDF_Stream> CreateModifiedAPStream();
+  // Behaves like NewIndirect<CPDF_Stream>(dict), but keeps track of the object
+  // number assigned to the newly created stream.
+  RetainPtr<CPDF_Stream> CreateModifiedAPStream(
+      RetainPtr<CPDF_Dictionary> dict);
 
   // Returns whether CreateModifiedAPStream() created `stream`.
   bool IsModifiedAPStream(const CPDF_Stream* stream) const;

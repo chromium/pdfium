@@ -83,11 +83,6 @@ CPDF_Stream* CPDF_Stream::AsMutableStream() {
   return this;
 }
 
-void CPDF_Stream::InitStreamWithEmptyData(RetainPtr<CPDF_Dictionary> pDict) {
-  dict_ = std::move(pDict);
-  TakeData({});
-}
-
 void CPDF_Stream::InitStreamFromFile(RetainPtr<IFX_SeekableReadStream> pFile,
                                      RetainPtr<CPDF_Dictionary> pDict) {
   data_ = pFile;
