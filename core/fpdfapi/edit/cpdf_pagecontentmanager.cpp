@@ -92,8 +92,7 @@ RetainPtr<CPDF_Stream> CPDF_PageContentManager::GetStreamByIndex(
 }
 
 size_t CPDF_PageContentManager::AddStream(fxcrt::ostringstream* buf) {
-  auto new_stream = document_->NewIndirect<CPDF_Stream>();
-  new_stream->SetDataFromStringstream(buf);
+  auto new_stream = document_->NewIndirect<CPDF_Stream>(buf);
 
   // If there is one Content stream (not in an array), now there will be two, so
   // create an array with the old and the new one. The new one's index is 1.
@@ -146,8 +145,7 @@ void CPDF_PageContentManager::UpdateStream(size_t stream_index,
   }
 
   if (GetContentsStream()) {
-    auto new_stream = document_->NewIndirect<CPDF_Stream>();
-    new_stream->SetDataFromStringstream(buf);
+    auto new_stream = document_->NewIndirect<CPDF_Stream>(buf);
     RetainPtr<CPDF_Dictionary> page_dict = page_obj_holder_->GetMutableDict();
     page_dict->SetNewFor<CPDF_Reference>("Contents", document_,
                                          new_stream->GetObjNum());
@@ -164,8 +162,7 @@ void CPDF_PageContentManager::UpdateStream(size_t stream_index,
     return;
   }
 
-  auto new_stream = document_->NewIndirect<CPDF_Stream>();
-  new_stream->SetDataFromStringstream(buf);
+  auto new_stream = document_->NewIndirect<CPDF_Stream>(buf);
   stream_reference->SetRef(document_, new_stream->GetObjNum());
 }
 

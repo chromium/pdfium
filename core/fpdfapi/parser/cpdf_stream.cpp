@@ -38,12 +38,29 @@ bool IsMetaDataStreamDictionary(const CPDF_Dictionary* dict) {
 
 CPDF_Stream::CPDF_Stream() = default;
 
-CPDF_Stream::CPDF_Stream(RetainPtr<CPDF_Dictionary> pDict)
-    : CPDF_Stream(DataVector<uint8_t>(), std::move(pDict)) {}
+CPDF_Stream::CPDF_Stream(RetainPtr<CPDF_Dictionary> dict)
+    : CPDF_Stream(DataVector<uint8_t>(), std::move(dict)) {}
 
-CPDF_Stream::CPDF_Stream(DataVector<uint8_t> pData,
-                         RetainPtr<CPDF_Dictionary> pDict)
-    : data_(std::move(pData)), dict_(std::move(pDict)) {
+CPDF_Stream::CPDF_Stream(pdfium::span<const uint8_t> span)
+    : dict_(pdfium::MakeRetain<CPDF_Dictionary>()) {
+  SetData(span);
+}
+
+CPDF_Stream::CPDF_Stream(fxcrt::ostringstream* stream)
+    : dict_(pdfium::MakeRetain<CPDF_Dictionary>()) {
+  SetDataFromStringstream(stream);
+}
+
+CPDF_Stream::CPDF_Stream(RetainPtr<IFX_SeekableReadStream> file,
+                         RetainPtr<CPDF_Dictionary> dict)
+    : data_(std::move(file)), dict_(std::move(dict)) {
+  SetLengthInDict(pdfium::base::checked_cast<int>(
+      absl::get<RetainPtr<IFX_SeekableReadStream>>(data_)->GetSize()));
+}
+
+CPDF_Stream::CPDF_Stream(DataVector<uint8_t> data,
+                         RetainPtr<CPDF_Dictionary> dict)
+    : data_(std::move(data)), dict_(std::move(dict)) {
   SetLengthInDict(pdfium::base::checked_cast<int>(
       absl::get<DataVector<uint8_t>>(data_).size()));
 }

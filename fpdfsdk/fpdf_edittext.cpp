@@ -125,15 +125,14 @@ RetainPtr<CPDF_Dictionary> LoadFontDesc(CPDF_Document* pDoc,
   pFontDesc->SetNewFor<CPDF_Number>("CapHeight", pFont->GetAscent());
   pFontDesc->SetNewFor<CPDF_Number>("StemV", pFont->IsBold() ? 120 : 70);
 
-  auto pStream = pDoc->NewIndirect<CPDF_Stream>();
-  pStream->SetData(span);
+  auto stream = pDoc->NewIndirect<CPDF_Stream>(span);
   // TODO(npm): Lengths for Type1 fonts.
   if (font_type == FPDF_FONT_TRUETYPE) {
-    pStream->GetMutableDict()->SetNewFor<CPDF_Number>(
+    stream->GetMutableDict()->SetNewFor<CPDF_Number>(
         "Length1", static_cast<int>(span.size()));
   }
   ByteString fontFile = font_type == FPDF_FONT_TYPE1 ? "FontFile" : "FontFile2";
-  pFontDesc->SetNewFor<CPDF_Reference>(fontFile, pDoc, pStream->GetObjNum());
+  pFontDesc->SetNewFor<CPDF_Reference>(fontFile, pDoc, stream->GetObjNum());
   return pFontDesc;
 }
 
@@ -289,8 +288,7 @@ RetainPtr<CPDF_Stream> LoadUnicode(
   buffer << "endbfrange\n";
   buffer << ToUnicodeEnd;
   // TODO(npm): Encrypt / Compress?
-  auto stream = pDoc->NewIndirect<CPDF_Stream>();
-  stream->SetDataFromStringstream(&buffer);
+  auto stream = pDoc->NewIndirect<CPDF_Stream>(&buffer);
   return stream;
 }
 

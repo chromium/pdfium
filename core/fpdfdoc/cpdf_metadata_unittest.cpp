@@ -15,8 +15,8 @@ TEST(CPDF_MetadataTest, CheckSharedFormEmailAtTopLevel) {
       "<adhocwf:version>1.1</adhocwf:version>\n"
       "</node>";
 
-  auto stream = pdfium::MakeRetain<CPDF_Stream>();
-  stream->SetData(ByteStringView(data).raw_span());
+  auto stream =
+      pdfium::MakeRetain<CPDF_Stream>(ByteStringView(data).raw_span());
   CPDF_Metadata metadata(stream);
 
   auto results = metadata.CheckForSharedForm();
@@ -32,8 +32,8 @@ TEST(CPDF_MetadataTest, CheckSharedFormAcrobatAtTopLevel) {
       "<adhocwf:version>1.1</adhocwf:version>\n"
       "</node>";
 
-  auto stream = pdfium::MakeRetain<CPDF_Stream>();
-  stream->SetData(ByteStringView(data).raw_span());
+  auto stream =
+      pdfium::MakeRetain<CPDF_Stream>(ByteStringView(data).raw_span());
   CPDF_Metadata metadata(stream);
 
   auto results = metadata.CheckForSharedForm();
@@ -49,8 +49,8 @@ TEST(CPDF_MetadataTest, CheckSharedFormFilesystemAtTopLevel) {
       "<adhocwf:version>1.1</adhocwf:version>\n"
       "</node>";
 
-  auto stream = pdfium::MakeRetain<CPDF_Stream>();
-  stream->SetData(ByteStringView(data).raw_span());
+  auto stream =
+      pdfium::MakeRetain<CPDF_Stream>(ByteStringView(data).raw_span());
   CPDF_Metadata metadata(stream);
 
   auto results = metadata.CheckForSharedForm();
@@ -66,8 +66,8 @@ TEST(CPDF_MetadataTest, CheckSharedFormWithoutWorkflow) {
       "<adhocwf:version>1.1</adhocwf:version>\n"
       "</node>";
 
-  auto stream = pdfium::MakeRetain<CPDF_Stream>();
-  stream->SetData(ByteStringView(data).raw_span());
+  auto stream =
+      pdfium::MakeRetain<CPDF_Stream>(ByteStringView(data).raw_span());
   CPDF_Metadata metadata(stream);
 
   auto results = metadata.CheckForSharedForm();
@@ -84,8 +84,8 @@ TEST(CPDF_MetadataTest, CheckSharedFormAsChild) {
       "</node>"
       "</parent></grandparent>";
 
-  auto stream = pdfium::MakeRetain<CPDF_Stream>();
-  stream->SetData(ByteStringView(data).raw_span());
+  auto stream =
+      pdfium::MakeRetain<CPDF_Stream>(ByteStringView(data).raw_span());
   CPDF_Metadata metadata(stream);
 
   auto results = metadata.CheckForSharedForm();
@@ -98,8 +98,8 @@ TEST(CPDF_MetadataTest, CheckSharedFormAsNoAdhoc) {
       "<?xml charset=\"utf-8\"?>\n"
       "<node></node>";
 
-  auto stream = pdfium::MakeRetain<CPDF_Stream>();
-  stream->SetData(ByteStringView(data).raw_span());
+  auto stream =
+      pdfium::MakeRetain<CPDF_Stream>(ByteStringView(data).raw_span());
   CPDF_Metadata metadata(stream);
 
   auto results = metadata.CheckForSharedForm();
@@ -131,8 +131,8 @@ TEST(CPDF_MetadataTest, CheckSharedFormExceedMaxDepth) {
       "</node>"
       "</parent>";
 
-  auto stream = pdfium::MakeRetain<CPDF_Stream>();
-  stream->SetData(ByteStringView(kData).raw_span());
+  auto stream =
+      pdfium::MakeRetain<CPDF_Stream>(ByteStringView(kData).raw_span());
   CPDF_Metadata metadata(stream);
 
   auto results = metadata.CheckForSharedForm();
@@ -147,8 +147,8 @@ TEST(CPDF_MetadataTest, CheckSharedFormWrongNamespace) {
       "<adhocwf:version>1.1</adhocwf:version>\n"
       "</node>";
 
-  auto stream = pdfium::MakeRetain<CPDF_Stream>();
-  stream->SetData(ByteStringView(data).raw_span());
+  auto stream =
+      pdfium::MakeRetain<CPDF_Stream>(ByteStringView(data).raw_span());
   CPDF_Metadata metadata(stream);
 
   auto results = metadata.CheckForSharedForm();
@@ -177,8 +177,8 @@ TEST(CPDF_MetadataTest, CheckSharedFormMultipleErrors) {
       "</node3>"
       "</grandparent>";
 
-  auto stream = pdfium::MakeRetain<CPDF_Stream>();
-  stream->SetData(ByteStringView(data).raw_span());
+  auto stream =
+      pdfium::MakeRetain<CPDF_Stream>(ByteStringView(data).raw_span());
   CPDF_Metadata metadata(stream);
 
   auto results = metadata.CheckForSharedForm();

@@ -16,7 +16,6 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fxcrt/data_vector.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 
@@ -176,10 +175,9 @@ TEST(cpdf_filespec, GetFileStream) {
       dict_obj->SetNewFor<CPDF_String>(keys[i], file_name);
 
       // Set the file stream.
-      size_t buf_len = strlen(streams[i]) + 1;
-      auto stream_object = object_holder.NewIndirect<CPDF_Stream>(
-          DataVector<uint8_t>(streams[i], streams[i] + buf_len),
-          pdfium::MakeRetain<CPDF_Dictionary>());
+      auto stream_object =
+          object_holder.NewIndirect<CPDF_Stream>(pdfium::as_bytes(
+              pdfium::make_span(streams[i], strlen(streams[i]) + 1)));
       ASSERT_TRUE(stream_object);
       const uint32_t stream_object_number = stream_object->GetObjNum();
       ASSERT_GT(stream_object_number, 0u);
@@ -219,9 +217,8 @@ TEST(cpdf_filespec, GetParamsDict) {
     // Add a file stream to the embedded files dictionary.
     RetainPtr<CPDF_Dictionary> file_dict = dict_obj->GetMutableDictFor("EF");
     static constexpr char kHello[] = "hello";
-    auto stream_object = object_holder.NewIndirect<CPDF_Stream>(
-        DataVector<uint8_t>(std::begin(kHello), std::end(kHello)),
-        pdfium::MakeRetain<CPDF_Dictionary>());
+    auto stream_object =
+        object_holder.NewIndirect<CPDF_Stream>(pdfium::as_byte_span(kHello));
     ASSERT_TRUE(stream_object);
     const uint32_t stream_object_number = stream_object->GetObjNum();
     ASSERT_GT(stream_object_number, 0u);

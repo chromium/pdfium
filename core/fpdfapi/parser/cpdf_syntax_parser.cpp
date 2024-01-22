@@ -785,11 +785,11 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     }
   }
 
-  RetainPtr<CPDF_Stream> pStream;
+  RetainPtr<CPDF_Stream> stream;
   if (substream) {
     // It is unclear from CPDF_SyntaxParser's perspective what object
     // `substream` is ultimately holding references to. To avoid unexpectedly
-    // changing object lifetimes by handing `substream` to `pStream`, make a
+    // changing object lifetimes by handing `substream` to `stream`, make a
     // copy of the data here.
     auto data = FixedSizeDataVector<uint8_t>::Uninit(substream->GetSize());
     bool did_read = substream->ReadBlockAtOffset(data.span(), 0);
@@ -797,11 +797,11 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     auto data_as_stream =
         pdfium::MakeRetain<CFX_ReadOnlyVectorStream>(std::move(data));
 
-    pStream = pdfium::MakeRetain<CPDF_Stream>();
-    pStream->InitStreamFromFile(std::move(data_as_stream), std::move(pDict));
+    stream = pdfium::MakeRetain<CPDF_Stream>(std::move(data_as_stream),
+                                             std::move(pDict));
   } else {
     DCHECK(!len);
-    pStream = pdfium::MakeRetain<CPDF_Stream>(std::move(pDict));
+    stream = pdfium::MakeRetain<CPDF_Stream>(std::move(pDict));
   }
   const FX_FILESIZE end_stream_offset = GetPos();
   memset(m_WordBuffer, 0, kEndObjStr.GetLength() + 1);
@@ -821,7 +821,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
       memcmp(m_WordBuffer, kEndObjStr.raw_str(), kEndObjStr.GetLength()) == 0) {
     SetPos(end_stream_offset);
   }
-  return pStream;
+  return stream;
 }
 
 uint32_t CPDF_SyntaxParser::GetDirectNum() {

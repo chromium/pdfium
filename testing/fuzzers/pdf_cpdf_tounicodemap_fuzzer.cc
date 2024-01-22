@@ -28,8 +28,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   std::vector<uint8_t> remaining =
       data_provider.ConsumeRemainingBytes<uint8_t>();
-  auto stream = pdfium::MakeRetain<CPDF_Stream>();
-  stream->SetData(remaining);
+  auto stream = pdfium::MakeRetain<CPDF_Stream>(remaining);
 
   auto to_unicode_map = std::make_unique<CPDF_ToUnicodeMap>(std::move(stream));
   to_unicode_map->Lookup(charcode_to_lookup);
