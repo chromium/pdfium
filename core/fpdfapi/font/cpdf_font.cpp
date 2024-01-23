@@ -31,10 +31,8 @@
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/cfx_substfont.h"
-#include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/base/check.h"
-#include "third_party/base/numerics/clamped_math.h"
 
 namespace {
 
@@ -404,18 +402,6 @@ CFX_Font* CPDF_Font::GetFontFallback(int position) {
   if (position < 0 || static_cast<size_t>(position) >= m_FontFallbacks.size())
     return nullptr;
   return m_FontFallbacks[position].get();
-}
-
-// static
-FX_RECT CPDF_Font::GetCharBBoxForFace(const RetainPtr<CFX_Face>& face) {
-  FXFT_FaceRec* rec = face->GetRec();
-  pdfium::base::ClampedNumeric<FT_Pos> left = FXFT_Get_Glyph_HoriBearingX(rec);
-  pdfium::base::ClampedNumeric<FT_Pos> top = FXFT_Get_Glyph_HoriBearingY(rec);
-  const uint16_t upem = face->GetUnitsPerEm();
-  return FX_RECT(NormalizeFontMetric(left, upem),
-                 NormalizeFontMetric(top, upem),
-                 NormalizeFontMetric(left + FXFT_Get_Glyph_Width(rec), upem),
-                 NormalizeFontMetric(top - FXFT_Get_Glyph_Height(rec), upem));
 }
 
 // static

@@ -22,7 +22,6 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_font.h"
-#include "core/fxge/freetype/fx_freetype.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CFX_DIBitmap;
@@ -138,8 +137,6 @@ class CPDF_Font : public Retainable, public Observable {
  protected:
   CPDF_Font(CPDF_Document* pDocument, RetainPtr<CPDF_Dictionary> pFontDict);
   ~CPDF_Font() override;
-
-  static FX_RECT GetCharBBoxForFace(const RetainPtr<CFX_Face>& face);
 
   // Commonly used wrappers for UseTTCharmap().
   static bool UseTTCharmapMSUnicode(const RetainPtr<CFX_Face>& face) {

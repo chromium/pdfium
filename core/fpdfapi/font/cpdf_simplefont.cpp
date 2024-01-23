@@ -88,7 +88,7 @@ void CPDF_SimpleFont::LoadCharMetrics(int charcode) {
   if (err)
     return;
 
-  m_CharBBox[charcode] = GetCharBBoxForFace(face);
+  m_CharBBox[charcode] = face->GetGlyphBBox();
 
   if (m_bUseFontWidth) {
     int TT_Width = NormalizeFontMetric(FXFT_Get_Glyph_HoriAdvance(face_rec),
