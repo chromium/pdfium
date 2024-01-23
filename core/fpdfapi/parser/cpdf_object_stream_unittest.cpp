@@ -80,11 +80,11 @@ TEST(ObjectStreamTest, StreamDictNormal) {
   EXPECT_FALSE(obj_stream->ParseObject(&holder, 12, 3));
 }
 
-TEST(ObjectStreamTest, StreamNoDict) {
+TEST(ObjectStreamTest, StreamEmptyDict) {
   ByteStringView contents_view(kNormalStreamContent);
   auto stream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(contents_view.begin(), contents_view.end()),
-      /*pDict=*/nullptr);
+      pdfium::MakeRetain<CPDF_Dictionary>());
   EXPECT_FALSE(CPDF_ObjectStream::Create(std::move(stream)));
 }
 

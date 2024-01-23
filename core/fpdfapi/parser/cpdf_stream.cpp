@@ -23,6 +23,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/span_util.h"
+#include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
@@ -52,6 +53,7 @@ CPDF_Stream::CPDF_Stream(fxcrt::ostringstream* stream)
 CPDF_Stream::CPDF_Stream(RetainPtr<IFX_SeekableReadStream> file,
                          RetainPtr<CPDF_Dictionary> dict)
     : data_(std::move(file)), dict_(std::move(dict)) {
+  CHECK(dict_);
   SetLengthInDict(pdfium::base::checked_cast<int>(
       absl::get<RetainPtr<IFX_SeekableReadStream>>(data_)->GetSize()));
 }
@@ -59,14 +61,16 @@ CPDF_Stream::CPDF_Stream(RetainPtr<IFX_SeekableReadStream> file,
 CPDF_Stream::CPDF_Stream(DataVector<uint8_t> data,
                          RetainPtr<CPDF_Dictionary> dict)
     : data_(std::move(data)), dict_(std::move(dict)) {
+  CHECK(dict_);
   SetLengthInDict(pdfium::base::checked_cast<int>(
       absl::get<DataVector<uint8_t>>(data_).size()));
 }
 
 CPDF_Stream::~CPDF_Stream() {
   m_ObjNum = kInvalidObjNum;
-  if (dict_ && dict_->GetObjNum() == kInvalidObjNum)
+  if (dict_->GetObjNum() == kInvalidObjNum) {
     dict_.Leak();  // lowercase release, release ownership.
+  }
 }
 
 CPDF_Object::Type CPDF_Stream::GetType() const {
@@ -161,7 +165,7 @@ DataVector<uint8_t> CPDF_Stream::ReadAllRawData() const {
 }
 
 bool CPDF_Stream::HasFilter() const {
-  return dict_ && dict_->KeyExist("Filter");
+  return dict_->KeyExist("Filter");
 }
 
 WideString CPDF_Stream::GetUnicodeText() const {
@@ -209,7 +213,5 @@ pdfium::span<const uint8_t> CPDF_Stream::GetInMemoryRawData() const {
 }
 
 void CPDF_Stream::SetLengthInDict(int length) {
-  if (!dict_)
-    dict_ = pdfium::MakeRetain<CPDF_Dictionary>();
   dict_->SetNewFor<CPDF_Number>("Length", length);
 }
