@@ -35,7 +35,6 @@
 #include "core/fxge/fx_font.h"
 #include "third_party/base/check.h"
 #include "third_party/base/numerics/clamped_math.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -405,16 +404,6 @@ CFX_Font* CPDF_Font::GetFontFallback(int position) {
   if (position < 0 || static_cast<size_t>(position) >= m_FontFallbacks.size())
     return nullptr;
   return m_FontFallbacks[position].get();
-}
-
-// static
-int CPDF_Font::NormalizeFontMetric(int64_t value, uint16_t upem) {
-  if (upem == 0) {
-    return pdfium::base::saturated_cast<int>(value);
-  }
-
-  const double scaled_value = (value * 1000.0 + upem / 2) / upem;
-  return pdfium::base::saturated_cast<int>(scaled_value);
 }
 
 // static

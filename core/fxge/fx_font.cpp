@@ -4,6 +4,8 @@
 
 #include "core/fxge/fx_font.h"
 
+#include <stdint.h>
+
 #include <algorithm>
 
 #include "core/fxcrt/fx_safe_types.h"
@@ -13,6 +15,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/text_glyph_pos.h"
+#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -143,4 +146,13 @@ ByteString AdobeNameFromUnicode(wchar_t unicode) {
   char glyph_name[64];
   FXFT_adobe_name_from_unicode(glyph_name, unicode);
   return ByteString(glyph_name);
+}
+
+int NormalizeFontMetric(int64_t value, uint16_t upem) {
+  if (upem == 0) {
+    return pdfium::base::saturated_cast<int>(value);
+  }
+
+  const double scaled_value = (value * 1000.0 + upem / 2) / upem;
+  return pdfium::base::saturated_cast<int>(scaled_value);
 }

@@ -7,6 +7,8 @@
 #ifndef CORE_FXGE_FX_FONT_H_
 #define CORE_FXGE_FX_FONT_H_
 
+#include <stdint.h>
+
 #include <vector>
 
 #include "core/fxcrt/bytestring.h"
@@ -93,5 +95,11 @@ inline bool FontFamilyIsScript(int32_t family) {
 
 wchar_t UnicodeFromAdobeName(const char* name);
 ByteString AdobeNameFromUnicode(wchar_t unicode);
+
+// Take a font metric `value` and scale it down by the font's `upem`. If the
+// font is not scalable, i.e. `upem` is 0, then return `value` as is.
+// If the computed result is excessively large and does not fit in an int,
+// NormalizeFontMetric() handles that with `saturated_cast()`.
+int NormalizeFontMetric(int64_t value, uint16_t upem);
 
 #endif  // CORE_FXGE_FX_FONT_H_

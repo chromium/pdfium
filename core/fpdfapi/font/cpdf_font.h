@@ -139,11 +139,6 @@ class CPDF_Font : public Retainable, public Observable {
   CPDF_Font(CPDF_Document* pDocument, RetainPtr<CPDF_Dictionary> pFontDict);
   ~CPDF_Font() override;
 
-  // Take a font metric `value` and scale it down by the font's `upem`. If the
-  // font is not scalable, i.e. `upem` is 0, then return `value` as is.
-  // If the computed result is excessively large and does not fit in an int,
-  // NormalizeFontMetric() handles that with `saturated_cast()`.
-  static int NormalizeFontMetric(int64_t value, uint16_t upem);
   static FX_RECT GetCharBBoxForFace(const RetainPtr<CFX_Face>& face);
 
   // Commonly used wrappers for UseTTCharmap().
