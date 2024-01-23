@@ -148,7 +148,7 @@ const char ToUnicodeStart[] =
     "/CMapName /Adobe-Identity-H def\n"
     "CMapType 2 def\n"
     "1 begincodespacerange\n"
-    "<0000> <FFFFF>\n"
+    "<0000> <FFFF>\n"
     "endcodespacerange\n";
 
 const char ToUnicodeEnd[] =
