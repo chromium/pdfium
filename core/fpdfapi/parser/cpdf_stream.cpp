@@ -36,8 +36,6 @@ bool IsMetaDataStreamDictionary(const CPDF_Dictionary* dict) {
 
 }  // namespace
 
-CPDF_Stream::CPDF_Stream() = default;
-
 CPDF_Stream::CPDF_Stream(RetainPtr<CPDF_Dictionary> dict)
     : CPDF_Stream(DataVector<uint8_t>(), std::move(dict)) {}
 
@@ -202,10 +200,7 @@ size_t CPDF_Stream::GetRawSize() const {
     return pdfium::base::checked_cast<size_t>(
         absl::get<RetainPtr<IFX_SeekableReadStream>>(data_)->GetSize());
   }
-  if (IsMemoryBased())
-    return absl::get<DataVector<uint8_t>>(data_).size();
-  DCHECK(IsUninitialized());
-  return 0;
+  return absl::get<DataVector<uint8_t>>(data_).size();
 }
 
 pdfium::span<const uint8_t> CPDF_Stream::GetInMemoryRawData() const {

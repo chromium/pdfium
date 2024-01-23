@@ -24,7 +24,9 @@ TEST(CPDFSeekableMultiStreamTest, NoStreams) {
 
 TEST(CXFAFileReadTest, EmptyStreams) {
   std::vector<RetainPtr<const CPDF_Stream>> streams;
-  streams.push_back(pdfium::MakeRetain<CPDF_Stream>());
+  streams.push_back(
+      pdfium::MakeRetain<CPDF_Stream>(pdfium::MakeRetain<CPDF_Dictionary>()));
+
   auto fileread =
       pdfium::MakeRetain<CPDF_SeekableMultiStream>(std::move(streams));
 

@@ -501,29 +501,29 @@ RetainPtr<CPDF_Dictionary> GenerateResourceDict(
   return pResourceDict;
 }
 
-void GenerateAndSetAPDict(CPDF_Document* pDoc,
-                          CPDF_Dictionary* pAnnotDict,
-                          fxcrt::ostringstream* psAppStream,
-                          RetainPtr<CPDF_Dictionary> pResourceDict,
-                          bool bIsTextMarkupAnnotation) {
-  auto pNormalStream = pDoc->NewIndirect<CPDF_Stream>();
-  pNormalStream->SetDataFromStringstream(psAppStream);
+void GenerateAndSetAPDict(CPDF_Document* doc,
+                          CPDF_Dictionary* annot_dict,
+                          fxcrt::ostringstream* app_stream,
+                          RetainPtr<CPDF_Dictionary> resource_dict,
+                          bool is_text_markup_annotation) {
+  auto stream_dict = pdfium::MakeRetain<CPDF_Dictionary>();
+  stream_dict->SetNewFor<CPDF_Number>("FormType", 1);
+  stream_dict->SetNewFor<CPDF_Name>("Type", "XObject");
+  stream_dict->SetNewFor<CPDF_Name>("Subtype", "Form");
+  stream_dict->SetMatrixFor("Matrix", CFX_Matrix());
 
-  RetainPtr<CPDF_Dictionary> pAPDict =
-      pAnnotDict->GetOrCreateDictFor(pdfium::annotation::kAP);
-  pAPDict->SetNewFor<CPDF_Reference>("N", pDoc, pNormalStream->GetObjNum());
+  CFX_FloatRect rect = is_text_markup_annotation
+                           ? CPDF_Annot::BoundingRectFromQuadPoints(annot_dict)
+                           : annot_dict->GetRectFor(pdfium::annotation::kRect);
+  stream_dict->SetRectFor("BBox", rect);
+  stream_dict->SetFor("Resources", std::move(resource_dict));
 
-  RetainPtr<CPDF_Dictionary> pStreamDict = pNormalStream->GetMutableDict();
-  pStreamDict->SetNewFor<CPDF_Number>("FormType", 1);
-  pStreamDict->SetNewFor<CPDF_Name>("Type", "XObject");
-  pStreamDict->SetNewFor<CPDF_Name>("Subtype", "Form");
-  pStreamDict->SetMatrixFor("Matrix", CFX_Matrix());
+  auto normal_stream = doc->NewIndirect<CPDF_Stream>(std::move(stream_dict));
+  normal_stream->SetDataFromStringstream(app_stream);
 
-  CFX_FloatRect rect = bIsTextMarkupAnnotation
-                           ? CPDF_Annot::BoundingRectFromQuadPoints(pAnnotDict)
-                           : pAnnotDict->GetRectFor(pdfium::annotation::kRect);
-  pStreamDict->SetRectFor("BBox", rect);
-  pStreamDict->SetFor("Resources", pResourceDict);
+  RetainPtr<CPDF_Dictionary> ap_dict =
+      annot_dict->GetOrCreateDictFor(pdfium::annotation::kAP);
+  ap_dict->SetNewFor<CPDF_Reference>("N", doc, normal_stream->GetObjNum());
 }
 
 bool GenerateCircleAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
@@ -1060,12 +1060,9 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
   RetainPtr<CPDF_Dictionary> pAPDict =
       pAnnotDict->GetOrCreateDictFor(pdfium::annotation::kAP);
   RetainPtr<CPDF_Stream> pNormalStream = pAPDict->GetMutableStreamFor("N");
-  if (!pNormalStream) {
-    pNormalStream = pDoc->NewIndirect<CPDF_Stream>();
-    pAPDict->SetNewFor<CPDF_Reference>("N", pDoc, pNormalStream->GetObjNum());
-  }
-  RetainPtr<CPDF_Dictionary> pStreamDict = pNormalStream->GetMutableDict();
-  if (pStreamDict) {
+  RetainPtr<CPDF_Dictionary> pStreamDict;
+  if (pNormalStream) {
+    pStreamDict = pNormalStream->GetMutableDict();
     RetainPtr<CPDF_Dictionary> pStreamResList =
         pStreamDict->GetMutableDictFor("Resources");
     if (pStreamResList) {
@@ -1086,6 +1083,10 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
     }
     pStreamDict->SetMatrixFor("Matrix", matrix);
     pStreamDict->SetRectFor("BBox", rcBBox);
+  } else {
+    pNormalStream =
+        pDoc->NewIndirect<CPDF_Stream>(pdfium::MakeRetain<CPDF_Dictionary>());
+    pAPDict->SetNewFor<CPDF_Reference>("N", pDoc, pNormalStream->GetObjNum());
   }
   CPVT_FontMap map(
       pDoc, pStreamDict ? pStreamDict->GetMutableDictFor("Resources") : nullptr,

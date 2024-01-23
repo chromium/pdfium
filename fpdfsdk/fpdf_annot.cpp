@@ -1062,62 +1062,63 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
   static_assert(std::size(kModeKeyForMode) == FPDF_ANNOT_APPEARANCEMODE_COUNT,
                 "length of kModeKeyForMode should be equal to "
                 "FPDF_ANNOT_APPEARANCEMODE_COUNT");
-  const char* modeKey = kModeKeyForMode[appearanceMode];
+  const char* mode_key = kModeKeyForMode[appearanceMode];
 
   RetainPtr<CPDF_Dictionary> pApDict =
       pAnnotDict->GetMutableDictFor(pdfium::annotation::kAP);
 
-  // If value is null, we're in remove mode. Otherwise, we're in add/update
-  // mode.
-  if (value) {
-    // Annotation object's non-empty bounding rect will be used as the /BBox
-    // for the associated /XObject object
-    CFX_FloatRect rect = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
-    constexpr float kMinSize = 0.000001f;
-    if (rect.Width() < kMinSize || rect.Height() < kMinSize)
-      return false;
-
-    CPDF_AnnotContext* pAnnotContext =
-        CPDFAnnotContextFromFPDFAnnotation(annot);
-
-    CPDF_Document* pDoc = pAnnotContext->GetPage()->GetDocument();
-    if (!pDoc)
-      return false;
-
-    auto pNewIndirectStream = pDoc->NewIndirect<CPDF_Stream>();
-    ByteString newAPStream =
-        PDF_EncodeText(WideStringFromFPDFWideString(value).AsStringView());
-    pNewIndirectStream->SetData(newAPStream.raw_span());
-
-    RetainPtr<CPDF_Dictionary> pStreamDict =
-        pNewIndirectStream->GetMutableDict();
-    pStreamDict->SetNewFor<CPDF_Name>(pdfium::annotation::kType, "XObject");
-    pStreamDict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Form");
-    pStreamDict->SetRectFor("BBox", rect);
-    // Transparency values are specified in range [0.0f, 1.0f]. We are strictly
-    // checking for value < 1 and not <= 1 so that the output PDF size does not
-    // unnecessarily bloat up by creating a new dictionary in case of solid
-    // color.
-    if (pAnnotDict->KeyExist("CA") && pAnnotDict->GetFloatFor("CA") < 1.0f) {
-      RetainPtr<CPDF_Dictionary> pResourceDict =
-          SetExtGStateInResourceDict(pDoc, pAnnotDict.Get(), "Normal");
-      pStreamDict->SetFor("Resources", pResourceDict);
-    }
-
-    // Storing reference to indirect object in annotation's AP
-    if (!pApDict) {
-      pApDict = pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP);
-    }
-    pApDict->SetNewFor<CPDF_Reference>(modeKey, pDoc,
-                                       pNewIndirectStream->GetObjNum());
-  } else {
+  // If `value` is null, then the action is to remove.
+  if (!value) {
     if (pApDict) {
-      if (appearanceMode == FPDF_ANNOT_APPEARANCEMODE_NORMAL)
+      if (appearanceMode == FPDF_ANNOT_APPEARANCEMODE_NORMAL) {
         pAnnotDict->RemoveFor(pdfium::annotation::kAP);
-      else
-        pApDict->RemoveFor(modeKey);
+      } else {
+        pApDict->RemoveFor(mode_key);
+      }
     }
+    return true;
   }
+
+  // Otherwise, add/update when `value` is non-null.
+  //
+  // Annotation object's non-empty bounding rect will be used as the /BBox
+  // for the associated /XObject object
+  CFX_FloatRect rect = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
+  constexpr float kMinSize = 0.000001f;
+  if (rect.Width() < kMinSize || rect.Height() < kMinSize) {
+    return false;
+  }
+
+  CPDF_AnnotContext* pAnnotContext = CPDFAnnotContextFromFPDFAnnotation(annot);
+
+  CPDF_Document* pDoc = pAnnotContext->GetPage()->GetDocument();
+  if (!pDoc) {
+    return false;
+  }
+
+  auto stream_dict = pdfium::MakeRetain<CPDF_Dictionary>();
+  stream_dict->SetNewFor<CPDF_Name>(pdfium::annotation::kType, "XObject");
+  stream_dict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Form");
+  stream_dict->SetRectFor("BBox", rect);
+  // Transparency values are specified in range [0.0f, 1.0f]. We are strictly
+  // checking for value < 1 and not <= 1 so that the output PDF size does not
+  // unnecessarily bloat up by creating a new dictionary in case of solid
+  // color.
+  if (pAnnotDict->KeyExist("CA") && pAnnotDict->GetFloatFor("CA") < 1.0f) {
+    stream_dict->SetFor("Resources", SetExtGStateInResourceDict(
+                                         pDoc, pAnnotDict.Get(), "Normal"));
+  }
+
+  auto new_stream = pDoc->NewIndirect<CPDF_Stream>(std::move(stream_dict));
+  ByteString new_stream_data =
+      PDF_EncodeText(WideStringFromFPDFWideString(value).AsStringView());
+  new_stream->SetData(new_stream_data.raw_span());
+
+  // Storing reference to indirect object in annotation's AP
+  if (!pApDict) {
+    pApDict = pAnnotDict->SetNewFor<CPDF_Dictionary>(pdfium::annotation::kAP);
+  }
+  pApDict->SetNewFor<CPDF_Reference>(mode_key, pDoc, new_stream->GetObjNum());
 
   return true;
 }

@@ -99,9 +99,6 @@ DataVector<uint8_t> CPDF_StreamAcc::DetachData() {
 }
 
 void CPDF_StreamAcc::ProcessRawData() {
-  if (m_pStream->IsUninitialized())
-    return;
-
   uint32_t dwSrcSize = m_pStream->GetRawSize();
   if (dwSrcSize == 0)
     return;
@@ -120,9 +117,6 @@ void CPDF_StreamAcc::ProcessRawData() {
 
 void CPDF_StreamAcc::ProcessFilteredData(uint32_t estimated_size,
                                          bool bImageAcc) {
-  if (m_pStream->IsUninitialized())
-    return;
-
   uint32_t dwSrcSize = m_pStream->GetRawSize();
   if (dwSrcSize == 0)
     return;

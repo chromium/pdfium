@@ -56,9 +56,6 @@ class CPDF_Stream final : public CPDF_Object {
   // Can only be called when a stream is not memory-based.
   DataVector<uint8_t> ReadAllRawData() const;
 
-  bool IsUninitialized() const {
-    return absl::holds_alternative<absl::monostate>(data_);
-  }
   bool IsFileBased() const {
     return absl::holds_alternative<RetainPtr<IFX_SeekableReadStream>>(data_);
   }
@@ -69,9 +66,6 @@ class CPDF_Stream final : public CPDF_Object {
 
  private:
   friend class CPDF_Dictionary;
-
-  // Uninitialized.
-  CPDF_Stream();
 
   // Initializes with empty data and /Length set to 0 in `dict`.
   // If `dict` is null, then a new dictionary will be created instead.
@@ -99,10 +93,7 @@ class CPDF_Stream final : public CPDF_Object {
 
   void SetLengthInDict(int length);
 
-  absl::variant<absl::monostate,
-                RetainPtr<IFX_SeekableReadStream>,
-                DataVector<uint8_t>>
-      data_;
+  absl::variant<RetainPtr<IFX_SeekableReadStream>, DataVector<uint8_t>> data_;
   RetainPtr<CPDF_Dictionary> dict_;
 };
 

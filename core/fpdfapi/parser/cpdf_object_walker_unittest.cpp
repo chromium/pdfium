@@ -59,7 +59,9 @@ TEST(ObjectWalkerTest, Simple) {
   EXPECT_EQ(Walk(pdfium::MakeRetain<CPDF_Array>()), "Arr");
   EXPECT_EQ(Walk(pdfium::MakeRetain<CPDF_String>()), "Str");
   EXPECT_EQ(Walk(pdfium::MakeRetain<CPDF_Boolean>()), "Bool");
-  EXPECT_EQ(Walk(pdfium::MakeRetain<CPDF_Stream>()), "Stream");
+  EXPECT_EQ(Walk(pdfium::MakeRetain<CPDF_Stream>(
+                pdfium::MakeRetain<CPDF_Dictionary>())),
+            "Stream Dict Num");
   EXPECT_EQ(Walk(pdfium::MakeRetain<CPDF_Reference>(nullptr, 0)), "Ref");
 }
 
