@@ -222,12 +222,13 @@ void CPDF_Font::CheckFontMetrics() {
     if (face) {
       // Note that `m_FontBBox` is deliberately flipped.
       const FX_RECT raw_bbox = face->GetBBox();
-      m_FontBBox.left = TT2PDF(raw_bbox.left, face);
-      m_FontBBox.bottom = TT2PDF(raw_bbox.top, face);
-      m_FontBBox.right = TT2PDF(raw_bbox.right, face);
-      m_FontBBox.top = TT2PDF(raw_bbox.bottom, face);
-      m_Ascent = TT2PDF(face->GetAscender(), face);
-      m_Descent = TT2PDF(face->GetDescender(), face);
+      const uint16_t upem = face->GetUnitsPerEm();
+      m_FontBBox.left = NormalizeFontMetric(raw_bbox.left, upem);
+      m_FontBBox.bottom = NormalizeFontMetric(raw_bbox.top, upem);
+      m_FontBBox.right = NormalizeFontMetric(raw_bbox.right, upem);
+      m_FontBBox.top = NormalizeFontMetric(raw_bbox.bottom, upem);
+      m_Ascent = NormalizeFontMetric(face->GetAscender(), upem);
+      m_Descent = NormalizeFontMetric(face->GetDescender(), upem);
     } else {
       bool bFirst = true;
       for (int i = 0; i < 256; i++) {
@@ -407,13 +408,13 @@ CFX_Font* CPDF_Font::GetFontFallback(int position) {
 }
 
 // static
-int CPDF_Font::TT2PDF(FT_Pos m, const RetainPtr<CFX_Face>& face) {
-  int upm = face->GetUnitsPerEm();
-  if (upm == 0)
-    return pdfium::base::saturated_cast<int>(m);
+int CPDF_Font::NormalizeFontMetric(int64_t value, uint16_t upem) {
+  if (upem == 0) {
+    return pdfium::base::saturated_cast<int>(value);
+  }
 
-  const double dm = (m * 1000.0 + upm / 2) / upm;
-  return pdfium::base::saturated_cast<int>(dm);
+  const double scaled_value = (value * 1000.0 + upem / 2) / upem;
+  return pdfium::base::saturated_cast<int>(scaled_value);
 }
 
 // static
@@ -421,9 +422,11 @@ FX_RECT CPDF_Font::GetCharBBoxForFace(const RetainPtr<CFX_Face>& face) {
   FXFT_FaceRec* rec = face->GetRec();
   pdfium::base::ClampedNumeric<FT_Pos> left = FXFT_Get_Glyph_HoriBearingX(rec);
   pdfium::base::ClampedNumeric<FT_Pos> top = FXFT_Get_Glyph_HoriBearingY(rec);
-  return FX_RECT(TT2PDF(left, face), TT2PDF(top, face),
-                 TT2PDF(left + FXFT_Get_Glyph_Width(rec), face),
-                 TT2PDF(top - FXFT_Get_Glyph_Height(rec), face));
+  const uint16_t upem = face->GetUnitsPerEm();
+  return FX_RECT(NormalizeFontMetric(left, upem),
+                 NormalizeFontMetric(top, upem),
+                 NormalizeFontMetric(left + FXFT_Get_Glyph_Width(rec), upem),
+                 NormalizeFontMetric(top - FXFT_Get_Glyph_Height(rec), upem));
 }
 
 // static
