@@ -83,11 +83,11 @@ CPDF_Stream* CPDF_Stream::AsMutableStream() {
   return this;
 }
 
-void CPDF_Stream::InitStreamFromFile(RetainPtr<IFX_SeekableReadStream> pFile,
-                                     RetainPtr<CPDF_Dictionary> pDict) {
-  data_ = pFile;
-  dict_ = std::move(pDict);
-  SetLengthInDict(pdfium::base::checked_cast<int>(pFile->GetSize()));
+void CPDF_Stream::InitStreamFromFile(RetainPtr<IFX_SeekableReadStream> file) {
+  const int size = pdfium::base::checked_cast<int>(file->GetSize());
+  data_ = std::move(file);
+  dict_ = pdfium::MakeRetain<CPDF_Dictionary>();
+  SetLengthInDict(size);
 }
 
 RetainPtr<CPDF_Object> CPDF_Stream::Clone() const {
@@ -135,9 +135,9 @@ void CPDF_Stream::SetData(pdfium::span<const uint8_t> pData) {
 }
 
 void CPDF_Stream::TakeData(DataVector<uint8_t> data) {
-  const size_t size = data.size();
+  const int size = pdfium::base::checked_cast<int>(data.size());
   data_ = std::move(data);
-  SetLengthInDict(pdfium::base::checked_cast<int>(size));
+  SetLengthInDict(size);
 }
 
 void CPDF_Stream::SetDataFromStringstream(fxcrt::ostringstream* stream) {

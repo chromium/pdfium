@@ -133,48 +133,53 @@ RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
   m_bIsMask = false;
   m_Width = info.width;
   m_Height = info.height;
-  if (!m_pStream)
-    m_pStream = pdfium::MakeRetain<CPDF_Stream>();
   return pDict;
 }
 
 void CPDF_Image::SetJpegImage(RetainPtr<IFX_SeekableReadStream> pFile) {
   uint32_t size = pdfium::base::checked_cast<uint32_t>(pFile->GetSize());
-  if (!size)
+  if (!size) {
     return;
+  }
 
   uint32_t dwEstimateSize = std::min(size, 8192U);
   DataVector<uint8_t> data(dwEstimateSize);
-  if (!pFile->ReadBlockAtOffset(data, 0))
+  if (!pFile->ReadBlockAtOffset(data, 0)) {
     return;
-
-  RetainPtr<CPDF_Dictionary> pDict = InitJPEG(data);
-  if (!pDict && size > dwEstimateSize) {
-    data.resize(size);
-    if (pFile->ReadBlockAtOffset(data, 0))
-      pDict = InitJPEG(data);
   }
-  if (!pDict)
-    return;
 
-  m_pStream->InitStreamFromFile(std::move(pFile), std::move(pDict));
+  RetainPtr<CPDF_Dictionary> dict = InitJPEG(data);
+  if (!dict && size > dwEstimateSize) {
+    data.resize(size);
+    if (pFile->ReadBlockAtOffset(data, 0)) {
+      dict = InitJPEG(data);
+    }
+  }
+  if (!dict) {
+    return;
+  }
+
+  m_pStream =
+      pdfium::MakeRetain<CPDF_Stream>(std::move(pFile), std::move(dict));
 }
 
 void CPDF_Image::SetJpegImageInline(RetainPtr<IFX_SeekableReadStream> pFile) {
   uint32_t size = pdfium::base::checked_cast<uint32_t>(pFile->GetSize());
-  if (!size)
+  if (!size) {
     return;
+  }
 
   DataVector<uint8_t> data(size);
-  if (!pFile->ReadBlockAtOffset(data, 0))
+  if (!pFile->ReadBlockAtOffset(data, 0)) {
     return;
+  }
 
-  RetainPtr<CPDF_Dictionary> pDict = InitJPEG(data);
-  if (!pDict)
+  RetainPtr<CPDF_Dictionary> dict = InitJPEG(data);
+  if (!dict) {
     return;
+  }
 
-  m_pStream =
-      pdfium::MakeRetain<CPDF_Stream>(std::move(data), std::move(pDict));
+  m_pStream = pdfium::MakeRetain<CPDF_Stream>(std::move(data), std::move(dict));
 }
 
 void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {

@@ -113,8 +113,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
         pFileWrite->GetSize() > 0) {
       if (iDataSetsIndex != -1) {
         if (pDataSetsStream) {
-          pDataSetsStream->InitStreamFromFile(
-              pFileWrite, pPDFDocument->New<CPDF_Dictionary>());
+          pDataSetsStream->InitStreamFromFile(pFileWrite);
         }
       } else {
         auto data_stream = pPDFDocument->NewIndirect<CPDF_Stream>(
@@ -134,8 +133,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
     if (pContext->SaveFormPackage(pFileWrite) && pFileWrite->GetSize() > 0) {
       if (iFormIndex != -1) {
         if (pFormStream) {
-          pFormStream->InitStreamFromFile(pFileWrite,
-                                          pPDFDocument->New<CPDF_Dictionary>());
+          pFormStream->InitStreamFromFile(pFileWrite);
         }
       } else {
         auto data_stream = pPDFDocument->NewIndirect<CPDF_Stream>(
