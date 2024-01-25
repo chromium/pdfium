@@ -329,9 +329,7 @@ bool CPDF_PageOrganizer::UpdateReference(RetainPtr<CPDF_Object> pObj) {
       return true;
     }
     case CPDF_Object::kStream: {
-      CPDF_Stream* pStream = pObj->AsMutableStream();
-      RetainPtr<CPDF_Dictionary> pDict = pStream->GetMutableDict();
-      return pDict && UpdateReference(std::move(pDict));
+      return UpdateReference(pObj->AsMutableStream()->GetMutableDict());
     }
     default:
       return true;

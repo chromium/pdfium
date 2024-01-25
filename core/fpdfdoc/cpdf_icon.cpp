@@ -17,26 +17,14 @@ CPDF_Icon::CPDF_Icon(RetainPtr<const CPDF_Stream> pStream)
 CPDF_Icon::~CPDF_Icon() = default;
 
 CFX_SizeF CPDF_Icon::GetImageSize() const {
-  RetainPtr<const CPDF_Dictionary> pDict = m_pStream->GetDict();
-  if (!pDict)
-    return CFX_SizeF();
-
-  CFX_FloatRect rect = pDict->GetRectFor("BBox");
+  CFX_FloatRect rect = m_pStream->GetDict()->GetRectFor("BBox");
   return {rect.right - rect.left, rect.top - rect.bottom};
 }
 
 CFX_Matrix CPDF_Icon::GetImageMatrix() const {
-  RetainPtr<const CPDF_Dictionary> pDict = m_pStream->GetDict();
-  if (!pDict)
-    return CFX_Matrix();
-
-  return pDict->GetMatrixFor("Matrix");
+  return m_pStream->GetDict()->GetMatrixFor("Matrix");
 }
 
 ByteString CPDF_Icon::GetImageAlias() const {
-  RetainPtr<const CPDF_Dictionary> pDict = m_pStream->GetDict();
-  if (!pDict)
-    return ByteString();
-
-  return pDict->GetByteStringFor("Name");
+  return m_pStream->GetDict()->GetByteStringFor("Name");
 }

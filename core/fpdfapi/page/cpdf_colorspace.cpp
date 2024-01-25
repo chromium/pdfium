@@ -525,9 +525,6 @@ RetainPtr<CPDF_ColorSpace> CPDF_ColorSpace::Load(
 
   if (const CPDF_Stream* pStream = pObj->AsStream()) {
     RetainPtr<const CPDF_Dictionary> pDict = pStream->GetDict();
-    if (!pDict)
-      return nullptr;
-
     CPDF_DictionaryLocker locker(std::move(pDict));
     for (const auto& it : locker) {
       RetainPtr<const CPDF_Name> pValue = ToName(it.second);
@@ -946,7 +943,7 @@ uint32_t CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc,
   // PDF viewers tolerate invalid values, Acrobat does not, so be consistent
   // with Acrobat and reject bad values.
   RetainPtr<const CPDF_Dictionary> pDict = pStream->GetDict();
-  const int32_t nDictComponents = pDict ? pDict->GetIntegerFor("N") : 0;
+  const int32_t nDictComponents = pDict->GetIntegerFor("N");
   if (!fxcodec::IccTransform::IsValidIccComponents(nDictComponents)) {
     return 0;
   }

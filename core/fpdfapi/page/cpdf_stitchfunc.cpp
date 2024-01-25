@@ -28,10 +28,8 @@ bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
   if (m_nInputs != kRequiredNumInputs)
     return false;
 
+  CHECK(pObj->IsDictionary() || pObj->IsStream());
   RetainPtr<const CPDF_Dictionary> pDict = pObj->GetDict();
-  if (!pDict)
-    return false;
-
   RetainPtr<const CPDF_Array> pFunctionsArray = pDict->GetArrayFor("Functions");
   if (!pFunctionsArray)
     return false;

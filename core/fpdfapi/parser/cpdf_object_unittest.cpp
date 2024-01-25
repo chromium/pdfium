@@ -157,8 +157,6 @@ class PDFObjectsTest : public testing::Test {
       case CPDF_Object::kStream: {
         RetainPtr<const CPDF_Stream> stream1(obj1->AsStream());
         RetainPtr<const CPDF_Stream> stream2(obj2->AsStream());
-        if (!stream1->GetDict() && !stream2->GetDict())
-          return true;
         // Compare dictionaries.
         if (!Equal(stream1->GetDict().Get(), stream2->GetDict().Get()))
           return false;

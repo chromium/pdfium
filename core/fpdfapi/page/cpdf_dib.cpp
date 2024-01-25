@@ -791,9 +791,6 @@ bool CPDF_DIB::LoadInternal(const CPDF_Dictionary* pFormResources,
     return false;
 
   m_pDict = m_pStream->GetDict();
-  if (!m_pDict)
-    return false;
-
   m_Width = m_pDict->GetIntegerFor("Width");
   m_Height = m_pDict->GetIntegerFor("Height");
   if (!IsValidDimension(m_Width) || !IsValidDimension(m_Height))

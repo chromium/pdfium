@@ -1092,9 +1092,6 @@ void SetDefaultIconName(CPDF_Stream* pIcon, const char* name) {
     return;
 
   RetainPtr<CPDF_Dictionary> pImageDict = pIcon->GetMutableDict();
-  if (!pImageDict)
-    return;
-
   if (pImageDict->KeyExist("Name"))
     return;
 
@@ -1801,14 +1798,11 @@ void CPDFSDK_AppStream::SetAsTextField(absl::optional<WideString> sValue) {
 }
 
 void CPDFSDK_AppStream::AddImage(const ByteString& sAPType,
-                                 CPDF_Stream* pImage) {
+                                 const CPDF_Stream* pImage) {
   RetainPtr<CPDF_Stream> pStream = dict_->GetMutableStreamFor(sAPType);
   RetainPtr<CPDF_Dictionary> pStreamDict = pStream->GetMutableDict();
-  ByteString sImageAlias = "IMG";
 
-  RetainPtr<const CPDF_Dictionary> pImageDict = pImage->GetDict();
-  if (pImageDict)
-    sImageAlias = pImageDict->GetByteStringFor("Name");
+  const ByteString sImageAlias = pImage->GetDict()->GetByteStringFor("Name");
 
   RetainPtr<CPDF_Dictionary> pStreamResList =
       pStreamDict->GetOrCreateDictFor("Resources");

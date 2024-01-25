@@ -746,10 +746,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
   if (!pXObject)
     return;
 
-  ByteString type;
-  if (pXObject->GetDict())
-    type = pXObject->GetDict()->GetByteStringFor("Subtype");
-
+  const ByteString type = pXObject->GetDict()->GetByteStringFor("Subtype");
   if (type == "Form") {
     if (m_RecursionState->form_count > kFormCountLimit) {
       return;

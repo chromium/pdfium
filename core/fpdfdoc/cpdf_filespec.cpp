@@ -154,11 +154,7 @@ RetainPtr<const CPDF_Stream> CPDF_FileSpec::GetFileStream() const {
 
 RetainPtr<const CPDF_Dictionary> CPDF_FileSpec::GetParamsDict() const {
   RetainPtr<const CPDF_Stream> pStream = GetFileStream();
-  if (!pStream)
-    return nullptr;
-
-  RetainPtr<const CPDF_Dictionary> pDict = pStream->GetDict();
-  return pDict ? pDict->GetDictFor("Params") : nullptr;
+  return pStream ? pStream->GetDict()->GetDictFor("Params") : nullptr;
 }
 
 RetainPtr<CPDF_Dictionary> CPDF_FileSpec::GetMutableParamsDict() {

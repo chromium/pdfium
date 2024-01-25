@@ -1312,9 +1312,6 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
 
   pNormalStream->SetDataFromStringstreamAndRemoveFilter(&sAppStream);
   pStreamDict = pNormalStream->GetMutableDict();
-  if (!pStreamDict)
-    return;
-
   pStreamDict->SetMatrixFor("Matrix", matrix);
   pStreamDict->SetRectFor("BBox", rcBBox);
   RetainPtr<CPDF_Dictionary> pStreamResList =
