@@ -64,11 +64,12 @@ class CPDF_ImageRenderer {
   bool NotDrawing() const;
   FX_RECT GetDrawRect() const;
   CFX_Matrix GetDrawMatrix(const FX_RECT& rect) const;
-  void CalculateDrawImage(CFX_DefaultRenderDevice& bitmap_device,
-                          CFX_DefaultRenderDevice& mask_device,
-                          RetainPtr<CFX_DIBBase> pDIBBase,
-                          const CFX_Matrix& mtNewMatrix,
-                          const FX_RECT& rect) const;
+  // Returns the mask, or nullptr if the mask could not be created.
+  RetainPtr<const CFX_DIBitmap> CalculateDrawImage(
+      CFX_DefaultRenderDevice& bitmap_device,
+      RetainPtr<CFX_DIBBase> pDIBBase,
+      const CFX_Matrix& mtNewMatrix,
+      const FX_RECT& rect) const;
   const CPDF_RenderOptions& GetRenderOptions() const;
   void HandleFilters();
   absl::optional<FX_RECT> GetUnitRect() const;
