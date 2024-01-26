@@ -78,62 +78,66 @@ static_assert(static_cast<int>(TextRenderingMode::MODE_LAST) ==
 
 namespace {
 
-ByteString BaseFontNameForType(const CFX_Font* pFont, int font_type) {
-  ByteString name = font_type == FPDF_FONT_TYPE1 ? pFont->GetPsName()
-                                                 : pFont->GetBaseFontName();
+ByteString BaseFontNameForType(const CFX_Font* font, int font_type) {
+  ByteString name = font_type == FPDF_FONT_TYPE1 ? font->GetPsName()
+                                                 : font->GetBaseFontName();
   return name.IsEmpty() ? CFX_Font::kUntitledFontName : name;
 }
 
-RetainPtr<CPDF_Dictionary> LoadFontDesc(CPDF_Document* pDoc,
+RetainPtr<CPDF_Dictionary> LoadFontDesc(CPDF_Document* doc,
                                         const ByteString& font_name,
-                                        CFX_Font* pFont,
-                                        pdfium::span<const uint8_t> span,
+                                        CFX_Font* font,
+                                        pdfium::span<const uint8_t> font_data,
                                         int font_type) {
-  auto pFontDesc = pDoc->NewIndirect<CPDF_Dictionary>();
-  pFontDesc->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
-  pFontDesc->SetNewFor<CPDF_Name>("FontName", font_name);
+  auto font_descriptor_dict = doc->NewIndirect<CPDF_Dictionary>();
+  font_descriptor_dict->SetNewFor<CPDF_Name>("Type", "FontDescriptor");
+  font_descriptor_dict->SetNewFor<CPDF_Name>("FontName", font_name);
   int flags = 0;
-  if (pFont->GetFace()->IsFixedWidth()) {
+  if (font->GetFace()->IsFixedWidth()) {
     flags |= FXFONT_FIXED_PITCH;
   }
   if (font_name.Contains("Serif"))
     flags |= FXFONT_SERIF;
-  if (pFont->GetFace()->IsItalic()) {
+  if (font->GetFace()->IsItalic()) {
     flags |= FXFONT_ITALIC;
   }
-  if (pFont->GetFace()->IsBold()) {
+  if (font->GetFace()->IsBold()) {
     flags |= FXFONT_FORCE_BOLD;
   }
 
   // TODO(npm): How do I know if a font is symbolic, script, allcap, smallcap?
   flags |= FXFONT_NONSYMBOLIC;
 
-  pFontDesc->SetNewFor<CPDF_Number>("Flags", flags);
-  FX_RECT bbox = pFont->GetBBox().value_or(FX_RECT());
-  pFontDesc->SetRectFor("FontBBox", CFX_FloatRect(bbox));
+  font_descriptor_dict->SetNewFor<CPDF_Number>("Flags", flags);
+  FX_RECT bbox = font->GetBBox().value_or(FX_RECT());
+  font_descriptor_dict->SetRectFor("FontBBox", CFX_FloatRect(bbox));
 
   // TODO(npm): calculate italic angle correctly
-  pFontDesc->SetNewFor<CPDF_Number>("ItalicAngle", pFont->IsItalic() ? -12 : 0);
+  font_descriptor_dict->SetNewFor<CPDF_Number>("ItalicAngle",
+                                               font->IsItalic() ? -12 : 0);
 
-  pFontDesc->SetNewFor<CPDF_Number>("Ascent", pFont->GetAscent());
-  pFontDesc->SetNewFor<CPDF_Number>("Descent", pFont->GetDescent());
+  font_descriptor_dict->SetNewFor<CPDF_Number>("Ascent", font->GetAscent());
+  font_descriptor_dict->SetNewFor<CPDF_Number>("Descent", font->GetDescent());
 
   // TODO(npm): calculate the capheight, stemV correctly
-  pFontDesc->SetNewFor<CPDF_Number>("CapHeight", pFont->GetAscent());
-  pFontDesc->SetNewFor<CPDF_Number>("StemV", pFont->IsBold() ? 120 : 70);
+  font_descriptor_dict->SetNewFor<CPDF_Number>("CapHeight", font->GetAscent());
+  font_descriptor_dict->SetNewFor<CPDF_Number>("StemV",
+                                               font->IsBold() ? 120 : 70);
 
-  auto stream = pDoc->NewIndirect<CPDF_Stream>(span);
+  auto stream = doc->NewIndirect<CPDF_Stream>(font_data);
   // TODO(npm): Lengths for Type1 fonts.
   if (font_type == FPDF_FONT_TRUETYPE) {
     stream->GetMutableDict()->SetNewFor<CPDF_Number>(
-        "Length1", pdfium::base::checked_cast<int>(span.size()));
+        "Length1", pdfium::base::checked_cast<int>(font_data.size()));
   }
-  ByteString fontFile = font_type == FPDF_FONT_TYPE1 ? "FontFile" : "FontFile2";
-  pFontDesc->SetNewFor<CPDF_Reference>(fontFile, pDoc, stream->GetObjNum());
-  return pFontDesc;
+  ByteString font_file_key =
+      font_type == FPDF_FONT_TYPE1 ? "FontFile" : "FontFile2";
+  font_descriptor_dict->SetNewFor<CPDF_Reference>(font_file_key, doc,
+                                                  stream->GetObjNum());
+  return font_descriptor_dict;
 }
 
-const char ToUnicodeStart[] =
+const char kToUnicodeStart[] =
     "/CIDInit /ProcSet findresource begin\n"
     "12 dict begin\n"
     "begincmap\n"
@@ -148,44 +152,44 @@ const char ToUnicodeStart[] =
     "<0000> <FFFF>\n"
     "endcodespacerange\n";
 
-const char ToUnicodeEnd[] =
+const char kToUnicodeEnd[] =
     "endcmap\n"
     "CMapName currentdict /CMap defineresource pop\n"
     "end\n"
     "end\n";
 
-void AddCharcode(fxcrt::ostringstream* pBuffer, uint32_t number) {
+void AddCharcode(fxcrt::ostringstream& buffer, uint32_t number) {
   CHECK_LE(number, 0xFFFF);
-  *pBuffer << "<";
+  buffer << "<";
   char ans[4];
   FXSYS_IntToFourHexChars(number, ans);
   for (char c : ans) {
-    *pBuffer << c;
+    buffer << c;
   }
-  *pBuffer << ">";
+  buffer << ">";
 }
 
 // PDF spec 1.7 Section 5.9.2: "Unicode character sequences as expressed in
 // UTF-16BE encoding." See https://en.wikipedia.org/wiki/UTF-16#Description
-void AddUnicode(fxcrt::ostringstream* pBuffer, uint32_t unicode) {
+void AddUnicode(fxcrt::ostringstream& buffer, uint32_t unicode) {
   if (pdfium::IsHighSurrogate(unicode) || pdfium::IsLowSurrogate(unicode)) {
     unicode = 0;
   }
 
   char ans[8];
-  size_t numChars = FXSYS_ToUTF16BE(unicode, ans);
-  *pBuffer << "<";
-  CHECK_LE(numChars, std::size(ans));
-  auto ans_span = pdfium::make_span(ans).first(numChars);
+  size_t char_count = FXSYS_ToUTF16BE(unicode, ans);
+  buffer << "<";
+  CHECK_LE(char_count, std::size(ans));
+  auto ans_span = pdfium::make_span(ans).first(char_count);
   for (char c : ans_span) {
-    *pBuffer << c;
+    buffer << c;
   }
-  *pBuffer << ">";
+  buffer << ">";
 }
 
 // Loads the charcode to unicode mapping into a stream
 RetainPtr<CPDF_Stream> LoadUnicode(
-    CPDF_Document* pDoc,
+    CPDF_Document* doc,
     const std::multimap<uint32_t, uint32_t>& to_unicode) {
   // A map charcode->unicode
   std::map<uint32_t, uint32_t> char_to_uni;
@@ -201,109 +205,113 @@ RetainPtr<CPDF_Stream> LoadUnicode(
   std::map<std::pair<uint32_t, uint32_t>, uint32_t> map_range;
 
   // Calculate the maps
-  for (auto iter = to_unicode.begin(); iter != to_unicode.end(); ++iter) {
-    uint32_t firstCharcode = iter->first;
-    uint32_t firstUnicode = iter->second;
+  for (auto it = to_unicode.begin(); it != to_unicode.end(); ++it) {
+    uint32_t first_charcode = it->first;
+    uint32_t first_unicode = it->second;
     {
-      auto next_it = std::next(iter);
-      if (next_it == to_unicode.end() || firstCharcode + 1 != next_it->first) {
-        char_to_uni[firstCharcode] = firstUnicode;
+      auto next_it = std::next(it);
+      if (next_it == to_unicode.end() || first_charcode + 1 != next_it->first) {
+        char_to_uni[first_charcode] = first_unicode;
         continue;
       }
     }
-    ++iter;
-    uint32_t curCharcode = iter->first;
-    uint32_t curUnicode = iter->second;
-    if (curCharcode % 256 == 0) {
-      char_to_uni[firstCharcode] = firstUnicode;
-      char_to_uni[curCharcode] = curUnicode;
+    ++it;
+    uint32_t current_charcode = it->first;
+    uint32_t current_unicode = it->second;
+    if (current_charcode % 256 == 0) {
+      char_to_uni[first_charcode] = first_unicode;
+      char_to_uni[current_charcode] = current_unicode;
       continue;
     }
-    const size_t maxExtra = 255 - (curCharcode % 256);
-    auto next_it = std::next(iter);
-    if (firstUnicode + 1 != curUnicode) {
+    const size_t max_extra = 255 - (current_charcode % 256);
+    auto next_it = std::next(it);
+    if (first_unicode + 1 != current_unicode) {
       // Consecutive charcodes mapping to non-consecutive unicodes
-      std::vector<uint32_t> unicodes = {firstUnicode, curUnicode};
-      for (size_t i = 0; i < maxExtra; ++i) {
-        if (next_it == to_unicode.end() || curCharcode + 1 != next_it->first)
+      std::vector<uint32_t> unicodes = {first_unicode, current_unicode};
+      for (size_t i = 0; i < max_extra; ++i) {
+        if (next_it == to_unicode.end() ||
+            current_charcode + 1 != next_it->first) {
           break;
-        ++iter;
-        ++curCharcode;
-        unicodes.push_back(iter->second);
-        next_it = std::next(iter);
+        }
+        ++it;
+        ++current_charcode;
+        unicodes.push_back(it->second);
+        next_it = std::next(it);
       }
-      DCHECK_EQ(iter->first - firstCharcode + 1, unicodes.size());
-      map_range_vector[std::make_pair(firstCharcode, iter->first)] = unicodes;
+      CHECK_EQ(it->first - first_charcode + 1, unicodes.size());
+      map_range_vector[std::make_pair(first_charcode, it->first)] = unicodes;
       continue;
     }
     // Consecutive charcodes mapping to consecutive unicodes
-    for (size_t i = 0; i < maxExtra; ++i) {
-      if (next_it == to_unicode.end() || curCharcode + 1 != next_it->first ||
-          curUnicode + 1 != next_it->second) {
+    for (size_t i = 0; i < max_extra; ++i) {
+      if (next_it == to_unicode.end() ||
+          current_charcode + 1 != next_it->first ||
+          current_unicode + 1 != next_it->second) {
         break;
       }
-      ++iter;
-      ++curCharcode;
-      ++curUnicode;
-      next_it = std::next(iter);
+      ++it;
+      ++current_charcode;
+      ++current_unicode;
+      next_it = std::next(it);
     }
-    map_range[std::make_pair(firstCharcode, curCharcode)] = firstUnicode;
+    map_range[std::make_pair(first_charcode, current_charcode)] = first_unicode;
   }
+
   fxcrt::ostringstream buffer;
-  buffer << ToUnicodeStart;
+  buffer << kToUnicodeStart;
   // Add maps to buffer
   buffer << static_cast<uint32_t>(char_to_uni.size()) << " beginbfchar\n";
-  for (const auto& iter : char_to_uni) {
-    AddCharcode(&buffer, iter.first);
+  for (const auto& it : char_to_uni) {
+    AddCharcode(buffer, it.first);
     buffer << " ";
-    AddUnicode(&buffer, iter.second);
+    AddUnicode(buffer, it.second);
     buffer << "\n";
   }
   buffer << "endbfchar\n"
          << static_cast<uint32_t>(map_range_vector.size() + map_range.size())
          << " beginbfrange\n";
-  for (const auto& iter : map_range_vector) {
-    const std::pair<uint32_t, uint32_t>& charcodeRange = iter.first;
-    AddCharcode(&buffer, charcodeRange.first);
+  for (const auto& it : map_range_vector) {
+    const std::pair<uint32_t, uint32_t>& charcode_range = it.first;
+    AddCharcode(buffer, charcode_range.first);
     buffer << " ";
-    AddCharcode(&buffer, charcodeRange.second);
+    AddCharcode(buffer, charcode_range.second);
     buffer << " [";
-    const std::vector<uint32_t>& unicodes = iter.second;
+    const std::vector<uint32_t>& unicodes = it.second;
     for (size_t i = 0; i < unicodes.size(); ++i) {
-      AddUnicode(&buffer, unicodes[i]);
+      AddUnicode(buffer, unicodes[i]);
       if (i != unicodes.size() - 1)
         buffer << " ";
     }
     buffer << "]\n";
   }
-  for (const auto& iter : map_range) {
-    const std::pair<uint32_t, uint32_t>& charcodeRange = iter.first;
-    AddCharcode(&buffer, charcodeRange.first);
+  for (const auto& it : map_range) {
+    const std::pair<uint32_t, uint32_t>& charcode_range = it.first;
+    AddCharcode(buffer, charcode_range.first);
     buffer << " ";
-    AddCharcode(&buffer, charcodeRange.second);
+    AddCharcode(buffer, charcode_range.second);
     buffer << " ";
-    AddUnicode(&buffer, iter.second);
+    AddUnicode(buffer, it.second);
     buffer << "\n";
   }
   buffer << "endbfrange\n";
-  buffer << ToUnicodeEnd;
-  auto stream = pDoc->NewIndirect<CPDF_Stream>(&buffer);
+  buffer << kToUnicodeEnd;
+  auto stream = doc->NewIndirect<CPDF_Stream>(&buffer);
   return stream;
 }
 
-RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* pDoc,
-                                    std::unique_ptr<CFX_Font> pFont,
-                                    pdfium::span<const uint8_t> span,
+RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* doc,
+                                    std::unique_ptr<CFX_Font> font,
+                                    pdfium::span<const uint8_t> font_data,
                                     int font_type) {
-  auto pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
-  pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
-  pFontDict->SetNewFor<CPDF_Name>(
+  auto font_dict = doc->NewIndirect<CPDF_Dictionary>();
+  font_dict->SetNewFor<CPDF_Name>("Type", "Font");
+  font_dict->SetNewFor<CPDF_Name>(
       "Subtype", font_type == FPDF_FONT_TYPE1 ? "Type1" : "TrueType");
-  ByteString name = BaseFontNameForType(pFont.get(), font_type);
-  pFontDict->SetNewFor<CPDF_Name>("BaseFont", name);
+  ByteString name = BaseFontNameForType(font.get(), font_type);
+  font_dict->SetNewFor<CPDF_Name>("BaseFont", name);
 
   // If it doesn't have a single char, just fail.
-  RetainPtr<CFX_Face> face = pFont->GetFace();
+  RetainPtr<CFX_Face> face = font->GetFace();
   if (face->GetGlyphCount() <= 0) {
     return nullptr;
   }
@@ -316,12 +324,12 @@ RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* pDoc,
     return nullptr;
   }
 
-  pFontDict->SetNewFor<CPDF_Number>(
+  font_dict->SetNewFor<CPDF_Number>(
       "FirstChar", static_cast<int>(char_codes_and_indices[0].char_code));
-  auto widths_array = pDoc->NewIndirect<CPDF_Array>();
+  auto widths_array = doc->NewIndirect<CPDF_Array>();
   for (size_t i = 0; i < char_codes_and_indices.size(); ++i) {
     widths_array->AppendNew<CPDF_Number>(
-        pFont->GetGlyphWidth(char_codes_and_indices[i].glyph_index));
+        font->GetGlyphWidth(char_codes_and_indices[i].glyph_index));
     if (i > 0 && i < char_codes_and_indices.size() - 1) {
       for (uint32_t j = char_codes_and_indices[i - 1].char_code + 1;
            j < char_codes_and_indices[i].char_code; ++j) {
@@ -329,55 +337,55 @@ RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* pDoc,
       }
     }
   }
-  pFontDict->SetNewFor<CPDF_Number>(
+  font_dict->SetNewFor<CPDF_Number>(
       "LastChar", static_cast<int>(char_codes_and_indices.back().char_code));
-  pFontDict->SetNewFor<CPDF_Reference>("Widths", pDoc,
+  font_dict->SetNewFor<CPDF_Reference>("Widths", doc,
                                        widths_array->GetObjNum());
-  RetainPtr<CPDF_Dictionary> pFontDesc =
-      LoadFontDesc(pDoc, name, pFont.get(), span, font_type);
+  RetainPtr<CPDF_Dictionary> font_descriptor_dict =
+      LoadFontDesc(doc, name, font.get(), font_data, font_type);
 
-  pFontDict->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc,
-                                       pFontDesc->GetObjNum());
-  return CPDF_DocPageData::FromDocument(pDoc)->GetFont(std::move(pFontDict));
+  font_dict->SetNewFor<CPDF_Reference>("FontDescriptor", doc,
+                                       font_descriptor_dict->GetObjNum());
+  return CPDF_DocPageData::FromDocument(doc)->GetFont(std::move(font_dict));
 }
 
-RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
-                                       std::unique_ptr<CFX_Font> pFont,
-                                       pdfium::span<const uint8_t> span,
+RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* doc,
+                                       std::unique_ptr<CFX_Font> font,
+                                       pdfium::span<const uint8_t> font_data,
                                        int font_type) {
-  auto pFontDict = pDoc->NewIndirect<CPDF_Dictionary>();
-  pFontDict->SetNewFor<CPDF_Name>("Type", "Font");
-  pFontDict->SetNewFor<CPDF_Name>("Subtype", "Type0");
+  auto font_dict = doc->NewIndirect<CPDF_Dictionary>();
+  font_dict->SetNewFor<CPDF_Name>("Type", "Font");
+  font_dict->SetNewFor<CPDF_Name>("Subtype", "Type0");
   // TODO(npm): Get the correct encoding, if it's not identity.
   ByteString encoding = "Identity-H";
-  pFontDict->SetNewFor<CPDF_Name>("Encoding", encoding);
-  ByteString name = BaseFontNameForType(pFont.get(), font_type);
-  pFontDict->SetNewFor<CPDF_Name>(
+  font_dict->SetNewFor<CPDF_Name>("Encoding", encoding);
+  ByteString name = BaseFontNameForType(font.get(), font_type);
+  font_dict->SetNewFor<CPDF_Name>(
       "BaseFont", font_type == FPDF_FONT_TYPE1 ? name + "-" + encoding : name);
 
-  auto pCIDFont = pDoc->NewIndirect<CPDF_Dictionary>();
-  pCIDFont->SetNewFor<CPDF_Name>("Type", "Font");
-  pCIDFont->SetNewFor<CPDF_Name>("Subtype", font_type == FPDF_FONT_TYPE1
-                                                ? "CIDFontType0"
-                                                : "CIDFontType2");
-  pCIDFont->SetNewFor<CPDF_Name>("BaseFont", name);
+  auto cid_font_dict = doc->NewIndirect<CPDF_Dictionary>();
+  cid_font_dict->SetNewFor<CPDF_Name>("Type", "Font");
+  cid_font_dict->SetNewFor<CPDF_Name>("Subtype", font_type == FPDF_FONT_TYPE1
+                                                     ? "CIDFontType0"
+                                                     : "CIDFontType2");
+  cid_font_dict->SetNewFor<CPDF_Name>("BaseFont", name);
 
   // TODO(npm): Maybe use FT_Get_CID_Registry_Ordering_Supplement to get the
   // CIDSystemInfo
-  auto pCIDSystemInfo = pDoc->NewIndirect<CPDF_Dictionary>();
-  pCIDSystemInfo->SetNewFor<CPDF_String>("Registry", "Adobe", false);
-  pCIDSystemInfo->SetNewFor<CPDF_String>("Ordering", "Identity", false);
-  pCIDSystemInfo->SetNewFor<CPDF_Number>("Supplement", 0);
-  pCIDFont->SetNewFor<CPDF_Reference>("CIDSystemInfo", pDoc,
-                                      pCIDSystemInfo->GetObjNum());
+  auto cid_system_info_dict = doc->NewIndirect<CPDF_Dictionary>();
+  cid_system_info_dict->SetNewFor<CPDF_String>("Registry", "Adobe", false);
+  cid_system_info_dict->SetNewFor<CPDF_String>("Ordering", "Identity", false);
+  cid_system_info_dict->SetNewFor<CPDF_Number>("Supplement", 0);
+  cid_font_dict->SetNewFor<CPDF_Reference>("CIDSystemInfo", doc,
+                                           cid_system_info_dict->GetObjNum());
 
-  RetainPtr<CPDF_Dictionary> pFontDesc =
-      LoadFontDesc(pDoc, name, pFont.get(), span, font_type);
-  pCIDFont->SetNewFor<CPDF_Reference>("FontDescriptor", pDoc,
-                                      pFontDesc->GetObjNum());
+  RetainPtr<CPDF_Dictionary> font_descriptor_dict =
+      LoadFontDesc(doc, name, font.get(), font_data, font_type);
+  cid_font_dict->SetNewFor<CPDF_Reference>("FontDescriptor", doc,
+                                           font_descriptor_dict->GetObjNum());
 
   // If it doesn't have a single char, just fail.
-  RetainPtr<CFX_Face> face = pFont->GetFace();
+  RetainPtr<CFX_Face> face = font->GetFace();
   if (face->GetGlyphCount() <= 0) {
     return nullptr;
   }
@@ -392,20 +400,20 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
   std::map<uint32_t, uint32_t> widths;
   for (const auto& item : char_codes_and_indices) {
     if (!pdfium::Contains(widths, item.glyph_index)) {
-      widths[item.glyph_index] = pFont->GetGlyphWidth(item.glyph_index);
+      widths[item.glyph_index] = font->GetGlyphWidth(item.glyph_index);
     }
     to_unicode.emplace(item.glyph_index, item.char_code);
   }
-  auto widthsArray = pDoc->NewIndirect<CPDF_Array>();
+  auto widths_array = doc->NewIndirect<CPDF_Array>();
   for (auto it = widths.begin(); it != widths.end(); ++it) {
     int ch = it->first;
     int w = it->second;
     if (std::next(it) == widths.end()) {
       // Only one char left, use format c [w]
-      auto oneW = pdfium::MakeRetain<CPDF_Array>();
-      oneW->AppendNew<CPDF_Number>(w);
-      widthsArray->AppendNew<CPDF_Number>(ch);
-      widthsArray->Append(oneW);
+      auto single_w_array = pdfium::MakeRetain<CPDF_Array>();
+      single_w_array->AppendNew<CPDF_Number>(w);
+      widths_array->AppendNew<CPDF_Number>(ch);
+      widths_array->Append(std::move(single_w_array));
       break;
     }
     ++it;
@@ -414,7 +422,7 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
     if (next_ch == ch + 1 && next_w == w) {
       // The array can have a group c_first c_last w: all CIDs in the range from
       // c_first to c_last will have width w
-      widthsArray->AppendNew<CPDF_Number>(ch);
+      widths_array->AppendNew<CPDF_Number>(ch);
       ch = next_ch;
       while (true) {
         auto next_it = std::next(it);
@@ -425,36 +433,38 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* pDoc,
         ++it;
         ch = it->first;
       }
-      widthsArray->AppendNew<CPDF_Number>(ch);
-      widthsArray->AppendNew<CPDF_Number>(w);
+      widths_array->AppendNew<CPDF_Number>(ch);
+      widths_array->AppendNew<CPDF_Number>(w);
       continue;
     }
     // Otherwise we can have a group of the form c [w1 w2 ...]: c has width
     // w1, c+1 has width w2, etc.
-    widthsArray->AppendNew<CPDF_Number>(ch);
-    auto curWidthArray = pdfium::MakeRetain<CPDF_Array>();
-    curWidthArray->AppendNew<CPDF_Number>(w);
-    curWidthArray->AppendNew<CPDF_Number>(next_w);
+    widths_array->AppendNew<CPDF_Number>(ch);
+    auto current_width_array = pdfium::MakeRetain<CPDF_Array>();
+    current_width_array->AppendNew<CPDF_Number>(w);
+    current_width_array->AppendNew<CPDF_Number>(next_w);
     while (true) {
       auto next_it = std::next(it);
       if (next_it == widths.end() || next_it->first != it->first + 1)
         break;
       ++it;
-      curWidthArray->AppendNew<CPDF_Number>(static_cast<int>(it->second));
+      current_width_array->AppendNew<CPDF_Number>(static_cast<int>(it->second));
     }
-    widthsArray->Append(curWidthArray);
+    widths_array->Append(std::move(current_width_array));
   }
-  pCIDFont->SetNewFor<CPDF_Reference>("W", pDoc, widthsArray->GetObjNum());
+  cid_font_dict->SetNewFor<CPDF_Reference>("W", doc, widths_array->GetObjNum());
 
   // TODO(npm): Support vertical writing
 
-  auto pDescendant = pFontDict->SetNewFor<CPDF_Array>("DescendantFonts");
-  pDescendant->AppendNew<CPDF_Reference>(pDoc, pCIDFont->GetObjNum());
+  auto descendant_fonts_array =
+      font_dict->SetNewFor<CPDF_Array>("DescendantFonts");
+  descendant_fonts_array->AppendNew<CPDF_Reference>(doc,
+                                                    cid_font_dict->GetObjNum());
 
-  RetainPtr<CPDF_Stream> toUnicodeStream = LoadUnicode(pDoc, to_unicode);
-  pFontDict->SetNewFor<CPDF_Reference>("ToUnicode", pDoc,
-                                       toUnicodeStream->GetObjNum());
-  return CPDF_DocPageData::FromDocument(pDoc)->GetFont(pFontDict);
+  RetainPtr<CPDF_Stream> to_unicode_stream = LoadUnicode(doc, to_unicode);
+  font_dict->SetNewFor<CPDF_Reference>("ToUnicode", doc,
+                                       to_unicode_stream->GetObjNum());
+  return CPDF_DocPageData::FromDocument(doc)->GetFont(font_dict);
 }
 
 CPDF_TextObject* CPDFTextObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object) {
