@@ -84,6 +84,42 @@ ByteString BaseFontNameForType(const CFX_Font* font, int font_type) {
   return name.IsEmpty() ? CFX_Font::kUntitledFontName : name;
 }
 
+RetainPtr<CPDF_Dictionary> CreateCompositeFontDict(CPDF_Document* doc,
+                                                   const CFX_Font* font,
+                                                   int font_type,
+                                                   const ByteString& name) {
+  auto font_dict = doc->NewIndirect<CPDF_Dictionary>();
+  font_dict->SetNewFor<CPDF_Name>("Type", "Font");
+  font_dict->SetNewFor<CPDF_Name>("Subtype", "Type0");
+  // TODO(npm): Get the correct encoding, if it's not identity.
+  ByteString encoding = "Identity-H";
+  font_dict->SetNewFor<CPDF_Name>("Encoding", encoding);
+  font_dict->SetNewFor<CPDF_Name>(
+      "BaseFont", font_type == FPDF_FONT_TYPE1 ? name + "-" + encoding : name);
+  return font_dict;
+}
+
+RetainPtr<CPDF_Dictionary> CreateCidFontDict(CPDF_Document* doc,
+                                             int font_type,
+                                             const ByteString& name) {
+  auto cid_font_dict = doc->NewIndirect<CPDF_Dictionary>();
+  cid_font_dict->SetNewFor<CPDF_Name>("Type", "Font");
+  cid_font_dict->SetNewFor<CPDF_Name>("Subtype", font_type == FPDF_FONT_TYPE1
+                                                     ? "CIDFontType0"
+                                                     : "CIDFontType2");
+  cid_font_dict->SetNewFor<CPDF_Name>("BaseFont", name);
+
+  // TODO(npm): Maybe use FT_Get_CID_Registry_Ordering_Supplement to get the
+  // CIDSystemInfo
+  auto cid_system_info_dict = doc->NewIndirect<CPDF_Dictionary>();
+  cid_system_info_dict->SetNewFor<CPDF_String>("Registry", "Adobe", false);
+  cid_system_info_dict->SetNewFor<CPDF_String>("Ordering", "Identity", false);
+  cid_system_info_dict->SetNewFor<CPDF_Number>("Supplement", 0);
+  cid_font_dict->SetNewFor<CPDF_Reference>("CIDSystemInfo", doc,
+                                           cid_system_info_dict->GetObjNum());
+  return cid_font_dict;
+}
+
 RetainPtr<CPDF_Dictionary> LoadFontDesc(CPDF_Document* doc,
                                         const ByteString& font_name,
                                         CFX_Font* font,
@@ -135,6 +171,61 @@ RetainPtr<CPDF_Dictionary> LoadFontDesc(CPDF_Document* doc,
   font_descriptor_dict->SetNewFor<CPDF_Reference>(font_file_key, doc,
                                                   stream->GetObjNum());
   return font_descriptor_dict;
+}
+
+RetainPtr<CPDF_Array> CreateWidthsArray(
+    CPDF_Document* doc,
+    const std::map<uint32_t, uint32_t>& widths) {
+  auto widths_array = doc->NewIndirect<CPDF_Array>();
+  for (auto it = widths.begin(); it != widths.end(); ++it) {
+    int ch = it->first;
+    int w = it->second;
+    if (std::next(it) == widths.end()) {
+      // Only one char left, use format c [w]
+      auto single_w_array = pdfium::MakeRetain<CPDF_Array>();
+      single_w_array->AppendNew<CPDF_Number>(w);
+      widths_array->AppendNew<CPDF_Number>(ch);
+      widths_array->Append(std::move(single_w_array));
+      break;
+    }
+    ++it;
+    int next_ch = it->first;
+    int next_w = it->second;
+    if (next_ch == ch + 1 && next_w == w) {
+      // The array can have a group c_first c_last w: all CIDs in the range from
+      // c_first to c_last will have width w
+      widths_array->AppendNew<CPDF_Number>(ch);
+      ch = next_ch;
+      while (true) {
+        auto next_it = std::next(it);
+        if (next_it == widths.end() || next_it->first != it->first + 1 ||
+            next_it->second != it->second) {
+          break;
+        }
+        ++it;
+        ch = it->first;
+      }
+      widths_array->AppendNew<CPDF_Number>(ch);
+      widths_array->AppendNew<CPDF_Number>(w);
+      continue;
+    }
+    // Otherwise we can have a group of the form c [w1 w2 ...]: c has width
+    // w1, c+1 has width w2, etc.
+    widths_array->AppendNew<CPDF_Number>(ch);
+    auto current_width_array = pdfium::MakeRetain<CPDF_Array>();
+    current_width_array->AppendNew<CPDF_Number>(w);
+    current_width_array->AppendNew<CPDF_Number>(next_w);
+    while (true) {
+      auto next_it = std::next(it);
+      if (next_it == widths.end() || next_it->first != it->first + 1) {
+        break;
+      }
+      ++it;
+      current_width_array->AppendNew<CPDF_Number>(static_cast<int>(it->second));
+    }
+    widths_array->Append(std::move(current_width_array));
+  }
+  return widths_array;
 }
 
 const char kToUnicodeStart[] =
@@ -299,6 +390,14 @@ RetainPtr<CPDF_Stream> LoadUnicode(
   return stream;
 }
 
+void CreateDescendantFontsArray(CPDF_Document* doc,
+                                CPDF_Dictionary* font_dict,
+                                uint32_t cid_font_dict_obj_num) {
+  auto descendant_fonts_dict =
+      font_dict->SetNewFor<CPDF_Array>("DescendantFonts");
+  descendant_fonts_dict->AppendNew<CPDF_Reference>(doc, cid_font_dict_obj_num);
+}
+
 RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* doc,
                                     std::unique_ptr<CFX_Font> font,
                                     pdfium::span<const uint8_t> font_data,
@@ -365,31 +464,12 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* doc,
     return nullptr;
   }
 
-  auto font_dict = doc->NewIndirect<CPDF_Dictionary>();
-  font_dict->SetNewFor<CPDF_Name>("Type", "Font");
-  font_dict->SetNewFor<CPDF_Name>("Subtype", "Type0");
-  // TODO(npm): Get the correct encoding, if it's not identity.
-  ByteString encoding = "Identity-H";
-  font_dict->SetNewFor<CPDF_Name>("Encoding", encoding);
   const ByteString name = BaseFontNameForType(font.get(), font_type);
-  font_dict->SetNewFor<CPDF_Name>(
-      "BaseFont", font_type == FPDF_FONT_TYPE1 ? name + "-" + encoding : name);
+  RetainPtr<CPDF_Dictionary> font_dict =
+      CreateCompositeFontDict(doc, font.get(), font_type, name);
 
-  auto cid_font_dict = doc->NewIndirect<CPDF_Dictionary>();
-  cid_font_dict->SetNewFor<CPDF_Name>("Type", "Font");
-  cid_font_dict->SetNewFor<CPDF_Name>("Subtype", font_type == FPDF_FONT_TYPE1
-                                                     ? "CIDFontType0"
-                                                     : "CIDFontType2");
-  cid_font_dict->SetNewFor<CPDF_Name>("BaseFont", name);
-
-  // TODO(npm): Maybe use FT_Get_CID_Registry_Ordering_Supplement to get the
-  // CIDSystemInfo
-  auto cid_system_info_dict = doc->NewIndirect<CPDF_Dictionary>();
-  cid_system_info_dict->SetNewFor<CPDF_String>("Registry", "Adobe", false);
-  cid_system_info_dict->SetNewFor<CPDF_String>("Ordering", "Identity", false);
-  cid_system_info_dict->SetNewFor<CPDF_Number>("Supplement", 0);
-  cid_font_dict->SetNewFor<CPDF_Reference>("CIDSystemInfo", doc,
-                                           cid_system_info_dict->GetObjNum());
+  RetainPtr<CPDF_Dictionary> cid_font_dict =
+      CreateCidFontDict(doc, font_type, name);
 
   RetainPtr<CPDF_Dictionary> font_descriptor_dict =
       LoadFontDesc(doc, name, font.get(), font_data, font_type);
@@ -404,62 +484,12 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* doc,
     }
     to_unicode.emplace(item.glyph_index, item.char_code);
   }
-  auto widths_array = doc->NewIndirect<CPDF_Array>();
-  for (auto it = widths.begin(); it != widths.end(); ++it) {
-    int ch = it->first;
-    int w = it->second;
-    if (std::next(it) == widths.end()) {
-      // Only one char left, use format c [w]
-      auto single_w_array = pdfium::MakeRetain<CPDF_Array>();
-      single_w_array->AppendNew<CPDF_Number>(w);
-      widths_array->AppendNew<CPDF_Number>(ch);
-      widths_array->Append(std::move(single_w_array));
-      break;
-    }
-    ++it;
-    int next_ch = it->first;
-    int next_w = it->second;
-    if (next_ch == ch + 1 && next_w == w) {
-      // The array can have a group c_first c_last w: all CIDs in the range from
-      // c_first to c_last will have width w
-      widths_array->AppendNew<CPDF_Number>(ch);
-      ch = next_ch;
-      while (true) {
-        auto next_it = std::next(it);
-        if (next_it == widths.end() || next_it->first != it->first + 1 ||
-            next_it->second != it->second) {
-          break;
-        }
-        ++it;
-        ch = it->first;
-      }
-      widths_array->AppendNew<CPDF_Number>(ch);
-      widths_array->AppendNew<CPDF_Number>(w);
-      continue;
-    }
-    // Otherwise we can have a group of the form c [w1 w2 ...]: c has width
-    // w1, c+1 has width w2, etc.
-    widths_array->AppendNew<CPDF_Number>(ch);
-    auto current_width_array = pdfium::MakeRetain<CPDF_Array>();
-    current_width_array->AppendNew<CPDF_Number>(w);
-    current_width_array->AppendNew<CPDF_Number>(next_w);
-    while (true) {
-      auto next_it = std::next(it);
-      if (next_it == widths.end() || next_it->first != it->first + 1)
-        break;
-      ++it;
-      current_width_array->AppendNew<CPDF_Number>(static_cast<int>(it->second));
-    }
-    widths_array->Append(std::move(current_width_array));
-  }
+  RetainPtr<CPDF_Array> widths_array = CreateWidthsArray(doc, widths);
   cid_font_dict->SetNewFor<CPDF_Reference>("W", doc, widths_array->GetObjNum());
 
   // TODO(npm): Support vertical writing
 
-  auto descendant_fonts_array =
-      font_dict->SetNewFor<CPDF_Array>("DescendantFonts");
-  descendant_fonts_array->AppendNew<CPDF_Reference>(doc,
-                                                    cid_font_dict->GetObjNum());
+  CreateDescendantFontsArray(doc, font_dict.Get(), cid_font_dict->GetObjNum());
 
   RetainPtr<CPDF_Stream> to_unicode_stream = LoadUnicode(doc, to_unicode);
   font_dict->SetNewFor<CPDF_Reference>("ToUnicode", doc,
