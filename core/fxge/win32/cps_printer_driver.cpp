@@ -17,6 +17,7 @@
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibbase.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/win32/cpsoutput.h"
 #include "third_party/base/check.h"
@@ -214,8 +215,7 @@ bool CPSPrinterDriver::MultiplyAlpha(float alpha) {
   NOTREACHED_NORETURN();
 }
 
-bool CPSPrinterDriver::MultiplyAlphaMask(
-    const RetainPtr<const CFX_DIBBase>& mask) {
+bool CPSPrinterDriver::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
   // PostScript doesn't support transparency. All callers are using
   // `CFX_DIBitmap`-backed raster devices anyway.
   NOTREACHED_NORETURN();

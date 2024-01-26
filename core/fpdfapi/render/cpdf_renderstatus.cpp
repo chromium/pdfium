@@ -637,14 +637,15 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   CFX_Matrix new_matrix = mtObj2Device;
   new_matrix.Translate(-rect.left, -rect.top);
 
-  RetainPtr<CFX_DIBitmap> pTextMask;
+  RetainPtr<CFX_DIBitmap> text_mask_bitmap;
   if (bTextClip) {
-    pTextMask = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (!pTextMask->Create(width, height, FXDIB_Format::k8bppMask))
+    text_mask_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+    if (!text_mask_bitmap->Create(width, height, FXDIB_Format::k8bppMask)) {
       return true;
+    }
 
     CFX_DefaultRenderDevice text_device;
-    text_device.Attach(pTextMask);
+    text_device.Attach(text_mask_bitmap);
     for (size_t i = 0; i < pPageObj->clip_path().GetTextCount(); ++i) {
       CPDF_TextObject* textobj = pPageObj->clip_path().GetText(i);
       if (!textobj)
@@ -678,14 +679,14 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   if (pSMaskDict) {
     CFX_Matrix smask_matrix =
         *pPageObj->general_state().GetSMaskMatrix() * mtObj2Device;
-    RetainPtr<CFX_DIBBase> pSMaskSource =
+    RetainPtr<CFX_DIBitmap> smask_bitmap =
         LoadSMask(pSMaskDict.Get(), &rect, smask_matrix);
-    if (pSMaskSource)
-      bitmap_device.MultiplyAlphaMask(pSMaskSource);
+    if (smask_bitmap) {
+      bitmap_device.MultiplyAlphaMask(std::move(smask_bitmap));
+    }
   }
-  if (pTextMask) {
-    bitmap_device.MultiplyAlphaMask(pTextMask);
-    pTextMask.Reset();
+  if (text_mask_bitmap) {
+    bitmap_device.MultiplyAlphaMask(std::move(text_mask_bitmap));
   }
   if (transparency.IsGroup()) {
     bitmap_device.MultiplyAlpha(group_alpha);

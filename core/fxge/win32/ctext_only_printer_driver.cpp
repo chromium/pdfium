@@ -15,6 +15,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/dib/cfx_dibbase.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
@@ -186,7 +187,7 @@ bool CTextOnlyPrinterDriver::MultiplyAlpha(float alpha) {
 }
 
 bool CTextOnlyPrinterDriver::MultiplyAlphaMask(
-    const RetainPtr<const CFX_DIBBase>& mask) {
+    RetainPtr<const CFX_DIBitmap> mask) {
   // Not needed. All callers are using `CFX_DIBitmap`-backed raster devices
   // anyway.
   NOTREACHED_NORETURN();

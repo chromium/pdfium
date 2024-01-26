@@ -65,7 +65,7 @@ class CTextOnlyPrinterDriver final : public RenderDeviceDriverIface {
                       uint32_t color,
                       const CFX_TextRenderOptions& options) override;
   bool MultiplyAlpha(float alpha) override;
-  bool MultiplyAlphaMask(const RetainPtr<const CFX_DIBBase>& mask) override;
+  bool MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) override;
 
   HDC m_hDC;
   const int m_Width;

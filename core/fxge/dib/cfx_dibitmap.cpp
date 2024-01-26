@@ -396,23 +396,22 @@ bool CFX_DIBitmap::SetUniformOpaqueAlpha() {
   return true;
 }
 
-bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBBase> source) {
-  CHECK(source->IsMaskFormat());
+bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
+  CHECK(mask->IsMaskFormat());
 
   if (!m_pBuffer) {
     return false;
   }
 
   if (IsOpaqueImage()) {
-    return SetAlphaFromBitmap(std::move(source));
+    return SetAlphaFromBitmap(std::move(mask));
   }
 
-  RetainPtr<const CFX_DIBitmap> pSrcClone = source.As<const CFX_DIBitmap>();
-  if (source->GetWidth() != m_Width || source->GetHeight() != m_Height) {
-    pSrcClone =
-        source->StretchTo(m_Width, m_Height, FXDIB_ResampleOptions(), nullptr);
-    if (!pSrcClone)
+  if (mask->GetWidth() != m_Width || mask->GetHeight() != m_Height) {
+    mask = mask->StretchTo(m_Width, m_Height, FXDIB_ResampleOptions(), nullptr);
+    if (!mask) {
       return false;
+    }
   }
   if (IsMaskFormat()) {
     if (!ConvertFormat(FXDIB_Format::k8bppMask))
@@ -420,15 +419,16 @@ bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBBase> source) {
 
     for (int row = 0; row < m_Height; row++) {
       uint8_t* dest_scan = m_pBuffer.Get() + m_Pitch * row;
-      uint8_t* src_scan = pSrcClone->m_pBuffer.Get() + pSrcClone->m_Pitch * row;
-      if (pSrcClone->GetBPP() == 1) {
+      const uint8_t* mask_scan = mask->m_pBuffer.Get() + mask->m_Pitch * row;
+      if (mask->GetBPP() == 1) {
         for (int col = 0; col < m_Width; col++) {
-          if (!((1 << (7 - col % 8)) & src_scan[col / 8]))
+          if (!((1 << (7 - col % 8)) & mask_scan[col / 8])) {
             dest_scan[col] = 0;
+          }
         }
       } else {
         for (int col = 0; col < m_Width; col++) {
-          *dest_scan = (*dest_scan) * src_scan[col] / 255;
+          *dest_scan = (*dest_scan) * mask_scan[col] / 255;
           dest_scan++;
         }
       }
@@ -437,14 +437,15 @@ bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBBase> source) {
   }
 
   DCHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
-  if (pSrcClone->GetBPP() == 1)
+  if (mask->GetBPP() == 1) {
     return false;
+  }
 
   for (int row = 0; row < m_Height; row++) {
     uint8_t* dest_scan = m_pBuffer.Get() + m_Pitch * row + 3;
-    uint8_t* src_scan = pSrcClone->m_pBuffer.Get() + pSrcClone->m_Pitch * row;
+    const uint8_t* mask_scan = mask->m_pBuffer.Get() + mask->m_Pitch * row;
     for (int col = 0; col < m_Width; col++) {
-      *dest_scan = (*dest_scan) * src_scan[col] / 255;
+      *dest_scan = (*dest_scan) * mask_scan[col] / 255;
       dest_scan += 4;
     }
   }

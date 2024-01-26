@@ -1485,9 +1485,8 @@ bool CFX_RenderDevice::MultiplyAlpha(float alpha) {
   return m_pDeviceDriver->MultiplyAlpha(alpha);
 }
 
-bool CFX_RenderDevice::MultiplyAlphaMask(
-    const RetainPtr<const CFX_DIBBase>& mask) {
-  return m_pDeviceDriver->MultiplyAlphaMask(mask);
+bool CFX_RenderDevice::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
+  return m_pDeviceDriver->MultiplyAlphaMask(std::move(mask));
 }
 
 CFX_RenderDevice::StateRestorer::StateRestorer(CFX_RenderDevice* pDevice)
