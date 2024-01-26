@@ -371,20 +371,6 @@ int16_t CFX_Face::GetDescender() const {
   return pdfium::base::checked_cast<int16_t>(GetRec()->descender);
 }
 
-int CFX_Face::GetAdjustedAscender() const {
-  int ascender = GetAscender();
-  CHECK_GE(ascender, kThousandthMinInt);
-  CHECK_LE(ascender, kThousandthMaxInt);
-  return EM_ADJUST(GetUnitsPerEm(), ascender);
-}
-
-int CFX_Face::GetAdjustedDescender() const {
-  int descender = GetDescender();
-  CHECK_GE(descender, kThousandthMinInt);
-  CHECK_LE(descender, kThousandthMaxInt);
-  return EM_ADJUST(GetUnitsPerEm(), descender);
-}
-
 #if BUILDFLAG(IS_ANDROID)
 int16_t CFX_Face::GetHeight() const {
   return pdfium::base::checked_cast<int16_t>(GetRec()->height);

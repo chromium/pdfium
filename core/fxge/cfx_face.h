@@ -67,8 +67,6 @@ class CFX_Face final : public Retainable, public Observable {
   uint16_t GetUnitsPerEm() const;
   int16_t GetAscender() const;
   int16_t GetDescender() const;
-  int GetAdjustedAscender() const;
-  int GetAdjustedDescender() const;
 #if BUILDFLAG(IS_ANDROID)
   int16_t GetHeight() const;
 #endif

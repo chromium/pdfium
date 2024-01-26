@@ -275,11 +275,17 @@ bool CFX_Font::IsTTFont() const {
 }
 
 int CFX_Font::GetAscent() const {
-  return m_Face ? m_Face->GetAdjustedAscender() : 0;
+  if (!m_Face) {
+    return 0;
+  }
+  return NormalizeFontMetric(m_Face->GetAscender(), m_Face->GetUnitsPerEm());
 }
 
 int CFX_Font::GetDescent() const {
-  return m_Face ? m_Face->GetAdjustedDescender() : 0;
+  if (!m_Face) {
+    return 0;
+  }
+  return NormalizeFontMetric(m_Face->GetDescender(), m_Face->GetUnitsPerEm());
 }
 
 absl::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
