@@ -303,13 +303,6 @@ RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* doc,
                                     std::unique_ptr<CFX_Font> font,
                                     pdfium::span<const uint8_t> font_data,
                                     int font_type) {
-  auto font_dict = doc->NewIndirect<CPDF_Dictionary>();
-  font_dict->SetNewFor<CPDF_Name>("Type", "Font");
-  font_dict->SetNewFor<CPDF_Name>(
-      "Subtype", font_type == FPDF_FONT_TYPE1 ? "Type1" : "TrueType");
-  ByteString name = BaseFontNameForType(font.get(), font_type);
-  font_dict->SetNewFor<CPDF_Name>("BaseFont", name);
-
   // If it doesn't have a single char, just fail.
   RetainPtr<CFX_Face> face = font->GetFace();
   if (face->GetGlyphCount() <= 0) {
@@ -323,6 +316,13 @@ RetainPtr<CPDF_Font> LoadSimpleFont(CPDF_Document* doc,
   if (char_codes_and_indices.empty()) {
     return nullptr;
   }
+
+  auto font_dict = doc->NewIndirect<CPDF_Dictionary>();
+  font_dict->SetNewFor<CPDF_Name>("Type", "Font");
+  font_dict->SetNewFor<CPDF_Name>(
+      "Subtype", font_type == FPDF_FONT_TYPE1 ? "Type1" : "TrueType");
+  const ByteString name = BaseFontNameForType(font.get(), font_type);
+  font_dict->SetNewFor<CPDF_Name>("BaseFont", name);
 
   font_dict->SetNewFor<CPDF_Number>(
       "FirstChar", static_cast<int>(char_codes_and_indices[0].char_code));
@@ -353,13 +353,25 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* doc,
                                        std::unique_ptr<CFX_Font> font,
                                        pdfium::span<const uint8_t> font_data,
                                        int font_type) {
+  // If it doesn't have a single char, just fail.
+  RetainPtr<CFX_Face> face = font->GetFace();
+  if (face->GetGlyphCount() <= 0) {
+    return nullptr;
+  }
+
+  auto char_codes_and_indices =
+      face->GetCharCodesAndIndices(pdfium::kMaximumSupplementaryCodePoint);
+  if (char_codes_and_indices.empty()) {
+    return nullptr;
+  }
+
   auto font_dict = doc->NewIndirect<CPDF_Dictionary>();
   font_dict->SetNewFor<CPDF_Name>("Type", "Font");
   font_dict->SetNewFor<CPDF_Name>("Subtype", "Type0");
   // TODO(npm): Get the correct encoding, if it's not identity.
   ByteString encoding = "Identity-H";
   font_dict->SetNewFor<CPDF_Name>("Encoding", encoding);
-  ByteString name = BaseFontNameForType(font.get(), font_type);
+  const ByteString name = BaseFontNameForType(font.get(), font_type);
   font_dict->SetNewFor<CPDF_Name>(
       "BaseFont", font_type == FPDF_FONT_TYPE1 ? name + "-" + encoding : name);
 
@@ -383,18 +395,6 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* doc,
       LoadFontDesc(doc, name, font.get(), font_data, font_type);
   cid_font_dict->SetNewFor<CPDF_Reference>("FontDescriptor", doc,
                                            font_descriptor_dict->GetObjNum());
-
-  // If it doesn't have a single char, just fail.
-  RetainPtr<CFX_Face> face = font->GetFace();
-  if (face->GetGlyphCount() <= 0) {
-    return nullptr;
-  }
-
-  auto char_codes_and_indices =
-      face->GetCharCodesAndIndices(pdfium::kMaximumSupplementaryCodePoint);
-  if (char_codes_and_indices.empty()) {
-    return nullptr;
-  }
 
   std::multimap<uint32_t, uint32_t> to_unicode;
   std::map<uint32_t, uint32_t> widths;
