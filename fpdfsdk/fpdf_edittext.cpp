@@ -78,13 +78,10 @@ static_assert(static_cast<int>(TextRenderingMode::MODE_LAST) ==
 
 namespace {
 
-ByteString BaseFontNameForType(CFX_Font* pFont, int font_type) {
+ByteString BaseFontNameForType(const CFX_Font* pFont, int font_type) {
   ByteString name = font_type == FPDF_FONT_TYPE1 ? pFont->GetPsName()
                                                  : pFont->GetBaseFontName();
-  if (!name.IsEmpty())
-    return name;
-
-  return CFX_Font::kUntitledFontName;
+  return name.IsEmpty() ? CFX_Font::kUntitledFontName : name;
 }
 
 RetainPtr<CPDF_Dictionary> LoadFontDesc(CPDF_Document* pDoc,
@@ -108,7 +105,7 @@ RetainPtr<CPDF_Dictionary> LoadFontDesc(CPDF_Document* pDoc,
     flags |= FXFONT_FORCE_BOLD;
   }
 
-  // TODO(npm): How do I know if a  font is symbolic, script, allcap, smallcap
+  // TODO(npm): How do I know if a font is symbolic, script, allcap, smallcap?
   flags |= FXFONT_NONSYMBOLIC;
 
   pFontDesc->SetNewFor<CPDF_Number>("Flags", flags);
@@ -129,7 +126,7 @@ RetainPtr<CPDF_Dictionary> LoadFontDesc(CPDF_Document* pDoc,
   // TODO(npm): Lengths for Type1 fonts.
   if (font_type == FPDF_FONT_TRUETYPE) {
     stream->GetMutableDict()->SetNewFor<CPDF_Number>(
-        "Length1", static_cast<int>(span.size()));
+        "Length1", pdfium::base::checked_cast<int>(span.size()));
   }
   ByteString fontFile = font_type == FPDF_FONT_TYPE1 ? "FontFile" : "FontFile2";
   pFontDesc->SetNewFor<CPDF_Reference>(fontFile, pDoc, stream->GetObjNum());
@@ -158,12 +155,13 @@ const char ToUnicodeEnd[] =
     "end\n";
 
 void AddCharcode(fxcrt::ostringstream* pBuffer, uint32_t number) {
-  DCHECK(number <= 0xFFFF);
+  CHECK_LE(number, 0xFFFF);
   *pBuffer << "<";
   char ans[4];
   FXSYS_IntToFourHexChars(number, ans);
-  for (size_t i = 0; i < 4; ++i)
-    *pBuffer << ans[i];
+  for (char c : ans) {
+    *pBuffer << c;
+  }
   *pBuffer << ">";
 }
 
@@ -175,10 +173,13 @@ void AddUnicode(fxcrt::ostringstream* pBuffer, uint32_t unicode) {
   }
 
   char ans[8];
-  *pBuffer << "<";
   size_t numChars = FXSYS_ToUTF16BE(unicode, ans);
-  for (size_t i = 0; i < numChars; ++i)
-    *pBuffer << ans[i];
+  *pBuffer << "<";
+  CHECK_LE(numChars, std::size(ans));
+  auto ans_span = pdfium::make_span(ans).first(numChars);
+  for (char c : ans_span) {
+    *pBuffer << c;
+  }
   *pBuffer << ">";
 }
 
@@ -203,10 +204,12 @@ RetainPtr<CPDF_Stream> LoadUnicode(
   for (auto iter = to_unicode.begin(); iter != to_unicode.end(); ++iter) {
     uint32_t firstCharcode = iter->first;
     uint32_t firstUnicode = iter->second;
-    if (std::next(iter) == to_unicode.end() ||
-        firstCharcode + 1 != std::next(iter)->first) {
-      char_to_uni[firstCharcode] = firstUnicode;
-      continue;
+    {
+      auto next_it = std::next(iter);
+      if (next_it == to_unicode.end() || firstCharcode + 1 != next_it->first) {
+        char_to_uni[firstCharcode] = firstUnicode;
+        continue;
+      }
     }
     ++iter;
     uint32_t curCharcode = iter->first;
@@ -220,9 +223,7 @@ RetainPtr<CPDF_Stream> LoadUnicode(
     auto next_it = std::next(iter);
     if (firstUnicode + 1 != curUnicode) {
       // Consecutive charcodes mapping to non-consecutive unicodes
-      std::vector<uint32_t> unicodes;
-      unicodes.push_back(firstUnicode);
-      unicodes.push_back(curUnicode);
+      std::vector<uint32_t> unicodes = {firstUnicode, curUnicode};
       for (size_t i = 0; i < maxExtra; ++i) {
         if (next_it == to_unicode.end() || curCharcode + 1 != next_it->first)
           break;
@@ -269,8 +270,7 @@ RetainPtr<CPDF_Stream> LoadUnicode(
     buffer << " [";
     const std::vector<uint32_t>& unicodes = iter.second;
     for (size_t i = 0; i < unicodes.size(); ++i) {
-      uint32_t uni = unicodes[i];
-      AddUnicode(&buffer, uni);
+      AddUnicode(&buffer, unicodes[i]);
       if (i != unicodes.size() - 1)
         buffer << " ";
     }
@@ -287,7 +287,6 @@ RetainPtr<CPDF_Stream> LoadUnicode(
   }
   buffer << "endbfrange\n";
   buffer << ToUnicodeEnd;
-  // TODO(npm): Encrypt / Compress?
   auto stream = pDoc->NewIndirect<CPDF_Stream>(&buffer);
   return stream;
 }
