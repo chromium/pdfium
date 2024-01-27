@@ -294,11 +294,62 @@ void CFX_DIBitmap::TransferEqualFormatsOneBPP(
   }
 }
 
-bool CFX_DIBitmap::SetChannelFromBitmap(Channel dest_channel,
-                                        RetainPtr<const CFX_DIBBase> source) {
+bool CFX_DIBitmap::SetAlphaFromMask(RetainPtr<const CFX_DIBitmap> mask) {
   if (!m_pBuffer)
     return false;
 
+  if (!mask->IsAlphaFormat() && !mask->IsMaskFormat()) {
+    return false;
+  }
+
+  if (mask->GetBPP() == 1) {
+    mask = mask->ConvertTo(FXDIB_Format::k8bppMask);
+    if (!mask) {
+      return false;
+    }
+  }
+  const int mask_offset = mask->GetFormat() == FXDIB_Format::kArgb ? 3 : 0;
+  int dest_offset = 0;
+  if (IsMaskFormat()) {
+    if (!ConvertFormat(FXDIB_Format::k8bppMask)) {
+      return false;
+    }
+  } else {
+    if (!ConvertFormat(FXDIB_Format::kArgb)) {
+      return false;
+    }
+
+    dest_offset = 3;
+  }
+  if (mask->GetWidth() != m_Width || mask->GetHeight() != m_Height) {
+    mask = mask->StretchTo(m_Width, m_Height, FXDIB_ResampleOptions(), nullptr);
+    if (!mask) {
+      return false;
+    }
+  }
+  RetainPtr<CFX_DIBitmap> dest_bitmap(this);
+  int mask_bytes = mask->GetBPP() / 8;
+  int dest_bytes = dest_bitmap->GetBPP() / 8;
+  for (int row = 0; row < m_Height; row++) {
+    uint8_t* dest_pos =
+        dest_bitmap->GetWritableScanline(row).subspan(dest_offset).data();
+    const uint8_t* mask_pos =
+        mask->GetScanline(row).subspan(mask_offset).data();
+    for (int col = 0; col < m_Width; col++) {
+      *dest_pos = *mask_pos;
+      dest_pos += dest_bytes;
+      mask_pos += mask_bytes;
+    }
+  }
+  return true;
+}
+
+bool CFX_DIBitmap::SetRedFromAlpha() {
+  if (!m_pBuffer) {
+    return false;
+  }
+
+  RetainPtr<CFX_DIBitmap> source(this);
   if (!source->IsAlphaFormat() && !source->IsMaskFormat()) {
     return false;
   }
@@ -310,33 +361,22 @@ bool CFX_DIBitmap::SetChannelFromBitmap(Channel dest_channel,
     }
   }
   const int src_offset = source->GetFormat() == FXDIB_Format::kArgb ? 3 : 0;
-  int dest_offset = 0;
-  if (dest_channel == Channel::kAlpha) {
-    if (IsMaskFormat()) {
-      if (!ConvertFormat(FXDIB_Format::k8bppMask))
+  if (IsMaskFormat()) {
+    return false;
+  }
+
+  if (GetBPP() < 24) {
+    if (IsAlphaFormat()) {
+      if (!ConvertFormat(FXDIB_Format::kArgb)) {
         return false;
+      }
     } else {
-      if (!ConvertFormat(FXDIB_Format::kArgb))
+      if (!ConvertFormat(kPlatformRGBFormat)) {
         return false;
-
-      dest_offset = 3;
-    }
-  } else {
-    DCHECK_EQ(dest_channel, Channel::kRed);
-    if (IsMaskFormat())
-      return false;
-
-    if (GetBPP() < 24) {
-      if (IsAlphaFormat()) {
-        if (!ConvertFormat(FXDIB_Format::kArgb))
-          return false;
-      } else {
-        if (!ConvertFormat(kPlatformRGBFormat))
-          return false;
       }
     }
-    dest_offset = 2;
   }
+  int dest_offset = 2;
   if (source->GetWidth() != m_Width || source->GetHeight() != m_Height) {
     source =
         source->StretchTo(m_Width, m_Height, FXDIB_ResampleOptions(), nullptr);
@@ -359,14 +399,6 @@ bool CFX_DIBitmap::SetChannelFromBitmap(Channel dest_channel,
     }
   }
   return true;
-}
-
-bool CFX_DIBitmap::SetAlphaFromBitmap(RetainPtr<const CFX_DIBBase> source) {
-  return SetChannelFromBitmap(Channel::kAlpha, std::move(source));
-}
-
-bool CFX_DIBitmap::SetRedFromBitmap(RetainPtr<const CFX_DIBBase> source) {
-  return SetChannelFromBitmap(Channel::kRed, std::move(source));
 }
 
 bool CFX_DIBitmap::SetUniformOpaqueAlpha() {
@@ -404,7 +436,7 @@ bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
   }
 
   if (IsOpaqueImage()) {
-    return SetAlphaFromBitmap(std::move(mask));
+    return SetAlphaFromMask(std::move(mask));
   }
 
   if (mask->GetWidth() != m_Width || mask->GetHeight() != m_Height) {

@@ -980,8 +980,9 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
       break;
     }
   }
-  if (bAlphaMode)
-    pBitmap->SetRedFromBitmap(pBitmap);
+  if (bAlphaMode) {
+    pBitmap->SetRedFromAlpha();
+  }
 
   if (options.ColorModeIs(CPDF_RenderOptions::kGray))
     pBitmap->ConvertColorScale(0, 0xffffff);
