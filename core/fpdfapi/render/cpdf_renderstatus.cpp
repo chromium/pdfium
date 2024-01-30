@@ -620,8 +620,8 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   if (rect.IsEmpty())
     return true;
 
-  int width = rect.Width();
-  int height = rect.Height();
+  const int width = rect.Width();
+  const int height = rect.Height();
   CFX_DefaultRenderDevice bitmap_device;
   RetainPtr<CFX_DIBitmap> backdrop;
   if (!transparency.IsIsolated() &&
@@ -680,7 +680,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     CFX_Matrix smask_matrix =
         *pPageObj->general_state().GetSMaskMatrix() * mtObj2Device;
     RetainPtr<CFX_DIBitmap> smask_bitmap =
-        LoadSMask(pSMaskDict.Get(), &rect, smask_matrix);
+        LoadSMask(pSMaskDict.Get(), rect, smask_matrix);
     if (smask_bitmap) {
       bitmap_device.MultiplyAlphaMask(std::move(smask_bitmap));
     }
@@ -1316,25 +1316,22 @@ void CPDF_RenderStatus::CompositeDIBitmap(
 }
 
 RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
-    CPDF_Dictionary* pSMaskDict,
-    FX_RECT* pClipRect,
-    const CFX_Matrix& mtMatrix) {
-  if (!pSMaskDict)
-    return nullptr;
-
+    CPDF_Dictionary* smask_dict,
+    const FX_RECT& clip_rect,
+    const CFX_Matrix& smask_matrix) {
   RetainPtr<CPDF_Stream> pGroup =
-      pSMaskDict->GetMutableStreamFor(pdfium::transparency::kG);
+      smask_dict->GetMutableStreamFor(pdfium::transparency::kG);
   if (!pGroup)
     return nullptr;
 
   std::unique_ptr<CPDF_Function> pFunc;
   RetainPtr<const CPDF_Object> pFuncObj =
-      pSMaskDict->GetDirectObjectFor(pdfium::transparency::kTR);
+      smask_dict->GetDirectObjectFor(pdfium::transparency::kTR);
   if (pFuncObj && (pFuncObj->IsDictionary() || pFuncObj->IsStream()))
     pFunc = CPDF_Function::Load(std::move(pFuncObj));
 
-  CFX_Matrix matrix = mtMatrix;
-  matrix.Translate(-pClipRect->left, -pClipRect->top);
+  CFX_Matrix matrix = smask_matrix;
+  matrix.Translate(-clip_rect.left, -clip_rect.top);
 
   CPDF_Form form(m_pContext->GetDocument(),
                  m_pContext->GetMutablePageResources(), pGroup);
@@ -1342,18 +1339,19 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
 
   CFX_DefaultRenderDevice bitmap_device;
   bool bLuminosity =
-      pSMaskDict->GetByteStringFor(pdfium::transparency::kSoftMaskSubType) !=
+      smask_dict->GetByteStringFor(pdfium::transparency::kSoftMaskSubType) !=
       pdfium::transparency::kAlpha;
-  int width = pClipRect->right - pClipRect->left;
-  int height = pClipRect->bottom - pClipRect->top;
-  FXDIB_Format format = GetFormatForLuminosity(bLuminosity);
-  if (!bitmap_device.Create(width, height, format, nullptr))
+  const int width = clip_rect.Width();
+  const int height = clip_rect.Height();
+  const FXDIB_Format format = GetFormatForLuminosity(bLuminosity);
+  if (!bitmap_device.Create(width, height, format, nullptr)) {
     return nullptr;
+  }
 
   CPDF_ColorSpace::Family nCSFamily = CPDF_ColorSpace::Family::kUnknown;
   const FX_ARGB background_color =
       bLuminosity
-          ? GetBackgroundColor(pSMaskDict, pGroup->GetDict().Get(), &nCSFamily)
+          ? GetBackgroundColor(smask_dict, pGroup->GetDict().Get(), &nCSFamily)
           : 0;
   bitmap_device.Clear(background_color);
 
@@ -1372,15 +1370,16 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   status.Initialize(nullptr, nullptr);
   status.RenderObjectList(&form, matrix);
 
-  auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pMask->Create(width, height, FXDIB_Format::k8bppMask))
+  auto result_mask = pdfium::MakeRetain<CFX_DIBitmap>();
+  if (!result_mask->Create(width, height, FXDIB_Format::k8bppMask)) {
     return nullptr;
+  }
 
-  pdfium::span<uint8_t> dest_buf = pMask->GetWritableBuffer();
+  pdfium::span<uint8_t> dest_buf = result_mask->GetWritableBuffer();
   RetainPtr<const CFX_DIBitmap> bitmap = bitmap_device.GetBitmap();
   pdfium::span<const uint8_t> src_buf = bitmap->GetBuffer();
-  int dest_pitch = pMask->GetPitch();
-  int src_pitch = bitmap->GetPitch();
+  const int dest_pitch = result_mask->GetPitch();
+  const int src_pitch = bitmap->GetPitch();
   DataVector<uint8_t> transfers(256);
   if (pFunc) {
     std::vector<float> results(pFunc->CountOutputs());
@@ -1413,7 +1412,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   } else {
     fxcrt::spancpy(dest_buf, src_buf.first(dest_pitch * height));
   }
-  return pMask;
+  return result_mask;
 }
 
 FX_ARGB CPDF_RenderStatus::GetBackgroundColor(
