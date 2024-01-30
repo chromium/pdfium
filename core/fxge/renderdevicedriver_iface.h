@@ -127,6 +127,8 @@ class RenderDeviceDriverIface {
   virtual bool MultiplyAlpha(float alpha) = 0;
 
   // Multiplies the device by an alpha mask, returning `true` on success.
+  // Implementations CHECK the following conditions:
+  // - `mask` must be of format `FXDIB_Format::k8bppMask`.
   virtual bool MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) = 0;
 };
 

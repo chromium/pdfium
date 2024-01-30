@@ -294,108 +294,23 @@ void CFX_DIBitmap::TransferEqualFormatsOneBPP(
   }
 }
 
-bool CFX_DIBitmap::SetAlphaFromMask(RetainPtr<const CFX_DIBitmap> mask) {
-  if (!m_pBuffer)
-    return false;
-
-  if (!mask->IsAlphaFormat() && !mask->IsMaskFormat()) {
-    return false;
-  }
-
-  if (mask->GetBPP() == 1) {
-    mask = mask->ConvertTo(FXDIB_Format::k8bppMask);
-    if (!mask) {
-      return false;
-    }
-  }
-  const int mask_offset = mask->GetFormat() == FXDIB_Format::kArgb ? 3 : 0;
-  int dest_offset = 0;
-  if (IsMaskFormat()) {
-    if (!ConvertFormat(FXDIB_Format::k8bppMask)) {
-      return false;
-    }
-  } else {
-    if (!ConvertFormat(FXDIB_Format::kArgb)) {
-      return false;
-    }
-
-    dest_offset = 3;
-  }
-  if (mask->GetWidth() != m_Width || mask->GetHeight() != m_Height) {
-    mask = mask->StretchTo(m_Width, m_Height, FXDIB_ResampleOptions(), nullptr);
-    if (!mask) {
-      return false;
-    }
-  }
-  RetainPtr<CFX_DIBitmap> dest_bitmap(this);
-  int mask_bytes = mask->GetBPP() / 8;
-  int dest_bytes = dest_bitmap->GetBPP() / 8;
-  for (int row = 0; row < m_Height; row++) {
-    uint8_t* dest_pos =
-        dest_bitmap->GetWritableScanline(row).subspan(dest_offset).data();
-    const uint8_t* mask_pos =
-        mask->GetScanline(row).subspan(mask_offset).data();
-    for (int col = 0; col < m_Width; col++) {
-      *dest_pos = *mask_pos;
-      dest_pos += dest_bytes;
-      mask_pos += mask_bytes;
-    }
-  }
-  return true;
-}
-
 bool CFX_DIBitmap::SetRedFromAlpha() {
+  CHECK_EQ(FXDIB_Format::kArgb, GetFormat());
+
   if (!m_pBuffer) {
     return false;
   }
 
-  RetainPtr<CFX_DIBitmap> source(this);
-  if (!source->IsAlphaFormat() && !source->IsMaskFormat()) {
-    return false;
-  }
-
-  if (source->GetBPP() == 1) {
-    source = source->ConvertTo(FXDIB_Format::k8bppMask);
-    if (!source) {
-      return false;
-    }
-  }
-  const int src_offset = source->GetFormat() == FXDIB_Format::kArgb ? 3 : 0;
-  if (IsMaskFormat()) {
-    return false;
-  }
-
-  if (GetBPP() < 24) {
-    if (IsAlphaFormat()) {
-      if (!ConvertFormat(FXDIB_Format::kArgb)) {
-        return false;
-      }
-    } else {
-      if (!ConvertFormat(kPlatformRGBFormat)) {
-        return false;
-      }
-    }
-  }
-  int dest_offset = 2;
-  if (source->GetWidth() != m_Width || source->GetHeight() != m_Height) {
-    source =
-        source->StretchTo(m_Width, m_Height, FXDIB_ResampleOptions(), nullptr);
-    if (!source) {
-      return false;
-    }
-  }
-  RetainPtr<CFX_DIBitmap> dest_bitmap(this);
-  int src_bytes = source->GetBPP() / 8;
-  int dest_bytes = dest_bitmap->GetBPP() / 8;
   for (int row = 0; row < m_Height; row++) {
-    uint8_t* dest_pos =
-        dest_bitmap->GetWritableScanline(row).subspan(dest_offset).data();
-    const uint8_t* src_pos =
-        source->GetScanline(row).subspan(src_offset).data();
+    constexpr int kSrcOffset = 3;
+    constexpr int kDestOffset = 2;
+    constexpr int kBytes = 4;
+    uint8_t* dest_pos = GetWritableScanline(row).subspan(kDestOffset).data();
+    const uint8_t* src_pos = GetScanline(row).subspan(kSrcOffset).data();
     for (int col = 0; col < m_Width; col++) {
       *dest_pos = *src_pos;
-      dest_pos += dest_bytes;
-      src_pos += src_bytes;
+      dest_pos += kBytes;
+      src_pos += kBytes;
     }
   }
   return true;
@@ -429,14 +344,37 @@ bool CFX_DIBitmap::SetUniformOpaqueAlpha() {
 }
 
 bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
-  CHECK(mask->IsMaskFormat());
+  CHECK_EQ(FXDIB_Format::k8bppMask, mask->GetFormat());
 
   if (!m_pBuffer) {
     return false;
   }
 
   if (IsOpaqueImage()) {
-    return SetAlphaFromMask(std::move(mask));
+    if (!ConvertFormat(FXDIB_Format::kArgb)) {
+      return false;
+    }
+
+    if (mask->GetWidth() != m_Width || mask->GetHeight() != m_Height) {
+      mask =
+          mask->StretchTo(m_Width, m_Height, FXDIB_ResampleOptions(), nullptr);
+      if (!mask) {
+        return false;
+      }
+    }
+    const int dest_bytes = GetBPP() / 8;
+    for (int row = 0; row < m_Height; row++) {
+      constexpr int kMaskBytes = 1;
+      constexpr int kDestOffset = 3;
+      uint8_t* dest_pos = GetWritableScanline(row).subspan(kDestOffset).data();
+      const uint8_t* mask_pos = mask->GetScanline(row).data();
+      for (int col = 0; col < m_Width; col++) {
+        *dest_pos = *mask_pos;
+        dest_pos += dest_bytes;
+        mask_pos += kMaskBytes;
+      }
+    }
+    return true;
   }
 
   if (mask->GetWidth() != m_Width || mask->GetHeight() != m_Height) {
@@ -452,27 +390,15 @@ bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
     for (int row = 0; row < m_Height; row++) {
       uint8_t* dest_scan = m_pBuffer.Get() + m_Pitch * row;
       const uint8_t* mask_scan = mask->m_pBuffer.Get() + mask->m_Pitch * row;
-      if (mask->GetBPP() == 1) {
-        for (int col = 0; col < m_Width; col++) {
-          if (!((1 << (7 - col % 8)) & mask_scan[col / 8])) {
-            dest_scan[col] = 0;
-          }
-        }
-      } else {
-        for (int col = 0; col < m_Width; col++) {
-          *dest_scan = (*dest_scan) * mask_scan[col] / 255;
-          dest_scan++;
-        }
+      for (int col = 0; col < m_Width; col++) {
+        *dest_scan = (*dest_scan) * mask_scan[col] / 255;
+        dest_scan++;
       }
     }
     return true;
   }
 
   DCHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
-  if (mask->GetBPP() == 1) {
-    return false;
-  }
-
   for (int row = 0; row < m_Height; row++) {
     uint8_t* dest_scan = m_pBuffer.Get() + m_Pitch * row + 3;
     const uint8_t* mask_scan = mask->m_pBuffer.Get() + mask->m_Pitch * row;

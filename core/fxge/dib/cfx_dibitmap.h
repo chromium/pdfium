@@ -59,7 +59,9 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   uint32_t GetPixelForTesting(int x, int y) const;
 #endif  // defined(PDF_USE_SKIA)
 
+  // Requires `this` to be of format `FXDIB_Format::kArgb`.
   bool SetRedFromAlpha();
+
   bool SetUniformOpaqueAlpha();
 
   // TODO(crbug.com/pdfium/2007): Migrate callers to `CFX_RenderDevice`.
@@ -150,7 +152,6 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   CFX_DIBitmap(const CFX_DIBitmap& src);
   ~CFX_DIBitmap() override;
 
-  bool SetAlphaFromMask(RetainPtr<const CFX_DIBitmap> mask);
   void ConvertBGRColorScale(uint32_t forecolor, uint32_t backcolor);
   bool TransferWithUnequalFormats(FXDIB_Format dest_format,
                                   int dest_left,

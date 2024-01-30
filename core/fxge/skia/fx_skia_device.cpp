@@ -967,7 +967,7 @@ bool CFX_SkiaDeviceDriver::MultiplyAlpha(float alpha) {
 
 bool CFX_SkiaDeviceDriver::MultiplyAlphaMask(
     RetainPtr<const CFX_DIBitmap> mask) {
-  CHECK(mask->IsMaskFormat());
+  CHECK_EQ(FXDIB_Format::k8bppMask, mask->GetFormat());
 
   sk_sp<SkImage> skia_mask = mask->RealizeSkImage();
   if (!skia_mask) {

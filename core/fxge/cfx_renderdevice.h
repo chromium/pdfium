@@ -203,10 +203,8 @@ class CFX_RenderDevice {
                    int alpha,
                    bool bAlphaMode);
 
-  // Multiplies the device by a constant alpha, returning `true` on success.
+  // See RenderDeviceDriverIface methods of the same name.
   bool MultiplyAlpha(float alpha);
-
-  // Multiplies the device by an alpha mask, returning `true` on success.
   bool MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask);
 
 #if defined(PDF_USE_SKIA)
