@@ -40,12 +40,8 @@ config("pdfium_common_config") {
     defines += [ "PDF_ENABLE_CLICK_LOGGING" ]
   }
 
-  if (pdf_use_skia) {
-    defines += [ "PDF_USE_SKIA" ]
-
-    if (pdf_enable_fontations) {
-      defines += [ "PDF_ENABLE_FONTATIONS" ]
-    }
+  if (pdf_use_skia && pdf_enable_fontations) {
+    defines += [ "PDF_ENABLE_FONTATIONS" ]
   }
 
   if (pdf_use_partition_alloc) {
@@ -260,6 +256,10 @@ config("pdfium_public_config") {
         defines += [ "PDF_ENABLE_XFA_TIFF" ]
       }
     }
+  }
+
+  if (pdf_use_skia) {
+    defines += [ "PDF_USE_SKIA" ]
   }
 }
 
