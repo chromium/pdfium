@@ -294,12 +294,9 @@ void CFX_DIBitmap::TransferEqualFormatsOneBPP(
   }
 }
 
-bool CFX_DIBitmap::SetRedFromAlpha() {
+void CFX_DIBitmap::SetRedFromAlpha() {
   CHECK_EQ(FXDIB_Format::kArgb, GetFormat());
-
-  if (!m_pBuffer) {
-    return false;
-  }
+  CHECK(m_pBuffer);
 
   for (int row = 0; row < m_Height; row++) {
     constexpr int kSrcOffset = 3;
@@ -313,98 +310,59 @@ bool CFX_DIBitmap::SetRedFromAlpha() {
       src_pos += kBytes;
     }
   }
-  return true;
 }
 
 bool CFX_DIBitmap::SetUniformOpaqueAlpha() {
+  CHECK_EQ(FXDIB_Format::kArgb, GetFormat());
+
   if (!m_pBuffer)
     return false;
 
-  if (IsMaskFormat()) {
-    if (!ConvertFormat(FXDIB_Format::k8bppMask))
-      return false;
-  } else {
-    if (!ConvertFormat(FXDIB_Format::kArgb))
-      return false;
-  }
-  const int Bpp = GetBPP() / 8;
-  if (Bpp == 1) {
-    memset(m_pBuffer.Get(), 0xff, m_Height * m_Pitch);
-    return true;
-  }
-  const int dest_offset = GetFormat() == FXDIB_Format::kArgb ? 3 : 0;
   for (int row = 0; row < m_Height; row++) {
-    uint8_t* scan_line = m_pBuffer.Get() + row * m_Pitch + dest_offset;
+    constexpr int kDestOffset = 3;
+    constexpr int kDestBytes = 4;
+    uint8_t* dest_pos = GetWritableScanline(row).subspan(kDestOffset).data();
     for (int col = 0; col < m_Width; col++) {
-      *scan_line = 0xff;
-      scan_line += Bpp;
+      *dest_pos = 0xff;
+      dest_pos += kDestBytes;
     }
   }
   return true;
 }
 
 bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
+  CHECK_EQ(m_Width, mask->GetWidth());
+  CHECK_EQ(m_Height, mask->GetHeight());
   CHECK_EQ(FXDIB_Format::k8bppMask, mask->GetFormat());
+  CHECK(m_pBuffer);
 
-  if (!m_pBuffer) {
-    return false;
-  }
-
-  if (IsOpaqueImage()) {
+  constexpr int kDestOffset = 3;
+  constexpr int kDestBytes = 4;
+  if (GetFormat() == FXDIB_Format::kRgb32) {
     if (!ConvertFormat(FXDIB_Format::kArgb)) {
       return false;
     }
 
-    if (mask->GetWidth() != m_Width || mask->GetHeight() != m_Height) {
-      mask =
-          mask->StretchTo(m_Width, m_Height, FXDIB_ResampleOptions(), nullptr);
-      if (!mask) {
-        return false;
-      }
-    }
-    const int dest_bytes = GetBPP() / 8;
     for (int row = 0; row < m_Height; row++) {
-      constexpr int kMaskBytes = 1;
-      constexpr int kDestOffset = 3;
       uint8_t* dest_pos = GetWritableScanline(row).subspan(kDestOffset).data();
-      const uint8_t* mask_pos = mask->GetScanline(row).data();
+      const uint8_t* mask_scan = mask->GetScanline(row).data();
       for (int col = 0; col < m_Width; col++) {
-        *dest_pos = *mask_pos;
-        dest_pos += dest_bytes;
-        mask_pos += kMaskBytes;
+        // Since the `dest_pos` value always starts out as 255 in this case,
+        // simplify 255 * x / 255.
+        *dest_pos = mask_scan[col];
+        dest_pos += kDestBytes;
       }
     }
     return true;
   }
 
-  if (mask->GetWidth() != m_Width || mask->GetHeight() != m_Height) {
-    mask = mask->StretchTo(m_Width, m_Height, FXDIB_ResampleOptions(), nullptr);
-    if (!mask) {
-      return false;
-    }
-  }
-  if (IsMaskFormat()) {
-    if (!ConvertFormat(FXDIB_Format::k8bppMask))
-      return false;
-
-    for (int row = 0; row < m_Height; row++) {
-      uint8_t* dest_scan = m_pBuffer.Get() + m_Pitch * row;
-      const uint8_t* mask_scan = mask->m_pBuffer.Get() + mask->m_Pitch * row;
-      for (int col = 0; col < m_Width; col++) {
-        *dest_scan = (*dest_scan) * mask_scan[col] / 255;
-        dest_scan++;
-      }
-    }
-    return true;
-  }
-
-  DCHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
+  CHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
   for (int row = 0; row < m_Height; row++) {
-    uint8_t* dest_scan = m_pBuffer.Get() + m_Pitch * row + 3;
-    const uint8_t* mask_scan = mask->m_pBuffer.Get() + mask->m_Pitch * row;
+    uint8_t* dest_pos = GetWritableScanline(row).subspan(kDestOffset).data();
+    const uint8_t* mask_scan = mask->GetScanline(row).data();
     for (int col = 0; col < m_Width; col++) {
-      *dest_scan = (*dest_scan) * mask_scan[col] / 255;
-      dest_scan += 4;
+      *dest_pos = (*dest_pos) * mask_scan[col] / 255;
+      dest_pos += kDestBytes;
     }
   }
   return true;
@@ -413,6 +371,7 @@ bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
 bool CFX_DIBitmap::MultiplyAlpha(float alpha) {
   CHECK_GE(alpha, 0.0f);
   CHECK_LE(alpha, 1.0f);
+  CHECK(!IsMaskFormat());
 
   if (alpha == 1.0f) {
     return true;
@@ -422,41 +381,19 @@ bool CFX_DIBitmap::MultiplyAlpha(float alpha) {
     return false;
   }
 
-  switch (GetFormat()) {
-    case FXDIB_Format::k1bppMask:
-      if (!ConvertFormat(FXDIB_Format::k8bppMask)) {
-        return false;
-      }
-      MultiplyAlpha(alpha);
-      break;
-    case FXDIB_Format::k8bppMask: {
-      const int bitmap_alpha = static_cast<int>(alpha * 255);
-      for (int row = 0; row < m_Height; row++) {
-        uint8_t* scan_line = m_pBuffer.Get() + row * m_Pitch;
-        for (int col = 0; col < m_Width; col++) {
-          scan_line[col] = scan_line[col] * bitmap_alpha / 255;
-        }
-      }
-      break;
+  if (!ConvertFormat(FXDIB_Format::kArgb)) {
+    return false;
+  }
+
+  const int bitmap_alpha = static_cast<int>(alpha * 255.0f);
+  for (int row = 0; row < m_Height; row++) {
+    constexpr int kDestOffset = 3;
+    constexpr int kDestBytes = 4;
+    uint8_t* dest_pos = GetWritableScanline(row).subspan(kDestOffset).data();
+    for (int col = 0; col < m_Width; col++) {
+      *dest_pos = (*dest_pos) * bitmap_alpha / 255;
+      dest_pos += kDestBytes;
     }
-    case FXDIB_Format::kArgb: {
-      const int bitmap_alpha = static_cast<int>(alpha * 255);
-      for (int row = 0; row < m_Height; row++) {
-        uint8_t* scan_line = m_pBuffer.Get() + row * m_Pitch + 3;
-        for (int col = 0; col < m_Width; col++) {
-          *scan_line = (*scan_line) * bitmap_alpha / 255;
-          scan_line += 4;
-        }
-      }
-      break;
-    }
-    default:
-      DCHECK(!IsAlphaFormat());
-      if (!ConvertFormat(FXDIB_Format::kArgb)) {
-        return false;
-      }
-      MultiplyAlpha(alpha);
-      break;
   }
   return true;
 }

@@ -60,8 +60,9 @@ class CFX_DIBitmap final : public CFX_DIBBase {
 #endif  // defined(PDF_USE_SKIA)
 
   // Requires `this` to be of format `FXDIB_Format::kArgb`.
-  bool SetRedFromAlpha();
+  void SetRedFromAlpha();
 
+  // Requires `this` to be of format `FXDIB_Format::kArgb`.
   bool SetUniformOpaqueAlpha();
 
   // TODO(crbug.com/pdfium/2007): Migrate callers to `CFX_RenderDevice`.
