@@ -238,7 +238,7 @@ const char kToUnicodeStart[] =
     "/Supplement 0\n"
     ">> def\n"
     "/CMapName /Adobe-Identity-H def\n"
-    "CMapType 2 def\n"
+    "/CMapType 2 def\n"
     "1 begincodespacerange\n"
     "<0000> <FFFF>\n"
     "endcodespacerange\n";
