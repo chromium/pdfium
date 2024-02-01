@@ -98,6 +98,7 @@ class CFX_Face final : public Retainable, public Observable {
                     int dest_width,
                     int weight,
                     const CFX_SubstFont* subst_font);
+  ByteString GetGlyphName(uint32_t glyph_index);
 
   int GetCharIndex(uint32_t code);
   int GetNameIndex(const char* name);

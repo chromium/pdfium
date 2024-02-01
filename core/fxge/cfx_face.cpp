@@ -642,6 +642,13 @@ int CFX_Face::GetGlyphWidth(uint32_t glyph_index,
   return static_cast<int>(EM_ADJUST(GetUnitsPerEm(), horizontal_advance));
 }
 
+ByteString CFX_Face::GetGlyphName(uint32_t glyph_index) {
+  char name[256] = {};
+  FT_Get_Glyph_Name(GetRec(), glyph_index, name, sizeof(name));
+  name[255] = 0;
+  return ByteString(name);
+}
+
 int CFX_Face::GetCharIndex(uint32_t code) {
   return FT_Get_Char_Index(GetRec(), code);
 }

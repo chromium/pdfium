@@ -214,14 +214,12 @@ void CPDF_Type1Font::LoadGlyphMap() {
           SetExtGID(name, charcode);
         } else {
           m_GlyphIndex[charcode] = face->GetCharIndex(charcode);
-          char name_glyph[kInternalTableSize] = {};
-          FT_Get_Glyph_Name(m_Font.GetFaceRec(), m_GlyphIndex[charcode],
-                            name_glyph, sizeof(name_glyph));
-          name_glyph[kInternalTableSize - 1] = 0;
+          ByteString glyph_name = face->GetGlyphName(m_GlyphIndex[charcode]);
           const wchar_t unicode =
-              name_glyph[0] != 0 ? UnicodeFromAdobeName(name_glyph) : 0;
+              glyph_name.IsEmpty() ? 0
+                                   : UnicodeFromAdobeName(glyph_name.c_str());
           m_Encoding.SetUnicode(charcode, unicode);
-          SetExtGID(name_glyph, charcode);
+          SetExtGID(glyph_name.c_str(), charcode);
         }
       }
       return;
@@ -269,12 +267,10 @@ void CPDF_Type1Font::LoadGlyphMap() {
         m_GlyphIndex[charcode] =
             face->GetCharIndex(static_cast<uint32_t>(charcode));
         if (m_GlyphIndex[charcode]) {
-          char name_glyph[kInternalTableSize] = {};
-          FT_Get_Glyph_Name(m_Font.GetFaceRec(), m_GlyphIndex[charcode],
-                            name_glyph, sizeof(name_glyph));
-          name_glyph[kInternalTableSize - 1] = 0;
+          ByteString glyph_name = face->GetGlyphName(m_GlyphIndex[charcode]);
           const wchar_t unicode =
-              name_glyph[0] != 0 ? UnicodeFromAdobeName(name_glyph) : 0;
+              glyph_name.IsEmpty() ? 0
+                                   : UnicodeFromAdobeName(glyph_name.c_str());
           m_Encoding.SetUnicode(charcode, unicode);
         }
       }
@@ -334,10 +330,8 @@ void CPDF_Type1Font::SetExtGID(const char* name, uint32_t charcode) {
 }
 
 void CPDF_Type1Font::CalcExtGID(uint32_t charcode) {
-  char name_glyph[kInternalTableSize] = {};
-  FT_Get_Glyph_Name(m_Font.GetFaceRec(), m_GlyphIndex[charcode], name_glyph,
-                    sizeof(name_glyph));
-  name_glyph[kInternalTableSize - 1] = 0;
-  SetExtGID(name_glyph, charcode);
+  ByteString glyph_name =
+      m_Font.GetFace()->GetGlyphName(m_GlyphIndex[charcode]);
+  SetExtGID(glyph_name.c_str(), charcode);
 }
 #endif  // BUILDFLAG(IS_APPLE)
