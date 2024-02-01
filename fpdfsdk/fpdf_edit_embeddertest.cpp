@@ -296,6 +296,7 @@ TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFont) {
   ScopedFPDFFont font(FPDFText_LoadFont(document(), font_data.data(),
                                         font_data.size(), FPDF_FONT_TRUETYPE,
                                         /*cid=*/true));
+  ASSERT_TRUE(font);
   FPDF_PAGEOBJECT text_object =
       FPDFPageObj_CreateTextObj(document(), font.get(), 20.0f);
   EXPECT_TRUE(text_object);
@@ -341,6 +342,7 @@ TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFontWithCharcodes) {
   ScopedFPDFFont font(FPDFText_LoadFont(document(), font_data.data(),
                                         font_data.size(), FPDF_FONT_TRUETYPE,
                                         /*cid=*/true));
+  ASSERT_TRUE(font);
   FPDF_PAGEOBJECT text_object =
       FPDFPageObj_CreateTextObj(document(), font.get(), 20.0f);
   EXPECT_TRUE(text_object);
@@ -3431,7 +3433,7 @@ TEST_F(FPDFEditEmbedderTest, LoadSimpleType1Font) {
   pdfium::span<const uint8_t> span = stock_font->GetFont()->GetFontSpan();
   ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
                                         FPDF_FONT_TYPE1, false));
-  ASSERT_TRUE(font.get());
+  ASSERT_TRUE(font);
   CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
   EXPECT_TRUE(typed_font->IsType1Font());
 
@@ -3460,7 +3462,7 @@ TEST_F(FPDFEditEmbedderTest, LoadSimpleTrueTypeFont) {
   pdfium::span<const uint8_t> span = stock_font->GetFont()->GetFontSpan();
   ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
                                         FPDF_FONT_TRUETYPE, false));
-  ASSERT_TRUE(font.get());
+  ASSERT_TRUE(font);
   CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
   EXPECT_TRUE(typed_font->IsTrueTypeFont());
 
@@ -3489,7 +3491,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType0Font) {
   pdfium::span<const uint8_t> span = stock_font->GetFont()->GetFontSpan();
   ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
                                         FPDF_FONT_TYPE1, 1));
-  ASSERT_TRUE(font.get());
+  ASSERT_TRUE(font);
   CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
   EXPECT_TRUE(typed_font->IsCIDFont());
 
@@ -3540,7 +3542,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCIDType2Font) {
   pdfium::span<const uint8_t> span = stock_font->GetFont()->GetFontSpan();
   ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
                                         FPDF_FONT_TRUETYPE, 1));
-  ASSERT_TRUE(font.get());
+  ASSERT_TRUE(font);
   CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
   EXPECT_TRUE(typed_font->IsCIDFont());
 
@@ -3595,7 +3597,7 @@ TEST_F(FPDFEditEmbedderTest, AddTrueTypeFontText) {
     pdfium::span<const uint8_t> span = stock_font->GetFont()->GetFontSpan();
     ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
                                           FPDF_FONT_TRUETYPE, 0));
-    ASSERT_TRUE(font.get());
+    ASSERT_TRUE(font);
 
     // Add some text to the page
     FPDF_PAGEOBJECT text_object =
@@ -3677,7 +3679,7 @@ TEST_F(FPDFEditEmbedderTest, AddCIDFontText) {
     // Load the data into a FPDF_Font.
     ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
                                           FPDF_FONT_TRUETYPE, 1));
-    ASSERT_TRUE(font.get());
+    ASSERT_TRUE(font);
 
     // Add some text to the page
     FPDF_PAGEOBJECT text_object =
@@ -3723,6 +3725,113 @@ TEST_F(FPDFEditEmbedderTest, AddCIDFontText) {
   VerifySavedDocument(612, 792, checksum);
 }
 #endif  // BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
+
+TEST_F(FPDFEditEmbedderTest, LoadCidType2FontCustom) {
+  // This is the same test as FPDFEditEmbedderTest.EmbedNotoSansSCFont, but some
+  // of the font data is provided by the caller, instead of being generated.
+  CreateEmptyDocument();
+  ScopedFPDFPage page(FPDFPage_New(document(), 0, 400, 400));
+  std::string font_path;
+  ASSERT_TRUE(PathService::GetThirdPartyFilePath(
+      "NotoSansCJK/NotoSansSC-Regular.subset.otf", &font_path));
+
+  std::vector<uint8_t> font_data = GetFileContents(font_path.c_str());
+  ASSERT_FALSE(font_data.empty());
+
+  static const char kToUnicodeCMap[] = R"(
+/CIDInit /ProcSet findresource begin
+12 dict begin
+begincmap
+/CIDSystemInfo <<
+  /Registry (Adobe)
+  /Ordering (Identity)
+  /Supplement 0
+>> def
+/CMapName /Adobe-Identity-H def
+/CMapType 2 def
+1 begincodespacerange
+<0000> <FFFF>
+endcodespacerange
+5 beginbfrange
+<0001> <0003> [<0020> <3002> <2F00>]
+<0003> <0004> [<4E00> <2F06>]
+<0004> <0005> [<4E8C> <53E5>]
+<0005> <0008> [<F906> <662F> <7B2C> <884C>]
+<0008> <0009> [<FA08> <8FD9>]
+endbfrange
+endcmap
+CMapName currentdict /CMap defineresource pop
+end
+end
+)";
+
+  const std::vector<uint8_t> cid_to_gid_map = {0, 0, 0, 1, 0, 2, 0, 3, 0, 4,
+                                               0, 5, 0, 6, 0, 7, 0, 8, 0, 9};
+
+  ScopedFPDFFont font(FPDFText_LoadCidType2Font(
+      document(), font_data.data(), font_data.size(), kToUnicodeCMap,
+      cid_to_gid_map.data(), cid_to_gid_map.size()));
+  ASSERT_TRUE(font);
+
+  FPDF_PAGEOBJECT text_object =
+      FPDFPageObj_CreateTextObj(document(), font.get(), 20.0f);
+  EXPECT_TRUE(text_object);
+
+  // Test the characters which are either mapped to one single unicode or
+  // multiple unicodes in the embedded font.
+  ScopedFPDFWideString text = GetFPDFWideString(L"这是第一句。 这是第二行。");
+  EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
+
+  FPDFPageObj_Transform(text_object, 1, 0, 0, 1, 50, 200);
+  FPDFPage_InsertObject(page.get(), text_object);
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+  const char* checksum = []() {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+#if BUILDFLAG(IS_WIN)
+      return "a1bc9e4007dc2155e9f56bf16234573e";
+#elif BUILDFLAG(IS_APPLE)
+      return "9a31fb87d1c6d2346bba22d1196041cd";
+#else
+      return "5bb65e15fc0a685934cd5006dec08a76";
+#endif
+    }
+    return "9a31fb87d1c6d2346bba22d1196041cd";
+  }();
+  ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
+  CompareBitmap(page_bitmap.get(), 400, 400, checksum);
+
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+  VerifySavedDocument(400, 400, checksum);
+}
+
+TEST_F(FPDFEditEmbedderTest, LoadCidType2FontWithBadParameters) {
+  ASSERT_TRUE(CreateNewDocument());
+
+  const std::vector<uint8_t> dummy_vec(3);
+  const char kDummyString[] = "dummy";
+  EXPECT_FALSE(FPDFText_LoadCidType2Font(nullptr, dummy_vec.data(),
+                                         dummy_vec.size(), kDummyString,
+                                         dummy_vec.data(), dummy_vec.size()));
+  EXPECT_FALSE(FPDFText_LoadCidType2Font(document(), nullptr, dummy_vec.size(),
+                                         kDummyString, dummy_vec.data(),
+                                         dummy_vec.size()));
+  EXPECT_FALSE(FPDFText_LoadCidType2Font(document(), dummy_vec.data(), 0,
+                                         kDummyString, dummy_vec.data(),
+                                         dummy_vec.size()));
+  EXPECT_FALSE(FPDFText_LoadCidType2Font(document(), dummy_vec.data(),
+                                         dummy_vec.size(), nullptr,
+                                         dummy_vec.data(), dummy_vec.size()));
+  EXPECT_FALSE(FPDFText_LoadCidType2Font(document(), dummy_vec.data(),
+                                         dummy_vec.size(), "", dummy_vec.data(),
+                                         dummy_vec.size()));
+  EXPECT_FALSE(FPDFText_LoadCidType2Font(document(), dummy_vec.data(),
+                                         dummy_vec.size(), kDummyString,
+                                         nullptr, dummy_vec.size()));
+  EXPECT_FALSE(FPDFText_LoadCidType2Font(document(), dummy_vec.data(),
+                                         dummy_vec.size(), kDummyString,
+                                         dummy_vec.data(), 0));
+}
 
 TEST_F(FPDFEditEmbedderTest, SaveAndRender) {
   const char* checksum = []() {

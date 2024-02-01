@@ -1183,16 +1183,16 @@ FPDFText_SetCharcodes(FPDF_PAGEOBJECT text_object,
                       size_t count);
 
 // Returns a font object loaded from a stream of data. The font is loaded
-// into the document.
+// into the document. Various font data structures, such as the ToUnicode data,
+// are auto-generated based on the inputs.
 //
-// document   - handle to the document.
-// data       - the stream of data, which will be copied by the font object.
-// size       - size of the stream, in bytes.
-// font_type  - FPDF_FONT_TYPE1 or FPDF_FONT_TRUETYPE depending on the font
-// type.
-// cid        - a boolean specifying if the font is a CID font or not.
+// document  - handle to the document.
+// data      - the stream of font data, which will be copied by the font object.
+// size      - the size of the font data, in bytes.
+// font_type - FPDF_FONT_TYPE1 or FPDF_FONT_TRUETYPE depending on the font type.
+// cid       - a boolean specifying if the font is a CID font or not.
 //
-// The loaded font can be closed using FPDFFont_Close.
+// The loaded font can be closed using FPDFFont_Close().
 //
 // Returns NULL on failure
 FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
@@ -1209,11 +1209,35 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFText_LoadFont(FPDF_DOCUMENT document,
 // document   - handle to the document.
 // font       - string containing the font name, without spaces.
 //
-// The loaded font can be closed using FPDFFont_Close.
+// The loaded font can be closed using FPDFFont_Close().
 //
 // Returns NULL on failure.
 FPDF_EXPORT FPDF_FONT FPDF_CALLCONV
 FPDFText_LoadStandardFont(FPDF_DOCUMENT document, FPDF_BYTESTRING font);
+
+// Experimental API.
+// Returns a font object loaded from a stream of data for a type 2 CID font. The
+// font is loaded into the document. Unlike FPDFText_LoadFont(), the ToUnicode
+// data and the CIDToGIDMap data are caller provided, instead of auto-generated.
+//
+// document                 - handle to the document.
+// font_data                - the stream of font data, which will be copied by
+//                            the font object.
+// font_data_size           - the size of the font data, in bytes.
+// to_unicode_cmap          - the ToUnicode data.
+// cid_to_gid_map_data      - the stream of CIDToGIDMap data.
+// cid_to_gid_map_data_size - the size of the CIDToGIDMap data, in bytes.
+//
+// The loaded font can be closed using FPDFFont_Close().
+//
+// Returns NULL on failure.
+FPDF_EXPORT FPDF_FONT FPDF_CALLCONV
+FPDFText_LoadCidType2Font(FPDF_DOCUMENT document,
+                          const uint8_t* font_data,
+                          uint32_t font_data_size,
+                          FPDF_BYTESTRING to_unicode_cmap,
+                          const uint8_t* cid_to_gid_map_data,
+                          uint32_t cid_to_gid_map_data_size);
 
 // Get the font size of a text object.
 //

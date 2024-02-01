@@ -497,6 +497,58 @@ RetainPtr<CPDF_Font> LoadCompositeFont(CPDF_Document* doc,
   return CPDF_DocPageData::FromDocument(doc)->GetFont(font_dict);
 }
 
+RetainPtr<CPDF_Font> LoadCustomCompositeFont(
+    CPDF_Document* doc,
+    std::unique_ptr<CFX_Font> font,
+    pdfium::span<const uint8_t> font_span,
+    const char* to_unicode_cmap,
+    pdfium::span<const uint8_t> cid_to_gid_map_span) {
+  // If it doesn't have a single char, just fail.
+  RetainPtr<CFX_Face> face = font->GetFace();
+  if (face->GetGlyphCount() <= 0) {
+    return nullptr;
+  }
+
+  auto char_codes_and_indices =
+      face->GetCharCodesAndIndices(pdfium::kMaximumSupplementaryCodePoint);
+  if (char_codes_and_indices.empty()) {
+    return nullptr;
+  }
+
+  const ByteString name = BaseFontNameForType(font.get(), FPDF_FONT_TRUETYPE);
+  RetainPtr<CPDF_Dictionary> font_dict =
+      CreateCompositeFontDict(doc, font.get(), FPDF_FONT_TRUETYPE, name);
+
+  RetainPtr<CPDF_Dictionary> cid_font_dict =
+      CreateCidFontDict(doc, FPDF_FONT_TRUETYPE, name);
+
+  RetainPtr<CPDF_Dictionary> font_descriptor =
+      LoadFontDesc(doc, name, font.get(), font_span, FPDF_FONT_TRUETYPE);
+  cid_font_dict->SetNewFor<CPDF_Reference>("FontDescriptor", doc,
+                                           font_descriptor->GetObjNum());
+
+  std::map<uint32_t, uint32_t> widths;
+  for (const auto& item : char_codes_and_indices) {
+    if (!pdfium::Contains(widths, item.glyph_index)) {
+      widths[item.glyph_index] = font->GetGlyphWidth(item.glyph_index);
+    }
+  }
+  RetainPtr<CPDF_Array> widths_array = CreateWidthsArray(doc, widths);
+  cid_font_dict->SetNewFor<CPDF_Reference>("W", doc, widths_array->GetObjNum());
+
+  auto cid_to_gid_map = doc->NewIndirect<CPDF_Stream>(cid_to_gid_map_span);
+  cid_font_dict->SetNewFor<CPDF_Reference>("CIDToGIDMap", doc,
+                                           cid_to_gid_map->GetObjNum());
+
+  CreateDescendantFontsArray(doc, font_dict, cid_font_dict->GetObjNum());
+
+  auto to_unicode_stream =
+      doc->NewIndirect<CPDF_Stream>(ByteStringView(to_unicode_cmap).raw_span());
+  font_dict->SetNewFor<CPDF_Reference>("ToUnicode", doc,
+                                       to_unicode_stream->GetObjNum());
+  return CPDF_DocPageData::FromDocument(doc)->GetFont(font_dict);
+}
+
 CPDF_TextObject* CPDFTextObjectFromFPDFPageObject(FPDF_PAGEOBJECT page_object) {
   auto* obj = CPDFPageObjectFromFPDFPageObject(page_object);
   return obj ? obj->AsText() : nullptr;
@@ -605,6 +657,37 @@ FPDFText_LoadStandardFont(FPDF_DOCUMENT document, FPDF_BYTESTRING font) {
   // Caller takes ownership.
   return FPDFFontFromCPDFFont(
       CPDF_Font::GetStockFont(pDoc, ByteStringView(font)).Leak());
+}
+
+FPDF_EXPORT FPDF_FONT FPDF_CALLCONV
+FPDFText_LoadCidType2Font(FPDF_DOCUMENT document,
+                          const uint8_t* font_data,
+                          uint32_t font_data_size,
+                          FPDF_BYTESTRING to_unicode_cmap,
+                          const uint8_t* cid_to_gid_map_data,
+                          uint32_t cid_to_gid_map_data_size) {
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc || !font_data || font_data_size == 0 || !to_unicode_cmap ||
+      strlen(to_unicode_cmap) == 0 || !cid_to_gid_map_data ||
+      cid_to_gid_map_data_size == 0) {
+    return nullptr;
+  }
+
+  auto font_span = pdfium::make_span(font_data, font_data_size);
+  auto font = std::make_unique<CFX_Font>();
+
+  // TODO(thestig): Consider checking the font format. See similar comment in
+  // FPDFText_LoadFont() above.
+  if (!font->LoadEmbedded(font_span, /*force_vertical=*/false,
+                          /*object_tag=*/0)) {
+    return nullptr;
+  }
+
+  // Caller takes ownership.
+  return FPDFFontFromCPDFFont(
+      LoadCustomCompositeFont(doc, std::move(font), font_span, to_unicode_cmap,
+                              {cid_to_gid_map_data, cid_to_gid_map_data_size})
+          .Leak());
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
