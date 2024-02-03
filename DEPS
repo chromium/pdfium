@@ -55,7 +55,7 @@ vars = {
   # reclient CIPD package
   'reclient_package': 'infra/rbe/client/',
   # reclient CIPD package version
-  'reclient_version': 're_client_version:0.125.0.f3883c2-gomaip',
+  'reclient_version': 're_client_version:0.130.0.546556b-gomaip',
 
   'chromium_git': 'https://chromium.googlesource.com',
   'pdfium_git': 'https://pdfium.googlesource.com',
