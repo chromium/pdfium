@@ -418,15 +418,12 @@ bool CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xref_offset) {
         std::move(m_CrossRefTable));
   }
 
-  // Traverse the xref data structures from oldest to newest. So entries from
-  // later iterations should overwrite existing entries.
   for (size_t i = 0; i < xref_list.size(); ++i) {
     if (xref_list[i] > 0 && !LoadCrossRefV4(xref_list[i], false))
       return false;
 
     if (xref_stream_list[i] > 0 &&
-        !LoadCrossRefV5(&xref_stream_list[i], /*is_main_xref=*/false,
-                        /*overwrite_existing=*/true)) {
+        !LoadCrossRefV5(&xref_stream_list[i], /*is_main_xref=*/false)) {
       return false;
     }
 
@@ -492,20 +489,16 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE main_xref_offset) {
   }
 
   if (xref_stream_list[0] > 0 &&
-      !LoadCrossRefV5(&xref_stream_list[0], /*is_main_xref=*/false,
-                      /*overwrite_existing=*/true)) {
+      !LoadCrossRefV5(&xref_stream_list[0], /*is_main_xref=*/false)) {
     return false;
   }
 
-  // Traverse the xref data structures from oldest to newest. So entries from
-  // later iterations should overwrite existing entries.
   for (size_t i = 1; i < xref_list.size(); ++i) {
     if (xref_list[i] > 0 && !LoadCrossRefV4(xref_list[i], false))
       return false;
 
     if (xref_stream_list[i] > 0 &&
-        !LoadCrossRefV5(&xref_stream_list[i], /*is_main_xref=*/false,
-                        /*overwrite_existing=*/true)) {
+        !LoadCrossRefV5(&xref_stream_list[i], /*is_main_xref=*/false)) {
       return false;
     }
   }
@@ -668,18 +661,14 @@ void CPDF_Parser::MergeCrossRefObjectsData(
 }
 
 bool CPDF_Parser::LoadAllCrossRefV5(FX_FILESIZE xref_offset) {
-  if (!LoadCrossRefV5(&xref_offset, /*is_main_xref=*/true,
-                      /*overwrite_existing=*/false)) {
+  if (!LoadCrossRefV5(&xref_offset, /*is_main_xref=*/true)) {
     return false;
   }
 
-  // Traverse the xref objects from newest to older. So entries from later
-  // iterations should not overwrite existing entries.
   std::set<FX_FILESIZE> seen_xref_offset;
   while (xref_offset > 0) {
     seen_xref_offset.insert(xref_offset);
-    if (!LoadCrossRefV5(&xref_offset, /*is_main_xref=*/false,
-                        /*overwrite_existing=*/false)) {
+    if (!LoadCrossRefV5(&xref_offset, /*is_main_xref=*/false)) {
       return false;
     }
 
@@ -774,9 +763,7 @@ bool CPDF_Parser::RebuildCrossRef() {
   return GetTrailer() && !m_CrossRefTable->objects_info().empty();
 }
 
-bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos,
-                                 bool is_main_xref,
-                                 bool overwrite_existing) {
+bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool is_main_xref) {
   RetainPtr<const CPDF_Stream> pStream =
       ToStream(ParseIndirectObjectAt(*pos, 0));
   if (!pStream || !pStream->GetObjNum()) {
@@ -863,7 +850,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos,
       }
 
       ProcessCrossRefV5Entry(seg_span.subspan(i * total_width, total_width),
-                             field_widths, obj_num, overwrite_existing);
+                             field_widths, obj_num);
     }
 
     segindex += index.obj_count;
@@ -874,8 +861,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos,
 void CPDF_Parser::ProcessCrossRefV5Entry(
     pdfium::span<const uint8_t> entry_span,
     pdfium::span<const uint32_t> field_widths,
-    uint32_t obj_num,
-    bool overwrite_existing) {
+    uint32_t obj_num) {
   DCHECK_GE(field_widths.size(), kMinFieldCount);
   ObjectType type;
   if (field_widths[0]) {
@@ -901,7 +887,7 @@ void CPDF_Parser::ProcessCrossRefV5Entry(
     return;
   }
 
-  if (!overwrite_existing && existing_type != ObjectType::kFree) {
+  if (existing_type != ObjectType::kFree) {
     return;
   }
 
@@ -1131,8 +1117,7 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
   m_LastXRefOffset = m_pLinearized->GetLastXRefOffset();
   FX_FILESIZE dwFirstXRefOffset = m_LastXRefOffset;
   bool bLoadV4 = LoadCrossRefV4(dwFirstXRefOffset, false);
-  if (!bLoadV4 && !LoadCrossRefV5(&dwFirstXRefOffset, /*is_main_xref=*/true,
-                                  /*overwrite_existing=*/false)) {
+  if (!bLoadV4 && !LoadCrossRefV5(&dwFirstXRefOffset, /*is_main_xref=*/true)) {
     if (!RebuildCrossRef())
       return FORMAT_ERROR;
 
@@ -1198,18 +1183,14 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
 
 bool CPDF_Parser::LoadLinearizedAllCrossRefV5(FX_FILESIZE main_xref_offset) {
   FX_FILESIZE xref_offset = main_xref_offset;
-  if (!LoadCrossRefV5(&xref_offset, /*is_main_xref=*/false,
-                      /*overwrite_existing=*/false)) {
+  if (!LoadCrossRefV5(&xref_offset, /*is_main_xref=*/false)) {
     return false;
   }
 
-  // Traverse the xref objects from newest to older. So entries from later
-  // iterations should not overwrite existing entries.
   std::set<FX_FILESIZE> seen_xref_offset;
   while (xref_offset) {
     seen_xref_offset.insert(xref_offset);
-    if (!LoadCrossRefV5(&xref_offset, /*is_main_xref=*/false,
-                        /*overwrite_existing=*/false)) {
+    if (!LoadCrossRefV5(&xref_offset, /*is_main_xref=*/false)) {
       return false;
     }
 
