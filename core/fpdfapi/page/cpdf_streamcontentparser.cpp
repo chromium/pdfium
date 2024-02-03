@@ -51,9 +51,6 @@ namespace {
 
 constexpr int kMaxFormLevel = 40;
 
-// Upper limit for the number of form XObjects within a form XObject.
-constexpr int kFormCountLimit = 8192;
-
 constexpr int kSingleCoordinatePair = 1;
 constexpr int kTensorCoordinatePairs = 16;
 constexpr int kCoonsCoordinatePairs = 12;
@@ -748,16 +745,7 @@ void CPDF_StreamContentParser::Handle_ExecuteXObject() {
 
   const ByteString type = pXObject->GetDict()->GetByteStringFor("Subtype");
   if (type == "Form") {
-    if (m_RecursionState->form_count > kFormCountLimit) {
-      return;
-    }
-
-    const bool is_first = m_RecursionState->form_count == 0;
-    ++m_RecursionState->form_count;
     AddForm(std::move(pXObject), name);
-    if (is_first) {
-      m_RecursionState->form_count = 0;
-    }
     return;
   }
 

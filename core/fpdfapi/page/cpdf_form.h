@@ -29,7 +29,6 @@ class CPDF_Form final : public CPDF_PageObjectHolder,
     ~RecursionState();
 
     std::set<const uint8_t*> parsed_set;
-    int form_count = 0;
   };
 
   // Helper method to choose the first non-null resources dictionary.
