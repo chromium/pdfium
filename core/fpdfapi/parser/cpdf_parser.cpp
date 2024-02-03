@@ -389,33 +389,39 @@ bool CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xref_offset) {
   std::vector<FX_FILESIZE> xref_list{xref_offset};
   std::set<FX_FILESIZE> seen_xref_offset{xref_offset};
 
-  // When the trailer doesn't have Prev entry or Prev entry value is not
-  // numerical, GetDirectInteger() returns 0. Loading will end.
-  xref_offset = GetTrailer()->GetDirectIntegerFor("Prev");
-  while (xref_offset > 0) {
-    // Check for circular references.
-    if (pdfium::Contains(seen_xref_offset, xref_offset))
-      return false;
+  // Ignore /Prev for hybrid-reference files.
+  // See ISO 32000-1:2008 spec, table 17.
+  if (!xref_stm) {
+    // When the trailer doesn't have Prev entry or Prev entry value is not
+    // numerical, GetDirectInteger() returns 0. Loading will end.
+    xref_offset = GetTrailer()->GetDirectIntegerFor("Prev");
+    while (xref_offset > 0) {
+      // Check for circular references.
+      if (pdfium::Contains(seen_xref_offset, xref_offset)) {
+        return false;
+      }
 
-    seen_xref_offset.insert(xref_offset);
-    xref_list.insert(xref_list.begin(), xref_offset);
+      seen_xref_offset.insert(xref_offset);
+      xref_list.insert(xref_list.begin(), xref_offset);
 
-    // SLOW ...
-    LoadCrossRefV4(xref_offset, true);
+      // SLOW ...
+      LoadCrossRefV4(xref_offset, true);
 
-    RetainPtr<CPDF_Dictionary> pDict(LoadTrailerV4());
-    if (!pDict)
-      return false;
+      RetainPtr<CPDF_Dictionary> pDict(LoadTrailerV4());
+      if (!pDict) {
+        return false;
+      }
 
-    xref_offset = pDict->GetDirectIntegerFor("Prev");
-    xref_stm = pDict->GetIntegerFor("XRefStm");
-    xref_stream_list.insert(xref_stream_list.begin(), xref_stm);
+      xref_offset = pDict->GetDirectIntegerFor("Prev");
+      xref_stm = pDict->GetIntegerFor("XRefStm");
+      xref_stream_list.insert(xref_stream_list.begin(), xref_stm);
 
-    // SLOW ...
-    m_CrossRefTable = CPDF_CrossRefTable::MergeUp(
-        std::make_unique<CPDF_CrossRefTable>(std::move(pDict),
-                                             kNoV4TrailerObjectNumber),
-        std::move(m_CrossRefTable));
+      // SLOW ...
+      m_CrossRefTable = CPDF_CrossRefTable::MergeUp(
+          std::make_unique<CPDF_CrossRefTable>(std::move(pDict),
+                                               kNoV4TrailerObjectNumber),
+          std::move(m_CrossRefTable));
+    }
   }
 
   for (size_t i = 0; i < xref_list.size(); ++i) {
@@ -459,33 +465,39 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE main_xref_offset) {
                                            kNoV4TrailerObjectNumber),
       std::move(m_CrossRefTable));
 
-  // Now GetTrailer() returns the merged trailer, where /Prev is from the
-  // main-trailer.
-  FX_FILESIZE xref_offset = GetTrailer()->GetDirectIntegerFor("Prev");
-  while (xref_offset > 0) {
-    // Check for circular references.
-    if (pdfium::Contains(seen_xref_offset, xref_offset))
-      return false;
+  // Ignore /Prev for hybrid-reference files.
+  // See ISO 32000-1:2008 spec, table 17.
+  if (!xref_stm) {
+    // Now GetTrailer() returns the merged trailer, where /Prev is from the
+    // main-trailer.
+    FX_FILESIZE xref_offset = GetTrailer()->GetDirectIntegerFor("Prev");
+    while (xref_offset > 0) {
+      // Check for circular references.
+      if (pdfium::Contains(seen_xref_offset, xref_offset)) {
+        return false;
+      }
 
-    seen_xref_offset.insert(xref_offset);
-    xref_list.insert(xref_list.begin(), xref_offset);
+      seen_xref_offset.insert(xref_offset);
+      xref_list.insert(xref_list.begin(), xref_offset);
 
-    // SLOW ...
-    LoadCrossRefV4(xref_offset, true);
+      // SLOW ...
+      LoadCrossRefV4(xref_offset, true);
 
-    RetainPtr<CPDF_Dictionary> pDict(LoadTrailerV4());
-    if (!pDict)
-      return false;
+      RetainPtr<CPDF_Dictionary> pDict(LoadTrailerV4());
+      if (!pDict) {
+        return false;
+      }
 
-    xref_offset = pDict->GetDirectIntegerFor("Prev");
-    xref_stm = pDict->GetIntegerFor("XRefStm");
-    xref_stream_list.insert(xref_stream_list.begin(), xref_stm);
+      xref_offset = pDict->GetDirectIntegerFor("Prev");
+      xref_stm = pDict->GetIntegerFor("XRefStm");
+      xref_stream_list.insert(xref_stream_list.begin(), xref_stm);
 
-    // SLOW ...
-    m_CrossRefTable = CPDF_CrossRefTable::MergeUp(
-        std::make_unique<CPDF_CrossRefTable>(std::move(pDict),
-                                             kNoV4TrailerObjectNumber),
-        std::move(m_CrossRefTable));
+      // SLOW ...
+      m_CrossRefTable = CPDF_CrossRefTable::MergeUp(
+          std::make_unique<CPDF_CrossRefTable>(std::move(pDict),
+                                               kNoV4TrailerObjectNumber),
+          std::move(m_CrossRefTable));
+    }
   }
 
   if (xref_stream_list[0] > 0 &&
