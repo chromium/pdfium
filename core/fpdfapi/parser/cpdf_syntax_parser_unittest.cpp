@@ -133,9 +133,9 @@ TEST(SyntaxParserTest, ReadHexString) {
 
   {
     // Just ending character.
-    static const uint8_t data[] = ">";
+    const char gt = '>';
     CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
-        pdfium::make_span(data, 1u)));
+        pdfium::byte_span_from_ref(gt)));
     EXPECT_EQ("", parser.ReadHexString());
     EXPECT_EQ(1, parser.GetPos());
   }

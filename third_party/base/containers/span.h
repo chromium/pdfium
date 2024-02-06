@@ -180,7 +180,9 @@ using EnableIfConstSpanCompatibleContainer =
 //
 // Additions beyond the C++ standard draft
 // - as_byte_span() function.
+// - as_writable_byte_span() function.
 // - span_from_ref() function.
+// - byte_span_from_ref() function.
 
 // [span], class template span
 template <typename T>
@@ -365,6 +367,19 @@ static constexpr span<T> span_from_ref(T& single_object) noexcept {
   return span<T>(&single_object, 1u);
 }
 
+// `byte_span_from_ref` converts a reference to T into a span of uint8_t of
+// length sizeof(T).  This is a non-std helper that is a sugar for
+// `as_writable_bytes(span_from_ref(x))`.
+template <typename T>
+static constexpr span<const uint8_t> byte_span_from_ref(
+    const T& single_object) noexcept {
+  return as_bytes(span<const T>(&single_object, 1u));
+}
+template <typename T>
+static constexpr span<uint8_t> byte_span_from_ref(T& single_object) noexcept {
+  return as_writable_bytes(span<T>(&single_object, 1u));
+}
+
 // Convenience function for converting an object which is itself convertible
 // to span into a span of bytes (i.e. span of const uint8_t). Typically used
 // to convert std::string or string-objects holding chars, or std::vector
@@ -373,6 +388,16 @@ static constexpr span<T> span_from_ref(T& single_object) noexcept {
 template <typename T>
 span<const uint8_t> as_byte_span(const T& arg) {
   return as_bytes(make_span(arg));
+}
+
+// Convenience function for converting an object which is itself convertible
+// to span into a span of mutable bytes (i.e. span of uint8_t). Typically used
+// to convert std::string or string-objects holding chars, or std::vector
+// or vector-like objects holding other scalar types, prior to passing them
+// into an API that requires mutable byte spans.
+template <typename T>
+constexpr span<uint8_t> as_writable_byte_span(T& arg) {
+  return as_writable_bytes(make_span(arg));
 }
 
 }  // namespace pdfium
