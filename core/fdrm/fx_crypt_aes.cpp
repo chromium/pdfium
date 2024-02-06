@@ -429,6 +429,7 @@ const unsigned int D3[256] = {
     0x3c498b28, 0x0d9541ff, 0xa8017139, 0x0cb3de08, 0xb4e49cd8, 0x56c19064,
     0xcb84617b, 0x32b670d5, 0x6c5c7448, 0xb85742d0,
 };
+
 #define ADD_ROUND_KEY_4()                                                     \
   (block[0] ^= *keysched++, block[1] ^= *keysched++, block[2] ^= *keysched++, \
    block[3] ^= *keysched++)
@@ -521,7 +522,11 @@ void aes_decrypt_nb_4(CRYPT_aes_context* ctx, unsigned int* block) {
 #undef FMAKEWORD
 #undef LASTWORD
 
-void aes_setup(CRYPT_aes_context* ctx, const unsigned char* key, int keylen) {
+}  // namespace
+
+void CRYPT_AESSetKey(CRYPT_aes_context* ctx,
+                     const uint8_t* key,
+                     uint32_t keylen) {
   DCHECK(keylen == 16 || keylen == 24 || keylen == 32);
   int Nk = keylen / 4;
   ctx->Nb = 4;
@@ -574,86 +579,57 @@ void aes_setup(CRYPT_aes_context* ctx, const unsigned char* key, int keylen) {
   }
 }
 
-void aes_decrypt(CRYPT_aes_context* ctx, unsigned int* block) {
-  aes_decrypt_nb_4(ctx, block);
+void CRYPT_AESSetIV(CRYPT_aes_context* ctx, const uint8_t* iv) {
+  for (int i = 0; i < ctx->Nb; i++) {
+    ctx->iv[i] = FXSYS_UINT32_GET_MSBFIRST(iv + 4 * i);
+  }
 }
 
-void aes_decrypt_cbc(unsigned char* dest,
-                     const unsigned char* src,
-                     int len,
-                     CRYPT_aes_context* ctx) {
+void CRYPT_AESDecrypt(CRYPT_aes_context* ctx,
+                      uint8_t* dest,
+                      const uint8_t* src,
+                      uint32_t size) {
   unsigned int iv[4];
   unsigned int x[4];
   unsigned int ct[4];
   int i;
-  DCHECK_EQ((len & 15), 0);
+  CHECK_EQ((size & 15), 0);
   memcpy(iv, ctx->iv, sizeof(iv));
-  while (len > 0) {
+  while (size != 0) {
     for (i = 0; i < 4; i++) {
       x[i] = ct[i] = FXSYS_UINT32_GET_MSBFIRST(src + 4 * i);
     }
-    aes_decrypt(ctx, x);
+    aes_decrypt_nb_4(ctx, x);
     for (i = 0; i < 4; i++) {
       PUT_32BIT_MSB_FIRST(dest + 4 * i, iv[i] ^ x[i]);
       iv[i] = ct[i];
     }
     dest += 16;
     src += 16;
-    len -= 16;
+    size -= 16;
   }
   memcpy(ctx->iv, iv, sizeof(iv));
 }
 
-void aes_encrypt(CRYPT_aes_context* ctx, unsigned int* block) {
-  aes_encrypt_nb_4(ctx, block);
-}
-
-void aes_encrypt_cbc(unsigned char* dest,
-                     const unsigned char* src,
-                     int len,
-                     CRYPT_aes_context* ctx) {
+void CRYPT_AESEncrypt(CRYPT_aes_context* ctx,
+                      uint8_t* dest,
+                      const uint8_t* src,
+                      uint32_t size) {
   unsigned int iv[4];
   int i;
-  DCHECK_EQ((len & 15), 0);
+  CHECK_EQ((size & 15), 0);
   memcpy(iv, ctx->iv, sizeof(iv));
-  while (len > 0) {
+  while (size != 0) {
     for (i = 0; i < 4; i++) {
       iv[i] ^= FXSYS_UINT32_GET_MSBFIRST(src + 4 * i);
     }
-    aes_encrypt(ctx, iv);
+    aes_encrypt_nb_4(ctx, iv);
     for (i = 0; i < 4; i++) {
       PUT_32BIT_MSB_FIRST(dest + 4 * i, iv[i]);
     }
     dest += 16;
     src += 16;
-    len -= 16;
+    size -= 16;
   }
   memcpy(ctx->iv, iv, sizeof(iv));
-}
-
-}  // namespace
-
-void CRYPT_AESSetKey(CRYPT_aes_context* context,
-                     const uint8_t* key,
-                     uint32_t keylen) {
-  aes_setup(context, key, keylen);
-}
-
-void CRYPT_AESSetIV(CRYPT_aes_context* context, const uint8_t* iv) {
-  for (int i = 0; i < context->Nb; i++)
-    context->iv[i] = FXSYS_UINT32_GET_MSBFIRST(iv + 4 * i);
-}
-
-void CRYPT_AESDecrypt(CRYPT_aes_context* context,
-                      uint8_t* dest,
-                      const uint8_t* src,
-                      uint32_t size) {
-  aes_decrypt_cbc(dest, src, size, context);
-}
-
-void CRYPT_AESEncrypt(CRYPT_aes_context* context,
-                      uint8_t* dest,
-                      const uint8_t* src,
-                      uint32_t size) {
-  aes_encrypt_cbc(dest, src, size, context);
 }
