@@ -304,8 +304,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   const int32_t src_pitch = pBitmap->GetPitch();
   if (bCopyWithoutAlpha) {
     for (int32_t i = 0; i < BitmapHeight; i++) {
-      fxcrt::spancpy(dest_span, src_span.first(dest_pitch));
-      dest_span = dest_span.subspan(dest_pitch);
+      dest_span = fxcrt::spancpy(dest_span, src_span.first(dest_pitch));
       src_span = src_span.subspan(src_pitch);
     }
   } else {

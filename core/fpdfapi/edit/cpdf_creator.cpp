@@ -81,9 +81,8 @@ bool CFX_FileBufferArchive::WriteBlock(pdfium::span<const uint8_t> buffer) {
   pdfium::span<const uint8_t> src_span = buffer;
   while (!src_span.empty()) {
     size_t copy_size = std::min(available_.size(), src_span.size());
-    fxcrt::spancpy(available_, src_span.first(copy_size));
+    available_ = fxcrt::spancpy(available_, src_span.first(copy_size));
     src_span = src_span.subspan(copy_size);
-    available_ = available_.subspan(copy_size);
     if (available_.empty() && !Flush())
       return false;
   }
