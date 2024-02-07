@@ -66,7 +66,7 @@ template <typename T,
                                       std::is_trivially_copyable_v<U>>>
 bool span_equals(pdfium::span<T> s1, pdfium::span<U> s2) {
   return s1.size_bytes() == s2.size_bytes() &&
-         memcmp(s1.data(), s2.data(), s1.size_bytes()) == 0;
+         FXSYS_memcmp(s1.data(), s2.data(), s1.size_bytes()) == 0;
 }
 
 template <typename T,
