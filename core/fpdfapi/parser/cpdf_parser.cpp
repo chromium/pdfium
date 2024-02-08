@@ -407,18 +407,18 @@ bool CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xref_offset) {
       // SLOW ...
       LoadCrossRefV4(xref_offset, true);
 
-      RetainPtr<CPDF_Dictionary> pDict(LoadTrailerV4());
-      if (!pDict) {
+      RetainPtr<CPDF_Dictionary> trailer_dict = LoadTrailerV4();
+      if (!trailer_dict) {
         return false;
       }
 
-      xref_offset = pDict->GetDirectIntegerFor("Prev");
-      xref_stm = pDict->GetIntegerFor("XRefStm");
+      xref_offset = trailer_dict->GetDirectIntegerFor("Prev");
+      xref_stm = trailer_dict->GetIntegerFor("XRefStm");
       xref_stream_list.insert(xref_stream_list.begin(), xref_stm);
 
       // SLOW ...
       m_CrossRefTable = CPDF_CrossRefTable::MergeUp(
-          std::make_unique<CPDF_CrossRefTable>(std::move(pDict),
+          std::make_unique<CPDF_CrossRefTable>(std::move(trailer_dict),
                                                kNoV4TrailerObjectNumber),
           std::move(m_CrossRefTable));
     }
@@ -483,18 +483,18 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE main_xref_offset) {
       // SLOW ...
       LoadCrossRefV4(xref_offset, true);
 
-      RetainPtr<CPDF_Dictionary> pDict(LoadTrailerV4());
-      if (!pDict) {
+      RetainPtr<CPDF_Dictionary> trailer_dict = LoadTrailerV4();
+      if (!trailer_dict) {
         return false;
       }
 
-      xref_offset = pDict->GetDirectIntegerFor("Prev");
-      xref_stm = pDict->GetIntegerFor("XRefStm");
+      xref_offset = trailer_dict->GetDirectIntegerFor("Prev");
+      xref_stm = trailer_dict->GetIntegerFor("XRefStm");
       xref_stream_list.insert(xref_stream_list.begin(), xref_stm);
 
       // SLOW ...
       m_CrossRefTable = CPDF_CrossRefTable::MergeUp(
-          std::make_unique<CPDF_CrossRefTable>(std::move(pDict),
+          std::make_unique<CPDF_CrossRefTable>(std::move(trailer_dict),
                                                kNoV4TrailerObjectNumber),
           std::move(m_CrossRefTable));
     }
@@ -680,13 +680,27 @@ bool CPDF_Parser::LoadAllCrossRefV5(FX_FILESIZE xref_offset) {
   std::set<FX_FILESIZE> seen_xref_offset;
   while (xref_offset > 0) {
     seen_xref_offset.insert(xref_offset);
+    FX_FILESIZE save_xref_offset = xref_offset;
     if (!LoadCrossRefV5(&xref_offset, /*is_main_xref=*/false)) {
-      return false;
+      // If a cross-reference stream failed to load at `xref_offset`, try
+      // loading a cross-reference table at the same location. Use
+      // `save_xref_offset` instead of `xref_offset`, as `xref_offset` may have
+      // changed.
+      if (!LoadCrossRefV4(save_xref_offset, /*bSkip=*/false)) {
+        return false;
+      }
+
+      RetainPtr<CPDF_Dictionary> trailer_dict = LoadTrailerV4();
+      if (!trailer_dict) {
+        return false;
+      }
+      xref_offset = trailer_dict->GetDirectIntegerFor("Prev");
     }
 
     // Check for circular references.
-    if (pdfium::Contains(seen_xref_offset, xref_offset))
+    if (pdfium::Contains(seen_xref_offset, xref_offset)) {
       return false;
+    }
   }
   m_ObjectStreamMap.clear();
   m_bXRefStream = true;
@@ -893,9 +907,10 @@ void CPDF_Parser::ProcessCrossRefV5Entry(
   const ObjectType existing_type = GetObjectType(obj_num);
   if (existing_type == ObjectType::kNull) {
     const uint32_t offset = GetSecondXRefStreamEntry(entry_span, field_widths);
-    if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
+    if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset)) {
       m_CrossRefTable->AddNormal(obj_num, 0, /*is_object_stream=*/false,
                                  offset);
+    }
     return;
   }
 
@@ -910,9 +925,10 @@ void CPDF_Parser::ProcessCrossRefV5Entry(
 
   if (type == ObjectType::kNormal) {
     const uint32_t offset = GetSecondXRefStreamEntry(entry_span, field_widths);
-    if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset))
+    if (pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(offset)) {
       m_CrossRefTable->AddNormal(obj_num, 0, /*is_object_stream=*/false,
                                  offset);
+    }
     return;
   }
 
