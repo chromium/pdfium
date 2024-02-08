@@ -309,7 +309,7 @@ TEST_F(FPDFDataAvailEmbedderTest, LoadInfoAfterReceivingFirstPage) {
   // Map "Info" to an object within the first section without breaking
   // linearization.
   ByteString data(ByteStringView(loader.file_contents()));
-  absl::optional<size_t> index = data.Find("/Info 27 0 R");
+  std::optional<size_t> index = data.Find("/Info 27 0 R");
   ASSERT_TRUE(index.has_value());
   auto span = loader.mutable_file_contents().subspan(index.value()).subspan(7);
   ASSERT_FALSE(span.empty());
@@ -337,7 +337,7 @@ TEST_F(FPDFDataAvailEmbedderTest, TryLoadInvalidInfo) {
   TestAsyncLoader loader("linearized.pdf");
   // Map "Info" to an invalid object without breaking linearization.
   ByteString data(ByteStringView(loader.file_contents()));
-  absl::optional<size_t> index = data.Find("/Info 27 0 R");
+  std::optional<size_t> index = data.Find("/Info 27 0 R");
   ASSERT_TRUE(index.has_value());
   auto span = loader.mutable_file_contents().subspan(index.value()).subspan(6);
   ASSERT_GE(span.size(), 2u);
@@ -368,7 +368,7 @@ TEST_F(FPDFDataAvailEmbedderTest, TryLoadNonExistsInfo) {
   TestAsyncLoader loader("linearized.pdf");
   // Break the "Info" parameter without breaking linearization.
   ByteString data(ByteStringView(loader.file_contents()));
-  absl::optional<size_t> index = data.Find("/Info 27 0 R");
+  std::optional<size_t> index = data.Find("/Info 27 0 R");
   ASSERT_TRUE(index.has_value());
   auto span = loader.mutable_file_contents().subspan(index.value()).subspan(2);
   ASSERT_FALSE(span.empty());

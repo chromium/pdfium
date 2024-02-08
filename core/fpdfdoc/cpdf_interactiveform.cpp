@@ -6,6 +6,7 @@
 
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -31,7 +32,6 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/fx_font.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
 #include "third_party/base/numerics/safe_conversions.h"
@@ -688,7 +688,7 @@ int CPDF_InteractiveForm::FindFieldInCalculationOrder(
   if (!pArray)
     return -1;
 
-  absl::optional<size_t> maybe_found = pArray->Find(pField->GetFieldDict());
+  std::optional<size_t> maybe_found = pArray->Find(pField->GetFieldDict());
   if (!maybe_found.has_value())
     return -1;
 

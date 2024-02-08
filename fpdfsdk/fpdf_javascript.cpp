@@ -50,7 +50,7 @@ FPDFDoc_GetJavaScriptAction(FPDF_DOCUMENT document, int index) {
   if (action.GetType() != CPDF_Action::Type::kJavaScript)
     return nullptr;
 
-  absl::optional<WideString> script = action.MaybeGetJavaScript();
+  std::optional<WideString> script = action.MaybeGetJavaScript();
   if (!script.has_value())
     return nullptr;
 

@@ -467,7 +467,7 @@ CXFA_FFWidget* CXFA_FFDocView::GetWidgetByName(const WideString& wsName,
     pRefNode = node->IsWidgetReady() ? node : nullptr;
   }
   WideString wsExpression = (!pRefNode ? L"$form." : L"") + wsName;
-  absl::optional<CFXJSE_Engine::ResolveResult> maybeResult =
+  std::optional<CFXJSE_Engine::ResolveResult> maybeResult =
       pScriptContext->ResolveObjects(
           pRefNode, wsExpression.AsStringView(),
           Mask<XFA_ResolveFlag>{
@@ -661,7 +661,7 @@ void CXFA_FFDocView::RunBindItems() {
     CFXJSE_Engine* pScriptContext =
         pWidgetNode->GetDocument()->GetScriptContext();
     WideString wsRef = item->GetRef();
-    absl::optional<CFXJSE_Engine::ResolveResult> maybeRS =
+    std::optional<CFXJSE_Engine::ResolveResult> maybeRS =
         pScriptContext->ResolveObjects(
             pWidgetNode, wsRef.AsStringView(),
             Mask<XFA_ResolveFlag>{

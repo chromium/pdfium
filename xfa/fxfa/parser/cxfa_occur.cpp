@@ -41,14 +41,12 @@ CXFA_Occur::CXFA_Occur(CXFA_Document* doc, XFA_PacketType packet)
 CXFA_Occur::~CXFA_Occur() = default;
 
 int32_t CXFA_Occur::GetMax() {
-  absl::optional<int32_t> max =
-      JSObject()->TryInteger(XFA_Attribute::Max, true);
+  std::optional<int32_t> max = JSObject()->TryInteger(XFA_Attribute::Max, true);
   return max.has_value() ? max.value() : GetMin();
 }
 
 int32_t CXFA_Occur::GetMin() {
-  absl::optional<int32_t> min =
-      JSObject()->TryInteger(XFA_Attribute::Min, true);
+  std::optional<int32_t> min = JSObject()->TryInteger(XFA_Attribute::Min, true);
   return min.has_value() && min.value() >= 0 ? min.value() : 1;
 }
 
@@ -56,7 +54,7 @@ std::tuple<int32_t, int32_t, int32_t> CXFA_Occur::GetOccurInfo() {
   int32_t iMin = GetMin();
   int32_t iMax = GetMax();
 
-  absl::optional<int32_t> init =
+  std::optional<int32_t> init =
       JSObject()->TryInteger(XFA_Attribute::Initial, false);
   return {iMin, iMax,
           init.has_value() && init.value() >= iMin ? init.value() : iMin};

@@ -75,18 +75,18 @@ const char kPDFCharTypes[256] = {
     'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R',
     'R', 'R', 'R', 'R', 'R', 'R', 'R', 'W'};
 
-absl::optional<FX_FILESIZE> GetHeaderOffset(
+std::optional<FX_FILESIZE> GetHeaderOffset(
     const RetainPtr<IFX_SeekableReadStream>& pFile) {
   static constexpr size_t kBufSize = 4;
   uint8_t buf[kBufSize];
   for (FX_FILESIZE offset = 0; offset <= 1024; ++offset) {
     if (!pFile->ReadBlockAtOffset(buf, offset))
-      return absl::nullopt;
+      return std::nullopt;
 
     if (memcmp(buf, "%PDF", 4) == 0)
       return offset;
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 ByteString PDF_NameDecode(ByteStringView orig) {

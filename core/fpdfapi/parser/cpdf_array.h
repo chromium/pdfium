@@ -9,6 +9,7 @@
 
 #include <stddef.h>
 
+#include <optional>
 #include <set>
 #include <type_traits>
 #include <utility>
@@ -18,7 +19,6 @@
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
 
 // Arrays never contain nullptrs for objects within bounds, but some of the
@@ -72,7 +72,7 @@ class CPDF_Array final : public CPDF_Object {
   CFX_FloatRect GetRect() const;
   CFX_Matrix GetMatrix() const;
 
-  absl::optional<size_t> Find(const CPDF_Object* pThat) const;
+  std::optional<size_t> Find(const CPDF_Object* pThat) const;
   bool Contains(const CPDF_Object* pThat) const;
 
   // Creates object owned by the array, and returns a retained pointer to it.

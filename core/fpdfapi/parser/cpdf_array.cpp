@@ -81,12 +81,12 @@ CFX_Matrix CPDF_Array::GetMatrix() const {
                     GetFloatAt(4), GetFloatAt(5));
 }
 
-absl::optional<size_t> CPDF_Array::Find(const CPDF_Object* pThat) const {
+std::optional<size_t> CPDF_Array::Find(const CPDF_Object* pThat) const {
   for (size_t i = 0; i < size(); ++i) {
     if (GetDirectObjectAt(i) == pThat)
       return i;
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 bool CPDF_Array::Contains(const CPDF_Object* pThat) const {

@@ -52,8 +52,8 @@ class CXFA_Box : public CXFA_Node {
 
  private:
   bool IsCircular();
-  absl::optional<int32_t> GetStartAngle();
-  absl::optional<int32_t> GetSweepAngle();
+  std::optional<int32_t> GetStartAngle();
+  std::optional<int32_t> GetSweepAngle();
 
   std::vector<CXFA_Stroke*> GetStrokesInternal(bool bNull);
   void DrawFill(const std::vector<CXFA_Stroke*>& strokes,

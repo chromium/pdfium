@@ -208,12 +208,12 @@ ByteString CFX_Win32FontInfo::FindFont(const ByteString& name) {
   if (!m_pMapper)
     return name;
 
-  absl::optional<ByteString> maybe_installed =
+  std::optional<ByteString> maybe_installed =
       m_pMapper->InstalledFontNameStartingWith(name);
   if (maybe_installed.has_value())
     return maybe_installed.value();
 
-  absl::optional<ByteString> maybe_localized =
+  std::optional<ByteString> maybe_localized =
       m_pMapper->LocalizedFontNameStartingWith(name);
   if (maybe_localized.has_value())
     return maybe_localized.value();

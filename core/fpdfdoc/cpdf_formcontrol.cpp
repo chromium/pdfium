@@ -192,10 +192,10 @@ CPDF_DefaultAppearance CPDF_FormControl::GetDefaultAppearance() const {
   return m_pForm->GetDefaultAppearance();
 }
 
-absl::optional<WideString> CPDF_FormControl::GetDefaultControlFontName() const {
+std::optional<WideString> CPDF_FormControl::GetDefaultControlFontName() const {
   RetainPtr<CPDF_Font> pFont = GetDefaultControlFont();
   if (!pFont)
-    return absl::nullopt;
+    return std::nullopt;
 
   return WideString::FromDefANSI(pFont->GetBaseFontName().AsStringView());
 }
@@ -203,7 +203,7 @@ absl::optional<WideString> CPDF_FormControl::GetDefaultControlFontName() const {
 RetainPtr<CPDF_Font> CPDF_FormControl::GetDefaultControlFont() const {
   float fFontSize;
   CPDF_DefaultAppearance cDA = GetDefaultAppearance();
-  absl::optional<ByteString> csFontNameTag = cDA.GetFont(&fFontSize);
+  std::optional<ByteString> csFontNameTag = cDA.GetFont(&fFontSize);
   if (!csFontNameTag.has_value() || csFontNameTag->IsEmpty())
     return nullptr;
 

@@ -6,6 +6,7 @@
 
 #include "xfa/fxfa/parser/cxfa_document_builder.h"
 
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -19,7 +20,6 @@
 #include "core/fxcrt/xml/cfx_xmlnode.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "fxjs/xfa/cjx_object.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -96,7 +96,7 @@ bool ResolveAttribute(CFX_XMLElement* pElement,
   return true;
 }
 
-absl::optional<WideString> FindAttributeWithNS(
+std::optional<WideString> FindAttributeWithNS(
     CFX_XMLElement* pElement,
     WideStringView wsLocalAttributeName,
     WideStringView wsNamespaceURIPrefix) {
@@ -121,7 +121,7 @@ absl::optional<WideString> FindAttributeWithNS(
     }
     return it.second;
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 CFX_XMLNode* GetDataSetsFromXDP(CFX_XMLNode* pXMLDocumentNode) {
@@ -377,7 +377,7 @@ CXFA_Node* CXFA_DocumentBuilder::ParseAsXDPPacket_XDP(
       continue;
 
     WideString wsPacketName = pElement->GetLocalTagName();
-    absl::optional<XFA_PACKETINFO> packet_info =
+    std::optional<XFA_PACKETINFO> packet_info =
         XFA_GetPacketByName(wsPacketName.AsStringView());
     if (packet_info.has_value() && packet_info.value().uri &&
         !MatchNodeName(pElement, packet_info.value().name,
@@ -677,7 +677,7 @@ CXFA_Node* CXFA_DocumentBuilder::NormalLoader(CXFA_Node* pXFANode,
           if (wsAttrName.EqualsASCII("nil") && it.second.EqualsASCII("true"))
             IsNeedValue = false;
 
-          absl::optional<XFA_ATTRIBUTEINFO> attr =
+          std::optional<XFA_ATTRIBUTEINFO> attr =
               XFA_GetAttributeByName(wsAttrName.AsStringView());
           if (!attr.has_value())
             continue;
@@ -795,7 +795,7 @@ void CXFA_DocumentBuilder::ParseDataGroup(CXFA_Node* pXFANode,
 
         XFA_Element eNodeType = XFA_Element::DataModel;
         if (eNodeType == XFA_Element::DataModel) {
-          absl::optional<WideString> wsDataNodeAttr =
+          std::optional<WideString> wsDataNodeAttr =
               FindAttributeWithNS(pXMLElement, L"dataNode",
                                   L"http://www.xfa.org/schema/xfa-data/1.0/");
           if (wsDataNodeAttr.has_value()) {
@@ -806,7 +806,7 @@ void CXFA_DocumentBuilder::ParseDataGroup(CXFA_Node* pXFANode,
           }
         }
         if (eNodeType == XFA_Element::DataModel) {
-          absl::optional<WideString> wsContentType =
+          std::optional<WideString> wsContentType =
               FindAttributeWithNS(pXMLElement, L"contentType",
                                   L"http://www.xfa.org/schema/xfa-data/1.0/");
           if (wsContentType.has_value() && !wsContentType.value().IsEmpty())

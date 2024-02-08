@@ -7,9 +7,10 @@
 #ifndef CORE_FPDFAPI_PAGE_IPDF_PAGE_H_
 #define CORE_FPDFAPI_PAGE_IPDF_PAGE_H_
 
+#include <optional>
+
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CPDF_Document;
 class CPDF_Page;
@@ -35,12 +36,12 @@ class IPDF_Page : public Retainable {
   virtual CFX_Matrix GetDisplayMatrix(const FX_RECT& rect,
                                       int iRotate) const = 0;
 
-  virtual absl::optional<CFX_PointF> DeviceToPage(
+  virtual std::optional<CFX_PointF> DeviceToPage(
       const FX_RECT& rect,
       int rotate,
       const CFX_PointF& device_point) const = 0;
 
-  virtual absl::optional<CFX_PointF> PageToDevice(
+  virtual std::optional<CFX_PointF> PageToDevice(
       const FX_RECT& rect,
       int rotate,
       const CFX_PointF& page_point) const = 0;

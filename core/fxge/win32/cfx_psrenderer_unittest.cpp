@@ -4,6 +4,7 @@
 
 #include "core/fxge/win32/cfx_psrenderer.h"
 
+#include <optional>
 #include <utility>
 
 #include "core/fxcrt/bytestring.h"
@@ -15,7 +16,6 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/win32/cfx_psfonttracker.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/containers/span.h"
 
 namespace {
@@ -43,7 +43,7 @@ class TestWriteStream final : public IFX_RetainableWriteStream {
 }  // namespace
 
 TEST(PSRendererTest, GenerateType42SfntData) {
-  absl::optional<ByteString> result;
+  std::optional<ByteString> result;
 
   result = CFX_PSRenderer::GenerateType42SfntDataForTesting("empty", {});
   EXPECT_FALSE(result.has_value());

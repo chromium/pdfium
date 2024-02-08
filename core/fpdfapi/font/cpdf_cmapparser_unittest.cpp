@@ -37,7 +37,7 @@ TEST(cpdf_cmapparser, GetCode) {
 }
 
 TEST(cpdf_cmapparser, GetCodeRange) {
-  absl::optional<CPDF_CMap::CodeRange> range;
+  std::optional<CPDF_CMap::CodeRange> range;
 
   // Must start with a <
   range = CPDF_CMapParser::GetCodeRange("", "");

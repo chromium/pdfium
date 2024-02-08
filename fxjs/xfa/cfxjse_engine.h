@@ -133,11 +133,11 @@ class CFXJSE_Engine final : public CFX_V8 {
                                             WideStringView wsScript,
                                             CXFA_Object* pThisObject);
 
-  absl::optional<ResolveResult> ResolveObjects(CXFA_Object* refObject,
-                                               WideStringView wsExpression,
-                                               Mask<XFA_ResolveFlag> dwStyles);
+  std::optional<ResolveResult> ResolveObjects(CXFA_Object* refObject,
+                                              WideStringView wsExpression,
+                                              Mask<XFA_ResolveFlag> dwStyles);
 
-  absl::optional<ResolveResult> ResolveObjectsWithBindNode(
+  std::optional<ResolveResult> ResolveObjectsWithBindNode(
       CXFA_Object* refObject,
       WideStringView wsExpression,
       Mask<XFA_ResolveFlag> dwStyles,

@@ -8,8 +8,7 @@
 #define FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256_H_
 
 #include <memory>
-
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include <optional>
 
 class CBC_ReedSolomonGF256Poly;
 
@@ -25,7 +24,7 @@ class CBC_ReedSolomonGF256 {
                                                           int32_t coefficient);
   static int32_t AddOrSubtract(int32_t a, int32_t b);
   int32_t Exp(int32_t a);
-  absl::optional<int32_t> Inverse(int32_t a);
+  std::optional<int32_t> Inverse(int32_t a);
   int32_t Multiply(int32_t a, int32_t b);
   void Init();
 

@@ -203,7 +203,7 @@ bool CPDF_Parser::IsObjectFree(uint32_t objnum) const {
 }
 
 bool CPDF_Parser::InitSyntaxParser(RetainPtr<CPDF_ReadValidator> validator) {
-  const absl::optional<FX_FILESIZE> header_offset = GetHeaderOffset(validator);
+  const std::optional<FX_FILESIZE> header_offset = GetHeaderOffset(validator);
   if (!header_offset.has_value())
     return false;
   if (validator->GetSize() < header_offset.value() + kPDFHeaderSize)

@@ -53,7 +53,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool* bRichText) {
 
     CXFA_Node* pChildNode = pValueNode->GetFirstChild();
     if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
-      absl::optional<WideString> contentType =
+      std::optional<WideString> contentType =
           pChildNode->JSObject()->TryAttribute(XFA_Attribute::ContentType,
                                                false);
       if (contentType.has_value() &&
@@ -77,7 +77,7 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool* bRichText) {
 
     CXFA_Node* pChildNode = pValueNode->GetFirstChild();
     if (pChildNode && pChildNode->GetElementType() == XFA_Element::ExData) {
-      absl::optional<WideString> contentType =
+      std::optional<WideString> contentType =
           pChildNode->JSObject()->TryAttribute(XFA_Attribute::ContentType,
                                                false);
       if (contentType.has_value() &&
@@ -132,10 +132,10 @@ bool CXFA_TextProvider::IsCheckButtonAndAutoWidth() const {
   return !m_pNode->TryWidth().has_value();
 }
 
-absl::optional<WideString> CXFA_TextProvider::GetEmbeddedObj(
+std::optional<WideString> CXFA_TextProvider::GetEmbeddedObj(
     const WideString& wsAttr) const {
   if (m_eType != Type::kText)
-    return absl::nullopt;
+    return std::nullopt;
 
   CXFA_Node* pParent = m_pNode->GetParent();
   CXFA_Document* pDocument = m_pNode->GetDocument();
@@ -149,7 +149,7 @@ absl::optional<WideString> CXFA_TextProvider::GetEmbeddedObj(
         wsAttr.AsStringView());
   }
   if (!pIDNode || !pIDNode->IsWidgetReady())
-    return absl::nullopt;
+    return std::nullopt;
 
   return pIDNode->GetValue(XFA_ValuePicture::kDisplay);
 }

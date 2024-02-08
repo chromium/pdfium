@@ -684,7 +684,7 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
 
   // Set to 0 to make CalculatePitchAndSize() calculate it.
   constexpr uint32_t kNoPitch = 0;
-  absl::optional<CFX_DIBitmap::PitchAndSize> needed_data =
+  std::optional<CFX_DIBitmap::PitchAndSize> needed_data =
       CFX_DIBitmap::CalculatePitchAndSize(m_SrcWidth, m_SrcHeight, format,
                                           kNoPitch);
   if (!needed_data.has_value()) {

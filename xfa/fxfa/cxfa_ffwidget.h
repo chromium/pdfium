@@ -146,8 +146,8 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   virtual bool CanDeSelect();
   virtual bool Undo();
   virtual bool Redo();
-  virtual absl::optional<WideString> Copy();
-  virtual absl::optional<WideString> Cut();
+  virtual std::optional<WideString> Copy();
+  virtual std::optional<WideString> Cut();
   virtual bool Paste(const WideString& wsPaste);
   virtual void SelectAll();
   virtual void Delete();

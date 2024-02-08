@@ -7,6 +7,8 @@
 #ifndef FPDFSDK_CPDFSDK_WIDGET_H_
 #define FPDFSDK_CPDFSDK_WIDGET_H_
 
+#include <optional>
+
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/cpdf_annot.h"
@@ -16,7 +18,6 @@
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/cfx_color.h"
 #include "fpdfsdk/cpdfsdk_baannot.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CFFL_InteractiveFormFiller;
 class CFX_RenderDevice;
@@ -80,9 +81,9 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   int GetFieldFlags() const;
   int GetRotate() const;
 
-  absl::optional<FX_COLORREF> GetFillColor() const;
-  absl::optional<FX_COLORREF> GetBorderColor() const;
-  absl::optional<FX_COLORREF> GetTextColor() const;
+  std::optional<FX_COLORREF> GetFillColor() const;
+  std::optional<FX_COLORREF> GetBorderColor() const;
+  std::optional<FX_COLORREF> GetTextColor() const;
   float GetFontSize() const;
 
   int GetSelectedIndex(int nIndex) const;
@@ -115,11 +116,11 @@ class CPDFSDK_Widget final : public CPDFSDK_BAAnnot {
   void ResetXFAAppearance(ValueChanged bValueChanged);
 #endif  // PDF_ENABLE_XFA
 
-  void ResetAppearance(absl::optional<WideString> sValue,
+  void ResetAppearance(std::optional<WideString> sValue,
                        ValueChanged bValueChanged);
   void ResetFieldAppearance();
   void UpdateField();
-  absl::optional<WideString> OnFormat();
+  std::optional<WideString> OnFormat();
 
   bool OnAAction(CPDF_AAction::AActionType type,
                  CFFL_FieldAction* data,

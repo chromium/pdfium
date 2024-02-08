@@ -146,10 +146,10 @@ std::vector<RetainPtr<const CPDF_Object>> CPDF_Action::GetAllFields() const {
   return result;
 }
 
-absl::optional<WideString> CPDF_Action::MaybeGetJavaScript() const {
+std::optional<WideString> CPDF_Action::MaybeGetJavaScript() const {
   RetainPtr<const CPDF_Object> pObject = GetJavaScriptObject();
   if (!pObject)
-    return absl::nullopt;
+    return std::nullopt;
   return pObject->GetUnicodeText();
 }
 

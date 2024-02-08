@@ -75,12 +75,12 @@ bool HasOptField(CPDF_FormField::Type type) {
 }  // namespace
 
 // static
-absl::optional<FormFieldType> CPDF_FormField::IntToFormFieldType(int value) {
+std::optional<FormFieldType> CPDF_FormField::IntToFormFieldType(int value) {
   if (value >= static_cast<int>(FormFieldType::kUnknown) &&
       value < static_cast<int>(kFormFieldTypeCount)) {
     return static_cast<FormFieldType>(value);
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 // static

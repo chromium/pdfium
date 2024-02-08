@@ -3,11 +3,11 @@
 // found in the LICENSE file.
 
 #include <iterator>
+#include <optional>
 
 #include "public/fpdf_structtree.h"
 #include "testing/embedder_test.h"
 #include "testing/fx_string_testhelpers.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class FPDFStructTreeEmbedderTest : public EmbedderTest {};
 

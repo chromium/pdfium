@@ -10,12 +10,12 @@
 #include <iterator>
 #include <list>
 #include <map>
+#include <optional>
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "fxjs/gc/heap.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
 #include "v8/include/cppgc/prefinalizer.h"
@@ -67,10 +67,10 @@ class CXFA_ViewLayoutProcessor
   CXFA_ViewLayoutItem* GetRootLayoutItem() const {
     return m_pPageSetRootLayoutItem;
   }
-  absl::optional<BreakData> ProcessBreakBefore(const CXFA_Node* pBreakNode);
-  absl::optional<BreakData> ProcessBreakAfter(const CXFA_Node* pBreakNode);
-  absl::optional<OverflowData> ProcessOverflow(CXFA_Node* pFormNode,
-                                               bool bCreatePage);
+  std::optional<BreakData> ProcessBreakBefore(const CXFA_Node* pBreakNode);
+  std::optional<BreakData> ProcessBreakAfter(const CXFA_Node* pBreakNode);
+  std::optional<OverflowData> ProcessOverflow(CXFA_Node* pFormNode,
+                                              bool bCreatePage);
   CXFA_Node* QueryOverflow(CXFA_Node* pFormNode);
   CXFA_Node* ProcessBookendLeader(const CXFA_Node* pBookendNode);
   CXFA_Node* ProcessBookendTrailer(const CXFA_Node* pBookendNode);
@@ -133,7 +133,7 @@ class CXFA_ViewLayoutProcessor
                                            bool bLeader);
   CXFA_Node* ResolveBookendLeaderOrTrailer(const CXFA_Node* pBookendNode,
                                            bool bLeader);
-  absl::optional<BreakData> ProcessBreakBeforeOrAfter(
+  std::optional<BreakData> ProcessBreakBeforeOrAfter(
       const CXFA_Node* pBreakNode,
       bool bBefore);
   BreakData ExecuteBreakBeforeOrAfter(const CXFA_Node* pCurNode, bool bBefore);

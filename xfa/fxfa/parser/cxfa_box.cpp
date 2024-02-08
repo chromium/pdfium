@@ -111,11 +111,11 @@ bool CXFA_Box::IsCircular() {
   return JSObject()->GetBoolean(XFA_Attribute::Circular);
 }
 
-absl::optional<int32_t> CXFA_Box::GetStartAngle() {
+std::optional<int32_t> CXFA_Box::GetStartAngle() {
   return JSObject()->TryInteger(XFA_Attribute::StartAngle, false);
 }
 
-absl::optional<int32_t> CXFA_Box::GetSweepAngle() {
+std::optional<int32_t> CXFA_Box::GetSweepAngle() {
   return JSObject()->TryInteger(XFA_Attribute::SweepAngle, false);
 }
 
@@ -256,8 +256,8 @@ void CXFA_Box::GetPathArcOrRounded(CFX_RectF rtDraw,
   rtDraw.top = center.y - b;
   rtDraw.width = a + a;
   rtDraw.height = b + b;
-  absl::optional<int32_t> startAngle = GetStartAngle();
-  absl::optional<int32_t> sweepAngle = GetSweepAngle();
+  std::optional<int32_t> startAngle = GetStartAngle();
+  std::optional<int32_t> sweepAngle = GetSweepAngle();
   if (!startAngle.has_value() && !sweepAngle.has_value()) {
     fillPath->AddEllipse(rtDraw);
     return;

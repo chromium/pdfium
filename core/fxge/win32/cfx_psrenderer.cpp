@@ -39,17 +39,17 @@
 
 namespace {
 
-absl::optional<ByteString> GenerateType42SfntData(
+std::optional<ByteString> GenerateType42SfntData(
     const ByteString& psname,
     pdfium::span<const uint8_t> font_data) {
   if (font_data.empty())
-    return absl::nullopt;
+    return std::nullopt;
 
   // Per Type 42 font spec.
   constexpr size_t kMaxSfntStringSize = 65535;
   if (font_data.size() > kMaxSfntStringSize) {
     // TODO(thestig): Fonts that are too big need to be written out in sections.
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   // Each byte is written as 2 ASCIIHex characters, so really 64 chars per line.
@@ -170,7 +170,7 @@ ByteString GenerateType42FontData(const CFX_Font* font) {
   const ByteString psname = font->GetPsName();
   DCHECK(!psname.IsEmpty());
 
-  absl::optional<ByteString> sfnt_data =
+  std::optional<ByteString> sfnt_data =
       GenerateType42SfntData(psname, font->GetFontSpan());
   if (!sfnt_data.has_value())
     return ByteString();
@@ -195,7 +195,7 @@ struct CFX_PSRenderer::Glyph {
 
   UnownedPtr<CFX_Font> const font;
   const uint32_t glyph_index;
-  absl::optional<std::array<float, 4>> adjust_matrix;
+  std::optional<std::array<float, 4>> adjust_matrix;
 };
 
 CFX_PSRenderer::FaxCompressResult::FaxCompressResult() = default;
@@ -578,7 +578,7 @@ bool CFX_PSRenderer::DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,
     uint8_t* output_buf = nullptr;
     size_t output_size = 0;
     bool output_buf_is_owned = true;
-    absl::optional<PSCompressResult> compress_result;
+    std::optional<PSCompressResult> compress_result;
     ByteString filter;
     if ((m_Level.value() == RenderingLevel::kLevel2 || options.bLossy) &&
         m_pEncoderIface->pJpegEncodeFunc(bitmap, &output_buf, &output_size)) {
@@ -870,10 +870,10 @@ CFX_PSRenderer::FaxCompressResult CFX_PSRenderer::FaxCompressData(
   return result;
 }
 
-absl::optional<CFX_PSRenderer::PSCompressResult> CFX_PSRenderer::PSCompressData(
+std::optional<CFX_PSRenderer::PSCompressResult> CFX_PSRenderer::PSCompressData(
     pdfium::span<const uint8_t> src_span) const {
   if (src_span.size() < 1024)
-    return absl::nullopt;
+    return std::nullopt;
 
   DataVector<uint8_t> (*encode_func)(pdfium::span<const uint8_t> src_span);
   ByteString filter;
@@ -888,7 +888,7 @@ absl::optional<CFX_PSRenderer::PSCompressResult> CFX_PSRenderer::PSCompressData(
 
   DataVector<uint8_t> decode_result = encode_func(src_span);
   if (decode_result.size() == 0 || decode_result.size() >= src_span.size())
-    return absl::nullopt;
+    return std::nullopt;
 
   PSCompressResult result;
   result.data = std::move(decode_result);
@@ -921,7 +921,7 @@ void CFX_PSRenderer::WriteString(ByteStringView str) {
 }
 
 // static
-absl::optional<ByteString> CFX_PSRenderer::GenerateType42SfntDataForTesting(
+std::optional<ByteString> CFX_PSRenderer::GenerateType42SfntDataForTesting(
     const ByteString& psname,
     pdfium::span<const uint8_t> font_data) {
   return GenerateType42SfntData(psname, font_data);

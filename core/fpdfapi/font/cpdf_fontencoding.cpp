@@ -7,6 +7,7 @@
 #include "core/fpdfapi/font/cpdf_fontencoding.h"
 
 #include <iterator>
+#include <optional>
 
 #include "constants/font_encodings.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -16,7 +17,6 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_fontencoding.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 namespace {
 
@@ -1688,7 +1688,7 @@ RetainPtr<CPDF_Object> CPDF_FontEncoding::Realize(
       FontEncoding::kAdobeSymbol,
   };
 
-  absl::optional<FontEncoding> predefined;
+  std::optional<FontEncoding> predefined;
   for (FontEncoding cs : kEncodings) {
     pdfium::span<const uint16_t> src = UnicodesForPredefinedCharSet(cs);
     bool match = true;

@@ -7,10 +7,11 @@
 #ifndef FPDFSDK_CPDFSDK_APPSTREAM_H_
 #define FPDFSDK_CPDFSDK_APPSTREAM_H_
 
+#include <optional>
+
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CPDFSDK_Widget;
 class CPDF_Dictionary;
@@ -24,9 +25,9 @@ class CPDFSDK_AppStream {
   void SetAsPushButton();
   void SetAsCheckBox();
   void SetAsRadioButton();
-  void SetAsComboBox(absl::optional<WideString> sValue);
+  void SetAsComboBox(std::optional<WideString> sValue);
   void SetAsListBox();
-  void SetAsTextField(absl::optional<WideString> sValue);
+  void SetAsTextField(std::optional<WideString> sValue);
 
  private:
   void AddImage(const ByteString& sAPType, const CPDF_Stream* pImage);

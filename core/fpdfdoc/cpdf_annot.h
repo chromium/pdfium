@@ -12,6 +12,7 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/bytestring.h"
@@ -19,7 +20,6 @@
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CFX_RenderDevice;
 class CPDF_Array;
@@ -99,7 +99,7 @@ class CPDF_Annot {
   CPDF_Form* GetAPForm(CPDF_Page* pPage, AppearanceMode mode);
   void SetOpenState(bool bOpenState) { m_bOpenState = bOpenState; }
   void SetPopupAnnotOpenState(bool bOpenState);
-  absl::optional<CFX_FloatRect> GetPopupAnnotRect() const;
+  std::optional<CFX_FloatRect> GetPopupAnnotRect() const;
   void SetPopupAnnot(CPDF_Annot* pAnnot) { m_pPopupAnnot = pAnnot; }
 
  private:

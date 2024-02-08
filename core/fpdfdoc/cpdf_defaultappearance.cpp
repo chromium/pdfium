@@ -64,11 +64,11 @@ CPDF_DefaultAppearance::CPDF_DefaultAppearance(
 
 CPDF_DefaultAppearance::~CPDF_DefaultAppearance() = default;
 
-absl::optional<ByteString> CPDF_DefaultAppearance::GetFont(
+std::optional<ByteString> CPDF_DefaultAppearance::GetFont(
     float* fFontSize) const {
   *fFontSize = 0.0f;
   if (m_csDA.IsEmpty())
-    return absl::nullopt;
+    return std::nullopt;
 
   ByteString csFontNameTag;
   CPDF_SimpleParser syntax(m_csDA.AsStringView().raw_span());
@@ -80,9 +80,9 @@ absl::optional<ByteString> CPDF_DefaultAppearance::GetFont(
   return PDF_NameDecode(csFontNameTag.AsStringView());
 }
 
-absl::optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
+std::optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
   if (m_csDA.IsEmpty())
-    return absl::nullopt;
+    return std::nullopt;
 
   CPDF_SimpleParser syntax(m_csDA.AsStringView().raw_span());
   if (FindTagParamFromStart(&syntax, "g", 1)) {
@@ -102,14 +102,14 @@ absl::optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
     float k = StringToFloat(syntax.GetWord());
     return CFX_Color(CFX_Color::Type::kCMYK, c, m, y, k);
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
-absl::optional<CFX_Color::TypeAndARGB> CPDF_DefaultAppearance::GetColorARGB()
+std::optional<CFX_Color::TypeAndARGB> CPDF_DefaultAppearance::GetColorARGB()
     const {
-  absl::optional<CFX_Color> maybe_color = GetColor();
+  std::optional<CFX_Color> maybe_color = GetColor();
   if (!maybe_color.has_value())
-    return absl::nullopt;
+    return std::nullopt;
 
   const CFX_Color& color = maybe_color.value();
   if (color.nColorType == CFX_Color::Type::kGray) {

@@ -7,13 +7,13 @@
 #ifndef CORE_FPDFAPI_FONT_CPDF_CMAPPARSER_H_
 #define CORE_FPDFAPI_FONT_CPDF_CMAPPARSER_H_
 
+#include <optional>
 #include <utility>
 #include <vector>
 
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fpdfapi/font/cpdf_cmap.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CPDF_CMapParser {
  public:
@@ -43,7 +43,7 @@ class CPDF_CMapParser {
   void HandleCodeSpaceRange(ByteStringView word);
 
   static uint32_t GetCode(ByteStringView word);
-  static absl::optional<CPDF_CMap::CodeRange> GetCodeRange(
+  static std::optional<CPDF_CMap::CodeRange> GetCodeRange(
       ByteStringView first,
       ByteStringView second);
 

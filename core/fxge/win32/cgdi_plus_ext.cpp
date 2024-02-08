@@ -394,7 +394,7 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
   return pPen;
 }
 
-absl::optional<std::pair<size_t, size_t>> IsSmallTriangle(
+std::optional<std::pair<size_t, size_t>> IsSmallTriangle(
     pdfium::span<const Gdiplus::PointF> points,
     const CFX_Matrix* pMatrix) {
   static constexpr size_t kPairs[3][2] = {{1, 2}, {0, 2}, {0, 1}};
@@ -414,7 +414,7 @@ absl::optional<std::pair<size_t, size_t>> IsSmallTriangle(
     if (distance_square < 2.25f)
       return std::make_pair(i, pair1);
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 class GpStream final : public IStream {

@@ -7,9 +7,10 @@
 #ifndef XFA_FXFA_CXFA_TEXTPROVIDER_H_
 #define XFA_FXFA_CXFA_TEXTPROVIDER_H_
 
+#include <optional>
+
 #include "core/fxcrt/widestring.h"
 #include "fxjs/gc/heap.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
 #include "v8/include/cppgc/visitor.h"
@@ -37,7 +38,7 @@ class CXFA_TextProvider : public cppgc::GarbageCollected<CXFA_TextProvider> {
   CXFA_Para* GetParaIfExists();
   CXFA_Font* GetFontIfExists();
   bool IsCheckButtonAndAutoWidth() const;
-  absl::optional<WideString> GetEmbeddedObj(const WideString& wsAttr) const;
+  std::optional<WideString> GetEmbeddedObj(const WideString& wsAttr) const;
 
  private:
   CXFA_TextProvider(CXFA_Node* pNode, Type eType);

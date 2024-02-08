@@ -22,7 +22,7 @@ CJS_EventContext::CJS_EventContext(CJS_Runtime* pRuntime)
 
 CJS_EventContext::~CJS_EventContext() = default;
 
-absl::optional<IJS_Runtime::JS_Error> CJS_EventContext::RunScript(
+std::optional<IJS_Runtime::JS_Error> CJS_EventContext::RunScript(
     const WideString& script) {
   v8::Isolate::Scope isolate_scope(m_pRuntime->GetIsolate());
   v8::HandleScope handle_scope(m_pRuntime->GetIsolate());
@@ -44,7 +44,7 @@ absl::optional<IJS_Runtime::JS_Error> CJS_EventContext::RunScript(
         1, 1, JSGetStringFromID(JSMessage::kDuplicateEventError));
   }
 
-  absl::optional<IJS_Runtime::JS_Error> err;
+  std::optional<IJS_Runtime::JS_Error> err;
   if (script.GetLength() > 0)
     err = m_pRuntime->ExecuteScript(script);
 

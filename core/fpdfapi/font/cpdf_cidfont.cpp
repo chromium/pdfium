@@ -763,7 +763,7 @@ int CPDF_CIDFont::GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) {
       return cid;
     }
 
-    absl::optional<fxge::FontEncoding> charmap =
+    std::optional<fxge::FontEncoding> charmap =
         face->GetCurrentCharMapEncoding();
     if (!charmap.has_value()) {
       return cid;

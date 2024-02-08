@@ -253,7 +253,7 @@ RetainPtr<CPDF_Font> CPDF_BAFontMap::GetAnnotDefaultFont(ByteString* sAlias) {
 
   CPDF_DefaultAppearance appearance(sDA);
   float font_size;
-  absl::optional<ByteString> font = appearance.GetFont(&font_size);
+  std::optional<ByteString> font = appearance.GetFont(&font_size);
   *sAlias = font.value_or(ByteString());
 
   RetainPtr<CPDF_Dictionary> pFontDict;

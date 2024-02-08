@@ -8,11 +8,11 @@
 #define CORE_FPDFAPI_PARSER_FPDF_PARSER_UTILITY_H_
 
 #include <iosfwd>
+#include <optional>
 #include <vector>
 
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CPDF_Array;
 class CPDF_Dictionary;
@@ -42,7 +42,7 @@ inline bool PDFCharIsLineEnding(uint8_t c) {
 // On success, return a positive offset value to the PDF header. If the header
 // cannot be found, or if there is an error reading from |pFile|, then return
 // nullopt.
-absl::optional<FX_FILESIZE> GetHeaderOffset(
+std::optional<FX_FILESIZE> GetHeaderOffset(
     const RetainPtr<IFX_SeekableReadStream>& pFile);
 
 ByteString PDF_NameDecode(ByteStringView orig);

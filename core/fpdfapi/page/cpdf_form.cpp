@@ -115,14 +115,14 @@ RetainPtr<const CPDF_Stream> CPDF_Form::GetStream() const {
   return m_pFormStream;
 }
 
-absl::optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
+std::optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
 CPDF_Form::GetBitmapAndMatrixFromSoleImageOfForm() const {
   if (GetPageObjectCount() != 1)
-    return absl::nullopt;
+    return std::nullopt;
 
   CPDF_ImageObject* pImageObject = (*begin())->AsImage();
   if (!pImageObject)
-    return absl::nullopt;
+    return std::nullopt;
 
   return {{pImageObject->GetIndependentBitmap(), pImageObject->matrix()}};
 }

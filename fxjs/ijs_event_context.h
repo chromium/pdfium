@@ -7,9 +7,10 @@
 #ifndef FXJS_IJS_EVENT_CONTEXT_H_
 #define FXJS_IJS_EVENT_CONTEXT_H_
 
+#include <optional>
+
 #include "core/fxcrt/widestring.h"
 #include "fxjs/ijs_runtime.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CPDF_FormField;
 
@@ -20,7 +21,7 @@ class IJS_EventContext {
  public:
   virtual ~IJS_EventContext() = default;
 
-  virtual absl::optional<IJS_Runtime::JS_Error> RunScript(
+  virtual std::optional<IJS_Runtime::JS_Error> RunScript(
       const WideString& script) = 0;
 
   virtual void OnDoc_Open(const WideString& strTargetName) = 0;

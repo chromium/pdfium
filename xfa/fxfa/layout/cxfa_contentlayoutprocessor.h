@@ -11,13 +11,13 @@
 
 #include <list>
 #include <map>
+#include <optional>
 #include <utility>
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/gc/heap.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/macros.h"
 #include "v8/include/cppgc/member.h"
@@ -72,7 +72,7 @@ class CXFA_ContentLayoutProcessor
     Context();
     ~Context();
 
-    absl::optional<float> m_fCurColumnWidth;
+    std::optional<float> m_fCurColumnWidth;
     UnownedPtr<std::vector<float>> m_prgSpecifiedColumnWidths;
     UnownedPtr<CXFA_ContentLayoutProcessor> m_pOverflowProcessor;  // OK, stack
     UnownedPtr<CXFA_Node> m_pOverflowNode;                         // Ok, stack
@@ -154,11 +154,11 @@ class CXFA_ContentLayoutProcessor
       CXFA_Node* pParentContainer,
       CXFA_Node* pCurActionNode);
 
-  absl::optional<Stage> ProcessKeepNodesForCheckNext(CXFA_Node** pCurActionNode,
-                                                     CXFA_Node** pNextContainer,
-                                                     bool* pLastKeepNode);
+  std::optional<Stage> ProcessKeepNodesForCheckNext(CXFA_Node** pCurActionNode,
+                                                    CXFA_Node** pNextContainer,
+                                                    bool* pLastKeepNode);
 
-  absl::optional<Stage> ProcessKeepNodesForBreakBefore(
+  std::optional<Stage> ProcessKeepNodesForBreakBefore(
       CXFA_Node** pCurActionNode,
       CXFA_Node* pContainerNode);
 
@@ -192,20 +192,20 @@ class CXFA_ContentLayoutProcessor
       Context* pLayoutContext,
       bool bNewRow);
 
-  absl::optional<Stage> HandleKeep(CXFA_Node* pBreakAfterNode,
-                                   CXFA_Node** pCurActionNode);
-  absl::optional<Stage> HandleBookendLeader(CXFA_Node* pParentContainer,
-                                            CXFA_Node** pCurActionNode);
-  absl::optional<Stage> HandleBreakBefore(CXFA_Node* pChildContainer,
-                                          CXFA_Node** pCurActionNode);
-  absl::optional<Stage> HandleBreakAfter(CXFA_Node* pChildContainer,
+  std::optional<Stage> HandleKeep(CXFA_Node* pBreakAfterNode,
+                                  CXFA_Node** pCurActionNode);
+  std::optional<Stage> HandleBookendLeader(CXFA_Node* pParentContainer,
+                                           CXFA_Node** pCurActionNode);
+  std::optional<Stage> HandleBreakBefore(CXFA_Node* pChildContainer,
                                          CXFA_Node** pCurActionNode);
-  absl::optional<Stage> HandleCheckNextChildContainer(
+  std::optional<Stage> HandleBreakAfter(CXFA_Node* pChildContainer,
+                                        CXFA_Node** pCurActionNode);
+  std::optional<Stage> HandleCheckNextChildContainer(
       CXFA_Node* pParentContainer,
       CXFA_Node* pChildContainer,
       CXFA_Node** pCurActionNode);
-  absl::optional<Stage> HandleBookendTrailer(CXFA_Node* pParentContainer,
-                                             CXFA_Node** pCurActionNode);
+  std::optional<Stage> HandleBookendTrailer(CXFA_Node* pParentContainer,
+                                            CXFA_Node** pCurActionNode);
   void ProcessKeepNodesEnd();
   void AdjustContainerSpecifiedSize(Context* pContext,
                                     CFX_SizeF* pSize,

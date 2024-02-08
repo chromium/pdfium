@@ -399,10 +399,10 @@ size_t CFX_Face::GetSfntTable(uint32_t table, pdfium::span<uint8_t> buffer) {
   return pdfium::base::checked_cast<size_t>(length);
 }
 
-absl::optional<std::array<uint32_t, 4>> CFX_Face::GetOs2UnicodeRange() {
+std::optional<std::array<uint32_t, 4>> CFX_Face::GetOs2UnicodeRange() {
   auto* os2 = static_cast<TT_OS2*>(FT_Get_Sfnt_Table(GetRec(), FT_SFNT_OS2));
   if (!os2) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return std::array<uint32_t, 4>{static_cast<uint32_t>(os2->ulUnicodeRange1),
                                  static_cast<uint32_t>(os2->ulUnicodeRange2),
@@ -410,19 +410,19 @@ absl::optional<std::array<uint32_t, 4>> CFX_Face::GetOs2UnicodeRange() {
                                  static_cast<uint32_t>(os2->ulUnicodeRange4)};
 }
 
-absl::optional<std::array<uint32_t, 2>> CFX_Face::GetOs2CodePageRange() {
+std::optional<std::array<uint32_t, 2>> CFX_Face::GetOs2CodePageRange() {
   auto* os2 = static_cast<TT_OS2*>(FT_Get_Sfnt_Table(GetRec(), FT_SFNT_OS2));
   if (!os2) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return std::array<uint32_t, 2>{static_cast<uint32_t>(os2->ulCodePageRange1),
                                  static_cast<uint32_t>(os2->ulCodePageRange2)};
 }
 
-absl::optional<std::array<uint8_t, 2>> CFX_Face::GetOs2Panose() {
+std::optional<std::array<uint8_t, 2>> CFX_Face::GetOs2Panose() {
   auto* os2 = static_cast<TT_OS2*>(FT_Get_Sfnt_Table(GetRec(), FT_SFNT_OS2));
   if (!os2) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return std::array<uint8_t, 2>{os2->panose[0], os2->panose[1]};
 }
@@ -736,9 +736,9 @@ CFX_Face::CharMap CFX_Face::GetCurrentCharMap() const {
   return GetRec()->charmap;
 }
 
-absl::optional<fxge::FontEncoding> CFX_Face::GetCurrentCharMapEncoding() const {
+std::optional<fxge::FontEncoding> CFX_Face::GetCurrentCharMapEncoding() const {
   if (!GetRec()->charmap) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return ToFontEncoding(GetRec()->charmap->encoding);
 }

@@ -7,6 +7,7 @@
 #ifndef CORE_FXCRT_CSS_CFX_CSSCOMPUTEDSTYLE_H_
 #define CORE_FXCRT_CSS_CFX_CSSCOMPUTEDSTYLE_H_
 
+#include <optional>
 #include <vector>
 
 #include "core/fxcrt/css/cfx_css.h"
@@ -15,7 +16,6 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CFX_CSSValueList;
 
@@ -61,7 +61,7 @@ class CFX_CSSComputedStyle final : public Retainable {
 
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  absl::optional<WideString> GetLastFontFamily() const;
+  std::optional<WideString> GetLastFontFamily() const;
   uint16_t GetFontWeight() const;
   CFX_CSSFontVariant GetFontVariant() const;
   CFX_CSSFontStyle GetFontStyle() const;

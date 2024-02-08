@@ -28,7 +28,7 @@ TEST(CFX_DIBitmap, Create) {
 
 TEST(CFX_DIBitmap, CalculatePitchAndSizeGood) {
   // Simple case with no provided pitch.
-  absl::optional<CFX_DIBitmap::PitchAndSize> result =
+  std::optional<CFX_DIBitmap::PitchAndSize> result =
       CFX_DIBitmap::CalculatePitchAndSize(100, 200, FXDIB_Format::kArgb, 0);
   ASSERT_TRUE(result.has_value());
   EXPECT_EQ(400u, result.value().pitch);
@@ -98,7 +98,7 @@ TEST(CFX_DIBitmap, CalculatePitchAndSizeBad) {
 
 TEST(CFX_DIBitmap, CalculatePitchAndSizeBoundary) {
   // Test boundary condition for pitch overflow.
-  absl::optional<CFX_DIBitmap::PitchAndSize> result =
+  std::optional<CFX_DIBitmap::PitchAndSize> result =
       CFX_DIBitmap::CalculatePitchAndSize(536870908, 4, FXDIB_Format::k8bppRgb,
                                           0);
   ASSERT_TRUE(result);

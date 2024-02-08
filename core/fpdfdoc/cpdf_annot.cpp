@@ -225,9 +225,9 @@ void CPDF_Annot::SetPopupAnnotOpenState(bool bOpenState) {
     m_pPopupAnnot->SetOpenState(bOpenState);
 }
 
-absl::optional<CFX_FloatRect> CPDF_Annot::GetPopupAnnotRect() const {
+std::optional<CFX_FloatRect> CPDF_Annot::GetPopupAnnotRect() const {
   if (!m_pPopupAnnot)
-    return absl::nullopt;
+    return std::nullopt;
   return m_pPopupAnnot->GetRect();
 }
 

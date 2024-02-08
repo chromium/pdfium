@@ -40,19 +40,19 @@ uint32_t CalculatePitch32OrDie(int bpp, int width) {
   return CalculatePitch32Safely(bpp, width).ValueOrDie();
 }
 
-absl::optional<uint32_t> CalculatePitch8(uint32_t bpc,
-                                         uint32_t components,
-                                         int width) {
+std::optional<uint32_t> CalculatePitch8(uint32_t bpc,
+                                        uint32_t components,
+                                        int width) {
   FX_SAFE_UINT32 pitch = CalculatePitch8Safely(bpc, components, width);
   if (!pitch.IsValid())
-    return absl::nullopt;
+    return std::nullopt;
   return pitch.ValueOrDie();
 }
 
-absl::optional<uint32_t> CalculatePitch32(int bpp, int width) {
+std::optional<uint32_t> CalculatePitch32(int bpp, int width) {
   FX_SAFE_UINT32 pitch = CalculatePitch32Safely(bpp, width);
   if (!pitch.IsValid())
-    return absl::nullopt;
+    return std::nullopt;
   return pitch.ValueOrDie();
 }
 

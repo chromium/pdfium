@@ -91,14 +91,14 @@ WideString GetStringCase(const WideString& wsOriginal, bool bMatchCase) {
   return wsLower;
 }
 
-absl::optional<WideString> ExtractSubString(const wchar_t* lpszFullString,
-                                            int iSubString) {
+std::optional<WideString> ExtractSubString(const wchar_t* lpszFullString,
+                                           int iSubString) {
   DCHECK(lpszFullString);
 
   while (iSubString--) {
     lpszFullString = wcschr(lpszFullString, L' ');
     if (!lpszFullString)
-      return absl::nullopt;
+      return std::nullopt;
 
     lpszFullString++;
     while (*lpszFullString == L' ')
@@ -109,7 +109,7 @@ absl::optional<WideString> ExtractSubString(const wchar_t* lpszFullString,
   int nLen = lpchEnd ? static_cast<int>(lpchEnd - lpszFullString)
                      : static_cast<int>(wcslen(lpszFullString));
   if (nLen < 0)
-    return absl::nullopt;
+    return std::nullopt;
 
   return WideString(lpszFullString, static_cast<size_t>(nLen));
 }
@@ -129,7 +129,7 @@ std::vector<WideString> ExtractFindWhat(const WideString& findwhat) {
 
   int index = 0;
   while (true) {
-    absl::optional<WideString> word = ExtractSubString(findwhat.c_str(), index);
+    std::optional<WideString> word = ExtractSubString(findwhat.c_str(), index);
     if (!word.has_value())
       break;
 
@@ -176,7 +176,7 @@ std::unique_ptr<CPDF_TextPageFind> CPDF_TextPageFind::Create(
     const CPDF_TextPage* pTextPage,
     const WideString& findwhat,
     const Options& options,
-    absl::optional<size_t> startPos) {
+    std::optional<size_t> startPos) {
   std::vector<WideString> findwhat_array =
       ExtractFindWhat(GetStringCase(findwhat, options.bMatchCase));
   auto find = pdfium::WrapUnique(
@@ -189,7 +189,7 @@ CPDF_TextPageFind::CPDF_TextPageFind(
     const CPDF_TextPage* pTextPage,
     const std::vector<WideString>& findwhat_array,
     const Options& options,
-    absl::optional<size_t> startPos)
+    std::optional<size_t> startPos)
     : m_pTextPage(pTextPage),
       m_strText(GetStringCase(pTextPage->GetAllPageText(), options.bMatchCase)),
       m_csFindWhatArray(findwhat_array),
@@ -221,7 +221,7 @@ bool CPDF_TextPageFind::FindNext() {
   }
 
   int nCount = fxcrt::CollectionSize<int>(m_csFindWhatArray);
-  absl::optional<size_t> nResultPos = 0;
+  std::optional<size_t> nResultPos = 0;
   bool bSpaceStart = false;
   for (int iWord = 0; iWord < nCount; iWord++) {
     WideString csWord = m_csFindWhatArray[iWord];

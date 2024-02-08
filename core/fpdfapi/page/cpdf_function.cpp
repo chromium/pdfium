@@ -128,23 +128,22 @@ bool CPDF_Function::Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
   return true;
 }
 
-absl::optional<uint32_t> CPDF_Function::Call(
-    pdfium::span<const float> inputs,
-    pdfium::span<float> results) const {
+std::optional<uint32_t> CPDF_Function::Call(pdfium::span<const float> inputs,
+                                            pdfium::span<float> results) const {
   if (m_nInputs != inputs.size())
-    return absl::nullopt;
+    return std::nullopt;
 
   std::vector<float> clamped_inputs(m_nInputs);
   for (uint32_t i = 0; i < m_nInputs; i++) {
     float domain1 = m_Domains[i * 2];
     float domain2 = m_Domains[i * 2 + 1];
     if (domain1 > domain2)
-      return absl::nullopt;
+      return std::nullopt;
 
     clamped_inputs[i] = std::clamp(inputs[i], domain1, domain2);
   }
   if (!v_Call(clamped_inputs, results))
-    return absl::nullopt;
+    return std::nullopt;
 
   if (m_Ranges.empty())
     return m_nOutputs;
@@ -153,7 +152,7 @@ absl::optional<uint32_t> CPDF_Function::Call(
     float range1 = m_Ranges[i * 2];
     float range2 = m_Ranges[i * 2 + 1];
     if (range1 > range2)
-      return absl::nullopt;
+      return std::nullopt;
 
     results[i] = std::clamp(results[i], range1, range2);
   }

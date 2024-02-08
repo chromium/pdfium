@@ -103,7 +103,7 @@ FPDF_StructElement_GetID(FPDF_STRUCTELEMENT struct_element,
       CPDFStructElementFromFPDFStructElement(struct_element);
   if (!elem)
     return 0;
-  absl::optional<WideString> id = elem->GetID();
+  std::optional<WideString> id = elem->GetID();
   if (!id.has_value())
     return 0;
   return Utf16EncodeMaybeCopyAndReturnLength(id.value(), buffer, buflen);
@@ -117,7 +117,7 @@ FPDF_StructElement_GetLang(FPDF_STRUCTELEMENT struct_element,
       CPDFStructElementFromFPDFStructElement(struct_element);
   if (!elem)
     return 0;
-  absl::optional<WideString> lang = elem->GetLang();
+  std::optional<WideString> lang = elem->GetLang();
   if (!lang.has_value())
     return 0;
   return Utf16EncodeMaybeCopyAndReturnLength(lang.value(), buffer, buflen);

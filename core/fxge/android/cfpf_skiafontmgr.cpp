@@ -389,7 +389,7 @@ std::unique_ptr<CFPF_SkiaPathFont> CFPF_SkiaFontMgr::ReportFace(
   }
 
   uint32_t charset = FPF_SKIACHARSET_Default;
-  absl::optional<std::array<uint32_t, 2>> code_page_range =
+  std::optional<std::array<uint32_t, 2>> code_page_range =
       face->GetOs2CodePageRange();
   if (code_page_range.has_value()) {
     if (code_page_range.value()[0] & (1 << 31)) {
@@ -398,7 +398,7 @@ std::unique_ptr<CFPF_SkiaPathFont> CFPF_SkiaFontMgr::ReportFace(
     charset |= FPF_SkiaGetFaceCharset(code_page_range.value()[0]);
   }
 
-  absl::optional<std::array<uint8_t, 2>> panose = face->GetOs2Panose();
+  std::optional<std::array<uint8_t, 2>> panose = face->GetOs2Panose();
   if (panose.has_value() && panose.value()[0] == 2) {
     uint8_t serif = panose.value()[1];
     if ((serif > 1 && serif < 10) || serif > 13) {

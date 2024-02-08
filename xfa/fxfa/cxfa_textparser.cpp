@@ -350,7 +350,7 @@ RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
   }
 
   if (pStyle) {
-    absl::optional<WideString> last_family = pStyle->GetLastFontFamily();
+    std::optional<WideString> last_family = pStyle->GetLastFontFamily();
     if (last_family.has_value())
       wsFamily = last_family.value();
 
@@ -499,19 +499,19 @@ float CXFA_TextParser::GetLineHeight(CXFA_TextProvider* pTextProvider,
   return fLineHeight;
 }
 
-absl::optional<WideString> CXFA_TextParser::GetEmbeddedObj(
+std::optional<WideString> CXFA_TextParser::GetEmbeddedObj(
     const CXFA_TextProvider* pTextProvider,
     const CFX_XMLNode* pXMLNode) {
   if (!pXMLNode)
-    return absl::nullopt;
+    return std::nullopt;
 
   const CFX_XMLElement* pElement = ToXMLElement(pXMLNode);
   if (!pElement)
-    return absl::nullopt;
+    return std::nullopt;
 
   WideString wsAttr = pElement->GetAttribute(L"xfa:embed");
   if (wsAttr.IsEmpty())
-    return absl::nullopt;
+    return std::nullopt;
 
   if (wsAttr[0] == L'#')
     wsAttr.Delete(0);
@@ -519,12 +519,12 @@ absl::optional<WideString> CXFA_TextParser::GetEmbeddedObj(
   WideString ws =
       GetLowerCaseElementAttributeOrDefault(pElement, L"xfa:embedType", L"som");
   if (!ws.EqualsASCII("uri"))
-    return absl::nullopt;
+    return std::nullopt;
 
   ws = GetLowerCaseElementAttributeOrDefault(pElement, L"xfa:embedMode",
                                              L"formatted");
   if (!(ws.EqualsASCII("raw") || ws.EqualsASCII("formatted")))
-    return absl::nullopt;
+    return std::nullopt;
 
   return pTextProvider->GetEmbeddedObj(wsAttr);
 }

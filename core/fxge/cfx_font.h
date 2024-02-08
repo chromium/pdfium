@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #include <memory>
+#include <optional>
 
 #include "build/build_config.h"
 #include "core/fxcrt/bytestring.h"
@@ -20,7 +21,6 @@
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxge/cfx_face.h"
 #include "core/fxge/freetype/fx_freetype.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/containers/span.h"
 
 #if defined(PDF_USE_SKIA)
@@ -104,7 +104,7 @@ class CFX_Font {
   int GetGlyphWidth(uint32_t glyph_index, int dest_width, int weight) const;
   int GetAscent() const;
   int GetDescent() const;
-  absl::optional<FX_RECT> GetGlyphBBox(uint32_t glyph_index);
+  std::optional<FX_RECT> GetGlyphBBox(uint32_t glyph_index);
   bool IsItalic() const;
   bool IsBold() const;
   bool IsFixedWidth() const;
@@ -116,10 +116,10 @@ class CFX_Font {
   bool IsTTFont() const;
 
   // Raw bounding box.
-  absl::optional<FX_RECT> GetRawBBox() const;
+  std::optional<FX_RECT> GetRawBBox() const;
 
   // Bounding box adjusted for font units.
-  absl::optional<FX_RECT> GetBBox() const;
+  std::optional<FX_RECT> GetBBox() const;
 
   bool IsEmbedded() const { return m_bEmbedded; }
   FontType GetFontType() const { return m_FontType; }

@@ -54,10 +54,10 @@ size_t FuseSurrogates(pdfium::span<wchar_t> s) {
 
 constexpr wchar_t kWideTrimChars[] = L"\x09\x0a\x0b\x0c\x0d\x20";
 
-absl::optional<size_t> FX_wcspos(pdfium::span<const wchar_t> haystack,
-                                 pdfium::span<const wchar_t> needle) {
+std::optional<size_t> FX_wcspos(pdfium::span<const wchar_t> haystack,
+                                pdfium::span<const wchar_t> needle) {
   if (needle.empty() || needle.size() > haystack.size()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   // After this `end_pos`, not enough characters remain in `haystack` for
   // a full match to occur.
@@ -68,11 +68,11 @@ absl::optional<size_t> FX_wcspos(pdfium::span<const wchar_t> haystack,
       return haystack_pos;
     }
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
-absl::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
-                                             va_list argList) {
+std::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
+                                            va_list argList) {
   size_t nMaxLen = 0;
   for (const wchar_t* pStr = pFormat; *pStr != 0; pStr++) {
     if (*pStr != '%' || *(pStr = pStr + 1) == '%') {
@@ -95,7 +95,7 @@ absl::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
         ++pStr;
     }
     if (iWidth < 0 || iWidth > 128 * 1024)
-      return absl::nullopt;
+      return std::nullopt;
     uint32_t nWidth = static_cast<uint32_t>(iWidth);
     int iPrecision = 0;
     if (*pStr == '.') {
@@ -110,7 +110,7 @@ absl::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
       }
     }
     if (iPrecision < 0 || iPrecision > 128 * 1024)
-      return absl::nullopt;
+      return std::nullopt;
     uint32_t nPrecision = static_cast<uint32_t>(iPrecision);
     int nModifier = 0;
     if (*pStr == L'I' && *(pStr + 1) == L'6' && *(pStr + 2) == L'4') {
@@ -265,11 +265,11 @@ absl::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
 }
 
 // Returns string unless we ran out of space.
-absl::optional<WideString> TryVSWPrintf(size_t size,
-                                        const wchar_t* pFormat,
-                                        va_list argList) {
+std::optional<WideString> TryVSWPrintf(size_t size,
+                                       const wchar_t* pFormat,
+                                       va_list argList) {
   if (!size)
-    return absl::nullopt;
+    return std::nullopt;
 
   WideString str;
   {
@@ -287,7 +287,7 @@ absl::optional<WideString> TryVSWPrintf(size_t size,
 
     bool bSufficientBuffer = ret >= 0 || buffer[size - 1] == 0;
     if (!bSufficientBuffer)
-      return absl::nullopt;
+      return std::nullopt;
   }
   str.ReleaseBuffer(str.GetStringLength());
   return str;
@@ -381,7 +381,7 @@ WideString WideString::FormatV(const wchar_t* format, va_list argList) {
 
   while (maxLen < 32 * 1024) {
     va_copy(argListCopy, argList);
-    absl::optional<WideString> ret =
+    std::optional<WideString> ret =
         TryVSWPrintf(static_cast<size_t>(maxLen), format, argListCopy);
     va_end(argListCopy);
     if (ret.has_value())
@@ -850,46 +850,46 @@ size_t WideString::Insert(size_t index, wchar_t ch) {
   return new_length;
 }
 
-absl::optional<size_t> WideString::Find(wchar_t ch, size_t start) const {
+std::optional<size_t> WideString::Find(wchar_t ch, size_t start) const {
   if (!m_pData)
-    return absl::nullopt;
+    return std::nullopt;
 
   if (!IsValidIndex(start))
-    return absl::nullopt;
+    return std::nullopt;
 
   const wchar_t* pStr = FXSYS_wmemchr(m_pData->m_String + start, ch,
                                       m_pData->m_nDataLength - start);
-  return pStr ? absl::optional<size_t>(
+  return pStr ? std::optional<size_t>(
                     static_cast<size_t>(pStr - m_pData->m_String))
-              : absl::nullopt;
+              : std::nullopt;
 }
 
-absl::optional<size_t> WideString::Find(WideStringView subStr,
-                                        size_t start) const {
+std::optional<size_t> WideString::Find(WideStringView subStr,
+                                       size_t start) const {
   if (!m_pData) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   if (!IsValidIndex(start)) {
-    return absl::nullopt;
+    return std::nullopt;
   }
-  absl::optional<size_t> result =
+  std::optional<size_t> result =
       FX_wcspos(m_pData->span().subspan(start), subStr.span());
   if (!result.has_value()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return start + result.value();
 }
 
-absl::optional<size_t> WideString::ReverseFind(wchar_t ch) const {
+std::optional<size_t> WideString::ReverseFind(wchar_t ch) const {
   if (!m_pData)
-    return absl::nullopt;
+    return std::nullopt;
 
   size_t nLength = m_pData->m_nDataLength;
   while (nLength--) {
     if (m_pData->m_String[nLength] == ch)
       return nLength;
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 void WideString::MakeLower() {
@@ -951,7 +951,7 @@ size_t WideString::Replace(WideStringView pOld, WideStringView pNew) {
     // Limit span lifetime.
     pdfium::span<const wchar_t> search_span = m_pData->span();
     while (true) {
-      absl::optional<size_t> found = FX_wcspos(search_span, pOld.span());
+      std::optional<size_t> found = FX_wcspos(search_span, pOld.span());
       if (!found.has_value()) {
         break;
       }

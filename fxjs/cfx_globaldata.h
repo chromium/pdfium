@@ -8,12 +8,12 @@
 #define FXJS_CFX_GLOBALDATA_H_
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "core/fxcrt/binary_buffer.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfx_keyvalue.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/containers/span.h"
 
 class CFX_GlobalData {
@@ -23,7 +23,7 @@ class CFX_GlobalData {
     virtual ~Delegate() = default;
 
     virtual bool StoreBuffer(pdfium::span<const uint8_t> pBuffer) = 0;
-    virtual absl::optional<pdfium::span<uint8_t>> LoadBuffer() = 0;
+    virtual std::optional<pdfium::span<uint8_t>> LoadBuffer() = 0;
     virtual void BufferDone() = 0;
   };
 

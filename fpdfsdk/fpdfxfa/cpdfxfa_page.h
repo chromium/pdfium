@@ -7,12 +7,13 @@
 #ifndef FPDFSDK_FPDFXFA_CPDFXFA_PAGE_H_
 #define FPDFSDK_FPDFXFA_CPDFXFA_PAGE_H_
 
+#include <optional>
+
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/page/ipdf_page.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CFX_RenderDevice;
 class CPDF_Dictionary;
@@ -32,11 +33,11 @@ class CPDFXFA_Page final : public IPDF_Page {
   float GetPageWidth() const override;
   float GetPageHeight() const override;
   CFX_Matrix GetDisplayMatrix(const FX_RECT& rect, int iRotate) const override;
-  absl::optional<CFX_PointF> DeviceToPage(
+  std::optional<CFX_PointF> DeviceToPage(
       const FX_RECT& rect,
       int rotate,
       const CFX_PointF& device_point) const override;
-  absl::optional<CFX_PointF> PageToDevice(
+  std::optional<CFX_PointF> PageToDevice(
       const FX_RECT& rect,
       int rotate,
       const CFX_PointF& page_point) const override;

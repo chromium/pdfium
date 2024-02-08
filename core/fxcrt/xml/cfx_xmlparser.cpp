@@ -515,7 +515,7 @@ void CFX_XMLParser::ProcessTextChar(wchar_t character) {
         }
       }
     }
-    entity_start_ = absl::nullopt;
+    entity_start_ = std::nullopt;
   } else if (!entity_start_.has_value() && character == L'&') {
     entity_start_ = current_text_.size() - 1;
   }
@@ -533,7 +533,7 @@ void CFX_XMLParser::ProcessTargetData() {
 
 WideString CFX_XMLParser::GetTextData() {
   WideString ret(current_text_.data(), current_text_.size());
-  entity_start_ = absl::nullopt;
+  entity_start_ = std::nullopt;
   current_text_.clear();
   current_text_.reserve(kCurrentTextReserve);
   return ret;

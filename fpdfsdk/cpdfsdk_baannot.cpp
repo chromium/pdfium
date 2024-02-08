@@ -6,6 +6,7 @@
 
 #include "fpdfsdk/cpdfsdk_baannot.h"
 
+#include <optional>
 #include <vector>
 
 #include "constants/annotation_common.h"
@@ -23,7 +24,6 @@
 #include "core/fxge/cfx_drawutils.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
 
@@ -228,7 +228,7 @@ void CPDFSDK_BAAnnot::UpdateAnnotRects() {
   std::vector<CFX_FloatRect> rects;
   rects.push_back(GetRect());
 
-  absl::optional<CFX_FloatRect> annot_rect = m_pAnnot->GetPopupAnnotRect();
+  std::optional<CFX_FloatRect> annot_rect = m_pAnnot->GetPopupAnnotRect();
   if (annot_rect.has_value())
     rects.push_back(annot_rect.value());
 

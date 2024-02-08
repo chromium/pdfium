@@ -248,7 +248,7 @@ bool CPDF_DIB::ContinueInternal() {
     m_Format = MakeRGBFormat(CalculateBitsPerPixel(m_bpc, m_nComponents));
   }
 
-  absl::optional<uint32_t> pitch =
+  std::optional<uint32_t> pitch =
       fxge::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
   if (!pitch.has_value())
     return false;
@@ -384,7 +384,7 @@ CPDF_DIB::LoadState CPDF_DIB::ContinueLoadDIBBase(PauseIndicatorIface* pPause) {
 
 bool CPDF_DIB::LoadColorInfo(const CPDF_Dictionary* pFormResources,
                              const CPDF_Dictionary* pPageResources) {
-  absl::optional<DecoderArray> decoder_array = GetDecoderArray(m_pDict);
+  std::optional<DecoderArray> decoder_array = GetDecoderArray(m_pDict);
   if (!decoder_array.has_value())
     return false;
 
@@ -543,11 +543,11 @@ CPDF_DIB::LoadState CPDF_DIB::CreateDecoder(uint8_t resolution_levels_to_skip) {
   if (!m_pDecoder)
     return LoadState::kFail;
 
-  const absl::optional<uint32_t> requested_pitch =
+  const std::optional<uint32_t> requested_pitch =
       fxge::CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!requested_pitch.has_value())
     return LoadState::kFail;
-  const absl::optional<uint32_t> provided_pitch = fxge::CalculatePitch8(
+  const std::optional<uint32_t> provided_pitch = fxge::CalculatePitch8(
       m_pDecoder->GetBPC(), m_pDecoder->CountComps(), m_pDecoder->GetWidth());
   if (!provided_pitch.has_value())
     return LoadState::kFail;
@@ -564,7 +564,7 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
   if (m_pDecoder)
     return true;
 
-  absl::optional<JpegModule::ImageInfo> info_opt =
+  std::optional<JpegModule::ImageInfo> info_opt =
       JpegModule::LoadInfo(src_span);
   if (!info_opt.has_value())
     return false;
@@ -802,7 +802,7 @@ bool CPDF_DIB::LoadInternal(const CPDF_Dictionary* pFormResources,
   if (m_bDoBpcCheck && (m_bpc == 0 || m_nComponents == 0))
     return false;
 
-  const absl::optional<uint32_t> maybe_size =
+  const std::optional<uint32_t> maybe_size =
       fxge::CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!maybe_size.has_value())
     return false;
@@ -1133,7 +1133,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
   if (m_bpc == 0)
     return pdfium::span<const uint8_t>();
 
-  const absl::optional<uint32_t> src_pitch =
+  const std::optional<uint32_t> src_pitch =
       fxge::CalculatePitch8(m_bpc, m_nComponents, m_Width);
   if (!src_pitch.has_value())
     return pdfium::span<const uint8_t>();

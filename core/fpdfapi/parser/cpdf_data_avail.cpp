@@ -490,7 +490,7 @@ CPDF_DataAvail::DocAvailStatus CPDF_DataAvail::CheckHeaderAndLinearized() {
     return kDataAvailable;
 
   CPDF_ReadValidator::ScopedSession read_session(GetValidator());
-  const absl::optional<FX_FILESIZE> header_offset =
+  const std::optional<FX_FILESIZE> header_offset =
       GetHeaderOffset(GetValidator());
   if (GetValidator()->has_read_problems())
     return kDataNotAvailable;

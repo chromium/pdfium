@@ -81,20 +81,20 @@ CPDF_PageLabel::CPDF_PageLabel(CPDF_Document* pDocument)
 
 CPDF_PageLabel::~CPDF_PageLabel() = default;
 
-absl::optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
+std::optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
   if (!m_pDocument)
-    return absl::nullopt;
+    return std::nullopt;
 
   if (nPage < 0 || nPage >= m_pDocument->GetPageCount())
-    return absl::nullopt;
+    return std::nullopt;
 
   const CPDF_Dictionary* pPDFRoot = m_pDocument->GetRoot();
   if (!pPDFRoot)
-    return absl::nullopt;
+    return std::nullopt;
 
   RetainPtr<const CPDF_Dictionary> pLabels = pPDFRoot->GetDictFor("PageLabels");
   if (!pLabels)
-    return absl::nullopt;
+    return std::nullopt;
 
   CPDF_NumberTree numberTree(std::move(pLabels));
   RetainPtr<const CPDF_Object> pValue;

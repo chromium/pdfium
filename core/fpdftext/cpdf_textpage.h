@@ -11,6 +11,7 @@
 
 #include <deque>
 #include <functional>
+#include <optional>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
@@ -20,7 +21,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
 #include "core/fxcrt/widetext_buffer.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CPDF_FormObject;
 class CPDF_Page;
@@ -124,7 +124,7 @@ class CPDF_TextPage {
   GenerateCharacter ProcessInsertObject(const CPDF_TextObject* pObj,
                                         const CFX_Matrix& formMatrix);
   const CharInfo* GetPrevCharInfo() const;
-  absl::optional<CharInfo> GenerateCharInfo(wchar_t unicode);
+  std::optional<CharInfo> GenerateCharInfo(wchar_t unicode);
   bool IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
                              const CPDF_PageObjectHolder* pObjList,
                              CPDF_PageObjectHolder::const_iterator iter) const;

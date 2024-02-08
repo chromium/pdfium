@@ -10,11 +10,11 @@
 #include <stdint.h>
 
 #include <functional>
+#include <optional>
 
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/widetext_buffer.h"
 #include "fxjs/xfa/fxjse.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "v8/include/cppgc/persistent.h"
 #include "v8/include/v8-forward.h"
 #include "v8/include/v8-persistent-handle.h"
@@ -267,8 +267,8 @@ class CFXJSE_FormCalcContext final : public CFXJSE_HostObject {
   static void concat_fm_object(CFXJSE_HostObject* pThis,
                                const v8::FunctionCallbackInfo<v8::Value>& info);
 
-  static absl::optional<WideTextBuffer> Translate(cppgc::Heap* pHeap,
-                                                  WideStringView wsFormcalc);
+  static std::optional<WideTextBuffer> Translate(cppgc::Heap* pHeap,
+                                                 WideStringView wsFormcalc);
 
   v8::Local<v8::Value> GlobalPropertyGetter();
   v8::Isolate* GetIsolate() const { return m_pIsolate; }

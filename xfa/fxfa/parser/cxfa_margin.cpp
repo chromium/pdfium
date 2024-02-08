@@ -57,18 +57,18 @@ float CXFA_Margin::GetBottomInset() const {
   return TryBottomInset().value_or(0);
 }
 
-absl::optional<float> CXFA_Margin::TryLeftInset() const {
+std::optional<float> CXFA_Margin::TryLeftInset() const {
   return JSObject()->TryMeasureAsFloat(XFA_Attribute::LeftInset);
 }
 
-absl::optional<float> CXFA_Margin::TryTopInset() const {
+std::optional<float> CXFA_Margin::TryTopInset() const {
   return JSObject()->TryMeasureAsFloat(XFA_Attribute::TopInset);
 }
 
-absl::optional<float> CXFA_Margin::TryRightInset() const {
+std::optional<float> CXFA_Margin::TryRightInset() const {
   return JSObject()->TryMeasureAsFloat(XFA_Attribute::RightInset);
 }
 
-absl::optional<float> CXFA_Margin::TryBottomInset() const {
+std::optional<float> CXFA_Margin::TryBottomInset() const {
   return JSObject()->TryMeasureAsFloat(XFA_Attribute::BottomInset);
 }

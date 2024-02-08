@@ -360,14 +360,14 @@ uint32_t FlateOrLZWDecode(bool bLZW,
                                        estimated_size, dest_buf, dest_size);
 }
 
-absl::optional<DecoderArray> GetDecoderArray(
+std::optional<DecoderArray> GetDecoderArray(
     RetainPtr<const CPDF_Dictionary> pDict) {
   RetainPtr<const CPDF_Object> pFilter = pDict->GetDirectObjectFor("Filter");
   if (!pFilter)
     return DecoderArray();
 
   if (!pFilter->IsArray() && !pFilter->IsName())
-    return absl::nullopt;
+    return std::nullopt;
 
   RetainPtr<const CPDF_Object> pParams =
       pDict->GetDirectObjectFor(pdfium::stream::kDecodeParms);
@@ -375,7 +375,7 @@ absl::optional<DecoderArray> GetDecoderArray(
   DecoderArray decoder_array;
   if (const CPDF_Array* pDecoders = pFilter->AsArray()) {
     if (!ValidateDecoderPipeline(pDecoders))
-      return absl::nullopt;
+      return std::nullopt;
 
     RetainPtr<const CPDF_Array> pParamsArray = ToArray(pParams);
     for (size_t i = 0; i < pDecoders->size(); ++i) {

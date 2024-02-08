@@ -496,12 +496,12 @@ bool CXFA_FFWidget::Redo() {
   return false;
 }
 
-absl::optional<WideString> CXFA_FFWidget::Copy() {
-  return absl::nullopt;
+std::optional<WideString> CXFA_FFWidget::Copy() {
+  return std::nullopt;
 }
 
-absl::optional<WideString> CXFA_FFWidget::Cut() {
-  return absl::nullopt;
+std::optional<WideString> CXFA_FFWidget::Cut() {
+  return std::nullopt;
 }
 
 bool CXFA_FFWidget::Paste(const WideString& wsPaste) {

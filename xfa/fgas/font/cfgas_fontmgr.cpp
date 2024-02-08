@@ -444,13 +444,13 @@ uint32_t GetFlags(const RetainPtr<CFX_Face>& face) {
     flags |= FXFONT_FIXED_PITCH;
   }
 
-  absl::optional<std::array<uint32_t, 2>> code_page_range =
+  std::optional<std::array<uint32_t, 2>> code_page_range =
       face->GetOs2CodePageRange();
   if (code_page_range.has_value() && (code_page_range.value()[0] & (1 << 31))) {
     flags |= FXFONT_SYMBOLIC;
   }
 
-  absl::optional<std::array<uint8_t, 2>> panose = face->GetOs2Panose();
+  std::optional<std::array<uint8_t, 2>> panose = face->GetOs2Panose();
   if (panose.has_value() && panose.value()[0] == 2) {
     uint8_t serif = panose.value()[1];
     if ((serif > 1 && serif < 10) || serif > 13) {
@@ -722,7 +722,7 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
 
   // TODO(crbug.com/pdfium/2085): Use make_span() in fewer places after updating
   // pdfium::span.
-  absl::optional<std::array<uint32_t, 4>> unicode_range =
+  std::optional<std::array<uint32_t, 4>> unicode_range =
       pFace->GetOs2UnicodeRange();
   auto usb_span = pdfium::make_span(pFont->m_dwUsb);
   if (unicode_range.has_value()) {
@@ -731,7 +731,7 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
     fxcrt::spanclr(usb_span);
   }
 
-  absl::optional<std::array<uint32_t, 2>> code_page_range =
+  std::optional<std::array<uint32_t, 2>> code_page_range =
       pFace->GetOs2CodePageRange();
   auto csb_span = pdfium::make_span(pFont->m_dwCsb);
   if (code_page_range.has_value()) {

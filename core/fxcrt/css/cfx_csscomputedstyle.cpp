@@ -25,10 +25,10 @@ bool CFX_CSSComputedStyle::GetCustomStyle(const WideString& wsName,
   return false;
 }
 
-absl::optional<WideString> CFX_CSSComputedStyle::GetLastFontFamily() const {
+std::optional<WideString> CFX_CSSComputedStyle::GetLastFontFamily() const {
   if (!m_InheritedData.m_pFontFamily ||
       m_InheritedData.m_pFontFamily->values().empty()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
 
   return m_InheritedData.m_pFontFamily->values()

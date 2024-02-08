@@ -112,7 +112,7 @@ void CPDF_CMapParser::HandleCodeSpaceRange(ByteStringView word) {
       return;
 
     if (m_CodeSeq % 2) {
-      absl::optional<CPDF_CMap::CodeRange> range =
+      std::optional<CPDF_CMap::CodeRange> range =
           GetCodeRange(m_LastWord.AsStringView(), word);
       if (range.has_value())
         m_PendingRanges.push_back(range.value());
@@ -161,11 +161,11 @@ uint32_t CPDF_CMapParser::GetCode(ByteStringView word) {
 }
 
 // static
-absl::optional<CPDF_CMap::CodeRange> CPDF_CMapParser::GetCodeRange(
+std::optional<CPDF_CMap::CodeRange> CPDF_CMapParser::GetCodeRange(
     ByteStringView first,
     ByteStringView second) {
   if (first.IsEmpty() || first[0] != '<')
-    return absl::nullopt;
+    return std::nullopt;
 
   size_t i;
   for (i = 1; i < first.GetLength(); ++i) {
@@ -174,7 +174,7 @@ absl::optional<CPDF_CMap::CodeRange> CPDF_CMapParser::GetCodeRange(
   }
   size_t char_size = (i - 1) / 2;
   if (char_size > 4)
-    return absl::nullopt;
+    return std::nullopt;
 
   CPDF_CMap::CodeRange range;
   range.m_CharSize = char_size;

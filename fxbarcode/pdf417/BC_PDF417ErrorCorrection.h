@@ -9,8 +9,9 @@
 
 #include <stdint.h>
 
+#include <optional>
+
 #include "core/fxcrt/widestring.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CBC_PDF417ErrorCorrection {
  public:
@@ -18,7 +19,7 @@ class CBC_PDF417ErrorCorrection {
   ~CBC_PDF417ErrorCorrection() = delete;
 
   static int32_t GetErrorCorrectionCodewordCount(int32_t errorCorrectionLevel);
-  static absl::optional<WideString> GenerateErrorCorrection(
+  static std::optional<WideString> GenerateErrorCorrection(
       const WideString& dataCodewords,
       int32_t errorCorrectionLevel);
 };

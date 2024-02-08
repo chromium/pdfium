@@ -203,7 +203,7 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
     DCHECK_EQ(m_SrcBpp, GetBppFromFormat(FXDIB_Format::kArgb));
   }
 
-  absl::optional<uint32_t> maybe_size =
+  std::optional<uint32_t> maybe_size =
       fxge::CalculatePitch32(m_DestBpp, clip_rect.Width());
   if (!maybe_size.has_value())
     return;

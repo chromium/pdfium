@@ -10,9 +10,9 @@
 #include <stdint.h>
 
 #include <memory>
+#include <optional>
 
 #include "build/build_config.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/containers/span.h"
 
 #if BUILDFLAG(IS_WIN)
@@ -42,7 +42,7 @@ class JpegModule {
       int nComps,
       bool ColorTransform);
 
-  static absl::optional<ImageInfo> LoadInfo(
+  static std::optional<ImageInfo> LoadInfo(
       pdfium::span<const uint8_t> src_span);
 
 #if BUILDFLAG(IS_WIN)

@@ -373,7 +373,7 @@ ByteString GetSubstName(const ByteString& name, bool is_truetype) {
 bool IsNarrowFontName(const ByteString& name) {
   static const char kNarrowFonts[][10] = {"Narrow", "Condensed"};
   for (const char* font : kNarrowFonts) {
-    absl::optional<size_t> pos = name.Find(font);
+    std::optional<size_t> pos = name.Find(font);
     if (pos.has_value() && pos.value() != 0)
       return true;
   }
@@ -595,7 +595,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   bool has_comma = false;
   bool has_hyphen = false;
   {
-    absl::optional<size_t> pos = subst_name.Find(",");
+    std::optional<size_t> pos = subst_name.Find(",");
     if (pos.has_value()) {
       family = subst_name.First(pos.value());
       GetStandardFontName(&family);
@@ -619,7 +619,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
     base_font = kNumStandardFonts;
     nStyle = FXFONT_NORMAL;
     if (!has_comma) {
-      absl::optional<size_t> pos = family.ReverseFind('-');
+      std::optional<size_t> pos = family.ReverseFind('-');
       if (pos.has_value()) {
         style = family.Last(family.GetLength() - (pos.value() + 1));
         family = family.First(pos.value());
@@ -773,22 +773,22 @@ bool CFX_FontMapper::HasLocalizedFont(ByteStringView name) const {
 }
 
 #if BUILDFLAG(IS_WIN)
-absl::optional<ByteString> CFX_FontMapper::InstalledFontNameStartingWith(
+std::optional<ByteString> CFX_FontMapper::InstalledFontNameStartingWith(
     const ByteString& name) const {
   for (const auto& thisname : m_InstalledTTFonts) {
     if (thisname.First(name.GetLength()) == name)
       return thisname;
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
-absl::optional<ByteString> CFX_FontMapper::LocalizedFontNameStartingWith(
+std::optional<ByteString> CFX_FontMapper::LocalizedFontNameStartingWith(
     const ByteString& name) const {
   for (const auto& thispair : m_LocalizedTTFonts) {
     if (thispair.first.First(name.GetLength()) == name)
       return thispair.second;
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 #endif  // BUILDFLAG(IS_WIN)
 
@@ -878,8 +878,8 @@ RetainPtr<CFX_Face> CFX_FontMapper::GetCachedFace(void* font_handle,
 }
 
 // static
-absl::optional<CFX_FontMapper::StandardFont>
-CFX_FontMapper::GetStandardFontName(ByteString* name) {
+std::optional<CFX_FontMapper::StandardFont> CFX_FontMapper::GetStandardFontName(
+    ByteString* name) {
   const auto* end = std::end(kAltFontNames);
   const auto* found =
       std::lower_bound(std::begin(kAltFontNames), end, name->c_str(),
@@ -887,7 +887,7 @@ CFX_FontMapper::GetStandardFontName(ByteString* name) {
                          return FXSYS_stricmp(element.m_pName, name) < 0;
                        });
   if (found == end || FXSYS_stricmp(found->m_pName, name->c_str()))
-    return absl::nullopt;
+    return std::nullopt;
 
   *name = kBase14FontNames[static_cast<size_t>(found->m_Index)];
   return found->m_Index;

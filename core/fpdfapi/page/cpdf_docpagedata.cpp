@@ -488,7 +488,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddStandardFont(
     const ByteString& fontName,
     const CPDF_FontEncoding* pEncoding) {
   ByteString mutable_name(fontName);
-  absl::optional<CFX_FontMapper::StandardFont> font_id =
+  std::optional<CFX_FontMapper::StandardFont> font_id =
       CFX_FontMapper::GetStandardFontName(&mutable_name);
   if (!font_id.has_value())
     return nullptr;

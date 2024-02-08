@@ -138,7 +138,7 @@ void CPDF_StreamAcc::ProcessFilteredData(uint32_t estimated_size,
   std::unique_ptr<uint8_t, FxFreeDeleter> pDecodedData;
   uint32_t dwDecodedSize = 0;
 
-  absl::optional<DecoderArray> decoder_array =
+  std::optional<DecoderArray> decoder_array =
       GetDecoderArray(m_pStream->GetDict());
   if (!decoder_array.has_value() || decoder_array.value().empty() ||
       !PDF_DataDecode(src_span, estimated_size, bImageAcc,

@@ -6,6 +6,7 @@
 
 #include "public/fpdf_save.h"
 
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -22,7 +23,6 @@
 #include "fpdfsdk/cpdfsdk_filewriteadapter.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_edit.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "core/fpdfapi/parser/cpdf_stream.h"
@@ -153,7 +153,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
 bool DoDocSave(FPDF_DOCUMENT document,
                FPDF_FILEWRITE* pFileWrite,
                FPDF_DWORD flags,
-               absl::optional<int> version) {
+               std::optional<int> version) {
   CPDF_Document* pPDFDoc = CPDFDocumentFromFPDFDocument(document);
   if (!pPDFDoc)
     return false;

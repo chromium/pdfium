@@ -43,7 +43,7 @@ TEST(PDF417HighLevelEncoderTest, EncodeHighLevel) {
     const EncodeHighLevelCase& testcase = kEncodeHighLevelCases[i];
     WideStringView input(testcase.input);
     WideString expected(testcase.expected, testcase.expected_length);
-    absl::optional<WideString> result =
+    std::optional<WideString> result =
         CBC_PDF417HighLevelEncoder::EncodeHighLevel(input);
     ASSERT_TRUE(result.has_value());
     EXPECT_EQ(expected, result.value()) << " for case number " << i;

@@ -109,7 +109,7 @@ CJS_Result CJX_Field::getSaveItem(CFXJSE_Engine* runtime,
   if (!node->IsWidgetReady())
     return CJS_Result::Success(runtime->NewNull());
 
-  absl::optional<WideString> value = node->GetChoiceListItem(iIndex, true);
+  std::optional<WideString> value = node->GetChoiceListItem(iIndex, true);
   if (!value.has_value())
     return CJS_Result::Success(runtime->NewNull());
 
@@ -172,7 +172,7 @@ CJS_Result CJX_Field::getDisplayItem(
   if (!node->IsWidgetReady())
     return CJS_Result::Success(runtime->NewNull());
 
-  absl::optional<WideString> value = node->GetChoiceListItem(iIndex, false);
+  std::optional<WideString> value = node->GetChoiceListItem(iIndex, false);
   if (!value.has_value())
     return CJS_Result::Success(runtime->NewNull());
 

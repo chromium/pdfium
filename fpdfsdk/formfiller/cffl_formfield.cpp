@@ -317,7 +317,7 @@ CPWL_Wnd::CreateParams CFFL_FormField::GetCreateParam() {
   if (dwFieldFlag & pdfium::form_flags::kReadOnly)
     dwCreateFlags |= PWS_READONLY;
 
-  absl::optional<FX_COLORREF> color = m_pWidget->GetFillColor();
+  std::optional<FX_COLORREF> color = m_pWidget->GetFillColor();
   if (color.has_value())
     cp.sBackgroundColor = CFX_Color(color.value());
   color = m_pWidget->GetBorderColor();

@@ -23,7 +23,7 @@ class TestDelegate : public CFX_GlobalData::Delegate {
     last_buffer_ = DataVector<uint8_t>(buffer.begin(), buffer.end());
     return true;
   }
-  absl::optional<pdfium::span<uint8_t>> LoadBuffer() override {
+  std::optional<pdfium::span<uint8_t>> LoadBuffer() override {
     return pdfium::span<uint8_t>(last_buffer_);
   }
   void BufferDone() override {

@@ -7,12 +7,12 @@
 #ifndef XFA_FXFA_FORMCALC_CXFA_FMEXPRESSION_H_
 #define XFA_FXFA_FORMCALC_CXFA_FMEXPRESSION_H_
 
+#include <optional>
 #include <vector>
 
 #include "core/fxcrt/widestring.h"
 #include "core/fxcrt/widetext_buffer.h"
 #include "fxjs/gc/heap.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
 #include "xfa/fxfa/formcalc/cxfa_fmlexer.h"
@@ -594,7 +594,7 @@ class CXFA_FMAST : public cppgc::GarbageCollected<CXFA_FMAST> {
   ~CXFA_FMAST();
 
   void Trace(cppgc::Visitor* visitor) const;
-  absl::optional<WideTextBuffer> ToJavaScript() const;
+  std::optional<WideTextBuffer> ToJavaScript() const;
 
  private:
   explicit CXFA_FMAST(

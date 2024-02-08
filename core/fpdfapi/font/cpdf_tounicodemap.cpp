@@ -79,7 +79,7 @@ size_t CPDF_ToUnicodeMap::GetUnicodeCountByCharcodeForTesting(
 }
 
 // static
-absl::optional<uint32_t> CPDF_ToUnicodeMap::StringToCode(ByteStringView input) {
+std::optional<uint32_t> CPDF_ToUnicodeMap::StringToCode(ByteStringView input) {
   // Ignore whitespaces within `input`. See https://crbug.com/pdfium/2065.
   std::set<char> seen_whitespace_chars;
   for (char c : input) {
@@ -103,18 +103,18 @@ absl::optional<uint32_t> CPDF_ToUnicodeMap::StringToCode(ByteStringView input) {
 
   size_t len = str.GetLength();
   if (len <= 2 || str[0] != '<' || str[len - 1] != '>')
-    return absl::nullopt;
+    return std::nullopt;
 
   FX_SAFE_UINT32 code = 0;
   for (char c : str.Substr(1, len - 2)) {
     if (!FXSYS_IsHexDigit(c))
-      return absl::nullopt;
+      return std::nullopt;
 
     code = code * 16 + FXSYS_HexCharToInt(c);
     if (!code.IsValid())
-      return absl::nullopt;
+      return std::nullopt;
   }
-  return absl::optional<uint32_t>(code.ValueOrDie());
+  return std::optional<uint32_t>(code.ValueOrDie());
 }
 
 // static
@@ -175,7 +175,7 @@ void CPDF_ToUnicodeMap::HandleBeginBFChar(CPDF_SimpleParser* pParser) {
     if (word.IsEmpty() || word == "endbfchar")
       return;
 
-    absl::optional<uint32_t> code = StringToCode(word);
+    std::optional<uint32_t> code = StringToCode(word);
     if (!code.has_value())
       return;
 
@@ -189,12 +189,12 @@ void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
     if (lowcode_str.IsEmpty() || lowcode_str == "endbfrange")
       return;
 
-    absl::optional<uint32_t> lowcode_opt = StringToCode(lowcode_str);
+    std::optional<uint32_t> lowcode_opt = StringToCode(lowcode_str);
     if (!lowcode_opt.has_value())
       return;
 
     ByteStringView highcode_str = pParser->GetWord();
-    absl::optional<uint32_t> highcode_opt = StringToCode(highcode_str);
+    std::optional<uint32_t> highcode_opt = StringToCode(highcode_str);
     if (!highcode_opt.has_value())
       return;
 
@@ -215,7 +215,7 @@ void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
 
     WideString destcode = StringToWideString(start);
     if (destcode.GetLength() == 1) {
-      absl::optional<uint32_t> value_or_error = StringToCode(start);
+      std::optional<uint32_t> value_or_error = StringToCode(start);
       if (!value_or_error.has_value())
         return;
 

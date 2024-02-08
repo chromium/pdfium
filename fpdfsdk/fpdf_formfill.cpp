@@ -712,7 +712,7 @@ FPDF_SetFormFieldHighlightColor(FPDF_FORMHANDLE hHandle,
   if (!pForm)
     return;
 
-  absl::optional<FormFieldType> cast_input =
+  std::optional<FormFieldType> cast_input =
       CPDF_FormField::IntToFormFieldType(fieldType);
   if (!cast_input.has_value())
     return;

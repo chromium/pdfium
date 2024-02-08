@@ -197,7 +197,7 @@ TEST(ArrayTest, Find) {
   arr->Append(dict0);
   arr->Append(dict1);
 
-  absl::optional<size_t> maybe_found = arr->Find(nullptr);
+  std::optional<size_t> maybe_found = arr->Find(nullptr);
   EXPECT_FALSE(maybe_found.has_value());
 
   maybe_found = arr->Find(dict0.Get());

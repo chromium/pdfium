@@ -10,12 +10,12 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <optional>
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CPDF_TextPage;
 
@@ -33,14 +33,14 @@ class CPDF_LinkExtract {
   size_t CountLinks() const { return m_LinkArray.size(); }
   WideString GetURL(size_t index) const;
   std::vector<CFX_FloatRect> GetRects(size_t index) const;
-  absl::optional<Range> GetTextRange(size_t index) const;
+  std::optional<Range> GetTextRange(size_t index) const;
 
  protected:
   struct Link : public Range {
     WideString m_strUrl;
   };
 
-  absl::optional<Link> CheckWebLink(const WideString& str);
+  std::optional<Link> CheckWebLink(const WideString& str);
   bool CheckMailLink(WideString* str);
 
   UnownedPtr<const CPDF_TextPage> const m_pTextPage;

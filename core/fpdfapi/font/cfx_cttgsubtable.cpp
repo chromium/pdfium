@@ -72,7 +72,7 @@ bool CFX_CTTGSUBTable::LoadGSUBTable(pdfium::span<const uint8_t> gsub) {
 
 uint32_t CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum) const {
   for (uint32_t item : feature_set_) {
-    absl::optional<uint32_t> result =
+    std::optional<uint32_t> result =
         GetVerticalGlyphSub(feature_list_[item], glyphnum);
     if (result.has_value())
       return result.value();
@@ -80,7 +80,7 @@ uint32_t CFX_CTTGSUBTable::GetVerticalGlyph(uint32_t glyphnum) const {
   return 0;
 }
 
-absl::optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub(
+std::optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub(
     const FeatureRecord& feature,
     uint32_t glyphnum) const {
   for (int index : feature.lookup_list_indices) {
@@ -90,15 +90,15 @@ absl::optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub(
     if (lookup_list_[index].lookup_type != 1) {
       continue;
     }
-    absl::optional<uint32_t> result =
+    std::optional<uint32_t> result =
         GetVerticalGlyphSub2(lookup_list_[index], glyphnum);
     if (result.has_value())
       return result.value();
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
-absl::optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub2(
+std::optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub2(
     const Lookup& lookup,
     uint32_t glyphnum) const {
   for (const auto& sub_table : lookup.sub_tables) {
@@ -118,7 +118,7 @@ absl::optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub2(
       }
     }
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 int CFX_CTTGSUBTable::GetCoverageIndex(const CoverageFormat& coverage,

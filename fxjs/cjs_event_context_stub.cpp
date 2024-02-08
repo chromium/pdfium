@@ -10,7 +10,7 @@ CJS_EventContextStub::CJS_EventContextStub() = default;
 
 CJS_EventContextStub::~CJS_EventContextStub() = default;
 
-absl::optional<IJS_Runtime::JS_Error> CJS_EventContextStub::RunScript(
+std::optional<IJS_Runtime::JS_Error> CJS_EventContextStub::RunScript(
     const WideString& script) {
   return IJS_Runtime::JS_Error(1, 1, L"JavaScript support not present");
 }

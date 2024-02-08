@@ -27,7 +27,7 @@ class CJS_RuntimeStub final : public IJS_Runtime {
   void ReleaseEventContext(IJS_EventContext* pContext) override;
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const override;
 
-  absl::optional<IJS_Runtime::JS_Error> ExecuteScript(
+  std::optional<IJS_Runtime::JS_Error> ExecuteScript(
       const WideString& script) override;
 
  private:

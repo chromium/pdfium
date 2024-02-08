@@ -204,16 +204,16 @@ void CFWL_Edit::SetAliasChar(wchar_t wAlias) {
   m_pEditEngine->SetAliasChar(wAlias);
 }
 
-absl::optional<WideString> CFWL_Edit::Copy() {
+std::optional<WideString> CFWL_Edit::Copy() {
   if (!m_pEditEngine->HasSelection())
-    return absl::nullopt;
+    return std::nullopt;
 
   return m_pEditEngine->GetSelectedText();
 }
 
-absl::optional<WideString> CFWL_Edit::Cut() {
+std::optional<WideString> CFWL_Edit::Cut() {
   if (!m_pEditEngine->HasSelection())
-    return absl::nullopt;
+    return std::nullopt;
 
   WideString cut_text = m_pEditEngine->DeleteSelectedText();
   UpdateCaret();

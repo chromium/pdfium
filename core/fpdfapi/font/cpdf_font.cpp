@@ -274,7 +274,7 @@ int CPDF_Font::GetStringWidth(ByteStringView pString) {
 RetainPtr<CPDF_Font> CPDF_Font::GetStockFont(CPDF_Document* pDoc,
                                              ByteStringView name) {
   ByteString fontname(name);
-  absl::optional<CFX_FontMapper::StandardFont> font_id =
+  std::optional<CFX_FontMapper::StandardFont> font_id =
       CFX_FontMapper::GetStandardFontName(&fontname);
   if (!font_id.has_value())
     return nullptr;
@@ -344,10 +344,10 @@ bool CPDF_Font::IsStandardFont() const {
   return AsType1Font()->IsBase14Font();
 }
 
-absl::optional<FX_Charset> CPDF_Font::GetSubstFontCharset() const {
+std::optional<FX_Charset> CPDF_Font::GetSubstFontCharset() const {
   CFX_SubstFont* pFont = m_Font.GetSubstFont();
   if (!pFont)
-    return absl::nullopt;
+    return std::nullopt;
   return pFont->m_Charset;
 }
 

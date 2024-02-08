@@ -7,12 +7,12 @@
 #ifndef CORE_FPDFDOC_CPDF_STRUCTELEMENT_H_
 #define CORE_FPDFDOC_CPDF_STRUCTELEMENT_H_
 
+#include <optional>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CPDF_Dictionary;
 class CPDF_Object;
@@ -27,8 +27,8 @@ class CPDF_StructElement final : public Retainable {
   WideString GetAltText() const;
   WideString GetActualText() const;
   WideString GetTitle() const;
-  absl::optional<WideString> GetID() const;
-  absl::optional<WideString> GetLang() const;
+  std::optional<WideString> GetID() const;
+  std::optional<WideString> GetLang() const;
   RetainPtr<const CPDF_Object> GetA() const;
   RetainPtr<const CPDF_Object> GetK() const;
 

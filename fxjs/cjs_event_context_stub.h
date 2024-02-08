@@ -15,7 +15,7 @@ class CJS_EventContextStub final : public IJS_EventContext {
   ~CJS_EventContextStub() override;
 
   // IJS_EventContext:
-  absl::optional<IJS_Runtime::JS_Error> RunScript(
+  std::optional<IJS_Runtime::JS_Error> RunScript(
       const WideString& script) override;
 
   void OnDoc_Open(const WideString& strTargetName) override {}

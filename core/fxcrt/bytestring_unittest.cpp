@@ -735,7 +735,7 @@ TEST(ByteString, Find) {
   EXPECT_FALSE(empty_string.Find('\0').has_value());
 
   ByteString single_string("a");
-  absl::optional<size_t> result = single_string.Find('a');
+  std::optional<size_t> result = single_string.Find('a');
   ASSERT_TRUE(result.has_value());
   EXPECT_EQ(0u, result.value());
   EXPECT_FALSE(single_string.Find('b').has_value());
@@ -783,7 +783,7 @@ TEST(ByteString, ReverseFind) {
   EXPECT_FALSE(empty_string.ReverseFind('\0').has_value());
 
   ByteString single_string("a");
-  absl::optional<size_t> result = single_string.ReverseFind('a');
+  std::optional<size_t> result = single_string.ReverseFind('a');
   ASSERT_TRUE(result.has_value());
   EXPECT_EQ(0u, result.value());
   EXPECT_FALSE(single_string.ReverseFind('b').has_value());
@@ -1313,7 +1313,7 @@ TEST(ByteStringView, Find) {
   EXPECT_FALSE(empty_string.Find('\0').has_value());
 
   ByteStringView single_string("a");
-  absl::optional<size_t> result = single_string.Find('a');
+  std::optional<size_t> result = single_string.Find('a');
   ASSERT_TRUE(result.has_value());
   EXPECT_EQ(0u, result.value());
   EXPECT_FALSE(single_string.Find('b').has_value());

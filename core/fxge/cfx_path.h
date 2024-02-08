@@ -9,11 +9,11 @@
 
 #include <stdint.h>
 
+#include <optional>
 #include <vector>
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CFX_Path {
  public:
@@ -56,7 +56,7 @@ class CFX_Path {
 
   void Transform(const CFX_Matrix& matrix);
   bool IsRect() const;
-  absl::optional<CFX_FloatRect> GetRect(const CFX_Matrix* matrix) const;
+  std::optional<CFX_FloatRect> GetRect(const CFX_Matrix* matrix) const;
 
   void Append(const CFX_Path& src, const CFX_Matrix* matrix);
   void AppendFloatRect(const CFX_FloatRect& rect);

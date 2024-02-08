@@ -213,7 +213,7 @@ bool CFXJSE_ResolveProcessor::ResolveForAttributeRs(
     CXFA_Object* curNode,
     CFXJSE_Engine::ResolveResult* rnd,
     WideStringView strAttr) {
-  absl::optional<XFA_SCRIPTATTRIBUTEINFO> info =
+  std::optional<XFA_SCRIPTATTRIBUTEINFO> info =
       XFA_GetScriptAttributeByName(curNode->GetElementType(), strAttr);
   if (!info.has_value())
     return false;

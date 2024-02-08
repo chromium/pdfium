@@ -11,6 +11,7 @@
 #include <string.h>
 
 #include <memory>
+#include <optional>
 #include <utility>
 
 #include "build/build_config.h"
@@ -21,7 +22,6 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 
@@ -190,7 +190,7 @@ bool JpegDecoder::InitDecode(bool bAcceptKnownBadHeader) {
   m_bInited = true;
 
   if (setjmp(m_JmpBuf) == -1) {
-    absl::optional<size_t> known_bad_header_offset;
+    std::optional<size_t> known_bad_header_offset;
     if (bAcceptKnownBadHeader) {
       for (size_t offset : kKnownBadHeaderWithInvalidHeightByteOffsetStarts) {
         if (HasKnownBadHeaderWithInvalidHeight(offset)) {
@@ -393,11 +393,11 @@ std::unique_ptr<ScanlineDecoder> JpegModule::CreateDecoder(
 }
 
 // static
-absl::optional<JpegModule::ImageInfo> JpegModule::LoadInfo(
+std::optional<JpegModule::ImageInfo> JpegModule::LoadInfo(
     pdfium::span<const uint8_t> src_span) {
   ImageInfo info;
   if (!JpegLoadInfo(src_span, &info))
-    return absl::nullopt;
+    return std::nullopt;
 
   return info;
 }

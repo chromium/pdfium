@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 #include <memory>
+#include <optional>
 #include <sstream>
 #include <vector>
 
@@ -23,7 +24,6 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/containers/span.h"
 
 class CFX_DIBBase;
@@ -99,7 +99,7 @@ class CFX_PSRenderer {
                 float font_size,
                 uint32_t color);
 
-  static absl::optional<ByteString> GenerateType42SfntDataForTesting(
+  static std::optional<ByteString> GenerateType42SfntDataForTesting(
       const ByteString& psname,
       pdfium::span<const uint8_t> font_data);
 
@@ -157,7 +157,7 @@ class CFX_PSRenderer {
                             float font_size,
                             fxcrt::ostringstream& buf);
   FaxCompressResult FaxCompressData(RetainPtr<const CFX_DIBBase> src) const;
-  absl::optional<PSCompressResult> PSCompressData(
+  std::optional<PSCompressResult> PSCompressData(
       pdfium::span<const uint8_t> src_span) const;
   void WritePreambleString(ByteStringView str);
   void WritePSBinary(pdfium::span<const uint8_t> data);
@@ -167,7 +167,7 @@ class CFX_PSRenderer {
   bool m_bInited = false;
   bool m_bGraphStateSet = false;
   bool m_bColorSet = false;
-  absl::optional<RenderingLevel> m_Level;
+  std::optional<RenderingLevel> m_Level;
   uint32_t m_LastColor = 0;
   FX_RECT m_ClipBox;
   CFX_GraphStateData m_CurGraphState;

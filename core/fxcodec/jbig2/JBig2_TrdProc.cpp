@@ -7,6 +7,7 @@
 #include "core/fxcodec/jbig2/JBig2_TrdProc.h"
 
 #include <memory>
+#include <optional>
 
 #include "core/fxcodec/jbig2/JBig2_ArithDecoder.h"
 #include "core/fxcodec/jbig2/JBig2_ArithIntDecoder.h"
@@ -14,25 +15,24 @@
 #include "core/fxcodec/jbig2/JBig2_HuffmanDecoder.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 namespace {
 
-absl::optional<uint32_t> CheckTRDDimension(uint32_t dimension, int32_t delta) {
+std::optional<uint32_t> CheckTRDDimension(uint32_t dimension, int32_t delta) {
   FX_SAFE_UINT32 result = dimension;
   result += delta;
   if (!result.IsValid())
-    return absl::nullopt;
+    return std::nullopt;
   return result.ValueOrDie();
 }
 
-absl::optional<int32_t> CheckTRDReferenceDimension(int32_t dimension,
-                                                   uint32_t shift,
-                                                   int32_t offset) {
+std::optional<int32_t> CheckTRDReferenceDimension(int32_t dimension,
+                                                  uint32_t shift,
+                                                  int32_t offset) {
   FX_SAFE_INT32 result = offset;
   result += dimension >> shift;
   if (!result.IsValid())
-    return absl::nullopt;
+    return std::nullopt;
   return result.ValueOrDie();
 }
 
@@ -159,14 +159,14 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
         if (!IBOI)
           return nullptr;
 
-        absl::optional<uint32_t> WOI = CheckTRDDimension(IBOI->width(), RDWI);
-        absl::optional<uint32_t> HOI = CheckTRDDimension(IBOI->height(), RDHI);
+        std::optional<uint32_t> WOI = CheckTRDDimension(IBOI->width(), RDWI);
+        std::optional<uint32_t> HOI = CheckTRDDimension(IBOI->height(), RDHI);
         if (!WOI.has_value() || !HOI.has_value())
           return nullptr;
 
-        absl::optional<int32_t> GRREFERENCEDX =
+        std::optional<int32_t> GRREFERENCEDX =
             CheckTRDReferenceDimension(RDWI, 2, RDXI);
-        absl::optional<int32_t> GRREFERENCEDY =
+        std::optional<int32_t> GRREFERENCEDY =
             CheckTRDReferenceDimension(RDHI, 2, RDYI);
         if (!GRREFERENCEDX.has_value() || !GRREFERENCEDY.has_value())
           return nullptr;
@@ -339,14 +339,14 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
         if (!IBOI)
           return nullptr;
 
-        absl::optional<uint32_t> WOI = CheckTRDDimension(IBOI->width(), RDWI);
-        absl::optional<uint32_t> HOI = CheckTRDDimension(IBOI->height(), RDHI);
+        std::optional<uint32_t> WOI = CheckTRDDimension(IBOI->width(), RDWI);
+        std::optional<uint32_t> HOI = CheckTRDDimension(IBOI->height(), RDHI);
         if (!WOI.has_value() || !HOI.has_value())
           return nullptr;
 
-        absl::optional<int32_t> GRREFERENCEDX =
+        std::optional<int32_t> GRREFERENCEDX =
             CheckTRDReferenceDimension(RDWI, 1, RDXI);
-        absl::optional<int32_t> GRREFERENCEDY =
+        std::optional<int32_t> GRREFERENCEDY =
             CheckTRDReferenceDimension(RDHI, 1, RDYI);
         if (!GRREFERENCEDX.has_value() || !GRREFERENCEDY.has_value())
           return nullptr;

@@ -77,7 +77,7 @@ bool IsText(wchar_t ch) {
 }  // namespace
 
 // static
-absl::optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
+std::optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
     WideStringView msg) {
   const ByteString bytes = FX_UTF8Encode(msg);
   size_t len = bytes.GetLength();
@@ -86,7 +86,7 @@ absl::optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
   for (size_t i = 0; i < len; i++) {
     wchar_t ch = bytes[i] & 0xff;
     if (ch == '?' && bytes[i] != '?')
-      return absl::nullopt;
+      return std::nullopt;
 
     result += ch;
   }
@@ -115,10 +115,10 @@ absl::optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
         textSubMode = EncodeText(result, p, t, textSubMode, &sb);
         p += t;
       } else {
-        absl::optional<size_t> b =
+        std::optional<size_t> b =
             DetermineConsecutiveBinaryCount(result, bytes.raw_span(), p);
         if (!b.has_value())
-          return absl::nullopt;
+          return std::nullopt;
 
         size_t b_value = b.value();
         if (b_value == 0)
@@ -352,7 +352,7 @@ size_t CBC_PDF417HighLevelEncoder::DetermineConsecutiveTextCount(
   return idx - startpos;
 }
 
-absl::optional<size_t>
+std::optional<size_t>
 CBC_PDF417HighLevelEncoder::DetermineConsecutiveBinaryCount(
     WideString msg,
     pdfium::span<const uint8_t> bytes,
@@ -384,7 +384,7 @@ CBC_PDF417HighLevelEncoder::DetermineConsecutiveBinaryCount(
       return idx - startpos;
     ch = msg[idx];
     if (bytes[idx] == 63 && ch != '?')
-      return absl::nullopt;
+      return std::nullopt;
     idx++;
   }
   return idx - startpos;

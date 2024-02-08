@@ -151,7 +151,7 @@ std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Divide(
     return nullptr;
 
   int32_t denominatorLeadingTerm = other->GetCoefficients(other->GetDegree());
-  absl::optional<int32_t> inverseDenominatorLeadingTeam =
+  std::optional<int32_t> inverseDenominatorLeadingTeam =
       m_field->Inverse(denominatorLeadingTerm);
   if (!inverseDenominatorLeadingTeam.has_value())
     return nullptr;

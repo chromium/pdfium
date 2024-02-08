@@ -713,7 +713,7 @@ bool CGdiDeviceDriver::SetClip_PathFill(
     const CFX_Path& path,
     const CFX_Matrix* pMatrix,
     const CFX_FillRenderOptions& fill_options) {
-  absl::optional<CFX_FloatRect> maybe_rectf = path.GetRect(pMatrix);
+  std::optional<CFX_FloatRect> maybe_rectf = path.GetRect(pMatrix);
   if (maybe_rectf.has_value()) {
     FX_RECT rect = maybe_rectf.value().GetOuterRect();
     // Can easily apply base clip to protect against wildly large rectangular

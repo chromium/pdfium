@@ -773,7 +773,7 @@ void CXFA_FMAST::Trace(cppgc::Visitor* visitor) const {
   ContainerTrace(visitor, expressions_);
 }
 
-absl::optional<WideTextBuffer> CXFA_FMAST::ToJavaScript() const {
+std::optional<WideTextBuffer> CXFA_FMAST::ToJavaScript() const {
   WideTextBuffer js;
   if (expressions_.empty()) {
     js << "// comments only";
@@ -798,13 +798,13 @@ absl::optional<WideTextBuffer> CXFA_FMAST::ToJavaScript() const {
             ? CXFA_FMAssignExpression::ReturnType::kImplied
             : CXFA_FMAssignExpression::ReturnType::kInferred;
     if (!expr->ToJavaScript(&js, ret_type))
-      return absl::nullopt;
+      return std::nullopt;
   }
   js << "return pfm_rt.get_val(pfm_ret);\n";
   js << "}).call(this);";
 
   if (CXFA_IsTooBig(js))
-    return absl::nullopt;
+    return std::nullopt;
 
   return js;
 }

@@ -288,24 +288,24 @@ int CFX_Font::GetDescent() const {
   return NormalizeFontMetric(m_Face->GetDescender(), m_Face->GetUnitsPerEm());
 }
 
-absl::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
+std::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
   if (!m_Face)
-    return absl::nullopt;
+    return std::nullopt;
 
   if (m_Face->IsTricky()) {
     int error = FT_Set_Char_Size(m_Face->GetRec(), 0, 1000 * 64, 72, 72);
     if (error)
-      return absl::nullopt;
+      return std::nullopt;
 
     error = FT_Load_Glyph(m_Face->GetRec(), glyph_index,
                           FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH);
     if (error)
-      return absl::nullopt;
+      return std::nullopt;
 
     FT_Glyph glyph;
     error = FT_Get_Glyph(m_Face->GetRec()->glyph, &glyph);
     if (error)
-      return absl::nullopt;
+      return std::nullopt;
 
     FT_BBox cbox;
     FT_Glyph_Get_CBox(glyph, FT_GLYPH_BBOX_PIXELS, &cbox);
@@ -318,12 +318,12 @@ absl::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
         std::max(result.bottom, static_cast<int>(m_Face->GetDescender()));
     FT_Done_Glyph(glyph);
     if (FT_Set_Pixel_Sizes(m_Face->GetRec(), 0, 64) != 0)
-      return absl::nullopt;
+      return std::nullopt;
     return result;
   }
   constexpr int kFlag = FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH;
   if (FT_Load_Glyph(m_Face->GetRec(), glyph_index, kFlag) != 0)
-    return absl::nullopt;
+    return std::nullopt;
   int em = m_Face->GetUnitsPerEm();
   return ScaledFXRectFromFTPos(FXFT_Get_Glyph_HoriBearingX(m_Face->GetRec()),
                                FXFT_Get_Glyph_HoriBearingY(m_Face->GetRec()) -
@@ -415,14 +415,14 @@ ByteString CFX_Font::GetBaseFontName() const {
   return ByteString();
 }
 
-absl::optional<FX_RECT> CFX_Font::GetRawBBox() const {
+std::optional<FX_RECT> CFX_Font::GetRawBBox() const {
   if (!m_Face)
-    return absl::nullopt;
+    return std::nullopt;
   return m_Face->GetBBox();
 }
 
-absl::optional<FX_RECT> CFX_Font::GetBBox() const {
-  absl::optional<FX_RECT> result = GetRawBBox();
+std::optional<FX_RECT> CFX_Font::GetBBox() const {
+  std::optional<FX_RECT> result = GetRawBBox();
   if (!result.has_value())
     return result;
 

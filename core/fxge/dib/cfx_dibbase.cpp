@@ -672,7 +672,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipToInternal(
       }
     }
   } else {
-    absl::optional<uint32_t> copy_len = fxge::CalculatePitch8(
+    std::optional<uint32_t> copy_len = fxge::CalculatePitch8(
         pNewBitmap->GetBPP(), /*components=*/1, pNewBitmap->GetWidth());
     if (!copy_len.has_value()) {
       return nullptr;

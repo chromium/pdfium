@@ -9,9 +9,10 @@
 
 #include <stddef.h>
 
+#include <optional>
+
 #include "core/fxcrt/widestring.h"
 #include "fxjs/xfa/cjx_object.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
 using XFA_ATTRIBUTE_CALLBACK = void (*)(v8::Isolate* pIsolate,
@@ -51,19 +52,19 @@ struct XFA_SCRIPTATTRIBUTEINFO {
 };
 
 XFA_PACKETINFO XFA_GetPacketByIndex(XFA_PacketType ePacket);
-absl::optional<XFA_PACKETINFO> XFA_GetPacketByName(WideStringView wsName);
+std::optional<XFA_PACKETINFO> XFA_GetPacketByName(WideStringView wsName);
 
 ByteStringView XFA_ElementToName(XFA_Element elem);
 XFA_Element XFA_GetElementByName(WideStringView name);
 
 ByteStringView XFA_AttributeToName(XFA_Attribute attr);
-absl::optional<XFA_ATTRIBUTEINFO> XFA_GetAttributeByName(WideStringView name);
+std::optional<XFA_ATTRIBUTEINFO> XFA_GetAttributeByName(WideStringView name);
 
 ByteStringView XFA_AttributeValueToName(XFA_AttributeValue item);
-absl::optional<XFA_AttributeValue> XFA_GetAttributeValueByName(
+std::optional<XFA_AttributeValue> XFA_GetAttributeValueByName(
     WideStringView name);
 
-absl::optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
+std::optional<XFA_SCRIPTATTRIBUTEINFO> XFA_GetScriptAttributeByName(
     XFA_Element eElement,
     WideStringView wsAttributeName);
 

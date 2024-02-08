@@ -9,6 +9,7 @@
 
 #include <array>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "build/build_config.h"
@@ -17,7 +18,6 @@
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/freetype/fx_freetype.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/containers/span.h"
 
 namespace fxge {
@@ -77,9 +77,9 @@ class CFX_Face final : public Retainable, public Observable {
   // it is large enough to hold the data.
   size_t GetSfntTable(uint32_t table, pdfium::span<uint8_t> buffer);
 
-  absl::optional<std::array<uint32_t, 4>> GetOs2UnicodeRange();
-  absl::optional<std::array<uint32_t, 2>> GetOs2CodePageRange();
-  absl::optional<std::array<uint8_t, 2>> GetOs2Panose();
+  std::optional<std::array<uint32_t, 4>> GetOs2UnicodeRange();
+  std::optional<std::array<uint32_t, 2>> GetOs2CodePageRange();
+  std::optional<std::array<uint8_t, 2>> GetOs2Panose();
 
   int GetGlyphCount() const;
   // TODO(crbug.com/pdfium/2037): Can this method be private?
@@ -108,7 +108,7 @@ class CFX_Face final : public Retainable, public Observable {
   std::vector<CharCodeAndIndex> GetCharCodesAndIndices(char32_t max_char);
 
   CharMap GetCurrentCharMap() const;
-  absl::optional<fxge::FontEncoding> GetCurrentCharMapEncoding() const;
+  std::optional<fxge::FontEncoding> GetCurrentCharMapEncoding() const;
   int GetCharMapPlatformIdByIndex(size_t index) const;
   int GetCharMapEncodingIdByIndex(size_t index) const;
   fxge::FontEncoding GetCharMapEncodingByIndex(size_t index) const;

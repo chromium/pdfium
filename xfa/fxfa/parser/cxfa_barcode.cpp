@@ -71,15 +71,15 @@ WideString CXFA_Barcode::GetBarcodeType() {
   return WideString(JSObject()->GetCData(XFA_Attribute::Type));
 }
 
-absl::optional<WideString> CXFA_Barcode::GetCharEncoding() {
+std::optional<WideString> CXFA_Barcode::GetCharEncoding() {
   return JSObject()->TryCData(XFA_Attribute::CharEncoding, true);
 }
 
-absl::optional<bool> CXFA_Barcode::GetChecksum() {
-  absl::optional<XFA_AttributeValue> checksum =
+std::optional<bool> CXFA_Barcode::GetChecksum() {
+  std::optional<XFA_AttributeValue> checksum =
       JSObject()->TryEnum(XFA_Attribute::Checksum, true);
   if (!checksum.has_value())
-    return absl::nullopt;
+    return std::nullopt;
 
   switch (checksum.value()) {
     case XFA_AttributeValue::None:
@@ -92,81 +92,81 @@ absl::optional<bool> CXFA_Barcode::GetChecksum() {
     default:
       break;
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
-absl::optional<int32_t> CXFA_Barcode::GetDataLength() {
-  absl::optional<WideString> wsDataLength =
+std::optional<int32_t> CXFA_Barcode::GetDataLength() {
+  std::optional<WideString> wsDataLength =
       JSObject()->TryCData(XFA_Attribute::DataLength, true);
   if (!wsDataLength.has_value())
-    return absl::nullopt;
+    return std::nullopt;
 
   return FXSYS_wtoi(wsDataLength->c_str());
 }
 
-absl::optional<char> CXFA_Barcode::GetStartChar() {
-  absl::optional<WideString> wsStartEndChar =
+std::optional<char> CXFA_Barcode::GetStartChar() {
+  std::optional<WideString> wsStartEndChar =
       JSObject()->TryCData(XFA_Attribute::StartChar, true);
   if (!wsStartEndChar.has_value() || wsStartEndChar->IsEmpty())
-    return absl::nullopt;
+    return std::nullopt;
 
   return static_cast<char>(wsStartEndChar.value()[0]);
 }
 
-absl::optional<char> CXFA_Barcode::GetEndChar() {
-  absl::optional<WideString> wsStartEndChar =
+std::optional<char> CXFA_Barcode::GetEndChar() {
+  std::optional<WideString> wsStartEndChar =
       JSObject()->TryCData(XFA_Attribute::EndChar, true);
   if (!wsStartEndChar.has_value() || wsStartEndChar->IsEmpty())
-    return absl::nullopt;
+    return std::nullopt;
 
   return static_cast<char>(wsStartEndChar.value()[0]);
 }
 
-absl::optional<int32_t> CXFA_Barcode::GetECLevel() {
-  absl::optional<WideString> wsECLevel =
+std::optional<int32_t> CXFA_Barcode::GetECLevel() {
+  std::optional<WideString> wsECLevel =
       JSObject()->TryCData(XFA_Attribute::ErrorCorrectionLevel, true);
   if (!wsECLevel.has_value())
-    return absl::nullopt;
+    return std::nullopt;
   return FXSYS_wtoi(wsECLevel->c_str());
 }
 
-absl::optional<int32_t> CXFA_Barcode::GetModuleWidth() {
-  absl::optional<CXFA_Measurement> moduleWidthHeight =
+std::optional<int32_t> CXFA_Barcode::GetModuleWidth() {
+  std::optional<CXFA_Measurement> moduleWidthHeight =
       JSObject()->TryMeasure(XFA_Attribute::ModuleWidth, true);
   if (!moduleWidthHeight.has_value())
-    return absl::nullopt;
+    return std::nullopt;
 
   return static_cast<int32_t>(moduleWidthHeight->ToUnit(XFA_Unit::Pt));
 }
 
-absl::optional<int32_t> CXFA_Barcode::GetModuleHeight() {
-  absl::optional<CXFA_Measurement> moduleWidthHeight =
+std::optional<int32_t> CXFA_Barcode::GetModuleHeight() {
+  std::optional<CXFA_Measurement> moduleWidthHeight =
       JSObject()->TryMeasure(XFA_Attribute::ModuleHeight, true);
   if (!moduleWidthHeight.has_value())
-    return absl::nullopt;
+    return std::nullopt;
 
   return static_cast<int32_t>(moduleWidthHeight->ToUnit(XFA_Unit::Pt));
 }
 
-absl::optional<bool> CXFA_Barcode::GetPrintChecksum() {
+std::optional<bool> CXFA_Barcode::GetPrintChecksum() {
   return JSObject()->TryBoolean(XFA_Attribute::PrintCheckDigit, true);
 }
 
-absl::optional<XFA_AttributeValue> CXFA_Barcode::GetTextLocation() {
+std::optional<XFA_AttributeValue> CXFA_Barcode::GetTextLocation() {
   return JSObject()->TryEnum(XFA_Attribute::TextLocation, true);
 }
 
-absl::optional<bool> CXFA_Barcode::GetTruncate() {
+std::optional<bool> CXFA_Barcode::GetTruncate() {
   return JSObject()->TryBoolean(XFA_Attribute::Truncate, true);
 }
 
-absl::optional<int8_t> CXFA_Barcode::GetWideNarrowRatio() {
-  absl::optional<WideString> wsWideNarrowRatio =
+std::optional<int8_t> CXFA_Barcode::GetWideNarrowRatio() {
+  std::optional<WideString> wsWideNarrowRatio =
       JSObject()->TryCData(XFA_Attribute::WideNarrowRatio, true);
   if (!wsWideNarrowRatio.has_value())
-    return absl::nullopt;
+    return std::nullopt;
 
-  absl::optional<size_t> ptPos = wsWideNarrowRatio->Find(':');
+  std::optional<size_t> ptPos = wsWideNarrowRatio->Find(':');
   if (!ptPos.has_value())
     return static_cast<int8_t>(FXSYS_wtoi(wsWideNarrowRatio->c_str()));
 

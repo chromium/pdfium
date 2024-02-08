@@ -10,9 +10,9 @@
 #include <stdint.h>
 
 #include <memory>
+#include <optional>
 
 #include "fxbarcode/BC_Library.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "xfa/fwl/cfwl_edit.h"
 
 class CFX_Barcode;
@@ -62,17 +62,17 @@ class CFWL_Barcode final : public CFWL_Edit {
 
   BC_TYPE m_type = BC_TYPE::kUnknown;
   Status m_eStatus = Status::kNormal;
-  absl::optional<BC_TEXT_LOC> m_eTextLocation;
-  absl::optional<BC_CHAR_ENCODING> m_eCharEncoding;
-  absl::optional<bool> m_bCalChecksum;
-  absl::optional<bool> m_bPrintChecksum;
-  absl::optional<char> m_cStartChar;
-  absl::optional<char> m_cEndChar;
-  absl::optional<int8_t> m_nWideNarrowRatio;
-  absl::optional<int32_t> m_nModuleHeight;
-  absl::optional<int32_t> m_nModuleWidth;
-  absl::optional<int32_t> m_nDataLength;
-  absl::optional<int32_t> m_nECLevel;
+  std::optional<BC_TEXT_LOC> m_eTextLocation;
+  std::optional<BC_CHAR_ENCODING> m_eCharEncoding;
+  std::optional<bool> m_bCalChecksum;
+  std::optional<bool> m_bPrintChecksum;
+  std::optional<char> m_cStartChar;
+  std::optional<char> m_cEndChar;
+  std::optional<int8_t> m_nWideNarrowRatio;
+  std::optional<int32_t> m_nModuleHeight;
+  std::optional<int32_t> m_nModuleWidth;
+  std::optional<int32_t> m_nDataLength;
+  std::optional<int32_t> m_nECLevel;
   std::unique_ptr<CFX_Barcode> m_pBarcodeEngine;
 };
 

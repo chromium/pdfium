@@ -72,7 +72,7 @@ class CPDF_FormField {
   CPDF_FormField(CPDF_InteractiveForm* pForm, RetainPtr<CPDF_Dictionary> pDict);
   ~CPDF_FormField();
 
-  static absl::optional<FormFieldType> IntToFormFieldType(int value);
+  static std::optional<FormFieldType> IntToFormFieldType(int value);
   static WideString GetFullNameForDict(const CPDF_Dictionary* pFieldDict);
   static RetainPtr<const CPDF_Object> GetFieldAttrForDict(
       const CPDF_Dictionary* pFieldDict,

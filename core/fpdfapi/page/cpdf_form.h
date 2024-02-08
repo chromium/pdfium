@@ -49,7 +49,7 @@ class CPDF_Form final : public CPDF_PageObjectHolder,
   void ParseContentForType3Char(CPDF_Type3Char* pType3Char) override;
   bool HasPageObjects() const override;
   CFX_FloatRect CalcBoundingBox() const override;
-  absl::optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
+  std::optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
   GetBitmapAndMatrixFromSoleImageOfForm() const override;
 
   void ParseContent();

@@ -8,13 +8,13 @@
 #define CORE_FPDFAPI_FONT_CPDF_TOUNICODEMAP_H_
 
 #include <map>
+#include <optional>
 #include <set>
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CPDF_CID2UnicodeMap;
 class CPDF_SimpleParser;
@@ -34,7 +34,7 @@ class CPDF_ToUnicodeMap {
   friend class cpdf_tounicodemap_StringToCode_Test;
   friend class cpdf_tounicodemap_StringToWideString_Test;
 
-  static absl::optional<uint32_t> StringToCode(ByteStringView input);
+  static std::optional<uint32_t> StringToCode(ByteStringView input);
   static WideString StringToWideString(ByteStringView str);
 
   void Load(RetainPtr<const CPDF_Stream> pStream);

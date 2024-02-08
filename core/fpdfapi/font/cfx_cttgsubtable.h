@@ -9,11 +9,11 @@
 
 #include <stdint.h>
 
+#include <optional>
 #include <set>
 #include <vector>
 
 #include "core/fxcrt/data_vector.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/abseil-cpp/absl/types/variant.h"
 #include "third_party/base/containers/span.h"
 
@@ -91,10 +91,10 @@ class CFX_CTTGSUBTable {
   CoverageFormat ParseCoverage(const uint8_t* raw);
   SubTable ParseSingleSubst(const uint8_t* raw);
 
-  absl::optional<uint32_t> GetVerticalGlyphSub(const FeatureRecord& feature,
+  std::optional<uint32_t> GetVerticalGlyphSub(const FeatureRecord& feature,
+                                              uint32_t glyphnum) const;
+  std::optional<uint32_t> GetVerticalGlyphSub2(const Lookup& lookup,
                                                uint32_t glyphnum) const;
-  absl::optional<uint32_t> GetVerticalGlyphSub2(const Lookup& lookup,
-                                                uint32_t glyphnum) const;
   int GetCoverageIndex(const CoverageFormat& coverage, uint32_t g) const;
 
   uint8_t GetUInt8(const uint8_t*& p) const;

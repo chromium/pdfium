@@ -63,7 +63,7 @@ bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
 
   // Check sub-functions.
   {
-    absl::optional<uint32_t> nOutputs;
+    std::optional<uint32_t> nOutputs;
     for (uint32_t i = 0; i < nSubs; ++i) {
       RetainPtr<const CPDF_Object> pSub = pFunctionsArray->GetDirectObjectAt(i);
       if (pSub == pObj)

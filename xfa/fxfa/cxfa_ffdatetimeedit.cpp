@@ -92,7 +92,7 @@ void CXFA_FFDateTimeEdit::UpdateWidgetProperty() {
   GetNormalWidget()->ModifyStyleExts(dwExtendedStyle, 0xFFFFFFFF);
 
   uint32_t dwEditStyles = 0;
-  absl::optional<int32_t> numCells = m_pNode->GetNumberOfCells();
+  std::optional<int32_t> numCells = m_pNode->GetNumberOfCells();
   if (numCells.has_value() && numCells.value() > 0) {
     dwEditStyles |= FWL_STYLEEXT_EDT_CombText;
     pPicker->SetEditLimit(numCells.value());
@@ -243,7 +243,7 @@ bool CXFA_FFDateTimeEdit::CanSelectAll() {
   return GetPickerWidget()->GetEditTextLength() > 0;
 }
 
-absl::optional<WideString> CXFA_FFDateTimeEdit::Copy() {
+std::optional<WideString> CXFA_FFDateTimeEdit::Copy() {
   return GetPickerWidget()->Copy();
 }
 
@@ -255,7 +255,7 @@ bool CXFA_FFDateTimeEdit::Redo() {
   return GetPickerWidget()->Redo();
 }
 
-absl::optional<WideString> CXFA_FFDateTimeEdit::Cut() {
+std::optional<WideString> CXFA_FFDateTimeEdit::Cut() {
   return GetPickerWidget()->Cut();
 }
 

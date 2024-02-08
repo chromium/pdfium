@@ -12,12 +12,12 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
 #include "fxjs/gc/heap.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/containers/span.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
@@ -179,7 +179,7 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
   std::map<uint32_t, cppgc::Member<CXFA_Node>> m_rgGlobalBinding;
   std::vector<cppgc::Member<CXFA_Node>> m_pPendingPageSet;
   XFA_VERSION m_eCurVersionMode = XFA_VERSION_DEFAULT;
-  absl::optional<bool> m_Interactive;
+  std::optional<bool> m_Interactive;
   bool m_bStrictScoping = false;
   bool m_bScripting = false;
 };

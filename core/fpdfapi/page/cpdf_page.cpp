@@ -104,7 +104,7 @@ CFX_FloatRect CPDF_Page::GetBox(const ByteString& name) const {
   return box;
 }
 
-absl::optional<CFX_PointF> CPDF_Page::DeviceToPage(
+std::optional<CFX_PointF> CPDF_Page::DeviceToPage(
     const FX_RECT& rect,
     int rotate,
     const CFX_PointF& device_point) const {
@@ -112,7 +112,7 @@ absl::optional<CFX_PointF> CPDF_Page::DeviceToPage(
   return page2device.GetInverse().Transform(device_point);
 }
 
-absl::optional<CFX_PointF> CPDF_Page::PageToDevice(
+std::optional<CFX_PointF> CPDF_Page::PageToDevice(
     const FX_RECT& rect,
     int rotate,
     const CFX_PointF& page_point) const {

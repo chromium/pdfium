@@ -39,8 +39,8 @@ class CXFA_FFDateTimeEdit final : public CXFA_FFTextEdit {
   bool CanSelectAll() override;
   bool Undo() override;
   bool Redo() override;
-  absl::optional<WideString> Copy() override;
-  absl::optional<WideString> Cut() override;
+  std::optional<WideString> Copy() override;
+  std::optional<WideString> Cut() override;
   bool Paste(const WideString& wsPaste) override;
   void SelectAll() override;
   void Delete() override;

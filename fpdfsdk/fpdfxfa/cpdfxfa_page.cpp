@@ -172,25 +172,25 @@ float CPDFXFA_Page::GetPageHeight() const {
   return 0.0f;
 }
 
-absl::optional<CFX_PointF> CPDFXFA_Page::DeviceToPage(
+std::optional<CFX_PointF> CPDFXFA_Page::DeviceToPage(
     const FX_RECT& rect,
     int rotate,
     const CFX_PointF& device_point) const {
   CXFA_FFPageView* pPageView = GetXFAPageView();
   if (!m_pPDFPage && !pPageView)
-    return absl::nullopt;
+    return std::nullopt;
 
   CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
   return page2device.GetInverse().Transform(device_point);
 }
 
-absl::optional<CFX_PointF> CPDFXFA_Page::PageToDevice(
+std::optional<CFX_PointF> CPDFXFA_Page::PageToDevice(
     const FX_RECT& rect,
     int rotate,
     const CFX_PointF& page_point) const {
   CXFA_FFPageView* pPageView = GetXFAPageView();
   if (!m_pPDFPage && !pPageView)
-    return absl::nullopt;
+    return std::nullopt;
 
   CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
   return page2device.Transform(page_point);

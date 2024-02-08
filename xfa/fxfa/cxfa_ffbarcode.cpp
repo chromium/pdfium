@@ -93,16 +93,16 @@ const BarCodeInfo kBarCodeData[] = {
     {0xfb48155c, "code3Of9", BC_TYPE::kCode39},
 };
 
-absl::optional<BC_CHAR_ENCODING> CharEncodingFromString(
+std::optional<BC_CHAR_ENCODING> CharEncodingFromString(
     const WideString& value) {
   if (value.CompareNoCase(L"UTF-16"))
     return BC_CHAR_ENCODING::kUnicode;
   if (value.CompareNoCase(L"UTF-8"))
     return BC_CHAR_ENCODING::kUTF8;
-  return absl::nullopt;
+  return std::nullopt;
 }
 
-absl::optional<BC_TEXT_LOC> TextLocFromAttribute(XFA_AttributeValue value) {
+std::optional<BC_TEXT_LOC> TextLocFromAttribute(XFA_AttributeValue value) {
   switch (value) {
     case XFA_AttributeValue::None:
       return BC_TEXT_LOC::kNone;
@@ -115,7 +115,7 @@ absl::optional<BC_TEXT_LOC> TextLocFromAttribute(XFA_AttributeValue value) {
     case XFA_AttributeValue::BelowEmbedded:
       return BC_TEXT_LOC::kBelowEmbed;
     default:
-      return absl::nullopt;
+      return std::nullopt;
   }
 }
 
@@ -198,49 +198,49 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
   auto* pBarCodeWidget = static_cast<CFWL_Barcode*>(GetNormalWidget());
   pBarCodeWidget->SetType(bc_type);
 
-  absl::optional<WideString> encoding_string = barcode_->GetCharEncoding();
+  std::optional<WideString> encoding_string = barcode_->GetCharEncoding();
   if (encoding_string.has_value()) {
-    absl::optional<BC_CHAR_ENCODING> encoding =
+    std::optional<BC_CHAR_ENCODING> encoding =
         CharEncodingFromString(encoding_string.value());
     if (encoding.has_value())
       pBarCodeWidget->SetCharEncoding(encoding.value());
   }
 
-  absl::optional<bool> calcChecksum = barcode_->GetChecksum();
+  std::optional<bool> calcChecksum = barcode_->GetChecksum();
   if (calcChecksum.has_value())
     pBarCodeWidget->SetCalChecksum(calcChecksum.value());
 
-  absl::optional<int32_t> dataLen = barcode_->GetDataLength();
+  std::optional<int32_t> dataLen = barcode_->GetDataLength();
   if (dataLen.has_value())
     pBarCodeWidget->SetDataLength(dataLen.value());
 
-  absl::optional<char> startChar = barcode_->GetStartChar();
+  std::optional<char> startChar = barcode_->GetStartChar();
   if (startChar.has_value())
     pBarCodeWidget->SetStartChar(startChar.value());
 
-  absl::optional<char> endChar = barcode_->GetEndChar();
+  std::optional<char> endChar = barcode_->GetEndChar();
   if (endChar.has_value())
     pBarCodeWidget->SetEndChar(endChar.value());
 
-  absl::optional<int32_t> ecLevel = barcode_->GetECLevel();
+  std::optional<int32_t> ecLevel = barcode_->GetECLevel();
   if (ecLevel.has_value())
     pBarCodeWidget->SetErrorCorrectionLevel(ecLevel.value());
 
-  absl::optional<int32_t> width = barcode_->GetModuleWidth();
+  std::optional<int32_t> width = barcode_->GetModuleWidth();
   if (width.has_value())
     pBarCodeWidget->SetModuleWidth(width.value());
 
-  absl::optional<int32_t> height = barcode_->GetModuleHeight();
+  std::optional<int32_t> height = barcode_->GetModuleHeight();
   if (height.has_value())
     pBarCodeWidget->SetModuleHeight(height.value());
 
-  absl::optional<bool> printCheck = barcode_->GetPrintChecksum();
+  std::optional<bool> printCheck = barcode_->GetPrintChecksum();
   if (printCheck.has_value())
     pBarCodeWidget->SetPrintChecksum(printCheck.value());
 
-  absl::optional<XFA_AttributeValue> text_attr = barcode_->GetTextLocation();
+  std::optional<XFA_AttributeValue> text_attr = barcode_->GetTextLocation();
   if (text_attr.has_value()) {
-    absl::optional<BC_TEXT_LOC> textLoc =
+    std::optional<BC_TEXT_LOC> textLoc =
         TextLocFromAttribute(text_attr.value());
     if (textLoc.has_value())
       pBarCodeWidget->SetTextLocation(textLoc.value());
@@ -248,7 +248,7 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
 
   // Truncated is currently not a supported flag.
 
-  absl::optional<int8_t> ratio = barcode_->GetWideNarrowRatio();
+  std::optional<int8_t> ratio = barcode_->GetWideNarrowRatio();
   if (ratio.has_value())
     pBarCodeWidget->SetWideNarrowRatio(ratio.value());
 

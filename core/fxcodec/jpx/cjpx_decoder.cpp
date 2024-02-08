@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -17,7 +18,6 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/memory/ptr_util.h"
 
 #if !defined(USE_SYSTEM_LIBOPENJPEG2)
@@ -60,19 +60,19 @@ opj_stream_t* fx_opj_stream_create_memory_stream(DecodeData* data) {
   return stream;
 }
 
-absl::optional<OpjImageRgbData> alloc_rgb(size_t size) {
+std::optional<OpjImageRgbData> alloc_rgb(size_t size) {
   OpjImageRgbData data;
   data.r.reset(static_cast<int*>(opj_image_data_alloc(size)));
   if (!data.r)
-    return absl::nullopt;
+    return std::nullopt;
 
   data.g.reset(static_cast<int*>(opj_image_data_alloc(size)));
   if (!data.g)
-    return absl::nullopt;
+    return std::nullopt;
 
   data.b.reset(static_cast<int*>(opj_image_data_alloc(size)));
   if (!data.b)
-    return absl::nullopt;
+    return std::nullopt;
 
   return data;
 }
@@ -115,7 +115,7 @@ void sycc444_to_rgb(opj_image_t* img) {
   if (!y || !cb || !cr)
     return;
 
-  absl::optional<OpjImageRgbData> data = alloc_rgb(max_size.ValueOrDie());
+  std::optional<OpjImageRgbData> data = alloc_rgb(max_size.ValueOrDie());
   if (!data.has_value())
     return;
 
@@ -180,7 +180,7 @@ void sycc420_to_rgb(opj_image_t* img) {
   if (!y || !cb || !cr)
     return;
 
-  absl::optional<OpjImageRgbData> data = alloc_rgb(safe_size.ValueOrDie());
+  std::optional<OpjImageRgbData> data = alloc_rgb(safe_size.ValueOrDie());
   if (!data.has_value())
     return;
 
@@ -317,7 +317,7 @@ void sycc422_to_rgb(opj_image_t* img) {
   if (!y || !cb || !cr)
     return;
 
-  absl::optional<OpjImageRgbData> data = alloc_rgb(max_size.ValueOrDie());
+  std::optional<OpjImageRgbData> data = alloc_rgb(max_size.ValueOrDie());
   if (!data.has_value())
     return;
 
@@ -524,7 +524,7 @@ bool CJPX_Decoder::Decode(pdfium::span<uint8_t> dest_buf,
     channel_count = 4;
   }
 
-  absl::optional<uint32_t> calculated_pitch =
+  std::optional<uint32_t> calculated_pitch =
       fxge::CalculatePitch32(8 * channel_count, m_Image->comps[0].w);
   if (!calculated_pitch.has_value() || pitch < calculated_pitch.value()) {
     return false;

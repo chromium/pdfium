@@ -1098,9 +1098,9 @@ void SetDefaultIconName(CPDF_Stream* pIcon, const char* name) {
   pImageDict->SetNewFor<CPDF_String>("Name", name, false);
 }
 
-absl::optional<CheckStyle> CheckStyleFromCaption(const WideString& caption) {
+std::optional<CheckStyle> CheckStyleFromCaption(const WideString& caption) {
   if (caption.IsEmpty())
-    return absl::nullopt;
+    return std::nullopt;
 
   // Character values are ZapfDingbats encodings of named glyphs.
   switch (caption[0]) {
@@ -1117,7 +1117,7 @@ absl::optional<CheckStyle> CheckStyleFromCaption(const WideString& caption) {
     case L'u':
       return CheckStyle::kDiamond;
     default:
-      return absl::nullopt;
+      return std::nullopt;
   }
 }
 
@@ -1186,12 +1186,12 @@ void CPDFSDK_AppStream::SetAsPushButton() {
 
   CFX_FloatRect rcClient = rcWindow.GetDeflated(fBorderWidth, fBorderWidth);
   CPDF_DefaultAppearance da = pControl->GetDefaultAppearance();
-  absl::optional<CFX_Color> color = da.GetColor();
+  std::optional<CFX_Color> color = da.GetColor();
   CFX_Color crText = color.value_or(CFX_Color(CFX_Color::Type::kGray, 0));
 
   float fFontSize;
   ByteString csNameTag;
-  absl::optional<ByteString> font = da.GetFont(&fFontSize);
+  std::optional<ByteString> font = da.GetFont(&fFontSize);
   if (font.has_value())
     csNameTag = font.value();
   else
@@ -1337,7 +1337,7 @@ void CPDFSDK_AppStream::SetAsCheckBox() {
 
   CFX_FloatRect rcWindow = widget_->GetRotatedRect();
   CFX_FloatRect rcClient = rcWindow.GetDeflated(fBorderWidth, fBorderWidth);
-  absl::optional<CFX_Color> color = pControl->GetDefaultAppearance().GetColor();
+  std::optional<CFX_Color> color = pControl->GetDefaultAppearance().GetColor();
   CFX_Color crText = color.value_or(CFX_Color());
 
   CheckStyle nStyle = CheckStyleFromCaption(pControl->GetNormalCaption())
@@ -1416,7 +1416,7 @@ void CPDFSDK_AppStream::SetAsRadioButton() {
 
   CFX_FloatRect rcWindow = widget_->GetRotatedRect();
   CFX_FloatRect rcClient = rcWindow.GetDeflated(fBorderWidth, fBorderWidth);
-  absl::optional<CFX_Color> color = pControl->GetDefaultAppearance().GetColor();
+  std::optional<CFX_Color> color = pControl->GetDefaultAppearance().GetColor();
   CFX_Color crText = color.value_or(CFX_Color());
   CheckStyle nStyle = CheckStyleFromCaption(pControl->GetNormalCaption())
                           .value_or(CheckStyle::kCircle);
@@ -1502,7 +1502,7 @@ void CPDFSDK_AppStream::SetAsRadioButton() {
     widget_->SetAppStateOff();
 }
 
-void CPDFSDK_AppStream::SetAsComboBox(absl::optional<WideString> sValue) {
+void CPDFSDK_AppStream::SetAsComboBox(std::optional<WideString> sValue) {
   CPDF_FormControl* pControl = widget_->GetFormControl();
   CPDF_FormField* pField = pControl->GetField();
   fxcrt::ostringstream sBody;
@@ -1654,7 +1654,7 @@ void CPDFSDK_AppStream::SetAsListBox() {
         ByteString());
 }
 
-void CPDFSDK_AppStream::SetAsTextField(absl::optional<WideString> sValue) {
+void CPDFSDK_AppStream::SetAsTextField(std::optional<WideString> sValue) {
   CPDF_FormControl* pControl = widget_->GetFormControl();
   CPDF_FormField* pField = pControl->GetField();
   fxcrt::ostringstream sBody;

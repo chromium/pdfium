@@ -44,7 +44,7 @@ bool CFX_DIBitmap::Create(int width,
   m_Height = 0;
   m_Pitch = 0;
 
-  absl::optional<PitchAndSize> pitch_size =
+  std::optional<PitchAndSize> pitch_size =
       CalculatePitchAndSize(width, height, format, pitch);
   if (!pitch_size.has_value())
     return false;
@@ -499,35 +499,35 @@ bool CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
 }
 
 // static
-absl::optional<CFX_DIBitmap::PitchAndSize> CFX_DIBitmap::CalculatePitchAndSize(
+std::optional<CFX_DIBitmap::PitchAndSize> CFX_DIBitmap::CalculatePitchAndSize(
     int width,
     int height,
     FXDIB_Format format,
     uint32_t pitch) {
   if (width <= 0 || height <= 0) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   int bpp = GetBppFromFormat(format);
   if (!bpp) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   if (pitch == 0) {
-    absl::optional<uint32_t> pitch32 = fxge::CalculatePitch32(bpp, width);
+    std::optional<uint32_t> pitch32 = fxge::CalculatePitch32(bpp, width);
     if (!pitch32.has_value()) {
-      return absl::nullopt;
+      return std::nullopt;
     }
     pitch = pitch32.value();
   } else {
-    absl::optional<uint32_t> actual_pitch =
+    std::optional<uint32_t> actual_pitch =
         fxge::CalculatePitch8(bpp, /*components=*/1, width);
     if (!actual_pitch.has_value() || pitch < actual_pitch.value()) {
-      return absl::nullopt;
+      return std::nullopt;
     }
   }
   FX_SAFE_UINT32 safe_size = pitch;
   safe_size *= height;
   if (!safe_size.IsValid())
-    return absl::nullopt;
+    return std::nullopt;
 
   return PitchAndSize{pitch, safe_size.ValueOrDie()};
 }

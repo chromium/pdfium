@@ -651,7 +651,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParsePostExpression(
 
     switch (m_token.GetType()) {
       case TOKlparen: {
-        absl::optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
+        std::optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
             expressions = ParseArgumentList();
         if (!expressions.has_value())
           return nullptr;
@@ -682,7 +682,7 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParsePostExpression(
         if (!NextToken())
           return nullptr;
         if (m_token.GetType() == TOKlparen) {
-          absl::optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
+          std::optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
               expressions = ParseArgumentList();
           if (!expressions.has_value())
             return nullptr;
@@ -800,10 +800,10 @@ CXFA_FMSimpleExpression* CXFA_FMParser::ParsePostExpression(
 
 // Argument lists are zero or more comma seperated simple expressions found
 // between '(' and ')'
-absl::optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
+std::optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
 CXFA_FMParser::ParseArgumentList() {
   if (m_token.GetType() != TOKlparen || !NextToken())
-    return absl::nullopt;
+    return std::nullopt;
 
   std::vector<cppgc::Member<CXFA_FMSimpleExpression>> expressions;
   bool first_arg = true;
@@ -812,16 +812,16 @@ CXFA_FMParser::ParseArgumentList() {
       first_arg = false;
     } else {
       if (m_token.GetType() != TOKcomma || !NextToken())
-        return absl::nullopt;
+        return std::nullopt;
     }
 
     CXFA_FMSimpleExpression* exp = ParseSimpleExpression();
     if (!exp)
-      return absl::nullopt;
+      return std::nullopt;
 
     expressions.push_back(exp);
     if (expressions.size() > kMaxPostExpressions)
-      return absl::nullopt;
+      return std::nullopt;
   }
 
   return expressions;

@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <iterator>
 #include <limits>
+#include <optional>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -35,7 +36,6 @@
 #include "fxjs/fx_date_helpers.h"
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/span.h"
 #include "third_party/base/numerics/safe_conversions.h"
@@ -213,9 +213,9 @@ void NormalizeDecimalMarkW(WideString* str) {
   str->Replace(L",", L".");
 }
 
-absl::optional<double> ApplyNamedOperation(const WideString& wsFunction,
-                                           double dValue1,
-                                           double dValue2) {
+std::optional<double> ApplyNamedOperation(const WideString& wsFunction,
+                                          double dValue1,
+                                          double dValue2) {
   if (wsFunction.EqualsASCIINoCase("AVG") ||
       wsFunction.EqualsASCIINoCase("SUM")) {
     return dValue1 + dValue2;
@@ -226,7 +226,7 @@ absl::optional<double> ApplyNamedOperation(const WideString& wsFunction,
     return std::min(dValue1, dValue2);
   if (wsFunction.EqualsASCIINoCase("MAX"))
     return std::max(dValue1, dValue2);
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 }  // namespace
@@ -846,7 +846,7 @@ CJS_Result CJS_PublicMethods::AFPercent_Format(
   strValue.ReleaseBuffer(szNewSize);
 
   // for processing separator style
-  absl::optional<size_t> mark_pos = strValue.Find('.');
+  std::optional<size_t> mark_pos = strValue.Find('.');
   if (mark_pos.has_value()) {
     char mark = DecimalMarkForStyle(iSepStyle);
     if (mark != '.')
@@ -1255,7 +1255,7 @@ CJS_Result CJS_PublicMethods::AFSimple(
   if (isnan(arg1) || isnan(arg2))
     return CJS_Result::Failure(JSMessage::kValueError);
 
-  absl::optional<double> result = ApplyNamedOperation(sFunction, arg1, arg2);
+  std::optional<double> result = ApplyNamedOperation(sFunction, arg1, arg2);
   if (!result.has_value())
     return CJS_Result::Failure(JSMessage::kValueError);
 
@@ -1354,7 +1354,7 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
            wcscmp(sFunction.c_str(), L"MAX") == 0)) {
         dValue = dTemp;
       }
-      absl::optional<double> dResult =
+      std::optional<double> dResult =
           ApplyNamedOperation(sFunction, dValue, dTemp);
       if (!dResult.has_value())
         return CJS_Result::Failure(JSMessage::kValueError);

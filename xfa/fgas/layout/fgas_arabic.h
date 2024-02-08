@@ -7,7 +7,7 @@
 #ifndef XFA_FGAS_LAYOUT_FGAS_ARABIC_H_
 #define XFA_FGAS_LAYOUT_FGAS_ARABIC_H_
 
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include <optional>
 
 class CFGAS_Char;
 
@@ -23,7 +23,7 @@ wchar_t GetFormChar(wchar_t wch, wchar_t prev, wchar_t next);
 wchar_t GetFormChar(const CFGAS_Char* cur,
                     const CFGAS_Char* prev,
                     const CFGAS_Char* next);
-absl::optional<wchar_t> GetArabicFromShaddaTable(wchar_t shadda);
+std::optional<wchar_t> GetArabicFromShaddaTable(wchar_t shadda);
 
 }  // namespace arabic
 }  // namespace pdfium

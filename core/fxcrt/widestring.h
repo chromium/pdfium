@@ -15,12 +15,12 @@
 #include <functional>
 #include <iosfwd>
 #include <iterator>
+#include <optional>
 #include <utility>
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_data_template.h"
 #include "core/fxcrt/string_view_template.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/span.h"
 
@@ -197,9 +197,9 @@ class WideString {
 
   int GetInteger() const;
 
-  absl::optional<size_t> Find(WideStringView subStr, size_t start = 0) const;
-  absl::optional<size_t> Find(wchar_t ch, size_t start = 0) const;
-  absl::optional<size_t> ReverseFind(wchar_t ch) const;
+  std::optional<size_t> Find(WideStringView subStr, size_t start = 0) const;
+  std::optional<size_t> Find(wchar_t ch, size_t start = 0) const;
+  std::optional<size_t> ReverseFind(wchar_t ch) const;
 
   bool Contains(WideStringView lpszSub, size_t start = 0) const {
     return Find(lpszSub, start).has_value();

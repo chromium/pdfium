@@ -1028,7 +1028,7 @@ bool CFX_SkiaDeviceDriver::SetClip_PathFill(
 
   SkPath skClipPath;
   if (path.GetPoints().size() == 5 || path.GetPoints().size() == 4) {
-    absl::optional<CFX_FloatRect> maybe_rectf = path.GetRect(&deviceMatrix);
+    std::optional<CFX_FloatRect> maybe_rectf = path.GetRect(&deviceMatrix);
     if (maybe_rectf.has_value()) {
       CFX_FloatRect& rectf = maybe_rectf.value();
       rectf.Intersect(CFX_FloatRect(0, 0,

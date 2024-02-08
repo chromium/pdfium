@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -22,7 +23,6 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_font.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CFX_DIBitmap;
 class CPDF_CIDFont;
@@ -44,7 +44,7 @@ class CPDF_Font : public Retainable, public Observable {
     virtual void ParseContentForType3Char(CPDF_Type3Char* pChar) = 0;
     virtual bool HasPageObjects() const = 0;
     virtual CFX_FloatRect CalcBoundingBox() const = 0;
-    virtual absl::optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
+    virtual std::optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
     GetBitmapAndMatrixFromSoleImageOfForm() const = 0;
   };
 
@@ -96,7 +96,7 @@ class CPDF_Font : public Retainable, public Observable {
   virtual bool HasFontWidths() const;
 
   ByteString GetBaseFontName() const { return m_BaseFontName; }
-  absl::optional<FX_Charset> GetSubstFontCharset() const;
+  std::optional<FX_Charset> GetSubstFontCharset() const;
   bool IsEmbedded() const { return IsType3Font() || m_pFontFile != nullptr; }
   RetainPtr<CPDF_Dictionary> GetMutableFontDict() { return m_pFontDict; }
   RetainPtr<const CPDF_Dictionary> GetFontDict() const { return m_pFontDict; }

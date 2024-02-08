@@ -7,7 +7,8 @@
 #ifndef XFA_FXFA_PARSER_CXFA_BARCODE_H_
 #define XFA_FXFA_PARSER_CXFA_BARCODE_H_
 
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include <optional>
+
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 class CXFA_Barcode final : public CXFA_Node {
@@ -20,18 +21,18 @@ class CXFA_Barcode final : public CXFA_Node {
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
 
   WideString GetBarcodeType();
-  absl::optional<WideString> GetCharEncoding();
-  absl::optional<bool> GetChecksum();
-  absl::optional<int32_t> GetDataLength();
-  absl::optional<char> GetStartChar();
-  absl::optional<char> GetEndChar();
-  absl::optional<int32_t> GetECLevel();
-  absl::optional<int32_t> GetModuleWidth();
-  absl::optional<int32_t> GetModuleHeight();
-  absl::optional<bool> GetPrintChecksum();
-  absl::optional<XFA_AttributeValue> GetTextLocation();
-  absl::optional<bool> GetTruncate();
-  absl::optional<int8_t> GetWideNarrowRatio();
+  std::optional<WideString> GetCharEncoding();
+  std::optional<bool> GetChecksum();
+  std::optional<int32_t> GetDataLength();
+  std::optional<char> GetStartChar();
+  std::optional<char> GetEndChar();
+  std::optional<int32_t> GetECLevel();
+  std::optional<int32_t> GetModuleWidth();
+  std::optional<int32_t> GetModuleHeight();
+  std::optional<bool> GetPrintChecksum();
+  std::optional<XFA_AttributeValue> GetTextLocation();
+  std::optional<bool> GetTruncate();
+  std::optional<int8_t> GetWideNarrowRatio();
 
  private:
   CXFA_Barcode(CXFA_Document* doc, XFA_PacketType packet);

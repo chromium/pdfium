@@ -34,10 +34,10 @@ namespace {
 
 constexpr char kTrimChars[] = "\x09\x0a\x0b\x0c\x0d\x20";
 
-absl::optional<size_t> FX_strpos(pdfium::span<const char> haystack,
-                                 pdfium::span<const char> needle) {
+std::optional<size_t> FX_strpos(pdfium::span<const char> haystack,
+                                pdfium::span<const char> needle) {
   if (needle.empty() || needle.size() > haystack.size()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   // After `end_pos`, not enough characters remain in `haystack` for
   // a full match to occur.
@@ -48,7 +48,7 @@ absl::optional<size_t> FX_strpos(pdfium::span<const char> haystack,
       return haystack_pos;
     }
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 }  // namespace
@@ -537,46 +537,46 @@ size_t ByteString::Insert(size_t index, char ch) {
   return new_length;
 }
 
-absl::optional<size_t> ByteString::Find(char ch, size_t start) const {
+std::optional<size_t> ByteString::Find(char ch, size_t start) const {
   if (!m_pData)
-    return absl::nullopt;
+    return std::nullopt;
 
   if (!IsValidIndex(start))
-    return absl::nullopt;
+    return std::nullopt;
 
   const char* pStr = static_cast<const char*>(FXSYS_memchr(
       m_pData->m_String + start, ch, m_pData->m_nDataLength - start));
-  return pStr ? absl::optional<size_t>(
+  return pStr ? std::optional<size_t>(
                     static_cast<size_t>(pStr - m_pData->m_String))
-              : absl::nullopt;
+              : std::nullopt;
 }
 
-absl::optional<size_t> ByteString::Find(ByteStringView subStr,
-                                        size_t start) const {
+std::optional<size_t> ByteString::Find(ByteStringView subStr,
+                                       size_t start) const {
   if (!m_pData) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   if (!IsValidIndex(start)) {
-    return absl::nullopt;
+    return std::nullopt;
   }
-  absl::optional<size_t> result =
+  std::optional<size_t> result =
       FX_strpos(m_pData->span().subspan(start), subStr.span());
   if (!result.has_value()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   return start + result.value();
 }
 
-absl::optional<size_t> ByteString::ReverseFind(char ch) const {
+std::optional<size_t> ByteString::ReverseFind(char ch) const {
   if (!m_pData)
-    return absl::nullopt;
+    return std::nullopt;
 
   size_t nLength = m_pData->m_nDataLength;
   while (nLength--) {
     if (m_pData->m_String[nLength] == ch)
       return nLength;
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 void ByteString::MakeLower() {
@@ -638,7 +638,7 @@ size_t ByteString::Replace(ByteStringView pOld, ByteStringView pNew) {
     // Limit span lifetime.
     pdfium::span<char> search_span = m_pData->span();
     while (true) {
-      absl::optional<size_t> found = FX_strpos(search_span, pOld.span());
+      std::optional<size_t> found = FX_strpos(search_span, pOld.span());
       if (!found.has_value()) {
         break;
       }

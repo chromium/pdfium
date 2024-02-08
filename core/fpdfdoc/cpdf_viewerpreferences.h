@@ -9,10 +9,11 @@
 
 #include <stdint.h>
 
+#include <optional>
+
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CPDF_Array;
 class CPDF_Dictionary;
@@ -30,7 +31,7 @@ class CPDF_ViewerPreferences {
   ByteString Duplex() const;
 
   // Gets the entry for |bsKey|.
-  absl::optional<ByteString> GenericName(const ByteString& bsKey) const;
+  std::optional<ByteString> GenericName(const ByteString& bsKey) const;
 
  private:
   RetainPtr<const CPDF_Dictionary> GetViewerPreferences() const;

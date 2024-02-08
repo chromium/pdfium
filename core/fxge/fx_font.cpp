@@ -42,7 +42,7 @@ FX_RECT GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs, int anti_alias) {
     if (!glyph.m_pGlyph)
       continue;
 
-    absl::optional<CFX_Point> point = glyph.GetOrigin({0, 0});
+    std::optional<CFX_Point> point = glyph.GetOrigin({0, 0});
     if (!point.has_value())
       continue;
 

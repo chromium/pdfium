@@ -400,8 +400,7 @@ bool CFX_Path::IsRect() const {
   return IsRectImpl(m_Points);
 }
 
-absl::optional<CFX_FloatRect> CFX_Path::GetRect(
-    const CFX_Matrix* matrix) const {
+std::optional<CFX_FloatRect> CFX_Path::GetRect(const CFX_Matrix* matrix) const {
   bool do_normalize = PathPointsNeedNormalization(m_Points);
   std::vector<Point> normalized;
   if (do_normalize)
@@ -410,13 +409,13 @@ absl::optional<CFX_FloatRect> CFX_Path::GetRect(
 
   if (!matrix) {
     if (!IsRectImpl(path_points))
-      return absl::nullopt;
+      return std::nullopt;
 
     return CreateRectFromPoints(path_points[0].m_Point, path_points[2].m_Point);
   }
 
   if (!IsRectPreTransform(path_points))
-    return absl::nullopt;
+    return std::nullopt;
 
   CFX_PointF points[5];
   for (size_t i = 0; i < path_points.size(); ++i) {
@@ -425,11 +424,11 @@ absl::optional<CFX_FloatRect> CFX_Path::GetRect(
     if (i == 0)
       continue;
     if (XYBothNotEqual(points[i], points[i - 1]))
-      return absl::nullopt;
+      return std::nullopt;
   }
 
   if (XYBothNotEqual(points[0], points[3]))
-    return absl::nullopt;
+    return std::nullopt;
 
   return CreateRectFromPoints(points[0], points[2]);
 }

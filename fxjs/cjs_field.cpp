@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <optional>
 #include <utility>
 
 #include "constants/access_permissions.h"
@@ -27,7 +28,6 @@
 #include "fxjs/cjs_icon.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/span.h"
 #include "third_party/base/notreached.h"
@@ -68,7 +68,7 @@ void UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
     if (IsComboBoxOrTextField(pFormField)) {
       for (auto& pWidget : widgets) {
         if (pWidget) {
-          absl::optional<WideString> sValue = pWidget->OnFormat();
+          std::optional<WideString> sValue = pWidget->OnFormat();
           if (pWidget) {  // Not redundant, may be clobbered by OnFormat.
             pWidget->ResetAppearance(sValue, CPDFSDK_Widget::kValueUnchanged);
           }
@@ -77,7 +77,7 @@ void UpdateFormField(CPDFSDK_FormFillEnvironment* pFormFillEnv,
     } else {
       for (auto& pWidget : widgets) {
         if (pWidget) {
-          pWidget->ResetAppearance(absl::nullopt,
+          pWidget->ResetAppearance(std::nullopt,
                                    CPDFSDK_Widget::kValueUnchanged);
         }
       }
@@ -108,13 +108,12 @@ void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
       FormFieldType fieldType = pWidget->GetFieldType();
       if (fieldType == FormFieldType::kComboBox ||
           fieldType == FormFieldType::kTextField) {
-        absl::optional<WideString> sValue = pWidget->OnFormat();
+        std::optional<WideString> sValue = pWidget->OnFormat();
         if (!observed_widget)
           return;
         pWidget->ResetAppearance(sValue, CPDFSDK_Widget::kValueUnchanged);
       } else {
-        pWidget->ResetAppearance(absl::nullopt,
-                                 CPDFSDK_Widget::kValueUnchanged);
+        pWidget->ResetAppearance(std::nullopt, CPDFSDK_Widget::kValueUnchanged);
       }
       if (!observed_widget)
         return;
@@ -132,7 +131,7 @@ struct FieldNameData {
   int control_index;
 };
 
-absl::optional<FieldNameData> ParseFieldName(const WideString& field_name) {
+std::optional<FieldNameData> ParseFieldName(const WideString& field_name) {
   auto reverse_it = field_name.rbegin();
   while (reverse_it != field_name.rend()) {
     if (*reverse_it == L'.')
@@ -140,14 +139,14 @@ absl::optional<FieldNameData> ParseFieldName(const WideString& field_name) {
     ++reverse_it;
   }
   if (reverse_it == field_name.rend()) {
-    return absl::nullopt;
+    return std::nullopt;
   }
   WideString suffixal = field_name.Last(reverse_it - field_name.rbegin());
   int control_index = FXSYS_wtoi(suffixal.c_str());
   if (control_index == 0) {
     suffixal.TrimRight(L' ');
     if (suffixal != L"0") {
-      return absl::nullopt;
+      return std::nullopt;
     }
   }
   return FieldNameData(field_name.First(field_name.rend() - reverse_it - 1),
@@ -649,7 +648,7 @@ bool CJS_Field::AttachField(CJS_Document* pDocument,
   swFieldNameTemp.Replace(L"..", L".");
 
   if (pForm->CountFields(swFieldNameTemp) <= 0) {
-    absl::optional<FieldNameData> parsed_data = ParseFieldName(swFieldNameTemp);
+    std::optional<FieldNameData> parsed_data = ParseFieldName(swFieldNameTemp);
     if (!parsed_data.has_value())
       return false;
 
@@ -1905,7 +1904,7 @@ CJS_Result CJS_Field::get_text_color(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   CPDF_DefaultAppearance FieldAppearance = pFormControl->GetDefaultAppearance();
-  absl::optional<CFX_Color::TypeAndARGB> maybe_type_argb_pair =
+  std::optional<CFX_Color::TypeAndARGB> maybe_type_argb_pair =
       FieldAppearance.GetColorARGB();
 
   CFX_Color crRet;
@@ -1956,7 +1955,7 @@ CJS_Result CJS_Field::get_text_font(CJS_Runtime* pRuntime) {
     return CJS_Result::Failure(JSMessage::kObjectTypeError);
   }
 
-  absl::optional<WideString> wsFontName =
+  std::optional<WideString> wsFontName =
       pFormControl->GetDefaultControlFontName();
   if (!wsFontName.has_value())
     return CJS_Result::Failure(JSMessage::kBadObjectError);

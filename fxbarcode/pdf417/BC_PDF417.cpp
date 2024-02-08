@@ -366,7 +366,7 @@ bool CBC_PDF417::GenerateBarcodeLogic(WideStringView msg,
   if (errorCorrectionCodeWords < 0)
     return false;
 
-  absl::optional<WideString> high_level =
+  std::optional<WideString> high_level =
       CBC_PDF417HighLevelEncoder::EncodeHighLevel(msg);
   if (!high_level.has_value())
     return false;
@@ -391,7 +391,7 @@ bool CBC_PDF417::GenerateBarcodeLogic(WideStringView msg,
     sb += (wchar_t)900;
 
   WideString dataCodewords(sb);
-  absl::optional<WideString> ec =
+  std::optional<WideString> ec =
       CBC_PDF417ErrorCorrection::GenerateErrorCorrection(dataCodewords,
                                                          errorCorrectionLevel);
   if (!ec.has_value())

@@ -11,6 +11,7 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "core/fxcrt/css/cfx_css.h"
@@ -20,7 +21,6 @@
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "fxjs/gc/heap.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "xfa/fxfa/fxfa_basic.h"
 
@@ -110,7 +110,7 @@ class CXFA_TextParser : public cppgc::GarbageCollected<CXFA_TextParser> {
                       bool bFirst,
                       float fVerScale) const;
 
-  absl::optional<WideString> GetEmbeddedObj(
+  std::optional<WideString> GetEmbeddedObj(
       const CXFA_TextProvider* pTextProvider,
       const CFX_XMLNode* pXMLNode);
   Context* GetParseContextFromMap(const CFX_XMLNode* pXMLNode);

@@ -122,7 +122,7 @@ CFGAS_Char::BreakType CFGAS_RTFBreak::AppendChar(wchar_t wch) {
 }
 
 void CFGAS_RTFBreak::AppendChar_Combination(CFGAS_Char* pCurChar) {
-  absl::optional<uint16_t> iCharWidthRet;
+  std::optional<uint16_t> iCharWidthRet;
   if (m_pFont) {
     iCharWidthRet = m_pFont->GetCharWidth(pCurChar->char_code());
   }
@@ -212,7 +212,7 @@ CFGAS_Char::BreakType CFGAS_RTFBreak::AppendChar_Arabic(CFGAS_Char* pCurChar) {
                pLastChar->GetCharType() == FX_CHARTYPE::kArabicAlef);
       FX_SAFE_INT32 iCharWidth = 0;
       if (m_pFont) {
-        absl::optional<uint16_t> iCharWidthRet = m_pFont->GetCharWidth(wForm);
+        std::optional<uint16_t> iCharWidthRet = m_pFont->GetCharWidth(wForm);
         if (iCharWidthRet.has_value()) {
           iCharWidth = iCharWidthRet.value();
         } else {
@@ -241,7 +241,7 @@ CFGAS_Char::BreakType CFGAS_RTFBreak::AppendChar_Arabic(CFGAS_Char* pCurChar) {
                                       nullptr);
   FX_SAFE_INT32 iCharWidth = 0;
   if (m_pFont) {
-    absl::optional<uint16_t> iCharWidthRet = m_pFont->GetCharWidth(wForm);
+    std::optional<uint16_t> iCharWidthRet = m_pFont->GetCharWidth(wForm);
     if (!iCharWidthRet.has_value())
       iCharWidthRet = m_pFont->GetCharWidth(pCurChar->char_code());
     iCharWidth = iCharWidthRet.value_or(0);

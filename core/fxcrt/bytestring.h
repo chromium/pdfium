@@ -15,13 +15,13 @@
 #include <functional>
 #include <iosfwd>
 #include <iterator>
+#include <optional>
 #include <utility>
 
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_data_template.h"
 #include "core/fxcrt/string_view_template.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/span.h"
 
@@ -180,9 +180,9 @@ class ByteString {
   ByteString First(size_t count) const;
   ByteString Last(size_t count) const;
 
-  absl::optional<size_t> Find(ByteStringView subStr, size_t start = 0) const;
-  absl::optional<size_t> Find(char ch, size_t start = 0) const;
-  absl::optional<size_t> ReverseFind(char ch) const;
+  std::optional<size_t> Find(ByteStringView subStr, size_t start = 0) const;
+  std::optional<size_t> Find(char ch, size_t start = 0) const;
+  std::optional<size_t> ReverseFind(char ch) const;
 
   bool Contains(ByteStringView lpszSub, size_t start = 0) const {
     return Find(lpszSub, start).has_value();

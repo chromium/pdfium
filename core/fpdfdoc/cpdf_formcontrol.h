@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFDOC_CPDF_FORMCONTROL_H_
 #define CORE_FPDFDOC_CPDF_FORMCONTROL_H_
 
+#include <optional>
+
 #include "constants/appearance.h"
 #include "core/fpdfdoc/cpdf_aaction.h"
 #include "core/fpdfdoc/cpdf_action.h"
@@ -22,7 +24,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_color.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CFX_RenderDevice;
 class CPDF_Dictionary;
@@ -92,7 +93,7 @@ class CPDF_FormControl {
   int GetTextPosition() const;
   CPDF_DefaultAppearance GetDefaultAppearance() const;
 
-  absl::optional<WideString> GetDefaultControlFontName() const;
+  std::optional<WideString> GetDefaultControlFontName() const;
   int GetControlAlignment() const;
 
   ByteString GetOnStateName() const;

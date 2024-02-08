@@ -7,11 +7,11 @@
 #ifndef XFA_FXFA_FORMCALC_CXFA_FMPARSER_H_
 #define XFA_FXFA_FORMCALC_CXFA_FMPARSER_H_
 
+#include <optional>
 #include <vector>
 
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "fxjs/gc/heap.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "v8/include/cppgc/macros.h"
 #include "v8/include/cppgc/member.h"
 #include "xfa/fxfa/formcalc/cxfa_fmexpression.h"
@@ -60,7 +60,7 @@ class CXFA_FMParser {
   CXFA_FMSimpleExpression* ParsePostExpression(CXFA_FMSimpleExpression* e);
   CXFA_FMSimpleExpression* ParseIndexExpression();
   CXFA_FMSimpleExpression* ParseLiteral();
-  absl::optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
+  std::optional<std::vector<cppgc::Member<CXFA_FMSimpleExpression>>>
   ParseArgumentList();
 
   UnownedPtr<cppgc::Heap> const m_heap;

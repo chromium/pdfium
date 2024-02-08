@@ -7,8 +7,9 @@
 #ifndef FXJS_CJS_RESULT_H_
 #define FXJS_CJS_RESULT_H_
 
+#include <optional>
+
 #include "fxjs/js_resources.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "v8/include/v8-forward.h"
 
 class CJS_Result {
@@ -50,7 +51,7 @@ class CJS_Result {
   explicit CJS_Result(const WideString&);     // Error with custom message.
   explicit CJS_Result(JSMessage id);          // Error with stock message.
 
-  absl::optional<WideString> error_;
+  std::optional<WideString> error_;
   v8::Local<v8::Value> return_;
 };
 

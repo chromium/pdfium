@@ -10,6 +10,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "core/fpdfdoc/cpdf_action.h"
@@ -17,7 +18,6 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CPDF_Dictionary;
 class CPDF_FormControl;
@@ -58,10 +58,10 @@ class CPDFSDK_InteractiveForm final
   bool OnKeyStrokeCommit(CPDF_FormField* pFormField, const WideString& csValue);
   bool OnValidate(CPDF_FormField* pFormField, const WideString& csValue);
   void OnCalculate(CPDF_FormField* pFormField);
-  absl::optional<WideString> OnFormat(CPDF_FormField* pFormField);
+  std::optional<WideString> OnFormat(CPDF_FormField* pFormField);
 
   void ResetFieldAppearance(CPDF_FormField* pFormField,
-                            absl::optional<WideString> sValue);
+                            std::optional<WideString> sValue);
   void UpdateField(CPDF_FormField* pFormField);
 
   bool DoAction_Hide(const CPDF_Action& action);

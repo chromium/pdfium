@@ -41,15 +41,15 @@ ByteString CPDF_ViewerPreferences::Duplex() const {
   return pDict ? pDict->GetByteStringFor("Duplex") : ByteString("None");
 }
 
-absl::optional<ByteString> CPDF_ViewerPreferences::GenericName(
+std::optional<ByteString> CPDF_ViewerPreferences::GenericName(
     const ByteString& bsKey) const {
   RetainPtr<const CPDF_Dictionary> pDict = GetViewerPreferences();
   if (!pDict)
-    return absl::nullopt;
+    return std::nullopt;
 
   RetainPtr<const CPDF_Name> pName = ToName(pDict->GetObjectFor(bsKey));
   if (!pName)
-    return absl::nullopt;
+    return std::nullopt;
 
   return pName->GetString();
 }

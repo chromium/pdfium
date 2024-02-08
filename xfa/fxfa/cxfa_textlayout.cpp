@@ -811,7 +811,7 @@ bool CXFA_TextLayout::LoadRichText(const CFX_XMLNode* pXMLNode,
           while (iTabCount-- > 0)
             wsText += L'\t';
         } else {
-          absl::optional<WideString> obj =
+          std::optional<WideString> obj =
               m_pTextParser->GetEmbeddedObj(m_pTextProvider, pXMLNode);
           if (obj.has_value())
             wsText = obj.value();

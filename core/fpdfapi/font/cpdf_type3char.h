@@ -8,12 +8,12 @@
 #define CORE_FPDFAPI_FONT_CPDF_TYPE3CHAR_H_
 
 #include <memory>
+#include <optional>
 #include <utility>
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/containers/span.h"
 
 class CFX_DIBitmap;

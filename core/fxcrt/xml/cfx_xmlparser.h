@@ -8,12 +8,12 @@
 #define CORE_FXCRT_XML_CFX_XMLPARSER_H_
 
 #include <memory>
+#include <optional>
 
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 
 class CFX_SeekableStreamProxy;
 class CFX_XMLDocument;
@@ -58,7 +58,7 @@ class CFX_XMLParser final {
   RetainPtr<CFX_SeekableStreamProxy> stream_;
   DataVector<wchar_t> current_text_;
   size_t xml_plane_size_ = 1024;
-  absl::optional<size_t> entity_start_;
+  std::optional<size_t> entity_start_;
 };
 
 #endif  // CORE_FXCRT_XML_CFX_XMLPARSER_H_

@@ -47,7 +47,7 @@ class CJS_EventContext final : public IJS_EventContext {
   ~CJS_EventContext() override;
 
   // IJS_EventContext
-  absl::optional<IJS_Runtime::JS_Error> RunScript(
+  std::optional<IJS_Runtime::JS_Error> RunScript(
       const WideString& script) override;
   void OnDoc_Open(const WideString& strTargetName) override;
   void OnDoc_WillPrint() override;

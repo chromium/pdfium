@@ -6,9 +6,10 @@
 
 #include "fxjs/xfa/cfxjse_mapmodule.h"
 
+#include <optional>
+
 #include "core/fxcrt/fx_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "xfa/fxfa/parser/cxfa_measurement.h"
 
 TEST(CFXJSEMapModule, EmptyModule) {

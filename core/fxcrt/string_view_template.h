@@ -11,11 +11,11 @@
 
 #include <algorithm>
 #include <iterator>
+#include <optional>
 #include <type_traits>
 
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_system.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
 #include "third_party/base/containers/span.h"
 
 namespace fxcrt {
@@ -187,12 +187,11 @@ class StringViewTemplate {
     return static_cast<CharType>(m_Span[index]);
   }
 
-  absl::optional<size_t> Find(CharType ch) const {
+  std::optional<size_t> Find(CharType ch) const {
     const auto* found = reinterpret_cast<const UnsignedType*>(FXSYS_chr(
         reinterpret_cast<const CharType*>(m_Span.data()), ch, m_Span.size()));
 
-    return found ? absl::optional<size_t>(found - m_Span.data())
-                 : absl::nullopt;
+    return found ? std::optional<size_t>(found - m_Span.data()) : std::nullopt;
   }
 
   bool Contains(CharType ch) const { return Find(ch).has_value(); }

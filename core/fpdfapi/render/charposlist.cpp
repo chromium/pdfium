@@ -55,7 +55,7 @@ bool IsActualFontLoaded(const CFX_SubstFont* subst_font,
   subst_font_name.Remove(' ');
   subst_font_name.MakeLower();
 
-  absl::optional<size_t> find =
+  std::optional<size_t> find =
       base_font_name.Find(subst_font_name.AsStringView());
   return find.has_value() && find.value() == 0;
 }
