@@ -68,7 +68,7 @@ class CPDF_Stream final : public CPDF_Object {
   friend class CPDF_Dictionary;
 
   // Initializes with empty data and /Length set to 0 in `dict`.
-  // `dict` must be non-null.
+  // `dict` must be non-null and be a direct object.
   explicit CPDF_Stream(RetainPtr<CPDF_Dictionary> dict);
 
   // Copies `span` and `stream`, respectively. Creates a new dictionary with the
@@ -77,12 +77,12 @@ class CPDF_Stream final : public CPDF_Object {
   explicit CPDF_Stream(fxcrt::ostringstream* stream);
 
   // Reads data from `file`. `dict` will have its /Length set based on `file`.
-  // `dict` must be non-null.
+  // `dict` must be non-null and be a direct object.
   CPDF_Stream(RetainPtr<IFX_SeekableReadStream> file,
               RetainPtr<CPDF_Dictionary> dict);
 
   // Takes `data`.
-  // `dict` must be non-null.
+  // `dict` must be non-null and be a direct object.
   CPDF_Stream(DataVector<uint8_t> data, RetainPtr<CPDF_Dictionary> dict);
   ~CPDF_Stream() override;
 
