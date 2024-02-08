@@ -19,6 +19,7 @@
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/string_pool_template.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
@@ -33,27 +34,21 @@ namespace {
 
 constexpr char kTrimChars[] = "\x09\x0a\x0b\x0c\x0d\x20";
 
-const char* FX_strstr(const char* haystack,
-                      size_t haystack_len,
-                      const char* needle,
-                      size_t needle_len) {
-  if (needle_len > haystack_len || needle_len == 0)
-    return nullptr;
-
-  const char* end_ptr = haystack + haystack_len - needle_len;
-  while (haystack <= end_ptr) {
-    size_t i = 0;
-    while (true) {
-      if (haystack[i] != needle[i])
-        break;
-
-      i++;
-      if (i == needle_len)
-        return haystack;
-    }
-    haystack++;
+absl::optional<size_t> FX_strpos(pdfium::span<const char> haystack,
+                                 pdfium::span<const char> needle) {
+  if (needle.empty() || needle.size() > haystack.size()) {
+    return absl::nullopt;
   }
-  return nullptr;
+  // After `end_pos`, not enough characters remain in `haystack` for
+  // a full match to occur.
+  size_t end_pos = haystack.size() - needle.size();
+  for (size_t haystack_pos = 0; haystack_pos <= end_pos; ++haystack_pos) {
+    auto candidate = haystack.subspan(haystack_pos, needle.size());
+    if (fxcrt::span_equals(candidate, needle)) {
+      return haystack_pos;
+    }
+  }
+  return absl::nullopt;
 }
 
 }  // namespace
@@ -558,18 +553,18 @@ absl::optional<size_t> ByteString::Find(char ch, size_t start) const {
 
 absl::optional<size_t> ByteString::Find(ByteStringView subStr,
                                         size_t start) const {
-  if (!m_pData)
+  if (!m_pData) {
     return absl::nullopt;
-
-  if (!IsValidIndex(start))
+  }
+  if (!IsValidIndex(start)) {
     return absl::nullopt;
-
-  const char* pStr =
-      FX_strstr(m_pData->m_String + start, m_pData->m_nDataLength - start,
-                subStr.unterminated_c_str(), subStr.GetLength());
-  return pStr ? absl::optional<size_t>(
-                    static_cast<size_t>(pStr - m_pData->m_String))
-              : absl::nullopt;
+  }
+  absl::optional<size_t> result =
+      FX_strpos(m_pData->span().subspan(start), subStr.span());
+  if (!result.has_value()) {
+    return absl::nullopt;
+  }
+  return start + result.value();
 }
 
 absl::optional<size_t> ByteString::ReverseFind(char ch) const {
@@ -638,25 +633,24 @@ size_t ByteString::Replace(ByteStringView pOld, ByteStringView pNew) {
   if (!m_pData || pOld.IsEmpty())
     return 0;
 
-  size_t nSourceLen = pOld.GetLength();
-  size_t nReplacementLen = pNew.GetLength();
   size_t nCount = 0;
-  const char* pStart = m_pData->m_String;
-  char* pEnd = m_pData->m_String + m_pData->m_nDataLength;
-  while (true) {
-    const char* pTarget = FX_strstr(pStart, static_cast<int>(pEnd - pStart),
-                                    pOld.unterminated_c_str(), nSourceLen);
-    if (!pTarget)
-      break;
-
-    nCount++;
-    pStart = pTarget + nSourceLen;
+  {
+    // Limit span lifetime.
+    pdfium::span<char> search_span = m_pData->span();
+    while (true) {
+      absl::optional<size_t> found = FX_strpos(search_span, pOld.span());
+      if (!found.has_value()) {
+        break;
+      }
+      nCount++;
+      search_span = search_span.subspan(found.value() + pOld.GetLength());
+    }
   }
   if (nCount == 0)
     return 0;
 
   size_t nNewLength =
-      m_pData->m_nDataLength + (nReplacementLen - nSourceLen) * nCount;
+      m_pData->m_nDataLength + nCount * (pNew.GetLength() - pOld.GetLength());
 
   if (nNewLength == 0) {
     clear();
@@ -664,19 +658,20 @@ size_t ByteString::Replace(ByteStringView pOld, ByteStringView pNew) {
   }
 
   RetainPtr<StringData> pNewData(StringData::Create(nNewLength));
-  pStart = m_pData->m_String;
-  char* pDest = pNewData->m_String;
-  for (size_t i = 0; i < nCount; i++) {
-    const char* pTarget = FX_strstr(pStart, static_cast<int>(pEnd - pStart),
-                                    pOld.unterminated_c_str(), nSourceLen);
-    FXSYS_memcpy(pDest, pStart, pTarget - pStart);
-    pDest += pTarget - pStart;
-    FXSYS_memcpy(pDest, pNew.unterminated_c_str(), pNew.GetLength());
-    pDest += pNew.GetLength();
-    pStart = pTarget + nSourceLen;
+  {
+    // Spans can't outlive the StringData buffers.
+    pdfium::span<const char> search_span = m_pData->span();
+    pdfium::span<char> dest_span = pNewData->span();
+    for (size_t i = 0; i < nCount; i++) {
+      size_t found = FX_strpos(search_span, pOld.span()).value();
+      dest_span = fxcrt::spancpy(dest_span, search_span.first(found));
+      dest_span = fxcrt::spancpy(dest_span, pNew.span());
+      search_span = search_span.subspan(found + pOld.GetLength());
+    }
+    dest_span = fxcrt::spancpy(dest_span, search_span);
+    CHECK(dest_span.empty());
   }
-  FXSYS_memcpy(pDest, pStart, pEnd - pStart);
-  m_pData.Swap(pNewData);
+  m_pData = std::move(pNewData);
   return nCount;
 }
 

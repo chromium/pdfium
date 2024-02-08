@@ -10,6 +10,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "third_party/base/containers/span.h"
+
 namespace fxcrt {
 
 template <typename CharType>
@@ -28,6 +30,13 @@ class StringDataTemplate {
   void CopyContents(const StringDataTemplate& other);
   void CopyContents(const CharType* pStr, size_t nLen);
   void CopyContentsAt(size_t offset, const CharType* pStr, size_t nLen);
+
+  pdfium::span<CharType> span() {
+    return pdfium::make_span(m_String, m_nDataLength);
+  }
+  pdfium::span<const CharType> span() const {
+    return pdfium::make_span(m_String, m_nDataLength);
+  }
 
   // To ensure ref counts do not overflow, consider the worst possible case:
   // the entire address space contains nothing but pointers to this object.
