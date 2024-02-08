@@ -55,10 +55,10 @@ constexpr FX_FILESIZE kPDFHeaderSize = 9;
 // dictionary.
 constexpr size_t kMinFieldCount = 3;
 
-// V4 trailers are inline.
-constexpr uint32_t kNoV4TrailerObjectNumber = 0;
+// Trailers are inline.
+constexpr uint32_t kNoTrailerObjectNumber = 0;
 
-struct CrossRefV5IndexEntry {
+struct CrossRefStreamIndexEntry {
   uint32_t start_obj_num;
   uint32_t obj_count;
 };
@@ -104,9 +104,10 @@ uint32_t GetThirdXRefStreamEntry(pdfium::span<const uint8_t> entry_span,
       entry_span.subspan(field_widths[0] + field_widths[1], field_widths[2]));
 }
 
-std::vector<CrossRefV5IndexEntry> GetCrossRefV5Indices(const CPDF_Array* array,
-                                                       uint32_t size) {
-  std::vector<CrossRefV5IndexEntry> indices;
+std::vector<CrossRefStreamIndexEntry> GetCrossRefStreamIndices(
+    const CPDF_Array* array,
+    uint32_t size) {
+  std::vector<CrossRefStreamIndexEntry> indices;
   if (array) {
     for (size_t i = 0; i < array->size() / 2; i++) {
       RetainPtr<const CPDF_Number> pStartNumObj = array->GetNumberAt(i * 2);
@@ -249,8 +250,8 @@ CPDF_Parser::Error CPDF_Parser::StartParseInternal() {
 
   m_LastXRefOffset = ParseStartXRef();
   if (m_LastXRefOffset >= kPDFHeaderSize) {
-    if (!LoadAllCrossRefV4(m_LastXRefOffset) &&
-        !LoadAllCrossRefV5(m_LastXRefOffset)) {
+    if (!LoadAllCrossRefTable(m_LastXRefOffset) &&
+        !LoadAllCrossRefStream(m_LastXRefOffset)) {
       if (!RebuildCrossRef())
         return FORMAT_ERROR;
 
@@ -351,7 +352,7 @@ void CPDF_Parser::ReleaseEncryptHandler() {
 // In reality, we rarely see well-formed cross references don't match
 // with the objects. crbug/602650 showed a case where object numbers
 // in the cross reference table are all off by one.
-bool CPDF_Parser::VerifyCrossRefV4() {
+bool CPDF_Parser::VerifyCrossRefTable() {
   for (const auto& it : m_CrossRefTable->objects_info()) {
     if (it.second.pos <= 0)
       continue;
@@ -371,15 +372,16 @@ bool CPDF_Parser::VerifyCrossRefV4() {
   return true;
 }
 
-bool CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xref_offset) {
-  if (!LoadCrossRefV4(xref_offset, true))
+bool CPDF_Parser::LoadAllCrossRefTable(FX_FILESIZE xref_offset) {
+  if (!LoadCrossRefTable(xref_offset, /*skip=*/true)) {
     return false;
+  }
 
-  RetainPtr<CPDF_Dictionary> trailer = LoadTrailerV4();
+  RetainPtr<CPDF_Dictionary> trailer = LoadTrailer();
   if (!trailer)
     return false;
 
-  m_CrossRefTable->SetTrailer(std::move(trailer), kNoV4TrailerObjectNumber);
+  m_CrossRefTable->SetTrailer(std::move(trailer), kNoTrailerObjectNumber);
   const int32_t xrefsize = GetTrailer()->GetDirectIntegerFor("Size");
   if (xrefsize > 0 && xrefsize <= kMaxXRefSize)
     m_CrossRefTable->SetObjectMapSize(xrefsize);
@@ -405,9 +407,9 @@ bool CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xref_offset) {
       xref_list.insert(xref_list.begin(), xref_offset);
 
       // SLOW ...
-      LoadCrossRefV4(xref_offset, true);
+      LoadCrossRefTable(xref_offset, /*skip=*/true);
 
-      RetainPtr<CPDF_Dictionary> trailer_dict = LoadTrailerV4();
+      RetainPtr<CPDF_Dictionary> trailer_dict = LoadTrailer();
       if (!trailer_dict) {
         return false;
       }
@@ -419,31 +421,34 @@ bool CPDF_Parser::LoadAllCrossRefV4(FX_FILESIZE xref_offset) {
       // SLOW ...
       m_CrossRefTable = CPDF_CrossRefTable::MergeUp(
           std::make_unique<CPDF_CrossRefTable>(std::move(trailer_dict),
-                                               kNoV4TrailerObjectNumber),
+                                               kNoTrailerObjectNumber),
           std::move(m_CrossRefTable));
     }
   }
 
   for (size_t i = 0; i < xref_list.size(); ++i) {
-    if (xref_list[i] > 0 && !LoadCrossRefV4(xref_list[i], false))
-      return false;
-
-    if (xref_stream_list[i] > 0 &&
-        !LoadCrossRefV5(&xref_stream_list[i], /*is_main_xref=*/false)) {
+    if (xref_list[i] > 0 && !LoadCrossRefTable(xref_list[i], /*skip=*/false)) {
       return false;
     }
 
-    if (i == 0 && !VerifyCrossRefV4())
+    if (xref_stream_list[i] > 0 &&
+        !LoadCrossRefStream(&xref_stream_list[i], /*is_main_xref=*/false)) {
       return false;
+    }
+
+    if (i == 0 && !VerifyCrossRefTable()) {
+      return false;
+    }
   }
   return true;
 }
 
-bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE main_xref_offset) {
-  if (!LoadCrossRefV4(main_xref_offset, false))
+bool CPDF_Parser::LoadLinearizedAllCrossRefTable(FX_FILESIZE main_xref_offset) {
+  if (!LoadCrossRefTable(main_xref_offset, /*skip=*/false)) {
     return false;
+  }
 
-  RetainPtr<CPDF_Dictionary> main_trailer = LoadTrailerV4();
+  RetainPtr<CPDF_Dictionary> main_trailer = LoadTrailer();
   if (!main_trailer)
     return false;
 
@@ -462,7 +467,7 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE main_xref_offset) {
   // Merge the trailers.
   m_CrossRefTable = CPDF_CrossRefTable::MergeUp(
       std::make_unique<CPDF_CrossRefTable>(std::move(main_trailer),
-                                           kNoV4TrailerObjectNumber),
+                                           kNoTrailerObjectNumber),
       std::move(m_CrossRefTable));
 
   // Ignore /Prev for hybrid-reference files.
@@ -481,9 +486,9 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE main_xref_offset) {
       xref_list.insert(xref_list.begin(), xref_offset);
 
       // SLOW ...
-      LoadCrossRefV4(xref_offset, true);
+      LoadCrossRefTable(xref_offset, /*skip=*/true);
 
-      RetainPtr<CPDF_Dictionary> trailer_dict = LoadTrailerV4();
+      RetainPtr<CPDF_Dictionary> trailer_dict = LoadTrailer();
       if (!trailer_dict) {
         return false;
       }
@@ -495,22 +500,23 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefV4(FX_FILESIZE main_xref_offset) {
       // SLOW ...
       m_CrossRefTable = CPDF_CrossRefTable::MergeUp(
           std::make_unique<CPDF_CrossRefTable>(std::move(trailer_dict),
-                                               kNoV4TrailerObjectNumber),
+                                               kNoTrailerObjectNumber),
           std::move(m_CrossRefTable));
     }
   }
 
   if (xref_stream_list[0] > 0 &&
-      !LoadCrossRefV5(&xref_stream_list[0], /*is_main_xref=*/false)) {
+      !LoadCrossRefStream(&xref_stream_list[0], /*is_main_xref=*/false)) {
     return false;
   }
 
   for (size_t i = 1; i < xref_list.size(); ++i) {
-    if (xref_list[i] > 0 && !LoadCrossRefV4(xref_list[i], false))
+    if (xref_list[i] > 0 && !LoadCrossRefTable(xref_list[i], /*skip=*/false)) {
       return false;
+    }
 
     if (xref_stream_list[i] > 0 &&
-        !LoadCrossRefV5(&xref_stream_list[i], /*is_main_xref=*/false)) {
+        !LoadCrossRefStream(&xref_stream_list[i], /*is_main_xref=*/false)) {
       return false;
     }
   }
@@ -602,7 +608,8 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
   return true;
 }
 
-bool CPDF_Parser::ParseCrossRefV4(std::vector<CrossRefObjData>* out_objects) {
+bool CPDF_Parser::ParseCrossRefTable(
+    std::vector<CrossRefObjData>* out_objects) {
   if (out_objects)
     out_objects->clear();
 
@@ -638,11 +645,12 @@ bool CPDF_Parser::ParseCrossRefV4(std::vector<CrossRefObjData>* out_objects) {
   return true;
 }
 
-bool CPDF_Parser::LoadCrossRefV4(FX_FILESIZE pos, bool bSkip) {
+bool CPDF_Parser::LoadCrossRefTable(FX_FILESIZE pos, bool skip) {
   m_pSyntax->SetPos(pos);
   std::vector<CrossRefObjData> objects;
-  if (!ParseCrossRefV4(bSkip ? nullptr : &objects))
+  if (!ParseCrossRefTable(skip ? nullptr : &objects)) {
     return false;
+  }
 
   MergeCrossRefObjectsData(objects);
   return true;
@@ -672,8 +680,8 @@ void CPDF_Parser::MergeCrossRefObjectsData(
   }
 }
 
-bool CPDF_Parser::LoadAllCrossRefV5(FX_FILESIZE xref_offset) {
-  if (!LoadCrossRefV5(&xref_offset, /*is_main_xref=*/true)) {
+bool CPDF_Parser::LoadAllCrossRefStream(FX_FILESIZE xref_offset) {
+  if (!LoadCrossRefStream(&xref_offset, /*is_main_xref=*/true)) {
     return false;
   }
 
@@ -681,16 +689,16 @@ bool CPDF_Parser::LoadAllCrossRefV5(FX_FILESIZE xref_offset) {
   while (xref_offset > 0) {
     seen_xref_offset.insert(xref_offset);
     FX_FILESIZE save_xref_offset = xref_offset;
-    if (!LoadCrossRefV5(&xref_offset, /*is_main_xref=*/false)) {
+    if (!LoadCrossRefStream(&xref_offset, /*is_main_xref=*/false)) {
       // If a cross-reference stream failed to load at `xref_offset`, try
       // loading a cross-reference table at the same location. Use
       // `save_xref_offset` instead of `xref_offset`, as `xref_offset` may have
       // changed.
-      if (!LoadCrossRefV4(save_xref_offset, /*bSkip=*/false)) {
+      if (!LoadCrossRefTable(save_xref_offset, /*skip=*/false)) {
         return false;
       }
 
-      RetainPtr<CPDF_Dictionary> trailer_dict = LoadTrailerV4();
+      RetainPtr<CPDF_Dictionary> trailer_dict = LoadTrailer();
       if (!trailer_dict) {
         return false;
       }
@@ -789,7 +797,7 @@ bool CPDF_Parser::RebuildCrossRef() {
   return GetTrailer() && !m_CrossRefTable->objects_info().empty();
 }
 
-bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool is_main_xref) {
+bool CPDF_Parser::LoadCrossRefStream(FX_FILESIZE* pos, bool is_main_xref) {
   RetainPtr<const CPDF_Stream> pStream =
       ToStream(ParseIndirectObjectAt(*pos, 0));
   if (!pStream || !pStream->GetObjNum()) {
@@ -818,8 +826,8 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool is_main_xref) {
         std::move(new_cross_ref_table), std::move(m_CrossRefTable));
   }
 
-  std::vector<CrossRefV5IndexEntry> indices =
-      GetCrossRefV5Indices(pDict->GetArrayFor("Index").Get(), size);
+  std::vector<CrossRefStreamIndexEntry> indices =
+      GetCrossRefStreamIndices(pDict->GetArrayFor("Index").Get(), size);
 
   std::vector<uint32_t> field_widths =
       GetFieldWidths(pDict->GetArrayFor("W").Get());
@@ -854,10 +862,10 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool is_main_xref) {
     }
 
     // Until SetObjectMapSize() below has been called by a prior loop iteration,
-    // `current_size` is based on the /Size value parsed in LoadCrossRefV5().
-    // PDFs may not always have the correct /Size. In this case, other PDF
-    // implementations ignore the incorrect size, and PDFium also ignores
-    // incorrect size in trailers for V4 xrefs.
+    // `current_size` is based on the /Size value parsed in
+    // LoadCrossRefStream(). PDFs may not always have the correct /Size. In this
+    // case, other PDF implementations ignore the incorrect size, and PDFium
+    // also ignores incorrect size in trailers for cross reference tables.
     const uint32_t current_size =
         m_CrossRefTable->objects_info().empty() ? 0 : GetLastObjNum() + 1;
     // So allow `new_size` to be greater than `current_size`, but avoid going
@@ -875,8 +883,8 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool is_main_xref) {
         break;
       }
 
-      ProcessCrossRefV5Entry(seg_span.subspan(i * total_width, total_width),
-                             field_widths, obj_num);
+      ProcessCrossRefStreamEntry(seg_span.subspan(i * total_width, total_width),
+                                 field_widths, obj_num);
     }
 
     segindex += index.obj_count;
@@ -884,7 +892,7 @@ bool CPDF_Parser::LoadCrossRefV5(FX_FILESIZE* pos, bool is_main_xref) {
   return true;
 }
 
-void CPDF_Parser::ProcessCrossRefV5Entry(
+void CPDF_Parser::ProcessCrossRefStreamEntry(
     pdfium::span<const uint8_t> entry_span,
     pdfium::span<const uint32_t> field_widths,
     uint32_t obj_num) {
@@ -1107,7 +1115,7 @@ void CPDF_Parser::SetLinearizedHeaderForTesting(
   m_pLinearized = std::move(pLinearized);
 }
 
-RetainPtr<CPDF_Dictionary> CPDF_Parser::LoadTrailerV4() {
+RetainPtr<CPDF_Dictionary> CPDF_Parser::LoadTrailer() {
   if (m_pSyntax->GetKeyword() != "trailer")
     return nullptr;
 
@@ -1144,20 +1152,22 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
 
   m_LastXRefOffset = m_pLinearized->GetLastXRefOffset();
   FX_FILESIZE dwFirstXRefOffset = m_LastXRefOffset;
-  bool bLoadV4 = LoadCrossRefV4(dwFirstXRefOffset, false);
-  if (!bLoadV4 && !LoadCrossRefV5(&dwFirstXRefOffset, /*is_main_xref=*/true)) {
+  const bool loaded_xref_table =
+      LoadCrossRefTable(dwFirstXRefOffset, /*skip=*/false);
+  if (!loaded_xref_table &&
+      !LoadCrossRefStream(&dwFirstXRefOffset, /*is_main_xref=*/true)) {
     if (!RebuildCrossRef())
       return FORMAT_ERROR;
 
     m_bXRefTableRebuilt = true;
     m_LastXRefOffset = 0;
   }
-  if (bLoadV4) {
-    RetainPtr<CPDF_Dictionary> trailer = LoadTrailerV4();
+  if (loaded_xref_table) {
+    RetainPtr<CPDF_Dictionary> trailer = LoadTrailer();
     if (!trailer)
       return SUCCESS;
 
-    m_CrossRefTable->SetTrailer(std::move(trailer), kNoV4TrailerObjectNumber);
+    m_CrossRefTable->SetTrailer(std::move(trailer), kNoTrailerObjectNumber);
     const int32_t xrefsize = GetTrailer()->GetDirectIntegerFor("Size");
     if (xrefsize > 0) {
       // Check if `xrefsize` is correct. If it is incorrect, give up and rebuild
@@ -1209,16 +1219,17 @@ CPDF_Parser::Error CPDF_Parser::StartLinearizedParse(
   return SUCCESS;
 }
 
-bool CPDF_Parser::LoadLinearizedAllCrossRefV5(FX_FILESIZE main_xref_offset) {
+bool CPDF_Parser::LoadLinearizedAllCrossRefStream(
+    FX_FILESIZE main_xref_offset) {
   FX_FILESIZE xref_offset = main_xref_offset;
-  if (!LoadCrossRefV5(&xref_offset, /*is_main_xref=*/false)) {
+  if (!LoadCrossRefStream(&xref_offset, /*is_main_xref=*/false)) {
     return false;
   }
 
   std::set<FX_FILESIZE> seen_xref_offset;
   while (xref_offset) {
     seen_xref_offset.insert(xref_offset);
-    if (!LoadCrossRefV5(&xref_offset, /*is_main_xref=*/false)) {
+    if (!LoadCrossRefStream(&xref_offset, /*is_main_xref=*/false)) {
       return false;
     }
 
@@ -1244,8 +1255,8 @@ CPDF_Parser::Error CPDF_Parser::LoadLinearizedMainXRefTable() {
   m_MetadataObjnum = 0;
   m_ObjectStreamMap.clear();
 
-  if (!LoadLinearizedAllCrossRefV4(main_xref_offset) &&
-      !LoadLinearizedAllCrossRefV5(main_xref_offset)) {
+  if (!LoadLinearizedAllCrossRefTable(main_xref_offset) &&
+      !LoadLinearizedAllCrossRefStream(main_xref_offset)) {
     m_LastXRefOffset = 0;
     return FORMAT_ERROR;
   }

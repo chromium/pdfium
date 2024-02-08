@@ -21,7 +21,7 @@ std::unique_ptr<CPDF_SyntaxParser> MakeParserForBuffer(
 
 }  // namespace
 
-TEST(CrossRefAvailTest, CheckCrossRefV4) {
+TEST(CrossRefAvailTest, CheckCrossRefTable) {
   const unsigned char xref_table[] =
       "xref \n"
       "0 6 \n"
@@ -129,7 +129,7 @@ TEST(CrossRefAvailTest, IncorrectData) {
   EXPECT_EQ(CPDF_DataAvail::kDataError, cross_ref_avail->CheckAvail());
 }
 
-TEST(CrossRefAvailTest, ThreeCrossRefV4) {
+TEST(CrossRefAvailTest, ThreeCrossRefTable) {
   char int_buffer[100];
   std::string table = "pdf blah blah blah\n";
   size_t cur_offset = table.size();
@@ -177,7 +177,7 @@ TEST(CrossRefAvailTest, ThreeCrossRefV4) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, cross_ref_avail->CheckAvail());
 }
 
-TEST(CrossRefAvailTest, ThreeCrossRefV5) {
+TEST(CrossRefAvailTest, ThreeCrossRefStream) {
   char int_buffer[100];
   std::string table = "pdf blah blah blah\n";
   size_t cur_offset = table.size();
@@ -225,7 +225,7 @@ TEST(CrossRefAvailTest, Mixed) {
   char int_buffer[100];
   std::string table = "pdf blah blah blah\n";
 
-  const int first_v5_table_offset = static_cast<int>(table.size());
+  const int first_stream_offset = static_cast<int>(table.size());
   table +=
       "16 0 obj\n"
       "<</Type /XRef>>"
@@ -235,7 +235,7 @@ TEST(CrossRefAvailTest, Mixed) {
       "endobj\n";
   table += "Dummy Data jgwhughouiwbahng";
 
-  const int second_v4_table_offset = static_cast<int>(table.size());
+  const int second_table_offset = static_cast<int>(table.size());
   table += std::string(
                "xref \n"
                "0 6 \n"
@@ -246,10 +246,10 @@ TEST(CrossRefAvailTest, Mixed) {
                "4f9bb2e7978401808f8f1f2a75c322c8>]"
                "/Info 15 0 R/Size 16"
                "/Prev ") +
-           FXSYS_itoa(first_v5_table_offset, int_buffer, 10) + ">>\n";
+           FXSYS_itoa(first_stream_offset, int_buffer, 10) + ">>\n";
   table += "More Dummy Data jgwhughouiwbahng";
 
-  const int last_v4_table_offset = static_cast<int>(table.size());
+  const int last_table_offset = static_cast<int>(table.size());
   table += std::string(
                "xref \n"
                "0 6 \n"
@@ -260,9 +260,9 @@ TEST(CrossRefAvailTest, Mixed) {
                "4f9bb2e7978401808f8f1f2a75c322c8>]"
                "/Info 15 0 R/Size 16"
                "/Prev ") +
-           FXSYS_itoa(second_v4_table_offset, int_buffer, 10) + " /XRefStm " +
-           FXSYS_itoa(first_v5_table_offset, int_buffer, 10) + ">>\n";
-  const FX_FILESIZE last_crossref_offset = last_v4_table_offset;
+           FXSYS_itoa(second_table_offset, int_buffer, 10) + " /XRefStm " +
+           FXSYS_itoa(first_stream_offset, int_buffer, 10) + ">>\n";
+  const FX_FILESIZE last_crossref_offset = last_table_offset;
 
   auto parser = MakeParserForBuffer(pdfium::as_byte_span(table));
   auto cross_ref_avail =
@@ -270,7 +270,7 @@ TEST(CrossRefAvailTest, Mixed) {
   EXPECT_EQ(CPDF_DataAvail::kDataAvailable, cross_ref_avail->CheckAvail());
 }
 
-TEST(CrossRefAvailTest, CrossRefV5IsNotStream) {
+TEST(CrossRefAvailTest, CrossRefStreamIsNotStream) {
   const unsigned char invalid_xref_stream[] =
       "16 0 obj\n"
       "[/array /object]\n"
@@ -284,7 +284,7 @@ TEST(CrossRefAvailTest, CrossRefV5IsNotStream) {
   EXPECT_EQ(CPDF_DataAvail::kDataError, cross_ref_avail->CheckAvail());
 }
 
-TEST(CrossRefAvailTest, CrossRefV4WithEncryptRef) {
+TEST(CrossRefAvailTest, CrossRefTableWithEncryptRef) {
   const unsigned char xref_table[] =
       "xref \n"
       "0 6 \n"

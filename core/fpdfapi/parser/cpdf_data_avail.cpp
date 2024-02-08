@@ -195,8 +195,10 @@ bool CPDF_DataAvail::CheckAndLoadAllXref() {
       return false;
   }
 
-  if (!m_parser.LoadAllCrossRefV4(m_pCrossRefAvail->last_crossref_offset()) &&
-      !m_parser.LoadAllCrossRefV5(m_pCrossRefAvail->last_crossref_offset())) {
+  if (!m_parser.LoadAllCrossRefTable(
+          m_pCrossRefAvail->last_crossref_offset()) &&
+      !m_parser.LoadAllCrossRefStream(
+          m_pCrossRefAvail->last_crossref_offset())) {
     m_internalStatus = InternalStatus::kLoadAllFile;
     return false;
   }

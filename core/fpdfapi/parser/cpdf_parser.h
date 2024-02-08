@@ -127,7 +127,7 @@ class CPDF_Parser {
       std::unique_ptr<CPDF_LinearizedHeader> pLinearized);
 
  protected:
-  bool LoadCrossRefV4(FX_FILESIZE pos, bool bSkip);
+  bool LoadCrossRefTable(FX_FILESIZE pos, bool skip);
   bool RebuildCrossRef();
   Error StartParseInternal();
   FX_FILESIZE ParseStartXRef();
@@ -143,22 +143,22 @@ class CPDF_Parser {
     CPDF_CrossRefTable::ObjectInfo info;
   };
 
-  bool LoadAllCrossRefV4(FX_FILESIZE xref_offset);
-  bool LoadAllCrossRefV5(FX_FILESIZE xref_offset);
-  bool LoadCrossRefV5(FX_FILESIZE* pos, bool is_main_xref);
-  void ProcessCrossRefV5Entry(pdfium::span<const uint8_t> entry_span,
-                              pdfium::span<const uint32_t> field_widths,
-                              uint32_t obj_num);
-  RetainPtr<CPDF_Dictionary> LoadTrailerV4();
+  bool LoadAllCrossRefTable(FX_FILESIZE xref_offset);
+  bool LoadAllCrossRefStream(FX_FILESIZE xref_offset);
+  bool LoadCrossRefStream(FX_FILESIZE* pos, bool is_main_xref);
+  void ProcessCrossRefStreamEntry(pdfium::span<const uint8_t> entry_span,
+                                  pdfium::span<const uint32_t> field_widths,
+                                  uint32_t obj_num);
+  RetainPtr<CPDF_Dictionary> LoadTrailer();
   Error SetEncryptHandler();
   void ReleaseEncryptHandler();
-  bool LoadLinearizedAllCrossRefV4(FX_FILESIZE main_xref_offset);
-  bool LoadLinearizedAllCrossRefV5(FX_FILESIZE main_xref_offset);
+  bool LoadLinearizedAllCrossRefTable(FX_FILESIZE main_xref_offset);
+  bool LoadLinearizedAllCrossRefStream(FX_FILESIZE main_xref_offset);
   Error LoadLinearizedMainXRefTable();
   const CPDF_ObjectStream* GetObjectStream(uint32_t object_number);
   // A simple check whether the cross reference table matches with
   // the objects.
-  bool VerifyCrossRefV4();
+  bool VerifyCrossRefTable();
 
   // If out_objects is null, the parser position will be moved to end subsection
   // without additional validation.
@@ -166,7 +166,7 @@ class CPDF_Parser {
       uint32_t start_objnum,
       uint32_t count,
       std::vector<CrossRefObjData>* out_objects);
-  bool ParseCrossRefV4(std::vector<CrossRefObjData>* out_objects);
+  bool ParseCrossRefTable(std::vector<CrossRefObjData>* out_objects);
   void MergeCrossRefObjectsData(const std::vector<CrossRefObjData>& objects);
 
   bool InitSyntaxParser(RetainPtr<CPDF_ReadValidator> validator);

@@ -45,11 +45,11 @@ CPDF_DataAvail::DocAvailStatus CPDF_CrossRefAvail::CheckAvail() {
       case State::kCrossRefCheck:
         check_result = CheckCrossRef();
         break;
-      case State::kCrossRefV4ItemCheck:
-        check_result = CheckCrossRefV4Item();
+      case State::kCrossRefTableItemCheck:
+        check_result = CheckCrossRefTableItem();
         break;
-      case State::kCrossRefV4TrailerCheck:
-        check_result = CheckCrossRefV4Trailer();
+      case State::kCrossRefTableTrailerCheck:
+        check_result = CheckCrossRefTableTrailer();
         break;
       case State::kDone:
         break;
@@ -83,7 +83,7 @@ bool CPDF_CrossRefAvail::CheckCrossRef() {
   if (CheckReadProblems())
     return false;
 
-  const bool result = (first_word == kCrossRefKeyword) ? CheckCrossRefV4()
+  const bool result = (first_word == kCrossRefKeyword) ? CheckCrossRefTable()
                                                        : CheckCrossRefStream();
 
   if (result)
@@ -92,7 +92,7 @@ bool CPDF_CrossRefAvail::CheckCrossRef() {
   return result;
 }
 
-bool CPDF_CrossRefAvail::CheckCrossRefV4() {
+bool CPDF_CrossRefAvail::CheckCrossRefTable() {
   const ByteString keyword = parser_->GetKeyword();
   if (CheckReadProblems())
     return false;
@@ -102,12 +102,12 @@ bool CPDF_CrossRefAvail::CheckCrossRefV4() {
     return false;
   }
 
-  state_ = State::kCrossRefV4ItemCheck;
+  state_ = State::kCrossRefTableItemCheck;
   offset_ = parser_->GetPos();
   return true;
 }
 
-bool CPDF_CrossRefAvail::CheckCrossRefV4Item() {
+bool CPDF_CrossRefAvail::CheckCrossRefTableItem() {
   parser_->SetPos(offset_);
   const ByteString keyword = parser_->GetKeyword();
   if (CheckReadProblems())
@@ -119,14 +119,14 @@ bool CPDF_CrossRefAvail::CheckCrossRefV4Item() {
   }
 
   if (keyword == kTrailerKeyword)
-    state_ = State::kCrossRefV4TrailerCheck;
+    state_ = State::kCrossRefTableTrailerCheck;
 
   // Go to next item.
   offset_ = parser_->GetPos();
   return true;
 }
 
-bool CPDF_CrossRefAvail::CheckCrossRefV4Trailer() {
+bool CPDF_CrossRefAvail::CheckCrossRefTableTrailer() {
   parser_->SetPos(offset_);
 
   RetainPtr<CPDF_Dictionary> trailer =

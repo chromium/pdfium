@@ -27,16 +27,16 @@ class CPDF_CrossRefAvail {
  private:
   enum class State {
     kCrossRefCheck,
-    kCrossRefV4ItemCheck,
-    kCrossRefV4TrailerCheck,
+    kCrossRefTableItemCheck,
+    kCrossRefTableTrailerCheck,
     kDone,
   };
 
   bool CheckReadProblems();
   bool CheckCrossRef();
-  bool CheckCrossRefV4();
-  bool CheckCrossRefV4Item();
-  bool CheckCrossRefV4Trailer();
+  bool CheckCrossRefTable();
+  bool CheckCrossRefTableItem();
+  bool CheckCrossRefTableTrailer();
   bool CheckCrossRefStream();
 
   void AddCrossRefForCheck(FX_FILESIZE crossref_offset);
