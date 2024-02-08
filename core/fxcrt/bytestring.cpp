@@ -477,24 +477,13 @@ ByteString ByteString::Substr(size_t offset) const {
 }
 
 ByteString ByteString::Substr(size_t first, size_t count) const {
-  if (!m_pData)
+  if (!m_pData) {
     return ByteString();
-
-  if (!IsValidIndex(first))
-    return ByteString();
-
-  if (count == 0 || !IsValidLength(count))
-    return ByteString();
-
-  if (!IsValidIndex(first + count - 1))
-    return ByteString();
-
-  if (first == 0 && count == m_pData->m_nDataLength)
+  }
+  if (first == 0 && count == m_pData->m_nDataLength) {
     return *this;
-
-  ByteString dest;
-  AllocCopy(dest, count, first);
-  return dest;
+  }
+  return ByteString(AsStringView().Substr(first, count));
 }
 
 ByteString ByteString::First(size_t count) const {
@@ -504,17 +493,6 @@ ByteString ByteString::First(size_t count) const {
 ByteString ByteString::Last(size_t count) const {
   // Unsigned underflow is well-defined and out-of-range is handled by Substr().
   return Substr(GetLength() - count, count);
-}
-
-void ByteString::AllocCopy(ByteString& dest,
-                           size_t nCopyLen,
-                           size_t nCopyIndex) const {
-  if (nCopyLen == 0)
-    return;
-
-  RetainPtr<StringData> pNewData(
-      StringData::Create(m_pData->m_String + nCopyIndex, nCopyLen));
-  dest.m_pData.Swap(pNewData);
 }
 
 void ByteString::SetAt(size_t index, char c) {

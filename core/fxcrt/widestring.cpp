@@ -796,24 +796,13 @@ WideString WideString::Substr(size_t offset) const {
 }
 
 WideString WideString::Substr(size_t first, size_t count) const {
-  if (!m_pData)
+  if (!m_pData) {
     return WideString();
-
-  if (!IsValidIndex(first))
-    return WideString();
-
-  if (count == 0 || !IsValidLength(count))
-    return WideString();
-
-  if (!IsValidIndex(first + count - 1))
-    return WideString();
-
-  if (first == 0 && count == GetLength())
+  }
+  if (first == 0 && count == GetLength()) {
     return *this;
-
-  WideString dest;
-  AllocCopy(dest, count, first);
-  return dest;
+  }
+  return WideString(AsStringView().Substr(first, count));
 }
 
 WideString WideString::First(size_t count) const {
@@ -823,17 +812,6 @@ WideString WideString::First(size_t count) const {
 WideString WideString::Last(size_t count) const {
   // Unsigned underflow is well-defined and out-of-range is handled by Substr().
   return Substr(GetLength() - count, count);
-}
-
-void WideString::AllocCopy(WideString& dest,
-                           size_t nCopyLen,
-                           size_t nCopyIndex) const {
-  if (nCopyLen == 0)
-    return;
-
-  RetainPtr<StringData> pNewData(
-      StringData::Create(m_pData->m_String + nCopyIndex, nCopyLen));
-  dest.m_pData.Swap(pNewData);
 }
 
 size_t WideString::Insert(size_t index, wchar_t ch) {
