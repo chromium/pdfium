@@ -508,14 +508,31 @@ include_rules = [
   '+testing',
   '+third_party/base',
 
-  # Abseil features must be allowlisted explicitly for now. See Chromium's
-  # //styleguide/c++/c++11.html. Allowed features' headers will be listed
-  # explicitly here.
-  '-absl',
-  '-third_party/abseil-cpp',
+  # Abseil is allowed by default, but some features are banned. See Chromium's
+  # //styleguide/c++/c++-features.md.
+  '+third_party/abseil-cpp',
+  '-third_party/abseil-cpp/absl/algorithm/container.h',
+  '-third_party/abseil-cpp/absl/base/no_destructor.h',
+  '-third_party/abseil-cpp/absl/base/nullability.h',
+  '-third_party/abseil-cpp/absl/container',
   '+third_party/abseil-cpp/absl/container/inlined_vector.h',
-  '+third_party/abseil-cpp/absl/types/optional.h',
-  '+third_party/abseil-cpp/absl/types/variant.h',
+  '-third_party/abseil-cpp/absl/crc',
+  '-third_party/abseil-cpp/absl/flags',
+  '-third_party/abseil-cpp/absl/functional/any_invocable.h',
+  '-third_party/abseil-cpp/absl/functional/bind_front.h',
+  '-third_party/abseil-cpp/absl/functional/function_ref.h',
+  '-third_party/abseil-cpp/absl/functional/overload.h',
+  '-third_party/abseil-cpp/absl/hash',
+  '-third_party/abseil-cpp/absl/log',
+  '-third_party/abseil-cpp/absl/random',
+  '-third_party/abseil-cpp/absl/status/statusor.h',
+  '-third_party/abseil-cpp/absl/strings',
+  '+third_party/abseil-cpp/absl/strings/ascii.h',
+  '+third_party/abseil-cpp/absl/strings/cord.h',
+  '-third_party/abseil-cpp/absl/synchronization',
+  '-third_party/abseil-cpp/absl/time',
+  '-third_party/abseil-cpp/absl/types/any.h',
+  '-third_party/abseil-cpp/absl/types/span.h',
 ]
 
 specific_include_rules = {
