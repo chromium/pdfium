@@ -15,5 +15,8 @@ third_party {
     mitigated_security_patch: "CVE-2023-26965"
     mitigated_security_patch: "CVE-2023-40745"
     mitigated_security_patch: "CVE-2023-41175"
+
+    # There are no callers to TIFFRasterScanlineSize() in PDFium's code base.
+    mitigated_security_patch: "CVE-2023-52355"
   }
 }
