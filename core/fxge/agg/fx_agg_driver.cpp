@@ -1305,7 +1305,7 @@ RetainPtr<CFX_DIBitmap> CFX_AggDeviceDriver::GetBackDrop() {
   return m_pBackdropBitmap;
 }
 
-bool CFX_AggDeviceDriver::SetDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
+bool CFX_AggDeviceDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                     uint32_t argb,
                                     const FX_RECT& src_rect,
                                     int left,
@@ -1314,14 +1314,14 @@ bool CFX_AggDeviceDriver::SetDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
   if (m_pBitmap->GetBuffer().empty())
     return true;
 
-  if (pBitmap->IsMaskFormat()) {
+  if (bitmap->IsMaskFormat()) {
     return m_pBitmap->CompositeMask(left, top, src_rect.Width(),
-                                    src_rect.Height(), std::move(pBitmap), argb,
+                                    src_rect.Height(), std::move(bitmap), argb,
                                     src_rect.left, src_rect.top, blend_type,
                                     m_pClipRgn.get(), m_bRgbByteOrder);
   }
   return m_pBitmap->CompositeBitmap(left, top, src_rect.Width(),
-                                    src_rect.Height(), std::move(pBitmap),
+                                    src_rect.Height(), std::move(bitmap),
                                     src_rect.left, src_rect.top, blend_type,
                                     m_pClipRgn.get(), m_bRgbByteOrder);
 }

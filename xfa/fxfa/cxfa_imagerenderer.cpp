@@ -8,6 +8,8 @@
 
 #include <math.h>
 
+#include <utility>
+
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -84,8 +86,9 @@ bool CXFA_ImageRenderer::Start() {
       dest_rect.right - image_rect.left, dest_rect.bottom - image_rect.top);
   RetainPtr<CFX_DIBitmap> pStretched =
       m_pDIBBase->StretchTo(dest_width, dest_height, options, &dest_clip);
-  if (pStretched)
-    CompositeDIBitmap(pStretched, dest_rect.left, dest_rect.top);
+  if (pStretched) {
+    CompositeDIBitmap(std::move(pStretched), dest_rect.left, dest_rect.top);
+  }
 
   return false;
 }
@@ -95,17 +98,18 @@ bool CXFA_ImageRenderer::Continue() {
     if (m_pTransformer->Continue(nullptr))
       return true;
 
-    RetainPtr<CFX_DIBitmap> pBitmap = m_pTransformer->DetachBitmap();
-    if (!pBitmap)
+    RetainPtr<CFX_DIBitmap> bitmap = m_pTransformer->DetachBitmap();
+    if (!bitmap) {
       return false;
+    }
 
-    if (pBitmap->IsMaskFormat()) {
-      m_pDevice->SetBitMask(pBitmap, m_pTransformer->result().left,
+    if (bitmap->IsMaskFormat()) {
+      m_pDevice->SetBitMask(std::move(bitmap), m_pTransformer->result().left,
                             m_pTransformer->result().top, 0);
     } else {
-      m_pDevice->SetDIBitsWithBlend(pBitmap, m_pTransformer->result().left,
-                                    m_pTransformer->result().top,
-                                    BlendMode::kNormal);
+      m_pDevice->SetDIBitsWithBlend(
+          std::move(bitmap), m_pTransformer->result().left,
+          m_pTransformer->result().top, BlendMode::kNormal);
     }
     return false;
   }
@@ -115,17 +119,16 @@ bool CXFA_ImageRenderer::Continue() {
   return false;
 }
 
-void CXFA_ImageRenderer::CompositeDIBitmap(
-    const RetainPtr<CFX_DIBitmap>& pDIBitmap,
-    int left,
-    int top) {
-  if (!pDIBitmap)
-    return;
+void CXFA_ImageRenderer::CompositeDIBitmap(RetainPtr<CFX_DIBitmap> bitmap,
+                                           int left,
+                                           int top) {
+  CHECK(bitmap);
 
-  if (!pDIBitmap->IsMaskFormat()) {
-    if (m_pDevice->SetDIBits(pDIBitmap, left, top))
+  if (!bitmap->IsMaskFormat()) {
+    if (m_pDevice->SetDIBits(std::move(bitmap), left, top)) {
       return;
-  } else if (m_pDevice->SetBitMask(pDIBitmap, left, top, 0)) {
+    }
+  } else if (m_pDevice->SetBitMask(bitmap, left, top, 0)) {
     return;
   }
 
@@ -133,25 +136,31 @@ void CXFA_ImageRenderer::CompositeDIBitmap(
                         (!(m_pDevice->GetRenderCaps() & FXRC_ALPHA_OUTPUT) &&
                          (m_pDevice->GetRenderCaps() & FXRC_GET_BITS));
   if (bGetBackGround) {
-    if (pDIBitmap->IsMaskFormat())
+    if (bitmap->IsMaskFormat()) {
       return;
+    }
 
-    m_pDevice->SetDIBitsWithBlend(pDIBitmap, left, top, BlendMode::kNormal);
+    m_pDevice->SetDIBitsWithBlend(std::move(bitmap), left, top,
+                                  BlendMode::kNormal);
     return;
   }
-  if (!pDIBitmap->IsAlphaFormat() ||
+  if (!bitmap->IsAlphaFormat() ||
       (m_pDevice->GetRenderCaps() & FXRC_ALPHA_IMAGE)) {
     return;
   }
 
-  RetainPtr<CFX_DIBitmap> pConverted = pDIBitmap->ConvertTo(FXDIB_Format::kRgb);
-  if (!pConverted)
+  bitmap = bitmap->ConvertTo(FXDIB_Format::kRgb);
+  if (!bitmap) {
     return;
+  }
 
-  CXFA_ImageRenderer imageRender(m_pDevice, pConverted, m_ImageMatrix);
-  if (!imageRender.Start())
+  CXFA_ImageRenderer image_renderer(m_pDevice, std::move(bitmap),
+                                    m_ImageMatrix);
+  if (!image_renderer.Start()) {
     return;
+  }
 
-  while (imageRender.Continue())
+  while (image_renderer.Continue()) {
     continue;
+  }
 }

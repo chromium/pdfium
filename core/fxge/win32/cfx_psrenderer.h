@@ -77,7 +77,7 @@ class CFX_PSRenderer {
                 uint32_t fill_color,
                 uint32_t stroke_color,
                 const CFX_FillRenderOptions& fill_options);
-  bool SetDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
+  bool SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                  uint32_t color,
                  int dest_left,
                  int dest_top);

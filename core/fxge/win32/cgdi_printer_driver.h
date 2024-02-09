@@ -21,7 +21,7 @@ class CGdiPrinterDriver final : public CGdiDeviceDriver {
  private:
   // CGdiPrinterDriver:
   int GetDeviceCaps(int caps_id) const override;
-  bool SetDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
+  bool SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                  uint32_t color,
                  const FX_RECT& src_rect,
                  int left,

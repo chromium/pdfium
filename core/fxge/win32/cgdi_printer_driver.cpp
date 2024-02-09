@@ -40,28 +40,29 @@ int CGdiPrinterDriver::GetDeviceCaps(int caps_id) const {
   return CGdiDeviceDriver::GetDeviceCaps(caps_id);
 }
 
-bool CGdiPrinterDriver::SetDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
+bool CGdiPrinterDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                   uint32_t color,
                                   const FX_RECT& src_rect,
                                   int left,
                                   int top,
                                   BlendMode blend_type) {
-  if (pSource->IsMaskFormat()) {
+  if (bitmap->IsMaskFormat()) {
     FX_RECT clip_rect(left, top, left + src_rect.Width(),
                       top + src_rect.Height());
-    int dest_width = pSource->GetWidth();
-    int dest_height = pSource->GetHeight();
-    return StretchDIBits(std::move(pSource), color, left - src_rect.left,
+    int dest_width = bitmap->GetWidth();
+    int dest_height = bitmap->GetHeight();
+    return StretchDIBits(std::move(bitmap), color, left - src_rect.left,
                          top - src_rect.top, dest_width, dest_height,
                          &clip_rect, FXDIB_ResampleOptions(),
                          BlendMode::kNormal);
   }
 
   DCHECK_EQ(blend_type, BlendMode::kNormal);
-  if (pSource->IsAlphaFormat())
+  if (bitmap->IsAlphaFormat()) {
     return false;
+  }
 
-  return GDI_SetDIBits(pSource, src_rect, left, top);
+  return GDI_SetDIBits(std::move(bitmap), src_rect, left, top);
 }
 
 bool CGdiPrinterDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,

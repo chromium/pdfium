@@ -76,51 +76,52 @@ bool CGdiDisplayDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   return ret;
 }
 
-bool CGdiDisplayDriver::SetDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
+bool CGdiDisplayDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                   uint32_t color,
                                   const FX_RECT& src_rect,
                                   int left,
                                   int top,
                                   BlendMode blend_type) {
   DCHECK_EQ(blend_type, BlendMode::kNormal);
-  if (pSource->IsMaskFormat()) {
-    int width = pSource->GetWidth();
-    int height = pSource->GetHeight();
+  if (bitmap->IsMaskFormat()) {
+    int width = bitmap->GetWidth();
+    int height = bitmap->GetHeight();
     int alpha = FXARGB_A(color);
-    if (pSource->GetBPP() != 1 || alpha != 255) {
+    if (bitmap->GetBPP() != 1 || alpha != 255) {
       auto background = pdfium::MakeRetain<CFX_DIBitmap>();
       if (!background->Create(width, height, FXDIB_Format::kRgb32) ||
           !GetDIBits(background, left, top) ||
-          !background->CompositeMask(0, 0, width, height, std::move(pSource),
+          !background->CompositeMask(0, 0, width, height, std::move(bitmap),
                                      color, 0, 0, BlendMode::kNormal, nullptr,
                                      false)) {
         return false;
       }
       FX_RECT alpha_src_rect(0, 0, width, height);
-      return SetDIBits(background, 0, alpha_src_rect, left, top,
-                       BlendMode::kNormal);
+      return SetDIBits(std::move(background), /*color=*/0, alpha_src_rect, left,
+                       top, BlendMode::kNormal);
     }
     FX_RECT clip_rect(left, top, left + src_rect.Width(),
                       top + src_rect.Height());
-    return StretchDIBits(std::move(pSource), color, left - src_rect.left,
+    return StretchDIBits(std::move(bitmap), color, left - src_rect.left,
                          top - src_rect.top, width, height, &clip_rect,
                          FXDIB_ResampleOptions(), BlendMode::kNormal);
   }
   int width = src_rect.Width();
   int height = src_rect.Height();
-  if (pSource->IsAlphaFormat()) {
-    auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (!bitmap->Create(width, height, FXDIB_Format::kRgb) ||
-        !GetDIBits(bitmap, left, top) ||
-        !bitmap->CompositeBitmap(0, 0, width, height, std::move(pSource),
-                                 src_rect.left, src_rect.top,
-                                 BlendMode::kNormal, nullptr, false)) {
+  if (bitmap->IsAlphaFormat()) {
+    auto rgb_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+    if (!rgb_bitmap->Create(width, height, FXDIB_Format::kRgb) ||
+        !GetDIBits(rgb_bitmap, left, top) ||
+        !rgb_bitmap->CompositeBitmap(0, 0, width, height, std::move(bitmap),
+                                     src_rect.left, src_rect.top,
+                                     BlendMode::kNormal, nullptr, false)) {
       return false;
     }
     FX_RECT alpha_src_rect(0, 0, width, height);
-    return SetDIBits(bitmap, 0, alpha_src_rect, left, top, BlendMode::kNormal);
+    return SetDIBits(std::move(rgb_bitmap), /*color=*/0, alpha_src_rect, left,
+                     top, BlendMode::kNormal);
   }
-  return GDI_SetDIBits(std::move(pSource), src_rect, left, top);
+  return GDI_SetDIBits(std::move(bitmap), src_rect, left, top);
 }
 
 bool CGdiDisplayDriver::UseFoxitStretchEngine(

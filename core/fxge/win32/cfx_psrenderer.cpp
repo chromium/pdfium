@@ -478,14 +478,14 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
   WriteStream(buf);
 }
 
-bool CFX_PSRenderer::SetDIBits(const RetainPtr<const CFX_DIBBase>& pSource,
+bool CFX_PSRenderer::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                uint32_t color,
                                int left,
                                int top) {
   StartRendering();
   CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(
-      pSource->GetWidth(), pSource->GetHeight(), left, top);
-  return DrawDIBits(std::move(pSource), color, matrix, FXDIB_ResampleOptions());
+      bitmap->GetWidth(), bitmap->GetHeight(), left, top);
+  return DrawDIBits(std::move(bitmap), color, matrix, FXDIB_ResampleOptions());
 }
 
 bool CFX_PSRenderer::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,

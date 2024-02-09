@@ -67,7 +67,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
                  int left,
                  int top) override;
   RetainPtr<CFX_DIBitmap> GetBackDrop() override;
-  bool SetDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
+  bool SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                  uint32_t argb,
                  const FX_RECT& src_rect,
                  int left,

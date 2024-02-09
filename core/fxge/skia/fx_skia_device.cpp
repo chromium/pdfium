@@ -1390,25 +1390,24 @@ RetainPtr<CFX_DIBitmap> CFX_SkiaDeviceDriver::GetBackDrop() {
   return m_pBackdropBitmap;
 }
 
-bool CFX_SkiaDeviceDriver::SetDIBits(
-    const RetainPtr<const CFX_DIBBase>& pBitmap,
-    uint32_t color,
-    const FX_RECT& src_rect,
-    int left,
-    int top,
-    BlendMode blend_type) {
+bool CFX_SkiaDeviceDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
+                                     uint32_t color,
+                                     const FX_RECT& src_rect,
+                                     int left,
+                                     int top,
+                                     BlendMode blend_type) {
   if (m_pBitmap->GetBuffer().empty()) {
     return true;
   }
 
   CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(
-      pBitmap->GetWidth(), pBitmap->GetHeight(), left, top);
+      bitmap->GetWidth(), bitmap->GetHeight(), left, top);
 
   // `bNoSmoothing` prevents linear sampling when rendering bitmaps.
   FXDIB_ResampleOptions sampling_options;
   sampling_options.bNoSmoothing = true;
 
-  return StartDIBitsSkia(std::move(pBitmap), src_rect, /*alpha=*/1.0f, color,
+  return StartDIBitsSkia(std::move(bitmap), src_rect, /*alpha=*/1.0f, color,
                          matrix, sampling_options, blend_type);
 }
 

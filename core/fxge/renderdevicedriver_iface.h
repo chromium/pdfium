@@ -72,7 +72,7 @@ class RenderDeviceDriverIface {
                          int left,
                          int top);
   virtual RetainPtr<CFX_DIBitmap> GetBackDrop();
-  virtual bool SetDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
+  virtual bool SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                          uint32_t color,
                          const FX_RECT& src_rect,
                          int dest_left,

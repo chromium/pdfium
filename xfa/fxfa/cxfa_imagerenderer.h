@@ -32,9 +32,7 @@ class CXFA_ImageRenderer {
  private:
   enum class State : uint8_t { kInitial = 0, kTransforming, kStarted };
 
-  void CompositeDIBitmap(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
-                         int left,
-                         int top);
+  void CompositeDIBitmap(RetainPtr<CFX_DIBitmap> bitmap, int left, int top);
 
   State m_State = State::kInitial;
   CFX_Matrix m_ImageMatrix;

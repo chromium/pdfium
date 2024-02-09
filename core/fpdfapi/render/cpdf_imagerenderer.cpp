@@ -462,10 +462,10 @@ bool CPDF_ImageRenderer::StartDIBBase() {
   FX_RECT dest_clip(
       dest_rect.left - image_rect->left, dest_rect.top - image_rect->top,
       dest_rect.right - image_rect->left, dest_rect.bottom - image_rect->top);
-  RetainPtr<CFX_DIBitmap> pStretched = m_pDIBBase->StretchTo(
+  RetainPtr<CFX_DIBitmap> stretched = m_pDIBBase->StretchTo(
       dest_width, dest_height, m_ResampleOptions, &dest_clip);
-  if (pStretched) {
-    m_pRenderStatus->CompositeDIBitmap(pStretched, dest_rect.left,
+  if (stretched) {
+    m_pRenderStatus->CompositeDIBitmap(std::move(stretched), dest_rect.left,
                                        dest_rect.top, m_FillArgb, m_Alpha,
                                        m_BlendType, CPDF_Transparency());
   }
@@ -558,22 +558,23 @@ bool CPDF_ImageRenderer::ContinueTransform(PauseIndicatorIface* pPause) {
   if (m_pTransformer->Continue(pPause))
     return true;
 
-  RetainPtr<CFX_DIBitmap> pBitmap = m_pTransformer->DetachBitmap();
-  if (!pBitmap)
+  RetainPtr<CFX_DIBitmap> bitmap = m_pTransformer->DetachBitmap();
+  if (!bitmap) {
     return false;
+  }
 
-  if (pBitmap->IsMaskFormat()) {
+  if (bitmap->IsMaskFormat()) {
     if (m_Alpha != 1.0f) {
       m_FillArgb = FXARGB_MUL_ALPHA(m_FillArgb, FXSYS_roundf(m_Alpha * 255));
     }
     m_Result = m_pRenderStatus->GetRenderDevice()->SetBitMask(
-        pBitmap, m_pTransformer->result().left, m_pTransformer->result().top,
-        m_FillArgb);
+        std::move(bitmap), m_pTransformer->result().left,
+        m_pTransformer->result().top, m_FillArgb);
   } else {
-    pBitmap->MultiplyAlpha(m_Alpha);
+    bitmap->MultiplyAlpha(m_Alpha);
     m_Result = m_pRenderStatus->GetRenderDevice()->SetDIBitsWithBlend(
-        pBitmap, m_pTransformer->result().left, m_pTransformer->result().top,
-        m_BlendType);
+        std::move(bitmap), m_pTransformer->result().left,
+        m_pTransformer->result().top, m_BlendType);
   }
   return false;
 }

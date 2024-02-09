@@ -53,7 +53,7 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
 
   void DrawLine(float x1, float y1, float x2, float y2);
 
-  bool GDI_SetDIBits(const RetainPtr<const CFX_DIBBase>& source,
+  bool GDI_SetDIBits(RetainPtr<const CFX_DIBBase> source,
                      const FX_RECT& src_rect,
                      int left,
                      int top);

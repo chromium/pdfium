@@ -45,7 +45,7 @@ class CPSPrinterDriver final : public RenderDeviceDriverIface {
                 const CFX_FillRenderOptions& fill_options,
                 BlendMode blend_type) override;
   bool GetClipBox(FX_RECT* pRect) override;
-  bool SetDIBits(const RetainPtr<const CFX_DIBBase>& pBitmap,
+  bool SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                  uint32_t color,
                  const FX_RECT& src_rect,
                  int left,

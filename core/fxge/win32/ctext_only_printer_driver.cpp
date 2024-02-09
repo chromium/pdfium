@@ -84,13 +84,12 @@ bool CTextOnlyPrinterDriver::DrawPath(const CFX_Path& path,
   return false;
 }
 
-bool CTextOnlyPrinterDriver::SetDIBits(
-    const RetainPtr<const CFX_DIBBase>& pBitmap,
-    uint32_t color,
-    const FX_RECT& src_rect,
-    int left,
-    int top,
-    BlendMode blend_type) {
+bool CTextOnlyPrinterDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
+                                       uint32_t color,
+                                       const FX_RECT& src_rect,
+                                       int left,
+                                       int top,
+                                       BlendMode blend_type) {
   return false;
 }
 
