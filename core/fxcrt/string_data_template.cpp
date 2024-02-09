@@ -20,7 +20,7 @@ namespace fxcrt {
 
 // static
 template <typename CharType>
-StringDataTemplate<CharType>* StringDataTemplate<CharType>::Create(
+RetainPtr<StringDataTemplate<CharType>> StringDataTemplate<CharType>::Create(
     size_t nLen) {
   DCHECK_GT(nLen, 0u);
 
@@ -42,16 +42,15 @@ StringDataTemplate<CharType>* StringDataTemplate<CharType>::Create(
   DCHECK(usableLen >= nLen);
 
   void* pData = FX_StringAlloc(char, totalSize);
-  return new (pData) StringDataTemplate(nLen, usableLen);
+  return pdfium::WrapRetain(new (pData) StringDataTemplate(nLen, usableLen));
 }
 
 // static
 template <typename CharType>
-StringDataTemplate<CharType>* StringDataTemplate<CharType>::Create(
-    const CharType* pStr,
-    size_t nLen) {
-  StringDataTemplate* result = Create(nLen);
-  result->CopyContents(pStr, nLen);
+RetainPtr<StringDataTemplate<CharType>> StringDataTemplate<CharType>::Create(
+    pdfium::span<const CharType> str) {
+  RetainPtr<StringDataTemplate> result = Create(str.size());
+  result->CopyContents(str);
   return result;
 }
 
@@ -70,30 +69,24 @@ void StringDataTemplate<CharType>::CopyContents(
 }
 
 template <typename CharType>
-void StringDataTemplate<CharType>::CopyContents(const CharType* pStr,
-                                                size_t nLen) {
-  DCHECK_GE(nLen, 0u);
-  DCHECK_LE(nLen, m_nAllocLength);
-  FXSYS_memcpy(m_String, pStr, nLen * sizeof(CharType));
-  m_String[nLen] = 0;
+void StringDataTemplate<CharType>::CopyContents(
+    pdfium::span<const CharType> str) {
+  FXSYS_memcpy(m_String, str.data(), str.size_bytes());
+  m_String[str.size()] = 0;
 }
 
 template <typename CharType>
-void StringDataTemplate<CharType>::CopyContentsAt(size_t offset,
-                                                  const CharType* pStr,
-                                                  size_t nLen) {
-  DCHECK_GE(offset, 0u);
-  DCHECK_GE(nLen, 0u);
-  DCHECK_LE(offset + nLen, m_nAllocLength);
-  FXSYS_memcpy(m_String + offset, pStr, nLen * sizeof(CharType));
-  m_String[offset + nLen] = 0;
+void StringDataTemplate<CharType>::CopyContentsAt(
+    size_t offset,
+    pdfium::span<const CharType> str) {
+  FXSYS_memcpy(m_String + offset, str.data(), str.size_bytes());
+  m_String[offset + str.size()] = 0;
 }
 
 template <typename CharType>
 StringDataTemplate<CharType>::StringDataTemplate(size_t dataLen,
                                                  size_t allocLen)
     : m_nDataLength(dataLen), m_nAllocLength(allocLen) {
-  DCHECK_GE(dataLen, 0u);
   DCHECK_LE(dataLen, allocLen);
   m_String[dataLen] = 0;
 }

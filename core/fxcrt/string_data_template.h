@@ -10,6 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "core/fxcrt/retain_ptr.h"
 #include "third_party/base/containers/span.h"
 
 namespace fxcrt {
@@ -17,8 +18,8 @@ namespace fxcrt {
 template <typename CharType>
 class StringDataTemplate {
  public:
-  static StringDataTemplate* Create(size_t nLen);
-  static StringDataTemplate* Create(const CharType* pStr, size_t nLen);
+  static RetainPtr<StringDataTemplate> Create(size_t nLen);
+  static RetainPtr<StringDataTemplate> Create(pdfium::span<const CharType> str);
 
   void Retain() { ++m_nRefs; }
   void Release();
@@ -28,8 +29,8 @@ class StringDataTemplate {
   }
 
   void CopyContents(const StringDataTemplate& other);
-  void CopyContents(const CharType* pStr, size_t nLen);
-  void CopyContentsAt(size_t offset, const CharType* pStr, size_t nLen);
+  void CopyContents(pdfium::span<const CharType> str);
+  void CopyContentsAt(size_t offset, pdfium::span<const CharType> str);
 
   pdfium::span<CharType> span() {
     return pdfium::make_span(m_String, m_nDataLength);

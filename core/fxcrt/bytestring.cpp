@@ -108,26 +108,22 @@ ByteString ByteString::Format(const char* pFormat, ...) {
 }
 
 ByteString::ByteString(const char* pStr, size_t nLen) {
-  if (nLen)
-    m_pData.Reset(StringData::Create(pStr, nLen));
+  if (nLen) {
+    m_pData = StringData::Create({pStr, nLen});
+  }
 }
 
-ByteString::ByteString(const uint8_t* pStr, size_t nLen) {
-  if (nLen)
-    m_pData.Reset(
-        StringData::Create(reinterpret_cast<const char*>(pStr), nLen));
-}
+ByteString::ByteString(const uint8_t* pStr, size_t nLen)
+    : ByteString(reinterpret_cast<const char*>(pStr), nLen) {}
 
 ByteString::ByteString() = default;
 
 ByteString::ByteString(const ByteString& other) = default;
 
-ByteString::ByteString(ByteString&& other) noexcept {
-  m_pData.Swap(other.m_pData);
-}
+ByteString::ByteString(ByteString&& other) noexcept = default;
 
 ByteString::ByteString(char ch) {
-  m_pData.Reset(StringData::Create(1));
+  m_pData = StringData::Create(1);
   m_pData->m_String[0] = ch;
 }
 
@@ -136,8 +132,7 @@ ByteString::ByteString(const char* ptr)
 
 ByteString::ByteString(ByteStringView bstrc) {
   if (!bstrc.IsEmpty()) {
-    m_pData.Reset(
-        StringData::Create(bstrc.unterminated_c_str(), bstrc.GetLength()));
+    m_pData = StringData::Create(bstrc.span());
   }
 }
 
@@ -149,10 +144,9 @@ ByteString::ByteString(ByteStringView str1, ByteStringView str2) {
   if (nNewLen == 0)
     return;
 
-  m_pData.Reset(StringData::Create(nNewLen));
-  m_pData->CopyContents(str1.unterminated_c_str(), str1.GetLength());
-  m_pData->CopyContentsAt(str1.GetLength(), str2.unterminated_c_str(),
-                          str2.GetLength());
+  m_pData = StringData::Create(nNewLen);
+  m_pData->CopyContents(str1.span());
+  m_pData->CopyContentsAt(str1.GetLength(), str2.span());
 }
 
 ByteString::ByteString(const std::initializer_list<ByteStringView>& list) {
@@ -164,20 +158,20 @@ ByteString::ByteString(const std::initializer_list<ByteStringView>& list) {
   if (nNewLen == 0)
     return;
 
-  m_pData.Reset(StringData::Create(nNewLen));
+  m_pData = StringData::Create(nNewLen);
 
   size_t nOffset = 0;
   for (const auto& item : list) {
-    m_pData->CopyContentsAt(nOffset, item.unterminated_c_str(),
-                            item.GetLength());
+    m_pData->CopyContentsAt(nOffset, item.span());
     nOffset += item.GetLength();
   }
 }
 
 ByteString::ByteString(const fxcrt::ostringstream& outStream) {
   auto str = outStream.str();
-  if (!str.empty())
-    m_pData.Reset(StringData::Create(str.c_str(), str.size()));
+  if (!str.empty()) {
+    m_pData = StringData::Create({str.c_str(), str.size()});
+  }
 }
 
 ByteString::~ByteString() = default;
@@ -335,7 +329,7 @@ bool ByteString::EqualNoCase(ByteStringView str) const {
 
 void ByteString::AssignCopy(const char* pSrcData, size_t nSrcLen) {
   AllocBeforeWrite(nSrcLen);
-  m_pData->CopyContents(pSrcData, nSrcLen);
+  m_pData->CopyContents({pSrcData, nSrcLen});
   m_pData->m_nDataLength = nSrcLen;
 }
 
@@ -348,28 +342,27 @@ void ByteString::ReallocBeforeWrite(size_t nNewLength) {
     return;
   }
 
-  RetainPtr<StringData> pNewData(StringData::Create(nNewLength));
+  RetainPtr<StringData> pNewData = StringData::Create(nNewLength);
   if (m_pData) {
     size_t nCopyLength = std::min(m_pData->m_nDataLength, nNewLength);
-    pNewData->CopyContents(m_pData->m_String, nCopyLength);
+    pNewData->CopyContents({m_pData->m_String, nCopyLength});
     pNewData->m_nDataLength = nCopyLength;
   } else {
     pNewData->m_nDataLength = 0;
   }
   pNewData->m_String[pNewData->m_nDataLength] = 0;
-  m_pData.Swap(pNewData);
+  m_pData = std::move(pNewData);
 }
 
 void ByteString::AllocBeforeWrite(size_t nNewLength) {
-  if (m_pData && m_pData->CanOperateInPlace(nNewLength))
+  if (m_pData && m_pData->CanOperateInPlace(nNewLength)) {
     return;
-
+  }
   if (nNewLength == 0) {
     clear();
     return;
   }
-
-  m_pData.Reset(StringData::Create(nNewLength));
+  m_pData = StringData::Create(nNewLength);
 }
 
 void ByteString::ReleaseBuffer(size_t nNewLength) {
@@ -399,10 +392,10 @@ void ByteString::Reserve(size_t len) {
 
 pdfium::span<char> ByteString::GetBuffer(size_t nMinBufLength) {
   if (!m_pData) {
-    if (nMinBufLength == 0)
+    if (nMinBufLength == 0) {
       return pdfium::span<char>();
-
-    m_pData.Reset(StringData::Create(nMinBufLength));
+    }
+    m_pData = StringData::Create(nMinBufLength);
     m_pData->m_nDataLength = 0;
     m_pData->m_String[0] = 0;
     return pdfium::span<char>(m_pData->m_String, m_pData->m_nAllocLength);
@@ -415,10 +408,10 @@ pdfium::span<char> ByteString::GetBuffer(size_t nMinBufLength) {
   if (nMinBufLength == 0)
     return pdfium::span<char>();
 
-  RetainPtr<StringData> pNewData(StringData::Create(nMinBufLength));
+  RetainPtr<StringData> pNewData = StringData::Create(nMinBufLength);
   pNewData->CopyContents(*m_pData);
   pNewData->m_nDataLength = m_pData->m_nDataLength;
-  m_pData.Swap(pNewData);
+  m_pData = std::move(pNewData);
   return pdfium::span<char>(m_pData->m_String, m_pData->m_nAllocLength);
 }
 
@@ -448,23 +441,23 @@ void ByteString::Concat(const char* pSrcData, size_t nSrcLen) {
     return;
 
   if (!m_pData) {
-    m_pData.Reset(StringData::Create(pSrcData, nSrcLen));
+    m_pData = StringData::Create({pSrcData, nSrcLen});
     return;
   }
 
   if (m_pData->CanOperateInPlace(m_pData->m_nDataLength + nSrcLen)) {
-    m_pData->CopyContentsAt(m_pData->m_nDataLength, pSrcData, nSrcLen);
+    m_pData->CopyContentsAt(m_pData->m_nDataLength, {pSrcData, nSrcLen});
     m_pData->m_nDataLength += nSrcLen;
     return;
   }
 
   size_t nConcatLen = std::max(m_pData->m_nDataLength / 2, nSrcLen);
-  RetainPtr<StringData> pNewData(
-      StringData::Create(m_pData->m_nDataLength + nConcatLen));
+  RetainPtr<StringData> pNewData =
+      StringData::Create(m_pData->m_nDataLength + nConcatLen);
   pNewData->CopyContents(*m_pData);
-  pNewData->CopyContentsAt(m_pData->m_nDataLength, pSrcData, nSrcLen);
+  pNewData->CopyContentsAt(m_pData->m_nDataLength, {pSrcData, nSrcLen});
   pNewData->m_nDataLength = m_pData->m_nDataLength + nSrcLen;
-  m_pData.Swap(pNewData);
+  m_pData = std::move(pNewData);
 }
 
 intptr_t ByteString::ReferenceCountForTesting() const {
@@ -635,7 +628,7 @@ size_t ByteString::Replace(ByteStringView pOld, ByteStringView pNew) {
     return nCount;
   }
 
-  RetainPtr<StringData> pNewData(StringData::Create(nNewLength));
+  RetainPtr<StringData> pNewData = StringData::Create(nNewLength);
   {
     // Spans can't outlive the StringData buffers.
     pdfium::span<const char> search_span = m_pData->span();
