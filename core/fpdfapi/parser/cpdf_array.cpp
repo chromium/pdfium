@@ -231,6 +231,7 @@ CPDF_Object* CPDF_Array::SetAtInternal(size_t index,
   CHECK(!IsLocked());
   CHECK(pObj);
   CHECK(pObj->IsInline());
+  CHECK(!pObj->IsStream());
   if (index >= m_Objects.size())
     return nullptr;
 
@@ -244,6 +245,7 @@ CPDF_Object* CPDF_Array::InsertAtInternal(size_t index,
   CHECK(!IsLocked());
   CHECK(pObj);
   CHECK(pObj->IsInline());
+  CHECK(!pObj->IsStream());
   if (index > m_Objects.size())
     return nullptr;
 
@@ -256,6 +258,7 @@ CPDF_Object* CPDF_Array::AppendInternal(RetainPtr<CPDF_Object> pObj) {
   CHECK(!IsLocked());
   CHECK(pObj);
   CHECK(pObj->IsInline());
+  CHECK(!pObj->IsStream());
   CPDF_Object* pRet = pObj.Get();
   m_Objects.push_back(std::move(pObj));
   return pRet;
