@@ -174,18 +174,23 @@ class StringViewTemplate {
   bool IsValidIndex(size_t index) const { return index < m_Span.size(); }
   bool IsValidLength(size_t length) const { return length <= m_Span.size(); }
 
+  // CHECK() if index is out of range (via span's operator[]).
   const UnsignedType& operator[](const size_t index) const {
     return m_Span[index];
   }
 
-  UnsignedType Front() const { return !m_Span.empty() ? m_Span[0] : 0; }
-  UnsignedType Back() const {
-    return !m_Span.empty() ? m_Span[m_Span.size() - 1] : 0;
-  }
-
+  // CHECK() if index is out of range (via span's operator[]).
   CharType CharAt(const size_t index) const {
     return static_cast<CharType>(m_Span[index]);
   }
+
+  // Unlike std::string_view::front(), this is always safe and returns a
+  // NUL char when the string is empty.
+  UnsignedType Front() const { return !m_Span.empty() ? m_Span.front() : 0; }
+
+  // Unlike std::string_view::back(), this is always safe and returns a
+  // NUL char when the string is empty.
+  UnsignedType Back() const { return !m_Span.empty() ? m_Span.back() : 0; }
 
   std::optional<size_t> Find(CharType ch) const {
     const auto* found = reinterpret_cast<const UnsignedType*>(FXSYS_chr(

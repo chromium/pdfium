@@ -38,6 +38,14 @@ class StringDataTemplate {
     return pdfium::make_span(m_String, m_nDataLength);
   }
 
+  // Unlike std::string::front(), this is always safe and returns a
+  // NUL char when the string is empty.
+  CharType Front() const { return !span().empty() ? span().front() : 0; }
+
+  // Unlike std::string::back(), this is always safe and returns a
+  // NUL char when the string is empty.
+  CharType Back() const { return !span().empty() ? span().back() : 0; }
+
   // To ensure ref counts do not overflow, consider the worst possible case:
   // the entire address space contains nothing but pointers to this object.
   // Since the count increments with each new pointer, the largest value is

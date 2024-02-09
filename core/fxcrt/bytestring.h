@@ -71,11 +71,12 @@ class ByteString {
   // to force immediate release if desired.
   void clear();
 
-  // Explicit conversion to C-style string.
+  // Explicit conversion to C-style string. The result is never nullptr,
+  // and is always NUL terminated.
   // Note: Any subsequent modification of |this| will invalidate the result.
   const char* c_str() const { return m_pData ? m_pData->m_String : ""; }
 
-  // Explicit conversion to uint8_t*.
+  // Explicit conversion to uint8_t*. May return nullptr.
   // Note: Any subsequent modification of |this| will invalidate the result.
   const uint8_t* raw_str() const {
     return m_pData ? reinterpret_cast<const uint8_t*>(m_pData->m_String)
@@ -99,9 +100,11 @@ class ByteString {
   }
 
   // Note: Any subsequent modification of |this| will invalidate iterators.
-  const_iterator begin() const { return m_pData ? m_pData->m_String : nullptr; }
+  const_iterator begin() const {
+    return m_pData ? m_pData->span().begin() : nullptr;
+  }
   const_iterator end() const {
-    return m_pData ? m_pData->m_String + m_pData->m_nDataLength : nullptr;
+    return m_pData ? m_pData->span().end() : nullptr;
   }
 
   // Note: Any subsequent modification of |this| will invalidate iterators.
@@ -147,13 +150,19 @@ class ByteString {
   ByteString& operator+=(const ByteString& str);
   ByteString& operator+=(ByteStringView str);
 
+  // CHECK() if index is out of range (via span's operator[]).
   CharType operator[](const size_t index) const {
-    CHECK(IsValidIndex(index));
-    return m_pData->m_String[index];
+    CHECK(m_pData);
+    return m_pData->span()[index];
   }
 
-  CharType Front() const { return GetLength() ? (*this)[0] : 0; }
-  CharType Back() const { return GetLength() ? (*this)[GetLength() - 1] : 0; }
+  // Unlike std::string::front(), this is always safe and returns a
+  // NUL char when the string is empty.
+  CharType Front() const { return m_pData ? m_pData->Front() : 0; }
+
+  // Unlike std::string::back(), this is always safe and returns a
+  // NUL char when the string is empty.
+  CharType Back() const { return m_pData ? m_pData->Back() : 0; }
 
   void SetAt(size_t index, char c);
 
