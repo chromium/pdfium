@@ -636,6 +636,8 @@ TEST(PDFArrayTest, GetTypeAt) {
   }
   {
     // Stream array.
+    CPDF_IndirectObjectHolder object_holder;
+
     RetainPtr<CPDF_Dictionary> vals[3];
     RetainPtr<CPDF_Stream> stream_vals[3];
     auto arr = pdfium::MakeRetain<CPDF_Array>();
@@ -649,9 +651,11 @@ TEST(PDFArrayTest, GetTypeAt) {
         vals[i]->SetNewFor<CPDF_Number>(key.c_str(), value);
       }
       static constexpr uint8_t kContents[] = "content: this is a stream";
-      stream_vals[i] = arr->AppendNew<CPDF_Stream>(
+      stream_vals[i] = object_holder.NewIndirect<CPDF_Stream>(
           DataVector<uint8_t>(std::begin(kContents), std::end(kContents)),
           vals[i]);
+      arr->AppendNew<CPDF_Reference>(&object_holder,
+                                     stream_vals[i]->GetObjNum());
     }
     for (size_t i = 0; i < 3; ++i) {
       TestArrayAccessors(arr.Get(), i,           // Array and index.
@@ -666,6 +670,8 @@ TEST(PDFArrayTest, GetTypeAt) {
   }
   {
     // Mixed array.
+
+    CPDF_IndirectObjectHolder object_holder;
     auto arr = pdfium::MakeRetain<CPDF_Array>();
     arr->InsertNewAt<CPDF_Boolean>(0, true);
     arr->InsertNewAt<CPDF_Boolean>(1, false);
@@ -693,9 +699,10 @@ TEST(PDFArrayTest, GetTypeAt) {
     static constexpr uint8_t kData[] = "A stream for test";
     // The data buffer will be owned by stream object, so it needs to be
     // dynamically allocated.
-    CPDF_Stream* stream_val = arr->InsertNewAt<CPDF_Stream>(
-        13, DataVector<uint8_t>(std::begin(kData), std::end(kData)),
-        stream_dict);
+    auto stream_val = object_holder.NewIndirect<CPDF_Stream>(
+        DataVector<uint8_t>(std::begin(kData), std::end(kData)), stream_dict);
+    arr->InsertNewAt<CPDF_Reference>(13, &object_holder,
+                                     stream_val->GetObjNum());
     const char* const expected_str[] = {
         "true",          "false", "0",    "-1234", "2345", "0.05", "",
         "It is a test!", "NAME",  "test", "",      "",     "",     ""};

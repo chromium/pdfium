@@ -83,6 +83,9 @@ class CPDF_Array final : public CPDF_Object {
   template <typename T, typename... Args>
   typename std::enable_if<!CanInternStrings<T>::value, RetainPtr<T>>::type
   AppendNew(Args&&... args) {
+    static_assert(!std::is_same<T, CPDF_Stream>::value,
+                  "Cannot append a CPDF_Stream directly. Add it indirectly as "
+                  "a `CPDF_Reference` instead.");
     return pdfium::WrapRetain(static_cast<T*>(
         AppendInternal(pdfium::MakeRetain<T>(std::forward<Args>(args)...))));
   }
@@ -95,6 +98,9 @@ class CPDF_Array final : public CPDF_Object {
   template <typename T, typename... Args>
   typename std::enable_if<!CanInternStrings<T>::value, RetainPtr<T>>::type
   SetNewAt(size_t index, Args&&... args) {
+    static_assert(!std::is_same<T, CPDF_Stream>::value,
+                  "Cannot set a CPDF_Stream directly. Add it indirectly as a "
+                  "`CPDF_Reference` instead.");
     return pdfium::WrapRetain(static_cast<T*>(SetAtInternal(
         index, pdfium::MakeRetain<T>(std::forward<Args>(args)...))));
   }
@@ -107,6 +113,9 @@ class CPDF_Array final : public CPDF_Object {
   template <typename T, typename... Args>
   typename std::enable_if<!CanInternStrings<T>::value, RetainPtr<T>>::type
   InsertNewAt(size_t index, Args&&... args) {
+    static_assert(!std::is_same<T, CPDF_Stream>::value,
+                  "Cannot insert a CPDF_Stream directly. Add it indirectly as "
+                  "a `CPDF_Reference` instead.");
     return pdfium::WrapRetain(static_cast<T*>(InsertAtInternal(
         index, pdfium::MakeRetain<T>(std::forward<Args>(args)...))));
   }
