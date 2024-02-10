@@ -74,8 +74,6 @@ class WideString {
   [[nodiscard]] static WideString FromUTF16LE(pdfium::span<const uint8_t> data);
   [[nodiscard]] static WideString FromUTF16BE(pdfium::span<const uint8_t> data);
 
-  [[nodiscard]] static size_t WStringLength(const unsigned short* str);
-
   // Explicit conversion to C-style wide string.  The result is never nullptr,
   // and is always NUL terminated.
   // Note: Any subsequent modification of |this| will invalidate the result.

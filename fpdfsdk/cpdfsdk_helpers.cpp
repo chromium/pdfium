@@ -72,6 +72,17 @@ unsigned long GetStreamMaybeCopyAndReturnLengthImpl(
   return pdfium::base::checked_cast<unsigned long>(stream_data_span.size());
 }
 
+size_t FPDFWideStringLength(const unsigned short* str) {
+  if (!str) {
+    return 0;
+  }
+  size_t len = 0;
+  while (str[len]) {
+    len++;
+  }
+  return len;
+}
+
 #ifdef PDF_ENABLE_XFA
 class FPDF_FileHandlerContext final : public IFX_SeekableStream {
  public:
@@ -211,7 +222,7 @@ ByteString ByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
 
 WideString WideStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
   return WideString::FromUTF16LE({reinterpret_cast<const uint8_t*>(wide_string),
-                                  WideString::WStringLength(wide_string) * 2});
+                                  FPDFWideStringLength(wide_string) * 2});
 }
 
 #ifdef PDF_ENABLE_XFA

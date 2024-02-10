@@ -1081,14 +1081,6 @@ int WideString::CompareNoCase(const wchar_t* str) const {
   return (!str || str[0] == 0) ? 0 : -1;
 }
 
-size_t WideString::WStringLength(const unsigned short* str) {
-  size_t len = 0;
-  if (str)
-    while (str[len])
-      len++;
-  return len;
-}
-
 void WideString::Trim() {
   TrimRight(kWideTrimChars);
   TrimLeft(kWideTrimChars);
