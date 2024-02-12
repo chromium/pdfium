@@ -7,6 +7,7 @@
 
 #include <stdint.h>
 
+#include <optional>
 #include <type_traits>
 
 #include "core/fxcrt/fx_memcpy_wrappers.h"
@@ -67,6 +68,29 @@ template <typename T,
 bool span_equals(pdfium::span<T> s1, pdfium::span<U> s2) {
   return s1.size_bytes() == s2.size_bytes() &&
          FXSYS_memcmp(s1.data(), s2.data(), s1.size_bytes()) == 0;
+}
+
+// Returns the first position where `needle` occurs in `haystack`.
+template <typename T,
+          typename U,
+          typename = std::enable_if_t<sizeof(T) == sizeof(U) &&
+                                      std::is_trivially_copyable_v<T> &&
+                                      std::is_trivially_copyable_v<U>>>
+std::optional<size_t> spanpos(pdfium::span<T> haystack,
+                              pdfium::span<U> needle) {
+  if (needle.empty() || needle.size() > haystack.size()) {
+    return std::nullopt;
+  }
+  // After this `end_pos`, not enough characters remain in `haystack` for
+  // a full match to occur.
+  size_t end_pos = haystack.size() - needle.size();
+  for (size_t haystack_pos = 0; haystack_pos <= end_pos; ++haystack_pos) {
+    auto candidate = haystack.subspan(haystack_pos, needle.size());
+    if (fxcrt::span_equals(candidate, needle)) {
+      return haystack_pos;
+    }
+  }
+  return std::nullopt;
 }
 
 template <typename T,

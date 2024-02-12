@@ -6,6 +6,7 @@
 
 #include <vector>
 
+#include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(Spanset, Fits) {
@@ -152,4 +153,31 @@ TEST(ReinterpretSpan, BadAlignment) {
   EXPECT_DEATH(fxcrt::reinterpret_span<uint32_t>(
                    pdfium::make_span(abcabc).subspan(1, 4)),
                "");
+}
+
+TEST(Spanpos, Empty) {
+  pdfium::span<const uint32_t> kEmpty;
+  const uint32_t kHaystack[] = {0, 1, 2, 3, 4, 5};
+  const uint32_t kNeedle[] = {1, 2};
+  EXPECT_FALSE(fxcrt::spanpos(kEmpty, kEmpty));
+  EXPECT_FALSE(fxcrt::spanpos(pdfium::make_span(kHaystack), kEmpty));
+  EXPECT_FALSE(fxcrt::spanpos(kEmpty, pdfium::make_span(kNeedle)));
+}
+
+TEST(Spanpos, NotEmpty) {
+  const uint32_t kHaystack[] = {0, 1, 2, 3, 4, 5};
+  const uint32_t kStartMatch[] = {0, 1};
+  const uint32_t kEndMatch[] = {4, 5};
+  const uint32_t kNotFound[] = {256, 512};  // test byte-shifted {1,2}.
+  const uint32_t kTooLong[] = {0, 1, 2, 3, 4, 5, 6};
+  EXPECT_THAT(fxcrt::spanpos(pdfium::make_span(kHaystack),
+                             pdfium::make_span(kStartMatch)),
+              testing::Optional(0u));
+  EXPECT_THAT(fxcrt::spanpos(pdfium::make_span(kHaystack),
+                             pdfium::make_span(kEndMatch)),
+              testing::Optional(4u));
+  EXPECT_FALSE(fxcrt::spanpos(pdfium::make_span(kHaystack),
+                              pdfium::make_span(kNotFound)));
+  EXPECT_FALSE(fxcrt::spanpos(pdfium::make_span(kHaystack),
+                              pdfium::make_span(kTooLong)));
 }

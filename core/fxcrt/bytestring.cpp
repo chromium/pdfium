@@ -34,23 +34,6 @@ namespace {
 
 constexpr char kTrimChars[] = "\x09\x0a\x0b\x0c\x0d\x20";
 
-std::optional<size_t> FX_strpos(pdfium::span<const char> haystack,
-                                pdfium::span<const char> needle) {
-  if (needle.empty() || needle.size() > haystack.size()) {
-    return std::nullopt;
-  }
-  // After `end_pos`, not enough characters remain in `haystack` for
-  // a full match to occur.
-  size_t end_pos = haystack.size() - needle.size();
-  for (size_t haystack_pos = 0; haystack_pos <= end_pos; ++haystack_pos) {
-    auto candidate = haystack.subspan(haystack_pos, needle.size());
-    if (fxcrt::span_equals(candidate, needle)) {
-      return haystack_pos;
-    }
-  }
-  return std::nullopt;
-}
-
 }  // namespace
 
 namespace fxcrt {
@@ -531,7 +514,7 @@ std::optional<size_t> ByteString::Find(ByteStringView subStr,
     return std::nullopt;
   }
   std::optional<size_t> result =
-      FX_strpos(m_pData->span().subspan(start), subStr.span());
+      spanpos(m_pData->span().subspan(start), subStr.span());
   if (!result.has_value()) {
     return std::nullopt;
   }
@@ -609,7 +592,7 @@ size_t ByteString::Replace(ByteStringView pOld, ByteStringView pNew) {
     // Limit span lifetime.
     pdfium::span<char> search_span = m_pData->span();
     while (true) {
-      std::optional<size_t> found = FX_strpos(search_span, pOld.span());
+      std::optional<size_t> found = spanpos(search_span, pOld.span());
       if (!found.has_value()) {
         break;
       }
@@ -634,12 +617,12 @@ size_t ByteString::Replace(ByteStringView pOld, ByteStringView pNew) {
     pdfium::span<const char> search_span = m_pData->span();
     pdfium::span<char> dest_span = pNewData->span();
     for (size_t i = 0; i < nCount; i++) {
-      size_t found = FX_strpos(search_span, pOld.span()).value();
-      dest_span = fxcrt::spancpy(dest_span, search_span.first(found));
-      dest_span = fxcrt::spancpy(dest_span, pNew.span());
+      size_t found = spanpos(search_span, pOld.span()).value();
+      dest_span = spancpy(dest_span, search_span.first(found));
+      dest_span = spancpy(dest_span, pNew.span());
       search_span = search_span.subspan(found + pOld.GetLength());
     }
-    dest_span = fxcrt::spancpy(dest_span, search_span);
+    dest_span = spancpy(dest_span, search_span);
     CHECK(dest_span.empty());
   }
   m_pData = std::move(pNewData);

@@ -54,23 +54,6 @@ size_t FuseSurrogates(pdfium::span<wchar_t> s) {
 
 constexpr wchar_t kWideTrimChars[] = L"\x09\x0a\x0b\x0c\x0d\x20";
 
-std::optional<size_t> FX_wcspos(pdfium::span<const wchar_t> haystack,
-                                pdfium::span<const wchar_t> needle) {
-  if (needle.empty() || needle.size() > haystack.size()) {
-    return std::nullopt;
-  }
-  // After this `end_pos`, not enough characters remain in `haystack` for
-  // a full match to occur.
-  size_t end_pos = haystack.size() - needle.size();
-  for (size_t haystack_pos = 0; haystack_pos <= end_pos; ++haystack_pos) {
-    auto candidate = haystack.subspan(haystack_pos, needle.size());
-    if (fxcrt::span_equals(candidate, needle)) {
-      return haystack_pos;
-    }
-  }
-  return std::nullopt;
-}
-
 std::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
                                             va_list argList) {
   size_t nMaxLen = 0;
@@ -847,7 +830,7 @@ std::optional<size_t> WideString::Find(WideStringView subStr,
     return std::nullopt;
   }
   std::optional<size_t> result =
-      FX_wcspos(m_pData->span().subspan(start), subStr.span());
+      spanpos(m_pData->span().subspan(start), subStr.span());
   if (!result.has_value()) {
     return std::nullopt;
   }
@@ -925,7 +908,7 @@ size_t WideString::Replace(WideStringView pOld, WideStringView pNew) {
     // Limit span lifetime.
     pdfium::span<const wchar_t> search_span = m_pData->span();
     while (true) {
-      std::optional<size_t> found = FX_wcspos(search_span, pOld.span());
+      std::optional<size_t> found = spanpos(search_span, pOld.span());
       if (!found.has_value()) {
         break;
       }
@@ -950,12 +933,12 @@ size_t WideString::Replace(WideStringView pOld, WideStringView pNew) {
     pdfium::span<const wchar_t> search_span = m_pData->span();
     pdfium::span<wchar_t> dest_span = pNewData->span();
     for (size_t i = 0; i < count; i++) {
-      size_t found = FX_wcspos(search_span, pOld.span()).value();
-      dest_span = fxcrt::spancpy(dest_span, search_span.first(found));
-      dest_span = fxcrt::spancpy(dest_span, pNew.span());
+      size_t found = spanpos(search_span, pOld.span()).value();
+      dest_span = spancpy(dest_span, search_span.first(found));
+      dest_span = spancpy(dest_span, pNew.span());
       search_span = search_span.subspan(found + pOld.GetLength());
     }
-    dest_span = fxcrt::spancpy(dest_span, search_span);
+    dest_span = spancpy(dest_span, search_span);
     CHECK(dest_span.empty());
   }
   m_pData = std::move(pNewData);
