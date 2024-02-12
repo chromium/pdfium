@@ -191,7 +191,7 @@ bool CFX_Font::LoadFile(RetainPtr<IFX_SeekableReadStream> pFile,
 
   m_pOwnedFile = std::move(pFile);
   m_pOwnedStreamRec = std::move(pStreamRec);
-  FT_Set_Pixel_Sizes(m_Face->GetRec(), 0, 64);
+  m_Face->SetPixelSize(0, 64);
   return true;
 }
 
@@ -317,8 +317,9 @@ std::optional<FX_RECT> CFX_Font::GetGlyphBBox(uint32_t glyph_index) {
     result.bottom =
         std::max(result.bottom, static_cast<int>(m_Face->GetDescender()));
     FT_Done_Glyph(glyph);
-    if (FT_Set_Pixel_Sizes(m_Face->GetRec(), 0, 64) != 0)
+    if (!m_Face->SetPixelSize(0, 64)) {
       return std::nullopt;
+    }
     return result;
   }
   constexpr int kFlag = FT_LOAD_NO_SCALE | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH;

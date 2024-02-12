@@ -119,11 +119,9 @@ RetainPtr<CFX_Face> CFX_FontMgr::NewFixedFace(RetainPtr<FontDesc> pDesc,
   RetainPtr<CFX_Face> face =
       CFX_Face::New(m_FTLibrary.get(), std::move(pDesc), span,
                     static_cast<FT_Long>(face_index));
-  if (!face)
+  if (!face || !face->SetPixelSize(64, 64)) {
     return nullptr;
-
-  if (FT_Set_Pixel_Sizes(face->GetRec(), 64, 64) != 0)
-    return nullptr;
+  }
 
   return face;
 }

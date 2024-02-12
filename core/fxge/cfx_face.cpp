@@ -778,6 +778,11 @@ bool CFX_Face::SelectCharMap(fxge::FontEncoding encoding) {
   return !error;
 }
 
+bool CFX_Face::SetPixelSize(uint32_t width, uint32_t height) {
+  FT_Error error = FT_Set_Pixel_Sizes(GetRec(), width, height);
+  return !error;
+}
+
 #if BUILDFLAG(IS_WIN)
 bool CFX_Face::CanEmbed() {
   FT_UShort fstype = FT_Get_FSType_Flags(GetRec());

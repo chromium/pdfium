@@ -117,6 +117,8 @@ class CFX_Face final : public Retainable, public Observable {
   void SetCharMapByIndex(size_t index);
   bool SelectCharMap(fxge::FontEncoding encoding);
 
+  bool SetPixelSize(uint32_t width, uint32_t height);
+
 #if BUILDFLAG(IS_WIN)
   bool CanEmbed();
 #endif
