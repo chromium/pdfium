@@ -25,7 +25,7 @@
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/span.h"
 
-template class fxcrt::StringDataTemplate<char>;
+// Instantiate.
 template class fxcrt::StringViewTemplate<char>;
 template class fxcrt::StringPoolTemplate<ByteString>;
 template struct std::hash<ByteString>;
@@ -158,14 +158,6 @@ ByteString::ByteString(const fxcrt::ostringstream& outStream) {
 }
 
 ByteString::~ByteString() = default;
-
-void ByteString::clear() {
-  if (m_pData && m_pData->CanOperateInPlace(0)) {
-    m_pData->m_nDataLength = 0;
-    return;
-  }
-  m_pData.Reset();
-}
 
 ByteString& ByteString::operator=(const char* str) {
   if (!str || !str[0])
@@ -310,44 +302,6 @@ bool ByteString::EqualNoCase(ByteStringView str) const {
   return true;
 }
 
-void ByteString::AssignCopy(const char* pSrcData, size_t nSrcLen) {
-  AllocBeforeWrite(nSrcLen);
-  m_pData->CopyContents({pSrcData, nSrcLen});
-  m_pData->m_nDataLength = nSrcLen;
-}
-
-void ByteString::ReallocBeforeWrite(size_t nNewLength) {
-  if (m_pData && m_pData->CanOperateInPlace(nNewLength))
-    return;
-
-  if (nNewLength == 0) {
-    clear();
-    return;
-  }
-
-  RetainPtr<StringData> pNewData = StringData::Create(nNewLength);
-  if (m_pData) {
-    size_t nCopyLength = std::min(m_pData->m_nDataLength, nNewLength);
-    pNewData->CopyContents({m_pData->m_String, nCopyLength});
-    pNewData->m_nDataLength = nCopyLength;
-  } else {
-    pNewData->m_nDataLength = 0;
-  }
-  pNewData->m_String[pNewData->m_nDataLength] = 0;
-  m_pData = std::move(pNewData);
-}
-
-void ByteString::AllocBeforeWrite(size_t nNewLength) {
-  if (m_pData && m_pData->CanOperateInPlace(nNewLength)) {
-    return;
-  }
-  if (nNewLength == 0) {
-    clear();
-    return;
-  }
-  m_pData = StringData::Create(nNewLength);
-}
-
 void ByteString::ReleaseBuffer(size_t nNewLength) {
   if (!m_pData)
     return;
@@ -417,30 +371,6 @@ size_t ByteString::Delete(size_t index, size_t count) {
                 chars_to_copy);
   m_pData->m_nDataLength = old_length - count;
   return m_pData->m_nDataLength;
-}
-
-void ByteString::Concat(const char* pSrcData, size_t nSrcLen) {
-  if (!pSrcData || nSrcLen == 0)
-    return;
-
-  if (!m_pData) {
-    m_pData = StringData::Create({pSrcData, nSrcLen});
-    return;
-  }
-
-  if (m_pData->CanOperateInPlace(m_pData->m_nDataLength + nSrcLen)) {
-    m_pData->CopyContentsAt(m_pData->m_nDataLength, {pSrcData, nSrcLen});
-    m_pData->m_nDataLength += nSrcLen;
-    return;
-  }
-
-  size_t nConcatLen = std::max(m_pData->m_nDataLength / 2, nSrcLen);
-  RetainPtr<StringData> pNewData =
-      StringData::Create(m_pData->m_nDataLength + nConcatLen);
-  pNewData->CopyContents(*m_pData);
-  pNewData->CopyContentsAt(m_pData->m_nDataLength, {pSrcData, nSrcLen});
-  pNewData->m_nDataLength = m_pData->m_nDataLength + nSrcLen;
-  m_pData = std::move(pNewData);
 }
 
 intptr_t ByteString::ReferenceCountForTesting() const {

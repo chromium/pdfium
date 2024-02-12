@@ -20,6 +20,7 @@
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_data_template.h"
+#include "core/fxcrt/string_template.h"
 #include "core/fxcrt/string_view_template.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/span.h"
@@ -30,13 +31,9 @@ class ByteString;
 
 // A mutable string with shared buffers using copy-on-write semantics that
 // avoids the cost of std::string's iterator stability guarantees.
-class WideString {
+// TODO(crbug.com/pdfium/2031): Consider switching to `char16_t` instead.
+class WideString : public StringTemplate<wchar_t> {
  public:
-  // TODO(crbug.com/pdfium/2031): Consider switching to `char16_t` instead.
-  using CharType = wchar_t;
-  using const_iterator = const CharType*;
-  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
-
   [[nodiscard]] static WideString FormatInteger(int i);
   [[nodiscard]] static WideString Format(const wchar_t* pFormat, ...);
   [[nodiscard]] static WideString FormatV(const wchar_t* lpszFormat,
@@ -107,10 +104,6 @@ class WideString {
   const_reverse_iterator rend() const {
     return const_reverse_iterator(begin());
   }
-
-  // Holds on to buffer if possible for later re-use. Assign WideString()
-  // to force immediate release if desired.
-  void clear();
 
   size_t GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
   size_t GetStringLength() const {
@@ -241,15 +234,7 @@ class WideString {
   WideString EncodeEntities() const;
 
  protected:
-  using StringData = StringDataTemplate<wchar_t>;
-
-  void ReallocBeforeWrite(size_t nNewLength);
-  void AllocBeforeWrite(size_t nNewLength);
-  void AssignCopy(const wchar_t* pSrcData, size_t nSrcLen);
-  void Concat(const wchar_t* pSrcData, size_t nSrcLen);
   intptr_t ReferenceCountForTesting() const;
-
-  RetainPtr<StringData> m_pData;
 
   friend class WideString_Assign_Test;
   friend class WideString_ConcatInPlace_Test;

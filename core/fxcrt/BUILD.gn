@@ -90,6 +90,8 @@ source_set("fxcrt") {
     "string_data_template.cpp",
     "string_data_template.h",
     "string_pool_template.h",
+    "string_template.cpp",
+    "string_template.h",
     "string_view_template.h",
     "tree_node.h",
     "unowned_ptr.h",

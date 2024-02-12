@@ -91,6 +91,7 @@ StringDataTemplate<CharType>::StringDataTemplate(size_t dataLen,
   m_String[dataLen] = 0;
 }
 
+// Instantiate.
 template class StringDataTemplate<char>;
 template class StringDataTemplate<wchar_t>;
 

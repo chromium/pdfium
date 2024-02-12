@@ -21,6 +21,7 @@
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_data_template.h"
+#include "core/fxcrt/string_template.h"
 #include "core/fxcrt/string_view_template.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/span.h"
@@ -29,12 +30,8 @@ namespace fxcrt {
 
 // A mutable string with shared buffers using copy-on-write semantics that
 // avoids the cost of std::string's iterator stability guarantees.
-class ByteString {
+class ByteString : public StringTemplate<char> {
  public:
-  using CharType = char;
-  using const_iterator = const CharType*;
-  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
-
   [[nodiscard]] static ByteString FormatInteger(int i);
   [[nodiscard]] static ByteString FormatFloat(float f);
   [[nodiscard]] static ByteString Format(const char* pFormat, ...);
@@ -66,10 +63,6 @@ class ByteString {
   explicit ByteString(const fxcrt::ostringstream& outStream);
 
   ~ByteString();
-
-  // Holds on to buffer if possible for later re-use. Assign ByteString()
-  // to force immediate release if desired.
-  void clear();
 
   // Explicit conversion to C-style string. The result is never nullptr,
   // and is always NUL terminated.
@@ -222,15 +215,7 @@ class ByteString {
   uint32_t GetID() const { return AsStringView().GetID(); }
 
  protected:
-  using StringData = StringDataTemplate<char>;
-
-  void ReallocBeforeWrite(size_t nNewLen);
-  void AllocBeforeWrite(size_t nNewLen);
-  void AssignCopy(const char* pSrcData, size_t nSrcLen);
-  void Concat(const char* pSrcData, size_t nSrcLen);
   intptr_t ReferenceCountForTesting() const;
-
-  RetainPtr<StringData> m_pData;
 
   friend class ByteString_Assign_Test;
   friend class ByteString_Concat_Test;

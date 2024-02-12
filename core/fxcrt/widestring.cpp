@@ -24,7 +24,7 @@
 #include "third_party/base/check_op.h"
 #include "third_party/base/numerics/safe_math.h"
 
-template class fxcrt::StringDataTemplate<wchar_t>;
+// Instantiate.
 template class fxcrt::StringViewTemplate<wchar_t>;
 template class fxcrt::StringPoolTemplate<WideString>;
 template struct std::hash<WideString>;
@@ -443,14 +443,6 @@ WideString::WideString(const std::initializer_list<WideStringView>& list) {
 
 WideString::~WideString() = default;
 
-void WideString::clear() {
-  if (m_pData && m_pData->CanOperateInPlace(0)) {
-    m_pData->m_nDataLength = 0;
-    return;
-  }
-  m_pData.Reset();
-}
-
 WideString& WideString::operator=(const wchar_t* str) {
   if (!str || !str[0])
     clear();
@@ -565,45 +557,6 @@ bool WideString::operator<(const WideString& other) const {
   return Compare(other) < 0;
 }
 
-void WideString::AssignCopy(const wchar_t* pSrcData, size_t nSrcLen) {
-  AllocBeforeWrite(nSrcLen);
-  m_pData->CopyContents({pSrcData, nSrcLen});
-  m_pData->m_nDataLength = nSrcLen;
-}
-
-void WideString::ReallocBeforeWrite(size_t nNewLength) {
-  if (m_pData && m_pData->CanOperateInPlace(nNewLength))
-    return;
-
-  if (nNewLength == 0) {
-    clear();
-    return;
-  }
-
-  RetainPtr<StringData> pNewData = StringData::Create(nNewLength);
-  if (m_pData) {
-    size_t nCopyLength = std::min(m_pData->m_nDataLength, nNewLength);
-    pNewData->CopyContents({m_pData->m_String, nCopyLength});
-    pNewData->m_nDataLength = nCopyLength;
-  } else {
-    pNewData->m_nDataLength = 0;
-  }
-  pNewData->m_String[pNewData->m_nDataLength] = 0;
-  m_pData = std::move(pNewData);
-}
-
-void WideString::AllocBeforeWrite(size_t nNewLength) {
-  if (m_pData && m_pData->CanOperateInPlace(nNewLength))
-    return;
-
-  if (nNewLength == 0) {
-    clear();
-    return;
-  }
-
-  m_pData = StringData::Create(nNewLength);
-}
-
 void WideString::ReleaseBuffer(size_t nNewLength) {
   if (!m_pData)
     return;
@@ -673,30 +626,6 @@ size_t WideString::Delete(size_t index, size_t count) {
            chars_to_copy);
   m_pData->m_nDataLength = old_length - count;
   return m_pData->m_nDataLength;
-}
-
-void WideString::Concat(const wchar_t* pSrcData, size_t nSrcLen) {
-  if (!pSrcData || nSrcLen == 0)
-    return;
-
-  if (!m_pData) {
-    m_pData = StringData::Create({pSrcData, nSrcLen});
-    return;
-  }
-
-  if (m_pData->CanOperateInPlace(m_pData->m_nDataLength + nSrcLen)) {
-    m_pData->CopyContentsAt(m_pData->m_nDataLength, {pSrcData, nSrcLen});
-    m_pData->m_nDataLength += nSrcLen;
-    return;
-  }
-
-  size_t nConcatLen = std::max(m_pData->m_nDataLength / 2, nSrcLen);
-  RetainPtr<StringData> pNewData =
-      StringData::Create(m_pData->m_nDataLength + nConcatLen);
-  pNewData->CopyContents(*m_pData);
-  pNewData->CopyContentsAt(m_pData->m_nDataLength, {pSrcData, nSrcLen});
-  pNewData->m_nDataLength = m_pData->m_nDataLength + nSrcLen;
-  m_pData = std::move(pNewData);
 }
 
 intptr_t WideString::ReferenceCountForTesting() const {
