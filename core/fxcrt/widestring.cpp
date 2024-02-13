@@ -557,54 +557,8 @@ bool WideString::operator<(const WideString& other) const {
   return Compare(other) < 0;
 }
 
-void WideString::ReleaseBuffer(size_t nNewLength) {
-  if (!m_pData)
-    return;
-
-  nNewLength = std::min(nNewLength, m_pData->m_nAllocLength);
-  if (nNewLength == 0) {
-    clear();
-    return;
-  }
-
-  DCHECK_EQ(m_pData->m_nRefs, 1);
-  m_pData->m_nDataLength = nNewLength;
-  m_pData->m_String[nNewLength] = 0;
-  if (m_pData->m_nAllocLength - nNewLength >= 32) {
-    // Over arbitrary threshold, so pay the price to relocate.  Force copy to
-    // always occur by holding a second reference to the string.
-    WideString preserve(*this);
-    ReallocBeforeWrite(nNewLength);
-  }
-}
-
 void WideString::Reserve(size_t len) {
   GetBuffer(len);
-}
-
-pdfium::span<wchar_t> WideString::GetBuffer(size_t nMinBufLength) {
-  if (!m_pData) {
-    if (nMinBufLength == 0)
-      return pdfium::span<wchar_t>();
-
-    m_pData = StringData::Create(nMinBufLength);
-    m_pData->m_nDataLength = 0;
-    m_pData->m_String[0] = 0;
-    return pdfium::span<wchar_t>(m_pData->m_String, m_pData->m_nAllocLength);
-  }
-
-  if (m_pData->CanOperateInPlace(nMinBufLength))
-    return pdfium::span<wchar_t>(m_pData->m_String, m_pData->m_nAllocLength);
-
-  nMinBufLength = std::max(nMinBufLength, m_pData->m_nDataLength);
-  if (nMinBufLength == 0)
-    return pdfium::span<wchar_t>();
-
-  RetainPtr<StringData> pNewData = StringData::Create(nMinBufLength);
-  pNewData->CopyContents(*m_pData);
-  pNewData->m_nDataLength = m_pData->m_nDataLength;
-  m_pData = std::move(pNewData);
-  return pdfium::span<wchar_t>(m_pData->m_String, m_pData->m_nAllocLength);
 }
 
 size_t WideString::Delete(size_t index, size_t count) {
