@@ -430,9 +430,9 @@ uint32_t CFX_DIBitmap::GetPixelForTesting(int x, int y) const {
                           : ArgbEncode(0xff, *pos, *pos, *pos);
     case FXDIB_Format::kRgb:
     case FXDIB_Format::kRgb32:
-      return FXARGB_GETDIB(pos) | 0xff000000;
+      return FXARGB_GetDIB(pos) | 0xff000000;
     case FXDIB_Format::kArgb:
-      return FXARGB_GETDIB(pos);
+      return FXARGB_GetDIB(pos);
     default:
       break;
   }
@@ -794,7 +794,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
       for (int col = 0; col < width; col++) {
         uint8_t back_alpha = dest_scan[3];
         if (back_alpha == 0) {
-          FXARGB_SETDIB(dest_scan, ArgbEncode(src_alpha, color_p[2], color_p[1],
+          FXARGB_SetDIB(dest_scan, ArgbEncode(src_alpha, color_p[2], color_p[1],
                                               color_p[0]));
           dest_scan += 4;
           continue;

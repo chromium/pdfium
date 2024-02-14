@@ -246,8 +246,8 @@ void CompositeRow_Argb2Argb(pdfium::span<uint8_t> dest_span,
     uint8_t src_alpha = GetAlpha(src_scan[3], clip_scan, col);
     if (back_alpha == 0) {
       if (clip_scan) {
-        FXARGB_SETDIB(dest_scan,
-                      (FXARGB_GETDIB(src_scan) & 0xffffff) | (src_alpha << 24));
+        FXARGB_SetDIB(dest_scan,
+                      (FXARGB_GetDIB(src_scan) & 0xffffff) | (src_alpha << 24));
       } else {
         memcpy(dest_scan, src_scan, 4);
       }
@@ -298,9 +298,9 @@ void CompositeRow_Rgb2Argb_Blend_NoClip(pdfium::span<uint8_t> dest_span,
     uint8_t back_alpha = *dest_alpha;
     if (back_alpha == 0) {
       if (src_Bpp == 4) {
-        FXARGB_SETDIB(dest_scan, 0xff000000 | FXARGB_GETDIB(src_scan));
+        FXARGB_SetDIB(dest_scan, 0xff000000 | FXARGB_GetDIB(src_scan));
       } else {
-        FXARGB_SETDIB(dest_scan,
+        FXARGB_SetDIB(dest_scan,
                       ArgbEncode(0xff, src_scan[2], src_scan[1], src_scan[0]));
       }
       dest_scan += 4;
@@ -416,9 +416,9 @@ void CompositeRow_Rgb2Argb_NoBlend_NoClip(pdfium::span<uint8_t> dest_span,
   const uint8_t* src_scan = src_span.data();
   for (int col = 0; col < width; col++) {
     if (src_Bpp == 4) {
-      FXARGB_SETDIB(dest_scan, 0xff000000 | FXARGB_GETDIB(src_scan));
+      FXARGB_SetDIB(dest_scan, 0xff000000 | FXARGB_GetDIB(src_scan));
     } else {
-      FXARGB_SETDIB(dest_scan,
+      FXARGB_SetDIB(dest_scan,
                     ArgbEncode(0xff, src_scan[2], src_scan[1], src_scan[0]));
     }
     dest_scan += 4;
@@ -902,7 +902,7 @@ void CompositeRow_ByteMask2Argb(pdfium::span<uint8_t> dest_span,
     int src_alpha = GetAlphaWithSrc(mask_alpha, clip_scan, src_scan, col);
     uint8_t back_alpha = dest_scan[3];
     if (back_alpha == 0) {
-      FXARGB_SETDIB(dest_scan, ArgbEncode(src_alpha, src_r, src_g, src_b));
+      FXARGB_SetDIB(dest_scan, ArgbEncode(src_alpha, src_r, src_g, src_b));
       dest_scan += 4;
       continue;
     }
@@ -1055,7 +1055,7 @@ void CompositeRow_BitMask2Argb(pdfium::span<uint8_t> dest_span,
     FX_ARGB argb = ArgbEncode(0xff, src_r, src_g, src_b);
     for (int col = 0; col < pixel_count; col++) {
       if (src_scan[(src_left + col) / 8] & (1 << (7 - (src_left + col) % 8))) {
-        FXARGB_SETDIB(dest_scan, argb);
+        FXARGB_SetDIB(dest_scan, argb);
       }
       dest_scan += 4;
     }
@@ -1069,7 +1069,7 @@ void CompositeRow_BitMask2Argb(pdfium::span<uint8_t> dest_span,
     int src_alpha = GetAlpha(mask_alpha, clip_scan, col);
     uint8_t back_alpha = dest_scan[3];
     if (back_alpha == 0) {
-      FXARGB_SETDIB(dest_scan, ArgbEncode(src_alpha, src_r, src_g, src_b));
+      FXARGB_SetDIB(dest_scan, ArgbEncode(src_alpha, src_r, src_g, src_b));
       dest_scan += 4;
       continue;
     }
@@ -1301,9 +1301,9 @@ void CompositeRow_Rgb2Argb_Blend_NoClip_RgbByteOrder(
     uint8_t back_alpha = dest_scan[3];
     if (back_alpha == 0) {
       if (src_Bpp == 4) {
-        FXARGB_SETRGBORDERDIB(dest_scan, 0xff000000 | FXARGB_GETDIB(src_scan));
+        FXARGB_SetRGBOrderDIB(dest_scan, 0xff000000 | FXARGB_GetDIB(src_scan));
       } else {
-        FXARGB_SETRGBORDERDIB(
+        FXARGB_SetRGBOrderDIB(
             dest_scan, ArgbEncode(0xff, src_scan[2], src_scan[1], src_scan[0]));
       }
       dest_scan += 4;
@@ -1382,9 +1382,9 @@ void CompositeRow_Rgb2Argb_NoBlend_NoClip_RgbByteOrder(
   const uint8_t* src_scan = src_span.data();
   for (int col = 0; col < width; col++) {
     if (src_Bpp == 4) {
-      FXARGB_SETRGBORDERDIB(dest_scan, 0xff000000 | FXARGB_GETDIB(src_scan));
+      FXARGB_SetRGBOrderDIB(dest_scan, 0xff000000 | FXARGB_GetDIB(src_scan));
     } else {
-      FXARGB_SETRGBORDERDIB(
+      FXARGB_SetRGBOrderDIB(
           dest_scan, ArgbEncode(0xff, src_scan[2], src_scan[1], src_scan[0]));
     }
     dest_scan += 4;
@@ -1851,7 +1851,7 @@ void CompositeRow_ByteMask2Argb_RgbByteOrder(
     int src_alpha = GetAlphaWithSrc(mask_alpha, clip_scan, src_scan, col);
     uint8_t back_alpha = dest_scan[3];
     if (back_alpha == 0) {
-      FXARGB_SETRGBORDERDIB(dest_scan,
+      FXARGB_SetRGBOrderDIB(dest_scan,
                             ArgbEncode(src_alpha, src_r, src_g, src_b));
       dest_scan += 4;
       continue;
@@ -1964,7 +1964,7 @@ void CompositeRow_BitMask2Argb_RgbByteOrder(
     FX_ARGB argb = ArgbEncode(0xff, src_r, src_g, src_b);
     for (int col = 0; col < pixel_count; col++) {
       if (src_scan[(src_left + col) / 8] & (1 << (7 - (src_left + col) % 8))) {
-        FXARGB_SETRGBORDERDIB(dest_scan, argb);
+        FXARGB_SetRGBOrderDIB(dest_scan, argb);
       }
       dest_scan += 4;
     }
@@ -1978,7 +1978,7 @@ void CompositeRow_BitMask2Argb_RgbByteOrder(
     int src_alpha = GetAlpha(mask_alpha, clip_scan, col);
     uint8_t back_alpha = dest_scan[3];
     if (back_alpha == 0) {
-      FXARGB_SETRGBORDERDIB(dest_scan,
+      FXARGB_SetRGBOrderDIB(dest_scan,
                             ArgbEncode(src_alpha, src_r, src_g, src_b));
       dest_scan += 4;
       continue;

@@ -430,7 +430,7 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
       }
       case 12: {
         for (int col = 0; col < sizeX; col++) {
-          FXARGB_SETDIB(pScanline, argb);
+          FXARGB_SetDIB(pScanline, argb);
           pScanline += 4;
         }
         break;

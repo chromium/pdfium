@@ -99,7 +99,7 @@ void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& pBitmap,
       for (int col = 0; col < width; col++) {
         uint8_t back_alpha = dest_scan[3];
         if (back_alpha == 0) {
-          FXARGB_SETRGBORDERDIB(dest_scan, argb);
+          FXARGB_SetRGBOrderDIB(dest_scan, argb);
           dest_scan += 4;
           continue;
         }
@@ -162,7 +162,7 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
           pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
       if (Bpp == 4) {
         for (int col = 0; col < width; col++) {
-          FXARGB_SETRGBORDERDIB(dest_scan,
+          FXARGB_SetRGBOrderDIB(dest_scan,
                                 *reinterpret_cast<const uint32_t*>(src_scan));
           dest_scan += 4;
           src_scan += 4;
@@ -212,7 +212,7 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
       const uint8_t* src_scan =
           pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
       for (int col = 0; col < width; col++) {
-        FXARGB_SETDIB(dest_scan,
+        FXARGB_SetDIB(dest_scan,
                       ArgbEncode(0xff, src_scan[0], src_scan[1], src_scan[2]));
         dest_scan += 4;
         src_scan += 3;
@@ -230,7 +230,7 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
     for (int col = 0; col < width; col++) {
-      FXARGB_SETDIB(dest_scan,
+      FXARGB_SetDIB(dest_scan,
                     ArgbEncode(0xff, src_scan[0], src_scan[1], src_scan[2]));
       src_scan += 4;
       dest_scan += 4;

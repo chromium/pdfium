@@ -121,7 +121,7 @@ TEST(CFX_DIBitmap, CalculatePitchAndSizeBoundary) {
 TEST(CFX_DIBitmap, UnPreMultiply_FromCleared) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
-  FXARGB_SETDIB(bitmap->GetBuffer().data(), 0x7f'7f'7f'7f);
+  FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'7f'7f'7f);
 
   bitmap->UnPreMultiply();
 
@@ -132,7 +132,7 @@ TEST(CFX_DIBitmap, UnPreMultiply_FromPreMultiplied) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
   bitmap->ForcePreMultiply();
-  FXARGB_SETDIB(bitmap->GetBuffer().data(), 0x7f'7f'7f'7f);
+  FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'7f'7f'7f);
 
   bitmap->UnPreMultiply();
 
@@ -143,7 +143,7 @@ TEST(CFX_DIBitmap, UnPreMultiply_FromUnPreMultiplied) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
   bitmap->UnPreMultiply();
-  FXARGB_SETDIB(bitmap->GetBuffer().data(), 0x7f'ff'ff'ff);
+  FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'ff'ff'ff);
 
   bitmap->UnPreMultiply();
 
