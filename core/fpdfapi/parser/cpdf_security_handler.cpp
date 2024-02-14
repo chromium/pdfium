@@ -18,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_random.h"
@@ -388,8 +389,9 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
   if (buf[9] != 'a' || buf[10] != 'd' || buf[11] != 'b')
     return false;
 
-  if (FXSYS_UINT32_GET_LSBFIRST(buf) != m_Permissions)
+  if (fxcrt::GetUInt32LSBFirst(buf) != m_Permissions) {
     return false;
+  }
 
   // Relax this check as there appear to be some non-conforming documents
   // in the wild. The value in the buffer is the truth; if it requires us

@@ -10,8 +10,8 @@
 
 #include <utility>
 
+#include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_fontmapper.h"
 
@@ -56,15 +56,16 @@ CFX_CTTGSUBTable::CFX_CTTGSUBTable(pdfium::span<const uint8_t> gsub) {
 CFX_CTTGSUBTable::~CFX_CTTGSUBTable() = default;
 
 bool CFX_CTTGSUBTable::LoadGSUBTable(pdfium::span<const uint8_t> gsub) {
-  if (FXSYS_UINT32_GET_MSBFIRST(gsub) != 0x00010000)
+  if (fxcrt::GetUInt32MSBFirst(gsub) != 0x00010000) {
     return false;
+  }
 
   auto scriptlist_span = gsub.subspan(4, 2);
   auto featurelist_span = gsub.subspan(6, 2);
   auto lookuplist_span = gsub.subspan(8, 2);
-  size_t scriptlist_index = FXSYS_UINT16_GET_MSBFIRST(scriptlist_span);
-  size_t featurelist_index = FXSYS_UINT16_GET_MSBFIRST(featurelist_span);
-  size_t lookuplist_index = FXSYS_UINT16_GET_MSBFIRST(lookuplist_span);
+  size_t scriptlist_index = fxcrt::GetUInt16MSBFirst(scriptlist_span);
+  size_t featurelist_index = fxcrt::GetUInt16MSBFirst(featurelist_span);
+  size_t lookuplist_index = fxcrt::GetUInt16MSBFirst(lookuplist_span);
   Parse(gsub.subspan(scriptlist_index), gsub.subspan(featurelist_index),
         gsub.subspan(lookuplist_index));
   return true;
@@ -158,25 +159,29 @@ uint8_t CFX_CTTGSUBTable::GetUInt8(const uint8_t*& p) const {
 }
 
 int16_t CFX_CTTGSUBTable::GetInt16(const uint8_t*& p) const {
-  uint16_t ret = FXSYS_UINT16_GET_MSBFIRST(p);
+  // TODO(tsepez): pass actual span.
+  uint16_t ret = fxcrt::GetUInt16MSBFirst(pdfium::make_span(p, 2u));
   p += 2;
-  return *reinterpret_cast<int16_t*>(&ret);
+  return static_cast<int16_t>(ret);
 }
 
 uint16_t CFX_CTTGSUBTable::GetUInt16(const uint8_t*& p) const {
-  uint16_t ret = FXSYS_UINT16_GET_MSBFIRST(p);
+  // TODO(tsepez): pass actual span.
+  uint16_t ret = fxcrt::GetUInt16MSBFirst(pdfium::make_span(p, 2u));
   p += 2;
   return ret;
 }
 
 int32_t CFX_CTTGSUBTable::GetInt32(const uint8_t*& p) const {
-  uint32_t ret = FXSYS_UINT32_GET_MSBFIRST(p);
+  // TODO(tsepez): pass actual span.
+  uint32_t ret = fxcrt::GetUInt32MSBFirst(pdfium::make_span(p, 4u));
   p += 4;
-  return *reinterpret_cast<int32_t*>(&ret);
+  return static_cast<int32_t>(ret);
 }
 
 uint32_t CFX_CTTGSUBTable::GetUInt32(const uint8_t*& p) const {
-  uint32_t ret = FXSYS_UINT32_GET_MSBFIRST(p);
+  // TODO(tsepez): pass actual span.
+  uint32_t ret = fxcrt::GetUInt32MSBFirst(pdfium::make_span(p, 4u));
   p += 4;
   return ret;
 }

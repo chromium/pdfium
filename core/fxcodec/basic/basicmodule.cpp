@@ -10,10 +10,10 @@
 #include <utility>
 
 #include "core/fxcodec/scanlinedecoder.h"
+#include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/span_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/numerics/safe_conversions.h"
@@ -331,7 +331,7 @@ DataVector<uint8_t> BasicModule::A85Encode(
   uint32_t line_length = 0;
   while (src_span.size() >= 4 && pos < src_span.size() - 3) {
     auto val_span = src_span.subspan(pos, 4);
-    uint32_t val = FXSYS_UINT32_GET_MSBFIRST(val_span);
+    uint32_t val = fxcrt::GetUInt32MSBFirst(val_span);
     pos += 4;
     if (val == 0) {  // All zero special case
       result_span[0] = 'z';

@@ -14,8 +14,8 @@
 #include <utility>
 
 #include "core/fxcodec/cfx_codec_memory.h"
+#include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/stl_util.h"
 
 namespace fxcodec {
@@ -384,10 +384,8 @@ GifDecoder::Status CFX_GifContext::ReadLogicalScreenDescriptor() {
     std::swap(global_palette_, palette);
   }
 
-  width_ = static_cast<int>(
-      FXSYS_UINT16_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&lsd.width)));
-  height_ = static_cast<int>(
-      FXSYS_UINT16_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&lsd.height)));
+  width_ = fxcrt::FromLE16(lsd.width);
+  height_ = fxcrt::FromLE16(lsd.height);
 
   return GifDecoder::Status::kSuccess;
 }
@@ -429,8 +427,8 @@ GifDecoder::Status CFX_GifContext::DecodeExtension() {
             std::make_unique<CFX_GifGraphicControlExtension>();
       graphic_control_extension_->block_size = gif_gce.block_size;
       graphic_control_extension_->gce_flags = gif_gce.gce_flags;
-      graphic_control_extension_->delay_time = FXSYS_UINT16_GET_LSBFIRST(
-          reinterpret_cast<uint8_t*>(&gif_gce.delay_time));
+      graphic_control_extension_->delay_time =
+          fxcrt::FromLE16(gif_gce.delay_time);
       graphic_control_extension_->trans_index = gif_gce.trans_index;
       break;
     }
@@ -458,14 +456,10 @@ GifDecoder::Status CFX_GifContext::DecodeImageInfo() {
     return GifDecoder::Status::kUnfinished;
 
   auto gif_image = std::make_unique<CFX_GifImage>();
-  gif_image->image_info.left =
-      FXSYS_UINT16_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info.left));
-  gif_image->image_info.top =
-      FXSYS_UINT16_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info.top));
-  gif_image->image_info.width =
-      FXSYS_UINT16_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info.width));
-  gif_image->image_info.height =
-      FXSYS_UINT16_GET_LSBFIRST(reinterpret_cast<uint8_t*>(&img_info.height));
+  gif_image->image_info.left = fxcrt::FromLE16(img_info.left);
+  gif_image->image_info.top = fxcrt::FromLE16(img_info.top);
+  gif_image->image_info.width = fxcrt::FromLE16(img_info.width);
+  gif_image->image_info.height = fxcrt::FromLE16(img_info.height);
   gif_image->image_info.local_flags = img_info.local_flags;
   if (gif_image->image_info.left + gif_image->image_info.width > width_ ||
       gif_image->image_info.top + gif_image->image_info.height > height_)

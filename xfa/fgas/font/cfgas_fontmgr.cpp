@@ -14,6 +14,7 @@
 #include <utility>
 
 #include "build/build_config.h"
+#include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/cfx_read_only_vector_stream.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fixed_size_data_vector.h"
@@ -370,8 +371,7 @@ uint16_t FX_GetUnicodeBit(wchar_t wcUnicode) {
 
 uint16_t ReadUInt16FromSpanAtOffset(pdfium::span<const uint8_t> data,
                                     size_t offset) {
-  const uint8_t* p = &data[offset];
-  return FXSYS_UINT16_GET_MSBFIRST(p);
+  return fxcrt::GetUInt16MSBFirst(data.subspan(offset));
 }
 
 extern "C" {

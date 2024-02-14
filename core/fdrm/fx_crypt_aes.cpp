@@ -8,18 +8,11 @@
 
 #include <string.h>
 
-#include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/byteorder.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 
 #define mulby2(x) (((x & 0x7F) << 1) ^ (x & 0x80 ? 0x1B : 0))
-#define PUT_32BIT_MSB_FIRST(cp, value) \
-  do {                                 \
-    (cp)[3] = (value);                 \
-    (cp)[2] = (value) >> 8;            \
-    (cp)[1] = (value) >> 16;           \
-    (cp)[0] = (value) >> 24;           \
-  } while (0)
 
 namespace {
 
@@ -528,13 +521,14 @@ void CRYPT_AESSetKey(CRYPT_aes_context* ctx,
                      const uint8_t* key,
                      uint32_t keylen) {
   DCHECK(keylen == 16 || keylen == 24 || keylen == 32);
+  auto keyspan = pdfium::make_span(key, keylen);
   int Nk = keylen / 4;
   ctx->Nb = 4;
   ctx->Nr = 6 + (ctx->Nb > Nk ? ctx->Nb : Nk);
   int rconst = 1;
   for (int i = 0; i < (ctx->Nr + 1) * ctx->Nb; i++) {
     if (i < Nk) {
-      ctx->keysched[i] = FXSYS_UINT32_GET_MSBFIRST(key + 4 * i);
+      ctx->keysched[i] = fxcrt::GetUInt32MSBFirst(keyspan.subspan(4 * i));
     } else {
       unsigned int temp = ctx->keysched[i - 1];
       if (i % Nk == 0) {
@@ -581,7 +575,8 @@ void CRYPT_AESSetKey(CRYPT_aes_context* ctx,
 
 void CRYPT_AESSetIV(CRYPT_aes_context* ctx, const uint8_t* iv) {
   for (int i = 0; i < ctx->Nb; i++) {
-    ctx->iv[i] = FXSYS_UINT32_GET_MSBFIRST(iv + 4 * i);
+    // TODO(tsepez): Pass actual span.
+    ctx->iv[i] = fxcrt::GetUInt32MSBFirst(pdfium::make_span(iv + 4 * i, 4u));
   }
 }
 
@@ -597,11 +592,13 @@ void CRYPT_AESDecrypt(CRYPT_aes_context* ctx,
   memcpy(iv, ctx->iv, sizeof(iv));
   while (size != 0) {
     for (i = 0; i < 4; i++) {
-      x[i] = ct[i] = FXSYS_UINT32_GET_MSBFIRST(src + 4 * i);
+      // TODO(tsepez): Create actual span.
+      x[i] = ct[i] = fxcrt::GetUInt32MSBFirst(pdfium::span(src + 4 * i, 4u));
     }
     aes_decrypt_nb_4(ctx, x);
     for (i = 0; i < 4; i++) {
-      PUT_32BIT_MSB_FIRST(dest + 4 * i, iv[i] ^ x[i]);
+      // TODO(tsepez): Create actual span.
+      fxcrt::PutUInt32MSBFirst(iv[i] ^ x[i], pdfium::span(dest + 4 * i, 4u));
       iv[i] = ct[i];
     }
     dest += 16;
@@ -621,11 +618,13 @@ void CRYPT_AESEncrypt(CRYPT_aes_context* ctx,
   memcpy(iv, ctx->iv, sizeof(iv));
   while (size != 0) {
     for (i = 0; i < 4; i++) {
-      iv[i] ^= FXSYS_UINT32_GET_MSBFIRST(src + 4 * i);
+      // TODO(tsepez): use an actual span.
+      iv[i] ^= fxcrt::GetUInt32MSBFirst(pdfium::span(src + 4 * i, 4u));
     }
     aes_encrypt_nb_4(ctx, iv);
     for (i = 0; i < 4; i++) {
-      PUT_32BIT_MSB_FIRST(dest + 4 * i, iv[i]);
+      // TODO(tsepez): use an actual span.
+      fxcrt::PutUInt32MSBFirst(iv[i], pdfium::span(dest + 4 * i, 4u));
     }
     dest += 16;
     src += 16;

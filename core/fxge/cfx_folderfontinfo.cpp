@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "build/build_config.h"
+#include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_folder.h"
@@ -86,10 +87,11 @@ ByteString LoadTableFromTT(FILE* pFile,
                            uint32_t tag,
                            FX_FILESIZE fileSize) {
   for (uint32_t i = 0; i < nTables; i++) {
-    const uint8_t* p = pTables + i * 16;
-    if (FXSYS_UINT32_GET_MSBFIRST(p) == tag) {
-      uint32_t offset = FXSYS_UINT32_GET_MSBFIRST(p + 8);
-      uint32_t size = FXSYS_UINT32_GET_MSBFIRST(p + 12);
+    // TODO(tsepez): use actual span.
+    auto p = pdfium::make_span(pTables + i * 16, 16u);
+    if (fxcrt::GetUInt32MSBFirst(p) == tag) {
+      uint32_t offset = fxcrt::GetUInt32MSBFirst(p.subspan(8));
+      uint32_t size = fxcrt::GetUInt32MSBFirst(p.subspan(12));
       if (offset > std::numeric_limits<uint32_t>::max() - size ||
           static_cast<FX_FILESIZE>(offset + size) > fileSize ||
           fseek(pFile, offset, SEEK_SET) < 0) {
@@ -206,12 +208,13 @@ void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
   if (readCnt != 1)
     return;
 
-  if (FXSYS_UINT32_GET_MSBFIRST(buffer) != kTableTTCF) {
+  if (fxcrt::GetUInt32MSBFirst(buffer) != kTableTTCF) {
     ReportFace(path, pFile.get(), filesize, 0);
     return;
   }
 
-  uint32_t nFaces = FXSYS_UINT32_GET_MSBFIRST(buffer + 8);
+  uint32_t nFaces =
+      fxcrt::GetUInt32MSBFirst(pdfium::make_span(buffer).subspan(8));
   FX_SAFE_SIZE_T safe_face_bytes = nFaces;
   safe_face_bytes *= 4;
   if (!safe_face_bytes.IsValid())
@@ -227,7 +230,7 @@ void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
   auto offsets_span = pdfium::make_span(offsets.get(), face_bytes);
   for (uint32_t i = 0; i < nFaces; i++) {
     ReportFace(path, pFile.get(), filesize,
-               FXSYS_UINT32_GET_MSBFIRST(&offsets_span[i * 4]));
+               fxcrt::GetUInt32MSBFirst(offsets_span.subspan(i * 4)));
   }
 }
 
@@ -239,7 +242,8 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
   if (fseek(pFile, offset, SEEK_SET) < 0 || !fread(buffer, 12, 1, pFile))
     return;
 
-  uint32_t nTables = FXSYS_UINT16_GET_MSBFIRST(buffer + 4);
+  uint32_t nTables =
+      fxcrt::GetUInt16MSBFirst(pdfium::as_byte_span(buffer).subspan(4));
   ByteString tables = ReadStringFromFile(pFile, nTables * 16);
   if (tables.IsEmpty())
     return;
@@ -269,8 +273,8 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
   ByteString os2 =
       LoadTableFromTT(pFile, tables.raw_str(), nTables, kOs2Tag, filesize);
   if (os2.GetLength() >= 86) {
-    const uint8_t* p = os2.raw_str() + 78;
-    uint32_t codepages = FXSYS_UINT32_GET_MSBFIRST(p);
+    pdfium::span<const uint8_t> p = os2.raw_span().subspan(78);
+    uint32_t codepages = fxcrt::GetUInt32MSBFirst(p);
     if (codepages & (1U << 17)) {
       m_pMapper->AddInstalledFont(facename, FX_Charset::kShiftJIS);
       pInfo->m_Charsets |= CHARSET_FLAG_SHIFTJIS;
@@ -384,10 +388,12 @@ size_t CFX_FolderFontInfo::GetFontData(void* hFont,
   } else {
     size_t nTables = pFont->m_FontTables.GetLength() / 16;
     for (size_t i = 0; i < nTables; i++) {
-      const uint8_t* p = pFont->m_FontTables.raw_str() + i * 16;
-      if (FXSYS_UINT32_GET_MSBFIRST(p) == table) {
-        offset = FXSYS_UINT32_GET_MSBFIRST(p + 8);
-        datasize = FXSYS_UINT32_GET_MSBFIRST(p + 12);
+      // TODO(tsepez): iterate over span.
+      pdfium::span<const uint8_t> p =
+          pFont->m_FontTables.raw_span().subspan(i * 16);
+      if (fxcrt::GetUInt32MSBFirst(p) == table) {
+        offset = fxcrt::GetUInt32MSBFirst(p.subspan(8));
+        datasize = fxcrt::GetUInt32MSBFirst(p.subspan(12));
       }
     }
   }
