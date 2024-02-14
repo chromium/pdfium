@@ -384,12 +384,6 @@ WideString WideString::Format(const wchar_t* pFormat, ...) {
   return ret;
 }
 
-WideString::WideString() = default;
-
-WideString::WideString(const WideString& other) = default;
-
-WideString::WideString(WideString&& other) noexcept = default;
-
 WideString::WideString(const wchar_t* pStr, size_t nLen) {
   if (nLen) {
     m_pData = StringData::Create({pStr, nLen});
@@ -440,8 +434,6 @@ WideString::WideString(const std::initializer_list<WideStringView>& list) {
     nOffset += item.GetLength();
   }
 }
-
-WideString::~WideString() = default;
 
 WideString& WideString::operator=(const wchar_t* str) {
   if (!str || !str[0])
@@ -746,40 +738,6 @@ void WideString::MakeUpper() {
 
   ReallocBeforeWrite(m_pData->m_nDataLength);
   FXSYS_wcsupr(m_pData->m_String);
-}
-
-size_t WideString::Remove(wchar_t chRemove) {
-  if (IsEmpty())
-    return 0;
-
-  wchar_t* pstrSource = m_pData->m_String;
-  wchar_t* pstrEnd = m_pData->m_String + m_pData->m_nDataLength;
-  while (pstrSource < pstrEnd) {
-    if (*pstrSource == chRemove)
-      break;
-    pstrSource++;
-  }
-  if (pstrSource == pstrEnd)
-    return 0;
-
-  ptrdiff_t copied = pstrSource - m_pData->m_String;
-  ReallocBeforeWrite(m_pData->m_nDataLength);
-  pstrSource = m_pData->m_String + copied;
-  pstrEnd = m_pData->m_String + m_pData->m_nDataLength;
-
-  wchar_t* pstrDest = pstrSource;
-  while (pstrSource < pstrEnd) {
-    if (*pstrSource != chRemove) {
-      *pstrDest = *pstrSource;
-      pstrDest++;
-    }
-    pstrSource++;
-  }
-
-  *pstrDest = 0;
-  size_t count = static_cast<size_t>(pstrSource - pstrDest);
-  m_pData->m_nDataLength -= count;
-  return count;
 }
 
 size_t WideString::Replace(WideStringView pOld, WideStringView pNew) {

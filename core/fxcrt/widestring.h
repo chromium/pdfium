@@ -39,11 +39,13 @@ class WideString : public StringTemplate<wchar_t> {
   [[nodiscard]] static WideString FormatV(const wchar_t* lpszFormat,
                                           va_list argList);
 
-  WideString();
-  WideString(const WideString& other);
+  WideString() = default;
+  WideString(const WideString& other) = default;
 
   // Move-construct a WideString. After construction, |other| is empty.
-  WideString(WideString&& other) noexcept;
+  WideString(WideString&& other) noexcept = default;
+
+  ~WideString() = default;
 
   // Make a one-character string from one wide char.
   explicit WideString(wchar_t ch);
@@ -62,8 +64,6 @@ class WideString : public StringTemplate<wchar_t> {
   WideString(WideStringView str1, WideStringView str2);
   WideString(const std::initializer_list<WideStringView>& list);
 
-  ~WideString();
-
   [[nodiscard]] static WideString FromASCII(ByteStringView str);
   [[nodiscard]] static WideString FromLatin1(ByteStringView str);
   [[nodiscard]] static WideString FromDefANSI(ByteStringView str);
@@ -76,42 +76,10 @@ class WideString : public StringTemplate<wchar_t> {
   // Note: Any subsequent modification of |this| will invalidate the result.
   const wchar_t* c_str() const { return m_pData ? m_pData->m_String : L""; }
 
-  // Explicit conversion to WideStringView.
-  // Note: Any subsequent modification of |this| will invalidate the result.
-  WideStringView AsStringView() const {
-    return WideStringView(c_str(), GetLength());
-  }
 
-  // Explicit conversion to span.
-  // Note: Any subsequent modification of |this| will invalidate the result.
-  pdfium::span<const wchar_t> span() const {
-    return pdfium::make_span(m_pData ? m_pData->m_String : nullptr,
-                             GetLength());
-  }
-
-  // Note: Any subsequent modification of |this| will invalidate iterators.
-  const_iterator begin() const {
-    return m_pData ? m_pData->span().begin() : nullptr;
-  }
-  const_iterator end() const {
-    return m_pData ? m_pData->span().end() : nullptr;
-  }
-
-  // Note: Any subsequent modification of |this| will invalidate iterators.
-  const_reverse_iterator rbegin() const {
-    return const_reverse_iterator(end());
-  }
-  const_reverse_iterator rend() const {
-    return const_reverse_iterator(begin());
-  }
-
-  size_t GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
   size_t GetStringLength() const {
     return m_pData ? wcslen(m_pData->m_String) : 0;
   }
-  bool IsEmpty() const { return !GetLength(); }
-  bool IsValidIndex(size_t index) const { return index < GetLength(); }
-  bool IsValidLength(size_t length) const { return length <= GetLength(); }
 
   WideString& operator=(const wchar_t* str);
   WideString& operator=(WideStringView str);
@@ -136,20 +104,6 @@ class WideString : public StringTemplate<wchar_t> {
   bool operator<(const wchar_t* ptr) const;
   bool operator<(WideStringView str) const;
   bool operator<(const WideString& other) const;
-
-  // / CHECK() if index is out of range (via span's operator[]).
-  CharType operator[](const size_t index) const {
-    CHECK(m_pData);
-    return m_pData->span()[index];
-  }
-
-  // Unlike std::wstring::front(), this is always safe and returns a
-  // NUL char when the string is empty.
-  CharType Front() const { return m_pData ? m_pData->Front() : 0; }
-
-  // Unlike std::wstring::back(), this is always safe and returns a
-  // NUL char when the string is empty.
-  CharType Back() const { return m_pData ? m_pData->Back() : 0; }
 
   void SetAt(size_t index, wchar_t c);
 
@@ -199,7 +153,6 @@ class WideString : public StringTemplate<wchar_t> {
   }
 
   size_t Replace(WideStringView pOld, WideStringView pNew);
-  size_t Remove(wchar_t ch);
 
   bool IsASCII() const { return AsStringView().IsASCII(); }
   bool EqualsASCII(ByteStringView that) const {

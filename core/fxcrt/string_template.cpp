@@ -63,6 +63,44 @@ void StringTemplate<T>::ReleaseBuffer(size_t nNewLength) {
 }
 
 template <typename T>
+size_t StringTemplate<T>::Remove(T chRemove) {
+  if (IsEmpty()) {
+    return 0;
+  }
+
+  T* pstrSource = m_pData->m_String;
+  T* pstrEnd = m_pData->m_String + m_pData->m_nDataLength;
+  while (pstrSource < pstrEnd) {
+    if (*pstrSource == chRemove) {
+      break;
+    }
+    pstrSource++;
+  }
+  if (pstrSource == pstrEnd) {
+    return 0;
+  }
+
+  ptrdiff_t copied = pstrSource - m_pData->m_String;
+  ReallocBeforeWrite(m_pData->m_nDataLength);
+  pstrSource = m_pData->m_String + copied;
+  pstrEnd = m_pData->m_String + m_pData->m_nDataLength;
+
+  T* pstrDest = pstrSource;
+  while (pstrSource < pstrEnd) {
+    if (*pstrSource != chRemove) {
+      *pstrDest = *pstrSource;
+      pstrDest++;
+    }
+    pstrSource++;
+  }
+
+  *pstrDest = 0;
+  size_t nCount = static_cast<size_t>(pstrSource - pstrDest);
+  m_pData->m_nDataLength -= nCount;
+  return nCount;
+}
+
+template <typename T>
 void StringTemplate<T>::ReallocBeforeWrite(size_t nNewLength) {
   if (m_pData && m_pData->CanOperateInPlace(nNewLength)) {
     return;

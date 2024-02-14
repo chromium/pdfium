@@ -37,11 +37,13 @@ class ByteString : public StringTemplate<char> {
   [[nodiscard]] static ByteString Format(const char* pFormat, ...);
   [[nodiscard]] static ByteString FormatV(const char* pFormat, va_list argList);
 
-  ByteString();
-  ByteString(const ByteString& other);
+  ByteString() = default;
+  ByteString(const ByteString& other) = default;
 
   // Move-construct a ByteString. After construction, |other| is empty.
-  ByteString(ByteString&& other) noexcept;
+  ByteString(ByteString&& other) noexcept = default;
+
+  ~ByteString() = default;
 
   // Make a one-character string from a char.
   explicit ByteString(char ch);
@@ -62,59 +64,14 @@ class ByteString : public StringTemplate<char> {
   ByteString(const std::initializer_list<ByteStringView>& list);
   explicit ByteString(const fxcrt::ostringstream& outStream);
 
-  ~ByteString();
-
   // Explicit conversion to C-style string. The result is never nullptr,
   // and is always NUL terminated.
   // Note: Any subsequent modification of |this| will invalidate the result.
   const char* c_str() const { return m_pData ? m_pData->m_String : ""; }
 
-  // Explicit conversion to uint8_t*. May return nullptr.
-  // Note: Any subsequent modification of |this| will invalidate the result.
-  const uint8_t* raw_str() const {
-    return m_pData ? reinterpret_cast<const uint8_t*>(m_pData->m_String)
-                   : nullptr;
-  }
-
-  // Explicit conversion to ByteStringView.
-  // Note: Any subsequent modification of |this| will invalidate the result.
-  ByteStringView AsStringView() const {
-    return ByteStringView(raw_str(), GetLength());
-  }
-
-  // Explicit conversion to span.
-  // Note: Any subsequent modification of |this| will invalidate the result.
-  pdfium::span<const char> span() const {
-    return pdfium::make_span(m_pData ? m_pData->m_String : nullptr,
-                             GetLength());
-  }
-  pdfium::span<const uint8_t> raw_span() const {
-    return pdfium::make_span(raw_str(), GetLength());
-  }
-
-  // Note: Any subsequent modification of |this| will invalidate iterators.
-  const_iterator begin() const {
-    return m_pData ? m_pData->span().begin() : nullptr;
-  }
-  const_iterator end() const {
-    return m_pData ? m_pData->span().end() : nullptr;
-  }
-
-  // Note: Any subsequent modification of |this| will invalidate iterators.
-  const_reverse_iterator rbegin() const {
-    return const_reverse_iterator(end());
-  }
-  const_reverse_iterator rend() const {
-    return const_reverse_iterator(begin());
-  }
-
-  size_t GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
   size_t GetStringLength() const {
     return m_pData ? strlen(m_pData->m_String) : 0;
   }
-  bool IsEmpty() const { return !GetLength(); }
-  bool IsValidIndex(size_t index) const { return index < GetLength(); }
-  bool IsValidLength(size_t length) const { return length <= GetLength(); }
 
   int Compare(ByteStringView str) const;
   bool EqualNoCase(ByteStringView str) const;
@@ -142,20 +99,6 @@ class ByteString : public StringTemplate<char> {
   ByteString& operator+=(const char* str);
   ByteString& operator+=(const ByteString& str);
   ByteString& operator+=(ByteStringView str);
-
-  // CHECK() if index is out of range (via span's operator[]).
-  CharType operator[](const size_t index) const {
-    CHECK(m_pData);
-    return m_pData->span()[index];
-  }
-
-  // Unlike std::string::front(), this is always safe and returns a
-  // NUL char when the string is empty.
-  CharType Front() const { return m_pData ? m_pData->Front() : 0; }
-
-  // Unlike std::string::back(), this is always safe and returns a
-  // NUL char when the string is empty.
-  CharType Back() const { return m_pData ? m_pData->Back() : 0; }
 
   void SetAt(size_t index, char c);
 
@@ -199,7 +142,6 @@ class ByteString : public StringTemplate<char> {
   void TrimRight(ByteStringView targets);
 
   size_t Replace(ByteStringView pOld, ByteStringView pNew);
-  size_t Remove(char ch);
 
   uint32_t GetID() const { return AsStringView().GetID(); }
 

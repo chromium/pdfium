@@ -9,6 +9,8 @@
 
 #include <stddef.h>
 
+#include <type_traits>
+
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/string_data_template.h"
 #include "core/fxcrt/string_view_template.h"
@@ -21,8 +23,71 @@ template <typename T>
 class StringTemplate {
  public:
   using CharType = T;
+  using UnsignedType = typename std::make_unsigned<CharType>::type;
   using const_iterator = T*;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+
+  bool IsEmpty() const { return !GetLength(); }
+  size_t GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
+
+  // Explicit conversion to UnsignedType*. May return nullptr.
+  // Note: Any subsequent modification of |this| will invalidate the result.
+  const UnsignedType* raw_str() const {
+    return m_pData ? reinterpret_cast<const UnsignedType*>(m_pData->m_String)
+                   : nullptr;
+  }
+
+  // Explicit conversion to ByteStringView.
+  // Note: Any subsequent modification of |this| will invalidate the result.
+  StringViewTemplate<CharType> AsStringView() const {
+    return StringViewTemplate<CharType>(raw_str(), GetLength());
+  }
+
+  // Explicit conversion to span.
+  // Note: Any subsequent modification of |this| will invalidate the result.
+  pdfium::span<const CharType> span() const {
+    return pdfium::make_span(m_pData ? m_pData->m_String : nullptr,
+                             GetLength());
+  }
+
+  // Explicit conversion to spans of unsigned types.
+  // Note: Any subsequent modification of |this| will invalidate the result.
+  pdfium::span<const UnsignedType> raw_span() const {
+    return pdfium::make_span(raw_str(), GetLength());
+  }
+
+  // Note: Any subsequent modification of |this| will invalidate iterators.
+  const_iterator begin() const {
+    return m_pData ? m_pData->span().begin() : nullptr;
+  }
+  const_iterator end() const {
+    return m_pData ? m_pData->span().end() : nullptr;
+  }
+
+  // Note: Any subsequent modification of |this| will invalidate iterators.
+  const_reverse_iterator rbegin() const {
+    return const_reverse_iterator(end());
+  }
+  const_reverse_iterator rend() const {
+    return const_reverse_iterator(begin());
+  }
+
+  bool IsValidIndex(size_t index) const { return index < GetLength(); }
+  bool IsValidLength(size_t length) const { return length <= GetLength(); }
+
+  // CHECK() if index is out of range (via span's operator[]).
+  CharType operator[](const size_t index) const {
+    CHECK(m_pData);
+    return m_pData->span()[index];
+  }
+
+  // Unlike std::wstring::front(), this is always safe and returns a
+  // NUL char when the string is empty.
+  CharType Front() const { return m_pData ? m_pData->Front() : 0; }
+
+  // Unlike std::wstring::back(), this is always safe and returns a
+  // NUL char when the string is empty.
+  CharType Back() const { return m_pData ? m_pData->Back() : 0; }
 
   // Holds on to buffer if possible for later re-use. Use assignment
   // to force immediate release if desired.
@@ -39,9 +104,19 @@ class StringTemplate {
   // to GetBuffer(), to indicate how much of the buffer was actually used.
   void ReleaseBuffer(size_t nNewLength);
 
+  size_t Remove(T ch);
+
  protected:
   using StringView = StringViewTemplate<T>;
   using StringData = StringDataTemplate<T>;
+
+  StringTemplate() = default;
+  StringTemplate(const StringTemplate& other) = default;
+
+  // Move-construct a StringTemplate. After construction, |other| is empty.
+  StringTemplate(StringTemplate&& other) noexcept = default;
+
+  ~StringTemplate() = default;
 
   void ReallocBeforeWrite(size_t nNewLen);
   void AllocBeforeWrite(size_t nNewLen);

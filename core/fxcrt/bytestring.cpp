@@ -99,12 +99,6 @@ ByteString::ByteString(const char* pStr, size_t nLen) {
 ByteString::ByteString(const uint8_t* pStr, size_t nLen)
     : ByteString(reinterpret_cast<const char*>(pStr), nLen) {}
 
-ByteString::ByteString() = default;
-
-ByteString::ByteString(const ByteString& other) = default;
-
-ByteString::ByteString(ByteString&& other) noexcept = default;
-
 ByteString::ByteString(char ch) {
   m_pData = StringData::Create(1);
   m_pData->m_String[0] = ch;
@@ -156,8 +150,6 @@ ByteString::ByteString(const fxcrt::ostringstream& outStream) {
     m_pData = StringData::Create({str.c_str(), str.size()});
   }
 }
-
-ByteString::~ByteString() = default;
 
 ByteString& ByteString::operator=(const char* str) {
   if (!str || !str[0])
@@ -431,40 +423,6 @@ void ByteString::MakeUpper() {
 
   ReallocBeforeWrite(m_pData->m_nDataLength);
   FXSYS_strupr(m_pData->m_String);
-}
-
-size_t ByteString::Remove(char chRemove) {
-  if (IsEmpty())
-    return 0;
-
-  char* pstrSource = m_pData->m_String;
-  char* pstrEnd = m_pData->m_String + m_pData->m_nDataLength;
-  while (pstrSource < pstrEnd) {
-    if (*pstrSource == chRemove)
-      break;
-    pstrSource++;
-  }
-  if (pstrSource == pstrEnd)
-    return 0;
-
-  ptrdiff_t copied = pstrSource - m_pData->m_String;
-  ReallocBeforeWrite(m_pData->m_nDataLength);
-  pstrSource = m_pData->m_String + copied;
-  pstrEnd = m_pData->m_String + m_pData->m_nDataLength;
-
-  char* pstrDest = pstrSource;
-  while (pstrSource < pstrEnd) {
-    if (*pstrSource != chRemove) {
-      *pstrDest = *pstrSource;
-      pstrDest++;
-    }
-    pstrSource++;
-  }
-
-  *pstrDest = 0;
-  size_t nCount = static_cast<size_t>(pstrSource - pstrDest);
-  m_pData->m_nDataLength -= nCount;
-  return nCount;
 }
 
 size_t ByteString::Replace(ByteStringView pOld, ByteStringView pNew) {
