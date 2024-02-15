@@ -19,35 +19,35 @@ constexpr uint32_t kTestValues32[] = {
 
 namespace fxcrt {
 
-TEST(ByteOrder, ByteSwapToLE16) {
+TEST(ByteOrder, FromLE16) {
   // Since there are so few values, test them all.
   for (uint32_t v = 0; v < 0x10000; ++v) {
     const uint16_t v16 = v;
     uint16_t expected = GetUInt16LSBFirst(pdfium::byte_span_from_ref(v16));
-    EXPECT_EQ(expected, ByteSwapToLE16(v16)) << v;
+    EXPECT_EQ(expected, FromLE16(v16)) << v;
   }
 }
 
-TEST(ByteOrder, ByteSwapToLE32) {
+TEST(ByteOrder, FromLE32) {
   for (uint32_t v : kTestValues32) {
     uint32_t expected = GetUInt32LSBFirst(pdfium::byte_span_from_ref(v));
-    EXPECT_EQ(expected, ByteSwapToLE32(v)) << v;
+    EXPECT_EQ(expected, FromLE32(v)) << v;
   }
 }
 
-TEST(ByteOrder, ByteSwapToBE16) {
+TEST(ByteOrder, FromBE16) {
   // Since there are so few values, test them all.
   for (uint32_t v = 0; v < 0x10000; ++v) {
     const uint16_t v16 = v;
     uint16_t expected = GetUInt16MSBFirst(pdfium::byte_span_from_ref(v16));
-    EXPECT_EQ(expected, ByteSwapToBE16(v16)) << v;
+    EXPECT_EQ(expected, FromBE16(v16)) << v;
   }
 }
 
-TEST(ByteOrder, ByteSwapToBE32) {
+TEST(ByteOrder, FromBE32) {
   for (uint32_t v : kTestValues32) {
     uint32_t expected = GetUInt32MSBFirst(pdfium::byte_span_from_ref(v));
-    EXPECT_EQ(expected, ByteSwapToBE32(v)) << v;
+    EXPECT_EQ(expected, FromBE32(v)) << v;
   }
 }
 

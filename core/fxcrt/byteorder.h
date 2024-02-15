@@ -49,11 +49,11 @@ inline FXCRT_BYTESWAPS_CONSTEXPR uint32_t ByteSwap(uint32_t x) {
 
 }  // namespace internal
 
-// NOTE: Prefer *Swap*() methods when data is known to be aligned.
+// NOTE: Prefer From*() methods when data is known to be aligned.
 
 // Converts the bytes in |x| from host order (endianness) to little endian, and
 // returns the result.
-inline uint16_t ByteSwapToLE16(uint16_t x) {
+inline uint16_t FromLE16(uint16_t x) {
 #if defined(ARCH_CPU_LITTLE_ENDIAN)
   return x;
 #else
@@ -61,7 +61,7 @@ inline uint16_t ByteSwapToLE16(uint16_t x) {
 #endif
 }
 
-inline uint32_t ByteSwapToLE32(uint32_t x) {
+inline uint32_t FromLE32(uint32_t x) {
 #if defined(ARCH_CPU_LITTLE_ENDIAN)
   return x;
 #else
@@ -71,36 +71,20 @@ inline uint32_t ByteSwapToLE32(uint32_t x) {
 
 // Converts the bytes in |x| from host order (endianness) to big endian, and
 // returns the result.
-inline uint16_t ByteSwapToBE16(uint16_t x) {
-#if defined(ARCH_CPU_LITTLE_ENDIAN)
-  return internal::ByteSwap(x);
-#else
-  return x;
-#endif
-}
-
-inline uint32_t ByteSwapToBE32(uint32_t x) {
-#if defined(ARCH_CPU_LITTLE_ENDIAN)
-  return internal::ByteSwap(x);
-#else
-  return x;
-#endif
-}
-
-// NOTE: These methods exist to improve readability by putting the word "From"
-// into the name, otherwise it is less clear that `x = ByteSwapToLE16(y)` gives
-// `x` in the native representation when `y` is in a LE representation.
-inline uint16_t FromLE16(uint16_t x) {
-  return ByteSwapToLE16(x);
-}
-inline uint32_t FromLE32(uint16_t x) {
-  return ByteSwapToLE32(x);
-}
 inline uint16_t FromBE16(uint16_t x) {
-  return ByteSwapToBE16(x);
+#if defined(ARCH_CPU_LITTLE_ENDIAN)
+  return internal::ByteSwap(x);
+#else
+  return x;
+#endif
 }
-inline uint32_t FromBE32(uint16_t x) {
-  return ByteSwapToBE32(x);
+
+inline uint32_t FromBE32(uint32_t x) {
+#if defined(ARCH_CPU_LITTLE_ENDIAN)
+  return internal::ByteSwap(x);
+#else
+  return x;
+#endif
 }
 
 // Transfer to/from spans irrespective of alignments.
