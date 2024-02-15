@@ -1224,7 +1224,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
         }
         bitmap->MultiplyAlpha(alpha);
       }
-      if (m_pDevice->SetDIBits(std::move(bitmap), left, top)) {
+      if (m_pDevice->SetDIBits(bitmap, left, top)) {
         return;
       }
     } else {
@@ -1233,7 +1233,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
         uint8_t* fill_argb8 = reinterpret_cast<uint8_t*>(&fill_argb);
         fill_argb8[3] *= FXSYS_roundf(alpha * 255) / 255;
       }
-      if (m_pDevice->SetBitMask(std::move(bitmap), left, top, fill_argb)) {
+      if (m_pDevice->SetBitMask(bitmap, left, top, fill_argb)) {
         return;
       }
     }
