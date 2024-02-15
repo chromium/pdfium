@@ -24,6 +24,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_random.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/widetext_buffer.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_class.h"
@@ -492,7 +493,8 @@ bool IsPartOfNumberW(wchar_t ch) {
 
 ByteString GUIDString(bool bSeparator) {
   uint8_t data[16];
-  FX_Random_GenerateMT(reinterpret_cast<uint32_t*>(data), 4);
+  auto random_span = pdfium::make_span(data);
+  FX_Random_GenerateMT(fxcrt::reinterpret_span<uint32_t>(random_span));
   data[6] = (data[6] & 0x0F) | 0x40;
 
   ByteString bsGUID;

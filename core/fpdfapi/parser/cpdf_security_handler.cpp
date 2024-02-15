@@ -22,6 +22,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_random.h"
+#include "core/fxcrt/span_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
@@ -555,7 +556,7 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
 
   if (m_Revision >= 5) {
     uint32_t random[4];
-    FX_Random_GenerateMT(random, std::size(random));
+    FX_Random_GenerateMT(random);
     CRYPT_sha2_context sha;
     CRYPT_SHA256Start(&sha);
     CRYPT_SHA256Update(&sha, reinterpret_cast<uint8_t*>(random),
@@ -655,8 +656,8 @@ void CPDF_SecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict) {
 
   // In ISO 32000 Supplement for ExtensionLevel 3, Algorithm 3.10 says bytes 12
   // to 15 should be random data.
-  uint32_t* buf_random = reinterpret_cast<uint32_t*>(&buf[12]);
-  FX_Random_GenerateMT(buf_random, 1);
+  auto random_span = pdfium::make_span(buf).subspan(12, 4);
+  FX_Random_GenerateMT(fxcrt::reinterpret_span<uint32_t>(random_span));
 
   CRYPT_aes_context aes = {};
   CRYPT_AESSetKey(&aes, m_EncryptKey, sizeof(m_EncryptKey));

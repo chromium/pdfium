@@ -18,7 +18,7 @@ TEST(FX_Random, GenerateMT3600times) {
   std::set<std::array<uint32_t, 16>> seen;
   std::array<uint32_t, 16> current;
   for (int i = 0; i < 3600; ++i) {
-    FX_Random_GenerateMT(current.data(), 16);
+    FX_Random_GenerateMT(current);
     EXPECT_TRUE(seen.insert(current).second);
   }
 }
