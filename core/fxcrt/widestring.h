@@ -116,10 +116,6 @@ class WideString : public StringTemplate<wchar_t> {
   WideString First(size_t count) const;
   WideString Last(size_t count) const;
 
-  size_t Insert(size_t index, wchar_t ch);
-  size_t InsertAtFront(wchar_t ch) { return Insert(0, ch); }
-  size_t InsertAtBack(wchar_t ch) { return Insert(GetLength(), ch); }
-
   void MakeLower();
   void MakeUpper();
 

@@ -101,6 +101,21 @@ size_t StringTemplate<T>::Remove(T chRemove) {
 }
 
 template <typename T>
+size_t StringTemplate<T>::Insert(size_t index, T ch) {
+  const size_t cur_length = GetLength();
+  if (!IsValidLength(index)) {
+    return cur_length;
+  }
+  const size_t new_length = cur_length + 1;
+  ReallocBeforeWrite(new_length);
+  fxcrt::spanmove(m_pData->capacity_span().subspan(index + 1),
+                  m_pData->capacity_span().subspan(index, new_length - index));
+  m_pData->m_String[index] = ch;
+  m_pData->m_nDataLength = new_length;
+  return new_length;
+}
+
+template <typename T>
 size_t StringTemplate<T>::Delete(size_t index, size_t count) {
   if (!m_pData) {
     return 0;

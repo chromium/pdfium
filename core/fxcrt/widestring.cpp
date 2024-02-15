@@ -647,20 +647,6 @@ WideString WideString::Last(size_t count) const {
   return Substr(GetLength() - count, count);
 }
 
-size_t WideString::Insert(size_t index, wchar_t ch) {
-  const size_t cur_length = GetLength();
-  if (!IsValidLength(index))
-    return cur_length;
-
-  const size_t new_length = cur_length + 1;
-  ReallocBeforeWrite(new_length);
-  FXSYS_wmemmove(m_pData->m_String + index + 1, m_pData->m_String + index,
-                 new_length - index);
-  m_pData->m_String[index] = ch;
-  m_pData->m_nDataLength = new_length;
-  return new_length;
-}
-
 std::optional<size_t> WideString::Find(wchar_t ch, size_t start) const {
   if (!m_pData)
     return std::nullopt;

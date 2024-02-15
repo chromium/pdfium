@@ -104,6 +104,11 @@ class StringTemplate {
   // to GetBuffer(), to indicate how much of the buffer was actually used.
   void ReleaseBuffer(size_t nNewLength);
 
+  // Returns size of string following insertion.
+  size_t Insert(size_t index, T ch);
+  size_t InsertAtFront(T ch) { return Insert(0, ch); }
+  size_t InsertAtBack(T ch) { return Insert(GetLength(), ch); }
+
   // Returns number of instances of `ch` removed.
   size_t Remove(T ch);
 

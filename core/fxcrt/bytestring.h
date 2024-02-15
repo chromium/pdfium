@@ -102,10 +102,6 @@ class ByteString : public StringTemplate<char> {
 
   void SetAt(size_t index, char c);
 
-  size_t Insert(size_t index, char ch);
-  size_t InsertAtFront(char ch) { return Insert(0, ch); }
-  size_t InsertAtBack(char ch) { return Insert(GetLength(), ch); }
-
   void Reserve(size_t len);
 
   ByteString Substr(size_t offset) const;
