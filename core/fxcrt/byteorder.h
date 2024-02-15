@@ -5,11 +5,49 @@
 #ifndef CORE_FXCRT_BYTEORDER_H_
 #define CORE_FXCRT_BYTEORDER_H_
 
+#include <stdint.h>
+
 #include "build/build_config.h"
 #include "third_party/base/containers/span.h"
-#include "third_party/base/sys_byteorder.h"
+
+#if defined(COMPILER_MSVC)
+#include <stdlib.h>
+#endif
 
 namespace fxcrt {
+
+namespace internal {
+
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+// TODO(thestig): See
+// https://developercommunity.visualstudio.com/t/Mark-some-built-in-functions-as-constexp/362558
+// https://developercommunity.visualstudio.com/t/constexpr-byte-swapping-optimization/983963
+#define FXCRT_BYTESWAPS_CONSTEXPR
+#else
+#define FXCRT_BYTESWAPS_CONSTEXPR constexpr
+#endif
+
+// Returns a value with all bytes in |x| swapped, i.e. reverses the endianness.
+// TODO(thestig): Once C++23 is available, replace with std::byteswap.
+inline FXCRT_BYTESWAPS_CONSTEXPR uint16_t ByteSwap(uint16_t x) {
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+  return _byteswap_ushort(x);
+#else
+  return __builtin_bswap16(x);
+#endif
+}
+
+inline FXCRT_BYTESWAPS_CONSTEXPR uint32_t ByteSwap(uint32_t x) {
+#if defined(COMPILER_MSVC) && !defined(__clang__)
+  return _byteswap_ulong(x);
+#else
+  return __builtin_bswap32(x);
+#endif
+}
+
+#undef FXCRT_BYTESWAPS_CONSTEXPR
+
+}  // namespace internal
 
 // NOTE: Prefer *Swap*() methods when data is known to be aligned.
 
@@ -19,7 +57,7 @@ inline uint16_t ByteSwapToLE16(uint16_t x) {
 #if defined(ARCH_CPU_LITTLE_ENDIAN)
   return x;
 #else
-  return pdfium::base::ByteSwap(x);
+  return internal::ByteSwap(x);
 #endif
 }
 
@@ -27,7 +65,7 @@ inline uint32_t ByteSwapToLE32(uint32_t x) {
 #if defined(ARCH_CPU_LITTLE_ENDIAN)
   return x;
 #else
-  return pdfium::base::ByteSwap(x);
+  return internal::ByteSwap(x);
 #endif
 }
 
@@ -35,7 +73,7 @@ inline uint32_t ByteSwapToLE32(uint32_t x) {
 // returns the result.
 inline uint16_t ByteSwapToBE16(uint16_t x) {
 #if defined(ARCH_CPU_LITTLE_ENDIAN)
-  return pdfium::base::ByteSwap(x);
+  return internal::ByteSwap(x);
 #else
   return x;
 #endif
@@ -43,7 +81,7 @@ inline uint16_t ByteSwapToBE16(uint16_t x) {
 
 inline uint32_t ByteSwapToBE32(uint32_t x) {
 #if defined(ARCH_CPU_LITTLE_ENDIAN)
-  return pdfium::base::ByteSwap(x);
+  return internal::ByteSwap(x);
 #else
   return x;
 #endif
