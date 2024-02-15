@@ -101,6 +101,29 @@ size_t StringTemplate<T>::Remove(T chRemove) {
 }
 
 template <typename T>
+size_t StringTemplate<T>::Delete(size_t index, size_t count) {
+  if (!m_pData) {
+    return 0;
+  }
+  size_t old_length = m_pData->m_nDataLength;
+  if (count == 0 || index != std::clamp<size_t>(index, 0, old_length)) {
+    return old_length;
+  }
+  size_t removal_length = index + count;
+  if (removal_length > old_length) {
+    return old_length;
+  }
+  ReallocBeforeWrite(old_length);
+  // Include the NUL char not accounted for in lengths.
+  size_t chars_to_copy = old_length - removal_length + 1;
+  fxcrt::spanmove(
+      m_pData->capacity_span().subspan(index),
+      m_pData->capacity_span().subspan(removal_length, chars_to_copy));
+  m_pData->m_nDataLength = old_length - count;
+  return m_pData->m_nDataLength;
+}
+
+template <typename T>
 void StringTemplate<T>::ReallocBeforeWrite(size_t nNewLength) {
   if (m_pData && m_pData->CanOperateInPlace(nNewLength)) {
     return;

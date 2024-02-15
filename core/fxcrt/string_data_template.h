@@ -39,6 +39,14 @@ class StringDataTemplate {
     return pdfium::make_span(m_String, m_nDataLength);
   }
 
+  // Includes the terminating NUL not included in lengths.
+  pdfium::span<CharType> capacity_span() {
+    return pdfium::make_span(m_String, m_nAllocLength + 1);
+  }
+  pdfium::span<const CharType> capacity_span() const {
+    return pdfium::make_span(m_String, m_nAllocLength + 1);
+  }
+
   // Unlike std::string::front(), this is always safe and returns a
   // NUL char when the string is empty.
   CharType Front() const { return !span().empty() ? span().front() : 0; }

@@ -119,7 +119,6 @@ class WideString : public StringTemplate<wchar_t> {
   size_t Insert(size_t index, wchar_t ch);
   size_t InsertAtFront(wchar_t ch) { return Insert(0, ch); }
   size_t InsertAtBack(wchar_t ch) { return Insert(GetLength(), ch); }
-  size_t Delete(size_t index, size_t count = 1);
 
   void MakeLower();
   void MakeUpper();

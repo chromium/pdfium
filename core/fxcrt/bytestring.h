@@ -105,7 +105,6 @@ class ByteString : public StringTemplate<char> {
   size_t Insert(size_t index, char ch);
   size_t InsertAtFront(char ch) { return Insert(0, ch); }
   size_t InsertAtBack(char ch) { return Insert(GetLength(), ch); }
-  size_t Delete(size_t index, size_t count = 1);
 
   void Reserve(size_t len);
 

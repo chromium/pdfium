@@ -298,27 +298,6 @@ void ByteString::Reserve(size_t len) {
   GetBuffer(len);
 }
 
-size_t ByteString::Delete(size_t index, size_t count) {
-  if (!m_pData)
-    return 0;
-
-  size_t old_length = m_pData->m_nDataLength;
-  if (count == 0 || index != std::clamp<size_t>(index, 0, old_length)) {
-    return old_length;
-  }
-
-  size_t removal_length = index + count;
-  if (removal_length > old_length)
-    return old_length;
-
-  ReallocBeforeWrite(old_length);
-  size_t chars_to_copy = old_length - removal_length + 1;
-  FXSYS_memmove(m_pData->m_String + index, m_pData->m_String + removal_length,
-                chars_to_copy);
-  m_pData->m_nDataLength = old_length - count;
-  return m_pData->m_nDataLength;
-}
-
 intptr_t ByteString::ReferenceCountForTesting() const {
   return m_pData ? m_pData->m_nRefs : 0;
 }

@@ -104,7 +104,11 @@ class StringTemplate {
   // to GetBuffer(), to indicate how much of the buffer was actually used.
   void ReleaseBuffer(size_t nNewLength);
 
+  // Returns number of instances of `ch` removed.
   size_t Remove(T ch);
+
+  // Returns size of the string following deletion.
+  size_t Delete(size_t index, size_t count = 1);
 
  protected:
   using StringView = StringViewTemplate<T>;
