@@ -123,64 +123,65 @@ void Revision6_Hash(const ByteString& password,
   uint8_t digest[32];
   CRYPT_SHA256Finish(&sha, digest);
 
-  DataVector<uint8_t> buf;
+  DataVector<uint8_t> encrypted_output;
+  DataVector<uint8_t> inter_digest;
   uint8_t* input = digest;
   uint8_t* key = input;
   uint8_t* iv = input + 16;
-  uint8_t* E = nullptr;
-  int iBufLen = 0;
-  DataVector<uint8_t> interDigest;
   int i = 0;
-  int iBlockSize = 32;
+  size_t block_size = 32;
   CRYPT_aes_context aes = {};
-  while (i < 64 || i < E[iBufLen - 1] + 32) {
-    int iRoundSize = password.GetLength() + iBlockSize;
+  do {
+    size_t round_size = password.GetLength() + block_size;
     if (vector) {
-      iRoundSize += 48;
+      round_size += 48;
     }
-    iBufLen = iRoundSize * 64;
-    buf.resize(iBufLen);
-    E = buf.data();
+    encrypted_output.resize(round_size * 64);
+    auto encrypted_output_span = pdfium::make_span(encrypted_output);
     DataVector<uint8_t> content;
     for (int j = 0; j < 64; ++j) {
       content.insert(std::end(content), password.raw_str(),
                      password.raw_str() + password.GetLength());
-      content.insert(std::end(content), input, input + iBlockSize);
+      content.insert(std::end(content), input, input + block_size);
       if (vector) {
         content.insert(std::end(content), vector, vector + 48);
       }
     }
     CRYPT_AESSetKey(&aes, key, 16);
     CRYPT_AESSetIV(&aes, iv);
-    CRYPT_AESEncrypt(&aes, E, content.data(), iBufLen);
+    CRYPT_AESEncrypt(&aes, encrypted_output_span.data(), content.data(),
+                     encrypted_output_span.size());
     int iHash = 0;
-    switch (BigOrder64BitsMod3(E)) {
+    switch (BigOrder64BitsMod3(encrypted_output_span.data())) {
       case 0:
         iHash = 0;
-        iBlockSize = 32;
+        block_size = 32;
         break;
       case 1:
         iHash = 1;
-        iBlockSize = 48;
+        block_size = 48;
         break;
       default:
         iHash = 2;
-        iBlockSize = 64;
+        block_size = 64;
         break;
     }
-    interDigest.resize(iBlockSize);
-    input = interDigest.data();
+    inter_digest.resize(block_size);
+    input = inter_digest.data();
     if (iHash == 0) {
-      CRYPT_SHA256Generate(E, iBufLen, input);
+      CRYPT_SHA256Generate(encrypted_output_span.data(),
+                           encrypted_output_span.size(), input);
     } else if (iHash == 1) {
-      CRYPT_SHA384Generate(E, iBufLen, input);
+      CRYPT_SHA384Generate(encrypted_output_span.data(),
+                           encrypted_output_span.size(), input);
     } else if (iHash == 2) {
-      CRYPT_SHA512Generate(E, iBufLen, input);
+      CRYPT_SHA512Generate(encrypted_output_span.data(),
+                           encrypted_output_span.size(), input);
     }
     key = input;
     iv = input + 16;
     ++i;
-  }
+  } while (i < 64 || i - 32 < encrypted_output.back());
   if (hash) {
     memcpy(hash, input, 32);
   }
