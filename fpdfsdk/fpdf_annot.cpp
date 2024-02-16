@@ -341,6 +341,7 @@ FPDFAnnot_IsSupportedSubtype(FPDF_ANNOTATION_SUBTYPE subtype) {
   // The supported subtypes must also be communicated in the user doc.
   switch (subtype) {
     case FPDF_ANNOT_CIRCLE:
+    case FPDF_ANNOT_FILEATTACHMENT:
     case FPDF_ANNOT_FREETEXT:
     case FPDF_ANNOT_HIGHLIGHT:
     case FPDF_ANNOT_INK:
@@ -1472,4 +1473,52 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetURI(FPDF_ANNOTATION annot,
   action->SetNewFor<CPDF_Name>("S", "URI");
   action->SetNewFor<CPDF_String>("URI", uri, /*bHex=*/false);
   return true;
+}
+
+FPDF_EXPORT FPDF_ATTACHMENT FPDF_CALLCONV
+FPDFAnnot_GetFileAttachment(FPDF_ANNOTATION annot) {
+  if (FPDFAnnot_GetSubtype(annot) != FPDF_ANNOT_FILEATTACHMENT) {
+    return nullptr;
+  }
+
+  RetainPtr<CPDF_Dictionary> annot_dict =
+      GetMutableAnnotDictFromFPDFAnnotation(annot);
+  if (!annot_dict) {
+    return nullptr;
+  }
+
+  return FPDFAttachmentFromCPDFObject(
+      annot_dict->GetMutableDirectObjectFor("FS"));
+}
+
+FPDF_EXPORT FPDF_ATTACHMENT FPDF_CALLCONV
+FPDFAnnot_AddFileAttachment(FPDF_ANNOTATION annot, FPDF_WIDESTRING name) {
+  if (FPDFAnnot_GetSubtype(annot) != FPDF_ANNOT_FILEATTACHMENT) {
+    return nullptr;
+  }
+
+  CPDF_AnnotContext* context = CPDFAnnotContextFromFPDFAnnotation(annot);
+  if (!context) {
+    return nullptr;
+  }
+
+  RetainPtr<CPDF_Dictionary> annot_dict = context->GetMutableAnnotDict();
+  if (!annot_dict) {
+    return nullptr;
+  }
+
+  WideString ws_name = WideStringFromFPDFWideString(name);
+  if (ws_name.IsEmpty()) {
+    return nullptr;
+  }
+
+  CPDF_Document* doc = context->GetPage()->GetDocument();
+  auto fs_obj = doc->NewIndirect<CPDF_Dictionary>();
+
+  fs_obj->SetNewFor<CPDF_Name>("Type", "Filespec");
+  fs_obj->SetNewFor<CPDF_String>("UF", ws_name.AsStringView());
+  fs_obj->SetNewFor<CPDF_String>("F", ws_name.AsStringView());
+
+  annot_dict->SetNewFor<CPDF_Reference>("FS", doc, fs_obj->GetObjNum());
+  return FPDFAttachmentFromCPDFObject(fs_obj);
 }

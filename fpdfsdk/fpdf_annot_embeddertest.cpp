@@ -21,6 +21,7 @@
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
+#include "public/fpdf_attachment.h"
 #include "public/fpdf_edit.h"
 #include "public/fpdf_formfill.h"
 #include "public/fpdfview.h"
@@ -3829,4 +3830,117 @@ TEST_F(FPDFAnnotEmbedderTest, AnnotationBorderRendering) {
 
   CloseSavedPage(page);
   CloseSavedDocument();
+}
+
+TEST_F(FPDFAnnotEmbedderTest, GetAndAddFileAttachmentAnnotation) {
+  ASSERT_TRUE(OpenDocument("annotation_fileattachment.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_ANNOT_FILEATTACHMENT, FPDFAnnot_GetSubtype(annot.get()));
+
+    FPDF_ATTACHMENT attachment = FPDFAnnot_GetFileAttachment(annot.get());
+    ASSERT_TRUE(attachment);
+
+    // Check that the name of the attachment is correct.
+    unsigned long length_bytes = FPDFAttachment_GetName(attachment, nullptr, 0);
+    ASSERT_EQ(18u, length_bytes);
+    std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
+    EXPECT_EQ(18u,
+              FPDFAttachment_GetName(attachment, buf.data(), length_bytes));
+    EXPECT_EQ(L"test.txt", GetPlatformWString(buf.data()));
+
+    // Check that the content of the attachment is correct.
+    ASSERT_TRUE(FPDFAttachment_GetFile(attachment, nullptr, 0, &length_bytes));
+    std::vector<uint8_t> content_buf(length_bytes);
+    unsigned long actual_length_bytes;
+    ASSERT_TRUE(FPDFAttachment_GetFile(attachment, content_buf.data(),
+                                       length_bytes, &actual_length_bytes));
+    ASSERT_THAT(content_buf, testing::ElementsAre('t', 'e', 's', 't', ' ', 't',
+                                                  'e', 'x', 't'));
+  }
+
+  {
+    // Add a file attachment annotation to the page.
+    ScopedFPDFAnnotation annot(
+        FPDFPage_CreateAnnot(page, FPDF_ANNOT_FILEATTACHMENT));
+    ASSERT_TRUE(annot);
+
+    // Check that there is now 2 annotations on this page.
+    EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+
+    ScopedFPDFWideString file_name = GetFPDFWideString(L"0.txt");
+    FPDF_ATTACHMENT attachment =
+        FPDFAnnot_AddFileAttachment(annot.get(), file_name.get());
+    ASSERT_TRUE(attachment);
+
+    // The filling of the FPDF_ATTACHMENT has been tested in
+    // fpdf_attachment_embeddertest.cpp
+  }
+
+  {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
+    ASSERT_TRUE(annot);
+    EXPECT_EQ(FPDF_ANNOT_FILEATTACHMENT, FPDFAnnot_GetSubtype(annot.get()));
+
+    // Check that we can read newly created file spec
+    FPDF_ATTACHMENT attachment = FPDFAnnot_GetFileAttachment(annot.get());
+    ASSERT_TRUE(attachment);
+
+    // Verify the name of the new attachment.
+    unsigned long length_bytes = FPDFAttachment_GetName(attachment, nullptr, 0);
+    ASSERT_EQ(12u, length_bytes);
+    std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(length_bytes);
+    EXPECT_EQ(12u,
+              FPDFAttachment_GetName(attachment, buf.data(), length_bytes));
+    EXPECT_EQ(L"0.txt", GetPlatformWString(buf.data()));
+  }
+
+  UnloadPage(page);
+}
+
+TEST_F(FPDFAnnotEmbedderTest, BadCasesFileAttachmentAnnotation) {
+  ASSERT_TRUE(OpenDocument("annotation_fileattachment.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+
+  {
+    ASSERT_FALSE(FPDFAnnot_GetFileAttachment(nullptr));
+
+    ScopedFPDFAnnotation text_annot(
+        FPDFPage_CreateAnnot(page, FPDF_ANNOT_TEXT));
+    ASSERT_TRUE(text_annot);
+    ASSERT_FALSE(FPDFAnnot_GetFileAttachment(text_annot.get()));
+
+    ScopedFPDFAnnotation newly_file_annot(
+        FPDFPage_CreateAnnot(page, FPDF_ANNOT_FILEATTACHMENT));
+    ASSERT_TRUE(newly_file_annot);
+    ASSERT_FALSE(FPDFAnnot_GetFileAttachment(newly_file_annot.get()));
+  }
+
+  {
+    ScopedFPDFWideString empty_name = GetFPDFWideString(L"");
+    ScopedFPDFWideString not_empty_name = GetFPDFWideString(L"0.txt");
+
+    ASSERT_FALSE(FPDFAnnot_AddFileAttachment(nullptr, nullptr));
+    ASSERT_FALSE(FPDFAnnot_AddFileAttachment(nullptr, empty_name.get()));
+    ASSERT_FALSE(FPDFAnnot_AddFileAttachment(nullptr, not_empty_name.get()));
+
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    ASSERT_FALSE(FPDFAnnot_AddFileAttachment(annot.get(), nullptr));
+    ASSERT_FALSE(FPDFAnnot_AddFileAttachment(annot.get(), empty_name.get()));
+
+    FPDF_ATTACHMENT old_attachment = FPDFAnnot_GetFileAttachment(annot.get());
+    EXPECT_NE(old_attachment,
+              FPDFAnnot_AddFileAttachment(annot.get(), not_empty_name.get()));
+  }
+
+  UnloadPage(page);
 }

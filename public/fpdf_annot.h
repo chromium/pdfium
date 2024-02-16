@@ -101,6 +101,7 @@ typedef enum FPDFANNOT_COLORTYPE {
 // Check if an annotation subtype is currently supported for creation.
 // Currently supported subtypes:
 //    - circle
+//    - fileattachment
 //    - freetext
 //    - highlight
 //    - ink
@@ -967,6 +968,25 @@ FPDFAnnot_GetFormFieldExportValue(FPDF_FORMHANDLE hHandle,
 // Returns true if successful.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetURI(FPDF_ANNOTATION annot,
                                                      const char* uri);
+
+// Experimental API.
+// Get the attachment from |annot|.
+//
+//   annot - handle to a file annotation.
+//
+// Returns the handle to the attachment object, or NULL on failure.
+FPDF_EXPORT FPDF_ATTACHMENT FPDF_CALLCONV
+FPDFAnnot_GetFileAttachment(FPDF_ANNOTATION annot);
+
+// Experimental API.
+// Add an embedded file with |name| to |annot|.
+//
+//   annot    - handle to a file annotation.
+//   name     - name of the new attachment.
+//
+// Returns a handle to the new attachment object, or NULL on failure.
+FPDF_EXPORT FPDF_ATTACHMENT FPDF_CALLCONV
+FPDFAnnot_AddFileAttachment(FPDF_ANNOTATION annot, FPDF_WIDESTRING name);
 
 #ifdef __cplusplus
 }  // extern "C"
