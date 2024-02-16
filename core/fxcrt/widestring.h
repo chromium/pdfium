@@ -135,18 +135,6 @@ class WideString : public StringTemplate<wchar_t> {
 
   int GetInteger() const;
 
-  std::optional<size_t> Find(WideStringView subStr, size_t start = 0) const;
-  std::optional<size_t> Find(wchar_t ch, size_t start = 0) const;
-  std::optional<size_t> ReverseFind(wchar_t ch) const;
-
-  bool Contains(WideStringView lpszSub, size_t start = 0) const {
-    return Find(lpszSub, start).has_value();
-  }
-
-  bool Contains(char ch, size_t start = 0) const {
-    return Find(ch, start).has_value();
-  }
-
   size_t Replace(WideStringView pOld, WideStringView pNew);
 
   bool IsASCII() const { return AsStringView().IsASCII(); }

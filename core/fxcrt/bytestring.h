@@ -109,18 +109,6 @@ class ByteString : public StringTemplate<char> {
   ByteString First(size_t count) const;
   ByteString Last(size_t count) const;
 
-  std::optional<size_t> Find(ByteStringView subStr, size_t start = 0) const;
-  std::optional<size_t> Find(char ch, size_t start = 0) const;
-  std::optional<size_t> ReverseFind(char ch) const;
-
-  bool Contains(ByteStringView lpszSub, size_t start = 0) const {
-    return Find(lpszSub, start).has_value();
-  }
-
-  bool Contains(char ch, size_t start = 0) const {
-    return Find(ch, start).has_value();
-  }
-
   void MakeLower();
   void MakeUpper();
 

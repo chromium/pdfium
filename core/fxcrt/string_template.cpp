@@ -139,6 +139,42 @@ size_t StringTemplate<T>::Delete(size_t index, size_t count) {
 }
 
 template <typename T>
+std::optional<size_t> StringTemplate<T>::Find(T ch, size_t start) const {
+  return Find(StringView(ch), start);
+}
+
+template <typename T>
+std::optional<size_t> StringTemplate<T>::Find(StringView str,
+                                              size_t start) const {
+  if (!m_pData) {
+    return std::nullopt;
+  }
+  if (!IsValidIndex(start)) {
+    return std::nullopt;
+  }
+  std::optional<size_t> result =
+      spanpos(m_pData->span().subspan(start), str.span());
+  if (!result.has_value()) {
+    return std::nullopt;
+  }
+  return start + result.value();
+}
+
+template <typename T>
+std::optional<size_t> StringTemplate<T>::ReverseFind(T ch) const {
+  if (!m_pData) {
+    return std::nullopt;
+  }
+  size_t nLength = m_pData->m_nDataLength;
+  while (nLength--) {
+    if (m_pData->m_String[nLength] == ch) {
+      return nLength;
+    }
+  }
+  return std::nullopt;
+}
+
+template <typename T>
 void StringTemplate<T>::ReallocBeforeWrite(size_t nNewLength) {
   if (m_pData && m_pData->CanOperateInPlace(nNewLength)) {
     return;
@@ -147,7 +183,6 @@ void StringTemplate<T>::ReallocBeforeWrite(size_t nNewLength) {
     clear();
     return;
   }
-
   RetainPtr<StringData> pNewData = StringData::Create(nNewLength);
   if (m_pData) {
     size_t nCopyLength = std::min(m_pData->m_nDataLength, nNewLength);

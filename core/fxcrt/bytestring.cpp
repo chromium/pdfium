@@ -332,48 +332,6 @@ void ByteString::SetAt(size_t index, char c) {
   m_pData->m_String[index] = c;
 }
 
-std::optional<size_t> ByteString::Find(char ch, size_t start) const {
-  if (!m_pData)
-    return std::nullopt;
-
-  if (!IsValidIndex(start))
-    return std::nullopt;
-
-  const char* pStr = static_cast<const char*>(FXSYS_memchr(
-      m_pData->m_String + start, ch, m_pData->m_nDataLength - start));
-  return pStr ? std::optional<size_t>(
-                    static_cast<size_t>(pStr - m_pData->m_String))
-              : std::nullopt;
-}
-
-std::optional<size_t> ByteString::Find(ByteStringView subStr,
-                                       size_t start) const {
-  if (!m_pData) {
-    return std::nullopt;
-  }
-  if (!IsValidIndex(start)) {
-    return std::nullopt;
-  }
-  std::optional<size_t> result =
-      spanpos(m_pData->span().subspan(start), subStr.span());
-  if (!result.has_value()) {
-    return std::nullopt;
-  }
-  return start + result.value();
-}
-
-std::optional<size_t> ByteString::ReverseFind(char ch) const {
-  if (!m_pData)
-    return std::nullopt;
-
-  size_t nLength = m_pData->m_nDataLength;
-  while (nLength--) {
-    if (m_pData->m_String[nLength] == ch)
-      return nLength;
-  }
-  return std::nullopt;
-}
-
 void ByteString::MakeLower() {
   if (IsEmpty())
     return;

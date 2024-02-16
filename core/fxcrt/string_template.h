@@ -24,6 +24,7 @@ class StringTemplate {
  public:
   using CharType = T;
   using UnsignedType = typename std::make_unsigned<CharType>::type;
+  using StringView = StringViewTemplate<T>;
   using const_iterator = T*;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
@@ -37,11 +38,9 @@ class StringTemplate {
                    : nullptr;
   }
 
-  // Explicit conversion to ByteStringView.
+  // Explicit conversion to StringView.
   // Note: Any subsequent modification of |this| will invalidate the result.
-  StringViewTemplate<CharType> AsStringView() const {
-    return StringViewTemplate<CharType>(raw_str(), GetLength());
-  }
+  StringView AsStringView() const { return StringView(raw_str(), GetLength()); }
 
   // Explicit conversion to span.
   // Note: Any subsequent modification of |this| will invalidate the result.
@@ -115,8 +114,19 @@ class StringTemplate {
   // Returns size of the string following deletion.
   size_t Delete(size_t index, size_t count = 1);
 
+  // Returns the index within in the string when found.
+  std::optional<size_t> Find(StringView str, size_t start = 0) const;
+  std::optional<size_t> Find(T ch, size_t start = 0) const;
+  std::optional<size_t> ReverseFind(T ch) const;
+
+  bool Contains(StringView str, size_t start = 0) const {
+    return Find(str, start).has_value();
+  }
+  bool Contains(T ch, size_t start = 0) const {
+    return Find(ch, start).has_value();
+  }
+
  protected:
-  using StringView = StringViewTemplate<T>;
   using StringData = StringDataTemplate<T>;
 
   StringTemplate() = default;
