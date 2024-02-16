@@ -772,84 +772,18 @@ int WideString::CompareNoCase(const wchar_t* str) const {
   return (!str || str[0] == 0) ? 0 : -1;
 }
 
-void WideString::Trim() {
-  TrimRight(kWideTrimChars);
+void WideString::TrimWhitespace() {
+  TrimWhitespaceRight();
+  TrimWhitespaceLeft();
+}
+
+void WideString::TrimWhitespaceLeft() {
   TrimLeft(kWideTrimChars);
 }
 
-void WideString::Trim(wchar_t target) {
-  wchar_t str[2] = {target, 0};
-  TrimRight(str);
-  TrimLeft(str);
-}
-
-void WideString::Trim(WideStringView targets) {
-  TrimRight(targets);
-  TrimLeft(targets);
-}
-
-void WideString::TrimLeft() {
-  TrimLeft(kWideTrimChars);
-}
-
-void WideString::TrimLeft(wchar_t target) {
-  wchar_t str[2] = {target, 0};
-  TrimLeft(str);
-}
-
-void WideString::TrimLeft(WideStringView targets) {
-  if (!m_pData || targets.IsEmpty())
-    return;
-
-  size_t len = GetLength();
-  if (len == 0)
-    return;
-
-  size_t pos = 0;
-  while (pos < len) {
-    size_t i = 0;
-    while (i < targets.GetLength() &&
-           targets.CharAt(i) != m_pData->m_String[pos]) {
-      i++;
-    }
-    if (i == targets.GetLength())
-      break;
-    pos++;
-  }
-  if (!pos)
-    return;
-
-  ReallocBeforeWrite(len);
-  size_t nDataLength = len - pos;
-  memmove(m_pData->m_String, m_pData->m_String + pos,
-          (nDataLength + 1) * sizeof(wchar_t));
-  m_pData->m_nDataLength = nDataLength;
-}
-
-void WideString::TrimRight() {
+void WideString::TrimWhitespaceRight() {
   TrimRight(kWideTrimChars);
 }
-
-void WideString::TrimRight(wchar_t target) {
-  wchar_t str[2] = {target, 0};
-  TrimRight(str);
-}
-
-void WideString::TrimRight(WideStringView targets) {
-  if (IsEmpty() || targets.IsEmpty())
-    return;
-
-  size_t pos = GetLength();
-  while (pos && targets.Contains(m_pData->m_String[pos - 1]))
-    pos--;
-
-  if (pos < m_pData->m_nDataLength) {
-    ReallocBeforeWrite(m_pData->m_nDataLength);
-    m_pData->m_String[pos] = 0;
-    m_pData->m_nDataLength = pos;
-  }
-}
-
 int WideString::GetInteger() const {
   return m_pData ? FXSYS_wtoi(m_pData->m_String) : 0;
 }

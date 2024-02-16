@@ -227,6 +227,92 @@ size_t StringTemplate<T>::Replace(StringView oldstr, StringView newstr) {
 }
 
 template <typename T>
+void StringTemplate<T>::Trim(T ch) {
+  TrimLeft(ch);
+  TrimRight(ch);
+}
+
+template <typename T>
+void StringTemplate<T>::TrimLeft(T ch) {
+  TrimLeft(StringView(ch));
+}
+
+template <typename T>
+void StringTemplate<T>::TrimRight(T ch) {
+  TrimRight(StringView(ch));
+}
+
+template <typename T>
+void StringTemplate<T>::Trim(StringView targets) {
+  TrimLeft(targets);
+  TrimRight(targets);
+}
+
+template <typename T>
+void StringTemplate<T>::TrimLeft(StringView targets) {
+  if (!m_pData || targets.IsEmpty()) {
+    return;
+  }
+
+  size_t len = GetLength();
+  if (len == 0) {
+    return;
+  }
+
+  size_t pos = 0;
+  while (pos < len) {
+    size_t i = 0;
+    while (i < targets.GetLength() &&
+           targets.CharAt(i) != m_pData->m_String[pos]) {
+      i++;
+    }
+    if (i == targets.GetLength()) {
+      break;
+    }
+    pos++;
+  }
+  if (!pos) {
+    return;
+  }
+
+  ReallocBeforeWrite(len);
+  size_t nDataLength = len - pos;
+  // Move the terminating NUL as well.
+  fxcrt::spanmove(m_pData->capacity_span(),
+                  m_pData->capacity_span().subspan(pos, nDataLength + 1));
+  m_pData->m_nDataLength = nDataLength;
+}
+
+template <typename T>
+void StringTemplate<T>::TrimRight(StringView targets) {
+  if (!m_pData || targets.IsEmpty()) {
+    return;
+  }
+
+  size_t pos = GetLength();
+  if (pos == 0) {
+    return;
+  }
+
+  while (pos) {
+    size_t i = 0;
+    while (i < targets.GetLength() &&
+           targets.CharAt(i) != m_pData->m_String[pos - 1]) {
+      i++;
+    }
+    if (i == targets.GetLength()) {
+      break;
+    }
+    pos--;
+  }
+  if (pos < m_pData->m_nDataLength) {
+    ReallocBeforeWrite(m_pData->m_nDataLength);
+    m_pData->m_String[pos] = 0;
+    m_pData->m_nDataLength = pos;
+  }
+}
+
+template <typename T>
 void StringTemplate<T>::ReallocBeforeWrite(size_t nNewLength) {
   if (m_pData && m_pData->CanOperateInPlace(nNewLength)) {
     return;

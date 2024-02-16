@@ -34,7 +34,7 @@ CFX_GlobalData* g_pInstance = nullptr;
 
 // Returns true if non-empty, setting sPropName
 bool TrimPropName(ByteString* sPropName) {
-  sPropName->Trim();
+  sPropName->TrimWhitespace();
   return sPropName->GetLength() != 0;
 }
 

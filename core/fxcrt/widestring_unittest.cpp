@@ -824,7 +824,7 @@ TEST(WideString, UpperLower) {
 
 TEST(WideString, Trim) {
   WideString fred(L"  FRED  ");
-  fred.Trim();
+  fred.TrimWhitespace();
   EXPECT_EQ(L"FRED", fred);
   fred.Trim(L'E');
   EXPECT_EQ(L"FRED", fred);
@@ -838,7 +838,7 @@ TEST(WideString, Trim) {
   EXPECT_EQ(L"   ", blank);
   blank.Trim(L'E');
   EXPECT_EQ(L"   ", blank);
-  blank.Trim();
+  blank.TrimWhitespace();
   EXPECT_EQ(L"", blank);
 
   WideString empty;
@@ -846,7 +846,7 @@ TEST(WideString, Trim) {
   EXPECT_EQ(L"", empty);
   empty.Trim(L'E');
   EXPECT_EQ(L"", empty);
-  empty.Trim();
+  empty.TrimWhitespace();
   EXPECT_EQ(L"", empty);
 
   WideString abc(L"  ABCCBA  ");
@@ -858,7 +858,7 @@ TEST(WideString, Trim) {
 
 TEST(WideString, TrimLeft) {
   WideString fred(L"  FRED  ");
-  fred.TrimLeft();
+  fred.TrimWhitespaceLeft();
   EXPECT_EQ(L"FRED  ", fred);
   fred.TrimLeft(L'E');
   EXPECT_EQ(L"FRED  ", fred);
@@ -872,7 +872,7 @@ TEST(WideString, TrimLeft) {
   EXPECT_EQ(L"   ", blank);
   blank.TrimLeft(L'E');
   EXPECT_EQ(L"   ", blank);
-  blank.TrimLeft();
+  blank.TrimWhitespaceLeft();
   EXPECT_EQ(L"", blank);
 
   WideString empty;
@@ -880,7 +880,7 @@ TEST(WideString, TrimLeft) {
   EXPECT_EQ(L"", empty);
   empty.TrimLeft(L'E');
   EXPECT_EQ(L"", empty);
-  empty.TrimLeft();
+  empty.TrimWhitespaceLeft();
   EXPECT_EQ(L"", empty);
 }
 
@@ -889,7 +889,7 @@ TEST(WideString, TrimLeftCopies) {
     // With a single reference, no copy takes place.
     WideString fred(L"  FRED  ");
     const wchar_t* old_buffer = fred.c_str();
-    fred.TrimLeft();
+    fred.TrimWhitespaceLeft();
     EXPECT_EQ(L"FRED  ", fred);
     EXPECT_EQ(old_buffer, fred.c_str());
   }
@@ -898,7 +898,7 @@ TEST(WideString, TrimLeftCopies) {
     WideString fred(L"  FRED  ");
     WideString other_fred = fred;
     const wchar_t* old_buffer = fred.c_str();
-    fred.TrimLeft();
+    fred.TrimWhitespaceLeft();
     EXPECT_EQ(L"FRED  ", fred);
     EXPECT_EQ(L"  FRED  ", other_fred);
     EXPECT_NE(old_buffer, fred.c_str());
@@ -908,7 +908,7 @@ TEST(WideString, TrimLeftCopies) {
     WideString fred(L"FRED");
     WideString other_fred = fred;
     const wchar_t* old_buffer = fred.c_str();
-    fred.TrimLeft();
+    fred.TrimWhitespaceLeft();
     EXPECT_EQ(L"FRED", fred);
     EXPECT_EQ(L"FRED", other_fred);
     EXPECT_EQ(old_buffer, fred.c_str());
@@ -917,7 +917,7 @@ TEST(WideString, TrimLeftCopies) {
 
 TEST(WideString, TrimRight) {
   WideString fred(L"  FRED  ");
-  fred.TrimRight();
+  fred.TrimWhitespaceRight();
   EXPECT_EQ(L"  FRED", fred);
   fred.TrimRight(L'E');
   EXPECT_EQ(L"  FRED", fred);
@@ -931,7 +931,7 @@ TEST(WideString, TrimRight) {
   EXPECT_EQ(L"   ", blank);
   blank.TrimRight(L'E');
   EXPECT_EQ(L"   ", blank);
-  blank.TrimRight();
+  blank.TrimWhitespaceRight();
   EXPECT_EQ(L"", blank);
 
   WideString empty;
@@ -939,7 +939,7 @@ TEST(WideString, TrimRight) {
   EXPECT_EQ(L"", empty);
   empty.TrimRight(L'E');
   EXPECT_EQ(L"", empty);
-  empty.TrimRight();
+  empty.TrimWhitespaceRight();
   EXPECT_EQ(L"", empty);
 }
 
@@ -948,7 +948,7 @@ TEST(WideString, TrimRightCopies) {
     // With a single reference, no copy takes place.
     WideString fred(L"  FRED  ");
     const wchar_t* old_buffer = fred.c_str();
-    fred.TrimRight();
+    fred.TrimWhitespaceRight();
     EXPECT_EQ(L"  FRED", fred);
     EXPECT_EQ(old_buffer, fred.c_str());
   }
@@ -957,7 +957,7 @@ TEST(WideString, TrimRightCopies) {
     WideString fred(L"  FRED  ");
     WideString other_fred = fred;
     const wchar_t* old_buffer = fred.c_str();
-    fred.TrimRight();
+    fred.TrimWhitespaceRight();
     EXPECT_EQ(L"  FRED", fred);
     EXPECT_EQ(L"  FRED  ", other_fred);
     EXPECT_NE(old_buffer, fred.c_str());
@@ -967,7 +967,7 @@ TEST(WideString, TrimRightCopies) {
     WideString fred(L"FRED");
     WideString other_fred = fred;
     const wchar_t* old_buffer = fred.c_str();
-    fred.TrimRight();
+    fred.TrimWhitespaceRight();
     EXPECT_EQ(L"FRED", fred);
     EXPECT_EQ(L"FRED", other_fred);
     EXPECT_EQ(old_buffer, fred.c_str());

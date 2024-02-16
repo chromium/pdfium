@@ -1246,7 +1246,7 @@ CJS_Result CJS_Document::getPageNthWord(
   }
 
   if (bStrip)
-    swRet.Trim();
+    swRet.TrimWhitespace();
   return CJS_Result::Success(pRuntime->NewString(swRet.AsStringView()));
 }
 

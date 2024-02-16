@@ -354,87 +354,18 @@ int ByteString::Compare(ByteStringView str) const {
   return this_len < that_len ? -1 : 1;
 }
 
-void ByteString::Trim() {
-  TrimRight(kTrimChars);
+void ByteString::TrimWhitespace() {
+  TrimWhitespaceRight();
+  TrimWhitespaceLeft();
+}
+
+void ByteString::TrimWhitespaceLeft() {
   TrimLeft(kTrimChars);
 }
 
-void ByteString::Trim(char target) {
-  ByteStringView targets(target);
-  TrimRight(targets);
-  TrimLeft(targets);
-}
-
-void ByteString::Trim(ByteStringView targets) {
-  TrimRight(targets);
-  TrimLeft(targets);
-}
-
-void ByteString::TrimLeft() {
-  TrimLeft(kTrimChars);
-}
-
-void ByteString::TrimLeft(char target) {
-  TrimLeft(ByteStringView(target));
-}
-
-void ByteString::TrimLeft(ByteStringView targets) {
-  if (!m_pData || targets.IsEmpty())
-    return;
-
-  size_t len = GetLength();
-  if (len == 0)
-    return;
-
-  size_t pos = 0;
-  while (pos < len) {
-    size_t i = 0;
-    while (i < targets.GetLength() && targets[i] != m_pData->m_String[pos])
-      i++;
-    if (i == targets.GetLength())
-      break;
-    pos++;
-  }
-  if (pos) {
-    ReallocBeforeWrite(len);
-    size_t nDataLength = len - pos;
-    FXSYS_memmove(m_pData->m_String, m_pData->m_String + pos,
-                  (nDataLength + 1) * sizeof(char));
-    m_pData->m_nDataLength = nDataLength;
-  }
-}
-
-void ByteString::TrimRight() {
+void ByteString::TrimWhitespaceRight() {
   TrimRight(kTrimChars);
 }
-
-void ByteString::TrimRight(char target) {
-  TrimRight(ByteStringView(target));
-}
-
-void ByteString::TrimRight(ByteStringView targets) {
-  if (!m_pData || targets.IsEmpty())
-    return;
-
-  size_t pos = GetLength();
-  if (pos == 0)
-    return;
-
-  while (pos) {
-    size_t i = 0;
-    while (i < targets.GetLength() && targets[i] != m_pData->m_String[pos - 1])
-      i++;
-    if (i == targets.GetLength())
-      break;
-    pos--;
-  }
-  if (pos < m_pData->m_nDataLength) {
-    ReallocBeforeWrite(m_pData->m_nDataLength);
-    m_pData->m_String[pos] = 0;
-    m_pData->m_nDataLength = pos;
-  }
-}
-
 std::ostream& operator<<(std::ostream& os, const ByteString& str) {
   return os.write(str.c_str(), str.GetLength());
 }

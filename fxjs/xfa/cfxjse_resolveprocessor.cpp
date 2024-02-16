@@ -573,8 +573,8 @@ int32_t CFXJSE_ResolveProcessor::GetFilter(WideStringView wsExpression,
   }
   wsName.ReleaseBuffer(nNameCount);
   wsCondition.ReleaseBuffer(nConditionCount);
-  wsName.Trim();
-  wsCondition.Trim();
+  wsName.TrimWhitespace();
+  wsCondition.TrimWhitespace();
   rnd.m_uHashName =
       static_cast<XFA_HashCode>(FX_HashCode_GetW(wsName.AsStringView()));
   return nStart;
@@ -650,7 +650,7 @@ void CFXJSE_ResolveProcessor::FilterCondition(v8::Isolate* pIsolate,
   }
 
   size_t iFoundCount = pRnd->m_Result.objects.size();
-  wsCondition.Trim();
+  wsCondition.TrimWhitespace();
 
   const size_t nLen = wsCondition.GetLength();
   if (nLen == 0) {

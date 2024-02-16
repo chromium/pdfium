@@ -117,17 +117,10 @@ class WideString : public StringTemplate<wchar_t> {
   void MakeLower();
   void MakeUpper();
 
-  void Trim();
-  void Trim(wchar_t target);
-  void Trim(WideStringView targets);
-
-  void TrimLeft();
-  void TrimLeft(wchar_t target);
-  void TrimLeft(WideStringView targets);
-
-  void TrimRight();
-  void TrimRight(wchar_t target);
-  void TrimRight(WideStringView targets);
+  // Trim a canonical set of characters from the widestring.
+  void TrimWhitespace();
+  void TrimWhitespaceLeft();
+  void TrimWhitespaceRight();
 
   int GetInteger() const;
 

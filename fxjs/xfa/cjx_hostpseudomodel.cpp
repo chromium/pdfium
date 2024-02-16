@@ -42,7 +42,7 @@ size_t FilterName(WideStringView wsExpression,
     }
   }
   wsFilter.ReleaseBuffer(nCount);
-  wsFilter.Trim();
+  wsFilter.TrimWhitespace();
   return nStart;
 }
 

@@ -659,7 +659,7 @@ bool CPDFXFA_DocEnvironment::MailToInfo(WideString& csURL,
                                         WideString& csSubject,
                                         WideString& csMsg) {
   WideString srcURL = csURL;
-  srcURL.TrimLeft();
+  srcURL.TrimWhitespaceLeft();
   if (srcURL.Left(7).CompareNoCase(L"mailto:") != 0)
     return false;
 
@@ -677,16 +677,16 @@ bool CPDFXFA_DocEnvironment::MailToInfo(WideString& csURL,
       tmp = srcURL.Left(pos.value());
       tmp = tmp.Right(tmp.GetLength() - 7);
     }
-    tmp.Trim();
+    tmp.TrimWhitespace();
     csToAddress = std::move(tmp);
   }
 
   srcURL = srcURL.Right(srcURL.GetLength() - (pos.value() + 1));
   while (!srcURL.IsEmpty()) {
-    srcURL.Trim();
+    srcURL.TrimWhitespace();
     pos = srcURL.Find(L'&');
     WideString tmp = (!pos.has_value()) ? srcURL : srcURL.Left(pos.value());
-    tmp.Trim();
+    tmp.TrimWhitespace();
     if (tmp.GetLength() >= 3 && tmp.Left(3).CompareNoCase(L"cc=") == 0) {
       tmp = tmp.Right(tmp.GetLength() - 3);
       if (!csCCAddress.IsEmpty())
@@ -920,7 +920,7 @@ bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,
   switch (submit->GetSubmitFormat()) {
     case XFA_AttributeValue::Xdp: {
       WideString csContent = submit->GetSubmitXDPContent();
-      csContent.Trim();
+      csContent.TrimWhitespace();
 
       WideString space = WideString::FromDefANSI(" ");
       csContent = space + csContent + space;

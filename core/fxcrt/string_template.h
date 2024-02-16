@@ -134,6 +134,16 @@ class StringTemplate {
 
   void Reserve(size_t len) { GetBuffer(len); }
 
+  // Remove character `ch` from  both/front/back of string.
+  void Trim(T ch);
+  void TrimLeft(T ch);
+  void TrimRight(T ch);
+
+  // Remove all characters in `targets` from both/front/back of string.
+  void Trim(StringView targets);
+  void TrimLeft(StringView targets);
+  void TrimRight(StringView targets);
+
  protected:
   using StringData = StringDataTemplate<T>;
 

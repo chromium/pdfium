@@ -2892,7 +2892,7 @@ void CFXJSE_FormCalcContext::HasValue(
 
   ByteString bsValue =
       fxv8::ReentrantToByteStringHelper(info.GetIsolate(), argOne);
-  bsValue.TrimLeft();
+  bsValue.TrimWhitespaceLeft();
   info.GetReturnValue().Set(static_cast<int>(!bsValue.IsEmpty()));
 }
 
@@ -3617,7 +3617,7 @@ void CFXJSE_FormCalcContext::Ltrim(
   }
 
   ByteString bsSource = ValueToUTF8String(info.GetIsolate(), argOne);
-  bsSource.TrimLeft();
+  bsSource.TrimWhitespaceLeft();
   info.GetReturnValue().Set(
       fxv8::NewStringHelper(info.GetIsolate(), bsSource.AsStringView()));
 }
@@ -3836,7 +3836,7 @@ void CFXJSE_FormCalcContext::Rtrim(
   }
 
   ByteString bsSource = ValueToUTF8String(info.GetIsolate(), argOne);
-  bsSource.TrimRight();
+  bsSource.TrimWhitespaceRight();
   info.GetReturnValue().Set(
       fxv8::NewStringHelper(info.GetIsolate(), bsSource.AsStringView()));
 }
