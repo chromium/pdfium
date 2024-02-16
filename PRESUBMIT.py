@@ -499,6 +499,7 @@ def ChecksCommon(input_api, output_api):
   results.extend(
       input_api.canned_checks.PanProjectChecks(
           input_api, output_api, project_name='PDFium'))
+  results.extend(_CheckUnwantedDependencies(input_api, output_api))
 
   # PanProjectChecks() doesn't consider .gn/.gni files, so check those, too.
   files_to_check = (
@@ -519,7 +520,6 @@ def ChecksCommon(input_api, output_api):
 def CheckChangeOnUpload(input_api, output_api):
   results = []
   results.extend(_CheckNoBannedFunctions(input_api, output_api))
-  results.extend(_CheckUnwantedDependencies(input_api, output_api))
   results.extend(
       input_api.canned_checks.CheckPatchFormatted(input_api, output_api))
   results.extend(
