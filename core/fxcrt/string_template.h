@@ -114,7 +114,7 @@ class StringTemplate {
   // Returns size of the string following deletion.
   size_t Delete(size_t index, size_t count = 1);
 
-  // Returns the index within in the string when found.
+  // Returns the index within the string when found.
   std::optional<size_t> Find(StringView str, size_t start = 0) const;
   std::optional<size_t> Find(T ch, size_t start = 0) const;
   std::optional<size_t> ReverseFind(T ch) const;
@@ -125,6 +125,9 @@ class StringTemplate {
   bool Contains(T ch, size_t start = 0) const {
     return Find(ch, start).has_value();
   }
+
+  // Replace all occurences of `oldstr' with `newstr'.
+  size_t Replace(StringView oldstr, StringView newstr);
 
   // Overwrite character at `index`.
   void SetAt(size_t index, T ch);

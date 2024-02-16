@@ -120,8 +120,6 @@ class ByteString : public StringTemplate<char> {
   void TrimRight(char target);
   void TrimRight(ByteStringView targets);
 
-  size_t Replace(ByteStringView pOld, ByteStringView pNew);
-
   uint32_t GetID() const { return AsStringView().GetID(); }
 
  protected:

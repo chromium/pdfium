@@ -659,52 +659,6 @@ void WideString::MakeUpper() {
   FXSYS_wcsupr(m_pData->m_String);
 }
 
-size_t WideString::Replace(WideStringView pOld, WideStringView pNew) {
-  if (!m_pData || pOld.IsEmpty())
-    return 0;
-
-  size_t count = 0;
-  {
-    // Limit span lifetime.
-    pdfium::span<const wchar_t> search_span = m_pData->span();
-    while (true) {
-      std::optional<size_t> found = spanpos(search_span, pOld.span());
-      if (!found.has_value()) {
-        break;
-      }
-      ++count;
-      search_span = search_span.subspan(found.value() + pOld.GetLength());
-    }
-  }
-  if (count == 0)
-    return 0;
-
-  size_t nNewLength =
-      m_pData->m_nDataLength + count * (pNew.GetLength() - pOld.GetLength());
-
-  if (nNewLength == 0) {
-    clear();
-    return count;
-  }
-
-  RetainPtr<StringData> pNewData = StringData::Create(nNewLength);
-  {
-    // Spans can't outlive StrinData buffers.
-    pdfium::span<const wchar_t> search_span = m_pData->span();
-    pdfium::span<wchar_t> dest_span = pNewData->span();
-    for (size_t i = 0; i < count; i++) {
-      size_t found = spanpos(search_span, pOld.span()).value();
-      dest_span = spancpy(dest_span, search_span.first(found));
-      dest_span = spancpy(dest_span, pNew.span());
-      search_span = search_span.subspan(found + pOld.GetLength());
-    }
-    dest_span = spancpy(dest_span, search_span);
-    CHECK(dest_span.empty());
-  }
-  m_pData = std::move(pNewData);
-  return count;
-}
-
 // static
 WideString WideString::FromASCII(ByteStringView bstr) {
   WideString result;

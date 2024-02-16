@@ -338,52 +338,6 @@ void ByteString::MakeUpper() {
   FXSYS_strupr(m_pData->m_String);
 }
 
-size_t ByteString::Replace(ByteStringView pOld, ByteStringView pNew) {
-  if (!m_pData || pOld.IsEmpty())
-    return 0;
-
-  size_t nCount = 0;
-  {
-    // Limit span lifetime.
-    pdfium::span<char> search_span = m_pData->span();
-    while (true) {
-      std::optional<size_t> found = spanpos(search_span, pOld.span());
-      if (!found.has_value()) {
-        break;
-      }
-      nCount++;
-      search_span = search_span.subspan(found.value() + pOld.GetLength());
-    }
-  }
-  if (nCount == 0)
-    return 0;
-
-  size_t nNewLength =
-      m_pData->m_nDataLength + nCount * (pNew.GetLength() - pOld.GetLength());
-
-  if (nNewLength == 0) {
-    clear();
-    return nCount;
-  }
-
-  RetainPtr<StringData> pNewData = StringData::Create(nNewLength);
-  {
-    // Spans can't outlive the StringData buffers.
-    pdfium::span<const char> search_span = m_pData->span();
-    pdfium::span<char> dest_span = pNewData->span();
-    for (size_t i = 0; i < nCount; i++) {
-      size_t found = spanpos(search_span, pOld.span()).value();
-      dest_span = spancpy(dest_span, search_span.first(found));
-      dest_span = spancpy(dest_span, pNew.span());
-      search_span = search_span.subspan(found + pOld.GetLength());
-    }
-    dest_span = spancpy(dest_span, search_span);
-    CHECK(dest_span.empty());
-  }
-  m_pData = std::move(pNewData);
-  return nCount;
-}
-
 int ByteString::Compare(ByteStringView str) const {
   if (!m_pData)
     return str.IsEmpty() ? 0 : -1;

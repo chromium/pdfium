@@ -182,6 +182,51 @@ std::optional<size_t> StringTemplate<T>::ReverseFind(T ch) const {
 }
 
 template <typename T>
+size_t StringTemplate<T>::Replace(StringView oldstr, StringView newstr) {
+  if (!m_pData || oldstr.IsEmpty()) {
+    return 0;
+  }
+  size_t count = 0;
+  {
+    // Limit span lifetime.
+    pdfium::span<const T> search_span = m_pData->span();
+    while (true) {
+      std::optional<size_t> found = spanpos(search_span, oldstr.span());
+      if (!found.has_value()) {
+        break;
+      }
+      ++count;
+      search_span = search_span.subspan(found.value() + oldstr.GetLength());
+    }
+  }
+  if (count == 0) {
+    return 0;
+  }
+  size_t nNewLength = m_pData->m_nDataLength +
+                      count * (newstr.GetLength() - oldstr.GetLength());
+  if (nNewLength == 0) {
+    clear();
+    return count;
+  }
+  RetainPtr<StringData> newstr_data = StringData::Create(nNewLength);
+  {
+    // Spans can't outlive StringData buffers.
+    pdfium::span<const T> search_span = m_pData->span();
+    pdfium::span<T> dest_span = newstr_data->span();
+    for (size_t i = 0; i < count; i++) {
+      size_t found = spanpos(search_span, oldstr.span()).value();
+      dest_span = spancpy(dest_span, search_span.first(found));
+      dest_span = spancpy(dest_span, newstr.span());
+      search_span = search_span.subspan(found + oldstr.GetLength());
+    }
+    dest_span = spancpy(dest_span, search_span);
+    CHECK(dest_span.empty());
+  }
+  m_pData = std::move(newstr_data);
+  return count;
+}
+
+template <typename T>
 void StringTemplate<T>::ReallocBeforeWrite(size_t nNewLength) {
   if (m_pData && m_pData->CanOperateInPlace(nNewLength)) {
     return;

@@ -131,8 +131,6 @@ class WideString : public StringTemplate<wchar_t> {
 
   int GetInteger() const;
 
-  size_t Replace(WideStringView pOld, WideStringView pNew);
-
   bool IsASCII() const { return AsStringView().IsASCII(); }
   bool EqualsASCII(ByteStringView that) const {
     return AsStringView().EqualsASCII(that);
