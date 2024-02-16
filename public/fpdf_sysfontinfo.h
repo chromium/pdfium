@@ -305,7 +305,7 @@ FPDF_EXPORT FPDF_SYSFONTINFO* FPDF_CALLCONV FPDF_GetDefaultSystemFontInfo();
  *           None
  * Comments:
  *           This function should be called on the output from
- *           FPDF_SetSystemFontInfo() once it is no longer needed.
+ *           FPDF_GetDefaultSystemFontInfo() once it is no longer needed.
  */
 FPDF_EXPORT void FPDF_CALLCONV
 FPDF_FreeDefaultSystemFontInfo(FPDF_SYSFONTINFO* pFontInfo);
