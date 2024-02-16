@@ -27,9 +27,9 @@
 #include "third_party/skia/include/ports/SkFontMgr_empty.h"  // nogncheck
 
 #if BUILDFLAG(IS_WIN)
-#include "include/ports/SkTypeface_win.h"  // nogncheck
+#include "third_party/skia/include/ports/SkTypeface_win.h"  // nogncheck
 #elif BUILDFLAG(IS_APPLE)
-#include "include/ports/SkFontMgr_mac_ct.h"  // nogncheck
+#include "third_party/skia/include/ports/SkFontMgr_mac_ct.h"  // nogncheck
 #endif
 
 #endif
