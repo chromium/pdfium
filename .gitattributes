@@ -18,10 +18,11 @@
 .gitattributes text eol=lf
 .gitignore text eol=lf
 .vpython text eol=lf
-codereview.settings text eol=lf
+AUTHORS text eol=lf
 DEPS text eol=lf
 LICENSE text eol=lf
 OWNERS text eol=lf
+codereview.settings text eol=lf
 
 # Skip Tricium on expectation files.
 *_expected.txt -tricium
