@@ -29,11 +29,11 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfdoc/cpdf_filespec.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
+#include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/base/check.h"
-#include "third_party/base/containers/contains.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 namespace {

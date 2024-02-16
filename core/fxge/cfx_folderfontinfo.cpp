@@ -12,6 +12,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/byteorder.h"
+#include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_folder.h"
@@ -20,7 +21,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_fontmapper.h"
 #include "core/fxge/fx_font.h"
-#include "third_party/base/containers/contains.h"
 
 namespace {
 

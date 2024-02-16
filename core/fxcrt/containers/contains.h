@@ -1,9 +1,9 @@
-// Copyright 2021 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_CONTAINERS_CONTAINS_H_
-#define THIRD_PARTY_BASE_CONTAINERS_CONTAINS_H_
+#ifndef CORE_FXCRT_CONTAINERS_CONTAINS_H_
+#define CORE_FXCRT_CONTAINERS_CONTAINS_H_
 
 #include <algorithm>
 #include <iterator>
@@ -23,7 +23,7 @@ struct HasKeyType : std::false_type {};
 template <typename T>
 struct HasKeyType<T, std::void_t<typename T::key_type>> : std::true_type {};
 
-// Utility type traits used for specializing base::Contains() below.
+// Utility type traits used for specializing pdfium::Contains() below.
 template <typename Container, typename Element, typename = void>
 struct HasFindWithNpos : std::false_type {};
 
@@ -111,4 +111,4 @@ bool Contains(const Container& container, const Value& value) {
 
 }  // namespace pdfium
 
-#endif  // THIRD_PARTY_BASE_CONTAINERS_CONTAINS_H_
+#endif  // CORE_FXCRT_CONTAINERS_CONTAINS_H_

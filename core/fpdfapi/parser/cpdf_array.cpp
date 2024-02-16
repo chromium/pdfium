@@ -16,9 +16,9 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_stream.h"
 #include "third_party/base/check.h"
-#include "third_party/base/containers/contains.h"
 #include "third_party/base/notreached.h"
 
 CPDF_Array::CPDF_Array() = default;

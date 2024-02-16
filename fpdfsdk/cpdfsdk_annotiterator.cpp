@@ -10,13 +10,13 @@
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fxcrt/containers/adapters.h"
+#include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
-#include "third_party/base/containers/adapters.h"
-#include "third_party/base/containers/contains.h"
 
 namespace {
 
@@ -98,7 +98,7 @@ void CPDFSDK_AnnotIterator::AddSelectedToAnnots(
     m_Annots.emplace_back(sa[select_idx]);
   }
 
-  for (size_t select_idx : pdfium::base::Reversed(aSelect)) {
+  for (size_t select_idx : pdfium::Reversed(aSelect)) {
     sa.erase(sa.begin() + select_idx);
   }
 }

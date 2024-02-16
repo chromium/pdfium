@@ -10,6 +10,7 @@
 #include <iterator>
 #include <utility>
 
+#include "core/fxcrt/containers/adapters.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_folder.h"
@@ -18,7 +19,6 @@
 #include "core/fxge/android/cfpf_skiapathfont.h"
 #include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/fx_font.h"
-#include "third_party/base/containers/adapters.h"
 
 namespace {
 
@@ -264,7 +264,7 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(ByteStringView bsFamilyname,
   int32_t nMax = -1;
   int32_t nGlyphNum = 0;
   for (const std::unique_ptr<CFPF_SkiaPathFont>& font :
-       pdfium::base::Reversed(m_FontFaces)) {
+       pdfium::Reversed(m_FontFaces)) {
     if (!(font->charsets() & FPF_SkiaGetCharset(uCharset)))
       continue;
     int32_t nFind = 0;

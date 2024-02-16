@@ -13,6 +13,8 @@
 #include <utility>
 
 #include "build/build_config.h"
+#include "core/fxcrt/containers/adapters.h"
+#include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
@@ -24,8 +26,6 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/containers/adapters.h"
-#include "third_party/base/containers/contains.h"
 
 namespace {
 
@@ -476,12 +476,12 @@ void CFX_FontMapper::LoadInstalledFonts() {
 
 ByteString CFX_FontMapper::MatchInstalledFonts(const ByteString& norm_name) {
   LoadInstalledFonts();
-  for (const ByteString& font : pdfium::base::Reversed(m_InstalledTTFonts)) {
+  for (const ByteString& font : pdfium::Reversed(m_InstalledTTFonts)) {
     if (TT_NormalizeName(font) == norm_name) {
       return font;
     }
   }
-  for (const auto& font_data : pdfium::base::Reversed(m_LocalizedTTFonts)) {
+  for (const auto& font_data : pdfium::Reversed(m_LocalizedTTFonts)) {
     if (TT_NormalizeName(font_data.first) == norm_name) {
       return font_data.second;
     }

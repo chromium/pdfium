@@ -21,10 +21,10 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/object_tree_traversal_util.h"
+#include "core/fxcrt/containers/adapters.h"
+#include "core/fxcrt/containers/contains.h"
 #include "third_party/abseil-cpp/absl/types/variant.h"
 #include "third_party/base/check.h"
-#include "third_party/base/containers/adapters.h"
-#include "third_party/base/containers/contains.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 CPDF_PageContentManager::CPDF_PageContentManager(
@@ -205,7 +205,7 @@ void CPDF_PageContentManager::ExecuteScheduledRemovals() {
 
   // In reverse order so as to not change the indexes in the middle of the loop,
   // remove the streams.
-  for (size_t stream_index : pdfium::base::Reversed(streams_to_remove_)) {
+  for (size_t stream_index : pdfium::Reversed(streams_to_remove_)) {
     contents_array->RemoveAt(stream_index);
     streams_left.erase(streams_left.begin() + stream_index);
   }

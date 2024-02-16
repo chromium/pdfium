@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "core/fdrm/fx_crypt.h"
+#include "core/fxcrt/containers/contains.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_edit.h"
@@ -25,7 +26,6 @@
 #include "testing/utils/path_service.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/containers/contains.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/checked_math.h"
 #include "third_party/base/numerics/safe_conversions.h"

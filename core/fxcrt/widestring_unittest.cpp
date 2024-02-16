@@ -9,11 +9,11 @@
 #include <vector>
 
 #include "build/build_config.h"
+#include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/utf16.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/containers/contains.h"
 
 namespace fxcrt {
 

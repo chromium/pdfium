@@ -9,9 +9,9 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/containers/contains.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/pseudo_retainable.h"
-#include "third_party/base/containers/contains.h"
 
 namespace {
 

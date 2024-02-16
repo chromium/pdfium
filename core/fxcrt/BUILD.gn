@@ -45,6 +45,8 @@ source_set("fxcrt") {
     "cfx_timer.cpp",
     "cfx_timer.h",
     "code_point_view.h",
+    "containers/adapters.h",
+    "containers/contains.h",
     "data_vector.h",
     "fileaccess_iface.h",
     "fixed_size_data_vector.h",

@@ -10,6 +10,7 @@
 #include <tuple>
 #include <utility>
 
+#include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/span.h"
@@ -26,7 +27,6 @@
 #include "fxjs/xfa/cjx_instancemanager.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/containers/contains.h"
 #include "v8/include/v8-forward.h"
 #include "v8/include/v8-object.h"
 #include "v8/include/v8-primitive.h"

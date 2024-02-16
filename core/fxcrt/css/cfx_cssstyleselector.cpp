@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <utility>
 
+#include "core/fxcrt/containers/adapters.h"
 #include "core/fxcrt/css/cfx_csscolorvalue.h"
 #include "core/fxcrt/css/cfx_csscomputedstyle.h"
 #include "core/fxcrt/css/cfx_csscustomproperty.h"
@@ -20,7 +21,6 @@
 #include "core/fxcrt/css/cfx_csssyntaxparser.h"
 #include "core/fxcrt/css/cfx_cssvaluelist.h"
 #include "third_party/base/check.h"
-#include "third_party/base/containers/adapters.h"
 
 CFX_CSSStyleSelector::CFX_CSSStyleSelector() = default;
 
@@ -556,7 +556,7 @@ Mask<CFX_CSSTEXTDECORATION> CFX_CSSStyleSelector::ToTextDecoration(
     const RetainPtr<CFX_CSSValueList>& pValue) {
   Mask<CFX_CSSTEXTDECORATION> dwDecoration;
   for (const RetainPtr<CFX_CSSValue>& val :
-       pdfium::base::Reversed(pValue->values())) {
+       pdfium::Reversed(pValue->values())) {
     if (val->GetType() != CFX_CSSValue::PrimitiveType::kEnum)
       continue;
 

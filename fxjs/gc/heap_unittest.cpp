@@ -7,10 +7,10 @@
 #include <memory>
 #include <set>
 
+#include "core/fxcrt/containers/contains.h"
 #include "testing/fxgc_unittest.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/v8_test_environment.h"
-#include "third_party/base/containers/contains.h"
 #include "v8/include/cppgc/allocation.h"
 #include "v8/include/cppgc/persistent.h"
 

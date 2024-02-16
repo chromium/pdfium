@@ -11,8 +11,8 @@
 #include "core/fpdfapi/parser/cpdf_object_walker.h"
 #include "core/fpdfapi/parser/cpdf_read_validator.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
+#include "core/fxcrt/containers/contains.h"
 #include "third_party/base/check.h"
-#include "third_party/base/containers/contains.h"
 
 CPDF_ObjectAvail::CPDF_ObjectAvail(RetainPtr<CPDF_ReadValidator> validator,
                                    CPDF_IndirectObjectHolder* holder,

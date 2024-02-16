@@ -477,7 +477,7 @@ if (is_clang) {
       deps = [
         ":fuzzer_helper",
         ":fuzzer_pdf_templates",
-        "../../third_party:pdfium_base",
+        "../../core/fxcrt",
       ]
       public_fuzzer = true
     }

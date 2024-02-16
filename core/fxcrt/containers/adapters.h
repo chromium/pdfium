@@ -1,9 +1,9 @@
-// Copyright 2020 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_CONTAINERS_ADAPTERS_H_
-#define THIRD_PARTY_BASE_CONTAINERS_ADAPTERS_H_
+#ifndef CORE_FXCRT_CONTAINERS_ADAPTERS_H_
+#define CORE_FXCRT_CONTAINERS_ADAPTERS_H_
 
 #include <stddef.h>
 
@@ -11,11 +11,10 @@
 #include <utility>
 
 namespace pdfium {
-namespace base {
 
 namespace internal {
 
-// Internal adapter class for implementing base::Reversed.
+// Internal adapter class for implementing Reversed()
 template <typename T>
 class ReversedAdapter {
  public:
@@ -40,7 +39,7 @@ class ReversedAdapter {
 // Example:
 //
 //   std::vector<int> v = ...;
-//   for (int i : base::Reversed(v)) {
+//   for (int i : pdfium::Reversed(v)) {
 //     // iterates through v from back to front
 //   }
 template <typename T>
@@ -48,7 +47,6 @@ internal::ReversedAdapter<T> Reversed(T& t) {
   return internal::ReversedAdapter<T>(t);
 }
 
-}  // namespace base
 }  // namespace pdfium
 
-#endif  // THIRD_PARTY_BASE_CONTAINERS_ADAPTERS_H_
+#endif  // CORE_FXCRT_CONTAINERS_ADAPTERS_H_
