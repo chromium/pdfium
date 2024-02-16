@@ -1189,7 +1189,7 @@ void CXFA_ContentLayoutProcessor::DoLayoutTableContainer(
       pLayoutNode->JSObject()->GetCData(XFA_Attribute::ColumnWidths);
   if (!wsColumnWidths.IsEmpty()) {
     for (auto& width : SeparateStringOnSpace(wsColumnWidths.span())) {
-      width.TrimLeft(L' ');
+      width.TrimFront(L' ');
       if (width.IsEmpty())
         continue;
 

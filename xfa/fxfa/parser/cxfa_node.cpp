@@ -4960,11 +4960,11 @@ WideString CXFA_Node::NormalizeNumStr(const WideString& wsValue) {
     return WideString();
 
   WideString wsOutput = wsValue;
-  wsOutput.TrimLeft('0');
+  wsOutput.TrimFront('0');
 
   if (!wsOutput.IsEmpty() && wsOutput.Contains('.') && GetFracDigits() != -1) {
-    wsOutput.TrimRight(L"0");
-    wsOutput.TrimRight(L".");
+    wsOutput.TrimBack(L"0");
+    wsOutput.TrimBack(L".");
   }
   if (wsOutput.IsEmpty() || wsOutput[0] == '.')
     wsOutput.InsertAtFront('0');

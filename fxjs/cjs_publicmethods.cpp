@@ -1316,8 +1316,8 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
         case FormFieldType::kTextField:
         case FormFieldType::kComboBox: {
           WideString trimmed = pFormField->GetValue();
-          trimmed.TrimWhitespaceRight();
-          trimmed.TrimWhitespaceLeft();
+          trimmed.TrimWhitespaceBack();
+          trimmed.TrimWhitespaceFront();
           dTemp = StringToDouble(trimmed.AsStringView());
           break;
         }
@@ -1331,8 +1331,8 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
               continue;
 
             WideString trimmed = pFormCtrl->GetExportValue();
-            trimmed.TrimWhitespaceRight();
-            trimmed.TrimWhitespaceLeft();
+            trimmed.TrimWhitespaceBack();
+            trimmed.TrimWhitespaceFront();
             dTemp = StringToFloat(trimmed.AsStringView());
             break;
           }
@@ -1340,8 +1340,8 @@ CJS_Result CJS_PublicMethods::AFSimple_Calculate(
         case FormFieldType::kListBox:
           if (pFormField->CountSelectedItems() <= 1) {
             WideString trimmed = pFormField->GetValue();
-            trimmed.TrimWhitespaceRight();
-            trimmed.TrimWhitespaceLeft();
+            trimmed.TrimWhitespaceBack();
+            trimmed.TrimWhitespaceFront();
             dTemp = StringToFloat(trimmed.AsStringView());
           }
           break;

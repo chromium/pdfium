@@ -47,7 +47,7 @@ void ProcessText(WideString* pText) {
   if (iLen == 0)
     return;
 
-  size_t iTrimLeft = 0;
+  size_t iTrimFront = 0;
   {
     // Span's lifetime must end before ReleaseBuffer() below.
     pdfium::span<wchar_t> psz = pText->GetBuffer(iLen);
@@ -60,10 +60,10 @@ void ProcessText(WideString* pText) {
         continue;
 
       wPrev = wch;
-      psz[iTrimLeft++] = wch;
+      psz[iTrimFront++] = wch;
     }
   }
-  pText->ReleaseBuffer(iTrimLeft);
+  pText->ReleaseBuffer(iTrimFront);
 }
 
 }  // namespace
@@ -719,7 +719,7 @@ void CXFA_TextLayout::LoadText(CXFA_Node* pNode,
   }
 
   WideString wsText = pNode->JSObject()->GetContent(false);
-  wsText.TrimRight(L" ");
+  wsText.TrimBack(L" ");
   bool bRet = AppendChar(wsText, pLinePos, fSpaceAbove, bSavePieces);
   if (bRet && m_pLoader)
     m_pLoader->pNode = pNode;
@@ -823,7 +823,7 @@ bool CXFA_TextLayout::LoadRichText(const CFX_XMLNode* pXMLNode,
 
       if (m_pLoader) {
         if (wsText.GetLength() > 0 && m_pLoader->bFilterSpace) {
-          wsText.TrimLeft(L" ");
+          wsText.TrimFront(L" ");
         }
         if (CFX_CSSDisplay::Block == eDisplay) {
           m_pLoader->bFilterSpace = true;

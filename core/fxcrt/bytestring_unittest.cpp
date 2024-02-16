@@ -865,40 +865,40 @@ TEST(ByteString, Trim) {
   EXPECT_EQ("BCCB", abc);
 }
 
-TEST(ByteString, TrimLeft) {
+TEST(ByteString, TrimFront) {
   ByteString fred("  FRED  ");
-  fred.TrimWhitespaceLeft();
+  fred.TrimWhitespaceFront();
   EXPECT_EQ("FRED  ", fred);
-  fred.TrimLeft('E');
+  fred.TrimFront('E');
   EXPECT_EQ("FRED  ", fred);
-  fred.TrimLeft('F');
+  fred.TrimFront('F');
   EXPECT_EQ("RED  ", fred);
-  fred.TrimLeft("ERP");
+  fred.TrimFront("ERP");
   EXPECT_EQ("D  ", fred);
 
   ByteString blank("   ");
-  blank.TrimLeft("ERP");
+  blank.TrimFront("ERP");
   EXPECT_EQ("   ", blank);
-  blank.TrimLeft('E');
+  blank.TrimFront('E');
   EXPECT_EQ("   ", blank);
-  blank.TrimWhitespaceLeft();
+  blank.TrimWhitespaceFront();
   EXPECT_EQ("", blank);
 
   ByteString empty;
-  empty.TrimLeft("ERP");
+  empty.TrimFront("ERP");
   EXPECT_EQ("", empty);
-  empty.TrimLeft('E');
+  empty.TrimFront('E');
   EXPECT_EQ("", empty);
-  empty.TrimWhitespaceLeft();
+  empty.TrimWhitespaceFront();
   EXPECT_EQ("", empty);
 }
 
-TEST(ByteString, TrimLeftCopies) {
+TEST(ByteString, TrimFrontCopies) {
   {
     // With a single reference, no copy takes place.
     ByteString fred("  FRED  ");
     const char* old_buffer = fred.c_str();
-    fred.TrimWhitespaceLeft();
+    fred.TrimWhitespaceFront();
     EXPECT_EQ("FRED  ", fred);
     EXPECT_EQ(old_buffer, fred.c_str());
   }
@@ -907,7 +907,7 @@ TEST(ByteString, TrimLeftCopies) {
     ByteString fred("  FRED  ");
     ByteString other_fred = fred;
     const char* old_buffer = fred.c_str();
-    fred.TrimWhitespaceLeft();
+    fred.TrimWhitespaceFront();
     EXPECT_EQ("FRED  ", fred);
     EXPECT_EQ("  FRED  ", other_fred);
     EXPECT_NE(old_buffer, fred.c_str());
@@ -917,47 +917,47 @@ TEST(ByteString, TrimLeftCopies) {
     ByteString fred("FRED");
     ByteString other_fred = fred;
     const char* old_buffer = fred.c_str();
-    fred.TrimWhitespaceLeft();
+    fred.TrimWhitespaceFront();
     EXPECT_EQ("FRED", fred);
     EXPECT_EQ("FRED", other_fred);
     EXPECT_EQ(old_buffer, fred.c_str());
   }
 }
 
-TEST(ByteString, TrimRight) {
+TEST(ByteString, TrimBack) {
   ByteString fred("  FRED  ");
-  fred.TrimWhitespaceRight();
+  fred.TrimWhitespaceBack();
   EXPECT_EQ("  FRED", fred);
-  fred.TrimRight('E');
+  fred.TrimBack('E');
   EXPECT_EQ("  FRED", fred);
-  fred.TrimRight('D');
+  fred.TrimBack('D');
   EXPECT_EQ("  FRE", fred);
-  fred.TrimRight("ERP");
+  fred.TrimBack("ERP");
   EXPECT_EQ("  F", fred);
 
   ByteString blank("   ");
-  blank.TrimRight("ERP");
+  blank.TrimBack("ERP");
   EXPECT_EQ("   ", blank);
-  blank.TrimRight('E');
+  blank.TrimBack('E');
   EXPECT_EQ("   ", blank);
-  blank.TrimWhitespaceRight();
+  blank.TrimWhitespaceBack();
   EXPECT_EQ("", blank);
 
   ByteString empty;
-  empty.TrimRight("ERP");
+  empty.TrimBack("ERP");
   EXPECT_EQ("", empty);
-  empty.TrimRight('E');
+  empty.TrimBack('E');
   EXPECT_EQ("", empty);
-  empty.TrimWhitespaceRight();
+  empty.TrimWhitespaceBack();
   EXPECT_EQ("", empty);
 }
 
-TEST(ByteString, TrimRightCopies) {
+TEST(ByteString, TrimBackCopies) {
   {
     // With a single reference, no copy takes place.
     ByteString fred("  FRED  ");
     const char* old_buffer = fred.c_str();
-    fred.TrimWhitespaceRight();
+    fred.TrimWhitespaceBack();
     EXPECT_EQ("  FRED", fred);
     EXPECT_EQ(old_buffer, fred.c_str());
   }
@@ -966,7 +966,7 @@ TEST(ByteString, TrimRightCopies) {
     ByteString fred("  FRED  ");
     ByteString other_fred = fred;
     const char* old_buffer = fred.c_str();
-    fred.TrimWhitespaceRight();
+    fred.TrimWhitespaceBack();
     EXPECT_EQ("  FRED", fred);
     EXPECT_EQ("  FRED  ", other_fred);
     EXPECT_NE(old_buffer, fred.c_str());
@@ -976,7 +976,7 @@ TEST(ByteString, TrimRightCopies) {
     ByteString fred("FRED");
     ByteString other_fred = fred;
     const char* old_buffer = fred.c_str();
-    fred.TrimWhitespaceRight();
+    fred.TrimWhitespaceBack();
     EXPECT_EQ("FRED", fred);
     EXPECT_EQ("FRED", other_fred);
     EXPECT_EQ(old_buffer, fred.c_str());

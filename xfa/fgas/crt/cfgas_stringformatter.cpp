@@ -1867,7 +1867,7 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
 
   pdfium::span<const wchar_t> spNumFormat = wsNumFormat.span();
   WideString wsSrcNum = wsInputNum;
-  wsSrcNum.TrimLeft('0');
+  wsSrcNum.TrimFront('0');
   if (wsSrcNum.IsEmpty() || wsSrcNum[0] == '.')
     wsSrcNum.InsertAtFront('0');
 
@@ -1930,8 +1930,8 @@ bool CFGAS_StringFormatter::FormatNum(LocaleMgrIface* pLocaleMgr,
     wsSrcNum = decimal.ToWideString();
   }
   if (bTrimTailZeros && scale > 0 && iTreading > 0) {
-    wsSrcNum.TrimRight(L"0");
-    wsSrcNum.TrimRight(L".");
+    wsSrcNum.TrimBack(L"0");
+    wsSrcNum.TrimBack(L".");
   }
 
   WideString wsGroupSymbol = pLocale->GetGroupingSymbol();

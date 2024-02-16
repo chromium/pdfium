@@ -263,7 +263,7 @@ bool CPDF_LinkExtract::CheckMailLink(WideString* str) {
   if (!aPos.has_value() || aPos.value() == 0)
     return false;
 
-  str->TrimRight(L'.');
+  str->TrimBack(L'.');
   // At least one '.' in domain name, but not at the beginning.
   // TODO(weili): RFC5322 allows domain names to be a local name without '.'.
   // Check whether we should remove this check.

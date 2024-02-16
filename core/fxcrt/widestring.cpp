@@ -773,16 +773,16 @@ int WideString::CompareNoCase(const wchar_t* str) const {
 }
 
 void WideString::TrimWhitespace() {
-  TrimWhitespaceRight();
-  TrimWhitespaceLeft();
+  TrimWhitespaceBack();
+  TrimWhitespaceFront();
 }
 
-void WideString::TrimWhitespaceLeft() {
-  TrimLeft(kWideTrimChars);
+void WideString::TrimWhitespaceFront() {
+  TrimFront(kWideTrimChars);
 }
 
-void WideString::TrimWhitespaceRight() {
-  TrimRight(kWideTrimChars);
+void WideString::TrimWhitespaceBack() {
+  TrimBack(kWideTrimChars);
 }
 int WideString::GetInteger() const {
   return m_pData ? FXSYS_wtoi(m_pData->m_String) : 0;

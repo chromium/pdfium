@@ -228,28 +228,28 @@ size_t StringTemplate<T>::Replace(StringView oldstr, StringView newstr) {
 
 template <typename T>
 void StringTemplate<T>::Trim(T ch) {
-  TrimLeft(ch);
-  TrimRight(ch);
+  TrimFront(ch);
+  TrimBack(ch);
 }
 
 template <typename T>
-void StringTemplate<T>::TrimLeft(T ch) {
-  TrimLeft(StringView(ch));
+void StringTemplate<T>::TrimFront(T ch) {
+  TrimFront(StringView(ch));
 }
 
 template <typename T>
-void StringTemplate<T>::TrimRight(T ch) {
-  TrimRight(StringView(ch));
+void StringTemplate<T>::TrimBack(T ch) {
+  TrimBack(StringView(ch));
 }
 
 template <typename T>
 void StringTemplate<T>::Trim(StringView targets) {
-  TrimLeft(targets);
-  TrimRight(targets);
+  TrimFront(targets);
+  TrimBack(targets);
 }
 
 template <typename T>
-void StringTemplate<T>::TrimLeft(StringView targets) {
+void StringTemplate<T>::TrimFront(StringView targets) {
   if (!m_pData || targets.IsEmpty()) {
     return;
   }
@@ -284,7 +284,7 @@ void StringTemplate<T>::TrimLeft(StringView targets) {
 }
 
 template <typename T>
-void StringTemplate<T>::TrimRight(StringView targets) {
+void StringTemplate<T>::TrimBack(StringView targets) {
   if (!m_pData || targets.IsEmpty()) {
     return;
   }

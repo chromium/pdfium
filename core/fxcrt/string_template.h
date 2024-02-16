@@ -136,13 +136,13 @@ class StringTemplate {
 
   // Remove character `ch` from  both/front/back of string.
   void Trim(T ch);
-  void TrimLeft(T ch);
-  void TrimRight(T ch);
+  void TrimFront(T ch);
+  void TrimBack(T ch);
 
   // Remove all characters in `targets` from both/front/back of string.
   void Trim(StringView targets);
-  void TrimLeft(StringView targets);
-  void TrimRight(StringView targets);
+  void TrimFront(StringView targets);
+  void TrimBack(StringView targets);
 
  protected:
   using StringData = StringDataTemplate<T>;

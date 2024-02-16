@@ -147,7 +147,7 @@ CFX_XMLNode* GetDataSetsFromXDP(CFX_XMLNode* pXMLDocumentNode) {
 }
 
 bool IsStringAllWhitespace(WideString wsText) {
-  wsText.TrimRight(L"\x20\x9\xD\xA");
+  wsText.TrimBack(L"\x20\x9\xD\xA");
   return wsText.IsEmpty();
 }
 

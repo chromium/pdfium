@@ -659,7 +659,7 @@ bool CPDFXFA_DocEnvironment::MailToInfo(WideString& csURL,
                                         WideString& csSubject,
                                         WideString& csMsg) {
   WideString srcURL = csURL;
-  srcURL.TrimWhitespaceLeft();
+  srcURL.TrimWhitespaceFront();
   if (srcURL.Left(7).CompareNoCase(L"mailto:") != 0)
     return false;
 

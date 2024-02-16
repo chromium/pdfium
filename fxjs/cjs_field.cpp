@@ -144,7 +144,7 @@ std::optional<FieldNameData> ParseFieldName(const WideString& field_name) {
   WideString suffixal = field_name.Last(reverse_it - field_name.rbegin());
   int control_index = FXSYS_wtoi(suffixal.c_str());
   if (control_index == 0) {
-    suffixal.TrimRight(L' ');
+    suffixal.TrimBack(L' ');
     if (suffixal != L"0") {
       return std::nullopt;
     }
