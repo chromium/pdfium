@@ -105,8 +105,6 @@ class WideString : public StringTemplate<wchar_t> {
   bool operator<(WideStringView str) const;
   bool operator<(const WideString& other) const;
 
-  void SetAt(size_t index, wchar_t c);
-
   int Compare(const wchar_t* str) const;
   int Compare(const WideString& str) const;
   int CompareNoCase(const wchar_t* str) const;
@@ -130,8 +128,6 @@ class WideString : public StringTemplate<wchar_t> {
   void TrimRight();
   void TrimRight(wchar_t target);
   void TrimRight(WideStringView targets);
-
-  void Reserve(size_t len);
 
   int GetInteger() const;
 

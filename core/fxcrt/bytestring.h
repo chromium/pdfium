@@ -100,10 +100,6 @@ class ByteString : public StringTemplate<char> {
   ByteString& operator+=(const ByteString& str);
   ByteString& operator+=(ByteStringView str);
 
-  void SetAt(size_t index, char c);
-
-  void Reserve(size_t len);
-
   ByteString Substr(size_t offset) const;
   ByteString Substr(size_t first, size_t count) const;
   ByteString First(size_t count) const;

@@ -126,6 +126,11 @@ class StringTemplate {
     return Find(ch, start).has_value();
   }
 
+  // Overwrite character at `index`.
+  void SetAt(size_t index, T ch);
+
+  void Reserve(size_t len) { GetBuffer(len); }
+
  protected:
   using StringData = StringDataTemplate<T>;
 

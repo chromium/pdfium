@@ -294,10 +294,6 @@ bool ByteString::EqualNoCase(ByteStringView str) const {
   return true;
 }
 
-void ByteString::Reserve(size_t len) {
-  GetBuffer(len);
-}
-
 intptr_t ByteString::ReferenceCountForTesting() const {
   return m_pData ? m_pData->m_nRefs : 0;
 }
@@ -324,12 +320,6 @@ ByteString ByteString::First(size_t count) const {
 ByteString ByteString::Last(size_t count) const {
   // Unsigned underflow is well-defined and out-of-range is handled by Substr().
   return Substr(GetLength() - count, count);
-}
-
-void ByteString::SetAt(size_t index, char c) {
-  DCHECK(IsValidIndex(index));
-  ReallocBeforeWrite(m_pData->m_nDataLength);
-  m_pData->m_String[index] = c;
 }
 
 void ByteString::MakeLower() {

@@ -549,10 +549,6 @@ bool WideString::operator<(const WideString& other) const {
   return Compare(other) < 0;
 }
 
-void WideString::Reserve(size_t len) {
-  GetBuffer(len);
-}
-
 intptr_t WideString::ReferenceCountForTesting() const {
   return m_pData ? m_pData->m_nRefs : 0;
 }
@@ -791,12 +787,6 @@ WideString WideString::FromUTF16BE(pdfium::span<const uint8_t> data) {
   }
   result.ReleaseBuffer(length);
   return result;
-}
-
-void WideString::SetAt(size_t index, wchar_t c) {
-  DCHECK(IsValidIndex(index));
-  ReallocBeforeWrite(m_pData->m_nDataLength);
-  m_pData->m_String[index] = c;
 }
 
 int WideString::Compare(const wchar_t* str) const {

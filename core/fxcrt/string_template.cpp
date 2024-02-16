@@ -139,6 +139,13 @@ size_t StringTemplate<T>::Delete(size_t index, size_t count) {
 }
 
 template <typename T>
+void StringTemplate<T>::SetAt(size_t index, T ch) {
+  DCHECK(IsValidIndex(index));
+  ReallocBeforeWrite(m_pData->m_nDataLength);
+  m_pData->span()[index] = ch;
+}
+
+template <typename T>
 std::optional<size_t> StringTemplate<T>::Find(T ch, size_t start) const {
   return Find(StringView(ch), start);
 }
