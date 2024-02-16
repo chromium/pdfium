@@ -10,7 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "third_party/base/containers/span.h"
+#include "core/fxcrt/span.h"
 
 class CFX_BitStream {
  public:

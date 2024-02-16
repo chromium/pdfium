@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/span.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -29,7 +30,6 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/hash.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/containers/span.h"
 
 using pdfium::AnnotationStampWithApChecksum;
 

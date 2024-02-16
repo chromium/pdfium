@@ -9,9 +9,9 @@
 
 #include <memory>
 
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/gc/heap.h"
-#include "third_party/base/containers/span.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "xfa/fxfa/parser/gced_locale_iface.h"
 

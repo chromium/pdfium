@@ -12,7 +12,7 @@
 #include "core/fxcodec/jbig2/JBig2_Define.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/maybe_owned.h"
-#include "third_party/base/containers/span.h"
+#include "core/fxcrt/span.h"
 
 struct FX_RECT;
 

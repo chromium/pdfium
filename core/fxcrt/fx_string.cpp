@@ -14,12 +14,12 @@
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/code_point_view.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/string_view_template.h"
 #include "core/fxcrt/utf16.h"
 #include "core/fxcrt/widestring.h"
 #include "third_party/base/compiler_specific.h"
-#include "third_party/base/containers/span.h"
 
 #if !defined(WCHAR_T_IS_16_BIT) && !defined(WCHAR_T_IS_32_BIT)
 #error "Unknown wchar_t size"

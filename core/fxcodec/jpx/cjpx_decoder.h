@@ -11,8 +11,8 @@
 
 #include <memory>
 
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/base/containers/span.h"
 
 #if defined(USE_SYSTEM_LIBOPENJPEG2)
 #include <openjpeg.h>

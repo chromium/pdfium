@@ -9,10 +9,10 @@
 
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/weak_ptr.h"
 #include "core/fxge/fx_fontencoding.h"
-#include "third_party/base/containers/span.h"
 
 enum class FontEncoding {
   kBuiltin = 0,

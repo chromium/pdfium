@@ -14,7 +14,7 @@
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "third_party/base/containers/span.h"
+#include "core/fxcrt/span.h"
 
 class CFX_DIBitmap;
 

@@ -8,10 +8,10 @@
 
 #include <vector>
 
+#include "core/fxcrt/span.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
 #include "fxjs/xfa/cfxjse_value.h"
-#include "third_party/base/containers/span.h"
 #include "v8/include/v8-object.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 #include "xfa/fxfa/parser/cxfa_node.h"

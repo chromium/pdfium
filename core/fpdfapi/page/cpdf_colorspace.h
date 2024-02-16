@@ -21,8 +21,8 @@
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/base/containers/span.h"
 
 class CPDF_Document;
 class CPDF_IndexedCS;

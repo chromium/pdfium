@@ -17,11 +17,11 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/string_view_template.h"
 #include "core/fxcrt/widestring.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
-#include "third_party/base/containers/span.h"
 
 namespace {
 

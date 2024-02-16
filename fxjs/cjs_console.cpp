@@ -8,10 +8,10 @@
 
 #include <vector>
 
+#include "core/fxcrt/span.h"
 #include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
-#include "third_party/base/containers/span.h"
 
 const JSMethodSpec CJS_Console::MethodSpecs[] = {{"clear", clear_static},
                                                  {"hide", hide_static},

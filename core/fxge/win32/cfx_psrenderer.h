@@ -22,9 +22,9 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "third_party/base/containers/span.h"
 
 class CFX_DIBBase;
 class CFX_Font;

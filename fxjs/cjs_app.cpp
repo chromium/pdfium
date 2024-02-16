@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "core/fxcrt/fixed_size_data_vector.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
@@ -20,7 +21,6 @@
 #include "fxjs/global_timer.h"
 #include "fxjs/ijs_event_context.h"
 #include "fxjs/js_resources.h"
-#include "third_party/base/containers/span.h"
 #include "v8/include/v8-container.h"
 
 namespace {

@@ -9,9 +9,9 @@
 
 #include <vector>
 
+#include "core/fxcrt/span.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "fxjs/xfa/jse_define.h"
-#include "third_party/base/containers/span.h"
 
 class CScript_LayoutPseudoModel;
 class CXFA_LayoutProcessor;

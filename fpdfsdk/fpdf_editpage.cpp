@@ -35,10 +35,10 @@
 #include "core/fpdfdoc/cpdf_annotlist.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_formfill.h"
-#include "third_party/base/containers/span.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 #ifdef PDF_ENABLE_XFA

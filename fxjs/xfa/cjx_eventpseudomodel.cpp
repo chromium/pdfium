@@ -9,9 +9,9 @@
 #include <algorithm>
 #include <vector>
 
+#include "core/fxcrt/span.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_engine.h"
-#include "third_party/base/containers/span.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/v8-primitive.h"

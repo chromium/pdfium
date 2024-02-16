@@ -11,8 +11,8 @@
 
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxge/dib/cfx_dibbase.h"
-#include "third_party/base/containers/span.h"
 
 class CPDF_TransferFunc;
 

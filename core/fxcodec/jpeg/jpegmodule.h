@@ -13,7 +13,7 @@
 #include <optional>
 
 #include "build/build_config.h"
-#include "third_party/base/containers/span.h"
+#include "core/fxcrt/span.h"
 
 #if BUILDFLAG(IS_WIN)
 #include "core/fxcrt/retain_ptr.h"

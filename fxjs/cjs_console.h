@@ -9,9 +9,9 @@
 
 #include <vector>
 
+#include "core/fxcrt/span.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
-#include "third_party/base/containers/span.h"
 
 class CJS_Console final : public CJS_Object {
  public:

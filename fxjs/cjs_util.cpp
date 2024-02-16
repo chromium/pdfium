@@ -15,6 +15,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/span.h"
 #include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/cjs_publicmethods.h"
@@ -24,7 +25,6 @@
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/containers/span.h"
 #include "v8/include/v8-date.h"
 
 #if BUILDFLAG(IS_ANDROID)

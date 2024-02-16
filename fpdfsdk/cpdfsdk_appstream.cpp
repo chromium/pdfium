@@ -31,6 +31,7 @@
 #include "core/fpdfdoc/cpdf_icon.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxcrt/fx_string_wrappers.h"
+#include "core/fxcrt/span.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
@@ -38,7 +39,6 @@
 #include "fpdfsdk/pwl/cpwl_edit.h"
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
-#include "third_party/base/containers/span.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 namespace {

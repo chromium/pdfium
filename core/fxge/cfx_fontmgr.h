@@ -18,9 +18,9 @@
 #include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxge/cfx_face.h"
 #include "core/fxge/freetype/fx_freetype.h"
-#include "third_party/base/containers/span.h"
 
 class CFX_FontMapper;
 

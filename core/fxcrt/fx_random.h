@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#include "third_party/base/containers/span.h"
+#include "core/fxcrt/span.h"
 
 void* FX_Random_MT_Start(uint32_t dwSeed);
 void FX_Random_MT_Close(void* pContext);

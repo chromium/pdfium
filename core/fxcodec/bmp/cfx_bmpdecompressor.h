@@ -15,8 +15,8 @@
 #include "core/fxcodec/bmp/fx_bmp.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/base/containers/span.h"
 
 class CFX_CodecMemory;
 

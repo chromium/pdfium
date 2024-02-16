@@ -13,12 +13,12 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/render_defines.h"
 #include "core/fxge/renderdevicedriver_iface.h"
-#include "third_party/base/containers/span.h"
 
 class CFX_DIBBase;
 class CFX_DIBitmap;

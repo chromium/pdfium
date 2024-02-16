@@ -11,8 +11,8 @@
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/base/containers/span.h"
 
 class CFX_DIBBase;
 class CFX_DIBitmap;

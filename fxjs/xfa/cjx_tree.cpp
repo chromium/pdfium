@@ -8,11 +8,11 @@
 
 #include <vector>
 
+#include "core/fxcrt/span.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_engine.h"
-#include "third_party/base/containers/span.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/cppgc/allocation.h"
 #include "v8/include/v8-object.h"

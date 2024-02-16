@@ -12,11 +12,11 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/win32/cfx_psfonttracker.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/containers/span.h"
 
 namespace {
 

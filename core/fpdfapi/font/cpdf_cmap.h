@@ -14,8 +14,8 @@
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 #include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/base/containers/span.h"
 
 namespace fxcmap {
 struct CMap;

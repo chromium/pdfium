@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "build/build_config.h"
+#include "core/fxcrt/span.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_ext.h"
@@ -22,7 +23,6 @@
 #include "public/fpdfview.h"
 #include "testing/fake_file_access.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/containers/span.h"
 
 class TestLoader;
 

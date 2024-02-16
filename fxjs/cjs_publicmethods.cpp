@@ -24,6 +24,7 @@
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_string_wrappers.h"
+#include "core/fxcrt/span.h"
 #include "core/fxge/cfx_color.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
@@ -37,7 +38,6 @@
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
 #include "third_party/base/check.h"
-#include "third_party/base/containers/span.h"
 #include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/v8-container.h"
 

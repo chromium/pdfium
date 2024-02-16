@@ -10,8 +10,8 @@
 #include <stdint.h>
 
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/base/containers/span.h"
 
 class CPDF_CryptoHandler;
 

@@ -10,9 +10,9 @@
 
 #include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/span.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/containers/span.h"
 
 std::ostream& operator<<(std::ostream& os, const CFX_DateTime& dt) {
   os << dt.GetYear() << "-" << std::to_string(dt.GetMonth()) << "-"

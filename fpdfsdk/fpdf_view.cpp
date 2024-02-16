@@ -35,6 +35,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -51,7 +52,6 @@
 #include "fxjs/ijs_runtime.h"
 #include "public/fpdf_formfill.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/containers/span.h"
 #include "third_party/base/memory/ptr_util.h"
 #include "third_party/base/numerics/safe_conversions.h"
 

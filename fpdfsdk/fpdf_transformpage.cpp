@@ -22,11 +22,11 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/fx_string_wrappers.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_path.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "third_party/base/containers/span.h"
 #include "third_party/base/numerics/safe_conversions.h"
 
 namespace {

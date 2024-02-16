@@ -10,13 +10,13 @@
 
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
 #include "third_party/base/containers/adapters.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/containers/span.h"
 
 namespace {
 

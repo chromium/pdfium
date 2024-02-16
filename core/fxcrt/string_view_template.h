@@ -16,7 +16,7 @@
 
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_system.h"
-#include "third_party/base/containers/span.h"
+#include "core/fxcrt/span.h"
 
 namespace fxcrt {
 

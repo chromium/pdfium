@@ -15,6 +15,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
@@ -25,7 +26,6 @@
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/containers/span.h"
 #include "third_party/base/notreached.h"
 
 // Ignore fallthrough warnings in agg23 headers.

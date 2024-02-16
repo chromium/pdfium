@@ -12,7 +12,7 @@
 #include <memory>
 
 #include "core/fxcrt/data_vector.h"
-#include "third_party/base/containers/span.h"
+#include "core/fxcrt/span.h"
 
 namespace fxcodec {
 

@@ -9,8 +9,8 @@
 #include "build/build_config.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/span.h"
 #include "third_party/base/check.h"
-#include "third_party/base/containers/span.h"
 
 namespace {
 

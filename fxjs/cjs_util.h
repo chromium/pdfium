@@ -9,10 +9,10 @@
 
 #include <vector>
 
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/widestring.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/js_define.h"
-#include "third_party/base/containers/span.h"
 #include "v8/include/v8-forward.h"
 
 class CJS_Util final : public CJS_Object {

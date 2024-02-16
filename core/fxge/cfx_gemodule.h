@@ -15,7 +15,7 @@
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 
 #if BUILDFLAG(IS_APPLE)
-#include "third_party/base/containers/span.h"
+#include "core/fxcrt/span.h"
 #endif
 
 class CFX_FontCache;

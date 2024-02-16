@@ -8,10 +8,10 @@
 #include <numeric>
 #include <utility>
 
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/containers/span.h"
 
 TEST(FixedSizedDataVector, NoData) {
   FixedSizeDataVector<int> vec;

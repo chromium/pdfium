@@ -19,6 +19,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/span.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/cfx_graphstatedata.h"
@@ -26,7 +27,6 @@
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/win32/cwin32_platform.h"
-#include "third_party/base/containers/span.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
 

@@ -18,10 +18,10 @@
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxge/cfx_face.h"
 #include "core/fxge/freetype/fx_freetype.h"
-#include "third_party/base/containers/span.h"
 
 #if defined(PDF_USE_SKIA)
 #include "core/fxge/fx_font.h"

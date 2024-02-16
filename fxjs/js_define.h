@@ -9,12 +9,12 @@
 
 #include <memory>
 
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfxjs_engine.h"
 #include "fxjs/cjs_result.h"
 #include "fxjs/cjs_runtime.h"
 #include "fxjs/js_resources.h"
-#include "third_party/base/containers/span.h"
 #include "v8/include/v8-local-handle.h"
 
 class CJS_Object;

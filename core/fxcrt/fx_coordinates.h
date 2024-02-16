@@ -13,7 +13,7 @@
 #include <iosfwd>
 #endif
 
-#include "third_party/base/containers/span.h"
+#include "core/fxcrt/span.h"
 
 template <class BaseType>
 class CFX_PTemplate {

@@ -9,13 +9,13 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"
 #include "core/fxcrt/xml/cfx_xmlelement.h"
 #include "core/fxcrt/xml/cfx_xmltext.h"
 #include "fxjs/cfx_v8.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
-#include "third_party/base/containers/span.h"
 #include "v8/include/v8-primitive.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"

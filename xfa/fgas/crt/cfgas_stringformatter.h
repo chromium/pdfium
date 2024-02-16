@@ -9,8 +9,8 @@
 
 #include <vector>
 
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/widestring.h"
-#include "third_party/base/containers/span.h"
 #include "xfa/fgas/crt/locale_iface.h"
 
 class CFX_DateTime;

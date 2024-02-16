@@ -9,10 +9,10 @@
 #include <algorithm>
 #include <utility>
 
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/containers/span.h"
 
 namespace fxcrt {
 

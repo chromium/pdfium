@@ -16,8 +16,8 @@
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
 #include "core/fxcodec/jbig2/JBig2_Page.h"
 #include "core/fxcodec/jbig2/JBig2_Segment.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/base/containers/span.h"
 
 class CJBig2_ArithDecoder;
 class CJBig2_GRDProc;

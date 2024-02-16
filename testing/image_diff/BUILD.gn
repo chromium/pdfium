@@ -14,8 +14,8 @@ source_set("image_diff") {
     "../../:pdfium_strict_config",
     "../../:pdfium_noshorten_config",
   ]
+  public_deps = [ "../../core/fxcrt" ]
   deps = [
-    "../../third_party:pdfium_base",
     "../../third_party:png",
     "../../third_party:zlib",
   ]

@@ -22,13 +22,13 @@
 #include "core/fxcrt/mask.h"
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_annot.h"
 #include "fpdfsdk/formfiller/cffl_interactiveformfiller.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
 #include "fpdfsdk/pwl/ipwl_fillernotify.h"
 #include "public/fpdf_formfill.h"
-#include "third_party/base/containers/span.h"
 
 class CPDF_Action;
 class CPDF_FormField;

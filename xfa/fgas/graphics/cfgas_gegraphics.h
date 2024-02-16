@@ -13,10 +13,10 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
-#include "third_party/base/containers/span.h"
 #include "xfa/fgas/graphics/cfgas_gecolor.h"
 
 class CFGAS_GEPath;

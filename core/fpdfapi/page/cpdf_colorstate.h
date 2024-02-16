@@ -12,8 +12,8 @@
 #include "core/fpdfapi/page/cpdf_color.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/shared_copy_on_write.h"
+#include "core/fxcrt/span.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/base/containers/span.h"
 
 class CPDF_ColorSpace;
 class CPDF_Pattern;

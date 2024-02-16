@@ -11,7 +11,7 @@
 #include "core/fxcrt/data_vector.h"
 
 #if defined(PDF_USE_SKIA)
-#include "third_party/base/containers/span.h"
+#include "core/fxcrt/span.h"
 #endif
 
 class CPDF_ExpIntFunc final : public CPDF_Function {

@@ -39,12 +39,12 @@
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/scoped_set_insertion.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_graphstate.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "third_party/base/check.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/containers/span.h"
 #include "third_party/base/notreached.h"
 
 namespace {

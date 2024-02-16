@@ -4,9 +4,9 @@
 
 #include <vector>
 
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/containers/span.h"
 
 // Tests PDFium-modifications to base::span. The name of this file is
 // chosen to avoid collisions with base's span_unittest.cc

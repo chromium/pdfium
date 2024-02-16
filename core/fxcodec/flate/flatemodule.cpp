@@ -21,10 +21,10 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
 #include "third_party/base/check.h"
-#include "third_party/base/containers/span.h"
 #include "third_party/base/notreached.h"
 #include "third_party/base/numerics/safe_conversions.h"
 

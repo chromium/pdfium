@@ -170,8 +170,8 @@ source_set("fuzzer_helper") {
   configs += [ ":fuzzer_config" ]
   deps = [
     "../../:pdfium_public_headers",
+    "../../core/fxcrt",
     "../../fpdfsdk",
-    "../../third_party:pdfium_base",
   ]
 }
 
@@ -531,7 +531,7 @@ pdfium_fuzzer("pdf_codec_icc_fuzzer") {
   sources = [ "pdf_codec_icc_fuzzer.cc" ]
   deps = [
     "../../core/fxcodec",
-    "../../third_party:pdfium_base",
+    "../../core/fxcrt",
     "../../third_party/:lcms2",
   ]
 }

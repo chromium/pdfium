@@ -14,8 +14,8 @@
 #include "core/fxcodec/gif/gif_decoder.h"
 #include "core/fxcodec/gif/lzw_decompressor.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/base/containers/span.h"
 
 class CFX_CodecMemory;
 

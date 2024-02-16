@@ -17,10 +17,10 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_number.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_path.h"
-#include "third_party/base/containers/span.h"
 
 class CPDF_AllStates;
 class CPDF_ColorSpace;

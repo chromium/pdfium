@@ -12,8 +12,8 @@
 #include "build/build_config.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/base/containers/span.h"
 
 #if defined(PDF_USE_SKIA)
 #include "third_party/skia/include/core/SkRefCnt.h"  // nogncheck

@@ -14,8 +14,8 @@
 #include <vector>
 
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/span.h"
 #include "third_party/abseil-cpp/absl/types/variant.h"
-#include "third_party/base/containers/span.h"
 
 class CFX_CTTGSUBTable {
  public:

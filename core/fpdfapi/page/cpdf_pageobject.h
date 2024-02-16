@@ -13,7 +13,7 @@
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "third_party/base/containers/span.h"
+#include "core/fxcrt/span.h"
 
 class CPDF_FormObject;
 class CPDF_ImageObject;

@@ -558,7 +558,6 @@ source_set("pdfium_base") {
     "base/component_export.h",
     "base/containers/adapters.h",
     "base/containers/contains.h",
-    "base/containers/span.h",
     "base/debug/alias.cc",
     "base/debug/alias.h",
     "base/immediate_crash.h",
@@ -590,9 +589,6 @@ source_set("pdfium_base") {
       "base/win/win_util.cc",
       "base/win/win_util.h",
     ]
-  }
-  if (pdf_use_partition_alloc) {
-    public_deps += [ ":pdfium_pa" ]
   }
 }
 

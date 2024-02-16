@@ -8,8 +8,8 @@
 
 #include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/containers/span.h"
 
 TEST(SeekableStreamProxyTest, NullStream) {
   auto proxy_stream = pdfium::MakeRetain<CFX_SeekableStreamProxy>(

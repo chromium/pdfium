@@ -9,8 +9,8 @@
 
 #include <vector>
 
+#include "core/fxcrt/span.h"
 #include "fxjs/cjs_result.h"
-#include "third_party/base/containers/span.h"
 
 class CFXJSE_Engine;
 

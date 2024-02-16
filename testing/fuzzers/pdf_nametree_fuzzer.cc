@@ -11,7 +11,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
-#include "third_party/base/containers/span.h"
+#include "core/fxcrt/span.h"
 
 struct Params {
   bool delete_backwards;

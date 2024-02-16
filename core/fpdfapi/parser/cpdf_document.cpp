@@ -25,11 +25,11 @@
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/scoped_set_insertion.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/stl_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/containers/span.h"
 
 namespace {
 

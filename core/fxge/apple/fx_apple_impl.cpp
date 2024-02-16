@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/span.h"
 #include "core/fxge/agg/fx_agg_driver.h"
 #include "core/fxge/apple/fx_apple_platform.h"
 #include "core/fxge/cfx_cliprgn.h"
@@ -22,7 +23,6 @@
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/text_char_pos.h"
-#include "third_party/base/containers/span.h"
 
 namespace {
 

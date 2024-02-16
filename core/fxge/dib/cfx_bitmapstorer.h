@@ -8,8 +8,8 @@
 #define CORE_FXGE_DIB_CFX_BITMAPSTORER_H_
 
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxge/dib/scanlinecomposer_iface.h"
-#include "third_party/base/containers/span.h"
 
 class CFX_DIBitmap;
 

@@ -13,9 +13,9 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/span.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/containers/span.h"
 
 namespace fxcrt {
 

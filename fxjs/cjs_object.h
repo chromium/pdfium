@@ -7,9 +7,9 @@
 #ifndef FXJS_CJS_OBJECT_H_
 #define FXJS_CJS_OBJECT_H_
 
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cjs_runtime.h"
-#include "third_party/base/containers/span.h"
 
 class CFXJS_Engine;
 

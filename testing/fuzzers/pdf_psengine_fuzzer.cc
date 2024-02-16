@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 #include "core/fpdfapi/page/cpdf_psengine.h"
-#include "third_party/base/containers/span.h"
+#include "core/fxcrt/span.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   CPDF_PSEngine engine;

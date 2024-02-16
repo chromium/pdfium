@@ -73,12 +73,11 @@ source_set("fxcodec") {
     "../../:pdfium_strict_config",
     "../../:pdfium_noshorten_config",
   ]
-  public_deps = [ "../../third_party:pdfium_base" ]
+  public_deps = [ "../fxcrt" ]
   deps = [
     "../../third_party:lcms2",
     "../../third_party:libopenjpeg2",
     "../../third_party:zlib",
-    "../fxcrt",
     "../fxge",
     "//third_party:jpeg",
   ]

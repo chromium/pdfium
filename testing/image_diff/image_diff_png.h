@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include "third_party/base/containers/span.h"
+#include "core/fxcrt/span.h"
 
 namespace image_diff_png {
 

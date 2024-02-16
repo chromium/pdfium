@@ -32,10 +32,10 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/scoped_set_insertion.h"
+#include "core/fxcrt/span.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/containers/contains.h"
-#include "third_party/base/containers/span.h"
 #include "third_party/base/notreached.h"
 
 using ObjectType = CPDF_CrossRefTable::ObjectType;

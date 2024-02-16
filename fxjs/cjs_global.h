@@ -11,11 +11,11 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fxjs/cfx_keyvalue.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/cjs_result.h"
-#include "third_party/base/containers/span.h"
 
 class CFX_GlobalData;
 

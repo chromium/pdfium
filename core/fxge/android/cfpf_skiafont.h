@@ -12,9 +12,9 @@
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_face.h"
-#include "third_party/base/containers/span.h"
 
 class CFPF_SkiaFontMgr;
 class CFPF_SkiaPathFont;
