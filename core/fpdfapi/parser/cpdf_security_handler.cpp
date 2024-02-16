@@ -91,22 +91,15 @@ bool IsValidKeyLengthForCipher(CPDF_CryptoHandler::Cipher cipher,
   }
 }
 
-#define FX_GET_32WORD(n, b, i)                                        \
-  {                                                                   \
-    (n) = (uint32_t)(                                                 \
-        ((uint64_t)(b)[(i)] << 24) | ((uint64_t)(b)[(i) + 1] << 16) | \
-        ((uint64_t)(b)[(i) + 2] << 8) | ((uint64_t)(b)[(i) + 3]));    \
-  }
-int BigOrder64BitsMod3(uint8_t* data) {
+int BigOrder64BitsMod3(pdfium::span<const uint8_t> data) {
   uint64_t ret = 0;
   for (int i = 0; i < 4; ++i) {
-    uint32_t value;
-    FX_GET_32WORD(value, data, 4 * i);
     ret <<= 32;
-    ret |= value;
+    ret |= fxcrt::GetUInt32MSBFirst(data);
     ret %= 3;
+    data = data.subspan(4);
   }
-  return (int)ret;
+  return static_cast<int>(ret);
 }
 
 void Revision6_Hash(const ByteString& password,
@@ -152,7 +145,7 @@ void Revision6_Hash(const ByteString& password,
     CRYPT_AESEncrypt(&aes, encrypted_output_span.data(), content.data(),
                      encrypted_output_span.size());
     int iHash = 0;
-    switch (BigOrder64BitsMod3(encrypted_output_span.data())) {
+    switch (BigOrder64BitsMod3(encrypted_output_span)) {
       case 0:
         iHash = 0;
         block_size = 32;
