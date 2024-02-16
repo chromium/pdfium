@@ -302,23 +302,6 @@ component("skia") {
     ]
   }
 
-  if (is_fuchsia) {
-    sources += [
-      # TODO(crbug.com/pdfium/2019): Consider using SkFontMgr_fuchsia.cpp
-      # instead of SkFontMgr_custom_empty.cpp.
-      "//third_party/skia/src/ports/SkFontMgr_custom.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_custom_empty.cpp",
-    ]
-    deps += [
-      "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.fonts:fuchsia.fonts_hlcpp",
-      "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.io:fuchsia.io_hlcpp",
-      "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.sys:fuchsia.sys_hlcpp",
-      "//third_party/fuchsia-sdk/sdk/pkg/sys_cpp",
-      "//third_party/fuchsia-sdk/sdk/pkg/zx",
-      "//third_party/icu:icuuc",
-    ]
-  }
-
   if (is_win || (is_apple && use_blink)) {
     sources += [
       # Add the FreeType custom font manager as a fallback backend for variable fonts.

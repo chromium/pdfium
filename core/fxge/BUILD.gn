@@ -160,7 +160,7 @@ source_set("fxge") {
     ]
   }
 
-  if (is_linux || is_chromeos || is_fuchsia) {
+  if (is_linux || is_chromeos) {
     sources += [ "linux/fx_linux_impl.cpp" ]
   }
 

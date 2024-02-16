@@ -42,9 +42,6 @@ vars = {
 
   'checkout_v8': 'checkout_configuration != "minimal"',
 
-  # By default, download the fuchsia sdk from the public sdk directory.
-  'fuchsia_sdk_cipd_prefix': 'fuchsia/sdk/core/',
-
   # Fetch configuration files required for the 'use_remoteexec' gn arg
   'download_remoteexec_cfg': False,
   # RBE instance to use for running remote builds
@@ -109,14 +106,6 @@ vars = {
   # the commit queue can handle CLs rolling freetype
   # and whatever else without interference from each other.
   'freetype_revision': '47574f7ea445c8bb751da0fa716424c9c29a6807',
-  # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling Fuchsia gn sdk
-  # and whatever else without interference from each other.
-  'fuchsia_gn_sdk_revision': '3f588d789b567e53fa284be308db4dbf3787d8f3',
-  # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling Fuchsia sdk
-  # and whatever else without interference from each other.
-  'fuchsia_version': 'version:16.20231030.2.1',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling GN CIPD package version
   # and whatever else without interference from each other.
@@ -340,13 +329,6 @@ deps = {
   'third_party/freetype/src':
     Var('chromium_git') + '/chromium/src/third_party/freetype2.git@' +
         Var('freetype_revision'),
-
-  'third_party/fuchsia-gn-sdk': {
-    'url': Var('chromium_git') +
-        '/chromium/src/third_party/fuchsia-gn-sdk.git@' +
-        Var('fuchsia_gn_sdk_revision'),
-    'condition': 'checkout_fuchsia',
-  },
 
   'third_party/googletest/src':
     Var('chromium_git') + '/external/github.com/google/googletest.git@' +
@@ -752,17 +734,6 @@ hooks = [
     'pattern': '.',
     'action': ['python3', 'build/util/lastchange.py',
                '-o', 'build/util/LASTCHANGE'],
-  },
-  {
-    'name': 'Download Fuchsia SDK from GCS',
-    'pattern': '.',
-    'condition': 'checkout_fuchsia',
-    'action': [
-      'python3',
-      'build/fuchsia/update_sdk.py',
-      '--cipd-prefix={fuchsia_sdk_cipd_prefix}',
-      '--version={fuchsia_version}',
-    ],
   },
   # Download remote exec cfg files
   {

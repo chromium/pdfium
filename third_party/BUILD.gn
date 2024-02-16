@@ -600,7 +600,7 @@ source_set("pdfium_base_test_support") {
     "../:pdfium_noshorten_config",
   ]
   deps = []
-  if (is_posix || is_fuchsia) {
+  if (is_posix) {
     sources += [
       "base/test/scoped_locale.cc",
       "base/test/scoped_locale.h",

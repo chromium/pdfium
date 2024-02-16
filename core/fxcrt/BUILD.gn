@@ -134,7 +134,7 @@ source_set("fxcrt") {
   } else {
     sources += [ "fx_memory_malloc.cpp" ]
   }
-  if (is_posix || is_fuchsia) {
+  if (is_posix) {
     sources += [
       "cfx_fileaccess_posix.cpp",
       "cfx_fileaccess_posix.h",
