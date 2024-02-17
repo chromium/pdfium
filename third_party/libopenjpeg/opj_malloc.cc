@@ -6,7 +6,6 @@
 // friends.
 
 #include "core/fxcrt/fx_memory.h"
-#include "third_party/base/memory/aligned_memory.h"
 
 extern "C" {
 
@@ -19,15 +18,15 @@ void* opj_calloc(size_t numOfElements, size_t sizeOfElements) {
 }
 
 void* opj_aligned_malloc(size_t size) {
-  return size ? pdfium::base::AlignedAlloc(size, 16) : nullptr;
+  return size ? FX_AlignedAlloc(size, 16) : nullptr;
 }
 
 void opj_aligned_free(void* ptr) {
-  pdfium::base::AlignedFree(ptr);
+  FX_AlignedFree(ptr);
 }
 
 void* opj_aligned_32_malloc(size_t size) {
-  return size ? pdfium::base::AlignedAlloc(size, 32) : nullptr;
+  return size ? FX_AlignedAlloc(size, 32) : nullptr;
 }
 
 void* opj_realloc(void* m, size_t s) {

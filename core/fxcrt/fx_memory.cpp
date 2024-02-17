@@ -10,13 +10,57 @@
 
 #include <iterator>
 #include <limits>
+#include <type_traits>
 
 #include "build/build_config.h"
 #include "core/fxcrt/debug/alias.h"
+#include "third_party/base/check_op.h"
 
 #if BUILDFLAG(IS_WIN)
 #include <windows.h>
 #endif
+
+#if BUILDFLAG(IS_ANDROID)
+#include <malloc.h>
+#endif
+
+namespace {
+
+#if DCHECK_IS_ON()
+// TODO(thestig): When C++20 is required, replace with std::has_single_bit().
+// Returns true iff |value| is a power of 2.
+template <typename T, typename = std::enable_if<std::is_integral<T>::value>>
+constexpr inline bool IsPowerOfTwo(T value) {
+  // From "Hacker's Delight": Section 2.1 Manipulating Rightmost Bits.
+  //
+  // Only positive integers with a single bit set are powers of two. If only one
+  // bit is set in x (e.g. 0b00000100000000) then |x-1| will have that bit set
+  // to zero and all bits to its right set to 1 (e.g. 0b00000011111111). Hence
+  // |x & (x-1)| is 0 iff x is a power of two.
+  return value > 0 && (value & (value - 1)) == 0;
+}
+
+#ifdef __has_builtin
+#define SUPPORTS_BUILTIN_IS_ALIGNED (__has_builtin(__builtin_is_aligned))
+#else
+#define SUPPORTS_BUILTIN_IS_ALIGNED 0
+#endif
+
+inline bool IsAligned(void* val, size_t alignment) {
+  // If the compiler supports builtin alignment checks prefer them.
+#if SUPPORTS_BUILTIN_IS_ALIGNED
+  return __builtin_is_aligned(reinterpret_cast<uintptr_t>(val), alignment);
+#else
+  DCHECK(IsPowerOfTwo(alignment));
+  return (reinterpret_cast<uintptr_t>(val) & (alignment - 1)) == 0;
+#endif
+}
+
+#undef SUPPORTS_BUILTIN_IS_ALIGNED
+
+#endif  // DCHECK_IS_ON()
+
+}  // namespace
 
 void* FXMEM_DefaultAlloc(size_t byte_size) {
   return pdfium::internal::Alloc(byte_size, 1);
@@ -50,6 +94,38 @@ NOINLINE void FX_OutOfMemoryTerminate(size_t size) {
 
   // Terminate cleanly.
   abort();
+}
+
+void* FX_AlignedAlloc(size_t size, size_t alignment) {
+  DCHECK_GT(size, 0u);
+  DCHECK(IsPowerOfTwo(alignment));
+  DCHECK_EQ(alignment % sizeof(void*), 0u);
+  void* ptr = nullptr;
+#if defined(COMPILER_MSVC)
+  ptr = _aligned_malloc(size, alignment);
+#elif BUILDFLAG(IS_ANDROID)
+  // Android technically supports posix_memalign(), but does not expose it in
+  // the current version of the library headers used by Chrome.  Luckily,
+  // memalign() on Android returns pointers which can safely be used with
+  // free(), so we can use it instead.  Issue filed to document this:
+  // http://code.google.com/p/android/issues/detail?id=35391
+  ptr = memalign(alignment, size);
+#else
+  int ret = posix_memalign(&ptr, alignment, size);
+  if (ret != 0) {
+    ptr = nullptr;
+  }
+#endif
+
+  // Since aligned allocations may fail for non-memory related reasons, force a
+  // crash if we encounter a failed allocation; maintaining consistent behavior
+  // with a normal allocation failure in Chrome.
+  if (!ptr) {
+    CHECK(false);
+  }
+  // Sanity check alignment just to be safe.
+  DCHECK(IsAligned(ptr, alignment));
+  return ptr;
 }
 
 namespace pdfium::internal {

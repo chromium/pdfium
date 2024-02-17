@@ -552,13 +552,10 @@ source_set("pdfium_base") {
     ":pdfium_third_party_config",
   ]
   sources = [
-    "base/bits.h",
     "base/check.h",
     "base/check_op.h",
     "base/component_export.h",
     "base/immediate_crash.h",
-    "base/memory/aligned_memory.cc",
-    "base/memory/aligned_memory.h",
     "base/memory/ptr_util.h",
     "base/no_destructor.h",
     "base/notreached.h",

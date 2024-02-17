@@ -24,6 +24,12 @@ void FXMEM_DefaultFree(void* pointer);
 
 #include "third_party/base/compiler_specific.h"
 
+#if defined(COMPILER_MSVC)
+#include <malloc.h>
+#else
+#include <stdlib.h>
+#endif
+
 void FX_InitializeMemoryAllocators();
 NOINLINE void FX_OutOfMemoryTerminate(size_t size);
 
@@ -74,6 +80,21 @@ void* FX_ArrayBufferAllocateUninitialized(size_t length);
 // FX_ArrayBufferFree accepts memory from both of the above.
 void FX_ArrayBufferFree(void* data);
 #endif  // V8_ENABLE_SANDBOX
+
+// Aligned allocators.
+
+// This can be replaced with std::aligned_alloc when we have C++17.
+// Caveat: std::aligned_alloc requires the size parameter be an integral
+// multiple of alignment.
+void* FX_AlignedAlloc(size_t size, size_t alignment);
+
+inline void FX_AlignedFree(void* ptr) {
+#if defined(COMPILER_MSVC)
+  _aligned_free(ptr);
+#else
+  free(ptr);
+#endif
+}
 
 namespace pdfium {
 namespace internal {

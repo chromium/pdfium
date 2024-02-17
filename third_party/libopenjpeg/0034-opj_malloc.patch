@@ -2,7 +2,7 @@ diff --git a/third_party/libopenjpeg/opj_malloc.cc b/third_party/libopenjpeg/opj
 new file mode 100644
 --- /dev/null
 +++ b/third_party/libopenjpeg/opj_malloc.cc
-@@ -0,0 +1,42 @@
+@@ -0,0 +1,41 @@
 +// Copyright 2020 The PDFium Authors
 +// Use of this source code is governed by a BSD-style license that can be
 +// found in the LICENSE file.
@@ -11,7 +11,6 @@ new file mode 100644
 +// friends.
 +
 +#include "core/fxcrt/fx_memory.h"
-+#include "third_party/base/memory/aligned_memory.h"
 +
 +extern "C" {
 +
@@ -24,15 +23,15 @@ new file mode 100644
 +}
 +
 +void* opj_aligned_malloc(size_t size) {
-+  return size ? pdfium::base::AlignedAlloc(size, 16) : nullptr;
++  return size ? FX_AlignedAlloc(size, 16) : nullptr;
 +}
 +
 +void opj_aligned_free(void* ptr) {
-+  pdfium::base::AlignedFree(ptr);
++  FX_AlignedFree(ptr);
 +}
 +
 +void* opj_aligned_32_malloc(size_t size) {
-+  return size ? pdfium::base::AlignedAlloc(size, 32) : nullptr;
++  return size ? FX_AlignedAlloc(size, 32) : nullptr;
 +}
 +
 +void* opj_realloc(void* m, size_t s) {
