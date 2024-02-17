@@ -357,21 +357,19 @@ void StringTemplate<T>::Concat(const T* pSrcData, size_t nSrcLen) {
   if (!pSrcData || nSrcLen == 0) {
     return;
   }
-
   if (!m_pData) {
     m_pData = StringData::Create({pSrcData, nSrcLen});
     return;
   }
-
   if (m_pData->CanOperateInPlace(m_pData->m_nDataLength + nSrcLen)) {
     m_pData->CopyContentsAt(m_pData->m_nDataLength, {pSrcData, nSrcLen});
     m_pData->m_nDataLength += nSrcLen;
     return;
   }
-
-  size_t nConcatLen = std::max(m_pData->m_nDataLength / 2, nSrcLen);
+  // Increase size by at least 50% to amortize repeated concatenations.
+  size_t nGrowLen = std::max(m_pData->m_nDataLength / 2, nSrcLen);
   RetainPtr<StringData> pNewData =
-      StringData::Create(m_pData->m_nDataLength + nConcatLen);
+      StringData::Create(m_pData->m_nDataLength + nGrowLen);
   pNewData->CopyContents(*m_pData);
   pNewData->CopyContentsAt(m_pData->m_nDataLength, {pSrcData, nSrcLen});
   pNewData->m_nDataLength = m_pData->m_nDataLength + nSrcLen;
