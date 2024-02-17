@@ -640,7 +640,7 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetIndirectObject(
     pObj->SetGenNum(parser_gennum);
   }
 
-  return GetValidator()->has_read_problems() ? nullptr : std::move(pObj);
+  return GetValidator()->has_read_problems() ? nullptr : pObj;
 }
 
 unsigned int CPDF_SyntaxParser::ReadEOLMarkers(FX_FILESIZE pos) {

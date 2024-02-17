@@ -224,7 +224,7 @@ std::unique_ptr<ScanlineDecoder> BasicModule::CreateRunLengthDecoder(
   if (!pDecoder->Create(src_buf, width, height, nComps, bpc))
     return nullptr;
 
-  return std::move(pDecoder);
+  return pDecoder;
 }
 
 // static

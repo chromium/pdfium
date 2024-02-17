@@ -32,7 +32,10 @@ std::unique_ptr<CFDF_Document> CFDF_Document::ParseMemory(
     pdfium::span<const uint8_t> span) {
   auto pDoc = std::make_unique<CFDF_Document>();
   pDoc->ParseStream(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(span));
-  return pDoc->m_pRootDict ? std::move(pDoc) : nullptr;
+  if (!pDoc->m_pRootDict) {
+    return nullptr;
+  }
+  return pDoc;
 }
 
 void CFDF_Document::ParseStream(RetainPtr<IFX_SeekableReadStream> pFile) {

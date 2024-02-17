@@ -73,7 +73,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_ListBox::NewPWLWindow(
   }
 
   pWnd->SetTopVisibleIndex(m_pWidget->GetTopVisibleIndex());
-  return std::move(pWnd);
+  return pWnd;
 }
 
 bool CFFL_ListBox::OnChar(CPDFSDK_Widget* pWidget,

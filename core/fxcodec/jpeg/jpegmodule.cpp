@@ -389,7 +389,7 @@ std::unique_ptr<ScanlineDecoder> JpegModule::CreateDecoder(
   if (!pDecoder->Create(src_span, width, height, nComps, ColorTransform))
     return nullptr;
 
-  return std::move(pDecoder);
+  return pDecoder;
 }
 
 // static

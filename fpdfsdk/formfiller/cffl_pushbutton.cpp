@@ -22,5 +22,5 @@ std::unique_ptr<CPWL_Wnd> CFFL_PushButton::NewPWLWindow(
     std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData) {
   auto pWnd = std::make_unique<CPWL_PushButton>(cp, std::move(pAttachedData));
   pWnd->Realize();
-  return std::move(pWnd);
+  return pWnd;
 }

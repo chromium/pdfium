@@ -28,7 +28,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_CheckBox::NewPWLWindow(
   auto pWnd = std::make_unique<CPWL_CheckBox>(cp, std::move(pAttachedData));
   pWnd->Realize();
   pWnd->SetCheck(m_pWidget->IsChecked());
-  return std::move(pWnd);
+  return pWnd;
 }
 
 bool CFFL_CheckBox::OnKeyDown(FWL_VKEYCODE nKeyCode,

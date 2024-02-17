@@ -462,7 +462,7 @@ CWin32Platform::CreateDefaultSystemFontInfo() {
     auto font_info = std::make_unique<CFX_Win32FallbackFontInfo>();
     for (; *user_paths; user_paths++)
       font_info->AddPath(*user_paths);
-    return std::move(font_info);
+    return font_info;
   }
 
   if (pdfium::IsUser32AndGdi32Available()) {

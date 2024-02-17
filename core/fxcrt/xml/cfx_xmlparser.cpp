@@ -87,7 +87,10 @@ std::unique_ptr<CFX_XMLDocument> CFX_XMLParser::Parse() {
   auto doc = std::make_unique<CFX_XMLDocument>();
   AutoRestorer<UnownedPtr<CFX_XMLNode>> restorer(&current_node_);
   current_node_ = doc->GetRoot();
-  return DoSyntaxParse(doc.get()) ? std::move(doc) : nullptr;
+  if (!DoSyntaxParse(doc.get())) {
+    return nullptr;
+  }
+  return doc;
 }
 
 bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {

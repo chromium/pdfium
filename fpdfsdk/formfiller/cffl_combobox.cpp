@@ -55,7 +55,7 @@ std::unique_ptr<CPWL_Wnd> CFFL_ComboBox::NewPWLWindow(
 
   pWnd->SetSelect(nCurSel);
   pWnd->SetText(swText);
-  return std::move(pWnd);
+  return pWnd;
 }
 
 bool CFFL_ComboBox::OnChar(CPDFSDK_Widget* pWidget,

@@ -149,7 +149,7 @@ CApplePlatform::CreateDefaultSystemFontInfo() {
     pInfo->AddPath("/Library/Fonts");
     pInfo->AddPath("/System/Library/Fonts");
   }
-  return std::move(pInfo);
+  return pInfo;
 }
 
 void* CApplePlatform::CreatePlatformFont(
