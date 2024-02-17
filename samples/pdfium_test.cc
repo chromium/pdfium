@@ -54,7 +54,6 @@
 #include <wingdi.h>
 
 #include "samples/helpers/win32/com_factory.h"
-#include "third_party/base/win/scoped_select_object.h"
 #else
 #include <unistd.h>
 #endif  // _WIN32
@@ -1181,14 +1180,21 @@ class GdiDisplayPageRenderer : public BitmapPageRenderer {
     if (!dib_.Get() || !InitializeBitmap(dib_pixels)) {
       return false;
     }
-    pdfium::base::win::ScopedSelectObject select_dib(dc_.Get(), dib_.Get());
+
+    HGDIOBJ old_obj = SelectObject(dc_.Get(), dib_.Get());
+    CHECK(old_obj);
+    CHECK_NE(old_obj, HGDI_ERROR);
 
     // Render into the in-memory DC.
     FPDF_RenderPage(dc_.Get(), page(), /*start_x=*/0, /*start_y=*/0,
                     /*size_x=*/width(), /*size_y=*/height(), /*rotate=*/0,
                     /*flags=*/flags());
 
-    return !!GdiFlush();
+    bool result = !!GdiFlush();
+    HGDIOBJ dib_obj = SelectObject(dc_.Get(), old_obj);
+    CHECK((GetObjectType(old_obj) != OBJ_REGION && dib_obj) ||
+          (GetObjectType(old_obj) == OBJ_REGION && dib_obj != HGDI_ERROR));
+    return result;
   }
 
   void Finish(FPDF_FORMHANDLE /*form*/) override {

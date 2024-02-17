@@ -12,7 +12,7 @@
 #include <limits>
 
 #include "build/build_config.h"
-#include "third_party/base/debug/alias.h"
+#include "core/fxcrt/debug/alias.h"
 
 #if BUILDFLAG(IS_WIN)
 #include <windows.h>
@@ -38,7 +38,7 @@ NOINLINE void FX_OutOfMemoryTerminate(size_t size) {
   // Convince the linker this should not be folded with similar functions using
   // Identical Code Folding.
   static int make_this_function_aliased = 0xbd;
-  pdfium::base::debug::Alias(&make_this_function_aliased);
+  pdfium::Alias(&make_this_function_aliased);
 
 #if BUILDFLAG(IS_WIN)
   // The same custom Windows exception code used in Chromium and Breakpad.

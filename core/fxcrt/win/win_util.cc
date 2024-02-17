@@ -1,15 +1,13 @@
-// Copyright 2019 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "third_party/base/win/win_util.h"
+#include "core/fxcrt/win/win_util.h"
 
 #include <windows.h>
 #include <processthreadsapi.h>
 
 namespace pdfium {
-namespace base {
-namespace win {
 
 bool IsUser32AndGdi32Available() {
   static auto is_user32_and_gdi32_available = []() {
@@ -36,6 +34,4 @@ bool IsUser32AndGdi32Available() {
   return is_user32_and_gdi32_available;
 }
 
-}  // namespace win
-}  // namespace base
 }  // namespace pdfium

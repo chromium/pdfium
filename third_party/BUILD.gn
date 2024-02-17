@@ -556,8 +556,6 @@ source_set("pdfium_base") {
     "base/check.h",
     "base/check_op.h",
     "base/component_export.h",
-    "base/debug/alias.cc",
-    "base/debug/alias.h",
     "base/immediate_crash.h",
     "base/memory/aligned_memory.cc",
     "base/memory/aligned_memory.h",
@@ -570,13 +568,6 @@ source_set("pdfium_base") {
     ":pdfium_compiler_specific",
     "//third_party/abseil-cpp:absl",
   ]
-  if (is_win) {
-    sources += [
-      "base/win/scoped_select_object.h",
-      "base/win/win_util.cc",
-      "base/win/win_util.h",
-    ]
-  }
 }
 
 source_set("pdfium_base_test_support") {

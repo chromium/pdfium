@@ -1,17 +1,15 @@
-// Copyright 2011 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_WIN_SCOPED_SELECT_OBJECT_H_
-#define THIRD_PARTY_BASE_WIN_SCOPED_SELECT_OBJECT_H_
+#ifndef CORE_FXCRT_WIN_SCOPED_SELECT_OBJECT_H_
+#define CORE_FXCRT_WIN_SCOPED_SELECT_OBJECT_H_
 
 #include <windows.h>
 
 #include "third_party/base/check.h"
 
 namespace pdfium {
-namespace base {
-namespace win {
 
 // Helper class for deselecting object from DC.
 class ScopedSelectObject {
@@ -38,8 +36,6 @@ class ScopedSelectObject {
   const HGDIOBJ oldobj_;
 };
 
-}  // namespace win
-}  // namespace base
 }  // namespace pdfium
 
-#endif  // THIRD_PARTY_BASE_WIN_SCOPED_SELECT_OBJECT_H_
+#endif  // CORE_FXCRT_WIN_SCOPED_SELECT_OBJECT_H_

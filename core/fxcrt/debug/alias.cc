@@ -1,14 +1,12 @@
-// Copyright (c) 2011 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "third_party/base/debug/alias.h"
+#include "core/fxcrt/debug/alias.h"
 
 #include "build/build_config.h"
 
 namespace pdfium {
-namespace base {
-namespace debug {
 
 #if defined(COMPILER_MSVC)
 #pragma optimize("", off)
@@ -25,6 +23,4 @@ void Alias(const void* var) {
 #pragma clang optimize on
 #endif
 
-}  // namespace debug
-}  // namespace base
 }  // namespace pdfium

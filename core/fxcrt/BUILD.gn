@@ -48,6 +48,8 @@ source_set("fxcrt") {
     "containers/adapters.h",
     "containers/contains.h",
     "data_vector.h",
+    "debug/alias.cc",
+    "debug/alias.h",
     "fileaccess_iface.h",
     "fixed_size_data_vector.h",
     "fx_2d_size.h",
@@ -159,6 +161,9 @@ source_set("fxcrt") {
       "cfx_fileaccess_windows.cpp",
       "cfx_fileaccess_windows.h",
       "fx_folder_windows.cpp",
+      "win/scoped_select_object.h",
+      "win/win_util.cc",
+      "win/win_util.h",
     ]
   }
   if (pdf_enable_xfa) {
