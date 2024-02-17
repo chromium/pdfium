@@ -732,7 +732,7 @@ int32_t CXFA_ViewLayoutProcessor::GetPageIndex(
     const CXFA_ViewLayoutItem* pPage) const {
   auto it = std::find(m_PageArray.begin(), m_PageArray.end(), pPage);
   return it != m_PageArray.end()
-             ? pdfium::base::checked_cast<int32_t>(it - m_PageArray.begin())
+             ? pdfium::checked_cast<int32_t>(it - m_PageArray.begin())
              : -1;
 }
 

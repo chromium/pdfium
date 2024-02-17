@@ -759,7 +759,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
     }
     if (bNextCreate) {
       int32_t checked_length =
-          pdfium::base::checked_cast<int32_t>(wsExpression.GetLength());
+          pdfium::checked_cast<int32_t>(wsExpression.GetLength());
       if (m_NodeHelper->CreateNode(rndFind.m_wsName, rndFind.m_wsCondition,
                                    nStart == checked_length, this)) {
         continue;
@@ -785,8 +785,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
 
       if (rndFind.m_Result.type == ResolveResult::Type::kAttribute &&
           rndFind.m_Result.script_attribute.callback &&
-          nStart <
-              pdfium::base::checked_cast<int32_t>(wsExpression.GetLength())) {
+          nStart < pdfium::checked_cast<int32_t>(wsExpression.GetLength())) {
         v8::Local<v8::Value> pValue;
         CJX_Object* jsObject = rndFind.m_Result.objects.front()->JSObject();
         (*rndFind.m_Result.script_attribute.callback)(
@@ -815,7 +814,7 @@ CFXJSE_Engine::ResolveObjectsWithBindNode(CXFA_Object* refObject,
           m_NodeHelper->m_iCreateCount = 1;
         }
         int32_t checked_length =
-            pdfium::base::checked_cast<int32_t>(wsExpression.GetLength());
+            pdfium::checked_cast<int32_t>(wsExpression.GetLength());
         if (m_NodeHelper->CreateNode(rndFind.m_wsName, rndFind.m_wsCondition,
                                      nStart == checked_length, this)) {
           continue;

@@ -23,6 +23,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/cfx_font.h"
@@ -32,7 +33,6 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_fontencoding.h"
 #include "third_party/base/check.h"
-#include "third_party/base/numerics/safe_conversions.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
 
@@ -756,7 +756,7 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
       WideString::FromUTF8(pFace->GetRec()->family_name));
   pFont->m_wsFaceName = wsFaceName;
   pFont->m_nFaceIndex =
-      pdfium::base::checked_cast<int32_t>(pFace->GetRec()->face_index);
+      pdfium::checked_cast<int32_t>(pFace->GetRec()->face_index);
   m_InstalledFonts.push_back(std::move(pFont));
 }
 
@@ -771,8 +771,7 @@ void CFGAS_FontMgr::RegisterFaces(
       continue;
     // All faces keep number of faces. It can be retrieved from any one face.
     if (num_faces == 0) {
-      num_faces =
-          pdfium::base::checked_cast<int32_t>(pFace->GetRec()->num_faces);
+      num_faces = pdfium::checked_cast<int32_t>(pFace->GetRec()->num_faces);
     }
     RegisterFace(pFace, wsFaceName);
     pFace->ClearExternalStream();

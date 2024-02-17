@@ -35,8 +35,9 @@ bool IsValidNumericDictionaryValue(const CPDF_Dictionary* pDict,
   if (!pNum || !pNum->IsInteger())
     return false;
   const int raw_value = pNum->GetInteger();
-  if (!pdfium::base::IsValueInRangeForNumericType<T>(raw_value))
+  if (!pdfium::IsValueInRangeForNumericType<T>(raw_value)) {
     return false;
+  }
   return static_cast<T>(raw_value) >= min_value;
 }
 

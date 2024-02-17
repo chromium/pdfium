@@ -1,9 +1,9 @@
-// Copyright 2014 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_NUMERICS_SAFE_CONVERSIONS_IMPL_H_
-#define THIRD_PARTY_BASE_NUMERICS_SAFE_CONVERSIONS_IMPL_H_
+#ifndef CORE_FXCRT_NUMERICS_SAFE_CONVERSIONS_IMPL_H_
+#define CORE_FXCRT_NUMERICS_SAFE_CONVERSIONS_IMPL_H_
 
 #include <stdint.h>
 
@@ -19,7 +19,6 @@
 #endif
 
 namespace pdfium {
-namespace base {
 namespace internal {
 
 // The std library doesn't provide a binary max_exponent for integers, however
@@ -668,7 +667,7 @@ struct IsStrictOp {
 // I.e. it's mostly an alias for: static_cast<std::make_signed<T>::type>(t)
 template <typename Src>
 constexpr typename std::make_signed<
-    typename base::internal::UnderlyingType<Src>::type>::type
+    typename internal::UnderlyingType<Src>::type>::type
 as_signed(const Src value) {
   static_assert(std::is_integral<decltype(as_signed(value))>::value,
                 "Argument must be a signed or unsigned integer type.");
@@ -680,7 +679,7 @@ as_signed(const Src value) {
 // I.e. it's mostly an alias for: static_cast<std::make_unsigned<T>::type>(t)
 template <typename Src>
 constexpr typename std::make_unsigned<
-    typename base::internal::UnderlyingType<Src>::type>::type
+    typename internal::UnderlyingType<Src>::type>::type
 as_unsigned(const Src value) {
   static_assert(std::is_integral<decltype(as_unsigned(value))>::value,
                 "Argument must be a signed or unsigned integer type.");
@@ -843,7 +842,6 @@ constexpr Dst CommonMaxOrMin(bool is_min) {
 }
 
 }  // namespace internal
-}  // namespace base
 }  // namespace pdfium
 
-#endif  // THIRD_PARTY_BASE_NUMERICS_SAFE_CONVERSIONS_IMPL_H_
+#endif  // CORE_FXCRT_NUMERICS_SAFE_CONVERSIONS_IMPL_H_

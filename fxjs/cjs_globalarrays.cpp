@@ -8,7 +8,7 @@
 
 #include <iterator>
 
-#include "third_party/base/numerics/safe_conversions.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "v8/include/v8-container.h"
 #include "v8/include/v8-isolate.h"
 
@@ -19,7 +19,7 @@
     v8::Local<v8::Context> ctx = (rt)->GetIsolate()->GetCurrentContext();      \
     for (size_t i = 0; i < std::size(values); ++i) {                           \
       array                                                                    \
-          ->Set(ctx, pdfium::base::checked_cast<uint32_t>(i),                  \
+          ->Set(ctx, pdfium::checked_cast<uint32_t>(i),                        \
                 (rt)->NewString(values[i]))                                    \
           .FromJust();                                                         \
     }                                                                          \

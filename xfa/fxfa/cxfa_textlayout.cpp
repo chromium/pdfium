@@ -508,7 +508,7 @@ bool CXFA_TextLayout::LayoutInternal(size_t szBlockIndex) {
     m_pLoader->nCharIdx = 0;
     if (!m_Blocks.empty()) {
       m_pLoader->iTotalLines =
-          pdfium::base::checked_cast<int32_t>(m_Blocks[szBlockIndex].szLength);
+          pdfium::checked_cast<int32_t>(m_Blocks[szBlockIndex].szLength);
     }
     Loader(szText.width, &fLinePos, true);
     if (m_Blocks.empty() && m_pLoader->fStartLineOffset < 0.1f)
@@ -516,7 +516,7 @@ bool CXFA_TextLayout::LayoutInternal(size_t szBlockIndex) {
   } else if (m_pTextDataNode) {
     if (!m_Blocks.empty() && szBlockIndex < m_Blocks.size() - 1) {
       m_pLoader->iTotalLines =
-          pdfium::base::checked_cast<int32_t>(m_Blocks[szBlockIndex].szLength);
+          pdfium::checked_cast<int32_t>(m_Blocks[szBlockIndex].szLength);
     }
     m_pBreak->Reset();
     if (m_bRichText) {

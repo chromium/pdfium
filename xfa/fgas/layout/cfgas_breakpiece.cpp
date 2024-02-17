@@ -6,8 +6,8 @@
 
 #include "xfa/fgas/layout/cfgas_breakpiece.h"
 
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/numerics/safe_conversions.h"
 #include "xfa/fgas/layout/cfgas_textuserdata.h"
 
 CFGAS_BreakPiece::CFGAS_BreakPiece() = default;
@@ -21,11 +21,11 @@ int32_t CFGAS_BreakPiece::GetEndPos() const {
 }
 
 size_t CFGAS_BreakPiece::GetLength() const {
-  return pdfium::base::checked_cast<size_t>(m_iCharCount);
+  return pdfium::checked_cast<size_t>(m_iCharCount);
 }
 
 CFGAS_Char* CFGAS_BreakPiece::GetChar(int32_t index) const {
-  return GetChar(pdfium::base::checked_cast<size_t>(index));
+  return GetChar(pdfium::checked_cast<size_t>(index));
 }
 
 CFGAS_Char* CFGAS_BreakPiece::GetChar(size_t index) const {

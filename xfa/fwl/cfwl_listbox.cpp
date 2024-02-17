@@ -10,8 +10,8 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/stl_util.h"
-#include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/graphics/cfgas_gegraphics.h"
@@ -824,7 +824,7 @@ int32_t CFWL_ListBox::GetItemIndex(CFWL_Widget* pWidget, Item* pItem) {
                            return candidate.get() == pItem;
                          });
   return it != m_ItemArray.end()
-             ? pdfium::base::checked_cast<int32_t>(it - m_ItemArray.begin())
+             ? pdfium::checked_cast<int32_t>(it - m_ItemArray.begin())
              : -1;
 }
 

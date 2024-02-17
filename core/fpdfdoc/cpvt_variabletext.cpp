@@ -346,7 +346,7 @@ CPVT_WordPlace CPVT_VariableText::WordIndexToWordPlace(int32_t index) const {
       break;
     }
     if (nIndex > index) {
-      place.nSecIndex = pdfium::base::checked_cast<int32_t>(i);
+      place.nSecIndex = pdfium::checked_cast<int32_t>(i);
       place.nWordIndex = index - nOldIndex - 1;
       pSection->UpdateWordPlace(place);
       bFound = true;

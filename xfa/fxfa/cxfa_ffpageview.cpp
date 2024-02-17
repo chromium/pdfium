@@ -404,7 +404,7 @@ bool CXFA_FFTabOrderPageWidgetIterator::SetCurrentWidget(
     return false;
 
   m_iCurWidget =
-      pdfium::base::checked_cast<int32_t>(it - m_TabOrderWidgetArray.begin());
+      pdfium::checked_cast<int32_t>(it - m_TabOrderWidgetArray.begin());
   return true;
 }
 

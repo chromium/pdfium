@@ -9,8 +9,8 @@
 #include <utility>
 
 #include "core/fdrm/fx_crypt.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/stl_util.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -41,7 +41,7 @@ bool TrimPropName(ByteString* sPropName) {
 void MakeNameTypeString(const ByteString& name,
                         CFX_Value::DataType eType,
                         BinaryBuffer* result) {
-  uint32_t dwNameLen = pdfium::base::checked_cast<uint32_t>(name.GetLength());
+  uint32_t dwNameLen = pdfium::checked_cast<uint32_t>(name.GetLength());
   result->AppendUint32(dwNameLen);
   result->AppendString(name);
   result->AppendUint16(static_cast<uint16_t>(eType));
@@ -64,7 +64,7 @@ bool MakeByteString(const ByteString& name,
     case CFX_Value::DataType::kString: {
       MakeNameTypeString(name, pData.nType, result);
       uint32_t dwDataLen =
-          pdfium::base::checked_cast<uint32_t>(pData.sData.GetLength());
+          pdfium::checked_cast<uint32_t>(pData.sData.GetLength());
       result->AppendUint32(dwDataLen);
       result->AppendString(pData.sData);
       return true;
@@ -386,7 +386,7 @@ bool CFX_GlobalData::SaveGlobalPersisitentVariables() {
   sFile.AppendUint16(kMaxVersion);
   sFile.AppendUint32(nCount);
 
-  uint32_t dwSize = pdfium::base::checked_cast<uint32_t>(sData.GetSize());
+  uint32_t dwSize = pdfium::checked_cast<uint32_t>(sData.GetSize());
   sFile.AppendUint32(dwSize);
   sFile.AppendSpan(sData.GetSpan());
 

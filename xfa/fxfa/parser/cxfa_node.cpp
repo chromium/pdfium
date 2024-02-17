@@ -4304,7 +4304,7 @@ int32_t CXFA_Node::GetSelectedItem(int32_t nIndex) {
   auto it = std::find(wsSaveTextArray.begin(), wsSaveTextArray.end(),
                       wsValueArray[nIndex]);
   return it != wsSaveTextArray.end()
-             ? pdfium::base::checked_cast<int32_t>(it - wsSaveTextArray.begin())
+             ? pdfium::checked_cast<int32_t>(it - wsSaveTextArray.begin())
              : -1;
 }
 
@@ -4316,7 +4316,7 @@ std::vector<int32_t> CXFA_Node::GetSelectedItems() {
     auto it = std::find(wsSaveTextArray.begin(), wsSaveTextArray.end(), value);
     if (it != wsSaveTextArray.end()) {
       iSelArray.push_back(
-          pdfium::base::checked_cast<int32_t>(it - wsSaveTextArray.begin()));
+          pdfium::checked_cast<int32_t>(it - wsSaveTextArray.begin()));
     }
   }
   return iSelArray;
@@ -4351,8 +4351,7 @@ void CXFA_Node::SetItemState(int32_t nIndex,
   auto value_iter = std::find(wsValueArray.begin(), wsValueArray.end(),
                               wsSaveTextArray[nIndex]);
   if (value_iter != wsValueArray.end()) {
-    iSel =
-        pdfium::base::checked_cast<int32_t>(value_iter - wsValueArray.begin());
+    iSel = pdfium::checked_cast<int32_t>(value_iter - wsValueArray.begin());
   }
   if (IsChoiceListMultiSelect()) {
     if (bSelected) {
@@ -4986,7 +4985,7 @@ WideString CXFA_Node::NumericLimit(const WideString& wsValue) {
   if (iLead == -1 && iTread == -1)
     return wsValue;
 
-  int32_t iCount = pdfium::base::checked_cast<int32_t>(wsValue.GetLength());
+  int32_t iCount = pdfium::checked_cast<int32_t>(wsValue.GetLength());
   if (iCount == 0)
     return wsValue;
 

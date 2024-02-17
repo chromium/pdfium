@@ -420,8 +420,8 @@ bool JpegModule::JpegEncode(const RetainPtr<const CFX_DIBBase>& pSource,
   int Bpp = pSource->GetBPP() / 8;
   uint32_t nComponents = Bpp >= 3 ? 3 : 1;
   uint32_t pitch = pSource->GetPitch();
-  uint32_t width = pdfium::base::checked_cast<uint32_t>(pSource->GetWidth());
-  uint32_t height = pdfium::base::checked_cast<uint32_t>(pSource->GetHeight());
+  uint32_t width = pdfium::checked_cast<uint32_t>(pSource->GetWidth());
+  uint32_t height = pdfium::checked_cast<uint32_t>(pSource->GetHeight());
   FX_SAFE_UINT32 safe_buf_len = width;
   safe_buf_len *= height;
   safe_buf_len *= nComponents;

@@ -43,7 +43,7 @@ index 31b35fe96..7b865fd20 100644
 @@ -21,6 +21,8 @@
  #define AGG_CLIP_LIANG_BARSKY_INCLUDED
  #include "agg_basics.h"
- #include "third_party/base/numerics/safe_math.h"
+ #include "core/fxcrt/numerics/safe_math.h"
 +namespace pdfium
 +{
  namespace agg
@@ -269,7 +269,7 @@ index 7850225d1..d2b6a46e4 100644
 @@ -49,6 +49,8 @@
  #include <limits.h>
  #include "agg_rasterizer_scanline_aa.h"
- #include "third_party/base/numerics/safe_math.h"
+ #include "core/fxcrt/numerics/safe_math.h"
 +namespace pdfium
 +{
  namespace agg

@@ -23,9 +23,9 @@
 #include "core/fpdfapi/parser/object_tree_traversal_util.h"
 #include "core/fxcrt/containers/adapters.h"
 #include "core/fxcrt/containers/contains.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "third_party/abseil-cpp/absl/types/variant.h"
 #include "third_party/base/check.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 CPDF_PageContentManager::CPDF_PageContentManager(
     CPDF_PageObjectHolder* page_obj_holder,
@@ -220,8 +220,8 @@ void CPDF_PageContentManager::ExecuteScheduledRemovals() {
   // Update the page objects' content stream indexes.
   for (const auto& obj : *page_obj_holder_) {
     int32_t old_stream_index = obj->GetContentStream();
-    int32_t new_stream_index = pdfium::base::checked_cast<int32_t>(
-        stream_index_mapping[old_stream_index]);
+    int32_t new_stream_index =
+        pdfium::checked_cast<int32_t>(stream_index_mapping[old_stream_index]);
     obj->SetContentStream(new_stream_index);
   }
 

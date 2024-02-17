@@ -19,12 +19,12 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 #if BUILDFLAG(IS_WIN)
 #include "core/fxge/dib/cfx_dibbase.h"
@@ -534,7 +534,7 @@ bool FaxDecoder::Rewind() {
 }
 
 pdfium::span<uint8_t> FaxDecoder::GetNextLine() {
-  int bitsize = pdfium::base::checked_cast<int>(m_SrcSpan.size() * 8);
+  int bitsize = pdfium::checked_cast<int>(m_SrcSpan.size() * 8);
   FaxSkipEOL(m_SrcSpan.data(), bitsize, &m_bitpos);
   if (m_bitpos >= bitsize)
     return pdfium::span<uint8_t>();
@@ -579,7 +579,7 @@ pdfium::span<uint8_t> FaxDecoder::GetNextLine() {
 }
 
 uint32_t FaxDecoder::GetSrcOffset() {
-  return pdfium::base::checked_cast<uint32_t>(
+  return pdfium::checked_cast<uint32_t>(
       std::min<size_t>((m_bitpos + 7) / 8, m_SrcSpan.size()));
 }
 

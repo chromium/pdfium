@@ -17,9 +17,9 @@
 #include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/numerics/safe_math.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
-#include "third_party/base/numerics/safe_math.h"
 
 namespace fxcodec {
 
@@ -493,7 +493,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
           }
           default: {
             int32_t avail_size =
-                pdfium::base::checked_cast<int32_t>(out_row_bytes_ - col_num_);
+                pdfium::checked_cast<int32_t>(out_row_bytes_ - col_num_);
             if (!avail_size || static_cast<int32_t>(first_part) > avail_size)
               return BmpDecoder::Status::kFail;
 
@@ -517,7 +517,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
       }
       default: {
         int32_t avail_size =
-            pdfium::base::checked_cast<int32_t>(out_row_bytes_ - col_num_);
+            pdfium::checked_cast<int32_t>(out_row_bytes_ - col_num_);
         if (!avail_size || static_cast<int32_t>(first_part) > avail_size)
           return BmpDecoder::Status::kFail;
 
@@ -589,7 +589,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE4() {
           }
           default: {
             int32_t avail_size =
-                pdfium::base::checked_cast<int32_t>(out_row_bytes_ - col_num_);
+                pdfium::checked_cast<int32_t>(out_row_bytes_ - col_num_);
             if (!avail_size)
               return BmpDecoder::Status::kFail;
             uint8_t size = HalfRoundUp(first_part);
@@ -619,7 +619,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE4() {
       }
       default: {
         int32_t avail_size =
-            pdfium::base::checked_cast<int32_t>(out_row_bytes_ - col_num_);
+            pdfium::checked_cast<int32_t>(out_row_bytes_ - col_num_);
         if (!avail_size)
           return BmpDecoder::Status::kFail;
 

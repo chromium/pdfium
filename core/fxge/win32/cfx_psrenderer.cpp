@@ -21,6 +21,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_font.h"
@@ -35,7 +36,6 @@
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/win32/cfx_psfonttracker.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -276,14 +276,14 @@ void CFX_PSRenderer::EndRendering() {
   if (preamble_pos > 0) {
     m_pStream->WriteBlock(
         {reinterpret_cast<const uint8_t*>(m_PreambleOutput.str().c_str()),
-         pdfium::base::checked_cast<size_t>(preamble_pos)});
+         pdfium::checked_cast<size_t>(preamble_pos)});
     m_PreambleOutput.str("");
   }
 
   // Flush `m_Output`. It's never empty because of the WriteString() call above.
   m_pStream->WriteBlock(
       {reinterpret_cast<const uint8_t*>(m_Output.str().c_str()),
-       pdfium::base::checked_cast<size_t>(std::streamoff(m_Output.tellp()))});
+       pdfium::checked_cast<size_t>(std::streamoff(m_Output.tellp()))});
   m_Output.str("");
 }
 
@@ -661,7 +661,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,
         found = true;
       }
       if (found) {
-        *ps_fontnum = pdfium::base::checked_cast<int>(i / 256);
+        *ps_fontnum = pdfium::checked_cast<int>(i / 256);
         *ps_glyphindex = i % 256;
         return;
       }
@@ -669,8 +669,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,
   }
 
   m_PSFontList.push_back(std::make_unique<Glyph>(pFont, charpos.m_GlyphIndex));
-  *ps_fontnum =
-      pdfium::base::checked_cast<int>((m_PSFontList.size() - 1) / 256);
+  *ps_fontnum = pdfium::checked_cast<int>((m_PSFontList.size() - 1) / 256);
   *ps_glyphindex = (m_PSFontList.size() - 1) % 256;
   if (*ps_glyphindex == 0) {
     fxcrt::ostringstream buf;
@@ -912,7 +911,7 @@ void CFX_PSRenderer::WriteStream(fxcrt::ostringstream& stream) {
   std::streamoff output_pos = stream.tellp();
   if (output_pos > 0) {
     m_Output.write(stream.str().c_str(),
-                   pdfium::base::checked_cast<size_t>(output_pos));
+                   pdfium::checked_cast<size_t>(output_pos));
   }
 }
 

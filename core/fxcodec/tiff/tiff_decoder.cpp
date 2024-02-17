@@ -15,12 +15,12 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/check.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 extern "C" {
 #if defined(USE_SYSTEM_LIBTIFF)
@@ -126,8 +126,8 @@ tsize_t tiff_read(thandle_t context, tdata_t buf, tsize_t length) {
   }
   pTiffContext->set_offset(increment.ValueOrDie());
   if (offset + length > pTiffContext->io_in()->GetSize()) {
-    return pdfium::base::checked_cast<tsize_t>(
-        pTiffContext->io_in()->GetSize() - offset);
+    return pdfium::checked_cast<tsize_t>(pTiffContext->io_in()->GetSize() -
+                                         offset);
   }
   return length;
 }
@@ -147,8 +147,7 @@ toff_t tiff_seek(thandle_t context, toff_t offset, int whence) {
     case 0: {
       if (file_offset > pTiffContext->io_in()->GetSize())
         return static_cast<toff_t>(-1);
-      pTiffContext->set_offset(
-          pdfium::base::checked_cast<uint32_t>(file_offset));
+      pTiffContext->set_offset(pdfium::checked_cast<uint32_t>(file_offset));
       return pTiffContext->offset();
     }
     case 1: {
@@ -162,7 +161,7 @@ toff_t tiff_seek(thandle_t context, toff_t offset, int whence) {
     case 2: {
       if (pTiffContext->io_in()->GetSize() < file_offset)
         return static_cast<toff_t>(-1);
-      pTiffContext->set_offset(pdfium::base::checked_cast<uint32_t>(
+      pTiffContext->set_offset(pdfium::checked_cast<uint32_t>(
           pTiffContext->io_in()->GetSize() - file_offset));
       return pTiffContext->offset();
     }
@@ -298,7 +297,7 @@ void CTiffContext::SetPalette(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
   uint16_t* blue_orig = nullptr;
   TIFFGetField(m_tif_ctx.get(), TIFFTAG_COLORMAP, &red_orig, &green_orig,
                &blue_orig);
-  for (int32_t i = pdfium::base::checked_cast<int32_t>((1L << bps) - 1); i >= 0;
+  for (int32_t i = pdfium::checked_cast<int32_t>((1L << bps) - 1); i >= 0;
        i--) {
 #define CVT(x) ((uint16_t)((x) >> 8))
     red_orig[i] = CVT(red_orig[i]);

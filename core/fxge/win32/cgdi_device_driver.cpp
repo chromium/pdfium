@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxge/agg/fx_agg_driver.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
@@ -26,7 +27,6 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -100,7 +100,7 @@ HPEN CreateExtPen(const CFX_GraphStateData* pGraphState,
   }
   return ExtCreatePen(
       PenStyle, (DWORD)ceil(width), &lb,
-      pdfium::base::checked_cast<DWORD>(pGraphState->m_DashArray.size()),
+      pdfium::checked_cast<DWORD>(pGraphState->m_DashArray.size()),
       reinterpret_cast<const DWORD*>(dashes.data()));
 }
 

@@ -9,13 +9,13 @@
 #include <sstream>
 #include <utility>
 
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_edit.h"
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
 #include "fpdfsdk/pwl/cpwl_scroll_bar.h"
 #include "fpdfsdk/pwl/ipwl_fillernotify.h"
 #include "public/fpdf_fwlevent.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 CPWL_ListBox::CPWL_ListBox(
     const CreateParams& cp,
@@ -210,7 +210,7 @@ bool CPWL_ListBox::OnNotifySelectionChanged(bool bKeyDown,
   WideString swChange = GetText();
   WideString strChangeEx;
   int nSelStart = 0;
-  int nSelEnd = pdfium::base::checked_cast<int>(swChange.GetLength());
+  int nSelEnd = pdfium::checked_cast<int>(swChange.GetLength());
   IPWL_FillerNotify::BeforeKeystrokeResult result =
       GetFillerNotify()->OnBeforeKeyStroke(GetAttachedData(), swChange,
                                            strChangeEx, nSelStart, nSelEnd,

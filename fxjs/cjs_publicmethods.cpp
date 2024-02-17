@@ -24,6 +24,7 @@
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_string_wrappers.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/cfx_color.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
@@ -38,7 +39,6 @@
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
 #include "third_party/base/check.h"
-#include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/v8-container.h"
 
 // static
@@ -124,8 +124,8 @@ ByteString CalculateString(double dValue,
   ss << std::fixed << std::setprecision(iDec) << dValue;
   fxcrt::string value = ss.str();
   size_t pos = value.find('.');
-  *iDec2 = pdfium::base::checked_cast<int>(
-      pos == fxcrt::string::npos ? value.size() : pos);
+  *iDec2 = pdfium::checked_cast<int>(pos == fxcrt::string::npos ? value.size()
+                                                                : pos);
   return ByteString(value.c_str());
 }
 #endif

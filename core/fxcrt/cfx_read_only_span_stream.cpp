@@ -7,8 +7,8 @@
 #include "core/fxcrt/cfx_read_only_span_stream.h"
 
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 CFX_ReadOnlySpanStream::CFX_ReadOnlySpanStream(pdfium::span<const uint8_t> span)
     : span_(span) {}
@@ -16,7 +16,7 @@ CFX_ReadOnlySpanStream::CFX_ReadOnlySpanStream(pdfium::span<const uint8_t> span)
 CFX_ReadOnlySpanStream::~CFX_ReadOnlySpanStream() = default;
 
 FX_FILESIZE CFX_ReadOnlySpanStream::GetSize() {
-  return pdfium::base::checked_cast<FX_FILESIZE>(span_.size());
+  return pdfium::checked_cast<FX_FILESIZE>(span_.size());
 }
 
 bool CFX_ReadOnlySpanStream::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
@@ -29,8 +29,7 @@ bool CFX_ReadOnlySpanStream::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
   if (!pos.IsValid() || pos.ValueOrDie() > span_.size())
     return false;
 
-  fxcrt::spancpy(
-      buffer,
-      span_.subspan(pdfium::base::checked_cast<size_t>(offset), buffer.size()));
+  fxcrt::spancpy(buffer, span_.subspan(pdfium::checked_cast<size_t>(offset),
+                                       buffer.size()));
   return true;
 }

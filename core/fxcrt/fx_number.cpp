@@ -13,7 +13,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_string.h"
-#include "third_party/base/numerics/safe_conversions.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 
 FX_Number::FX_Number() = default;
 
@@ -100,7 +100,7 @@ int32_t FX_Number::GetSigned() const {
   if (absl::holds_alternative<int32_t>(value_)) {
     return absl::get<int32_t>(value_);
   }
-  return pdfium::base::saturated_cast<int32_t>(absl::get<float>(value_));
+  return pdfium::saturated_cast<int32_t>(absl::get<float>(value_));
 }
 
 float FX_Number::GetFloat() const {

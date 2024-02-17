@@ -1,17 +1,16 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_NUMERICS_SAFE_MATH_ARM_IMPL_H_
-#define THIRD_PARTY_BASE_NUMERICS_SAFE_MATH_ARM_IMPL_H_
+#ifndef CORE_FXCRT_NUMERICS_SAFE_MATH_ARM_IMPL_H_
+#define CORE_FXCRT_NUMERICS_SAFE_MATH_ARM_IMPL_H_
 
 #include <cassert>
 #include <type_traits>
 
-#include "third_party/base/numerics/safe_conversions.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 
 namespace pdfium {
-namespace base {
 namespace internal {
 
 template <typename T, typename U>
@@ -121,7 +120,6 @@ struct ClampedMulFastAsmOp {
 };
 
 }  // namespace internal
-}  // namespace base
 }  // namespace pdfium
 
-#endif  // THIRD_PARTY_BASE_NUMERICS_SAFE_MATH_ARM_IMPL_H_
+#endif  // CORE_FXCRT_NUMERICS_SAFE_MATH_ARM_IMPL_H_

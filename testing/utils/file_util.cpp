@@ -9,9 +9,9 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
 #include "testing/utils/path_service.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 std::vector<uint8_t> GetFileContents(const char* filename) {
   FILE* file = fopen(filename, "rb");
@@ -46,7 +46,7 @@ FileAccessForTesting::FileAccessForTesting(const std::string& file_name) {
     return;
   }
 
-  m_FileLen = pdfium::base::checked_cast<unsigned long>(file_contents_.size());
+  m_FileLen = pdfium::checked_cast<unsigned long>(file_contents_.size());
   m_GetBlock = SGetBlock;
   m_Param = this;
 }

@@ -10,12 +10,12 @@
 
 #include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/cfx_glyphbitmap.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/text_glyph_pos.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -63,10 +63,10 @@ FX_RECT GetGlyphsBBox(const std::vector<TextGlyphPos>& glyphs, int anti_alias) {
     if (bStarted) {
       rect.left = std::min(rect.left, point.value().x);
       rect.top = std::min(rect.top, point.value().y);
-      rect.right = pdfium::base::ValueOrDieForType<int32_t>(
-          pdfium::base::CheckMax(rect.right, char_right));
-      rect.bottom = pdfium::base::ValueOrDieForType<int32_t>(
-          pdfium::base::CheckMax(rect.bottom, char_bottom));
+      rect.right = pdfium::ValueOrDieForType<int32_t>(
+          pdfium::CheckMax(rect.right, char_right));
+      rect.bottom = pdfium::ValueOrDieForType<int32_t>(
+          pdfium::CheckMax(rect.bottom, char_bottom));
       continue;
     }
 
@@ -150,9 +150,9 @@ ByteString AdobeNameFromUnicode(wchar_t unicode) {
 
 int NormalizeFontMetric(int64_t value, uint16_t upem) {
   if (upem == 0) {
-    return pdfium::base::saturated_cast<int>(value);
+    return pdfium::saturated_cast<int>(value);
   }
 
   const double scaled_value = (value * 1000.0 + upem / 2) / upem;
-  return pdfium::base::saturated_cast<int>(scaled_value);
+  return pdfium::saturated_cast<int>(scaled_value);
 }

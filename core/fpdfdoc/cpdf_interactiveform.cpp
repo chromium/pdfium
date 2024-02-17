@@ -31,10 +31,10 @@
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/fx_font.h"
 #include "third_party/base/check.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -692,7 +692,7 @@ int CPDF_InteractiveForm::FindFieldInCalculationOrder(
   if (!maybe_found.has_value())
     return -1;
 
-  return pdfium::base::checked_cast<int>(maybe_found.value());
+  return pdfium::checked_cast<int>(maybe_found.value());
 }
 
 RetainPtr<CPDF_Font> CPDF_InteractiveForm::GetFormFont(

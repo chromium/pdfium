@@ -75,8 +75,8 @@ CFX_XMLParser::CFX_XMLParser(const RetainPtr<IFX_SeekableReadStream>& pStream) {
   }
   stream_ = proxy;
 
-  xml_plane_size_ = std::min(
-      xml_plane_size_, pdfium::base::checked_cast<size_t>(stream_->GetSize()));
+  xml_plane_size_ = std::min(xml_plane_size_,
+                             pdfium::checked_cast<size_t>(stream_->GetSize()));
 
   current_text_.reserve(kCurrentTextReserve);
 }

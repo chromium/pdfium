@@ -48,7 +48,7 @@
 //----------------------------------------------------------------------------
 #include <limits.h>
 #include "agg_rasterizer_scanline_aa.h"
-#include "third_party/base/numerics/safe_math.h"
+#include "core/fxcrt/numerics/safe_math.h"
 namespace pdfium
 {
 namespace agg
@@ -227,20 +227,20 @@ AGG_INLINE void outline_aa::render_hline(int ey, int x1, int y1, int x2, int y2)
 void outline_aa::render_line(int x1, int y1, int x2, int y2)
 {
     enum dx_limit_e { dx_limit = 16384 << poly_base_shift };
-    pdfium::base::CheckedNumeric<int> safe_dx = x2;
+    pdfium::CheckedNumeric<int> safe_dx = x2;
     safe_dx -= x1;
     if (!safe_dx.IsValid())
         return;
 
     int dx = safe_dx.ValueOrDie();
     if(dx >= dx_limit || dx <= -dx_limit) {
-        pdfium::base::CheckedNumeric<int> safe_cx = x1;
+        pdfium::CheckedNumeric<int> safe_cx = x1;
         safe_cx += x2;
         safe_cx /= 2;
         if (!safe_cx.IsValid())
             return;
 
-        pdfium::base::CheckedNumeric<int> safe_cy = y1;
+        pdfium::CheckedNumeric<int> safe_cy = y1;
         safe_cy += y2;
         safe_cy /= 2;
         if (!safe_cy.IsValid())
@@ -288,7 +288,7 @@ void outline_aa::render_line(int x1, int y1, int x2, int y2)
         m_cur_cell.add_cover(delta, two_fx * delta);
         return;
     }
-    pdfium::base::CheckedNumeric<int> safeP = poly_base_size - fy1;
+    pdfium::CheckedNumeric<int> safeP = poly_base_size - fy1;
     safeP *= dx;
     if (!safeP.IsValid())
       return;
@@ -524,7 +524,7 @@ int rasterizer_scanline_aa::calculate_area(int cover, int shift)
 // static
 bool rasterizer_scanline_aa::safe_add(int* op1, int op2)
 {
-    pdfium::base::CheckedNumeric<int> safeOp1 = *op1;
+    pdfium::CheckedNumeric<int> safeOp1 = *op1;
     safeOp1 += op2;
     if(!safeOp1.IsValid()) {
         return false;

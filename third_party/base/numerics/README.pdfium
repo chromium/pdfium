@@ -1,8 +1,0 @@
-Shipped: yes
-
-Description:
-Chromium's safe numerics library
-
-Local Modifications:
-
-Namespaced from base:: to pdfium::base:: in all files.

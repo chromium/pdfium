@@ -31,6 +31,7 @@
 #include "core/fpdfdoc/cpdf_icon.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxcrt/fx_string_wrappers.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
@@ -39,7 +40,6 @@
 #include "fpdfsdk/pwl/cpwl_edit.h"
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -1705,7 +1705,7 @@ void CPDFSDK_AppStream::SetAsTextField(std::optional<WideString> sValue) {
       }
     } else {
       if (sValue.has_value())
-        nMaxLen = pdfium::base::checked_cast<int>(sValue.value().GetLength());
+        nMaxLen = pdfium::checked_cast<int>(sValue.value().GetLength());
       pEdit->SetLimitChar(nMaxLen);
     }
   }

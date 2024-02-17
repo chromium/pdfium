@@ -13,13 +13,13 @@
 #include <utility>
 
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/check.h"
 #include "third_party/base/compiler_specific.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -57,8 +57,8 @@ class CFX_BilinearMatrix {
 
   void Transform(int x, int y, int* x1, int* y1, int* res_x, int* res_y) const {
     CFX_PointF val = TransformInternal(CFX_PointF(x, y));
-    *x1 = pdfium::base::saturated_cast<int>(val.x / kBase);
-    *y1 = pdfium::base::saturated_cast<int>(val.y / kBase);
+    *x1 = pdfium::saturated_cast<int>(val.x / kBase);
+    *y1 = pdfium::saturated_cast<int>(val.y / kBase);
     *res_x = static_cast<int>(val.x) % kBase;
     *res_y = static_cast<int>(val.y) % kBase;
     if (*res_x < 0 && *res_x > -kBase)

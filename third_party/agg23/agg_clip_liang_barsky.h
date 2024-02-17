@@ -20,7 +20,7 @@
 #ifndef AGG_CLIP_LIANG_BARSKY_INCLUDED
 #define AGG_CLIP_LIANG_BARSKY_INCLUDED
 #include "agg_basics.h"
-#include "third_party/base/numerics/safe_math.h"
+#include "core/fxcrt/numerics/safe_math.h"
 namespace pdfium
 {
 namespace agg
@@ -40,11 +40,11 @@ inline unsigned clip_liang_barsky(T x1, T y1, T x2, T y2,
 {
     const float nearzero = 1e-30f;
 
-    pdfium::base::CheckedNumeric<float> width = x2;
+    pdfium::CheckedNumeric<float> width = x2;
     width -= x1;
     if (!width.IsValid())
         return 0;
-    pdfium::base::CheckedNumeric<float> height = y2;
+    pdfium::CheckedNumeric<float> height = y2;
     height -= y1;
     if (!height.IsValid())
         return 0;

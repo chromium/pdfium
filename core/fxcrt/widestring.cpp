@@ -17,12 +17,12 @@
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/numerics/safe_math.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/utf16.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/numerics/safe_math.h"
 
 // Instantiate.
 template class fxcrt::StringViewTemplate<wchar_t>;
@@ -360,7 +360,7 @@ WideString WideString::FormatV(const wchar_t* format, va_list argList) {
   if (!guess.has_value()) {
     return WideString();
   }
-  int maxLen = pdfium::base::checked_cast<int>(guess.value());
+  int maxLen = pdfium::checked_cast<int>(guess.value());
 
   while (maxLen < 32 * 1024) {
     va_copy(argListCopy, argList);

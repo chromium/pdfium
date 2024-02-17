@@ -7,7 +7,7 @@
 #include "fpdfsdk/cpdfsdk_customaccess.h"
 
 #include "core/fxcrt/fx_safe_types.h"
-#include "third_party/base/numerics/safe_conversions.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 
 CPDFSDK_CustomAccess::CPDFSDK_CustomAccess(FPDF_FILEACCESS* pFileAccess)
     : m_FileAccess(*pFileAccess) {}
@@ -23,14 +23,14 @@ bool CPDFSDK_CustomAccess::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
   if (buffer.empty() || offset < 0)
     return false;
 
-  if (!pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(buffer.size()))
+  if (!pdfium::IsValueInRangeForNumericType<FX_FILESIZE>(buffer.size())) {
     return false;
+  }
 
   FX_SAFE_FILESIZE new_pos = buffer.size();
   new_pos += offset;
   return new_pos.IsValid() && new_pos.ValueOrDie() <= GetSize() &&
          m_FileAccess.m_GetBlock(
-             m_FileAccess.m_Param,
-             pdfium::base::checked_cast<unsigned long>(offset), buffer.data(),
-             pdfium::base::checked_cast<unsigned long>(buffer.size()));
+             m_FileAccess.m_Param, pdfium::checked_cast<unsigned long>(offset),
+             buffer.data(), pdfium::checked_cast<unsigned long>(buffer.size()));
 }

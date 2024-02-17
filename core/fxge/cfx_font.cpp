@@ -17,6 +17,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_fontcache.h"
@@ -29,15 +30,14 @@
 #include "core/fxge/fx_font.h"
 #include "core/fxge/scoped_font_transform.h"
 #include "third_party/base/check.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
 FX_RECT FXRectFromFTPos(FT_Pos left, FT_Pos top, FT_Pos right, FT_Pos bottom) {
-  return FX_RECT(pdfium::base::checked_cast<int32_t>(left),
-                 pdfium::base::checked_cast<int32_t>(top),
-                 pdfium::base::checked_cast<int32_t>(right),
-                 pdfium::base::checked_cast<int32_t>(bottom));
+  return FX_RECT(pdfium::checked_cast<int32_t>(left),
+                 pdfium::checked_cast<int32_t>(top),
+                 pdfium::checked_cast<int32_t>(right),
+                 pdfium::checked_cast<int32_t>(bottom));
 }
 
 FX_RECT ScaledFXRectFromFTPos(FT_Pos left,

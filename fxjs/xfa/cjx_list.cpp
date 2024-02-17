@@ -8,12 +8,12 @@
 
 #include <vector>
 
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_class.h"
 #include "fxjs/xfa/cfxjse_engine.h"
-#include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/v8-object.h"
 #include "v8/include/v8-primitive.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -106,5 +106,5 @@ void CJX_List::length(v8::Isolate* pIsolate,
     return;
   }
   *pValue = fxv8::NewNumberHelper(
-      pIsolate, pdfium::base::checked_cast<int32_t>(GetXFAList()->GetLength()));
+      pIsolate, pdfium::checked_cast<int32_t>(GetXFAList()->GetLength()));
 }

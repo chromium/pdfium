@@ -187,8 +187,9 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
   } else {
     dwStreamSize = DecodeInlineStream(m_pBuf.subspan(m_Pos), width, height,
                                       decoder, std::move(pParam), dwOrigSize);
-    if (!pdfium::base::IsValueInRangeForNumericType<int>(dwStreamSize))
+    if (!pdfium::IsValueInRangeForNumericType<int>(dwStreamSize)) {
       return nullptr;
+    }
 
     uint32_t dwSavePos = m_Pos;
     m_Pos += dwStreamSize;

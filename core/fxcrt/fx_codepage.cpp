@@ -11,7 +11,7 @@
 #include <utility>
 
 #include "build/build_config.h"
-#include "third_party/base/numerics/safe_math.h"
+#include "core/fxcrt/numerics/safe_math.h"
 
 #if BUILDFLAG(IS_WIN)
 #include <windows.h>
@@ -294,8 +294,8 @@ size_t FX_WideCharToMultiByte(FX_CodePage codepage,
                               WideStringView wstr,
                               pdfium::span<char> buf) {
 #if BUILDFLAG(IS_WIN)
-  int input_len = pdfium::base::checked_cast<int>(wstr.GetLength());
-  int output_len = pdfium::base::checked_cast<int>(buf.size());
+  int input_len = pdfium::checked_cast<int>(wstr.GetLength());
+  int output_len = pdfium::checked_cast<int>(buf.size());
   return WideCharToMultiByte(static_cast<UINT>(codepage), 0,
                              wstr.unterminated_c_str(), input_len, buf.data(),
                              output_len, nullptr, nullptr);
@@ -316,8 +316,8 @@ size_t FX_MultiByteToWideChar(FX_CodePage codepage,
                               ByteStringView bstr,
                               pdfium::span<wchar_t> buf) {
 #if BUILDFLAG(IS_WIN)
-  const int input_len = pdfium::base::checked_cast<int>(bstr.GetLength());
-  const int output_len = pdfium::base::checked_cast<int>(buf.size());
+  const int input_len = pdfium::checked_cast<int>(bstr.GetLength());
+  const int output_len = pdfium::checked_cast<int>(buf.size());
   return MultiByteToWideChar(static_cast<UINT>(codepage), 0,
                              bstr.unterminated_c_str(), input_len, buf.data(),
                              output_len);

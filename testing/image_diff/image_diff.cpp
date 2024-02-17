@@ -19,9 +19,9 @@
 #include <vector>
 
 #include "core/fxcrt/fx_memory.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "testing/image_diff/image_diff_png.h"
 #include "testing/utils/path_service.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 #if BUILDFLAG(IS_WIN)
 #include <windows.h>

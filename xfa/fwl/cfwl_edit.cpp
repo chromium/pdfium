@@ -12,10 +12,10 @@
 #include <vector>
 
 #include "build/build_config.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/text_char_pos.h"
 #include "third_party/base/check.h"
-#include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -346,8 +346,8 @@ void CFWL_Edit::DrawContentNonComb(CFGAS_GEGraphics* pGraphics,
     size_t count;
     std::tie(sel_start, count) = m_pEditEngine->GetSelection();
     std::vector<CFX_RectF> rects = m_pEditEngine->GetCharacterRectsInRange(
-        pdfium::base::checked_cast<int32_t>(sel_start),
-        pdfium::base::checked_cast<int32_t>(count));
+        pdfium::checked_cast<int32_t>(sel_start),
+        pdfium::checked_cast<int32_t>(count));
 
     CFGAS_GEPath path;
     for (auto& rect : rects) {
@@ -757,7 +757,7 @@ void CFWL_Edit::UpdateCursorRect() {
   int32_t bidi_level;
   if (m_pEditEngine->CanGenerateCharacterInfo()) {
     std::tie(bidi_level, m_CaretRect) = m_pEditEngine->GetCharacterInfo(
-        pdfium::base::checked_cast<int32_t>(m_CursorPosition));
+        pdfium::checked_cast<int32_t>(m_CursorPosition));
   } else {
     bidi_level = 0;
     m_CaretRect = CFX_RectF();

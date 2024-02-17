@@ -14,8 +14,8 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcodec/flate/flatemodule.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "third_party/base/check.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 CPDF_FlateEncoder::CPDF_FlateEncoder(RetainPtr<const CPDF_Stream> pStream,
                                      bool bFlateEncode)
@@ -44,7 +44,7 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(RetainPtr<const CPDF_Stream> pStream,
   m_Data = FlateModule::Encode(m_pAcc->GetSpan());
   m_pClonedDict = ToDictionary(pStream->GetDict()->Clone());
   m_pClonedDict->SetNewFor<CPDF_Number>(
-      "Length", pdfium::base::checked_cast<int>(GetSpan().size()));
+      "Length", pdfium::checked_cast<int>(GetSpan().size()));
   m_pClonedDict->SetNewFor<CPDF_Name>("Filter", "FlateDecode");
   m_pClonedDict->RemoveFor(pdfium::stream::kDecodeParms);
   DCHECK(!m_pDict);

@@ -33,6 +33,7 @@
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_string_wrappers.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_color.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
@@ -40,7 +41,6 @@
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "third_party/base/check.h"
 #include "third_party/base/memory/ptr_util.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -434,7 +434,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_GetAnnotIndex(FPDF_PAGE page,
   if (it == locker.end())
     return -1;
 
-  return pdfium::base::checked_cast<int>(it - locker.begin());
+  return pdfium::checked_cast<int>(it - locker.begin());
 }
 
 FPDF_EXPORT void FPDF_CALLCONV FPDFPage_CloseAnnot(FPDF_ANNOTATION annot) {
@@ -505,7 +505,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_AddInkStroke(FPDF_ANNOTATION annot,
                                                      size_t point_count) {
   if (FPDFAnnot_GetSubtype(annot) != FPDF_ANNOT_INK || !points ||
       point_count == 0 ||
-      !pdfium::base::IsValueInRangeForNumericType<int32_t>(point_count)) {
+      !pdfium::IsValueInRangeForNumericType<int32_t>(point_count)) {
     return -1;
   }
 
@@ -594,8 +594,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetObjectCount(FPDF_ANNOTATION annot) {
 
     pAnnot->SetForm(std::move(pStream));
   }
-  return pdfium::base::checked_cast<int>(
-      pAnnot->GetForm()->GetPageObjectCount());
+  return pdfium::checked_cast<int>(pAnnot->GetForm()->GetPageObjectCount());
 }
 
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV

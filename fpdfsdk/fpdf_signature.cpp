@@ -11,9 +11,9 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -83,7 +83,7 @@ FPDFSignatureObj_GetContents(FPDF_SIGNATURE signature,
 
   ByteString contents = value_dict->GetByteStringFor("Contents");
   const unsigned long contents_len =
-      pdfium::base::checked_cast<unsigned long>(contents.GetLength());
+      pdfium::checked_cast<unsigned long>(contents.GetLength());
   if (buffer && length >= contents_len)
     memcpy(buffer, contents.c_str(), contents_len);
 

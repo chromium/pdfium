@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include "third_party/base/numerics/safe_conversions.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 
 namespace fxcrt {
 
@@ -30,7 +30,7 @@ FakeUniquePtr<T> MakeFakeUniquePtr(T* arg) {
 // size_t size() method return values will be checked.
 template <typename ResultType, typename Collection>
 ResultType CollectionSize(const Collection& collection) {
-  return pdfium::base::checked_cast<ResultType>(collection.size());
+  return pdfium::checked_cast<ResultType>(collection.size());
 }
 
 // Convenience routine for "int-fected" code, to handle signed indicies. The

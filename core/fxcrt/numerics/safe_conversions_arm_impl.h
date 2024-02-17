@@ -1,18 +1,17 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_NUMERICS_SAFE_CONVERSIONS_ARM_IMPL_H_
-#define THIRD_PARTY_BASE_NUMERICS_SAFE_CONVERSIONS_ARM_IMPL_H_
+#ifndef CORE_FXCRT_NUMERICS_SAFE_CONVERSIONS_ARM_IMPL_H_
+#define CORE_FXCRT_NUMERICS_SAFE_CONVERSIONS_ARM_IMPL_H_
 
 #include <cassert>
 #include <limits>
 #include <type_traits>
 
-#include "third_party/base/numerics/safe_conversions_impl.h"
+#include "core/fxcrt/numerics/safe_conversions_impl.h"
 
 namespace pdfium {
-namespace base {
 namespace internal {
 
 // Fast saturation to a destination type.
@@ -47,7 +46,6 @@ struct SaturateFastAsmOp {
 };
 
 }  // namespace internal
-}  // namespace base
 }  // namespace pdfium
 
-#endif  // THIRD_PARTY_BASE_NUMERICS_SAFE_CONVERSIONS_ARM_IMPL_H_
+#endif  // CORE_FXCRT_NUMERICS_SAFE_CONVERSIONS_ARM_IMPL_H_

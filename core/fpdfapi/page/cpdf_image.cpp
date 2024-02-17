@@ -30,11 +30,11 @@
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "third_party/base/check.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 // static
 bool CPDF_Image::IsValidJpegComponent(int32_t comps) {
@@ -137,7 +137,7 @@ RetainPtr<CPDF_Dictionary> CPDF_Image::InitJPEG(
 }
 
 void CPDF_Image::SetJpegImage(RetainPtr<IFX_SeekableReadStream> pFile) {
-  uint32_t size = pdfium::base::checked_cast<uint32_t>(pFile->GetSize());
+  uint32_t size = pdfium::checked_cast<uint32_t>(pFile->GetSize());
   if (!size) {
     return;
   }
@@ -164,7 +164,7 @@ void CPDF_Image::SetJpegImage(RetainPtr<IFX_SeekableReadStream> pFile) {
 }
 
 void CPDF_Image::SetJpegImageInline(RetainPtr<IFX_SeekableReadStream> pFile) {
-  uint32_t size = pdfium::base::checked_cast<uint32_t>(pFile->GetSize());
+  uint32_t size = pdfium::checked_cast<uint32_t>(pFile->GetSize());
   if (!size) {
     return;
   }
@@ -291,7 +291,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       }
     }
     pMaskDict->SetNewFor<CPDF_Number>(
-        "Length", pdfium::base::checked_cast<int>(mask_buf.size()));
+        "Length", pdfium::checked_cast<int>(mask_buf.size()));
     auto pNewStream = m_pDocument->NewIndirect<CPDF_Stream>(
         std::move(mask_buf), std::move(pMaskDict));
     pDict->SetNewFor<CPDF_Reference>("SMask", m_pDocument,

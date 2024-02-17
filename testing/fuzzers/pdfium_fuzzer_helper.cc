@@ -16,13 +16,13 @@
 #include <tuple>
 #include <utility>
 
+#include "core/fxcrt/numerics/checked_math.h"
 #include "core/fxcrt/span.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_text.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/numerics/checked_math.h"
 
 namespace {
 
@@ -35,7 +35,7 @@ class FuzzerTestLoader {
                       unsigned char* pBuf,
                       unsigned long size) {
     FuzzerTestLoader* pLoader = static_cast<FuzzerTestLoader*>(param);
-    pdfium::base::CheckedNumeric<size_t> end = pos;
+    pdfium::CheckedNumeric<size_t> end = pos;
     end += size;
     CHECK_LE(end.ValueOrDie(), pLoader->m_Span.size());
 

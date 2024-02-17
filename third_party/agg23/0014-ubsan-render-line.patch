@@ -7,7 +7,7 @@ index d2b6a46e4..2f19a1816 100644
  {
      enum dx_limit_e { dx_limit = 16384 << poly_base_shift };
 -    int dx = x2 - x1;
-+    pdfium::base::CheckedNumeric<int> safe_dx = x2;
++    pdfium::CheckedNumeric<int> safe_dx = x2;
 +    safe_dx -= x1;
 +    if (!safe_dx.IsValid())
 +        return;
@@ -16,13 +16,13 @@ index d2b6a46e4..2f19a1816 100644
      if(dx >= dx_limit || dx <= -dx_limit) {
 -        int cx = (x1 + x2) >> 1;
 -        int cy = (y1 + y2) >> 1;
-+        pdfium::base::CheckedNumeric<int> safe_cx = x1;
++        pdfium::CheckedNumeric<int> safe_cx = x1;
 +        safe_cx += x2;
 +        safe_cx /= 2;
 +        if (!safe_cx.IsValid())
 +            return;
 +
-+        pdfium::base::CheckedNumeric<int> safe_cy = y1;
++        pdfium::CheckedNumeric<int> safe_cy = y1;
 +        safe_cy += y2;
 +        safe_cy /= 2;
 +        if (!safe_cy.IsValid())

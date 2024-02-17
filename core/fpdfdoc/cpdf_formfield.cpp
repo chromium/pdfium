@@ -274,7 +274,7 @@ int CPDF_FormField::GetControlIndex(const CPDF_FormControl* pControl) const {
   if (it == controls.end())
     return -1;
 
-  return pdfium::base::checked_cast<int>(it - controls.begin());
+  return pdfium::checked_cast<int>(it - controls.begin());
 }
 
 FormFieldType CPDF_FormField::GetFieldType() const {

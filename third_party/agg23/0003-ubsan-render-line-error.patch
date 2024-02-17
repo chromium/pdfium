@@ -6,7 +6,7 @@ index 46379f6..c6b3f01 100644
  //----------------------------------------------------------------------------
  #include <limits.h>
  #include "agg_rasterizer_scanline_aa.h"
-+#include "third_party/base/numerics/safe_math.h"
++#include "core/fxcrt/numerics/safe_math.h"
  namespace agg
  {
  AGG_INLINE void cell_aa::set_cover(int c, int a)
@@ -24,7 +24,7 @@ index 46379f6..c6b3f01 100644
          return;
      }
 -    p     = (poly_base_size - fy1) * dx;
-+    pdfium::base::CheckedNumeric<int> safeP = poly_base_size - fy1;
++    pdfium::CheckedNumeric<int> safeP = poly_base_size - fy1;
 +    safeP *= dx;
 +    if (!safeP.IsValid())
 +      return;

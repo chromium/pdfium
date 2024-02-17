@@ -14,9 +14,9 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
 #include "third_party/base/check.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 namespace fxcodec {
 
@@ -137,13 +137,12 @@ pdfium::span<uint8_t> RLScanlineDecoder::GetNextLine() {
     if (m_Operator < 128) {
       uint32_t copy_len = m_Operator + 1;
       if (col_pos + copy_len >= m_dwLineBytes) {
-        copy_len =
-            pdfium::base::checked_cast<uint32_t>(m_dwLineBytes - col_pos);
+        copy_len = pdfium::checked_cast<uint32_t>(m_dwLineBytes - col_pos);
         eol = true;
       }
       if (copy_len >= m_SrcBuf.size() - m_SrcOffset) {
         copy_len =
-            pdfium::base::checked_cast<uint32_t>(m_SrcBuf.size() - m_SrcOffset);
+            pdfium::checked_cast<uint32_t>(m_SrcBuf.size() - m_SrcOffset);
         m_bEOD = true;
       }
       auto copy_span = m_SrcBuf.subspan(m_SrcOffset, copy_len);
@@ -157,8 +156,7 @@ pdfium::span<uint8_t> RLScanlineDecoder::GetNextLine() {
       }
       uint32_t duplicate_len = 257 - m_Operator;
       if (col_pos + duplicate_len >= m_dwLineBytes) {
-        duplicate_len =
-            pdfium::base::checked_cast<uint32_t>(m_dwLineBytes - col_pos);
+        duplicate_len = pdfium::checked_cast<uint32_t>(m_dwLineBytes - col_pos);
         eol = true;
       }
       fxcrt::spanset(scan_span.subspan(col_pos, duplicate_len), fill);
@@ -173,7 +171,7 @@ pdfium::span<uint8_t> RLScanlineDecoder::GetNextLine() {
 }
 
 uint32_t RLScanlineDecoder::GetSrcOffset() {
-  return pdfium::base::checked_cast<uint32_t>(m_SrcOffset);
+  return pdfium::checked_cast<uint32_t>(m_SrcOffset);
 }
 
 void RLScanlineDecoder::GetNextOperator() {

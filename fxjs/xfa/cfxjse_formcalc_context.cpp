@@ -24,6 +24,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_random.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/widetext_buffer.h"
 #include "fxjs/fxv8.h"
@@ -33,7 +34,6 @@
 #include "fxjs/xfa/cfxjse_value.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/numerics/safe_conversions.h"
 #include "v8/include/v8-container.h"
 #include "v8/include/v8-function-callback.h"
 #include "v8/include/v8-local-handle.h"
@@ -4007,7 +4007,7 @@ void CFXJSE_FormCalcContext::Stuff(
   int32_t iStart = 1;  // one-based character indexing.
   int32_t iDelete = 0;
   ByteString bsSource = ValueToUTF8String(info.GetIsolate(), sourceValue);
-  int32_t iLength = pdfium::base::checked_cast<int32_t>(bsSource.GetLength());
+  int32_t iLength = pdfium::checked_cast<int32_t>(bsSource.GetLength());
   if (iLength) {
     iStart = std::clamp(
         static_cast<int32_t>(ValueToFloat(info.GetIsolate(), startValue)), 1,

@@ -31,6 +31,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
@@ -50,7 +51,6 @@
 #include "third_party/base/check_op.h"
 #include "third_party/base/memory/ptr_util.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/skia/include/core/SkBlendMode.h"
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkClipOp.h"
@@ -555,7 +555,7 @@ void PaintStroke(SkPaint* spaint,
       intervals[i * 2 + 1] = off;
     }
     spaint->setPathEffect(SkDashPathEffect::Make(
-        intervals.data(), pdfium::base::checked_cast<int>(intervals.size()),
+        intervals.data(), pdfium::checked_cast<int>(intervals.size()),
         graph_state->m_DashPhase));
   }
   spaint->setStyle(SkPaint::kStroke_Style);
@@ -1603,8 +1603,8 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(RetainPtr<const CFX_DIBBase> bitmap,
     if (!use_interpolate_bilinear) {
       float dest_width = ceilf(matrix.GetXUnit());
       float dest_height = ceilf(matrix.GetYUnit());
-      if (pdfium::base::IsValueInRangeForNumericType<int>(dest_width) &&
-          pdfium::base::IsValueInRangeForNumericType<int>(dest_height)) {
+      if (pdfium::IsValueInRangeForNumericType<int>(dest_width) &&
+          pdfium::IsValueInRangeForNumericType<int>(dest_height)) {
         use_interpolate_bilinear = CStretchEngine::UseInterpolateBilinear(
             options, static_cast<int>(dest_width),
             static_cast<int>(dest_height), width, height);

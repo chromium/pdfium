@@ -24,7 +24,7 @@ void BitmapSaver::WriteBitmapToPng(FPDF_BITMAP bitmap,
   size *= height;
   auto input = pdfium::make_span(
       static_cast<const uint8_t*>(FPDFBitmap_GetBuffer(bitmap)),
-      pdfium::base::ValueOrDieForType<size_t>(size));
+      pdfium::ValueOrDieForType<size_t>(size));
 
   std::vector<uint8_t> png;
   int format = FPDFBitmap_GetFormat(bitmap);

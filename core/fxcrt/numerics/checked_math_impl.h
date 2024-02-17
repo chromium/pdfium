@@ -1,9 +1,9 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_NUMERICS_CHECKED_MATH_IMPL_H_
-#define THIRD_PARTY_BASE_NUMERICS_CHECKED_MATH_IMPL_H_
+#ifndef CORE_FXCRT_NUMERICS_CHECKED_MATH_IMPL_H_
+#define CORE_FXCRT_NUMERICS_CHECKED_MATH_IMPL_H_
 
 #include <stddef.h>
 #include <stdint.h>
@@ -14,11 +14,10 @@
 #include <limits>
 #include <type_traits>
 
-#include "third_party/base/numerics/safe_conversions.h"
-#include "third_party/base/numerics/safe_math_shared_impl.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
+#include "core/fxcrt/numerics/safe_math_shared_impl.h"
 
 namespace pdfium {
-namespace base {
 namespace internal {
 
 template <typename T>
@@ -589,7 +588,6 @@ class CheckedNumericState<T, NUMERIC_FLOATING> {
 };
 
 }  // namespace internal
-}  // namespace base
 }  // namespace pdfium
 
-#endif  // THIRD_PARTY_BASE_NUMERICS_CHECKED_MATH_IMPL_H_
+#endif  // CORE_FXCRT_NUMERICS_CHECKED_MATH_IMPL_H_

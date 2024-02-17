@@ -30,6 +30,7 @@
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_string_wrappers.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/utf16.h"
@@ -42,7 +43,6 @@
 #include "public/fpdf_edit.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 // These checks are here because core/ and public/ cannot depend on each other.
 static_assert(static_cast<int>(TextRenderingMode::MODE_UNKNOWN) ==
@@ -164,7 +164,7 @@ RetainPtr<CPDF_Dictionary> LoadFontDesc(CPDF_Document* doc,
   // TODO(npm): Lengths for Type1 fonts.
   if (font_type == FPDF_FONT_TRUETYPE) {
     stream->GetMutableDict()->SetNewFor<CPDF_Number>(
-        "Length1", pdfium::base::checked_cast<int>(font_data.size()));
+        "Length1", pdfium::checked_cast<int>(font_data.size()));
   }
   ByteString font_file_key =
       font_type == FPDF_FONT_TYPE1 ? "FontFile" : "FontFile2";
@@ -849,7 +849,7 @@ FPDFFont_GetFontName(FPDF_FONT font, char* buffer, unsigned long length) {
   CFX_Font* pCfxFont = pFont->GetFont();
   ByteString name = pCfxFont->GetFamilyName();
   const unsigned long dwStringLen =
-      pdfium::base::checked_cast<unsigned long>(name.GetLength() + 1);
+      pdfium::checked_cast<unsigned long>(name.GetLength() + 1);
   if (buffer && length >= dwStringLen)
     memcpy(buffer, name.c_str(), dwStringLen);
 
@@ -951,8 +951,9 @@ FPDFFont_GetGlyphPath(FPDF_FONT font, uint32_t glyph, float font_size) {
   if (!pFont)
     return nullptr;
 
-  if (!pdfium::base::IsValueInRangeForNumericType<wchar_t>(glyph))
+  if (!pdfium::IsValueInRangeForNumericType<wchar_t>(glyph)) {
     return nullptr;
+  }
 
   uint32_t charcode = pFont->CharCodeFromUnicode(static_cast<wchar_t>(glyph));
   std::vector<TextCharPos> pos =

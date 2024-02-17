@@ -11,10 +11,10 @@
 
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/pwl/cpwl_edit_impl.h"
 #include "fpdfsdk/pwl/cpwl_list_box.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 CPWL_ListCtrl::NotifyIface::~NotifyIface() = default;
 
@@ -536,8 +536,7 @@ int32_t CPWL_ListCtrl::GetItemIndex(const CFX_PointF& point) const {
     if (FXSYS_IsFloatSmaller(pt.y, rcListItem.bottom))
       bLast = false;
     if (pt.y >= rcListItem.top && pt.y < rcListItem.bottom) {
-      return pdfium::base::checked_cast<int32_t>(&pListItem -
-                                                 &m_ListItems.front());
+      return pdfium::checked_cast<int32_t>(&pListItem - &m_ListItems.front());
     }
   }
   if (bFirst)
@@ -590,7 +589,7 @@ int32_t CPWL_ListCtrl::GetFirstSelected() const {
 int32_t CPWL_ListCtrl::GetLastSelected() const {
   for (auto iter = m_ListItems.rbegin(); iter != m_ListItems.rend(); ++iter) {
     if ((*iter)->IsSelected())
-      return pdfium::base::checked_cast<int32_t>(&*iter - &m_ListItems.front());
+      return pdfium::checked_cast<int32_t>(&*iter - &m_ListItems.front());
   }
   return -1;
 }

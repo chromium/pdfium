@@ -1,9 +1,9 @@
-// Copyright 2014 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_NUMERICS_SAFE_CONVERSIONS_H_
-#define THIRD_PARTY_BASE_NUMERICS_SAFE_CONVERSIONS_H_
+#ifndef CORE_FXCRT_NUMERICS_SAFE_CONVERSIONS_H_
+#define CORE_FXCRT_NUMERICS_SAFE_CONVERSIONS_H_
 
 #include <stddef.h>
 
@@ -11,17 +11,16 @@
 #include <limits>
 #include <type_traits>
 
-#include "third_party/base/numerics/safe_conversions_impl.h"
+#include "core/fxcrt/numerics/safe_conversions_impl.h"
 
 #if defined(__ARMEL__) && !defined(__native_client__)
-#include "third_party/base/numerics/safe_conversions_arm_impl.h"
+#include "core/fxcrt/numerics/safe_conversions_arm_impl.h"
 #define BASE_HAS_OPTIMIZED_SAFE_CONVERSIONS (1)
 #else
 #define BASE_HAS_OPTIMIZED_SAFE_CONVERSIONS (0)
 #endif
 
 namespace pdfium {
-namespace base {
 namespace internal {
 
 #if !BASE_HAS_OPTIMIZED_SAFE_CONVERSIONS
@@ -384,7 +383,6 @@ Dst ClampRound(Src value) {
   return saturated_cast<Dst>(rounded);
 }
 
-}  // namespace base
 }  // namespace pdfium
 
-#endif  // THIRD_PARTY_BASE_NUMERICS_SAFE_CONVERSIONS_H_
+#endif  // CORE_FXCRT_NUMERICS_SAFE_CONVERSIONS_H_

@@ -244,7 +244,7 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
       if (ppFind)
         *ppFind = pNames;
       if (pFindIndex)
-        *pFindIndex = pdfium::base::checked_cast<int32_t>(i);
+        *pFindIndex = pdfium::checked_cast<int32_t>(i);
       if (iCompare < 0)
         continue;
 

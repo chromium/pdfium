@@ -6,8 +6,8 @@
 
 #include <string.h>
 
+#include "core/fxcrt/numerics/checked_math.h"
 #include "third_party/base/check_op.h"
-#include "third_party/base/numerics/checked_math.h"
 
 TestLoader::TestLoader(pdfium::span<const uint8_t> span) : m_Span(span) {}
 
@@ -17,7 +17,7 @@ int TestLoader::GetBlock(void* param,
                          unsigned char* pBuf,
                          unsigned long size) {
   TestLoader* pLoader = static_cast<TestLoader*>(param);
-  pdfium::base::CheckedNumeric<size_t> end = pos;
+  pdfium::CheckedNumeric<size_t> end = pos;
   end += size;
   CHECK_LE(end.ValueOrDie(), pLoader->m_Span.size());
 

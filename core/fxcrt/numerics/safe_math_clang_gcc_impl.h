@@ -1,25 +1,24 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_NUMERICS_SAFE_MATH_CLANG_GCC_IMPL_H_
-#define THIRD_PARTY_BASE_NUMERICS_SAFE_MATH_CLANG_GCC_IMPL_H_
+#ifndef CORE_FXCRT_NUMERICS_SAFE_MATH_CLANG_GCC_IMPL_H_
+#define CORE_FXCRT_NUMERICS_SAFE_MATH_CLANG_GCC_IMPL_H_
 
 #include <cassert>
 #include <limits>
 #include <type_traits>
 
-#include "third_party/base/numerics/safe_conversions.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 
 #if !defined(__native_client__) && (defined(__ARMEL__) || defined(__arch64__))
-#include "third_party/base/numerics/safe_math_arm_impl.h"
+#include "core/fxcrt/numerics/safe_math_arm_impl.h"
 #define BASE_HAS_ASSEMBLER_SAFE_MATH (1)
 #else
 #define BASE_HAS_ASSEMBLER_SAFE_MATH (0)
 #endif
 
 namespace pdfium {
-namespace base {
 namespace internal {
 
 // These are the non-functioning boilerplate implementations of the optimized
@@ -153,7 +152,6 @@ struct ClampedNegFastOp {
 };
 
 }  // namespace internal
-}  // namespace base
 }  // namespace pdfium
 
-#endif  // THIRD_PARTY_BASE_NUMERICS_SAFE_MATH_CLANG_GCC_IMPL_H_
+#endif  // CORE_FXCRT_NUMERICS_SAFE_MATH_CLANG_GCC_IMPL_H_

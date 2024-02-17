@@ -13,11 +13,11 @@
 #include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/cfx_folderfontinfo.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "third_party/base/check.h"
-#include "third_party/base/numerics/safe_conversions.h"
 #include "third_party/base/win/scoped_select_object.h"
 #include "third_party/base/win/win_util.h"
 
@@ -423,7 +423,7 @@ size_t CFX_Win32FontInfo::GetFontData(void* hFont,
   ScopedSelectObject select_object(m_hDC, static_cast<HFONT>(hFont));
   table = fxcrt::FromBE32(table);
   size_t size = ::GetFontData(m_hDC, table, 0, buffer.data(),
-                              pdfium::base::checked_cast<DWORD>(buffer.size()));
+                              pdfium::checked_cast<DWORD>(buffer.size()));
   return size != GDI_ERROR ? size : 0;
 }
 

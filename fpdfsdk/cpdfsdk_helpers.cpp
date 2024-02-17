@@ -20,11 +20,11 @@
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fpdfdoc/cpdf_metadata.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "third_party/base/check.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -69,7 +69,7 @@ unsigned long GetStreamMaybeCopyAndReturnLengthImpl(
   if (!buffer.empty() && buffer.size() <= stream_data_span.size())
     fxcrt::spancpy(buffer, stream_data_span);
 
-  return pdfium::base::checked_cast<unsigned long>(stream_data_span.size());
+  return pdfium::checked_cast<unsigned long>(stream_data_span.size());
 }
 
 size_t FPDFWideStringLength(const unsigned short* str) {
@@ -296,7 +296,7 @@ unsigned long NulTerminateMaybeCopyAndReturnLength(const ByteString& text,
                                                    void* buffer,
                                                    unsigned long buflen) {
   const unsigned long len =
-      pdfium::base::checked_cast<unsigned long>(text.GetLength() + 1);
+      pdfium::checked_cast<unsigned long>(text.GetLength() + 1);
   if (buffer && len <= buflen)
     memcpy(buffer, text.c_str(), len);
   return len;
@@ -307,7 +307,7 @@ unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
                                                   unsigned long buflen) {
   ByteString encoded_text = text.ToUTF16LE();
   const unsigned long len =
-      pdfium::base::checked_cast<unsigned long>(encoded_text.GetLength());
+      pdfium::checked_cast<unsigned long>(encoded_text.GetLength());
   if (buffer && len <= buflen)
     memcpy(buffer, encoded_text.c_str(), len);
   return len;
@@ -489,18 +489,16 @@ std::vector<uint32_t> ParsePageRangeString(const ByteString& bsPageRange,
   for (const auto& entry : fxcrt::Split(bsStrippedPageRange, ',')) {
     std::vector<ByteString> args = fxcrt::Split(entry, '-');
     if (args.size() == 1) {
-      uint32_t page_num =
-          pdfium::base::checked_cast<uint32_t>(atoi(args[0].c_str()));
+      uint32_t page_num = pdfium::checked_cast<uint32_t>(atoi(args[0].c_str()));
       if (page_num == 0 || page_num > nCount)
         return std::vector<uint32_t>();
       results.push_back(page_num - 1);
     } else if (args.size() == 2) {
       uint32_t first_num =
-          pdfium::base::checked_cast<uint32_t>(atoi(args[0].c_str()));
+          pdfium::checked_cast<uint32_t>(atoi(args[0].c_str()));
       if (first_num == 0)
         return std::vector<uint32_t>();
-      uint32_t last_num =
-          pdfium::base::checked_cast<uint32_t>(atoi(args[1].c_str()));
+      uint32_t last_num = pdfium::checked_cast<uint32_t>(atoi(args[1].c_str()));
       if (last_num == 0 || first_num > last_num || last_num > nCount)
         return std::vector<uint32_t>();
       for (uint32_t i = first_num; i <= last_num; ++i)

@@ -1,9 +1,9 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_NUMERICS_SAFE_MATH_SHARED_IMPL_H_
-#define THIRD_PARTY_BASE_NUMERICS_SAFE_MATH_SHARED_IMPL_H_
+#ifndef CORE_FXCRT_NUMERICS_SAFE_MATH_SHARED_IMPL_H_
+#define CORE_FXCRT_NUMERICS_SAFE_MATH_SHARED_IMPL_H_
 
 #include <stddef.h>
 #include <stdint.h>
@@ -16,7 +16,7 @@
 #include <type_traits>
 
 #include "build/build_config.h"
-#include "third_party/base/numerics/safe_conversions.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 
 #if BUILDFLAG(IS_ASMJS)
 // Optimized safe math instructions are incompatible with asmjs.
@@ -27,14 +27,13 @@
       ((__clang_major__ > 3) ||                            \
        (__clang_major__ == 3 && __clang_minor__ >= 4))) || \
      (defined(__GNUC__) && __GNUC__ >= 5))
-#include "third_party/base/numerics/safe_math_clang_gcc_impl.h"
+#include "core/fxcrt/numerics/safe_math_clang_gcc_impl.h"
 #define BASE_HAS_OPTIMIZED_SAFE_MATH (1)
 #else
 #define BASE_HAS_OPTIMIZED_SAFE_MATH (0)
 #endif
 
 namespace pdfium {
-namespace base {
 namespace internal {
 
 // These are the non-functioning boilerplate implementations of the optimized
@@ -212,7 +211,6 @@ struct MathWrapper {
   BASE_NUMERIC_ARITHMETIC_VARIADIC(CLASS, CL_ABBR, OP_NAME)
 
 }  // namespace internal
-}  // namespace base
 }  // namespace pdfium
 
-#endif  // THIRD_PARTY_BASE_NUMERICS_SAFE_MATH_SHARED_IMPL_H_
+#endif  // CORE_FXCRT_NUMERICS_SAFE_MATH_SHARED_IMPL_H_

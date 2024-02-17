@@ -135,7 +135,7 @@ CJBig2_HuffmanTable::CJBig2_HuffmanTable(size_t idx) {
   DCHECK(idx < kNumHuffmanTables);
   const HuffmanTable& table = kHuffmanTables[idx];
   HTOOB = table.HTOOB;
-  NTEMP = pdfium::base::checked_cast<uint32_t>(table.size);
+  NTEMP = pdfium::checked_cast<uint32_t>(table.size);
   m_bOK = ParseFromStandardTable(idx);
   DCHECK(m_bOK);
 }

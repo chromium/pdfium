@@ -186,20 +186,20 @@ void CFX_FloatRect::Union(const CFX_FloatRect& other_rect) {
 
 FX_RECT CFX_FloatRect::GetOuterRect() const {
   FX_RECT rect;
-  rect.left = pdfium::base::saturated_cast<int>(floor(left));
-  rect.bottom = pdfium::base::saturated_cast<int>(ceil(top));
-  rect.right = pdfium::base::saturated_cast<int>(ceil(right));
-  rect.top = pdfium::base::saturated_cast<int>(floor(bottom));
+  rect.left = pdfium::saturated_cast<int>(floor(left));
+  rect.bottom = pdfium::saturated_cast<int>(ceil(top));
+  rect.right = pdfium::saturated_cast<int>(ceil(right));
+  rect.top = pdfium::saturated_cast<int>(floor(bottom));
   rect.Normalize();
   return rect;
 }
 
 FX_RECT CFX_FloatRect::GetInnerRect() const {
   FX_RECT rect;
-  rect.left = pdfium::base::saturated_cast<int>(ceil(left));
-  rect.bottom = pdfium::base::saturated_cast<int>(floor(top));
-  rect.right = pdfium::base::saturated_cast<int>(floor(right));
-  rect.top = pdfium::base::saturated_cast<int>(ceil(bottom));
+  rect.left = pdfium::saturated_cast<int>(ceil(left));
+  rect.bottom = pdfium::saturated_cast<int>(floor(top));
+  rect.right = pdfium::saturated_cast<int>(floor(right));
+  rect.top = pdfium::saturated_cast<int>(ceil(bottom));
   rect.Normalize();
   return rect;
 }

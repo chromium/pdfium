@@ -10,8 +10,8 @@
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/containers/contains.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "third_party/base/check.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 namespace {
 
@@ -146,15 +146,16 @@ bool CPDF_CrossRefAvail::CheckCrossRefTableTrailer() {
 
   const int32_t xrefpos = trailer->GetDirectIntegerFor(kPrevCrossRefFieldKey);
   if (xrefpos > 0 &&
-      pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(xrefpos))
+      pdfium::IsValueInRangeForNumericType<FX_FILESIZE>(xrefpos)) {
     AddCrossRefForCheck(static_cast<FX_FILESIZE>(xrefpos));
+  }
 
   const int32_t stream_xref_offset =
       trailer->GetDirectIntegerFor(kPrevCrossRefStreamOffsetFieldKey);
   if (stream_xref_offset > 0 &&
-      pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(
-          stream_xref_offset))
+      pdfium::IsValueInRangeForNumericType<FX_FILESIZE>(stream_xref_offset)) {
     AddCrossRefForCheck(static_cast<FX_FILESIZE>(stream_xref_offset));
+  }
 
   // Goto check next crossref
   state_ = State::kCrossRefCheck;
@@ -182,7 +183,7 @@ bool CPDF_CrossRefAvail::CheckCrossRefStream() {
   if (trailer->GetNameFor(kTypeFieldKey) == kXRefKeyword) {
     const int32_t xrefpos = trailer->GetIntegerFor(kPrevCrossRefFieldKey);
     if (xrefpos > 0 &&
-        pdfium::base::IsValueInRangeForNumericType<FX_FILESIZE>(xrefpos)) {
+        pdfium::IsValueInRangeForNumericType<FX_FILESIZE>(xrefpos)) {
       AddCrossRefForCheck(static_cast<FX_FILESIZE>(xrefpos));
     }
   }

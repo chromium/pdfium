@@ -17,6 +17,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
 #include "core/fxge/cfx_cliprgn.h"
@@ -25,7 +26,6 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 CFX_DIBitmap::CFX_DIBitmap() = default;
 
@@ -105,7 +105,7 @@ size_t CFX_DIBitmap::GetEstimatedImageMemoryBurden() const {
   size_t result = CFX_DIBBase::GetEstimatedImageMemoryBurden();
   if (!GetBuffer().empty()) {
     int height = GetHeight();
-    CHECK(pdfium::base::IsValueInRangeForNumericType<size_t>(height));
+    CHECK(pdfium::IsValueInRangeForNumericType<size_t>(height));
     result += static_cast<size_t>(height) * GetPitch();
   }
   return result;

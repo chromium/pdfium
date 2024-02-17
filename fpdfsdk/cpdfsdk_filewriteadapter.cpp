@@ -6,8 +6,8 @@
 
 #include "fpdfsdk/cpdfsdk_filewriteadapter.h"
 
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "third_party/base/check.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 CPDFSDK_FileWriteAdapter::CPDFSDK_FileWriteAdapter(FPDF_FILEWRITE* file_write)
     : file_write_(file_write) {
@@ -19,5 +19,5 @@ CPDFSDK_FileWriteAdapter::~CPDFSDK_FileWriteAdapter() = default;
 bool CPDFSDK_FileWriteAdapter::WriteBlock(pdfium::span<const uint8_t> buffer) {
   return file_write_->WriteBlock(
              file_write_, buffer.data(),
-             pdfium::base::checked_cast<unsigned long>(buffer.size())) != 0;
+             pdfium::checked_cast<unsigned long>(buffer.size())) != 0;
 }

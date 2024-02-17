@@ -17,6 +17,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/dib/cfx_cmyk_to_srgb.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
@@ -24,7 +25,6 @@
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 #include "third_party/base/notreached.h"
-#include "third_party/base/numerics/safe_conversions.h"
 
 #ifdef PDF_ENABLE_XFA_BMP
 #include "core/fxcodec/bmp/bmp_progressive_decoder.h"
@@ -75,7 +75,7 @@ void ProgressiveDecoder::HorzTable::CalculateWeights(int dest_len,
                                                      int src_len) {
   CHECK_GE(dest_len, 0);
   m_ItemSize =
-      pdfium::base::checked_cast<int>(PixelWeight::TotalBytesForWeightCount(2));
+      pdfium::checked_cast<int>(PixelWeight::TotalBytesForWeightCount(2));
   FX_SAFE_SIZE_T safe_size = m_ItemSize;
   safe_size *= dest_len;
   m_pWeightTables.resize(safe_size.ValueOrDie(), 0);
@@ -132,7 +132,7 @@ void ProgressiveDecoder::VertTable::CalculateWeights(int dest_len,
                                                      int src_len) {
   CHECK_GE(dest_len, 0);
   m_ItemSize =
-      pdfium::base::checked_cast<int>(PixelWeight::TotalBytesForWeightCount(2));
+      pdfium::checked_cast<int>(PixelWeight::TotalBytesForWeightCount(2));
   FX_SAFE_SIZE_T safe_size = m_ItemSize;
   safe_size *= dest_len;
   m_pWeightTables.resize(safe_size.ValueOrDie(), 0);
@@ -355,7 +355,7 @@ void ProgressiveDecoder::PngFillScanlineBufCompleted(int pass, int line) {
 
 #ifdef PDF_ENABLE_XFA_GIF
 uint32_t ProgressiveDecoder::GifCurrentPosition() const {
-  uint32_t remain_size = pdfium::base::checked_cast<uint32_t>(
+  uint32_t remain_size = pdfium::checked_cast<uint32_t>(
       GifDecoder::GetAvailInput(m_pGifContext.get()));
   return m_offSet - remain_size;
 }
@@ -557,7 +557,7 @@ void ProgressiveDecoder::ResampleVertBT(
   int dest_top = m_startY;
   int dest_bottom = m_startY + m_sizeY;
   FX_SAFE_INT32 check_dest_row_1 = dest_row;
-  check_dest_row_1 += pdfium::base::checked_cast<int>(scale_y);
+  check_dest_row_1 += pdfium::checked_cast<int>(scale_y);
   int dest_row_1 = check_dest_row_1.ValueOrDie();
   if (dest_row_1 >= dest_bottom - 1) {
     const uint8_t* scan_src =
@@ -692,7 +692,7 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     return false;
   }
 
-  uint32_t available_data = pdfium::base::checked_cast<uint32_t>(
+  uint32_t available_data = pdfium::checked_cast<uint32_t>(
       m_pFile->GetSize() - m_offSet +
       BmpDecoder::GetAvailInput(pBmpContext.get()));
   if (needed_data.value().size > available_data) {
@@ -838,7 +838,7 @@ void ProgressiveDecoder::GifDoubleLineResampleVert(
   int dest_Bpp = pDeviceBitmap->GetBPP() >> 3;
   uint32_t dest_ScanOffset = m_startX * dest_Bpp;
   int dest_top = m_startY;
-  pdfium::base::CheckedNumeric<double> scale_y2 = scale_y;
+  pdfium::CheckedNumeric<double> scale_y2 = scale_y;
   scale_y2 *= 2;
   FX_SAFE_INT32 check_dest_row_1 = dest_row;
   check_dest_row_1 -= scale_y2.ValueOrDie();
@@ -1405,7 +1405,7 @@ bool ProgressiveDecoder::DetectImageType(FXCODEC_IMAGE_TYPE imageType,
     return TiffDetectImageTypeFromFile(pAttribute);
 #endif  // PDF_ENABLE_XFA_TIFF
 
-  size_t size = pdfium::base::checked_cast<size_t>(
+  size_t size = pdfium::checked_cast<size_t>(
       std::min<FX_FILESIZE>(m_pFile->GetSize(), kBlockSize));
   m_pCodecMemory = pdfium::MakeRetain<CFX_CodecMemory>(size);
   m_offSet = 0;
@@ -1448,7 +1448,7 @@ bool ProgressiveDecoder::ReadMoreData(
 
   // Try to get whatever remains.
   uint32_t dwBytesToFetchFromFile =
-      pdfium::base::checked_cast<uint32_t>(m_pFile->GetSize() - m_offSet);
+      pdfium::checked_cast<uint32_t>(m_pFile->GetSize() - m_offSet);
 
   // Figure out if the codec stopped processing midway through the buffer.
   size_t dwUnconsumed;
@@ -1472,7 +1472,7 @@ bool ProgressiveDecoder::ReadMoreData(
     // don't need to do this awkward dance to free up exactly enough buffer
     // space for the next read.
     size_t dwConsumable = m_pCodecMemory->GetSize() - dwUnconsumed;
-    dwBytesToFetchFromFile = pdfium::base::checked_cast<uint32_t>(
+    dwBytesToFetchFromFile = pdfium::checked_cast<uint32_t>(
         std::min<size_t>(dwBytesToFetchFromFile, dwConsumable));
     m_pCodecMemory->Consume(dwBytesToFetchFromFile);
     m_pCodecMemory->Seek(dwConsumable - dwBytesToFetchFromFile);
@@ -1923,7 +1923,7 @@ void ProgressiveDecoder::ResampleVert(
   uint32_t dest_ScanOffset = m_startX * dest_Bpp;
   int dest_top = m_startY;
   FX_SAFE_INT32 check_dest_row_1 = dest_row;
-  check_dest_row_1 -= pdfium::base::checked_cast<int>(scale_y);
+  check_dest_row_1 -= pdfium::checked_cast<int>(scale_y);
   int dest_row_1 = check_dest_row_1.ValueOrDie();
   if (dest_row_1 < dest_top) {
     int dest_bottom = dest_top + m_sizeY;

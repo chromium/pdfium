@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "third_party/base/numerics/safe_conversions.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 
 namespace {
 
@@ -162,7 +162,7 @@ const uint8_t* CJBig2_BitStream::getBuf() const {
 }
 
 uint32_t CJBig2_BitStream::getLength() const {
-  return pdfium::base::checked_cast<uint32_t>(m_Span.size());
+  return pdfium::checked_cast<uint32_t>(m_Span.size());
 }
 
 const uint8_t* CJBig2_BitStream::getPointer() const {

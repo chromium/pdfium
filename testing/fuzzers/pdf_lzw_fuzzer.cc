@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "core/fxcodec/gif/lzw_decompressor.h"
-#include "third_party/base/numerics/safe_conversions.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 
 // Between 2x and 5x is a standard range for LZW according to a quick
 // search of papers. Running up to 10x to catch any niche cases.

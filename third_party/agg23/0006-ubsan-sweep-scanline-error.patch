@@ -9,7 +9,7 @@ index 1fe9a0c32..9254d830d 100644
 +// static
 +bool rasterizer_scanline_aa::safe_add(int* op1, int op2)
 +{
-+    pdfium::base::CheckedNumeric<int> safeOp1 = *op1;
++    pdfium::CheckedNumeric<int> safeOp1 = *op1;
 +    safeOp1 += op2;
 +    if(!safeOp1.IsValid()) {
 +        return false;
