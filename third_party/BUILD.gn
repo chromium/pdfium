@@ -569,20 +569,3 @@ source_set("pdfium_base") {
     "//third_party/abseil-cpp:absl",
   ]
 }
-
-source_set("pdfium_base_test_support") {
-  testonly = true
-  sources = []
-  configs += [
-    "../:pdfium_strict_config",
-    "../:pdfium_noshorten_config",
-  ]
-  deps = []
-  if (is_posix) {
-    sources += [
-      "base/test/scoped_locale.cc",
-      "base/test/scoped_locale.h",
-    ]
-    deps += [ "//testing/gtest" ]
-  }
-}

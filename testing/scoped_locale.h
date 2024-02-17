@@ -1,14 +1,13 @@
-// Copyright 2019 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_TEST_SCOPED_LOCALE_H_
-#define THIRD_PARTY_BASE_TEST_SCOPED_LOCALE_H_
+#ifndef TESTING_SCOPED_LOCALE_H_
+#define TESTING_SCOPED_LOCALE_H_
 
 #include <string>
 
 namespace pdfium {
-namespace base {
 
 // Sets the given |locale| on construction, and restores the previous locale
 // on destruction.
@@ -24,7 +23,6 @@ class ScopedLocale {
   ScopedLocale& operator=(const ScopedLocale&) = delete;
 };
 
-}  // namespace base
 }  // namespace pdfium
 
-#endif  // THIRD_PARTY_BASE_TEST_SCOPED_LOCALE_H_
+#endif  // TESTING_SCOPED_LOCALE_H_

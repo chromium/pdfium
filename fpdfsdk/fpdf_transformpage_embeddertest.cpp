@@ -10,7 +10,7 @@
 #include "testing/embedder_test_constants.h"
 
 #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
-#include "third_party/base/test/scoped_locale.h"
+#include "testing/scoped_locale.h"
 #endif
 
 using pdfium::RectanglesChecksum;
@@ -485,7 +485,7 @@ TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSave) {
 
 #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
 TEST_F(FPDFTransformEmbedderTest, TransFormWithClipAndSaveWithLocale) {
-  pdfium::base::ScopedLocale scoped_locale("da_DK.UTF-8");
+  pdfium::ScopedLocale scoped_locale("da_DK.UTF-8");
 
   {
     ASSERT_TRUE(OpenDocument("rectangles.pdf"));
