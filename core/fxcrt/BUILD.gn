@@ -98,6 +98,7 @@ source_set("fxcrt") {
     "observed_ptr.cpp",
     "observed_ptr.h",
     "pauseindicator_iface.h",
+    "ptr_util.h",
     "retain_ptr.h",
     "scoped_set_insertion.h",
     "shared_copy_on_write.h",

@@ -9,8 +9,8 @@
 #include <memory>
 
 #include "build/build_config.h"
+#include "core/fxcrt/ptr_util.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/base/memory/ptr_util.h"
 
 #if BUILDFLAG(IS_WIN)
 #error "built on wrong platform"

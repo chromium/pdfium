@@ -8,6 +8,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/ptr_util.h"
 #include "fxbarcode/cbc_codabar.h"
 #include "fxbarcode/cbc_code128.h"
 #include "fxbarcode/cbc_code39.h"
@@ -18,7 +19,6 @@
 #include "fxbarcode/cbc_pdf417i.h"
 #include "fxbarcode/cbc_qrcode.h"
 #include "fxbarcode/cbc_upca.h"
-#include "third_party/base/memory/ptr_util.h"
 #include "third_party/base/notreached.h"
 
 namespace {

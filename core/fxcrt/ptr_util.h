@@ -1,9 +1,9 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_MEMORY_PTR_UTIL_H_
-#define THIRD_PARTY_BASE_MEMORY_PTR_UTIL_H_
+#ifndef CORE_FXCRT_PTR_UTIL_H_
+#define CORE_FXCRT_PTR_UTIL_H_
 
 #include <memory>
 
@@ -19,4 +19,4 @@ std::unique_ptr<T> WrapUnique(T* ptr) {
 
 }  // namespace pdfium
 
-#endif  // THIRD_PARTY_BASE_MEMORY_PTR_UTIL_H_
+#endif  // CORE_FXCRT_PTR_UTIL_H_
