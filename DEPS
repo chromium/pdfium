@@ -151,7 +151,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling markupsafe
   # and whatever else without interference from each other.
-  'markupsafe_revision': '0bad08bb207bbfc1d6f3bbc82b9242b0c50e5794',
+  'markupsafe_revision': 'e582d7f0edb9d67499b0f5abd6ae5550e91da7f2',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling nasm_source
   # and whatever else without interference from each other.
