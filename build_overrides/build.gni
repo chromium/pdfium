@@ -6,6 +6,11 @@
 # Chromium specific targets in a client project's GN file etc.
 build_with_chromium = false
 
+# Variable that can be used to support multiple build scenarios, like when
+# V8 is embedded within a target.
+# PDFium is one such embedder of V8.
+build_with_v8_embedder = true
+
 # PDFium builds don't support building java targets.
 enable_java_templates = false
 
