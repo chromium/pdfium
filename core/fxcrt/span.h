@@ -19,6 +19,8 @@
 
 #if defined(PDF_USE_PARTITION_ALLOC)
 #include "partition_alloc/pointers/raw_ptr.h"
+#else
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 #endif
 
 namespace pdfium {
@@ -311,7 +313,7 @@ class TRIVIAL_ABI GSL_POINTER span {
 #if defined(PDF_USE_PARTITION_ALLOC)
   raw_ptr<T, AllowPtrArithmetic> data_ = nullptr;
 #else
-  T* data_ = nullptr;
+  UNOWNED_PTR_EXCLUSION T* data_ = nullptr;
 #endif
   size_t size_ = 0;
 };
