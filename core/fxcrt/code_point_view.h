@@ -7,7 +7,6 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/string_view_template.h"
-#include "core/fxcrt/utf16.h"
 #include "third_party/base/check_op.h"
 
 namespace pdfium {
@@ -19,6 +18,8 @@ class CodePointView final {
  public:
   class Iterator {
    public:
+    ~Iterator();
+
     bool operator==(const Iterator& other) const {
       return current_ == other.current_;
     }
@@ -28,8 +29,7 @@ class CodePointView final {
     }
 
     Iterator& operator++() {
-      DCHECK_LT(current_, end_);
-      current_ += IsSupplementary(code_point_) ? 2 : 1;
+      current_ = next_;
       code_point_ = Decode();
       return *this;
     }
@@ -44,43 +44,23 @@ class CodePointView final {
 
     static constexpr char32_t kSentinel = -1;
 
-    Iterator(const wchar_t* begin, const wchar_t* end)
-        : current_(begin), end_(end), code_point_(Decode()) {}
+    explicit Iterator(WideStringView str_view);
 
-    char32_t Decode() {
-      if (current_ >= end_) {
-        return kSentinel;
-      }
+    char32_t Decode();
 
-      char32_t code_point = *current_;
-      if (IsHighSurrogate(code_point)) {
-        const wchar_t* next = current_ + 1;
-        if (next < end_ && IsLowSurrogate(*next)) {
-          code_point = SurrogatePair(code_point, *next).ToCodePoint();
-        }
-      }
-
-      return code_point;
-    }
-
-    const wchar_t* current_;
-    const wchar_t* end_;
+    WideStringView current_;
+    WideStringView next_;
     char32_t code_point_;
   };
 
-  explicit CodePointView(WideStringView backing)
-      : begin_(backing.begin()), end_(backing.end()) {
-    DCHECK_LE(begin_, end_);
-  }
+  explicit CodePointView(WideStringView backing);
+  ~CodePointView();
 
-  Iterator begin() const { return Iterator(begin_, end_); }
-
-  Iterator end() const { return Iterator(end_, end_); }
+  Iterator begin() const { return Iterator(backing_); }
+  Iterator end() const { return Iterator(WideStringView()); }
 
  private:
-  // Note that a `WideStringView` member would make the constructor too complex.
-  const wchar_t* begin_;
-  const wchar_t* end_;
+  WideStringView backing_;
 };
 #else
 using CodePointView = WideStringView;
