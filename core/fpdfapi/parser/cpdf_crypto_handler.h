@@ -10,6 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <array>
 #include <memory>
 
 #include "core/fdrm/fx_crypt.h"
@@ -59,7 +60,7 @@ class CPDF_CryptoHandler {
   const size_t m_KeyLen;
   const Cipher m_Cipher;
   std::unique_ptr<CRYPT_aes_context, FxFreeDeleter> m_pAESContext;
-  uint8_t m_EncryptKey[32] = {};
+  std::array<uint8_t, 32> m_EncryptKey = {};
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_CRYPTO_HANDLER_H_

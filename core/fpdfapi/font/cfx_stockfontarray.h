@@ -7,6 +7,8 @@
 #ifndef CORE_FPDFAPI_FONT_CFX_STOCKFONTARRAY_H_
 #define CORE_FPDFAPI_FONT_CFX_STOCKFONTARRAY_H_
 
+#include <array>
+
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_fontmapper.h"
 
@@ -21,7 +23,7 @@ class CFX_StockFontArray {
   void SetFont(CFX_FontMapper::StandardFont index, RetainPtr<CPDF_Font> pFont);
 
  private:
-  RetainPtr<CPDF_Font> m_StockFonts[14];
+  std::array<RetainPtr<CPDF_Font>, 14> m_StockFonts;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CFX_STOCKFONTARRAY_H_

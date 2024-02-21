@@ -181,6 +181,8 @@ using EnableIfConstSpanCompatibleContainer =
 // - using size_t instead of ptrdiff_t for indexing
 //
 // Additions beyond the C++ standard draft
+// - as_chars() function.
+// - as_writable_chars() function.
 // - as_byte_span() function.
 // - as_writable_byte_span() function.
 // - span_from_ref() function.
@@ -210,6 +212,10 @@ class TRIVIAL_ABI GSL_POINTER span {
 
   template <size_t N>
   constexpr span(std::array<T, N>& array) noexcept : span(array.data(), N) {}
+
+  template <size_t N>
+  constexpr span(const std::array<std::remove_cv_t<T>, N>& array) noexcept
+      : span(array.data(), N) {}
 
   // Conversion from a container that provides |T* data()| and |integral_type
   // size()|. Note that |data()| may not return nullptr for some empty
@@ -328,6 +334,17 @@ template <typename T,
           typename U = typename std::enable_if<!std::is_const<T>::value>::type>
 span<uint8_t> as_writable_bytes(span<T> s) noexcept {
   return {reinterpret_cast<uint8_t*>(s.data()), s.size_bytes()};
+}
+
+template <typename T>
+span<const char> as_chars(span<T> s) noexcept {
+  return {reinterpret_cast<const char*>(s.data()), s.size_bytes()};
+}
+
+template <typename T,
+          typename U = typename std::enable_if<!std::is_const<T>::value>::type>
+span<char> as_writable_chars(span<T> s) noexcept {
+  return {reinterpret_cast<char*>(s.data()), s.size_bytes()};
 }
 
 // Type-deducing helpers for constructing a span.

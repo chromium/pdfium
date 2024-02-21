@@ -7,6 +7,7 @@
 #ifndef FXBARCODE_QRCODE_BC_QRCODERVERSION_H_
 #define FXBARCODE_QRCODE_BC_QRCODERVERSION_H_
 
+#include <array>
 #include <memory>
 
 #include "fxbarcode/qrcode/BC_QRCoderECBlocks.h"
@@ -35,7 +36,7 @@ class CBC_QRCoderVersion {
  private:
   const int32_t m_versionNumber;
   int32_t m_totalCodeWords;
-  std::unique_ptr<CBC_QRCoderECBlocks> m_ecBlocksArray[4];
+  std::array<std::unique_ptr<CBC_QRCoderECBlocks>, 4> m_ecBlocksArray;
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERVERSION_H_

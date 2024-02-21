@@ -76,7 +76,7 @@ bool CPDF_Type3Font::Load() {
     m_FontBBox = box.ToFxRect();
   }
 
-  static constexpr size_t kCharLimit = std::extent<decltype(m_CharWidthL)>();
+  const size_t kCharLimit = m_CharWidthL.size();
   int StartChar = m_pFontDict->GetIntegerFor("FirstChar");
   if (StartChar >= 0 && static_cast<size_t>(StartChar) < kCharLimit) {
     RetainPtr<const CPDF_Array> pWidthArray =

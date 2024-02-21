@@ -7,6 +7,7 @@
 #ifndef FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256_H_
 #define FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256_H_
 
+#include <array>
 #include <memory>
 #include <optional>
 
@@ -31,8 +32,8 @@ class CBC_ReedSolomonGF256 {
  private:
   std::unique_ptr<CBC_ReedSolomonGF256Poly> m_zero;
   std::unique_ptr<CBC_ReedSolomonGF256Poly> m_one;
-  int32_t m_expTable[256];
-  int32_t m_logTable[256];
+  std::array<int32_t, 256> m_expTable;
+  std::array<int32_t, 256> m_logTable;
 };
 
 #endif  // FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256_H_

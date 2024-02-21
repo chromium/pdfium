@@ -10,6 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <array>
 #include <memory>
 
 #include "core/fpdfapi/parser/cpdf_crypto_handler.h"
@@ -82,7 +83,7 @@ class CPDF_SecurityHandler final : public Retainable {
   ByteString m_FileId;
   RetainPtr<const CPDF_Dictionary> m_pEncryptDict;
   std::unique_ptr<CPDF_CryptoHandler> m_pCryptoHandler;
-  uint8_t m_EncryptKey[32] = {};
+  std::array<uint8_t, 32> m_EncryptKey = {};
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_SECURITY_HANDLER_H_

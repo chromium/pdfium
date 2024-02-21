@@ -82,13 +82,13 @@ constexpr uint8_t kSRGBSamples2[] = {
 
 constexpr size_t kBlackWhitePointCount = 3;
 
-void GetDefaultBlackPoint(float* pPoints) {
+void GetDefaultBlackPoint(pdfium::span<float> pPoints) {
   static constexpr float kDefaultValue = 0.0f;
   for (size_t i = 0; i < kBlackWhitePointCount; ++i)
     pPoints[i] = kDefaultValue;
 }
 
-void GetBlackPoint(const CPDF_Dictionary* pDict, float* pPoints) {
+void GetBlackPoint(const CPDF_Dictionary* pDict, pdfium::span<float> pPoints) {
   RetainPtr<const CPDF_Array> pParam = pDict->GetArrayFor("BlackPoint");
   if (!pParam || pParam->size() != kBlackWhitePointCount) {
     GetDefaultBlackPoint(pPoints);
@@ -105,7 +105,7 @@ void GetBlackPoint(const CPDF_Dictionary* pDict, float* pPoints) {
   }
 }
 
-bool GetWhitePoint(const CPDF_Dictionary* pDict, float* pPoints) {
+bool GetWhitePoint(const CPDF_Dictionary* pDict, pdfium::span<float> pPoints) {
   RetainPtr<const CPDF_Array> pParam = pDict->GetArrayFor("WhitePoint");
   if (!pParam || pParam->size() != kBlackWhitePointCount)
     return false;
@@ -208,9 +208,9 @@ class CPDF_LabCS final : public CPDF_ColorSpace {
 
   CPDF_LabCS();
 
-  float m_WhitePoint[kBlackWhitePointCount] = {1.0f, 1.0f, 1.0f};
-  float m_BlackPoint[kBlackWhitePointCount] = {0.0f, 0.0f, 0.0f};
-  float m_Ranges[kRangesCount] = {};
+  std::array<float, kBlackWhitePointCount> m_WhitePoint = {1.0f, 1.0f, 1.0f};
+  std::array<float, kBlackWhitePointCount> m_BlackPoint = {0.0f, 0.0f, 0.0f};
+  std::array<float, kRangesCount> m_Ranges = {};
 };
 
 class CPDF_ICCBasedCS final : public CPDF_BasedCS {
@@ -863,8 +863,6 @@ uint32_t CPDF_LabCS::v_Load(CPDF_Document* pDoc,
   RetainPtr<const CPDF_Array> pParam = pDict->GetArrayFor("Range");
   static constexpr float kDefaultRanges[kRangesCount] = {-100.0f, 100.0f,
                                                          -100.0f, 100.0f};
-  static_assert(std::size(kDefaultRanges) == std::extent<decltype(m_Ranges)>(),
-                "Range size mismatch");
   for (size_t i = 0; i < std::size(kDefaultRanges); ++i)
     m_Ranges[i] = pParam ? pParam->GetFloatAt(i) : kDefaultRanges[i];
   return 3;

@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include <array>
 #include <memory>
 #include <vector>
 
@@ -90,7 +91,7 @@ class CPDF_CIDFont final : public CPDF_Font {
   int16_t m_DefaultW1 = -1000;
   std::vector<int> m_WidthList;
   std::vector<int> m_VertMetrics;
-  FX_RECT m_CharBBox[256];
+  std::array<FX_RECT, 256> m_CharBBox;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_CIDFONT_H_

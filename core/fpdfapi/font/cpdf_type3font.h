@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include <array>
 #include <map>
 #include <memory>
 
@@ -61,7 +62,7 @@ class CPDF_Type3Font final : public CPDF_SimpleFont {
   RetainPtr<CPDF_Dictionary> m_pPageResources;
   RetainPtr<CPDF_Dictionary> m_pFontResources;
   std::map<uint32_t, std::unique_ptr<CPDF_Type3Char>> m_CacheMap;
-  int m_CharWidthL[256] = {};
+  std::array<int, 256> m_CharWidthL = {};
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_TYPE3FONT_H_

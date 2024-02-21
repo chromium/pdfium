@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include <array>
+
 #include "core/fxcrt/mask.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -86,9 +88,9 @@ class CFGAS_Break {
   int32_t m_iTolerance = 0;
   int32_t m_iCharSpace = 0;
   RetainPtr<CFGAS_GEFont> m_pFont;
-  UnownedPtr<CFGAS_BreakLine> m_pCurLine;
   int8_t m_iReadyLineIndex = -1;
-  CFGAS_BreakLine m_Lines[2];
+  std::array<CFGAS_BreakLine, 2> m_Lines;
+  UnownedPtr<CFGAS_BreakLine> m_pCurLine;
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFGAS_BREAK_H_

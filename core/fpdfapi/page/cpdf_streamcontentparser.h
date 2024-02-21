@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_STREAMCONTENTPARSER_H_
 #define CORE_FPDFAPI_PAGE_CPDF_STREAMCONTENTPARSER_H_
 
+#include <array>
 #include <memory>
 #include <stack>
 #include <vector>
@@ -239,8 +240,8 @@ class CPDF_StreamContentParser {
   RetainPtr<CPDF_Image> m_pLastImage;
   bool m_bColored = false;
   std::vector<std::unique_ptr<CPDF_AllStates>> m_StateStack;
-  float m_Type3Data[6] = {0.0f};
-  ContentParam m_ParamBuf[kParamBufSize];
+  std::array<float, 6> m_Type3Data = {};
+  std::array<ContentParam, kParamBufSize> m_ParamBuf;
 
   // The merged stream offsets at which a content stream ends and another
   // begins.

@@ -7,6 +7,8 @@
 #ifndef CORE_FXGE_TEXT_CHAR_POS_H_
 #define CORE_FXGE_TEXT_CHAR_POS_H_
 
+#include <array>
+
 #include "build/build_config.h"
 #include "core/fxcrt/fx_coordinates.h"
 
@@ -28,7 +30,7 @@ class TextCharPos {
   int32_t m_FallbackFontPosition = 0;
   bool m_bGlyphAdjust = false;
   bool m_bFontStyle = false;
-  float m_AdjustMatrix[4] = {};
+  std::array<float, 4> m_AdjustMatrix = {};
 };
 
 #endif  // CORE_FXGE_TEXT_CHAR_POS_H_
