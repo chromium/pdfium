@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 
+#include <array>
 #include <iterator>
 
 #include "build/build_config.h"
@@ -54,7 +55,7 @@ void AppendCodePointToByteString(char32_t code_point, ByteString& buffer) {
     byte_size = 4;
   }
 
-  static constexpr uint8_t kPrefix[] = {0xc0, 0xe0, 0xf0};
+  static constexpr std::array<uint8_t, 3> kPrefix = {{0xc0, 0xe0, 0xf0}};
   int order = 1 << ((byte_size - 1) * 6);
   buffer += kPrefix[byte_size - 2] | (code_point / order);
   for (int i = 0; i < byte_size - 1; i++) {

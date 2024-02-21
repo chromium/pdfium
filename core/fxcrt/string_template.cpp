@@ -53,7 +53,7 @@ void StringTemplate<T>::ReleaseBuffer(size_t nNewLength) {
   }
   DCHECK_EQ(m_pData->m_nRefs, 1);
   m_pData->m_nDataLength = nNewLength;
-  m_pData->m_String[nNewLength] = 0;
+  m_pData->capacity_span()[nNewLength] = 0;
   if (m_pData->m_nAllocLength - nNewLength >= 32) {
     // Over arbitrary threshold, so pay the price to relocate.  Force copy to
     // always occur by holding a second reference to the string.
@@ -64,40 +64,29 @@ void StringTemplate<T>::ReleaseBuffer(size_t nNewLength) {
 
 template <typename T>
 size_t StringTemplate<T>::Remove(T chRemove) {
-  if (IsEmpty()) {
-    return 0;
-  }
-
-  T* pstrSource = m_pData->m_String;
-  T* pstrEnd = m_pData->m_String + m_pData->m_nDataLength;
-  while (pstrSource < pstrEnd) {
-    if (*pstrSource == chRemove) {
-      break;
+  size_t count = 0;
+  for (const auto& ch : span()) {
+    if (ch == chRemove) {
+      count++;
     }
-    pstrSource++;
   }
-  if (pstrSource == pstrEnd) {
+  if (count == 0) {
     return 0;
   }
-
-  ptrdiff_t copied = pstrSource - m_pData->m_String;
   ReallocBeforeWrite(m_pData->m_nDataLength);
-  pstrSource = m_pData->m_String + copied;
-  pstrEnd = m_pData->m_String + m_pData->m_nDataLength;
-
-  T* pstrDest = pstrSource;
-  while (pstrSource < pstrEnd) {
-    if (*pstrSource != chRemove) {
-      *pstrDest = *pstrSource;
-      pstrDest++;
+  auto src_span = m_pData->span();
+  auto dst_span = m_pData->span();
+  // Perform self-intersecting copy in forwards order.
+  while (!src_span.empty()) {
+    if (src_span[0] != chRemove) {
+      dst_span[0] = src_span[0];
+      dst_span = dst_span.subspan(1);
     }
-    pstrSource++;
+    src_span = src_span.subspan(1);
   }
-
-  *pstrDest = 0;
-  size_t nCount = static_cast<size_t>(pstrSource - pstrDest);
-  m_pData->m_nDataLength -= nCount;
-  return nCount;
+  m_pData->m_nDataLength -= count;
+  m_pData->capacity_span()[m_pData->m_nDataLength] = 0;
+  return count;
 }
 
 template <typename T>
@@ -110,7 +99,7 @@ size_t StringTemplate<T>::Insert(size_t index, T ch) {
   ReallocBeforeWrite(new_length);
   fxcrt::spanmove(m_pData->capacity_span().subspan(index + 1),
                   m_pData->capacity_span().subspan(index, new_length - index));
-  m_pData->m_String[index] = ch;
+  m_pData->capacity_span()[index] = ch;
   m_pData->m_nDataLength = new_length;
   return new_length;
 }
@@ -174,7 +163,7 @@ std::optional<size_t> StringTemplate<T>::ReverseFind(T ch) const {
   }
   size_t nLength = m_pData->m_nDataLength;
   while (nLength--) {
-    if (m_pData->m_String[nLength] == ch) {
+    if (m_pData->span()[nLength] == ch) {
       return nLength;
     }
   }
@@ -263,7 +252,7 @@ void StringTemplate<T>::TrimFront(StringView targets) {
   while (pos < len) {
     size_t i = 0;
     while (i < targets.GetLength() &&
-           targets.CharAt(i) != m_pData->m_String[pos]) {
+           targets.CharAt(i) != m_pData->span()[pos]) {
       i++;
     }
     if (i == targets.GetLength()) {
@@ -297,7 +286,7 @@ void StringTemplate<T>::TrimBack(StringView targets) {
   while (pos) {
     size_t i = 0;
     while (i < targets.GetLength() &&
-           targets.CharAt(i) != m_pData->m_String[pos - 1]) {
+           targets.CharAt(i) != m_pData->span()[pos - 1]) {
       i++;
     }
     if (i == targets.GetLength()) {
@@ -307,8 +296,8 @@ void StringTemplate<T>::TrimBack(StringView targets) {
   }
   if (pos < m_pData->m_nDataLength) {
     ReallocBeforeWrite(m_pData->m_nDataLength);
-    m_pData->m_String[pos] = 0;
     m_pData->m_nDataLength = pos;
+    m_pData->capacity_span()[m_pData->m_nDataLength] = 0;
   }
 }
 
@@ -329,7 +318,7 @@ void StringTemplate<T>::ReallocBeforeWrite(size_t nNewLength) {
   } else {
     pNewData->m_nDataLength = 0;
   }
-  pNewData->m_String[pNewData->m_nDataLength] = 0;
+  pNewData->capacity_span()[pNewData->m_nDataLength] = 0;
   m_pData = std::move(pNewData);
 }
 

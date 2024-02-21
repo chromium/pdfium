@@ -16,6 +16,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span_util.h"
 #include "third_party/base/check.h"
 #include "third_party/base/check_op.h"
 
@@ -67,26 +68,19 @@ std::pair<size_t, size_t> UTF8Decode(pdfium::span<const uint8_t> pSrc,
   return {iSrcNum, iDstNum};
 }
 
+void UTF16ToWChar(pdfium::span<wchar_t> buffer) {
 #if defined(WCHAR_T_IS_32_BIT)
-static_assert(sizeof(wchar_t) > 2, "wchar_t is too small");
-
-void UTF16ToWChar(void* pBuffer, size_t iLength) {
-  DCHECK(pBuffer);
-  DCHECK_GT(iLength, 0u);
-
-  uint16_t* pSrc = static_cast<uint16_t*>(pBuffer);
-  wchar_t* pDst = static_cast<wchar_t*>(pBuffer);
-
+  auto src = fxcrt::reinterpret_span<uint16_t>(buffer);
   // Perform self-intersecting copy in reverse order.
-  for (size_t i = iLength; i > 0; --i)
-    pDst[i - 1] = static_cast<wchar_t>(pSrc[i - 1]);
-}
+  for (size_t i = buffer.size(); i > 0; --i) {
+    buffer[i - 1] = static_cast<wchar_t>(src[i - 1]);
+  }
 #endif  // defined(WCHAR_T_IS_32_BIT)
+}
 
-void SwapByteOrder(uint16_t* pStr, size_t iLength) {
-  while (iLength-- > 0) {
-    uint16_t wch = *pStr;
-    *pStr++ = (wch >> 8) | (wch << 8);
+void SwapByteOrder(pdfium::span<uint16_t> str) {
+  for (auto& wch : str) {
+    wch = (wch >> 8) | (wch << 8);
   }
 }
 
@@ -191,13 +185,10 @@ size_t CFX_SeekableStreamProxy::ReadBlock(wchar_t* pStr, size_t size) {
     size_t iBytes = size * 2;
     size_t iLen = ReadData(reinterpret_cast<uint8_t*>(pStr), iBytes);
     size = iLen / 2;
-    if (m_wCodePage == FX_CodePage::kUTF16BE)
-      SwapByteOrder(reinterpret_cast<uint16_t*>(pStr), size);
-
-#if defined(WCHAR_T_IS_32_BIT)
-    if (size > 0)
-      UTF16ToWChar(pStr, size);
-#endif
+    if (m_wCodePage == FX_CodePage::kUTF16BE) {
+      SwapByteOrder({reinterpret_cast<uint16_t*>(pStr), size});
+    }
+    UTF16ToWChar({pStr, size});
     return size;
   }
 

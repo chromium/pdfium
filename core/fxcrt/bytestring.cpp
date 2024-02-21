@@ -271,25 +271,22 @@ bool ByteString::operator<(const ByteString& other) const {
 }
 
 bool ByteString::EqualNoCase(ByteStringView str) const {
-  if (!m_pData)
+  if (!m_pData) {
     return str.IsEmpty();
-
-  size_t len = str.GetLength();
-  if (m_pData->m_nDataLength != len)
+  }
+  if (m_pData->m_nDataLength != str.GetLength()) {
     return false;
-
-  const uint8_t* pThis = (const uint8_t*)m_pData->m_String;
-  const uint8_t* pThat = str.raw_str();
-  for (size_t i = 0; i < len; i++) {
-    if ((*pThis) != (*pThat)) {
-      uint8_t this_char = tolower(*pThis);
-      uint8_t that_char = tolower(*pThat);
-      if (this_char != that_char) {
-        return false;
-      }
+  }
+  pdfium::span<const uint8_t> this_span = pdfium::as_bytes(m_pData->span());
+  pdfium::span<const uint8_t> that_span = str.raw_span();
+  while (!this_span.empty()) {
+    uint8_t this_char = this_span.front();
+    uint8_t that_char = that_span.front();
+    if (this_char != that_char && tolower(this_char) != tolower(that_char)) {
+      return false;
     }
-    pThis++;
-    pThat++;
+    this_span = this_span.subspan(1);
+    that_span = that_span.subspan(1);
   }
   return true;
 }
@@ -366,6 +363,7 @@ void ByteString::TrimWhitespaceFront() {
 void ByteString::TrimWhitespaceBack() {
   TrimBack(kTrimChars);
 }
+
 std::ostream& operator<<(std::ostream& os, const ByteString& str) {
   return os.write(str.c_str(), str.GetLength());
 }
