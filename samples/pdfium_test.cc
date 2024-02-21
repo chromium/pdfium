@@ -1944,63 +1944,69 @@ int main(int argc, const char* argv[]) {
 
   FPDF_InitLibraryWithConfig(&config);
 
-  std::unique_ptr<FontRenamer> font_renamer;
-  if (options.croscore_font_names)
-    font_renamer = std::make_unique<FontRenamer>();
-
-  UNSUPPORT_INFO unsupported_info = {};
-  unsupported_info.version = 1;
-  unsupported_info.FSDK_UnSupport_Handler = ExampleUnsupportedHandler;
-
-  FSDK_SetUnSpObjProcessHandler(&unsupported_info);
-
-  if (options.time > -1) {
-    // This must be a static var to avoid explicit capture, so the lambda can be
-    // converted to a function ptr.
-    static time_t time_ret = options.time;
-    FSDK_SetTimeFunction([]() { return time_ret; });
-    FSDK_SetLocaltimeFunction([](const time_t* tp) { return gmtime(tp); });
-  }
-
-  Processor processor(&options, &idler);
-  for (const std::string& filename : files) {
-    std::vector<uint8_t> file_contents = GetFileContents(filename.c_str());
-    if (file_contents.empty()) {
-      continue;
+  {
+    std::unique_ptr<FontRenamer> font_renamer;
+    if (options.croscore_font_names) {
+      // Must be destroyed before FPDF_DestroyLibrary().
+      font_renamer = std::make_unique<FontRenamer>();
     }
-    fprintf(stderr, "Processing PDF file %s.\n", filename.c_str());
+
+    UNSUPPORT_INFO unsupported_info = {};
+    unsupported_info.version = 1;
+    unsupported_info.FSDK_UnSupport_Handler = ExampleUnsupportedHandler;
+
+    FSDK_SetUnSpObjProcessHandler(&unsupported_info);
+
+    if (options.time > -1) {
+      // This must be a static var to avoid explicit capture, so the lambda can
+      // be converted to a function ptr.
+      static time_t time_ret = options.time;
+      FSDK_SetTimeFunction([]() { return time_ret; });
+      FSDK_SetLocaltimeFunction([](const time_t* tp) { return gmtime(tp); });
+    }
+
+    Processor processor(&options, &idler);
+    for (const std::string& filename : files) {
+      std::vector<uint8_t> file_contents = GetFileContents(filename.c_str());
+      if (file_contents.empty()) {
+        continue;
+      }
+      fprintf(stderr, "Processing PDF file %s.\n", filename.c_str());
 
 #ifdef ENABLE_CALLGRIND
-    if (options.callgrind_delimiters)
-      CALLGRIND_START_INSTRUMENTATION;
+      if (options.callgrind_delimiters) {
+        CALLGRIND_START_INSTRUMENTATION;
+      }
 #endif  // ENABLE_CALLGRIND
 
-    std::string events;
-    if (options.send_events) {
-      std::string event_filename = filename;
-      size_t extension_pos = event_filename.find(".pdf");
-      if (extension_pos != std::string::npos) {
-        event_filename.replace(extension_pos, 4, ".evt");
-        if (access(event_filename.c_str(), R_OK) == 0) {
-          fprintf(stderr, "Using event file %s.\n", event_filename.c_str());
-          std::vector<uint8_t> event_contents =
-              GetFileContents(event_filename.c_str());
-          if (!event_contents.empty()) {
-            fprintf(stderr, "Sending events from: %s\n",
-                    event_filename.c_str());
-            std::copy(event_contents.begin(), event_contents.end(),
-                      std::back_inserter(events));
+      std::string events;
+      if (options.send_events) {
+        std::string event_filename = filename;
+        size_t extension_pos = event_filename.find(".pdf");
+        if (extension_pos != std::string::npos) {
+          event_filename.replace(extension_pos, 4, ".evt");
+          if (access(event_filename.c_str(), R_OK) == 0) {
+            fprintf(stderr, "Using event file %s.\n", event_filename.c_str());
+            std::vector<uint8_t> event_contents =
+                GetFileContents(event_filename.c_str());
+            if (!event_contents.empty()) {
+              fprintf(stderr, "Sending events from: %s\n",
+                      event_filename.c_str());
+              std::copy(event_contents.begin(), event_contents.end(),
+                        std::back_inserter(events));
+            }
           }
         }
       }
-    }
 
-    processor.ProcessPdf(filename, file_contents, events);
+      processor.ProcessPdf(filename, file_contents, events);
 
 #ifdef ENABLE_CALLGRIND
-    if (options.callgrind_delimiters)
-      CALLGRIND_STOP_INSTRUMENTATION;
+      if (options.callgrind_delimiters) {
+        CALLGRIND_STOP_INSTRUMENTATION;
+      }
 #endif  // ENABLE_CALLGRIND
+    }
   }
 
   FPDF_DestroyLibrary();

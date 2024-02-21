@@ -155,10 +155,17 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_AddInstalledFont(void* mapper,
 
 FPDF_EXPORT void FPDF_CALLCONV
 FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt) {
+  auto* mapper = CFX_GEModule::Get()->GetFontMgr()->GetBuiltinMapper();
+  if (!pFontInfoExt) {
+    std::unique_ptr<SystemFontInfoIface> info = mapper->TakeSystemFontInfo();
+    // Delete `info` when it goes out of scope here.
+    return;
+  }
+
   if (pFontInfoExt->version != 1)
     return;
 
-  CFX_GEModule::Get()->GetFontMgr()->GetBuiltinMapper()->SetSystemFontInfo(
+  mapper->SetSystemFontInfo(
       std::make_unique<CFX_ExternalFontInfo>(pFontInfoExt));
 
 #ifdef PDF_ENABLE_XFA
