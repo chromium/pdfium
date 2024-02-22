@@ -408,8 +408,9 @@ RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
   CHECK(pProfileStream);
 
   auto it = m_IccProfileMap.find(pProfileStream);
-  if (it != m_IccProfileMap.end() && it->second)
-    return pdfium::WrapRetain(it->second.Get());
+  if (it != m_IccProfileMap.end()) {
+    return it->second;
+  }
 
   auto pAccessor = pdfium::MakeRetain<CPDF_StreamAcc>(pProfileStream);
   pAccessor->LoadAllDataFiltered();
@@ -426,12 +427,13 @@ RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
   auto hash_it = m_HashIccProfileMap.find(hash_profile_key);
   if (hash_it != m_HashIccProfileMap.end()) {
     auto it_copied_stream = m_IccProfileMap.find(hash_it->second);
-    if (it_copied_stream != m_IccProfileMap.end() && it_copied_stream->second)
-      return pdfium::WrapRetain(it_copied_stream->second.Get());
+    if (it_copied_stream != m_IccProfileMap.end()) {
+      return it_copied_stream->second;
+    }
   }
   auto pProfile = pdfium::MakeRetain<CPDF_IccProfile>(
       pProfileStream, pAccessor->GetSpan(), expected_components);
-  m_IccProfileMap[pProfileStream].Reset(pProfile.Get());
+  m_IccProfileMap[pProfileStream] = pProfile;
   m_HashIccProfileMap[hash_profile_key] = std::move(pProfileStream);
   return pProfile;
 }

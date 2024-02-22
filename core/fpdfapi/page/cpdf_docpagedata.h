@@ -124,7 +124,7 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
       m_ColorSpaceMap;
   std::map<RetainPtr<const CPDF_Stream>, RetainPtr<CPDF_StreamAcc>>
       m_FontFileMap;
-  std::map<RetainPtr<const CPDF_Stream>, ObservedPtr<CPDF_IccProfile>>
+  std::map<RetainPtr<const CPDF_Stream>, RetainPtr<CPDF_IccProfile>>
       m_IccProfileMap;
   std::map<RetainPtr<const CPDF_Object>, ObservedPtr<CPDF_Pattern>>
       m_PatternMap;

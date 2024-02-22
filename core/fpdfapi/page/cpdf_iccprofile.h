@@ -11,7 +11,6 @@
 
 #include <memory>
 
-#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 
@@ -21,7 +20,7 @@ namespace fxcodec {
 class IccTransform;
 }  // namespace fxcodec
 
-class CPDF_IccProfile final : public Retainable, public Observable {
+class CPDF_IccProfile final : public Retainable {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 
