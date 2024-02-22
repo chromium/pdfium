@@ -4,10 +4,10 @@
 
 #include "testing/xfa_test_environment.h"
 
+#include "core/fxcrt/check.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
 #include "core/fxge/systemfontinfo_iface.h"
-#include "third_party/base/check.h"
 #include "xfa/fgas/font/cfgas_gemodule.h"
 
 namespace {

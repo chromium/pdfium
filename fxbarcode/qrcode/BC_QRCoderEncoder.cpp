@@ -30,6 +30,8 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/check.h"
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/span_util.h"
@@ -43,8 +45,6 @@
 #include "fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
 #include "fxbarcode/qrcode/BC_QRCoderMode.h"
 #include "fxbarcode/qrcode/BC_QRCoderVersion.h"
-#include "third_party/base/check.h"
-#include "third_party/base/check_op.h"
 
 using ModeStringPair = std::pair<CBC_QRCoderMode*, ByteString>;
 

@@ -26,10 +26,10 @@
 
 #include <memory>
 
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
-#include "third_party/base/check.h"
 
 namespace {
 

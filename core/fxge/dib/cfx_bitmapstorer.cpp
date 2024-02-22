@@ -10,9 +10,9 @@
 
 #include <utility>
 
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "third_party/base/check_op.h"
 
 CFX_BitmapStorer::CFX_BitmapStorer() = default;
 

@@ -18,11 +18,11 @@
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/cfx_read_only_string_stream.h"
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_stream.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
-#include "third_party/base/check.h"
 
 namespace {
 

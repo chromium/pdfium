@@ -14,8 +14,8 @@
 #include <type_traits>
 #include <utility>
 
-#include "third_party/base/check.h"
-#include "third_party/base/compiler_specific.h"
+#include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 
 #if defined(PDF_USE_PARTITION_ALLOC)
 #include "partition_alloc/pointers/raw_ptr.h"

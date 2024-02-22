@@ -4,14 +4,14 @@
 
 #include <vector>
 
+#include "core/fxcrt/check.h"
+#include "core/fxcrt/check_op.h"
 #include "fpdfsdk/cpdfsdk_annotiterator.h"
 #include "fpdfsdk/cpdfsdk_baannot.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "testing/embedder_test.h"
-#include "third_party/base/check.h"
-#include "third_party/base/check_op.h"
 
 class CPDFSDK_BAAnnotTest : public EmbedderTest {
  public:

@@ -65,8 +65,8 @@ using UnownedPtr = raw_ptr<T>;
 #include <type_traits>
 #include <utility>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/unowned_ptr_exclusion.h"
-#include "third_party/base/compiler_specific.h"
 
 namespace fxcrt {
 

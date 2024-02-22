@@ -8,7 +8,7 @@
 
 #include "core/fxcodec/bmp/bmp_decoder.h"
 #include "core/fxcodec/cfx_codec_memory.h"
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 
 namespace fxcodec {
 

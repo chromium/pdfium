@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffsignature.h"
 
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 #include "xfa/fxfa/cxfa_ffpageview.h"

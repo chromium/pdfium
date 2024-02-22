@@ -12,10 +12,10 @@
 #include <utility>
 
 #include "core/fxcodec/flate/flatemodule.h"
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cjx_object.h"
-#include "third_party/base/check.h"
 #include "xfa/fxfa/parser/cxfa_acrobat.h"
 #include "xfa/fxfa/parser/cxfa_common.h"
 #include "xfa/fxfa/parser/cxfa_locale.h"

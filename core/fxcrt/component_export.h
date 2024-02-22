@@ -1,9 +1,9 @@
-// Copyright 2018 The Chromium Authors
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_COMPONENT_EXPORT_H_
-#define THIRD_PARTY_BASE_COMPONENT_EXPORT_H_
+#ifndef CORE_FXCRT_COMPONENT_EXPORT_H_
+#define CORE_FXCRT_COMPONENT_EXPORT_H_
 
 // Used to annotate symbols which are exported by the component named
 // |component|. Note that this only does the right thing if the corresponding
@@ -73,4 +73,4 @@
   COMPONENT_MACRO_SELECT_THIRD_ARGUMENT_IMPL_(__VA_ARGS__)
 #define COMPONENT_MACRO_SELECT_THIRD_ARGUMENT_IMPL_(a, b, c, ...) c
 
-#endif  // THIRD_PARTY_BASE_COMPONENT_EXPORT_H_
+#endif  // CORE_FXCRT_COMPONENT_EXPORT_H_

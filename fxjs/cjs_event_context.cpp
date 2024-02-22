@@ -8,12 +8,12 @@
 
 #include "core/fpdfdoc/cpdf_formfield.h"
 #include "core/fxcrt/autorestorer.h"
+#include "core/fxcrt/check.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fxjs/cjs_field.h"
 #include "fxjs/cjs_runtime.h"
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
-#include "third_party/base/check.h"
 #include "v8/include/v8-context.h"
 #include "v8/include/v8-isolate.h"
 

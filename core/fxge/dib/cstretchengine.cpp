@@ -12,6 +12,7 @@
 #include <type_traits>
 #include <utility>
 
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/pauseindicator_iface.h"
@@ -20,7 +21,6 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/dib/scanlinecomposer_iface.h"
-#include "third_party/base/check.h"
 
 static_assert(
     std::is_trivially_destructible<CStretchEngine::PixelWeight>::value,

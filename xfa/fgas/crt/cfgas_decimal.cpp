@@ -12,8 +12,8 @@
 #include <limits>
 #include <utility>
 
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_extension.h"
-#include "third_party/base/check.h"
 
 #define FXMATH_DECIMAL_SCALELIMIT 0x1c
 #define FXMATH_DECIMAL_RSHIFT32BIT(x) ((x) >> 0x10 >> 0x10)

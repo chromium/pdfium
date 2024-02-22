@@ -9,7 +9,7 @@
 #include <math.h>
 
 #include "core/fxcrt/fx_extension.h"
-#include "third_party/base/notreached.h"
+#include "core/fxcrt/notreached.h"
 
 namespace {
 

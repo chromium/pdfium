@@ -14,8 +14,8 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcodec/flate/flatemodule.h"
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
-#include "third_party/base/check.h"
 
 CPDF_FlateEncoder::CPDF_FlateEncoder(RetainPtr<const CPDF_Stream> pStream,
                                      bool bFlateEncode)

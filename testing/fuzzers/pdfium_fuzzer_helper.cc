@@ -16,13 +16,13 @@
 #include <tuple>
 #include <utility>
 
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/numerics/checked_math.h"
 #include "core/fxcrt/span.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdf_text.h"
-#include "third_party/base/check_op.h"
 
 namespace {
 

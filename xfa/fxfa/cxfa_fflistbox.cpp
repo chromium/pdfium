@@ -10,8 +10,8 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/stl_util.h"
-#include "third_party/base/check.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_listbox.h"
 #include "xfa/fwl/cfwl_notedriver.h"

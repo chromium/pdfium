@@ -7,8 +7,8 @@
 #include "xfa/fwl/cfwl_widgetmgr.h"
 
 #include "build/build_config.h"
+#include "core/fxcrt/check.h"
 #include "fxjs/gc/container_trace.h"
-#include "third_party/base/check.h"
 #include "xfa/fwl/cfwl_app.h"
 #include "xfa/fwl/cfwl_message.h"
 #include "xfa/fwl/cfwl_notedriver.h"

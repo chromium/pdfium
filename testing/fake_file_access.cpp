@@ -6,8 +6,8 @@
 
 #include <utility>
 
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_system.h"
-#include "third_party/base/check.h"
 
 class FileAccessWrapper final : public FPDF_FILEACCESS {
  public:

@@ -8,10 +8,10 @@
 
 #include <utility>
 
+#include "core/fxcrt/notreached.h"
 #include "fpdfsdk/pwl/cpwl_combo_box.h"
 #include "fpdfsdk/pwl/cpwl_list_ctrl.h"
 #include "public/fpdf_fwlevent.h"
-#include "third_party/base/notreached.h"
 
 CPWL_CBListBox::CPWL_CBListBox(
     const CreateParams& cp,

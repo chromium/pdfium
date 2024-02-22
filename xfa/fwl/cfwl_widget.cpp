@@ -10,7 +10,7 @@
 #include <utility>
 #include <vector>
 
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fwl/cfwl_app.h"

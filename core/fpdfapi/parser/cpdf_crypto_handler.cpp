@@ -23,8 +23,8 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "third_party/base/check.h"
-#include "third_party/base/check_op.h"
+#include "core/fxcrt/check.h"
+#include "core/fxcrt/check_op.h"
 
 namespace {
 

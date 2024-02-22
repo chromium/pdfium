@@ -13,8 +13,8 @@
 #include <type_traits>
 
 #include "build/build_config.h"
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/debug/alias.h"
-#include "third_party/base/check_op.h"
 
 #if BUILDFLAG(IS_WIN)
 #include <windows.h>

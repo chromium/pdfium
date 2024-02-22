@@ -12,9 +12,9 @@
 #include <type_traits>
 #include <utility>
 
+#include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/base/check.h"
-#include "third_party/base/compiler_specific.h"
 
 namespace fxcrt {
 

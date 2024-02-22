@@ -6,7 +6,7 @@
 
 #include "core/fxcrt/css/cfx_cssstylerule.h"
 
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 
 CFX_CSSStyleRule::CFX_CSSStyleRule() = default;
 

@@ -7,10 +7,10 @@
 #ifndef XFA_FGAS_GRAPHICS_CFGAS_GECOLOR_H_
 #define XFA_FGAS_GRAPHICS_CFGAS_GECOLOR_H_
 
+#include "core/fxcrt/check.h"
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/base/check.h"
-#include "third_party/base/check_op.h"
 
 class CFGAS_GEPattern;
 class CFGAS_GEShading;

@@ -9,7 +9,7 @@
 #include <winerror.h>
 #include <xpsobjectmodel.h>
 
-#include "third_party/base/check_op.h"
+#include "core/fxcrt/check_op.h"
 
 ComFactory::ComFactory() = default;
 

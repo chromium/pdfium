@@ -9,13 +9,13 @@
 #include <algorithm>
 
 #include "build/build_config.h"
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/containers/adapters.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/numerics/safe_math.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/text_char_pos.h"
-#include "third_party/base/check.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfgas_char.h"
 #include "xfa/fgas/layout/cfgas_textpiece.h"

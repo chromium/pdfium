@@ -1,13 +1,13 @@
-// Copyright 2020 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_NOTREACHED_H_
-#define THIRD_PARTY_BASE_NOTREACHED_H_
+#ifndef CORE_FXCRT_NOTREACHED_H_
+#define CORE_FXCRT_NOTREACHED_H_
 
 #include <assert.h>
 
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 
 // TODO(crbug.com/pdfium/2008): Migrate NOTREACHED() callers to
 // NOTREACHED_NORETURN() which is [[noreturn]] and always FATAL. Once that's
@@ -21,4 +21,4 @@
 // callers of the old non-CHECK-fatal macro.
 #define NOTREACHED_NORETURN() CHECK(false)
 
-#endif  // THIRD_PARTY_BASE_NOTREACHED_H_
+#endif  // CORE_FXCRT_NOTREACHED_H_

@@ -27,10 +27,10 @@
 #include <algorithm>
 #include <vector>
 
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/fixed_size_data_vector.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
-#include "third_party/base/check.h"
 
 namespace {
 

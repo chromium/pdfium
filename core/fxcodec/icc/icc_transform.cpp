@@ -12,9 +12,9 @@
 #include <memory>
 
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/ptr_util.h"
-#include "third_party/base/notreached.h"
 
 namespace fxcodec {
 

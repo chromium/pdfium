@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "third_party/base/notreached.h"
+#include "core/fxcrt/notreached.h"
 
 // Color types are ordered by increasing number of components so we can choose
 // a best color type during some conversions.

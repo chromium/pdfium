@@ -12,7 +12,7 @@
 
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 
 namespace {
 

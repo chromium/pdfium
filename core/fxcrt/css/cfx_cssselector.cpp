@@ -8,8 +8,8 @@
 
 #include <utility>
 
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_extension.h"
-#include "third_party/base/check.h"
 
 namespace {
 

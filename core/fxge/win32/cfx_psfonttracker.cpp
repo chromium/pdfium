@@ -4,9 +4,9 @@
 
 #include "core/fxge/win32/cfx_psfonttracker.h"
 
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxge/cfx_font.h"
-#include "third_party/base/check.h"
 
 CFX_PSFontTracker::CFX_PSFontTracker() = default;
 

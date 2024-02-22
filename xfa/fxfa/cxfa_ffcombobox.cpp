@@ -9,7 +9,7 @@
 #include <utility>
 #include <vector>
 
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_combobox.h"
 #include "xfa/fwl/cfwl_eventselectchanged.h"

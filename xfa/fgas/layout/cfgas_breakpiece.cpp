@@ -6,8 +6,8 @@
 
 #include "xfa/fgas/layout/cfgas_breakpiece.h"
 
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
-#include "third_party/base/check_op.h"
 #include "xfa/fgas/layout/cfgas_textuserdata.h"
 
 CFGAS_BreakPiece::CFGAS_BreakPiece() = default;

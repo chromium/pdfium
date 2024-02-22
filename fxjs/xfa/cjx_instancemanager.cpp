@@ -9,11 +9,11 @@
 #include <algorithm>
 #include <vector>
 
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/span.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_engine.h"
-#include "third_party/base/check_op.h"
 #include "v8/include/v8-object.h"
 #include "v8/include/v8-primitive.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"

@@ -11,7 +11,7 @@
 
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "third_party/base/check_op.h"
+#include "core/fxcrt/check_op.h"
 
 CFX_StockFontArray::CFX_StockFontArray() = default;
 

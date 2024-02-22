@@ -4,7 +4,7 @@
 
 #include "xfa/fgas/font/cfgas_gemodule.h"
 
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
 namespace {

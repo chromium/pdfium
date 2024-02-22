@@ -8,6 +8,7 @@
 
 #include <string.h>
 
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -15,7 +16,6 @@
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "third_party/base/check_op.h"
 
 CFX_BitmapComposer::CFX_BitmapComposer() = default;
 

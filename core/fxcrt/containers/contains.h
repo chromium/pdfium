@@ -9,7 +9,7 @@
 #include <iterator>
 #include <type_traits>
 
-#include "third_party/base/template_util.h"
+#include "core/fxcrt/template_util.h"
 
 namespace pdfium {
 

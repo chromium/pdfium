@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "core/fpdfapi/page/cpdf_patterncs.h"
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 
 CPDF_Color::CPDF_Color() = default;
 

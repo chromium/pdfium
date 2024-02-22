@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "core/fxcrt/byteorder.h"
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
@@ -19,7 +20,6 @@
 #include "core/fxcrt/win/win_util.h"
 #include "core/fxge/cfx_folderfontinfo.h"
 #include "core/fxge/cfx_gemodule.h"
-#include "third_party/base/check.h"
 
 namespace {
 

@@ -24,8 +24,8 @@
 
 #include <utility>
 
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_system.h"
-#include "third_party/base/check.h"
 
 CBC_QRCoderMode* CBC_QRCoderMode::sBYTE = nullptr;
 CBC_QRCoderMode* CBC_QRCoderMode::sNUMERIC = nullptr;

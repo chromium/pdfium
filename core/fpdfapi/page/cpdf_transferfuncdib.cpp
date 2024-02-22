@@ -11,8 +11,8 @@
 #include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_transferfunc.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fxcrt/check.h"
 #include "core/fxge/calculate_pitch.h"
-#include "third_party/base/check.h"
 
 CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
     RetainPtr<CFX_DIBBase> pSrc,

@@ -1,9 +1,9 @@
-// Copyright (c) 2011 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_TEMPLATE_UTIL_H_
-#define THIRD_PARTY_BASE_TEMPLATE_UTIL_H_
+#ifndef CORE_FXCRT_TEMPLATE_UTIL_H_
+#define CORE_FXCRT_TEMPLATE_UTIL_H_
 
 #include <stddef.h>
 #include <iosfwd>
@@ -46,4 +46,4 @@ struct is_iterator<
 
 }  // namespace pdfium
 
-#endif  // THIRD_PARTY_BASE_TEMPLATE_UTIL_H_
+#endif  // CORE_FXCRT_TEMPLATE_UTIL_H_

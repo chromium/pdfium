@@ -7,7 +7,7 @@
 #include "xfa/fxfa/cxfa_ffdatetimeedit.h"
 
 #include "core/fxcrt/cfx_datetime.h"
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 #include "xfa/fwl/cfwl_datetimepicker.h"
 #include "xfa/fwl/cfwl_eventselectchanged.h"
 #include "xfa/fwl/cfwl_notedriver.h"

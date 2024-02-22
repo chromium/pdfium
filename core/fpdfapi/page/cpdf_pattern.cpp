@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 
 CPDF_Pattern::CPDF_Pattern(CPDF_Document* pDoc,
                            RetainPtr<CPDF_Object> pObj,

@@ -1,9 +1,9 @@
-// Copyright 2019 The Chromium Authors
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_IMMEDIATE_CRASH_H_
-#define THIRD_PARTY_BASE_IMMEDIATE_CRASH_H_
+#ifndef CORE_FXCRT_IMMEDIATE_CRASH_H_
+#define CORE_FXCRT_IMMEDIATE_CRASH_H_
 
 #include "build/build_config.h"
 
@@ -139,7 +139,6 @@
 #endif
 
 namespace pdfium {
-namespace base {
 
 [[noreturn]] IMMEDIATE_CRASH_ALWAYS_INLINE void ImmediateCrash() {
   TRAP_SEQUENCE_();
@@ -148,7 +147,6 @@ namespace base {
 #endif  // defined(__clang__) || defined(COMPILER_GCC)
 }
 
-}  // namespace base
 }  // namespace pdfium
 
-#endif  // THIRD_PARTY_BASE_IMMEDIATE_CRASH_H_
+#endif  // CORE_FXCRT_IMMEDIATE_CRASH_H_

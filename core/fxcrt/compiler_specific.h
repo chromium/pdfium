@@ -1,9 +1,9 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_COMPILER_SPECIFIC_H_
-#define THIRD_PARTY_BASE_COMPILER_SPECIFIC_H_
+#ifndef CORE_FXCRT_COMPILER_SPECIFIC_H_
+#define CORE_FXCRT_COMPILER_SPECIFIC_H_
 
 #include "build/build_config.h"
 
@@ -91,4 +91,4 @@
 #define UNSAFE_HEADERS_BEGIN() UNSAFE_PRAGMA_BEGIN
 #define UNSAFE_HEADERS_END() UNSAFE_PRAGMA_END
 
-#endif  // THIRD_PARTY_BASE_COMPILER_SPECIFIC_H_
+#endif  // CORE_FXCRT_COMPILER_SPECIFIC_H_

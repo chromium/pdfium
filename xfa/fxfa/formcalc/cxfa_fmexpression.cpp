@@ -10,10 +10,10 @@
 #include <utility>
 
 #include "core/fxcrt/autorestorer.h"
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/widetext_buffer.h"
 #include "fxjs/gc/container_trace.h"
-#include "third_party/base/check.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fxfa/formcalc/cxfa_fmtojavascriptdepth.h"
 

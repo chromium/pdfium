@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffpushbutton.h"
 
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fgas/graphics/cfgas_gecolor.h"
 #include "xfa/fgas/graphics/cfgas_gepath.h"

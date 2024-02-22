@@ -9,8 +9,8 @@
 
 #include <set>
 
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/unowned_ptr_exclusion.h"
-#include "third_party/base/check.h"
 
 namespace fxcrt {
 

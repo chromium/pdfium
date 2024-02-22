@@ -12,7 +12,7 @@
 #include <tuple>
 #include <utility>
 
-#include "third_party/base/compiler_specific.h"
+#include "core/fxcrt/compiler_specific.h"
 
 // Encoding:
 // - Bits-per-pixel: value & 0xFF

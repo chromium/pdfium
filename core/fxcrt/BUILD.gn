@@ -44,7 +44,10 @@ source_set("fxcrt") {
     "cfx_seekablestreamproxy.h",
     "cfx_timer.cpp",
     "cfx_timer.h",
+    "check.h",
+    "check_op.h",
     "code_point_view.h",
+    "component_export.h",
     "containers/adapters.h",
     "containers/contains.h",
     "data_vector.h",
@@ -82,8 +85,10 @@ source_set("fxcrt") {
     "fx_types.h",
     "fx_unicode.cpp",
     "fx_unicode.h",
+    "immediate_crash.h",
     "mask.h",
     "maybe_owned.h",
+    "notreached.h",
     "numerics/checked_math.h",
     "numerics/checked_math_impl.h",
     "numerics/clamped_math.h",
@@ -111,6 +116,7 @@ source_set("fxcrt") {
     "string_template.cpp",
     "string_template.h",
     "string_view_template.h",
+    "template_util.h",
     "tree_node.h",
     "unowned_ptr.h",
     "utf16.h",
@@ -140,10 +146,9 @@ source_set("fxcrt") {
   ]
   public_deps = [
     "../../:freetype_common",
-    "../../third_party:pdfium_base",
+    "//third_party/abseil-cpp:absl",
     "//third_party/icu:icuuc",
   ]
-  deps = [ "../../third_party:pdfium_compiler_specific" ]
   if (pdf_use_partition_alloc) {
     sources += [ "fx_memory_pa.cpp" ]
     public_deps += [ "../../third_party:pdfium_pa" ]

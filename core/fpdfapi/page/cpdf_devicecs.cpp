@@ -14,9 +14,9 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcodec/fx_codec.h"
+#include "core/fxcrt/check.h"
+#include "core/fxcrt/notreached.h"
 #include "core/fxge/dib/cfx_cmyk_to_srgb.h"
-#include "third_party/base/check.h"
-#include "third_party/base/notreached.h"
 
 namespace {
 

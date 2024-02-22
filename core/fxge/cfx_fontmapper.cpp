@@ -13,6 +13,7 @@
 #include <utility>
 
 #include "build/build_config.h"
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/containers/adapters.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/data_vector.h"
@@ -25,7 +26,6 @@
 #include "core/fxge/cfx_substfont.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/systemfontinfo_iface.h"
-#include "third_party/base/check_op.h"
 
 namespace {
 

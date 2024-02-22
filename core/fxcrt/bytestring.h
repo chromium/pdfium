@@ -18,13 +18,13 @@
 #include <optional>
 #include <utility>
 
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/string_data_template.h"
 #include "core/fxcrt/string_template.h"
 #include "core/fxcrt/string_view_template.h"
-#include "third_party/base/check.h"
 
 namespace fxcrt {
 

@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_system.h"
 #include "public/fpdf_edit.h"
 #include "testing/embedder_test.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/check.h"
 
 class FPDFEditPathEmbedderTest : public EmbedderTest {};
 

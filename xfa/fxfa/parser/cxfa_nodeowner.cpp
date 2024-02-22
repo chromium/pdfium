@@ -6,8 +6,8 @@
 
 #include "xfa/fxfa/parser/cxfa_nodeowner.h"
 
+#include "core/fxcrt/check.h"
 #include "fxjs/gc/container_trace.h"
-#include "third_party/base/check.h"
 #include "xfa/fxfa/parser/cxfa_list.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 

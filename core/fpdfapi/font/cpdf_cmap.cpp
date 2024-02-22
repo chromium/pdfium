@@ -13,7 +13,7 @@
 #include "core/fpdfapi/font/cpdf_cmapparser.h"
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 
 namespace {
 

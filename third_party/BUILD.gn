@@ -526,15 +526,6 @@ if (pdf_enable_xfa_tiff) {
   }
 }
 
-source_set("pdfium_compiler_specific") {
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    "//build/config/compiler:no_chromium_code",
-    ":pdfium_third_party_config",
-  ]
-  sources = [ "base/compiler_specific.h" ]
-}
-
 if (pdf_use_partition_alloc) {
   group("pdfium_pa") {
     public_deps = [
@@ -543,24 +534,4 @@ if (pdf_use_partition_alloc) {
     ]
     deps = [ "//base/allocator/partition_allocator/src/partition_alloc" ]
   }
-}
-
-source_set("pdfium_base") {
-  configs -= [ "//build/config/compiler:chromium_code" ]
-  configs += [
-    "//build/config/compiler:no_chromium_code",
-    ":pdfium_third_party_config",
-  ]
-  sources = [
-    "base/check.h",
-    "base/check_op.h",
-    "base/component_export.h",
-    "base/immediate_crash.h",
-    "base/notreached.h",
-    "base/template_util.h",
-  ]
-  public_deps = [
-    ":pdfium_compiler_specific",
-    "//third_party/abseil-cpp:absl",
-  ]
 }

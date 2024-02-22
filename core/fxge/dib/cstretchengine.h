@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_coordinates.h"
@@ -17,7 +18,6 @@
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/base/check_op.h"
 
 class CFX_DIBBase;
 class PauseIndicatorIface;

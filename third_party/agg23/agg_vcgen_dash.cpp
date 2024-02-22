@@ -22,7 +22,7 @@
 
 #include "agg_shorten_path.h"
 #include "agg_vcgen_dash.h"
-#include "third_party/base/check_op.h"
+#include "core/fxcrt/check_op.h"
 
 namespace pdfium
 {

@@ -12,9 +12,9 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/base/check.h"
 #include "v8/include/v8-forward.h"
 #include "v8/include/v8-persistent-handle.h"
 

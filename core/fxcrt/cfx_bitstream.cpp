@@ -8,9 +8,9 @@
 
 #include <limits>
 
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_system.h"
-#include "third_party/base/check_op.h"
 
 CFX_BitStream::CFX_BitStream(pdfium::span<const uint8_t> pData)
     : m_BitSize(pData.size() * 8), m_pData(pData) {

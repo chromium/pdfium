@@ -19,11 +19,11 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "third_party/base/check.h"
 
 #if defined(PDF_USE_SKIA)
 #include "core/fxcrt/data_vector.h"

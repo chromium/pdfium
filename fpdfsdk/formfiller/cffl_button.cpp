@@ -6,8 +6,8 @@
 
 #include "fpdfsdk/formfiller/cffl_button.h"
 
+#include "core/fxcrt/check.h"
 #include "fpdfsdk/cpdfsdk_widget.h"
-#include "third_party/base/check.h"
 
 CFFL_Button::CFFL_Button(CFFL_InteractiveFormFiller* pFormFiller,
                          CPDFSDK_Widget* pWidget)

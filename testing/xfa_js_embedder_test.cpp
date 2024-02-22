@@ -7,6 +7,7 @@
 #include <memory>
 #include <string>
 
+#include "core/fxcrt/check_op.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
 #include "fxjs/fxv8.h"
@@ -14,7 +15,6 @@
 #include "fxjs/xfa/cfxjse_isolatetracker.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/check_op.h"
 #include "v8/include/v8-container.h"
 #include "v8/include/v8-local-handle.h"
 #include "v8/include/v8-value.h"

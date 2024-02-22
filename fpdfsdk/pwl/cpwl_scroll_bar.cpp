@@ -12,11 +12,11 @@
 #include <sstream>
 #include <utility>
 
+#include "core/fxcrt/check.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "fpdfsdk/pwl/cpwl_wnd.h"
-#include "third_party/base/check.h"
 
 namespace {
 

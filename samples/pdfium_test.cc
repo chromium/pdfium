@@ -23,6 +23,7 @@
 #define PDF_USE_SKIA
 #endif
 
+#include "core/fxcrt/check_op.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_annot.h"
 #include "public/fpdf_attachment.h"
@@ -45,7 +46,6 @@
 #include "testing/utils/file_util.h"
 #include "testing/utils/hash.h"
 #include "testing/utils/path_service.h"
-#include "third_party/base/check_op.h"
 
 #ifdef _WIN32
 #include <crtdbg.h>

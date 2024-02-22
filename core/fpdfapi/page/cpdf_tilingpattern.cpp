@@ -16,7 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 
 CPDF_TilingPattern::CPDF_TilingPattern(CPDF_Document* pDoc,
                                        RetainPtr<CPDF_Object> pPatternObj,

@@ -488,7 +488,6 @@ include_rules = [
   '+build/build_config.h',
   '+constants',
   '+testing',
-  '+third_party/base',
 
   # Abseil is allowed by default, but some features are banned. See Chromium's
   # //styleguide/c++/c++-features.md.

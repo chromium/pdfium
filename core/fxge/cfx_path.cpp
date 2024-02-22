@@ -11,8 +11,8 @@
 #include <algorithm>
 #include <iterator>
 
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_system.h"
-#include "third_party/base/check_op.h"
 
 namespace {
 

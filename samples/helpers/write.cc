@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/notreached.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_annot.h"
 #include "public/fpdf_attachment.h"
@@ -18,7 +19,6 @@
 #include "public/fpdf_thumbnail.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/image_diff/image_diff_png.h"
-#include "third_party/base/notreached.h"
 
 #ifdef PDF_ENABLE_SKIA
 #include "third_party/skia/include/core/SkPicture.h"       // nogncheck

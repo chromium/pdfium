@@ -9,13 +9,13 @@
 #include <memory>
 #include <vector>
 
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/css/cfx_cssdeclaration.h"
 #include "core/fxcrt/css/cfx_cssenumvalue.h"
 #include "core/fxcrt/css/cfx_cssnumbervalue.h"
 #include "core/fxcrt/css/cfx_cssstylerule.h"
 #include "core/fxcrt/css/cfx_cssvaluelist.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/check.h"
 
 class CFX_CSSStyleSheetTest : public testing::Test {
  public:

@@ -10,6 +10,7 @@
 
 #include <algorithm>
 
+#include "core/fxcrt/check_op.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 #include "fxjs/cfx_globaldata.h"
 #include "fxjs/cjs_annot.h"
@@ -39,7 +40,6 @@
 #include "fxjs/cjs_zoomtype.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/js_define.h"
-#include "third_party/base/check_op.h"
 #include "v8/include/v8-context.h"
 #include "v8/include/v8-exception.h"
 #include "v8/include/v8-isolate.h"

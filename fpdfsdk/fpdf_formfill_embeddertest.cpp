@@ -6,6 +6,8 @@
 
 #include "build/build_config.h"
 #include "constants/ascii.h"
+#include "core/fxcrt/check.h"
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -20,8 +22,6 @@
 #include "testing/embedder_test_timer_handling_delegate.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/base/check.h"
-#include "third_party/base/check_op.h"
 
 using pdfium::TextFormChecksum;
 

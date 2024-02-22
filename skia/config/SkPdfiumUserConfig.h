@@ -124,7 +124,7 @@
  */
 // #define SK_HISTOGRAM_BOOLEAN(name, value)
 // #define SK_HISTOGRAM_ENUMERATION(name, value, boundary_value)
-#include "third_party/base/component_export.h"
+#include "core/fxcrt/component_export.h"
 
 // ===== Begin Chrome-specific definitions =====
 

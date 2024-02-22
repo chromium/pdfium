@@ -22,7 +22,7 @@ void FXMEM_DefaultFree(void* pointer);
 #ifdef __cplusplus
 }  // extern "C"
 
-#include "third_party/base/compiler_specific.h"
+#include "core/fxcrt/compiler_specific.h"
 
 #if defined(COMPILER_MSVC)
 #include <malloc.h>

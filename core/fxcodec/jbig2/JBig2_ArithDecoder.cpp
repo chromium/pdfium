@@ -9,7 +9,7 @@
 #include <iterator>
 
 #include "core/fxcodec/jbig2/JBig2_BitStream.h"
-#include "third_party/base/check_op.h"
+#include "core/fxcrt/check_op.h"
 
 namespace {
 

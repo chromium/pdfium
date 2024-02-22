@@ -19,7 +19,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 
 namespace {
 

@@ -16,9 +16,9 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_object.h"
+#include "core/fxcrt/check.h"
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/containers/contains.h"
-#include "third_party/base/check.h"
-#include "third_party/base/check_op.h"
 
 CPDF_Page::CPDF_Page(CPDF_Document* pDocument,
                      RetainPtr<CPDF_Dictionary> pPageDict)

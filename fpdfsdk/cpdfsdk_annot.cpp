@@ -6,8 +6,8 @@
 
 #include "fpdfsdk/cpdfsdk_annot.h"
 
+#include "core/fxcrt/check.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
-#include "third_party/base/check.h"
 
 CPDFSDK_Annot::CPDFSDK_Annot(CPDFSDK_PageView* pPageView)
     : m_pPageView(pPageView) {

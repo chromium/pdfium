@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <sstream>
 
+#include "core/fxcrt/check.h"
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
@@ -21,8 +23,6 @@
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/utf16.h"
-#include "third_party/base/check.h"
-#include "third_party/base/check_op.h"
 
 // Instantiate.
 template class fxcrt::StringViewTemplate<wchar_t>;

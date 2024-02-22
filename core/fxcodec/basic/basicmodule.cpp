@@ -11,12 +11,12 @@
 
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/byteorder.h"
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
-#include "third_party/base/check.h"
 
 namespace fxcodec {
 

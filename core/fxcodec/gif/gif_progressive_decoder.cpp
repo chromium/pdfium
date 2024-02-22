@@ -8,7 +8,7 @@
 
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/gif/gif_decoder.h"
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 
 namespace fxcodec {
 

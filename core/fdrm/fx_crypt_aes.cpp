@@ -9,8 +9,8 @@
 #include <string.h>
 
 #include "core/fxcrt/byteorder.h"
-#include "third_party/base/check.h"
-#include "third_party/base/check_op.h"
+#include "core/fxcrt/check.h"
+#include "core/fxcrt/check_op.h"
 
 #define mulby2(x) (((x & 0x7F) << 1) ^ (x & 0x80 ? 0x1B : 0))
 

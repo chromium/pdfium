@@ -12,9 +12,9 @@
 
 #include "core/fpdfapi/page/cpdf_transferfuncdib.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxge/dib/cfx_dibbase.h"
-#include "third_party/base/check_op.h"
 
 CPDF_TransferFunc::CPDF_TransferFunc(bool bIdentify,
                                      FixedSizeDataVector<uint8_t> samples_r,

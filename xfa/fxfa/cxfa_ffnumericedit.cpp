@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffnumericedit.h"
 
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_eventvalidate.h"
 #include "xfa/fwl/cfwl_notedriver.h"

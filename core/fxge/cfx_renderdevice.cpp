@@ -13,6 +13,8 @@
 #include <utility>
 
 #include "build/build_config.h"
+#include "core/fxcrt/check.h"
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/cfx_color.h"
@@ -32,8 +34,6 @@
 #include "core/fxge/renderdevicedriver_iface.h"
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/text_glyph_pos.h"
-#include "third_party/base/check.h"
-#include "third_party/base/check_op.h"
 
 #if defined(PDF_USE_SKIA)
 #include "third_party/skia/include/core/SkTypes.h"  // nogncheck

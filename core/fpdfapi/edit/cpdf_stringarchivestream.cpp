@@ -6,8 +6,8 @@
 
 #include <sstream>
 
+#include "core/fxcrt/notreached.h"
 #include "core/fxcrt/span_util.h"
-#include "third_party/base/notreached.h"
 
 CPDF_StringArchiveStream::CPDF_StringArchiveStream(fxcrt::ostringstream* stream)
     : stream_(stream) {}

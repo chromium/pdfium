@@ -188,7 +188,6 @@ source_set("embedder_test_support") {
     "../:pdfium_public_headers",
     "../core/fdrm",
     "../core/fxge",
-    "../third_party:pdfium_base",
     "//testing/gmock",
     "//testing/gtest",
   ]

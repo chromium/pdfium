@@ -12,8 +12,8 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/data_vector.h"
-#include "third_party/base/check_op.h"
 
 CPDF_StreamAcc::CPDF_StreamAcc(RetainPtr<const CPDF_Stream> pStream)
     : m_pStream(std::move(pStream)) {}

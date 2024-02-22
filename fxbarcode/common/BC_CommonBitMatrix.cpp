@@ -22,8 +22,8 @@
 
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fixed_size_data_vector.h"
-#include "third_party/base/check_op.h"
 
 CBC_CommonBitMatrix::CBC_CommonBitMatrix(size_t width, size_t height)
     : m_height(height), m_rowSize((width + 31) >> 5) {

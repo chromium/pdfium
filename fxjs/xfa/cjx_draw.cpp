@@ -6,9 +6,9 @@
 
 #include "fxjs/xfa/cjx_draw.h"
 
+#include "core/fxcrt/check.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_value.h"
-#include "third_party/base/check.h"
 #include "v8/include/v8-primitive.h"
 #include "v8/include/v8-value.h"
 #include "xfa/fxfa/parser/cxfa_draw.h"

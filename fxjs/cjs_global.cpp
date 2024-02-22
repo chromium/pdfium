@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/span.h"
@@ -20,7 +21,6 @@
 #include "fxjs/fxv8.h"
 #include "fxjs/js_define.h"
 #include "fxjs/js_resources.h"
-#include "third_party/base/check.h"
 #include "v8/include/v8-isolate.h"
 
 namespace {

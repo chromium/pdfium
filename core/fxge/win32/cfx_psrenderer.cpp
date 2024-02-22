@@ -16,6 +16,7 @@
 #include <utility>
 
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
@@ -35,7 +36,6 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/win32/cfx_psfonttracker.h"
-#include "third_party/base/check_op.h"
 
 namespace {
 

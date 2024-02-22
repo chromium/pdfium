@@ -25,8 +25,8 @@
 #include <iterator>
 #include <utility>
 
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/data_vector.h"
-#include "third_party/base/check_op.h"
 
 CBC_CommonByteMatrix::CBC_CommonByteMatrix(size_t width, size_t height)
     : m_width(width), m_height(height) {

@@ -16,7 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfdoc/cpdf_structtree.h"
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 
 CPDF_StructElement::Kid::Kid() = default;
 

@@ -1,20 +1,20 @@
-// Copyright 2020 The Chromium Authors. All rights reserved.
+// Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef THIRD_PARTY_BASE_CHECK_H_
-#define THIRD_PARTY_BASE_CHECK_H_
+#ifndef CORE_FXCRT_CHECK_H_
+#define CORE_FXCRT_CHECK_H_
 
 #include <assert.h>
 
 #include "build/build_config.h"
-#include "third_party/base/compiler_specific.h"
-#include "third_party/base/immediate_crash.h"
+#include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/immediate_crash.h"
 
 #define CHECK(condition)              \
   do {                                \
     if (UNLIKELY(!(condition))) {     \
-      pdfium::base::ImmediateCrash(); \
+      pdfium::ImmediateCrash();       \
     }                                 \
   } while (0)
 
@@ -33,4 +33,4 @@
 #define DCHECK assert
 #endif
 
-#endif  // THIRD_PARTY_BASE_CHECK_H_
+#endif  // CORE_FXCRT_CHECK_H_

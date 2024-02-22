@@ -9,8 +9,8 @@
 #include <stdint.h>
 
 #include "core/fpdfapi/parser/cpdf_crypto_handler.h"
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/data_vector.h"
-#include "third_party/base/check.h"
 
 CPDF_Encryptor::CPDF_Encryptor(const CPDF_CryptoHandler* pHandler, int objnum)
     : m_pHandler(pHandler), m_ObjNum(objnum) {

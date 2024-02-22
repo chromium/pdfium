@@ -10,7 +10,7 @@
 #include <utility>
 
 #include "constants/ascii.h"
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 #include "xfa/fgas/graphics/cfgas_gecolor.h"
 #include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fgas/graphics/cfgas_gepath.h"

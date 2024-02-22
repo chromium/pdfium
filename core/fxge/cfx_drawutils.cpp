@@ -6,11 +6,11 @@
 
 #include "core/fxge/cfx_drawutils.h"
 
+#include "core/fxcrt/check.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
-#include "third_party/base/check.h"
 
 // static
 void CFX_DrawUtils::DrawFocusRect(CFX_RenderDevice* render_device,

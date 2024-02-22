@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 #include "xfa/fxfa/cxfa_ffapp.h"
 #include "xfa/fxfa/cxfa_ffarc.h"
 #include "xfa/fxfa/cxfa_ffbarcode.h"

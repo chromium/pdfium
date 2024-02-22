@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/cxfa_ffpasswordedit.h"
 
-#include "third_party/base/check.h"
+#include "core/fxcrt/check.h"
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fxfa/cxfa_ffdoc.h"
