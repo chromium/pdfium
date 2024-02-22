@@ -68,6 +68,8 @@ void StringDealloc(void* ptr) {
 
 void FX_InitializeMemoryAllocators() {}
 
+void FX_DestroyMemoryAllocators() {}
+
 void* FX_ArrayBufferAllocate(size_t length) {
   void* result = calloc(length, 1);
   if (!result)

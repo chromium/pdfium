@@ -57,7 +57,6 @@
 
 #ifdef PDF_ENABLE_V8
 #include "fxjs/cfx_v8_array_buffer_allocator.h"
-#include "third_party/base/no_destructor.h"
 #endif
 
 #ifdef PDF_ENABLE_XFA
@@ -274,6 +273,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_DestroyLibrary() {
   CPDF_PageModule::Destroy();
   CFX_GEModule::Destroy();
   CFX_Timer::DestroyGlobals();
+  FX_DestroyMemoryAllocators();
 
   g_bLibraryInitialized = false;
 }
@@ -1151,8 +1151,11 @@ FPDF_EXPORT const char* FPDF_CALLCONV FPDF_GetRecommendedV8Flags() {
 }
 
 FPDF_EXPORT void* FPDF_CALLCONV FPDF_GetArrayBufferAllocatorSharedInstance() {
-  static pdfium::base::NoDestructor<CFX_V8ArrayBufferAllocator> allocator;
-  return allocator.get();
+  // Deliberately leaked. This allocator is used outside of the library
+  // initialization / destruction lifecycle, and the caller does not take
+  // ownership of the object. Thus there is no existing way to delete this.
+  static auto* s_allocator = new CFX_V8ArrayBufferAllocator();
+  return s_allocator;
 }
 #endif  // PDF_ENABLE_V8
 

@@ -556,7 +556,6 @@ source_set("pdfium_base") {
     "base/check_op.h",
     "base/component_export.h",
     "base/immediate_crash.h",
-    "base/no_destructor.h",
     "base/notreached.h",
     "base/template_util.h",
   ]

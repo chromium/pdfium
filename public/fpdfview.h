@@ -1452,6 +1452,9 @@ FPDF_EXPORT const char* FPDF_CALLCONV FPDF_GetRecommendedV8Flags();
 //          Use is optional, but allows external creation of isolates
 //          matching the ones PDFium will make when none is provided
 //          via |FPDF_LIBRARY_CONFIG::m_pIsolate|.
+//
+//          Can only be called when the library is in an uninitialized or
+//          destroyed state.
 FPDF_EXPORT void* FPDF_CALLCONV FPDF_GetArrayBufferAllocatorSharedInstance();
 #endif  // PDF_ENABLE_V8
 

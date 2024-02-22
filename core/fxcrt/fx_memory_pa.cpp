@@ -8,7 +8,6 @@
 
 #include "core/fxcrt/fx_safe_types.h"
 #include "partition_alloc/partition_alloc.h"
-#include "third_party/base/no_destructor.h"
 
 #if !defined(PDF_USE_PARTITION_ALLOC)
 #error "File compiled under wrong build option."
@@ -18,24 +17,29 @@ namespace {
 
 constexpr partition_alloc::PartitionOptions kOptions = {};
 
+struct Allocators {
+#ifndef V8_ENABLE_SANDBOX
+  partition_alloc::PartitionAllocator array_buffer_allocator{kOptions};
+#endif
+
+  partition_alloc::PartitionAllocator general_allocator{kOptions};
+  partition_alloc::PartitionAllocator string_allocator{kOptions};
+};
+
+Allocators* g_allocators = nullptr;
+
 #ifndef V8_ENABLE_SANDBOX
 partition_alloc::PartitionAllocator& GetArrayBufferPartitionAllocator() {
-  static pdfium::base::NoDestructor<partition_alloc::PartitionAllocator>
-      s_array_buffer_allocator(kOptions);
-  return *s_array_buffer_allocator;
+  return g_allocators->array_buffer_allocator;
 }
-#endif  //  V8_ENABLE_SANDBOX
+#endif
 
 partition_alloc::PartitionAllocator& GetGeneralPartitionAllocator() {
-  static pdfium::base::NoDestructor<partition_alloc::PartitionAllocator>
-      s_general_allocator(kOptions);
-  return *s_general_allocator;
+  return g_allocators->general_allocator;
 }
 
 partition_alloc::PartitionAllocator& GetStringPartitionAllocator() {
-  static pdfium::base::NoDestructor<partition_alloc::PartitionAllocator>
-      s_string_allocator(kOptions);
-  return *s_string_allocator;
+  return g_allocators->string_allocator;
 }
 
 }  // namespace
@@ -122,18 +126,14 @@ void StringDealloc(void* ptr) {
 }  // namespace pdfium::internal
 
 void FX_InitializeMemoryAllocators() {
-  static bool s_partition_allocators_initialized = false;
-  if (!s_partition_allocators_initialized) {
-    partition_alloc::PartitionAllocGlobalInit(FX_OutOfMemoryTerminate);
-    // These calls force the allocators to be created and initialized (via magic
-    // of static local variables).
-#ifndef V8_ENABLE_SANDBOX
-    GetArrayBufferPartitionAllocator();
-#endif  // V8_ENABLE_SANDBOX
-    GetGeneralPartitionAllocator();
-    GetStringPartitionAllocator();
-    s_partition_allocators_initialized = true;
+  if (!g_allocators) {
+    g_allocators = new Allocators();
   }
+}
+
+void FX_DestroyMemoryAllocators() {
+  delete g_allocators;
+  g_allocators = nullptr;
 }
 
 #ifndef V8_ENABLE_SANDBOX
