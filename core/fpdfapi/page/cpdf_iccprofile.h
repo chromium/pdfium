@@ -14,7 +14,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 
-class CPDF_Stream;
+class CPDF_StreamAcc;
 
 namespace fxcodec {
 class IccTransform;
@@ -37,16 +37,17 @@ class CPDF_IccProfile final : public Retainable {
                          int pixels);
 
  private:
-  // Keeps stream alive for the duration of the CPDF_IccProfile.
-  CPDF_IccProfile(RetainPtr<const CPDF_Stream> pStream,
-                  pdfium::span<const uint8_t> span,
+  CPDF_IccProfile(RetainPtr<const CPDF_StreamAcc> stream_acc,
                   uint32_t expected_components);
   ~CPDF_IccProfile() override;
 
+  // Keeps stream alive for the lifetime of this object, so `m_Transform` can
+  // safely access the stream data.
+  RetainPtr<const CPDF_StreamAcc> const m_pStreamAcc;
+  // Uses data from `m_pStreamAcc`.
+  std::unique_ptr<fxcodec::IccTransform> m_Transform;
   const bool m_bsRGB;
   uint32_t m_nSrcComponents = 0;
-  RetainPtr<const CPDF_Stream> const m_pStream;  // Used by `m_Transform`.
-  std::unique_ptr<fxcodec::IccTransform> m_Transform;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_ICCPROFILE_H_

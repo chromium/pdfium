@@ -431,8 +431,8 @@ RetainPtr<CPDF_IccProfile> CPDF_DocPageData::GetIccProfile(
       return it_copied_stream->second;
     }
   }
-  auto pProfile = pdfium::MakeRetain<CPDF_IccProfile>(
-      pProfileStream, pAccessor->GetSpan(), expected_components);
+  auto pProfile =
+      pdfium::MakeRetain<CPDF_IccProfile>(pAccessor, expected_components);
   m_IccProfileMap[pProfileStream] = pProfile;
   m_HashIccProfileMap[hash_profile_key] = std::move(pProfileStream);
   return pProfile;
