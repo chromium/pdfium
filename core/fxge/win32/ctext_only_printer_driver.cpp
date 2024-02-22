@@ -131,10 +131,12 @@ bool CTextOnlyPrinterDriver::DrawDeviceText(
     float font_size,
     uint32_t color,
     const CFX_TextRenderOptions& /*options*/) {
-  if (g_pdfium_print_mode != WindowsPrintMode::kTextOnly)
+  if (g_pdfium_print_mode != WindowsPrintMode::kTextOnly) {
     return false;
-  if (pCharPos.empty() || !pFont || !pFont->IsEmbedded() || !pFont->IsTTFont())
+  }
+  if (pCharPos.empty() || !pFont) {
     return false;
+  }
 
   // Scale factor used to minimize the kerning problems caused by rounding
   // errors below. Value chosen based on the title of https://crbug.com/18383

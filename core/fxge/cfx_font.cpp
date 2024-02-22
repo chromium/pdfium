@@ -169,7 +169,6 @@ int CFX_Font::GetSubstFontItalicAngle() const {
 #ifdef PDF_ENABLE_XFA
 bool CFX_Font::LoadFile(RetainPtr<IFX_SeekableReadStream> pFile,
                         int nFaceIndex) {
-  m_bEmbedded = false;
   m_ObjectTag = 0;
 
   auto pStreamRec = std::make_unique<FXFT_StreamRec>();
@@ -224,7 +223,6 @@ void CFX_Font::LoadSubst(const ByteString& face_name,
                          int italic_angle,
                          FX_CodePage code_page,
                          bool bVertical) {
-  m_bEmbedded = false;
   m_bVertical = bVertical;
   m_ObjectTag = 0;
   m_pSubstFont = std::make_unique<CFX_SubstFont>();
@@ -265,7 +263,6 @@ bool CFX_Font::LoadEmbedded(pdfium::span<const uint8_t> src_span,
   m_FontDataAllocation = DataVector<uint8_t>(src_span.begin(), src_span.end());
   m_Face = CFX_GEModule::Get()->GetFontMgr()->NewFixedFace(
       nullptr, m_FontDataAllocation, 0);
-  m_bEmbedded = true;
   m_FontData = m_FontDataAllocation;
   return !!m_Face;
 }

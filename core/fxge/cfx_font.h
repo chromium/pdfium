@@ -121,7 +121,6 @@ class CFX_Font {
   // Bounding box adjusted for font units.
   std::optional<FX_RECT> GetBBox() const;
 
-  bool IsEmbedded() const { return m_bEmbedded; }
   FontType GetFontType() const { return m_FontType; }
   void SetFontType(FontType type) { m_FontType = type; }
   uint64_t GetObjectTag() const { return m_ObjectTag; }
@@ -161,7 +160,6 @@ class CFX_Font {
   pdfium::span<uint8_t> m_FontData;
   FontType m_FontType = FontType::kUnknown;
   uint64_t m_ObjectTag = 0;
-  bool m_bEmbedded = false;
   bool m_bVertical = false;
 #if BUILDFLAG(IS_APPLE)
   UNOWNED_PTR_EXCLUSION void* m_pPlatformFont = nullptr;
