@@ -173,3 +173,53 @@ TEST_F(PDFEditImgTest, GetSetImageMatrix) {
   EXPECT_FLOAT_EQ(5.0f, matrix.e);
   EXPECT_FLOAT_EQ(6.0f, matrix.f);
 }
+
+TEST_F(PDFEditImgTest, Bug2132) {
+  constexpr int kExpectedWidth = 200;
+  constexpr int kExpectedHeight = 300;
+  constexpr char kExpectedChecksum[] = "617b1d57c30c516beee86e0781ff7810";
+
+  OpenDocument("bug_2132.pdf");
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
+                  kExpectedChecksum);
+  }
+
+  FPDF_PAGEOBJECT image = FPDFPage_GetObject(page, 0);
+  ASSERT_TRUE(image);
+
+  FS_MATRIX matrix;
+  ASSERT_TRUE(FPDFPageObj_GetMatrix(image, &matrix));
+  EXPECT_FLOAT_EQ(60.0f, matrix.a);
+  EXPECT_FLOAT_EQ(0.0f, matrix.b);
+  EXPECT_FLOAT_EQ(0.0f, matrix.c);
+  EXPECT_FLOAT_EQ(30.0f, matrix.d);
+  EXPECT_FLOAT_EQ(0.0f, matrix.e);
+  EXPECT_FLOAT_EQ(270.0f, matrix.f);
+
+  ASSERT_TRUE(FPDFPageObj_SetMatrix(image, &matrix));
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
+                  kExpectedChecksum);
+  }
+
+  ASSERT_TRUE(FPDFPage_GenerateContent(page));
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
+                  kExpectedChecksum);
+  }
+
+  UnloadPage(page);
+
+  // TODO(crbug.com/pdfium/2132): Should be `kExpectedChecksum`.
+  constexpr char kWrongChecksum[] = "d01c62c9ee094f5be545f006148808b5";
+  VerifySavedDocument(kExpectedWidth, kExpectedHeight, kWrongChecksum);
+}
