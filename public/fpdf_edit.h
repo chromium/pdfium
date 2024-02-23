@@ -292,6 +292,11 @@ FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
 //   |b d f|
 // and used to scale, rotate, shear and translate the page object.
 //
+// For page objects outside form objects, the matrix values are relative to the
+// page that contains it.
+// For page objects inside form objects, the matrix values are relative to the
+// form that contains it.
+//
 // Returns TRUE on success.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObj_GetMatrix(FPDF_PAGEOBJECT page_object, FS_MATRIX* matrix);
