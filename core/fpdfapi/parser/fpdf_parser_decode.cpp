@@ -538,31 +538,16 @@ ByteString PDF_EncodeText(WideStringView str) {
 
   size_t dest_index = 0;
   {
-#if defined(WCHAR_T_IS_32_BIT)
-    // 2 or 4 bytes required per UTF-32 code unit.
-    pdfium::span<uint8_t> dest_buf =
-        pdfium::as_writable_bytes(result.GetBuffer(len * 4 + 2));
-#else
+    std::u16string utf16 = FX_UTF16Encode(str);
     // 2 bytes required per UTF-16 code unit.
     pdfium::span<uint8_t> dest_buf =
-        pdfium::as_writable_bytes(result.GetBuffer(len * 2 + 2));
-#endif  // defined(WCHAR_T_IS_32_BIT)
+        pdfium::as_writable_bytes(result.GetBuffer(utf16.size() * 2 + 2));
 
     dest_buf[dest_index++] = 0xfe;
     dest_buf[dest_index++] = 0xff;
-    for (size_t j = 0; j < len; ++j) {
-#if defined(WCHAR_T_IS_32_BIT)
-      if (pdfium::IsSupplementary(str[j])) {
-        pdfium::SurrogatePair pair(str[j]);
-        dest_buf[dest_index++] = pair.high() >> 8;
-        dest_buf[dest_index++] = static_cast<uint8_t>(pair.high());
-        dest_buf[dest_index++] = pair.low() >> 8;
-        dest_buf[dest_index++] = static_cast<uint8_t>(pair.low());
-        continue;
-      }
-#endif  // defined(WCHAR_T_IS_32_BIT)
-      dest_buf[dest_index++] = str[j] >> 8;
-      dest_buf[dest_index++] = static_cast<uint8_t>(str[j]);
+    for (char16_t code_unit : utf16) {
+      dest_buf[dest_index++] = code_unit >> 8;
+      dest_buf[dest_index++] = static_cast<uint8_t>(code_unit);
     }
   }
   result.ReleaseBuffer(dest_index);
