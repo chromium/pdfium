@@ -174,8 +174,10 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
 
     // Set the default graphic state values
     buf << "q\n";
-    if (!m_pObjHolder->GetLastCTM().IsIdentity())
-      WriteMatrix(buf, m_pObjHolder->GetLastCTM().GetInverse()) << " cm\n";
+    const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
+    if (!ctm.IsIdentity()) {
+      WriteMatrix(buf, ctm.GetInverse()) << " cm\n";
+    }
 
     ProcessDefaultGraphics(&buf);
     streams[dirty_stream] = std::move(buf);
@@ -397,8 +399,8 @@ void CPDF_PageContentGenerator::ProcessPageObject(fxcrt::ostringstream* buf,
 
 void CPDF_PageContentGenerator::ProcessImage(fxcrt::ostringstream* buf,
                                              CPDF_ImageObject* pImageObj) {
-  if ((pImageObj->matrix().a == 0 && pImageObj->matrix().b == 0) ||
-      (pImageObj->matrix().c == 0 && pImageObj->matrix().d == 0)) {
+  CFX_Matrix matrix = pImageObj->matrix();
+  if ((matrix.a == 0 && matrix.b == 0) || (matrix.c == 0 && matrix.d == 0)) {
     return;
   }
 
@@ -411,7 +413,12 @@ void CPDF_PageContentGenerator::ProcessImage(fxcrt::ostringstream* buf,
     return;
 
   *buf << "q ";
-  WriteMatrix(*buf, pImageObj->matrix()) << " cm ";
+
+  const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
+  if (!ctm.IsIdentity()) {
+    matrix.Concat(ctm.GetInverse());
+  }
+  WriteMatrix(*buf, matrix) << " cm ";
 
   bool bWasInline = pStream->IsInline();
   if (bWasInline)
@@ -430,8 +437,8 @@ void CPDF_PageContentGenerator::ProcessImage(fxcrt::ostringstream* buf,
 
 void CPDF_PageContentGenerator::ProcessForm(fxcrt::ostringstream* buf,
                                             CPDF_FormObject* pFormObj) {
-  if ((pFormObj->form_matrix().a == 0 && pFormObj->form_matrix().b == 0) ||
-      (pFormObj->form_matrix().c == 0 && pFormObj->form_matrix().d == 0)) {
+  CFX_Matrix matrix = pFormObj->form_matrix();
+  if ((matrix.a == 0 && matrix.b == 0) || (matrix.c == 0 && matrix.d == 0)) {
     return;
   }
 
@@ -443,7 +450,13 @@ void CPDF_PageContentGenerator::ProcessForm(fxcrt::ostringstream* buf,
   pFormObj->SetResourceName(name);
 
   *buf << "q\n";
-  WriteMatrix(*buf, pFormObj->form_matrix()) << " cm ";
+
+  const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
+  if (!ctm.IsIdentity()) {
+    matrix.Concat(ctm.GetInverse());
+  }
+  WriteMatrix(*buf, matrix) << " cm ";
+
   *buf << "/" << PDF_NameEncode(name) << " Do Q\n";
 }
 
@@ -502,6 +515,8 @@ void CPDF_PageContentGenerator::ProcessPath(fxcrt::ostringstream* buf,
                                             CPDF_PathObject* pPathObj) {
   ProcessGraphics(buf, pPathObj);
 
+  // TODO(crbug.com/pdfium/2132): Does this need to take the current
+  // transformation matrix in `m_pObjHolder` into account?
   WriteMatrix(*buf, pPathObj->matrix()) << " cm ";
   ProcessPathPoints(buf, &pPathObj->path());
 
@@ -654,6 +669,8 @@ void CPDF_PageContentGenerator::ProcessText(fxcrt::ostringstream* buf,
                                             CPDF_TextObject* pTextObj) {
   ProcessGraphics(buf, pTextObj);
   *buf << "BT ";
+  // TODO(crbug.com/pdfium/2132): Does this need to take the current
+  // transformation matrix in `m_pObjHolder` into account?
   WriteMatrix(*buf, pTextObj->GetTextMatrix()) << " Tm ";
   RetainPtr<CPDF_Font> pFont(pTextObj->GetFont());
   if (!pFont)

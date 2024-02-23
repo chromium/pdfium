@@ -219,9 +219,7 @@ TEST_F(PDFEditImgTest, Bug2132) {
 
   UnloadPage(page);
 
-  // TODO(crbug.com/pdfium/2132): Should be `kExpectedChecksum`.
-  constexpr char kWrongChecksum[] = "d01c62c9ee094f5be545f006148808b5";
-  VerifySavedDocument(kExpectedWidth, kExpectedHeight, kWrongChecksum);
+  VerifySavedDocument(kExpectedWidth, kExpectedHeight, kExpectedChecksum);
 }
 
 TEST_F(PDFEditImgTest, GetAndSetMatrixForFormWithImage) {
@@ -289,7 +287,5 @@ TEST_F(PDFEditImgTest, GetAndSetMatrixForFormWithImage) {
 
   UnloadPage(page);
 
-  // TODO(crbug.com/pdfium/2132): Should be `kExpectedChecksum`.
-  constexpr char kWrongChecksum[] = "308e2263f01744b2749d68a9ca711fc6";
-  VerifySavedDocument(kExpectedWidth, kExpectedHeight, kWrongChecksum);
+  VerifySavedDocument(kExpectedWidth, kExpectedHeight, kExpectedChecksum);
 }
