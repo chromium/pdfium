@@ -8,10 +8,12 @@
 #define CORE_FPDFAPI_PARSER_FPDF_PARSER_UTILITY_H_
 
 #include <iosfwd>
+#include <limits>
 #include <optional>
 #include <vector>
 
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Array;
@@ -22,17 +24,30 @@ class IFX_SeekableReadStream;
 // Use the accessors below instead of directly accessing kPDFCharTypes.
 extern const char kPDFCharTypes[256];
 
+inline uint8_t GetPDFCharTypeFromArray(uint8_t c) {
+  static_assert(std::numeric_limits<decltype(c)>::min() == 0);
+  static_assert(std::numeric_limits<decltype(c)>::max() <
+                std::size(kPDFCharTypes));
+
+  // SAFETY: previous static_asserts show table covers entire range
+  // of the index's type.
+  return UNSAFE_BUFFERS(kPDFCharTypes[c]);
+}
+
 inline bool PDFCharIsWhitespace(uint8_t c) {
-  return kPDFCharTypes[c] == 'W';
+  return GetPDFCharTypeFromArray(c) == 'W';
 }
+
 inline bool PDFCharIsNumeric(uint8_t c) {
-  return kPDFCharTypes[c] == 'N';
+  return GetPDFCharTypeFromArray(c) == 'N';
 }
+
 inline bool PDFCharIsDelimiter(uint8_t c) {
-  return kPDFCharTypes[c] == 'D';
+  return GetPDFCharTypeFromArray(c) == 'D';
 }
+
 inline bool PDFCharIsOther(uint8_t c) {
-  return kPDFCharTypes[c] == 'R';
+  return GetPDFCharTypeFromArray(c) == 'R';
 }
 
 inline bool PDFCharIsLineEnding(uint8_t c) {
