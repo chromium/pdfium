@@ -39,10 +39,13 @@
 // into an unowned array is desired, which performs the same checks.
 
 #include "build/build_config.h"
+#include "core/fxcrt/compiler_specific.h"
 
 #if defined(PDF_USE_PARTITION_ALLOC)
+UNSAFE_HEADERS_BEGIN()
 #include "partition_alloc/partition_alloc_buildflags.h"
 #include "partition_alloc/pointers/raw_ptr.h"
+UNSAFE_HEADERS_END()
 
 #if !BUILDFLAG(USE_PARTITION_ALLOC)
 #error "pdf_use_partition_alloc=true requires use_partition_alloc=true"
@@ -65,7 +68,6 @@ using UnownedPtr = raw_ptr<T>;
 #include <type_traits>
 #include <utility>
 
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 
 namespace fxcrt {

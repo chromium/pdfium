@@ -6,10 +6,14 @@
 
 #include "core/fxcrt/fx_memory.h"
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "partition_alloc/partition_alloc.h"
 
-#if !defined(PDF_USE_PARTITION_ALLOC)
+#if defined(PDF_USE_PARTITION_ALLOC)
+UNSAFE_HEADERS_BEGIN()
+#include "partition_alloc/partition_alloc.h"
+UNSAFE_HEADERS_END()
+#else
 #error "File compiled under wrong build option."
 #endif
 

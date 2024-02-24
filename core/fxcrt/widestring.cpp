@@ -57,192 +57,199 @@ constexpr wchar_t kWideTrimChars[] = L"\x09\x0a\x0b\x0c\x0d\x20";
 std::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
                                             va_list argList) {
   size_t nMaxLen = 0;
-  for (const wchar_t* pStr = pFormat; *pStr != 0; pStr++) {
-    if (*pStr != '%' || *(pStr = pStr + 1) == '%') {
-      ++nMaxLen;
-      continue;
-    }
-    int iWidth = 0;
-    for (; *pStr != 0; pStr++) {
-      if (*pStr == '#') {
-        nMaxLen += 2;
-      } else if (*pStr == '*') {
-        iWidth = va_arg(argList, int);
-      } else if (*pStr != '-' && *pStr != '+' && *pStr != '0' && *pStr != ' ') {
-        break;
+  // SAFETY: TODO(tsepez): investigate lack of safety.
+  UNSAFE_BUFFERS({
+    for (const wchar_t* pStr = pFormat; *pStr != 0; pStr++) {
+      if (*pStr != '%' || *(pStr = pStr + 1) == '%') {
+        ++nMaxLen;
+        continue;
       }
-    }
-    if (iWidth == 0) {
-      iWidth = FXSYS_wtoi(pStr);
-      while (FXSYS_IsDecimalDigit(*pStr))
-        ++pStr;
-    }
-    if (iWidth < 0 || iWidth > 128 * 1024)
-      return std::nullopt;
-    uint32_t nWidth = static_cast<uint32_t>(iWidth);
-    int iPrecision = 0;
-    if (*pStr == '.') {
-      pStr++;
-      if (*pStr == '*') {
-        iPrecision = va_arg(argList, int);
-        pStr++;
-      } else {
-        iPrecision = FXSYS_wtoi(pStr);
+      int iWidth = 0;
+      for (; *pStr != 0; pStr++) {
+        if (*pStr == '#') {
+          nMaxLen += 2;
+        } else if (*pStr == '*') {
+          iWidth = va_arg(argList, int);
+        } else if (*pStr != '-' && *pStr != '+' && *pStr != '0' &&
+                   *pStr != ' ') {
+          break;
+        }
+      }
+      if (iWidth == 0) {
+        iWidth = FXSYS_wtoi(pStr);
         while (FXSYS_IsDecimalDigit(*pStr))
           ++pStr;
       }
-    }
-    if (iPrecision < 0 || iPrecision > 128 * 1024)
-      return std::nullopt;
-    uint32_t nPrecision = static_cast<uint32_t>(iPrecision);
-    int nModifier = 0;
-    if (*pStr == L'I' && *(pStr + 1) == L'6' && *(pStr + 2) == L'4') {
-      pStr += 3;
-      nModifier = FORCE_INT64;
-    } else {
-      switch (*pStr) {
-        case 'h':
-          nModifier = FORCE_ANSI;
-          pStr++;
-          break;
-        case 'l':
-          nModifier = FORCE_UNICODE;
-          pStr++;
-          break;
-        case 'F':
-        case 'N':
-        case 'L':
-          pStr++;
-          break;
+      if (iWidth < 0 || iWidth > 128 * 1024) {
+        return std::nullopt;
       }
-    }
-    size_t nItemLen = 0;
-    switch (*pStr | nModifier) {
-      case 'c':
-      case 'C':
-        nItemLen = 2;
-        va_arg(argList, int);
-        break;
-      case 'c' | FORCE_ANSI:
-      case 'C' | FORCE_ANSI:
-        nItemLen = 2;
-        va_arg(argList, int);
-        break;
-      case 'c' | FORCE_UNICODE:
-      case 'C' | FORCE_UNICODE:
-        nItemLen = 2;
-        va_arg(argList, int);
-        break;
-      case 's': {
-        const wchar_t* pstrNextArg = va_arg(argList, const wchar_t*);
-        if (pstrNextArg) {
-          nItemLen = wcslen(pstrNextArg);
-          if (nItemLen < 1) {
-            nItemLen = 1;
-          }
+      uint32_t nWidth = static_cast<uint32_t>(iWidth);
+      int iPrecision = 0;
+      if (*pStr == '.') {
+        pStr++;
+        if (*pStr == '*') {
+          iPrecision = va_arg(argList, int);
+          pStr++;
         } else {
-          nItemLen = 6;
-        }
-      } break;
-      case 'S': {
-        const char* pstrNextArg = va_arg(argList, const char*);
-        if (pstrNextArg) {
-          nItemLen = strlen(pstrNextArg);
-          if (nItemLen < 1) {
-            nItemLen = 1;
+          iPrecision = FXSYS_wtoi(pStr);
+          while (FXSYS_IsDecimalDigit(*pStr)) {
+            ++pStr;
           }
-        } else {
-          nItemLen = 6;
         }
-      } break;
-      case 's' | FORCE_ANSI:
-      case 'S' | FORCE_ANSI: {
-        const char* pstrNextArg = va_arg(argList, const char*);
-        if (pstrNextArg) {
-          nItemLen = strlen(pstrNextArg);
-          if (nItemLen < 1) {
-            nItemLen = 1;
-          }
-        } else {
-          nItemLen = 6;
-        }
-      } break;
-      case 's' | FORCE_UNICODE:
-      case 'S' | FORCE_UNICODE: {
-        const wchar_t* pstrNextArg = va_arg(argList, wchar_t*);
-        if (pstrNextArg) {
-          nItemLen = wcslen(pstrNextArg);
-          if (nItemLen < 1) {
-            nItemLen = 1;
-          }
-        } else {
-          nItemLen = 6;
-        }
-      } break;
-    }
-    if (nItemLen != 0) {
-      if (nPrecision != 0 && nItemLen > nPrecision) {
-        nItemLen = nPrecision;
       }
-      if (nItemLen < nWidth) {
-        nItemLen = nWidth;
+      if (iPrecision < 0 || iPrecision > 128 * 1024) {
+        return std::nullopt;
       }
-    } else {
-      switch (*pStr) {
-        case 'd':
-        case 'i':
-        case 'u':
-        case 'x':
-        case 'X':
-        case 'o':
-          if (nModifier & FORCE_INT64) {
-            va_arg(argList, int64_t);
+      uint32_t nPrecision = static_cast<uint32_t>(iPrecision);
+      int nModifier = 0;
+      if (*pStr == L'I' && *(pStr + 1) == L'6' && *(pStr + 2) == L'4') {
+        pStr += 3;
+        nModifier = FORCE_INT64;
+      } else {
+        switch (*pStr) {
+          case 'h':
+            nModifier = FORCE_ANSI;
+            pStr++;
+            break;
+          case 'l':
+            nModifier = FORCE_UNICODE;
+            pStr++;
+            break;
+          case 'F':
+          case 'N':
+          case 'L':
+            pStr++;
+            break;
+        }
+      }
+      size_t nItemLen = 0;
+      switch (*pStr | nModifier) {
+        case 'c':
+        case 'C':
+          nItemLen = 2;
+          va_arg(argList, int);
+          break;
+        case 'c' | FORCE_ANSI:
+        case 'C' | FORCE_ANSI:
+          nItemLen = 2;
+          va_arg(argList, int);
+          break;
+        case 'c' | FORCE_UNICODE:
+        case 'C' | FORCE_UNICODE:
+          nItemLen = 2;
+          va_arg(argList, int);
+          break;
+        case 's': {
+          const wchar_t* pstrNextArg = va_arg(argList, const wchar_t*);
+          if (pstrNextArg) {
+            nItemLen = wcslen(pstrNextArg);
+            if (nItemLen < 1) {
+              nItemLen = 1;
+            }
           } else {
-            va_arg(argList, int);
+            nItemLen = 6;
           }
-          nItemLen = 32;
-          if (nItemLen < nWidth + nPrecision) {
-            nItemLen = nWidth + nPrecision;
-          }
-          break;
-        case 'a':
-        case 'A':
-        case 'e':
-        case 'E':
-        case 'g':
-        case 'G':
-          va_arg(argList, double);
-          nItemLen = 128;
-          if (nItemLen < nWidth + nPrecision) {
-            nItemLen = nWidth + nPrecision;
-          }
-          break;
-        case 'f':
-          if (nWidth + nPrecision > 100) {
-            nItemLen = nPrecision + nWidth + 128;
+        } break;
+        case 'S': {
+          const char* pstrNextArg = va_arg(argList, const char*);
+          if (pstrNextArg) {
+            nItemLen = strlen(pstrNextArg);
+            if (nItemLen < 1) {
+              nItemLen = 1;
+            }
           } else {
-            double f;
-            char pszTemp[256];
-            f = va_arg(argList, double);
-            FXSYS_snprintf(pszTemp, sizeof(pszTemp), "%*.*f", nWidth,
-                           nPrecision + 6, f);
-            nItemLen = strlen(pszTemp);
+            nItemLen = 6;
           }
-          break;
-        case 'p':
-          va_arg(argList, void*);
-          nItemLen = 32;
-          if (nItemLen < nWidth + nPrecision) {
-            nItemLen = nWidth + nPrecision;
+        } break;
+        case 's' | FORCE_ANSI:
+        case 'S' | FORCE_ANSI: {
+          const char* pstrNextArg = va_arg(argList, const char*);
+          if (pstrNextArg) {
+            nItemLen = strlen(pstrNextArg);
+            if (nItemLen < 1) {
+              nItemLen = 1;
+            }
+          } else {
+            nItemLen = 6;
           }
-          break;
-        case 'n':
-          va_arg(argList, int*);
-          break;
+        } break;
+        case 's' | FORCE_UNICODE:
+        case 'S' | FORCE_UNICODE: {
+          const wchar_t* pstrNextArg = va_arg(argList, wchar_t*);
+          if (pstrNextArg) {
+            nItemLen = wcslen(pstrNextArg);
+            if (nItemLen < 1) {
+              nItemLen = 1;
+            }
+          } else {
+            nItemLen = 6;
+          }
+        } break;
       }
+      if (nItemLen != 0) {
+        if (nPrecision != 0 && nItemLen > nPrecision) {
+          nItemLen = nPrecision;
+        }
+        if (nItemLen < nWidth) {
+          nItemLen = nWidth;
+        }
+      } else {
+        switch (*pStr) {
+          case 'd':
+          case 'i':
+          case 'u':
+          case 'x':
+          case 'X':
+          case 'o':
+            if (nModifier & FORCE_INT64) {
+              va_arg(argList, int64_t);
+            } else {
+              va_arg(argList, int);
+            }
+            nItemLen = 32;
+            if (nItemLen < nWidth + nPrecision) {
+              nItemLen = nWidth + nPrecision;
+            }
+            break;
+          case 'a':
+          case 'A':
+          case 'e':
+          case 'E':
+          case 'g':
+          case 'G':
+            va_arg(argList, double);
+            nItemLen = 128;
+            if (nItemLen < nWidth + nPrecision) {
+              nItemLen = nWidth + nPrecision;
+            }
+            break;
+          case 'f':
+            if (nWidth + nPrecision > 100) {
+              nItemLen = nPrecision + nWidth + 128;
+            } else {
+              double f;
+              char pszTemp[256];
+              f = va_arg(argList, double);
+              FXSYS_snprintf(pszTemp, sizeof(pszTemp), "%*.*f", nWidth,
+                             nPrecision + 6, f);
+              nItemLen = strlen(pszTemp);
+            }
+            break;
+          case 'p':
+            va_arg(argList, void*);
+            nItemLen = 32;
+            if (nItemLen < nWidth + nPrecision) {
+              nItemLen = nWidth + nPrecision;
+            }
+            break;
+          case 'n':
+            va_arg(argList, int*);
+            break;
+        }
+      }
+      nMaxLen += nItemLen;
     }
-    nMaxLen += nItemLen;
-  }
+  });
   nMaxLen += 32;  // Fudge factor.
   return nMaxLen;
 }

@@ -64,12 +64,7 @@ void StringTemplate<T>::ReleaseBuffer(size_t nNewLength) {
 
 template <typename T>
 size_t StringTemplate<T>::Remove(T chRemove) {
-  size_t count = 0;
-  for (const auto& ch : span()) {
-    if (ch == chRemove) {
-      count++;
-    }
-  }
+  size_t count = std::count(span().begin(), span().end(), chRemove);
   if (count == 0) {
     return 0;
   }
