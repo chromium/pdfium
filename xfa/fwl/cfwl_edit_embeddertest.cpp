@@ -277,7 +277,7 @@ TEST_F(CFWLEditEmbedderTest, ComboBoxTest) {
   {
     const char* filled_checksum = []() {
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-        return "8c555487e09ee4acf3ace77db5929bdc";
+        return "5a246f785310fe71544dfe2c85669915";
       }
       return "dad642ae8a5afce2591ffbcabbfc58dd";
     }();

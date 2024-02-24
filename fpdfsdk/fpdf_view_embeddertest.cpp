@@ -1000,12 +1000,6 @@ TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
     }
     return "f11a11137c8834389e31cf555a4a6979";
   }();
-  const char* hori_stretched_checksum = []() {
-    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "6d3776d7bb21cbb7195126b8e95dfba2";
-    }
-    return "48ef9205941ed19691ccfa00d717187e";
-  }();
   const char* rotated_90_clockwise_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "b4baa001d201baed576cd6d5d0d5a160";
@@ -1044,7 +1038,7 @@ TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
   }();
   const char* larger_rotated_diagonal_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "85c41bb892c1a09882f432aa2f4a5ef6";
+      return "a7179bc24e329341a1a1f6d6be20a1e9";
     }
     return "3d62417468bdaff0eb14391a0c30a3b1";
   }();
@@ -1054,6 +1048,7 @@ TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
     }
     return "0a190003c97220bf8877684c8d7e89cf";
   }();
+  const char kHoriStretchedChecksum[] = "48ef9205941ed19691ccfa00d717187e";
   const char kLargerChecksum[] = "c806145641c3e6fc4e022c7065343749";
   const char kLargerClippedChecksum[] = "091d3b1c7933c8f6945eb2cb41e588e9";
   const char kLargerRotatedChecksum[] = "115f13353ebfc82ddb392d1f0059eb12";
@@ -1097,7 +1092,7 @@ TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
   FS_MATRIX stretch_x_matrix{2, 0, 0, 1, 0, 0};
   TestRenderPageBitmapWithMatrix(page, page_width, page_height,
                                  stretch_x_matrix, page_rect,
-                                 hori_stretched_checksum);
+                                 kHoriStretchedChecksum);
 
   // Try a 90 degree rotation clockwise but with the same bitmap size, so part
   // will be clipped.
