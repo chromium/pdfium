@@ -694,8 +694,9 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Decode) {
   ExecuteExpectString(R"(Decode("~%26^&*()_+|`{", "mbogo"))", "~&^&*()_+|`{");
   ExecuteExpectString(R"(Decode("~%26^&*()_+|`{"))", "~&^&*()_+|`{");
   ExecuteExpectString(R"(Decode("~%~~"))", "");
+  ExecuteExpectString(R"(Decode("?%f~"))", "");
   ExecuteExpectString(R"(Decode("?%~"))", "");
-  ExecuteExpectString(R"(Decode("?%"))", "?");
+  ExecuteExpectString(R"(Decode("?%"))", "");
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Encode) {
