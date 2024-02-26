@@ -252,6 +252,8 @@ component("skia") {
   if (is_win) {
     # See SK_TYPEFACE_FACTORY_DIRECTWRITE
     sources += [
+      "//third_party/skia/src/codec/SkEncodedInfo.cpp",
+      "//third_party/skia/src/codec/SkPngCodec.cpp",
       "//third_party/skia/src/ports/SkFontMgr_win_dw.cpp",
       "//third_party/skia/src/ports/SkOSFile_win.cpp",
       "//third_party/skia/src/ports/SkRemotableFontMgr_win_dw.cpp",
