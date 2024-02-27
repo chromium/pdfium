@@ -111,12 +111,9 @@ ByteString PDF_NameDecode(ByteStringView orig) {
 }
 
 ByteString PDF_NameEncode(const ByteString& orig) {
-  const uint8_t* src_buf = reinterpret_cast<const uint8_t*>(orig.c_str());
-  int src_len = orig.GetLength();
-  int dest_len = 0;
-  int i;
-  for (i = 0; i < src_len; i++) {
-    uint8_t ch = src_buf[i];
+  pdfium::span<const uint8_t> src_span = orig.raw_span();
+  size_t dest_len = 0;
+  for (const auto ch : src_span) {
     if (ch >= 0x80 || PDFCharIsWhitespace(ch) || ch == '#' ||
         PDFCharIsDelimiter(ch)) {
       dest_len += 3;
@@ -124,16 +121,15 @@ ByteString PDF_NameEncode(const ByteString& orig) {
       dest_len++;
     }
   }
-  if (dest_len == src_len)
+  if (dest_len == src_span.size()) {
     return orig;
-
+  }
   ByteString res;
   {
     // Span's lifetime must end before ReleaseBuffer() below.
     pdfium::span<char> dest_buf = res.GetBuffer(dest_len);
     dest_len = 0;
-    for (i = 0; i < src_len; i++) {
-      uint8_t ch = src_buf[i];
+    for (const auto ch : src_span) {
       if (ch >= 0x80 || PDFCharIsWhitespace(ch) || ch == '#' ||
           PDFCharIsDelimiter(ch)) {
         dest_buf[dest_len++] = '#';
