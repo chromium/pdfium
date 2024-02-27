@@ -22,7 +22,7 @@ void CheckNameKeyValue(const CPDF_Array* names,
                        const char* key,
                        int value) {
   ASSERT_TRUE(names);
-  EXPECT_STREQ(key, names->GetByteStringAt(pair_index * 2).c_str());
+  EXPECT_EQ(key, names->GetByteStringAt(pair_index * 2));
   EXPECT_EQ(value, names->GetIntegerAt(pair_index * 2 + 1));
 }
 
@@ -45,8 +45,8 @@ void CheckLimitsArray(const CPDF_Dictionary* node,
   ASSERT_TRUE(left);
   RetainPtr<const CPDF_String> right = limits->GetStringAt(1);
   ASSERT_TRUE(right);
-  EXPECT_STREQ(least, left->GetString().c_str());
-  EXPECT_STREQ(greatest, right->GetString().c_str());
+  EXPECT_EQ(least, left->GetString());
+  EXPECT_EQ(greatest, right->GetString());
 }
 
 // Set up a name tree with 3 levels and 5 nodes, per diagram:
@@ -116,7 +116,7 @@ TEST(cpdf_nametree, GetUnicodeNameWithBOM) {
       CPDF_NameTree::CreateForTesting(pRootDict.Get());
   WideString stored_name;
   name_tree->LookupValueAndName(0, &stored_name);
-  EXPECT_STREQ(L"1", stored_name.c_str());
+  EXPECT_EQ(L"1", stored_name);
 
   // Check that the correct value object can be obtained by looking up "1".
   RetainPtr<const CPDF_Number> pNumber = ToNumber(name_tree->LookupValue(L"1"));
@@ -325,7 +325,7 @@ TEST(cpdf_nametree, DeleteFromKids) {
   ASSERT_TRUE(name_tree->LookupValue(L"9.txt"));
   EXPECT_EQ(999, name_tree->LookupValue(L"9.txt")->GetInteger());
   EXPECT_TRUE(name_tree->LookupValueAndName(4, &csName));
-  EXPECT_STREQ(L"9.txt", csName.c_str());
+  EXPECT_EQ(L"9.txt", csName);
   EXPECT_EQ(2u, pKid1->GetArrayFor("Kids")->size());
   EXPECT_TRUE(name_tree->DeleteValueAndName(4));
   EXPECT_EQ(1u, pKid1->GetArrayFor("Kids")->size());
@@ -336,7 +336,7 @@ TEST(cpdf_nametree, DeleteFromKids) {
   ASSERT_TRUE(name_tree->LookupValue(L"2.txt"));
   EXPECT_EQ(222, name_tree->LookupValue(L"2.txt")->GetInteger());
   EXPECT_TRUE(name_tree->LookupValueAndName(1, &csName));
-  EXPECT_STREQ(L"2.txt", csName.c_str());
+  EXPECT_EQ(L"2.txt", csName);
   EXPECT_EQ(4u, pGreatGrandKid4->GetArrayFor("Names")->size());
   EXPECT_TRUE(name_tree->DeleteValueAndName(1));
   EXPECT_EQ(2u, pGreatGrandKid4->GetArrayFor("Names")->size());
@@ -349,7 +349,7 @@ TEST(cpdf_nametree, DeleteFromKids) {
   ASSERT_TRUE(name_tree->LookupValue(L"1.txt"));
   EXPECT_EQ(111, name_tree->LookupValue(L"1.txt")->GetInteger());
   EXPECT_TRUE(name_tree->LookupValueAndName(0, &csName));
-  EXPECT_STREQ(L"1.txt", csName.c_str());
+  EXPECT_EQ(L"1.txt", csName);
   EXPECT_EQ(2u, pGrandKid2->GetArrayFor("Kids")->size());
   EXPECT_TRUE(name_tree->DeleteValueAndName(0));
   EXPECT_EQ(1u, pGrandKid2->GetArrayFor("Kids")->size());
@@ -361,7 +361,7 @@ TEST(cpdf_nametree, DeleteFromKids) {
   ASSERT_TRUE(name_tree->LookupValue(L"3.txt"));
   EXPECT_EQ(333, name_tree->LookupValue(L"3.txt")->GetInteger());
   EXPECT_TRUE(name_tree->LookupValueAndName(0, &csName));
-  EXPECT_STREQ(L"3.txt", csName.c_str());
+  EXPECT_EQ(L"3.txt", csName);
   EXPECT_EQ(4u, pGreatGrandKid5->GetArrayFor("Names")->size());
   EXPECT_TRUE(name_tree->DeleteValueAndName(0));
   EXPECT_EQ(2u, pGreatGrandKid5->GetArrayFor("Names")->size());
@@ -374,7 +374,7 @@ TEST(cpdf_nametree, DeleteFromKids) {
   ASSERT_TRUE(name_tree->LookupValue(L"5.txt"));
   EXPECT_EQ(555, name_tree->LookupValue(L"5.txt")->GetInteger());
   EXPECT_TRUE(name_tree->LookupValueAndName(0, &csName));
-  EXPECT_STREQ(L"5.txt", csName.c_str());
+  EXPECT_EQ(L"5.txt", csName);
   EXPECT_EQ(1u, name_tree->GetRootForTesting()->GetArrayFor("Kids")->size());
   EXPECT_TRUE(name_tree->DeleteValueAndName(0));
   EXPECT_EQ(0u, name_tree->GetRootForTesting()->GetArrayFor("Kids")->size());

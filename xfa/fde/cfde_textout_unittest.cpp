@@ -45,7 +45,7 @@ class CFDETextOutTest : public testing::Test {
     text_out_->SetFont(font_);
     text_out_->SetFontSize(12.0f);
 
-    EXPECT_STREQ(GetEmptyBitmapChecksum(), GetBitmapChecksum().c_str());
+    EXPECT_EQ(GetEmptyBitmapChecksum(), GetBitmapChecksum());
   }
 
   void TearDown() override {
@@ -102,12 +102,12 @@ TEST_F(CFDETextOutTest, DrawLogicTextBasic) {
 #endif
     return "b26f1c171fcdbf185823364185adacf0";
   }();
-  EXPECT_STREQ(checksum, GetBitmapChecksum().c_str());
+  EXPECT_EQ(checksum, GetBitmapChecksum());
 }
 
 TEST_F(CFDETextOutTest, DrawLogicTextEmptyRect) {
   text_out().DrawLogicText(device(), L"foo", CFX_RectF());
-  EXPECT_STREQ(GetEmptyBitmapChecksum(), GetBitmapChecksum().c_str());
+  EXPECT_EQ(GetEmptyBitmapChecksum(), GetBitmapChecksum());
 }
 
 #if !BUILDFLAG(IS_WIN)
@@ -159,7 +159,7 @@ TEST_F(CFDETextOutLargeBitmapTest, DrawLogicTextBug953881) {
       L"iiiiisssss";
   text_out().DrawLogicText(device(), WideString(kText),
                            CFX_RectF(3, 3, 2048, 10));
-  EXPECT_STREQ(GetLargeTextBlobChecksum(), GetBitmapChecksum().c_str());
+  EXPECT_EQ(GetLargeTextBlobChecksum(), GetBitmapChecksum());
 }
 
 TEST_F(CFDETextOutLargeBitmapTest, DrawLogicTextBug1342078) {
@@ -181,6 +181,6 @@ TEST_F(CFDETextOutLargeBitmapTest, DrawLogicTextBug1342078) {
       L"iiiiiiiiiisssss";
   text_out().DrawLogicText(device(), WideString(kText),
                            CFX_RectF(3, 3, 2048, 10));
-  EXPECT_STREQ(GetLargeTextBlobChecksum(), GetBitmapChecksum().c_str());
+  EXPECT_EQ(GetLargeTextBlobChecksum(), GetBitmapChecksum());
 }
 #endif  // !BUILDFLAG(IS_WIN)

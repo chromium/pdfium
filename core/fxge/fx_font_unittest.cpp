@@ -23,13 +23,13 @@ TEST(FXFontTest, UnicodeFromAdobeName) {
 }
 
 TEST(FXFontTest, AdobeNameFromUnicode) {
-  EXPECT_STREQ("", AdobeNameFromUnicode(0x0000).c_str());
-  EXPECT_STREQ("divide", AdobeNameFromUnicode(0x00f7).c_str());
-  EXPECT_STREQ("Lslash", AdobeNameFromUnicode(0x0141).c_str());
-  EXPECT_STREQ("tonos", AdobeNameFromUnicode(0x0384).c_str());
-  EXPECT_STREQ("afii57513", AdobeNameFromUnicode(0x0691).c_str());
-  EXPECT_STREQ("angkhankhuthai", AdobeNameFromUnicode(0x0e5a).c_str());
-  EXPECT_STREQ("Euro", AdobeNameFromUnicode(0x20ac).c_str());
+  EXPECT_EQ("", AdobeNameFromUnicode(0x0000));
+  EXPECT_EQ("divide", AdobeNameFromUnicode(0x00f7));
+  EXPECT_EQ("Lslash", AdobeNameFromUnicode(0x0141));
+  EXPECT_EQ("tonos", AdobeNameFromUnicode(0x0384));
+  EXPECT_EQ("afii57513", AdobeNameFromUnicode(0x0691));
+  EXPECT_EQ("angkhankhuthai", AdobeNameFromUnicode(0x0e5a));
+  EXPECT_EQ("Euro", AdobeNameFromUnicode(0x20ac));
 }
 
 TEST(FXFontTest, ReadFontNameFromMicrosoftEntries) {

@@ -67,21 +67,21 @@ TEST(cpdf_tounicodemap, HandleBeginBFRangeAvoidIntegerOverflow) {
         "beginbfrange<FFFFFFFF><FFFFFFFF>[<0041>]endbfrange";
     auto stream = pdfium::MakeRetain<CPDF_Stream>(pdfium::make_span(kInput1));
     CPDF_ToUnicodeMap map(stream);
-    EXPECT_STREQ(L"A", map.Lookup(0xffffffff).c_str());
+    EXPECT_EQ(L"A", map.Lookup(0xffffffff));
   }
   {
     static constexpr uint8_t kInput2[] =
         "beginbfrange<FFFFFFFF><FFFFFFFF><0042>endbfrange";
     auto stream = pdfium::MakeRetain<CPDF_Stream>(pdfium::make_span(kInput2));
     CPDF_ToUnicodeMap map(stream);
-    EXPECT_STREQ(L"B", map.Lookup(0xffffffff).c_str());
+    EXPECT_EQ(L"B", map.Lookup(0xffffffff));
   }
   {
     static constexpr uint8_t kInput3[] =
         "beginbfrange<FFFFFFFF><FFFFFFFF><00410042>endbfrange";
     auto stream = pdfium::MakeRetain<CPDF_Stream>(pdfium::make_span(kInput3));
     CPDF_ToUnicodeMap map(stream);
-    EXPECT_STREQ(L"AB", map.Lookup(0xffffffff).c_str());
+    EXPECT_EQ(L"AB", map.Lookup(0xffffffff));
   }
 }
 

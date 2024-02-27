@@ -1129,10 +1129,10 @@ TEST_F(FPDFFormFillEmbedderTest, DocumentAActions) {
   UnloadPage(page);
 
   ASSERT_EQ(4U, alerts.size());
-  EXPECT_STREQ(L"Will Save", alerts[0].message.c_str());
-  EXPECT_STREQ(L"Did Save", alerts[1].message.c_str());
-  EXPECT_STREQ(L"Will Print", alerts[2].message.c_str());
-  EXPECT_STREQ(L"Did Print", alerts[3].message.c_str());
+  EXPECT_EQ(L"Will Save", alerts[0].message);
+  EXPECT_EQ(L"Did Save", alerts[1].message);
+  EXPECT_EQ(L"Will Print", alerts[2].message);
+  EXPECT_EQ(L"Did Print", alerts[3].message);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, DocumentAActionsDisableJavaScript) {
@@ -1186,23 +1186,23 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_551248) {
 
   ASSERT_EQ(4U, alerts.size());  // nothing else fired.
 
-  EXPECT_STREQ(L"interval fired", alerts[0].message.c_str());
-  EXPECT_STREQ(L"Alert", alerts[0].title.c_str());
+  EXPECT_EQ(L"interval fired", alerts[0].message);
+  EXPECT_EQ(L"Alert", alerts[0].title);
   EXPECT_EQ(0, alerts[0].type);
   EXPECT_EQ(0, alerts[0].icon);
 
-  EXPECT_STREQ(L"timer fired", alerts[1].message.c_str());
-  EXPECT_STREQ(L"Alert", alerts[1].title.c_str());
+  EXPECT_EQ(L"timer fired", alerts[1].message);
+  EXPECT_EQ(L"Alert", alerts[1].title);
   EXPECT_EQ(0, alerts[1].type);
   EXPECT_EQ(0, alerts[1].icon);
 
-  EXPECT_STREQ(L"interval fired", alerts[2].message.c_str());
-  EXPECT_STREQ(L"Alert", alerts[2].title.c_str());
+  EXPECT_EQ(L"interval fired", alerts[2].message);
+  EXPECT_EQ(L"Alert", alerts[2].title);
   EXPECT_EQ(0, alerts[2].type);
   EXPECT_EQ(0, alerts[2].icon);
 
-  EXPECT_STREQ(L"interval fired", alerts[3].message.c_str());
-  EXPECT_STREQ(L"Alert", alerts[3].title.c_str());
+  EXPECT_EQ(L"interval fired", alerts[3].message);
+  EXPECT_EQ(L"Alert", alerts[3].title);
   EXPECT_EQ(0, alerts[3].type);
   EXPECT_EQ(0, alerts[3].icon);
 }
@@ -1221,7 +1221,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_620428) {
 
   const auto& alerts = delegate.GetAlerts();
   ASSERT_EQ(1U, alerts.size());
-  EXPECT_STREQ(L"done", alerts[0].message.c_str());
+  EXPECT_EQ(L"done", alerts[0].message);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, BUG_634394) {

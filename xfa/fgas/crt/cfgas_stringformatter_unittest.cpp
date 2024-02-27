@@ -96,7 +96,7 @@ TEST_F(CFGAS_StringFormatterTest, DateFormat) {
     EXPECT_TRUE(fmt.FormatDateTime(Mgr(tests[i].locale), tests[i].input,
                                    CFGAS_StringFormatter::DateTimeType::kDate,
                                    &result));
-    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+    EXPECT_EQ(tests[i].output, result) << " TEST: " << i;
   }
 }
 
@@ -147,7 +147,7 @@ TEST_F(CFGAS_StringFormatterTest, TimeFormat) {
       EXPECT_TRUE(fmt.FormatDateTime(Mgr(tests[i].locale), tests[i].input,
                                      CFGAS_StringFormatter::DateTimeType::kTime,
                                      &result));
-      EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+      EXPECT_EQ(tests[i].output, result) << " TEST: " << i;
     }
   }
 }
@@ -179,7 +179,7 @@ TEST_F(CFGAS_StringFormatterTest, DateTimeFormat) {
     EXPECT_TRUE(fmt.FormatDateTime(
         Mgr(tests[i].locale), tests[i].input,
         CFGAS_StringFormatter::DateTimeType::kDateTime, &result));
-    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+    EXPECT_EQ(tests[i].output, result) << " TEST: " << i;
   }
 }
 
@@ -208,7 +208,7 @@ TEST_F(CFGAS_StringFormatterTest, TimeDateFormat) {
     EXPECT_TRUE(fmt.FormatDateTime(
         Mgr(tests[i].locale), tests[i].input,
         CFGAS_StringFormatter::DateTimeType::kTimeDate, &result));
-    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+    EXPECT_EQ(tests[i].output, result) << " TEST: " << i;
   }
 }
 
@@ -319,7 +319,7 @@ TEST_F(CFGAS_StringFormatterTest, SplitFormatString) {
   const wchar_t* patterns[] = {L"null{'No|data'} ", L" null{} ",
                                L" text{999*9999} ", L" text{999*999*9999}"};
   for (size_t i = 0; i < results.size(); ++i) {
-    EXPECT_STREQ(patterns[i], results[i].c_str());
+    EXPECT_EQ(patterns[i], results[i]);
   }
 }
 
@@ -459,7 +459,7 @@ TEST_F(CFGAS_StringFormatterTest, NumParse) {
     CFGAS_StringFormatter fmt(test.pattern);
     EXPECT_TRUE(fmt.ParseNum(Mgr(test.locale), test.input, &result))
         << " TEST: " << test.input << ", " << test.pattern;
-    EXPECT_STREQ(test.output, result.c_str())
+    EXPECT_EQ(test.output, result)
         << " TEST: " << test.input << ", " << test.pattern;
   }
 
@@ -590,7 +590,7 @@ TEST_F(CFGAS_StringFormatterTest, NumFormat) {
     CFGAS_StringFormatter fmt(test.pattern);
     EXPECT_TRUE(fmt.FormatNum(Mgr(test.locale), test.input, &result))
         << " TEST: " << test.input << ", " << test.pattern;
-    EXPECT_STREQ(test.output, result.c_str())
+    EXPECT_EQ(test.output, result)
         << " TEST: " << test.input << ", " << test.pattern;
   }
 
@@ -622,7 +622,7 @@ TEST_F(CFGAS_StringFormatterTest, TextParse) {
     WideString result;
     CFGAS_StringFormatter fmt(tests[i].pattern);
     EXPECT_TRUE(fmt.ParseText(tests[i].input, &result));
-    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+    EXPECT_EQ(tests[i].output, result) << " TEST: " << i;
   }
 }
 
@@ -653,7 +653,7 @@ TEST_F(CFGAS_StringFormatterTest, TextFormat) {
     WideString result;
     CFGAS_StringFormatter fmt(tests[i].pattern);
     EXPECT_TRUE(fmt.FormatText(tests[i].input, &result));
-    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+    EXPECT_EQ(tests[i].output, result) << " TEST: " << i;
   }
 }
 
@@ -682,7 +682,7 @@ TEST_F(CFGAS_StringFormatterTest, NullFormat) {
     WideString result;
     CFGAS_StringFormatter fmt(tests[i].pattern);
     EXPECT_TRUE(fmt.FormatNull(&result));
-    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+    EXPECT_EQ(tests[i].output, result) << " TEST: " << i;
   }
 }
 
@@ -714,7 +714,7 @@ TEST_F(CFGAS_StringFormatterTest, ZeroFormat) {
     WideString result;
     CFGAS_StringFormatter fmt(tests[i].pattern);
     EXPECT_TRUE(fmt.FormatZero(&result));
-    EXPECT_STREQ(tests[i].output, result.c_str()) << " TEST: " << i;
+    EXPECT_EQ(tests[i].output, result) << " TEST: " << i;
   }
 }
 

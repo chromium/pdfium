@@ -16,11 +16,11 @@ TEST(STLUtil, string) {
   str += '.';
   str += '6';
   str += "F";
-  EXPECT_STREQ("22C is 71.6F", str.c_str());
+  EXPECT_EQ("22C is 71.6F", str);
 }
 
 TEST(STLUtil, OStringStream) {
   fxcrt::ostringstream str;
   str << 22 << "C is " << 71.6f << "F";
-  EXPECT_STREQ("22C is 71.6F", str.str().c_str());
+  EXPECT_EQ("22C is 71.6F", str.str());
 }

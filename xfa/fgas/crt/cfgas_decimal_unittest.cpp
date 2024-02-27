@@ -20,22 +20,22 @@ TEST(CFGAS_Decimal, Empty) {
 TEST(CFGAS_Decimal, FromInt32) {
   CFGAS_Decimal big(std::numeric_limits<int32_t>::max());
   CFGAS_Decimal small(std::numeric_limits<int32_t>::min());
-  EXPECT_STREQ(L"2147483647", big.ToWideString().c_str());
-  EXPECT_STREQ(L"-2147483648", small.ToWideString().c_str());
+  EXPECT_EQ(L"2147483647", big.ToWideString());
+  EXPECT_EQ(L"-2147483648", small.ToWideString());
 }
 
 TEST(CFGAS_Decimal, FromUint32) {
   CFGAS_Decimal big(std::numeric_limits<uint32_t>::max());
   CFGAS_Decimal small(std::numeric_limits<uint32_t>::min());
-  EXPECT_STREQ(L"4294967295", big.ToWideString().c_str());
-  EXPECT_STREQ(L"0", small.ToWideString().c_str());
+  EXPECT_EQ(L"4294967295", big.ToWideString());
+  EXPECT_EQ(L"0", small.ToWideString());
 }
 
 TEST(CFGAS_Decimal, FromUint64) {
   CFGAS_Decimal big(std::numeric_limits<uint64_t>::max());
   CFGAS_Decimal small(std::numeric_limits<uint64_t>::min());
-  EXPECT_STREQ(L"18446744073709551615", big.ToWideString().c_str());
-  EXPECT_STREQ(L"0", small.ToWideString().c_str());
+  EXPECT_EQ(L"18446744073709551615", big.ToWideString());
+  EXPECT_EQ(L"0", small.ToWideString());
 }
 
 TEST(CFGAS_Decimal, FromFloat) {
@@ -44,17 +44,17 @@ TEST(CFGAS_Decimal, FromFloat) {
 
   // Precision may not be the same on all platforms.
   EXPECT_EQ(big_expected.GetLength(), big.GetLength());
-  EXPECT_STREQ(big_expected.First(8).c_str(), big.First(8).c_str());
+  EXPECT_EQ(big_expected.First(8).c_str(), big.First(8));
 
   WideString tiny = CFGAS_Decimal(1e20f, 0).ToWideString();
   WideString tiny_expected = L"100000000000000000000";
   EXPECT_EQ(tiny_expected.GetLength(), tiny.GetLength());
-  EXPECT_STREQ(tiny_expected.First(8).c_str(), tiny.First(8).c_str());
+  EXPECT_EQ(tiny_expected.First(8).c_str(), tiny.First(8));
 
   WideString teeny = CFGAS_Decimal(1e14f, 4).ToWideString();
   WideString teeny_expected = L"100000000000000.0000";
   EXPECT_EQ(teeny_expected.GetLength(), teeny.GetLength());
-  EXPECT_STREQ(teeny_expected.First(8).c_str(), teeny.First(8).c_str());
+  EXPECT_EQ(teeny_expected.First(8).c_str(), teeny.First(8));
 }
 
 TEST(CFGAS_Decimal, FromFloatFractional) {
@@ -63,17 +63,17 @@ TEST(CFGAS_Decimal, FromFloatFractional) {
 
   // Precision may not be the same on all platforms.
   EXPECT_EQ(case1_expected.GetLength(), case1.GetLength());
-  EXPECT_STREQ(case1_expected.First(8).c_str(), case1.First(8).c_str());
+  EXPECT_EQ(case1_expected.First(8).c_str(), case1.First(8));
 }
 
 TEST(CFGAS_Decimal, FromString) {
   CFGAS_Decimal big(L"100000000000000000000000000");
   CFGAS_Decimal small(L"-1000000000000000000000000");
-  EXPECT_STREQ(L"100000000000000000000000000", big.ToWideString().c_str());
-  EXPECT_STREQ(L"-1000000000000000000000000", small.ToWideString().c_str());
+  EXPECT_EQ(L"100000000000000000000000000", big.ToWideString());
+  EXPECT_EQ(L"-1000000000000000000000000", small.ToWideString());
 }
 
 TEST(CFGAS_Decimal, FromString28Digits) {
   CFGAS_Decimal frac(L"32109876543210.0123456890123");
-  EXPECT_STREQ(L"32109876543210.0123456890123", frac.ToWideString().c_str());
+  EXPECT_EQ(L"32109876543210.0123456890123", frac.ToWideString());
 }

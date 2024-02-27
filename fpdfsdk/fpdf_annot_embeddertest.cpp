@@ -103,7 +103,7 @@ void VerifyUriActionInLink(FPDF_DOCUMENT doc,
   std::vector<char> buffer(bufsize);
   EXPECT_EQ(bufsize,
             FPDFAction_GetURIPath(doc, action, buffer.data(), bufsize));
-  EXPECT_STREQ(expected_uri.c_str(), buffer.data());
+  EXPECT_EQ(expected_uri, buffer.data());
 }
 
 }  // namespace

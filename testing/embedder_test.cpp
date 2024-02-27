@@ -227,9 +227,9 @@ FPDF_FILEHANDLER* DownloadFromURLStub(FPDF_FORMFILLINFO* pThis,
   static FPDF_FILEHANDLER kFakeFileHandler = {
       nullptr,
       [](void*) -> void {},
-      [](void*) -> FPDF_DWORD { return sizeof(kString); },
+      [](void*) -> FPDF_DWORD { return sizeof(kString) - 1; },
       [](void*, FPDF_DWORD off, void* buffer, FPDF_DWORD size) -> FPDF_RESULT {
-        memcpy(buffer, kString, std::min<size_t>(size, sizeof(kString)));
+        memcpy(buffer, kString, std::min<size_t>(size, sizeof(kString) - 1));
         return 0;
       },
       [](void*, FPDF_DWORD, const void*, FPDF_DWORD) -> FPDF_RESULT {

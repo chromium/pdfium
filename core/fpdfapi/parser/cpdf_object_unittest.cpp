@@ -38,7 +38,7 @@ void TestArrayAccessors(const CPDF_Array* arr,
                         CPDF_Array* arr_val,
                         CPDF_Dictionary* dict_val,
                         CPDF_Stream* stream_val) {
-  EXPECT_STREQ(str_val, arr->GetByteStringAt(index).c_str());
+  EXPECT_EQ(str_val, arr->GetByteStringAt(index));
   EXPECT_EQ(int_val, arr->GetIntegerAt(index));
   EXPECT_EQ(float_val, arr->GetFloatAt(index));
   EXPECT_EQ(arr_val, arr->GetArrayAt(index));
@@ -79,7 +79,7 @@ class PDFObjectsTest : public testing::Test {
     m_StreamDictObj->SetNewFor<CPDF_String>("key1", L" test dict");
     m_StreamDictObj->SetNewFor<CPDF_Number>("key2", -1);
     auto stream_obj = pdfium::MakeRetain<CPDF_Stream>(
-        DataVector<uint8_t>(std::begin(kContents), std::end(kContents)),
+        DataVector<uint8_t>(std::begin(kContents), std::end(kContents) - 1),
         std::move(pNewDict));
     // Null Object.
     auto null_obj = pdfium::MakeRetain<CPDF_Null>();
@@ -202,13 +202,13 @@ TEST_F(PDFObjectsTest, GetString) {
       "",      "",     "",     ""};
   // Check for direct objects.
   for (size_t i = 0; i < m_DirectObjs.size(); ++i)
-    EXPECT_STREQ(direct_obj_results[i], m_DirectObjs[i]->GetString().c_str());
+    EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetString());
 
   // Check indirect references.
   const char* const indirect_obj_results[] = {"true", "1245", "\t\n", "space",
                                               "",     "",     ""};
   for (size_t i = 0; i < m_RefObjs.size(); ++i) {
-    EXPECT_STREQ(indirect_obj_results[i], m_RefObjs[i]->GetString().c_str());
+    EXPECT_EQ(indirect_obj_results[i], m_RefObjs[i]->GetString());
   }
 }
 
@@ -219,13 +219,12 @@ TEST_F(PDFObjectsTest, GetUnicodeText) {
       L""};
   // Check for direct objects.
   for (size_t i = 0; i < m_DirectObjs.size(); ++i) {
-    EXPECT_STREQ(direct_obj_results[i],
-                 m_DirectObjs[i]->GetUnicodeText().c_str());
+    EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetUnicodeText());
   }
 
   // Check indirect references.
   for (const auto& it : m_RefObjs)
-    EXPECT_STREQ(L"", it->GetUnicodeText().c_str());
+    EXPECT_EQ(L"", it->GetUnicodeText());
 }
 
 TEST_F(PDFObjectsTest, GetNumber) {
@@ -278,17 +277,17 @@ TEST_F(PDFObjectsTest, GetNameFor) {
   m_DictObj->SetNewFor<CPDF_String>("string", "ium", false);
   m_DictObj->SetNewFor<CPDF_Name>("name", "Pdf");
 
-  EXPECT_STREQ("", m_DictObj->GetNameFor("invalid").c_str());
-  EXPECT_STREQ("", m_DictObj->GetNameFor("bool").c_str());
-  EXPECT_STREQ("", m_DictObj->GetNameFor("num").c_str());
-  EXPECT_STREQ("", m_DictObj->GetNameFor("string").c_str());
-  EXPECT_STREQ("Pdf", m_DictObj->GetNameFor("name").c_str());
+  EXPECT_EQ("", m_DictObj->GetNameFor("invalid"));
+  EXPECT_EQ("", m_DictObj->GetNameFor("bool"));
+  EXPECT_EQ("", m_DictObj->GetNameFor("num"));
+  EXPECT_EQ("", m_DictObj->GetNameFor("string"));
+  EXPECT_EQ("Pdf", m_DictObj->GetNameFor("name"));
 
-  EXPECT_STREQ("", m_DictObj->GetByteStringFor("invalid").c_str());
-  EXPECT_STREQ("false", m_DictObj->GetByteStringFor("bool").c_str());
-  EXPECT_STREQ("0.23", m_DictObj->GetByteStringFor("num").c_str());
-  EXPECT_STREQ("ium", m_DictObj->GetByteStringFor("string").c_str());
-  EXPECT_STREQ("Pdf", m_DictObj->GetByteStringFor("name").c_str());
+  EXPECT_EQ("", m_DictObj->GetByteStringFor("invalid"));
+  EXPECT_EQ("false", m_DictObj->GetByteStringFor("bool"));
+  EXPECT_EQ("0.23", m_DictObj->GetByteStringFor("num"));
+  EXPECT_EQ("ium", m_DictObj->GetByteStringFor("string"));
+  EXPECT_EQ("Pdf", m_DictObj->GetByteStringFor("name"));
 }
 
 TEST_F(PDFObjectsTest, GetArray) {
@@ -346,7 +345,7 @@ TEST_F(PDFObjectsTest, SetString) {
                                   "changed", "",      "NewName"};
   for (size_t i = 0; i < std::size(set_values); ++i) {
     m_DirectObjs[i]->SetString(set_values[i]);
-    EXPECT_STREQ(expected[i], m_DirectObjs[i]->GetString().c_str());
+    EXPECT_EQ(expected[i], m_DirectObjs[i]->GetString());
   }
 }
 
@@ -711,7 +710,7 @@ TEST(PDFArrayTest, GetTypeAt) {
     const float expected_float[] = {0, 0, 0, -1234, 2345, 0.05f, 0,
                                     0, 0, 0, 0,     0,    0,     0};
     for (size_t i = 0; i < arr->size(); ++i) {
-      EXPECT_STREQ(expected_str[i], arr->GetByteStringAt(i).c_str());
+      EXPECT_EQ(expected_str[i], arr->GetByteStringAt(i));
       EXPECT_EQ(expected_int[i], arr->GetIntegerAt(i));
       EXPECT_EQ(expected_float[i], arr->GetFloatAt(i));
       if (i == 11)
@@ -767,9 +766,9 @@ TEST(PDFArrayTest, AddStringAndName) {
   }
   for (size_t i = 0; i < std::size(kVals); ++i) {
     EXPECT_EQ(CPDF_Object::kString, string_array->GetObjectAt(i)->GetType());
-    EXPECT_STREQ(kVals[i], string_array->GetObjectAt(i)->GetString().c_str());
+    EXPECT_EQ(kVals[i], string_array->GetObjectAt(i)->GetString());
     EXPECT_EQ(CPDF_Object::kName, name_array->GetObjectAt(i)->GetType());
-    EXPECT_STREQ(kVals[i], name_array->GetObjectAt(i)->GetString().c_str());
+    EXPECT_EQ(kVals[i], name_array->GetObjectAt(i)->GetString());
   }
 }
 

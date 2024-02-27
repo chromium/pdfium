@@ -98,8 +98,7 @@ class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {
     CFXJSE_ScopeUtil_IsolateHandleContext scope(GetJseContext());
     v8::Local<v8::Value> value = GetValue();
     EXPECT_TRUE(fxv8::IsString(value));
-    EXPECT_STREQ(expected,
-                 fxv8::ReentrantToByteStringHelper(isolate(), value).c_str())
+    EXPECT_EQ(expected, fxv8::ReentrantToByteStringHelper(isolate(), value))
         << "Program: " << input;
   }
 };

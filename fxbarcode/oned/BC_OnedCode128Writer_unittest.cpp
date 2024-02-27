@@ -109,21 +109,21 @@ TEST(OnedCode128WriterTest, CheckContentValidity) {
 TEST(OnedCode128WriterTest, FilterContents) {
   {
     CBC_OnedCode128Writer writer(BC_TYPE::kCode128B);
-    EXPECT_STREQ(L"", writer.FilterContents(L"").c_str());
-    EXPECT_STREQ(L"foo", writer.FilterContents(L"foo\x10").c_str());
-    EXPECT_STREQ(L"fool", writer.FilterContents(L"foo\x10l").c_str());
-    EXPECT_STREQ(L"foo", writer.FilterContents(L"foo\x10\x7F").c_str());
-    EXPECT_STREQ(L"foo", writer.FilterContents(L"foo\x10\x7F\x88").c_str());
-    EXPECT_STREQ(L"bar", writer.FilterContents(L"bar\x10\x7F\x88").c_str());
+    EXPECT_EQ(L"", writer.FilterContents(L""));
+    EXPECT_EQ(L"foo", writer.FilterContents(L"foo\x10"));
+    EXPECT_EQ(L"fool", writer.FilterContents(L"foo\x10l"));
+    EXPECT_EQ(L"foo", writer.FilterContents(L"foo\x10\x7F"));
+    EXPECT_EQ(L"foo", writer.FilterContents(L"foo\x10\x7F\x88"));
+    EXPECT_EQ(L"bar", writer.FilterContents(L"bar\x10\x7F\x88"));
   }
   {
     CBC_OnedCode128Writer writer(BC_TYPE::kCode128C);
-    EXPECT_STREQ(L"", writer.FilterContents(L"").c_str());
-    EXPECT_STREQ(L"f", writer.FilterContents(L"foo\x10").c_str());
-    EXPECT_STREQ(L"f", writer.FilterContents(L"foo\x10l").c_str());
-    EXPECT_STREQ(L"f", writer.FilterContents(L"foo\x10\x7F").c_str());
-    EXPECT_STREQ(L"f", writer.FilterContents(L"foo\x10\x7F\x88").c_str());
-    EXPECT_STREQ(L"ba", writer.FilterContents(L"bar\x10\x7F\x88").c_str());
+    EXPECT_EQ(L"", writer.FilterContents(L""));
+    EXPECT_EQ(L"f", writer.FilterContents(L"foo\x10"));
+    EXPECT_EQ(L"f", writer.FilterContents(L"foo\x10l"));
+    EXPECT_EQ(L"f", writer.FilterContents(L"foo\x10\x7F"));
+    EXPECT_EQ(L"f", writer.FilterContents(L"foo\x10\x7F\x88"));
+    EXPECT_EQ(L"ba", writer.FilterContents(L"bar\x10\x7F\x88"));
   }
 }
 

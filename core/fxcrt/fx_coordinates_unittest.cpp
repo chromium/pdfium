@@ -324,34 +324,34 @@ TEST(CFX_FloatRect, Print) {
   std::ostringstream os;
   CFX_FloatRect rect;
   os << rect;
-  EXPECT_STREQ("rect[w 0 x h 0 (left 0, bot 0)]", os.str().c_str());
+  EXPECT_EQ("rect[w 0 x h 0 (left 0, bot 0)]", os.str());
 
   os.str("");
   rect = CFX_FloatRect(10, 20, 14, 23);
   os << rect;
-  EXPECT_STREQ("rect[w 4 x h 3 (left 10, bot 20)]", os.str().c_str());
+  EXPECT_EQ("rect[w 4 x h 3 (left 10, bot 20)]", os.str());
 
   os.str("");
   rect = CFX_FloatRect(10.5, 20.5, 14.75, 23.75);
   os << rect;
-  EXPECT_STREQ("rect[w 4.25 x h 3.25 (left 10.5, bot 20.5)]", os.str().c_str());
+  EXPECT_EQ("rect[w 4.25 x h 3.25 (left 10.5, bot 20.5)]", os.str());
 }
 
 TEST(CFX_RectF, Print) {
   std::ostringstream os;
   CFX_RectF rect;
   os << rect;
-  EXPECT_STREQ("rect[w 0 x h 0 (left 0, top 0)]", os.str().c_str());
+  EXPECT_EQ("rect[w 0 x h 0 (left 0, top 0)]", os.str());
 
   os.str("");
   rect = CFX_RectF(10, 20, 4, 3);
   os << rect;
-  EXPECT_STREQ("rect[w 4 x h 3 (left 10, top 20)]", os.str().c_str());
+  EXPECT_EQ("rect[w 4 x h 3 (left 10, top 20)]", os.str());
 
   os.str("");
   rect = CFX_RectF(10.5, 20.5, 4.25, 3.25);
   os << rect;
-  EXPECT_STREQ("rect[w 4.25 x h 3.25 (left 10.5, top 20.5)]", os.str().c_str());
+  EXPECT_EQ("rect[w 4.25 x h 3.25 (left 10.5, top 20.5)]", os.str());
 }
 #endif  // NDEBUG
 
