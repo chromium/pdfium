@@ -260,14 +260,6 @@ void CPDF_GeneralState::SetTextKnockout(bool knockout) {
   m_Ref.GetPrivateCopy()->m_TextKnockout = knockout;
 }
 
-void CPDF_GeneralState::SetMatrix(const CFX_Matrix& matrix) {
-  m_Ref.GetPrivateCopy()->m_Matrix = matrix;
-}
-
-CFX_Matrix* CPDF_GeneralState::GetMutableMatrix() {
-  return &m_Ref.GetPrivateCopy()->m_Matrix;
-}
-
 void CPDF_GeneralState::SetGraphicsResourceNames(
     std::vector<ByteString> names) {
   m_Ref.GetPrivateCopy()->m_GraphicsResourceNames = std::move(names);
@@ -297,7 +289,6 @@ CPDF_GeneralState::StateData::StateData(const StateData& that)
       m_FillAlpha(that.m_FillAlpha),
       m_pTR(that.m_pTR),
       m_pTransferFunc(that.m_pTransferFunc),
-      m_Matrix(that.m_Matrix),
       m_RenderIntent(that.m_RenderIntent),
       m_StrokeAdjust(that.m_StrokeAdjust),
       m_AlphaSource(that.m_AlphaSource),

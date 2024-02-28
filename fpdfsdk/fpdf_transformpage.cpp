@@ -299,7 +299,6 @@ FPDFPageObj_TransformClipPath(FPDF_PAGEOBJECT page_object,
   // object is already transformed.
   if (!pPageObj->IsShading())
     pPageObj->TransformClipPath(matrix);
-  pPageObj->TransformGeneralState(matrix);
 }
 
 FPDF_EXPORT FPDF_CLIPPATH FPDF_CALLCONV

@@ -168,7 +168,6 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
         break;
     }
   }
-  mutable_general_state().SetMatrix(m_CTM);
 }
 
 void CPDF_AllStates::ResetTextPosition() {

@@ -99,15 +99,6 @@ void CPDF_PageObject::TransformClipPath(const CFX_Matrix& matrix) {
   SetDirty(true);
 }
 
-void CPDF_PageObject::TransformGeneralState(const CFX_Matrix& matrix) {
-  CPDF_GeneralState& general_state = mutable_general_state();
-  if (!general_state.HasRef()) {
-    return;
-  }
-  general_state.GetMutableMatrix()->Concat(matrix);
-  SetDirty(true);
-}
-
 FX_RECT CPDF_PageObject::GetBBox() const {
   return GetRect().GetOuterRect();
 }

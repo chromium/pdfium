@@ -63,7 +63,6 @@ class CPDF_PageObject {
   void SetDirty(bool value) { m_bDirty = value; }
   bool IsDirty() const { return m_bDirty; }
   void TransformClipPath(const CFX_Matrix& matrix);
-  void TransformGeneralState(const CFX_Matrix& matrix);
 
   void SetOriginalRect(const CFX_FloatRect& rect) { m_OriginalRect = rect; }
   const CFX_FloatRect& GetOriginalRect() const { return m_OriginalRect; }

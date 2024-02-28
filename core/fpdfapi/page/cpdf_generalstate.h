@@ -79,9 +79,6 @@ class CPDF_GeneralState {
   void SetAlphaSource(bool source);
   void SetTextKnockout(bool knockout);
 
-  void SetMatrix(const CFX_Matrix& matrix);
-  CFX_Matrix* GetMutableMatrix();
-
   void SetGraphicsResourceNames(std::vector<ByteString> names);
   void AppendGraphicsResourceName(ByteString name);
   pdfium::span<const ByteString> GetGraphicsResourceNames() const;
@@ -101,7 +98,6 @@ class CPDF_GeneralState {
     float m_FillAlpha = 1.0f;
     RetainPtr<const CPDF_Object> m_pTR;
     RetainPtr<CPDF_TransferFunc> m_pTransferFunc;
-    CFX_Matrix m_Matrix;
     int m_RenderIntent = 0;
     bool m_StrokeAdjust = false;
     bool m_AlphaSource = false;
