@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/page/cpdf_color.h"
 
+#include <optional>
 #include <utility>
 
 #include "core/fpdfapi/page/cpdf_patterncs.h"
@@ -78,7 +79,7 @@ bool CPDF_Color::IsColorSpaceRGB() const {
          CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceRGB);
 }
 
-bool CPDF_Color::GetRGB(int* R, int* G, int* B) const {
+std::optional<FX_COLORREF> CPDF_Color::GetRGB() const {
   float r = 0.0f;
   float g = 0.0f;
   float b = 0.0f;
@@ -92,13 +93,13 @@ bool CPDF_Color::GetRGB(int* R, int* G, int* B) const {
     if (!m_Buffer.empty())
       result = m_pCS->GetRGB(m_Buffer, &r, &g, &b);
   }
-  if (!result)
-    return false;
+  if (!result) {
+    return std::nullopt;
+  }
 
-  *R = static_cast<int32_t>(r * 255 + 0.5f);
-  *G = static_cast<int32_t>(g * 255 + 0.5f);
-  *B = static_cast<int32_t>(b * 255 + 0.5f);
-  return true;
+  return FXSYS_BGR(static_cast<int32_t>(b * 255 + 0.5f),
+                   static_cast<int32_t>(g * 255 + 0.5f),
+                   static_cast<int32_t>(r * 255 + 0.5f));
 }
 
 RetainPtr<CPDF_Pattern> CPDF_Color::GetPattern() const {

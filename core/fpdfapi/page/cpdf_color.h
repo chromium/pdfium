@@ -10,10 +10,12 @@
 #include <stdint.h>
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
+#include "core/fxge/dib/fx_dib.h"
 
 class CPDF_ColorSpace;
 class CPDF_Pattern;
@@ -37,7 +39,7 @@ class CPDF_Color {
 
   uint32_t ComponentCount() const;
   bool IsColorSpaceRGB() const;
-  bool GetRGB(int* R, int* G, int* B) const;
+  std::optional<FX_COLORREF> GetRGB() const;
 
   // Should only be called if IsPattern() returns true.
   RetainPtr<CPDF_Pattern> GetPattern() const;

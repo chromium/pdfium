@@ -8,6 +8,7 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 #include <set>
 #include <sstream>
 #include <tuple>
@@ -51,15 +52,21 @@ namespace {
 // Value: The resource names of a given type.
 using ResourcesMap = std::map<ByteString, std::set<ByteString>>;
 
+// TODO(thestig): Remove out parameter and raw pointer.
 bool GetColor(const CPDF_Color* pColor, float* rgb) {
-  int intRGB[3];
-  if (!pColor || !pColor->IsColorSpaceRGB() ||
-      !pColor->GetRGB(&intRGB[0], &intRGB[1], &intRGB[2])) {
+  if (!pColor || !pColor->IsColorSpaceRGB()) {
     return false;
   }
-  rgb[0] = intRGB[0] / 255.0f;
-  rgb[1] = intRGB[1] / 255.0f;
-  rgb[2] = intRGB[2] / 255.0f;
+
+  std::optional<FX_COLORREF> colors = pColor->GetRGB();
+  if (!colors.has_value()) {
+    return false;
+  }
+
+  // TODO(thestig): Remove float to int to float conversion.
+  rgb[0] = FXSYS_GetRValue(colors.value()) / 255.0f;
+  rgb[1] = FXSYS_GetGValue(colors.value()) / 255.0f;
+  rgb[2] = FXSYS_GetBValue(colors.value()) / 255.0f;
   return true;
 }
 
