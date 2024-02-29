@@ -28,7 +28,7 @@
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class CPDF_PageContentGeneratorTest : public TestWithPageModule {
+class CPDFPageContentGeneratorTest : public TestWithPageModule {
  protected:
   void TestProcessPath(CPDF_PageContentGenerator* pGen,
                        fxcrt::ostringstream* buf,
@@ -52,7 +52,7 @@ class CPDF_PageContentGeneratorTest : public TestWithPageModule {
   }
 };
 
-TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
+TEST_F(CPDFPageContentGeneratorTest, ProcessRect) {
   auto pPathObj = std::make_unique<CPDF_PathObject>();
   pPathObj->set_stroke(true);
   pPathObj->set_filltype(CFX_FillRenderOptions::FillType::kEvenOdd);
@@ -78,7 +78,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessRect) {
   EXPECT_EQ("q 1 0 0 1 0 0 cm 0 0 5.1999998 3.78 re n Q\n", ByteString(buf));
 }
 
-TEST_F(CPDF_PageContentGeneratorTest, BUG_937) {
+TEST_F(CPDFPageContentGeneratorTest, BUG_937) {
   static const std::vector<float> rgb = {0.000000000000000000001f, 0.7f, 0.35f};
   RetainPtr<CPDF_ColorSpace> pCS =
       CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceRGB);
@@ -144,7 +144,7 @@ TEST_F(CPDF_PageContentGeneratorTest, BUG_937) {
   }
 }
 
-TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
+TEST_F(CPDFPageContentGeneratorTest, ProcessPath) {
   auto pPathObj = std::make_unique<CPDF_PathObject>();
   pPathObj->set_filltype(CFX_FillRenderOptions::FillType::kWinding);
   pPathObj->path().AppendPoint(CFX_PointF(3.102f, 4.67f),
@@ -181,7 +181,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessPath) {
       ByteString(buf));
 }
 
-TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
+TEST_F(CPDFPageContentGeneratorTest, ProcessGraphics) {
   auto pPathObj = std::make_unique<CPDF_PathObject>();
   pPathObj->set_stroke(true);
   pPathObj->set_filltype(CFX_FillRenderOptions::FillType::kWinding);
@@ -208,38 +208,38 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessGraphics) {
   CPDF_PageContentGenerator generator(pTestPage.Get());
   fxcrt::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
-  ByteString pathString(buf);
+  ByteString path_string(buf);
 
   // Color RGB values used are integers divided by 255.
   EXPECT_EQ("q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG /",
-            pathString.First(48));
+            path_string.First(48));
   EXPECT_EQ(" gs 1 0 0 1 0 0 cm 1 2 m 3 4 l 5 6 l h B Q\n",
-            pathString.Last(43));
-  ASSERT_GT(pathString.GetLength(), 91U);
-  RetainPtr<const CPDF_Dictionary> externalGS =
+            path_string.Last(43));
+  ASSERT_GT(path_string.GetLength(), 91U);
+  RetainPtr<const CPDF_Dictionary> external_gs =
       TestGetResource(&generator, "ExtGState",
-                      pathString.Substr(48, pathString.GetLength() - 91));
-  ASSERT_TRUE(externalGS);
-  EXPECT_EQ(0.5f, externalGS->GetFloatFor("ca"));
-  EXPECT_EQ(0.8f, externalGS->GetFloatFor("CA"));
+                      path_string.Substr(48, path_string.GetLength() - 91));
+  ASSERT_TRUE(external_gs);
+  EXPECT_EQ(0.5f, external_gs->GetFloatFor("ca"));
+  EXPECT_EQ(0.8f, external_gs->GetFloatFor("CA"));
 
   // Same path, now with a stroke.
   pPathObj->mutable_graph_state().SetLineWidth(10.5f);
   buf.str("");
   TestProcessPath(&generator, &buf, pPathObj.get());
-  ByteString pathString2(buf);
+  ByteString path_string2(buf);
   EXPECT_EQ("q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG 10.5 w /",
-            pathString2.First(55));
+            path_string2.First(55));
   EXPECT_EQ(" gs 1 0 0 1 0 0 cm 1 2 m 3 4 l 5 6 l h B Q\n",
-            pathString2.Last(43));
+            path_string2.Last(43));
 
   // Compare with the previous (should use same dictionary for gs)
-  EXPECT_EQ(pathString.GetLength() + 7, pathString2.GetLength());
-  EXPECT_EQ(pathString.Substr(48, pathString.GetLength() - 76),
-            pathString2.Substr(55, pathString2.GetLength() - 83));
+  EXPECT_EQ(path_string.GetLength() + 7, path_string2.GetLength());
+  EXPECT_EQ(path_string.Substr(48, path_string.GetLength() - 76),
+            path_string2.Substr(55, path_string2.GetLength() - 83));
 }
 
-TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
+TEST_F(CPDFPageContentGeneratorTest, ProcessStandardText) {
   // Checking font whose font dictionary is not yet indirect object.
   auto pDoc = std::make_unique<CPDF_TestDocument>();
   pDoc->CreateNewDoc();
@@ -265,47 +265,47 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessStandardText) {
   pTextObj->SetText("Hello World");
   fxcrt::ostringstream buf;
   TestProcessText(&generator, &buf, pTextObj.get());
-  ByteString textString(buf);
-  auto firstResourceAt = textString.Find('/');
-  ASSERT_TRUE(firstResourceAt.has_value());
-  firstResourceAt = firstResourceAt.value() + 1;
-  auto secondResourceAt = textString.ReverseFind('/');
-  ASSERT_TRUE(secondResourceAt.has_value());
-  secondResourceAt = secondResourceAt.value() + 1;
-  ByteString firstString = textString.First(firstResourceAt.value());
-  ByteString midString =
-      textString.Substr(firstResourceAt.value(),
-                        secondResourceAt.value() - firstResourceAt.value());
-  ByteString lastString =
-      textString.Last(textString.GetLength() - secondResourceAt.value());
+  ByteString text_string(buf);
+  auto first_resource_at = text_string.Find('/');
+  ASSERT_TRUE(first_resource_at.has_value());
+  first_resource_at = first_resource_at.value() + 1;
+  auto second_resource_at = text_string.ReverseFind('/');
+  ASSERT_TRUE(second_resource_at.has_value());
+  second_resource_at = second_resource_at.value() + 1;
+  ByteString first_string = text_string.First(first_resource_at.value());
+  ByteString mid_string = text_string.Substr(
+      first_resource_at.value(),
+      second_resource_at.value() - first_resource_at.value());
+  ByteString last_string =
+      text_string.Last(text_string.GetLength() - second_resource_at.value());
   // q and Q must be outside the BT .. ET operations
-  ByteString compareString1 =
+  ByteString compare_string1 =
       "q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG /";
   // Color RGB values used are integers divided by 255.
-  ByteString compareString2 = " gs BT 1 0 0 1 100 100 Tm /";
-  ByteString compareString3 = " 10 Tf 0 Tr <48656C6C6F20576F726C64> Tj ET Q\n";
-  EXPECT_LT(compareString1.GetLength() + compareString2.GetLength() +
-                compareString3.GetLength(),
-            textString.GetLength());
-  EXPECT_EQ(compareString1, firstString.First(compareString1.GetLength()));
-  EXPECT_EQ(compareString2, midString.Last(compareString2.GetLength()));
-  EXPECT_EQ(compareString3, lastString.Last(compareString3.GetLength()));
-  RetainPtr<const CPDF_Dictionary> externalGS = TestGetResource(
+  ByteString compare_string2 = " gs BT 1 0 0 1 100 100 Tm /";
+  ByteString compare_string3 = " 10 Tf 0 Tr <48656C6C6F20576F726C64> Tj ET Q\n";
+  EXPECT_LT(compare_string1.GetLength() + compare_string2.GetLength() +
+                compare_string3.GetLength(),
+            text_string.GetLength());
+  EXPECT_EQ(compare_string1, first_string.First(compare_string1.GetLength()));
+  EXPECT_EQ(compare_string2, mid_string.Last(compare_string2.GetLength()));
+  EXPECT_EQ(compare_string3, last_string.Last(compare_string3.GetLength()));
+  RetainPtr<const CPDF_Dictionary> external_gs = TestGetResource(
       &generator, "ExtGState",
-      midString.First(midString.GetLength() - compareString2.GetLength()));
-  ASSERT_TRUE(externalGS);
-  EXPECT_EQ(0.5f, externalGS->GetFloatFor("ca"));
-  EXPECT_EQ(0.8f, externalGS->GetFloatFor("CA"));
-  RetainPtr<const CPDF_Dictionary> fontDict = TestGetResource(
+      mid_string.First(mid_string.GetLength() - compare_string2.GetLength()));
+  ASSERT_TRUE(external_gs);
+  EXPECT_EQ(0.5f, external_gs->GetFloatFor("ca"));
+  EXPECT_EQ(0.8f, external_gs->GetFloatFor("CA"));
+  RetainPtr<const CPDF_Dictionary> font_dict = TestGetResource(
       &generator, "Font",
-      lastString.First(lastString.GetLength() - compareString3.GetLength()));
-  ASSERT_TRUE(fontDict);
-  EXPECT_EQ("Font", fontDict->GetNameFor("Type"));
-  EXPECT_EQ("Type1", fontDict->GetNameFor("Subtype"));
-  EXPECT_EQ("Times-Roman", fontDict->GetNameFor("BaseFont"));
+      last_string.First(last_string.GetLength() - compare_string3.GetLength()));
+  ASSERT_TRUE(font_dict);
+  EXPECT_EQ("Font", font_dict->GetNameFor("Type"));
+  EXPECT_EQ("Type1", font_dict->GetNameFor("Subtype"));
+  EXPECT_EQ("Times-Roman", font_dict->GetNameFor("BaseFont"));
 }
 
-TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
+TEST_F(CPDFPageContentGeneratorTest, ProcessText) {
   // Checking font whose font dictionary is already an indirect object.
   auto pDoc = std::make_unique<CPDF_TestDocument>();
   pDoc->CreateNewDoc();
@@ -350,40 +350,40 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessText) {
     TestProcessText(&generator, &buf, pTextObj.get());
   }
 
-  ByteString textString(buf);
-  auto firstResourceAt = textString.Find('/');
-  ASSERT_TRUE(firstResourceAt.has_value());
-  firstResourceAt = firstResourceAt.value() + 1;
-  ByteString firstString = textString.First(firstResourceAt.value());
-  ByteString lastString =
-      textString.Last(textString.GetLength() - firstResourceAt.value());
+  ByteString text_string(buf);
+  auto first_resource_at = text_string.Find('/');
+  ASSERT_TRUE(first_resource_at.has_value());
+  first_resource_at = first_resource_at.value() + 1;
+  ByteString first_string = text_string.First(first_resource_at.value());
+  ByteString last_string =
+      text_string.Last(text_string.GetLength() - first_resource_at.value());
   // q and Q must be outside the BT .. ET operations
-  ByteString compareString1 = "q 0 0 5 4 re W* n BT 1 0 0 1 0 0 Tm /";
-  ByteString compareString2 =
+  ByteString compare_string1 = "q 0 0 5 4 re W* n BT 1 0 0 1 0 0 Tm /";
+  ByteString compare_string2 =
       " 15.5 Tf 4 Tr <4920616D20696E646972656374> Tj ET Q\n";
-  EXPECT_LT(compareString1.GetLength() + compareString2.GetLength(),
-            textString.GetLength());
-  EXPECT_EQ(compareString1, textString.First(compareString1.GetLength()));
-  EXPECT_EQ(compareString2, textString.Last(compareString2.GetLength()));
-  RetainPtr<const CPDF_Dictionary> fontDict = TestGetResource(
+  EXPECT_LT(compare_string1.GetLength() + compare_string2.GetLength(),
+            text_string.GetLength());
+  EXPECT_EQ(compare_string1, text_string.First(compare_string1.GetLength()));
+  EXPECT_EQ(compare_string2, text_string.Last(compare_string2.GetLength()));
+  RetainPtr<const CPDF_Dictionary> font_dict = TestGetResource(
       &generator, "Font",
-      textString.Substr(compareString1.GetLength(),
-                        textString.GetLength() - compareString1.GetLength() -
-                            compareString2.GetLength()));
-  ASSERT_TRUE(fontDict);
-  EXPECT_TRUE(fontDict->GetObjNum());
-  EXPECT_EQ("Font", fontDict->GetNameFor("Type"));
-  EXPECT_EQ("TrueType", fontDict->GetNameFor("Subtype"));
-  EXPECT_EQ("Helvetica", fontDict->GetNameFor("BaseFont"));
-  RetainPtr<const CPDF_Dictionary> fontDesc =
-      fontDict->GetDictFor("FontDescriptor");
-  ASSERT_TRUE(fontDesc);
-  EXPECT_TRUE(fontDesc->GetObjNum());
-  EXPECT_EQ("FontDescriptor", fontDesc->GetNameFor("Type"));
-  EXPECT_EQ("Helvetica", fontDesc->GetNameFor("FontName"));
+      text_string.Substr(compare_string1.GetLength(),
+                         text_string.GetLength() - compare_string1.GetLength() -
+                             compare_string2.GetLength()));
+  ASSERT_TRUE(font_dict);
+  EXPECT_TRUE(font_dict->GetObjNum());
+  EXPECT_EQ("Font", font_dict->GetNameFor("Type"));
+  EXPECT_EQ("TrueType", font_dict->GetNameFor("Subtype"));
+  EXPECT_EQ("Helvetica", font_dict->GetNameFor("BaseFont"));
+  RetainPtr<const CPDF_Dictionary> font_desc =
+      font_dict->GetDictFor("FontDescriptor");
+  ASSERT_TRUE(font_desc);
+  EXPECT_TRUE(font_desc->GetObjNum());
+  EXPECT_EQ("FontDescriptor", font_desc->GetNameFor("Type"));
+  EXPECT_EQ("Helvetica", font_desc->GetNameFor("FontName"));
 }
 
-TEST_F(CPDF_PageContentGeneratorTest, ProcessEmptyForm) {
+TEST_F(CPDFPageContentGeneratorTest, ProcessEmptyForm) {
   auto pDoc = std::make_unique<CPDF_TestDocument>();
   pDoc->CreateNewDoc();
   auto pStream =
@@ -402,7 +402,7 @@ TEST_F(CPDF_PageContentGeneratorTest, ProcessEmptyForm) {
   EXPECT_EQ("", ByteString(buf));
 }
 
-TEST_F(CPDF_PageContentGeneratorTest, ProcessFormWithPath) {
+TEST_F(CPDFPageContentGeneratorTest, ProcessFormWithPath) {
   auto pDoc = std::make_unique<CPDF_TestDocument>();
   pDoc->CreateNewDoc();
   static constexpr uint8_t kContents[] =

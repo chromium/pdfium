@@ -36,7 +36,7 @@ class CPDF_PageContentGenerator {
   bool ProcessPageObjects(fxcrt::ostringstream* buf);
 
  private:
-  friend class CPDF_PageContentGeneratorTest;
+  friend class CPDFPageContentGeneratorTest;
 
   void ProcessPageObject(fxcrt::ostringstream* buf, CPDF_PageObject* pPageObj);
   void ProcessPathPoints(fxcrt::ostringstream* buf, CPDF_Path* pPath);
