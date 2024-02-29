@@ -1386,7 +1386,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   const int src_pitch = bitmap->GetPitch();
   DataVector<uint8_t> transfers(256);
   if (pFunc) {
-    std::vector<float> results(pFunc->CountOutputs());
+    std::vector<float> results(pFunc->OutputCount());
     for (size_t i = 0; i < transfers.size(); ++i) {
       float input = i / 255.0f;
       pFunc->Call(pdfium::span_from_ref(input), results);
@@ -1449,7 +1449,7 @@ FX_ARGB CPDF_RenderStatus::GetBackgroundColor(
   // Store Color Space Family to use in CPDF_RenderStatus::Initialize().
   *pCSFamily = family;
 
-  uint32_t comps = std::max(8u, pCS->CountComponents());
+  uint32_t comps = std::max(8u, pCS->ComponentCount());
   size_t count = std::min<size_t>(8, pBC->size());
   std::vector<float> floats = ReadArrayElementsToVector(pBC.Get(), count);
   floats.resize(comps);

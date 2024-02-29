@@ -615,7 +615,7 @@ std::vector<float> CPDF_ColorSpace::CreateBufAndSetDefaultColor() const {
   return buf;
 }
 
-uint32_t CPDF_ColorSpace::CountComponents() const {
+uint32_t CPDF_ColorSpace::ComponentCount() const {
   return m_nComponents;
 }
 
@@ -982,7 +982,7 @@ bool CPDF_ICCBasedCS::GetRGB(pdfium::span<const float> pBuf,
   }
   if (profile_->IsSupported()) {
     float rgb[3];
-    profile_->Translate(pBuf.first(CountComponents()), rgb);
+    profile_->Translate(pBuf.first(ComponentCount()), rgb);
     *R = rgb[0];
     *G = rgb[1];
     *B = rgb[2];
@@ -1016,7 +1016,7 @@ void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
   }
 
   // |nMaxColors| will not overflow since |nComponents| is limited in size.
-  const uint32_t nComponents = CountComponents();
+  const uint32_t nComponents = ComponentCount();
   DCHECK(fxcodec::IccTransform::IsValidIccComponents(nComponents));
   int nMaxColors = 1;
   for (uint32_t i = 0; i < nComponents; i++)
@@ -1094,8 +1094,9 @@ bool CPDF_ICCBasedCS::FindAlternateProfile(
   if (pAlterCS->GetFamily() == Family::kPattern)
     return false;
 
-  if (pAlterCS->CountComponents() != nExpectedComponents)
+  if (pAlterCS->ComponentCount() != nExpectedComponents) {
     return false;
+  }
 
   m_pBaseCS = std::move(pAlterCS);
   return true;
@@ -1164,8 +1165,9 @@ uint32_t CPDF_SeparationCS::v_Load(CPDF_Document* pDoc,
   RetainPtr<const CPDF_Object> pFuncObj = pArray->GetDirectObjectAt(3);
   if (pFuncObj && !pFuncObj->IsName()) {
     auto pFunc = CPDF_Function::Load(std::move(pFuncObj));
-    if (pFunc && pFunc->CountOutputs() >= m_pBaseCS->CountComponents())
+    if (pFunc && pFunc->OutputCount() >= m_pBaseCS->ComponentCount()) {
       m_pFunc = std::move(pFunc);
+    }
   }
   return 1;
 }
@@ -1181,7 +1183,7 @@ bool CPDF_SeparationCS::GetRGB(pdfium::span<const float> pBuf,
     if (!m_pBaseCS)
       return false;
 
-    int nComps = m_pBaseCS->CountComponents();
+    int nComps = m_pBaseCS->ComponentCount();
     std::vector<float> results(nComps);
     for (int i = 0; i < nComps; i++)
       results[i] = pBuf[0];
@@ -1189,7 +1191,7 @@ bool CPDF_SeparationCS::GetRGB(pdfium::span<const float> pBuf,
   }
 
   // Using at least 16 elements due to the call m_pAltCS->GetRGB() below.
-  std::vector<float> results(std::max(m_pFunc->CountOutputs(), 16u));
+  std::vector<float> results(std::max(m_pFunc->OutputCount(), 16u));
   uint32_t nresults = m_pFunc->Call(pBuf.first(1), results).value_or(0);
   if (nresults == 0)
     return false;
@@ -1235,8 +1237,9 @@ uint32_t CPDF_DeviceNCS::v_Load(CPDF_Document* pDoc,
   if (m_pBaseCS->IsSpecial())
     return 0;
 
-  if (m_pFunc->CountOutputs() < m_pBaseCS->CountComponents())
+  if (m_pFunc->OutputCount() < m_pBaseCS->ComponentCount()) {
     return 0;
+  }
 
   return fxcrt::CollectionSize<uint32_t>(*pObj);
 }
@@ -1249,9 +1252,9 @@ bool CPDF_DeviceNCS::GetRGB(pdfium::span<const float> pBuf,
     return false;
 
   // Using at least 16 elements due to the call m_pAltCS->GetRGB() below.
-  std::vector<float> results(std::max(m_pFunc->CountOutputs(), 16u));
+  std::vector<float> results(std::max(m_pFunc->OutputCount(), 16u));
   uint32_t nresults =
-      m_pFunc->Call(pBuf.first(CountComponents()), pdfium::make_span(results))
+      m_pFunc->Call(pBuf.first(ComponentCount()), pdfium::make_span(results))
           .value_or(0);
 
   if (nresults == 0)

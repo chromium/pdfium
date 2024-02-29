@@ -117,8 +117,9 @@ void CPDF_ColorState::SetColor(RetainPtr<CPDF_ColorSpace> colorspace,
     color->SetColorSpace(
         CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceGray));
   }
-  if (color->CountComponents() > values.size())
+  if (color->ComponentCount() > values.size()) {
     return;
+  }
 
   if (!color->IsPattern())
     color->SetValueForNonPattern(std::move(values));

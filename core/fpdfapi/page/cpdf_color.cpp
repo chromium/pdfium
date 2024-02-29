@@ -10,6 +10,7 @@
 
 #include "core/fpdfapi/page/cpdf_patterncs.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/check_op.h"
 
 CPDF_Color::CPDF_Color() = default;
 
@@ -39,8 +40,8 @@ void CPDF_Color::SetColorSpace(RetainPtr<CPDF_ColorSpace> colorspace) {
 }
 
 void CPDF_Color::SetValueForNonPattern(std::vector<float> values) {
-  DCHECK(!IsPatternInternal());
-  DCHECK(m_pCS->CountComponents() <= values.size());
+  CHECK(!IsPatternInternal());
+  CHECK_LE(m_pCS->ComponentCount(), values.size());
   m_Buffer = std::move(values);
 }
 
@@ -68,8 +69,8 @@ CPDF_Color& CPDF_Color::operator=(const CPDF_Color& that) {
   return *this;
 }
 
-uint32_t CPDF_Color::CountComponents() const {
-  return m_pCS->CountComponents();
+uint32_t CPDF_Color::ComponentCount() const {
+  return m_pCS->ComponentCount();
 }
 
 bool CPDF_Color::IsColorSpaceRGB() const {

@@ -128,7 +128,7 @@ bool CPDF_MeshStream::Load() {
   if (ShouldCheckBitsPerFlag(m_type) && !IsValidBitsPerFlag(m_nFlagBits))
     return false;
 
-  uint32_t nComponents = m_pCS->CountComponents();
+  uint32_t nComponents = m_pCS->ComponentCount();
   if (nComponents > kMaxComponents)
     return false;
 
@@ -220,8 +220,9 @@ std::tuple<float, float, float> CPDF_MeshStream::ReadColor() {
 
   float result[kMaxComponents] = {};
   for (const auto& func : m_funcs) {
-    if (func && func->CountOutputs() <= kMaxComponents)
+    if (func && func->OutputCount() <= kMaxComponents) {
       func->Call(pdfium::make_span(color_value, 1u), result);
+    }
   }
 
   m_pCS->GetRGB(result, &r, &g, &b);

@@ -93,7 +93,7 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   // Should only be called if this colorspace is not a pattern.
   std::vector<float> CreateBufAndSetDefaultColor() const;
 
-  uint32_t CountComponents() const;
+  uint32_t ComponentCount() const;
   Family GetFamily() const { return m_Family; }
   bool IsSpecial() const {
     return GetFamily() == Family::kSeparation ||

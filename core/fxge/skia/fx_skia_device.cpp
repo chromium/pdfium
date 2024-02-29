@@ -282,7 +282,7 @@ SkBlendMode GetSkiaBlendMode(BlendMode blend_type) {
 bool AddColors(const CPDF_ExpIntFunc* func,
                DataVector<SkColor>& colors,
                bool is_encode_reversed) {
-  if (func->CountInputs() != 1) {
+  if (func->InputCount() != 1) {
     return false;
   }
   if (func->GetExponent() != 1) {
@@ -316,10 +316,10 @@ uint8_t FloatToByte(float f) {
 bool AddSamples(const CPDF_SampledFunc* func,
                 DataVector<SkColor>& colors,
                 DataVector<SkScalar>& pos) {
-  if (func->CountInputs() != 1) {
+  if (func->InputCount() != 1) {
     return false;
   }
-  if (func->CountOutputs() != 3) {  // expect rgb
+  if (func->OutputCount() != 3) {  // expect rgb
     return false;
   }
   if (func->GetEncodeInfo().empty()) {

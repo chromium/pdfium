@@ -76,10 +76,11 @@ bool CPDF_StitchFunc::v_Init(const CPDF_Object* pObj, VisitedSet* pVisited) {
 
       // Check that the input dimensionality is 1, and that all output
       // dimensionalities are the same.
-      if (pFunc->CountInputs() != kRequiredNumInputs)
+      if (pFunc->InputCount() != kRequiredNumInputs) {
         return false;
+      }
 
-      uint32_t nFuncOutputs = pFunc->CountOutputs();
+      uint32_t nFuncOutputs = pFunc->OutputCount();
       if (nFuncOutputs == 0)
         return false;
 

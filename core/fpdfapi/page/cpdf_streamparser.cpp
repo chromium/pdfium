@@ -162,7 +162,7 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
   if (pCSObj) {
     RetainPtr<CPDF_ColorSpace> pCS =
         CPDF_DocPageData::FromDocument(pDoc)->GetColorSpace(pCSObj, nullptr);
-    nComponents = pCS ? pCS->CountComponents() : 3;
+    nComponents = pCS ? pCS->ComponentCount() : 3;
     bpc = pDict->GetIntegerFor("BitsPerComponent");
   }
   std::optional<uint32_t> maybe_size =

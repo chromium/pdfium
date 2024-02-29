@@ -35,10 +35,11 @@ uint32_t CPDF_PatternCS::v_Load(CPDF_Document* pDoc,
   if (m_pBaseCS->GetFamily() == Family::kPattern)
     return 0;
 
-  if (m_pBaseCS->CountComponents() > kMaxPatternColorComps)
+  if (m_pBaseCS->ComponentCount() > kMaxPatternColorComps) {
     return 0;
+  }
 
-  return m_pBaseCS->CountComponents() + 1;
+  return m_pBaseCS->ComponentCount() + 1;
 }
 
 bool CPDF_PatternCS::GetRGB(pdfium::span<const float> pBuf,

@@ -38,8 +38,8 @@ class CPDF_Function {
 
   std::optional<uint32_t> Call(pdfium::span<const float> inputs,
                                pdfium::span<float> results) const;
-  uint32_t CountInputs() const { return m_nInputs; }
-  uint32_t CountOutputs() const { return m_nOutputs; }
+  uint32_t InputCount() const { return m_nInputs; }
+  uint32_t OutputCount() const { return m_nOutputs; }
   float GetDomain(int i) const { return m_Domains[i]; }
   float GetRange(int i) const { return m_Ranges[i]; }
   float Interpolate(float x,

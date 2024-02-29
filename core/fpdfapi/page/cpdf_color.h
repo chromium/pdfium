@@ -35,7 +35,7 @@ class CPDF_Color {
   void SetValueForPattern(RetainPtr<CPDF_Pattern> pattern,
                           pdfium::span<float> values);
 
-  uint32_t CountComponents() const;
+  uint32_t ComponentCount() const;
   bool IsColorSpaceRGB() const;
   bool GetRGB(int* R, int* G, int* B) const;
 

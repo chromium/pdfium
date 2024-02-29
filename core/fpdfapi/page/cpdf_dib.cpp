@@ -426,7 +426,7 @@ bool CPDF_DIB::LoadColorInfo(const CPDF_Dictionary* pFormResources,
   // |m_nComponents| does not get reached, then a decoder can try to set
   // |m_nComponents| based on the number of channels in the image being
   // decoded.
-  m_nComponents = m_pColorSpace->CountComponents();
+  m_nComponents = m_pColorSpace->ComponentCount();
   m_Family = m_pColorSpace->GetFamily();
   if (m_Family == CPDF_ColorSpace::Family::kICCBased && pCSObj->IsName()) {
     ByteString cs = pCSObj->GetString();
@@ -588,7 +588,7 @@ bool CPDF_DIB::CreateDCTDecoder(pdfium::span<const uint8_t> src_span,
   m_nComponents = static_cast<uint32_t>(info.num_components);
   m_CompData.clear();
   if (m_pColorSpace) {
-    uint32_t colorspace_comps = m_pColorSpace->CountComponents();
+    uint32_t colorspace_comps = m_pColorSpace->ComponentCount();
     switch (m_Family) {
       case CPDF_ColorSpace::Family::kDeviceGray:
       case CPDF_ColorSpace::Family::kDeviceRGB:
@@ -843,7 +843,7 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
   if (pMatte && m_pColorSpace &&
       m_Family != CPDF_ColorSpace::Family::kPattern &&
       pMatte->size() == m_nComponents &&
-      m_pColorSpace->CountComponents() <= m_nComponents) {
+      m_pColorSpace->ComponentCount() <= m_nComponents) {
     std::vector<float> colors =
         ReadArrayElementsToVector(pMatte.Get(), m_nComponents);
 
@@ -919,7 +919,7 @@ void CPDF_DIB::LoadPalette() {
                              m_Family == CPDF_ColorSpace::Family::kDeviceRGB)) {
       return;
     }
-    if (m_pColorSpace->CountComponents() > 3) {
+    if (m_pColorSpace->ComponentCount() > 3) {
       return;
     }
     float color_values[3];
@@ -976,8 +976,8 @@ void CPDF_DIB::LoadPalette() {
     float G = 0;
     float B = 0;
     if (m_nComponents == 1 && m_Family == CPDF_ColorSpace::Family::kICCBased &&
-        m_pColorSpace->CountComponents() > 1) {
-      int nComponents = m_pColorSpace->CountComponents();
+        m_pColorSpace->ComponentCount() > 1) {
+      int nComponents = m_pColorSpace->ComponentCount();
       std::vector<float> temp_buf(nComponents);
       for (int k = 0; k < nComponents; ++k)
         temp_buf[k] = color_values[0];
@@ -1076,7 +1076,7 @@ bool CPDF_DIB::TranslateScanline24bppDefaultDecode(
     if (m_bpc != 8)
       return false;
 
-    if (m_nComponents == m_pColorSpace->CountComponents()) {
+    if (m_nComponents == m_pColorSpace->ComponentCount()) {
       m_pColorSpace->TranslateImageLine(dest_scan, src_scan, m_Width, m_Width,
                                         m_Height, TransMask());
     }

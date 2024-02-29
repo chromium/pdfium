@@ -124,7 +124,7 @@ bool CPDF_ShadingPattern::Validate() const {
     }
   }
 
-  uint32_t nNumColorSpaceComponents = m_pCS->CountComponents();
+  uint32_t nNumColorSpaceComponents = m_pCS->ComponentCount();
   switch (m_ShadingType) {
     case kFunctionBasedShading: {
       // Either one 2-to-N function or N 2-to-1 functions.
@@ -163,12 +163,12 @@ bool CPDF_ShadingPattern::ValidateFunctions(
     if (!function)
       return false;
 
-    if (function->CountInputs() != nExpectedNumInputs ||
-        function->CountOutputs() != nExpectedNumOutputs) {
+    if (function->InputCount() != nExpectedNumInputs ||
+        function->OutputCount() != nExpectedNumOutputs) {
       return false;
     }
 
-    nTotalOutputs += function->CountOutputs();
+    nTotalOutputs += function->OutputCount();
   }
 
   return nTotalOutputs.IsValid();

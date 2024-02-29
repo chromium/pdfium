@@ -52,7 +52,7 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
   if (family == Family::kIndexed || family == Family::kPattern)
     return 0;
 
-  m_nBaseComponents = m_pBaseCS->CountComponents();
+  m_nBaseComponents = m_pBaseCS->ComponentCount();
   DCHECK(m_nBaseComponents);
   m_pCompMinMax = DataVector<float>(Fx2DSizeOrDie(m_nBaseComponents, 2));
   float defvalue;
@@ -86,7 +86,7 @@ bool CPDF_IndexedCS::GetRGB(pdfium::span<const float> pBuf,
     return false;
 
   DCHECK(m_nBaseComponents);
-  DCHECK_EQ(m_nBaseComponents, m_pBaseCS->CountComponents());
+  DCHECK_EQ(m_nBaseComponents, m_pBaseCS->ComponentCount());
 
   FX_SAFE_SIZE_T length = index;
   length += 1;
