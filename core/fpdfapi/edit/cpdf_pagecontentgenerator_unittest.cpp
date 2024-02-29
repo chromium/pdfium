@@ -63,7 +63,7 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessRect) {
   CPDF_PageContentGenerator generator(pTestPage.Get());
   fxcrt::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
-  EXPECT_EQ("q 1 0 0 1 0 0 cm 10 5 3 25 re B* Q\n", ByteString(buf));
+  EXPECT_EQ("q 10 5 3 25 re B* Q\n", ByteString(buf));
 
   pPathObj = std::make_unique<CPDF_PathObject>();
   pPathObj->path().AppendPoint(CFX_PointF(0, 0), CFX_Path::Point::Type::kMove);
@@ -75,7 +75,7 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessRect) {
                                        CFX_Path::Point::Type::kLine);
   buf.str("");
   TestProcessPath(&generator, &buf, pPathObj.get());
-  EXPECT_EQ("q 1 0 0 1 0 0 cm 0 0 5.1999998 3.78 re n Q\n", ByteString(buf));
+  EXPECT_EQ("q 0 0 5.1999998 3.78 re n Q\n", ByteString(buf));
 }
 
 TEST_F(CPDFPageContentGeneratorTest, BUG_937) {
@@ -174,7 +174,7 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessPath) {
   fxcrt::ostringstream buf;
   TestProcessPath(&generator, &buf, pPathObj.get());
   EXPECT_EQ(
-      "q 1 0 0 1 0 0 cm 3.102 4.6700001 m 5.4499998 .28999999 l 4.2399998 "
+      "q 3.102 4.6700001 m 5.4499998 .28999999 l 4.2399998 "
       "3.1500001 4.6500001 2.98 3.4560001 .23999999 c 10.6000004 11.149999"
       "6 l 11 12.5 l 11.46 12.6700001 11.8400002 12.96 12 13.6400003 c h f"
       " Q\n",
@@ -213,12 +213,11 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessGraphics) {
   // Color RGB values used are integers divided by 255.
   EXPECT_EQ("q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG /",
             path_string.First(48));
-  EXPECT_EQ(" gs 1 0 0 1 0 0 cm 1 2 m 3 4 l 5 6 l h B Q\n",
-            path_string.Last(43));
-  ASSERT_GT(path_string.GetLength(), 91U);
+  EXPECT_EQ(" gs 1 2 m 3 4 l 5 6 l h B Q\n", path_string.Last(28));
+  ASSERT_GT(path_string.GetLength(), 76U);
   RetainPtr<const CPDF_Dictionary> external_gs =
       TestGetResource(&generator, "ExtGState",
-                      path_string.Substr(48, path_string.GetLength() - 91));
+                      path_string.Substr(48, path_string.GetLength() - 76));
   ASSERT_TRUE(external_gs);
   EXPECT_EQ(0.5f, external_gs->GetFloatFor("ca"));
   EXPECT_EQ(0.8f, external_gs->GetFloatFor("CA"));
@@ -230,8 +229,7 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessGraphics) {
   ByteString path_string2(buf);
   EXPECT_EQ("q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG 10.5 w /",
             path_string2.First(55));
-  EXPECT_EQ(" gs 1 0 0 1 0 0 cm 1 2 m 3 4 l 5 6 l h B Q\n",
-            path_string2.Last(43));
+  EXPECT_EQ(" gs 1 2 m 3 4 l 5 6 l h B Q\n", path_string2.Last(28));
 
   // Compare with the previous (should use same dictionary for gs)
   EXPECT_EQ(path_string.GetLength() + 7, path_string2.GetLength());
@@ -358,7 +356,7 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessText) {
   ByteString last_string =
       text_string.Last(text_string.GetLength() - first_resource_at.value());
   // q and Q must be outside the BT .. ET operations
-  ByteString compare_string1 = "q 0 0 5 4 re W* n BT 1 0 0 1 0 0 Tm /";
+  ByteString compare_string1 = "q 0 0 5 4 re W* n BT /";
   ByteString compare_string2 =
       " 15.5 Tf 4 Tr <4920616D20696E646972656374> Tj ET Q\n";
   EXPECT_LT(compare_string1.GetLength() + compare_string2.GetLength(),
@@ -406,7 +404,7 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessFormWithPath) {
   auto pDoc = std::make_unique<CPDF_TestDocument>();
   pDoc->CreateNewDoc();
   static constexpr uint8_t kContents[] =
-      "q 1 0 0 1 0 0 cm 3.102 4.6700001 m 5.4500012 .28999999 "
+      "q 3.102 4.6700001 m 5.4500012 .28999999 "
       "l 4.2399998 3.1499999 4.65 2.98 3.456 0.24 c 3.102 4.6700001 l h f Q\n";
   auto pStream = pdfium::MakeRetain<CPDF_Stream>(
       DataVector<uint8_t>(std::begin(kContents), std::end(kContents)),
@@ -422,7 +420,7 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessFormWithPath) {
   fxcrt::ostringstream process_buf;
   generator.ProcessPageObjects(&process_buf);
   EXPECT_EQ(
-      "q 1 0 0 1 0 0 cm 3.102 4.6700001 m 5.4500012 .28999999 l 4.2399998 3.14"
+      "q 3.102 4.6700001 m 5.4500012 .28999999 l 4.2399998 3.14"
       "99999 4.6500001 2.98 3.4560001 .24000001 c 3.102 4.6700001 l h f Q\n",
       ByteString(process_buf));
 }

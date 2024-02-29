@@ -418,7 +418,9 @@ void CPDF_PageContentGenerator::ProcessImage(fxcrt::ostringstream* buf,
   if (!ctm.IsIdentity()) {
     matrix.Concat(ctm.GetInverse());
   }
-  WriteMatrix(*buf, matrix) << " cm ";
+  if (!matrix.IsIdentity()) {
+    WriteMatrix(*buf, matrix) << " cm ";
+  }
 
   bool bWasInline = pStream->IsInline();
   if (bWasInline)
@@ -455,7 +457,9 @@ void CPDF_PageContentGenerator::ProcessForm(fxcrt::ostringstream* buf,
   if (!ctm.IsIdentity()) {
     matrix.Concat(ctm.GetInverse());
   }
-  WriteMatrix(*buf, matrix) << " cm ";
+  if (!matrix.IsIdentity()) {
+    WriteMatrix(*buf, matrix) << " cm ";
+  }
 
   *buf << "/" << PDF_NameEncode(name) << " Do Q\n";
 }
@@ -517,7 +521,11 @@ void CPDF_PageContentGenerator::ProcessPath(fxcrt::ostringstream* buf,
 
   // TODO(crbug.com/pdfium/2132): Does this need to take the current
   // transformation matrix in `m_pObjHolder` into account?
-  WriteMatrix(*buf, pPathObj->matrix()) << " cm ";
+  const CFX_Matrix& matrix = pPathObj->matrix();
+  if (!matrix.IsIdentity()) {
+    WriteMatrix(*buf, matrix) << " cm ";
+  }
+
   ProcessPathPoints(buf, &pPathObj->path());
 
   if (pPathObj->has_no_filltype())
@@ -669,9 +677,14 @@ void CPDF_PageContentGenerator::ProcessText(fxcrt::ostringstream* buf,
                                             CPDF_TextObject* pTextObj) {
   ProcessGraphics(buf, pTextObj);
   *buf << "BT ";
+
   // TODO(crbug.com/pdfium/2132): Does this need to take the current
   // transformation matrix in `m_pObjHolder` into account?
-  WriteMatrix(*buf, pTextObj->GetTextMatrix()) << " Tm ";
+  const CFX_Matrix& matrix = pTextObj->GetTextMatrix();
+  if (!matrix.IsIdentity()) {
+    WriteMatrix(*buf, matrix) << " Tm ";
+  }
+
   RetainPtr<CPDF_Font> pFont(pTextObj->GetFont());
   if (!pFont)
     pFont = CPDF_Font::GetStockFont(m_pDocument, "Helvetica");
