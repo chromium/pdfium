@@ -32,7 +32,9 @@ enum class FXDIB_Format : uint16_t {
 using FX_ARGB = uint32_t;
 using FX_CMYK = uint32_t;
 
-// FX_COLORREF, like win32 COLORREF, is BGR.
+// FX_COLORREF, like win32 COLORREF, is BGR. i.e. 0x00BBGGRR.
+// Note that while the non-existent alpha component should be set to 0, some
+// parts of the codebase use 0xFFFFFFFF as a sentinel value to indicate error.
 using FX_COLORREF = uint32_t;
 
 struct FXDIB_ResampleOptions {

@@ -6,12 +6,12 @@
 
 #include "core/fpdfapi/page/cpdf_colorstate.h"
 
+#include <optional>
 #include <utility>
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_pattern.h"
 #include "core/fpdfapi/page/cpdf_tilingpattern.h"
-#include "core/fxcrt/check.h"
 #include "core/fxge/dib/fx_dib.h"
 
 CPDF_ColorState::CPDF_ColorState() = default;
@@ -49,8 +49,8 @@ void CPDF_ColorState::SetStrokeColorRef(FX_COLORREF colorref) {
 }
 
 const CPDF_Color* CPDF_ColorState::GetFillColor() const {
-  const ColorData* pData = m_Ref.GetObject();
-  return pData ? &pData->m_FillColor : nullptr;
+  const ColorData* data = m_Ref.GetObject();
+  return data ? &data->m_FillColor : nullptr;
 }
 
 CPDF_Color* CPDF_ColorState::GetMutableFillColor() {
@@ -63,8 +63,8 @@ bool CPDF_ColorState::HasFillColor() const {
 }
 
 const CPDF_Color* CPDF_ColorState::GetStrokeColor() const {
-  const ColorData* pData = m_Ref.GetObject();
-  return pData ? &pData->m_StrokeColor : nullptr;
+  const ColorData* data = m_Ref.GetObject();
+  return data ? &data->m_StrokeColor : nullptr;
 }
 
 CPDF_Color* CPDF_ColorState::GetMutableStrokeColor() {
@@ -78,73 +78,73 @@ bool CPDF_ColorState::HasStrokeColor() const {
 
 void CPDF_ColorState::SetFillColor(RetainPtr<CPDF_ColorSpace> colorspace,
                                    std::vector<float> values) {
-  ColorData* pData = m_Ref.GetPrivateCopy();
-  SetColor(std::move(colorspace), std::move(values), &pData->m_FillColor,
-           &pData->m_FillColorRef);
+  ColorData* data = m_Ref.GetPrivateCopy();
+  std::optional<FX_COLORREF> colorref =
+      SetColor(std::move(colorspace), std::move(values), data->m_FillColor);
+  if (colorref.has_value()) {
+    data->m_FillColorRef = colorref.value();
+  }
 }
 
 void CPDF_ColorState::SetStrokeColor(RetainPtr<CPDF_ColorSpace> colorspace,
                                      std::vector<float> values) {
-  ColorData* pData = m_Ref.GetPrivateCopy();
-  SetColor(std::move(colorspace), std::move(values), &pData->m_StrokeColor,
-           &pData->m_StrokeColorRef);
+  ColorData* data = m_Ref.GetPrivateCopy();
+  std::optional<FX_COLORREF> colorref =
+      SetColor(std::move(colorspace), std::move(values), data->m_StrokeColor);
+  if (colorref.has_value()) {
+    data->m_StrokeColorRef = colorref.value();
+  }
 }
 
 void CPDF_ColorState::SetFillPattern(RetainPtr<CPDF_Pattern> pattern,
                                      pdfium::span<float> values) {
-  ColorData* pData = m_Ref.GetPrivateCopy();
-  SetPattern(std::move(pattern), values, &pData->m_FillColor,
-             &pData->m_FillColorRef);
+  ColorData* data = m_Ref.GetPrivateCopy();
+  data->m_FillColorRef =
+      SetPattern(std::move(pattern), values, data->m_FillColor);
 }
 
 void CPDF_ColorState::SetStrokePattern(RetainPtr<CPDF_Pattern> pattern,
                                        pdfium::span<float> values) {
-  ColorData* pData = m_Ref.GetPrivateCopy();
-  SetPattern(std::move(pattern), values, &pData->m_StrokeColor,
-             &pData->m_StrokeColorRef);
+  ColorData* data = m_Ref.GetPrivateCopy();
+  data->m_StrokeColorRef =
+      SetPattern(std::move(pattern), values, data->m_StrokeColor);
 }
 
-void CPDF_ColorState::SetColor(RetainPtr<CPDF_ColorSpace> colorspace,
-                               std::vector<float> values,
-                               CPDF_Color* color,
-                               FX_COLORREF* colorref) {
-  DCHECK(color);
-  DCHECK(colorref);
-
+std::optional<FX_COLORREF> CPDF_ColorState::SetColor(
+    RetainPtr<CPDF_ColorSpace> colorspace,
+    std::vector<float> values,
+    CPDF_Color& color) {
   if (colorspace) {
-    color->SetColorSpace(std::move(colorspace));
-  } else if (color->IsNull()) {
-    color->SetColorSpace(
+    color.SetColorSpace(std::move(colorspace));
+  } else if (color.IsNull()) {
+    color.SetColorSpace(
         CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceGray));
   }
-  if (color->ComponentCount() > values.size()) {
-    return;
+  if (color.ComponentCount() > values.size()) {
+    return std::nullopt;
   }
 
-  if (!color->IsPattern())
-    color->SetValueForNonPattern(std::move(values));
+  if (!color.IsPattern()) {
+    color.SetValueForNonPattern(std::move(values));
+  }
   int R;
   int G;
   int B;
-  *colorref = color->GetRGB(&R, &G, &B) ? FXSYS_BGR(B, G, R) : 0xFFFFFFFF;
+  return color.GetRGB(&R, &G, &B) ? FXSYS_BGR(B, G, R) : 0xFFFFFFFF;
 }
 
-void CPDF_ColorState::SetPattern(RetainPtr<CPDF_Pattern> pattern,
-                                 pdfium::span<float> values,
-                                 CPDF_Color* color,
-                                 FX_COLORREF* colorref) {
-  DCHECK(color);
-  DCHECK(colorref);
-  color->SetValueForPattern(pattern, values);
+FX_COLORREF CPDF_ColorState::SetPattern(RetainPtr<CPDF_Pattern> pattern,
+                                        pdfium::span<float> values,
+                                        CPDF_Color& color) {
+  color.SetValueForPattern(pattern, values);
   int R;
   int G;
   int B;
-  if (color->GetRGB(&R, &G, &B)) {
-    *colorref = FXSYS_BGR(B, G, R);
-    return;
+  if (color.GetRGB(&R, &G, &B)) {
+    return FXSYS_BGR(B, G, R);
   }
   CPDF_TilingPattern* tiling = pattern->AsTilingPattern();
-  *colorref = tiling && tiling->colored() ? 0x00BFBFBF : 0xFFFFFFFF;
+  return tiling && tiling->colored() ? 0x00BFBFBF : 0xFFFFFFFF;
 }
 
 CPDF_ColorState::ColorData::ColorData() = default;

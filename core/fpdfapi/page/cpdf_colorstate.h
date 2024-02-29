@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_COLORSTATE_H_
 #define CORE_FPDFAPI_PAGE_CPDF_COLORSTATE_H_
 
+#include <optional>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_color.h"
@@ -72,14 +73,12 @@ class CPDF_ColorState {
     ~ColorData() override;
   };
 
-  void SetColor(RetainPtr<CPDF_ColorSpace> colorspace,
-                std::vector<float> values,
-                CPDF_Color* color,
-                FX_COLORREF* colorref);
-  void SetPattern(RetainPtr<CPDF_Pattern> pattern,
-                  pdfium::span<float> values,
-                  CPDF_Color* color,
-                  FX_COLORREF* colorref);
+  std::optional<FX_COLORREF> SetColor(RetainPtr<CPDF_ColorSpace> colorspace,
+                                      std::vector<float> values,
+                                      CPDF_Color& color);
+  FX_COLORREF SetPattern(RetainPtr<CPDF_Pattern> pattern,
+                         pdfium::span<float> values,
+                         CPDF_Color& color);
 
   SharedCopyOnWrite<ColorData> m_Ref;
 };
