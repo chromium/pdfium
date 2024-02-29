@@ -247,9 +247,9 @@ class CPDF_ICCBasedCS final : public CPDF_BasedCS {
   static std::vector<float> GetRanges(const CPDF_Dictionary* pDict,
                                       uint32_t nComponents);
 
-  RetainPtr<CPDF_IccProfile> m_pProfile;
-  mutable DataVector<uint8_t> m_pCache;
-  std::vector<float> m_pRanges;
+  RetainPtr<CPDF_IccProfile> profile_;
+  mutable DataVector<uint8_t> cache_;
+  std::vector<float> ranges_;
 };
 
 class CPDF_SeparationCS final : public CPDF_BasedCS {
@@ -948,14 +948,15 @@ uint32_t CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc,
 
   // Safe to cast, as the value just got validated.
   const uint32_t nComponents = static_cast<uint32_t>(nDictComponents);
-  m_pProfile = CPDF_DocPageData::FromDocument(pDoc)->GetIccProfile(pStream);
-  if (!m_pProfile)
+  profile_ = CPDF_DocPageData::FromDocument(pDoc)->GetIccProfile(pStream);
+  if (!profile_) {
     return 0;
+  }
 
   // If PDFium does not understand the ICC profile format at all, or if it's
   // SRGB, a profile PDFium recognizes but does not support well, then try the
   // alternate profile.
-  if (!m_pProfile->IsSupported() &&
+  if (!profile_->IsSupported() &&
       !FindAlternateProfile(pDoc, pDict.Get(), pVisited, nComponents)) {
     // If there is no alternate profile, use a stock profile as mentioned in
     // the PDF 1.7 spec in table 4.16 in the "Alternate" key description.
@@ -963,7 +964,8 @@ uint32_t CPDF_ICCBasedCS::v_Load(CPDF_Document* pDoc,
     m_pBaseCS = GetStockAlternateProfile(nComponents);
   }
 
-  m_pRanges = GetRanges(pDict.Get(), nComponents);
+  // TODO(crbug.com/pdfium/2136): Use this data to clamp color components.
+  ranges_ = GetRanges(pDict.Get(), nComponents);
   return nComponents;
 }
 
@@ -971,16 +973,16 @@ bool CPDF_ICCBasedCS::GetRGB(pdfium::span<const float> pBuf,
                              float* R,
                              float* G,
                              float* B) const {
-  DCHECK(m_pProfile);
-  if (m_pProfile->IsSRGB()) {
+  DCHECK(profile_);
+  if (profile_->IsSRGB()) {
     *R = pBuf[0];
     *G = pBuf[1];
     *B = pBuf[2];
     return true;
   }
-  if (m_pProfile->IsSupported()) {
+  if (profile_->IsSupported()) {
     float rgb[3];
-    m_pProfile->Translate(pBuf.first(CountComponents()), rgb);
+    profile_->Translate(pBuf.first(CountComponents()), rgb);
     *R = rgb[0];
     *G = rgb[1];
     *B = rgb[2];
@@ -1001,11 +1003,11 @@ void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
                                          int image_width,
                                          int image_height,
                                          bool bTransMask) const {
-  if (m_pProfile->IsSRGB()) {
+  if (profile_->IsSRGB()) {
     fxcodec::ReverseRGB(dest_span.data(), src_span.data(), pixels);
     return;
   }
-  if (!m_pProfile->IsSupported()) {
+  if (!profile_->IsSupported()) {
     if (m_pBaseCS) {
       m_pBaseCS->TranslateImageLine(dest_span, src_span, pixels, image_width,
                                     image_height, false);
@@ -1027,12 +1029,12 @@ void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
     if (nPixelCount.IsValid())
       bTranslate = nPixelCount.ValueOrDie() < nMaxColors * 3 / 2;
   }
-  if (bTranslate && m_pProfile->IsSupported()) {
-    m_pProfile->TranslateScanline(dest_span, src_span, pixels);
+  if (bTranslate && profile_->IsSupported()) {
+    profile_->TranslateScanline(dest_span, src_span, pixels);
     return;
   }
-  if (m_pCache.empty()) {
-    m_pCache.resize(Fx2DSizeOrDie(nMaxColors, 3));
+  if (cache_.empty()) {
+    cache_.resize(Fx2DSizeOrDie(nMaxColors, 3));
     DataVector<uint8_t> temp_src(Fx2DSizeOrDie(nMaxColors, nComponents));
     size_t src_index = 0;
     for (int i = 0; i < nMaxColors; i++) {
@@ -1044,8 +1046,8 @@ void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
         order /= 52;
       }
     }
-    if (m_pProfile->IsSupported()) {
-      m_pProfile->TranslateScanline(m_pCache, temp_src, nMaxColors);
+    if (profile_->IsSupported()) {
+      profile_->TranslateScanline(cache_, temp_src, nMaxColors);
     }
   }
   uint8_t* pDestBuf = dest_span.data();
@@ -1057,17 +1059,19 @@ void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
       pSrcBuf++;
     }
     index *= 3;
-    *pDestBuf++ = m_pCache[index];
-    *pDestBuf++ = m_pCache[index + 1];
-    *pDestBuf++ = m_pCache[index + 2];
+    *pDestBuf++ = cache_[index];
+    *pDestBuf++ = cache_[index + 1];
+    *pDestBuf++ = cache_[index + 2];
   }
 }
 
 bool CPDF_ICCBasedCS::IsNormal() const {
-  if (m_pProfile->IsSRGB())
+  if (profile_->IsSRGB()) {
     return true;
-  if (m_pProfile->IsSupported())
-    return m_pProfile->IsNormal();
+  }
+  if (profile_->IsSupported()) {
+    return profile_->IsNormal();
+  }
   if (m_pBaseCS)
     return m_pBaseCS->IsNormal();
   return false;
