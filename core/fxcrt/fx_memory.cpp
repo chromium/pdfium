@@ -6,6 +6,7 @@
 
 #include "core/fxcrt/fx_memory.h"
 
+#include <stdint.h>  // For uintptr_t.
 #include <stdlib.h>  // For abort().
 
 #include <iterator>
