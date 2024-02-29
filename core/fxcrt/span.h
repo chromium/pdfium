@@ -21,9 +21,9 @@
 // with the fully annotated one that is being prepared in base/.
 
 #if defined(PDF_USE_PARTITION_ALLOC)
-UNSAFE_HEADERS_BEGIN()
+UNSAFE_BUFFERS_INCLUDE_BEGIN
 #include "partition_alloc/pointers/raw_ptr.h"
-UNSAFE_HEADERS_END()
+UNSAFE_BUFFERS_INCLUDE_END
 #else
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 #endif
