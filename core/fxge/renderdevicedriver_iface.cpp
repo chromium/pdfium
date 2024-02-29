@@ -34,7 +34,7 @@ bool RenderDeviceDriverIface::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
   return false;
 }
 
-bool RenderDeviceDriverIface::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
+bool RenderDeviceDriverIface::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                                         int left,
                                         int top) {
   return false;

@@ -877,11 +877,11 @@ void CFX_RenderDevice::DrawZeroAreaPath(
                             path_options, blend_type);
 }
 
-bool CFX_RenderDevice::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
+bool CFX_RenderDevice::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                                  int left,
                                  int top) {
   return (m_RenderCaps & FXRC_GET_BITS) &&
-         m_pDeviceDriver->GetDIBits(pBitmap, left, top);
+         m_pDeviceDriver->GetDIBits(std::move(bitmap), left, top);
 }
 
 bool CFX_RenderDevice::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,

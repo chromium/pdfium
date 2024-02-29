@@ -34,12 +34,12 @@ int CGdiDisplayDriver::GetDeviceCaps(int caps_id) const {
   return CGdiDeviceDriver::GetDeviceCaps(caps_id);
 }
 
-bool CGdiDisplayDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
+bool CGdiDisplayDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                                   int left,
                                   int top) {
   bool ret = false;
-  int width = pBitmap->GetWidth();
-  int height = pBitmap->GetHeight();
+  int width = bitmap->GetWidth();
+  int height = bitmap->GetHeight();
   HBITMAP hbmp = CreateCompatibleBitmap(m_hDC, width, height);
   HDC hDCMemory = CreateCompatibleDC(m_hDC);
   HBITMAP holdbmp = (HBITMAP)SelectObject(hDCMemory, hbmp);
@@ -48,13 +48,13 @@ bool CGdiDisplayDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   BITMAPINFO bmi;
   memset(&bmi, 0, sizeof bmi);
   bmi.bmiHeader.biSize = sizeof bmi.bmiHeader;
-  bmi.bmiHeader.biBitCount = pBitmap->GetBPP();
+  bmi.bmiHeader.biBitCount = bitmap->GetBPP();
   bmi.bmiHeader.biHeight = -height;
   bmi.bmiHeader.biPlanes = 1;
   bmi.bmiHeader.biWidth = width;
-  if (pBitmap->GetBPP() > 8) {
+  if (bitmap->GetBPP() > 8) {
     ret = ::GetDIBits(hDCMemory, hbmp, 0, height,
-                      pBitmap->GetWritableBuffer().data(), &bmi,
+                      bitmap->GetWritableBuffer().data(), &bmi,
                       DIB_RGB_COLORS) == height;
   } else {
     auto rgb_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
@@ -62,14 +62,15 @@ bool CGdiDisplayDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
       bmi.bmiHeader.biBitCount = 24;
       ::GetDIBits(hDCMemory, hbmp, 0, height,
                   rgb_bitmap->GetWritableBuffer().data(), &bmi, DIB_RGB_COLORS);
-      ret = pBitmap->TransferBitmap(0, 0, width, height, std::move(rgb_bitmap),
-                                    0, 0);
+      ret = bitmap->TransferBitmap(0, 0, width, height, std::move(rgb_bitmap),
+                                   0, 0);
     } else {
       ret = false;
     }
   }
-  if (ret && pBitmap->IsAlphaFormat())
-    pBitmap->SetUniformOpaqueAlpha();
+  if (ret && bitmap->IsAlphaFormat()) {
+    bitmap->SetUniformOpaqueAlpha();
+  }
 
   DeleteObject(hbmp);
   DeleteObject(hDCMemory);

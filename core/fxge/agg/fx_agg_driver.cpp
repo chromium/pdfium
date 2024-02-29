@@ -1268,14 +1268,13 @@ bool CFX_AggDeviceDriver::GetClipBox(FX_RECT* pRect) {
   return true;
 }
 
-bool CFX_AggDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
+bool CFX_AggDeviceDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                                     int left,
                                     int top) {
   if (m_pBitmap->GetBuffer().empty())
     return true;
 
-  FX_RECT rect(left, top, left + pBitmap->GetWidth(),
-               top + pBitmap->GetHeight());
+  FX_RECT rect(left, top, left + bitmap->GetWidth(), top + bitmap->GetHeight());
   RetainPtr<CFX_DIBitmap> pBack;
   if (m_pBackdropBitmap) {
     pBack = m_pBackdropBitmap->ClipTo(rect);
@@ -1293,12 +1292,12 @@ bool CFX_AggDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
   left = std::min(left, 0);
   top = std::min(top, 0);
   if (m_bRgbByteOrder) {
-    RgbByteOrderTransferBitmap(std::move(pBitmap), rect.Width(), rect.Height(),
+    RgbByteOrderTransferBitmap(std::move(bitmap), rect.Width(), rect.Height(),
                                std::move(pBack), left, top);
     return true;
   }
-  return pBitmap->TransferBitmap(0, 0, rect.Width(), rect.Height(),
-                                 std::move(pBack), left, top);
+  return bitmap->TransferBitmap(0, 0, rect.Width(), rect.Height(),
+                                std::move(pBack), left, top);
 }
 
 RetainPtr<CFX_DIBitmap> CFX_AggDeviceDriver::GetBackDrop() {

@@ -1358,7 +1358,7 @@ bool CFX_SkiaDeviceDriver::GetClipBox(FX_RECT* pRect) {
   return true;
 }
 
-bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
+bool CFX_SkiaDeviceDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                                      int left,
                                      int top) {
   const uint8_t* input_buffer = m_pBitmap->GetBuffer().data();
@@ -1366,7 +1366,7 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
     return true;
   }
 
-  uint8_t* output_buffer = pBitmap->GetWritableBuffer().data();
+  uint8_t* output_buffer = bitmap->GetWritableBuffer().data();
   DCHECK(output_buffer);
 
   SkImageInfo input_info =
@@ -1377,10 +1377,10 @@ bool CFX_SkiaDeviceDriver::GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap,
       /*rasterReleaseProc=*/nullptr, /*releaseContext=*/nullptr);
 
   SkImageInfo output_info = SkImageInfo::Make(
-      pBitmap->GetWidth(), pBitmap->GetHeight(),
+      bitmap->GetWidth(), bitmap->GetHeight(),
       Get32BitSkColorType(m_bRgbByteOrder), kPremul_SkAlphaType);
   sk_sp<SkSurface> output =
-      SkSurfaces::WrapPixels(output_info, output_buffer, pBitmap->GetPitch());
+      SkSurfaces::WrapPixels(output_info, output_buffer, bitmap->GetPitch());
 
   output->getCanvas()->drawImage(input, left, top, SkSamplingOptions());
   return true;

@@ -717,33 +717,33 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
     bool bBackAlphaRequired) {
   int width = bbox.Width();
   int height = bbox.Height();
-  auto pBackdrop = pdfium::MakeRetain<CFX_DIBitmap>();
+  auto backdrop = pdfium::MakeRetain<CFX_DIBitmap>();
   if (bBackAlphaRequired && !m_bDropObjects) {
-    if (!pBackdrop->Create(width, height, FXDIB_Format::kArgb)) {
+    if (!backdrop->Create(width, height, FXDIB_Format::kArgb)) {
       return nullptr;
     }
   } else {
-    if (!m_pDevice->CreateCompatibleBitmap(pBackdrop, width, height)) {
+    if (!m_pDevice->CreateCompatibleBitmap(backdrop, width, height)) {
       return nullptr;
     }
   }
 
   const int cap_to_check =
-      pBackdrop->IsAlphaFormat() ? FXRC_ALPHA_OUTPUT : FXRC_GET_BITS;
+      backdrop->IsAlphaFormat() ? FXRC_ALPHA_OUTPUT : FXRC_GET_BITS;
   if (m_pDevice->GetRenderCaps() & cap_to_check) {
-    m_pDevice->GetDIBits(pBackdrop, bbox.left, bbox.top);
-    return pBackdrop;
+    m_pDevice->GetDIBits(backdrop, bbox.left, bbox.top);
+    return backdrop;
   }
   CFX_Matrix FinalMatrix = m_DeviceMatrix;
   FinalMatrix.Translate(-bbox.left, -bbox.top);
-  if (!pBackdrop->IsAlphaFormat()) {
-    pBackdrop->Clear(0xffffffff);
+  if (!backdrop->IsAlphaFormat()) {
+    backdrop->Clear(0xffffffff);
   }
 
   CFX_DefaultRenderDevice device;
-  device.Attach(pBackdrop);
+  device.Attach(backdrop);
   m_pContext->Render(&device, pObj, &m_Options, &FinalMatrix);
-  return pBackdrop;
+  return backdrop;
 }
 
 std::unique_ptr<CPDF_GraphicStates> CPDF_RenderStatus::CloneObjStates(

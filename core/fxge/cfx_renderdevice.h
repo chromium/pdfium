@@ -94,7 +94,7 @@ class CFX_RenderDevice {
   }
 
   RetainPtr<CFX_DIBitmap> GetBackDrop();
-  bool GetDIBits(const RetainPtr<CFX_DIBitmap>& pBitmap, int left, int top);
+  bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap, int left, int top);
   bool SetDIBits(RetainPtr<const CFX_DIBBase> bitmap, int left, int top);
   bool SetDIBitsWithBlend(RetainPtr<const CFX_DIBBase> bitmap,
                           int left,
