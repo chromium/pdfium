@@ -191,6 +191,7 @@ TEST_F(PDFEditImgTest, Bug2132) {
 
   FPDF_PAGEOBJECT image = FPDFPage_GetObject(page, 0);
   ASSERT_TRUE(image);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(image));
 
   FS_MATRIX matrix;
   ASSERT_TRUE(FPDFPageObj_GetMatrix(image, &matrix));
