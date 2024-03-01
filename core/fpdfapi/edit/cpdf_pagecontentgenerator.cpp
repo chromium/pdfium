@@ -682,9 +682,11 @@ void CPDF_PageContentGenerator::ProcessText(fxcrt::ostringstream* buf,
   ProcessGraphics(buf, pTextObj);
   *buf << "BT ";
 
-  // TODO(crbug.com/pdfium/2132): Does this need to take the current
-  // transformation matrix in `m_pObjHolder` into account?
-  const CFX_Matrix& matrix = pTextObj->GetTextMatrix();
+  CFX_Matrix matrix = pTextObj->GetTextMatrix();
+  const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
+  if (!ctm.IsIdentity()) {
+    matrix.Concat(ctm.GetInverse());
+  }
   if (!matrix.IsIdentity()) {
     WriteMatrix(*buf, matrix) << " Tm ";
   }

@@ -1003,7 +1003,7 @@ TEST_F(FPDFEditEmbedderTest, BUG_1574) {
   CloseSavedDocument();
 }
 
-TEST_F(FPDFEditEmbedderTest, BUG_1893) {
+TEST_F(FPDFEditEmbedderTest, Bug1893) {
   ASSERT_TRUE(OpenDocument("bug_1893.pdf"));
   FPDF_PAGE page = LoadPage(0);
   {
@@ -1061,31 +1061,10 @@ TEST_F(FPDFEditEmbedderTest, BUG_1893) {
   UnloadPage(page);
 
   {
-    // TODO(crbug.com/pdfium/1893): The saved result should match
-    // `removed_checksum`. But in the actual saved result, the remaining text
-    // objects were upside down. Remove `wrong_checksum` after fixing this
-    // issue.
-    const char* wrong_checksum = []() {
-      if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-#if BUILDFLAG(IS_WIN)
-        return "441cada6218d4fd79dbe0ba95093524e";
-#elif BUILDFLAG(IS_APPLE)
-        return "627290533339e0ae493dc9385fac53e2";
-#else
-        return "57da26dcb24503403cadb27ed8bb46c6";
-#endif
-      }
-#if BUILDFLAG(IS_APPLE)
-      return "c3b6a8ecd863914044f5f79137c606b5";
-#else
-      return "cb19480a846e4efd36418cbd7412118e";
-#endif
-    }();
-
     ASSERT_TRUE(OpenSavedDocument());
     FPDF_PAGE saved_page = LoadSavedPage(0);
     ScopedFPDFBitmap bitmap = RenderSavedPageWithFlags(saved_page, FPDF_ANNOT);
-    CompareBitmap(bitmap.get(), 200, 300, wrong_checksum);
+    CompareBitmap(bitmap.get(), 200, 300, removed_checksum);
     CloseSavedPage(saved_page);
     CloseSavedDocument();
   }
