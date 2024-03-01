@@ -186,12 +186,5 @@ TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForFormWithPath) {
 
   UnloadPage(page);
 
-  // TODO(crbug.com/pdfium/2132): This should use RectanglesChecksum().
-  const char* const kWrongChecksum = []() {
-    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "f7c69f8d0bb92541d48dbbbba003396d";
-    }
-    return "37a215071985bd88079fedb56b001685";
-  }();
-  VerifySavedDocument(kExpectedWidth, kExpectedHeight, kWrongChecksum);
+  VerifySavedDocument(kExpectedWidth, kExpectedHeight, RectanglesChecksum());
 }

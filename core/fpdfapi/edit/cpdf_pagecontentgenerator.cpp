@@ -183,7 +183,7 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
     buf << "q\n";
     const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
     if (!ctm.IsIdentity()) {
-      WriteMatrix(buf, ctm.GetInverse()) << " cm\n";
+      WriteMatrix(buf, ctm) << " cm\n";
     }
 
     ProcessDefaultGraphics(&buf);

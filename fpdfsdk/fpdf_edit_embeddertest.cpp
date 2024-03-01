@@ -5267,24 +5267,7 @@ TEST_F(FPDFEditEmbedderTest, GetAndSetMatrixForFormWithText) {
 
   UnloadPage(page);
 
-  // TODO(crbug.com/pdfium/2132): This should use HelloWorldChecksum().
-  const char* const kWrongChecksum = []() {
-    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-#if BUILDFLAG(IS_WIN)
-      return "0b5370959c7731c846a35066f0463aee";
-#elif BUILDFLAG(IS_MAC)
-      return "8715c645f7dccfb23e25a32da32ef6af";
-#else
-      return "b4a1a4a73668c5dd4b769db86334943b";
-#endif
-    }
-#if BUILDFLAG(IS_MAC)
-    return "6cb1bfe4f8bef5547eab41cdfad79d59";
-#else
-    return "0e6dd5f1332bb4c4b0cd3aa6a0b89943";
-#endif
-  }();
-  VerifySavedDocument(kExpectedWidth, kExpectedHeight, kWrongChecksum);
+  VerifySavedDocument(kExpectedWidth, kExpectedHeight, HelloWorldChecksum());
 }
 
 class FPDFEditMoveEmbedderTest : public EmbedderTest {
