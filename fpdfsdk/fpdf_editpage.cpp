@@ -257,6 +257,7 @@ FPDFPage_InsertObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_object) {
   if (!IsPageObject(pPage))
     return;
 
+  pPageObj->SetUsesCTM(false);
   pPageObj->SetDirty(true);
   pPage->AppendPageObject(std::move(pPageObjHolder));
   CalcBoundingBox(pPageObj);

@@ -4,7 +4,6 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "public/fpdf_edit.h"
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_constants.h"
@@ -112,14 +111,7 @@ TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForPath) {
 
   UnloadPage(page);
 
-  // TODO(crbug.com/pdfium/2132): This should use RectanglesChecksum().
-  const char* const kWrongChecksum = []() {
-    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "a8b00bc40677a73c15a08b9769d1b576";
-    }
-    return "8f3a555ef9c0d5031831ae3715273707";
-  }();
-  VerifySavedDocument(kExpectedWidth, kExpectedHeight, kWrongChecksum);
+  VerifySavedDocument(kExpectedWidth, kExpectedHeight, RectanglesChecksum());
 }
 
 TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForFormWithPath) {

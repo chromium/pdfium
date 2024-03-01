@@ -421,9 +421,11 @@ void CPDF_PageContentGenerator::ProcessImage(fxcrt::ostringstream* buf,
 
   *buf << "q ";
 
-  const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
-  if (!ctm.IsIdentity()) {
-    matrix.Concat(ctm.GetInverse());
+  if (pImageObj->UsesCTM()) {
+    const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
+    if (!ctm.IsIdentity()) {
+      matrix.Concat(ctm.GetInverse());
+    }
   }
   if (!matrix.IsIdentity()) {
     WriteMatrix(*buf, matrix) << " cm ";
@@ -460,9 +462,11 @@ void CPDF_PageContentGenerator::ProcessForm(fxcrt::ostringstream* buf,
 
   *buf << "q\n";
 
-  const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
-  if (!ctm.IsIdentity()) {
-    matrix.Concat(ctm.GetInverse());
+  if (pFormObj->UsesCTM()) {
+    const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
+    if (!ctm.IsIdentity()) {
+      matrix.Concat(ctm.GetInverse());
+    }
   }
   if (!matrix.IsIdentity()) {
     WriteMatrix(*buf, matrix) << " cm ";
@@ -526,9 +530,13 @@ void CPDF_PageContentGenerator::ProcessPath(fxcrt::ostringstream* buf,
                                             CPDF_PathObject* pPathObj) {
   ProcessGraphics(buf, pPathObj);
 
-  // TODO(crbug.com/pdfium/2132): Does this need to take the current
-  // transformation matrix in `m_pObjHolder` into account?
-  const CFX_Matrix& matrix = pPathObj->matrix();
+  CFX_Matrix matrix = pPathObj->matrix();
+  if (pPathObj->UsesCTM()) {
+    const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
+    if (!ctm.IsIdentity()) {
+      matrix.Concat(ctm.GetInverse());
+    }
+  }
   if (!matrix.IsIdentity()) {
     WriteMatrix(*buf, matrix) << " cm ";
   }
@@ -683,9 +691,11 @@ void CPDF_PageContentGenerator::ProcessText(fxcrt::ostringstream* buf,
   *buf << "BT ";
 
   CFX_Matrix matrix = pTextObj->GetTextMatrix();
-  const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
-  if (!ctm.IsIdentity()) {
-    matrix.Concat(ctm.GetInverse());
+  if (pTextObj->UsesCTM()) {
+    const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
+    if (!ctm.IsIdentity()) {
+      matrix.Concat(ctm.GetInverse());
+    }
   }
   if (!matrix.IsIdentity()) {
     WriteMatrix(*buf, matrix) << " Tm ";
