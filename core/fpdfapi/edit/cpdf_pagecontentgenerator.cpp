@@ -52,21 +52,21 @@ namespace {
 // Value: The resource names of a given type.
 using ResourcesMap = std::map<ByteString, std::set<ByteString>>;
 
-// TODO(thestig): Remove out parameter and raw pointer.
-bool GetColor(const CPDF_Color* pColor, float* rgb) {
-  if (!pColor || !pColor->IsColorSpaceRGB()) {
+// Returns whether it wrote to `buf` or not.
+bool WriteColorToStream(fxcrt::ostringstream& buf, const CPDF_Color* color) {
+  if (!color || !color->IsColorSpaceRGB()) {
     return false;
   }
 
-  std::optional<FX_COLORREF> colors = pColor->GetRGB();
+  std::optional<FX_COLORREF> colors = color->GetRGB();
   if (!colors.has_value()) {
     return false;
   }
 
   // TODO(thestig): Remove float to int to float conversion.
-  rgb[0] = FXSYS_GetRValue(colors.value()) / 255.0f;
-  rgb[1] = FXSYS_GetGValue(colors.value()) / 255.0f;
-  rgb[2] = FXSYS_GetBValue(colors.value()) / 255.0f;
+  buf << FXSYS_GetRValue(colors.value()) / 255.0f << " "
+      << FXSYS_GetGValue(colors.value()) / 255.0f << " "
+      << FXSYS_GetBValue(colors.value()) / 255.0f;
   return true;
 }
 
@@ -557,19 +557,16 @@ void CPDF_PageContentGenerator::ProcessPath(fxcrt::ostringstream* buf,
 void CPDF_PageContentGenerator::ProcessGraphics(fxcrt::ostringstream* buf,
                                                 CPDF_PageObject* pPageObj) {
   *buf << "q ";
-  float fillColor[3];
-  if (GetColor(pPageObj->color_state().GetFillColor(), fillColor)) {
-    *buf << fillColor[0] << " " << fillColor[1] << " " << fillColor[2]
-         << " rg ";
+  if (WriteColorToStream(*buf, pPageObj->color_state().GetFillColor())) {
+    *buf << " rg ";
   }
-  float strokeColor[3];
-  if (GetColor(pPageObj->color_state().GetStrokeColor(), strokeColor)) {
-    *buf << strokeColor[0] << " " << strokeColor[1] << " " << strokeColor[2]
-         << " RG ";
+  if (WriteColorToStream(*buf, pPageObj->color_state().GetStrokeColor())) {
+    *buf << " RG ";
   }
-  float lineWidth = pPageObj->graph_state().GetLineWidth();
-  if (lineWidth != 1.0f)
-    WriteFloat(*buf, lineWidth) << " w ";
+  float line_width = pPageObj->graph_state().GetLineWidth();
+  if (line_width != 1.0f) {
+    WriteFloat(*buf, line_width) << " w ";
+  }
   CFX_GraphStateData::LineCap lineCap = pPageObj->graph_state().GetLineCap();
   if (lineCap != CFX_GraphStateData::LineCap::kButt)
     *buf << static_cast<int>(lineCap) << " J ";
