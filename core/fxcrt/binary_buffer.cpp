@@ -100,7 +100,7 @@ void BinaryBuffer::AppendSpan(pdfium::span<const uint8_t> span) {
 }
 
 void BinaryBuffer::AppendString(const ByteString& str) {
-  AppendSpan(str.raw_span());
+  AppendSpan(str.unsigned_span());
 }
 
 void BinaryBuffer::AppendUint8(uint8_t value) {

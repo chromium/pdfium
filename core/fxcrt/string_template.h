@@ -33,14 +33,16 @@ class StringTemplate {
 
   // Explicit conversion to UnsignedType*. May return nullptr.
   // Note: Any subsequent modification of |this| will invalidate the result.
-  const UnsignedType* raw_str() const {
+  const UnsignedType* unsigned_str() const {
     return m_pData ? reinterpret_cast<const UnsignedType*>(m_pData->m_String)
                    : nullptr;
   }
 
   // Explicit conversion to StringView.
   // Note: Any subsequent modification of |this| will invalidate the result.
-  StringView AsStringView() const { return StringView(raw_str(), GetLength()); }
+  StringView AsStringView() const {
+    return StringView(unsigned_str(), GetLength());
+  }
 
   // Explicit conversion to span.
   // Note: Any subsequent modification of |this| will invalidate the result.
@@ -51,8 +53,8 @@ class StringTemplate {
 
   // Explicit conversion to spans of unsigned types.
   // Note: Any subsequent modification of |this| will invalidate the result.
-  pdfium::span<const UnsignedType> raw_span() const {
-    return pdfium::make_span(raw_str(), GetLength());
+  pdfium::span<const UnsignedType> unsigned_span() const {
+    return pdfium::make_span(unsigned_str(), GetLength());
   }
 
   // Note: Any subsequent modification of |this| will invalidate iterators.

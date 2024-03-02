@@ -542,8 +542,8 @@ RetainPtr<CPDF_Font> LoadCustomCompositeFont(
 
   CreateDescendantFontsArray(doc, font_dict, cid_font_dict->GetObjNum());
 
-  auto to_unicode_stream =
-      doc->NewIndirect<CPDF_Stream>(ByteStringView(to_unicode_cmap).raw_span());
+  auto to_unicode_stream = doc->NewIndirect<CPDF_Stream>(
+      ByteStringView(to_unicode_cmap).unsigned_span());
   font_dict->SetNewFor<CPDF_Reference>("ToUnicode", doc,
                                        to_unicode_stream->GetObjNum());
   return CPDF_DocPageData::FromDocument(doc)->GetFont(font_dict);

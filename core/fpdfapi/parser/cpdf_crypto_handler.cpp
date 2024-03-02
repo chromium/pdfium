@@ -214,7 +214,7 @@ ByteString CPDF_CryptoHandler::Decrypt(uint32_t objnum,
                                        const ByteString& str) {
   BinaryBuffer dest_buf;
   void* context = DecryptStart(objnum, gennum);
-  DecryptStream(context, str.raw_span(), dest_buf);
+  DecryptStream(context, str.unsigned_span(), dest_buf);
   DecryptFinish(context, dest_buf);
   return ByteString(dest_buf.GetSpan());
 }

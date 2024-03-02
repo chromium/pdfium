@@ -233,7 +233,7 @@ FPDFPage_TransFormWithClip(FPDF_PAGE page,
 
   auto pEndStream =
       pDoc->NewIndirect<CPDF_Stream>(pDoc->New<CPDF_Dictionary>());
-  pEndStream->SetData(ByteStringView(" Q").raw_span());
+  pEndStream->SetData(ByteStringView(" Q").unsigned_span());
 
   RetainPtr<CPDF_Array> pContentArray = ToArray(pContentObj);
   if (pContentArray) {

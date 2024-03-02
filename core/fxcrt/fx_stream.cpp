@@ -45,7 +45,7 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
 }  // namespace
 
 bool IFX_WriteStream::WriteString(ByteStringView str) {
-  return WriteBlock(str.raw_span());
+  return WriteBlock(str.unsigned_span());
 }
 
 bool IFX_WriteStream::WriteByte(uint8_t byte) {

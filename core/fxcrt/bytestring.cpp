@@ -278,7 +278,7 @@ bool ByteString::EqualNoCase(ByteStringView str) const {
     return false;
   }
   pdfium::span<const uint8_t> this_span = pdfium::as_bytes(m_pData->span());
-  pdfium::span<const uint8_t> that_span = str.raw_span();
+  pdfium::span<const uint8_t> that_span = str.unsigned_span();
   while (!this_span.empty()) {
     uint8_t this_char = this_span.front();
     uint8_t that_char = that_span.front();

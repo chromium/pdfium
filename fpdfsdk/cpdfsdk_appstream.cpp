@@ -1852,7 +1852,7 @@ void CPDFSDK_AppStream::Write(const ByteString& sAPType,
   RetainPtr<CPDF_Dictionary> stream_dict = stream->GetMutableDict();
   stream_dict->SetMatrixFor("Matrix", widget_->GetMatrix());
   stream_dict->SetRectFor("BBox", widget_->GetRotatedRect());
-  stream->SetDataAndRemoveFilter(sContents.raw_span());
+  stream->SetDataAndRemoveFilter(sContents.unsigned_span());
 }
 
 void CPDFSDK_AppStream::Remove(ByteStringView sAPType) {

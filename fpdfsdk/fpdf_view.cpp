@@ -1252,7 +1252,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
         break;
       i++;
     }
-    wsName = PDF_DecodeText(bsName.raw_span());
+    wsName = PDF_DecodeText(bsName.unsigned_span());
   } else {
     pDestObj = name_tree->LookupValueAndName(index, &wsName);
   }

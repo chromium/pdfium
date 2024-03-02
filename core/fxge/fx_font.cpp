@@ -119,7 +119,7 @@ ByteString GetNameFromTT(pdfium::span<const uint8_t> name_table,
           return ByteString();
         }
 
-        return WideString::FromUTF16BE(utf16_be.raw_span()).ToUTF8();
+        return WideString::FromUTF16BE(utf16_be.unsigned_span()).ToUTF8();
       }
     }
   }

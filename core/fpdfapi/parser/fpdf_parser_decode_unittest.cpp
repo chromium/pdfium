@@ -429,7 +429,7 @@ TEST(ParserDecodeTest, RoundTripText) {
   for (int pdf_code_point = 0; pdf_code_point < 256; ++pdf_code_point) {
     ByteString original(static_cast<char>(pdf_code_point));
     ByteString reencoded =
-        PDF_EncodeText(PDF_DecodeText(original.raw_span()).AsStringView());
+        PDF_EncodeText(PDF_DecodeText(original.unsigned_span()).AsStringView());
 
     switch (pdf_code_point) {
       case 0x7F:

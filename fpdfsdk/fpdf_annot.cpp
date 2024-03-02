@@ -1112,7 +1112,7 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
   auto new_stream = pDoc->NewIndirect<CPDF_Stream>(std::move(stream_dict));
   ByteString new_stream_data =
       PDF_EncodeText(WideStringFromFPDFWideString(value).AsStringView());
-  new_stream->SetData(new_stream_data.raw_span());
+  new_stream->SetData(new_stream_data.unsigned_span());
 
   // Storing reference to indirect object in annotation's AP
   if (!pApDict) {

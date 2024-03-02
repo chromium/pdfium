@@ -45,9 +45,9 @@ TEST(CXFAFileReadTest, NormalStreams) {
   ByteStringView one_view(kOne);
   ByteStringView two_view(kTwo);
   ByteStringView three_view(kThree);
-  auto stream1 = pdfium::MakeRetain<CPDF_Stream>(one_view.raw_span());
-  auto stream2 = pdfium::MakeRetain<CPDF_Stream>(two_view.raw_span());
-  auto stream3 = pdfium::MakeRetain<CPDF_Stream>(three_view.raw_span());
+  auto stream1 = pdfium::MakeRetain<CPDF_Stream>(one_view.unsigned_span());
+  auto stream2 = pdfium::MakeRetain<CPDF_Stream>(two_view.unsigned_span());
+  auto stream3 = pdfium::MakeRetain<CPDF_Stream>(three_view.unsigned_span());
 
   std::vector<RetainPtr<const CPDF_Stream>> streams;
   streams.push_back(std::move(stream1));

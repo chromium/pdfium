@@ -111,7 +111,7 @@ ByteString PDF_NameDecode(ByteStringView orig) {
 }
 
 ByteString PDF_NameEncode(const ByteString& orig) {
-  pdfium::span<const uint8_t> src_span = orig.raw_span();
+  pdfium::span<const uint8_t> src_span = orig.unsigned_span();
   size_t dest_len = 0;
   for (const auto ch : src_span) {
     if (ch >= 0x80 || PDFCharIsWhitespace(ch) || ch == '#' ||

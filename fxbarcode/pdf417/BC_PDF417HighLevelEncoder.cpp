@@ -116,7 +116,7 @@ std::optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
         p += t;
       } else {
         std::optional<size_t> b =
-            DetermineConsecutiveBinaryCount(result, bytes.raw_span(), p);
+            DetermineConsecutiveBinaryCount(result, bytes.unsigned_span(), p);
         if (!b.has_value())
           return std::nullopt;
 
@@ -124,9 +124,9 @@ std::optional<WideString> CBC_PDF417HighLevelEncoder::EncodeHighLevel(
         if (b_value == 0)
           b_value = 1;
         if (b_value == 1 && encodingMode == EncodingMode::kText) {
-          EncodeBinary(bytes.raw_span(), p, 1, EncodingMode::kText, &sb);
+          EncodeBinary(bytes.unsigned_span(), p, 1, EncodingMode::kText, &sb);
         } else {
-          EncodeBinary(bytes.raw_span(), p, b_value, encodingMode, &sb);
+          EncodeBinary(bytes.unsigned_span(), p, b_value, encodingMode, &sb);
           encodingMode = EncodingMode::kByte;
           textSubMode = SubMode::kAlpha;
         }

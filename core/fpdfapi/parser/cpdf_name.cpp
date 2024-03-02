@@ -39,7 +39,7 @@ CPDF_Name* CPDF_Name::AsMutableName() {
 }
 
 WideString CPDF_Name::GetUnicodeText() const {
-  return PDF_DecodeText(m_Name.raw_span());
+  return PDF_DecodeText(m_Name.unsigned_span());
 }
 
 bool CPDF_Name::WriteTo(IFX_ArchiveStream* archive,

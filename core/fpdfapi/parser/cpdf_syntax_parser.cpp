@@ -756,7 +756,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     // Earlier version of PDF specification doesn't require EOL marker before
     // 'endstream' keyword. If keyword 'endstream' follows the bytes in
     // specified length, it signals the end of stream.
-    if (memcmp(m_WordBuffer.data(), kEndStreamStr.raw_str(),
+    if (memcmp(m_WordBuffer.data(), kEndStreamStr.unterminated_unsigned_str(),
                kEndStreamStr.GetLength()) != 0) {
       substream.Reset();
       len = -1;
@@ -821,7 +821,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   int numMarkers = ReadEOLMarkers(GetPos());
   if (m_WordSize == static_cast<unsigned int>(kEndObjStr.GetLength()) &&
       numMarkers != 0 &&
-      memcmp(m_WordBuffer.data(), kEndObjStr.raw_str(),
+      memcmp(m_WordBuffer.data(), kEndObjStr.unterminated_unsigned_str(),
              kEndObjStr.GetLength()) == 0) {
     SetPos(end_stream_offset);
   }

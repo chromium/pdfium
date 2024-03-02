@@ -394,8 +394,8 @@ CJS_Result CJS_Document::mailForm(CJS_Runtime* pRuntime,
     cMsg = pRuntime->ToWideString(newParams[5]);
 
   pRuntime->BeginBlock();
-  m_pFormFillEnv->JS_docmailForm(sTextBuf.raw_span(), bUI, cTo, cSubject, cCc,
-                                 cBcc, cMsg);
+  m_pFormFillEnv->JS_docmailForm(sTextBuf.unsigned_span(), bUI, cTo, cSubject,
+                                 cCc, cBcc, cMsg);
   pRuntime->EndBlock();
   return CJS_Result::Success();
 }

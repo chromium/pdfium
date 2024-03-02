@@ -182,7 +182,7 @@ RetainPtr<CPDF_Reference> NewIndirectContentsStreamReference(
     const ByteString& contents) {
   auto pNewContents =
       pDocument->NewIndirect<CPDF_Stream>(pDocument->New<CPDF_Dictionary>());
-  pNewContents->SetData(contents.raw_span());
+  pNewContents->SetData(contents.unsigned_span());
   return pNewContents->MakeReference(pDocument);
 }
 
@@ -215,7 +215,7 @@ void SetPageContents(const ByteString& key,
       sStream += ByteString(pAcc->GetSpan());
       sStream += "\nQ";
     }
-    pContentsStream->SetDataAndRemoveFilter(sStream.raw_span());
+    pContentsStream->SetDataAndRemoveFilter(sStream.unsigned_span());
     pContentsArray = pDocument->NewIndirect<CPDF_Array>();
     pContentsArray->AppendNew<CPDF_Reference>(pDocument,
                                               pContentsStream->GetObjNum());
@@ -413,7 +413,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     ByteString str(buf);
     sStream += ByteString::Format("q %s cm /%s Do Q\n", str.c_str(),
                                   sFormName.c_str());
-    pNewXObject->SetDataAndRemoveFilter(sStream.raw_span());
+    pNewXObject->SetDataAndRemoveFilter(sStream.unsigned_span());
   }
   pPageDict->RemoveFor("Annots");
   return FLATTEN_SUCCESS;

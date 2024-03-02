@@ -99,7 +99,7 @@ bool CPDF_IndexedCS::GetRGB(pdfium::span<const float> pBuf,
   }
 
   std::vector<float> comps(m_nBaseComponents);
-  const uint8_t* pTable = m_Table.raw_str();
+  const uint8_t* pTable = m_Table.unsigned_str();
   for (uint32_t i = 0; i < m_nBaseComponents; ++i) {
     comps[i] =
         m_pCompMinMax[i * 2] +

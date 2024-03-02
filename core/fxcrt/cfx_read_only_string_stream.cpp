@@ -11,7 +11,8 @@
 
 CFX_ReadOnlyStringStream::CFX_ReadOnlyStringStream(ByteString data)
     : data_(std::move(data)),
-      stream_(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(data_.raw_span())) {}
+      stream_(
+          pdfium::MakeRetain<CFX_ReadOnlySpanStream>(data_.unsigned_span())) {}
 
 CFX_ReadOnlyStringStream::~CFX_ReadOnlyStringStream() = default;
 

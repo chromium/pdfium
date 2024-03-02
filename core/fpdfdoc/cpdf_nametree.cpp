@@ -580,5 +580,6 @@ RetainPtr<const CPDF_Object> CPDF_NameTree::LookupValue(
 
 RetainPtr<const CPDF_Array> CPDF_NameTree::LookupNewStyleNamedDest(
     const ByteString& sName) {
-  return GetNamedDestFromObject(LookupValue(PDF_DecodeText(sName.raw_span())));
+  return GetNamedDestFromObject(
+      LookupValue(PDF_DecodeText(sName.unsigned_span())));
 }

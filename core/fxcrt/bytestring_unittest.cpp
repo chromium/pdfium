@@ -32,7 +32,7 @@ TEST(ByteString, ElementAccess) {
   EXPECT_EQ(3u, abc_span.size());
   EXPECT_EQ(0, memcmp(abc_span.data(), "abc", 3));
 
-  pdfium::span<const uint8_t> abc_raw_span = abc.raw_span();
+  pdfium::span<const uint8_t> abc_raw_span = abc.unsigned_span();
   EXPECT_EQ(3u, abc_raw_span.size());
   EXPECT_EQ(0, memcmp(abc_raw_span.data(), "abc", 3));
 
@@ -1150,7 +1150,7 @@ TEST(ByteString, MultiCharReverseIterator) {
 
 TEST(ByteStringView, Null) {
   ByteStringView null_string;
-  EXPECT_FALSE(null_string.raw_str());
+  EXPECT_FALSE(null_string.unterminated_unsigned_str());
   EXPECT_EQ(0u, null_string.GetLength());
   EXPECT_TRUE(null_string.IsEmpty());
 
@@ -1158,40 +1158,40 @@ TEST(ByteStringView, Null) {
   EXPECT_EQ(null_string, another_null_string);
 
   ByteStringView copied_null_string(null_string);
-  EXPECT_FALSE(copied_null_string.raw_str());
+  EXPECT_FALSE(copied_null_string.unterminated_unsigned_str());
   EXPECT_EQ(0u, copied_null_string.GetLength());
   EXPECT_TRUE(copied_null_string.IsEmpty());
   EXPECT_EQ(null_string, copied_null_string);
 
   ByteStringView span_null_string = pdfium::span<const uint8_t>();
-  EXPECT_FALSE(span_null_string.raw_str());
+  EXPECT_FALSE(span_null_string.unterminated_unsigned_str());
   EXPECT_EQ(0u, span_null_string.GetLength());
   EXPECT_TRUE(span_null_string.IsEmpty());
   EXPECT_EQ(null_string, span_null_string);
 
   ByteStringView empty_string("");  // Pointer to NUL, not NULL pointer.
-  EXPECT_TRUE(empty_string.raw_str());
+  EXPECT_TRUE(empty_string.unterminated_unsigned_str());
   EXPECT_EQ(0u, empty_string.GetLength());
   EXPECT_TRUE(empty_string.IsEmpty());
   EXPECT_EQ(null_string, empty_string);
 
   ByteStringView assigned_null_string("initially not nullptr");
   assigned_null_string = null_string;
-  EXPECT_FALSE(assigned_null_string.raw_str());
+  EXPECT_FALSE(assigned_null_string.unterminated_unsigned_str());
   EXPECT_EQ(0u, assigned_null_string.GetLength());
   EXPECT_TRUE(assigned_null_string.IsEmpty());
   EXPECT_EQ(null_string, assigned_null_string);
 
   ByteStringView assigned_nullptr_string("initially not nullptr");
   assigned_nullptr_string = nullptr;
-  EXPECT_FALSE(assigned_nullptr_string.raw_str());
+  EXPECT_FALSE(assigned_nullptr_string.unterminated_unsigned_str());
   EXPECT_EQ(0u, assigned_nullptr_string.GetLength());
   EXPECT_TRUE(assigned_nullptr_string.IsEmpty());
   EXPECT_EQ(null_string, assigned_nullptr_string);
 
   ByteStringView assigned_span_null_string("initially not null span");
   assigned_span_null_string = pdfium::span<const uint8_t>();
-  EXPECT_FALSE(assigned_span_null_string.raw_str());
+  EXPECT_FALSE(assigned_span_null_string.unterminated_unsigned_str());
   EXPECT_EQ(0u, assigned_span_null_string.GetLength());
   EXPECT_TRUE(assigned_span_null_string.IsEmpty());
   EXPECT_EQ(null_string, assigned_span_null_string);
@@ -1286,7 +1286,7 @@ TEST(ByteStringView, FromVector) {
   cleared_vec.pop_back();
   ByteStringView cleared_string(cleared_vec);
   EXPECT_EQ(0u, cleared_string.GetLength());
-  EXPECT_FALSE(cleared_string.raw_str());
+  EXPECT_FALSE(cleared_string.unterminated_unsigned_str());
 }
 
 TEST(ByteStringView, GetID) {
@@ -1520,7 +1520,7 @@ TEST(ByteStringView, OperatorEQ) {
 
   pdfium::span<const uint8_t> span5(
       pdfium::as_bytes(pdfium::make_span("hello", 5u)));
-  auto raw_span = byte_string_c.raw_span();
+  auto raw_span = byte_string_c.unsigned_span();
   EXPECT_TRUE(
       std::equal(raw_span.begin(), raw_span.end(), span5.begin(), span5.end()));
 }
@@ -1733,14 +1733,14 @@ TEST(ByteString, Empty) {
   EXPECT_TRUE(cstr);
   EXPECT_EQ(0u, strlen(cstr));
 
-  const uint8_t* rstr = empty_str.raw_str();
+  const uint8_t* rstr = empty_str.unsigned_str();
   EXPECT_FALSE(rstr);
 
   pdfium::span<const char> cspan = empty_str.span();
   EXPECT_TRUE(cspan.empty());
   EXPECT_FALSE(cspan.data());
 
-  pdfium::span<const uint8_t> rspan = empty_str.raw_span();
+  pdfium::span<const uint8_t> rspan = empty_str.unsigned_span();
   EXPECT_TRUE(rspan.empty());
   EXPECT_FALSE(rspan.data());
 }

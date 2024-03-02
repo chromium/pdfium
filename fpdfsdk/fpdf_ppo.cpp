@@ -640,7 +640,7 @@ RetainPtr<CPDF_Stream> CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
       pAcc->LoadAllDataFiltered();
       bsSrcContentStream = ByteString(pAcc->GetSpan());
     }
-    pNewXObject->SetDataAndRemoveFilter(bsSrcContentStream.raw_span());
+    pNewXObject->SetDataAndRemoveFilter(bsSrcContentStream.unsigned_span());
   }
   return pNewXObject;
 }
@@ -681,7 +681,7 @@ void CPDF_NPageToOneExporter::FinishPage(
 
   auto pStream =
       dest()->NewIndirect<CPDF_Stream>(dest()->New<CPDF_Dictionary>());
-  pStream->SetData(bsContent.raw_span());
+  pStream->SetData(bsContent.unsigned_span());
   pDestPageDict->SetNewFor<CPDF_Reference>(pdfium::page_object::kContents,
                                            dest(), pStream->GetObjNum());
 }

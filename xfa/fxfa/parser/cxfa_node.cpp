@@ -407,7 +407,8 @@ DataVector<uint8_t> XFA_Base64Decode(const ByteString& bsStr) {
   if (bsStr.IsEmpty())
     return result;
 
-  DataVector<uint8_t> buffer = XFA_RemoveBase64Whitespace(bsStr.raw_span());
+  DataVector<uint8_t> buffer =
+      XFA_RemoveBase64Whitespace(bsStr.unsigned_span());
   result.reserve(3 * (buffer.size() / 4));
 
   uint32_t dwLimb = 0;

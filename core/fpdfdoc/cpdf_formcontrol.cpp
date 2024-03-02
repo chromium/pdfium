@@ -91,7 +91,7 @@ WideString CPDF_FormControl::GetExportValue() const {
     csOn = pArray->GetByteStringAt(m_pField->GetControlIndex(this));
   if (csOn.IsEmpty())
     csOn = "Yes";
-  return PDF_DecodeText(csOn.raw_span());
+  return PDF_DecodeText(csOn.unsigned_span());
 }
 
 bool CPDF_FormControl::IsChecked() const {
