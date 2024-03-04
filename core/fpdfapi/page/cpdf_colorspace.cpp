@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <limits>
 #include <memory>
+#include <optional>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -39,11 +40,13 @@
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/scoped_set_insertion.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
+#include "core/fxge/dib/fx_dib.h"
 
 namespace {
 
@@ -617,6 +620,22 @@ std::vector<float> CPDF_ColorSpace::CreateBufAndSetDefaultColor() const {
 
 uint32_t CPDF_ColorSpace::ComponentCount() const {
   return m_nComponents;
+}
+
+std::optional<FX_COLORREF> CPDF_ColorSpace::GetColorRef(
+    pdfium::span<const float> buffer) {
+  float r;
+  float g;
+  float b;
+  if (!GetRGB(buffer, &r, &g, &b)) {
+    return std::nullopt;
+  }
+
+  r = std::clamp(r, 0.0f, 1.0f);
+  g = std::clamp(g, 0.0f, 1.0f);
+  b = std::clamp(b, 0.0f, 1.0f);
+  return FXSYS_BGR(FXSYS_roundf(b * 255), FXSYS_roundf(g * 255),
+                   FXSYS_roundf(r * 255));
 }
 
 void CPDF_ColorSpace::GetDefaultValue(int iComponent,

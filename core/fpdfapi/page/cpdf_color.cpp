@@ -80,26 +80,16 @@ bool CPDF_Color::IsColorSpaceRGB() const {
 }
 
 std::optional<FX_COLORREF> CPDF_Color::GetRGB() const {
-  float r = 0.0f;
-  float g = 0.0f;
-  float b = 0.0f;
-  bool result = false;
   if (IsPatternInternal()) {
     if (m_pValue) {
-      const CPDF_PatternCS* pPatternCS = m_pCS->AsPatternCS();
-      result = pPatternCS->GetPatternRGB(*m_pValue, &r, &g, &b);
+      return m_pCS->AsPatternCS()->GetPatternRGB(*m_pValue);
     }
   } else {
-    if (!m_Buffer.empty())
-      result = m_pCS->GetRGB(m_Buffer, &r, &g, &b);
+    if (!m_Buffer.empty()) {
+      return m_pCS->GetColorRef(m_Buffer);
+    }
   }
-  if (!result) {
-    return std::nullopt;
-  }
-
-  return FXSYS_BGR(static_cast<int32_t>(b * 255 + 0.5f),
-                   static_cast<int32_t>(g * 255 + 0.5f),
-                   static_cast<int32_t>(r * 255 + 0.5f));
+  return std::nullopt;
 }
 
 RetainPtr<CPDF_Pattern> CPDF_Color::GetPattern() const {

@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 #include <array>
+#include <optional>
 #include <set>
 #include <utility>
 #include <vector>
@@ -23,6 +24,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxge/dib/fx_dib.h"
 
 class CPDF_Document;
 class CPDF_IndexedCS;
@@ -100,6 +102,11 @@ class CPDF_ColorSpace : public Retainable, public Observable {
            GetFamily() == Family::kDeviceN || GetFamily() == Family::kIndexed ||
            GetFamily() == Family::kPattern;
   }
+
+  // Wrapper around GetRGB() that returns the RGB value as FX_COLORREF. The
+  // GetRGB() return value is sanitized to fit into FX_COLORREF, where the color
+  // components are integers.
+  std::optional<FX_COLORREF> GetColorRef(pdfium::span<const float> buffer);
 
   // Use CPDF_Pattern::GetPatternRGB() instead of GetRGB() for patterns.
   virtual bool GetRGB(pdfium::span<const float> pBuf,
