@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_STREAMPARSER_H_
 #define CORE_FPDFAPI_PAGE_CPDF_STREAMPARSER_H_
 
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/string_pool_template.h"
@@ -53,7 +54,7 @@ class CPDF_StreamParser {
   uint32_t m_WordSize = 0;  // Current byte position within |m_WordBuffer|.
   WeakPtr<ByteStringPool> m_pPool;
   RetainPtr<CPDF_Object> m_pLastObj;
-  pdfium::span<const uint8_t> m_pBuf;
+  pdfium::raw_span<const uint8_t> m_pBuf;
   uint8_t m_WordBuffer[kMaxWordLength + 1] = {};  // Include space for NUL.
 };
 

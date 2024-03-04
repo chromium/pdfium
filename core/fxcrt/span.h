@@ -32,7 +32,17 @@ namespace pdfium {
 
 constexpr size_t dynamic_extent = static_cast<size_t>(-1);
 
+#if defined(PDF_USE_PARTITION_ALLOC)
 template <typename T>
+using DefaultSpanInternalPtr = raw_ptr<T, AllowPtrArithmetic>;
+#else
+template <typename T>
+using DefaultSpanInternalPtr = UNOWNED_PTR_EXCLUSION T*;
+#endif
+
+template <typename T,
+          size_t Extent = dynamic_extent,
+          typename InternalPtr = DefaultSpanInternalPtr<T>>
 class span;
 
 namespace internal {
@@ -194,7 +204,7 @@ using EnableIfConstSpanCompatibleContainer =
 // - byte_span_from_ref() function.
 
 // [span], class template span
-template <typename T>
+template <typename T, size_t Extent, typename InternalPtr>
 class TRIVIAL_ABI GSL_POINTER span {
  public:
   using value_type = typename std::remove_cv<T>::type;
@@ -323,11 +333,7 @@ class TRIVIAL_ABI GSL_POINTER span {
   }
 
  private:
-#if defined(PDF_USE_PARTITION_ALLOC)
-  raw_ptr<T, AllowPtrArithmetic> data_ = nullptr;
-#else
-  UNOWNED_PTR_EXCLUSION T* data_ = nullptr;
-#endif
+  InternalPtr data_ = nullptr;
   size_t size_ = 0;
 };
 
