@@ -50,11 +50,19 @@ class CFX_FolderFontInfo : public SystemFontInfoIface {
 
   class FontFaceInfo {
    public:
+    static constexpr int32_t kSimilarityScoreMax = 68;
+
     FontFaceInfo(ByteString filePath,
                  ByteString faceName,
                  ByteString fontTables,
                  uint32_t fontOffset,
                  uint32_t fileSize);
+
+    bool IsEligibleForFindFont(uint32_t flag, FX_Charset charset) const;
+    int32_t SimilarityScore(int weight,
+                            bool italic,
+                            int pitch_family,
+                            bool exact_match_bonus) const;
 
     const ByteString m_FilePath;
     const ByteString m_FaceName;
