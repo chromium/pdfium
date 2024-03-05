@@ -13,6 +13,7 @@
 
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "third_party/abseil-cpp/absl/types/variant.h"
@@ -63,7 +64,7 @@ class CPDF_StreamAcc final : public Retainable {
   RetainPtr<const CPDF_Dictionary> m_pImageParam;
   // Needs to outlive `m_Data` when the data is not owned.
   RetainPtr<const CPDF_Stream> const m_pStream;
-  absl::variant<pdfium::span<const uint8_t>, DataVector<uint8_t>> m_Data;
+  absl::variant<pdfium::raw_span<const uint8_t>, DataVector<uint8_t>> m_Data;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_STREAM_ACC_H_

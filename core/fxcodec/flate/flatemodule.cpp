@@ -24,6 +24,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
@@ -131,7 +132,7 @@ class CLZWDecoder {
   void DecodeString(uint32_t code);
   void ExpandDestBuf(uint32_t additional_size);
 
-  pdfium::span<const uint8_t> const src_span_;
+  pdfium::raw_span<const uint8_t> const src_span_;
   std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf_;
   uint32_t src_bit_pos_ = 0;
   uint32_t dest_buf_size_ = 0;  // Actual allocated size.
@@ -641,7 +642,7 @@ class FlateScanlineDecoder : public ScanlineDecoder {
 
  protected:
   std::unique_ptr<z_stream, FlateDeleter> m_pFlate;
-  const pdfium::span<const uint8_t> m_SrcBuf;
+  const pdfium::raw_span<const uint8_t> m_SrcBuf;
   DataVector<uint8_t> m_Scanline;
 };
 

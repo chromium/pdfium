@@ -7,6 +7,7 @@
 #ifndef CORE_FXCODEC_JBIG2_JBIG2_BITSTREAM_H_
 #define CORE_FXCODEC_JBIG2_JBIG2_BITSTREAM_H_
 
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 
@@ -46,7 +47,7 @@ class CJBig2_BitStream {
   void AdvanceBit();
   uint32_t LengthInBits() const;
 
-  const pdfium::span<const uint8_t> m_Span;
+  const pdfium::raw_span<const uint8_t> m_Span;
   uint32_t m_dwByteIdx = 0;
   uint32_t m_dwBitIdx = 0;
   const uint64_t m_Key;

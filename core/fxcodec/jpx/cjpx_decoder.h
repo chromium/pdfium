@@ -11,6 +11,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 
@@ -79,7 +80,7 @@ class CJPX_Decoder {
             uint8_t resolution_levels_to_skip);
 
   const ColorSpaceOption m_ColorSpaceOption;
-  pdfium::span<const uint8_t> m_SrcData;
+  pdfium::raw_span<const uint8_t> m_SrcData;
   UnownedPtr<opj_image_t> m_Image;
   UnownedPtr<opj_codec_t> m_Codec;
   std::unique_ptr<DecodeData> m_DecodeData;

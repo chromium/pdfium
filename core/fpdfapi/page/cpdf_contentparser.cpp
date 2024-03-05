@@ -181,7 +181,7 @@ CPDF_ContentParser::Stage CPDF_ContentParser::PrepareContent() {
   const size_t buffer_size = safe_size.ValueOrDie();
   auto buffer = FixedSizeDataVector<uint8_t>::TryZeroed(buffer_size);
   if (buffer.empty()) {
-    m_Data.emplace<pdfium::span<const uint8_t>>();
+    m_Data.emplace<pdfium::raw_span<const uint8_t>>();
     return Stage::kComplete;
   }
 
@@ -274,5 +274,5 @@ pdfium::span<const uint8_t> CPDF_ContentParser::GetData() const {
   if (is_owned()) {
     return absl::get<FixedSizeDataVector<uint8_t>>(m_Data).span();
   }
-  return absl::get<pdfium::span<const uint8_t>>(m_Data);
+  return absl::get<pdfium::raw_span<const uint8_t>>(m_Data);
 }

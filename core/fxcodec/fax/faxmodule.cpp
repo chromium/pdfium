@@ -22,6 +22,7 @@
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
@@ -495,7 +496,7 @@ class FaxDecoder final : public ScanlineDecoder {
   bool m_bByteAlign = false;
   const bool m_bEndOfLine;
   const bool m_bBlack;
-  const pdfium::span<const uint8_t> m_SrcSpan;
+  const pdfium::raw_span<const uint8_t> m_SrcSpan;
   DataVector<uint8_t> m_ScanlineBuf;
   DataVector<uint8_t> m_RefBuf;
 };
@@ -707,7 +708,7 @@ class FaxEncoder {
   // Must outlive `m_RefLineSpan`.
   const DataVector<uint8_t> m_InitialRefLine;
   DataVector<uint8_t> m_LineBuf;
-  pdfium::span<const uint8_t> m_RefLineSpan;
+  pdfium::raw_span<const uint8_t> m_RefLineSpan;
 };
 
 FaxEncoder::FaxEncoder(RetainPtr<const CFX_DIBBase> src)

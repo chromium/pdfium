@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/span.h"
 
 class PauseIndicatorIface;
@@ -49,7 +50,7 @@ class ScanlineDecoder {
   int m_bpc;
   uint32_t m_Pitch;
   int m_NextLine = -1;
-  pdfium::span<uint8_t> m_pLastScanline;
+  pdfium::raw_span<uint8_t> m_pLastScanline;
 };
 
 }  // namespace fxcodec

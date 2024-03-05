@@ -94,7 +94,7 @@ DataVector<uint8_t> CPDF_StreamAcc::DetachData() {
   if (is_owned())
     return std::move(absl::get<DataVector<uint8_t>>(m_Data));
 
-  auto span = absl::get<pdfium::span<const uint8_t>>(m_Data);
+  auto span = absl::get<pdfium::raw_span<const uint8_t>>(m_Data);
   return DataVector<uint8_t>(span.begin(), span.end());
 }
 
@@ -121,7 +121,7 @@ void CPDF_StreamAcc::ProcessFilteredData(uint32_t estimated_size,
   if (dwSrcSize == 0)
     return;
 
-  absl::variant<pdfium::span<const uint8_t>, DataVector<uint8_t>> src_data;
+  absl::variant<pdfium::raw_span<const uint8_t>, DataVector<uint8_t>> src_data;
   pdfium::span<const uint8_t> src_span;
   if (m_pStream->IsMemoryBased()) {
     src_span = m_pStream->GetInMemoryRawData();

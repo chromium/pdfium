@@ -30,6 +30,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_random.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 
@@ -50,7 +51,7 @@ class CFX_FileBufferArchive final : public IFX_ArchiveStream {
 
   FX_FILESIZE offset_ = 0;
   DataVector<uint8_t> buffer_;
-  pdfium::span<uint8_t> available_;
+  pdfium::raw_span<uint8_t> available_;
   RetainPtr<IFX_RetainableWriteStream> const backing_file_;
 };
 

@@ -7,6 +7,7 @@
 #ifndef XFA_FXFA_FORMCALC_CXFA_FMLEXER_H_
 #define XFA_FXFA_FORMCALC_CXFA_FMLEXER_H_
 
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/widestring.h"
 #include "v8/include/cppgc/macros.h"
 
@@ -118,7 +119,7 @@ class CXFA_FMLexer {
 
   void RaiseError() { m_bLexerError = true; }
 
-  pdfium::span<const wchar_t> m_spInput;
+  pdfium::raw_span<const wchar_t> m_spInput;
   size_t m_nCursor = 0;
   bool m_bLexerError = false;
 };

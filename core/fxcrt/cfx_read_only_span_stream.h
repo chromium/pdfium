@@ -8,6 +8,7 @@
 #define CORE_FXCRT_CFX_READ_ONLY_SPAN_STREAM_H_
 
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 
@@ -24,7 +25,7 @@ class CFX_ReadOnlySpanStream final : public IFX_SeekableReadStream {
   explicit CFX_ReadOnlySpanStream(pdfium::span<const uint8_t> span);
   ~CFX_ReadOnlySpanStream() override;
 
-  const pdfium::span<const uint8_t> span_;
+  const pdfium::raw_span<const uint8_t> span_;
 };
 
 #endif  // CORE_FXCRT_CFX_READ_ONLY_SPAN_STREAM_H_

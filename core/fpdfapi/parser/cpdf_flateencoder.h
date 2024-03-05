@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "third_party/abseil-cpp/absl/types/variant.h"
@@ -42,7 +43,7 @@ class CPDF_FlateEncoder {
   // Must outlive `m_Data`.
   RetainPtr<CPDF_StreamAcc> const m_pAcc;
 
-  absl::variant<pdfium::span<const uint8_t>, DataVector<uint8_t>> m_Data;
+  absl::variant<pdfium::raw_span<const uint8_t>, DataVector<uint8_t>> m_Data;
 
   // Only one of these two pointers is valid at any time.
   RetainPtr<const CPDF_Dictionary> m_pDict;

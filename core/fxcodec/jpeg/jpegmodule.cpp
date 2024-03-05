@@ -22,6 +22,7 @@
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/raw_span.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/fx_dib.h"
 
@@ -157,7 +158,7 @@ class JpegDecoder final : public ScanlineDecoder {
   jpeg_decompress_struct m_Cinfo;
   jpeg_error_mgr m_Jerr;
   jpeg_source_mgr m_Src;
-  pdfium::span<const uint8_t> m_SrcSpan;
+  pdfium::raw_span<const uint8_t> m_SrcSpan;
   DataVector<uint8_t> m_ScanlineBuf;
   bool m_bInited = false;
   bool m_bStarted = false;

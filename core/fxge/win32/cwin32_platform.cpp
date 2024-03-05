@@ -15,6 +15,7 @@
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/win/scoped_select_object.h"
 #include "core/fxcrt/win/win_util.h"
@@ -25,7 +26,7 @@ namespace {
 
 struct Variant {
   const char* m_pFaceName;
-  pdfium::span<const char> m_pVariantName;
+  pdfium::raw_span<const char> m_pVariantName;
 };
 
 constexpr Variant kVariantNames[] = {

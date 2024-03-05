@@ -16,6 +16,7 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/mask.h"
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -526,8 +527,8 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   bool m_bIsNull = true;
   bool m_bPreNull = true;
   bool is_widget_ready_ = false;
-  const pdfium::span<const PropertyData> m_Properties;
-  const pdfium::span<const AttributeData> m_Attributes;
+  const pdfium::raw_span<const PropertyData> m_Properties;
+  const pdfium::raw_span<const AttributeData> m_Attributes;
   const Mask<XFA_XDPPACKET> m_ValidPackets;
   UnownedPtr<CFX_XMLNode> xml_node_;
   const XFA_PacketType m_ePacket;

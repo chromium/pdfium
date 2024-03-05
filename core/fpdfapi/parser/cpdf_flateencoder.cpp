@@ -81,5 +81,5 @@ const CPDF_Dictionary* CPDF_FlateEncoder::GetDict() const {
 pdfium::span<const uint8_t> CPDF_FlateEncoder::GetSpan() const {
   if (is_owned())
     return absl::get<DataVector<uint8_t>>(m_Data);
-  return absl::get<pdfium::span<const uint8_t>>(m_Data);
+  return absl::get<pdfium::raw_span<const uint8_t>>(m_Data);
 }

@@ -14,8 +14,8 @@
 #include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
 
@@ -142,7 +142,7 @@ class CStretchEngine {
   const int m_SrcBpp;
   const bool m_bHasAlpha;
   RetainPtr<const CFX_DIBBase> const m_pSource;
-  pdfium::span<const uint32_t> m_pSrcPalette;
+  pdfium::raw_span<const uint32_t> m_pSrcPalette;
   const int m_SrcWidth;
   const int m_SrcHeight;
   UnownedPtr<ScanlineComposerIface> const m_pDestBitmap;

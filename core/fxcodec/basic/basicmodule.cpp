@@ -16,6 +16,7 @@
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/span_util.h"
 
 namespace fxcodec {
@@ -44,7 +45,7 @@ class RLScanlineDecoder final : public ScanlineDecoder {
   void UpdateOperator(uint8_t used_bytes);
 
   DataVector<uint8_t> m_Scanline;
-  pdfium::span<const uint8_t> m_SrcBuf;
+  pdfium::raw_span<const uint8_t> m_SrcBuf;
   size_t m_dwLineBytes = 0;
   size_t m_SrcOffset = 0;
   bool m_bEOD = false;

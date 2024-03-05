@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/dib/cfx_dibbase.h"
@@ -33,9 +34,9 @@ class CPDF_TransferFuncDIB final : public CFX_DIBBase {
 
   RetainPtr<CFX_DIBBase> const m_pSrc;
   RetainPtr<CPDF_TransferFunc> const m_pTransferFunc;
-  const pdfium::span<const uint8_t> m_RampR;
-  const pdfium::span<const uint8_t> m_RampG;
-  const pdfium::span<const uint8_t> m_RampB;
+  const pdfium::raw_span<const uint8_t> m_RampR;
+  const pdfium::raw_span<const uint8_t> m_RampG;
+  const pdfium::raw_span<const uint8_t> m_RampB;
   mutable DataVector<uint8_t> m_Scanline;
 };
 

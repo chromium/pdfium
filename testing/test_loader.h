@@ -7,6 +7,7 @@
 
 #include <stdint.h>
 
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/span.h"
 
 class TestLoader {
@@ -19,7 +20,7 @@ class TestLoader {
                       unsigned long size);
 
  private:
-  const pdfium::span<const uint8_t> m_Span;
+  const pdfium::raw_span<const uint8_t> m_Span;
 };
 
 #endif  // TESTING_TEST_LOADER_H_
