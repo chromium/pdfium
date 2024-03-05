@@ -4,6 +4,7 @@
 
 #include <vector>
 
+#include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -57,7 +58,7 @@ TEST(PdfiumSpanDeathTest, EmptySpanBack) {
 namespace {
 
 void CreateDanglingSpan() {
-  pdfium::span<int> data_span;
+  pdfium::raw_span<int> data_span;
   {
     std::vector<int> data(4);
     data_span = pdfium::make_span(data);

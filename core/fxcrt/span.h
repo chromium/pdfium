@@ -16,29 +16,17 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/unowned_ptr_exclusion.h"
 
 // SAFETY: TODO(crbug.com/pdfium/2085): this entire file is to be replaced
 // with the fully annotated one that is being prepared in base/.
-
-#if defined(PDF_USE_PARTITION_ALLOC)
-UNSAFE_BUFFERS_INCLUDE_BEGIN
-#include "partition_alloc/pointers/raw_ptr.h"
-UNSAFE_BUFFERS_INCLUDE_END
-#else
-#include "core/fxcrt/unowned_ptr_exclusion.h"
-#endif
 
 namespace pdfium {
 
 constexpr size_t dynamic_extent = static_cast<size_t>(-1);
 
-#if defined(PDF_USE_PARTITION_ALLOC)
-template <typename T>
-using DefaultSpanInternalPtr = raw_ptr<T, AllowPtrArithmetic>;
-#else
 template <typename T>
 using DefaultSpanInternalPtr = UNOWNED_PTR_EXCLUSION T*;
-#endif
 
 template <typename T,
           size_t Extent = dynamic_extent,
@@ -257,8 +245,13 @@ class TRIVIAL_ABI GSL_POINTER span {
 
   // Conversions from spans of compatible types: this allows a span<T> to be
   // seamlessly used as a span<const T>, but not the other way around.
-  template <typename U, typename = internal::EnableIfLegalSpanConversion<U, T>>
-  constexpr span(const span<U>& other) : span(other.data(), other.size()) {}
+  template <typename U,
+            size_t M,
+            typename R,
+            typename = internal::EnableIfLegalSpanConversion<U, T>>
+  constexpr span(const span<U, M, R>& other)
+      : span(other.data(), other.size()) {}
+
   span& operator=(const span& other) noexcept {
     if (this != &other) {
       data_ = other.data_;
@@ -338,25 +331,29 @@ class TRIVIAL_ABI GSL_POINTER span {
 };
 
 // [span.objectrep], views of object representation
-template <typename T>
-span<const uint8_t> as_bytes(span<T> s) noexcept {
+template <typename T, size_t N, typename P>
+span<const uint8_t> as_bytes(span<T, N, P> s) noexcept {
   return {reinterpret_cast<const uint8_t*>(s.data()), s.size_bytes()};
 }
 
 template <typename T,
+          size_t N,
+          typename P,
           typename U = typename std::enable_if<!std::is_const<T>::value>::type>
-span<uint8_t> as_writable_bytes(span<T> s) noexcept {
+span<uint8_t> as_writable_bytes(span<T, N, P> s) noexcept {
   return {reinterpret_cast<uint8_t*>(s.data()), s.size_bytes()};
 }
 
-template <typename T>
-span<const char> as_chars(span<T> s) noexcept {
+template <typename T, size_t N, typename P>
+span<const char> as_chars(span<T, N, P> s) noexcept {
   return {reinterpret_cast<const char*>(s.data()), s.size_bytes()};
 }
 
 template <typename T,
+          size_t N,
+          typename P,
           typename U = typename std::enable_if<!std::is_const<T>::value>::type>
-span<char> as_writable_chars(span<T> s) noexcept {
+span<char> as_writable_chars(span<T, N, P> s) noexcept {
   return {reinterpret_cast<char*>(s.data()), s.size_bytes()};
 }
 
