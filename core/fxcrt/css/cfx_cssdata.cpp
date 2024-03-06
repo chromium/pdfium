@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <utility>
 
+#include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/css/cfx_cssstyleselector.h"
 #include "core/fxcrt/css/cfx_cssvaluelistparser.h"
 #include "core/fxcrt/fx_codepage.h"
@@ -73,7 +75,10 @@ const CFX_CSSData::Property* CFX_CSSData::GetPropertyByName(
 
 const CFX_CSSData::Property* CFX_CSSData::GetPropertyByEnum(
     CFX_CSSProperty property) {
-  return &kPropertyTable[static_cast<uint8_t>(property)];
+  auto index = static_cast<size_t>(property);
+  CHECK_LT(index, std::size(kPropertyTable));
+  // SAFETY: CHECK() on previous line ensures index is in bounds.
+  return UNSAFE_BUFFERS(&kPropertyTable[index]);
 }
 
 const CFX_CSSData::PropertyValue* CFX_CSSData::GetPropertyValueByName(
@@ -102,13 +107,12 @@ const CFX_CSSData::LengthUnit* CFX_CSSData::GetLengthUnitByName(
   WideString lowerName = WideString(wsName);
   lowerName.MakeLower();
 
-  for (auto* iter = std::begin(kLengthUnitTable);
-       iter != std::end(kLengthUnitTable); ++iter) {
-    if (lowerName == iter->value)
-      return iter;
-  }
-
-  return nullptr;
+  auto* iter =
+      std::find_if(std::begin(kLengthUnitTable), std::end(kLengthUnitTable),
+                   [lowerName](const CFX_CSSData::LengthUnit& unit) {
+                     return lowerName == unit.value;
+                   });
+  return iter != std::end(kLengthUnitTable) ? iter : nullptr;
 }
 
 const CFX_CSSData::Color* CFX_CSSData::GetColorByName(WideStringView wsName) {
@@ -118,10 +122,9 @@ const CFX_CSSData::Color* CFX_CSSData::GetColorByName(WideStringView wsName) {
   WideString lowerName = WideString(wsName);
   lowerName.MakeLower();
 
-  for (auto* iter = std::begin(kColorTable); iter != std::end(kColorTable);
-       ++iter) {
-    if (lowerName == iter->name)
-      return iter;
-  }
-  return nullptr;
+  auto* iter = std::find_if(std::begin(kColorTable), std::end(kColorTable),
+                            [lowerName](const CFX_CSSData::Color& color) {
+                              return lowerName == color.name;
+                            });
+  return iter != std::end(kColorTable) ? iter : nullptr;
 }

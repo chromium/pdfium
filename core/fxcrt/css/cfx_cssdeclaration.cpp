@@ -8,6 +8,7 @@
 
 #include <math.h>
 
+#include <array>
 #include <utility>
 
 #include "core/fxcrt/check.h"
@@ -96,9 +97,9 @@ std::optional<FX_ARGB> CFX_CSSDeclaration::ParseCSSColor(WideStringView value) {
     if (!value.First(4).EqualsASCIINoCase("rgb(") || value.Back() != ')') {
       return std::nullopt;
     }
-    uint8_t rgb[3] = {0};
+    std::array<uint8_t, 3> rgb = {};
     CFX_CSSValueListParser list(value.Substr(4, value.GetLength() - 5), ',');
-    for (int32_t i = 0; i < 3; ++i) {
+    for (auto& component : rgb) {
       auto maybe_value = list.NextValue();
       if (!maybe_value.has_value() ||
           maybe_value.value().type != CFX_CSSValue::PrimitiveType::kNumber) {
@@ -108,9 +109,9 @@ std::optional<FX_ARGB> CFX_CSSDeclaration::ParseCSSColor(WideStringView value) {
       if (!maybe_number.has_value()) {
         return std::nullopt;
       }
-      rgb[i] = maybe_number.value().unit == CFX_CSSNumber::Unit::kPercent
-                   ? FXSYS_roundf(maybe_number.value().value * 2.55f)
-                   : FXSYS_roundf(maybe_number.value().value);
+      component = maybe_number.value().unit == CFX_CSSNumber::Unit::kPercent
+                      ? FXSYS_roundf(maybe_number.value().value * 2.55f)
+                      : FXSYS_roundf(maybe_number.value().value);
     }
     return ArgbEncode(255, rgb[0], rgb[1], rgb[2]);
   }
