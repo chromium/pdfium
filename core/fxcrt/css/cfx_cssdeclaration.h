@@ -8,10 +8,12 @@
 #define CORE_FXCRT_CSS_CFX_CSSDECLARATION_H_
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "core/fxcrt/css/cfx_cssdata.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/widestring.h"
 
 class CFX_CSSPropertyHolder;
 class CFX_CSSCustomProperty;
@@ -23,13 +25,8 @@ class CFX_CSSDeclaration {
   using const_custom_iterator =
       std::vector<std::unique_ptr<CFX_CSSCustomProperty>>::const_iterator;
 
-  static bool ParseCSSString(const wchar_t* pszValue,
-                             size_t nValueLen,
-                             size_t* nOffset,
-                             size_t* nLength);
-  static bool ParseCSSColor(const wchar_t* pszValue,
-                            size_t nValueLen,
-                            FX_ARGB* dwColor);
+  static std::optional<WideStringView> ParseCSSString(WideStringView value);
+  static std::optional<FX_ARGB> ParseCSSColor(WideStringView value);
 
   CFX_CSSDeclaration();
   ~CFX_CSSDeclaration();
@@ -37,6 +34,7 @@ class CFX_CSSDeclaration {
   RetainPtr<CFX_CSSValue> GetProperty(CFX_CSSProperty eProperty,
                                       bool* bImportant) const;
 
+  bool empty() const { return properties_.empty(); }
   const_prop_iterator begin() const { return properties_.begin(); }
   const_prop_iterator end() const { return properties_.end(); }
 
@@ -45,27 +43,21 @@ class CFX_CSSDeclaration {
   }
   const_custom_iterator custom_end() const { return custom_properties_.end(); }
 
-  bool empty() const { return properties_.empty(); }
-
   void AddProperty(const CFX_CSSData::Property* property, WideStringView value);
   void AddProperty(const WideString& prop, const WideString& value);
-
   size_t PropertyCountForTesting() const;
 
-  FX_ARGB ParseColorForTest(const wchar_t* pszValue,
-                            size_t nValueLen,
-                            FX_ARGB* dwColor) const;
+  std::optional<FX_ARGB> ParseColorForTest(WideStringView value);
 
  private:
-  void ParseFontProperty(const wchar_t* pszValue,
-                         size_t nValueLen,
-                         bool bImportant);
-  bool ParseBorderProperty(const wchar_t* pszValue,
-                           size_t nValueLen,
-                           RetainPtr<CFX_CSSValue>& pWidth) const;
+  void ParseFontProperty(WideStringView value, bool bImportant);
+
+  // Never returns nullptr, instead returns a CSSValue representing zero
+  // if the input cannot be parsed.
+  RetainPtr<CFX_CSSValue> ParseBorderProperty(WideStringView value) const;
+
   void ParseValueListProperty(const CFX_CSSData::Property* pProperty,
-                              const wchar_t* pszValue,
-                              size_t nValueLen,
+                              WideStringView value,
                               bool bImportant);
   void Add4ValuesProperty(const std::vector<RetainPtr<CFX_CSSValue>>& list,
                           bool bImportant,
@@ -73,12 +65,10 @@ class CFX_CSSDeclaration {
                           CFX_CSSProperty eTop,
                           CFX_CSSProperty eRight,
                           CFX_CSSProperty eBottom);
-  RetainPtr<CFX_CSSValue> ParseNumber(const wchar_t* pszValue,
-                                      size_t nValueLen);
-  RetainPtr<CFX_CSSValue> ParseEnum(const wchar_t* pszValue, size_t nValueLen);
-  RetainPtr<CFX_CSSValue> ParseColor(const wchar_t* pszValue, size_t nValueLen);
-  RetainPtr<CFX_CSSValue> ParseString(const wchar_t* pszValue,
-                                      size_t nValueLen);
+  RetainPtr<CFX_CSSValue> ParseNumber(WideStringView value);
+  RetainPtr<CFX_CSSValue> ParseEnum(WideStringView value);
+  RetainPtr<CFX_CSSValue> ParseColor(WideStringView value);
+  RetainPtr<CFX_CSSValue> ParseString(WideStringView value);
   void AddPropertyHolder(CFX_CSSProperty eProperty,
                          RetainPtr<CFX_CSSValue> pValue,
                          bool bImportant);

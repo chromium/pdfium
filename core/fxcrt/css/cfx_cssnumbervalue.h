@@ -9,8 +9,7 @@
 
 #include "core/fxcrt/css/cfx_cssvalue.h"
 
-class CFX_CSSNumberValue final : public CFX_CSSValue {
- public:
+struct CFX_CSSNumber {
   enum class Unit {
     kNumber,
     kPercent,
@@ -24,16 +23,21 @@ class CFX_CSSNumberValue final : public CFX_CSSValue {
     kPicas,
   };
 
-  CFX_CSSNumberValue(Unit unit, float value);
+  Unit unit;
+  float value;
+};
+
+class CFX_CSSNumberValue final : public CFX_CSSValue {
+ public:
+  explicit CFX_CSSNumberValue(CFX_CSSNumber number);
   ~CFX_CSSNumberValue() override;
 
-  Unit unit() const { return unit_; }
-  float value() const { return value_; }
+  CFX_CSSNumber::Unit unit() const { return number_.unit; }
+  float value() const { return number_.value; }
   float Apply(float percentBase) const;
 
  private:
-  Unit unit_;
-  float value_;
+  CFX_CSSNumber number_;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSNUMBERVALUE_H_

@@ -6,7 +6,7 @@
 
 #include "core/fxcrt/css/cfx_cssstringvalue.h"
 
-CFX_CSSStringValue::CFX_CSSStringValue(const WideString& value)
+CFX_CSSStringValue::CFX_CSSStringValue(WideStringView value)
     : CFX_CSSValue(PrimitiveType::kString), value_(value) {}
 
 CFX_CSSStringValue::~CFX_CSSStringValue() = default;

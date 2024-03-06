@@ -31,14 +31,14 @@ const CFX_CSSData::PropertyValue kPropertyValueTable[] = {
 #undef CSS_PROP_VALUE____
 
 const CFX_CSSData::LengthUnit kLengthUnitTable[] = {
-    {L"cm", CFX_CSSNumberValue::Unit::kCentiMeters},
-    {L"em", CFX_CSSNumberValue::Unit::kEMS},
-    {L"ex", CFX_CSSNumberValue::Unit::kEXS},
-    {L"in", CFX_CSSNumberValue::Unit::kInches},
-    {L"mm", CFX_CSSNumberValue::Unit::kMilliMeters},
-    {L"pc", CFX_CSSNumberValue::Unit::kPicas},
-    {L"pt", CFX_CSSNumberValue::Unit::kPoints},
-    {L"px", CFX_CSSNumberValue::Unit::kPixels},
+    {L"cm", CFX_CSSNumber::Unit::kCentiMeters},
+    {L"em", CFX_CSSNumber::Unit::kEMS},
+    {L"ex", CFX_CSSNumber::Unit::kEXS},
+    {L"in", CFX_CSSNumber::Unit::kInches},
+    {L"mm", CFX_CSSNumber::Unit::kMilliMeters},
+    {L"pc", CFX_CSSNumber::Unit::kPicas},
+    {L"pt", CFX_CSSNumber::Unit::kPoints},
+    {L"px", CFX_CSSNumber::Unit::kPixels},
 };
 
 // 16 colours from CSS 2.0 + alternate spelling of grey/gray.

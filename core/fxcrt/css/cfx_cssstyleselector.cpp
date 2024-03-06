@@ -209,7 +209,7 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
     case CFX_CSSProperty::LineHeight:
       if (eType == CFX_CSSValue::PrimitiveType::kNumber) {
         RetainPtr<CFX_CSSNumberValue> v = pValue.As<CFX_CSSNumberValue>();
-        if (v->unit() == CFX_CSSNumberValue::Unit::kNumber) {
+        if (v->unit() == CFX_CSSNumber::Unit::kNumber) {
           pComputedStyle->m_InheritedData.m_fLineHeight =
               v->value() * pComputedStyle->m_InheritedData.m_fFontSize;
         } else {
@@ -361,7 +361,7 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
             CFX_CSSLengthUnit::Normal);
       } else if (eType == CFX_CSSValue::PrimitiveType::kNumber) {
         if (pValue.AsRaw<CFX_CSSNumberValue>()->unit() ==
-            CFX_CSSNumberValue::Unit::kPercent) {
+            CFX_CSSNumber::Unit::kPercent) {
           break;
         }
 
@@ -376,7 +376,7 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
             CFX_CSSLengthUnit::Normal);
       } else if (eType == CFX_CSSValue::PrimitiveType::kNumber) {
         if (pValue.AsRaw<CFX_CSSNumberValue>()->unit() ==
-            CFX_CSSNumberValue::Unit::kPercent) {
+            CFX_CSSNumber::Unit::kPercent) {
           break;
         }
         SetLengthWithPercent(pComputedStyle->m_InheritedData.m_WordSpacing,
@@ -470,7 +470,7 @@ bool CFX_CSSStyleSelector::SetLengthWithPercent(
     float fFontSize) {
   if (eType == CFX_CSSValue::PrimitiveType::kNumber) {
     RetainPtr<CFX_CSSNumberValue> v = pValue.As<CFX_CSSNumberValue>();
-    if (v->unit() == CFX_CSSNumberValue::Unit::kPercent) {
+    if (v->unit() == CFX_CSSNumber::Unit::kPercent) {
       width.Set(CFX_CSSLengthUnit::Percent,
                 pValue.AsRaw<CFX_CSSNumberValue>()->value() / 100.0f);
       return width.NonZero();
