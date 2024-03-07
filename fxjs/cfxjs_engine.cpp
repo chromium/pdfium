@@ -199,8 +199,8 @@ class CFXJS_ObjDefinition {
   }
 
   void DefineProperty(v8::Local<v8::String> sPropName,
-                      v8::AccessorGetterCallback pPropGet,
-                      v8::AccessorSetterCallback pPropPut) {
+                      v8::AccessorNameGetterCallback pPropGet,
+                      v8::AccessorNameSetterCallback pPropPut) {
     GetInstanceTemplate()->SetAccessor(sPropName, pPropGet, pPropPut);
   }
 
@@ -435,8 +435,8 @@ void CFXJS_Engine::DefineObjMethod(uint32_t nObjDefnID,
 
 void CFXJS_Engine::DefineObjProperty(uint32_t nObjDefnID,
                                      const char* sPropName,
-                                     v8::AccessorGetterCallback pPropGet,
-                                     v8::AccessorSetterCallback pPropPut) {
+                                     v8::AccessorNameGetterCallback pPropGet,
+                                     v8::AccessorNameSetterCallback pPropPut) {
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::HandleScope handle_scope(GetIsolate());
   FXJS_PerIsolateData* pIsolateData = FXJS_PerIsolateData::Get(GetIsolate());

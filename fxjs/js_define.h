@@ -68,7 +68,7 @@ UnownedPtr<C> JSGetObject(v8::Isolate* isolate, v8::Local<v8::Object> obj) {
 template <class C, CJS_Result (C::*M)(CJS_Runtime*)>
 void JSPropGetter(const char* prop_name_string,
                   const char* class_name_string,
-                  v8::Local<v8::String> property,
+                  v8::Local<v8::Name> property,
                   const v8::PropertyCallbackInfo<v8::Value>& info) {
   auto pObj = JSGetObject<C>(info.GetIsolate(), info.Holder());
   if (!pObj)
@@ -92,7 +92,7 @@ void JSPropGetter(const char* prop_name_string,
 template <class C, CJS_Result (C::*M)(CJS_Runtime*, v8::Local<v8::Value>)>
 void JSPropSetter(const char* prop_name_string,
                   const char* class_name_string,
-                  v8::Local<v8::String> property,
+                  v8::Local<v8::Name> property,
                   v8::Local<v8::Value> value,
                   const v8::PropertyCallbackInfo<void>& info) {
   auto pObj = JSGetObject<C>(info.GetIsolate(), info.Holder());
@@ -138,18 +138,18 @@ void JSMethod(const char* method_name_string,
     info.GetReturnValue().Set(result.Return());
 }
 
-#define JS_STATIC_PROP(err_name, prop_name, class_name)           \
-  static void get_##prop_name##_static(                           \
-      v8::Local<v8::String> property,                             \
-      const v8::PropertyCallbackInfo<v8::Value>& info) {          \
-    JSPropGetter<class_name, &class_name::get_##prop_name>(       \
-        #err_name, class_name::kName, property, info);            \
-  }                                                               \
-  static void set_##prop_name##_static(                           \
-      v8::Local<v8::String> property, v8::Local<v8::Value> value, \
-      const v8::PropertyCallbackInfo<void>& info) {               \
-    JSPropSetter<class_name, &class_name::set_##prop_name>(       \
-        #err_name, class_name::kName, property, value, info);     \
+#define JS_STATIC_PROP(err_name, prop_name, class_name)         \
+  static void get_##prop_name##_static(                         \
+      v8::Local<v8::Name> property,                             \
+      const v8::PropertyCallbackInfo<v8::Value>& info) {        \
+    JSPropGetter<class_name, &class_name::get_##prop_name>(     \
+        #err_name, class_name::kName, property, info);          \
+  }                                                             \
+  static void set_##prop_name##_static(                         \
+      v8::Local<v8::Name> property, v8::Local<v8::Value> value, \
+      const v8::PropertyCallbackInfo<void>& info) {             \
+    JSPropSetter<class_name, &class_name::set_##prop_name>(     \
+        #err_name, class_name::kName, property, value, info);   \
   }
 
 #define JS_STATIC_METHOD(method_name, class_name)                            \

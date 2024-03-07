@@ -108,8 +108,8 @@ class CFXJS_Engine : public CFX_V8 {
                        v8::FunctionCallback pMethodCall);
   void DefineObjProperty(uint32_t nObjDefnID,
                          const char* sPropName,
-                         v8::AccessorGetterCallback pPropGet,
-                         v8::AccessorSetterCallback pPropPut);
+                         v8::AccessorNameGetterCallback pPropGet,
+                         v8::AccessorNameSetterCallback pPropPut);
   void DefineObjAllProperties(
       uint32_t nObjDefnID,
       v8::GenericNamedPropertyQueryCallback pPropQurey,
