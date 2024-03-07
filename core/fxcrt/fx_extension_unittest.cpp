@@ -155,7 +155,7 @@ TEST(fxcrt, FXSYS_wcstof) {
   EXPECT_EQ(0u, used_len);
 
   used_len = 0;
-  EXPECT_FLOAT_EQ(0.0f, FXSYS_wcstof(L"1.234E-128", 21, &used_len));
+  EXPECT_FLOAT_EQ(0.0f, FXSYS_wcstof(L"1.234E-128", 10, &used_len));
   EXPECT_EQ(0u, used_len);
 
   // TODO(dsinclair): This should round as per IEEE 64-bit values.
