@@ -140,24 +140,6 @@ wchar_t* FXSYS_wcsncpy(wchar_t* dstStr, const wchar_t* srcStr, size_t count) {
   return dstStr;
 }
 
-int32_t FXSYS_wcsnicmp(const wchar_t* s1, const wchar_t* s2, size_t count) {
-  DCHECK(s1);
-  DCHECK(s2);
-  DCHECK(count > 0);
-
-  // SAFETY: TODO(tsepez): This is UNSAFE_BUFFER_USAGE as well.
-  UNSAFE_BUFFERS({
-    while (count-- > 0) {
-      wchar_t wch1 = static_cast<wchar_t>(FXSYS_towlower(*s1++));
-      wchar_t wch2 = static_cast<wchar_t>(FXSYS_towlower(*s2++));
-      if (wch1 != wch2) {
-        return wch1 > wch2 ? 1 : -1;
-      }
-    }
-  });
-  return 0;
-}
-
 void FXSYS_IntToTwoHexChars(uint8_t n, char* buf) {
   static const char kHex[] = "0123456789ABCDEF";
   // SAFETY: TODO(tsepez): This is UNSAFE_BUFFER_USAGE as well.

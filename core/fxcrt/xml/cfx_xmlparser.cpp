@@ -345,12 +345,12 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
           current_buffer_idx++;
           break;
         case FDE_XmlSyntaxState::SkipCommentOrDecl: {
-          auto current_span =
-              pdfium::make_span(buffer).subspan(current_buffer_idx);
-          if (FXSYS_wcsnicmp(current_span.data(), L"--", 2) == 0) {
+          auto current_view = WideStringView(
+              pdfium::make_span(buffer).subspan(current_buffer_idx));
+          if (current_view.First(2).EqualsASCII("--")) {
             current_buffer_idx += 2;
             current_parser_state = FDE_XmlSyntaxState::SkipComment;
-          } else if (FXSYS_wcsnicmp(current_span.data(), L"[CDATA[", 7) == 0) {
+          } else if (current_view.First(7).EqualsASCIINoCase("[CDATA[")) {
             current_buffer_idx += 7;
             current_parser_state = FDE_XmlSyntaxState::SkipCData;
           } else {
@@ -361,9 +361,9 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
           break;
         }
         case FDE_XmlSyntaxState::SkipCData: {
-          auto current_span =
-              pdfium::make_span(buffer).subspan(current_buffer_idx);
-          if (FXSYS_wcsnicmp(current_span.data(), L"]]>", 3) == 0) {
+          auto current_view = WideStringView(
+              pdfium::make_span(buffer).subspan(current_buffer_idx));
+          if (current_view.First(3).EqualsASCII("]]>")) {
             current_buffer_idx += 3;
             current_parser_state = FDE_XmlSyntaxState::Text;
             current_node_->AppendLastChild(
@@ -424,9 +424,9 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
           }
           break;
         case FDE_XmlSyntaxState::SkipComment: {
-          auto current_span =
-              pdfium::make_span(buffer).subspan(current_buffer_idx);
-          if (FXSYS_wcsnicmp(current_span.data(), L"-->", 3) == 0) {
+          auto current_view = WideStringView(
+              pdfium::make_span(buffer).subspan(current_buffer_idx));
+          if (current_view.First(3).EqualsASCII("-->")) {
             current_buffer_idx += 2;
             current_parser_state = FDE_XmlSyntaxState::Text;
           }

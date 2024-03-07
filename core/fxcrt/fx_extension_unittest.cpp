@@ -192,32 +192,6 @@ TEST(fxcrt, FXSYS_wcstof) {
   EXPECT_EQ(131u, used_len);
 }
 
-TEST(fxcrt, FXSYS_wcsnicmp) {
-  EXPECT_EQ(FXSYS_wcsnicmp(L"foo", L"foo", 1), 0);
-  EXPECT_EQ(FXSYS_wcsnicmp(L"foo", L"foo", 2), 0);
-  EXPECT_EQ(FXSYS_wcsnicmp(L"foo", L"foo", 3), 0);
-
-  EXPECT_GT(FXSYS_wcsnicmp(L"foo", L"barr", 3), 0);
-  EXPECT_LT(FXSYS_wcsnicmp(L"bar", L"fooo", 3), 0);
-
-  EXPECT_EQ(FXSYS_wcsnicmp(L"FOO", L"foo", 3), 0);
-  EXPECT_EQ(FXSYS_wcsnicmp(L"foO", L"Foo", 3), 0);
-  EXPECT_EQ(FXSYS_wcsnicmp(L"food", L"FOOT", 3), 0);
-  EXPECT_LT(FXSYS_wcsnicmp(L"food", L"FOOT", 4), 0);
-
-  const wchar_t kMax16bitSigned[] = {
-      static_cast<wchar_t>(std::numeric_limits<int16_t>::max()), 0};
-  EXPECT_GT(FXSYS_wcsnicmp(kMax16bitSigned, L"f", 1), 0);
-  const wchar_t kMax16bitUnsigned[] = {
-      static_cast<wchar_t>(std::numeric_limits<uint16_t>::max()), 0};
-  EXPECT_GT(FXSYS_wcsnicmp(kMax16bitUnsigned, L"f", 1), 0);
-
-#if defined(WCHAR_T_IS_32_BIT)
-  const wchar_t kMaxUnicode[] = {static_cast<wchar_t>(0x10ffff), 0};
-  EXPECT_GT(FXSYS_wcsnicmp(kMaxUnicode, L"f", 1), 0);
-#endif
-}
-
 TEST(fxcrt, FXSYS_SafeOps) {
   const float fMin = std::numeric_limits<float>::min();
   const float fMax = std::numeric_limits<float>::max();

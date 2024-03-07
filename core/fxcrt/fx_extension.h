@@ -26,7 +26,6 @@
 
 float FXSYS_wcstof(const wchar_t* pwsStr, size_t nLength, size_t* pUsedLen);
 wchar_t* FXSYS_wcsncpy(wchar_t* dstStr, const wchar_t* srcStr, size_t count);
-int32_t FXSYS_wcsnicmp(const wchar_t* s1, const wchar_t* s2, size_t count);
 
 inline bool FXSYS_iswlower(int32_t c) {
   return u_islower(c);
