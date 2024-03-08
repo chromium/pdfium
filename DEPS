@@ -61,7 +61,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling abseil
   # and whatever else without interference from each other.
-  'abseil_revision': 'f1c5751a2cb4102efbffc4110ee7551b3c54cfea',
+  'abseil_revision': 'd02875c9cb9cdc8ab262cfa28024e8cf239eaadd',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling android_toolchain
   # and whatever else without interference from each other.
@@ -69,11 +69,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
-  'build_revision': '3aeefdc1a3fab47659c33fe6e83029a437f29104',
+  'build_revision': '05c489d88a12991efad91591f10cfe4432b9ed55',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
-  'buildtools_revision': 'af7ef4774cb4a0c4d4fb4364437bf03b897829ed',
+  'buildtools_revision': '36dc95f27a27c10b727d67f04e4283b64980d404',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling catapult
   # and whatever else without interference from each other.
@@ -85,7 +85,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang
   # and whatever else without interference from each other.
-  'clang_revision': '44c10e4148369138b6df09c1bd330d8a7f4c8311',
+  'clang_revision': 'ebfc67baf110c1cf28e77ad520dc9d371ad27913',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling code_coverage
   # and whatever else without interference from each other.
@@ -163,7 +163,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling partition_allocator
   # and whatever else without interference from each other.
-  'partition_allocator_revision': 'dd11a7511c809e26ef5ab839c98a32eb5087189c',
+  'partition_allocator_revision': 'c2bb1848ed490e596de26b28c9f9760d9b4ef387',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling pdfium_tests
   # and whatever else without interference from each other.
