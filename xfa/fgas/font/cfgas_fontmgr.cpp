@@ -36,6 +36,10 @@
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/font/fgas_fontutils.h"
 
+#if BUILDFLAG(IS_WIN)
+#include "core/fxcrt/win/win_util.h"
+#endif
+
 namespace {
 
 bool VerifyUnicode(const RetainPtr<CFGAS_GEFont>& pFont, wchar_t wcUnicode) {
@@ -191,6 +195,12 @@ int32_t CALLBACK GdiFontEnumProc(ENUMLOGFONTEX* lpelfe,
 std::deque<FX_FONTDESCRIPTOR> EnumGdiFonts(const wchar_t* pwsFaceName,
                                            wchar_t wUnicode) {
   std::deque<FX_FONTDESCRIPTOR> fonts;
+  if (!pdfium::IsUser32AndGdi32Available()) {
+    // Without GDI32 and User32, GetDC / EnumFontFamiliesExW / ReleaseDC all
+    // fail.
+    return fonts;
+  }
+
   LOGFONTW lfFind;
   memset(&lfFind, 0, sizeof(lfFind));
   lfFind.lfCharSet = DEFAULT_CHARSET;
