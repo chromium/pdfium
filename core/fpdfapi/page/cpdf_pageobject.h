@@ -62,8 +62,6 @@ class CPDF_PageObject {
 
   void SetDirty(bool value) { m_bDirty = value; }
   bool IsDirty() const { return m_bDirty; }
-  void SetUsesCTM(bool uses_ctm) { m_bUsesCTM = uses_ctm; }
-  bool UsesCTM() const { return m_bUsesCTM; }
   void TransformClipPath(const CFX_Matrix& matrix);
 
   void SetOriginalRect(const CFX_FloatRect& rect) { m_OriginalRect = rect; }
@@ -144,11 +142,6 @@ class CPDF_PageObject {
   CFX_FloatRect m_OriginalRect;
   CPDF_ContentMarks m_ContentMarks;
   bool m_bDirty = false;
-  // If a page object is created by CPDF_StreamContentParser, then it uses the
-  // current transformation matrix. If it is created by a public API and
-  // inserted into a page, then it does not use the CTM. True by default since
-  // the majority of CPDF_PageObjects are created by CPDF_StreamContentParser.
-  bool m_bUsesCTM = true;
   int32_t m_ContentStream;
   // The resource name for this object.
   ByteString m_ResourceName;

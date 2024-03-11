@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_form.h"
+#include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/page/cpdf_streamcontentparser.h"
 #include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/raw_span.h"
@@ -40,9 +41,8 @@ class CPDF_ContentParser {
                      CPDF_Form::RecursionState* recursion_state);
   ~CPDF_ContentParser();
 
-  const CPDF_AllStates* GetCurStates() const {
-    return m_pParser ? m_pParser->GetCurStates() : nullptr;
-  }
+  CPDF_PageObjectHolder::CTMMap TakeAllCTMs();
+
   // Returns whether to continue or not.
   bool Continue(PauseIndicatorIface* pPause);
 

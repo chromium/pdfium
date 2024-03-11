@@ -41,6 +41,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfapi/parser/object_tree_traversal_util.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
@@ -179,11 +180,13 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
   for (int32_t dirty_stream : all_dirty_streams) {
     fxcrt::ostringstream buf;
 
-    // Set the default graphic state values
+    // Set the default graphic state values. Update CTM to be the identity
+    // matrix for the duration of this stream, if it is not already.
     buf << "q\n";
-    const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
+    const CFX_Matrix ctm =
+        m_pObjHolder->GetCTMAtBeginningOfStream(dirty_stream);
     if (!ctm.IsIdentity()) {
-      WriteMatrix(buf, ctm) << " cm\n";
+      WriteMatrix(buf, ctm.GetInverse()) << " cm\n";
     }
 
     ProcessDefaultGraphics(&buf);
@@ -208,15 +211,46 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
 
   // Finish dirty streams.
   for (int32_t dirty_stream : all_dirty_streams) {
+    CFX_Matrix prev_ctm;
+    CFX_Matrix ctm;
+    bool affects_ctm;
+    if (dirty_stream == 0) {
+      // For the first stream, `prev_ctm` is the identity matrix.
+      ctm = m_pObjHolder->GetCTMAtEndOfStream(dirty_stream);
+      affects_ctm = !ctm.IsIdentity();
+    } else if (dirty_stream > 0) {
+      prev_ctm = m_pObjHolder->GetCTMAtEndOfStream(dirty_stream - 1);
+      ctm = m_pObjHolder->GetCTMAtEndOfStream(dirty_stream);
+      affects_ctm = prev_ctm != ctm;
+    } else {
+      CHECK_EQ(CPDF_PageObject::kNoContentStream, dirty_stream);
+      // This is the last stream, so there is no subsequent stream that it can
+      // affect.
+      affects_ctm = false;
+    }
+
+    const bool is_empty = pdfium::Contains(empty_streams, dirty_stream);
+
     fxcrt::ostringstream* buf = &streams[dirty_stream];
-    if (pdfium::Contains(empty_streams, dirty_stream)) {
+    if (is_empty && !affects_ctm) {
       // Clear to show that this stream needs to be deleted.
       buf->str("");
-    } else {
-      FinishMarks(buf, current_content_marks[dirty_stream]);
+      continue;
+    }
 
-      // Return graphics to original state
-      *buf << "Q\n";
+    if (!is_empty) {
+      FinishMarks(buf, current_content_marks[dirty_stream]);
+    }
+
+    // Return graphics to original state.
+    *buf << "Q\n";
+
+    if (affects_ctm) {
+      // Update CTM so the next stream gets the expected value.
+      CFX_Matrix ctm_difference = prev_ctm.GetInverse() * ctm;
+      if (!ctm_difference.IsIdentity()) {
+        WriteMatrix(*buf, ctm_difference) << " cm\n";
+      }
     }
   }
 
@@ -406,7 +440,7 @@ void CPDF_PageContentGenerator::ProcessPageObject(fxcrt::ostringstream* buf,
 
 void CPDF_PageContentGenerator::ProcessImage(fxcrt::ostringstream* buf,
                                              CPDF_ImageObject* pImageObj) {
-  CFX_Matrix matrix = pImageObj->matrix();
+  const CFX_Matrix& matrix = pImageObj->matrix();
   if ((matrix.a == 0 && matrix.b == 0) || (matrix.c == 0 && matrix.d == 0)) {
     return;
   }
@@ -421,12 +455,6 @@ void CPDF_PageContentGenerator::ProcessImage(fxcrt::ostringstream* buf,
 
   *buf << "q ";
 
-  if (pImageObj->UsesCTM()) {
-    const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
-    if (!ctm.IsIdentity()) {
-      matrix.Concat(ctm.GetInverse());
-    }
-  }
   if (!matrix.IsIdentity()) {
     WriteMatrix(*buf, matrix) << " cm ";
   }
@@ -448,7 +476,7 @@ void CPDF_PageContentGenerator::ProcessImage(fxcrt::ostringstream* buf,
 
 void CPDF_PageContentGenerator::ProcessForm(fxcrt::ostringstream* buf,
                                             CPDF_FormObject* pFormObj) {
-  CFX_Matrix matrix = pFormObj->form_matrix();
+  const CFX_Matrix& matrix = pFormObj->form_matrix();
   if ((matrix.a == 0 && matrix.b == 0) || (matrix.c == 0 && matrix.d == 0)) {
     return;
   }
@@ -462,12 +490,6 @@ void CPDF_PageContentGenerator::ProcessForm(fxcrt::ostringstream* buf,
 
   *buf << "q\n";
 
-  if (pFormObj->UsesCTM()) {
-    const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
-    if (!ctm.IsIdentity()) {
-      matrix.Concat(ctm.GetInverse());
-    }
-  }
   if (!matrix.IsIdentity()) {
     WriteMatrix(*buf, matrix) << " cm ";
   }
@@ -530,13 +552,7 @@ void CPDF_PageContentGenerator::ProcessPath(fxcrt::ostringstream* buf,
                                             CPDF_PathObject* pPathObj) {
   ProcessGraphics(buf, pPathObj);
 
-  CFX_Matrix matrix = pPathObj->matrix();
-  if (pPathObj->UsesCTM()) {
-    const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
-    if (!ctm.IsIdentity()) {
-      matrix.Concat(ctm.GetInverse());
-    }
-  }
+  const CFX_Matrix& matrix = pPathObj->matrix();
   if (!matrix.IsIdentity()) {
     WriteMatrix(*buf, matrix) << " cm ";
   }
@@ -690,13 +706,7 @@ void CPDF_PageContentGenerator::ProcessText(fxcrt::ostringstream* buf,
   ProcessGraphics(buf, pTextObj);
   *buf << "BT ";
 
-  CFX_Matrix matrix = pTextObj->GetTextMatrix();
-  if (pTextObj->UsesCTM()) {
-    const CFX_Matrix& ctm = m_pObjHolder->GetLastCTM();
-    if (!ctm.IsIdentity()) {
-      matrix.Concat(ctm.GetInverse());
-    }
-  }
+  const CFX_Matrix& matrix = pTextObj->GetTextMatrix();
   if (!matrix.IsIdentity()) {
     WriteMatrix(*buf, matrix) << " Tm ";
   }

@@ -14,6 +14,7 @@
 
 #include "core/fpdfapi/page/cpdf_contentmarks.h"
 #include "core/fpdfapi/page/cpdf_form.h"
+#include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_number.h"
@@ -32,7 +33,6 @@ class CPDF_Image;
 class CPDF_ImageObject;
 class CPDF_Object;
 class CPDF_PageObject;
-class CPDF_PageObjectHolder;
 class CPDF_Pattern;
 class CPDF_ShadingPattern;
 class CPDF_Stream;
@@ -64,6 +64,7 @@ class CPDF_StreamContentParser {
   bool IsColored() const { return m_bColored; }
   pdfium::span<const float> GetType3Data() const { return m_Type3Data; }
   RetainPtr<CPDF_Font> FindFont(const ByteString& name);
+  CPDF_PageObjectHolder::CTMMap TakeAllCTMs();
 
   static ByteStringView FindKeyAbbreviationForTesting(ByteStringView abbr);
   static ByteStringView FindValueAbbreviationForTesting(ByteStringView abbr);
@@ -242,6 +243,7 @@ class CPDF_StreamContentParser {
   std::vector<std::unique_ptr<CPDF_AllStates>> m_StateStack;
   std::array<float, 6> m_Type3Data = {};
   std::array<ContentParam, kParamBufSize> m_ParamBuf;
+  CPDF_PageObjectHolder::CTMMap m_AllCTMs;
 
   // The merged stream offsets at which a content stream ends and another
   // begins.

@@ -52,6 +52,10 @@ class CPDF_PageObjectHolder {
  public:
   enum class ParseState : uint8_t { kNotParsed, kParsing, kParsed };
 
+  // Key: The stream index.
+  // Value: The current transformation matrix at the end of the stream.
+  using CTMMap = std::map<int32_t, CFX_Matrix>;
+
   using iterator = std::deque<std::unique_ptr<CPDF_PageObject>>::iterator;
   using const_iterator =
       std::deque<std::unique_ptr<CPDF_PageObject>>::const_iterator;
@@ -96,7 +100,6 @@ class CPDF_PageObjectHolder {
   iterator end() { return m_PageObjectList.end(); }
   const_iterator end() const { return m_PageObjectList.end(); }
 
-  const CFX_Matrix& GetLastCTM() const { return m_LastCTM; }
   const CFX_FloatRect& GetBBox() const { return m_BBox; }
 
   const CPDF_Transparency& GetTransparency() const { return m_Transparency; }
@@ -119,6 +122,12 @@ class CPDF_PageObjectHolder {
   std::optional<ByteString> FontsMapSearch(const FontData& fd);
   void FontsMapInsert(const FontData& fd, const ByteString& str);
 
+  // `stream` must be non-negative or `CPDF_PageObject::kNoContentStream`.
+  CFX_Matrix GetCTMAtBeginningOfStream(int32_t stream);
+
+  // `stream` must be non-negative.
+  CFX_Matrix GetCTMAtEndOfStream(int32_t stream);
+
  protected:
   void LoadTransparencyInfo();
 
@@ -137,7 +146,8 @@ class CPDF_PageObjectHolder {
   std::vector<CFX_FloatRect> m_MaskBoundingBoxes;
   std::unique_ptr<CPDF_ContentParser> m_pParser;
   std::deque<std::unique_ptr<CPDF_PageObject>> m_PageObjectList;
-  CFX_Matrix m_LastCTM;
+
+  CTMMap m_AllCTMs;
 
   // The indexes of Content streams that are dirty and need to be regenerated.
   std::set<int32_t> m_DirtyStreams;

@@ -269,8 +269,6 @@ TEST_F(FPDFEditPathEmbedderTest, AddPathToRectanglesWithLeakyCTM) {
 
   UnloadPage(page);
 
-  // TODO(crbug.com/pdfium/2142): This is the wrong checksum. It should be
-  // RectanglesAndTriangleChecksum().
   VerifySavedDocument(kExpectedRectangleWidth, kExpectedRectangleHeight,
-                      RectanglesChecksum());
+                      RectanglesAndTriangleChecksum());
 }
