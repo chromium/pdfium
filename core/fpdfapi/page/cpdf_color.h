@@ -39,7 +39,7 @@ class CPDF_Color {
 
   uint32_t ComponentCount() const;
   bool IsColorSpaceRGB() const;
-  std::optional<FX_COLORREF> GetRGB() const;
+  std::optional<FX_COLORREF> GetColorRef() const;
 
   // Should only be called if IsPattern() returns true.
   RetainPtr<CPDF_Pattern> GetPattern() const;

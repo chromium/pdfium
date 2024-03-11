@@ -58,7 +58,7 @@ bool WriteColorToStream(fxcrt::ostringstream& buf, const CPDF_Color* color) {
     return false;
   }
 
-  std::optional<FX_COLORREF> colors = color->GetRGB();
+  std::optional<FX_COLORREF> colors = color->GetColorRef();
   if (!colors.has_value()) {
     return false;
   }

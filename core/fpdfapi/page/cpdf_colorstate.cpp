@@ -127,14 +127,14 @@ std::optional<FX_COLORREF> CPDF_ColorState::SetColor(
   if (!color.IsPattern()) {
     color.SetValueForNonPattern(std::move(values));
   }
-  return color.GetRGB().value_or(0xFFFFFFFF);
+  return color.GetColorRef().value_or(0xFFFFFFFF);
 }
 
 FX_COLORREF CPDF_ColorState::SetPattern(RetainPtr<CPDF_Pattern> pattern,
                                         pdfium::span<float> values,
                                         CPDF_Color& color) {
   color.SetValueForPattern(pattern, values);
-  std::optional<FX_COLORREF> colorref = color.GetRGB();
+  std::optional<FX_COLORREF> colorref = color.GetColorRef();
   if (colorref.has_value()) {
     return colorref.value();
   }
