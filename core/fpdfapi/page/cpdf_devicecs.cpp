@@ -84,6 +84,8 @@ void CPDF_DeviceCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
   const uint8_t* pSrcBuf = src_span.data();
   switch (GetFamily()) {
     case Family::kDeviceGray:
+      CHECK(!bTransMask);  // Only applies to CMYK colorspaces.
+
       for (int i = 0; i < pixels; i++) {
         // Compiler can not conclude that src/dest don't overlap, avoid
         // duplicate loads.
@@ -94,6 +96,8 @@ void CPDF_DeviceCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
       }
       break;
     case Family::kDeviceRGB:
+      CHECK(!bTransMask);  // Only applies to CMYK colorspaces.
+
       fxcodec::ReverseRGB(pDestBuf, pSrcBuf, pixels);
       break;
     case Family::kDeviceCMYK:
