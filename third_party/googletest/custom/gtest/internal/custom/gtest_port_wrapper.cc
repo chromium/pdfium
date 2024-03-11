@@ -71,6 +71,9 @@ class CapturedStream {
     close(captured_fd);
   }
 
+  CapturedStream(const CapturedStream&) = delete;
+  CapturedStream& operator=(const CapturedStream&) = delete;
+
   ~CapturedStream() { remove(filename_.c_str()); }
 
   std::string GetCapturedString() {
@@ -97,8 +100,6 @@ class CapturedStream {
   int uncaptured_fd_;
   // Name of the temporary file holding the stderr output.
   ::std::string filename_;
-
-  GTEST_DISALLOW_COPY_AND_ASSIGN_(CapturedStream);
 };
 
 GTEST_DISABLE_MSC_DEPRECATED_POP_()
@@ -126,6 +127,15 @@ static std::string GetCapturedStream(CapturedStream** captured_stream) {
 
   return content;
 }
+
+#if defined(_MSC_VER) || defined(__BORLANDC__)
+// MSVC and C++Builder do not provide a definition of STDERR_FILENO.
+const int kStdOutFileno = 1;
+const int kStdErrFileno = 2;
+#else
+const int kStdOutFileno = STDOUT_FILENO;
+const int kStdErrFileno = STDERR_FILENO;
+#endif  // defined(_MSC_VER) || defined(__BORLANDC__)
 
 // Starts capturing stdout.
 void CaptureStdout() {
