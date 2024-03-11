@@ -4,6 +4,7 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxge/cfx_defaultrenderdevice.h"
 #include "public/fpdf_edit.h"
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_constants.h"
@@ -11,7 +12,30 @@
 
 using pdfium::RectanglesChecksum;
 
-class FPDFEditPathEmbedderTest : public EmbedderTest {};
+using FPDFEditPathEmbedderTest = EmbedderTest;
+
+namespace {
+
+constexpr int kExpectedRectangleWidth = 200;
+constexpr int kExpectedRectangleHeight = 300;
+
+const char* RectanglesAndTriangleChecksum() {
+  return CFX_DefaultRenderDevice::UseSkiaRenderer()
+             ? "89b85ca2749a98320518531cf365b010"
+             : "8bb78ca28f1e0ab9d36c0745ae0f58bb";
+}
+
+ScopedFPDFPageObject CreateBlackTriangle() {
+  ScopedFPDFPageObject path(FPDFPageObj_CreateNewPath(100, 50));
+  EXPECT_TRUE(FPDFPageObj_SetFillColor(path.get(), 0, 0, 0, 255));
+  EXPECT_TRUE(FPDFPath_SetDrawMode(path.get(), FPDF_FILLMODE_ALTERNATE, 0));
+  EXPECT_TRUE(FPDFPath_LineTo(path.get(), 100, 75));
+  EXPECT_TRUE(FPDFPath_LineTo(path.get(), 75, 75));
+  EXPECT_TRUE(FPDFPath_Close(path.get()));
+  return path;
+}
+
+}  // namespace
 
 TEST_F(FPDFEditPathEmbedderTest, VerifyCorrectColoursReturned) {
   constexpr int kObjectCount = 256;
@@ -67,17 +91,14 @@ TEST_F(FPDFEditPathEmbedderTest, VerifyCorrectColoursReturned) {
 }
 
 TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForPath) {
-  constexpr int kExpectedWidth = 200;
-  constexpr int kExpectedHeight = 300;
-
   OpenDocument("rectangles_double_flipped.pdf");
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
-                  RectanglesChecksum());
+    CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
+                  kExpectedRectangleHeight, RectanglesChecksum());
   }
 
   FPDF_PAGEOBJECT path = FPDFPage_GetObject(page, 0);
@@ -96,8 +117,8 @@ TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForPath) {
   ASSERT_TRUE(FPDFPageObj_SetMatrix(path, &matrix));
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
-                  RectanglesChecksum());
+    CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
+                  kExpectedRectangleHeight, RectanglesChecksum());
   }
 
   ASSERT_TRUE(FPDFPage_GenerateContent(page));
@@ -105,27 +126,25 @@ TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForPath) {
 
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
-                  RectanglesChecksum());
+    CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
+                  kExpectedRectangleHeight, RectanglesChecksum());
   }
 
   UnloadPage(page);
 
-  VerifySavedDocument(kExpectedWidth, kExpectedHeight, RectanglesChecksum());
+  VerifySavedDocument(kExpectedRectangleWidth, kExpectedRectangleHeight,
+                      RectanglesChecksum());
 }
 
 TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForFormWithPath) {
-  constexpr int kExpectedWidth = 200;
-  constexpr int kExpectedHeight = 300;
-
   OpenDocument("form_object_with_path.pdf");
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
-                  RectanglesChecksum());
+    CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
+                  kExpectedRectangleHeight, RectanglesChecksum());
   }
 
   FPDF_PAGEOBJECT form = FPDFPage_GetObject(page, 0);
@@ -144,8 +163,8 @@ TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForFormWithPath) {
   ASSERT_TRUE(FPDFPageObj_SetMatrix(form, &matrix));
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
-                  RectanglesChecksum());
+    CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
+                  kExpectedRectangleHeight, RectanglesChecksum());
   }
 
   FPDF_PAGEOBJECT path = FPDFFormObj_GetObject(form, 0);
@@ -163,8 +182,8 @@ TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForFormWithPath) {
   ASSERT_TRUE(FPDFPageObj_SetMatrix(path, &matrix));
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
-                  RectanglesChecksum());
+    CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
+                  kExpectedRectangleHeight, RectanglesChecksum());
   }
 
   ASSERT_TRUE(FPDFPage_GenerateContent(page));
@@ -172,11 +191,86 @@ TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForFormWithPath) {
 
   {
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    CompareBitmap(bitmap.get(), kExpectedWidth, kExpectedHeight,
-                  RectanglesChecksum());
+    CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
+                  kExpectedRectangleHeight, RectanglesChecksum());
   }
 
   UnloadPage(page);
 
-  VerifySavedDocument(kExpectedWidth, kExpectedHeight, RectanglesChecksum());
+  VerifySavedDocument(kExpectedRectangleWidth, kExpectedRectangleHeight,
+                      RectanglesChecksum());
+}
+
+TEST_F(FPDFEditPathEmbedderTest, AddPathToRectangles) {
+  OpenDocument("rectangles.pdf");
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
+                  kExpectedRectangleHeight, RectanglesChecksum());
+  }
+
+  ScopedFPDFPageObject path = CreateBlackTriangle();
+  ASSERT_TRUE(path);
+  FPDFPage_InsertObject(page, path.release());
+
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
+                  kExpectedRectangleHeight, RectanglesAndTriangleChecksum());
+  }
+
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
+                  kExpectedRectangleHeight, RectanglesAndTriangleChecksum());
+  }
+
+  UnloadPage(page);
+
+  VerifySavedDocument(kExpectedRectangleWidth, kExpectedRectangleHeight,
+                      RectanglesAndTriangleChecksum());
+}
+
+TEST_F(FPDFEditPathEmbedderTest, AddPathToRectanglesWithLeakyCTM) {
+  OpenDocument("rectangles_with_leaky_ctm.pdf");
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
+                  kExpectedRectangleHeight, RectanglesChecksum());
+  }
+
+  ScopedFPDFPageObject path = CreateBlackTriangle();
+  ASSERT_TRUE(path);
+  FPDFPage_InsertObject(page, path.release());
+
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
+                  kExpectedRectangleHeight, RectanglesAndTriangleChecksum());
+  }
+
+  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
+                  kExpectedRectangleHeight, RectanglesAndTriangleChecksum());
+  }
+
+  UnloadPage(page);
+
+  // TODO(crbug.com/pdfium/2142): This is the wrong checksum. It should be
+  // RectanglesAndTriangleChecksum().
+  VerifySavedDocument(kExpectedRectangleWidth, kExpectedRectangleHeight,
+                      RectanglesChecksum());
 }
