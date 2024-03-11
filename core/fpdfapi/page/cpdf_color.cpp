@@ -82,7 +82,7 @@ bool CPDF_Color::IsColorSpaceRGB() const {
 std::optional<FX_COLORREF> CPDF_Color::GetRGB() const {
   if (IsPatternInternal()) {
     if (m_pValue) {
-      return m_pCS->AsPatternCS()->GetPatternRGB(*m_pValue);
+      return m_pCS->AsPatternCS()->GetPatternColorRef(*m_pValue);
     }
   } else {
     if (!m_Buffer.empty()) {

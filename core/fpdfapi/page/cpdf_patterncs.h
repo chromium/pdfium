@@ -35,7 +35,8 @@ class CPDF_PatternCS final : public CPDF_BasedCS {
                   const CPDF_Array* pArray,
                   std::set<const CPDF_Object*>* pVisited) override;
 
-  std::optional<FX_COLORREF> GetPatternRGB(const PatternValue& value) const;
+  std::optional<FX_COLORREF> GetPatternColorRef(
+      const PatternValue& value) const;
 
  private:
   CPDF_PatternCS();
