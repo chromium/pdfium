@@ -53,3 +53,7 @@ enable_dangling_raw_ptr_checks_default = false
 raw_ptr_zero_on_construct_default = true
 raw_ptr_zero_on_move_default = true
 raw_ptr_zero_on_destruct_default = false
+
+# Allow embedders to opt-out of C++20 build which is set as default.
+# Set to true to use C++20 by default.
+assert_cpp20_default = true
