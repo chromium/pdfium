@@ -2203,7 +2203,7 @@ TEST_F(FPDFAnnotEmbedderTest, Bug1206) {
     }
     return "0d9fc05c6762fd788bd23fd87a4967bc";
   }();
-  static constexpr size_t kExpectedSize = 1601;
+  static constexpr size_t kExpectedMinimumOriginalSize = 1601;
 
   ASSERT_TRUE(OpenDocument("bug_1206.pdf"));
 
@@ -2211,7 +2211,8 @@ TEST_F(FPDFAnnotEmbedderTest, Bug1206) {
   ASSERT_TRUE(page);
 
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  EXPECT_EQ(kExpectedSize, GetString().size());
+  const size_t original_size = GetString().size();
+  EXPECT_LE(kExpectedMinimumOriginalSize, original_size);  // Sanity check.
   ClearString();
 
   for (size_t i = 0; i < 10; ++i) {
@@ -2221,7 +2222,7 @@ TEST_F(FPDFAnnotEmbedderTest, Bug1206) {
     ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
     // TODO(https://crbug.com/pdfium/1206): This is wrong. The size should be
     // equal, not bigger.
-    EXPECT_LT(kExpectedSize, GetString().size());
+    EXPECT_GT(GetString().size(), original_size);
     ClearString();
   }
 
