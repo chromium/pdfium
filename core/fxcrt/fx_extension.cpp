@@ -48,13 +48,13 @@ float FXSYS_wcstof(const wchar_t* pwsStr, size_t nLength, size_t* pUsedLen) {
         break;
     }
 
-    float fValue = 0.0f;
+    double dValue = 0.0f;
     while (nUsedLen < nLength) {
       wchar_t wch = pwsStr[nUsedLen];
       if (!FXSYS_IsDecimalDigit(wch))
         break;
 
-      fValue = fValue * 10.0f + (wch - L'0');
+      dValue = dValue * 10.0f + (wch - L'0');
       nUsedLen++;
     }
 
@@ -66,7 +66,7 @@ float FXSYS_wcstof(const wchar_t* pwsStr, size_t nLength, size_t* pUsedLen) {
           break;
         }
 
-        fValue += (wch - L'0') * fPrecise;
+        dValue += (wch - L'0') * fPrecise;
         fPrecise *= 0.1f;
       }
     }
@@ -107,9 +107,9 @@ float FXSYS_wcstof(const wchar_t* pwsStr, size_t nLength, size_t* pUsedLen) {
       for (size_t i = exp_value; i > 0; --i) {
         if (exp_value > 0) {
           if (negative_exponent) {
-            fValue /= 10;
+            dValue /= 10;
           } else {
-            fValue *= 10;
+            dValue *= 10;
           }
         }
       }
@@ -119,7 +119,7 @@ float FXSYS_wcstof(const wchar_t* pwsStr, size_t nLength, size_t* pUsedLen) {
       *pUsedLen = nUsedLen;
     }
 
-    return bNegtive ? -fValue : fValue;
+    return static_cast<float>(bNegtive ? -dValue : dValue);
   });
 }
 
