@@ -14,6 +14,7 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
@@ -153,50 +154,45 @@ void SetPathToDC(HDC hDC, const CFX_Path& path, const CFX_Matrix* pMatrix) {
   EndPath(hDC);
 }
 
-ByteString GetBitmapInfo(const RetainPtr<const CFX_DIBBase>& source) {
-  int len = sizeof(BITMAPINFOHEADER);
+FixedSizeDataVector<uint8_t> GetBitmapInfoHeader(
+    const RetainPtr<const CFX_DIBBase>& source) {
+  size_t len = sizeof(BITMAPINFOHEADER);
   if (source->GetBPP() == 1 || source->GetBPP() == 8) {
     len += sizeof(DWORD) * (int)(1 << source->GetBPP());
   }
 
-  ByteString result;
-  {
-    // Span's lifetime must end before ReleaseBuffer() below.
-    pdfium::span<char> cspan = result.GetBuffer(len);
-    BITMAPINFOHEADER* pbmih = reinterpret_cast<BITMAPINFOHEADER*>(cspan.data());
-    memset(pbmih, 0, sizeof(BITMAPINFOHEADER));
-    pbmih->biSize = sizeof(BITMAPINFOHEADER);
-    pbmih->biBitCount = source->GetBPP();
-    pbmih->biCompression = BI_RGB;
-    pbmih->biHeight = -(int)source->GetHeight();
-    pbmih->biPlanes = 1;
-    pbmih->biWidth = source->GetWidth();
-    if (source->GetBPP() == 8) {
-      uint32_t* palette = (uint32_t*)(pbmih + 1);
-      if (source->HasPalette()) {
-        pdfium::span<const uint32_t> palette_span = source->GetPaletteSpan();
-        for (int i = 0; i < 256; i++) {
-          palette[i] = palette_span[i];
-        }
-      } else {
-        for (int i = 0; i < 256; i++) {
-          palette[i] = ArgbEncode(0, i, i, i);
-        }
+  auto result = FixedSizeDataVector<uint8_t>::Zeroed(len);
+  auto* pbmih = reinterpret_cast<BITMAPINFOHEADER*>(result.span().data());
+  pbmih->biSize = sizeof(BITMAPINFOHEADER);
+  pbmih->biBitCount = source->GetBPP();
+  pbmih->biCompression = BI_RGB;
+  pbmih->biHeight = -(int)source->GetHeight();
+  pbmih->biPlanes = 1;
+  pbmih->biWidth = source->GetWidth();
+  if (source->GetBPP() == 8) {
+    uint32_t* palette = (uint32_t*)(pbmih + 1);
+    if (source->HasPalette()) {
+      pdfium::span<const uint32_t> palette_span = source->GetPaletteSpan();
+      for (int i = 0; i < 256; i++) {
+        palette[i] = palette_span[i];
       }
-    }
-    if (source->GetBPP() == 1) {
-      uint32_t* palette = (uint32_t*)(pbmih + 1);
-      if (source->HasPalette()) {
-        pdfium::span<const uint32_t> palette_span = source->GetPaletteSpan();
-        palette[0] = palette_span[0];
-        palette[1] = palette_span[1];
-      } else {
-        palette[0] = 0;
-        palette[1] = 0xffffff;
+    } else {
+      for (int i = 0; i < 256; i++) {
+        palette[i] = ArgbEncode(0, i, i, i);
       }
     }
   }
-  result.ReleaseBuffer(len);
+  if (source->GetBPP() == 1) {
+    uint32_t* palette = (uint32_t*)(pbmih + 1);
+    if (source->HasPalette()) {
+      pdfium::span<const uint32_t> palette_span = source->GetPaletteSpan();
+      palette[0] = palette_span[0];
+      palette[1] = palette_span[1];
+    } else {
+      palette[0] = 0;
+      palette[1] = 0xffffff;
+    }
+  }
   return result;
 }
 
@@ -400,8 +396,9 @@ bool CGdiDeviceDriver::GDI_SetDIBits(RetainPtr<const CFX_DIBBase> source,
     }
 
     CHECK(!flipped_source->GetBuffer().empty());
-    ByteString info = GetBitmapInfo(flipped_source);
-    ((BITMAPINFOHEADER*)info.c_str())->biHeight *= -1;
+    FixedSizeDataVector<uint8_t> info = GetBitmapInfoHeader(flipped_source);
+    auto* header = reinterpret_cast<BITMAPINFOHEADER*>(info.span().data());
+    header->biHeight *= -1;
     FX_RECT dst_rect(0, 0, src_rect.Width(), src_rect.Height());
     dst_rect.Intersect(0, 0, flipped_source->GetWidth(),
                        flipped_source->GetHeight());
@@ -409,7 +406,8 @@ bool CGdiDeviceDriver::GDI_SetDIBits(RetainPtr<const CFX_DIBBase> source,
     int dst_height = dst_rect.Height();
     ::StretchDIBits(m_hDC, left, top, dst_width, dst_height, 0, 0, dst_width,
                     dst_height, flipped_source->GetBuffer().data(),
-                    (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS, SRCCOPY);
+                    reinterpret_cast<BITMAPINFO*>(header), DIB_RGB_COLORS,
+                    SRCCOPY);
     return true;
   }
 
@@ -417,12 +415,13 @@ bool CGdiDeviceDriver::GDI_SetDIBits(RetainPtr<const CFX_DIBBase> source,
   if (!realized_source) {
     return false;
   }
-  ByteString info = GetBitmapInfo(realized_source);
+  FixedSizeDataVector<uint8_t> info = GetBitmapInfoHeader(realized_source);
+  auto* header = reinterpret_cast<BITMAPINFOHEADER*>(info.span().data());
   ::SetDIBitsToDevice(
       m_hDC, left, top, src_rect.Width(), src_rect.Height(), src_rect.left,
       realized_source->GetHeight() - src_rect.bottom, 0,
       realized_source->GetHeight(), realized_source->GetBuffer().data(),
-      (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS);
+      reinterpret_cast<BITMAPINFO*>(header), DIB_RGB_COLORS);
   return true;
 }
 
@@ -458,11 +457,13 @@ bool CGdiDeviceDriver::GDI_StretchDIBits(RetainPtr<const CFX_DIBBase> source,
   }
 
   CHECK(!realized_source->GetBuffer().empty());
-  ByteString info = GetBitmapInfo(realized_source);
+  FixedSizeDataVector<uint8_t> info = GetBitmapInfoHeader(realized_source);
+  auto* header = reinterpret_cast<BITMAPINFOHEADER*>(info.span().data());
   ::StretchDIBits(m_hDC, dest_left, dest_top, dest_width, dest_height, 0, 0,
                   realized_source->GetWidth(), realized_source->GetHeight(),
                   realized_source->GetBuffer().data(),
-                  (BITMAPINFO*)info.c_str(), DIB_RGB_COLORS, SRCCOPY);
+                  reinterpret_cast<BITMAPINFO*>(header), DIB_RGB_COLORS,
+                  SRCCOPY);
   return true;
 }
 
