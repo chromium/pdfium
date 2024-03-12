@@ -83,6 +83,7 @@ source_set("fpdfdoc") {
   ]
   deps = [
     "../../constants",
+    "../fpdfapi/edit",
     "../fpdfapi/font",
     "../fpdfapi/page",
     "../fpdfapi/parser",

@@ -14,6 +14,7 @@
 #include "constants/appearance.h"
 #include "constants/font_encodings.h"
 #include "constants/form_fields.h"
+#include "core/fpdfapi/edit/cpdf_contentstream_write_utils.h"
 #include "core/fpdfapi/font/cpdf_font.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
@@ -1041,10 +1042,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
   fxcrt::ostringstream sAppStream;
   ByteString sBG = GenerateColorAP(crBG, PaintOperation::kFill);
   if (sBG.GetLength() > 0) {
-    sAppStream << "q\n"
-               << sBG << rcBBox.left << " " << rcBBox.bottom << " "
-               << rcBBox.Width() << " " << rcBBox.Height() << " re f\n"
-               << "Q\n";
+    sAppStream << "q\n" << sBG;
+    WriteRect(sAppStream, rcBBox) << " re f\nQ\n";
   }
   ByteString sBorderStream =
       GenerateBorderAP(rcBBox, fBorderWidth, crBorder, crLeftTop, crRightBottom,
@@ -1147,9 +1146,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
                    << "q\n";
         if (rcContent.Width() > rcBody.Width() ||
             rcContent.Height() > rcBody.Height()) {
-          sAppStream << rcBody.left << " " << rcBody.bottom << " "
-                     << rcBody.Width() << " " << rcBody.Height()
-                     << " re\nW\nn\n";
+          WriteRect(sAppStream, rcBody) << " re\nW\nn\n";
         }
         sAppStream << "BT\n"
                    << GenerateColorAP(crText, PaintOperation::kFill) << sBody
@@ -1184,10 +1181,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
       ByteString sEdit =
           GenerateEditAP(&map, vt.GetIterator(), ptOffset, true, 0);
       if (sEdit.GetLength() > 0) {
-        sAppStream << "/Tx BMC\n"
-                   << "q\n";
-        sAppStream << rcEdit.left << " " << rcEdit.bottom << " "
-                   << rcEdit.Width() << " " << rcEdit.Height() << " re\nW\nn\n";
+        sAppStream << "/Tx BMC\nq\n";
+        WriteRect(sAppStream, rcEdit) << " re\nW\nn\n";
         sAppStream << "BT\n"
                    << GenerateColorAP(crText, PaintOperation::kFill) << sEdit
                    << "ET\n"
@@ -1199,8 +1194,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
                           PaintOperation::kFill);
       if (sButton.GetLength() > 0 && !rcButton.IsEmpty()) {
         sAppStream << "q\n" << sButton;
-        sAppStream << rcButton.left << " " << rcButton.bottom << " "
-                   << rcButton.Width() << " " << rcButton.Height() << " re f\n";
+        WriteRect(sAppStream, rcButton) << " re f\n";
         sAppStream << "Q\n";
         ByteString sButtonBorder =
             GenerateBorderAP(rcButton, 2, CFX_Color(CFX_Color::Type::kGray, 0),
@@ -1216,10 +1210,11 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
             FXSYS_IsFloatBigger(rcButton.Height(), 6)) {
           sAppStream << "q\n"
                      << " 0 g\n";
-          sAppStream << ptCenter.x - 3 << " " << ptCenter.y + 1.5f << " m\n";
-          sAppStream << ptCenter.x + 3 << " " << ptCenter.y + 1.5f << " l\n";
-          sAppStream << ptCenter.x << " " << ptCenter.y - 1.5f << " l\n";
-          sAppStream << ptCenter.x - 3 << " " << ptCenter.y + 1.5f << " l f\n";
+          WritePoint(sAppStream, {ptCenter.x - 3, ptCenter.y + 1.5f}) << " m\n";
+          WritePoint(sAppStream, {ptCenter.x + 3, ptCenter.y + 1.5f}) << " l\n";
+          WritePoint(sAppStream, {ptCenter.x, ptCenter.y - 1.5f}) << " l\n";
+          WritePoint(sAppStream, {ptCenter.x - 3, ptCenter.y + 1.5f})
+              << " l f\n";
           sAppStream << sButton << "Q\n";
         }
       }
@@ -1276,10 +1271,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
                     << GenerateColorAP(
                            CFX_Color(CFX_Color::Type::kRGB, 0, 51.0f / 255.0f,
                                      113.0f / 255.0f),
-                           PaintOperation::kFill)
-                    << rcItem.left << " " << rcItem.bottom << " "
-                    << rcItem.Width() << " " << rcItem.Height() << " re f\n"
-                    << "Q\n";
+                           PaintOperation::kFill);
+              WriteRect(sBody, rcItem) << " re f\nQ\n";
               sBody << "BT\n"
                     << GenerateColorAP(CFX_Color(CFX_Color::Type::kGray, 1),
                                        PaintOperation::kFill)
@@ -1298,10 +1291,9 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* pDoc,
         }
       }
       if (sBody.tellp() > 0) {
-        sAppStream << "/Tx BMC\nq\n"
-                   << rcBody.left << " " << rcBody.bottom << " "
-                   << rcBody.Width() << " " << rcBody.Height() << " re\nW\nn\n"
-                   << sBody.str() << "Q\nEMC\n";
+        sAppStream << "/Tx BMC\nq\n";
+        WriteRect(sAppStream, rcBody) << " re\nW\nn\n"
+                                      << sBody.str() << "Q\nEMC\n";
       }
       break;
     }
