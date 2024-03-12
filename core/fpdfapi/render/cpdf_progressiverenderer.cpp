@@ -13,6 +13,7 @@
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/pauseindicator_iface.h"
 #include "core/fxge/cfx_renderdevice.h"
 
@@ -20,7 +21,10 @@ CPDF_ProgressiveRenderer::CPDF_ProgressiveRenderer(
     CPDF_RenderContext* pContext,
     CFX_RenderDevice* pDevice,
     const CPDF_RenderOptions* pOptions)
-    : m_pContext(pContext), m_pDevice(pDevice), m_pOptions(pOptions) {}
+    : m_pContext(pContext), m_pDevice(pDevice), m_pOptions(pOptions) {
+  CHECK(m_pContext);
+  CHECK(m_pDevice);
+}
 
 CPDF_ProgressiveRenderer::~CPDF_ProgressiveRenderer() {
   if (m_pRenderStatus) {
@@ -30,7 +34,7 @@ CPDF_ProgressiveRenderer::~CPDF_ProgressiveRenderer() {
 }
 
 void CPDF_ProgressiveRenderer::Start(PauseIndicatorIface* pPause) {
-  if (!m_pContext || !m_pDevice || m_Status != kReady) {
+  if (m_Status != kReady) {
     m_Status = kFailed;
     return;
   }

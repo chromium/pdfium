@@ -17,7 +17,6 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/unowned_ptr.h"
 
-class CFX_RenderDevice;
 class CPDF_Annot;
 class CPDF_Document;
 class CPDF_Page;
@@ -29,7 +28,6 @@ class CPDF_AnnotList final : public CPDF_PageRenderContext::AnnotListIface {
   ~CPDF_AnnotList() override;
 
   void DisplayAnnots(CPDF_Page* pPage,
-                     CFX_RenderDevice* pDevice,
                      CPDF_RenderContext* pContext,
                      bool bPrinting,
                      const CFX_Matrix& mtUser2Device,
@@ -41,7 +39,6 @@ class CPDF_AnnotList final : public CPDF_PageRenderContext::AnnotListIface {
 
  private:
   void DisplayPass(CPDF_Page* pPage,
-                   CFX_RenderDevice* pDevice,
                    CPDF_RenderContext* pContext,
                    bool bPrinting,
                    const CFX_Matrix& mtMatrix,

@@ -74,8 +74,7 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
 
     // TODO(https://crbug.com/pdfium/993) - maybe pass true here.
     const bool bShowWidget = false;
-    pList->DisplayAnnots(pPage, pContext->m_pDevice.get(),
-                         pContext->m_pContext.get(), bPrinting, matrix,
+    pList->DisplayAnnots(pPage, pContext->m_pContext.get(), bPrinting, matrix,
                          bShowWidget);
   }
 
