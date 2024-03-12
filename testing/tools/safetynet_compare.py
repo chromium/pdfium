@@ -386,9 +386,7 @@ class CompareRun:
     PrintErr('Done.')
 
     PrintErr('Building...')
-    cmd = ['ninja', '-C', build_dir, 'pdfium_test']
-    if GetBooleanGnArg('use_goma', build_dir):
-      cmd.extend(['-j', '250'])
+    cmd = ['autoninja', '-C', build_dir, 'pdfium_test']
     RunCommandPropagateErr(cmd, stdout_has_errors=True, exit_status_on_error=1)
     PrintErr('Done.')
 
