@@ -69,7 +69,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
-  'build_revision': '05c489d88a12991efad91591f10cfe4432b9ed55',
+  'build_revision': 'e9a12f27664b7ede2b97cb510c90f27dba8a2143',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
@@ -85,7 +85,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang
   # and whatever else without interference from each other.
-  'clang_revision': 'ebfc67baf110c1cf28e77ad520dc9d371ad27913',
+  'clang_revision': 'd298a77be81d33986ae546cd42cfc70aa400d732',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling code_coverage
   # and whatever else without interference from each other.
@@ -175,7 +175,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang
   # and whatever else without interference from each other.
-  'rust_revision': 'bcaf16e552b19d4f5d67636d8373c172a2cf8a1a',
+  'rust_revision': '1d0018c655c8fe52b77dc7c72ce0dfd4f8cdc89d',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling skia
   # and whatever else without interference from each other.
