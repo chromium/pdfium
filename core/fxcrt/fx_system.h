@@ -54,33 +54,25 @@ extern "C" {
 #define FXSYS_itoa _itoa
 #define FXSYS_strlwr _strlwr
 #define FXSYS_strupr _strupr
-#define FXSYS_stricmp _stricmp
-#define FXSYS_wcsicmp _wcsicmp
 #define FXSYS_wcslwr _wcslwr
 #define FXSYS_wcsupr _wcsupr
+#define FXSYS_SetLastError SetLastError
+#define FXSYS_GetLastError GetLastError
 size_t FXSYS_wcsftime(wchar_t* strDest,
                       size_t maxsize,
                       const wchar_t* format,
                       const struct tm* timeptr);
-#define FXSYS_SetLastError SetLastError
-#define FXSYS_GetLastError GetLastError
 #else  // BUILDFLAG(IS_WIN)
 char* FXSYS_itoa(int value, char* str, int radix);
 char* FXSYS_strlwr(char* str);
 char* FXSYS_strupr(char* str);
-int FXSYS_stricmp(const char* str1, const char* str2);
-int FXSYS_wcsicmp(const wchar_t* str1, const wchar_t* str2);
 wchar_t* FXSYS_wcslwr(wchar_t* str);
 wchar_t* FXSYS_wcsupr(wchar_t* str);
-#define FXSYS_wcsftime wcsftime
 void FXSYS_SetLastError(uint32_t err);
 uint32_t FXSYS_GetLastError();
+#define FXSYS_wcsftime wcsftime
 #endif  // BUILDFLAG(IS_WIN)
 
-int32_t FXSYS_atoi(const char* str);
-uint32_t FXSYS_atoui(const char* str);
-int32_t FXSYS_wtoi(const wchar_t* str);
-int64_t FXSYS_atoi64(const char* str);
 const char* FXSYS_i64toa(int64_t value, char* str, int radix);
 int FXSYS_roundf(float f);
 int FXSYS_round(double d);
@@ -88,6 +80,15 @@ float FXSYS_sqrt2(float a, float b);
 
 #ifdef __cplusplus
 }  // extern "C"
+
+// C++-only section to allow future use of TerminatedPtr<>.
+int FXSYS_stricmp(const char* str1, const char* str2);
+int FXSYS_wcsicmp(const wchar_t* str1, const wchar_t* str2);
+int32_t FXSYS_atoi(const char* str);
+int32_t FXSYS_wtoi(const wchar_t* str);
+uint32_t FXSYS_atoui(const char* str);
+int64_t FXSYS_atoi64(const char* str);
+
 #endif  // __cplusplus
 
 #endif  // CORE_FXCRT_FX_SYSTEM_H_

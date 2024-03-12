@@ -154,6 +154,14 @@ size_t FXSYS_wcsftime(wchar_t* strDest,
   return wcsftime(strDest, maxsize, format, timeptr);
 }
 
+int FXSYS_stricmp(const char* str1, const char* str2) {
+  return _stricmp(str1, str2);
+}
+
+int FXSYS_wcsicmp(const wchar_t* str1, const wchar_t* str2) {
+  return _wcsicmp(str1, str2);
+}
+
 #else   // BUILDFLAG(IS_WIN)
 
 char* FXSYS_strlwr(char* str) {
