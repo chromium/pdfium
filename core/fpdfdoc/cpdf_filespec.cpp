@@ -24,32 +24,30 @@
 namespace {
 
 #if BUILDFLAG(IS_APPLE) || BUILDFLAG(IS_WIN)
-WideString ChangeSlashToPlatform(const wchar_t* str) {
+WideString ChangeSlashToPlatform(WideStringView str) {
   WideString result;
-  while (*str) {
-    if (*str == '/') {
+  for (auto wch : str) {
+    if (wch == '/') {
 #if BUILDFLAG(IS_APPLE)
       result += L':';
 #else
       result += L'\\';
 #endif
     } else {
-      result += *str;
+      result += wch;
     }
-    str++;
   }
   return result;
 }
 
-WideString ChangeSlashToPDF(const wchar_t* str) {
+WideString ChangeSlashToPDF(WideStringView str) {
   WideString result;
-  while (*str) {
-    if (*str == '\\' || *str == ':')
+  for (auto wch : str) {
+    if (wch == '\\' || wch == ':') {
       result += L'/';
-    else
-      result += *str;
-
-    str++;
+    } else {
+      result += wch;
+    }
   }
   return result;
 }
@@ -65,32 +63,36 @@ CPDF_FileSpec::CPDF_FileSpec(RetainPtr<const CPDF_Object> pObj)
 CPDF_FileSpec::~CPDF_FileSpec() = default;
 
 WideString CPDF_FileSpec::DecodeFileName(const WideString& filepath) {
-  if (filepath.GetLength() <= 1)
+  if (filepath.IsEmpty()) {
     return WideString();
-
+  }
 #if BUILDFLAG(IS_APPLE)
-  if (filepath.First(sizeof("/Mac") - 1) == WideStringView(L"/Mac"))
-    return ChangeSlashToPlatform(filepath.c_str() + 1);
-  return ChangeSlashToPlatform(filepath.c_str());
+  WideStringView view = filepath.AsStringView();
+  if (view.First(sizeof("/Mac") - 1) == WideStringView(L"/Mac")) {
+    return ChangeSlashToPlatform(view.Substr(1));
+  }
+  return ChangeSlashToPlatform(view);
 #elif BUILDFLAG(IS_WIN)
-
-  if (filepath[0] != L'/')
-    return ChangeSlashToPlatform(filepath.c_str());
-  if (filepath[1] == L'/')
-    return ChangeSlashToPlatform(filepath.c_str() + 1);
-  if (filepath[2] == L'/') {
+  WideStringView view = filepath.AsStringView();
+  if (view[0] != L'/') {
+    return ChangeSlashToPlatform(view);
+  }
+  if (view[1] == L'/') {
+    return ChangeSlashToPlatform(view.Substr(1));
+  }
+  if (view[2] == L'/') {
     WideString result;
-    result += filepath[1];
+    result += view[1];
     result += L':';
-    result += ChangeSlashToPlatform(filepath.c_str() + 2);
+    result += ChangeSlashToPlatform(view.Substr(2));
     return result;
   }
   WideString result;
   result += L'\\';
-  result += ChangeSlashToPlatform(filepath.c_str());
+  result += ChangeSlashToPlatform(view);
   return result;
 #else
-  return WideString(filepath);
+  return filepath;
 #endif
 }
 
@@ -163,30 +165,34 @@ RetainPtr<CPDF_Dictionary> CPDF_FileSpec::GetMutableParamsDict() {
 }
 
 WideString CPDF_FileSpec::EncodeFileName(const WideString& filepath) {
-  if (filepath.GetLength() <= 1)
+  if (filepath.IsEmpty()) {
     return WideString();
-
+  }
 #if BUILDFLAG(IS_WIN)
-  if (filepath[1] == L':') {
+  WideStringView view = filepath.AsStringView();
+  if (view[1] == L':') {
     WideString result(L'/');
-    result += filepath[0];
-    if (filepath[2] != L'\\')
+    result += view[0];
+    if (view[2] != L'\\') {
       result += L'/';
-
-    result += ChangeSlashToPDF(filepath.c_str() + 2);
+    }
+    result += ChangeSlashToPDF(view.Substr(2));
     return result;
   }
-  if (filepath[0] == L'\\' && filepath[1] == L'\\')
-    return ChangeSlashToPDF(filepath.c_str() + 1);
-
-  if (filepath[0] == L'\\')
-    return L'/' + ChangeSlashToPDF(filepath.c_str());
-  return ChangeSlashToPDF(filepath.c_str());
+  if (view[0] == L'\\' && view[1] == L'\\') {
+    return ChangeSlashToPDF(view.Substr(1));
+  }
+  if (view[0] == L'\\') {
+    return L'/' + ChangeSlashToPDF(view);
+  }
+  return ChangeSlashToPDF(view);
 #elif BUILDFLAG(IS_APPLE)
-  if (filepath.First(sizeof("Mac") - 1).EqualsASCII("Mac"))
-    return L'/' + ChangeSlashToPDF(filepath.c_str());
-  return ChangeSlashToPDF(filepath.c_str());
+  WideStringView view = filepath.AsStringView();
+  if (view.First(sizeof("Mac") - 1).EqualsASCII("Mac")) {
+    return L'/' + ChangeSlashToPDF(view);
+  }
+  return ChangeSlashToPDF(view);
 #else
-  return WideString(filepath);
+  return filepath;
 #endif
 }
