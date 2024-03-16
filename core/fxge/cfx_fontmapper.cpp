@@ -176,24 +176,26 @@ ByteString TT_NormalizeName(ByteString norm) {
   return norm;
 }
 
-void GetFontFamily(uint32_t nStyle, ByteString* fontName) {
-  if (fontName->Contains("Script")) {
-    if (FontStyleIsForceBold(nStyle))
-      *fontName = "ScriptMTBold";
-    else if (fontName->Contains("Palace"))
-      *fontName = "PalaceScriptMT";
-    else if (fontName->Contains("French"))
-      *fontName = "FrenchScriptMT";
-    else if (fontName->Contains("FreeStyle"))
-      *fontName = "FreeStyleScript";
-    return;
+const char* GetFontFamily(uint32_t nStyle, const ByteString& fontname) {
+  if (fontname.Contains("Script")) {
+    if (FontStyleIsForceBold(nStyle)) {
+      return "ScriptMTBold";
+    }
+    if (fontname.Contains("Palace")) {
+      return "PalaceScriptMT";
+    } else if (fontname.Contains("French")) {
+      return "FrenchScriptMT";
+    } else if (fontname.Contains("FreeStyle")) {
+      return "FreeStyleScript";
+    }
+    return nullptr;
   }
   for (const auto& alternate : kAltFontFamilies) {
-    if (fontName->Contains(alternate.m_pFontName)) {
-      *fontName = alternate.m_pFontFamily;
-      return;
+    if (fontname.Contains(alternate.m_pFontName)) {
+      return alternate.m_pFontFamily;
     }
   }
+  return nullptr;
 }
 
 ByteString ParseStyle(const ByteString& bsStyle, size_t iStart) {
@@ -656,7 +658,11 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
   const bool is_cjk = FX_CharSetIsCJK(Charset);
   bool is_italic = FontStyleIsItalic(nStyle);
 
-  GetFontFamily(nStyle, &family);
+  const char* maybe_family = GetFontFamily(nStyle, family);
+  if (maybe_family) {
+    family = ByteString(maybe_family);
+  }
+
   ByteString match = MatchInstalledFonts(TT_NormalizeName(family));
   if (match.IsEmpty() && family != subst_name &&
       (!has_comma && (!has_hyphen || (has_hyphen && !is_style_available)))) {
