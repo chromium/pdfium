@@ -54,7 +54,6 @@ source_set("css") {
   configs += [
     "../../../:pdfium_strict_config",
     "../../../:pdfium_noshorten_config",
-    "../../../:pdfium_nounsafe_buffer_usage_config",
   ]
   deps = [
     "../",

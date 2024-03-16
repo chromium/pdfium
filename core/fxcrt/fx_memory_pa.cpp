@@ -10,9 +10,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 
 #if defined(PDF_USE_PARTITION_ALLOC)
-UNSAFE_BUFFERS_INCLUDE_BEGIN
 #include "partition_alloc/partition_alloc.h"
-UNSAFE_BUFFERS_INCLUDE_END
 #else
 #error "File compiled under wrong build option."
 #endif

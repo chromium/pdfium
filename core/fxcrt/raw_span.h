@@ -9,9 +9,7 @@
 #include "core/fxcrt/span.h"
 
 #if defined(PDF_USE_PARTITION_ALLOC)
-UNSAFE_BUFFERS_INCLUDE_BEGIN
 #include "partition_alloc/pointers/raw_ptr.h"
-UNSAFE_BUFFERS_INCLUDE_END
 #else
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 #endif

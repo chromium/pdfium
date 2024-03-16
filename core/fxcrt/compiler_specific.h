@@ -83,21 +83,17 @@
 #define UNSAFE_BUFFER_USAGE
 #endif
 
-#if defined(__clang__)
 // clang-format off
 // Formatting is off so that we can put each _Pragma on its own line, as
 // recommended by the gcc docs.
+#if defined(__clang__)
 #define UNSAFE_BUFFERS(...)                  \
   _Pragma("clang unsafe_buffer_usage begin") \
   __VA_ARGS__                                \
   _Pragma("clang unsafe_buffer_usage end")
-// clang-format on
-#define UNSAFE_BUFFERS_INCLUDE_BEGIN _Pragma("clang unsafe_buffer_usage begin")
-#define UNSAFE_BUFFERS_INCLUDE_END _Pragma("clang unsafe_buffer_usage end")
 #else
 #define UNSAFE_BUFFERS(...) __VA_ARGS__
-#define UNSAFE_BUFFERS_INCLUDE_BEGIN
-#define UNSAFE_BUFFERS_INCLUDE_END
 #endif
+// clang-format on
 
 #endif  // CORE_FXCRT_COMPILER_SPECIFIC_H_

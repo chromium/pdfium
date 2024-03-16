@@ -42,10 +42,8 @@
 #include "core/fxcrt/compiler_specific.h"
 
 #if defined(PDF_USE_PARTITION_ALLOC)
-UNSAFE_BUFFERS_INCLUDE_BEGIN
 #include "partition_alloc/partition_alloc_buildflags.h"
 #include "partition_alloc/pointers/raw_ptr.h"
-UNSAFE_BUFFERS_INCLUDE_END
 
 #if !BUILDFLAG(USE_PARTITION_ALLOC)
 #error "pdf_use_partition_alloc=true requires use_partition_alloc=true"
