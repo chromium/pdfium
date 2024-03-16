@@ -15,8 +15,8 @@ namespace fxjs {
 
 enum class ConversionStatus { kSuccess = 0, kBadFormat, kBadDate };
 
-extern const wchar_t* const kMonths[12];
-extern const wchar_t* const kFullMonths[12];
+extern const char* const kMonths[12];
+extern const char* const kFullMonths[12];
 
 double FX_GetDateTime();
 int FX_GetYearFromTime(double dt);

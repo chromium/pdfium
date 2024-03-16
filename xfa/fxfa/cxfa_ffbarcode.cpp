@@ -95,10 +95,12 @@ const BarCodeInfo kBarCodeData[] = {
 
 std::optional<BC_CHAR_ENCODING> CharEncodingFromString(
     const WideString& value) {
-  if (value.CompareNoCase(L"UTF-16"))
+  if (value.EqualsASCIINoCase("UTF-16")) {
     return BC_CHAR_ENCODING::kUnicode;
-  if (value.CompareNoCase(L"UTF-8"))
+  }
+  if (value.EqualsASCIINoCase("UTF-8")) {
     return BC_CHAR_ENCODING::kUTF8;
+  }
   return std::nullopt;
 }
 

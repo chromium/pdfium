@@ -660,11 +660,10 @@ bool CPDFXFA_DocEnvironment::MailToInfo(WideString& csURL,
                                         WideString& csMsg) {
   WideString srcURL = csURL;
   srcURL.TrimWhitespaceFront();
-  if (srcURL.Left(7).CompareNoCase(L"mailto:") != 0)
+  if (!srcURL.Left(7).EqualsASCIINoCase("mailto:")) {
     return false;
-
+  }
   auto pos = srcURL.Find(L'?');
-
   {
     WideString tmp;
     if (!pos.has_value()) {
@@ -687,23 +686,21 @@ bool CPDFXFA_DocEnvironment::MailToInfo(WideString& csURL,
     pos = srcURL.Find(L'&');
     WideString tmp = (!pos.has_value()) ? srcURL : srcURL.Left(pos.value());
     tmp.TrimWhitespace();
-    if (tmp.GetLength() >= 3 && tmp.Left(3).CompareNoCase(L"cc=") == 0) {
+    if (tmp.GetLength() >= 3 && tmp.Left(3).EqualsASCIINoCase("cc=")) {
       tmp = tmp.Right(tmp.GetLength() - 3);
       if (!csCCAddress.IsEmpty())
         csCCAddress += L';';
       csCCAddress += tmp;
-    } else if (tmp.GetLength() >= 4 &&
-               tmp.Left(4).CompareNoCase(L"bcc=") == 0) {
+    } else if (tmp.GetLength() >= 4 && tmp.Left(4).EqualsASCIINoCase("bcc=")) {
       tmp = tmp.Right(tmp.GetLength() - 4);
       if (!csBCCAddress.IsEmpty())
         csBCCAddress += L';';
       csBCCAddress += tmp;
     } else if (tmp.GetLength() >= 8 &&
-               tmp.Left(8).CompareNoCase(L"subject=") == 0) {
+               tmp.Left(8).EqualsASCIINoCase("subject=")) {
       tmp = tmp.Right(tmp.GetLength() - 8);
       csSubject += tmp;
-    } else if (tmp.GetLength() >= 5 &&
-               tmp.Left(5).CompareNoCase(L"body=") == 0) {
+    } else if (tmp.GetLength() >= 5 && tmp.Left(5).EqualsASCIINoCase("body=")) {
       tmp = tmp.Right(tmp.GetLength() - 5);
       csMsg += tmp;
     }
@@ -952,7 +949,7 @@ bool CPDFXFA_DocEnvironment::SubmitInternal(CXFA_FFDoc* hDoc,
   if (!pFileHandler)
     return false;
 
-  if (csURL.Left(7).CompareNoCase(L"mailto:") == 0) {
+  if (csURL.Left(7).EqualsASCIINoCase("mailto:")) {
     WideString csToAddress;
     WideString csCCAddress;
     WideString csBCCAddress;

@@ -168,14 +168,12 @@ size_t FindSubWordLength(const WideString& str, size_t nStart) {
 
 }  // namespace
 
-const wchar_t* const kMonths[12] = {L"Jan", L"Feb", L"Mar", L"Apr",
-                                    L"May", L"Jun", L"Jul", L"Aug",
-                                    L"Sep", L"Oct", L"Nov", L"Dec"};
+const char* const kMonths[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
-const wchar_t* const kFullMonths[12] = {L"January", L"February", L"March",
-                                        L"April",   L"May",      L"June",
-                                        L"July",    L"August",   L"September",
-                                        L"October", L"November", L"December"};
+const char* const kFullMonths[12] = {
+    "January", "February", "March",     "April",   "May",      "June",
+    "July",    "August",   "September", "October", "November", "December"};
 
 static constexpr size_t KMonthAbbreviationLength = 3;  // Anything in |kMonths|.
 static constexpr size_t kLongestFullMonthLength = 9;   // September
@@ -436,7 +434,7 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
               if (nSkip == KMonthAbbreviationLength) {
                 WideString sMonth = value.Substr(j, KMonthAbbreviationLength);
                 for (size_t m = 0; m < std::size(kMonths); ++m) {
-                  if (sMonth.CompareNoCase(kMonths[m]) == 0) {
+                  if (sMonth.EqualsASCIINoCase(kMonths[m])) {
                     nMonth = static_cast<int>(m) + 1;
                     i += 3;
                     j += nSkip;
@@ -473,7 +471,7 @@ ConversionStatus FX_ParseDateUsingFormat(const WideString& value,
                 WideString sMonth = value.Substr(j, nSkip);
                 sMonth.MakeLower();
                 for (size_t m = 0; m < std::size(kFullMonths); ++m) {
-                  WideString sFullMonths = WideString(kFullMonths[m]);
+                  auto sFullMonths = WideString::FromASCII(kFullMonths[m]);
                   sFullMonths.MakeLower();
                   if (sFullMonths.Contains(sMonth.AsStringView())) {
                     nMonth = static_cast<int>(m) + 1;

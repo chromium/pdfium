@@ -543,7 +543,7 @@ WideString CJS_PublicMethods::PrintDateUsingFormat(double dDate,
             case 'm':
               i += 3;
               if (FX_IsValidMonth(nMonth))
-                sPart += fxjs::kMonths[nMonth - 1];
+                sPart += WideString::FromASCII(fxjs::kMonths[nMonth - 1]);
               break;
             default:
               i += 3;
@@ -561,7 +561,7 @@ WideString CJS_PublicMethods::PrintDateUsingFormat(double dDate,
             case 'm':
               i += 4;
               if (FX_IsValidMonth(nMonth))
-                sPart += fxjs::kFullMonths[nMonth - 1];
+                sPart += WideString::FromASCII(fxjs::kFullMonths[nMonth - 1]);
               break;
             default:
               i += 4;
@@ -933,7 +933,7 @@ double CJS_PublicMethods::ParseDateAsGMT(v8::Isolate* isolate,
   int nMonth = 1;
   sTemp = wsArray[1];
   for (size_t i = 0; i < std::size(fxjs::kMonths); ++i) {
-    if (sTemp == fxjs::kMonths[i]) {
+    if (sTemp.EqualsASCII(fxjs::kMonths[i])) {
       nMonth = static_cast<int>(i) + 1;
       break;
     }
