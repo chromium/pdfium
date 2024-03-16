@@ -299,18 +299,15 @@ CFXJSE_Class* CFXJSE_Class::Create(
       hFunctionTemplate->InstanceTemplate();
   SetUpNamedPropHandler(pIsolate, hObjectTemplate, pClassDescriptor);
 
-  if (pClassDescriptor->methNum) {
-    for (int32_t i = 0; i < pClassDescriptor->methNum; i++) {
-      v8::Local<v8::FunctionTemplate> fun = v8::FunctionTemplate::New(
-          pIsolate, V8FunctionCallback_Wrapper,
-          v8::External::New(pIsolate, const_cast<FXJSE_FUNCTION_DESCRIPTOR*>(
-                                          pClassDescriptor->methods + i)));
-      fun->RemovePrototype();
-      hObjectTemplate->Set(
-          fxv8::NewStringHelper(pIsolate, pClassDescriptor->methods[i].name),
-          fun,
-          static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
-    }
+  for (const auto& method : pClassDescriptor->methods) {
+    v8::Local<v8::FunctionTemplate> fun = v8::FunctionTemplate::New(
+        pIsolate, V8FunctionCallback_Wrapper,
+        v8::External::New(pIsolate,
+                          const_cast<FXJSE_FUNCTION_DESCRIPTOR*>(&method)));
+    fun->RemovePrototype();
+    hObjectTemplate->Set(
+        fxv8::NewStringHelper(pIsolate, method.name), fun,
+        static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
   }
 
   if (bIsJSGlobal) {

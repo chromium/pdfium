@@ -1361,7 +1361,6 @@ const FXJSE_CLASS_DESCRIPTOR kFormCalcDescriptor = {
     kClassTag,                      // tag
     "XFA_FormCalcClass",            // name
     kFormCalcFunctions,             // methods
-    std::size(kFormCalcFunctions),  // number of methods
     nullptr,                        // dynamic prop type
     nullptr,                        // dynamic prop getter
     nullptr,                        // dynamic prop setter

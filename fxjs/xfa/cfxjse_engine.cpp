@@ -44,8 +44,7 @@ using pdfium::fxjse::kClassTag;
 const FXJSE_CLASS_DESCRIPTOR kGlobalClassDescriptor = {
     kClassTag,  // tag
     "Root",     // name
-    nullptr,    // methods
-    0,          // method count
+    {},         // methods
     CFXJSE_Engine::GlobalPropTypeGetter,
     CFXJSE_Engine::GlobalPropertyGetter,
     CFXJSE_Engine::GlobalPropertySetter,
@@ -55,8 +54,7 @@ const FXJSE_CLASS_DESCRIPTOR kGlobalClassDescriptor = {
 const FXJSE_CLASS_DESCRIPTOR kNormalClassDescriptor = {
     kClassTag,    // tag
     "XFAObject",  // name
-    nullptr,      // methods
-    0,            // method count
+    {},           // methods
     CFXJSE_Engine::NormalPropTypeGetter,
     CFXJSE_Engine::NormalPropertyGetter,
     CFXJSE_Engine::NormalPropertySetter,
@@ -66,8 +64,7 @@ const FXJSE_CLASS_DESCRIPTOR kNormalClassDescriptor = {
 const FXJSE_CLASS_DESCRIPTOR kVariablesClassDescriptor = {
     kClassTag,          // tag
     "XFAScriptObject",  // name
-    nullptr,            // methods
-    0,                  // method count
+    {},                 // methods
     CFXJSE_Engine::NormalPropTypeGetter,
     CFXJSE_Engine::GlobalPropertyGetter,
     CFXJSE_Engine::GlobalPropertySetter,
