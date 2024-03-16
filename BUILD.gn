@@ -287,8 +287,10 @@ config("pdfium_plugin_config") {
   defines = []
   if (clang_use_chrome_plugins) {
     # Catch misuse of C-style pointers.
+    # TODO(crbug.com/1320670): enable for non-debug builds once this stops
+    # interfering with code generation.
     # TODO(tsepez): enable for windows, too.
-    if (!is_win) {
+    if (is_debug && !is_win) {
       cflags += [
         "-Xclang",
         "-plugin-arg-find-bad-constructs",
