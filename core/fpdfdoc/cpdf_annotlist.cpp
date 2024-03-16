@@ -172,8 +172,8 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 }  // namespace
 
 CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
-    : m_pDocument(pPage->GetDocument()) {
-  RetainPtr<CPDF_Array> pAnnots = pPage->GetMutableAnnotsArray();
+    : m_pPage(pPage), m_pDocument(m_pPage->GetDocument()) {
+  RetainPtr<CPDF_Array> pAnnots = m_pPage->GetMutableAnnotsArray();
   if (!pAnnots)
     return;
 
@@ -205,7 +205,7 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
   m_nAnnotCount = m_AnnotList.size();
   for (size_t i = 0; i < m_nAnnotCount; ++i) {
     std::unique_ptr<CPDF_Annot> pPopupAnnot =
-        CreatePopupAnnot(m_pDocument, pPage, m_AnnotList[i].get());
+        CreatePopupAnnot(m_pDocument, m_pPage, m_AnnotList[i].get());
     if (pPopupAnnot)
       m_AnnotList.push_back(std::move(pPopupAnnot));
   }
@@ -230,8 +230,7 @@ bool CPDF_AnnotList::Contains(const CPDF_Annot* pAnnot) const {
   return it != m_AnnotList.end();
 }
 
-void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
-                                 CPDF_RenderContext* pContext,
+void CPDF_AnnotList::DisplayPass(CPDF_RenderContext* pContext,
                                  bool bPrinting,
                                  const CFX_Matrix& mtMatrix,
                                  bool bWidgetPass) {
@@ -251,18 +250,17 @@ void CPDF_AnnotList::DisplayPass(CPDF_Page* pPage,
     if (!bPrinting && (annot_flags & pdfium::annotation_flags::kNoView))
       continue;
 
-    pAnnot->DrawInContext(pPage, pContext, mtMatrix,
+    pAnnot->DrawInContext(m_pPage, pContext, mtMatrix,
                           CPDF_Annot::AppearanceMode::kNormal);
   }
 }
 
-void CPDF_AnnotList::DisplayAnnots(CPDF_Page* pPage,
-                                   CPDF_RenderContext* pContext,
+void CPDF_AnnotList::DisplayAnnots(CPDF_RenderContext* pContext,
                                    bool bPrinting,
                                    const CFX_Matrix& mtUser2Device,
                                    bool bShowWidget) {
   CHECK(pContext);
-  DisplayPass(pPage, pContext, bPrinting, mtUser2Device, false);
+  DisplayPass(pContext, bPrinting, mtUser2Device, false);
   if (bShowWidget)
-    DisplayPass(pPage, pContext, bPrinting, mtUser2Device, true);
+    DisplayPass(pContext, bPrinting, mtUser2Device, true);
 }
