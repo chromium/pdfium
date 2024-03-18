@@ -16,7 +16,6 @@ class CPDF_SimpleParser;
 
 class CPDF_DefaultAppearance {
  public:
-  CPDF_DefaultAppearance();
   explicit CPDF_DefaultAppearance(const ByteString& csDA);
   CPDF_DefaultAppearance(const CPDF_DefaultAppearance& cDA);
   ~CPDF_DefaultAppearance();

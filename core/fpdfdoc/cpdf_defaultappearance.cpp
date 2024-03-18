@@ -54,8 +54,6 @@ bool FindTagParamFromStart(CPDF_SimpleParser* parser,
 
 }  // namespace
 
-CPDF_DefaultAppearance::CPDF_DefaultAppearance() = default;
-
 CPDF_DefaultAppearance::CPDF_DefaultAppearance(const ByteString& csDA)
     : m_csDA(csDA) {}
 

@@ -723,9 +723,8 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::GetFontForElement(
 }
 
 CPDF_DefaultAppearance CPDF_InteractiveForm::GetDefaultAppearance() const {
-  if (!m_pFormDict)
-    return CPDF_DefaultAppearance();
-  return CPDF_DefaultAppearance(m_pFormDict->GetByteStringFor("DA"));
+  return CPDF_DefaultAppearance(
+      m_pFormDict ? m_pFormDict->GetByteStringFor("DA") : "");
 }
 
 int CPDF_InteractiveForm::GetFormAlignment() const {
