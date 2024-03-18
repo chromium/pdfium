@@ -17,6 +17,12 @@ enable_java_templates = false
 # Enables assertions on safety checks in libc++.
 enable_safe_libcxx = true
 
+# Enable assertions on safety checks, also in libstdc++
+#
+# In case the C++ standard library implementation used is libstdc++, then
+# enable its own hardening checks.
+enable_safe_libstdcxx = true
+
 # Whether to use the neon FPU instruction set or not.
 if (current_cpu == "arm") {
   arm_use_neon = true
