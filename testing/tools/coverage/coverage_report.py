@@ -177,7 +177,8 @@ class CoverageExecutor:
   def build_binaries(self):
     """Build all the binaries that are going to be needed for coverage
     generation."""
-    call_args = ['autoninja', '-C', self.build_directory, self.build_targets]
+    call_args = ['autoninja', '-C', self.build_directory]
+    call_args.extend(self.build_targets)
     return self.call(call_args, dry_run=self.dry_run) == 0
 
   def generate_coverage(self, name, spec):
