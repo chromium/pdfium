@@ -360,7 +360,6 @@ component("skia") {
   }
 
   if (skia_support_pdf) {
-    deps += [ "//third_party/sfntly" ]
     sources += skia_pdf_sources
   } else {
     sources += [ "//third_party/skia/src/pdf/SkDocument_PDF_None.cpp" ]
