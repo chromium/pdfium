@@ -21,36 +21,30 @@ CFXJSE_NodeHelper::~CFXJSE_NodeHelper() = default;
 
 bool CFXJSE_NodeHelper::CreateNodeForCondition(const WideString& wsCondition) {
   size_t szLen = wsCondition.GetLength();
-  WideString wsIndex(L"0");
-  bool bAll = false;
   if (szLen == 0) {
     m_iCreateFlag = CFXJSE_Engine::ResolveResult::Type::kCreateNodeOne;
     return false;
   }
-  if (wsCondition[0] != '[')
+  if (wsCondition[0] != '[') {
     return false;
-
+  }
   size_t i = 1;
   for (; i < szLen; ++i) {
     wchar_t ch = wsCondition[i];
-    if (ch == ' ')
-      continue;
-
-    if (ch == '*')
-      bAll = true;
-    break;
+    if (ch == '*') {
+      m_iCreateFlag = CFXJSE_Engine::ResolveResult::Type::kCreateNodeAll;
+      m_iCreateCount = 1;
+      return true;
+    }
+    if (ch != ' ') {
+      break;
+    }
   }
-  if (bAll) {
-    wsIndex = L"1";
-    m_iCreateFlag = CFXJSE_Engine::ResolveResult::Type::kCreateNodeAll;
-  } else {
-    m_iCreateFlag = CFXJSE_Engine::ResolveResult::Type::kCreateNodeOne;
-    wsIndex = wsCondition.Substr(i, szLen - 1 - i);
-  }
-  int32_t iCount = wsIndex.GetInteger();
-  if (iCount < 0)
+  m_iCreateFlag = CFXJSE_Engine::ResolveResult::Type::kCreateNodeOne;
+  int32_t iCount = wsCondition.Substr(i, szLen - 1 - i).GetInteger();
+  if (iCount < 0) {
     return false;
-
+  }
   m_iCreateCount = iCount;
   return true;
 }
