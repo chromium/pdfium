@@ -321,7 +321,7 @@ CJS_Runtime* CPDFXFA_Context::GetCJSRuntime() const {
 }
 
 WideString CPDFXFA_Context::GetAppTitle() const {
-  return L"PDFium";
+  return WideString::FromASCII("PDFium");
 }
 
 WideString CPDFXFA_Context::GetAppName() {

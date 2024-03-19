@@ -128,8 +128,7 @@ void CJX_Tree::nodes(v8::Isolate* pIsolate,
                      bool bSetting,
                      XFA_Attribute eAttribute) {
   if (bSetting) {
-    WideString wsMessage = L"Unable to set ";
-    FXJSE_ThrowMessage(pIsolate, wsMessage.ToUTF8().AsStringView());
+    FXJSE_ThrowMessage(pIsolate, "Unable to set ");
     return;
   }
 

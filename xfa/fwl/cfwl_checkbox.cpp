@@ -82,7 +82,7 @@ void CFWL_CheckBox::DrawWidget(CFGAS_GEGraphics* pGraphics,
   textParam.m_dwStates = dwStates;
   textParam.m_matrix = matrix;
   textParam.m_PartRect = m_CaptionRect;
-  textParam.m_wsText = L"Check box";
+  textParam.m_wsText = WideString::FromASCII("Check box");
   textParam.m_dwTTOStyles = m_TTOStyles;
   textParam.m_iTTOAlign = m_iTTOAlign;
   pTheme->DrawText(textParam);
@@ -117,7 +117,8 @@ void CFWL_CheckBox::Layout() {
   m_CaptionRect.Inflate(-kCaptionMargin, -kCaptionMargin);
 
   CFX_RectF rtFocus = m_CaptionRect;
-  CalcTextRect(L"Check box", m_TTOStyles, m_iTTOAlign, &rtFocus);
+  CalcTextRect(WideString::FromASCII("Check box"), m_TTOStyles, m_iTTOAlign,
+               &rtFocus);
   m_FocusRect = CFX_RectF(m_CaptionRect.TopLeft(),
                           std::max(m_CaptionRect.width, rtFocus.width),
                           std::min(m_CaptionRect.height, rtFocus.height));

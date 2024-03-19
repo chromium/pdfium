@@ -541,7 +541,7 @@ void CJX_Object::SetContent(const WideString& wsContent,
 
         CXFA_Node* pChildValue = pValue->GetFirstChild();
         pChildValue->JSObject()->SetCData(XFA_Attribute::ContentType,
-                                          L"text/xml");
+                                          WideString::FromASCII("text/xml"));
         pChildValue->JSObject()->SetContent(wsContent, wsContent, bNotify,
                                             bScriptModify, false);
 
@@ -563,8 +563,8 @@ void CJX_Object::SetContent(const WideString& wsContent,
               while (iAddNodes-- > 0) {
                 CXFA_Node* pValueNodes =
                     pBind->CreateSamePacketNode(XFA_Element::DataValue);
-                pValueNodes->JSObject()->SetCData(XFA_Attribute::Name,
-                                                  L"value");
+                pValueNodes->JSObject()->SetCData(
+                    XFA_Attribute::Name, WideString::FromASCII("value"));
                 pValueNodes->CreateXMLMappingNode();
                 pBind->InsertChildAndNotify(pValueNodes, nullptr);
               }
@@ -705,7 +705,8 @@ std::optional<WideString> CJX_Object::TryContent(bool bScriptModify,
         CXFA_Node* pChildValue = pValue->GetFirstChild();
         if (pChildValue && XFA_FieldIsMultiListBox(GetXFANode())) {
           pChildValue->JSObject()->SetAttributeByEnum(
-              XFA_Attribute::ContentType, L"text/xml", false);
+              XFA_Attribute::ContentType, WideString::FromASCII("text/xml"),
+              false);
         }
         if (!pChildValue)
           return std::nullopt;

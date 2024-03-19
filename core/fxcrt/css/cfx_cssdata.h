@@ -27,12 +27,12 @@ class CFX_CSSData {
   };
 
   struct LengthUnit {
-    const wchar_t* value;  // Raw, POD struct.
+    const char* value;  // Raw, POD struct.
     CFX_CSSNumber::Unit type;
   };
 
   struct Color {
-    const wchar_t* name;  // Raw, POD struct.
+    const char* name;  // Raw, POD struct.
     FX_ARGB value;
   };
 

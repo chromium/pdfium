@@ -535,16 +535,16 @@ CJS_Result CFXJSE_Engine::NormalMethodCall(
     const v8::FunctionCallbackInfo<v8::Value>& info,
     const WideString& functionName) {
   CXFA_Object* pObject = ToObject(info);
-  if (!pObject)
-    return CJS_Result::Failure(L"no Holder() present.");
-
+  if (!pObject) {
+    return CJS_Result::Failure(WideString::FromASCII("no Holder() present."));
+  }
   CFXJSE_Engine* pScriptContext = pObject->GetDocument()->GetScriptContext();
   pObject = pScriptContext->GetVariablesThis(pObject);
 
   v8::LocalVector<v8::Value> parameters(info.GetIsolate());
-  for (int i = 0; i < info.Length(); i++)
+  for (int i = 0; i < info.Length(); i++) {
     parameters.push_back(info[i]);
-
+  }
   return pObject->JSObject()->RunMethod(pScriptContext, functionName,
                                         parameters);
 }

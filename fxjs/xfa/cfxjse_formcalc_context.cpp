@@ -347,27 +347,35 @@ void AlternateDateTimeSymbols(WideString* pPattern,
 std::pair<bool, CXFA_LocaleValue::ValueType> PatternStringType(
     ByteStringView bsPattern) {
   WideString wsPattern = WideString::FromUTF8(bsPattern);
-  if (L"datetime" == wsPattern.First(8))
+  if (wsPattern.First(8).EqualsASCII("datetime")) {
     return {true, CXFA_LocaleValue::ValueType::kDateTime};
-  if (L"date" == wsPattern.First(4)) {
+  }
+  if (wsPattern.First(4).EqualsASCII("date")) {
     auto pos = wsPattern.Find(L"time");
-    if (pos.has_value() && pos.value() != 0)
+    if (pos.has_value() && pos.value() != 0) {
       return {true, CXFA_LocaleValue::ValueType::kDateTime};
+    }
     return {true, CXFA_LocaleValue::ValueType::kDate};
   }
-  if (L"time" == wsPattern.First(4))
+  if (wsPattern.First(4).EqualsASCII("time")) {
     return {true, CXFA_LocaleValue::ValueType::kTime};
-  if (L"text" == wsPattern.First(4))
+  }
+  if (wsPattern.First(4).EqualsASCII("text")) {
     return {true, CXFA_LocaleValue::ValueType::kText};
-  if (L"num" == wsPattern.First(3)) {
-    if (L"integer" == wsPattern.Substr(4, 7))
+  }
+  if (wsPattern.First(3).EqualsASCII("num")) {
+    if (wsPattern.Substr(4, 7).EqualsASCII("integer")) {
       return {true, CXFA_LocaleValue::ValueType::kInteger};
-    if (L"decimal" == wsPattern.Substr(4, 7))
+    }
+    if (wsPattern.Substr(4, 7).EqualsASCII("decimal")) {
       return {true, CXFA_LocaleValue::ValueType::kDecimal};
-    if (L"currency" == wsPattern.Substr(4, 8))
+    }
+    if (wsPattern.Substr(4, 8).EqualsASCII("currency")) {
       return {true, CXFA_LocaleValue::ValueType::kFloat};
-    if (L"percent" == wsPattern.Substr(4, 7))
+    }
+    if (wsPattern.Substr(4, 7).EqualsASCII("percent")) {
       return {true, CXFA_LocaleValue::ValueType::kFloat};
+    }
     return {true, CXFA_LocaleValue::ValueType::kFloat};
   }
 
@@ -3481,10 +3489,10 @@ void CFXJSE_FormCalcContext::Format(
           info.GetReturnValue().SetEmptyString();
           return;
         }
-        WideString wsDatePattern(L"date{");
+        auto wsDatePattern = WideString::FromASCII("date{");
         wsDatePattern += wsPattern.First(iTChar.value()) + L"} ";
 
-        WideString wsTimePattern(L"time{");
+        auto wsTimePattern = WideString::FromASCII("time{");
         wsTimePattern +=
             wsPattern.Last(wsPattern.GetLength() - (iTChar.value() + 1)) + L"}";
         wsPattern = wsDatePattern + wsTimePattern;

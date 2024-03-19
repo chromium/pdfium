@@ -2146,7 +2146,7 @@ CJS_Result CJS_Field::get_value_as_string(CJS_Runtime* pRuntime) {
     if (!pFormField->CountControls())
       return CJS_Result::Failure(JSMessage::kBadObjectError);
     return CJS_Result::Success(pRuntime->NewString(
-        pFormField->GetControl(0)->IsChecked() ? L"Yes" : L"Off"));
+        pFormField->GetControl(0)->IsChecked() ? "Yes" : "Off"));
   }
 
   if (pFormField->GetFieldType() == FormFieldType::kRadioButton &&

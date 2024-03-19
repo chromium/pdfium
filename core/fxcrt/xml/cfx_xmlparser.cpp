@@ -509,15 +509,15 @@ void CFX_XMLParser::ProcessTextChar(wchar_t character) {
         if (character != 0)
           current_text_ += character;
       } else {
-        if (csEntity == L"amp") {
+        if (csEntity.EqualsASCII("amp")) {
           current_text_ += L'&';
-        } else if (csEntity == L"lt") {
+        } else if (csEntity.EqualsASCII("lt")) {
           current_text_ += L'<';
-        } else if (csEntity == L"gt") {
+        } else if (csEntity.EqualsASCII("gt")) {
           current_text_ += L'>';
-        } else if (csEntity == L"apos") {
+        } else if (csEntity.EqualsASCII("apos")) {
           current_text_ += L'\'';
-        } else if (csEntity == L"quot") {
+        } else if (csEntity.EqualsASCII("quot")) {
           current_text_ += L'"';
         }
       }

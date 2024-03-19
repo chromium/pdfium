@@ -363,8 +363,9 @@ CJS_Result CJS_Document::mailForm(CJS_Runtime* pRuntime,
 
   CPDFSDK_InteractiveForm* pInteractiveForm = GetSDKInteractiveForm();
   ByteString sTextBuf = pInteractiveForm->ExportFormToFDFTextBuf();
-  if (sTextBuf.IsEmpty())
-    return CJS_Result::Failure(L"Bad FDF format.");
+  if (sTextBuf.IsEmpty()) {
+    return CJS_Result::Failure(WideString::FromASCII("Bad FDF format."));
+  }
 
   v8::LocalVector<v8::Value> newParams = ExpandKeywordParams(
       pRuntime, params, 6, "bUI", "cTo", "cCc", "cBcc", "cSubject", "cMsg");

@@ -193,7 +193,7 @@ class CPDFSDK_FormFillEnvironment final
   void SetCurrentPage(int iCurPage);
 
   // TODO(dsinclair): This should probably change to PDFium?
-  WideString FFI_GetAppName() const { return WideString(L"Acrobat"); }
+  WideString FFI_GetAppName() const { return WideString::FromASCII("Acrobat"); }
 
   void GotoURL(const WideString& wsURL);
   FS_RECTF GetPageViewRect(IPDF_Page* page);
