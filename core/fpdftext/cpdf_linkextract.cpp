@@ -6,6 +6,8 @@
 
 #include "core/fpdftext/cpdf_linkextract.h"
 
+#include <wchar.h>
+
 #include <vector>
 
 #include "core/fpdftext/cpdf_textpage.h"
@@ -181,8 +183,8 @@ std::optional<CPDF_LinkExtract::Link> CPDF_LinkExtract::CheckWebLink(
   static const wchar_t kHttpScheme[] = L"http";
   static const wchar_t kWWWAddrStart[] = L"www.";
 
-  const size_t kHttpSchemeLen = FXSYS_len(kHttpScheme);
-  const size_t kWWWAddrStartLen = FXSYS_len(kWWWAddrStart);
+  const size_t kHttpSchemeLen = wcslen(kHttpScheme);
+  const size_t kWWWAddrStartLen = wcslen(kWWWAddrStart);
 
   WideString str = strBeCheck;
   str.MakeLower();

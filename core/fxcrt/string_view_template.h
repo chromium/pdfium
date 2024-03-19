@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <iterator>
 #include <optional>
+#include <string>
 #include <type_traits>
 
 #include "core/fxcrt/compiler_specific.h"
@@ -48,7 +49,7 @@ class StringViewTemplate {
   // NOLINTNEXTLINE(runtime/explicit)
   StringViewTemplate(const CharType* ptr) noexcept
       : m_Span(reinterpret_cast<const UnsignedType*>(ptr),
-               ptr ? FXSYS_len(ptr) : 0) {}
+               ptr ? std::char_traits<CharType>::length(ptr) : 0) {}
 
   constexpr StringViewTemplate(const CharType* ptr, size_t size) noexcept
       : m_Span(reinterpret_cast<const UnsignedType*>(ptr), size) {}
@@ -79,7 +80,8 @@ class StringViewTemplate {
 
   StringViewTemplate& operator=(const CharType* src) {
     m_Span = pdfium::span<const UnsignedType>(
-        reinterpret_cast<const UnsignedType*>(src), src ? FXSYS_len(src) : 0);
+        reinterpret_cast<const UnsignedType*>(src),
+        src ? std::char_traits<CharType>::length(src) : 0);
     return *this;
   }
 
@@ -196,8 +198,10 @@ class StringViewTemplate {
   UnsignedType Back() const { return !m_Span.empty() ? m_Span.back() : 0; }
 
   std::optional<size_t> Find(CharType ch) const {
-    const auto* found = reinterpret_cast<const UnsignedType*>(FXSYS_chr(
-        reinterpret_cast<const CharType*>(m_Span.data()), ch, m_Span.size()));
+    const auto* found =
+        reinterpret_cast<const UnsignedType*>(std::char_traits<CharType>::find(
+            reinterpret_cast<const CharType*>(m_Span.data()), m_Span.size(),
+            ch));
 
     return found ? std::optional<size_t>(found - m_Span.data()) : std::nullopt;
   }
@@ -252,18 +256,24 @@ class StringViewTemplate {
   }
 
   bool operator<(const StringViewTemplate& that) const {
+    const size_t common_size = std::min(m_Span.size(), that.m_Span.size());
     int result =
-        FXSYS_cmp(reinterpret_cast<const CharType*>(m_Span.data()),
-                  reinterpret_cast<const CharType*>(that.m_Span.data()),
-                  std::min(m_Span.size(), that.m_Span.size()));
+        common_size ? std::char_traits<CharType>::compare(
+                          reinterpret_cast<const CharType*>(m_Span.data()),
+                          reinterpret_cast<const CharType*>(that.m_Span.data()),
+                          common_size)
+                    : 0;
     return result < 0 || (result == 0 && m_Span.size() < that.m_Span.size());
   }
 
   bool operator>(const StringViewTemplate& that) const {
+    const size_t common_size = std::min(m_Span.size(), that.m_Span.size());
     int result =
-        FXSYS_cmp(reinterpret_cast<const CharType*>(m_Span.data()),
-                  reinterpret_cast<const CharType*>(that.m_Span.data()),
-                  std::min(m_Span.size(), that.m_Span.size()));
+        common_size ? std::char_traits<CharType>::compare(
+                          reinterpret_cast<const CharType*>(m_Span.data()),
+                          reinterpret_cast<const CharType*>(that.m_Span.data()),
+                          common_size)
+                    : 0;
     return result > 0 || (result == 0 && m_Span.size() > that.m_Span.size());
   }
 
