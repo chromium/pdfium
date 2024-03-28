@@ -359,10 +359,10 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
     float g[3];
     float b[3];
     for (int i = 0; i < 3; i++) {
-      CPDF_MeshVertex& vertex1 = triangle[i];
-      CPDF_MeshVertex& vertex2 = triangle[(i + 1) % 3];
-      CFX_PointF& position1 = vertex1.position;
-      CFX_PointF& position2 = vertex2.position;
+      const CPDF_MeshVertex& vertex1 = triangle[i];
+      const CPDF_MeshVertex& vertex2 = triangle[(i + 1) % 3];
+      const CFX_PointF& position1 = vertex1.position;
+      const CFX_PointF& position2 = vertex2.position;
       bool bIntersect =
           GetScanlineIntersect(y, position1, position2, &inter_x[nIntersects]);
       if (!bIntersect)
@@ -395,12 +395,14 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
     int start_x = std::clamp(min_x, 0, pBitmap->GetWidth());
     int end_x = std::clamp(max_x, 0, pBitmap->GetWidth());
-    float r_unit = (r[end_index] - r[start_index]) / (max_x - min_x);
-    float g_unit = (g[end_index] - g[start_index]) / (max_x - min_x);
-    float b_unit = (b[end_index] - b[start_index]) / (max_x - min_x);
-    float r_result = r[start_index] + (start_x - min_x) * r_unit;
-    float g_result = g[start_index] + (start_x - min_x) * g_unit;
-    float b_result = b[start_index] + (start_x - min_x) * b_unit;
+    const int range_x = max_x - min_x;
+    float r_unit = (r[end_index] - r[start_index]) / range_x;
+    float g_unit = (g[end_index] - g[start_index]) / range_x;
+    float b_unit = (b[end_index] - b[start_index]) / range_x;
+    const int diff_x = start_x - min_x;
+    float r_result = r[start_index] + diff_x * r_unit;
+    float g_result = g[start_index] + diff_x * g_unit;
+    float b_result = b[start_index] + diff_x * b_unit;
     pdfium::span<uint8_t> dib_span =
         pBitmap->GetWritableScanline(y).subspan(start_x * 4);
 
