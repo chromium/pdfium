@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "build/build_config.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/span.h"
@@ -1007,7 +1008,8 @@ TEST(WideString, GetBuffer) {
   WideString str2(L"cl");
   {
     pdfium::span<wchar_t> buffer = str2.GetBuffer(12);
-    wcscpy(buffer.data() + 2, L"ams");
+    // TODO(tsepez): make safe.
+    UNSAFE_BUFFERS(wcscpy(buffer.data() + 2, L"ams"));
   }
   str2.ReleaseBuffer(str2.GetStringLength());
   EXPECT_EQ(L"clams", str2);
@@ -1242,12 +1244,15 @@ TEST(WideString, FromUTF16BE) {
       {ByteString("\xD8\x3C\xDF\xA8", 4), L"🎨"},
   };
 
-  for (size_t i = 0; i < std::size(utf16be_decode_cases); ++i) {
-    EXPECT_EQ(
-        WideString::FromUTF16BE(utf16be_decode_cases[i].in.unsigned_span()),
-        utf16be_decode_cases[i].out)
-        << " for case number " << i;
-  }
+  // TODO(tsepez): make safe.
+  UNSAFE_BUFFERS({
+    for (size_t i = 0; i < std::size(utf16be_decode_cases); ++i) {
+      EXPECT_EQ(
+          WideString::FromUTF16BE(utf16be_decode_cases[i].in.unsigned_span()),
+          utf16be_decode_cases[i].out)
+          << " for case number " << i;
+    }
+  });
 }
 
 TEST(WideString, FromUTF16LE) {
@@ -1262,12 +1267,15 @@ TEST(WideString, FromUTF16LE) {
       {ByteString("\x3C\xD8\xA8\xDF", 4), L"🎨"},
   };
 
-  for (size_t i = 0; i < std::size(utf16le_decode_cases); ++i) {
-    EXPECT_EQ(
-        WideString::FromUTF16LE(utf16le_decode_cases[i].in.unsigned_span()),
-        utf16le_decode_cases[i].out)
-        << " for case number " << i;
-  }
+  // TODO(tsepez): make safe.
+  UNSAFE_BUFFERS({
+    for (size_t i = 0; i < std::size(utf16le_decode_cases); ++i) {
+      EXPECT_EQ(
+          WideString::FromUTF16LE(utf16le_decode_cases[i].in.unsigned_span()),
+          utf16le_decode_cases[i].out)
+          << " for case number " << i;
+    }
+  });
 }
 
 TEST(WideString, ToUTF16LE) {
@@ -1284,11 +1292,14 @@ TEST(WideString, ToUTF16LE) {
       {L"🎨", ByteString("\x3C\xD8\xA8\xDF\0\0", 6)},
   };
 
-  for (size_t i = 0; i < std::size(utf16le_encode_cases); ++i) {
-    EXPECT_EQ(utf16le_encode_cases[i].bs,
-              utf16le_encode_cases[i].ws.ToUTF16LE())
-        << " for case number " << i;
-  }
+  // TODO(tsepez): make safe.
+  UNSAFE_BUFFERS({
+    for (size_t i = 0; i < std::size(utf16le_encode_cases); ++i) {
+      EXPECT_EQ(utf16le_encode_cases[i].bs,
+                utf16le_encode_cases[i].ws.ToUTF16LE())
+          << " for case number " << i;
+    }
+  });
 }
 
 TEST(WideString, EncodeEntities) {

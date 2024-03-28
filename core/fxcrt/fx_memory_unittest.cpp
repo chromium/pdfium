@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "build/build_config.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 #if defined(PDF_USE_PARTITION_ALLOC)
@@ -103,8 +104,10 @@ TEST(fxcrt, FXMEMDefaultOOM) {
 TEST(fxcrt, AllocZeroesMemory) {
   uint8_t* ptr = FX_Alloc(uint8_t, 32);
   ASSERT_TRUE(ptr);
-  for (size_t i = 0; i < 32; ++i)
-    EXPECT_EQ(0, ptr[i]);
+  for (size_t i = 0; i < 32; ++i) {
+    // TODO(tsepez): make safe.
+    EXPECT_EQ(0, UNSAFE_BUFFERS(ptr[i]));
+  }
   FX_Free(ptr);
 }
 

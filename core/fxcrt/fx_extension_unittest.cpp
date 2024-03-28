@@ -10,6 +10,7 @@
 #include <iterator>
 #include <limits>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(fxcrt, FXSYS_IsLowerASCII) {
@@ -199,22 +200,25 @@ TEST(fxcrt, FXSYS_SafeOps) {
   const float fNan = std::numeric_limits<float>::quiet_NaN();
   const float ascending[] = {fMin, 1.0f, 2.0f, fMax, fInf, fNan};
 
-  for (size_t i = 0; i < std::size(ascending); ++i) {
-    for (size_t j = 0; j < std::size(ascending); ++j) {
-      if (i == j) {
-        EXPECT_TRUE(FXSYS_SafeEQ(ascending[i], ascending[j]))
-            << " at " << i << " " << j;
-      } else {
-        EXPECT_FALSE(FXSYS_SafeEQ(ascending[i], ascending[j]))
-            << " at " << i << " " << j;
-      }
-      if (i < j) {
-        EXPECT_TRUE(FXSYS_SafeLT(ascending[i], ascending[j]))
-            << " at " << i << " " << j;
-      } else {
-        EXPECT_FALSE(FXSYS_SafeLT(ascending[i], ascending[j]))
-            << " at " << i << " " << j;
+  // TODO(tsepez): make safe.
+  UNSAFE_BUFFERS({
+    for (size_t i = 0; i < std::size(ascending); ++i) {
+      for (size_t j = 0; j < std::size(ascending); ++j) {
+        if (i == j) {
+          EXPECT_TRUE(FXSYS_SafeEQ(ascending[i], ascending[j]))
+              << " at " << i << " " << j;
+        } else {
+          EXPECT_FALSE(FXSYS_SafeEQ(ascending[i], ascending[j]))
+              << " at " << i << " " << j;
+        }
+        if (i < j) {
+          EXPECT_TRUE(FXSYS_SafeLT(ascending[i], ascending[j]))
+              << " at " << i << " " << j;
+        } else {
+          EXPECT_FALSE(FXSYS_SafeLT(ascending[i], ascending[j]))
+              << " at " << i << " " << j;
+        }
       }
     }
-  }
+  });
 }

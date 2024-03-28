@@ -6,16 +6,21 @@
 
 #include <limits>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
 
 uint32_t ReferenceGetBits32(const uint8_t* pData, int bitpos, int nbits) {
   int result = 0;
-  for (int i = 0; i < nbits; i++) {
-    if (pData[(bitpos + i) / 8] & (1 << (7 - (bitpos + i) % 8)))
-      result |= 1 << (nbits - i - 1);
-  }
+  // TODO(tsepez): make safe.
+  UNSAFE_BUFFERS({
+    for (int i = 0; i < nbits; i++) {
+      if (pData[(bitpos + i) / 8] & (1 << (7 - (bitpos + i) % 8))) {
+        result |= 1 << (nbits - i - 1);
+      }
+    }
+  });
   return result;
 }
 

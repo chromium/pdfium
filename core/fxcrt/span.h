@@ -269,7 +269,8 @@ class TRIVIAL_ABI GSL_POINTER span {
 
   const span last(size_t count) const {
     CHECK(count <= size_);
-    return span(static_cast<T*>(data_) + (size_ - count), count);
+    return UNSAFE_BUFFERS(
+        span(static_cast<T*>(data_) + (size_ - count), count));
   }
 
   const span subspan(size_t pos, size_t count = dynamic_extent) const {
