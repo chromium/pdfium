@@ -28,6 +28,7 @@
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/numerics/clamped_math.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -395,11 +396,11 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
     int start_x = std::clamp(min_x, 0, pBitmap->GetWidth());
     int end_x = std::clamp(max_x, 0, pBitmap->GetWidth());
-    const int range_x = max_x - min_x;
+    const int range_x = pdfium::ClampSub(max_x, min_x);
     float r_unit = (r[end_index] - r[start_index]) / range_x;
     float g_unit = (g[end_index] - g[start_index]) / range_x;
     float b_unit = (b[end_index] - b[start_index]) / range_x;
-    const int diff_x = start_x - min_x;
+    const int diff_x = pdfium::ClampSub(start_x, min_x);
     float r_result = r[start_index] + diff_x * r_unit;
     float g_result = g[start_index] + diff_x * g_unit;
     float b_result = b[start_index] + diff_x * b_unit;
