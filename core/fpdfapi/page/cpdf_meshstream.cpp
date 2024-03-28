@@ -177,12 +177,12 @@ bool CPDF_MeshStream::CanReadColor() const {
   return m_BitStream->BitsRemaining() / m_nComponentBits >= m_nComponents;
 }
 
-uint32_t CPDF_MeshStream::ReadFlag() {
+uint32_t CPDF_MeshStream::ReadFlag() const {
   DCHECK(ShouldCheckBitsPerFlag(m_type));
   return m_BitStream->GetBits(m_nFlagBits) & 0x03;
 }
 
-CFX_PointF CPDF_MeshStream::ReadCoords() {
+CFX_PointF CPDF_MeshStream::ReadCoords() const {
   DCHECK(ShouldCheckBPC(m_type));
 
   CFX_PointF pos;
@@ -200,7 +200,7 @@ CFX_PointF CPDF_MeshStream::ReadCoords() {
   return pos;
 }
 
-std::tuple<float, float, float> CPDF_MeshStream::ReadColor() {
+std::array<float, 3> CPDF_MeshStream::ReadColor() const {
   DCHECK(ShouldCheckBPC(m_type));
 
   float color_value[kMaxComponents];
@@ -210,12 +210,10 @@ std::tuple<float, float, float> CPDF_MeshStream::ReadColor() {
                                          m_ComponentMax;
   }
 
-  float r = 0.0;
-  float g = 0.0;
-  float b = 0.0;
+  std::array<float, 3> rgb = {};
   if (m_funcs.empty()) {
-    m_pCS->GetRGB(color_value, &r, &g, &b);
-    return std::tuple<float, float, float>(r, g, b);
+    m_pCS->GetRGB(color_value, &rgb[0], &rgb[1], &rgb[2]);
+    return rgb;
   }
 
   float result[kMaxComponents] = {};
@@ -225,8 +223,8 @@ std::tuple<float, float, float> CPDF_MeshStream::ReadColor() {
     }
   }
 
-  m_pCS->GetRGB(result, &r, &g, &b);
-  return std::tuple<float, float, float>(r, g, b);
+  m_pCS->GetRGB(result, &rgb[0], &rgb[1], &rgb[2]);
+  return rgb;
 }
 
 bool CPDF_MeshStream::ReadVertex(const CFX_Matrix& pObject2Bitmap,
@@ -242,7 +240,7 @@ bool CPDF_MeshStream::ReadVertex(const CFX_Matrix& pObject2Bitmap,
 
   if (!CanReadColor())
     return false;
-  std::tie(vertex->r, vertex->g, vertex->b) = ReadColor();
+  vertex->rgb = ReadColor();
   m_BitStream->ByteAlign();
   return true;
 }
@@ -261,7 +259,7 @@ std::vector<CPDF_MeshVertex> CPDF_MeshStream::ReadVertexRow(
     if (!CanReadColor())
       return std::vector<CPDF_MeshVertex>();
 
-    std::tie(vertex.r, vertex.g, vertex.b) = ReadColor();
+    vertex.rgb = ReadColor();
     m_BitStream->ByteAlign();
   }
   return vertices;

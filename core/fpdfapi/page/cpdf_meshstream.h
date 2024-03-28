@@ -9,8 +9,8 @@
 
 #include <stdint.h>
 
+#include <array>
 #include <memory>
-#include <tuple>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_shadingpattern.h"
@@ -25,9 +25,7 @@ class CPDF_MeshVertex {
   ~CPDF_MeshVertex();
 
   CFX_PointF position;
-  float r = 0.0f;
-  float g = 0.0f;
-  float b = 0.0f;
+  std::array<float, 3> rgb = {};
 };
 
 class CFX_BitStream;
@@ -53,9 +51,9 @@ class CPDF_MeshStream {
   bool CanReadCoords() const;
   bool CanReadColor() const;
 
-  uint32_t ReadFlag();
-  CFX_PointF ReadCoords();
-  std::tuple<float, float, float> ReadColor();
+  uint32_t ReadFlag() const;
+  CFX_PointF ReadCoords() const;
+  std::array<float, 3> ReadColor() const;
 
   bool ReadVertex(const CFX_Matrix& pObject2Bitmap,
                   CPDF_MeshVertex* vertex,
