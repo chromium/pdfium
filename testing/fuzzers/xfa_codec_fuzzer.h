@@ -43,8 +43,10 @@ class XFACodecFuzzer {
     }
 
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    bitmap->Create(decoder->GetWidth(), decoder->GetHeight(),
-                   FXDIB_Format::kArgb);
+    if (!bitmap->Create(decoder->GetWidth(), decoder->GetHeight(),
+                        FXDIB_Format::kArgb)) {
+      return 0;
+    }
 
     size_t frames;
     std::tie(status, frames) = decoder->GetFrames();

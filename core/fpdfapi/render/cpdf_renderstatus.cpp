@@ -1310,8 +1310,8 @@ void CPDF_RenderStatus::CompositeDIBitmap(
   }
 
   auto new_backdrop = pdfium::MakeRetain<CFX_DIBitmap>();
-  new_backdrop->Create(backdrop->GetWidth(), backdrop->GetHeight(),
-                       FXDIB_Format::kRgb32);
+  CHECK(new_backdrop->Create(backdrop->GetWidth(), backdrop->GetHeight(),
+                             FXDIB_Format::kRgb32));
   new_backdrop->Clear(0xffffffff);
   new_backdrop->CompositeBitmap(0, 0, new_backdrop->GetWidth(),
                                 new_backdrop->GetHeight(), std::move(backdrop),

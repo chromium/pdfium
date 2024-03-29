@@ -521,10 +521,13 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* pFont,
   int dib_width = bitmap.width;
   auto pGlyphBitmap =
       std::make_unique<CFX_GlyphBitmap>(glyph->bitmap_left, glyph->bitmap_top);
-  pGlyphBitmap->GetBitmap()->Create(dib_width, bitmap.rows,
-                                    anti_alias == FT_RENDER_MODE_MONO
-                                        ? FXDIB_Format::k1bppMask
-                                        : FXDIB_Format::k8bppMask);
+  const FXDIB_Format format = anti_alias == FT_RENDER_MODE_MONO
+                                  ? FXDIB_Format::k1bppMask
+                                  : FXDIB_Format::k8bppMask;
+  if (!pGlyphBitmap->GetBitmap()->Create(dib_width, bitmap.rows, format)) {
+    return nullptr;
+  }
+
   int dest_pitch = pGlyphBitmap->GetBitmap()->GetPitch();
   uint8_t* pDestBuf = pGlyphBitmap->GetBitmap()->GetWritableBuffer().data();
   const uint8_t* pSrcBuf = bitmap.buffer;

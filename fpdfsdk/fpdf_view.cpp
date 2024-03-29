@@ -608,9 +608,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   }
 
   RetainPtr<CFX_DIBitmap> pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  // Create will probably work fine even if it fails here: we will just attach
-  // a zero-sized bitmap to `device`.
-  pBitmap->Create(size_x, size_y, FXDIB_Format::kArgb);
+  CHECK(pBitmap->Create(size_x, size_y, FXDIB_Format::kArgb));
   if (!CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     // Not needed by Skia. Call it for AGG to preserve pre-existing behavior.
     pBitmap->Clear(0x00ffffff);
