@@ -18,6 +18,9 @@ default_args = {
   # PDFium is currently incompatible with the V8 Sandbox.
   # See https://crbug.com/v8/13014 for details.
   v8_enable_sandbox = false
+
+  # PDFium has its own unsafe-buffers enforcement directories.
+  clang_unsafe_buffers_paths = "//pdfium_unsafe_buffers_paths.txt"
 }
 
 no_check_targets = [
