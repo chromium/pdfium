@@ -371,11 +371,11 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
       float y_dist = (y - position1.y) / (position2.y - position1.y);
       r[nIntersects] =
-          vertex1.rgb[0] + ((vertex2.rgb[0] - vertex1.rgb[0]) * y_dist);
-      g[nIntersects] =
-          vertex1.rgb[1] + ((vertex2.rgb[1] - vertex1.rgb[1]) * y_dist);
+          vertex1.rgb.red + ((vertex2.rgb.red - vertex1.rgb.red) * y_dist);
+      g[nIntersects] = vertex1.rgb.green +
+                       ((vertex2.rgb.green - vertex1.rgb.green) * y_dist);
       b[nIntersects] =
-          vertex1.rgb[2] + ((vertex2.rgb[2] - vertex1.rgb[2]) * y_dist);
+          vertex1.rgb.blue + ((vertex2.rgb.blue - vertex1.rgb.blue) * y_dist);
       nIntersects++;
     }
     if (nIntersects != 2)
@@ -848,10 +848,10 @@ void DrawCoonPatchMeshes(
       if (!stream.CanReadColor())
         break;
 
-      std::array<float, 3> rgb = stream.ReadColor();
-      patch.patch_colors[i].comp[0] = static_cast<int32_t>(rgb[0] * 255);
-      patch.patch_colors[i].comp[1] = static_cast<int32_t>(rgb[1] * 255);
-      patch.patch_colors[i].comp[2] = static_cast<int32_t>(rgb[2] * 255);
+      FX_RGB<float> rgb = stream.ReadColor();
+      patch.patch_colors[i].comp[0] = static_cast<int32_t>(rgb.red * 255);
+      patch.patch_colors[i].comp[1] = static_cast<int32_t>(rgb.green * 255);
+      patch.patch_colors[i].comp[2] = static_cast<int32_t>(rgb.blue * 255);
     }
 
     CFX_FloatRect bbox =
