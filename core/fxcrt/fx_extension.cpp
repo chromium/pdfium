@@ -6,12 +6,12 @@
 
 #include "core/fxcrt/fx_extension.h"
 
-#include <algorithm>
-#include <limits>
+#include <wchar.h>
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/utf16.h"
+#include "core/fxcrt/widestring.h"
 
 namespace {
 
@@ -29,98 +29,16 @@ struct tm* (*g_localtime_func)(const time_t*) = DefaultLocaltimeFunction;
 }  // namespace
 
 float FXSYS_wcstof(const wchar_t* pwsStr, size_t nLength, size_t* pUsedLen) {
-  // SAFETY: TODO(tsepez): This is an enormous unsafe block, pretty hard to
-  // explain its soundness.
-  UNSAFE_BUFFERS({
-    DCHECK(pwsStr);
-    if (nLength == 0) {
-      return 0.0f;
-    }
-
-    size_t nUsedLen = 0;
-    bool bNegtive = false;
-    switch (pwsStr[nUsedLen]) {
-      case '-':
-        bNegtive = true;
-        [[fallthrough]];
-      case '+':
-        nUsedLen++;
-        break;
-    }
-
-    double dValue = 0.0f;
-    while (nUsedLen < nLength) {
-      wchar_t wch = pwsStr[nUsedLen];
-      if (!FXSYS_IsDecimalDigit(wch))
-        break;
-
-      dValue = dValue * 10.0f + (wch - L'0');
-      nUsedLen++;
-    }
-
-    if (nUsedLen < nLength && pwsStr[nUsedLen] == L'.') {
-      float fPrecise = 0.1f;
-      while (++nUsedLen < nLength) {
-        wchar_t wch = pwsStr[nUsedLen];
-        if (!FXSYS_IsDecimalDigit(wch)) {
-          break;
-        }
-
-        dValue += (wch - L'0') * fPrecise;
-        fPrecise *= 0.1f;
-      }
-    }
-
-    if (nUsedLen < nLength &&
-        (pwsStr[nUsedLen] == 'e' || pwsStr[nUsedLen] == 'E')) {
-      ++nUsedLen;
-
-      bool negative_exponent = false;
-      if (nUsedLen < nLength &&
-          (pwsStr[nUsedLen] == '-' || pwsStr[nUsedLen] == '+')) {
-        negative_exponent = pwsStr[nUsedLen] == '-';
-        ++nUsedLen;
-      }
-
-      int32_t exp_value = 0;
-      while (nUsedLen < nLength) {
-        wchar_t wch = pwsStr[nUsedLen];
-        if (!FXSYS_IsDecimalDigit(wch)) {
-          break;
-        }
-
-        exp_value = exp_value * 10.0f + (wch - L'0');
-        // Exponent is outside the valid range, fail.
-        if ((negative_exponent &&
-             -exp_value < std::numeric_limits<float>::min_exponent10) ||
-            (!negative_exponent &&
-             exp_value > std::numeric_limits<float>::max_exponent10)) {
-          if (pUsedLen) {
-            *pUsedLen = 0;
-          }
-          return 0.0f;
-        }
-
-        ++nUsedLen;
-      }
-
-      for (size_t i = exp_value; i > 0; --i) {
-        if (exp_value > 0) {
-          if (negative_exponent) {
-            dValue /= 10;
-          } else {
-            dValue *= 10;
-          }
-        }
-      }
-    }
-
-    if (pUsedLen) {
-      *pUsedLen = nUsedLen;
-    }
-
-    return static_cast<float>(bNegtive ? -dValue : dValue);
-  });
+  WideString copied(pwsStr, nLength);
+  wchar_t* endptr = nullptr;
+  float result = wcstof(copied.c_str(), &endptr);
+  if (result != result) {
+    result = 0.0f;  // Convert NAN to 0.0f;
+  }
+  if (pUsedLen) {
+    *pUsedLen = endptr - copied.c_str();
+  }
+  return result;
 }
 
 wchar_t* FXSYS_wcsncpy(wchar_t* dstStr, const wchar_t* srcStr, size_t count) {
