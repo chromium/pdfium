@@ -24,17 +24,11 @@ using fxge::Blend;
 
 namespace {
 
-struct RGB {
-  int red;
-  int green;
-  int blue;
-};
-
-int Lum(RGB color) {
+int Lum(FX_RGB<int> color) {
   return (color.red * 30 + color.green * 59 + color.blue * 11) / 100;
 }
 
-RGB ClipColor(RGB color) {
+FX_RGB<int> ClipColor(FX_RGB<int> color) {
   int l = Lum(color);
   int n = std::min(color.red, std::min(color.green, color.blue));
   int x = std::max(color.red, std::max(color.green, color.blue));
@@ -51,7 +45,7 @@ RGB ClipColor(RGB color) {
   return color;
 }
 
-RGB SetLum(RGB color, int l) {
+FX_RGB<int> SetLum(FX_RGB<int> color, int l) {
   int d = l - Lum(color);
   color.red += d;
   color.green += d;
@@ -59,16 +53,16 @@ RGB SetLum(RGB color, int l) {
   return ClipColor(color);
 }
 
-int Sat(RGB color) {
+int Sat(FX_RGB<int> color) {
   return std::max(color.red, std::max(color.green, color.blue)) -
          std::min(color.red, std::min(color.green, color.blue));
 }
 
-RGB SetSat(RGB color, int s) {
+FX_RGB<int> SetSat(FX_RGB<int> color, int s) {
   int min = std::min(color.red, std::min(color.green, color.blue));
   int max = std::max(color.red, std::max(color.green, color.blue));
   if (min == max)
-    return {0, 0, 0};
+    return {};
 
   color.red = (color.red - min) * s / (max - min);
   color.green = (color.green - min) * s / (max - min);
@@ -80,15 +74,11 @@ void RGB_Blend(BlendMode blend_mode,
                const uint8_t* src_scan,
                const uint8_t* dest_scan,
                int results[3]) {
-  RGB result = {0, 0, 0};
-  RGB src;
-  src.red = src_scan[2];
-  src.green = src_scan[1];
-  src.blue = src_scan[0];
-  RGB back;
-  back.red = dest_scan[2];
-  back.green = dest_scan[1];
-  back.blue = dest_scan[0];
+  FX_RGB<int> result = {};
+  FX_RGB<int> src = {
+      .red = src_scan[2], .green = src_scan[1], .blue = src_scan[0]};
+  FX_RGB<int> back = {
+      .red = dest_scan[2], .green = dest_scan[1], .blue = dest_scan[0]};
   switch (blend_mode) {
     case BlendMode::kHue:
       result = SetLum(SetSat(src, Sat(back)), Lum(back));

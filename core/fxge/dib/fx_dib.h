@@ -37,6 +37,13 @@ using FX_CMYK = uint32_t;
 // parts of the codebase use 0xFFFFFFFF as a sentinel value to indicate error.
 using FX_COLORREF = uint32_t;
 
+template <typename T>
+struct FX_RGB {
+  T red;
+  T green;
+  T blue;
+};
+
 struct FXDIB_ResampleOptions {
   FXDIB_ResampleOptions();
 
