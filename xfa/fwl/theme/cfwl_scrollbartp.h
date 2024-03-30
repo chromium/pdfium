@@ -7,6 +7,7 @@
 #ifndef XFA_FWL_THEME_CFWL_SCROLLBARTP_H_
 #define XFA_FWL_THEME_CFWL_SCROLLBARTP_H_
 
+#include <array>
 #include <memory>
 
 #include "fxjs/gc/heap.h"
@@ -24,8 +25,8 @@ class CFWL_ScrollBarTP final : public CFWL_WidgetTP {
   struct SBThemeData {
     FX_ARGB clrTrackBKStart;
     FX_ARGB clrTrackBKEnd;
-    FX_ARGB clrBtnBK[4][2];
-    FX_ARGB clrBtnBorder[4];
+    std::array<FX_ARGB, 4> clrBtnBK;
+    std::array<FX_ARGB, 4> clrBtnBorder;
   };
 
   CFWL_ScrollBarTP();
