@@ -32,25 +32,32 @@ FX_SAFE_UINT32 CalculatePitch32Safely(int bpp, int width) {
 
 }  // namespace
 
-uint32_t CalculatePitch8OrDie(uint32_t bpc, uint32_t components, int width) {
-  return CalculatePitch8Safely(bpc, components, width).ValueOrDie();
+uint32_t CalculatePitch8OrDie(uint32_t bits_per_component,
+                              uint32_t components_per_pixel,
+                              int width_in_pixels) {
+  return CalculatePitch8Safely(bits_per_component, components_per_pixel,
+                               width_in_pixels)
+      .ValueOrDie();
 }
 
-uint32_t CalculatePitch32OrDie(int bpp, int width) {
-  return CalculatePitch32Safely(bpp, width).ValueOrDie();
+uint32_t CalculatePitch32OrDie(int bits_per_pixel, int width_in_pixels) {
+  return CalculatePitch32Safely(bits_per_pixel, width_in_pixels).ValueOrDie();
 }
 
-std::optional<uint32_t> CalculatePitch8(uint32_t bpc,
+std::optional<uint32_t> CalculatePitch8(uint32_t bits_per_component,
                                         uint32_t components,
-                                        int width) {
-  FX_SAFE_UINT32 pitch = CalculatePitch8Safely(bpc, components, width);
+                                        int width_in_pixels) {
+  FX_SAFE_UINT32 pitch =
+      CalculatePitch8Safely(bits_per_component, components, width_in_pixels);
   if (!pitch.IsValid())
     return std::nullopt;
   return pitch.ValueOrDie();
 }
 
-std::optional<uint32_t> CalculatePitch32(int bpp, int width) {
-  FX_SAFE_UINT32 pitch = CalculatePitch32Safely(bpp, width);
+std::optional<uint32_t> CalculatePitch32(int bits_per_pixel,
+                                         int width_in_pixels) {
+  FX_SAFE_UINT32 pitch =
+      CalculatePitch32Safely(bits_per_pixel, width_in_pixels);
   if (!pitch.IsValid())
     return std::nullopt;
   return pitch.ValueOrDie();

@@ -11,12 +11,24 @@
 
 namespace fxge {
 
-uint32_t CalculatePitch8OrDie(uint32_t bpc, uint32_t components, int width);
-uint32_t CalculatePitch32OrDie(int bpp, int width);
-std::optional<uint32_t> CalculatePitch8(uint32_t bpc,
-                                        uint32_t components,
-                                        int width);
-std::optional<uint32_t> CalculatePitch32(int bpp, int width);
+// Returns the bytes between successive rows of an image where rows are aligned
+// on a byte boundary and there is no additional padding beyond that, or nullopt
+// if the result can not fit in a uint32_t.
+std::optional<uint32_t> CalculatePitch8(uint32_t bits_per_component,
+                                        uint32_t components_per_pixel,
+                                        int width_in_pixels);
+
+// Returns the bytes between successive rows of an image where rows are aligned
+// on a 32-bit word boundary and there is no additional padding beyond that, or
+// nullopt if the result can not fit in a uint32_t.
+std::optional<uint32_t> CalculatePitch32(int bits_per_pixel,
+                                         int width_in_pixels);
+
+// Same as above, but terminate if the result can not fit in a uint32_t.
+uint32_t CalculatePitch8OrDie(uint32_t bits_per_component,
+                              uint32_t components_per_pixel,
+                              int width_in_pixels);
+uint32_t CalculatePitch32OrDie(int bits_per_pixel, int width_in_pixels);
 
 }  // namespace fxge
 
