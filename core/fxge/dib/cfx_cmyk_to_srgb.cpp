@@ -7,7 +7,6 @@
 #include "core/fxge/dib/cfx_cmyk_to_srgb.h"
 
 #include <algorithm>
-#include <tuple>
 
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_system.h"
@@ -1662,10 +1661,7 @@ constexpr uint8_t kCMYK[81 * 81][3] = {
 
 }  // namespace
 
-std::tuple<uint8_t, uint8_t, uint8_t> AdobeCMYK_to_sRGB1(uint8_t c,
-                                                         uint8_t m,
-                                                         uint8_t y,
-                                                         uint8_t k) {
+FX_RGB<uint8_t> AdobeCMYK_to_sRGB1(uint8_t c, uint8_t m, uint8_t y, uint8_t k) {
   int fix_c = c << 8;
   int fix_m = m << 8;
   int fix_y = y << 8;
@@ -1715,17 +1711,15 @@ std::tuple<uint8_t, uint8_t, uint8_t> AdobeCMYK_to_sRGB1(uint8_t c,
   fix_g += (kCMYK[pos][1] - kCMYK[k1_pos][1]) * k_rate / 32;
   fix_b += (kCMYK[pos][2] - kCMYK[k1_pos][2]) * k_rate / 32;
 
-  fix_r = std::max(fix_r, 0);
-  fix_g = std::max(fix_g, 0);
-  fix_b = std::max(fix_b, 0);
+  fix_r = std::max(fix_r, 0) >> 8;
+  fix_g = std::max(fix_g, 0) >> 8;
+  fix_b = std::max(fix_b, 0) >> 8;
 
-  return std::make_tuple(fix_r >> 8, fix_g >> 8, fix_b >> 8);
+  return {static_cast<uint8_t>(fix_r), static_cast<uint8_t>(fix_g),
+          static_cast<uint8_t>(fix_b)};
 }
 
-std::tuple<float, float, float> AdobeCMYK_to_sRGB(float c,
-                                                  float m,
-                                                  float y,
-                                                  float k) {
+FX_RGB<float> AdobeCMYK_to_sRGB(float c, float m, float y, float k) {
   // Convert to uint8_t with round-to-nearest. Avoid using FXSYS_roundf because
   // it is incredibly expensive with VC++ (tested on VC++ 2015) because round()
   // is very expensive.
@@ -1735,24 +1729,26 @@ std::tuple<float, float, float> AdobeCMYK_to_sRGB(float c,
   // That value is close to the cusp but zero is the correct answer, and
   // getting the same answer as before is desirable.
   // All floats from 0.0 to 1.0 were tested and now give the same results.
-  const float rounding_offset = 0.49999997f;
-  uint8_t c1 = static_cast<int>(c * 255.f + rounding_offset);
-  uint8_t m1 = static_cast<int>(m * 255.f + rounding_offset);
-  uint8_t y1 = static_cast<int>(y * 255.f + rounding_offset);
-  uint8_t k1 = static_cast<int>(k * 255.f + rounding_offset);
+  constexpr float kRoundingOffset = 0.49999997f;
+  uint8_t c1 = static_cast<int>(c * 255.f + kRoundingOffset);
+  uint8_t m1 = static_cast<int>(m * 255.f + kRoundingOffset);
+  uint8_t y1 = static_cast<int>(y * 255.f + kRoundingOffset);
+  uint8_t k1 = static_cast<int>(k * 255.f + kRoundingOffset);
 
   DCHECK_EQ(c1, FXSYS_roundf(c * 255));
   DCHECK_EQ(m1, FXSYS_roundf(m * 255));
   DCHECK_EQ(y1, FXSYS_roundf(y * 255));
   DCHECK_EQ(k1, FXSYS_roundf(k * 255));
 
-  uint8_t r;
-  uint8_t g;
-  uint8_t b;
-  std::tie(r, g, b) = AdobeCMYK_to_sRGB1(c1, m1, y1, k1);
+  FX_RGB<uint8_t> int_results = AdobeCMYK_to_sRGB1(c1, m1, y1, k1);
   // Multiply by a constant rather than dividing because division is much
   // more expensive.
-  return std::make_tuple(r * (1.0f / 255), g * (1.0f / 255), b * (1.0f / 255));
+  constexpr float kToFloat = 1.0f / 255.0f;
+  return {
+      int_results.red * kToFloat,
+      int_results.green * kToFloat,
+      int_results.blue * kToFloat,
+  };
 }
 
 }  // namespace fxge

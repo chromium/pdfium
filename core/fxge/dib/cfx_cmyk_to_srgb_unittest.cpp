@@ -19,14 +19,12 @@ TEST(fxge, CMYK_Rounding) {
   // range.
   constexpr float kStartValue = 0.001f;
   constexpr float kEndValue = 0.003f;
-  float R = 0.0f;
-  float G = 0.0f;
-  float B = 0.0f;
+  FX_RGB<float> rgb;
   // Iterate through floats by incrementing the representation, as discussed in
   // https://randomascii.wordpress.com/2012/01/23/stupid-float-tricks-2/
   for (Float_t f = kStartValue; f.f < kEndValue; f.i++) {
-    std::tie(R, G, B) = AdobeCMYK_to_sRGB(f.f, f.f, f.f, f.f);
+    rgb = AdobeCMYK_to_sRGB(f.f, f.f, f.f, f.f);
   }
   // Check various other 'special' numbers.
-  std::tie(R, G, B) = AdobeCMYK_to_sRGB(0.0f, 0.25f, 0.5f, 1.0f);
+  rgb = AdobeCMYK_to_sRGB(0.0f, 0.25f, 0.5f, 1.0f);
 }

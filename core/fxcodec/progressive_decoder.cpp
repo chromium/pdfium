@@ -1353,7 +1353,8 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
           src_line += 4;
         }
       }
-    } break;
+      break;
+    }
     case FXDIB_Format::kRgb:
     case FXDIB_Format::kRgb32: {
       int32_t desBpp =
@@ -1373,7 +1374,8 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
           src_line += 4;
         }
       }
-    } break;
+      break;
+    }
     default:
       break;
   }
@@ -1596,7 +1598,8 @@ void ProgressiveDecoder::GetTransMethod(FXDIB_Format dest_format,
         default:
           m_TransMethod = -1;
       }
-    } break;
+      break;
+    }
     case FXDIB_Format::k8bppMask:
     case FXDIB_Format::k8bppRgb: {
       switch (src_format) {
@@ -1621,7 +1624,8 @@ void ProgressiveDecoder::GetTransMethod(FXDIB_Format dest_format,
         default:
           m_TransMethod = -1;
       }
-    } break;
+      break;
+    }
     case FXDIB_Format::kRgb: {
       switch (src_format) {
         case FXCodec_1bppGray:
@@ -1645,7 +1649,8 @@ void ProgressiveDecoder::GetTransMethod(FXDIB_Format dest_format,
         default:
           m_TransMethod = -1;
       }
-    } break;
+      break;
+    }
     case FXDIB_Format::kRgb32:
     case FXDIB_Format::kArgb: {
       switch (src_format) {
@@ -1676,7 +1681,8 @@ void ProgressiveDecoder::GetTransMethod(FXDIB_Format dest_format,
         default:
           m_TransMethod = -1;
       }
-    } break;
+      break;
+    }
     default:
       m_TransMethod = -1;
   }
@@ -1713,7 +1719,8 @@ void ProgressiveDecoder::ResampleScanline(
           dest_g += pixel_weight * src_scan[j];
         }
         *dest_scan++ = CStretchEngine::PixelFromFixed(dest_g);
-      } break;
+        break;
+      }
       case 3: {
         uint32_t dest_r = 0;
         uint32_t dest_g = 0;
@@ -1731,7 +1738,8 @@ void ProgressiveDecoder::ResampleScanline(
             FXRGB2GRAY(CStretchEngine::PixelFromFixed(dest_r),
                        CStretchEngine::PixelFromFixed(dest_g),
                        CStretchEngine::PixelFromFixed(dest_b)));
-      } break;
+        break;
+      }
       case 4: {
         uint32_t dest_b = 0;
         uint32_t dest_g = 0;
@@ -1749,31 +1757,30 @@ void ProgressiveDecoder::ResampleScanline(
             FXRGB2GRAY(CStretchEngine::PixelFromFixed(dest_r),
                        CStretchEngine::PixelFromFixed(dest_g),
                        CStretchEngine::PixelFromFixed(dest_b)));
-      } break;
+        break;
+      }
       case 5: {
-        uint32_t dest_b = 0;
-        uint32_t dest_g = 0;
         uint32_t dest_r = 0;
+        uint32_t dest_g = 0;
+        uint32_t dest_b = 0;
         for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd;
              j++) {
           uint32_t pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
           const uint8_t* src_pixel = src_scan + j * src_bytes_per_pixel;
-          uint8_t src_b = 0;
-          uint8_t src_g = 0;
-          uint8_t src_r = 0;
-          std::tie(src_r, src_g, src_b) =
+          FX_RGB<uint8_t> src_rgb =
               AdobeCMYK_to_sRGB1(255 - src_pixel[0], 255 - src_pixel[1],
                                  255 - src_pixel[2], 255 - src_pixel[3]);
-          dest_b += pixel_weight * src_b;
-          dest_g += pixel_weight * src_g;
-          dest_r += pixel_weight * src_r;
+          dest_r += pixel_weight * src_rgb.red;
+          dest_g += pixel_weight * src_rgb.green;
+          dest_b += pixel_weight * src_rgb.blue;
         }
         *dest_scan++ = static_cast<uint8_t>(
             FXRGB2GRAY(CStretchEngine::PixelFromFixed(dest_r),
                        CStretchEngine::PixelFromFixed(dest_g),
                        CStretchEngine::PixelFromFixed(dest_b)));
-      } break;
+        break;
+      }
       case 6:
         return;
       case 7: {
@@ -1786,7 +1793,8 @@ void ProgressiveDecoder::ResampleScanline(
         }
         memset(dest_scan, CStretchEngine::PixelFromFixed(dest_g), 3);
         dest_scan += dest_bytes_per_pixel;
-      } break;
+        break;
+      }
       case 8: {
         uint32_t dest_r = 0;
         uint32_t dest_g = 0;
@@ -1804,7 +1812,8 @@ void ProgressiveDecoder::ResampleScanline(
         *dest_scan++ = CStretchEngine::PixelFromFixed(dest_g);
         *dest_scan++ = CStretchEngine::PixelFromFixed(dest_r);
         dest_scan += dest_bytes_per_pixel - 3;
-      } break;
+        break;
+      }
       case 12: {
 #ifdef PDF_ENABLE_XFA_BMP
         if (m_pBmpContext) {
@@ -1845,7 +1854,8 @@ void ProgressiveDecoder::ResampleScanline(
         *dest_scan++ = CStretchEngine::PixelFromFixed(dest_g);
         *dest_scan++ = CStretchEngine::PixelFromFixed(dest_r);
         *dest_scan++ = CStretchEngine::PixelFromFixed(dest_a);
-      } break;
+        break;
+      }
       case 9: {
         uint32_t dest_b = 0;
         uint32_t dest_g = 0;
@@ -1863,7 +1873,8 @@ void ProgressiveDecoder::ResampleScanline(
         *dest_scan++ = CStretchEngine::PixelFromFixed(dest_g);
         *dest_scan++ = CStretchEngine::PixelFromFixed(dest_r);
         dest_scan += dest_bytes_per_pixel - 3;
-      } break;
+        break;
+      }
       case 10: {
         uint32_t dest_b = 0;
         uint32_t dest_g = 0;
@@ -1873,21 +1884,19 @@ void ProgressiveDecoder::ResampleScanline(
           uint32_t pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
           const uint8_t* src_pixel = src_scan + j * src_bytes_per_pixel;
-          uint8_t src_b = 0;
-          uint8_t src_g = 0;
-          uint8_t src_r = 0;
-          std::tie(src_r, src_g, src_b) =
+          FX_RGB<uint8_t> src_rgb =
               AdobeCMYK_to_sRGB1(255 - src_pixel[0], 255 - src_pixel[1],
                                  255 - src_pixel[2], 255 - src_pixel[3]);
-          dest_b += pixel_weight * src_b;
-          dest_g += pixel_weight * src_g;
-          dest_r += pixel_weight * src_r;
+          dest_b += pixel_weight * src_rgb.blue;
+          dest_g += pixel_weight * src_rgb.green;
+          dest_r += pixel_weight * src_rgb.red;
         }
         *dest_scan++ = CStretchEngine::PixelFromFixed(dest_b);
         *dest_scan++ = CStretchEngine::PixelFromFixed(dest_g);
         *dest_scan++ = CStretchEngine::PixelFromFixed(dest_r);
         dest_scan += dest_bytes_per_pixel - 3;
-      } break;
+        break;
+      }
       case 11: {
         uint32_t dest_alpha = 0;
         uint32_t dest_r = 0;
@@ -1908,7 +1917,8 @@ void ProgressiveDecoder::ResampleScanline(
         *dest_scan++ = CStretchEngine::PixelFromFixed(dest_g);
         *dest_scan++ = CStretchEngine::PixelFromFixed(dest_r);
         *dest_scan++ = CStretchEngine::PixelFromFixed(dest_alpha * 255);
-      } break;
+        break;
+      }
       default:
         return;
     }
