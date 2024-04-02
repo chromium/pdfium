@@ -747,9 +747,8 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndSaveWithBookmarks) {
   EXPECT_EQ(1, FPDF_GetPageCount(document()));
 
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  // TODO(crbug.com/pdfium/2146): These should be 1.
-  EXPECT_EQ(2, CountPageEntries(GetString()));
-  EXPECT_EQ(2, CountStreamEntries(GetString()));
+  EXPECT_EQ(1, CountPageEntries(GetString()));
+  EXPECT_EQ(1, CountStreamEntries(GetString()));
 }
 
 TEST_F(FPDFDocEmbedderTest, DeletePageAndSaveWithCustomObject) {
@@ -761,8 +760,7 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndSaveWithCustomObject) {
   EXPECT_EQ(1, FPDF_GetPageCount(document()));
 
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  // TODO(crbug.com/pdfium/2146): This should be 1.
-  EXPECT_EQ(2, CountPageEntries(GetString()));
+  EXPECT_EQ(1, CountPageEntries(GetString()));
   EXPECT_EQ(1, CountStreamEntries(GetString()));
 }
 
@@ -793,8 +791,7 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndSaveWithCustomObjectForNewPage) {
   EXPECT_EQ(1, FPDF_GetPageCount(document()));
 
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  // TODO(crbug.com/pdfium/2146): This should be 1.
-  EXPECT_EQ(2, CountPageEntries(GetString()));
+  EXPECT_EQ(1, CountPageEntries(GetString()));
   EXPECT_EQ(1, CountStreamEntries(GetString()));
 }
 

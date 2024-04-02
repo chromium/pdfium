@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_linearized_header.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
+#include "core/fpdfapi/parser/cpdf_null.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
 #include "core/fpdfapi/parser/cpdf_read_validator.h"
@@ -587,20 +588,54 @@ RetainPtr<const CPDF_Array> CPDF_Document::GetFileIdentifier() const {
   return m_pParser ? m_pParser->GetIDArray() : nullptr;
 }
 
-void CPDF_Document::DeletePage(int iPage) {
+uint32_t CPDF_Document::DeletePage(int iPage) {
   RetainPtr<CPDF_Dictionary> pPages = GetMutablePagesDict();
-  if (!pPages)
-    return;
+  if (!pPages) {
+    return 0;
+  }
 
   int nPages = pPages->GetIntegerFor("Count");
-  if (iPage < 0 || iPage >= nPages)
-    return;
+  if (iPage < 0 || iPage >= nPages) {
+    return 0;
+  }
+
+  RetainPtr<const CPDF_Dictionary> page_dict = GetPageDictionary(iPage);
+  if (!page_dict) {
+    return 0;
+  }
 
   std::set<RetainPtr<CPDF_Dictionary>> stack = {pPages};
-  if (!InsertDeletePDFPage(std::move(pPages), iPage, nullptr, false, &stack))
-    return;
+  if (!InsertDeletePDFPage(std::move(pPages), iPage, nullptr, false, &stack)) {
+    return 0;
+  }
 
   m_PageList.erase(m_PageList.begin() + iPage);
+  return page_dict->GetObjNum();
+}
+
+void CPDF_Document::SetPageToNullObject(uint32_t page_obj_num) {
+  if (!page_obj_num || m_PageList.empty()) {
+    return;
+  }
+
+  // Load all pages so `m_PageList` has all the object numbers.
+  for (size_t i = 0; i < m_PageList.size(); ++i) {
+    GetPageDictionary(i);
+  }
+
+  if (pdfium::Contains(m_PageList, page_obj_num)) {
+    return;
+  }
+
+  // If `page_dict` is no longer in the page tree, replace it with an object of
+  // type null.
+  //
+  // Delete the object first from this container, so the conditional in the
+  // replacement call always evaluates to true.
+  DeleteIndirectObject(page_obj_num);
+  const bool replaced = ReplaceIndirectObjectIfHigherGeneration(
+      page_obj_num, pdfium::MakeRetain<CPDF_Null>());
+  CHECK(replaced);
 }
 
 void CPDF_Document::SetRootForTesting(RetainPtr<CPDF_Dictionary> root) {

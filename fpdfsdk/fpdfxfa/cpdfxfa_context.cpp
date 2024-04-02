@@ -279,11 +279,11 @@ RetainPtr<CPDFXFA_Page> CPDFXFA_Context::GetXFAPage(
   return nullptr;
 }
 
-void CPDFXFA_Context::DeletePage(int page_index) {
+uint32_t CPDFXFA_Context::DeletePage(int page_index) {
   // Delete from the document first because, if GetPage was never called for
   // this |page_index| then |m_XFAPageList| may have size < |page_index| even
   // if it's a valid page in the document.
-  m_pPDFDoc->DeletePage(page_index);
+  uint32_t page_obj_num = m_pPDFDoc->DeletePage(page_index);
 
   if (fxcrt::IndexInBounds(m_XFAPageList, page_index)) {
     m_XFAPageList.erase(m_XFAPageList.begin() + page_index);
@@ -293,6 +293,8 @@ void CPDFXFA_Context::DeletePage(int page_index) {
       }
     }
   }
+
+  return page_obj_num;
 }
 
 bool CPDFXFA_Context::ContainsExtensionForm() const {

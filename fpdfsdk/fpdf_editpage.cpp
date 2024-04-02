@@ -187,12 +187,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFPage_Delete(FPDF_DOCUMENT document,
     return;
 
   CPDF_Document::Extension* pExtension = pDoc->GetExtension();
-  if (pExtension) {
-    pExtension->DeletePage(page_index);
-    return;
-  }
-
-  pDoc->DeletePage(page_index);
+  const uint32_t page_obj_num = pExtension ? pExtension->DeletePage(page_index)
+                                           : pDoc->DeletePage(page_index);
+  pDoc->SetPageToNullObject(page_obj_num);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
