@@ -12,6 +12,7 @@
 #include <stdlib.h>
 
 #include <algorithm>
+#include <array>
 #include <limits>
 #include <memory>
 #include <optional>
@@ -21,6 +22,7 @@
 #include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/code_point_view.h"
+#include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_random.h"
@@ -61,7 +63,9 @@ constexpr int kMaxCharCount = 15654908;
 
 const double kFinancialPrecision = 0.00000001;
 
-const wchar_t kStrCode[] = L"0123456789abcdef";
+constexpr std::array<wchar_t, 16> kStrCode = {
+    {L'0', L'1', L'2', L'3', L'4', L'5', L'6', L'7', L'8', L'9', L'a', L'b',
+     L'c', L'd', L'e', L'f'}};
 
 struct XFA_FMHtmlReserveCode {
   uint16_t m_uCode;
@@ -673,93 +677,53 @@ WideString EncodeURL(const ByteString& bsURL) {
                                             '^', '~', '[', ']', '`'};
   static constexpr char32_t kStrReserved[] = {';', '/', '?', ':',
                                               '@', '=', '&'};
-  static constexpr char32_t kStrSpecial[] = {'$',  '-', '+', '!', '*',
-                                             '\'', '(', ')', ','};
 
   WideString wsURL = WideString::FromUTF8(bsURL.AsStringView());
   WideTextBuffer wsResultBuf;
-  wchar_t encode_buffer[3];
-  encode_buffer[0] = '%';
+  std::array<wchar_t, 3> encode_buffer = {L'%'};  // Starts with %.
   for (char32_t ch : pdfium::CodePointView(wsURL.AsStringView())) {
-    size_t i = 0;
-    size_t iCount = std::size(kStrUnsafe);
-    while (i < iCount) {
-      if (ch == kStrUnsafe[i]) {
-        int32_t iIndex = ch / 16;
-        encode_buffer[1] = kStrCode[iIndex];
-        encode_buffer[2] = kStrCode[ch - iIndex * 16];
-        wsResultBuf << WideStringView(encode_buffer, 3);
-        break;
-      }
-      ++i;
-    }
-    if (i < iCount)
-      continue;
-
-    i = 0;
-    iCount = std::size(kStrReserved);
-    while (i < iCount) {
-      if (ch == kStrReserved[i]) {
-        int32_t iIndex = ch / 16;
-        encode_buffer[1] = kStrCode[iIndex];
-        encode_buffer[2] = kStrCode[ch - iIndex * 16];
-        wsResultBuf << WideStringView(encode_buffer, 3);
-        break;
-      }
-      ++i;
-    }
-    if (i < iCount)
-      continue;
-
-    i = 0;
-    iCount = std::size(kStrSpecial);
-    while (i < iCount) {
-      if (ch == kStrSpecial[i]) {
-        wsResultBuf.AppendChar(ch);
-        break;
-      }
-      ++i;
-    }
-    if (i < iCount)
-      continue;
-
-    if ((ch >= 0x80 && ch <= 0xff) || ch <= 0x1f || ch == 0x7f) {
+    if (ch <= 0x1f || (ch >= 0x7f && ch <= 0xff) ||
+        pdfium::Contains(kStrUnsafe, ch) ||
+        pdfium::Contains(kStrReserved, ch)) {
       int32_t iIndex = ch / 16;
       encode_buffer[1] = kStrCode[iIndex];
       encode_buffer[2] = kStrCode[ch - iIndex * 16];
-      wsResultBuf << WideStringView(encode_buffer, 3);
-    } else if (ch >= 0x20 && ch <= 0x7e) {
+      wsResultBuf << WideStringView(encode_buffer);
+      continue;
+    }
+    if (ch >= 0x20 && ch <= 0x7e) {
       wsResultBuf.AppendChar(ch);
-    } else {
-      const wchar_t iRadix = 16;
-      WideString wsBuffer;
-      while (ch >= iRadix) {
-        wchar_t tmp = kStrCode[ch % iRadix];
-        ch /= iRadix;
-        wsBuffer += tmp;
-      }
-      wsBuffer += kStrCode[ch];
-      int32_t iLen = wsBuffer.GetLength();
-      if (iLen < 2)
-        break;
+      continue;
+    }
+    const wchar_t iRadix = 16;
+    WideString wsBuffer;
+    while (ch >= iRadix) {
+      wchar_t tmp = kStrCode[ch % iRadix];
+      ch /= iRadix;
+      wsBuffer += tmp;
+    }
+    wsBuffer += kStrCode[ch];
+    int32_t iLen = wsBuffer.GetLength();
+    if (iLen < 2) {
+      break;
+    }
 
-      int32_t iIndex = 0;
-      if (iLen % 2 != 0) {
-        encode_buffer[1] = '0';
-        encode_buffer[2] = wsBuffer[iLen - 1];
-        iIndex = iLen - 2;
-      } else {
-        encode_buffer[1] = wsBuffer[iLen - 1];
-        encode_buffer[2] = wsBuffer[iLen - 2];
-        iIndex = iLen - 3;
-      }
-      wsResultBuf << WideStringView(encode_buffer, 3);
-      while (iIndex > 0) {
-        encode_buffer[1] = wsBuffer[iIndex];
-        encode_buffer[2] = wsBuffer[iIndex - 1];
-        iIndex -= 2;
-        wsResultBuf << WideStringView(encode_buffer, 3);
-      }
+    int32_t iIndex = 0;
+    if (iLen % 2 != 0) {
+      encode_buffer[1] = '0';
+      encode_buffer[2] = wsBuffer[iLen - 1];
+      iIndex = iLen - 2;
+    } else {
+      encode_buffer[1] = wsBuffer[iLen - 1];
+      encode_buffer[2] = wsBuffer[iLen - 2];
+      iIndex = iLen - 3;
+    }
+    wsResultBuf << WideStringView(encode_buffer);
+    while (iIndex > 0) {
+      encode_buffer[1] = wsBuffer[iIndex];
+      encode_buffer[2] = wsBuffer[iIndex - 1];
+      iIndex -= 2;
+      wsResultBuf << WideStringView(encode_buffer);
     }
   }
   return wsResultBuf.MakeString();
