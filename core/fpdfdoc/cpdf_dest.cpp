@@ -20,14 +20,12 @@ namespace {
 
 // These arrays are indexed by the PDFDEST_VIEW_* constants.
 
-// Last element is a sentinel.
-const char* const kZoomModes[] = {"Unknown", "XYZ",  "Fit",   "FitH",  "FitV",
-                                  "FitR",    "FitB", "FitBH", "FitBV", nullptr};
+constexpr std::array<const char*, 9> kZoomModes = {{"Unknown", "XYZ", "Fit",
+                                                    "FitH", "FitV", "FitR",
+                                                    "FitB", "FitBH", "FitBV"}};
 
-constexpr uint8_t kZoomModeMaxParamCount[] = {0, 3, 0, 1, 1, 4, 0, 1, 1, 0};
-
-static_assert(std::size(kZoomModes) == std::size(kZoomModeMaxParamCount),
-              "Zoom mode count Mismatch");
+constexpr std::array<uint8_t, 9> kZoomModeMaxParamCount = {
+    {0, 3, 0, 1, 1, 4, 0, 1, 1}};
 
 }  // namespace
 
@@ -79,19 +77,19 @@ std::vector<float> CPDF_Dest::GetScrollPositionArray() const {
 }
 
 int CPDF_Dest::GetZoomMode() const {
-  if (!m_pArray)
+  if (!m_pArray) {
     return 0;
-
-  RetainPtr<const CPDF_Object> pArray = m_pArray->GetDirectObjectAt(1);
-  if (!pArray)
-    return 0;
-
-  ByteString mode = pArray->GetString();
-  for (int i = 1; kZoomModes[i]; ++i) {
-    if (mode == kZoomModes[i])
-      return i;
   }
-
+  RetainPtr<const CPDF_Object> pArray = m_pArray->GetDirectObjectAt(1);
+  if (!pArray) {
+    return 0;
+  }
+  ByteString mode = pArray->GetString();
+  for (size_t i = 1; i < std::size(kZoomModes); ++i) {
+    if (mode == kZoomModes[i]) {
+      return static_cast<int>(i);
+    }
+  }
   return 0;
 }
 
