@@ -78,7 +78,7 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessRect) {
   EXPECT_EQ("q 0 0 5.1999998 3.78 re n Q\n", ByteString(buf));
 }
 
-TEST_F(CPDFPageContentGeneratorTest, BUG_937) {
+TEST_F(CPDFPageContentGeneratorTest, Bug937) {
   static const std::vector<float> rgb = {0.000000000000000000001f, 0.7f, 0.35f};
   RetainPtr<CPDF_ColorSpace> pCS =
       CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceRGB);
@@ -102,9 +102,11 @@ TEST_F(CPDFPageContentGeneratorTest, BUG_937) {
     fxcrt::ostringstream buf;
     TestProcessPath(&generator, &buf, pPathObj.get());
     EXPECT_EQ(
-        "q 0 0.701961 0.34902 rg 0 0.701961 0.34902 RG 200000000000000000000 w"
-        " 1 0 0 1 .00000000000000000000099999997 200000000000000 cm .000000000"
-        "00000000000099999997 .00000000000000000000099999997 100 100 re f Q\n",
+        "q 0 .7019608 .34901962 rg 0 .7019608 .34901962 RG "
+        "200000000000000000000 w "
+        "1 0 0 1 .00000000000000000000099999997 200000000000000 cm "
+        ".00000000000000000000099999997 .00000000000000000000099999997 100 100 "
+        "re f Q\n",
         ByteString(buf));
   }
 
@@ -136,10 +138,12 @@ TEST_F(CPDFPageContentGeneratorTest, BUG_937) {
 
     TestProcessPath(&generator, &buf, pPathObj.get());
     EXPECT_EQ(
-        "q 0 0.701961 0.34902 rg 0 0.701961 0.34902 RG 2 w 1 0 0 1 432 4999999"
-        "90000000 cm .00000000000000000000099999997 4.6700001 m .0000000000000"
-        "0000000099999997 100000000000000 l .000000000000099999998 3.1500001 3"
-        ".5699999 2.98 53.400002 5000000000000000000 c h f Q\n",
+        "q 0 .7019608 .34901962 rg 0 .7019608 .34901962 RG 2 w "
+        "1 0 0 1 432 499999990000000 cm "
+        ".00000000000000000000099999997 4.6700001 m "
+        ".00000000000000000000099999997 100000000000000 l "
+        ".000000000000099999998 3.1500001 3.5699999 2.98 53.400002 "
+        "5000000000000000000 c h f Q\n",
         ByteString(buf));
   }
 }
@@ -211,13 +215,20 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessGraphics) {
   ByteString path_string(buf);
 
   // Color RGB values used are integers divided by 255.
-  EXPECT_EQ("q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG /",
-            path_string.First(48));
-  EXPECT_EQ(" gs 1 2 m 3 4 l 5 6 l h B Q\n", path_string.Last(28));
-  ASSERT_GT(path_string.GetLength(), 76U);
-  RetainPtr<const CPDF_Dictionary> external_gs =
-      TestGetResource(&generator, "ExtGState",
-                      path_string.Substr(48, path_string.GetLength() - 76));
+  const ByteStringView expected_string_start =
+      "q .50196081 .7019608 .34901962 rg 1 .90196079 0 RG /";
+  const ByteStringView expected_string_end = " gs 1 2 m 3 4 l 5 6 l h B Q\n";
+  const size_t expected_string_min_length =
+      expected_string_start.GetLength() + expected_string_end.GetLength();
+  EXPECT_EQ(expected_string_start,
+            path_string.First(expected_string_start.GetLength()));
+  EXPECT_EQ(expected_string_end,
+            path_string.Last(expected_string_end.GetLength()));
+  ASSERT_GT(path_string.GetLength(), expected_string_min_length);
+  RetainPtr<const CPDF_Dictionary> external_gs = TestGetResource(
+      &generator, "ExtGState",
+      path_string.Substr(expected_string_start.GetLength(),
+                         path_string.GetLength() - expected_string_min_length));
   ASSERT_TRUE(external_gs);
   EXPECT_EQ(0.5f, external_gs->GetFloatFor("ca"));
   EXPECT_EQ(0.8f, external_gs->GetFloatFor("CA"));
@@ -226,15 +237,26 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessGraphics) {
   pPathObj->mutable_graph_state().SetLineWidth(10.5f);
   buf.str("");
   TestProcessPath(&generator, &buf, pPathObj.get());
+  const ByteStringView expected_string_start2 =
+      "q .50196081 .7019608 .34901962 rg 1 .90196079 0 RG 10.5 w /";
   ByteString path_string2(buf);
-  EXPECT_EQ("q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG 10.5 w /",
-            path_string2.First(55));
-  EXPECT_EQ(" gs 1 2 m 3 4 l 5 6 l h B Q\n", path_string2.Last(28));
+  EXPECT_EQ(expected_string_start2,
+            path_string2.First(expected_string_start2.GetLength()));
+  EXPECT_EQ(expected_string_end,
+            path_string2.Last(expected_string_end.GetLength()));
 
   // Compare with the previous (should use same dictionary for gs)
-  EXPECT_EQ(path_string.GetLength() + 7, path_string2.GetLength());
-  EXPECT_EQ(path_string.Substr(48, path_string.GetLength() - 76),
-            path_string2.Substr(55, path_string2.GetLength() - 83));
+  const size_t expected_strings_length_difference =
+      expected_string_start2.GetLength() - expected_string_start.GetLength();
+  EXPECT_EQ(path_string.GetLength() + expected_strings_length_difference,
+            path_string2.GetLength());
+  EXPECT_EQ(
+      path_string.Substr(expected_string_start.GetLength(),
+                         path_string.GetLength() - expected_string_min_length),
+      path_string2.Substr(expected_string_start2.GetLength(),
+                          path_string2.GetLength() -
+                              expected_string_min_length -
+                              expected_strings_length_difference));
 }
 
 TEST_F(CPDFPageContentGeneratorTest, ProcessStandardText) {
@@ -278,7 +300,7 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessStandardText) {
       text_string.Last(text_string.GetLength() - second_resource_at.value());
   // q and Q must be outside the BT .. ET operations
   ByteString compare_string1 =
-      "q 0.501961 0.701961 0.34902 rg 1 0.901961 0 RG /";
+      "q .50196081 .7019608 .34901962 rg 1 .90196079 0 RG /";
   // Color RGB values used are integers divided by 255.
   ByteString compare_string2 = " gs BT 1 0 0 1 100 100 Tm /";
   ByteString compare_string3 = " 10 Tf 0 Tr <48656C6C6F20576F726C64> Tj ET Q\n";
