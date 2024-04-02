@@ -1393,7 +1393,7 @@ TEST(ByteStringView, TrimmedRight) {
   EXPECT_EQ("FRED", fred.TrimmedRight('E'));
   EXPECT_EQ("FRE", fred.TrimmedRight('D'));
   ByteStringView fredd("FREDD");
-  EXPECT_EQ("FRE", fred.TrimmedRight('D'));
+  EXPECT_EQ("FRE", fredd.TrimmedRight('D'));
 }
 
 TEST(ByteStringView, ElementAccess) {

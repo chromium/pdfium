@@ -1803,7 +1803,7 @@ TEST(WideStringView, TrimmedRight) {
   EXPECT_EQ(L"FRED", fred.TrimmedRight(L'E'));
   EXPECT_EQ(L"FRE", fred.TrimmedRight(L'D'));
   WideStringView fredd(L"FREDD");
-  EXPECT_EQ(L"FRE", fred.TrimmedRight(L'D'));
+  EXPECT_EQ(L"FRE", fredd.TrimmedRight(L'D'));
 }
 
 TEST(WideString, FormatWidth) {
