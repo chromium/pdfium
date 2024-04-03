@@ -29,10 +29,10 @@ size_t FilterName(WideStringView wsExpression,
     return nLength;
 
   size_t nCount = 0;
+  pdfium::span<const wchar_t> pSrc = wsExpression.span();
   {
     // Span's lifetime must end before ReleaseBuffer() below.
     pdfium::span<wchar_t> pBuf = wsFilter.GetBuffer(nLength - nStart);
-    const wchar_t* pSrc = wsExpression.unterminated_c_str();
     while (nStart < nLength) {
       wchar_t wCur = pSrc[nStart++];
       if (wCur == ',')
