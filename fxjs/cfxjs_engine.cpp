@@ -212,12 +212,11 @@ class CFXJS_ObjDefinition {
     GetInstanceTemplate()->Set(sMethodName, fun, v8::ReadOnly);
   }
 
-  void DefineAllProperties(
-      v8::GenericNamedPropertyQueryCallback pPropQurey,
-      v8::GenericNamedPropertyGetterCallback pPropGet,
-      v8::GenericNamedPropertySetterCallback pPropPut,
-      v8::GenericNamedPropertyDeleterCallback pPropDel,
-      v8::GenericNamedPropertyEnumeratorCallback pPropEnum) {
+  void DefineAllProperties(v8::NamedPropertyQueryCallback pPropQurey,
+                           v8::NamedPropertyGetterCallback pPropGet,
+                           v8::NamedPropertySetterCallback pPropPut,
+                           v8::NamedPropertyDeleterCallback pPropDel,
+                           v8::NamedPropertyEnumeratorCallback pPropEnum) {
     GetInstanceTemplate()->SetHandler(v8::NamedPropertyHandlerConfiguration(
         pPropGet, pPropPut, pPropQurey, pPropDel, pPropEnum,
         v8::Local<v8::Value>(),
@@ -446,11 +445,11 @@ void CFXJS_Engine::DefineObjProperty(uint32_t nObjDefnID,
 
 void CFXJS_Engine::DefineObjAllProperties(
     uint32_t nObjDefnID,
-    v8::GenericNamedPropertyQueryCallback pPropQurey,
-    v8::GenericNamedPropertyGetterCallback pPropGet,
-    v8::GenericNamedPropertySetterCallback pPropPut,
-    v8::GenericNamedPropertyDeleterCallback pPropDel,
-    v8::GenericNamedPropertyEnumeratorCallback pPropEnum) {
+    v8::NamedPropertyQueryCallback pPropQurey,
+    v8::NamedPropertyGetterCallback pPropGet,
+    v8::NamedPropertySetterCallback pPropPut,
+    v8::NamedPropertyDeleterCallback pPropDel,
+    v8::NamedPropertyEnumeratorCallback pPropEnum) {
   v8::Isolate::Scope isolate_scope(GetIsolate());
   v8::HandleScope handle_scope(GetIsolate());
   FXJS_PerIsolateData* pIsolateData = FXJS_PerIsolateData::Get(GetIsolate());

@@ -192,13 +192,14 @@ bool DynPropQueryAdapter(v8::Isolate* pIsolate,
   return nPropType != FXJSE_ClassPropType::kNone;
 }
 
-void NamedPropertyQueryCallback(
+v8::Intercepted NamedPropertyQueryCallback(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Integer>& info) {
   const FXJSE_CLASS_DESCRIPTOR* pClass =
       AsClassDescriptor(info.Data().As<v8::External>()->Value());
-  if (!pClass)
-    return;
+  if (!pClass) {
+    return v8::Intercepted::kNo;
+  }
 
   v8::HandleScope scope(info.GetIsolate());
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
@@ -206,35 +207,38 @@ void NamedPropertyQueryCallback(
   if (DynPropQueryAdapter(info.GetIsolate(), pClass, info.Holder(),
                           szFxPropName)) {
     info.GetReturnValue().Set(v8::DontDelete);
-    return;
+    return v8::Intercepted::kYes;
   }
-  const int32_t iV8Absent = 64;
-  info.GetReturnValue().Set(iV8Absent);
+
+  return v8::Intercepted::kNo;
 }
 
-void NamedPropertyGetterCallback(
+v8::Intercepted NamedPropertyGetterCallback(
     v8::Local<v8::Name> property,
     const v8::PropertyCallbackInfo<v8::Value>& info) {
   const FXJSE_CLASS_DESCRIPTOR* pClass =
       AsClassDescriptor(info.Data().As<v8::External>()->Value());
-  if (!pClass)
-    return;
+  if (!pClass) {
+    return v8::Intercepted::kNo;
+  }
 
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   ByteStringView szFxPropName(*szPropName, szPropName.length());
   std::unique_ptr<CFXJSE_Value> pNewValue = DynPropGetterAdapter(
       info.GetIsolate(), pClass, info.Holder(), szFxPropName);
   info.GetReturnValue().Set(pNewValue->DirectGetValue());
+  return v8::Intercepted::kYes;
 }
 
-void NamedPropertySetterCallback(
+v8::Intercepted NamedPropertySetterCallback(
     v8::Local<v8::Name> property,
     v8::Local<v8::Value> value,
-    const v8::PropertyCallbackInfo<v8::Value>& info) {
+    const v8::PropertyCallbackInfo<void>& info) {
   const FXJSE_CLASS_DESCRIPTOR* pClass =
       AsClassDescriptor(info.Data().As<v8::External>()->Value());
-  if (!pClass)
-    return;
+  if (!pClass) {
+    return v8::Intercepted::kNo;
+  }
 
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   ByteStringView szFxPropName(*szPropName, szPropName.length());
@@ -242,6 +246,7 @@ void NamedPropertySetterCallback(
   DynPropSetterAdapter(info.GetIsolate(), pClass, info.Holder(), szFxPropName,
                        pNewValue.get());
   info.GetReturnValue().Set(value);
+  return v8::Intercepted::kYes;
 }
 
 void NamedPropertyEnumeratorCallback(
