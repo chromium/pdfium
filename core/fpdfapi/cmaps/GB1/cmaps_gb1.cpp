@@ -6,9 +6,8 @@
 
 #include "core/fpdfapi/cmaps/GB1/cmaps_gb1.h"
 
-#include <iterator>
-
 namespace fxcmap {
+namespace {
 
 const CMap kGB1_cmaps[] = {
     {"GB-EUC-H", kGB_EUC_H_0, nullptr, 90, 0, CMap::Type::kRange, 0},
@@ -29,6 +28,8 @@ const CMap kGB1_cmaps[] = {
     {"UniGB-UTF16-V", kUniGB_UCS2_V_4, nullptr, 24, 0, CMap::Type::kRange, -1},
 };
 
-const size_t kGB1_cmaps_size = std::size(kGB1_cmaps);
+}  // namespace
+
+const pdfium::span<const CMap> kGB1_cmaps_span{kGB1_cmaps};
 
 }  // namespace fxcmap

@@ -6,9 +6,8 @@
 
 #include "core/fpdfapi/cmaps/Japan1/cmaps_japan1.h"
 
-#include <iterator>
-
 namespace fxcmap {
+namespace {
 
 const CMap kJapan1_cmaps[] = {
     {"83pv-RKSJ-H", k83pv_RKSJ_H_1, nullptr, 222, 0, CMap::Type::kRange, 0},
@@ -39,6 +38,8 @@ const CMap kJapan1_cmaps[] = {
      -1},
 };
 
-const size_t kJapan1_cmaps_size = std::size(kJapan1_cmaps);
+}  // namespace
+
+const pdfium::span<const CMap> kJapan1_cmaps_span{kJapan1_cmaps};
 
 }  // namespace fxcmap

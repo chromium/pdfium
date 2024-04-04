@@ -6,9 +6,8 @@
 
 #include "core/fpdfapi/cmaps/Korea1/cmaps_korea1.h"
 
-#include <iterator>
-
 namespace fxcmap {
+namespace {
 
 const CMap kKorea1_cmaps[] = {
     {"KSC-EUC-H", kKSC_EUC_H_0, nullptr, 467, 0, CMap::Type::kRange, 0},
@@ -27,6 +26,8 @@ const CMap kKorea1_cmaps[] = {
     {"UniKS-UTF16-V", kUniKS_UCS2_V_1, nullptr, 18, 0, CMap::Type::kRange, -1},
 };
 
-const size_t kKorea1_cmaps_size = std::size(kKorea1_cmaps);
+}  // namespace
+
+const pdfium::span<const CMap> kKorea1_cmaps_span{kKorea1_cmaps};
 
 }  // namespace fxcmap

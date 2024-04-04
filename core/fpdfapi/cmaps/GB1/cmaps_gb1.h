@@ -7,10 +7,10 @@
 #ifndef CORE_FPDFAPI_CMAPS_GB1_CMAPS_GB1_H_
 #define CORE_FPDFAPI_CMAPS_GB1_CMAPS_GB1_H_
 
-#include <stddef.h>
 #include <stdint.h>
 
 #include "core/fpdfapi/cmaps/fpdf_cmaps.h"
+#include "core/fxcrt/span.h"
 
 namespace fxcmap {
 
@@ -28,8 +28,8 @@ extern const uint16_t kGBK2K_V_5[];
 extern const uint16_t kUniGB_UCS2_H_4[];
 extern const uint16_t kUniGB_UCS2_V_4[];
 extern const uint16_t kGB1CID2Unicode_5[30284];
-extern const CMap kGB1_cmaps[];
-extern const size_t kGB1_cmaps_size;
+
+extern const pdfium::span<const CMap> kGB1_cmaps_span;
 
 }  // namespace fxcmap
 
