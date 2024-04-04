@@ -24,6 +24,7 @@
 
 #include <optional>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_extension.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_EncoderContext.h"
@@ -47,11 +48,17 @@ size_t DetermineConsecutiveDigitCount(const WideString& msg, size_t startpos) {
   size_t count = 0;
   const size_t size = msg.GetLength();
   const wchar_t* data = msg.c_str();
-  for (size_t i = startpos; i < size; ++i) {
-    if (!FXSYS_IsDecimalDigit(data[i]))
-      break;
-    ++count;
-  }
+
+  // SAFETY: performance-sensitive.
+  UNSAFE_BUFFERS({
+    for (size_t i = startpos; i < size; ++i) {
+      if (!FXSYS_IsDecimalDigit(data[i])) {
+        break;
+      }
+      ++count;
+    }
+  });
+
   return count;
 }
 

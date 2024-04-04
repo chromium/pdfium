@@ -22,6 +22,7 @@
 
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 
+#include <array>
 #include <iterator>
 
 #include "core/fxcrt/notreached.h"
@@ -32,32 +33,26 @@
 namespace {
 
 constexpr size_t kSymbolsCount = 30;
+constexpr size_t kSymbolDataSize = kSymbolsCount - 1;
 
-CBC_SymbolInfo* g_symbols[kSymbolsCount] = {
-    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-    nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+std::array<CBC_SymbolInfo*, kSymbolsCount> g_symbols = {};
 
-constexpr CBC_SymbolInfo::Data kSymbolData[] = {
-    {3, 5, 3, 5, 8, 8, 1},           {5, 7, 5, 7, 10, 10, 1},
-    {5, 7, 5, 7, 16, 6, 1},          {8, 10, 8, 10, 12, 12, 1},
-    {10, 11, 10, 11, 14, 6, 2},      {12, 12, 12, 12, 14, 14, 1},
-    {16, 14, 16, 14, 24, 10, 1},     {18, 14, 18, 14, 16, 16, 1},
-    {22, 18, 22, 18, 18, 18, 1},     {22, 18, 22, 18, 16, 10, 2},
-    {30, 20, 30, 20, 20, 20, 1},     {32, 24, 32, 24, 16, 14, 2},
-    {36, 24, 36, 24, 22, 22, 1},     {44, 28, 44, 28, 24, 24, 1},
-    {49, 28, 49, 28, 22, 14, 2},     {62, 36, 62, 36, 14, 14, 4},
-    {86, 42, 86, 42, 16, 16, 4},     {114, 48, 114, 48, 18, 18, 4},
-    {144, 56, 144, 56, 20, 20, 4},   {174, 68, 174, 68, 22, 22, 4},
-    {204, 84, 102, 42, 24, 24, 4},   {280, 112, 140, 56, 14, 14, 16},
-    {368, 144, 92, 36, 16, 16, 16},  {456, 192, 114, 48, 18, 18, 16},
-    {576, 224, 144, 56, 20, 20, 16}, {696, 272, 174, 68, 22, 22, 16},
-    {816, 336, 136, 56, 24, 24, 16}, {1050, 408, 175, 68, 18, 18, 36},
-    {1304, 496, 163, 62, 20, 20, 36}};
-
-constexpr size_t kSymbolDataSize = std::size(kSymbolData);
-static_assert(kSymbolDataSize + 1 == kSymbolsCount, "Wrong kSymbolDataSize");
+constexpr std::array<CBC_SymbolInfo::Data, kSymbolDataSize> kSymbolData = {
+    {{3, 5, 3, 5, 8, 8, 1},           {5, 7, 5, 7, 10, 10, 1},
+     {5, 7, 5, 7, 16, 6, 1},          {8, 10, 8, 10, 12, 12, 1},
+     {10, 11, 10, 11, 14, 6, 2},      {12, 12, 12, 12, 14, 14, 1},
+     {16, 14, 16, 14, 24, 10, 1},     {18, 14, 18, 14, 16, 16, 1},
+     {22, 18, 22, 18, 18, 18, 1},     {22, 18, 22, 18, 16, 10, 2},
+     {30, 20, 30, 20, 20, 20, 1},     {32, 24, 32, 24, 16, 14, 2},
+     {36, 24, 36, 24, 22, 22, 1},     {44, 28, 44, 28, 24, 24, 1},
+     {49, 28, 49, 28, 22, 14, 2},     {62, 36, 62, 36, 14, 14, 4},
+     {86, 42, 86, 42, 16, 16, 4},     {114, 48, 114, 48, 18, 18, 4},
+     {144, 56, 144, 56, 20, 20, 4},   {174, 68, 174, 68, 22, 22, 4},
+     {204, 84, 102, 42, 24, 24, 4},   {280, 112, 140, 56, 14, 14, 16},
+     {368, 144, 92, 36, 16, 16, 16},  {456, 192, 114, 48, 18, 18, 16},
+     {576, 224, 144, 56, 20, 20, 16}, {696, 272, 174, 68, 22, 22, 16},
+     {816, 336, 136, 56, 24, 24, 16}, {1050, 408, 175, 68, 18, 18, 36},
+     {1304, 496, 163, 62, 20, 20, 36}}};
 
 }  // namespace
 

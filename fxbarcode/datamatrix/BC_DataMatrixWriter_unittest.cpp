@@ -7,7 +7,10 @@
 #include <stdint.h>
 
 #include "core/fxcrt/data_vector.h"
+#include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
+
+using testing::ElementsAreArray;
 
 class CBC_DataMatrixWriterTest : public testing::Test {
  public:
@@ -44,8 +47,7 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
     ASSERT_EQ(std::size(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
     ASSERT_EQ(kExpectedDimension, height);
-    for (size_t i = 0; i < std::size(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data[i]) << i;
+    EXPECT_THAT(data, ElementsAreArray(kExpectedData));
   }
   {
     static constexpr int kExpectedDimension = 14;
@@ -71,8 +73,7 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
     ASSERT_EQ(std::size(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
     ASSERT_EQ(kExpectedDimension, height);
-    for (size_t i = 0; i < std::size(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data[i]) << i;
+    EXPECT_THAT(data, ElementsAreArray(kExpectedData));
   }
   {
     static constexpr int kExpectedDimension = 10;
@@ -94,8 +95,7 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
     ASSERT_EQ(std::size(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
     ASSERT_EQ(kExpectedDimension, height);
-    for (size_t i = 0; i < std::size(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data[i]) << i;
+    EXPECT_THAT(data, ElementsAreArray(kExpectedData));
   }
   {
     static constexpr int kExpectedDimension = 18;
@@ -126,8 +126,7 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
     ASSERT_EQ(std::size(kExpectedData), data.size());
     ASSERT_EQ(kExpectedDimension, width);
     ASSERT_EQ(kExpectedDimension, height);
-    for (size_t i = 0; i < std::size(kExpectedData); ++i)
-      EXPECT_EQ(kExpectedData[i], data[i]) << i;
+    EXPECT_THAT(data, ElementsAreArray(kExpectedData));
   }
   {
     DataVector<uint8_t> data = writer.Encode(L"hello world", &width, &height);
