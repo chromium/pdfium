@@ -10,6 +10,7 @@
 #include <time.h>
 #include <wctype.h>
 
+#include <array>
 #include <iterator>
 
 #include "build/build_config.h"
@@ -20,10 +21,11 @@
 namespace fxjs {
 namespace {
 
-constexpr uint16_t daysMonth[12] = {0,   31,  59,  90,  120, 151,
-                                    181, 212, 243, 273, 304, 334};
-constexpr uint16_t leapDaysMonth[12] = {0,   31,  60,  91,  121, 152,
-                                        182, 213, 244, 274, 305, 335};
+constexpr std::array<uint16_t, 12> kDaysMonth = {
+    {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334}};
+
+constexpr std::array<uint16_t, 12> kLeapDaysMonth = {
+    {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335}};
 
 double Mod(double x, double y) {
   double r = fmod(x, y);
@@ -74,8 +76,8 @@ double TimeFromYear(int y) {
 }
 
 double TimeFromYearMonth(int y, int m) {
-  const uint16_t* pMonth = IsLeapYear(y) ? leapDaysMonth : daysMonth;
-  return TimeFromYear(y) + ((double)pMonth[m]) * 86400000;
+  const uint16_t month = IsLeapYear(y) ? kLeapDaysMonth[m] : kDaysMonth[m];
+  return TimeFromYear(y) + static_cast<double>(month) * 86400000;
 }
 
 int Day(double t) {
@@ -113,8 +115,8 @@ int MonthFromTime(double t) {
     --day;
 
   // Check for February onwards.
-  static constexpr int kCumulativeDaysInMonths[] = {
-      59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365};
+  static constexpr std::array<int, 11> kCumulativeDaysInMonths = {
+      {59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365}};
   for (size_t i = 0; i < std::size(kCumulativeDaysInMonths); ++i) {
     if (day < kCumulativeDaysInMonths[i])
       return static_cast<int>(i) + 1;
@@ -168,12 +170,13 @@ size_t FindSubWordLength(const WideString& str, size_t nStart) {
 
 }  // namespace
 
-const char* const kMonths[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+const std::array<const char*, 12> kMonths = {{"Jan", "Feb", "Mar", "Apr", "May",
+                                              "Jun", "Jul", "Aug", "Sep", "Oct",
+                                              "Nov", "Dec"}};
 
-const char* const kFullMonths[12] = {
-    "January", "February", "March",     "April",   "May",      "June",
-    "July",    "August",   "September", "October", "November", "December"};
+const std::array<const char*, 12> kFullMonths = {
+    {"January", "February", "March", "April", "May", "June", "July", "August",
+     "September", "October", "November", "December"}};
 
 static constexpr size_t KMonthAbbreviationLength = 3;  // Anything in |kMonths|.
 static constexpr size_t kLongestFullMonthLength = 9;   // September

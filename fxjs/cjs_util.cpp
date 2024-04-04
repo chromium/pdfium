@@ -47,7 +47,7 @@ struct TbConvertAdditional {
   int value;
 };
 
-const TbConvert TbConvertTable[] = {
+const TbConvert kTbConvertTable[] = {
     {L"mmmm", L"%B"}, {L"mmm", L"%b"}, {L"mm", L"%m"},   {L"dddd", L"%A"},
     {L"ddd", L"%a"},  {L"dd", L"%d"},  {L"yyyy", L"%Y"}, {L"yy", L"%y"},
     {L"HH", L"%H"},   {L"hh", L"%I"},  {L"MM", L"%M"},   {L"ss", L"%S"},
@@ -217,40 +217,40 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
   cFormat.erase(std::remove(cFormat.begin(), cFormat.end(), '%'),
                 cFormat.end());
 
-  for (size_t i = 0; i < std::size(TbConvertTable); ++i) {
+  for (const auto& conversion : kTbConvertTable) {
     size_t nFound = 0;
     while (true) {
-      nFound = cFormat.find(TbConvertTable[i].lpszJSMark, nFound);
-      if (nFound == std::wstring::npos)
+      nFound = cFormat.find(conversion.lpszJSMark, nFound);
+      if (nFound == std::wstring::npos) {
         break;
-
-      cFormat.replace(nFound, wcslen(TbConvertTable[i].lpszJSMark),
-                      TbConvertTable[i].lpszCppMark);
+      }
+      cFormat.replace(nFound, wcslen(conversion.lpszJSMark),
+                      conversion.lpszCppMark);
     }
   }
 
   if (year < 0)
     return CJS_Result::Failure(JSMessage::kValueError);
 
-  const TbConvertAdditional cTableAd[] = {
+  const TbConvertAdditional table_additional[] = {
       {L'm', month}, {L'd', day},
       {L'H', hour},  {L'h', hour > 12 ? hour - 12 : hour},
       {L'M', min},   {L's', sec},
   };
 
-  for (size_t i = 0; i < std::size(cTableAd); ++i) {
+  for (const auto& conversion : table_additional) {
     size_t nFound = 0;
     while (true) {
-      nFound = cFormat.find(cTableAd[i].js_mark, nFound);
-      if (nFound == std::wstring::npos)
+      nFound = cFormat.find(conversion.js_mark, nFound);
+      if (nFound == std::wstring::npos) {
         break;
-
+      }
       if (nFound != 0 && cFormat[nFound - 1] == L'%') {
         ++nFound;
         continue;
       }
       cFormat.replace(nFound, 1,
-                      WideString::FormatInteger(cTableAd[i].value).c_str());
+                      WideString::FormatInteger(conversion.value).c_str());
     }
   }
 

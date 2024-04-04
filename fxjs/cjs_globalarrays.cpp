@@ -14,14 +14,13 @@
 
 #define GLOBAL_ARRAY(rt, name, ...)                                            \
   {                                                                            \
-    static const wchar_t* const values[] = {__VA_ARGS__};                      \
+    static const wchar_t* const kValues[] = {__VA_ARGS__};                     \
     v8::Local<v8::Array> array = (rt)->NewArray();                             \
     v8::Local<v8::Context> ctx = (rt)->GetIsolate()->GetCurrentContext();      \
-    for (size_t i = 0; i < std::size(values); ++i) {                           \
-      array                                                                    \
-          ->Set(ctx, pdfium::checked_cast<uint32_t>(i),                        \
-                (rt)->NewString(values[i]))                                    \
-          .FromJust();                                                         \
+    uint32_t i = 0;                                                            \
+    for (const auto* value : kValues) {                                        \
+      array->Set(ctx, i, (rt)->NewString(value)).FromJust();                   \
+      ++i;                                                                     \
     }                                                                          \
     (rt)->SetConstArray((name), array);                                        \
     (rt)->DefineGlobalConst(                                                   \

@@ -9,14 +9,16 @@
 
 #include <stddef.h>
 
+#include <array>
+
 #include "core/fxcrt/widestring.h"
 
 namespace fxjs {
 
 enum class ConversionStatus { kSuccess = 0, kBadFormat, kBadDate };
 
-extern const char* const kMonths[12];
-extern const char* const kFullMonths[12];
+extern const std::array<const char*, 12> kMonths;
+extern const std::array<const char*, 12> kFullMonths;
 
 double FX_GetDateTime();
 int FX_GetYearFromTime(double dt);

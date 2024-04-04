@@ -9,6 +9,7 @@
 #include <math.h>
 
 #include <algorithm>
+#include <array>
 #include <iomanip>
 #include <iterator>
 #include <limits>
@@ -23,6 +24,7 @@
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
@@ -73,13 +75,13 @@ namespace {
 constexpr double kDoubleCorrect = 0.000000000000001;
 #endif
 
-constexpr const char* kDateFormats[] = {
-    "m/d",         "m/d/yy",       "mm/dd/yy",       "mm/yy",       "d-mmm",
-    "d-mmm-yy",    "dd-mmm-yy",    "yy-mm-dd",       "mmm-yy",      "mmmm-yy",
-    "mmm d, yyyy", "mmmm d, yyyy", "m/d/yy h:MM tt", "m/d/yy HH:MM"};
+constexpr std::array<const char*, 14> kDateFormats = {
+    {"m/d", "m/d/yy", "mm/dd/yy", "mm/yy", "d-mmm", "d-mmm-yy", "dd-mmm-yy",
+     "yy-mm-dd", "mmm-yy", "mmmm-yy", "mmm d, yyyy", "mmmm d, yyyy",
+     "m/d/yy h:MM tt", "m/d/yy HH:MM"}};
 
-constexpr const char* kTimeFormats[] = {"HH:MM", "h:MM tt", "HH:MM:ss",
-                                        "h:MM:ss tt"};
+constexpr std::array<const char*, 4> kTimeFormats = {
+    {"HH:MM", "h:MM tt", "HH:MM:ss", "h:MM:ss tt"}};
 
 template <typename T>
 T StrTrim(const T& str) {
@@ -263,30 +265,36 @@ bool CJS_PublicMethods::IsNumber(const WideString& str) {
   bool bDot = false;
   bool bKXJS = false;
 
-  wchar_t c;
-  while ((c = *p) != L'\0') {
-    if (IsDigitSeparatorOrDecimalMark(c)) {
-      if (bDot)
-        return false;
-      bDot = true;
-    } else if (c == L'-' || c == L'+') {
-      if (p != pTrim)
-        return false;
-    } else if (c == L'e' || c == L'E') {
-      if (bKXJS)
-        return false;
+  // TODO(tsepez): fix UNSAFE usage.
+  UNSAFE_BUFFERS({
+    wchar_t c;
+    while ((c = *p) != L'\0') {
+      if (IsDigitSeparatorOrDecimalMark(c)) {
+        if (bDot) {
+          return false;
+        }
+        bDot = true;
+      } else if (c == L'-' || c == L'+') {
+        if (p != pTrim) {
+          return false;
+        }
+      } else if (c == L'e' || c == L'E') {
+        if (bKXJS) {
+          return false;
+        }
 
+        p++;
+        c = *p;
+        if (c != L'+' && c != L'-') {
+          return false;
+        }
+        bKXJS = true;
+      } else if (!FXSYS_IsDecimalDigit(c)) {
+        return false;
+      }
       p++;
-      c = *p;
-      if (c != L'+' && c != L'-')
-        return false;
-      bKXJS = true;
-    } else if (!FXSYS_IsDecimalDigit(c)) {
-      return false;
     }
-    p++;
-  }
-
+  });
   return true;
 }
 
@@ -322,22 +330,27 @@ v8::Local<v8::Array> CJS_PublicMethods::AF_MakeArrayFromList(
 
   int nIndex = 0;
   v8::Local<v8::Array> StrArray = pRuntime->NewArray();
-  while (*p) {
-    const char* pTemp = strchr(p, ',');
-    if (!pTemp) {
+
+  // TODO(tsepez): fix UNSAFE usage.
+  UNSAFE_BUFFERS({
+    while (*p) {
+      const char* pTemp = strchr(p, ',');
+      if (!pTemp) {
+        pRuntime->PutArrayElement(
+            StrArray, nIndex,
+            pRuntime->NewString(StrTrim(ByteString(p)).AsStringView()));
+        break;
+      }
+
       pRuntime->PutArrayElement(
           StrArray, nIndex,
-          pRuntime->NewString(StrTrim(ByteString(p)).AsStringView()));
-      break;
+          pRuntime->NewString(
+              StrTrim(ByteString(p, pTemp - p)).AsStringView()));
+
+      nIndex++;
+      p = ++pTemp;
     }
-
-    pRuntime->PutArrayElement(
-        StrArray, nIndex,
-        pRuntime->NewString(StrTrim(ByteString(p, pTemp - p)).AsStringView()));
-
-    nIndex++;
-    p = ++pTemp;
-  }
+  });
   return StrArray;
 }
 
@@ -352,7 +365,7 @@ double CJS_PublicMethods::ParseDate(v8::Isolate* isolate,
   int nMin = FX_GetMinFromTime(dt);
   int nSec = FX_GetSecFromTime(dt);
 
-  int number[3];
+  std::array<int, 3> number;
 
   size_t nSkip = 0;
   size_t nLen = value.GetLength();
