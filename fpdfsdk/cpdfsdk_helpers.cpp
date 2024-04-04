@@ -72,14 +72,18 @@ unsigned long GetStreamMaybeCopyAndReturnLengthImpl(
   return pdfium::checked_cast<unsigned long>(stream_data_span.size());
 }
 
+// TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
 size_t FPDFWideStringLength(const unsigned short* str) {
   if (!str) {
     return 0;
   }
   size_t len = 0;
-  while (str[len]) {
-    len++;
-  }
+  // SAFETY: NUL-termination required from caller.
+  UNSAFE_BUFFERS({
+    while (str[len]) {
+      len++;
+    }
+  });
   return len;
 }
 

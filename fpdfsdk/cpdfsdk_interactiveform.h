@@ -7,6 +7,7 @@
 #ifndef FPDFSDK_CPDFSDK_INTERACTIVEFORM_H_
 #define FPDFSDK_CPDFSDK_INTERACTIVEFORM_H_
 
+#include <array>
 #include <functional>
 #include <map>
 #include <memory>
@@ -115,8 +116,8 @@ class CPDFSDK_InteractiveForm final
   bool m_bCalculate = true;
   bool m_bBusy = false;
   uint8_t m_HighlightAlpha = 0;
-  FX_COLORREF m_HighlightColor[kFormFieldTypeCount];
-  bool m_NeedsHighlight[kFormFieldTypeCount];
+  std::array<FX_COLORREF, kFormFieldTypeCount> m_HighlightColor;
+  std::array<bool, kFormFieldTypeCount> m_NeedsHighlight;
 };
 
 #endif  // FPDFSDK_CPDFSDK_INTERACTIVEFORM_H_
