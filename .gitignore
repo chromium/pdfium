@@ -15,6 +15,7 @@
 /third_party/googletest/src
 /third_party/icu
 /third_party/instrumented_libraries
+/third_party/instrumented_libs
 /third_party/jinja2
 /third_party/libc++/src
 /third_party/libc++abi/src

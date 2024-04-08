@@ -69,7 +69,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
-  'build_revision': 'e4eef53d5b822960db715cc180890570ceec98f0',
+  'build_revision': 'bbc1efa4ce09a306328744c508d208407d5978a6',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
@@ -121,7 +121,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling instrumented_lib
   # and whatever else without interference from each other.
-  'instrumented_lib_revision': '0893d760101b3ddf9a2408b9d20f15ec2b80b2c1',
+  'instrumented_lib_revision': '0172d67d98df2d30bd2241959d0e9569ada25abe',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling jinja2
   # and whatever else without interference from each other.
@@ -337,9 +337,9 @@ deps = {
   'third_party/icu':
     Var('chromium_git') + '/chromium/deps/icu.git@' + Var('icu_revision'),
 
-  'third_party/instrumented_libraries':
+  'third_party/instrumented_libs':
     Var('chromium_git') +
-        '/chromium/src/third_party/instrumented_libraries.git@' +
+        '/chromium/third_party/instrumented_libraries.git@' +
         Var('instrumented_lib_revision'),
 
   'third_party/jinja2':
@@ -480,7 +480,9 @@ deps = {
 
 }
 
-recursedeps = []
+recursedeps = [
+  'third_party/instrumented_libs',
+]
 
 include_rules = [
   # Basic stuff that everyone can use.
@@ -702,30 +704,6 @@ hooks = [
                 '--bucket', 'chromium-fonts',
                 '-s', 'third_party/test_fonts/test_fonts.tar.gz.sha1',
     ],
-  },
-  {
-    'name': 'msan_chained_origins_focal',
-    'pattern': '.',
-    'condition': 'checkout_instrumented_libraries',
-    'action': [ 'python3',
-                'third_party/depot_tools/download_from_google_storage.py',
-                '--no_resume',
-                '--no_auth',
-                '--bucket', 'chromium-instrumented-libraries',
-                '-s', 'third_party/instrumented_libraries/binaries/msan-chained-origins-focal.tgz.sha1',
-              ],
-  },
-  {
-    'name': 'msan_no_origins_focal',
-    'pattern': '.',
-    'condition': 'checkout_instrumented_libraries',
-    'action': [ 'python3',
-                'third_party/depot_tools/download_from_google_storage.py',
-                '--no_resume',
-                '--no_auth',
-                '--bucket', 'chromium-instrumented-libraries',
-                '-s', 'third_party/instrumented_libraries/binaries/msan-no-origins-focal.tgz.sha1',
-              ],
   },
   {
     # Update LASTCHANGE.
