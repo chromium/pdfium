@@ -10,8 +10,10 @@
 
 #include <memory>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_font.h"
@@ -209,16 +211,19 @@ void* DefaultGetFont(struct _FPDF_SYSFONTINFO* pThis, const char* family) {
   return pDefault->m_pFontInfo->GetFont(family);
 }
 
+// TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
 static unsigned long DefaultGetFontData(struct _FPDF_SYSFONTINFO* pThis,
                                         void* hFont,
                                         unsigned int table,
                                         unsigned char* buffer,
                                         unsigned long buf_size) {
   auto* pDefault = static_cast<FPDF_SYSFONTINFO_DEFAULT*>(pThis);
-  return pdfium::checked_cast<unsigned long>(
-      pDefault->m_pFontInfo->GetFontData(hFont, table, {buffer, buf_size}));
+  // SAFETY: required from caller.
+  return pdfium::checked_cast<unsigned long>(pDefault->m_pFontInfo->GetFontData(
+      hFont, table, UNSAFE_BUFFERS(pdfium::make_span(buffer, buf_size))));
 }
 
+// TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
 static unsigned long DefaultGetFaceName(struct _FPDF_SYSFONTINFO* pThis,
                                         void* hFont,
                                         char* buffer,

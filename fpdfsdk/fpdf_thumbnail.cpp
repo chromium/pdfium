@@ -11,6 +11,8 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
+#include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/span.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdfview.h"
@@ -40,9 +42,11 @@ FPDFPage_GetDecodedThumbnailData(FPDF_PAGE page,
   if (!thumb_stream)
     return 0u;
 
+  // SAFETY: caller ensures `buffer` points to at least `buflen` bytes.
   return DecodeStreamMaybeCopyAndReturnLength(
       std::move(thumb_stream),
-      {static_cast<uint8_t*>(buffer), static_cast<size_t>(buflen)});
+      UNSAFE_BUFFERS(pdfium::make_span(static_cast<uint8_t*>(buffer),
+                                       static_cast<size_t>(buflen))));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -54,9 +58,11 @@ FPDFPage_GetRawThumbnailData(FPDF_PAGE page,
   if (!thumb_stream)
     return 0u;
 
+  // SAFETY: caller ensures `buffer` points to at least `buflen` bytes.
   return GetRawStreamMaybeCopyAndReturnLength(
       std::move(thumb_stream),
-      {static_cast<uint8_t*>(buffer), static_cast<size_t>(buflen)});
+      UNSAFE_BUFFERS(pdfium::make_span(static_cast<uint8_t*>(buffer),
+                                       static_cast<size_t>(buflen))));
 }
 
 FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV

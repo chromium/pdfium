@@ -202,7 +202,11 @@ FPDF_MovePages(FPDF_DOCUMENT document,
     return false;
   }
 
-  return doc->MovePages({page_indices, page_indices_len}, dest_page_index);
+  // SAFETY: caller ensures `page_indices` points to at least
+  // `page_indices_len` ints.
+  return doc->MovePages(
+      UNSAFE_BUFFERS(pdfium::make_span(page_indices, page_indices_len)),
+      dest_page_index);
 }
 
 FPDF_EXPORT FPDF_PAGE FPDF_CALLCONV FPDFPage_New(FPDF_DOCUMENT document,

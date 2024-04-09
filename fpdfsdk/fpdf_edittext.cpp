@@ -683,10 +683,14 @@ FPDFText_LoadCidType2Font(FPDF_DOCUMENT document,
     return nullptr;
   }
 
-  // Caller takes ownership.
+  // Caller takes ownership of result.
+  // SAFETY: caller ensures `cid_to_gid_map_data` points to at least
+  // `cid_to_gid_map_data_size` entries.
   return FPDFFontFromCPDFFont(
-      LoadCustomCompositeFont(doc, std::move(font), font_span, to_unicode_cmap,
-                              {cid_to_gid_map_data, cid_to_gid_map_data_size})
+      LoadCustomCompositeFont(
+          doc, std::move(font), font_span, to_unicode_cmap,
+          UNSAFE_BUFFERS(
+              pdfium::make_span(cid_to_gid_map_data, cid_to_gid_map_data_size)))
           .Leak());
 }
 

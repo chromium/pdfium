@@ -40,13 +40,19 @@ ByteString CFXByteStringHexDecode(const ByteString& bsHex) {
   return ByteString(result.get(), size);
 }
 
+// TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
 ByteString GenerateMD5Base16(const void* contents, const unsigned long len) {
   uint8_t digest[16];
-  CRYPT_MD5Generate({static_cast<const uint8_t*>(contents), len}, digest);
-  char buf[32];
-  for (int i = 0; i < 16; ++i)
-    FXSYS_IntToTwoHexChars(digest[i], &buf[i * 2]);
 
+  // SAFETY: caller ensures `contents` points to at least `len` bytes.
+  CRYPT_MD5Generate(UNSAFE_BUFFERS(pdfium::make_span(
+                        static_cast<const uint8_t*>(contents), len)),
+                    digest);
+
+  char buf[32];
+  for (int i = 0; i < 16; ++i) {
+    FXSYS_IntToTwoHexChars(digest[i], &buf[i * 2]);
+  }
   return ByteString(buf, 32);
 }
 
@@ -274,8 +280,10 @@ FPDFAttachment_GetFile(FPDF_ATTACHMENT attachment,
   if (!pFileStream)
     return false;
 
+  // SAFETY: required from caller.
   *out_buflen = DecodeStreamMaybeCopyAndReturnLength(
       std::move(pFileStream),
-      {static_cast<uint8_t*>(buffer), static_cast<size_t>(buflen)});
+      UNSAFE_BUFFERS(pdfium::make_span(static_cast<uint8_t*>(buffer),
+                                       static_cast<size_t>(buflen))));
   return true;
 }

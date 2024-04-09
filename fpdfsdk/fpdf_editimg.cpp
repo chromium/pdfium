@@ -342,9 +342,11 @@ FPDFImageObj_GetImageDataDecoded(FPDF_PAGEOBJECT image_object,
   if (!pImgStream)
     return 0;
 
+  // SAFETY: caller ensures `buffer` points to at least `buflen` bytes.
   return DecodeStreamMaybeCopyAndReturnLength(
       std::move(pImgStream),
-      {static_cast<uint8_t*>(buffer), static_cast<size_t>(buflen)});
+      UNSAFE_BUFFERS(pdfium::make_span(static_cast<uint8_t*>(buffer),
+                                       static_cast<size_t>(buflen))));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -363,9 +365,11 @@ FPDFImageObj_GetImageDataRaw(FPDF_PAGEOBJECT image_object,
   if (!pImgStream)
     return 0;
 
+  // SAFETY: caller ensures `buffer` points to at least `buflen` bytes.
   return GetRawStreamMaybeCopyAndReturnLength(
       std::move(pImgStream),
-      {static_cast<uint8_t*>(buffer), static_cast<size_t>(buflen)});
+      UNSAFE_BUFFERS(pdfium::make_span(static_cast<uint8_t*>(buffer),
+                                       static_cast<size_t>(buflen))));
 }
 
 FPDF_EXPORT int FPDF_CALLCONV

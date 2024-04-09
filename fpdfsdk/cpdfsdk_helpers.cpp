@@ -224,9 +224,12 @@ ByteString ByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
   return WideStringFromFPDFWideString(wide_string).ToUTF8();
 }
 
+// TOOO(tsepez): should be UNSAFE_BUFFER_USAGE.
 WideString WideStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
-  return WideString::FromUTF16LE({reinterpret_cast<const uint8_t*>(wide_string),
-                                  FPDFWideStringLength(wide_string) * 2});
+  // SAFETY: caller ensures `wide_string` is NUL-terminated.
+  return WideString::FromUTF16LE(UNSAFE_BUFFERS(
+      pdfium::make_span(reinterpret_cast<const uint8_t*>(wide_string),
+                        FPDFWideStringLength(wide_string) * 2)));
 }
 
 #ifdef PDF_ENABLE_XFA
