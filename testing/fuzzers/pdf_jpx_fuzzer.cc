@@ -29,8 +29,11 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (size < 2)
     return 0;
 
+  // SAFETY: trusted arguments from fuzzer.
+  auto span = UNSAFE_BUFFERS(pdfium::make_span(data, size));
+
   std::unique_ptr<CJPX_Decoder> decoder = CJPX_Decoder::Create(
-      {data + 2, size - 2},
+      span.subspan(2u),
       static_cast<CJPX_Decoder::ColorSpaceOption>(data[0] % 3), data[1]);
   if (!decoder)
     return 0;

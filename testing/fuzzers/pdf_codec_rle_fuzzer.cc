@@ -5,8 +5,11 @@
 #include <cstdint>
 
 #include "core/fxcodec/basic/basicmodule.h"
+#include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/span.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
-  BasicModule::RunLengthEncode({data, size});
+  // SAFETY: trusted arguments passed from fuzzer.
+  BasicModule::RunLengthEncode(UNSAFE_BUFFERS(pdfium::make_span(data, size)));
   return 0;
 }

@@ -17,6 +17,7 @@
 #include <utility>
 
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/numerics/checked_math.h"
 #include "core/fxcrt/span.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -131,7 +132,8 @@ void PDFiumFuzzerHelper::RenderPdf(const char* data, size_t len) {
   form_callbacks.version = GetFormCallbackVersion();
   form_callbacks.m_pJsPlatform = &platform_callbacks;
 
-  FuzzerTestLoader loader({data, len});
+  // SAFETY: trusted arguments from fuzzer,
+  FuzzerTestLoader loader(UNSAFE_BUFFERS(pdfium::make_span(data, len)));
   FPDF_FILEACCESS file_access;
   memset(&file_access, '\0', sizeof(file_access));
   file_access.m_FileLen = static_cast<unsigned long>(len);

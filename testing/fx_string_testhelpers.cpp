@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/span.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -63,8 +64,11 @@ std::wstring GetPlatformWString(FPDF_WIDESTRING wstr) {
 ScopedFPDFWideString GetFPDFWideString(const std::wstring& wstr) {
   size_t length = sizeof(uint16_t) * (wstr.size() + 1);
   ScopedFPDFWideString result(static_cast<FPDF_WCHAR*>(malloc(length)));
-  pdfium::span<uint8_t> result_span(reinterpret_cast<uint8_t*>(result.get()),
-                                    length);
+
+  // SAFETY: length was argument to malloc above.
+  pdfium::span<uint8_t> result_span = UNSAFE_BUFFERS(
+      pdfium::make_span(reinterpret_cast<uint8_t*>(result.get()), length));
+
   size_t i = 0;
   for (wchar_t w : wstr) {
     result_span[i++] = w & 0xff;

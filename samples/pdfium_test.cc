@@ -24,6 +24,8 @@
 #endif
 
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/span.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_annot.h"
 #include "public/fpdf_attachment.h"
@@ -955,8 +957,9 @@ class BitmapPageRenderer : public PageRenderer {
       if (md5) {
         // Write the filename and the MD5 of the buffer to stdout.
         OutputMD5Hash(image_file_name.c_str(),
-                      {static_cast<const uint8_t*>(buffer),
-                       static_cast<size_t>(stride) * renderer.height()});
+                      UNSAFE_BUFFERS(pdfium::make_span(
+                          static_cast<const uint8_t*>(buffer),
+                          static_cast<size_t>(stride) * renderer.height())));
       }
       return true;
     };
@@ -1285,8 +1288,9 @@ class SkPicturePageRenderer final : public SkCanvasPageRenderer {
         return false;
 
       OutputMD5Hash(image_file_name.c_str(),
-                    {static_cast<const uint8_t*>(pixmap.addr()),
-                     pixmap.computeByteSize()});
+                    UNSAFE_BUFFERS(pdfium::make_span(
+                        static_cast<const uint8_t*>(pixmap.addr()),
+                        pixmap.computeByteSize())));
     }
     return true;
   }

@@ -7,7 +7,9 @@
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
 #include "core/fxcodec/jbig2/jbig2_decoder.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 #include "testing/fuzzers/pdfium_fuzzer_util.h"
@@ -17,10 +19,11 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   if (size < kParameterSize)
     return 0;
 
+  // SAFETY: trusted arguments from fuzzer.
+  auto span = UNSAFE_BUFFERS(pdfium::make_span(data, size));
   uint32_t width = GetInteger(data);
   uint32_t height = GetInteger(data + 4);
-  size -= kParameterSize;
-  data += kParameterSize;
+  span = span.subspan(kParameterSize);
 
   static constexpr uint32_t kMemLimit = 512000000;   // 512 MB
   static constexpr uint32_t k1bppRgbComponents = 4;  // From CFX_DIBitmap impl.
@@ -37,7 +40,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   JBig2_DocumentContext document_context;
   Jbig2Context jbig2_context;
   FXCODEC_STATUS status = Jbig2Decoder::StartDecode(
-      &jbig2_context, &document_context, width, height, {data, size}, 1, {}, 0,
+      &jbig2_context, &document_context, width, height, span, 1, {}, 0,
       bitmap->GetWritableBuffer(), bitmap->GetPitch(), nullptr);
 
   while (status == FXCODEC_STATUS::kDecodeToBeContinued)
