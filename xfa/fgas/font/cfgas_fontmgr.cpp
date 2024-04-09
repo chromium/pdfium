@@ -17,6 +17,7 @@
 #include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/cfx_read_only_vector_stream.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fixed_size_data_vector.h"
@@ -395,9 +396,12 @@ unsigned long ftStreamRead(FXFT_StreamRec* stream,
 
   IFX_SeekableReadStream* pFile =
       static_cast<IFX_SeekableReadStream*>(stream->descriptor.pointer);
-  if (!pFile->ReadBlockAtOffset({buffer, count}, offset))
-    return 0;
 
+  // SAFETY: required from caller.
+  if (!pFile->ReadBlockAtOffset(
+          UNSAFE_BUFFERS(pdfium::make_span(buffer, count), offset))) {
+    return 0;
+  }
   return count;
 }
 

@@ -303,12 +303,12 @@ void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
     for (size_t i = 0; i < line.GetSize(); ++i) {
       const Piece* pPiece = line.GetPieceAtIndex(i);
       size_t szCount = GetDisplayPos(pPiece);
-      if (szCount == 0)
+      if (szCount == 0) {
         continue;
-
+      }
       CFDE_TextOut::DrawString(device, m_TxtColor, m_pFont,
-                               {m_CharPos.data(), szCount}, m_fFontSize,
-                               m_Matrix);
+                               pdfium::make_span(m_CharPos).first(szCount),
+                               m_fFontSize, m_Matrix);
     }
   }
   device->RestoreState(false);

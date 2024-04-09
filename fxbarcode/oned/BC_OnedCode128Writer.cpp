@@ -142,8 +142,8 @@ DataVector<uint8_t> CBC_OnedCode128Writer::Encode(const ByteString& contents) {
   DataVector<uint8_t> result(codeWidth);
   auto result_span = pdfium::make_span(result);
   for (const int32_t pattern_index : patterns) {
-    const uint8_t* pattern = kCodePatterns[pattern_index];
-    result_span = AppendPattern(result_span, {pattern, kPatternSize}, true);
+    result_span =
+        AppendPattern(result_span, kCodePatterns[pattern_index], true);
   }
   return result;
 }
