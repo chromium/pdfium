@@ -228,6 +228,58 @@ config("pdfium_common_config") {
       "-Wno-return-type",
     ]
   }
+
+  if (clang_use_chrome_plugins) {
+    defines += [ "PDF_USE_CHROME_PLUGINS" ]
+
+    # Catch misuse of C-style pointers.
+    # TODO(crbug.com/1320670): enable for non-debug builds once this stops
+    # interfering with code generation.
+    # TODO(tsepez): enable for windows, too.
+    if (is_debug && !is_win) {
+      cflags += [
+        "-Xclang",
+        "-plugin-arg-find-bad-constructs",
+        "-Xclang",
+        "check-raw-ptr-fields",
+
+        "-Xclang",
+        "-plugin-arg-find-bad-constructs",
+        "-Xclang",
+        "raw-ptr-exclude-path=public",
+
+        "-Xclang",
+        "-plugin-arg-find-bad-constructs",
+        "-Xclang",
+        "raw-ptr-exclude-path=test",
+
+        # TODO(tsepez): enforce raw_ref<> as well.
+        # "-Xclang",
+        # "-plugin-arg-find-bad-constructs",
+        # "-Xclang",
+        # "check-raw-ref-fields",
+      ]
+      defines += [ "PDF_ENABLE_UNOWNED_PTR_EXCLUSION" ]
+    }
+
+    # Catch misuse of cppgc in XFA.
+    if (pdf_enable_xfa) {
+      cflags += [
+        "-Xclang",
+        "-add-plugin",
+        "-Xclang",
+        "blink-gc-plugin",
+      ]
+
+      # Disable GC plugin forbidding off-heap collections of GCed:
+      cflags += [
+        "-Xclang",
+        "-plugin-arg-blink-gc-plugin",
+        "-Xclang",
+        "disable-off-heap-collections-of-gced-check",
+      ]
+    }
+  }
 }
 
 config("pdfium_implementation_config") {
@@ -282,64 +334,9 @@ config("pdfium_core_config") {
   }
 }
 
-config("pdfium_plugin_config") {
-  cflags = []
-  defines = []
-  if (clang_use_chrome_plugins) {
-    # Catch misuse of C-style pointers.
-    # TODO(crbug.com/1320670): enable for non-debug builds once this stops
-    # interfering with code generation.
-    # TODO(tsepez): enable for windows, too.
-    if (is_debug && !is_win) {
-      cflags += [
-        "-Xclang",
-        "-plugin-arg-find-bad-constructs",
-        "-Xclang",
-        "check-raw-ptr-fields",
-
-        "-Xclang",
-        "-plugin-arg-find-bad-constructs",
-        "-Xclang",
-        "raw-ptr-exclude-path=public",
-
-        "-Xclang",
-        "-plugin-arg-find-bad-constructs",
-        "-Xclang",
-        "raw-ptr-exclude-path=test",
-
-        # TODO(tsepez): enforce raw_ref<> as well.
-        # "-Xclang",
-        # "-plugin-arg-find-bad-constructs",
-        # "-Xclang",
-        # "check-raw-ref-fields",
-      ]
-      defines += [ "PDF_ENABLE_UNOWNED_PTR_EXCLUSION" ]
-    }
-
-    # Catch misuse of cppgc in XFA.
-    if (pdf_enable_xfa) {
-      cflags += [
-        "-Xclang",
-        "-add-plugin",
-        "-Xclang",
-        "blink-gc-plugin",
-      ]
-
-      # Disable GC plugin forbidding off-heap collections of GCed:
-      cflags += [
-        "-Xclang",
-        "-plugin-arg-blink-gc-plugin",
-        "-Xclang",
-        "disable-off-heap-collections-of-gced-check",
-      ]
-    }
-  }
-}
-
 config("pdfium_strict_config") {
   configs = [
     ":pdfium_core_config",
-    ":pdfium_plugin_config",
     "//build/config/compiler:wexit_time_destructors",
     "//build/config/compiler:wglobal_constructors",
   ]
