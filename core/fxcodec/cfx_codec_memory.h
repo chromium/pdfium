@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
@@ -20,7 +21,10 @@ class CFX_CodecMemory final : public Retainable {
     return GetBufferSpan().subspan(pos_);
   }
 
-  pdfium::span<uint8_t> GetBufferSpan() { return {buffer_.get(), size_}; }
+  // SAFETY: `size_` must track `buffer_` allocations.
+  pdfium::span<uint8_t> GetBufferSpan() {
+    return UNSAFE_BUFFERS(pdfium::make_span(buffer_.get(), size_));
+  }
   size_t GetSize() const { return size_; }
   size_t GetPosition() const { return pos_; }
   bool IsEOF() const { return pos_ >= size_; }
@@ -39,6 +43,7 @@ class CFX_CodecMemory final : public Retainable {
   explicit CFX_CodecMemory(size_t buffer_size);
   ~CFX_CodecMemory() override;
 
+  // TODO(tsepez): convert to a fixed array type.
   std::unique_ptr<uint8_t, FxFreeDeleter> buffer_;
   size_t size_ = 0;
   size_t pos_ = 0;

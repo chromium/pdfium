@@ -334,7 +334,11 @@ bool CFX_GifContext::ReadAllOrNone(uint8_t* dest, uint32_t size) {
     return false;
 
   size_t read_marker = input_buffer_->GetPosition();
-  size_t read = input_buffer_->ReadBlock({dest, size});
+
+  // SAFETY: caller ensures `dest` points to `size` bytes, as enforced via
+  // UNSAFE_BUFFER_USAGE for method declaration in header.
+  auto read_span = UNSAFE_BUFFERS(pdfium::make_span(dest, size));
+  size_t read = input_buffer_->ReadBlock(read_span);
   if (read < size) {
     input_buffer_->Seek(read_marker);
     return false;

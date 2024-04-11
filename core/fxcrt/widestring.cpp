@@ -14,6 +14,7 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
@@ -391,9 +392,11 @@ WideString WideString::Format(const wchar_t* pFormat, ...) {
   return ret;
 }
 
+// TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
 WideString::WideString(const wchar_t* pStr, size_t nLen) {
   if (nLen) {
-    m_pData = StringData::Create({pStr, nLen});
+    // SAFETY: caller ensures `pStr` points to al least `nLen` wchar_t.
+    m_pData = StringData::Create(UNSAFE_BUFFERS(pdfium::make_span(pStr, nLen)));
   }
 }
 

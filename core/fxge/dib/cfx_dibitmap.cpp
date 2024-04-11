@@ -16,11 +16,13 @@
 #include "build/build_config.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
 #include "core/fxge/cfx_cliprgn.h"
@@ -90,7 +92,8 @@ pdfium::span<const uint8_t> CFX_DIBitmap::GetBuffer() const {
   if (!m_pBuffer)
     return pdfium::span<const uint8_t>();
 
-  return {m_pBuffer.Get(), m_Height * m_Pitch};
+  // TODO(tsepez): investigate safety.
+  return UNSAFE_BUFFERS(pdfium::make_span(m_pBuffer.Get(), m_Height * m_Pitch));
 }
 
 pdfium::span<const uint8_t> CFX_DIBitmap::GetScanline(int line) const {
@@ -863,9 +866,11 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
     memset(dest_buf.get(), 0xff, dest_buf_size);
   }
   RetainPtr<CFX_DIBBase> holder(this);
-  m_palette =
-      ConvertBuffer(dest_format, {dest_buf.get(), dest_buf_size}, dest_pitch,
-                    m_Width, m_Height, holder, /*src_left=*/0, /*src_top=*/0);
+  // SAFETY: `dest_buf` allocated with `dest_buf_size` bytes above.
+  m_palette = ConvertBuffer(
+      dest_format,
+      UNSAFE_BUFFERS(pdfium::make_span(dest_buf.get(), dest_buf_size)),
+      dest_pitch, m_Width, m_Height, holder, /*src_left=*/0, /*src_top=*/0);
   m_pBuffer = std::move(dest_buf);
   m_Format = dest_format;
   m_Pitch = dest_pitch;

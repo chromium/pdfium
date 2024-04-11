@@ -9,6 +9,7 @@
 
 #include <optional>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -44,12 +45,15 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   pdfium::span<const uint8_t> GetBuffer() const;
   pdfium::span<uint8_t> GetWritableBuffer() {
     pdfium::span<const uint8_t> src = GetBuffer();
-    return {const_cast<uint8_t*>(src.data()), src.size()};
+    // SAFETY: const_cast<>() doesn't change size.
+    return UNSAFE_BUFFERS(
+        pdfium::make_span(const_cast<uint8_t*>(src.data()), src.size()));
   }
 
   pdfium::span<uint8_t> GetWritableScanline(int line) {
     pdfium::span<const uint8_t> src = GetScanline(line);
-    return {const_cast<uint8_t*>(src.data()), src.size()};
+    return UNSAFE_BUFFERS(
+        pdfium::make_span(const_cast<uint8_t*>(src.data()), src.size()));
   }
 
   void TakeOver(RetainPtr<CFX_DIBitmap>&& pSrcBitmap);

@@ -33,6 +33,7 @@
 #include "core/fxcodec/icc/icc_transform.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/containers/contains.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -74,10 +75,9 @@ ByteString GetPSNameFromTT(HDC hDC) {
   ByteString result;
   DWORD size = ::GetFontData(hDC, 'eman', 0, nullptr, 0);
   if (size != GDI_ERROR) {
-    LPBYTE buffer = FX_Alloc(BYTE, size);
-    ::GetFontData(hDC, 'eman', 0, buffer, size);
-    result = GetNameFromTT({buffer, size}, 6);
-    FX_Free(buffer);
+    auto buffer = FixedSizeDataVector<BYTE>::Uninit(size);
+    ::GetFontData(hDC, 'eman', 0, buffer.span().data(), buffer.size());
+    result = GetNameFromTT(buffer, 6);
   }
   return result;
 }

@@ -7,7 +7,7 @@
 #include "core/fxcrt/widetext_buffer.h"
 
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/span_util.h"
 
 namespace fxcrt {
 
@@ -16,13 +16,11 @@ size_t WideTextBuffer::GetLength() const {
 }
 
 pdfium::span<wchar_t> WideTextBuffer::GetWideSpan() {
-  return pdfium::make_span(reinterpret_cast<wchar_t*>(m_buffer.data()),
-                           GetLength());
+  return reinterpret_span<wchar_t>(GetMutableSpan());
 }
 
 pdfium::span<const wchar_t> WideTextBuffer::GetWideSpan() const {
-  return pdfium::make_span(reinterpret_cast<const wchar_t*>(m_buffer.data()),
-                           GetLength());
+  return reinterpret_span<const wchar_t>(GetSpan());
 }
 
 WideStringView WideTextBuffer::AsStringView() const {

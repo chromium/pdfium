@@ -1204,7 +1204,9 @@ TEST(ByteStringView, NotNull) {
   ByteStringView string3("abc");
   ByteStringView string6("abcdef");
   ByteStringView alternate_string3("abcdef", 3);
-  ByteStringView span_string4(pdfium::as_bytes(pdfium::make_span("abcd", 4u)));
+  const char abcd[] = "abcd";
+  ByteStringView span_string4(
+      pdfium::as_bytes(pdfium::make_span(abcd).first(4u)));
   ByteStringView embedded_nul_string7("abc\0def", 7);
   ByteStringView illegal_string7("abcdef", 7);
 
@@ -1518,8 +1520,9 @@ TEST(ByteStringView, OperatorEQ) {
   EXPECT_FALSE(c_string2 == byte_string_c);
   EXPECT_FALSE(c_string3 == byte_string_c);
 
+  const char kHello[] = "hello";
   pdfium::span<const uint8_t> span5(
-      pdfium::as_bytes(pdfium::make_span("hello", 5u)));
+      pdfium::as_bytes(pdfium::make_span(kHello).first(5u)));
   auto raw_span = byte_string_c.unsigned_span();
   EXPECT_TRUE(
       std::equal(raw_span.begin(), raw_span.end(), span5.begin(), span5.end()));

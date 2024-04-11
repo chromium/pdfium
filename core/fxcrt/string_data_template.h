@@ -33,18 +33,31 @@ class StringDataTemplate {
   void CopyContentsAt(size_t offset, pdfium::span<const CharType> str);
 
   pdfium::span<CharType> span() {
-    return pdfium::make_span(m_String, m_nDataLength);
+    // SAFETY: m_nDataLength is within m_String.
+    return UNSAFE_BUFFERS(pdfium::make_span(m_String, m_nDataLength));
   }
   pdfium::span<const CharType> span() const {
-    return pdfium::make_span(m_String, m_nDataLength);
+    // SAFETY: m_nDataLength is within m_String.
+    return UNSAFE_BUFFERS(pdfium::make_span(m_String, m_nDataLength));
+  }
+
+  pdfium::span<CharType> alloc_span() {
+    // SAFETY: m_nAllocLength is within m_String.
+    return UNSAFE_BUFFERS(pdfium::make_span(m_String, m_nAllocLength));
+  }
+  pdfium::span<const CharType> alloc_span() const {
+    // SAFETY: m_nAllocLength is within m_String.
+    return UNSAFE_BUFFERS(pdfium::make_span(m_String, m_nAllocLength));
   }
 
   // Includes the terminating NUL not included in lengths.
   pdfium::span<CharType> capacity_span() {
-    return pdfium::make_span(m_String, m_nAllocLength + 1);
+    // SAFETY: m_nAllocLength + 1 is within m_String.
+    return UNSAFE_BUFFERS(pdfium::make_span(m_String, m_nAllocLength + 1));
   }
   pdfium::span<const CharType> capacity_span() const {
-    return pdfium::make_span(m_String, m_nAllocLength + 1);
+    // SAFETY: m_nAllocLength + 1 is within m_String.
+    return UNSAFE_BUFFERS(pdfium::make_span(m_String, m_nAllocLength + 1));
   }
 
   // Unlike std::string::front(), this is always safe and returns a

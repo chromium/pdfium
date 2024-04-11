@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
 
@@ -25,10 +26,10 @@ pdfium::span<T> StringTemplate<T>::GetBuffer(size_t nMinBufLength) {
     m_pData = StringData::Create(nMinBufLength);
     m_pData->m_nDataLength = 0;
     m_pData->m_String[0] = 0;
-    return pdfium::span<T>(m_pData->m_String, m_pData->m_nAllocLength);
+    return m_pData->alloc_span();
   }
   if (m_pData->CanOperateInPlace(nMinBufLength)) {
-    return pdfium::span<T>(m_pData->m_String, m_pData->m_nAllocLength);
+    return m_pData->alloc_span();
   }
   nMinBufLength = std::max(nMinBufLength, m_pData->m_nDataLength);
   if (nMinBufLength == 0) {
@@ -38,7 +39,7 @@ pdfium::span<T> StringTemplate<T>::GetBuffer(size_t nMinBufLength) {
   pNewData->CopyContents(*m_pData);
   pNewData->m_nDataLength = m_pData->m_nDataLength;
   m_pData = std::move(pNewData);
-  return pdfium::span<T>(m_pData->m_String, m_pData->m_nAllocLength);
+  return m_pData->alloc_span();
 }
 
 template <typename T>
@@ -308,7 +309,9 @@ void StringTemplate<T>::ReallocBeforeWrite(size_t nNewLength) {
   RetainPtr<StringData> pNewData = StringData::Create(nNewLength);
   if (m_pData) {
     size_t nCopyLength = std::min(m_pData->m_nDataLength, nNewLength);
-    pNewData->CopyContents({m_pData->m_String, nCopyLength});
+    // SAFETY: copy of no more than m_nDataLength bytes.
+    pNewData->CopyContents(
+        UNSAFE_BUFFERS(pdfium::make_span(m_pData->m_String, nCopyLength)));
     pNewData->m_nDataLength = nCopyLength;
   } else {
     pNewData->m_nDataLength = 0;
@@ -332,7 +335,8 @@ void StringTemplate<T>::AllocBeforeWrite(size_t nNewLength) {
 template <typename T>
 void StringTemplate<T>::AssignCopy(const T* pSrcData, size_t nSrcLen) {
   AllocBeforeWrite(nSrcLen);
-  m_pData->CopyContents({pSrcData, nSrcLen});
+  // SAFETY: AllocBeforeWrite() ensures `nSrcLen` bytes available.
+  m_pData->CopyContents(UNSAFE_BUFFERS(pdfium::make_span(pSrcData, nSrcLen)));
   m_pData->m_nDataLength = nSrcLen;
 }
 
@@ -341,12 +345,15 @@ void StringTemplate<T>::Concat(const T* pSrcData, size_t nSrcLen) {
   if (!pSrcData || nSrcLen == 0) {
     return;
   }
+  // SAFETY: required from caller.
+  // TODO(tsepez): should be UNSAFE_BUFFER_USAGE or pass span.
+  auto src_span = UNSAFE_BUFFERS(pdfium::make_span(pSrcData, nSrcLen));
   if (!m_pData) {
-    m_pData = StringData::Create({pSrcData, nSrcLen});
+    m_pData = StringData::Create(src_span);
     return;
   }
   if (m_pData->CanOperateInPlace(m_pData->m_nDataLength + nSrcLen)) {
-    m_pData->CopyContentsAt(m_pData->m_nDataLength, {pSrcData, nSrcLen});
+    m_pData->CopyContentsAt(m_pData->m_nDataLength, src_span);
     m_pData->m_nDataLength += nSrcLen;
     return;
   }
@@ -355,7 +362,7 @@ void StringTemplate<T>::Concat(const T* pSrcData, size_t nSrcLen) {
   RetainPtr<StringData> pNewData =
       StringData::Create(m_pData->m_nDataLength + nGrowLen);
   pNewData->CopyContents(*m_pData);
-  pNewData->CopyContentsAt(m_pData->m_nDataLength, {pSrcData, nSrcLen});
+  pNewData->CopyContentsAt(m_pData->m_nDataLength, src_span);
   pNewData->m_nDataLength = m_pData->m_nDataLength + nSrcLen;
   m_pData = std::move(pNewData);
 }

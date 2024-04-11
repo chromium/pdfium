@@ -10,6 +10,7 @@
 #include <memory>
 #include <utility>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/span.h"
 
@@ -74,9 +75,13 @@ class FixedSizeDataVector {
   operator pdfium::span<const T>() const { return span(); }
 
   // Explicit access to data via span.
-  pdfium::span<T> span() { return pdfium::span<T>(data_.get(), size_); }
+  pdfium::span<T> span() {
+    // SAFETY: size_ describes size of data_.
+    return UNSAFE_BUFFERS(pdfium::make_span(data_.get(), size_));
+  }
   pdfium::span<const T> span() const {
-    return pdfium::span<const T>(data_.get(), size_);
+    // SAFETY: size_ describes size of data_.
+    return UNSAFE_BUFFERS(pdfium::make_span(data_.get(), size_));
   }
 
   // Convenience methods to slice the vector into spans.

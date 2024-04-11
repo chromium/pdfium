@@ -13,12 +13,14 @@
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 
@@ -120,8 +122,11 @@ tsize_t tiff_read(thandle_t context, tdata_t buf, tsize_t length) {
     return 0;
 
   FX_FILESIZE offset = pTiffContext->offset();
+  // SAFETY: required from caller.
   if (!pTiffContext->io_in()->ReadBlockAtOffset(
-          {static_cast<uint8_t*>(buf), static_cast<size_t>(length)}, offset)) {
+          UNSAFE_BUFFERS(pdfium::make_span(static_cast<uint8_t*>(buf),
+                                           static_cast<size_t>(length))),
+          offset)) {
     return 0;
   }
   pTiffContext->set_offset(increment.ValueOrDie());

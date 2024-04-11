@@ -25,6 +25,7 @@
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_random.h"
 #include "core/fxcrt/notreached.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
 
 namespace {
@@ -70,8 +71,9 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
   CRYPT_MD5Finish(&md5, digest);
   size_t copy_len = std::min(keylen, sizeof(digest));
   if (is_revision_3_or_greater) {
-    for (int i = 0; i < 50; i++)
-      CRYPT_MD5Generate({digest, copy_len}, digest);
+    for (int i = 0; i < 50; i++) {
+      CRYPT_MD5Generate(pdfium::make_span(digest).first(copy_len), digest);
+    }
   }
   memset(key, 0, keylen);
   memcpy(key, digest, copy_len);
@@ -460,9 +462,10 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
 
   memcpy(test, ukey.c_str(), copy_len);
   for (int32_t i = 19; i >= 0; i--) {
-    for (size_t j = 0; j < m_KeyLen; j++)
+    for (size_t j = 0; j < m_KeyLen; j++) {
       tmpkey[j] = m_EncryptKey[j] ^ static_cast<uint8_t>(i);
-    CRYPT_ArcFourCryptBlock(test, {tmpkey, m_KeyLen});
+    }
+    CRYPT_ArcFourCryptBlock(test, pdfium::make_span(tmpkey).first(m_KeyLen));
   }
   CRYPT_md5_context md5 = CRYPT_MD5Start();
   CRYPT_MD5Update(&md5, kDefaultPasscode);
@@ -491,19 +494,21 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
   }
   uint8_t enckey[32] = {};
   size_t copy_len = std::min(m_KeyLen, sizeof(digest));
-
   memcpy(enckey, digest, copy_len);
   uint8_t okeybuf[32] = {};
   memcpy(okeybuf, okey.c_str(), okeylen);
-  pdfium::span<uint8_t> okey_span(okeybuf, okeylen);
+  pdfium::span<uint8_t> okey_span = pdfium::make_span(okeybuf).first(okeylen);
   if (m_Revision == 2) {
-    CRYPT_ArcFourCryptBlock(okey_span, {enckey, m_KeyLen});
+    CRYPT_ArcFourCryptBlock(okey_span,
+                            pdfium::make_span(enckey).first(m_KeyLen));
   } else {
     for (int32_t i = 19; i >= 0; i--) {
       uint8_t tempkey[32] = {};
-      for (size_t j = 0; j < m_KeyLen; j++)
+      for (size_t j = 0; j < m_KeyLen; j++) {
         tempkey[j] = enckey[j] ^ static_cast<uint8_t>(i);
-      CRYPT_ArcFourCryptBlock(okey_span, {tempkey, m_KeyLen});
+      }
+      CRYPT_ArcFourCryptBlock(okey_span,
+                              pdfium::make_span(tempkey).first(m_KeyLen));
     }
   }
   size_t len = kRequiredOkeyLength;
@@ -582,16 +587,19 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
 
     uint8_t digest[32];
     CRYPT_MD5Finish(&md5, digest);
-    pdfium::span<uint8_t> partial_digest_span(digest, 16u);
+    auto partial_digest_span = pdfium::make_span(digest).first(16u);
     CRYPT_ArcFourCryptBlock(partial_digest_span,
                             pdfium::make_span(m_EncryptKey).first(key_len));
     uint8_t tempkey[32];
     for (uint8_t i = 1; i <= 19; i++) {
-      for (size_t j = 0; j < key_len; j++)
+      for (size_t j = 0; j < key_len; j++) {
         tempkey[j] = m_EncryptKey[j] ^ i;
-      CRYPT_ArcFourCryptBlock(partial_digest_span, {tempkey, key_len});
+      }
+      CRYPT_ArcFourCryptBlock(partial_digest_span,
+                              pdfium::make_span(tempkey).first(key_len));
     }
-    CRYPT_MD5Generate({digest, 16u}, digest + 16);
+    CRYPT_MD5Generate(pdfium::make_span(digest).first(16u),
+                      pdfium::make_span(digest).subspan(16u).data());
     pEncryptDict->SetNewFor<CPDF_String>("U", ByteString(digest, 32), false);
   }
 

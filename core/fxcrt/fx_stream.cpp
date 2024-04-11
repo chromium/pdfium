@@ -49,19 +49,21 @@ bool IFX_WriteStream::WriteString(ByteStringView str) {
 }
 
 bool IFX_WriteStream::WriteByte(uint8_t byte) {
-  return WriteBlock({&byte, 1u});
+  return WriteBlock(pdfium::byte_span_from_ref(byte));
 }
 
 bool IFX_WriteStream::WriteDWord(uint32_t i) {
   char buf[20] = {};
   FXSYS_itoa(i, buf, 10);
-  return WriteBlock({reinterpret_cast<uint8_t*>(buf), strlen(buf)});
+  auto buf_span = pdfium::as_byte_span(buf);
+  return WriteBlock(buf_span.first(strlen(buf)));
 }
 
 bool IFX_WriteStream::WriteFilesize(FX_FILESIZE size) {
   char buf[20] = {};
   FXSYS_i64toa(size, buf, 10);
-  return WriteBlock({reinterpret_cast<uint8_t*>(buf), strlen(buf)});
+  auto buf_span = fxcrt::reinterpret_span<uint8_t>(pdfium::make_span(buf));
+  return WriteBlock(buf_span.first(strlen(buf)));
 }
 
 // static

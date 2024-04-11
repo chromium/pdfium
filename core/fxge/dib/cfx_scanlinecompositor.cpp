@@ -12,6 +12,7 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxge/dib/blend.h"
 #include "core/fxge/dib/fx_dib.h"
 
@@ -2530,7 +2531,9 @@ pdfium::span<uint8_t> CFX_ScanlineCompositor::Palette::Make8BitPalette(
   m_Width = sizeof(uint8_t);
   m_nElements = nElements;
   m_pData.reset(reinterpret_cast<uint32_t*>(FX_Alloc(uint8_t, m_nElements)));
-  return {reinterpret_cast<uint8_t*>(m_pData.get()), m_nElements};
+  // SAFETY: `m_nElements` passed to FX_Alloc() of type uint8_t.
+  return UNSAFE_BUFFERS(pdfium::make_span(
+      reinterpret_cast<uint8_t*>(m_pData.get()), m_nElements));
 }
 
 pdfium::span<uint32_t> CFX_ScanlineCompositor::Palette::Make32BitPalette(
@@ -2538,17 +2541,23 @@ pdfium::span<uint32_t> CFX_ScanlineCompositor::Palette::Make32BitPalette(
   m_Width = sizeof(uint32_t);
   m_nElements = nElements;
   m_pData.reset(FX_Alloc(uint32_t, m_nElements));
-  return {m_pData.get(), m_nElements};
+  // SAFETY: `m_nElements` passed to FX_Alloc() of type uint32_t.
+  return UNSAFE_BUFFERS(pdfium::make_span(m_pData.get(), m_nElements));
 }
 
 pdfium::span<const uint8_t> CFX_ScanlineCompositor::Palette::Get8BitPalette()
     const {
   CHECK(!m_pData || m_Width == sizeof(uint8_t));
-  return {reinterpret_cast<const uint8_t*>(m_pData.get()), m_nElements};
+  // SAFETY: `m_Width` only set to sizeof(uint8_t) just prior to passing
+  // `m_nElements` to FX_Alloc() of type uint8_t.
+  return UNSAFE_BUFFERS(pdfium::make_span(
+      reinterpret_cast<const uint8_t*>(m_pData.get()), m_nElements));
 }
 
 pdfium::span<const uint32_t> CFX_ScanlineCompositor::Palette::Get32BitPalette()
     const {
   CHECK(!m_pData || m_Width == sizeof(uint32_t));
-  return {m_pData.get(), m_nElements};
+  // SAFETY: `m_Width` only set to sizeof(uint32_t) just prior to passing
+  // `m_nElements` to FX_Alloc() of type uint32_t.
+  return UNSAFE_BUFFERS(pdfium::make_span(m_pData.get(), m_nElements));
 }

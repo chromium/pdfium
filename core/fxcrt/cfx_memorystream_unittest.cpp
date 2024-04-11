@@ -10,7 +10,7 @@
 
 namespace {
 
-const char kSomeText[] = "Lets make holes in streams";
+const uint8_t kSomeText[] = "Lets make holes in streams";
 const size_t kSomeTextLen = sizeof(kSomeText) - 1;
 
 }  // namespace
@@ -18,8 +18,8 @@ const size_t kSomeTextLen = sizeof(kSomeText) - 1;
 TEST(CFXMemoryStreamTest, SparseBlockWrites) {
   auto stream = pdfium::MakeRetain<CFX_MemoryStream>();
   for (FX_FILESIZE offset = 0; offset <= 200000; offset += 100000) {
-    stream->WriteBlockAtOffset(
-        {reinterpret_cast<const uint8_t*>(kSomeText), kSomeTextLen}, offset);
+    stream->WriteBlockAtOffset(pdfium::make_span(kSomeText).first(kSomeTextLen),
+                               offset);
   }
   EXPECT_EQ(200000 + kSomeTextLen, static_cast<size_t>(stream->GetSize()));
 }
@@ -27,8 +27,8 @@ TEST(CFXMemoryStreamTest, SparseBlockWrites) {
 TEST(CFXMemoryStreamTest, OverlappingBlockWrites) {
   auto stream = pdfium::MakeRetain<CFX_MemoryStream>();
   for (FX_FILESIZE offset = 0; offset <= 100; ++offset) {
-    stream->WriteBlockAtOffset(
-        {reinterpret_cast<const uint8_t*>(kSomeText), kSomeTextLen}, offset);
+    stream->WriteBlockAtOffset(pdfium::make_span(kSomeText).first(kSomeTextLen),
+                               offset);
   }
   EXPECT_EQ(100 + kSomeTextLen, static_cast<size_t>(stream->GetSize()));
 }

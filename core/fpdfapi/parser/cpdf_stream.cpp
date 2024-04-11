@@ -125,10 +125,8 @@ void CPDF_Stream::SetDataFromStringstreamAndRemoveFilter(
     SetDataAndRemoveFilter({});
     return;
   }
-
-  SetDataAndRemoveFilter(
-      {reinterpret_cast<const uint8_t*>(stream->str().c_str()),
-       static_cast<size_t>(stream->tellp())});
+  SetDataAndRemoveFilter(pdfium::as_byte_span(stream->str())
+                             .first(static_cast<size_t>(stream->tellp())));
 }
 
 void CPDF_Stream::SetData(pdfium::span<const uint8_t> pData) {
@@ -147,8 +145,8 @@ void CPDF_Stream::SetDataFromStringstream(fxcrt::ostringstream* stream) {
     SetData({});
     return;
   }
-  SetData({reinterpret_cast<const uint8_t*>(stream->str().c_str()),
-           static_cast<size_t>(stream->tellp())});
+  SetData(pdfium::as_byte_span(stream->str())
+              .first(static_cast<size_t>(stream->tellp())));
 }
 
 DataVector<uint8_t> CPDF_Stream::ReadAllRawData() const {

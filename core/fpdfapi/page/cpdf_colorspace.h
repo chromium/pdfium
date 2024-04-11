@@ -39,11 +39,7 @@ class PatternValue {
   ~PatternValue();
 
   void SetComps(pdfium::span<const float> comps);
-  pdfium::span<const float> GetComps() const {
-    // TODO(tsepez): update span.h from base for implicit std::array ctor.
-    return {m_Comps.data(), m_Comps.size()};
-  }
-
+  pdfium::span<const float> GetComps() const { return m_Comps; }
   RetainPtr<CPDF_Pattern> GetPattern() const { return m_pRetainedPattern; }
   void SetPattern(RetainPtr<CPDF_Pattern> pPattern) {
     m_pRetainedPattern = std::move(pPattern);
@@ -51,7 +47,7 @@ class PatternValue {
 
  private:
   RetainPtr<CPDF_Pattern> m_pRetainedPattern;
-  std::array<float, kMaxPatternColorComps> m_Comps{};
+  std::array<float, kMaxPatternColorComps> m_Comps = {};
 };
 
 class CPDF_ColorSpace : public Retainable, public Observable {

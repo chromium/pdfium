@@ -90,9 +90,11 @@ ByteString ByteString::Format(const char* pFormat, ...) {
   return ret;
 }
 
+// TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
 ByteString::ByteString(const char* pStr, size_t nLen) {
   if (nLen) {
-    m_pData = StringData::Create({pStr, nLen});
+    // SAFETY: caller ensures `pStr` points to at least `nLen` chars.
+    m_pData = StringData::Create(UNSAFE_BUFFERS(pdfium::make_span(pStr, nLen)));
   }
 }
 
@@ -147,7 +149,7 @@ ByteString::ByteString(const std::initializer_list<ByteStringView>& list) {
 ByteString::ByteString(const fxcrt::ostringstream& outStream) {
   auto str = outStream.str();
   if (!str.empty()) {
-    m_pData = StringData::Create({str.c_str(), str.size()});
+    m_pData = StringData::Create(pdfium::make_span(str));
   }
 }
 

@@ -7,6 +7,7 @@
 #include <limits>
 
 #include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/span.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -166,7 +167,10 @@ TEST(fxcrt, BitStreamBig) {
   const uint8_t kNotReallyBigEnough[32] = {};
   constexpr size_t kAllocationBytes = std::numeric_limits<size_t>::max() / 8;
   constexpr size_t kAllocationBits = kAllocationBytes * 8;
-  CFX_BitStream bitstream({kNotReallyBigEnough, kAllocationBytes});
+
+  // SAFETY: not safe, see above.
+  CFX_BitStream bitstream(
+      UNSAFE_BUFFERS(pdfium::make_span(kNotReallyBigEnough, kAllocationBytes)));
   EXPECT_FALSE(bitstream.IsEOF());
   EXPECT_EQ(0U, bitstream.GetPos());
   EXPECT_EQ(kAllocationBits, bitstream.BitsRemaining());

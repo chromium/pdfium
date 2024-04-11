@@ -12,10 +12,12 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/clamped_math.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/numerics/safe_math.h"
+#include "core/fxcrt/span.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
@@ -378,7 +380,8 @@ int16_t CFX_Face::GetHeight() const {
 #endif
 
 pdfium::span<uint8_t> CFX_Face::GetData() const {
-  return {GetRec()->stream->base, GetRec()->stream->size};
+  return UNSAFE_BUFFERS(
+      pdfium::make_span(GetRec()->stream->base, GetRec()->stream->size));
 }
 
 size_t CFX_Face::GetSfntTable(uint32_t table, pdfium::span<uint8_t> buffer) {

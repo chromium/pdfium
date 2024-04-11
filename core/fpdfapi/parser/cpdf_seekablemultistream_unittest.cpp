@@ -18,7 +18,8 @@ TEST(CPDFSeekableMultiStreamTest, NoStreams) {
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));
-  EXPECT_FALSE(fileread->ReadBlockAtOffset({output_buffer, 0u}, 0));
+  EXPECT_FALSE(fileread->ReadBlockAtOffset(
+      pdfium::make_span(output_buffer).first(0u), 0));
   EXPECT_EQ(0xbd, output_buffer[0]);
 }
 
@@ -32,7 +33,8 @@ TEST(CXFAFileReadTest, EmptyStreams) {
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));
-  EXPECT_FALSE(fileread->ReadBlockAtOffset({output_buffer, 0u}, 0));
+  EXPECT_FALSE(fileread->ReadBlockAtOffset(
+      pdfium::make_span(output_buffer).first(0u), 0));
   EXPECT_EQ(0xbd, output_buffer[0]);
 }
 
@@ -58,15 +60,18 @@ TEST(CXFAFileReadTest, NormalStreams) {
 
   uint8_t output_buffer[16];
   memset(output_buffer, 0xbd, sizeof(output_buffer));
-  EXPECT_TRUE(fileread->ReadBlockAtOffset({output_buffer, 0u}, 0));
+  EXPECT_TRUE(fileread->ReadBlockAtOffset(
+      pdfium::make_span(output_buffer).first(0u), 0));
   EXPECT_EQ(0xbd, output_buffer[0]);
 
   memset(output_buffer, 0xbd, sizeof(output_buffer));
-  EXPECT_TRUE(fileread->ReadBlockAtOffset({output_buffer, 0u}, 1));
+  EXPECT_TRUE(fileread->ReadBlockAtOffset(
+      pdfium::make_span(output_buffer).first(0u), 1));
   EXPECT_EQ(0xbd, output_buffer[0]);
 
   memset(output_buffer, 0xbd, sizeof(output_buffer));
-  EXPECT_TRUE(fileread->ReadBlockAtOffset({output_buffer, 1u}, 0));
+  EXPECT_TRUE(fileread->ReadBlockAtOffset(
+      pdfium::make_span(output_buffer).first(1u), 0));
   EXPECT_EQ(0, memcmp(output_buffer, "o", 1));
   EXPECT_EQ(0xbd, output_buffer[1]);
 
@@ -75,7 +80,8 @@ TEST(CXFAFileReadTest, NormalStreams) {
   EXPECT_EQ(0, memcmp(output_buffer, "one two three!!!", 16));
 
   memset(output_buffer, 0xbd, sizeof(output_buffer));
-  EXPECT_TRUE(fileread->ReadBlockAtOffset({output_buffer, 10u}, 2));
+  EXPECT_TRUE(fileread->ReadBlockAtOffset(
+      pdfium::make_span(output_buffer).first(10u), 2));
   EXPECT_EQ(0, memcmp(output_buffer, "e two thre", 10));
   EXPECT_EQ(0xbd, output_buffer[11]);
 

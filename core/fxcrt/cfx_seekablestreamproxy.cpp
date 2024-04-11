@@ -15,9 +15,11 @@
 #include "build/build_config.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
 
 namespace {
@@ -167,8 +169,12 @@ size_t CFX_SeekableStreamProxy::ReadData(uint8_t* pBuffer, size_t iBufferSize) {
   if (iBufferSize <= 0)
     return 0;
 
-  if (!m_pStream->ReadBlockAtOffset({pBuffer, iBufferSize}, m_iPosition))
+  // SAFETY: required from caller.
+  // TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
+  if (!m_pStream->ReadBlockAtOffset(UNSAFE_BUFFERS(
+          pdfium::make_span(pBuffer, iBufferSize), m_iPosition))) {
     return 0;
+  }
 
   FX_SAFE_FILESIZE new_pos = m_iPosition;
   new_pos += iBufferSize;
@@ -176,6 +182,7 @@ size_t CFX_SeekableStreamProxy::ReadData(uint8_t* pBuffer, size_t iBufferSize) {
   return new_pos.IsValid() ? iBufferSize : 0;
 }
 
+// TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
 size_t CFX_SeekableStreamProxy::ReadBlock(wchar_t* pStr, size_t size) {
   if (!pStr || size == 0)
     return 0;
@@ -186,9 +193,12 @@ size_t CFX_SeekableStreamProxy::ReadBlock(wchar_t* pStr, size_t size) {
     size_t iLen = ReadData(reinterpret_cast<uint8_t*>(pStr), iBytes);
     size = iLen / 2;
     if (m_wCodePage == FX_CodePage::kUTF16BE) {
-      SwapByteOrder({reinterpret_cast<uint16_t*>(pStr), size});
+      // SAFETY: required from caller.
+      SwapByteOrder(UNSAFE_BUFFERS(
+          pdfium::make_span(reinterpret_cast<uint16_t*>(pStr), size)));
     }
-    UTF16ToWChar({pStr, size});
+    // SAFETY: required from caller.
+    UTF16ToWChar(UNSAFE_BUFFERS(pdfium::make_span(pStr, size)));
     return size;
   }
 
@@ -203,7 +213,10 @@ size_t CFX_SeekableStreamProxy::ReadBlock(wchar_t* pStr, size_t size) {
     return 0;
 
   size_t iSrc;
-  std::tie(iSrc, size) = UTF8Decode({buf.data(), iLen}, {pStr, size});
+  // SAFETY: required from caller.
+  std::tie(iSrc, size) =
+      UTF8Decode(pdfium::make_span(buf).first(iLen),
+                 UNSAFE_BUFFERS(pdfium::make_span(pStr, size)));
   Seek(From::Current, iSrc - iLen);
   return size;
 }

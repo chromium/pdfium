@@ -13,6 +13,7 @@
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcodec/gif/gif_decoder.h"
 #include "core/fxcodec/gif/lzw_decompressor.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -60,7 +61,7 @@ class CFX_GifContext : public ProgressiveDecoderIface::Context {
   uint8_t img_pass_num_ = 0;
 
  protected:
-  bool ReadAllOrNone(uint8_t* dest, uint32_t size);
+  UNSAFE_BUFFER_USAGE bool ReadAllOrNone(uint8_t* dest, uint32_t size);
   GifDecoder::Status ReadGifSignature();
   GifDecoder::Status ReadLogicalScreenDescriptor();
 

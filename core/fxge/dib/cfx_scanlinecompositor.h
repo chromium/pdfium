@@ -68,6 +68,8 @@ class CFX_ScanlineCompositor {
     // If 4, then |m_pData| is uint32_t* as expected.
     size_t m_Width = 0;
     size_t m_nElements = 0;
+
+    // TODO(tsepez): convert to variant of FixedArray.
     std::unique_ptr<uint32_t, FxFreeDeleter> m_pData;
   };
 
