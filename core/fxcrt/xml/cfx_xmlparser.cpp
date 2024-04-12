@@ -120,7 +120,8 @@ bool CFX_XMLParser::DoSyntaxParse(CFX_XMLDocument* doc) {
       if (stream_->IsEOF())
         return true;
 
-      size_t buffer_chars = stream_->ReadBlock(buffer.data(), xml_plane_size_);
+      size_t buffer_chars =
+          stream_->ReadBlock(pdfium::make_span(buffer).first(xml_plane_size_));
       if (buffer_chars == 0)
         return true;
 

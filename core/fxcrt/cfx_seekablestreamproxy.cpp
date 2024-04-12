@@ -15,7 +15,6 @@
 #include "build/build_config.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -102,7 +101,7 @@ CFX_SeekableStreamProxy::CFX_SeekableStreamProxy(
   Seek(From::Begin, 0);
 
   uint32_t bom = 0;
-  ReadData(reinterpret_cast<uint8_t*>(&bom), 3);
+  ReadData(pdfium::byte_span_from_ref(bom).first(3));
 
   bom &= BOM_UTF8_MASK;
   if (bom == BOM_UTF8) {
@@ -127,15 +126,15 @@ CFX_SeekableStreamProxy::CFX_SeekableStreamProxy(
 
 CFX_SeekableStreamProxy::~CFX_SeekableStreamProxy() = default;
 
-FX_FILESIZE CFX_SeekableStreamProxy::GetSize() {
+FX_FILESIZE CFX_SeekableStreamProxy::GetSize() const {
   return m_pStream->GetSize();
 }
 
-FX_FILESIZE CFX_SeekableStreamProxy::GetPosition() {
+FX_FILESIZE CFX_SeekableStreamProxy::GetPosition() const {
   return m_iPosition;
 }
 
-bool CFX_SeekableStreamProxy::IsEOF() {
+bool CFX_SeekableStreamProxy::IsEOF() const {
   return m_iPosition >= GetSize();
 }
 
@@ -160,63 +159,51 @@ void CFX_SeekableStreamProxy::SetCodePage(FX_CodePage wCodePage) {
   m_wCodePage = wCodePage;
 }
 
-size_t CFX_SeekableStreamProxy::ReadData(uint8_t* pBuffer, size_t iBufferSize) {
-  DCHECK(pBuffer);
-  DCHECK(iBufferSize > 0);
-
-  iBufferSize =
-      std::min(iBufferSize, static_cast<size_t>(GetSize() - m_iPosition));
-  if (iBufferSize <= 0)
-    return 0;
-
-  // SAFETY: required from caller.
-  // TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
-  if (!m_pStream->ReadBlockAtOffset(UNSAFE_BUFFERS(
-          pdfium::make_span(pBuffer, iBufferSize), m_iPosition))) {
+size_t CFX_SeekableStreamProxy::ReadData(pdfium::span<uint8_t> buffer) {
+  DCHECK(!buffer.empty());
+  const size_t remaining = static_cast<size_t>(GetSize() - m_iPosition);
+  size_t read_size = std::min(buffer.size(), remaining);
+  if (read_size == 0) {
     return 0;
   }
-
+  if (!m_pStream->ReadBlockAtOffset(buffer.first(read_size), m_iPosition)) {
+    return 0;
+  }
   FX_SAFE_FILESIZE new_pos = m_iPosition;
-  new_pos += iBufferSize;
+  new_pos += read_size;
   m_iPosition = new_pos.ValueOrDefault(m_iPosition);
-  return new_pos.IsValid() ? iBufferSize : 0;
+  return new_pos.IsValid() ? read_size : 0;
 }
 
-// TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
-size_t CFX_SeekableStreamProxy::ReadBlock(wchar_t* pStr, size_t size) {
-  if (!pStr || size == 0)
+size_t CFX_SeekableStreamProxy::ReadBlock(pdfium::span<wchar_t> buffer) {
+  if (buffer.empty()) {
     return 0;
-
+  }
   if (m_wCodePage == FX_CodePage::kUTF16LE ||
       m_wCodePage == FX_CodePage::kUTF16BE) {
-    size_t iBytes = size * 2;
-    size_t iLen = ReadData(reinterpret_cast<uint8_t*>(pStr), iBytes);
-    size = iLen / 2;
+    size_t bytes_to_read = buffer.size() * sizeof(uint16_t);
+    size_t bytes_read =
+        ReadData(pdfium::as_writable_bytes(buffer).first(bytes_to_read));
+    size_t elements = bytes_read / sizeof(uint16_t);
     if (m_wCodePage == FX_CodePage::kUTF16BE) {
-      // SAFETY: required from caller.
-      SwapByteOrder(UNSAFE_BUFFERS(
-          pdfium::make_span(reinterpret_cast<uint16_t*>(pStr), size)));
+      SwapByteOrder(fxcrt::reinterpret_span<uint16_t>(buffer).first(elements));
     }
-    // SAFETY: required from caller.
-    UTF16ToWChar(UNSAFE_BUFFERS(pdfium::make_span(pStr, size)));
-    return size;
+    UTF16ToWChar(buffer.first(elements));
+    return elements;
   }
-
   FX_FILESIZE pos = GetPosition();
-  size_t iBytes = std::min(size, static_cast<size_t>(GetSize() - pos));
-  if (iBytes == 0)
+  size_t bytes_to_read =
+      std::min(buffer.size(), static_cast<size_t>(GetSize() - pos));
+  if (bytes_to_read == 0) {
     return 0;
-
-  DataVector<uint8_t> buf(iBytes);
-  size_t iLen = ReadData(buf.data(), iBytes);
-  if (m_wCodePage != FX_CodePage::kUTF8)
+  }
+  DataVector<uint8_t> byte_buf(bytes_to_read);
+  size_t bytes_read = ReadData(byte_buf);
+  if (m_wCodePage != FX_CodePage::kUTF8) {
     return 0;
-
-  size_t iSrc;
-  // SAFETY: required from caller.
-  std::tie(iSrc, size) =
-      UTF8Decode(pdfium::make_span(buf).first(iLen),
-                 UNSAFE_BUFFERS(pdfium::make_span(pStr, size)));
-  Seek(From::Current, iSrc - iLen);
-  return size;
+  }
+  auto [src_bytes_consumed, dest_wchars_produced] =
+      UTF8Decode(pdfium::make_span(byte_buf).first(bytes_read), buffer);
+  Seek(From::Current, src_bytes_consumed - bytes_read);
+  return dest_wchars_produced;
 }

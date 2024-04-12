@@ -14,16 +14,17 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_types.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 
 class CFX_SeekableStreamProxy final : public Retainable {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  // Unlike IFX_SeekableStreamProxy, buffers and sizes are always in terms
-  // of the number of wchar_t elementss, not bytes.
-  FX_FILESIZE GetSize();  // Estimate under worst possible expansion.
-  bool IsEOF();
-  size_t ReadBlock(wchar_t* pStr, size_t size);
+  FX_FILESIZE GetSize() const;  // Estimate under worst possible expansion.
+  bool IsEOF() const;
+
+  // Returns number of wchar_t elements placed into `buffer`.
+  size_t ReadBlock(pdfium::span<wchar_t> buffer);
 
   FX_CodePage GetCodePage() const { return m_wCodePage; }
   void SetCodePage(FX_CodePage wCodePage);
@@ -38,9 +39,9 @@ class CFX_SeekableStreamProxy final : public Retainable {
       const RetainPtr<IFX_SeekableReadStream>& stream);
   ~CFX_SeekableStreamProxy() override;
 
-  FX_FILESIZE GetPosition();
+  FX_FILESIZE GetPosition() const;
   void Seek(From eSeek, FX_FILESIZE iOffset);
-  size_t ReadData(uint8_t* pBuffer, size_t iBufferSize);
+  size_t ReadData(pdfium::span<uint8_t> buffer);
 
   FX_CodePage m_wCodePage = FX_CodePage::kDefANSI;
   size_t m_wBOMLength = 0;
