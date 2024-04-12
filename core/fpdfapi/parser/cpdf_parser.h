@@ -145,6 +145,7 @@ class CPDF_Parser {
 
   bool LoadAllCrossRefTable(FX_FILESIZE xref_offset);
   bool LoadAllCrossRefStream(FX_FILESIZE xref_offset);
+  bool LoadAllSecondaryCrossRefStreams(FX_FILESIZE xref_offset);
   bool LoadCrossRefStream(FX_FILESIZE* pos, bool is_main_xref);
   void ProcessCrossRefStreamEntry(pdfium::span<const uint8_t> entry_span,
                                   pdfium::span<const uint32_t> field_widths,
