@@ -36,6 +36,10 @@
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/fx_font.h"
 
+#if BUILDFLAG(IS_WIN)
+#include "core/fxcrt/win/win_util.h"
+#endif
+
 namespace {
 
 const int nMaxRecursion = 32;
@@ -89,9 +93,16 @@ ByteString GetNativeFontName(FX_Charset charSet, void* pLogFont) {
 #if BUILDFLAG(IS_WIN)
   LOGFONTA lf = {};
   if (charSet == FX_Charset::kANSI) {
-    csFontName = CFX_Font::kDefaultAnsiFontName;
-    return csFontName;
+    return CFX_Font::kDefaultAnsiFontName;
   }
+
+  if (!pdfium::IsUser32AndGdi32Available()) {
+    // Without GDI32 and User32, GetDC / EnumFontFamiliesExW / ReleaseDC all
+    // fail, which is called by RetrieveSpecificFont. We won't be able to look
+    // up native fonts without GDI.
+    return ByteString();
+  }
+
   bool bRet = false;
   const ByteString default_font_name =
       CFX_Font::GetDefaultFontNameByCharset(charSet);
