@@ -616,6 +616,30 @@ ByteString WideString::ToUTF16LE() const {
   return result;
 }
 
+ByteString WideString::ToUCS2LE() const {
+  ByteString result;
+  size_t output_length = 0;
+  {
+    // Span's lifetime must end before ReleaseBuffer() below.
+    // 2 bytes required per UTF-16 code unit.
+    pdfium::span<uint8_t> buffer =
+        pdfium::as_writable_bytes(result.GetBuffer(GetLength() * 2 + 2));
+    for (wchar_t wc : AsStringView()) {
+#if defined(WCHAR_T_IS_32_BIT)
+      if (pdfium::IsSupplementary(wc)) {
+        continue;
+      }
+#endif
+      buffer[output_length++] = wc & 0xff;
+      buffer[output_length++] = wc >> 8;
+    }
+    buffer[output_length++] = 0;
+    buffer[output_length++] = 0;
+  }
+  result.ReleaseBuffer(output_length);
+  return result;
+}
+
 WideString WideString::EncodeEntities() const {
   WideString ret = *this;
   ret.Replace(L"&", L"&amp;");

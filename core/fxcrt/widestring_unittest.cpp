@@ -1291,6 +1291,31 @@ TEST(WideString, ToUTF16LE) {
   }
 }
 
+TEST(WideString, ToUCS2LE) {
+  struct UCS2LEEncodeCase {
+    WideString ws;
+    ByteString bs;
+  } const ucs2le_encode_cases[] = {
+      {L"", ByteString("\0\0", 2)},
+      {L"abc", ByteString("a\0b\0c\0\0\0", 8)},
+      {L"abcdef", ByteString("a\0b\0c\0d\0e\0f\0\0\0", 14)},
+      {L"abc\0def", ByteString("a\0b\0c\0\0\0", 8)},
+      {L"\xaabb\xccdd", ByteString("\xbb\xaa\xdd\xcc\0\0", 6)},
+      {L"\x3132\x6162", ByteString("\x32\x31\x62\x61\0\0", 6)},
+#if defined(WCHAR_T_IS_32_BIT)
+      {L"🎨", ByteString("\0\0", 2)},
+#endif
+  };
+
+  // TODO(tsepez): make safe.
+  UNSAFE_BUFFERS({
+    for (size_t i = 0; i < std::size(ucs2le_encode_cases); ++i) {
+      EXPECT_EQ(ucs2le_encode_cases[i].bs, ucs2le_encode_cases[i].ws.ToUCS2LE())
+          << " for case number " << i;
+    }
+  });
+}
+
 TEST(WideString, EncodeEntities) {
   EXPECT_EQ(WideString(L"Symbols &<>'\".").EncodeEntities(),
             L"Symbols &amp;&lt;&gt;&apos;&quot;.");

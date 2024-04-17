@@ -7,6 +7,7 @@
 #include "public/fpdf_text.h"
 
 #include <algorithm>
+#include <limits>
 #include <memory>
 #include <vector>
 
@@ -19,13 +20,14 @@
 #include "core/fpdftext/cpdf_textpage.h"
 #include "core/fpdftext/cpdf_textpagefind.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
+#include "core/fxcrt/span.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 
 namespace {
-
-constexpr size_t kBytesPerCharacter = sizeof(unsigned short);
 
 CPDF_TextPage* GetTextPageForValidIndex(FPDF_TEXTPAGE text_page, int index) {
   if (!text_page || index < 0)
@@ -319,34 +321,32 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetText(FPDF_TEXTPAGE page,
                                                int char_count,
                                                unsigned short* result) {
   CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(page);
-  if (!textpage || start_index < 0 || char_count < 0 || !result)
+  if (!textpage || start_index < 0 || char_count < 0 || !result) {
     return 0;
-
+  }
   int char_available = textpage->CountChars() - start_index;
-  if (char_available <= 0)
+  if (char_available <= 0) {
     return 0;
-
+  }
   char_count = std::min(char_count, char_available);
   if (char_count == 0) {
     // Writing out "", which has a character count of 1 due to the NUL.
     *result = '\0';
     return 1;
   }
+  // SAFETY: Required from caller. Public API description states that
+  // `result` must be able to hold `char_count` characters plus a
+  // terminator.
+  CHECK_LT(char_count, std::numeric_limits<int>::max());
+  pdfium::span<unsigned short> result_span =
+      UNSAFE_BUFFERS(pdfium::make_span(result, char_count + 1));
 
-  WideString str = textpage->GetPageText(start_index, char_count);
-
-  if (str.GetLength() > static_cast<size_t>(char_count))
-    str = str.First(static_cast<size_t>(char_count));
-
-  ByteString byte_str = str.ToUTF16LE();
-  size_t byte_str_len = byte_str.GetLength();
-  size_t ret_count = byte_str_len / kBytesPerCharacter;
-
-  // +1 to account for the NUL terminator.
-  DCHECK_LE(ret_count, static_cast<size_t>(char_count) + 1);
-
-  memcpy(result, byte_str.c_str(), byte_str_len);
-  return pdfium::checked_cast<int>(ret_count);
+  // Includes two-byte terminator in string data itself.
+  ByteString str = textpage->GetPageText(start_index, char_count).ToUCS2LE();
+  pdfium::span<const char> str_span = str.AsStringView().span();
+  auto copy_span = fxcrt::reinterpret_span<const unsigned short>(str_span);
+  fxcrt::spancpy(result_span, copy_span);
+  return static_cast<int>(copy_span.size());
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_CountRects(FPDF_TEXTPAGE text_page,
@@ -384,22 +384,27 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,
                                                       unsigned short* buffer,
                                                       int buflen) {
   CPDF_TextPage* textpage = CPDFTextPageFromFPDFTextPage(text_page);
-  if (!textpage)
+  if (!textpage) {
     return 0;
-
+  }
   CFX_FloatRect rect((float)left, (float)bottom, (float)right, (float)top);
-  WideString str = textpage->GetTextByRect(rect);
+  WideString wstr = textpage->GetTextByRect(rect);
+  if (buflen <= 0 || !buffer) {
+    return pdfium::checked_cast<int>(wstr.GetLength());
+  }
 
-  if (buflen <= 0 || !buffer)
-    return pdfium::checked_cast<int>(str.GetLength());
+  // SAFETY: Required from caller. Public API states that buflen
+  // describes the number of values buffer can hold.
+  const auto buffer_span = UNSAFE_BUFFERS(pdfium::make_span(buffer, buflen));
 
-  ByteString cbUTF16Str = str.ToUTF16LE();
-  int len = pdfium::checked_cast<int>(cbUTF16Str.GetLength()) /
-            sizeof(unsigned short);
-  int size = buflen > len ? len : buflen;
-  memcpy(buffer, cbUTF16Str.c_str(), size * sizeof(unsigned short));
-  cbUTF16Str.ReleaseBuffer(size * sizeof(unsigned short));
-  return size;
+  ByteString str = wstr.ToUTF16LE();
+  pdfium::span<const char> str_span = str.span();
+  auto copy_span = fxcrt::reinterpret_span<const unsigned short>(str_span);
+  if (copy_span.size() > buffer_span.size()) {
+    copy_span = copy_span.first(buffer_span.size());
+  }
+  fxcrt::spancpy(buffer_span, copy_span);
+  return pdfium::checked_cast<int>(copy_span.size());
 }
 
 FPDF_EXPORT FPDF_SCHHANDLE FPDF_CALLCONV

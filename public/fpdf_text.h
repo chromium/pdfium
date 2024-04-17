@@ -376,17 +376,16 @@ FPDFText_GetCharIndexAtPos(FPDF_TEXTPAGE text_page,
 //          text_page   -   Handle to a text page information structure.
 //                          Returned by FPDFText_LoadPage function.
 //          start_index -   Index for the start characters.
-//          count       -   Number of characters to be extracted.
+//          count       -   Number of UCS-2 values to be extracted.
 //          result      -   A buffer (allocated by application) receiving the
-//                          extracted unicodes. The size of the buffer must be
-//                          able to hold the number of characters plus a
-//                          terminator.
+//                          extracted UCS-2 values. The buffer must be able to
+//                          hold `count` UCS-2 values plus a terminator.
 // Return Value:
 //          Number of characters written into the result buffer, including the
 //          trailing terminator.
 // Comments:
-//          This function ignores characters without unicode information.
-//          It returns all characters on the page, even those that are not
+//          This function ignores characters without UCS-2 representations.
+//          It considers all characters on the page, even those that are not
 //          visible when the page has a cropbox. To filter out the characters
 //          outside of the cropbox, use FPDF_GetPageBoundingBox() and
 //          FPDFText_GetCharBox().
@@ -456,20 +455,20 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetRect(FPDF_TEXTPAGE text_page,
 //          top         -   Top boundary.
 //          right       -   Right boundary.
 //          bottom      -   Bottom boundary.
-//          buffer      -   A unicode buffer.
-//          buflen      -   Number of characters (not bytes) for the buffer,
-//                          excluding an additional terminator.
+//          buffer      -   Caller-allocated buffer to receive UTF-16 values.
+//          buflen      -   Number of UTF-16 values (not bytes) that `buffer`
+//                          is capable of holding.
 // Return Value:
-//          If buffer is NULL or buflen is zero, return number of characters
-//          (not bytes) of text present within the rectangle, excluding a
-//          terminating NUL. Generally you should pass a buffer at least one
+//          If buffer is NULL or buflen is zero, return number of UTF-16
+//          values (not bytes) of text present within the rectangle, excluding
+//          a terminating NUL. Generally you should pass a buffer at least one
 //          larger than this if you want a terminating NUL, which will be
-//          provided if space is available. Otherwise, return number of
-//          characters copied into the buffer, including the terminating NUL
-//          when space for it is available.
+//          provided if space is available. Otherwise, return number of UTF-16
+//          values copied into the buffer, including the terminating NUL when
+//          space for it is available.
 // Comment:
 //          If the buffer is too small, as much text as will fit is copied into
-//          it.
+//          it. May return a split surrogate in that case.
 //
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetBoundedText(FPDF_TEXTPAGE text_page,
                                                       double left,
