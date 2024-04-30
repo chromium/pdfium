@@ -510,17 +510,23 @@ bool WideString::operator==(const wchar_t* ptr) const {
   if (!ptr)
     return m_pData->m_nDataLength == 0;
 
+  // SAFTEY: `wsclen()` comparison ensures there are `m_nDataLength` wchars at
+  // `ptr` before the terminator, and `m_nDataLength` is within `m_String`.
   return wcslen(ptr) == m_pData->m_nDataLength &&
-         FXSYS_wmemcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
+         UNSAFE_BUFFERS(FXSYS_wmemcmp(ptr, m_pData->m_String,
+                                      m_pData->m_nDataLength)) == 0;
 }
 
 bool WideString::operator==(WideStringView str) const {
   if (!m_pData)
     return str.IsEmpty();
 
+  // SAFTEY: Comparison ensure there are `m_nDataLength` wchars in `str`
+  // and `m_nDataLength is within `m_String`.
   return m_pData->m_nDataLength == str.GetLength() &&
-         FXSYS_wmemcmp(m_pData->m_String, str.unterminated_c_str(),
-                       str.GetLength()) == 0;
+         UNSAFE_BUFFERS(FXSYS_wmemcmp(
+             m_pData->m_String, str.unterminated_c_str(), str.GetLength())) ==
+             0;
 }
 
 bool WideString::operator==(const WideString& other) const {
@@ -550,8 +556,10 @@ bool WideString::operator<(WideStringView str) const {
 
   size_t len = GetLength();
   size_t other_len = str.GetLength();
-  int result = FXSYS_wmemcmp(c_str(), str.unterminated_c_str(),
-                             std::min(len, other_len));
+
+  // SAFETY: Comparison limited to minimum valid length of either argument.
+  int result = UNSAFE_BUFFERS(FXSYS_wmemcmp(c_str(), str.unterminated_c_str(),
+                                            std::min(len, other_len)));
   return result < 0 || (result == 0 && len < other_len);
 }
 
@@ -792,7 +800,10 @@ int WideString::Compare(const WideString& str) const {
   size_t this_len = m_pData->m_nDataLength;
   size_t that_len = str.m_pData->m_nDataLength;
   size_t min_len = std::min(this_len, that_len);
-  int result = FXSYS_wmemcmp(m_pData->m_String, str.m_pData->m_String, min_len);
+
+  // SAFTEY: Comparison limited to minimum length of either argument.
+  int result = UNSAFE_BUFFERS(
+      FXSYS_wmemcmp(m_pData->m_String, str.m_pData->m_String, min_len));
   if (result != 0)
     return result;
   if (this_len == that_len)

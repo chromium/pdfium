@@ -30,7 +30,10 @@ template <typename T1,
 inline pdfium::span<T1> spancpy(pdfium::span<T1, N1, P1> dst,
                                 pdfium::span<T2, N2, P2> src) {
   CHECK_GE(dst.size(), src.size());
-  FXSYS_memcpy(dst.data(), src.data(), src.size_bytes());
+  // SAFETY: SFINAE ensures `sizeof(T1)` equals `sizeof(T2)`, so comparing
+  // `size()` for equality ensures `size_bytes()` are equal, and `size_bytes()`
+  // accurately describes `data()`.
+  UNSAFE_BUFFERS(FXSYS_memcpy(dst.data(), src.data(), src.size_bytes()));
   return dst.subspan(src.size());
 }
 
@@ -48,7 +51,10 @@ template <typename T1,
 pdfium::span<T1> spanmove(pdfium::span<T1, N1, P1> dst,
                           pdfium::span<T2, N2, P2> src) {
   CHECK_GE(dst.size(), src.size());
-  FXSYS_memmove(dst.data(), src.data(), src.size_bytes());
+  // SAFETY: SFINAE ensures `sizeof(T1)` equals `sizeof(T2)`, so comparing
+  // `size()` for equality ensures `size_bytes()` are equal, and `size_bytes()`
+  // accurately describes `data()`.
+  UNSAFE_BUFFERS(FXSYS_memmove(dst.data(), src.data(), src.size_bytes()));
   return dst.subspan(src.size());
 }
 
@@ -59,7 +65,8 @@ template <typename T,
           typename = std::enable_if_t<std::is_trivially_constructible_v<T> &&
                                       std::is_trivially_destructible_v<T>>>
 void spanset(pdfium::span<T, N, P> dst, uint8_t val) {
-  FXSYS_memset(dst.data(), val, dst.size_bytes());
+  // SAFETY: `dst.size_bytes()` accurately describes `dst.data()`.
+  UNSAFE_BUFFERS(FXSYS_memset(dst.data(), val, dst.size_bytes()));
 }
 
 // Bounds-checked zeroing of spans.
@@ -69,7 +76,8 @@ template <typename T,
           typename = std::enable_if_t<std::is_trivially_constructible_v<T> &&
                                       std::is_trivially_destructible_v<T>>>
 void spanclr(pdfium::span<T, N, P> dst) {
-  FXSYS_memset(dst.data(), 0, dst.size_bytes());
+  // SAFETY: `dst.size_bytes()` accurately describes `dst.data()`.
+  UNSAFE_BUFFERS(FXSYS_memset(dst.data(), 0, dst.size_bytes()));
 }
 
 // Bounds-checked byte-for-byte equality of same-sized spans. This is
@@ -84,8 +92,11 @@ template <typename T1,
                                       std::is_trivially_copyable_v<T1> &&
                                       std::is_trivially_copyable_v<T2>>>
 bool span_equals(pdfium::span<T1, N1, P1> s1, pdfium::span<T2, N2, P2> s2) {
+  // SAFETY: For both `s1` and `s2`, there are `size_bytes()` valid bytes at
+  // the corresponding `data()`, and the sizes are the same.
   return s1.size_bytes() == s2.size_bytes() &&
-         FXSYS_memcmp(s1.data(), s2.data(), s1.size_bytes()) == 0;
+         UNSAFE_BUFFERS(FXSYS_memcmp(s1.data(), s2.data(), s1.size_bytes())) ==
+             0;
 }
 
 // Returns the first position where `needle` occurs in `haystack`.

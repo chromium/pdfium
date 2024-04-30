@@ -218,17 +218,23 @@ bool ByteString::operator==(const char* ptr) const {
   if (!ptr)
     return m_pData->m_nDataLength == 0;
 
+  // SAFETY: `m_nDataLength` is within `m_String`, and the strlen() call
+  // ensures there are `m_nDataLength` bytes at `ptr` before the terminator.
   return strlen(ptr) == m_pData->m_nDataLength &&
-         FXSYS_memcmp(ptr, m_pData->m_String, m_pData->m_nDataLength) == 0;
+         UNSAFE_BUFFERS(
+             FXSYS_memcmp(ptr, m_pData->m_String, m_pData->m_nDataLength)) == 0;
 }
 
 bool ByteString::operator==(ByteStringView str) const {
   if (!m_pData)
     return str.IsEmpty();
 
+  // SAFETY: `str` has `GetLength()` valid bytes in `unterminated_c_str()`,
+  // `m_nDataLength` is within `m_String`, and equality comparison.
   return m_pData->m_nDataLength == str.GetLength() &&
-         FXSYS_memcmp(m_pData->m_String, str.unterminated_c_str(),
-                      str.GetLength()) == 0;
+         UNSAFE_BUFFERS(FXSYS_memcmp(
+             m_pData->m_String, str.unterminated_c_str(), str.GetLength())) ==
+             0;
 }
 
 bool ByteString::operator==(const ByteString& other) const {
@@ -254,7 +260,10 @@ bool ByteString::operator<(const char* ptr) const {
 
   size_t len = GetLength();
   size_t other_len = ptr ? strlen(ptr) : 0;
-  int result = FXSYS_memcmp(c_str(), ptr, std::min(len, other_len));
+
+  // SAFETY: Comparison limited to minimum valid length of either argument.
+  int result =
+      UNSAFE_BUFFERS(FXSYS_memcmp(c_str(), ptr, std::min(len, other_len)));
   return result < 0 || (result == 0 && len < other_len);
 }
 
@@ -268,7 +277,10 @@ bool ByteString::operator<(const ByteString& other) const {
 
   size_t len = GetLength();
   size_t other_len = other.GetLength();
-  int result = FXSYS_memcmp(c_str(), other.c_str(), std::min(len, other_len));
+
+  // SAFETY: Comparison limited to minimum valid length of either argument.
+  int result = UNSAFE_BUFFERS(
+      FXSYS_memcmp(c_str(), other.c_str(), std::min(len, other_len)));
   return result < 0 || (result == 0 && len < other_len);
 }
 
@@ -344,8 +356,10 @@ int ByteString::Compare(ByteStringView str) const {
   size_t this_len = m_pData->m_nDataLength;
   size_t that_len = str.GetLength();
   size_t min_len = std::min(this_len, that_len);
-  int result =
-      FXSYS_memcmp(m_pData->m_String, str.unterminated_c_str(), min_len);
+
+  // SAFETY: Comparison limited to minimum valid length of either argument.
+  int result = UNSAFE_BUFFERS(
+      FXSYS_memcmp(m_pData->m_String, str.unterminated_c_str(), min_len));
   if (result != 0)
     return result;
   if (this_len == that_len)
