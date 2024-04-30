@@ -82,7 +82,7 @@ PDFFuzzerInitPublic::PDFFuzzerInitPublic() {
 #endif  // PDF_ENABLE_XFA
 #endif  // PDF_ENABLE_V8
   memset(&config_, '\0', sizeof(config_));
-  config_.version = 3;
+  config_.version = 4;
   config_.m_pUserFontPaths = nullptr;
   config_.m_pPlatform = nullptr;
   config_.m_pIsolate = nullptr;
@@ -91,6 +91,11 @@ PDFFuzzerInitPublic::PDFFuzzerInitPublic() {
   config_.m_pPlatform = platform_.get();
   config_.m_pIsolate = isolate_.get();
 #endif  // PDF_ENABLE_V8
+#if defined(PDF_USE_SKIA)
+  config_.m_RendererType = FPDF_RENDERERTYPE_SKIA;
+#else
+  config_.m_RendererType = FPDF_RENDERERTYPE_AGG;
+#endif
   FPDF_InitLibraryWithConfig(&config_);
 
   memset(&unsupport_info_, '\0', sizeof(unsupport_info_));
