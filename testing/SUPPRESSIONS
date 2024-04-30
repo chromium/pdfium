@@ -662,6 +662,9 @@ bug_2001.pdf * * * *
 # TODO(chromium:237527): Remove after associated bug is fixed
 bug_237527_1.in * * * *
 
+# TODO(chromium:335309995): Remove after associated bug is fixed
+bug_335309995.pdf * * * *
+
 # TODO(chromium:451366): Remove after associated bug is fixed
 bug_451366.in * * * agg
 

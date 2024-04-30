@@ -1,0 +1,117 @@
+%PDF-1.7
+% ò¤ô
+1 0 obj <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+% Not actually used. This is just bait for the parser code that reconstructs
+% damaged PDFs.
+2 0 obj <<
+  /Type /Pages
+  /MediaBox [0 0 200 350]
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+% Actually used.
+2 0 obj <<
+  /Type /Pages
+  /MediaBox [0 0 200 300]
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+% Not actually used. This is just bait for the parser code that reconstructs
+% damaged PDFs.
+2 0 obj <<
+  /Type /Pages
+  /MediaBox [0 0 200 400]
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+3 0 obj <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+>>
+endobj
+4 0 obj <<
+  /Length 188
+>>
+stream
+q
+0 0 0 rg
+0 290 10 10 re B*
+10 150 50 30 re B*
+0 0 1 rg
+190 290 10 10 re B*
+70 232 50 30 re B*
+0 1 0 rg
+190 0 10 10 re B*
+130 150 50 30 re B*
+1 0 0 rg
+0 0 10 10 re B*
+70 67 50 30 re B*
+Q
+endstream
+endobj
+xref
+0 5
+0000000000 65535 f 
+0000000015 00000 n 
+0000000267 00000 n 
+0000000538 00000 n 
+0000000607 00000 n 
+trailer <<
+  /Root 1 0 R
+  /Size 5
+>>
+startxref
+847
+%%EOF
+% Not actually used. Though it is referenced by the XRefStm object.
+6 0 obj <<
+  /Type /Pages
+  /MediaBox [0 0 200 450]
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+5 0 obj <<
+  /Type /XRef
+  /Filter /ASCIIHexDecode
+  /Index [6 1]
+  /Length 12
+  /Size 7
+  /W [1 2 1]
+>>
+stream
+01 04 3A 00
+endstream
+endobj
+xref
+0 1
+0000000000 65535 f 
+trailer <<
+  /Prev 847
+  /Root 1 0 R
+  /Size 7
+  /XRefStm 1171
+>>
+startxref
+1312
+%%EOF
+xref
+0 1
+0000000000 65535 f 
+trailer <<
+  /Prev 1312
+  /Root 1 0 R
+  /Size 7
+  /XRefStm 1171
+>>
+startxref
+1428
+%%EOF
