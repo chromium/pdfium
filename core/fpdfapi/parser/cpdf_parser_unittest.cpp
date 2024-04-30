@@ -725,7 +725,7 @@ TEST_F(ParserXRefTest, XrefIndexWithRepeatedObject) {
       {.type = CPDF_CrossRefTable::ObjectType::kNormal, .pos = 0},
       // Since the /Index does not follow the spec, this is one of the 2
       // possible values that a parser can come up with.
-      {.type = CPDF_CrossRefTable::ObjectType::kNormal, .pos = 15}};
+      {.type = CPDF_CrossRefTable::ObjectType::kNormal, .pos = 18}};
 
   EXPECT_THAT(objects_info, ElementsAre(Pair(2, expected_result[0]),
                                         Pair(3, expected_result[1])));
