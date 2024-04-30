@@ -31,6 +31,11 @@ TEST(WideString, ElementAccess) {
   EXPECT_EQ(3u, abc_span.size());
   EXPECT_EQ(0, wmemcmp(abc_span.data(), L"abc", 3));
 
+  pdfium::span<const wchar_t> abc_span_with_terminator =
+      abc.span_with_terminator();
+  EXPECT_EQ(4u, abc_span_with_terminator.size());
+  EXPECT_EQ(0, wmemcmp(abc_span_with_terminator.data(), L"abc", 4));
+
   WideString mutable_abc = abc;
   EXPECT_EQ(abc.c_str(), mutable_abc.c_str());
   EXPECT_EQ(L'a', mutable_abc[0]);

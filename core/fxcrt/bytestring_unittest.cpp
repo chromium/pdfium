@@ -32,9 +32,19 @@ TEST(ByteString, ElementAccess) {
   EXPECT_EQ(3u, abc_span.size());
   EXPECT_EQ(0, memcmp(abc_span.data(), "abc", 3));
 
+  pdfium::span<const char> abc_span_with_terminator =
+      abc.span_with_terminator();
+  EXPECT_EQ(4u, abc_span_with_terminator.size());
+  EXPECT_EQ(0, memcmp(abc_span_with_terminator.data(), "abc", 4));
+
   pdfium::span<const uint8_t> abc_raw_span = abc.unsigned_span();
   EXPECT_EQ(3u, abc_raw_span.size());
   EXPECT_EQ(0, memcmp(abc_raw_span.data(), "abc", 3));
+
+  pdfium::span<const uint8_t> abc_raw_span_with_terminator =
+      abc.unsigned_span_with_terminator();
+  EXPECT_EQ(4u, abc_raw_span_with_terminator.size());
+  EXPECT_EQ(0, memcmp(abc_raw_span_with_terminator.data(), "abc", 4));
 
   ByteString mutable_abc = abc;
   EXPECT_EQ(abc.c_str(), mutable_abc.c_str());

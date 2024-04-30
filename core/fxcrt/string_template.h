@@ -56,6 +56,23 @@ class StringTemplate {
     return reinterpret_span<const UnsignedType>(span());
   }
 
+  // Explicit conversion to spans including the NUL terminator. Only a
+  // const-form is provided to preclude modifying the terminator. Usage
+  // should be rare and carefully considered.
+  // Note: Any subsequent modification of |this| will invalidate the result.
+  pdfium::span<const CharType> span_with_terminator() const {
+    return m_pData ? m_pData->span_with_terminator()
+                   : pdfium::span<const CharType>();
+  }
+
+  // Explicit conversion to spans of unsigned types including the NUL
+  // terminator. Only a const-form is provided to preclude modifying the
+  // terminator. Usage should be rare and carefully considered.
+  // Note: Any subsequent modification of |this| will invalidate the result.
+  pdfium::span<const UnsignedType> unsigned_span_with_terminator() const {
+    return reinterpret_span<const UnsignedType>(span_with_terminator());
+  }
+
   // Note: Any subsequent modification of |this| will invalidate iterators.
   const_iterator begin() const {
     return m_pData ? m_pData->span().begin() : nullptr;

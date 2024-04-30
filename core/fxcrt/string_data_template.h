@@ -41,6 +41,13 @@ class StringDataTemplate {
     return UNSAFE_BUFFERS(pdfium::make_span(m_String, m_nDataLength));
   }
 
+  // Only a const-form is provided to preclude modifying the terminator.
+  pdfium::span<const CharType> span_with_terminator() const {
+    // SAFETY: m_nDataLength is within m_String and there is always a
+    // terminator character following it.
+    return UNSAFE_BUFFERS(pdfium::make_span(m_String, m_nDataLength + 1));
+  }
+
   pdfium::span<CharType> alloc_span() {
     // SAFETY: m_nAllocLength is within m_String.
     return UNSAFE_BUFFERS(pdfium::make_span(m_String, m_nAllocLength));
