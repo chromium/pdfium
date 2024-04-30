@@ -8,6 +8,7 @@
 
 #include <math.h>
 
+#include <array>
 #include <iterator>
 #include <memory>
 #include <utility>
@@ -17,6 +18,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -277,16 +279,14 @@ void CFX_ImageTransformer::CalcAlpha(const CalcData& calc_data) {
 }
 
 void CFX_ImageTransformer::CalcMono(const CalcData& calc_data) {
-  uint32_t argb[256];
+  std::array<uint32_t, 256> argb;
   if (m_Storer.GetBitmap()->HasPalette()) {
     pdfium::span<const uint32_t> palette =
         m_Storer.GetBitmap()->GetPaletteSpan();
-    for (size_t i = 0; i < std::size(argb); i++)
-      argb[i] = palette[i];
+    fxcrt::spancpy(pdfium::make_span(argb), palette.first(argb.size()));
   } else {
-    for (size_t i = 0; i < std::size(argb); i++) {
-      uint32_t v = static_cast<uint32_t>(i);
-      argb[i] = ArgbEncode(0xff, v, v, v);
+    for (uint32_t i = 0; i < argb.size(); ++i) {
+      argb[i] = ArgbEncode(0xff, i, i, i);
     }
   }
   int destBpp = calc_data.bitmap->GetBPP() / 8;

@@ -1341,8 +1341,8 @@ FPDF_GetTrailerEnds(FPDF_DOCUMENT document,
   const unsigned long trailer_ends_len =
       fxcrt::CollectionSize<unsigned long>(trailer_ends);
   if (buffer && length >= trailer_ends_len) {
-    for (size_t i = 0; i < trailer_ends_len; ++i)
-      buffer[i] = trailer_ends[i];
+    fxcrt::spancpy(pdfium::make_span(buffer, length),
+                   pdfium::make_span(trailer_ends));
   }
 
   return trailer_ends_len;

@@ -13,6 +13,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxge/dib/blend.h"
 #include "core/fxge/dib/fx_dib.h"
 
@@ -2152,8 +2153,7 @@ void CFX_ScanlineCompositor::InitSourcePalette(
       return;
     }
     pdfium::span<uint32_t> pPalette = m_SrcPalette.Make32BitPalette(pal_count);
-    for (size_t i = 0; i < pal_count; ++i)
-      pPalette[i] = src_palette[i];
+    fxcrt::spancpy(pPalette, src_palette.first(pal_count));
     return;
   }
   if (bIsDestBpp8) {

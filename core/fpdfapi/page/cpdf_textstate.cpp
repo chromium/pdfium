@@ -101,13 +101,9 @@ CPDF_TextState::TextData::TextData(const TextData& that)
       m_FontSize(that.m_FontSize),
       m_CharSpace(that.m_CharSpace),
       m_WordSpace(that.m_WordSpace),
-      m_TextMode(that.m_TextMode) {
-  for (int i = 0; i < 4; ++i)
-    m_Matrix[i] = that.m_Matrix[i];
-
-  for (int i = 0; i < 4; ++i)
-    m_CTM[i] = that.m_CTM[i];
-
+      m_TextMode(that.m_TextMode),
+      m_Matrix(that.m_Matrix),
+      m_CTM(that.m_CTM) {
   if (m_pDocument && m_pFont) {
     auto* pPageData = CPDF_DocPageData::FromDocument(m_pDocument);
     m_pFont = pPageData->GetFont(m_pFont->GetMutableFontDict());
