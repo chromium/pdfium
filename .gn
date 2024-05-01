@@ -19,6 +19,12 @@ default_args = {
   # See https://crbug.com/v8/13014 for details.
   v8_enable_sandbox = false
 
+  # Suppress V8_DEPRECATE_SOON warnings to match the chromium build
+  # (at the moment). This is why chromium builds including pdfium
+  # currently build against the latest V8, but standalone builds
+  # give warnings.
+  v8_imminent_deprecation_warnings = false
+
   # PDFium has its own unsafe-buffers enforcement directories.
   clang_unsafe_buffers_paths = "//pdfium_unsafe_buffers_paths.txt"
 }
