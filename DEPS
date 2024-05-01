@@ -105,7 +105,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling freetype
   # and whatever else without interference from each other.
-  'freetype_revision': 'f42ce25563b73fed0123d18a2556b9ba01d2c76b',
+  'freetype_revision': '1168b1b5b0774b09a7484b150d2d49c682e46e91',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling GN CIPD package version
   # and whatever else without interference from each other.
