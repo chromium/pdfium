@@ -109,7 +109,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling GN CIPD package version
   # and whatever else without interference from each other.
-  'gn_version': 'git_revision:93ee9b91423c1f1f53fb5f6cba7b8eef6247a564',
+  'gn_version': 'git_revision:f284b6b47039a2d7edfcbfc51f52664f82b5a789',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling gtest
   # and whatever else without interference from each other.
