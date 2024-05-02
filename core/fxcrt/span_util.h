@@ -48,14 +48,62 @@ template <typename T1,
           typename = std::enable_if_t<sizeof(T1) == sizeof(T2) &&
                                       std::is_trivially_copyable_v<T1> &&
                                       std::is_trivially_copyable_v<T2>>>
-pdfium::span<T1> spanmove(pdfium::span<T1, N1, P1> dst,
-                          pdfium::span<T2, N2, P2> src) {
+inline pdfium::span<T1> spanmove(pdfium::span<T1, N1, P1> dst,
+                                 pdfium::span<T2, N2, P2> src) {
   CHECK_GE(dst.size(), src.size());
   // SAFETY: SFINAE ensures `sizeof(T1)` equals `sizeof(T2)`, so comparing
   // `size()` for equality ensures `size_bytes()` are equal, and `size_bytes()`
   // accurately describes `data()`.
   UNSAFE_BUFFERS(FXSYS_memmove(dst.data(), src.data(), src.size_bytes()));
   return dst.subspan(src.size());
+}
+
+// Bounds-checked byte-for-byte copies from spans into spans. Performs the
+// copy if there is room, and returns true. Otherwise does not copy anything
+// and returns false.
+template <typename T1,
+          typename T2,
+          size_t N1,
+          size_t N2,
+          typename P1,
+          typename P2,
+          typename = std::enable_if_t<sizeof(T1) == sizeof(T2) &&
+                                      std::is_trivially_copyable_v<T1> &&
+                                      std::is_trivially_copyable_v<T2>>>
+inline bool try_spancpy(pdfium::span<T1, N1, P1> dst,
+                        pdfium::span<T2, N2, P2> src) {
+  if (dst.size() < src.size()) {
+    return false;
+  }
+  // SAFETY: SFINAE ensures `sizeof(T1)` equals `sizeof(T2)`, the test above
+  // ensures `src.size()` <= `dst.size()` which implies `src.size_bytes()`
+  // <= `dst.size_bytes()`, and `dst.size_bytes()` describes `dst.data()`.
+  UNSAFE_BUFFERS(FXSYS_memcpy(dst.data(), src.data(), src.size_bytes()));
+  return true;
+}
+
+// Bounds-checked byte-for-byte moves from spans into spans. Peforms the
+// move if there is room, and returns true. Otherwise does not move anything
+// and returns false.
+template <typename T1,
+          typename T2,
+          size_t N1,
+          size_t N2,
+          typename P1,
+          typename P2,
+          typename = std::enable_if_t<sizeof(T1) == sizeof(T2) &&
+                                      std::is_trivially_copyable_v<T1> &&
+                                      std::is_trivially_copyable_v<T2>>>
+inline bool try_spanmove(pdfium::span<T1, N1, P1> dst,
+                         pdfium::span<T2, N2, P2> src) {
+  if (dst.size() < src.size()) {
+    return false;
+  }
+  // SAFETY: SFINAE ensures `sizeof(T1)` equals `sizeof(T2)`, the test above
+  // ensures `src.size()` <= `dst.size()` which implies `src.size_bytes()`
+  // <= `dst.size_bytes()`, and `dst.size_bytes()` describes `dst.data()`.
+  UNSAFE_BUFFERS(FXSYS_memmove(dst.data(), src.data(), src.size_bytes()));
+  return true;
 }
 
 // Bounds-checked sets into spans.

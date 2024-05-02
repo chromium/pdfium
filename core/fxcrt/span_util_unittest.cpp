@@ -77,6 +77,27 @@ TEST(Spancpy, EmptyCopyToEmpty) {
   EXPECT_TRUE(remain.empty());
 }
 
+TEST(Spancpy, TryFitsEntirely) {
+  std::vector<char> src(4, 'A');
+  std::vector<char> dst(4, 'B');
+  EXPECT_TRUE(
+      fxcrt::try_spancpy(pdfium::make_span(dst), pdfium::make_span(src)));
+  EXPECT_EQ(dst[0], 'A');
+  EXPECT_EQ(dst[1], 'A');
+  EXPECT_EQ(dst[2], 'A');
+  EXPECT_EQ(dst[3], 'A');
+}
+
+TEST(Spancpy, TryDoesNotFit) {
+  std::vector<char> src(4, 'A');
+  std::vector<char> dst(3, 'B');
+  EXPECT_FALSE(
+      fxcrt::try_spancpy(pdfium::make_span(dst), pdfium::make_span(src)));
+  EXPECT_EQ(dst[0], 'B');
+  EXPECT_EQ(dst[1], 'B');
+  EXPECT_EQ(dst[2], 'B');
+}
+
 TEST(Spanmove, FitsWithin) {
   std::vector<char> src(2, 'A');
   std::vector<char> dst(4, 'B');
@@ -89,6 +110,48 @@ TEST(Spanmove, FitsWithin) {
   EXPECT_EQ(dst[3], 'B');
   EXPECT_EQ(remain.size(), 1u);
   EXPECT_EQ(remain.data(), &dst[3]);
+}
+
+TEST(Spanmove, TryFitsEntirely) {
+  std::vector<char> src(4, 'A');
+  std::vector<char> dst(4, 'B');
+  EXPECT_TRUE(
+      fxcrt::try_spanmove(pdfium::make_span(dst), pdfium::make_span(src)));
+  EXPECT_EQ(dst[0], 'A');
+  EXPECT_EQ(dst[1], 'A');
+  EXPECT_EQ(dst[2], 'A');
+  EXPECT_EQ(dst[3], 'A');
+}
+
+TEST(Spanmove, TrySelfIntersect) {
+  {
+    std::vector<char> vec = {'A', 'B', 'C', 'D'};
+    EXPECT_TRUE(fxcrt::try_spanmove(pdfium::make_span(vec).first(3),
+                                    pdfium::make_span(vec).last(3)));
+    EXPECT_EQ(vec[0], 'B');
+    EXPECT_EQ(vec[1], 'C');
+    EXPECT_EQ(vec[2], 'D');
+    EXPECT_EQ(vec[3], 'D');
+  }
+  {
+    std::vector<char> vec = {'A', 'B', 'C', 'D'};
+    EXPECT_TRUE(fxcrt::try_spanmove(pdfium::make_span(vec).last(3),
+                                    pdfium::make_span(vec).first(3)));
+    EXPECT_EQ(vec[0], 'A');
+    EXPECT_EQ(vec[1], 'A');
+    EXPECT_EQ(vec[2], 'B');
+    EXPECT_EQ(vec[3], 'C');
+  }
+}
+
+TEST(Spanmove, TryDoesNotFit) {
+  std::vector<char> src(4, 'A');
+  std::vector<char> dst(3, 'B');
+  EXPECT_FALSE(
+      fxcrt::try_spanmove(pdfium::make_span(dst), pdfium::make_span(src)));
+  EXPECT_EQ(dst[0], 'B');
+  EXPECT_EQ(dst[1], 'B');
+  EXPECT_EQ(dst[2], 'B');
 }
 
 TEST(SpanEquals, Empty) {
