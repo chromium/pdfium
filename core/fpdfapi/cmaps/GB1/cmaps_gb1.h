@@ -27,8 +27,8 @@ extern const DWordCIDMap kGBK2K_H_5_DWord[];
 extern const uint16_t kGBK2K_V_5[];
 extern const uint16_t kUniGB_UCS2_H_4[];
 extern const uint16_t kUniGB_UCS2_V_4[];
-extern const uint16_t kGB1CID2Unicode_5[30284];
 
+extern const pdfium::span<const uint16_t> kGB1CID2Unicode_5;
 extern const pdfium::span<const CMap> kGB1_cmaps_span;
 
 }  // namespace fxcmap
