@@ -20,6 +20,11 @@
  * limitations under the License.
  */
 
+#if defined(UNSAFE_BUFFERS_BUILD)
+// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
+#pragma allow_unsafe_buffers
+#endif
+
 #include "fxbarcode/pdf417/BC_PDF417HighLevelEncoder.h"
 
 #include "core/fxcrt/fx_extension.h"

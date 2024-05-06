@@ -2,6 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if defined(UNSAFE_BUFFERS_BUILD)
+// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
+#pragma allow_unsafe_buffers
+#endif
+
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 
 #include <stdint.h>

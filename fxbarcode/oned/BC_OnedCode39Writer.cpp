@@ -20,6 +20,11 @@
  * limitations under the License.
  */
 
+#if defined(UNSAFE_BUFFERS_BUILD)
+// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
+#pragma allow_unsafe_buffers
+#endif
+
 #include "fxbarcode/oned/BC_OnedCode39Writer.h"
 
 #include <algorithm>

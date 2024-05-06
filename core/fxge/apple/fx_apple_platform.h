@@ -4,6 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#if defined(UNSAFE_BUFFERS_BUILD)
+// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
+#pragma allow_unsafe_buffers
+#endif
+
 #ifndef CORE_FXGE_APPLE_FX_APPLE_PLATFORM_H_
 #define CORE_FXGE_APPLE_FX_APPLE_PLATFORM_H_
 

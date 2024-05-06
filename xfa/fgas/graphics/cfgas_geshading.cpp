@@ -4,6 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
+#if defined(UNSAFE_BUFFERS_BUILD)
+// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
+#pragma allow_unsafe_buffers
+#endif
+
 #include "xfa/fgas/graphics/cfgas_geshading.h"
 
 CFGAS_GEShading::CFGAS_GEShading(const CFX_PointF& beginPoint,
