@@ -18,6 +18,8 @@
 #include <limits>
 #include <type_traits>
 
+#include "core/fxcrt/fx_memcpy_wrappers.h"
+
 namespace fxcodec {
 
 OPJ_SIZE_T opj_read_from_memory(void* p_buffer,
@@ -33,7 +35,7 @@ OPJ_SIZE_T opj_read_from_memory(void* p_buffer,
 
   OPJ_SIZE_T bufferLength = srcData->src_size - srcData->offset;
   OPJ_SIZE_T readlength = nb_bytes < bufferLength ? nb_bytes : bufferLength;
-  memcpy(p_buffer, &srcData->src_data[srcData->offset], readlength);
+  FXSYS_memcpy(p_buffer, &srcData->src_data[srcData->offset], readlength);
   srcData->offset += readlength;
   return readlength;
 }

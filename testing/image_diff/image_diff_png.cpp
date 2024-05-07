@@ -17,6 +17,7 @@
 #include <string>
 
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/notreached.h"
 
 #ifdef USE_SYSTEM_ZLIB
@@ -95,7 +96,7 @@ void ConvertRGBAtoRGB(const uint8_t* rgba,
   const uint8_t* pixel_in = rgba;
   uint8_t* pixel_out = rgb;
   for (int x = 0; x < pixel_width; x++) {
-    memcpy(pixel_out, pixel_in, 3);
+    FXSYS_memcpy(pixel_out, pixel_in, 3);
     pixel_in += 4;
     pixel_out += 3;
   }
@@ -151,7 +152,7 @@ void ConvertRGBtoRGBA(const uint8_t* rgb,
   const uint8_t* pixel_in = rgb;
   uint8_t* pixel_out = rgba;
   for (int x = 0; x < pixel_width; x++) {
-    memcpy(pixel_out, pixel_in, 3);
+    FXSYS_memcpy(pixel_out, pixel_in, 3);
     pixel_out[3] = 0xff;
     pixel_in += 3;
     pixel_out += 4;
@@ -295,7 +296,7 @@ void DecodeRowCallback(png_struct* png_ptr,
   if (state->row_converter)
     state->row_converter(new_row, state->width, dest, &state->is_opaque);
   else
-    memcpy(dest, new_row, state->width * state->output_channels);
+    FXSYS_memcpy(dest, new_row, state->width * state->output_channels);
 }
 
 void DecodeEndCallback(png_struct* png_ptr, png_info* info) {
@@ -397,7 +398,7 @@ void EncoderWriteCallback(png_structp png, png_bytep data, png_size_t size) {
   PngEncoderState* state = static_cast<PngEncoderState*>(png_get_io_ptr(png));
   size_t old_size = state->out->size();
   state->out->resize(old_size + size);
-  memcpy(&(*state->out)[old_size], data, size);
+  FXSYS_memcpy(&(*state->out)[old_size], data, size);
 }
 
 void FakeFlushCallback(png_structp png) {

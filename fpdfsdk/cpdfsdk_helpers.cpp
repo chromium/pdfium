@@ -21,6 +21,8 @@
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fpdfdoc/cpdf_metadata.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -304,8 +306,11 @@ unsigned long NulTerminateMaybeCopyAndReturnLength(const ByteString& text,
                                                    unsigned long buflen) {
   const unsigned long len =
       pdfium::checked_cast<unsigned long>(text.GetLength() + 1);
-  if (buffer && len <= buflen)
-    memcpy(buffer, text.c_str(), len);
+  // TODO(tsepez): convert to span.
+  if (buffer && len <= buflen) {
+    // SAFETY: check above.
+    UNSAFE_BUFFERS(FXSYS_memcpy(buffer, text.c_str(), len));
+  }
   return len;
 }
 
@@ -315,8 +320,12 @@ unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
   ByteString encoded_text = text.ToUTF16LE();
   const unsigned long len =
       pdfium::checked_cast<unsigned long>(encoded_text.GetLength());
-  if (buffer && len <= buflen)
-    memcpy(buffer, encoded_text.c_str(), len);
+
+  // TODO(tsepez): convert to span.
+  if (buffer && len <= buflen) {
+    // SAFTEY: check above.
+    UNSAFE_BUFFERS(FXSYS_memcpy(buffer, encoded_text.c_str(), len));
+  }
   return len;
 }
 

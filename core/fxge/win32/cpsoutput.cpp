@@ -13,6 +13,7 @@
 
 #include <algorithm>
 
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/span.h"
 
@@ -25,7 +26,7 @@ bool CPSOutput::WriteBlock(pdfium::span<const uint8_t> input) {
     uint8_t buffer[1026];
     size_t send_len = std::min<size_t>(input.size(), 1024);
     *(reinterpret_cast<uint16_t*>(buffer)) = static_cast<uint16_t>(send_len);
-    memcpy(buffer + 2, input.data(), send_len);
+    FXSYS_memcpy(buffer + 2, input.data(), send_len);
     switch (m_mode) {
       case OutputMode::kExtEscape:
         ExtEscape(m_hDC, PASSTHROUGH, static_cast<int>(send_len + 2),

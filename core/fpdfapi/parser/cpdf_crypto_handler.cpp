@@ -30,6 +30,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 
 namespace {
 
@@ -57,7 +58,7 @@ void CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
                                         uint8_t* dest_buf,
                                         size_t& dest_size) const {
   if (m_Cipher == Cipher::kNone) {
-    memcpy(dest_buf, source.data(), source.size());
+    FXSYS_memcpy(dest_buf, source.data(), source.size());
     return;
   }
   uint8_t realkey[16];
@@ -66,7 +67,7 @@ void CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
     uint8_t key1[32];
     PopulateKey(objnum, gennum, key1);
     if (m_Cipher == Cipher::kAES) {
-      memcpy(key1 + m_KeyLen + 5, "sAlT", 4);
+      FXSYS_memcpy(key1 + m_KeyLen + 5, "sAlT", 4);
     }
     size_t len = m_Cipher == Cipher::kAES ? m_KeyLen + 9 : m_KeyLen + 5;
     CRYPT_MD5Generate(pdfium::make_span(key1).first(len), realkey);
@@ -80,12 +81,12 @@ void CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
       iv[i] = (uint8_t)rand();
     }
     CRYPT_AESSetIV(m_pAESContext.get(), iv);
-    memcpy(dest_buf, iv, 16);
+    FXSYS_memcpy(dest_buf, iv, 16);
     int nblocks = source.size() / 16;
     CRYPT_AESEncrypt(m_pAESContext.get(), dest_buf + 16, source.data(),
                      nblocks * 16);
     uint8_t padding[16];
-    memcpy(padding, source.data() + nblocks * 16, source.size() % 16);
+    FXSYS_memcpy(padding, source.data() + nblocks * 16, source.size() % 16);
     memset(padding + source.size() % 16, 16 - source.size() % 16,
            16 - source.size() % 16);
     CRYPT_AESEncrypt(m_pAESContext.get(), dest_buf + nblocks * 16 + 16, padding,
@@ -94,7 +95,7 @@ void CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
   } else {
     DCHECK_EQ(dest_size, source.size());
     if (dest_buf != source.data()) {
-      memcpy(dest_buf, source.data(), source.size());
+      FXSYS_memcpy(dest_buf, source.data(), source.size());
     }
     // SAFETY: caller ensures that dest_buf points to at least dest_size bytes.
     CRYPT_ArcFourCryptBlock(
@@ -125,7 +126,7 @@ void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
   PopulateKey(objnum, gennum, key1);
 
   if (m_Cipher == Cipher::kAES)
-    memcpy(key1 + m_KeyLen + 5, "sAlT", 4);
+    FXSYS_memcpy(key1 + m_KeyLen + 5, "sAlT", 4);
 
   uint8_t realkey[16];
   size_t len = m_Cipher == Cipher::kAES ? m_KeyLen + 9 : m_KeyLen + 5;
@@ -170,8 +171,8 @@ bool CPDF_CryptoHandler::DecryptStream(void* context,
     if (copy_size > src_left) {
       copy_size = src_left;
     }
-    memcpy(pContext->m_Block + pContext->m_BlockOffset, source.data() + src_off,
-           copy_size);
+    FXSYS_memcpy(pContext->m_Block + pContext->m_BlockOffset,
+                 source.data() + src_off, copy_size);
     src_off += copy_size;
     src_left -= copy_size;
     pContext->m_BlockOffset += copy_size;
@@ -333,7 +334,7 @@ CPDF_CryptoHandler::CPDF_CryptoHandler(Cipher cipher,
   DCHECK(cipher != Cipher::kRC4 || (keylen >= 5 && keylen <= 16));
 
   if (m_Cipher != Cipher::kNone)
-    memcpy(m_EncryptKey.data(), key, m_KeyLen);
+    FXSYS_memcpy(m_EncryptKey.data(), key, m_KeyLen);
 
   if (m_Cipher == Cipher::kAES)
     m_pAESContext.reset(FX_Alloc(CRYPT_aes_context, 1));
@@ -344,7 +345,7 @@ CPDF_CryptoHandler::~CPDF_CryptoHandler() = default;
 void CPDF_CryptoHandler::PopulateKey(uint32_t objnum,
                                      uint32_t gennum,
                                      uint8_t* key) const {
-  memcpy(key, m_EncryptKey.data(), m_KeyLen);
+  FXSYS_memcpy(key, m_EncryptKey.data(), m_KeyLen);
   key[m_KeyLen + 0] = (uint8_t)objnum;
   key[m_KeyLen + 1] = (uint8_t)(objnum >> 8);
   key[m_KeyLen + 2] = (uint8_t)(objnum >> 16);

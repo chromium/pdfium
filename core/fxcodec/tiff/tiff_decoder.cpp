@@ -19,6 +19,7 @@
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
@@ -110,7 +111,7 @@ void _TIFFmemset(void* ptr, int val, tmsize_t size) {
 }
 
 void _TIFFmemcpy(void* des, const void* src, tmsize_t size) {
-  memcpy(des, src, static_cast<size_t>(size));
+  FXSYS_memcpy(des, src, static_cast<size_t>(size));
 }
 
 int _TIFFmemcmp(const void* ptr1, const void* ptr2, tmsize_t size) {

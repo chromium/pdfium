@@ -14,6 +14,7 @@
 #include <utility>
 
 #include "core/fdrm/fx_crypt.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/stl_util.h"
 
@@ -302,7 +303,7 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
     }
 
     uint32_t dwNameLen = 0;
-    memcpy(&dwNameLen, p, sizeof(uint32_t));
+    FXSYS_memcpy(&dwNameLen, p, sizeof(uint32_t));
     p += sizeof(uint32_t);
     if (p + dwNameLen > buffer.end())
       break;
@@ -311,7 +312,7 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
     p += sizeof(char) * dwNameLen;
 
     uint16_t wDataType = 0;
-    memcpy(&wDataType, p, sizeof(uint16_t));
+    FXSYS_memcpy(&wDataType, p, sizeof(uint16_t));
     p += sizeof(uint16_t);
 
     CFX_Value::DataType eDataType = static_cast<CFX_Value::DataType>(wDataType);
@@ -322,13 +323,13 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
         switch (wVersion) {
           case 1: {
             uint32_t dwData = 0;
-            memcpy(&dwData, p, sizeof(uint32_t));
+            FXSYS_memcpy(&dwData, p, sizeof(uint32_t));
             p += sizeof(uint32_t);
             dData = dwData;
           } break;
           case 2: {
             dData = 0;
-            memcpy(&dData, p, sizeof(double));
+            FXSYS_memcpy(&dData, p, sizeof(double));
             p += sizeof(double);
           } break;
         }
@@ -337,14 +338,14 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
       } break;
       case CFX_Value::DataType::kBoolean: {
         uint16_t wData = 0;
-        memcpy(&wData, p, sizeof(uint16_t));
+        FXSYS_memcpy(&wData, p, sizeof(uint16_t));
         p += sizeof(uint16_t);
         SetGlobalVariableBoolean(sEntry, (bool)(wData == 1));
         SetGlobalVariablePersistent(sEntry, true);
       } break;
       case CFX_Value::DataType::kString: {
         uint32_t dwLength = 0;
-        memcpy(&dwLength, p, sizeof(uint32_t));
+        FXSYS_memcpy(&dwLength, p, sizeof(uint32_t));
         p += sizeof(uint32_t);
         if (p + dwLength > buffer.end())
           break;

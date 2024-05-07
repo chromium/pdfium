@@ -38,6 +38,7 @@
 #include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
@@ -1192,7 +1193,7 @@ FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Set(FPDF_BSTR* bstr,
     bstr->str = FX_Alloc(char, length + 1);
 
   bstr->str[length] = 0;
-  memcpy(bstr->str, cstr, length);
+  FXSYS_memcpy(bstr->str, cstr, length);
   bstr->len = length;
   return 0;
 }
@@ -1274,7 +1275,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
   if (!buffer) {
     *buflen = len;
   } else if (len <= *buflen) {
-    memcpy(buffer, utf16Name.c_str(), len);
+    FXSYS_memcpy(buffer, utf16Name.c_str(), len);
     *buflen = len;
   } else {
     *buflen = -1;

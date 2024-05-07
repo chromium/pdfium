@@ -21,6 +21,7 @@
 #include "core/fpdftext/cpdf_textpagefind.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
@@ -134,9 +135,12 @@ FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
   ByteString basefont = font->GetBaseFontName();
   const unsigned long length =
       pdfium::checked_cast<unsigned long>(basefont.GetLength() + 1);
-  if (buffer && buflen >= length)
-    memcpy(buffer, basefont.c_str(), length);
 
+  // TODO(tsepez): convert to span.
+  if (buffer && length <= buflen) {
+    // SAFETY: check above.
+    UNSAFE_BUFFERS(FXSYS_memcpy(buffer, basefont.c_str(), length));
+  }
   return length;
 }
 
@@ -510,7 +514,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFLink_GetURL(FPDF_PAGELINK link_page,
   int size = std::min(required, buflen);
   if (size > 0) {
     int buf_size = size * sizeof(unsigned short);
-    memcpy(buffer, cbUTF16URL.c_str(), buf_size);
+    // TODO(tsepez): invesstigate safety.
+    UNSAFE_BUFFERS(FXSYS_memcpy(buffer, cbUTF16URL.c_str(), buf_size));
   }
   return size;
 }

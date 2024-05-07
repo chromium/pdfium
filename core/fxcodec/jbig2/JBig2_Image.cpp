@@ -20,6 +20,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 
@@ -93,7 +94,7 @@ CJBig2_Image::CJBig2_Image(const CJBig2_Image& other)
   if (other.m_pData) {
     m_pData.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
         FX_Alloc2D(uint8_t, m_nStride, m_nHeight)));
-    memcpy(data(), other.data(), m_nStride * m_nHeight);
+    FXSYS_memcpy(data(), other.data(), m_nStride * m_nHeight);
   }
 }
 
@@ -152,7 +153,7 @@ void CJBig2_Image::CopyLine(int32_t hTo, int32_t hFrom) {
     memset(pDst, 0, m_nStride);
     return;
   }
-  memcpy(pDst, pSrc, m_nStride);
+  FXSYS_memcpy(pDst, pSrc, m_nStride);
 }
 
 void CJBig2_Image::Fill(bool v) {
@@ -222,7 +223,8 @@ void CJBig2_Image::SubImageFast(int32_t x,
   int32_t bytes_to_copy = std::min(pImage->m_nStride, m_nStride - m);
   int32_t lines_to_copy = std::min(pImage->m_nHeight, m_nHeight - y);
   for (int32_t j = 0; j < lines_to_copy; j++)
-    memcpy(pImage->GetLineUnsafe(j), GetLineUnsafe(y + j) + m, bytes_to_copy);
+    FXSYS_memcpy(pImage->GetLineUnsafe(j), GetLineUnsafe(y + j) + m,
+                 bytes_to_copy);
 }
 
 void CJBig2_Image::SubImageSlow(int32_t x,
@@ -264,7 +266,7 @@ void CJBig2_Image::Expand(int32_t h, bool v) {
     uint8_t* pExternalBuffer = data();
     m_pData.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
         FX_Alloc(uint8_t, desired_size)));
-    memcpy(data(), pExternalBuffer, current_size);
+    FXSYS_memcpy(data(), pExternalBuffer, current_size);
   }
   memset(data() + current_size, v ? 0xff : 0, desired_size - current_size);
   m_nHeight = h;

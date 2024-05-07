@@ -20,6 +20,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_string_wrappers.h"
@@ -462,7 +463,7 @@ class GpStream final : public IStream {
     size_t bytes_left = pdfium::checked_cast<size_t>(
         std::streamoff(m_InterStream.tellp()) - m_ReadPos);
     size_t bytes_out = std::min(pdfium::checked_cast<size_t>(cb), bytes_left);
-    memcpy(output, m_InterStream.str().c_str() + m_ReadPos, bytes_out);
+    FXSYS_memcpy(output, m_InterStream.str().c_str() + m_ReadPos, bytes_out);
     m_ReadPos += bytes_out;
     if (pcbRead)
       *pcbRead = (ULONG)bytes_out;

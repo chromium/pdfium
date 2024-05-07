@@ -14,6 +14,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/containers/contains.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/checked_math.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
@@ -229,7 +230,8 @@ FPDF_FILEHANDLER* DownloadFromURLStub(FPDF_FORMFILLINFO* pThis,
       [](void*) -> void {},
       [](void*) -> FPDF_DWORD { return sizeof(kString) - 1; },
       [](void*, FPDF_DWORD off, void* buffer, FPDF_DWORD size) -> FPDF_RESULT {
-        memcpy(buffer, kString, std::min<size_t>(size, sizeof(kString) - 1));
+        FXSYS_memcpy(buffer, kString,
+                     std::min<size_t>(size, sizeof(kString) - 1));
         return 0;
       },
       [](void*, FPDF_DWORD, const void*, FPDF_DWORD) -> FPDF_RESULT {
@@ -853,7 +855,7 @@ int EmbedderTest::GetBlockFromString(void* param,
   end += size;
   CHECK_LE(end.ValueOrDie(), new_file->size());
 
-  memcpy(buf, new_file->data() + pos, size);
+  FXSYS_memcpy(buf, new_file->data() + pos, size);
   return 1;
 }
 

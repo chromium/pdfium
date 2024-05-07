@@ -18,6 +18,7 @@
 
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/numerics/checked_math.h"
 #include "core/fxcrt/span.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -40,7 +41,7 @@ class FuzzerTestLoader {
     end += size;
     CHECK_LE(end.ValueOrDie(), pLoader->m_Span.size());
 
-    memcpy(pBuf, &pLoader->m_Span[pos], size);
+    FXSYS_memcpy(pBuf, &pLoader->m_Span[pos], size);
     return 1;
   }
 

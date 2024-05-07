@@ -36,6 +36,7 @@
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
@@ -860,7 +861,7 @@ FPDFFont_GetFontName(FPDF_FONT font, char* buffer, unsigned long length) {
   const unsigned long dwStringLen =
       pdfium::checked_cast<unsigned long>(name.GetLength() + 1);
   if (buffer && length >= dwStringLen)
-    memcpy(buffer, name.c_str(), dwStringLen);
+    FXSYS_memcpy(buffer, name.c_str(), dwStringLen);
 
   return dwStringLen;
 }

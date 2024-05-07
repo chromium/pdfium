@@ -487,7 +487,7 @@ FPDFPageObjMark_GetParamBlobValue(FPDF_PAGEOBJECTMARK mark,
       pdfium::checked_cast<unsigned long>(result.GetLength());
 
   if (buffer && len <= buflen)
-    memcpy(buffer, result.c_str(), len);
+    FXSYS_memcpy(buffer, result.c_str(), len);
 
   *out_buflen = len;
   return true;

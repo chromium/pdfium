@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/hash.h"
 
@@ -355,7 +356,7 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
     CRYPT_ArcFourSetup(&context, {});
 
     uint8_t data_short[std::size(kDataShort)];
-    memcpy(data_short, kDataShort, std::size(kDataShort));
+    FXSYS_memcpy(data_short, kDataShort, std::size(kDataShort));
     static const uint8_t kExpectedEncryptedDataShort[] = {
         138, 112, 236, 97,  242, 66,  52,  89,  225, 38,  88,  8,
         47,  78,  216, 24,  170, 106, 26,  199, 208, 131, 157, 242,
@@ -395,7 +396,7 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
     CRYPT_ArcFourSetup(&context, {});
 
     uint8_t data_long[std::size(kDataLong)];
-    memcpy(data_long, kDataLong, std::size(kDataLong));
+    FXSYS_memcpy(data_long, kDataLong, std::size(kDataLong));
     static const uint8_t kExpectedEncryptedDataLong[] = {
         138, 112, 236, 97,  242, 66,  52,  89,  225, 38,  88,  8,   47,  78,
         216, 24,  170, 106, 26,  199, 208, 131, 157, 242, 55,  11,  25,  90,
@@ -452,7 +453,7 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
     CRYPT_ArcFourSetup(&context, foobar.unsigned_span());
 
     uint8_t data_short[std::size(kDataShort)];
-    memcpy(data_short, kDataShort, std::size(kDataShort));
+    FXSYS_memcpy(data_short, kDataShort, std::size(kDataShort));
     static const uint8_t kExpectedEncryptedDataShort[] = {
         59,  193, 117, 206, 167, 54,  218, 7,   229, 214, 188, 55,
         90,  205, 196, 25,  36,  114, 199, 218, 161, 107, 122, 119,
@@ -493,7 +494,7 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
     CRYPT_ArcFourSetup(&context, foobar.unsigned_span());
 
     uint8_t data_long[std::size(kDataLong)];
-    memcpy(data_long, kDataLong, std::size(kDataLong));
+    FXSYS_memcpy(data_long, kDataLong, std::size(kDataLong));
     static const uint8_t kExpectedEncryptedDataLong[] = {
         59,  193, 117, 206, 167, 54,  218, 7,   229, 214, 188, 55,  90,  205,
         196, 25,  36,  114, 199, 218, 161, 107, 122, 119, 106, 167, 44,  175,

@@ -41,6 +41,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
@@ -763,7 +764,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
         const uint8_t* src = result_bitmap->GetScanline(row).data();
         uint8_t* dest = rgb_bitmap->GetWritableScanline(row).data();
         for (uint32_t col = 0; col < image_info.width; ++col) {
-          memcpy(dest, src, 3);
+          FXSYS_memcpy(dest, src, 3);
           src += 4;
           dest += 3;
         }

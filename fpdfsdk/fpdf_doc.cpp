@@ -32,6 +32,7 @@
 #include "core/fpdfdoc/cpdf_pagelabel.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/containers/contains.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_formfill.h"
@@ -243,7 +244,7 @@ FPDFAction_GetURIPath(FPDF_DOCUMENT document,
   const unsigned long len =
       pdfium::checked_cast<unsigned long>(path.GetLength() + 1);
   if (buffer && len <= buflen)
-    memcpy(buffer, path.c_str(), len);
+    FXSYS_memcpy(buffer, path.c_str(), len);
   return len;
 }
 

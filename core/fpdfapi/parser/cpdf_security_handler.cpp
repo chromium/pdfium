@@ -46,7 +46,7 @@ void GetPassCode(const ByteString& password, pdfium::span<uint8_t> output) {
   size_t remaining = output.size() - len;
   FXSYS_memcpy(output.data(), password.unsigned_str(), len);
   if (remaining) {
-    memcpy(&output[len], kDefaultPasscode, remaining);
+    FXSYS_memcpy(&output[len], kDefaultPasscode, remaining);
   }
 }
 
@@ -81,7 +81,7 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
     }
   }
   memset(key, 0, keylen);
-  memcpy(key, digest, copy_len);
+  FXSYS_memcpy(key, digest, copy_len);
 }
 
 bool IsValidKeyLengthForCipher(CPDF_CryptoHandler::Cipher cipher,
@@ -183,7 +183,7 @@ void Revision6_Hash(const ByteString& password,
     ++i;
   } while (i < 64 || i - 32 < encrypted_output.back());
   if (hash) {
-    memcpy(hash, input, 32);
+    FXSYS_memcpy(hash, input, 32);
   }
 }
 
@@ -385,7 +385,7 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
   uint8_t perms_buf[16] = {};
   size_t copy_len =
       std::min(sizeof(perms_buf), static_cast<size_t>(perms.GetLength()));
-  memcpy(perms_buf, perms.unsigned_str(), copy_len);
+  FXSYS_memcpy(perms_buf, perms.unsigned_str(), copy_len);
   uint8_t buf[16];
   CRYPT_AESDecrypt(&aes, buf, perms_buf, 16);
   if (buf[9] != 'a' || buf[10] != 'd' || buf[11] != 'b')
@@ -455,7 +455,7 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
 
   uint8_t ukeybuf[32];
   if (m_Revision == 2) {
-    memcpy(ukeybuf, kDefaultPasscode, sizeof(kDefaultPasscode));
+    FXSYS_memcpy(ukeybuf, kDefaultPasscode, sizeof(kDefaultPasscode));
     CRYPT_ArcFourCryptBlock(ukeybuf,
                             pdfium::make_span(m_EncryptKey).first(m_KeyLen));
     return memcmp(ukey.c_str(), ukeybuf, 16) == 0;
@@ -465,7 +465,7 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
   uint8_t tmpkey[32] = {};
   uint32_t copy_len = std::min(sizeof(test), ukey.GetLength());
 
-  memcpy(test, ukey.c_str(), copy_len);
+  FXSYS_memcpy(test, ukey.c_str(), copy_len);
   for (int32_t i = 19; i >= 0; i--) {
     for (size_t j = 0; j < m_KeyLen; j++) {
       tmpkey[j] = m_EncryptKey[j] ^ static_cast<uint8_t>(i);
@@ -499,9 +499,9 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
   }
   uint8_t enckey[32] = {};
   size_t copy_len = std::min(m_KeyLen, sizeof(digest));
-  memcpy(enckey, digest, copy_len);
+  FXSYS_memcpy(enckey, digest, copy_len);
   uint8_t okeybuf[32] = {};
-  memcpy(okeybuf, okey.c_str(), okeylen);
+  FXSYS_memcpy(okeybuf, okey.c_str(), okeylen);
   pdfium::span<uint8_t> okey_span = pdfium::make_span(okeybuf).first(okeylen);
   if (m_Revision == 2) {
     CRYPT_ArcFourCryptBlock(okey_span,
@@ -580,7 +580,7 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
                  false, file_id);
   if (m_Revision < 3) {
     uint8_t tempbuf[32];
-    memcpy(tempbuf, kDefaultPasscode, sizeof(kDefaultPasscode));
+    FXSYS_memcpy(tempbuf, kDefaultPasscode, sizeof(kDefaultPasscode));
     CRYPT_ArcFourCryptBlock(tempbuf,
                             pdfium::make_span(m_EncryptKey).first(key_len));
     pEncryptDict->SetNewFor<CPDF_String>("U", ByteString(tempbuf, 32), false);
@@ -631,7 +631,7 @@ void CPDF_SecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
     CRYPT_SHA256Update(&sha2, digest, 8);
     CRYPT_SHA256Finish(&sha2, digest1);
   }
-  memcpy(digest1 + 32, digest, 16);
+  FXSYS_memcpy(digest1 + 32, digest, 16);
   pEncryptDict->SetNewFor<CPDF_String>("U", ByteString(digest1, 48), false);
   if (m_Revision >= 6) {
     Revision6_Hash(password, digest + 8, nullptr, digest1);

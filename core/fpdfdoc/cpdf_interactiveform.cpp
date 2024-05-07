@@ -30,8 +30,10 @@
 #include "core/fpdfdoc/cpdf_filespec.h"
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/fx_font.h"
@@ -58,7 +60,9 @@ int CALLBACK EnumFontFamExProc(ENUMLOGFONTEXA* lpelfe,
     return 1;
 
   PDF_FONTDATA* pData = (PDF_FONTDATA*)lParam;
-  memcpy(&pData->lf, &lpelfe->elfLogFont, sizeof(LOGFONTA));
+  // TODO(tsepez): investigate safety.
+  UNSAFE_BUFFERS(
+      FXSYS_memcpy(&pData->lf, &lpelfe->elfLogFont, sizeof(LOGFONTA)));
   pData->bFind = true;
   return 0;
 }
@@ -81,9 +85,10 @@ bool RetrieveSpecificFont(FX_Charset charSet,
   EnumFontFamiliesExA(hDC, &lf, (FONTENUMPROCA)EnumFontFamExProc, (LPARAM)&fd,
                       0);
   ::ReleaseDC(nullptr, hDC);
-  if (fd.bFind)
-    memcpy(&lf, &fd.lf, sizeof(LOGFONTA));
-
+  if (fd.bFind) {
+    // TODO(tsepez): investigate safety.
+    UNSAFE_BUFFERS(FXSYS_memcpy(&lf, &fd.lf, sizeof(LOGFONTA)));
+  }
   return fd.bFind;
 }
 #endif  // BUILDFLAG(IS_WIN)
@@ -117,8 +122,10 @@ ByteString GetNativeFontName(FX_Charset charSet, void* pLogFont) {
   if (!bRet)
     bRet = RetrieveSpecificFont(charSet, nullptr, lf);
   if (bRet) {
-    if (pLogFont)
-      memcpy(pLogFont, &lf, sizeof(LOGFONTA));
+    if (pLogFont) {
+      // TODO(tsepez): investigate safety.
+      UNSAFE_BUFFERS(FXSYS_memcpy(pLogFont, &lf, sizeof(LOGFONTA)));
+    }
     csFontName = lf.lfFaceName;
   }
 #endif

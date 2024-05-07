@@ -23,6 +23,7 @@
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -604,7 +605,7 @@ bool CFX_PSRenderer::DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,
             src_scan += 3;
           }
         } else {
-          memcpy(dest_scan, src_scan, src_pitch);
+          FXSYS_memcpy(dest_scan, src_scan, src_pitch);
         }
       }
       // SAFETY: `output_size` passed to FX_Alloc() of `output_buf`.

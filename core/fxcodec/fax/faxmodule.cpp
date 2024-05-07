@@ -25,6 +25,7 @@
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_2d_size.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/raw_span.h"
@@ -643,7 +644,7 @@ int FaxModule::FaxG4Decode(const uint8_t* src_buf,
     uint8_t* line_buf = dest_buf + iRow * pitch;
     memset(line_buf, 0xff, pitch);
     FaxG4GetRow(src_buf, src_size << 3, &bitpos, line_buf, ref_buf, width);
-    memcpy(ref_buf.data(), line_buf, pitch);
+    FXSYS_memcpy(ref_buf.data(), line_buf, pitch);
   }
   return bitpos;
 }

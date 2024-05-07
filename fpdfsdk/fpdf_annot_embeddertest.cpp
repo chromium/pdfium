@@ -21,6 +21,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxcrt/containers/contains.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
@@ -1760,7 +1761,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
     // small. The result buffer should be overwritten with an empty string.
     std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(normal_length_bytes);
     // Write in the buffer to verify it's not overwritten.
-    memcpy(buf.data(), "abcdefgh", 8);
+    FXSYS_memcpy(buf.data(), "abcdefgh", 8);
     EXPECT_EQ(kExpectNormalAPLength,
               FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
                               buf.data(), normal_length_bytes - 1));

@@ -21,6 +21,7 @@
 #include "core/fxcodec/jpeg/jpeg_progressive_decoder.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/fx_system.h"
@@ -710,8 +711,8 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
   m_pBmpContext = std::move(pBmpContext);
   if (m_SrcPaletteNumber) {
     m_SrcPalette.resize(m_SrcPaletteNumber);
-    memcpy(m_SrcPalette.data(), palette->data(),
-           m_SrcPaletteNumber * sizeof(FX_ARGB));
+    FXSYS_memcpy(m_SrcPalette.data(), palette->data(),
+                 m_SrcPaletteNumber * sizeof(FX_ARGB));
   } else {
     m_SrcPalette.clear();
   }
