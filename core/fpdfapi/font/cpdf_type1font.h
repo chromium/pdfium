@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include <array>
+
 #include "build/build_config.h"
 #include "core/fpdfapi/font/cpdf_simplefont.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -46,7 +48,7 @@ class CPDF_Type1Font final : public CPDF_SimpleFont {
   void SetExtGID(const char* name, uint32_t charcode);
   void CalcExtGID(uint32_t charcode);
 
-  uint16_t m_ExtGID[kInternalTableSize];
+  std::array<uint16_t, kInternalTableSize> m_ExtGID;
 #endif
 
   std::optional<CFX_FontMapper::StandardFont> m_Base14Font;

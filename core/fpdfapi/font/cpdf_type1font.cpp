@@ -76,7 +76,7 @@ CPDF_Type1Font::CPDF_Type1Font(CPDF_Document* pDocument,
                                RetainPtr<CPDF_Dictionary> pFontDict)
     : CPDF_SimpleFont(pDocument, std::move(pFontDict)) {
 #if BUILDFLAG(IS_APPLE)
-  memset(m_ExtGID, 0xff, sizeof(m_ExtGID));
+  m_ExtGID.fill(0xffff);
 #endif
 }
 
@@ -168,8 +168,9 @@ void CPDF_Type1Font::LoadGlyphMap() {
       }
       if (bGotOne) {
 #if BUILDFLAG(IS_APPLE)
-        if (!bCoreText)
-          memcpy(m_ExtGID, m_GlyphIndex, sizeof(m_ExtGID));
+        if (!bCoreText) {
+          m_ExtGID = m_GlyphIndex;
+        }
 #endif
         return;
       }
@@ -200,8 +201,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
     }
 #if BUILDFLAG(IS_APPLE)
     if (!bCoreText) {
-      fxcrt::spancpy(pdfium::make_span(m_ExtGID),
-                     pdfium::make_span(m_GlyphIndex));
+      m_ExtGID = m_GlyphIndex;
     }
 #endif
     return;
@@ -281,8 +281,9 @@ void CPDF_Type1Font::LoadGlyphMap() {
       }
     }
 #if BUILDFLAG(IS_APPLE)
-    if (!bCoreText)
-      memcpy(m_ExtGID, m_GlyphIndex, sizeof(m_ExtGID));
+    if (!bCoreText) {
+      m_ExtGID = m_GlyphIndex;
+    }
 #endif
     return;
   }
@@ -309,8 +310,9 @@ void CPDF_Type1Font::LoadGlyphMap() {
     }
   }
 #if BUILDFLAG(IS_APPLE)
-  if (!bCoreText)
-    memcpy(m_ExtGID, m_GlyphIndex, sizeof(m_ExtGID));
+  if (!bCoreText) {
+    m_ExtGID = m_GlyphIndex;
+  }
 #endif
 }
 

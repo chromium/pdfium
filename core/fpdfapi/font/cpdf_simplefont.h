@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include <array>
 #include <vector>
 
 #include "core/fpdfapi/font/cpdf_font.h"
@@ -50,9 +51,9 @@ class CPDF_SimpleFont : public CPDF_Font {
   FontEncoding m_BaseEncoding = FontEncoding::kBuiltin;
   bool m_bUseFontWidth = false;
   std::vector<ByteString> m_CharNames;
-  uint16_t m_GlyphIndex[kInternalTableSize];
-  uint16_t m_CharWidth[kInternalTableSize];
-  FX_RECT m_CharBBox[kInternalTableSize];
+  std::array<uint16_t, kInternalTableSize> m_GlyphIndex;
+  std::array<uint16_t, kInternalTableSize> m_CharWidth;
+  std::array<FX_RECT, kInternalTableSize> m_CharBBox;
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_SIMPLEFONT_H_
