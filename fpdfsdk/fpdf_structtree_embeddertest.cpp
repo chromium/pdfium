@@ -58,8 +58,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAltText) {
     EXPECT_EQ(-1, FPDF_StructElement_GetMarkedContentID(gchild_element));
     ASSERT_EQ(24U, FPDF_StructElement_GetAltText(gchild_element, nullptr, 0));
 
-    unsigned short buffer[12];
-    memset(buffer, 0, sizeof(buffer));
+    unsigned short buffer[12] = {};
     // Deliberately pass in a small buffer size to make sure |buffer| remains
     // untouched.
     ASSERT_EQ(24U, FPDF_StructElement_GetAltText(gchild_element, buffer, 1));
@@ -456,12 +455,11 @@ TEST_F(FPDFStructTreeEmbedderTest, GetType) {
     ASSERT_TRUE(element);
 
     // test nullptr inputs
-    unsigned short buffer[12];
+    unsigned short buffer[12] = {};
     ASSERT_EQ(0U, FPDF_StructElement_GetType(nullptr, buffer, sizeof(buffer)));
     ASSERT_EQ(0U, FPDF_StructElement_GetType(nullptr, nullptr, 0));
     ASSERT_EQ(18U, FPDF_StructElement_GetType(element, nullptr, 0));
 
-    memset(buffer, 0, sizeof(buffer));
     // Deliberately pass in a small buffer size to make sure |buffer| remains
     // untouched.
     ASSERT_EQ(18U, FPDF_StructElement_GetType(element, buffer, 1));
@@ -574,7 +572,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetTitle) {
     ASSERT_TRUE(element);
 
     // test nullptr inputs
-    unsigned short buffer[13];
+    unsigned short buffer[13] = {};
     ASSERT_EQ(0U, FPDF_StructElement_GetTitle(nullptr, buffer, sizeof(buffer)));
     ASSERT_EQ(0U, FPDF_StructElement_GetTitle(nullptr, nullptr, 0));
     ASSERT_EQ(20U, FPDF_StructElement_GetTitle(element, nullptr, 0));

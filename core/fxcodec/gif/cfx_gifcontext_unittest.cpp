@@ -161,8 +161,7 @@ TEST(CFX_GifContext, ReadLocalScreenDescriptor) {
   }
   // LSD with all the values zero'd
   {
-    uint8_t lsd[sizeof(CFX_GifLocalScreenDescriptor)];
-    memset(&lsd, 0, sizeof(CFX_GifLocalScreenDescriptor));
+    uint8_t lsd[sizeof(CFX_GifLocalScreenDescriptor)] = {};
     context.SetTestInputBuffer(lsd);
 
     EXPECT_EQ(GifDecoder::Status::kSuccess,

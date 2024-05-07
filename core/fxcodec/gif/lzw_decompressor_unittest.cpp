@@ -130,8 +130,7 @@ TEST(LZWDecompressor, Decode1x1SingleColour) {
   uint32_t image_size = std::size(image_data);
 
   uint8_t expected_data[] = {0x00};
-  uint8_t output_data[std::size(expected_data)];
-  memset(output_data, 0, sizeof(output_data));
+  uint8_t output_data[std::size(expected_data)] = {};
   uint32_t output_size = std::size(output_data);
 
   decompressor->SetSource(image_data, image_size);
@@ -162,8 +161,7 @@ TEST(LZWDecompressor, Decode10x10SingleColour) {
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00, 0x00, 0x00, 0x00};
-  uint8_t output_data[std::size(kExpectedData)];
-  memset(output_data, 0, sizeof(output_data));
+  uint8_t output_data[std::size(kExpectedData)] = {};
   uint32_t output_size = std::size(output_data);
 
   decompressor->SetSource(kImageData, image_size);
@@ -196,8 +194,7 @@ TEST(LZWDecompressor, Decode10x10MultipleColour) {
       0x02, 0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x02, 0x02, 0x02, 0x02, 0x01,
       0x01, 0x01, 0x01, 0x01};
 
-  uint8_t output_data[std::size(kExpectedData)];
-  memset(output_data, 0, sizeof(output_data));
+  uint8_t output_data[std::size(kExpectedData)] = {};
   uint32_t output_size = std::size(output_data);
 
   decompressor->SetSource(kImageData, image_size);
@@ -246,8 +243,7 @@ TEST(LZWDecompressor, HandleColourCodeOutOfPalette) {
       0xE2, 0xBE, 0xB0, 0x20, 0xCF, 0x74, 0x61, 0xDF, 0x78, 0x04};
   uint32_t image_size = std::size(kImageData);
 
-  uint8_t output_data[100];  // The uncompressed data is for a 10x10 image
-  memset(output_data, 0, sizeof(output_data));
+  uint8_t output_data[100] = {};  // The uncompressed data is for a 10x10 image
   uint32_t output_size = std::size(output_data);
 
   decompressor->SetSource(kImageData, image_size);

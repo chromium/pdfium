@@ -51,15 +51,16 @@ void CFX_FileAccess_Posix::Close() {
   close(m_nFD);
   m_nFD = -1;
 }
+
 FX_FILESIZE CFX_FileAccess_Posix::GetSize() const {
   if (m_nFD < 0) {
     return 0;
   }
-  struct stat s;
-  memset(&s, 0, sizeof(s));
+  struct stat s = {};
   fstat(m_nFD, &s);
   return pdfium::checked_cast<FX_FILESIZE>(s.st_size);
 }
+
 FX_FILESIZE CFX_FileAccess_Posix::GetPosition() const {
   if (m_nFD < 0) {
     return (FX_FILESIZE)-1;

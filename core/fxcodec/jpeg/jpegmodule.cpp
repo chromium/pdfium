@@ -17,6 +17,7 @@
 
 #include <memory>
 #include <optional>
+#include <type_traits>
 #include <utility>
 
 #include "build/build_config.h"
@@ -160,22 +161,22 @@ class JpegDecoder final : public ScanlineDecoder {
   static constexpr size_t kSofMarkerByteOffset = 5;
 
   jmp_buf m_JmpBuf;
-  jpeg_decompress_struct m_Cinfo;
-  jpeg_error_mgr m_Jerr;
-  jpeg_source_mgr m_Src;
+  jpeg_decompress_struct m_Cinfo = {};
+  jpeg_error_mgr m_Jerr = {};
+  jpeg_source_mgr m_Src = {};
   pdfium::raw_span<const uint8_t> m_SrcSpan;
   DataVector<uint8_t> m_ScanlineBuf;
   bool m_bInited = false;
   bool m_bStarted = false;
   bool m_bJpegTransform = false;
   uint32_t m_nDefaultScaleDenom = 1;
+
+  static_assert(std::is_aggregate_v<decltype(m_Cinfo)>);
+  static_assert(std::is_aggregate_v<decltype(m_Jerr)>);
+  static_assert(std::is_aggregate_v<decltype(m_Src)>);
 };
 
-JpegDecoder::JpegDecoder() {
-  memset(&m_Cinfo, 0, sizeof(m_Cinfo));
-  memset(&m_Jerr, 0, sizeof(m_Jerr));
-  memset(&m_Src, 0, sizeof(m_Src));
-}
+JpegDecoder::JpegDecoder() = default;
 
 JpegDecoder::~JpegDecoder() {
   if (m_bInited)
@@ -419,8 +420,8 @@ bool JpegModule::JpegEncode(const RetainPtr<const CFX_DIBBase>& pSource,
   jerr.format_message = error_do_nothing_char;
   jerr.reset_error_mgr = error_do_nothing;
 
-  jpeg_compress_struct cinfo;
-  memset(&cinfo, 0, sizeof(cinfo));
+  jpeg_compress_struct cinfo = {};  // Aggregate initialization.
+  static_assert(std::is_aggregate_v<decltype(cinfo)>);
   cinfo.err = &jerr;
   jpeg_create_compress(&cinfo);
   int Bpp = pSource->GetBPP() / 8;

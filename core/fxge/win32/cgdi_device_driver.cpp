@@ -492,8 +492,7 @@ bool CGdiDeviceDriver::GDI_StretchBitMask(RetainPtr<const CFX_DIBBase> source,
   struct {
     BITMAPINFOHEADER bmiHeader;
     uint32_t bmiColors[2];
-  } bmi;
-  memset(&bmi.bmiHeader, 0, sizeof(BITMAPINFOHEADER));
+  } bmi = {};
   bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
   bmi.bmiHeader.biBitCount = 1;
   bmi.bmiHeader.biCompression = BI_RGB;

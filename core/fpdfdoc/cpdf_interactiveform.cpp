@@ -7,6 +7,7 @@
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 
 #include <optional>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -60,9 +61,7 @@ int CALLBACK EnumFontFamExProc(ENUMLOGFONTEXA* lpelfe,
     return 1;
 
   PDF_FONTDATA* pData = (PDF_FONTDATA*)lParam;
-  // TODO(tsepez): investigate safety.
-  UNSAFE_BUFFERS(
-      FXSYS_memcpy(&pData->lf, &lpelfe->elfLogFont, sizeof(LOGFONTA)));
+  pData->lf = lpelfe->elfLogFont;
   pData->bFind = true;
   return 0;
 }
@@ -70,7 +69,8 @@ int CALLBACK EnumFontFamExProc(ENUMLOGFONTEXA* lpelfe,
 bool RetrieveSpecificFont(FX_Charset charSet,
                           LPCSTR pcsFontName,
                           LOGFONTA& lf) {
-  memset(&lf, 0, sizeof(LOGFONTA));
+  lf = {};  // Aggregate initialization, not construction.
+  static_assert(std::is_aggregate_v<std::remove_reference_t<decltype(lf)>>);
   lf.lfCharSet = static_cast<int>(charSet);
   lf.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
   if (pcsFontName) {
@@ -79,8 +79,8 @@ bool RetrieveSpecificFont(FX_Charset charSet,
     strcpy(lf.lfFaceName, pcsFontName);
   }
 
-  PDF_FONTDATA fd;
-  memset(&fd, 0, sizeof(PDF_FONTDATA));
+  PDF_FONTDATA fd = {};  // Aggregate initialization, not construction.
+  static_assert(std::is_aggregate_v<decltype(fd)>);
   HDC hDC = ::GetDC(nullptr);
   EnumFontFamiliesExA(hDC, &lf, (FONTENUMPROCA)EnumFontFamExProc, (LPARAM)&fd,
                       0);

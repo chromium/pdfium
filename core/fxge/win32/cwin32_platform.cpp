@@ -13,6 +13,7 @@
 
 #include <iterator>
 #include <memory>
+#include <type_traits>
 #include <utility>
 
 #include "core/fxcrt/byteorder.h"
@@ -200,8 +201,8 @@ void CFX_Win32FontInfo::AddInstalledFont(const LOGFONTA* plf,
 
 bool CFX_Win32FontInfo::EnumFontList(CFX_FontMapper* pMapper) {
   m_pMapper = pMapper;
-  LOGFONTA lf;
-  memset(&lf, 0, sizeof(LOGFONTA));
+  LOGFONTA lf = {};  // Aggregate initialization.
+  static_assert(std::is_aggregate_v<decltype(lf)>);
   lf.lfCharSet = static_cast<int>(FX_Charset::kDefault);
   lf.lfFaceName[0] = 0;
   lf.lfPitchAndFamily = 0;

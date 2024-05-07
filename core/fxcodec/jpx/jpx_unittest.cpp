@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 #include <limits>
+#include <type_traits>
 
 #include "core/fxcodec/jpx/cjpx_decoder.h"
 #include "core/fxcodec/jpx/jpx_decode_utils.h"
@@ -387,30 +388,30 @@ TEST(fxcodec, DecodeDataSeek) {
 }
 
 TEST(fxcodec, YUV420ToRGB) {
-  opj_image_comp_t u;
-  memset(&u, 0, sizeof(u));
+  opj_image_comp_t u = {};
+  static_assert(std::is_aggregate_v<decltype(u)>);
   u.dx = 1;
   u.dy = 1;
   u.w = 16;
   u.h = 16;
   u.prec = 8;
   u.bpp = 8;
-  opj_image_comp_t v;
-  memset(&v, 0, sizeof(v));
+  opj_image_comp_t v = {};
+  static_assert(std::is_aggregate_v<decltype(v)>);
   v.dx = 1;
   v.dy = 1;
   v.w = 16;
   v.h = 16;
   v.prec = 8;
   v.bpp = 8;
-  opj_image_comp_t y;
-  memset(&y, 0, sizeof(y));
+  opj_image_comp_t y = {};
+  static_assert(std::is_aggregate_v<decltype(y)>);
   y.dx = 1;
   y.dy = 1;
   y.prec = 8;
   y.bpp = 8;
-  opj_image_t img;
-  memset(&img, 0, sizeof(img));
+  opj_image_t img = {};
+  static_assert(std::is_aggregate_v<decltype(img)>);
   img.numcomps = 3;
   img.color_space = OPJ_CLRSPC_SYCC;
   img.comps = FX_Alloc(opj_image_comp_t, 3);

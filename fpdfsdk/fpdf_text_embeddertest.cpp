@@ -793,10 +793,9 @@ TEST_F(FPDFTextEmbedderTest, WebLinksAcrossLines) {
 
   EXPECT_EQ(kNumLinks, FPDFLink_CountWebLinks(pagelink));
 
-  unsigned short buffer[128];
   for (int i = 0; i < kNumLinks; i++) {
+    unsigned short buffer[128] = {};
     const size_t expected_len = strlen(kExpectedUrls[i]) + 1;
-    memset(buffer, 0, sizeof(buffer));
     EXPECT_EQ(static_cast<int>(expected_len),
               FPDFLink_GetURL(pagelink, i, nullptr, 0));
     EXPECT_EQ(static_cast<int>(expected_len),
@@ -1205,9 +1204,7 @@ TEST_F(FPDFTextEmbedderTest, GetTextWithHyphen) {
       0x0073, 0x0065, 0x0072, 0x0075, 0x006D, 0x0000};
   {
     constexpr int count = std::size(soft_expected) - 1;
-    unsigned short buffer[std::size(soft_expected)];
-    memset(buffer, 0, sizeof(buffer));
-
+    unsigned short buffer[std::size(soft_expected)] = {};
     EXPECT_EQ(count + 1, FPDFText_GetText(textpage, 0, count, buffer));
     for (int i = 0; i < count; i++)
       EXPECT_EQ(soft_expected[i], buffer[i]);

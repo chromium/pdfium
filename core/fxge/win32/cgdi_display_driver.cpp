@@ -45,8 +45,7 @@ bool CGdiDisplayDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
   HBITMAP holdbmp = (HBITMAP)SelectObject(hDCMemory, hbmp);
   BitBlt(hDCMemory, 0, 0, width, height, m_hDC, left, top, SRCCOPY);
   SelectObject(hDCMemory, holdbmp);
-  BITMAPINFO bmi;
-  memset(&bmi, 0, sizeof bmi);
+  BITMAPINFO bmi = {};
   bmi.bmiHeader.biSize = sizeof bmi.bmiHeader;
   bmi.bmiHeader.biBitCount = bitmap->GetBPP();
   bmi.bmiHeader.biHeight = -height;

@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <iterator>
 #include <memory>
+#include <type_traits>
 #include <utility>
 
 #include "build/build_config.h"
@@ -188,8 +189,8 @@ int32_t CALLBACK GdiFontEnumProc(ENUMLOGFONTEX* lpelfe,
   const LOGFONTW& lf = ((LPENUMLOGFONTEXW)lpelfe)->elfLogFont;
   if (lf.lfFaceName[0] == L'@')
     return 1;
-  FX_FONTDESCRIPTOR font;
-  memset(&font, 0, sizeof(FX_FONTDESCRIPTOR));
+  FX_FONTDESCRIPTOR font = {};  // Aggregate initialization.
+  static_assert(std::is_aggregate_v<decltype(font)>);
   font.uCharSet = FX_GetCharsetFromInt(lf.lfCharSet);
   font.dwFontStyles = GetGdiFontStyles(lf);
   FXSYS_wcsncpy(font.wsFontFace, (const wchar_t*)lf.lfFaceName, 31);
@@ -209,8 +210,8 @@ std::deque<FX_FONTDESCRIPTOR> EnumGdiFonts(const wchar_t* pwsFaceName,
     return fonts;
   }
 
-  LOGFONTW lfFind;
-  memset(&lfFind, 0, sizeof(lfFind));
+  LOGFONTW lfFind = {};  // Aggregate initialization.
+  static_assert(std::is_aggregate_v<decltype(lfFind)>);
   lfFind.lfCharSet = DEFAULT_CHARSET;
   if (pwsFaceName) {
     FXSYS_wcsncpy(lfFind.lfFaceName, pwsFaceName, 31);
@@ -271,8 +272,8 @@ const FX_FONTDESCRIPTOR* CFGAS_FontMgr::FindFont(const wchar_t* pszFontFamily,
                                                  FX_CodePage wCodePage,
                                                  uint32_t dwUSB,
                                                  wchar_t wUnicode) {
-  FX_FONTMATCHPARAMS params;
-  memset(&params, 0, sizeof(params));
+  FX_FONTMATCHPARAMS params = {};  // Aggregate initialization.
+  static_assert(std::is_aggregate_v<decltype(params)>);
   params.dwUSB = dwUSB;
   params.wUnicode = wUnicode;
   params.wCodePage = wCodePage;
@@ -528,8 +529,8 @@ RetainPtr<CFX_Face> LoadFace(
   ftStream->read = ftStreamRead;
   ftStream->close = ftStreamClose;
 
-  FT_Open_Args ftArgs;
-  memset(&ftArgs, 0, sizeof(FT_Open_Args));
+  FT_Open_Args ftArgs = {};  // Aggregate initialization.
+  static_assert(std::is_aggregate_v<decltype(ftArgs)>);
   ftArgs.flags |= FT_OPEN_STREAM;
   ftArgs.stream = ftStream;
 

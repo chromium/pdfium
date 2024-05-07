@@ -13,6 +13,7 @@
 
 #include <algorithm>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include "build/build_config.h"
@@ -1116,8 +1117,8 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveAnnotation) {
   // TODO(npm): VerifySavedRendering changes annot rect dimensions by 1??
   // Open the saved document.
   std::string new_file = GetString();
-  FPDF_FILEACCESS file_access;
-  memset(&file_access, 0, sizeof(file_access));
+  FPDF_FILEACCESS file_access = {};  // Aggregate initialization
+  static_assert(std::is_aggregate_v<decltype(file_access)>);
   file_access.m_FileLen = new_file.size();
   file_access.m_GetBlock = GetBlockFromString;
   file_access.m_Param = &new_file;
