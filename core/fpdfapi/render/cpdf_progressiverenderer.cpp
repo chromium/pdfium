@@ -75,7 +75,7 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
     bool is_mask = false;
     while (iter != iterEnd) {
       CPDF_PageObject* pCurObj = iter->get();
-      if (pCurObj && pCurObj->GetRect().left <= m_ClipRect.right &&
+      if (pCurObj->GetRect().left <= m_ClipRect.right &&
           pCurObj->GetRect().right >= m_ClipRect.left &&
           pCurObj->GetRect().bottom <= m_ClipRect.top &&
           pCurObj->GetRect().top >= m_ClipRect.bottom) {

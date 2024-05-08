@@ -138,8 +138,7 @@ CPDF_PageContentGenerator::CPDF_PageContentGenerator(
     CPDF_PageObjectHolder* pObjHolder)
     : m_pObjHolder(pObjHolder), m_pDocument(pObjHolder->GetDocument()) {
   for (const auto& pObj : *pObjHolder) {
-    if (pObj)
-      m_pageObjects.emplace_back(pObj.get());
+    m_pageObjects.emplace_back(pObj.get());
   }
 }
 

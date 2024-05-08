@@ -165,6 +165,7 @@ CPDF_PageObject* CPDF_PageObjectHolder::GetPageObjectByIndex(
 
 void CPDF_PageObjectHolder::AppendPageObject(
     std::unique_ptr<CPDF_PageObject> pPageObj) {
+  CHECK(pPageObj);
   m_PageObjectList.push_back(std::move(pPageObj));
 }
 
