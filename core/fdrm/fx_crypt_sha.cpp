@@ -10,6 +10,7 @@
 #endif
 
 #include "core/fdrm/fx_crypt.h"
+#include "core/fxcrt/stl_util.h"
 
 #include <string.h>
 
@@ -445,7 +446,7 @@ void CRYPT_SHA256Start(CRYPT_sha2_context* context) {
   context->state[5] = 0x9B05688C;
   context->state[6] = 0x1F83D9AB;
   context->state[7] = 0x5BE0CD19;
-  memset(context->buffer, 0, sizeof(context->buffer));
+  fxcrt::Fill(context->buffer, 0);
 }
 
 void CRYPT_SHA256Update(CRYPT_sha2_context* context,
@@ -510,7 +511,7 @@ void CRYPT_SHA384Start(CRYPT_sha2_context* context) {
   context->state[5] = 0x8eb44a8768581511ULL;
   context->state[6] = 0xdb0c2e0d64f98fa7ULL;
   context->state[7] = 0x47b5481dbefa4fa4ULL;
-  memset(context->buffer, 0, sizeof(context->buffer));
+  fxcrt::Fill(context->buffer, 0);
 }
 
 void CRYPT_SHA384Update(CRYPT_sha2_context* context,
@@ -574,7 +575,7 @@ void CRYPT_SHA512Start(CRYPT_sha2_context* context) {
   context->state[5] = 0x9b05688c2b3e6c1fULL;
   context->state[6] = 0x1f83d9abfb41bd6bULL;
   context->state[7] = 0x5be0cd19137e2179ULL;
-  memset(context->buffer, 0, sizeof(context->buffer));
+  fxcrt::Fill(context->buffer, 0);
 }
 
 void CRYPT_SHA512Update(CRYPT_sha2_context* context,

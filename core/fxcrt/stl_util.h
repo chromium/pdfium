@@ -5,6 +5,7 @@
 #ifndef CORE_FXCRT_STL_UTIL_H_
 #define CORE_FXCRT_STL_UTIL_H_
 
+#include <algorithm>
 #include <memory>
 
 #include "core/fxcrt/numerics/safe_conversions.h"
@@ -38,6 +39,12 @@ ResultType CollectionSize(const Collection& collection) {
 template <typename IndexType, typename Collection>
 bool IndexInBounds(const Collection& collection, IndexType index) {
   return index >= 0 && index < CollectionSize<IndexType>(collection);
+}
+
+// Equivalent of C++20 std::ranges::fill().
+template <typename T, typename V>
+void Fill(T& container, const V& value) {
+  std::fill(std::begin(container), std::end(container), value);
 }
 
 }  // namespace fxcrt

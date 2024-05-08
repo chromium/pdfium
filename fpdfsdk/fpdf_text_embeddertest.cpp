@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "build/build_config.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/fx_font.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_doc.h"
@@ -53,7 +54,7 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   ASSERT_TRUE(textpage);
 
   unsigned short buffer[128];
-  memset(buffer, 0xbd, sizeof(buffer));
+  fxcrt::Fill(buffer, 0xbdbd);
 
   // Check that edge cases are handled gracefully
   EXPECT_EQ(0, FPDFText_GetText(textpage, 0, 128, nullptr));
@@ -63,7 +64,7 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   EXPECT_EQ(0, buffer[0]);
 
   // Keep going and check the next case.
-  memset(buffer, 0xbd, sizeof(buffer));
+  fxcrt::Fill(buffer, 0xbdbd);
   EXPECT_EQ(2, FPDFText_GetText(textpage, 0, 1, buffer));
   EXPECT_EQ(kHelloGoodbyeText[0], buffer[0]);
   EXPECT_EQ(0, buffer[1]);
@@ -87,7 +88,7 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   // the expected string, plus 2 more for the terminating character.
   static const char kSmallExpected[] = "Hello";
   unsigned short small_buffer[12];
-  memset(buffer, 0xbd, sizeof(buffer));
+  fxcrt::Fill(buffer, 0xbdbd);
   EXPECT_EQ(6, FPDFText_GetText(textpage, 0, 5, small_buffer));
   EXPECT_TRUE(check_unsigned_shorts(kSmallExpected, small_buffer,
                                     sizeof(kSmallExpected)));
@@ -206,19 +207,19 @@ TEST_F(FPDFTextEmbedderTest, Text) {
       9, FPDFText_GetBoundedText(textpage, 41.0, 56.0, 82.0, 48.0, nullptr, 0));
 
   // Extract starting at character 4 as above.
-  memset(buffer, 0xbd, sizeof(buffer));
+  fxcrt::Fill(buffer, 0xbdbd);
   EXPECT_EQ(
       1, FPDFText_GetBoundedText(textpage, 41.0, 56.0, 82.0, 48.0, buffer, 1));
   EXPECT_TRUE(check_unsigned_shorts(kHelloGoodbyeText + 4, buffer, 1));
   EXPECT_EQ(0xbdbd, buffer[1]);
 
-  memset(buffer, 0xbd, sizeof(buffer));
+  fxcrt::Fill(buffer, 0xbdbd);
   EXPECT_EQ(
       9, FPDFText_GetBoundedText(textpage, 41.0, 56.0, 82.0, 48.0, buffer, 9));
   EXPECT_TRUE(check_unsigned_shorts(kHelloGoodbyeText + 4, buffer, 8));
   EXPECT_EQ(0xbdbd, buffer[9]);
 
-  memset(buffer, 0xbd, sizeof(buffer));
+  fxcrt::Fill(buffer, 0xbdbd);
   EXPECT_EQ(10, FPDFText_GetBoundedText(textpage, 41.0, 56.0, 82.0, 48.0,
                                         buffer, 128));
   EXPECT_TRUE(check_unsigned_shorts(kHelloGoodbyeText + 4, buffer, 9));
@@ -279,7 +280,7 @@ TEST_F(FPDFTextEmbedderTest, TextHebrewMirrored) {
     ASSERT_EQ(kCharCount, FPDFText_CountChars(textpage.get()));
 
     unsigned short buffer[kCharCount + 1];
-    memset(buffer, 0x42, sizeof(buffer));
+    fxcrt::Fill(buffer, 0x4242);
     EXPECT_EQ(kCharCount + 1,
               FPDFText_GetText(textpage.get(), 0, kCharCount, buffer));
     EXPECT_EQ(0x05d1, buffer[0]);
@@ -694,20 +695,20 @@ TEST_F(FPDFTextEmbedderTest, WebLinks) {
   // Retrieve a link with too small a buffer.  Buffer will not be
   // NUL-terminated, but must not be modified past indicated length,
   // so pre-fill with a pattern to check write bounds.
-  memset(buffer, 0xbd, sizeof(buffer));
+  fxcrt::Fill(buffer, 0xbdbd);
   EXPECT_EQ(1, FPDFLink_GetURL(pagelink, 0, buffer, 1));
   EXPECT_TRUE(check_unsigned_shorts(expected_url, buffer, 1));
   EXPECT_EQ(0xbdbd, buffer[1]);
 
   // Check buffer that doesn't have space for a terminating NUL.
-  memset(buffer, 0xbd, sizeof(buffer));
+  fxcrt::Fill(buffer, 0xbdbd);
   EXPECT_EQ(static_cast<int>(expected_len - 1),
             FPDFLink_GetURL(pagelink, 0, buffer, expected_len - 1));
   EXPECT_TRUE(check_unsigned_shorts(expected_url, buffer, expected_len - 1));
   EXPECT_EQ(0xbdbd, buffer[expected_len - 1]);
 
   // Retreive link with exactly-sized buffer.
-  memset(buffer, 0xbd, sizeof(buffer));
+  fxcrt::Fill(buffer, 0xbdbd);
   EXPECT_EQ(static_cast<int>(expected_len),
             FPDFLink_GetURL(pagelink, 0, buffer, expected_len));
   EXPECT_TRUE(check_unsigned_shorts(expected_url, buffer, expected_len));
@@ -715,7 +716,7 @@ TEST_F(FPDFTextEmbedderTest, WebLinks) {
   EXPECT_EQ(0xbdbd, buffer[expected_len]);
 
   // Retreive link with ample-sized-buffer.
-  memset(buffer, 0xbd, sizeof(buffer));
+  fxcrt::Fill(buffer, 0xbdbd);
   EXPECT_EQ(static_cast<int>(expected_len),
             FPDFLink_GetURL(pagelink, 0, buffer, 128));
   EXPECT_TRUE(check_unsigned_shorts(expected_url, buffer, expected_len));
@@ -1175,7 +1176,7 @@ TEST_F(FPDFTextEmbedderTest, Bug_921) {
     EXPECT_EQ(kData[i], FPDFText_GetUnicode(textpage, kStartIndex + i));
 
   unsigned short buffer[std::size(kData) + 1];
-  memset(buffer, 0xbd, sizeof(buffer));
+  fxcrt::Fill(buffer, 0xbdbd);
   int count = FPDFText_GetText(textpage, kStartIndex, std::size(kData), buffer);
   ASSERT_GT(count, 0);
   ASSERT_EQ(std::size(kData) + 1, static_cast<size_t>(count));
@@ -1253,7 +1254,7 @@ TEST_F(FPDFTextEmbedderTest, ControlCharacters) {
 
   // Should not include the control characters in the output
   unsigned short buffer[128];
-  memset(buffer, 0xbd, sizeof(buffer));
+  fxcrt::Fill(buffer, 0xbdbd);
   int num_chars = FPDFText_GetText(textpage, 0, 128, buffer);
   ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
   EXPECT_TRUE(
@@ -1264,7 +1265,7 @@ TEST_F(FPDFTextEmbedderTest, ControlCharacters) {
   // Offset is the length of 'Hello, world!\r\n' + 2 control characters in the
   // original stream
   static const int offset = 17;
-  memset(buffer, 0xbd, sizeof(buffer));
+  fxcrt::Fill(buffer, 0xbdbd);
   num_chars = FPDFText_GetText(textpage, offset, 128, buffer);
 
   ASSERT_GE(num_chars, 0);
@@ -1468,7 +1469,7 @@ TEST_F(FPDFTextEmbedderTest, CroppedText) {
       ASSERT_TRUE(textpage);
 
       unsigned short buffer[128];
-      memset(buffer, 0xbd, sizeof(buffer));
+      fxcrt::Fill(buffer, 0xbdbd);
       int num_chars = FPDFText_GetText(textpage.get(), 0, 128, buffer);
       ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
       EXPECT_TRUE(check_unsigned_shorts(kHelloGoodbyeText, buffer,
@@ -1479,7 +1480,7 @@ TEST_F(FPDFTextEmbedderTest, CroppedText) {
                 FPDFText_GetBoundedText(textpage.get(), box.left, box.top,
                                         box.right, box.bottom, nullptr, 0));
 
-      memset(buffer, 0xbd, sizeof(buffer));
+      fxcrt::Fill(buffer, 0xbdbd);
       ASSERT_EQ(expected_char_count + 1,
                 FPDFText_GetBoundedText(textpage.get(), box.left, box.top,
                                         box.right, box.bottom, buffer, 128));
