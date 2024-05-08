@@ -80,7 +80,7 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
       CRYPT_MD5Generate(pdfium::make_span(digest).first(copy_len), digest);
     }
   }
-  memset(key, 0, keylen);
+  FXSYS_memset(key, 0, keylen);
   FXSYS_memcpy(key, digest, copy_len);
 }
 

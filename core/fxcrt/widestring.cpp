@@ -267,15 +267,15 @@ std::optional<WideString> TryVSWPrintf(size_t size,
     // Span's lifetime must end before ReleaseBuffer() below.
     pdfium::span<wchar_t> buffer = str.GetBuffer(size);
 
-    // In the following two calls, there's always space in the WideString
-    // for a terminating NUL that's not included in the span.
+    // SAFETY: In the following two calls, there's always space in the
+    // WideString for a terminating NUL that's not included in the span.
     // For vswprintf(), MSAN won't untaint the buffer on a truncated write's
     // -1 return code even though the buffer is written. Probably just as well
     // not to trust the vendor's implementation to write anything anyways.
     // See https://crbug.com/705912.
-    memset(buffer.data(), 0, (size + 1) * sizeof(wchar_t));
+    UNSAFE_BUFFERS(
+        FXSYS_memset(buffer.data(), 0, (size + 1) * sizeof(wchar_t)));
     int ret = vswprintf(buffer.data(), size + 1, pFormat, argList);
-
     bool bSufficientBuffer = ret >= 0 || buffer[size - 1] == 0;
     if (!bSufficientBuffer)
       return std::nullopt;

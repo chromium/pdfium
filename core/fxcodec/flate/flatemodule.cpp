@@ -103,7 +103,7 @@ uint32_t FlateOutput(z_stream* context,
 
   uint32_t written = post_pos - pre_pos;
   if (written < dest_size)
-    memset(dest_buf + written, '\0', dest_size - written);
+    FXSYS_memset(dest_buf + written, '\0', dest_size - written);
 
   return ret;
 }

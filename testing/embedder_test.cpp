@@ -275,7 +275,7 @@ EmbedderTest::~EmbedderTest() = default;
 
 void EmbedderTest::SetUp() {
   UNSUPPORT_INFO* info = static_cast<UNSUPPORT_INFO*>(this);
-  memset(info, 0, sizeof(UNSUPPORT_INFO));
+  FXSYS_memset(info, 0, sizeof(UNSUPPORT_INFO));
   info->version = 1;
   info->FSDK_UnSupport_Handler = UnsupportedHandlerTrampoline;
   FSDK_SetUnSpObjProcessHandler(info);
@@ -343,7 +343,7 @@ bool EmbedderTest::OpenDocumentWithOptions(const std::string& filename,
   EXPECT_TRUE(!loader_);
   loader_ = std::make_unique<TestLoader>(file_contents_);
 
-  memset(&file_access_, 0, sizeof(file_access_));
+  FXSYS_memset(&file_access_, 0, sizeof(file_access_));
   file_access_.m_FileLen =
       pdfium::checked_cast<unsigned long>(file_contents_.size());
   file_access_.m_GetBlock = TestLoader::GetBlock;
@@ -428,7 +428,7 @@ void EmbedderTest::CloseDocument() {
   document_.reset();
   avail_.reset();
   fake_file_access_.reset();
-  memset(&file_access_, 0, sizeof(file_access_));
+  FXSYS_memset(&file_access_, 0, sizeof(file_access_));
   loader_.reset();
   file_contents_ = {};
 }
@@ -437,12 +437,12 @@ FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(
     FPDF_DOCUMENT doc,
     JavaScriptOption javascript_option) {
   IPDF_JSPLATFORM* platform = static_cast<IPDF_JSPLATFORM*>(this);
-  memset(platform, '\0', sizeof(IPDF_JSPLATFORM));
+  FXSYS_memset(platform, '\0', sizeof(IPDF_JSPLATFORM));
   platform->version = 3;
   platform->app_alert = AlertTrampoline;
 
   FPDF_FORMFILLINFO* formfillinfo = static_cast<FPDF_FORMFILLINFO*>(this);
-  memset(formfillinfo, 0, sizeof(FPDF_FORMFILLINFO));
+  FXSYS_memset(formfillinfo, 0, sizeof(FPDF_FORMFILLINFO));
   formfillinfo->version = form_fill_info_version_;
   formfillinfo->FFI_Invalidate = InvalidateStub;
   formfillinfo->FFI_OutputSelectedRect = OutputSelectedRectStub;
@@ -686,7 +686,7 @@ int EmbedderTest::BytesPerPixelForFormat(int format) {
 
 FPDF_DOCUMENT EmbedderTest::OpenSavedDocumentWithPassword(
     const char* password) {
-  memset(&saved_file_access_, 0, sizeof(saved_file_access_));
+  FXSYS_memset(&saved_file_access_, 0, sizeof(saved_file_access_));
   saved_file_access_.m_FileLen =
       pdfium::checked_cast<unsigned long>(data_string_.size());
   saved_file_access_.m_GetBlock = GetBlockFromString;

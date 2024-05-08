@@ -107,7 +107,7 @@ void* _TIFFrealloc(void* ptr, tmsize_t size) {
 }
 
 void _TIFFmemset(void* ptr, int val, tmsize_t size) {
-  memset(ptr, val, static_cast<size_t>(size));
+  FXSYS_memset(ptr, val, static_cast<size_t>(size));
 }
 
 void _TIFFmemcpy(void* des, const void* src, tmsize_t size) {

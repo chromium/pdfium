@@ -151,7 +151,7 @@ void CompositeRow_Rgb2Mask(pdfium::span<uint8_t> dest_span,
   uint8_t* dest_scan = dest_span.data();
   const uint8_t* clip_scan = clip_span.data();
   if (!clip_scan) {
-    memset(dest_scan, 0xff, width);
+    FXSYS_memset(dest_scan, 0xff, width);
     return;
   }
   for (int i = 0; i < width; ++i) {

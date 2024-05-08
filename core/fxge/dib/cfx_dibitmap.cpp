@@ -146,19 +146,20 @@ void CFX_DIBitmap::Clear(uint32_t color) {
   uint8_t* pBuffer = m_pBuffer.Get();
   switch (GetFormat()) {
     case FXDIB_Format::k1bppMask:
-      memset(pBuffer, (color & 0xff000000) ? 0xff : 0, m_Pitch * m_Height);
+      FXSYS_memset(pBuffer, (color & 0xff000000) ? 0xff : 0,
+                   m_Pitch * m_Height);
       break;
     case FXDIB_Format::k1bppRgb: {
       int index = FindPalette(color);
-      memset(pBuffer, index ? 0xff : 0, m_Pitch * m_Height);
+      FXSYS_memset(pBuffer, index ? 0xff : 0, m_Pitch * m_Height);
       break;
     }
     case FXDIB_Format::k8bppMask:
-      memset(pBuffer, color >> 24, m_Pitch * m_Height);
+      FXSYS_memset(pBuffer, color >> 24, m_Pitch * m_Height);
       break;
     case FXDIB_Format::k8bppRgb: {
       int index = FindPalette(color);
-      memset(pBuffer, index, m_Pitch * m_Height);
+      FXSYS_memset(pBuffer, index, m_Pitch * m_Height);
       break;
     }
     case FXDIB_Format::kRgb: {
@@ -168,7 +169,7 @@ void CFX_DIBitmap::Clear(uint32_t color) {
       int b;
       std::tie(a, r, g, b) = ArgbDecode(color);
       if (r == g && g == b) {
-        memset(pBuffer, r, m_Pitch * m_Height);
+        FXSYS_memset(pBuffer, r, m_Pitch * m_Height);
       } else {
         int byte_pos = 0;
         for (int col = 0; col < m_Width; col++) {
@@ -722,7 +723,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
     for (int row = rect.top; row < rect.bottom; row++) {
       uint8_t* dest_scan = m_pBuffer.Get() + row * m_Pitch + rect.left;
       if (src_alpha == 255) {
-        memset(dest_scan, gray, width);
+        FXSYS_memset(dest_scan, gray, width);
       } else {
         for (int col = 0; col < width; col++) {
           *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray, src_alpha);
@@ -753,7 +754,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
       uint8_t left_flag = *dest_scan_top & (255 << (8 - left_shift));
       uint8_t right_flag = *dest_scan_top_r & (255 >> right_shift);
       if (new_width) {
-        memset(dest_scan_top + 1, index ? 255 : 0, new_width - 1);
+        FXSYS_memset(dest_scan_top + 1, index ? 255 : 0, new_width - 1);
         if (!index) {
           *dest_scan_top &= left_flag;
           *dest_scan_top_r &= right_flag;
@@ -869,7 +870,7 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
     return false;
 
   if (dest_format == FXDIB_Format::kArgb) {
-    memset(dest_buf.get(), 0xff, dest_buf_size);
+    FXSYS_memset(dest_buf.get(), 0xff, dest_buf_size);
   }
   RetainPtr<CFX_DIBBase> holder(this);
   // SAFETY: `dest_buf` allocated with `dest_buf_size` bytes above.

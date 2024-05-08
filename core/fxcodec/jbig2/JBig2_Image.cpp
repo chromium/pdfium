@@ -150,7 +150,7 @@ void CJBig2_Image::CopyLine(int32_t hTo, int32_t hFrom) {
 
   const uint8_t* pSrc = GetLine(hFrom);
   if (!pSrc) {
-    memset(pDst, 0, m_nStride);
+    FXSYS_memset(pDst, 0, m_nStride);
     return;
   }
   FXSYS_memcpy(pDst, pSrc, m_nStride);
@@ -160,7 +160,7 @@ void CJBig2_Image::Fill(bool v) {
   if (!m_pData)
     return;
 
-  memset(data(), v ? 0xff : 0, Fx2DSizeOrDie(m_nStride, m_nHeight));
+  FXSYS_memset(data(), v ? 0xff : 0, Fx2DSizeOrDie(m_nStride, m_nHeight));
 }
 
 bool CJBig2_Image::ComposeTo(CJBig2_Image* pDst,
@@ -268,7 +268,8 @@ void CJBig2_Image::Expand(int32_t h, bool v) {
         FX_Alloc(uint8_t, desired_size)));
     FXSYS_memcpy(data(), pExternalBuffer, current_size);
   }
-  memset(data() + current_size, v ? 0xff : 0, desired_size - current_size);
+  FXSYS_memset(data() + current_size, v ? 0xff : 0,
+               desired_size - current_size);
   m_nHeight = h;
 }
 

@@ -407,7 +407,7 @@ void CRYPT_SHA1Finish(CRYPT_sha1_context* context, uint8_t digest[20]) {
   } else {
     pad = 56 - context->blkused;
   }
-  memset(c, 0, pad);
+  FXSYS_memset(c, 0, pad);
   c[0] = 0x80;
   CRYPT_SHA1Update(context, c, pad);
   c[0] = (total_bits >> 56) & 0xFF;

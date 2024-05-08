@@ -359,7 +359,7 @@ void ConvertBuffer_1bppMask2Rgb(FXDIB_Format dest_format,
     for (int col = src_left; col < src_left + width; ++col) {
       uint8_t value =
           (src_scan[col / 8] & (1 << (7 - col % 8))) ? kSetGray : kResetGray;
-      memset(dest_scan, value, 3);
+      FXSYS_memset(dest_scan, value, 3);
       dest_scan += comps;
     }
   }
@@ -380,7 +380,7 @@ void ConvertBuffer_8bppMask2Rgb(FXDIB_Format dest_format,
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row).subspan(src_left).data();
     for (int col = 0; col < width; ++col) {
-      memset(dest_scan, *src_scan, 3);
+      FXSYS_memset(dest_scan, *src_scan, 3);
       dest_scan += comps;
       ++src_scan;
     }
@@ -907,7 +907,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
       continue;
     }
     if (GetBppFromFormat(m_Format) == 1) {
-      memset(dest_scan, 0, m_Pitch);
+      FXSYS_memset(dest_scan, 0, m_Pitch);
       for (int col = 0; col < m_Width; ++col) {
         if (src_scan[col / 8] & (1 << (7 - col % 8))) {
           int dest_col = m_Width - col - 1;

@@ -87,8 +87,8 @@ void CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
                      nblocks * 16);
     uint8_t padding[16];
     FXSYS_memcpy(padding, source.data() + nblocks * 16, source.size() % 16);
-    memset(padding + source.size() % 16, 16 - source.size() % 16,
-           16 - source.size() % 16);
+    FXSYS_memset(padding + source.size() % 16, 16 - source.size() % 16,
+                 16 - source.size() % 16);
     CRYPT_AESEncrypt(m_pAESContext.get(), dest_buf + nblocks * 16 + 16, padding,
                      16);
     dest_size = 32 + nblocks * 16;

@@ -69,9 +69,10 @@ ByteString ByteString::FormatV(const char* pFormat, va_list argList) {
     // Span's lifetime must end before ReleaseBuffer() below.
     pdfium::span<char> buf = ret.GetBuffer(nMaxLen);
 
-    // In the following two calls, there's always space in the buffer for
-    // a terminating NUL that's not included in nMaxLen.
-    memset(buf.data(), 0, nMaxLen + 1);
+    // SAFETY: In the following two calls, there's always space in the buffer
+    // for a terminating NUL that's not included in nMaxLen, and hence not
+    // included in the span.
+    UNSAFE_BUFFERS(FXSYS_memset(buf.data(), 0, nMaxLen + 1));
     va_copy(argListCopy, argList);
     vsnprintf(buf.data(), nMaxLen + 1, pFormat, argListCopy);
     va_end(argListCopy);

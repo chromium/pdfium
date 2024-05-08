@@ -31,6 +31,7 @@
 #include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/calculate_pitch.h"
 
 #if BUILDFLAG(IS_WIN)
@@ -151,7 +152,7 @@ void FaxFillBits(uint8_t* dest_buf, int columns, int startpos, int endpos) {
     dest_buf[last_byte] -= 1 << (7 - i);
 
   if (last_byte > first_byte + 1)
-    memset(dest_buf + first_byte + 1, 0, last_byte - first_byte - 1);
+    FXSYS_memset(dest_buf + first_byte + 1, 0, last_byte - first_byte - 1);
 }
 
 inline bool NextBit(const uint8_t* src_buf, int* bitpos) {
@@ -535,7 +536,7 @@ FaxDecoder::~FaxDecoder() {
 }
 
 bool FaxDecoder::Rewind() {
-  memset(m_RefBuf.data(), 0xff, m_RefBuf.size());
+  fxcrt::Fill(m_RefBuf, 0xff);
   m_bitpos = 0;
   return true;
 }
@@ -546,7 +547,7 @@ pdfium::span<uint8_t> FaxDecoder::GetNextLine() {
   if (m_bitpos >= bitsize)
     return pdfium::span<uint8_t>();
 
-  memset(m_ScanlineBuf.data(), 0xff, m_ScanlineBuf.size());
+  fxcrt::Fill(m_ScanlineBuf, 0xff);
   if (m_Encoding < 0) {
     FaxG4GetRow(m_SrcSpan.data(), bitsize, &m_bitpos, m_ScanlineBuf.data(),
                 m_RefBuf, m_OrigWidth);
@@ -642,7 +643,7 @@ int FaxModule::FaxG4Decode(const uint8_t* src_buf,
   int bitpos = starting_bitpos;
   for (int iRow = 0; iRow < height; ++iRow) {
     uint8_t* line_buf = dest_buf + iRow * pitch;
-    memset(line_buf, 0xff, pitch);
+    FXSYS_memset(line_buf, 0xff, pitch);
     FaxG4GetRow(src_buf, src_size << 3, &bitpos, line_buf, ref_buf, width);
     FXSYS_memcpy(ref_buf.data(), line_buf, pitch);
   }

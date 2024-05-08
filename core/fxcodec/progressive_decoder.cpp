@@ -422,7 +422,7 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
       case 3: {
         uint8_t gray =
             FXRGB2GRAY(FXARGB_R(argb), FXARGB_G(argb), FXARGB_B(argb));
-        memset(pScanline, gray, sizeX);
+        FXSYS_memset(pScanline, gray, sizeX);
         break;
       }
       case 8: {
@@ -1797,7 +1797,7 @@ void ProgressiveDecoder::ResampleScanline(
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
           dest_g += pixel_weight * src_scan[j];
         }
-        memset(dest_scan, CStretchEngine::PixelFromFixed(dest_g), 3);
+        FXSYS_memset(dest_scan, CStretchEngine::PixelFromFixed(dest_g), 3);
         dest_scan += dest_bytes_per_pixel;
         break;
       }
