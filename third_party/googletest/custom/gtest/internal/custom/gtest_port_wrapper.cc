@@ -102,8 +102,6 @@ class CapturedStream {
   ::std::string filename_;
 };
 
-GTEST_DISABLE_MSC_DEPRECATED_POP_()
-
 static CapturedStream* g_captured_stderr = nullptr;
 static CapturedStream* g_captured_stdout = nullptr;
 
