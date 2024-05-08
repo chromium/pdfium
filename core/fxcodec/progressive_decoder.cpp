@@ -505,7 +505,7 @@ void ProgressiveDecoder::GifReadScanline(int32_t row_num,
                               .subspan(dest_ScanOffset)
                               .data();
       uint32_t size = m_sizeX * dest_Bpp;
-      memmove(scan_des, scan_src, size);
+      FXSYS_memmove(scan_des, scan_src, size);
     }
   }
   if (bLastPass)
@@ -573,7 +573,7 @@ void ProgressiveDecoder::ResampleVertBT(
                               .subspan(dest_ScanOffset)
                               .data();
       uint32_t size = m_sizeX * dest_Bpp;
-      memmove(scan_des, scan_src, size);
+      FXSYS_memmove(scan_des, scan_src, size);
     }
     return;
   }

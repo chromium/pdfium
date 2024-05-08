@@ -17,6 +17,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/text_char_pos.h"
@@ -160,13 +161,13 @@ void CFDE_TextEditEngine::AdjustGap(size_t idx, size_t length) {
 
   // Move the gap, if necessary.
   if (idx < gap_position_) {
-    memmove(content_.data() + idx + gap_size_, content_.data() + idx,
-            (gap_position_ - idx) * char_size);
+    FXSYS_memmove(content_.data() + idx + gap_size_, content_.data() + idx,
+                  (gap_position_ - idx) * char_size);
     gap_position_ = idx;
   } else if (idx > gap_position_) {
-    memmove(content_.data() + gap_position_,
-            content_.data() + gap_position_ + gap_size_,
-            (idx - gap_position_) * char_size);
+    FXSYS_memmove(content_.data() + gap_position_,
+                  content_.data() + gap_position_ + gap_size_,
+                  (idx - gap_position_) * char_size);
     gap_position_ = idx;
   }
 
@@ -175,9 +176,9 @@ void CFDE_TextEditEngine::AdjustGap(size_t idx, size_t length) {
     size_t new_gap_size = length + kGapSize;
     content_.resize(text_length_ + new_gap_size);
 
-    memmove(content_.data() + gap_position_ + new_gap_size,
-            content_.data() + gap_position_ + gap_size_,
-            (text_length_ - gap_position_) * char_size);
+    FXSYS_memmove(content_.data() + gap_position_ + new_gap_size,
+                  content_.data() + gap_position_ + gap_size_,
+                  (text_length_ - gap_position_) * char_size);
 
     gap_size_ = new_gap_size;
   }

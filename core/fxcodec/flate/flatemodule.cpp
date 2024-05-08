@@ -26,7 +26,6 @@
 #include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
@@ -324,7 +323,7 @@ void PNG_PredictLine(pdfium::span<uint8_t> dest_span,
   const uint32_t BytesPerPixel = (bpc * nColors + 7) / 8;
   uint8_t tag = pSrcData[0];
   if (tag == 0) {
-    memmove(pDestData, pSrcData + 1, row_size);
+    FXSYS_memmove(pDestData, pSrcData + 1, row_size);
     return;
   }
   for (uint32_t byte = 0; byte < row_size; ++byte) {
