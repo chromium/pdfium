@@ -10,7 +10,9 @@ source_set("fdrm") {
     "fx_crypt.cpp",
     "fx_crypt.h",
     "fx_crypt_aes.cpp",
+    "fx_crypt_aes.h",
     "fx_crypt_sha.cpp",
+    "fx_crypt_sha.h",
   ]
   configs += [
     "../../:pdfium_strict_config",

@@ -9,7 +9,7 @@
 #pragma allow_unsafe_buffers
 #endif
 
-#include "core/fdrm/fx_crypt.h"
+#include "core/fdrm/fx_crypt_sha.h"
 #include "core/fxcrt/stl_util.h"
 
 #include <string.h>
