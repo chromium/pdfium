@@ -197,6 +197,8 @@ FPDFPage_InsertObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_object);
 //
 // Ownership is transferred to the caller. Call FPDFPageObj_Destroy() to free
 // it.
+// Note that when removing a |page_object| of type FPDF_PAGEOBJ_TEXT, all
+// FPDF_TEXTPAGE handles for |page| are no longer valid.
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPage_RemoveObject(FPDF_PAGE page, FPDF_PAGEOBJECT page_object);
 

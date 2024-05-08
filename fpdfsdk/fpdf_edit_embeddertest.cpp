@@ -1084,6 +1084,16 @@ TEST_F(FPDFEditEmbedderTest, RemoveTextObject) {
     CompareBitmap(page_bitmap.get(), 200, 200, HelloWorldChecksum());
   }
 
+  // Check the initial state of the text page as well. `text_page` must be freed
+  // before calling FPDFPage_RemoveObject() below, so ASAN does not report
+  // dangling pointers.
+  {
+    ScopedFPDFTextPage text_page(FPDFText_LoadPage(page));
+    ASSERT_TRUE(text_page);
+    EXPECT_EQ(30, FPDFText_CountChars(text_page.get()));
+    EXPECT_EQ(0, FPDFText_GetFontWeight(text_page.get(), 0));
+  }
+
   // Get the "Hello, world!" text object and remove it.
   ASSERT_EQ(2, FPDFPage_CountObjects(page));
   {
@@ -1098,6 +1108,14 @@ TEST_F(FPDFEditEmbedderTest, RemoveTextObject) {
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     CompareBitmap(page_bitmap.get(), 200, 200, FirstRemovedChecksum());
+  }
+
+  // Create a new text page, which has updated results.
+  {
+    ScopedFPDFTextPage text_page(FPDFText_LoadPage(page));
+    ASSERT_TRUE(text_page);
+    EXPECT_EQ(15, FPDFText_CountChars(text_page.get()));
+    EXPECT_EQ(0, FPDFText_GetFontWeight(text_page.get(), 0));
   }
 
   // Verify the rendering again after calling FPDFPage_GenerateContent().
