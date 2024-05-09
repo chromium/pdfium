@@ -10,6 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <array>
 #include <memory>
 #include <vector>
 
@@ -127,7 +128,7 @@ class CPDF_PSEngine {
 
   uint32_t m_StackCount = 0;
   CPDF_PSProc m_MainProc;
-  float m_Stack[kPSEngineStackSize] = {};
+  std::array<float, kPSEngineStackSize> m_Stack = {};
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PSENGINE_H_
