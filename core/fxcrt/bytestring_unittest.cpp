@@ -20,6 +20,14 @@
 namespace fxcrt {
 
 TEST(ByteString, ElementAccess) {
+  const ByteString empty;
+  pdfium::span<const char> empty_span = empty.span();
+  pdfium::span<const char> empty_span_with_terminator =
+      empty.span_with_terminator();
+  EXPECT_EQ(0u, empty_span.size());
+  ASSERT_EQ(1u, empty_span_with_terminator.size());
+  EXPECT_EQ('\0', empty_span_with_terminator[0]);
+
   const ByteString abc("abc");
   EXPECT_EQ('a', abc[0]);
   EXPECT_EQ('b', abc[1]);

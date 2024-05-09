@@ -64,15 +64,6 @@ class ByteString : public StringTemplate<char> {
   ByteString(const std::initializer_list<ByteStringView>& list);
   explicit ByteString(const fxcrt::ostringstream& outStream);
 
-  // Explicit conversion to C-style string. The result is never nullptr,
-  // and is always NUL terminated.
-  // Note: Any subsequent modification of |this| will invalidate the result.
-  const char* c_str() const { return m_pData ? m_pData->m_String : ""; }
-
-  size_t GetStringLength() const {
-    return m_pData ? strlen(m_pData->m_String) : 0;
-  }
-
   int Compare(ByteStringView str) const;
   bool EqualNoCase(ByteStringView str) const;
 

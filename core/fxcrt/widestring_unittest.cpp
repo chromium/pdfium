@@ -19,6 +19,14 @@
 namespace fxcrt {
 
 TEST(WideString, ElementAccess) {
+  const WideString empty;
+  pdfium::span<const wchar_t> empty_span = empty.span();
+  pdfium::span<const wchar_t> empty_span_with_terminator =
+      empty.span_with_terminator();
+  EXPECT_EQ(0u, empty_span.size());
+  ASSERT_EQ(1u, empty_span_with_terminator.size());
+  EXPECT_EQ(L'\0', empty_span_with_terminator[0]);
+
   const WideString abc(L"abc");
   EXPECT_EQ(L'a', abc[0]);
   EXPECT_EQ(L'b', abc[1]);
