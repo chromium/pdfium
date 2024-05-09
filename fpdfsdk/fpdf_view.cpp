@@ -38,6 +38,7 @@
 #include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "core/fxcrt/cfx_timer.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
@@ -1187,13 +1188,18 @@ FPDF_EXPORT FPDF_RESULT FPDF_CALLCONV FPDF_BStr_Set(FPDF_BSTR* bstr,
     return 0;
   }
 
-  if (bstr->str && bstr->len < length)
-    bstr->str = FX_Realloc(char, bstr->str, length + 1);
-  else if (!bstr->str)
+  if (!bstr->str) {
     bstr->str = FX_Alloc(char, length + 1);
+  } else if (bstr->len < length) {
+    bstr->str = FX_Realloc(char, bstr->str, length + 1);
+  }
 
-  bstr->str[length] = 0;
-  FXSYS_memcpy(bstr->str, cstr, length);
+  // SAFETY: only alloc/realloc is performed above and will ensure at least
+  // length + 1 bytes are available.
+  UNSAFE_BUFFERS({
+    bstr->str[length] = 0;
+    FXSYS_memcpy(bstr->str, cstr, length);
+  });
   bstr->len = length;
   return 0;
 }
@@ -1275,7 +1281,10 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
   if (!buffer) {
     *buflen = len;
   } else if (len <= *buflen) {
-    FXSYS_memcpy(buffer, utf16Name.c_str(), len);
+    // SAFETY: required from caller.
+    auto buffer_span =
+        UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), *buflen));
+    fxcrt::spancpy(buffer_span, utf16Name.span());
     *buflen = len;
   } else {
     *buflen = -1;

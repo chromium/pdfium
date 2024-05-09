@@ -698,8 +698,7 @@ TEST_F(FPDFViewEmbedderTest, ViewerRef) {
   EXPECT_STREQ("ABCD", buf);
 
   // Note "Foo" is a different key from "foo".
-  EXPECT_EQ(4U,
-            FPDF_VIEWERREF_GetName(document(), "Foo", nullptr, sizeof(buf)));
+  EXPECT_EQ(4U, FPDF_VIEWERREF_GetName(document(), "Foo", nullptr, 0));
   ASSERT_EQ(4U, FPDF_VIEWERREF_GetName(document(), "Foo", buf, sizeof(buf)));
   EXPECT_STREQ("foo", buf);
 

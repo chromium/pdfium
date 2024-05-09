@@ -519,11 +519,12 @@ FORM_GetFocusedText(FPDF_FORMHANDLE hHandle,
                     void* buffer,
                     unsigned long buflen) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
-  if (!pPageView)
+  if (!pPageView) {
     return 0;
-
-  return Utf16EncodeMaybeCopyAndReturnLength(pPageView->GetFocusedFormText(),
-                                             buffer, buflen);
+  }
+  // SAFETY: required from caller.
+  return UNSAFE_BUFFERS(Utf16EncodeMaybeCopyAndReturnLength(
+      pPageView->GetFocusedFormText(), buffer, buflen));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -532,11 +533,12 @@ FORM_GetSelectedText(FPDF_FORMHANDLE hHandle,
                      void* buffer,
                      unsigned long buflen) {
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, page);
-  if (!pPageView)
+  if (!pPageView) {
     return 0;
-
-  return Utf16EncodeMaybeCopyAndReturnLength(pPageView->GetSelectedText(),
-                                             buffer, buflen);
+  }
+  // SAFETY: required from caller.
+  return UNSAFE_BUFFERS(Utf16EncodeMaybeCopyAndReturnLength(
+      pPageView->GetSelectedText(), buffer, buflen));
 }
 
 FPDF_EXPORT void FPDF_CALLCONV

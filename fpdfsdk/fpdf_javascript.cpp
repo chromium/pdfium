@@ -11,6 +11,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfdoc/cpdf_action.h"
 #include "core/fpdfdoc/cpdf_nametree.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 
@@ -73,9 +74,12 @@ FPDFJavaScriptAction_GetName(FPDF_JAVASCRIPT_ACTION javascript,
                              unsigned long buflen) {
   CPDF_JavaScript* js =
       CPDFJavaScriptActionFromFPDFJavaScriptAction(javascript);
-  if (!js)
+  if (!js) {
     return 0;
-  return Utf16EncodeMaybeCopyAndReturnLength(js->name, buffer, buflen);
+  }
+  // SAFETY: required from caller.
+  return UNSAFE_BUFFERS(
+      Utf16EncodeMaybeCopyAndReturnLength(js->name, buffer, buflen));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -84,7 +88,10 @@ FPDFJavaScriptAction_GetScript(FPDF_JAVASCRIPT_ACTION javascript,
                                unsigned long buflen) {
   CPDF_JavaScript* js =
       CPDFJavaScriptActionFromFPDFJavaScriptAction(javascript);
-  if (!js)
+  if (!js) {
     return 0;
-  return Utf16EncodeMaybeCopyAndReturnLength(js->script, buffer, buflen);
+  }
+  // SAFETY: required from caller.
+  return UNSAFE_BUFFERS(
+      Utf16EncodeMaybeCopyAndReturnLength(js->script, buffer, buflen));
 }

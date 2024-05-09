@@ -18,30 +18,35 @@ TEST(CPDFSDK_HelpersTest, NulTerminateMaybeCopyAndReturnLength) {
     constexpr size_t kExpectedToBeCopiedLen = 10;
     ASSERT_EQ(kExpectedToBeCopiedLen, to_be_copied.GetLength());
 
+    // SAFETY: nullptr argument.
     EXPECT_EQ(kExpectedToBeCopiedLen + 1,
-              NulTerminateMaybeCopyAndReturnLength(to_be_copied, nullptr, 0));
+              UNSAFE_BUFFERS(NulTerminateMaybeCopyAndReturnLength(to_be_copied,
+                                                                  nullptr, 0)));
 
     // Buffer should not change if declared length is too short.
     char buf[kExpectedToBeCopiedLen + 1];
     // TODO(tsepez): convert to span.
     UNSAFE_BUFFERS(FXSYS_memset(buf, 0x42, kExpectedToBeCopiedLen + 1));
     ASSERT_EQ(kExpectedToBeCopiedLen + 1,
-              NulTerminateMaybeCopyAndReturnLength(to_be_copied, buf,
-                                                   kExpectedToBeCopiedLen));
+              UNSAFE_BUFFERS(NulTerminateMaybeCopyAndReturnLength(
+                  to_be_copied, buf, kExpectedToBeCopiedLen)));
     for (char c : buf)
       EXPECT_EQ(0x42, c);
 
     // Buffer should copy over if long enough.
+    // TODO(tsepez): convert to span.
     ASSERT_EQ(kExpectedToBeCopiedLen + 1,
-              NulTerminateMaybeCopyAndReturnLength(to_be_copied, buf,
-                                                   kExpectedToBeCopiedLen + 1));
+              UNSAFE_BUFFERS(NulTerminateMaybeCopyAndReturnLength(
+                  to_be_copied, buf, kExpectedToBeCopiedLen + 1)));
     EXPECT_EQ(to_be_copied, ByteString(buf));
   }
   {
     // Empty ByteString should still copy NUL terminator.
     const ByteString empty;
     char buf[1];
-    ASSERT_EQ(1u, NulTerminateMaybeCopyAndReturnLength(empty, buf, 1));
+    // TODO(tsepez): convert to span.
+    ASSERT_EQ(1u, UNSAFE_BUFFERS(
+                      NulTerminateMaybeCopyAndReturnLength(empty, buf, 1)));
     EXPECT_EQ(empty, ByteString(buf));
   }
 }

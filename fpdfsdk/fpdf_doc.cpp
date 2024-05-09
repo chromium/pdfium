@@ -31,9 +31,12 @@
 #include "core/fpdfdoc/cpdf_linklist.h"
 #include "core/fpdfdoc/cpdf_pagelabel.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
+#include "core/fxcrt/span.h"
+#include "core/fxcrt/span_util.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_formfill.h"
 
@@ -231,21 +234,22 @@ FPDFAction_GetURIPath(FPDF_DOCUMENT document,
                       void* buffer,
                       unsigned long buflen) {
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pDoc)
+  if (!pDoc) {
     return 0;
-
+  }
   unsigned long type = FPDFAction_GetType(action);
-  if (type != PDFACTION_URI)
+  if (type != PDFACTION_URI) {
     return 0;
-
+  }
   CPDF_Action cAction(pdfium::WrapRetain(CPDFDictionaryFromFPDFAction(action)));
   ByteString path = cAction.GetURI(pDoc);
-
-  const unsigned long len =
-      pdfium::checked_cast<unsigned long>(path.GetLength() + 1);
-  if (buffer && len <= buflen)
-    FXSYS_memcpy(buffer, path.c_str(), len);
-  return len;
+  if (buffer) {
+    // SAFETY: required from caller.
+    pdfium::span<char> result_span =
+        UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), buflen));
+    fxcrt::try_spancpy(result_span, path.span_with_terminator());
+  }
+  return static_cast<unsigned long>(path.span_with_terminator().size());
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFDest_GetDestPageIndex(FPDF_DOCUMENT document,

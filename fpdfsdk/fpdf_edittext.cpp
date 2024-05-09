@@ -856,14 +856,15 @@ FPDFFont_GetFontName(FPDF_FONT font, char* buffer, unsigned long length) {
   if (!pFont)
     return 0;
 
-  CFX_Font* pCfxFont = pFont->GetFont();
-  ByteString name = pCfxFont->GetFamilyName();
-  const unsigned long dwStringLen =
-      pdfium::checked_cast<unsigned long>(name.GetLength() + 1);
-  if (buffer && length >= dwStringLen)
-    FXSYS_memcpy(buffer, name.c_str(), dwStringLen);
-
-  return dwStringLen;
+  ByteString name = pFont->GetFont()->GetFamilyName();
+  pdfium::span<const char> name_span = name.span_with_terminator();
+  if (buffer) {
+    // SAFETY: required from caller.
+    pdfium::span<char> result_span =
+        UNSAFE_BUFFERS(pdfium::make_span(buffer, length));
+    fxcrt::try_spancpy(result_span, name_span);
+  }
+  return static_cast<unsigned long>(name_span.size());
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetFontData(FPDF_FONT font,
@@ -874,9 +875,13 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetFontData(FPDF_FONT font,
   if (!cfont || !out_buflen)
     return false;
 
-  pdfium::span<uint8_t> data = cfont->GetFont()->GetFontSpan();
-  if (buffer && buflen >= data.size())
-    fxcrt::spancpy(pdfium::make_span(buffer, buflen), data);
+  pdfium::span<const uint8_t> data = cfont->GetFont()->GetFontSpan();
+  if (buffer) {
+    // SAFETY: required from caller.
+    pdfium::span<uint8_t> result_span =
+        UNSAFE_BUFFERS(pdfium::make_span(buffer, buflen));
+    fxcrt::try_spancpy(result_span, data);
+  }
   *out_buflen = data.size();
   return true;
 }

@@ -12,6 +12,7 @@
 #include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_parser.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxge/cfx_path.h"
 #include "public/fpdf_doc.h"
@@ -266,13 +267,15 @@ FS_RECTF FSRectFFromCFXFloatRect(const CFX_FloatRect& rect);
 CFX_Matrix CFXMatrixFromFSMatrix(const FS_MATRIX& matrix);
 FS_MATRIX FSMatrixFromCFXMatrix(const CFX_Matrix& matrix);
 
-unsigned long NulTerminateMaybeCopyAndReturnLength(const ByteString& text,
-                                                   void* buffer,
-                                                   unsigned long buflen);
+UNSAFE_BUFFER_USAGE unsigned long NulTerminateMaybeCopyAndReturnLength(
+    const ByteString& text,
+    void* buffer,
+    unsigned long buflen);
 
-unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
-                                                  void* buffer,
-                                                  unsigned long buflen);
+UNSAFE_BUFFER_USAGE unsigned long Utf16EncodeMaybeCopyAndReturnLength(
+    const WideString& text,
+    void* buffer,
+    unsigned long buflen);
 
 // Returns the length of the raw stream data from |stream|. The raw data is the
 // stream's data as stored in the PDF without applying any filters. If |buffer|

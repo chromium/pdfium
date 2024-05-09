@@ -38,10 +38,12 @@
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 #include "core/fpdfdoc/cpdf_annot.h"
 #include "core/fpdfdoc/cpdf_annotlist.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/fpdf_formfill.h"
@@ -482,14 +484,14 @@ FPDFPageObjMark_GetParamBlobValue(FPDF_PAGEOBJECTMARK mark,
   if (!pObj || !pObj->IsString())
     return false;
 
-  ByteString result = pObj->GetString();
-  const unsigned long len =
-      pdfium::checked_cast<unsigned long>(result.GetLength());
-
-  if (buffer && len <= buflen)
-    FXSYS_memcpy(buffer, result.c_str(), len);
-
-  *out_buflen = len;
+  ByteString value = pObj->GetString();
+  if (buffer) {
+    // SAFETY: required from caller.
+    pdfium::span<char> result_span =
+        UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), buflen));
+    fxcrt::try_spancpy(result_span, value.span());
+  }
+  *out_buflen = pdfium::checked_cast<unsigned long>(value.span().size());
   return true;
 }
 
@@ -985,17 +987,18 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObj_GetDashArray(FPDF_PAGEOBJECT page_object,
                          float* dash_array,
                          size_t dash_count) {
+  if (!dash_array) {
+    return false;
+  }
   auto* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!pPageObj || !dash_array)
+  if (!pPageObj) {
     return false;
+  }
 
+  // SAFETY: required from caller.
+  auto result_span = UNSAFE_BUFFERS(pdfium::make_span(dash_array, dash_count));
   auto dash_vector = pPageObj->graph_state().GetLineDashArray();
-  if (dash_vector.size() > dash_count)
-    return false;
-
-  FXSYS_memcpy(dash_array, dash_vector.data(),
-               dash_vector.size() * sizeof(float));
-  return true;
+  return fxcrt::try_spancpy(result_span, pdfium::make_span(dash_vector));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
