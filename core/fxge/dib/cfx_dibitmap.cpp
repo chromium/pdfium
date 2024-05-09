@@ -11,9 +11,6 @@
 
 #include "core/fxge/dib/cfx_dibitmap.h"
 
-#include <stdint.h>
-#include <string.h>
-
 #include <limits>
 #include <memory>
 #include <utility>

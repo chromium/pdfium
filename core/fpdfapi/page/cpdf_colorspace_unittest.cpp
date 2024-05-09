@@ -9,6 +9,7 @@
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include "core/fxcrt/retain_ptr.h"

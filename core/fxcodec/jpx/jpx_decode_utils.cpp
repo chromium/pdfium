@@ -11,9 +11,6 @@
 
 #include "core/fxcodec/jpx/jpx_decode_utils.h"
 
-#include <stddef.h>
-#include <string.h>
-
 #include <algorithm>
 #include <limits>
 #include <type_traits>

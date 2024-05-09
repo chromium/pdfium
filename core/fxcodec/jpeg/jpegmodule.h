@@ -7,6 +7,7 @@
 #ifndef CORE_FXCODEC_JPEG_JPEGMODULE_H_
 #define CORE_FXCODEC_JPEG_JPEGMODULE_H_
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include <memory>

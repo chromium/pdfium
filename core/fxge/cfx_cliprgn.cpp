@@ -11,7 +11,7 @@
 
 #include "core/fxge/cfx_cliprgn.h"
 
-#include <string.h>
+#include <stdint.h>
 
 #include <utility>
 

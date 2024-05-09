@@ -6,8 +6,6 @@
 
 #include "core/fxge/dib/cfx_bitmapstorer.h"
 
-#include <string.h>
-
 #include <utility>
 
 #include "core/fxcrt/check_op.h"

@@ -12,8 +12,6 @@
 #include "core/fxcodec/jpeg/jpegmodule.h"
 
 #include <setjmp.h>
-#include <stdint.h>
-#include <string.h>
 
 #include <memory>
 #include <optional>

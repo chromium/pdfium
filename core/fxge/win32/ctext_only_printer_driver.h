@@ -5,6 +5,7 @@
 #ifndef CORE_FXGE_WIN32_CTEXT_ONLY_PRINTER_DRIVER_H_
 #define CORE_FXGE_WIN32_CTEXT_ONLY_PRINTER_DRIVER_H_
 
+#include <stdint.h>
 #include <windows.h>
 
 #include <memory>

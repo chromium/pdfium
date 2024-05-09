@@ -7,6 +7,7 @@
 #ifndef CORE_FXGE_DIB_CFX_DIBBASE_H_
 #define CORE_FXGE_DIB_CFX_DIBBASE_H_
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include "build/build_config.h"

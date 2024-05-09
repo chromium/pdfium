@@ -11,7 +11,7 @@
 
 #include "core/fxge/dib/cfx_bitmapcomposer.h"
 
-#include <string.h>
+#include <stddef.h>
 
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_2d_size.h"

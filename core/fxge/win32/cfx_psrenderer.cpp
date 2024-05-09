@@ -12,7 +12,6 @@
 #include "core/fxge/win32/cfx_psrenderer.h"
 
 #include <math.h>
-#include <string.h>
 
 #include <algorithm>
 #include <array>

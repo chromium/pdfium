@@ -11,9 +11,6 @@
 
 #include "core/fxge/dib/cfx_dibbase.h"
 
-#include <stdint.h>
-#include <string.h>
-
 #include <algorithm>
 #include <utility>
 #include <vector>

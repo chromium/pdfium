@@ -7,6 +7,9 @@
 #ifndef CORE_FXCODEC_JBIG2_JBIG2_CONTEXT_H_
 #define CORE_FXCODEC_JBIG2_JBIG2_CONTEXT_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <list>
 #include <memory>
 #include <utility>

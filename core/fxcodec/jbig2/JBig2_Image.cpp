@@ -12,7 +12,7 @@
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 
 #include <limits.h>
-#include <string.h>
+#include <stddef.h>
 
 #include <algorithm>
 #include <memory>

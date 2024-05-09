@@ -11,8 +11,6 @@
 
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 
-#include <string.h>
-
 #include <algorithm>
 #include <limits>
 #include <list>

@@ -11,8 +11,6 @@
 
 #include "core/fxcodec/jbig2/jbig2_decoder.h"
 
-#include <string.h>
-
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
 #include "core/fxcrt/fx_2d_size.h"

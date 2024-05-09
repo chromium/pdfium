@@ -11,8 +11,6 @@
 
 #include "core/fdrm/fx_crypt_aes.h"
 
-#include <string.h>
-
 #include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"

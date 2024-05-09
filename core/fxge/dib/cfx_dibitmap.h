@@ -7,6 +7,9 @@
 #ifndef CORE_FXGE_DIB_CFX_DIBITMAP_H_
 #define CORE_FXGE_DIB_CFX_DIBITMAP_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <optional>
 
 #include "core/fxcrt/compiler_specific.h"

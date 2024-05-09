@@ -11,7 +11,7 @@
 
 #include "core/fxcodec/jbig2/JBig2_SddProc.h"
 
-#include <string.h>
+#include <stddef.h>
 
 #include <algorithm>
 #include <memory>
