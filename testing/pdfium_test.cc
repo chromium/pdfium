@@ -37,13 +37,13 @@
 #include "public/fpdf_structtree.h"
 #include "public/fpdf_text.h"
 #include "public/fpdfview.h"
-#include "samples/helpers/dump.h"
-#include "samples/helpers/event.h"
-#include "samples/helpers/page_renderer.h"
-#include "samples/helpers/write.h"
 #include "testing/command_line_helpers.h"
 #include "testing/font_renamer.h"
 #include "testing/fx_string_testhelpers.h"
+#include "testing/helpers/dump.h"
+#include "testing/helpers/event.h"
+#include "testing/helpers/page_renderer.h"
+#include "testing/helpers/write.h"
 #include "testing/test_loader.h"
 #include "testing/utils/file_util.h"
 #include "testing/utils/hash.h"
@@ -55,7 +55,7 @@
 #include <io.h>
 #include <wingdi.h>
 
-#include "samples/helpers/win32/com_factory.h"
+#include "testing/helpers/win32/com_factory.h"
 #else
 #include <unistd.h>
 #endif  // _WIN32
@@ -84,7 +84,7 @@
 #endif
 
 #ifdef BUILD_WITH_CHROMIUM
-#include "samples/chromium_support/discardable_memory_allocator.h"  // nogncheck
+#include "testing/chromium_support/discardable_memory_allocator.h"  // nogncheck
 #endif
 #endif  // PDF_ENABLE_SKIA
 

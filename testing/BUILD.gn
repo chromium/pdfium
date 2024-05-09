@@ -229,6 +229,81 @@ source_set("embedder_test_support") {
   }
 }
 
+config("pdfium_test_config") {
+  cflags = []
+  ldflags = []
+  defines = []
+  include_dirs = [ ".." ]
+  if (pdf_use_skia) {
+    defines += [ "PDF_ENABLE_SKIA" ]
+  }
+  if (is_asan) {
+    defines += [ "PDF_ENABLE_ASAN" ]
+  }
+  if (pdf_use_partition_alloc) {
+    defines += [ "PDF_USE_PARTITION_ALLOC" ]
+  }
+  if (enable_callgrind) {
+    defines += [ "ENABLE_CALLGRIND" ]
+  }
+  if (build_with_chromium) {
+    defines += [ "BUILD_WITH_CHROMIUM" ]
+  }
+}
+
+executable("pdfium_test") {
+  testonly = true
+  sources = [
+    "helpers/dump.cc",
+    "helpers/dump.h",
+    "helpers/event.cc",
+    "helpers/event.h",
+    "helpers/page_renderer.cc",
+    "helpers/page_renderer.h",
+    "helpers/write.cc",
+    "helpers/write.h",
+    "pdfium_test.cc",
+  ]
+
+  # Note: One should write programs that depend on ../:pdfium. Whereas this
+  # test program does not set a good example, and depends on PDFium internals,
+  # as well as test support code, for convenience.
+  deps = [
+    "../:pdfium_public_headers",
+    "../fpdfsdk",
+    "../testing:test_support",
+    "../testing/image_diff",
+    "//build/win:default_exe_manifest",
+  ]
+  configs += [ ":pdfium_test_config" ]
+
+  if (is_win) {
+    sources += [
+      "helpers/win32/com_factory.cc",
+      "helpers/win32/com_factory.h",
+    ]
+  }
+
+  if (pdf_enable_v8) {
+    deps += [
+      "//v8:v8_headers",
+      "//v8:v8_libplatform",
+    ]
+    include_dirs = [ "//v8" ]
+    configs += [ "//v8:external_startup_data" ]
+  }
+  if (pdf_use_skia) {
+    deps += [ "//skia" ]
+    if (build_with_chromium) {
+      sources += [
+        "chromium_support/discardable_memory_allocator.cc",
+        "chromium_support/discardable_memory_allocator.h",
+      ]
+      deps += [ "//base/test:test_support" ]
+    }
+  }
+}
+
 # Dummy group to keep satisfy references from //build.
 group("test_scripts_shared") {
 }

@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef SAMPLES_HELPERS_EVENT_H_
-#define SAMPLES_HELPERS_EVENT_H_
+#ifndef TESTING_HELPERS_EVENT_H_
+#define TESTING_HELPERS_EVENT_H_
 
 #include <functional>
 #include <string>
@@ -16,4 +16,4 @@ void SendPageEvents(FPDF_FORMHANDLE form,
                     const std::string& events,
                     const std::function<void()>& idler);
 
-#endif  // SAMPLES_HELPERS_EVENT_H_
+#endif  // TESTING_HELPERS_EVENT_H_

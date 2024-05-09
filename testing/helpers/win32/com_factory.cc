@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "samples/helpers/win32/com_factory.h"
+#include "testing/helpers/win32/com_factory.h"
 
 #include <combaseapi.h>
 #include <objbase.h>

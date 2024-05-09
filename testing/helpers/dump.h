@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef SAMPLES_HELPERS_DUMP_H_
-#define SAMPLES_HELPERS_DUMP_H_
+#ifndef TESTING_HELPERS_DUMP_H_
+#define TESTING_HELPERS_DUMP_H_
 
 #include "public/fpdfview.h"
 
@@ -12,4 +12,4 @@ void DumpPageInfo(FPDF_PAGE page, int page_idx);
 void DumpPageStructure(FPDF_PAGE page, int page_idx);
 void DumpMetaData(FPDF_DOCUMENT doc);
 
-#endif  // SAMPLES_HELPERS_DUMP_H_
+#endif  // TESTING_HELPERS_DUMP_H_

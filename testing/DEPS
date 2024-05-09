@@ -4,6 +4,7 @@ include_rules = [
   '+fxjs',
   '+partition_alloc',
   '+public',
+  '+third_party/skia/include',
   '+v8',
   '+xfa'
 ]

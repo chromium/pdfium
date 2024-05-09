@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef SAMPLES_HELPERS_WIN32_COM_FACTORY_H_
-#define SAMPLES_HELPERS_WIN32_COM_FACTORY_H_
+#ifndef TESTING_HELPERS_WIN32_COM_FACTORY_H_
+#define TESTING_HELPERS_WIN32_COM_FACTORY_H_
 
 struct IXpsOMObjectFactory;
 
@@ -22,4 +22,4 @@ class ComFactory final {
   IXpsOMObjectFactory* xps_om_object_factory_ = nullptr;
 };
 
-#endif  // SAMPLES_HELPERS_WIN32_COM_FACTORY_H_
+#endif  // TESTING_HELPERS_WIN32_COM_FACTORY_H_

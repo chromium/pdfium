@@ -586,7 +586,7 @@ group("pdfium_all") {
     ":pdfium_diff",
     ":pdfium_embeddertests",
     ":pdfium_unittests",
-    "samples",
+    "testing:pdfium_test",
     "testing/fuzzers",
   ]
 

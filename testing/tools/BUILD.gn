@@ -37,8 +37,8 @@ if (pdf_is_standalone) {
 
     # Built runtime dependencies.
     data_deps = [
+      "../:pdfium_test",
       "../../:pdfium_diff",
-      "../../samples:pdfium_test",
     ]
 
     # Force `data_deps` to be built before this target, rather than in parallel.
