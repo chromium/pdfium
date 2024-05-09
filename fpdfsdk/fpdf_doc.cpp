@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "public/fpdf_doc.h"
 
 #include <memory>
@@ -120,7 +115,9 @@ FPDFBookmark_GetTitle(FPDF_BOOKMARK bookmark,
   CPDF_Bookmark cBookmark(
       pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(bookmark)));
   WideString title = cBookmark.GetTitle();
-  return Utf16EncodeMaybeCopyAndReturnLength(title, buffer, buflen);
+  // SAFETY: required from caller.
+  return UNSAFE_BUFFERS(
+      Utf16EncodeMaybeCopyAndReturnLength(title, buffer, buflen));
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFBookmark_GetCount(FPDF_BOOKMARK bookmark) {
@@ -222,10 +219,11 @@ FPDFAction_GetFilePath(FPDF_ACTION action, void* buffer, unsigned long buflen) {
       type != PDFACTION_LAUNCH) {
     return 0;
   }
-
   CPDF_Action cAction(pdfium::WrapRetain(CPDFDictionaryFromFPDFAction(action)));
   ByteString path = cAction.GetFilePath().ToUTF8();
-  return NulTerminateMaybeCopyAndReturnLength(path, buffer, buflen);
+  // SAFETY: required from caller.
+  return UNSAFE_BUFFERS(
+      NulTerminateMaybeCopyAndReturnLength(path, buffer, buflen));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -271,14 +269,15 @@ FPDFDest_GetView(FPDF_DEST dest, unsigned long* pNumParams, FS_FLOAT* pParams) {
     *pNumParams = 0;
     return 0;
   }
-
   CPDF_Dest destination(pdfium::WrapRetain(CPDFArrayFromFPDFDest(dest)));
   const unsigned long nParams =
       pdfium::checked_cast<unsigned long>(destination.GetNumParams());
   DCHECK(nParams <= 4);
   *pNumParams = nParams;
-  for (unsigned long i = 0; i < nParams; ++i)
-    pParams[i] = destination.GetParam(i);
+  for (unsigned long i = 0; i < nParams; ++i) {
+    // TODO(crbug.com/pdfium/2155): resolve safety issues.
+    UNSAFE_BUFFERS(pParams[i] = destination.GetParam(i));
+  }
   return destination.GetZoomMode();
 }
 
@@ -490,8 +489,9 @@ FPDF_GetFileIdentifier(FPDF_DOCUMENT document,
   if (!pValue)
     return 0;
 
-  return NulTerminateMaybeCopyAndReturnLength(pValue->GetString(), buffer,
-                                              buflen);
+  // SAFETY: required from caller.
+  return UNSAFE_BUFFERS(NulTerminateMaybeCopyAndReturnLength(
+      pValue->GetString(), buffer, buflen));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetMetaText(FPDF_DOCUMENT document,
@@ -509,7 +509,10 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetMetaText(FPDF_DOCUMENT document,
     return 0;
 
   WideString text = pInfo->GetUnicodeTextFor(tag);
-  return Utf16EncodeMaybeCopyAndReturnLength(text, buffer, buflen);
+
+  // SAFETY: required from caller.
+  return UNSAFE_BUFFERS(
+      Utf16EncodeMaybeCopyAndReturnLength(text, buffer, buflen));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -523,7 +526,10 @@ FPDF_GetPageLabel(FPDF_DOCUMENT document,
   // CPDF_PageLabel can deal with NULL |document|.
   CPDF_PageLabel label(CPDFDocumentFromFPDFDocument(document));
   std::optional<WideString> str = label.GetLabel(page_index);
-  return str.has_value()
-             ? Utf16EncodeMaybeCopyAndReturnLength(str.value(), buffer, buflen)
-             : 0;
+  if (!str.has_value()) {
+    return 0;
+  }
+  // SAFETY: required from caller.
+  return UNSAFE_BUFFERS(
+      Utf16EncodeMaybeCopyAndReturnLength(str.value(), buffer, buflen));
 }

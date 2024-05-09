@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "public/fpdf_signature.h"
 
 #include <utility>
@@ -121,8 +116,10 @@ FPDFSignatureObj_GetByteRange(FPDF_SIGNATURE signature,
   const unsigned long byte_range_len =
       fxcrt::CollectionSize<unsigned long>(*byte_range);
   if (buffer && length >= byte_range_len) {
-    for (size_t i = 0; i < byte_range_len; ++i)
-      buffer[i] = byte_range->GetIntegerAt(i);
+    for (size_t i = 0; i < byte_range_len; ++i) {
+      // TODO(crbug.com/pdfium/2155): resolve safety issue.
+      UNSAFE_BUFFERS(buffer[i] = byte_range->GetIntegerAt(i));
+    }
   }
   return byte_range_len;
 }
@@ -142,7 +139,10 @@ FPDFSignatureObj_GetSubFilter(FPDF_SIGNATURE signature,
     return 0;
 
   ByteString sub_filter = value_dict->GetNameFor("SubFilter");
-  return NulTerminateMaybeCopyAndReturnLength(sub_filter, buffer, length);
+
+  // SAFETY: required from caller.
+  return UNSAFE_BUFFERS(
+      NulTerminateMaybeCopyAndReturnLength(sub_filter, buffer, length));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -163,8 +163,9 @@ FPDFSignatureObj_GetReason(FPDF_SIGNATURE signature,
   if (!obj || !obj->IsString())
     return 0;
 
-  return Utf16EncodeMaybeCopyAndReturnLength(obj->GetUnicodeText(), buffer,
-                                             length);
+  // SAFETY: required from caller.
+  return UNSAFE_BUFFERS(Utf16EncodeMaybeCopyAndReturnLength(
+      obj->GetUnicodeText(), buffer, length));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -185,7 +186,9 @@ FPDFSignatureObj_GetTime(FPDF_SIGNATURE signature,
   if (!obj || !obj->IsString())
     return 0;
 
-  return NulTerminateMaybeCopyAndReturnLength(obj->GetString(), buffer, length);
+  // SAFETY: required from caller.
+  return UNSAFE_BUFFERS(
+      NulTerminateMaybeCopyAndReturnLength(obj->GetString(), buffer, length));
 }
 
 FPDF_EXPORT unsigned int FPDF_CALLCONV

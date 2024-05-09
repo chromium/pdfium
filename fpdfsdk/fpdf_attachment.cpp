@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "public/fpdf_attachment.h"
 
 #include <limits.h>
@@ -56,7 +51,9 @@ ByteString GenerateMD5Base16(const void* contents, const unsigned long len) {
 
   char buf[32];
   for (int i = 0; i < 16; ++i) {
-    FXSYS_IntToTwoHexChars(digest[i], &buf[i * 2]);
+    // TODO(crbug.com/pdfium/2155): resolve safety issues.
+    FXSYS_IntToTwoHexChars(UNSAFE_BUFFERS(digest[i]),
+                           UNSAFE_BUFFERS(&buf[i * 2]));
   }
   return ByteString(buf, 32);
 }
@@ -141,8 +138,9 @@ FPDFAttachment_GetName(FPDF_ATTACHMENT attachment,
     return 0;
 
   CPDF_FileSpec spec(pdfium::WrapRetain(pFile));
-  return Utf16EncodeMaybeCopyAndReturnLength(spec.GetFileName(), buffer,
-                                             buflen);
+  // SAFETY: required from caller.
+  return UNSAFE_BUFFERS(
+      Utf16EncodeMaybeCopyAndReturnLength(spec.GetFileName(), buffer, buflen));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -216,8 +214,9 @@ FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
                   ->GetUnicodeText();
     }
   }
-
-  return Utf16EncodeMaybeCopyAndReturnLength(value, buffer, buflen);
+  // SAFETY: required from caller.
+  return UNSAFE_BUFFERS(
+      Utf16EncodeMaybeCopyAndReturnLength(value, buffer, buflen));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -260,9 +259,13 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
 
   // Create the file stream and have the filespec dictionary link to it.
   const uint8_t* contents_as_bytes = static_cast<const uint8_t*>(contents);
+
+  // TODO(crbug.com/pdfium/2155): resolve safety issues.
   auto pFileStream = pDoc->NewIndirect<CPDF_Stream>(
-      DataVector<uint8_t>(contents_as_bytes, contents_as_bytes + len),
+      DataVector<uint8_t>(contents_as_bytes,
+                          UNSAFE_BUFFERS(contents_as_bytes + len)),
       std::move(pFileStreamDict));
+
   auto pEFDict = pFile->AsMutableDictionary()->SetNewFor<CPDF_Dictionary>("EF");
   pEFDict->SetNewFor<CPDF_Reference>("F", pDoc, pFileStream->GetObjNum());
   return true;

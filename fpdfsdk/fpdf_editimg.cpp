@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "public/fpdf_edit.h"
 
 #include <memory>
@@ -27,6 +22,7 @@
 #include "core/fpdfapi/render/cpdf_imagerenderer.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
@@ -97,9 +93,11 @@ bool LoadJpegHelper(FPDF_PAGE* pages,
 
   if (pages) {
     for (int index = 0; index < count; index++) {
-      CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
-      if (pPage)
+      // TODO(crbug.com/pdfium/2155): resolve safety issues.
+      CPDF_Page* pPage = CPDFPageFromFPDFPage(UNSAFE_BUFFERS(pages[index]));
+      if (pPage) {
         pImgObj->GetImage()->ResetCache(pPage);
+      }
     }
   }
 
@@ -177,9 +175,11 @@ FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
 
   if (pages) {
     for (int index = 0; index < count; index++) {
-      CPDF_Page* pPage = CPDFPageFromFPDFPage(pages[index]);
-      if (pPage)
+      // TODO(crbug.com/pdfium/2155): resolve safety issues.
+      CPDF_Page* pPage = CPDFPageFromFPDFPage(UNSAFE_BUFFERS(pages[index]));
+      if (pPage) {
         pImgObj->GetImage()->ResetCache(pPage);
+      }
     }
   }
 
@@ -420,7 +420,9 @@ FPDFImageObj_GetImageFilter(FPDF_PAGEOBJECT image_object,
                             ? pFilter->AsName()->GetString()
                             : pFilter->AsArray()->GetByteStringAt(index);
 
-  return NulTerminateMaybeCopyAndReturnLength(bsFilter, buffer, buflen);
+  // SAFETY: required from caller.
+  return UNSAFE_BUFFERS(
+      NulTerminateMaybeCopyAndReturnLength(bsFilter, buffer, buflen));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

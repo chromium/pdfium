@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "public/fpdf_ppo.h"
 
 #include <algorithm>
@@ -741,14 +736,13 @@ FPDF_ImportPagesByIndex(FPDF_DOCUMENT dest_doc,
     std::iota(page_indices_vec.begin(), page_indices_vec.end(), 0);
     return exporter.ExportPage(page_indices_vec, index);
   }
-
-  if (length == 0)
+  if (length == 0) {
     return false;
-
-  return exporter.ExportPage(
-      pdfium::make_span(reinterpret_cast<const uint32_t*>(page_indices),
-                        length),
-      index);
+  }
+  // TODO(crbug.com/pdfium/2155): investigate safety issues.
+  auto page_span = UNSAFE_BUFFERS(pdfium::make_span(
+      reinterpret_cast<const uint32_t*>(page_indices), length));
+  return exporter.ExportPage(page_span, index);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
