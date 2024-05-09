@@ -9,7 +9,6 @@
 
 #include <stddef.h>
 
-#include <string>
 #include <type_traits>
 
 #include "core/fxcrt/compiler_specific.h"
@@ -43,7 +42,7 @@ class StringTemplate {
 
   // Return length as determined by the position of the first NUL.
   size_t GetStringLength() const {
-    return m_pData ? std::char_traits<CharType>::length(m_pData->m_String) : 0;
+    return m_pData ? m_pData->GetStringLength() : 0;
   }
 
   // Explicit conversion to UnsignedType*. May return nullptr.

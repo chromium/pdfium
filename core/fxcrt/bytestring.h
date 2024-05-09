@@ -10,7 +10,6 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <string.h>
 
 #include <functional>
 #include <iosfwd>

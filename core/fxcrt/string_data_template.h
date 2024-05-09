@@ -10,6 +10,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <string>
+
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 
@@ -65,6 +67,11 @@ class StringDataTemplate {
   pdfium::span<const CharType> capacity_span() const {
     // SAFETY: m_nAllocLength + 1 is within m_String.
     return UNSAFE_BUFFERS(pdfium::make_span(m_String, m_nAllocLength + 1));
+  }
+
+  // Return length as determined by the location of the first embedded NUL.
+  size_t GetStringLength() const {
+    return std::char_traits<CharType>::length(m_String);
   }
 
   // Unlike std::string::front(), this is always safe and returns a

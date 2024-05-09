@@ -8,6 +8,7 @@
 
 #include <stddef.h>
 #include <string.h>
+#include <wchar.h>
 
 #include <algorithm>
 #include <sstream>
