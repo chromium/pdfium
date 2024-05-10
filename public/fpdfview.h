@@ -84,6 +84,8 @@ typedef const struct fpdf_signature_t__* FPDF_SIGNATURE;
 typedef void* FPDF_SKIA_CANVAS;  // Passed into Skia as an SkCanvas.
 typedef struct fpdf_structelement_t__* FPDF_STRUCTELEMENT;
 typedef const struct fpdf_structelement_attr_t__* FPDF_STRUCTELEMENT_ATTR;
+typedef const struct fpdf_structelement_attr_value_t__*
+FPDF_STRUCTELEMENT_ATTR_VALUE;
 typedef struct fpdf_structtree_t__* FPDF_STRUCTTREE;
 typedef struct fpdf_textpage_t__* FPDF_TEXTPAGE;
 typedef struct fpdf_widget_t__* FPDF_WIDGET;

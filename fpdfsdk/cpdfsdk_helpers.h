@@ -196,6 +196,15 @@ inline const CPDF_Dictionary* CPDFDictionaryFromFPDFStructElementAttr(
   return reinterpret_cast<const CPDF_Dictionary*>(struct_element_attr);
 }
 
+inline FPDF_STRUCTELEMENT_ATTR_VALUE FPDFStructElementAttrValueFromCPDFObject(
+    const CPDF_Object* object) {
+  return reinterpret_cast<FPDF_STRUCTELEMENT_ATTR_VALUE>(object);
+}
+inline const CPDF_Object* CPDFObjectFromFPDFStructElementAttrValue(
+    FPDF_STRUCTELEMENT_ATTR_VALUE struct_element_attr_value) {
+  return reinterpret_cast<const CPDF_Object*>(struct_element_attr_value);
+}
+
 inline FPDF_TEXTPAGE FPDFTextPageFromCPDFTextPage(CPDF_TextPage* page) {
   return reinterpret_cast<FPDF_TEXTPAGE>(page);
 }
