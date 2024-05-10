@@ -1313,9 +1313,9 @@ FPDF_GetXFAPacketName(FPDF_DOCUMENT document,
   if (static_cast<size_t>(index) >= xfa_packets.size()) {
     return 0;
   }
-  // TODO(crbug.com/pdfium/2155): resolve safety issues.
+  // SAFETY: required from caller.
   return NulTerminateMaybeCopyAndReturnLength(
-      UNSAFE_BUFFERS(xfa_packets[index].name),
+      xfa_packets[index].name,
       UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 

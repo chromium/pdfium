@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "fpdfsdk/cpdfsdk_appstream.h"
 
 #include <math.h>
@@ -35,6 +30,7 @@
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_icon.h"
 #include "core/fpdfdoc/cpvt_word.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
@@ -210,30 +206,33 @@ ByteString GetAP_Check(const CFX_FloatRect& crBBox) {
 
   for (size_t i = 0; i < std::size(pts); ++i) {
     for (size_t j = 0; j < std::size(pts[0]); ++j) {
-      pts[i][j].x = pts[i][j].x * fWidth + crBBox.left;
-      pts[i][j].y *= pts[i][j].y * fHeight + crBBox.bottom;
+      // TODO(crbug.com/pdfium/2155): resolve safety issues.
+      UNSAFE_BUFFERS(pts[i][j].x = pts[i][j].x * fWidth + crBBox.left);
+      UNSAFE_BUFFERS(pts[i][j].y *= pts[i][j].y * fHeight + crBBox.bottom);
     }
   }
 
   fxcrt::ostringstream csAP;
   WriteMove(csAP, pts[0][0]);
 
-  for (size_t i = 0; i < std::size(pts); ++i) {
-    size_t nNext = i < std::size(pts) - 1 ? i + 1 : 0;
-    const CFX_PointF& pt_next = pts[nNext][0];
+  // TODO(crbug.com/pdfium/2155): resolve safety issues.
+  UNSAFE_BUFFERS({
+    for (size_t i = 0; i < std::size(pts); ++i) {
+      size_t nNext = i < std::size(pts) - 1 ? i + 1 : 0;
+      const CFX_PointF& pt_next = pts[nNext][0];
 
-    float px1 = pts[i][1].x - pts[i][0].x;
-    float py1 = pts[i][1].y - pts[i][0].y;
-    float px2 = pts[i][2].x - pt_next.x;
-    float py2 = pts[i][2].y - pt_next.y;
+      float px1 = pts[i][1].x - pts[i][0].x;
+      float py1 = pts[i][1].y - pts[i][0].y;
+      float px2 = pts[i][2].x - pt_next.x;
+      float py2 = pts[i][2].y - pt_next.y;
 
-    WriteBezierCurve(
-        csAP,
-        {pts[i][0].x + px1 * FXSYS_BEZIER, pts[i][0].y + py1 * FXSYS_BEZIER},
-        {pt_next.x + px2 * FXSYS_BEZIER, pt_next.y + py2 * FXSYS_BEZIER},
-        pt_next);
-  }
-
+      WriteBezierCurve(
+          csAP,
+          {pts[i][0].x + px1 * FXSYS_BEZIER, pts[i][0].y + py1 * FXSYS_BEZIER},
+          {pt_next.x + px2 * FXSYS_BEZIER, pt_next.y + py2 * FXSYS_BEZIER},
+          pt_next);
+    }
+  });
   return ByteString(csAP);
 }
 
@@ -335,7 +334,8 @@ ByteString GetAP_Star(const CFX_FloatRect& crBBox) {
   int next = 0;
   for (size_t i = 0; i < std::size(points); ++i) {
     next = (next + 2) % std::size(points);
-    WriteLine(csAP, points[next]);
+    // TODO(crbug.com/pdfium/2155): resolve safety issues.
+    WriteLine(csAP, UNSAFE_BUFFERS(points[next]));
   }
 
   return ByteString(csAP);
