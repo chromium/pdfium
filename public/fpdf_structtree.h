@@ -350,7 +350,8 @@ FPDF_StructElement_Attr_GetName(FPDF_STRUCTELEMENT_ATTR struct_attribute,
 //          name               - The attribute name.
 // Return value:
 //          Returns the type of the value, or FPDF_OBJECT_UNKNOWN in case of
-//          failure.
+//          failure. Note that this will never return FPDF_OBJECT_REFERENCE, as
+//          references are always dereferenced.
 FPDF_EXPORT FPDF_OBJECT_TYPE FPDF_CALLCONV
 FPDF_StructElement_Attr_GetType(FPDF_STRUCTELEMENT_ATTR struct_attribute,
                                 FPDF_BYTESTRING name);

@@ -760,7 +760,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAttributes) {
           EXPECT_EQ(8U, out_len);
           EXPECT_STREQ("RowSpan", buffer);
 
-          EXPECT_EQ(FPDF_OBJECT_REFERENCE,
+          EXPECT_EQ(FPDF_OBJECT_NUMBER,
                     FPDF_StructElement_Attr_GetType(attr, buffer));
           float val;
           ASSERT_TRUE(

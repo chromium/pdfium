@@ -366,7 +366,7 @@ FPDF_StructElement_Attr_GetType(FPDF_STRUCTELEMENT_ATTR struct_attribute,
   if (!dict)
     return FPDF_OBJECT_UNKNOWN;
 
-  RetainPtr<const CPDF_Object> obj = dict->GetObjectFor(name);
+  RetainPtr<const CPDF_Object> obj = dict->GetDirectObjectFor(name);
   return obj ? obj->GetType() : FPDF_OBJECT_UNKNOWN;
 }
 
@@ -382,7 +382,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_StructElement_Attr_GetBooleanValue(
   if (!dict)
     return false;
 
-  RetainPtr<const CPDF_Object> obj = dict->GetObjectFor(name);
+  RetainPtr<const CPDF_Object> obj = dict->GetDirectObjectFor(name);
   if (!obj || !obj->IsBoolean())
     return false;
 
@@ -424,7 +424,7 @@ FPDF_StructElement_Attr_GetStringValue(FPDF_STRUCTELEMENT_ATTR struct_attribute,
   if (!dict)
     return false;
 
-  RetainPtr<const CPDF_Object> obj = dict->GetObjectFor(name);
+  RetainPtr<const CPDF_Object> obj = dict->GetDirectObjectFor(name);
   if (!obj || !(obj->IsString() || obj->IsName()))
     return false;
 
@@ -449,7 +449,7 @@ FPDF_StructElement_Attr_GetBlobValue(FPDF_STRUCTELEMENT_ATTR struct_attribute,
   if (!dict)
     return false;
 
-  RetainPtr<const CPDF_Object> obj = dict->GetObjectFor(name);
+  RetainPtr<const CPDF_Object> obj = dict->GetDirectObjectFor(name);
   if (!obj || !obj->IsString())
     return false;
 
