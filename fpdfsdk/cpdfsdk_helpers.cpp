@@ -223,15 +223,26 @@ CPDFSDK_InteractiveForm* FormHandleToInteractiveForm(FPDF_FORMHANDLE hHandle) {
 }
 
 ByteString ByteStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
-  return WideStringFromFPDFWideString(wide_string).ToUTF8();
+  // SAFETY: caller ensures `wide_string` is NUL-terminated and enforced
+  // by UNSAFE_BUFFER_USAGE in header file.
+  return UNSAFE_BUFFERS(WideStringFromFPDFWideString(wide_string).ToUTF8());
 }
 
-// TOOO(tsepez): should be UNSAFE_BUFFER_USAGE.
 WideString WideStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
-  // SAFETY: caller ensures `wide_string` is NUL-terminated.
+  // SAFETY: caller ensures `wide_string` is NUL-terminated and enforced
+  // by UNSAFE_BUFFER_USAGE in header file.
   return WideString::FromUTF16LE(UNSAFE_BUFFERS(
       pdfium::make_span(reinterpret_cast<const uint8_t*>(wide_string),
                         FPDFWideStringLength(wide_string) * 2)));
+}
+
+pdfium::span<char> SpanFromFPDFApiArgs(void* buffer, unsigned long buflen) {
+  if (!buffer) {
+    // API convention is to ignore `buflen` arg when `buffer` is NULL.
+    return pdfium::span<char>();
+  }
+  // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE in header.
+  return UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), buflen));
 }
 
 #ifdef PDF_ENABLE_XFA
@@ -301,32 +312,20 @@ FS_MATRIX FSMatrixFromCFXMatrix(const CFX_Matrix& matrix) {
   return {matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f};
 }
 
-unsigned long NulTerminateMaybeCopyAndReturnLength(const ByteString& text,
-                                                   void* buffer,
-                                                   unsigned long buflen) {
+unsigned long NulTerminateMaybeCopyAndReturnLength(
+    const ByteString& text,
+    pdfium::span<char> result_span) {
   pdfium::span<const char> text_span = text.span_with_terminator();
-  if (buffer) {
-    // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE on
-    // declaration in header file.
-    pdfium::span<char> result_span =
-        UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), buflen));
-    fxcrt::try_spancpy(result_span, text_span);
-  }
+  fxcrt::try_spancpy(result_span, text_span);
   return pdfium::checked_cast<unsigned long>(text_span.size());
 }
 
-unsigned long Utf16EncodeMaybeCopyAndReturnLength(const WideString& text,
-                                                  void* buffer,
-                                                  unsigned long buflen) {
+unsigned long Utf16EncodeMaybeCopyAndReturnLength(
+    const WideString& text,
+    pdfium::span<char> result_span) {
   ByteString encoded_text = text.ToUTF16LE();
   pdfium::span<const char> encoded_text_span = encoded_text.span();
-  if (buffer) {
-    // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE on
-    // declaration in header file.
-    pdfium::span<char> result_span =
-        UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), buflen));
-    fxcrt::try_spancpy(result_span, encoded_text_span);
-  }
+  fxcrt::try_spancpy(result_span, encoded_text_span);
   return pdfium::checked_cast<unsigned long>(encoded_text_span.size());
 }
 

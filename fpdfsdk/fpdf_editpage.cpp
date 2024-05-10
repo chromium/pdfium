@@ -368,9 +368,9 @@ FPDFPageObjMark_GetName(FPDF_PAGEOBJECTMARK mark,
     return false;
   }
   // SAFETY: required from caller.
-  *out_buflen = UNSAFE_BUFFERS(Utf16EncodeMaybeCopyAndReturnLength(
-      WideString::FromUTF8(pMarkItem->GetName().AsStringView()), buffer,
-      buflen));
+  *out_buflen = Utf16EncodeMaybeCopyAndReturnLength(
+      WideString::FromUTF8(pMarkItem->GetName().AsStringView()),
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
   return true;
 }
 
@@ -402,8 +402,9 @@ FPDFPageObjMark_GetParamKey(FPDF_PAGEOBJECTMARK mark,
   for (auto& it : locker) {
     if (index == 0) {
       // SAFETY: required from caller.
-      *out_buflen = UNSAFE_BUFFERS(Utf16EncodeMaybeCopyAndReturnLength(
-          WideString::FromUTF8(it.first.AsStringView()), buffer, buflen));
+      *out_buflen = Utf16EncodeMaybeCopyAndReturnLength(
+          WideString::FromUTF8(it.first.AsStringView()),
+          UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
       return true;
     }
     --index;
@@ -460,8 +461,9 @@ FPDFPageObjMark_GetParamStringValue(FPDF_PAGEOBJECTMARK mark,
     return false;
 
   // SAFETY: required from caller.
-  *out_buflen = UNSAFE_BUFFERS(Utf16EncodeMaybeCopyAndReturnLength(
-      WideString::FromUTF8(pObj->GetString().AsStringView()), buffer, buflen));
+  *out_buflen = Utf16EncodeMaybeCopyAndReturnLength(
+      WideString::FromUTF8(pObj->GetString().AsStringView()),
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
   return true;
 }
 
@@ -482,13 +484,10 @@ FPDFPageObjMark_GetParamBlobValue(FPDF_PAGEOBJECTMARK mark,
   if (!pObj || !pObj->IsString())
     return false;
 
+  // SAFETY: required from caller.
+  auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
   ByteString value = pObj->GetString();
-  if (buffer) {
-    // SAFETY: required from caller.
-    pdfium::span<char> result_span =
-        UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), buflen));
-    fxcrt::try_spancpy(result_span, value.span());
-  }
+  fxcrt::try_spancpy(result_span, value.span());
   *out_buflen = pdfium::checked_cast<unsigned long>(value.span().size());
   return true;
 }

@@ -78,8 +78,8 @@ FPDFJavaScriptAction_GetName(FPDF_JAVASCRIPT_ACTION javascript,
     return 0;
   }
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(
-      Utf16EncodeMaybeCopyAndReturnLength(js->name, buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      js->name, UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -92,6 +92,6 @@ FPDFJavaScriptAction_GetScript(FPDF_JAVASCRIPT_ACTION javascript,
     return 0;
   }
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(
-      Utf16EncodeMaybeCopyAndReturnLength(js->script, buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      js->script, UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }

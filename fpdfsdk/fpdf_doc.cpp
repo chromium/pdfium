@@ -116,8 +116,8 @@ FPDFBookmark_GetTitle(FPDF_BOOKMARK bookmark,
       pdfium::WrapRetain(CPDFDictionaryFromFPDFBookmark(bookmark)));
   WideString title = cBookmark.GetTitle();
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(
-      Utf16EncodeMaybeCopyAndReturnLength(title, buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      title, UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFBookmark_GetCount(FPDF_BOOKMARK bookmark) {
@@ -134,7 +134,8 @@ FPDFBookmark_Find(FPDF_DOCUMENT document, FPDF_WIDESTRING title) {
   if (!pDoc)
     return nullptr;
 
-  WideString encodedTitle = WideStringFromFPDFWideString(title);
+  // SAFETY: required from caller.
+  WideString encodedTitle = UNSAFE_BUFFERS(WideStringFromFPDFWideString(title));
   if (encodedTitle.IsEmpty())
     return nullptr;
 
@@ -222,8 +223,8 @@ FPDFAction_GetFilePath(FPDF_ACTION action, void* buffer, unsigned long buflen) {
   CPDF_Action cAction(pdfium::WrapRetain(CPDFDictionaryFromFPDFAction(action)));
   ByteString path = cAction.GetFilePath().ToUTF8();
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(
-      NulTerminateMaybeCopyAndReturnLength(path, buffer, buflen));
+  return NulTerminateMaybeCopyAndReturnLength(
+      path, UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -239,14 +240,11 @@ FPDFAction_GetURIPath(FPDF_DOCUMENT document,
   if (type != PDFACTION_URI) {
     return 0;
   }
+  // SAFETY: required from caller.
+  auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
   CPDF_Action cAction(pdfium::WrapRetain(CPDFDictionaryFromFPDFAction(action)));
   ByteString path = cAction.GetURI(pDoc);
-  if (buffer) {
-    // SAFETY: required from caller.
-    pdfium::span<char> result_span =
-        UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), buflen));
-    fxcrt::try_spancpy(result_span, path.span_with_terminator());
-  }
+  fxcrt::try_spancpy(result_span, path.span_with_terminator());
   return static_cast<unsigned long>(path.span_with_terminator().size());
 }
 
@@ -490,8 +488,8 @@ FPDF_GetFileIdentifier(FPDF_DOCUMENT document,
     return 0;
 
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(NulTerminateMaybeCopyAndReturnLength(
-      pValue->GetString(), buffer, buflen));
+  return NulTerminateMaybeCopyAndReturnLength(
+      pValue->GetString(), UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetMetaText(FPDF_DOCUMENT document,
@@ -508,11 +506,10 @@ FPDF_EXPORT unsigned long FPDF_CALLCONV FPDF_GetMetaText(FPDF_DOCUMENT document,
   if (!pInfo)
     return 0;
 
-  WideString text = pInfo->GetUnicodeTextFor(tag);
-
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(
-      Utf16EncodeMaybeCopyAndReturnLength(text, buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      pInfo->GetUnicodeTextFor(tag),
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -530,6 +527,6 @@ FPDF_GetPageLabel(FPDF_DOCUMENT document,
     return 0;
   }
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(
-      Utf16EncodeMaybeCopyAndReturnLength(str.value(), buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      str.value(), UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }

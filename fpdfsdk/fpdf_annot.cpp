@@ -1012,8 +1012,9 @@ FPDFAnnot_SetStringValue(FPDF_ANNOTATION annot,
   if (!pAnnotDict)
     return false;
 
+  // SAFETY: required from caller.
   pAnnotDict->SetNewFor<CPDF_String>(
-      key, WideStringFromFPDFWideString(value).AsStringView());
+      key, UNSAFE_BUFFERS(WideStringFromFPDFWideString(value).AsStringView()));
   return true;
 }
 
@@ -1027,8 +1028,9 @@ FPDFAnnot_GetStringValue(FPDF_ANNOTATION annot,
     return 0;
   }
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(Utf16EncodeMaybeCopyAndReturnLength(
-      pAnnotDict->GetUnicodeTextFor(key), buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      pAnnotDict->GetUnicodeTextFor(key),
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -1114,10 +1116,10 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
     stream_dict->SetFor("Resources", SetExtGStateInResourceDict(
                                          pDoc, pAnnotDict.Get(), "Normal"));
   }
-
+  // SAFETY: required from caller.
+  ByteString new_stream_data = PDF_EncodeText(
+      UNSAFE_BUFFERS(WideStringFromFPDFWideString(value).AsStringView()));
   auto new_stream = pDoc->NewIndirect<CPDF_Stream>(std::move(stream_dict));
-  ByteString new_stream_data =
-      PDF_EncodeText(WideStringFromFPDFWideString(value).AsStringView());
   new_stream->SetData(new_stream_data.unsigned_span());
 
   // Storing reference to indirect object in annotation's AP
@@ -1147,8 +1149,9 @@ FPDFAnnot_GetAP(FPDF_ANNOTATION annot,
 
   RetainPtr<CPDF_Stream> pStream = GetAnnotAPNoFallback(pAnnotDict.Get(), mode);
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(Utf16EncodeMaybeCopyAndReturnLength(
-      pStream ? pStream->GetUnicodeText() : WideString(), buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      pStream ? pStream->GetUnicodeText() : WideString(),
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT FPDF_ANNOTATION FPDF_CALLCONV
@@ -1226,8 +1229,9 @@ FPDFAnnot_GetFormFieldName(FPDF_FORMHANDLE hHandle,
     return 0;
   }
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(Utf16EncodeMaybeCopyAndReturnLength(
-      pFormField->GetFullName(), buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      pFormField->GetFullName(),
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT int FPDF_CALLCONV
@@ -1255,8 +1259,9 @@ FPDFAnnot_GetFormAdditionalActionJavaScript(FPDF_FORMHANDLE hHandle,
   CPDF_AAction additional_action = pFormField->GetAdditionalAction();
   CPDF_Action action = additional_action.GetAction(type);
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(Utf16EncodeMaybeCopyAndReturnLength(
-      action.GetJavaScript(), buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      action.GetJavaScript(),
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -1269,8 +1274,9 @@ FPDFAnnot_GetFormFieldAlternateName(FPDF_FORMHANDLE hHandle,
     return 0;
   }
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(Utf16EncodeMaybeCopyAndReturnLength(
-      pFormField->GetAlternateName(), buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      pFormField->GetAlternateName(),
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -1283,8 +1289,9 @@ FPDFAnnot_GetFormFieldValue(FPDF_FORMHANDLE hHandle,
     return 0;
   }
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(Utf16EncodeMaybeCopyAndReturnLength(
-      pFormField->GetValue(), buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      pFormField->GetValue(),
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_GetOptionCount(FPDF_FORMHANDLE hHandle,
@@ -1306,10 +1313,10 @@ FPDFAnnot_GetOptionLabel(FPDF_FORMHANDLE hHandle,
   if (!pFormField || index >= pFormField->CountOptions())
     return 0;
 
-  WideString ws = pFormField->GetOptionLabel(index);
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(
-      Utf16EncodeMaybeCopyAndReturnLength(ws, buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      pFormField->GetOptionLabel(index),
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -1474,8 +1481,9 @@ FPDFAnnot_GetFormFieldExportValue(FPDF_FORMHANDLE hHandle,
     return 0;
   }
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(Utf16EncodeMaybeCopyAndReturnLength(
-      pWidget->GetExportValue(), buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      pWidget->GetExportValue(),
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetURI(FPDF_ANNOTATION annot,
@@ -1524,7 +1532,8 @@ FPDFAnnot_AddFileAttachment(FPDF_ANNOTATION annot, FPDF_WIDESTRING name) {
     return nullptr;
   }
 
-  WideString ws_name = WideStringFromFPDFWideString(name);
+  // SAFETY: required from caller.
+  WideString ws_name = UNSAFE_BUFFERS(WideStringFromFPDFWideString(name));
   if (ws_name.IsEmpty()) {
     return nullptr;
   }

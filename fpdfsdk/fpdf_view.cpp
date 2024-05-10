@@ -1107,8 +1107,8 @@ FPDF_VIEWERREF_GetName(FPDF_DOCUMENT document,
     return 0;
   }
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(
-      NulTerminateMaybeCopyAndReturnLength(bsVal.value(), buffer, length));
+  return NulTerminateMaybeCopyAndReturnLength(
+      bsVal.value(), UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, length)));
 }
 
 FPDF_EXPORT FPDF_DWORD FPDF_CALLCONV
@@ -1314,8 +1314,9 @@ FPDF_GetXFAPacketName(FPDF_DOCUMENT document,
     return 0;
   }
   // TODO(crbug.com/pdfium/2155): resolve safety issues.
-  return UNSAFE_BUFFERS(NulTerminateMaybeCopyAndReturnLength(
-      xfa_packets[index].name, buffer, buflen));
+  return NulTerminateMaybeCopyAndReturnLength(
+      UNSAFE_BUFFERS(xfa_packets[index].name),
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

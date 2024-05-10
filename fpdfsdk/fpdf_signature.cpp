@@ -85,13 +85,10 @@ FPDFSignatureObj_GetContents(FPDF_SIGNATURE signature,
   if (!value_dict) {
     return 0;
   }
+  // SAFETY: required from caller.
+  auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, length));
   ByteString contents = value_dict->GetByteStringFor("Contents");
-  if (buffer) {
-    // SAFETY: required from caller.
-    pdfium::span<char> result_span =
-        UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), length));
-    fxcrt::try_spancpy(result_span, contents.span());
-  }
+  fxcrt::try_spancpy(result_span, contents.span());
   return pdfium::checked_cast<unsigned long>(contents.span().size());
 }
 
@@ -141,8 +138,8 @@ FPDFSignatureObj_GetSubFilter(FPDF_SIGNATURE signature,
   ByteString sub_filter = value_dict->GetNameFor("SubFilter");
 
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(
-      NulTerminateMaybeCopyAndReturnLength(sub_filter, buffer, length));
+  return NulTerminateMaybeCopyAndReturnLength(
+      sub_filter, UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, length)));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -164,8 +161,9 @@ FPDFSignatureObj_GetReason(FPDF_SIGNATURE signature,
     return 0;
 
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(Utf16EncodeMaybeCopyAndReturnLength(
-      obj->GetUnicodeText(), buffer, length));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      obj->GetUnicodeText(),
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, length)));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -187,8 +185,8 @@ FPDFSignatureObj_GetTime(FPDF_SIGNATURE signature,
     return 0;
 
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(
-      NulTerminateMaybeCopyAndReturnLength(obj->GetString(), buffer, length));
+  return NulTerminateMaybeCopyAndReturnLength(
+      obj->GetString(), UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, length)));
 }
 
 FPDF_EXPORT unsigned int FPDF_CALLCONV

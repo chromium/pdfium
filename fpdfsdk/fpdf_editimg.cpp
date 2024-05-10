@@ -421,8 +421,8 @@ FPDFImageObj_GetImageFilter(FPDF_PAGEOBJECT image_object,
                             : pFilter->AsArray()->GetByteStringAt(index);
 
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(
-      NulTerminateMaybeCopyAndReturnLength(bsFilter, buffer, buflen));
+  return NulTerminateMaybeCopyAndReturnLength(
+      bsFilter, UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

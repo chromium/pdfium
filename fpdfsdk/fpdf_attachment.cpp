@@ -76,7 +76,8 @@ FPDFDoc_AddAttachment(FPDF_DOCUMENT document, FPDF_WIDESTRING name) {
   if (!pDoc)
     return nullptr;
 
-  WideString wsName = WideStringFromFPDFWideString(name);
+  // SAFETY: required from caller.
+  WideString wsName = UNSAFE_BUFFERS(WideStringFromFPDFWideString(name));
   if (wsName.IsEmpty())
     return nullptr;
 
@@ -139,8 +140,8 @@ FPDFAttachment_GetName(FPDF_ATTACHMENT attachment,
 
   CPDF_FileSpec spec(pdfium::WrapRetain(pFile));
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(
-      Utf16EncodeMaybeCopyAndReturnLength(spec.GetFileName(), buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      spec.GetFileName(), UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -178,12 +179,13 @@ FPDFAttachment_SetStringValue(FPDF_ATTACHMENT attachment,
   if (!pParamsDict)
     return false;
 
+  // SAFETY: required from caller.
+  ByteString bsValue = UNSAFE_BUFFERS(ByteStringFromFPDFWideString(value));
   ByteString bsKey = key;
-  ByteString bsValue = ByteStringFromFPDFWideString(value);
   bool bEncodedAsHex = bsKey == kChecksumKey;
-  if (bEncodedAsHex)
+  if (bEncodedAsHex) {
     bsValue = CFXByteStringHexDecode(bsValue);
-
+  }
   pParamsDict->SetNewFor<CPDF_String>(bsKey, bsValue, bEncodedAsHex);
   return true;
 }
@@ -215,8 +217,8 @@ FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
     }
   }
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(
-      Utf16EncodeMaybeCopyAndReturnLength(value, buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      value, UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

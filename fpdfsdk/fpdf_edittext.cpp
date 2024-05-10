@@ -590,10 +590,11 @@ FPDFPageObj_NewTextObj(FPDF_DOCUMENT document,
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFText_SetText(FPDF_PAGEOBJECT text_object, FPDF_WIDESTRING text) {
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text_object);
-  if (!pTextObj)
+  if (!pTextObj) {
     return false;
-
-  WideString encodedText = WideStringFromFPDFWideString(text);
+  }
+  // SAFETY: required from caller.
+  WideString encodedText = UNSAFE_BUFFERS(WideStringFromFPDFWideString(text));
   ByteString byteText;
   for (wchar_t wc : encodedText) {
     pTextObj->GetFont()->AppendChar(
@@ -723,10 +724,10 @@ FPDFTextObj_GetText(FPDF_PAGEOBJECT text_object,
   if (!pTextPage)
     return 0;
 
-  WideString text = pTextPage->GetTextByObject(pTextObj);
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(
-      Utf16EncodeMaybeCopyAndReturnLength(text, buffer, length));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      pTextPage->GetTextByObject(pTextObj),
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, length)));
 }
 
 FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV
@@ -855,14 +856,11 @@ FPDFFont_GetFontName(FPDF_FONT font, char* buffer, unsigned long length) {
   if (!pFont)
     return 0;
 
+  // SAFETY: required from caller.
+  auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, length));
   ByteString name = pFont->GetFont()->GetFamilyName();
   pdfium::span<const char> name_span = name.span_with_terminator();
-  if (buffer) {
-    // SAFETY: required from caller.
-    pdfium::span<char> result_span =
-        UNSAFE_BUFFERS(pdfium::make_span(buffer, length));
-    fxcrt::try_spancpy(result_span, name_span);
-  }
+  fxcrt::try_spancpy(result_span, name_span);
   return static_cast<unsigned long>(name_span.size());
 }
 
@@ -874,13 +872,11 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetFontData(FPDF_FONT font,
   if (!cfont || !out_buflen)
     return false;
 
+  // SAFETY: required from caller.
+  auto result_span = UNSAFE_BUFFERS(
+      SpanFromFPDFApiArgs(buffer, pdfium::checked_cast<unsigned long>(buflen)));
   pdfium::span<const uint8_t> data = cfont->GetFont()->GetFontSpan();
-  if (buffer) {
-    // SAFETY: required from caller.
-    pdfium::span<uint8_t> result_span =
-        UNSAFE_BUFFERS(pdfium::make_span(buffer, buflen));
-    fxcrt::try_spancpy(result_span, data);
-  }
+  fxcrt::try_spancpy(result_span, data);
   *out_buflen = data.size();
   return true;
 }

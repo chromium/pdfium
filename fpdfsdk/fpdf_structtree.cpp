@@ -27,8 +27,8 @@ UNSAFE_BUFFER_USAGE unsigned long WideStringToBuffer(const WideString& str,
     return 0;
   }
   // SAFETY: required from caller and enforced by UNSAFE_BUFFER_USAGE.
-  return UNSAFE_BUFFERS(
-      Utf16EncodeMaybeCopyAndReturnLength(str, buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      str, UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 int GetMcidFromDict(const CPDF_Dictionary* dict) {
@@ -122,8 +122,8 @@ FPDF_StructElement_GetID(FPDF_STRUCTELEMENT struct_element,
     return 0;
   }
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(
-      Utf16EncodeMaybeCopyAndReturnLength(id.value(), buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      id.value(), UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
@@ -140,8 +140,8 @@ FPDF_StructElement_GetLang(FPDF_STRUCTELEMENT struct_element,
     return 0;
   }
   // SAFETY: required from caller.
-  return UNSAFE_BUFFERS(
-      Utf16EncodeMaybeCopyAndReturnLength(lang.value(), buffer, buflen));
+  return Utf16EncodeMaybeCopyAndReturnLength(
+      lang.value(), UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT int FPDF_CALLCONV
@@ -218,8 +218,9 @@ FPDF_StructElement_GetStringAttribute(FPDF_STRUCTELEMENT struct_element,
       continue;
     }
     // SAFETY: required from caller.
-    return UNSAFE_BUFFERS(Utf16EncodeMaybeCopyAndReturnLength(
-        attr->GetUnicodeText(), buffer, buflen));
+    return Utf16EncodeMaybeCopyAndReturnLength(
+        attr->GetUnicodeText(),
+        UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
   }
   return 0;
 }
@@ -348,8 +349,8 @@ FPDF_StructElement_Attr_GetName(FPDF_STRUCTELEMENT_ATTR struct_attribute,
   for (auto& it : locker) {
     if (index == 0) {
       // SAFETY: required from caller.
-      *out_buflen = UNSAFE_BUFFERS(
-          NulTerminateMaybeCopyAndReturnLength(it.first, buffer, buflen));
+      *out_buflen = NulTerminateMaybeCopyAndReturnLength(
+          it.first, UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
       return true;
     }
     --index;
@@ -428,8 +429,9 @@ FPDF_StructElement_Attr_GetStringValue(FPDF_STRUCTELEMENT_ATTR struct_attribute,
     return false;
 
   // SAFETY: required from caller.
-  *out_buflen = UNSAFE_BUFFERS(Utf16EncodeMaybeCopyAndReturnLength(
-      WideString::FromUTF8(obj->GetString().AsStringView()), buffer, buflen));
+  *out_buflen = Utf16EncodeMaybeCopyAndReturnLength(
+      WideString::FromUTF8(obj->GetString().AsStringView()),
+      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
   return true;
 }
 
@@ -451,13 +453,10 @@ FPDF_StructElement_Attr_GetBlobValue(FPDF_STRUCTELEMENT_ATTR struct_attribute,
   if (!obj || !obj->IsString())
     return false;
 
+  // SAFETY: required from caller.
+  auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
   ByteString blob_value = obj->GetString();
-  if (buffer) {
-    // SAFETY: required from caller.
-    pdfium::span<char> result_span =
-        UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), buflen));
-    fxcrt::try_spancpy(result_span, blob_value.span());
-  }
+  fxcrt::try_spancpy(result_span, blob_value.span());
   *out_buflen = pdfium::checked_cast<unsigned long>(blob_value.span().size());
   return true;
 }

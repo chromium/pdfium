@@ -132,14 +132,11 @@ FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
   if (flags)
     *flags = font->GetFontFlags();
 
+  // SAFETY: required from caller.
+  auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
   ByteString basefont = font->GetBaseFontName();
   auto basefont_span = basefont.span_with_terminator();
-  if (buffer) {
-    // SAFETY: required from caller.
-    pdfium::span<char> result_span =
-        UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), buflen));
-    fxcrt::try_spancpy(result_span, basefont_span);
-  }
+  fxcrt::try_spancpy(result_span, basefont_span);
   return pdfium::checked_cast<unsigned long>(basefont_span.size());
 }
 
@@ -424,8 +421,10 @@ FPDFText_FindStart(FPDF_TEXTPAGE text_page,
   options.bMatchCase = !!(flags & FPDF_MATCHCASE);
   options.bMatchWholeWord = !!(flags & FPDF_MATCHWHOLEWORD);
   options.bConsecutive = !!(flags & FPDF_CONSECUTIVE);
+
+  // SAFETY: required from caller.
   auto find = CPDF_TextPageFind::Create(
-      textpage, WideStringFromFPDFWideString(findwhat), options,
+      textpage, UNSAFE_BUFFERS(WideStringFromFPDFWideString(findwhat)), options,
       start_index >= 0 ? std::optional<size_t>(start_index) : std::nullopt);
 
   // Caller takes ownership.
