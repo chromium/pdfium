@@ -4,13 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfdoc/cpdf_action.h"
 
+#include <array>
 #include <iterator>
 #include <utility>
 
@@ -24,11 +20,26 @@
 
 namespace {
 
-const char* const kActionTypeStrings[] = {
-    "GoTo",       "GoToR",     "GoToE",      "Launch",     "Thread",
-    "URI",        "Sound",     "Movie",      "Hide",       "Named",
-    "SubmitForm", "ResetForm", "ImportData", "JavaScript", "SetOCGState",
-    "Rendition",  "Trans",     "GoTo3DView"};
+const std::array<const char*, 18> kActionTypeStrings = {{
+    "GoTo",
+    "GoToR",
+    "GoToE",
+    "Launch",
+    "Thread",
+    "URI",
+    "Sound",
+    "Movie",
+    "Hide",
+    "Named",
+    "SubmitForm",
+    "ResetForm",
+    "ImportData",
+    "JavaScript",
+    "SetOCGState",
+    "Rendition",
+    "Trans",
+    "GoTo3DView",
+}};
 
 }  // namespace
 
