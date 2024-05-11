@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 
 #include <wchar.h>
@@ -391,8 +386,8 @@ bool CXFA_LocaleValue::ValidateCanonicalValue(const WideString& wsValue,
 
 bool CXFA_LocaleValue::ValidateCanonicalDate(const WideString& wsDate,
                                              CFX_DateTime* unDate) {
-  static const uint8_t LastDay[12] = {31, 28, 31, 30, 31, 30,
-                                      31, 31, 30, 31, 30, 31};
+  static const std::array<const uint8_t, 12> LastDay = {
+      {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}};
   static const uint16_t wCountY = 4;
   static const uint16_t wCountM = 2;
   static const uint16_t wCountD = 2;
