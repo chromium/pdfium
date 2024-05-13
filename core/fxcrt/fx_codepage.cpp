@@ -204,7 +204,7 @@ const FX_CHARSET_MAP kFXCharset2CodePageTable[] = {
 
 }  // namespace
 
-const FX_CharsetUnicodes kFX_CharsetUnicodes[8] = {
+const std::array<FX_CharsetUnicodes, 8> kFX_CharsetUnicodes = {{
     {FX_Charset::kThai, kFX_MSDOSThaiUnicodes},
     {FX_Charset::kMSWin_EasternEuropean, kFX_MSWinEasternEuropeanUnicodes},
     {FX_Charset::kMSWin_Cyrillic, kFX_MSWinCyrillicUnicodes},
@@ -213,7 +213,7 @@ const FX_CharsetUnicodes kFX_CharsetUnicodes[8] = {
     {FX_Charset::kMSWin_Hebrew, kFX_MSWinHebrewUnicodes},
     {FX_Charset::kMSWin_Arabic, kFX_MSWinArabicUnicodes},
     {FX_Charset::kMSWin_Baltic, kFX_MSWinBalticUnicodes},
-};
+}};
 
 FX_CodePage FX_GetACP() {
 #if BUILDFLAG(IS_WIN)

@@ -9,11 +9,12 @@
 
 #include <stdint.h>
 
+#include <array>
+
 // Prove consistency with incomplete forward definitions.
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/span.h"
-#include "core/fxcrt/unowned_ptr_exclusion.h"
 
 enum class FX_CodePage : uint16_t {
   kDefANSI = 0,
@@ -104,10 +105,10 @@ enum class FX_Charset : uint8_t {
 // Hi-bytes to unicode codepoint mapping for various code pages.
 struct FX_CharsetUnicodes {
   FX_Charset m_Charset;
-  UNOWNED_PTR_EXCLUSION const uint16_t* m_pUnicodes;  // POD struct.
+  pdfium::span<const uint16_t> m_pUnicodes;
 };
 
-extern const FX_CharsetUnicodes kFX_CharsetUnicodes[8];
+extern const std::array<FX_CharsetUnicodes, 8> kFX_CharsetUnicodes;
 
 FX_CodePage FX_GetACP();
 FX_CodePage FX_GetCodePageFromCharset(FX_Charset charset);
