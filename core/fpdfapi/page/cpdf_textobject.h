@@ -17,6 +17,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 
 class CPDF_TextObject final : public CPDF_PageObject {
  public:
@@ -70,9 +71,9 @@ class CPDF_TextObject final : public CPDF_PageObject {
   // Caller is expected to call SetDirty(true) when done changing the object.
   void SetTextMatrix(const CFX_Matrix& matrix);
 
-  void SetSegments(const ByteString* pStrs,
-                   const std::vector<float>& kernings,
-                   size_t nSegs);
+  void SetSegments(pdfium::span<const ByteString> strings,
+                   pdfium::span<const float> kernings);
+
   CFX_PointF CalcPositionData(float horz_scale);
 
  private:

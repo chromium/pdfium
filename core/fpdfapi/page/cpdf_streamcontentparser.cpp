@@ -1244,24 +1244,26 @@ RetainPtr<CPDF_ShadingPattern> CPDF_StreamContentParser::FindShading(
       ->GetShading(std::move(pPattern), m_pCurStates->parent_matrix());
 }
 
-void CPDF_StreamContentParser::AddTextObject(const ByteString* pStrs,
-                                             float fInitKerning,
-                                             const std::vector<float>& kernings,
-                                             size_t nSegs) {
+void CPDF_StreamContentParser::AddTextObject(
+    pdfium::span<const ByteString> strings,
+    pdfium::span<const float> kernings,
+    float initial_kerning) {
   RetainPtr<CPDF_Font> pFont = m_pCurStates->text_state().GetFont();
-  if (!pFont)
+  if (!pFont) {
     return;
-
-  if (fInitKerning != 0) {
-    if (pFont->IsVertWriting())
-      m_pCurStates->IncrementTextPositionY(-GetVerticalTextSize(fInitKerning));
-    else
-      m_pCurStates->IncrementTextPositionX(
-          -GetHorizontalTextSize(fInitKerning));
   }
-  if (nSegs == 0)
+  if (initial_kerning != 0) {
+    if (pFont->IsVertWriting()) {
+      m_pCurStates->IncrementTextPositionY(
+          -GetVerticalTextSize(initial_kerning));
+    } else {
+      m_pCurStates->IncrementTextPositionX(
+          -GetHorizontalTextSize(initial_kerning));
+    }
+  }
+  if (strings.empty()) {
     return;
-
+  }
   const TextRenderingMode text_mode =
       pFont->IsType3Font() ? TextRenderingMode::MODE_FILL
                            : m_pCurStates->text_state().GetTextMode();
@@ -1278,7 +1280,7 @@ void CPDF_StreamContentParser::AddTextObject(const ByteString* pStrs,
       text_ctm[2] = ctm.b;
       text_ctm[3] = ctm.d;
     }
-    pText->SetSegments(pStrs, kernings, nSegs);
+    pText->SetSegments(strings, kernings);
     pText->SetPosition(m_mtContentToUser.Transform(
         m_pCurStates->GetTransformedTextPosition()));
 
@@ -1290,13 +1292,13 @@ void CPDF_StreamContentParser::AddTextObject(const ByteString* pStrs,
       m_ClipTextList.push_back(pText->Clone());
     m_pObjectHolder->AppendPageObject(std::move(pText));
   }
-  if (!kernings.empty() && kernings[nSegs - 1] != 0) {
+  if (!kernings.empty() && kernings.back() != 0) {
     if (pFont->IsVertWriting())
       m_pCurStates->IncrementTextPositionY(
-          -GetVerticalTextSize(kernings[nSegs - 1]));
+          -GetVerticalTextSize(kernings.back()));
     else
       m_pCurStates->IncrementTextPositionX(
-          -GetHorizontalTextSize(kernings[nSegs - 1]));
+          -GetHorizontalTextSize(kernings.back()));
   }
 }
 
@@ -1317,8 +1319,9 @@ int32_t CPDF_StreamContentParser::GetCurrentStreamIndex() {
 
 void CPDF_StreamContentParser::Handle_ShowText() {
   ByteString str = GetString(0);
-  if (!str.IsEmpty())
-    AddTextObject(&str, 0, std::vector<float>(), 1);
+  if (!str.IsEmpty()) {
+    AddTextObject(pdfium::span_from_ref(str), pdfium::span<float>(), 0.0f);
+  }
 }
 
 void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
@@ -1364,7 +1367,8 @@ void CPDF_StreamContentParser::Handle_ShowText_Positioning() {
         kernings[iSegment - 1] += num;
     }
   }
-  AddTextObject(strs.data(), fInitKerning, kernings, iSegment);
+  AddTextObject(pdfium::make_span(strs).first(iSegment), kernings,
+                fInitKerning);
 }
 
 void CPDF_StreamContentParser::Handle_SetTextLeading() {
