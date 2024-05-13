@@ -49,16 +49,6 @@ constexpr FX_CodePage kCharsetCodePages[CIDSET_NUM_SETS] = {
     FX_CodePage::kHangul,
     FX_CodePage::kUTF16LE};
 
-struct CIDTransform {
-  uint16_t cid;
-  uint8_t a;
-  uint8_t b;
-  uint8_t c;
-  uint8_t d;
-  uint8_t e;
-  uint8_t f;
-};
-
 constexpr CIDTransform kJapan1VerticalCIDs[] = {
     {97, 129, 0, 0, 127, 55, 0},     {7887, 127, 0, 0, 127, 76, 89},
     {7888, 127, 0, 0, 127, 79, 94},  {7889, 0, 129, 127, 0, 17, 127},
@@ -527,14 +517,14 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
   }
   if (!m_pFontFile && m_Charset == CIDSET_JAPAN1) {
     uint16_t cid = CIDFromCharCode(charcode);
-    const uint8_t* pTransform = GetCIDTransform(cid);
+    const CIDTransform* pTransform = GetCIDTransform(cid);
     if (pTransform && !bVert) {
-      CFX_Matrix matrix(CIDTransformToFloat(pTransform[0]),
-                        CIDTransformToFloat(pTransform[1]),
-                        CIDTransformToFloat(pTransform[2]),
-                        CIDTransformToFloat(pTransform[3]),
-                        CIDTransformToFloat(pTransform[4]) * 1000,
-                        CIDTransformToFloat(pTransform[5]) * 1000);
+      CFX_Matrix matrix(CIDTransformToFloat(pTransform->a),
+                        CIDTransformToFloat(pTransform->b),
+                        CIDTransformToFloat(pTransform->c),
+                        CIDTransformToFloat(pTransform->d),
+                        CIDTransformToFloat(pTransform->e) * 1000,
+                        CIDTransformToFloat(pTransform->f) * 1000);
       rect = matrix.TransformRect(CFX_FloatRect(rect)).GetOuterRect();
     }
   }
@@ -846,7 +836,7 @@ void CPDF_CIDFont::LoadGB2312() {
   m_bAnsiWidthsFixed = true;
 }
 
-const uint8_t* CPDF_CIDFont::GetCIDTransform(uint16_t cid) const {
+const CIDTransform* CPDF_CIDFont::GetCIDTransform(uint16_t cid) const {
   if (m_Charset != CIDSET_JAPAN1 || m_pFontFile)
     return nullptr;
 
@@ -856,6 +846,5 @@ const uint8_t* CPDF_CIDFont::GetCIDTransform(uint16_t cid) const {
       pBegin, pEnd, cid,
       [](const CIDTransform& entry, uint16_t cid) { return entry.cid < cid; });
 
-  return (pTransform < pEnd && cid == pTransform->cid) ? &pTransform->a
-                                                       : nullptr;
+  return pTransform < pEnd && cid == pTransform->cid ? pTransform : nullptr;
 }

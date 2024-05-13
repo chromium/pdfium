@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/render/charposlist.h"
 
 #include "build/build_config.h"
@@ -179,20 +174,20 @@ std::vector<TextCharPos> GetCharPosList(pdfium::span<const uint32_t> char_codes,
       text_char_pos.m_Origin.y -= font_size * vertical_origin.y / 1000;
     }
 
-    const uint8_t* cid_transform = cid_font->GetCIDTransform(cid);
+    const CIDTransform* cid_transform = cid_font->GetCIDTransform(cid);
     if (cid_transform && !is_vertical_glyph) {
       text_char_pos.m_AdjustMatrix[0] =
-          cid_font->CIDTransformToFloat(cid_transform[0]) * scaling_factor;
+          cid_font->CIDTransformToFloat(cid_transform->a) * scaling_factor;
       text_char_pos.m_AdjustMatrix[1] =
-          cid_font->CIDTransformToFloat(cid_transform[1]) * scaling_factor;
+          cid_font->CIDTransformToFloat(cid_transform->b) * scaling_factor;
       text_char_pos.m_AdjustMatrix[2] =
-          cid_font->CIDTransformToFloat(cid_transform[2]);
+          cid_font->CIDTransformToFloat(cid_transform->c);
       text_char_pos.m_AdjustMatrix[3] =
-          cid_font->CIDTransformToFloat(cid_transform[3]);
+          cid_font->CIDTransformToFloat(cid_transform->d);
       text_char_pos.m_Origin.x +=
-          cid_font->CIDTransformToFloat(cid_transform[4]) * font_size;
+          cid_font->CIDTransformToFloat(cid_transform->e) * font_size;
       text_char_pos.m_Origin.y +=
-          cid_font->CIDTransformToFloat(cid_transform[5]) * font_size;
+          cid_font->CIDTransformToFloat(cid_transform->f) * font_size;
       text_char_pos.m_bGlyphAdjust = true;
     }
   }
