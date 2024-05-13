@@ -8,6 +8,7 @@
 /third_party/abseil-cpp
 /third_party/android_toolchain
 /third_party/catapult
+/third_party/clang-format
 /third_party/cpu_features/src
 /third_party/depot_tools
 /third_party/fp16/src

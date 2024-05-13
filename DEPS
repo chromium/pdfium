@@ -232,11 +232,6 @@ deps = {
     Var('chromium_git') + '/chromium/src/buildtools.git@' +
         Var('buildtools_revision'),
 
-  'buildtools/clang_format/script':
-    Var('chromium_git') +
-        '/external/github.com/llvm/llvm-project/clang/tools/clang-format.git@' +
-        Var('clang_format_revision'),
-
   'buildtools/linux64': {
     'packages': [
       {
@@ -310,6 +305,11 @@ deps = {
     'url': Var('chromium_git') + '/catapult.git@' + Var('catapult_revision'),
     'condition': 'checkout_android',
   },
+
+  'third_party/clang-format/script':
+    Var('chromium_git') +
+        '/external/github.com/llvm/llvm-project/clang/tools/clang-format.git@' +
+        Var('clang_format_revision'),
 
   'third_party/cpu_features/src': {
     'url': Var('chromium_git') +
