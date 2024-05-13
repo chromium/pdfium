@@ -45,58 +45,88 @@ void DumpBoxInfo(GetBoxInfoFunc func,
          rect.left, rect.bottom, rect.right, rect.top);
 }
 
+void DumpStructureElementAttributeValues(
+    FPDF_STRUCTELEMENT_ATTR_VALUE attr_value,
+    const char* name,
+    int indent) {
+  if (!attr_value) {
+    printf("%*s FPDF_StructElement_Attr_GetValue failed for %s\n", indent, "",
+           name);
+    return;
+  }
+
+  FPDF_OBJECT_TYPE type = FPDF_StructElement_Attr_GetType(attr_value);
+  switch (type) {
+    case FPDF_OBJECT_BOOLEAN: {
+      int value;
+      if (FPDF_StructElement_Attr_GetBooleanValue(attr_value, &value)) {
+        printf("%*s %s: %d\n", indent, "", name, value);
+      } else {
+        printf("%*s %s: Failed FPDF_StructElement_Attr_GetBooleanValue\n",
+               indent, "", name);
+      }
+      break;
+    }
+    case FPDF_OBJECT_NUMBER: {
+      float value;
+      if (FPDF_StructElement_Attr_GetNumberValue(attr_value, &value)) {
+        printf("%*s %s: %f\n", indent, "", name, value);
+      } else {
+        printf("%*s %s: Failed FPDF_StructElement_Attr_GetNumberValue\n",
+               indent, "", name);
+      }
+      break;
+    }
+    case FPDF_OBJECT_STRING:
+    case FPDF_OBJECT_NAME: {
+      static const size_t kBufSize = 1024;
+      unsigned short buffer[kBufSize];
+      unsigned long len;
+      if (FPDF_StructElement_Attr_GetStringValue(attr_value, buffer,
+                                                 sizeof(buffer), &len)) {
+        printf("%*s %s: %ls\n", indent, "", name,
+               ConvertToWString(buffer, len).c_str());
+      } else {
+        printf("%*s %s: Failed FPDF_StructElement_Attr_GetStringValue\n",
+               indent, "", name);
+      }
+      break;
+    }
+    case FPDF_OBJECT_ARRAY: {
+      printf("%*s %s:\n", indent, "", name);
+      int count = FPDF_StructElement_Attr_CountChildren(attr_value);
+      for (int i = 0; i < count; ++i) {
+        DumpStructureElementAttributeValues(
+            FPDF_StructElement_Attr_GetChildAtIndex(attr_value, i), name,
+            indent + 2);
+      }
+      break;
+    }
+    case FPDF_OBJECT_UNKNOWN: {
+      printf("%*s %s: FPDF_OBJECT_UNKNOWN\n", indent, "", name);
+      break;
+    }
+    default: {
+      printf("%*s %s: NOT_YET_IMPLEMENTED: %d\n", indent, "", name, type);
+      break;
+    }
+  }
+}
+
 void DumpStructureElementAttributes(FPDF_STRUCTELEMENT_ATTR attr, int indent) {
   static const size_t kBufSize = 1024;
   int count = FPDF_StructElement_Attr_GetCount(attr);
-  for (int i = 0; i < count; i++) {
-    char name[kBufSize] = {};
-    unsigned long len = ULONG_MAX;
+  for (int i = 0; i < count; ++i) {
+    char name[kBufSize];
+    unsigned long len;
     if (!FPDF_StructElement_Attr_GetName(attr, i, name, sizeof(name), &len)) {
       printf("%*s FPDF_StructElement_Attr_GetName failed for %d\n", indent, "",
              i);
       continue;
     }
 
-    FPDF_STRUCTELEMENT_ATTR_VALUE attr_value =
-        FPDF_StructElement_Attr_GetValue(attr, name);
-    if (!attr_value) {
-      printf("%*s FPDF_StructElement_Attr_GetValue failed for %s\n", indent, "",
-             name);
-      continue;
-    }
-
-    FPDF_OBJECT_TYPE type = FPDF_StructElement_Attr_GetType(attr_value);
-    if (type == FPDF_OBJECT_BOOLEAN) {
-      int value;
-      if (!FPDF_StructElement_Attr_GetBooleanValue(attr_value, &value)) {
-        printf("%*s %s: Failed FPDF_StructElement_Attr_GetBooleanValue\n",
-               indent, "", name);
-        continue;
-      }
-      printf("%*s %s: %d\n", indent, "", name, value);
-    } else if (type == FPDF_OBJECT_NUMBER) {
-      float value;
-      if (!FPDF_StructElement_Attr_GetNumberValue(attr_value, &value)) {
-        printf("%*s %s: Failed FPDF_StructElement_Attr_GetNumberValue\n",
-               indent, "", name);
-        continue;
-      }
-      printf("%*s %s: %f\n", indent, "", name, value);
-    } else if (type == FPDF_OBJECT_STRING || type == FPDF_OBJECT_NAME) {
-      unsigned short buffer[kBufSize] = {};
-      if (!FPDF_StructElement_Attr_GetStringValue(attr_value, buffer,
-                                                  sizeof(buffer), &len)) {
-        printf("%*s %s: Failed FPDF_StructElement_Attr_GetStringValue\n",
-               indent, "", name);
-        continue;
-      }
-      printf("%*s %s: %ls\n", indent, "", name,
-             ConvertToWString(buffer, len).c_str());
-    } else if (type == FPDF_OBJECT_UNKNOWN) {
-      printf("%*s %s: FPDF_OBJECT_UNKNOWN\n", indent, "", name);
-    } else {
-      printf("%*s %s: NOT_YET_IMPLEMENTED: %d\n", indent, "", name, type);
-    }
+    DumpStructureElementAttributeValues(
+        FPDF_StructElement_Attr_GetValue(attr, name), name, indent);
   }
 }
 

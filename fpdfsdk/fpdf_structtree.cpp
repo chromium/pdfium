@@ -452,6 +452,28 @@ FPDF_StructElement_Attr_GetBlobValue(FPDF_STRUCTELEMENT_ATTR_VALUE value,
 }
 
 FPDF_EXPORT int FPDF_CALLCONV
+FPDF_StructElement_Attr_CountChildren(FPDF_STRUCTELEMENT_ATTR_VALUE value) {
+  const CPDF_Array* array =
+      ToArray(CPDFObjectFromFPDFStructElementAttrValue(value));
+  return array ? fxcrt::CollectionSize<int>(*array) : -1;
+}
+
+FPDF_EXPORT FPDF_STRUCTELEMENT_ATTR_VALUE FPDF_CALLCONV
+FPDF_StructElement_Attr_GetChildAtIndex(FPDF_STRUCTELEMENT_ATTR_VALUE value,
+                                        int index) {
+  if (index < 0) {
+    return nullptr;
+  }
+
+  const auto* array = ToArray(CPDFObjectFromFPDFStructElementAttrValue(value));
+  if (!array) {
+    return nullptr;
+  }
+
+  return FPDFStructElementAttrValueFromCPDFObject(array->GetObjectAt(index));
+}
+
+FPDF_EXPORT int FPDF_CALLCONV
 FPDF_StructElement_GetMarkedContentIdCount(FPDF_STRUCTELEMENT struct_element) {
   CPDF_StructElement* elem =
       CPDFStructElementFromFPDFStructElement(struct_element);

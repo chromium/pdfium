@@ -365,8 +365,10 @@ int CheckPDFiumCApi() {
     CHK(FPDF_GetSignatureObject);
 
     // fpdf_structtree.h
+    CHK(FPDF_StructElement_Attr_CountChildren);
     CHK(FPDF_StructElement_Attr_GetBlobValue);
     CHK(FPDF_StructElement_Attr_GetBooleanValue);
+    CHK(FPDF_StructElement_Attr_GetChildAtIndex);
     CHK(FPDF_StructElement_Attr_GetCount);
     CHK(FPDF_StructElement_Attr_GetName);
     CHK(FPDF_StructElement_Attr_GetNumberValue);

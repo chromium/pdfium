@@ -56,6 +56,9 @@ FPDF_StructTree_CountChildren(FPDF_STRUCTTREE struct_tree);
 //          The child at the n-th index or NULL on error. The caller does not
 //          own the handle. The handle remains valid as long as |struct_tree|
 //          remains valid.
+// Comments:
+//          The |index| must be less than the FPDF_StructTree_CountChildren()
+//          return value.
 FPDF_EXPORT FPDF_STRUCTELEMENT FPDF_CALLCONV
 FPDF_StructTree_GetChildAtIndex(FPDF_STRUCTTREE struct_tree, int index);
 
@@ -171,6 +174,10 @@ FPDF_StructElement_GetStringAttribute(FPDF_STRUCTELEMENT struct_element,
 // Return value:
 //          The marked content ID of the element. If no ID exists, returns
 //          -1.
+// Comments:
+//          FPDF_StructElement_GetMarkedContentIdAtIndex() may be able to
+//          extract more marked content IDs out of |struct_element|. This API
+//          may be deprecated in the future.
 FPDF_EXPORT int FPDF_CALLCONV
 FPDF_StructElement_GetMarkedContentID(FPDF_STRUCTELEMENT struct_element);
 
@@ -254,6 +261,8 @@ FPDF_StructElement_CountChildren(FPDF_STRUCTELEMENT struct_element);
 // Comments:
 //          If the child exists but is not an element, then this function will
 //          return NULL. This will also return NULL for out of bounds indices.
+//          The |index| must be less than the FPDF_StructElement_CountChildren()
+//          return value.
 FPDF_EXPORT FPDF_STRUCTELEMENT FPDF_CALLCONV
 FPDF_StructElement_GetChildAtIndex(FPDF_STRUCTELEMENT struct_element,
                                    int index);
@@ -271,6 +280,8 @@ FPDF_StructElement_GetChildAtIndex(FPDF_STRUCTELEMENT struct_element,
 //          function will return -1. This will also return -1 for out of bounds
 //          indices. Compared to FPDF_StructElement_GetMarkedContentIdAtIndex,
 //          it is scoped to the current page.
+//          The |index| must be less than the FPDF_StructElement_CountChildren()
+//          return value.
 FPDF_EXPORT int FPDF_CALLCONV
 FPDF_StructElement_GetChildMarkedContentID(FPDF_STRUCTELEMENT struct_element,
                                            int index);
@@ -310,6 +321,8 @@ FPDF_StructElement_GetAttributeCount(FPDF_STRUCTELEMENT struct_element);
 //          function will return NULL. This will also return NULL for out of
 //          bounds indices. The caller does not own the handle. The handle
 //          remains valid as long as |struct_element| remains valid.
+//          The |index| must be less than the
+//          FPDF_StructElement_GetAttributeCount() return value.
 FPDF_EXPORT FPDF_STRUCTELEMENT_ATTR FPDF_CALLCONV
 FPDF_StructElement_GetAttributeAtIndex(FPDF_STRUCTELEMENT struct_element, int index);
 
@@ -453,6 +466,31 @@ FPDF_StructElement_Attr_GetBlobValue(FPDF_STRUCTELEMENT_ATTR_VALUE value,
                                      unsigned long* out_buflen);
 
 // Experimental API.
+// Function: FPDF_StructElement_Attr_CountChildren
+//           Count the number of children values in an attribute.
+// Parameters:
+//           value - Handle to the value.
+// Return value:
+//           The number of children, or -1 on error.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDF_StructElement_Attr_CountChildren(FPDF_STRUCTELEMENT_ATTR_VALUE value);
+
+// Experimental API.
+// Function: FPDF_StructElement_Attr_GetChildAtIndex
+//           Get a child from an attribute.
+// Parameters:
+//           value - Handle to the value.
+//           index - The index for the child, 0-based.
+// Return value:
+//           The child at the n-th index or NULL on error.
+// Comments:
+//           The |index| must be less than the
+//           FPDF_StructElement_Attr_CountChildren() return value.
+FPDF_EXPORT FPDF_STRUCTELEMENT_ATTR_VALUE FPDF_CALLCONV
+FPDF_StructElement_Attr_GetChildAtIndex(FPDF_STRUCTELEMENT_ATTR_VALUE value,
+                                        int index);
+
+// Experimental API.
 // Function: FPDF_StructElement_GetMarkedContentIdCount
 //          Get the count of marked content ids for a given element.
 // Parameters:
@@ -471,6 +509,10 @@ FPDF_StructElement_GetMarkedContentIdCount(FPDF_STRUCTELEMENT struct_element);
 // Return value:
 //          The marked content ID of the element. If no ID exists, returns
 //          -1.
+// Comments:
+//          The |index| must be less than the
+//          FPDF_StructElement_GetMarkedContentIdCount() return value.
+//          This will likely supersede FPDF_StructElement_GetMarkedContentID().
 FPDF_EXPORT int FPDF_CALLCONV
 FPDF_StructElement_GetMarkedContentIdAtIndex(FPDF_STRUCTELEMENT struct_element,
                                              int index);

@@ -792,6 +792,90 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAttributes) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFStructTreeEmbedderTest, GetAttributesFromChildAttributes) {
+  ASSERT_TRUE(OpenDocument("tagged_actual_text.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    ScopedFPDFStructTree struct_tree(FPDF_StructTree_GetForPage(page));
+    ASSERT_TRUE(struct_tree);
+    ASSERT_EQ(1, FPDF_StructTree_CountChildren(struct_tree.get()));
+
+    FPDF_STRUCTELEMENT element =
+        FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
+    ASSERT_TRUE(element);
+    ASSERT_EQ(1, FPDF_StructElement_CountChildren(element));
+
+    FPDF_STRUCTELEMENT child_element =
+        FPDF_StructElement_GetChildAtIndex(element, 0);
+    ASSERT_TRUE(child_element);
+    ASSERT_EQ(1, FPDF_StructElement_CountChildren(child_element));
+
+    FPDF_STRUCTELEMENT gchild_element =
+        FPDF_StructElement_GetChildAtIndex(child_element, 0);
+    ASSERT_TRUE(gchild_element);
+
+    int gchild_attr_count =
+        FPDF_StructElement_GetAttributeCount(gchild_element);
+    ASSERT_EQ(1, gchild_attr_count);
+
+    FPDF_STRUCTELEMENT_ATTR attr =
+        FPDF_StructElement_GetAttributeAtIndex(gchild_element, 0);
+    ASSERT_TRUE(attr);
+
+    int attr_count = FPDF_StructElement_Attr_GetCount(attr);
+    ASSERT_EQ(5, attr_count);
+
+    char name[20] = {};
+    unsigned long required_len;
+    ASSERT_TRUE(FPDF_StructElement_Attr_GetName(attr, 1, name, sizeof(name),
+                                                &required_len));
+    EXPECT_EQ(7u, required_len);
+    EXPECT_STREQ("Height", name);
+
+    // Reject bad values for FPDF_StructElement_Attr_CountChildren().
+    EXPECT_EQ(-1, FPDF_StructElement_Attr_CountChildren(nullptr));
+    EXPECT_FALSE(FPDF_StructElement_Attr_GetChildAtIndex(nullptr, -1));
+    EXPECT_FALSE(FPDF_StructElement_Attr_GetChildAtIndex(nullptr, 0));
+    EXPECT_FALSE(FPDF_StructElement_Attr_GetChildAtIndex(nullptr, 1));
+    {
+      FPDF_STRUCTELEMENT_ATTR_VALUE attr_value =
+          FPDF_StructElement_Attr_GetValue(attr, name);
+      ASSERT_TRUE(attr_value);
+      EXPECT_EQ(FPDF_OBJECT_NUMBER,
+                FPDF_StructElement_Attr_GetType(attr_value));
+      EXPECT_EQ(-1, FPDF_StructElement_Attr_CountChildren(attr_value));
+      EXPECT_FALSE(FPDF_StructElement_Attr_GetChildAtIndex(attr_value, -1));
+      EXPECT_FALSE(FPDF_StructElement_Attr_GetChildAtIndex(attr_value, 0));
+      EXPECT_FALSE(FPDF_StructElement_Attr_GetChildAtIndex(attr_value, 1));
+    }
+
+    ASSERT_TRUE(FPDF_StructElement_Attr_GetName(attr, 0, name, sizeof(name),
+                                                &required_len));
+    EXPECT_EQ(5u, required_len);
+    EXPECT_STREQ("BBox", name);
+
+    FPDF_STRUCTELEMENT_ATTR_VALUE attr_value =
+        FPDF_StructElement_Attr_GetValue(attr, name);
+    ASSERT_TRUE(attr_value);
+    EXPECT_EQ(FPDF_OBJECT_ARRAY, FPDF_StructElement_Attr_GetType(attr_value));
+    EXPECT_EQ(4, FPDF_StructElement_Attr_CountChildren(attr_value));
+    FPDF_STRUCTELEMENT_ATTR_VALUE nested_attr_value0 =
+        FPDF_StructElement_Attr_GetChildAtIndex(attr_value, 0);
+    ASSERT_TRUE(nested_attr_value0);
+    EXPECT_EQ(FPDF_OBJECT_NUMBER,
+              FPDF_StructElement_Attr_GetType(nested_attr_value0));
+    FPDF_STRUCTELEMENT_ATTR_VALUE nested_attr_value3 =
+        FPDF_StructElement_Attr_GetChildAtIndex(attr_value, 3);
+    ASSERT_TRUE(nested_attr_value3);
+    EXPECT_EQ(FPDF_OBJECT_NUMBER,
+              FPDF_StructElement_Attr_GetType(nested_attr_value3));
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFStructTreeEmbedderTest, GetStructTreeForNestedTaggedPDF) {
   ASSERT_TRUE(OpenDocument("tagged_nested.pdf"));
   FPDF_PAGE page = LoadPage(0);
