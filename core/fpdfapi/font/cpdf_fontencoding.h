@@ -4,13 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #ifndef CORE_FPDFAPI_FONT_CPDF_FONTENCODING_H_
 #define CORE_FPDFAPI_FONT_CPDF_FONTENCODING_H_
+
+#include <array>
 
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -63,7 +60,7 @@ class CPDF_FontEncoding {
   RetainPtr<CPDF_Object> Realize(WeakPtr<ByteStringPool> pPool) const;
 
  private:
-  wchar_t m_Unicodes[kEncodingTableSize] = {};
+  std::array<wchar_t, kEncodingTableSize> m_Unicodes = {};
 };
 
 #endif  // CORE_FPDFAPI_FONT_CPDF_FONTENCODING_H_

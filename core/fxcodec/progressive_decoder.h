@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #ifndef CORE_FXCODEC_PROGRESSIVE_DECODER_H_
 #define CORE_FXCODEC_PROGRESSIVE_DECODER_H_
 
@@ -138,8 +133,9 @@ class ProgressiveDecoder final :
 
     void CalculateWeights(int dest_len, int src_len);
     PixelWeight* GetPixelWeight(int pixel) {
-      return reinterpret_cast<PixelWeight*>(m_pWeightTables.data() +
-                                            pixel * m_ItemSize);
+      return reinterpret_cast<PixelWeight*>(pdfium::make_span(m_pWeightTables)
+                                                .subspan(pixel * m_ItemSize)
+                                                .data());
     }
 
    private:
@@ -154,8 +150,9 @@ class ProgressiveDecoder final :
 
     void CalculateWeights(int dest_len, int src_len);
     PixelWeight* GetPixelWeight(int pixel) {
-      return reinterpret_cast<PixelWeight*>(m_pWeightTables.data() +
-                                            pixel * m_ItemSize);
+      return reinterpret_cast<PixelWeight*>(pdfium::make_span(m_pWeightTables)
+                                                .subspan(pixel * m_ItemSize)
+                                                .data());
     }
 
    private:

@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #ifndef CORE_FXGE_DIB_CSTRETCHENGINE_H_
 #define CORE_FXGE_DIB_CSTRETCHENGINE_H_
 
@@ -65,13 +60,15 @@ class CStretchEngine {
     uint32_t GetWeightForPosition(int position) const {
       CHECK_GE(position, m_SrcStart);
       CHECK_LE(position, m_SrcEnd);
-      return m_Weights[position - m_SrcStart];
+      // SAFETY: enforced by checks above.
+      return UNSAFE_BUFFERS(m_Weights[position - m_SrcStart]);
     }
 
     void SetWeightForPosition(int position, uint32_t weight) {
       CHECK_GE(position, m_SrcStart);
       CHECK_LE(position, m_SrcEnd);
-      m_Weights[position - m_SrcStart] = weight;
+      // SAFETY: enforced by checks above.
+      UNSAFE_BUFFERS(m_Weights[position - m_SrcStart] = weight);
     }
 
     // NOTE: relies on defined behaviour for unsigned overflow to
@@ -79,7 +76,8 @@ class CStretchEngine {
     void RemoveLastWeightAndAdjust(uint32_t weight_change) {
       CHECK_GT(m_SrcEnd, m_SrcStart);
       --m_SrcEnd;
-      m_Weights[m_SrcEnd - m_SrcStart] += weight_change;
+      // SAFETY: enforced by checks above.
+      UNSAFE_BUFFERS(m_Weights[m_SrcEnd - m_SrcStart] += weight_change);
     }
 
     int m_SrcStart;

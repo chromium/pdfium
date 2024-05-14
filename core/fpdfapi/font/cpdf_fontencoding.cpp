@@ -1682,7 +1682,7 @@ CPDF_FontEncoding::CPDF_FontEncoding(FontEncoding predefined_encoding) {
 }
 
 bool CPDF_FontEncoding::IsIdentical(const CPDF_FontEncoding* pAnother) const {
-  return memcmp(m_Unicodes, pAnother->m_Unicodes, sizeof(m_Unicodes)) == 0;
+  return m_Unicodes == pAnother->m_Unicodes;
 }
 
 RetainPtr<CPDF_Object> CPDF_FontEncoding::Realize(
