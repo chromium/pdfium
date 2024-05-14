@@ -323,9 +323,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
               scale = 1.0f;
             }
           }
-          int32_t index =
-              static_cast<int32_t>(scale * (CFGAS_GEShading::kSteps - 1));
-          dib_buf[column] = m_info.fillColor.GetShading()->GetArgb(index);
+          dib_buf[column] = m_info.fillColor.GetShading()->GetArgb(scale);
         }
       }
       result = true;
@@ -386,8 +384,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
               continue;
             s = 1.0f;
           }
-          int index = static_cast<int32_t>(s * (CFGAS_GEShading::kSteps - 1));
-          dib_buf[column] = m_info.fillColor.GetShading()->GetArgb(index);
+          dib_buf[column] = m_info.fillColor.GetShading()->GetArgb(s);
         }
       }
       result = true;

@@ -4,15 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #ifndef XFA_FGAS_GRAPHICS_CFGAS_GESHADING_H_
 #define XFA_FGAS_GRAPHICS_CFGAS_GESHADING_H_
 
 #include <stddef.h>
+
+#include <array>
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -20,8 +17,6 @@
 class CFGAS_GEShading final {
  public:
   enum class Type { kAxial = 1, kRadial };
-
-  static constexpr size_t kSteps = 256;
 
   // Axial shading.
   CFGAS_GEShading(const CFX_PointF& beginPoint,
@@ -50,9 +45,13 @@ class CFGAS_GEShading final {
   float GetEndRadius() const { return m_endRadius; }
   bool IsExtendedBegin() const { return m_isExtendedBegin; }
   bool IsExtendedEnd() const { return m_isExtendedEnd; }
-  FX_ARGB GetArgb(size_t index) const { return m_argbArray[index]; }
+  FX_ARGB GetArgb(float value) const {
+    return m_argbArray[static_cast<size_t>(value * (kSteps - 1))];
+  }
 
  private:
+  static constexpr size_t kSteps = 256;
+
   void InitArgbArray(FX_ARGB beginArgb, FX_ARGB endArgb);
 
   const Type m_type;
@@ -62,7 +61,7 @@ class CFGAS_GEShading final {
   const float m_endRadius;
   const bool m_isExtendedBegin;
   const bool m_isExtendedEnd;
-  FX_ARGB m_argbArray[kSteps];
+  std::array<FX_ARGB, kSteps> m_argbArray;
 };
 
 #endif  // XFA_FGAS_GRAPHICS_CFGAS_GESHADING_H_

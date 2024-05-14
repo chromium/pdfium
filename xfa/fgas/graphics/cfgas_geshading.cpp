@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "xfa/fgas/graphics/cfgas_geshading.h"
 
 CFGAS_GEShading::CFGAS_GEShading(const CFX_PointF& beginPoint,
@@ -48,17 +43,8 @@ CFGAS_GEShading::CFGAS_GEShading(const CFX_PointF& beginPoint,
 CFGAS_GEShading::~CFGAS_GEShading() = default;
 
 void CFGAS_GEShading::InitArgbArray(FX_ARGB beginArgb, FX_ARGB endArgb) {
-  int32_t a1;
-  int32_t r1;
-  int32_t g1;
-  int32_t b1;
-  std::tie(a1, r1, g1, b1) = ArgbDecode(beginArgb);
-
-  int32_t a2;
-  int32_t r2;
-  int32_t g2;
-  int32_t b2;
-  std::tie(a2, r2, g2, b2) = ArgbDecode(endArgb);
+  auto [a1, r1, g1, b1] = ArgbDecode(beginArgb);
+  auto [a2, r2, g2, b2] = ArgbDecode(endArgb);
 
   float f = static_cast<float>(kSteps - 1);
   float aScale = 1.0 * (a2 - a1) / f;
