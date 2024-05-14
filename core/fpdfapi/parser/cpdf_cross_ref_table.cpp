@@ -67,9 +67,6 @@ void CPDF_CrossRefTable::AddNormal(uint32_t obj_num,
   if (info.gennum > gen_num)
     return;
 
-  if (info.type == ObjectType::kCompressed && gen_num == 0)
-    return;
-
   info.type = ObjectType::kNormal;
   info.is_object_stream_flag |= is_object_stream;
   info.gennum = gen_num;
