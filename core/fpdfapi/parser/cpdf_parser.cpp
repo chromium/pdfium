@@ -676,25 +676,40 @@ bool CPDF_Parser::FindAllCrossReferenceTablesAndStream(
     }
 
     seen_xref_offset.insert(xref_offset);
-    xref_list.insert(xref_list.begin(), xref_offset);
 
-    // SLOW ...
-    LoadCrossRefTable(xref_offset, /*skip=*/true);
+    // Use a copy of `xref_offset`, as LoadCrossRefStream() may change it.
+    FX_FILESIZE xref_offset_copy = xref_offset;
+    if (LoadCrossRefStream(&xref_offset_copy, /*is_main_xref=*/false)) {
+      // Since `xref_offset` points to a cross reference stream, mark it
+      // accordingly.
+      xref_list.insert(xref_list.begin(), 0);
+      xref_stream_list.insert(xref_stream_list.begin(), xref_offset);
+      xref_offset = xref_offset_copy;
 
-    RetainPtr<CPDF_Dictionary> trailer_dict = LoadTrailer();
-    if (!trailer_dict) {
-      return false;
+      // On success, LoadCrossRefStream() called CPDF_CrossRefTable::MergeUp()
+      // when `is_main_xref` is false. Thus no explicit call here.
+    } else {
+      // SLOW ...
+      LoadCrossRefTable(xref_offset, /*skip=*/true);
+
+      RetainPtr<CPDF_Dictionary> trailer_dict = LoadTrailer();
+      if (!trailer_dict) {
+        return false;
+      }
+
+      // The trailer for cross reference tables may point to a cross reference
+      // stream as well.
+      xref_list.insert(xref_list.begin(), xref_offset);
+      xref_stream_list.insert(xref_stream_list.begin(),
+                              trailer_dict->GetIntegerFor("XRefStm"));
+      xref_offset = trailer_dict->GetDirectIntegerFor("Prev");
+
+      // SLOW ...
+      m_CrossRefTable = CPDF_CrossRefTable::MergeUp(
+          std::make_unique<CPDF_CrossRefTable>(std::move(trailer_dict),
+                                               kNoTrailerObjectNumber),
+          std::move(m_CrossRefTable));
     }
-
-    xref_offset = trailer_dict->GetDirectIntegerFor("Prev");
-    xref_stream_list.insert(xref_stream_list.begin(),
-                            trailer_dict->GetIntegerFor("XRefStm"));
-
-    // SLOW ...
-    m_CrossRefTable = CPDF_CrossRefTable::MergeUp(
-        std::make_unique<CPDF_CrossRefTable>(std::move(trailer_dict),
-                                             kNoTrailerObjectNumber),
-        std::move(m_CrossRefTable));
   }
   return true;
 }
