@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/font/cfx_cttgsubtable.h"
 
 #include <stdint.h>
@@ -23,11 +18,8 @@
 namespace {
 
 bool IsVerticalFeatureTag(uint32_t tag) {
-  static constexpr uint32_t kTags[] = {
-      CFX_FontMapper::MakeTag('v', 'r', 't', '2'),
-      CFX_FontMapper::MakeTag('v', 'e', 'r', 't'),
-  };
-  return tag == kTags[0] || tag == kTags[1];
+  return tag == CFX_FontMapper::MakeTag('v', 'r', 't', '2') ||
+         tag == CFX_FontMapper::MakeTag('v', 'e', 'r', 't');
 }
 
 }  // namespace
@@ -157,37 +149,33 @@ int CFX_CTTGSUBTable::GetCoverageIndex(const CoverageFormat& coverage,
   return -1;
 }
 
-uint8_t CFX_CTTGSUBTable::GetUInt8(const uint8_t*& p) const {
-  uint8_t ret = p[0];
-  p += 1;
+uint8_t CFX_CTTGSUBTable::GetUInt8(pdfium::span<const uint8_t>& p) const {
+  uint8_t ret = p.front();
+  p = p.subspan(1u);
   return ret;
 }
 
-int16_t CFX_CTTGSUBTable::GetInt16(const uint8_t*& p) const {
-  // TODO(tsepez): pass actual span.
-  uint16_t ret = fxcrt::GetUInt16MSBFirst(pdfium::make_span(p, 2u));
-  p += 2;
+int16_t CFX_CTTGSUBTable::GetInt16(pdfium::span<const uint8_t>& p) const {
+  uint16_t ret = fxcrt::GetUInt16MSBFirst(p.first(2u));
+  p = p.subspan(2u);
   return static_cast<int16_t>(ret);
 }
 
-uint16_t CFX_CTTGSUBTable::GetUInt16(const uint8_t*& p) const {
-  // TODO(tsepez): pass actual span.
-  uint16_t ret = fxcrt::GetUInt16MSBFirst(pdfium::make_span(p, 2u));
-  p += 2;
+uint16_t CFX_CTTGSUBTable::GetUInt16(pdfium::span<const uint8_t>& p) const {
+  uint16_t ret = fxcrt::GetUInt16MSBFirst(p.first(2u));
+  p = p.subspan(2u);
   return ret;
 }
 
-int32_t CFX_CTTGSUBTable::GetInt32(const uint8_t*& p) const {
-  // TODO(tsepez): pass actual span.
-  uint32_t ret = fxcrt::GetUInt32MSBFirst(pdfium::make_span(p, 4u));
-  p += 4;
+int32_t CFX_CTTGSUBTable::GetInt32(pdfium::span<const uint8_t>& p) const {
+  uint32_t ret = fxcrt::GetUInt32MSBFirst(p.first(4u));
+  p = p.subspan(4u);
   return static_cast<int32_t>(ret);
 }
 
-uint32_t CFX_CTTGSUBTable::GetUInt32(const uint8_t*& p) const {
-  // TODO(tsepez): pass actual span.
-  uint32_t ret = fxcrt::GetUInt32MSBFirst(pdfium::make_span(p, 4u));
-  p += 4;
+uint32_t CFX_CTTGSUBTable::GetUInt32(pdfium::span<const uint8_t>& p) const {
+  uint32_t ret = fxcrt::GetUInt32MSBFirst(p.first(4u));
+  p = p.subspan(4u);
   return ret;
 }
 
@@ -200,32 +188,32 @@ void CFX_CTTGSUBTable::Parse(pdfium::span<const uint8_t> scriptlist,
 }
 
 void CFX_CTTGSUBTable::ParseScriptList(pdfium::span<const uint8_t> raw) {
-  const uint8_t* sp = raw.data();
+  pdfium::span<const uint8_t> sp = raw;
   script_list_ = std::vector<ScriptRecord>(GetUInt16(sp));
   for (auto& script : script_list_) {
     // Skip over "ScriptTag" field.
-    sp += 4;
-    script = ParseScript(&raw[GetUInt16(sp)]);
+    sp = sp.subspan(4u);
+    script = ParseScript(raw.subspan(GetUInt16(sp)));
   }
 }
 
 CFX_CTTGSUBTable::ScriptRecord CFX_CTTGSUBTable::ParseScript(
-    const uint8_t* raw) {
+    pdfium::span<const uint8_t> raw) {
   // Skip over "DefaultLangSys" field.
-  const uint8_t* sp = raw + 2;
+  pdfium::span<const uint8_t> sp = raw.subspan(2u);
   ScriptRecord result(GetUInt16(sp));
   for (auto& record : result) {
     // Skip over "LangSysTag" field.
-    sp += 4;
-    record = ParseLangSys(&raw[GetUInt16(sp)]);
+    sp = sp.subspan(4u);
+    record = ParseLangSys(raw.subspan(GetUInt16(sp)));
   }
   return result;
 }
 
 CFX_CTTGSUBTable::FeatureIndices CFX_CTTGSUBTable::ParseLangSys(
-    const uint8_t* raw) {
+    pdfium::span<const uint8_t> raw) {
   // Skip over "LookupOrder" and "ReqFeatureIndex" fields.
-  const uint8_t* sp = raw + 4;
+  pdfium::span<const uint8_t> sp = raw.subspan(4u);
   FeatureIndices result(GetUInt16(sp));
   for (auto& element : result) {
     element = GetUInt16(sp);
@@ -234,19 +222,19 @@ CFX_CTTGSUBTable::FeatureIndices CFX_CTTGSUBTable::ParseLangSys(
 }
 
 void CFX_CTTGSUBTable::ParseFeatureList(pdfium::span<const uint8_t> raw) {
-  const uint8_t* sp = raw.data();
+  pdfium::span<const uint8_t> sp = raw;
   feature_list_ = std::vector<FeatureRecord>(GetUInt16(sp));
   for (auto& record : feature_list_) {
     record.feature_tag = GetUInt32(sp);
     record.lookup_list_indices =
-        ParseFeatureLookupListIndices(&raw[GetUInt16(sp)]);
+        ParseFeatureLookupListIndices(raw.subspan(GetUInt16(sp)));
   }
 }
 
 DataVector<uint16_t> CFX_CTTGSUBTable::ParseFeatureLookupListIndices(
-    const uint8_t* raw) {
+    pdfium::span<const uint8_t> raw) {
   // Skip over "FeatureParams" field.
-  const uint8_t* sp = raw + 2;
+  pdfium::span<const uint8_t> sp = raw.subspan(2u);
   DataVector<uint16_t> result(GetUInt16(sp));
   for (auto& index : result) {
     index = GetUInt16(sp);
@@ -255,38 +243,37 @@ DataVector<uint16_t> CFX_CTTGSUBTable::ParseFeatureLookupListIndices(
 }
 
 void CFX_CTTGSUBTable::ParseLookupList(pdfium::span<const uint8_t> raw) {
-  const uint8_t* sp = raw.data();
+  pdfium::span<const uint8_t> sp = raw;
   lookup_list_ = std::vector<Lookup>(GetUInt16(sp));
   for (auto& lookup : lookup_list_) {
-    lookup = ParseLookup(&raw[GetUInt16(sp)]);
+    lookup = ParseLookup(raw.subspan(GetUInt16(sp)));
   }
 }
 
-CFX_CTTGSUBTable::Lookup CFX_CTTGSUBTable::ParseLookup(const uint8_t* raw) {
-  const uint8_t* sp = raw;
+CFX_CTTGSUBTable::Lookup CFX_CTTGSUBTable::ParseLookup(
+    pdfium::span<const uint8_t> raw) {
+  pdfium::span<const uint8_t> sp = raw;
   CFX_CTTGSUBTable::Lookup result;
   result.lookup_type = GetUInt16(sp);
   // Skip over "LookupFlag" field.
-  sp += 2;
+  sp = sp.subspan(2u);
   result.sub_tables = Lookup::SubTables(GetUInt16(sp));
   if (result.lookup_type != 1) {
     return result;
   }
-
   for (auto& sub_table : result.sub_tables) {
-    sub_table = ParseSingleSubst(&raw[GetUInt16(sp)]);
+    sub_table = ParseSingleSubst(raw.subspan(GetUInt16(sp)));
   }
   return result;
 }
 
 CFX_CTTGSUBTable::CoverageFormat CFX_CTTGSUBTable::ParseCoverage(
-    const uint8_t* raw) {
-  const uint8_t* sp = raw;
+    pdfium::span<const uint8_t> raw) {
+  pdfium::span<const uint8_t> sp = raw;
   uint16_t format = GetUInt16(sp);
   if (format != 1 && format != 2) {
     return absl::monostate();
   }
-
   if (format == 1) {
     DataVector<uint16_t> glyph_array(GetUInt16(sp));
     for (auto& glyph : glyph_array) {
@@ -294,7 +281,6 @@ CFX_CTTGSUBTable::CoverageFormat CFX_CTTGSUBTable::ParseCoverage(
     }
     return glyph_array;
   }
-
   std::vector<RangeRecord> range_records(GetUInt16(sp));
   for (auto& range_rec : range_records) {
     range_rec.start = GetUInt16(sp);
@@ -305,16 +291,14 @@ CFX_CTTGSUBTable::CoverageFormat CFX_CTTGSUBTable::ParseCoverage(
 }
 
 CFX_CTTGSUBTable::SubTable CFX_CTTGSUBTable::ParseSingleSubst(
-    const uint8_t* raw) {
-  const uint8_t* sp = raw;
+    pdfium::span<const uint8_t> raw) {
+  pdfium::span<const uint8_t> sp = raw;
   uint16_t format = GetUInt16(sp);
   SubTable rec;
   if (format != 1 && format != 2) {
     return rec;
   }
-
-  uint16_t offset = GetUInt16(sp);
-  rec.coverage = ParseCoverage(&raw[offset]);
+  rec.coverage = ParseCoverage(raw.subspan(GetUInt16(sp)));
   if (format == 1) {
     rec.table_data = GetInt16(sp);
   } else {

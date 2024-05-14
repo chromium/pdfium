@@ -82,14 +82,15 @@ class CFX_CTTGSUBTable {
              pdfium::span<const uint8_t> featurelist,
              pdfium::span<const uint8_t> lookuplist);
   void ParseScriptList(pdfium::span<const uint8_t> raw);
-  ScriptRecord ParseScript(const uint8_t* raw);
-  FeatureIndices ParseLangSys(const uint8_t* raw);
+  ScriptRecord ParseScript(pdfium::span<const uint8_t> raw);
+  FeatureIndices ParseLangSys(pdfium::span<const uint8_t> raw);
   void ParseFeatureList(pdfium::span<const uint8_t> raw);
-  DataVector<uint16_t> ParseFeatureLookupListIndices(const uint8_t* raw);
+  DataVector<uint16_t> ParseFeatureLookupListIndices(
+      pdfium::span<const uint8_t> raw);
   void ParseLookupList(pdfium::span<const uint8_t> raw);
-  Lookup ParseLookup(const uint8_t* raw);
-  CoverageFormat ParseCoverage(const uint8_t* raw);
-  SubTable ParseSingleSubst(const uint8_t* raw);
+  Lookup ParseLookup(pdfium::span<const uint8_t> raw);
+  CoverageFormat ParseCoverage(pdfium::span<const uint8_t> raw);
+  SubTable ParseSingleSubst(pdfium::span<const uint8_t> raw);
 
   std::optional<uint32_t> GetVerticalGlyphSub(const FeatureRecord& feature,
                                               uint32_t glyphnum) const;
@@ -97,11 +98,11 @@ class CFX_CTTGSUBTable {
                                                uint32_t glyphnum) const;
   int GetCoverageIndex(const CoverageFormat& coverage, uint32_t g) const;
 
-  uint8_t GetUInt8(const uint8_t*& p) const;
-  int16_t GetInt16(const uint8_t*& p) const;
-  uint16_t GetUInt16(const uint8_t*& p) const;
-  int32_t GetInt32(const uint8_t*& p) const;
-  uint32_t GetUInt32(const uint8_t*& p) const;
+  uint8_t GetUInt8(pdfium::span<const uint8_t>& p) const;
+  int16_t GetInt16(pdfium::span<const uint8_t>& p) const;
+  uint16_t GetUInt16(pdfium::span<const uint8_t>& p) const;
+  int32_t GetInt32(pdfium::span<const uint8_t>& p) const;
+  uint32_t GetUInt32(pdfium::span<const uint8_t>& p) const;
 
   std::set<uint32_t> feature_set_;
   std::vector<ScriptRecord> script_list_;
