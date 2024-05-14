@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "xfa/fwl/cfwl_monthcalendar.h"
 
 #include <algorithm>
@@ -557,13 +552,9 @@ void CFWL_MonthCalendar::JumpToToday() {
 }
 
 WideString CFWL_MonthCalendar::GetHeadText(int32_t iYear, int32_t iMonth) {
-  DCHECK(iMonth > 0);
-  DCHECK(iMonth < 13);
-
-  static const wchar_t* const pMonth[] = {L"January", L"February", L"March",
-                                          L"April",   L"May",      L"June",
-                                          L"July",    L"August",   L"September",
-                                          L"October", L"November", L"December"};
+  static const std::array<const wchar_t*, 12> pMonth = {
+      {L"January", L"February", L"March", L"April", L"May", L"June", L"July",
+       L"August", L"September", L"October", L"November", L"December"}};
   return WideString::Format(L"%ls, %d", pMonth[iMonth - 1], iYear);
 }
 

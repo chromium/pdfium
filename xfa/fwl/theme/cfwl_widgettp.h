@@ -7,6 +7,7 @@
 #ifndef XFA_FWL_THEME_CFWL_WIDGETTP_H_
 #define XFA_FWL_THEME_CFWL_WIDGETTP_H_
 
+#include <array>
 #include <memory>
 
 #include "core/fxcrt/fx_coordinates.h"
@@ -34,10 +35,10 @@ class CFWL_WidgetTP : public cppgc::GarbageCollected<CFWL_WidgetTP> {
 
  protected:
   struct CColorData {
-    FX_ARGB clrBorder[4];  // Indexed by enum FWLTHEME_STATE - 1.
-    FX_ARGB clrStart[4];   // Indexed by enum FWLTHEME_STATE - 1.
-    FX_ARGB clrEnd[4];     // Indexed by enum FWLTHEME_STATE - 1.
-    FX_ARGB clrSign[4];    // Indexed by enum FWLTHEME_STATE - 1.
+    std::array<FX_ARGB, 4> clrBorder;  // Indexed by enum FWLTHEME_STATE - 1.
+    std::array<FX_ARGB, 4> clrStart;   // Indexed by enum FWLTHEME_STATE - 1.
+    std::array<FX_ARGB, 4> clrEnd;     // Indexed by enum FWLTHEME_STATE - 1.
+    std::array<FX_ARGB, 4> clrSign;    // Indexed by enum FWLTHEME_STATE - 1.
   };
 
   CFWL_WidgetTP();
