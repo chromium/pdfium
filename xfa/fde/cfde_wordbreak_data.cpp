@@ -4,17 +4,14 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "xfa/fde/cfde_wordbreak_data.h"
 
+#include <array>
 #include <iterator>
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/span.h"
 
 namespace {
 
@@ -37,7 +34,7 @@ enum WordBreakMask : uint16_t {
       1 << static_cast<int>(WordBreakProperty::kExtendNumLet),
 };
 
-const uint16_t kWordBreakTable[] = {
+constexpr uint16_t kWordBreakTableData[] = {
     // WordBreakProperty::kNone
     0xFFFF,
 
@@ -85,9 +82,11 @@ const uint16_t kWordBreakTable[] = {
                             kWordBreakMaskExtendNumLet)),
 };
 
+const pdfium::span<const uint16_t> kWordBreakTable{kWordBreakTableData};
+
 // Table of |WordBreakProperty| for each of the possible uint16_t values,
 // packed as nibbles, with the low nibble first.
-const uint8_t kCodePointProperties[32768] = {
+const std::array<uint8_t, 32768> kCodePointProperties = {{
     0x00, 0x00, 0x00, 0x00, 0x00, 0x23, 0x31, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x00, 0x00, 0x90, 0xA0,
     0xBB, 0xBB, 0xBB, 0xBB, 0xBB, 0x89, 0x00, 0x00, 0x07, 0x77, 0x77, 0x77,
@@ -2819,7 +2818,7 @@ const uint8_t kCodePointProperties[32768] = {
     0x00, 0x77, 0x77, 0x77, 0x00, 0x77, 0x77, 0x77, 0x00, 0x77, 0x77, 0x77,
     0x00, 0x77, 0x70, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x05, 0x55, 0x00, 0x00,
-};
+}};
 
 }  // namespace
 

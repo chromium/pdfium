@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "xfa/fde/cfde_texteditengine.h"
 
 #include <algorithm>
@@ -16,6 +11,7 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
@@ -161,13 +157,16 @@ void CFDE_TextEditEngine::AdjustGap(size_t idx, size_t length) {
 
   // Move the gap, if necessary.
   if (idx < gap_position_) {
-    FXSYS_memmove(content_.data() + idx + gap_size_, content_.data() + idx,
-                  (gap_position_ - idx) * char_size);
+    // TODO(crbug.com/pdfium/2155): resolve safety issues,
+    UNSAFE_BUFFERS(FXSYS_memmove(content_.data() + idx + gap_size_,
+                                 content_.data() + idx,
+                                 (gap_position_ - idx) * char_size));
     gap_position_ = idx;
   } else if (idx > gap_position_) {
-    FXSYS_memmove(content_.data() + gap_position_,
-                  content_.data() + gap_position_ + gap_size_,
-                  (idx - gap_position_) * char_size);
+    // TODO(crbug.com/pdfium/2155): resolve safety issues,
+    UNSAFE_BUFFERS(FXSYS_memmove(content_.data() + gap_position_,
+                                 content_.data() + gap_position_ + gap_size_,
+                                 (idx - gap_position_) * char_size));
     gap_position_ = idx;
   }
 
@@ -176,9 +175,10 @@ void CFDE_TextEditEngine::AdjustGap(size_t idx, size_t length) {
     size_t new_gap_size = length + kGapSize;
     content_.resize(text_length_ + new_gap_size);
 
-    FXSYS_memmove(content_.data() + gap_position_ + new_gap_size,
-                  content_.data() + gap_position_ + gap_size_,
-                  (text_length_ - gap_position_) * char_size);
+    // TODO(crbug.com/pdfium/2155): resolve safety issues,
+    UNSAFE_BUFFERS(FXSYS_memmove(content_.data() + gap_position_ + new_gap_size,
+                                 content_.data() + gap_position_ + gap_size_,
+                                 (text_length_ - gap_position_) * char_size));
 
     gap_size_ = new_gap_size;
   }
@@ -295,8 +295,8 @@ void CFDE_TextEditEngine::Insert(size_t idx,
     str += text;
 
     if (text_length_ - gap_position_ > 0) {
-      str += WideStringView(content_.data() + gap_position_ + gap_size_,
-                            text_length_ - gap_position_);
+      str += WideStringView(pdfium::make_span(content_).subspan(
+          gap_position_ + gap_size_, text_length_ - gap_position_));
     }
 
     if (validation_enabled_ && delegate_ && !delegate_->OnValidate(str)) {
@@ -759,28 +759,28 @@ WideString CFDE_TextEditEngine::GetSelectedText() const {
   if (selection_.start_idx < gap_position_) {
     // Fully on left of gap.
     if (selection_.start_idx + selection_.count < gap_position_) {
-      text += WideStringView(content_.data() + selection_.start_idx,
-                             selection_.count);
+      text += WideStringView(pdfium::make_span(content_).subspan(
+          selection_.start_idx, selection_.count));
       return text;
     }
 
     // Pre-gap text
-    text += WideStringView(content_.data() + selection_.start_idx,
-                           gap_position_ - selection_.start_idx);
+    text += WideStringView(pdfium::make_span(content_).subspan(
+        selection_.start_idx, gap_position_ - selection_.start_idx));
 
     if (selection_.count - (gap_position_ - selection_.start_idx) > 0) {
       // Post-gap text
-      text += WideStringView(
-          content_.data() + gap_position_ + gap_size_,
-          selection_.count - (gap_position_ - selection_.start_idx));
+      text += WideStringView(pdfium::make_span(content_).subspan(
+          gap_position_ + gap_size_,
+          selection_.count - (gap_position_ - selection_.start_idx)));
     }
 
     return text;
   }
 
   // Fully right of gap
-  text += WideStringView(content_.data() + gap_size_ + selection_.start_idx,
-                         selection_.count);
+  text += WideStringView(pdfium::make_span(content_).subspan(
+      gap_size_ + selection_.start_idx, selection_.count));
   return text;
 }
 
@@ -823,8 +823,8 @@ WideString CFDE_TextEditEngine::Delete(size_t start_idx,
   length = std::min(length, text_length_ - start_idx);
   AdjustGap(start_idx + length, 0);
 
-  WideString ret;
-  ret += WideStringView(content_.data() + start_idx, length);
+  WideString ret(
+      WideStringView(pdfium::make_span(content_).subspan(start_idx, length)));
 
   if (add_operation == RecordOperation::kInsertRecord) {
     AddOperationRecord(std::make_unique<DeleteOperation>(this, start_idx, ret));
@@ -879,11 +879,12 @@ void CFDE_TextEditEngine::ReplaceSelectedText(const WideString& requested_rep) {
 
 WideString CFDE_TextEditEngine::GetText() const {
   WideString str;
-  if (gap_position_ > 0)
+  if (gap_position_ > 0) {
     str += WideStringView(content_.data(), gap_position_);
+  }
   if (text_length_ - gap_position_ > 0) {
-    str += WideStringView(content_.data() + gap_position_ + gap_size_,
-                          text_length_ - gap_position_);
+    str += WideStringView(pdfium::make_span(content_).subspan(
+        gap_position_ + gap_size_, text_length_ - gap_position_));
   }
   return str;
 }
