@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include <limits.h>
 #include <stdint.h>
 
@@ -432,27 +427,31 @@ TEST(fxcodec, YUV420ToRGB) {
         opj_image_data_alloc(v.w * v.h * sizeof(OPJ_INT32)));
     u.data = static_cast<OPJ_INT32*>(
         opj_image_data_alloc(u.w * u.h * sizeof(OPJ_INT32)));
-    FXSYS_memset(y.data, 1, y.w * y.h * sizeof(OPJ_INT32));
-    FXSYS_memset(u.data, 0, u.w * u.h * sizeof(OPJ_INT32));
-    FXSYS_memset(v.data, 0, v.w * v.h * sizeof(OPJ_INT32));
-    img.comps[0] = y;
-    img.comps[1] = u;
-    img.comps[2] = v;
-    CJPX_Decoder::Sycc420ToRgbForTesting(&img);
-    if (testcase.expected) {
-      EXPECT_EQ(img.comps[0].w, img.comps[1].w);
-      EXPECT_EQ(img.comps[0].h, img.comps[1].h);
-      EXPECT_EQ(img.comps[0].w, img.comps[2].w);
-      EXPECT_EQ(img.comps[0].h, img.comps[2].h);
-    } else {
-      EXPECT_NE(img.comps[0].w, img.comps[1].w);
-      EXPECT_NE(img.comps[0].h, img.comps[1].h);
-      EXPECT_NE(img.comps[0].w, img.comps[2].w);
-      EXPECT_NE(img.comps[0].h, img.comps[2].h);
-    }
-    opj_image_data_free(img.comps[0].data);
-    opj_image_data_free(img.comps[1].data);
-    opj_image_data_free(img.comps[2].data);
+
+    // TODO(crbug.com/pdfium/2155): resolve safety issues.
+    UNSAFE_BUFFERS({
+      FXSYS_memset(y.data, 1, y.w * y.h * sizeof(OPJ_INT32));
+      FXSYS_memset(u.data, 0, u.w * u.h * sizeof(OPJ_INT32));
+      FXSYS_memset(v.data, 0, v.w * v.h * sizeof(OPJ_INT32));
+      img.comps[0] = y;
+      img.comps[1] = u;
+      img.comps[2] = v;
+      CJPX_Decoder::Sycc420ToRgbForTesting(&img);
+      if (testcase.expected) {
+        EXPECT_EQ(img.comps[0].w, img.comps[1].w);
+        EXPECT_EQ(img.comps[0].h, img.comps[1].h);
+        EXPECT_EQ(img.comps[0].w, img.comps[2].w);
+        EXPECT_EQ(img.comps[0].h, img.comps[2].h);
+      } else {
+        EXPECT_NE(img.comps[0].w, img.comps[1].w);
+        EXPECT_NE(img.comps[0].h, img.comps[1].h);
+        EXPECT_NE(img.comps[0].w, img.comps[2].w);
+        EXPECT_NE(img.comps[0].h, img.comps[2].h);
+      }
+      opj_image_data_free(img.comps[0].data);
+      opj_image_data_free(img.comps[1].data);
+      opj_image_data_free(img.comps[2].data);
+    });
   }
   FX_Free(img.comps);
 }
