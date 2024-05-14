@@ -195,9 +195,7 @@ bool CPDF_DataAvail::CheckAndLoadAllXref() {
       return false;
   }
 
-  if (!m_parser.LoadAllCrossRefTables(
-          m_pCrossRefAvail->last_crossref_offset()) &&
-      !m_parser.LoadAllCrossRefStreams(
+  if (!m_parser.LoadAllCrossRefTablesAndStreams(
           m_pCrossRefAvail->last_crossref_offset())) {
     m_internalStatus = InternalStatus::kLoadAllFile;
     return false;

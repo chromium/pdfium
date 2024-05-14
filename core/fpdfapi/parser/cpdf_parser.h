@@ -143,9 +143,7 @@ class CPDF_Parser {
     CPDF_CrossRefTable::ObjectInfo info;
   };
 
-  bool LoadAllCrossRefTables(FX_FILESIZE xref_offset);
-  bool LoadAllCrossRefStreams(FX_FILESIZE xref_offset);
-  bool LoadAllSecondaryCrossRefStreams(FX_FILESIZE xref_offset);
+  bool LoadAllCrossRefTablesAndStreams(FX_FILESIZE xref_offset);
   bool FindAllCrossReferenceTablesAndStream(
       FX_FILESIZE main_xref_offset,
       std::vector<FX_FILESIZE>& xref_list,
