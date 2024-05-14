@@ -13,6 +13,7 @@
 #include "core/fxcrt/css/cfx_css.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widestring.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -159,15 +160,15 @@ class CXFA_TextLayout final : public cppgc::GarbageCollected<CXFA_TextLayout> {
   void RenderString(CFX_RenderDevice* pDevice,
                     PieceLine* pPieceLine,
                     size_t szPiece,
-                    std::vector<TextCharPos>* pCharPos,
+                    pdfium::span<TextCharPos> pCharPos,
                     const CFX_Matrix& mtDoc2Device);
   void RenderPath(CFX_RenderDevice* pDevice,
                   const PieceLine* pPieceLine,
                   size_t szPiece,
-                  std::vector<TextCharPos>* pCharPos,
+                  pdfium::span<TextCharPos> pCharPos,
                   const CFX_Matrix& mtDoc2Device);
   size_t GetDisplayPos(const TextPiece* pPiece,
-                       std::vector<TextCharPos>* pCharPos);
+                       pdfium::span<TextCharPos> pCharPos);
   void DoTabstops(CFX_CSSComputedStyle* pStyle, PieceLine* pPieceLine);
   bool LayoutInternal(size_t szBlockIndex);
   size_t CountBlocks() const;

@@ -639,10 +639,10 @@ bool CXFA_TextLayout::DrawString(CFX_RenderDevice* pFxDevice,
       int32_t iChars = pPiece->iChars;
       if (fxcrt::CollectionSize<int32_t>(char_pos) < iChars)
         char_pos.resize(iChars);
-      RenderString(pFxDevice, pPieceLine, j, &char_pos, mtDoc2Device);
+      RenderString(pFxDevice, pPieceLine, j, char_pos, mtDoc2Device);
     }
     for (size_t j = 0; j < pPieceLine->m_textPieces.size(); ++j)
-      RenderPath(pFxDevice, pPieceLine, j, &char_pos, mtDoc2Device);
+      RenderPath(pFxDevice, pPieceLine, j, char_pos, mtDoc2Device);
   }
   pFxDevice->RestoreState(false);
   return szPieceLines > 0;
@@ -1148,14 +1148,14 @@ void CXFA_TextLayout::AppendTextLine(CFGAS_Char::BreakType dwStatus,
 void CXFA_TextLayout::RenderString(CFX_RenderDevice* pDevice,
                                    PieceLine* pPieceLine,
                                    size_t szPiece,
-                                   std::vector<TextCharPos>* pCharPos,
+                                   pdfium::span<TextCharPos> pCharPos,
                                    const CFX_Matrix& mtDoc2Device) {
   const TextPiece* pPiece = pPieceLine->m_textPieces[szPiece].get();
   size_t szCount = GetDisplayPos(pPiece, pCharPos);
   if (szCount > 0) {
-    auto span = pdfium::make_span(*pCharPos).first(szCount);
-    CFDE_TextOut::DrawString(pDevice, pPiece->dwColor, pPiece->pFont, span,
-                             pPiece->fFontSize, mtDoc2Device);
+    CFDE_TextOut::DrawString(pDevice, pPiece->dwColor, pPiece->pFont,
+                             pCharPos.first(szCount), pPiece->fFontSize,
+                             mtDoc2Device);
   }
   pPieceLine->m_charCounts.push_back(szCount);
 }
@@ -1163,7 +1163,7 @@ void CXFA_TextLayout::RenderString(CFX_RenderDevice* pDevice,
 void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
                                  const PieceLine* pPieceLine,
                                  size_t szPiece,
-                                 std::vector<TextCharPos>* pCharPos,
+                                 pdfium::span<TextCharPos> pCharPos,
                                  const CFX_Matrix& mtDoc2Device) {
   const TextPiece* pPiece = pPieceLine->m_textPieces[szPiece].get();
   bool bNoUnderline = pPiece->iUnderline < 1 || pPiece->iUnderline > 2;
@@ -1176,34 +1176,33 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
   if (szChars > 0) {
     CFX_PointF pt1;
     CFX_PointF pt2;
-    float fEndY = (*pCharPos)[0].m_Origin.y + 1.05f;
+    float fEndY = pCharPos[0].m_Origin.y + 1.05f;
     if (pPiece->iPeriod == XFA_AttributeValue::Word) {
       for (int32_t i = 0; i < pPiece->iUnderline; i++) {
         for (size_t j = 0; j < szChars; j++) {
-          pt1.x = (*pCharPos)[j].m_Origin.x;
-          pt2.x = pt1.x +
-                  (*pCharPos)[j].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
+          pt1.x = pCharPos[j].m_Origin.x;
+          pt2.x =
+              pt1.x + pCharPos[j].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
           pt1.y = pt2.y = fEndY;
           path.AppendLine(pt1, pt2);
         }
         fEndY += 2.0f;
       }
     } else {
-      pt1.x = (*pCharPos)[0].m_Origin.x;
-      pt2.x = (*pCharPos)[szChars - 1].m_Origin.x +
-              (*pCharPos)[szChars - 1].m_FontCharWidth * pPiece->fFontSize /
-                  1000.0f;
+      pt1.x = pCharPos[0].m_Origin.x;
+      pt2.x =
+          pCharPos[szChars - 1].m_Origin.x +
+          pCharPos[szChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
       for (int32_t i = 0; i < pPiece->iUnderline; i++) {
         pt1.y = pt2.y = fEndY;
         path.AppendLine(pt1, pt2);
         fEndY += 2.0f;
       }
     }
-    fEndY = (*pCharPos)[0].m_Origin.y - pPiece->rtPiece.height * 0.25f;
-    pt1.x = (*pCharPos)[0].m_Origin.x;
-    pt2.x =
-        (*pCharPos)[szChars - 1].m_Origin.x +
-        (*pCharPos)[szChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
+    fEndY = pCharPos[0].m_Origin.y - pPiece->rtPiece.height * 0.25f;
+    pt1.x = pCharPos[0].m_Origin.x;
+    pt2.x = pCharPos[szChars - 1].m_Origin.x +
+            pCharPos[szChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
     for (int32_t i = 0; i < pPiece->iLineThrough; i++) {
       pt1.y = pt2.y = fEndY;
       path.AppendLine(pt1, pt2);
@@ -1245,27 +1244,26 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
     if (szChars < 1)
       return;
 
-    fOrgX =
-        (*pCharPos)[szChars - 1].m_Origin.x +
-        (*pCharPos)[szChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
+    fOrgX = pCharPos[szChars - 1].m_Origin.x +
+            pCharPos[szChars - 1].m_FontCharWidth * pPiece->fFontSize / 1000.0f;
     pPiece = pPieceLine->m_textPieces[szPieceNext].get();
     szChars = GetDisplayPos(pPiece, pCharPos);
     if (szChars < 1)
       return;
 
-    fEndX = (*pCharPos)[0].m_Origin.x;
+    fEndX = pCharPos[0].m_Origin.x;
     CFX_PointF pt1;
     CFX_PointF pt2;
     pt1.x = fOrgX;
     pt2.x = fEndX;
-    float fEndY = (*pCharPos)[0].m_Origin.y + 1.05f;
+    float fEndY = pCharPos[0].m_Origin.y + 1.05f;
     for (int32_t i = 0; i < pPiece->iUnderline; i++) {
       pt1.y = fEndY;
       pt2.y = fEndY;
       path.AppendLine(pt1, pt2);
       fEndY += 2.0f;
     }
-    fEndY = (*pCharPos)[0].m_Origin.y - pPiece->rtPiece.height * 0.25f;
+    fEndY = pCharPos[0].m_Origin.y - pPiece->rtPiece.height * 0.25f;
     for (int32_t i = 0; i < pPiece->iLineThrough; i++) {
       pt1.y = fEndY;
       pt2.y = fEndY;
@@ -1285,8 +1283,9 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
 }
 
 size_t CXFA_TextLayout::GetDisplayPos(const TextPiece* pPiece,
-                                      std::vector<TextCharPos>* pCharPos) {
-  if (!pPiece || pPiece->iChars < 1)
+                                      pdfium::span<TextCharPos> pCharPos) {
+  if (!pPiece || pPiece->iChars < 1) {
     return 0;
+  }
   return m_pBreak->GetDisplayPos(pPiece, pCharPos);
 }

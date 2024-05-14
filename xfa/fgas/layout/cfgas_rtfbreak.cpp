@@ -708,7 +708,7 @@ void CFGAS_RTFBreak::SplitTextLine(CFGAS_BreakLine* pCurLine,
 }
 
 size_t CFGAS_RTFBreak::GetDisplayPos(const CFGAS_TextPiece* pPiece,
-                                     std::vector<TextCharPos>* pCharPos) const {
+                                     pdfium::span<TextCharPos> pCharPos) const {
   if (pPiece->iChars == 0 || !pPiece->pFont)
     return 0;
 
@@ -735,7 +735,7 @@ size_t CFGAS_RTFBreak::GetDisplayPos(const CFGAS_TextPiece* pPiece,
   float fY = rtText.top + fAscent;
   size_t szCount = 0;
   for (int32_t i = 0; i < pPiece->iChars; ++i) {
-    TextCharPos& current_char_pos = (*pCharPos)[szCount];
+    TextCharPos& current_char_pos = pCharPos[szCount];
     wchar_t wch = pPiece->szText[i];
     int32_t iWidth = pPiece->Widths[i];
     FX_CHARTYPE dwCharType = pdfium::unicode::GetCharType(wch);

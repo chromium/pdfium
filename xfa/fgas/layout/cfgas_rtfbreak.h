@@ -13,6 +13,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_unicode.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "xfa/fgas/layout/cfgas_break.h"
 
 class CFGAS_TextPiece;
@@ -42,7 +43,7 @@ class CFGAS_RTFBreak final : public CFGAS_Break {
   CFGAS_Char::BreakType EndBreak(CFGAS_Char::BreakType dwStatus);
 
   size_t GetDisplayPos(const CFGAS_TextPiece* pPiece,
-                       std::vector<TextCharPos>* pCharPos) const;
+                       pdfium::span<TextCharPos> pCharPos) const;
 
   CFGAS_Char::BreakType AppendChar(wchar_t wch);
 
