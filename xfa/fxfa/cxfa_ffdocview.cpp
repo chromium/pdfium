@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "xfa/fxfa/cxfa_ffdocview.h"
 
 #include <set>
@@ -62,9 +57,7 @@ bool IsValidXMLNameString(const WideString& str) {
   return true;
 }
 
-}  // namespace
-
-const XFA_AttributeValue kXFAEventActivity[] = {
+const XFA_AttributeValue kXFAEventActivityData[] = {
     XFA_AttributeValue::Click,      XFA_AttributeValue::Change,
     XFA_AttributeValue::DocClose,   XFA_AttributeValue::DocReady,
     XFA_AttributeValue::Enter,      XFA_AttributeValue::Exit,
@@ -80,6 +73,11 @@ const XFA_AttributeValue kXFAEventActivity[] = {
     XFA_AttributeValue::PreSubmit,  XFA_AttributeValue::Ready,
     XFA_AttributeValue::Unknown,
 };
+
+}  // namespace
+
+const pdfium::span<const XFA_AttributeValue> kXFAEventActivity{
+    kXFAEventActivityData};
 
 CXFA_FFDocView::UpdateScope::UpdateScope(CXFA_FFDocView* pDocView)
     : m_pDocView(pDocView) {

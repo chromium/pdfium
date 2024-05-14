@@ -10,6 +10,7 @@
 #include <list>
 #include <vector>
 
+#include "core/fxcrt/span.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
@@ -26,7 +27,7 @@ class CXFA_Node;
 class CXFA_Subform;
 class CXFA_ViewLayoutItem;
 
-extern const XFA_AttributeValue kXFAEventActivity[];
+extern const pdfium::span<const XFA_AttributeValue> kXFAEventActivity;
 
 class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
  public:

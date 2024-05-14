@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "xfa/fxfa/cxfa_textlayout.h"
 
 #include <math.h>
@@ -1158,7 +1153,7 @@ void CXFA_TextLayout::RenderString(CFX_RenderDevice* pDevice,
   const TextPiece* pPiece = pPieceLine->m_textPieces[szPiece].get();
   size_t szCount = GetDisplayPos(pPiece, pCharPos);
   if (szCount > 0) {
-    auto span = pdfium::make_span(pCharPos->data(), szCount);
+    auto span = pdfium::make_span(*pCharPos).first(szCount);
     CFDE_TextOut::DrawString(pDevice, pPiece->dwColor, pPiece->pFont, span,
                              pPiece->fFontSize, mtDoc2Device);
   }
