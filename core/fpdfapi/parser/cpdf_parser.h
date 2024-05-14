@@ -143,9 +143,13 @@ class CPDF_Parser {
     CPDF_CrossRefTable::ObjectInfo info;
   };
 
-  bool LoadAllCrossRefTable(FX_FILESIZE xref_offset);
-  bool LoadAllCrossRefStream(FX_FILESIZE xref_offset);
+  bool LoadAllCrossRefTables(FX_FILESIZE xref_offset);
+  bool LoadAllCrossRefStreams(FX_FILESIZE xref_offset);
   bool LoadAllSecondaryCrossRefStreams(FX_FILESIZE xref_offset);
+  bool FindAllCrossReferenceTablesAndStream(
+      FX_FILESIZE main_xref_offset,
+      std::vector<FX_FILESIZE>& xref_list,
+      std::vector<FX_FILESIZE>& xref_stream_list);
   bool LoadCrossRefStream(FX_FILESIZE* pos, bool is_main_xref);
   void ProcessCrossRefStreamEntry(pdfium::span<const uint8_t> entry_span,
                                   pdfium::span<const uint32_t> field_widths,
