@@ -196,13 +196,9 @@ vars = {
   # and whatever else without interference from each other.
   'tools_memory_revision': '2448d81f9741a5f791b1515893fc18c0999970e7',
   # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling trace_event
-  # and whatever else without interference from each other.
-  'trace_event_revision': '29ac73db520575590c3aceb0a6f1f58dda8934f6',
-  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling v8
   # and whatever else without interference from each other.
-  'v8_revision': '0832ba5148b1b13fdf5636f6534c78f3fe332783',
+  'v8_revision': 'a9dc62b2c5b69ec098d6cb56b9b563bb3d6f1aa4',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling zlib
   # and whatever else without interference from each other.
@@ -227,10 +223,6 @@ deps = {
     Var('chromium_git') +
         '/chromium/src/base/allocator/partition_allocator.git@' +
         Var('partition_allocator_revision'),
-
-  'base/trace_event/common':
-    Var('chromium_git') + '/chromium/src/base/trace_event/common.git@' +
-        Var('trace_event_revision'),
 
   'build':
     Var('chromium_git') + '/chromium/src/build.git@' + Var('build_revision'),
