@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdftext/cpdf_textpagefind.h"
 
 #include <wchar.h>
@@ -100,23 +95,29 @@ std::optional<WideString> ExtractSubString(const wchar_t* lpszFullString,
                                            int iSubString) {
   DCHECK(lpszFullString);
 
-  while (iSubString--) {
-    lpszFullString = wcschr(lpszFullString, L' ');
-    if (!lpszFullString)
-      return std::nullopt;
+  // TODO(crbug.com/pdfium/2155): resolve safety issues.
+  UNSAFE_BUFFERS({
+    while (iSubString--) {
+      lpszFullString = wcschr(lpszFullString, L' ');
+      if (!lpszFullString) {
+        return std::nullopt;
+      }
 
-    lpszFullString++;
-    while (*lpszFullString == L' ')
       lpszFullString++;
-  }
+      while (*lpszFullString == L' ') {
+        lpszFullString++;
+      }
+    }
 
-  const wchar_t* lpchEnd = wcschr(lpszFullString, L' ');
-  int nLen = lpchEnd ? static_cast<int>(lpchEnd - lpszFullString)
-                     : static_cast<int>(wcslen(lpszFullString));
-  if (nLen < 0)
-    return std::nullopt;
+    const wchar_t* lpchEnd = wcschr(lpszFullString, L' ');
+    int nLen = lpchEnd ? static_cast<int>(lpchEnd - lpszFullString)
+                       : static_cast<int>(wcslen(lpszFullString));
+    if (nLen < 0) {
+      return std::nullopt;
+    }
 
-  return WideString(lpszFullString, static_cast<size_t>(nLen));
+    return WideString(lpszFullString, static_cast<size_t>(nLen));
+  });
 }
 
 std::vector<WideString> ExtractFindWhat(const WideString& findwhat) {

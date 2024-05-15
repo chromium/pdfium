@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdftext/cpdf_textpage.h"
 
 #include <math.h>
@@ -30,6 +25,7 @@
 #include "core/fpdftext/unicodenormalizationdata.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_bidi.h"
 #include "core/fxcrt/fx_extension.h"
@@ -84,23 +80,28 @@ float CalculateBaseSpace(const CPDF_TextObject* pTextObj,
 }
 
 DataVector<wchar_t> GetUnicodeNormalization(wchar_t wch) {
-  wch = wch & 0xFFFF;
-  wchar_t wFind = kUnicodeDataNormalization[wch];
-  if (!wFind)
-    return DataVector<wchar_t>(1, wch);
+  // TODO(crbug.com/pdfium/2155): resolve safety issues.
+  UNSAFE_BUFFERS({
+    wch = wch & 0xFFFF;
+    wchar_t wFind = kUnicodeDataNormalization[wch];
+    if (!wFind) {
+      return DataVector<wchar_t>(1, wch);
+    }
 
-  if (wFind >= 0x8000) {
-    return DataVector<wchar_t>(1,
-                               kUnicodeDataNormalizationMap1[wFind - 0x8000]);
-  }
+    if (wFind >= 0x8000) {
+      return DataVector<wchar_t>(1,
+                                 kUnicodeDataNormalizationMap1[wFind - 0x8000]);
+    }
 
-  wch = wFind & 0x0FFF;
-  wFind >>= 12;
-  const uint16_t* pMap = kUnicodeDataNormalizationMaps[wFind - 2] + wch;
-  if (wFind == 4)
-    wFind = static_cast<wchar_t>(*pMap++);
+    wch = wFind & 0x0FFF;
+    wFind >>= 12;
+    const uint16_t* pMap = kUnicodeDataNormalizationMaps[wFind - 2] + wch;
+    if (wFind == 4) {
+      wFind = static_cast<wchar_t>(*pMap++);
+    }
 
-  return DataVector<wchar_t>(pMap, pMap + wFind);
+    return DataVector<wchar_t>(pMap, pMap + wFind);
+  });
 }
 
 float MaskPercentFilled(const std::vector<bool>& mask,
@@ -946,7 +947,8 @@ void CPDF_TextPage::SwapTempTextBuf(size_t iCharListStartAppend,
   pdfium::span<wchar_t> temp_span = m_TempTextBuf.GetWideSpan();
   DCHECK(!temp_span.empty());
   if (iBufStartAppend < temp_span.size()) {
-    std::reverse(temp_span.begin() + iBufStartAppend, temp_span.end());
+    pdfium::span<wchar_t> reverse_span = temp_span.subspan(iBufStartAppend);
+    std::reverse(reverse_span.begin(), reverse_span.end());
   }
 }
 

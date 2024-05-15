@@ -2,12 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdftext/cpdf_linkextract.h"
+
+#include <utility>
 
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -40,9 +37,13 @@ TEST(CPDF_LinkExtractTest, CheckMailLink) {
     EXPECT_FALSE(extractor.CheckMailLink(&text_str)) << input;
   }
 
+  // A struct of {input_string, expected_extracted_email_address}.
+  struct IOPair {
+    const wchar_t* input;
+    const wchar_t* expected_output;
+  };
   // Check cases that can extract valid mail link.
-  // An array of {input_string, expected_extracted_email_address}.
-  const wchar_t* const kValidStrings[][2] = {
+  constexpr IOPair kValidStrings[] = {
       {L"peter@abc.d", L"peter@abc.d"},
       {L"red.teddy.b@abc.com", L"red.teddy.b@abc.com"},
       {L"abc_@gmail.com", L"abc_@gmail.com"},  // '_' is ok before '@'.
@@ -56,11 +57,10 @@ TEST(CPDF_LinkExtractTest, CheckMailLink) {
       {L"CAP.cap@Gmail.Com", L"CAP.cap@Gmail.Com"},  // Keep the original case.
   };
   for (const auto& it : kValidStrings) {
-    const wchar_t* const input = it[0];
-    WideString text_str(input);
+    WideString text_str(it.input);
     WideString expected_str(L"mailto:");
-    expected_str += it[1];
-    EXPECT_TRUE(extractor.CheckMailLink(&text_str)) << input;
+    expected_str += it.expected_output;
+    EXPECT_TRUE(extractor.CheckMailLink(&text_str)) << it.input;
     EXPECT_EQ(expected_str.c_str(), text_str);
   }
 }
