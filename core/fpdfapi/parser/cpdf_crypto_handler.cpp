@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/parser/cpdf_crypto_handler.h"
 
 #include <time.h>
@@ -57,51 +52,54 @@ void CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
                                         pdfium::span<const uint8_t> source,
                                         uint8_t* dest_buf,
                                         size_t& dest_size) const {
-  if (m_Cipher == Cipher::kNone) {
-    FXSYS_memcpy(dest_buf, source.data(), source.size());
-    return;
-  }
-  uint8_t realkey[16];
-  size_t realkeylen = sizeof(realkey);
-  if (m_Cipher != Cipher::kAES || m_KeyLen != 32) {
-    uint8_t key1[32];
-    PopulateKey(objnum, gennum, key1);
-    if (m_Cipher == Cipher::kAES) {
-      FXSYS_memcpy(key1 + m_KeyLen + 5, "sAlT", 4);
-    }
-    size_t len = m_Cipher == Cipher::kAES ? m_KeyLen + 9 : m_KeyLen + 5;
-    CRYPT_MD5Generate(pdfium::make_span(key1).first(len), realkey);
-    realkeylen = std::min(m_KeyLen + 5, sizeof(realkey));
-  }
-  if (m_Cipher == Cipher::kAES) {
-    CRYPT_AESSetKey(m_pAESContext.get(),
-                    m_KeyLen == 32 ? m_EncryptKey.data() : realkey, m_KeyLen);
-    uint8_t iv[16];
-    for (int i = 0; i < 16; i++) {
-      iv[i] = (uint8_t)rand();
-    }
-    CRYPT_AESSetIV(m_pAESContext.get(), iv);
-    FXSYS_memcpy(dest_buf, iv, 16);
-    int nblocks = source.size() / 16;
-    CRYPT_AESEncrypt(m_pAESContext.get(), dest_buf + 16, source.data(),
-                     nblocks * 16);
-    uint8_t padding[16];
-    FXSYS_memcpy(padding, source.data() + nblocks * 16, source.size() % 16);
-    FXSYS_memset(padding + source.size() % 16, 16 - source.size() % 16,
-                 16 - source.size() % 16);
-    CRYPT_AESEncrypt(m_pAESContext.get(), dest_buf + nblocks * 16 + 16, padding,
-                     16);
-    dest_size = 32 + nblocks * 16;
-  } else {
-    DCHECK_EQ(dest_size, source.size());
-    if (dest_buf != source.data()) {
+  // TODO(crbug.com/pdfium/2155): investigate safety.
+  UNSAFE_BUFFERS({
+    if (m_Cipher == Cipher::kNone) {
       FXSYS_memcpy(dest_buf, source.data(), source.size());
+      return;
     }
-    // SAFETY: caller ensures that dest_buf points to at least dest_size bytes.
-    CRYPT_ArcFourCryptBlock(
-        UNSAFE_BUFFERS(pdfium::make_span(dest_buf, dest_size)),
-        pdfium::make_span(realkey).first(realkeylen));
-  }
+    uint8_t realkey[16];
+    size_t realkeylen = sizeof(realkey);
+    if (m_Cipher != Cipher::kAES || m_KeyLen != 32) {
+      uint8_t key1[32];
+      PopulateKey(objnum, gennum, key1);
+      if (m_Cipher == Cipher::kAES) {
+        FXSYS_memcpy(key1 + m_KeyLen + 5, "sAlT", 4);
+      }
+      size_t len = m_Cipher == Cipher::kAES ? m_KeyLen + 9 : m_KeyLen + 5;
+      CRYPT_MD5Generate(pdfium::make_span(key1).first(len), realkey);
+      realkeylen = std::min(m_KeyLen + 5, sizeof(realkey));
+    }
+    if (m_Cipher == Cipher::kAES) {
+      CRYPT_AESSetKey(m_pAESContext.get(),
+                      m_KeyLen == 32 ? m_EncryptKey.data() : realkey, m_KeyLen);
+      uint8_t iv[16];
+      for (int i = 0; i < 16; i++) {
+        iv[i] = (uint8_t)rand();
+      }
+      CRYPT_AESSetIV(m_pAESContext.get(), iv);
+      FXSYS_memcpy(dest_buf, iv, 16);
+      int nblocks = source.size() / 16;
+      CRYPT_AESEncrypt(m_pAESContext.get(), dest_buf + 16, source.data(),
+                       nblocks * 16);
+      uint8_t padding[16];
+      FXSYS_memcpy(padding, source.data() + nblocks * 16, source.size() % 16);
+      FXSYS_memset(padding + source.size() % 16, 16 - source.size() % 16,
+                   16 - source.size() % 16);
+      CRYPT_AESEncrypt(m_pAESContext.get(), dest_buf + nblocks * 16 + 16,
+                       padding, 16);
+      dest_size = 32 + nblocks * 16;
+    } else {
+      DCHECK_EQ(dest_size, source.size());
+      if (dest_buf != source.data()) {
+        FXSYS_memcpy(dest_buf, source.data(), source.size());
+      }
+      // SAFETY: caller ensures that dest_buf points to at least dest_size
+      // bytes.
+      CRYPT_ArcFourCryptBlock(pdfium::make_span(dest_buf, dest_size),
+                              pdfium::make_span(realkey).first(realkeylen));
+    }
+  });
 }
 
 struct AESCryptContext {
@@ -125,8 +123,10 @@ void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
   uint8_t key1[48];
   PopulateKey(objnum, gennum, key1);
 
-  if (m_Cipher == Cipher::kAES)
-    FXSYS_memcpy(key1 + m_KeyLen + 5, "sAlT", 4);
+  if (m_Cipher == Cipher::kAES) {
+    // TODO(crbug.com/pdfium/2155): investigate safety.
+    UNSAFE_BUFFERS(FXSYS_memcpy(key1 + m_KeyLen + 5, "sAlT", 4));
+  }
 
   uint8_t realkey[16];
   size_t len = m_Cipher == Cipher::kAES ? m_KeyLen + 9 : m_KeyLen + 5;
@@ -171,8 +171,9 @@ bool CPDF_CryptoHandler::DecryptStream(void* context,
     if (copy_size > src_left) {
       copy_size = src_left;
     }
-    FXSYS_memcpy(pContext->m_Block + pContext->m_BlockOffset,
-                 source.data() + src_off, copy_size);
+    // TODO(crbug.com/pdfium/2155): investigate safety.
+    UNSAFE_BUFFERS(FXSYS_memcpy(pContext->m_Block + pContext->m_BlockOffset,
+                                source.data() + src_off, copy_size));
     src_off += copy_size;
     src_left -= copy_size;
     pContext->m_BlockOffset += copy_size;
@@ -333,11 +334,13 @@ CPDF_CryptoHandler::CPDF_CryptoHandler(Cipher cipher,
   DCHECK(cipher != Cipher::kAES2 || keylen == 32);
   DCHECK(cipher != Cipher::kRC4 || (keylen >= 5 && keylen <= 16));
 
-  if (m_Cipher != Cipher::kNone)
-    FXSYS_memcpy(m_EncryptKey.data(), key, m_KeyLen);
-
-  if (m_Cipher == Cipher::kAES)
+  if (m_Cipher != Cipher::kNone) {
+    // TODO(crbug.com/pdfium/2155): investigate safety.
+    UNSAFE_BUFFERS(FXSYS_memcpy(m_EncryptKey.data(), key, m_KeyLen));
+  }
+  if (m_Cipher == Cipher::kAES) {
     m_pAESContext.reset(FX_Alloc(CRYPT_aes_context, 1));
+  }
 }
 
 CPDF_CryptoHandler::~CPDF_CryptoHandler() = default;
@@ -345,10 +348,13 @@ CPDF_CryptoHandler::~CPDF_CryptoHandler() = default;
 void CPDF_CryptoHandler::PopulateKey(uint32_t objnum,
                                      uint32_t gennum,
                                      uint8_t* key) const {
-  FXSYS_memcpy(key, m_EncryptKey.data(), m_KeyLen);
-  key[m_KeyLen + 0] = (uint8_t)objnum;
-  key[m_KeyLen + 1] = (uint8_t)(objnum >> 8);
-  key[m_KeyLen + 2] = (uint8_t)(objnum >> 16);
-  key[m_KeyLen + 3] = (uint8_t)gennum;
-  key[m_KeyLen + 4] = (uint8_t)(gennum >> 8);
+  // TODO(crbug.com/pdfium/2155): investigate safety.
+  UNSAFE_BUFFERS({
+    FXSYS_memcpy(key, m_EncryptKey.data(), m_KeyLen);
+    key[m_KeyLen + 0] = (uint8_t)objnum;
+    key[m_KeyLen + 1] = (uint8_t)(objnum >> 8);
+    key[m_KeyLen + 2] = (uint8_t)(objnum >> 16);
+    key[m_KeyLen + 3] = (uint8_t)gennum;
+    key[m_KeyLen + 4] = (uint8_t)(gennum >> 8);
+  });
 }
