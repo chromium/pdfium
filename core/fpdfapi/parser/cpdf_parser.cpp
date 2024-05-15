@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/parser/cpdf_parser.h"
 
 #include <ctype.h>
@@ -563,12 +558,13 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
       obj_data.obj_num = objnum;
       ObjectInfo& info = obj_data.info;
 
-      const char* pEntry = &buf[i * kEntrySize];
+      pdfium::span<const char> pEntry =
+          pdfium::make_span(buf).subspan(i * kEntrySize);
       if (pEntry[17] == 'f') {
         info.pos = 0;
         info.type = ObjectType::kFree;
       } else {
-        const FX_SAFE_FILESIZE offset = FXSYS_atoi64(pEntry);
+        const FX_SAFE_FILESIZE offset = FXSYS_atoi64(pEntry.data());
         if (!offset.IsValid())
           return false;
 
@@ -583,7 +579,7 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
 
         // TODO(art-snake): The info.gennum is uint16_t, but version may be
         // greated than max<uint16_t>. Needs solve this issue.
-        const int32_t version = FXSYS_atoi(pEntry + 11);
+        const int32_t version = FXSYS_atoi(pEntry.subspan(11).data());
         info.gennum = version;
         info.type = ObjectType::kNormal;
       }
