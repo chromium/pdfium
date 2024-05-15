@@ -1651,10 +1651,11 @@ const char* const kZapfEncodingNames[kEncodingNamesTableSize] = {
     nullptr, "a201",  "a183",  "a184",  "a197",  "a185",  "a194",  "a198",
     "a186",  "a195",  "a187",  "a188",  "a189",  "a190",  "a191",  nullptr};
 
-uint32_t PDF_FindCode(const uint16_t* pCodes, uint16_t unicode) {
-  for (size_t i = 0; i < CPDF_FontEncoding::kEncodingTableSize; i++) {
-    if (pCodes[i] == unicode)
+uint32_t PDF_FindCode(pdfium::span<const uint16_t> pCodes, uint16_t unicode) {
+  for (size_t i = 0; i < pCodes.size(); i++) {
+    if (pCodes[i] == unicode) {
       return static_cast<uint32_t>(i);
+    }
   }
   return 0;
 }

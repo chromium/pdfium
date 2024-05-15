@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include <array>
 #include <memory>
 #include <optional>
 #include <utility>
@@ -29,7 +30,7 @@ class ScanlineDecoder;
 }
 
 // Indexed by 8-bit char code, contains unicode code points.
-extern const uint16_t kPDFDocEncoding[256];
+extern const std::array<uint16_t, 256> kPDFDocEncoding;
 
 bool ValidateDecoderPipeline(const CPDF_Array* pDecoders);
 

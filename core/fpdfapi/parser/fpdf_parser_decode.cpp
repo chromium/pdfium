@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 
 #include <ctype.h>
@@ -16,6 +11,7 @@
 #include <stddef.h>
 
 #include <algorithm>
+#include <array>
 #include <utility>
 
 #include "build/build_config.h"
@@ -59,7 +55,7 @@ uint8_t GetA85Result(uint32_t res, size_t i) {
 
 }  // namespace
 
-const uint16_t kPDFDocEncoding[256] = {
+const std::array<uint16_t, 256> kPDFDocEncoding = {
     0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008,
     0x0009, 0x000a, 0x000b, 0x000c, 0x000d, 0x000e, 0x000f, 0x0010, 0x0011,
     0x0012, 0x0013, 0x0014, 0x0015, 0x0016, 0x0017, 0x02d8, 0x02c7, 0x02c6,
@@ -162,7 +158,8 @@ uint32_t A85Decode(pdfium::span<const uint8_t> src_span,
       continue;
 
     if (ch == 'z') {
-      FXSYS_memset(dest_buf_ptr + *dest_size, 0, 4);
+      // TODO(crbug.com/pdfium/2155): investigate safety issues.
+      UNSAFE_BUFFERS(FXSYS_memset(dest_buf_ptr + *dest_size, 0, 4));
       state = 0;
       res = 0;
       *dest_size += 4;
@@ -180,7 +177,8 @@ uint32_t A85Decode(pdfium::span<const uint8_t> src_span,
     }
 
     for (size_t i = 0; i < 4; ++i) {
-      dest_buf_ptr[(*dest_size)++] = GetA85Result(res, i);
+      // TODO(crbug.com/pdfium/2155): investigate safety issues.
+      UNSAFE_BUFFERS(dest_buf_ptr[(*dest_size)++] = GetA85Result(res, i));
     }
     state = 0;
     res = 0;
@@ -189,8 +187,10 @@ uint32_t A85Decode(pdfium::span<const uint8_t> src_span,
   if (state) {
     for (size_t i = state; i < 5; ++i)
       res = res * 85 + 84;
-    for (size_t i = 0; i < state - 1; ++i)
-      dest_buf_ptr[(*dest_size)++] = GetA85Result(res, i);
+    for (size_t i = 0; i < state - 1; ++i) {
+      // TODO(crbug.com/pdfium/2155): investigate safety issues.
+      UNSAFE_BUFFERS(dest_buf_ptr[(*dest_size)++] = GetA85Result(res, i));
+    }
   }
   if (pos < src_span.size() && src_span[pos] == '>')
     ++pos;
@@ -227,10 +227,13 @@ uint32_t HexDecode(pdfium::span<const uint8_t> src_span,
       continue;
 
     int digit = FXSYS_HexCharToInt(ch);
-    if (bFirst)
-      dest_buf_ptr[*dest_size] = digit * 16;
-    else
-      dest_buf_ptr[(*dest_size)++] += digit;
+    if (bFirst) {
+      // TODO(crbug.com/pdfium/2155): investigate safety issues.
+      UNSAFE_BUFFERS(dest_buf_ptr[*dest_size] = digit * 16);
+    } else {
+      // TODO(crbug.com/pdfium/2155): investigate safety issues.
+      UNSAFE_BUFFERS(dest_buf_ptr[(*dest_size)++] += digit);
+    }
     bFirst = !bFirst;
   }
   if (!bFirst)
