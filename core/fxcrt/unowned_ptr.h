@@ -49,7 +49,8 @@
 #error "pdf_use_partition_alloc=true requires use_partition_alloc=true"
 #endif
 
-#if BUILDFLAG(ENABLE_DANGLING_RAW_PTR_CHECKS) || BUILDFLAG(USE_ASAN_UNOWNED_PTR)
+#if BUILDFLAG(ENABLE_DANGLING_RAW_PTR_CHECKS) || \
+    BUILDFLAG(USE_RAW_PTR_ASAN_UNOWNED_IMPL)
 #define UNOWNED_PTR_DANGLING_CHECKS
 #endif
 
