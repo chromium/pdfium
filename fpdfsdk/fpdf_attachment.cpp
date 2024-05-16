@@ -51,9 +51,7 @@ ByteString GenerateMD5Base16(const void* contents, const unsigned long len) {
 
   char buf[32];
   for (int i = 0; i < 16; ++i) {
-    // TODO(crbug.com/pdfium/2155): resolve safety issues.
-    FXSYS_IntToTwoHexChars(UNSAFE_BUFFERS(digest[i]),
-                           UNSAFE_BUFFERS(&buf[i * 2]));
+    FXSYS_IntToTwoHexChars(UNSAFE_TODO(digest[i]), UNSAFE_TODO(&buf[i * 2]));
   }
   return ByteString(buf, 32);
 }
@@ -262,10 +260,9 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
   // Create the file stream and have the filespec dictionary link to it.
   const uint8_t* contents_as_bytes = static_cast<const uint8_t*>(contents);
 
-  // TODO(crbug.com/pdfium/2155): resolve safety issues.
   auto pFileStream = pDoc->NewIndirect<CPDF_Stream>(
       DataVector<uint8_t>(contents_as_bytes,
-                          UNSAFE_BUFFERS(contents_as_bytes + len)),
+                          UNSAFE_TODO(contents_as_bytes + len)),
       std::move(pFileStreamDict));
 
   auto pEFDict = pFile->AsMutableDictionary()->SetNewFor<CPDF_Dictionary>("EF");

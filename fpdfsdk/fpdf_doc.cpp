@@ -273,8 +273,7 @@ FPDFDest_GetView(FPDF_DEST dest, unsigned long* pNumParams, FS_FLOAT* pParams) {
   DCHECK(nParams <= 4);
   *pNumParams = nParams;
   for (unsigned long i = 0; i < nParams; ++i) {
-    // TODO(crbug.com/pdfium/2155): resolve safety issues.
-    UNSAFE_BUFFERS(pParams[i] = destination.GetParam(i));
+    UNSAFE_TODO(pParams[i]) = destination.GetParam(i);
   }
   return destination.GetZoomMode();
 }

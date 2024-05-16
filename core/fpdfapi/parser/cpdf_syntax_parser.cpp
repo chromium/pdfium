@@ -750,8 +750,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   if (len >= 0) {
     CPDF_ReadValidator::ScopedSession read_session(GetValidator());
     m_Pos += ReadEOLMarkers(GetPos());
-    // TODO(tsepez): investigate safety.
-    UNSAFE_BUFFERS(
+    UNSAFE_TODO(
         FXSYS_memset(m_WordBuffer.data(), 0, kEndStreamStr.GetLength() + 1));
     GetNextWordInternal();
     if (GetValidator()->has_read_problems())
@@ -811,9 +810,7 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     stream = pdfium::MakeRetain<CPDF_Stream>(std::move(pDict));
   }
   const FX_FILESIZE end_stream_offset = GetPos();
-  // TODO(tsepez): investigate safety.
-  UNSAFE_BUFFERS(
-      FXSYS_memset(m_WordBuffer.data(), 0, kEndObjStr.GetLength() + 1));
+  UNSAFE_TODO(FXSYS_memset(m_WordBuffer.data(), 0, kEndObjStr.GetLength() + 1));
   GetNextWordInternal();
 
   // Allow whitespace after endstream and before a newline.

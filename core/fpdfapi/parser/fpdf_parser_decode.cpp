@@ -158,8 +158,7 @@ uint32_t A85Decode(pdfium::span<const uint8_t> src_span,
       continue;
 
     if (ch == 'z') {
-      // TODO(crbug.com/pdfium/2155): investigate safety issues.
-      UNSAFE_BUFFERS(FXSYS_memset(dest_buf_ptr + *dest_size, 0, 4));
+      UNSAFE_TODO(FXSYS_memset(dest_buf_ptr + *dest_size, 0, 4));
       state = 0;
       res = 0;
       *dest_size += 4;
@@ -177,8 +176,7 @@ uint32_t A85Decode(pdfium::span<const uint8_t> src_span,
     }
 
     for (size_t i = 0; i < 4; ++i) {
-      // TODO(crbug.com/pdfium/2155): investigate safety issues.
-      UNSAFE_BUFFERS(dest_buf_ptr[(*dest_size)++] = GetA85Result(res, i));
+      UNSAFE_TODO(dest_buf_ptr[(*dest_size)++] = GetA85Result(res, i));
     }
     state = 0;
     res = 0;
@@ -188,8 +186,7 @@ uint32_t A85Decode(pdfium::span<const uint8_t> src_span,
     for (size_t i = state; i < 5; ++i)
       res = res * 85 + 84;
     for (size_t i = 0; i < state - 1; ++i) {
-      // TODO(crbug.com/pdfium/2155): investigate safety issues.
-      UNSAFE_BUFFERS(dest_buf_ptr[(*dest_size)++] = GetA85Result(res, i));
+      UNSAFE_TODO(dest_buf_ptr[(*dest_size)++] = GetA85Result(res, i));
     }
   }
   if (pos < src_span.size() && src_span[pos] == '>')
@@ -228,11 +225,9 @@ uint32_t HexDecode(pdfium::span<const uint8_t> src_span,
 
     int digit = FXSYS_HexCharToInt(ch);
     if (bFirst) {
-      // TODO(crbug.com/pdfium/2155): investigate safety issues.
-      UNSAFE_BUFFERS(dest_buf_ptr[*dest_size] = digit * 16);
+      UNSAFE_TODO(dest_buf_ptr[*dest_size] = digit * 16);
     } else {
-      // TODO(crbug.com/pdfium/2155): investigate safety issues.
-      UNSAFE_BUFFERS(dest_buf_ptr[(*dest_size)++] += digit);
+      UNSAFE_TODO(dest_buf_ptr[(*dest_size)++] += digit);
     }
     bFirst = !bFirst;
   }

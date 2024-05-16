@@ -96,4 +96,9 @@
 #endif
 // clang-format on
 
+// Like UNSAFE_BUFFERS(), but indicates there is a TODO() task to
+// investigate safety,
+// TODO(crbug.com/pdfium/2155): remove all usage.
+#define UNSAFE_TODO(...) UNSAFE_BUFFERS(__VA_ARGS__)
+
 #endif  // CORE_FXCRT_COMPILER_SPECIFIC_H_

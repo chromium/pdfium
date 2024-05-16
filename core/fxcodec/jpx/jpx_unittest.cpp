@@ -428,8 +428,7 @@ TEST(fxcodec, YUV420ToRGB) {
     u.data = static_cast<OPJ_INT32*>(
         opj_image_data_alloc(u.w * u.h * sizeof(OPJ_INT32)));
 
-    // TODO(crbug.com/pdfium/2155): resolve safety issues.
-    UNSAFE_BUFFERS({
+    UNSAFE_TODO({
       FXSYS_memset(y.data, 1, y.w * y.h * sizeof(OPJ_INT32));
       FXSYS_memset(u.data, 0, u.w * u.h * sizeof(OPJ_INT32));
       FXSYS_memset(v.data, 0, v.w * v.h * sizeof(OPJ_INT32));

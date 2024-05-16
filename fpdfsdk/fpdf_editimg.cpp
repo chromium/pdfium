@@ -93,8 +93,7 @@ bool LoadJpegHelper(FPDF_PAGE* pages,
 
   if (pages) {
     for (int index = 0; index < count; index++) {
-      // TODO(crbug.com/pdfium/2155): resolve safety issues.
-      CPDF_Page* pPage = CPDFPageFromFPDFPage(UNSAFE_BUFFERS(pages[index]));
+      CPDF_Page* pPage = CPDFPageFromFPDFPage(UNSAFE_TODO(pages[index]));
       if (pPage) {
         pImgObj->GetImage()->ResetCache(pPage);
       }
@@ -175,8 +174,7 @@ FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
 
   if (pages) {
     for (int index = 0; index < count; index++) {
-      // TODO(crbug.com/pdfium/2155): resolve safety issues.
-      CPDF_Page* pPage = CPDFPageFromFPDFPage(UNSAFE_BUFFERS(pages[index]));
+      CPDF_Page* pPage = CPDFPageFromFPDFPage(UNSAFE_TODO(pages[index]));
       if (pPage) {
         pImgObj->GetImage()->ResetCache(pPage);
       }

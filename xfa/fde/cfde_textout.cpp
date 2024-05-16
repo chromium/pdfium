@@ -93,8 +93,7 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
 #else
         font = pFxFont;
 #endif
-        // TODO(crbug.com/pdfium/2155): investigate safety issues.
-        device->DrawNormalText(UNSAFE_BUFFERS(pdfium::make_span(pCurCP, count)),
+        device->DrawNormalText(UNSAFE_TODO(pdfium::make_span(pCurCP, count)),
                                font, -fFontSize, matrix, color, kOptions);
       }
       pCurFont = pSTFont;
@@ -114,10 +113,8 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
 #else
     font = pFxFont;
 #endif
-    // TODO(crbug.com/pdfium/2155): investigate safety issues.
-    return device->DrawNormalText(
-        UNSAFE_BUFFERS(pdfium::make_span(pCurCP, count)), font, -fFontSize,
-        matrix, color, kOptions);
+    return device->DrawNormalText(UNSAFE_TODO(pdfium::make_span(pCurCP, count)),
+                                  font, -fFontSize, matrix, color, kOptions);
   }
   return true;
 }

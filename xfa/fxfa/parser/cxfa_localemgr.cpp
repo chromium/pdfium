@@ -1077,9 +1077,8 @@ CXFA_XMLLocale* GetLocaleFromBuffer(cppgc::Heap* heap,
   if (!output)
     return nullptr;
 
-  // TODO(crbug.com/pdfuim/2155): investigate safety issues.
   return CXFA_XMLLocale::Create(
-      heap, UNSAFE_BUFFERS(pdfium::make_span(output.get(), dwSize)));
+      heap, UNSAFE_TODO(pdfium::make_span(output.get(), dwSize)));
 }
 
 CXFA_LocaleMgr::LangID GetLanguageID(WideString wsLanguage) {

@@ -957,7 +957,7 @@ class BitmapPageRenderer : public PageRenderer {
       if (md5) {
         // Write the filename and the MD5 of the buffer to stdout.
         OutputMD5Hash(image_file_name.c_str(),
-                      UNSAFE_BUFFERS(pdfium::make_span(
+                      UNSAFE_TODO(pdfium::make_span(
                           static_cast<const uint8_t*>(buffer),
                           static_cast<size_t>(stride) * renderer.height())));
       }
@@ -1288,7 +1288,7 @@ class SkPicturePageRenderer final : public SkCanvasPageRenderer {
         return false;
 
       OutputMD5Hash(image_file_name.c_str(),
-                    UNSAFE_BUFFERS(pdfium::make_span(
+                    UNSAFE_TODO(pdfium::make_span(
                         static_cast<const uint8_t*>(pixmap.addr()),
                         pixmap.computeByteSize())));
     }

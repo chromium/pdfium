@@ -82,8 +82,7 @@ TEST_F(FPDFJavaScriptEmbedderTest, GetJSName) {
   // The result buffer should be overwritten with an empty string.
   std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(kExpectedLength);
   // Write in the buffer to verify it's not overwritten.
-  // TODO(tsepez): investigate safety.
-  UNSAFE_BUFFERS(FXSYS_memcpy(buf.data(), "abcdefgh", 8));
+  UNSAFE_TODO(FXSYS_memcpy(buf.data(), "abcdefgh", 8));
   EXPECT_EQ(kExpectedLength, FPDFJavaScriptAction_GetName(js.get(), buf.data(),
                                                           kExpectedLength - 1));
   EXPECT_EQ(0, memcmp(buf.data(), "abcdefgh", 8));
@@ -113,8 +112,7 @@ TEST_F(FPDFJavaScriptEmbedderTest, GetJSScript) {
   // small. The result buffer should be overwritten with an empty string.
   std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(kExpectedLength);
   // Write in the buffer to verify it's not overwritten.
-  // TODO(tsepez): investigate safety.
-  UNSAFE_BUFFERS(FXSYS_memcpy(buf.data(), "abcdefgh", 8));
+  UNSAFE_TODO(FXSYS_memcpy(buf.data(), "abcdefgh", 8));
   EXPECT_EQ(kExpectedLength, FPDFJavaScriptAction_GetScript(
                                  js.get(), buf.data(), kExpectedLength - 1));
   EXPECT_EQ(0, memcmp(buf.data(), "abcdefgh", 8));

@@ -1013,8 +1013,7 @@ FPDFPageObj_SetDashArray(FPDF_PAGEOBJECT page_object,
   std::vector<float> dashes;
   if (dash_count > 0) {
     dashes.reserve(dash_count);
-    // TODO(crbug.com/pdfium/2155): resolve safety issues.
-    dashes.assign(dash_array, UNSAFE_BUFFERS(dash_array + dash_count));
+    dashes.assign(dash_array, UNSAFE_TODO(dash_array + dash_count));
   }
   pPageObj->mutable_graph_state().SetLineDash(dashes, phase, 1.0f);
   pPageObj->SetDirty(true);

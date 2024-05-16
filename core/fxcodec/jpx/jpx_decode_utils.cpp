@@ -26,8 +26,7 @@ OPJ_SIZE_T opj_read_from_memory(void* p_buffer,
   if (srcData->offset >= srcData->src_size)
     return static_cast<OPJ_SIZE_T>(-1);
 
-  // TODO(crbug.com/pdfium/2155): resolve safety issues.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     OPJ_SIZE_T bufferLength = srcData->src_size - srcData->offset;
     OPJ_SIZE_T readlength = nb_bytes < bufferLength ? nb_bytes : bufferLength;
     FXSYS_memcpy(p_buffer, &srcData->src_data[srcData->offset], readlength);

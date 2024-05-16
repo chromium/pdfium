@@ -519,9 +519,8 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_AddInkStroke(FPDF_ANNOTATION annot,
 
   auto ink_coord_list = inklist->AppendNew<CPDF_Array>();
   for (size_t i = 0; i < point_count; i++) {
-    // TODO(crbug.com/pdfium/2155): investigate safety issues.
-    ink_coord_list->AppendNew<CPDF_Number>(UNSAFE_BUFFERS(points[i].x));
-    ink_coord_list->AppendNew<CPDF_Number>(UNSAFE_BUFFERS(points[i].y));
+    ink_coord_list->AppendNew<CPDF_Number>(UNSAFE_TODO(points[i].x));
+    ink_coord_list->AppendNew<CPDF_Number>(UNSAFE_TODO(points[i].y));
   }
   return static_cast<int>(inklist->size() - 1);
 }
@@ -878,9 +877,8 @@ FPDFAnnot_GetVertices(FPDF_ANNOTATION annot,
       fxcrt::CollectionSize<unsigned long>(*vertices) / 2;
   if (buffer && length >= points_len) {
     for (unsigned long i = 0; i < points_len; ++i) {
-      // TODO(crbug.com/pdfium/2155): investigate safety issues.
-      UNSAFE_BUFFERS(buffer[i].x) = vertices->GetFloatAt(i * 2);
-      UNSAFE_BUFFERS(buffer[i].y) = vertices->GetFloatAt(i * 2 + 1);
+      UNSAFE_TODO(buffer[i].x) = vertices->GetFloatAt(i * 2);
+      UNSAFE_TODO(buffer[i].y) = vertices->GetFloatAt(i * 2 + 1);
     }
   }
   return points_len;
@@ -910,9 +908,8 @@ FPDFAnnot_GetInkListPath(FPDF_ANNOTATION annot,
       fxcrt::CollectionSize<unsigned long>(*path) / 2;
   if (buffer && length >= points_len) {
     for (unsigned long i = 0; i < points_len; ++i) {
-      // TODO(crbug.com/pdfium/2155): investigate safety issues.
-      UNSAFE_BUFFERS(buffer[i].x) = path->GetFloatAt(i * 2);
-      UNSAFE_BUFFERS(buffer[i].y) = path->GetFloatAt(i * 2 + 1);
+      UNSAFE_TODO(buffer[i].x) = path->GetFloatAt(i * 2);
+      UNSAFE_TODO(buffer[i].y) = path->GetFloatAt(i * 2 + 1);
     }
   }
   return points_len;
@@ -1069,8 +1066,7 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
                 "length of kModeKeyForMode should be equal to "
                 "FPDF_ANNOT_APPEARANCEMODE_COUNT");
 
-  // TODO(crbug.com/pdfium/2155): investigate safety issues.
-  const char* mode_key = UNSAFE_BUFFERS(kModeKeyForMode[appearanceMode]);
+  const char* mode_key = UNSAFE_TODO(kModeKeyForMode[appearanceMode]);
 
   RetainPtr<CPDF_Dictionary> pApDict =
       pAnnotDict->GetMutableDictFor(pdfium::annotation::kAP);
@@ -1391,9 +1387,8 @@ FPDFAnnot_SetFocusableSubtypes(FPDF_FORMHANDLE hHandle,
   std::vector<CPDF_Annot::Subtype> focusable_annot_types;
   focusable_annot_types.reserve(count);
   for (size_t i = 0; i < count; ++i) {
-    // TODO(crbug.com/pdfium/2155): investigate safety issues.
     focusable_annot_types.push_back(
-        static_cast<CPDF_Annot::Subtype>(UNSAFE_BUFFERS(subtypes[i])));
+        static_cast<CPDF_Annot::Subtype>(UNSAFE_TODO(subtypes[i])));
   }
 
   pFormFillEnv->SetFocusableAnnotSubtypes(focusable_annot_types);
@@ -1431,9 +1426,8 @@ FPDFAnnot_GetFocusableSubtypes(FPDF_FORMHANDLE hHandle,
     return false;
 
   for (size_t i = 0; i < focusable_annot_types.size(); ++i) {
-    // TODO(crbug.com/pdfium/2155): investigate safety issues.
-    UNSAFE_BUFFERS(subtypes[i] = static_cast<FPDF_ANNOTATION_SUBTYPE>(
-                       focusable_annot_types[i]));
+    UNSAFE_TODO(subtypes[i] = static_cast<FPDF_ANNOTATION_SUBTYPE>(
+                    focusable_annot_types[i]));
   }
 
   return true;
@@ -1483,7 +1477,7 @@ FPDFAnnot_GetFormFieldExportValue(FPDF_FORMHANDLE hHandle,
   // SAFETY: required from caller.
   return Utf16EncodeMaybeCopyAndReturnLength(
       pWidget->GetExportValue(),
-      UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
+      UNSAFE_TODO(SpanFromFPDFApiArgs(buffer, buflen)));
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetURI(FPDF_ANNOTATION annot,

@@ -597,15 +597,13 @@ void CRYPT_AESDecrypt(CRYPT_aes_context* ctx,
   FXSYS_memcpy(iv, ctx->iv, sizeof(iv));
   while (size != 0) {
     for (i = 0; i < 4; i++) {
-      // TODO(tsepez): Create actual span.
       x[i] = ct[i] = fxcrt::GetUInt32MSBFirst(
-          UNSAFE_BUFFERS(pdfium::make_span(src + 4 * i, 4u)));
+          UNSAFE_TODO(pdfium::make_span(src + 4 * i, 4u)));
     }
     aes_decrypt_nb_4(ctx, x);
     for (i = 0; i < 4; i++) {
-      // TODO(tsepez): Create actual span.
       fxcrt::PutUInt32MSBFirst(
-          iv[i] ^ x[i], UNSAFE_BUFFERS(pdfium::make_span(dest + 4 * i, 4u)));
+          iv[i] ^ x[i], UNSAFE_TODO(pdfium::make_span(dest + 4 * i, 4u)));
       iv[i] = ct[i];
     }
     dest += 16;
@@ -625,15 +623,13 @@ void CRYPT_AESEncrypt(CRYPT_aes_context* ctx,
   FXSYS_memcpy(iv, ctx->iv, sizeof(iv));
   while (size != 0) {
     for (i = 0; i < 4; i++) {
-      // TODO(tsepez): use an actual span.
       iv[i] ^= fxcrt::GetUInt32MSBFirst(
-          UNSAFE_BUFFERS(pdfium::make_span(src + 4 * i, 4u)));
+          UNSAFE_TODO(pdfium::make_span(src + 4 * i, 4u)));
     }
     aes_encrypt_nb_4(ctx, iv);
     for (i = 0; i < 4; i++) {
-      // TODO(tsepez): use an actual span.
       fxcrt::PutUInt32MSBFirst(
-          iv[i], UNSAFE_BUFFERS(pdfium::make_span(dest + 4 * i, 4u)));
+          iv[i], UNSAFE_TODO(pdfium::make_span(dest + 4 * i, 4u)));
     }
     dest += 16;
     src += 16;

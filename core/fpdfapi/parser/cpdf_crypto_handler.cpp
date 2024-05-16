@@ -52,8 +52,7 @@ void CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
                                         pdfium::span<const uint8_t> source,
                                         uint8_t* dest_buf,
                                         size_t& dest_size) const {
-  // TODO(crbug.com/pdfium/2155): investigate safety.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     if (m_Cipher == Cipher::kNone) {
       FXSYS_memcpy(dest_buf, source.data(), source.size());
       return;
@@ -124,8 +123,7 @@ void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
   PopulateKey(objnum, gennum, key1);
 
   if (m_Cipher == Cipher::kAES) {
-    // TODO(crbug.com/pdfium/2155): investigate safety.
-    UNSAFE_BUFFERS(FXSYS_memcpy(key1 + m_KeyLen + 5, "sAlT", 4));
+    UNSAFE_TODO(FXSYS_memcpy(key1 + m_KeyLen + 5, "sAlT", 4));
   }
 
   uint8_t realkey[16];
@@ -171,9 +169,8 @@ bool CPDF_CryptoHandler::DecryptStream(void* context,
     if (copy_size > src_left) {
       copy_size = src_left;
     }
-    // TODO(crbug.com/pdfium/2155): investigate safety.
-    UNSAFE_BUFFERS(FXSYS_memcpy(pContext->m_Block + pContext->m_BlockOffset,
-                                source.data() + src_off, copy_size));
+    UNSAFE_TODO(FXSYS_memcpy(pContext->m_Block + pContext->m_BlockOffset,
+                             source.data() + src_off, copy_size));
     src_off += copy_size;
     src_left -= copy_size;
     pContext->m_BlockOffset += copy_size;
@@ -335,8 +332,7 @@ CPDF_CryptoHandler::CPDF_CryptoHandler(Cipher cipher,
   DCHECK(cipher != Cipher::kRC4 || (keylen >= 5 && keylen <= 16));
 
   if (m_Cipher != Cipher::kNone) {
-    // TODO(crbug.com/pdfium/2155): investigate safety.
-    UNSAFE_BUFFERS(FXSYS_memcpy(m_EncryptKey.data(), key, m_KeyLen));
+    UNSAFE_TODO(FXSYS_memcpy(m_EncryptKey.data(), key, m_KeyLen));
   }
   if (m_Cipher == Cipher::kAES) {
     m_pAESContext.reset(FX_Alloc(CRYPT_aes_context, 1));
@@ -348,8 +344,7 @@ CPDF_CryptoHandler::~CPDF_CryptoHandler() = default;
 void CPDF_CryptoHandler::PopulateKey(uint32_t objnum,
                                      uint32_t gennum,
                                      uint8_t* key) const {
-  // TODO(crbug.com/pdfium/2155): investigate safety.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     FXSYS_memcpy(key, m_EncryptKey.data(), m_KeyLen);
     key[m_KeyLen + 0] = (uint8_t)objnum;
     key[m_KeyLen + 1] = (uint8_t)(objnum >> 8);

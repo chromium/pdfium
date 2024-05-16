@@ -1021,8 +1021,7 @@ TEST(WideString, GetBuffer) {
   WideString str2(L"cl");
   {
     pdfium::span<wchar_t> buffer = str2.GetBuffer(12);
-    // TODO(tsepez): make safe.
-    UNSAFE_BUFFERS(wcscpy(buffer.data() + 2, L"ams"));
+    UNSAFE_TODO(wcscpy(buffer.data() + 2, L"ams"));
   }
   str2.ReleaseBuffer(str2.GetStringLength());
   EXPECT_EQ(L"clams", str2);
@@ -1256,9 +1255,7 @@ TEST(WideString, FromUTF16BE) {
       {ByteString(" &", 2), L"…"},
       {ByteString("\xD8\x3C\xDF\xA8", 4), L"🎨"},
   };
-
-  // TODO(tsepez): make safe.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     for (size_t i = 0; i < std::size(utf16be_decode_cases); ++i) {
       EXPECT_EQ(
           WideString::FromUTF16BE(utf16be_decode_cases[i].in.unsigned_span()),
@@ -1279,9 +1276,7 @@ TEST(WideString, FromUTF16LE) {
       {ByteString("& ", 2), L"…"},
       {ByteString("\x3C\xD8\xA8\xDF", 4), L"🎨"},
   };
-
-  // TODO(tsepez): make safe.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     for (size_t i = 0; i < std::size(utf16le_decode_cases); ++i) {
       EXPECT_EQ(
           WideString::FromUTF16LE(utf16le_decode_cases[i].in.unsigned_span()),
@@ -1304,9 +1299,7 @@ TEST(WideString, ToUTF16LE) {
       {L"\x3132\x6162", ByteString("\x32\x31\x62\x61\0\0", 6)},
       {L"🎨", ByteString("\x3C\xD8\xA8\xDF\0\0", 6)},
   };
-
-  // TODO(tsepez): make safe.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     for (size_t i = 0; i < std::size(utf16le_encode_cases); ++i) {
       EXPECT_EQ(utf16le_encode_cases[i].bs,
                 utf16le_encode_cases[i].ws.ToUTF16LE())
@@ -1330,9 +1323,7 @@ TEST(WideString, ToUCS2LE) {
       {L"🎨", ByteString("\0\0", 2)},
 #endif
   };
-
-  // TODO(tsepez): make safe.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     for (size_t i = 0; i < std::size(ucs2le_encode_cases); ++i) {
       EXPECT_EQ(ucs2le_encode_cases[i].bs, ucs2le_encode_cases[i].ws.ToUCS2LE())
           << " for case number " << i;

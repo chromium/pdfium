@@ -39,8 +39,7 @@ void GetPassCode(const ByteString& password, pdfium::span<uint8_t> output) {
   DCHECK_EQ(sizeof(kDefaultPasscode), output.size());
   size_t len = std::min(password.GetLength(), output.size());
   size_t remaining = output.size() - len;
-  // TODO(crbug.com/pdfium/2155): investigate safety.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     FXSYS_memcpy(output.data(), password.unsigned_str(), len);
     if (remaining) {
       FXSYS_memcpy(&output[len], kDefaultPasscode, remaining);
@@ -78,8 +77,7 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
       CRYPT_MD5Generate(pdfium::make_span(digest).first(copy_len), digest);
     }
   }
-  // TODO(crbug.com/pdfium/2155): investigate safety.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     FXSYS_memset(key, 0, keylen);
     FXSYS_memcpy(key, digest, copy_len);
   });
@@ -128,8 +126,7 @@ void Revision6_Hash(const ByteString& password,
   DataVector<uint8_t> inter_digest;
   uint8_t* input = digest;
   uint8_t* key = input;
-  // TODO(crbug.com/pdfium/2155): investigate safety.
-  uint8_t* iv = UNSAFE_BUFFERS(input + 16);
+  uint8_t* iv = UNSAFE_TODO(input + 16);
   int i = 0;
   size_t block_size = 32;
   CRYPT_aes_context aes = {};
@@ -142,8 +139,7 @@ void Revision6_Hash(const ByteString& password,
     auto encrypted_output_span = pdfium::make_span(encrypted_output);
     DataVector<uint8_t> content;
     for (int j = 0; j < 64; ++j) {
-      // TODO(crbug.com/pdfium/2155): investigate safety.
-      UNSAFE_BUFFERS({
+      UNSAFE_TODO({
         content.insert(std::end(content), password.unsigned_str(),
                        password.unsigned_str() + password.GetLength());
         content.insert(std::end(content), input, input + block_size);
@@ -184,13 +180,11 @@ void Revision6_Hash(const ByteString& password,
                            encrypted_output_span.size(), input);
     }
     key = input;
-    // TODO(crbug.com/pdfium/2155): investigate safety.
-    iv = UNSAFE_BUFFERS(input + 16);
+    iv = UNSAFE_TODO(input + 16);
     ++i;
   } while (i < 64 || i - 32 < encrypted_output.back());
   if (hash) {
-    // TODO(crbug.com/pdfium/2155): investigate safety.
-    UNSAFE_BUFFERS(FXSYS_memcpy(hash, input, 32));
+    UNSAFE_TODO(FXSYS_memcpy(hash, input, 32));
   }
 }
 
@@ -350,14 +344,12 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
   CRYPT_sha2_context sha;
   uint8_t digest[32];
   if (m_Revision >= 6) {
-    // TODO(crbug.com/pdfium/2155): investigate safety.
-    Revision6_Hash(password, UNSAFE_BUFFERS((const uint8_t*)pkey + 32),
+    Revision6_Hash(password, UNSAFE_TODO((const uint8_t*)pkey + 32),
                    bOwner ? ukey.unsigned_str() : nullptr, digest);
   } else {
     CRYPT_SHA256Start(&sha);
     CRYPT_SHA256Update(&sha, password.unsigned_str(), password.GetLength());
-    // TODO(crbug.com/pdfium/2155): investigate safety.
-    CRYPT_SHA256Update(&sha, UNSAFE_BUFFERS(pkey + 32), 8);
+    CRYPT_SHA256Update(&sha, UNSAFE_TODO(pkey + 32), 8);
     if (bOwner)
       CRYPT_SHA256Update(&sha, ukey.unsigned_str(), 48);
     CRYPT_SHA256Finish(&sha, digest);
@@ -366,14 +358,12 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
     return false;
 
   if (m_Revision >= 6) {
-    // TODO(crbug.com/pdfium/2155): investigate safety.
-    Revision6_Hash(password, UNSAFE_BUFFERS((const uint8_t*)pkey + 40),
+    Revision6_Hash(password, UNSAFE_TODO((const uint8_t*)pkey + 40),
                    bOwner ? ukey.unsigned_str() : nullptr, digest);
   } else {
     CRYPT_SHA256Start(&sha);
     CRYPT_SHA256Update(&sha, password.unsigned_str(), password.GetLength());
-    // TODO(crbug.com/pdfium/2155): investigate safety.
-    CRYPT_SHA256Update(&sha, UNSAFE_BUFFERS(pkey + 40), 8);
+    CRYPT_SHA256Update(&sha, UNSAFE_TODO(pkey + 40), 8);
     if (bOwner)
       CRYPT_SHA256Update(&sha, ukey.unsigned_str(), 48);
     CRYPT_SHA256Finish(&sha, digest);
@@ -396,8 +386,7 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
   uint8_t perms_buf[16] = {};
   size_t copy_len =
       std::min(sizeof(perms_buf), static_cast<size_t>(perms.GetLength()));
-  // TODO(crbug.com/pdfium/2155): investigate safety.
-  UNSAFE_BUFFERS(FXSYS_memcpy(perms_buf, perms.unsigned_str(), copy_len));
+  UNSAFE_TODO(FXSYS_memcpy(perms_buf, perms.unsigned_str(), copy_len));
   uint8_t buf[16];
   CRYPT_AESDecrypt(&aes, buf, perms_buf, 16);
   if (buf[9] != 'a' || buf[10] != 'd' || buf[11] != 'b')
@@ -467,8 +456,7 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
 
   uint8_t ukeybuf[32];
   if (m_Revision == 2) {
-    // TODO(crbug.com/pdfium/2155): investigate safety.
-    UNSAFE_BUFFERS(
+    UNSAFE_TODO(
         FXSYS_memcpy(ukeybuf, kDefaultPasscode, sizeof(kDefaultPasscode)));
     CRYPT_ArcFourCryptBlock(ukeybuf,
                             pdfium::make_span(m_EncryptKey).first(m_KeyLen));
@@ -478,13 +466,10 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
   uint8_t test[32] = {};
   uint8_t tmpkey[32] = {};
   uint32_t copy_len = std::min(sizeof(test), ukey.GetLength());
-
-  // TODO(crbug.com/pdfium/2155): investigate safety.
-  UNSAFE_BUFFERS(FXSYS_memcpy(test, ukey.c_str(), copy_len));
+  UNSAFE_TODO(FXSYS_memcpy(test, ukey.c_str(), copy_len));
   for (int32_t i = 19; i >= 0; i--) {
     for (size_t j = 0; j < m_KeyLen; j++) {
-      // TODO(crbug.com/pdfium/2155): investigate safety.
-      UNSAFE_BUFFERS(tmpkey[j] = m_EncryptKey[j] ^ static_cast<uint8_t>(i));
+      UNSAFE_TODO(tmpkey[j] = m_EncryptKey[j] ^ static_cast<uint8_t>(i));
     }
     CRYPT_ArcFourCryptBlock(test, pdfium::make_span(tmpkey).first(m_KeyLen));
   }
@@ -516,8 +501,7 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
   uint8_t enckey[32] = {};
   uint8_t okeybuf[32] = {};
   size_t copy_len = std::min(m_KeyLen, sizeof(digest));
-  // TODO(crbug.com/pdfium/2155): investigate safety.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     FXSYS_memcpy(enckey, digest, copy_len);
     FXSYS_memcpy(okeybuf, okey.c_str(), okeylen);
   });
@@ -529,16 +513,14 @@ ByteString CPDF_SecurityHandler::GetUserPassword(
     for (int32_t i = 19; i >= 0; i--) {
       uint8_t tempkey[32] = {};
       for (size_t j = 0; j < m_KeyLen; j++) {
-        // TODO(crbug.com/pdfium/2155): investigate safety.
-        UNSAFE_BUFFERS(tempkey[j] = enckey[j] ^ static_cast<uint8_t>(i));
+        UNSAFE_TODO(tempkey[j] = enckey[j] ^ static_cast<uint8_t>(i));
       }
       CRYPT_ArcFourCryptBlock(okey_span,
                               pdfium::make_span(tempkey).first(m_KeyLen));
     }
   }
   size_t len = kRequiredOkeyLength;
-  // TODO(crbug.com/pdfium/2155): investigate safety.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     while (len && kDefaultPasscode[len - 1] == okey_span[len - 1]) {
       len--;
     }
@@ -603,8 +585,7 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
                  false, file_id);
   if (m_Revision < 3) {
     uint8_t tempbuf[32];
-    // TODO(crbug.com/pdfium/2155): investigate safety.
-    UNSAFE_BUFFERS(
+    UNSAFE_TODO(
         FXSYS_memcpy(tempbuf, kDefaultPasscode, sizeof(kDefaultPasscode)));
     CRYPT_ArcFourCryptBlock(tempbuf,
                             pdfium::make_span(m_EncryptKey).first(key_len));
@@ -623,8 +604,7 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
     uint8_t tempkey[32];
     for (uint8_t i = 1; i <= 19; i++) {
       for (size_t j = 0; j < key_len; j++) {
-        // TODO(crbug.com/pdfium/2155): investigate safety.
-        UNSAFE_BUFFERS(tempkey[j] = m_EncryptKey[j] ^ i);
+        UNSAFE_TODO(tempkey[j] = m_EncryptKey[j] ^ i);
       }
       CRYPT_ArcFourCryptBlock(partial_digest_span,
                               pdfium::make_span(tempkey).first(key_len));
@@ -657,17 +637,14 @@ void CPDF_SecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
     CRYPT_SHA256Update(&sha2, digest, 8);
     CRYPT_SHA256Finish(&sha2, digest1);
   }
-  // TODO(crbug.com/pdfium/2155): investigate safety.
-  UNSAFE_BUFFERS(FXSYS_memcpy(digest1 + 32, digest, 16));
+  UNSAFE_TODO(FXSYS_memcpy(digest1 + 32, digest, 16));
   pEncryptDict->SetNewFor<CPDF_String>("U", ByteString(digest1, 48), false);
   if (m_Revision >= 6) {
-    // TODO(crbug.com/pdfium/2155): investigate safety.
-    Revision6_Hash(password, UNSAFE_BUFFERS(digest + 8), nullptr, digest1);
+    Revision6_Hash(password, UNSAFE_TODO(digest + 8), nullptr, digest1);
   } else {
     CRYPT_SHA256Start(&sha2);
     CRYPT_SHA256Update(&sha2, password.unsigned_str(), password.GetLength());
-    // TODO(crbug.com/pdfium/2155): investigate safety.
-    CRYPT_SHA256Update(&sha2, UNSAFE_BUFFERS(digest + 8), 8);
+    CRYPT_SHA256Update(&sha2, UNSAFE_TODO(digest + 8), 8);
     CRYPT_SHA256Finish(&sha2, digest1);
   }
   CRYPT_aes_context aes = {};

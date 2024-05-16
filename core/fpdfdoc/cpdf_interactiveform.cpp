@@ -86,8 +86,7 @@ bool RetrieveSpecificFont(FX_Charset charSet,
                       0);
   ::ReleaseDC(nullptr, hDC);
   if (fd.bFind) {
-    // TODO(tsepez): investigate safety.
-    UNSAFE_BUFFERS(FXSYS_memcpy(&lf, &fd.lf, sizeof(LOGFONTA)));
+    UNSAFE_TODO(FXSYS_memcpy(&lf, &fd.lf, sizeof(LOGFONTA)));
   }
   return fd.bFind;
 }
@@ -123,8 +122,7 @@ ByteString GetNativeFontName(FX_Charset charSet, void* pLogFont) {
     bRet = RetrieveSpecificFont(charSet, nullptr, lf);
   if (bRet) {
     if (pLogFont) {
-      // TODO(tsepez): investigate safety.
-      UNSAFE_BUFFERS(FXSYS_memcpy(pLogFont, &lf, sizeof(LOGFONTA)));
+      UNSAFE_TODO(FXSYS_memcpy(pLogFont, &lf, sizeof(LOGFONTA)));
     }
     csFontName = lf.lfFaceName;
   }

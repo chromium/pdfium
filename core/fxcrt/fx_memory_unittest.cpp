@@ -105,8 +105,7 @@ TEST(fxcrt, AllocZeroesMemory) {
   uint8_t* ptr = FX_Alloc(uint8_t, 32);
   ASSERT_TRUE(ptr);
   for (size_t i = 0; i < 32; ++i) {
-    // TODO(tsepez): make safe.
-    EXPECT_EQ(0, UNSAFE_BUFFERS(ptr[i]));
+    EXPECT_EQ(0, UNSAFE_TODO(ptr[i]));
   }
   FX_Free(ptr);
 }

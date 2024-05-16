@@ -44,8 +44,7 @@ TEST(FlateModule, Decode) {
     EXPECT_EQ(
         data.processed_size,
         FlateModule::FlateOrLZWDecode(
-            false,
-            UNSAFE_BUFFERS(pdfium::make_span(data.input, data.input_size)),
+            false, UNSAFE_TODO(pdfium::make_span(data.input, data.input_size)),
             false, 0, 0, 0, 0, 0, &buf, &buf_size))
         << " for case " << i;
     ASSERT_TRUE(buf);
@@ -80,7 +79,7 @@ TEST(FlateModule, Encode) {
   for (size_t i = 0; i < std::size(flate_encode_cases); ++i) {
     const pdfium::StrFuncTestData& data = flate_encode_cases[i];
     DataVector<uint8_t> result = FlateModule::Encode(
-        UNSAFE_BUFFERS(pdfium::make_span(data.input, data.input_size)));
+        UNSAFE_TODO(pdfium::make_span(data.input, data.input_size)));
     EXPECT_EQ(data.expected_size, result.size()) << " for case " << i;
     if (data.expected_size != result.size()) {
       continue;

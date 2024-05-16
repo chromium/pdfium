@@ -80,8 +80,7 @@ float CalculateBaseSpace(const CPDF_TextObject* pTextObj,
 }
 
 DataVector<wchar_t> GetUnicodeNormalization(wchar_t wch) {
-  // TODO(crbug.com/pdfium/2155): resolve safety issues.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     wch = wch & 0xFFFF;
     wchar_t wFind = kUnicodeDataNormalization[wch];
     if (!wFind) {

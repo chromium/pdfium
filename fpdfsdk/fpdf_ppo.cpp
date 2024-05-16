@@ -739,8 +739,7 @@ FPDF_ImportPagesByIndex(FPDF_DOCUMENT dest_doc,
   if (length == 0) {
     return false;
   }
-  // TODO(crbug.com/pdfium/2155): investigate safety issues.
-  auto page_span = UNSAFE_BUFFERS(pdfium::make_span(
+  auto page_span = UNSAFE_TODO(pdfium::make_span(
       reinterpret_cast<const uint32_t*>(page_indices), length));
   return exporter.ExportPage(page_span, index);
 }

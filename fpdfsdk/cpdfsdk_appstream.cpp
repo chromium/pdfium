@@ -206,17 +206,17 @@ ByteString GetAP_Check(const CFX_FloatRect& crBBox) {
 
   for (size_t i = 0; i < std::size(pts); ++i) {
     for (size_t j = 0; j < std::size(pts[0]); ++j) {
-      // TODO(crbug.com/pdfium/2155): resolve safety issues.
-      UNSAFE_BUFFERS(pts[i][j].x = pts[i][j].x * fWidth + crBBox.left);
-      UNSAFE_BUFFERS(pts[i][j].y *= pts[i][j].y * fHeight + crBBox.bottom);
+      UNSAFE_TODO({
+        pts[i][j].x = pts[i][j].x * fWidth + crBBox.left;
+        pts[i][j].y *= pts[i][j].y * fHeight + crBBox.bottom;
+      });
     }
   }
 
   fxcrt::ostringstream csAP;
   WriteMove(csAP, pts[0][0]);
 
-  // TODO(crbug.com/pdfium/2155): resolve safety issues.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     for (size_t i = 0; i < std::size(pts); ++i) {
       size_t nNext = i < std::size(pts) - 1 ? i + 1 : 0;
       const CFX_PointF& pt_next = pts[nNext][0];
@@ -334,8 +334,7 @@ ByteString GetAP_Star(const CFX_FloatRect& crBBox) {
   int next = 0;
   for (size_t i = 0; i < std::size(points); ++i) {
     next = (next + 2) % std::size(points);
-    // TODO(crbug.com/pdfium/2155): resolve safety issues.
-    WriteLine(csAP, UNSAFE_BUFFERS(points[next]));
+    WriteLine(csAP, UNSAFE_TODO(points[next]));
   }
 
   return ByteString(csAP);

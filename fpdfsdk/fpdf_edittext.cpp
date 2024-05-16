@@ -618,8 +618,7 @@ FPDFText_SetCharcodes(FPDF_PAGEOBJECT text_object,
   ByteString byte_text;
   if (charcodes) {
     for (size_t i = 0; i < count; ++i) {
-      // TODO(crbug.com/pdfium/2155): investigate safety issues.
-      pTextObj->GetFont()->AppendChar(&byte_text, UNSAFE_BUFFERS(charcodes[i]));
+      pTextObj->GetFont()->AppendChar(&byte_text, UNSAFE_TODO(charcodes[i]));
     }
   }
   pTextObj->SetText(byte_text);

@@ -4054,8 +4054,7 @@ TEST_F(FPDFEditEmbedderTest, AddMarkedText) {
   // - blob "BlobKey": "\x01\x02\x03\0BlobValue1\0\0\0BlobValue2\0"
   constexpr size_t kBlobLen = 28;
   char block_value[kBlobLen];
-  // TODO(tsepez): investigate safety.
-  UNSAFE_BUFFERS(FXSYS_memcpy(
+  UNSAFE_TODO(FXSYS_memcpy(
       block_value, "\x01\x02\x03\0BlobValue1\0\0\0BlobValue2\0", kBlobLen));
   EXPECT_EQ(0, FPDFPageObjMark_CountParams(mark));
   EXPECT_TRUE(

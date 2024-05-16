@@ -63,20 +63,19 @@ IntType FXSYS_StrToInt(const CharType* str) {
 
 template <typename T, typename UT, typename STR_T>
 STR_T FXSYS_IntToStr(T value, STR_T str, int radix) {
-  // SAFETY: TODO(tsepez): investigate safety throughout.
   if (radix < 2 || radix > 16) {
     str[0] = 0;
     return str;
   }
   if (value == 0) {
     str[0] = '0';
-    UNSAFE_BUFFERS(str[1]) = 0;
+    UNSAFE_TODO(str[1]) = 0;
     return str;
   }
   int i = 0;
   UT uvalue;
   if (value < 0) {
-    UNSAFE_BUFFERS(str[i++]) = '-';
+    UNSAFE_TODO(str[i++]) = '-';
     // Standard trick to avoid undefined behaviour when negating INT_MIN.
     uvalue = static_cast<UT>(-(value + 1)) + 1;
   } else {
@@ -89,10 +88,10 @@ STR_T FXSYS_IntToStr(T value, STR_T str, int radix) {
     order = order / radix;
   }
   for (int d = digits - 1; d > -1; d--) {
-    UNSAFE_BUFFERS(str[d + i] = "0123456789abcdef"[uvalue % radix]);
+    UNSAFE_TODO(str[d + i] = "0123456789abcdef"[uvalue % radix]);
     uvalue /= radix;
   }
-  UNSAFE_BUFFERS(str[digits + i]) = 0;
+  UNSAFE_TODO(str[digits + i]) = 0;
   return str;
 }
 

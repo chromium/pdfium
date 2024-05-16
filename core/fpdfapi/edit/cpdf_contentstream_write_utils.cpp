@@ -111,8 +111,7 @@ unsigned SkFloatToDecimal(float value,
   // abs(FLT_MIN_10_EXP) = number of zeros in FLT_MIN
   static_assert(kMaximumSkFloatToDecimalLength == 3 + 9 - FLT_MIN_10_EXP, "");
 
-  // TODO(tsepez): this whole section is unsafe.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     // section C.1 of the PDF 1.4 spec (http://goo.gl/0SCswJ) says that
     // most PDF rasterizers will use fixed-point scalars that lack the
     // dynamic range of floats.  Even if this is the case, I want to

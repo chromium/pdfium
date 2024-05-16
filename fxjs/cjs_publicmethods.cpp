@@ -265,8 +265,7 @@ bool CJS_PublicMethods::IsNumber(const WideString& str) {
   bool bDot = false;
   bool bKXJS = false;
 
-  // TODO(tsepez): fix UNSAFE usage.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     wchar_t c;
     while ((c = *p) != L'\0') {
       if (IsDigitSeparatorOrDecimalMark(c)) {
@@ -331,8 +330,7 @@ v8::Local<v8::Array> CJS_PublicMethods::AF_MakeArrayFromList(
   int nIndex = 0;
   v8::Local<v8::Array> StrArray = pRuntime->NewArray();
 
-  // TODO(tsepez): fix UNSAFE usage.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     while (*p) {
       const char* pTemp = strchr(p, ',');
       if (!pTemp) {

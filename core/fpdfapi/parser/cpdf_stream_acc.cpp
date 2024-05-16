@@ -152,9 +152,8 @@ void CPDF_StreamAcc::ProcessFilteredData(uint32_t estimated_size,
   if (pDecodedData) {
     DCHECK_NE(pDecodedData.get(), src_span.data());
     // TODO(crbug.com/pdfium/1872): Avoid copying.
-    // TODO(crbug.com/pdfium/2155): investigate safety issues.
     m_Data = DataVector<uint8_t>(
-        pDecodedData.get(), UNSAFE_BUFFERS(pDecodedData.get() + dwDecodedSize));
+        pDecodedData.get(), UNSAFE_TODO(pDecodedData.get() + dwDecodedSize));
   } else {
     m_Data = std::move(src_data);
   }

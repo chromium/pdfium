@@ -157,16 +157,14 @@ void CFDE_TextEditEngine::AdjustGap(size_t idx, size_t length) {
 
   // Move the gap, if necessary.
   if (idx < gap_position_) {
-    // TODO(crbug.com/pdfium/2155): resolve safety issues,
-    UNSAFE_BUFFERS(FXSYS_memmove(content_.data() + idx + gap_size_,
-                                 content_.data() + idx,
-                                 (gap_position_ - idx) * char_size));
+    UNSAFE_TODO(FXSYS_memmove(content_.data() + idx + gap_size_,
+                              content_.data() + idx,
+                              (gap_position_ - idx) * char_size));
     gap_position_ = idx;
   } else if (idx > gap_position_) {
-    // TODO(crbug.com/pdfium/2155): resolve safety issues,
-    UNSAFE_BUFFERS(FXSYS_memmove(content_.data() + gap_position_,
-                                 content_.data() + gap_position_ + gap_size_,
-                                 (idx - gap_position_) * char_size));
+    UNSAFE_TODO(FXSYS_memmove(content_.data() + gap_position_,
+                              content_.data() + gap_position_ + gap_size_,
+                              (idx - gap_position_) * char_size));
     gap_position_ = idx;
   }
 
@@ -175,10 +173,9 @@ void CFDE_TextEditEngine::AdjustGap(size_t idx, size_t length) {
     size_t new_gap_size = length + kGapSize;
     content_.resize(text_length_ + new_gap_size);
 
-    // TODO(crbug.com/pdfium/2155): resolve safety issues,
-    UNSAFE_BUFFERS(FXSYS_memmove(content_.data() + gap_position_ + new_gap_size,
-                                 content_.data() + gap_position_ + gap_size_,
-                                 (text_length_ - gap_position_) * char_size));
+    UNSAFE_TODO(FXSYS_memmove(content_.data() + gap_position_ + new_gap_size,
+                              content_.data() + gap_position_ + gap_size_,
+                              (text_length_ - gap_position_) * char_size));
 
     gap_size_ = new_gap_size;
   }

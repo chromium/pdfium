@@ -95,8 +95,7 @@ pdfium::span<const uint8_t> CFX_DIBitmap::GetBuffer() const {
   if (!m_pBuffer)
     return pdfium::span<const uint8_t>();
 
-  // TODO(tsepez): investigate safety.
-  return UNSAFE_BUFFERS(pdfium::make_span(m_pBuffer.Get(), m_Height * m_Pitch));
+  return UNSAFE_TODO(pdfium::make_span(m_pBuffer.Get(), m_Height * m_Pitch));
 }
 
 pdfium::span<const uint8_t> CFX_DIBitmap::GetScanline(int line) const {

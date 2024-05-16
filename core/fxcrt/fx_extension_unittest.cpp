@@ -228,8 +228,7 @@ TEST(fxcrt, FXSYS_SafeOps) {
   const float fNan = std::numeric_limits<float>::quiet_NaN();
   const float ascending[] = {fMin, 1.0f, 2.0f, fMax, fInf, fNan};
 
-  // TODO(tsepez): make safe.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     for (size_t i = 0; i < std::size(ascending); ++i) {
       for (size_t j = 0; j < std::size(ascending); ++j) {
         if (i == j) {

@@ -114,8 +114,7 @@ FPDFSignatureObj_GetByteRange(FPDF_SIGNATURE signature,
       fxcrt::CollectionSize<unsigned long>(*byte_range);
   if (buffer && length >= byte_range_len) {
     for (size_t i = 0; i < byte_range_len; ++i) {
-      // TODO(crbug.com/pdfium/2155): resolve safety issue.
-      UNSAFE_BUFFERS(buffer[i] = byte_range->GetIntegerAt(i));
+      UNSAFE_TODO(buffer[i]) = byte_range->GetIntegerAt(i);
     }
   }
   return byte_range_len;

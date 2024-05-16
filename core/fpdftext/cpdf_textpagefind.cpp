@@ -94,9 +94,7 @@ WideString GetStringCase(const WideString& wsOriginal, bool bMatchCase) {
 std::optional<WideString> ExtractSubString(const wchar_t* lpszFullString,
                                            int iSubString) {
   DCHECK(lpszFullString);
-
-  // TODO(crbug.com/pdfium/2155): resolve safety issues.
-  UNSAFE_BUFFERS({
+  UNSAFE_TODO({
     while (iSubString--) {
       lpszFullString = wcschr(lpszFullString, L' ');
       if (!lpszFullString) {
