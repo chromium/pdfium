@@ -11,6 +11,8 @@ source_set("fxcodec") {
     "basic/basicmodule.h",
     "cfx_codec_memory.cpp",
     "cfx_codec_memory.h",
+    "data_and_bytes_consumed.cpp",
+    "data_and_bytes_consumed.h",
     "fax/faxmodule.cpp",
     "fax/faxmodule.h",
     "flate/flatemodule.cpp",

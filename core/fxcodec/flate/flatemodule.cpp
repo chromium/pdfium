@@ -19,6 +19,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcodec/data_and_bytes_consumed.h"
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/data_vector.h"
@@ -549,17 +550,12 @@ bool TIFF_Predictor(int Colors,
   return true;
 }
 
-void FlateUncompress(pdfium::span<const uint8_t> src_buf,
-                     uint32_t orig_size,
-                     std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                     uint32_t* dest_size,
-                     uint32_t* offset) {
-  dest_buf->reset();
-  *dest_size = 0;
-
+DataAndBytesConsumed FlateUncompress(pdfium::span<const uint8_t> src_buf,
+                                     uint32_t orig_size) {
   std::unique_ptr<z_stream, FlateDeleter> context(FlateInit());
-  if (!context)
-    return;
+  if (!context) {
+    return {nullptr, 0u, 0u};
+  }
 
   FlateInput(context.get(), src_buf);
 
@@ -574,7 +570,6 @@ void FlateUncompress(pdfium::span<const uint8_t> src_buf,
   std::unique_ptr<uint8_t, FxFreeDeleter> guess_buf(
       FX_Alloc(uint8_t, guess_size + 1));
   guess_buf.get()[guess_size] = '\0';
-
   std::vector<std::unique_ptr<uint8_t, FxFreeDeleter>> result_tmp_bufs;
   {
     std::unique_ptr<uint8_t, FxFreeDeleter> cur_buf = std::move(guess_buf);
@@ -595,17 +590,16 @@ void FlateUncompress(pdfium::span<const uint8_t> src_buf,
   // The TotalOut size returned from the library may not be big enough to
   // handle the content the library returns. We can only handle items
   // up to 4GB in size.
-  *dest_size = FlateGetPossiblyTruncatedTotalOut(context.get());
-  *offset = FlateGetPossiblyTruncatedTotalIn(context.get());
+  const uint32_t dest_size = FlateGetPossiblyTruncatedTotalOut(context.get());
+  const uint32_t offset = FlateGetPossiblyTruncatedTotalIn(context.get());
   if (result_tmp_bufs.size() == 1) {
-    *dest_buf = std::move(result_tmp_bufs[0]);
-    return;
+    return {std::move(result_tmp_bufs.front()), dest_size, offset};
   }
 
   std::unique_ptr<uint8_t, FxFreeDeleter> result_buf(
-      FX_Alloc(uint8_t, *dest_size));
+      FX_Alloc(uint8_t, dest_size));
   uint32_t result_pos = 0;
-  uint32_t remaining = *dest_size;
+  uint32_t remaining = dest_size;
   for (size_t i = 0; i < result_tmp_bufs.size(); i++) {
     std::unique_ptr<uint8_t, FxFreeDeleter> tmp_buf =
         std::move(result_tmp_bufs[i]);
@@ -618,7 +612,7 @@ void FlateUncompress(pdfium::span<const uint8_t> src_buf,
     result_pos += cp_size;
     remaining -= cp_size;
   }
-  *dest_buf = std::move(result_buf);
+  return {std::move(result_buf), dest_size, offset};
 }
 
 enum class PredictorType : uint8_t { kNone, kFlate, kPng };
@@ -857,25 +851,29 @@ uint32_t FlateModule::FlateOrLZWDecode(
     std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
     uint32_t* dest_size) {
   dest_buf->reset();
-  uint32_t offset = 0;
+  uint32_t bytes_consumed = 0;
   PredictorType predictor_type = GetPredictor(predictor);
 
   if (bLZW) {
     auto decoder = std::make_unique<CLZWDecoder>(src_span, bEarlyChange);
-    if (!decoder->Decode())
+    if (!decoder->Decode()) {
       return FX_INVALID_OFFSET;
+    }
 
-    offset = decoder->GetSrcSize();
+    bytes_consumed = decoder->GetSrcSize();
     *dest_size = decoder->GetDestSize();
     *dest_buf = decoder->TakeDestBuf();
   } else {
-    FlateUncompress(src_span, estimated_size, dest_buf, dest_size, &offset);
+    DataAndBytesConsumed result = FlateUncompress(src_span, estimated_size);
+    *dest_buf = std::move(result.data);
+    *dest_size = result.size;
+    bytes_consumed = result.bytes_consumed;
   }
 
   bool ret = false;
   switch (predictor_type) {
     case PredictorType::kNone:
-      return offset;
+      return bytes_consumed;
     case PredictorType::kPng:
       ret =
           PNG_Predictor(Colors, BitsPerComponent, Columns, dest_buf, dest_size);
@@ -885,7 +883,7 @@ uint32_t FlateModule::FlateOrLZWDecode(
                            dest_size);
       break;
   }
-  return ret ? offset : FX_INVALID_OFFSET;
+  return ret ? bytes_consumed : FX_INVALID_OFFSET;
 }
 
 // static
