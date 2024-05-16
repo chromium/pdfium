@@ -137,6 +137,7 @@ pdfium_unittest_source_set("unittests") {
     ":parser",
     ":unit_test_support",
     "../../../constants",
+    "../../fxcodec",
     "../page",
     "../page:unit_test_support",
     "../render",

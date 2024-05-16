@@ -20,6 +20,7 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fxcodec/data_and_bytes_consumed.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/span.h"
@@ -287,16 +288,13 @@ TEST(ParserDecodeTest, A85Decode) {
       STR_IN_OUT_CASE("FCfN8FCfN8vw", "testtest", 11),
   };
   for (const auto& test_case : kTestData) {
-    std::unique_ptr<uint8_t, FxFreeDeleter> result;
-    uint32_t result_size = 0;
-    EXPECT_EQ(test_case.processed_size,
-              A85Decode(UNSAFE_TODO(pdfium::make_span(test_case.input,
-                                                      test_case.input_size)),
-                        &result, &result_size))
+    DataAndBytesConsumed result = A85Decode(
+        UNSAFE_TODO(pdfium::make_span(test_case.input, test_case.input_size)));
+    EXPECT_EQ(test_case.processed_size, result.bytes_consumed)
         << "for case " << test_case.input;
-    ASSERT_EQ(test_case.expected_size, result_size);
-    const uint8_t* result_ptr = result.get();
-    for (size_t j = 0; j < result_size; ++j) {
+    ASSERT_EQ(test_case.expected_size, result.size);
+    const uint8_t* result_ptr = result.data.get();
+    for (size_t j = 0; j < result.size; ++j) {
       EXPECT_EQ(test_case.expected[j], result_ptr[j])
           << "for case " << test_case.input << " char " << j;
     }
@@ -323,16 +321,13 @@ TEST(ParserDecodeTest, HexDecode) {
       STR_IN_OUT_CASE("12AcED3c3456", "\x12\xac\xed\x3c\x34\x56", 12),
   };
   for (const auto& test_case : kTestData) {
-    std::unique_ptr<uint8_t, FxFreeDeleter> result;
-    uint32_t result_size = 0;
-    EXPECT_EQ(test_case.processed_size,
-              HexDecode(UNSAFE_TODO(pdfium::make_span(test_case.input,
-                                                      test_case.input_size)),
-                        &result, &result_size))
+    DataAndBytesConsumed result = HexDecode(
+        UNSAFE_TODO(pdfium::make_span(test_case.input, test_case.input_size)));
+    EXPECT_EQ(test_case.processed_size, result.bytes_consumed)
         << "for case " << test_case.input;
-    ASSERT_EQ(test_case.expected_size, result_size);
-    const uint8_t* result_ptr = result.get();
-    for (size_t j = 0; j < result_size; ++j) {
+    ASSERT_EQ(test_case.expected_size, result.size);
+    const uint8_t* result_ptr = result.data.get();
+    for (size_t j = 0; j < result.size; ++j) {
       EXPECT_EQ(test_case.expected[j], result_ptr[j])
           << "for case " << test_case.input << " char " << j;
     }
