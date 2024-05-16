@@ -839,7 +839,7 @@ std::unique_ptr<ScanlineDecoder> FlateModule::CreateDecoder(
 }
 
 // static
-uint32_t FlateModule::FlateOrLZWDecode(
+DataAndBytesConsumed FlateModule::FlateOrLZWDecode(
     bool bLZW,
     pdfium::span<const uint8_t> src_span,
     bool bEarlyChange,
@@ -847,43 +847,46 @@ uint32_t FlateModule::FlateOrLZWDecode(
     int Colors,
     int BitsPerComponent,
     int Columns,
-    uint32_t estimated_size,
-    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-    uint32_t* dest_size) {
-  dest_buf->reset();
-  uint32_t bytes_consumed = 0;
+    uint32_t estimated_size) {
+  std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf;
+  uint32_t dest_size = 0;
+  uint32_t bytes_consumed = FX_INVALID_OFFSET;
   PredictorType predictor_type = GetPredictor(predictor);
 
   if (bLZW) {
     auto decoder = std::make_unique<CLZWDecoder>(src_span, bEarlyChange);
     if (!decoder->Decode()) {
-      return FX_INVALID_OFFSET;
+      return {std::move(dest_buf), dest_size, bytes_consumed};
     }
 
+    dest_buf = decoder->TakeDestBuf();
+    dest_size = decoder->GetDestSize();
     bytes_consumed = decoder->GetSrcSize();
-    *dest_size = decoder->GetDestSize();
-    *dest_buf = decoder->TakeDestBuf();
   } else {
     DataAndBytesConsumed result = FlateUncompress(src_span, estimated_size);
-    *dest_buf = std::move(result.data);
-    *dest_size = result.size;
+    dest_buf = std::move(result.data);
+    dest_size = result.size;
     bytes_consumed = result.bytes_consumed;
   }
 
   bool ret = false;
   switch (predictor_type) {
     case PredictorType::kNone:
-      return bytes_consumed;
+      ret = true;
+      break;
     case PredictorType::kPng:
-      ret =
-          PNG_Predictor(Colors, BitsPerComponent, Columns, dest_buf, dest_size);
+      ret = PNG_Predictor(Colors, BitsPerComponent, Columns, &dest_buf,
+                          &dest_size);
       break;
     case PredictorType::kFlate:
-      ret = TIFF_Predictor(Colors, BitsPerComponent, Columns, dest_buf,
-                           dest_size);
+      ret = TIFF_Predictor(Colors, BitsPerComponent, Columns, &dest_buf,
+                           &dest_size);
       break;
   }
-  return ret ? bytes_consumed : FX_INVALID_OFFSET;
+  if (!ret) {
+    bytes_consumed = FX_INVALID_OFFSET;
+  }
+  return {std::move(dest_buf), dest_size, bytes_consumed};
 }
 
 // static
