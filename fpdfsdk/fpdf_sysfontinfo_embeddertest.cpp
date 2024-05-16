@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2153): resolve buffer safety issues.
+// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
 #pragma allow_unsafe_buffers
 #endif
 
