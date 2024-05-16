@@ -69,11 +69,15 @@ uint32_t FlateGetPossiblyTruncatedTotalIn(z_stream* context) {
   return pdfium::saturated_cast<uint32_t>(context->total_in);
 }
 
-bool FlateCompress(unsigned char* dest_buf,
-                   unsigned long* dest_size,
-                   const unsigned char* src_buf,
-                   unsigned long src_size) {
-  return compress(dest_buf, dest_size, src_buf, src_size) == Z_OK;
+size_t FlateCompress(pdfium::span<const uint8_t> src_span,
+                     pdfium::span<uint8_t> dest_span) {
+  const auto src_size = pdfium::checked_cast<unsigned long>(src_span.size());
+  auto dest_size = pdfium::checked_cast<unsigned long>(dest_span.size());
+  if (compress(dest_span.data(), &dest_size, src_span.data(), src_size) !=
+      Z_OK) {
+    return 0;
+  }
+  return pdfium::checked_cast<size_t>(dest_size);
 }
 
 z_stream* FlateInit() {
@@ -890,17 +894,12 @@ DataAndBytesConsumed FlateModule::FlateOrLZWDecode(
 
 // static
 DataVector<uint8_t> FlateModule::Encode(pdfium::span<const uint8_t> src_span) {
-  const unsigned long src_size =
-      pdfium::checked_cast<unsigned long>(src_span.size());
-  pdfium::CheckedNumeric<unsigned long> safe_dest_size = src_size;
-  safe_dest_size += src_size / 1000;
+  FX_SAFE_SIZE_T safe_dest_size = src_span.size();
+  safe_dest_size += src_span.size() / 1000;
   safe_dest_size += 12;
-  unsigned long dest_size = safe_dest_size.ValueOrDie();
-  DataVector<uint8_t> dest_buf(dest_size);
-  if (!FlateCompress(dest_buf.data(), &dest_size, src_span.data(), src_size))
-    return {};
-
-  dest_buf.resize(pdfium::checked_cast<size_t>(dest_size));
+  DataVector<uint8_t> dest_buf(safe_dest_size.ValueOrDie());
+  size_t compressed_size = FlateCompress(src_span, dest_buf);
+  dest_buf.resize(compressed_size);
   return dest_buf;
 }
 
