@@ -400,7 +400,9 @@ template <typename T,
           typename P,
           typename U = typename std::enable_if<!std::is_const<T>::value>::type>
 span<char> as_writable_chars(span<T, N, P> s) noexcept {
-  return {reinterpret_cast<char*>(s.data()), s.size_bytes()};
+  // SAFETY: from size_bytes() method.
+  return UNSAFE_BUFFERS(
+      make_span(reinterpret_cast<char*>(s.data()), s.size_bytes()));
 }
 
 // `span_from_ref` converts a reference to T into a span of length 1.  This is a

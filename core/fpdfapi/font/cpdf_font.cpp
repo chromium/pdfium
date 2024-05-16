@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/font/cpdf_font.h"
 
 #include <algorithm>
@@ -32,6 +27,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/stl_util.h"
@@ -309,7 +305,8 @@ RetainPtr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
   if (type == "TrueType") {
     ByteString tag = pFontDict->GetByteStringFor("BaseFont").First(4);
     for (size_t i = 0; i < std::size(kChineseFontNames); ++i) {
-      if (tag == ByteString(kChineseFontNames[i], kChineseFontNameSize)) {
+      if (tag ==
+          UNSAFE_TODO(ByteString(kChineseFontNames[i], kChineseFontNameSize))) {
         RetainPtr<const CPDF_Dictionary> pFontDesc =
             pFontDict->GetDictFor("FontDescriptor");
         if (!pFontDesc || !pFontDesc->KeyExist("FontFile2"))
