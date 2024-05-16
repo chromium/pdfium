@@ -15,6 +15,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcodec/data_and_bytes_consumed.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
@@ -65,12 +66,11 @@ uint32_t HexDecode(pdfium::span<const uint8_t> src_span,
                    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
                    uint32_t* dest_size);
 
-uint32_t FlateOrLZWDecode(bool bLZW,
-                          pdfium::span<const uint8_t> src_span,
-                          const CPDF_Dictionary* pParams,
-                          uint32_t estimated_size,
-                          std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                          uint32_t* dest_size);
+fxcodec::DataAndBytesConsumed FlateOrLZWDecode(
+    bool use_lzw,
+    pdfium::span<const uint8_t> src_span,
+    const CPDF_Dictionary* pParams,
+    uint32_t estimated_size);
 
 // Returns std::nullopt if the filter in |pDict| is the wrong type or an
 // invalid decoder pipeline.

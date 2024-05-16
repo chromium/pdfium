@@ -29,6 +29,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
+#include "core/fxcodec/data_and_bytes_consumed.h"
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/check.h"
@@ -91,16 +92,19 @@ uint32_t DecodeInlineStream(pdfium::span<const uint8_t> src_span,
   DCHECK(decoder != "LZW");
   DCHECK(decoder != "RL");
 
-  std::unique_ptr<uint8_t, FxFreeDeleter> ignored_result;
-  uint32_t ignored_size;
   if (decoder == "FlateDecode") {
-    return FlateOrLZWDecode(false, src_span, pParam.Get(), orig_size,
-                            &ignored_result, &ignored_size);
+    return FlateOrLZWDecode(/*use_lzw=*/false, src_span, pParam.Get(),
+                            /*estimated_size=*/orig_size)
+        .bytes_consumed;
   }
   if (decoder == "LZWDecode") {
-    return FlateOrLZWDecode(true, src_span, pParam.Get(), 0, &ignored_result,
-                            &ignored_size);
+    return FlateOrLZWDecode(
+               /*use_lzw=*/true, src_span, pParam.Get(),
+               /*estimated_size=*/0)
+        .bytes_consumed;
   }
+  std::unique_ptr<uint8_t, FxFreeDeleter> ignored_result;
+  uint32_t ignored_size;
   if (decoder == "DCTDecode") {
     std::unique_ptr<ScanlineDecoder> pDecoder = JpegModule::CreateDecoder(
         src_span, width, height, 0,
