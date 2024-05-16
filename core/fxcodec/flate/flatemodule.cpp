@@ -298,16 +298,15 @@ bool CLZWDecoder::Decode() {
   return dest_byte_pos_ != 0;
 }
 
-uint8_t PathPredictor(int a, int b, int c) {
-  int p = a + b - c;
+uint8_t PathPredictor(uint8_t a, uint8_t b, uint8_t c) {
+  int p = static_cast<int>(a) + b - c;
   int pa = abs(p - a);
   int pb = abs(p - b);
   int pc = abs(p - c);
-  if (pa <= pb && pa <= pc)
-    return (uint8_t)a;
-  if (pb <= pc)
-    return (uint8_t)b;
-  return (uint8_t)c;
+  if (pa <= pb && pa <= pc) {
+    return a;
+  }
+  return pb <= pc ? b : c;
 }
 
 void PNG_PredictLine(pdfium::span<uint8_t> dest_span,
