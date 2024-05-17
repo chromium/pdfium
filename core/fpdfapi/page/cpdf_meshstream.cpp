@@ -205,7 +205,7 @@ CFX_PointF CPDF_MeshStream::ReadCoords() const {
   return pos;
 }
 
-FX_RGB<float> CPDF_MeshStream::ReadColor() const {
+FX_RGB_STRUCT<float> CPDF_MeshStream::ReadColor() const {
   DCHECK(ShouldCheckBPC(m_type));
 
   float color_value[kMaxComponents];
@@ -215,7 +215,7 @@ FX_RGB<float> CPDF_MeshStream::ReadColor() const {
                                          m_ComponentMax;
   }
 
-  FX_RGB<float> rgb = {};
+  FX_RGB_STRUCT<float> rgb = {};
   if (m_funcs.empty()) {
     m_pCS->GetRGB(color_value, &rgb.red, &rgb.green, &rgb.blue);
     return rgb;

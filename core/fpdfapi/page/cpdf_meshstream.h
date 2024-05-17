@@ -25,7 +25,7 @@ class CPDF_MeshVertex {
   ~CPDF_MeshVertex();
 
   CFX_PointF position;
-  FX_RGB<float> rgb = {};
+  FX_RGB_STRUCT<float> rgb = {};
 };
 
 class CFX_BitStream;
@@ -53,7 +53,7 @@ class CPDF_MeshStream {
 
   uint32_t ReadFlag() const;
   CFX_PointF ReadCoords() const;
-  FX_RGB<float> ReadColor() const;
+  FX_RGB_STRUCT<float> ReadColor() const;
 
   bool ReadVertex(const CFX_Matrix& pObject2Bitmap,
                   CPDF_MeshVertex* vertex,

@@ -38,7 +38,7 @@ using FX_CMYK = uint32_t;
 using FX_COLORREF = uint32_t;
 
 template <typename T>
-struct FX_RGB {
+struct FX_RGB_STRUCT {
   T red;
   T green;
   T blue;

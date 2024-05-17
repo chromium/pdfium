@@ -69,7 +69,7 @@ bool CPDF_DeviceCS::GetRGB(pdfium::span<const float> pBuf,
         *G = 1.0f - std::min(1.0f, pBuf[1] + k);
         *B = 1.0f - std::min(1.0f, pBuf[2] + k);
       } else {
-        FX_RGB<float> rgb = AdobeCMYK_to_sRGB(
+        FX_RGB_STRUCT<float> rgb = AdobeCMYK_to_sRGB(
             NormalizeChannel(pBuf[0]), NormalizeChannel(pBuf[1]),
             NormalizeChannel(pBuf[2]), NormalizeChannel(pBuf[3]));
         *R = rgb.red;
@@ -140,8 +140,8 @@ void CPDF_DeviceCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
           }
         } else {
           for (int i = 0; i < pixels; i++) {
-            FX_RGB<uint8_t> rgb = AdobeCMYK_to_sRGB1(pSrcBuf[0], pSrcBuf[1],
-                                                     pSrcBuf[2], pSrcBuf[3]);
+            FX_RGB_STRUCT<uint8_t> rgb = AdobeCMYK_to_sRGB1(
+                pSrcBuf[0], pSrcBuf[1], pSrcBuf[2], pSrcBuf[3]);
             pDestBuf[0] = rgb.blue;
             pDestBuf[1] = rgb.green;
             pDestBuf[2] = rgb.red;

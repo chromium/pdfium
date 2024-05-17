@@ -1774,7 +1774,7 @@ void ProgressiveDecoder::ResampleScanline(
           uint32_t pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
           const uint8_t* src_pixel = src_scan + j * src_bytes_per_pixel;
-          FX_RGB<uint8_t> src_rgb =
+          FX_RGB_STRUCT<uint8_t> src_rgb =
               AdobeCMYK_to_sRGB1(255 - src_pixel[0], 255 - src_pixel[1],
                                  255 - src_pixel[2], 255 - src_pixel[3]);
           dest_r += pixel_weight * src_rgb.red;
@@ -1890,7 +1890,7 @@ void ProgressiveDecoder::ResampleScanline(
           uint32_t pixel_weight =
               pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
           const uint8_t* src_pixel = src_scan + j * src_bytes_per_pixel;
-          FX_RGB<uint8_t> src_rgb =
+          FX_RGB_STRUCT<uint8_t> src_rgb =
               AdobeCMYK_to_sRGB1(255 - src_pixel[0], 255 - src_pixel[1],
                                  255 - src_pixel[2], 255 - src_pixel[3]);
           dest_b += pixel_weight * src_rgb.blue;

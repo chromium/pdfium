@@ -853,7 +853,7 @@ void DrawCoonPatchMeshes(
       if (!stream.CanReadColor())
         break;
 
-      FX_RGB<float> rgb = stream.ReadColor();
+      FX_RGB_STRUCT<float> rgb = stream.ReadColor();
       patch.patch_colors[i].comp[0] = static_cast<int32_t>(rgb.red * 255);
       patch.patch_colors[i].comp[1] = static_cast<int32_t>(rgb.green * 255);
       patch.patch_colors[i].comp[2] = static_cast<int32_t>(rgb.blue * 255);

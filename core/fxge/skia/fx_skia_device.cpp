@@ -1334,7 +1334,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
         cubics[i].fY = point.y;
       }
       for (size_t i = start_color; i < std::size(colors); ++i) {
-        FX_RGB<float> rgb = stream.ReadColor();
+        FX_RGB_STRUCT<float> rgb = stream.ReadColor();
         colors[i] =
             SkColorSetARGB(0xFF, (U8CPU)(rgb.red * 255),
                            (U8CPU)(rgb.green * 255), (U8CPU)(rgb.blue * 255));

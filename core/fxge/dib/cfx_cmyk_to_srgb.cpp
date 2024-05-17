@@ -1666,7 +1666,10 @@ constexpr uint8_t kCMYK[81 * 81][3] = {
 
 }  // namespace
 
-FX_RGB<uint8_t> AdobeCMYK_to_sRGB1(uint8_t c, uint8_t m, uint8_t y, uint8_t k) {
+FX_RGB_STRUCT<uint8_t> AdobeCMYK_to_sRGB1(uint8_t c,
+                                          uint8_t m,
+                                          uint8_t y,
+                                          uint8_t k) {
   int fix_c = c << 8;
   int fix_m = m << 8;
   int fix_y = y << 8;
@@ -1724,7 +1727,7 @@ FX_RGB<uint8_t> AdobeCMYK_to_sRGB1(uint8_t c, uint8_t m, uint8_t y, uint8_t k) {
           static_cast<uint8_t>(fix_b)};
 }
 
-FX_RGB<float> AdobeCMYK_to_sRGB(float c, float m, float y, float k) {
+FX_RGB_STRUCT<float> AdobeCMYK_to_sRGB(float c, float m, float y, float k) {
   // Convert to uint8_t with round-to-nearest. Avoid using FXSYS_roundf because
   // it is incredibly expensive with VC++ (tested on VC++ 2015) because round()
   // is very expensive.
@@ -1745,7 +1748,7 @@ FX_RGB<float> AdobeCMYK_to_sRGB(float c, float m, float y, float k) {
   DCHECK_EQ(y1, FXSYS_roundf(y * 255));
   DCHECK_EQ(k1, FXSYS_roundf(k * 255));
 
-  FX_RGB<uint8_t> int_results = AdobeCMYK_to_sRGB1(c1, m1, y1, k1);
+  FX_RGB_STRUCT<uint8_t> int_results = AdobeCMYK_to_sRGB1(c1, m1, y1, k1);
   // Multiply by a constant rather than dividing because division is much
   // more expensive.
   constexpr float kToFloat = 1.0f / 255.0f;
