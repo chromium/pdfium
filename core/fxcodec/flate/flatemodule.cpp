@@ -386,8 +386,9 @@ void PNG_PredictLine(pdfium::span<uint8_t> dest_span,
 bool PNG_Predictor(int Colors,
                    int BitsPerComponent,
                    int Columns,
-                   std::unique_ptr<uint8_t, FxFreeDeleter>* data_buf,
-                   uint32_t* data_size) {
+                   pdfium::span<const uint8_t> src_span,
+                   std::unique_ptr<uint8_t, FxFreeDeleter>* result_buf,
+                   uint32_t* result_size) {
   const uint32_t row_size =
       fxge::CalculatePitch8(BitsPerComponent, Colors, Columns).value_or(0);
   if (row_size == 0) {
@@ -399,37 +400,37 @@ bool PNG_Predictor(int Colors,
     // Avoid divide by 0.
     return false;
   }
-  const uint32_t row_count = (*data_size + row_size) / src_row_size;
+  const size_t row_count = (src_span.size() + row_size) / src_row_size;
   if (row_count == 0) {
     return false;
   }
 
-  const uint32_t last_row_size = *data_size % src_row_size;
+  const uint32_t last_row_size = src_span.size() % src_row_size;
   std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf(
       FX_Alloc2D(uint8_t, row_size, row_count));
-  uint32_t byte_cnt = 0;
-  const uint8_t* pSrcData = data_buf->get();
+  size_t byte_count = 0;
+  const uint8_t* pSrcData = src_span.data();
   uint8_t* pDestData = dest_buf.get();
   const uint8_t* pPrevDestData = nullptr;
-  for (uint32_t row = 0; row < row_count; row++) {
+  for (size_t row = 0; row < row_count; row++) {
     uint8_t tag = pSrcData[0];
-    byte_cnt++;
+    byte_count++;
     if (tag == 0) {
       uint32_t move_size = row_size;
-      if ((row + 1) * (move_size + 1) > *data_size) {
+      if ((row + 1) * (move_size + 1) > src_span.size()) {
         move_size = last_row_size - 1;
       }
       FXSYS_memcpy(pDestData, pSrcData + 1, move_size);
       pSrcData += move_size + 1;
       pPrevDestData = pDestData;
       pDestData += move_size;
-      byte_cnt += move_size;
+      byte_count += move_size;
       continue;
     }
 
     const uint32_t BytesPerPixel = (Colors * BitsPerComponent + 7) / 8;
-    for (uint32_t byte = 0; byte < row_size && byte_cnt < *data_size;
-         ++byte, ++byte_cnt) {
+    for (uint32_t byte = 0; byte < row_size && byte_count < src_span.size();
+         ++byte, ++byte_count) {
       uint8_t raw_byte = pSrcData[byte + 1];
       switch (tag) {
         case 1: {
@@ -485,9 +486,10 @@ bool PNG_Predictor(int Colors,
     pPrevDestData = pDestData;
     pDestData += row_size;
   }
-  *data_buf = std::move(dest_buf);
-  *data_size = row_size * row_count -
-               (last_row_size > 0 ? (src_row_size - last_row_size) : 0);
+  *result_buf = std::move(dest_buf);
+  size_t dest_size = row_size * row_count -
+                     (last_row_size > 0 ? (src_row_size - last_row_size) : 0);
+  *result_size = pdfium::checked_cast<uint32_t>(dest_size);
   return true;
 }
 
@@ -876,10 +878,15 @@ DataAndBytesConsumed FlateModule::FlateOrLZWDecode(
       return {std::move(dest_buf), dest_size, bytes_consumed};
     }
     case PredictorType::kPng: {
-      bool ret = PNG_Predictor(Colors, BitsPerComponent, Columns, &dest_buf,
-                               &dest_size);
-      return {std::move(dest_buf), dest_size,
-              ret ? bytes_consumed : FX_INVALID_OFFSET};
+      std::unique_ptr<uint8_t, FxFreeDeleter> result_buf;
+      uint32_t result_size = 0;
+      bool ret = PNG_Predictor(Colors, BitsPerComponent, Columns,
+                               pdfium::make_span(dest_buf.get(), dest_size),
+                               &result_buf, &result_size);
+      if (!ret) {
+        return {std::move(dest_buf), dest_size, FX_INVALID_OFFSET};
+      }
+      return {std::move(result_buf), result_size, bytes_consumed};
     }
     case PredictorType::kFlate: {
       bool ret = TIFF_Predictor(Colors, BitsPerComponent, Columns,
