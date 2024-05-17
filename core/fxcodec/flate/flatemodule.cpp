@@ -493,24 +493,23 @@ bool PNG_Predictor(int Colors,
   return true;
 }
 
-void TIFF_PredictLine(uint8_t* dest_buf,
-                      size_t row_size,
+void TIFF_PredictLine(pdfium::span<uint8_t> dest_span,
                       int BitsPerComponent,
                       int Colors,
                       int Columns) {
   if (BitsPerComponent == 1) {
     int row_bits = std::min(BitsPerComponent * Colors * Columns,
-                            pdfium::checked_cast<int>(row_size * 8));
+                            pdfium::checked_cast<int>(dest_span.size() * 8));
     int index_pre = 0;
     int col_pre = 0;
     for (int i = 1; i < row_bits; i++) {
       int col = i % 8;
       int index = i / 8;
-      if (((dest_buf[index] >> (7 - col)) & 1) ^
-          ((dest_buf[index_pre] >> (7 - col_pre)) & 1)) {
-        dest_buf[index] |= 1 << (7 - col);
+      if (((dest_span[index] >> (7 - col)) & 1) ^
+          ((dest_span[index_pre] >> (7 - col_pre)) & 1)) {
+        dest_span[index] |= 1 << (7 - col);
       } else {
-        dest_buf[index] &= ~(1 << (7 - col));
+        dest_span[index] &= ~(1 << (7 - col));
       }
       index_pre = index;
       col_pre = col;
@@ -519,16 +518,16 @@ void TIFF_PredictLine(uint8_t* dest_buf,
   }
   int BytesPerPixel = BitsPerComponent * Colors / 8;
   if (BitsPerComponent == 16) {
-    for (size_t i = BytesPerPixel; i + 1 < row_size; i += 2) {
-      uint16_t pixel =
-          (dest_buf[i - BytesPerPixel] << 8) | dest_buf[i - BytesPerPixel + 1];
-      pixel += (dest_buf[i] << 8) | dest_buf[i + 1];
-      dest_buf[i] = pixel >> 8;
-      dest_buf[i + 1] = (uint8_t)pixel;
+    for (size_t i = BytesPerPixel; i + 1 < dest_span.size(); i += 2) {
+      uint16_t pixel = (dest_span[i - BytesPerPixel] << 8) |
+                       dest_span[i - BytesPerPixel + 1];
+      pixel += (dest_span[i] << 8) | dest_span[i + 1];
+      dest_span[i] = pixel >> 8;
+      dest_span[i + 1] = (uint8_t)pixel;
     }
   } else {
-    for (size_t i = BytesPerPixel; i < row_size; i++) {
-      dest_buf[i] += dest_buf[i - BytesPerPixel];
+    for (size_t i = BytesPerPixel; i < dest_span.size(); i++) {
+      dest_span[i] += dest_span[i - BytesPerPixel];
     }
   }
 }
@@ -543,13 +542,11 @@ bool TIFF_Predictor(int Colors,
     return false;
   }
 
-  const size_t row_count = (data_span.size() + row_size - 1) / row_size;
-  const size_t last_row_size = data_span.size() % row_size;
-  for (size_t row = 0; row < row_count; row++) {
-    uint8_t* scan_line = data_span.subspan(row * row_size).data();
-    size_t scan_line_size = row + 1 < row_count ? row_size : last_row_size;
-    TIFF_PredictLine(scan_line, scan_line_size, BitsPerComponent, Colors,
-                     Columns);
+  while (!data_span.empty()) {
+    auto row_span =
+        data_span.first(std::min<size_t>(row_size, data_span.size()));
+    TIFF_PredictLine(row_span, BitsPerComponent, Colors, Columns);
+    data_span = data_span.subspan(row_span.size());
   }
   return true;
 }
@@ -777,8 +774,8 @@ void FlatePredictorScanlineDecoder::GetNextLineWithPredictedPitch() {
       break;
     case PredictorType::kFlate:
       FlateOutput(m_pFlate.get(), m_Scanline.data(), m_Pitch);
-      TIFF_PredictLine(m_Scanline.data(), m_PredictPitch, m_bpc, m_nComps,
-                       m_OutputWidth);
+      TIFF_PredictLine(pdfium::make_span(m_Scanline).first(m_PredictPitch),
+                       m_bpc, m_nComps, m_OutputWidth);
       break;
     case PredictorType::kNone:
       NOTREACHED_NORETURN();
@@ -804,8 +801,8 @@ void FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
         break;
       case PredictorType::kFlate:
         FlateOutput(m_pFlate.get(), m_PredictBuffer.data(), m_PredictPitch);
-        TIFF_PredictLine(m_PredictBuffer.data(), m_PredictPitch,
-                         m_BitsPerComponent, m_Colors, m_Columns);
+        TIFF_PredictLine(m_PredictBuffer, m_BitsPerComponent, m_Colors,
+                         m_Columns);
         break;
       case PredictorType::kNone:
         NOTREACHED_NORETURN();
