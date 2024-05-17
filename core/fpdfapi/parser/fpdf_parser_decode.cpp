@@ -408,19 +408,36 @@ std::optional<DecoderArray> GetDecoderArray(
   return decoder_array;
 }
 
-bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
-                    uint32_t last_estimated_size,
-                    bool bImageAcc,
-                    const DecoderArray& decoder_array,
-                    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                    uint32_t* dest_size,
-                    ByteString* ImageEncoding,
-                    RetainPtr<const CPDF_Dictionary>* pImageParams) {
-  std::unique_ptr<uint8_t, FxFreeDeleter> result;
-  // May be changed to point to |result| in the for-loop below. So put it below
-  // |result| and let it get destroyed first.
+PDFDataDecodeResult::PDFDataDecodeResult() = default;
+
+PDFDataDecodeResult::PDFDataDecodeResult(
+    std::unique_ptr<uint8_t, FxFreeDeleter> data,
+    uint32_t size,
+    ByteString image_encoding,
+    RetainPtr<const CPDF_Dictionary> image_params)
+    : data(std::move(data)),
+      size(size),
+      image_encoding(std::move(image_encoding)),
+      image_params(std::move(image_params)) {}
+
+PDFDataDecodeResult::PDFDataDecodeResult(PDFDataDecodeResult&& that) noexcept =
+    default;
+
+PDFDataDecodeResult& PDFDataDecodeResult::operator=(
+    PDFDataDecodeResult&& that) noexcept = default;
+
+PDFDataDecodeResult::~PDFDataDecodeResult() = default;
+
+std::optional<PDFDataDecodeResult> PDF_DataDecode(
+    pdfium::span<const uint8_t> src_span,
+    uint32_t last_estimated_size,
+    bool bImageAcc,
+    const DecoderArray& decoder_array) {
+  PDFDataDecodeResult result;
+  // May be changed to point to `result.data` in the for-loop below. So put it
+  // below `result` and let it get destroyed first.
   pdfium::span<const uint8_t> last_span = src_span;
-  size_t nSize = decoder_array.size();
+  const size_t nSize = decoder_array.size();
   for (size_t i = 0; i < nSize; ++i) {
     int estimated_size = i == nSize - 1 ? last_estimated_size : 0;
     ByteString decoder = decoder_array[i].first;
@@ -433,11 +450,10 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
       continue;
     if (decoder == "FlateDecode" || decoder == "Fl") {
       if (bImageAcc && i == nSize - 1) {
-        *ImageEncoding = "FlateDecode";
-        *dest_buf = std::move(result);
-        *dest_size = last_span.size();
-        *pImageParams = std::move(pParam);
-        return true;
+        result.size = last_span.size();
+        result.image_encoding = "FlateDecode";
+        result.image_params = std::move(pParam);
+        return result;
       }
       DataAndBytesConsumed decode_result = FlateOrLZWDecode(
           /*use_lzw=*/false, last_span, pParam, estimated_size);
@@ -462,11 +478,10 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
       bytes_consumed = decode_result.bytes_consumed;
     } else if (decoder == "RunLengthDecode" || decoder == "RL") {
       if (bImageAcc && i == nSize - 1) {
-        *ImageEncoding = "RunLengthDecode";
-        *dest_buf = std::move(result);
-        *dest_size = last_span.size();
-        *pImageParams = std::move(pParam);
-        return true;
+        result.size = last_span.size();
+        result.image_encoding = "RunLengthDecode";
+        result.image_params = std::move(pParam);
+        return result;
       }
       DataAndBytesConsumed decode_result = RunLengthDecode(last_span);
       new_buf = std::move(decode_result.data);
@@ -474,29 +489,29 @@ bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
       bytes_consumed = decode_result.bytes_consumed;
     } else {
       // If we get here, assume it's an image decoder.
-      if (decoder == "DCT")
+      if (decoder == "DCT") {
         decoder = "DCTDecode";
-      else if (decoder == "CCF")
+      } else if (decoder == "CCF") {
         decoder = "CCITTFaxDecode";
-      *ImageEncoding = std::move(decoder);
-      *pImageParams = std::move(pParam);
-      *dest_buf = std::move(result);
-      *dest_size = last_span.size();
-      return true;
+      }
+      result.size = last_span.size();
+      result.image_encoding = std::move(decoder);
+      result.image_params = std::move(pParam);
+      return result;
     }
     if (bytes_consumed == FX_INVALID_OFFSET) {
-      return false;
+      return std::nullopt;
     }
 
     // SAFETY: relies on out params of FlateOrLZWDecode().
     last_span = UNSAFE_BUFFERS(pdfium::make_span(new_buf.get(), new_size));
-    result = std::move(new_buf);
+    result.data = std::move(new_buf);
   }
-  ImageEncoding->clear();
-  *pImageParams = nullptr;
-  *dest_buf = std::move(result);
-  *dest_size = last_span.size();
-  return true;
+
+  result.size = last_span.size();
+  result.image_encoding.clear();
+  result.image_params = nullptr;
+  return result;
 }
 
 static size_t StripLanguageCodes(pdfium::span<wchar_t> s, size_t n) {

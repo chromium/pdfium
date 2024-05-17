@@ -136,27 +136,33 @@ void CPDF_StreamAcc::ProcessFilteredData(uint32_t estimated_size,
     src_data = std::move(temp_src_data);
   }
 
-  std::unique_ptr<uint8_t, FxFreeDeleter> pDecodedData;
-  uint32_t dwDecodedSize = 0;
-
   std::optional<DecoderArray> decoder_array =
       GetDecoderArray(m_pStream->GetDict());
-  if (!decoder_array.has_value() || decoder_array.value().empty() ||
-      !PDF_DataDecode(src_span, estimated_size, bImageAcc,
-                      decoder_array.value(), &pDecodedData, &dwDecodedSize,
-                      &m_ImageDecoder, &m_pImageParam)) {
+  if (!decoder_array.has_value() || decoder_array.value().empty()) {
     m_Data = std::move(src_data);
     return;
   }
 
-  if (pDecodedData) {
-    DCHECK_NE(pDecodedData.get(), src_span.data());
-    // TODO(crbug.com/pdfium/1872): Avoid copying.
-    m_Data = DataVector<uint8_t>(
-        pDecodedData.get(), UNSAFE_TODO(pDecodedData.get() + dwDecodedSize));
-  } else {
+  std::optional<PDFDataDecodeResult> result = PDF_DataDecode(
+      src_span, estimated_size, bImageAcc, decoder_array.value());
+  if (!result.has_value()) {
     m_Data = std::move(src_data);
+    return;
   }
+
+  m_ImageDecoder = std::move(result.value().image_encoding);
+  m_pImageParam = std::move(result.value().image_params);
+
+  if (!result.value().data) {
+    m_Data = std::move(src_data);
+    return;
+  }
+
+  DCHECK_NE(result.value().data.get(), src_span.data());
+  // TODO(crbug.com/pdfium/1872): Avoid copying.
+  m_Data = DataVector<uint8_t>(
+      result.value().data.get(),
+      UNSAFE_TODO(result.value().data.get() + result.value().size));
 }
 
 DataVector<uint8_t> CPDF_StreamAcc::ReadRawStream() const {

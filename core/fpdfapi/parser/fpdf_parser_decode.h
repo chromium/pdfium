@@ -77,13 +77,27 @@ using DecoderArray =
 std::optional<DecoderArray> GetDecoderArray(
     RetainPtr<const CPDF_Dictionary> pDict);
 
-bool PDF_DataDecode(pdfium::span<const uint8_t> src_span,
-                    uint32_t estimated_size,
-                    bool bImageAcc,
-                    const DecoderArray& decoder_array,
-                    std::unique_ptr<uint8_t, FxFreeDeleter>* dest_buf,
-                    uint32_t* dest_size,
-                    ByteString* ImageEncoding,
-                    RetainPtr<const CPDF_Dictionary>* pImageParams);
+struct PDFDataDecodeResult {
+  PDFDataDecodeResult();
+  PDFDataDecodeResult(std::unique_ptr<uint8_t, FxFreeDeleter> data,
+                      uint32_t size,
+                      ByteString image_encoding,
+                      RetainPtr<const CPDF_Dictionary> image_params);
+  PDFDataDecodeResult(PDFDataDecodeResult&& that) noexcept;
+  PDFDataDecodeResult& operator=(PDFDataDecodeResult&& that) noexcept;
+  ~PDFDataDecodeResult();
+
+  // TODO(crbug.com/pdfium/1872): Convert to DataVector.
+  std::unique_ptr<uint8_t, FxFreeDeleter> data;
+  uint32_t size = 0;
+  ByteString image_encoding;
+  RetainPtr<const CPDF_Dictionary> image_params;
+};
+
+std::optional<PDFDataDecodeResult> PDF_DataDecode(
+    pdfium::span<const uint8_t> src_span,
+    uint32_t estimated_size,
+    bool bImageAcc,
+    const DecoderArray& decoder_array);
 
 #endif  // CORE_FPDFAPI_PARSER_FPDF_PARSER_DECODE_H_
