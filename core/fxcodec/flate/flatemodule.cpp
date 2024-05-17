@@ -24,6 +24,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fixed_size_data_vector.h"
+#include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -403,87 +404,67 @@ bool PNG_Predictor(int Colors,
   }
 
   const uint32_t last_row_size = src_span.size() % src_row_size;
+  size_t dest_size = Fx2DSizeOrDie(row_size, row_count);
+  if (last_row_size) {
+    dest_size -= src_row_size - last_row_size;
+  }
   std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf(
-      FX_Alloc2D(uint8_t, row_size, row_count));
-  size_t byte_count = 0;
+      FX_Alloc(uint8_t, dest_size));
   pdfium::span<const uint8_t> remaining_src_span = src_span;
   pdfium::span<uint8_t> remaining_dest_span =
-      pdfium::make_span(dest_buf.get(), row_size * row_count);
+      pdfium::make_span(dest_buf.get(), dest_size);
   pdfium::span<uint8_t> prev_dest_span;
+  const uint32_t bytes_per_pixel = (Colors * BitsPerComponent + 7) / 8;
   for (size_t row = 0; row < row_count; row++) {
     const uint8_t tag = remaining_src_span.front();
-    byte_count++;
-    if (tag == 0) {
-      uint32_t move_size = row_size;
-      if (last_row_size != 0 && (row + 1) * (move_size + 1) > src_span.size()) {
-        move_size = last_row_size - 1;
-      }
-      fxcrt::spancpy(remaining_dest_span,
-                     remaining_src_span.subspan(1, move_size));
-      remaining_src_span = remaining_src_span.subspan(move_size + 1);
-      prev_dest_span = remaining_dest_span;
-      remaining_dest_span = remaining_dest_span.subspan(move_size);
-      byte_count += move_size;
-      continue;
-    }
-
-    const uint32_t bytes_per_pixel = (Colors * BitsPerComponent + 7) / 8;
+    remaining_src_span = remaining_src_span.subspan(1);
+    const size_t remaining_row_size =
+        std::min<size_t>(row_size, remaining_src_span.size());
     switch (tag) {
       case 1: {
-        for (uint32_t i = 0; i < row_size && byte_count < src_span.size();
-             ++i, ++byte_count) {
+        for (uint32_t i = 0; i < remaining_row_size; ++i) {
           uint8_t left = GetLeftValue(remaining_dest_span, i, bytes_per_pixel);
-          remaining_dest_span[i] = remaining_src_span[i + 1] + left;
+          remaining_dest_span[i] = remaining_src_span[i] + left;
         }
         break;
       }
       case 2: {
-        for (uint32_t i = 0; i < row_size && byte_count < src_span.size();
-             ++i, ++byte_count) {
+        for (uint32_t i = 0; i < remaining_row_size; ++i) {
           uint8_t up = GetUpValue(prev_dest_span, i);
-          remaining_dest_span[i] = remaining_src_span[i + 1] + up;
+          remaining_dest_span[i] = remaining_src_span[i] + up;
         }
         break;
       }
       case 3: {
-        for (uint32_t i = 0; i < row_size && byte_count < src_span.size();
-             ++i, ++byte_count) {
+        for (uint32_t i = 0; i < remaining_row_size; ++i) {
           uint8_t left = GetLeftValue(remaining_dest_span, i, bytes_per_pixel);
           uint8_t up = GetUpValue(prev_dest_span, i);
-          remaining_dest_span[i] = remaining_src_span[i + 1] + (up + left) / 2;
+          remaining_dest_span[i] = remaining_src_span[i] + (up + left) / 2;
         }
         break;
       }
       case 4: {
-        for (uint32_t i = 0; i < row_size && byte_count < src_span.size();
-             ++i, ++byte_count) {
+        for (uint32_t i = 0; i < remaining_row_size; ++i) {
           uint8_t left = GetLeftValue(remaining_dest_span, i, bytes_per_pixel);
           uint8_t up = GetUpValue(prev_dest_span, i);
           uint8_t upper_left =
               GetUpperLeftValue(prev_dest_span, i, bytes_per_pixel);
           remaining_dest_span[i] =
-              remaining_src_span[i + 1] + PathPredictor(left, up, upper_left);
+              remaining_src_span[i] + PathPredictor(left, up, upper_left);
         }
         break;
       }
       default: {
-        for (uint32_t i = 0; i < row_size && byte_count < src_span.size();
-             ++i, ++byte_count) {
-          remaining_dest_span[i] = remaining_src_span[i + 1];
-        }
+        fxcrt::spancpy(remaining_dest_span,
+                       remaining_src_span.first(remaining_row_size));
         break;
       }
     }
-    size_t remaining_size = (last_row_size == 0 || row + 1 < row_count)
-                                ? src_row_size
-                                : last_row_size;
-    remaining_src_span = remaining_src_span.subspan(remaining_size);
+    remaining_src_span = remaining_src_span.subspan(remaining_row_size);
     prev_dest_span = remaining_dest_span;
-    remaining_dest_span = remaining_dest_span.subspan(remaining_size - 1);
+    remaining_dest_span = remaining_dest_span.subspan(remaining_row_size);
   }
   *result_buf = std::move(dest_buf);
-  size_t dest_size = row_size * row_count -
-                     (last_row_size > 0 ? (src_row_size - last_row_size) : 0);
   *result_size = pdfium::checked_cast<uint32_t>(dest_size);
   return true;
 }
