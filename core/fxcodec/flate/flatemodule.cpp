@@ -327,26 +327,32 @@ void PNG_PredictLine(pdfium::span<uint8_t> dest_span,
   }
 
   const uint32_t BytesPerPixel = (bpc * nColors + 7) / 8;
-  for (uint32_t byte = 0; byte < row_size; ++byte) {
-    uint8_t raw_byte = src_span[byte + 1];
-    switch (tag) {
-      case 1: {
+  switch (tag) {
+    case 1: {
+      for (uint32_t byte = 0; byte < row_size; ++byte) {
+        uint8_t raw_byte = src_span[byte + 1];
         uint8_t left = 0;
         if (byte >= BytesPerPixel) {
           left = dest_span[byte - BytesPerPixel];
         }
         dest_span[byte] = raw_byte + left;
-        break;
       }
-      case 2: {
+      break;
+    }
+    case 2: {
+      for (uint32_t byte = 0; byte < row_size; ++byte) {
+        uint8_t raw_byte = src_span[byte + 1];
         uint8_t up = 0;
         if (!last_span.empty()) {
           up = last_span[byte];
         }
         dest_span[byte] = raw_byte + up;
-        break;
       }
-      case 3: {
+      break;
+    }
+    case 3: {
+      for (uint32_t byte = 0; byte < row_size; ++byte) {
+        uint8_t raw_byte = src_span[byte + 1];
         uint8_t left = 0;
         if (byte >= BytesPerPixel) {
           left = dest_span[byte - BytesPerPixel];
@@ -356,9 +362,12 @@ void PNG_PredictLine(pdfium::span<uint8_t> dest_span,
           up = last_span[byte];
         }
         dest_span[byte] = raw_byte + (up + left) / 2;
-        break;
       }
-      case 4: {
+      break;
+    }
+    case 4: {
+      for (uint32_t byte = 0; byte < row_size; ++byte) {
+        uint8_t raw_byte = src_span[byte + 1];
         uint8_t left = 0;
         if (byte >= BytesPerPixel) {
           left = dest_span[byte - BytesPerPixel];
@@ -372,11 +381,15 @@ void PNG_PredictLine(pdfium::span<uint8_t> dest_span,
           upper_left = last_span[byte - BytesPerPixel];
         }
         dest_span[byte] = raw_byte + PathPredictor(left, up, upper_left);
-        break;
       }
-      default:
+      break;
+    }
+    default: {
+      for (uint32_t byte = 0; byte < row_size; ++byte) {
+        uint8_t raw_byte = src_span[byte + 1];
         dest_span[byte] = raw_byte;
-        break;
+      }
+      break;
     }
   }
 }
@@ -429,27 +442,35 @@ bool PNG_Predictor(int Colors,
     }
 
     const uint32_t BytesPerPixel = (Colors * BitsPerComponent + 7) / 8;
-    for (uint32_t byte = 0; byte < row_size && byte_count < src_span.size();
-         ++byte, ++byte_count) {
-      uint8_t raw_byte = remaining_src_span[byte + 1];
-      switch (tag) {
-        case 1: {
+    switch (tag) {
+      case 1: {
+        for (uint32_t byte = 0; byte < row_size && byte_count < src_span.size();
+             ++byte, ++byte_count) {
+          uint8_t raw_byte = remaining_src_span[byte + 1];
           uint8_t left = 0;
           if (byte >= BytesPerPixel) {
             left = remaining_dest_span[byte - BytesPerPixel];
           }
           remaining_dest_span[byte] = raw_byte + left;
-          break;
         }
-        case 2: {
+        break;
+      }
+      case 2: {
+        for (uint32_t byte = 0; byte < row_size && byte_count < src_span.size();
+             ++byte, ++byte_count) {
+          uint8_t raw_byte = remaining_src_span[byte + 1];
           uint8_t up = 0;
           if (!prev_dest_span.empty()) {
             up = prev_dest_span[byte];
           }
           remaining_dest_span[byte] = raw_byte + up;
-          break;
         }
-        case 3: {
+        break;
+      }
+      case 3: {
+        for (uint32_t byte = 0; byte < row_size && byte_count < src_span.size();
+             ++byte, ++byte_count) {
+          uint8_t raw_byte = remaining_src_span[byte + 1];
           uint8_t left = 0;
           if (byte >= BytesPerPixel) {
             left = remaining_dest_span[byte - BytesPerPixel];
@@ -459,9 +480,13 @@ bool PNG_Predictor(int Colors,
             up = prev_dest_span[byte];
           }
           remaining_dest_span[byte] = raw_byte + (up + left) / 2;
-          break;
         }
-        case 4: {
+        break;
+      }
+      case 4: {
+        for (uint32_t byte = 0; byte < row_size && byte_count < src_span.size();
+             ++byte, ++byte_count) {
+          uint8_t raw_byte = remaining_src_span[byte + 1];
           uint8_t left = 0;
           if (byte >= BytesPerPixel) {
             left = remaining_dest_span[byte - BytesPerPixel];
@@ -476,11 +501,16 @@ bool PNG_Predictor(int Colors,
           }
           remaining_dest_span[byte] =
               raw_byte + PathPredictor(left, up, upper_left);
-          break;
         }
-        default:
+        break;
+      }
+      default: {
+        for (uint32_t byte = 0; byte < row_size && byte_count < src_span.size();
+             ++byte, ++byte_count) {
+          uint8_t raw_byte = remaining_src_span[byte + 1];
           remaining_dest_span[byte] = raw_byte;
-          break;
+        }
+        break;
       }
     }
     size_t remaining_size = (last_row_size == 0 || row + 1 < row_count)
