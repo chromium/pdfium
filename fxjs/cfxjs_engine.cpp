@@ -201,7 +201,7 @@ class CFXJS_ObjDefinition {
   void DefineProperty(v8::Local<v8::String> sPropName,
                       v8::AccessorNameGetterCallback pPropGet,
                       v8::AccessorNameSetterCallback pPropPut) {
-    GetInstanceTemplate()->SetAccessor(sPropName, pPropGet, pPropPut);
+    GetInstanceTemplate()->SetNativeDataProperty(sPropName, pPropGet, pPropPut);
   }
 
   void DefineMethod(v8::Local<v8::String> sMethodName,
