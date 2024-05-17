@@ -110,26 +110,26 @@ void CFFL_ListBox::SaveData(const CPDFSDK_PageView* pPageView) {
   }
   int32_t nNewTopIndex = pListBox->GetTopVisibleIndex();
   ObservedPtr<CPWL_ListBox> observed_box(pListBox);
+  ObservedPtr<CPDFSDK_Widget> observed_widget(m_pWidget);
   m_pWidget->ClearSelection();
-  if (!observed_box) {
+  if (!observed_box || !observed_widget) {
     return;
   }
   if (m_pWidget->GetFieldFlags() & pdfium::form_flags::kChoiceMultiSelect) {
     for (int32_t i = 0, sz = pListBox->GetCount(); i < sz; i++) {
       if (pListBox->IsItemSelected(i)) {
         m_pWidget->SetOptionSelection(i);
-        if (!observed_box) {
+        if (!observed_box || !observed_widget) {
           return;
         }
       }
     }
   } else {
     m_pWidget->SetOptionSelection(pListBox->GetCurSel());
-    if (!observed_box) {
+    if (!observed_box || !observed_widget) {
       return;
     }
   }
-  ObservedPtr<CPDFSDK_Widget> observed_widget(m_pWidget);
   ObservedPtr<CFFL_ListBox> observed_this(this);
   m_pWidget->SetTopVisibleIndex(nNewTopIndex);
   if (!observed_widget) {
