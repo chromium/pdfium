@@ -492,7 +492,7 @@ bool PNG_Predictor(int Colors,
 }
 
 void TIFF_PredictLine(uint8_t* dest_buf,
-                      uint32_t row_size,
+                      size_t row_size,
                       int BitsPerComponent,
                       int Colors,
                       int Columns) {
@@ -517,7 +517,7 @@ void TIFF_PredictLine(uint8_t* dest_buf,
   }
   int BytesPerPixel = BitsPerComponent * Colors / 8;
   if (BitsPerComponent == 16) {
-    for (uint32_t i = BytesPerPixel; i + 1 < row_size; i += 2) {
+    for (size_t i = BytesPerPixel; i + 1 < row_size; i += 2) {
       uint16_t pixel =
           (dest_buf[i - BytesPerPixel] << 8) | dest_buf[i - BytesPerPixel + 1];
       pixel += (dest_buf[i] << 8) | dest_buf[i + 1];
@@ -525,7 +525,7 @@ void TIFF_PredictLine(uint8_t* dest_buf,
       dest_buf[i + 1] = (uint8_t)pixel;
     }
   } else {
-    for (uint32_t i = BytesPerPixel; i < row_size; i++) {
+    for (size_t i = BytesPerPixel; i < row_size; i++) {
       dest_buf[i] += dest_buf[i - BytesPerPixel];
     }
   }
@@ -534,21 +534,20 @@ void TIFF_PredictLine(uint8_t* dest_buf,
 bool TIFF_Predictor(int Colors,
                     int BitsPerComponent,
                     int Columns,
-                    std::unique_ptr<uint8_t, FxFreeDeleter>* data_buf,
-                    uint32_t* data_size) {
-  uint32_t row_size =
+                    pdfium::span<uint8_t> data_span) {
+  const uint32_t row_size =
       fxge::CalculatePitch8(BitsPerComponent, Colors, Columns).value_or(0);
-  if (row_size == 0)
+  if (row_size == 0) {
     return false;
+  }
 
-  const uint32_t row_count = (*data_size + row_size - 1) / row_size;
-  const uint32_t last_row_size = *data_size % row_size;
-  for (uint32_t row = 0; row < row_count; row++) {
-    uint8_t* scan_line = data_buf->get() + row * row_size;
-    if ((row + 1) * row_size > *data_size) {
-      row_size = last_row_size;
-    }
-    TIFF_PredictLine(scan_line, row_size, BitsPerComponent, Colors, Columns);
+  const size_t row_count = (data_span.size() + row_size - 1) / row_size;
+  const size_t last_row_size = data_span.size() % row_size;
+  for (size_t row = 0; row < row_count; row++) {
+    uint8_t* scan_line = data_span.subspan(row * row_size).data();
+    size_t scan_line_size = row + 1 < row_count ? row_size : last_row_size;
+    TIFF_PredictLine(scan_line, scan_line_size, BitsPerComponent, Colors,
+                     Columns);
   }
   return true;
 }
@@ -872,24 +871,23 @@ DataAndBytesConsumed FlateModule::FlateOrLZWDecode(
     bytes_consumed = result.bytes_consumed;
   }
 
-  bool ret = false;
   switch (predictor_type) {
-    case PredictorType::kNone:
-      ret = true;
-      break;
-    case PredictorType::kPng:
-      ret = PNG_Predictor(Colors, BitsPerComponent, Columns, &dest_buf,
-                          &dest_size);
-      break;
-    case PredictorType::kFlate:
-      ret = TIFF_Predictor(Colors, BitsPerComponent, Columns, &dest_buf,
-                           &dest_size);
-      break;
+    case PredictorType::kNone: {
+      return {std::move(dest_buf), dest_size, bytes_consumed};
+    }
+    case PredictorType::kPng: {
+      bool ret = PNG_Predictor(Colors, BitsPerComponent, Columns, &dest_buf,
+                               &dest_size);
+      return {std::move(dest_buf), dest_size,
+              ret ? bytes_consumed : FX_INVALID_OFFSET};
+    }
+    case PredictorType::kFlate: {
+      bool ret = TIFF_Predictor(Colors, BitsPerComponent, Columns,
+                                pdfium::make_span(dest_buf.get(), dest_size));
+      return {std::move(dest_buf), dest_size,
+              ret ? bytes_consumed : FX_INVALID_OFFSET};
+    }
   }
-  if (!ret) {
-    bytes_consumed = FX_INVALID_OFFSET;
-  }
-  return {std::move(dest_buf), dest_size, bytes_consumed};
 }
 
 // static
