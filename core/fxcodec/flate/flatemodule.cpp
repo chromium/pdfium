@@ -336,7 +336,7 @@ uint8_t PathPredictor(uint8_t a, uint8_t b, uint8_t c) {
 void PNG_PredictLine(pdfium::span<uint8_t> dest_span,
                      pdfium::span<const uint8_t> src_span,
                      pdfium::span<const uint8_t> last_span,
-                     uint32_t row_size,
+                     size_t row_size,
                      uint32_t bytes_per_pixel) {
   const uint8_t tag = src_span.front();
   pdfium::span<const uint8_t> remaining_src_span =
@@ -416,51 +416,11 @@ bool PNG_Predictor(int Colors,
   pdfium::span<uint8_t> prev_dest_span;
   const uint32_t bytes_per_pixel = (Colors * BitsPerComponent + 7) / 8;
   for (size_t row = 0; row < row_count; row++) {
-    const uint8_t tag = remaining_src_span.front();
-    remaining_src_span = remaining_src_span.subspan(1);
     const size_t remaining_row_size =
-        std::min<size_t>(row_size, remaining_src_span.size());
-    switch (tag) {
-      case 1: {
-        for (uint32_t i = 0; i < remaining_row_size; ++i) {
-          uint8_t left = GetLeftValue(remaining_dest_span, i, bytes_per_pixel);
-          remaining_dest_span[i] = remaining_src_span[i] + left;
-        }
-        break;
-      }
-      case 2: {
-        for (uint32_t i = 0; i < remaining_row_size; ++i) {
-          uint8_t up = GetUpValue(prev_dest_span, i);
-          remaining_dest_span[i] = remaining_src_span[i] + up;
-        }
-        break;
-      }
-      case 3: {
-        for (uint32_t i = 0; i < remaining_row_size; ++i) {
-          uint8_t left = GetLeftValue(remaining_dest_span, i, bytes_per_pixel);
-          uint8_t up = GetUpValue(prev_dest_span, i);
-          remaining_dest_span[i] = remaining_src_span[i] + (up + left) / 2;
-        }
-        break;
-      }
-      case 4: {
-        for (uint32_t i = 0; i < remaining_row_size; ++i) {
-          uint8_t left = GetLeftValue(remaining_dest_span, i, bytes_per_pixel);
-          uint8_t up = GetUpValue(prev_dest_span, i);
-          uint8_t upper_left =
-              GetUpperLeftValue(prev_dest_span, i, bytes_per_pixel);
-          remaining_dest_span[i] =
-              remaining_src_span[i] + PathPredictor(left, up, upper_left);
-        }
-        break;
-      }
-      default: {
-        fxcrt::spancpy(remaining_dest_span,
-                       remaining_src_span.first(remaining_row_size));
-        break;
-      }
-    }
-    remaining_src_span = remaining_src_span.subspan(remaining_row_size);
+        std::min<size_t>(row_size, remaining_src_span.size() - 1);
+    PNG_PredictLine(remaining_dest_span, remaining_src_span, prev_dest_span,
+                    remaining_row_size, bytes_per_pixel);
+    remaining_src_span = remaining_src_span.subspan(remaining_row_size + 1);
     prev_dest_span = remaining_dest_span;
     remaining_dest_span = remaining_dest_span.subspan(remaining_row_size);
   }
