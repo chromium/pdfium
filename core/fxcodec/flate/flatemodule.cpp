@@ -302,6 +302,25 @@ bool CLZWDecoder::Decode() {
   return dest_byte_pos_ != 0;
 }
 
+uint8_t GetLeftValue(pdfium::span<const uint8_t> span,
+                     size_t i,
+                     uint32_t bytes_per_pixel) {
+  return i >= bytes_per_pixel ? span[i - bytes_per_pixel] : 0;
+}
+
+uint8_t GetUpValue(pdfium::span<const uint8_t> span, size_t i) {
+  return span.empty() ? 0 : span[i];
+}
+
+uint8_t GetUpperLeftValue(pdfium::span<const uint8_t> span,
+                          size_t i,
+                          uint32_t bytes_per_pixel) {
+  if (i >= bytes_per_pixel && !span.empty()) {
+    return span[i - bytes_per_pixel];
+  }
+  return 0;
+}
+
 uint8_t PathPredictor(uint8_t a, uint8_t b, uint8_t c) {
   int p = static_cast<int>(a) + b - c;
   int pa = abs(p - a);
@@ -321,74 +340,44 @@ void PNG_PredictLine(pdfium::span<uint8_t> dest_span,
                      int nPixels) {
   const uint32_t row_size = fxge::CalculatePitch8OrDie(bpc, nColors, nPixels);
   const uint8_t tag = src_span.front();
-  if (tag == 0) {
-    fxcrt::spanmove(dest_span, src_span.subspan(1, row_size));
-    return;
-  }
-
-  const uint32_t BytesPerPixel = (bpc * nColors + 7) / 8;
+  pdfium::span<const uint8_t> remaining_src_span =
+      src_span.subspan(1, row_size);
+  const uint32_t bytes_per_pixel = (bpc * nColors + 7) / 8;
   switch (tag) {
     case 1: {
-      for (uint32_t byte = 0; byte < row_size; ++byte) {
-        uint8_t raw_byte = src_span[byte + 1];
-        uint8_t left = 0;
-        if (byte >= BytesPerPixel) {
-          left = dest_span[byte - BytesPerPixel];
-        }
-        dest_span[byte] = raw_byte + left;
+      for (size_t i = 0; i < remaining_src_span.size(); ++i) {
+        uint8_t left = GetLeftValue(dest_span, i, bytes_per_pixel);
+        dest_span[i] = remaining_src_span[i] + left;
       }
       break;
     }
     case 2: {
-      for (uint32_t byte = 0; byte < row_size; ++byte) {
-        uint8_t raw_byte = src_span[byte + 1];
-        uint8_t up = 0;
-        if (!last_span.empty()) {
-          up = last_span[byte];
-        }
-        dest_span[byte] = raw_byte + up;
+      for (size_t i = 0; i < remaining_src_span.size(); ++i) {
+        uint8_t up = GetUpValue(last_span, i);
+        dest_span[i] = remaining_src_span[i] + up;
       }
       break;
     }
     case 3: {
-      for (uint32_t byte = 0; byte < row_size; ++byte) {
-        uint8_t raw_byte = src_span[byte + 1];
-        uint8_t left = 0;
-        if (byte >= BytesPerPixel) {
-          left = dest_span[byte - BytesPerPixel];
-        }
-        uint8_t up = 0;
-        if (!last_span.empty()) {
-          up = last_span[byte];
-        }
-        dest_span[byte] = raw_byte + (up + left) / 2;
+      for (size_t i = 0; i < remaining_src_span.size(); ++i) {
+        uint8_t left = GetLeftValue(dest_span, i, bytes_per_pixel);
+        uint8_t up = GetUpValue(last_span, i);
+        dest_span[i] = remaining_src_span[i] + (up + left) / 2;
       }
       break;
     }
     case 4: {
-      for (uint32_t byte = 0; byte < row_size; ++byte) {
-        uint8_t raw_byte = src_span[byte + 1];
-        uint8_t left = 0;
-        if (byte >= BytesPerPixel) {
-          left = dest_span[byte - BytesPerPixel];
-        }
-        uint8_t up = 0;
-        if (!last_span.empty()) {
-          up = last_span[byte];
-        }
-        uint8_t upper_left = 0;
-        if (byte >= BytesPerPixel && !last_span.empty()) {
-          upper_left = last_span[byte - BytesPerPixel];
-        }
-        dest_span[byte] = raw_byte + PathPredictor(left, up, upper_left);
+      for (size_t i = 0; i < remaining_src_span.size(); ++i) {
+        uint8_t left = GetLeftValue(dest_span, i, bytes_per_pixel);
+        uint8_t up = GetUpValue(last_span, i);
+        uint8_t upper_left = GetUpperLeftValue(last_span, i, bytes_per_pixel);
+        dest_span[i] =
+            remaining_src_span[i] + PathPredictor(left, up, upper_left);
       }
       break;
     }
     default: {
-      for (uint32_t byte = 0; byte < row_size; ++byte) {
-        uint8_t raw_byte = src_span[byte + 1];
-        dest_span[byte] = raw_byte;
-      }
+      fxcrt::spancpy(dest_span, remaining_src_span);
       break;
     }
   }
@@ -441,74 +430,49 @@ bool PNG_Predictor(int Colors,
       continue;
     }
 
-    const uint32_t BytesPerPixel = (Colors * BitsPerComponent + 7) / 8;
+    const uint32_t bytes_per_pixel = (Colors * BitsPerComponent + 7) / 8;
     switch (tag) {
       case 1: {
-        for (uint32_t byte = 0; byte < row_size && byte_count < src_span.size();
-             ++byte, ++byte_count) {
-          uint8_t raw_byte = remaining_src_span[byte + 1];
-          uint8_t left = 0;
-          if (byte >= BytesPerPixel) {
-            left = remaining_dest_span[byte - BytesPerPixel];
-          }
-          remaining_dest_span[byte] = raw_byte + left;
+        for (uint32_t i = 0; i < row_size && byte_count < src_span.size();
+             ++i, ++byte_count) {
+          uint8_t left = GetLeftValue(remaining_dest_span, i, bytes_per_pixel);
+          remaining_dest_span[i] = remaining_src_span[i + 1] + left;
         }
         break;
       }
       case 2: {
-        for (uint32_t byte = 0; byte < row_size && byte_count < src_span.size();
-             ++byte, ++byte_count) {
-          uint8_t raw_byte = remaining_src_span[byte + 1];
-          uint8_t up = 0;
-          if (!prev_dest_span.empty()) {
-            up = prev_dest_span[byte];
-          }
-          remaining_dest_span[byte] = raw_byte + up;
+        for (uint32_t i = 0; i < row_size && byte_count < src_span.size();
+             ++i, ++byte_count) {
+          uint8_t up = GetUpValue(prev_dest_span, i);
+          remaining_dest_span[i] = remaining_src_span[i + 1] + up;
         }
         break;
       }
       case 3: {
-        for (uint32_t byte = 0; byte < row_size && byte_count < src_span.size();
-             ++byte, ++byte_count) {
-          uint8_t raw_byte = remaining_src_span[byte + 1];
-          uint8_t left = 0;
-          if (byte >= BytesPerPixel) {
-            left = remaining_dest_span[byte - BytesPerPixel];
-          }
-          uint8_t up = 0;
-          if (!prev_dest_span.empty()) {
-            up = prev_dest_span[byte];
-          }
-          remaining_dest_span[byte] = raw_byte + (up + left) / 2;
+        for (uint32_t i = 0; i < row_size && byte_count < src_span.size();
+             ++i, ++byte_count) {
+          uint8_t left = GetLeftValue(remaining_dest_span, i, bytes_per_pixel);
+          uint8_t up = GetUpValue(prev_dest_span, i);
+          remaining_dest_span[i] = remaining_src_span[i + 1] + (up + left) / 2;
         }
         break;
       }
       case 4: {
-        for (uint32_t byte = 0; byte < row_size && byte_count < src_span.size();
-             ++byte, ++byte_count) {
-          uint8_t raw_byte = remaining_src_span[byte + 1];
-          uint8_t left = 0;
-          if (byte >= BytesPerPixel) {
-            left = remaining_dest_span[byte - BytesPerPixel];
-          }
-          uint8_t up = 0;
-          if (!prev_dest_span.empty()) {
-            up = prev_dest_span[byte];
-          }
-          uint8_t upper_left = 0;
-          if (!prev_dest_span.empty() && byte >= BytesPerPixel) {
-            upper_left = prev_dest_span[byte - BytesPerPixel];
-          }
-          remaining_dest_span[byte] =
-              raw_byte + PathPredictor(left, up, upper_left);
+        for (uint32_t i = 0; i < row_size && byte_count < src_span.size();
+             ++i, ++byte_count) {
+          uint8_t left = GetLeftValue(remaining_dest_span, i, bytes_per_pixel);
+          uint8_t up = GetUpValue(prev_dest_span, i);
+          uint8_t upper_left =
+              GetUpperLeftValue(prev_dest_span, i, bytes_per_pixel);
+          remaining_dest_span[i] =
+              remaining_src_span[i + 1] + PathPredictor(left, up, upper_left);
         }
         break;
       }
       default: {
-        for (uint32_t byte = 0; byte < row_size && byte_count < src_span.size();
-             ++byte, ++byte_count) {
-          uint8_t raw_byte = remaining_src_span[byte + 1];
-          remaining_dest_span[byte] = raw_byte;
+        for (uint32_t i = 0; i < row_size && byte_count < src_span.size();
+             ++i, ++byte_count) {
+          remaining_dest_span[i] = remaining_src_span[i + 1];
         }
         break;
       }
