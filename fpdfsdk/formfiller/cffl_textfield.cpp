@@ -153,15 +153,15 @@ void CFFL_TextField::SaveData(const CPDFSDK_PageView* pPageView) {
   WideString sNewValue = observed_edit->GetText();
   ObservedPtr<CPDFSDK_Widget> observed_widget(m_pWidget);
   ObservedPtr<CFFL_TextField> observed_this(this);
-  m_pWidget->SetValue(sNewValue);
+  observed_widget->SetValue(sNewValue);
   if (!observed_widget) {
     return;
   }
-  m_pWidget->ResetFieldAppearance();
+  observed_widget->ResetFieldAppearance();
   if (!observed_widget) {
     return;
   }
-  m_pWidget->UpdateField();
+  observed_widget->UpdateField();
   if (!observed_widget || !observed_this) {
     return;
   }

@@ -101,24 +101,25 @@ void UpdateFormControl(CPDFSDK_FormFillEnvironment* pFormFillEnv,
                        bool bResetAP) {
   DCHECK(pFormControl);
   CPDFSDK_InteractiveForm* pForm = pFormFillEnv->GetInteractiveForm();
-  CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl);
-  if (pWidget) {
-    ObservedPtr<CPDFSDK_Widget> observed_widget(pWidget);
+  ObservedPtr<CPDFSDK_Widget> observed_widget(pForm->GetWidget(pFormControl));
+  if (observed_widget) {
     if (bResetAP) {
-      FormFieldType fieldType = pWidget->GetFieldType();
+      FormFieldType fieldType = observed_widget->GetFieldType();
       if (fieldType == FormFieldType::kComboBox ||
           fieldType == FormFieldType::kTextField) {
-        std::optional<WideString> sValue = pWidget->OnFormat();
+        std::optional<WideString> sValue = observed_widget->OnFormat();
         if (!observed_widget)
           return;
-        pWidget->ResetAppearance(sValue, CPDFSDK_Widget::kValueUnchanged);
+        observed_widget->ResetAppearance(sValue,
+                                         CPDFSDK_Widget::kValueUnchanged);
       } else {
-        pWidget->ResetAppearance(std::nullopt, CPDFSDK_Widget::kValueUnchanged);
+        observed_widget->ResetAppearance(std::nullopt,
+                                         CPDFSDK_Widget::kValueUnchanged);
       }
       if (!observed_widget)
         return;
     }
-    pFormFillEnv->UpdateAllViews(pWidget);
+    pFormFillEnv->UpdateAllViews(observed_widget.Get());
   }
   pFormFillEnv->SetChangeMark();
 }

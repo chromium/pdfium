@@ -154,31 +154,31 @@ CPDFSDK_Annot* CPDFSDK_PageView::AddAnnotForFFWidget(CXFA_FFWidget* pWidget) {
 }
 
 void CPDFSDK_PageView::DeleteAnnotForFFWidget(CXFA_FFWidget* pWidget) {
-  CPDFSDK_Annot* pAnnot = GetAnnotForFFWidget(pWidget);
-  if (!pAnnot)
+  ObservedPtr<CPDFSDK_Annot> pAnnot(GetAnnotForFFWidget(pWidget));
+  if (!pAnnot) {
     return;
-
+  }
   IPDF_Page* pPage = pAnnot->GetXFAPage();
-  if (!pPage)
+  if (!pPage) {
     return;
-
+  }
   CPDF_Document::Extension* pContext = pPage->GetDocument()->GetExtension();
-  if (pContext && !pContext->ContainsExtensionForm())
+  if (pContext && !pContext->ContainsExtensionForm()) {
     return;
-
-  ObservedPtr<CPDFSDK_Annot> pObserved(pAnnot);
-  if (GetFocusAnnot() == pAnnot)
-    m_pFormFillEnv->KillFocusAnnot({});  // May invoke JS, invalidating pAnnot.
-
-  if (pObserved) {
+  }
+  if (GetFocusAnnot() == pAnnot) {
+    // May invoke JS, invalidating pAnnot.
+    m_pFormFillEnv->KillFocusAnnot({});
+  }
+  if (pAnnot) {
     auto it = std::find(m_SDKAnnotArray.begin(), m_SDKAnnotArray.end(),
-                        fxcrt::MakeFakeUniquePtr(pAnnot));
+                        fxcrt::MakeFakeUniquePtr(pAnnot.Get()));
     if (it != m_SDKAnnotArray.end())
       m_SDKAnnotArray.erase(it);
   }
-
-  if (m_pCaptureWidget.Get() == pAnnot)
+  if (m_pCaptureWidget.Get() == pAnnot) {
     m_pCaptureWidget.Reset();
+  }
 }
 
 CPDFXFA_Page* CPDFSDK_PageView::XFAPageIfNotBackedByPDFPage() {

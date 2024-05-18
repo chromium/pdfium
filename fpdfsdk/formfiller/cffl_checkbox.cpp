@@ -87,12 +87,12 @@ bool CFFL_CheckBox::OnLButtonUp(CPDFSDK_PageView* pPageView,
   if (!IsValid()) {
     return true;
   }
-  CPWL_CheckBox* pWnd = CreateOrUpdatePWLCheckBox(pPageView);
+  ObservedPtr<CPWL_CheckBox> pWnd(CreateOrUpdatePWLCheckBox(pPageView));
   if (pWnd) {
-    ObservedPtr<CPWL_CheckBox> pObservedBox(pWnd);
+    // IsChecked() may invalidate check box.
     const bool is_checked = pWidget->IsChecked();
-    if (pObservedBox) {
-      pObservedBox->SetCheck(!is_checked);
+    if (pWnd) {
+      pWnd->SetCheck(!is_checked);
     }
   }
   return CommitData(pPageView, nFlags);
@@ -105,20 +105,22 @@ bool CFFL_CheckBox::IsDataChanged(const CPDFSDK_PageView* pPageView) {
 
 void CFFL_CheckBox::SaveData(const CPDFSDK_PageView* pPageView) {
   CPWL_CheckBox* pWnd = GetPWLCheckBox(pPageView);
-  if (!pWnd)
+  if (!pWnd) {
     return;
-
+  }
   bool bNewChecked = pWnd->IsChecked();
   ObservedPtr<CPDFSDK_Widget> observed_widget(m_pWidget);
   ObservedPtr<CFFL_CheckBox> observed_this(this);
-  m_pWidget->SetCheck(bNewChecked);
-  if (!observed_widget)
+  observed_widget->SetCheck(bNewChecked);
+  if (!observed_widget) {
     return;
-
-  m_pWidget->UpdateField();
-  if (!observed_widget || !observed_this)
-    return;
-
+  }
+  observed_widget->UpdateField();
+  {
+    if (!observed_widget || !observed_this) {
+      return;
+    }
+  }
   SetChangeMark();
 }
 
