@@ -26,7 +26,7 @@
 #include "core/fpdfapi/parser/object_tree_traversal_util.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/containers/contains.h"
-#include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_random.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -50,15 +50,15 @@ class CFX_FileBufferArchive final : public IFX_ArchiveStream {
   bool Flush();
 
   FX_FILESIZE offset_ = 0;
-  DataVector<uint8_t> buffer_;
+  FixedSizeDataVector<uint8_t> buffer_;
   pdfium::raw_span<uint8_t> available_;
   RetainPtr<IFX_RetainableWriteStream> const backing_file_;
 };
 
 CFX_FileBufferArchive::CFX_FileBufferArchive(
     RetainPtr<IFX_RetainableWriteStream> file)
-    : buffer_(kArchiveBufferSize),
-      available_(buffer_),
+    : buffer_(FixedSizeDataVector<uint8_t>::Uninit(kArchiveBufferSize)),
+      available_(buffer_.span()),
       backing_file_(std::move(file)) {
   DCHECK(backing_file_);
 }
@@ -68,11 +68,9 @@ CFX_FileBufferArchive::~CFX_FileBufferArchive() {
 }
 
 bool CFX_FileBufferArchive::Flush() {
-  size_t nUsed = buffer_.size() - available_.size();
-  available_ = pdfium::make_span(buffer_);
-  if (!nUsed)
-    return true;
-  return backing_file_->WriteBlock(available_.first(nUsed));
+  size_t used = buffer_.size() - available_.size();
+  available_ = buffer_.span();
+  return used == 0 || backing_file_->WriteBlock(available_.first(used));
 }
 
 bool CFX_FileBufferArchive::WriteBlock(pdfium::span<const uint8_t> buffer) {
