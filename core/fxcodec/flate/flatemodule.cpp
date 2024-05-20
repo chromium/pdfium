@@ -514,8 +514,7 @@ DataAndBytesConsumed FlateUncompress(pdfium::span<const uint8_t> src_buf,
       EstimateFlateUncompressBufferSize(orig_size, src_buf.size());
   uint32_t last_buf_size = buf_size;
   std::unique_ptr<uint8_t, FxFreeDeleter> guess_buf(
-      FX_Alloc(uint8_t, buf_size + 1));
-  guess_buf.get()[buf_size] = '\0';
+      FX_Alloc(uint8_t, buf_size));
   std::vector<std::unique_ptr<uint8_t, FxFreeDeleter>> result_tmp_bufs;
   {
     std::unique_ptr<uint8_t, FxFreeDeleter> cur_buf = std::move(guess_buf);
@@ -529,8 +528,7 @@ DataAndBytesConsumed FlateUncompress(pdfium::span<const uint8_t> src_buf,
         break;
       }
       result_tmp_bufs.push_back(std::move(cur_buf));
-      cur_buf.reset(FX_Alloc(uint8_t, buf_size + 1));
-      cur_buf.get()[buf_size] = '\0';
+      cur_buf.reset(FX_Alloc(uint8_t, buf_size));
     }
   }
 
@@ -538,28 +536,28 @@ DataAndBytesConsumed FlateUncompress(pdfium::span<const uint8_t> src_buf,
   // handle the content the library returns. We can only handle items
   // up to 4GB in size.
   const uint32_t dest_size = FlateGetPossiblyTruncatedTotalOut(context.get());
-  const uint32_t offset = FlateGetPossiblyTruncatedTotalIn(context.get());
+  const uint32_t bytes_consumed =
+      FlateGetPossiblyTruncatedTotalIn(context.get());
   if (result_tmp_bufs.size() == 1) {
-    return {std::move(result_tmp_bufs.front()), dest_size, offset};
+    CHECK_LE(dest_size, buf_size);
+    return {std::move(result_tmp_bufs.front()), dest_size, bytes_consumed};
   }
 
   std::unique_ptr<uint8_t, FxFreeDeleter> result_buf(
       FX_Alloc(uint8_t, dest_size));
-  uint32_t result_pos = 0;
+  auto result_span = pdfium::make_span(result_buf.get(), dest_size);
   uint32_t remaining = dest_size;
   for (size_t i = 0; i < result_tmp_bufs.size(); i++) {
     std::unique_ptr<uint8_t, FxFreeDeleter> tmp_buf =
         std::move(result_tmp_bufs[i]);
-    uint32_t tmp_buf_size = buf_size;
-    if (i + 1 == result_tmp_bufs.size()) {
-      tmp_buf_size = last_buf_size;
-    }
+    const uint32_t tmp_buf_size =
+        i + 1 < result_tmp_bufs.size() ? buf_size : last_buf_size;
     uint32_t cp_size = std::min(tmp_buf_size, remaining);
-    FXSYS_memcpy(result_buf.get() + result_pos, tmp_buf.get(), cp_size);
-    result_pos += cp_size;
+    fxcrt::spancpy(result_span, pdfium::make_span(tmp_buf.get(), cp_size));
+    result_span = result_span.subspan(cp_size);
     remaining -= cp_size;
   }
-  return {std::move(result_buf), dest_size, offset};
+  return {std::move(result_buf), dest_size, bytes_consumed};
 }
 
 enum class PredictorType : uint8_t { kNone, kFlate, kPng };
