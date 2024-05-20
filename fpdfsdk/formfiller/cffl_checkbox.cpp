@@ -104,24 +104,22 @@ bool CFFL_CheckBox::IsDataChanged(const CPDFSDK_PageView* pPageView) {
 }
 
 void CFFL_CheckBox::SaveData(const CPDFSDK_PageView* pPageView) {
-  CPWL_CheckBox* pWnd = GetPWLCheckBox(pPageView);
+  ObservedPtr<CFFL_CheckBox> observed_this(this);
+  CPWL_CheckBox* pWnd = observed_this->GetPWLCheckBox(pPageView);
   if (!pWnd) {
     return;
   }
   bool bNewChecked = pWnd->IsChecked();
   ObservedPtr<CPDFSDK_Widget> observed_widget(m_pWidget);
-  ObservedPtr<CFFL_CheckBox> observed_this(this);
   observed_widget->SetCheck(bNewChecked);
   if (!observed_widget) {
     return;
   }
   observed_widget->UpdateField();
-  {
-    if (!observed_widget || !observed_this) {
-      return;
-    }
+  if (!observed_widget || !observed_this) {
+    return;
   }
-  SetChangeMark();
+  observed_this->SetChangeMark();
 }
 
 CPWL_CheckBox* CFFL_CheckBox::GetPWLCheckBox(

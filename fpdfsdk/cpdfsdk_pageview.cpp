@@ -421,7 +421,7 @@ bool CPDFSDK_PageView::OnMouseMove(Mask<FWL_EVENTFLAG> nFlags,
   ObservedPtr<CPDFSDK_PageView> pThis(this);
 
   if (pThis->m_bOnWidget && pThis->m_pCaptureWidget != pFXAnnot) {
-    ExitWidget(true, nFlags);
+    pThis->ExitWidget(true, nFlags);
   }
 
   // ExitWidget() may have invalidated objects.
@@ -429,14 +429,14 @@ bool CPDFSDK_PageView::OnMouseMove(Mask<FWL_EVENTFLAG> nFlags,
     return false;
 
   if (!pThis->m_bOnWidget) {
-    EnterWidget(pFXAnnot, nFlags);
+    pThis->EnterWidget(pFXAnnot, nFlags);
 
     // EnterWidget() may have invalidated objects.
     if (!pThis)
       return false;
 
     if (!pFXAnnot) {
-      ExitWidget(false, nFlags);
+      pThis->ExitWidget(false, nFlags);
       return true;
     }
   }
@@ -453,20 +453,21 @@ void CPDFSDK_PageView::EnterWidget(ObservedPtr<CPDFSDK_Annot>& pAnnot,
 
 void CPDFSDK_PageView::ExitWidget(bool callExitCallback,
                                   Mask<FWL_EVENTFLAG> nFlags) {
-  m_bOnWidget = false;
-  if (!m_pCaptureWidget)
+  ObservedPtr<CPDFSDK_PageView> pThis(this);
+  pThis->m_bOnWidget = false;
+  if (!pThis->m_pCaptureWidget) {
     return;
+  }
 
   if (callExitCallback) {
-    ObservedPtr<CPDFSDK_PageView> pThis(this);
     CPDFSDK_Annot::OnMouseExit(pThis->m_pCaptureWidget, nFlags);
 
     // OnMouseExit() may have invalidated |this|.
-    if (!pThis)
+    if (!pThis) {
       return;
+    }
   }
-
-  m_pCaptureWidget.Reset();
+  pThis->m_pCaptureWidget.Reset();
 }
 
 bool CPDFSDK_PageView::OnMouseWheel(Mask<FWL_EVENTFLAG> nFlags,

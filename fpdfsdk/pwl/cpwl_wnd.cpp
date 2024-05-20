@@ -276,22 +276,22 @@ void CPWL_Wnd::DrawChildAppearance(CFX_RenderDevice* pDevice,
 }
 
 bool CPWL_Wnd::InvalidateRect(const CFX_FloatRect* pRect) {
-  if (!IsValid())
-    return true;
-
   ObservedPtr<CPWL_Wnd> this_observed(this);
-  CFX_FloatRect rcRefresh = pRect ? *pRect : GetWindowRect();
-  if (!HasFlag(PWS_NOREFRESHCLIP)) {
-    CFX_FloatRect rcClip = GetClipRect();
+  if (!this_observed->IsValid()) {
+    return true;
+  }
+  CFX_FloatRect rcRefresh = pRect ? *pRect : this_observed->GetWindowRect();
+  if (!this_observed->HasFlag(PWS_NOREFRESHCLIP)) {
+    CFX_FloatRect rcClip = this_observed->GetClipRect();
     if (!rcClip.IsEmpty())
       rcRefresh.Intersect(rcClip);
   }
 
-  CFX_FloatRect rcWin = PWLtoWnd(rcRefresh);
+  CFX_FloatRect rcWin = this_observed->PWLtoWnd(rcRefresh);
   rcWin.Inflate(1, 1);
   rcWin.Normalize();
-  GetFillerNotify()->InvalidateRect(this_observed->m_pAttachedData.get(),
-                                    rcWin);
+  this_observed->GetFillerNotify()->InvalidateRect(
+      this_observed->m_pAttachedData.get(), rcWin);
   return !!this_observed;
 }
 
@@ -574,10 +574,10 @@ bool CPWL_Wnd::ClientHitTest(const CFX_PointF& point) const {
 }
 
 bool CPWL_Wnd::SetVisible(bool bVisible) {
-  if (!IsValid())
-    return true;
-
   ObservedPtr<CPWL_Wnd> this_observed(this);
+  if (!this_observed->IsValid()) {
+    return true;
+  }
   for (const auto& pChild : this_observed->m_Children) {
     if (!pChild->SetVisible(bVisible)) {
       return false;
@@ -586,15 +586,14 @@ bool CPWL_Wnd::SetVisible(bool bVisible) {
       return false;
     }
   }
-
   if (bVisible != this_observed->m_bVisible) {
     this_observed->m_bVisible = bVisible;
-    if (!RepositionChildWnd()) {
+    if (!this_observed->RepositionChildWnd()) {
       return false;
     }
-
-    if (!InvalidateRect(nullptr))
+    if (!this_observed->InvalidateRect(nullptr)) {
       return false;
+    }
   }
   return true;
 }
@@ -613,13 +612,15 @@ bool CPWL_Wnd::IsReadOnly() const {
 }
 
 bool CPWL_Wnd::RepositionChildWnd() {
-  CPWL_ScrollBar* pVSB = GetVScrollBar();
-  if (!pVSB)
+  ObservedPtr<CPWL_Wnd> this_observed(this);
+  CPWL_ScrollBar* pVSB = this_observed->GetVScrollBar();
+  if (!pVSB) {
     return true;
-
-  CFX_FloatRect rcContent = GetWindowRect();
+  }
+  CFX_FloatRect rcContent = this_observed->GetWindowRect();
   if (!rcContent.IsEmpty()) {
-    float width = static_cast<float>(GetBorderWidth() + GetInnerBorderWidth());
+    float width = static_cast<float>(this_observed->GetBorderWidth() +
+                                     this_observed->GetInnerBorderWidth());
     rcContent.Deflate(width, width);
     rcContent.Normalize();
   }
@@ -627,13 +628,8 @@ bool CPWL_Wnd::RepositionChildWnd() {
       CFX_FloatRect(rcContent.right - CPWL_ScrollBar::kWidth, rcContent.bottom,
                     rcContent.right - 1.0f, rcContent.top);
 
-  ObservedPtr<CPWL_Wnd> this_observed(this);
   pVSB->Move(rcVScroll, true, false);
-  if (!this_observed) {
-    return false;
-  }
-
-  return true;
+  return !!this_observed;
 }
 
 void CPWL_Wnd::CreateChildWnd(const CreateParams& cp) {}

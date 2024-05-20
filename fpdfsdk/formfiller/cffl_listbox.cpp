@@ -144,7 +144,7 @@ void CFFL_ListBox::SaveData(const CPDFSDK_PageView* pPageView) {
   if (!observed_widget || !observed_this) {
     return;
   }
-  SetChangeMark();
+  observed_this->SetChangeMark();
 }
 
 void CFFL_ListBox::GetActionData(const CPDFSDK_PageView* pPageView,

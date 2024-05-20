@@ -205,17 +205,15 @@ bool CPWL_ListBox::RepositionChildWnd() {
 
 bool CPWL_ListBox::OnNotifySelectionChanged(bool bKeyDown,
                                             Mask<FWL_EVENTFLAG> nFlag) {
-  ObservedPtr<CPWL_Wnd> this_observed(this);
-
-  WideString swChange = GetText();
+  ObservedPtr<CPWL_ListBox> this_observed(this);
+  WideString swChange = this_observed->GetText();
   WideString strChangeEx;
   int nSelStart = 0;
   int nSelEnd = pdfium::checked_cast<int>(swChange.GetLength());
   IPWL_FillerNotify::BeforeKeystrokeResult result =
-      GetFillerNotify()->OnBeforeKeyStroke(GetAttachedData(), swChange,
-                                           strChangeEx, nSelStart, nSelEnd,
-                                           bKeyDown, nFlag);
-
+      this_observed->GetFillerNotify()->OnBeforeKeyStroke(
+          this_observed->GetAttachedData(), swChange, strChangeEx, nSelStart,
+          nSelEnd, bKeyDown, nFlag);
   if (!this_observed) {
     return false;
   }

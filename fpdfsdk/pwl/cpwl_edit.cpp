@@ -47,31 +47,28 @@ void CPWL_Edit::SetText(const WideString& csText) {
 }
 
 bool CPWL_Edit::RepositionChildWnd() {
-  if (CPWL_ScrollBar* pVSB = GetVScrollBar()) {
-    CFX_FloatRect rcWindow = m_rcOldWindow;
+  ObservedPtr<CPWL_Edit> this_observed(this);
+  if (CPWL_ScrollBar* pVSB = this_observed->GetVScrollBar()) {
+    CFX_FloatRect rcWindow = this_observed->m_rcOldWindow;
     CFX_FloatRect rcVScroll =
         CFX_FloatRect(rcWindow.right, rcWindow.bottom,
                       rcWindow.right + CPWL_ScrollBar::kWidth, rcWindow.top);
-
-    ObservedPtr<CPWL_Edit> this_observed(this);
     pVSB->Move(rcVScroll, true, false);
     if (!this_observed) {
       return false;
     }
   }
-
-  if (m_pCaret && !HasFlag(PES_TEXTOVERFLOW)) {
-    CFX_FloatRect rect = GetClientRect();
+  if (this_observed->m_pCaret && !HasFlag(PES_TEXTOVERFLOW)) {
+    CFX_FloatRect rect = this_observed->GetClientRect();
     if (!rect.IsEmpty()) {
       // +1 for caret beside border
       rect.Inflate(1.0f, 1.0f);
       rect.Normalize();
     }
-    m_pCaret->SetClipRect(rect);
+    this_observed->m_pCaret->SetClipRect(rect);
   }
-
-  m_pEditImpl->SetPlateRect(GetClientRect());
-  m_pEditImpl->Paint();
+  this_observed->m_pEditImpl->SetPlateRect(GetClientRect());
+  this_observed->m_pEditImpl->Paint();
   return true;
 }
 
@@ -219,12 +216,12 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
 void CPWL_Edit::OnSetFocus() {
   ObservedPtr<CPWL_Edit> this_observed(this);
-  SetEditCaret(true);
+  this_observed->SetEditCaret(true);
   if (!this_observed) {
     return;
   }
-  if (!IsReadOnly()) {
-    CPWL_Wnd::ProviderIface* pProvider = GetProvider();
+  if (!this_observed->IsReadOnly()) {
+    CPWL_Wnd::ProviderIface* pProvider = this_observed->GetProvider();
     if (pProvider) {
       pProvider->OnSetFocusForEdit(this);
       if (!this_observed) {
@@ -237,7 +234,7 @@ void CPWL_Edit::OnSetFocus() {
 
 void CPWL_Edit::OnKillFocus() {
   ObservedPtr<CPWL_Edit> this_observed(this);
-  CPWL_ScrollBar* pScroll = GetVScrollBar();
+  CPWL_ScrollBar* pScroll = this_observed->GetVScrollBar();
   if (pScroll && pScroll->IsVisible()) {
     if (!pScroll->SetVisible(false)) {
       return;
@@ -245,7 +242,7 @@ void CPWL_Edit::OnKillFocus() {
     if (!this_observed) {
       return;
     }
-    if (!Move(this_observed->m_rcOldWindow, true, true)) {
+    if (!this_observed->Move(this_observed->m_rcOldWindow, true, true)) {
       return;
     }
   }
@@ -253,10 +250,10 @@ void CPWL_Edit::OnKillFocus() {
   if (!this_observed) {
     return;
   }
-  if (!SetCaret(false, CFX_PointF(), CFX_PointF())) {
+  if (!this_observed->SetCaret(false, CFX_PointF(), CFX_PointF())) {
     return;
   }
-  SetCharSet(FX_Charset::kANSI);
+  this_observed->SetCharSet(FX_Charset::kANSI);
   this_observed->m_bFocus = false;
 }
 
@@ -332,25 +329,23 @@ bool CPWL_Edit::IsVScrollBarVisible() const {
 }
 
 bool CPWL_Edit::OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) {
-  if (m_bMouseDown)
+  ObservedPtr<CPWL_Edit> this_observed(this);
+  if (this_observed->m_bMouseDown) {
     return true;
-
+  }
   if (nKeyCode == FWL_VKEY_Delete) {
     WideString strChange;
     WideString strChangeEx;
-
     int nSelStart;
     int nSelEnd;
-    std::tie(nSelStart, nSelEnd) = GetSelection();
-
-    if (nSelStart == nSelEnd)
+    std::tie(nSelStart, nSelEnd) = this_observed->GetSelection();
+    if (nSelStart == nSelEnd) {
       nSelEnd = nSelStart + 1;
-
-    ObservedPtr<CPWL_Wnd> this_observed(this);
+    }
     IPWL_FillerNotify::BeforeKeystrokeResult result =
-        GetFillerNotify()->OnBeforeKeyStroke(GetAttachedData(), strChange,
-                                             strChangeEx, nSelStart, nSelEnd,
-                                             true, nFlag);
+        this_observed->GetFillerNotify()->OnBeforeKeyStroke(
+            this_observed->GetAttachedData(), strChange, strChangeEx, nSelStart,
+            nSelEnd, true, nFlag);
 
     if (!this_observed) {
       return false;
@@ -363,12 +358,12 @@ bool CPWL_Edit::OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) {
     }
   }
 
-  bool bRet = OnKeyDownInternal(nKeyCode, nFlag);
+  bool bRet = this_observed->OnKeyDownInternal(nKeyCode, nFlag);
 
   // In case of implementation swallow the OnKeyDown event.
-  if (IsProceedtoOnChar(nKeyCode, nFlag))
+  if (this_observed->IsProceedtoOnChar(nKeyCode, nFlag)) {
     return true;
-
+  }
   return bRet;
 }
 
@@ -403,15 +398,13 @@ bool CPWL_Edit::IsProceedtoOnChar(FWL_VKEYCODE nKeyCode,
 }
 
 bool CPWL_Edit::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
-  if (m_bMouseDown)
+  ObservedPtr<CPWL_Edit> this_observed(this);
+  if (this_observed->m_bMouseDown) {
     return true;
-
-  if (!IsCTRLKeyDown(nFlag)) {
+  }
+  if (!this_observed->IsCTRLKeyDown(nFlag)) {
     WideString swChange;
-    int nSelStart;
-    int nSelEnd;
-    std::tie(nSelStart, nSelEnd) = GetSelection();
-
+    auto [nSelStart, nSelEnd] = this_observed->GetSelection();
     switch (nChar) {
       case pdfium::ascii::kBackspace:
         if (nSelStart == nSelEnd)
@@ -423,13 +416,11 @@ bool CPWL_Edit::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
         swChange += nChar;
         break;
     }
-
-    ObservedPtr<CPWL_Wnd> this_observed(this);
     WideString strChangeEx;
     IPWL_FillerNotify::BeforeKeystrokeResult result =
-        GetFillerNotify()->OnBeforeKeyStroke(GetAttachedData(), swChange,
-                                             strChangeEx, nSelStart, nSelEnd,
-                                             true, nFlag);
+        this_observed->GetFillerNotify()->OnBeforeKeyStroke(
+            this_observed->GetAttachedData(), swChange, strChangeEx, nSelStart,
+            nSelEnd, true, nFlag);
 
     if (!this_observed) {
       return false;
@@ -441,17 +432,15 @@ bool CPWL_Edit::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
       return false;
     }
   }
-
-  if (IPVT_FontMap* pFontMap = GetFontMap()) {
-    FX_Charset nOldCharSet = GetCharSet();
+  if (IPVT_FontMap* pFontMap = this_observed->GetFontMap()) {
+    FX_Charset nOldCharSet = this_observed->GetCharSet();
     FX_Charset nNewCharSet =
         pFontMap->CharSetFromUnicode(nChar, FX_Charset::kDefault);
     if (nOldCharSet != nNewCharSet) {
-      SetCharSet(nNewCharSet);
+      this_observed->SetCharSet(nNewCharSet);
     }
   }
-
-  return OnCharInternal(nChar, nFlag);
+  return this_observed->OnCharInternal(nChar, nFlag);
 }
 
 bool CPWL_Edit::OnMouseWheel(Mask<FWL_EVENTFLAG> nFlag,
@@ -782,13 +771,13 @@ void CPWL_Edit::GetCaretInfo(CFX_PointF* ptHead, CFX_PointF* ptFoot) const {
 bool CPWL_Edit::SetCaret(bool bVisible,
                          const CFX_PointF& ptHead,
                          const CFX_PointF& ptFoot) {
-  if (!m_pCaret)
-    return true;
-
-  if (!IsFocused() || m_pEditImpl->IsSelected())
-    bVisible = false;
-
   ObservedPtr<CPWL_Edit> this_observed(this);
+  if (!this_observed->m_pCaret) {
+    return true;
+  }
+  if (!this_observed->IsFocused() || this_observed->m_pEditImpl->IsSelected()) {
+    bVisible = false;
+  }
   this_observed->m_pCaret->SetCaret(bVisible, ptHead, ptFoot);
   return !!this_observed;
 }

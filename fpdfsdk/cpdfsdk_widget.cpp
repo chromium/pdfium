@@ -1054,29 +1054,31 @@ bool CPDFSDK_Widget::OnAAction(CPDF_AAction::AActionType type,
 }
 
 void CPDFSDK_Widget::OnLoad() {
-  if (IsSignatureWidget())
+  ObservedPtr<CPDFSDK_Widget> pObserved(this);
+  if (pObserved->IsSignatureWidget()) {
     return;
-
-  if (!IsAppearanceValid())
-    ResetAppearance(std::nullopt, CPDFSDK_Widget::kValueUnchanged);
-
-  FormFieldType field_type = GetFieldType();
+  }
+  if (!pObserved->IsAppearanceValid()) {
+    pObserved->ResetAppearance(std::nullopt, CPDFSDK_Widget::kValueUnchanged);
+  }
+  FormFieldType field_type = pObserved->GetFieldType();
   if (field_type == FormFieldType::kTextField ||
       field_type == FormFieldType::kComboBox) {
-    ObservedPtr<CPDFSDK_Annot> pObserved(this);
-    std::optional<WideString> sValue = OnFormat();
-    if (!pObserved)
+    std::optional<WideString> sValue = pObserved->OnFormat();
+    if (!pObserved) {
       return;
-
-    if (sValue.has_value() && field_type == FormFieldType::kComboBox)
-      ResetAppearance(sValue, CPDFSDK_Widget::kValueUnchanged);
+    }
+    if (sValue.has_value() && field_type == FormFieldType::kComboBox) {
+      pObserved->ResetAppearance(sValue, CPDFSDK_Widget::kValueUnchanged);
+    }
   }
-
 #ifdef PDF_ENABLE_XFA
-  auto* pContext = GetPageView()->GetFormFillEnv()->GetDocExtension();
+  auto* pContext =
+      pObserved->GetPageView()->GetFormFillEnv()->GetDocExtension();
   if (pContext && pContext->ContainsExtensionForegroundForm()) {
-    if (!IsAppearanceValid() && !GetValue().IsEmpty())
-      ResetXFAAppearance(CPDFSDK_Widget::kValueUnchanged);
+    if (!pObserved->IsAppearanceValid() && !pObserved->GetValue().IsEmpty()) {
+      pObserved->ResetXFAAppearance(CPDFSDK_Widget::kValueUnchanged);
+    }
   }
 #endif  // PDF_ENABLE_XFA
 }

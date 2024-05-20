@@ -80,14 +80,15 @@ bool CFFL_ComboBox::IsDataChanged(const CPDFSDK_PageView* pPageView) {
 }
 
 void CFFL_ComboBox::SaveData(const CPDFSDK_PageView* pPageView) {
-  CPWL_ComboBox* pWnd = GetPWLComboBox(pPageView);
+  ObservedPtr<CFFL_ComboBox> observed_this(this);
+  CPWL_ComboBox* pWnd = observed_this->GetPWLComboBox(pPageView);
   if (!pWnd) {
     return;
   }
   WideString swText = pWnd->GetText();
   int32_t nCurSel = pWnd->GetSelect();
   bool bSetValue = false;
-  ObservedPtr<CPDFSDK_Widget> observed_widget(m_pWidget);
+  ObservedPtr<CPDFSDK_Widget> observed_widget(observed_this->m_pWidget);
   if (observed_widget->GetFieldFlags() & pdfium::form_flags::kChoiceEdit) {
     bSetValue =
         (nCurSel < 0) || (swText != observed_widget->GetOptionLabel(nCurSel));
@@ -101,7 +102,6 @@ void CFFL_ComboBox::SaveData(const CPDFSDK_PageView* pPageView) {
   if (!observed_widget) {
     return;
   }
-  ObservedPtr<CFFL_ComboBox> observed_this(this);
   observed_widget->ResetFieldAppearance();
   if (!observed_widget) {
     return;
@@ -110,7 +110,7 @@ void CFFL_ComboBox::SaveData(const CPDFSDK_PageView* pPageView) {
   if (!observed_widget || !observed_this) {
     return;
   }
-  SetChangeMark();
+  observed_this->SetChangeMark();
 }
 
 void CFFL_ComboBox::GetActionData(const CPDFSDK_PageView* pPageView,
