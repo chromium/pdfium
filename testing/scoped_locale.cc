@@ -6,18 +6,17 @@
 
 #include <locale.h>
 
-#include "testing/gtest/include/gtest/gtest.h"
+#include "core/fxcrt/check_op.h"
 
 namespace pdfium {
 
 ScopedLocale::ScopedLocale(const std::string& locale) {
   prev_locale_ = setlocale(LC_ALL, nullptr);
-  EXPECT_TRUE(setlocale(LC_ALL, locale.c_str()) != nullptr)
-      << "Failed to set locale: " << locale;
+  CHECK(setlocale(LC_ALL, locale.c_str()) != nullptr);
 }
 
 ScopedLocale::~ScopedLocale() {
-  EXPECT_STREQ(prev_locale_.c_str(), setlocale(LC_ALL, prev_locale_.c_str()));
+  CHECK_EQ(prev_locale_, setlocale(LC_ALL, prev_locale_.c_str()));
 }
 
 }  // namespace pdfium

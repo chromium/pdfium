@@ -57,7 +57,6 @@ source_set("test_support") {
       "scoped_locale.cc",
       "scoped_locale.h",
     ]
-    deps += [ "//testing/gtest" ]
   }
   if (pdf_use_partition_alloc) {
     sources += [
@@ -302,6 +301,8 @@ executable("pdfium_test") {
       deps += [ "//base/test:test_support" ]
     }
   }
+
+  assert_no_deps = [ "//testing/gtest/*" ]
 }
 
 # Dummy group to keep satisfy references from //build.
