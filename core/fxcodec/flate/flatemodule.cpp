@@ -128,20 +128,19 @@ class CLZWDecoder {
 
   bool Decode();
   uint32_t GetSrcSize() const { return (src_bit_pos_ + 7) / 8; }
-  uint32_t GetDestSize() const { return dest_byte_pos_; }
-  std::unique_ptr<uint8_t, FxFreeDeleter> TakeDestBuf() {
+  DataVector<uint8_t> TakeDestBuf() {
+    dest_buf_.resize(dest_byte_pos_);
     return std::move(dest_buf_);
   }
 
  private:
   void AddCode(uint32_t prefix_code, uint8_t append_char);
   void DecodeString(uint32_t code);
-  void ExpandDestBuf(uint32_t additional_size);
+  bool ExpandDestBuf(size_t additional_size);
 
   pdfium::raw_span<const uint8_t> const src_span_;
-  std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf_;
+  DataVector<uint8_t> dest_buf_;
   uint32_t src_bit_pos_ = 0;
-  uint32_t dest_buf_size_ = 0;  // Actual allocated size.
   uint32_t dest_byte_pos_ = 0;  // Size used.
   uint32_t stack_len_ = 0;
   FixedSizeDataVector<uint8_t> decode_stack_;
@@ -193,16 +192,16 @@ void CLZWDecoder::DecodeString(uint32_t code) {
   decode_span[stack_len_++] = static_cast<uint8_t>(code);
 }
 
-void CLZWDecoder::ExpandDestBuf(uint32_t additional_size) {
-  FX_SAFE_UINT32 new_size = std::max(dest_buf_size_ / 2, additional_size);
-  new_size += dest_buf_size_;
+bool CLZWDecoder::ExpandDestBuf(size_t additional_size) {
+  FX_SAFE_SIZE_T new_size = std::max(dest_buf_.size() / 2, additional_size);
+  new_size += dest_buf_.size();
   if (!new_size.IsValid()) {
-    dest_buf_.reset();
-    return;
+    dest_buf_.clear();
+    return false;
   }
 
-  dest_buf_size_ = new_size.ValueOrDie();
-  dest_buf_.reset(FX_Realloc(uint8_t, dest_buf_.release(), dest_buf_size_));
+  dest_buf_.resize(new_size.ValueOrDie());
+  return true;
 }
 
 bool CLZWDecoder::Decode() {
@@ -212,8 +211,7 @@ bool CLZWDecoder::Decode() {
 
   // In one PDF test set, 40% of Decode() calls did not need to realloc with
   // this size.
-  dest_buf_size_ = 512;
-  dest_buf_.reset(FX_Alloc(uint8_t, dest_buf_size_));
+  dest_buf_.resize(512);
   while (true) {
     if (src_bit_pos_ + code_len_ > src_span_.size() * 8)
       break;
@@ -237,13 +235,13 @@ bool CLZWDecoder::Decode() {
     src_bit_pos_ += code_len_;
 
     if (code < 256) {
-      if (dest_byte_pos_ >= dest_buf_size_) {
-        ExpandDestBuf(dest_byte_pos_ - dest_buf_size_ + 1);
-        if (!dest_buf_)
+      if (dest_byte_pos_ >= dest_buf_.size()) {
+        if (!ExpandDestBuf(dest_byte_pos_ - dest_buf_.size() + 1)) {
           return false;
+        }
       }
 
-      dest_buf_.get()[dest_byte_pos_] = (uint8_t)code;
+      dest_buf_[dest_byte_pos_] = static_cast<uint8_t>(code);
       dest_byte_pos_++;
       last_char = (uint8_t)code;
       if (old_code != 0xFFFFFFFF)
@@ -280,14 +278,14 @@ bool CLZWDecoder::Decode() {
       return false;
 
     uint32_t required_size = safe_required_size.ValueOrDie();
-    if (required_size > dest_buf_size_) {
-      ExpandDestBuf(required_size - dest_buf_size_);
-      if (!dest_buf_)
+    if (required_size > dest_buf_.size()) {
+      if (!ExpandDestBuf(required_size - dest_buf_.size())) {
         return false;
+      }
     }
 
     for (uint32_t i = 0; i < stack_len_; i++)
-      dest_buf_.get()[dest_byte_pos_ + i] = decode_span[stack_len_ - i - 1];
+      dest_buf_[dest_byte_pos_ + i] = decode_span[stack_len_ - i - 1];
     dest_byte_pos_ += stack_len_;
     last_char = decode_span[stack_len_ - 1];
     if (old_code >= 258 && old_code - 258 >= current_code_)
@@ -824,8 +822,11 @@ DataAndBytesConsumed FlateModule::FlateOrLZWDecode(
       return {std::move(dest_buf), dest_size, bytes_consumed};
     }
 
-    dest_buf = decoder->TakeDestBuf();
-    dest_size = decoder->GetDestSize();
+    // TODO(crbug.com/pdfium/1872): Avoid copying.
+    DataVector<uint8_t> decoded_data = decoder->TakeDestBuf();
+    dest_buf.reset(FX_Alloc(uint8_t, decoded_data.size()));
+    FXSYS_memcpy(dest_buf.get(), decoded_data.data(), decoded_data.size());
+    dest_size = pdfium::checked_cast<uint32_t>(decoded_data.size());
     bytes_consumed = decoder->GetSrcSize();
   } else {
     DataAndBytesConsumed result = FlateUncompress(src_span, estimated_size);
