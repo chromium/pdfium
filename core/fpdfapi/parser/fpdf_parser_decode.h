@@ -17,7 +17,6 @@
 
 #include "core/fxcodec/data_and_bytes_consumed.h"
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
@@ -54,12 +53,14 @@ std::unique_ptr<fxcodec::ScanlineDecoder> CreateFlateDecoder(
     int bpc,
     const CPDF_Dictionary* pParams);
 
-fxcodec::DataAndBytesConsumed RunLengthDecode(
+fxcodec::DataVectorAndBytesConsumed RunLengthDecode(
     pdfium::span<const uint8_t> src_span);
 
-fxcodec::DataAndBytesConsumed A85Decode(pdfium::span<const uint8_t> src_span);
+fxcodec::DataVectorAndBytesConsumed A85Decode(
+    pdfium::span<const uint8_t> src_span);
 
-fxcodec::DataAndBytesConsumed HexDecode(pdfium::span<const uint8_t> src_span);
+fxcodec::DataVectorAndBytesConsumed HexDecode(
+    pdfium::span<const uint8_t> src_span);
 
 fxcodec::DataVectorAndBytesConsumed FlateOrLZWDecode(
     bool use_lzw,
@@ -79,17 +80,14 @@ std::optional<DecoderArray> GetDecoderArray(
 
 struct PDFDataDecodeResult {
   PDFDataDecodeResult();
-  PDFDataDecodeResult(std::unique_ptr<uint8_t, FxFreeDeleter> data,
-                      uint32_t size,
+  PDFDataDecodeResult(DataVector<uint8_t> data,
                       ByteString image_encoding,
                       RetainPtr<const CPDF_Dictionary> image_params);
   PDFDataDecodeResult(PDFDataDecodeResult&& that) noexcept;
   PDFDataDecodeResult& operator=(PDFDataDecodeResult&& that) noexcept;
   ~PDFDataDecodeResult();
 
-  // TODO(crbug.com/pdfium/1872): Convert to DataVector.
-  std::unique_ptr<uint8_t, FxFreeDeleter> data;
-  uint32_t size = 0;
+  DataVector<uint8_t> data;
   ByteString image_encoding;
   RetainPtr<const CPDF_Dictionary> image_params;
 };

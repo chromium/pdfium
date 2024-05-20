@@ -39,10 +39,10 @@ TEST(fxcodec, RLENormalInputs) {
     // Case 1: Match, match
     const uint8_t src_buf_1[] = {2, 2, 2, 2, 4, 4, 4, 4, 4, 4};
     DataVector<uint8_t> dest_buf = BasicModule::RunLengthEncode(src_buf_1);
-    DataAndBytesConsumed result = RunLengthDecode(dest_buf);
-    ASSERT_EQ(sizeof(src_buf_1), result.size);
-    auto decoded_buf_span = pdfium::make_span(result.data.get(), result.size);
-    for (uint32_t i = 0; i < result.size; i++) {
+    DataVectorAndBytesConsumed result = RunLengthDecode(dest_buf);
+    ASSERT_EQ(sizeof(src_buf_1), result.data.size());
+    auto decoded_buf_span = pdfium::make_span(result.data);
+    for (uint32_t i = 0; i < decoded_buf_span.size(); i++) {
       EXPECT_EQ(src_buf_1[i], decoded_buf_span[i]) << " at " << i;
     }
   }
@@ -51,10 +51,10 @@ TEST(fxcodec, RLENormalInputs) {
     // Case 2: Match, non-match
     const uint8_t src_buf_2[] = {2, 2, 2, 2, 1, 2, 3, 4, 5, 6};
     DataVector<uint8_t> dest_buf = BasicModule::RunLengthEncode(src_buf_2);
-    DataAndBytesConsumed result = RunLengthDecode(dest_buf);
-    ASSERT_EQ(sizeof(src_buf_2), result.size);
-    auto decoded_buf_span = pdfium::make_span(result.data.get(), result.size);
-    for (uint32_t i = 0; i < result.size; i++) {
+    DataVectorAndBytesConsumed result = RunLengthDecode(dest_buf);
+    ASSERT_EQ(sizeof(src_buf_2), result.data.size());
+    auto decoded_buf_span = pdfium::make_span(result.data);
+    for (uint32_t i = 0; i < decoded_buf_span.size(); i++) {
       EXPECT_EQ(src_buf_2[i], decoded_buf_span[i]) << " at " << i;
     }
   }
@@ -63,10 +63,10 @@ TEST(fxcodec, RLENormalInputs) {
     // Case 3: Non-match, match
     const uint8_t src_buf_3[] = {1, 2, 3, 4, 5, 3, 3, 3, 3, 3};
     DataVector<uint8_t> dest_buf = BasicModule::RunLengthEncode(src_buf_3);
-    DataAndBytesConsumed result = RunLengthDecode(dest_buf);
-    ASSERT_EQ(sizeof(src_buf_3), result.size);
-    auto decoded_buf_span = pdfium::make_span(result.data.get(), result.size);
-    for (uint32_t i = 0; i < result.size; i++) {
+    DataVectorAndBytesConsumed result = RunLengthDecode(dest_buf);
+    ASSERT_EQ(sizeof(src_buf_3), result.data.size());
+    auto decoded_buf_span = pdfium::make_span(result.data);
+    for (uint32_t i = 0; i < decoded_buf_span.size(); i++) {
       EXPECT_EQ(src_buf_3[i], decoded_buf_span[i]) << " at " << i;
     }
   }
@@ -79,10 +79,10 @@ TEST(fxcodec, RLEFullLengthInputs) {
     // Case 1: Match, match
     const uint8_t src_buf_1[260] = {1};
     DataVector<uint8_t> dest_buf = BasicModule::RunLengthEncode(src_buf_1);
-    DataAndBytesConsumed result = RunLengthDecode(dest_buf);
-    ASSERT_EQ(sizeof(src_buf_1), result.size);
-    auto decoded_buf_span = pdfium::make_span(result.data.get(), result.size);
-    for (uint32_t i = 0; i < result.size; i++) {
+    DataVectorAndBytesConsumed result = RunLengthDecode(dest_buf);
+    ASSERT_EQ(sizeof(src_buf_1), result.data.size());
+    auto decoded_buf_span = pdfium::make_span(result.data);
+    for (uint32_t i = 0; i < decoded_buf_span.size(); i++) {
       EXPECT_EQ(src_buf_1[i], decoded_buf_span[i]) << " at " << i;
     }
   }
@@ -93,10 +93,10 @@ TEST(fxcodec, RLEFullLengthInputs) {
     for (uint16_t i = 128; i < 260; i++)
       src_buf_2[i] = static_cast<uint8_t>(i - 125);
     DataVector<uint8_t> dest_buf = BasicModule::RunLengthEncode(src_buf_2);
-    DataAndBytesConsumed result = RunLengthDecode(dest_buf);
-    ASSERT_EQ(sizeof(src_buf_2), result.size);
-    auto decoded_buf_span = pdfium::make_span(result.data.get(), result.size);
-    for (uint32_t i = 0; i < result.size; i++) {
+    DataVectorAndBytesConsumed result = RunLengthDecode(dest_buf);
+    ASSERT_EQ(sizeof(src_buf_2), result.data.size());
+    auto decoded_buf_span = pdfium::make_span(result.data);
+    for (uint32_t i = 0; i < decoded_buf_span.size(); i++) {
       EXPECT_EQ(src_buf_2[i], decoded_buf_span[i]) << " at " << i;
     }
   }
@@ -107,10 +107,10 @@ TEST(fxcodec, RLEFullLengthInputs) {
     for (uint8_t i = 0; i < 128; i++)
       src_buf_3[i] = i;
     DataVector<uint8_t> dest_buf = BasicModule::RunLengthEncode(src_buf_3);
-    DataAndBytesConsumed result = RunLengthDecode(dest_buf);
-    ASSERT_EQ(sizeof(src_buf_3), result.size);
-    auto decoded_buf_span = pdfium::make_span(result.data.get(), result.size);
-    for (uint32_t i = 0; i < result.size; i++) {
+    DataVectorAndBytesConsumed result = RunLengthDecode(dest_buf);
+    ASSERT_EQ(sizeof(src_buf_3), result.data.size());
+    auto decoded_buf_span = pdfium::make_span(result.data);
+    for (uint32_t i = 0; i < decoded_buf_span.size(); i++) {
       EXPECT_EQ(src_buf_3[i], decoded_buf_span[i]) << " at " << i;
     }
   }
@@ -121,10 +121,10 @@ TEST(fxcodec, RLEFullLengthInputs) {
     for (uint16_t i = 0; i < 260; i++)
       src_buf_4[i] = static_cast<uint8_t>(i);
     DataVector<uint8_t> dest_buf = BasicModule::RunLengthEncode(src_buf_4);
-    DataAndBytesConsumed result = RunLengthDecode(dest_buf);
-    ASSERT_EQ(sizeof(src_buf_4), result.size);
-    auto decoded_buf_span = pdfium::make_span(result.data.get(), result.size);
-    for (uint32_t i = 0; i < result.size; i++) {
+    DataVectorAndBytesConsumed result = RunLengthDecode(dest_buf);
+    ASSERT_EQ(sizeof(src_buf_4), result.data.size());
+    auto decoded_buf_span = pdfium::make_span(result.data);
+    for (uint32_t i = 0; i < decoded_buf_span.size(); i++) {
       EXPECT_EQ(src_buf_4[i], decoded_buf_span[i]) << " at " << i;
     }
   }

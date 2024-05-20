@@ -288,13 +288,13 @@ TEST(ParserDecodeTest, A85Decode) {
       STR_IN_OUT_CASE("FCfN8FCfN8vw", "testtest", 11),
   };
   for (const auto& test_case : kTestData) {
-    DataAndBytesConsumed result = A85Decode(
+    DataVectorAndBytesConsumed result = A85Decode(
         UNSAFE_TODO(pdfium::make_span(test_case.input, test_case.input_size)));
     EXPECT_EQ(test_case.processed_size, result.bytes_consumed)
         << "for case " << test_case.input;
-    ASSERT_EQ(test_case.expected_size, result.size);
-    const uint8_t* result_ptr = result.data.get();
-    for (size_t j = 0; j < result.size; ++j) {
+    ASSERT_EQ(test_case.expected_size, result.data.size());
+    const uint8_t* result_ptr = result.data.data();
+    for (size_t j = 0; j < result.data.size(); ++j) {
       EXPECT_EQ(test_case.expected[j], result_ptr[j])
           << "for case " << test_case.input << " char " << j;
     }
@@ -321,13 +321,13 @@ TEST(ParserDecodeTest, HexDecode) {
       STR_IN_OUT_CASE("12AcED3c3456", "\x12\xac\xed\x3c\x34\x56", 12),
   };
   for (const auto& test_case : kTestData) {
-    DataAndBytesConsumed result = HexDecode(
+    DataVectorAndBytesConsumed result = HexDecode(
         UNSAFE_TODO(pdfium::make_span(test_case.input, test_case.input_size)));
     EXPECT_EQ(test_case.processed_size, result.bytes_consumed)
         << "for case " << test_case.input;
-    ASSERT_EQ(test_case.expected_size, result.size);
-    const uint8_t* result_ptr = result.data.get();
-    for (size_t j = 0; j < result.size; ++j) {
+    ASSERT_EQ(test_case.expected_size, result.data.size());
+    const uint8_t* result_ptr = result.data.data();
+    for (size_t j = 0; j < result.data.size(); ++j) {
       EXPECT_EQ(test_case.expected[j], result_ptr[j])
           << "for case " << test_case.input << " char " << j;
     }

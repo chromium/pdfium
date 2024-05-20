@@ -153,16 +153,12 @@ void CPDF_StreamAcc::ProcessFilteredData(uint32_t estimated_size,
   m_ImageDecoder = std::move(result.value().image_encoding);
   m_pImageParam = std::move(result.value().image_params);
 
-  if (!result.value().data) {
+  if (result.value().data.empty()) {
     m_Data = std::move(src_data);
     return;
   }
 
-  DCHECK_NE(result.value().data.get(), src_span.data());
-  // TODO(crbug.com/pdfium/1872): Avoid copying.
-  m_Data = DataVector<uint8_t>(
-      result.value().data.get(),
-      UNSAFE_TODO(result.value().data.get() + result.value().size));
+  m_Data = std::move(result.value().data);
 }
 
 DataVector<uint8_t> CPDF_StreamAcc::ReadRawStream() const {

@@ -35,8 +35,8 @@ namespace {
 constexpr char kChecksumKey[] = "CheckSum";
 
 ByteString CFXByteStringHexDecode(const ByteString& bsHex) {
-  DataAndBytesConsumed result = HexDecode(bsHex.unsigned_span());
-  return ByteString(result.data.get(), result.size);
+  DataVectorAndBytesConsumed result = HexDecode(bsHex.unsigned_span());
+  return ByteString(ByteStringView(result.data));
 }
 
 // TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
