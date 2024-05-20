@@ -420,14 +420,15 @@ bool CPDFSDK_PageView::OnMouseMove(Mask<FWL_EVENTFLAG> nFlags,
   ObservedPtr<CPDFSDK_Annot> pFXAnnot(GetFXAnnotAtPoint(point));
   ObservedPtr<CPDFSDK_PageView> pThis(this);
 
-  if (m_bOnWidget && m_pCaptureWidget != pFXAnnot)
+  if (pThis->m_bOnWidget && pThis->m_pCaptureWidget != pFXAnnot) {
     ExitWidget(true, nFlags);
+  }
 
   // ExitWidget() may have invalidated objects.
   if (!pThis || !pFXAnnot)
     return false;
 
-  if (!m_bOnWidget) {
+  if (!pThis->m_bOnWidget) {
     EnterWidget(pFXAnnot, nFlags);
 
     // EnterWidget() may have invalidated objects.
@@ -458,7 +459,7 @@ void CPDFSDK_PageView::ExitWidget(bool callExitCallback,
 
   if (callExitCallback) {
     ObservedPtr<CPDFSDK_PageView> pThis(this);
-    CPDFSDK_Annot::OnMouseExit(m_pCaptureWidget, nFlags);
+    CPDFSDK_Annot::OnMouseExit(pThis->m_pCaptureWidget, nFlags);
 
     // OnMouseExit() may have invalidated |this|.
     if (!pThis)

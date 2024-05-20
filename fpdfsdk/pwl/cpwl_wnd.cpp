@@ -81,17 +81,17 @@ class CPWL_Wnd::SharedCaptureFocusState final : public Observable {
   }
 
   void ReleaseFocus() {
-    ObservedPtr<SharedCaptureFocusState> observed_ptr(this);
-    if (!m_KeyboardPaths.empty()) {
-      CPWL_Wnd* pWnd = m_KeyboardPaths.front();
+    ObservedPtr<SharedCaptureFocusState> this_observed(this);
+    if (!this_observed->m_KeyboardPaths.empty()) {
+      CPWL_Wnd* pWnd = this_observed->m_KeyboardPaths.front();
       if (pWnd)
         pWnd->OnKillFocus();
     }
-    if (!observed_ptr)
+    if (!this_observed) {
       return;
-
-    m_pMainKeyboardWnd = nullptr;
-    m_KeyboardPaths.clear();
+    }
+    this_observed->m_pMainKeyboardWnd = nullptr;
+    this_observed->m_KeyboardPaths.clear();
   }
 
   void RemoveWnd(CPWL_Wnd* pWnd) {
@@ -290,7 +290,8 @@ bool CPWL_Wnd::InvalidateRect(const CFX_FloatRect* pRect) {
   CFX_FloatRect rcWin = PWLtoWnd(rcRefresh);
   rcWin.Inflate(1, 1);
   rcWin.Normalize();
-  GetFillerNotify()->InvalidateRect(m_pAttachedData.get(), rcWin);
+  GetFillerNotify()->InvalidateRect(this_observed->m_pAttachedData.get(),
+                                    rcWin);
   return !!this_observed;
 }
 
@@ -577,7 +578,7 @@ bool CPWL_Wnd::SetVisible(bool bVisible) {
     return true;
 
   ObservedPtr<CPWL_Wnd> this_observed(this);
-  for (const auto& pChild : m_Children) {
+  for (const auto& pChild : this_observed->m_Children) {
     if (!pChild->SetVisible(bVisible)) {
       return false;
     }
@@ -586,8 +587,8 @@ bool CPWL_Wnd::SetVisible(bool bVisible) {
     }
   }
 
-  if (bVisible != m_bVisible) {
-    m_bVisible = bVisible;
+  if (bVisible != this_observed->m_bVisible) {
+    this_observed->m_bVisible = bVisible;
     if (!RepositionChildWnd()) {
       return false;
     }

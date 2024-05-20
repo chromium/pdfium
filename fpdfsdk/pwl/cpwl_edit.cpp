@@ -218,46 +218,46 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
 }
 
 void CPWL_Edit::OnSetFocus() {
-  ObservedPtr<CPWL_Edit> observed_ptr(this);
+  ObservedPtr<CPWL_Edit> this_observed(this);
   SetEditCaret(true);
-  if (!observed_ptr)
+  if (!this_observed) {
     return;
-
+  }
   if (!IsReadOnly()) {
     CPWL_Wnd::ProviderIface* pProvider = GetProvider();
     if (pProvider) {
       pProvider->OnSetFocusForEdit(this);
-      if (!observed_ptr)
+      if (!this_observed) {
         return;
+      }
     }
   }
-  m_bFocus = true;
+  this_observed->m_bFocus = true;
 }
 
 void CPWL_Edit::OnKillFocus() {
-  ObservedPtr<CPWL_Edit> observed_ptr(this);
+  ObservedPtr<CPWL_Edit> this_observed(this);
   CPWL_ScrollBar* pScroll = GetVScrollBar();
   if (pScroll && pScroll->IsVisible()) {
     if (!pScroll->SetVisible(false)) {
       return;
     }
-    if (!observed_ptr) {
+    if (!this_observed) {
       return;
     }
-    if (!Move(m_rcOldWindow, true, true)) {
+    if (!Move(this_observed->m_rcOldWindow, true, true)) {
       return;
     }
   }
-
-  m_pEditImpl->SelectNone();
-  if (!observed_ptr)
+  this_observed->m_pEditImpl->SelectNone();
+  if (!this_observed) {
     return;
-
-  if (!SetCaret(false, CFX_PointF(), CFX_PointF()))
+  }
+  if (!SetCaret(false, CFX_PointF(), CFX_PointF())) {
     return;
-
+  }
   SetCharSet(FX_Charset::kANSI);
-  m_bFocus = false;
+  this_observed->m_bFocus = false;
 }
 
 CPVT_WordRange CPWL_Edit::GetSelectWordRange() const {
@@ -347,7 +347,6 @@ bool CPWL_Edit::OnKeyDown(FWL_VKEYCODE nKeyCode, Mask<FWL_EVENTFLAG> nFlag) {
       nSelEnd = nSelStart + 1;
 
     ObservedPtr<CPWL_Wnd> this_observed(this);
-
     IPWL_FillerNotify::BeforeKeystrokeResult result =
         GetFillerNotify()->OnBeforeKeyStroke(GetAttachedData(), strChange,
                                              strChangeEx, nSelStart, nSelEnd,
@@ -426,7 +425,6 @@ bool CPWL_Edit::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
     }
 
     ObservedPtr<CPWL_Wnd> this_observed(this);
-
     WideString strChangeEx;
     IPWL_FillerNotify::BeforeKeystrokeResult result =
         GetFillerNotify()->OnBeforeKeyStroke(GetAttachedData(), swChange,
@@ -791,12 +789,8 @@ bool CPWL_Edit::SetCaret(bool bVisible,
     bVisible = false;
 
   ObservedPtr<CPWL_Edit> this_observed(this);
-  m_pCaret->SetCaret(bVisible, ptHead, ptFoot);
-  if (!this_observed) {
-    return false;
-  }
-
-  return true;
+  this_observed->m_pCaret->SetCaret(bVisible, ptHead, ptFoot);
+  return !!this_observed;
 }
 
 WideString CPWL_Edit::GetText() {

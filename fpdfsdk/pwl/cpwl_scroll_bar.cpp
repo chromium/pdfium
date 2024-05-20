@@ -150,14 +150,14 @@ bool CPWL_ScrollBar::RepositionChildWnd() {
   }
 
   ObservedPtr<CPWL_ScrollBar> this_observed(this);
-  if (m_pMinButton) {
-    m_pMinButton->Move(rcMinButton, true, false);
+  if (this_observed->m_pMinButton) {
+    this_observed->m_pMinButton->Move(rcMinButton, true, false);
     if (!this_observed) {
       return false;
     }
   }
-  if (m_pMaxButton) {
-    m_pMaxButton->Move(rcMaxButton, true, false);
+  if (this_observed->m_pMaxButton) {
+    this_observed->m_pMaxButton->Move(rcMaxButton, true, false);
     if (!this_observed) {
       return false;
     }
@@ -316,9 +316,9 @@ void CPWL_ScrollBar::CreateButtons(const CreateParams& cp) {
         scp, CloneAttachedData(), CPWL_SBButton::Type::kPosButton);
     m_pPosButton = pButton.get();
     ObservedPtr<CPWL_ScrollBar> this_observed(this);
-    if (m_pPosButton->SetVisible(false) && this_observed) {
+    if (this_observed->m_pPosButton->SetVisible(false) && this_observed) {
       AddChild(std::move(pButton));
-      m_pPosButton->Realize();
+      this_observed->m_pPosButton->Realize();
     }
   }
 }
@@ -334,17 +334,18 @@ void CPWL_ScrollBar::SetScrollRange(float fMin,
     return;
 
   ObservedPtr<CPWL_ScrollBar> this_observed(this);
-  m_sData.SetScrollRange(fMin, fMax);
-  m_sData.SetClientWidth(fClientWidth);
+  this_observed->m_sData.SetScrollRange(fMin, fMax);
+  this_observed->m_sData.SetClientWidth(fClientWidth);
 
-  if (FXSYS_IsFloatSmaller(m_sData.ScrollRange.GetWidth(), 0.0f)) {
-    (void)m_pPosButton->SetVisible(false);
+  if (FXSYS_IsFloatSmaller(this_observed->m_sData.ScrollRange.GetWidth(),
+                           0.0f)) {
+    (void)this_observed->m_pPosButton->SetVisible(false);
     // Note, |this| may no longer be viable at this point. If more work needs
     // to be done, check this_observed.
     return;
   }
 
-  if (!m_pPosButton->SetVisible(true) || !this_observed) {
+  if (!this_observed->m_pPosButton->SetVisible(true) || !this_observed) {
     return;
   }
 
@@ -389,7 +390,7 @@ bool CPWL_ScrollBar::MovePosButton(bool bRefresh) {
         CFX_FloatRect(rcPosArea.left, fBottom, rcPosArea.right, fTop);
 
     ObservedPtr<CPWL_ScrollBar> this_observed(this);
-    m_pPosButton->Move(rcPosButton, true, bRefresh);
+    this_observed->m_pPosButton->Move(rcPosButton, true, bRefresh);
     if (!this_observed) {
       return false;
     }
