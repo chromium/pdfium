@@ -375,19 +375,7 @@ void PNG_PredictLine(pdfium::span<uint8_t> dest_span,
   }
 }
 
-// TODO(crbug.com/pdfium/1872): Replace with DataVector.
-struct PredictorResult {
-  PredictorResult(std::unique_ptr<uint8_t, FxFreeDeleter> data, uint32_t size)
-      : data(std::move(data)), size(size) {}
-  PredictorResult(PredictorResult&& that) noexcept = default;
-  PredictorResult& operator=(PredictorResult&& that) noexcept = default;
-  ~PredictorResult() = default;
-
-  std::unique_ptr<uint8_t, FxFreeDeleter> data;
-  uint32_t size;
-};
-
-std::optional<PredictorResult> PNG_Predictor(
+std::optional<DataVector<uint8_t>> PNG_Predictor(
     int Colors,
     int BitsPerComponent,
     int Columns,
@@ -413,11 +401,9 @@ std::optional<PredictorResult> PNG_Predictor(
   if (last_row_size) {
     dest_size -= src_row_size - last_row_size;
   }
-  std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf(
-      FX_Alloc(uint8_t, dest_size));
+  DataVector<uint8_t> dest_buf(dest_size);
   pdfium::span<const uint8_t> remaining_src_span = src_span;
-  pdfium::span<uint8_t> remaining_dest_span =
-      pdfium::make_span(dest_buf.get(), dest_size);
+  pdfium::span<uint8_t> remaining_dest_span = pdfium::make_span(dest_buf);
   pdfium::span<uint8_t> prev_dest_span;
   const uint32_t bytes_per_pixel = (Colors * BitsPerComponent + 7) / 8;
   for (size_t row = 0; row < row_count; row++) {
@@ -429,8 +415,7 @@ std::optional<PredictorResult> PNG_Predictor(
     prev_dest_span = remaining_dest_span;
     remaining_dest_span = remaining_dest_span.subspan(remaining_row_size);
   }
-  return PredictorResult(std::move(dest_buf),
-                         pdfium::checked_cast<uint32_t>(dest_size));
+  return dest_buf;
 }
 
 void TIFF_PredictLine(pdfium::span<uint8_t> dest_span,
@@ -840,14 +825,19 @@ DataAndBytesConsumed FlateModule::FlateOrLZWDecode(
       return {std::move(dest_buf), dest_size, bytes_consumed};
     }
     case PredictorType::kPng: {
-      std::optional<PredictorResult> result =
+      std::optional<DataVector<uint8_t>> result =
           PNG_Predictor(Colors, BitsPerComponent, Columns,
                         pdfium::make_span(dest_buf.get(), dest_size));
       if (!result.has_value()) {
         return {std::move(dest_buf), dest_size, FX_INVALID_OFFSET};
       }
-      return {std::move(result.value().data), result.value().size,
-              bytes_consumed};
+      // TODO(crbug.com/pdfium/1872): Avoid copying.
+      uint32_t result_size =
+          pdfium::checked_cast<uint32_t>(result.value().size());
+      std::unique_ptr<uint8_t, FxFreeDeleter> result_buf(
+          FX_Alloc(uint8_t, result_size));
+      FXSYS_memcpy(result_buf.get(), result.value().data(), result_size);
+      return {std::move(result_buf), result_size, bytes_consumed};
     }
     case PredictorType::kFlate: {
       bool ret = TIFF_Predictor(Colors, BitsPerComponent, Columns,
