@@ -647,6 +647,7 @@ class FlatePredictorScanlineDecoder final : public FlateScanlineDecoder {
  private:
   void GetNextLineWithPredictedPitch();
   void GetNextLineWithoutPredictedPitch();
+  size_t CopyAndAdvanceLine(size_t bytes_to_go);
 
   const PredictorType m_Predictor;
   int m_Colors = 0;
@@ -745,32 +746,38 @@ void FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
   const uint32_t row_size =
       fxge::CalculatePitch8OrDie(m_BitsPerComponent, m_Colors, m_Columns);
   const uint32_t bytes_per_pixel = (m_BitsPerComponent * m_Colors + 7) / 8;
-  while (bytes_to_go) {
-    switch (m_Predictor) {
-      case PredictorType::kPng: {
+  switch (m_Predictor) {
+    case PredictorType::kPng: {
+      while (bytes_to_go) {
         FlateOutput(m_pFlate.get(), m_PredictRaw);
         PNG_PredictLine(m_PredictBuffer, m_PredictRaw, m_LastLine, row_size,
                         bytes_per_pixel);
         fxcrt::spancpy(m_LastLine.span(), m_PredictBuffer.span());
-        break;
+        bytes_to_go = CopyAndAdvanceLine(bytes_to_go);
       }
-      case PredictorType::kFlate: {
+      break;
+    }
+    case PredictorType::kFlate: {
+      while (bytes_to_go) {
         FlateOutput(m_pFlate.get(), m_PredictBuffer);
         TIFF_PredictLine(m_PredictBuffer, m_BitsPerComponent, m_Colors,
                          m_Columns);
-        break;
+        bytes_to_go = CopyAndAdvanceLine(bytes_to_go);
       }
-      case PredictorType::kNone: {
-        NOTREACHED_NORETURN();
-      }
+      break;
     }
-    size_t read_bytes =
-        m_PredictPitch > bytes_to_go ? bytes_to_go : m_PredictPitch;
-    fxcrt::spancpy(m_Scanline.subspan(m_Pitch - bytes_to_go),
-                   m_PredictBuffer.first(read_bytes));
-    m_LeftOver += m_PredictPitch - read_bytes;
-    bytes_to_go -= read_bytes;
+    case PredictorType::kNone: {
+      NOTREACHED_NORETURN();
+    }
   }
+}
+
+size_t FlatePredictorScanlineDecoder::CopyAndAdvanceLine(size_t bytes_to_go) {
+  size_t read_bytes = std::min<size_t>(m_PredictPitch, bytes_to_go);
+  fxcrt::spancpy(m_Scanline.subspan(m_Pitch - bytes_to_go),
+                 m_PredictBuffer.first(read_bytes));
+  m_LeftOver += m_PredictPitch - read_bytes;
+  return bytes_to_go - read_bytes;
 }
 
 }  // namespace
