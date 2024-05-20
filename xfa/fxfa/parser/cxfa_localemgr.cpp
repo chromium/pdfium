@@ -14,8 +14,6 @@
 #include "core/fxcodec/data_and_bytes_consumed.h"
 #include "core/fxcodec/flate/flatemodule.h"
 #include "core/fxcrt/check.h"
-#include "core/fxcrt/compiler_specific.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "fxjs/gc/container_trace.h"
 #include "fxjs/xfa/cjx_object.h"
 #include "xfa/fxfa/parser/cxfa_acrobat.h"
@@ -1071,14 +1069,13 @@ CXFA_XMLLocale* GetLocaleFromBuffer(cppgc::Heap* heap,
   if (src_span.empty())
     return nullptr;
 
-  DataAndBytesConsumed result =
+  DataVectorAndBytesConsumed result =
       FlateModule::FlateOrLZWDecode(false, src_span, true, 0, 0, 0, 0, 0);
-  if (!result.data) {
+  if (result.data.empty()) {
     return nullptr;
   }
 
-  return CXFA_XMLLocale::Create(
-      heap, UNSAFE_TODO(pdfium::make_span(result.data.get(), result.size)));
+  return CXFA_XMLLocale::Create(heap, result.data);
 }
 
 CXFA_LocaleMgr::LangID GetLanguageID(WideString wsLanguage) {

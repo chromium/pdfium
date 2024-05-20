@@ -22,4 +22,16 @@ DataAndBytesConsumed& DataAndBytesConsumed::operator=(
 
 DataAndBytesConsumed::~DataAndBytesConsumed() = default;
 
+DataVectorAndBytesConsumed::DataVectorAndBytesConsumed(DataVector<uint8_t> data,
+                                                       uint32_t bytes_consumed)
+    : data(std::move(data)), bytes_consumed(bytes_consumed) {}
+
+DataVectorAndBytesConsumed::DataVectorAndBytesConsumed(
+    DataVectorAndBytesConsumed&&) noexcept = default;
+
+DataVectorAndBytesConsumed& DataVectorAndBytesConsumed::operator=(
+    DataVectorAndBytesConsumed&&) noexcept = default;
+
+DataVectorAndBytesConsumed::~DataVectorAndBytesConsumed() = default;
+
 }  // namespace fxcodec

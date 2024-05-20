@@ -353,10 +353,11 @@ std::unique_ptr<ScanlineDecoder> CreateFlateDecoder(
                                     Columns);
 }
 
-DataAndBytesConsumed FlateOrLZWDecode(bool use_lzw,
-                                      pdfium::span<const uint8_t> src_span,
-                                      const CPDF_Dictionary* pParams,
-                                      uint32_t estimated_size) {
+DataVectorAndBytesConsumed FlateOrLZWDecode(
+    bool use_lzw,
+    pdfium::span<const uint8_t> src_span,
+    const CPDF_Dictionary* pParams,
+    uint32_t estimated_size) {
   int predictor = 0;
   int Colors = 0;
   int BitsPerComponent = 0;
@@ -369,7 +370,7 @@ DataAndBytesConsumed FlateOrLZWDecode(bool use_lzw,
     BitsPerComponent = pParams->GetIntegerFor("BitsPerComponent", 8);
     Columns = pParams->GetIntegerFor("Columns", 1);
     if (!CheckFlateDecodeParams(Colors, BitsPerComponent, Columns))
-      return {nullptr, 0u, FX_INVALID_OFFSET};
+      return {DataVector<uint8_t>(), FX_INVALID_OFFSET};
   }
   return FlateModule::FlateOrLZWDecode(use_lzw, src_span, bEarlyChange,
                                        predictor, Colors, BitsPerComponent,
@@ -455,16 +456,22 @@ std::optional<PDFDataDecodeResult> PDF_DataDecode(
         result.image_params = std::move(pParam);
         return result;
       }
-      DataAndBytesConsumed decode_result = FlateOrLZWDecode(
+      DataVectorAndBytesConsumed decode_result = FlateOrLZWDecode(
           /*use_lzw=*/false, last_span, pParam, estimated_size);
-      new_buf = std::move(decode_result.data);
-      new_size = decode_result.size;
+      // TODO(crbug.com/pdfium/1872): Avoid copying.
+      new_size = pdfium::checked_cast<uint32_t>(decode_result.data.size());
+      new_buf.reset(FX_Alloc(uint8_t, new_size));
+      UNSAFE_TODO(
+          FXSYS_memcpy(new_buf.get(), decode_result.data.data(), new_size));
       bytes_consumed = decode_result.bytes_consumed;
     } else if (decoder == "LZWDecode" || decoder == "LZW") {
-      DataAndBytesConsumed decode_result =
+      DataVectorAndBytesConsumed decode_result =
           FlateOrLZWDecode(/*use_lzw=*/true, last_span, pParam, estimated_size);
-      new_buf = std::move(decode_result.data);
-      new_size = decode_result.size;
+      // TODO(crbug.com/pdfium/1872): Avoid copying.
+      new_size = pdfium::checked_cast<uint32_t>(decode_result.data.size());
+      new_buf.reset(FX_Alloc(uint8_t, new_size));
+      UNSAFE_TODO(
+          FXSYS_memcpy(new_buf.get(), decode_result.data.data(), new_size));
       bytes_consumed = decode_result.bytes_consumed;
     } else if (decoder == "ASCII85Decode" || decoder == "A85") {
       DataAndBytesConsumed decode_result = A85Decode(last_span);

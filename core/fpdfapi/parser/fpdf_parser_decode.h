@@ -61,7 +61,7 @@ fxcodec::DataAndBytesConsumed A85Decode(pdfium::span<const uint8_t> src_span);
 
 fxcodec::DataAndBytesConsumed HexDecode(pdfium::span<const uint8_t> src_span);
 
-fxcodec::DataAndBytesConsumed FlateOrLZWDecode(
+fxcodec::DataVectorAndBytesConsumed FlateOrLZWDecode(
     bool use_lzw,
     pdfium::span<const uint8_t> src_span,
     const CPDF_Dictionary* pParams,
