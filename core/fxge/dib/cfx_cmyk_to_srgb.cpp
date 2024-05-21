@@ -4,14 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/dib/cfx_cmyk_to_srgb.h"
 
 #include <algorithm>
+#include <array>
 
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_system.h"
@@ -20,7 +16,8 @@ namespace fxge {
 
 namespace {
 
-constexpr uint8_t kCMYK[81 * 81][3] = {
+// 4-dimensional array each indexed by [0..8).
+constexpr std::array<const FX_RGB_STRUCT<uint8_t>, 9 * 9 * 9 * 9> kCMYK = {{
     {255, 255, 255}, {225, 226, 228}, {199, 200, 202}, {173, 174, 178},
     {147, 149, 152}, {123, 125, 128}, {99, 99, 102},   {69, 70, 71},
     {34, 30, 31},    {255, 253, 229}, {226, 224, 203}, {200, 199, 182},
@@ -1662,7 +1659,11 @@ constexpr uint8_t kCMYK[81 * 81][3] = {
     {54, 53, 57},    {48, 45, 49},    {41, 37, 41},    {33, 28, 32},
     {22, 19, 23},    {11, 6, 10},     {1, 0, 0},       {0, 0, 0},
     {0, 0, 0},
-};
+}};
+
+constexpr inline int IndexFromCMYK(int c, int m, int y, int k) {
+  return 9 * 9 * 9 * c + 9 * 9 * m + 9 * y + k;
+}
 
 }  // namespace
 
@@ -1678,10 +1679,11 @@ FX_RGB_STRUCT<uint8_t> AdobeCMYK_to_sRGB1(uint8_t c,
   int m_index = (fix_m + 4096) >> 13;
   int y_index = (fix_y + 4096) >> 13;
   int k_index = (fix_k + 4096) >> 13;
-  const int pos = c_index * 9 * 9 * 9 + m_index * 9 * 9 + y_index * 9 + k_index;
-  int fix_r = kCMYK[pos][0] << 8;
-  int fix_g = kCMYK[pos][1] << 8;
-  int fix_b = kCMYK[pos][2] << 8;
+  const auto& start_rgb =
+      kCMYK[IndexFromCMYK(c_index, m_index, y_index, k_index)];
+  int fix_r = start_rgb.red << 8;
+  int fix_g = start_rgb.green << 8;
+  int fix_b = start_rgb.blue << 8;
   int c1_index = fix_c >> 13;
   if (c1_index == c_index)
     c1_index = c1_index == 8 ? c1_index - 1 : c1_index + 1;
@@ -1695,29 +1697,33 @@ FX_RGB_STRUCT<uint8_t> AdobeCMYK_to_sRGB1(uint8_t c,
   if (k1_index == k_index)
     k1_index = k1_index == 8 ? k1_index - 1 : k1_index + 1;
 
-  const int c1_pos = pos + (c1_index - c_index) * 9 * 9 * 9;
+  const auto& c1_rgb =
+      kCMYK[IndexFromCMYK(c1_index, m_index, y_index, k_index)];
   const int c_rate = (fix_c - (c_index << 13)) * (c_index - c1_index);
-  fix_r += (kCMYK[pos][0] - kCMYK[c1_pos][0]) * c_rate / 32;
-  fix_g += (kCMYK[pos][1] - kCMYK[c1_pos][1]) * c_rate / 32;
-  fix_b += (kCMYK[pos][2] - kCMYK[c1_pos][2]) * c_rate / 32;
+  fix_r += (start_rgb.red - c1_rgb.red) * c_rate / 32;
+  fix_g += (start_rgb.green - c1_rgb.green) * c_rate / 32;
+  fix_b += (start_rgb.blue - c1_rgb.blue) * c_rate / 32;
 
-  const int m1_pos = pos + (m1_index - m_index) * 9 * 9;
+  const auto& m1_rgb =
+      kCMYK[IndexFromCMYK(c_index, m1_index, y_index, k_index)];
   const int m_rate = (fix_m - (m_index << 13)) * (m_index - m1_index);
-  fix_r += (kCMYK[pos][0] - kCMYK[m1_pos][0]) * m_rate / 32;
-  fix_g += (kCMYK[pos][1] - kCMYK[m1_pos][1]) * m_rate / 32;
-  fix_b += (kCMYK[pos][2] - kCMYK[m1_pos][2]) * m_rate / 32;
+  fix_r += (start_rgb.red - m1_rgb.red) * m_rate / 32;
+  fix_g += (start_rgb.green - m1_rgb.green) * m_rate / 32;
+  fix_b += (start_rgb.blue - m1_rgb.blue) * m_rate / 32;
 
-  const int y1_pos = pos + (y1_index - y_index) * 9;
+  const auto& y1_rgb =
+      kCMYK[IndexFromCMYK(c_index, m_index, y1_index, k_index)];
   const int y_rate = (fix_y - (y_index << 13)) * (y_index - y1_index);
-  fix_r += (kCMYK[pos][0] - kCMYK[y1_pos][0]) * y_rate / 32;
-  fix_g += (kCMYK[pos][1] - kCMYK[y1_pos][1]) * y_rate / 32;
-  fix_b += (kCMYK[pos][2] - kCMYK[y1_pos][2]) * y_rate / 32;
+  fix_r += (start_rgb.red - y1_rgb.red) * y_rate / 32;
+  fix_g += (start_rgb.green - y1_rgb.green) * y_rate / 32;
+  fix_b += (start_rgb.blue - y1_rgb.blue) * y_rate / 32;
 
-  const int k1_pos = pos + (k1_index - k_index);
+  const auto& k1_rgb =
+      kCMYK[IndexFromCMYK(c_index, m_index, y_index, k1_index)];
   const int k_rate = (fix_k - (k_index << 13)) * (k_index - k1_index);
-  fix_r += (kCMYK[pos][0] - kCMYK[k1_pos][0]) * k_rate / 32;
-  fix_g += (kCMYK[pos][1] - kCMYK[k1_pos][1]) * k_rate / 32;
-  fix_b += (kCMYK[pos][2] - kCMYK[k1_pos][2]) * k_rate / 32;
+  fix_r += (start_rgb.red - k1_rgb.red) * k_rate / 32;
+  fix_g += (start_rgb.green - k1_rgb.green) * k_rate / 32;
+  fix_b += (start_rgb.blue - k1_rgb.blue) * k_rate / 32;
 
   fix_r = std::max(fix_r, 0) >> 8;
   fix_g = std::max(fix_g, 0) >> 8;
