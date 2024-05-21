@@ -484,11 +484,11 @@ uint32_t EstimateFlateUncompressBufferSize(uint32_t orig_size,
   return std::min(guess_size, kMaxInitialAllocSize);
 }
 
-DataAndBytesConsumed FlateUncompress(pdfium::span<const uint8_t> src_buf,
-                                     uint32_t orig_size) {
+DataVectorAndBytesConsumed FlateUncompress(pdfium::span<const uint8_t> src_buf,
+                                           uint32_t orig_size) {
   std::unique_ptr<z_stream, FlateDeleter> context(FlateInit());
   if (!context) {
-    return {nullptr, 0u, 0u};
+    return {DataVector<uint8_t>(), 0u};
   }
 
   FlateInput(context.get(), src_buf);
@@ -496,14 +496,12 @@ DataAndBytesConsumed FlateUncompress(pdfium::span<const uint8_t> src_buf,
   const uint32_t buf_size =
       EstimateFlateUncompressBufferSize(orig_size, src_buf.size());
   uint32_t last_buf_size = buf_size;
-  std::unique_ptr<uint8_t, FxFreeDeleter> guess_buf(
-      FX_Alloc(uint8_t, buf_size));
-  std::vector<std::unique_ptr<uint8_t, FxFreeDeleter>> result_tmp_bufs;
+  DataVector<uint8_t> guess_buf(buf_size);
+  std::vector<DataVector<uint8_t>> result_tmp_bufs;
   {
-    std::unique_ptr<uint8_t, FxFreeDeleter> cur_buf = std::move(guess_buf);
+    DataVector<uint8_t> cur_buf = std::move(guess_buf);
     while (true) {
-      bool ret = FlateOutput(context.get(),
-                             pdfium::make_span(cur_buf.get(), buf_size));
+      bool ret = FlateOutput(context.get(), cur_buf);
       uint32_t avail_buf_size = FlateGetAvailOut(context.get());
       if (!ret || avail_buf_size != 0) {
         last_buf_size = buf_size - avail_buf_size;
@@ -511,7 +509,7 @@ DataAndBytesConsumed FlateUncompress(pdfium::span<const uint8_t> src_buf,
         break;
       }
       result_tmp_bufs.push_back(std::move(cur_buf));
-      cur_buf.reset(FX_Alloc(uint8_t, buf_size));
+      cur_buf = DataVector<uint8_t>(buf_size);
     }
   }
 
@@ -523,24 +521,21 @@ DataAndBytesConsumed FlateUncompress(pdfium::span<const uint8_t> src_buf,
       FlateGetPossiblyTruncatedTotalIn(context.get());
   if (result_tmp_bufs.size() == 1) {
     CHECK_LE(dest_size, buf_size);
-    return {std::move(result_tmp_bufs.front()), dest_size, bytes_consumed};
+    result_tmp_bufs.front().resize(dest_size);
+    return {std::move(result_tmp_bufs.front()), bytes_consumed};
   }
 
-  std::unique_ptr<uint8_t, FxFreeDeleter> result_buf(
-      FX_Alloc(uint8_t, dest_size));
-  auto result_span = pdfium::make_span(result_buf.get(), dest_size);
-  uint32_t remaining = dest_size;
+  DataVector<uint8_t> result_buf(dest_size);
+  auto result_span = pdfium::make_span(result_buf);
   for (size_t i = 0; i < result_tmp_bufs.size(); i++) {
-    std::unique_ptr<uint8_t, FxFreeDeleter> tmp_buf =
-        std::move(result_tmp_bufs[i]);
+    DataVector<uint8_t> tmp_buf = std::move(result_tmp_bufs[i]);
     const uint32_t tmp_buf_size =
         i + 1 < result_tmp_bufs.size() ? buf_size : last_buf_size;
-    uint32_t cp_size = std::min(tmp_buf_size, remaining);
-    fxcrt::spancpy(result_span, pdfium::make_span(tmp_buf.get(), cp_size));
-    result_span = result_span.subspan(cp_size);
-    remaining -= cp_size;
+    size_t cp_size = std::min<size_t>(tmp_buf_size, result_span.size());
+    result_span =
+        fxcrt::spancpy(result_span, pdfium::make_span(tmp_buf).first(cp_size));
   }
-  return {std::move(result_buf), dest_size, bytes_consumed};
+  return {std::move(result_buf), bytes_consumed};
 }
 
 enum class PredictorType : uint8_t { kNone, kFlate, kPng };
@@ -809,10 +804,9 @@ DataVectorAndBytesConsumed FlateModule::FlateOrLZWDecode(
     dest_buf = decoder->TakeDestBuf();
     bytes_consumed = decoder->GetSrcSize();
   } else {
-    DataAndBytesConsumed result = FlateUncompress(src_span, estimated_size);
-    // TODO(crbug.com/pdfium/1872): Avoid copying.
-    dest_buf.resize(result.size);
-    FXSYS_memcpy(dest_buf.data(), result.data.get(), dest_buf.size());
+    DataVectorAndBytesConsumed result =
+        FlateUncompress(src_span, estimated_size);
+    dest_buf = std::move(result.data);
     bytes_consumed = result.bytes_consumed;
   }
 

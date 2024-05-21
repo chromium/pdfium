@@ -8,20 +8,6 @@
 
 namespace fxcodec {
 
-DataAndBytesConsumed::DataAndBytesConsumed(
-    std::unique_ptr<uint8_t, FxFreeDeleter> data,
-    uint32_t size,
-    uint32_t bytes_consumed)
-    : data(std::move(data)), size(size), bytes_consumed(bytes_consumed) {}
-
-DataAndBytesConsumed::DataAndBytesConsumed(DataAndBytesConsumed&&) noexcept =
-    default;
-
-DataAndBytesConsumed& DataAndBytesConsumed::operator=(
-    DataAndBytesConsumed&&) noexcept = default;
-
-DataAndBytesConsumed::~DataAndBytesConsumed() = default;
-
 DataVectorAndBytesConsumed::DataVectorAndBytesConsumed(DataVector<uint8_t> data,
                                                        uint32_t bytes_consumed)
     : data(std::move(data)), bytes_consumed(bytes_consumed) {}

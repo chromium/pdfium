@@ -7,29 +7,9 @@
 
 #include <stdint.h>
 
-#include <memory>
-
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
 
 namespace fxcodec {
-
-// TODO(crbug.com/pdfium/1872): Replace with DataVectorAndBytesConsumed.
-struct DataAndBytesConsumed {
-  DataAndBytesConsumed(std::unique_ptr<uint8_t, FxFreeDeleter> data,
-                       uint32_t size,
-                       uint32_t bytes_consumed);
-  DataAndBytesConsumed(DataAndBytesConsumed&) = delete;
-  DataAndBytesConsumed& operator=(DataAndBytesConsumed&) = delete;
-  DataAndBytesConsumed(DataAndBytesConsumed&&) noexcept;
-  DataAndBytesConsumed& operator=(DataAndBytesConsumed&&) noexcept;
-  ~DataAndBytesConsumed();
-
-  std::unique_ptr<uint8_t, FxFreeDeleter> data;
-  uint32_t size;
-  // TODO(thestig): Consider replacing with std::optional<size_t>.
-  uint32_t bytes_consumed;
-};
 
 // TODO(crbug.com/pdfium/1872): Rename to DataAndBytesConsumed once the existing
 // struct of that name is no longer used.
@@ -48,7 +28,6 @@ struct DataVectorAndBytesConsumed {
 
 }  // namespace fxcodec
 
-using DataAndBytesConsumed = fxcodec::DataAndBytesConsumed;
 using DataVectorAndBytesConsumed = fxcodec::DataVectorAndBytesConsumed;
 
 #endif  // CORE_FXCODEC_DATA_AND_BYTES_CONSUMED_H_
