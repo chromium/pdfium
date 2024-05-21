@@ -22,7 +22,6 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcodec/data_and_bytes_consumed.h"
 #include "core/fxcrt/bytestring.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/string_view_template.h"
 #include "core/fxcrt/widestring.h"
