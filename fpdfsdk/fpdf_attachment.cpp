@@ -39,22 +39,6 @@ ByteString CFXByteStringHexDecode(const ByteString& bsHex) {
   return ByteString(ByteStringView(result.data));
 }
 
-// TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
-ByteString GenerateMD5Base16(const void* contents, const unsigned long len) {
-  uint8_t digest[16];
-
-  // SAFETY: caller ensures `contents` points to at least `len` bytes.
-  CRYPT_MD5Generate(UNSAFE_BUFFERS(pdfium::make_span(
-                        static_cast<const uint8_t*>(contents), len)),
-                    digest);
-
-  char buf[32];
-  for (int i = 0; i < 16; ++i) {
-    FXSYS_IntToTwoHexChars(UNSAFE_TODO(digest[i]), UNSAFE_TODO(&buf[i * 2]));
-  }
-  return ByteString(buf, 32);
-}
-
 }  // namespace
 
 FPDF_EXPORT int FPDF_CALLCONV
@@ -223,14 +207,16 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
                        FPDF_DOCUMENT document,
                        const void* contents,
                        unsigned long len) {
+  // An empty content must have a zero length.
+  if (!contents && len != 0) {
+    return false;
+  }
+
   CPDF_Object* pFile = CPDFObjectFromFPDFAttachment(attachment);
   CPDF_Document* pDoc = CPDFDocumentFromFPDFDocument(document);
-  if (!pFile || !pFile->IsDictionary() || !pDoc || len > INT_MAX)
+  if (!pFile || !pFile->IsDictionary() || !pDoc || len > INT_MAX) {
     return false;
-
-  // An empty content must have a zero length.
-  if (!contents && len != 0)
-    return false;
+  }
 
   // Create a dictionary for the new embedded file stream.
   auto pFileStreamDict = pdfium::MakeRetain<CPDF_Dictionary>();
@@ -251,17 +237,23 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
                          dateTime.GetSecond()),
       false);
 
+  // SAFETY: required from caller.
+  pdfium::span<const uint8_t> contents_span = UNSAFE_BUFFERS(
+      pdfium::make_span(static_cast<const uint8_t*>(contents), len));
+
+  ByteString digest;
+  {
+    auto digest_span = pdfium::as_writable_bytes(digest.GetBuffer(16));
+    CRYPT_MD5Generate(contents_span, digest_span.data());
+    digest.ReleaseBuffer(16);
+  }
+
   // Set the checksum of the new attachment in the dictionary.
-  pParamsDict->SetNewFor<CPDF_String>(
-      kChecksumKey, CFXByteStringHexDecode(GenerateMD5Base16(contents, len)),
-      true);
+  pParamsDict->SetNewFor<CPDF_String>(kChecksumKey, digest, /*bHex=*/true);
 
   // Create the file stream and have the filespec dictionary link to it.
-  const uint8_t* contents_as_bytes = static_cast<const uint8_t*>(contents);
-
   auto pFileStream = pDoc->NewIndirect<CPDF_Stream>(
-      DataVector<uint8_t>(contents_as_bytes,
-                          UNSAFE_TODO(contents_as_bytes + len)),
+      DataVector<uint8_t>(contents_span.begin(), contents_span.end()),
       std::move(pFileStreamDict));
 
   auto pEFDict = pFile->AsMutableDictionary()->SetNewFor<CPDF_Dictionary>("EF");
