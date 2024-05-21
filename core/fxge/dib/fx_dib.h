@@ -44,6 +44,53 @@ struct FX_RGB_STRUCT {
   T blue;
 };
 
+template <typename T>
+struct FX_BGR_STRUCT {
+  T blue;
+  T green;
+  T red;
+};
+
+template <typename T>
+struct FX_ARGB_STRUCT {
+  T alpha;
+  T red;
+  T green;
+  T blue;
+};
+
+template <typename T>
+struct FX_ABGR_STRUCT {
+  T alpha;
+  T blue;
+  T green;
+  T red;
+};
+
+template <typename T>
+struct FX_RGBA_STRUCT {
+  T red;
+  T green;
+  T blue;
+  T alpha;
+};
+
+template <typename T>
+struct FX_BGRA_STRUCT {
+  T blue;
+  T green;
+  T red;
+  T alpha;
+};
+
+template <typename T>
+struct FX_CMYK_STRUCT {
+  T cyan;
+  T magenta;
+  T yellow;
+  T key;
+};
+
 struct FXDIB_ResampleOptions {
   FXDIB_ResampleOptions();
 

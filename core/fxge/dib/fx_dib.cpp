@@ -20,6 +20,15 @@ static_assert(sizeof(FX_COLORREF) == sizeof(COLORREF),
               "FX_COLORREF vs. COLORREF mismatch");
 #endif
 
+// Assert that FX_*_STRUCTS are packed.
+static_assert(sizeof(FX_RGB_STRUCT<uint8_t>) == 3u);
+static_assert(sizeof(FX_BGR_STRUCT<uint8_t>) == 3u);
+static_assert(sizeof(FX_ARGB_STRUCT<uint8_t>) == 4u);
+static_assert(sizeof(FX_ABGR_STRUCT<uint8_t>) == 4u);
+static_assert(sizeof(FX_RGBA_STRUCT<uint8_t>) == 4u);
+static_assert(sizeof(FX_BGRA_STRUCT<uint8_t>) == 4u);
+static_assert(sizeof(FX_CMYK_STRUCT<uint8_t>) == 4u);
+
 FXDIB_Format MakeRGBFormat(int bpp) {
   switch (bpp) {
     case 1:
