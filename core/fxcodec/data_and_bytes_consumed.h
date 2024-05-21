@@ -11,15 +11,13 @@
 
 namespace fxcodec {
 
-// TODO(crbug.com/pdfium/1872): Rename to DataAndBytesConsumed once the existing
-// struct of that name is no longer used.
-struct DataVectorAndBytesConsumed {
-  DataVectorAndBytesConsumed(DataVector<uint8_t> data, uint32_t bytes_consumed);
-  DataVectorAndBytesConsumed(DataVectorAndBytesConsumed&) = delete;
-  DataVectorAndBytesConsumed& operator=(DataVectorAndBytesConsumed&) = delete;
-  DataVectorAndBytesConsumed(DataVectorAndBytesConsumed&&) noexcept;
-  DataVectorAndBytesConsumed& operator=(DataVectorAndBytesConsumed&&) noexcept;
-  ~DataVectorAndBytesConsumed();
+struct DataAndBytesConsumed {
+  DataAndBytesConsumed(DataVector<uint8_t> data, uint32_t bytes_consumed);
+  DataAndBytesConsumed(DataAndBytesConsumed&) = delete;
+  DataAndBytesConsumed& operator=(DataAndBytesConsumed&) = delete;
+  DataAndBytesConsumed(DataAndBytesConsumed&&) noexcept;
+  DataAndBytesConsumed& operator=(DataAndBytesConsumed&&) noexcept;
+  ~DataAndBytesConsumed();
 
   DataVector<uint8_t> data;
   // TODO(thestig): Consider replacing with std::optional<size_t>.
@@ -28,6 +26,6 @@ struct DataVectorAndBytesConsumed {
 
 }  // namespace fxcodec
 
-using DataVectorAndBytesConsumed = fxcodec::DataVectorAndBytesConsumed;
+using DataAndBytesConsumed = fxcodec::DataAndBytesConsumed;
 
 #endif  // CORE_FXCODEC_DATA_AND_BYTES_CONSUMED_H_

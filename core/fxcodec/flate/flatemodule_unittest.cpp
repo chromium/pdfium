@@ -40,7 +40,7 @@ TEST(FlateModule, Decode) {
 
   for (size_t i = 0; i < std::size(flate_decode_cases); ++i) {
     const pdfium::DecodeTestData& data = flate_decode_cases[i];
-    DataVectorAndBytesConsumed result = FlateModule::FlateOrLZWDecode(
+    DataAndBytesConsumed result = FlateModule::FlateOrLZWDecode(
         false, UNSAFE_TODO(pdfium::make_span(data.input, data.input_size)),
         false, 0, 0, 0, 0, 0);
     EXPECT_EQ(data.processed_size, result.bytes_consumed) << " for case " << i;

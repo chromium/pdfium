@@ -288,7 +288,7 @@ TEST(ParserDecodeTest, A85Decode) {
       STR_IN_OUT_CASE("FCfN8FCfN8vw", "testtest", 11),
   };
   for (const auto& test_case : kTestData) {
-    DataVectorAndBytesConsumed result = A85Decode(
+    DataAndBytesConsumed result = A85Decode(
         UNSAFE_TODO(pdfium::make_span(test_case.input, test_case.input_size)));
     EXPECT_EQ(test_case.processed_size, result.bytes_consumed)
         << "for case " << test_case.input;
@@ -321,7 +321,7 @@ TEST(ParserDecodeTest, HexDecode) {
       STR_IN_OUT_CASE("12AcED3c3456", "\x12\xac\xed\x3c\x34\x56", 12),
   };
   for (const auto& test_case : kTestData) {
-    DataVectorAndBytesConsumed result = HexDecode(
+    DataAndBytesConsumed result = HexDecode(
         UNSAFE_TODO(pdfium::make_span(test_case.input, test_case.input_size)));
     EXPECT_EQ(test_case.processed_size, result.bytes_consumed)
         << "for case " << test_case.input;

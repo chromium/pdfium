@@ -33,7 +33,7 @@ class FlateModule {
       int BitsPerComponent,
       int Columns);
 
-  static DataVectorAndBytesConsumed FlateOrLZWDecode(
+  static DataAndBytesConsumed FlateOrLZWDecode(
       bool bLZW,
       pdfium::span<const uint8_t> src_span,
       bool bEarlyChange,

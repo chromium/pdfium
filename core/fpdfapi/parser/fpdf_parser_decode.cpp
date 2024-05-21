@@ -114,7 +114,7 @@ bool ValidateDecoderPipeline(const CPDF_Array* pDecoders) {
   return true;
 }
 
-DataVectorAndBytesConsumed A85Decode(pdfium::span<const uint8_t> src_span) {
+DataAndBytesConsumed A85Decode(pdfium::span<const uint8_t> src_span) {
   if (src_span.empty()) {
     return {DataVector<uint8_t>(), 0u};
   }
@@ -201,7 +201,7 @@ DataVectorAndBytesConsumed A85Decode(pdfium::span<const uint8_t> src_span) {
   return {std::move(dest_buf), pos};
 }
 
-DataVectorAndBytesConsumed HexDecode(pdfium::span<const uint8_t> src_span) {
+DataAndBytesConsumed HexDecode(pdfium::span<const uint8_t> src_span) {
   if (src_span.empty()) {
     return {DataVector<uint8_t>(), 0u};
   }
@@ -246,8 +246,7 @@ DataVectorAndBytesConsumed HexDecode(pdfium::span<const uint8_t> src_span) {
   return {std::move(dest_buf), i};
 }
 
-DataVectorAndBytesConsumed RunLengthDecode(
-    pdfium::span<const uint8_t> src_span) {
+DataAndBytesConsumed RunLengthDecode(pdfium::span<const uint8_t> src_span) {
   uint32_t dest_size = 0;
   size_t i = 0;
   while (i < src_span.size()) {
@@ -354,11 +353,10 @@ std::unique_ptr<ScanlineDecoder> CreateFlateDecoder(
                                     Columns);
 }
 
-DataVectorAndBytesConsumed FlateOrLZWDecode(
-    bool use_lzw,
-    pdfium::span<const uint8_t> src_span,
-    const CPDF_Dictionary* pParams,
-    uint32_t estimated_size) {
+DataAndBytesConsumed FlateOrLZWDecode(bool use_lzw,
+                                      pdfium::span<const uint8_t> src_span,
+                                      const CPDF_Dictionary* pParams,
+                                      uint32_t estimated_size) {
   int predictor = 0;
   int Colors = 0;
   int BitsPerComponent = 0;
@@ -453,21 +451,21 @@ std::optional<PDFDataDecodeResult> PDF_DataDecode(
         result.image_params = std::move(pParam);
         return result;
       }
-      DataVectorAndBytesConsumed decode_result = FlateOrLZWDecode(
+      DataAndBytesConsumed decode_result = FlateOrLZWDecode(
           /*use_lzw=*/false, last_span, pParam, estimated_size);
       new_buf = std::move(decode_result.data);
       bytes_consumed = decode_result.bytes_consumed;
     } else if (decoder == "LZWDecode" || decoder == "LZW") {
-      DataVectorAndBytesConsumed decode_result =
+      DataAndBytesConsumed decode_result =
           FlateOrLZWDecode(/*use_lzw=*/true, last_span, pParam, estimated_size);
       new_buf = std::move(decode_result.data);
       bytes_consumed = decode_result.bytes_consumed;
     } else if (decoder == "ASCII85Decode" || decoder == "A85") {
-      DataVectorAndBytesConsumed decode_result = A85Decode(last_span);
+      DataAndBytesConsumed decode_result = A85Decode(last_span);
       new_buf = std::move(decode_result.data);
       bytes_consumed = decode_result.bytes_consumed;
     } else if (decoder == "ASCIIHexDecode" || decoder == "AHx") {
-      DataVectorAndBytesConsumed decode_result = HexDecode(last_span);
+      DataAndBytesConsumed decode_result = HexDecode(last_span);
       new_buf = std::move(decode_result.data);
       bytes_consumed = decode_result.bytes_consumed;
     } else if (decoder == "RunLengthDecode" || decoder == "RL") {
@@ -476,7 +474,7 @@ std::optional<PDFDataDecodeResult> PDF_DataDecode(
         result.image_params = std::move(pParam);
         return result;
       }
-      DataVectorAndBytesConsumed decode_result = RunLengthDecode(last_span);
+      DataAndBytesConsumed decode_result = RunLengthDecode(last_span);
       new_buf = std::move(decode_result.data);
       bytes_consumed = decode_result.bytes_consumed;
     } else {

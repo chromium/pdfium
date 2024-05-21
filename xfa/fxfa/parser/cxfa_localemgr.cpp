@@ -1069,7 +1069,7 @@ CXFA_XMLLocale* GetLocaleFromBuffer(cppgc::Heap* heap,
   if (src_span.empty())
     return nullptr;
 
-  DataVectorAndBytesConsumed result =
+  DataAndBytesConsumed result =
       FlateModule::FlateOrLZWDecode(false, src_span, true, 0, 0, 0, 0, 0);
   if (result.data.empty()) {
     return nullptr;

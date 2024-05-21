@@ -35,7 +35,7 @@ namespace {
 constexpr char kChecksumKey[] = "CheckSum";
 
 ByteString CFXByteStringHexDecode(const ByteString& bsHex) {
-  DataVectorAndBytesConsumed result = HexDecode(bsHex.unsigned_span());
+  DataAndBytesConsumed result = HexDecode(bsHex.unsigned_span());
   return ByteString(ByteStringView(result.data));
 }
 

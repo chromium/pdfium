@@ -8,16 +8,16 @@
 
 namespace fxcodec {
 
-DataVectorAndBytesConsumed::DataVectorAndBytesConsumed(DataVector<uint8_t> data,
-                                                       uint32_t bytes_consumed)
+DataAndBytesConsumed::DataAndBytesConsumed(DataVector<uint8_t> data,
+                                           uint32_t bytes_consumed)
     : data(std::move(data)), bytes_consumed(bytes_consumed) {}
 
-DataVectorAndBytesConsumed::DataVectorAndBytesConsumed(
-    DataVectorAndBytesConsumed&&) noexcept = default;
+DataAndBytesConsumed::DataAndBytesConsumed(DataAndBytesConsumed&&) noexcept =
+    default;
 
-DataVectorAndBytesConsumed& DataVectorAndBytesConsumed::operator=(
-    DataVectorAndBytesConsumed&&) noexcept = default;
+DataAndBytesConsumed& DataAndBytesConsumed::operator=(
+    DataAndBytesConsumed&&) noexcept = default;
 
-DataVectorAndBytesConsumed::~DataVectorAndBytesConsumed() = default;
+DataAndBytesConsumed::~DataAndBytesConsumed() = default;
 
 }  // namespace fxcodec
