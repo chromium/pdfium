@@ -9,8 +9,6 @@ source_set("fxcodec") {
   sources = [
     "basic/basicmodule.cpp",
     "basic/basicmodule.h",
-    "cfx_codec_memory.cpp",
-    "cfx_codec_memory.h",
     "data_and_bytes_consumed.cpp",
     "data_and_bytes_consumed.h",
     "fax/faxmodule.cpp",
@@ -85,6 +83,8 @@ source_set("fxcodec") {
   ]
   if (pdf_enable_xfa) {
     sources += [
+      "cfx_codec_memory.cpp",
+      "cfx_codec_memory.h",
       "jpeg/jpeg_progressive_decoder.cpp",
       "jpeg/jpeg_progressive_decoder.h",
       "progressive_decoder.cpp",
