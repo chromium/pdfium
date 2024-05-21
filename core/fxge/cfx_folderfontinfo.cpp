@@ -19,10 +19,10 @@
 #include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/containers/contains.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_folder.h"
-#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_fontmapper.h"
@@ -187,9 +187,10 @@ void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
   uint8_t buffer[16];
   fseek(pFile.get(), 0, SEEK_SET);
 
-  size_t readCnt = fread(buffer, 12, 1, pFile.get());
-  if (readCnt != 1)
+  size_t items_read = fread(buffer, /*size=*/12, /*nmemb=*/1, pFile.get());
+  if (items_read != 1) {
     return;
+  }
 
   if (fxcrt::GetUInt32MSBFirst(buffer) != kTableTTCF) {
     ReportFace(path, pFile.get(), filesize, 0);
@@ -203,14 +204,15 @@ void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
   if (!safe_face_bytes.IsValid())
     return;
 
-  const size_t face_bytes = safe_face_bytes.ValueOrDie();
-  std::unique_ptr<uint8_t, FxFreeDeleter> offsets(
-      FX_Alloc(uint8_t, face_bytes));
-  readCnt = fread(offsets.get(), 1, face_bytes, pFile.get());
-  if (readCnt != face_bytes)
+  auto offsets =
+      FixedSizeDataVector<uint8_t>::Uninit(safe_face_bytes.ValueOrDie());
+  pdfium::span<uint8_t> offsets_span = offsets.span();
+  items_read = fread(offsets_span.data(), /*size=*/1,
+                     /*nmemb=*/offsets_span.size(), pFile.get());
+  if (items_read != offsets_span.size()) {
     return;
+  }
 
-  auto offsets_span = pdfium::make_span(offsets.get(), face_bytes);
   for (uint32_t i = 0; i < nFaces; i++) {
     ReportFace(path, pFile.get(), filesize,
                fxcrt::GetUInt32MSBFirst(offsets_span.subspan(i * 4)));
