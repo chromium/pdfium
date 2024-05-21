@@ -302,7 +302,9 @@ executable("pdfium_test") {
     }
   }
 
-  assert_no_deps = [ "//testing/gtest/*" ]
+  if (!build_with_chromium) {
+    assert_no_deps = [ "//testing/gtest/*" ]
+  }
 }
 
 # Dummy group to keep satisfy references from //build.
