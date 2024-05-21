@@ -116,7 +116,7 @@ TEST(cpdf_filespec, GetFileName) {
     }
 
     // With all the former fields and 'FS' field suggests 'URL' type.
-    dict_obj->SetNewFor<CPDF_String>("FS", "URL", false);
+    dict_obj->SetNewFor<CPDF_String>("FS", "URL");
     // Url string is not decoded.
     EXPECT_EQ(test_data[4].input, file_spec.GetFileName());
   }
@@ -134,7 +134,7 @@ TEST(cpdf_filespec, GetFileName) {
       dict_obj->SetNewFor<CPDF_Name>(key, "http://evil.org");
       EXPECT_TRUE(file_spec.GetFileName().IsEmpty());
     }
-    dict_obj->SetNewFor<CPDF_String>("FS", "URL", false);
+    dict_obj->SetNewFor<CPDF_String>("FS", "URL");
     EXPECT_TRUE(file_spec.GetFileName().IsEmpty());
   }
 }
@@ -191,7 +191,7 @@ TEST(cpdf_filespec, GetFileStream) {
                 file_spec.GetFileStream()->GetUnicodeText().ToUTF8());
 
       if (i == 2) {
-        dict_obj->SetNewFor<CPDF_String>("FS", "URL", false);
+        dict_obj->SetNewFor<CPDF_String>("FS", "URL");
         EXPECT_FALSE(file_spec.GetFileStream());
       }
     }

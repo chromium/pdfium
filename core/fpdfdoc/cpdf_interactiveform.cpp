@@ -308,7 +308,7 @@ RetainPtr<CPDF_Dictionary> InitDict(CPDF_Document* pDocument) {
   if (pFont)
     csDA = "/" + PDF_NameEncode(csBaseName) + " 0 Tf ";
   csDA += "0 g";
-  pFormDict->SetNewFor<CPDF_String>("DA", csDA, /*bHex=*/false);
+  pFormDict->SetNewFor<CPDF_String>("DA", csDA);
   return pFormDict;
 }
 
@@ -958,8 +958,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
     auto pNewDict = pDoc->New<CPDF_Dictionary>();
     pNewDict->SetNewFor<CPDF_Name>("Type", "Filespec");
     WideString wsStr = CPDF_FileSpec::EncodeFileName(pdf_path);
-    pNewDict->SetNewFor<CPDF_String>(pdfium::stream::kF, wsStr.ToDefANSI(),
-                                     false);
+    pNewDict->SetNewFor<CPDF_String>(pdfium::stream::kF, wsStr.ToDefANSI());
     pNewDict->SetNewFor<CPDF_String>("UF", wsStr.AsStringView());
     pMainDict->SetFor("F", pNewDict);
   }
@@ -997,8 +996,7 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
       ByteString csBExport = PDF_EncodeText(csExport.AsStringView());
       RetainPtr<const CPDF_Object> pOpt = pField->GetFieldAttr("Opt");
       if (pOpt) {
-        pFieldDict->SetNewFor<CPDF_String>(pdfium::form_fields::kV, csBExport,
-                                           false);
+        pFieldDict->SetNewFor<CPDF_String>(pdfium::form_fields::kV, csBExport);
       } else {
         pFieldDict->SetNewFor<CPDF_Name>(pdfium::form_fields::kV, csBExport);
       }

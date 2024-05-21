@@ -119,7 +119,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
         auto data_stream = pPDFDocument->NewIndirect<CPDF_Stream>(
             pFileWrite, pPDFDocument->New<CPDF_Dictionary>());
         int iLast = fxcrt::CollectionSize<int>(*pArray) - 2;
-        pArray->InsertNewAt<CPDF_String>(iLast, "datasets", false);
+        pArray->InsertNewAt<CPDF_String>(iLast, "datasets");
         pArray->InsertNewAt<CPDF_Reference>(iLast + 1, pPDFDocument,
                                             data_stream->GetObjNum());
       }
@@ -139,7 +139,7 @@ bool SaveXFADocumentData(CPDFXFA_Context* pContext,
         auto data_stream = pPDFDocument->NewIndirect<CPDF_Stream>(
             pFileWrite, pPDFDocument->New<CPDF_Dictionary>());
         int iLast = fxcrt::CollectionSize<int>(*pArray) - 2;
-        pArray->InsertNewAt<CPDF_String>(iLast, "form", false);
+        pArray->InsertNewAt<CPDF_String>(iLast, "form");
         pArray->InsertNewAt<CPDF_Reference>(iLast + 1, pPDFDocument,
                                             data_stream->GetObjNum());
       }

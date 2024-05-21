@@ -533,7 +533,7 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
 
   if (word == "(") {
     ByteString str = ReadString();
-    return pdfium::MakeRetain<CPDF_String>(m_pPool, str, false);
+    return pdfium::MakeRetain<CPDF_String>(m_pPool, str);
   }
   if (word == "<") {
     ByteString str = ReadHexString();

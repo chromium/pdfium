@@ -229,7 +229,7 @@ TEST_F(DocumentTest, IsValidPageObject) {
   EXPECT_TRUE(CPDF_Document::IsValidPageObject(dict_type_name_page.Get()));
 
   auto dict_type_string_page = pdfium::MakeRetain<CPDF_Dictionary>();
-  dict_type_string_page->SetNewFor<CPDF_String>("Type", "Page", false);
+  dict_type_string_page->SetNewFor<CPDF_String>("Type", "Page");
   document.AddIndirectObject(dict_type_string_page);
   EXPECT_FALSE(CPDF_Document::IsValidPageObject(dict_type_string_page.Get()));
 

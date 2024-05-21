@@ -1099,7 +1099,7 @@ void SetDefaultIconName(CPDF_Stream* pIcon, const char* name) {
   if (pImageDict->KeyExist("Name"))
     return;
 
-  pImageDict->SetNewFor<CPDF_String>("Name", name, false);
+  pImageDict->SetNewFor<CPDF_String>("Name", name);
 }
 
 std::optional<CheckStyle> CheckStyleFromCaption(const WideString& caption) {

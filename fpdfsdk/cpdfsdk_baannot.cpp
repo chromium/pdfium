@@ -110,7 +110,7 @@ uint32_t CPDFSDK_BAAnnot::GetFlags() const {
 
 void CPDFSDK_BAAnnot::SetAppStateOff() {
   RetainPtr<CPDF_Dictionary> pDict = GetMutableAnnotDict();
-  pDict->SetNewFor<CPDF_String>(pdfium::annotation::kAS, "Off", false);
+  pDict->SetNewFor<CPDF_String>(pdfium::annotation::kAS, "Off");
 }
 
 ByteString CPDFSDK_BAAnnot::GetAppState() const {

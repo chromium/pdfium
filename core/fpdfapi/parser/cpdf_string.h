@@ -32,6 +32,8 @@ class CPDF_String final : public CPDF_Object {
 
  private:
   CPDF_String();
+  // Same as the 3-param ctor, with `bHex` set to false.
+  CPDF_String(WeakPtr<ByteStringPool> pPool, const ByteString& str);
   CPDF_String(WeakPtr<ByteStringPool> pPool, const ByteString& str, bool bHex);
   CPDF_String(WeakPtr<ByteStringPool> pPool, WideStringView str);
   ~CPDF_String() override;

@@ -192,8 +192,8 @@ FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
     if (stringValue->IsHex()) {
       ByteString encoded =
           PDF_HexEncodeString(stringValue->GetString().AsStringView());
-      value = pdfium::MakeRetain<CPDF_String>(nullptr, encoded, false)
-                  ->GetUnicodeText();
+      value =
+          pdfium::MakeRetain<CPDF_String>(nullptr, encoded)->GetUnicodeText();
     }
   }
   // SAFETY: required from caller.
@@ -233,8 +233,7 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
       ByteString::Format("D:%d%02d%02d%02d%02d%02d", dateTime.GetYear(),
                          dateTime.GetMonth(), dateTime.GetDay(),
                          dateTime.GetHour(), dateTime.GetMinute(),
-                         dateTime.GetSecond()),
-      false);
+                         dateTime.GetSecond()));
 
   // SAFETY: required from caller.
   pdfium::span<const uint8_t> contents_span = UNSAFE_BUFFERS(

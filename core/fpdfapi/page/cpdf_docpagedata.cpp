@@ -755,8 +755,8 @@ RetainPtr<CPDF_Dictionary> CPDF_DocPageData::ProcessbCJK(
   pFontDict->SetNewFor<CPDF_Name>("BaseFont", basefont);
 
   auto pCIDSysInfo = pFontDict->SetNewFor<CPDF_Dictionary>("CIDSystemInfo");
-  pCIDSysInfo->SetNewFor<CPDF_String>("Registry", "Adobe", false);
-  pCIDSysInfo->SetNewFor<CPDF_String>("Ordering", ordering, false);
+  pCIDSysInfo->SetNewFor<CPDF_String>("Registry", "Adobe");
+  pCIDSysInfo->SetNewFor<CPDF_String>("Ordering", ordering);
   pCIDSysInfo->SetNewFor<CPDF_Number>("Supplement", supplement);
 
   auto pArray = pBaseDict->SetNewFor<CPDF_Array>("DescendantFonts");

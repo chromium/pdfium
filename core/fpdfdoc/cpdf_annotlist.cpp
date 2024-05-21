@@ -92,9 +92,8 @@ std::unique_ptr<CPDF_Annot> CreatePopupAnnot(CPDF_Document* pDocument,
   pAnnotDict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Popup");
   pAnnotDict->SetNewFor<CPDF_String>(
       pdfium::form_fields::kT,
-      pParentDict->GetByteStringFor(pdfium::form_fields::kT), false);
-  pAnnotDict->SetNewFor<CPDF_String>(pdfium::annotation::kContents, contents,
-                                     /*bHex=*/false);
+      pParentDict->GetByteStringFor(pdfium::form_fields::kT));
+  pAnnotDict->SetNewFor<CPDF_String>(pdfium::annotation::kContents, contents);
 
   CFX_FloatRect rect = pParentDict->GetRectFor(pdfium::annotation::kRect);
   rect.Normalize();
@@ -166,7 +165,7 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 
   pAnnotDict->SetNewFor<CPDF_String>(
       pdfium::annotation::kAS,
-      pParentDict->GetByteStringFor(pdfium::annotation::kAS), false);
+      pParentDict->GetByteStringFor(pdfium::annotation::kAS));
 }
 
 }  // namespace

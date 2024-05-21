@@ -174,7 +174,7 @@ FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV FPDF_CreateNewDocument() {
   RetainPtr<CPDF_Dictionary> pInfoDict = pDoc->GetInfo();
   if (pInfoDict) {
     if (IsPDFSandboxPolicyEnabled(FPDF_POLICY_MACHINETIME_ACCESS))
-      pInfoDict->SetNewFor<CPDF_String>("CreationDate", DateStr, false);
+      pInfoDict->SetNewFor<CPDF_String>("CreationDate", DateStr);
     pInfoDict->SetNewFor<CPDF_String>("Creator", L"PDFium");
   }
 
@@ -559,7 +559,7 @@ FPDFPageObjMark_SetStringParam(FPDF_DOCUMENT document,
   if (!pParams)
     return false;
 
-  pParams->SetNewFor<CPDF_String>(key, value, false);
+  pParams->SetNewFor<CPDF_String>(key, value);
   pPageObj->SetDirty(true);
   return true;
 }

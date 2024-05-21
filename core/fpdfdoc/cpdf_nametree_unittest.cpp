@@ -13,7 +13,7 @@
 namespace {
 
 void AddNameKeyValue(CPDF_Array* names, const char* key, int value) {
-  names->AppendNew<CPDF_String>(key, false);
+  names->AppendNew<CPDF_String>(key);
   names->AppendNew<CPDF_Number>(value);
 }
 
@@ -30,8 +30,8 @@ void AddLimitsArray(CPDF_Dictionary* node,
                     const char* least,
                     const char* greatest) {
   auto limits = node->SetNewFor<CPDF_Array>("Limits");
-  limits->AppendNew<CPDF_String>(least, false);
-  limits->AppendNew<CPDF_String>(greatest, false);
+  limits->AppendNew<CPDF_String>(least);
+  limits->AppendNew<CPDF_String>(greatest);
 }
 
 void CheckLimitsArray(const CPDF_Dictionary* node,

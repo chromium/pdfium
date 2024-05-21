@@ -39,14 +39,14 @@ RetainPtr<CPDF_Dictionary> CreateInvalidActionDictWithType(
     const ByteString& action_type) {
   auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
   dict->SetNewFor<CPDF_Name>("Type", "Action");
-  dict->SetNewFor<CPDF_String>("S", action_type, /*is_hex=*/false);
+  dict->SetNewFor<CPDF_String>("S", action_type);
   return dict;
 }
 
 RetainPtr<CPDF_Dictionary> CreateInvalidActionDictWithoutType(
     const ByteString& action_type) {
   auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
-  dict->SetNewFor<CPDF_String>("S", action_type, /*is_hex=*/false);
+  dict->SetNewFor<CPDF_String>("S", action_type);
   return dict;
 }
 

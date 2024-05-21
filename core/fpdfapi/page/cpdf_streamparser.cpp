@@ -328,12 +328,13 @@ RetainPtr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
 
   if (first_char == '(') {
     ByteString str = ReadString();
-    return pdfium::MakeRetain<CPDF_String>(m_pPool, str, false);
+    return pdfium::MakeRetain<CPDF_String>(m_pPool, str);
   }
 
   if (first_char == '<') {
-    if (m_WordSize == 1)
+    if (m_WordSize == 1) {
       return pdfium::MakeRetain<CPDF_String>(m_pPool, ReadHexString(), true);
+    }
 
     auto pDict = pdfium::MakeRetain<CPDF_Dictionary>(m_pPool);
     while (true) {

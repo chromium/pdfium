@@ -264,7 +264,7 @@ bool CPDF_PageOrganizer::InitDestDoc() {
 
   RetainPtr<CPDF_Dictionary> info = dest()->GetInfo();
   if (info) {
-    info->SetNewFor<CPDF_String>("Producer", "PDFium", false);
+    info->SetNewFor<CPDF_String>("Producer", "PDFium");
   }
 
   if (root->GetByteStringFor("Type", ByteString()).IsEmpty()) {

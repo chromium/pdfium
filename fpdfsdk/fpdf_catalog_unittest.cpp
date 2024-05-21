@@ -52,7 +52,7 @@ TEST_F(PDFCatalogTest, IsTagged) {
   EXPECT_FALSE(FPDFCatalog_IsTagged(m_pDoc.get()));
 
   // Root with other key
-  m_pRootObj->SetNewFor<CPDF_String>("OTHER_KEY", "other value", false);
+  m_pRootObj->SetNewFor<CPDF_String>("OTHER_KEY", "other value");
   EXPECT_FALSE(FPDFCatalog_IsTagged(m_pDoc.get()));
 
   // Root with empty MarkInfo

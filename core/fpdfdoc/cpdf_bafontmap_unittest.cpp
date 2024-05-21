@@ -23,8 +23,7 @@ TEST_F(BAFontMapTest, DefaultFont) {
 
   auto annot_dict = pdfium::MakeRetain<CPDF_Dictionary>();
   annot_dict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Widget");
-  annot_dict->SetNewFor<CPDF_String>("DA", "0 0 0 rg /F1 12 Tf",
-                                     /*bHex=*/false);
+  annot_dict->SetNewFor<CPDF_String>("DA", "0 0 0 rg /F1 12 Tf");
 
   CPDF_BAFontMap font_map(&doc, std::move(annot_dict), "N");
 #if !BUILDFLAG(IS_WIN)
@@ -51,8 +50,7 @@ TEST_F(BAFontMapTest, Bug853238) {
 
   auto annot_dict = pdfium::MakeRetain<CPDF_Dictionary>();
   annot_dict->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Widget");
-  annot_dict->SetNewFor<CPDF_String>("DA", "0 0 0 rg /F1 12 Tf",
-                                     /*bHex=*/false);
+  annot_dict->SetNewFor<CPDF_String>("DA", "0 0 0 rg /F1 12 Tf");
 
   CPDF_BAFontMap font_map(&doc, std::move(annot_dict), "N");
   EXPECT_EQ(font_map.GetPDFFontAlias(0), "F1");

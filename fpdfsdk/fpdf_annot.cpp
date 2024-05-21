@@ -1490,7 +1490,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_SetURI(FPDF_ANNOTATION annot,
   auto action = annot_dict->SetNewFor<CPDF_Dictionary>("A");
   action->SetNewFor<CPDF_Name>("Type", "Action");
   action->SetNewFor<CPDF_Name>("S", "URI");
-  action->SetNewFor<CPDF_String>("URI", uri, /*bHex=*/false);
+  action->SetNewFor<CPDF_String>("URI", uri);
   return true;
 }
 

@@ -48,8 +48,7 @@ class CPDFAnnotListTest : public TestWithPageModule {
     RetainPtr<CPDF_Dictionary> annotation =
         page_->GetOrCreateAnnotsArray()->AppendNew<CPDF_Dictionary>();
     annotation->SetNewFor<CPDF_Name>(pdfium::annotation::kSubtype, "Text");
-    annotation->SetNewFor<CPDF_String>(pdfium::annotation::kContents, contents,
-                                       /*bHex=*/false);
+    annotation->SetNewFor<CPDF_String>(pdfium::annotation::kContents, contents);
   }
 
   std::unique_ptr<CPDF_TestDocument> document_;

@@ -101,7 +101,7 @@ TEST(ObjectStreamTest, StreamDictNoType) {
 
 TEST(ObjectStreamTest, StreamDictWrongType) {
   auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
-  dict->SetNewFor<CPDF_String>("Type", "ObjStm", /*bHex=*/false);
+  dict->SetNewFor<CPDF_String>("Type", "ObjStm");
   dict->SetNewFor<CPDF_Number>("N", 3);
   dict->SetNewFor<CPDF_Number>("First", 5);
 

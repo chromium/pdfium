@@ -17,6 +17,9 @@
 
 CPDF_String::CPDF_String() = default;
 
+CPDF_String::CPDF_String(WeakPtr<ByteStringPool> pPool, const ByteString& str)
+    : CPDF_String(pPool, str, false) {}
+
 CPDF_String::CPDF_String(WeakPtr<ByteStringPool> pPool,
                          const ByteString& str,
                          bool bHex)

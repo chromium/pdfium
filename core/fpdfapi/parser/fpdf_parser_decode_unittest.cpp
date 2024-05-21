@@ -99,7 +99,7 @@ TEST(ParserDecodeTest, ValidateDecoderPipeline) {
   {
     // Invalid 1 decoder pipeline due to wrong type.
     auto decoders = pdfium::MakeRetain<CPDF_Array>();
-    decoders->AppendNew<CPDF_String>("FlateEncode", false);
+    decoders->AppendNew<CPDF_String>("FlateEncode");
     EXPECT_FALSE(ValidateDecoderPipeline(decoders.Get()));
   }
   {
@@ -119,7 +119,7 @@ TEST(ParserDecodeTest, ValidateDecoderPipeline) {
   {
     // Invalid 2 decoder pipeline due to wrong type.
     auto decoders = pdfium::MakeRetain<CPDF_Array>();
-    decoders->AppendNew<CPDF_String>("AHx", false);
+    decoders->AppendNew<CPDF_String>("AHx");
     decoders->AppendNew<CPDF_Name>("LZWDecode");
     EXPECT_FALSE(ValidateDecoderPipeline(decoders.Get()));
   }
@@ -140,7 +140,7 @@ TEST(ParserDecodeTest, ValidateDecoderPipeline) {
     decoders->AppendNew<CPDF_Name>("A85");
     decoders->AppendNew<CPDF_Name>("RunLengthDecode");
     decoders->AppendNew<CPDF_Name>("FlateDecode");
-    decoders->AppendNew<CPDF_String>("RL", false);
+    decoders->AppendNew<CPDF_String>("RL");
     EXPECT_FALSE(ValidateDecoderPipeline(decoders.Get()));
   }
 }
@@ -177,8 +177,7 @@ TEST(ParserDecodeTest, ValidateDecoderPipelineWithIndirectObjects) {
   {
     // Invalid 2 decoder pipeline due to wrong type indirect object.
     CPDF_IndirectObjectHolder objects_holder;
-    auto decoder =
-        pdfium::MakeRetain<CPDF_String>(nullptr, "FlateDecode", false);
+    auto decoder = pdfium::MakeRetain<CPDF_String>(nullptr, "FlateDecode");
     uint32_t decoder_number =
         objects_holder.AddIndirectObject(std::move(decoder));
 
@@ -213,7 +212,7 @@ TEST(ParserDecodeTest, GetDecoderArray) {
   {
     // Wrong filter type.
     auto dict = pdfium::MakeRetain<CPDF_Dictionary>();
-    dict->SetNewFor<CPDF_String>("Filter", "RL", false);
+    dict->SetNewFor<CPDF_String>("Filter", "RL");
     std::optional<DecoderArray> decoder_array = GetDecoderArray(dict);
     EXPECT_FALSE(decoder_array.has_value());
   }

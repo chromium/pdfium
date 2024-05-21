@@ -278,7 +278,7 @@ TEST_F(PDFObjectsTest, GetDict) {
 }
 
 TEST_F(PDFObjectsTest, GetNameFor) {
-  m_DictObj->SetNewFor<CPDF_String>("string", "ium", false);
+  m_DictObj->SetNewFor<CPDF_String>("string", "ium");
   m_DictObj->SetNewFor<CPDF_Name>("name", "Pdf");
 
   EXPECT_EQ("", m_DictObj->GetNameFor("invalid"));
@@ -552,7 +552,7 @@ TEST(PDFArrayTest, GetTypeAt) {
     auto string_array = pdfium::MakeRetain<CPDF_Array>();
     auto name_array = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < std::size(vals); ++i) {
-      string_array->InsertNewAt<CPDF_String>(i, vals[i], false);
+      string_array->InsertNewAt<CPDF_String>(i, vals[i]);
       name_array->InsertNewAt<CPDF_Name>(i, vals[i]);
     }
     for (size_t i = 0; i < std::size(vals); ++i) {
@@ -682,8 +682,8 @@ TEST(PDFArrayTest, GetTypeAt) {
     arr->InsertNewAt<CPDF_Number>(3, -1234);
     arr->InsertNewAt<CPDF_Number>(4, 2345.0f);
     arr->InsertNewAt<CPDF_Number>(5, 0.05f);
-    arr->InsertNewAt<CPDF_String>(6, "", false);
-    arr->InsertNewAt<CPDF_String>(7, "It is a test!", false);
+    arr->InsertNewAt<CPDF_String>(6, "");
+    arr->InsertNewAt<CPDF_String>(7, "It is a test!");
     arr->InsertNewAt<CPDF_Name>(8, "NAME");
     arr->InsertNewAt<CPDF_Name>(9, "test");
     arr->InsertNewAt<CPDF_Null>(10);
@@ -693,12 +693,12 @@ TEST(PDFArrayTest, GetTypeAt) {
     arr_val->AppendNew<CPDF_Number>(2);
 
     auto dict_val = arr->InsertNewAt<CPDF_Dictionary>(12);
-    dict_val->SetNewFor<CPDF_String>("key1", "Linda", false);
-    dict_val->SetNewFor<CPDF_String>("key2", "Zoe", false);
+    dict_val->SetNewFor<CPDF_String>("key1", "Linda");
+    dict_val->SetNewFor<CPDF_String>("key2", "Zoe");
 
     auto stream_dict = pdfium::MakeRetain<CPDF_Dictionary>();
-    stream_dict->SetNewFor<CPDF_String>("key1", "John", false);
-    stream_dict->SetNewFor<CPDF_String>("key2", "King", false);
+    stream_dict->SetNewFor<CPDF_String>("key1", "John");
+    stream_dict->SetNewFor<CPDF_String>("key2", "King");
     static constexpr uint8_t kData[] = "A stream for test";
     // The data buffer will be owned by stream object, so it needs to be
     // dynamically allocated.
@@ -765,7 +765,7 @@ TEST(PDFArrayTest, AddStringAndName) {
   auto string_array = pdfium::MakeRetain<CPDF_Array>();
   auto name_array = pdfium::MakeRetain<CPDF_Array>();
   for (const char* val : kVals) {
-    string_array->AppendNew<CPDF_String>(val, false);
+    string_array->AppendNew<CPDF_String>(val);
     name_array->AppendNew<CPDF_Name>(val);
   }
   for (size_t i = 0; i < std::size(kVals); ++i) {
@@ -782,7 +782,7 @@ TEST(PDFArrayTest, AddReferenceAndGetObjectAt) {
   auto int_obj = pdfium::MakeRetain<CPDF_Number>(-1234);
   auto float_obj = pdfium::MakeRetain<CPDF_Number>(2345.089f);
   auto str_obj =
-      pdfium::MakeRetain<CPDF_String>(nullptr, "Adsfdsf 343434 %&&*\n", false);
+      pdfium::MakeRetain<CPDF_String>(nullptr, "Adsfdsf 343434 %&&*\n");
   auto name_obj = pdfium::MakeRetain<CPDF_Name>(nullptr, "Title:");
   auto null_obj = pdfium::MakeRetain<CPDF_Null>();
   RetainPtr<CPDF_Object> indirect_objs[] = {boolean_obj, int_obj,  float_obj,
