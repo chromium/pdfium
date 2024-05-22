@@ -1060,23 +1060,22 @@ void CFX_AggDeviceDriver::SetClipMask(agg::rasterizer_scanline_aa& rasterizer) {
   FX_RECT path_rect(rasterizer.min_x(), rasterizer.min_y(),
                     rasterizer.max_x() + 1, rasterizer.max_y() + 1);
   path_rect.Intersect(m_pClipRgn->GetBox());
-  if (path_rect.IsEmpty()) {
-    return;
-  }
   auto pThisLayer = pdfium::MakeRetain<CFX_DIBitmap>();
-  CHECK(pThisLayer->Create(path_rect.Width(), path_rect.Height(),
-                           FXDIB_Format::k8bppMask));
-  agg::rendering_buffer raw_buf(pThisLayer->GetWritableBuffer().data(),
-                                pThisLayer->GetWidth(), pThisLayer->GetHeight(),
-                                pThisLayer->GetPitch());
-  agg::pixfmt_gray8 pixel_buf(raw_buf);
-  agg::renderer_base<agg::pixfmt_gray8> base_buf(pixel_buf);
-  RendererScanLineAaOffset<agg::renderer_base<agg::pixfmt_gray8>> final_render(
-      base_buf, path_rect.left, path_rect.top);
-  final_render.color(agg::gray8(255));
-  agg::scanline_u8 scanline;
-  agg::render_scanlines(rasterizer, scanline, final_render,
-                        m_FillOptions.aliased_path);
+  if (!path_rect.IsEmpty()) {
+    CHECK(pThisLayer->Create(path_rect.Width(), path_rect.Height(),
+                             FXDIB_Format::k8bppMask));
+    agg::rendering_buffer raw_buf(
+        pThisLayer->GetWritableBuffer().data(), pThisLayer->GetWidth(),
+        pThisLayer->GetHeight(), pThisLayer->GetPitch());
+    agg::pixfmt_gray8 pixel_buf(raw_buf);
+    agg::renderer_base<agg::pixfmt_gray8> base_buf(pixel_buf);
+    RendererScanLineAaOffset<agg::renderer_base<agg::pixfmt_gray8>>
+        final_render(base_buf, path_rect.left, path_rect.top);
+    final_render.color(agg::gray8(255));
+    agg::scanline_u8 scanline;
+    agg::render_scanlines(rasterizer, scanline, final_render,
+                          m_FillOptions.aliased_path);
+  }
   m_pClipRgn->IntersectMaskF(path_rect.left, path_rect.top,
                              std::move(pThisLayer));
 }

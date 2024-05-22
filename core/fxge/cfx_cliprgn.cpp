@@ -63,9 +63,13 @@ void CFX_ClipRgn::IntersectMaskRect(FX_RECT rect,
 void CFX_ClipRgn::IntersectMaskF(int left,
                                  int top,
                                  RetainPtr<CFX_DIBitmap> pMask) {
-  DCHECK_EQ(pMask->GetFormat(), FXDIB_Format::k8bppMask);
   FX_RECT mask_box(left, top, left + pMask->GetWidth(),
                    top + pMask->GetHeight());
+  if (!mask_box.IsEmpty()) {
+    // Make sure non-empty masks have the right format. If the mask is empty,
+    // then the format does not matter as it will not get used.
+    CHECK_EQ(pMask->GetFormat(), FXDIB_Format::k8bppMask);
+  }
   if (m_Type == kRectI) {
     IntersectMaskRect(m_Box, mask_box, std::move(pMask));
     return;
