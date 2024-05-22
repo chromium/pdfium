@@ -297,34 +297,36 @@ CFGAS_Decimal::CFGAS_Decimal(float val, uint8_t scale) {
   m_uScale = scale;
 }
 
-CFGAS_Decimal::CFGAS_Decimal(WideStringView strObj) {
-  const wchar_t* str = strObj.unterminated_c_str();
-  const wchar_t* strBound = str + strObj.GetLength();
+CFGAS_Decimal::CFGAS_Decimal(WideStringView str) {
   bool pointmet = false;
   bool negmet = false;
   uint8_t scale = 0;
-  while (str != strBound && *str == ' ')
-    str++;
-  if (str != strBound && *str == '-') {
-    negmet = true;
-    str++;
-  } else if (str != strBound && *str == '+') {
-    str++;
+  // Note: Rely on WideStringView::Front() => NUL on empty strings.
+  while (str.Front() == ' ') {
+    str = str.Substr(1);
   }
-
-  while (str != strBound && (FXSYS_IsDecimalDigit(*str) || *str == '.') &&
-         scale < FXMATH_DECIMAL_SCALELIMIT) {
-    if (*str == '.') {
-      if (!pointmet)
-        pointmet = true;
-    } else {
-      m_uHi = m_uHi * 0xA + FXMATH_DECIMAL_RSHIFT32BIT((uint64_t)m_uMid * 0xA);
-      m_uMid = m_uMid * 0xA + FXMATH_DECIMAL_RSHIFT32BIT((uint64_t)m_uLo * 0xA);
-      m_uLo = m_uLo * 0xA + (*str - '0');
-      if (pointmet)
-        scale++;
+  if (str.Front() == '-') {
+    negmet = true;
+    str = str.Substr(1);
+  } else if (str.Front() == '+') {
+    str = str.Substr(1);
+  }
+  while (scale < FXMATH_DECIMAL_SCALELIMIT) {
+    if (str.Front() == '.') {
+      pointmet = true;
+      str = str.Substr(1);
+      continue;
     }
-    str++;
+    if (!FXSYS_IsDecimalDigit(static_cast<wchar_t>(str.Front()))) {
+      break;
+    }
+    m_uHi = m_uHi * 0xA + FXMATH_DECIMAL_RSHIFT32BIT((uint64_t)m_uMid * 0xA);
+    m_uMid = m_uMid * 0xA + FXMATH_DECIMAL_RSHIFT32BIT((uint64_t)m_uLo * 0xA);
+    m_uLo = m_uLo * 0xA + (str.Front() - '0');
+    if (pointmet) {
+      scale++;
+    }
+    str = str.Substr(1);
   }
   m_bNeg = negmet && IsNotZero();
   m_uScale = scale;
