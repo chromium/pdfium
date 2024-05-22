@@ -1,0 +1,81 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Names 4 0 R
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 612 792]
+  /Resources <<
+    /ProcSet [/PDF]
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  /EmbeddedFiles 5 0 R
+>>
+endobj
+{{object 5 0}} <<
+  /Names [(1.txt) 6 0 R (2.txt) 8 0 R]
+>>
+endobj
+{{object 6 0}} <<
+  /Type /Filespec
+  /Desc ()
+  /EF <<
+    /F 7 0 R
+  >>
+  /F (1.txt)
+  /UF (1.txt)
+>>
+endobj
+{{object 7 0}} <<
+  /Params <<
+    /CheckSum /Bad % should be a string, not a name
+  >>
+  {{streamlen}}
+>>
+stream
+12
+endstream
+endobj
+{{object 8 0}} <<
+  /Type /Filespec
+  /Desc ()
+  /EF <<
+    /F 9 0 R
+  >>
+  /F (2.txt)
+  /UF (2.txt)
+>>
+endobj
+{{object 9 0}} <<
+  /Params <<
+    /CheckSum 10 0 R % should be a string, not a stream
+  >>
+  {{streamlen}}
+>>
+stream
+345
+endstream
+endobj
+{{object 10 0}} <<
+  {{streamlen}}
+>>
+stream
+6789
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

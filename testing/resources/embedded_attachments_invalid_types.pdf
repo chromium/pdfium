@@ -1,0 +1,98 @@
+%PDF-1.7
+% ò¤ô
+1 0 obj <<
+  /Type /Catalog
+  /Names 4 0 R
+  /Pages 2 0 R
+>>
+endobj
+2 0 obj <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+3 0 obj <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 612 792]
+  /Resources <<
+    /ProcSet [/PDF]
+  >>
+>>
+endobj
+4 0 obj <<
+  /EmbeddedFiles 5 0 R
+>>
+endobj
+5 0 obj <<
+  /Names [(1.txt) 6 0 R (2.txt) 8 0 R]
+>>
+endobj
+6 0 obj <<
+  /Type /Filespec
+  /Desc ()
+  /EF <<
+    /F 7 0 R
+  >>
+  /F (1.txt)
+  /UF (1.txt)
+>>
+endobj
+7 0 obj <<
+  /Params <<
+    /CheckSum /Bad % should be a string, not a name
+  >>
+  /Length 3
+>>
+stream
+12
+endstream
+endobj
+8 0 obj <<
+  /Type /Filespec
+  /Desc ()
+  /EF <<
+    /F 9 0 R
+  >>
+  /F (2.txt)
+  /UF (2.txt)
+>>
+endobj
+9 0 obj <<
+  /Params <<
+    /CheckSum 10 0 R % should be a string, not a stream
+  >>
+  /Length 4
+>>
+stream
+345
+endstream
+endobj
+10 0 obj <<
+  /Length 5
+>>
+stream
+6789
+endstream
+endobj
+xref
+0 11
+0000000000 65535 f 
+0000000015 00000 n 
+0000000083 00000 n 
+0000000146 00000 n 
+0000000264 00000 n 
+0000000308 00000 n 
+0000000368 00000 n 
+0000000472 00000 n 
+0000000595 00000 n 
+0000000699 00000 n 
+0000000827 00000 n 
+trailer <<
+  /Root 1 0 R
+  /Size 11
+>>
+startxref
+883
+%%EOF

@@ -173,30 +173,40 @@ FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
                               FPDF_BYTESTRING key,
                               FPDF_WCHAR* buffer,
                               unsigned long buflen) {
-  CPDF_Object* pFile = CPDFObjectFromFPDFAttachment(attachment);
-  if (!pFile)
+  CPDF_Object* file = CPDFObjectFromFPDFAttachment(attachment);
+  if (!file) {
     return 0;
+  }
 
-  CPDF_FileSpec spec(pdfium::WrapRetain(pFile));
-  RetainPtr<const CPDF_Dictionary> pParamsDict = spec.GetParamsDict();
-  if (!pParamsDict)
+  CPDF_FileSpec spec(pdfium::WrapRetain(file));
+  RetainPtr<const CPDF_Dictionary> params = spec.GetParamsDict();
+  if (!params) {
     return 0;
+  }
 
-  ByteString bsKey = key;
-  WideString value = pParamsDict->GetUnicodeTextFor(bsKey);
-  if (bsKey == kChecksumKey && !value.IsEmpty()) {
-    const CPDF_String* stringValue =
-        pParamsDict->GetObjectFor(bsKey)->AsString();
-    if (stringValue->IsHex()) {
+  // SAFETY: required from caller.
+  auto buffer_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
+
+  ByteString key_str = key;
+  RetainPtr<const CPDF_Object> object = params->GetObjectFor(key_str);
+  if (!object || (!object->IsString() && !object->IsName())) {
+    // Per API description, return an empty string in these cases.
+    return Utf16EncodeMaybeCopyAndReturnLength(WideString(), buffer_span);
+  }
+
+  if (key_str == kChecksumKey) {
+    RetainPtr<const CPDF_String> string_object = ToString(object);
+    if (string_object && string_object->IsHex()) {
       ByteString encoded =
-          PDF_HexEncodeString(stringValue->GetString().AsStringView());
-      value =
-          pdfium::MakeRetain<CPDF_String>(nullptr, encoded)->GetUnicodeText();
+          PDF_HexEncodeString(string_object->GetString().AsStringView());
+      return Utf16EncodeMaybeCopyAndReturnLength(
+          pdfium::MakeRetain<CPDF_String>(nullptr, encoded)->GetUnicodeText(),
+          buffer_span);
     }
   }
-  // SAFETY: required from caller.
-  return Utf16EncodeMaybeCopyAndReturnLength(
-      value, UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen)));
+
+  return Utf16EncodeMaybeCopyAndReturnLength(object->GetUnicodeText(),
+                                             buffer_span);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

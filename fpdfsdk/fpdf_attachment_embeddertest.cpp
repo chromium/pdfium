@@ -366,3 +366,40 @@ TEST_F(FPDFAttachmentEmbedderTest, DeleteAttachment) {
   EXPECT_EQ(26u, FPDFAttachment_GetName(attachment, buf.data(), length_bytes));
   EXPECT_EQ(L"attached.pdf", GetPlatformWString(buf.data()));
 }
+
+TEST_F(FPDFAttachmentEmbedderTest, GetStringValueForChecksumNotString) {
+  ASSERT_TRUE(OpenDocument("embedded_attachments_invalid_types.pdf"));
+  EXPECT_EQ(2, FPDFDoc_GetAttachmentCount(document()));
+
+  FPDF_ATTACHMENT attachment = FPDFDoc_GetAttachment(document(), 0);
+  ASSERT_TRUE(attachment);
+
+  // The checksum key is a name, which violates the spec. This will still return
+  // the value, but should not crash.
+  constexpr unsigned long kExpectedLength = 8u;
+  ASSERT_EQ(kExpectedLength, FPDFAttachment_GetStringValue(
+                                 attachment, kChecksumKey, nullptr, 0));
+  std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(kExpectedLength);
+  EXPECT_EQ(kExpectedLength,
+            FPDFAttachment_GetStringValue(attachment, kChecksumKey, buf.data(),
+                                          kExpectedLength));
+  EXPECT_EQ(L"Bad", GetPlatformWString(buf.data()));
+}
+
+TEST_F(FPDFAttachmentEmbedderTest, GetStringValueForNotString) {
+  ASSERT_TRUE(OpenDocument("embedded_attachments_invalid_types.pdf"));
+  EXPECT_EQ(2, FPDFDoc_GetAttachmentCount(document()));
+
+  FPDF_ATTACHMENT attachment = FPDFDoc_GetAttachment(document(), 1);
+  ASSERT_TRUE(attachment);
+
+  // The checksum key is a stream, while the API requires a string or name.
+  constexpr unsigned long kExpectedLength = 2u;
+  ASSERT_EQ(kExpectedLength, FPDFAttachment_GetStringValue(
+                                 attachment, kChecksumKey, nullptr, 0));
+  std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(kExpectedLength);
+  EXPECT_EQ(kExpectedLength,
+            FPDFAttachment_GetStringValue(attachment, kChecksumKey, buf.data(),
+                                          kExpectedLength));
+  EXPECT_EQ(L"", GetPlatformWString(buf.data()));
+}
