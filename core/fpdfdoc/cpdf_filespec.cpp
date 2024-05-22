@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfdoc/cpdf_filespec.h"
 
 #include <iterator>
@@ -23,6 +18,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/notreached.h"
 
@@ -149,7 +145,7 @@ RetainPtr<const CPDF_Stream> CPDF_FileSpec::GetFileStream() const {
   static constexpr const char* kKeys[] = {"UF", "F", "DOS", "Mac", "Unix"};
   size_t end = pDict->GetByteStringFor("FS") == "URL" ? 2 : std::size(kKeys);
   for (size_t i = 0; i < end; ++i) {
-    ByteString key = kKeys[i];
+    ByteString key = UNSAFE_TODO(kKeys[i]);
     if (!pDict->GetUnicodeTextFor(key).IsEmpty()) {
       RetainPtr<const CPDF_Stream> pStream = pFiles->GetStreamFor(key);
       if (pStream)

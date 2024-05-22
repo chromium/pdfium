@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfdoc/cpvt_section.h"
 
 #include <algorithm>
@@ -16,6 +11,7 @@
 #include "core/fpdfdoc/cpvt_variabletext.h"
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/stl_util.h"
 
 namespace {
@@ -35,9 +31,9 @@ constexpr uint8_t kSpecialChars[128] = {
 };
 
 bool IsLatin(uint16_t word) {
-  if (word <= 0x007F)
-    return !!(kSpecialChars[word] & 0x01);
-
+  if (word <= 0x007F) {
+    return !!(UNSAFE_TODO(kSpecialChars[word]) & 0x01);
+  }
   return ((word >= 0x00C0 && word <= 0x00FF) ||
           (word >= 0x0100 && word <= 0x024F) ||
           (word >= 0x1E00 && word <= 0x1EFF) ||
@@ -74,7 +70,7 @@ bool IsCJK(uint32_t word) {
 
 bool IsPunctuation(uint32_t word) {
   if (word <= 0x007F)
-    return !!(kSpecialChars[word] & 0x08);
+    return !!(UNSAFE_TODO(kSpecialChars[word]) & 0x08);
 
   if (word >= 0x0080 && word <= 0x00FF) {
     return (word == 0x0082 || word == 0x0084 || word == 0x0085 ||
@@ -120,12 +116,12 @@ bool IsPunctuation(uint32_t word) {
 }
 
 bool IsConnectiveSymbol(uint32_t word) {
-  return word <= 0x007F && (kSpecialChars[word] & 0x20);
+  return word <= 0x007F && (UNSAFE_TODO(kSpecialChars[word]) & 0x20);
 }
 
 bool IsOpenStylePunctuation(uint32_t word) {
   if (word <= 0x007F)
-    return !!(kSpecialChars[word] & 0x04);
+    return !!(UNSAFE_TODO(kSpecialChars[word]) & 0x04);
 
   return (word == 0x300A || word == 0x300C || word == 0x300E ||
           word == 0x3010 || word == 0x3014 || word == 0x3016 ||

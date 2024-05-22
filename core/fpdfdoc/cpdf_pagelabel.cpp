@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfdoc/cpdf_pagelabel.h"
 
 #include <utility>
@@ -31,11 +26,13 @@ WideString MakeRoman(int num) {
   int i = 0;
   WideString wsRomanNumber;
   while (num > 0) {
-    while (num >= kArabic[i]) {
-      num = num - kArabic[i];
-      wsRomanNumber += kRoman[i];
-    }
-    i = i + 1;
+    UNSAFE_TODO({
+      while (num >= kArabic[i]) {
+        num = num - kArabic[i];
+        wsRomanNumber += kRoman[i];
+      }
+      i = i + 1;
+    });
   }
   return wsRomanNumber;
 }

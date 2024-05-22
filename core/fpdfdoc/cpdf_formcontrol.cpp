@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 
 #include <iterator>
@@ -25,6 +20,7 @@
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 
 namespace {
 
@@ -136,8 +132,11 @@ CPDF_FormControl::HighlightingMode CPDF_FormControl::GetHighlightingMode()
   ByteString csH = m_pWidgetDict->GetByteStringFor("H", "I");
   for (size_t i = 0; i < std::size(kHighlightModes); ++i) {
     // TODO(tsepez): disambiguate string ctors.
-    if (csH == ByteStringView(kHighlightModes[i]))
-      return static_cast<HighlightingMode>(i);
+    UNSAFE_TODO({
+      if (csH == ByteStringView(kHighlightModes[i])) {
+        return static_cast<HighlightingMode>(i);
+      }
+    });
   }
   return kInvert;
 }

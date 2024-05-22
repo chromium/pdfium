@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfdoc/cpvt_variabletext.h"
 
 #include <algorithm>
@@ -20,6 +15,7 @@
 #include "core/fpdfdoc/cpvt_wordinfo.h"
 #include "core/fpdfdoc/ipvt_fontmap.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/stl_util.h"
@@ -783,13 +779,14 @@ float CPVT_VariableText::GetAutoFontSize() {
   int32_t nRight = nTotal - 1;
   int32_t nMid = nTotal / 2;
   while (nLeft <= nRight) {
-    if (IsBigger(kFontSizeSteps[nMid]))
+    if (IsBigger(UNSAFE_TODO(kFontSizeSteps[nMid]))) {
       nRight = nMid - 1;
-    else
+    } else {
       nLeft = nMid + 1;
+    }
     nMid = (nLeft + nRight) / 2;
   }
-  return (float)kFontSizeSteps[nMid];
+  return (float)UNSAFE_TODO(kFontSizeSteps[nMid]);
 }
 
 bool CPVT_VariableText::IsBigger(float fFontSize) const {
