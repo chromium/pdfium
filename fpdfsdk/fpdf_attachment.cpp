@@ -200,8 +200,7 @@ FPDFAttachment_GetStringValue(FPDF_ATTACHMENT attachment,
       ByteString encoded =
           PDF_HexEncodeString(string_object->GetString().AsStringView());
       return Utf16EncodeMaybeCopyAndReturnLength(
-          pdfium::MakeRetain<CPDF_String>(nullptr, encoded)->GetUnicodeText(),
-          buffer_span);
+          PDF_DecodeText(encoded.unsigned_span()), buffer_span);
     }
   }
 
