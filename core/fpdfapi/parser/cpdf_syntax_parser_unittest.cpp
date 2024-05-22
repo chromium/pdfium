@@ -14,8 +14,12 @@
 #include "core/fpdfapi/parser/cpdf_syntax_parser.h"
 #include "core/fxcrt/cfx_read_only_span_stream.h"
 #include "core/fxcrt/fx_extension.h"
+#include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
+
+using testing::ElementsAre;
+using testing::IsEmpty;
 
 TEST(SyntaxParserTest, ReadHexString) {
   {
@@ -23,7 +27,7 @@ TEST(SyntaxParserTest, ReadHexString) {
     static const uint8_t data[] = "";
     CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
         pdfium::make_span(data, 0u)));
-    EXPECT_EQ("", parser.ReadHexString());
+    EXPECT_THAT(parser.ReadHexString(), IsEmpty());
     EXPECT_EQ(0, parser.GetPos());
   }
 
@@ -32,7 +36,7 @@ TEST(SyntaxParserTest, ReadHexString) {
     static const uint8_t data[] = "  ";
     CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
         pdfium::make_span(data, 2u)));
-    EXPECT_EQ("", parser.ReadHexString());
+    EXPECT_THAT(parser.ReadHexString(), IsEmpty());
     EXPECT_EQ(2, parser.GetPos());
   }
 
@@ -41,7 +45,7 @@ TEST(SyntaxParserTest, ReadHexString) {
     static const uint8_t data[] = "z12b";
     CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
         pdfium::make_span(data, 4u)));
-    EXPECT_EQ("\x12\xb0", parser.ReadHexString());
+    EXPECT_THAT(parser.ReadHexString(), ElementsAre(0x12, 0xb0));
     EXPECT_EQ(4, parser.GetPos());
   }
 
@@ -50,7 +54,7 @@ TEST(SyntaxParserTest, ReadHexString) {
     static const uint8_t data[] = "*<&*#$^&@1";
     CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
         pdfium::make_span(data, 10u)));
-    EXPECT_EQ("\x10", parser.ReadHexString());
+    EXPECT_THAT(parser.ReadHexString(), ElementsAre(0x10));
     EXPECT_EQ(10, parser.GetPos());
   }
 
@@ -59,7 +63,7 @@ TEST(SyntaxParserTest, ReadHexString) {
     static const uint8_t data[] = "\x80zab";
     CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
         pdfium::make_span(data, 4u)));
-    EXPECT_EQ("\xab", parser.ReadHexString());
+    EXPECT_THAT(parser.ReadHexString(), ElementsAre(0xab));
     EXPECT_EQ(4, parser.GetPos());
   }
 
@@ -68,7 +72,7 @@ TEST(SyntaxParserTest, ReadHexString) {
     static const uint8_t data[] = "\xffzab";
     CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
         pdfium::make_span(data, 4u)));
-    EXPECT_EQ("\xab", parser.ReadHexString());
+    EXPECT_THAT(parser.ReadHexString(), ElementsAre(0xab));
     EXPECT_EQ(4, parser.GetPos());
   }
 
@@ -77,7 +81,7 @@ TEST(SyntaxParserTest, ReadHexString) {
     static const uint8_t data[] = "1A2b>abcd";
     CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
         pdfium::make_span(data, 9u)));
-    EXPECT_EQ("\x1a\x2b", parser.ReadHexString());
+    EXPECT_THAT(parser.ReadHexString(), ElementsAre(0x1a, 0x2b));
     EXPECT_EQ(5, parser.GetPos());
   }
 
@@ -87,17 +91,17 @@ TEST(SyntaxParserTest, ReadHexString) {
     CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
         pdfium::make_span(data, 5u)));
     parser.SetPos(5);
-    EXPECT_EQ("", parser.ReadHexString());
+    EXPECT_THAT(parser.ReadHexString(), IsEmpty());
 
     parser.SetPos(6);
-    EXPECT_EQ("", parser.ReadHexString());
+    EXPECT_THAT(parser.ReadHexString(), IsEmpty());
 
     parser.SetPos(std::numeric_limits<FX_FILESIZE>::max());
-    EXPECT_EQ("", parser.ReadHexString());
+    EXPECT_THAT(parser.ReadHexString(), IsEmpty());
 
     // Check string still parses when set to 0.
     parser.SetPos(0);
-    EXPECT_EQ("\x12\xab", parser.ReadHexString());
+    EXPECT_THAT(parser.ReadHexString(), ElementsAre(0x12, 0xab));
   }
 
   {
@@ -105,7 +109,7 @@ TEST(SyntaxParserTest, ReadHexString) {
     static const uint8_t data[] = "1A2b";
     CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
         pdfium::make_span(data, 4u)));
-    EXPECT_EQ("\x1a\x2b", parser.ReadHexString());
+    EXPECT_THAT(parser.ReadHexString(), ElementsAre(0x1a, 0x2b));
     EXPECT_EQ(4, parser.GetPos());
   }
 
@@ -114,7 +118,7 @@ TEST(SyntaxParserTest, ReadHexString) {
     static const uint8_t data[] = "12abz";
     CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
         pdfium::make_span(data, 5u)));
-    EXPECT_EQ("\x12\xab", parser.ReadHexString());
+    EXPECT_THAT(parser.ReadHexString(), ElementsAre(0x12, 0xab));
     EXPECT_EQ(5, parser.GetPos());
   }
 
@@ -123,7 +127,7 @@ TEST(SyntaxParserTest, ReadHexString) {
     static const uint8_t data[] = "1A2>asdf";
     CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
         pdfium::make_span(data, 8u)));
-    EXPECT_EQ("\x1a\x20", parser.ReadHexString());
+    EXPECT_THAT(parser.ReadHexString(), ElementsAre(0x1a, 0x20));
     EXPECT_EQ(4, parser.GetPos());
   }
 
@@ -132,7 +136,7 @@ TEST(SyntaxParserTest, ReadHexString) {
     static const uint8_t data[] = "1A2zasdf";
     CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
         pdfium::make_span(data, 8u)));
-    EXPECT_EQ("\x1a\x2a\xdf", parser.ReadHexString());
+    EXPECT_THAT(parser.ReadHexString(), ElementsAre(0x1a, 0x2a, 0xdf));
     EXPECT_EQ(8, parser.GetPos());
   }
 
@@ -141,7 +145,7 @@ TEST(SyntaxParserTest, ReadHexString) {
     const char gt = '>';
     CPDF_SyntaxParser parser(pdfium::MakeRetain<CFX_ReadOnlySpanStream>(
         pdfium::byte_span_from_ref(gt)));
-    EXPECT_EQ("", parser.ReadHexString());
+    EXPECT_THAT(parser.ReadHexString(), IsEmpty());
     EXPECT_EQ(1, parser.GetPos());
   }
 }

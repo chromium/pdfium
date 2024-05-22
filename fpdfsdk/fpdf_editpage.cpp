@@ -571,20 +571,27 @@ FPDFPageObjMark_SetBlobParam(FPDF_DOCUMENT document,
                              FPDF_BYTESTRING key,
                              void* value,
                              unsigned long value_len) {
-  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!pPageObj || !PageObjectContainsMark(pPageObj, mark))
+  if (!value && value_len > 0) {
     return false;
+  }
+
+  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!pPageObj || !PageObjectContainsMark(pPageObj, mark)) {
+    return false;
+  }
 
   RetainPtr<CPDF_Dictionary> pParams =
       GetOrCreateMarkParamsDict(document, mark);
-  if (!pParams)
+  if (!pParams) {
     return false;
+  }
 
-  if (!value && value_len > 0)
-    return false;
-
+  // SAFETY: required from caller.
   pParams->SetNewFor<CPDF_String>(
-      key, ByteString(static_cast<const char*>(value), value_len), true);
+      key,
+      UNSAFE_BUFFERS(
+          pdfium::make_span(static_cast<const uint8_t*>(value), value_len)),
+      CPDF_String::DataType::kIsHex);
   pPageObj->SetDirty(true);
   return true;
 }

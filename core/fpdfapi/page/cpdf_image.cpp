@@ -4,16 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/page/cpdf_image.h"
 
 #include <stdint.h>
 
 #include <algorithm>
+#include <array>
 #include <memory>
 #include <utility>
 
@@ -224,19 +220,11 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       pCS->AppendNew<CPDF_Name>("Indexed");
       pCS->AppendNew<CPDF_Name>("DeviceRGB");
       pCS->AppendNew<CPDF_Number>(1);
-      ByteString ct;
-      {
-        // Span's lifetime must end before ReleaseBuffer() below.
-        pdfium::span<char> pBuf = ct.GetBuffer(6);
-        pBuf[0] = static_cast<char>(reset_r);
-        pBuf[1] = static_cast<char>(reset_g);
-        pBuf[2] = static_cast<char>(reset_b);
-        pBuf[3] = static_cast<char>(set_r);
-        pBuf[4] = static_cast<char>(set_g);
-        pBuf[5] = static_cast<char>(set_b);
-      }
-      ct.ReleaseBuffer(6);
-      pCS->AppendNew<CPDF_String>(ct, true);
+      uint8_t ct[6] = {
+          static_cast<uint8_t>(reset_r), static_cast<uint8_t>(reset_g),
+          static_cast<uint8_t>(reset_b), static_cast<uint8_t>(set_r),
+          static_cast<uint8_t>(set_g),   static_cast<uint8_t>(set_b)};
+      pCS->AppendNew<CPDF_String>(ct, CPDF_String::DataType::kIsHex);
     }
     pDict->SetNewFor<CPDF_Number>("BitsPerComponent", 1);
     dest_pitch = (BitmapWidth + 7) / 8;
@@ -317,11 +305,13 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       uint8_t* dest_ptr = dest_span.data();
       const uint8_t* src_ptr = src_span.data();
       for (int32_t column = 0; column < BitmapWidth; column++) {
-        dest_ptr[0] = src_ptr[2];
-        dest_ptr[1] = src_ptr[1];
-        dest_ptr[2] = src_ptr[0];
-        dest_ptr += 3;
-        src_ptr += src_step;
+        UNSAFE_TODO({
+          dest_ptr[0] = src_ptr[2];
+          dest_ptr[1] = src_ptr[1];
+          dest_ptr[2] = src_ptr[0];
+          dest_ptr += 3;
+          src_ptr += src_step;
+        })
       }
       dest_span = dest_span.subspan(dest_pitch);
       src_span = src_span.subspan(src_pitch);

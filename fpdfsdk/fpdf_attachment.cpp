@@ -6,6 +6,7 @@
 
 #include <limits.h>
 
+#include <array>
 #include <memory>
 #include <utility>
 
@@ -32,11 +33,6 @@
 namespace {
 
 constexpr char kChecksumKey[] = "CheckSum";
-
-ByteString CFXByteStringHexDecode(const ByteString& bsHex) {
-  DataAndBytesConsumed result = HexDecode(bsHex.unsigned_span());
-  return ByteString(ByteStringView(result.data));
-}
 
 }  // namespace
 
@@ -162,11 +158,13 @@ FPDFAttachment_SetStringValue(FPDF_ATTACHMENT attachment,
   // SAFETY: required from caller.
   ByteString bsValue = UNSAFE_BUFFERS(ByteStringFromFPDFWideString(value));
   ByteString bsKey = key;
-  bool bEncodedAsHex = bsKey == kChecksumKey;
-  if (bEncodedAsHex) {
-    bsValue = CFXByteStringHexDecode(bsValue);
+  if (bsKey == kChecksumKey) {
+    pParamsDict->SetNewFor<CPDF_String>(bsKey,
+                                        HexDecode(bsValue.unsigned_span()).data,
+                                        CPDF_String::DataType::kIsHex);
+  } else {
+    pParamsDict->SetNewFor<CPDF_String>(bsKey, bsValue);
   }
-  pParamsDict->SetNewFor<CPDF_String>(bsKey, bsValue, bEncodedAsHex);
   return true;
 }
 
@@ -239,15 +237,12 @@ FPDFAttachment_SetFile(FPDF_ATTACHMENT attachment,
   pdfium::span<const uint8_t> contents_span = UNSAFE_BUFFERS(
       pdfium::make_span(static_cast<const uint8_t*>(contents), len));
 
-  ByteString digest;
-  {
-    auto digest_span = pdfium::as_writable_bytes(digest.GetBuffer(16));
-    CRYPT_MD5Generate(contents_span, digest_span.data());
-    digest.ReleaseBuffer(16);
-  }
+  std::array<uint8_t, 16> digest;
+  CRYPT_MD5Generate(contents_span, digest.data());
 
   // Set the checksum of the new attachment in the dictionary.
-  pParamsDict->SetNewFor<CPDF_String>(kChecksumKey, digest, /*bHex=*/true);
+  pParamsDict->SetNewFor<CPDF_String>(kChecksumKey, digest,
+                                      CPDF_String::DataType::kIsHex);
 
   // Create the file stream and have the filespec dictionary link to it.
   auto pFileStream = pDoc->NewIndirect<CPDF_Stream>(

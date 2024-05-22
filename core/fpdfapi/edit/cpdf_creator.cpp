@@ -9,6 +9,7 @@
 #include <stdint.h>
 
 #include <algorithm>
+#include <array>
 #include <set>
 #include <utility>
 
@@ -95,17 +96,15 @@ bool CFX_FileBufferArchive::WriteBlock(pdfium::span<const uint8_t> buffer) {
   return true;
 }
 
-ByteString GenerateFileID(uint32_t dwSeed1, uint32_t dwSeed2) {
-  uint32_t buffer[4];
+std::array<uint32_t, 4> GenerateFileID(uint32_t dwSeed1, uint32_t dwSeed2) {
   void* pContext1 = FX_Random_MT_Start(dwSeed1);
   void* pContext2 = FX_Random_MT_Start(dwSeed2);
-  buffer[0] = FX_Random_MT_Generate(pContext1);
-  buffer[1] = FX_Random_MT_Generate(pContext1);
-  buffer[2] = FX_Random_MT_Generate(pContext2);
-  buffer[3] = FX_Random_MT_Generate(pContext2);
+  std::array<uint32_t, 4> buffer = {
+      FX_Random_MT_Generate(pContext1), FX_Random_MT_Generate(pContext1),
+      FX_Random_MT_Generate(pContext2), FX_Random_MT_Generate(pContext2)};
   FX_Random_MT_Close(pContext1);
   FX_Random_MT_Close(pContext2);
-  return ByteString(ByteStringView(pdfium::as_byte_span(buffer)));
+  return buffer;
 }
 
 bool OutputIndex(IFX_ArchiveStream* archive, FX_FILESIZE offset) {
@@ -570,9 +569,11 @@ void CPDF_Creator::InitID() {
   if (pID1) {
     m_pIDArray->Append(pID1->Clone());
   } else {
-    ByteString bsBuffer =
+    std::array<uint32_t, 4> file_id =
         GenerateFileID((uint32_t)(uintptr_t)this, m_dwLastObjNum);
-    m_pIDArray->AppendNew<CPDF_String>(bsBuffer, true);
+    m_pIDArray->AppendNew<CPDF_String>(
+        pdfium::as_bytes(pdfium::make_span(file_id)),
+        CPDF_String::DataType::kIsHex);
   }
 
   if (pOldIDArray) {
@@ -581,9 +582,11 @@ void CPDF_Creator::InitID() {
       m_pIDArray->Append(pID2->Clone());
       return;
     }
-    ByteString bsBuffer =
+    std::array<uint32_t, 4> file_id =
         GenerateFileID((uint32_t)(uintptr_t)this, m_dwLastObjNum);
-    m_pIDArray->AppendNew<CPDF_String>(bsBuffer, true);
+    m_pIDArray->AppendNew<CPDF_String>(
+        pdfium::as_bytes(pdfium::make_span(file_id)),
+        CPDF_String::DataType::kIsHex);
     return;
   }
 

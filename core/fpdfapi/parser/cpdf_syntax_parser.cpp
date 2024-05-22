@@ -28,6 +28,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
@@ -321,12 +322,13 @@ ByteString CPDF_SyntaxParser::ReadString() {
   return buf;
 }
 
-ByteString CPDF_SyntaxParser::ReadHexString() {
+DataVector<uint8_t> CPDF_SyntaxParser::ReadHexString() {
   uint8_t ch;
-  if (!GetNextChar(ch))
-    return ByteString();
+  if (!GetNextChar(ch)) {
+    return DataVector<uint8_t>();
+  }
 
-  ByteString buf;
+  DataVector<uint8_t> buf;
   bool bFirst = true;
   uint8_t code = 0;
   while (true) {
@@ -339,16 +341,18 @@ ByteString CPDF_SyntaxParser::ReadHexString() {
         code = val * 16;
       } else {
         code += val;
-        buf += static_cast<char>(code);
+        buf.push_back(code);
       }
       bFirst = !bFirst;
     }
 
-    if (!GetNextChar(ch))
+    if (!GetNextChar(ch)) {
       break;
+    }
   }
-  if (!bFirst)
-    buf += static_cast<char>(code);
+  if (!bFirst) {
+    buf.push_back(code);
+  }
 
   return buf;
 }
@@ -532,12 +536,11 @@ RetainPtr<CPDF_Object> CPDF_SyntaxParser::GetObjectBodyInternal(
     return pdfium::MakeRetain<CPDF_Null>();
 
   if (word == "(") {
-    ByteString str = ReadString();
-    return pdfium::MakeRetain<CPDF_String>(m_pPool, str);
+    return pdfium::MakeRetain<CPDF_String>(m_pPool, ReadString());
   }
   if (word == "<") {
-    ByteString str = ReadHexString();
-    return pdfium::MakeRetain<CPDF_String>(m_pPool, str, true);
+    return pdfium::MakeRetain<CPDF_String>(m_pPool, ReadHexString(),
+                                           CPDF_String::DataType::kIsHex);
   }
   if (word == "[") {
     auto pArray = pdfium::MakeRetain<CPDF_Array>();

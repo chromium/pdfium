@@ -107,8 +107,8 @@ TEST(cpdf_nametree, GetUnicodeNameWithBOM) {
   auto pNames = pRootDict->SetNewFor<CPDF_Array>("Names");
 
   // Add the key "1" (with BOM) and value 100 into the array.
-  constexpr char kData[] = "\xFE\xFF\x00\x31";
-  pNames->AppendNew<CPDF_String>(ByteString(kData, sizeof(kData) - 1), true);
+  constexpr uint8_t kData[] = {0xFE, 0xFF, 0x00, 0x31};
+  pNames->AppendNew<CPDF_String>(kData, CPDF_String::DataType::kIsHex);
   pNames->AppendNew<CPDF_Number>(100);
 
   // Check that the key is as expected.

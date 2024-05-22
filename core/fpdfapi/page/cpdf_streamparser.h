@@ -7,6 +7,9 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_STREAMPARSER_H_
 #define CORE_FPDFAPI_PAGE_CPDF_STREAMPARSER_H_
 
+#include <stdint.h>
+
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
@@ -47,7 +50,7 @@ class CPDF_StreamParser {
 
   void GetNextWord(bool& bIsNumber);
   ByteString ReadString();
-  ByteString ReadHexString();
+  DataVector<uint8_t> ReadHexString();
   bool PositionIsInBounds() const;
 
   uint32_t m_Pos = 0;       // Current byte position within |m_pBuf|.

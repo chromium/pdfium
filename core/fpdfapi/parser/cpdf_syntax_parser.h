@@ -82,7 +82,7 @@ class CPDF_SyntaxParser {
   FX_FILESIZE GetDocumentSize() const;
 
   ByteString ReadString();
-  ByteString ReadHexString();
+  DataVector<uint8_t> ReadHexString();
 
   void SetTrailerEnds(std::vector<unsigned int>* trailer_ends) {
     m_TrailerEnds = trailer_ends;

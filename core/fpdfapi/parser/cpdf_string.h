@@ -10,12 +10,16 @@
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/string_pool_template.h"
 #include "core/fxcrt/weak_ptr.h"
 
 class CPDF_String final : public CPDF_Object {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
+
+  // Used as a placeholder to differentiate constructors.
+  enum class DataType { kIsHex };
 
   // CPDF_Object:
   Type GetType() const override;
@@ -32,9 +36,10 @@ class CPDF_String final : public CPDF_Object {
 
  private:
   CPDF_String();
-  // Same as the 3-param ctor, with `bHex` set to false.
+  CPDF_String(WeakPtr<ByteStringPool> pPool,
+              pdfium::span<const uint8_t> data,
+              DataType is_hex);
   CPDF_String(WeakPtr<ByteStringPool> pPool, const ByteString& str);
-  CPDF_String(WeakPtr<ByteStringPool> pPool, const ByteString& str, bool bHex);
   CPDF_String(WeakPtr<ByteStringPool> pPool, WideStringView str);
   ~CPDF_String() override;
 

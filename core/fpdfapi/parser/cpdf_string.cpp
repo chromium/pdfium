@@ -17,21 +17,25 @@
 
 CPDF_String::CPDF_String() = default;
 
-CPDF_String::CPDF_String(WeakPtr<ByteStringPool> pPool, const ByteString& str)
-    : CPDF_String(pPool, str, false) {}
-
 CPDF_String::CPDF_String(WeakPtr<ByteStringPool> pPool,
-                         const ByteString& str,
-                         bool bHex)
-    : m_String(str), m_bHex(bHex) {
-  if (pPool)
+                         pdfium::span<const uint8_t> data,
+                         DataType is_hex)
+    : m_String(ByteStringView(data)), m_bHex(true) {
+  if (pPool) {
     m_String = pPool->Intern(m_String);
+  }
+}
+
+CPDF_String::CPDF_String(WeakPtr<ByteStringPool> pPool, const ByteString& str)
+    : m_String(str) {
+  if (pPool) {
+    m_String = pPool->Intern(m_String);
+  }
 }
 
 CPDF_String::CPDF_String(WeakPtr<ByteStringPool> pPool, WideStringView str)
-    : m_String(PDF_EncodeText(str)) {
-  if (pPool)
-    m_String = pPool->Intern(m_String);
+    : CPDF_String(pPool, PDF_EncodeText(str)) {
+  // Delegates to ctor above.
 }
 
 CPDF_String::~CPDF_String() = default;

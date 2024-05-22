@@ -327,13 +327,13 @@ RetainPtr<CPDF_Object> CPDF_StreamParser::ReadNextObject(
   }
 
   if (first_char == '(') {
-    ByteString str = ReadString();
-    return pdfium::MakeRetain<CPDF_String>(m_pPool, str);
+    return pdfium::MakeRetain<CPDF_String>(m_pPool, ReadString());
   }
 
   if (first_char == '<') {
     if (m_WordSize == 1) {
-      return pdfium::MakeRetain<CPDF_String>(m_pPool, ReadHexString(), true);
+      return pdfium::MakeRetain<CPDF_String>(m_pPool, ReadHexString(),
+                                             CPDF_String::DataType::kIsHex);
     }
 
     auto pDict = pdfium::MakeRetain<CPDF_Dictionary>(m_pPool);
@@ -552,13 +552,15 @@ ByteString CPDF_StreamParser::ReadString() {
   }
 }
 
-ByteString CPDF_StreamParser::ReadHexString() {
-  if (!PositionIsInBounds())
-    return ByteString();
+DataVector<uint8_t> CPDF_StreamParser::ReadHexString() {
+  if (!PositionIsInBounds()) {
+    return DataVector<uint8_t>();
+  }
 
-  ByteString buf;
+  // TODO(thestig): Deduplicate CPDF_SyntaxParser::ReadHexString()?
+  DataVector<uint8_t> buf;
   bool bFirst = true;
-  int code = 0;
+  uint8_t code = 0;
   while (PositionIsInBounds()) {
     uint8_t ch = m_pBuf[m_Pos++];
     if (ch == '>')
@@ -572,14 +574,18 @@ ByteString CPDF_StreamParser::ReadHexString() {
       code = val * 16;
     } else {
       code += val;
-      buf += static_cast<uint8_t>(code);
+      buf.push_back(code);
     }
     bFirst = !bFirst;
   }
-  if (!bFirst)
-    buf += static_cast<char>(code);
+  if (!bFirst) {
+    buf.push_back(code);
+  }
 
-  return buf.First(std::min<size_t>(buf.GetLength(), kMaxStringLength));
+  if (buf.size() > kMaxStringLength) {
+    buf.resize(kMaxStringLength);
+  }
+  return buf;
 }
 
 bool CPDF_StreamParser::PositionIsInBounds() const {
