@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/font/cpdf_type1font.h"
 
 #include <algorithm>
@@ -17,6 +12,7 @@
 
 #include "build/build_config.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/span_util.h"
@@ -156,7 +152,7 @@ void CPDF_Type1Font::LoadGlyphMap() {
       for (uint32_t charcode = 0; charcode < kInternalTableSize; charcode++) {
         const uint8_t prefix[4] = {0x00, 0xf0, 0xf1, 0xf2};
         for (int j = 0; j < 4; j++) {
-          uint16_t unicode = prefix[j] * 256 + charcode;
+          uint16_t unicode = UNSAFE_TODO(prefix[j]) * 256 + charcode;
           m_GlyphIndex[charcode] = face->GetCharIndex(unicode);
 #if BUILDFLAG(IS_APPLE)
           CalcExtGID(charcode);

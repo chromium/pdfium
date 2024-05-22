@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/font/cpdf_fontencoding.h"
 
 #include <iterator>
@@ -20,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxge/fx_font.h"
 #include "core/fxge/fx_fontencoding.h"
 
@@ -1764,7 +1760,7 @@ uint32_t CharCodeFromUnicodeForEncoding(fxge::FontEncoding encoding,
 }
 
 wchar_t UnicodeFromAppleRomanCharCode(uint8_t charcode) {
-  return kMacRomanEncoding[charcode];
+  return UNSAFE_TODO(kMacRomanEncoding[charcode]);
 }
 
 pdfium::span<const uint16_t> UnicodesForPredefinedCharSet(
@@ -1806,19 +1802,19 @@ const char* CharNameFromPredefinedCharSet(FontEncoding encoding,
   }
   switch (encoding) {
     case FontEncoding::kWinAnsi:
-      return kAdobeWinAnsiEncodingNames[charcode];
+      return UNSAFE_TODO(kAdobeWinAnsiEncodingNames[charcode]);
     case FontEncoding::kMacRoman:
-      return kMacRomanEncodingNames[charcode];
+      return UNSAFE_TODO(kMacRomanEncodingNames[charcode]);
     case FontEncoding::kMacExpert:
-      return kMacExpertEncodingNames[charcode];
+      return UNSAFE_TODO(kMacExpertEncodingNames[charcode]);
     case FontEncoding::kStandard:
-      return kStandardEncodingNames[charcode];
+      return UNSAFE_TODO(kStandardEncodingNames[charcode]);
     case FontEncoding::kAdobeSymbol:
-      return kAdobeSymbolEncodingNames[charcode];
+      return UNSAFE_TODO(kAdobeSymbolEncodingNames[charcode]);
     case FontEncoding::kZapfDingbats:
-      return kZapfEncodingNames[charcode];
+      return UNSAFE_TODO(kZapfEncodingNames[charcode]);
     case FontEncoding::kPdfDoc:
-      return kPDFDocEncodingNames[charcode];
+      return UNSAFE_TODO(kPDFDocEncodingNames[charcode]);
     default:
       return nullptr;
   }
