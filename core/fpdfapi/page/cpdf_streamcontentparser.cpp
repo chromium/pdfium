@@ -4,14 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/page/cpdf_streamcontentparser.h"
 
 #include <algorithm>
+#include <array>
 #include <map>
 #include <memory>
 #include <utility>
@@ -1612,7 +1608,7 @@ uint32_t CPDF_StreamContentParser::Parse(
 }
 
 void CPDF_StreamContentParser::ParsePathObject() {
-  float params[6] = {};
+  std::array<float, 6> params = {};
   int nParams = 0;
   int last_pos = m_pSyntax->GetPos();
   while (true) {
