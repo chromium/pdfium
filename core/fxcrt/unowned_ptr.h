@@ -45,12 +45,12 @@
 #include "partition_alloc/partition_alloc_buildflags.h"
 #include "partition_alloc/pointers/raw_ptr.h"
 
-#if !BUILDFLAG(USE_PARTITION_ALLOC)
+#if !PA_BUILDFLAG(USE_PARTITION_ALLOC)
 #error "pdf_use_partition_alloc=true requires use_partition_alloc=true"
 #endif
 
-#if BUILDFLAG(ENABLE_DANGLING_RAW_PTR_CHECKS) || \
-    BUILDFLAG(USE_RAW_PTR_ASAN_UNOWNED_IMPL)
+#if PA_BUILDFLAG(ENABLE_DANGLING_RAW_PTR_CHECKS) || \
+    PA_BUILDFLAG(USE_RAW_PTR_ASAN_UNOWNED_IMPL)
 #define UNOWNED_PTR_DANGLING_CHECKS
 #endif
 

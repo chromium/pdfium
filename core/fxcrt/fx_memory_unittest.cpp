@@ -134,25 +134,26 @@ TEST(fxcrt, FXAlign) {
 }
 
 #if defined(PDF_USE_PARTITION_ALLOC)
-#if BUILDFLAG(USE_PARTITION_ALLOC_AS_MALLOC) && BUILDFLAG(HAS_64_BIT_POINTERS)
+#if PA_BUILDFLAG(USE_PARTITION_ALLOC_AS_MALLOC) && \
+    PA_BUILDFLAG(HAS_64_BIT_POINTERS)
 TEST(FxMemory, NewOperatorResultIsPA) {
   auto obj = std::make_unique<double>(4.0);
   EXPECT_TRUE(partition_alloc::IsManagedByPartitionAlloc(
       reinterpret_cast<uintptr_t>(obj.get())));
-#if BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
+#if PA_BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
   EXPECT_TRUE(partition_alloc::IsManagedByPartitionAllocBRPPool(
       reinterpret_cast<uintptr_t>(obj.get())));
-#endif  // BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
+#endif  // PA_BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
 }
 
 TEST(FxMemory, MallocResultIsPA) {
   void* obj = malloc(16);
   EXPECT_TRUE(partition_alloc::IsManagedByPartitionAlloc(
       reinterpret_cast<uintptr_t>(obj)));
-#if BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
+#if PA_BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
   EXPECT_TRUE(partition_alloc::IsManagedByPartitionAllocBRPPool(
       reinterpret_cast<uintptr_t>(obj)));
-#endif  // BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
+#endif  // PA_BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
   free(obj);
 }
 
@@ -160,11 +161,11 @@ TEST(FxMemory, StackObjectIsNotPA) {
   int x = 3;
   EXPECT_FALSE(partition_alloc::IsManagedByPartitionAlloc(
       reinterpret_cast<uintptr_t>(&x)));
-#if BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
+#if PA_BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
   EXPECT_FALSE(partition_alloc::IsManagedByPartitionAllocBRPPool(
       reinterpret_cast<uintptr_t>(&x)));
-#endif  // BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
+#endif  // PA_BUILDFLAG(ENABLE_BACKUP_REF_PTR_SUPPORT)
 }
-#endif  // BUILDFLAG(USE_PARTITION_ALLOC_AS_MALLOC) &&
-        // BUILDFLAG(HAS_64_BIT_POINTERS)
+#endif  // PA_BUILDFLAG(USE_PARTITION_ALLOC_AS_MALLOC) &&
+        // PA_BUILDFLAG(HAS_64_BIT_POINTERS)
 #endif  // defined(PDF_USE_PARTITION_ALLOC)
