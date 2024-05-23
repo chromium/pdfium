@@ -66,8 +66,8 @@ constexpr std::array<U, N> ToArrayImpl(const T (&data)[N],
   return UNSAFE_BUFFERS({{static_cast<U>(data[I])...}});
 }
 
-template <typename U, typename T, size_t N>
-constexpr std::array<U, N> ToArray(const T (&data)[N]) {
+template <typename U, size_t N>
+constexpr std::array<U, N> ToArray(const U (&data)[N]) {
   return ToArrayImpl<U>(data, std::make_index_sequence<N>());
 }
 

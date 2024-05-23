@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/freetype/fx_freetype.h"
 #include "core/fxge/fx_font.h"
 
@@ -242,8 +243,9 @@ bool CPDF_SimpleFont::LoadCommon() {
   }
 
   if (FontStyleIsAllCaps(m_Flags)) {
-    static const std::array<std::pair<uint8_t, uint8_t>, 3> kLowercases = {
-        {{'a', 'z'}, {0xe0, 0xf6}, {0xf8, 0xfd}}};
+    static const auto kLowercases =
+        fxcrt::ToArray<std::pair<const uint8_t, const uint8_t>>(
+            {{'a', 'z'}, {0xe0, 0xf6}, {0xf8, 0xfd}});
     for (const auto& lower : kLowercases) {
       for (int i = lower.first; i <= lower.second; ++i) {
         if (m_GlyphIndex[i] != 0xffff && m_pFontFile) {

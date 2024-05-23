@@ -17,10 +17,11 @@
 #include "core/fpdfapi/parser/cpdf_name.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fpdfdoc/cpdf_filespec.h"
+#include "core/fxcrt/stl_util.h"
 
 namespace {
 
-const std::array<const char*, 18> kActionTypeStrings = {{
+constexpr auto kActionTypeStrings = fxcrt::ToArray<const char*>({
     "GoTo",
     "GoToR",
     "GoToE",
@@ -39,7 +40,7 @@ const std::array<const char*, 18> kActionTypeStrings = {{
     "Rendition",
     "Trans",
     "GoTo3DView",
-}};
+});
 
 }  // namespace
 
