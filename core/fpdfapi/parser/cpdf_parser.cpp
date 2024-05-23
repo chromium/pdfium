@@ -482,14 +482,16 @@ bool CPDF_Parser::LoadLinearizedAllCrossRefTable(FX_FILESIZE main_xref_offset) {
     return false;
   }
 
+  // Unlike LoadAllCrossRefTablesAndStreams(), the first XRefStm entry in
+  // `xref_stream_list` should be processed.
+  if (xref_stream_list[0] > 0 &&
+      !LoadCrossRefStream(&xref_stream_list[0], /*is_main_xref=*/false)) {
+    return false;
+  }
+
   // Cross reference table entries take precedence over cross reference stream
   // entries. So process the stream entries first and then give the cross
   // reference tables a chance to overwrite them.
-  //
-  // XRefStm entries should only be used in update sections, so skip
-  // `xref_stream_list[0]`.
-  //
-  // See details in ISO 32000-1:2008, section 7.5.8.4.
   for (size_t i = 1; i < xref_list.size(); ++i) {
     if (xref_stream_list[i] > 0 &&
         !LoadCrossRefStream(&xref_stream_list[i], /*is_main_xref=*/false)) {
