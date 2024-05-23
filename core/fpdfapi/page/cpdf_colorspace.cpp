@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 
 #include <math.h>
@@ -40,6 +35,7 @@
 #include "core/fxcodec/icc/icc_transform.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_2d_size.h"
@@ -381,9 +377,12 @@ class Matrix_3by3 {
 float RGB_Conversion(float colorComponent) {
   colorComponent = std::clamp(colorComponent, 0.0f, 1.0f);
   int scale = std::max(static_cast<int>(colorComponent * 1023), 0);
-  if (scale < 192)
-    return kSRGBSamples1[scale] / 255.0f;
-  return kSRGBSamples2[scale / 4 - 48] / 255.0f;
+  UNSAFE_TODO({
+    if (scale < 192) {
+      return kSRGBSamples1[scale] / 255.0f;
+    }
+    return kSRGBSamples2[scale / 4 - 48] / 255.0f;
+  });
 }
 
 void XYZ_to_sRGB(float X, float Y, float Z, float* R, float* G, float* B) {
@@ -668,14 +667,17 @@ void CPDF_ColorSpace::TranslateImageLine(pdfium::span<uint8_t> dest_span,
   float G;
   float B;
   const int divisor = m_Family != Family::kIndexed ? 255 : 1;
-  for (int i = 0; i < pixels; i++) {
-    for (uint32_t j = 0; j < m_nComponents; j++)
-      src[j] = static_cast<float>(*src_buf++) / divisor;
-    GetRGB(src, &R, &G, &B);
-    *dest_buf++ = static_cast<int32_t>(B * 255);
-    *dest_buf++ = static_cast<int32_t>(G * 255);
-    *dest_buf++ = static_cast<int32_t>(R * 255);
-  }
+  UNSAFE_TODO({
+    for (int i = 0; i < pixels; i++) {
+      for (uint32_t j = 0; j < m_nComponents; j++) {
+        src[j] = static_cast<float>(*src_buf++) / divisor;
+      }
+      GetRGB(src, &R, &G, &B);
+      *dest_buf++ = static_cast<int32_t>(B * 255);
+      *dest_buf++ = static_cast<int32_t>(G * 255);
+      *dest_buf++ = static_cast<int32_t>(R * 255);
+    }
+  });
 }
 
 void CPDF_ColorSpace::EnableStdConversion(bool bEnabled) {
@@ -750,13 +752,15 @@ void CPDF_CalGray::TranslateImageLine(pdfium::span<uint8_t> dest_span,
 
   uint8_t* pDestBuf = dest_span.data();
   const uint8_t* pSrcBuf = src_span.data();
-  for (int i = 0; i < pixels; i++) {
-    // Compiler can not conclude that src/dest don't overlap.
-    const uint8_t pix = pSrcBuf[i];
-    *pDestBuf++ = pix;
-    *pDestBuf++ = pix;
-    *pDestBuf++ = pix;
-  }
+  UNSAFE_TODO({
+    for (int i = 0; i < pixels; i++) {
+      // Compiler can not conclude that src/dest don't overlap.
+      const uint8_t pix = pSrcBuf[i];
+      *pDestBuf++ = pix;
+      *pDestBuf++ = pix;
+      *pDestBuf++ = pix;
+    }
+  });
 }
 
 CPDF_CalRGB::CPDF_CalRGB() : CPDF_ColorSpace(Family::kCalRGB) {}
@@ -779,14 +783,14 @@ uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
   if (pGamma) {
     m_bHasGamma = true;
     for (size_t i = 0; i < std::size(m_Gamma); ++i)
-      m_Gamma[i] = pGamma->GetFloatAt(i);
+      UNSAFE_TODO(m_Gamma[i]) = pGamma->GetFloatAt(i);
   }
 
   RetainPtr<const CPDF_Array> pMatrix = pDict->GetArrayFor("Matrix");
   if (pMatrix) {
     m_bHasMatrix = true;
     for (size_t i = 0; i < std::size(m_Matrix); ++i)
-      m_Matrix[i] = pMatrix->GetFloatAt(i);
+      UNSAFE_TODO(m_Matrix[i]) = pMatrix->GetFloatAt(i);
   }
   return 3;
 }
@@ -795,29 +799,31 @@ bool CPDF_CalRGB::GetRGB(pdfium::span<const float> pBuf,
                          float* R,
                          float* G,
                          float* B) const {
-  float A_ = pBuf[0];
-  float B_ = pBuf[1];
-  float C_ = pBuf[2];
-  if (m_bHasGamma) {
-    A_ = powf(A_, m_Gamma[0]);
-    B_ = powf(B_, m_Gamma[1]);
-    C_ = powf(C_, m_Gamma[2]);
-  }
+  UNSAFE_TODO({
+    float A_ = pBuf[0];
+    float B_ = pBuf[1];
+    float C_ = pBuf[2];
+    if (m_bHasGamma) {
+      A_ = powf(A_, m_Gamma[0]);
+      B_ = powf(B_, m_Gamma[1]);
+      C_ = powf(C_, m_Gamma[2]);
+    }
 
-  float X;
-  float Y;
-  float Z;
-  if (m_bHasMatrix) {
-    X = m_Matrix[0] * A_ + m_Matrix[3] * B_ + m_Matrix[6] * C_;
-    Y = m_Matrix[1] * A_ + m_Matrix[4] * B_ + m_Matrix[7] * C_;
-    Z = m_Matrix[2] * A_ + m_Matrix[5] * B_ + m_Matrix[8] * C_;
-  } else {
-    X = A_;
-    Y = B_;
-    Z = C_;
-  }
-  XYZ_to_sRGB_WhitePoint(X, Y, Z, m_WhitePoint[0], m_WhitePoint[1],
-                         m_WhitePoint[2], R, G, B);
+    float X;
+    float Y;
+    float Z;
+    if (m_bHasMatrix) {
+      X = m_Matrix[0] * A_ + m_Matrix[3] * B_ + m_Matrix[6] * C_;
+      Y = m_Matrix[1] * A_ + m_Matrix[4] * B_ + m_Matrix[7] * C_;
+      Z = m_Matrix[2] * A_ + m_Matrix[5] * B_ + m_Matrix[8] * C_;
+    } else {
+      X = A_;
+      Y = B_;
+      Z = C_;
+    }
+    XYZ_to_sRGB_WhitePoint(X, Y, Z, m_WhitePoint[0], m_WhitePoint[1],
+                           m_WhitePoint[2], R, G, B);
+  });
   return true;
 }
 
@@ -875,8 +881,11 @@ uint32_t CPDF_LabCS::v_Load(CPDF_Document* pDoc,
   RetainPtr<const CPDF_Array> pParam = pDict->GetArrayFor("Range");
   static constexpr float kDefaultRanges[kRangesCount] = {-100.0f, 100.0f,
                                                          -100.0f, 100.0f};
-  for (size_t i = 0; i < std::size(kDefaultRanges); ++i)
-    m_Ranges[i] = pParam ? pParam->GetFloatAt(i) : kDefaultRanges[i];
+  UNSAFE_TODO({
+    for (size_t i = 0; i < std::size(kDefaultRanges); ++i) {
+      m_Ranges[i] = pParam ? pParam->GetFloatAt(i) : kDefaultRanges[i];
+    }
+  });
   return 3;
 }
 
@@ -922,22 +931,24 @@ void CPDF_LabCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
 
   uint8_t* pDestBuf = dest_span.data();
   const uint8_t* pSrcBuf = src_span.data();
-  for (int i = 0; i < pixels; i++) {
-    float lab[3];
-    lab[0] = pSrcBuf[0] * 100 / 255.0f;
-    lab[1] = pSrcBuf[1] - 128;
-    lab[2] = pSrcBuf[2] - 128;
+  UNSAFE_TODO({
+    for (int i = 0; i < pixels; i++) {
+      float lab[3];
+      lab[0] = pSrcBuf[0] * 100 / 255.0f;
+      lab[1] = pSrcBuf[1] - 128;
+      lab[2] = pSrcBuf[2] - 128;
 
-    float R;
-    float G;
-    float B;
-    GetRGB(lab, &R, &G, &B);
-    pDestBuf[0] = static_cast<int32_t>(B * 255);
-    pDestBuf[1] = static_cast<int32_t>(G * 255);
-    pDestBuf[2] = static_cast<int32_t>(R * 255);
-    pDestBuf += 3;
-    pSrcBuf += 3;
-  }
+      float R;
+      float G;
+      float B;
+      GetRGB(lab, &R, &G, &B);
+      pDestBuf[0] = static_cast<int32_t>(B * 255);
+      pDestBuf[1] = static_cast<int32_t>(G * 255);
+      pDestBuf[2] = static_cast<int32_t>(R * 255);
+      pDestBuf += 3;
+      pSrcBuf += 3;
+    }
+  });
 }
 
 CPDF_ICCBasedCS::CPDF_ICCBasedCS() : CPDF_BasedCS(Family::kICCBased) {}
@@ -1068,17 +1079,19 @@ void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
   }
   uint8_t* pDestBuf = dest_span.data();
   const uint8_t* pSrcBuf = src_span.data();
-  for (int i = 0; i < pixels; i++) {
-    int index = 0;
-    for (uint32_t c = 0; c < nComponents; c++) {
-      index = index * 52 + (*pSrcBuf) / 5;
-      pSrcBuf++;
+  UNSAFE_TODO({
+    for (int i = 0; i < pixels; i++) {
+      int index = 0;
+      for (uint32_t c = 0; c < nComponents; c++) {
+        index = index * 52 + (*pSrcBuf) / 5;
+        pSrcBuf++;
+      }
+      index *= 3;
+      *pDestBuf++ = cache_[index];
+      *pDestBuf++ = cache_[index + 1];
+      *pDestBuf++ = cache_[index + 2];
     }
-    index *= 3;
-    *pDestBuf++ = cache_[index];
-    *pDestBuf++ = cache_[index + 1];
-    *pDestBuf++ = cache_[index + 2];
-  }
+  });
 }
 
 bool CPDF_ICCBasedCS::IsNormal() const {

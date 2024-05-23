@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/page/cpdf_meshstream.h"
 
 #include <utility>
@@ -21,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/cfx_bitstream.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/span.h"
 
 namespace {
@@ -147,10 +143,11 @@ bool CPDF_MeshStream::Load() {
   m_ymin = pDecode->GetFloatAt(2);
   m_ymax = pDecode->GetFloatAt(3);
   for (uint32_t i = 0; i < m_nComponents; ++i) {
-    m_ColorMin[i] = pDecode->GetFloatAt(i * 2 + 4);
-    m_ColorMax[i] = pDecode->GetFloatAt(i * 2 + 5);
+    UNSAFE_TODO({
+      m_ColorMin[i] = pDecode->GetFloatAt(i * 2 + 4);
+      m_ColorMax[i] = pDecode->GetFloatAt(i * 2 + 5);
+    });
   }
-
   if (ShouldCheckBPC(m_type)) {
     m_CoordMax = m_nCoordBits == 32 ? -1 : (1 << m_nCoordBits) - 1;
     m_ComponentMax = (1 << m_nComponentBits) - 1;
@@ -210,9 +207,11 @@ FX_RGB_STRUCT<float> CPDF_MeshStream::ReadColor() const {
 
   float color_value[kMaxComponents];
   for (uint32_t i = 0; i < m_nComponents; ++i) {
-    color_value[i] = m_ColorMin[i] + m_BitStream->GetBits(m_nComponentBits) *
-                                         (m_ColorMax[i] - m_ColorMin[i]) /
-                                         m_ComponentMax;
+    UNSAFE_TODO({
+      color_value[i] = m_ColorMin[i] + m_BitStream->GetBits(m_nComponentBits) *
+                                           (m_ColorMax[i] - m_ColorMin[i]) /
+                                           m_ComponentMax;
+    });
   }
 
   FX_RGB_STRUCT<float> rgb = {};
@@ -224,7 +223,7 @@ FX_RGB_STRUCT<float> CPDF_MeshStream::ReadColor() const {
   float result[kMaxComponents] = {};
   for (const auto& func : m_funcs) {
     if (func && func->OutputCount() <= kMaxComponents) {
-      func->Call(pdfium::make_span(color_value, 1u), result);
+      func->Call(UNSAFE_TODO(pdfium::make_span(color_value, 1u)), result);
     }
   }
 

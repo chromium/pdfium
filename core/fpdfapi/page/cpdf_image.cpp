@@ -28,6 +28,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_stream.h"
@@ -311,7 +312,7 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
           dest_ptr[2] = src_ptr[0];
           dest_ptr += 3;
           src_ptr += src_step;
-        })
+        });
       }
       dest_span = dest_span.subspan(dest_pitch);
       src_span = src_span.subspan(src_pitch);

@@ -39,6 +39,7 @@
 #include "core/fxcrt/autonuller.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/notreached.h"
@@ -1687,7 +1688,7 @@ void CPDF_StreamContentParser::ParsePathObject() {
           break;
 
         FX_Number number(m_pSyntax->GetWord());
-        params[nParams++] = number.GetFloat();
+        UNSAFE_TODO(params[nParams++]) = number.GetFloat();
         break;
       }
       default:
