@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 
 #include <stdint.h>
@@ -58,6 +53,7 @@
 #include "core/fpdfapi/render/cpdf_type3cache.h"
 #include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_2d_size.h"
@@ -1236,7 +1232,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
       uint32_t fill_argb = m_Options.TranslateColor(mask_argb);
       if (alpha != 1.0f) {
         uint8_t* fill_argb8 = reinterpret_cast<uint8_t*>(&fill_argb);
-        fill_argb8[3] *= FXSYS_roundf(alpha * 255) / 255;
+        UNSAFE_TODO(fill_argb8[3]) *= FXSYS_roundf(alpha * 255) / 255;
       }
       if (m_pDevice->SetBitMask(bitmap, left, top, fill_argb)) {
         return;
@@ -1409,8 +1405,10 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
       uint8_t* dest_pos = dest_buf.subspan(dest_offset).data();
       const uint8_t* src_pos = src_buf.subspan(src_offset).data();
       for (int col = 0; col < width; col++) {
-        *dest_pos++ = transfers[FXRGB2GRAY(src_pos[2], src_pos[1], *src_pos)];
-        src_pos += Bpp;
+        UNSAFE_TODO({
+          *dest_pos++ = transfers[FXRGB2GRAY(src_pos[2], src_pos[1], *src_pos)];
+          src_pos += Bpp;
+        });
       }
     }
   } else if (pFunc) {

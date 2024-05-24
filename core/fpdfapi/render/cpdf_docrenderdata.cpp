@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 
 #include <stdint.h>
@@ -25,6 +20,7 @@
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/render/cpdf_type3cache.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fixed_size_data_vector.h"
 
 #if BUILDFLAG(IS_WIN)
@@ -89,9 +85,11 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
       return nullptr;
 
     for (uint32_t i = 0; i < 3; ++i) {
-      pFuncs[2 - i] = CPDF_Function::Load(pArray->GetDirectObjectAt(i));
-      if (!pFuncs[2 - i])
+      UNSAFE_TODO(pFuncs[2 - i]) =
+          CPDF_Function::Load(pArray->GetDirectObjectAt(i));
+      if (!UNSAFE_TODO(pFuncs[2 - i])) {
         return nullptr;
+      }
     }
   } else {
     pFuncs[0] = CPDF_Function::Load(pObj);
@@ -116,11 +114,11 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
     for (size_t v = 0; v < CPDF_TransferFunc::kChannelSampleSize; ++v) {
       float input = static_cast<float>(v) / 255.0f;
       for (int i = 0; i < 3; ++i) {
-        if (pFuncs[i]->OutputCount() > kMaxOutputs) {
+        if (UNSAFE_TODO(pFuncs[i])->OutputCount() > kMaxOutputs) {
           samples[i][v] = v;
           continue;
         }
-        pFuncs[i]->Call(pdfium::span_from_ref(input), output);
+        UNSAFE_TODO(pFuncs[i])->Call(pdfium::span_from_ref(input), output);
         size_t o = FXSYS_roundf(output[0] * 255);
         if (o != v)
           bIdentity = false;

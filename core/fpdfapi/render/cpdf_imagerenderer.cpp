@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/render/cpdf_imagerenderer.h"
 
 #include <math.h>
@@ -36,6 +31,7 @@
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
@@ -263,18 +259,18 @@ RetainPtr<const CFX_DIBitmap> CPDF_ImageRenderer::CalculateDrawImage(
         const uint8_t* mask_scan =
             mask_device.GetBitmap()->GetScanline(row).data();
         for (int col = 0; col < rect.Width(); col++) {
-          int alpha = *mask_scan++;
+          int alpha = UNSAFE_TODO(*mask_scan++);
           if (!alpha) {
-            dest_scan += 4;
+            UNSAFE_TODO(dest_scan += 4);
             continue;
           }
           int orig = (*dest_scan - matte_b) * 255 / alpha + matte_b;
-          *dest_scan++ = std::clamp(orig, 0, 255);
+          UNSAFE_TODO(*dest_scan++) = std::clamp(orig, 0, 255);
           orig = (*dest_scan - matte_g) * 255 / alpha + matte_g;
-          *dest_scan++ = std::clamp(orig, 0, 255);
+          UNSAFE_TODO(*dest_scan++) = std::clamp(orig, 0, 255);
           orig = (*dest_scan - matte_r) * 255 / alpha + matte_r;
-          *dest_scan++ = std::clamp(orig, 0, 255);
-          dest_scan++;
+          UNSAFE_TODO(*dest_scan++) = std::clamp(orig, 0, 255);
+          UNSAFE_TODO(dest_scan++);
         }
       }
     }
