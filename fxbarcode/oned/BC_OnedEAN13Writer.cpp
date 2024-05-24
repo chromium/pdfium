@@ -156,41 +156,41 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
   length = tempStr.GetLength();
   int32_t strWidth = static_cast<int32_t>(kWidth * m_outputHScale);
 
-  CalcTextInfo(tempStr, &charpos[1], m_pFont, (float)strWidth, iFontSize,
-               blank);
+  pdfium::span<TextCharPos> charpos_span = pdfium::make_span(charpos);
+  CalcTextInfo(tempStr, charpos_span.subspan(1), m_pFont, (float)strWidth,
+               iFontSize, blank);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
                               kLeftPosition * m_outputHScale,
                               (float)(m_Height - iTextHeight) + iFontSize);
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(pdfium::make_span(charpos).subspan(1, length),
-                           m_pFont, static_cast<float>(iFontSize),
-                           affine_matrix1, m_fontColor, GetTextRenderOptions());
+    device->DrawNormalText(charpos_span.subspan(1, length), m_pFont,
+                           static_cast<float>(iFontSize), affine_matrix1,
+                           m_fontColor, GetTextRenderOptions());
   }
   tempStr = str.Substr(7, 6);
   length = tempStr.GetLength();
-  CalcTextInfo(tempStr, &charpos[7], m_pFont, (float)strWidth, iFontSize,
-               blank);
+  CalcTextInfo(tempStr, charpos_span.subspan(7), m_pFont, (float)strWidth,
+               iFontSize, blank);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0,
                               (kLeftPosition + 47) * m_outputHScale,
                               (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(pdfium::make_span(charpos).subspan(7, length),
-                           m_pFont, static_cast<float>(iFontSize),
-                           affine_matrix1, m_fontColor, GetTextRenderOptions());
+    device->DrawNormalText(charpos_span.subspan(7, length), m_pFont,
+                           static_cast<float>(iFontSize), affine_matrix1,
+                           m_fontColor, GetTextRenderOptions());
   }
   tempStr = str.First(1);
   length = tempStr.GetLength();
   strWidth = 7 * static_cast<int32_t>(strWidth * m_outputHScale);
 
-  CalcTextInfo(tempStr, charpos.data(), m_pFont, (float)strWidth, iFontSize,
-               blank);
+  CalcTextInfo(tempStr, charpos, m_pFont, (float)strWidth, iFontSize, blank);
   {
     CFX_Matrix affine_matrix1(1.0, 0.0, 0.0, -1.0, 0.0,
                               (float)(m_Height - iTextHeight + iFontSize));
     affine_matrix1.Concat(matrix);
-    device->DrawNormalText(pdfium::make_span(charpos).first(length), m_pFont,
+    device->DrawNormalText(charpos_span.first(length), m_pFont,
                            static_cast<float>(iFontSize), affine_matrix1,
                            m_fontColor, GetTextRenderOptions());
   }

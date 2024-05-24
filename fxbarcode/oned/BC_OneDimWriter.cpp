@@ -20,11 +20,6 @@
  * limitations under the License.
  */
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "fxbarcode/oned/BC_OneDimWriter.h"
 
 #include <math.h>
@@ -107,7 +102,7 @@ pdfium::span<uint8_t> CBC_OneDimWriter::AppendPattern(
 }
 
 void CBC_OneDimWriter::CalcTextInfo(const ByteString& text,
-                                    TextCharPos* charPos,
+                                    pdfium::span<TextCharPos> charPos,
                                     CFX_Font* cFont,
                                     float geWidth,
                                     int32_t fontSize,
@@ -156,7 +151,7 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
                                        const CFX_Matrix& matrix,
                                        const ByteString str,
                                        float geWidth,
-                                       TextCharPos* pCharPos,
+                                       pdfium::span<TextCharPos> pCharPos,
                                        float locX,
                                        float locY,
                                        int32_t barWidth) {
@@ -172,7 +167,7 @@ void CBC_OneDimWriter::ShowDeviceChars(CFX_RenderDevice* device,
   CFX_Matrix affine_matrix(1.0, 0.0, 0.0, -1.0, (float)locX,
                            (float)(locY + iFontSize));
   affine_matrix.Concat(matrix);
-  device->DrawNormalText(pdfium::make_span(pCharPos, str.GetLength()), m_pFont,
+  device->DrawNormalText(pCharPos.first(str.GetLength()), m_pFont,
                          static_cast<float>(iFontSize), affine_matrix,
                          m_fontColor, GetTextRenderOptions());
 }
@@ -197,7 +192,7 @@ bool CBC_OneDimWriter::ShowChars(WideStringView contents,
   }
   int32_t iFontSize = static_cast<int32_t>(fabs(m_fFontSize));
   int32_t iTextHeight = iFontSize + 1;
-  CalcTextInfo(str, charpos.data(), m_pFont, geWidth, iFontSize, charsLen);
+  CalcTextInfo(str, charpos, m_pFont, geWidth, iFontSize, charsLen);
   if (charsLen < 1)
     return true;
 
@@ -226,7 +221,7 @@ bool CBC_OneDimWriter::ShowChars(WideStringView contents,
       geWidth = (float)barWidth;
       break;
   }
-  ShowDeviceChars(device, matrix, str, geWidth, charpos.data(), (float)locX,
+  ShowDeviceChars(device, matrix, str, geWidth, charpos, (float)locX,
                   (float)locY, barWidth);
   return true;
 }
