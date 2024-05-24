@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #ifndef XFA_FGAS_FONT_CFGAS_FONTMGR_H_
 #define XFA_FGAS_FONT_CFGAS_FONTMGR_H_
 
@@ -20,6 +15,7 @@
 #include <vector>
 
 #include "build/build_config.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/widestring.h"
@@ -30,8 +26,8 @@ class IFX_SeekableReadStream;
 
 #if BUILDFLAG(IS_WIN)
 struct FX_FONTSIGNATURE {
-  uint32_t fsUsb[4];
-  uint32_t fsCsb[2];
+  std::array<uint32_t, 4> fsUsb;
+  std::array<uint32_t, 2> fsCsb;
 };
 
 inline bool operator==(const FX_FONTSIGNATURE& left,

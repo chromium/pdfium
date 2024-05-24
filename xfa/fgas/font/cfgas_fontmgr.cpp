@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 
 #include <stdint.h>
@@ -193,9 +188,11 @@ int32_t CALLBACK GdiFontEnumProc(ENUMLOGFONTEX* lpelfe,
   font.uCharSet = FX_GetCharsetFromInt(lf.lfCharSet);
   font.dwFontStyles = GetGdiFontStyles(lf);
   FXSYS_wcsncpy(font.wsFontFace, (const wchar_t*)lf.lfFaceName, 31);
-  font.wsFontFace[31] = 0;
-  FXSYS_memcpy(&font.FontSignature, &lpntme->ntmFontSig,
-               sizeof(lpntme->ntmFontSig));
+  UNSAFE_TODO({
+    font.wsFontFace[31] = 0;
+    FXSYS_memcpy(&font.FontSignature, &lpntme->ntmFontSig,
+                 sizeof(lpntme->ntmFontSig));
+  });
   reinterpret_cast<std::deque<FX_FONTDESCRIPTOR>*>(lParam)->push_back(font);
   return 1;
 }
@@ -213,8 +210,10 @@ std::deque<FX_FONTDESCRIPTOR> EnumGdiFonts(const wchar_t* pwsFaceName,
   static_assert(std::is_aggregate_v<decltype(lfFind)>);
   lfFind.lfCharSet = DEFAULT_CHARSET;
   if (pwsFaceName) {
-    FXSYS_wcsncpy(lfFind.lfFaceName, pwsFaceName, 31);
-    lfFind.lfFaceName[31] = 0;
+    UNSAFE_TODO({
+      FXSYS_wcsncpy(lfFind.lfFaceName, pwsFaceName, 31);
+      lfFind.lfFaceName[31] = 0;
+    });
   }
   HDC hDC = ::GetDC(nullptr);
   EnumFontFamiliesExW(hDC, (LPLOGFONTW)&lfFind, (FONTENUMPROCW)GdiFontEnumProc,
@@ -376,8 +375,9 @@ const FX_CodePage kCodePages[] = {FX_CodePage::kMSWin_WesternEuropean,
 
 uint16_t FX_GetCodePageBit(FX_CodePage wCodePage) {
   for (size_t i = 0; i < std::size(kCodePages); ++i) {
-    if (kCodePages[i] == wCodePage)
+    if (UNSAFE_TODO(kCodePages[i]) == wCodePage) {
       return static_cast<uint16_t>(i);
+    }
   }
   return static_cast<uint16_t>(-1);
 }
@@ -520,7 +520,7 @@ RetainPtr<CFX_Face> LoadFace(
   // https://bugs.chromium.org/p/pdfium/issues/detail?id=690
   FXFT_StreamRec* ftStream =
       static_cast<FXFT_StreamRec*>(ft_scalloc(sizeof(FXFT_StreamRec), 1));
-  FXSYS_memset(ftStream, 0, sizeof(FXFT_StreamRec));
+  UNSAFE_TODO(FXSYS_memset(ftStream, 0, sizeof(FXFT_StreamRec)));
   ftStream->base = nullptr;
   ftStream->descriptor.pointer = static_cast<void*>(pFontStream.Get());
   ftStream->pos = 0;

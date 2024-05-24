@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "xfa/fgas/font/cfgas_pdffontmgr.h"
 
 #include <algorithm>
@@ -21,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxge/fx_font.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -107,13 +103,13 @@ ByteString CFGAS_PDFFontMgr::PsNameToFontName(const ByteString& strPsName,
                                               bool bBold,
                                               bool bItalic) {
   for (size_t i = 0; i < std::size(kXFAPDFFontName); ++i) {
-    if (strPsName == kXFAPDFFontName[i][0]) {
+    if (strPsName == UNSAFE_TODO(kXFAPDFFontName[i][0])) {
       size_t index = 1;
       if (bBold)
         ++index;
       if (bItalic)
         index += 2;
-      return kXFAPDFFontName[i][index];
+      return UNSAFE_TODO(kXFAPDFFontName[i][index]);
     }
   }
   return strPsName;
