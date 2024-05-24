@@ -13,6 +13,7 @@
 #include <optional>
 
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/widetext_buffer.h"
 #include "fxjs/xfa/fxjse.h"
 #include "v8/include/cppgc/persistent.h"

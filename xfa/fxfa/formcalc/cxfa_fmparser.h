@@ -10,6 +10,7 @@
 #include <optional>
 #include <vector>
 
+#include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/macros.h"
