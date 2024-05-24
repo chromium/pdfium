@@ -4,14 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "xfa/fgas/layout/cfgas_char.h"
 
 #include <algorithm>
+#include <array>
 #include <iterator>
 
 #include "core/fxcrt/check.h"
@@ -103,17 +99,17 @@ enum FX_BIDINEUTRALACTION : uint16_t {
 };
 #undef PACK_NIBBLES
 
-const FX_BIDICLASS kNTypes[] = {
-    FX_BIDICLASS::kN,   FX_BIDICLASS::kL,   FX_BIDICLASS::kR,
-    FX_BIDICLASS::kAN,  FX_BIDICLASS::kEN,  FX_BIDICLASS::kAL,
-    FX_BIDICLASS::kNSM, FX_BIDICLASS::kCS,  FX_BIDICLASS::kES,
-    FX_BIDICLASS::kET,  FX_BIDICLASS::kBN,  FX_BIDICLASS::kBN,
-    FX_BIDICLASS::kN,   FX_BIDICLASS::kB,   FX_BIDICLASS::kRLO,
-    FX_BIDICLASS::kRLE, FX_BIDICLASS::kLRO, FX_BIDICLASS::kLRE,
-    FX_BIDICLASS::kPDF, FX_BIDICLASS::kON,
-};
+constexpr auto kNTypes = fxcrt::ToArray<const FX_BIDICLASS>(
+    {FX_BIDICLASS::kN,   FX_BIDICLASS::kL,   FX_BIDICLASS::kR,
+     FX_BIDICLASS::kAN,  FX_BIDICLASS::kEN,  FX_BIDICLASS::kAL,
+     FX_BIDICLASS::kNSM, FX_BIDICLASS::kCS,  FX_BIDICLASS::kES,
+     FX_BIDICLASS::kET,  FX_BIDICLASS::kBN,  FX_BIDICLASS::kBN,
+     FX_BIDICLASS::kN,   FX_BIDICLASS::kB,   FX_BIDICLASS::kRLO,
+     FX_BIDICLASS::kRLE, FX_BIDICLASS::kLRO, FX_BIDICLASS::kLRE,
+     FX_BIDICLASS::kPDF, FX_BIDICLASS::kON});
 
-const FX_BIDIWEAKSTATE kWeakStates[20][10] = {
+using WeakStateRow = std::array<const FX_BIDIWEAKSTATE, 10>;
+constexpr std::array<const WeakStateRow, 20> kWeakStateTable = {{
     {FX_BWSao, FX_BWSxl, FX_BWSxr, FX_BWScn, FX_BWScn, FX_BWSxa, FX_BWSxa,
      FX_BWSao, FX_BWSao, FX_BWSao},
     {FX_BWSro, FX_BWSxl, FX_BWSxr, FX_BWSra, FX_BWSre, FX_BWSxa, FX_BWSxr,
@@ -154,9 +150,10 @@ const FX_BIDIWEAKSTATE kWeakStates[20][10] = {
      FX_BWSro, FX_BWSro, FX_BWSret},
     {FX_BWSlo, FX_BWSxl, FX_BWSxr, FX_BWSla, FX_BWSle, FX_BWSxa, FX_BWSlet,
      FX_BWSlo, FX_BWSlo, FX_BWSlet},
-};
+}};
 
-const FX_BIDIWEAKACTION kWeakActions[20][10] = {
+using WeakActionRow = std::array<const FX_BIDIWEAKACTION, 10>;
+constexpr std::array<const WeakActionRow, 20> kWeakActionTable = {{
     {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxA, FX_BWAxxR,
      FX_BWAxxR, FX_BWAxxN, FX_BWAxxN, FX_BWAxxN},
     {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxE, FX_BWAxxR,
@@ -197,30 +194,33 @@ const FX_BIDIWEAKACTION kWeakActions[20][10] = {
      FX_BWAxxE, FX_BWAxxN, FX_BWAxxN, FX_BWAxxE},
     {FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxx, FX_BWAxxL, FX_BWAxxR,
      FX_BWAxxL, FX_BWAxxN, FX_BWAxxN, FX_BWAxxL},
-};
+}};
 
-const FX_BIDINEUTRALSTATE kNeutralStates[6][5] = {
+using NeutralStateRow = std::array<const FX_BIDINEUTRALSTATE, 5>;
+constexpr std::array<const NeutralStateRow, 6> kNeutralStateTable = {{
     {FX_BNSrn, FX_BNSl, FX_BNSr, FX_BNSr, FX_BNSr},
     {FX_BNSln, FX_BNSl, FX_BNSr, FX_BNSa, FX_BNSl},
     {FX_BNSrn, FX_BNSl, FX_BNSr, FX_BNSr, FX_BNSr},
     {FX_BNSln, FX_BNSl, FX_BNSr, FX_BNSa, FX_BNSl},
     {FX_BNSna, FX_BNSl, FX_BNSr, FX_BNSa, FX_BNSl},
     {FX_BNSna, FX_BNSl, FX_BNSr, FX_BNSa, FX_BNSl},
-};
+}};
 
-const FX_BIDINEUTRALACTION kNeutralActions[6][5] = {
+using NeutralActionRow = std::array<const FX_BIDINEUTRALACTION, 5>;
+constexpr std::array<const NeutralActionRow, 6> kNeutralActionTable = {{
     {FX_BNAIn, FX_BNAZero, FX_BNAZero, FX_BNAZero, FX_BNAZero},
     {FX_BNAIn, FX_BNAZero, FX_BNAZero, FX_BNAZero, FX_BNAnL},
     {FX_BNAIn, FX_BNAEn, FX_BNARn, FX_BNARn, FX_BNARn},
     {FX_BNAIn, FX_BNALn, FX_BNAEn, FX_BNAEn, FX_BNALnL},
     {FX_BNAIn, FX_BNAZero, FX_BNAZero, FX_BNAZero, FX_BNAnL},
     {FX_BNAIn, FX_BNAEn, FX_BNARn, FX_BNARn, FX_BNAEn},
-};
+}};
 
-const uint8_t kAddLevel[2][4] = {
+using AddLevelRow = std::array<const uint8_t, 4>;
+constexpr std::array<const AddLevelRow, 2> kAddLevelTable = {{
     {0, 1, 2, 2},
     {1, 0, 1, 1},
-};
+}};
 
 FX_BIDICLASS Direction(int32_t val) {
   return FX_IsOdd(val) ? FX_BIDICLASS::kR : FX_BIDICLASS::kL;
@@ -244,31 +244,25 @@ FX_BIDICLASS GetResolvedNeutrals(int32_t iAction) {
 }
 
 FX_BIDIWEAKSTATE GetWeakState(FX_BIDIWEAKSTATE eState, FX_BIDICLASS eClass) {
-  DCHECK(static_cast<size_t>(eState) < std::size(kWeakStates));
-  DCHECK(static_cast<size_t>(eClass) < std::size(kWeakStates[0]));
-  return kWeakStates[static_cast<size_t>(eState)][static_cast<size_t>(eClass)];
+  return kWeakStateTable[static_cast<size_t>(eState)]
+                        [static_cast<size_t>(eClass)];
 }
 
 FX_BIDIWEAKACTION GetWeakAction(FX_BIDIWEAKSTATE eState, FX_BIDICLASS eClass) {
-  DCHECK(static_cast<size_t>(eState) < std::size(kWeakActions));
-  DCHECK(static_cast<size_t>(eClass) < std::size(kWeakActions[0]));
-  return kWeakActions[static_cast<size_t>(eState)][static_cast<size_t>(eClass)];
+  return kWeakActionTable[static_cast<size_t>(eState)]
+                         [static_cast<size_t>(eClass)];
 }
 
 FX_BIDINEUTRALSTATE GetNeutralState(FX_BIDINEUTRALSTATE eState,
                                     FX_BIDICLASS eClass) {
-  DCHECK(static_cast<size_t>(eState) < std::size(kNeutralStates));
-  DCHECK(static_cast<size_t>(eClass) < std::size(kNeutralStates[0]));
-  return kNeutralStates[static_cast<size_t>(eState)]
-                       [static_cast<size_t>(eClass)];
+  return kNeutralStateTable[static_cast<size_t>(eState)]
+                           [static_cast<size_t>(eClass)];
 }
 
 FX_BIDINEUTRALACTION GetNeutralAction(FX_BIDINEUTRALSTATE eState,
                                       FX_BIDICLASS eClass) {
-  DCHECK(static_cast<size_t>(eState) < std::size(kNeutralActions));
-  DCHECK(static_cast<size_t>(eClass) < std::size(kNeutralActions[0]));
-  return kNeutralActions[static_cast<size_t>(eState)]
-                        [static_cast<size_t>(eClass)];
+  return kNeutralActionTable[static_cast<size_t>(eState)]
+                            [static_cast<size_t>(eClass)];
 }
 
 void ReverseString(std::vector<CFGAS_Char>* chars,
@@ -447,8 +441,9 @@ void ResolveImplicit(std::vector<CFGAS_Char>* chars, size_t iCount) {
         eCls >= FX_BIDICLASS::kAL) {
       continue;
     }
-    (*chars)[i].m_iBidiLevel += kAddLevel[FX_IsOdd((*chars)[i].m_iBidiLevel)]
-                                         [static_cast<size_t>(eCls) - 1];
+    (*chars)[i].m_iBidiLevel +=
+        kAddLevelTable[FX_IsOdd((*chars)[i].m_iBidiLevel)]
+                      [static_cast<size_t>(eCls) - 1];
   }
 }
 

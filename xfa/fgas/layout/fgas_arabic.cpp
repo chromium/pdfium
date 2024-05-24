@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "xfa/fgas/layout/fgas_arabic.h"
 
 #include <iterator>
@@ -142,7 +137,7 @@ const FX_ARBFORMTABLE* GetArabicFormTable(wchar_t unicode) {
   if (unicode < kFirstFormTableEntry || unicode > kLastFormTableEntry)
     return nullptr;
 
-  return &kFormTable[unicode - kFirstFormTableEntry];
+  return UNSAFE_TODO(&kFormTable[unicode - kFirstFormTableEntry]);
 }
 
 const FX_ARBFORMTABLE* ParseChar(const CFGAS_Char* pTC,
@@ -221,7 +216,7 @@ std::optional<wchar_t> GetArabicFromShaddaTable(wchar_t shadda) {
   if (shadda < kFirstShaddaTableEntry || shadda > kLastShaddaTableEntry)
     return std::nullopt;
 
-  return kShaddaTable[shadda - kFirstShaddaTableEntry];
+  return UNSAFE_TODO(kShaddaTable[shadda - kFirstShaddaTableEntry]);
 }
 
 }  // namespace pdfium::arabic

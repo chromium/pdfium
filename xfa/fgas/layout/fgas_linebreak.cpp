@@ -4,16 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "xfa/fgas/layout/fgas_linebreak.h"
 
+#include <array>
 #include <iterator>
 
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_unicode.h"
 
 namespace {
@@ -26,7 +23,8 @@ namespace {
 #define FX_LBPB FX_LINEBREAKTYPE::kPROHIBITED_BRK
 #define FX_LBHS FX_LINEBREAKTYPE::kHANGUL_SPACE_BRK
 
-const FX_LINEBREAKTYPE kFX_LineBreak_PairTable[38][38] = {
+using LineBreakPairRow = std::array<const FX_LINEBREAKTYPE, 38>;
+constexpr std::array<const LineBreakPairRow, 38> kLineBreakPairTable = {{
     {FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB,
      FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB,
      FX_LBPB, FX_LBPB, FX_LBPB, FX_LBCP, FX_LBPB, FX_LBPB, FX_LBPB, FX_LBPB,
@@ -217,7 +215,7 @@ const FX_LINEBREAKTYPE kFX_LineBreak_PairTable[38][38] = {
      FX_LBDB, FX_LBDB, FX_LBPB, FX_LBCB, FX_LBPB, FX_LBDB, FX_LBDB, FX_LBDB,
      FX_LBDB, FX_LBDB, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN,
      FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN, FX_LBUN},
-};
+}};
 
 #undef FX_LBUN
 #undef FX_LBDB
@@ -231,9 +229,7 @@ const FX_LINEBREAKTYPE kFX_LineBreak_PairTable[38][38] = {
 
 FX_LINEBREAKTYPE GetLineBreakTypeFromPair(FX_BREAKPROPERTY curr_char,
                                           FX_BREAKPROPERTY next_char) {
-  size_t row = static_cast<size_t>(curr_char);
-  size_t col = static_cast<size_t>(next_char);
-  DCHECK(row < std::size(kFX_LineBreak_PairTable));
-  DCHECK(col < std::size(kFX_LineBreak_PairTable[0]));
-  return kFX_LineBreak_PairTable[row][col];
+  const size_t row = static_cast<size_t>(curr_char);
+  const size_t col = static_cast<size_t>(next_char);
+  return kLineBreakPairTable[row][col];
 }

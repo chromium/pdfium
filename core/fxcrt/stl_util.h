@@ -6,6 +6,7 @@
 #define CORE_FXCRT_STL_UTIL_H_
 
 #include <algorithm>
+#include <array>
 #include <memory>
 
 #include "core/fxcrt/compiler_specific.h"

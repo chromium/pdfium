@@ -4,17 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "xfa/fgas/layout/cfgas_rtfbreak.h"
 
 #include <algorithm>
 
 #include "build/build_config.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/containers/adapters.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -377,7 +373,7 @@ bool CFGAS_RTFBreak::EndBreakSplitLine(CFGAS_BreakLine* pNextLine,
   int32_t iLast = fxcrt::CollectionSize<int32_t>(m_pCurLine->m_LineChars) - 1;
   int32_t j = 0;
   for (int32_t i = 0; i <= iLast;) {
-    const CFGAS_Char* pTC = pCurChars + i;
+    const CFGAS_Char* pTC = UNSAFE_TODO(pCurChars + i);
     if (bNew) {
       tp.SetStartChar(i);
       tp.IncrementStartPos(tp.GetWidth());
@@ -595,7 +591,7 @@ int32_t CFGAS_RTFBreak::GetBreakPos(std::vector<CFGAS_Char>& tca,
   }
 
   CFGAS_Char* pCharArray = tca.data();
-  CFGAS_Char* pCur = pCharArray + iLength;
+  CFGAS_Char* pCur = UNSAFE_TODO(pCharArray + iLength);
   --iLength;
   if (bAllChars)
     pCur->m_eLineBreakType = FX_LINEBREAKTYPE::kUNKNOWN;
@@ -606,7 +602,7 @@ int32_t CFGAS_RTFBreak::GetBreakPos(std::vector<CFGAS_Char>& tca,
     *pEndPos -= iCharWidth;
 
   while (iLength >= 0) {
-    pCur = pCharArray + iLength;
+    pCur = UNSAFE_TODO(pCharArray + iLength);
     FX_BREAKPROPERTY nCur =
         pdfium::unicode::GetBreakProperty(pCur->char_code());
     bool bNeedBreak = false;
