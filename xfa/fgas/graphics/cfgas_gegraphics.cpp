@@ -4,22 +4,20 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "xfa/fgas/graphics/cfgas_gegraphics.h"
 
 #include <math.h>
 
+#include <array>
 #include <iterator>
 #include <memory>
 #include <utility>
 
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/cfx_unicodeencoding.h"
@@ -37,7 +35,7 @@ struct FX_HATCHDATA {
   uint8_t maskBits[64];
 };
 
-const FX_HATCHDATA kHatchBitmapData[] = {
+constexpr auto kHatchBitmapData = fxcrt::ToArray<const FX_HATCHDATA>({
     {16,  // Horizontal
      16,
      {
@@ -98,7 +96,7 @@ const FX_HATCHDATA kHatchBitmapData[] = {
          0x18, 0x18, 0x00, 0x00, 0x18, 0x18, 0x00, 0x00, 0x24, 0x24, 0x00,
          0x00, 0x42, 0x42, 0x00, 0x00, 0x81, 0x81, 0x00, 0x00,
      }},
-};
+});
 
 const FX_HATCHDATA kHatchPlaceHolder = {
     0,
@@ -323,7 +321,8 @@ void CFGAS_GEGraphics::FillPathWithShading(
               scale = 1.0f;
             }
           }
-          dib_buf[column] = m_info.fillColor.GetShading()->GetArgb(scale);
+          UNSAFE_TODO(dib_buf[column]) =
+              m_info.fillColor.GetShading()->GetArgb(scale);
         }
       }
       result = true;
@@ -384,7 +383,8 @@ void CFGAS_GEGraphics::FillPathWithShading(
               continue;
             s = 1.0f;
           }
-          dib_buf[column] = m_info.fillColor.GetShading()->GetArgb(s);
+          UNSAFE_TODO(dib_buf[column]) =
+              m_info.fillColor.GetShading()->GetArgb(s);
         }
       }
       result = true;
