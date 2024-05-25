@@ -1,5 +1,4 @@
 # This file is used by git cl to get repository specific information.
-BUG_PREFIX: pdfium:
 CC_LIST: pdfium-reviews@googlegroups.com
 GERRIT_HOST: True
 PROJECT: pdfium
