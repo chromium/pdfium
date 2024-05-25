@@ -16,20 +16,22 @@
 
 class CBC_PDF417Writer final : public CBC_TwoDimWriter {
  public:
+  struct EncodeResult {
+    EncodeResult(DataVector<uint8_t> data, int32_t width, int32_t height);
+    ~EncodeResult();
+
+    DataVector<uint8_t> data;
+    int32_t width;
+    int32_t height;
+  };
+
   CBC_PDF417Writer();
   ~CBC_PDF417Writer() override;
 
-  DataVector<uint8_t> Encode(WideStringView contents,
-                             int32_t* pOutWidth,
-                             int32_t* pOutHeight);
+  EncodeResult Encode(WideStringView contents) const;
 
   // CBC_TwoDimWriter
   bool SetErrorCorrectionLevel(int32_t level) override;
-
- private:
-  void RotateArray(DataVector<uint8_t>* bitarray,
-                   int32_t width,
-                   int32_t height);
 };
 
 #endif  // FXBARCODE_PDF417_BC_PDF417WRITER_H_
