@@ -20,16 +20,12 @@
  * limitations under the License.
  */
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "fxbarcode/oned/BC_OnedEAN13Writer.h"
 
 #include <math.h>
 
 #include <algorithm>
+#include <array>
 #include <memory>
 #include <vector>
 
@@ -42,18 +38,31 @@
 
 namespace {
 
-const int8_t kFirstDigitEncodings[10] = {0x00, 0x0B, 0x0D, 0xE,  0x13,
-                                         0x19, 0x1C, 0x15, 0x16, 0x1A};
+constexpr std::array<const int8_t, 10> kFirstDigitEncodings = {
+    {0x00, 0x0B, 0x0D, 0xE, 0x13, 0x19, 0x1C, 0x15, 0x16, 0x1A}};
+
 const uint8_t kOnedEAN13StartPattern[3] = {1, 1, 1};
 const uint8_t kOnedEAN13MiddlePattern[5] = {1, 1, 1, 1, 1};
-const uint8_t kOnedEAN13LPattern[10][4] = {
-    {3, 2, 1, 1}, {2, 2, 2, 1}, {2, 1, 2, 2}, {1, 4, 1, 1}, {1, 1, 3, 2},
-    {1, 2, 3, 1}, {1, 1, 1, 4}, {1, 3, 1, 2}, {1, 2, 1, 3}, {3, 1, 1, 2}};
-const uint8_t kOnedEAN13LGPattern[20][4] = {
-    {3, 2, 1, 1}, {2, 2, 2, 1}, {2, 1, 2, 2}, {1, 4, 1, 1}, {1, 1, 3, 2},
-    {1, 2, 3, 1}, {1, 1, 1, 4}, {1, 3, 1, 2}, {1, 2, 1, 3}, {3, 1, 1, 2},
-    {1, 1, 2, 3}, {1, 2, 2, 2}, {2, 2, 1, 2}, {1, 1, 4, 1}, {2, 3, 1, 1},
-    {1, 3, 2, 1}, {4, 1, 1, 1}, {2, 1, 3, 1}, {3, 1, 2, 1}, {2, 1, 1, 3}};
+
+using LPatternRow = std::array<uint8_t, 4>;
+constexpr std::array<const LPatternRow, 10> kOnedEAN13LPatternTable = {
+    {{3, 2, 1, 1},
+     {2, 2, 2, 1},
+     {2, 1, 2, 2},
+     {1, 4, 1, 1},
+     {1, 1, 3, 2},
+     {1, 2, 3, 1},
+     {1, 1, 1, 4},
+     {1, 3, 1, 2},
+     {1, 2, 1, 3},
+     {3, 1, 1, 2}}};
+
+using LGPatternRow = std::array<uint8_t, 4>;
+constexpr std::array<const LGPatternRow, 20> kOnedEAN13LGPatternTable = {
+    {{3, 2, 1, 1}, {2, 2, 2, 1}, {2, 1, 2, 2}, {1, 4, 1, 1}, {1, 1, 3, 2},
+     {1, 2, 3, 1}, {1, 1, 1, 4}, {1, 3, 1, 2}, {1, 2, 1, 3}, {3, 1, 1, 2},
+     {1, 1, 2, 3}, {1, 2, 2, 2}, {2, 2, 1, 2}, {1, 1, 4, 1}, {2, 3, 1, 1},
+     {1, 3, 2, 1}, {4, 1, 1, 1}, {2, 1, 3, 1}, {3, 1, 2, 1}, {2, 1, 1, 3}}};
 
 }  // namespace
 
@@ -105,13 +114,15 @@ DataVector<uint8_t> CBC_OnedEAN13Writer::Encode(const ByteString& contents) {
     if ((parities >> (6 - i) & 1) == 1) {
       digit += 10;
     }
-    result_span = AppendPattern(result_span, kOnedEAN13LGPattern[digit], false);
+    result_span =
+        AppendPattern(result_span, kOnedEAN13LGPatternTable[digit], false);
   }
   result_span = AppendPattern(result_span, kOnedEAN13MiddlePattern, false);
 
   for (int i = 7; i <= 12; i++) {
     int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
-    result_span = AppendPattern(result_span, kOnedEAN13LPattern[digit], true);
+    result_span =
+        AppendPattern(result_span, kOnedEAN13LPatternTable[digit], true);
   }
   AppendPattern(result_span, kOnedEAN13StartPattern, true);
   return result;

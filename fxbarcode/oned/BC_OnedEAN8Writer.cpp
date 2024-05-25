@@ -20,16 +20,12 @@
  * limitations under the License.
  */
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "fxbarcode/oned/BC_OnedEAN8Writer.h"
 
 #include <math.h>
 
 #include <algorithm>
+#include <array>
 #include <memory>
 #include <vector>
 
@@ -45,9 +41,19 @@ namespace {
 
 const uint8_t kOnedEAN8StartPattern[3] = {1, 1, 1};
 const uint8_t kOnedEAN8MiddlePattern[5] = {1, 1, 1, 1, 1};
-const uint8_t kOnedEAN8LPattern[10][4] = {
-    {3, 2, 1, 1}, {2, 2, 2, 1}, {2, 1, 2, 2}, {1, 4, 1, 1}, {1, 1, 3, 2},
-    {1, 2, 3, 1}, {1, 1, 1, 4}, {1, 3, 1, 2}, {1, 2, 1, 3}, {3, 1, 1, 2}};
+
+using LPatternRow = std::array<uint8_t, 4>;
+constexpr std::array<const LPatternRow, 10> kOnedEAN8LPatternTable = {
+    {{3, 2, 1, 1},
+     {2, 2, 2, 1},
+     {2, 1, 2, 2},
+     {1, 4, 1, 1},
+     {1, 1, 3, 2},
+     {1, 2, 3, 1},
+     {1, 1, 1, 4},
+     {1, 3, 1, 2},
+     {1, 2, 1, 3},
+     {3, 1, 1, 2}}};
 
 }  // namespace
 
@@ -102,13 +108,15 @@ DataVector<uint8_t> CBC_OnedEAN8Writer::Encode(const ByteString& contents) {
 
   for (int i = 0; i <= 3; i++) {
     int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
-    result_span = AppendPattern(result_span, kOnedEAN8LPattern[digit], false);
+    result_span =
+        AppendPattern(result_span, kOnedEAN8LPatternTable[digit], false);
   }
   result_span = AppendPattern(result_span, kOnedEAN8MiddlePattern, false);
 
   for (int i = 4; i <= 7; i++) {
     int32_t digit = FXSYS_DecimalCharToInt(contents[i]);
-    result_span = AppendPattern(result_span, kOnedEAN8LPattern[digit], true);
+    result_span =
+        AppendPattern(result_span, kOnedEAN8LPatternTable[digit], true);
   }
   AppendPattern(result_span, kOnedEAN8StartPattern, true);
   return result;

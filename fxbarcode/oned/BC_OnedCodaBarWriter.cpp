@@ -20,35 +20,30 @@
  * limitations under the License.
  */
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "fxbarcode/oned/BC_OnedCodaBarWriter.h"
 
+#include <array>
 #include <iterator>
 
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/stl_util.h"
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
 
 namespace {
 
-const char kOnedCodaAlphabet[] = {'0', '1', '2', '3', '4', '5', '6', '7',
-                                  '8', '9', '-', '$', ':', '/', '.', '+',
-                                  'A', 'B', 'C', 'D', 'T', 'N'};
+constexpr auto kOnedCodaAlphabet = fxcrt::ToArray<const char>(
+    {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-',
+     '$', ':', '/', '.', '+', 'A', 'B', 'C', 'D', 'T', 'N'});
+static_assert(std::size(kOnedCodaAlphabet) == 22, "Wrong size");
 
-const int8_t kOnedCodaCharacterEncoding[] = {
-    0x03, 0x06, 0x09, 0x60, 0x12, 0x42, 0x21, 0x24, 0x30, 0x48, 0x0c,
-    0x18, 0x45, 0x51, 0x54, 0x15, 0x1A, 0x29, 0x0B, 0x0E, 0x1A, 0x29};
+constexpr auto kOnedCodaCharacterEncoding = fxcrt::ToArray<const int8_t>(
+    {0x03, 0x06, 0x09, 0x60, 0x12, 0x42, 0x21, 0x24, 0x30, 0x48, 0x0c,
+     0x18, 0x45, 0x51, 0x54, 0x15, 0x1A, 0x29, 0x0B, 0x0E, 0x1A, 0x29});
 static_assert(std::size(kOnedCodaCharacterEncoding) == 22, "Wrong size");
-static_assert(std::size(kOnedCodaCharacterEncoding) ==
-                  std::size(kOnedCodaAlphabet),
-              "Wrong size");
 
 const char kStartEndChars[] = {'A', 'B', 'C', 'D', 'T', 'N', '*', 'E',
                                'a', 'b', 'c', 'd', 't', 'n', 'e'};
