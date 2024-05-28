@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include <array>
+
 struct CBC_QRCoderECBlockData {
   int32_t GetNumBlocks() const;
   int32_t GetTotalECCodeWords() const;
@@ -24,6 +26,7 @@ struct CBC_QRCoderECBlockData {
   int32_t GetECCodeWordsPerBlock() const;
 };
 
-extern const CBC_QRCoderECBlockData kQRCoderECBDataTable[40][4];
+using ECBlockDataRow = std::array<CBC_QRCoderECBlockData, 4>;
+extern const std::array<const ECBlockDataRow, 40> kQRCoderECBDataTable;
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERECBLOCKSDATA_H_

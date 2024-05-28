@@ -18,8 +18,7 @@ class CBC_QRCoderVersion {
  public:
   static constexpr int32_t kMaxVersion = 40;
 
-  CBC_QRCoderVersion(int32_t versionNumber,
-                     const CBC_QRCoderECBlockData data[4]);
+  CBC_QRCoderVersion(int32_t versionNumber, const ECBlockDataRow& row);
   ~CBC_QRCoderVersion();
 
   static void Initialize();

@@ -42,12 +42,12 @@ std::vector<std::unique_ptr<CBC_QRCoderVersion>>* g_VERSION = nullptr;
 }  // namespace
 
 CBC_QRCoderVersion::CBC_QRCoderVersion(int32_t versionNumber,
-                                       const CBC_QRCoderECBlockData data[4])
+                                       const ECBlockDataRow& row)
     : m_versionNumber(versionNumber) {
-  m_ecBlocksArray[0] = std::make_unique<CBC_QRCoderECBlockData>(data[0]);
-  m_ecBlocksArray[1] = std::make_unique<CBC_QRCoderECBlockData>(data[1]);
-  m_ecBlocksArray[2] = std::make_unique<CBC_QRCoderECBlockData>(data[2]);
-  m_ecBlocksArray[3] = std::make_unique<CBC_QRCoderECBlockData>(data[3]);
+  m_ecBlocksArray[0] = std::make_unique<CBC_QRCoderECBlockData>(row[0]);
+  m_ecBlocksArray[1] = std::make_unique<CBC_QRCoderECBlockData>(row[1]);
+  m_ecBlocksArray[2] = std::make_unique<CBC_QRCoderECBlockData>(row[2]);
+  m_ecBlocksArray[3] = std::make_unique<CBC_QRCoderECBlockData>(row[3]);
   m_totalCodeWords = m_ecBlocksArray[0]->GetTotalDataCodeWords();
 }
 
