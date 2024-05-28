@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "fxjs/cfx_globaldata.h"
 
 #include <utility>
@@ -277,92 +272,100 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
 
   CRYPT_ArcFourCryptBlock(buffer, kRC4KEY);
 
-  uint8_t* p = buffer.data();
-  uint16_t wType = *((uint16_t*)p);
-  p += sizeof(uint16_t);
-  if (wType != kMagic)
-    return false;
-
-  uint16_t wVersion = *((uint16_t*)p);
-  p += sizeof(uint16_t);
-  if (wVersion > kMaxVersion)
-    return false;
-
-  uint32_t dwCount = *((uint32_t*)p);
-  p += sizeof(uint32_t);
-
-  uint32_t dwSize = *((uint32_t*)p);
-  p += sizeof(uint32_t);
-
-  if (dwSize != buffer.size() - sizeof(uint16_t) * 2 - sizeof(uint32_t) * 2)
-    return false;
-
-  for (int32_t i = 0, sz = dwCount; i < sz; i++) {
-    if (p + sizeof(uint32_t) >= buffer.end()) {
-      break;
-    }
-
-    uint32_t dwNameLen = 0;
-    FXSYS_memcpy(&dwNameLen, p, sizeof(uint32_t));
-    p += sizeof(uint32_t);
-    if (p + dwNameLen > buffer.end())
-      break;
-
-    ByteString sEntry = ByteString(p, dwNameLen);
-    p += sizeof(char) * dwNameLen;
-
-    uint16_t wDataType = 0;
-    FXSYS_memcpy(&wDataType, p, sizeof(uint16_t));
+  UNSAFE_TODO({
+    uint8_t* p = buffer.data();
+    uint16_t wType = *((uint16_t*)p);
     p += sizeof(uint16_t);
-
-    CFX_Value::DataType eDataType = static_cast<CFX_Value::DataType>(wDataType);
-
-    switch (eDataType) {
-      case CFX_Value::DataType::kNumber: {
-        double dData = 0;
-        switch (wVersion) {
-          case 1: {
-            uint32_t dwData = 0;
-            FXSYS_memcpy(&dwData, p, sizeof(uint32_t));
-            p += sizeof(uint32_t);
-            dData = dwData;
-          } break;
-          case 2: {
-            dData = 0;
-            FXSYS_memcpy(&dData, p, sizeof(double));
-            p += sizeof(double);
-          } break;
-        }
-        SetGlobalVariableNumber(sEntry, dData);
-        SetGlobalVariablePersistent(sEntry, true);
-      } break;
-      case CFX_Value::DataType::kBoolean: {
-        uint16_t wData = 0;
-        FXSYS_memcpy(&wData, p, sizeof(uint16_t));
-        p += sizeof(uint16_t);
-        SetGlobalVariableBoolean(sEntry, (bool)(wData == 1));
-        SetGlobalVariablePersistent(sEntry, true);
-      } break;
-      case CFX_Value::DataType::kString: {
-        uint32_t dwLength = 0;
-        FXSYS_memcpy(&dwLength, p, sizeof(uint32_t));
-        p += sizeof(uint32_t);
-        if (p + dwLength > buffer.end())
-          break;
-
-        SetGlobalVariableString(sEntry, ByteString(p, dwLength));
-        SetGlobalVariablePersistent(sEntry, true);
-        p += sizeof(char) * dwLength;
-      } break;
-      case CFX_Value::DataType::kNull: {
-        SetGlobalVariableNull(sEntry);
-        SetGlobalVariablePersistent(sEntry, true);
-      } break;
-      case CFX_Value::DataType::kObject:
-        // Arrays aren't allowed in these buffers, nor are unrecognized tags.
-        return false;
+    if (wType != kMagic) {
+      return false;
     }
-  }
+
+    uint16_t wVersion = *((uint16_t*)p);
+    p += sizeof(uint16_t);
+    if (wVersion > kMaxVersion) {
+      return false;
+    }
+
+    uint32_t dwCount = *((uint32_t*)p);
+    p += sizeof(uint32_t);
+
+    uint32_t dwSize = *((uint32_t*)p);
+    p += sizeof(uint32_t);
+
+    if (dwSize != buffer.size() - sizeof(uint16_t) * 2 - sizeof(uint32_t) * 2) {
+      return false;
+    }
+
+    for (int32_t i = 0, sz = dwCount; i < sz; i++) {
+      if (p + sizeof(uint32_t) >= buffer.end()) {
+        break;
+      }
+
+      uint32_t dwNameLen = 0;
+      FXSYS_memcpy(&dwNameLen, p, sizeof(uint32_t));
+      p += sizeof(uint32_t);
+      if (p + dwNameLen > buffer.end()) {
+        break;
+      }
+
+      ByteString sEntry = ByteString(p, dwNameLen);
+      p += sizeof(char) * dwNameLen;
+
+      uint16_t wDataType = 0;
+      FXSYS_memcpy(&wDataType, p, sizeof(uint16_t));
+      p += sizeof(uint16_t);
+
+      CFX_Value::DataType eDataType =
+          static_cast<CFX_Value::DataType>(wDataType);
+
+      switch (eDataType) {
+        case CFX_Value::DataType::kNumber: {
+          double dData = 0;
+          switch (wVersion) {
+            case 1: {
+              uint32_t dwData = 0;
+              FXSYS_memcpy(&dwData, p, sizeof(uint32_t));
+              p += sizeof(uint32_t);
+              dData = dwData;
+            } break;
+            case 2: {
+              dData = 0;
+              FXSYS_memcpy(&dData, p, sizeof(double));
+              p += sizeof(double);
+            } break;
+          }
+          SetGlobalVariableNumber(sEntry, dData);
+          SetGlobalVariablePersistent(sEntry, true);
+        } break;
+        case CFX_Value::DataType::kBoolean: {
+          uint16_t wData = 0;
+          FXSYS_memcpy(&wData, p, sizeof(uint16_t));
+          p += sizeof(uint16_t);
+          SetGlobalVariableBoolean(sEntry, (bool)(wData == 1));
+          SetGlobalVariablePersistent(sEntry, true);
+        } break;
+        case CFX_Value::DataType::kString: {
+          uint32_t dwLength = 0;
+          FXSYS_memcpy(&dwLength, p, sizeof(uint32_t));
+          p += sizeof(uint32_t);
+          if (p + dwLength > buffer.end()) {
+            break;
+          }
+
+          SetGlobalVariableString(sEntry, ByteString(p, dwLength));
+          SetGlobalVariablePersistent(sEntry, true);
+          p += sizeof(char) * dwLength;
+        } break;
+        case CFX_Value::DataType::kNull: {
+          SetGlobalVariableNull(sEntry);
+          SetGlobalVariablePersistent(sEntry, true);
+        } break;
+        case CFX_Value::DataType::kObject:
+          // Arrays aren't allowed in these buffers, nor are unrecognized tags.
+          return false;
+      }
+    }
+  });
   return true;
 }
 
