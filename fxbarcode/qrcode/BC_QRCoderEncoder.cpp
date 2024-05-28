@@ -45,7 +45,7 @@
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomonGF256.h"
 #include "fxbarcode/qrcode/BC_QRCoder.h"
 #include "fxbarcode/qrcode/BC_QRCoderBitVector.h"
-#include "fxbarcode/qrcode/BC_QRCoderECBlocks.h"
+#include "fxbarcode/qrcode/BC_QRCoderECBlockData.h"
 #include "fxbarcode/qrcode/BC_QRCoderMaskUtil.h"
 #include "fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
 #include "fxbarcode/qrcode/BC_QRCoderMode.h"

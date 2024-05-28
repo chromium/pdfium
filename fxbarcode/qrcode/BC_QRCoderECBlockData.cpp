@@ -20,11 +20,9 @@
  * limitations under the License.
  */
 
-#include "fxbarcode/qrcode/BC_QRCoderECBlocksData.h"
+#include "fxbarcode/qrcode/BC_QRCoderECBlockData.h"
 
-namespace fxbarcode {
-
-const CBC_QRCoderECBlockData kECBData[40][4] = {
+const CBC_QRCoderECBlockData kQRCoderECBDataTable[40][4] = {
     {{7, 1, 19, 0, 0}, {10, 1, 16, 0, 0}, {13, 1, 13, 0, 0}, {17, 1, 9, 0, 0}},
     {{10, 1, 34, 0, 0},
      {16, 1, 28, 0, 0},
@@ -181,4 +179,19 @@ const CBC_QRCoderECBlockData kECBData[40][4] = {
      {30, 20, 15, 61, 16}},
 };
 
-}  // namespace fxbarcode
+int32_t CBC_QRCoderECBlockData::GetECCodeWordsPerBlock() const {
+  return ecCodeWordsPerBlock;
+}
+
+int32_t CBC_QRCoderECBlockData::GetNumBlocks() const {
+  return count1 + count2;
+}
+
+int32_t CBC_QRCoderECBlockData::GetTotalECCodeWords() const {
+  return GetECCodeWordsPerBlock() * GetNumBlocks();
+}
+
+int32_t CBC_QRCoderECBlockData::GetTotalDataCodeWords() const {
+  return count1 * (dataCodeWords1 + GetECCodeWordsPerBlock()) +
+         count2 * (dataCodeWords2 + GetECCodeWordsPerBlock());
+}

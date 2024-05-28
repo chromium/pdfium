@@ -10,17 +10,20 @@
 #include <stdint.h>
 
 struct CBC_QRCoderECBlockData {
+  int32_t GetNumBlocks() const;
+  int32_t GetTotalECCodeWords() const;
+  int32_t GetTotalDataCodeWords() const;
+
   uint8_t ecCodeWordsPerBlock;
   uint8_t count1;
   uint8_t dataCodeWords1;
   uint8_t count2;
   uint8_t dataCodeWords2;
+
+ private:
+  int32_t GetECCodeWordsPerBlock() const;
 };
 
-namespace fxbarcode {
-
-extern const CBC_QRCoderECBlockData kECBData[40][4];
-
-}  // namespace fxbarcode
+extern const CBC_QRCoderECBlockData kQRCoderECBDataTable[40][4];
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERECBLOCKSDATA_H_
