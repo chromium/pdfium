@@ -446,7 +446,7 @@ bool CPDFSDK_PageView::OnMouseMove(Mask<FWL_EVENTFLAG> nFlags,
 void CPDFSDK_PageView::EnterWidget(ObservedPtr<CPDFSDK_Annot>& pAnnot,
                                    Mask<FWL_EVENTFLAG> nFlags) {
   m_bOnWidget = true;
-  m_pCaptureWidget.Reset(pAnnot.Get());
+  m_pCaptureWidget = pAnnot;
   CPDFSDK_Annot::OnMouseEnter(m_pCaptureWidget, nFlags);
 }
 
