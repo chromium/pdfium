@@ -8,6 +8,7 @@
 #define CORE_FDRM_FX_CRYPT_H_
 
 #include <stdint.h>
+#include <array>
 
 #include "core/fdrm/fx_crypt_aes.h"
 #include "core/fdrm/fx_crypt_sha.h"
@@ -18,15 +19,14 @@ struct CRYPT_rc4_context {
 
   int32_t x;
   int32_t y;
-  int32_t m[kPermutationLength];
+  std::array<int32_t, kPermutationLength> m;
 };
 
 struct CRYPT_md5_context {
-  uint32_t total[2];
-  uint32_t state[4];
+  std::array<uint32_t, 2> total;
+  std::array<uint32_t, 4> state;
   uint8_t buffer[64];
 };
-
 
 void CRYPT_ArcFourCryptBlock(pdfium::span<uint8_t> data,
                              pdfium::span<const uint8_t> key);

@@ -4,31 +4,28 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fdrm/fx_crypt.h"
 
 #include <utility>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/span_util.h"
 
 #define GET_UINT32(n, b, i)                            \
-  {                                                    \
+  UNSAFE_TODO({                                        \
     (n) = (uint32_t)((uint8_t*)b)[(i)] |               \
           (((uint32_t)((uint8_t*)b)[(i) + 1]) << 8) |  \
           (((uint32_t)((uint8_t*)b)[(i) + 2]) << 16) | \
           (((uint32_t)((uint8_t*)b)[(i) + 3]) << 24);  \
-  }
+  })
+
 #define PUT_UINT32(n, b, i)                                   \
-  {                                                           \
+  UNSAFE_TODO({                                               \
     (((uint8_t*)b)[(i)]) = (uint8_t)(((n)) & 0xFF);           \
     (((uint8_t*)b)[(i) + 1]) = (uint8_t)(((n) >> 8) & 0xFF);  \
     (((uint8_t*)b)[(i) + 2]) = (uint8_t)(((n) >> 16) & 0xFF); \
     (((uint8_t*)b)[(i) + 3]) = (uint8_t)(((n) >> 24) & 0xFF); \
-  }
+  })
 
 namespace {
 
