@@ -20,13 +20,9 @@
  * limitations under the License.
  */
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "fxbarcode/qrcode/BC_QRCoderMatrixUtil.h"
 
+#include <array>
 #include <iterator>
 
 #include "core/fxcrt/check.h"
@@ -39,49 +35,76 @@
 
 namespace {
 
-constexpr uint8_t POSITION_DETECTION_PATTERN[7][7] = {
-    {1, 1, 1, 1, 1, 1, 1}, {1, 0, 0, 0, 0, 0, 1}, {1, 0, 1, 1, 1, 0, 1},
-    {1, 0, 1, 1, 1, 0, 1}, {1, 0, 1, 1, 1, 0, 1}, {1, 0, 0, 0, 0, 0, 1},
-    {1, 1, 1, 1, 1, 1, 1}};
+using PositionDetectionPatternRow = std::array<uint8_t, 7>;
+constexpr std::array<const PositionDetectionPatternRow, 7>
+    kPositionDetectionPatternTable = {{{{1, 1, 1, 1, 1, 1, 1}},
+                                       {{1, 0, 0, 0, 0, 0, 1}},
+                                       {{1, 0, 1, 1, 1, 0, 1}},
+                                       {{1, 0, 1, 1, 1, 0, 1}},
+                                       {{1, 0, 1, 1, 1, 0, 1}},
+                                       {{1, 0, 0, 0, 0, 0, 1}},
+                                       {{1, 1, 1, 1, 1, 1, 1}}}};
 
-constexpr uint8_t POSITION_ADJUSTMENT_PATTERN[5][5] = {{1, 1, 1, 1, 1},
-                                                       {1, 0, 0, 0, 1},
-                                                       {1, 0, 1, 0, 1},
-                                                       {1, 0, 0, 0, 1},
-                                                       {1, 1, 1, 1, 1}};
+using PositionAdjustmentPatternRow = std::array<uint8_t, 5>;
+constexpr std::array<const PositionAdjustmentPatternRow, 5>
+    kPositionAdjustmentPatternTable = {{{{1, 1, 1, 1, 1}},
+                                        {{1, 0, 0, 0, 1}},
+                                        {{1, 0, 1, 0, 1}},
+                                        {{1, 0, 0, 0, 1}},
+                                        {{1, 1, 1, 1, 1}}}};
 
 constexpr size_t kNumCoordinate = 7;
-constexpr uint8_t kPositionAdjustmentPatternCoordinates[39][kNumCoordinate] = {
-    {6, 18, 0, 0, 0, 0, 0},         {6, 22, 0, 0, 0, 0, 0},
-    {6, 26, 0, 0, 0, 0, 0},         {6, 30, 0, 0, 0, 0, 0},
-    {6, 34, 0, 0, 0, 0, 0},         {6, 22, 38, 0, 0, 0, 0},
-    {6, 24, 42, 0, 0, 0, 0},        {6, 26, 46, 0, 0, 0, 0},
-    {6, 28, 50, 0, 0, 0, 0},        {6, 30, 54, 0, 0, 0, 0},
-    {6, 32, 58, 0, 0, 0, 0},        {6, 34, 62, 0, 0, 0, 0},
-    {6, 26, 46, 66, 0, 0, 0},       {6, 26, 48, 70, 0, 0, 0},
-    {6, 26, 50, 74, 0, 0, 0},       {6, 30, 54, 78, 0, 0, 0},
-    {6, 30, 56, 82, 0, 0, 0},       {6, 30, 58, 86, 0, 0, 0},
-    {6, 34, 62, 90, 0, 0, 0},       {6, 28, 50, 72, 94, 0, 0},
-    {6, 26, 50, 74, 98, 0, 0},      {6, 30, 54, 78, 102, 0, 0},
-    {6, 28, 54, 80, 106, 0, 0},     {6, 32, 58, 84, 110, 0, 0},
-    {6, 30, 58, 86, 114, 0, 0},     {6, 34, 62, 90, 118, 0, 0},
-    {6, 26, 50, 74, 98, 122, 0},    {6, 30, 54, 78, 102, 126, 0},
-    {6, 26, 52, 78, 104, 130, 0},   {6, 30, 56, 82, 108, 134, 0},
-    {6, 34, 60, 86, 112, 138, 0},   {6, 30, 58, 86, 114, 142, 0},
-    {6, 34, 62, 90, 118, 146, 0},   {6, 30, 54, 78, 102, 126, 150},
-    {6, 24, 50, 76, 102, 128, 154}, {6, 28, 54, 80, 106, 132, 158},
-    {6, 32, 58, 84, 110, 136, 162}, {6, 26, 54, 82, 110, 138, 166},
-    {6, 30, 58, 86, 114, 142, 170},
+using PositionCoordinatePatternRow = std::array<uint8_t, kNumCoordinate>;
+constexpr std::array<const PositionCoordinatePatternRow, 39>
+    kPositionCoordinatePatternTable = {{
+        {{6, 18, 0, 0, 0, 0, 0}},         {{6, 22, 0, 0, 0, 0, 0}},
+        {{6, 26, 0, 0, 0, 0, 0}},         {{6, 30, 0, 0, 0, 0, 0}},
+        {{6, 34, 0, 0, 0, 0, 0}},         {{6, 22, 38, 0, 0, 0, 0}},
+        {{6, 24, 42, 0, 0, 0, 0}},        {{6, 26, 46, 0, 0, 0, 0}},
+        {{6, 28, 50, 0, 0, 0, 0}},        {{6, 30, 54, 0, 0, 0, 0}},
+        {{6, 32, 58, 0, 0, 0, 0}},        {{6, 34, 62, 0, 0, 0, 0}},
+        {{6, 26, 46, 66, 0, 0, 0}},       {{6, 26, 48, 70, 0, 0, 0}},
+        {{6, 26, 50, 74, 0, 0, 0}},       {{6, 30, 54, 78, 0, 0, 0}},
+        {{6, 30, 56, 82, 0, 0, 0}},       {{6, 30, 58, 86, 0, 0, 0}},
+        {{6, 34, 62, 90, 0, 0, 0}},       {{6, 28, 50, 72, 94, 0, 0}},
+        {{6, 26, 50, 74, 98, 0, 0}},      {{6, 30, 54, 78, 102, 0, 0}},
+        {{6, 28, 54, 80, 106, 0, 0}},     {{6, 32, 58, 84, 110, 0, 0}},
+        {{6, 30, 58, 86, 114, 0, 0}},     {{6, 34, 62, 90, 118, 0, 0}},
+        {{6, 26, 50, 74, 98, 122, 0}},    {{6, 30, 54, 78, 102, 126, 0}},
+        {{6, 26, 52, 78, 104, 130, 0}},   {{6, 30, 56, 82, 108, 134, 0}},
+        {{6, 34, 60, 86, 112, 138, 0}},   {{6, 30, 58, 86, 114, 142, 0}},
+        {{6, 34, 62, 90, 118, 146, 0}},   {{6, 30, 54, 78, 102, 126, 150}},
+        {{6, 24, 50, 76, 102, 128, 154}}, {{6, 28, 54, 80, 106, 132, 158}},
+        {{6, 32, 58, 84, 110, 136, 162}}, {{6, 26, 54, 82, 110, 138, 166}},
+        {{6, 30, 58, 86, 114, 142, 170}},
+    }};
+
+struct TypeInfoCoordinate {
+  uint8_t x;
+  uint8_t y;
 };
 
-const uint8_t TYPE_INFO_COORDINATES[15][2] = {
-    {8, 0}, {8, 1}, {8, 2}, {8, 3}, {8, 4}, {8, 5}, {8, 7}, {8, 8},
-    {7, 8}, {5, 8}, {4, 8}, {3, 8}, {2, 8}, {1, 8}, {0, 8},
-};
+const std::array<const TypeInfoCoordinate, 15> kTypeInfoCoordinates = {{
+    {8, 0},
+    {8, 1},
+    {8, 2},
+    {8, 3},
+    {8, 4},
+    {8, 5},
+    {8, 7},
+    {8, 8},
+    {7, 8},
+    {5, 8},
+    {4, 8},
+    {3, 8},
+    {2, 8},
+    {1, 8},
+    {0, 8},
+}};
 
-const int32_t VERSION_INFO_POLY = 0x1f25;
-const int32_t TYPE_INFO_POLY = 0x0537;
-const int32_t TYPE_INFO_MASK_PATTERN = 0x5412;
+constexpr int32_t VERSION_INFO_POLY = 0x1f25;
+constexpr int32_t TYPE_INFO_POLY = 0x0537;
+constexpr int32_t TYPE_INFO_MASK_PATTERN = 0x5412;
 
 bool IsEmpty(int32_t value) {
   return (uint8_t)value == 0xff;
@@ -187,8 +210,8 @@ bool EmbedTypeInfo(const CBC_QRCoderErrorCorrectionLevel* ecLevel,
 
   for (size_t i = 0; i < typeInfoBits.Size(); i++) {
     int32_t bit = typeInfoBits.At(typeInfoBits.Size() - 1 - i);
-    int32_t x1 = TYPE_INFO_COORDINATES[i][0];
-    int32_t y1 = TYPE_INFO_COORDINATES[i][1];
+    int32_t x1 = kTypeInfoCoordinates[i].x;
+    int32_t y1 = kTypeInfoCoordinates[i].y;
     matrix->Set(x1, y1, bit);
     if (i < 8) {
       int32_t x2 = matrix->GetWidth() - i - 1;
@@ -275,10 +298,11 @@ bool EmbedPositionAdjustmentPattern(int32_t xStart,
                                     CBC_CommonByteMatrix* matrix) {
   for (int32_t y = 0; y < 5; y++) {
     for (int32_t x = 0; x < 5; x++) {
-      if (!IsEmpty(matrix->Get(xStart + x, y + yStart)))
+      if (!IsEmpty(matrix->Get(xStart + x, y + yStart))) {
         return false;
-
-      matrix->Set(xStart + x, yStart + y, POSITION_ADJUSTMENT_PATTERN[y][x]);
+      }
+      matrix->Set(xStart + x, yStart + y,
+                  kPositionAdjustmentPatternTable[y][x]);
     }
   }
   return true;
@@ -292,7 +316,7 @@ bool EmbedPositionDetectionPattern(int32_t xStart,
       if (!IsEmpty(matrix->Get(xStart + x, yStart + y)))
         return false;
 
-      matrix->Set(xStart + x, yStart + y, POSITION_DETECTION_PATTERN[y][x]);
+      matrix->Set(xStart + x, yStart + y, kPositionDetectionPatternTable[y][x]);
     }
   }
   return true;
@@ -339,10 +363,11 @@ bool MaybeEmbedPositionAdjustmentPatterns(int32_t version,
     return true;
 
   const size_t index = version - 2;
-  if (index >= std::size(kPositionAdjustmentPatternCoordinates))
+  if (index >= std::size(kPositionCoordinatePatternTable)) {
     return false;
+  }
 
-  const auto* coordinates = &kPositionAdjustmentPatternCoordinates[index][0];
+  const auto& coordinates = kPositionCoordinatePatternTable[index];
   for (size_t i = 0; i < kNumCoordinate; i++) {
     const int32_t y = coordinates[i];
     if (y == 0)

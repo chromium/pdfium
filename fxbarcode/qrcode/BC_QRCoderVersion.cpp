@@ -20,11 +20,6 @@
  * limitations under the License.
  */
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "fxbarcode/qrcode/BC_QRCoderVersion.h"
 
 #include <memory>
