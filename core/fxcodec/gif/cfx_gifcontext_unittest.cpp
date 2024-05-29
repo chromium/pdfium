@@ -55,39 +55,30 @@ TEST(CFX_GifContext, SetInputBuffer) {
 }
 
 TEST(CFX_GifContext, ReadAllOrNone) {
-  DataVector<uint8_t> dest_buffer;
+  CFX_GifContextForTest context;
+  context.SetTestInputBuffer({});
+  EXPECT_FALSE(context.ReadAllOrNone(pdfium::span<uint8_t>()));
+
   uint8_t src_buffer[] = {0x00, 0x01, 0x02, 0x03, 0x04,
                           0x05, 0x06, 0x07, 0x08, 0x09};
-  CFX_GifContextForTest context;
 
-  context.SetTestInputBuffer({});
-  EXPECT_FALSE(context.ReadAllOrNone(nullptr, 0));
-  EXPECT_FALSE(context.ReadAllOrNone(nullptr, 10));
-
-  EXPECT_FALSE(context.ReadAllOrNone(dest_buffer.data(), 0));
-  EXPECT_FALSE(context.ReadAllOrNone(dest_buffer.data(), 10));
-
-  context.SetTestInputBuffer(pdfium::make_span(src_buffer).first(0u));
-  dest_buffer.resize(sizeof(src_buffer));
-  EXPECT_FALSE(context.ReadAllOrNone(dest_buffer.data(), sizeof(src_buffer)));
+  DataVector<uint8_t> dest_buffer(sizeof(src_buffer));
+  auto dest_span = pdfium::make_span(dest_buffer);
 
   context.SetTestInputBuffer(pdfium::make_span(src_buffer).first(1u));
-  EXPECT_FALSE(context.ReadAllOrNone(dest_buffer.data(), sizeof(src_buffer)));
+  EXPECT_FALSE(context.ReadAllOrNone(dest_buffer));
   EXPECT_EQ(0u, context.InputBuffer()->GetPosition());
-  EXPECT_FALSE(context.ReadAllOrNone(nullptr, sizeof(src_buffer)));
-  EXPECT_FALSE(context.ReadAllOrNone(nullptr, 1));
-  EXPECT_TRUE(context.ReadAllOrNone(dest_buffer.data(), 1));
+  EXPECT_TRUE(context.ReadAllOrNone(dest_span.first(1u)));
   EXPECT_EQ(src_buffer[0], dest_buffer[0]);
 
   context.SetTestInputBuffer(src_buffer);
-  EXPECT_FALSE(context.ReadAllOrNone(nullptr, sizeof(src_buffer)));
-  EXPECT_TRUE(context.ReadAllOrNone(dest_buffer.data(), sizeof(src_buffer)));
+  EXPECT_TRUE(context.ReadAllOrNone(dest_span.first(sizeof(src_buffer))));
   for (size_t i = 0; i < sizeof(src_buffer); i++)
     EXPECT_EQ(src_buffer[i], dest_buffer[i]);
 
   context.SetTestInputBuffer(src_buffer);
   for (size_t i = 0; i < sizeof(src_buffer); i++) {
-    EXPECT_TRUE(context.ReadAllOrNone(dest_buffer.data(), 1));
+    EXPECT_TRUE(context.ReadAllOrNone(dest_span.first(1u)));
     EXPECT_EQ(src_buffer[i], dest_buffer[0]);
   }
 }

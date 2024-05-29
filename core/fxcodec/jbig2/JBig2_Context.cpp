@@ -621,7 +621,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
   // conservative estimate just to sanitize the |SBNUMINSTANCES| value.
   // Use FX_SAFE_INT32 to be safe, though it should never overflow because PDFs
   // have a maximum size of roughly 11 GB.
-  FX_SAFE_INT32 nMaxStripInstances = m_pStream->getLength();
+  FX_SAFE_INT32 nMaxStripInstances = m_pStream->getBufSpan().size();
   nMaxStripInstances *= 32;
   if (pTRD->SBNUMINSTANCES > nMaxStripInstances.ValueOrDie())
     return JBig2_Result::kFailure;

@@ -462,9 +462,8 @@ FXCODEC_STATUS CJBig2_GRDProc::StartDecodeMMR(
     return m_ProgressiveStatus;
   }
   int bitpos = static_cast<int>(pStream->getBitPos());
-  bitpos =
-      FaxModule::FaxG4Decode(pStream->getBuf(), pStream->getLength(), bitpos,
-                             GBW, GBH, image->stride(), image->data());
+  bitpos = FaxModule::FaxG4Decode(pStream->getBufSpan(), bitpos, GBW, GBH,
+                                  image->stride(), image->data());
   pStream->setBitPos(bitpos);
   for (uint32_t i = 0; i < image->stride() * GBH; ++i)
     image->data()[i] = ~image->data()[i];

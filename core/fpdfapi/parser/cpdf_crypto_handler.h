@@ -34,7 +34,7 @@ class CPDF_CryptoHandler {
 
   static bool IsSignatureDictionary(const CPDF_Dictionary* dictionary);
 
-  CPDF_CryptoHandler(Cipher cipher, const uint8_t* key, size_t keylen);
+  CPDF_CryptoHandler(Cipher cipher, pdfium::span<const uint8_t> key);
   ~CPDF_CryptoHandler();
 
   bool DecryptObjectTree(RetainPtr<CPDF_Object> object);

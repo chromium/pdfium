@@ -8,7 +8,10 @@
 #include <vector>
 
 #include "core/fxcodec/gif/lzw_decompressor.h"
+#include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
+#include "core/fxcrt/span.h"
 
 // Between 2x and 5x is a standard range for LZW according to a quick
 // search of papers. Running up to 10x to catch any niche cases.
@@ -17,8 +20,7 @@ constexpr uint32_t kMaxCompressionRatio = 10;
 
 static constexpr size_t kMaxFuzzBytes = 1024 * 1024 * 1024;  // 1 GB.
 
-void LZWFuzz(const uint8_t* src_buf,
-             uint32_t src_size,
+void LZWFuzz(pdfium::span<const uint8_t> src_buf,
              uint8_t color_exp,
              uint8_t code_exp) {
   std::unique_ptr<LZWDecompressor> decompressor =
@@ -28,11 +30,11 @@ void LZWFuzz(const uint8_t* src_buf,
 
   for (uint32_t compressions_ratio = kMinCompressionRatio;
        compressions_ratio <= kMaxCompressionRatio; compressions_ratio++) {
-    std::vector<uint8_t> dest_buf(compressions_ratio * src_size);
-    // This cast should be safe since the caller is checking for overflow on
-    // the initial data.
-    uint32_t dest_size = static_cast<uint32_t>(dest_buf.size());
-    decompressor->SetSource(src_buf, src_size);
+    FX_SAFE_UINT32 safe_dest_size = src_buf.size();
+    safe_dest_size *= compressions_ratio;
+    uint32_t dest_size = safe_dest_size.ValueOrDie();
+    std::vector<uint8_t> dest_buf(dest_size);
+    decompressor->SetSource(src_buf);
     if (LZWDecompressor::Status::kInsufficientDestSize !=
         decompressor->Decode(dest_buf.data(), &dest_size)) {
       return;
@@ -41,24 +43,26 @@ void LZWFuzz(const uint8_t* src_buf,
 }
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
+  // SAFETY: required from fuzzer
+  auto data_span = UNSAFE_BUFFERS(pdfium::make_span(data, size));
+
   // Need at least 3 bytes to do anything.
-  if (size < 3 || size > kMaxFuzzBytes)
+  if (data_span.size() < 3 || data_span.size() > kMaxFuzzBytes) {
     return 0;
+  }
 
   // Normally the GIF would provide the code and color sizes, instead, going
   // to assume they are the first two bytes of data provided.
-  uint8_t color_exp = data[0];
-  uint8_t code_exp = data[1];
-  const uint8_t* lzw_data = data + 2;
-  uint32_t lzw_data_size = static_cast<uint32_t>(size - 2);
+  uint8_t color_exp = data_span[0];
+  uint8_t code_exp = data_span[1];
+  pdfium::span<const uint8_t> lzw_data = data_span.subspan(2);
   // Check that there isn't going to be an overflow in the destination buffer
   // size.
-  if (lzw_data_size >
+  if (lzw_data.size() >
       std::numeric_limits<uint32_t>::max() / kMaxCompressionRatio) {
     return 0;
   }
 
-  LZWFuzz(lzw_data, lzw_data_size, color_exp, code_exp);
-
+  LZWFuzz(lzw_data, color_exp, code_exp);
   return 0;
 }

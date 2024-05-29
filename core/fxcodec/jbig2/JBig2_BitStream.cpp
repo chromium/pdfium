@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 
 namespace {
@@ -145,7 +146,8 @@ uint32_t CJBig2_BitStream::getOffset() const {
 }
 
 void CJBig2_BitStream::setOffset(uint32_t dwOffset) {
-  m_dwByteIdx = std::min(dwOffset, getLength());
+  m_dwByteIdx =
+      std::min(dwOffset, pdfium::checked_cast<uint32_t>(getBufSpan().size()));
 }
 
 uint32_t CJBig2_BitStream::getBitPos() const {
@@ -157,14 +159,6 @@ void CJBig2_BitStream::setBitPos(uint32_t dwBitPos) {
   m_dwBitIdx = dwBitPos & 7;
 }
 
-const uint8_t* CJBig2_BitStream::getBuf() const {
-  return m_Span.data();
-}
-
-uint32_t CJBig2_BitStream::getLength() const {
-  return pdfium::checked_cast<uint32_t>(m_Span.size());
-}
-
 const uint8_t* CJBig2_BitStream::getPointer() const {
   return m_Span.subspan(m_dwByteIdx).data();
 }
@@ -174,7 +168,9 @@ void CJBig2_BitStream::offset(uint32_t dwOffset) {
 }
 
 uint32_t CJBig2_BitStream::getByteLeft() const {
-  return getLength() - m_dwByteIdx;
+  FX_SAFE_UINT32 result = getBufSpan().size();
+  result -= m_dwByteIdx;
+  return result.ValueOrDie();
 }
 
 void CJBig2_BitStream::AdvanceBit() {
@@ -187,9 +183,11 @@ void CJBig2_BitStream::AdvanceBit() {
 }
 
 bool CJBig2_BitStream::IsInBounds() const {
-  return m_dwByteIdx < getLength();
+  return m_dwByteIdx < getBufSpan().size();
 }
 
 uint32_t CJBig2_BitStream::LengthInBits() const {
-  return getLength() << 3;
+  FX_SAFE_UINT32 result = getBufSpan().size();
+  result *= 8;
+  return result.ValueOrDie();
 }

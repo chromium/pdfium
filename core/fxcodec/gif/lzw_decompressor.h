@@ -14,6 +14,7 @@
 
 #include "core/fxcodec/gif/cfx_gif.h"
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/span.h"
 
 namespace fxcodec {
 
@@ -36,12 +37,12 @@ class LZWDecompressor {
                                                  uint8_t code_exp);
   ~LZWDecompressor();
 
-  void SetSource(const uint8_t* src_buf, uint32_t src_size);
+  void SetSource(pdfium::span<const uint8_t> src_buf);
   Status Decode(uint8_t* dest_buf, uint32_t* dest_size);
 
   // Used by unittests, should not be called in production code.
-  uint32_t ExtractDataForTest(uint8_t* dest_buf, uint32_t dest_size) {
-    return ExtractData(dest_buf, dest_size);
+  size_t ExtractDataForTest(pdfium::span<uint8_t> dest_buf) {
+    return ExtractData(dest_buf);
   }
 
   DataVector<uint8_t>* DecompressedForTest() { return &decompressed_; }
@@ -54,7 +55,7 @@ class LZWDecompressor {
   void ClearTable();
   void AddCode(uint16_t prefix_code, uint8_t append_char);
   bool DecodeString(uint16_t code);
-  uint32_t ExtractData(uint8_t* dest_buf, uint32_t dest_size);
+  size_t ExtractData(pdfium::span<uint8_t> dest_buf);
 
   const uint8_t code_size_;
   uint8_t code_size_cur_ = 0;

@@ -61,7 +61,7 @@ class CFX_GifContext : public ProgressiveDecoderIface::Context {
   uint8_t img_pass_num_ = 0;
 
  protected:
-  UNSAFE_BUFFER_USAGE bool ReadAllOrNone(uint8_t* dest, uint32_t size);
+  bool ReadAllOrNone(pdfium::span<uint8_t> dest);
   GifDecoder::Status ReadGifSignature();
   GifDecoder::Status ReadLogicalScreenDescriptor();
 

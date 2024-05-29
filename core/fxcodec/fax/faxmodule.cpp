@@ -630,14 +630,16 @@ std::unique_ptr<ScanlineDecoder> FaxModule::CreateDecoder(
 }
 
 // static
-int FaxModule::FaxG4Decode(const uint8_t* src_buf,
-                           uint32_t src_size,
+int FaxModule::FaxG4Decode(pdfium::span<const uint8_t> src_span,
                            int starting_bitpos,
                            int width,
                            int height,
                            int pitch,
                            uint8_t* dest_buf) {
   DCHECK(pitch != 0);
+
+  const uint8_t* src_buf = src_span.data();
+  uint32_t src_size = pdfium::checked_cast<uint32_t>(src_span.size());
 
   DataVector<uint8_t> ref_buf(pitch, 0xff);
   int bitpos = starting_bitpos;

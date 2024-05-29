@@ -688,5 +688,5 @@ void CPDF_SecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict) {
 
 void CPDF_SecurityHandler::InitCryptoHandler() {
   m_pCryptoHandler = std::make_unique<CPDF_CryptoHandler>(
-      m_Cipher, m_EncryptKey.data(), m_KeyLen);
+      m_Cipher, pdfium::make_span(m_EncryptKey).first(m_KeyLen));
 }

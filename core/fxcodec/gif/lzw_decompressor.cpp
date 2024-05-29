@@ -17,6 +17,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/ptr_util.h"
 #include "core/fxcrt/stl_util.h"
 
@@ -43,9 +44,9 @@ LZWDecompressor::LZWDecompressor(uint8_t color_exp, uint8_t code_exp)
 
 LZWDecompressor::~LZWDecompressor() = default;
 
-void LZWDecompressor::SetSource(const uint8_t* src_buf, uint32_t src_size) {
-  next_in_ = src_buf;
-  avail_in_ = src_size;
+void LZWDecompressor::SetSource(pdfium::span<const uint8_t> src_buf) {
+  next_in_ = src_buf.data();
+  avail_in_ = pdfium::checked_cast<uint32_t>(src_buf.size());
 }
 
 LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
@@ -59,9 +60,10 @@ LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
   if (*dest_size == 0)
     return Status::kInsufficientDestSize;
 
-  uint32_t i = 0;
+  FX_SAFE_UINT32 i = 0;
   if (decompressed_next_ != 0) {
-    uint32_t extracted_size = ExtractData(dest_buf, *dest_size);
+    size_t extracted_size =
+        ExtractData(pdfium::make_span(dest_buf, *dest_size));
     if (decompressed_next_ != 0)
       return Status::kInsufficientDestSize;
 
@@ -69,7 +71,8 @@ LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
     i += extracted_size;
   }
 
-  while (i <= *dest_size && (avail_in_ > 0 || bits_left_ >= code_size_cur_)) {
+  while (i.ValueOrDie() <= *dest_size &&
+         (avail_in_ > 0 || bits_left_ >= code_size_cur_)) {
     if (code_size_cur_ > GIF_MAX_LZW_EXP)
       return Status::kError;
 
@@ -98,7 +101,7 @@ LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
         continue;
       }
       if (code == code_end_) {
-        *dest_size = i;
+        *dest_size = i.ValueOrDie();
         return Status::kSuccess;
       }
 
@@ -124,10 +127,11 @@ LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
       }
 
       code_old_ = code;
-      uint32_t extracted_size = ExtractData(dest_buf, *dest_size - i);
-      if (decompressed_next_ != 0)
+      size_t extracted_size = ExtractData(
+          pdfium::make_span(dest_buf, (*dest_size - i).ValueOrDie()));
+      if (decompressed_next_ != 0) {
         return Status::kInsufficientDestSize;
-
+      }
       dest_buf += extracted_size;
       i += extracted_size;
     }
@@ -136,7 +140,7 @@ LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
   if (avail_in_ != 0)
     return Status::kError;
 
-  *dest_size = i;
+  *dest_size = i.ValueOrDie();
   return Status::kUnfinished;
 }
 
@@ -186,15 +190,14 @@ bool LZWDecompressor::DecodeString(uint16_t code) {
   return true;
 }
 
-uint32_t LZWDecompressor::ExtractData(uint8_t* dest_buf, uint32_t dest_size) {
-  if (dest_size == 0)
+size_t LZWDecompressor::ExtractData(pdfium::span<uint8_t> dest_span) {
+  if (dest_span.empty()) {
     return 0;
-
-  uint32_t copy_size = dest_size <= decompressed_next_
-                           ? dest_size
-                           : static_cast<uint32_t>(decompressed_next_);
+  }
+  size_t copy_size = std::min(dest_span.size(), decompressed_next_);
   std::reverse_copy(decompressed_.data() + decompressed_next_ - copy_size,
-                    decompressed_.data() + decompressed_next_, dest_buf);
+                    decompressed_.data() + decompressed_next_,
+                    dest_span.data());
   decompressed_next_ -= copy_size;
   return copy_size;
 }

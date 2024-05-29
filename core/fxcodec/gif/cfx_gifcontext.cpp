@@ -70,9 +70,9 @@ GifDecoder::Status CFX_GifContext::GetFrame() {
         return GifDecoder::Status::kSuccess;
       case GIF_D_STATUS_SIG: {
         uint8_t signature;
-        if (!ReadAllOrNone(&signature, sizeof(signature)))
+        if (!ReadAllOrNone(pdfium::byte_span_from_ref(signature))) {
           return GifDecoder::Status::kUnfinished;
-
+        }
         switch (signature) {
           case GIF_SIG_EXTENSION:
             SaveDecodingStatus(GIF_D_STATUS_EXT);
@@ -95,9 +95,9 @@ GifDecoder::Status CFX_GifContext::GetFrame() {
       }
       case GIF_D_STATUS_EXT: {
         uint8_t extension;
-        if (!ReadAllOrNone(&extension, sizeof(extension)))
+        if (!ReadAllOrNone(pdfium::byte_span_from_ref(extension))) {
           return GifDecoder::Status::kUnfinished;
-
+        }
         switch (extension) {
           case GIF_BLOCK_CE:
             SaveDecodingStatus(GIF_D_STATUS_EXT_CE);
@@ -128,10 +128,9 @@ GifDecoder::Status CFX_GifContext::GetFrame() {
       case GIF_D_STATUS_IMG_DATA: {
         uint8_t img_data_size;
         size_t read_marker = input_buffer_->GetPosition();
-
-        if (!ReadAllOrNone(&img_data_size, sizeof(img_data_size)))
+        if (!ReadAllOrNone(pdfium::byte_span_from_ref(img_data_size))) {
           return GifDecoder::Status::kUnfinished;
-
+        }
         while (img_data_size != GIF_BLOCK_TERMINAL) {
           if (!input_buffer_->Seek(input_buffer_->GetPosition() +
                                    img_data_size)) {
@@ -143,10 +142,10 @@ GifDecoder::Status CFX_GifContext::GetFrame() {
           // ScanForTerminalMarker() cannot be used here.
           SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
           read_marker = input_buffer_->GetPosition();
-          if (!ReadAllOrNone(&img_data_size, sizeof(img_data_size)))
+          if (!ReadAllOrNone(pdfium::byte_span_from_ref(img_data_size))) {
             return GifDecoder::Status::kUnfinished;
+          }
         }
-
         SaveDecodingStatus(GIF_D_STATUS_SIG);
         continue;
       }
@@ -226,16 +225,15 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
   // TODO(crbug.com/pdfium/1793): This logic can be simplified a lot, but it
   // probably makes more sense to switch to a different GIF decoder altogether.
   if (decode_status_ == GIF_D_STATUS_IMG_DATA) {
-    if (!ReadAllOrNone(&img_data_size, sizeof(img_data_size)))
+    if (!ReadAllOrNone(pdfium::byte_span_from_ref(img_data_size))) {
       return GifDecoder::Status::kUnfinished;
-
+    }
     if (img_data_size != GIF_BLOCK_TERMINAL) {
       img_data.resize(img_data_size);
-      if (!ReadAllOrNone(img_data.data(), img_data_size)) {
+      if (!ReadAllOrNone(img_data)) {
         input_buffer_->Seek(read_marker);
         return GifDecoder::Status::kUnfinished;
       }
-
       if (!lzw_decompressor_) {
         lzw_decompressor_ = LZWDecompressor::Create(GetPaletteExp(gif_image),
                                                     gif_image->code_exp);
@@ -244,7 +242,7 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
           return GifDecoder::Status::kError;
         }
       }
-      lzw_decompressor_->SetSource(img_data.data(), img_data_size);
+      lzw_decompressor_->SetSource(img_data);
 
       SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
       img_row_offset_ += img_row_avail_size_;
@@ -266,17 +264,16 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
 
         if (ret == LZWDecompressor::Status::kUnfinished) {
           read_marker = input_buffer_->GetPosition();
-          if (!ReadAllOrNone(&img_data_size, sizeof(img_data_size)))
+          if (!ReadAllOrNone(pdfium::byte_span_from_ref(img_data_size))) {
             return GifDecoder::Status::kUnfinished;
-
+          }
           if (img_data_size != GIF_BLOCK_TERMINAL) {
             img_data.resize(img_data_size);
-            if (!ReadAllOrNone(img_data.data(), img_data_size)) {
+            if (!ReadAllOrNone(img_data)) {
               input_buffer_->Seek(read_marker);
               return GifDecoder::Status::kUnfinished;
             }
-
-            lzw_decompressor_->SetSource(img_data.data(), img_data_size);
+            lzw_decompressor_->SetSource(img_data);
 
             SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
             img_row_offset_ += img_row_avail_size_;
@@ -334,29 +331,24 @@ uint32_t CFX_GifContext::GetAvailInput() const {
                                         input_buffer_->GetPosition());
 }
 
-bool CFX_GifContext::ReadAllOrNone(uint8_t* dest, uint32_t size) {
-  if (!input_buffer_ || !dest)
+bool CFX_GifContext::ReadAllOrNone(pdfium::span<uint8_t> dest) {
+  if (!input_buffer_ || dest.empty()) {
     return false;
-
+  }
   size_t read_marker = input_buffer_->GetPosition();
-
-  // SAFETY: caller ensures `dest` points to `size` bytes, as enforced via
-  // UNSAFE_BUFFER_USAGE for method declaration in header.
-  auto read_span = UNSAFE_BUFFERS(pdfium::make_span(dest, size));
-  size_t read = input_buffer_->ReadBlock(read_span);
-  if (read < size) {
+  size_t read = input_buffer_->ReadBlock(dest);
+  if (read < dest.size()) {
     input_buffer_->Seek(read_marker);
     return false;
   }
-
   return true;
 }
 
 GifDecoder::Status CFX_GifContext::ReadGifSignature() {
   CFX_GifHeader header;
-  if (!ReadAllOrNone(reinterpret_cast<uint8_t*>(&header), 6))
+  if (!ReadAllOrNone(pdfium::byte_span_from_ref(header))) {
     return GifDecoder::Status::kUnfinished;
-
+  }
   if (strncmp(header.signature, kGifSignature87, 6) != 0 &&
       strncmp(header.signature, kGifSignature89, 6) != 0) {
     return GifDecoder::Status::kError;
@@ -368,10 +360,9 @@ GifDecoder::Status CFX_GifContext::ReadGifSignature() {
 GifDecoder::Status CFX_GifContext::ReadLogicalScreenDescriptor() {
   CFX_GifLocalScreenDescriptor lsd;
   size_t read_marker = input_buffer_->GetPosition();
-
-  if (!ReadAllOrNone(reinterpret_cast<uint8_t*>(&lsd), sizeof(lsd)))
+  if (!ReadAllOrNone(pdfium::byte_span_from_ref(lsd))) {
     return GifDecoder::Status::kUnfinished;
-
+  }
   if (lsd.global_flags.global_pal) {
     uint32_t palette_count = unsigned(2 << lsd.global_flags.pal_bits);
     if (lsd.bc_index >= palette_count)
@@ -379,9 +370,7 @@ GifDecoder::Status CFX_GifContext::ReadLogicalScreenDescriptor() {
     bc_index_ = lsd.bc_index;
 
     std::vector<CFX_GifPalette> palette(palette_count);
-    auto bytes = pdfium::as_writable_bytes(pdfium::make_span(palette));
-    if (!ReadAllOrNone(bytes.data(),
-                       pdfium::checked_cast<uint32_t>(bytes.size()))) {
+    if (!ReadAllOrNone(pdfium::as_writable_byte_span(palette))) {
       // Roll back the read for the LSD
       input_buffer_->Seek(read_marker);
       return GifDecoder::Status::kUnfinished;
@@ -416,9 +405,9 @@ GifDecoder::Status CFX_GifContext::DecodeExtension() {
     }
     case GIF_D_STATUS_EXT_PTE: {
       CFX_GifPlainTextExtension gif_pte;
-      if (!ReadAllOrNone(reinterpret_cast<uint8_t*>(&gif_pte), sizeof(gif_pte)))
+      if (!ReadAllOrNone(pdfium::byte_span_from_ref(gif_pte))) {
         return GifDecoder::Status::kUnfinished;
-
+      }
       graphic_control_extension_ = nullptr;
       if (!ScanForTerminalMarker()) {
         input_buffer_->Seek(read_marker);
@@ -428,12 +417,13 @@ GifDecoder::Status CFX_GifContext::DecodeExtension() {
     }
     case GIF_D_STATUS_EXT_GCE: {
       CFX_GifGraphicControlExtension gif_gce;
-      if (!ReadAllOrNone(reinterpret_cast<uint8_t*>(&gif_gce), sizeof(gif_gce)))
+      if (!ReadAllOrNone(pdfium::byte_span_from_ref(gif_gce))) {
         return GifDecoder::Status::kUnfinished;
-
-      if (!graphic_control_extension_.get())
+      }
+      if (!graphic_control_extension_.get()) {
         graphic_control_extension_ =
             std::make_unique<CFX_GifGraphicControlExtension>();
+      }
       graphic_control_extension_->block_size = gif_gce.block_size;
       graphic_control_extension_->gce_flags = gif_gce.gce_flags;
       graphic_control_extension_->delay_time =
@@ -461,9 +451,9 @@ GifDecoder::Status CFX_GifContext::DecodeImageInfo() {
 
   size_t read_marker = input_buffer_->GetPosition();
   CFX_GifImageInfo img_info;
-  if (!ReadAllOrNone(reinterpret_cast<uint8_t*>(&img_info), sizeof(img_info)))
+  if (!ReadAllOrNone(pdfium::byte_span_from_ref(img_info))) {
     return GifDecoder::Status::kUnfinished;
-
+  }
   auto gif_image = std::make_unique<CFX_GifImage>();
   gif_image->image_info.left = fxcrt::FromLE16(img_info.left);
   gif_image->image_info.top = fxcrt::FromLE16(img_info.top);
@@ -479,18 +469,15 @@ GifDecoder::Status CFX_GifContext::DecodeImageInfo() {
     gif_image->local_palette_exp = gif_img_info_lf->pal_bits;
     uint32_t loc_pal_count = unsigned(2 << gif_img_info_lf->pal_bits);
     std::vector<CFX_GifPalette> loc_pal(loc_pal_count);
-    auto bytes = pdfium::as_writable_bytes(pdfium::make_span(loc_pal));
-    if (!ReadAllOrNone(bytes.data(),
-                       pdfium::checked_cast<uint32_t>(bytes.size()))) {
+    if (!ReadAllOrNone(pdfium::as_writable_byte_span(loc_pal))) {
       input_buffer_->Seek(read_marker);
       return GifDecoder::Status::kUnfinished;
     }
-
     gif_image->local_palettes = std::move(loc_pal);
   }
 
   uint8_t code_size;
-  if (!ReadAllOrNone(&code_size, sizeof(code_size))) {
+  if (!ReadAllOrNone(pdfium::span_from_ref(code_size))) {
     input_buffer_->Seek(read_marker);
     return GifDecoder::Status::kUnfinished;
   }
@@ -523,17 +510,15 @@ void CFX_GifContext::DecodingFailureAtTailCleanup(CFX_GifImage* gif_image) {
 
 bool CFX_GifContext::ScanForTerminalMarker() {
   uint8_t data_size;
-
-  if (!ReadAllOrNone(&data_size, sizeof(data_size)))
+  if (!ReadAllOrNone(pdfium::span_from_ref(data_size))) {
     return false;
-
+  }
   while (data_size != GIF_BLOCK_TERMINAL) {
     if (!input_buffer_->Seek(input_buffer_->GetPosition() + data_size) ||
-        !ReadAllOrNone(&data_size, sizeof(data_size))) {
+        !ReadAllOrNone(pdfium::span_from_ref(data_size))) {
       return false;
     }
   }
-
   return true;
 }
 

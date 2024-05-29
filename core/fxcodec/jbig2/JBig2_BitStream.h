@@ -35,8 +35,7 @@ class CJBig2_BitStream {
   void setOffset(uint32_t dwOffset);
   uint32_t getBitPos() const;
   void setBitPos(uint32_t dwBitPos);
-  const uint8_t* getBuf() const;
-  uint32_t getLength() const;
+  pdfium::span<const uint8_t> getBufSpan() const { return m_Span; }
   const uint8_t* getPointer() const;
   void offset(uint32_t dwOffset);
   uint32_t getByteLeft() const;
