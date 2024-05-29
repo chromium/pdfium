@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/page/cpdf_dib.h"
 
 #include <stdint.h>
@@ -40,6 +35,7 @@
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -57,18 +53,20 @@ bool IsValidDimension(int value) {
 unsigned int GetBits8(const uint8_t* pData, uint64_t bitpos, size_t nbits) {
   DCHECK(nbits == 1 || nbits == 2 || nbits == 4 || nbits == 8 || nbits == 16);
   DCHECK_EQ((bitpos & (nbits - 1)), 0u);
-  unsigned int byte = pData[bitpos / 8];
-  if (nbits == 8)
-    return byte;
-
-  if (nbits == 16)
-    return byte * 256 + pData[bitpos / 8 + 1];
-
-  return (byte >> (8 - nbits - (bitpos % 8))) & ((1 << nbits) - 1);
+  UNSAFE_TODO({
+    unsigned int byte = pData[bitpos / 8];
+    if (nbits == 8) {
+      return byte;
+    }
+    if (nbits == 16) {
+      return byte * 256 + pData[bitpos / 8 + 1];
+    }
+    return (byte >> (8 - nbits - (bitpos % 8))) & ((1 << nbits) - 1);
+  });
 }
 
 bool GetBitValue(const uint8_t* pSrc, uint32_t pos) {
-  return pSrc[pos / 8] & (1 << (7 - pos % 8));
+  return UNSAFE_TODO(pSrc[pos / 8] & (1 << (7 - pos % 8)));
 }
 
 // Just to sanity check and filter out obvious bad values.
@@ -87,10 +85,13 @@ bool IsColorIndexOutOfBounds(uint8_t index, const DIB_COMP_DATA& comp_datum) {
 bool AreColorIndicesOutOfBounds(const uint8_t* indices,
                                 const DIB_COMP_DATA* comp_data,
                                 size_t count) {
-  for (size_t i = 0; i < count; ++i) {
-    if (IsColorIndexOutOfBounds(indices[i], comp_data[i]))
-      return true;
-  }
+  UNSAFE_TODO({
+    for (size_t i = 0; i < count; ++i) {
+      if (IsColorIndexOutOfBounds(indices[i], comp_data[i])) {
+        return true;
+      }
+    }
+  });
   return false;
 }
 
@@ -744,30 +745,34 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
       for (uint32_t row = 0; row < image_info.height; ++row) {
         const uint8_t* src = result_bitmap->GetScanline(row).data();
         uint8_t* dest = rgb_bitmap->GetWritableScanline(row).data();
-        for (uint32_t col = 0; col < image_info.width; ++col) {
-          uint8_t a = src[3];
-          m_JpxInlineData.data.push_back(a);
-          uint8_t na = 255 - a;
-          uint8_t b = (src[0] * a + 255 * na) / 255;
-          uint8_t g = (src[1] * a + 255 * na) / 255;
-          uint8_t r = (src[2] * a + 255 * na) / 255;
-          dest[0] = b;
-          dest[1] = g;
-          dest[2] = r;
-          src += 4;
-          dest += 3;
-        }
+        UNSAFE_TODO({
+          for (uint32_t col = 0; col < image_info.width; ++col) {
+            uint8_t a = src[3];
+            m_JpxInlineData.data.push_back(a);
+            uint8_t na = 255 - a;
+            uint8_t b = (src[0] * a + 255 * na) / 255;
+            uint8_t g = (src[1] * a + 255 * na) / 255;
+            uint8_t r = (src[2] * a + 255 * na) / 255;
+            dest[0] = b;
+            dest[1] = g;
+            dest[2] = r;
+            src += 4;
+            dest += 3;
+          }
+        });
       }
     } else {
       // TODO(thestig): Is there existing code that does this already?
       for (uint32_t row = 0; row < image_info.height; ++row) {
         const uint8_t* src = result_bitmap->GetScanline(row).data();
         uint8_t* dest = rgb_bitmap->GetWritableScanline(row).data();
-        for (uint32_t col = 0; col < image_info.width; ++col) {
-          FXSYS_memcpy(dest, src, 3);
-          src += 4;
-          dest += 3;
-        }
+        UNSAFE_TODO({
+          for (uint32_t col = 0; col < image_info.width; ++col) {
+            FXSYS_memcpy(dest, src, 3);
+            src += 4;
+            dest += 3;
+          }
+        });
       }
     }
     result_bitmap = std::move(rgb_bitmap);
@@ -777,10 +782,12 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
     int scale = 8 - m_bpc;
     for (uint32_t row = 0; row < image_info.height; ++row) {
       uint8_t* scanline = result_bitmap->GetWritableScanline(row).data();
-      for (uint32_t col = 0; col < image_info.width; ++col) {
-        *scanline = (*scanline) >> scale;
-        ++scanline;
-      }
+      UNSAFE_TODO({
+        for (uint32_t col = 0; col < image_info.width; ++col) {
+          *scanline = (*scanline) >> scale;
+          ++scanline;
+        }
+      });
     }
   }
 
@@ -1096,40 +1103,46 @@ bool CPDF_DIB::TranslateScanline24bppDefaultDecode(
   const uint8_t* src_pos = src_scan.data();
   switch (m_bpc) {
     case 8:
-      for (int column = 0; column < m_Width; column++) {
-        *dest_pos++ = src_pos[2];
-        *dest_pos++ = src_pos[1];
-        *dest_pos++ = *src_pos;
-        src_pos += 3;
-      }
+      UNSAFE_TODO({
+        for (int column = 0; column < m_Width; column++) {
+          *dest_pos++ = src_pos[2];
+          *dest_pos++ = src_pos[1];
+          *dest_pos++ = *src_pos;
+          src_pos += 3;
+        }
+      });
       break;
     case 16:
-      for (int col = 0; col < m_Width; col++) {
-        *dest_pos++ = src_pos[4];
-        *dest_pos++ = src_pos[2];
-        *dest_pos++ = *src_pos;
-        src_pos += 6;
-      }
+      UNSAFE_TODO({
+        for (int col = 0; col < m_Width; col++) {
+          *dest_pos++ = src_pos[4];
+          *dest_pos++ = src_pos[2];
+          *dest_pos++ = *src_pos;
+          src_pos += 6;
+        }
+      });
       break;
     default:
       const unsigned int max_data = (1 << m_bpc) - 1;
       uint64_t src_bit_pos = 0;
       size_t dest_byte_pos = 0;
-      for (int column = 0; column < m_Width; column++) {
-        unsigned int R = GetBits8(src_scan.data(), src_bit_pos, m_bpc);
-        src_bit_pos += m_bpc;
-        unsigned int G = GetBits8(src_scan.data(), src_bit_pos, m_bpc);
-        src_bit_pos += m_bpc;
-        unsigned int B = GetBits8(src_scan.data(), src_bit_pos, m_bpc);
-        src_bit_pos += m_bpc;
-        R = std::min(R, max_data);
-        G = std::min(G, max_data);
-        B = std::min(B, max_data);
-        dest_pos[dest_byte_pos] = B * 255 / max_data;
-        dest_pos[dest_byte_pos + 1] = G * 255 / max_data;
-        dest_pos[dest_byte_pos + 2] = R * 255 / max_data;
-        dest_byte_pos += 3;
-      }
+      UNSAFE_TODO({
+        for (int column = 0; column < m_Width; column++) {
+          unsigned int R = GetBits8(src_scan.data(), src_bit_pos, m_bpc);
+          src_bit_pos += m_bpc;
+          unsigned int G = GetBits8(src_scan.data(), src_bit_pos, m_bpc);
+          src_bit_pos += m_bpc;
+          unsigned int B = GetBits8(src_scan.data(), src_bit_pos, m_bpc);
+          src_bit_pos += m_bpc;
+          R = std::min(R, max_data);
+          G = std::min(G, max_data);
+          B = std::min(B, max_data);
+          dest_pos[dest_byte_pos] = B * 255 / max_data;
+          dest_pos[dest_byte_pos + 1] = G * 255 / max_data;
+          dest_pos[dest_byte_pos + 2] = R * 255 / max_data;
+          dest_byte_pos += 3;
+        }
+      });
       break;
   }
   return true;
@@ -1178,7 +1191,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
     if (m_bImageMask && m_bDefaultDecode) {
       for (uint32_t i = 0; i < src_pitch_value; i++) {
         // TODO(tsepez): Bounds check if cost is acceptable.
-        m_LineBuf[i] = ~pSrcLine.data()[i];
+        UNSAFE_TODO(m_LineBuf[i] = ~pSrcLine.data()[i]);
       }
       return pdfium::make_span(m_LineBuf).first(src_pitch_value);
     }
@@ -1190,9 +1203,11 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
     uint32_t reset_argb = Get1BitResetValue();
     uint32_t set_argb = Get1BitSetValue();
     uint32_t* dest_scan = reinterpret_cast<uint32_t*>(m_MaskBuf.data());
-    for (int col = 0; col < m_Width; col++, dest_scan++) {
-      *dest_scan = GetBitValue(pSrcLine.data(), col) ? set_argb : reset_argb;
-    }
+    UNSAFE_TODO({
+      for (int col = 0; col < m_Width; col++, dest_scan++) {
+        *dest_scan = GetBitValue(pSrcLine.data(), col) ? set_argb : reset_argb;
+      }
+    });
     return pdfium::make_span(m_MaskBuf).first(m_Width * sizeof(uint32_t));
   }
   if (m_bpc * m_nComponents <= 8) {
@@ -1219,35 +1234,40 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
     uint8_t* pDestPixel = m_MaskBuf.data();
     const uint8_t* pSrcPixel = m_LineBuf.data();
     pdfium::span<const uint32_t> palette = GetPaletteSpan();
-    if (HasPalette()) {
-      for (int col = 0; col < m_Width; col++) {
-        uint8_t index = *pSrcPixel++;
-        *pDestPixel++ = FXARGB_B(palette[index]);
-        *pDestPixel++ = FXARGB_G(palette[index]);
-        *pDestPixel++ = FXARGB_R(palette[index]);
-        *pDestPixel++ =
-            IsColorIndexOutOfBounds(index, m_CompData[0]) ? 0xFF : 0;
+    UNSAFE_TODO({
+      if (HasPalette()) {
+        for (int col = 0; col < m_Width; col++) {
+          uint8_t index = *pSrcPixel++;
+          *pDestPixel++ = FXARGB_B(palette[index]);
+          *pDestPixel++ = FXARGB_G(palette[index]);
+          *pDestPixel++ = FXARGB_R(palette[index]);
+          *pDestPixel++ =
+              IsColorIndexOutOfBounds(index, m_CompData[0]) ? 0xFF : 0;
+        }
+      } else {
+        for (int col = 0; col < m_Width; col++) {
+          uint8_t index = *pSrcPixel++;
+          *pDestPixel++ = index;
+          *pDestPixel++ = index;
+          *pDestPixel++ = index;
+          *pDestPixel++ =
+              IsColorIndexOutOfBounds(index, m_CompData[0]) ? 0xFF : 0;
+        }
       }
-    } else {
-      for (int col = 0; col < m_Width; col++) {
-        uint8_t index = *pSrcPixel++;
-        *pDestPixel++ = index;
-        *pDestPixel++ = index;
-        *pDestPixel++ = index;
-        *pDestPixel++ =
-            IsColorIndexOutOfBounds(index, m_CompData[0]) ? 0xFF : 0;
-      }
-    }
+    });
     return pdfium::make_span(m_MaskBuf).first(4 * m_Width);
   }
   if (m_bColorKey) {
     if (m_nComponents == 3 && m_bpc == 8) {
-      uint8_t* alpha_channel = m_MaskBuf.data() + 3;
-      for (int col = 0; col < m_Width; col++) {
-        const uint8_t* pPixel = pSrcLine.data() + col * 3;
-        alpha_channel[col * 4] =
-            AreColorIndicesOutOfBounds(pPixel, m_CompData.data(), 3) ? 0xFF : 0;
-      }
+      UNSAFE_TODO({
+        uint8_t* alpha_channel = m_MaskBuf.data() + 3;
+        for (int col = 0; col < m_Width; col++) {
+          const uint8_t* pPixel = pSrcLine.data() + col * 3;
+          alpha_channel[col * 4] =
+              AreColorIndicesOutOfBounds(pPixel, m_CompData.data(), 3) ? 0xFF
+                                                                       : 0;
+        }
+      });
     } else {
       fxcrt::spanset(pdfium::make_span(m_MaskBuf), 0xFF);
     }
@@ -1263,12 +1283,14 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
   // TODO(tsepez): Bounds check if cost is acceptable.
   const uint8_t* pSrcPixel = pSrcLine.data();
   uint8_t* pDestPixel = m_MaskBuf.data();
-  for (int col = 0; col < m_Width; col++) {
-    *pDestPixel++ = *pSrcPixel++;
-    *pDestPixel++ = *pSrcPixel++;
-    *pDestPixel++ = *pSrcPixel++;
-    pDestPixel++;
-  }
+  UNSAFE_TODO({
+    for (int col = 0; col < m_Width; col++) {
+      *pDestPixel++ = *pSrcPixel++;
+      *pDestPixel++ = *pSrcPixel++;
+      *pDestPixel++ = *pSrcPixel++;
+      pDestPixel++;
+    }
+  });
   return pdfium::make_span(m_MaskBuf).first(4 * m_Width);
 }
 

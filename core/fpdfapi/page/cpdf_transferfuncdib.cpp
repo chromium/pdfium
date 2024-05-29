@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/page/cpdf_transferfuncdib.h"
 
 #include <utility>
@@ -17,7 +12,14 @@
 #include "core/fpdfapi/page/cpdf_transferfunc.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxge/calculate_pitch.h"
+
+#if BUILDFLAG(IS_APPLE)
+#define INCR_ON_APPLE(x) ++x
+#else
+#define INCR_ON_APPLE(x)
+#endif
 
 CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
     RetainPtr<CFX_DIBBase> pSrc,
@@ -60,72 +62,78 @@ void CPDF_TransferFuncDIB::TranslateScanline(
       int g1 = m_RampG[255];
       int b1 = m_RampB[255];
       int index = 0;
-      for (int i = 0; i < m_Width; i++) {
-        if (src_buf[i / 8] & (1 << (7 - i % 8))) {
-          m_Scanline[index++] = b1;
-          m_Scanline[index++] = g1;
-          m_Scanline[index++] = r1;
-        } else {
-          m_Scanline[index++] = b0;
-          m_Scanline[index++] = g0;
-          m_Scanline[index++] = r0;
+      UNSAFE_TODO({
+        for (int i = 0; i < m_Width; i++) {
+          if (src_buf[i / 8] & (1 << (7 - i % 8))) {
+            m_Scanline[index++] = b1;
+            m_Scanline[index++] = g1;
+            m_Scanline[index++] = r1;
+          } else {
+            m_Scanline[index++] = b0;
+            m_Scanline[index++] = g0;
+            m_Scanline[index++] = r0;
+          }
+          INCR_ON_APPLE(index);
         }
-#if BUILDFLAG(IS_APPLE)
-        index++;
-#endif
-      }
+      });
       break;
     }
     case FXDIB_Format::k1bppMask: {
       int m0 = m_RampR[0];
       int m1 = m_RampR[255];
       int index = 0;
-      for (int i = 0; i < m_Width; i++) {
-        if (src_buf[i / 8] & (1 << (7 - i % 8)))
-          m_Scanline[index++] = m1;
-        else
-          m_Scanline[index++] = m0;
-      }
+      UNSAFE_TODO({
+        for (int i = 0; i < m_Width; i++) {
+          if (src_buf[i / 8] & (1 << (7 - i % 8))) {
+            m_Scanline[index++] = m1;
+          } else {
+            m_Scanline[index++] = m0;
+          }
+        }
+      });
       break;
     }
     case FXDIB_Format::k8bppRgb: {
       pdfium::span<const uint32_t> src_palette = m_pSrc->GetPaletteSpan();
       int index = 0;
-      for (int i = 0; i < m_Width; i++) {
-        if (m_pSrc->HasPalette()) {
-          FX_ARGB src_argb = src_palette[*src_buf];
-          m_Scanline[index++] = m_RampB[FXARGB_R(src_argb)];
-          m_Scanline[index++] = m_RampG[FXARGB_G(src_argb)];
-          m_Scanline[index++] = m_RampR[FXARGB_B(src_argb)];
-        } else {
-          uint32_t src_byte = *src_buf;
-          m_Scanline[index++] = m_RampB[src_byte];
-          m_Scanline[index++] = m_RampG[src_byte];
-          m_Scanline[index++] = m_RampR[src_byte];
+      UNSAFE_TODO({
+        for (int i = 0; i < m_Width; i++) {
+          if (m_pSrc->HasPalette()) {
+            FX_ARGB src_argb = src_palette[*src_buf];
+            m_Scanline[index++] = m_RampB[FXARGB_R(src_argb)];
+            m_Scanline[index++] = m_RampG[FXARGB_G(src_argb)];
+            m_Scanline[index++] = m_RampR[FXARGB_B(src_argb)];
+          } else {
+            uint32_t src_byte = *src_buf;
+            m_Scanline[index++] = m_RampB[src_byte];
+            m_Scanline[index++] = m_RampG[src_byte];
+            m_Scanline[index++] = m_RampR[src_byte];
+          }
+          src_buf++;
+          INCR_ON_APPLE(index);
         }
-        src_buf++;
-#if BUILDFLAG(IS_APPLE)
-        index++;
-#endif
-      }
+      });
       break;
     }
     case FXDIB_Format::k8bppMask: {
       int index = 0;
-      for (int i = 0; i < m_Width; i++)
-        m_Scanline[index++] = m_RampR[*(src_buf++)];
+      UNSAFE_TODO({
+        for (int i = 0; i < m_Width; i++) {
+          m_Scanline[index++] = m_RampR[*(src_buf++)];
+        }
+      });
       break;
     }
     case FXDIB_Format::kRgb: {
       int index = 0;
-      for (int i = 0; i < m_Width; i++) {
-        m_Scanline[index++] = m_RampB[*(src_buf++)];
-        m_Scanline[index++] = m_RampG[*(src_buf++)];
-        m_Scanline[index++] = m_RampR[*(src_buf++)];
-#if BUILDFLAG(IS_APPLE)
-        index++;
-#endif
-      }
+      UNSAFE_TODO({
+        for (int i = 0; i < m_Width; i++) {
+          m_Scanline[index++] = m_RampB[*(src_buf++)];
+          m_Scanline[index++] = m_RampG[*(src_buf++)];
+          m_Scanline[index++] = m_RampR[*(src_buf++)];
+          INCR_ON_APPLE(index);
+        }
+      });
       break;
     }
     case FXDIB_Format::kRgb32:
@@ -133,19 +141,19 @@ void CPDF_TransferFuncDIB::TranslateScanline(
       [[fallthrough]];
     case FXDIB_Format::kArgb: {
       int index = 0;
-      for (int i = 0; i < m_Width; i++) {
-        m_Scanline[index++] = m_RampB[*(src_buf++)];
-        m_Scanline[index++] = m_RampG[*(src_buf++)];
-        m_Scanline[index++] = m_RampR[*(src_buf++)];
-        if (!bSkip) {
-          m_Scanline[index++] = *src_buf;
-#if BUILDFLAG(IS_APPLE)
-        } else {
-          index++;
-#endif
+      UNSAFE_TODO({
+        for (int i = 0; i < m_Width; i++) {
+          m_Scanline[index++] = m_RampB[*(src_buf++)];
+          m_Scanline[index++] = m_RampG[*(src_buf++)];
+          m_Scanline[index++] = m_RampR[*(src_buf++)];
+          if (!bSkip) {
+            m_Scanline[index++] = *src_buf;
+          } else {
+            INCR_ON_APPLE(index);
+          }
+          src_buf++;
         }
-        src_buf++;
-      }
+      });
       break;
     }
     default:
