@@ -33,7 +33,9 @@
 
 namespace {
 
-using CodewordRow = std::array<const uint16_t, 929>;
+constexpr int kCodewordRowLength = 929;
+
+using CodewordRow = std::array<const uint16_t, kCodewordRowLength>;
 constexpr std::array<const CodewordRow, 3> kCodewordTable = {
     {{0xd5c0, 0xeaf0, 0xf57c, 0xd4e0, 0xea78, 0xf53e, 0xa8c0, 0xd470, 0xa860,
       0x5040, 0xa830, 0x5020, 0xadc0, 0xd6f0, 0xeb7c, 0xace0, 0xd678, 0xeb3e,
@@ -353,6 +355,7 @@ int32_t Get17BitCodeword(int i, int j) {
 }
 
 }  // namespace
+
 CBC_PDF417::CBC_PDF417() = default;
 
 CBC_PDF417::~CBC_PDF417() = default;
@@ -383,10 +386,15 @@ bool CBC_PDF417::GenerateBarcodeLogic(WideStringView msg,
   int32_t rows = dimensions[1];
   int32_t pad = getNumberOfPadCodewords(sourceCodeWords,
                                         errorCorrectionCodeWords, cols, rows);
-  if (sourceCodeWords + errorCorrectionCodeWords + 1 > 929)
+  if (sourceCodeWords + errorCorrectionCodeWords + 1 > kCodewordRowLength) {
     return false;
+  }
 
   int32_t n = sourceCodeWords + pad + 1;
+  if (n >= kCodewordRowLength) {
+    return false;
+  }
+
   WideString sb;
   sb += (wchar_t)n;
   sb += high_level.value();
