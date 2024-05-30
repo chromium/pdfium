@@ -1,10 +1,10 @@
 Name: OpenJPEG
 URL: http://www.openjpeg.org/
-Version: 2.5.0 (also update in opj_config*)
+Version: 2.5.2 (also update in opj_config*)
 Security Critical: yes
 Shipped: yes
 License: 2-clause BSD
-CPEPrefix: cpe:/a:uclouvain:openjpeg:2.5.0
+CPEPrefix: cpe:/a:uclouvain:openjpeg:2.5.2
 
 Description:
 JPEG 2000 library.
@@ -25,13 +25,8 @@ Local Modifications:
 0022-jp2_apply_pclr_overflow.patch: Prevent integer overflow in opj_jp2_apply_pclr.
 0023-opj_j2k_read_mct_records.patch: Fix opj_j2k_read to prevent heap-use-after-free.
 0025-opj_j2k_add_mct_null_data.patch: Check m_data != null before trying to read from it.
-0026-use_opj_uint_ceildiv.patch: Remove (OPJ_UINT32)opj_int_ceildiv((OPJ_INT32)a, (OPJ_INT32) b).
 0034-opj_malloc.patch: PDFium changes in opj_malloc.
 0035-opj_image_data_free.patch: Use the right free function in opj_jp2_apply_pclr.
 0039-opj_mqc_renorme.patch: Remove unused opj_mqc_renorme().
 0041-remove_opj_clock.patch: Remove unused opj_clock.h include.
-0042-popcnt-windows-arm64.patch: Backport to fix Windows arm64 build.
-0043-mel_init.patch: Backport fix for assertion failure in mel_init().
-0044-opj_t1_allocate_buffers.patch: Backport fix for malloc size error in opj_t1_allocate_buffers().
-0045-openjp2-j2k-replace-sprintf-calls-with-snprintf.patch: Replace sprintf with snprintf for macOS 13 SDK compatibility, from https://github.com/uclouvain/openjpeg/pull/1450.
 0046-func-ptr-mixup.patch: Prevent mixing up function pointer types.

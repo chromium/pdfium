@@ -692,7 +692,7 @@ index 44d0c98e5..6db728d18 100644
      /* preconditions */
      assert(jp2 != 00);
      assert(stream != 00);
-@@ -2854,11 +2863,12 @@ static OPJ_BOOL opj_jp2_read_boxhdr_char(opj_jp2_box_t *box,
+@@ -2849,11 +2849,12 @@ static OPJ_BOOL opj_jp2_read_boxhdr_char(opj_jp2_box_t *box,
  }
  
  OPJ_BOOL opj_jp2_read_header(opj_stream_private_t *p_stream,
@@ -703,9 +703,9 @@ index 44d0c98e5..6db728d18 100644
                              )
  {
 +    opj_jp2_t *jp2 = (opj_jp2_t*)p_jp2;
+     int ret;
+ 
      /* preconditions */
-     assert(jp2 != 00);
-     assert(p_stream != 00);
 @@ -2981,7 +2991,7 @@ static OPJ_BOOL opj_jp2_setup_header_reading(opj_jp2_t *jp2,
      return OPJ_TRUE;
  }

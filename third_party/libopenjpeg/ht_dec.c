@@ -55,6 +55,16 @@
 #define OPJ_COMPILER_GNUC
 #endif
 
+#if defined(OPJ_COMPILER_MSVC) && defined(_M_ARM64) \
+    && !defined(_M_ARM64EC) && !defined(_M_CEE_PURE) && !defined(__CUDACC__) \
+    && !defined(__INTEL_COMPILER) && !defined(__clang__)
+#define MSVC_NEON_INTRINSICS
+#endif
+
+#ifdef MSVC_NEON_INTRINSICS
+#include <arm64_neon.h>
+#endif
+
 //************************************************************************/
 /** @brief Displays the error message for disabling the decoding of SPP and
   * MRP passes
@@ -71,6 +81,9 @@ OPJ_UINT32 population_count(OPJ_UINT32 val)
 {
 #if defined(OPJ_COMPILER_MSVC) && (defined(_M_IX86) || defined(_M_AMD64))
     return (OPJ_UINT32)__popcnt(val);
+#elif defined(OPJ_COMPILER_MSVC) && defined(MSVC_NEON_INTRINSICS)
+    const __n64 temp = neon_cnt(__uint64ToN64_v(val));
+    return neon_addv8(temp).n8_i8[0];
 #elif (defined OPJ_COMPILER_GNUC)
     return (OPJ_UINT32)__builtin_popcount(val);
 #else
@@ -1083,6 +1096,26 @@ static OPJ_BOOL opj_t1_allocate_buffers(
     return OPJ_TRUE;
 }
 
+/**
+Decode 1 HT code-block
+@param t1 T1 handle
+@param cblk Code-block coding parameters
+@param orient
+@param roishift Region of interest shifting value
+@param cblksty Code-block style
+@param p_manager the event manager
+@param p_manager_mutex mutex for the event manager
+@param check_pterm whether PTERM correct termination should be checked
+*/
+OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
+                               opj_tcd_cblk_dec_t* cblk,
+                               OPJ_UINT32 orient,
+                               OPJ_UINT32 roishift,
+                               OPJ_UINT32 cblksty,
+                               opj_event_mgr_t *p_manager,
+                               opj_mutex_t* p_manager_mutex,
+                               OPJ_BOOL check_pterm);
+
 //************************************************************************/
 /** @brief Decodes one codeblock, processing the cleanup, siginificance
   *         propagation, and magnitude refinement pass
@@ -1190,6 +1223,9 @@ OPJ_BOOL opj_t1_ht_decode_cblk(opj_t1_t *t1,
 
         /* Concatenate all chunks */
         cblkdata = t1->cblkdatabuffer;
+        if (cblkdata == NULL) {
+            return OPJ_FALSE;
+        }
         cblk_len = 0;
         for (i = 0; i < cblk->numchunks; i++) {
             memcpy(cblkdata + cblk_len, cblk->chunks[i].data, cblk->chunks[i].len);
