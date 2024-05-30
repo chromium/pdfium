@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include <array>
+
 struct CRYPT_aes_context {
   static constexpr int kMaxNb = 8;
   static constexpr int kMaxNr = 14;
@@ -16,9 +18,9 @@ struct CRYPT_aes_context {
 
   int Nb;
   int Nr;
-  unsigned int keysched[kSchedSize];
-  unsigned int invkeysched[kSchedSize];
-  unsigned int iv[kMaxNb];
+  std::array<uint32_t, kSchedSize> keysched;
+  std::array<uint32_t, kSchedSize> invkeysched;
+  std::array<uint32_t, kMaxNb> iv;
 };
 
 void CRYPT_AESSetKey(CRYPT_aes_context* ctx,
