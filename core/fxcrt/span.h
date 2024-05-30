@@ -208,14 +208,20 @@ class TRIVIAL_ABI GSL_POINTER span {
 
   // TODO(dcheng): Implement construction from a |begin| and |end| pointer.
   template <size_t N>
-  constexpr span(T (&array)[N]) noexcept : span(array, N) {}
+  constexpr span(T (&array)[N]) noexcept : span(array, N) {
+    static_assert(Extent == dynamic_extent || Extent == N);
+  }
 
   template <size_t N>
-  constexpr span(std::array<T, N>& array) noexcept : span(array.data(), N) {}
+  constexpr span(std::array<T, N>& array) noexcept : span(array.data(), N) {
+    static_assert(Extent == dynamic_extent || Extent == N);
+  }
 
   template <size_t N>
   constexpr span(const std::array<std::remove_cv_t<T>, N>& array) noexcept
-      : span(array.data(), N) {}
+      : span(array.data(), N) {
+    static_assert(Extent == dynamic_extent || Extent == N);
+  }
 
   // Conversion from a container that provides |T* data()| and |integral_type
   // size()|. Note that |data()| may not return nullptr for some empty
