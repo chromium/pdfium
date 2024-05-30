@@ -123,6 +123,15 @@ enum class JpxDecodeAction {
   kConvertArgbToRgb,
 };
 
+// ISO 32000-1:2008 section 7.4.9 says the PDF and JPX colorspaces should have
+// the same number of color channels. This helper function checks the
+// colorspaces match, but also tolerates unknowns.
+bool IsJPXColorSpaceOrUnspecifiedOrUnknown(COLOR_SPACE actual,
+                                           COLOR_SPACE expected) {
+  return actual == expected || actual == OPJ_CLRSPC_UNSPECIFIED ||
+         actual == OPJ_CLRSPC_UNKNOWN;
+}
+
 // Decides which JpxDecodeAction to use based on the colorspace information from
 // the PDF and the JPX image. Called only when the PDF's image object contains a
 // "/ColorSpace" entry.
@@ -131,8 +140,8 @@ JpxDecodeAction GetJpxDecodeActionFromColorSpaces(
     const CPDF_ColorSpace* pdf_colorspace) {
   if (pdf_colorspace ==
       CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceGray)) {
-    if (jpx_info.colorspace != OPJ_CLRSPC_GRAY &&
-        jpx_info.colorspace != OPJ_CLRSPC_UNSPECIFIED) {
+    if (!IsJPXColorSpaceOrUnspecifiedOrUnknown(/*actual=*/jpx_info.colorspace,
+                                               /*expected=*/OPJ_CLRSPC_GRAY)) {
       return JpxDecodeAction::kFail;
     }
     return JpxDecodeAction::kUseGray;
@@ -140,8 +149,8 @@ JpxDecodeAction GetJpxDecodeActionFromColorSpaces(
 
   if (pdf_colorspace ==
       CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceRGB)) {
-    if (jpx_info.colorspace != OPJ_CLRSPC_SRGB &&
-        jpx_info.colorspace != OPJ_CLRSPC_UNSPECIFIED) {
+    if (!IsJPXColorSpaceOrUnspecifiedOrUnknown(/*actual=*/jpx_info.colorspace,
+                                               /*expected=*/OPJ_CLRSPC_SRGB)) {
       return JpxDecodeAction::kFail;
     }
 
@@ -155,8 +164,8 @@ JpxDecodeAction GetJpxDecodeActionFromColorSpaces(
 
   if (pdf_colorspace ==
       CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceCMYK)) {
-    if (jpx_info.colorspace != OPJ_CLRSPC_CMYK &&
-        jpx_info.colorspace != OPJ_CLRSPC_UNSPECIFIED) {
+    if (!IsJPXColorSpaceOrUnspecifiedOrUnknown(/*actual=*/jpx_info.colorspace,
+                                               /*expected=*/OPJ_CLRSPC_CMYK)) {
       return JpxDecodeAction::kFail;
     }
     return JpxDecodeAction::kUseCmyk;
