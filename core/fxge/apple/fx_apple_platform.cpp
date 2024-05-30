@@ -4,16 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/apple/fx_apple_platform.h"
 
 #include <memory>
 #include <utility>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxge/cfx_folderfontinfo.h"
 #include "core/fxge/cfx_fontmgr.h"
@@ -131,13 +127,17 @@ void* CFX_MacFontInfo::MapFont(int weight,
 }
 
 bool CFX_MacFontInfo::ParseFontCfg(const char** pUserPaths) {
-  if (!pUserPaths)
+  if (!pUserPaths) {
     return false;
-
-  for (const char** pPath = pUserPaths; *pPath; ++pPath)
-    AddPath(*pPath);
+  }
+  UNSAFE_TODO({
+    for (const char** pPath = pUserPaths; *pPath; ++pPath) {
+      AddPath(*pPath);
+    }
+  });
   return true;
 }
+
 }  // namespace
 
 CApplePlatform::CApplePlatform() = default;

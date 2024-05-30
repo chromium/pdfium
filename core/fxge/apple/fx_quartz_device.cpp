@@ -4,15 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/apple/fx_quartz_device.h"
 
 #include <CoreGraphics/CoreGraphics.h>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_path.h"
@@ -96,10 +92,12 @@ bool CQuartz2D::DrawGraphicsString(void* graphics,
   CGContextSaveGState(context);
 #if CGFLOAT_IS_DOUBLE
   CGPoint* glyphPositionsCG = new CGPoint[glyphPositions.size()];
-  for (size_t index = 0; index < glyphPositions.size(); ++index) {
-    glyphPositionsCG[index].x = glyphPositions[index].x;
-    glyphPositionsCG[index].y = glyphPositions[index].y;
-  }
+  UNSAFE_TODO({
+    for (size_t index = 0; index < glyphPositions.size(); ++index) {
+      glyphPositionsCG[index].x = glyphPositions[index].x;
+      glyphPositionsCG[index].y = glyphPositions[index].y;
+    }
+  });
 #else
   CGPoint* glyphPositionsCG = glyphPositions.data();
 #endif
