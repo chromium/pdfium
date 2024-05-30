@@ -4,17 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxcodec/gif/cfx_gifcontext.h"
 
 #include <stdint.h>
 #include <string.h>
 
 #include <algorithm>
+#include <array>
 #include <iterator>
 #include <utility>
 
@@ -27,7 +23,7 @@ namespace fxcodec {
 
 namespace {
 
-constexpr int32_t kGifInterlaceStep[4] = {8, 8, 4, 2};
+constexpr std::array<const int32_t, 4> kGifInterlaceStep = {{8, 8, 4, 2}};
 
 }  // namespace
 
@@ -247,8 +243,10 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
       SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
       img_row_offset_ += img_row_avail_size_;
       img_row_avail_size_ = gif_img_row_bytes - img_row_offset_;
-      LZWDecompressor::Status ret = lzw_decompressor_->Decode(
-          gif_image->row_buffer.data() + img_row_offset_, &img_row_avail_size_);
+      auto img_row_span = pdfium::make_span(gif_image->row_buffer)
+                              .subspan(img_row_offset_, img_row_avail_size_);
+      LZWDecompressor::Status ret =
+          lzw_decompressor_->Decode(img_row_span.data(), &img_row_avail_size_);
       if (ret == LZWDecompressor::Status::kError) {
         DecodingFailureAtTailCleanup(gif_image);
         return GifDecoder::Status::kError;
@@ -278,9 +276,10 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
             SaveDecodingStatus(GIF_D_STATUS_IMG_DATA);
             img_row_offset_ += img_row_avail_size_;
             img_row_avail_size_ = gif_img_row_bytes - img_row_offset_;
-            ret = lzw_decompressor_->Decode(
-                gif_image->row_buffer.data() + img_row_offset_,
-                &img_row_avail_size_);
+            img_row_span = pdfium::make_span(gif_image->row_buffer)
+                               .subspan(img_row_offset_, img_row_avail_size_);
+            ret = lzw_decompressor_->Decode(img_row_span.data(),
+                                            &img_row_avail_size_);
           }
         }
 
@@ -303,9 +302,10 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
 
           img_row_offset_ = 0;
           img_row_avail_size_ = gif_img_row_bytes;
-          ret = lzw_decompressor_->Decode(
-              gif_image->row_buffer.data() + img_row_offset_,
-              &img_row_avail_size_);
+          img_row_span = pdfium::make_span(gif_image->row_buffer)
+                             .subspan(img_row_offset_, img_row_avail_size_);
+          ret = lzw_decompressor_->Decode(img_row_span.data(),
+                                          &img_row_avail_size_);
         }
 
         if (ret == LZWDecompressor::Status::kError) {

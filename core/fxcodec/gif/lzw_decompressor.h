@@ -10,6 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <array>
 #include <memory>
 
 #include "core/fxcodec/gif/cfx_gif.h"
@@ -71,7 +72,7 @@ class LZWDecompressor {
   uint32_t avail_in_ = 0;
   uint8_t bits_left_ = 0;
   uint32_t code_store_ = 0;
-  CodeEntry code_table_[GIF_MAX_LZW_CODE];
+  std::array<CodeEntry, GIF_MAX_LZW_CODE> code_table_;
 };
 
 }  // namespace fxcodec
