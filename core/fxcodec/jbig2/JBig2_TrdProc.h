@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include <array>
 #include <memory>
 #include <vector>
 
@@ -83,7 +84,7 @@ class CJBig2_TRDProc {
   UnownedPtr<const CJBig2_HuffmanTable> SBHUFFRDX;
   UnownedPtr<const CJBig2_HuffmanTable> SBHUFFRDY;
   UnownedPtr<const CJBig2_HuffmanTable> SBHUFFRSIZE;
-  int8_t SBRAT[4];
+  std::array<int8_t, 4> SBRAT;
 
  private:
   struct ComposeData {

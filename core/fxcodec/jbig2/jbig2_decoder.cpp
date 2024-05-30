@@ -4,15 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxcodec/jbig2/jbig2_decoder.h"
 
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 #include "core/fxcodec/jbig2/JBig2_DocumentContext.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/span_util.h"
 
@@ -31,8 +27,9 @@ FXCODEC_STATUS Decode(Jbig2Context* pJbig2Context, bool decode_success) {
 
   int dword_size = pJbig2Context->m_height * pJbig2Context->m_dest_pitch / 4;
   uint32_t* dword_buf = reinterpret_cast<uint32_t*>(pJbig2Context->m_dest_buf);
-  for (int i = 0; i < dword_size; i++)
-    dword_buf[i] = ~dword_buf[i];
+  for (int i = 0; i < dword_size; i++) {
+    UNSAFE_TODO(dword_buf[i] = ~dword_buf[i]);
+  }
   return FXCODEC_STATUS::kDecodeFinished;
 }
 

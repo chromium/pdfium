@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include <array>
 #include <memory>
 
 #include "core/fxcrt/unowned_ptr.h"
@@ -32,7 +33,7 @@ class CJBig2_GRRDProc {
   int32_t GRREFERENCEDX;
   int32_t GRREFERENCEDY;
   UnownedPtr<CJBig2_Image> GRREFERENCE;
-  int8_t GRAT[4];
+  std::array<int8_t, 4> GRAT;
 
  private:
   std::unique_ptr<CJBig2_Image> DecodeTemplate0Unopt(

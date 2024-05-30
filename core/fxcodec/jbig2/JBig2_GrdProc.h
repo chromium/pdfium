@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include <array>
 #include <memory>
 
 #include "core/fxcodec/fx_codec_def.h"
@@ -54,7 +55,7 @@ class CJBig2_GRDProc {
   uint32_t GBW;
   uint32_t GBH;
   UnownedPtr<CJBig2_Image> SKIP;
-  int8_t GBAT[8];
+  std::array<int8_t, 8> GBAT;
 
  private:
   bool UseTemplate0Opt3() const;

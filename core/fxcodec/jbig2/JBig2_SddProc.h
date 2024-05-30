@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include <array>
 #include <memory>
 #include <vector>
 
@@ -49,8 +50,8 @@ class CJBig2_SDDProc {
   UnownedPtr<const CJBig2_HuffmanTable> SDHUFFDW;
   UnownedPtr<const CJBig2_HuffmanTable> SDHUFFBMSIZE;
   UnownedPtr<const CJBig2_HuffmanTable> SDHUFFAGGINST;
-  int8_t SDAT[8];
-  int8_t SDRAT[4];
+  std::array<int8_t, 8> SDAT;
+  std::array<int8_t, 4> SDRAT;
 
  private:
   // Reads from `SDINSYMS` if `i` is in-bounds. Otherwise, reduce `i` by

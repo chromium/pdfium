@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxcodec/jbig2/JBig2_Context.h"
 
 #include <algorithm>
@@ -437,7 +432,7 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
         const CJBig2_SymbolDict& dict = *pSeg->m_SymbolDict;
         for (uint32_t j = 0; j < dict.NumImages(); ++j) {
           uint32_t dwTemp = (dwNumSyms + j).ValueOrDie();
-          SDINSYMS.get()[dwTemp] = dict.GetImage(j);
+          UNSAFE_TODO(SDINSYMS.get()[dwTemp] = dict.GetImage(j));
         }
         dwNumSyms += dict.NumImages();
       }
@@ -652,7 +647,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
         const CJBig2_SymbolDict& dict = *pSeg->m_SymbolDict;
         for (uint32_t j = 0; j < dict.NumImages(); ++j) {
           uint32_t dwIndex = (dwNumSyms + j).ValueOrDie();
-          SBSYMS.get()[dwIndex] = dict.GetImage(j);
+          UNSAFE_TODO(SBSYMS.get()[dwIndex] = dict.GetImage(j));
         }
         dwNumSyms += dict.NumImages();
       }
@@ -1125,13 +1120,14 @@ JBig2_Result CJBig2_Context::ParseRegionInfo(JBig2RegionInfo* pRI) {
 std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(
     uint32_t SBNUMSYMS) {
   const size_t kRunCodesSize = 35;
-  JBig2HuffmanCode huffman_codes[kRunCodesSize];
+  std::array<JBig2HuffmanCode, kRunCodesSize> huffman_codes;
   for (size_t i = 0; i < kRunCodesSize; ++i) {
     if (m_pStream->readNBits(4, &huffman_codes[i].codelen) != 0)
       return std::vector<JBig2HuffmanCode>();
   }
-  if (!HuffmanAssignCode(huffman_codes, kRunCodesSize))
+  if (!HuffmanAssignCode(huffman_codes.data(), kRunCodesSize)) {
     return std::vector<JBig2HuffmanCode>();
+  }
 
   std::vector<JBig2HuffmanCode> SBSYMCODES(SBNUMSYMS);
   int32_t run = 0;
@@ -1207,13 +1203,14 @@ const CJBig2_HuffmanTable* CJBig2_Context::GetHuffmanTable(size_t idx) {
 bool CJBig2_Context::HuffmanAssignCode(JBig2HuffmanCode* SBSYMCODES,
                                        uint32_t NTEMP) {
   int LENMAX = 0;
-  for (uint32_t i = 0; i < NTEMP; ++i)
-    LENMAX = std::max(SBSYMCODES[i].codelen, LENMAX);
-
+  for (uint32_t i = 0; i < NTEMP; ++i) {
+    LENMAX = std::max(UNSAFE_TODO(SBSYMCODES[i].codelen), LENMAX);
+  }
   std::vector<int> LENCOUNT(LENMAX + 1);
   std::vector<int> FIRSTCODE(LENMAX + 1);
-  for (uint32_t i = 0; i < NTEMP; ++i)
-    ++LENCOUNT[SBSYMCODES[i].codelen];
+  for (uint32_t i = 0; i < NTEMP; ++i) {
+    UNSAFE_TODO(++LENCOUNT[SBSYMCODES[i].codelen]);
+  }
   LENCOUNT[0] = 0;
 
   for (int i = 1; i <= LENMAX; ++i) {
@@ -1225,10 +1222,13 @@ bool CJBig2_Context::HuffmanAssignCode(JBig2HuffmanCode* SBSYMCODES,
 
     FIRSTCODE[i] = shifted.ValueOrDie();
     int CURCODE = FIRSTCODE[i];
-    for (uint32_t j = 0; j < NTEMP; ++j) {
-      if (SBSYMCODES[j].codelen == i)
-        SBSYMCODES[j].code = CURCODE++;
-    }
+    UNSAFE_TODO({
+      for (uint32_t j = 0; j < NTEMP; ++j) {
+        if (SBSYMCODES[j].codelen == i) {
+          SBSYMCODES[j].code = CURCODE++;
+        }
+      }
+    });
   }
   return true;
 }

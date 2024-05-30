@@ -4,16 +4,13 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxcodec/jbig2/JBig2_ArithIntDecoder.h"
 
+#include <array>
 #include <vector>
 
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/stl_util.h"
 
 namespace {
 
@@ -26,9 +23,14 @@ struct ArithIntDecodeData {
   int nValue;
 };
 
-constexpr ArithIntDecodeData kArithIntDecodeData[] = {
-    {2, 0}, {4, 4}, {6, 20}, {8, 84}, {12, 340}, {32, 4436},
-};
+constexpr auto kArithIntDecodeData = fxcrt::ToArray<ArithIntDecodeData>({
+    {2, 0},
+    {4, 4},
+    {6, 20},
+    {8, 84},
+    {12, 340},
+    {32, 4436},
+});
 
 size_t RecursiveDecode(CJBig2_ArithDecoder* decoder,
                        std::vector<JBig2ArithCtx>* context,
