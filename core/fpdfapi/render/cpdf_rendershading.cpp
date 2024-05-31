@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/render/cpdf_rendershading.h"
 
 #include <math.h>
@@ -31,6 +26,7 @@
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/numerics/clamped_math.h"
@@ -139,28 +135,30 @@ void DrawAxialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
   CFX_Matrix matrix = mtObject2Bitmap.GetInverse();
   for (int row = 0; row < height; row++) {
-    uint32_t* dib_buf =
+    auto dest_buf =
         fxcrt::reinterpret_span<uint32_t>(pBitmap->GetWritableScanline(row))
-            .data();
-    for (int column = 0; column < width; column++) {
-      CFX_PointF pos = matrix.Transform(
-          CFX_PointF(static_cast<float>(column), static_cast<float>(row)));
+            .first(width);
+    size_t column_counter = 0;
+    for (auto& pix : dest_buf) {
+      const float column = static_cast<float>(column_counter++);
+      const CFX_PointF pos =
+          matrix.Transform(CFX_PointF(column, static_cast<float>(row)));
       float scale =
           (((pos.x - start_x) * x_span) + ((pos.y - start_y) * y_span)) /
           axis_len_square;
       int index = static_cast<int32_t>(scale * (kShadingSteps - 1));
       if (index < 0) {
-        if (!bStartExtend)
+        if (!bStartExtend) {
           continue;
-
+        }
         index = 0;
       } else if (index >= kShadingSteps) {
-        if (!bEndExtend)
+        if (!bEndExtend) {
           continue;
-
+        }
         index = kShadingSteps - 1;
       }
-      dib_buf[column] = shading_steps[index];
+      pix = shading_steps[index];
     }
   }
 }
@@ -213,12 +211,14 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
   CFX_Matrix matrix = mtObject2Bitmap.GetInverse();
   for (int row = 0; row < height; row++) {
-    uint32_t* dib_buf =
+    auto dest_buf =
         fxcrt::reinterpret_span<uint32_t>(pBitmap->GetWritableScanline(row))
-            .data();
-    for (int column = 0; column < width; column++) {
-      CFX_PointF pos = matrix.Transform(
-          CFX_PointF(static_cast<float>(column), static_cast<float>(row)));
+            .first(width);
+    size_t column_counter = 0;
+    for (auto& pix : dest_buf) {
+      const float column = static_cast<float>(column_counter++);
+      const CFX_PointF pos =
+          matrix.Transform(CFX_PointF(column, static_cast<float>(row)));
       float pos_dx = pos.x - start_x;
       float pos_dy = pos.y - start_y;
       float b = -2 * (pos_dx * dx + pos_dy * dy + start_r * dr);
@@ -230,34 +230,36 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
         s = -c / b;
       } else {
         float b2_4ac = (b * b) - 4 * (a * c);
-        if (b2_4ac < 0)
+        if (b2_4ac < 0) {
           continue;
-
+        }
         float root = sqrt(b2_4ac);
         float s1 = (-b - root) / (2 * a);
         float s2 = (-b + root) / (2 * a);
         if (a <= 0)
           std::swap(s1, s2);
-        if (bDecreasing)
+        if (bDecreasing) {
           s = (s1 >= 0 || bStartExtend) ? s1 : s2;
-        else
+        } else {
           s = (s2 <= 1.0f || bEndExtend) ? s2 : s1;
-
-        if (start_r + s * dr < 0)
+        }
+        if (start_r + s * dr < 0) {
           continue;
+        }
       }
-
       int index = static_cast<int32_t>(s * (kShadingSteps - 1));
       if (index < 0) {
-        if (!bStartExtend)
+        if (!bStartExtend) {
           continue;
+        }
         index = 0;
       } else if (index >= kShadingSteps) {
-        if (!bEndExtend)
+        if (!bEndExtend) {
           continue;
+        }
         index = kShadingSteps - 1;
       }
-      dib_buf[column] = shading_steps[index];
+      pix = shading_steps[index];
     }
   }
 }
@@ -295,9 +297,8 @@ void DrawFuncShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
   CHECK_GE(total_results, pCS->ComponentCount());
   std::vector<float> result_array(total_results);
   for (int row = 0; row < height; ++row) {
-    uint32_t* dib_buf =
-        fxcrt::reinterpret_span<uint32_t>(pBitmap->GetWritableScanline(row))
-            .data();
+    auto dib_buf =
+        fxcrt::reinterpret_span<uint32_t>(pBitmap->GetWritableScanline(row));
     for (int column = 0; column < width; column++) {
       CFX_PointF pos = matrix.Transform(
           CFX_PointF(static_cast<float>(column), static_cast<float>(row)));
@@ -343,7 +344,7 @@ bool GetScanlineIntersect(int y,
 
 void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
                  int alpha,
-                 CPDF_MeshVertex triangle[3]) {
+                 pdfium::span<CPDF_MeshVertex, 3> triangle) {
   float min_y = triangle[0].position.y;
   float max_y = triangle[0].position.y;
   for (int i = 1; i < 3; i++) {
@@ -360,10 +361,10 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
   for (int y = min_yi; y <= max_yi; y++) {
     int nIntersects = 0;
-    float inter_x[3];
-    float r[3];
-    float g[3];
-    float b[3];
+    std::array<float, 3> inter_x;
+    std::array<float, 3> r;
+    std::array<float, 3> g;
+    std::array<float, 3> b;
     for (int i = 0; i < 3; i++) {
       const CPDF_MeshVertex& vertex1 = triangle[i];
       const CPDF_MeshVertex& vertex2 = triangle[(i + 1) % 3];
@@ -416,13 +417,13 @@ void DrawGouraud(const RetainPtr<CFX_DIBitmap>& pBitmap,
         pBitmap->GetWritableScanline(y).subspan(start_x * 4);
 
     for (int x = start_x; x < end_x; x++) {
-      uint8_t* dib_buf = dib_span.data();
       r_result += r_unit;
       g_result += g_unit;
       b_result += b_unit;
-      FXARGB_SetDIB(dib_buf, ArgbEncode(alpha, static_cast<int>(r_result * 255),
-                                        static_cast<int>(g_result * 255),
-                                        static_cast<int>(b_result * 255)));
+      UNSAFE_TODO(FXARGB_SetDIB(
+          dib_span.data(), ArgbEncode(alpha, static_cast<int>(r_result * 255),
+                                      static_cast<int>(g_result * 255),
+                                      static_cast<int>(b_result * 255))));
       dib_span = dib_span.subspan(4);
     }
   }
@@ -442,7 +443,7 @@ void DrawFreeGouraudShading(
   if (!stream.Load())
     return;
 
-  CPDF_MeshVertex triangle[3];
+  std::array<CPDF_MeshVertex, 3> triangle;
   while (!stream.IsEOF()) {
     CPDF_MeshVertex vertex;
     uint32_t flag;
@@ -485,7 +486,7 @@ void DrawLatticeGouraudShading(
   if (!stream.Load())
     return;
 
-  std::vector<CPDF_MeshVertex> vertices[2];
+  std::array<std::vector<CPDF_MeshVertex>, 2> vertices;
   vertices[0] = stream.ReadVertexRow(mtObject2Bitmap, row_verts);
   if (vertices[0].empty())
     return;
@@ -546,7 +547,7 @@ struct CoonBezierCoeff {
     return result;
   }
 
-  void GetPoints(float p[4]) const {
+  void GetPoints(pdfium::span<float, 4> p) const {
     p[0] = d;
     p[1] = c / 3 + p[0];
     p[2] = b / 3 - p[0] + 2 * p[1];
@@ -601,8 +602,8 @@ struct CoonBezier {
 
   void GetPoints(pdfium::span<CFX_Path::Point> path_points) const {
     constexpr size_t kPointsCount = 4;
-    float points_x[kPointsCount];
-    float points_y[kPointsCount];
+    std::array<float, kPointsCount> points_x;
+    std::array<float, kPointsCount> points_y;
     x.GetPoints(points_x);
     y.GetPoints(points_y);
     for (size_t i = 0; i < kPointsCount; ++i)
@@ -611,8 +612,8 @@ struct CoonBezier {
 
   void GetPointsReverse(pdfium::span<CFX_Path::Point> path_points) const {
     constexpr size_t kPointsCount = 4;
-    float points_x[kPointsCount];
-    float points_y[kPointsCount];
+    std::array<float, kPointsCount> points_x;
+    std::array<float, kPointsCount> points_y;
     x.GetPoints(points_x);
     y.GetPoints(points_y);
     for (size_t i = 0; i < kPointsCount; ++i) {
@@ -657,7 +658,11 @@ struct CoonColor {
   CoonColor() = default;
 
   // Returns true if successful, false if overflow detected.
-  bool BiInterpol(CoonColor colors[4], int x, int y, int x_scale, int y_scale) {
+  bool BiInterpol(pdfium::span<CoonColor, 4> colors,
+                  int x,
+                  int y,
+                  int x_scale,
+                  int y_scale) {
     bool overflow = false;
     for (int i = 0; i < 3; i++) {
       comp[i] = BiInterpolImpl(colors[0].comp[i], colors[1].comp[i],
@@ -672,7 +677,7 @@ struct CoonColor {
                      abs(comp[2] - o.comp[2])});
   }
 
-  int comp[3] = {};
+  std::array<int, 3> comp = {};
 };
 
 struct PatchDrawer {
@@ -785,7 +790,7 @@ struct PatchDrawer {
   UnownedPtr<CFX_RenderDevice> pDevice;
   bool bNoPathSmooth;
   int alpha;
-  CoonColor patch_colors[4];
+  std::array<CoonColor, 4> patch_colors;
 };
 
 void DrawCoonPatchMeshes(
@@ -820,7 +825,7 @@ void DrawCoonPatchMeshes(
                                              : CFX_Path::Point::Type::kBezier);
   }
 
-  CFX_PointF coords[16];
+  std::array<CFX_PointF, 16> coords;
   int point_count = type == kTensorProductPatchMeshShading ? 16 : 12;
   while (!stream.IsEOF()) {
     if (!stream.CanReadFlag())
@@ -832,14 +837,15 @@ void DrawCoonPatchMeshes(
     if (flag) {
       iStartPoint = 4;
       iStartColor = 2;
-      CFX_PointF tempCoords[4];
+      std::array<CFX_PointF, 4> tempCoords;
       for (i = 0; i < 4; i++) {
         tempCoords[i] = coords[(flag * 3 + i) % 12];
       }
       fxcrt::spancpy(pdfium::make_span(coords), pdfium::make_span(tempCoords));
-      CoonColor tempColors[2] = {
-          tempColors[0] = patch.patch_colors[flag],
-          tempColors[1] = patch.patch_colors[(flag + 1) % 4]};
+      std::array<CoonColor, 2> tempColors = {{
+          patch.patch_colors[flag],
+          patch.patch_colors[(flag + 1) % 4],
+      }};
       fxcrt::spancpy(pdfium::make_span(patch.patch_colors),
                      pdfium::make_span(tempColors));
     }
