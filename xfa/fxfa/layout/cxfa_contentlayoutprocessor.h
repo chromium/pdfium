@@ -9,6 +9,7 @@
 
 #include <float.h>
 
+#include <array>
 #include <list>
 #include <map>
 #include <optional>
@@ -78,6 +79,9 @@ class CXFA_ContentLayoutProcessor
     UnownedPtr<CXFA_Node> m_pOverflowNode;                         // Ok, stack
   };
 
+  using ContentLayoutItemVector =
+      std::vector<cppgc::Persistent<CXFA_ContentLayoutItem>>;
+
   CXFA_ContentLayoutProcessor(cppgc::Heap* pHeap,
                               CXFA_Node* pNode,
                               CXFA_ViewLayoutProcessor* pViewLayoutProcessor);
@@ -91,17 +95,15 @@ class CXFA_ContentLayoutProcessor
   bool HasLayoutItem() const { return !!m_pLayoutItem; }
   void SplitLayoutItem(float fSplitPos);
   float FindSplitPos(float fProposedSplitPos);
-  bool ProcessKeepForSplit(
-      CXFA_ContentLayoutProcessor* pChildProcessor,
-      Result eRetValue,
-      std::vector<cppgc::Persistent<CXFA_ContentLayoutItem>>*
-          rgCurLineLayoutItem,
-      float* fContentCurRowAvailWidth,
-      float* fContentCurRowHeight,
-      float* fContentCurRowY,
-      bool* bAddedItemInRow,
-      bool* bForceEndPage,
-      Result* result);
+  bool ProcessKeepForSplit(CXFA_ContentLayoutProcessor* pChildProcessor,
+                           Result eRetValue,
+                           ContentLayoutItemVector& rgCurLineLayoutItem,
+                           float* fContentCurRowAvailWidth,
+                           float* fContentCurRowHeight,
+                           float* fContentCurRowY,
+                           bool* bAddedItemInRow,
+                           bool* bForceEndPage,
+                           Result* result);
   void ProcessUnUseOverFlow(CXFA_Node* pLeaderNode,
                             CXFA_Node* pTrailerNode,
                             CXFA_ContentLayoutItem* pTrailerItem,
@@ -120,8 +122,7 @@ class CXFA_ContentLayoutProcessor
                        float fSplitPos);
   float InsertKeepLayoutItems();
   bool CalculateRowChildPosition(
-      std::vector<cppgc::Persistent<CXFA_ContentLayoutItem>> (
-          &rgCurLineLayoutItems)[3],
+      std::array<ContentLayoutItemVector, 3>& rgCurLineLayoutItems,
       XFA_AttributeValue eFlowStrategy,
       bool bContainerHeightAutoSize,
       bool bContainerWidthAutoSize,
@@ -178,8 +179,7 @@ class CXFA_ContentLayoutProcessor
       float fContainerHeight,
       XFA_AttributeValue eFlowStrategy,
       uint8_t* uCurHAlignState,
-      std::vector<cppgc::Persistent<CXFA_ContentLayoutItem>> (
-          &rgCurLineLayoutItems)[3],
+      std::array<ContentLayoutItemVector, 3>& rgCurLineLayoutItems,
       bool bUseBreakControl,
       float fAvailHeight,
       float fRealHeight,

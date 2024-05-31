@@ -1419,7 +1419,7 @@ float CXFA_ContentLayoutProcessor::InsertKeepLayoutItems() {
 bool CXFA_ContentLayoutProcessor::ProcessKeepForSplit(
     CXFA_ContentLayoutProcessor* pChildProcessor,
     Result eRetValue,
-    std::vector<cppgc::Persistent<CXFA_ContentLayoutItem>>* rgCurLineLayoutItem,
+    ContentLayoutItemVector& rgCurLineLayoutItem,
     float* fContentCurRowAvailWidth,
     float* fContentCurRowHeight,
     float* fContentCurRowY,
@@ -1452,7 +1452,7 @@ bool CXFA_ContentLayoutProcessor::ProcessKeepForSplit(
     return true;
   }
 
-  rgCurLineLayoutItem->push_back(pChildProcessor->ExtractLayoutItem());
+  rgCurLineLayoutItem.push_back(pChildProcessor->ExtractLayoutItem());
   *bAddedItemInRow = true;
   *fContentCurRowAvailWidth -= childSize.width;
   *fContentCurRowHeight = std::max(*fContentCurRowHeight, childSize.height);
@@ -1587,8 +1587,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
     float fContentCurRowHeight = 0;
     float fContentCurRowAvailWidth = fContentWidthLimit;
     m_fWidthLimit = fContentCurRowAvailWidth;
-    std::vector<cppgc::Persistent<CXFA_ContentLayoutItem>>
-        rgCurLineLayoutItems[3];
+    std::array<ContentLayoutItemVector, 3> rgCurLineLayoutItems;
     uint8_t uCurHAlignState =
         (eFlowStrategy != XFA_AttributeValue::Rl_tb ? 0 : 2);
     if (pLastChild) {
@@ -1724,7 +1723,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
                   bContainerWidthAutoSize, &calculated_size.width,
                   &calculated_size.height, &fContentCurRowY,
                   fContentCurRowHeight, fContentWidthLimit, false);
-              rgCurLineLayoutItems->clear();
+              rgCurLineLayoutItems.front().clear();
               auto* pTempProcessor =
                   cppgc::MakeGarbageCollected<CXFA_ContentLayoutProcessor>(
                       GetHeap()->GetAllocationHandle(), GetHeap(), pLeaderNode,
@@ -1914,8 +1913,7 @@ CXFA_ContentLayoutProcessor::DoLayoutFlowedContainer(
 }
 
 bool CXFA_ContentLayoutProcessor::CalculateRowChildPosition(
-    std::vector<cppgc::Persistent<CXFA_ContentLayoutItem>> (
-        &rgCurLineLayoutItems)[3],
+    std::array<ContentLayoutItemVector, 3>& rgCurLineLayoutItems,
     XFA_AttributeValue eFlowStrategy,
     bool bContainerHeightAutoSize,
     bool bContainerWidthAutoSize,
@@ -2342,8 +2340,7 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
     float fContainerHeight,
     XFA_AttributeValue eFlowStrategy,
     uint8_t* uCurHAlignState,
-    std::vector<cppgc::Persistent<CXFA_ContentLayoutItem>> (
-        &rgCurLineLayoutItems)[3],
+    std::array<ContentLayoutItemVector, 3>& rgCurLineLayoutItems,
     bool bUseBreakControl,
     float fAvailHeight,
     float fRealHeight,
@@ -2534,7 +2531,7 @@ CXFA_ContentLayoutProcessor::InsertFlowedItem(
   }
 
   Result eResult;
-  if (ProcessKeepForSplit(pProcessor, eRetValue, &rgCurLineLayoutItems[uHAlign],
+  if (ProcessKeepForSplit(pProcessor, eRetValue, rgCurLineLayoutItems[uHAlign],
                           fContentCurRowAvailWidth, fContentCurRowHeight,
                           fContentCurRowY, bAddedItemInRow, bForceEndPage,
                           &eResult)) {
