@@ -4,14 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/android/cfpf_skiafontmgr.h"
 
 #include <algorithm>
+#include <array>
 #include <iterator>
 #include <utility>
 
@@ -20,6 +16,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_folder.h"
 #include "core/fxcrt/fx_system.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/android/cfpf_skiafont.h"
 #include "core/fxge/android/cfpf_skiapathfont.h"
 #include "core/fxge/freetype/fx_freetype.h"
@@ -58,15 +55,15 @@ const FPF_SKIAFONTMAP kSkiaSansFontMap[] = {
 };
 
 uint32_t FPF_SkiaGetSubstFont(uint32_t dwHash,
-                              const FPF_SKIAFONTMAP* skFontMap,
-                              size_t length) {
-  const FPF_SKIAFONTMAP* pEnd = skFontMap + length;
-  const FPF_SKIAFONTMAP* pFontMap = std::lower_bound(
-      skFontMap, pEnd, dwHash, [](const FPF_SKIAFONTMAP& item, uint32_t hash) {
-        return item.dwFamily < hash;
-      });
-  if (pFontMap < pEnd && pFontMap->dwFamily == dwHash)
+                              pdfium::span<const FPF_SKIAFONTMAP> skFontMap) {
+  const FPF_SKIAFONTMAP* pFontMap =
+      std::lower_bound(skFontMap.begin(), skFontMap.end(), dwHash,
+                       [](const FPF_SKIAFONTMAP& item, uint32_t hash) {
+                         return item.dwFamily < hash;
+                       });
+  if (pFontMap != skFontMap.end() && pFontMap->dwFamily == dwHash) {
     return pFontMap->dwSubSt;
+  }
   return 0;
 }
 
@@ -169,7 +166,7 @@ bool FPF_SkiaMaybeArabic(ByteStringView bsFacename) {
   return bsName.Contains("arabic");
 }
 
-const uint32_t kFPFSkiaFontCharsets[] = {
+constexpr auto kFPFSkiaFontCharsets = fxcrt::ToArray<const uint32_t>({
     FPF_SKIACHARSET_Ansi,
     FPF_SKIACHARSET_EeasternEuropean,
     FPF_SKIACHARSET_Cyrillic,
@@ -202,7 +199,7 @@ const uint32_t kFPFSkiaFontCharsets[] = {
     0,
     FPF_SKIACHARSET_OEM,
     FPF_SKIACHARSET_Symbol,
-};
+});
 
 uint32_t FPF_SkiaGetFaceCharset(uint32_t code_range) {
   uint32_t charset = 0;
@@ -252,10 +249,8 @@ CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(ByteStringView bsFamilyname,
     return family_iter->second.get();
 
   uint32_t dwFaceName = FPF_SKIANormalizeFontName(bsFamilyname);
-  uint32_t dwSubst =
-      FPF_SkiaGetSubstFont(dwFaceName, kSkiaFontmap, std::size(kSkiaFontmap));
-  uint32_t dwSubstSans = FPF_SkiaGetSubstFont(dwFaceName, kSkiaSansFontMap,
-                                              std::size(kSkiaSansFontMap));
+  uint32_t dwSubst = FPF_SkiaGetSubstFont(dwFaceName, kSkiaFontmap);
+  uint32_t dwSubstSans = FPF_SkiaGetSubstFont(dwFaceName, kSkiaSansFontMap);
   bool bMaybeSymbol = FPF_SkiaMaybeSymbol(bsFamilyname);
   if (uCharset != FX_Charset::kMSWin_Arabic &&
       FPF_SkiaMaybeArabic(bsFamilyname)) {
