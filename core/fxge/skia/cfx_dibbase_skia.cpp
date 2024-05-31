@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/dib/cfx_dibbase.h"
 
 #include <stddef.h>
@@ -17,6 +12,7 @@
 #include <utility>
 
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
@@ -85,7 +81,7 @@ class PixelTransformTraits<1, PixelTransform> {
   using Result = std::invoke_result_t<PixelTransform, bool>;
 
   static Result Invoke(PixelTransform&& pixel_transform,
-                       const uint8_t* scanline,
+                       pdfium::span<const uint8_t> scanline,
                        size_t column) {
     uint8_t kMask = 1 << (7 - column % 8);
     return pixel_transform(!!(scanline[column / 8] & kMask));
@@ -98,7 +94,7 @@ class PixelTransformTraits<8, PixelTransform> {
   using Result = std::invoke_result_t<PixelTransform, uint8_t>;
 
   static Result Invoke(PixelTransform&& pixel_transform,
-                       const uint8_t* scanline,
+                       pdfium::span<const uint8_t> scanline,
                        size_t column) {
     return pixel_transform(scanline[column]);
   }
@@ -111,7 +107,7 @@ class PixelTransformTraits<24, PixelTransform> {
       std::invoke_result_t<PixelTransform, uint8_t, uint8_t, uint8_t>;
 
   static Result Invoke(PixelTransform&& pixel_transform,
-                       const uint8_t* scanline,
+                       pdfium::span<const uint8_t> scanline,
                        size_t column) {
     size_t offset = column * 3;
     return pixel_transform(scanline[offset + 2], scanline[offset + 1],
@@ -162,9 +158,8 @@ sk_sp<SkImage> CreateSkiaImageFromTransformedDib(
     ValidateScanlineSize(scanline, min_row_bytes);
 
     for (int column = 0; column < width; ++column) {
-      *output_cursor++ =
-          Traits::Invoke(std::forward<PixelTransform>(pixel_transform),
-                         scanline.data(), column);
+      UNSAFE_TODO(*output_cursor++) = Traits::Invoke(
+          std::forward<PixelTransform>(pixel_transform), scanline, column);
     }
   }
 
