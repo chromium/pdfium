@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/cfx_fontmapper.h"
 
 #include <stdint.h>
@@ -36,22 +31,23 @@ namespace {
 static_assert(CFX_FontMapper::kLast + 1 == CFX_FontMapper::kNumStandardFonts,
               "StandardFont enum count mismatch");
 
-const char* const kBase14FontNames[CFX_FontMapper::kNumStandardFonts] = {
-    "Courier",
-    "Courier-Bold",
-    "Courier-BoldOblique",
-    "Courier-Oblique",
-    "Helvetica",
-    "Helvetica-Bold",
-    "Helvetica-BoldOblique",
-    "Helvetica-Oblique",
-    "Times-Roman",
-    "Times-Bold",
-    "Times-BoldItalic",
-    "Times-Italic",
-    "Symbol",
-    "ZapfDingbats",
-};
+constexpr std::array<const char*, CFX_FontMapper::kNumStandardFonts>
+    kBase14FontNames = {{
+        "Courier",
+        "Courier-Bold",
+        "Courier-BoldOblique",
+        "Courier-Oblique",
+        "Helvetica",
+        "Helvetica-Bold",
+        "Helvetica-BoldOblique",
+        "Helvetica-Oblique",
+        "Times-Roman",
+        "Times-Bold",
+        "Times-BoldItalic",
+        "Times-Italic",
+        "Symbol",
+        "ZapfDingbats",
+    }};
 
 struct AltFontName {
   const char* m_pName;  // Raw, POD struct.

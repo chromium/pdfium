@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/cfx_cliprgn.h"
 
 #include <stdint.h>
@@ -89,7 +84,7 @@ void CFX_ClipRgn::IntersectMaskF(int left,
   for (int row = new_box.top; row < new_box.bottom; row++) {
     pdfium::span<const uint8_t> old_scan = m_Mask->GetScanline(row - m_Box.top);
     pdfium::span<const uint8_t> mask_scan = pMask->GetScanline(row - top);
-    uint8_t* new_scan = new_dib->GetWritableScanline(row - new_box.top).data();
+    auto new_scan = new_dib->GetWritableScanline(row - new_box.top);
     for (int col = new_box.left; col < new_box.right; col++) {
       new_scan[col - new_box.left] =
           old_scan[col - m_Box.left] * mask_scan[col - left] / 255;

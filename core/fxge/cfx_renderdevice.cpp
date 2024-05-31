@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/cfx_renderdevice.h"
 
 #include <math.h>
@@ -20,6 +15,7 @@
 #include "build/build_config.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/cfx_color.h"
@@ -84,7 +80,7 @@ void AdjustGlyphSpace(std::vector<TextGlyphPos>* pGlyphAndPos) {
   }
 }
 
-constexpr uint8_t kTextGammaAdjust[256] = {
+constexpr std::array<const uint8_t, 256> kTextGammaAdjust = {{
     0,   2,   3,   4,   6,   7,   8,   10,  11,  12,  13,  15,  16,  17,  18,
     19,  21,  22,  23,  24,  25,  26,  27,  29,  30,  31,  32,  33,  34,  35,
     36,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,  48,  49,  51,  52,
@@ -103,11 +99,9 @@ constexpr uint8_t kTextGammaAdjust[256] = {
     228, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 239, 240,
     241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 250, 251, 252, 253, 254,
     255,
-};
+}};
 
 int TextGammaAdjust(int value) {
-  DCHECK_GE(value, 0);
-  DCHECK_LE(value, 255);
   return kTextGammaAdjust[value];
 }
 
@@ -126,13 +120,15 @@ void MergeGammaAdjustRgb(const uint8_t* src,
                          int b,
                          int a,
                          uint8_t* dest) {
-  MergeGammaAdjust(src[2], b, a, &dest[0]);
-  MergeGammaAdjust(src[1], g, a, &dest[1]);
-  MergeGammaAdjust(src[0], r, a, &dest[2]);
+  UNSAFE_TODO({
+    MergeGammaAdjust(src[2], b, a, &dest[0]);
+    MergeGammaAdjust(src[1], g, a, &dest[1]);
+    MergeGammaAdjust(src[0], r, a, &dest[2]);
+  });
 }
 
 int AverageRgb(const uint8_t* src) {
-  return (src[0] + src[1] + src[2]) / 3;
+  return UNSAFE_TODO((src[0] + src[1] + src[2]) / 3);
 }
 
 uint8_t CalculateDestAlpha(uint8_t back_alpha, int src_alpha) {
@@ -140,9 +136,11 @@ uint8_t CalculateDestAlpha(uint8_t back_alpha, int src_alpha) {
 }
 
 void ApplyAlpha(uint8_t* dest, int b, int g, int r, int alpha) {
-  dest[0] = FXDIB_ALPHA_MERGE(dest[0], b, alpha);
-  dest[1] = FXDIB_ALPHA_MERGE(dest[1], g, alpha);
-  dest[2] = FXDIB_ALPHA_MERGE(dest[2], r, alpha);
+  UNSAFE_TODO({
+    dest[0] = FXDIB_ALPHA_MERGE(dest[0], b, alpha);
+    dest[1] = FXDIB_ALPHA_MERGE(dest[1], g, alpha);
+    dest[2] = FXDIB_ALPHA_MERGE(dest[2], r, alpha);
+  });
 }
 
 void ApplyDestAlpha(uint8_t back_alpha,
@@ -153,7 +151,7 @@ void ApplyDestAlpha(uint8_t back_alpha,
                     uint8_t* dest) {
   uint8_t dest_alpha = CalculateDestAlpha(back_alpha, src_alpha);
   ApplyAlpha(dest, b, g, r, src_alpha * 255 / dest_alpha);
-  dest[3] = dest_alpha;
+  UNSAFE_TODO(dest[3] = dest_alpha);
 }
 
 void NormalizeArgb(int src_value,
@@ -163,11 +161,14 @@ void NormalizeArgb(int src_value,
                    int a,
                    uint8_t* dest,
                    int src_alpha) {
-  uint8_t back_alpha = dest[3];
-  if (back_alpha == 0)
-    FXARGB_SetDIB(dest, ArgbEncode(src_alpha, r, g, b));
-  else if (src_alpha != 0)
-    ApplyDestAlpha(back_alpha, src_alpha, r, g, b, dest);
+  UNSAFE_TODO({
+    uint8_t back_alpha = dest[3];
+    if (back_alpha == 0) {
+      FXARGB_SetDIB(dest, ArgbEncode(src_alpha, r, g, b));
+    } else if (src_alpha != 0) {
+      ApplyDestAlpha(back_alpha, src_alpha, r, g, b, dest);
+    }
+  });
 }
 
 void NormalizeDest(bool has_alpha,
@@ -206,13 +207,16 @@ void NormalizeSrc(bool has_alpha,
 }
 
 void NextPixel(const uint8_t** src_scan, uint8_t** dst_scan, int bpp) {
-  *src_scan += 3;
-  *dst_scan += bpp;
+  UNSAFE_TODO({
+    *src_scan += 3;
+    *dst_scan += bpp;
+  });
 }
 
 void SetAlpha(bool has_alpha, uint8_t* alpha) {
-  if (has_alpha)
-    alpha[3] = 255;
+  if (has_alpha) {
+    UNSAFE_TODO(alpha[3] = 255);
+  }
 }
 
 void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
@@ -252,54 +256,57 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
       }
       continue;
     }
-    if (x_subpixel == 1) {
+    UNSAFE_TODO({
+      if (x_subpixel == 1) {
+        if (normalize) {
+          int src_value = start_col > left ? AverageRgb(&src_scan[-1])
+                                           : (src_scan[0] + src_scan[1]) / 3;
+          NormalizeSrc(has_alpha, src_value, r, g, b, a, dest_scan);
+        } else {
+          if (start_col > left) {
+            MergeGammaAdjust(src_scan[-1], r, a, &dest_scan[2]);
+          }
+          MergeGammaAdjust(src_scan[0], g, a, &dest_scan[1]);
+          MergeGammaAdjust(src_scan[1], b, a, &dest_scan[0]);
+          SetAlpha(has_alpha, dest_scan);
+        }
+        NextPixel(&src_scan, &dest_scan, Bpp);
+        for (int col = start_col + 1; col < end_col; ++col) {
+          if (normalize) {
+            int src_value = AverageRgb(&src_scan[-1]);
+            NormalizeDest(has_alpha, src_value, r, g, b, a, dest_scan);
+          } else {
+            MergeGammaAdjustRgb(&src_scan[-1], r, g, b, a, &dest_scan[0]);
+            SetAlpha(has_alpha, dest_scan);
+          }
+          NextPixel(&src_scan, &dest_scan, Bpp);
+        }
+        continue;
+      }
       if (normalize) {
-        int src_value = start_col > left ? AverageRgb(&src_scan[-1])
-                                         : (src_scan[0] + src_scan[1]) / 3;
+        int src_value =
+            start_col > left ? AverageRgb(&src_scan[-2]) : src_scan[0] / 3;
         NormalizeSrc(has_alpha, src_value, r, g, b, a, dest_scan);
       } else {
-        if (start_col > left)
-          MergeGammaAdjust(src_scan[-1], r, a, &dest_scan[2]);
-        MergeGammaAdjust(src_scan[0], g, a, &dest_scan[1]);
-        MergeGammaAdjust(src_scan[1], b, a, &dest_scan[0]);
+        if (start_col > left) {
+          MergeGammaAdjust(src_scan[-2], r, a, &dest_scan[2]);
+          MergeGammaAdjust(src_scan[-1], g, a, &dest_scan[1]);
+        }
+        MergeGammaAdjust(src_scan[0], b, a, &dest_scan[0]);
         SetAlpha(has_alpha, dest_scan);
       }
       NextPixel(&src_scan, &dest_scan, Bpp);
       for (int col = start_col + 1; col < end_col; ++col) {
         if (normalize) {
-          int src_value = AverageRgb(&src_scan[-1]);
+          int src_value = AverageRgb(&src_scan[-2]);
           NormalizeDest(has_alpha, src_value, r, g, b, a, dest_scan);
         } else {
-          MergeGammaAdjustRgb(&src_scan[-1], r, g, b, a, &dest_scan[0]);
+          MergeGammaAdjustRgb(&src_scan[-2], r, g, b, a, &dest_scan[0]);
           SetAlpha(has_alpha, dest_scan);
         }
         NextPixel(&src_scan, &dest_scan, Bpp);
       }
-      continue;
-    }
-    if (normalize) {
-      int src_value =
-          start_col > left ? AverageRgb(&src_scan[-2]) : src_scan[0] / 3;
-      NormalizeSrc(has_alpha, src_value, r, g, b, a, dest_scan);
-    } else {
-      if (start_col > left) {
-        MergeGammaAdjust(src_scan[-2], r, a, &dest_scan[2]);
-        MergeGammaAdjust(src_scan[-1], g, a, &dest_scan[1]);
-      }
-      MergeGammaAdjust(src_scan[0], b, a, &dest_scan[0]);
-      SetAlpha(has_alpha, dest_scan);
-    }
-    NextPixel(&src_scan, &dest_scan, Bpp);
-    for (int col = start_col + 1; col < end_col; ++col) {
-      if (normalize) {
-        int src_value = AverageRgb(&src_scan[-2]);
-        NormalizeDest(has_alpha, src_value, r, g, b, a, dest_scan);
-      } else {
-        MergeGammaAdjustRgb(&src_scan[-2], r, g, b, a, &dest_scan[0]);
-        SetAlpha(has_alpha, dest_scan);
-      }
-      NextPixel(&src_scan, &dest_scan, Bpp);
-    }
+    });
   }
 }
 

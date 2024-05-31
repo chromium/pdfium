@@ -2,14 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/cfx_face.h"
 
 #include <algorithm>
+#include <array>
 #include <limits>
 #include <memory>
 #include <utility>
@@ -23,6 +19,7 @@
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/numerics/safe_math.h"
 #include "core/fxcrt/span.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
@@ -54,7 +51,7 @@ constexpr int kMaxGlyphDimension = 2048;
 // Boundary value to avoid integer overflow when adding 1/64th of the value.
 constexpr int kMaxRectTop = 2114445437;
 
-constexpr uint8_t kWeightPow[] = {
+constexpr auto kWeightPow = fxcrt::ToArray<const uint8_t>({
     0,   6,   12,  14,  16,  18,  22,  24,  28,  30,  32,  34,  36,  38,  40,
     42,  44,  46,  48,  50,  52,  54,  56,  58,  60,  62,  64,  66,  68,  70,
     70,  72,  72,  74,  74,  74,  76,  76,  76,  78,  78,  78,  80,  80,  80,
@@ -62,18 +59,18 @@ constexpr uint8_t kWeightPow[] = {
     90,  90,  90,  92,  92,  92,  92,  94,  94,  94,  94,  96,  96,  96,  96,
     96,  98,  98,  98,  98,  100, 100, 100, 100, 100, 102, 102, 102, 102, 102,
     104, 104, 104, 104, 104, 106, 106, 106, 106, 106,
-};
+});
 
-constexpr uint8_t kWeightPow11[] = {
+constexpr auto kWeightPow11 = fxcrt::ToArray<const uint8_t>({
     0,  4,  7,  8,  9,  10, 12, 13, 15, 17, 18, 19, 20, 21, 22, 23, 24,
     25, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 39, 39, 40, 40, 41,
     41, 41, 42, 42, 42, 43, 43, 43, 44, 44, 44, 45, 45, 45, 46, 46, 46,
     46, 43, 47, 47, 48, 48, 48, 48, 45, 50, 50, 50, 46, 51, 51, 51, 52,
     52, 52, 52, 53, 53, 53, 53, 53, 54, 54, 54, 54, 55, 55, 55, 55, 55,
     56, 56, 56, 56, 56, 57, 57, 57, 57, 57, 58, 58, 58, 58, 58,
-};
+});
 
-constexpr uint8_t kWeightPowShiftJis[] = {
+constexpr auto kWeightPowShiftJis = fxcrt::ToArray<const uint8_t>({
     0,   0,   2,   4,   6,   8,   10,  14,  16,  20,  22,  26,  28,  32,  34,
     38,  42,  44,  48,  52,  56,  60,  64,  66,  70,  74,  78,  82,  86,  90,
     96,  96,  96,  96,  98,  98,  98,  100, 100, 100, 100, 102, 102, 102, 102,
@@ -81,13 +78,18 @@ constexpr uint8_t kWeightPowShiftJis[] = {
     110, 110, 110, 110, 110, 112, 112, 112, 112, 112, 112, 114, 114, 114, 114,
     114, 114, 114, 116, 116, 116, 116, 116, 116, 116, 118, 118, 118, 118, 118,
     118, 118, 120, 120, 120, 120, 120, 120, 120, 120,
-};
+});
 
 constexpr size_t kWeightPowArraySize = 100;
 static_assert(kWeightPowArraySize == std::size(kWeightPow), "Wrong size");
 static_assert(kWeightPowArraySize == std::size(kWeightPow11), "Wrong size");
 static_assert(kWeightPowArraySize == std::size(kWeightPowShiftJis),
               "Wrong size");
+
+constexpr auto kAngleSkew = fxcrt::ToArray<const int8_t>({
+    -0,  -2,  -3,  -5,  -7,  -9,  -11, -12, -14, -16, -18, -19, -21, -23, -25,
+    -27, -29, -31, -32, -34, -36, -38, -40, -42, -45, -47, -49, -51, -53, -55,
+});
 
 // Returns negative values on failure.
 int GetWeightLevel(FX_Charset charset, size_t index) {
@@ -102,11 +104,6 @@ int GetWeightLevel(FX_Charset charset, size_t index) {
 }
 
 int GetSkewFromAngle(int angle) {
-  static constexpr int8_t kAngleSkew[] = {
-      -0,  -2,  -3,  -5,  -7,  -9,  -11, -12, -14, -16, -18, -19, -21, -23, -25,
-      -27, -29, -31, -32, -34, -36, -38, -40, -42, -45, -47, -49, -51, -53, -55,
-  };
-
   // |angle| is non-positive so |-angle| is used as the index. Need to make sure
   // |angle| != INT_MIN since -INT_MIN is undefined.
   if (angle > 0 || angle == std::numeric_limits<int>::min() ||
@@ -432,7 +429,8 @@ std::optional<std::array<uint8_t, 2>> CFX_Face::GetOs2Panose() {
   if (!os2) {
     return std::nullopt;
   }
-  return std::array<uint8_t, 2>{os2->panose[0], os2->panose[1]};
+  // SAFETY: required from library.
+  return UNSAFE_BUFFERS(std::array<uint8_t, 2>{os2->panose[0], os2->panose[1]});
 }
 
 int CFX_Face::GetGlyphCount() const {
@@ -540,26 +538,28 @@ std::unique_ptr<CFX_GlyphBitmap> CFX_Face::RenderGlyph(const CFX_Font* pFont,
   int dest_pitch = pGlyphBitmap->GetBitmap()->GetPitch();
   uint8_t* pDestBuf = pGlyphBitmap->GetBitmap()->GetWritableBuffer().data();
   const uint8_t* pSrcBuf = bitmap.buffer;
-  if (anti_alias != FT_RENDER_MODE_MONO &&
-      bitmap.pixel_mode == FT_PIXEL_MODE_MONO) {
-    unsigned int bytes = anti_alias == FT_RENDER_MODE_LCD ? 3 : 1;
-    for (unsigned int i = 0; i < bitmap.rows; i++) {
-      for (unsigned int n = 0; n < bitmap.width; n++) {
-        uint8_t data =
-            (pSrcBuf[i * bitmap.pitch + n / 8] & (0x80 >> (n % 8))) ? 255 : 0;
-        for (unsigned int b = 0; b < bytes; b++) {
-          pDestBuf[i * dest_pitch + n * bytes + b] = data;
+  UNSAFE_TODO({
+    if (anti_alias != FT_RENDER_MODE_MONO &&
+        bitmap.pixel_mode == FT_PIXEL_MODE_MONO) {
+      unsigned int bytes = anti_alias == FT_RENDER_MODE_LCD ? 3 : 1;
+      for (unsigned int i = 0; i < bitmap.rows; i++) {
+        for (unsigned int n = 0; n < bitmap.width; n++) {
+          uint8_t data =
+              (pSrcBuf[i * bitmap.pitch + n / 8] & (0x80 >> (n % 8))) ? 255 : 0;
+          for (unsigned int b = 0; b < bytes; b++) {
+            pDestBuf[i * dest_pitch + n * bytes + b] = data;
+          }
         }
       }
+    } else {
+      FXSYS_memset(pDestBuf, 0, dest_pitch * bitmap.rows);
+      int rowbytes = std::min(abs(bitmap.pitch), dest_pitch);
+      for (unsigned int row = 0; row < bitmap.rows; row++) {
+        FXSYS_memcpy(pDestBuf + row * dest_pitch, pSrcBuf + row * bitmap.pitch,
+                     rowbytes);
+      }
     }
-  } else {
-    FXSYS_memset(pDestBuf, 0, dest_pitch * bitmap.rows);
-    int rowbytes = std::min(abs(bitmap.pitch), dest_pitch);
-    for (unsigned int row = 0; row < bitmap.rows; row++) {
-      FXSYS_memcpy(pDestBuf + row * dest_pitch, pSrcBuf + row * bitmap.pitch,
-                   rowbytes);
-    }
-  }
+  });
   return pGlyphBitmap;
 }
 
@@ -756,17 +756,20 @@ std::optional<fxge::FontEncoding> CFX_Face::GetCurrentCharMapEncoding() const {
 
 int CFX_Face::GetCharMapPlatformIdByIndex(size_t index) const {
   CHECK_LT(index, GetCharMapCount());
-  return GetRec()->charmaps[index]->platform_id;
+  // SAFETY: required from library as enforced by check above.
+  return UNSAFE_BUFFERS(GetRec()->charmaps[index]->platform_id);
 }
 
 int CFX_Face::GetCharMapEncodingIdByIndex(size_t index) const {
   CHECK_LT(index, GetCharMapCount());
-  return GetRec()->charmaps[index]->encoding_id;
+  // SAFETY: required from library as enforced by check above.
+  return UNSAFE_BUFFERS(GetRec()->charmaps[index]->encoding_id);
 }
 
 fxge::FontEncoding CFX_Face::GetCharMapEncodingByIndex(size_t index) const {
   CHECK_LT(index, GetCharMapCount());
-  return ToFontEncoding(GetRec()->charmaps[index]->encoding);
+  // SAFETY: required from library as enforced by check above.
+  return ToFontEncoding(UNSAFE_BUFFERS(GetRec()->charmaps[index]->encoding));
 }
 
 size_t CFX_Face::GetCharMapCount() const {
@@ -781,7 +784,8 @@ void CFX_Face::SetCharMap(CharMap map) {
 
 void CFX_Face::SetCharMapByIndex(size_t index) {
   CHECK_LT(index, GetCharMapCount());
-  SetCharMap(GetRec()->charmaps[index]);
+  // SAFETY: required from library as enforced by check above.
+  SetCharMap(UNSAFE_BUFFERS(GetRec()->charmaps[index]));
 }
 
 bool CFX_Face::SelectCharMap(fxge::FontEncoding encoding) {

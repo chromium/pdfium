@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/cfx_font.h"
 
 #include <stdint.h>
@@ -112,10 +107,13 @@ const char CFX_Font::kUniversalDefaultFontName[] = "Arial Unicode MS";
 
 // static
 ByteString CFX_Font::GetDefaultFontNameByCharset(FX_Charset nCharset) {
-  for (size_t i = 0; i < std::size(kDefaultTTFMap) - 1; ++i) {
-    if (static_cast<int>(nCharset) == kDefaultTTFMap[i].charset)
-      return kDefaultTTFMap[i].fontname;
-  }
+  UNSAFE_TODO({
+    for (size_t i = 0; i < std::size(kDefaultTTFMap) - 1; ++i) {
+      if (static_cast<int>(nCharset) == kDefaultTTFMap[i].charset) {
+        return kDefaultTTFMap[i].fontname;
+      }
+    }
+  });
   return kUniversalDefaultFontName;
 }
 

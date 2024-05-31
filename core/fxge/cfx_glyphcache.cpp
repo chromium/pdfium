@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/cfx_glyphcache.h"
 
 #include <stdarg.h>
@@ -17,6 +12,7 @@
 #include <utility>
 
 #include "build/build_config.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
@@ -59,7 +55,7 @@ void UniqueKeyGen::Generate(int count, ...) {
   va_start(argList, count);
   for (int i = 0; i < count; i++) {
     int p = va_arg(argList, int);
-    reinterpret_cast<uint32_t*>(key_)[i] = p;
+    UNSAFE_TODO(reinterpret_cast<uint32_t*>(key_)[i] = p);
   }
   va_end(argList);
   key_len_ = count * sizeof(uint32_t);

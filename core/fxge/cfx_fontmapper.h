@@ -7,6 +7,7 @@
 #ifndef CORE_FXGE_CFX_FONTMAPPER_H_
 #define CORE_FXGE_CFX_FONTMAPPER_H_
 
+#include <array>
 #include <memory>
 #include <optional>
 #include <utility>
@@ -130,7 +131,7 @@ class CFX_FontMapper {
   UnownedPtr<CFX_FontMgr> const m_pFontMgr;
   std::vector<ByteString> m_InstalledTTFonts;
   std::vector<std::pair<ByteString, ByteString>> m_LocalizedTTFonts;
-  RetainPtr<CFX_Face> m_StandardFaces[kNumStandardFonts];
+  std::array<RetainPtr<CFX_Face>, kNumStandardFonts> m_StandardFaces;
   RetainPtr<CFX_Face> m_GenericSansFace;
   RetainPtr<CFX_Face> m_GenericSerifFace;
 };
