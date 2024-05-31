@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/win32/cps_printer_driver.h"
 
 #include <stdint.h>
@@ -17,6 +12,7 @@
 #include <utility>
 
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/notreached.h"
@@ -81,8 +77,8 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
       if (::GetRegionData(hRgn, dwCount, pData)) {
         CFX_Path path;
         for (uint32_t i = 0; i < pData->rdh.nCount; i++) {
-          RECT* pRect =
-              reinterpret_cast<RECT*>(pData->Buffer + pData->rdh.nRgnSize * i);
+          RECT* pRect = UNSAFE_TODO(
+              reinterpret_cast<RECT*>(pData->Buffer + pData->rdh.nRgnSize * i));
           path.AppendRect(static_cast<float>(pRect->left),
                           static_cast<float>(pRect->bottom),
                           static_cast<float>(pRect->right),

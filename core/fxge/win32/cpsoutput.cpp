@@ -4,15 +4,11 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/win32/cpsoutput.h"
 
 #include <algorithm>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/span.h"
@@ -26,7 +22,7 @@ bool CPSOutput::WriteBlock(pdfium::span<const uint8_t> input) {
     uint8_t buffer[1026];
     size_t send_len = std::min<size_t>(input.size(), 1024);
     *(reinterpret_cast<uint16_t*>(buffer)) = static_cast<uint16_t>(send_len);
-    FXSYS_memcpy(buffer + 2, input.data(), send_len);
+    UNSAFE_TODO(FXSYS_memcpy(buffer + 2, input.data(), send_len));
     switch (m_mode) {
       case OutputMode::kExtEscape:
         ExtEscape(m_hDC, PASSTHROUGH, static_cast<int>(send_len + 2),

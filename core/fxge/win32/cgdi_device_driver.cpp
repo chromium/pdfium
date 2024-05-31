@@ -4,21 +4,18 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/win32/cgdi_device_driver.h"
 
 #include <math.h>
 #include <windows.h>
 
 #include <algorithm>
+#include <array>
 #include <vector>
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/notreached.h"
@@ -174,30 +171,32 @@ FixedSizeDataVector<uint8_t> GetBitmapInfoHeader(
   pbmih->biHeight = -(int)source->GetHeight();
   pbmih->biPlanes = 1;
   pbmih->biWidth = source->GetWidth();
-  if (source->GetBPP() == 8) {
-    uint32_t* palette = (uint32_t*)(pbmih + 1);
-    if (source->HasPalette()) {
-      pdfium::span<const uint32_t> palette_span = source->GetPaletteSpan();
-      for (int i = 0; i < 256; i++) {
-        palette[i] = palette_span[i];
-      }
-    } else {
-      for (int i = 0; i < 256; i++) {
-        palette[i] = ArgbEncode(0, i, i, i);
+  UNSAFE_TODO({
+    if (source->GetBPP() == 8) {
+      uint32_t* palette = (uint32_t*)(pbmih + 1);
+      if (source->HasPalette()) {
+        pdfium::span<const uint32_t> palette_span = source->GetPaletteSpan();
+        for (int i = 0; i < 256; i++) {
+          palette[i] = palette_span[i];
+        }
+      } else {
+        for (int i = 0; i < 256; i++) {
+          palette[i] = ArgbEncode(0, i, i, i);
+        }
       }
     }
-  }
-  if (source->GetBPP() == 1) {
-    uint32_t* palette = (uint32_t*)(pbmih + 1);
-    if (source->HasPalette()) {
-      pdfium::span<const uint32_t> palette_span = source->GetPaletteSpan();
-      palette[0] = palette_span[0];
-      palette[1] = palette_span[1];
-    } else {
-      palette[0] = 0;
-      palette[1] = 0xffffff;
+    if (source->GetBPP() == 1) {
+      uint32_t* palette = (uint32_t*)(pbmih + 1);
+      if (source->HasPalette()) {
+        pdfium::span<const uint32_t> palette_span = source->GetPaletteSpan();
+        palette[0] = palette_span[0];
+        palette[1] = palette_span[1];
+      } else {
+        palette[0] = 0;
+        palette[1] = 0xffffff;
+      }
     }
-  }
+  });
   return result;
 }
 
@@ -259,8 +258,10 @@ unsigned clip_liang_barsky(float x1,
   }
   if (tin1 <= 1.0f) {
     if (0 < tin1) {
-      *x++ = xin;
-      *y++ = yin;
+      UNSAFE_TODO({
+        *x++ = xin;
+        *y++ = yin;
+      });
       ++np;
     }
     if (tin2 <= 1.0f) {
@@ -271,34 +272,48 @@ unsigned clip_liang_barsky(float x1,
         if (tin2 <= tout1) {
           if (tin2 > 0) {
             if (tinx > tiny) {
-              *x++ = xin;
-              *y++ = y1 + (deltay * tinx);
+              UNSAFE_TODO({
+                *x++ = xin;
+                *y++ = y1 + (deltay * tinx);
+              });
             } else {
-              *x++ = x1 + (deltax * tiny);
-              *y++ = yin;
+              UNSAFE_TODO({
+                *x++ = x1 + (deltax * tiny);
+                *y++ = yin;
+              });
             }
             ++np;
           }
           if (tout1 < 1.0f) {
             if (toutx < touty) {
-              *x++ = xout;
-              *y++ = y1 + (deltay * toutx);
+              UNSAFE_TODO({
+                *x++ = xout;
+                *y++ = y1 + (deltay * toutx);
+              });
             } else {
-              *x++ = x1 + (deltax * touty);
-              *y++ = yout;
+              UNSAFE_TODO({
+                *x++ = x1 + (deltax * touty);
+                *y++ = yout;
+              });
             }
           } else {
-            *x++ = x2;
-            *y++ = y2;
+            UNSAFE_TODO({
+              *x++ = x2;
+              *y++ = y2;
+            });
           }
           ++np;
         } else {
           if (tinx > tiny) {
-            *x++ = xin;
-            *y++ = yout;
+            UNSAFE_TODO({
+              *x++ = xin;
+              *y++ = yout;
+            });
           } else {
-            *x++ = xout;
-            *y++ = yin;
+            UNSAFE_TODO({
+              *x++ = xout;
+              *y++ = yin;
+            });
           }
           ++np;
         }
@@ -491,7 +506,7 @@ bool CGdiDeviceDriver::GDI_StretchBitMask(RetainPtr<const CFX_DIBBase> source,
   int height = realized_source->GetHeight();
   struct {
     BITMAPINFOHEADER bmiHeader;
-    uint32_t bmiColors[2];
+    std::array<uint32_t, 2> bmiColors;
   } bmi = {};
   bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
   bmi.bmiHeader.biBitCount = 1;

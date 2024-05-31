@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/win32/cgdi_plus_ext.h"
 
 #include <windows.h>
@@ -16,6 +11,7 @@
 #include <objidl.h>
 
 #include <algorithm>
+#include <array>
 #include <sstream>
 #include <utility>
 #include <vector>
@@ -263,12 +259,13 @@ void OutputImage(Gdiplus::GpGraphics* pGraphics,
       CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
                                           PixelFormat8bppIndexed, scan0,
                                           &bitmap);
-      UINT pal[258];
+      std::array<UINT, 258> pal;
       pal[0] = 0;
       pal[1] = 256;
-      for (int i = 0; i < 256; i++)
+      for (int i = 0; i < 256; i++) {
         pal[i + 2] = realized_source->GetPaletteArgb(i);
-      CallFunc(GdipSetImagePalette)(bitmap, (Gdiplus::ColorPalette*)pal);
+      }
+      CallFunc(GdipSetImagePalette)(bitmap, (Gdiplus::ColorPalette*)pal.data());
       break;
     }
     case FXDIB_Format::k1bppRgb: {
@@ -374,14 +371,18 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
           on_leftover += on_phase;
           off_leftover += off_phase;
         } else {
-          pDashArray[nCount - 2] += on_phase;
-          pDashArray[nCount - 1] += off_phase;
+          UNSAFE_TODO({
+            pDashArray[nCount - 2] += on_phase;
+            pDashArray[nCount - 1] += off_phase;
+          });
         }
       } else {
-        pDashArray[nCount++] = on_phase + on_leftover;
-        on_leftover = 0;
-        pDashArray[nCount++] = off_phase + off_leftover;
-        off_leftover = 0;
+        UNSAFE_TODO({
+          pDashArray[nCount++] = on_phase + on_leftover;
+          on_leftover = 0;
+          pDashArray[nCount++] = off_phase + off_leftover;
+          off_leftover = 0;
+        });
       }
     }
     CallFunc(GdipSetPenDashArray)(pPen, pDashArray, nCount);
@@ -403,18 +404,17 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
 std::optional<std::pair<size_t, size_t>> IsSmallTriangle(
     pdfium::span<const Gdiplus::PointF> points,
     const CFX_Matrix* pMatrix) {
-  static constexpr size_t kPairs[3][2] = {{1, 2}, {0, 2}, {0, 1}};
+  static constexpr std::array<std::pair<const size_t, const size_t>, 3> kPairs =
+      {{{1, 2}, {0, 2}, {0, 1}}};
   for (size_t i = 0; i < std::size(kPairs); ++i) {
-    size_t pair1 = kPairs[i][0];
-    size_t pair2 = kPairs[i][1];
-
+    size_t pair1 = kPairs[i].first;
+    size_t pair2 = kPairs[i].second;
     CFX_PointF p1(points[pair1].X, points[pair1].Y);
     CFX_PointF p2(points[pair2].X, points[pair2].Y);
     if (pMatrix) {
       p1 = pMatrix->Transform(p1);
       p2 = pMatrix->Transform(p2);
     }
-
     CFX_PointF diff = p1 - p2;
     float distance_square = (diff.x * diff.x) + (diff.y * diff.y);
     if (distance_square < 2.25f)
@@ -463,7 +463,8 @@ class GpStream final : public IStream {
     size_t bytes_left = pdfium::checked_cast<size_t>(
         std::streamoff(m_InterStream.tellp()) - m_ReadPos);
     size_t bytes_out = std::min(pdfium::checked_cast<size_t>(cb), bytes_left);
-    FXSYS_memcpy(output, m_InterStream.str().c_str() + m_ReadPos, bytes_out);
+    UNSAFE_TODO(FXSYS_memcpy(output, m_InterStream.str().c_str() + m_ReadPos,
+                             bytes_out));
     m_ReadPos += bytes_out;
     if (pcbRead)
       *pcbRead = (ULONG)bytes_out;
@@ -578,15 +579,17 @@ void CGdiplusExt::Load() {
   }
 
   gdiplus_functions_.resize(std::size(g_GdipFuncNames));
-  for (size_t i = 0; i < std::size(g_GdipFuncNames); ++i) {
-    gdiplus_functions_[i] = GetProcAddress(gdiplus_module_, g_GdipFuncNames[i]);
-    if (!gdiplus_functions_[i]) {
-      FreeLibrary(gdiplus_module_);
-      gdiplus_module_ = nullptr;
-      return;
+  UNSAFE_TODO({
+    for (size_t i = 0; i < std::size(g_GdipFuncNames); ++i) {
+      gdiplus_functions_[i] =
+          GetProcAddress(gdiplus_module_, g_GdipFuncNames[i]);
+      if (!gdiplus_functions_[i]) {
+        FreeLibrary(gdiplus_module_);
+        gdiplus_module_ = nullptr;
+        return;
+      }
     }
-  }
-
+  });
   ULONG_PTR gdiplus_token;
   Gdiplus::GdiplusStartupInput gdiplus_startup_input;
   ((FuncType_GdiplusStartup)gdiplus_functions_[FuncId_GdiplusStartup])(

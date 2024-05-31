@@ -4,13 +4,9 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/win32/cwin32_platform.h"
 
+#include <array>
 #include <iterator>
 #include <memory>
 #include <type_traits>
@@ -18,11 +14,13 @@
 
 #include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/span.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/win/scoped_select_object.h"
 #include "core/fxcrt/win/win_util.h"
 #include "core/fxge/cfx_folderfontinfo.h"
@@ -46,7 +44,7 @@ struct Substs {
   bool m_bItalic;
 };
 
-constexpr Substs kBase14Substs[] = {
+constexpr auto kBase14Substs = fxcrt::ToArray<const Substs>({
     {"Courier", "Courier New", false, false},
     {"Courier-Bold", "Courier New", true, false},
     {"Courier-BoldOblique", "Courier New", true, true},
@@ -59,7 +57,7 @@ constexpr Substs kBase14Substs[] = {
     {"Times-Bold", "Times New Roman", true, false},
     {"Times-BoldItalic", "Times New Roman", true, true},
     {"Times-Italic", "Times New Roman", false, true},
-};
+});
 
 struct FontNameMap {
   const char* m_pSubFontName;
@@ -72,12 +70,14 @@ constexpr FontNameMap kJpFontNameMap[] = {
 };
 
 bool GetSubFontName(ByteString* name) {
-  for (size_t i = 0; i < std::size(kJpFontNameMap); ++i) {
-    if (!FXSYS_stricmp(name->c_str(), kJpFontNameMap[i].m_pSrcFontName)) {
-      *name = kJpFontNameMap[i].m_pSubFontName;
-      return true;
+  UNSAFE_TODO({
+    for (size_t i = 0; i < std::size(kJpFontNameMap); ++i) {
+      if (!FXSYS_stricmp(name->c_str(), kJpFontNameMap[i].m_pSrcFontName)) {
+        *name = kJpFontNameMap[i].m_pSubFontName;
+        return true;
+      }
     }
-  }
+  });
   return false;
 }
 
@@ -467,8 +467,11 @@ CWin32Platform::CreateDefaultSystemFontInfo() {
   auto** user_paths = CFX_GEModule::Get()->GetUserFontPaths();
   if (user_paths) {
     auto font_info = std::make_unique<CFX_Win32FallbackFontInfo>();
-    for (; *user_paths; user_paths++)
-      font_info->AddPath(*user_paths);
+    UNSAFE_TODO({
+      for (; *user_paths; user_paths++) {
+        font_info->AddPath(*user_paths);
+      }
+    });
     return font_info;
   }
 
