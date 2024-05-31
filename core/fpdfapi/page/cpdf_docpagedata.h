@@ -17,7 +17,6 @@
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/fx_coordinates.h"
-#include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CFX_Font;
@@ -120,16 +119,15 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
 
   // Specific destruction order may be required between maps.
   std::map<HashIccProfileKey, RetainPtr<const CPDF_Stream>> m_HashIccProfileMap;
-  std::map<RetainPtr<const CPDF_Array>, ObservedPtr<CPDF_ColorSpace>>
+  std::map<RetainPtr<const CPDF_Array>, RetainPtr<CPDF_ColorSpace>>
       m_ColorSpaceMap;
   std::map<RetainPtr<const CPDF_Stream>, RetainPtr<CPDF_StreamAcc>>
       m_FontFileMap;
   std::map<RetainPtr<const CPDF_Stream>, RetainPtr<CPDF_IccProfile>>
       m_IccProfileMap;
-  std::map<RetainPtr<const CPDF_Object>, ObservedPtr<CPDF_Pattern>>
-      m_PatternMap;
+  std::map<RetainPtr<const CPDF_Object>, RetainPtr<CPDF_Pattern>> m_PatternMap;
   std::map<uint32_t, RetainPtr<CPDF_Image>> m_ImageMap;
-  std::map<RetainPtr<const CPDF_Dictionary>, ObservedPtr<CPDF_Font>> m_FontMap;
+  std::map<RetainPtr<const CPDF_Dictionary>, RetainPtr<CPDF_Font>> m_FontMap;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_DOCPAGEDATA_H_
