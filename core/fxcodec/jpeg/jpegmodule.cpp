@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxcodec/jpeg/jpegmodule.h"
 
 #include <setjmp.h>
@@ -24,6 +19,7 @@
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/raw_span.h"
@@ -51,7 +47,8 @@ static void src_skip_data(jpeg_decompress_struct* cinfo, long num) {
   if (num > (long)cinfo->src->bytes_in_buffer) {
     error_fatal((j_common_ptr)cinfo);
   }
-  cinfo->src->next_input_byte += num;
+  // SAFETY: required from library API as checked above.
+  UNSAFE_BUFFERS(cinfo->src->next_input_byte += num);
   cinfo->src->bytes_in_buffer -= num;
 }
 
@@ -151,7 +148,7 @@ class JpegDecoder final : public ScanlineDecoder {
   // Patch up the JPEG trailer, even if it is correct.
   void PatchUpTrailer();
 
-  uint8_t* GetWritableSrcData();
+  pdfium::span<uint8_t> GetWritableSrcData();
 
   // For a given invalid height byte offset in
   // |kKnownBadHeaderWithInvalidHeightByteOffsetStarts|, the SOFn marker should
@@ -346,7 +343,7 @@ bool JpegDecoder::HasKnownBadHeaderWithInvalidHeight(
   if (!IsSofSegment(dimension_offset - kSofMarkerByteOffset))
     return false;
 
-  const uint8_t* pHeaderDimensions = &m_SrcSpan[dimension_offset];
+  const auto pHeaderDimensions = m_SrcSpan.subspan(dimension_offset);
   uint8_t nExpectedWidthByte1 = (m_OrigWidth >> 8) & 0xff;
   uint8_t nExpectedWidthByte2 = m_OrigWidth & 0xff;
   // Height high byte, height low byte, width high byte, width low byte.
@@ -356,7 +353,7 @@ bool JpegDecoder::HasKnownBadHeaderWithInvalidHeight(
 }
 
 bool JpegDecoder::IsSofSegment(size_t marker_offset) const {
-  const uint8_t* pHeaderMarker = &m_SrcSpan[marker_offset];
+  const auto pHeaderMarker = m_SrcSpan.subspan(marker_offset);
   return pHeaderMarker[0] == 0xff && pHeaderMarker[1] >= 0xc0 &&
          pHeaderMarker[1] <= 0xcf;
 }
@@ -364,19 +361,21 @@ bool JpegDecoder::IsSofSegment(size_t marker_offset) const {
 void JpegDecoder::PatchUpKnownBadHeaderWithInvalidHeight(
     size_t dimension_offset) {
   DCHECK(m_SrcSpan.size() > dimension_offset + 1u);
-  uint8_t* pData = GetWritableSrcData() + dimension_offset;
+  auto pData = GetWritableSrcData().subspan(dimension_offset);
   pData[0] = (m_OrigHeight >> 8) & 0xff;
   pData[1] = m_OrigHeight & 0xff;
 }
 
 void JpegDecoder::PatchUpTrailer() {
-  uint8_t* pData = GetWritableSrcData();
+  auto pData = GetWritableSrcData();
   pData[m_SrcSpan.size() - 2] = 0xff;
   pData[m_SrcSpan.size() - 1] = 0xd9;
 }
 
-uint8_t* JpegDecoder::GetWritableSrcData() {
-  return const_cast<uint8_t*>(m_SrcSpan.data());
+pdfium::span<uint8_t> JpegDecoder::GetWritableSrcData() {
+  // SAFETY: const_cast<> doesn't change size.
+  return UNSAFE_BUFFERS(pdfium::make_span(
+      const_cast<uint8_t*>(m_SrcSpan.data()), m_SrcSpan.size()));
 }
 
 }  // namespace
@@ -475,16 +474,20 @@ bool JpegModule::JpegEncode(const RetainPtr<const CFX_DIBBase>& pSource,
     if (nComponents > 1) {
       uint8_t* dest_scan = line_buf;
       if (nComponents == 3) {
-        for (uint32_t i = 0; i < width; i++) {
-          ReverseCopy3Bytes(dest_scan, src_scan.data());
-          dest_scan += 3;
-          src_scan = src_scan.subspan(Bpp);
-        }
+        UNSAFE_TODO({
+          for (uint32_t i = 0; i < width; i++) {
+            ReverseCopy3Bytes(dest_scan, src_scan.data());
+            dest_scan += 3;
+            src_scan = src_scan.subspan(Bpp);
+          }
+        });
       } else {
-        for (uint32_t i = 0; i < pitch; i++) {
-          *dest_scan++ = ~src_scan.front();
-          src_scan = src_scan.subspan(1);
-        }
+        UNSAFE_TODO({
+          for (uint32_t i = 0; i < pitch; i++) {
+            *dest_scan++ = ~src_scan.front();
+            src_scan = src_scan.subspan(1);
+          }
+        });
       }
       row_pointer[0] = line_buf;
     } else {
@@ -492,14 +495,17 @@ bool JpegModule::JpegEncode(const RetainPtr<const CFX_DIBBase>& pSource,
     }
     row = cinfo.next_scanline;
     jpeg_write_scanlines(&cinfo, row_pointer, 1);
-    if (cinfo.next_scanline == row) {
-      constexpr size_t kJpegBlockSize = 1048576;
-      *dest_buf =
-          FX_Realloc(uint8_t, *dest_buf, dest_buf_length + kJpegBlockSize);
-      dest.next_output_byte = *dest_buf + dest_buf_length - dest.free_in_buffer;
-      dest_buf_length += kJpegBlockSize;
-      dest.free_in_buffer += kJpegBlockSize;
-    }
+    UNSAFE_TODO({
+      if (cinfo.next_scanline == row) {
+        constexpr size_t kJpegBlockSize = 1048576;
+        *dest_buf =
+            FX_Realloc(uint8_t, *dest_buf, dest_buf_length + kJpegBlockSize);
+        dest.next_output_byte =
+            *dest_buf + dest_buf_length - dest.free_in_buffer;
+        dest_buf_length += kJpegBlockSize;
+        dest.free_in_buffer += kJpegBlockSize;
+      }
+    });
   }
   jpeg_finish_compress(&cinfo);
   jpeg_destroy_compress(&cinfo);
