@@ -4,18 +4,16 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
+#include <array>
 #include <iterator>
 #include <memory>
 #include <utility>
 
 #include "build/build_config.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_folderfontinfo.h"
 #include "core/fxge/cfx_fontmgr.h"
 #include "core/fxge/cfx_gemodule.h"
@@ -36,12 +34,13 @@ enum JpFontFamily : uint8_t {
   kCount
 };
 
-const char* const kLinuxJpFontList[][JpFontFamily::kCount] = {
-    {"TakaoPGothic", "VL PGothic", "IPAPGothic", "VL Gothic"},
-    {"TakaoGothic", "VL Gothic", "IPAGothic", "Kochi Gothic"},
-    {"TakaoPMincho", "IPAPMincho", "VL Gothic", "Kochi Mincho"},
-    {"TakaoMincho", "IPAMincho", "VL Gothic", "Kochi Mincho"},
-};
+using LinuxJpFontRow = std::array<const char*, JpFontFamily::kCount>;
+constexpr auto kLinuxJpFontTable = fxcrt::ToArray<const LinuxJpFontRow>({
+    {{"TakaoPGothic", "VL PGothic", "IPAPGothic", "VL Gothic"}},
+    {{"TakaoGothic", "VL Gothic", "IPAGothic", "Kochi Gothic"}},
+    {{"TakaoPMincho", "IPAPMincho", "VL Gothic", "Kochi Mincho"}},
+    {{"TakaoMincho", "IPAMincho", "VL Gothic", "Kochi Mincho"}},
+});
 
 const char* const kLinuxGbFontList[] = {
     "AR PL UMing CN Light",
@@ -110,8 +109,7 @@ void* CFX_LinuxFontInfo::MapFont(int weight,
   switch (charset) {
     case FX_Charset::kShiftJIS: {
       JpFontFamily index = GetJapanesePreference(face, weight, pitch_family);
-      DCHECK(index < std::size(kLinuxJpFontList));
-      for (const char* name : kLinuxJpFontList[index]) {
+      for (const char* name : kLinuxJpFontTable[index]) {
         auto it = m_FontList.find(name);
         if (it != m_FontList.end())
           return it->second.get();
@@ -153,8 +151,12 @@ bool CFX_LinuxFontInfo::ParseFontCfg(const char** pUserPaths) {
   if (!pUserPaths)
     return false;
 
-  for (const char** pPath = pUserPaths; *pPath; ++pPath)
-    AddPath(*pPath);
+  // SAFETY: nullptr-terminated array required from caller.
+  UNSAFE_BUFFERS({
+    for (const char** pPath = pUserPaths; *pPath; ++pPath) {
+      AddPath(*pPath);
+    }
+  });
   return true;
 }
 
