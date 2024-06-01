@@ -54,9 +54,9 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
     return 0;
   }
 
-  base_component_count_ = m_pBaseCS->ComponentCount();
-  DCHECK(base_component_count_);
-  component_min_max_ = DataVector<IndexedColorMinMax>(base_component_count_);
+  uint32_t base_component_count = m_pBaseCS->ComponentCount();
+  DCHECK(base_component_count);
+  component_min_max_ = DataVector<IndexedColorMinMax>(base_component_count);
   float defvalue;
   for (uint32_t i = 0; i < component_min_max_.size(); i++) {
     IndexedColorMinMax& comp = component_min_max_[i];
@@ -98,12 +98,12 @@ bool CPDF_IndexedCS::GetRGB(pdfium::span<const float> pBuf,
     return false;
   }
 
-  DCHECK(base_component_count_);
-  DCHECK_EQ(base_component_count_, m_pBaseCS->ComponentCount());
+  DCHECK(!component_min_max_.empty());
+  DCHECK_EQ(component_min_max_.size(), m_pBaseCS->ComponentCount());
 
   FX_SAFE_SIZE_T length = index;
   length += 1;
-  length *= base_component_count_;
+  length *= component_min_max_.size();
   if (!length.IsValid() || length.ValueOrDie() > lookup_table_.size()) {
     *R = 0;
     *G = 0;
@@ -111,11 +111,12 @@ bool CPDF_IndexedCS::GetRGB(pdfium::span<const float> pBuf,
     return false;
   }
 
-  DataVector<float> comps(base_component_count_);
-  for (uint32_t i = 0; i < base_component_count_; ++i) {
-    comps[i] = component_min_max_[i].min +
-               component_min_max_[i].max *
-                   lookup_table_[index * base_component_count_ + i] / 255;
+  DataVector<float> comps(component_min_max_.size());
+  for (uint32_t i = 0; i < component_min_max_.size(); ++i) {
+    const IndexedColorMinMax& comp = component_min_max_[i];
+    comps[i] =
+        comp.min +
+        comp.max * lookup_table_[index * component_min_max_.size() + i] / 255;
   }
   return m_pBaseCS->GetRGB(comps, R, G, B);
 }

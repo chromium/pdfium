@@ -42,7 +42,6 @@ class CPDF_IndexedCS final : public CPDF_BasedCS {
  private:
   CPDF_IndexedCS();
 
-  uint32_t base_component_count_ = 0;
   int max_index_ = 0;
   DataVector<uint8_t> lookup_table_;
   DataVector<IndexedColorMinMax> component_min_max_;
