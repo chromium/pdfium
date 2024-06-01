@@ -5,10 +5,11 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_INDEXEDCS_H_
 #define CORE_FPDFAPI_PAGE_CPDF_INDEXEDCS_H_
 
+#include <stdint.h>
+
 #include <set>
 
 #include "core/fpdfapi/page/cpdf_basedcs.h"
-#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -43,7 +44,7 @@ class CPDF_IndexedCS final : public CPDF_BasedCS {
 
   uint32_t base_component_count_ = 0;
   int max_index_ = 0;
-  ByteString lookup_table_;
+  DataVector<uint8_t> lookup_table_;
   DataVector<IndexedColorMinMax> component_min_max_;
 };
 

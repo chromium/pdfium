@@ -5,7 +5,6 @@
 #include "core/fpdfapi/page/cpdf_indexedcs.h"
 
 #include <set>
-#include <vector>
 
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
@@ -76,12 +75,16 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
     return 0;
   }
 
-  if (const CPDF_String* pString = pTableObj->AsString()) {
-    lookup_table_ = pString->GetString();
-  } else if (const CPDF_Stream* pStream = pTableObj->AsStream()) {
-    auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(pStream));
-    pAcc->LoadAllDataFiltered();
-    lookup_table_ = ByteStringView(pAcc->GetSpan());
+  if (const CPDF_String* str_obj = pTableObj->AsString()) {
+    ByteString str_data = str_obj->GetString();
+    pdfium::span<const uint8_t> str_span = str_data.unsigned_span();
+    lookup_table_ = DataVector<uint8_t>(str_span.begin(), str_span.end());
+  } else if (const CPDF_Stream* stream_obj = pTableObj->AsStream()) {
+    auto acc =
+        pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(stream_obj));
+    acc->LoadAllDataFiltered();
+    pdfium::span<const uint8_t> str_span = acc->GetSpan();
+    lookup_table_ = DataVector<uint8_t>(str_span.begin(), str_span.end());
   }
   return 1;
 }
@@ -101,19 +104,18 @@ bool CPDF_IndexedCS::GetRGB(pdfium::span<const float> pBuf,
   FX_SAFE_SIZE_T length = index;
   length += 1;
   length *= base_component_count_;
-  if (!length.IsValid() || length.ValueOrDie() > lookup_table_.GetLength()) {
+  if (!length.IsValid() || length.ValueOrDie() > lookup_table_.size()) {
     *R = 0;
     *G = 0;
     *B = 0;
     return false;
   }
 
-  std::vector<float> comps(base_component_count_);
-  pdfium::span<const uint8_t> pTable = lookup_table_.unsigned_span();
+  DataVector<float> comps(base_component_count_);
   for (uint32_t i = 0; i < base_component_count_; ++i) {
     comps[i] = component_min_max_[i].min +
                component_min_max_[i].max *
-                   pTable[index * base_component_count_ + i] / 255;
+                   lookup_table_[index * base_component_count_ + i] / 255;
   }
   return m_pBaseCS->GetRGB(comps, R, G, B);
 }
