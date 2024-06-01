@@ -33,24 +33,28 @@ const CPDF_IndexedCS* CPDF_IndexedCS::AsIndexedCS() const {
 uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
                                 const CPDF_Array* pArray,
                                 std::set<const CPDF_Object*>* pVisited) {
-  if (pArray->size() < 4)
+  if (pArray->size() < 4) {
     return 0;
+  }
 
   RetainPtr<const CPDF_Object> pBaseObj = pArray->GetDirectObjectAt(1);
-  if (HasSameArray(pBaseObj.Get()))
+  if (HasSameArray(pBaseObj.Get())) {
     return 0;
+  }
 
   auto* pDocPageData = CPDF_DocPageData::FromDocument(pDoc);
   m_pBaseCS =
       pDocPageData->GetColorSpaceGuarded(pBaseObj.Get(), nullptr, pVisited);
-  if (!m_pBaseCS)
+  if (!m_pBaseCS) {
     return 0;
+  }
 
-  // The base color space cannot be a Pattern or Indexed space, according to the
-  // PDF 1.7 spec, page 263.
+  // The base color space cannot be a Pattern or Indexed space, according to ISO
+  // 32000-1:2008 section 8.6.6.3.
   Family family = m_pBaseCS->GetFamily();
-  if (family == Family::kIndexed || family == Family::kPattern)
+  if (family == Family::kIndexed || family == Family::kPattern) {
     return 0;
+  }
 
   base_component_count_ = m_pBaseCS->ComponentCount();
   DCHECK(base_component_count_);
@@ -62,11 +66,17 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
                                &component_min_max_[i * 2 + 1]);
     component_min_max_[i * 2 + 1] -= component_min_max_[i * 2];
   }
+
+  // ISO 32000-1:2008 section 8.6.6.3 says the maximum value is 255.
   max_index_ = pArray->GetIntegerAt(2);
+  if (max_index_ < 0 || max_index_ > 255) {
+    return 0;
+  }
 
   RetainPtr<const CPDF_Object> pTableObj = pArray->GetDirectObjectAt(3);
-  if (!pTableObj)
+  if (!pTableObj) {
     return 0;
+  }
 
   if (const CPDF_String* pString = pTableObj->AsString()) {
     lookup_table_ = pString->GetString();
