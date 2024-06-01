@@ -90,7 +90,7 @@ CFXJSE_Engine::ResolveResult::~ResolveResult() = default;
 // static
 CXFA_Object* CFXJSE_Engine::ToObject(
     const v8::FunctionCallbackInfo<v8::Value>& info) {
-  return ToObject(info.GetIsolate(), info.Holder());
+  return ToObject(info.GetIsolate(), info.This());
 }
 
 // static

@@ -48,7 +48,7 @@ void V8FunctionCallback_Wrapper(
   if (!pFunctionInfo)
     return;
 
-  pFunctionInfo->callbackProc(CFXJSE_HostObject::FromV8(info.Holder()), info);
+  pFunctionInfo->callbackProc(CFXJSE_HostObject::FromV8(info.This()), info);
 }
 
 void V8ConstructorCallback_Wrapper(
@@ -61,9 +61,9 @@ void V8ConstructorCallback_Wrapper(
   if (!pClassDescriptor)
     return;
 
-  DCHECK_EQ(info.Holder()->InternalFieldCount(), 2);
-  info.Holder()->SetAlignedPointerInInternalField(0, nullptr);
-  info.Holder()->SetAlignedPointerInInternalField(1, nullptr);
+  DCHECK_EQ(info.This()->InternalFieldCount(), 2);
+  info.This()->SetAlignedPointerInInternalField(0, nullptr);
+  info.This()->SetAlignedPointerInInternalField(1, nullptr);
 }
 
 void Context_GlobalObjToString(
@@ -73,7 +73,7 @@ void Context_GlobalObjToString(
   if (!pClassDescriptor)
     return;
 
-  if (info.This() == info.Holder() && pClassDescriptor->name) {
+  if (pClassDescriptor->name) {
     ByteString szStringVal =
         ByteString::Format("[object %s]", pClassDescriptor->name);
     info.GetReturnValue().Set(
@@ -81,7 +81,7 @@ void Context_GlobalObjToString(
     return;
   }
   v8::Local<v8::String> local_str =
-      info.Holder()
+      info.This()
           ->ObjectProtoToString(info.GetIsolate()->GetCurrentContext())
           .FromMaybe(v8::Local<v8::String>());
   info.GetReturnValue().Set(local_str);
