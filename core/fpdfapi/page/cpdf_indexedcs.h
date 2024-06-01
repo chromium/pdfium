@@ -29,15 +29,15 @@ class CPDF_IndexedCS final : public CPDF_BasedCS {
                   const CPDF_Array* pArray,
                   std::set<const CPDF_Object*>* pVisited) override;
 
-  int GetMaxIndex() const { return m_MaxIndex; }
+  int GetMaxIndex() const { return max_index_; }
 
  private:
   CPDF_IndexedCS();
 
-  uint32_t m_nBaseComponents = 0;
-  int m_MaxIndex = 0;
-  ByteString m_Table;
-  DataVector<float> m_pCompMinMax;
+  uint32_t base_component_count_ = 0;
+  int max_index_ = 0;
+  ByteString lookup_table_;
+  DataVector<float> component_min_max_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_INDEXEDCS_H_

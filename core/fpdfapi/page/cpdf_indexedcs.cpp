@@ -52,27 +52,28 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
   if (family == Family::kIndexed || family == Family::kPattern)
     return 0;
 
-  m_nBaseComponents = m_pBaseCS->ComponentCount();
-  DCHECK(m_nBaseComponents);
-  m_pCompMinMax = DataVector<float>(Fx2DSizeOrDie(m_nBaseComponents, 2));
+  base_component_count_ = m_pBaseCS->ComponentCount();
+  DCHECK(base_component_count_);
+  component_min_max_ =
+      DataVector<float>(Fx2DSizeOrDie(base_component_count_, 2));
   float defvalue;
-  for (uint32_t i = 0; i < m_nBaseComponents; i++) {
-    m_pBaseCS->GetDefaultValue(i, &defvalue, &m_pCompMinMax[i * 2],
-                               &m_pCompMinMax[i * 2 + 1]);
-    m_pCompMinMax[i * 2 + 1] -= m_pCompMinMax[i * 2];
+  for (uint32_t i = 0; i < base_component_count_; i++) {
+    m_pBaseCS->GetDefaultValue(i, &defvalue, &component_min_max_[i * 2],
+                               &component_min_max_[i * 2 + 1]);
+    component_min_max_[i * 2 + 1] -= component_min_max_[i * 2];
   }
-  m_MaxIndex = pArray->GetIntegerAt(2);
+  max_index_ = pArray->GetIntegerAt(2);
 
   RetainPtr<const CPDF_Object> pTableObj = pArray->GetDirectObjectAt(3);
   if (!pTableObj)
     return 0;
 
   if (const CPDF_String* pString = pTableObj->AsString()) {
-    m_Table = pString->GetString();
+    lookup_table_ = pString->GetString();
   } else if (const CPDF_Stream* pStream = pTableObj->AsStream()) {
     auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pdfium::WrapRetain(pStream));
     pAcc->LoadAllDataFiltered();
-    m_Table = ByteStringView(pAcc->GetSpan());
+    lookup_table_ = ByteStringView(pAcc->GetSpan());
   }
   return 1;
 }
@@ -82,28 +83,29 @@ bool CPDF_IndexedCS::GetRGB(pdfium::span<const float> pBuf,
                             float* G,
                             float* B) const {
   int32_t index = static_cast<int32_t>(pBuf[0]);
-  if (index < 0 || index > m_MaxIndex)
+  if (index < 0 || index > max_index_) {
     return false;
+  }
 
-  DCHECK(m_nBaseComponents);
-  DCHECK_EQ(m_nBaseComponents, m_pBaseCS->ComponentCount());
+  DCHECK(base_component_count_);
+  DCHECK_EQ(base_component_count_, m_pBaseCS->ComponentCount());
 
   FX_SAFE_SIZE_T length = index;
   length += 1;
-  length *= m_nBaseComponents;
-  if (!length.IsValid() || length.ValueOrDie() > m_Table.GetLength()) {
+  length *= base_component_count_;
+  if (!length.IsValid() || length.ValueOrDie() > lookup_table_.GetLength()) {
     *R = 0;
     *G = 0;
     *B = 0;
     return false;
   }
 
-  std::vector<float> comps(m_nBaseComponents);
-  pdfium::span<const uint8_t> pTable = m_Table.unsigned_span();
-  for (uint32_t i = 0; i < m_nBaseComponents; ++i) {
-    comps[i] =
-        m_pCompMinMax[i * 2] +
-        m_pCompMinMax[i * 2 + 1] * pTable[index * m_nBaseComponents + i] / 255;
+  std::vector<float> comps(base_component_count_);
+  pdfium::span<const uint8_t> pTable = lookup_table_.unsigned_span();
+  for (uint32_t i = 0; i < base_component_count_; ++i) {
+    comps[i] = component_min_max_[i * 2] +
+               component_min_max_[i * 2 + 1] *
+                   pTable[index * base_component_count_ + i] / 255;
   }
   return m_pBaseCS->GetRGB(comps, R, G, B);
 }
