@@ -54,9 +54,7 @@ class StringTemplate {
 
   // Explicit conversion to StringView.
   // Note: Any subsequent modification of |this| will invalidate the result.
-  StringView AsStringView() const {
-    return StringView(unsigned_str(), GetLength());
-  }
+  StringView AsStringView() const { return StringView(unsigned_span()); }
 
   // Explicit conversion to C-style string. The result is never nullptr,
   // and is always NUL terminated.

@@ -736,7 +736,7 @@ WideString EncodeURL(const ByteString& bsURL) {
 
 WideString EncodeHTML(const ByteString& bsHTML) {
   WideString wsHTML = WideString::FromUTF8(bsHTML.AsStringView());
-  wchar_t encode_buffer[8];
+  std::array<wchar_t, 8> encode_buffer;
   encode_buffer[0] = '&';
   encode_buffer[1] = '#';
   encode_buffer[2] = 'x';
@@ -754,7 +754,7 @@ WideString EncodeHTML(const ByteString& bsHTML) {
       encode_buffer[3] = kStrCode[iIndex];
       encode_buffer[4] = kStrCode[ch - iIndex * 16];
       encode_buffer[5] = ';';
-      wsResultBuf << WideStringView(encode_buffer, 6);
+      wsResultBuf << WideStringView(encode_buffer).First(6);
     } else if (ch < 65536) {
       int32_t iBigByte = ch / 256;
       int32_t iLittleByte = ch % 256;
@@ -763,7 +763,7 @@ WideString EncodeHTML(const ByteString& bsHTML) {
       encode_buffer[5] = kStrCode[iLittleByte / 16];
       encode_buffer[6] = kStrCode[iLittleByte % 16];
       encode_buffer[7] = ';';
-      wsResultBuf << WideStringView(encode_buffer, 8);
+      wsResultBuf << WideStringView(encode_buffer).First(8);
     } else {
       // TODO(tsepez): Handle codepoint not in BMP.
     }
@@ -774,7 +774,7 @@ WideString EncodeHTML(const ByteString& bsHTML) {
 WideString EncodeXML(const ByteString& bsXML) {
   WideString wsXML = WideString::FromUTF8(bsXML.AsStringView());
   WideTextBuffer wsResultBuf;
-  wchar_t encode_buffer[8];
+  std::array<wchar_t, 8> encode_buffer;
   encode_buffer[0] = '&';
   encode_buffer[1] = '#';
   encode_buffer[2] = 'x';
@@ -813,7 +813,7 @@ WideString EncodeXML(const ByteString& bsXML) {
           encode_buffer[3] = kStrCode[iIndex];
           encode_buffer[4] = kStrCode[ch - iIndex * 16];
           encode_buffer[5] = ';';
-          wsResultBuf << WideStringView(encode_buffer, 6);
+          wsResultBuf << WideStringView(encode_buffer).First(6);
         } else if (ch < 65536) {
           int32_t iBigByte = ch / 256;
           int32_t iLittleByte = ch % 256;
@@ -822,7 +822,7 @@ WideString EncodeXML(const ByteString& bsXML) {
           encode_buffer[5] = kStrCode[iLittleByte / 16];
           encode_buffer[6] = kStrCode[iLittleByte % 16];
           encode_buffer[7] = ';';
-          wsResultBuf << WideStringView(encode_buffer, 8);
+          wsResultBuf << WideStringView(encode_buffer).First(8);
         } else {
           // TODO(tsepez): Handle codepoint not in BMP.
         }

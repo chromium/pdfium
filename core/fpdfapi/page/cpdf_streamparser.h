@@ -34,7 +34,7 @@ class CPDF_StreamParser {
 
   ElementType ParseNextElement();
   ByteStringView GetWord() const {
-    return ByteStringView(m_WordBuffer.data(), m_WordSize);
+    return ByteStringView(m_WordBuffer).First(m_WordSize);
   }
   uint32_t GetPos() const { return m_Pos; }
   void SetPos(uint32_t pos) { m_Pos = pos; }

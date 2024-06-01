@@ -440,13 +440,12 @@ bool ParseLocaleTime(const WideString& wsTime,
       WideString wsAM = pLocale->GetMeridiemName(true);
       WideString wsPM = pLocale->GetMeridiemName(false);
       if (*cc + wsAM.GetLength() <= spTime.size() &&
-          UNSAFE_TODO(WideStringView(spTime.data() + *cc, wsAM.GetLength())) ==
-              wsAM) {
+          WideStringView(spTime.subspan(*cc, wsAM.GetLength())) == wsAM) {
         *cc += wsAM.GetLength();
         bHasA = true;
       } else if (*cc + wsPM.GetLength() <= spTime.size() &&
-                 UNSAFE_TODO(WideStringView(spTime.data() + *cc,
-                                            wsPM.GetLength())) == wsPM) {
+                 WideStringView(spTime.subspan(*cc, wsPM.GetLength())) ==
+                     wsPM) {
         *cc += wsPM.GetLength();
         bHasA = true;
         bPM = true;
@@ -953,8 +952,8 @@ WideString CFGAS_StringFormatter::GetTextFormat(
     if (m_spPattern[ccf] == '\'') {
       size_t iCurChar = ccf;
       GetLiteralText(m_spPattern, &ccf);
-      wsPurgePattern += UNSAFE_TODO(
-          WideStringView(m_spPattern.data() + iCurChar, ccf - iCurChar + 1));
+      wsPurgePattern +=
+          WideStringView(m_spPattern.subspan(iCurChar, ccf - iCurChar + 1));
     } else if (!bBrackOpen &&
                !pdfium::Contains(kConstChars, m_spPattern[ccf])) {
       WideString wsSearchCategory(m_spPattern[ccf]);
@@ -1004,8 +1003,8 @@ LocaleIface* CFGAS_StringFormatter::GetNumericFormat(
     if (m_spPattern[ccf] == '\'') {
       size_t iCurChar = ccf;
       GetLiteralText(m_spPattern, &ccf);
-      *wsPurgePattern += UNSAFE_TODO(
-          WideStringView(m_spPattern.data() + iCurChar, ccf - iCurChar + 1));
+      *wsPurgePattern +=
+          WideStringView(m_spPattern.subspan(iCurChar, ccf - iCurChar + 1));
     } else if (!bBrackOpen &&
                !pdfium::Contains(kConstChars, m_spPattern[ccf])) {
       WideString wsCategory(m_spPattern[ccf]);
@@ -1598,8 +1597,8 @@ CFGAS_StringFormatter::DateTimeType CFGAS_StringFormatter::GetDateTimeFormat(
     if (m_spPattern[ccf] == '\'') {
       size_t iCurChar = ccf;
       GetLiteralText(m_spPattern, &ccf);
-      wsTempPattern += UNSAFE_TODO(
-          WideStringView(m_spPattern.data() + iCurChar, ccf - iCurChar + 1));
+      wsTempPattern +=
+          WideStringView(m_spPattern.subspan(iCurChar, ccf - iCurChar + 1));
     } else if (!bBraceOpen && eDateTimeType != DateTimeType::kDateTime &&
                !pdfium::Contains(kConstChars, m_spPattern[ccf])) {
       WideString wsCategory(m_spPattern[ccf]);

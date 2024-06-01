@@ -285,9 +285,9 @@ void CFDE_TextEditEngine::Insert(size_t idx,
 
   if (validation_enabled_ || limit_horizontal_area_ || limit_vertical_area_) {
     WideString str;
-    if (gap_position_ > 0)
-      str += WideStringView(content_.data(), gap_position_);
-
+    if (gap_position_ > 0) {
+      str += WideStringView(pdfium::make_span(content_).first(gap_position_));
+    }
     str += text;
 
     if (text_length_ - gap_position_ > 0) {
@@ -876,7 +876,7 @@ void CFDE_TextEditEngine::ReplaceSelectedText(const WideString& requested_rep) {
 WideString CFDE_TextEditEngine::GetText() const {
   WideString str;
   if (gap_position_ > 0) {
-    str += WideStringView(content_.data(), gap_position_);
+    str += WideStringView(pdfium::make_span(content_).first(gap_position_));
   }
   if (text_length_ - gap_position_ > 0) {
     str += WideStringView(pdfium::make_span(content_).subspan(

@@ -131,7 +131,7 @@ int CPDF_Font::AppendChar(char* buf, uint32_t charcode) const {
 void CPDF_Font::AppendChar(ByteString* str, uint32_t charcode) const {
   char buf[4];
   int len = AppendChar(buf, charcode);
-  *str += ByteStringView(buf, len);
+  *str += ByteStringView(pdfium::make_span(buf).first(len));
 }
 
 WideString CPDF_Font::UnicodeFromCharCode(uint32_t charcode) const {
