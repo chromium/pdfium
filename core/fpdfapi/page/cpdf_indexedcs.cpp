@@ -17,7 +17,6 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
@@ -58,13 +57,12 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
 
   base_component_count_ = m_pBaseCS->ComponentCount();
   DCHECK(base_component_count_);
-  component_min_max_ =
-      DataVector<float>(Fx2DSizeOrDie(base_component_count_, 2));
+  component_min_max_ = DataVector<IndexedColorMinMax>(base_component_count_);
   float defvalue;
-  for (uint32_t i = 0; i < base_component_count_; i++) {
-    m_pBaseCS->GetDefaultValue(i, &defvalue, &component_min_max_[i * 2],
-                               &component_min_max_[i * 2 + 1]);
-    component_min_max_[i * 2 + 1] -= component_min_max_[i * 2];
+  for (uint32_t i = 0; i < component_min_max_.size(); i++) {
+    IndexedColorMinMax& comp = component_min_max_[i];
+    m_pBaseCS->GetDefaultValue(i, &defvalue, &comp.min, &comp.max);
+    comp.max -= comp.min;
   }
 
   // ISO 32000-1:2008 section 8.6.6.3 says the maximum value is 255.
@@ -113,8 +111,8 @@ bool CPDF_IndexedCS::GetRGB(pdfium::span<const float> pBuf,
   std::vector<float> comps(base_component_count_);
   pdfium::span<const uint8_t> pTable = lookup_table_.unsigned_span();
   for (uint32_t i = 0; i < base_component_count_; ++i) {
-    comps[i] = component_min_max_[i * 2] +
-               component_min_max_[i * 2 + 1] *
+    comps[i] = component_min_max_[i].min +
+               component_min_max_[i].max *
                    pTable[index * base_component_count_ + i] / 255;
   }
   return m_pBaseCS->GetRGB(comps, R, G, B);

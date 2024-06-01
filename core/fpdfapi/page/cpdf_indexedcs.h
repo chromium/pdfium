@@ -10,9 +10,16 @@
 #include "core/fpdfapi/page/cpdf_basedcs.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 
 class CPDF_Document;
+
+struct IndexedColorMinMax {
+  float min;
+  float max;
+};
+FX_DATA_PARTITION_EXCEPTION(IndexedColorMinMax);
 
 class CPDF_IndexedCS final : public CPDF_BasedCS {
  public:
@@ -37,7 +44,7 @@ class CPDF_IndexedCS final : public CPDF_BasedCS {
   uint32_t base_component_count_ = 0;
   int max_index_ = 0;
   ByteString lookup_table_;
-  DataVector<float> component_min_max_;
+  DataVector<IndexedColorMinMax> component_min_max_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_INDEXEDCS_H_
