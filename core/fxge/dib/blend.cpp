@@ -4,14 +4,10 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/dib/blend.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 
 #include "core/fxcrt/check_op.h"
@@ -22,7 +18,7 @@ namespace fxge {
 
 namespace {
 
-constexpr uint8_t kColorSqrt[256] = {
+constexpr std::array<const uint8_t, 256> kColorSqrt = {
     0x00, 0x03, 0x07, 0x0B, 0x0F, 0x12, 0x16, 0x19, 0x1D, 0x20, 0x23, 0x26,
     0x29, 0x2C, 0x2F, 0x32, 0x35, 0x37, 0x3A, 0x3C, 0x3F, 0x41, 0x43, 0x46,
     0x48, 0x4A, 0x4C, 0x4E, 0x50, 0x52, 0x54, 0x56, 0x57, 0x59, 0x5B, 0x5C,
@@ -91,8 +87,10 @@ int Blend(BlendMode blend_mode, int back_color, int src_color) {
         return back_color - (255 - 2 * src_color) * back_color *
                                 (255 - back_color) / 255 / 255;
       }
-      return back_color + (2 * src_color - 255) *
-                              (kColorSqrt[back_color] - back_color) / 255;
+      return back_color +
+             (2 * src_color - 255) *
+                 (kColorSqrt[static_cast<uint8_t>(back_color)] - back_color) /
+                 255;
     }
     case BlendMode::kDifference:
       return std::abs(back_color - src_color);
