@@ -191,7 +191,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
           return nullptr;
 
         pStream->alignByte();
-        pStream->offset(2);
+        pStream->addOffset(2);
         if (static_cast<uint32_t>(HUFFRSIZE) != (pStream->getOffset() - nTmp))
           return nullptr;
       }

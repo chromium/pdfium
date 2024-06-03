@@ -104,14 +104,14 @@ std::unique_ptr<CJBig2_Image> CJBig2_HTRDProc::DecodeMMR(
     return nullptr;
 
   pStream->alignByte();
-  pStream->offset(3);
+  pStream->addOffset(3);
   for (int32_t J = GSBPP - 2; J >= 0; --J) {
     GRD.StartDecodeMMR(&GSPLANES[J], pStream);
     if (!GSPLANES[J])
       return nullptr;
 
     pStream->alignByte();
-    pStream->offset(3);
+    pStream->addOffset(3);
     GSPLANES[J]->ComposeFrom(0, 0, GSPLANES[J + 1].get(), JBIG2_COMPOSE_XOR);
   }
   return DecodeImage(GSPLANES);

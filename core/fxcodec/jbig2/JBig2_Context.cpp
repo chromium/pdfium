@@ -112,7 +112,7 @@ JBig2_Result CJBig2_Context::DecodeSequential(PauseIndicatorIface* pPause) {
       m_nOffset = new_offset.ValueOrDie();
       m_pStream->setOffset(m_nOffset);
     } else {
-      m_pStream->offset(4);
+      m_pStream->addOffset(4);
     }
     m_SegmentList.push_back(std::move(m_pSegment));
     if (m_pStream->getByteLeft() > 0 && m_pPage && pPause &&
@@ -356,17 +356,17 @@ JBig2_Result CJBig2_Context::ProcessingParseSegmentData(
       m_bInPage = false;
       return JBig2_Result::kEndReached;
     case 50:
-      m_pStream->offset(pSegment->m_dwData_length);
+      m_pStream->addOffset(pSegment->m_dwData_length);
       break;
     case 51:
       return JBig2_Result::kEndReached;
     case 52:
-      m_pStream->offset(pSegment->m_dwData_length);
+      m_pStream->addOffset(pSegment->m_dwData_length);
       break;
     case 53:
       return ParseTable(pSegment);
     case 62:
-      m_pStream->offset(pSegment->m_dwData_length);
+      m_pStream->addOffset(pSegment->m_dwData_length);
       break;
     default:
       break;
@@ -544,7 +544,7 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
         return JBig2_Result::kFailure;
 
       m_pStream->alignByte();
-      m_pStream->offset(2);
+      m_pStream->addOffset(2);
     } else {
       pSegment->m_SymbolDict = pSymbolDictDecoder->DecodeHuffman(
           m_pStream.get(), &gbContext, &grContext);
@@ -796,7 +796,7 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
     if (!pSegment->m_Image)
       return JBig2_Result::kFailure;
     m_pStream->alignByte();
-    m_pStream->offset(2);
+    m_pStream->addOffset(2);
   }
   if (pSegment->m_cFlags.s.type != 4) {
     if (!m_bBufSpecified) {
@@ -843,7 +843,7 @@ JBig2_Result CJBig2_Context::ParsePatternDict(CJBig2_Segment* pSegment,
       return JBig2_Result::kFailure;
 
     m_pStream->alignByte();
-    m_pStream->offset(2);
+    m_pStream->addOffset(2);
   }
   return JBig2_Result::kSuccess;
 }
@@ -910,7 +910,7 @@ JBig2_Result CJBig2_Context::ParseHalftoneRegion(CJBig2_Segment* pSegment,
       return JBig2_Result::kFailure;
 
     m_pStream->alignByte();
-    m_pStream->offset(2);
+    m_pStream->addOffset(2);
   }
   if (pSegment->m_cFlags.s.type != 20) {
     if (!m_bBufSpecified) {
@@ -1008,7 +1008,7 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
       return JBig2_Result::kFailure;
     }
     m_pStream->alignByte();
-    m_pStream->offset(2);
+    m_pStream->addOffset(2);
   }
   if (pSegment->m_cFlags.s.type != 36) {
     if (!m_bBufSpecified) {
@@ -1080,7 +1080,7 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
     return JBig2_Result::kFailure;
 
   m_pStream->alignByte();
-  m_pStream->offset(2);
+  m_pStream->addOffset(2);
   if (pSegment->m_cFlags.s.type != 40) {
     if (!m_bBufSpecified) {
       JBig2PageInfo* pPageInfo = m_PageInfoList.back().get();

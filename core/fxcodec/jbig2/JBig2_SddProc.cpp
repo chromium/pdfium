@@ -407,7 +407,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
             return nullptr;
 
           pStream->alignByte();
-          pStream->offset(2);
+          pStream->addOffset(2);
           if ((uint32_t)nVal != (pStream->getOffset() - nTmp))
             return nullptr;
         }
@@ -442,7 +442,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
         for (uint32_t i = 0; i < HCHEIGHT; ++i) {
           UNSAFE_TODO(FXSYS_memcpy(BHC->data() + i * BHC->stride(),
                                    pStream->getPointer(), stride));
-          pStream->offset(stride);
+          pStream->addOffset(stride);
         }
       } else {
         auto pGRD = std::make_unique<CJBig2_GRDProc>();
