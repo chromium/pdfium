@@ -64,7 +64,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling abseil
   # and whatever else without interference from each other.
-  'abseil_revision': '2c1ad970da6bd5837bcee6671da262eac0bd5397',
+  'abseil_revision': '30d4d2184638dcc328b79723355c65140cf06e4b',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling android_toolchain
   # and whatever else without interference from each other.
@@ -88,7 +88,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang
   # and whatever else without interference from each other.
-  'clang_revision': '277a3849ebe4f41beb773614cc4bad839870cfcf',
+  'clang_revision': '92d8405e46d00cb7a4e61cc57844a57b94825505',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling code_coverage
   # and whatever else without interference from each other.
