@@ -21,6 +21,7 @@
 #include "core/fxcodec/jbig2/JBig2_SddProc.h"
 #include "core/fxcodec/jbig2/JBig2_TrdProc.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/pauseindicator_iface.h"
@@ -499,24 +500,26 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
       GetHuffContextSize(pSymbolDictDecoder->SDTEMPLATE);
   const size_t grContextSize =
       GetRefAggContextSize(pSymbolDictDecoder->SDRTEMPLATE);
-  std::vector<JBig2ArithCtx> gbContext;
-  std::vector<JBig2ArithCtx> grContext;
+  std::vector<JBig2ArithCtx> gbContexts;
+  std::vector<JBig2ArithCtx> grContexts;
   if ((wFlags & 0x0100) && pLRSeg) {
     if (bUseGbContext) {
-      gbContext = pLRSeg->m_SymbolDict->GbContext();
-      if (gbContext.size() != gbContextSize)
+      gbContexts = pLRSeg->m_SymbolDict->GbContexts();
+      if (gbContexts.size() != gbContextSize) {
         return JBig2_Result::kFailure;
+      }
     }
     if (bUseGrContext) {
-      grContext = pLRSeg->m_SymbolDict->GrContext();
-      if (grContext.size() != grContextSize)
+      grContexts = pLRSeg->m_SymbolDict->GrContexts();
+      if (grContexts.size() != grContextSize) {
         return JBig2_Result::kFailure;
+      }
     }
   } else {
     if (bUseGbContext)
-      gbContext.resize(gbContextSize);
+      gbContexts.resize(gbContextSize);
     if (bUseGrContext)
-      grContext.resize(grContextSize);
+      grContexts.resize(grContextSize);
   }
 
   CJBig2_CompoundKey key(pSegment->m_Key, pSegment->m_dwDataOffset);
@@ -539,7 +542,7 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
       auto pArithDecoder =
           std::make_unique<CJBig2_ArithDecoder>(m_pStream.get());
       pSegment->m_SymbolDict = pSymbolDictDecoder->DecodeArith(
-          pArithDecoder.get(), &gbContext, &grContext);
+          pArithDecoder.get(), gbContexts, grContexts);
       if (!pSegment->m_SymbolDict)
         return JBig2_Result::kFailure;
 
@@ -547,7 +550,7 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
       m_pStream->addOffset(2);
     } else {
       pSegment->m_SymbolDict = pSymbolDictDecoder->DecodeHuffman(
-          m_pStream.get(), &gbContext, &grContext);
+          m_pStream.get(), gbContexts, grContexts);
       if (!pSegment->m_SymbolDict)
         return JBig2_Result::kFailure;
       m_pStream->alignByte();
@@ -565,9 +568,9 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
   }
   if (wFlags & 0x0200) {
     if (bUseGbContext)
-      pSegment->m_SymbolDict->SetGbContext(std::move(gbContext));
+      pSegment->m_SymbolDict->SetGbContexts(std::move(gbContexts));
     if (bUseGrContext)
-      pSegment->m_SymbolDict->SetGrContext(std::move(grContext));
+      pSegment->m_SymbolDict->SetGrContexts(std::move(grContexts));
   }
   return JBig2_Result::kSuccess;
 }
@@ -778,21 +781,21 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
       pTRD->SBHUFFRSIZE = pSeg->m_HuffmanTable.get();
     }
   }
-  std::unique_ptr<JBig2ArithCtx, FxFreeDeleter> grContext;
+  FixedSizeDataVector<JBig2ArithCtx> grContexts;
   if (pTRD->SBREFINE) {
     const size_t size = GetRefAggContextSize(pTRD->SBRTEMPLATE);
-    grContext.reset(FX_Alloc(JBig2ArithCtx, size));
+    grContexts = FixedSizeDataVector<JBig2ArithCtx>::Zeroed(size);
   }
   pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
   if (pTRD->SBHUFF) {
-    pSegment->m_Image = pTRD->DecodeHuffman(m_pStream.get(), grContext.get());
+    pSegment->m_Image = pTRD->DecodeHuffman(m_pStream.get(), grContexts);
     if (!pSegment->m_Image)
       return JBig2_Result::kFailure;
     m_pStream->alignByte();
   } else {
     auto pArithDecoder = std::make_unique<CJBig2_ArithDecoder>(m_pStream.get());
     pSegment->m_Image =
-        pTRD->DecodeArith(pArithDecoder.get(), grContext.get(), nullptr);
+        pTRD->DecodeArith(pArithDecoder.get(), grContexts, nullptr);
     if (!pSegment->m_Image)
       return JBig2_Result::kFailure;
     m_pStream->alignByte();
@@ -834,11 +837,10 @@ JBig2_Result CJBig2_Context::ParsePatternDict(CJBig2_Segment* pSegment,
     m_pStream->alignByte();
   } else {
     const size_t size = GetHuffContextSize(pPDD->HDTEMPLATE);
-    std::unique_ptr<JBig2ArithCtx, FxFreeDeleter> gbContext(
-        FX_Alloc(JBig2ArithCtx, size));
+    auto gbContexts = FixedSizeDataVector<JBig2ArithCtx>::Zeroed(size);
     auto pArithDecoder = std::make_unique<CJBig2_ArithDecoder>(m_pStream.get());
     pSegment->m_PatternDict =
-        pPDD->DecodeArith(pArithDecoder.get(), gbContext.get(), pPause);
+        pPDD->DecodeArith(pArithDecoder.get(), gbContexts, pPause);
     if (!pSegment->m_PatternDict)
       return JBig2_Result::kFailure;
 
@@ -901,11 +903,10 @@ JBig2_Result CJBig2_Context::ParseHalftoneRegion(CJBig2_Segment* pSegment,
     m_pStream->alignByte();
   } else {
     const size_t size = GetHuffContextSize(pHRD->HTEMPLATE);
-    std::unique_ptr<JBig2ArithCtx, FxFreeDeleter> gbContext(
-        FX_Alloc(JBig2ArithCtx, size));
+    auto gbContexts = FixedSizeDataVector<JBig2ArithCtx>::Zeroed(size);
     auto pArithDecoder = std::make_unique<CJBig2_ArithDecoder>(m_pStream.get());
     pSegment->m_Image =
-        pHRD->DecodeArith(pArithDecoder.get(), gbContext.get(), pPause);
+        pHRD->DecodeArith(pArithDecoder.get(), gbContexts, pPause);
     if (!pSegment->m_Image)
       return JBig2_Result::kFailure;
 
@@ -966,19 +967,20 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
     }
     m_pStream->alignByte();
   } else {
-    if (m_gbContext.empty())
-      m_gbContext.resize(GetHuffContextSize(m_pGRD->GBTEMPLATE));
+    if (m_gbContexts.empty()) {
+      m_gbContexts.resize(GetHuffContextSize(m_pGRD->GBTEMPLATE));
+    }
 
     bool bStart = !m_pArithDecoder;
     if (bStart) {
       m_pArithDecoder = std::make_unique<CJBig2_ArithDecoder>(m_pStream.get());
     }
     {
-      // |state.gbContext| can't exist when m_gbContext.clear() called below.
+      // |state.gbContexts| can't exist when m_gbContexts.clear() called below.
       CJBig2_GRDProc::ProgressiveArithDecodeState state;
       state.pImage = &pSegment->m_Image;
       state.pArithDecoder = m_pArithDecoder.get();
-      state.gbContext = m_gbContext.data();
+      state.gbContexts = m_gbContexts;
       state.pPause = pPause;
       m_ProcessingStatus = bStart ? m_pGRD->StartDecodeArith(&state)
                                   : m_pGRD->ContinueDecode(&state);
@@ -1001,7 +1003,7 @@ JBig2_Result CJBig2_Context::ParseGenericRegion(CJBig2_Segment* pSegment,
       }
     }
     m_pArithDecoder.reset();
-    m_gbContext.clear();
+    m_gbContexts.clear();
     if (!pSegment->m_Image) {
       m_ProcessingStatus = FXCODEC_STATUS::kError;
       m_pGRD.reset();
@@ -1071,11 +1073,10 @@ JBig2_Result CJBig2_Context::ParseGenericRefinementRegion(
   pGRRD->GRREFERENCEDX = 0;
   pGRRD->GRREFERENCEDY = 0;
   const size_t size = GetRefAggContextSize(pGRRD->GRTEMPLATE);
-  std::unique_ptr<JBig2ArithCtx, FxFreeDeleter> grContext(
-      FX_Alloc(JBig2ArithCtx, size));
+  auto grContexts = FixedSizeDataVector<JBig2ArithCtx>::Zeroed(size);
   auto pArithDecoder = std::make_unique<CJBig2_ArithDecoder>(m_pStream.get());
   pSegment->m_nResultType = JBIG2_IMAGE_POINTER;
-  pSegment->m_Image = pGRRD->Decode(pArithDecoder.get(), grContext.get());
+  pSegment->m_Image = pGRRD->Decode(pArithDecoder.get(), grContexts);
   if (!pSegment->m_Image)
     return JBig2_Result::kFailure;
 

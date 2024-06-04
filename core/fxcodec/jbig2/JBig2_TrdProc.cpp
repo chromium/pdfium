@@ -49,7 +49,7 @@ CJBig2_TRDProc::~CJBig2_TRDProc() = default;
 
 std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
     CJBig2_BitStream* pStream,
-    JBig2ArithCtx* grContext) {
+    pdfium::span<JBig2ArithCtx> grContexts) {
   auto SBREG = std::make_unique<CJBig2_Image>(SBW, SBH);
   if (!SBREG->data())
     return nullptr;
@@ -186,7 +186,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
         pGRRD->GRAT[3] = SBRAT[3];
 
         auto pArithDecoder = std::make_unique<CJBig2_ArithDecoder>(pStream);
-        IBI = pGRRD->Decode(pArithDecoder.get(), grContext);
+        IBI = pGRRD->Decode(pArithDecoder.get(), grContexts);
         if (!IBI)
           return nullptr;
 
@@ -223,7 +223,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeHuffman(
 
 std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
     CJBig2_ArithDecoder* pArithDecoder,
-    JBig2ArithCtx* grContext,
+    pdfium::span<JBig2ArithCtx> grContexts,
     JBig2IntDecoderState* pIDS) {
   auto SBREG = std::make_unique<CJBig2_Image>(SBW, SBH);
   if (!SBREG->data())
@@ -364,7 +364,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_TRDProc::DecodeArith(
         pGRRD->GRAT[1] = SBRAT[1];
         pGRRD->GRAT[2] = SBRAT[2];
         pGRRD->GRAT[3] = SBRAT[3];
-        pIBI = pGRRD->Decode(pArithDecoder, grContext);
+        pIBI = pGRRD->Decode(pArithDecoder, grContexts);
       }
       if (!pIBI)
         return nullptr;

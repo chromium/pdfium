@@ -29,19 +29,19 @@ class CJBig2_SymbolDict {
   size_t NumImages() const { return m_SDEXSYMS.size(); }
   CJBig2_Image* GetImage(size_t index) const { return m_SDEXSYMS[index].get(); }
 
-  const std::vector<JBig2ArithCtx>& GbContext() const { return m_gbContext; }
-  const std::vector<JBig2ArithCtx>& GrContext() const { return m_grContext; }
+  const std::vector<JBig2ArithCtx>& GbContexts() const { return m_gbContexts; }
+  const std::vector<JBig2ArithCtx>& GrContexts() const { return m_grContexts; }
 
-  void SetGbContext(std::vector<JBig2ArithCtx> gbContext) {
-    m_gbContext = std::move(gbContext);
+  void SetGbContexts(std::vector<JBig2ArithCtx> gbContexts) {
+    m_gbContexts = std::move(gbContexts);
   }
-  void SetGrContext(std::vector<JBig2ArithCtx> grContext) {
-    m_grContext = std::move(grContext);
+  void SetGrContexts(std::vector<JBig2ArithCtx> grContexts) {
+    m_grContexts = std::move(grContexts);
   }
 
  private:
-  std::vector<JBig2ArithCtx> m_gbContext;
-  std::vector<JBig2ArithCtx> m_grContext;
+  std::vector<JBig2ArithCtx> m_gbContexts;
+  std::vector<JBig2ArithCtx> m_grContexts;
   std::vector<std::unique_ptr<CJBig2_Image>> m_SDEXSYMS;
 };
 

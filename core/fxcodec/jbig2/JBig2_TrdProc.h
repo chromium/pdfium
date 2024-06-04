@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "core/fxcodec/jbig2/JBig2_Image.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 
@@ -53,12 +54,14 @@ class CJBig2_TRDProc {
   CJBig2_TRDProc();
   ~CJBig2_TRDProc();
 
-  std::unique_ptr<CJBig2_Image> DecodeHuffman(CJBig2_BitStream* pStream,
-                                              JBig2ArithCtx* grContext);
+  std::unique_ptr<CJBig2_Image> DecodeHuffman(
+      CJBig2_BitStream* pStream,
+      pdfium::span<JBig2ArithCtx> grContexts);
 
-  std::unique_ptr<CJBig2_Image> DecodeArith(CJBig2_ArithDecoder* pArithDecoder,
-                                            JBig2ArithCtx* grContext,
-                                            JBig2IntDecoderState* pIDS);
+  std::unique_ptr<CJBig2_Image> DecodeArith(
+      CJBig2_ArithDecoder* pArithDecoder,
+      pdfium::span<JBig2ArithCtx> grContexts,
+      JBig2IntDecoderState* pIDS);
 
   bool SBHUFF;
   bool SBREFINE;

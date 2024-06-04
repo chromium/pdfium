@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 class CJBig2_BitStream;
@@ -35,6 +36,7 @@ class JBig2ArithCtx {
   bool m_MPS = false;
   unsigned int m_I = 0;
 };
+FX_DATA_PARTITION_EXCEPTION(JBig2ArithCtx);
 
 class CJBig2_ArithDecoder {
  public:

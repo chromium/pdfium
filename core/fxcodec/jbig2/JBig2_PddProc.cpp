@@ -14,7 +14,7 @@
 
 std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeArith(
     CJBig2_ArithDecoder* pArithDecoder,
-    JBig2ArithCtx* gbContext,
+    pdfium::span<JBig2ArithCtx> gbContexts,
     PauseIndicatorIface* pPause) {
   std::unique_ptr<CJBig2_GRDProc> pGRD = CreateGRDProc();
   if (!pGRD)
@@ -38,7 +38,7 @@ std::unique_ptr<CJBig2_PatternDict> CJBig2_PDDProc::DecodeArith(
   CJBig2_GRDProc::ProgressiveArithDecodeState state;
   state.pImage = &BHDC;
   state.pArithDecoder = pArithDecoder;
-  state.gbContext = gbContext;
+  state.gbContexts = gbContexts;
   state.pPause = nullptr;
 
   FXCODEC_STATUS status = pGRD->StartDecodeArith(&state);

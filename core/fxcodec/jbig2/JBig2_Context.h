@@ -95,7 +95,7 @@ class CJBig2_Context {
   bool m_bBufSpecified = false;
   int32_t m_PauseStep = 10;
   FXCODEC_STATUS m_ProcessingStatus = FXCODEC_STATUS::kFrameReady;
-  std::vector<JBig2ArithCtx> m_gbContext;
+  std::vector<JBig2ArithCtx> m_gbContexts;
   std::unique_ptr<CJBig2_ArithDecoder> m_pArithDecoder;
   std::unique_ptr<CJBig2_GRDProc> m_pGRD;
   std::unique_ptr<CJBig2_Segment> m_pSegment;

@@ -29,8 +29,8 @@ CJBig2_SDDProc::~CJBig2_SDDProc() = default;
 
 std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
     CJBig2_ArithDecoder* pArithDecoder,
-    std::vector<JBig2ArithCtx>* gbContext,
-    std::vector<JBig2ArithCtx>* grContext) {
+    pdfium::span<JBig2ArithCtx> gbContexts,
+    pdfium::span<JBig2ArithCtx> grContexts) {
   auto IADH = std::make_unique<CJBig2_ArithIntDecoder>();
   auto IADW = std::make_unique<CJBig2_ArithIntDecoder>();
   auto IAAI = std::make_unique<CJBig2_ArithIntDecoder>();
@@ -95,7 +95,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
         pGRD->GBAT[5] = SDAT[5];
         pGRD->GBAT[6] = SDAT[6];
         pGRD->GBAT[7] = SDAT[7];
-        BS = pGRD->DecodeArith(pArithDecoder, gbContext->data());
+        BS = pGRD->DecodeArith(pArithDecoder, gbContexts);
         if (!BS)
           return nullptr;
       } else {
@@ -161,7 +161,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
           ids.IARDX = IARDX.get();
           ids.IARDY = IARDY.get();
           ids.IAID = IAID.get();
-          BS = pDecoder->DecodeArith(pArithDecoder, grContext->data(), &ids);
+          BS = pDecoder->DecodeArith(pArithDecoder, grContexts, &ids);
           if (!BS)
             return nullptr;
         } else if (REFAGGNINST == 1) {
@@ -192,7 +192,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
           pGRRD->GRAT[1] = SDRAT[1];
           pGRRD->GRAT[2] = SDRAT[2];
           pGRRD->GRAT[3] = SDRAT[3];
-          BS = pGRRD->Decode(pArithDecoder, grContext->data());
+          BS = pGRRD->Decode(pArithDecoder, grContexts);
           if (!BS)
             return nullptr;
         }
@@ -245,10 +245,9 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
 
 std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
     CJBig2_BitStream* pStream,
-    std::vector<JBig2ArithCtx>* gbContext,
-    std::vector<JBig2ArithCtx>* grContext) {
+    pdfium::span<JBig2ArithCtx> gbContexts,
+    pdfium::span<JBig2ArithCtx> grContexts) {
   auto pHuffmanDecoder = std::make_unique<CJBig2_HuffmanDecoder>(pStream);
-
   std::vector<std::unique_ptr<CJBig2_Image>> SDNEWSYMS(SDNUMNEWSYMS);
   std::vector<uint32_t> SDNEWSYMWIDTHS;
   if (SDREFAGG == 0)
@@ -346,7 +345,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
           pDecoder->SBRAT[1] = SDRAT[1];
           pDecoder->SBRAT[2] = SDRAT[2];
           pDecoder->SBRAT[3] = SDRAT[3];
-          BS = pDecoder->DecodeHuffman(pStream, grContext->data());
+          BS = pDecoder->DecodeHuffman(pStream, grContexts);
           if (!BS)
             return nullptr;
 
@@ -402,7 +401,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
           pGRRD->GRAT[2] = SDRAT[2];
           pGRRD->GRAT[3] = SDRAT[3];
           auto pArithDecoder = std::make_unique<CJBig2_ArithDecoder>(pStream);
-          BS = pGRRD->Decode(pArithDecoder.get(), grContext->data());
+          BS = pGRRD->Decode(pArithDecoder.get(), grContexts);
           if (!BS)
             return nullptr;
 

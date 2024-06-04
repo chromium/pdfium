@@ -18,7 +18,7 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SymbolDict::DeepCopy() const {
     dst->m_SDEXSYMS.push_back(image ? std::make_unique<CJBig2_Image>(*image)
                                     : nullptr);
   }
-  dst->m_gbContext = m_gbContext;
-  dst->m_grContext = m_grContext;
+  dst->m_gbContexts = m_gbContexts;
+  dst->m_grContexts = m_grContexts;
   return dst;
 }

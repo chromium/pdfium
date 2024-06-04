@@ -11,6 +11,8 @@
 
 #include <memory>
 
+#include "core/fxcrt/span.h"
+
 class CJBig2_ArithDecoder;
 class CJBig2_BitStream;
 class CJBig2_GRDProc;
@@ -22,7 +24,7 @@ class CJBig2_PDDProc {
  public:
   std::unique_ptr<CJBig2_PatternDict> DecodeArith(
       CJBig2_ArithDecoder* pArithDecoder,
-      JBig2ArithCtx* gbContext,
+      pdfium::span<JBig2ArithCtx> gbContexts,
       PauseIndicatorIface* pPause);
 
   std::unique_ptr<CJBig2_PatternDict> DecodeMMR(CJBig2_BitStream* pStream);

@@ -19,7 +19,7 @@ CJBig2_GRRDProc::~CJBig2_GRRDProc() = default;
 
 std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::Decode(
     CJBig2_ArithDecoder* pArithDecoder,
-    JBig2ArithCtx* grContext) {
+    pdfium::span<JBig2ArithCtx> grContexts) {
   if (!CJBig2_Image::IsValidImageSize(GRW, GRH))
     return std::make_unique<CJBig2_Image>(GRW, GRH);
 
@@ -27,20 +27,20 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::Decode(
     if ((GRAT[0] == -1) && (GRAT[1] == -1) && (GRAT[2] == -1) &&
         (GRAT[3] == -1) && (GRREFERENCEDX == 0) &&
         (GRW == (uint32_t)GRREFERENCE->width())) {
-      return DecodeTemplate0Opt(pArithDecoder, grContext);
+      return DecodeTemplate0Opt(pArithDecoder, grContexts);
     }
-    return DecodeTemplate0Unopt(pArithDecoder, grContext);
+    return DecodeTemplate0Unopt(pArithDecoder, grContexts);
   }
 
   if ((GRREFERENCEDX == 0) && (GRW == (uint32_t)GRREFERENCE->width()))
-    return DecodeTemplate1Opt(pArithDecoder, grContext);
+    return DecodeTemplate1Opt(pArithDecoder, grContexts);
 
-  return DecodeTemplate1Unopt(pArithDecoder, grContext);
+  return DecodeTemplate1Unopt(pArithDecoder, grContexts);
 }
 
 std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Unopt(
     CJBig2_ArithDecoder* pArithDecoder,
-    JBig2ArithCtx* grContext) {
+    pdfium::span<JBig2ArithCtx> grContexts) {
   auto GRREG = std::make_unique<CJBig2_Image>(GRW, GRH);
   if (!GRREG->data())
     return nullptr;
@@ -49,10 +49,10 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Unopt(
   int LTP = 0;
   for (uint32_t h = 0; h < GRH; h++) {
     if (TPGRON) {
-      if (pArithDecoder->IsComplete())
+      if (pArithDecoder->IsComplete()) {
         return nullptr;
-
-      LTP = LTP ^ pArithDecoder->Decode(UNSAFE_TODO(&grContext[0x0010]));
+      }
+      LTP = LTP ^ pArithDecoder->Decode(&grContexts[0x0010]);
     }
     uint32_t lines[5];
     lines[0] = GRREG->GetPixel(1, h - 1);
@@ -77,7 +77,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Unopt(
         if (pArithDecoder->IsComplete())
           return nullptr;
 
-        int bVal = pArithDecoder->Decode(UNSAFE_TODO(&grContext[CONTEXT]));
+        int bVal = pArithDecoder->Decode(&grContexts[CONTEXT]);
         DecodeTemplate0UnoptSetPixel(GRREG.get(), lines, w, h, bVal);
       }
     } else {
@@ -96,7 +96,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Unopt(
           if (pArithDecoder->IsComplete())
             return nullptr;
 
-          bVal = pArithDecoder->Decode(UNSAFE_TODO(&grContext[CONTEXT]));
+          bVal = pArithDecoder->Decode(&grContexts[CONTEXT]);
         }
         DecodeTemplate0UnoptSetPixel(GRREG.get(), lines, w, h, bVal);
       }
@@ -149,7 +149,7 @@ void CJBig2_GRRDProc::DecodeTemplate0UnoptSetPixel(CJBig2_Image* GRREG,
 
 std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Opt(
     CJBig2_ArithDecoder* pArithDecoder,
-    JBig2ArithCtx* grContext) {
+    pdfium::span<JBig2ArithCtx> grContexts) {
   if (!GRREFERENCE->data())
     return nullptr;
 
@@ -171,10 +171,10 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Opt(
   intptr_t nOffset = -GRREFERENCEDY * nStrideR;
   for (int32_t h = 0; h < iGRH; h++) {
     if (TPGRON) {
-      if (pArithDecoder->IsComplete())
+      if (pArithDecoder->IsComplete()) {
         return nullptr;
-
-      LTP = LTP ^ pArithDecoder->Decode(UNSAFE_TODO(&grContext[0x0010]));
+      }
+      LTP = LTP ^ pArithDecoder->Decode(&grContexts[0x0010]);
     }
     uint32_t line1 = (h > 0) ? UNSAFE_TODO(pLine[-nStride]) << 4 : 0;
     int32_t reference_h = h - GRREFERENCEDY;
@@ -225,7 +225,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Opt(
         }
         uint8_t cVal = 0;
         for (int32_t k = 0; k < nBits; k++) {
-          int bVal = pArithDecoder->Decode(UNSAFE_TODO(&grContext[CONTEXT]));
+          int bVal = pArithDecoder->Decode(&grContexts[CONTEXT]);
           cVal |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x0cdb) << 1) | (bVal << 9) |
                     ((line1 >> (7 - k)) & 0x0400) |
@@ -281,7 +281,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Opt(
             if (pArithDecoder->IsComplete())
               return nullptr;
 
-            bVal = pArithDecoder->Decode(UNSAFE_TODO(&grContext[CONTEXT]));
+            bVal = pArithDecoder->Decode(&grContexts[CONTEXT]);
           }
           cVal |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x0cdb) << 1) | (bVal << 9) |
@@ -303,7 +303,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate0Opt(
 
 std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Unopt(
     CJBig2_ArithDecoder* pArithDecoder,
-    JBig2ArithCtx* grContext) {
+    pdfium::span<JBig2ArithCtx> grContexts) {
   auto GRREG = std::make_unique<CJBig2_Image>(GRW, GRH);
   if (!GRREG->data())
     return nullptr;
@@ -312,10 +312,10 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Unopt(
   int LTP = 0;
   for (uint32_t h = 0; h < GRH; h++) {
     if (TPGRON) {
-      if (pArithDecoder->IsComplete())
+      if (pArithDecoder->IsComplete()) {
         return nullptr;
-
-      LTP = LTP ^ pArithDecoder->Decode(UNSAFE_TODO(&grContext[0x0008]));
+      }
+      LTP = LTP ^ pArithDecoder->Decode(&grContexts[0x0008]);
     }
     if (!LTP) {
       uint32_t line1 = GRREG->GetPixel(1, h - 1);
@@ -339,10 +339,10 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Unopt(
         CONTEXT |= line3 << 5;
         CONTEXT |= line2 << 6;
         CONTEXT |= line1 << 7;
-        if (pArithDecoder->IsComplete())
+        if (pArithDecoder->IsComplete()) {
           return nullptr;
-
-        int bVal = pArithDecoder->Decode(UNSAFE_TODO(&grContext[CONTEXT]));
+        }
+        int bVal = pArithDecoder->Decode(&grContexts[CONTEXT]);
         GRREG->SetPixel(w, h, bVal);
         line1 = ((line1 << 1) | GRREG->GetPixel(w + 2, h - 1)) & 0x07;
         line2 = ((line2 << 1) | bVal) & 0x01;
@@ -387,10 +387,10 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Unopt(
           CONTEXT |= line3 << 5;
           CONTEXT |= line2 << 6;
           CONTEXT |= line1 << 7;
-          if (pArithDecoder->IsComplete())
+          if (pArithDecoder->IsComplete()) {
             return nullptr;
-
-          bVal = pArithDecoder->Decode(UNSAFE_TODO(&grContext[CONTEXT]));
+          }
+          bVal = pArithDecoder->Decode(&grContexts[CONTEXT]);
         }
         GRREG->SetPixel(w, h, bVal);
         line1 = ((line1 << 1) | GRREG->GetPixel(w + 2, h - 1)) & 0x07;
@@ -412,7 +412,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Unopt(
 
 std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Opt(
     CJBig2_ArithDecoder* pArithDecoder,
-    JBig2ArithCtx* grContext) {
+    pdfium::span<JBig2ArithCtx> grContexts) {
   if (!GRREFERENCE->data())
     return nullptr;
 
@@ -438,7 +438,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Opt(
       if (pArithDecoder->IsComplete())
         return nullptr;
 
-      LTP = LTP ^ pArithDecoder->Decode(UNSAFE_TODO(&grContext[0x0008]));
+      LTP = LTP ^ pArithDecoder->Decode(&grContexts[0x0008]);
     }
     uint32_t line1 = (h > 0) ? UNSAFE_TODO(pLine[-nStride]) << 1 : 0;
     int32_t reference_h = h - GRREFERENCEDY;
@@ -479,7 +479,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Opt(
         }
         uint8_t cVal = 0;
         for (int32_t k = 0; k < nBits; k++) {
-          int bVal = pArithDecoder->Decode(UNSAFE_TODO(&grContext[CONTEXT]));
+          int bVal = pArithDecoder->Decode(&grContexts[CONTEXT]);
           cVal |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x018d) << 1) | (bVal << 6) |
                     ((line1 >> (7 - k)) & 0x0080) |
@@ -532,7 +532,7 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRRDProc::DecodeTemplate1Opt(
             if (pArithDecoder->IsComplete())
               return nullptr;
 
-            bVal = pArithDecoder->Decode(UNSAFE_TODO(&grContext[CONTEXT]));
+            bVal = pArithDecoder->Decode(&grContexts[CONTEXT]);
           }
           cVal |= bVal << (7 - k);
           CONTEXT = ((CONTEXT & 0x018d) << 1) | (bVal << 6) |
