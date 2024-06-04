@@ -837,7 +837,7 @@ void CPDF_CalRGB::TranslateImageLine(pdfium::span<uint8_t> dest_span,
 
   uint8_t* pDestBuf = dest_span.data();
   const uint8_t* pSrcBuf = src_span.data();
-  fxcodec::ReverseRGB(pDestBuf, pSrcBuf, pixels);
+  UNSAFE_TODO(fxcodec::ReverseRGB(pDestBuf, pSrcBuf, pixels));
 }
 
 CPDF_LabCS::CPDF_LabCS() : CPDF_ColorSpace(Family::kLab) {}
@@ -1031,7 +1031,7 @@ void CPDF_ICCBasedCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
   CHECK(!bTransMask);  // Only applies to CMYK colorspaces.
 
   if (profile_->IsSRGB()) {
-    fxcodec::ReverseRGB(dest_span.data(), src_span.data(), pixels);
+    UNSAFE_TODO(fxcodec::ReverseRGB(dest_span.data(), src_span.data(), pixels));
     return;
   }
   if (!profile_->IsSupported()) {

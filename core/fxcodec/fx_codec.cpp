@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxcodec/fx_codec.h"
 
 #include <utility>
@@ -24,18 +19,21 @@ CFX_DIBAttribute::~CFX_DIBAttribute() = default;
 #endif  // PDF_ENABLE_XFA
 
 void ReverseRGB(uint8_t* pDestBuf, const uint8_t* pSrcBuf, int pixels) {
-  if (pDestBuf == pSrcBuf) {
-    for (int i = 0; i < pixels; i++) {
-      std::swap(pDestBuf[0], pDestBuf[2]);
-      pDestBuf += 3;
+  // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE in header.
+  UNSAFE_BUFFERS({
+    if (pDestBuf == pSrcBuf) {
+      for (int i = 0; i < pixels; i++) {
+        std::swap(pDestBuf[0], pDestBuf[2]);
+        pDestBuf += 3;
+      }
+    } else {
+      for (int i = 0; i < pixels; i++) {
+        ReverseCopy3Bytes(pDestBuf, pSrcBuf);
+        pDestBuf += 3;
+        pSrcBuf += 3;
+      }
     }
-  } else {
-    for (int i = 0; i < pixels; i++) {
-      ReverseCopy3Bytes(pDestBuf, pSrcBuf);
-      pDestBuf += 3;
-      pSrcBuf += 3;
-    }
-  }
+  });
 }
 
 }  // namespace fxcodec

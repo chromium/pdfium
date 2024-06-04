@@ -15,6 +15,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxge/dib/cfx_cmyk_to_srgb.h"
 
@@ -109,7 +110,8 @@ void CPDF_DeviceCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
       break;
     case Family::kDeviceRGB:
       CHECK(!bTransMask);  // bTransMask only allowed for CMYK colorspaces.
-      fxcodec::ReverseRGB(dest_span.data(), src_span.data(), pixels);
+      UNSAFE_TODO(
+          fxcodec::ReverseRGB(dest_span.data(), src_span.data(), pixels));
       break;
     case Family::kDeviceCMYK: {
       auto cmyk_in =
