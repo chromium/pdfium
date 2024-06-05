@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxcodec/bmp/cfx_bmpdecompressor.h"
 
 #include <stdint.h>
@@ -20,11 +15,13 @@
 #include "core/fxcodec/bmp/cfx_bmpcontext.h"
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcrt/byteorder.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/numerics/safe_math.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
+#include "core/fxge/dib/fx_dib.h"
 
 namespace fxcodec {
 
@@ -289,23 +286,27 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpPalette() {
       pal_num_ = color_used_;
     size_t src_pal_size = pal_num_ * PaletteChannelCount();
     DataVector<uint8_t> src_pal(src_pal_size);
-    uint8_t* src_pal_data = src_pal.data();
     if (!ReadAllOrNone(src_pal))
       return BmpDecoder::Status::kContinue;
 
     palette_.resize(pal_num_);
-    int32_t src_pal_index = 0;
     if (pal_type_ == PalType::kOld) {
-      while (src_pal_index < pal_num_) {
-        palette_[src_pal_index++] = BMP_PAL_ENCODE(
-            0x00, src_pal_data[2], src_pal_data[1], src_pal_data[0]);
-        src_pal_data += 3;
+      auto src_pal_data =
+          fxcrt::truncating_reinterpret_span<FX_RGB_STRUCT<uint8_t>, uint8_t>(
+              src_pal);
+      for (auto& dest : palette_) {
+        const auto& entry = src_pal_data.front();
+        dest = BMP_PAL_ENCODE(0x00, entry.blue, entry.green, entry.red);
+        src_pal_data = src_pal_data.subspan(1);
       }
     } else {
-      while (src_pal_index < pal_num_) {
-        palette_[src_pal_index++] = BMP_PAL_ENCODE(
-            src_pal_data[3], src_pal_data[2], src_pal_data[1], src_pal_data[0]);
-        src_pal_data += 4;
+      auto src_pal_data =
+          fxcrt::truncating_reinterpret_span<FX_RGBA_STRUCT<uint8_t>, uint8_t>(
+              src_pal);
+      for (auto& dest : palette_) {
+        const auto& entry = src_pal_data.front();
+        dest = BMP_PAL_ENCODE(entry.alpha, entry.blue, entry.green, entry.red);
+        src_pal_data = src_pal_data.subspan(1);
       }
     }
   }
@@ -611,11 +612,12 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE4() {
               return BmpDecoder::Status::kContinue;
 
             for (uint8_t i = 0; i < first_part; i++) {
-              uint8_t color = (i & 0x01) ? (*second_part_data++ & 0x0F)
-                                         : (*second_part_data & 0xF0) >> 4;
-              if (!ValidateColorIndex(color))
+              uint8_t color = (i & 0x01)
+                                  ? UNSAFE_TODO((*second_part_data++ & 0x0F))
+                                  : (*second_part_data & 0xF0) >> 4;
+              if (!ValidateColorIndex(color)) {
                 return BmpDecoder::Status::kFail;
-
+              }
               out_row_buffer_[col_num_++] = color;
             }
           }
