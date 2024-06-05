@@ -21,14 +21,10 @@
 #include "core/fxcrt/numerics/safe_math.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxge/calculate_pitch.h"
-#include "core/fxge/dib/fx_dib.h"
 
 namespace fxcodec {
 
 namespace {
-
-#define BMP_PAL_ENCODE(a, r, g, b) \
-  (((uint32_t)(a) << 24) | ((r) << 16) | ((g) << 8) | (b))
 
 constexpr size_t kBmpCoreHeaderSize = 12;
 constexpr size_t kBmpInfoHeaderSize = 40;
@@ -279,39 +275,41 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpPalette() {
     mask_green_ = 0x03E0;
     mask_blue_ = 0x001F;
   }
-  pal_num_ = 0;
+  uint32_t palette_entries = 0;
   if (bit_counts_ < 16) {
-    pal_num_ = 1 << bit_counts_;
-    if (color_used_ != 0)
-      pal_num_ = color_used_;
-    size_t src_pal_size = pal_num_ * PaletteChannelCount();
-    DataVector<uint8_t> src_pal(src_pal_size);
+    palette_entries = 1 << bit_counts_;
+    if (color_used_ != 0) {
+      palette_entries = color_used_;
+    }
+    size_t pal_bytes = palette_entries * PaletteChannelCount();
+    DataVector<uint8_t> src_pal(pal_bytes);
     if (!ReadAllOrNone(src_pal))
       return BmpDecoder::Status::kContinue;
 
-    palette_.resize(pal_num_);
+    palette_.resize(palette_entries);
     if (pal_type_ == PalType::kOld) {
       auto src_pal_data =
-          fxcrt::truncating_reinterpret_span<FX_RGB_STRUCT<uint8_t>, uint8_t>(
+          fxcrt::truncating_reinterpret_span<FX_BGR_STRUCT<uint8_t>, uint8_t>(
               src_pal);
       for (auto& dest : palette_) {
         const auto& entry = src_pal_data.front();
-        dest = BMP_PAL_ENCODE(0x00, entry.blue, entry.green, entry.red);
+        dest = ArgbEncode(0x00, entry.red, entry.green, entry.blue);
         src_pal_data = src_pal_data.subspan(1);
       }
     } else {
       auto src_pal_data =
-          fxcrt::truncating_reinterpret_span<FX_RGBA_STRUCT<uint8_t>, uint8_t>(
+          fxcrt::truncating_reinterpret_span<FX_BGRA_STRUCT<uint8_t>, uint8_t>(
               src_pal);
       for (auto& dest : palette_) {
         const auto& entry = src_pal_data.front();
-        dest = BMP_PAL_ENCODE(entry.alpha, entry.blue, entry.green, entry.red);
+        dest = ArgbEncode(entry.alpha, entry.red, entry.green, entry.blue);
         src_pal_data = src_pal_data.subspan(1);
       }
     }
   }
-  header_offset_ = std::max(
-      header_offset_, 14 + img_ifh_size_ + pal_num_ * PaletteChannelCount());
+  header_offset_ =
+      std::max(header_offset_,
+               14 + img_ifh_size_ + palette_entries * PaletteChannelCount());
   SaveDecodingStatus(DecodeStatus::kDataPre);
   return BmpDecoder::Status::kSuccess;
 }
@@ -360,7 +358,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeImage() {
 }
 
 bool CFX_BmpDecompressor::ValidateColorIndex(uint8_t val) const {
-  return val < pal_num_;
+  return val < palette_.size();
 }
 
 BmpDecoder::Status CFX_BmpDecompressor::DecodeRGB() {

@@ -29,14 +29,16 @@ enum class FXDIB_Format : uint16_t {
   kArgb = 0x220,
 };
 
-using FX_ARGB = uint32_t;
-using FX_CMYK = uint32_t;
+// Endian-dependent (in theory).
+using FX_ARGB = uint32_t;  // A in high bits, ..., B in low bits.
+using FX_CMYK = uint32_t;  // C in high bits, ..., K in low bits.
 
 // FX_COLORREF, like win32 COLORREF, is BGR. i.e. 0x00BBGGRR.
 // Note that while the non-existent alpha component should be set to 0, some
 // parts of the codebase use 0xFFFFFFFF as a sentinel value to indicate error.
 using FX_COLORREF = uint32_t;
 
+// Endian-independent, name-ordered by increasing address.
 template <typename T>
 struct FX_RGB_STRUCT {
   T red;

@@ -389,7 +389,6 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(uint32_t rcd_pos,
     pPalette = m_pGifPalette;
   }
   m_SrcPalette.resize(pal_num);
-  m_SrcPaletteNumber = pal_num;
   for (int i = 0; i < pal_num; i++) {
     m_SrcPalette[i] =
         ArgbEncode(0xff, pPalette[i].r, pPalette[i].g, pPalette[i].b);
@@ -649,10 +648,10 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
       BmpDecoder::StartDecode(this);
   BmpDecoder::Input(pBmpContext.get(), m_pCodecMemory);
 
-  const std::vector<uint32_t>* palette;
+  pdfium::span<const FX_ARGB> palette;
   BmpDecoder::Status read_result = BmpDecoder::ReadHeader(
       pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
-      &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
+      &m_SrcComponents, &palette, pAttribute);
   while (read_result == BmpDecoder::Status::kContinue) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
     if (!BmpReadMoreData(pBmpContext.get(), &error_status)) {
@@ -661,7 +660,7 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
     }
     read_result = BmpDecoder::ReadHeader(
         pBmpContext.get(), &m_SrcWidth, &m_SrcHeight, &m_BmpIsTopBottom,
-        &m_SrcComponents, &m_SrcPaletteNumber, &palette, pAttribute);
+        &m_SrcComponents, &palette, pAttribute);
   }
 
   if (read_result != BmpDecoder::Status::kSuccess) {
@@ -709,10 +708,9 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
   m_SrcBPC = 8;
   m_clipBox = FX_RECT(0, 0, m_SrcWidth, m_SrcHeight);
   m_pBmpContext = std::move(pBmpContext);
-  if (m_SrcPaletteNumber) {
-    m_SrcPalette.resize(m_SrcPaletteNumber);
-    FXSYS_memcpy(m_SrcPalette.data(), palette->data(),
-                 m_SrcPaletteNumber * sizeof(FX_ARGB));
+  if (!palette.empty()) {
+    m_SrcPalette.resize(palette.size());
+    fxcrt::spancpy(pdfium::make_span(m_SrcPalette), palette);
   } else {
     m_SrcPalette.clear();
   }

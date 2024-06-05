@@ -17,6 +17,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxge/dib/fx_dib.h"
 
 class CFX_CodecMemory;
 
@@ -34,12 +35,11 @@ class CFX_BmpDecompressor {
   void SetInputBuffer(RetainPtr<CFX_CodecMemory> codec_memory);
   FX_FILESIZE GetAvailInput() const;
 
-  const std::vector<uint32_t>* palette() const { return &palette_; }
+  pdfium::span<const FX_ARGB> palette() const { return palette_; }
   uint32_t width() const { return width_; }
   uint32_t height() const { return height_; }
   int32_t components() const { return components_; }
   bool img_tb_flag() const { return img_tb_flag_; }
-  int32_t pal_num() const { return pal_num_; }
   int32_t dpi_x() const { return dpi_x_; }
   int32_t dpi_y() const { return dpi_y_; }
 
@@ -73,7 +73,7 @@ class CFX_BmpDecompressor {
 
   UnownedPtr<const CFX_BmpContext> const context_;
   DataVector<uint8_t> out_row_buffer_;
-  std::vector<uint32_t> palette_;
+  std::vector<FX_ARGB> palette_;
   uint32_t header_offset_ = 0;
   uint32_t width_ = 0;
   uint32_t height_ = 0;
@@ -84,7 +84,6 @@ class CFX_BmpDecompressor {
   bool img_tb_flag_ = false;
   uint16_t bit_counts_ = 0;
   uint32_t color_used_ = 0;
-  int32_t pal_num_ = 0;
   PalType pal_type_ = PalType::kNew;
   uint32_t data_offset_ = 0;
   uint32_t data_size_ = 0;

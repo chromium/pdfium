@@ -257,7 +257,6 @@ class ProgressiveDecoder final :
   int m_sizeX = 0;
   int m_sizeY = 0;
   int m_TransMethod = -1;
-  int m_SrcPaletteNumber = 0;
   int m_SrcRow = 0;
   FXCodec_Format m_SrcFormat = FXCodec_Invalid;
   int m_SrcPassNumber = 0;
