@@ -59,24 +59,37 @@ class CFXJS_PerObjectData {
  public:
   ~CFXJS_PerObjectData() = default;
 
-  static void SetNewDataInObject(uint32_t nObjDefnID,
+  static void SetNewDataInObject(FXJSOBJTYPE eObjType,
+                                 uint32_t nObjDefnID,
                                  v8::Local<v8::Object> pObj) {
     if (pObj->InternalFieldCount() == 2) {
       pObj->SetAlignedPointerInInternalField(
           0, GetAlignedPointerForPerObjectDataTag());
       pObj->SetAlignedPointerInInternalField(
-          1, new CFXJS_PerObjectData(nObjDefnID));
+          1, new CFXJS_PerObjectData(eObjType, nObjDefnID));
     }
   }
 
   static CFXJS_PerObjectData* GetFromObject(v8::Local<v8::Object> pObj) {
-    if (pObj.IsEmpty() || pObj->InternalFieldCount() != 2 ||
-        pObj->GetAlignedPointerFromInternalField(0) !=
-            GetAlignedPointerForPerObjectDataTag()) {
+    if (pObj.IsEmpty()) {
       return nullptr;
     }
-    return static_cast<CFXJS_PerObjectData*>(
-        pObj->GetAlignedPointerFromInternalField(1));
+    if (HasInternalFields(pObj)) {
+      return ExtractFromObject(pObj);
+    }
+    // `pObj` might be the global object proxy, in which case its prototype
+    // is the global object with the internal fields.
+    v8::Local<v8::Value> proto = pObj->GetPrototype();
+    if (proto.IsEmpty() || !proto->IsObject()) {
+      return nullptr;
+    }
+    pObj = proto.As<v8::Object>();
+    if (!HasInternalFields(pObj)) {
+      return nullptr;
+    }
+    // Double-check that this was really the global object.
+    CFXJS_PerObjectData* result = ExtractFromObject(pObj);
+    return result->m_ObjType == FXJSOBJTYPE_GLOBAL ? result : nullptr;
   }
 
   uint32_t GetObjDefnID() const { return m_ObjDefnID; }
@@ -84,8 +97,21 @@ class CFXJS_PerObjectData {
   void SetPrivate(std::unique_ptr<CJS_Object> p) { m_pPrivate = std::move(p); }
 
  private:
-  explicit CFXJS_PerObjectData(uint32_t nObjDefnID) : m_ObjDefnID(nObjDefnID) {}
+  CFXJS_PerObjectData(FXJSOBJTYPE eObjType, uint32_t nObjDefnID)
+      : m_ObjType(eObjType), m_ObjDefnID(nObjDefnID) {}
 
+  static bool HasInternalFields(v8::Local<v8::Object> pObj) {
+    return pObj->InternalFieldCount() == 2 &&
+           pObj->GetAlignedPointerFromInternalField(0) ==
+               GetAlignedPointerForPerObjectDataTag();
+  }
+
+  static CFXJS_PerObjectData* ExtractFromObject(v8::Local<v8::Object> pObj) {
+    return static_cast<CFXJS_PerObjectData*>(
+        pObj->GetAlignedPointerFromInternalField(1));
+  }
+
+  const FXJSOBJTYPE m_ObjType;
   const uint32_t m_ObjDefnID;
   std::unique_ptr<CJS_Object> m_pPrivate;
 };
@@ -184,7 +210,7 @@ class CFXJS_ObjDefinition {
       fxv8::ThrowExceptionHelper(isolate, "not a dynamic object");
       return;
     }
-    v8::Local<v8::Object> holder = info.Holder();
+    v8::Local<v8::Object> holder = info.This();
     DCHECK_EQ(holder->InternalFieldCount(), 2);
     holder->SetAlignedPointerInInternalField(0, nullptr);
     holder->SetAlignedPointerInInternalField(1, nullptr);
@@ -504,7 +530,8 @@ void CFXJS_Engine::InitializeEngine() {
   v8::Local<v8::Context> v8Context = v8::Context::New(
       GetIsolate(), nullptr, GetGlobalObjectTemplate(GetIsolate()));
 
-  // May not have the internal fields when called from tests.
+  // May not have the internal fields when called from tests, so clear these
+  // in case we don't process a FXJSOBJTYPE_GLOBAL below.
   v8::Local<v8::Object> pThisProxy = v8Context->Global();
   if (pThisProxy->InternalFieldCount() == 2) {
     pThisProxy->SetAlignedPointerInInternalField(0, nullptr);
@@ -523,7 +550,7 @@ void CFXJS_Engine::InitializeEngine() {
   for (uint32_t i = 1; i <= maxID; ++i) {
     CFXJS_ObjDefinition* pObjDef = pIsolateData->ObjDefinitionForID(i);
     if (pObjDef->GetObjType() == FXJSOBJTYPE_GLOBAL) {
-      CFXJS_PerObjectData::SetNewDataInObject(i, pThis);
+      CFXJS_PerObjectData::SetNewDataInObject(FXJSOBJTYPE_GLOBAL, i, pThis);
       pObjDef->RunConstructor(this, pThis, pThisProxy);
     } else if (pObjDef->GetObjType() == FXJSOBJTYPE_STATIC) {
       v8::Local<v8::String> pObjName = NewString(pObjDef->GetObjName());
@@ -534,6 +561,7 @@ void CFXJS_Engine::InitializeEngine() {
       }
     }
   }
+
   m_V8Context.Reset(GetIsolate(), v8Context);
 }
 
@@ -617,7 +645,7 @@ v8::Local<v8::Object> CFXJS_Engine::NewFXJSBoundObject(uint32_t nObjDefnID,
   if (!pObjDef->GetInstanceTemplate()->NewInstance(context).ToLocal(&obj))
     return v8::Local<v8::Object>();
 
-  CFXJS_PerObjectData::SetNewDataInObject(nObjDefnID, obj);
+  CFXJS_PerObjectData::SetNewDataInObject(type, nObjDefnID, obj);
   pObjDef->RunConstructor(this, obj, obj);
   if (type == FXJSOBJTYPE_DYNAMIC) {
     auto* pIsolateData = FXJS_PerIsolateData::Get(GetIsolate());
@@ -650,32 +678,7 @@ v8::Local<v8::Context> CFXJS_Engine::GetV8Context() {
 CJS_Object* CFXJS_Engine::GetObjectPrivate(v8::Isolate* pIsolate,
                                            v8::Local<v8::Object> pObj) {
   auto* pData = CFXJS_PerObjectData::GetFromObject(pObj);
-  if (pData)
-    return pData->GetPrivate();
-
-  if (pObj.IsEmpty())
-    return nullptr;
-
-  // It could be a global proxy object, in which case the prototype holds
-  // the actual bound object.
-  v8::Local<v8::Value> val = pObj->GetPrototype();
-  if (!val->IsObject())
-    return nullptr;
-
-  auto* pProtoData = CFXJS_PerObjectData::GetFromObject(val.As<v8::Object>());
-  if (!pProtoData)
-    return nullptr;
-
-  auto* pIsolateData = FXJS_PerIsolateData::Get(pIsolate);
-  if (!pIsolateData)
-    return nullptr;
-
-  CFXJS_ObjDefinition* pObjDef =
-      pIsolateData->ObjDefinitionForID(pProtoData->GetObjDefnID());
-  if (!pObjDef || pObjDef->GetObjType() != FXJSOBJTYPE_GLOBAL)
-    return nullptr;
-
-  return pProtoData->GetPrivate();
+  return pData ? pData->GetPrivate() : nullptr;
 }
 
 v8::Local<v8::Array> CFXJS_Engine::GetConstArray(const WideString& name) {

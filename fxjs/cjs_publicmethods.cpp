@@ -137,7 +137,7 @@ template <CJS_Result (*F)(CJS_Runtime*, pdfium::span<v8::Local<v8::Value>>)>
 void JSGlobalFunc(const char* func_name_string,
                   const v8::FunctionCallbackInfo<v8::Value>& info) {
   CJS_Object* pObj =
-      CFXJS_Engine::GetObjectPrivate(info.GetIsolate(), info.Holder());
+      CFXJS_Engine::GetObjectPrivate(info.GetIsolate(), info.This());
   if (!pObj)
     return;
 

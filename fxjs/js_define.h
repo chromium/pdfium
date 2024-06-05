@@ -115,7 +115,7 @@ template <class C,
 void JSMethod(const char* method_name_string,
               const char* class_name_string,
               const v8::FunctionCallbackInfo<v8::Value>& info) {
-  auto pObj = JSGetObject<C>(info.GetIsolate(), info.Holder());
+  auto pObj = JSGetObject<C>(info.GetIsolate(), info.This());
   if (!pObj)
     return;
 
