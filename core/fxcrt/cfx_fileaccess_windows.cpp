@@ -80,32 +80,31 @@ FX_FILESIZE CFX_FileAccess_Windows::SetPosition(FX_FILESIZE pos) {
   return (FX_FILESIZE)newPos.QuadPart;
 }
 
-size_t CFX_FileAccess_Windows::Read(void* pBuffer, size_t szBuffer) {
+size_t CFX_FileAccess_Windows::Read(pdfium::span<uint8_t> buffer) {
   if (!m_hFile)
     return 0;
 
   size_t szRead = 0;
-  if (!::ReadFile(m_hFile, pBuffer, (DWORD)szBuffer, (LPDWORD)&szRead,
-                  nullptr)) {
+  if (!::ReadFile(m_hFile, buffer.data(), (DWORD)buffer.size(),
+                  (LPDWORD)&szRead, nullptr)) {
     return 0;
   }
   return szRead;
 }
 
-size_t CFX_FileAccess_Windows::Write(const void* pBuffer, size_t szBuffer) {
+size_t CFX_FileAccess_Windows::Write(pdfium::span<const uint8_t> buffer) {
   if (!m_hFile)
     return 0;
 
   size_t szWrite = 0;
-  if (!::WriteFile(m_hFile, pBuffer, (DWORD)szBuffer, (LPDWORD)&szWrite,
-                   nullptr)) {
+  if (!::WriteFile(m_hFile, buffer.data(), (DWORD)buffer.size(),
+                   (LPDWORD)&szWrite, nullptr)) {
     return 0;
   }
   return szWrite;
 }
 
-size_t CFX_FileAccess_Windows::ReadPos(void* pBuffer,
-                                       size_t szBuffer,
+size_t CFX_FileAccess_Windows::ReadPos(pdfium::span<uint8_t> buffer,
                                        FX_FILESIZE pos) {
   if (!m_hFile)
     return 0;
@@ -116,11 +115,10 @@ size_t CFX_FileAccess_Windows::ReadPos(void* pBuffer,
   if (SetPosition(pos) == (FX_FILESIZE)-1)
     return 0;
 
-  return Read(pBuffer, szBuffer);
+  return Read(buffer);
 }
 
-size_t CFX_FileAccess_Windows::WritePos(const void* pBuffer,
-                                        size_t szBuffer,
+size_t CFX_FileAccess_Windows::WritePos(pdfium::span<const uint8_t> buffer,
                                         FX_FILESIZE pos) {
   if (!m_hFile) {
     return 0;
@@ -128,7 +126,7 @@ size_t CFX_FileAccess_Windows::WritePos(const void* pBuffer,
   if (SetPosition(pos) == (FX_FILESIZE)-1) {
     return 0;
   }
-  return Write(pBuffer, szBuffer);
+  return Write(buffer);
 }
 
 bool CFX_FileAccess_Windows::Flush() {

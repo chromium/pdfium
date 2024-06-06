@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "core/fxcrt/fx_string.h"
+#include "core/fxcrt/span.h"
 
 class FileAccessIface {
  public:
@@ -22,11 +23,10 @@ class FileAccessIface {
   virtual FX_FILESIZE GetSize() const = 0;
   virtual FX_FILESIZE GetPosition() const = 0;
   virtual FX_FILESIZE SetPosition(FX_FILESIZE pos) = 0;
-  virtual size_t Read(void* pBuffer, size_t szBuffer) = 0;
-  virtual size_t Write(const void* pBuffer, size_t szBuffer) = 0;
-  virtual size_t ReadPos(void* pBuffer, size_t szBuffer, FX_FILESIZE pos) = 0;
-  virtual size_t WritePos(const void* pBuffer,
-                          size_t szBuffer,
+  virtual size_t Read(pdfium::span<uint8_t> buffer) = 0;
+  virtual size_t Write(pdfium::span<const uint8_t> buffer) = 0;
+  virtual size_t ReadPos(pdfium::span<uint8_t> buffer, FX_FILESIZE pos) = 0;
+  virtual size_t WritePos(pdfium::span<const uint8_t> buffer,
                           FX_FILESIZE pos) = 0;
   virtual bool Flush() = 0;
   virtual bool Truncate(FX_FILESIZE szFile) = 0;

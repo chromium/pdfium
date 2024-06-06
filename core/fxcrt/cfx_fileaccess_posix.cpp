@@ -73,20 +73,19 @@ FX_FILESIZE CFX_FileAccess_Posix::SetPosition(FX_FILESIZE pos) {
   }
   return lseek(m_nFD, pos, SEEK_SET);
 }
-size_t CFX_FileAccess_Posix::Read(void* pBuffer, size_t szBuffer) {
+size_t CFX_FileAccess_Posix::Read(pdfium::span<uint8_t> buffer) {
   if (m_nFD < 0) {
     return 0;
   }
-  return read(m_nFD, pBuffer, szBuffer);
+  return read(m_nFD, buffer.data(), buffer.size());
 }
-size_t CFX_FileAccess_Posix::Write(const void* pBuffer, size_t szBuffer) {
+size_t CFX_FileAccess_Posix::Write(pdfium::span<const uint8_t> buffer) {
   if (m_nFD < 0) {
     return 0;
   }
-  return write(m_nFD, pBuffer, szBuffer);
+  return write(m_nFD, buffer.data(), buffer.size());
 }
-size_t CFX_FileAccess_Posix::ReadPos(void* pBuffer,
-                                     size_t szBuffer,
+size_t CFX_FileAccess_Posix::ReadPos(pdfium::span<uint8_t> buffer,
                                      FX_FILESIZE pos) {
   if (m_nFD < 0) {
     return 0;
@@ -97,10 +96,9 @@ size_t CFX_FileAccess_Posix::ReadPos(void* pBuffer,
   if (SetPosition(pos) == (FX_FILESIZE)-1) {
     return 0;
   }
-  return Read(pBuffer, szBuffer);
+  return Read(buffer);
 }
-size_t CFX_FileAccess_Posix::WritePos(const void* pBuffer,
-                                      size_t szBuffer,
+size_t CFX_FileAccess_Posix::WritePos(pdfium::span<const uint8_t> buffer,
                                       FX_FILESIZE pos) {
   if (m_nFD < 0) {
     return 0;
@@ -108,7 +106,7 @@ size_t CFX_FileAccess_Posix::WritePos(const void* pBuffer,
   if (SetPosition(pos) == (FX_FILESIZE)-1) {
     return 0;
   }
-  return Write(pBuffer, szBuffer);
+  return Write(buffer);
 }
 
 bool CFX_FileAccess_Posix::Flush() {
