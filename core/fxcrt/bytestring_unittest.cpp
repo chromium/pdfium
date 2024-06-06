@@ -1221,12 +1221,16 @@ TEST(ByteStringView, Null) {
 TEST(ByteStringView, NotNull) {
   ByteStringView string3("abc");
   ByteStringView string6("abcdef");
-  ByteStringView alternate_string3("abcdef", 3);
+  // SAFETY: known fixed-length string.
+  auto alternate_string3 = UNSAFE_BUFFERS(ByteStringView::Create("abcdef", 3));
   const char abcd[] = "abcd";
   ByteStringView span_string4(
       pdfium::as_bytes(pdfium::make_span(abcd).first(4u)));
-  ByteStringView embedded_nul_string7("abc\0def", 7);
-  ByteStringView illegal_string7("abcdef", 7);
+  // SAFETY: known fixed-length string.
+  auto embedded_nul_string7 =
+      UNSAFE_BUFFERS(ByteStringView::Create("abc\0def", 7));
+  // SAFETY: known fixed-length string.
+  auto illegal_string7 = UNSAFE_BUFFERS(ByteStringView::Create("abcdef", 7));
 
   EXPECT_EQ(3u, string3.GetLength());
   EXPECT_EQ(6u, string6.GetLength());
@@ -1961,8 +1965,9 @@ TEST(ByteStringView, OStreamOverload) {
   // a C++-style string.
   {
     std::ostringstream stream;
-    char stringWithNulls[]{'x', 'y', '\0', 'z'};
-    ByteStringView str(stringWithNulls, 4);
+    char stringWithNulls[] = {'x', 'y', '\0', 'z'};
+    // SAFETY: known array above.
+    auto str = UNSAFE_BUFFERS(ByteStringView::Create(stringWithNulls, 4));
     EXPECT_EQ(4u, str.GetLength());
     stream << str;
     EXPECT_EQ(4u, stream.tellp());

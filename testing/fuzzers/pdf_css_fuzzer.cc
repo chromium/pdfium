@@ -7,8 +7,9 @@
 #include "core/fxcrt/fx_string.h"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
-  WideString input =
-      WideString::FromUTF8(ByteStringView(data, static_cast<size_t>(size)));
+  // SAFETY: required from fuzzer.
+  WideString input = WideString::FromUTF8(
+      UNSAFE_BUFFERS(ByteStringView::Create(data, static_cast<size_t>(size))));
 
   // If we convert the input into an empty string bail out.
   if (input.IsEmpty())

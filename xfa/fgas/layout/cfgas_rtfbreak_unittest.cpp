@@ -80,7 +80,9 @@ TEST_F(CFGAS_RTFBreakTest, BidiLine) {
   rtf_break->SetLineBreakTolerance(1);
   rtf_break->SetFontSize(12);
 
-  WideString input = WideString::FromUTF8(ByteStringView("\xa\x0\xa\xa", 4));
+  // SAFETY: known fixed-length string.
+  WideString input = WideString::FromUTF8(
+      UNSAFE_BUFFERS(ByteStringView::Create("\xa\x0\xa\xa", 4)));
   for (wchar_t ch : input)
     rtf_break->AppendChar(ch);
 

@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "fxjs/cjs_result.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
@@ -203,7 +204,9 @@ v8::Intercepted NamedPropertyQueryCallback(
 
   v8::HandleScope scope(info.GetIsolate());
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
-  ByteStringView szFxPropName(*szPropName, szPropName.length());
+  // SAFETY: required from V8.
+  auto szFxPropName =
+      UNSAFE_BUFFERS(ByteStringView::Create(*szPropName, szPropName.length()));
   if (DynPropQueryAdapter(info.GetIsolate(), pClass, info.Holder(),
                           szFxPropName)) {
     info.GetReturnValue().Set(v8::DontDelete);
@@ -223,7 +226,9 @@ v8::Intercepted NamedPropertyGetterCallback(
   }
 
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
-  ByteStringView szFxPropName(*szPropName, szPropName.length());
+  // SAFETY: required from V8.
+  auto szFxPropName =
+      UNSAFE_BUFFERS(ByteStringView::Create(*szPropName, szPropName.length()));
   std::unique_ptr<CFXJSE_Value> pNewValue = DynPropGetterAdapter(
       info.GetIsolate(), pClass, info.Holder(), szFxPropName);
   info.GetReturnValue().Set(pNewValue->DirectGetValue());
@@ -241,7 +246,9 @@ v8::Intercepted NamedPropertySetterCallback(
   }
 
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
-  ByteStringView szFxPropName(*szPropName, szPropName.length());
+  // SAFETY: required from V8.
+  auto szFxPropName =
+      UNSAFE_BUFFERS(ByteStringView::Create(*szPropName, szPropName.length()));
   auto pNewValue = std::make_unique<CFXJSE_Value>(info.GetIsolate(), value);
   DynPropSetterAdapter(info.GetIsolate(), pClass, info.Holder(), szFxPropName,
                        pNewValue.get());

@@ -9,6 +9,7 @@
 #include <iterator>
 
 #include "core/fxcrt/cfx_datetime.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_string.h"
 #include "public/fpdfview.h"
 #include "testing/fuzzers/pdfium_fuzzer_util.h"
@@ -43,10 +44,10 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
 
   size_t pattern_len = size / 2;
   size_t value_len = size - pattern_len;
-  WideString pattern =
-      WideString::FromLatin1(ByteStringView(data, pattern_len));
-  WideString value =
-      WideString::FromLatin1(ByteStringView(data + pattern_len, value_len));
+  WideString pattern = WideString::FromLatin1(
+      UNSAFE_TODO(ByteStringView::Create(data, pattern_len)));
+  WideString value = WideString::FromLatin1(
+      UNSAFE_TODO(ByteStringView::Create(data + pattern_len, value_len)));
 
   auto fmt = std::make_unique<CFGAS_StringFormatter>(pattern);
 

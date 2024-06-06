@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_string.h"
 #include "fxjs/xfa/cfxjse_formcalc_context.h"
@@ -13,7 +14,9 @@
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   auto* state = static_cast<XFAProcessState*>(FPDF_GetFuzzerPerProcessState());
-  WideString input = WideString::FromUTF8(ByteStringView(data, size));
+  // SAFETY: required from fuzzer.
+  WideString input =
+      WideString::FromUTF8(UNSAFE_BUFFERS(ByteStringView::Create(data, size)));
   CFXJSE_FormCalcContext::Translate(state->GetHeap(), input.AsStringView());
   state->ForceGCAndPump();
   return 0;

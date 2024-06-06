@@ -33,7 +33,8 @@ namespace {
 // Converts a string literal into a `uint8_t` span.
 template <size_t N>
 pdfium::span<const uint8_t> ToSpan(const char (&array)[N]) {
-  return pdfium::as_bytes(ByteStringView(array, N - 1).span());
+  return pdfium::as_bytes(
+      UNSAFE_BUFFERS(ByteStringView::Create(array, N - 1).span()));
 }
 
 // Converts a string literal into a `ByteString`.
