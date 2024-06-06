@@ -430,7 +430,7 @@ TEST(fxstring, SplitWideStringView) {
 
 TEST(fxstring, ByteStringSplitEfficiency) {
   std::vector<char> commas(50000, ',');
-  ByteString input(commas.data(), commas.size());
+  auto input = ByteString(ByteStringView(commas));
   std::vector<ByteString> result;
   result = fxcrt::Split(input, ',');
   ASSERT_EQ(commas.size() + 1, result.size());

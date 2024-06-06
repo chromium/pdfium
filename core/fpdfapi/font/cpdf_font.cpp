@@ -305,8 +305,8 @@ RetainPtr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
   if (type == "TrueType") {
     ByteString tag = pFontDict->GetByteStringFor("BaseFont").First(4);
     for (size_t i = 0; i < std::size(kChineseFontNames); ++i) {
-      if (tag ==
-          UNSAFE_TODO(ByteString(kChineseFontNames[i], kChineseFontNameSize))) {
+      if (tag == UNSAFE_TODO(ByteString::Create(kChineseFontNames[i],
+                                                kChineseFontNameSize))) {
         RetainPtr<const CPDF_Dictionary> pFontDesc =
             pFontDict->GetDictFor("FontDescriptor");
         if (!pFontDesc || !pFontDesc->KeyExist("FontFile2"))

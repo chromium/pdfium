@@ -471,7 +471,7 @@ CPDF_SyntaxParser::WordResult CPDF_SyntaxParser::GetNextWord() {
   WordType word_type = GetNextWordInternal();
   ByteString word;
   if (!GetValidator()->has_read_problems())
-    word = ByteString(m_WordBuffer.data(), m_WordSize);
+    word = UNSAFE_TODO(ByteString::Create(m_WordBuffer.data(), m_WordSize));
   return {word, word_type == WordType::kNumber};
 }
 

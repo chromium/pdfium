@@ -161,7 +161,8 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
   const bool bNative = false;
 #endif
   GenKey(&keygen, pFont, matrix, dest_width, anti_alias, bNative);
-  ByteString FaceGlyphsKey(keygen.key_, keygen.key_len_);
+  auto FaceGlyphsKey =
+      UNSAFE_TODO(ByteString::Create(keygen.key_, keygen.key_len_));
 
 #if BUILDFLAG(IS_APPLE)
   const bool bDoLookUp =
@@ -206,7 +207,8 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
     }
   }
   GenKey(&keygen, pFont, matrix, dest_width, anti_alias, /*bNative=*/false);
-  ByteString FaceGlyphsKey2(keygen.key_, keygen.key_len_);
+  auto FaceGlyphsKey2 =
+      UNSAFE_TODO(ByteString::Create(keygen.key_, keygen.key_len_));
   text_options->native_text = false;
   return LookUpGlyphBitmap(pFont, matrix, FaceGlyphsKey2, glyph_index,
                            bFontStyle, dest_width, anti_alias);

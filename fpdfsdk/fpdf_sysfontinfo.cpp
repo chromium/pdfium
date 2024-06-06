@@ -126,7 +126,7 @@ class CFX_ExternalFontInfo final : public SystemFontInfoIface {
       return false;
     char* buffer = FX_Alloc(char, size);
     size = m_pInfo->GetFaceName(m_pInfo, hFont, buffer, size);
-    *name = ByteString(buffer, size);
+    *name = UNSAFE_TODO(ByteString::Create(buffer, size));
     FX_Free(buffer);
     return true;
   }

@@ -14,6 +14,7 @@
 #include <iosfwd>
 #include <utility>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/string_template.h"
 
@@ -27,6 +28,14 @@ class ByteString : public StringTemplate<char> {
   [[nodiscard]] static ByteString FormatFloat(float f);
   [[nodiscard]] static ByteString Format(const char* pFormat, ...);
   [[nodiscard]] static ByteString FormatV(const char* pFormat, va_list argList);
+
+  // Make public when compiler enforces UNSAFE_BUFFER_USAGE on ctors.
+  UNSAFE_BUFFER_USAGE static ByteString Create(const char* str, size_t len) {
+    return UNSAFE_BUFFERS(ByteString(str, len));
+  }
+  UNSAFE_BUFFER_USAGE static ByteString Create(const uint8_t* str, size_t len) {
+    return UNSAFE_BUFFERS(ByteString(str, len));
+  }
 
   ByteString() = default;
   ByteString(const ByteString& other) = default;
@@ -46,9 +55,6 @@ class ByteString : public StringTemplate<char> {
   // No implicit conversions from wide strings.
   // NOLINTNEXTLINE(runtime/explicit)
   ByteString(wchar_t) = delete;
-
-  ByteString(const char* pStr, size_t len);
-  ByteString(const uint8_t* pStr, size_t len);
 
   explicit ByteString(ByteStringView bstrc);
   ByteString(ByteStringView str1, ByteStringView str2);
@@ -98,6 +104,10 @@ class ByteString : public StringTemplate<char> {
   uint32_t GetID() const { return AsStringView().GetID(); }
 
  protected:
+  // Make public when compiler enforces UNSAFE_BUFFER_USAGE on ctors.
+  UNSAFE_BUFFER_USAGE ByteString(const char* pStr, size_t len);
+  UNSAFE_BUFFER_USAGE ByteString(const uint8_t* pStr, size_t len);
+
   intptr_t ReferenceCountForTesting() const;
 
   friend class ByteString_Assign_Test;

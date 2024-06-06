@@ -88,7 +88,7 @@ ByteString CPDF_StreamAcc::ComputeDigest() const {
   uint8_t digest[20];
   pdfium::span<const uint8_t> span = GetSpan();
   CRYPT_SHA1Generate(span.data(), span.size(), digest);
-  return ByteString(digest, 20);
+  return UNSAFE_TODO(ByteString::Create(digest, 20));
 }
 
 DataVector<uint8_t> CPDF_StreamAcc::DetachData() {

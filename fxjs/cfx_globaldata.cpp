@@ -308,7 +308,7 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
         break;
       }
 
-      ByteString sEntry = ByteString(p, dwNameLen);
+      ByteString sEntry = ByteString::Create(p, dwNameLen);
       p += sizeof(char) * dwNameLen;
 
       uint16_t wDataType = 0;
@@ -351,8 +351,7 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
           if (p + dwLength > buffer.end()) {
             break;
           }
-
-          SetGlobalVariableString(sEntry, ByteString(p, dwLength));
+          SetGlobalVariableString(sEntry, ByteString::Create(p, dwLength));
           SetGlobalVariablePersistent(sEntry, true);
           p += sizeof(char) * dwLength;
         } break;

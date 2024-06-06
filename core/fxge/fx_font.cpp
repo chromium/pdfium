@@ -29,8 +29,7 @@ ByteString GetStringFromTable(pdfium::span<const uint8_t> string_span,
   if (string_span.size() < static_cast<uint32_t>(offset + length))
     return ByteString();
 
-  string_span = string_span.subspan(offset, length);
-  return ByteString(string_span.data(), string_span.size());
+  return ByteString(ByteStringView(string_span.subspan(offset, length)));
 }
 
 }  // namespace

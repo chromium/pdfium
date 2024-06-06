@@ -1250,10 +1250,11 @@ TEST(WideString, FromUTF16BE) {
     WideString out;
   } const utf16be_decode_cases[] = {
       {"", L""},
-      {ByteString("\0a\0b\0c", 6), L"abc"},
-      {ByteString("\0a\0b\0c\0\0\0d\0e\0f", 14), WideString(L"abc\0def", 7)},
-      {ByteString(" &", 2), L"…"},
-      {ByteString("\xD8\x3C\xDF\xA8", 4), L"🎨"},
+      {UNSAFE_BUFFERS(ByteString::Create("\0a\0b\0c", 6)), L"abc"},
+      {UNSAFE_BUFFERS(ByteString::Create("\0a\0b\0c\0\0\0d\0e\0f", 14)),
+       WideString(L"abc\0def", 7)},
+      {UNSAFE_BUFFERS(ByteString::Create(" &", 2)), L"…"},
+      {UNSAFE_BUFFERS(ByteString::Create("\xD8\x3C\xDF\xA8", 4)), L"🎨"},
   };
   UNSAFE_TODO({
     for (size_t i = 0; i < std::size(utf16be_decode_cases); ++i) {
@@ -1270,11 +1271,13 @@ TEST(WideString, FromUTF16LE) {
     ByteString in;
     WideString out;
   } const utf16le_decode_cases[] = {
+      // SAFETY: not required, control sizes for test.
       {"", L""},
-      {ByteString("a\0b\0c\0", 6), L"abc"},
-      {ByteString("a\0b\0c\0\0\0d\0e\0f\0", 14), WideString(L"abc\0def", 7)},
-      {ByteString("& ", 2), L"…"},
-      {ByteString("\x3C\xD8\xA8\xDF", 4), L"🎨"},
+      {UNSAFE_BUFFERS(ByteString::Create("a\0b\0c\0", 6)), L"abc"},
+      {UNSAFE_BUFFERS(ByteString::Create("a\0b\0c\0\0\0d\0e\0f\0", 14)),
+       WideString(L"abc\0def", 7)},
+      {UNSAFE_BUFFERS(ByteString::Create("& ", 2)), L"…"},
+      {UNSAFE_BUFFERS(ByteString::Create("\x3C\xD8\xA8\xDF", 4)), L"🎨"},
   };
   UNSAFE_TODO({
     for (size_t i = 0; i < std::size(utf16le_decode_cases); ++i) {
@@ -1291,13 +1294,16 @@ TEST(WideString, ToUTF16LE) {
     WideString ws;
     ByteString bs;
   } const utf16le_encode_cases[] = {
-      {L"", ByteString("\0\0", 2)},
-      {L"abc", ByteString("a\0b\0c\0\0\0", 8)},
-      {L"abcdef", ByteString("a\0b\0c\0d\0e\0f\0\0\0", 14)},
-      {L"abc\0def", ByteString("a\0b\0c\0\0\0", 8)},
-      {L"\xaabb\xccdd", ByteString("\xbb\xaa\xdd\xcc\0\0", 6)},
-      {L"\x3132\x6162", ByteString("\x32\x31\x62\x61\0\0", 6)},
-      {L"🎨", ByteString("\x3C\xD8\xA8\xDF\0\0", 6)},
+      {L"", UNSAFE_TODO(ByteString::Create("\0\0", 2))},
+      {L"abc", UNSAFE_TODO(ByteString::Create("a\0b\0c\0\0\0", 8))},
+      {L"abcdef",
+       UNSAFE_TODO(ByteString::Create("a\0b\0c\0d\0e\0f\0\0\0", 14))},
+      {L"abc\0def", UNSAFE_TODO(ByteString::Create("a\0b\0c\0\0\0", 8))},
+      {L"\xaabb\xccdd",
+       UNSAFE_TODO(ByteString::Create("\xbb\xaa\xdd\xcc\0\0", 6))},
+      {L"\x3132\x6162",
+       UNSAFE_TODO(ByteString::Create("\x32\x31\x62\x61\0\0", 6))},
+      {L"🎨", UNSAFE_TODO(ByteString::Create("\x3C\xD8\xA8\xDF\0\0", 6))},
   };
   UNSAFE_TODO({
     for (size_t i = 0; i < std::size(utf16le_encode_cases); ++i) {
@@ -1313,14 +1319,17 @@ TEST(WideString, ToUCS2LE) {
     WideString ws;
     ByteString bs;
   } const ucs2le_encode_cases[] = {
-      {L"", ByteString("\0\0", 2)},
-      {L"abc", ByteString("a\0b\0c\0\0\0", 8)},
-      {L"abcdef", ByteString("a\0b\0c\0d\0e\0f\0\0\0", 14)},
-      {L"abc\0def", ByteString("a\0b\0c\0\0\0", 8)},
-      {L"\xaabb\xccdd", ByteString("\xbb\xaa\xdd\xcc\0\0", 6)},
-      {L"\x3132\x6162", ByteString("\x32\x31\x62\x61\0\0", 6)},
+      {L"", UNSAFE_TODO(ByteString::Create("\0\0", 2))},
+      {L"abc", UNSAFE_TODO(ByteString::Create("a\0b\0c\0\0\0", 8))},
+      {L"abcdef",
+       UNSAFE_TODO(ByteString::Create("a\0b\0c\0d\0e\0f\0\0\0", 14))},
+      {L"abc\0def", UNSAFE_TODO(ByteString::Create("a\0b\0c\0\0\0", 8))},
+      {L"\xaabb\xccdd",
+       UNSAFE_TODO(ByteString::Create("\xbb\xaa\xdd\xcc\0\0", 6))},
+      {L"\x3132\x6162",
+       UNSAFE_TODO(ByteString::Create("\x32\x31\x62\x61\0\0", 6))},
 #if defined(WCHAR_T_IS_32_BIT)
-      {L"🎨", ByteString("\0\0", 2)},
+      {L"🎨", UNSAFE_TODO(ByteString::Create("\0\0", 2))},
 #endif
   };
   UNSAFE_TODO({

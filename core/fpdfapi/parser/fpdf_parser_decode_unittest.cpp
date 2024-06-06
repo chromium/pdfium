@@ -40,7 +40,8 @@ pdfium::span<const uint8_t> ToSpan(const char (&array)[N]) {
 // Converts a string literal into a `ByteString`.
 template <size_t N>
 ByteString ToByteString(const char (&array)[N]) {
-  return ByteString(array, N - 1);
+  // SAFETY: compiler correctly infers size.
+  return UNSAFE_BUFFERS(ByteString::Create(array, N - 1));
 }
 
 }  // namespace

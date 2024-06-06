@@ -6,6 +6,7 @@
 
 #include <algorithm>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_engine.h"
@@ -761,7 +762,8 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, bug_854623) {
   const uint8_t test_string[] = {
       0x4c, 0x6f, 0x77, 0x65, 0x72, 0x28, 0x22, 0xc3,
       0x85, 0xc3, 0x85, 0xc3, 0x85, 0x22, 0x29};  // Lower("ÅÅÅ")
-  Execute(ByteString(test_string, sizeof(test_string)).AsStringView());
+  Execute(UNSAFE_TODO(ByteString::Create(test_string, sizeof(test_string)))
+              .AsStringView());
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Ltrim) {

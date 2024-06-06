@@ -343,7 +343,7 @@ v8::Local<v8::Array> CJS_PublicMethods::AF_MakeArrayFromList(
       pRuntime->PutArrayElement(
           StrArray, nIndex,
           pRuntime->NewString(
-              StrTrim(ByteString(p, pTemp - p)).AsStringView()));
+              StrTrim(ByteString::Create(p, pTemp - p)).AsStringView()));
 
       nIndex++;
       p = ++pTemp;

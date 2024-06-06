@@ -12,6 +12,7 @@
 #include <set>
 #include <vector>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/span.h"
@@ -1886,7 +1887,7 @@ TEST(ByteString, OStreamOverload) {
   stream << "abc" << str << "ghi";
   EXPECT_EQ("abc123ghi", stream.str());
 
-  char stringWithNulls[]{'x', 'y', '\0', 'z'};
+  char stringWithNulls[] = {'x', 'y', '\0', 'z'};
 
   // Writing a ByteString with nulls and no specified length treats it as
   // a C-style null-terminated string.
@@ -1898,7 +1899,7 @@ TEST(ByteString, OStreamOverload) {
 
   // Writing a ByteString with nulls but specifying its length treats it as
   // a C++-style string.
-  str = ByteString(stringWithNulls, 4);
+  str = UNSAFE_TODO(ByteString::Create(stringWithNulls, 4));
   EXPECT_EQ(4u, str.GetLength());
   stream.str("");
   stream << str;
