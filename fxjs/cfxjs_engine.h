@@ -69,6 +69,30 @@ class FXJS_PerIsolateData {
   std::unique_ptr<ExtensionIface> m_pExtension;
 };
 
+class CFXJS_PerObjectData {
+ public:
+  static void SetNewDataInObject(FXJSOBJTYPE eObjType,
+                                 uint32_t nObjDefnID,
+                                 v8::Local<v8::Object> pObj);
+  static CFXJS_PerObjectData* GetFromObject(v8::Local<v8::Object> pObj);
+
+  ~CFXJS_PerObjectData();
+
+  uint32_t GetObjDefnID() const { return m_ObjDefnID; }
+  CJS_Object* GetPrivate() { return m_pPrivate.get(); }
+  void SetPrivate(std::unique_ptr<CJS_Object> p);
+
+ private:
+  CFXJS_PerObjectData(FXJSOBJTYPE eObjType, uint32_t nObjDefnID);
+
+  static bool HasInternalFields(v8::Local<v8::Object> pObj);
+  static CFXJS_PerObjectData* ExtractFromObject(v8::Local<v8::Object> pObj);
+
+  const FXJSOBJTYPE m_ObjType;
+  const uint32_t m_ObjDefnID;
+  std::unique_ptr<CJS_Object> m_pPrivate;
+};
+
 void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate);
 void FXJS_Release();
 

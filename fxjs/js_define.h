@@ -55,13 +55,17 @@ void JSDestructor(v8::Local<v8::Object> obj);
 
 template <class C>
 UnownedPtr<C> JSGetObject(v8::Isolate* isolate, v8::Local<v8::Object> obj) {
-  if (CFXJS_Engine::GetObjDefnID(obj) != C::GetObjDefnID())
+  CFXJS_PerObjectData* pData = CFXJS_PerObjectData::GetFromObject(obj);
+  if (!pData) {
     return nullptr;
-
-  CJS_Object* pJSObj = CFXJS_Engine::GetObjectPrivate(isolate, obj);
-  if (!pJSObj)
+  }
+  if (pData->GetObjDefnID() != C::GetObjDefnID()) {
     return nullptr;
-
+  }
+  CJS_Object* pJSObj = pData->GetPrivate();
+  if (!pJSObj) {
+    return nullptr;
+  }
   return UnownedPtr<C>(static_cast<C*>(pJSObj));
 }
 
