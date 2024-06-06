@@ -12,25 +12,25 @@
 #include "v8/include/v8-container.h"
 #include "v8/include/v8-isolate.h"
 
-#define GLOBAL_ARRAY(rt, name, ...)                                           \
-  {                                                                           \
-    static const wchar_t* const kValues[] = {__VA_ARGS__};                    \
-    v8::Local<v8::Array> array = (rt)->NewArray();                            \
-    v8::Local<v8::Context> ctx = (rt)->GetIsolate()->GetCurrentContext();     \
-    uint32_t i = 0;                                                           \
-    for (const auto* value : kValues) {                                       \
-      array->Set(ctx, i, (rt)->NewString(value)).FromJust();                  \
-      ++i;                                                                    \
-    }                                                                         \
-    (rt)->SetConstArray((name), array);                                       \
-    (rt)->DefineGlobalConst(                                                  \
-        (name), [](const v8::FunctionCallbackInfo<v8::Value>& info) {         \
-          CJS_Object* pObj =                                                  \
-              CFXJS_Engine::GetObjectPrivate(info.GetIsolate(), info.This()); \
-          CJS_Runtime* pCurrentRuntime = pObj->GetRuntime();                  \
-          if (pCurrentRuntime)                                                \
-            info.GetReturnValue().Set(pCurrentRuntime->GetConstArray(name));  \
-        });                                                                   \
+#define GLOBAL_ARRAY(rt, name, ...)                                          \
+  {                                                                          \
+    static const wchar_t* const kValues[] = {__VA_ARGS__};                   \
+    v8::Local<v8::Array> array = (rt)->NewArray();                           \
+    v8::Local<v8::Context> ctx = (rt)->GetIsolate()->GetCurrentContext();    \
+    uint32_t i = 0;                                                          \
+    for (const auto* value : kValues) {                                      \
+      array->Set(ctx, i, (rt)->NewString(value)).FromJust();                 \
+      ++i;                                                                   \
+    }                                                                        \
+    (rt)->SetConstArray((name), array);                                      \
+    (rt)->DefineGlobalConst(                                                 \
+        (name), [](const v8::FunctionCallbackInfo<v8::Value>& info) {        \
+          auto* pObj = static_cast<CJS_Object*>(                             \
+              CFXJS_Engine::GetBinding(info.GetIsolate(), info.This()));     \
+          CJS_Runtime* pCurrentRuntime = pObj->GetRuntime();                 \
+          if (pCurrentRuntime)                                               \
+            info.GetReturnValue().Set(pCurrentRuntime->GetConstArray(name)); \
+        });                                                                  \
   }
 
 // static

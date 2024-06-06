@@ -46,7 +46,7 @@ template <class T>
 static void JSConstructor(CFXJS_Engine* pEngine,
                           v8::Local<v8::Object> obj,
                           v8::Local<v8::Object> proxy) {
-  pEngine->SetObjectPrivate(
+  pEngine->SetBinding(
       obj, std::make_unique<T>(proxy, static_cast<CJS_Runtime*>(pEngine)));
 }
 
@@ -62,11 +62,11 @@ UnownedPtr<C> JSGetObject(v8::Isolate* isolate, v8::Local<v8::Object> obj) {
   if (pData->GetObjDefnID() != C::GetObjDefnID()) {
     return nullptr;
   }
-  CJS_Object* pJSObj = pData->GetPrivate();
-  if (!pJSObj) {
+  CFXJS_PerObjectData::Binding* pBinding = pData->GetBinding();
+  if (!pBinding) {
     return nullptr;
   }
-  return UnownedPtr<C>(static_cast<C*>(pJSObj));
+  return UnownedPtr<C>(static_cast<C*>(pBinding));
 }
 
 template <class C, CJS_Result (C::*M)(CJS_Runtime*)>

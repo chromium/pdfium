@@ -320,7 +320,7 @@ CJS_Result CJS_App::setInterval(CJS_Runtime* pRuntime,
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   auto* pJS_TimerObj = static_cast<CJS_TimerObj*>(
-      CFXJS_Engine::GetObjectPrivate(pRuntime->GetIsolate(), pRetObj));
+      CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pRetObj));
 
   pJS_TimerObj->SetTimer(pTimerRef);
   return CJS_Result::Success(pRetObj);
@@ -348,7 +348,7 @@ CJS_Result CJS_App::setTimeOut(CJS_Runtime* pRuntime,
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   auto* pJS_TimerObj = static_cast<CJS_TimerObj*>(
-      CFXJS_Engine::GetObjectPrivate(pRuntime->GetIsolate(), pRetObj));
+      CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pRetObj));
 
   pJS_TimerObj->SetTimer(pTimerRef);
   return CJS_Result::Success(pRetObj);

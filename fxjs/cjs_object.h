@@ -9,9 +9,8 @@
 
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "fxjs/cfxjs_engine.h"
 #include "fxjs/cjs_runtime.h"
-
-class CFXJS_Engine;
 
 struct JSConstSpec {
   enum Type { Number = 0, String = 1 };
@@ -33,7 +32,7 @@ struct JSMethodSpec {
   v8::FunctionCallback pMethodCall;
 };
 
-class CJS_Object {
+class CJS_Object : public CFXJS_PerObjectData::Binding {
  public:
   static void DefineConsts(CFXJS_Engine* pEngine,
                            uint32_t nObjDefnID,
@@ -46,7 +45,7 @@ class CJS_Object {
                             pdfium::span<const JSMethodSpec> consts);
 
   CJS_Object(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
-  virtual ~CJS_Object();
+  ~CJS_Object() override;
 
   v8::Local<v8::Object> ToV8Object() {
     return m_pV8Object.Get(GetRuntime()->GetIsolate());

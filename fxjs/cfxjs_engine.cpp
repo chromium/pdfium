@@ -111,10 +111,6 @@ CFXJS_PerObjectData::CFXJS_PerObjectData(FXJSOBJTYPE eObjType,
 
 CFXJS_PerObjectData::~CFXJS_PerObjectData() = default;
 
-void CFXJS_PerObjectData::SetPrivate(std::unique_ptr<CJS_Object> p) {
-  m_pPrivate = std::move(p);
-}
-
 // Global weak map to save dynamic objects.
 class V8TemplateMapTraits final
     : public v8::StdMapTraits<CFXJS_PerObjectData*, v8::Object> {
@@ -315,7 +311,7 @@ void V8TemplateMapTraits::Dispose(v8::Isolate* isolate,
   if (!pObjDef)
     return;
   pObjDef->RunDestructor(obj);
-  CFXJS_Engine::FreeObjectPrivate(obj);
+  CFXJS_Engine::FreePerObjectData(obj);
 }
 
 void V8TemplateMapTraits::DisposeWeak(
@@ -418,16 +414,17 @@ uint32_t CFXJS_Engine::GetObjDefnID(v8::Local<v8::Object> pObj) {
 }
 
 // static
-void CFXJS_Engine::SetObjectPrivate(v8::Local<v8::Object> pObj,
-                                    std::unique_ptr<CJS_Object> p) {
+void CFXJS_Engine::SetBinding(v8::Local<v8::Object> pObj,
+                              std::unique_ptr<CFXJS_PerObjectData::Binding> p) {
   CFXJS_PerObjectData* pPerObjectData =
       CFXJS_PerObjectData::GetFromObject(pObj);
-  if (pPerObjectData)
-    pPerObjectData->SetPrivate(std::move(p));
+  if (pPerObjectData) {
+    pPerObjectData->SetBinding(std::move(p));
+  }
 }
 
 // static
-void CFXJS_Engine::FreeObjectPrivate(v8::Local<v8::Object> pObj) {
+void CFXJS_Engine::FreePerObjectData(v8::Local<v8::Object> pObj) {
   CFXJS_PerObjectData* pData = CFXJS_PerObjectData::GetFromObject(pObj);
   pObj->SetAlignedPointerInInternalField(0, nullptr);
   pObj->SetAlignedPointerInInternalField(1, nullptr);
@@ -587,7 +584,7 @@ void CFXJS_Engine::ReleaseEngine() {
     }
     if (!pObj.IsEmpty()) {
       pObjDef->RunDestructor(pObj);
-      FreeObjectPrivate(pObj);
+      FreePerObjectData(pObj);
     }
   }
 
@@ -675,10 +672,11 @@ v8::Local<v8::Context> CFXJS_Engine::GetV8Context() {
 }
 
 // static
-CJS_Object* CFXJS_Engine::GetObjectPrivate(v8::Isolate* pIsolate,
-                                           v8::Local<v8::Object> pObj) {
+CFXJS_PerObjectData::Binding* CFXJS_Engine::GetBinding(
+    v8::Isolate* pIsolate,
+    v8::Local<v8::Object> pObj) {
   auto* pData = CFXJS_PerObjectData::GetFromObject(pObj);
-  return pData ? pData->GetPrivate() : nullptr;
+  return pData ? pData->GetBinding() : nullptr;
 }
 
 v8::Local<v8::Array> CFXJS_Engine::GetConstArray(const WideString& name) {

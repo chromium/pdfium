@@ -260,7 +260,7 @@ CJS_Result CJS_Document::getField(CJS_Runtime* pRuntime,
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   auto* pJSField = static_cast<CJS_Field*>(
-      CFXJS_Engine::GetObjectPrivate(pRuntime->GetIsolate(), pFieldObj));
+      CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pFieldObj));
   if (!pJSField)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
@@ -1018,7 +1018,7 @@ CJS_Result CJS_Document::getAnnot(CJS_Runtime* pRuntime,
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   auto* pJS_Annot = static_cast<CJS_Annot*>(
-      CFXJS_Engine::GetObjectPrivate(pRuntime->GetIsolate(), pObj));
+      CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pObj));
   if (!pJS_Annot)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
@@ -1052,7 +1052,7 @@ CJS_Result CJS_Document::getAnnots(CJS_Runtime* pRuntime,
         return CJS_Result::Failure(JSMessage::kBadObjectError);
 
       auto* pJS_Annot = static_cast<CJS_Annot*>(
-          CFXJS_Engine::GetObjectPrivate(pRuntime->GetIsolate(), pObj));
+          CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pObj));
       pJS_Annot->SetSDKAnnot(pSDKAnnotCur->AsBAAnnot());
       pRuntime->PutArrayElement(
           annots, i,
@@ -1116,7 +1116,7 @@ CJS_Result CJS_Document::get_icons(CJS_Runtime* pRuntime) {
       return CJS_Result::Failure(JSMessage::kBadObjectError);
 
     auto* pJS_Icon = static_cast<CJS_Icon*>(
-        CFXJS_Engine::GetObjectPrivate(pRuntime->GetIsolate(), pObj));
+        CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pObj));
     pJS_Icon->SetIconName(name);
     pRuntime->PutArrayElement(Icons, i++,
                               pJS_Icon
@@ -1147,7 +1147,7 @@ CJS_Result CJS_Document::getIcon(CJS_Runtime* pRuntime,
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
   auto* pJSIcon = static_cast<CJS_Icon*>(
-      CFXJS_Engine::GetObjectPrivate(pRuntime->GetIsolate(), pObj));
+      CFXJS_Engine::GetBinding(pRuntime->GetIsolate(), pObj));
   if (!pJSIcon)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 

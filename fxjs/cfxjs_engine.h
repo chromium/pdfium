@@ -29,7 +29,6 @@
 #include "v8/include/v8-template.h"
 
 class CFXJS_ObjDefinition;
-class CJS_Object;
 class V8TemplateMap;
 
 enum FXJSOBJTYPE {
@@ -71,6 +70,12 @@ class CFXJS_PerIsolateData {
 
 class CFXJS_PerObjectData {
  public:
+  // Object on the C++ side to which the v8::Object is bound.
+  class Binding {
+   public:
+    virtual ~Binding() = default;
+  };
+
   static void SetNewDataInObject(FXJSOBJTYPE eObjType,
                                  uint32_t nObjDefnID,
                                  v8::Local<v8::Object> pObj);
@@ -79,8 +84,8 @@ class CFXJS_PerObjectData {
   ~CFXJS_PerObjectData();
 
   uint32_t GetObjDefnID() const { return m_ObjDefnID; }
-  CJS_Object* GetPrivate() { return m_pPrivate.get(); }
-  void SetPrivate(std::unique_ptr<CJS_Object> p);
+  Binding* GetBinding() { return m_pBinding.get(); }
+  void SetBinding(std::unique_ptr<Binding> p) { m_pBinding = std::move(p); }
 
  private:
   CFXJS_PerObjectData(FXJSOBJTYPE eObjType, uint32_t nObjDefnID);
@@ -90,7 +95,7 @@ class CFXJS_PerObjectData {
 
   const FXJSOBJTYPE m_ObjType;
   const uint32_t m_ObjDefnID;
-  std::unique_ptr<CJS_Object> m_pPrivate;
+  std::unique_ptr<Binding> m_pBinding;
 };
 
 void FXJS_Initialize(unsigned int embedderDataSlot, v8::Isolate* pIsolate);
@@ -115,11 +120,11 @@ class CFXJS_Engine : public CFX_V8 {
   using Destructor = std::function<void(v8::Local<v8::Object> obj)>;
 
   static uint32_t GetObjDefnID(v8::Local<v8::Object> pObj);
-  static CJS_Object* GetObjectPrivate(v8::Isolate* pIsolate,
-                                      v8::Local<v8::Object> pObj);
-  static void SetObjectPrivate(v8::Local<v8::Object> pObj,
-                               std::unique_ptr<CJS_Object> p);
-  static void FreeObjectPrivate(v8::Local<v8::Object> pObj);
+  static CFXJS_PerObjectData::Binding* GetBinding(v8::Isolate* pIsolate,
+                                                  v8::Local<v8::Object> pObj);
+  static void SetBinding(v8::Local<v8::Object> pObj,
+                         std::unique_ptr<CFXJS_PerObjectData::Binding> p);
+  static void FreePerObjectData(v8::Local<v8::Object> pObj);
 
   // Always returns a valid (i.e. non-zero), newly-created objDefnID.
   uint32_t DefineObj(const char* sObjName,
