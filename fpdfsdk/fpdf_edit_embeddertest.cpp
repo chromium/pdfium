@@ -4492,6 +4492,25 @@ TEST_F(FPDFEditEmbedderTest, GetBitmapIgnoresSMask) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFEditEmbedderTest, GetBitmapWithArgbImageWithPalette) {
+  ASSERT_TRUE(OpenDocument("bug_343075986.pdf"));
+
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  constexpr int kExpectedObjects = 2;
+  ASSERT_EQ(kExpectedObjects, FPDFPage_CountObjects(page));
+  FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page, 1);
+  ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
+
+  ScopedFPDFBitmap bitmap(FPDFImageObj_GetBitmap(obj));
+  ASSERT_TRUE(bitmap);
+  EXPECT_EQ(FPDFBitmap_BGR, FPDFBitmap_GetFormat(bitmap.get()));
+  CompareBitmap(bitmap.get(), 4, 4, "49b4d39d3fd81c9853b493b615e475d1");
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSetMatrix) {
   ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
   FPDF_PAGE page = LoadPage(0);

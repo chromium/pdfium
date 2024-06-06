@@ -1,0 +1,67 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 40 60]
+  /Resources <<
+    /XObject <<
+      /Img1 5 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+% Draw yellow background.
+q
+1 1 0 rg
+0 0 40 60 re f
+Q
+% Draw image where the black is masked out to let the yellow show.
+q
+40 0 0 60 0 0 cm
+/Img1 Do
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /Width 4
+  /Height 4
+  /BitsPerComponent 8
+  /ColorSpace [
+    /Indexed
+    /DeviceRGB
+    4
+    <000000 FF0000 00FF00 0000FF FFFFFF>
+  ]
+  /Filter /ASCIIHexDecode
+  /Mask [0 0 0 0 0 0] % Mask out black.
+  {{streamlen}}
+>>
+stream
+00 00 01 01
+00 02 02 01
+03 02 02 04
+03 03 04 04
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF

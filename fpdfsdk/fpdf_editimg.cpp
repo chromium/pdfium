@@ -220,32 +220,30 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
   ConversionOp op;
   switch (pSource->GetFormat()) {
     case FXDIB_Format::k1bppMask:
-    case FXDIB_Format::k8bppMask:
+    case FXDIB_Format::k8bppMask: {
       // Masks do not have palettes, so they can be safely converted to
       // `FXDIB_Format::k8bppRgb`.
       CHECK(!pSource->HasPalette());
       op = ConversionOp::kConvertTo8bppRgb;
       break;
-    case FXDIB_Format::k1bppRgb:
+    }
+    case FXDIB_Format::k1bppRgb: {
       // If there is a palette, then convert to `FXDIB_Format::kRgb` to avoid
       // creating a bitmap with a palette.
       op = pSource->HasPalette() ? ConversionOp::kConvertToRgb
                                  : ConversionOp::kConvertTo8bppRgb;
       break;
+    }
     case FXDIB_Format::k8bppRgb:
+    case FXDIB_Format::kArgb:
+    case FXDIB_Format::kRgb:
+    case FXDIB_Format::kRgb32: {
       // If there is a palette, then convert to `FXDIB_Format::kRgb` to avoid
       // creating a bitmap with a palette.
       op = pSource->HasPalette() ? ConversionOp::kConvertToRgb
                                  : ConversionOp::kRealize;
       break;
-
-    case FXDIB_Format::kArgb:
-    case FXDIB_Format::kRgb:
-    case FXDIB_Format::kRgb32:
-      CHECK(!pSource->HasPalette());
-      op = ConversionOp::kRealize;
-      break;
-
+    }
     case FXDIB_Format::kInvalid: {
       NOTREACHED_NORETURN();
     }
