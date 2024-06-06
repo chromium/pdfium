@@ -38,7 +38,7 @@ enum FXJSOBJTYPE {
   FXJSOBJTYPE_GLOBAL,       // The global object itself (may only appear once).
 };
 
-class FXJS_PerIsolateData {
+class CFXJS_PerIsolateData {
  public:
   // Hook for XFA's data, when present.
   class ExtensionIface {
@@ -46,10 +46,10 @@ class FXJS_PerIsolateData {
     virtual ~ExtensionIface() = default;
   };
 
-  ~FXJS_PerIsolateData();
+  ~CFXJS_PerIsolateData();
 
   static void SetUp(v8::Isolate* pIsolate);
-  static FXJS_PerIsolateData* Get(v8::Isolate* pIsolate);
+  static CFXJS_PerIsolateData* Get(v8::Isolate* pIsolate);
 
   uint32_t CurrentMaxObjDefinitionID() const;
   CFXJS_ObjDefinition* ObjDefinitionForID(uint32_t id) const;
@@ -61,7 +61,7 @@ class FXJS_PerIsolateData {
   }
 
  private:
-  explicit FXJS_PerIsolateData(v8::Isolate* pIsolate);
+  explicit CFXJS_PerIsolateData(v8::Isolate* pIsolate);
 
   const wchar_t* const m_Tag;  // Raw, always a literal.
   std::vector<std::unique_ptr<CFXJS_ObjDefinition>> m_ObjectDefnArray;
