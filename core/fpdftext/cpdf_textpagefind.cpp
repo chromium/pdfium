@@ -12,6 +12,7 @@
 
 #include "core/fpdftext/cpdf_textpage.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_system.h"
@@ -114,7 +115,7 @@ std::optional<WideString> ExtractSubString(const wchar_t* lpszFullString,
       return std::nullopt;
     }
 
-    return WideString(lpszFullString, static_cast<size_t>(nLen));
+    return WideString::Create(lpszFullString, static_cast<size_t>(nLen));
   });
 }
 

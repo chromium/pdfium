@@ -42,7 +42,7 @@ WideString CPDF_Bookmark::GetTitle() const {
     wchar_t w = title[i];
     buf[i] = w > 0x20 ? w : 0x20;
   }
-  return WideString(buf.data(), len);
+  return UNSAFE_TODO(WideString::Create(buf.data(), len));
 }
 
 CPDF_Dest CPDF_Bookmark::GetDest(CPDF_Document* pDocument) const {

@@ -1252,7 +1252,7 @@ TEST(WideString, FromUTF16BE) {
       {"", L""},
       {UNSAFE_BUFFERS(ByteString::Create("\0a\0b\0c", 6)), L"abc"},
       {UNSAFE_BUFFERS(ByteString::Create("\0a\0b\0c\0\0\0d\0e\0f", 14)),
-       WideString(L"abc\0def", 7)},
+       UNSAFE_BUFFERS(WideString::Create(L"abc\0def", 7))},
       {UNSAFE_BUFFERS(ByteString::Create(" &", 2)), L"…"},
       {UNSAFE_BUFFERS(ByteString::Create("\xD8\x3C\xDF\xA8", 4)), L"🎨"},
   };
@@ -1275,7 +1275,7 @@ TEST(WideString, FromUTF16LE) {
       {"", L""},
       {UNSAFE_BUFFERS(ByteString::Create("a\0b\0c\0", 6)), L"abc"},
       {UNSAFE_BUFFERS(ByteString::Create("a\0b\0c\0\0\0d\0e\0f\0", 14)),
-       WideString(L"abc\0def", 7)},
+       UNSAFE_BUFFERS(WideString::Create(L"abc\0def", 7))},
       {UNSAFE_BUFFERS(ByteString::Create("& ", 2)), L"…"},
       {UNSAFE_BUFFERS(ByteString::Create("\x3C\xD8\xA8\xDF", 4)), L"🎨"},
   };
@@ -2016,7 +2016,8 @@ TEST(WideString, OStreamOverload) {
 
   // Writing a WideString with nulls but specifying its length treats it as
   // a C++-style string.
-  str = WideString(stringWithNulls, 4);
+  // SAFETY: known fixed-length string.
+  str = UNSAFE_BUFFERS(WideString::Create(stringWithNulls, 4));
   EXPECT_EQ(4u, str.GetLength());
   stream.str("");
   stream << str;
@@ -2070,7 +2071,7 @@ TEST(WideString, WideOStreamOverload) {
 
   // Writing a WideString with nulls but specifying its length treats it as
   // a C++-style string.
-  str = WideString(stringWithNulls, 4);
+  str = UNSAFE_BUFFERS(WideString::Create(stringWithNulls, 4));
   EXPECT_EQ(4u, str.GetLength());
   stream.str(L"");
   stream << str;

@@ -14,6 +14,7 @@
 #include <iosfwd>
 #include <utility>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/string_template.h"
 
@@ -30,6 +31,12 @@ class WideString : public StringTemplate<wchar_t> {
   [[nodiscard]] static WideString Format(const wchar_t* pFormat, ...);
   [[nodiscard]] static WideString FormatV(const wchar_t* lpszFormat,
                                           va_list argList);
+
+  // Remove when UNSAFE_BUFFER_USAGE enforced on ctors.
+  UNSAFE_BUFFER_USAGE static WideString Create(const wchar_t* pStr,
+                                               size_t len) {
+    return UNSAFE_BUFFERS(WideString(pStr, len));
+  }
 
   WideString() = default;
   WideString(const WideString& other) = default;
@@ -49,8 +56,6 @@ class WideString : public StringTemplate<wchar_t> {
   // No implicit conversions from byte strings.
   // NOLINTNEXTLINE(runtime/explicit)
   WideString(char) = delete;
-
-  WideString(const wchar_t* pStr, size_t len);
 
   explicit WideString(WideStringView str);
   WideString(WideStringView str1, WideStringView str2);
@@ -129,6 +134,9 @@ class WideString : public StringTemplate<wchar_t> {
   WideString EncodeEntities() const;
 
  protected:
+  // Make public UNSAFE_BUFFER_USAGE enforced on ctors.
+  UNSAFE_BUFFER_USAGE WideString(const wchar_t* pStr, size_t len);
+
   intptr_t ReferenceCountForTesting() const;
 
   friend class WideString_Assign_Test;

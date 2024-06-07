@@ -47,7 +47,8 @@ TEST(PDF417HighLevelEncoderTest, EncodeHighLevel) {
   for (size_t i = 0; i < std::size(kEncodeHighLevelCases); ++i) {
     const EncodeHighLevelCase& testcase = kEncodeHighLevelCases[i];
     WideStringView input(testcase.input);
-    WideString expected(testcase.expected, testcase.expected_length);
+    auto expected = UNSAFE_TODO(
+        WideString::Create(testcase.expected, testcase.expected_length));
     std::optional<WideString> result =
         CBC_PDF417HighLevelEncoder::EncodeHighLevel(input);
     ASSERT_TRUE(result.has_value());
@@ -96,7 +97,8 @@ TEST(PDF417HighLevelEncoderTest, EncodeBinary) {
     for (size_t j = 0; j < input_length; ++j) {
       input_array[j] = testcase.input[j];
     }
-    WideString expected(testcase.expected, testcase.expected_length);
+    auto expected = UNSAFE_TODO(
+        WideString::Create(testcase.expected, testcase.expected_length));
     WideString result;
     CBC_PDF417HighLevelEncoder::EncodeBinary(input_array, testcase.offset,
                                              testcase.count, testcase.startmode,
@@ -158,7 +160,8 @@ TEST(PDF417HighLevelEncoderTest, EncodeNumeric) {
   for (size_t i = 0; i < std::size(kEncodeNumericCases); ++i) {
     const EncodeNumericCase& testcase = kEncodeNumericCases[i];
     WideString input(testcase.input);
-    WideString expected(testcase.expected, testcase.expected_length);
+    auto expected = UNSAFE_TODO(
+        WideString::Create(testcase.expected, testcase.expected_length));
     WideString result;
     CBC_PDF417HighLevelEncoder::EncodeNumeric(input, testcase.offset,
                                               testcase.count, &result);

@@ -884,13 +884,13 @@ std::vector<WideString> CFGAS_StringFormatter::SplitOnBars(
     if (spFormatString[index] == '\'') {
       bQuote = !bQuote;
     } else if (spFormatString[index] == L'|' && !bQuote) {
-      UNSAFE_TODO(wsPatterns.emplace_back(spFormatString.data() + token,
-                                          index - token));
+      wsPatterns.push_back(UNSAFE_TODO(
+          WideString::Create(spFormatString.data() + token, index - token)));
       token = index + 1;
     }
   }
-  UNSAFE_TODO(
-      wsPatterns.emplace_back(spFormatString.data() + token, index - token));
+  wsPatterns.push_back(UNSAFE_TODO(
+      WideString::Create(spFormatString.data() + token, index - token)));
   return wsPatterns;
 }
 

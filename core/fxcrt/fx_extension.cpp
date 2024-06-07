@@ -9,6 +9,7 @@
 #include <wchar.h>
 
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/utf16.h"
 #include "core/fxcrt/widestring.h"
@@ -29,7 +30,7 @@ struct tm* (*g_localtime_func)(const time_t*) = DefaultLocaltimeFunction;
 }  // namespace
 
 float FXSYS_wcstof(const wchar_t* pwsStr, size_t nLength, size_t* pUsedLen) {
-  WideString copied(pwsStr, nLength);
+  auto copied = UNSAFE_TODO(WideString::Create(pwsStr, nLength));
   wchar_t* endptr = nullptr;
   float result = wcstof(copied.c_str(), &endptr);
   if (result != result) {
