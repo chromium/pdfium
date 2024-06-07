@@ -14,6 +14,7 @@
 #include <memory>
 
 #include "core/fxcodec/gif/cfx_gif.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/span.h"
 
@@ -39,7 +40,7 @@ class LZWDecompressor {
   ~LZWDecompressor();
 
   void SetSource(pdfium::span<const uint8_t> src_buf);
-  Status Decode(uint8_t* dest_buf, uint32_t* dest_size);
+  UNSAFE_BUFFER_USAGE Status Decode(uint8_t* dest_buf, uint32_t* dest_size);
 
   // Used by unittests, should not be called in production code.
   size_t ExtractDataForTest(pdfium::span<uint8_t> dest_buf) {

@@ -16,6 +16,7 @@
 
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcrt/byteorder.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/stl_util.h"
 
@@ -245,8 +246,8 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
       img_row_avail_size_ = gif_img_row_bytes - img_row_offset_;
       auto img_row_span = pdfium::make_span(gif_image->row_buffer)
                               .subspan(img_row_offset_, img_row_avail_size_);
-      LZWDecompressor::Status ret =
-          lzw_decompressor_->Decode(img_row_span.data(), &img_row_avail_size_);
+      LZWDecompressor::Status ret = UNSAFE_TODO(
+          lzw_decompressor_->Decode(img_row_span.data(), &img_row_avail_size_));
       if (ret == LZWDecompressor::Status::kError) {
         DecodingFailureAtTailCleanup(gif_image);
         return GifDecoder::Status::kError;
@@ -278,8 +279,8 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
             img_row_avail_size_ = gif_img_row_bytes - img_row_offset_;
             img_row_span = pdfium::make_span(gif_image->row_buffer)
                                .subspan(img_row_offset_, img_row_avail_size_);
-            ret = lzw_decompressor_->Decode(img_row_span.data(),
-                                            &img_row_avail_size_);
+            ret = UNSAFE_TODO(lzw_decompressor_->Decode(img_row_span.data(),
+                                                        &img_row_avail_size_));
           }
         }
 
@@ -304,8 +305,8 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
           img_row_avail_size_ = gif_img_row_bytes;
           img_row_span = pdfium::make_span(gif_image->row_buffer)
                              .subspan(img_row_offset_, img_row_avail_size_);
-          ret = lzw_decompressor_->Decode(img_row_span.data(),
-                                          &img_row_avail_size_);
+          ret = UNSAFE_TODO(lzw_decompressor_->Decode(img_row_span.data(),
+                                                      &img_row_avail_size_));
         }
 
         if (ret == LZWDecompressor::Status::kError) {

@@ -15,6 +15,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/span.h"
 #include "fxjs/cjs_event_context.h"
@@ -263,7 +264,7 @@ CJS_Result CJS_Util::printd(CJS_Runtime* pRuntime,
   time.tm_sec = sec;
 
   wchar_t buf[64] = {};
-  FXSYS_wcsftime(buf, 64, cFormat.c_str(), &time);
+  UNSAFE_TODO(FXSYS_wcsftime(buf, 64, cFormat.c_str(), &time));
   cFormat = buf;
   return CJS_Result::Success(pRuntime->NewString(cFormat.c_str()));
 }

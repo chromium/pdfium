@@ -106,7 +106,8 @@ class FixedSizeDataVector {
   pdfium::span<const T> last(size_t count) const { return span().last(count); }
 
  private:
-  FixedSizeDataVector(T* ptr, size_t size) : data_(ptr), size_(size) {}
+  UNSAFE_BUFFER_USAGE FixedSizeDataVector(T* ptr, size_t size)
+      : data_(ptr), size_(size) {}
 
   std::unique_ptr<T, FxFreeDeleter> data_;
   size_t size_ = 0;

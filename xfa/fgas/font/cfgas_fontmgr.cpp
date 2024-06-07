@@ -187,8 +187,8 @@ int32_t CALLBACK GdiFontEnumProc(ENUMLOGFONTEX* lpelfe,
   static_assert(std::is_aggregate_v<decltype(font)>);
   font.uCharSet = FX_GetCharsetFromInt(lf.lfCharSet);
   font.dwFontStyles = GetGdiFontStyles(lf);
-  FXSYS_wcsncpy(font.wsFontFace, (const wchar_t*)lf.lfFaceName, 31);
   UNSAFE_TODO({
+    FXSYS_wcsncpy(font.wsFontFace, (const wchar_t*)lf.lfFaceName, 31);
     font.wsFontFace[31] = 0;
     FXSYS_memcpy(&font.FontSignature, &lpntme->ntmFontSig,
                  sizeof(lpntme->ntmFontSig));

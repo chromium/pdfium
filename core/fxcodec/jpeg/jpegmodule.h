@@ -17,6 +17,7 @@
 #include "core/fxcrt/span.h"
 
 #if BUILDFLAG(IS_WIN)
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/retain_ptr.h"
 #endif
 
@@ -47,9 +48,10 @@ class JpegModule {
       pdfium::span<const uint8_t> src_span);
 
 #if BUILDFLAG(IS_WIN)
-  static bool JpegEncode(const RetainPtr<const CFX_DIBBase>& pSource,
-                         uint8_t** dest_buf,
-                         size_t* dest_size);
+  UNSAFE_BUFFER_USAGE static bool JpegEncode(
+      const RetainPtr<const CFX_DIBBase>& pSource,
+      uint8_t** dest_buf,
+      size_t* dest_size);
 #endif  // BUILDFLAG(IS_WIN)
 
   JpegModule() = delete;

@@ -14,6 +14,7 @@
 #include <wchar.h>
 
 #include "build/build_config.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_types.h"
 
 #if defined(_MSC_VER) && _MSC_VER < 1900
@@ -58,10 +59,10 @@ extern "C" {
 #define FXSYS_wcsupr _wcsupr
 #define FXSYS_SetLastError SetLastError
 #define FXSYS_GetLastError GetLastError
-size_t FXSYS_wcsftime(wchar_t* strDest,
-                      size_t maxsize,
-                      const wchar_t* format,
-                      const struct tm* timeptr);
+UNSAFE_BUFFER_USAGE size_t FXSYS_wcsftime(wchar_t* strDest,
+                                          size_t maxsize,
+                                          const wchar_t* format,
+                                          const struct tm* timeptr);
 #else  // BUILDFLAG(IS_WIN)
 char* FXSYS_itoa(int value, char* str, int radix);
 char* FXSYS_strlwr(char* str);

@@ -234,8 +234,8 @@ void CJX_Object::SetAttributeByEnum(XFA_Attribute eAttr,
       break;
     case XFA_AttributeType::Integer:
       SetInteger(eAttr,
-                 FXSYS_roundf(FXSYS_wcstof(wsValue.c_str(), wsValue.GetLength(),
-                                           nullptr)),
+                 FXSYS_roundf(UNSAFE_TODO(FXSYS_wcstof(
+                     wsValue.c_str(), wsValue.GetLength(), nullptr))),
                  bNotify);
       break;
     case XFA_AttributeType::Measure:

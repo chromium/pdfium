@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include "core/fxcrt/compiler_specific.h"
+
 #if defined(USE_SYSTEM_LIBOPENJPEG2)
 #include <openjpeg.h>
 #else
@@ -18,7 +20,7 @@
 namespace fxcodec {
 
 struct DecodeData {
-  DecodeData(const uint8_t* data, OPJ_SIZE_T size)
+  UNSAFE_BUFFER_USAGE DecodeData(const uint8_t* data, OPJ_SIZE_T size)
       : src_data(data), src_size(size), offset(0) {}
 
   const uint8_t* src_data;

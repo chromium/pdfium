@@ -8,6 +8,7 @@
 
 #include <algorithm>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/stl_util.h"
 
@@ -313,8 +314,8 @@ CXFA_FMLexer::Token CXFA_FMLexer::AdvanceForNumber() {
   // This will set end to the character after the end of the number.
   size_t used_length = 0;
   if (m_nCursor < m_spInput.size()) {
-    FXSYS_wcstof(&m_spInput[m_nCursor], m_spInput.size() - m_nCursor,
-                 &used_length);
+    UNSAFE_TODO(FXSYS_wcstof(&m_spInput[m_nCursor],
+                             m_spInput.size() - m_nCursor, &used_length));
   }
   size_t end = m_nCursor + used_length;
   if (used_length == 0 ||
