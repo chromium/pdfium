@@ -1,0 +1,110 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 200 200]
+  /Resources <<
+    /ExtGState <<
+      /GS0 6 0 R
+    >>
+    /Pattern <<
+      /Pa0 7 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q /Pattern cs /Pa0 scn /GS0 gs 0 0 20 20 re f* Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /ExtGState
+  /ca 1
+>>
+endobj
+{{object 6 0}} <<
+  /Type /ExtGState
+  /ca 0.5
+>>
+endobj
+{{object 7 0}} <<
+  /Type /Pattern
+  /Subtype /Form
+  /BBox [0 0 30 30]
+  {{streamlen}}
+  /PaintType 1
+  /PatternType 1
+  /Resources <<
+    /ExtGState <<
+      /GS0 5 0 R
+    >>
+    /XObject <<
+      /Fm0 8 0 R
+    >>
+  >>
+  /TilingType 3
+  /XStep 30
+  /YStep 30
+>>
+stream
+q 1 0 0 1 0 0 cm /GS0 gs /Fm0 Do Q
+endstream
+endobj
+{{object 8 0}} <<
+  /Type /Pattern
+  /Subtype /Form
+  /BBox [0 0 30 30]
+  {{streamlen}}
+  /PaintType 1
+  /PatternType 1
+  /Resources <<
+    /ExtGState <<
+      /GS0 5 0 R
+    >>
+    /XObject <<
+      /Fm0 9 0 R
+    >>
+  >>
+  /TilingType 3
+  /XStep 30
+  /YStep 30
+>>
+stream
+q 20 0 0 20 0 0 cm /GS0 gs /Fm0 Do Q
+endstream
+endobj
+{{object 9 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /ColorSpace /DeviceGray
+  /Width 20 /BitsPerComponent 8
+  {{streamlen}}
+  /Height 20
+  /Filter [/ASCII85Decode /DCTDecode]
+  /DecodeParms <</ColorTransform 0>>
+>>
+stream
+s4IA0!"_al8O`[\!<<*#!!*'"s4[N@!!<9(!WiE*!WiE*!s8W."p>&3"9\u7"pG2;#RUnF#RLeE$kEaR
+$P!ON#n7IU%M'*^&J,9X&eblh'+YWc&HBNG$O?_H!#,G7&HMjL!#5J7!<<*"zzz$3.pD'G(9Fzzz!!!$
+!g&MBZ!<<*a!0oeL&-(;~>
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
