@@ -7,7 +7,11 @@
 #include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
+
+using ::testing::ElementsAre;
+using ::testing::ElementsAreArray;
 
 // Tests PDFium-modifications to base::span. The name of this file is
 // chosen to avoid collisions with base's span_unittest.cc
@@ -37,6 +41,35 @@ TEST(PdfiumSpan, FirstLast) {
   EXPECT_EQ(one_span.back(), 1);
   EXPECT_EQ(stuff_span.front(), 1);
   EXPECT_EQ(stuff_span.back(), 3);
+}
+
+TEST(PdfiumSpan, GMockMacroCompatibility) {
+  int arr1[] = {1, 3, 5};
+  int arr2[] = {1, 3, 5};
+  std::vector vec1(std::begin(arr1), std::end(arr1));
+  std::vector vec2(std::begin(arr2), std::end(arr2));
+  pdfium::span<int, 3> static_span1(arr1);
+  pdfium::span<int, 3> static_span2(arr2);
+  pdfium::span<int> dynamic_span1(vec1);
+  pdfium::span<int> dynamic_span2(vec2);
+
+  EXPECT_THAT(arr1, ElementsAreArray(static_span2));
+  EXPECT_THAT(arr1, ElementsAreArray(dynamic_span2));
+
+  EXPECT_THAT(vec1, ElementsAreArray(static_span2));
+  EXPECT_THAT(vec1, ElementsAreArray(dynamic_span2));
+
+  EXPECT_THAT(static_span1, ElementsAre(1, 3, 5));
+  EXPECT_THAT(static_span1, ElementsAreArray(arr2));
+  EXPECT_THAT(static_span1, ElementsAreArray(static_span2));
+  EXPECT_THAT(static_span1, ElementsAreArray(dynamic_span2));
+  EXPECT_THAT(static_span1, ElementsAreArray(vec2));
+
+  EXPECT_THAT(dynamic_span1, ElementsAre(1, 3, 5));
+  EXPECT_THAT(dynamic_span1, ElementsAreArray(arr2));
+  EXPECT_THAT(dynamic_span1, ElementsAreArray(static_span2));
+  EXPECT_THAT(dynamic_span1, ElementsAreArray(dynamic_span2));
+  EXPECT_THAT(dynamic_span1, ElementsAreArray(vec2));
 }
 
 TEST(PdfiumSpanDeathTest, EmptySpanIndex) {
