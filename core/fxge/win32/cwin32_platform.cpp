@@ -30,11 +30,11 @@ namespace {
 
 struct Variant {
   const char* m_pFaceName;
-  pdfium::raw_span<const char> m_pVariantName;
+  const wchar_t* m_pVariantName;
 };
 
 constexpr Variant kVariantNames[] = {
-    {"DFKai-SB", pdfium::make_span("\x19\x6A\x77\x69\xD4\x9A")},
+    {"DFKai-SB", L"\x6A19\x6977\x9AD4"},
 };
 
 struct Substs {
@@ -382,8 +382,7 @@ void* CFX_Win32FontInfo::MapFont(int weight,
     if (new_face != variant.m_pFaceName)
       continue;
 
-    WideString wsName =
-        WideString::FromUTF16LE(pdfium::as_bytes(variant.m_pVariantName));
+    WideString wsName(variant.m_pVariantName);
     if (wsFace == wsName)
       return hFont;
   }

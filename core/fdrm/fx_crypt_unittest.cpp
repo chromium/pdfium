@@ -188,7 +188,7 @@ TEST(FXCRYPT, MD5StringTestSuite7) {
 
 TEST(FXCRYPT, ContextWithStringData) {
   CRYPT_md5_context ctx = CRYPT_MD5Start();
-  CRYPT_MD5Update(&ctx, pdfium::as_bytes(pdfium::make_span("abc", 3u)));
+  CRYPT_MD5Update(&ctx, ByteStringView("abc").unsigned_span());
 
   uint8_t digest[16];
   CRYPT_MD5Finish(&ctx, digest);
