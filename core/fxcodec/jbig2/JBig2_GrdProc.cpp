@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/40284755): Remove this and spanify to fix the errors.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxcodec/jbig2/JBig2_GrdProc.h"
 
 #include <array>
@@ -118,94 +113,101 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithOpt3(
   int32_t nBitsLeft = GBW - (nLineBytes << 3);
   // TODO(npm): Why is the height only trimmed when OPT is 0?
   uint32_t height = OPT == 0 ? GBH & 0x7fffffff : GBH;
-  for (uint32_t h = 0; h < height; ++h) {
-    if (TPGDON) {
-      if (pArithDecoder->IsComplete())
-        return nullptr;
-
-      LTP = LTP ^ pArithDecoder->Decode(&gbContexts[kOptConstant1[OPT]]);
-    }
-    if (LTP) {
-      GBREG->CopyLine(h, h - 1);
-    } else {
-      if (h > 1) {
-        uint8_t* pLine1 = pLine - nStride2;
-        uint8_t* pLine2 = pLine - nStride;
-        uint32_t line1 = (*pLine1++) << kOptConstant2[OPT];
-        uint32_t line2 = *pLine2++;
-        uint32_t CONTEXT = (line1 & kOptConstant3[OPT]) |
-                           ((line2 >> kOptConstant4[OPT]) & kOptConstant5[OPT]);
-        for (int32_t cc = 0; cc < nLineBytes; ++cc) {
-          line1 = (line1 << 8) | ((*pLine1++) << kOptConstant2[OPT]);
-          line2 = (line2 << 8) | (*pLine2++);
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; --k) {
-            if (pArithDecoder->IsComplete())
-              return nullptr;
-
-            int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-            cVal |= bVal << k;
-            CONTEXT =
-                (((CONTEXT & kOptConstant6[OPT]) << 1) | bVal |
-                 ((line1 >> k) & kOptConstant7[OPT]) |
-                 ((line2 >> (k + kOptConstant4[OPT])) & kOptConstant8[OPT]));
-          }
-          pLine[cc] = cVal;
+  UNSAFE_TODO({
+    for (uint32_t h = 0; h < height; ++h) {
+      if (TPGDON) {
+        if (pArithDecoder->IsComplete()) {
+          return nullptr;
         }
-        line1 <<= 8;
-        line2 <<= 8;
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; ++k) {
-          if (pArithDecoder->IsComplete())
-            return nullptr;
 
-          int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT =
-              (((CONTEXT & kOptConstant6[OPT]) << 1) | bVal |
-               ((line1 >> (7 - k)) & kOptConstant7[OPT]) |
-               ((line2 >> (7 + kOptConstant4[OPT] - k)) & kOptConstant8[OPT]));
-        }
-        pLine[nLineBytes] = cVal1;
-      } else {
-        uint8_t* pLine2 = pLine - nStride;
-        uint32_t line2 = (h & 1) ? (*pLine2++) : 0;
-        uint32_t CONTEXT = ((line2 >> kOptConstant4[OPT]) & kOptConstant5[OPT]);
-        for (int32_t cc = 0; cc < nLineBytes; ++cc) {
-          if (h & 1) {
-            line2 = (line2 << 8) | (*pLine2++);
-          }
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; --k) {
-            if (pArithDecoder->IsComplete())
-              return nullptr;
-
-            int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-            cVal |= bVal << k;
-            CONTEXT =
-                (((CONTEXT & kOptConstant6[OPT]) << 1) | bVal |
-                 ((line2 >> (k + kOptConstant4[OPT])) & kOptConstant8[OPT]));
-          }
-          pLine[cc] = cVal;
-        }
-        line2 <<= 8;
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; ++k) {
-          if (pArithDecoder->IsComplete())
-            return nullptr;
-
-          int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT = (((CONTEXT & kOptConstant6[OPT]) << 1) | bVal |
-                     (((line2 >> (7 + kOptConstant4[OPT] - k))) &
-                      kOptConstant8[OPT]));
-        }
-        pLine[nLineBytes] = cVal1;
+        LTP = LTP ^ pArithDecoder->Decode(&gbContexts[kOptConstant1[OPT]]);
       }
+      if (LTP) {
+        GBREG->CopyLine(h, h - 1);
+      } else {
+        if (h > 1) {
+          uint8_t* pLine1 = pLine - nStride2;
+          uint8_t* pLine2 = pLine - nStride;
+          uint32_t line1 = (*pLine1++) << kOptConstant2[OPT];
+          uint32_t line2 = *pLine2++;
+          uint32_t CONTEXT =
+              (line1 & kOptConstant3[OPT]) |
+              ((line2 >> kOptConstant4[OPT]) & kOptConstant5[OPT]);
+          for (int32_t cc = 0; cc < nLineBytes; ++cc) {
+            line1 = (line1 << 8) | ((*pLine1++) << kOptConstant2[OPT]);
+            line2 = (line2 << 8) | (*pLine2++);
+            uint8_t cVal = 0;
+            for (int32_t k = 7; k >= 0; --k) {
+              if (pArithDecoder->IsComplete()) {
+                return nullptr;
+              }
+
+              int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+              cVal |= bVal << k;
+              CONTEXT =
+                  (((CONTEXT & kOptConstant6[OPT]) << 1) | bVal |
+                   ((line1 >> k) & kOptConstant7[OPT]) |
+                   ((line2 >> (k + kOptConstant4[OPT])) & kOptConstant8[OPT]));
+            }
+            pLine[cc] = cVal;
+          }
+          line1 <<= 8;
+          line2 <<= 8;
+          uint8_t cVal1 = 0;
+          for (int32_t k = 0; k < nBitsLeft; ++k) {
+            if (pArithDecoder->IsComplete())
+              return nullptr;
+
+            int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+            cVal1 |= bVal << (7 - k);
+            CONTEXT = (((CONTEXT & kOptConstant6[OPT]) << 1) | bVal |
+                       ((line1 >> (7 - k)) & kOptConstant7[OPT]) |
+                       ((line2 >> (7 + kOptConstant4[OPT] - k)) &
+                        kOptConstant8[OPT]));
+          }
+          pLine[nLineBytes] = cVal1;
+        } else {
+          uint8_t* pLine2 = pLine - nStride;
+          uint32_t line2 = (h & 1) ? (*pLine2++) : 0;
+          uint32_t CONTEXT =
+              ((line2 >> kOptConstant4[OPT]) & kOptConstant5[OPT]);
+          for (int32_t cc = 0; cc < nLineBytes; ++cc) {
+            if (h & 1) {
+              line2 = (line2 << 8) | (*pLine2++);
+            }
+            uint8_t cVal = 0;
+            for (int32_t k = 7; k >= 0; --k) {
+              if (pArithDecoder->IsComplete()) {
+                return nullptr;
+              }
+
+              int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+              cVal |= bVal << k;
+              CONTEXT =
+                  (((CONTEXT & kOptConstant6[OPT]) << 1) | bVal |
+                   ((line2 >> (k + kOptConstant4[OPT])) & kOptConstant8[OPT]));
+            }
+            pLine[cc] = cVal;
+          }
+          line2 <<= 8;
+          uint8_t cVal1 = 0;
+          for (int32_t k = 0; k < nBitsLeft; ++k) {
+            if (pArithDecoder->IsComplete())
+              return nullptr;
+
+            int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+            cVal1 |= bVal << (7 - k);
+            CONTEXT = (((CONTEXT & kOptConstant6[OPT]) << 1) | bVal |
+                       (((line2 >> (7 + kOptConstant4[OPT] - k))) &
+                        kOptConstant8[OPT]));
+          }
+          pLine[nLineBytes] = cVal1;
+        }
+      }
+      pLine += nStride;
     }
-    pLine += nStride;
-  }
-  return GBREG;
+    return GBREG;
+  });
 }
 
 std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplateUnopt(
@@ -283,76 +285,81 @@ std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate3Opt3(
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
   int32_t nBitsLeft = GBW - (nLineBytes << 3);
 
-  for (uint32_t h = 0; h < GBH; h++) {
-    if (TPGDON) {
-      if (pArithDecoder->IsComplete())
-        return nullptr;
-
-      LTP = LTP ^ pArithDecoder->Decode(&gbContexts[0x0195]);
-    }
-
-    if (LTP) {
-      GBREG->CopyLine(h, h - 1);
-    } else {
-      if (h > 0) {
-        uint8_t* pLine1 = pLine - nStride;
-        uint32_t line1 = *pLine1++;
-        uint32_t CONTEXT = (line1 >> 1) & 0x03f0;
-        for (int32_t cc = 0; cc < nLineBytes; cc++) {
-          line1 = (line1 << 8) | (*pLine1++);
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; k--) {
-            if (pArithDecoder->IsComplete())
-              return nullptr;
-
-            int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-            cVal |= bVal << k;
-            CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal |
-                      ((line1 >> (k + 1)) & 0x0010);
-          }
-          pLine[cc] = cVal;
+  UNSAFE_TODO({
+    for (uint32_t h = 0; h < GBH; h++) {
+      if (TPGDON) {
+        if (pArithDecoder->IsComplete()) {
+          return nullptr;
         }
-        line1 <<= 8;
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; k++) {
-          if (pArithDecoder->IsComplete())
-            return nullptr;
 
-          int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT =
-              ((CONTEXT & 0x01f7) << 1) | bVal | ((line1 >> (8 - k)) & 0x0010);
-        }
-        pLine[nLineBytes] = cVal1;
+        LTP = LTP ^ pArithDecoder->Decode(&gbContexts[0x0195]);
+      }
+
+      if (LTP) {
+        GBREG->CopyLine(h, h - 1);
       } else {
-        uint32_t CONTEXT = 0;
-        for (int32_t cc = 0; cc < nLineBytes; cc++) {
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; k--) {
+        if (h > 0) {
+          uint8_t* pLine1 = pLine - nStride;
+          uint32_t line1 = *pLine1++;
+          uint32_t CONTEXT = (line1 >> 1) & 0x03f0;
+          for (int32_t cc = 0; cc < nLineBytes; cc++) {
+            line1 = (line1 << 8) | (*pLine1++);
+            uint8_t cVal = 0;
+            for (int32_t k = 7; k >= 0; k--) {
+              if (pArithDecoder->IsComplete()) {
+                return nullptr;
+              }
+
+              int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+              cVal |= bVal << k;
+              CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal |
+                        ((line1 >> (k + 1)) & 0x0010);
+            }
+            pLine[cc] = cVal;
+          }
+          line1 <<= 8;
+          uint8_t cVal1 = 0;
+          for (int32_t k = 0; k < nBitsLeft; k++) {
             if (pArithDecoder->IsComplete())
               return nullptr;
 
             int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-            cVal |= bVal << k;
+            cVal1 |= bVal << (7 - k);
+            CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal |
+                      ((line1 >> (8 - k)) & 0x0010);
+          }
+          pLine[nLineBytes] = cVal1;
+        } else {
+          uint32_t CONTEXT = 0;
+          for (int32_t cc = 0; cc < nLineBytes; cc++) {
+            uint8_t cVal = 0;
+            for (int32_t k = 7; k >= 0; k--) {
+              if (pArithDecoder->IsComplete()) {
+                return nullptr;
+              }
+
+              int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+              cVal |= bVal << k;
+              CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal;
+            }
+            pLine[cc] = cVal;
+          }
+          uint8_t cVal1 = 0;
+          for (int32_t k = 0; k < nBitsLeft; k++) {
+            if (pArithDecoder->IsComplete())
+              return nullptr;
+
+            int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+            cVal1 |= bVal << (7 - k);
             CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal;
           }
-          pLine[cc] = cVal;
+          pLine[nLineBytes] = cVal1;
         }
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; k++) {
-          if (pArithDecoder->IsComplete())
-            return nullptr;
-
-          int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal;
-        }
-        pLine[nLineBytes] = cVal1;
       }
+      pLine += nStride;
     }
-    pLine += nStride;
-  }
-  return GBREG;
+    return GBREG;
+  });
 }
 
 std::unique_ptr<CJBig2_Image> CJBig2_GRDProc::DecodeArithTemplate3Unopt(
@@ -478,8 +485,9 @@ FXCODEC_STATUS CJBig2_GRDProc::StartDecodeMMR(
   bitpos = FaxModule::FaxG4Decode(pStream->getBufSpan(), bitpos, GBW, GBH,
                                   image->stride(), image->data());
   pStream->setBitPos(bitpos);
-  for (uint32_t i = 0; i < image->stride() * GBH; ++i)
-    image->data()[i] = ~image->data()[i];
+  for (uint32_t i = 0; i < image->stride() * GBH; ++i) {
+    UNSAFE_TODO(image->data()[i] = ~image->data()[i]);
+  }
   m_ProgressiveStatus = FXCODEC_STATUS::kDecodeFinished;
   *pImage = std::move(image);
   return m_ProgressiveStatus;
@@ -510,94 +518,100 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Opt3(
   int32_t nBitsLeft = GBW - (nLineBytes << 3);
   uint32_t height = GBH & 0x7fffffff;
 
-  for (; m_loopIndex < height; m_loopIndex++) {
-    if (TPGDON) {
-      if (pArithDecoder->IsComplete())
-        return FXCODEC_STATUS::kError;
-
-      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContexts[0x9b25]);
-    }
-    if (m_LTP) {
-      pImage->CopyLine(m_loopIndex, m_loopIndex - 1);
-    } else {
-      if (m_loopIndex > 1) {
-        uint8_t* pLine1 = m_pLine - nStride2;
-        uint8_t* pLine2 = m_pLine - nStride;
-        uint32_t line1 = (*pLine1++) << 6;
-        uint32_t line2 = *pLine2++;
-        uint32_t CONTEXT = ((line1 & 0xf800) | (line2 & 0x07f0));
-        for (int32_t cc = 0; cc < nLineBytes; cc++) {
-          line1 = (line1 << 8) | ((*pLine1++) << 6);
-          line2 = (line2 << 8) | (*pLine2++);
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; k--) {
-            if (pArithDecoder->IsComplete())
-              return FXCODEC_STATUS::kError;
-
-            int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-            cVal |= bVal << k;
-            CONTEXT = (((CONTEXT & 0x7bf7) << 1) | bVal |
-                       ((line1 >> k) & 0x0800) | ((line2 >> k) & 0x0010));
-          }
-          m_pLine[cc] = cVal;
+  UNSAFE_TODO({
+    for (; m_loopIndex < height; m_loopIndex++) {
+      if (TPGDON) {
+        if (pArithDecoder->IsComplete()) {
+          return FXCODEC_STATUS::kError;
         }
-        line1 <<= 8;
-        line2 <<= 8;
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; k++) {
-          if (pArithDecoder->IsComplete())
-            return FXCODEC_STATUS::kError;
 
-          int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT =
-              (((CONTEXT & 0x7bf7) << 1) | bVal |
-               ((line1 >> (7 - k)) & 0x0800) | ((line2 >> (7 - k)) & 0x0010));
-        }
-        m_pLine[nLineBytes] = cVal1;
+        m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContexts[0x9b25]);
+      }
+      if (m_LTP) {
+        pImage->CopyLine(m_loopIndex, m_loopIndex - 1);
       } else {
-        uint8_t* pLine2 = m_pLine - nStride;
-        uint32_t line2 = (m_loopIndex & 1) ? (*pLine2++) : 0;
-        uint32_t CONTEXT = (line2 & 0x07f0);
-        for (int32_t cc = 0; cc < nLineBytes; cc++) {
-          if (m_loopIndex & 1) {
+        if (m_loopIndex > 1) {
+          uint8_t* pLine1 = m_pLine - nStride2;
+          uint8_t* pLine2 = m_pLine - nStride;
+          uint32_t line1 = (*pLine1++) << 6;
+          uint32_t line2 = *pLine2++;
+          uint32_t CONTEXT = ((line1 & 0xf800) | (line2 & 0x07f0));
+          for (int32_t cc = 0; cc < nLineBytes; cc++) {
+            line1 = (line1 << 8) | ((*pLine1++) << 6);
             line2 = (line2 << 8) | (*pLine2++);
+            uint8_t cVal = 0;
+            for (int32_t k = 7; k >= 0; k--) {
+              if (pArithDecoder->IsComplete()) {
+                return FXCODEC_STATUS::kError;
+              }
+
+              int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+              cVal |= bVal << k;
+              CONTEXT = (((CONTEXT & 0x7bf7) << 1) | bVal |
+                         ((line1 >> k) & 0x0800) | ((line2 >> k) & 0x0010));
+            }
+            m_pLine[cc] = cVal;
           }
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; k--) {
+          line1 <<= 8;
+          line2 <<= 8;
+          uint8_t cVal1 = 0;
+          for (int32_t k = 0; k < nBitsLeft; k++) {
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS::kError;
 
             int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-            cVal |= bVal << k;
+            cVal1 |= bVal << (7 - k);
             CONTEXT =
-                (((CONTEXT & 0x7bf7) << 1) | bVal | ((line2 >> k) & 0x0010));
+                (((CONTEXT & 0x7bf7) << 1) | bVal |
+                 ((line1 >> (7 - k)) & 0x0800) | ((line2 >> (7 - k)) & 0x0010));
           }
-          m_pLine[cc] = cVal;
-        }
-        line2 <<= 8;
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; k++) {
-          if (pArithDecoder->IsComplete())
-            return FXCODEC_STATUS::kError;
+          m_pLine[nLineBytes] = cVal1;
+        } else {
+          uint8_t* pLine2 = m_pLine - nStride;
+          uint32_t line2 = (m_loopIndex & 1) ? (*pLine2++) : 0;
+          uint32_t CONTEXT = (line2 & 0x07f0);
+          for (int32_t cc = 0; cc < nLineBytes; cc++) {
+            if (m_loopIndex & 1) {
+              line2 = (line2 << 8) | (*pLine2++);
+            }
+            uint8_t cVal = 0;
+            for (int32_t k = 7; k >= 0; k--) {
+              if (pArithDecoder->IsComplete()) {
+                return FXCODEC_STATUS::kError;
+              }
 
-          int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT = (((CONTEXT & 0x7bf7) << 1) | bVal |
-                     ((line2 >> (7 - k)) & 0x0010));
+              int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+              cVal |= bVal << k;
+              CONTEXT =
+                  (((CONTEXT & 0x7bf7) << 1) | bVal | ((line2 >> k) & 0x0010));
+            }
+            m_pLine[cc] = cVal;
+          }
+          line2 <<= 8;
+          uint8_t cVal1 = 0;
+          for (int32_t k = 0; k < nBitsLeft; k++) {
+            if (pArithDecoder->IsComplete()) {
+              return FXCODEC_STATUS::kError;
+            }
+
+            int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+            cVal1 |= bVal << (7 - k);
+            CONTEXT = (((CONTEXT & 0x7bf7) << 1) | bVal |
+                       ((line2 >> (7 - k)) & 0x0010));
+          }
+          m_pLine[nLineBytes] = cVal1;
         }
-        m_pLine[nLineBytes] = cVal1;
+      }
+      m_pLine += nStride;
+      if (pState->pPause && pState->pPause->NeedToPauseNow()) {
+        m_loopIndex++;
+        m_ProgressiveStatus = FXCODEC_STATUS::kDecodeToBeContinued;
+        return FXCODEC_STATUS::kDecodeToBeContinued;
       }
     }
-    m_pLine += nStride;
-    if (pState->pPause && pState->pPause->NeedToPauseNow()) {
-      m_loopIndex++;
-      m_ProgressiveStatus = FXCODEC_STATUS::kDecodeToBeContinued;
-      return FXCODEC_STATUS::kDecodeToBeContinued;
-    }
-  }
-  m_ProgressiveStatus = FXCODEC_STATUS::kDecodeFinished;
-  return FXCODEC_STATUS::kDecodeFinished;
+    m_ProgressiveStatus = FXCODEC_STATUS::kDecodeFinished;
+    return FXCODEC_STATUS::kDecodeFinished;
+  });
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate0Unopt(
@@ -669,94 +683,100 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Opt3(
   int32_t nStride2 = nStride << 1;
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
   int32_t nBitsLeft = GBW - (nLineBytes << 3);
-  for (; m_loopIndex < GBH; m_loopIndex++) {
-    if (TPGDON) {
-      if (pArithDecoder->IsComplete())
-        return FXCODEC_STATUS::kError;
 
-      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContexts[0x0795]);
-    }
-    if (m_LTP) {
-      pImage->CopyLine(m_loopIndex, m_loopIndex - 1);
-    } else {
-      if (m_loopIndex > 1) {
-        uint8_t* pLine1 = m_pLine - nStride2;
-        uint8_t* pLine2 = m_pLine - nStride;
-        uint32_t line1 = (*pLine1++) << 4;
-        uint32_t line2 = *pLine2++;
-        uint32_t CONTEXT = (line1 & 0x1e00) | ((line2 >> 1) & 0x01f8);
-        for (int32_t cc = 0; cc < nLineBytes; cc++) {
-          line1 = (line1 << 8) | ((*pLine1++) << 4);
-          line2 = (line2 << 8) | (*pLine2++);
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; k--) {
-            if (pArithDecoder->IsComplete())
-              return FXCODEC_STATUS::kError;
-
-            int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-            cVal |= bVal << k;
-            CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
-                      ((line1 >> k) & 0x0200) | ((line2 >> (k + 1)) & 0x0008);
-          }
-          m_pLine[cc] = cVal;
+  UNSAFE_TODO({
+    for (; m_loopIndex < GBH; m_loopIndex++) {
+      if (TPGDON) {
+        if (pArithDecoder->IsComplete()) {
+          return FXCODEC_STATUS::kError;
         }
-        line1 <<= 8;
-        line2 <<= 8;
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; k++) {
-          if (pArithDecoder->IsComplete())
-            return FXCODEC_STATUS::kError;
 
-          int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
-                    ((line1 >> (7 - k)) & 0x0200) |
-                    ((line2 >> (8 - k)) & 0x0008);
-        }
-        m_pLine[nLineBytes] = cVal1;
+        m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContexts[0x0795]);
+      }
+      if (m_LTP) {
+        pImage->CopyLine(m_loopIndex, m_loopIndex - 1);
       } else {
-        uint8_t* pLine2 = m_pLine - nStride;
-        uint32_t line2 = (m_loopIndex & 1) ? (*pLine2++) : 0;
-        uint32_t CONTEXT = (line2 >> 1) & 0x01f8;
-        for (int32_t cc = 0; cc < nLineBytes; cc++) {
-          if (m_loopIndex & 1) {
+        if (m_loopIndex > 1) {
+          uint8_t* pLine1 = m_pLine - nStride2;
+          uint8_t* pLine2 = m_pLine - nStride;
+          uint32_t line1 = (*pLine1++) << 4;
+          uint32_t line2 = *pLine2++;
+          uint32_t CONTEXT = (line1 & 0x1e00) | ((line2 >> 1) & 0x01f8);
+          for (int32_t cc = 0; cc < nLineBytes; cc++) {
+            line1 = (line1 << 8) | ((*pLine1++) << 4);
             line2 = (line2 << 8) | (*pLine2++);
+            uint8_t cVal = 0;
+            for (int32_t k = 7; k >= 0; k--) {
+              if (pArithDecoder->IsComplete()) {
+                return FXCODEC_STATUS::kError;
+              }
+
+              int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+              cVal |= bVal << k;
+              CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
+                        ((line1 >> k) & 0x0200) | ((line2 >> (k + 1)) & 0x0008);
+            }
+            m_pLine[cc] = cVal;
           }
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; k--) {
+          line1 <<= 8;
+          line2 <<= 8;
+          uint8_t cVal1 = 0;
+          for (int32_t k = 0; k < nBitsLeft; k++) {
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS::kError;
 
             int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-            cVal |= bVal << k;
+            cVal1 |= bVal << (7 - k);
             CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
-                      ((line2 >> (k + 1)) & 0x0008);
+                      ((line1 >> (7 - k)) & 0x0200) |
+                      ((line2 >> (8 - k)) & 0x0008);
           }
-          m_pLine[cc] = cVal;
-        }
-        line2 <<= 8;
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; k++) {
-          if (pArithDecoder->IsComplete())
-            return FXCODEC_STATUS::kError;
+          m_pLine[nLineBytes] = cVal1;
+        } else {
+          uint8_t* pLine2 = m_pLine - nStride;
+          uint32_t line2 = (m_loopIndex & 1) ? (*pLine2++) : 0;
+          uint32_t CONTEXT = (line2 >> 1) & 0x01f8;
+          for (int32_t cc = 0; cc < nLineBytes; cc++) {
+            if (m_loopIndex & 1) {
+              line2 = (line2 << 8) | (*pLine2++);
+            }
+            uint8_t cVal = 0;
+            for (int32_t k = 7; k >= 0; k--) {
+              if (pArithDecoder->IsComplete()) {
+                return FXCODEC_STATUS::kError;
+              }
 
-          int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT =
-              ((CONTEXT & 0x0efb) << 1) | bVal | ((line2 >> (8 - k)) & 0x0008);
+              int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+              cVal |= bVal << k;
+              CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
+                        ((line2 >> (k + 1)) & 0x0008);
+            }
+            m_pLine[cc] = cVal;
+          }
+          line2 <<= 8;
+          uint8_t cVal1 = 0;
+          for (int32_t k = 0; k < nBitsLeft; k++) {
+            if (pArithDecoder->IsComplete())
+              return FXCODEC_STATUS::kError;
+
+            int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+            cVal1 |= bVal << (7 - k);
+            CONTEXT = ((CONTEXT & 0x0efb) << 1) | bVal |
+                      ((line2 >> (8 - k)) & 0x0008);
+          }
+          m_pLine[nLineBytes] = cVal1;
         }
-        m_pLine[nLineBytes] = cVal1;
+      }
+      m_pLine += nStride;
+      if (pState->pPause && pState->pPause->NeedToPauseNow()) {
+        m_loopIndex++;
+        m_ProgressiveStatus = FXCODEC_STATUS::kDecodeToBeContinued;
+        return FXCODEC_STATUS::kDecodeToBeContinued;
       }
     }
-    m_pLine += nStride;
-    if (pState->pPause && pState->pPause->NeedToPauseNow()) {
-      m_loopIndex++;
-      m_ProgressiveStatus = FXCODEC_STATUS::kDecodeToBeContinued;
-      return FXCODEC_STATUS::kDecodeToBeContinued;
-    }
-  }
-  m_ProgressiveStatus = FXCODEC_STATUS::kDecodeFinished;
-  return FXCODEC_STATUS::kDecodeFinished;
+    m_ProgressiveStatus = FXCODEC_STATUS::kDecodeFinished;
+    return FXCODEC_STATUS::kDecodeFinished;
+  });
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate1Unopt(
@@ -824,95 +844,100 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Opt3(
   int32_t nStride2 = nStride << 1;
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
   int32_t nBitsLeft = GBW - (nLineBytes << 3);
-  for (; m_loopIndex < GBH; m_loopIndex++) {
-    if (TPGDON) {
-      if (pArithDecoder->IsComplete())
-        return FXCODEC_STATUS::kError;
-
-      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContexts[0x00e5]);
-    }
-    if (m_LTP) {
-      pImage->CopyLine(m_loopIndex, m_loopIndex - 1);
-    } else {
-      if (m_loopIndex > 1) {
-        uint8_t* pLine1 = m_pLine - nStride2;
-        uint8_t* pLine2 = m_pLine - nStride;
-        uint32_t line1 = (*pLine1++) << 1;
-        uint32_t line2 = *pLine2++;
-        uint32_t CONTEXT = (line1 & 0x0380) | ((line2 >> 3) & 0x007c);
-        for (int32_t cc = 0; cc < nLineBytes; cc++) {
-          line1 = (line1 << 8) | ((*pLine1++) << 1);
-          line2 = (line2 << 8) | (*pLine2++);
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; k--) {
-            if (pArithDecoder->IsComplete())
-              return FXCODEC_STATUS::kError;
-
-            int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-            cVal |= bVal << k;
-            CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
-                      ((line1 >> k) & 0x0080) | ((line2 >> (k + 3)) & 0x0004);
-          }
-          m_pLine[cc] = cVal;
+  UNSAFE_TODO({
+    for (; m_loopIndex < GBH; m_loopIndex++) {
+      if (TPGDON) {
+        if (pArithDecoder->IsComplete()) {
+          return FXCODEC_STATUS::kError;
         }
-        line1 <<= 8;
-        line2 <<= 8;
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; k++) {
-          if (pArithDecoder->IsComplete())
-            return FXCODEC_STATUS::kError;
 
-          int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
-                    ((line1 >> (7 - k)) & 0x0080) |
-                    ((line2 >> (10 - k)) & 0x0004);
-        }
-        m_pLine[nLineBytes] = cVal1;
+        m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContexts[0x00e5]);
+      }
+      if (m_LTP) {
+        pImage->CopyLine(m_loopIndex, m_loopIndex - 1);
       } else {
-        uint8_t* pLine2 = m_pLine - nStride;
-        uint32_t line2 = (m_loopIndex & 1) ? (*pLine2++) : 0;
-        uint32_t CONTEXT = (line2 >> 3) & 0x007c;
-        for (int32_t cc = 0; cc < nLineBytes; cc++) {
-          if (m_loopIndex & 1) {
+        if (m_loopIndex > 1) {
+          uint8_t* pLine1 = m_pLine - nStride2;
+          uint8_t* pLine2 = m_pLine - nStride;
+          uint32_t line1 = (*pLine1++) << 1;
+          uint32_t line2 = *pLine2++;
+          uint32_t CONTEXT = (line1 & 0x0380) | ((line2 >> 3) & 0x007c);
+          for (int32_t cc = 0; cc < nLineBytes; cc++) {
+            line1 = (line1 << 8) | ((*pLine1++) << 1);
             line2 = (line2 << 8) | (*pLine2++);
+            uint8_t cVal = 0;
+            for (int32_t k = 7; k >= 0; k--) {
+              if (pArithDecoder->IsComplete()) {
+                return FXCODEC_STATUS::kError;
+              }
+
+              int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+              cVal |= bVal << k;
+              CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
+                        ((line1 >> k) & 0x0080) | ((line2 >> (k + 3)) & 0x0004);
+            }
+            m_pLine[cc] = cVal;
           }
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; k--) {
+          line1 <<= 8;
+          line2 <<= 8;
+          uint8_t cVal1 = 0;
+          for (int32_t k = 0; k < nBitsLeft; k++) {
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS::kError;
 
             int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-            cVal |= bVal << k;
+            cVal1 |= bVal << (7 - k);
             CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
-                      ((line2 >> (k + 3)) & 0x0004);
+                      ((line1 >> (7 - k)) & 0x0080) |
+                      ((line2 >> (10 - k)) & 0x0004);
           }
-          m_pLine[cc] = cVal;
-        }
-        line2 <<= 8;
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; k++) {
-          if (pArithDecoder->IsComplete())
-            return FXCODEC_STATUS::kError;
+          m_pLine[nLineBytes] = cVal1;
+        } else {
+          uint8_t* pLine2 = m_pLine - nStride;
+          uint32_t line2 = (m_loopIndex & 1) ? (*pLine2++) : 0;
+          uint32_t CONTEXT = (line2 >> 3) & 0x007c;
+          for (int32_t cc = 0; cc < nLineBytes; cc++) {
+            if (m_loopIndex & 1) {
+              line2 = (line2 << 8) | (*pLine2++);
+            }
+            uint8_t cVal = 0;
+            for (int32_t k = 7; k >= 0; k--) {
+              if (pArithDecoder->IsComplete()) {
+                return FXCODEC_STATUS::kError;
+              }
 
-          int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
-                    (((line2 >> (10 - k))) & 0x0004);
+              int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+              cVal |= bVal << k;
+              CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
+                        ((line2 >> (k + 3)) & 0x0004);
+            }
+            m_pLine[cc] = cVal;
+          }
+          line2 <<= 8;
+          uint8_t cVal1 = 0;
+          for (int32_t k = 0; k < nBitsLeft; k++) {
+            if (pArithDecoder->IsComplete())
+              return FXCODEC_STATUS::kError;
+
+            int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+            cVal1 |= bVal << (7 - k);
+            CONTEXT = ((CONTEXT & 0x01bd) << 1) | bVal |
+                      (((line2 >> (10 - k))) & 0x0004);
+          }
+          m_pLine[nLineBytes] = cVal1;
         }
-        m_pLine[nLineBytes] = cVal1;
+      }
+      m_pLine += nStride;
+      if (pState->pPause && m_loopIndex % 50 == 0 &&
+          pState->pPause->NeedToPauseNow()) {
+        m_loopIndex++;
+        m_ProgressiveStatus = FXCODEC_STATUS::kDecodeToBeContinued;
+        return FXCODEC_STATUS::kDecodeToBeContinued;
       }
     }
-    m_pLine += nStride;
-    if (pState->pPause && m_loopIndex % 50 == 0 &&
-        pState->pPause->NeedToPauseNow()) {
-      m_loopIndex++;
-      m_ProgressiveStatus = FXCODEC_STATUS::kDecodeToBeContinued;
-      return FXCODEC_STATUS::kDecodeToBeContinued;
-    }
-  }
-  m_ProgressiveStatus = FXCODEC_STATUS::kDecodeFinished;
-  return FXCODEC_STATUS::kDecodeFinished;
+    m_ProgressiveStatus = FXCODEC_STATUS::kDecodeFinished;
+    return FXCODEC_STATUS::kDecodeFinished;
+  })
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate2Unopt(
@@ -979,81 +1004,86 @@ FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Opt3(
   int32_t nStride = pImage->stride();
   int32_t nLineBytes = ((GBW + 7) >> 3) - 1;
   int32_t nBitsLeft = GBW - (nLineBytes << 3);
-  for (; m_loopIndex < GBH; m_loopIndex++) {
-    if (TPGDON) {
-      if (pArithDecoder->IsComplete())
-        return FXCODEC_STATUS::kError;
-
-      m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContexts[0x0195]);
-    }
-    if (m_LTP) {
-      pImage->CopyLine(m_loopIndex, m_loopIndex - 1);
-    } else {
-      if (m_loopIndex > 0) {
-        uint8_t* pLine1 = m_pLine - nStride;
-        uint32_t line1 = *pLine1++;
-        uint32_t CONTEXT = (line1 >> 1) & 0x03f0;
-        for (int32_t cc = 0; cc < nLineBytes; cc++) {
-          line1 = (line1 << 8) | (*pLine1++);
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; k--) {
-            if (pArithDecoder->IsComplete())
-              return FXCODEC_STATUS::kError;
-
-            int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-            cVal |= bVal << k;
-            CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal |
-                      ((line1 >> (k + 1)) & 0x0010);
-          }
-          m_pLine[cc] = cVal;
+  UNSAFE_TODO({
+    for (; m_loopIndex < GBH; m_loopIndex++) {
+      if (TPGDON) {
+        if (pArithDecoder->IsComplete()) {
+          return FXCODEC_STATUS::kError;
         }
-        line1 <<= 8;
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; k++) {
-          if (pArithDecoder->IsComplete())
-            return FXCODEC_STATUS::kError;
 
-          int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT =
-              ((CONTEXT & 0x01f7) << 1) | bVal | ((line1 >> (8 - k)) & 0x0010);
-        }
-        m_pLine[nLineBytes] = cVal1;
+        m_LTP = m_LTP ^ pArithDecoder->Decode(&gbContexts[0x0195]);
+      }
+      if (m_LTP) {
+        pImage->CopyLine(m_loopIndex, m_loopIndex - 1);
       } else {
-        uint32_t CONTEXT = 0;
-        for (int32_t cc = 0; cc < nLineBytes; cc++) {
-          uint8_t cVal = 0;
-          for (int32_t k = 7; k >= 0; k--) {
+        if (m_loopIndex > 0) {
+          uint8_t* pLine1 = m_pLine - nStride;
+          uint32_t line1 = *pLine1++;
+          uint32_t CONTEXT = (line1 >> 1) & 0x03f0;
+          for (int32_t cc = 0; cc < nLineBytes; cc++) {
+            line1 = (line1 << 8) | (*pLine1++);
+            uint8_t cVal = 0;
+            for (int32_t k = 7; k >= 0; k--) {
+              if (pArithDecoder->IsComplete()) {
+                return FXCODEC_STATUS::kError;
+              }
+
+              int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+              cVal |= bVal << k;
+              CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal |
+                        ((line1 >> (k + 1)) & 0x0010);
+            }
+            m_pLine[cc] = cVal;
+          }
+          line1 <<= 8;
+          uint8_t cVal1 = 0;
+          for (int32_t k = 0; k < nBitsLeft; k++) {
             if (pArithDecoder->IsComplete())
               return FXCODEC_STATUS::kError;
 
             int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-            cVal |= bVal << k;
+            cVal1 |= bVal << (7 - k);
+            CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal |
+                      ((line1 >> (8 - k)) & 0x0010);
+          }
+          m_pLine[nLineBytes] = cVal1;
+        } else {
+          uint32_t CONTEXT = 0;
+          for (int32_t cc = 0; cc < nLineBytes; cc++) {
+            uint8_t cVal = 0;
+            for (int32_t k = 7; k >= 0; k--) {
+              if (pArithDecoder->IsComplete()) {
+                return FXCODEC_STATUS::kError;
+              }
+
+              int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+              cVal |= bVal << k;
+              CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal;
+            }
+            m_pLine[cc] = cVal;
+          }
+          uint8_t cVal1 = 0;
+          for (int32_t k = 0; k < nBitsLeft; k++) {
+            if (pArithDecoder->IsComplete())
+              return FXCODEC_STATUS::kError;
+
+            int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
+            cVal1 |= bVal << (7 - k);
             CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal;
           }
-          m_pLine[cc] = cVal;
+          m_pLine[nLineBytes] = cVal1;
         }
-        uint8_t cVal1 = 0;
-        for (int32_t k = 0; k < nBitsLeft; k++) {
-          if (pArithDecoder->IsComplete())
-            return FXCODEC_STATUS::kError;
-
-          int bVal = pArithDecoder->Decode(&gbContexts[CONTEXT]);
-          cVal1 |= bVal << (7 - k);
-          CONTEXT = ((CONTEXT & 0x01f7) << 1) | bVal;
-        }
-        m_pLine[nLineBytes] = cVal1;
+      }
+      m_pLine += nStride;
+      if (pState->pPause && pState->pPause->NeedToPauseNow()) {
+        m_loopIndex++;
+        m_ProgressiveStatus = FXCODEC_STATUS::kDecodeToBeContinued;
+        return FXCODEC_STATUS::kDecodeToBeContinued;
       }
     }
-    m_pLine += nStride;
-    if (pState->pPause && pState->pPause->NeedToPauseNow()) {
-      m_loopIndex++;
-      m_ProgressiveStatus = FXCODEC_STATUS::kDecodeToBeContinued;
-      return FXCODEC_STATUS::kDecodeToBeContinued;
-    }
-  }
-  m_ProgressiveStatus = FXCODEC_STATUS::kDecodeFinished;
-  return FXCODEC_STATUS::kDecodeFinished;
+    m_ProgressiveStatus = FXCODEC_STATUS::kDecodeFinished;
+    return FXCODEC_STATUS::kDecodeFinished;
+  });
 }
 
 FXCODEC_STATUS CJBig2_GRDProc::ProgressiveDecodeArithTemplate3Unopt(
