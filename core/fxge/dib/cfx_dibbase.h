@@ -14,6 +14,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxge/dib/fx_dib.h"
 
 #if defined(PDF_USE_SKIA)
@@ -49,6 +50,11 @@ class CFX_DIBBase : public Retainable {
   // Calls Realize() if needed. Otherwise, return `this`.
   virtual RetainPtr<const CFX_DIBitmap> RealizeIfNeeded() const;
 #endif
+
+  template <typename T>
+  pdfium::span<const T> GetScanlineAs(int line) const {
+    return fxcrt::truncating_reinterpret_span<const T>(GetScanline(line));
+  }
 
   int GetWidth() const { return m_Width; }
   int GetHeight() const { return m_Height; }

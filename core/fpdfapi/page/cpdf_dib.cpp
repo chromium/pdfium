@@ -759,36 +759,38 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
       m_JpxInlineData.height = image_info.height;
       m_JpxInlineData.data.reserve(image_info.width * image_info.height);
       for (uint32_t row = 0; row < image_info.height; ++row) {
-        const uint8_t* src = result_bitmap->GetScanline(row).data();
-        uint8_t* dest = rgb_bitmap->GetWritableScanline(row).data();
-        UNSAFE_TODO({
-          for (uint32_t col = 0; col < image_info.width; ++col) {
-            uint8_t a = src[3];
-            m_JpxInlineData.data.push_back(a);
-            uint8_t na = 255 - a;
-            uint8_t b = (src[0] * a + 255 * na) / 255;
-            uint8_t g = (src[1] * a + 255 * na) / 255;
-            uint8_t r = (src[2] * a + 255 * na) / 255;
-            dest[0] = b;
-            dest[1] = g;
-            dest[2] = r;
-            src += 4;
-            dest += 3;
-          }
-        });
+        auto src =
+            result_bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(
+                image_info.width);
+        auto dest =
+            rgb_bitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row)
+                .first(image_info.width);
+        for (const auto& input : src) {
+          auto& output = dest.front();
+          m_JpxInlineData.data.push_back(input.alpha);
+          const uint8_t na = 255 - input.alpha;
+          output.blue = (input.blue * input.alpha + 255 * na) / 255;
+          output.green = (input.green * input.alpha + 255 * na) / 255;
+          output.red = (input.red * input.alpha + 255 * na) / 255;
+          dest = dest.subspan(1);
+        }
       }
     } else {
       // TODO(thestig): Is there existing code that does this already?
       for (uint32_t row = 0; row < image_info.height; ++row) {
-        const uint8_t* src = result_bitmap->GetScanline(row).data();
-        uint8_t* dest = rgb_bitmap->GetWritableScanline(row).data();
-        UNSAFE_TODO({
-          for (uint32_t col = 0; col < image_info.width; ++col) {
-            FXSYS_memcpy(dest, src, 3);
-            src += 4;
-            dest += 3;
-          }
-        });
+        auto src =
+            result_bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(
+                image_info.width);
+        auto dest =
+            rgb_bitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row)
+                .first(image_info.width);
+        for (const auto& input : src) {
+          auto& output = dest.front();
+          output.green = input.green;
+          output.red = input.red;
+          output.blue = input.blue;
+          dest = dest.subspan(1);
+        }
       }
     }
     result_bitmap = std::move(rgb_bitmap);
@@ -797,13 +799,11 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
              m_bpc < 8) {
     int scale = 8 - m_bpc;
     for (uint32_t row = 0; row < image_info.height; ++row) {
-      uint8_t* scanline = result_bitmap->GetWritableScanline(row).data();
-      UNSAFE_TODO({
-        for (uint32_t col = 0; col < image_info.width; ++col) {
-          *scanline = (*scanline) >> scale;
-          ++scanline;
-        }
-      });
+      pdfium::span<uint8_t> scanline =
+          result_bitmap->GetWritableScanline(row).first(image_info.width);
+      for (auto& pixel : scanline) {
+        pixel >>= scale;
+      }
     }
   }
 
