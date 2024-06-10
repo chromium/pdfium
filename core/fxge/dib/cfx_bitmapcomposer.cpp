@@ -4,16 +4,12 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/dib/cfx_bitmapcomposer.h"
 
 #include <stddef.h>
 
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -152,34 +148,38 @@ void CFX_BitmapComposer::ComposeScanlineV(
   const int y_step = m_bFlipY ? -dest_pitch : dest_pitch;
   uint8_t* src_scan = m_pScanlineV.data();
   uint8_t* dest_scan = dest_buf;
-  for (int i = 0; i < m_DestHeight; ++i) {
-    for (int j = 0; j < Bpp; ++j)
-      *src_scan++ = dest_scan[j];
-    dest_scan += y_step;
-  }
-  pdfium::span<uint8_t> clip_scan;
-  if (m_pClipMask) {
-    clip_scan = m_pClipScanV;
-    int clip_pitch = m_pClipMask->GetPitch();
-    const uint8_t* src_clip =
-        m_pClipMask->GetScanline(m_DestTop - m_pClipRgn->GetBox().top)
-            .subspan(dest_x - m_pClipRgn->GetBox().left)
-            .data();
-    if (m_bFlipY) {
-      src_clip += Fx2DSizeOrDie(clip_pitch, m_DestHeight - 1);
-      clip_pitch = -clip_pitch;
-    }
+  UNSAFE_TODO({
     for (int i = 0; i < m_DestHeight; ++i) {
-      clip_scan[i] = *src_clip;
-      src_clip += clip_pitch;
+      for (int j = 0; j < Bpp; ++j) {
+        *src_scan++ = dest_scan[j];
+      }
+      dest_scan += y_step;
     }
-  }
-  DoCompose(m_pScanlineV, scanline, m_DestHeight, clip_scan);
-  src_scan = m_pScanlineV.data();
-  dest_scan = dest_buf;
-  for (int i = 0; i < m_DestHeight; ++i) {
-    for (int j = 0; j < Bpp; ++j)
-      dest_scan[j] = *src_scan++;
-    dest_scan += y_step;
-  }
+    pdfium::span<uint8_t> clip_scan;
+    if (m_pClipMask) {
+      clip_scan = m_pClipScanV;
+      int clip_pitch = m_pClipMask->GetPitch();
+      const uint8_t* src_clip =
+          m_pClipMask->GetScanline(m_DestTop - m_pClipRgn->GetBox().top)
+              .subspan(dest_x - m_pClipRgn->GetBox().left)
+              .data();
+      if (m_bFlipY) {
+        src_clip += Fx2DSizeOrDie(clip_pitch, m_DestHeight - 1);
+        clip_pitch = -clip_pitch;
+      }
+      for (int i = 0; i < m_DestHeight; ++i) {
+        clip_scan[i] = *src_clip;
+        src_clip += clip_pitch;
+      }
+    }
+    DoCompose(m_pScanlineV, scanline, m_DestHeight, clip_scan);
+    src_scan = m_pScanlineV.data();
+    dest_scan = dest_buf;
+    for (int i = 0; i < m_DestHeight; ++i) {
+      for (int j = 0; j < Bpp; ++j) {
+        dest_scan[j] = *src_scan++;
+      }
+      dest_scan += y_step;
+    }
+  });
 }

@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/dib/cfx_imagetransformer.h"
 
 #include <math.h>
@@ -41,15 +36,17 @@ uint8_t BilinearInterpolate(const uint8_t* buf,
   int i_resx = 255 - data.res_x;
   int col_bpp_l = data.src_col_l * bpp;
   int col_bpp_r = data.src_col_r * bpp;
-  const uint8_t* buf_u = buf + data.row_offset_l + c_offset;
-  const uint8_t* buf_d = buf + data.row_offset_r + c_offset;
-  const uint8_t* src_pos0 = buf_u + col_bpp_l;
-  const uint8_t* src_pos1 = buf_u + col_bpp_r;
-  const uint8_t* src_pos2 = buf_d + col_bpp_l;
-  const uint8_t* src_pos3 = buf_d + col_bpp_r;
-  uint8_t r_pos_0 = (*src_pos0 * i_resx + *src_pos1 * data.res_x) >> 8;
-  uint8_t r_pos_1 = (*src_pos2 * i_resx + *src_pos3 * data.res_x) >> 8;
-  return (r_pos_0 * (255 - data.res_y) + r_pos_1 * data.res_y) >> 8;
+  UNSAFE_TODO({
+    const uint8_t* buf_u = buf + data.row_offset_l + c_offset;
+    const uint8_t* buf_d = buf + data.row_offset_r + c_offset;
+    const uint8_t* src_pos0 = buf_u + col_bpp_l;
+    const uint8_t* src_pos1 = buf_u + col_bpp_r;
+    const uint8_t* src_pos2 = buf_d + col_bpp_l;
+    const uint8_t* src_pos3 = buf_d + col_bpp_r;
+    uint8_t r_pos_0 = (*src_pos0 * i_resx + *src_pos1 * data.res_x) >> 8;
+    uint8_t r_pos_1 = (*src_pos2 * i_resx + *src_pos3 * data.res_x) >> 8;
+    return (r_pos_0 * (255 - data.res_y) + r_pos_1 * data.res_y) >> 8;
+  });
 }
 
 class CFX_BilinearMatrix {
@@ -130,7 +127,7 @@ void DoBilinearLoop(const CFX_ImageTransformer::CalcData& calc_data,
         d.row_offset_r = d.src_row_r * calc_data.pitch;
         func(d, dest);
       }
-      dest += increment;
+      UNSAFE_TODO(dest += increment);
     }
   }
 }

@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/dib/cfx_dibbase.h"
 
 #include <algorithm>
@@ -67,31 +62,33 @@ CFX_Palette::CFX_Palette(const RetainPtr<const CFX_DIBBase>& pBitmap)
   int bpp = pBitmap->GetBPP() / 8;
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
-  for (int row = 0; row < height; ++row) {
-    pdfium::span<const uint8_t> scan_line = pBitmap->GetScanline(row);
-    for (int col = 0; col < width; ++col) {
-      const uint8_t* src_port =
-          scan_line.subspan(Fx2DSizeOrDie(col, bpp)).data();
-      uint32_t b = src_port[0] & 0xf0;
-      uint32_t g = src_port[1] & 0xf0;
-      uint32_t r = src_port[2] & 0xf0;
-      uint32_t index = (r << 4) + g + (b >> 4);
-      ++m_Luts[index].first;
+  UNSAFE_TODO({
+    for (int row = 0; row < height; ++row) {
+      pdfium::span<const uint8_t> scan_line = pBitmap->GetScanline(row);
+      for (int col = 0; col < width; ++col) {
+        const uint8_t* src_port =
+            scan_line.subspan(Fx2DSizeOrDie(col, bpp)).data();
+        uint32_t b = src_port[0] & 0xf0;
+        uint32_t g = src_port[1] & 0xf0;
+        uint32_t r = src_port[2] & 0xf0;
+        uint32_t index = (r << 4) + g + (b >> 4);
+        ++m_Luts[index].first;
+      }
     }
-  }
-  // Move non-zeros to the front and count them
-  for (uint32_t row = 0; row < m_Luts.size(); ++row) {
-    if (m_Luts[row].first != 0) {
-      m_Luts[m_lut].first = m_Luts[row].first;
-      m_Luts[m_lut].second = row;
-      ++m_lut;
+    // Move non-zeros to the front and count them
+    for (uint32_t row = 0; row < m_Luts.size(); ++row) {
+      if (m_Luts[row].first != 0) {
+        m_Luts[m_lut].first = m_Luts[row].first;
+        m_Luts[m_lut].second = row;
+        ++m_lut;
+      }
     }
-  }
-  pdfium::span<LutsData> lut_span = pdfium::make_span(m_Luts).first(m_lut);
-  std::sort(lut_span.begin(), lut_span.end(),
-            [](const LutsData& arg1, const LutsData& arg2) {
-              return arg1.first < arg2.first;
-            });
+    pdfium::span<LutsData> lut_span = pdfium::make_span(m_Luts).first(m_lut);
+    std::sort(lut_span.begin(), lut_span.end(),
+              [](const LutsData& arg1, const LutsData& arg2) {
+                return arg1.first < arg2.first;
+              });
+  });
   ObtainPalette();
 }
 
@@ -153,11 +150,14 @@ void ConvertBuffer_1bppMask2Gray(pdfium::span<uint8_t> dest_buf,
     fxcrt::spanset(dest_span.first(width), kResetGray);
     uint8_t* dest_scan = dest_span.data();
     const uint8_t* src_scan = src_span.data();
-    for (int col = src_left; col < src_left + width; ++col) {
-      if (src_scan[col / 8] & (1 << (7 - col % 8)))
-        *dest_scan = kSetGray;
-      ++dest_scan;
-    }
+    UNSAFE_TODO({
+      for (int col = src_left; col < src_left + width; ++col) {
+        if (src_scan[col / 8] & (1 << (7 - col % 8))) {
+          *dest_scan = kSetGray;
+        }
+        ++dest_scan;
+      }
+    });
   }
 }
 
@@ -198,11 +198,14 @@ void ConvertBuffer_1bppPlt2Gray(pdfium::span<uint8_t> dest_buf,
     fxcrt::spanset(dest_span.first(width), gray0);
     uint8_t* dest_scan = dest_span.data();
     const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row).data();
-    for (int col = src_left; col < src_left + width; ++col) {
-      if (src_scan[col / 8] & (1 << (7 - col % 8)))
-        *dest_scan = gray1;
-      ++dest_scan;
-    }
+    UNSAFE_TODO({
+      for (int col = src_left; col < src_left + width; ++col) {
+        if (src_scan[col / 8] & (1 << (7 - col % 8))) {
+          *dest_scan = gray1;
+        }
+        ++dest_scan;
+      }
+    });
   }
 }
 
@@ -215,19 +218,21 @@ void ConvertBuffer_8bppPlt2Gray(pdfium::span<uint8_t> dest_buf,
                                 int src_top) {
   pdfium::span<const uint32_t> src_palette = pSrcBitmap->GetPaletteSpan();
   uint8_t gray[256];
-  for (size_t i = 0; i < std::size(gray); ++i) {
-    gray[i] = FXRGB2GRAY(FXARGB_R(src_palette[i]), FXARGB_G(src_palette[i]),
-                         FXARGB_B(src_palette[i]));
-  }
-
-  for (int row = 0; row < height; ++row) {
-    uint8_t* dest_scan =
-        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
-    const uint8_t* src_scan =
-        pSrcBitmap->GetScanline(src_top + row).subspan(src_left).data();
-    for (int col = 0; col < width; ++col)
-      *dest_scan++ = gray[*src_scan++];
-  }
+  UNSAFE_TODO({
+    for (size_t i = 0; i < std::size(gray); ++i) {
+      gray[i] = FXRGB2GRAY(FXARGB_R(src_palette[i]), FXARGB_G(src_palette[i]),
+                           FXARGB_B(src_palette[i]));
+    }
+    for (int row = 0; row < height; ++row) {
+      uint8_t* dest_scan =
+          dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
+      const uint8_t* src_scan =
+          pSrcBitmap->GetScanline(src_top + row).subspan(src_left).data();
+      for (int col = 0; col < width; ++col) {
+        *dest_scan++ = gray[*src_scan++];
+      }
+    }
+  });
 }
 
 void ConvertBuffer_Rgb2Gray(pdfium::span<uint8_t> dest_buf,
@@ -244,10 +249,12 @@ void ConvertBuffer_Rgb2Gray(pdfium::span<uint8_t> dest_buf,
         dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row).subspan(x_offset).data();
-    for (int col = 0; col < width; ++col) {
-      *dest_scan++ = FXRGB2GRAY(src_scan[2], src_scan[1], src_scan[0]);
-      src_scan += Bpp;
-    }
+    UNSAFE_TODO({
+      for (int col = 0; col < width; ++col) {
+        *dest_scan++ = FXRGB2GRAY(src_scan[2], src_scan[1], src_scan[0]);
+        src_scan += Bpp;
+      }
+    });
   }
 }
 
@@ -266,13 +273,17 @@ void ConvertBuffer_IndexCopy(pdfium::span<uint8_t> dest_buf,
       fxcrt::spanset(dest_span.first(width), 255);
       uint8_t* dest_scan = dest_span.data();
       const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row).data();
-      for (int col = src_left; col < src_left + width; ++col) {
-        // If the source bit is set, then set the destination pixel to be black.
-        if (src_scan[col / 8] & (1 << (7 - col % 8)))
-          *dest_scan = 0;
+      UNSAFE_TODO({
+        for (int col = src_left; col < src_left + width; ++col) {
+          // If the source bit is set, then set the destination pixel to be
+          // black.
+          if (src_scan[col / 8] & (1 << (7 - col % 8))) {
+            *dest_scan = 0;
+          }
 
-        ++dest_scan;
-      }
+          ++dest_scan;
+        }
+      });
     }
   } else {
     for (int row = 0; row < height; ++row) {
@@ -318,20 +329,22 @@ DataVector<uint32_t> ConvertBuffer_Rgb2PltRgb8(
         pSrcBitmap->GetScanline(src_top + row).subspan(src_left);
     uint8_t* dest_scan =
         dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
-    for (int col = 0; col < width; ++col) {
-      const uint8_t* src_port =
-          src_span.subspan(Fx2DSizeOrDie(col, bpp)).data();
-      int r = src_port[2] & 0xf0;
-      int g = src_port[1] & 0xf0;
-      int b = src_port[0] & 0xf0;
-      uint32_t clrindex = (r << 4) + g + (b >> 4);
-      for (size_t i = luts.size(); i > 0; --i) {
-        if (clrindex == luts[i - 1].second) {
-          *(dest_scan + col) = static_cast<uint8_t>(luts[i - 1].first);
-          break;
+    UNSAFE_TODO({
+      for (int col = 0; col < width; ++col) {
+        const uint8_t* src_port =
+            src_span.subspan(Fx2DSizeOrDie(col, bpp)).data();
+        int r = src_port[2] & 0xf0;
+        int g = src_port[1] & 0xf0;
+        int b = src_port[0] & 0xf0;
+        uint32_t clrindex = (r << 4) + g + (b >> 4);
+        for (size_t i = luts.size(); i > 0; --i) {
+          if (clrindex == luts[i - 1].second) {
+            *(dest_scan + col) = static_cast<uint8_t>(luts[i - 1].first);
+            break;
+          }
         }
       }
-    }
+    });
   }
 
   pdfium::span<const uint32_t> src_palette_span = src_palette.GetPalette();
@@ -353,12 +366,14 @@ void ConvertBuffer_1bppMask2Rgb(FXDIB_Format dest_format,
     uint8_t* dest_scan =
         dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
     const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row).data();
-    for (int col = src_left; col < src_left + width; ++col) {
-      uint8_t value =
-          (src_scan[col / 8] & (1 << (7 - col % 8))) ? kSetGray : kResetGray;
-      FXSYS_memset(dest_scan, value, 3);
-      dest_scan += comps;
-    }
+    UNSAFE_TODO({
+      for (int col = src_left; col < src_left + width; ++col) {
+        uint8_t value =
+            (src_scan[col / 8] & (1 << (7 - col % 8))) ? kSetGray : kResetGray;
+        FXSYS_memset(dest_scan, value, 3);
+        dest_scan += comps;
+      }
+    });
   }
 }
 
@@ -376,11 +391,13 @@ void ConvertBuffer_8bppMask2Rgb(FXDIB_Format dest_format,
         dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row).subspan(src_left).data();
-    for (int col = 0; col < width; ++col) {
-      FXSYS_memset(dest_scan, *src_scan, 3);
-      dest_scan += comps;
-      ++src_scan;
-    }
+    UNSAFE_TODO({
+      for (int col = 0; col < width; ++col) {
+        FXSYS_memset(dest_scan, *src_scan, 3);
+        dest_scan += comps;
+        ++src_scan;
+      }
+    });
   }
 }
 
@@ -402,11 +419,13 @@ void ConvertBuffer_1bppPlt2Rgb(FXDIB_Format dest_format,
     uint8_t* dest_scan =
         dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
     const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row).data();
-    for (int col = src_left; col < src_left + width; ++col) {
-      size_t offset = (src_scan[col / 8] & (1 << (7 - col % 8))) ? 3 : 0;
-      FXSYS_memcpy(dest_scan, dst_palette + offset, 3);
-      dest_scan += comps;
-    }
+    UNSAFE_TODO({
+      for (int col = src_left; col < src_left + width; ++col) {
+        size_t offset = (src_scan[col / 8] & (1 << (7 - col % 8))) ? 3 : 0;
+        FXSYS_memcpy(dest_scan, dst_palette + offset, 3);
+        dest_scan += comps;
+      }
+    });
   }
 }
 
@@ -420,23 +439,25 @@ void ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dest_format,
                                int src_top) {
   pdfium::span<const uint32_t> src_palette = pSrcBitmap->GetPaletteSpan();
   uint8_t dst_palette[768];
-  for (int i = 0; i < 256; ++i) {
-    dst_palette[3 * i] = FXARGB_B(src_palette[i]);
-    dst_palette[3 * i + 1] = FXARGB_G(src_palette[i]);
-    dst_palette[3 * i + 2] = FXARGB_R(src_palette[i]);
-  }
-  int comps = GetCompsFromFormat(dest_format);
-  for (int row = 0; row < height; ++row) {
-    uint8_t* dest_scan =
-        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
-    const uint8_t* src_scan =
-        pSrcBitmap->GetScanline(src_top + row).subspan(src_left).data();
-    for (int col = 0; col < width; ++col) {
-      uint8_t* src_pixel = dst_palette + 3 * (*src_scan++);
-      FXSYS_memcpy(dest_scan, src_pixel, 3);
-      dest_scan += comps;
+  UNSAFE_TODO({
+    for (int i = 0; i < 256; ++i) {
+      dst_palette[3 * i] = FXARGB_B(src_palette[i]);
+      dst_palette[3 * i + 1] = FXARGB_G(src_palette[i]);
+      dst_palette[3 * i + 2] = FXARGB_R(src_palette[i]);
     }
-  }
+    int comps = GetCompsFromFormat(dest_format);
+    for (int row = 0; row < height; ++row) {
+      uint8_t* dest_scan =
+          dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
+      const uint8_t* src_scan =
+          pSrcBitmap->GetScanline(src_top + row).subspan(src_left).data();
+      for (int col = 0; col < width; ++col) {
+        uint8_t* src_pixel = dst_palette + 3 * (*src_scan++);
+        FXSYS_memcpy(dest_scan, src_pixel, 3);
+        dest_scan += comps;
+      }
+    }
+  });
 }
 
 void ConvertBuffer_24bppRgb2Rgb24(
@@ -470,11 +491,13 @@ void ConvertBuffer_32bppRgb2Rgb24(
         dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row).subspan(x_offset).data();
-    for (int col = 0; col < width; ++col) {
-      FXSYS_memcpy(dest_scan, src_scan, 3);
-      dest_scan += 3;
-      src_scan += 4;
-    }
+    UNSAFE_TODO({
+      for (int col = 0; col < width; ++col) {
+        FXSYS_memcpy(dest_scan, src_scan, 3);
+        dest_scan += 3;
+        src_scan += 4;
+      }
+    });
   }
 }
 
@@ -492,11 +515,13 @@ void ConvertBuffer_Rgb2Rgb32(pdfium::span<uint8_t> dest_buf,
         dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
     const uint8_t* src_scan =
         pSrcBitmap->GetScanline(src_top + row).subspan(x_offset).data();
-    for (int col = 0; col < width; ++col) {
-      FXSYS_memcpy(dest_scan, src_scan, 3);
-      dest_scan += 4;
-      src_scan += comps;
-    }
+    UNSAFE_TODO({
+      for (int col = 0; col < width; ++col) {
+        FXSYS_memcpy(dest_scan, src_scan, 3);
+        dest_scan += 4;
+        src_scan += comps;
+      }
+    });
   }
 }
 
@@ -669,10 +694,12 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipToInternal(
       const uint32_t* src_scan =
           src_span.subspan(rect.left / 32, dword_count + 1).data();
       uint32_t* dst_scan = dst_span.first(dword_count).data();
-      for (int i = 0; i < dword_count; ++i) {
-        dst_scan[i] =
-            (src_scan[i] << left_shift) | (src_scan[i + 1] >> right_shift);
-      }
+      UNSAFE_TODO({
+        for (int i = 0; i < dword_count; ++i) {
+          dst_scan[i] =
+              (src_scan[i] << left_shift) | (src_scan[i + 1] >> right_shift);
+        }
+      });
     }
   } else {
     std::optional<uint32_t> copy_len = fxge::CalculatePitch8(
@@ -694,7 +721,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipToInternal(
           GetScanline(row).subspan(offset.ValueOrDie()).data();
       uint8_t* dest_scan =
           pNewBitmap->GetWritableScanline(row - rect.top).data();
-      FXSYS_memcpy(dest_scan, src_scan, copy_len.value());
+      UNSAFE_TODO(FXSYS_memcpy(dest_scan, src_scan, copy_len.value()));
     }
   }
   return pNewBitmap;
@@ -880,10 +907,12 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneAlphaMask() const {
   for (int row = 0; row < m_Height; ++row) {
     const uint8_t* src_scan = GetScanline(row).subspan(3).data();
     uint8_t* dest_scan = pMask->GetWritableScanline(row).data();
-    for (int col = 0; col < m_Width; ++col) {
-      *dest_scan++ = *src_scan;
-      src_scan += 4;
-    }
+    UNSAFE_TODO({
+      for (int col = 0; col < m_Width; ++col) {
+        *dest_scan++ = *src_scan;
+        src_scan += 4;
+      }
+    });
   }
   return pMask;
 }
@@ -895,49 +924,52 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
 
   pFlipped->SetPalette(GetPaletteSpan());
   int Bpp = GetBppFromFormat(m_Format) / 8;
-  for (int row = 0; row < m_Height; ++row) {
-    const uint8_t* src_scan = GetScanline(row).data();
-    uint8_t* dest_scan =
-        pFlipped->GetWritableScanline(bYFlip ? m_Height - row - 1 : row).data();
-    if (!bXFlip) {
-      FXSYS_memcpy(dest_scan, src_scan, m_Pitch);
-      continue;
-    }
-    if (GetBppFromFormat(m_Format) == 1) {
-      FXSYS_memset(dest_scan, 0, m_Pitch);
-      for (int col = 0; col < m_Width; ++col) {
-        if (src_scan[col / 8] & (1 << (7 - col % 8))) {
-          int dest_col = m_Width - col - 1;
-          dest_scan[dest_col / 8] |= (1 << (7 - dest_col % 8));
+  UNSAFE_TODO({
+    for (int row = 0; row < m_Height; ++row) {
+      const uint8_t* src_scan = GetScanline(row).data();
+      uint8_t* dest_scan =
+          pFlipped->GetWritableScanline(bYFlip ? m_Height - row - 1 : row)
+              .data();
+      if (!bXFlip) {
+        FXSYS_memcpy(dest_scan, src_scan, m_Pitch);
+        continue;
+      }
+      if (GetBppFromFormat(m_Format) == 1) {
+        FXSYS_memset(dest_scan, 0, m_Pitch);
+        for (int col = 0; col < m_Width; ++col) {
+          if (src_scan[col / 8] & (1 << (7 - col % 8))) {
+            int dest_col = m_Width - col - 1;
+            dest_scan[dest_col / 8] |= (1 << (7 - dest_col % 8));
+          }
+        }
+        continue;
+      }
+
+      dest_scan += (m_Width - 1) * Bpp;
+      if (Bpp == 1) {
+        for (int col = 0; col < m_Width; ++col) {
+          *dest_scan = *src_scan;
+          --dest_scan;
+          ++src_scan;
+        }
+      } else if (Bpp == 3) {
+        for (int col = 0; col < m_Width; ++col) {
+          FXSYS_memcpy(dest_scan, src_scan, 3);
+          dest_scan -= 3;
+          src_scan += 3;
+        }
+      } else {
+        DCHECK_EQ(Bpp, 4);
+        for (int col = 0; col < m_Width; ++col) {
+          const auto* src_scan32 = reinterpret_cast<const uint32_t*>(src_scan);
+          uint32_t* dest_scan32 = reinterpret_cast<uint32_t*>(dest_scan);
+          *dest_scan32 = *src_scan32;
+          dest_scan -= 4;
+          src_scan += 4;
         }
       }
-      continue;
     }
-
-    dest_scan += (m_Width - 1) * Bpp;
-    if (Bpp == 1) {
-      for (int col = 0; col < m_Width; ++col) {
-        *dest_scan = *src_scan;
-        --dest_scan;
-        ++src_scan;
-      }
-    } else if (Bpp == 3) {
-      for (int col = 0; col < m_Width; ++col) {
-        FXSYS_memcpy(dest_scan, src_scan, 3);
-        dest_scan -= 3;
-        src_scan += 3;
-      }
-    } else {
-      DCHECK_EQ(Bpp, 4);
-      for (int col = 0; col < m_Width; ++col) {
-        const auto* src_scan32 = reinterpret_cast<const uint32_t*>(src_scan);
-        uint32_t* dest_scan32 = reinterpret_cast<uint32_t*>(dest_scan);
-        *dest_scan32 = *src_scan32;
-        dest_scan -= 4;
-        src_scan += 4;
-      }
-    }
-  }
+  });
   return pFlipped;
 }
 
@@ -986,63 +1018,71 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
   const int row_end = bXFlip ? m_Height - dest_clip.left : dest_clip.right;
   const int col_start = bYFlip ? m_Width - dest_clip.bottom : dest_clip.top;
   const int col_end = bYFlip ? m_Width - dest_clip.top : dest_clip.bottom;
-  if (GetBPP() == 1) {
-    fxcrt::spanset(dest_span, 0xff);
-    if (bYFlip)
-      dest_span = dest_span.subspan(dest_last_row_offset);
-    const int dest_step = bYFlip ? -dest_pitch : dest_pitch;
-    for (int row = row_start; row < row_end; ++row) {
-      const uint8_t* src_scan = GetScanline(row).data();
-      int dest_col = (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
-                     dest_clip.left;
-      uint8_t* dest_scan = dest_span.data();
-      for (int col = col_start; col < col_end; ++col) {
-        if (!(src_scan[col / 8] & (1 << (7 - col % 8))))
-          dest_scan[dest_col / 8] &= ~(1 << (7 - dest_col % 8));
-        dest_scan += dest_step;
+  UNSAFE_TODO({
+    if (GetBPP() == 1) {
+      fxcrt::spanset(dest_span, 0xff);
+      if (bYFlip) {
+        dest_span = dest_span.subspan(dest_last_row_offset);
       }
-    }
-  } else {
-    int nBytes = GetBPP() / 8;
-    int dest_step = bYFlip ? -dest_pitch : dest_pitch;
-    if (nBytes == 3)
-      dest_step -= 2;
-    if (bYFlip)
-      dest_span = dest_span.subspan(dest_last_row_offset);
-    for (int row = row_start; row < row_end; ++row) {
-      int dest_col = (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
-                     dest_clip.left;
-      size_t dest_offset = Fx2DSizeOrDie(dest_col, nBytes);
-      uint8_t* dest_scan = dest_span.subspan(dest_offset).data();
-      if (nBytes == 4) {
-        const uint32_t* src_scan =
-            fxcrt::reinterpret_span<const uint32_t>(GetScanline(row))
-                .subspan(col_start)
-                .data();
+      const int dest_step = bYFlip ? -dest_pitch : dest_pitch;
+      for (int row = row_start; row < row_end; ++row) {
+        const uint8_t* src_scan = GetScanline(row).data();
+        int dest_col =
+            (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
+            dest_clip.left;
+        uint8_t* dest_scan = dest_span.data();
         for (int col = col_start; col < col_end; ++col) {
-          uint32_t* dest_scan32 = reinterpret_cast<uint32_t*>(dest_scan);
-          *dest_scan32 = *src_scan++;
+          if (!(src_scan[col / 8] & (1 << (7 - col % 8)))) {
+            dest_scan[dest_col / 8] &= ~(1 << (7 - dest_col % 8));
+          }
           dest_scan += dest_step;
         }
-      } else {
-        const uint8_t* src_scan =
-            GetScanline(row).subspan(col_start * nBytes).data();
-        if (nBytes == 1) {
+      }
+    } else {
+      int nBytes = GetBPP() / 8;
+      int dest_step = bYFlip ? -dest_pitch : dest_pitch;
+      if (nBytes == 3) {
+        dest_step -= 2;
+      }
+      if (bYFlip) {
+        dest_span = dest_span.subspan(dest_last_row_offset);
+      }
+      for (int row = row_start; row < row_end; ++row) {
+        int dest_col =
+            (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
+            dest_clip.left;
+        size_t dest_offset = Fx2DSizeOrDie(dest_col, nBytes);
+        uint8_t* dest_scan = dest_span.subspan(dest_offset).data();
+        if (nBytes == 4) {
+          const uint32_t* src_scan =
+              fxcrt::reinterpret_span<const uint32_t>(GetScanline(row))
+                  .subspan(col_start)
+                  .data();
           for (int col = col_start; col < col_end; ++col) {
-            *dest_scan = *src_scan++;
+            uint32_t* dest_scan32 = reinterpret_cast<uint32_t*>(dest_scan);
+            *dest_scan32 = *src_scan++;
             dest_scan += dest_step;
           }
         } else {
-          for (int col = col_start; col < col_end; ++col) {
-            FXSYS_memcpy(dest_scan, src_scan, 3);
-            dest_scan += 2 + dest_step;
-            src_scan += 3;
+          const uint8_t* src_scan =
+              GetScanline(row).subspan(col_start * nBytes).data();
+          if (nBytes == 1) {
+            for (int col = col_start; col < col_end; ++col) {
+              *dest_scan = *src_scan++;
+              dest_scan += dest_step;
+            }
+          } else {
+            for (int col = col_start; col < col_end; ++col) {
+              FXSYS_memcpy(dest_scan, src_scan, 3);
+              dest_scan += 2 + dest_step;
+              src_scan += 3;
+            }
           }
         }
       }
     }
-  }
-  return pTransBitmap;
+    return pTransBitmap;
+  });
 }
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::TransformTo(const CFX_Matrix& mtDest,
