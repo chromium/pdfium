@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "fxjs/xfa/cfxjse_formcalc_context.h"
 
 #include <ctype.h>
@@ -27,6 +22,7 @@
 #include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/code_point_view.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_extension.h"
@@ -330,27 +326,30 @@ void AlternateDateTimeSymbols(WideString* pPattern,
   bool bInConstRange = false;
   bool bEscape = false;
   int32_t i = 0;
-  while (i < nLength) {
-    wchar_t wc = (*pPattern)[i];
-    if (wc == L'\'') {
-      bInConstRange = !bInConstRange;
-      if (bEscape) {
-        i++;
-      } else {
-        pPattern->Delete(i);
-        nLength--;
+  UNSAFE_TODO({
+    while (i < nLength) {
+      wchar_t wc = (*pPattern)[i];
+      if (wc == L'\'') {
+        bInConstRange = !bInConstRange;
+        if (bEscape) {
+          i++;
+        } else {
+          pPattern->Delete(i);
+          nLength--;
+        }
+        bEscape = !bEscape;
+        continue;
       }
-      bEscape = !bEscape;
-      continue;
+      if (!bInConstRange && wc >= L'A' && wc <= L'a') {
+        uint8_t nAlt = pAltTable[wc - L'A'];
+        if (nAlt != 255) {
+          pPattern->SetAt(i, wsAltSymbols[nAlt]);
+        }
+      }
+      i++;
+      bEscape = false;
     }
-    if (!bInConstRange && wc >= L'A' && wc <= L'a') {
-      uint8_t nAlt = pAltTable[wc - L'A'];
-      if (nAlt != 255)
-        pPattern->SetAt(i, wsAltSymbols[nAlt]);
-    }
-    i++;
-    bEscape = false;
-  }
+  });
 }
 
 std::pair<bool, CXFA_LocaleValue::ValueType> PatternStringType(
@@ -394,51 +393,59 @@ std::pair<bool, CXFA_LocaleValue::ValueType> PatternStringType(
   int32_t iLength = wsPattern.GetLength();
   int32_t iIndex = 0;
   bool bSingleQuotation = false;
-  while (iIndex < iLength) {
-    wchar_t wsPatternChar = pData[iIndex];
-    if (wsPatternChar == 0x27) {
-      bSingleQuotation = !bSingleQuotation;
-      iIndex++;
-      continue;
-    }
-    if (bSingleQuotation) {
-      iIndex++;
-      continue;
-    }
-
-    if (wsPatternChar == 'h' || wsPatternChar == 'k')
-      return {false, CXFA_LocaleValue::ValueType::kTime};
-    if (wsPatternChar == 'x' || wsPatternChar == 'o' || wsPatternChar == '0')
-      return {false, CXFA_LocaleValue::ValueType::kText};
-    if (wsPatternChar == 'v' || wsPatternChar == '8' || wsPatternChar == '$')
-      return {false, CXFA_LocaleValue::ValueType::kFloat};
-    if (wsPatternChar == 'y' || wsPatternChar == 'j') {
-      iIndex++;
-      wchar_t timePatternChar;
-      while (iIndex < iLength) {
-        timePatternChar = pData[iIndex];
-        if (timePatternChar == 0x27) {
-          bSingleQuotation = !bSingleQuotation;
-          iIndex++;
-          continue;
-        }
-        if (!bSingleQuotation && timePatternChar == 't')
-          return {false, CXFA_LocaleValue::ValueType::kDateTime};
+  UNSAFE_TODO({
+    while (iIndex < iLength) {
+      wchar_t wsPatternChar = pData[iIndex];
+      if (wsPatternChar == 0x27) {
+        bSingleQuotation = !bSingleQuotation;
         iIndex++;
+        continue;
       }
-      return {false, CXFA_LocaleValue::ValueType::kDate};
-    }
+      if (bSingleQuotation) {
+        iIndex++;
+        continue;
+      }
 
-    if (wsPatternChar == 'a') {
-      type = CXFA_LocaleValue::ValueType::kText;
-    } else if (wsPatternChar == 'z' || wsPatternChar == 's' ||
-               wsPatternChar == 'e' || wsPatternChar == ',' ||
-               wsPatternChar == '.') {
-      type = CXFA_LocaleValue::ValueType::kFloat;
+      if (wsPatternChar == 'h' || wsPatternChar == 'k') {
+        return {false, CXFA_LocaleValue::ValueType::kTime};
+      }
+      if (wsPatternChar == 'x' || wsPatternChar == 'o' ||
+          wsPatternChar == '0') {
+        return {false, CXFA_LocaleValue::ValueType::kText};
+      }
+      if (wsPatternChar == 'v' || wsPatternChar == '8' ||
+          wsPatternChar == '$') {
+        return {false, CXFA_LocaleValue::ValueType::kFloat};
+      }
+      if (wsPatternChar == 'y' || wsPatternChar == 'j') {
+        iIndex++;
+        wchar_t timePatternChar;
+        while (iIndex < iLength) {
+          timePatternChar = pData[iIndex];
+          if (timePatternChar == 0x27) {
+            bSingleQuotation = !bSingleQuotation;
+            iIndex++;
+            continue;
+          }
+          if (!bSingleQuotation && timePatternChar == 't') {
+            return {false, CXFA_LocaleValue::ValueType::kDateTime};
+          }
+          iIndex++;
+        }
+        return {false, CXFA_LocaleValue::ValueType::kDate};
+      }
+
+      if (wsPatternChar == 'a') {
+        type = CXFA_LocaleValue::ValueType::kText;
+      } else if (wsPatternChar == 'z' || wsPatternChar == 's' ||
+                 wsPatternChar == 'e' || wsPatternChar == ',' ||
+                 wsPatternChar == '.') {
+        type = CXFA_LocaleValue::ValueType::kFloat;
+      }
+      iIndex++;
     }
-    iIndex++;
-  }
-  return {false, type};
+    return {false, type};
+  });
 }
 
 CFXJSE_FormCalcContext* ToFormCalcContext(CFXJSE_HostObject* pHostObj) {
@@ -523,7 +530,7 @@ ByteString GUIDString(bool bSeparator) {
       if (bSeparator && (i == 4 || i == 6 || i == 8 || i == 10))
         pBuf[out_index++] = L'-';
 
-      FXSYS_IntToTwoHexChars(data[i], &pBuf[out_index]);
+      FXSYS_IntToTwoHexChars(UNSAFE_TODO(data[i]), &pBuf[out_index]);
     }
   }
   bsGUID.ReleaseBuffer(bSeparator ? 36 : 32);
@@ -577,95 +584,108 @@ WideString DecodeURL(const WideString& wsURL) {
   const wchar_t* pData = wsURL.c_str();
   size_t iLen = wsURL.GetLength();
   WideTextBuffer wsResultBuf;
-  for (size_t i = 0; i < iLen; ++i) {
-    wchar_t ch = pData[i];
-    if ('%' != ch) {
-      wsResultBuf.AppendChar(ch);
-      continue;
-    }
-    wchar_t chTemp = 0;
-    int32_t iCount = 0;
-    while (iCount < 2) {
-      if (++i >= iLen) {
-        return WideString();
+  UNSAFE_TODO({
+    for (size_t i = 0; i < iLen; ++i) {
+      wchar_t ch = pData[i];
+      if ('%' != ch) {
+        wsResultBuf.AppendChar(ch);
+        continue;
       }
-      chTemp *= 16;
-      ch = pData[i];
-      if (!FXSYS_IsWideHexDigit(ch))
-        return WideString();
-      chTemp += FXSYS_WideHexCharToInt(ch);
-      ++iCount;
+      wchar_t chTemp = 0;
+      int32_t iCount = 0;
+      while (iCount < 2) {
+        if (++i >= iLen) {
+          return WideString();
+        }
+        chTemp *= 16;
+        ch = pData[i];
+        if (!FXSYS_IsWideHexDigit(ch)) {
+          return WideString();
+        }
+        chTemp += FXSYS_WideHexCharToInt(ch);
+        ++iCount;
+      }
+      wsResultBuf.AppendChar(chTemp);
     }
-    wsResultBuf.AppendChar(chTemp);
-  }
-  return wsResultBuf.MakeString();
+    return wsResultBuf.MakeString();
+  });
 }
 
 WideString DecodeMLInternal(const WideString& wsHTML, bool bIsHTML) {
   const wchar_t* pData = wsHTML.c_str();
   size_t iLen = wsHTML.GetLength();
   WideTextBuffer wsResultBuf;
-  for (size_t i = 0; i < iLen; ++i) {
-    wchar_t ch = pData[i];
-    if (ch != '&') {
-      wsResultBuf.AppendChar(ch);
-      continue;
-    }
+  UNSAFE_TODO({
+    for (size_t i = 0; i < iLen; ++i) {
+      wchar_t ch = pData[i];
+      if (ch != '&') {
+        wsResultBuf.AppendChar(ch);
+        continue;
+      }
 
-    if (++i >= iLen)
-      break;
-    ch = pData[i];
-    if (ch == '#') {
       if (++i >= iLen)
         break;
       ch = pData[i];
-      if (ch != 'x' && ch != 'X')
-        return WideString();
-      if (++i >= iLen)
-        break;
-      ch = pData[i];
-      uint32_t iCode = 0;
-      while (ch != ';' && i < iLen) {
-        iCode *= 16;
-        if (!FXSYS_IsWideHexDigit(ch))
+      if (ch == '#') {
+        if (++i >= iLen) {
+          break;
+        }
+        ch = pData[i];
+        if (ch != 'x' && ch != 'X') {
           return WideString();
-        iCode += FXSYS_WideHexCharToInt(ch);
+        }
         if (++i >= iLen)
           break;
         ch = pData[i];
+        uint32_t iCode = 0;
+        while (ch != ';' && i < iLen) {
+          iCode *= 16;
+          if (!FXSYS_IsWideHexDigit(ch)) {
+            return WideString();
+          }
+          iCode += FXSYS_WideHexCharToInt(ch);
+          if (++i >= iLen) {
+            break;
+          }
+          ch = pData[i];
+        }
+        wsResultBuf.AppendChar(iCode);
+        continue;
       }
-      wsResultBuf.AppendChar(iCode);
-      continue;
-    }
 
-    wchar_t szBuffer[9];
-    size_t iStrIndex = 0;
-    while (ch != ';' && i < iLen) {
-      if (iStrIndex < 8)
-        szBuffer[iStrIndex++] = ch;
-      if (++i >= iLen)
-        break;
-      ch = pData[i];
+      wchar_t szBuffer[9];
+      size_t iStrIndex = 0;
+      while (ch != ';' && i < iLen) {
+        if (iStrIndex < 8) {
+          szBuffer[iStrIndex++] = ch;
+        }
+        if (++i >= iLen) {
+          break;
+        }
+        ch = pData[i];
+      }
+      szBuffer[iStrIndex] = 0;
+      if (bIsHTML) {
+        uint32_t iData = 0;
+        if (HTMLSTR2Code(szBuffer, &iData)) {
+          wsResultBuf.AppendChar((wchar_t)iData);
+        }
+      } else {
+        if (wcscmp(szBuffer, L"quot") == 0) {
+          wsResultBuf.AppendChar('"');
+        } else if (wcscmp(szBuffer, L"amp") == 0) {
+          wsResultBuf.AppendChar('&');
+        } else if (wcscmp(szBuffer, L"apos") == 0) {
+          wsResultBuf.AppendChar('\'');
+        } else if (wcscmp(szBuffer, L"lt") == 0) {
+          wsResultBuf.AppendChar('<');
+        } else if (wcscmp(szBuffer, L"gt") == 0) {
+          wsResultBuf.AppendChar('>');
+        }
+      }
     }
-    szBuffer[iStrIndex] = 0;
-    if (bIsHTML) {
-      uint32_t iData = 0;
-      if (HTMLSTR2Code(szBuffer, &iData))
-        wsResultBuf.AppendChar((wchar_t)iData);
-    } else {
-      if (wcscmp(szBuffer, L"quot") == 0)
-        wsResultBuf.AppendChar('"');
-      else if (wcscmp(szBuffer, L"amp") == 0)
-        wsResultBuf.AppendChar('&');
-      else if (wcscmp(szBuffer, L"apos") == 0)
-        wsResultBuf.AppendChar('\'');
-      else if (wcscmp(szBuffer, L"lt") == 0)
-        wsResultBuf.AppendChar('<');
-      else if (wcscmp(szBuffer, L"gt") == 0)
-        wsResultBuf.AppendChar('>');
-    }
-  }
-  return wsResultBuf.MakeString();
+    return wsResultBuf.MakeString();
+  });
 }
 
 WideString DecodeHTML(const WideString& wsHTML) {
@@ -863,73 +883,75 @@ ByteString TrillionUS(ByteStringView bsData) {
 
   ByteString strBuf;
   int32_t iIndex = 0;
-  if (iFirstCount == 3) {
-    if (pData[iIndex] != '0') {
-      strBuf += kCapUnits[pData[iIndex] - '0'];
-      strBuf += kComm[0];
-    }
-    if (pData[iIndex + 1] == '0') {
-      strBuf += kCapUnits[pData[iIndex + 2] - '0'];
-    } else {
-      if (pData[iIndex + 1] > '1') {
-        strBuf += kLastTens[pData[iIndex + 1] - '2'];
-        strBuf += "-";
-        strBuf += kUnits[pData[iIndex + 2] - '0'];
-      } else if (pData[iIndex + 1] == '1') {
-        strBuf += kTens[pData[iIndex + 2] - '0'];
-      } else if (pData[iIndex + 1] == '0') {
-        strBuf += kCapUnits[pData[iIndex + 2] - '0'];
+  UNSAFE_TODO({
+    if (iFirstCount == 3) {
+      if (pData[iIndex] != '0') {
+        strBuf += kCapUnits[pData[iIndex] - '0'];
+        strBuf += kComm[0];
       }
-    }
-    iIndex += 3;
-  } else if (iFirstCount == 2) {
-    if (pData[iIndex] == '0') {
-      strBuf += kCapUnits[pData[iIndex + 1] - '0'];
-    } else {
-      if (pData[iIndex] > '1') {
-        strBuf += kLastTens[pData[iIndex] - '2'];
-        strBuf += "-";
-        strBuf += kUnits[pData[iIndex + 1] - '0'];
-      } else if (pData[iIndex] == '1') {
-        strBuf += kTens[pData[iIndex + 1] - '0'];
-      } else if (pData[iIndex] == '0') {
+      if (pData[iIndex + 1] == '0') {
+        strBuf += kCapUnits[pData[iIndex + 2] - '0'];
+      } else {
+        if (pData[iIndex + 1] > '1') {
+          strBuf += kLastTens[pData[iIndex + 1] - '2'];
+          strBuf += "-";
+          strBuf += kUnits[pData[iIndex + 2] - '0'];
+        } else if (pData[iIndex + 1] == '1') {
+          strBuf += kTens[pData[iIndex + 2] - '0'];
+        } else if (pData[iIndex + 1] == '0') {
+          strBuf += kCapUnits[pData[iIndex + 2] - '0'];
+        }
+      }
+      iIndex += 3;
+    } else if (iFirstCount == 2) {
+      if (pData[iIndex] == '0') {
         strBuf += kCapUnits[pData[iIndex + 1] - '0'];
+      } else {
+        if (pData[iIndex] > '1') {
+          strBuf += kLastTens[pData[iIndex] - '2'];
+          strBuf += "-";
+          strBuf += kUnits[pData[iIndex + 1] - '0'];
+        } else if (pData[iIndex] == '1') {
+          strBuf += kTens[pData[iIndex + 1] - '0'];
+        } else if (pData[iIndex] == '0') {
+          strBuf += kCapUnits[pData[iIndex + 1] - '0'];
+        }
       }
-    }
-    iIndex += 2;
-  } else if (iFirstCount == 1) {
-    strBuf += kCapUnits[pData[iIndex] - '0'];
-    ++iIndex;
-  }
-  if (iLength > 3 && iFirstCount > 0) {
-    strBuf += kComm[iComm];
-    --iComm;
-  }
-  while (iIndex < iLength) {
-    if (pData[iIndex] != '0') {
+      iIndex += 2;
+    } else if (iFirstCount == 1) {
       strBuf += kCapUnits[pData[iIndex] - '0'];
-      strBuf += kComm[0];
+      ++iIndex;
     }
-    if (pData[iIndex + 1] == '0') {
-      strBuf += kCapUnits[pData[iIndex + 2] - '0'];
-    } else {
-      if (pData[iIndex + 1] > '1') {
-        strBuf += kLastTens[pData[iIndex + 1] - '2'];
-        strBuf += "-";
-        strBuf += kUnits[pData[iIndex + 2] - '0'];
-      } else if (pData[iIndex + 1] == '1') {
-        strBuf += kTens[pData[iIndex + 2] - '0'];
-      } else if (pData[iIndex + 1] == '0') {
-        strBuf += kCapUnits[pData[iIndex + 2] - '0'];
-      }
-    }
-    if (iIndex < iLength - 3) {
+    if (iLength > 3 && iFirstCount > 0) {
       strBuf += kComm[iComm];
       --iComm;
     }
-    iIndex += 3;
-  }
-  return strBuf;
+    while (iIndex < iLength) {
+      if (pData[iIndex] != '0') {
+        strBuf += kCapUnits[pData[iIndex] - '0'];
+        strBuf += kComm[0];
+      }
+      if (pData[iIndex + 1] == '0') {
+        strBuf += kCapUnits[pData[iIndex + 2] - '0'];
+      } else {
+        if (pData[iIndex + 1] > '1') {
+          strBuf += kLastTens[pData[iIndex + 1] - '2'];
+          strBuf += "-";
+          strBuf += kUnits[pData[iIndex + 2] - '0'];
+        } else if (pData[iIndex + 1] == '1') {
+          strBuf += kTens[pData[iIndex + 2] - '0'];
+        } else if (pData[iIndex + 1] == '0') {
+          strBuf += kCapUnits[pData[iIndex + 2] - '0'];
+        }
+      }
+      if (iIndex < iLength - 3) {
+        strBuf += kComm[iComm];
+        --iComm;
+      }
+      iIndex += 3;
+    }
+    return strBuf;
+  });
 }
 
 ByteString WordUS(ByteStringView bsData, int32_t iStyle) {
@@ -3059,74 +3081,82 @@ void CFXJSE_FormCalcContext::UnitType(
   const wchar_t* pData = wsType.c_str();
   int32_t u = 0;
   int32_t uLen = wsType.GetLength();
-  while (IsWhitespace(pData[u]))
-    u++;
-
-  XFA_FormCalc_VALUETYPE_ParserStatus eParserStatus = VALUETYPE_START;
-  wchar_t typeChar;
-  // TODO(dsinclair): Cleanup this parser, figure out what the various checks
-  //    are for.
-  while (u < uLen) {
-    typeChar = pData[u];
-    if (IsWhitespace(typeChar)) {
-      if (eParserStatus != VALUETYPE_HAVEDIGIT &&
-          eParserStatus != VALUETYPE_HAVEDIGITWHITE) {
-        eParserStatus = VALUETYPE_ISIN;
-        break;
-      }
-      eParserStatus = VALUETYPE_HAVEDIGITWHITE;
-    } else if (IsPartOfNumberW(typeChar)) {
-      if (eParserStatus == VALUETYPE_HAVEDIGITWHITE) {
-        eParserStatus = VALUETYPE_ISIN;
-        break;
-      }
-      eParserStatus = VALUETYPE_HAVEDIGIT;
-    } else if ((typeChar == 'c' || typeChar == 'p') && (u + 1 < uLen)) {
-      wchar_t nextChar = pData[u + 1];
-      if ((eParserStatus == VALUETYPE_START ||
-           eParserStatus == VALUETYPE_HAVEDIGIT ||
-           eParserStatus == VALUETYPE_HAVEDIGITWHITE) &&
-          !IsPartOfNumberW(nextChar)) {
-        eParserStatus = (typeChar == 'c') ? VALUETYPE_ISCM : VALUETYPE_ISPT;
-        break;
-      }
-      eParserStatus = VALUETYPE_HAVEINVALIDCHAR;
-    } else if (typeChar == 'm' && (u + 1 < uLen)) {
-      wchar_t nextChar = pData[u + 1];
-      if ((eParserStatus == VALUETYPE_START ||
-           eParserStatus == VALUETYPE_HAVEDIGIT ||
-           eParserStatus == VALUETYPE_HAVEDIGITWHITE) &&
-          !IsPartOfNumberW(nextChar)) {
-        eParserStatus = VALUETYPE_ISMM;
-        if (nextChar == 'p' || ((u + 5 < uLen) && pData[u + 1] == 'i' &&
-                                pData[u + 2] == 'l' && pData[u + 3] == 'l' &&
-                                pData[u + 4] == 'i' && pData[u + 5] == 'p')) {
-          eParserStatus = VALUETYPE_ISMP;
-        }
-        break;
-      }
-    } else {
-      eParserStatus = VALUETYPE_HAVEINVALIDCHAR;
+  UNSAFE_TODO({
+    while (IsWhitespace(pData[u])) {
+      u++;
     }
-    u++;
-  }
-  switch (eParserStatus) {
-    case VALUETYPE_ISCM:
-      info.GetReturnValue().Set(fxv8::NewStringHelper(info.GetIsolate(), "cm"));
-      break;
-    case VALUETYPE_ISMM:
-      info.GetReturnValue().Set(fxv8::NewStringHelper(info.GetIsolate(), "mm"));
-      break;
-    case VALUETYPE_ISPT:
-      info.GetReturnValue().Set(fxv8::NewStringHelper(info.GetIsolate(), "pt"));
-      break;
-    case VALUETYPE_ISMP:
-      info.GetReturnValue().Set(fxv8::NewStringHelper(info.GetIsolate(), "mp"));
-      break;
-    default:
-      info.GetReturnValue().Set(fxv8::NewStringHelper(info.GetIsolate(), "in"));
-      break;
-  }
+
+    XFA_FormCalc_VALUETYPE_ParserStatus eParserStatus = VALUETYPE_START;
+    wchar_t typeChar;
+    // TODO(dsinclair): Cleanup this parser, figure out what the various checks
+    //    are for.
+    while (u < uLen) {
+      typeChar = pData[u];
+      if (IsWhitespace(typeChar)) {
+        if (eParserStatus != VALUETYPE_HAVEDIGIT &&
+            eParserStatus != VALUETYPE_HAVEDIGITWHITE) {
+          eParserStatus = VALUETYPE_ISIN;
+          break;
+        }
+        eParserStatus = VALUETYPE_HAVEDIGITWHITE;
+      } else if (IsPartOfNumberW(typeChar)) {
+        if (eParserStatus == VALUETYPE_HAVEDIGITWHITE) {
+          eParserStatus = VALUETYPE_ISIN;
+          break;
+        }
+        eParserStatus = VALUETYPE_HAVEDIGIT;
+      } else if ((typeChar == 'c' || typeChar == 'p') && (u + 1 < uLen)) {
+        wchar_t nextChar = pData[u + 1];
+        if ((eParserStatus == VALUETYPE_START ||
+             eParserStatus == VALUETYPE_HAVEDIGIT ||
+             eParserStatus == VALUETYPE_HAVEDIGITWHITE) &&
+            !IsPartOfNumberW(nextChar)) {
+          eParserStatus = (typeChar == 'c') ? VALUETYPE_ISCM : VALUETYPE_ISPT;
+          break;
+        }
+        eParserStatus = VALUETYPE_HAVEINVALIDCHAR;
+      } else if (typeChar == 'm' && (u + 1 < uLen)) {
+        wchar_t nextChar = pData[u + 1];
+        if ((eParserStatus == VALUETYPE_START ||
+             eParserStatus == VALUETYPE_HAVEDIGIT ||
+             eParserStatus == VALUETYPE_HAVEDIGITWHITE) &&
+            !IsPartOfNumberW(nextChar)) {
+          eParserStatus = VALUETYPE_ISMM;
+          if (nextChar == 'p' || ((u + 5 < uLen) && pData[u + 1] == 'i' &&
+                                  pData[u + 2] == 'l' && pData[u + 3] == 'l' &&
+                                  pData[u + 4] == 'i' && pData[u + 5] == 'p')) {
+            eParserStatus = VALUETYPE_ISMP;
+          }
+          break;
+        }
+      } else {
+        eParserStatus = VALUETYPE_HAVEINVALIDCHAR;
+      }
+      u++;
+    }
+    switch (eParserStatus) {
+      case VALUETYPE_ISCM:
+        info.GetReturnValue().Set(
+            fxv8::NewStringHelper(info.GetIsolate(), "cm"));
+        break;
+      case VALUETYPE_ISMM:
+        info.GetReturnValue().Set(
+            fxv8::NewStringHelper(info.GetIsolate(), "mm"));
+        break;
+      case VALUETYPE_ISPT:
+        info.GetReturnValue().Set(
+            fxv8::NewStringHelper(info.GetIsolate(), "pt"));
+        break;
+      case VALUETYPE_ISMP:
+        info.GetReturnValue().Set(
+            fxv8::NewStringHelper(info.GetIsolate(), "mp"));
+        break;
+      default:
+        info.GetReturnValue().Set(
+            fxv8::NewStringHelper(info.GetIsolate(), "in"));
+        break;
+    }
+  });
 }
 
 // static
@@ -3152,120 +3182,135 @@ void CFXJSE_FormCalcContext::UnitValue(
     return;
   }
 
-  size_t u = 0;
-  while (IsWhitespace(pData[u]))
-    ++u;
-
-  while (u < bsUnitspan.GetLength()) {
-    if (!IsPartOfNumber(pData[u]))
-      break;
-    ++u;
-  }
-
-  char* pTemp = nullptr;
-  double dFirstNumber = strtod(pData, &pTemp);
-  while (IsWhitespace(pData[u]))
-    ++u;
-
-  size_t uLen = bsUnitspan.GetLength();
-  ByteString bsFirstUnit;
-  while (u < uLen) {
-    if (pData[u] == ' ')
-      break;
-
-    bsFirstUnit += pData[u];
-    ++u;
-  }
-  bsFirstUnit.MakeLower();
-
-  ByteString bsUnit;
-  if (argc > 1) {
-    v8::Local<v8::Value> unitValue = GetSimpleValue(info, 1);
-    ByteString bsUnitTemp = ValueToUTF8String(info.GetIsolate(), unitValue);
-    const char* pChar = bsUnitTemp.c_str();
-    size_t uVal = 0;
-    while (IsWhitespace(pChar[uVal]))
-      ++uVal;
-
-    while (uVal < bsUnitTemp.GetLength()) {
-      if (!isdigit(pChar[uVal]) && pChar[uVal] != '.')
-        break;
-      ++uVal;
+  UNSAFE_TODO({
+    size_t u = 0;
+    while (IsWhitespace(pData[u])) {
+      ++u;
     }
-    while (IsWhitespace(pChar[uVal]))
-      ++uVal;
 
-    size_t uValLen = bsUnitTemp.GetLength();
-    while (uVal < uValLen) {
-      if (pChar[uVal] == ' ')
+    while (u < bsUnitspan.GetLength()) {
+      if (!IsPartOfNumber(pData[u])) {
         break;
-
-      bsUnit += pChar[uVal];
-      ++uVal;
+      }
+      ++u;
     }
-    bsUnit.MakeLower();
-  } else {
-    bsUnit = bsFirstUnit;
-  }
 
-  double dResult = 0;
-  if (bsFirstUnit == "in" || bsFirstUnit == "inches") {
-    if (bsUnit == "mm" || bsUnit == "millimeters")
-      dResult = dFirstNumber * 25.4;
-    else if (bsUnit == "cm" || bsUnit == "centimeters")
-      dResult = dFirstNumber * 2.54;
-    else if (bsUnit == "pt" || bsUnit == "points")
-      dResult = dFirstNumber / 72;
-    else if (bsUnit == "mp" || bsUnit == "millipoints")
-      dResult = dFirstNumber / 72000;
-    else
-      dResult = dFirstNumber;
-  } else if (bsFirstUnit == "mm" || bsFirstUnit == "millimeters") {
-    if (bsUnit == "mm" || bsUnit == "millimeters")
-      dResult = dFirstNumber;
-    else if (bsUnit == "cm" || bsUnit == "centimeters")
-      dResult = dFirstNumber / 10;
-    else if (bsUnit == "pt" || bsUnit == "points")
-      dResult = dFirstNumber / 25.4 / 72;
-    else if (bsUnit == "mp" || bsUnit == "millipoints")
-      dResult = dFirstNumber / 25.4 / 72000;
-    else
-      dResult = dFirstNumber / 25.4;
-  } else if (bsFirstUnit == "cm" || bsFirstUnit == "centimeters") {
-    if (bsUnit == "mm" || bsUnit == "millimeters")
-      dResult = dFirstNumber * 10;
-    else if (bsUnit == "cm" || bsUnit == "centimeters")
-      dResult = dFirstNumber;
-    else if (bsUnit == "pt" || bsUnit == "points")
-      dResult = dFirstNumber / 2.54 / 72;
-    else if (bsUnit == "mp" || bsUnit == "millipoints")
-      dResult = dFirstNumber / 2.54 / 72000;
-    else
-      dResult = dFirstNumber / 2.54;
-  } else if (bsFirstUnit == "pt" || bsFirstUnit == "points") {
-    if (bsUnit == "mm" || bsUnit == "millimeters")
-      dResult = dFirstNumber / 72 * 25.4;
-    else if (bsUnit == "cm" || bsUnit == "centimeters")
-      dResult = dFirstNumber / 72 * 2.54;
-    else if (bsUnit == "pt" || bsUnit == "points")
-      dResult = dFirstNumber;
-    else if (bsUnit == "mp" || bsUnit == "millipoints")
-      dResult = dFirstNumber * 1000;
-    else
-      dResult = dFirstNumber / 72;
-  } else if (bsFirstUnit == "mp" || bsFirstUnit == "millipoints") {
-    if (bsUnit == "mm" || bsUnit == "millimeters")
-      dResult = dFirstNumber / 72000 * 25.4;
-    else if (bsUnit == "cm" || bsUnit == "centimeters")
-      dResult = dFirstNumber / 72000 * 2.54;
-    else if (bsUnit == "pt" || bsUnit == "points")
-      dResult = dFirstNumber / 1000;
-    else if (bsUnit == "mp" || bsUnit == "millipoints")
-      dResult = dFirstNumber;
-    else
-      dResult = dFirstNumber / 72000;
-  }
-  info.GetReturnValue().Set(dResult);
+    char* pTemp = nullptr;
+    double dFirstNumber = strtod(pData, &pTemp);
+    while (IsWhitespace(pData[u])) {
+      ++u;
+    }
+
+    size_t uLen = bsUnitspan.GetLength();
+    ByteString bsFirstUnit;
+    while (u < uLen) {
+      if (pData[u] == ' ') {
+        break;
+      }
+
+      bsFirstUnit += pData[u];
+      ++u;
+    }
+    bsFirstUnit.MakeLower();
+
+    ByteString bsUnit;
+    if (argc > 1) {
+      v8::Local<v8::Value> unitValue = GetSimpleValue(info, 1);
+      ByteString bsUnitTemp = ValueToUTF8String(info.GetIsolate(), unitValue);
+      const char* pChar = bsUnitTemp.c_str();
+      size_t uVal = 0;
+      while (IsWhitespace(pChar[uVal])) {
+        ++uVal;
+      }
+
+      while (uVal < bsUnitTemp.GetLength()) {
+        if (!isdigit(pChar[uVal]) && pChar[uVal] != '.') {
+          break;
+        }
+        ++uVal;
+      }
+      while (IsWhitespace(pChar[uVal])) {
+        ++uVal;
+      }
+
+      size_t uValLen = bsUnitTemp.GetLength();
+      while (uVal < uValLen) {
+        if (pChar[uVal] == ' ') {
+          break;
+        }
+
+        bsUnit += pChar[uVal];
+        ++uVal;
+      }
+      bsUnit.MakeLower();
+    } else {
+      bsUnit = bsFirstUnit;
+    }
+
+    double dResult = 0;
+    if (bsFirstUnit == "in" || bsFirstUnit == "inches") {
+      if (bsUnit == "mm" || bsUnit == "millimeters") {
+        dResult = dFirstNumber * 25.4;
+      } else if (bsUnit == "cm" || bsUnit == "centimeters") {
+        dResult = dFirstNumber * 2.54;
+      } else if (bsUnit == "pt" || bsUnit == "points") {
+        dResult = dFirstNumber / 72;
+      } else if (bsUnit == "mp" || bsUnit == "millipoints") {
+        dResult = dFirstNumber / 72000;
+      } else {
+        dResult = dFirstNumber;
+      }
+    } else if (bsFirstUnit == "mm" || bsFirstUnit == "millimeters") {
+      if (bsUnit == "mm" || bsUnit == "millimeters") {
+        dResult = dFirstNumber;
+      } else if (bsUnit == "cm" || bsUnit == "centimeters") {
+        dResult = dFirstNumber / 10;
+      } else if (bsUnit == "pt" || bsUnit == "points") {
+        dResult = dFirstNumber / 25.4 / 72;
+      } else if (bsUnit == "mp" || bsUnit == "millipoints") {
+        dResult = dFirstNumber / 25.4 / 72000;
+      } else {
+        dResult = dFirstNumber / 25.4;
+      }
+    } else if (bsFirstUnit == "cm" || bsFirstUnit == "centimeters") {
+      if (bsUnit == "mm" || bsUnit == "millimeters") {
+        dResult = dFirstNumber * 10;
+      } else if (bsUnit == "cm" || bsUnit == "centimeters") {
+        dResult = dFirstNumber;
+      } else if (bsUnit == "pt" || bsUnit == "points") {
+        dResult = dFirstNumber / 2.54 / 72;
+      } else if (bsUnit == "mp" || bsUnit == "millipoints") {
+        dResult = dFirstNumber / 2.54 / 72000;
+      } else {
+        dResult = dFirstNumber / 2.54;
+      }
+    } else if (bsFirstUnit == "pt" || bsFirstUnit == "points") {
+      if (bsUnit == "mm" || bsUnit == "millimeters") {
+        dResult = dFirstNumber / 72 * 25.4;
+      } else if (bsUnit == "cm" || bsUnit == "centimeters") {
+        dResult = dFirstNumber / 72 * 2.54;
+      } else if (bsUnit == "pt" || bsUnit == "points") {
+        dResult = dFirstNumber;
+      } else if (bsUnit == "mp" || bsUnit == "millipoints") {
+        dResult = dFirstNumber * 1000;
+      } else {
+        dResult = dFirstNumber / 72;
+      }
+    } else if (bsFirstUnit == "mp" || bsFirstUnit == "millipoints") {
+      if (bsUnit == "mm" || bsUnit == "millimeters") {
+        dResult = dFirstNumber / 72000 * 25.4;
+      } else if (bsUnit == "cm" || bsUnit == "centimeters") {
+        dResult = dFirstNumber / 72000 * 2.54;
+      } else if (bsUnit == "pt" || bsUnit == "points") {
+        dResult = dFirstNumber / 1000;
+      } else if (bsUnit == "mp" || bsUnit == "millipoints") {
+        dResult = dFirstNumber;
+      } else {
+        dResult = dFirstNumber / 72000;
+      }
+    }
+    info.GetReturnValue().Set(dResult);
+  });
 }
 
 // static
@@ -3891,74 +3936,80 @@ void CFXJSE_FormCalcContext::Str(
   const char* pData = bsNumber.c_str();
   int32_t iLength = bsNumber.GetLength();
   int32_t u = 0;
-  while (u < iLength) {
-    if (pData[u] == '.')
-      break;
-
-    ++u;
-  }
-
-  if (u > iWidth || (iPrecision + u) >= iWidth) {
-    DataVector<char> stars(std::max(iWidth, 0), '*');
-    info.GetReturnValue().Set(
-        fxv8::NewStringHelper(info.GetIsolate(), ByteStringView(stars)));
-    return;
-  }
-
-  ByteString resultBuf;
-  if (u == iLength) {
-    if (iLength > iWidth) {
-      int32_t i = 0;
-      while (i < iWidth) {
-        resultBuf += '*';
-        ++i;
+  UNSAFE_TODO({
+    while (u < iLength) {
+      if (pData[u] == '.') {
+        break;
       }
-    } else {
-      int32_t i = 0;
-      while (i < iWidth - iLength) {
-        resultBuf += ' ';
-        ++i;
+
+      ++u;
+    }
+
+    if (u > iWidth || (iPrecision + u) >= iWidth) {
+      DataVector<char> stars(std::max(iWidth, 0), '*');
+      info.GetReturnValue().Set(
+          fxv8::NewStringHelper(info.GetIsolate(), ByteStringView(stars)));
+      return;
+    }
+
+    ByteString resultBuf;
+    if (u == iLength) {
+      if (iLength > iWidth) {
+        int32_t i = 0;
+        while (i < iWidth) {
+          resultBuf += '*';
+          ++i;
+        }
+      } else {
+        int32_t i = 0;
+        while (i < iWidth - iLength) {
+          resultBuf += ' ';
+          ++i;
+        }
+        resultBuf += pData;
       }
-      resultBuf += pData;
+      info.GetReturnValue().Set(
+          fxv8::NewStringHelper(info.GetIsolate(), resultBuf.AsStringView()));
+      return;
+    }
+
+    int32_t iLeavingSpace = iWidth - u - iPrecision;
+    if (iPrecision != 0) {
+      iLeavingSpace--;
+    }
+
+    int32_t i = 0;
+    while (i < iLeavingSpace) {
+      resultBuf += ' ';
+      ++i;
+    }
+    i = 0;
+    while (i < u) {
+      resultBuf += pData[i];
+      ++i;
+    }
+    if (iPrecision != 0) {
+      resultBuf += '.';
+    }
+
+    u++;
+    i = 0;
+    while (u < iLength) {
+      if (i >= iPrecision) {
+        break;
+      }
+
+      resultBuf += pData[u];
+      ++i;
+      ++u;
+    }
+    while (i < iPrecision) {
+      resultBuf += '0';
+      ++i;
     }
     info.GetReturnValue().Set(
         fxv8::NewStringHelper(info.GetIsolate(), resultBuf.AsStringView()));
-    return;
-  }
-
-  int32_t iLeavingSpace = iWidth - u - iPrecision;
-  if (iPrecision != 0)
-    iLeavingSpace--;
-
-  int32_t i = 0;
-  while (i < iLeavingSpace) {
-    resultBuf += ' ';
-    ++i;
-  }
-  i = 0;
-  while (i < u) {
-    resultBuf += pData[i];
-    ++i;
-  }
-  if (iPrecision != 0)
-    resultBuf += '.';
-
-  u++;
-  i = 0;
-  while (u < iLength) {
-    if (i >= iPrecision)
-      break;
-
-    resultBuf += pData[u];
-    ++i;
-    ++u;
-  }
-  while (i < iPrecision) {
-    resultBuf += '0';
-    ++i;
-  }
-  info.GetReturnValue().Set(
-      fxv8::NewStringHelper(info.GetIsolate(), resultBuf.AsStringView()));
+  });
 }
 
 // static
@@ -5133,7 +5184,7 @@ bool CFXJSE_FormCalcContext::IsIsoDateFormat(ByteStringView bsData,
       return false;
     }
 
-    szYear[i] = pData[i];
+    UNSAFE_TODO(szYear[i]) = pData[i];
   }
   iYear = FXSYS_atoi(szYear);
   if (pData.size() == 4) {
@@ -5257,7 +5308,7 @@ bool CFXJSE_FormCalcContext::IsIsoTimeFormat(ByteStringView bsData) {
       if (!isdigit(c)) {
         return false;
       }
-      szMilliSeconds[j] = c;
+      UNSAFE_TODO(szMilliSeconds[j]) = c;
     }
     if (FXSYS_atoi(szMilliSeconds) >= 1000) {
       return false;
