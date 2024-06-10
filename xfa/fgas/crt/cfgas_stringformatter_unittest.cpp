@@ -18,10 +18,13 @@
 #include "core/fxcrt/cfx_datetime.h"
 #include "testing/fx_string_testhelpers.h"
 #include "testing/fxgc_unittest.h"
+#include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/scoped_set_tz.h"
 #include "v8/include/cppgc/persistent.h"
 #include "xfa/fxfa/parser/cxfa_localemgr.h"
+
+using ::testing::ElementsAre;
 
 class CFGAS_StringFormatterTest : public FXGCUnitTest {
  public:
@@ -319,13 +322,9 @@ TEST_F(CFGAS_StringFormatterTest, SplitFormatString) {
 
   results = CFGAS_StringFormatter::SplitOnBars(
       L"null{'No|data'} | null{} | text{999*9999} | text{999*999*9999}");
-  EXPECT_EQ(4UL, results.size());
-
-  const wchar_t* patterns[] = {L"null{'No|data'} ", L" null{} ",
-                               L" text{999*9999} ", L" text{999*999*9999}"};
-  for (size_t i = 0; i < results.size(); ++i) {
-    EXPECT_EQ(patterns[i], results[i]);
-  }
+  EXPECT_THAT(results,
+              ElementsAre(L"null{'No|data'} ", L" null{} ", L" text{999*9999} ",
+                          L" text{999*999*9999}"));
 }
 
 TEST_F(CFGAS_StringFormatterTest, NumParse) {

@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 
 #include <stddef.h>
@@ -25,8 +20,11 @@
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/string_view_template.h"
 #include "core/fxcrt/widestring.h"
+#include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
+
+using ::testing::ElementsAreArray;
 
 namespace {
 
@@ -288,16 +286,11 @@ TEST(ParserDecodeTest, A85Decode) {
       STR_IN_OUT_CASE("FCfN8FCfN8vw", "testtest", 11),
   };
   for (const auto& test_case : kTestData) {
-    DataAndBytesConsumed result = A85Decode(
-        UNSAFE_TODO(pdfium::make_span(test_case.input, test_case.input_size)));
+    DataAndBytesConsumed result = A85Decode(test_case.input_span());
     EXPECT_EQ(test_case.processed_size, result.bytes_consumed)
         << "for case " << test_case.input;
-    ASSERT_EQ(test_case.expected_size, result.data.size());
-    const uint8_t* result_ptr = result.data.data();
-    for (size_t j = 0; j < result.data.size(); ++j) {
-      EXPECT_EQ(test_case.expected[j], result_ptr[j])
-          << "for case " << test_case.input << " char " << j;
-    }
+    EXPECT_THAT(result.data, ElementsAreArray(test_case.expected_span()))
+        << "for case " << test_case.input;
   }
 }
 
@@ -325,12 +318,8 @@ TEST(ParserDecodeTest, HexDecode) {
         UNSAFE_TODO(pdfium::make_span(test_case.input, test_case.input_size)));
     EXPECT_EQ(test_case.processed_size, result.bytes_consumed)
         << "for case " << test_case.input;
-    ASSERT_EQ(test_case.expected_size, result.data.size());
-    const uint8_t* result_ptr = result.data.data();
-    for (size_t j = 0; j < result.data.size(); ++j) {
-      EXPECT_EQ(test_case.expected[j], result_ptr[j])
-          << "for case " << test_case.input << " char " << j;
-    }
+    EXPECT_THAT(result.data, ElementsAreArray(test_case.expected_span()))
+        << "for case " << test_case.input;
   }
 }
 

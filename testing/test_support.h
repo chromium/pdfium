@@ -7,33 +7,54 @@
 
 #include <stdint.h>
 
+#include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/span.h"
+
 namespace pdfium {
 
-#define STR_IN_TEST_CASE(input_literal, ...)               \
-  {                                                        \
-    reinterpret_cast<const unsigned char*>(input_literal), \
-        sizeof(input_literal) - 1, __VA_ARGS__             \
+#define STR_IN_TEST_CASE(input_literal, ...)         \
+  {                                                  \
+    reinterpret_cast<const uint8_t*>(input_literal), \
+        sizeof(input_literal) - 1, __VA_ARGS__       \
   }
 
-#define STR_IN_OUT_CASE(input_literal, expected_literal, ...)     \
-  {                                                               \
-    reinterpret_cast<const unsigned char*>(input_literal),        \
-        sizeof(input_literal) - 1,                                \
-        reinterpret_cast<const unsigned char*>(expected_literal), \
-        sizeof(expected_literal) - 1, __VA_ARGS__                 \
+#define STR_IN_OUT_CASE(input_literal, expected_literal, ...) \
+  {                                                           \
+    reinterpret_cast<const uint8_t*>(input_literal),          \
+        sizeof(input_literal) - 1,                            \
+        reinterpret_cast<const uint8_t*>(expected_literal),   \
+        sizeof(expected_literal) - 1, __VA_ARGS__             \
   }
 
 struct StrFuncTestData {
-  const unsigned char* input;
+  pdfium::span<const uint8_t> input_span() const {
+    // SAFETY: size determined from literal via macro above.
+    return UNSAFE_BUFFERS(pdfium::make_span(input, input_size));
+  }
+  pdfium::span<const uint8_t> expected_span() const {
+    // SAFETY: size determined from literal via macro above.
+    return UNSAFE_BUFFERS(pdfium::make_span(expected, expected_size));
+  }
+
+  const uint8_t* input;
   uint32_t input_size;
-  const unsigned char* expected;
+  const uint8_t* expected;
   uint32_t expected_size;
 };
 
 struct DecodeTestData {
-  const unsigned char* input;
+  pdfium::span<const uint8_t> input_span() const {
+    // SAFETY: size determined from literal via macro above.
+    return UNSAFE_BUFFERS(pdfium::make_span(input, input_size));
+  }
+  pdfium::span<const uint8_t> expected_span() const {
+    // SAFETY: size determined from literal via macro above.
+    return UNSAFE_BUFFERS(pdfium::make_span(expected, expected_size));
+  }
+
+  const uint8_t* input;
   uint32_t input_size;
-  const unsigned char* expected;
+  const uint8_t* expected;
   uint32_t expected_size;
   // The size of input string being processed.
   uint32_t processed_size;

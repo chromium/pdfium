@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/render/cpdf_docrenderdata.h"
 
 #include <iterator>
@@ -21,7 +16,10 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fxcrt/data_vector.h"
+#include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
+
+using ::testing::ElementsAreArray;
 
 namespace {
 
@@ -178,20 +176,12 @@ TEST(CPDF_DocRenderDataTest, TransferFunctionOne) {
   auto func = render_data.CreateTransferFuncForTesting(func_dict);
   ASSERT_TRUE(func);
   EXPECT_FALSE(func->GetIdentity());
-
-  auto r_samples = func->GetSamplesR();
-  auto g_samples = func->GetSamplesG();
-  auto b_samples = func->GetSamplesB();
-  ASSERT_EQ(std::size(kExpectedType2FunctionSamples), r_samples.size());
-  ASSERT_EQ(std::size(kExpectedType2FunctionSamples), g_samples.size());
-  ASSERT_EQ(std::size(kExpectedType2FunctionSamples), b_samples.size());
-
-  for (size_t i = 0; i < std::size(kExpectedType2FunctionSamples); ++i) {
-    EXPECT_EQ(kExpectedType2FunctionSamples[i], r_samples[i]);
-    EXPECT_EQ(kExpectedType2FunctionSamples[i], g_samples[i]);
-    EXPECT_EQ(kExpectedType2FunctionSamples[i], b_samples[i]);
-  }
-
+  EXPECT_THAT(func->GetSamplesR(),
+              ElementsAreArray(kExpectedType2FunctionSamples));
+  EXPECT_THAT(func->GetSamplesG(),
+              ElementsAreArray(kExpectedType2FunctionSamples));
+  EXPECT_THAT(func->GetSamplesB(),
+              ElementsAreArray(kExpectedType2FunctionSamples));
   EXPECT_EQ(0x000d0d0du, func->TranslateColor(0x00ffffff));
   EXPECT_EQ(0x000d1a1au, func->TranslateColor(0x00ff0000));
   EXPECT_EQ(0x001a0d1au, func->TranslateColor(0x0000ff00));
@@ -215,20 +205,12 @@ TEST(CPDF_DocRenderDataTest, TransferFunctionArray) {
   auto func = render_data.CreateTransferFuncForTesting(func_array);
   ASSERT_TRUE(func);
   EXPECT_FALSE(func->GetIdentity());
-
-  auto r_samples = func->GetSamplesR();
-  auto g_samples = func->GetSamplesG();
-  auto b_samples = func->GetSamplesB();
-  ASSERT_EQ(std::size(kExpectedType0FunctionSamples), r_samples.size());
-  ASSERT_EQ(std::size(kExpectedType2FunctionSamples), g_samples.size());
-  ASSERT_EQ(std::size(kExpectedType4FunctionSamples), b_samples.size());
-
-  for (size_t i = 0; i < std::size(kExpectedType2FunctionSamples); ++i) {
-    EXPECT_EQ(kExpectedType0FunctionSamples[i], r_samples[i]);
-    EXPECT_EQ(kExpectedType2FunctionSamples[i], g_samples[i]);
-    EXPECT_EQ(kExpectedType4FunctionSamples[i], b_samples[i]);
-  }
-
+  EXPECT_THAT(func->GetSamplesR(),
+              ElementsAreArray(kExpectedType0FunctionSamples));
+  EXPECT_THAT(func->GetSamplesG(),
+              ElementsAreArray(kExpectedType2FunctionSamples));
+  EXPECT_THAT(func->GetSamplesB(),
+              ElementsAreArray(kExpectedType4FunctionSamples));
   EXPECT_EQ(0x001a0d00u, func->TranslateColor(0x00ffffff));
   EXPECT_EQ(0x001a1a00u, func->TranslateColor(0x00ff0000));
   EXPECT_EQ(0x00190d00u, func->TranslateColor(0x0000ff00));
