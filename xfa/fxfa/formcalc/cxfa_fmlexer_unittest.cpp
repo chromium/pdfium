@@ -2,10 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
 
 #include "xfa/fxfa/formcalc/cxfa_fmlexer.h"
 
@@ -122,73 +118,73 @@ TEST(CXFA_FMLexerTest, Strings) {
 
 // Note, 'this' is a keyword but is not matched by the lexer.
 TEST(CXFA_FMLexerTest, OperatorsAndKeywords) {
-  struct {
+  static const struct {
     const wchar_t* op;
     XFA_FM_TOKEN token;
-  } op[] = {{L"+", TOKplus},
-            {L"/", TOKdiv},
-            {L"-", TOKminus},
-            {L"&", TOKand},
-            {L"|", TOKor},
-            {L"*", TOKmul},
-            {L"<", TOKlt},
-            {L">", TOKgt},
-            {L"==", TOKeq},
-            {L"<>", TOKne},
-            {L"<=", TOKle},
-            {L">=", TOKge},
-            {L"and", TOKksand},
-            {L"break", TOKbreak},
-            {L"continue", TOKcontinue},
-            {L"do", TOKdo},
-            {L"downto", TOKdownto},
-            {L"else", TOKelse},
-            {L"elseif", TOKelseif},
-            {L"end", TOKend},
-            {L"endfor", TOKendfor},
-            {L"endfunc", TOKendfunc},
-            {L"endif", TOKendif},
-            {L"endwhile", TOKendwhile},
-            {L"eq", TOKkseq},
-            {L"exit", TOKexit},
-            {L"for", TOKfor},
-            {L"foreach", TOKforeach},
-            {L"func", TOKfunc},
-            {L"ge", TOKksge},
-            {L"gt", TOKksgt},
-            {L"if", TOKif},
-            {L"in", TOKin},
-            {L"infinity", TOKinfinity},
-            {L"le", TOKksle},
-            {L"lt", TOKkslt},
-            {L"nan", TOKnan},
-            {L"ne", TOKksne},
-            {L"not", TOKksnot},
-            {L"null", TOKnull},
-            {L"or", TOKksor},
-            {L"return", TOKreturn},
-            {L"step", TOKstep},
-            {L"then", TOKthen},
-            {L"throw", TOKthrow},
-            {L"upto", TOKupto},
-            {L"var", TOKvar},
-            {L"while", TOKwhile},
+  } kOps[] = {{L"+", TOKplus},
+              {L"/", TOKdiv},
+              {L"-", TOKminus},
+              {L"&", TOKand},
+              {L"|", TOKor},
+              {L"*", TOKmul},
+              {L"<", TOKlt},
+              {L">", TOKgt},
+              {L"==", TOKeq},
+              {L"<>", TOKne},
+              {L"<=", TOKle},
+              {L">=", TOKge},
+              {L"and", TOKksand},
+              {L"break", TOKbreak},
+              {L"continue", TOKcontinue},
+              {L"do", TOKdo},
+              {L"downto", TOKdownto},
+              {L"else", TOKelse},
+              {L"elseif", TOKelseif},
+              {L"end", TOKend},
+              {L"endfor", TOKendfor},
+              {L"endfunc", TOKendfunc},
+              {L"endif", TOKendif},
+              {L"endwhile", TOKendwhile},
+              {L"eq", TOKkseq},
+              {L"exit", TOKexit},
+              {L"for", TOKfor},
+              {L"foreach", TOKforeach},
+              {L"func", TOKfunc},
+              {L"ge", TOKksge},
+              {L"gt", TOKksgt},
+              {L"if", TOKif},
+              {L"in", TOKin},
+              {L"infinity", TOKinfinity},
+              {L"le", TOKksle},
+              {L"lt", TOKkslt},
+              {L"nan", TOKnan},
+              {L"ne", TOKksne},
+              {L"not", TOKksnot},
+              {L"null", TOKnull},
+              {L"or", TOKksor},
+              {L"return", TOKreturn},
+              {L"step", TOKstep},
+              {L"then", TOKthen},
+              {L"throw", TOKthrow},
+              {L"upto", TOKupto},
+              {L"var", TOKvar},
+              {L"while", TOKwhile},
 
-            // The following are defined but aren't in the spec.
-            {L"(", TOKlparen},
-            {L")", TOKrparen},
-            {L",", TOKcomma},
-            {L".", TOKdot},
-            {L"[", TOKlbracket},
-            {L"]", TOKrbracket},
-            {L"..", TOKdotdot},
-            {L".#", TOKdotscream},
-            {L".*", TOKdotstar}};
+              // The following are defined but aren't in the spec.
+              {L"(", TOKlparen},
+              {L")", TOKrparen},
+              {L",", TOKcomma},
+              {L".", TOKdot},
+              {L"[", TOKlbracket},
+              {L"]", TOKrbracket},
+              {L"..", TOKdotdot},
+              {L".#", TOKdotscream},
+              {L".*", TOKdotstar}};
 
-  for (size_t i = 0; i < std::size(op); ++i) {
-    CXFA_FMLexer lexer(op[i].op);
+  for (const auto& op : kOps) {
+    CXFA_FMLexer lexer(op.op);
     CXFA_FMLexer::Token token = lexer.NextToken();
-    EXPECT_EQ(op[i].token, token.GetType());
+    EXPECT_EQ(op.token, token.GetType());
     EXPECT_TRUE(lexer.IsComplete());
   }
 }

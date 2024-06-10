@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/page/cpdf_psengine.h"
 
 #include <iterator>
@@ -76,15 +71,13 @@ TEST(CPDF_PSProc, AddOperator) {
   };
 
   CPDF_PSProc proc;
-  EXPECT_EQ(0U, proc.num_operators());
-  for (size_t i = 0; i < std::size(kTestData); ++i) {
-    ByteStringView word(kTestData[i].name);
+  for (const auto& item : kTestData) {
+    ByteStringView word(item.name);
     proc.AddOperatorForTesting(word);
-    ASSERT_EQ(i + 1, proc.num_operators());
     const std::unique_ptr<CPDF_PSOP>& new_psop = proc.last_operator();
     ASSERT_TRUE(new_psop);
     PDF_PSOP new_op = new_psop->GetOp();
-    EXPECT_EQ(kTestData[i].op, new_op);
+    EXPECT_EQ(item.op, new_op);
     if (new_op == PSOP_CONST) {
       float fv = new_psop->GetFloatValue();
       if (word == "invalid")

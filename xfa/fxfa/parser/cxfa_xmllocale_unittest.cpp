@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "xfa/fxfa/parser/cxfa_xmllocale.h"
 
 #include "testing/fxgc_unittest.h"
@@ -93,9 +88,7 @@ const char kXMLData[] =
     "</locale>";
 
 CXFA_XMLLocale* CreateLocaleHelper(cppgc::Heap* heap) {
-  return CXFA_XMLLocale::Create(
-      heap, pdfium::as_writable_bytes(pdfium::make_span(
-                const_cast<char*>(kXMLData), strlen(kXMLData))));
+  return CXFA_XMLLocale::Create(heap, ByteStringView(kXMLData).unsigned_span());
 }
 
 }  // namespace
