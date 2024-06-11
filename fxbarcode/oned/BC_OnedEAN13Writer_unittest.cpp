@@ -2,15 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "fxbarcode/oned/BC_OnedEAN13Writer.h"
 
 #include <string.h>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -45,9 +41,9 @@ TEST(OnedEAN13WriterTest, Encode) {
       "#  #   "  // 8 R
       "# #";     // End
   DataVector<uint8_t> encoded = writer.Encode("1234567890128");
-  for (size_t i = 0; i < strlen(kExpected1); i++)
-    EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i]) << i;
-
+  for (size_t i = 0; i < strlen(kExpected1); i++) {
+    UNSAFE_TODO(EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i])) << i;
+  }
   static const char kExpected2[] =
       "# #"  // Start
       // 7 implicit by LGLGLG in next 6 digits
@@ -67,8 +63,9 @@ TEST(OnedEAN13WriterTest, Encode) {
       "# #";     // End
   encoded = writer.Encode("7776665554440");
   ASSERT_EQ(strlen(kExpected2), encoded.size());
-  for (size_t i = 0; i < strlen(kExpected2); i++)
-    EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i]) << i;
+  for (size_t i = 0; i < strlen(kExpected2); i++) {
+    UNSAFE_TODO(EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i])) << i;
+  }
 }
 
 TEST(OnedEAN13WriterTest, Checksum) {
