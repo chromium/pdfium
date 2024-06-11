@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fdrm/fx_crypt.h"
 
 #include <algorithm>
@@ -20,6 +15,7 @@
 #include "testing/utils/hash.h"
 
 using ::testing::ElementsAre;
+using ::testing::ElementsAreArray;
 
 namespace {
 
@@ -30,11 +26,10 @@ std::string CRYPT_MD5String(const char* str) {
 void CheckArcFourContext(const CRYPT_rc4_context& context,
                          int32_t expected_x,
                          int32_t expected_y,
-                         const uint8_t* expected_permutation) {
+                         pdfium::span<const uint8_t> expected_permutation) {
   EXPECT_EQ(expected_x, context.x);
   EXPECT_EQ(expected_y, context.y);
-  for (int32_t i = 0; i < CRYPT_rc4_context::kPermutationLength; ++i)
-    EXPECT_EQ(expected_permutation[i], context.m[i]) << i;
+  EXPECT_THAT(context.m, ElementsAreArray(expected_permutation));
 }
 
 }  // namespace
@@ -325,19 +320,15 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
     CRYPT_rc4_context context;
     CRYPT_ArcFourSetup(&context, {});
 
-    uint8_t data_short[std::size(kDataShort)];
-    FXSYS_memcpy(data_short, kDataShort, std::size(kDataShort));
+    std::vector<uint8_t> data_short(std::begin(kDataShort),
+                                    std::end(kDataShort));
     static const uint8_t kExpectedEncryptedDataShort[] = {
         138, 112, 236, 97,  242, 66,  52,  89,  225, 38,  88,  8,
         47,  78,  216, 24,  170, 106, 26,  199, 208, 131, 157, 242,
         55,  11,  25,  90,  66,  182, 19,  255, 210, 181, 85,  69,
         31,  240, 206, 171, 97,  62,  202, 172, 30,  252};
-    static_assert(
-        std::size(kExpectedEncryptedDataShort) == std::size(data_short),
-        "data_short mismatch");
     CRYPT_ArcFourCrypt(&context, data_short);
-    for (size_t i = 0; i < std::size(data_short); ++i)
-      EXPECT_EQ(kExpectedEncryptedDataShort[i], data_short[i]) << i;
+    EXPECT_THAT(data_short, ElementsAreArray(kExpectedEncryptedDataShort));
 
     static const uint8_t kPermutation[CRYPT_rc4_context::kPermutationLength] = {
         0,   198, 10,  37,  253, 192, 171, 183, 99,  8,   144, 103, 208, 191,
@@ -365,8 +356,7 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
     CRYPT_rc4_context context;
     CRYPT_ArcFourSetup(&context, {});
 
-    uint8_t data_long[std::size(kDataLong)];
-    FXSYS_memcpy(data_long, kDataLong, std::size(kDataLong));
+    std::vector<uint8_t> data_long(std::begin(kDataLong), std::end(kDataLong));
     static const uint8_t kExpectedEncryptedDataLong[] = {
         138, 112, 236, 97,  242, 66,  52,  89,  225, 38,  88,  8,   47,  78,
         216, 24,  170, 106, 26,  199, 208, 131, 157, 242, 55,  11,  25,  90,
@@ -388,12 +378,8 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
         208, 161, 105, 226, 164, 114, 80,  137, 58,  107, 109, 42,  110, 100,
         202, 170, 224, 89,  28,  5,   138, 19,  253, 105, 220, 105, 24,  187,
         109, 89,  205, 89,  202};
-    static_assert(std::size(kExpectedEncryptedDataLong) == std::size(data_long),
-                  "data_long mismatch");
-    static_assert(std::size(data_long) > 256, "too short");
     CRYPT_ArcFourCrypt(&context, data_long);
-    for (size_t i = 0; i < std::size(data_long); ++i)
-      EXPECT_EQ(kExpectedEncryptedDataLong[i], data_long[i]) << i;
+    EXPECT_THAT(data_long, ElementsAreArray(kExpectedEncryptedDataLong));
 
     static const uint8_t kPermutation[CRYPT_rc4_context::kPermutationLength] = {
         172, 59,  196, 72,  101, 21,  215, 210, 212, 52,  243, 73,  47,  213,
@@ -422,19 +408,15 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
     ByteStringView foobar = "foobar";
     CRYPT_ArcFourSetup(&context, foobar.unsigned_span());
 
-    uint8_t data_short[std::size(kDataShort)];
-    FXSYS_memcpy(data_short, kDataShort, std::size(kDataShort));
+    std::vector<uint8_t> data_short(std::begin(kDataShort),
+                                    std::end(kDataShort));
     static const uint8_t kExpectedEncryptedDataShort[] = {
         59,  193, 117, 206, 167, 54,  218, 7,   229, 214, 188, 55,
         90,  205, 196, 25,  36,  114, 199, 218, 161, 107, 122, 119,
         106, 167, 44,  175, 240, 123, 192, 102, 174, 167, 105, 187,
         202, 70,  121, 81,  17,  30,  5,   138, 116, 166};
-    static_assert(
-        std::size(kExpectedEncryptedDataShort) == std::size(data_short),
-        "data_short mismatch");
     CRYPT_ArcFourCrypt(&context, data_short);
-    for (size_t i = 0; i < std::size(data_short); ++i)
-      EXPECT_EQ(kExpectedEncryptedDataShort[i], data_short[i]) << i;
+    EXPECT_THAT(data_short, ElementsAreArray(kExpectedEncryptedDataShort));
 
     static const uint8_t kPermutation[CRYPT_rc4_context::kPermutationLength] = {
         102, 41,  45,  82,  124, 141, 237, 38,  6,   64,  90,  140, 254, 96,
@@ -463,8 +445,7 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
     ByteStringView foobar = "foobar";
     CRYPT_ArcFourSetup(&context, foobar.unsigned_span());
 
-    uint8_t data_long[std::size(kDataLong)];
-    FXSYS_memcpy(data_long, kDataLong, std::size(kDataLong));
+    std::vector<uint8_t> data_long(std::begin(kDataLong), std::end(kDataLong));
     static const uint8_t kExpectedEncryptedDataLong[] = {
         59,  193, 117, 206, 167, 54,  218, 7,   229, 214, 188, 55,  90,  205,
         196, 25,  36,  114, 199, 218, 161, 107, 122, 119, 106, 167, 44,  175,
@@ -486,12 +467,9 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
         22,  110, 43,  56,  94,  127, 48,  96,  47,  172, 3,   31,  130, 249,
         243, 73,  206, 89,  9,   93,  156, 167, 205, 166, 75,  227, 36,  34,
         81,  124, 195, 246, 152};
-    static_assert(std::size(kExpectedEncryptedDataLong) == std::size(data_long),
-                  "data_long mismatch");
-    static_assert(std::size(data_long) > 256, "too short");
+    static_assert(std::size(kDataLong) > 256, "too short");
     CRYPT_ArcFourCrypt(&context, data_long);
-    for (size_t i = 0; i < std::size(data_long); ++i)
-      EXPECT_EQ(kExpectedEncryptedDataLong[i], data_long[i]) << i;
+    EXPECT_THAT(data_long, ElementsAreArray(kExpectedEncryptedDataLong));
 
     static const uint8_t kPermutation[CRYPT_rc4_context::kPermutationLength] = {
         188, 12,  81,  130, 228, 58,  124, 218, 72,  210, 50,  70,  166, 38,

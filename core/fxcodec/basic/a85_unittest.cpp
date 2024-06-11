@@ -2,13 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include <stdint.h>
 
+#include <array>
 #include <iterator>
 #include <limits>
 #include <memory>
@@ -94,7 +90,7 @@ TEST(fxcodec, A85Zeros) {
 // Make sure we get returns in the expected locations.
 TEST(fxcodec, A85LineBreaks) {
   // Make sure really big values don't break.
-  uint8_t src_buf[131] = {0};
+  std::array<uint8_t, 131> src_buf = {};
   // 1 full line + most of a line of normal symbols.
   for (int k = 0; k < 116; k += 4) {
     src_buf[k] = 1;

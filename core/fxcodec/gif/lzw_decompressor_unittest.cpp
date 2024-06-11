@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxcodec/gif/lzw_decompressor.h"
 
 #include <stdint.h>
@@ -14,11 +9,14 @@
 
 #include <iterator>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/stl_util.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
+using ::testing::Each;
+using ::testing::ElementsAre;
 using ::testing::ElementsAreArray;
 
 TEST(LZWDecompressor, CreateBadParams) {
@@ -42,9 +40,7 @@ TEST(LZWDecompressor, ExtractData) {
     fxcrt::Fill(dest_buf, 0xff);
     EXPECT_EQ(0u, decompressor->ExtractDataForTest(
                       pdfium::make_span(dest_buf).first(0u)));
-    for (size_t i = 0; i < std::size(dest_buf); ++i) {
-      EXPECT_EQ(static_cast<uint8_t>(-1), dest_buf[i]);
-    }
+    EXPECT_THAT(dest_buf, Each(static_cast<uint8_t>(-1)));
     EXPECT_EQ(10u, *(decompressor->DecompressedNextForTest()));
     for (size_t i = 0; i < *(decompressor->DecompressedNextForTest()); ++i) {
       EXPECT_EQ(i, (*decompressed)[i]);
@@ -62,11 +58,11 @@ TEST(LZWDecompressor, ExtractData) {
                       pdfium::make_span(dest_buf).first(5u)));
     size_t i = 0;
     for (; i < 5; ++i) {
-      EXPECT_EQ(9 - i, dest_buf[i]);
+      EXPECT_EQ(9 - i, UNSAFE_TODO(dest_buf[i]));
     }
-    for (; i < std::size(dest_buf); ++i) {
-      EXPECT_EQ(static_cast<uint8_t>(-1), dest_buf[i]);
-    }
+    EXPECT_THAT(pdfium::span(dest_buf).first(5), ElementsAre(9, 8, 7, 6, 5));
+    EXPECT_THAT(pdfium::span(dest_buf).subspan(5),
+                Each(static_cast<uint8_t>(-1)));
     EXPECT_EQ(5u, *(decompressor->DecompressedNextForTest()));
     for (i = 0; i < *(decompressor->DecompressedNextForTest()); ++i) {
       EXPECT_EQ(i, (*decompressed)[i]);
@@ -81,13 +77,10 @@ TEST(LZWDecompressor, ExtractData) {
     uint8_t dest_buf[20];
     fxcrt::Fill(dest_buf, 0xff);
     EXPECT_EQ(10u, decompressor->ExtractDataForTest(dest_buf));
-    size_t i = 0;
-    for (; i < 10; ++i) {
-      EXPECT_EQ(9 - i, dest_buf[i]);
-    }
-    for (; i < std::size(dest_buf); ++i) {
-      EXPECT_EQ(static_cast<uint8_t>(-1), dest_buf[i]);
-    }
+    EXPECT_THAT(pdfium::span(dest_buf).first(10),
+                ElementsAre(9, 8, 7, 6, 5, 4, 3, 2, 1, 0));
+    EXPECT_THAT(pdfium::span(dest_buf).subspan(10),
+                Each(static_cast<uint8_t>(-1)));
     EXPECT_EQ(0u, *(decompressor->DecompressedNextForTest()));
   }
 }
@@ -104,17 +97,17 @@ TEST(LZWDecompressor, DecodeBadParams) {
 
   decompressor->SetSource(pdfium::span<uint8_t>());
   EXPECT_EQ(LZWDecompressor::Status::kError,
-            decompressor->Decode(output_data, &output_size));
+            UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
 
   decompressor->SetSource(image_data);
   EXPECT_EQ(LZWDecompressor::Status::kError,
-            decompressor->Decode(nullptr, &output_size));
+            UNSAFE_TODO(decompressor->Decode(nullptr, &output_size)));
   EXPECT_EQ(LZWDecompressor::Status::kError,
-            decompressor->Decode(output_data, nullptr));
+            UNSAFE_TODO(decompressor->Decode(output_data, nullptr)));
 
   output_size = 0;
   EXPECT_EQ(LZWDecompressor::Status::kInsufficientDestSize,
-            decompressor->Decode(output_data, &output_size));
+            UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
 }
 
 TEST(LZWDecompressor, Decode1x1SingleColour) {
@@ -130,7 +123,7 @@ TEST(LZWDecompressor, Decode1x1SingleColour) {
 
   decompressor->SetSource(image_data);
   EXPECT_EQ(LZWDecompressor::Status::kSuccess,
-            decompressor->Decode(output_data, &output_size));
+            UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
 
   EXPECT_EQ(std::size(output_data), output_size);
   EXPECT_TRUE(0 == memcmp(expected_data, output_data, sizeof(expected_data)));
@@ -159,7 +152,7 @@ TEST(LZWDecompressor, Decode10x10SingleColour) {
 
   decompressor->SetSource(kImageData);
   EXPECT_EQ(LZWDecompressor::Status::kSuccess,
-            decompressor->Decode(output_data, &output_size));
+            UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
 
   EXPECT_EQ(std::size(output_data), output_size);
   EXPECT_TRUE(0 == memcmp(kExpectedData, output_data, sizeof(kExpectedData)));
@@ -189,7 +182,7 @@ TEST(LZWDecompressor, Decode10x10MultipleColour) {
 
   decompressor->SetSource(kImageData);
   EXPECT_EQ(LZWDecompressor::Status::kSuccess,
-            decompressor->Decode(output_data, &output_size));
+            UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
 
   EXPECT_EQ(std::size(output_data), output_size);
   EXPECT_TRUE(0 == memcmp(kExpectedData, output_data, sizeof(kExpectedData)));
@@ -207,14 +200,14 @@ TEST(LZWDecompressor, MultipleDecodes) {
   fxcrt::Fill(output_data, 0xff);
   uint32_t output_size = std::size(output_data);
   EXPECT_EQ(LZWDecompressor::Status::kInsufficientDestSize,
-            decompressor->Decode(output_data, &output_size));
+            UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
   EXPECT_EQ(std::size(kExpectedScanline), output_size);
   EXPECT_THAT(output_data, ElementsAreArray(kExpectedScanline));
 
   fxcrt::Fill(output_data, 0xff);
   output_size = std::size(output_data);
   EXPECT_EQ(LZWDecompressor::Status::kSuccess,
-            decompressor->Decode(output_data, &output_size));
+            UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
   EXPECT_EQ(std::size(kExpectedScanline), output_size);
   EXPECT_THAT(output_data, ElementsAreArray(kExpectedScanline));
 }
@@ -236,5 +229,5 @@ TEST(LZWDecompressor, HandleColourCodeOutOfPalette) {
 
   decompressor->SetSource(kImageData);
   EXPECT_EQ(LZWDecompressor::Status::kError,
-            decompressor->Decode(output_data, &output_size));
+            UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
 }

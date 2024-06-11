@@ -2,15 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/dib/cfx_dibitmap.h"
 
 #include <stdint.h>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/dib/fx_dib.h"
@@ -126,10 +122,9 @@ TEST(CFX_DIBitmap, CalculatePitchAndSizeBoundary) {
 TEST(CFX_DIBitmap, UnPreMultiply_FromCleared) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
-  FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'7f'7f'7f);
+  UNSAFE_TODO(FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'7f'7f'7f));
 
   bitmap->UnPreMultiply();
-
   EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0xff, 0xff, 0xff, 0x7f));
 }
 
@@ -137,10 +132,9 @@ TEST(CFX_DIBitmap, UnPreMultiply_FromPreMultiplied) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
   bitmap->ForcePreMultiply();
-  FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'7f'7f'7f);
+  UNSAFE_TODO(FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'7f'7f'7f));
 
   bitmap->UnPreMultiply();
-
   EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0xff, 0xff, 0xff, 0x7f));
 }
 
@@ -148,10 +142,9 @@ TEST(CFX_DIBitmap, UnPreMultiply_FromUnPreMultiplied) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
   bitmap->UnPreMultiply();
-  FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'ff'ff'ff);
+  UNSAFE_TODO(FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'ff'ff'ff));
 
   bitmap->UnPreMultiply();
-
   EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0xff, 0xff, 0xff, 0x7f));
 }
 #endif  // defined(PDF_USE_SKIA)

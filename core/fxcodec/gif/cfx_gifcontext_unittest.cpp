@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxcodec/gif/cfx_gifcontext.h"
 
 #include <stdint.h>
@@ -14,6 +9,7 @@
 #include <utility>
 
 #include "core/fxcodec/cfx_codec_memory.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/span_util.h"
 #include "testing/gtest/include/gtest/gtest.h"
@@ -73,13 +69,13 @@ TEST(CFX_GifContext, ReadAllOrNone) {
 
   context.SetTestInputBuffer(src_buffer);
   EXPECT_TRUE(context.ReadAllOrNone(dest_span.first(sizeof(src_buffer))));
-  for (size_t i = 0; i < sizeof(src_buffer); i++)
-    EXPECT_EQ(src_buffer[i], dest_buffer[i]);
-
+  for (size_t i = 0; i < sizeof(src_buffer); i++) {
+    UNSAFE_TODO(EXPECT_EQ(src_buffer[i], dest_buffer[i]));
+  }
   context.SetTestInputBuffer(src_buffer);
   for (size_t i = 0; i < sizeof(src_buffer); i++) {
     EXPECT_TRUE(context.ReadAllOrNone(dest_span.first(1u)));
-    EXPECT_EQ(src_buffer[i], dest_buffer[0]);
+    UNSAFE_TODO(EXPECT_EQ(src_buffer[i], dest_buffer[0]));
   }
 }
 

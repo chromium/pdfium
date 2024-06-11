@@ -2,17 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 // TODO(tsepez) this requires a lot more testing.
 
 #include "core/fxcodec/jbig2/JBig2_Image.h"
 
 #include <stdint.h>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -62,14 +58,14 @@ TEST(fxcodec, JBig2ImageCreate) {
   EXPECT_EQ(0, img.GetPixel(0, 0));
   EXPECT_EQ(0, img.GetLine(0)[0]);
   EXPECT_EQ(0, img.GetPixel(kWidthPixels - 1, kHeightLines - 1));
-  EXPECT_EQ(0, img.GetLine(kHeightLines - 1)[kWidthBytes - 1]);
+  EXPECT_EQ(0, UNSAFE_TODO(img.GetLine(kHeightLines - 1)[kWidthBytes - 1]));
 
   img.SetPixel(0, 0, true);
   img.SetPixel(kWidthPixels - 1, kHeightLines - 1, true);
   EXPECT_EQ(1, img.GetPixel(0, 0));
   EXPECT_EQ(1, img.GetPixel(kWidthPixels - 1, kHeightLines - 1));
   EXPECT_EQ(0x80, img.GetLine(0)[0]);
-  EXPECT_EQ(0x01, img.GetLine(kHeightLines - 1)[kWidthBytes - 1]);
+  EXPECT_EQ(0x01, UNSAFE_TODO(img.GetLine(kHeightLines - 1)[kWidthBytes - 1]));
 
   // Out-of-bounds SetPixel() is silent no-op.
   img.SetPixel(-1, 1, true);
