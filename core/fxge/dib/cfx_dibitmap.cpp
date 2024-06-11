@@ -309,18 +309,11 @@ void CFX_DIBitmap::SetRedFromAlpha() {
   CHECK(m_pBuffer);
 
   for (int row = 0; row < m_Height; row++) {
-    constexpr int kSrcOffset = 3;
-    constexpr int kDestOffset = 2;
-    constexpr int kBytes = 4;
-    uint8_t* dest_pos = GetWritableScanline(row).subspan(kDestOffset).data();
-    const uint8_t* src_pos = GetScanline(row).subspan(kSrcOffset).data();
-    UNSAFE_TODO({
-      for (int col = 0; col < m_Width; col++) {
-        *dest_pos = *src_pos;
-        dest_pos += kBytes;
-        src_pos += kBytes;
-      }
-    });
+    auto scanline =
+        GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(m_Width);
+    for (auto& pixel : scanline) {
+      pixel.red = pixel.alpha;
+    }
   }
 }
 
@@ -331,15 +324,11 @@ bool CFX_DIBitmap::SetUniformOpaqueAlpha() {
     return false;
 
   for (int row = 0; row < m_Height; row++) {
-    constexpr int kDestOffset = 3;
-    constexpr int kDestBytes = 4;
-    uint8_t* dest_pos = GetWritableScanline(row).subspan(kDestOffset).data();
-    UNSAFE_TODO({
-      for (int col = 0; col < m_Width; col++) {
-        *dest_pos = 0xff;
-        dest_pos += kDestBytes;
-      }
-    });
+    auto scanline =
+        GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(m_Width);
+    for (auto& pixel : scanline) {
+      pixel.alpha = 0xff;
+    }
   }
   return true;
 }
@@ -350,38 +339,32 @@ bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
   CHECK_EQ(FXDIB_Format::k8bppMask, mask->GetFormat());
   CHECK(m_pBuffer);
 
-  constexpr int kDestOffset = 3;
-  constexpr int kDestBytes = 4;
   if (GetFormat() == FXDIB_Format::kRgb32) {
     if (!ConvertFormat(FXDIB_Format::kArgb)) {
       return false;
     }
 
     for (int row = 0; row < m_Height; row++) {
-      uint8_t* dest_pos = GetWritableScanline(row).subspan(kDestOffset).data();
-      const uint8_t* mask_scan = mask->GetScanline(row).data();
-      UNSAFE_TODO({
-        for (int col = 0; col < m_Width; col++) {
-          // Since the `dest_pos` value always starts out as 255 in this case,
-          // simplify 255 * x / 255.
-          *dest_pos = mask_scan[col];
-          dest_pos += kDestBytes;
-        }
-      });
+      auto dest_scan =
+          GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(m_Width);
+      auto mask_scan = mask->GetScanline(row).first(m_Width);
+      for (int col = 0; col < m_Width; col++) {
+        // Since the `dest_scan` value always starts out as 255 in this case,
+        // simplify 255 * x / 255.
+        dest_scan[col].alpha = mask_scan[col];
+      }
     }
     return true;
   }
 
   CHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
   for (int row = 0; row < m_Height; row++) {
-    uint8_t* dest_pos = GetWritableScanline(row).subspan(kDestOffset).data();
-    const uint8_t* mask_scan = mask->GetScanline(row).data();
-    UNSAFE_TODO({
-      for (int col = 0; col < m_Width; col++) {
-        *dest_pos = (*dest_pos) * mask_scan[col] / 255;
-        dest_pos += kDestBytes;
-      }
-    });
+    auto dest_scan =
+        GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(m_Width);
+    auto mask_scan = mask->GetScanline(row).first(m_Width);
+    for (int col = 0; col < m_Width; col++) {
+      dest_scan[col].alpha = dest_scan[col].alpha * mask_scan[col] / 255;
+    }
   }
   return true;
 }
@@ -405,15 +388,11 @@ bool CFX_DIBitmap::MultiplyAlpha(float alpha) {
 
   const int bitmap_alpha = static_cast<int>(alpha * 255.0f);
   for (int row = 0; row < m_Height; row++) {
-    constexpr int kDestOffset = 3;
-    constexpr int kDestBytes = 4;
-    uint8_t* dest_pos = GetWritableScanline(row).subspan(kDestOffset).data();
-    UNSAFE_TODO({
-      for (int col = 0; col < m_Width; col++) {
-        *dest_pos = (*dest_pos) * bitmap_alpha / 255;
-        dest_pos += kDestBytes;
-      }
-    });
+    auto dest_scan =
+        GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(m_Width);
+    for (auto& pixel : dest_scan) {
+      pixel.alpha = pixel.alpha * bitmap_alpha / 255;
+    }
   }
   return true;
 }
