@@ -7,6 +7,7 @@
 #include "core/fpdfapi/font/cpdf_font.h"
 
 #include <algorithm>
+#include <array>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -27,7 +28,6 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcrt/check.h"
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/stl_util.h"
@@ -37,13 +37,13 @@
 
 namespace {
 
-constexpr size_t kChineseFontNameSize = 4;
-const uint8_t kChineseFontNames[][kChineseFontNameSize] = {
-    {0xCB, 0xCE, 0xCC, 0xE5},
-    {0xBF, 0xAC, 0xCC, 0xE5},
-    {0xBA, 0xDA, 0xCC, 0xE5},
-    {0xB7, 0xC2, 0xCB, 0xCE},
-    {0xD0, 0xC2, 0xCB, 0xCE}};
+constexpr std::array<const char*, 5> kChineseFontNames = {{
+    "\xCB\xCE\xCC\xE5",
+    "\xBF\xAC\xCC\xE5",
+    "\xBA\xDA\xCC\xE5",
+    "\xB7\xC2\xCB\xCE",
+    "\xD0\xC2\xCB\xCE",
+}};
 
 }  // namespace
 
@@ -307,9 +307,8 @@ RetainPtr<CPDF_Font> CPDF_Font::Create(CPDF_Document* pDoc,
   RetainPtr<CPDF_Font> pFont;
   if (type == "TrueType") {
     ByteString tag = pFontDict->GetByteStringFor("BaseFont").First(4);
-    for (size_t i = 0; i < std::size(kChineseFontNames); ++i) {
-      if (tag == UNSAFE_TODO(ByteString::Create(kChineseFontNames[i],
-                                                kChineseFontNameSize))) {
+    for (const char* chinese_font_name : kChineseFontNames) {
+      if (tag == chinese_font_name) {
         RetainPtr<const CPDF_Dictionary> pFontDesc =
             pFontDict->GetDictFor("FontDescriptor");
         if (!pFontDesc || !pFontDesc->KeyExist("FontFile2"))
