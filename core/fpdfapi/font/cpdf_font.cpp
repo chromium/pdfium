@@ -54,8 +54,9 @@ CPDF_Font::CPDF_Font(CPDF_Document* pDocument,
       m_BaseFontName(m_pFontDict->GetByteStringFor("BaseFont")) {}
 
 CPDF_Font::~CPDF_Font() {
-  if (m_pFontFile)
+  if (!m_bWillBeDestroyed && m_pFontFile) {
     m_pDocument->MaybePurgeFontFileStreamAcc(std::move(m_pFontFile));
+  }
 }
 
 bool CPDF_Font::IsType1Font() const {
@@ -116,7 +117,9 @@ int CPDF_Font::GlyphFromCharCodeExt(uint32_t charcode) {
 }
 #endif
 
-void CPDF_Font::WillBeDestroyed() {}
+void CPDF_Font::WillBeDestroyed() {
+  m_bWillBeDestroyed = true;
+}
 
 bool CPDF_Font::IsVertWriting() const {
   const CPDF_CIDFont* pCIDFont = AsCIDFont();

@@ -48,11 +48,14 @@ CPDF_Type3Font* CPDF_Type3Font::AsType3Font() {
 }
 
 void CPDF_Type3Font::WillBeDestroyed() {
+  m_bWillBeDestroyed = true;
+
   // Last reference to |this| may be through one of its CPDF_Type3Chars.
   RetainPtr<CPDF_Font> protector(this);
   for (const auto& item : m_CacheMap) {
-    if (item.second)
+    if (item.second) {
       item.second->WillBeDestroyed();
+    }
   }
 }
 

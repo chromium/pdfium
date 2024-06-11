@@ -171,6 +171,7 @@ class CPDF_Font : public Retainable, public Observable {
   ByteString m_BaseFontName;
   mutable std::unique_ptr<CPDF_ToUnicodeMap> m_pToUnicodeMap;
   mutable bool m_bToUnicodeLoaded = false;
+  bool m_bWillBeDestroyed = false;
   int m_Flags = 0;
   int m_StemV = 0;
   int m_Ascent = 0;

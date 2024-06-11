@@ -219,8 +219,9 @@ class CPDF_Document : public Observable,
   int m_iNextPageToTraverse = 0;
   uint32_t m_ParsedPageCount = 0;
 
-  std::unique_ptr<RenderDataIface> m_pDocRender;
-  std::unique_ptr<PageDataIface> m_pDocPage;  // Must be after |m_pDocRender|.
+  std::unique_ptr<RenderDataIface> const m_pDocRender;
+  // Must be after `m_pDocRender`.
+  std::unique_ptr<PageDataIface> const m_pDocPage;
   std::unique_ptr<JBig2_DocumentContext> m_pCodecContext;
   std::unique_ptr<LinkListIface> m_pLinksContext;
   std::set<uint32_t> m_ModifiedAPStreamIDs;

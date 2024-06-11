@@ -451,13 +451,11 @@ RetainPtr<CPDF_StreamAcc> CPDF_Document::GetFontFileStreamAcc(
 
 void CPDF_Document::MaybePurgeFontFileStreamAcc(
     RetainPtr<CPDF_StreamAcc>&& pStreamAcc) {
-  if (m_pDocPage)
-    m_pDocPage->MaybePurgeFontFileStreamAcc(std::move(pStreamAcc));
+  m_pDocPage->MaybePurgeFontFileStreamAcc(std::move(pStreamAcc));
 }
 
 void CPDF_Document::MaybePurgeImage(uint32_t objnum) {
-  if (m_pDocPage)
-    m_pDocPage->MaybePurgeImage(objnum);
+  m_pDocPage->MaybePurgeImage(objnum);
 }
 
 void CPDF_Document::CreateNewDoc() {
