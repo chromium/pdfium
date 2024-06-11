@@ -7,7 +7,6 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_PSENGINE_H_
 #define CORE_FPDFAPI_PAGE_CPDF_PSENGINE_H_
 
-#include <stddef.h>
 #include <stdint.h>
 
 #include <array>
@@ -96,7 +95,6 @@ class CPDF_PSProc {
 
   // These methods are exposed for testing.
   void AddOperatorForTesting(ByteStringView word);
-  size_t num_operators() const { return m_Operators.size(); }
   const std::unique_ptr<CPDF_PSOP>& last_operator() {
     return m_Operators.back();
   }
