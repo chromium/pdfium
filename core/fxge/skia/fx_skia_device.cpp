@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxge/skia/fx_skia_device.h"
 
 #include <math.h>
@@ -349,25 +344,28 @@ bool AddSamples(const CPDF_SampledFunc* func,
 
   float colors_min[3];
   float colors_max[3];
-  for (int i = 0; i < 3; ++i) {
-    colors_min[i] = func->GetRange(i * 2);
-    colors_max[i] = func->GetRange(i * 2 + 1);
-  }
-  pdfium::span<const uint8_t> sample_data = func->GetSampleStream()->GetSpan();
-  CFX_BitStream bitstream(sample_data);
-  for (uint32_t i = 0; i < sample_count; ++i) {
-    float float_colors[3];
-    for (uint32_t j = 0; j < 3; ++j) {
-      float sample = static_cast<float>(bitstream.GetBits(sample_size));
-      float interp = sample / (sample_count - 1);
-      float_colors[j] =
-          colors_min[j] + (colors_max[j] - colors_min[j]) * interp;
+  UNSAFE_TODO({
+    for (int i = 0; i < 3; ++i) {
+      colors_min[i] = func->GetRange(i * 2);
+      colors_max[i] = func->GetRange(i * 2 + 1);
     }
-    colors.push_back(SkPackARGB32NoCheck(0xFF, FloatToByte(float_colors[0]),
-                                         FloatToByte(float_colors[1]),
-                                         FloatToByte(float_colors[2])));
-    pos.push_back(static_cast<float>(i) / (sample_count - 1));
-  }
+    pdfium::span<const uint8_t> sample_data =
+        func->GetSampleStream()->GetSpan();
+    CFX_BitStream bitstream(sample_data);
+    for (uint32_t i = 0; i < sample_count; ++i) {
+      float float_colors[3];
+      for (uint32_t j = 0; j < 3; ++j) {
+        float sample = static_cast<float>(bitstream.GetBits(sample_size));
+        float interp = sample / (sample_count - 1);
+        float_colors[j] =
+            colors_min[j] + (colors_max[j] - colors_min[j]) * interp;
+      }
+      colors.push_back(SkPackARGB32NoCheck(0xFF, FloatToByte(float_colors[0]),
+                                           FloatToByte(float_colors[1]),
+                                           FloatToByte(float_colors[2])));
+      pos.push_back(static_cast<float>(i) / (sample_count - 1));
+    }
+  });
   return true;
 }
 
@@ -399,8 +397,9 @@ bool AddStitching(const CPDF_StitchFunc* func,
 
 // see https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
 SkScalar LineSide(const SkPoint line[2], const SkPoint& pt) {
-  return (line[1].fY - line[0].fY) * pt.fX - (line[1].fX - line[0].fX) * pt.fY +
-         line[1].fX * line[0].fY - line[1].fY * line[0].fX;
+  return UNSAFE_TODO((line[1].fY - line[0].fY) * pt.fX -
+                     (line[1].fX - line[0].fX) * pt.fY +
+                     line[1].fX * line[0].fY - line[1].fY * line[0].fX);
 }
 
 SkPoint IntersectSides(const SkPoint& parallelPt,
@@ -430,74 +429,83 @@ void ClipAngledGradient(const SkPoint pts[2],
   SkScalar maxPerpDist = SK_ScalarMin;
   int minPerpPtIndex = -1;
   int maxPerpPtIndex = -1;
-  SkVector slope = pts[1] - pts[0];
-  SkPoint startPerp[2] = {pts[0], {pts[0].fX + slope.fY, pts[0].fY - slope.fX}};
-  SkPoint endPerp[2] = {pts[1], {pts[1].fX + slope.fY, pts[1].fY - slope.fX}};
-  for (int i = 0; i < 4; ++i) {
-    SkScalar sDist = LineSide(startPerp, rectPts[i]);
-    SkScalar eDist = LineSide(endPerp, rectPts[i]);
-    if (sDist * eDist <= 0)  // if the signs are different,
-      continue;              // the point is inside the gradient
-    if (sDist < 0) {
-      SkScalar smaller = std::min(sDist, eDist);
-      if (minPerpDist > smaller) {
-        minPerpDist = smaller;
-        minPerpPtIndex = i;
+  UNSAFE_TODO({
+    SkVector slope = pts[1] - pts[0];
+    SkPoint startPerp[2] = {pts[0],
+                            {pts[0].fX + slope.fY, pts[0].fY - slope.fX}};
+    SkPoint endPerp[2] = {pts[1], {pts[1].fX + slope.fY, pts[1].fY - slope.fX}};
+    for (int i = 0; i < 4; ++i) {
+      SkScalar sDist = LineSide(startPerp, rectPts[i]);
+      SkScalar eDist = LineSide(endPerp, rectPts[i]);
+      if (sDist * eDist <= 0) {  // if the signs are different,
+        continue;                // the point is inside the gradient
       }
-    } else {
-      SkScalar larger = std::max(sDist, eDist);
-      if (maxPerpDist < larger) {
-        maxPerpDist = larger;
-        maxPerpPtIndex = i;
+      if (sDist < 0) {
+        SkScalar smaller = std::min(sDist, eDist);
+        if (minPerpDist > smaller) {
+          minPerpDist = smaller;
+          minPerpPtIndex = i;
+        }
+      } else {
+        SkScalar larger = std::max(sDist, eDist);
+        if (maxPerpDist < larger) {
+          maxPerpDist = larger;
+          maxPerpPtIndex = i;
+        }
       }
     }
-  }
-  if (minPerpPtIndex < 0 && maxPerpPtIndex < 0)  // nothing's outside
-    return;
-
-  // determine if negative distances are before start or after end
-  SkPoint beforeStart = {pts[0].fX * 2 - pts[1].fX, pts[0].fY * 2 - pts[1].fY};
-  bool beforeNeg = LineSide(startPerp, beforeStart) < 0;
-
-  int noClipStartIndex = maxPerpPtIndex;
-  int noClipEndIndex = minPerpPtIndex;
-  if (beforeNeg)
-    std::swap(noClipStartIndex, noClipEndIndex);
-  if ((!clipStart && noClipStartIndex < 0) ||
-      (!clipEnd && noClipEndIndex < 0)) {
-    return;
-  }
-
-  const SkPoint& startEdgePt = clipStart ? pts[0] : rectPts[noClipStartIndex];
-  const SkPoint& endEdgePt = clipEnd ? pts[1] : rectPts[noClipEndIndex];
-
-  // find the corners that bound the gradient
-  SkScalar minDist = SK_ScalarMax;
-  SkScalar maxDist = SK_ScalarMin;
-  int minBounds = -1;
-  int maxBounds = -1;
-  for (int i = 0; i < 4; ++i) {
-    SkScalar dist = LineSide(pts, rectPts[i]);
-    if (minDist > dist) {
-      minDist = dist;
-      minBounds = i;
+    if (minPerpPtIndex < 0 && maxPerpPtIndex < 0) {  // nothing's outside
+      return;
     }
-    if (maxDist < dist) {
-      maxDist = dist;
-      maxBounds = i;
+
+    // determine if negative distances are before start or after end
+    SkPoint beforeStart = {pts[0].fX * 2 - pts[1].fX,
+                           pts[0].fY * 2 - pts[1].fY};
+    bool beforeNeg = LineSide(startPerp, beforeStart) < 0;
+
+    int noClipStartIndex = maxPerpPtIndex;
+    int noClipEndIndex = minPerpPtIndex;
+    if (beforeNeg) {
+      std::swap(noClipStartIndex, noClipEndIndex);
     }
-  }
-  if (minBounds < 0 || maxBounds < 0)
-    return;
-  if (minBounds == maxBounds)
-    return;
-  // construct a clip parallel to the gradient that goes through
-  // rectPts[minBounds] and rectPts[maxBounds] and perpendicular to the
-  // gradient that goes through startEdgePt, endEdgePt.
-  clip->moveTo(IntersectSides(rectPts[minBounds], slope, startEdgePt));
-  clip->lineTo(IntersectSides(rectPts[minBounds], slope, endEdgePt));
-  clip->lineTo(IntersectSides(rectPts[maxBounds], slope, endEdgePt));
-  clip->lineTo(IntersectSides(rectPts[maxBounds], slope, startEdgePt));
+    if ((!clipStart && noClipStartIndex < 0) ||
+        (!clipEnd && noClipEndIndex < 0)) {
+      return;
+    }
+
+    const SkPoint& startEdgePt = clipStart ? pts[0] : rectPts[noClipStartIndex];
+    const SkPoint& endEdgePt = clipEnd ? pts[1] : rectPts[noClipEndIndex];
+
+    // find the corners that bound the gradient
+    SkScalar minDist = SK_ScalarMax;
+    SkScalar maxDist = SK_ScalarMin;
+    int minBounds = -1;
+    int maxBounds = -1;
+    for (int i = 0; i < 4; ++i) {
+      SkScalar dist = LineSide(pts, rectPts[i]);
+      if (minDist > dist) {
+        minDist = dist;
+        minBounds = i;
+      }
+      if (maxDist < dist) {
+        maxDist = dist;
+        maxBounds = i;
+      }
+    }
+    if (minBounds < 0 || maxBounds < 0) {
+      return;
+    }
+    if (minBounds == maxBounds) {
+      return;
+    }
+    // construct a clip parallel to the gradient that goes through
+    // rectPts[minBounds] and rectPts[maxBounds] and perpendicular to the
+    // gradient that goes through startEdgePt, endEdgePt.
+    clip->moveTo(IntersectSides(rectPts[minBounds], slope, startEdgePt));
+    clip->lineTo(IntersectSides(rectPts[minBounds], slope, endEdgePt));
+    clip->lineTo(IntersectSides(rectPts[maxBounds], slope, endEdgePt));
+    clip->lineTo(IntersectSides(rectPts[maxBounds], slope, startEdgePt));
+  });
 }
 
 // Converts a stroking path to scanlines
@@ -1313,35 +1321,37 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     if (!skClip.isEmpty())
       m_pCanvas->clipPath(skClip, SkClipOp::kIntersect, true);
     m_pCanvas->concat(skMatrix);
-    while (!stream.IsEOF()) {
-      uint32_t flag = stream.ReadFlag();
-      size_t start_point = flag ? 4 : 0;
-      size_t start_color = flag ? 2 : 0;
-      if (flag) {
-        SkPoint temp_cubics[4];
-        for (size_t i = 0; i < std::size(temp_cubics); ++i) {
-          temp_cubics[i] = cubics[(flag * 3 + i) % 12];
+    UNSAFE_TODO({
+      while (!stream.IsEOF()) {
+        uint32_t flag = stream.ReadFlag();
+        size_t start_point = flag ? 4 : 0;
+        size_t start_color = flag ? 2 : 0;
+        if (flag) {
+          SkPoint temp_cubics[4];
+          for (size_t i = 0; i < std::size(temp_cubics); ++i) {
+            temp_cubics[i] = cubics[(flag * 3 + i) % 12];
+          }
+          std::copy(std::begin(temp_cubics), std::end(temp_cubics),
+                    std::begin(cubics));
+          SkColor temp_colors[2] = {colors[flag % 4], colors[(flag + 1) % 4]};
+          std::copy(std::begin(temp_colors), std::end(temp_colors),
+                    std::begin(colors));
         }
-        std::copy(std::begin(temp_cubics), std::end(temp_cubics),
-                  std::begin(cubics));
-        SkColor temp_colors[2] = {colors[flag % 4], colors[(flag + 1) % 4]};
-        std::copy(std::begin(temp_colors), std::end(temp_colors),
-                  std::begin(colors));
+        for (size_t i = start_point; i < std::size(cubics); ++i) {
+          CFX_PointF point = stream.ReadCoords();
+          cubics[i].fX = point.x;
+          cubics[i].fY = point.y;
+        }
+        for (size_t i = start_color; i < std::size(colors); ++i) {
+          FX_RGB_STRUCT<float> rgb = stream.ReadColor();
+          colors[i] =
+              SkColorSetARGB(0xFF, (U8CPU)(rgb.red * 255),
+                             (U8CPU)(rgb.green * 255), (U8CPU)(rgb.blue * 255));
+        }
+        m_pCanvas->drawPatch(cubics, colors, /*texCoords=*/nullptr,
+                             SkBlendMode::kDst, paint);
       }
-      for (size_t i = start_point; i < std::size(cubics); ++i) {
-        CFX_PointF point = stream.ReadCoords();
-        cubics[i].fX = point.x;
-        cubics[i].fY = point.y;
-      }
-      for (size_t i = start_color; i < std::size(colors); ++i) {
-        FX_RGB_STRUCT<float> rgb = stream.ReadColor();
-        colors[i] =
-            SkColorSetARGB(0xFF, (U8CPU)(rgb.red * 255),
-                           (U8CPU)(rgb.green * 255), (U8CPU)(rgb.blue * 255));
-      }
-      m_pCanvas->drawPatch(cubics, colors, /*texCoords=*/nullptr,
-                           SkBlendMode::kDst, paint);
-    }
+    });
     return true;
   }
   SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
