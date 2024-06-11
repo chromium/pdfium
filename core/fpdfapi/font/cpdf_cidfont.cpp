@@ -31,10 +31,25 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_unicode.h"
 #include "core/fxcrt/span.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/fx_font.h"
 
 namespace {
+
+struct LowHighVal {
+  int low;
+  int high;
+  int val;
+};
+
+struct LowHighValXY {
+  int low;
+  int high;
+  int val;
+  int x;
+  int y;
+};
 
 constexpr FX_CodePage kCharsetCodePages[CIDSET_NUM_SETS] = {
     FX_CodePage::kDefANSI,
@@ -199,10 +214,6 @@ void UseCIDCharmap(const RetainPtr<CFX_Face>& face, CIDCoding coding) {
   if (!result && face->GetCharMapCount()) {
     face->SetCharMapByIndex(0);
   }
-}
-
-bool IsMetricForCID(const int* pEntry, uint16_t cid) {
-  return UNSAFE_TODO(pEntry[0] <= cid && pEntry[1] >= cid);
 }
 
 void LoadMetricsArray(RetainPtr<const CPDF_Array> pArray,
@@ -531,65 +542,48 @@ FX_RECT CPDF_CIDFont::GetCharBBox(uint32_t charcode) {
 }
 
 int CPDF_CIDFont::GetCharWidthF(uint32_t charcode) {
-  if (charcode < 0x80 && m_bAnsiWidthsFixed)
+  if (charcode < 0x80 && m_bAnsiWidthsFixed) {
     return (charcode >= 32 && charcode < 127) ? 500 : 0;
-
+  }
   uint16_t cid = CIDFromCharCode(charcode);
-  size_t size = m_WidthList.size();
-  const int* pList = m_WidthList.data();
-  UNSAFE_TODO({
-    for (size_t i = 0; i < size; i += 3) {
-      const int* pEntry = pList + i;
-      if (IsMetricForCID(pEntry, cid)) {
-        return pEntry[2];
-      }
+  auto lhv_span = fxcrt::truncating_reinterpret_span<const LowHighVal>(
+      pdfium::make_span(m_WidthList));
+  for (const auto& lhv : lhv_span) {
+    if (lhv.low <= cid && cid <= lhv.high) {
+      return lhv.val;
     }
-  });
+  }
   return m_DefaultWidth;
 }
 
 int16_t CPDF_CIDFont::GetVertWidth(uint16_t cid) const {
-  size_t vertsize = m_VertMetrics.size() / 5;
-  if (vertsize) {
-    const int* pTable = m_VertMetrics.data();
-    UNSAFE_TODO({
-      for (size_t i = 0; i < vertsize; i++) {
-        const int* pEntry = pTable + (i * 5);
-        if (IsMetricForCID(pEntry, cid)) {
-          return static_cast<int16_t>(pEntry[2]);
-        }
-      }
-    });
+  auto lhvxy_span = fxcrt::truncating_reinterpret_span<const LowHighValXY>(
+      pdfium::make_span(m_VertMetrics));
+  for (const auto& lhvxy : lhvxy_span) {
+    if (lhvxy.low <= cid && cid <= lhvxy.high) {
+      return lhvxy.val;
+    }
   }
   return m_DefaultW1;
 }
 
 CFX_Point16 CPDF_CIDFont::GetVertOrigin(uint16_t cid) const {
-  size_t vertsize = m_VertMetrics.size() / 5;
-  if (vertsize) {
-    const int* pTable = m_VertMetrics.data();
-    UNSAFE_TODO({
-      for (size_t i = 0; i < vertsize; i++) {
-        const int* pEntry = pTable + (i * 5);
-        if (IsMetricForCID(pEntry, cid)) {
-          return {static_cast<int16_t>(pEntry[3]),
-                  static_cast<int16_t>(pEntry[4])};
-        }
-      }
-    });
+  auto lhvxy_span = fxcrt::truncating_reinterpret_span<const LowHighValXY>(
+      pdfium::make_span(m_VertMetrics));
+  for (const auto& lhvxy : lhvxy_span) {
+    if (lhvxy.low <= cid & cid <= lhvxy.high) {
+      return {static_cast<int16_t>(lhvxy.x), static_cast<int16_t>(lhvxy.y)};
+    }
   }
   int width = m_DefaultWidth;
-  size_t size = m_WidthList.size();
-  const int* pList = m_WidthList.data();
-  UNSAFE_TODO({
-    for (size_t i = 0; i < size; i += 3) {
-      const int* pEntry = pList + i;
-      if (IsMetricForCID(pEntry, cid)) {
-        width = pEntry[2];
-        break;
-      }
+  auto lhv_span = fxcrt::truncating_reinterpret_span<const LowHighVal>(
+      pdfium::make_span(m_WidthList));
+  for (const auto& lhv : lhv_span) {
+    if (lhv.low <= cid && cid <= lhv.high) {
+      width = lhv.val;
+      break;
     }
-  });
+  }
   return {static_cast<int16_t>(width / 2), m_DefaultVY};
 }
 
