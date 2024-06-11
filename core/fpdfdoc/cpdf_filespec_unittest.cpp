@@ -2,13 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfdoc/cpdf_filespec.h"
 
+#include <array>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -83,30 +79,31 @@ TEST(cpdf_filespec, GetFileName) {
   }
   {
     // Dictionary object.
-    static const pdfium::NullTermWstrFuncTestData test_data[] = {
+    static constexpr std::array<pdfium::NullTermWstrFuncTestData, 5> test_data =
+        {{
 #if BUILDFLAG(IS_WIN)
-      {L"/C/docs/test.pdf", L"C:\\docs\\test.pdf"},
-      {L"/D/docs/test.pdf", L"D:\\docs\\test.pdf"},
-      {L"/E/docs/test.pdf", L"E:\\docs\\test.pdf"},
-      {L"/F/docs/test.pdf", L"F:\\docs\\test.pdf"},
-      {L"/G/docs/test.pdf", L"G:\\docs\\test.pdf"},
+            {L"/C/docs/test.pdf", L"C:\\docs\\test.pdf"},
+            {L"/D/docs/test.pdf", L"D:\\docs\\test.pdf"},
+            {L"/E/docs/test.pdf", L"E:\\docs\\test.pdf"},
+            {L"/F/docs/test.pdf", L"F:\\docs\\test.pdf"},
+            {L"/G/docs/test.pdf", L"G:\\docs\\test.pdf"},
 #elif BUILDFLAG(IS_APPLE)
-      {L"/Mac HD/docs1/test.pdf", L"Mac HD:docs1:test.pdf"},
-      {L"/Mac HD/docs2/test.pdf", L"Mac HD:docs2:test.pdf"},
-      {L"/Mac HD/docs3/test.pdf", L"Mac HD:docs3:test.pdf"},
-      {L"/Mac HD/docs4/test.pdf", L"Mac HD:docs4:test.pdf"},
-      {L"/Mac HD/docs5/test.pdf", L"Mac HD:docs5:test.pdf"},
+            {L"/Mac HD/docs1/test.pdf", L"Mac HD:docs1:test.pdf"},
+            {L"/Mac HD/docs2/test.pdf", L"Mac HD:docs2:test.pdf"},
+            {L"/Mac HD/docs3/test.pdf", L"Mac HD:docs3:test.pdf"},
+            {L"/Mac HD/docs4/test.pdf", L"Mac HD:docs4:test.pdf"},
+            {L"/Mac HD/docs5/test.pdf", L"Mac HD:docs5:test.pdf"},
 #else
-      {L"/docs/a/test.pdf", L"/docs/a/test.pdf"},
-      {L"/docs/b/test.pdf", L"/docs/b/test.pdf"},
-      {L"/docs/c/test.pdf", L"/docs/c/test.pdf"},
-      {L"/docs/d/test.pdf", L"/docs/d/test.pdf"},
-      {L"/docs/e/test.pdf", L"/docs/e/test.pdf"},
+            {L"/docs/a/test.pdf", L"/docs/a/test.pdf"},
+            {L"/docs/b/test.pdf", L"/docs/b/test.pdf"},
+            {L"/docs/c/test.pdf", L"/docs/c/test.pdf"},
+            {L"/docs/d/test.pdf", L"/docs/d/test.pdf"},
+            {L"/docs/e/test.pdf", L"/docs/e/test.pdf"},
 #endif
-    };
+        }};
     // Keyword fields in reverse order of precedence to retrieve the file name.
-    const char* const keywords[] = {"Unix", "Mac", "DOS", "F", "UF"};
-    static_assert(std::size(test_data) == std::size(keywords), "size mismatch");
+    constexpr std::array<const char*, 5> keywords = {
+        {"Unix", "Mac", "DOS", "F", "UF"}};
     auto dict_obj = pdfium::MakeRetain<CPDF_Dictionary>();
     CPDF_FileSpec file_spec(dict_obj);
     EXPECT_TRUE(file_spec.GetFileName().IsEmpty());
@@ -167,8 +164,10 @@ TEST(cpdf_filespec, GetFileStream) {
     CPDF_FileSpec file_spec(dict_obj);
 
     const wchar_t file_name[] = L"test.pdf";
-    const char* const keys[] = {"Unix", "Mac", "DOS", "F", "UF"};
-    const char* const streams[] = {"test1", "test2", "test3", "test4", "test5"};
+    constexpr std::array<const char*, 5> keys = {
+        {"Unix", "Mac", "DOS", "F", "UF"}};
+    constexpr std::array<const char*, 5> streams = {
+        {"test1", "test2", "test3", "test4", "test5"}};
     static_assert(std::size(keys) == std::size(streams), "size mismatch");
     RetainPtr<CPDF_Dictionary> file_dict = dict_obj->GetMutableDictFor("EF");
 
@@ -179,7 +178,7 @@ TEST(cpdf_filespec, GetFileStream) {
 
       // Set the file stream.
       auto stream_object = object_holder.NewIndirect<CPDF_Stream>(
-          pdfium::as_bytes(pdfium::make_span(streams[i], strlen(streams[i]))));
+          ByteStringView(streams[i]).unsigned_span());
       ASSERT_TRUE(stream_object);
       const uint32_t stream_object_number = stream_object->GetObjNum();
       ASSERT_GT(stream_object_number, 0u);

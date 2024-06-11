@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/parser/cpdf_array.h"
 
 #include <iterator>
@@ -41,41 +36,42 @@ TEST(ArrayTest, GetBooleanAt) {
 
 TEST(ArrayTest, RemoveAt) {
   {
-    const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     auto arr = pdfium::MakeRetain<CPDF_Array>();
-    for (size_t i = 0; i < std::size(elems); ++i)
-      arr->AppendNew<CPDF_Number>(elems[i]);
+    for (const int elem : {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}) {
+      arr->AppendNew<CPDF_Number>(elem);
+    }
     for (size_t i = 0; i < 3; ++i)
       arr->RemoveAt(3);
-    const int expected[] = {1, 2, 3, 7, 8, 9, 10};
-    ASSERT_EQ(std::size(expected), arr->size());
-    for (size_t i = 0; i < std::size(expected); ++i)
+    constexpr std::array<int, 7> expected = {{1, 2, 3, 7, 8, 9, 10}};
+    ASSERT_EQ(expected.size(), arr->size());
+    for (size_t i = 0; i < expected.size(); ++i) {
       EXPECT_EQ(expected[i], arr->GetIntegerAt(i));
+    }
     arr->RemoveAt(4);
     arr->RemoveAt(4);
-    const int expected2[] = {1, 2, 3, 7, 10};
+    constexpr std::array<int, 5> expected2 = {{1, 2, 3, 7, 10}};
     ASSERT_EQ(std::size(expected2), arr->size());
     for (size_t i = 0; i < std::size(expected2); ++i)
       EXPECT_EQ(expected2[i], arr->GetIntegerAt(i));
   }
   {
     // When the range is out of bound, RemoveAt() has no effect.
-    const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     auto arr = pdfium::MakeRetain<CPDF_Array>();
-    for (size_t i = 0; i < std::size(elems); ++i)
-      arr->AppendNew<CPDF_Number>(elems[i]);
+    for (const int elem : {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}) {
+      arr->AppendNew<CPDF_Number>(elem);
+    }
+    EXPECT_EQ(10u, arr->size());
     arr->RemoveAt(11);
-    EXPECT_EQ(std::size(elems), arr->size());
+    EXPECT_EQ(10u, arr->size());
   }
 }
 
 TEST(ArrayTest, Clear) {
-  const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
   auto arr = pdfium::MakeRetain<CPDF_Array>();
-  EXPECT_EQ(0U, arr->size());
-  for (size_t i = 0; i < std::size(elems); ++i)
-    arr->AppendNew<CPDF_Number>(elems[i]);
-  EXPECT_EQ(std::size(elems), arr->size());
+  for (const int elem : {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}) {
+    arr->AppendNew<CPDF_Number>(elem);
+  }
+  EXPECT_EQ(10u, arr->size());
   arr->Clear();
   EXPECT_EQ(0U, arr->size());
 }
@@ -88,20 +84,24 @@ TEST(ArrayTest, SetAtBeyond) {
 }
 
 TEST(ArrayTest, InsertAt) {
-  const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  constexpr std::array<int, 10> elems = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}};
   auto arr = pdfium::MakeRetain<CPDF_Array>();
-  for (size_t i = 0; i < std::size(elems); ++i)
+  for (size_t i = 0; i < std::size(elems); ++i) {
     arr->InsertNewAt<CPDF_Number>(i, elems[i]);
+  }
   ASSERT_EQ(std::size(elems), arr->size());
-  for (size_t i = 0; i < std::size(elems); ++i)
+  for (size_t i = 0; i < std::size(elems); ++i) {
     EXPECT_EQ(elems[i], arr->GetIntegerAt(i));
+  }
   arr->InsertNewAt<CPDF_Number>(3, 33);
   arr->InsertNewAt<CPDF_Number>(6, 55);
   arr->InsertNewAt<CPDF_Number>(12, 12);
-  const int expected[] = {1, 2, 3, 33, 4, 5, 55, 6, 7, 8, 9, 10, 12};
-  ASSERT_EQ(std::size(expected), arr->size());
-  for (size_t i = 0; i < std::size(expected); ++i)
+  constexpr std::array<int, 13> expected = {
+      {1, 2, 3, 33, 4, 5, 55, 6, 7, 8, 9, 10, 12}};
+  ASSERT_EQ(expected.size(), arr->size());
+  for (size_t i = 0; i < expected.size(); ++i) {
     EXPECT_EQ(expected[i], arr->GetIntegerAt(i));
+  }
 }
 
 TEST(ArrayTest, InsertAtBeyond) {
@@ -114,10 +114,11 @@ TEST(ArrayTest, InsertAtBeyond) {
 TEST(ArrayTest, Clone) {
   {
     // Basic case.
-    const int elems[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    constexpr std::array<int, 10> elems = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}};
     auto arr = pdfium::MakeRetain<CPDF_Array>();
-    for (size_t i = 0; i < std::size(elems); ++i)
+    for (size_t i = 0; i < std::size(elems); ++i) {
       arr->InsertNewAt<CPDF_Number>(i, elems[i]);
+    }
     RetainPtr<CPDF_Array> arr2 = ToArray(arr->Clone());
     ASSERT_EQ(arr->size(), arr2->size());
     for (size_t i = 0; i < std::size(elems); ++i) {
@@ -129,18 +130,22 @@ TEST(ArrayTest, Clone) {
   {
     // Clone() with and without dereferencing reference objects.
     static const size_t kNumOfRows = 3;
-    static const size_t kNumOfRowElems = 5;
-    const int elems[kNumOfRows][kNumOfRowElems] = {
-        {1, 2, 3, 4, 5}, {10, 9, 8, 7, 6}, {11, 12, 13, 14, 15}};
+    static const size_t kNumOfColumns = 5;
+    using ElemRow = std::array<int, kNumOfColumns>;
+    constexpr std::array<ElemRow, kNumOfRows> elems = {{
+        {{1, 2, 3, 4, 5}},
+        {{10, 9, 8, 7, 6}},
+        {{11, 12, 13, 14, 15}},
+    }};
     auto arr = pdfium::MakeRetain<CPDF_Array>();
     // Indirect references to indirect objects.
     auto obj_holder = std::make_unique<CPDF_IndirectObjectHolder>();
     for (size_t i = 0; i < kNumOfRows; ++i) {
       auto arr_elem = pdfium::MakeRetain<CPDF_Array>();
-      for (size_t j = 0; j < kNumOfRowElems; ++j) {
+      for (size_t j = 0; j < kNumOfColumns; ++j) {
         auto obj = pdfium::MakeRetain<CPDF_Number>(elems[i][j]);
         // Starts object number from 1.
-        int obj_num = i * kNumOfRowElems + j + 1;
+        int obj_num = i * kNumOfColumns + j + 1;
         obj_holder->ReplaceIndirectObjectIfHigherGeneration(obj_num,
                                                             std::move(obj));
         arr_elem->InsertNewAt<CPDF_Reference>(j, obj_holder.get(), obj_num);
@@ -161,7 +166,7 @@ TEST(ArrayTest, Clone) {
       const CPDF_Array* arr2_elem = arr2->GetObjectAt(i)->AsArray();
       EXPECT_NE(arr_elem, arr1_elem);
       EXPECT_NE(arr_elem, arr2_elem);
-      for (size_t j = 0; j < kNumOfRowElems; ++j) {
+      for (size_t j = 0; j < kNumOfColumns; ++j) {
         auto elem_obj = arr_elem->GetObjectAt(j);
         auto elem_obj1 = arr1_elem->GetObjectAt(j);
         auto elem_obj2 = arr2_elem->GetObjectAt(j);
@@ -181,7 +186,7 @@ TEST(ArrayTest, Clone) {
     arr.Reset();
     ASSERT_EQ(kNumOfRows, arr1->size());
     for (size_t i = 0; i < kNumOfRows; ++i) {
-      for (size_t j = 0; j < kNumOfRowElems; ++j) {
+      for (size_t j = 0; j < kNumOfColumns; ++j) {
         // Results from not deferencing reference objects.
         auto elem_obj1 = arr1->GetObjectAt(i)->AsArray()->GetObjectAt(j);
         EXPECT_TRUE(elem_obj1->IsReference());
@@ -230,15 +235,16 @@ TEST(ArrayTest, Contains) {
 }
 
 TEST(ArrayTest, Iterator) {
-  const int elems[] = {-23, -11,     3,         455,   2345877,
-                       0,   7895330, -12564334, 10000, -100000};
+  constexpr std::array<int, 10> elems = {
+      {-23, -11, 3, 455, 2345877, 0, 7895330, -12564334, 10000, -100000}};
   auto arr = pdfium::MakeRetain<CPDF_Array>();
-  for (size_t i = 0; i < std::size(elems); ++i)
+  for (size_t i = 0; i < std::size(elems); ++i) {
     arr->InsertNewAt<CPDF_Number>(i, elems[i]);
-
+  }
   size_t index = 0;
   CPDF_ArrayLocker locker(arr);
-  for (const auto& it : locker)
+  for (const auto& it : locker) {
     EXPECT_EQ(elems[index++], it->AsNumber()->GetInteger());
+  }
   EXPECT_EQ(std::size(elems), index);
 }

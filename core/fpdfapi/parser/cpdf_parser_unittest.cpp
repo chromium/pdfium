@@ -2,13 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/parser/cpdf_parser.h"
 
+#include <array>
 #include <limits>
 #include <memory>
 #include <ostream>
@@ -24,6 +20,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/retain_ptr.h"
+#include "core/fxcrt/stl_util.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
@@ -33,6 +30,11 @@ using testing::Pair;
 using testing::Return;
 
 namespace {
+
+struct OffsetAndType {
+  FX_FILESIZE offset;
+  CPDF_CrossRefTable::ObjectType type;
+};
 
 CPDF_CrossRefTable::ObjectInfo GetObjInfo(const CPDF_Parser& parser,
                                           uint32_t obj_num) {
@@ -153,13 +155,15 @@ TEST(ParserTest, RebuildCrossRefCorrectly) {
   ASSERT_TRUE(parser.InitTestFromFile(test_file.c_str())) << test_file;
 
   ASSERT_TRUE(parser.RebuildCrossRef());
-  const FX_FILESIZE offsets[] = {0, 15, 61, 154, 296, 374, 450};
-  const uint16_t versions[] = {0, 0, 2, 4, 6, 8, 0};
-  for (size_t i = 0; i < std::size(offsets); ++i)
+  constexpr std::array<FX_FILESIZE, 7> offsets = {
+      {0, 15, 61, 154, 296, 374, 450}};
+  constexpr std::array<uint16_t, 7> versions = {{0, 0, 2, 4, 6, 8, 0}};
+  for (size_t i = 0; i < std::size(offsets); ++i) {
     EXPECT_EQ(offsets[i], GetObjInfo(parser, i).pos);
-  for (size_t i = 0; i < std::size(versions); ++i)
+  }
+  for (size_t i = 0; i < std::size(versions); ++i) {
     EXPECT_EQ(versions[i], GetObjInfo(parser, i).gennum);
-
+  }
   const CPDF_CrossRefTable* cross_ref_table = parser.GetCrossRefTable();
   ASSERT_TRUE(cross_ref_table);
   EXPECT_EQ(0u, cross_ref_table->trailer_object_number());
@@ -187,23 +191,20 @@ TEST(ParserTest, LoadCrossRefTable) {
         "0000000331 00000 n \n"
         "0000000409 00000 n \n"
         "trail";  // Needed to end cross ref table reading.
+    static constexpr auto kExpected = fxcrt::ToArray<OffsetAndType>({
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {17, CPDF_CrossRefTable::ObjectType::kNormal},
+        {81, CPDF_CrossRefTable::ObjectType::kNormal},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {331, CPDF_CrossRefTable::ObjectType::kNormal},
+        {409, CPDF_CrossRefTable::ObjectType::kNormal},
+    });
     CPDF_TestParser parser;
     ASSERT_TRUE(parser.InitTestFromBuffer(kXrefTable));
-
     ASSERT_TRUE(parser.LoadCrossRefTable(/*pos=*/0, /*skip=*/false));
-    static const FX_FILESIZE kOffsets[] = {0, 17, 81, 0, 331, 409};
-    static const CPDF_CrossRefTable::ObjectType kTypes[] = {
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kNormal,
-        CPDF_CrossRefTable::ObjectType::kNormal,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kNormal,
-        CPDF_CrossRefTable::ObjectType::kNormal};
-    static_assert(std::size(kOffsets) == std::size(kTypes),
-                  "kOffsets / kTypes size mismatch");
-    for (size_t i = 0; i < std::size(kOffsets); ++i) {
-      EXPECT_EQ(kOffsets[i], GetObjInfo(parser, i).pos);
-      EXPECT_EQ(kTypes[i], GetObjInfo(parser, i).type);
+    for (size_t i = 0; i < std::size(kExpected); ++i) {
+      EXPECT_EQ(kExpected[i].offset, GetObjInfo(parser, i).pos);
+      EXPECT_EQ(kExpected[i].type, GetObjInfo(parser, i).type);
     }
   }
   {
@@ -219,31 +220,27 @@ TEST(ParserTest, LoadCrossRefTable) {
         "12 1 \n"
         "0000025777 00000 n \n"
         "trail";  // Needed to end cross ref table reading.
+    static constexpr auto kExpected = fxcrt::ToArray<OffsetAndType>({
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {25325, CPDF_CrossRefTable::ObjectType::kNormal},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {25518, CPDF_CrossRefTable::ObjectType::kNormal},
+        {25635, CPDF_CrossRefTable::ObjectType::kNormal},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {25777, CPDF_CrossRefTable::ObjectType::kNormal},
+    });
     CPDF_TestParser parser;
     ASSERT_TRUE(parser.InitTestFromBuffer(kXrefTable));
-
     ASSERT_TRUE(parser.LoadCrossRefTable(/*pos=*/0, /*skip=*/false));
-    static const FX_FILESIZE kOffsets[] = {0, 0,     0,     25325, 0, 0,    0,
-                                           0, 25518, 25635, 0,     0, 25777};
-    static const CPDF_CrossRefTable::ObjectType kTypes[] = {
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kNormal,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kNormal,
-        CPDF_CrossRefTable::ObjectType::kNormal,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kNormal};
-    static_assert(std::size(kOffsets) == std::size(kTypes),
-                  "kOffsets / kTypes size mismatch");
-    for (size_t i = 0; i < std::size(kOffsets); ++i) {
-      EXPECT_EQ(kOffsets[i], GetObjInfo(parser, i).pos);
-      EXPECT_EQ(kTypes[i], GetObjInfo(parser, i).type);
+    for (size_t i = 0; i < std::size(kExpected); ++i) {
+      EXPECT_EQ(kExpected[i].offset, GetObjInfo(parser, i).pos);
+      EXPECT_EQ(kExpected[i].type, GetObjInfo(parser, i).type);
     }
   }
   {
@@ -259,31 +256,27 @@ TEST(ParserTest, LoadCrossRefTable) {
         "12 1 \n"
         "0000025777 00000 n \n"
         "trail";  // Needed to end cross ref table reading.
+    static constexpr auto kExpected = fxcrt::ToArray<OffsetAndType>({
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {25325, CPDF_CrossRefTable::ObjectType::kNormal},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {25635, CPDF_CrossRefTable::ObjectType::kNormal},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {25777, CPDF_CrossRefTable::ObjectType::kNormal},
+    });
     CPDF_TestParser parser;
     ASSERT_TRUE(parser.InitTestFromBuffer(kXrefTable));
-
     ASSERT_TRUE(parser.LoadCrossRefTable(/*pos=*/0, /*skip=*/false));
-    static const FX_FILESIZE kOffsets[] = {0, 0, 0,     25325, 0, 0,    0,
-                                           0, 0, 25635, 0,     0, 25777};
-    static const CPDF_CrossRefTable::ObjectType kTypes[] = {
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kNormal,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kNormal,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kNormal};
-    static_assert(std::size(kOffsets) == std::size(kTypes),
-                  "kOffsets / kTypes size mismatch");
-    for (size_t i = 0; i < std::size(kOffsets); ++i) {
-      EXPECT_EQ(kOffsets[i], GetObjInfo(parser, i).pos);
-      EXPECT_EQ(kTypes[i], GetObjInfo(parser, i).type);
+    for (size_t i = 0; i < std::size(kExpected); ++i) {
+      EXPECT_EQ(kExpected[i].offset, GetObjInfo(parser, i).pos);
+      EXPECT_EQ(kExpected[i].type, GetObjInfo(parser, i).type);
     }
   }
   {
@@ -298,24 +291,21 @@ TEST(ParserTest, LoadCrossRefTable) {
         "0000000045 00000 n \n"
         "0000000179 00000 n \n"
         "trail";  // Needed to end cross ref table reading.
+    static constexpr auto kExpected = fxcrt::ToArray<OffsetAndType>({
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {23, CPDF_CrossRefTable::ObjectType::kNormal},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {0, CPDF_CrossRefTable::ObjectType::kFree},
+        {45, CPDF_CrossRefTable::ObjectType::kNormal},
+        {179, CPDF_CrossRefTable::ObjectType::kNormal},
+    });
     CPDF_TestParser parser;
     ASSERT_TRUE(parser.InitTestFromBuffer(kXrefTable));
-
     ASSERT_TRUE(parser.LoadCrossRefTable(/*pos=*/0, /*skip=*/false));
-    static const FX_FILESIZE kOffsets[] = {0, 23, 0, 0, 0, 45, 179};
-    static const CPDF_CrossRefTable::ObjectType kTypes[] = {
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kNormal,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kFree,
-        CPDF_CrossRefTable::ObjectType::kNormal,
-        CPDF_CrossRefTable::ObjectType::kNormal};
-    static_assert(std::size(kOffsets) == std::size(kTypes),
-                  "kOffsets / kTypes size mismatch");
-    for (size_t i = 0; i < std::size(kOffsets); ++i) {
-      EXPECT_EQ(kOffsets[i], GetObjInfo(parser, i).pos);
-      EXPECT_EQ(kTypes[i], GetObjInfo(parser, i).type);
+    for (size_t i = 0; i < std::size(kExpected); ++i) {
+      EXPECT_EQ(kExpected[i].offset, GetObjInfo(parser, i).pos);
+      EXPECT_EQ(kExpected[i].type, GetObjInfo(parser, i).type);
     }
   }
   {
@@ -332,9 +322,7 @@ TEST(ParserTest, LoadCrossRefTable) {
     xref_table += "trail";  // Needed to end cross ref table reading.
     CPDF_TestParser parser;
     ASSERT_TRUE(parser.InitTestFromBuffer(
-        pdfium::make_span(reinterpret_cast<const uint8_t*>(xref_table.c_str()),
-                          xref_table.size())));
-
+        ByteStringView(xref_table.c_str()).unsigned_span()));
     ASSERT_TRUE(parser.LoadCrossRefTable(/*pos=*/0, /*skip=*/false));
     for (size_t i = 0; i < 2048; ++i) {
       EXPECT_EQ(static_cast<int>(i) + 1, GetObjInfo(parser, i).pos);

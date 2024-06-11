@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fpdfapi/parser/cpdf_object.h"
 
 #include <stdint.h>
@@ -28,6 +23,7 @@
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -83,7 +79,8 @@ class PDFObjectsTest : public testing::Test {
     m_StreamDictObj->SetNewFor<CPDF_String>("key1", L" test dict");
     m_StreamDictObj->SetNewFor<CPDF_Number>("key2", -1);
     auto stream_obj = pdfium::MakeRetain<CPDF_Stream>(
-        DataVector<uint8_t>(std::begin(kContents), std::end(kContents) - 1),
+        DataVector<uint8_t>(std::begin(kContents),
+                            UNSAFE_TODO(std::end(kContents) - 1)),
         std::move(pNewDict));
     // Null Object.
     auto null_obj = pdfium::MakeRetain<CPDF_Null>();
@@ -99,7 +96,7 @@ class PDFObjectsTest : public testing::Test {
         CPDF_Object::kName,    CPDF_Object::kArray,   CPDF_Object::kDictionary,
         CPDF_Object::kStream,  CPDF_Object::kNullobj};
     for (size_t i = 0; i < std::size(objs); ++i)
-      m_DirectObjs.emplace_back(objs[i]);
+      m_DirectObjs.emplace_back(UNSAFE_TODO(objs[i]));
 
     // Indirect references to indirect objects.
     m_ObjHolder = std::make_unique<CPDF_IndirectObjectHolder>();
@@ -206,13 +203,13 @@ TEST_F(PDFObjectsTest, GetString) {
       "",      "",     "",     ""};
   // Check for direct objects.
   for (size_t i = 0; i < m_DirectObjs.size(); ++i)
-    EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetString());
+    EXPECT_EQ(UNSAFE_TODO(direct_obj_results[i]), m_DirectObjs[i]->GetString());
 
   // Check indirect references.
   const char* const indirect_obj_results[] = {"true", "1245", "\t\n", "space",
                                               "",     "",     ""};
   for (size_t i = 0; i < m_RefObjs.size(); ++i) {
-    EXPECT_EQ(indirect_obj_results[i], m_RefObjs[i]->GetString());
+    EXPECT_EQ(UNSAFE_TODO(indirect_obj_results[i]), m_RefObjs[i]->GetString());
   }
 }
 
@@ -223,7 +220,8 @@ TEST_F(PDFObjectsTest, GetUnicodeText) {
       L""};
   // Check for direct objects.
   for (size_t i = 0; i < m_DirectObjs.size(); ++i) {
-    EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetUnicodeText());
+    EXPECT_EQ(UNSAFE_TODO(direct_obj_results[i]),
+              m_DirectObjs[i]->GetUnicodeText());
   }
 
   // Check indirect references.
@@ -236,24 +234,25 @@ TEST_F(PDFObjectsTest, GetNumber) {
                                       0, 0, 0,    0,        0};
   // Check for direct objects.
   for (size_t i = 0; i < m_DirectObjs.size(); ++i)
-    EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetNumber());
+    EXPECT_EQ(UNSAFE_TODO(direct_obj_results[i]), m_DirectObjs[i]->GetNumber());
 
   // Check indirect references.
   const float indirect_obj_results[] = {0, 1245, 0, 0, 0, 0, 0};
   for (size_t i = 0; i < m_RefObjs.size(); ++i)
-    EXPECT_EQ(indirect_obj_results[i], m_RefObjs[i]->GetNumber());
+    EXPECT_EQ(UNSAFE_TODO(indirect_obj_results[i]), m_RefObjs[i]->GetNumber());
 }
 
 TEST_F(PDFObjectsTest, GetInteger) {
   const int direct_obj_results[] = {0, 1, 1245, 9, 0, 0, 0, 0, 0, 0, 0};
   // Check for direct objects.
   for (size_t i = 0; i < m_DirectObjs.size(); ++i)
-    EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetInteger());
+    EXPECT_EQ(UNSAFE_TODO(direct_obj_results[i]),
+              m_DirectObjs[i]->GetInteger());
 
   // Check indirect references.
   const int indirect_obj_results[] = {1, 1245, 0, 0, 0, 0, 0};
   for (size_t i = 0; i < m_RefObjs.size(); ++i)
-    EXPECT_EQ(indirect_obj_results[i], m_RefObjs[i]->GetInteger());
+    EXPECT_EQ(UNSAFE_TODO(indirect_obj_results[i]), m_RefObjs[i]->GetInteger());
 }
 
 TEST_F(PDFObjectsTest, GetDict) {
@@ -263,7 +262,7 @@ TEST_F(PDFObjectsTest, GetDict) {
       nullptr};
   // Check for direct objects.
   for (size_t i = 0; i < m_DirectObjs.size(); ++i)
-    EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetDict());
+    EXPECT_EQ(UNSAFE_TODO(direct_obj_results[i]), m_DirectObjs[i]->GetDict());
 
   // Check indirect references.
   const CPDF_Dictionary* const indirect_obj_results[] = {nullptr,
@@ -274,7 +273,8 @@ TEST_F(PDFObjectsTest, GetDict) {
                                                          m_DictObj.Get(),
                                                          m_StreamDictObj.Get()};
   for (size_t i = 0; i < m_RefObjs.size(); ++i)
-    EXPECT_TRUE(Equal(indirect_obj_results[i], m_RefObjs[i]->GetDict().Get()));
+    EXPECT_TRUE(Equal(UNSAFE_TODO(indirect_obj_results[i]),
+                      m_RefObjs[i]->GetDict().Get()));
 }
 
 TEST_F(PDFObjectsTest, GetNameFor) {
@@ -300,7 +300,7 @@ TEST_F(PDFObjectsTest, GetArray) {
       nullptr, m_ArrayObj.Get(), nullptr, nullptr, nullptr};
   // Check for direct objects.
   for (size_t i = 0; i < m_DirectObjs.size(); ++i)
-    EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->AsArray());
+    EXPECT_EQ(UNSAFE_TODO(direct_obj_results[i]), m_DirectObjs[i]->AsArray());
 
   // Check indirect references.
   for (const auto& it : m_RefObjs)
@@ -348,8 +348,8 @@ TEST_F(PDFObjectsTest, SetString) {
   const char* const expected[] = {"true",    "false", "3.125",  "97",
                                   "changed", "",      "NewName"};
   for (size_t i = 0; i < std::size(set_values); ++i) {
-    m_DirectObjs[i]->SetString(set_values[i]);
-    EXPECT_EQ(expected[i], m_DirectObjs[i]->GetString());
+    m_DirectObjs[i]->SetString(UNSAFE_TODO(set_values[i]));
+    EXPECT_EQ(UNSAFE_TODO(expected[i]), m_DirectObjs[i]->GetString());
   }
 }
 
@@ -457,10 +457,12 @@ TEST(PDFArrayTest, GetMatrix) {
                       {0.05f, 0.1f, 0.56f, 0.67f, 1.34f, 99.9f}};
   for (size_t i = 0; i < std::size(elems); ++i) {
     auto arr = pdfium::MakeRetain<CPDF_Array>();
-    CFX_Matrix matrix(elems[i][0], elems[i][1], elems[i][2], elems[i][3],
-                      elems[i][4], elems[i][5]);
-    for (size_t j = 0; j < 6; ++j)
-      arr->AppendNew<CPDF_Number>(elems[i][j]);
+    CFX_Matrix matrix(UNSAFE_TODO(elems[i][0]), UNSAFE_TODO(elems[i][1]),
+                      UNSAFE_TODO(elems[i][2]), UNSAFE_TODO(elems[i][3]),
+                      UNSAFE_TODO(elems[i][4]), UNSAFE_TODO(elems[i][5]));
+    for (size_t j = 0; j < 6; ++j) {
+      arr->AppendNew<CPDF_Number>(UNSAFE_TODO(elems[i][j]));
+    }
     CFX_Matrix arr_matrix = arr->GetMatrix();
     EXPECT_EQ(matrix.a, arr_matrix.a);
     EXPECT_EQ(matrix.b, arr_matrix.b);
@@ -478,9 +480,11 @@ TEST(PDFArrayTest, GetRect) {
                       {0.05f, 0.1f, 1.34f, 99.9f}};
   for (size_t i = 0; i < std::size(elems); ++i) {
     auto arr = pdfium::MakeRetain<CPDF_Array>();
-    CFX_FloatRect rect(elems[i][0], elems[i][1], elems[i][2], elems[i][3]);
-    for (size_t j = 0; j < 4; ++j)
-      arr->AppendNew<CPDF_Number>(elems[i][j]);
+    CFX_FloatRect rect(UNSAFE_TODO(elems[i][0]), UNSAFE_TODO(elems[i][1]),
+                       UNSAFE_TODO(elems[i][2]), UNSAFE_TODO(elems[i][3]));
+    for (size_t j = 0; j < 4; ++j) {
+      arr->AppendNew<CPDF_Number>(UNSAFE_TODO(elems[i][j]));
+    }
     CFX_FloatRect arr_rect = arr->GetRect();
     EXPECT_EQ(rect.left, arr_rect.left);
     EXPECT_EQ(rect.right, arr_rect.right);
@@ -495,16 +499,17 @@ TEST(PDFArrayTest, GetTypeAt) {
     const bool vals[] = {true, false, false, true, true};
     auto arr = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < std::size(vals); ++i)
-      arr->InsertNewAt<CPDF_Boolean>(i, vals[i]);
+      arr->InsertNewAt<CPDF_Boolean>(i, UNSAFE_TODO(vals[i]));
     for (size_t i = 0; i < std::size(vals); ++i) {
-      TestArrayAccessors(arr.Get(), i,                // Array and index.
-                         vals[i] ? "true" : "false",  // String value.
-                         nullptr,                     // Const string value.
-                         vals[i] ? 1 : 0,             // Integer value.
-                         0,                           // Float value.
-                         nullptr,                     // Array value.
-                         nullptr,                     // Dictionary value.
-                         nullptr);                    // Stream value.
+      TestArrayAccessors(
+          arr.Get(), i,                             // Array and index.
+          UNSAFE_TODO(vals[i]) ? "true" : "false",  // String value.
+          nullptr,                                  // Const string value.
+          UNSAFE_TODO(vals[i]) ? 1 : 0,             // Integer value.
+          0,                                        // Float value.
+          nullptr,                                  // Array value.
+          nullptr,                                  // Dictionary value.
+          nullptr);                                 // Stream value.
     }
   }
   {
@@ -512,17 +517,18 @@ TEST(PDFArrayTest, GetTypeAt) {
     const int vals[] = {10, 0, -345, 2089345456, -1000000000, 567, 93658767};
     auto arr = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < std::size(vals); ++i)
-      arr->InsertNewAt<CPDF_Number>(i, vals[i]);
+      arr->InsertNewAt<CPDF_Number>(i, UNSAFE_TODO(vals[i]));
     for (size_t i = 0; i < std::size(vals); ++i) {
       char buf[33];
-      TestArrayAccessors(arr.Get(), i,                  // Array and index.
-                         FXSYS_itoa(vals[i], buf, 10),  // String value.
-                         nullptr,                       // Const string value.
-                         vals[i],                       // Integer value.
-                         vals[i],                       // Float value.
-                         nullptr,                       // Array value.
-                         nullptr,                       // Dictionary value.
-                         nullptr);                      // Stream value.
+      TestArrayAccessors(
+          arr.Get(), i,                               // Array and index.
+          FXSYS_itoa(UNSAFE_TODO(vals[i]), buf, 10),  // String value.
+          nullptr,                                    // Const string value.
+          UNSAFE_TODO(vals[i]),                       // Integer value.
+          UNSAFE_TODO(vals[i]),                       // Float value.
+          nullptr,                                    // Array value.
+          nullptr,                                    // Dictionary value.
+          nullptr);                                   // Stream value.
     }
   }
   {
@@ -533,16 +539,16 @@ TEST(PDFArrayTest, GetTypeAt) {
         "0", "0", "10", "10", "0.0345", "897.34", "-2.5", "-1", "-345", "0"};
     auto arr = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < std::size(vals); ++i)
-      arr->InsertNewAt<CPDF_Number>(i, vals[i]);
+      arr->InsertNewAt<CPDF_Number>(i, UNSAFE_TODO(vals[i]));
     for (size_t i = 0; i < std::size(vals); ++i) {
-      TestArrayAccessors(arr.Get(), i,     // Array and index.
-                         expected_str[i],  // String value.
-                         nullptr,          // Const string value.
-                         vals[i],          // Integer value.
-                         vals[i],          // Float value.
-                         nullptr,          // Array value.
-                         nullptr,          // Dictionary value.
-                         nullptr);         // Stream value.
+      TestArrayAccessors(arr.Get(), i,                  // Array and index.
+                         UNSAFE_TODO(expected_str[i]),  // String value.
+                         nullptr,                       // Const string value.
+                         UNSAFE_TODO(vals[i]),          // Integer value.
+                         UNSAFE_TODO(vals[i]),          // Float value.
+                         nullptr,                       // Array value.
+                         nullptr,                       // Dictionary value.
+                         nullptr);                      // Stream value.
     }
   }
   {
@@ -552,21 +558,21 @@ TEST(PDFArrayTest, GetTypeAt) {
     auto string_array = pdfium::MakeRetain<CPDF_Array>();
     auto name_array = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < std::size(vals); ++i) {
-      string_array->InsertNewAt<CPDF_String>(i, vals[i]);
-      name_array->InsertNewAt<CPDF_Name>(i, vals[i]);
+      string_array->InsertNewAt<CPDF_String>(i, UNSAFE_TODO(vals[i]));
+      name_array->InsertNewAt<CPDF_Name>(i, UNSAFE_TODO(vals[i]));
     }
     for (size_t i = 0; i < std::size(vals); ++i) {
       TestArrayAccessors(string_array.Get(), i,  // Array and index.
-                         vals[i],                // String value.
-                         vals[i],                // Const string value.
+                         UNSAFE_TODO(vals[i]),   // String value.
+                         UNSAFE_TODO(vals[i]),   // Const string value.
                          0,                      // Integer value.
                          0,                      // Float value.
                          nullptr,                // Array value.
                          nullptr,                // Dictionary value.
                          nullptr);               // Stream value.
       TestArrayAccessors(name_array.Get(), i,    // Array and index.
-                         vals[i],                // String value.
-                         vals[i],                // Const string value.
+                         UNSAFE_TODO(vals[i]),   // String value.
+                         UNSAFE_TODO(vals[i]),   // Const string value.
                          0,                      // Integer value.
                          0,                      // Float value.
                          nullptr,                // Array value.
@@ -595,21 +601,21 @@ TEST(PDFArrayTest, GetTypeAt) {
     RetainPtr<CPDF_Array> vals[3];
     auto arr = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < 3; ++i) {
-      vals[i] = arr->AppendNew<CPDF_Array>();
+      UNSAFE_TODO(vals[i]) = arr->AppendNew<CPDF_Array>();
       for (size_t j = 0; j < 3; ++j) {
         int value = j + 100;
-        vals[i]->InsertNewAt<CPDF_Number>(j, value);
+        UNSAFE_TODO(vals[i])->InsertNewAt<CPDF_Number>(j, value);
       }
     }
     for (size_t i = 0; i < 3; ++i) {
-      TestArrayAccessors(arr.Get(), i,   // Array and index.
-                         "",             // String value.
-                         nullptr,        // Const string value.
-                         0,              // Integer value.
-                         0,              // Float value.
-                         vals[i].Get(),  // Array value.
-                         nullptr,        // Dictionary value.
-                         nullptr);       // Stream value.
+      TestArrayAccessors(arr.Get(), i,                // Array and index.
+                         "",                          // String value.
+                         nullptr,                     // Const string value.
+                         0,                           // Integer value.
+                         0,                           // Float value.
+                         UNSAFE_TODO(vals[i]).Get(),  // Array value.
+                         nullptr,                     // Dictionary value.
+                         nullptr);                    // Stream value.
     }
   }
   {
@@ -617,24 +623,24 @@ TEST(PDFArrayTest, GetTypeAt) {
     RetainPtr<CPDF_Dictionary> vals[3];
     auto arr = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < 3; ++i) {
-      vals[i] = arr->AppendNew<CPDF_Dictionary>();
+      UNSAFE_TODO(vals[i]) = arr->AppendNew<CPDF_Dictionary>();
       for (size_t j = 0; j < 3; ++j) {
         std::string key("key");
         char buf[33];
         key.append(FXSYS_itoa(j, buf, 10));
         int value = j + 200;
-        vals[i]->SetNewFor<CPDF_Number>(key.c_str(), value);
+        UNSAFE_TODO(vals[i])->SetNewFor<CPDF_Number>(key.c_str(), value);
       }
     }
     for (size_t i = 0; i < 3; ++i) {
-      TestArrayAccessors(arr.Get(), i,   // Array and index.
-                         "",             // String value.
-                         nullptr,        // Const string value.
-                         0,              // Integer value.
-                         0,              // Float value.
-                         nullptr,        // Array value.
-                         vals[i].Get(),  // Dictionary value.
-                         nullptr);       // Stream value.
+      TestArrayAccessors(arr.Get(), i,                // Array and index.
+                         "",                          // String value.
+                         nullptr,                     // Const string value.
+                         0,                           // Integer value.
+                         0,                           // Float value.
+                         nullptr,                     // Array value.
+                         UNSAFE_TODO(vals[i]).Get(),  // Dictionary value.
+                         nullptr);                    // Stream value.
     }
   }
   {
@@ -645,30 +651,30 @@ TEST(PDFArrayTest, GetTypeAt) {
     RetainPtr<CPDF_Stream> stream_vals[3];
     auto arr = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < 3; ++i) {
-      vals[i] = pdfium::MakeRetain<CPDF_Dictionary>();
+      UNSAFE_TODO(vals[i]) = pdfium::MakeRetain<CPDF_Dictionary>();
       for (size_t j = 0; j < 3; ++j) {
         std::string key("key");
         char buf[33];
         key.append(FXSYS_itoa(j, buf, 10));
         int value = j + 200;
-        vals[i]->SetNewFor<CPDF_Number>(key.c_str(), value);
+        UNSAFE_TODO(vals[i])->SetNewFor<CPDF_Number>(key.c_str(), value);
       }
       static constexpr uint8_t kContents[] = "content: this is a stream";
-      stream_vals[i] = object_holder.NewIndirect<CPDF_Stream>(
+      UNSAFE_TODO(stream_vals[i]) = object_holder.NewIndirect<CPDF_Stream>(
           DataVector<uint8_t>(std::begin(kContents), std::end(kContents)),
-          vals[i]);
+          UNSAFE_TODO(vals[i]));
       arr->AppendNew<CPDF_Reference>(&object_holder,
-                                     stream_vals[i]->GetObjNum());
+                                     UNSAFE_TODO(stream_vals[i])->GetObjNum());
     }
     for (size_t i = 0; i < 3; ++i) {
-      TestArrayAccessors(arr.Get(), i,           // Array and index.
-                         "",                     // String value.
-                         nullptr,                // Const string value.
-                         0,                      // Integer value.
-                         0,                      // Float value.
-                         nullptr,                // Array value.
-                         vals[i].Get(),          // Dictionary value.
-                         stream_vals[i].Get());  // Stream value.
+      TestArrayAccessors(arr.Get(), i,                // Array and index.
+                         "",                          // String value.
+                         nullptr,                     // Const string value.
+                         0,                           // Integer value.
+                         0,                           // Float value.
+                         nullptr,                     // Array value.
+                         UNSAFE_TODO(vals[i]).Get(),  // Dictionary value.
+                         UNSAFE_TODO(stream_vals[i]).Get());  // Stream value.
     }
   }
   {
@@ -714,9 +720,9 @@ TEST(PDFArrayTest, GetTypeAt) {
     const float expected_float[] = {0, 0, 0, -1234, 2345, 0.05f, 0,
                                     0, 0, 0, 0,     0,    0,     0};
     for (size_t i = 0; i < arr->size(); ++i) {
-      EXPECT_EQ(expected_str[i], arr->GetByteStringAt(i));
-      EXPECT_EQ(expected_int[i], arr->GetIntegerAt(i));
-      EXPECT_EQ(expected_float[i], arr->GetFloatAt(i));
+      EXPECT_EQ(UNSAFE_TODO(expected_str[i]), arr->GetByteStringAt(i));
+      EXPECT_EQ(UNSAFE_TODO(expected_int[i]), arr->GetIntegerAt(i));
+      EXPECT_EQ(UNSAFE_TODO(expected_float[i]), arr->GetFloatAt(i));
       if (i == 11)
         EXPECT_EQ(arr_val, arr->GetArrayAt(i));
       else
@@ -740,10 +746,10 @@ TEST(PDFArrayTest, AddNumber) {
                   12345.54321f, 0.5f,  1000, 0.000045f};
   auto arr = pdfium::MakeRetain<CPDF_Array>();
   for (size_t i = 0; i < std::size(vals); ++i)
-    arr->AppendNew<CPDF_Number>(vals[i]);
+    arr->AppendNew<CPDF_Number>(UNSAFE_TODO(vals[i]));
   for (size_t i = 0; i < std::size(vals); ++i) {
     EXPECT_EQ(CPDF_Object::kNumber, arr->GetObjectAt(i)->GetType());
-    EXPECT_EQ(vals[i], arr->GetObjectAt(i)->GetNumber());
+    EXPECT_EQ(UNSAFE_TODO(vals[i]), arr->GetObjectAt(i)->GetNumber());
   }
 }
 
@@ -751,10 +757,10 @@ TEST(PDFArrayTest, AddInteger) {
   int vals[] = {0, 1, 934435456, 876, 10000, -1, -24354656, -100};
   auto arr = pdfium::MakeRetain<CPDF_Array>();
   for (size_t i = 0; i < std::size(vals); ++i)
-    arr->AppendNew<CPDF_Number>(vals[i]);
+    arr->AppendNew<CPDF_Number>(UNSAFE_TODO(vals[i]));
   for (size_t i = 0; i < std::size(vals); ++i) {
     EXPECT_EQ(CPDF_Object::kNumber, arr->GetObjectAt(i)->GetType());
-    EXPECT_EQ(vals[i], arr->GetObjectAt(i)->GetNumber());
+    EXPECT_EQ(UNSAFE_TODO(vals[i]), arr->GetObjectAt(i)->GetNumber());
   }
 }
 
@@ -770,9 +776,9 @@ TEST(PDFArrayTest, AddStringAndName) {
   }
   for (size_t i = 0; i < std::size(kVals); ++i) {
     EXPECT_EQ(CPDF_Object::kString, string_array->GetObjectAt(i)->GetType());
-    EXPECT_EQ(kVals[i], string_array->GetObjectAt(i)->GetString());
+    EXPECT_EQ(UNSAFE_TODO(kVals[i]), string_array->GetObjectAt(i)->GetString());
     EXPECT_EQ(CPDF_Object::kName, name_array->GetObjectAt(i)->GetType());
-    EXPECT_EQ(kVals[i], name_array->GetObjectAt(i)->GetString());
+    EXPECT_EQ(UNSAFE_TODO(kVals[i]), name_array->GetObjectAt(i)->GetString());
   }
 }
 
@@ -792,24 +798,25 @@ TEST(PDFArrayTest, AddReferenceAndGetObjectAt) {
   auto arr1 = pdfium::MakeRetain<CPDF_Array>();
   // Create two arrays of references by different AddReference() APIs.
   for (size_t i = 0; i < std::size(indirect_objs); ++i) {
-    holder->ReplaceIndirectObjectIfHigherGeneration(obj_nums[i],
-                                                    indirect_objs[i]);
-    arr->AppendNew<CPDF_Reference>(holder.get(), obj_nums[i]);
+    holder->ReplaceIndirectObjectIfHigherGeneration(
+        UNSAFE_TODO(obj_nums[i]), UNSAFE_TODO(indirect_objs[i]));
+    arr->AppendNew<CPDF_Reference>(holder.get(), UNSAFE_TODO(obj_nums[i]));
     arr1->AppendNew<CPDF_Reference>(holder.get(),
-                                    indirect_objs[i]->GetObjNum());
+                                    UNSAFE_TODO(indirect_objs[i]->GetObjNum()));
   }
   // Check indirect objects.
   for (size_t i = 0; i < std::size(obj_nums); ++i)
-    EXPECT_EQ(indirect_objs[i], holder->GetOrParseIndirectObject(obj_nums[i]));
+    EXPECT_EQ(UNSAFE_TODO(indirect_objs[i]),
+              holder->GetOrParseIndirectObject(UNSAFE_TODO(obj_nums[i])));
   // Check arrays.
   EXPECT_EQ(arr->size(), arr1->size());
   for (size_t i = 0; i < arr->size(); ++i) {
     EXPECT_EQ(CPDF_Object::kReference, arr->GetObjectAt(i)->GetType());
-    EXPECT_EQ(indirect_objs[i], arr->GetObjectAt(i)->GetDirect());
-    EXPECT_EQ(indirect_objs[i], arr->GetDirectObjectAt(i));
+    EXPECT_EQ(UNSAFE_TODO(indirect_objs[i]), arr->GetObjectAt(i)->GetDirect());
+    EXPECT_EQ(UNSAFE_TODO(indirect_objs[i]), arr->GetDirectObjectAt(i));
     EXPECT_EQ(CPDF_Object::kReference, arr1->GetObjectAt(i)->GetType());
-    EXPECT_EQ(indirect_objs[i], arr1->GetObjectAt(i)->GetDirect());
-    EXPECT_EQ(indirect_objs[i], arr1->GetDirectObjectAt(i));
+    EXPECT_EQ(UNSAFE_TODO(indirect_objs[i]), arr1->GetObjectAt(i)->GetDirect());
+    EXPECT_EQ(UNSAFE_TODO(indirect_objs[i]), arr1->GetDirectObjectAt(i));
   }
 }
 
