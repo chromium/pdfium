@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxcodec/jpeg/jpeg_progressive_decoder.h"
 
 #include <optional>
@@ -19,6 +14,7 @@
 #include "core/fxcodec/jpeg/jpeg_common.h"
 #include "core/fxcodec/scanlinedecoder.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/ptr_util.h"
 #include "core/fxge/dib/cfx_dibbase.h"
@@ -51,7 +47,8 @@ static void src_skip_data(jpeg_decompress_struct* cinfo, long num) {
     pContext->m_SkipSize = (unsigned int)(num - cinfo->src->bytes_in_buffer);
     cinfo->src->bytes_in_buffer = 0;
   } else {
-    cinfo->src->next_input_byte += num;
+    // SAFETY: required from library during callback.
+    UNSAFE_BUFFERS(cinfo->src->next_input_byte += num);
     cinfo->src->bytes_in_buffer -= num;
   }
 }

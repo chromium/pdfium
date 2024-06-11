@@ -4,11 +4,6 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "core/fxcodec/tiff/tiff_decoder.h"
 
 #include <limits>
@@ -107,15 +102,15 @@ void* _TIFFrealloc(void* ptr, tmsize_t size) {
 }
 
 void _TIFFmemset(void* ptr, int val, tmsize_t size) {
-  FXSYS_memset(ptr, val, static_cast<size_t>(size));
+  UNSAFE_TODO(FXSYS_memset(ptr, val, static_cast<size_t>(size)));
 }
 
 void _TIFFmemcpy(void* des, const void* src, tmsize_t size) {
-  FXSYS_memcpy(des, src, static_cast<size_t>(size));
+  UNSAFE_TODO(FXSYS_memcpy(des, src, static_cast<size_t>(size)));
 }
 
 int _TIFFmemcmp(const void* ptr1, const void* ptr2, tmsize_t size) {
-  return memcmp(ptr1, ptr2, static_cast<size_t>(size));
+  return UNSAFE_TODO(memcmp(ptr1, ptr2, static_cast<size_t>(size)));
 }
 
 namespace {
@@ -197,12 +192,14 @@ int tiff_map(thandle_t context, tdata_t*, toff_t*) {
 void tiff_unmap(thandle_t context, tdata_t, toff_t) {}
 
 void TiffBGRA2RGBA(uint8_t* pBuf, int32_t pixel, int32_t spp) {
-  for (int32_t n = 0; n < pixel; n++) {
-    uint8_t tmp = pBuf[0];
-    pBuf[0] = pBuf[2];
-    pBuf[2] = tmp;
-    pBuf += spp;
-  }
+  UNSAFE_TODO({
+    for (int32_t n = 0; n < pixel; n++) {
+      uint8_t tmp = pBuf[0];
+      pBuf[0] = pBuf[2];
+      pBuf[2] = tmp;
+      pBuf += spp;
+    }
+  });
 }
 
 }  // namespace
@@ -308,23 +305,25 @@ void CTiffContext::SetPalette(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
   uint16_t* blue_orig = nullptr;
   TIFFGetField(m_tif_ctx.get(), TIFFTAG_COLORMAP, &red_orig, &green_orig,
                &blue_orig);
-  for (int32_t i = pdfium::checked_cast<int32_t>((1L << bps) - 1); i >= 0;
-       i--) {
 #define CVT(x) ((uint16_t)((x) >> 8))
-    red_orig[i] = CVT(red_orig[i]);
-    green_orig[i] = CVT(green_orig[i]);
-    blue_orig[i] = CVT(blue_orig[i]);
+  UNSAFE_TODO({
+    for (int32_t i = pdfium::checked_cast<int32_t>((1L << bps) - 1); i >= 0;
+         i--) {
+      red_orig[i] = CVT(red_orig[i]);
+      green_orig[i] = CVT(green_orig[i]);
+      blue_orig[i] = CVT(blue_orig[i]);
+    }
+    int32_t len = 1 << bps;
+    for (int32_t index = 0; index < len; index++) {
+      uint32_t r = red_orig[index] & 0xFF;
+      uint32_t g = green_orig[index] & 0xFF;
+      uint32_t b = blue_orig[index] & 0xFF;
+      uint32_t color = (uint32_t)b | ((uint32_t)g << 8) | ((uint32_t)r << 16) |
+                       (((uint32_t)0xffL) << 24);
+      pDIBitmap->SetPaletteArgb(index, color);
+    }
+  });
 #undef CVT
-  }
-  int32_t len = 1 << bps;
-  for (int32_t index = 0; index < len; index++) {
-    uint32_t r = red_orig[index] & 0xFF;
-    uint32_t g = green_orig[index] & 0xFF;
-    uint32_t b = blue_orig[index] & 0xFF;
-    uint32_t color = (uint32_t)b | ((uint32_t)g << 8) | ((uint32_t)r << 16) |
-                     (((uint32_t)0xffL) << 24);
-    pDIBitmap->SetPaletteArgb(index, color);
-  }
 }
 
 bool CTiffContext::Decode1bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
@@ -347,7 +346,7 @@ bool CTiffContext::Decode1bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
     uint8_t* bitMapbuffer = pDIBitmap->GetWritableScanline(row).data();
     TIFFReadScanline(m_tif_ctx.get(), buf, row, 0);
     for (int32_t j = 0; j < size; j++) {
-      bitMapbuffer[j] = buf[j];
+      UNSAFE_TODO(bitMapbuffer[j] = buf[j]);
     }
   }
   _TIFFfree(buf);
@@ -373,17 +372,19 @@ bool CTiffContext::Decode8bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
   for (int32_t row = 0; row < height; row++) {
     uint8_t* bitMapbuffer = pDIBitmap->GetWritableScanline(row).data();
     TIFFReadScanline(m_tif_ctx.get(), buf, row, 0);
-    for (int32_t j = 0; j < size; j++) {
-      switch (bps) {
-        case 4:
-          bitMapbuffer[2 * j + 0] = (buf[j] & 0xF0) >> 4;
-          bitMapbuffer[2 * j + 1] = (buf[j] & 0x0F) >> 0;
-          break;
-        case 8:
-          bitMapbuffer[j] = buf[j];
-          break;
+    UNSAFE_TODO({
+      for (int32_t j = 0; j < size; j++) {
+        switch (bps) {
+          case 4:
+            bitMapbuffer[2 * j + 0] = (buf[j] & 0xF0) >> 4;
+            bitMapbuffer[2 * j + 1] = (buf[j] & 0x0F) >> 0;
+            break;
+          case 8:
+            bitMapbuffer[j] = buf[j];
+            break;
+        }
       }
-    }
+    });
   }
   _TIFFfree(buf);
   return true;
@@ -406,11 +407,13 @@ bool CTiffContext::Decode24bppRGB(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
   for (int32_t row = 0; row < height; row++) {
     uint8_t* bitMapbuffer = pDIBitmap->GetWritableScanline(row).data();
     TIFFReadScanline(m_tif_ctx.get(), buf, row, 0);
-    for (int32_t j = 0; j < size - 2; j += 3) {
-      bitMapbuffer[j + 0] = buf[j + 2];
-      bitMapbuffer[j + 1] = buf[j + 1];
-      bitMapbuffer[j + 2] = buf[j + 0];
-    }
+    UNSAFE_TODO({
+      for (int32_t j = 0; j < size - 2; j += 3) {
+        bitMapbuffer[j + 0] = buf[j + 2];
+        bitMapbuffer[j + 1] = buf[j + 1];
+        bitMapbuffer[j + 2] = buf[j + 0];
+      }
+    });
   }
   _TIFFfree(buf);
   return true;
