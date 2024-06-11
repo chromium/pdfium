@@ -94,6 +94,44 @@ TEST_F(FPDFSaveEmbedderTest, SaveCopiedDoc) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFSaveEmbedderTest, Bug42271133) {
+  ASSERT_TRUE(OpenDocument("bug_42271133.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  // Arbitrarily remove the first page object.
+  auto text_object = FPDFPage_GetObject(page, 0);
+  ASSERT_TRUE(text_object);
+  ASSERT_TRUE(FPDFPage_RemoveObject(page, text_object));
+  FPDFPageObj_Destroy(text_object);
+
+  // Regenerate dirty stream and save the document.
+  ASSERT_TRUE(FPDFPage_GenerateContent(page));
+  UnloadPage(page);
+  ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  // Reload saved document.
+  ASSERT_TRUE(OpenSavedDocument());
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
+
+  // Assert path fill color is not changed to black.
+  auto path_obj = FPDFPage_GetObject(saved_page, 0);
+  ASSERT_TRUE(path_obj);
+  unsigned int r;
+  unsigned int g;
+  unsigned int b;
+  unsigned int a;
+  ASSERT_TRUE(FPDFPageObj_GetFillColor(path_obj, &r, &g, &b, &a));
+  // TODO(crbug.com/42271133): Change the assertion to EXPECT_NE().
+  EXPECT_EQ(0u, r);
+  EXPECT_EQ(0u, g);
+  EXPECT_EQ(0u, b);
+
+  CloseSavedPage(saved_page);
+  CloseSavedDocument();
+}
+
 TEST_F(FPDFSaveEmbedderTest, SaveLinearizedDoc) {
   const int kPageCount = 3;
   std::array<std::string, kPageCount> original_md5;
