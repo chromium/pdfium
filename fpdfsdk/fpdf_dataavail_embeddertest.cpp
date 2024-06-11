@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include <algorithm>
 #include <memory>
 #include <string>
@@ -14,6 +9,7 @@
 #include <vector>
 
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
 #include "public/fpdf_doc.h"
@@ -119,7 +115,7 @@ class TestAsyncLoader final : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
     if (end <= pos)
       return 0;
     const unsigned long bytes_to_copy = end - pos;
-    fxcrt::spancpy(pdfium::make_span(pBuf, size),
+    fxcrt::spancpy(UNSAFE_TODO(pdfium::make_span(pBuf, size)),
                    file_contents().subspan(pos, bytes_to_copy));
     SetDataAvailable(pos, bytes_to_copy);
     return static_cast<int>(bytes_to_copy);

@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include <iterator>
 #include <optional>
 
@@ -63,9 +58,9 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAltText) {
     // Deliberately pass in a small buffer size to make sure |buffer| remains
     // untouched.
     ASSERT_EQ(24U, FPDF_StructElement_GetAltText(gchild_element, buffer, 1));
-    for (size_t i = 0; i < std::size(buffer); ++i)
-      EXPECT_EQ(0U, buffer[i]);
-
+    for (unsigned short b : buffer) {
+      EXPECT_EQ(0U, b);
+    }
     EXPECT_EQ(-1, FPDF_StructElement_GetMarkedContentID(gchild_element));
     ASSERT_EQ(24U, FPDF_StructElement_GetAltText(gchild_element, buffer,
                                                  sizeof(buffer)));
@@ -114,8 +109,9 @@ TEST_F(FPDFStructTreeEmbedderTest, GetActualText) {
     // Deliberately pass in a small buffer size to make sure |buffer| remains
     // untouched.
     ASSERT_EQ(24U, FPDF_StructElement_GetActualText(gchild_element, buffer, 1));
-    for (size_t i = 0; i < std::size(buffer); ++i)
-      EXPECT_EQ(0U, buffer[i]);
+    for (unsigned short b : buffer) {
+      EXPECT_EQ(0U, b);
+    }
     ASSERT_EQ(24U, FPDF_StructElement_GetActualText(gchild_element, buffer,
                                                     sizeof(buffer)));
     EXPECT_EQ(L"Actual Text", GetPlatformWString(buffer));
@@ -499,9 +495,9 @@ TEST_F(FPDFStructTreeEmbedderTest, GetObjType) {
     // Deliberately pass in a small buffer size to make sure `buffer` remains
     // untouched.
     ASSERT_EQ(22U, FPDF_StructElement_GetObjType(child, buffer, 1));
-    for (size_t i = 0; i < std::size(buffer); ++i)
-      EXPECT_EQ(0U, buffer[i]);
-
+    for (unsigned short b : buffer) {
+      EXPECT_EQ(0U, b);
+    }
     ASSERT_EQ(22U,
               FPDF_StructElement_GetObjType(child, buffer, sizeof(buffer)));
     EXPECT_EQ(L"StructElem", GetPlatformWString(buffer));
@@ -660,9 +656,9 @@ TEST_F(FPDFStructTreeEmbedderTest, GetAttributes) {
       ASSERT_TRUE(
           FPDF_StructElement_Attr_GetName(attr, 1, buffer, 1, &out_len));
       EXPECT_EQ(2U, out_len);
-      for (size_t i = 0; i < std::size(buffer); ++i)
-        EXPECT_EQ(0, buffer[i]);
-
+      for (unsigned short b : buffer) {
+        EXPECT_EQ(0U, b);
+      }
       ASSERT_TRUE(FPDF_StructElement_Attr_GetName(attr, 1, buffer,
                                                   sizeof(buffer), &out_len));
       EXPECT_EQ(2U, out_len);

@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include <vector>
 
 #include "build/build_config.h"
@@ -834,16 +829,15 @@ TEST_F(FPDFFormFillEmbedderTest, FormFillContinuousTab) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  static constexpr int kExpectedAnnotIndex[] = {1, 2, 3, 0};
   // Tabs should iterate focus over annotations.
-  for (size_t i = 0; i < std::size(kExpectedAnnotIndex); ++i) {
+  for (int expected : {1, 2, 3, 0}) {
     ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab, 0));
     int page_index = -2;
     FPDF_ANNOTATION annot = nullptr;
     EXPECT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
     EXPECT_EQ(0, page_index);
     ASSERT_TRUE(annot);
-    EXPECT_EQ(kExpectedAnnotIndex[i], FPDFPage_GetAnnotIndex(page, annot));
+    EXPECT_EQ(expected, FPDFPage_GetAnnotIndex(page, annot));
     FPDFPage_CloseAnnot(annot);
   }
 
@@ -858,9 +852,8 @@ TEST_F(FPDFFormFillEmbedderTest, FormFillContinuousShiftTab) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  static constexpr int kExpectedAnnotIndex[] = {0, 3, 2, 1};
   // Shift-tabs should iterate focus over annotations.
-  for (size_t i = 0; i < std::size(kExpectedAnnotIndex); ++i) {
+  for (int expected : {0, 3, 2, 1}) {
     ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab,
                                FWL_EVENTFLAG_ShiftKey));
     int page_index = -2;
@@ -868,7 +861,7 @@ TEST_F(FPDFFormFillEmbedderTest, FormFillContinuousShiftTab) {
     EXPECT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
     EXPECT_EQ(0, page_index);
     ASSERT_TRUE(annot);
-    EXPECT_EQ(kExpectedAnnotIndex[i], FPDFPage_GetAnnotIndex(page, annot));
+    EXPECT_EQ(expected, FPDFPage_GetAnnotIndex(page, annot));
     FPDFPage_CloseAnnot(annot);
   }
 

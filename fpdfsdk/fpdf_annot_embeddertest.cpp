@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "public/fpdf_annot.h"
 
 #include <limits.h>
@@ -21,6 +16,7 @@
 #include "core/fpdfapi/page/cpdf_annotcontext.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_system.h"
@@ -1762,11 +1758,11 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
     // small. The result buffer should be overwritten with an empty string.
     std::vector<FPDF_WCHAR> buf = GetFPDFWideStringBuffer(normal_length_bytes);
     // Write in the buffer to verify it's not overwritten.
-    FXSYS_memcpy(buf.data(), "abcdefgh", 8);
+    UNSAFE_TODO(FXSYS_memcpy(buf.data(), "abcdefgh", 8));
     EXPECT_EQ(kExpectNormalAPLength,
               FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_NORMAL,
                               buf.data(), normal_length_bytes - 1));
-    EXPECT_EQ(0, memcmp(buf.data(), "abcdefgh", 8));
+    UNSAFE_TODO(EXPECT_EQ(0, memcmp(buf.data(), "abcdefgh", 8)));
 
     // Check that the string value of an AP is returned through a buffer that is
     // the right size.
@@ -2926,17 +2922,19 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldType) {
     EXPECT_EQ(-1, FPDFAnnot_GetFormFieldType(nullptr, annot.get()));
   }
 
-  constexpr int kExpectedAnnotTypes[] = {-1,
-                                         FPDF_FORMFIELD_COMBOBOX,
-                                         FPDF_FORMFIELD_LISTBOX,
-                                         FPDF_FORMFIELD_TEXTFIELD,
-                                         FPDF_FORMFIELD_CHECKBOX,
-                                         FPDF_FORMFIELD_RADIOBUTTON};
-
-  for (size_t i = 0; i < std::size(kExpectedAnnotTypes); ++i) {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, i));
+  static const struct {
+    int input;
+    int output;
+  } kTests[] = {{0, -1},
+                {1, FPDF_FORMFIELD_COMBOBOX},
+                {2, FPDF_FORMFIELD_LISTBOX},
+                {3, FPDF_FORMFIELD_TEXTFIELD},
+                {4, FPDF_FORMFIELD_CHECKBOX},
+                {5, FPDF_FORMFIELD_RADIOBUTTON}};
+  for (const auto& test : kTests) {
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, test.input));
     ASSERT_TRUE(annot);
-    EXPECT_EQ(kExpectedAnnotTypes[i],
+    EXPECT_EQ(test.output,
               FPDFAnnot_GetFormFieldType(form_handle(), annot.get()));
   }
   UnloadPage(page);

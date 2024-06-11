@@ -2,11 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "public/fpdf_edit.h"
@@ -177,7 +173,7 @@ TEST_F(FPDFEditPageEmbedderTest, DashingArrayAndPhase) {
     float get_array[] = {-1.0f, -1.0f, -1.0f};
     EXPECT_FALSE(FPDFPageObj_GetDashArray(nullptr, get_array, 3));
     for (int i = 0; i < 3; i++)
-      EXPECT_FLOAT_EQ(-1.0f, get_array[i]);
+      EXPECT_FLOAT_EQ(-1.0f, UNSAFE_TODO(get_array[i]));
 
     EXPECT_FALSE(FPDFPageObj_SetDashPhase(nullptr, 5.0f));
     EXPECT_FALSE(FPDFPageObj_SetDashArray(nullptr, nullptr, 3, 5.0f));
@@ -210,7 +206,7 @@ TEST_F(FPDFEditPageEmbedderTest, DashingArrayAndPhase) {
     float get_array[] = {-1.0f, -1.0f, -1.0f};
     EXPECT_TRUE(FPDFPageObj_GetDashArray(path, get_array, 3));
     for (int i = 0; i < 3; i++)
-      EXPECT_FLOAT_EQ(-1.0f, get_array[i]);
+      EXPECT_FLOAT_EQ(-1.0f, UNSAFE_TODO(get_array[i]));
   }
 
   {
@@ -227,12 +223,12 @@ TEST_F(FPDFEditPageEmbedderTest, DashingArrayAndPhase) {
     ASSERT_TRUE(FPDFPageObj_GetDashArray(path, dash_array, 6));
 
     for (int i = 0; i < 6; i++)
-      EXPECT_LT(0.0f, dash_array[i]);
+      EXPECT_LT(0.0f, UNSAFE_TODO(dash_array[i]));
 
     // the array is decreasing in value.
-    for (int i = 0; i < 5; i++)
-      EXPECT_GT(dash_array[i], dash_array[i + 1]);
-
+    for (int i = 0; i < 5; i++) {
+      UNSAFE_TODO({ EXPECT_GT(dash_array[i], dash_array[i + 1]); });
+    }
     // modify phase
     EXPECT_TRUE(FPDFPageObj_SetDashPhase(path, 1.0f));
 
@@ -264,7 +260,7 @@ TEST_F(FPDFEditPageEmbedderTest, DashingArrayAndPhase) {
     float get_array[] = {-1.0f, -1.0f, -1.0f, -1.0f};
     EXPECT_TRUE(FPDFPageObj_GetDashArray(path, get_array, 4));
     for (int i = 0; i < 4; i++)
-      EXPECT_FLOAT_EQ(-1.0f, get_array[i]);
+      EXPECT_FLOAT_EQ(-1.0f, UNSAFE_TODO(get_array[i]));
 
     // modify dash_array and phase
     const float set_array[] = {1.0f, 2.0f, 3.0f};
@@ -278,13 +274,13 @@ TEST_F(FPDFEditPageEmbedderTest, DashingArrayAndPhase) {
     // Pretend `get_array` has too few members.
     EXPECT_FALSE(FPDFPageObj_GetDashArray(path, get_array, 2));
     for (int i = 0; i < 4; i++)
-      EXPECT_FLOAT_EQ(-1.0f, get_array[i]);
+      EXPECT_FLOAT_EQ(-1.0f, UNSAFE_TODO(get_array[i]));
 
     ASSERT_TRUE(FPDFPageObj_GetDashArray(path, get_array, 4));
 
     // `get_array` should be modified only up to dash_count
     for (int i = 0; i < 3; i++)
-      EXPECT_FLOAT_EQ(static_cast<float>(i + 1), get_array[i]);
+      EXPECT_FLOAT_EQ(static_cast<float>(i + 1), UNSAFE_TODO(get_array[i]));
 
     EXPECT_FLOAT_EQ(-1.0f, get_array[3]);
 

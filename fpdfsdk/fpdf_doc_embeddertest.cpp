@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include <set>
 #include <string>
 #include <vector>
@@ -15,6 +10,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -696,7 +692,7 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndRender) {
     FPDF_PAGE page = LoadPage(i);
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    const PageData& expected = expected_page_data[i];
+    const PageData& expected = UNSAFE_TODO(expected_page_data[i]);
     CompareBitmap(bitmap.get(), expected.width, expected.height,
                   expected.checksum);
     UnloadPage(page);
@@ -709,7 +705,7 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndRender) {
     FPDF_PAGE page = LoadPage(i);
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    const PageData& expected = expected_page_data[i + 1];
+    const PageData& expected = UNSAFE_TODO(expected_page_data[i + 1]);
     CompareBitmap(bitmap.get(), expected.width, expected.height,
                   expected.checksum);
     UnloadPage(page);
@@ -722,7 +718,7 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndRender) {
     FPDF_PAGE page = LoadPage(i);
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    const PageData& expected = expected_page_data[i + 1];
+    const PageData& expected = UNSAFE_TODO(expected_page_data[i + 1]);
     CompareBitmap(bitmap.get(), expected.width, expected.height,
                   expected.checksum);
     UnloadPage(page);
@@ -736,7 +732,7 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndRender) {
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
     int adjusted_index = i == 0 ? 1 : 3;
-    const PageData& expected = expected_page_data[adjusted_index];
+    const PageData& expected = UNSAFE_TODO(expected_page_data[adjusted_index]);
     CompareBitmap(bitmap.get(), expected.width, expected.height,
                   expected.checksum);
     UnloadPage(page);

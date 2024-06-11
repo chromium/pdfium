@@ -2,15 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
 #include "public/fpdf_sysfontinfo.h"
 
 #include <vector>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_environment.h"
 #include "testing/gmock/include/gmock/gmock.h"
@@ -166,7 +162,8 @@ TEST_F(FPDFSysFontInfoEmbedderTest, DefaultTTFMap) {
   // Stop at either end mark.
   while (cfmap->charset != -1 && cfmap->fontname) {
     charsets.push_back(cfmap->charset);
-    ++cfmap;
+    // SAFETY: requires FPDF_GetDefaultTTFMap() to provide a sentinel.
+    UNSAFE_BUFFERS(++cfmap);
   }
 
   // Confirm end marks only occur as a pair.

@@ -2,11 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if defined(UNSAFE_BUFFERS_BUILD)
-// TODO(crbug.com/pdfium/2154): resolve buffer safety issues.
-#pragma allow_unsafe_buffers
-#endif
-
+#include <array>
 #include <string>
 
 #include "core/fxcrt/fx_string.h"
@@ -100,7 +96,7 @@ TEST_F(FPDFSaveEmbedderTest, SaveCopiedDoc) {
 
 TEST_F(FPDFSaveEmbedderTest, SaveLinearizedDoc) {
   const int kPageCount = 3;
-  std::string original_md5[kPageCount];
+  std::array<std::string, kPageCount> original_md5;
 
   ASSERT_TRUE(OpenDocument("linearized.pdf"));
   for (int i = 0; i < kPageCount; ++i) {
