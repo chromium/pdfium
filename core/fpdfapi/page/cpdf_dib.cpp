@@ -724,10 +724,10 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
     format = FXDIB_Format::k8bppRgb;
   } else if (action == JpxDecodeAction::kUseRgb && image_info.channels == 3) {
     format = FXDIB_Format::kRgb;
-  } else if (action == JpxDecodeAction::kConvertArgbToRgb &&
-             image_info.channels == 4) {
-    format = FXDIB_Format::kRgb32;
   } else if (action == JpxDecodeAction::kUseRgb && image_info.channels == 4) {
+    format = FXDIB_Format::kRgb32;
+  } else if (action == JpxDecodeAction::kConvertArgbToRgb) {
+    CHECK_GE(image_info.channels, 4);
     format = FXDIB_Format::kRgb32;
   } else {
     image_info.width = (image_info.width * image_info.channels + 2) / 3;
