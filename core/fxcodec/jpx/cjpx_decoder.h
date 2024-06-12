@@ -13,7 +13,6 @@
 
 #include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/span.h"
-#include "core/fxcrt/unowned_ptr.h"
 
 #if defined(USE_SYSTEM_LIBOPENJPEG2)
 #include <openjpeg.h>
@@ -73,6 +72,18 @@ class CJPX_Decoder {
               uint32_t component_count);
 
  private:
+  struct CodecDeleter {
+    inline void operator()(opj_codec_t* ptr) const { opj_destroy_codec(ptr); }
+  };
+
+  struct ImageDeleter {
+    inline void operator()(opj_image_t* ptr) const { opj_image_destroy(ptr); }
+  };
+
+  struct StreamDeleter {
+    inline void operator()(opj_stream_t* ptr) const { opj_stream_destroy(ptr); }
+  };
+
   // Use Create() to instantiate.
   explicit CJPX_Decoder(ColorSpaceOption option);
 
@@ -81,10 +92,10 @@ class CJPX_Decoder {
 
   const ColorSpaceOption m_ColorSpaceOption;
   pdfium::raw_span<const uint8_t> m_SrcData;
-  UnownedPtr<opj_image_t> m_Image;
-  UnownedPtr<opj_codec_t> m_Codec;
   std::unique_ptr<DecodeData> m_DecodeData;
-  UnownedPtr<opj_stream_t> m_Stream;
+  std::unique_ptr<opj_codec_t, CodecDeleter> m_Codec;
+  std::unique_ptr<opj_stream_t, StreamDeleter> m_Stream;
+  std::unique_ptr<opj_image_t, ImageDeleter> m_Image;
   opj_dparameters_t m_Parameters = {};
 };
 

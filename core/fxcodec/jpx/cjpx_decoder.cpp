@@ -429,14 +429,7 @@ void CJPX_Decoder::Sycc420ToRgbForTesting(opj_image_t* img) {
 CJPX_Decoder::CJPX_Decoder(ColorSpaceOption option)
     : m_ColorSpaceOption(option) {}
 
-CJPX_Decoder::~CJPX_Decoder() {
-  if (m_Codec)
-    opj_destroy_codec(m_Codec.ExtractAsDangling());
-  if (m_Stream)
-    opj_stream_destroy(m_Stream.ExtractAsDangling());
-  if (m_Image)
-    opj_image_destroy(m_Image.ExtractAsDangling());
-}
+CJPX_Decoder::~CJPX_Decoder() = default;
 
 bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
                         uint8_t resolution_levels_to_skip) {
@@ -447,10 +440,10 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
     return false;
   }
 
-  m_Image = nullptr;
+  m_Image.reset();
   m_SrcData = src_data;
   m_DecodeData = std::make_unique<DecodeData>(src_data.data(), src_data.size());
-  m_Stream = fx_opj_stream_create_memory_stream(m_DecodeData.get());
+  m_Stream.reset(fx_opj_stream_create_memory_stream(m_DecodeData.get()));
   if (!m_Stream)
     return false;
 
@@ -459,54 +452,55 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
   m_Parameters.cod_format = 3;
   m_Parameters.cp_reduce = resolution_levels_to_skip;
   if (memcmp(m_SrcData.data(), kJP2Header, sizeof(kJP2Header)) == 0) {
-    m_Codec = opj_create_decompress(OPJ_CODEC_JP2);
+    m_Codec.reset(opj_create_decompress(OPJ_CODEC_JP2));
     m_Parameters.decod_format = 1;
   } else {
-    m_Codec = opj_create_decompress(OPJ_CODEC_J2K);
+    m_Codec.reset(opj_create_decompress(OPJ_CODEC_J2K));
   }
   if (!m_Codec)
     return false;
 
   if (m_ColorSpaceOption == kIndexedColorSpace)
     m_Parameters.flags |= OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
-  opj_set_info_handler(m_Codec, fx_ignore_callback, nullptr);
-  opj_set_warning_handler(m_Codec, fx_ignore_callback, nullptr);
-  opj_set_error_handler(m_Codec, fx_ignore_callback, nullptr);
-  if (!opj_setup_decoder(m_Codec, &m_Parameters))
+  opj_set_info_handler(m_Codec.get(), fx_ignore_callback, nullptr);
+  opj_set_warning_handler(m_Codec.get(), fx_ignore_callback, nullptr);
+  opj_set_error_handler(m_Codec.get(), fx_ignore_callback, nullptr);
+  if (!opj_setup_decoder(m_Codec.get(), &m_Parameters)) {
     return false;
+  }
 
   // For https://crbug.com/42270564
-  CHECK(opj_decoder_set_strict_mode(m_Codec, false));
+  CHECK(opj_decoder_set_strict_mode(m_Codec.get(), false));
 
-  m_Image = nullptr;
   opj_image_t* pTempImage = nullptr;
-  if (!opj_read_header(m_Stream, m_Codec, &pTempImage))
+  if (!opj_read_header(m_Stream.get(), m_Codec.get(), &pTempImage)) {
     return false;
+  }
 
-  m_Image = pTempImage;
+  m_Image.reset(pTempImage);
   return true;
 }
 
 bool CJPX_Decoder::StartDecode() {
   if (!m_Parameters.nb_tile_to_decode) {
-    if (!opj_set_decode_area(m_Codec, m_Image, m_Parameters.DA_x0,
+    if (!opj_set_decode_area(m_Codec.get(), m_Image.get(), m_Parameters.DA_x0,
                              m_Parameters.DA_y0, m_Parameters.DA_x1,
                              m_Parameters.DA_y1)) {
-      opj_image_destroy(m_Image.ExtractAsDangling());
+      m_Image.reset();
       return false;
     }
-    if (!(opj_decode(m_Codec, m_Stream, m_Image) &&
-          opj_end_decompress(m_Codec, m_Stream))) {
-      opj_image_destroy(m_Image.ExtractAsDangling());
+    if (!(opj_decode(m_Codec.get(), m_Stream.get(), m_Image.get()) &&
+          opj_end_decompress(m_Codec.get(), m_Stream.get()))) {
+      m_Image.reset();
       return false;
     }
-  } else if (!opj_get_decoded_tile(m_Codec, m_Stream, m_Image,
+  } else if (!opj_get_decoded_tile(m_Codec.get(), m_Stream.get(), m_Image.get(),
                                    m_Parameters.tile_index)) {
     return false;
   }
 
-  opj_stream_destroy(m_Stream.ExtractAsDangling());
-  auto components = components_span(m_Image);
+  m_Stream.reset();
+  auto components = components_span(m_Image.get());
   if (m_Image->color_space != OPJ_CLRSPC_SYCC && components.size() == 3 &&
       components[0].dx == components[0].dy && components[1].dx != 1) {
     m_Image->color_space = OPJ_CLRSPC_SYCC;
@@ -514,7 +508,7 @@ bool CJPX_Decoder::StartDecode() {
     m_Image->color_space = OPJ_CLRSPC_GRAY;
   }
   if (m_Image->color_space == OPJ_CLRSPC_SYCC)
-    color_sycc_to_rgb(m_Image);
+    color_sycc_to_rgb(m_Image.get());
 
   if (m_Image->icc_profile_buf) {
     // TODO(palmer): Using |opj_free| here resolves the crash described in
@@ -532,7 +526,7 @@ bool CJPX_Decoder::StartDecode() {
 }
 
 CJPX_Decoder::JpxImageInfo CJPX_Decoder::GetInfo() const {
-  const auto components = components_span(m_Image);
+  const auto components = components_span(m_Image.get());
   return {components[0].w, components[0].h,
           pdfium::checked_cast<uint32_t>(components.size()),
           m_Image->color_space};
@@ -568,7 +562,8 @@ bool CJPX_Decoder::Decode(pdfium::span<uint8_t> dest_buf,
   fxcrt::spanset(dest_buf.first(m_Image->comps[0].h * pitch), 0xff);
   std::vector<uint8_t*> channel_bufs(m_Image->numcomps);
   std::vector<int> adjust_comps(m_Image->numcomps);
-  const pdfium::span<opj_image_comp_t> components = components_span(m_Image);
+  const pdfium::span<opj_image_comp_t> components =
+      components_span(m_Image.get());
   for (size_t i = 0; i < components.size(); i++) {
     channel_bufs[i] = dest_buf.subspan(i).data();
     adjust_comps[i] = components[i].prec - 8;
