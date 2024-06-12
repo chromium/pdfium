@@ -79,8 +79,9 @@ void CPDF_ImageObject::SetImageMatrix(const CFX_Matrix& matrix) {
 }
 
 void CPDF_ImageObject::MaybePurgeCache() {
-  if (!m_pImage)
+  if (!m_pImage || m_pImage->IsGoingToBeDestroyed()) {
     return;
+  }
 
   RetainPtr<const CPDF_Stream> pStream = m_pImage->GetStream();
   if (!pStream)

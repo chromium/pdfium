@@ -331,6 +331,10 @@ void CPDF_Image::ResetCache(CPDF_Page* pPage) {
   pPage->GetPageImageCache()->ResetBitmapForImage(std::move(pHolder));
 }
 
+void CPDF_Image::WillBeDestroyed() {
+  m_bWillBeDestroyed = true;
+}
+
 RetainPtr<CPDF_DIB> CPDF_Image::CreateNewDIB() const {
   return pdfium::MakeRetain<CPDF_DIB>(GetDocument(), GetStream());
 }

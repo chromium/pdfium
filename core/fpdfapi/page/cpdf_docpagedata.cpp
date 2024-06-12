@@ -170,9 +170,11 @@ CPDF_DocPageData* CPDF_DocPageData::FromDocument(const CPDF_Document* pDoc) {
 CPDF_DocPageData::CPDF_DocPageData() = default;
 
 CPDF_DocPageData::~CPDF_DocPageData() {
+  for (auto& it : m_ImageMap) {
+    it.second->WillBeDestroyed();
+  }
   for (auto& it : m_FontMap) {
-    if (it.second)
-      it.second->WillBeDestroyed();
+    it.second->WillBeDestroyed();
   }
 }
 

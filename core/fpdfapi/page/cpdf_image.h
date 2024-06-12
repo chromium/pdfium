@@ -56,6 +56,9 @@ class CPDF_Image final : public Retainable {
 
   void ResetCache(CPDF_Page* pPage);
 
+  void WillBeDestroyed();
+  bool IsGoingToBeDestroyed() const { return m_bWillBeDestroyed; }
+
   // Returns whether to Continue() or not.
   bool StartLoadDIBBase(const CPDF_Dictionary* pFormResource,
                         const CPDF_Dictionary* pPageResource,
@@ -86,6 +89,7 @@ class CPDF_Image final : public Retainable {
   bool m_bIsInline = false;
   bool m_bIsMask = false;
   bool m_bInterpolate = false;
+  bool m_bWillBeDestroyed = false;
   UnownedPtr<CPDF_Document> const m_pDocument;
   RetainPtr<CFX_DIBBase> m_pDIBBase;
   RetainPtr<CFX_DIBBase> m_pMask;
