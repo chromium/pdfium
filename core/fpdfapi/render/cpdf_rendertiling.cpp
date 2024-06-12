@@ -125,11 +125,6 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
     if (!pPattern->colored()) {
       pStates = CPDF_RenderStatus::CloneObjStates(&pPageObj->graphic_states(),
                                                   bStroke);
-    } else if (pPageObj->AsPath()) {
-      pStates = std::make_unique<CPDF_GraphicStates>();
-      pStates->SetDefaultStates();
-      pStates->mutable_general_state().SetFillAlpha(
-          pPageObj->general_state().GetFillAlpha());
     }
 
     RetainPtr<const CPDF_Dictionary> pFormResource =

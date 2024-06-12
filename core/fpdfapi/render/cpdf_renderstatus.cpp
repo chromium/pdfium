@@ -584,7 +584,6 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   }
   RetainPtr<const CPDF_Dictionary> pFormResource;
   float group_alpha = 1.0f;
-  float initial_alpha = 1.0f;
   CPDF_Transparency transparency = m_Transparency;
   bool bGroupTransparent = false;
   const CPDF_FormObject* pFormObj = pPageObj->AsForm();
@@ -593,14 +592,13 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     transparency = pFormObj->form()->GetTransparency();
     bGroupTransparent = transparency.IsIsolated();
     pFormResource = pFormObj->form()->GetDict()->GetDictFor("Resources");
-    initial_alpha = m_InitialStates.general_state().GetFillAlpha();
   }
   bool bTextClip =
       (pPageObj->clip_path().HasRef() &&
        pPageObj->clip_path().GetTextCount() > 0 && !m_bPrint &&
        !(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP));
   if (!pSMaskDict && group_alpha == 1.0f && blend_type == BlendMode::kNormal &&
-      !bTextClip && !bGroupTransparent && initial_alpha == 1.0f) {
+      !bTextClip && !bGroupTransparent) {
     return false;
   }
   if (m_bPrint) {
@@ -695,9 +693,6 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     bitmap_device.MultiplyAlpha(group_alpha);
   }
   transparency = m_Transparency;
-  if (initial_alpha != 1.0f) {
-    bitmap_device.MultiplyAlpha(initial_alpha);
-  }
   if (pPageObj->IsForm()) {
     transparency.SetGroup();
   }
