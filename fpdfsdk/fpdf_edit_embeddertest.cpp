@@ -2636,7 +2636,7 @@ TEST_F(FPDFEditEmbedderTest, AddStrokedPaths) {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     const char* checksum_2 = []() {
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-        return "68b3194f74abd9d471695ce1415be43f";
+        return "c4b2314ce2da802fbb390ea3bb2adae9";
       }
       return "4b6f3b9d25c4e194821217d5016c3724";
     }();
@@ -2658,7 +2658,7 @@ TEST_F(FPDFEditEmbedderTest, AddStrokedPaths) {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     const char* checksum_3 = []() {
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-        return "ea784068651df2b9ba132ce9215e6780";
+        return "e37dfe983eac22a3f936dfc86355fde5";
       }
       return "ff3e6a22326754944cc6e56609acd73b";
     }();
