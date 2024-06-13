@@ -9,6 +9,7 @@ third_party {
     # PDFium's copy of libtiff does not ship tools like tiffcrop.
     mitigated_security_patch: "CVE-2022-48281"
     mitigated_security_patch: "CVE-2023-1916"
+    mitigated_security_patch: "CVE-2023-3164"
     mitigated_security_patch: "CVE-2023-25433"
     mitigated_security_patch: "CVE-2023-25434"
     mitigated_security_patch: "CVE-2023-25435"
