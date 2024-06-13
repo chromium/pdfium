@@ -187,52 +187,50 @@ ByteString GetAP_Check(const CFX_FloatRect& crBBox) {
   const float fWidth = crBBox.Width();
   const float fHeight = crBBox.Height();
 
-  CFX_PointF pts[8][3] = {{CFX_PointF(0.28f, 0.52f), CFX_PointF(0.27f, 0.48f),
-                           CFX_PointF(0.29f, 0.40f)},
-                          {CFX_PointF(0.30f, 0.33f), CFX_PointF(0.31f, 0.29f),
-                           CFX_PointF(0.31f, 0.28f)},
-                          {CFX_PointF(0.39f, 0.28f), CFX_PointF(0.49f, 0.29f),
-                           CFX_PointF(0.77f, 0.67f)},
-                          {CFX_PointF(0.76f, 0.68f), CFX_PointF(0.78f, 0.69f),
-                           CFX_PointF(0.76f, 0.75f)},
-                          {CFX_PointF(0.76f, 0.75f), CFX_PointF(0.73f, 0.80f),
-                           CFX_PointF(0.68f, 0.75f)},
-                          {CFX_PointF(0.68f, 0.74f), CFX_PointF(0.68f, 0.74f),
-                           CFX_PointF(0.44f, 0.47f)},
-                          {CFX_PointF(0.43f, 0.47f), CFX_PointF(0.40f, 0.47f),
-                           CFX_PointF(0.41f, 0.58f)},
-                          {CFX_PointF(0.40f, 0.60f), CFX_PointF(0.28f, 0.66f),
-                           CFX_PointF(0.30f, 0.56f)}};
+  using PointRow = std::array<CFX_PointF, 3>;
+  std::array<PointRow, 8> point_table = {{
+      {{CFX_PointF(0.28f, 0.52f), CFX_PointF(0.27f, 0.48f),
+        CFX_PointF(0.29f, 0.40f)}},
+      {{CFX_PointF(0.30f, 0.33f), CFX_PointF(0.31f, 0.29f),
+        CFX_PointF(0.31f, 0.28f)}},
+      {{CFX_PointF(0.39f, 0.28f), CFX_PointF(0.49f, 0.29f),
+        CFX_PointF(0.77f, 0.67f)}},
+      {{CFX_PointF(0.76f, 0.68f), CFX_PointF(0.78f, 0.69f),
+        CFX_PointF(0.76f, 0.75f)}},
+      {{CFX_PointF(0.76f, 0.75f), CFX_PointF(0.73f, 0.80f),
+        CFX_PointF(0.68f, 0.75f)}},
+      {{CFX_PointF(0.68f, 0.74f), CFX_PointF(0.68f, 0.74f),
+        CFX_PointF(0.44f, 0.47f)}},
+      {{CFX_PointF(0.43f, 0.47f), CFX_PointF(0.40f, 0.47f),
+        CFX_PointF(0.41f, 0.58f)}},
+      {{CFX_PointF(0.40f, 0.60f), CFX_PointF(0.28f, 0.66f),
+        CFX_PointF(0.30f, 0.56f)}},
+  }};
 
-  for (size_t i = 0; i < std::size(pts); ++i) {
-    for (size_t j = 0; j < std::size(pts[0]); ++j) {
-      UNSAFE_TODO({
-        pts[i][j].x = pts[i][j].x * fWidth + crBBox.left;
-        pts[i][j].y = pts[i][j].y * fHeight + crBBox.bottom;
-      });
+  for (PointRow& row : point_table) {
+    for (CFX_PointF& point : row) {
+      point.x = point.x * fWidth + crBBox.left;
+      point.y = point.y * fHeight + crBBox.bottom;
     }
   }
 
   fxcrt::ostringstream csAP;
-  WriteMove(csAP, pts[0][0]);
+  WriteMove(csAP, point_table[0][0]);
 
-  UNSAFE_TODO({
-    for (size_t i = 0; i < std::size(pts); ++i) {
-      size_t nNext = i < std::size(pts) - 1 ? i + 1 : 0;
-      const CFX_PointF& pt_next = pts[nNext][0];
-
-      float px1 = pts[i][1].x - pts[i][0].x;
-      float py1 = pts[i][1].y - pts[i][0].y;
-      float px2 = pts[i][2].x - pt_next.x;
-      float py2 = pts[i][2].y - pt_next.y;
-
-      WriteBezierCurve(
-          csAP,
-          {pts[i][0].x + px1 * FXSYS_BEZIER, pts[i][0].y + py1 * FXSYS_BEZIER},
-          {pt_next.x + px2 * FXSYS_BEZIER, pt_next.y + py2 * FXSYS_BEZIER},
-          pt_next);
-    }
-  });
+  for (size_t i = 0; i < point_table.size(); ++i) {
+    size_t nNext = i < point_table.size() - 1 ? i + 1 : 0;
+    const CFX_PointF& pt_next = point_table[nNext][0];
+    float px1 = point_table[i][1].x - point_table[i][0].x;
+    float py1 = point_table[i][1].y - point_table[i][0].y;
+    float px2 = point_table[i][2].x - pt_next.x;
+    float py2 = point_table[i][2].y - pt_next.y;
+    WriteBezierCurve(
+        csAP,
+        {point_table[i][0].x + px1 * FXSYS_BEZIER,
+         point_table[i][0].y + py1 * FXSYS_BEZIER},
+        {pt_next.x + px2 * FXSYS_BEZIER, pt_next.y + py2 * FXSYS_BEZIER},
+        pt_next);
+  }
   return ByteString(csAP);
 }
 
