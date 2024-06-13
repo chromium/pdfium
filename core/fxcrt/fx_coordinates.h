@@ -451,12 +451,14 @@ std::ostream& operator<<(std::ostream& os, const CFX_RectF& rect);
 //
 class CFX_Matrix {
  public:
-  CFX_Matrix() = default;
+  constexpr CFX_Matrix() = default;
 
-  explicit CFX_Matrix(const float n[6])
-      : a(n[0]), b(n[1]), c(n[2]), d(n[3]), e(n[4]), f(n[5]) {}
-
-  CFX_Matrix(float a1, float b1, float c1, float d1, float e1, float f1)
+  constexpr CFX_Matrix(float a1,
+                       float b1,
+                       float c1,
+                       float d1,
+                       float e1,
+                       float f1)
       : a(a1), b(b1), c(c1), d(d1), e(e1), f(f1) {}
 
   CFX_Matrix(const CFX_Matrix& other) = default;
