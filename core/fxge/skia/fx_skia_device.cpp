@@ -342,18 +342,17 @@ bool AddSamples(const CPDF_SampledFunc* func,
     return false;
   }
 
-  float colors_min[3];
-  float colors_max[3];
-  UNSAFE_TODO({
-    for (int i = 0; i < 3; ++i) {
-      colors_min[i] = func->GetRange(i * 2);
-      colors_max[i] = func->GetRange(i * 2 + 1);
-    }
+  std::array<float, 3> colors_min;
+  std::array<float, 3> colors_max;
+  for (int i = 0; i < 3; ++i) {
+    colors_min[i] = func->GetRange(i * 2);
+    colors_max[i] = func->GetRange(i * 2 + 1);
+  }
     pdfium::span<const uint8_t> sample_data =
         func->GetSampleStream()->GetSpan();
     CFX_BitStream bitstream(sample_data);
     for (uint32_t i = 0; i < sample_count; ++i) {
-      float float_colors[3];
+      std::array<float, 3> float_colors;
       for (uint32_t j = 0; j < 3; ++j) {
         float sample = static_cast<float>(bitstream.GetBits(sample_size));
         float interp = sample / (sample_count - 1);
@@ -365,7 +364,6 @@ bool AddSamples(const CPDF_SampledFunc* func,
                                            FloatToByte(float_colors[2])));
       pos.push_back(static_cast<float>(i) / (sample_count - 1));
     }
-  });
   return true;
 }
 

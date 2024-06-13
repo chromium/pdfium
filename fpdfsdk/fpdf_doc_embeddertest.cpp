@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <array>
 #include <set>
 #include <string>
 #include <vector>
@@ -10,7 +11,6 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fxcrt/bytestring.h"
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
@@ -654,7 +654,7 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndRender) {
     int height;
     const char* checksum;
   };
-  const PageData expected_page_data[5] = {
+  const std::array<const PageData, 5> expected_page_data = {{
       {200, 250,
        []() {
          return CFX_DefaultRenderDevice::UseSkiaRenderer()
@@ -679,11 +679,13 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndRender) {
                     ? "a8c5b3e626f665eddf593c6d4c32ae9e"
                     : "dcd768be15efb9c6e5093cf74508752c";
        }()},
-      {200, 250, []() {
+      {200, 250,
+       []() {
          return CFX_DefaultRenderDevice::UseSkiaRenderer()
                     ? "72eb157853ae2d19b70ea62e3f5ac202"
                     : "7a3f8f79ebcb350854c0d69607729ec5";
-       }()}};
+       }()},
+  }};
 
   // Render the original document. (page indices 0-4)
   ASSERT_TRUE(OpenDocument("rectangles_multi_pages.pdf"));
@@ -692,7 +694,7 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndRender) {
     FPDF_PAGE page = LoadPage(i);
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    const PageData& expected = UNSAFE_TODO(expected_page_data[i]);
+    const PageData& expected = expected_page_data[i];
     CompareBitmap(bitmap.get(), expected.width, expected.height,
                   expected.checksum);
     UnloadPage(page);
@@ -705,7 +707,7 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndRender) {
     FPDF_PAGE page = LoadPage(i);
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    const PageData& expected = UNSAFE_TODO(expected_page_data[i + 1]);
+    const PageData& expected = expected_page_data[i + 1];
     CompareBitmap(bitmap.get(), expected.width, expected.height,
                   expected.checksum);
     UnloadPage(page);
@@ -718,7 +720,7 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndRender) {
     FPDF_PAGE page = LoadPage(i);
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
-    const PageData& expected = UNSAFE_TODO(expected_page_data[i + 1]);
+    const PageData& expected = expected_page_data[i + 1];
     CompareBitmap(bitmap.get(), expected.width, expected.height,
                   expected.checksum);
     UnloadPage(page);
@@ -732,7 +734,7 @@ TEST_F(FPDFDocEmbedderTest, DeletePageAndRender) {
     ASSERT_TRUE(page);
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
     int adjusted_index = i == 0 ? 1 : 3;
-    const PageData& expected = UNSAFE_TODO(expected_page_data[adjusted_index]);
+    const PageData& expected = expected_page_data[adjusted_index];
     CompareBitmap(bitmap.get(), expected.width, expected.height,
                   expected.checksum);
     UnloadPage(page);

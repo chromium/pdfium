@@ -143,10 +143,8 @@ bool CPDF_MeshStream::Load() {
   m_ymin = pDecode->GetFloatAt(2);
   m_ymax = pDecode->GetFloatAt(3);
   for (uint32_t i = 0; i < m_nComponents; ++i) {
-    UNSAFE_TODO({
-      m_ColorMin[i] = pDecode->GetFloatAt(i * 2 + 4);
-      m_ColorMax[i] = pDecode->GetFloatAt(i * 2 + 5);
-    });
+    m_ColorMin[i] = pDecode->GetFloatAt(i * 2 + 4);
+    m_ColorMax[i] = pDecode->GetFloatAt(i * 2 + 5);
   }
   if (ShouldCheckBPC(m_type)) {
     m_CoordMax = m_nCoordBits == 32 ? -1 : (1 << m_nCoordBits) - 1;
@@ -205,13 +203,11 @@ CFX_PointF CPDF_MeshStream::ReadCoords() const {
 FX_RGB_STRUCT<float> CPDF_MeshStream::ReadColor() const {
   DCHECK(ShouldCheckBPC(m_type));
 
-  float color_value[kMaxComponents];
+  std::array<float, kMaxComponents> color_value;
   for (uint32_t i = 0; i < m_nComponents; ++i) {
-    UNSAFE_TODO({
       color_value[i] = m_ColorMin[i] + m_BitStream->GetBits(m_nComponentBits) *
                                            (m_ColorMax[i] - m_ColorMin[i]) /
                                            m_ComponentMax;
-    });
   }
 
   FX_RGB_STRUCT<float> rgb = {};
@@ -223,7 +219,7 @@ FX_RGB_STRUCT<float> CPDF_MeshStream::ReadColor() const {
   float result[kMaxComponents] = {};
   for (const auto& func : m_funcs) {
     if (func && func->OutputCount() <= kMaxComponents) {
-      func->Call(UNSAFE_TODO(pdfium::make_span(color_value, 1u)), result);
+      func->Call(pdfium::make_span(color_value).first(1u), result);
     }
   }
 

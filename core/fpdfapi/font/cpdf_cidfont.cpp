@@ -7,6 +7,7 @@
 #include "core/fpdfapi/font/cpdf_cidfont.h"
 
 #include <algorithm>
+#include <array>
 #include <limits>
 #include <utility>
 #include <vector>
@@ -51,13 +52,14 @@ struct LowHighValXY {
   int y;
 };
 
-constexpr FX_CodePage kCharsetCodePages[CIDSET_NUM_SETS] = {
+constexpr std::array<FX_CodePage, CIDSET_NUM_SETS> kCharsetCodePages = {
     FX_CodePage::kDefANSI,
     FX_CodePage::kChineseSimplified,
     FX_CodePage::kChineseTraditional,
     FX_CodePage::kShiftJIS,
     FX_CodePage::kHangul,
-    FX_CodePage::kUTF16LE};
+    FX_CodePage::kUTF16LE,
+};
 
 constexpr CIDTransform kJapan1VerticalCIDs[] = {
     {97, 129, 0, 0, 127, 55, 0},     {7887, 127, 0, 0, 127, 76, 89},
@@ -331,7 +333,7 @@ wchar_t CPDF_CIDFont::GetUnicodeFromCharCode(uint32_t charcode) const {
     charsize = 2;
   }
   size_t ret = FX_MultiByteToWideChar(
-      UNSAFE_TODO(kCharsetCodePages[static_cast<size_t>(m_pCMap->GetCoding())]),
+      kCharsetCodePages[static_cast<size_t>(m_pCMap->GetCoding())],
       UNSAFE_TODO(ByteStringView::Create(
           reinterpret_cast<const char*>(&charcode), charsize)),
       pdfium::span_from_ref(unicode));
@@ -379,7 +381,7 @@ uint32_t CPDF_CIDFont::CharCodeFromUnicode(wchar_t unicode) const {
 #if BUILDFLAG(IS_WIN)
   uint8_t buffer[32];
   size_t ret = FX_WideCharToMultiByte(
-      UNSAFE_TODO(kCharsetCodePages[static_cast<size_t>(m_pCMap->GetCoding())]),
+      kCharsetCodePages[static_cast<size_t>(m_pCMap->GetCoding())],
       WideStringView(unicode),
       pdfium::as_writable_chars(pdfium::make_span(buffer).first(4u)));
   if (ret == 1)
@@ -809,7 +811,7 @@ void CPDF_CIDFont::LoadSubstFont() {
   safeStemV *= 5;
   m_Font.LoadSubst(m_BaseFontName, m_FontType == CIDFontType::kTrueType,
                    m_Flags, safeStemV.ValueOrDefault(FXFONT_FW_NORMAL),
-                   m_ItalicAngle, UNSAFE_TODO(kCharsetCodePages[m_Charset]),
+                   m_ItalicAngle, kCharsetCodePages[m_Charset],
                    IsVertWriting());
 }
 

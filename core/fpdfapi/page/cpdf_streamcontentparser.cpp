@@ -1688,7 +1688,7 @@ void CPDF_StreamContentParser::ParsePathObject() {
           break;
 
         FX_Number number(m_pSyntax->GetWord());
-        UNSAFE_TODO(params[nParams++]) = number.GetFloat();
+        params[nParams++] = number.GetFloat();
         break;
       }
       default:

@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #include <algorithm>
+#include <array>
 #include <limits>
 #include <memory>
 #include <optional>
@@ -50,7 +51,7 @@
 
 namespace {
 
-constexpr uint8_t kSRGBSamples1[] = {
+constexpr auto kSRGBSamples1 = fxcrt::ToArray<const uint8_t>({
     0,   3,   6,   10,  13,  15,  18,  20,  22,  23,  25,  27,  28,  30,  31,
     32,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,
     48,  49,  49,  50,  51,  52,  53,  53,  54,  55,  56,  56,  57,  58,  58,
@@ -64,9 +65,9 @@ constexpr uint8_t kSRGBSamples1[] = {
     107, 107, 108, 108, 108, 109, 109, 109, 110, 110, 110, 110, 111, 111, 111,
     112, 112, 112, 113, 113, 113, 114, 114, 114, 115, 115, 115, 115, 116, 116,
     116, 117, 117, 117, 118, 118, 118, 118, 119, 119, 119, 120,
-};
+});
 
-constexpr uint8_t kSRGBSamples2[] = {
+constexpr auto kSRGBSamples2 = fxcrt::ToArray<const uint8_t>({
     120, 121, 122, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135,
     136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 148, 149,
     150, 151, 152, 153, 154, 155, 155, 156, 157, 158, 159, 159, 160, 161, 162,
@@ -81,7 +82,7 @@ constexpr uint8_t kSRGBSamples2[] = {
     236, 236, 237, 237, 238, 238, 238, 239, 239, 240, 240, 241, 241, 242, 242,
     243, 243, 244, 244, 245, 245, 246, 246, 246, 247, 247, 248, 248, 249, 249,
     250, 250, 251, 251, 251, 252, 252, 253, 253, 254, 254, 255, 255,
-};
+});
 
 constexpr size_t kBlackWhitePointCount = 3;
 
@@ -144,8 +145,8 @@ class CPDF_CalGray final : public CPDF_ColorSpace {
   CPDF_CalGray();
 
   float m_Gamma = kDefaultGamma;
-  float m_WhitePoint[kBlackWhitePointCount] = {1.0f, 1.0f, 1.0f};
-  float m_BlackPoint[kBlackWhitePointCount] = {0.0f, 0.0f, 0.0f};
+  std::array<float, kBlackWhitePointCount> m_WhitePoint = {{1.0f, 1.0f, 1.0f}};
+  std::array<float, kBlackWhitePointCount> m_BlackPoint = {{0.0f, 0.0f, 0.0f}};
 };
 
 class CPDF_CalRGB final : public CPDF_ColorSpace {
@@ -174,10 +175,10 @@ class CPDF_CalRGB final : public CPDF_ColorSpace {
 
   CPDF_CalRGB();
 
-  float m_WhitePoint[kBlackWhitePointCount] = {1.0f, 1.0f, 1.0f};
-  float m_BlackPoint[kBlackWhitePointCount] = {0.0f, 0.0f, 0.0f};
-  float m_Gamma[kGammaCount] = {};
-  float m_Matrix[kMatrixCount] = {};
+  std::array<float, kBlackWhitePointCount> m_WhitePoint = {{1.0f, 1.0f, 1.0f}};
+  std::array<float, kBlackWhitePointCount> m_BlackPoint = {{0.0f, 0.0f, 0.0f}};
+  std::array<float, kGammaCount> m_Gamma = {};
+  std::array<float, kMatrixCount> m_Matrix = {};
   bool m_bHasGamma = false;
   bool m_bHasMatrix = false;
 };
@@ -211,8 +212,8 @@ class CPDF_LabCS final : public CPDF_ColorSpace {
 
   CPDF_LabCS();
 
-  std::array<float, kBlackWhitePointCount> m_WhitePoint = {1.0f, 1.0f, 1.0f};
-  std::array<float, kBlackWhitePointCount> m_BlackPoint = {0.0f, 0.0f, 0.0f};
+  std::array<float, kBlackWhitePointCount> m_WhitePoint = {{1.0f, 1.0f, 1.0f}};
+  std::array<float, kBlackWhitePointCount> m_BlackPoint = {{0.0f, 0.0f, 0.0f}};
   std::array<float, kRangesCount> m_Ranges = {};
 };
 
@@ -377,12 +378,10 @@ class Matrix_3by3 {
 float RGB_Conversion(float colorComponent) {
   colorComponent = std::clamp(colorComponent, 0.0f, 1.0f);
   int scale = std::max(static_cast<int>(colorComponent * 1023), 0);
-  UNSAFE_TODO({
-    if (scale < 192) {
-      return kSRGBSamples1[scale] / 255.0f;
-    }
-    return kSRGBSamples2[scale / 4 - 48] / 255.0f;
-  });
+  if (scale < 192) {
+    return kSRGBSamples1[scale] / 255.0f;
+  }
+  return kSRGBSamples2[scale / 4 - 48] / 255.0f;
 }
 
 void XYZ_to_sRGB(float X, float Y, float Z, float* R, float* G, float* B) {
@@ -782,15 +781,17 @@ uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
   RetainPtr<const CPDF_Array> pGamma = pDict->GetArrayFor("Gamma");
   if (pGamma) {
     m_bHasGamma = true;
-    for (size_t i = 0; i < std::size(m_Gamma); ++i)
-      UNSAFE_TODO(m_Gamma[i]) = pGamma->GetFloatAt(i);
+    for (size_t i = 0; i < std::size(m_Gamma); ++i) {
+      m_Gamma[i] = pGamma->GetFloatAt(i);
+    }
   }
 
   RetainPtr<const CPDF_Array> pMatrix = pDict->GetArrayFor("Matrix");
   if (pMatrix) {
     m_bHasMatrix = true;
-    for (size_t i = 0; i < std::size(m_Matrix); ++i)
-      UNSAFE_TODO(m_Matrix[i]) = pMatrix->GetFloatAt(i);
+    for (size_t i = 0; i < std::size(m_Matrix); ++i) {
+      m_Matrix[i] = pMatrix->GetFloatAt(i);
+    }
   }
   return 3;
 }
@@ -879,13 +880,11 @@ uint32_t CPDF_LabCS::v_Load(CPDF_Document* pDoc,
   GetBlackPoint(pDict.Get(), m_BlackPoint);
 
   RetainPtr<const CPDF_Array> pParam = pDict->GetArrayFor("Range");
-  static constexpr float kDefaultRanges[kRangesCount] = {-100.0f, 100.0f,
-                                                         -100.0f, 100.0f};
-  UNSAFE_TODO({
-    for (size_t i = 0; i < std::size(kDefaultRanges); ++i) {
-      m_Ranges[i] = pParam ? pParam->GetFloatAt(i) : kDefaultRanges[i];
-    }
-  });
+  static constexpr std::array<float, kRangesCount> kDefaultRanges = {
+      {-100.0f, 100.0f, -100.0f, 100.0f}};
+  for (size_t i = 0; i < std::size(kDefaultRanges); ++i) {
+    m_Ranges[i] = pParam ? pParam->GetFloatAt(i) : kDefaultRanges[i];
+  }
   return 3;
 }
 

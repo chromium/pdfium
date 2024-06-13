@@ -516,9 +516,8 @@ bool IsPartOfNumberW(wchar_t ch) {
 }
 
 ByteString GUIDString(bool bSeparator) {
-  uint8_t data[16];
-  auto random_span = pdfium::make_span(data);
-  FX_Random_GenerateMT(fxcrt::reinterpret_span<uint32_t>(random_span));
+  std::array<uint8_t, 16> data;
+  FX_Random_GenerateMT(fxcrt::reinterpret_span<uint32_t, uint8_t>(data));
   data[6] = (data[6] & 0x0F) | 0x40;
 
   ByteString bsGUID;
@@ -527,10 +526,10 @@ ByteString GUIDString(bool bSeparator) {
     pdfium::span<char> pBuf = bsGUID.GetBuffer(40);
     size_t out_index = 0;
     for (size_t i = 0; i < 16; ++i, out_index += 2) {
-      if (bSeparator && (i == 4 || i == 6 || i == 8 || i == 10))
+      if (bSeparator && (i == 4 || i == 6 || i == 8 || i == 10)) {
         pBuf[out_index++] = L'-';
-
-      FXSYS_IntToTwoHexChars(UNSAFE_TODO(data[i]), &pBuf[out_index]);
+      }
+      FXSYS_IntToTwoHexChars(data[i], &pBuf[out_index]);
     }
   }
   bsGUID.ReleaseBuffer(bSeparator ? 36 : 32);
@@ -5177,16 +5176,14 @@ bool CFXJSE_FormCalcContext::IsIsoDateFormat(ByteStringView bsData,
     return false;
   }
 
-  char szYear[5];
-  szYear[4] = '\0';
+  std::array<char, 5> szYear = {};
   for (int32_t i = 0; i < 4; ++i) {
     if (!isdigit(pData[i])) {
       return false;
     }
-
-    UNSAFE_TODO(szYear[i]) = pData[i];
+    szYear[i] = pData[i];
   }
-  iYear = FXSYS_atoi(szYear);
+  iYear = FXSYS_atoi(szYear.data());
   if (pData.size() == 4) {
     return true;
   }
@@ -5302,15 +5299,15 @@ bool CFXJSE_FormCalcContext::IsIsoTimeFormat(ByteStringView bsData) {
     }
 
     ++iIndex;
-    char szMilliSeconds[kSubSecondLength + 1] = {};
+    std::array<char, kSubSecondLength + 1> szMilliSeconds = {};
     for (int j = 0; j < kSubSecondLength; ++j) {
       char c = pData[iIndex + j];
       if (!isdigit(c)) {
         return false;
       }
-      UNSAFE_TODO(szMilliSeconds[j]) = c;
+      szMilliSeconds[j] = c;
     }
-    if (FXSYS_atoi(szMilliSeconds) >= 1000) {
+    if (FXSYS_atoi(szMilliSeconds.data()) >= 1000) {
       return false;
     }
     iIndex += kSubSecondLength;

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <array>
 #include <iterator>
 #include <memory>
 #include <string>
@@ -16,7 +17,6 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -44,27 +44,30 @@ constexpr int kRectanglesMultiPagesPageCount = 2;
 
 const char* RectanglesMultiPagesExpectedChecksum(int page_index) {
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    static constexpr const char* kChecksums[kRectanglesMultiPagesPageCount] = {
-        "07606a12487bd0c28a88f23fa00fc313", "94ea6e1eef220833a3ec14d6a1c612b0"};
-    return UNSAFE_TODO(kChecksums[page_index]);
+    static constexpr std::array<const char*, kRectanglesMultiPagesPageCount>
+        kChecksums = {{"07606a12487bd0c28a88f23fa00fc313",
+                       "94ea6e1eef220833a3ec14d6a1c612b0"}};
+    return kChecksums[page_index];
   }
-  static constexpr const char* kChecksums[kRectanglesMultiPagesPageCount] = {
-      "72d0d7a19a2f40e010ca6a1133b33e1e", "fb18142190d770cfbc329d2b071aee4d"};
-  return UNSAFE_TODO(kChecksums[page_index]);
+  static constexpr std::array<const char*, kRectanglesMultiPagesPageCount>
+      kChecksums = {{"72d0d7a19a2f40e010ca6a1133b33e1e",
+                     "fb18142190d770cfbc329d2b071aee4d"}};
+  return kChecksums[page_index];
 }
 
 const char* Bug750568PageHash(int page_index) {
   constexpr int kBug750568PageCount = 4;
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    static constexpr const char* kChecksums[kBug750568PageCount] = {
-        "eaa139e944eafb43d31e8742a0e158de", "226485e9d4fa6a67dfe0a88723f12060",
-        "c5601a3492ae5dcc5dd25140fc463bfe", "1f60055b54de4fac8a59c65e90da156e"};
-    return UNSAFE_TODO(kChecksums[page_index]);
+    static constexpr std::array<const char*, kBug750568PageCount> kChecksums = {
+        {"eaa139e944eafb43d31e8742a0e158de", "226485e9d4fa6a67dfe0a88723f12060",
+         "c5601a3492ae5dcc5dd25140fc463bfe",
+         "1f60055b54de4fac8a59c65e90da156e"}};
+    return kChecksums[page_index];
   }
-  static constexpr const char* kChecksums[kBug750568PageCount] = {
-      "64ad08132a1c5a166768298c8a578f57", "83b83e2f6bc80707d0a917c7634140b9",
-      "913cd3723a451e4e46fbc2c05702d1ee", "81fb7cfd4860f855eb468f73dfeb6d60"};
-  return UNSAFE_TODO(kChecksums[page_index]);
+  static constexpr std::array<const char*, kBug750568PageCount> kChecksums = {
+      {"64ad08132a1c5a166768298c8a578f57", "83b83e2f6bc80707d0a917c7634140b9",
+       "913cd3723a451e4e46fbc2c05702d1ee", "81fb7cfd4860f855eb468f73dfeb6d60"}};
+  return kChecksums[page_index];
 }
 
 }  // namespace
@@ -227,24 +230,23 @@ TEST_F(FPDFPPOEmbedderTest, ImportPageToXObject) {
   constexpr int kExpectedPageCount = 2;
   ASSERT_TRUE(OpenSavedDocument());
 
-  FPDF_PAGE saved_pages[kExpectedPageCount];
-  FPDF_PAGEOBJECT xobjects[kExpectedPageCount];
-  UNSAFE_TODO({
-    for (int i = 0; i < kExpectedPageCount; ++i) {
-      saved_pages[i] = LoadSavedPage(i);
-      ASSERT_TRUE(saved_pages[i]);
+  std::array<FPDF_PAGE, kExpectedPageCount> saved_pages;
+  std::array<FPDF_PAGEOBJECT, kExpectedPageCount> xobjects;
+  for (int i = 0; i < kExpectedPageCount; ++i) {
+    saved_pages[i] = LoadSavedPage(i);
+    ASSERT_TRUE(saved_pages[i]);
 
-      EXPECT_EQ(1, FPDFPage_CountObjects(saved_pages[i]));
-      xobjects[i] = FPDFPage_GetObject(saved_pages[i], 0);
-      ASSERT_TRUE(xobjects[i]);
-      ASSERT_EQ(FPDF_PAGEOBJ_FORM, FPDFPageObj_GetType(xobjects[i]));
-      EXPECT_EQ(8, FPDFFormObj_CountObjects(xobjects[i]));
+    EXPECT_EQ(1, FPDFPage_CountObjects(saved_pages[i]));
+    xobjects[i] = FPDFPage_GetObject(saved_pages[i], 0);
+    ASSERT_TRUE(xobjects[i]);
+    ASSERT_EQ(FPDF_PAGEOBJ_FORM, FPDFPageObj_GetType(xobjects[i]));
+    EXPECT_EQ(8, FPDFFormObj_CountObjects(xobjects[i]));
 
-      {
-        ScopedFPDFBitmap page_bitmap = RenderPage(saved_pages[i]);
-        CompareBitmap(page_bitmap.get(), 612, 792, checksum);
-      }
+    {
+      ScopedFPDFBitmap page_bitmap = RenderPage(saved_pages[i]);
+      CompareBitmap(page_bitmap.get(), 612, 792, checksum);
     }
+  }
 
     for (int i = 0; i < kExpectedPageCount; ++i) {
       float left;
@@ -272,7 +274,7 @@ TEST_F(FPDFPPOEmbedderTest, ImportPageToXObject) {
     ASSERT_TRUE(obj2->AsForm()->form()->GetStream());
     EXPECT_EQ(obj1->AsForm()->form()->GetStream(),
               obj2->AsForm()->form()->GetStream());
-  });
+
   for (FPDF_PAGE saved_page : saved_pages)
     CloseSavedPage(saved_page);
 

@@ -1061,12 +1061,13 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
   if (appearanceMode < 0 || appearanceMode >= FPDF_ANNOT_APPEARANCEMODE_COUNT)
     return false;
 
-  static constexpr const char* kModeKeyForMode[] = {"N", "R", "D"};
-  static_assert(std::size(kModeKeyForMode) == FPDF_ANNOT_APPEARANCEMODE_COUNT,
+  static constexpr auto kModeKeyForMode =
+      fxcrt::ToArray<const char*>({"N", "R", "D"});
+  static_assert(kModeKeyForMode.size() == FPDF_ANNOT_APPEARANCEMODE_COUNT,
                 "length of kModeKeyForMode should be equal to "
                 "FPDF_ANNOT_APPEARANCEMODE_COUNT");
 
-  const char* mode_key = UNSAFE_TODO(kModeKeyForMode[appearanceMode]);
+  const char* mode_key = kModeKeyForMode[appearanceMode];
 
   RetainPtr<CPDF_Dictionary> pApDict =
       pAnnotDict->GetMutableDictFor(pdfium::annotation::kAP);
@@ -1426,8 +1427,8 @@ FPDFAnnot_GetFocusableSubtypes(FPDF_FORMHANDLE hHandle,
     return false;
 
   for (size_t i = 0; i < focusable_annot_types.size(); ++i) {
-    UNSAFE_TODO(subtypes[i] = static_cast<FPDF_ANNOTATION_SUBTYPE>(
-                    focusable_annot_types[i]));
+    UNSAFE_TODO(subtypes[i]) =
+        static_cast<FPDF_ANNOTATION_SUBTYPE>(focusable_annot_types[i]);
   }
 
   return true;

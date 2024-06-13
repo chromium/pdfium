@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include <array>
 #include <memory>
 #include <vector>
 
@@ -83,8 +84,8 @@ class CPDF_MeshStream {
   float m_ymax = 0.0f;
   RetainPtr<CPDF_StreamAcc> m_pStream;
   std::unique_ptr<CFX_BitStream> m_BitStream;
-  float m_ColorMin[kMaxComponents] = {};
-  float m_ColorMax[kMaxComponents] = {};
+  std::array<float, kMaxComponents> m_ColorMin = {};
+  std::array<float, kMaxComponents> m_ColorMax = {};
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_MESHSTREAM_H_

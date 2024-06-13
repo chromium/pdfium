@@ -1899,7 +1899,8 @@ TEST(ByteString, OStreamOverload) {
 
   // Writing a ByteString with nulls but specifying its length treats it as
   // a C++-style string.
-  str = UNSAFE_TODO(ByteString::Create(stringWithNulls, 4));
+  // SAFETY: required for testing, manual length calculation based on above.
+  str = UNSAFE_BUFFERS(ByteString::Create(stringWithNulls, 4));
   EXPECT_EQ(4u, str.GetLength());
   stream.str("");
   stream << str;

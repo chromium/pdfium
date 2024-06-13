@@ -105,7 +105,8 @@ TEST(fxcrt, AllocZeroesMemory) {
   uint8_t* ptr = FX_Alloc(uint8_t, 32);
   ASSERT_TRUE(ptr);
   for (size_t i = 0; i < 32; ++i) {
-    EXPECT_EQ(0, UNSAFE_TODO(ptr[i]));
+    // SAFETY: required for testing, length and loop bounds 32.
+    EXPECT_EQ(0, UNSAFE_BUFFERS(ptr[i]));
   }
   FX_Free(ptr);
 }

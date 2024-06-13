@@ -78,16 +78,15 @@ CFX_PSFontTracker* CPDF_DocRenderData::GetPSFontTracker() {
 
 RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
     RetainPtr<const CPDF_Object> pObj) const {
-  std::unique_ptr<CPDF_Function> pFuncs[3];
+  std::array<std::unique_ptr<CPDF_Function>, 3> pFuncs;
   const CPDF_Array* pArray = pObj->AsArray();
   if (pArray) {
     if (pArray->size() < 3)
       return nullptr;
 
     for (uint32_t i = 0; i < 3; ++i) {
-      UNSAFE_TODO(pFuncs[2 - i]) =
-          CPDF_Function::Load(pArray->GetDirectObjectAt(i));
-      if (!UNSAFE_TODO(pFuncs[2 - i])) {
+      pFuncs[2 - i] = CPDF_Function::Load(pArray->GetDirectObjectAt(i));
+      if (!pFuncs[2 - i]) {
         return nullptr;
       }
     }
@@ -114,11 +113,11 @@ RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::CreateTransferFunc(
     for (size_t v = 0; v < CPDF_TransferFunc::kChannelSampleSize; ++v) {
       float input = static_cast<float>(v) / 255.0f;
       for (int i = 0; i < 3; ++i) {
-        if (UNSAFE_TODO(pFuncs[i])->OutputCount() > kMaxOutputs) {
+        if (pFuncs[i]->OutputCount() > kMaxOutputs) {
           samples[i][v] = v;
           continue;
         }
-        UNSAFE_TODO(pFuncs[i])->Call(pdfium::span_from_ref(input), output);
+        pFuncs[i]->Call(pdfium::span_from_ref(input), output);
         size_t o = FXSYS_roundf(output[0] * 255);
         if (o != v)
           bIdentity = false;

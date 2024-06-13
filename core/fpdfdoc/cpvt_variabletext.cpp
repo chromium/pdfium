@@ -7,6 +7,7 @@
 #include "core/fpdfdoc/cpvt_variabletext.h"
 
 #include <algorithm>
+#include <array>
 #include <utility>
 
 #include "core/fpdfapi/font/cpdf_font.h"
@@ -25,9 +26,9 @@ namespace {
 constexpr float kFontScale = 0.001f;
 constexpr uint8_t kReturnLength = 1;
 
-constexpr uint8_t kFontSizeSteps[] = {4,  6,  8,   9,   10,  12,  14, 18, 20,
-                                      25, 30, 35,  40,  45,  50,  55, 60, 70,
-                                      80, 90, 100, 110, 120, 130, 144};
+constexpr auto kFontSizeSteps = fxcrt::ToArray<const uint8_t>(
+    {4,  6,  8,  9,  10, 12, 14, 18,  20,  25,  30,  35, 40,
+     45, 50, 55, 60, 70, 80, 90, 100, 110, 120, 130, 144});
 
 }  // namespace
 
@@ -775,18 +776,19 @@ float CPVT_VariableText::GetAutoFontSize() {
   if (GetPlateWidth() <= 0)
     return 0;
 
+  // TODO(tsepez): replace with std::lower_bound().
   int32_t nLeft = 0;
   int32_t nRight = nTotal - 1;
   int32_t nMid = nTotal / 2;
   while (nLeft <= nRight) {
-    if (IsBigger(UNSAFE_TODO(kFontSizeSteps[nMid]))) {
+    if (IsBigger(kFontSizeSteps[nMid])) {
       nRight = nMid - 1;
     } else {
       nLeft = nMid + 1;
     }
     nMid = (nLeft + nRight) / 2;
   }
-  return (float)UNSAFE_TODO(kFontSizeSteps[nMid]);
+  return static_cast<float>(kFontSizeSteps[nMid]);
 }
 
 bool CPVT_VariableText::IsBigger(float fFontSize) const {

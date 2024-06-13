@@ -2,12 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "core/fxcrt/compiler_specific.h"
+#include "public/fpdf_edit.h"
+
+#include <array>
+
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
-#include "public/fpdf_edit.h"
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_constants.h"
+#include "testing/gmock/include/gmock/gmock.h"
+
+using ::testing::Each;
+using ::testing::Eq;
+using ::testing::FloatEq;
+using ::testing::Gt;
 
 class FPDFEditPageEmbedderTest : public EmbedderTest {};
 
@@ -170,16 +178,17 @@ TEST_F(FPDFEditPageEmbedderTest, DashingArrayAndPhase) {
 
     EXPECT_FALSE(FPDFPageObj_GetDashArray(nullptr, nullptr, 3));
 
-    float get_array[] = {-1.0f, -1.0f, -1.0f};
-    EXPECT_FALSE(FPDFPageObj_GetDashArray(nullptr, get_array, 3));
-    for (int i = 0; i < 3; i++)
-      EXPECT_FLOAT_EQ(-1.0f, UNSAFE_TODO(get_array[i]));
+    std::array<float, 3> get_array = {{-1.0f, -1.0f, -1.0f}};
+    EXPECT_FALSE(
+        FPDFPageObj_GetDashArray(nullptr, get_array.data(), get_array.size()));
+    EXPECT_THAT(get_array, Each(FloatEq(-1.0f)));
 
     EXPECT_FALSE(FPDFPageObj_SetDashPhase(nullptr, 5.0f));
     EXPECT_FALSE(FPDFPageObj_SetDashArray(nullptr, nullptr, 3, 5.0f));
 
-    float set_array[] = {1.0f, 2.0f, 3.0f};
-    EXPECT_FALSE(FPDFPageObj_SetDashArray(nullptr, set_array, 3, 5.0f));
+    std::array<float, 3> set_array = {{1.0f, 2.0f, 3.0f}};
+    EXPECT_FALSE(FPDFPageObj_SetDashArray(nullptr, set_array.data(),
+                                          set_array.size(), 5.0f));
   }
 
   constexpr int kExpectedObjectCount = 3;
@@ -203,10 +212,10 @@ TEST_F(FPDFEditPageEmbedderTest, DashingArrayAndPhase) {
     EXPECT_FLOAT_EQ(0.0f, phase);
     EXPECT_EQ(0, FPDFPageObj_GetDashCount(path));
 
-    float get_array[] = {-1.0f, -1.0f, -1.0f};
-    EXPECT_TRUE(FPDFPageObj_GetDashArray(path, get_array, 3));
-    for (int i = 0; i < 3; i++)
-      EXPECT_FLOAT_EQ(-1.0f, UNSAFE_TODO(get_array[i]));
+    std::array<float, 3> get_array = {{-1.0f, -1.0f, -1.0f}};
+    EXPECT_TRUE(
+        FPDFPageObj_GetDashArray(path, get_array.data(), get_array.size()));
+    EXPECT_THAT(get_array, Each(FloatEq(-1.0f)));
   }
 
   {
@@ -219,15 +228,15 @@ TEST_F(FPDFEditPageEmbedderTest, DashingArrayAndPhase) {
     EXPECT_LT(0.0f, phase);
     ASSERT_EQ(6, FPDFPageObj_GetDashCount(path));
 
-    float dash_array[] = {-1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f};
-    ASSERT_TRUE(FPDFPageObj_GetDashArray(path, dash_array, 6));
-
-    for (int i = 0; i < 6; i++)
-      EXPECT_LT(0.0f, UNSAFE_TODO(dash_array[i]));
+    std::array<float, 6> dash_array = {
+        {-1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f}};
+    ASSERT_TRUE(
+        FPDFPageObj_GetDashArray(path, dash_array.data(), dash_array.size()));
+    EXPECT_THAT(dash_array, Each(Gt(0.0f)));
 
     // the array is decreasing in value.
     for (int i = 0; i < 5; i++) {
-      UNSAFE_TODO({ EXPECT_GT(dash_array[i], dash_array[i + 1]); });
+      EXPECT_GT(dash_array[i], dash_array[i + 1]);
     }
     // modify phase
     EXPECT_TRUE(FPDFPageObj_SetDashPhase(path, 1.0f));
@@ -257,14 +266,15 @@ TEST_F(FPDFEditPageEmbedderTest, DashingArrayAndPhase) {
     EXPECT_EQ(0, FPDFPageObj_GetDashCount(path));
 
     // `get_array` should be unmodified
-    float get_array[] = {-1.0f, -1.0f, -1.0f, -1.0f};
-    EXPECT_TRUE(FPDFPageObj_GetDashArray(path, get_array, 4));
-    for (int i = 0; i < 4; i++)
-      EXPECT_FLOAT_EQ(-1.0f, UNSAFE_TODO(get_array[i]));
+    std::array<float, 4> get_array = {{-1.0f, -1.0f, -1.0f, -1.0f}};
+    EXPECT_TRUE(
+        FPDFPageObj_GetDashArray(path, get_array.data(), get_array.size()));
+    EXPECT_THAT(get_array, Each(FloatEq(-1.0f)));
 
     // modify dash_array and phase
-    const float set_array[] = {1.0f, 2.0f, 3.0f};
-    EXPECT_TRUE(FPDFPageObj_SetDashArray(path, set_array, 3, 5.0f));
+    const std::array<float, 3> set_array = {{1.0f, 2.0f, 3.0f}};
+    EXPECT_TRUE(FPDFPageObj_SetDashArray(path, set_array.data(),
+                                         set_array.size(), 5.0f));
 
     phase = -1123.5f;
     EXPECT_TRUE(FPDFPageObj_GetDashPhase(path, &phase));
@@ -272,20 +282,20 @@ TEST_F(FPDFEditPageEmbedderTest, DashingArrayAndPhase) {
     ASSERT_EQ(3, FPDFPageObj_GetDashCount(path));
 
     // Pretend `get_array` has too few members.
-    EXPECT_FALSE(FPDFPageObj_GetDashArray(path, get_array, 2));
-    for (int i = 0; i < 4; i++)
-      EXPECT_FLOAT_EQ(-1.0f, UNSAFE_TODO(get_array[i]));
+    EXPECT_FALSE(FPDFPageObj_GetDashArray(path, get_array.data(), 2));
+    EXPECT_THAT(get_array, Each(FloatEq(-1.0f)));
 
-    ASSERT_TRUE(FPDFPageObj_GetDashArray(path, get_array, 4));
+    ASSERT_TRUE(
+        FPDFPageObj_GetDashArray(path, get_array.data(), get_array.size()));
 
     // `get_array` should be modified only up to dash_count
-    for (int i = 0; i < 3; i++)
-      EXPECT_FLOAT_EQ(static_cast<float>(i + 1), UNSAFE_TODO(get_array[i]));
-
+    for (int i = 0; i < 3; i++) {
+      EXPECT_FLOAT_EQ(static_cast<float>(i + 1), get_array[i]);
+    }
     EXPECT_FLOAT_EQ(-1.0f, get_array[3]);
 
     // clear array
-    EXPECT_TRUE(FPDFPageObj_SetDashArray(path, set_array, 0, 4.0f));
+    EXPECT_TRUE(FPDFPageObj_SetDashArray(path, set_array.data(), 0, 4.0f));
     EXPECT_EQ(0, FPDFPageObj_GetDashCount(path));
 
     phase = -1123.5f;

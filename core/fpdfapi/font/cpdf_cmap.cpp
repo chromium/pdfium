@@ -254,14 +254,16 @@ int CheckFourByteCodeRange(uint8_t* codes,
 
 size_t GetFourByteCharSizeImpl(
     uint32_t charcode,
-    const std::vector<CPDF_CMap::CodeRange>& ranges) {
+    pdfium::span<const CPDF_CMap::CodeRange> ranges) {
   if (ranges.empty())
     return 1;
 
-  uint8_t codes[4];
-  codes[0] = codes[1] = 0x00;
-  codes[2] = static_cast<uint8_t>(charcode >> 8 & 0xFF);
-  codes[3] = static_cast<uint8_t>(charcode);
+  std::array<uint8_t, 4> codes = {{
+      0x00,
+      0x00,
+      static_cast<uint8_t>(charcode >> 8 & 0xFF),
+      static_cast<uint8_t>(charcode),
+  }};
   for (size_t offset = 0; offset < 4; offset++) {
     size_t size = 4 - offset;
     for (size_t j = 0; j < ranges.size(); j++) {
@@ -270,8 +272,8 @@ size_t GetFourByteCharSizeImpl(
         continue;
       size_t iChar = 0;
       while (iChar < size) {
-        if (UNSAFE_TODO(codes[offset + iChar] < ranges[iSeg].m_Lower[iChar]) ||
-            UNSAFE_TODO(codes[offset + iChar] > ranges[iSeg].m_Upper[iChar])) {
+        if (codes[offset + iChar] < ranges[iSeg].m_Lower[iChar] ||
+            codes[offset + iChar] > ranges[iSeg].m_Upper[iChar]) {
           break;
         }
         ++iChar;

@@ -6,6 +6,7 @@
 
 #include "core/fpdfdoc/cpdf_filespec.h"
 
+#include <array>
 #include <iterator>
 #include <utility>
 
@@ -142,10 +143,11 @@ RetainPtr<const CPDF_Stream> CPDF_FileSpec::GetFileStream() const {
 
   // List of keys to check for the file specification string.
   // Follows the same precedence order as GetFileName().
-  static constexpr const char* kKeys[] = {"UF", "F", "DOS", "Mac", "Unix"};
+  static constexpr std::array<const char*, 5> kKeys = {
+      {"UF", "F", "DOS", "Mac", "Unix"}};
   size_t end = pDict->GetByteStringFor("FS") == "URL" ? 2 : std::size(kKeys);
   for (size_t i = 0; i < end; ++i) {
-    ByteString key = UNSAFE_TODO(kKeys[i]);
+    ByteString key = kKeys[i];
     if (!pDict->GetUnicodeTextFor(key).IsEmpty()) {
       RetainPtr<const CPDF_Stream> pStream = pFiles->GetStreamFor(key);
       if (pStream)
