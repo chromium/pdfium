@@ -32,14 +32,6 @@ class CFGAS_PDFFontMgr final {
                                    bool bBold,
                                    bool bItalic,
                                    bool bStrictMatch);
-  ByteString PsNameToFontName(const ByteString& strPsName,
-                              bool bBold,
-                              bool bItalic);
-  bool PsNameMatchDRFontName(ByteStringView bsPsName,
-                             bool bBold,
-                             bool bItalic,
-                             const ByteString& bsDRFontName,
-                             bool bStrictMatch);
 
   UnownedPtr<const CPDF_Document> const m_pDoc;
   std::map<std::pair<WideString, uint32_t>, RetainPtr<CFGAS_GEFont>> m_FontMap;
