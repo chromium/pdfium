@@ -208,7 +208,7 @@ ByteString GetAP_Check(const CFX_FloatRect& crBBox) {
     for (size_t j = 0; j < std::size(pts[0]); ++j) {
       UNSAFE_TODO({
         pts[i][j].x = pts[i][j].x * fWidth + crBBox.left;
-        pts[i][j].y *= pts[i][j].y * fHeight + crBBox.bottom;
+        pts[i][j].y = pts[i][j].y * fHeight + crBBox.bottom;
       });
     }
   }
