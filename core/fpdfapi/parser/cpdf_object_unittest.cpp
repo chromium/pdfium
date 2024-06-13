@@ -25,6 +25,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
+#include "core/fxcrt/stl_util.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -95,9 +96,9 @@ class PDFObjectsTest : public testing::Test {
         CPDF_Object::kNumber,  CPDF_Object::kString,  CPDF_Object::kString,
         CPDF_Object::kName,    CPDF_Object::kArray,   CPDF_Object::kDictionary,
         CPDF_Object::kStream,  CPDF_Object::kNullobj};
-    for (size_t i = 0; i < std::size(objs); ++i)
-      m_DirectObjs.emplace_back(UNSAFE_TODO(objs[i]));
-
+    for (auto* obj : objs) {
+      m_DirectObjs.emplace_back(obj);
+    }
     // Indirect references to indirect objects.
     m_ObjHolder = std::make_unique<CPDF_IndirectObjectHolder>();
     m_IndirectObjNums = {
@@ -451,45 +452,40 @@ TEST_F(PDFObjectsTest, KeyForCache) {
 }
 
 TEST(PDFArrayTest, GetMatrix) {
-  float elems[][6] = {{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
-                      {1, 2, 3, 4, 5, 6},
-                      {2.3f, 4.05f, 3, -2, -3, 0.0f},
-                      {0.05f, 0.1f, 0.56f, 0.67f, 1.34f, 99.9f}};
-  for (size_t i = 0; i < std::size(elems); ++i) {
+  using Row = std::array<float, 6>;
+  constexpr auto elems = fxcrt::ToArray<const Row>({
+      {{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}},
+      {{1, 2, 3, 4, 5, 6}},
+      {{2.3f, 4.05f, 3, -2, -3, 0.0f}},
+      {{0.05f, 0.1f, 0.56f, 0.67f, 1.34f, 99.9f}},
+  });
+  for (const auto& elem : elems) {
     auto arr = pdfium::MakeRetain<CPDF_Array>();
-    CFX_Matrix matrix(UNSAFE_TODO(elems[i][0]), UNSAFE_TODO(elems[i][1]),
-                      UNSAFE_TODO(elems[i][2]), UNSAFE_TODO(elems[i][3]),
-                      UNSAFE_TODO(elems[i][4]), UNSAFE_TODO(elems[i][5]));
-    for (size_t j = 0; j < 6; ++j) {
-      arr->AppendNew<CPDF_Number>(UNSAFE_TODO(elems[i][j]));
+    for (float f : elem) {
+      arr->AppendNew<CPDF_Number>(f);
     }
+    CFX_Matrix matrix(elem[0], elem[1], elem[2], elem[3], elem[4], elem[5]);
     CFX_Matrix arr_matrix = arr->GetMatrix();
-    EXPECT_EQ(matrix.a, arr_matrix.a);
-    EXPECT_EQ(matrix.b, arr_matrix.b);
-    EXPECT_EQ(matrix.c, arr_matrix.c);
-    EXPECT_EQ(matrix.d, arr_matrix.d);
-    EXPECT_EQ(matrix.e, arr_matrix.e);
-    EXPECT_EQ(matrix.f, arr_matrix.f);
+    EXPECT_EQ(matrix, arr_matrix);
   }
 }
 
 TEST(PDFArrayTest, GetRect) {
-  float elems[][4] = {{0.0f, 0.0f, 0.0f, 0.0f},
-                      {1, 2, 5, 6},
-                      {2.3f, 4.05f, -3, 0.0f},
-                      {0.05f, 0.1f, 1.34f, 99.9f}};
-  for (size_t i = 0; i < std::size(elems); ++i) {
+  using Row = std::array<float, 4>;
+  constexpr auto elems = fxcrt::ToArray<const Row>({
+      {{0.0f, 0.0f, 0.0f, 0.0f}},
+      {{1, 2, 5, 6}},
+      {{2.3f, 4.05f, -3, 0.0f}},
+      {{0.05f, 0.1f, 1.34f, 99.9f}},
+  });
+  for (const auto& elem : elems) {
     auto arr = pdfium::MakeRetain<CPDF_Array>();
-    CFX_FloatRect rect(UNSAFE_TODO(elems[i][0]), UNSAFE_TODO(elems[i][1]),
-                       UNSAFE_TODO(elems[i][2]), UNSAFE_TODO(elems[i][3]));
-    for (size_t j = 0; j < 4; ++j) {
-      arr->AppendNew<CPDF_Number>(UNSAFE_TODO(elems[i][j]));
+    for (float f : elem) {
+      arr->AppendNew<CPDF_Number>(f);
     }
+    CFX_FloatRect rect(elem[0], elem[1], elem[2], elem[3]);
     CFX_FloatRect arr_rect = arr->GetRect();
-    EXPECT_EQ(rect.left, arr_rect.left);
-    EXPECT_EQ(rect.right, arr_rect.right);
-    EXPECT_EQ(rect.bottom, arr_rect.bottom);
-    EXPECT_EQ(rect.top, arr_rect.top);
+    EXPECT_EQ(rect, arr_rect);
   }
 }
 

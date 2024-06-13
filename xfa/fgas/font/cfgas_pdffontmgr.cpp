@@ -7,6 +7,7 @@
 #include "xfa/fgas/font/cfgas_pdffontmgr.h"
 
 #include <algorithm>
+#include <array>
 #include <iterator>
 #include <utility>
 
@@ -16,7 +17,7 @@
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 #include "core/fxcrt/check.h"
-#include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/fx_font.h"
 #include "xfa/fgas/font/cfgas_fontmgr.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
@@ -24,11 +25,12 @@
 namespace {
 
 // The 5 names per entry are: PsName, Normal, Bold, Italic, BoldItalic.
-const char* const kXFAPDFFontName[][5] = {
-    {"Adobe PI Std", "AdobePIStd", "AdobePIStd", "AdobePIStd", "AdobePIStd"},
-    {"Myriad Pro Light", "MyriadPro-Light", "MyriadPro-Semibold",
-     "MyriadPro-LightIt", "MyriadPro-SemiboldIt"},
-};
+using FontNameEntry = std::array<const char*, 5>;
+constexpr auto kXFAPDFFontNameTable = fxcrt::ToArray<const FontNameEntry>({
+    {{"Adobe PI Std", "AdobePIStd", "AdobePIStd", "AdobePIStd", "AdobePIStd"}},
+    {{"Myriad Pro Light", "MyriadPro-Light", "MyriadPro-Semibold",
+      "MyriadPro-LightIt", "MyriadPro-SemiboldIt"}},
+});
 
 }  // namespace
 
@@ -102,14 +104,16 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::GetFont(
 ByteString CFGAS_PDFFontMgr::PsNameToFontName(const ByteString& strPsName,
                                               bool bBold,
                                               bool bItalic) {
-  for (size_t i = 0; i < std::size(kXFAPDFFontName); ++i) {
-    if (strPsName == UNSAFE_TODO(kXFAPDFFontName[i][0])) {
+  for (const auto& entry : kXFAPDFFontNameTable) {
+    if (strPsName == entry[0]) {
       size_t index = 1;
-      if (bBold)
+      if (bBold) {
         ++index;
-      if (bItalic)
+      }
+      if (bItalic) {
         index += 2;
-      return UNSAFE_TODO(kXFAPDFFontName[i][index]);
+      }
+      return entry[index];
     }
   }
   return strPsName;
