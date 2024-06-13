@@ -66,7 +66,7 @@ class CPDF_CMap final : public Retainable {
   int GetCharSize(uint32_t charcode) const;
   uint32_t GetNextChar(ByteStringView pString, size_t* pOffset) const;
   size_t CountChar(ByteStringView pString) const;
-  int AppendChar(char* str, uint32_t charcode) const;
+  void AppendChar(ByteString* str, uint32_t charcode) const;
 
   void SetVertical(bool vert) { m_bVertical = vert; }
   void SetCodingScheme(CodingScheme scheme) { m_CodingScheme = scheme; }

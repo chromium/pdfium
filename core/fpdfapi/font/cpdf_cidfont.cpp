@@ -796,8 +796,8 @@ size_t CPDF_CIDFont::CountChar(ByteStringView pString) const {
   return m_pCMap->CountChar(pString);
 }
 
-int CPDF_CIDFont::AppendChar(char* str, uint32_t charcode) const {
-  return m_pCMap->AppendChar(str, charcode);
+void CPDF_CIDFont::AppendChar(ByteString* str, uint32_t charcode) const {
+  m_pCMap->AppendChar(str, charcode);
 }
 
 bool CPDF_CIDFont::IsUnicodeCompatible() const {

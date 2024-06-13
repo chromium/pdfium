@@ -86,7 +86,7 @@ class CPDF_Font : public Retainable, public Observable {
   virtual bool IsUnicodeCompatible() const = 0;
   virtual uint32_t GetNextChar(ByteStringView pString, size_t* pOffset) const;
   virtual size_t CountChar(ByteStringView pString) const;
-  virtual int AppendChar(char* buf, uint32_t charcode) const;
+  virtual void AppendChar(ByteString* buf, uint32_t charcode) const;
   virtual int GlyphFromCharCode(uint32_t charcode, bool* pVertGlyph) = 0;
 #if BUILDFLAG(IS_APPLE)
   virtual int GlyphFromCharCodeExt(uint32_t charcode);
@@ -107,7 +107,6 @@ class CPDF_Font : public Retainable, public Observable {
   void ClearFontDict() { m_pFontDict = nullptr; }
   bool IsStandardFont() const;
   bool HasFace() const { return !!m_Font.GetFace(); }
-  void AppendChar(ByteString* str, uint32_t charcode) const;
 
   const FX_RECT& GetFontBBox() const { return m_FontBBox; }
   int GetTypeAscent() const { return m_Ascent; }

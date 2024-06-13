@@ -60,7 +60,7 @@ class CPDF_CIDFont final : public CPDF_Font {
   FX_RECT GetCharBBox(uint32_t charcode) override;
   uint32_t GetNextChar(ByteStringView pString, size_t* pOffset) const override;
   size_t CountChar(ByteStringView pString) const override;
-  int AppendChar(char* str, uint32_t charcode) const override;
+  void AppendChar(ByteString* str, uint32_t charcode) const override;
   bool IsVertWriting() const override;
   bool IsUnicodeCompatible() const override;
   bool Load() override;

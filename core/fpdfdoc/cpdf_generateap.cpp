@@ -72,9 +72,9 @@ ByteString GetPDFWordString(IPVT_FontMap* pFontMap,
 
   ByteString sWord;
   uint32_t dwCharCode = pPDFFont->CharCodeFromUnicode(Word);
-  if (dwCharCode != CPDF_Font::kInvalidCharCode)
+  if (dwCharCode != CPDF_Font::kInvalidCharCode) {
     pPDFFont->AppendChar(&sWord, dwCharCode);
-
+  }
   return sWord;
 }
 

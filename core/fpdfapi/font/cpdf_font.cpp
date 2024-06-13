@@ -126,15 +126,8 @@ bool CPDF_Font::IsVertWriting() const {
   return pCIDFont ? pCIDFont->IsVertWriting() : m_Font.IsVertical();
 }
 
-int CPDF_Font::AppendChar(char* buf, uint32_t charcode) const {
-  *buf = static_cast<char>(charcode);
-  return 1;
-}
-
 void CPDF_Font::AppendChar(ByteString* str, uint32_t charcode) const {
-  char buf[4];
-  int len = AppendChar(buf, charcode);
-  *str += ByteStringView(pdfium::make_span(buf).first(len));
+  *str += static_cast<char>(charcode);
 }
 
 WideString CPDF_Font::UnicodeFromCharCode(uint32_t charcode) const {

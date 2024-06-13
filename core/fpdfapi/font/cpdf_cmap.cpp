@@ -457,54 +457,51 @@ size_t CPDF_CMap::CountChar(ByteStringView pString) const {
   return pString.GetLength();
 }
 
-// TODO: should be UNSAFE_BUFFER_USAGE
-int CPDF_CMap::AppendChar(char* str, uint32_t charcode) const {
+void CPDF_CMap::AppendChar(ByteString* str, uint32_t charcode) const {
   switch (m_CodingScheme) {
     case OneByte:
-      UNSAFE_TODO(str[0]) = static_cast<char>(charcode);
-      return 1;
+      *str += static_cast<char>(charcode);
+      return;
     case TwoBytes:
-      UNSAFE_TODO(str[0]) = static_cast<char>(charcode / 256);
-      UNSAFE_TODO(str[1]) = static_cast<char>(charcode % 256);
-      return 2;
+      *str += static_cast<char>(charcode / 256);
+      *str += static_cast<char>(charcode % 256);
+      return;
     case MixedTwoBytes:
       if (charcode < 0x100 && !m_MixedTwoByteLeadingBytes[charcode]) {
-        UNSAFE_TODO(str[0]) = static_cast<char>(charcode);
-        return 1;
+        *str += static_cast<char>(charcode);
+        return;
       }
-      UNSAFE_TODO(str[0]) = static_cast<char>(charcode >> 8);
-      UNSAFE_TODO(str[1]) = static_cast<char>(charcode);
-      return 2;
+      *str += static_cast<char>(charcode >> 8);
+      *str += static_cast<char>(charcode);
+      return;
     case MixedFourBytes:
       if (charcode < 0x100) {
         int iSize = static_cast<int>(
             GetFourByteCharSizeImpl(charcode, m_MixedFourByteLeadingRanges));
-        if (iSize == 0)
-          iSize = 1;
-        UNSAFE_TODO(str[iSize - 1]) = static_cast<char>(charcode);
-        if (iSize > 1) {
-          UNSAFE_TODO(FXSYS_memset(str, 0, iSize - 1));
+        int pad = iSize != 0 ? iSize - 1 : 0;
+        for (int i = 0; i < pad; ++i) {
+          *str += static_cast<char>(0);
         }
-        return iSize;
+        *str += static_cast<char>(charcode);
+        return;
       }
       if (charcode < 0x10000) {
-        UNSAFE_TODO(str[0]) = static_cast<char>(charcode >> 8);
-        UNSAFE_TODO(str[1]) = static_cast<char>(charcode);
-        return 2;
+        *str += static_cast<char>(charcode >> 8);
+        *str += static_cast<char>(charcode);
+        return;
       }
       if (charcode < 0x1000000) {
-        UNSAFE_TODO(str[0]) = static_cast<char>(charcode >> 16);
-        UNSAFE_TODO(str[1]) = static_cast<char>(charcode >> 8);
-        UNSAFE_TODO(str[2]) = static_cast<char>(charcode);
-        return 3;
+        *str += static_cast<char>(charcode >> 16);
+        *str += static_cast<char>(charcode >> 8);
+        *str += static_cast<char>(charcode);
+        return;
       }
-      UNSAFE_TODO(str[0]) = static_cast<char>(charcode >> 24);
-      UNSAFE_TODO(str[1]) = static_cast<char>(charcode >> 16);
-      UNSAFE_TODO(str[2]) = static_cast<char>(charcode >> 8);
-      UNSAFE_TODO(str[3]) = static_cast<char>(charcode);
-      return 4;
+      *str += static_cast<char>(charcode >> 24);
+      *str += static_cast<char>(charcode >> 16);
+      *str += static_cast<char>(charcode >> 8);
+      *str += static_cast<char>(charcode);
+      return;
   }
-  return 0;
 }
 
 void CPDF_CMap::SetAdditionalMappings(std::vector<CIDRange> mappings) {
