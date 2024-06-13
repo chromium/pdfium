@@ -15,7 +15,6 @@
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 #include "core/fxcrt/check.h"
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 
 namespace {
@@ -221,33 +220,36 @@ const PredefinedCMap* GetPredefinedCMap(ByteStringView cmapid) {
 
 std::vector<bool> LoadLeadingSegments(const PredefinedCMap& map) {
   std::vector<bool> segments(256);
-  for (uint32_t i = 0; i < map.m_LeadingSegCount; ++i) {
-    const ByteRange& seg = UNSAFE_TODO(map.m_LeadingSegs[i]);
-    for (int b = seg.m_First; b <= seg.m_Last; ++b)
+  const auto seg_span = pdfium::make_span(map.m_LeadingSegs);
+  for (const ByteRange& seg : seg_span.first(map.m_LeadingSegCount)) {
+    for (int b = seg.m_First; b <= seg.m_Last; ++b) {
       segments[b] = true;
+    }
   }
   return segments;
 }
 
-int CheckFourByteCodeRange(uint8_t* codes,
-                           size_t size,
-                           const std::vector<CPDF_CMap::CodeRange>& ranges) {
+int CheckFourByteCodeRange(pdfium::span<uint8_t> codes,
+                           pdfium::span<const CPDF_CMap::CodeRange> ranges) {
   for (size_t i = ranges.size(); i > 0; i--) {
-    size_t seg = i - 1;
-    if (ranges[seg].m_CharSize < size)
+    const auto& range = ranges[i - 1];
+    if (range.m_CharSize < codes.size()) {
       continue;
+    }
     size_t iChar = 0;
-    while (iChar < size) {
-      if (UNSAFE_TODO(codes[iChar] < ranges[seg].m_Lower[iChar]) ||
-          UNSAFE_TODO(codes[iChar] > ranges[seg].m_Upper[iChar])) {
+    while (iChar < codes.size()) {
+      if (codes[iChar] < range.m_Lower[iChar] ||
+          codes[iChar] > range.m_Upper[iChar]) {
         break;
       }
       ++iChar;
     }
-    if (iChar == ranges[seg].m_CharSize)
+    if (iChar == range.m_CharSize) {
       return 2;
-    if (iChar)
-      return (size == ranges[seg].m_CharSize) ? 2 : 1;
+    }
+    if (iChar) {
+      return (codes.size() == range.m_CharSize) ? 2 : 1;
+    }
   }
   return 0;
 }
@@ -388,8 +390,9 @@ uint32_t CPDF_CMap::GetNextChar(ByteStringView pString, size_t* pOffset) const {
       int char_size = 1;
       codes[0] = offset < pBytes.size() ? pBytes[offset++] : 0;
       while (true) {
-        int ret = CheckFourByteCodeRange(codes.data(), char_size,
-                                         m_MixedFourByteLeadingRanges);
+        int ret =
+            CheckFourByteCodeRange(pdfium::make_span(codes).first(char_size),
+                                   m_MixedFourByteLeadingRanges);
         if (ret == 0)
           return 0;
         if (ret == 2) {
