@@ -41,56 +41,56 @@ using FX_COLORREF = uint32_t;
 // Endian-independent, name-ordered by increasing address.
 template <typename T>
 struct FX_RGB_STRUCT {
-  T red;
-  T green;
-  T blue;
+  T red = 0;
+  T green = 0;
+  T blue = 0;
 };
 
 template <typename T>
 struct FX_BGR_STRUCT {
-  T blue;
-  T green;
-  T red;
+  T blue = 0;
+  T green = 0;
+  T red = 0;
 };
 
 template <typename T>
 struct FX_ARGB_STRUCT {
-  T alpha;
-  T red;
-  T green;
-  T blue;
+  T alpha = 0;
+  T red = 0;
+  T green = 0;
+  T blue = 0;
 };
 
 template <typename T>
 struct FX_ABGR_STRUCT {
-  T alpha;
-  T blue;
-  T green;
-  T red;
+  T alpha = 0;
+  T blue = 0;
+  T green = 0;
+  T red = 0;
 };
 
 template <typename T>
 struct FX_RGBA_STRUCT {
-  T red;
-  T green;
-  T blue;
-  T alpha;
+  T red = 0;
+  T green = 0;
+  T blue = 0;
+  T alpha = 0;
 };
 
 template <typename T>
 struct FX_BGRA_STRUCT {
-  T blue;
-  T green;
-  T red;
-  T alpha;
+  T blue = 0;
+  T green = 0;
+  T red = 0;
+  T alpha = 0;
 };
 
 template <typename T>
 struct FX_CMYK_STRUCT {
-  T cyan;
-  T magenta;
-  T yellow;
-  T key;
+  T cyan = 0;
+  T magenta = 0;
+  T yellow = 0;
+  T key = 0;
 };
 
 struct FXDIB_ResampleOptions {
