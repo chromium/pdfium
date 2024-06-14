@@ -199,83 +199,84 @@ class PDFObjectsTest : public testing::Test {
 };
 
 TEST_F(PDFObjectsTest, GetString) {
-  const char* const direct_obj_results[] = {
-      "false", "true", "1245", "9.00345", "A simple test", "\t\n", "space",
-      "",      "",     "",     ""};
+  constexpr auto direct_obj_results = fxcrt::ToArray<const char*>(
+      {"false", "true", "1245", "9.00345", "A simple test", "\t\n", "space", "",
+       "", "", ""});
   // Check for direct objects.
-  for (size_t i = 0; i < m_DirectObjs.size(); ++i)
-    EXPECT_EQ(UNSAFE_TODO(direct_obj_results[i]), m_DirectObjs[i]->GetString());
+  for (size_t i = 0; i < m_DirectObjs.size(); ++i) {
+    EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetString());
+  }
 
   // Check indirect references.
-  const char* const indirect_obj_results[] = {"true", "1245", "\t\n", "space",
-                                              "",     "",     ""};
+  constexpr auto indirect_obj_results = fxcrt::ToArray<const char*>(
+      {"true", "1245", "\t\n", "space", "", "", ""});
   for (size_t i = 0; i < m_RefObjs.size(); ++i) {
-    EXPECT_EQ(UNSAFE_TODO(indirect_obj_results[i]), m_RefObjs[i]->GetString());
+    EXPECT_EQ(indirect_obj_results[i], m_RefObjs[i]->GetString());
   }
 }
 
 TEST_F(PDFObjectsTest, GetUnicodeText) {
-  const wchar_t* const direct_obj_results[] = {
-      L"",     L"",      L"", L"", L"A simple test",
-      L"\t\n", L"space", L"", L"", L"abcdefghijklmnopqrstuvwxyz",
-      L""};
+  constexpr auto direct_obj_results = fxcrt::ToArray<const wchar_t*>(
+      {L"", L"", L"", L"", L"A simple test", L"\t\n", L"space", L"", L"",
+       L"abcdefghijklmnopqrstuvwxyz", L""});
   // Check for direct objects.
   for (size_t i = 0; i < m_DirectObjs.size(); ++i) {
-    EXPECT_EQ(UNSAFE_TODO(direct_obj_results[i]),
-              m_DirectObjs[i]->GetUnicodeText());
+    EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetUnicodeText());
   }
 
   // Check indirect references.
-  for (const auto& it : m_RefObjs)
+  for (const auto& it : m_RefObjs) {
     EXPECT_EQ(L"", it->GetUnicodeText());
+  }
 }
 
 TEST_F(PDFObjectsTest, GetNumber) {
-  const float direct_obj_results[] = {0, 0, 1245, 9.00345f, 0, 0,
-                                      0, 0, 0,    0,        0};
+  constexpr auto direct_obj_results =
+      fxcrt::ToArray<const float>({0, 0, 1245, 9.00345f, 0, 0, 0, 0, 0, 0, 0});
   // Check for direct objects.
-  for (size_t i = 0; i < m_DirectObjs.size(); ++i)
-    EXPECT_EQ(UNSAFE_TODO(direct_obj_results[i]), m_DirectObjs[i]->GetNumber());
+  for (size_t i = 0; i < m_DirectObjs.size(); ++i) {
+    EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetNumber());
+  }
 
   // Check indirect references.
-  const float indirect_obj_results[] = {0, 1245, 0, 0, 0, 0, 0};
+  constexpr auto indirect_obj_results =
+      fxcrt::ToArray<const float>({0, 1245, 0, 0, 0, 0, 0});
   for (size_t i = 0; i < m_RefObjs.size(); ++i)
-    EXPECT_EQ(UNSAFE_TODO(indirect_obj_results[i]), m_RefObjs[i]->GetNumber());
+    EXPECT_EQ(indirect_obj_results[i], m_RefObjs[i]->GetNumber());
 }
 
 TEST_F(PDFObjectsTest, GetInteger) {
-  const int direct_obj_results[] = {0, 1, 1245, 9, 0, 0, 0, 0, 0, 0, 0};
+  constexpr auto direct_obj_results =
+      fxcrt::ToArray<const int>({0, 1, 1245, 9, 0, 0, 0, 0, 0, 0, 0});
   // Check for direct objects.
-  for (size_t i = 0; i < m_DirectObjs.size(); ++i)
-    EXPECT_EQ(UNSAFE_TODO(direct_obj_results[i]),
-              m_DirectObjs[i]->GetInteger());
+  for (size_t i = 0; i < m_DirectObjs.size(); ++i) {
+    EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetInteger());
+  }
 
   // Check indirect references.
-  const int indirect_obj_results[] = {1, 1245, 0, 0, 0, 0, 0};
-  for (size_t i = 0; i < m_RefObjs.size(); ++i)
-    EXPECT_EQ(UNSAFE_TODO(indirect_obj_results[i]), m_RefObjs[i]->GetInteger());
+  constexpr auto indirect_obj_results =
+      fxcrt::ToArray<const int>({1, 1245, 0, 0, 0, 0, 0});
+  for (size_t i = 0; i < m_RefObjs.size(); ++i) {
+    EXPECT_EQ(indirect_obj_results[i], m_RefObjs[i]->GetInteger());
+  }
 }
 
 TEST_F(PDFObjectsTest, GetDict) {
-  const CPDF_Dictionary* const direct_obj_results[] = {
-      nullptr, nullptr, nullptr, nullptr,         nullptr,
-      nullptr, nullptr, nullptr, m_DictObj.Get(), m_StreamDictObj.Get(),
-      nullptr};
+  const auto direct_obj_results = fxcrt::ToArray<const CPDF_Dictionary*>(
+      {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+       m_DictObj.Get(), m_StreamDictObj.Get(), nullptr});
   // Check for direct objects.
-  for (size_t i = 0; i < m_DirectObjs.size(); ++i)
-    EXPECT_EQ(UNSAFE_TODO(direct_obj_results[i]), m_DirectObjs[i]->GetDict());
+  for (size_t i = 0; i < m_DirectObjs.size(); ++i) {
+    EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetDict());
+  }
 
+  const auto indirect_obj_results = fxcrt::ToArray<const CPDF_Dictionary*>(
+      {nullptr, nullptr, nullptr, nullptr, nullptr, m_DictObj.Get(),
+       m_StreamDictObj.Get()});
   // Check indirect references.
-  const CPDF_Dictionary* const indirect_obj_results[] = {nullptr,
-                                                         nullptr,
-                                                         nullptr,
-                                                         nullptr,
-                                                         nullptr,
-                                                         m_DictObj.Get(),
-                                                         m_StreamDictObj.Get()};
-  for (size_t i = 0; i < m_RefObjs.size(); ++i)
-    EXPECT_TRUE(Equal(UNSAFE_TODO(indirect_obj_results[i]),
-                      m_RefObjs[i]->GetDict().Get()));
+  for (size_t i = 0; i < m_RefObjs.size(); ++i) {
+    EXPECT_TRUE(Equal(indirect_obj_results[i], m_RefObjs[i]->GetDict().Get()));
+  }
 }
 
 TEST_F(PDFObjectsTest, GetNameFor) {
@@ -296,16 +297,18 @@ TEST_F(PDFObjectsTest, GetNameFor) {
 }
 
 TEST_F(PDFObjectsTest, GetArray) {
-  const CPDF_Array* const direct_obj_results[] = {
-      nullptr, nullptr,          nullptr, nullptr, nullptr, nullptr,
-      nullptr, m_ArrayObj.Get(), nullptr, nullptr, nullptr};
+  const auto direct_obj_results = fxcrt::ToArray<const CPDF_Array*>(
+      {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+       m_ArrayObj.Get(), nullptr, nullptr, nullptr});
   // Check for direct objects.
-  for (size_t i = 0; i < m_DirectObjs.size(); ++i)
-    EXPECT_EQ(UNSAFE_TODO(direct_obj_results[i]), m_DirectObjs[i]->AsArray());
+  for (size_t i = 0; i < m_DirectObjs.size(); ++i) {
+    EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->AsArray());
+  }
 
   // Check indirect references.
-  for (const auto& it : m_RefObjs)
+  for (const auto& it : m_RefObjs) {
     EXPECT_FALSE(it->AsArray());
+  }
 }
 
 TEST_F(PDFObjectsTest, Clone) {
@@ -344,13 +347,13 @@ TEST_F(PDFObjectsTest, GetDirect) {
 
 TEST_F(PDFObjectsTest, SetString) {
   // Check for direct objects.
-  const char* const set_values[] = {"true",    "fake", "3.125f", "097",
-                                    "changed", "",     "NewName"};
-  const char* const expected[] = {"true",    "false", "3.125",  "97",
-                                  "changed", "",      "NewName"};
+  constexpr auto set_values = fxcrt::ToArray<const char*>(
+      {"true", "fake", "3.125f", "097", "changed", "", "NewName"});
+  constexpr auto expected = fxcrt::ToArray<const char*>(
+      {"true", "false", "3.125", "97", "changed", "", "NewName"});
   for (size_t i = 0; i < std::size(set_values); ++i) {
-    m_DirectObjs[i]->SetString(UNSAFE_TODO(set_values[i]));
-    EXPECT_EQ(UNSAFE_TODO(expected[i]), m_DirectObjs[i]->GetString());
+    m_DirectObjs[i]->SetString(set_values[i]);
+    EXPECT_EQ(expected[i], m_DirectObjs[i]->GetString());
   }
 }
 
@@ -492,83 +495,86 @@ TEST(PDFArrayTest, GetRect) {
 TEST(PDFArrayTest, GetTypeAt) {
   {
     // Boolean array.
-    const bool vals[] = {true, false, false, true, true};
+    constexpr auto vals =
+        fxcrt::ToArray<const bool>({true, false, false, true, true});
     auto arr = pdfium::MakeRetain<CPDF_Array>();
-    for (size_t i = 0; i < std::size(vals); ++i)
-      arr->InsertNewAt<CPDF_Boolean>(i, UNSAFE_TODO(vals[i]));
-    for (size_t i = 0; i < std::size(vals); ++i) {
-      TestArrayAccessors(
-          arr.Get(), i,                             // Array and index.
-          UNSAFE_TODO(vals[i]) ? "true" : "false",  // String value.
-          nullptr,                                  // Const string value.
-          UNSAFE_TODO(vals[i]) ? 1 : 0,             // Integer value.
-          0,                                        // Float value.
-          nullptr,                                  // Array value.
-          nullptr,                                  // Dictionary value.
-          nullptr);                                 // Stream value.
+    for (size_t i = 0; i < vals.size(); ++i) {
+      arr->InsertNewAt<CPDF_Boolean>(i, vals[i]);
+    }
+    for (size_t i = 0; i < vals.size(); ++i) {
+      TestArrayAccessors(arr.Get(), i,                // Array and index.
+                         vals[i] ? "true" : "false",  // String value.
+                         nullptr,                     // Const string value.
+                         vals[i] ? 1 : 0,             // Integer value.
+                         0,                           // Float value.
+                         nullptr,                     // Array value.
+                         nullptr,                     // Dictionary value.
+                         nullptr);                    // Stream value.
     }
   }
   {
     // Integer array.
-    const int vals[] = {10, 0, -345, 2089345456, -1000000000, 567, 93658767};
+    constexpr auto vals = fxcrt::ToArray<const int>(
+        {10, 0, -345, 2089345456, -1000000000, 567, 93658767});
     auto arr = pdfium::MakeRetain<CPDF_Array>();
-    for (size_t i = 0; i < std::size(vals); ++i)
-      arr->InsertNewAt<CPDF_Number>(i, UNSAFE_TODO(vals[i]));
-    for (size_t i = 0; i < std::size(vals); ++i) {
-      char buf[33];
-      TestArrayAccessors(
-          arr.Get(), i,                               // Array and index.
-          FXSYS_itoa(UNSAFE_TODO(vals[i]), buf, 10),  // String value.
-          nullptr,                                    // Const string value.
-          UNSAFE_TODO(vals[i]),                       // Integer value.
-          UNSAFE_TODO(vals[i]),                       // Float value.
-          nullptr,                                    // Array value.
-          nullptr,                                    // Dictionary value.
-          nullptr);                                   // Stream value.
+    for (size_t i = 0; i < vals.size(); ++i) {
+      arr->InsertNewAt<CPDF_Number>(i, vals[i]);
     }
-  }
-  {
-    // Float array.
-    const float vals[] = {0.0f,    0,     10,    10.0f,   0.0345f,
-                          897.34f, -2.5f, -1.0f, -345.0f, -0.0f};
-    const char* const expected_str[] = {
-        "0", "0", "10", "10", "0.0345", "897.34", "-2.5", "-1", "-345", "0"};
-    auto arr = pdfium::MakeRetain<CPDF_Array>();
-    for (size_t i = 0; i < std::size(vals); ++i)
-      arr->InsertNewAt<CPDF_Number>(i, UNSAFE_TODO(vals[i]));
-    for (size_t i = 0; i < std::size(vals); ++i) {
+    for (size_t i = 0; i < vals.size(); ++i) {
+      char buf[33];
       TestArrayAccessors(arr.Get(), i,                  // Array and index.
-                         UNSAFE_TODO(expected_str[i]),  // String value.
+                         FXSYS_itoa(vals[i], buf, 10),  // String value.
                          nullptr,                       // Const string value.
-                         UNSAFE_TODO(vals[i]),          // Integer value.
-                         UNSAFE_TODO(vals[i]),          // Float value.
+                         vals[i],                       // Integer value.
+                         vals[i],                       // Float value.
                          nullptr,                       // Array value.
                          nullptr,                       // Dictionary value.
                          nullptr);                      // Stream value.
     }
   }
   {
+    // Float array.
+    constexpr auto vals = fxcrt::ToArray<const float>(
+        {0.0f, 0, 10, 10.0f, 0.0345f, 897.34f, -2.5f, -1.0f, -345.0f, -0.0f});
+    auto arr = pdfium::MakeRetain<CPDF_Array>();
+    for (size_t i = 0; i < vals.size(); ++i) {
+      arr->InsertNewAt<CPDF_Number>(i, vals[i]);
+    }
+    constexpr auto expected_str = fxcrt::ToArray<const char*>(
+        {"0", "0", "10", "10", "0.0345", "897.34", "-2.5", "-1", "-345", "0"});
+    for (size_t i = 0; i < vals.size(); ++i) {
+      TestArrayAccessors(arr.Get(), i,     // Array and index.
+                         expected_str[i],  // String value.
+                         nullptr,          // Const string value.
+                         vals[i],          // Integer value.
+                         vals[i],          // Float value.
+                         nullptr,          // Array value.
+                         nullptr,          // Dictionary value.
+                         nullptr);         // Stream value.
+    }
+  }
+  {
     // String and name array
-    const char* const vals[] = {"this", "adsde$%^", "\r\t",           "\"012",
-                                ".",    "EYREW",    "It is a joke :)"};
+    constexpr auto vals = fxcrt::ToArray<const char*>(
+        {"this", "adsde$%^", "\r\t", "\"012", ".", "EYREW", "It is a joke :)"});
     auto string_array = pdfium::MakeRetain<CPDF_Array>();
     auto name_array = pdfium::MakeRetain<CPDF_Array>();
-    for (size_t i = 0; i < std::size(vals); ++i) {
-      string_array->InsertNewAt<CPDF_String>(i, UNSAFE_TODO(vals[i]));
-      name_array->InsertNewAt<CPDF_Name>(i, UNSAFE_TODO(vals[i]));
+    for (size_t i = 0; i < vals.size(); ++i) {
+      string_array->InsertNewAt<CPDF_String>(i, vals[i]);
+      name_array->InsertNewAt<CPDF_Name>(i, vals[i]);
     }
     for (size_t i = 0; i < std::size(vals); ++i) {
       TestArrayAccessors(string_array.Get(), i,  // Array and index.
-                         UNSAFE_TODO(vals[i]),   // String value.
-                         UNSAFE_TODO(vals[i]),   // Const string value.
+                         vals[i],                // String value.
+                         vals[i],                // Const string value.
                          0,                      // Integer value.
                          0,                      // Float value.
                          nullptr,                // Array value.
                          nullptr,                // Dictionary value.
                          nullptr);               // Stream value.
       TestArrayAccessors(name_array.Get(), i,    // Array and index.
-                         UNSAFE_TODO(vals[i]),   // String value.
-                         UNSAFE_TODO(vals[i]),   // Const string value.
+                         vals[i],                // String value.
+                         vals[i],                // Const string value.
                          0,                      // Integer value.
                          0,                      // Float value.
                          nullptr,                // Array value.
@@ -594,83 +600,83 @@ TEST(PDFArrayTest, GetTypeAt) {
   }
   {
     // Array of array.
-    RetainPtr<CPDF_Array> vals[3];
+    std::array<RetainPtr<CPDF_Array>, 3> vals;
     auto arr = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < 3; ++i) {
-      UNSAFE_TODO(vals[i]) = arr->AppendNew<CPDF_Array>();
+      vals[i] = arr->AppendNew<CPDF_Array>();
       for (size_t j = 0; j < 3; ++j) {
         int value = j + 100;
-        UNSAFE_TODO(vals[i])->InsertNewAt<CPDF_Number>(j, value);
+        vals[i]->InsertNewAt<CPDF_Number>(j, value);
       }
     }
     for (size_t i = 0; i < 3; ++i) {
-      TestArrayAccessors(arr.Get(), i,                // Array and index.
-                         "",                          // String value.
-                         nullptr,                     // Const string value.
-                         0,                           // Integer value.
-                         0,                           // Float value.
-                         UNSAFE_TODO(vals[i]).Get(),  // Array value.
-                         nullptr,                     // Dictionary value.
-                         nullptr);                    // Stream value.
+      TestArrayAccessors(arr.Get(), i,   // Array and index.
+                         "",             // String value.
+                         nullptr,        // Const string value.
+                         0,              // Integer value.
+                         0,              // Float value.
+                         vals[i].Get(),  // Array value.
+                         nullptr,        // Dictionary value.
+                         nullptr);       // Stream value.
     }
   }
   {
     // Dictionary array.
-    RetainPtr<CPDF_Dictionary> vals[3];
+    std::array<RetainPtr<CPDF_Dictionary>, 3> vals;
     auto arr = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < 3; ++i) {
-      UNSAFE_TODO(vals[i]) = arr->AppendNew<CPDF_Dictionary>();
+      vals[i] = arr->AppendNew<CPDF_Dictionary>();
       for (size_t j = 0; j < 3; ++j) {
         std::string key("key");
         char buf[33];
         key.append(FXSYS_itoa(j, buf, 10));
         int value = j + 200;
-        UNSAFE_TODO(vals[i])->SetNewFor<CPDF_Number>(key.c_str(), value);
+        vals[i]->SetNewFor<CPDF_Number>(key.c_str(), value);
       }
     }
     for (size_t i = 0; i < 3; ++i) {
-      TestArrayAccessors(arr.Get(), i,                // Array and index.
-                         "",                          // String value.
-                         nullptr,                     // Const string value.
-                         0,                           // Integer value.
-                         0,                           // Float value.
-                         nullptr,                     // Array value.
-                         UNSAFE_TODO(vals[i]).Get(),  // Dictionary value.
-                         nullptr);                    // Stream value.
+      TestArrayAccessors(arr.Get(), i,   // Array and index.
+                         "",             // String value.
+                         nullptr,        // Const string value.
+                         0,              // Integer value.
+                         0,              // Float value.
+                         nullptr,        // Array value.
+                         vals[i].Get(),  // Dictionary value.
+                         nullptr);       // Stream value.
     }
   }
   {
     // Stream array.
     CPDF_IndirectObjectHolder object_holder;
 
-    RetainPtr<CPDF_Dictionary> vals[3];
-    RetainPtr<CPDF_Stream> stream_vals[3];
+    std::array<RetainPtr<CPDF_Dictionary>, 3> vals;
+    std::array<RetainPtr<CPDF_Stream>, 3> stream_vals;
     auto arr = pdfium::MakeRetain<CPDF_Array>();
     for (size_t i = 0; i < 3; ++i) {
-      UNSAFE_TODO(vals[i]) = pdfium::MakeRetain<CPDF_Dictionary>();
+      vals[i] = pdfium::MakeRetain<CPDF_Dictionary>();
       for (size_t j = 0; j < 3; ++j) {
         std::string key("key");
         char buf[33];
         key.append(FXSYS_itoa(j, buf, 10));
         int value = j + 200;
-        UNSAFE_TODO(vals[i])->SetNewFor<CPDF_Number>(key.c_str(), value);
+        vals[i]->SetNewFor<CPDF_Number>(key.c_str(), value);
       }
       static constexpr uint8_t kContents[] = "content: this is a stream";
-      UNSAFE_TODO(stream_vals[i]) = object_holder.NewIndirect<CPDF_Stream>(
+      stream_vals[i] = object_holder.NewIndirect<CPDF_Stream>(
           DataVector<uint8_t>(std::begin(kContents), std::end(kContents)),
-          UNSAFE_TODO(vals[i]));
+          vals[i]);
       arr->AppendNew<CPDF_Reference>(&object_holder,
-                                     UNSAFE_TODO(stream_vals[i])->GetObjNum());
+                                     stream_vals[i]->GetObjNum());
     }
     for (size_t i = 0; i < 3; ++i) {
-      TestArrayAccessors(arr.Get(), i,                // Array and index.
-                         "",                          // String value.
-                         nullptr,                     // Const string value.
-                         0,                           // Integer value.
-                         0,                           // Float value.
-                         nullptr,                     // Array value.
-                         UNSAFE_TODO(vals[i]).Get(),  // Dictionary value.
-                         UNSAFE_TODO(stream_vals[i]).Get());  // Stream value.
+      TestArrayAccessors(arr.Get(), i,           // Array and index.
+                         "",                     // String value.
+                         nullptr,                // Const string value.
+                         0,                      // Integer value.
+                         0,                      // Float value.
+                         nullptr,                // Array value.
+                         vals[i].Get(),          // Dictionary value.
+                         stream_vals[i].Get());  // Stream value.
     }
   }
   {
@@ -708,21 +714,22 @@ TEST(PDFArrayTest, GetTypeAt) {
         DataVector<uint8_t>(std::begin(kData), std::end(kData)), stream_dict);
     arr->InsertNewAt<CPDF_Reference>(13, &object_holder,
                                      stream_val->GetObjNum());
-    const char* const expected_str[] = {
-        "true",          "false", "0",    "-1234", "2345", "0.05", "",
-        "It is a test!", "NAME",  "test", "",      "",     "",     ""};
-    const int expected_int[] = {1, 0, 0, -1234, 2345, 0, 0,
-                                0, 0, 0, 0,     0,    0, 0};
-    const float expected_float[] = {0, 0, 0, -1234, 2345, 0.05f, 0,
-                                    0, 0, 0, 0,     0,    0,     0};
+    constexpr auto expected_str = fxcrt::ToArray<const char*>(
+        {"true", "false", "0", "-1234", "2345", "0.05", "", "It is a test!",
+         "NAME", "test", "", "", "", ""});
+    constexpr auto expected_int = fxcrt::ToArray<const int>(
+        {1, 0, 0, -1234, 2345, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+    constexpr auto expected_float = fxcrt::ToArray<const float>(
+        {0, 0, 0, -1234, 2345, 0.05f, 0, 0, 0, 0, 0, 0, 0, 0});
     for (size_t i = 0; i < arr->size(); ++i) {
-      EXPECT_EQ(UNSAFE_TODO(expected_str[i]), arr->GetByteStringAt(i));
-      EXPECT_EQ(UNSAFE_TODO(expected_int[i]), arr->GetIntegerAt(i));
-      EXPECT_EQ(UNSAFE_TODO(expected_float[i]), arr->GetFloatAt(i));
-      if (i == 11)
+      EXPECT_EQ(expected_str[i], arr->GetByteStringAt(i));
+      EXPECT_EQ(expected_int[i], arr->GetIntegerAt(i));
+      EXPECT_EQ(expected_float[i], arr->GetFloatAt(i));
+      if (i == 11) {
         EXPECT_EQ(arr_val, arr->GetArrayAt(i));
-      else
+      } else {
         EXPECT_FALSE(arr->GetArrayAt(i));
+      }
       if (i == 13) {
         EXPECT_EQ(stream_dict, arr->GetDictAt(i));
         EXPECT_EQ(stream_val, arr->GetStreamAt(i));
@@ -738,32 +745,35 @@ TEST(PDFArrayTest, GetTypeAt) {
 }
 
 TEST(PDFArrayTest, AddNumber) {
-  float vals[] = {1.0f,         -1.0f, 0,    0.456734f,
-                  12345.54321f, 0.5f,  1000, 0.000045f};
+  constexpr auto vals = fxcrt::ToArray<const float>(
+      {1.0f, -1.0f, 0, 0.456734f, 12345.54321f, 0.5f, 1000, 0.000045f});
   auto arr = pdfium::MakeRetain<CPDF_Array>();
-  for (size_t i = 0; i < std::size(vals); ++i)
-    arr->AppendNew<CPDF_Number>(UNSAFE_TODO(vals[i]));
-  for (size_t i = 0; i < std::size(vals); ++i) {
+  for (size_t i = 0; i < vals.size(); ++i) {
+    arr->AppendNew<CPDF_Number>(vals[i]);
+  }
+  for (size_t i = 0; i < vals.size(); ++i) {
     EXPECT_EQ(CPDF_Object::kNumber, arr->GetObjectAt(i)->GetType());
-    EXPECT_EQ(UNSAFE_TODO(vals[i]), arr->GetObjectAt(i)->GetNumber());
+    EXPECT_EQ(vals[i], arr->GetObjectAt(i)->GetNumber());
   }
 }
 
 TEST(PDFArrayTest, AddInteger) {
-  int vals[] = {0, 1, 934435456, 876, 10000, -1, -24354656, -100};
+  constexpr auto vals = fxcrt::ToArray<const int>(
+      {0, 1, 934435456, 876, 10000, -1, -24354656, -100});
   auto arr = pdfium::MakeRetain<CPDF_Array>();
-  for (size_t i = 0; i < std::size(vals); ++i)
-    arr->AppendNew<CPDF_Number>(UNSAFE_TODO(vals[i]));
-  for (size_t i = 0; i < std::size(vals); ++i) {
+  for (size_t i = 0; i < vals.size(); ++i) {
+    arr->AppendNew<CPDF_Number>(vals[i]);
+  }
+  for (size_t i = 0; i < vals.size(); ++i) {
     EXPECT_EQ(CPDF_Object::kNumber, arr->GetObjectAt(i)->GetType());
-    EXPECT_EQ(UNSAFE_TODO(vals[i]), arr->GetObjectAt(i)->GetNumber());
+    EXPECT_EQ(vals[i], arr->GetObjectAt(i)->GetNumber());
   }
 }
 
 TEST(PDFArrayTest, AddStringAndName) {
-  static constexpr const char* kVals[] = {
-      "",        "a", "ehjhRIOYTTFdfcdnv",  "122323",
-      "$#%^&**", " ", "This is a test.\r\n"};
+  static constexpr auto kVals =
+      fxcrt::ToArray<const char*>({"", "a", "ehjhRIOYTTFdfcdnv", "122323",
+                                   "$#%^&**", " ", "This is a test.\r\n"});
   auto string_array = pdfium::MakeRetain<CPDF_Array>();
   auto name_array = pdfium::MakeRetain<CPDF_Array>();
   for (const char* val : kVals) {
@@ -772,9 +782,9 @@ TEST(PDFArrayTest, AddStringAndName) {
   }
   for (size_t i = 0; i < std::size(kVals); ++i) {
     EXPECT_EQ(CPDF_Object::kString, string_array->GetObjectAt(i)->GetType());
-    EXPECT_EQ(UNSAFE_TODO(kVals[i]), string_array->GetObjectAt(i)->GetString());
+    EXPECT_EQ(kVals[i], string_array->GetObjectAt(i)->GetString());
     EXPECT_EQ(CPDF_Object::kName, name_array->GetObjectAt(i)->GetType());
-    EXPECT_EQ(UNSAFE_TODO(kVals[i]), name_array->GetObjectAt(i)->GetString());
+    EXPECT_EQ(kVals[i], name_array->GetObjectAt(i)->GetString());
   }
 }
 
@@ -787,32 +797,31 @@ TEST(PDFArrayTest, AddReferenceAndGetObjectAt) {
       pdfium::MakeRetain<CPDF_String>(nullptr, "Adsfdsf 343434 %&&*\n");
   auto name_obj = pdfium::MakeRetain<CPDF_Name>(nullptr, "Title:");
   auto null_obj = pdfium::MakeRetain<CPDF_Null>();
-  RetainPtr<CPDF_Object> indirect_objs[] = {boolean_obj, int_obj,  float_obj,
-                                            str_obj,     name_obj, null_obj};
-  unsigned int obj_nums[] = {2, 4, 7, 2345, 799887, 1};
+  auto indirect_objs = fxcrt::ToArray<RetainPtr<CPDF_Object>>(
+      {boolean_obj, int_obj, float_obj, str_obj, name_obj, null_obj});
+  auto obj_nums = fxcrt::ToArray<int>({2, 4, 7, 2345, 799887, 1});
   auto arr = pdfium::MakeRetain<CPDF_Array>();
   auto arr1 = pdfium::MakeRetain<CPDF_Array>();
   // Create two arrays of references by different AddReference() APIs.
   for (size_t i = 0; i < std::size(indirect_objs); ++i) {
-    holder->ReplaceIndirectObjectIfHigherGeneration(
-        UNSAFE_TODO(obj_nums[i]), UNSAFE_TODO(indirect_objs[i]));
-    arr->AppendNew<CPDF_Reference>(holder.get(), UNSAFE_TODO(obj_nums[i]));
+    holder->ReplaceIndirectObjectIfHigherGeneration(obj_nums[i],
+                                                    indirect_objs[i]);
+    arr->AppendNew<CPDF_Reference>(holder.get(), obj_nums[i]);
     arr1->AppendNew<CPDF_Reference>(holder.get(),
-                                    UNSAFE_TODO(indirect_objs[i]->GetObjNum()));
+                                    indirect_objs[i]->GetObjNum());
   }
   // Check indirect objects.
   for (size_t i = 0; i < std::size(obj_nums); ++i)
-    EXPECT_EQ(UNSAFE_TODO(indirect_objs[i]),
-              holder->GetOrParseIndirectObject(UNSAFE_TODO(obj_nums[i])));
+    EXPECT_EQ(indirect_objs[i], holder->GetOrParseIndirectObject(obj_nums[i]));
   // Check arrays.
   EXPECT_EQ(arr->size(), arr1->size());
   for (size_t i = 0; i < arr->size(); ++i) {
     EXPECT_EQ(CPDF_Object::kReference, arr->GetObjectAt(i)->GetType());
-    EXPECT_EQ(UNSAFE_TODO(indirect_objs[i]), arr->GetObjectAt(i)->GetDirect());
-    EXPECT_EQ(UNSAFE_TODO(indirect_objs[i]), arr->GetDirectObjectAt(i));
+    EXPECT_EQ(indirect_objs[i], arr->GetObjectAt(i)->GetDirect());
+    EXPECT_EQ(indirect_objs[i], arr->GetDirectObjectAt(i));
     EXPECT_EQ(CPDF_Object::kReference, arr1->GetObjectAt(i)->GetType());
-    EXPECT_EQ(UNSAFE_TODO(indirect_objs[i]), arr1->GetObjectAt(i)->GetDirect());
-    EXPECT_EQ(UNSAFE_TODO(indirect_objs[i]), arr1->GetDirectObjectAt(i));
+    EXPECT_EQ(indirect_objs[i], arr1->GetObjectAt(i)->GetDirect());
+    EXPECT_EQ(indirect_objs[i], arr1->GetDirectObjectAt(i));
   }
 }
 

@@ -27,7 +27,7 @@ TEST(CPDFSDK_HelpersTest, NulTerminateMaybeCopyAndReturnLength) {
     ASSERT_EQ(kExpectedToBeCopiedLen + 1,
               NulTerminateMaybeCopyAndReturnLength(
                   to_be_copied,
-                  UNSAFE_TODO(pdfium::make_span(buf, kExpectedToBeCopiedLen))));
+                  pdfium::make_span(buf).first(kExpectedToBeCopiedLen)));
     for (char c : buf)
       EXPECT_EQ(0x42, c);
 

@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <array>
 #include <iterator>
 
 #include "core/fxcrt/compiler_specific.h"
@@ -52,13 +53,13 @@ TEST(LZWDecompressor, ExtractData) {
     DataVector<uint8_t>* decompressed = decompressor->DecompressedForTest();
     *decompressed = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     *(decompressor->DecompressedNextForTest()) = decompressed->size();
-    uint8_t dest_buf[20];
+    std::array<uint8_t, 20> dest_buf;
     fxcrt::Fill(dest_buf, 0xff);
     EXPECT_EQ(5u, decompressor->ExtractDataForTest(
                       pdfium::make_span(dest_buf).first(5u)));
     size_t i = 0;
     for (; i < 5; ++i) {
-      EXPECT_EQ(9 - i, UNSAFE_TODO(dest_buf[i]));
+      EXPECT_EQ(9 - i, dest_buf[i]);
     }
     EXPECT_THAT(pdfium::span(dest_buf).first(5), ElementsAre(9, 8, 7, 6, 5));
     EXPECT_THAT(pdfium::span(dest_buf).subspan(5),
