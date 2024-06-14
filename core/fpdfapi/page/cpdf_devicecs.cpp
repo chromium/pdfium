@@ -110,8 +110,7 @@ void CPDF_DeviceCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
       break;
     case Family::kDeviceRGB:
       CHECK(!bTransMask);  // bTransMask only allowed for CMYK colorspaces.
-      UNSAFE_TODO(
-          fxcodec::ReverseRGB(dest_span.data(), src_span.data(), pixels));
+      fxcodec::ReverseRGB(dest_span, src_span, pixels);
       break;
     case Family::kDeviceCMYK: {
       auto cmyk_in =

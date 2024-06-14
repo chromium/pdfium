@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/span.h"
 
 namespace fxcodec {
 
@@ -34,9 +34,9 @@ class CFX_DIBAttribute {
 };
 #endif  // PDF_ENABLE_XFA
 
-UNSAFE_BUFFER_USAGE void ReverseRGB(uint8_t* pDestBuf,
-                                    const uint8_t* pSrcBuf,
-                                    int pixels);
+void ReverseRGB(pdfium::span<uint8_t> pDestBuf,
+                pdfium::span<const uint8_t> pSrcBuf,
+                int pixels);
 
 }  // namespace fxcodec
 
