@@ -79,6 +79,11 @@ bool CPDF_Color::IsColorSpaceRGB() const {
          CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceRGB);
 }
 
+bool CPDF_Color::IsColorSpaceGray() const {
+  return m_pCS ==
+         CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceGray);
+}
+
 std::optional<FX_COLORREF> CPDF_Color::GetColorRef() const {
   if (IsPatternInternal()) {
     if (m_pValue) {

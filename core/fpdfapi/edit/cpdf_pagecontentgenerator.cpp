@@ -55,7 +55,7 @@ using ResourcesMap = std::map<ByteString, std::set<ByteString>>;
 
 // Returns whether it wrote to `buf` or not.
 bool WriteColorToStream(fxcrt::ostringstream& buf, const CPDF_Color* color) {
-  if (!color || !color->IsColorSpaceRGB()) {
+  if (!color || (!color->IsColorSpaceRGB() && !color->IsColorSpaceGray())) {
     return false;
   }
 
