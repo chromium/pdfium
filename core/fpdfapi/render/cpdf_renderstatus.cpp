@@ -1457,10 +1457,8 @@ FX_ARGB CPDF_RenderStatus::GetBackgroundColor(
   std::vector<float> floats = ReadArrayElementsToVector(pBC.Get(), count);
   floats.resize(comps);
 
-  float R;
-  float G;
-  float B;
-  pCS->GetRGB(floats, &R, &G, &B);
-  return ArgbEncode(255, static_cast<int>(R * 255), static_cast<int>(G * 255),
-                    static_cast<int>(B * 255));
+  auto rgb = pCS->GetRGBOrZerosOnError(floats);
+  return ArgbEncode(255, static_cast<int>(rgb.red * 255),
+                    static_cast<int>(rgb.green * 255),
+                    static_cast<int>(rgb.blue * 255));
 }

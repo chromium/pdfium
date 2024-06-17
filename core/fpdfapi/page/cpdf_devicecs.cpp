@@ -43,45 +43,37 @@ uint32_t CPDF_DeviceCS::v_Load(CPDF_Document* pDoc,
   NOTREACHED_NORETURN();
 }
 
-bool CPDF_DeviceCS::GetRGB(pdfium::span<const float> pBuf,
-                           float* R,
-                           float* G,
-                           float* B) const {
+std::optional<FX_RGB_STRUCT<float>> CPDF_DeviceCS::GetRGB(
+    pdfium::span<const float> pBuf) const {
   switch (GetFamily()) {
     case Family::kDeviceGray: {
       const float pix = NormalizeChannel(pBuf.front());
-      *R = pix;
-      *G = pix;
-      *B = pix;
-      return true;
+      return FX_RGB_STRUCT<float>{pix, pix, pix};
     }
     case Family::kDeviceRGB: {
-      auto rgb =
-          fxcrt::truncating_reinterpret_span<const FX_RGB_STRUCT<float>>(pBuf);
-      *R = NormalizeChannel(rgb.front().red);
-      *G = NormalizeChannel(rgb.front().green);
-      *B = NormalizeChannel(rgb.front().blue);
-      return true;
+      const auto& rgb =
+          fxcrt::truncating_reinterpret_span<const FX_RGB_STRUCT<float>>(pBuf)
+              .front();
+      return FX_RGB_STRUCT<float>{
+          NormalizeChannel(rgb.red),
+          NormalizeChannel(rgb.green),
+          NormalizeChannel(rgb.blue),
+      };
     }
     case Family::kDeviceCMYK: {
-      auto cmyk =
-          fxcrt::truncating_reinterpret_span<const FX_CMYK_STRUCT<float>>(pBuf);
+      const auto& cmyk =
+          fxcrt::truncating_reinterpret_span<const FX_CMYK_STRUCT<float>>(pBuf)
+              .front();
       if (IsStdConversionEnabled()) {
-        float k = cmyk.front().key;
-        *R = 1.0f - std::min(1.0f, cmyk.front().cyan + k);
-        *G = 1.0f - std::min(1.0f, cmyk.front().magenta + k);
-        *B = 1.0f - std::min(1.0f, cmyk.front().yellow + k);
-        return true;
+        return FX_RGB_STRUCT<float>{
+            1.0f - std::min(1.0f, cmyk.cyan + cmyk.key),
+            1.0f - std::min(1.0f, cmyk.magenta + cmyk.key),
+            1.0f - std::min(1.0f, cmyk.yellow + cmyk.key),
+        };
       }
-      FX_RGB_STRUCT<float> rgb =
-          AdobeCMYK_to_sRGB(NormalizeChannel(cmyk.front().cyan),
-                            NormalizeChannel(cmyk.front().magenta),
-                            NormalizeChannel(cmyk.front().yellow),
-                            NormalizeChannel(cmyk.front().key));
-      *R = rgb.red;
-      *G = rgb.green;
-      *B = rgb.blue;
-      return true;
+      return AdobeCMYK_to_sRGB(
+          NormalizeChannel(cmyk.cyan), NormalizeChannel(cmyk.magenta),
+          NormalizeChannel(cmyk.yellow), NormalizeChannel(cmyk.key));
     }
     default:
       NOTREACHED_NORETURN();

@@ -876,12 +876,10 @@ CPDF_DIB::LoadState CPDF_DIB::StartLoadMask() {
     std::vector<float> colors =
         ReadArrayElementsToVector(pMatte.Get(), m_nComponents);
 
-    float R;
-    float G;
-    float B;
-    m_pColorSpace->GetRGB(colors, &R, &G, &B);
-    m_MatteColor = ArgbEncode(0, FXSYS_roundf(R * 255), FXSYS_roundf(G * 255),
-                              FXSYS_roundf(B * 255));
+    auto rgb = m_pColorSpace->GetRGBOrZerosOnError(colors);
+    m_MatteColor =
+        ArgbEncode(0, FXSYS_roundf(rgb.red * 255),
+                   FXSYS_roundf(rgb.green * 255), FXSYS_roundf(rgb.blue * 255));
   }
   return StartLoadMaskDIB(std::move(mask));
 }
@@ -955,13 +953,10 @@ void CPDF_DIB::LoadPalette() {
     std::fill(std::begin(color_values), std::end(color_values),
               m_CompData[0].m_DecodeMin);
 
-    float R = 0.0f;
-    float G = 0.0f;
-    float B = 0.0f;
-    m_pColorSpace->GetRGB(color_values, &R, &G, &B);
-
-    FX_ARGB argb0 = ArgbEncode(255, FXSYS_roundf(R * 255),
-                               FXSYS_roundf(G * 255), FXSYS_roundf(B * 255));
+    auto rgb = m_pColorSpace->GetRGBOrZerosOnError(color_values);
+    FX_ARGB argb0 =
+        ArgbEncode(255, FXSYS_roundf(rgb.red * 255),
+                   FXSYS_roundf(rgb.green * 255), FXSYS_roundf(rgb.blue * 255));
     FX_ARGB argb1;
     const CPDF_IndexedCS* indexed_cs = m_pColorSpace->AsIndexedCS();
     if (indexed_cs && indexed_cs->GetMaxIndex() == 0) {
@@ -973,9 +968,10 @@ void CPDF_DIB::LoadPalette() {
       color_values[0] += m_CompData[0].m_DecodeStep;
       color_values[1] += m_CompData[0].m_DecodeStep;
       color_values[2] += m_CompData[0].m_DecodeStep;
-      m_pColorSpace->GetRGB(color_values, &R, &G, &B);
-      argb1 = ArgbEncode(255, FXSYS_roundf(R * 255), FXSYS_roundf(G * 255),
-                         FXSYS_roundf(B * 255));
+      auto result = m_pColorSpace->GetRGBOrZerosOnError(color_values);
+      argb1 = ArgbEncode(255, FXSYS_roundf(result.red * 255),
+                         FXSYS_roundf(result.green * 255),
+                         FXSYS_roundf(result.blue * 255));
     }
 
     if (argb0 != 0xFF000000 || argb1 != 0xFFFFFFFF) {
@@ -1001,21 +997,18 @@ void CPDF_DIB::LoadPalette() {
       color_values[j] = m_CompData[j].m_DecodeMin +
                         m_CompData[j].m_DecodeStep * encoded_component;
     }
-    float R = 0;
-    float G = 0;
-    float B = 0;
+    FX_RGB_STRUCT<float> rgb;
     if (m_nComponents == 1 && m_Family == CPDF_ColorSpace::Family::kICCBased &&
         m_pColorSpace->ComponentCount() > 1) {
-      int nComponents = m_pColorSpace->ComponentCount();
-      std::vector<float> temp_buf(nComponents);
-      for (int k = 0; k < nComponents; ++k)
-        temp_buf[k] = color_values[0];
-      m_pColorSpace->GetRGB(temp_buf, &R, &G, &B);
+      const size_t nComponents = m_pColorSpace->ComponentCount();
+      std::vector<float> temp_buf(nComponents, color_values[0]);
+      rgb = m_pColorSpace->GetRGBOrZerosOnError(temp_buf);
     } else {
-      m_pColorSpace->GetRGB(color_values, &R, &G, &B);
+      rgb = m_pColorSpace->GetRGBOrZerosOnError(color_values);
     }
-    SetPaletteArgb(i, ArgbEncode(255, FXSYS_roundf(R * 255),
-                                 FXSYS_roundf(G * 255), FXSYS_roundf(B * 255)));
+    SetPaletteArgb(i, ArgbEncode(255, FXSYS_roundf(rgb.red * 255),
+                                 FXSYS_roundf(rgb.green * 255),
+                                 FXSYS_roundf(rgb.blue * 255)));
   }
 }
 
@@ -1055,9 +1048,7 @@ void CPDF_DIB::TranslateScanline24bpp(
 
   // Using at least 16 elements due to the call m_pColorSpace->GetRGB().
   std::vector<float> color_values(std::max(m_nComponents, 16u));
-  float R = 0.0f;
-  float G = 0.0f;
-  float B = 0.0f;
+  FX_RGB_STRUCT<float> rgb = {};
   uint64_t src_bit_pos = 0;
   uint64_t src_byte_pos = 0;
   size_t dest_byte_pos = 0;
@@ -1075,18 +1066,17 @@ void CPDF_DIB::TranslateScanline24bpp(
         src_bit_pos += m_bpc;
       }
     }
-
     if (TransMask()) {
       float k = 1.0f - color_values[3];
-      R = (1.0f - color_values[0]) * k;
-      G = (1.0f - color_values[1]) * k;
-      B = (1.0f - color_values[2]) * k;
+      rgb.red = (1.0f - color_values[0]) * k;
+      rgb.green = (1.0f - color_values[1]) * k;
+      rgb.blue = (1.0f - color_values[2]) * k;
     } else if (m_Family != CPDF_ColorSpace::Family::kPattern) {
-      m_pColorSpace->GetRGB(color_values, &R, &G, &B);
+      rgb = m_pColorSpace->GetRGBOrZerosOnError(color_values);
     }
-    R = std::clamp(R, 0.0f, 1.0f);
-    G = std::clamp(G, 0.0f, 1.0f);
-    B = std::clamp(B, 0.0f, 1.0f);
+    const float R = std::clamp(rgb.red, 0.0f, 1.0f);
+    const float G = std::clamp(rgb.green, 0.0f, 1.0f);
+    const float B = std::clamp(rgb.blue, 0.0f, 1.0f);
     dest_scan[dest_byte_pos] = static_cast<uint8_t>(B * 255);
     dest_scan[dest_byte_pos + 1] = static_cast<uint8_t>(G * 255);
     dest_scan[dest_byte_pos + 2] = static_cast<uint8_t>(R * 255);

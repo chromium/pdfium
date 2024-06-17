@@ -104,11 +104,16 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   // components are integers.
   std::optional<FX_COLORREF> GetColorRef(pdfium::span<const float> buffer);
 
+  // Wrapper around GetRGB() that returns black (0, 0, 0) when an actual value
+  // can not be determined.
+  FX_RGB_STRUCT<float> GetRGBOrZerosOnError(
+      pdfium::span<const float> pBuf) const {
+    return GetRGB(pBuf).value_or(FX_RGB_STRUCT<float>{});
+  }
+
   // Use CPDF_Pattern::GetPatternColorRef() instead of GetRGB() for patterns.
-  virtual bool GetRGB(pdfium::span<const float> pBuf,
-                      float* R,
-                      float* G,
-                      float* B) const = 0;
+  virtual std::optional<FX_RGB_STRUCT<float>> GetRGB(
+      pdfium::span<const float> pBuf) const = 0;
 
   virtual void GetDefaultValue(int iComponent,
                                float* value,

@@ -28,10 +28,8 @@ class CPDF_IndexedCS final : public CPDF_BasedCS {
   ~CPDF_IndexedCS() override;
 
   // CPDF_ColorSpace:
-  bool GetRGB(pdfium::span<const float> pBuf,
-              float* R,
-              float* G,
-              float* B) const override;
+  std::optional<FX_RGB_STRUCT<float>> GetRGB(
+      pdfium::span<const float> pBuf) const override;
   const CPDF_IndexedCS* AsIndexedCS() const override;
   uint32_t v_Load(CPDF_Document* pDoc,
                   const CPDF_Array* pArray,
