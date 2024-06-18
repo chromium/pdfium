@@ -13,48 +13,53 @@
 
 namespace {
 
-RetainPtr<const CPDF_Object> SearchNumberNode(const CPDF_Dictionary* pNode,
-                                              int num) {
-  RetainPtr<const CPDF_Array> pLimits = pNode->GetArrayFor("Limits");
-  if (pLimits &&
-      (num < pLimits->GetIntegerAt(0) || num > pLimits->GetIntegerAt(1))) {
+RetainPtr<const CPDF_Object> FindNumberNode(const CPDF_Dictionary* node_dict,
+                                            int num) {
+  RetainPtr<const CPDF_Array> limits_array = node_dict->GetArrayFor("Limits");
+  if (limits_array && (num < limits_array->GetIntegerAt(0) ||
+                       num > limits_array->GetIntegerAt(1))) {
     return nullptr;
   }
-  RetainPtr<const CPDF_Array> pNumbers = pNode->GetArrayFor("Nums");
-  if (pNumbers) {
-    for (size_t i = 0; i < pNumbers->size() / 2; i++) {
-      int index = pNumbers->GetIntegerAt(i * 2);
-      if (num == index)
-        return pNumbers->GetDirectObjectAt(i * 2 + 1);
-      if (index > num)
+  RetainPtr<const CPDF_Array> numbers_array = node_dict->GetArrayFor("Nums");
+  if (numbers_array) {
+    for (size_t i = 0; i < numbers_array->size() / 2; i++) {
+      int index = numbers_array->GetIntegerAt(i * 2);
+      if (num == index) {
+        return numbers_array->GetDirectObjectAt(i * 2 + 1);
+      }
+      if (index > num) {
         break;
+      }
     }
     return nullptr;
   }
 
-  RetainPtr<const CPDF_Array> pKids = pNode->GetArrayFor("Kids");
-  if (!pKids)
+  RetainPtr<const CPDF_Array> kids_array = node_dict->GetArrayFor("Kids");
+  if (!kids_array) {
     return nullptr;
+  }
 
-  for (size_t i = 0; i < pKids->size(); i++) {
-    RetainPtr<const CPDF_Dictionary> pKid = pKids->GetDictAt(i);
-    if (!pKid)
+  for (size_t i = 0; i < kids_array->size(); i++) {
+    RetainPtr<const CPDF_Dictionary> kid_dict = kids_array->GetDictAt(i);
+    if (!kid_dict) {
       continue;
+    }
 
-    RetainPtr<const CPDF_Object> pFound = SearchNumberNode(pKid.Get(), num);
-    if (pFound)
-      return pFound;
+    RetainPtr<const CPDF_Object> result = FindNumberNode(kid_dict.Get(), num);
+    if (result) {
+      return result;
+    }
   }
   return nullptr;
 }
 
 }  // namespace
 
-CPDF_NumberTree::CPDF_NumberTree(RetainPtr<const CPDF_Dictionary> pRoot)
-    : m_pRoot(std::move(pRoot)) {}
+CPDF_NumberTree::CPDF_NumberTree(RetainPtr<const CPDF_Dictionary> root)
+    : root_(std::move(root)) {}
 
 CPDF_NumberTree::~CPDF_NumberTree() = default;
 
 RetainPtr<const CPDF_Object> CPDF_NumberTree::LookupValue(int num) const {
-  return SearchNumberNode(m_pRoot.Get(), num);
+  return FindNumberNode(root_.Get(), num);
 }
