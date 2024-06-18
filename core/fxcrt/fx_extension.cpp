@@ -30,7 +30,8 @@ struct tm* (*g_localtime_func)(const time_t*) = DefaultLocaltimeFunction;
 }  // namespace
 
 float FXSYS_wcstof(const wchar_t* pwsStr, size_t nLength, size_t* pUsedLen) {
-  auto copied = UNSAFE_TODO(WideString::Create(pwsStr, nLength));
+  // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE in header.
+  auto copied = UNSAFE_BUFFERS(WideString::Create(pwsStr, nLength));
   wchar_t* endptr = nullptr;
   float result = wcstof(copied.c_str(), &endptr);
   if (result != result) {
@@ -42,13 +43,12 @@ float FXSYS_wcstof(const wchar_t* pwsStr, size_t nLength, size_t* pUsedLen) {
   return result;
 }
 
-// TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
 wchar_t* FXSYS_wcsncpy(wchar_t* dstStr, const wchar_t* srcStr, size_t count) {
   DCHECK(dstStr);
   DCHECK(srcStr);
   DCHECK(count > 0);
 
-  // SAFETY: required from caller.
+  // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE in header.
   UNSAFE_BUFFERS({
     for (size_t i = 0; i < count; ++i) {
       dstStr[i] = srcStr[i];
