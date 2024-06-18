@@ -27,12 +27,12 @@
 #include "core/fxcrt/cfx_read_only_vector_stream.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/stl_util.h"
 
 namespace {
 
@@ -469,10 +469,11 @@ void CPDF_SyntaxParser::RecordingToNextWord() {
 CPDF_SyntaxParser::WordResult CPDF_SyntaxParser::GetNextWord() {
   CPDF_ReadValidator::ScopedSession read_session(GetValidator());
   WordType word_type = GetNextWordInternal();
-  ByteString word;
-  if (!GetValidator()->has_read_problems())
-    word = UNSAFE_TODO(ByteString::Create(m_WordBuffer.data(), m_WordSize));
-  return {word, word_type == WordType::kNumber};
+  ByteStringView word;
+  if (!GetValidator()->has_read_problems()) {
+    word = ByteStringView(pdfium::make_span(m_WordBuffer).first(m_WordSize));
+  }
+  return {ByteString(word), word_type == WordType::kNumber};
 }
 
 ByteString CPDF_SyntaxParser::PeekNextWord() {
@@ -753,8 +754,8 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
   if (len >= 0) {
     CPDF_ReadValidator::ScopedSession read_session(GetValidator());
     m_Pos += ReadEOLMarkers(GetPos());
-    UNSAFE_TODO(
-        FXSYS_memset(m_WordBuffer.data(), 0, kEndStreamStr.GetLength() + 1));
+    const size_t zap_length = kEndStreamStr.GetLength() + 1;
+    fxcrt::Fill(pdfium::make_span(m_WordBuffer).first(zap_length), 0);
     GetNextWordInternal();
     if (GetValidator()->has_read_problems())
       return nullptr;
@@ -813,7 +814,8 @@ RetainPtr<CPDF_Stream> CPDF_SyntaxParser::ReadStream(
     stream = pdfium::MakeRetain<CPDF_Stream>(std::move(pDict));
   }
   const FX_FILESIZE end_stream_offset = GetPos();
-  UNSAFE_TODO(FXSYS_memset(m_WordBuffer.data(), 0, kEndObjStr.GetLength() + 1));
+  const size_t zap_length = kEndObjStr.GetLength() + 1;
+  fxcrt::Fill(pdfium::make_span(m_WordBuffer).first(zap_length), 0);
   GetNextWordInternal();
 
   // Allow whitespace after endstream and before a newline.
