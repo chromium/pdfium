@@ -86,13 +86,26 @@ bool CPDF_Color::IsColorSpaceGray() const {
 }
 
 std::optional<FX_COLORREF> CPDF_Color::GetColorRef() const {
+  std::optional<FX_RGB_STRUCT<float>> maybe_rgb = GetRGB();
+  if (!maybe_rgb.has_value()) {
+    return std::nullopt;
+  }
+
+  const float r = std::clamp(maybe_rgb.value().red, 0.0f, 1.0f);
+  const float g = std::clamp(maybe_rgb.value().green, 0.0f, 1.0f);
+  const float b = std::clamp(maybe_rgb.value().blue, 0.0f, 1.0f);
+  return FXSYS_BGR(FXSYS_roundf(b * 255.0f), FXSYS_roundf(g * 255.0f),
+                   FXSYS_roundf(r * 255.0f));
+}
+
+std::optional<FX_RGB_STRUCT<float>> CPDF_Color::GetRGB() const {
   if (IsPatternInternal()) {
     if (value_) {
-      return cs_->AsPatternCS()->GetPatternColorRef(*value_);
+      return cs_->AsPatternCS()->GetPatternRGB(*value_);
     }
   } else {
     if (!buffer_.empty()) {
-      return cs_->GetColorRef(buffer_);
+      return cs_->GetRGB(buffer_);
     }
   }
   return std::nullopt;

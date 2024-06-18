@@ -53,11 +53,11 @@ const CPDF_PatternCS* CPDF_PatternCS::AsPatternCS() const {
   return this;
 }
 
-std::optional<FX_COLORREF> CPDF_PatternCS::GetPatternColorRef(
+std::optional<FX_RGB_STRUCT<float>> CPDF_PatternCS::GetPatternRGB(
     const PatternValue& value) const {
   if (!m_pBaseCS) {
     return std::nullopt;
   }
 
-  return m_pBaseCS->GetColorRef(value.GetComps());
+  return m_pBaseCS->GetRGB(value.GetComps());
 }

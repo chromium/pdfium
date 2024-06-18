@@ -40,7 +40,11 @@ class CPDF_Color {
   uint32_t ComponentCount() const;
   bool IsColorSpaceRGB() const;
   bool IsColorSpaceGray() const;
+  // Wrapper around GetRGB() that returns the RGB value as FX_COLORREF. The
+  // GetRGB() return value is clamped to fit into FX_COLORREF, where the color
+  // components are 8-bit fields within an unsigned integer.
   std::optional<FX_COLORREF> GetColorRef() const;
+  std::optional<FX_RGB_STRUCT<float>> GetRGB() const;
 
   // Should only be called if IsPattern() returns true.
   RetainPtr<CPDF_Pattern> GetPattern() const;

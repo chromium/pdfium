@@ -604,19 +604,6 @@ uint32_t CPDF_ColorSpace::ComponentCount() const {
   return m_nComponents;
 }
 
-std::optional<FX_COLORREF> CPDF_ColorSpace::GetColorRef(
-    pdfium::span<const float> buffer) {
-  auto maybe_rgb = GetRGB(buffer);
-  if (!maybe_rgb.has_value()) {
-    return std::nullopt;
-  }
-  const float r = std::clamp(maybe_rgb.value().red, 0.0f, 1.0f);
-  const float g = std::clamp(maybe_rgb.value().green, 0.0f, 1.0f);
-  const float b = std::clamp(maybe_rgb.value().blue, 0.0f, 1.0f);
-  return FXSYS_BGR(FXSYS_roundf(b * 255), FXSYS_roundf(g * 255),
-                   FXSYS_roundf(r * 255));
-}
-
 void CPDF_ColorSpace::GetDefaultValue(int iComponent,
                                       float* value,
                                       float* min,

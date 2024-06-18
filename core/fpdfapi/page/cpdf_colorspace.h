@@ -99,11 +99,6 @@ class CPDF_ColorSpace : public Retainable, public Observable {
            GetFamily() == Family::kPattern;
   }
 
-  // Wrapper around GetRGB() that returns the RGB value as FX_COLORREF. The
-  // GetRGB() return value is sanitized to fit into FX_COLORREF, where the color
-  // components are integers.
-  std::optional<FX_COLORREF> GetColorRef(pdfium::span<const float> buffer);
-
   // Wrapper around GetRGB() that returns black (0, 0, 0) when an actual value
   // can not be determined.
   FX_RGB_STRUCT<float> GetRGBOrZerosOnError(

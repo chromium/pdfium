@@ -59,15 +59,14 @@ bool WriteColorToStream(fxcrt::ostringstream& buf, const CPDF_Color* color) {
     return false;
   }
 
-  std::optional<FX_COLORREF> colors = color->GetColorRef();
+  std::optional<FX_RGB_STRUCT<float>> colors = color->GetRGB();
   if (!colors.has_value()) {
     return false;
   }
 
-  // TODO(thestig): Remove float to int to float conversion.
-  WriteFloat(buf, FXSYS_GetRValue(colors.value()) / 255.0f) << " ";
-  WriteFloat(buf, FXSYS_GetGValue(colors.value()) / 255.0f) << " ";
-  WriteFloat(buf, FXSYS_GetBValue(colors.value()) / 255.0f);
+  WriteFloat(buf, colors.value().red) << " ";
+  WriteFloat(buf, colors.value().green) << " ";
+  WriteFloat(buf, colors.value().blue);
   return true;
 }
 
