@@ -346,8 +346,6 @@ luci.notifier(
     notify_emails = [
         "andyphan@chromium.org",
         "awscreen@chromium.org",
-        "kmoon@chromium.org",
-        "nigi@chromium.org",
         "thestig@chromium.org",
     ],
     notify_blamelist = True,
