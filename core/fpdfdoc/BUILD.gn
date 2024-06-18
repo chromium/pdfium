@@ -106,6 +106,7 @@ pdfium_unittest_source_set("unittests") {
     "cpdf_formfield_unittest.cpp",
     "cpdf_metadata_unittest.cpp",
     "cpdf_nametree_unittest.cpp",
+    "cpdf_pagelabel_unittest.cpp",
   ]
   deps = [
     ":fpdfdoc",
