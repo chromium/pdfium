@@ -27,101 +27,112 @@ WideString MakeRoman(int num) {
 
   num %= kMaxNum;
   int i = 0;
-  WideString wsRomanNumber;
+  WideString result;
   while (num > 0) {
-      while (num >= kArabic[i]) {
-        num = num - kArabic[i];
-        wsRomanNumber += kRoman[i];
-      }
-      i = i + 1;
+    while (num >= kArabic[i]) {
+      num = num - kArabic[i];
+      result += kRoman[i];
+    }
+    i = i + 1;
   }
-  return wsRomanNumber;
+  return result;
 }
 
 WideString MakeLetters(int num) {
-  if (num == 0)
+  if (num == 0) {
     return WideString();
+  }
 
-  WideString wsLetters;
-  const int nMaxCount = 1000;
-  const int nLetterCount = 26;
+  const int kMaxCount = 1000;
+  const int kLetterCount = 26;
   --num;
 
-  int count = num / nLetterCount + 1;
-  count %= nMaxCount;
-  wchar_t ch = L'a' + num % nLetterCount;
-  for (int i = 0; i < count; i++)
-    wsLetters += ch;
-  return wsLetters;
+  int count = num / kLetterCount + 1;
+  count %= kMaxCount;
+  wchar_t ch = L'a' + num % kLetterCount;
+  WideString result;
+  for (int i = 0; i < count; i++) {
+    result += ch;
+  }
+  return result;
 }
 
-WideString GetLabelNumPortion(int num, const ByteString& bsStyle) {
-  if (bsStyle.IsEmpty())
+WideString GetLabelNumPortion(int num, const ByteString& style) {
+  if (style.IsEmpty()) {
     return WideString();
-  if (bsStyle == "D")
+  }
+  if (style == "D") {
     return WideString::FormatInteger(num);
-  if (bsStyle == "R") {
-    WideString wsNumPortion = MakeRoman(num);
-    wsNumPortion.MakeUpper();
-    return wsNumPortion;
   }
-  if (bsStyle == "r")
+  if (style == "R") {
+    WideString result = MakeRoman(num);
+    result.MakeUpper();
+    return result;
+  }
+  if (style == "r") {
     return MakeRoman(num);
-  if (bsStyle == "A") {
-    WideString wsNumPortion = MakeLetters(num);
-    wsNumPortion.MakeUpper();
-    return wsNumPortion;
   }
-  if (bsStyle == "a")
+  if (style == "A") {
+    WideString result = MakeLetters(num);
+    result.MakeUpper();
+    return result;
+  }
+  if (style == "a") {
     return MakeLetters(num);
+  }
   return WideString();
 }
 
 }  // namespace
 
-CPDF_PageLabel::CPDF_PageLabel(CPDF_Document* pDocument)
-    : m_pDocument(pDocument) {}
+CPDF_PageLabel::CPDF_PageLabel(CPDF_Document* doc) : doc_(doc) {}
 
 CPDF_PageLabel::~CPDF_PageLabel() = default;
 
-std::optional<WideString> CPDF_PageLabel::GetLabel(int nPage) const {
-  if (!m_pDocument)
+std::optional<WideString> CPDF_PageLabel::GetLabel(int page_index) const {
+  if (!doc_) {
     return std::nullopt;
+  }
 
-  if (nPage < 0 || nPage >= m_pDocument->GetPageCount())
+  if (page_index < 0 || page_index >= doc_->GetPageCount()) {
     return std::nullopt;
+  }
 
-  const CPDF_Dictionary* pPDFRoot = m_pDocument->GetRoot();
-  if (!pPDFRoot)
+  const CPDF_Dictionary* root_dict = doc_->GetRoot();
+  if (!root_dict) {
     return std::nullopt;
+  }
 
-  RetainPtr<const CPDF_Dictionary> pLabels = pPDFRoot->GetDictFor("PageLabels");
-  if (!pLabels)
+  RetainPtr<const CPDF_Dictionary> labels_dict =
+      root_dict->GetDictFor("PageLabels");
+  if (!labels_dict) {
     return std::nullopt;
+  }
 
-  CPDF_NumberTree numberTree(std::move(pLabels));
-  RetainPtr<const CPDF_Object> pValue;
-  int n = nPage;
+  CPDF_NumberTree number_tree(std::move(labels_dict));
+  RetainPtr<const CPDF_Object> label_value;
+  int n = page_index;
   while (n >= 0) {
-    pValue = numberTree.LookupValue(n);
-    if (pValue)
+    label_value = number_tree.LookupValue(n);
+    if (label_value) {
       break;
+    }
     n--;
   }
 
-  if (pValue) {
-    pValue = pValue->GetDirect();
-    if (const CPDF_Dictionary* pLabel = pValue->AsDictionary()) {
+  if (label_value) {
+    label_value = label_value->GetDirect();
+    if (const CPDF_Dictionary* label_dict = label_value->AsDictionary()) {
       WideString label;
-      if (pLabel->KeyExist("P"))
-        label += pLabel->GetUnicodeTextFor("P");
+      if (label_dict->KeyExist("P")) {
+        label += label_dict->GetUnicodeTextFor("P");
+      }
 
-      ByteString bsNumberingStyle = pLabel->GetByteStringFor("S", ByteString());
-      int nLabelNum = nPage - n + pLabel->GetIntegerFor("St", 1);
-      WideString wsNumPortion = GetLabelNumPortion(nLabelNum, bsNumberingStyle);
-      label += wsNumPortion;
+      ByteString style = label_dict->GetByteStringFor("S", ByteString());
+      int label_number = page_index - n + label_dict->GetIntegerFor("St", 1);
+      label += GetLabelNumPortion(label_number, style);
       return label;
     }
   }
-  return WideString::FormatInteger(nPage + 1);
+  return WideString::FormatInteger(page_index + 1);
 }

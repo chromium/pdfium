@@ -16,13 +16,13 @@ class CPDF_Document;
 
 class CPDF_PageLabel {
  public:
-  explicit CPDF_PageLabel(CPDF_Document* pDocument);
+  explicit CPDF_PageLabel(CPDF_Document* doc);
   ~CPDF_PageLabel();
 
-  std::optional<WideString> GetLabel(int nPage) const;
+  std::optional<WideString> GetLabel(int page_index) const;
 
  private:
-  UnownedPtr<CPDF_Document> const m_pDocument;
+  UnownedPtr<CPDF_Document> const doc_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_PAGELABEL_H_
