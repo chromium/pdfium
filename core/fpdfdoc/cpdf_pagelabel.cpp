@@ -18,22 +18,23 @@
 namespace {
 
 WideString MakeRoman(int num) {
-  const auto kArabic = fxcrt::ToArray<const int>(
+  constexpr auto kArabic = fxcrt::ToArray<const int>(
       {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1});
   const auto kRoman = fxcrt::ToArray<const WideStringView>(
       {L"m", L"cm", L"d", L"cd", L"c", L"xc", L"l", L"xl", L"x", L"ix", L"v",
        L"iv", L"i"});
-  const int kMaxNum = 1000000;
+  constexpr int kMaxNum = 1000000;
 
   num %= kMaxNum;
   int i = 0;
   WideString result;
+  result.Reserve(10);  // Should cover most use cases.
   while (num > 0) {
     while (num >= kArabic[i]) {
-      num = num - kArabic[i];
+      num -= kArabic[i];
       result += kRoman[i];
     }
-    i = i + 1;
+    ++i;
   }
   return result;
 }
@@ -43,16 +44,18 @@ WideString MakeLetters(int num) {
     return WideString();
   }
 
-  const int kMaxCount = 1000;
-  const int kLetterCount = 26;
-  --num;
+  constexpr int kMaxCount = 1000;
+  constexpr int kLetterCount = 26;
 
-  int count = num / kLetterCount + 1;
-  count %= kMaxCount;
-  wchar_t ch = L'a' + num % kLetterCount;
+  --num;
+  const int count = (num / kLetterCount + 1) % kMaxCount;
+  const wchar_t ch = L'a' + num % kLetterCount;
+
   WideString result;
-  for (int i = 0; i < count; i++) {
-    result += ch;
+  {
+    auto result_span = result.GetBuffer(count);
+    fxcrt::Fill(result_span, ch);
+    result.ReleaseBuffer(count);
   }
   return result;
 }
@@ -120,19 +123,19 @@ std::optional<WideString> CPDF_PageLabel::GetLabel(int page_index) const {
     n--;
   }
 
-  if (label_value) {
-    label_value = label_value->GetDirect();
-    if (const CPDF_Dictionary* label_dict = label_value->AsDictionary()) {
-      WideString label;
-      if (label_dict->KeyExist("P")) {
-        label += label_dict->GetUnicodeTextFor("P");
-      }
-
-      ByteString style = label_dict->GetByteStringFor("S", ByteString());
-      int label_number = page_index - n + label_dict->GetIntegerFor("St", 1);
-      label += GetLabelNumPortion(label_number, style);
-      return label;
-    }
+  const CPDF_Dictionary* label_dict =
+      label_value ? label_value->GetDirect()->AsDictionary() : nullptr;
+  if (!label_dict) {
+    return WideString::FormatInteger(page_index + 1);
   }
-  return WideString::FormatInteger(page_index + 1);
+
+  WideString label;
+  if (label_dict->KeyExist("P")) {
+    label = label_dict->GetUnicodeTextFor("P");
+  }
+
+  ByteString style = label_dict->GetByteStringFor("S", ByteString());
+  int label_number = page_index - n + label_dict->GetIntegerFor("St", 1);
+  label += GetLabelNumPortion(label_number, style);
+  return label;
 }
