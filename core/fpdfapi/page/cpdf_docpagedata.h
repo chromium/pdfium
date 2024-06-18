@@ -15,6 +15,7 @@
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_codepage_forward.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -88,12 +89,13 @@ class CPDF_DocPageData final : public CPDF_Document::PageDataIface,
 
  private:
   struct HashIccProfileKey {
-    HashIccProfileKey(ByteString digest, uint32_t components);
+    HashIccProfileKey(DataVector<uint8_t> digest, uint32_t components);
+    HashIccProfileKey(const HashIccProfileKey& that);
     ~HashIccProfileKey();
 
     bool operator<(const HashIccProfileKey& other) const;
 
-    ByteString digest;
+    DataVector<uint8_t> digest;
     uint32_t components;
   };
 

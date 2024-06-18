@@ -39,7 +39,7 @@ class CPDF_StreamAcc final : public Retainable {
   uint32_t GetSize() const;
   pdfium::span<const uint8_t> GetSpan() const;
   uint64_t KeyForCache() const;
-  ByteString ComputeDigest() const;
+  DataVector<uint8_t> ComputeDigest() const;
   ByteString GetImageDecoder() const { return m_ImageDecoder; }
   DataVector<uint8_t> DetachData();
 

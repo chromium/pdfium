@@ -84,11 +84,11 @@ uint64_t CPDF_StreamAcc::KeyForCache() const {
   return m_pStream ? m_pStream->KeyForCache() : 0;
 }
 
-ByteString CPDF_StreamAcc::ComputeDigest() const {
-  uint8_t digest[20];
+DataVector<uint8_t> CPDF_StreamAcc::ComputeDigest() const {
+  DataVector<uint8_t> digest(20);
   pdfium::span<const uint8_t> span = GetSpan();
   CRYPT_SHA1Generate(span.data(), span.size(), digest);
-  return UNSAFE_TODO(ByteString::Create(digest, 20));
+  return digest;
 }
 
 DataVector<uint8_t> CPDF_StreamAcc::DetachData() {

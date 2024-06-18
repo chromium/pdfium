@@ -178,9 +178,13 @@ CPDF_DocPageData::~CPDF_DocPageData() {
   }
 }
 
-CPDF_DocPageData::HashIccProfileKey::HashIccProfileKey(ByteString digest,
-                                                       uint32_t components)
+CPDF_DocPageData::HashIccProfileKey::HashIccProfileKey(
+    DataVector<uint8_t> digest,
+    uint32_t components)
     : digest(std::move(digest)), components(components) {}
+
+CPDF_DocPageData::HashIccProfileKey::HashIccProfileKey(
+    const HashIccProfileKey& that) = default;
 
 CPDF_DocPageData::HashIccProfileKey::~HashIccProfileKey() = default;
 
