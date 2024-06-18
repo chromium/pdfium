@@ -201,8 +201,7 @@ TEST_F(PageLabelTest, GetLabel) {
   EXPECT_THAT(page_label()->GetLabel(10001), Eq(std::nullopt));
 }
 
-// TODO(crbug.com/347268873): Enable this test once GetLabel() is fast enough.
-TEST_F(PageLabelTest, DISABLED_GetLabelPerf) {
+TEST_F(PageLabelTest, GetLabelPerf) {
   for (int i = 0; i < 10001; ++i) {
     page_label()->GetLabel(i);
   }
