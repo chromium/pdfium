@@ -6,15 +6,14 @@
 
 #include "core/fxge/cfx_glyphcache.h"
 
-#include <stdarg.h>
-
+#include <initializer_list>
 #include <memory>
 #include <utility>
 
 #include "build/build_config.h"
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
+#include "core/fxcrt/span.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_glyphbitmap.h"
@@ -43,30 +42,41 @@ namespace {
 
 constexpr uint32_t kInvalidGlyphIndex = static_cast<uint32_t>(-1);
 
-struct UniqueKeyGen {
-  void Generate(int count, ...);
+class UniqueKeyGen {
+ public:
+  UniqueKeyGen(const CFX_Font* pFont,
+               const CFX_Matrix& matrix,
+               int dest_width,
+               int anti_alias,
+               bool bNative);
 
-  int key_len_;
-  char key_[128];
+  pdfium::span<const uint8_t> span() const;
+
+ private:
+  void Initialize(std::initializer_list<const int> args);
+
+  size_t key_len_;
+  uint32_t key_[32];
 };
 
-void UniqueKeyGen::Generate(int count, ...) {
-  va_list argList;
-  va_start(argList, count);
-  for (int i = 0; i < count; i++) {
-    int p = va_arg(argList, int);
-    UNSAFE_TODO(reinterpret_cast<uint32_t*>(key_)[i] = p);
+void UniqueKeyGen::Initialize(std::initializer_list<const int32_t> args) {
+  auto key_span = pdfium::make_span(key_);
+  for (const auto& arg : args) {
+    key_span.front() = arg;
+    key_span = key_span.subspan(1);
   }
-  va_end(argList);
-  key_len_ = count * sizeof(uint32_t);
+  key_len_ = args.size();
 }
 
-void GenKey(UniqueKeyGen* pKeyGen,
-            const CFX_Font* pFont,
-            const CFX_Matrix& matrix,
-            int dest_width,
-            int anti_alias,
-            bool bNative) {
+pdfium::span<const uint8_t> UniqueKeyGen::span() const {
+  return pdfium::as_bytes(pdfium::make_span(key_).first(key_len_));
+}
+
+UniqueKeyGen::UniqueKeyGen(const CFX_Font* pFont,
+                           const CFX_Matrix& matrix,
+                           int dest_width,
+                           int anti_alias,
+                           bool bNative) {
   int nMatrixA = static_cast<int>(matrix.a * 10000);
   int nMatrixB = static_cast<int>(matrix.b * 10000);
   int nMatrixC = static_cast<int>(matrix.c * 10000);
@@ -75,28 +85,26 @@ void GenKey(UniqueKeyGen* pKeyGen,
 #if BUILDFLAG(IS_APPLE)
   if (bNative) {
     if (pFont->GetSubstFont()) {
-      pKeyGen->Generate(10, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                        anti_alias, pFont->GetSubstFont()->m_Weight,
-                        pFont->GetSubstFont()->m_ItalicAngle,
-                        pFont->IsVertical(), 3);
+      Initialize({nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
+                  anti_alias, pFont->GetSubstFont()->m_Weight,
+                  pFont->GetSubstFont()->m_ItalicAngle, pFont->IsVertical(),
+                  3});
     } else {
-      pKeyGen->Generate(7, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                        anti_alias, 3);
+      Initialize(
+          {nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width, anti_alias, 3});
     }
     return;
   }
-#else
-  CHECK(!bNative);
 #endif
 
+  CHECK(!bNative);
   if (pFont->GetSubstFont()) {
-    pKeyGen->Generate(9, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                      anti_alias, pFont->GetSubstFont()->m_Weight,
-                      pFont->GetSubstFont()->m_ItalicAngle,
-                      pFont->IsVertical());
+    Initialize({nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width, anti_alias,
+                pFont->GetSubstFont()->m_Weight,
+                pFont->GetSubstFont()->m_ItalicAngle, pFont->IsVertical()});
   } else {
-    pKeyGen->Generate(6, nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width,
-                      anti_alias);
+    Initialize(
+        {nMatrixA, nMatrixB, nMatrixC, nMatrixD, dest_width, anti_alias});
   }
 }
 
@@ -154,15 +162,13 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
   if (glyph_index == kInvalidGlyphIndex)
     return nullptr;
 
-  UniqueKeyGen keygen;
 #if BUILDFLAG(IS_APPLE)
   const bool bNative = text_options->native_text;
 #else
   const bool bNative = false;
 #endif
-  GenKey(&keygen, pFont, matrix, dest_width, anti_alias, bNative);
-  auto FaceGlyphsKey =
-      UNSAFE_TODO(ByteString::Create(keygen.key_, keygen.key_len_));
+  UniqueKeyGen keygen(pFont, matrix, dest_width, anti_alias, bNative);
+  auto FaceGlyphsKey = ByteString(ByteStringView(keygen.span()));
 
 #if BUILDFLAG(IS_APPLE)
   const bool bDoLookUp =
@@ -206,9 +212,9 @@ const CFX_GlyphBitmap* CFX_GlyphCache::LoadGlyphBitmap(
       return pResult;
     }
   }
-  GenKey(&keygen, pFont, matrix, dest_width, anti_alias, /*bNative=*/false);
-  auto FaceGlyphsKey2 =
-      UNSAFE_TODO(ByteString::Create(keygen.key_, keygen.key_len_));
+  UniqueKeyGen keygen2(pFont, matrix, dest_width, anti_alias,
+                       /*bNative=*/false);
+  auto FaceGlyphsKey2 = ByteString(ByteStringView(keygen2.span()));
   text_options->native_text = false;
   return LookUpGlyphBitmap(pFont, matrix, FaceGlyphsKey2, glyph_index,
                            bFontStyle, dest_width, anti_alias);
