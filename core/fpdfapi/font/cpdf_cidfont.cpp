@@ -326,16 +326,18 @@ wchar_t CPDF_CIDFont::GetUnicodeFromCharCode(uint32_t charcode) const {
     return m_pCID2UnicodeMap->UnicodeFromCID(CIDFromCharCode(charcode));
 
 #if BUILDFLAG(IS_WIN)
-  wchar_t unicode;
-  int charsize = 1;
-  if (charcode > 255) {
-    charcode = (charcode % 256) * 256 + (charcode / 256);
-    charsize = 2;
+  uint8_t sequence[2] = {};
+  const int charsize = charcode < 256 ? 1 : 2;
+  if (charsize == 1) {
+    sequence[0] = charcode;
+  } else {
+    sequence[0] = charcode / 256;
+    sequence[1] = charcode % 256;
   }
+  wchar_t unicode;
   size_t ret = FX_MultiByteToWideChar(
       kCharsetCodePages[static_cast<size_t>(m_pCMap->GetCoding())],
-      UNSAFE_TODO(ByteStringView::Create(
-          reinterpret_cast<const char*>(&charcode), charsize)),
+      ByteStringView(pdfium::make_span(sequence).first(charsize)),
       pdfium::span_from_ref(unicode));
   return ret == 1 ? unicode : 0;
 #else
