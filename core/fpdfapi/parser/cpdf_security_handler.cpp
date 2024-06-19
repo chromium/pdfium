@@ -677,8 +677,10 @@ void CPDF_SecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict) {
 
   // In ISO 32000 Supplement for ExtensionLevel 3, Algorithm 3.10 says bytes 12
   // to 15 should be random data.
-  auto random_span = pdfium::make_span(buf).subspan(12, 4);
-  FX_Random_GenerateMT(fxcrt::reinterpret_span<uint32_t>(random_span));
+  uint32_t random_value;
+  FX_Random_GenerateMT(pdfium::span_from_ref(random_value));
+  fxcrt::spancpy(pdfium::make_span(buf).subspan(12, 4),
+                 pdfium::byte_span_from_ref(random_value));
 
   CRYPT_aes_context aes = {};
   CRYPT_AESSetKey(&aes, m_EncryptKey.data(), m_EncryptKey.size());

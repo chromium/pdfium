@@ -21,7 +21,6 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_stream.h"
-#include "core/fxcrt/span_util.h"
 
 // Indexed by 8-bit character code, contains either:
 //   'W' - for whitespace: NUL, TAB, CR, LF, FF, SPACE, 0x80, 0xff
@@ -244,7 +243,7 @@ std::ostream& operator<<(std::ostream& buf, const CPDF_Object* pObj) {
       buf << p->GetDict().Get() << "stream\r\n";
       auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(p));
       pAcc->LoadAllDataRaw();
-      auto span = fxcrt::reinterpret_span<const char>(pAcc->GetSpan());
+      auto span = pdfium::as_chars(pAcc->GetSpan());
       buf.write(span.data(), span.size());
       buf << "\r\nendstream";
       break;

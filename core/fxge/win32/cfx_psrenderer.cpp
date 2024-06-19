@@ -913,7 +913,7 @@ void CFX_PSRenderer::WritePSBinary(pdfium::span<const uint8_t> data) {
   DataVector<uint8_t> encoded_data = m_pEncoderIface->pA85EncodeFunc(data);
   pdfium::span<const uint8_t> result =
       encoded_data.empty() ? data : encoded_data;
-  auto chars = fxcrt::reinterpret_span<const char>(result);
+  auto chars = pdfium::as_chars(result);
   m_Output.write(chars.data(), chars.size());
 }
 

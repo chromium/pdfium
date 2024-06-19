@@ -13,7 +13,7 @@ StringWriteStream::StringWriteStream() = default;
 StringWriteStream::~StringWriteStream() = default;
 
 bool StringWriteStream::WriteBlock(pdfium::span<const uint8_t> buffer) {
-  auto chars = fxcrt::reinterpret_span<const char>(buffer);
+  auto chars = pdfium::as_chars(buffer);
   stream_.write(chars.data(), chars.size());
   return true;
 }

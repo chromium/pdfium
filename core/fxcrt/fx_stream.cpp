@@ -62,8 +62,7 @@ bool IFX_WriteStream::WriteDWord(uint32_t i) {
 bool IFX_WriteStream::WriteFilesize(FX_FILESIZE size) {
   char buf[20] = {};
   FXSYS_i64toa(size, buf, 10);
-  auto buf_span = fxcrt::reinterpret_span<uint8_t>(pdfium::make_span(buf));
-  return WriteBlock(buf_span.first(strlen(buf)));
+  return WriteBlock(pdfium::as_writable_byte_span(buf).first(strlen(buf)));
 }
 
 // static
