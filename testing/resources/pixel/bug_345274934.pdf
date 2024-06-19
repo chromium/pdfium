@@ -1,0 +1,77 @@
+%PDF-1.7
+% ò¤ô
+1 0 obj <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+2 0 obj <<
+  /Type /Pages
+  /MediaBox [0 0 200 300]
+  /Count 1
+  /Kids [4 0 R]
+>>
+endobj
+% Object 3 0 is a free object, so there is no content stream.
+4 0 obj <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 3 0 R
+>>
+endobj
+5 0 obj <<
+  /Type /XRef
+  /Filter /ASCIIHexDecode
+  /Length 45
+  /Root 1 0 R
+  /Size 5
+  /W [1 1 1]
+>>
+stream
+00 00 00
+01 0F 00
+01 44 00
+00 00 00
+01 DB 00
+endstream
+endobj
+startxref
+288
+%%EOF
+3 0 obj <<
+  /Length 188
+>>
+stream
+q
+0 0 0 rg
+0 290 10 10 re B*
+10 150 50 30 re B*
+0 0 1 rg
+190 290 10 10 re B*
+70 232 50 30 re B*
+0 1 0 rg
+190 0 10 10 re B*
+130 150 50 30 re B*
+1 0 0 rg
+0 0 10 10 re B*
+70 67 50 30 re B*
+Q
+endstream
+endobj
+5 0 obj <<
+  /Type /XRef
+  /Filter /ASCIIHexDecode
+  /Index [3 1]
+  /Length 11
+  /Prev 288
+  /Root 1 0 R
+  /Size 5
+  /W [1 2 1]
+>>
+stream
+01 01E1 00
+endstream
+endobj
+startxref
+721
+%%EOF
