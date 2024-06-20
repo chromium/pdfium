@@ -15,7 +15,6 @@
 #include <vector>
 
 #include "core/fxcodec/jpx/jpx_decode_utils.h"
-#include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/ptr_util.h"
@@ -468,9 +467,6 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
   if (!opj_setup_decoder(m_Codec.get(), &m_Parameters)) {
     return false;
   }
-
-  // For https://crbug.com/42270564
-  CHECK(opj_decoder_set_strict_mode(m_Codec.get(), false));
 
   opj_image_t* pTempImage = nullptr;
   if (!opj_read_header(m_Stream.get(), m_Codec.get(), &pTempImage)) {
