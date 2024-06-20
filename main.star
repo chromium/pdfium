@@ -578,6 +578,10 @@ luci.cq_group(
         transient_failure_weight = 1,
         timeout_weight = 2,
     ),
+    user_limit_default = cq.user_limit(
+        name = "default-limit",
+        run = cq.run_limits(max_active = 4),
+    ),
     verifiers = [
         luci.cq_tryjob_verifier(
             builder = "pdfium:try/pdfium_analysis",
