@@ -314,8 +314,7 @@ CXFA_FMLexer::Token CXFA_FMLexer::AdvanceForNumber() {
   // This will set end to the character after the end of the number.
   size_t used_length = 0;
   if (m_nCursor < m_spInput.size()) {
-    UNSAFE_TODO(FXSYS_wcstof(&m_spInput[m_nCursor],
-                             m_spInput.size() - m_nCursor, &used_length));
+    FXSYS_wcstof(WideStringView(m_spInput.subspan(m_nCursor)), &used_length);
   }
   size_t end = m_nCursor + used_length;
   if (used_length == 0 ||

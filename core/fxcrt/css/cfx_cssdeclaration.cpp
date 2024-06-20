@@ -36,8 +36,7 @@ std::optional<CFX_CSSNumber> ParseCSSNumber(WideStringView view) {
   DCHECK(!view.IsEmpty());
 
   size_t nUsedLen = 0;
-  float value = UNSAFE_TODO(
-      FXSYS_wcstof(view.unterminated_c_str(), view.GetLength(), &nUsedLen));
+  float value = FXSYS_wcstof(view, &nUsedLen);
   if (nUsedLen == 0 || !isfinite(value)) {
     return std::nullopt;
   }

@@ -29,9 +29,9 @@ struct tm* (*g_localtime_func)(const time_t*) = DefaultLocaltimeFunction;
 
 }  // namespace
 
-float FXSYS_wcstof(const wchar_t* pwsStr, size_t nLength, size_t* pUsedLen) {
-  // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE in header.
-  auto copied = UNSAFE_BUFFERS(WideString::Create(pwsStr, nLength));
+float FXSYS_wcstof(WideStringView pwsStr, size_t* pUsedLen) {
+  // Force NUL-termination via copied buffer.
+  auto copied = WideString(pwsStr);
   wchar_t* endptr = nullptr;
   float result = wcstof(copied.c_str(), &endptr);
   if (result != result) {

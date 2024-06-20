@@ -44,11 +44,10 @@ void CXFA_Measurement::SetString(WideStringView wsMeasure) {
   }
 
   size_t nUsedLen = 0;
-  float fValue = UNSAFE_TODO(FXSYS_wcstof(wsMeasure.unterminated_c_str(),
-                                          wsMeasure.GetLength(), &nUsedLen));
-  if (!isfinite(fValue))
+  float fValue = FXSYS_wcstof(wsMeasure, &nUsedLen);
+  if (!isfinite(fValue)) {
     fValue = 0.0f;
-
+  }
   Set(fValue, GetUnitFromString(wsMeasure.Substr(nUsedLen)));
 }
 
