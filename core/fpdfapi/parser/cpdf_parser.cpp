@@ -914,16 +914,6 @@ void CPDF_Parser::ProcessCrossRefStreamEntry(
     type = ObjectType::kNormal;
   }
 
-  const ObjectType existing_type = GetObjectType(obj_num);
-  if (existing_type == ObjectType::kNull) {
-    const uint32_t offset = GetSecondXRefStreamEntry(entry_span, field_widths);
-    if (pdfium::IsValueInRangeForNumericType<FX_FILESIZE>(offset)) {
-      m_CrossRefTable->AddNormal(obj_num, 0, /*is_object_stream=*/false,
-                                 offset);
-    }
-    return;
-  }
-
   if (type == ObjectType::kFree) {
     const uint32_t gen_num = GetThirdXRefStreamEntry(entry_span, field_widths);
     if (pdfium::IsValueInRangeForNumericType<uint16_t>(gen_num)) {
