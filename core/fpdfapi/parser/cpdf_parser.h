@@ -96,7 +96,6 @@ class CPDF_Parser {
   uint32_t GetLastObjNum() const;
   bool IsValidObjectNumber(uint32_t objnum) const;
   FX_FILESIZE GetObjectPositionOrZero(uint32_t objnum) const;
-  bool IsObjectFreeOrNull(uint32_t objnum) const;
   const RetainPtr<CPDF_SecurityHandler>& GetSecurityHandler() const {
     return m_pSecurityHandler;
   }

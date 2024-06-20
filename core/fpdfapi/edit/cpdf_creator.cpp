@@ -143,8 +143,9 @@ bool CPDF_Creator::WriteIndirectObj(uint32_t objnum, const CPDF_Object* pObj) {
 }
 
 bool CPDF_Creator::WriteOldIndirectObject(uint32_t objnum) {
-  if (m_pParser->IsObjectFreeOrNull(objnum))
+  if (m_pParser->IsObjectFree(objnum)) {
     return true;
+  }
 
   m_ObjectOffsets[objnum] = m_Archive->CurrentOffset();
 
@@ -257,8 +258,9 @@ CPDF_Creator::Stage CPDF_Creator::WriteDoc_Stage1() {
     }
     if (m_IsOriginal && m_pParser->GetLastXRefOffset() == 0) {
       for (uint32_t num = 0; num <= m_pParser->GetLastObjNum(); ++num) {
-        if (m_pParser->IsObjectFreeOrNull(num))
+        if (m_pParser->IsObjectFree(num)) {
           continue;
+        }
 
         m_ObjectOffsets[num] = m_pParser->GetObjectPositionOrZero(num);
       }

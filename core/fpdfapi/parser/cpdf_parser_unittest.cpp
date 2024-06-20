@@ -73,8 +73,6 @@ bool operator==(const CPDF_CrossRefTable::ObjectInfo& lhs,
     case CPDF_CrossRefTable::ObjectType::kCompressed:
       return lhs.archive.obj_num == rhs.archive.obj_num &&
              lhs.archive.obj_index == rhs.archive.obj_index;
-    case CPDF_CrossRefTable::ObjectType::kNull:
-      return false;
   }
 }
 
@@ -94,9 +92,6 @@ std::ostream& operator<<(std::ostream& os,
     case CPDF_CrossRefTable::ObjectType::kCompressed:
       os << "Compressed object, archive obj_num: " << info.archive.obj_num
          << ", archive obj_index: " << info.archive.obj_index;
-      break;
-    case CPDF_CrossRefTable::ObjectType::kNull:
-      os << "Null object";
       break;
   }
   os << ", gennum: " << info.gennum << ")";

@@ -22,7 +22,6 @@ class CPDF_CrossRefTable {
     kFree = 0,
     kNormal = 1,
     kCompressed = 2,
-    kNull = 3,  // Higher values reserved, treat all as the null object.
   };
 
   struct ObjectInfo {

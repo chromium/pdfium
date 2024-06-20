@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #include <algorithm>
+#include <optional>
 #include <utility>
 #include <vector>
 
@@ -63,7 +64,8 @@ struct CrossRefStreamIndexEntry {
   uint32_t obj_count;
 };
 
-ObjectType GetObjectTypeFromCrossRefStreamType(uint32_t cross_ref_stream_type) {
+std::optional<ObjectType> GetObjectTypeFromCrossRefStreamType(
+    uint32_t cross_ref_stream_type) {
   switch (cross_ref_stream_type) {
     case 0:
       return ObjectType::kFree;
@@ -72,7 +74,7 @@ ObjectType GetObjectTypeFromCrossRefStreamType(uint32_t cross_ref_stream_type) {
     case 2:
       return ObjectType::kCompressed;
     default:
-      return ObjectType::kNull;
+      return std::nullopt;
   }
 }
 
@@ -185,18 +187,6 @@ ObjectType CPDF_Parser::GetObjectType(uint32_t objnum) const {
   DCHECK(IsValidObjectNumber(objnum));
   const auto* info = m_CrossRefTable->GetObjectInfo(objnum);
   return info ? info->type : ObjectType::kFree;
-}
-
-bool CPDF_Parser::IsObjectFreeOrNull(uint32_t objnum) const {
-  switch (GetObjectType(objnum)) {
-    case ObjectType::kFree:
-    case ObjectType::kNull:
-      return true;
-    case ObjectType::kNormal:
-    case ObjectType::kCompressed:
-      return false;
-  }
-  NOTREACHED_NORETURN();
 }
 
 bool CPDF_Parser::IsObjectFree(uint32_t objnum) const {
@@ -656,9 +646,6 @@ void CPDF_Parser::MergeCrossRefObjectsData(
         m_CrossRefTable->AddCompressed(obj.obj_num, obj.info.archive.obj_num,
                                        obj.info.archive.obj_index);
         break;
-      case ObjectType::kNull:
-        // Ignored.
-        break;
     }
   }
 }
@@ -903,10 +890,12 @@ void CPDF_Parser::ProcessCrossRefStreamEntry(
   if (field_widths[0]) {
     const uint32_t cross_ref_stream_obj_type =
         GetFirstXRefStreamEntry(entry_span, field_widths);
-    type = GetObjectTypeFromCrossRefStreamType(cross_ref_stream_obj_type);
-    if (type == ObjectType::kNull) {
+    std::optional<ObjectType> maybe_type =
+        GetObjectTypeFromCrossRefStreamType(cross_ref_stream_obj_type);
+    if (!maybe_type.has_value()) {
       return;
     }
+    type = maybe_type.value();
   } else {
     // Per ISO 32000-1:2008 table 17, use the default value of 1 for the xref
     // stream entry when it is not specified. The `type` assignment is the
