@@ -9,6 +9,7 @@
 #include <stddef.h>
 
 #include <memory>
+#include <utility>
 
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
@@ -124,10 +125,11 @@ class CFX_ExternalFontInfo final : public SystemFontInfoIface {
     unsigned long size = m_pInfo->GetFaceName(m_pInfo, hFont, nullptr, 0);
     if (size == 0)
       return false;
-    char* buffer = FX_Alloc(char, size);
-    size = m_pInfo->GetFaceName(m_pInfo, hFont, buffer, size);
-    *name = UNSAFE_TODO(ByteString::Create(buffer, size));
-    FX_Free(buffer);
+    ByteString result;
+    auto result_span = result.GetBuffer(size);
+    size = m_pInfo->GetFaceName(m_pInfo, hFont, result_span.data(), size);
+    result.ReleaseBuffer(size);
+    *name = std::move(result);
     return true;
   }
 
