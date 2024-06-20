@@ -4,6 +4,7 @@
 
 #include "public/fpdf_annot.h"
 
+#include <array>
 #include <memory>
 #include <sstream>
 #include <utility>
@@ -303,25 +304,42 @@ CPDF_FormField* GetFormField(FPDF_FORMHANDLE hHandle, FPDF_ANNOTATION annot) {
   return pPDFForm->GetFieldByDict(pAnnotDict);
 }
 
-const CPDFSDK_Widget* GetRadioButtonOrCheckBoxWidget(FPDF_FORMHANDLE hHandle,
-                                                     FPDF_ANNOTATION annot) {
-  const CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
-  if (!pAnnotDict)
-    return nullptr;
-
-  CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle);
-  if (!pForm)
-    return nullptr;
-
-  CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
-  CPDF_FormField* pFormField = pPDFForm->GetFieldByDict(pAnnotDict);
-  if (!pFormField || (pFormField->GetType() != CPDF_FormField::kCheckBox &&
-                      pFormField->GetType() != CPDF_FormField::kRadioButton)) {
+// If `allowed_types` is empty, then match all types.
+const CPDFSDK_Widget* GetWidgetOfTypes(
+    FPDF_FORMHANDLE hHandle,
+    FPDF_ANNOTATION annot,
+    pdfium::span<const CPDF_FormField::Type> allowed_types) {
+  const CPDF_Dictionary* annot_dict = GetAnnotDictFromFPDFAnnotation(annot);
+  if (!annot_dict) {
     return nullptr;
   }
 
-  CPDF_FormControl* pFormControl = pPDFForm->GetControlByDict(pAnnotDict);
-  return pFormControl ? pForm->GetWidget(pFormControl) : nullptr;
+  CPDFSDK_InteractiveForm* form = FormHandleToInteractiveForm(hHandle);
+  if (!form) {
+    return nullptr;
+  }
+
+  CPDF_InteractiveForm* pdf_form = form->GetInteractiveForm();
+  CPDF_FormField* form_field = pdf_form->GetFieldByDict(annot_dict);
+  if (!form_field) {
+    return nullptr;
+  }
+
+  if (!allowed_types.empty()) {
+    if (!pdfium::Contains(allowed_types, form_field->GetType())) {
+      return nullptr;
+    }
+  }
+
+  CPDF_FormControl* form_control = pdf_form->GetControlByDict(annot_dict);
+  return form_control ? form->GetWidget(form_control) : nullptr;
+}
+
+const CPDFSDK_Widget* GetRadioButtonOrCheckBoxWidget(FPDF_FORMHANDLE handle,
+                                                     FPDF_ANNOTATION annot) {
+  constexpr std::array<CPDF_FormField::Type, 2> kAllowedTypes = {
+      CPDF_FormField::kCheckBox, CPDF_FormField::kRadioButton};
+  return GetWidgetOfTypes(handle, annot, kAllowedTypes);
 }
 
 RetainPtr<const CPDF_Array> GetInkList(FPDF_ANNOTATION annot) {
@@ -1342,27 +1360,16 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFAnnot_GetFontSize(FPDF_FORMHANDLE hHandle,
                       FPDF_ANNOTATION annot,
                       float* value) {
-  if (!value)
+  if (!value) {
     return false;
+  }
 
-  CPDFSDK_InteractiveForm* pForm = FormHandleToInteractiveForm(hHandle);
-  if (!pForm)
+  const CPDFSDK_Widget* widget = GetWidgetOfTypes(hHandle, annot, {});
+  if (!widget) {
     return false;
+  }
 
-  const CPDF_Dictionary* pAnnotDict = GetAnnotDictFromFPDFAnnotation(annot);
-  if (!pAnnotDict)
-    return false;
-
-  CPDF_InteractiveForm* pPDFForm = pForm->GetInteractiveForm();
-  CPDF_FormControl* pFormControl = pPDFForm->GetControlByDict(pAnnotDict);
-  if (!pFormControl)
-    return false;
-
-  CPDFSDK_Widget* pWidget = pForm->GetWidget(pFormControl);
-  if (!pWidget)
-    return false;
-
-  *value = pWidget->GetFontSize();
+  *value = widget->GetFontSize();
   return true;
 }
 
