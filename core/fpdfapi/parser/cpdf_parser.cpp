@@ -645,7 +645,7 @@ void CPDF_Parser::MergeCrossRefObjectsData(
     switch (obj.info.type) {
       case ObjectType::kFree:
         if (obj.info.gennum > 0)
-          m_CrossRefTable->SetFree(obj.obj_num);
+          m_CrossRefTable->SetFree(obj.obj_num, obj.info.gennum);
         break;
       case ObjectType::kNormal:
         m_CrossRefTable->AddNormal(obj.obj_num, obj.info.gennum,
@@ -925,7 +925,10 @@ void CPDF_Parser::ProcessCrossRefStreamEntry(
   }
 
   if (type == ObjectType::kFree) {
-    m_CrossRefTable->SetFree(obj_num);
+    const uint32_t gen_num = GetThirdXRefStreamEntry(entry_span, field_widths);
+    if (pdfium::IsValueInRangeForNumericType<uint16_t>(gen_num)) {
+      m_CrossRefTable->SetFree(obj_num, gen_num);
+    }
     return;
   }
 

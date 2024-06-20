@@ -73,12 +73,12 @@ void CPDF_CrossRefTable::AddNormal(uint32_t obj_num,
   info.pos = pos;
 }
 
-void CPDF_CrossRefTable::SetFree(uint32_t obj_num) {
+void CPDF_CrossRefTable::SetFree(uint32_t obj_num, uint16_t gen_num) {
   CHECK_LT(obj_num, CPDF_Parser::kMaxObjectNumber);
 
   auto& info = objects_info_[obj_num];
   info.type = ObjectType::kFree;
-  info.gennum = 0xFFFF;
+  info.gennum = gen_num;
   info.pos = 0;
 }
 
