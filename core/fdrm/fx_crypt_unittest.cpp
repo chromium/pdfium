@@ -179,8 +179,7 @@ TEST(FXCRYPT, ContextWithStringData) {
 TEST(FXCRYPT, Sha1Empty) {
   static const char kInput[] = "";
   uint8_t actual[20];
-  CRYPT_SHA1Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
-                     actual);
+  CRYPT_SHA1Generate(ByteStringView(kInput).unsigned_span(), actual);
   EXPECT_THAT(actual, ElementsAre(0xda, 0x39, 0xa3, 0xee, 0x5e, 0x6b, 0x4b,
                                   0x0d, 0x32, 0x55, 0xbf, 0xef, 0x95, 0x60,
                                   0x18, 0x90, 0xaf, 0xd8, 0x07, 0x09));
@@ -191,8 +190,7 @@ TEST(FXCRYPT, Sha1TestA1) {
   // Example A.1 from FIPS 180-2: one-block message.
   static const char kInput[] = "abc";
   uint8_t actual[20];
-  CRYPT_SHA1Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
-                     actual);
+  CRYPT_SHA1Generate(ByteStringView(kInput).unsigned_span(), actual);
   EXPECT_THAT(actual, ElementsAre(0xa9, 0x99, 0x3e, 0x36, 0x47, 0x06, 0x81,
                                   0x6a, 0xba, 0x3e, 0x25, 0x71, 0x78, 0x50,
                                   0xc2, 0x6c, 0x9c, 0xd0, 0xd8, 0x9d));
@@ -203,8 +201,7 @@ TEST(FXCRYPT, Sha1TestA2) {
   static const char kInput[] =
       "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
   uint8_t actual[20];
-  CRYPT_SHA1Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
-                     actual);
+  CRYPT_SHA1Generate(ByteStringView(kInput).unsigned_span(), actual);
   EXPECT_THAT(actual, ElementsAre(0x84, 0x98, 0x3e, 0x44, 0x1c, 0x3b, 0xd2,
                                   0x6e, 0xba, 0xae, 0x4a, 0xa1, 0xf9, 0x51,
                                   0x29, 0xe5, 0xe5, 0x46, 0x70, 0xf1));
@@ -213,8 +210,7 @@ TEST(FXCRYPT, Sha1TestA2) {
 TEST(FXCRYPT, Sha256Empty) {
   static const char kInput[] = "";
   uint8_t actual[32];
-  CRYPT_SHA256Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
-                       actual);
+  CRYPT_SHA256Generate(ByteStringView(kInput).unsigned_span(), actual);
   EXPECT_THAT(actual,
               ElementsAre(0xe3, 0xb0, 0xc4, 0x42, 0x98, 0xfc, 0x1c, 0x14, 0x9a,
                           0xfb, 0xf4, 0xc8, 0x99, 0x6f, 0xb9, 0x24, 0x27, 0xae,
@@ -226,8 +222,7 @@ TEST(FXCRYPT, Sha256TestB1) {
   // Example B.1 from FIPS 180-2: one-block message.
   static const char kInput[] = "abc";
   uint8_t actual[32];
-  CRYPT_SHA256Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
-                       actual);
+  CRYPT_SHA256Generate(ByteStringView(kInput).unsigned_span(), actual);
   EXPECT_THAT(actual,
               ElementsAre(0xba, 0x78, 0x16, 0xbf, 0x8f, 0x01, 0xcf, 0xea, 0x41,
                           0x41, 0x40, 0xde, 0x5d, 0xae, 0x22, 0x23, 0xb0, 0x03,
@@ -240,8 +235,7 @@ TEST(FXCRYPT, Sha256TestB2) {
   static const char kInput[] =
       "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
   uint8_t actual[32];
-  CRYPT_SHA256Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
-                       actual);
+  CRYPT_SHA256Generate(ByteStringView(kInput).unsigned_span(), actual);
   EXPECT_THAT(actual,
               ElementsAre(0x24, 0x8d, 0x6a, 0x61, 0xd2, 0x06, 0x38, 0xb8, 0xe5,
                           0xc0, 0x26, 0x93, 0x0c, 0x3e, 0x60, 0x39, 0xa3, 0x3c,

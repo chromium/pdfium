@@ -28,6 +28,7 @@
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 
 namespace {
 
@@ -39,49 +40,50 @@ const uint8_t kDefaultPasscode[32] = {
 void GetPassCode(const ByteString& password, pdfium::span<uint8_t> output) {
   DCHECK_EQ(sizeof(kDefaultPasscode), output.size());
   size_t len = std::min(password.GetLength(), output.size());
-  size_t remaining = output.size() - len;
-  UNSAFE_TODO({
-    FXSYS_memcpy(output.data(), password.unsigned_str(), len);
-    if (remaining) {
-      FXSYS_memcpy(&output[len], kDefaultPasscode, remaining);
-    }
-  });
+  auto remaining = fxcrt::spancpy(output, password.unsigned_span().first(len));
+  if (!remaining.empty()) {
+    auto default_span = pdfium::make_span(kDefaultPasscode);
+    fxcrt::spancpy(remaining, default_span.first(remaining.size()));
+  }
 }
 
 void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
                     const ByteString& password,
-                    uint8_t* key,
-                    size_t keylen,
+                    pdfium::span<uint8_t> key,
                     bool ignore_metadata,
                     const ByteString& file_id) {
+  fxcrt::Fill(key, 0);
+
   uint8_t passcode[32];
   GetPassCode(password, passcode);
+
   CRYPT_md5_context md5 = CRYPT_MD5Start();
   CRYPT_MD5Update(&md5, passcode);
+
   ByteString okey = pEncrypt->GetByteStringFor("O");
   CRYPT_MD5Update(&md5, okey.unsigned_span());
+
   uint32_t perm = pEncrypt->GetIntegerFor("P");
   CRYPT_MD5Update(&md5, pdfium::as_bytes(pdfium::span_from_ref(perm)));
-  if (!file_id.IsEmpty())
+  if (!file_id.IsEmpty()) {
     CRYPT_MD5Update(&md5, file_id.unsigned_span());
+  }
   const bool is_revision_3_or_greater = pEncrypt->GetIntegerFor("R") >= 3;
   if (!ignore_metadata && is_revision_3_or_greater &&
       !pEncrypt->GetBooleanFor("EncryptMetadata", true)) {
     constexpr uint32_t tag = 0xFFFFFFFF;
-    CRYPT_MD5Update(&md5, pdfium::as_bytes(pdfium::span_from_ref(tag)));
+    CRYPT_MD5Update(&md5, pdfium::byte_span_from_ref(tag));
   }
   uint8_t digest[16];
   CRYPT_MD5Finish(&md5, digest);
-  size_t copy_len = std::min(keylen, sizeof(digest));
+  size_t copy_len = std::min(key.size(), sizeof(digest));
+  auto digest_span = pdfium::make_span(digest).first(copy_len);
   if (is_revision_3_or_greater) {
     for (int i = 0; i < 50; i++) {
-      CRYPT_MD5Generate(pdfium::make_span(digest).first(copy_len), digest);
+      CRYPT_MD5Generate(digest_span, digest);
     }
   }
-  UNSAFE_TODO({
-    FXSYS_memset(key, 0, keylen);
-    FXSYS_memcpy(key, digest, copy_len);
-  });
+  fxcrt::spancpy(key, digest_span);
 }
 
 bool IsValidKeyLengthForCipher(CPDF_CryptoHandler::Cipher cipher,
@@ -115,11 +117,11 @@ void Revision6_Hash(const ByteString& password,
                     uint8_t* hash) {
   CRYPT_sha2_context sha;
   CRYPT_SHA256Start(&sha);
-  CRYPT_SHA256Update(&sha, password.unsigned_str(), password.GetLength());
-  CRYPT_SHA256Update(&sha, salt, 8);
-  if (vector)
-    CRYPT_SHA256Update(&sha, vector, 48);
-
+  CRYPT_SHA256Update(&sha, password.unsigned_span());
+  CRYPT_SHA256Update(&sha, UNSAFE_TODO(pdfium::make_span(salt, 8)));
+  if (vector) {
+    CRYPT_SHA256Update(&sha, UNSAFE_TODO(pdfium::make_span(vector, 48)));
+  }
   uint8_t digest[32];
   CRYPT_SHA256Finish(&sha, digest);
 
@@ -171,8 +173,7 @@ void Revision6_Hash(const ByteString& password,
     inter_digest.resize(block_size);
     input = inter_digest.data();
     if (iHash == 0) {
-      CRYPT_SHA256Generate(encrypted_output_span.data(),
-                           encrypted_output_span.size(), input);
+      CRYPT_SHA256Generate(encrypted_output_span, inter_digest);
     } else if (iHash == 1) {
       CRYPT_SHA384Generate(encrypted_output_span.data(),
                            encrypted_output_span.size(), input);
@@ -349,24 +350,26 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
                    bOwner ? ukey.unsigned_str() : nullptr, digest);
   } else {
     CRYPT_SHA256Start(&sha);
-    CRYPT_SHA256Update(&sha, password.unsigned_str(), password.GetLength());
-    CRYPT_SHA256Update(&sha, UNSAFE_TODO(pkey + 32), 8);
-    if (bOwner)
-      CRYPT_SHA256Update(&sha, ukey.unsigned_str(), 48);
+    CRYPT_SHA256Update(&sha, password.unsigned_span());
+    CRYPT_SHA256Update(&sha, UNSAFE_TODO(pdfium::make_span(pkey + 32, 8)));
+    if (bOwner) {
+      CRYPT_SHA256Update(&sha, ukey.unsigned_span().first(48u));
+    }
     CRYPT_SHA256Finish(&sha, digest);
   }
   if (memcmp(digest, pkey, 32) != 0)
     return false;
 
   if (m_Revision >= 6) {
-    Revision6_Hash(password, UNSAFE_TODO((const uint8_t*)pkey + 40),
+    Revision6_Hash(password, UNSAFE_TODO(pkey + 40),
                    bOwner ? ukey.unsigned_str() : nullptr, digest);
   } else {
     CRYPT_SHA256Start(&sha);
-    CRYPT_SHA256Update(&sha, password.unsigned_str(), password.GetLength());
-    CRYPT_SHA256Update(&sha, UNSAFE_TODO(pkey + 40), 8);
-    if (bOwner)
-      CRYPT_SHA256Update(&sha, ukey.unsigned_str(), 48);
+    CRYPT_SHA256Update(&sha, password.unsigned_span());
+    CRYPT_SHA256Update(&sha, UNSAFE_TODO(pdfium::make_span(pkey + 40, 8)));
+    if (bOwner) {
+      CRYPT_SHA256Update(&sha, ukey.unsigned_span().first(48u));
+    }
     CRYPT_SHA256Finish(&sha, digest);
   }
   ByteString ekey = m_pEncryptDict->GetByteStringFor(bOwner ? "OE" : "UE");
@@ -447,7 +450,8 @@ bool CPDF_SecurityHandler::CheckPasswordImpl(const ByteString& password,
 
 bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
                                              bool bIgnoreEncryptMeta) {
-  CalcEncryptKey(m_pEncryptDict.Get(), password, m_EncryptKey.data(), m_KeyLen,
+  CalcEncryptKey(m_pEncryptDict.Get(), password,
+                 pdfium::make_span(m_EncryptKey).first(m_KeyLen),
                  bIgnoreEncryptMeta, m_FileId);
   ByteString ukey =
       m_pEncryptDict ? m_pEncryptDict->GetByteStringFor("U") : ByteString();
@@ -570,9 +574,8 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
     FX_Random_GenerateMT(random);
     CRYPT_sha2_context sha;
     CRYPT_SHA256Start(&sha);
-    CRYPT_SHA256Update(&sha, reinterpret_cast<uint8_t*>(random),
-                       sizeof(random));
-    CRYPT_SHA256Finish(&sha, m_EncryptKey.data());
+    CRYPT_SHA256Update(&sha, pdfium::as_bytes(pdfium::make_span(random)));
+    CRYPT_SHA256Finish(&sha, pdfium::make_span(m_EncryptKey));
     AES256_SetPassword(pEncryptDict, password);
     AES256_SetPerms(pEncryptDict);
     return;
@@ -582,8 +585,9 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
   if (pIdArray)
     file_id = pIdArray->GetByteStringAt(0);
 
-  CalcEncryptKey(m_pEncryptDict.Get(), password, m_EncryptKey.data(), key_len,
-                 false, file_id);
+  CalcEncryptKey(m_pEncryptDict.Get(), password,
+                 pdfium::make_span(m_EncryptKey).first(key_len), false,
+                 file_id);
   if (m_Revision < 3) {
     uint8_t tempbuf[32];
     UNSAFE_TODO(
@@ -624,8 +628,10 @@ void CPDF_SecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
                                               const ByteString& password) {
   CRYPT_sha1_context sha;
   CRYPT_SHA1Start(&sha);
-  CRYPT_SHA1Update(&sha, m_EncryptKey.data(), m_EncryptKey.size());
-  CRYPT_SHA1Update(&sha, (uint8_t*)"hello", 5);
+  CRYPT_SHA1Update(&sha, m_EncryptKey);
+  // SAFETY: fixed-length string "hello" contains 5 characters.
+  CRYPT_SHA1Update(
+      &sha, pdfium::as_bytes(UNSAFE_BUFFERS(pdfium::make_span("hello", 5))));
 
   uint8_t digest[20];
   CRYPT_SHA1Finish(&sha, digest);
@@ -636,9 +642,9 @@ void CPDF_SecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
     Revision6_Hash(password, digest, nullptr, digest1);
   } else {
     CRYPT_SHA256Start(&sha2);
-    CRYPT_SHA256Update(&sha2, password.unsigned_str(), password.GetLength());
-    CRYPT_SHA256Update(&sha2, digest, 8);
-    CRYPT_SHA256Finish(&sha2, digest1);
+    CRYPT_SHA256Update(&sha2, password.unsigned_span());
+    CRYPT_SHA256Update(&sha2, pdfium::make_span(digest).first(8u));
+    CRYPT_SHA256Finish(&sha2, pdfium::make_span(digest1).first(32u));
   }
   UNSAFE_TODO(FXSYS_memcpy(digest1 + 32, digest, 16));
   pEncryptDict->SetNewFor<CPDF_String>(
@@ -647,9 +653,9 @@ void CPDF_SecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
     Revision6_Hash(password, UNSAFE_TODO(digest + 8), nullptr, digest1);
   } else {
     CRYPT_SHA256Start(&sha2);
-    CRYPT_SHA256Update(&sha2, password.unsigned_str(), password.GetLength());
-    CRYPT_SHA256Update(&sha2, UNSAFE_TODO(digest + 8), 8);
-    CRYPT_SHA256Finish(&sha2, digest1);
+    CRYPT_SHA256Update(&sha2, password.unsigned_span());
+    CRYPT_SHA256Update(&sha2, pdfium::make_span(digest).subspan(8, 8));
+    CRYPT_SHA256Finish(&sha2, pdfium::make_span(digest1).first(32));
   }
   CRYPT_aes_context aes = {};
   CRYPT_AESSetKey(&aes, digest1, 32);

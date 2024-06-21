@@ -86,8 +86,7 @@ uint64_t CPDF_StreamAcc::KeyForCache() const {
 
 DataVector<uint8_t> CPDF_StreamAcc::ComputeDigest() const {
   DataVector<uint8_t> digest(20);
-  pdfium::span<const uint8_t> span = GetSpan();
-  CRYPT_SHA1Generate(span.data(), span.size(), digest);
+  CRYPT_SHA1Generate(GetSpan(), digest);
   return digest;
 }
 

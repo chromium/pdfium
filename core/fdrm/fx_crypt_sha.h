@@ -28,22 +28,19 @@ struct CRYPT_sha2_context {
 
 void CRYPT_SHA1Start(CRYPT_sha1_context* context);
 void CRYPT_SHA1Update(CRYPT_sha1_context* context,
-                      const uint8_t* data,
-                      uint32_t size);
+                      pdfium::span<const uint8_t> data);
 void CRYPT_SHA1Finish(CRYPT_sha1_context* context,
                       pdfium::span<uint8_t, 20> digest);
-void CRYPT_SHA1Generate(const uint8_t* data,
-                        uint32_t size,
+void CRYPT_SHA1Generate(pdfium::span<const uint8_t> data,
                         pdfium::span<uint8_t, 20> digest);
 
 void CRYPT_SHA256Start(CRYPT_sha2_context* context);
 void CRYPT_SHA256Update(CRYPT_sha2_context* context,
-                        const uint8_t* data,
-                        uint32_t size);
-void CRYPT_SHA256Finish(CRYPT_sha2_context* context, uint8_t digest[32]);
-void CRYPT_SHA256Generate(const uint8_t* data,
-                          uint32_t size,
-                          uint8_t digest[32]);
+                        pdfium::span<const uint8_t> data);
+void CRYPT_SHA256Finish(CRYPT_sha2_context* context,
+                        pdfium::span<uint8_t, 32> digest);
+void CRYPT_SHA256Generate(pdfium::span<const uint8_t> data,
+                          pdfium::span<uint8_t, 32> digest);
 
 void CRYPT_SHA384Start(CRYPT_sha2_context* context);
 void CRYPT_SHA384Update(CRYPT_sha2_context* context,
