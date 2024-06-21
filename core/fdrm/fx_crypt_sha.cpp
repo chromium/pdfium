@@ -428,12 +428,14 @@ void CRYPT_SHA1Finish(CRYPT_sha1_context* context,
   }
 }
 
-void CRYPT_SHA1Generate(pdfium::span<const uint8_t> data,
-                        pdfium::span<uint8_t, 20> digest) {
+DataVector<uint8_t> CRYPT_SHA1Generate(pdfium::span<const uint8_t> data) {
   CRYPT_sha1_context s;
   CRYPT_SHA1Start(&s);
   CRYPT_SHA1Update(&s, data);
+
+  DataVector<uint8_t> digest(20);
   CRYPT_SHA1Finish(&s, digest);
+  return digest;
 }
 
 void CRYPT_SHA256Start(CRYPT_sha2_context* context) {
@@ -492,12 +494,14 @@ void CRYPT_SHA256Finish(CRYPT_sha2_context* context,
   SHA_PUT_UINT32(context->state[7], digest, 28);
 }
 
-void CRYPT_SHA256Generate(pdfium::span<const uint8_t> data,
-                          pdfium::span<uint8_t, 32> digest) {
+DataVector<uint8_t> CRYPT_SHA256Generate(pdfium::span<const uint8_t> data) {
   CRYPT_sha2_context ctx;
   CRYPT_SHA256Start(&ctx);
   CRYPT_SHA256Update(&ctx, data);
+
+  DataVector<uint8_t> digest(32);
   CRYPT_SHA256Finish(&ctx, digest);
+  return digest;
 }
 
 void CRYPT_SHA384Start(CRYPT_sha2_context* context) {
@@ -555,12 +559,14 @@ void CRYPT_SHA384Finish(CRYPT_sha2_context* context,
   SHA_PUT_UINT64(context->state[5], digest, 40);
 }
 
-void CRYPT_SHA384Generate(pdfium::span<const uint8_t> data,
-                          pdfium::span<uint8_t, 48> digest) {
+DataVector<uint8_t> CRYPT_SHA384Generate(pdfium::span<const uint8_t> data) {
   CRYPT_sha2_context context;
   CRYPT_SHA384Start(&context);
   CRYPT_SHA384Update(&context, data);
+
+  DataVector<uint8_t> digest(48);
   CRYPT_SHA384Finish(&context, digest);
+  return digest;
 }
 
 void CRYPT_SHA512Start(CRYPT_sha2_context* context) {
@@ -601,10 +607,12 @@ void CRYPT_SHA512Finish(CRYPT_sha2_context* context,
   SHA_PUT_UINT64(context->state[7], digest, 56);
 }
 
-void CRYPT_SHA512Generate(pdfium::span<const uint8_t> data,
-                          pdfium::span<uint8_t, 64> digest) {
+DataVector<uint8_t> CRYPT_SHA512Generate(pdfium::span<const uint8_t> data) {
   CRYPT_sha2_context context;
   CRYPT_SHA512Start(&context);
   CRYPT_SHA512Update(&context, data);
+
+  DataVector<uint8_t> digest(64);
   CRYPT_SHA512Finish(&context, digest);
+  return digest;
 }

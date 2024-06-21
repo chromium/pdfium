@@ -11,6 +11,7 @@
 
 #include <array>
 
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/span.h"
 
 struct CRYPT_sha1_context {
@@ -31,31 +32,27 @@ void CRYPT_SHA1Update(CRYPT_sha1_context* context,
                       pdfium::span<const uint8_t> data);
 void CRYPT_SHA1Finish(CRYPT_sha1_context* context,
                       pdfium::span<uint8_t, 20> digest);
-void CRYPT_SHA1Generate(pdfium::span<const uint8_t> data,
-                        pdfium::span<uint8_t, 20> digest);
+DataVector<uint8_t> CRYPT_SHA1Generate(pdfium::span<const uint8_t> data);
 
 void CRYPT_SHA256Start(CRYPT_sha2_context* context);
 void CRYPT_SHA256Update(CRYPT_sha2_context* context,
                         pdfium::span<const uint8_t> data);
 void CRYPT_SHA256Finish(CRYPT_sha2_context* context,
                         pdfium::span<uint8_t, 32> digest);
-void CRYPT_SHA256Generate(pdfium::span<const uint8_t> data,
-                          pdfium::span<uint8_t, 32> digest);
+DataVector<uint8_t> CRYPT_SHA256Generate(pdfium::span<const uint8_t> data);
 
 void CRYPT_SHA384Start(CRYPT_sha2_context* context);
 void CRYPT_SHA384Update(CRYPT_sha2_context* context,
                         pdfium::span<const uint8_t> data);
 void CRYPT_SHA384Finish(CRYPT_sha2_context* context,
                         pdfium::span<uint8_t, 48> digest);
-void CRYPT_SHA384Generate(pdfium::span<const uint8_t> data,
-                          pdfium::span<uint8_t, 48> digest);
+DataVector<uint8_t> CRYPT_SHA384Generate(pdfium::span<const uint8_t> data);
 
 void CRYPT_SHA512Start(CRYPT_sha2_context* context);
 void CRYPT_SHA512Update(CRYPT_sha2_context* context,
                         pdfium::span<const uint8_t> data);
 void CRYPT_SHA512Finish(CRYPT_sha2_context* context,
                         pdfium::span<uint8_t, 64> digest);
-void CRYPT_SHA512Generate(pdfium::span<const uint8_t> data,
-                          pdfium::span<uint8_t, 64> digest);
+DataVector<uint8_t> CRYPT_SHA512Generate(pdfium::span<const uint8_t> data);
 
 #endif  // CORE_FDRM_FX_CRYPT_SHA_H_

@@ -155,30 +155,22 @@ void Revision6_Hash(const ByteString& password,
     CRYPT_AESSetIV(&aes, iv);
     CRYPT_AESEncrypt(&aes, encrypted_output_span.data(), content.data(),
                      encrypted_output_span.size());
-    int iHash = 0;
+
     switch (BigOrder64BitsMod3(encrypted_output_span)) {
       case 0:
-        iHash = 0;
         block_size = 32;
+        inter_digest = CRYPT_SHA256Generate(encrypted_output_span);
         break;
       case 1:
-        iHash = 1;
         block_size = 48;
+        inter_digest = CRYPT_SHA384Generate(encrypted_output_span);
         break;
       default:
-        iHash = 2;
         block_size = 64;
+        inter_digest = CRYPT_SHA512Generate(encrypted_output_span);
         break;
     }
-    inter_digest.resize(block_size);
     input = inter_digest.data();
-    if (iHash == 0) {
-      CRYPT_SHA256Generate(encrypted_output_span, inter_digest);
-    } else if (iHash == 1) {
-      CRYPT_SHA384Generate(encrypted_output_span, inter_digest);
-    } else if (iHash == 2) {
-      CRYPT_SHA512Generate(encrypted_output_span, inter_digest);
-    }
     key = input;
     iv = UNSAFE_TODO(input + 16);
     ++i;
