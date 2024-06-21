@@ -1373,6 +1373,32 @@ FPDFAnnot_GetFontSize(FPDF_FORMHANDLE hHandle,
   return true;
 }
 
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFAnnot_GetFontColor(FPDF_FORMHANDLE hHandle,
+                       FPDF_ANNOTATION annot,
+                       unsigned int* R,
+                       unsigned int* G,
+                       unsigned int* B) {
+  if (!R || !G || !B) {
+    return false;
+  }
+
+  const CPDFSDK_Widget* widget = GetWidgetOfTypes(hHandle, annot, {});
+  if (!widget) {
+    return false;
+  }
+
+  std::optional<FX_COLORREF> text_color = widget->GetTextColor();
+  if (!text_color) {
+    return false;
+  }
+
+  *R = FXSYS_GetRValue(*text_color);
+  *G = FXSYS_GetGValue(*text_color);
+  *B = FXSYS_GetBValue(*text_color);
+  return true;
+}
+
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFAnnot_IsChecked(FPDF_FORMHANDLE hHandle,
                                                         FPDF_ANNOTATION annot) {
   const CPDFSDK_Widget* pWidget =

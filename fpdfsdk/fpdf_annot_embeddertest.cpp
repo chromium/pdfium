@@ -2800,6 +2800,43 @@ TEST_F(FPDFAnnotEmbedderTest, GetFontSizeNegative) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFAnnotEmbedderTest, GetFontColor) {
+  // Open a file with textfield annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("text_form_color.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    // Obtain the first annotation, a text field with orange color.
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ASSERT_TRUE(annot);
+
+    // Negative testing.
+    unsigned int R;
+    unsigned int G;
+    unsigned int B;
+    ASSERT_FALSE(
+        FPDFAnnot_GetFontColor(nullptr, nullptr, nullptr, nullptr, nullptr));
+    ASSERT_FALSE(FPDFAnnot_GetFontColor(form_handle(), nullptr, nullptr,
+                                        nullptr, nullptr));
+    ASSERT_FALSE(FPDFAnnot_GetFontColor(form_handle(), annot.get(), nullptr,
+                                        nullptr, nullptr));
+    ASSERT_FALSE(FPDFAnnot_GetFontColor(form_handle(), annot.get(), &R, nullptr,
+                                        nullptr));
+    ASSERT_FALSE(
+        FPDFAnnot_GetFontColor(form_handle(), annot.get(), &R, &G, nullptr));
+
+    // Positive testing.
+    ASSERT_TRUE(FPDFAnnot_GetFontColor(form_handle(), annot.get(), &R, &G, &B));
+    // Make sure it's #ff8000, i.e. orange.
+    EXPECT_EQ(0xffU, R);
+    EXPECT_EQ(0x80U, G);
+    EXPECT_EQ(0x00U, B);
+  }
+
+  UnloadPage(page);
+}
+
 TEST_F(FPDFAnnotEmbedderTest, IsCheckedCheckbox) {
   // Open a file with checkbox and radiobuttons widget annotations and load its
   // first page.
