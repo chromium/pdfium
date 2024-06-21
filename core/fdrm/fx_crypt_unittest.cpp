@@ -492,8 +492,7 @@ TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
 TEST(FXCRYPT, Sha384Empty) {
   static const char kInput[] = "";
   uint8_t actual[48];
-  CRYPT_SHA384Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
-                       actual);
+  CRYPT_SHA384Generate(ByteStringView(kInput).unsigned_span(), actual);
   EXPECT_THAT(
       actual,
       ElementsAre(0x38, 0xb0, 0x60, 0xa7, 0x51, 0xac, 0x96, 0x38, 0x4c, 0xd9,
@@ -508,8 +507,7 @@ TEST(FXCRYPT, Sha384Test) {
   static const char kInput[] =
       "This is a simple test. To see whether it is getting correct value.";
   uint8_t actual[48];
-  CRYPT_SHA384Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
-                       actual);
+  CRYPT_SHA384Generate(ByteStringView(kInput).unsigned_span(), actual);
   EXPECT_THAT(
       actual,
       ElementsAre(0x95, 0x54, 0xff, 0xd3, 0x89, 0xf0, 0xd6, 0x42, 0xe9, 0x33,
@@ -526,8 +524,7 @@ TEST(FXCRYPT, Sha384Pad112) {
       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
   uint8_t actual[48];
   EXPECT_EQ(112u, strlen(kInput));
-  CRYPT_SHA384Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
-                       actual);
+  CRYPT_SHA384Generate(ByteStringView(kInput).unsigned_span(), actual);
   EXPECT_THAT(
       actual,
       ElementsAre(0x18, 0x7d, 0x4e, 0x07, 0xcb, 0x30, 0x61, 0x03, 0xc6, 0x99,
@@ -540,8 +537,7 @@ TEST(FXCRYPT, Sha384Pad112) {
 TEST(FXCRYPT, Sha512Empty) {
   static const char kInput[] = "";
   uint8_t actual[64];
-  CRYPT_SHA512Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
-                       actual);
+  CRYPT_SHA512Generate(ByteStringView(kInput).unsigned_span(), actual);
   EXPECT_THAT(
       actual,
       ElementsAre(0xcf, 0x83, 0xe1, 0x35, 0x7e, 0xef, 0xb8, 0xbd, 0xf1, 0x54,
@@ -558,8 +554,7 @@ TEST(FXCRYPT, Sha512Test) {
   static const char kInput[] =
       "This is a simple test. To see whether it is getting correct value.";
   uint8_t actual[64];
-  CRYPT_SHA512Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
-                       actual);
+  CRYPT_SHA512Generate(ByteStringView(kInput).unsigned_span(), actual);
   EXPECT_THAT(
       actual,
       ElementsAre(0x86, 0xB5, 0x05, 0x63, 0xA2, 0x6F, 0xD6, 0xFA, 0xEB, 0x9B,
@@ -578,8 +573,7 @@ TEST(FXCRYPT, Sha512Pad112) {
       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
   EXPECT_EQ(112u, strlen(kInput));
   uint8_t actual[64];
-  CRYPT_SHA512Generate(reinterpret_cast<const uint8_t*>(kInput), strlen(kInput),
-                       actual);
+  CRYPT_SHA512Generate(ByteStringView(kInput).unsigned_span(), actual);
   EXPECT_THAT(
       actual,
       ElementsAre(0xc0, 0x1d, 0x08, 0x0e, 0xfd, 0x49, 0x27, 0x76, 0xa1, 0xc4,

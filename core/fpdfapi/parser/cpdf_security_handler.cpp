@@ -175,11 +175,9 @@ void Revision6_Hash(const ByteString& password,
     if (iHash == 0) {
       CRYPT_SHA256Generate(encrypted_output_span, inter_digest);
     } else if (iHash == 1) {
-      CRYPT_SHA384Generate(encrypted_output_span.data(),
-                           encrypted_output_span.size(), input);
+      CRYPT_SHA384Generate(encrypted_output_span, inter_digest);
     } else if (iHash == 2) {
-      CRYPT_SHA512Generate(encrypted_output_span.data(),
-                           encrypted_output_span.size(), input);
+      CRYPT_SHA512Generate(encrypted_output_span, inter_digest);
     }
     key = input;
     iv = UNSAFE_TODO(input + 16);
