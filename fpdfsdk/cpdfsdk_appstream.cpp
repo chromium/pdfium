@@ -8,6 +8,7 @@
 
 #include <math.h>
 
+#include <array>
 #include <iterator>
 #include <memory>
 #include <sstream>
@@ -30,7 +31,6 @@
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 #include "core/fpdfdoc/cpdf_icon.h"
 #include "core/fpdfdoc/cpvt_word.h"
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
@@ -319,7 +319,7 @@ ByteString GetAP_Star(const CFX_FloatRect& crBBox) {
   CFX_PointF ptCenter = CFX_PointF((crBBox.left + crBBox.right) / 2.0f,
                                    (crBBox.top + crBBox.bottom) / 2.0f);
 
-  CFX_PointF points[5];
+  std::array<CFX_PointF, 5> points;
   float fAngle = FXSYS_PI / 10.0f;
   for (auto& point : points) {
     point =
@@ -328,12 +328,11 @@ ByteString GetAP_Star(const CFX_FloatRect& crBBox) {
   }
 
   WriteMove(csAP, points[0]);
-
-  int next = 0;
-  for (size_t i = 0; i < std::size(points); ++i) {
-    next = (next + 2) % std::size(points);
-    WriteLine(csAP, UNSAFE_TODO(points[next]));
-  }
+  WriteLine(csAP, points[2]);
+  WriteLine(csAP, points[4]);
+  WriteLine(csAP, points[1]);
+  WriteLine(csAP, points[3]);
+  WriteLine(csAP, points[0]);
 
   return ByteString(csAP);
 }
