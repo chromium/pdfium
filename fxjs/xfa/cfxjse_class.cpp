@@ -252,7 +252,6 @@ v8::Intercepted NamedPropertySetterCallback(
   auto pNewValue = std::make_unique<CFXJSE_Value>(info.GetIsolate(), value);
   DynPropSetterAdapter(info.GetIsolate(), pClass, info.Holder(), szFxPropName,
                        pNewValue.get());
-  info.GetReturnValue().Set(value);
   return v8::Intercepted::kYes;
 }
 

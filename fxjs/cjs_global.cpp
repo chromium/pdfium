@@ -118,8 +118,6 @@ v8::Intercepted CJS_Global::putprop_static(
         JSFormatErrorString("global", "PutProperty", result.Error()));
     return v8::Intercepted::kYes;
   }
-
-  info.GetReturnValue().Set(value);
   return v8::Intercepted::kYes;
 }
 
