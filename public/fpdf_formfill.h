@@ -280,7 +280,7 @@ typedef struct _IPDF_JsPlatform {
   // Return Value:
   //       Number of bytes the filePath consumes, including trailing zeros.
   // Comments:
-  //       The filePath shoule always be provided in local encoding.
+  //       The filePath should always be provided in local encoding.
   int (*Field_browse)(struct _IPDF_JsPlatform* pThis,
                       void* filePath,
                       int length);
@@ -1498,7 +1498,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_CanRedo(FPDF_FORMHANDLE hHandle,
                                                  FPDF_PAGE page);
 
 // Function: FORM_Undo
-//       Make the current focussed widget perform an undo operation.
+//       Make the current focused widget perform an undo operation.
 // Parameters:
 //       hHandle     -   Handle to the form fill module, as returned by
 //                       FPDFDOC_InitFormFillEnvironment().
@@ -1509,7 +1509,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FORM_Undo(FPDF_FORMHANDLE hHandle,
                                               FPDF_PAGE page);
 
 // Function: FORM_Redo
-//       Make the current focussed widget perform a redo operation.
+//       Make the current focused widget perform a redo operation.
 // Parameters:
 //       hHandle     -   Handle to the form fill module, as returned by
 //                       FPDFDOC_InitFormFillEnvironment().

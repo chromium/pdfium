@@ -75,7 +75,7 @@ typedef struct _FPDF_SYSFONTINFO {
   // Return Value:
   //          None
   // Comments:
-  //          Implementations should call FPDF_AddIntalledFont() function for
+  //          Implementations should call FPDF_AddInstalledFont() function for
   //          each font found. Only TrueType/OpenType and Type1 fonts are
   //          accepted by PDFium.
   void (*EnumFonts)(struct _FPDF_SYSFONTINFO* pThis, void* pMapper);
