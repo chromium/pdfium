@@ -30,10 +30,10 @@ class CJPX_Decoder {
   // 1 is the smallest required size.
   static constexpr uint8_t kMaxResolutionsToSkip = 32;
 
-  enum ColorSpaceOption {
-    kNoColorSpace,
-    kNormalColorSpace,
-    kIndexedColorSpace
+  enum class ColorSpaceOption {
+    kNone,
+    kNormal,
+    kIndexed,
   };
 
   struct JpxImageInfo {

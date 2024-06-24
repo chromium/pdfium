@@ -108,11 +108,13 @@ int CalculateBitsPerPixel(uint32_t bpc, uint32_t comps) {
 
 CJPX_Decoder::ColorSpaceOption ColorSpaceOptionFromColorSpace(
     CPDF_ColorSpace* pCS) {
-  if (!pCS)
-    return CJPX_Decoder::kNoColorSpace;
-  if (pCS->GetFamily() == CPDF_ColorSpace::Family::kIndexed)
-    return CJPX_Decoder::kIndexedColorSpace;
-  return CJPX_Decoder::kNormalColorSpace;
+  if (!pCS) {
+    return CJPX_Decoder::ColorSpaceOption::kNone;
+  }
+  if (pCS->GetFamily() == CPDF_ColorSpace::Family::kIndexed) {
+    return CJPX_Decoder::ColorSpaceOption::kIndexed;
+  }
+  return CJPX_Decoder::ColorSpaceOption::kNormal;
 }
 
 enum class JpxDecodeAction {

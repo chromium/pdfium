@@ -460,8 +460,9 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
   if (!m_Codec)
     return false;
 
-  if (m_ColorSpaceOption == kIndexedColorSpace)
+  if (m_ColorSpaceOption == ColorSpaceOption::kIndexed) {
     m_Parameters.flags |= OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
+  }
   opj_set_info_handler(m_Codec.get(), fx_ignore_callback, nullptr);
   opj_set_warning_handler(m_Codec.get(), fx_ignore_callback, nullptr);
   opj_set_error_handler(m_Codec.get(), fx_ignore_callback, nullptr);
