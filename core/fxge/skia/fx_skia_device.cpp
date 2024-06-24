@@ -359,9 +359,9 @@ bool AddSamples(const CPDF_SampledFunc* func,
         float_colors[j] =
             colors_min[j] + (colors_max[j] - colors_min[j]) * interp;
       }
-      colors.push_back(SkPackARGB32NoCheck(0xFF, FloatToByte(float_colors[0]),
-                                           FloatToByte(float_colors[1]),
-                                           FloatToByte(float_colors[2])));
+      colors.push_back(SkPackARGB32(0xFF, FloatToByte(float_colors[0]),
+                                    FloatToByte(float_colors[1]),
+                                    FloatToByte(float_colors[2])));
       pos.push_back(static_cast<float>(i) / (sample_count - 1));
     }
   return true;
