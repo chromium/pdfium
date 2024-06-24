@@ -44,3 +44,52 @@ TEST(fxcrt, FillSpan) {
     EXPECT_EQ(b, 123.0f);
   }
 }
+
+TEST(fxcrt, CopyCArray) {
+  uint32_t dst[4];
+  {
+    uint32_t buf[4];
+    fxcrt::Fill(buf, 0x01020304u);
+    fxcrt::Copy(buf, dst);
+  }
+  for (const auto b : dst) {
+    EXPECT_EQ(b, 0x01020304u);
+  }
+}
+
+TEST(fxcrt, CopyStdArray) {
+  uint16_t dst[10];
+  {
+    std::array<uint16_t, 10> buf;
+    fxcrt::Fill(buf, 0x0102u);
+    fxcrt::Copy(buf, dst);
+  }
+  for (const auto b : dst) {
+    EXPECT_EQ(b, 0x0102u);
+  }
+}
+
+TEST(fxcrt, CopyStdVector) {
+  uint8_t dst[15];
+  {
+    std::vector<uint8_t> buf(15);
+    fxcrt::Fill(buf, 0x32u);
+    fxcrt::Copy(buf, dst);
+  }
+  for (const auto b : dst) {
+    EXPECT_EQ(b, 0x32u);
+  }
+}
+
+TEST(fxcrt, CopySpan) {
+  float dst[12];
+  {
+    float buf[12];
+    auto buf_span = pdfium::make_span(buf);
+    fxcrt::Fill(buf_span, 123.0f);
+    fxcrt::Copy(buf_span, dst);
+  }
+  for (const auto b : dst) {
+    EXPECT_EQ(b, 123.0f);
+  }
+}

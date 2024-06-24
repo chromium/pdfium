@@ -7,8 +7,10 @@
 
 #include <algorithm>
 #include <array>
+#include <iterator>
 #include <memory>
 
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 
@@ -47,6 +49,16 @@ bool IndexInBounds(const Collection& collection, IndexType index) {
 template <typename T, typename V>
 void Fill(T& container, const V& value) {
   std::fill(std::begin(container), std::end(container), value);
+}
+
+// Non-flawed version of C++20 std::ranges::copy(), which takes an output
+// range as the second parameter and CHECKS() if it not sufficiently sized.
+template <typename T, typename U>
+void Copy(const T& source_container, U&& dest_container) {
+  static_assert(sizeof(source_container[0]) == sizeof(dest_container[0]));
+  CHECK_GE(std::size(dest_container), std::size(source_container));
+  std::copy(std::begin(source_container), std::end(source_container),
+            std::begin(dest_container));
 }
 
 // ToArray<>() implementation as taken from chromium /base. Replace with
