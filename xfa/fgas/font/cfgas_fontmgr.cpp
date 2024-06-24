@@ -752,7 +752,7 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
   if (unicode_range.has_value()) {
     fxcrt::spancpy(usb_span, pdfium::make_span(unicode_range.value()));
   } else {
-    fxcrt::spanclr(usb_span);
+    fxcrt::Fill(usb_span, 0);
   }
 
   std::optional<std::array<uint32_t, 2>> code_page_range =
@@ -761,7 +761,7 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
   if (code_page_range.has_value()) {
     fxcrt::spancpy(csb_span, pdfium::make_span(code_page_range.value()));
   } else {
-    fxcrt::spanclr(csb_span);
+    fxcrt::Fill(csb_span, 0);
   }
 
   static constexpr uint32_t kNameTag =

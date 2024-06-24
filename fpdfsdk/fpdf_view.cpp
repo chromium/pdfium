@@ -642,9 +642,9 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     if (win_dc.GetDeviceType() == DeviceType::kPrinter) {
       auto dest_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
       if (dest_bitmap->Create(size_x, size_y, FXDIB_Format::kRgb32)) {
-        fxcrt::spanset(dest_bitmap->GetWritableBuffer().first(
-                           pBitmap->GetPitch() * size_y),
-                       -1);
+        fxcrt::Fill(dest_bitmap->GetWritableBuffer().first(pBitmap->GetPitch() *
+                                                           size_y),
+                    -1);
         dest_bitmap->CompositeBitmap(0, 0, size_x, size_y, pBitmap, 0, 0,
                                      BlendMode::kNormal, nullptr, false);
         win_dc.StretchDIBits(std::move(dest_bitmap), 0, 0, size_x, size_y);

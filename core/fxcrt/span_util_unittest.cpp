@@ -9,24 +9,6 @@
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(Spanset, Fits) {
-  std::vector<char> dst(4, 'B');
-  fxcrt::spanset(pdfium::make_span(dst).first(2), 'A');
-  EXPECT_EQ(dst[0], 'A');
-  EXPECT_EQ(dst[1], 'A');
-  EXPECT_EQ(dst[2], 'B');
-  EXPECT_EQ(dst[3], 'B');
-}
-
-TEST(Spanset, Empty) {
-  std::vector<char> dst(4, 'B');
-  fxcrt::spanset(pdfium::make_span(dst).subspan(4), 'A');
-  EXPECT_EQ(dst[0], 'B');
-  EXPECT_EQ(dst[1], 'B');
-  EXPECT_EQ(dst[2], 'B');
-  EXPECT_EQ(dst[3], 'B');
-}
-
 TEST(Spancpy, FitsEntirely) {
   std::vector<char> src(4, 'A');
   std::vector<char> dst(4, 'B');

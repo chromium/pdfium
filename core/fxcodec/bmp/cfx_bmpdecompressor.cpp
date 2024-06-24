@@ -20,6 +20,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/numerics/safe_math.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/calculate_pitch.h"
 
 namespace fxcodec {
@@ -469,7 +470,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
 
             ReadNextScanline();
             col_num_ = 0;
-            fxcrt::spanset(pdfium::make_span(out_row_buffer_), 0);
+            fxcrt::Fill(out_row_buffer_, 0);
             SaveDecodingStatus(DecodeStatus::kData);
             continue;
           }
@@ -490,7 +491,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
               return BmpDecoder::Status::kFail;
 
             while (row_num_ < bmp_row_num__next) {
-              fxcrt::spanset(pdfium::make_span(out_row_buffer_), 0);
+              fxcrt::Fill(out_row_buffer_, 0);
               ReadNextScanline();
             }
             break;
@@ -530,7 +531,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE8() {
           return BmpDecoder::Status::kContinue;
         }
 
-        fxcrt::spanset(
+        fxcrt::Fill(
             pdfium::make_span(out_row_buffer_).subspan(col_num_, first_part),
             second_part);
 
@@ -565,7 +566,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE4() {
 
             ReadNextScanline();
             col_num_ = 0;
-            fxcrt::spanset(pdfium::make_span(out_row_buffer_), 0);
+            fxcrt::Fill(out_row_buffer_, 0);
             SaveDecodingStatus(DecodeStatus::kData);
             continue;
           }
@@ -586,7 +587,7 @@ BmpDecoder::Status CFX_BmpDecompressor::DecodeRLE4() {
               return BmpDecoder::Status::kFail;
 
             while (row_num_ < bmp_row_num__next) {
-              fxcrt::spanset(pdfium::make_span(out_row_buffer_), 0);
+              fxcrt::Fill(out_row_buffer_, 0);
               ReadNextScanline();
             }
             break;

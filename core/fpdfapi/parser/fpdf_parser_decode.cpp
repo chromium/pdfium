@@ -31,7 +31,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
-#include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/utf16.h"
 
 namespace {
@@ -159,7 +159,7 @@ DataAndBytesConsumed A85Decode(pdfium::span<const uint8_t> src_span) {
     }
 
     if (ch == 'z') {
-      fxcrt::spanset(dest_span.first(4), 0);
+      fxcrt::Fill(dest_span.first(4), 0);
       dest_span = dest_span.subspan(4);
       state = 0;
       res = 0;
@@ -286,7 +286,7 @@ DataAndBytesConsumed RunLengthDecode(pdfium::span<const uint8_t> src_span) {
       if (buf_left < copy_len) {
         uint32_t delta = copy_len - buf_left;
         copy_len = buf_left;
-        fxcrt::spanclr(dest_span.subspan(dest_count + copy_len, delta));
+        fxcrt::Fill(dest_span.subspan(dest_count + copy_len, delta), 0);
       }
       auto copy_span = src_span.subspan(i + 1, copy_len);
       fxcrt::spancpy(dest_span.subspan(dest_count), copy_span);
@@ -295,7 +295,7 @@ DataAndBytesConsumed RunLengthDecode(pdfium::span<const uint8_t> src_span) {
     } else {
       const uint8_t fill = i + 1 < src_span.size() ? src_span[i + 1] : 0;
       const size_t fill_size = 257 - src_span[i];
-      fxcrt::spanset(dest_span.subspan(dest_count, fill_size), fill);
+      fxcrt::Fill(dest_span.subspan(dest_count, fill_size), fill);
       dest_count += fill_size;
       i += 2;
     }

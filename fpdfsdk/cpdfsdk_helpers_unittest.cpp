@@ -6,6 +6,7 @@
 
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
+#include "core/fxcrt/stl_util.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -23,7 +24,7 @@ TEST(CPDFSDK_HelpersTest, NulTerminateMaybeCopyAndReturnLength) {
 
     // Buffer should not change if declared length is too short.
     char buf[kExpectedToBeCopiedLen + 1];
-    fxcrt::spanset(pdfium::make_span(buf), 0x42);
+    fxcrt::Fill(buf, 0x42);
     ASSERT_EQ(kExpectedToBeCopiedLen + 1,
               NulTerminateMaybeCopyAndReturnLength(
                   to_be_copied,

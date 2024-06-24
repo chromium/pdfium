@@ -15,11 +15,12 @@
 #include <vector>
 
 #include "core/fxcodec/jpx/jpx_decode_utils.h"
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/ptr_util.h"
 #include "core/fxcrt/span.h"
-#include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/calculate_pitch.h"
 
 #if !defined(USE_SYSTEM_LIBOPENJPEG2)
@@ -558,7 +559,7 @@ bool CJPX_Decoder::Decode(pdfium::span<uint8_t> dest_buf,
   // the color component data if `m_Image->numcomps` > `component_count`.
   // Currently only the color component data is used for rendering.
   // TODO(crbug.com/pdfium/1747): Make full use of the component information.
-  fxcrt::spanset(dest_buf.first(m_Image->comps[0].h * pitch), 0xff);
+  fxcrt::Fill(dest_buf.first(m_Image->comps[0].h * pitch), 0xff);
   std::vector<uint8_t*> channel_bufs(m_Image->numcomps);
   std::vector<int> adjust_comps(m_Image->numcomps);
   const pdfium::span<opj_image_comp_t> components =

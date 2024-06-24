@@ -40,6 +40,7 @@
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/calculate_pitch.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
@@ -1190,7 +1191,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
 
   if (pSrcLine.empty()) {
     pdfium::span<uint8_t> result = !m_MaskBuf.empty() ? m_MaskBuf : m_LineBuf;
-    fxcrt::spanset(result, 0);
+    fxcrt::Fill(result, 0);
     return result;
   }
   if (m_bpc * m_nComponents == 1) {
@@ -1275,7 +1276,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
         }
       });
     } else {
-      fxcrt::spanset(pdfium::make_span(m_MaskBuf), 0xFF);
+      fxcrt::Fill(m_MaskBuf, 0xFF);
     }
   }
   if (m_pColorSpace) {

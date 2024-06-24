@@ -14,7 +14,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
@@ -83,8 +83,8 @@ void CFX_BitmapComposer::DoCompose(pdfium::span<uint8_t> dest_scan,
         m_pAddClipScan[i] = clip_scan[i] * m_Alpha;
       }
     } else {
-      fxcrt::spanset(pdfium::make_span(m_pAddClipScan).first(dest_width),
-                     FXSYS_roundf(m_Alpha * 255));
+      fxcrt::Fill(pdfium::make_span(m_pAddClipScan).first(dest_width),
+                  FXSYS_roundf(m_Alpha * 255));
     }
     clip_scan = m_pAddClipScan;
   }
