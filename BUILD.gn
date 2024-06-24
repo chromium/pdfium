@@ -239,23 +239,23 @@ config("pdfium_common_config") {
     if (is_debug && !is_win) {
       cflags += [
         "-Xclang",
-        "-plugin-arg-find-bad-constructs",
+        "-plugin-arg-raw-ptr-plugin",
         "-Xclang",
         "check-raw-ptr-fields",
 
         "-Xclang",
-        "-plugin-arg-find-bad-constructs",
+        "-plugin-arg-raw-ptr-plugin",
         "-Xclang",
         "raw-ptr-exclude-path=public",
 
         "-Xclang",
-        "-plugin-arg-find-bad-constructs",
+        "-plugin-arg-raw-ptr-plugin",
         "-Xclang",
         "raw-ptr-exclude-path=test",
 
         # TODO(tsepez): enforce raw_ref<> as well.
         # "-Xclang",
-        # "-plugin-arg-find-bad-constructs",
+        # "-plugin-arg-raw-ptr-plugin",
         # "-Xclang",
         # "check-raw-ref-fields",
       ]
