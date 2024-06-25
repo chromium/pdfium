@@ -39,7 +39,7 @@ TEST_F(FPDFFlattenEmbedderTest, FlatPrint) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFFlattenEmbedderTest, BUG_861842) {
+TEST_F(FPDFFlattenEmbedderTest, Bug861842) {
   const char* checkbox_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_APPLE)
@@ -72,7 +72,7 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_861842) {
   VerifySavedDocument(100, 120, kBlankPageHash);
 }
 
-TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
+TEST_F(FPDFFlattenEmbedderTest, Bug889099) {
   const char* page_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
@@ -122,7 +122,7 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_889099) {
   VerifySavedDocument(300, 400, flattened_page_checksum);
 }
 
-TEST_F(FPDFFlattenEmbedderTest, BUG_890322) {
+TEST_F(FPDFFlattenEmbedderTest, Bug890322) {
   const char* checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "793689536cf64fe792c2f241888c0cf3";
@@ -144,7 +144,7 @@ TEST_F(FPDFFlattenEmbedderTest, BUG_890322) {
   VerifySavedDocument(200, 200, checksum);
 }
 
-TEST_F(FPDFFlattenEmbedderTest, BUG_896366) {
+TEST_F(FPDFFlattenEmbedderTest, Bug896366) {
   const char* checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "c3cccfadc4c5249e6aa0675e511fa4c3";

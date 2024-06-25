@@ -610,7 +610,7 @@ TEST_F(FPDFFormFillEmbedderTest, FirstTest) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFFormFillEmbedderTest, BUG_487928) {
+TEST_F(FPDFFormFillEmbedderTest, Bug487928) {
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
 
@@ -622,7 +622,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_487928) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFFormFillEmbedderTest, BUG_507316) {
+TEST_F(FPDFFormFillEmbedderTest, Bug507316) {
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
 
@@ -634,7 +634,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_507316) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFFormFillEmbedderTest, BUG_514690) {
+TEST_F(FPDFFormFillEmbedderTest, Bug514690) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_TRUE(page);
@@ -646,7 +646,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_514690) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFFormFillEmbedderTest, BUG_900552) {
+TEST_F(FPDFFormFillEmbedderTest, Bug900552) {
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
 
@@ -664,7 +664,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_900552) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFFormFillEmbedderTest, BUG_901654) {
+TEST_F(FPDFFormFillEmbedderTest, Bug901654) {
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
 
@@ -683,7 +683,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_901654) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFFormFillEmbedderTest, BUG_901654_2) {
+TEST_F(FPDFFormFillEmbedderTest, Bug901654_2) {
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
 
@@ -997,7 +997,7 @@ class DoURIActionBlockedDelegate final : public EmbedderTest::Delegate {
   }
 };
 
-TEST_F(FPDFFormFillEmbedderTest, BUG_851821) {
+TEST_F(FPDFFormFillEmbedderTest, Bug851821) {
   DoURIActionBlockedDelegate delegate;
   SetDelegate(&delegate);
 
@@ -1153,7 +1153,7 @@ TEST_F(FPDFFormFillEmbedderTest, DocumentAActionsDisableJavaScript) {
   ASSERT_EQ(0U, alerts.size());
 }
 
-TEST_F(FPDFFormFillEmbedderTest, BUG_551248) {
+TEST_F(FPDFFormFillEmbedderTest, Bug551248) {
   // Test that timers fire once and intervals fire repeatedly.
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
@@ -1205,7 +1205,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_551248) {
   EXPECT_EQ(0, alerts[3].icon);
 }
 
-TEST_F(FPDFFormFillEmbedderTest, BUG_620428) {
+TEST_F(FPDFFormFillEmbedderTest, Bug620428) {
   // Test that timers and intervals are cancelable.
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
@@ -1222,7 +1222,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_620428) {
   EXPECT_EQ(L"done", alerts[0].message);
 }
 
-TEST_F(FPDFFormFillEmbedderTest, BUG_634394) {
+TEST_F(FPDFFormFillEmbedderTest, Bug634394) {
   // Cancel timer inside timer callback.
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
@@ -1245,7 +1245,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_634394) {
   EXPECT_EQ(2U, alerts.size());
 }
 
-TEST_F(FPDFFormFillEmbedderTest, BUG_634716) {
+TEST_F(FPDFFormFillEmbedderTest, Bug634716) {
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
 
@@ -1267,7 +1267,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_634716) {
   EXPECT_EQ(2U, alerts.size());
 }
 
-TEST_F(FPDFFormFillEmbedderTest, BUG_679649) {
+TEST_F(FPDFFormFillEmbedderTest, Bug679649) {
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
 
@@ -1284,7 +1284,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_679649) {
   EXPECT_EQ(0u, alerts.size());
 }
 
-TEST_F(FPDFFormFillEmbedderTest, BUG_707673) {
+TEST_F(FPDFFormFillEmbedderTest, Bug707673) {
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
 
@@ -1302,7 +1302,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_707673) {
   EXPECT_EQ(0u, alerts.size());
 }
 
-TEST_F(FPDFFormFillEmbedderTest, BUG_765384) {
+TEST_F(FPDFFormFillEmbedderTest, Bug765384) {
   ASSERT_TRUE(OpenDocument("bug_765384.pdf"));
   FPDF_PAGE page = LoadPage(0);
   EXPECT_TRUE(page);
@@ -1314,7 +1314,7 @@ TEST_F(FPDFFormFillEmbedderTest, BUG_765384) {
 }
 
 // Test passes if DCHECK() not hit.
-TEST_F(FPDFFormFillEmbedderTest, BUG_1477093) {
+TEST_F(FPDFFormFillEmbedderTest, Bug1477093) {
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
 
@@ -1412,7 +1412,7 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
 
 // Tests using FPDF_REVERSE_BYTE_ORDER with FPDF_FFLDraw(). The two rendered
 // bitmaps should be different.
-TEST_F(FPDFFormFillEmbedderTest, BUG_1281) {
+TEST_F(FPDFFormFillEmbedderTest, Bug1281) {
   const char* reverse_byte_order_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "8077970bbd10333f18186a9bb459bbe6";
