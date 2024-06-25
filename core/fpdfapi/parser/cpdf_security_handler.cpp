@@ -386,7 +386,8 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
   if (buf[9] != 'a' || buf[10] != 'd' || buf[11] != 'b')
     return false;
 
-  if (fxcrt::GetUInt32LSBFirst(buf) != m_Permissions) {
+  if (fxcrt::GetUInt32LSBFirst(pdfium::make_span(buf).first(4u)) !=
+      m_Permissions) {
     return false;
   }
 

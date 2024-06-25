@@ -193,8 +193,9 @@ void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
   if (items_read != 1) {
     return;
   }
-
-  if (fxcrt::GetUInt32MSBFirst(buffer) != kTableTTCF) {
+  uint32_t magic =
+      fxcrt::GetUInt32MSBFirst(pdfium::make_span(buffer).first(4u));
+  if (magic != kTableTTCF) {
     ReportFace(path, pFile.get(), filesize, 0);
     return;
   }

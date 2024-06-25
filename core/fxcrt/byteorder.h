@@ -88,44 +88,44 @@ inline uint32_t FromBE32(uint32_t x) {
 }
 
 // Transfer to/from spans irrespective of alignments.
-inline uint16_t GetUInt16MSBFirst(pdfium::span<const uint8_t> span) {
+inline uint16_t GetUInt16MSBFirst(pdfium::span<const uint8_t, 2> span) {
   return (static_cast<uint32_t>(span[0]) << 8) | static_cast<uint32_t>(span[1]);
 }
 
-inline uint32_t GetUInt32MSBFirst(pdfium::span<const uint8_t> span) {
+inline uint32_t GetUInt32MSBFirst(pdfium::span<const uint8_t, 4> span) {
   return (static_cast<uint32_t>(span[0]) << 24) |
          (static_cast<uint32_t>(span[1]) << 16) |
          (static_cast<uint32_t>(span[2]) << 8) | static_cast<uint32_t>(span[3]);
 }
 
-inline uint16_t GetUInt16LSBFirst(pdfium::span<const uint8_t> span) {
+inline uint16_t GetUInt16LSBFirst(pdfium::span<const uint8_t, 2> span) {
   return (static_cast<uint32_t>(span[1]) << 8) | static_cast<uint32_t>(span[0]);
 }
 
-inline uint32_t GetUInt32LSBFirst(pdfium::span<const uint8_t> span) {
+inline uint32_t GetUInt32LSBFirst(pdfium::span<const uint8_t, 4> span) {
   return (static_cast<uint32_t>(span[3]) << 24) |
          (static_cast<uint32_t>(span[2]) << 16) |
          (static_cast<uint32_t>(span[1]) << 8) | static_cast<uint32_t>(span[0]);
 }
 
-inline void PutUInt16MSBFirst(uint16_t value, pdfium::span<uint8_t> span) {
+inline void PutUInt16MSBFirst(uint16_t value, pdfium::span<uint8_t, 2> span) {
   span[0] = value >> 8;
   span[1] = value & 0xff;
 }
 
-inline void PutUInt32MSBFirst(uint32_t value, pdfium::span<uint8_t> span) {
+inline void PutUInt32MSBFirst(uint32_t value, pdfium::span<uint8_t, 4> span) {
   span[0] = value >> 24;
   span[1] = (value >> 16) & 0xff;
   span[2] = (value >> 8) & 0xff;
   span[3] = value & 0xff;
 }
 
-inline void PutUInt16LSBFirst(uint16_t value, pdfium::span<uint8_t> span) {
+inline void PutUInt16LSBFirst(uint16_t value, pdfium::span<uint8_t, 2> span) {
   span[1] = value >> 8;
   span[0] = value & 0xff;
 }
 
-inline void PutUInt32LSBFirst(uint32_t value, pdfium::span<uint8_t> span) {
+inline void PutUInt32LSBFirst(uint32_t value, pdfium::span<uint8_t, 4> span) {
   span[3] = value >> 24;
   span[2] = (value >> 16) & 0xff;
   span[1] = (value >> 8) & 0xff;
