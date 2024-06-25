@@ -1,0 +1,117 @@
+%PDF-1.7
+% ò¤ô
+1 0 obj <<
+  /Type /Catalog
+  /AcroForm <<
+    /DA (/ZaDb 10 Tf 0 g)
+    /DR <<
+      /Font <<
+        /ZaDb 5 0 R
+      >>
+    >>
+    /Fields [4 0 R]
+  >>
+  /Pages 2 0 R
+>>
+endobj
+2 0 obj <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+3 0 obj <<
+  /Type /Page
+  /Parent 2 0 R
+  /Annots [4 0 R]
+  /MediaBox [0 0 100 100]
+>>
+endobj
+4 0 obj <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Btn
+  /AP <<
+    /N <<
+      /Off 8 0 R
+      /Yes 9 0 R
+    >>
+  >>
+  /AS /Off
+  /DA (/ZaDb 0 Tf 0 g)
+  /F 4
+  /MK <<
+    /BC [0]
+    /BG [1]
+    /CA (4)
+  >>
+  /P 3 0 R
+  /Rect [10 20 25 35]
+  /T (CheckBox)
+>>
+endobj
+5 0 obj <<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /ZapfDingbats
+  /Encoding 6 0 R
+  /Name /ZaDb
+>>
+endobj
+6 0 obj <<
+  /Type /Encoding
+  /BaseEncoding /PDFDocEncoding
+>>
+endobj
+8 0 obj <<
+  /Type /XObject
+  /Subtype /Form
+  /FormType 1
+  /BBox [0 0 15 15]
+  /Length 19
+>>
+stream
+1 g
+0 0 15 15 re
+f
+endstream
+endobj
+9 0 obj <<
+  /Type /XObject
+  /Subtype /Form
+  /FormType 1
+  /BBox [0 0 15 15]
+  /Resources <<
+    /Font <<
+      /ZaDb 5 0 R
+    >>
+  >>
+  /Length 36
+>>
+stream
+BT
+/ZaDb 12 Tf
+2.5 2.5 Td
+(4) Tj
+ET
+endstream
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000015 00000 n 
+0000000196 00000 n 
+0000000259 00000 n 
+0000000354 00000 n 
+0000000625 00000 n 
+0000000736 00000 n 
+0000000000 65535 f 
+0000000807 00000 n 
+0000000945 00000 n 
+trailer <<
+  /Root 1 0 R
+  /Size 10
+>>
+startxref
+1159
+%%EOF

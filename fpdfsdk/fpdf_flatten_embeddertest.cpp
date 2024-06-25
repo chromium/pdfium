@@ -7,7 +7,10 @@
 #include "public/fpdf_flatten.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
+#include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
+
+using testing::HasSubstr;
 
 namespace {
 
@@ -36,6 +39,22 @@ TEST_F(FPDFFlattenEmbedderTest, FlatPrint) {
   FPDF_PAGE page = LoadPage(0);
   EXPECT_TRUE(page);
   EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_PRINT));
+  UnloadPage(page);
+}
+
+TEST_F(FPDFFlattenEmbedderTest, FlatWithBadFont) {
+  ASSERT_TRUE(OpenDocument("344775293.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+
+  FORM_OnLButtonDown(form_handle(), page, 0, 20, 30);
+  FORM_OnLButtonUp(form_handle(), page, 0, 20, 30);
+
+  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_PRINT));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  // TODO(crbug.com/344775293): HasSubstr() should be negated with Not().
+  EXPECT_THAT(GetString(), HasSubstr("/PDFDocEncoding"));
   UnloadPage(page);
 }
 
