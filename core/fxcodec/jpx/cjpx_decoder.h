@@ -46,7 +46,8 @@ class CJPX_Decoder {
   static std::unique_ptr<CJPX_Decoder> Create(
       pdfium::span<const uint8_t> src_span,
       CJPX_Decoder::ColorSpaceOption option,
-      uint8_t resolution_levels_to_skip);
+      uint8_t resolution_levels_to_skip,
+      bool strict_mode);
 
   static void Sycc420ToRgbForTesting(opj_image_t* img);
 
@@ -87,8 +88,11 @@ class CJPX_Decoder {
   // Use Create() to instantiate.
   explicit CJPX_Decoder(ColorSpaceOption option);
 
+  // TODO(crbug.com/42270564): Remove `strict_mode` once all the bugs have been
+  // worked out in OpenJPEG.
   bool Init(pdfium::span<const uint8_t> src_data,
-            uint8_t resolution_levels_to_skip);
+            uint8_t resolution_levels_to_skip,
+            bool strict_mode);
 
   const ColorSpaceOption m_ColorSpaceOption;
   pdfium::raw_span<const uint8_t> m_SrcData;

@@ -413,11 +413,13 @@ void color_sycc_to_rgb(opj_image_t* img) {
 std::unique_ptr<CJPX_Decoder> CJPX_Decoder::Create(
     pdfium::span<const uint8_t> src_span,
     CJPX_Decoder::ColorSpaceOption option,
-    uint8_t resolution_levels_to_skip) {
+    uint8_t resolution_levels_to_skip,
+    bool strict_mode) {
   // Private ctor.
   auto decoder = pdfium::WrapUnique(new CJPX_Decoder(option));
-  if (!decoder->Init(src_span, resolution_levels_to_skip))
+  if (!decoder->Init(src_span, resolution_levels_to_skip, strict_mode)) {
     return nullptr;
+  }
   return decoder;
 }
 
@@ -432,7 +434,8 @@ CJPX_Decoder::CJPX_Decoder(ColorSpaceOption option)
 CJPX_Decoder::~CJPX_Decoder() = default;
 
 bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
-                        uint8_t resolution_levels_to_skip) {
+                        uint8_t resolution_levels_to_skip,
+                        bool strict_mode) {
   static constexpr uint8_t kJP2Header[] = {0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50,
                                            0x20, 0x20, 0x0d, 0x0a, 0x87, 0x0a};
   if (src_data.size() < sizeof(kJP2Header) ||
@@ -468,6 +471,11 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
   opj_set_error_handler(m_Codec.get(), fx_ignore_callback, nullptr);
   if (!opj_setup_decoder(m_Codec.get(), &m_Parameters)) {
     return false;
+  }
+
+  // For https://crbug.com/42270564
+  if (!strict_mode) {
+    CHECK(opj_decoder_set_strict_mode(m_Codec.get(), false));
   }
 
   opj_image_t* pTempImage = nullptr;

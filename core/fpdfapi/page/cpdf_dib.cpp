@@ -661,7 +661,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
   std::unique_ptr<CJPX_Decoder> decoder =
       CJPX_Decoder::Create(m_pStreamAcc->GetSpan(),
                            ColorSpaceOptionFromColorSpace(m_pColorSpace.Get()),
-                           resolution_levels_to_skip);
+                           resolution_levels_to_skip, /*strict_mode=*/true);
   if (!decoder)
     return nullptr;
 
