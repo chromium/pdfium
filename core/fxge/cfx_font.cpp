@@ -436,10 +436,10 @@ std::optional<FX_RECT> CFX_Font::GetBBox() const {
   int em = m_Face->GetUnitsPerEm();
   if (em != 0) {
     FX_RECT& bbox = result.value();
-    bbox.left = (bbox.left * 1000) / em;
-    bbox.top = (bbox.top * 1000) / em;
-    bbox.right = (bbox.right * 1000) / em;
-    bbox.bottom = (bbox.bottom * 1000) / em;
+    bbox.left = pdfium::saturated_cast<int32_t>((bbox.left * 1000.0f) / em);
+    bbox.top = pdfium::saturated_cast<int32_t>((bbox.top * 1000.0f) / em);
+    bbox.right = pdfium::saturated_cast<int32_t>((bbox.right * 1000.0f) / em);
+    bbox.bottom = pdfium::saturated_cast<int32_t>((bbox.bottom * 1000.0f) / em);
   }
   return result;
 }
