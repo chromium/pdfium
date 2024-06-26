@@ -21,7 +21,7 @@ namespace fxcodec {
 static const OPJ_OFF_T kSkipError = static_cast<OPJ_OFF_T>(-1);
 static const OPJ_SIZE_T kReadError = static_cast<OPJ_SIZE_T>(-1);
 
-static const uint8_t stream_data[] = {
+static const uint8_t kStreamData[] = {
     0x00, 0x01, 0x02, 0x03,
     0x84, 0x85, 0x86, 0x87,  // Include some hi-bytes, too.
 };
@@ -37,7 +37,7 @@ TEST(fxcodec, DecodeDataNullDecodeData) {
 }
 
 TEST(fxcodec, DecodeDataNullStream) {
-  DecodeData UNSAFE_TODO(dd(nullptr, 0));  // should have default ctor.
+  DecodeData dd;
   uint8_t buffer[16];
 
   // Reads of size 0 do nothing but return an error code.
@@ -64,7 +64,7 @@ TEST(fxcodec, DecodeDataNullStream) {
 }
 
 TEST(fxcodec, DecodeDataZeroSize) {
-  DecodeData UNSAFE_TODO(dd(stream_data, 0));  // Spanify ctor.
+  DecodeData dd(pdfium::make_span(kStreamData).first(0u));
   uint8_t buffer[16];
 
   // Reads of size 0 do nothing but return an error code.
@@ -93,7 +93,7 @@ TEST(fxcodec, DecodeDataZeroSize) {
 TEST(fxcodec, DecodeDataReadInBounds) {
   uint8_t buffer[16];
   {
-    DecodeData UNSAFE_TODO(dd(stream_data, sizeof(stream_data)));
+    DecodeData dd(kStreamData);
 
     // Exact sized read in a single call.
     fxcrt::Fill(buffer, 0xbd);
@@ -109,7 +109,7 @@ TEST(fxcodec, DecodeDataReadInBounds) {
     EXPECT_EQ(0xbd, buffer[8]);
   }
   {
-    DecodeData UNSAFE_TODO(dd(stream_data, sizeof(stream_data)));
+    DecodeData dd(kStreamData);
 
     // Simple read.
     fxcrt::Fill(buffer, 0xbd);
@@ -144,7 +144,7 @@ TEST(fxcodec, DecodeDataReadInBounds) {
 TEST(fxcodec, DecodeDataReadBeyondBounds) {
   uint8_t buffer[16];
   {
-    DecodeData UNSAFE_TODO(dd(stream_data, sizeof(stream_data)));
+    DecodeData dd(kStreamData);
 
     // Read beyond bounds in a single step.
     fxcrt::Fill(buffer, 0xbd);
@@ -160,7 +160,7 @@ TEST(fxcodec, DecodeDataReadBeyondBounds) {
     EXPECT_EQ(0xbd, buffer[8]);
   }
   {
-    DecodeData UNSAFE_TODO(dd(stream_data, sizeof(stream_data)));
+    DecodeData dd(kStreamData);
 
     // Read well beyond bounds in a single step.
     fxcrt::Fill(buffer, 0xbd);
@@ -177,7 +177,7 @@ TEST(fxcodec, DecodeDataReadBeyondBounds) {
     EXPECT_EQ(0xbd, buffer[8]);
   }
   {
-    DecodeData UNSAFE_TODO(dd(stream_data, sizeof(stream_data)));
+    DecodeData dd(kStreamData);
 
     // Read of size 6 gets first 6 bytes.
     // rest of buffer intact.
@@ -210,7 +210,7 @@ TEST(fxcodec, DecodeDataReadBeyondBounds) {
 TEST(fxcodec, DecodeDataSkip) {
   uint8_t buffer[16];
   {
-    DecodeData UNSAFE_TODO(dd(stream_data, sizeof(stream_data)));
+    DecodeData dd(kStreamData);
 
     // Skiping within buffer is allowed.
     fxcrt::Fill(buffer, 0xbd);
@@ -239,7 +239,7 @@ TEST(fxcodec, DecodeDataSkip) {
     EXPECT_EQ(0xbd, buffer[0]);
   }
   {
-    DecodeData UNSAFE_TODO(dd(stream_data, sizeof(stream_data)));
+    DecodeData dd(kStreamData);
 
     // Skiping directly to EOS is allowed.
     fxcrt::Fill(buffer, 0xbd);
@@ -250,7 +250,7 @@ TEST(fxcodec, DecodeDataSkip) {
     EXPECT_EQ(0xbd, buffer[0]);
   }
   {
-    DecodeData UNSAFE_TODO(dd(stream_data, sizeof(stream_data)));
+    DecodeData dd(kStreamData);
 
     // Skipping beyond end of stream is allowed and returns full distance.
     fxcrt::Fill(buffer, 0xbd);
@@ -261,7 +261,7 @@ TEST(fxcodec, DecodeDataSkip) {
     EXPECT_EQ(0xbd, buffer[0]);
   }
   {
-    DecodeData UNSAFE_TODO(dd(stream_data, sizeof(stream_data)));
+    DecodeData dd(kStreamData);
 
     // Skipping way beyond EOS is allowd, doesn't wrap, and returns
     // full distance.
@@ -275,7 +275,7 @@ TEST(fxcodec, DecodeDataSkip) {
     EXPECT_EQ(0xbd, buffer[0]);
   }
   {
-    DecodeData UNSAFE_TODO(dd(stream_data, sizeof(stream_data)));
+    DecodeData dd(kStreamData);
 
     // Negative skip within buffer not is allowed, position unchanged.
     fxcrt::Fill(buffer, 0xbd);
@@ -297,7 +297,7 @@ TEST(fxcodec, DecodeDataSkip) {
     EXPECT_EQ(0xbd, buffer[1]);
   }
   {
-    DecodeData UNSAFE_TODO(dd(stream_data, sizeof(stream_data)));
+    DecodeData dd(kStreamData);
 
     // Negative skip way before buffer is not allowed, doesn't wrap
     fxcrt::Fill(buffer, 0xbd);
@@ -311,7 +311,7 @@ TEST(fxcodec, DecodeDataSkip) {
     EXPECT_EQ(0xbd, buffer[1]);
   }
   {
-    DecodeData UNSAFE_TODO(dd(stream_data, sizeof(stream_data)));
+    DecodeData dd(kStreamData);
 
     // Negative skip after EOS isn't alowed, still EOS.
     fxcrt::Fill(buffer, 0xbd);
@@ -326,7 +326,7 @@ TEST(fxcodec, DecodeDataSkip) {
 
 TEST(fxcodec, DecodeDataSeek) {
   uint8_t buffer[16];
-  DecodeData UNSAFE_TODO(dd(stream_data, sizeof(stream_data)));
+  DecodeData dd(kStreamData);
 
   // Seeking within buffer is allowed and read succeeds
   fxcrt::Fill(buffer, 0xbd);

@@ -12,8 +12,13 @@
 
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
+#include "core/fxcrt/numerics/safe_conversions.h"
 
 namespace fxcodec {
+
+DecodeData::DecodeData(pdfium::span<const uint8_t> data)
+    : src_data(data.data()),
+      src_size(pdfium::checked_cast<OPJ_SIZE_T>(data.size())) {}
 
 OPJ_SIZE_T opj_read_from_memory(void* p_buffer,
                                 OPJ_SIZE_T nb_bytes,
