@@ -47,59 +47,53 @@ bool CPDF_CryptoHandler::IsSignatureDictionary(
   return type_obj && type_obj->GetString() == pdfium::form_fields::kSig;
 }
 
-// TODO(tsepez): should be UNSAFE_BUFFER_USAGE due to `dest_size`.
-void CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
-                                        uint32_t gennum,
-                                        pdfium::span<const uint8_t> source,
-                                        uint8_t* dest_buf,
-                                        size_t& dest_size) const {
-  UNSAFE_TODO({
-    if (m_Cipher == Cipher::kNone) {
-      FXSYS_memcpy(dest_buf, source.data(), source.size());
-      return;
-    }
-    uint8_t realkey[16];
-    size_t realkeylen = sizeof(realkey);
-    if (m_Cipher != Cipher::kAES || m_KeyLen != 32) {
-      uint8_t key1[32];
-      PopulateKey(objnum, gennum, key1);
-      if (m_Cipher == Cipher::kAES) {
-        FXSYS_memcpy(key1 + m_KeyLen + 5, "sAlT", 4);
-      }
-      size_t len = m_Cipher == Cipher::kAES ? m_KeyLen + 9 : m_KeyLen + 5;
-      CRYPT_MD5Generate(pdfium::make_span(key1).first(len), realkey);
-      realkeylen = std::min(m_KeyLen + 5, sizeof(realkey));
-    }
+size_t CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
+                                          uint32_t gennum,
+                                          pdfium::span<const uint8_t> source,
+                                          pdfium::span<uint8_t> dest) const {
+  if (m_Cipher == Cipher::kNone) {
+    fxcrt::Copy(source, dest);
+    return source.size();
+  }
+  uint8_t realkey[16];
+  size_t realkeylen = sizeof(realkey);
+  if (m_Cipher != Cipher::kAES || m_KeyLen != 32) {
+    uint8_t key1[32];
+    PopulateKey(objnum, gennum, key1);
     if (m_Cipher == Cipher::kAES) {
-      CRYPT_AESSetKey(m_pAESContext.get(),
-                      m_KeyLen == 32 ? m_EncryptKey.data() : realkey, m_KeyLen);
-      uint8_t iv[16];
-      for (int i = 0; i < 16; i++) {
-        iv[i] = (uint8_t)rand();
-      }
-      CRYPT_AESSetIV(m_pAESContext.get(), iv);
-      FXSYS_memcpy(dest_buf, iv, 16);
-      int nblocks = source.size() / 16;
-      CRYPT_AESEncrypt(m_pAESContext.get(), dest_buf + 16, source.data(),
-                       nblocks * 16);
-      uint8_t padding[16];
-      FXSYS_memcpy(padding, source.data() + nblocks * 16, source.size() % 16);
-      FXSYS_memset(padding + source.size() % 16, 16 - source.size() % 16,
-                   16 - source.size() % 16);
-      CRYPT_AESEncrypt(m_pAESContext.get(), dest_buf + nblocks * 16 + 16,
-                       padding, 16);
-      dest_size = 32 + nblocks * 16;
-    } else {
-      DCHECK_EQ(dest_size, source.size());
-      if (dest_buf != source.data()) {
-        FXSYS_memcpy(dest_buf, source.data(), source.size());
-      }
-      // SAFETY: caller ensures that dest_buf points to at least dest_size
-      // bytes.
-      CRYPT_ArcFourCryptBlock(pdfium::make_span(dest_buf, dest_size),
-                              pdfium::make_span(realkey).first(realkeylen));
+      fxcrt::Copy(ByteStringView("sAlT").unsigned_span(),
+                  pdfium::make_span(key1).subspan(m_KeyLen + 5));
     }
-  });
+    size_t len = m_Cipher == Cipher::kAES ? m_KeyLen + 9 : m_KeyLen + 5;
+    CRYPT_MD5Generate(pdfium::make_span(key1).first(len), realkey);
+    realkeylen = std::min(m_KeyLen + 5, sizeof(realkey));
+  }
+  if (m_Cipher == Cipher::kAES) {
+    CRYPT_AESSetKey(m_pAESContext.get(),
+                    m_KeyLen == 32 ? m_EncryptKey.data() : realkey, m_KeyLen);
+    uint8_t iv[16];
+    for (auto& v : iv) {
+      v = (uint8_t)rand();
+    }
+    CRYPT_AESSetIV(m_pAESContext.get(), iv);
+    fxcrt::Copy(iv, dest);
+    int nblocks = source.size() / 16;
+    CRYPT_AESEncrypt(m_pAESContext.get(), dest.subspan(16).data(),
+                     source.data(), nblocks * 16);
+    uint8_t padding[16];
+    fxcrt::Copy(source.subspan(nblocks * 16, source.size() % 16), padding);
+    fxcrt::Fill(pdfium::make_span(padding).subspan(source.size() % 16),
+                16 - source.size() % 16);
+    CRYPT_AESEncrypt(m_pAESContext.get(),
+                     dest.subspan(nblocks * 16 + 16).data(), padding, 16);
+    return 32 + nblocks * 16;
+  }
+  DCHECK_EQ(dest.size(), source.size());
+  if (dest.data() != source.data()) {
+    fxcrt::Copy(source, dest);
+  }
+  CRYPT_ArcFourCryptBlock(dest, pdfium::make_span(realkey).first(realkeylen));
+  return dest.size();
 }
 
 struct AESCryptContext {

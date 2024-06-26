@@ -19,15 +19,13 @@ CPDF_Encryptor::CPDF_Encryptor(const CPDF_CryptoHandler* pHandler, int objnum)
 
 DataVector<uint8_t> CPDF_Encryptor::Encrypt(
     pdfium::span<const uint8_t> src_data) const {
-  if (src_data.empty())
+  if (src_data.empty()) {
     return DataVector<uint8_t>();
-
-  DataVector<uint8_t> result;
-  size_t buf_size = m_pHandler->EncryptGetSize(src_data);
-  result.resize(buf_size);
-  m_pHandler->EncryptContent(m_ObjNum, 0, src_data, result.data(),
-                             buf_size);  // Updates |buf_size| with actual.
-  result.resize(buf_size);
+  }
+  size_t estimated = m_pHandler->EncryptGetSize(src_data);
+  DataVector<uint8_t> result(estimated);
+  size_t actual = m_pHandler->EncryptContent(m_ObjNum, 0, src_data, result);
+  result.resize(actual);
   return result;
 }
 

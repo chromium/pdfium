@@ -39,11 +39,12 @@ class CPDF_CryptoHandler {
 
   bool DecryptObjectTree(RetainPtr<CPDF_Object> object);
   size_t EncryptGetSize(pdfium::span<const uint8_t> source) const;
-  void EncryptContent(uint32_t objnum,
-                      uint32_t gennum,
-                      pdfium::span<const uint8_t> source,
-                      uint8_t* dest_buf,
-                      size_t& dest_size) const;
+
+  // Returns number of valid bytes in `dest`.
+  [[nodiscard]] size_t EncryptContent(uint32_t objnum,
+                                      uint32_t gennum,
+                                      pdfium::span<const uint8_t> source,
+                                      pdfium::span<uint8_t> dest) const;
 
   bool IsCipherAES() const;
 
