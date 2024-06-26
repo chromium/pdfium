@@ -41,7 +41,6 @@
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/ptr_util.h"
 #include "core/fxcrt/span.h"
-#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
@@ -1282,7 +1281,7 @@ FPDF_EXPORT FPDF_DEST FPDF_CALLCONV FPDF_GetNamedDest(FPDF_DOCUMENT document,
     // SAFETY: required from caller.
     auto buffer_span =
         UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), *buflen));
-    fxcrt::spancpy(buffer_span, utf16Name.span());
+    fxcrt::Copy(utf16Name.span(), buffer_span);
     *buflen = len;
   } else {
     *buflen = -1;
@@ -1357,8 +1356,8 @@ FPDF_GetTrailerEnds(FPDF_DOCUMENT document,
       fxcrt::CollectionSize<unsigned long>(trailer_ends);
   if (buffer && length >= trailer_ends_len) {
     // SAFETY: required from caller.
-    fxcrt::spancpy(UNSAFE_BUFFERS(pdfium::make_span(buffer, length)),
-                   pdfium::make_span(trailer_ends));
+    fxcrt::Copy(trailer_ends,
+                UNSAFE_BUFFERS(pdfium::make_span(buffer, length)));
   }
 
   return trailer_ends_len;

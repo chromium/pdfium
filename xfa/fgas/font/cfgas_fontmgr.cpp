@@ -29,7 +29,6 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
-#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontmapper.h"
@@ -748,20 +747,18 @@ void CFGAS_FontMgr::RegisterFace(RetainPtr<CFX_Face> pFace,
   // pdfium::span.
   std::optional<std::array<uint32_t, 4>> unicode_range =
       pFace->GetOs2UnicodeRange();
-  auto usb_span = pdfium::make_span(pFont->m_dwUsb);
   if (unicode_range.has_value()) {
-    fxcrt::spancpy(usb_span, pdfium::make_span(unicode_range.value()));
+    fxcrt::Copy(unicode_range.value(), pFont->m_dwUsb);
   } else {
-    fxcrt::Fill(usb_span, 0);
+    fxcrt::Fill(pFont->m_dwUsb, 0);
   }
 
   std::optional<std::array<uint32_t, 2>> code_page_range =
       pFace->GetOs2CodePageRange();
-  auto csb_span = pdfium::make_span(pFont->m_dwCsb);
   if (code_page_range.has_value()) {
-    fxcrt::spancpy(csb_span, pdfium::make_span(code_page_range.value()));
+    fxcrt::Copy(code_page_range.value(), pFont->m_dwCsb);
   } else {
-    fxcrt::Fill(csb_span, 0);
+    fxcrt::Fill(pFont->m_dwCsb, 0);
   }
 
   static constexpr uint32_t kNameTag =

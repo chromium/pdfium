@@ -11,7 +11,7 @@
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
-#include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "public/fpdf_doc.h"
 #include "public/fpdfview.h"
 #include "testing/embedder_test.h"
@@ -115,8 +115,8 @@ class TestAsyncLoader final : public FX_DOWNLOADHINTS, FX_FILEAVAIL {
     if (end <= pos)
       return 0;
     const unsigned long bytes_to_copy = end - pos;
-    fxcrt::spancpy(UNSAFE_TODO(pdfium::make_span(pBuf, size)),
-                   file_contents().subspan(pos, bytes_to_copy));
+    fxcrt::Copy(file_contents().subspan(pos, bytes_to_copy),
+                UNSAFE_TODO(pdfium::make_span(pBuf, size)));
     SetDataAvailable(pos, bytes_to_copy);
     return static_cast<int>(bytes_to_copy);
   }

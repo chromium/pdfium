@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "core/fxcrt/span.h"
-#include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -27,7 +27,7 @@ TEST(FixedSizeDataVector, UninitData) {
   ASSERT_EQ(4u, vec.span().size());
 
   constexpr int kData[] = {1, 2, 3, 4};
-  fxcrt::spancpy(vec.span(), pdfium::make_span(kData));
+  fxcrt::Copy(kData, vec.span());
   EXPECT_THAT(vec.span(), testing::ElementsAre(1, 2, 3, 4));
 }
 
@@ -39,7 +39,7 @@ TEST(FixedSizeDataVector, ZeroedData) {
   EXPECT_THAT(vec.span(), testing::ElementsAre(0, 0, 0, 0));
 
   constexpr int kData[] = {1, 2, 3, 4};
-  fxcrt::spancpy(vec.span(), pdfium::make_span(kData));
+  fxcrt::Copy(kData, vec.span());
   EXPECT_THAT(vec.span(), testing::ElementsAre(1, 2, 3, 4));
 }
 
@@ -51,7 +51,7 @@ TEST(FixedSizeDataVector, TryZeroedData) {
   EXPECT_THAT(vec.span(), testing::ElementsAre(0, 0, 0, 0));
 
   constexpr int kData[] = {1, 2, 3, 4};
-  fxcrt::spancpy(vec.span(), pdfium::make_span(kData));
+  fxcrt::Copy(kData, vec.span());
   EXPECT_THAT(vec.span(), testing::ElementsAre(1, 2, 3, 4));
 }
 
@@ -68,7 +68,7 @@ TEST(FixedSizeDataVector, MoveConstruct) {
   constexpr int kData[] = {1, 2, 3, 4};
   auto vec = FixedSizeDataVector<int>::Uninit(4);
   ASSERT_EQ(4u, vec.span().size());
-  fxcrt::spancpy(vec.span(), pdfium::make_span(kData));
+  fxcrt::Copy(kData, vec.span());
   const int* const original_data_ptr = vec.span().data();
 
   FixedSizeDataVector<int> vec2(std::move(vec));
@@ -99,7 +99,7 @@ TEST(FixedSizeDataVector, MoveAssign) {
   auto vec2 = FixedSizeDataVector<int>::Zeroed(4);
   constexpr int kData[] = {1, 2, 3, 4};
   ASSERT_EQ(4u, vec2.span().size());
-  fxcrt::spancpy(vec2.span(), pdfium::make_span(kData));
+  fxcrt::Copy(kData, vec2.span());
 
   vec = std::move(vec2);
   EXPECT_TRUE(vec2.empty());

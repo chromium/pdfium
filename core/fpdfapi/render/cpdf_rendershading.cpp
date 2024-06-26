@@ -32,6 +32,7 @@
 #include "core/fxcrt/numerics/clamped_math.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
@@ -836,13 +837,12 @@ void DrawCoonPatchMeshes(
       for (i = 0; i < 4; i++) {
         tempCoords[i] = coords[(flag * 3 + i) % 12];
       }
-      fxcrt::spancpy(pdfium::make_span(coords), pdfium::make_span(tempCoords));
+      fxcrt::Copy(tempCoords, coords);
       std::array<CoonColor, 2> tempColors = {{
           patch.patch_colors[flag],
           patch.patch_colors[(flag + 1) % 4],
       }};
-      fxcrt::spancpy(pdfium::make_span(patch.patch_colors),
-                     pdfium::make_span(tempColors));
+      fxcrt::Copy(tempColors, patch.patch_colors);
     }
     for (i = iStartPoint; i < point_count; i++) {
       if (!stream.CanReadCoords())

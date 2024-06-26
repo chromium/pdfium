@@ -11,7 +11,6 @@
 
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcrt/data_vector.h"
-#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
@@ -29,7 +28,7 @@ class CFX_GifContextForTest final : public CFX_GifContext {
   CFX_CodecMemory* InputBuffer() const { return input_buffer_.Get(); }
   void SetTestInputBuffer(pdfium::span<const uint8_t> input) {
     auto pMemory = pdfium::MakeRetain<CFX_CodecMemory>(input.size());
-    fxcrt::spancpy(pMemory->GetBufferSpan(), input);
+    fxcrt::Copy(input, pMemory->GetBufferSpan());
     SetInputBuffer(std::move(pMemory));
   }
 };

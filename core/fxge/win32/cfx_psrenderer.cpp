@@ -24,7 +24,7 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
-#include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/cfx_fontcache.h"
@@ -873,8 +873,7 @@ CFX_PSRenderer::FaxCompressResult CFX_PSRenderer::FaxCompressData(
   result.data.resize(safe_size.ValueOrDie());
   auto dest_span = pdfium::make_span(result.data);
   for (int row = 0; row < height; row++) {
-    pdfium::span<const uint8_t> src_scan = src->GetScanline(row);
-    fxcrt::spancpy(dest_span.subspan(row * pitch, pitch), src_scan);
+    fxcrt::Copy(src->GetScanline(row), dest_span.subspan(row * pitch, pitch));
   }
   return result;
 }

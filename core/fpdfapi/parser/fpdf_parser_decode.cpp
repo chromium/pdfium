@@ -289,7 +289,7 @@ DataAndBytesConsumed RunLengthDecode(pdfium::span<const uint8_t> src_span) {
         fxcrt::Fill(dest_span.subspan(dest_count + copy_len, delta), 0);
       }
       auto copy_span = src_span.subspan(i + 1, copy_len);
-      fxcrt::spancpy(dest_span.subspan(dest_count), copy_span);
+      fxcrt::Copy(copy_span, dest_span.subspan(dest_count));
       dest_count += src_span[i] + 1;
       i += src_span[i] + 2;
     } else {

@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "core/fxcrt/check_op.h"
-#include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
 CFX_BitmapStorer::CFX_BitmapStorer() = default;
@@ -27,8 +27,9 @@ void CFX_BitmapStorer::Replace(RetainPtr<CFX_DIBitmap>&& pBitmap) {
 void CFX_BitmapStorer::ComposeScanline(int line,
                                        pdfium::span<const uint8_t> scanline) {
   pdfium::span<uint8_t> dest_buf = m_pBitmap->GetWritableScanline(line);
-  if (!dest_buf.empty())
-    fxcrt::spancpy(dest_buf, scanline);
+  if (!dest_buf.empty()) {
+    fxcrt::Copy(scanline, dest_buf);
+  }
 }
 
 bool CFX_BitmapStorer::SetInfo(int width,

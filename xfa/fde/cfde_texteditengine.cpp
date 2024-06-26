@@ -14,7 +14,7 @@
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
-#include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/text_char_pos.h"
 #include "xfa/fde/cfde_textout.h"
 #include "xfa/fde/cfde_wordbreak_data.h"
@@ -328,8 +328,9 @@ void CFDE_TextEditEngine::Insert(size_t idx,
     previous_text = GetText();
 
   // Copy the new text into the gap.
-  fxcrt::spancpy(pdfium::make_span(content_).subspan(gap_position_),
-                 text.span().first(length));
+  fxcrt::Copy(text.span().first(length),
+              pdfium::make_span(content_).subspan(gap_position_));
+
   gap_position_ += length;
   gap_size_ -= length;
   text_length_ += length;

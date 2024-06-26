@@ -17,7 +17,7 @@
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/span.h"
-#include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/string_view_template.h"
 #include "core/fxcrt/utf16.h"
 #include "core/fxcrt/widestring.h"
@@ -182,7 +182,7 @@ size_t ToString(T value, int (*round_func)(T), pdfium::span<char> buf) {
   int i = scaled / scale;
   FXSYS_itoa(i, buf2, 10);
   size_t len = strlen(buf2);
-  fxcrt::spancpy(buf.subspan(buf_size), pdfium::make_span(buf2).first(len));
+  fxcrt::Copy(pdfium::make_span(buf2).first(len), buf.subspan(buf_size));
   buf_size += len;
   int fraction = scaled % scale;
   if (fraction == 0) {

@@ -11,6 +11,7 @@
 
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 
 namespace fxcrt {
 
@@ -95,7 +96,7 @@ void BinaryBuffer::AppendSpan(pdfium::span<const uint8_t> span) {
     return;
 
   ExpandBuf(span.size());
-  fxcrt::spancpy(pdfium::make_span(m_buffer).subspan(GetSize()), span);
+  fxcrt::Copy(span, pdfium::make_span(m_buffer).subspan(GetSize()));
   m_DataSize += span.size();
 }
 

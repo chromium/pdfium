@@ -16,7 +16,6 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/raw_span.h"
-#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 
 namespace fxcodec {
@@ -146,8 +145,8 @@ pdfium::span<uint8_t> RLScanlineDecoder::GetNextLine() {
             pdfium::checked_cast<uint32_t>(m_SrcBuf.size() - m_SrcOffset);
         m_bEOD = true;
       }
-      auto copy_span = m_SrcBuf.subspan(m_SrcOffset, copy_len);
-      fxcrt::spancpy(scan_span.subspan(col_pos), copy_span);
+      fxcrt::Copy(m_SrcBuf.subspan(m_SrcOffset, copy_len),
+                  scan_span.subspan(col_pos));
       col_pos += copy_len;
       UpdateOperator((uint8_t)copy_len);
     } else if (m_Operator > 128) {

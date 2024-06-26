@@ -34,6 +34,7 @@
 #include "core/fxcrt/fx_stream.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 
@@ -279,8 +280,8 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     if (pMaskBitmap->GetFormat() != FXDIB_Format::k1bppMask) {
       mask_buf.resize(Fx2DSizeOrDie(mask_width, mask_height));
       for (int32_t a = 0; a < mask_height; a++) {
-        fxcrt::spancpy(pdfium::make_span(mask_buf).subspan(a * mask_width),
-                       pMaskBitmap->GetScanline(a).first(mask_width));
+        fxcrt::Copy(pMaskBitmap->GetScanline(a).first(mask_width),
+                    pdfium::make_span(mask_buf).subspan(a * mask_width));
       }
     }
     pMaskDict->SetNewFor<CPDF_Number>(

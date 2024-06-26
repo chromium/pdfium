@@ -483,7 +483,7 @@ void ProgressiveDecoder::GifReadScanline(int32_t row_num,
   const int32_t left = m_GifFrameRect.left;
   const pdfium::span<uint8_t> decode_span = m_DecodeBuf;
   fxcrt::Fill(decode_span.first(m_SrcWidth), pal_index);
-  fxcrt::spancpy(decode_span.subspan(left), row_buf.first(img_width));
+  fxcrt::Copy(row_buf.first(img_width), decode_span.subspan(left));
 
   bool bLastPass = (row_num % 2) == 1;
   int32_t line = row_num + m_GifFrameRect.top;
@@ -541,7 +541,7 @@ void ProgressiveDecoder::BmpReadScanline(uint32_t row_num,
   RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
   DCHECK(pDIBitmap);
 
-  fxcrt::spancpy(pdfium::make_span(m_DecodeBuf), row_buf.first(m_ScanlineSize));
+  fxcrt::Copy(row_buf.first(m_ScanlineSize), m_DecodeBuf);
 
   int src_top = m_clipBox.top;
   int src_bottom = m_clipBox.bottom;
@@ -730,7 +730,7 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
   m_pBmpContext = std::move(pBmpContext);
   if (!palette.empty()) {
     m_SrcPalette.resize(palette.size());
-    fxcrt::spancpy(pdfium::make_span(m_SrcPalette), palette);
+    fxcrt::Copy(palette, m_SrcPalette);
   } else {
     m_SrcPalette.clear();
   }

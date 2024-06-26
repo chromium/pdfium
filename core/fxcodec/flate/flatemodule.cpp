@@ -365,7 +365,7 @@ void PNG_PredictLine(pdfium::span<uint8_t> dest_span,
       break;
     }
     default: {
-      fxcrt::spancpy(dest_span, remaining_src_span);
+      fxcrt::Copy(remaining_src_span, dest_span);
       break;
     }
   }
@@ -692,7 +692,7 @@ void FlatePredictorScanlineDecoder::GetNextLineWithPredictedPitch() {
       FlateOutput(m_pFlate.get(), m_PredictRaw);
       PNG_PredictLine(m_Scanline, m_PredictRaw, m_LastLine, row_size,
                       bytes_per_pixel);
-      fxcrt::spancpy(m_LastLine.span(), m_Scanline.first(m_PredictPitch));
+      fxcrt::Copy(m_Scanline.first(m_PredictPitch), m_LastLine.span());
       break;
     }
     case PredictorType::kFlate: {
@@ -711,9 +711,9 @@ void FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
   size_t bytes_to_go = m_Pitch;
   size_t read_leftover = m_LeftOver > bytes_to_go ? bytes_to_go : m_LeftOver;
   if (read_leftover) {
-    fxcrt::spancpy(
-        m_Scanline.span(),
-        m_PredictBuffer.subspan(m_PredictPitch - m_LeftOver, read_leftover));
+    fxcrt::Copy(
+        m_PredictBuffer.subspan(m_PredictPitch - m_LeftOver, read_leftover),
+        m_Scanline.span());
     m_LeftOver -= read_leftover;
     bytes_to_go -= read_leftover;
   }
@@ -726,7 +726,7 @@ void FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
         FlateOutput(m_pFlate.get(), m_PredictRaw);
         PNG_PredictLine(m_PredictBuffer, m_PredictRaw, m_LastLine, row_size,
                         bytes_per_pixel);
-        fxcrt::spancpy(m_LastLine.span(), m_PredictBuffer.span());
+        fxcrt::Copy(m_PredictBuffer.span(), m_LastLine.span());
         bytes_to_go = CopyAndAdvanceLine(bytes_to_go);
       }
       break;
@@ -748,8 +748,8 @@ void FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
 
 size_t FlatePredictorScanlineDecoder::CopyAndAdvanceLine(size_t bytes_to_go) {
   size_t read_bytes = std::min<size_t>(m_PredictPitch, bytes_to_go);
-  fxcrt::spancpy(m_Scanline.subspan(m_Pitch - bytes_to_go),
-                 m_PredictBuffer.first(read_bytes));
+  fxcrt::Copy(m_PredictBuffer.first(read_bytes),
+              m_Scanline.subspan(m_Pitch - bytes_to_go));
   m_LeftOver += m_PredictPitch - read_bytes;
   return bytes_to_go - read_bytes;
 }

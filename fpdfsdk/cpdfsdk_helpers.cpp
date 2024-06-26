@@ -25,6 +25,7 @@
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/unowned_ptr.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 
@@ -68,9 +69,9 @@ unsigned long GetStreamMaybeCopyAndReturnLengthImpl(
     stream_acc->LoadAllDataRaw();
 
   pdfium::span<const uint8_t> stream_data_span = stream_acc->GetSpan();
-  if (!buffer.empty() && buffer.size() <= stream_data_span.size())
-    fxcrt::spancpy(buffer, stream_data_span);
-
+  if (!buffer.empty() && buffer.size() <= stream_data_span.size()) {
+    fxcrt::Copy(stream_data_span, buffer);
+  }
   return pdfium::checked_cast<unsigned long>(stream_data_span.size());
 }
 

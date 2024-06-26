@@ -26,7 +26,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
-#include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 
 namespace {
 
@@ -332,7 +332,7 @@ CPDF_CryptoHandler::CPDF_CryptoHandler(Cipher cipher,
   DCHECK(cipher != Cipher::kRC4 || (key.size() >= 5 && key.size() <= 16));
 
   if (m_Cipher != Cipher::kNone) {
-    fxcrt::spancpy(pdfium::make_span(m_EncryptKey), key.first(m_KeyLen));
+    fxcrt::Copy(key.first(m_KeyLen), m_EncryptKey);
   }
   if (m_Cipher == Cipher::kAES) {
     m_pAESContext.reset(FX_Alloc(CRYPT_aes_context, 1));

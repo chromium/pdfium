@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "core/fxcrt/compiler_specific.h"
-#include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 
 #define GET_UINT32(n, b, i)                            \
   UNSAFE_TODO({                                        \
@@ -200,7 +200,7 @@ void CRYPT_MD5Update(CRYPT_md5_context* context,
 
   const pdfium::span<uint8_t> buffer_span = pdfium::make_span(context->buffer);
   if (left && data.size() >= fill) {
-    fxcrt::spancpy(buffer_span.subspan(left), data.first(fill));
+    fxcrt::Copy(data.first(fill), buffer_span.subspan(left));
     md5_process(context, context->buffer);
     data = data.subspan(fill);
     left = 0;
@@ -209,8 +209,9 @@ void CRYPT_MD5Update(CRYPT_md5_context* context,
     md5_process(context, data.data());
     data = data.subspan(64);
   }
-  if (!data.empty())
-    fxcrt::spancpy(buffer_span.subspan(left), data);
+  if (!data.empty()) {
+    fxcrt::Copy(data, buffer_span.subspan(left));
+  }
 }
 
 void CRYPT_MD5Finish(CRYPT_md5_context* context, uint8_t digest[16]) {

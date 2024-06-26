@@ -12,7 +12,7 @@
 
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/notreached.h"
-#include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
 CFX_ClipRgn::CFX_ClipRgn(int width, int height) : m_Box(0, 0, width, height) {}
@@ -51,7 +51,7 @@ void CFX_ClipRgn::IntersectMaskRect(FX_RECT rect,
         m_Mask->GetWritableScanline(row - m_Box.top);
     pdfium::span<const uint8_t> src_scan =
         pOldMask->GetScanline(row - mask_rect.top);
-    fxcrt::spancpy(dest_scan, src_scan.subspan(offset, m_Box.Width()));
+    fxcrt::Copy(src_scan.subspan(offset, m_Box.Width()), dest_scan);
   }
 }
 

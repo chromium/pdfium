@@ -10,7 +10,7 @@
 #include <utility>
 
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 
 CFX_MemoryStream::CFX_MemoryStream() = default;
 
@@ -51,8 +51,8 @@ bool CFX_MemoryStream::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
   m_nCurPos = new_pos.ValueOrDie();
   // Safe to cast `offset` because it was used to calculate `new_pos` above, and
   // `new_pos` is valid.
-  fxcrt::spancpy(buffer,
-                 GetSpan().subspan(static_cast<size_t>(offset), buffer.size()));
+  fxcrt::Copy(GetSpan().subspan(static_cast<size_t>(offset), buffer.size()),
+              buffer);
   return true;
 }
 
@@ -97,8 +97,8 @@ bool CFX_MemoryStream::WriteBlockAtOffset(pdfium::span<const uint8_t> buffer,
 
   // Safe to cast `offset` because it was used to calculate `safe_new_pos`
   // above, and `safe_new_pos` is valid.
-  fxcrt::spancpy(pdfium::make_span(m_data).subspan(static_cast<size_t>(offset)),
-                 buffer);
+  fxcrt::Copy(buffer,
+              pdfium::make_span(m_data).subspan(static_cast<size_t>(offset)));
   m_nCurSize = std::max(m_nCurSize, m_nCurPos);
 
   return true;

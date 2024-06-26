@@ -170,9 +170,8 @@ void ConvertBuffer_8bppMask2Gray(pdfium::span<uint8_t> dest_buf,
                                  int src_left,
                                  int src_top) {
   for (int row = 0; row < height; ++row) {
-    fxcrt::spancpy(
-        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)),
-        pSrcBitmap->GetScanline(src_top + row).subspan(src_left, width));
+    fxcrt::Copy(pSrcBitmap->GetScanline(src_top + row).subspan(src_left, width),
+                dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)));
   }
 }
 
@@ -288,9 +287,9 @@ void ConvertBuffer_IndexCopy(pdfium::span<uint8_t> dest_buf,
     }
   } else {
     for (int row = 0; row < height; ++row) {
-      fxcrt::spancpy(
-          dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)),
-          pSrcBitmap->GetScanline(src_top + row).subspan(src_left, width));
+      fxcrt::Copy(
+          pSrcBitmap->GetScanline(src_top + row).subspan(src_left, width),
+          dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)));
     }
   }
 }
@@ -472,9 +471,9 @@ void ConvertBuffer_24bppRgb2Rgb24(
   const size_t x_offset = Fx2DSizeOrDie(src_left, 3);
   const size_t byte_count = Fx2DSizeOrDie(width, 3);
   for (int row = 0; row < height; ++row) {
-    fxcrt::spancpy(
-        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)),
-        pSrcBitmap->GetScanline(src_top + row).subspan(x_offset, byte_count));
+    fxcrt::Copy(
+        pSrcBitmap->GetScanline(src_top + row).subspan(x_offset, byte_count),
+        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)));
   }
 }
 

@@ -10,7 +10,8 @@
 #include <vector>
 
 #include "core/fxcrt/numerics/safe_conversions.h"
-#include "core/fxcrt/span_util.h"
+#include "core/fxcrt/span.h"
+#include "core/fxcrt/stl_util.h"
 #include "testing/utils/path_service.h"
 
 std::vector<uint8_t> GetFileContents(const char* filename) {
@@ -54,8 +55,8 @@ FileAccessForTesting::FileAccessForTesting(const std::string& file_name) {
 int FileAccessForTesting::GetBlockImpl(unsigned long pos,
                                        unsigned char* pBuf,
                                        unsigned long size) {
-  fxcrt::spancpy(pdfium::make_span(pBuf, size),
-                 pdfium::make_span(file_contents_).subspan(pos, size));
+  fxcrt::Copy(pdfium::make_span(file_contents_).subspan(pos, size),
+              pdfium::make_span(pBuf, size));
   return size ? 1 : 0;
 }
 

@@ -34,7 +34,6 @@
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "fxbarcode/common/BC_CommonByteMatrix.h"
 #include "fxbarcode/common/reedsolomon/BC_ReedSolomon.h"
@@ -322,9 +321,9 @@ bool InterleaveWithECBytes(CBC_QRCoderBitVector* bits,
       return false;
 
     DataVector<uint8_t> dataBytes(numDataBytesInBlock);
-    fxcrt::spancpy(
-        pdfium::make_span(dataBytes),
-        bits->GetArray().subspan(dataBytesOffset, numDataBytesInBlock));
+    fxcrt::Copy(bits->GetArray().subspan(dataBytesOffset, numDataBytesInBlock),
+                dataBytes);
+
     DataVector<uint8_t> ecBytes = GenerateECBytes(dataBytes, numEcBytesInBlock);
     if (ecBytes.empty())
       return false;

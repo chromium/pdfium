@@ -8,7 +8,6 @@
 
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
-#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 
 #define SHA_GET_UINT32(n, b, i)                                         \
@@ -376,14 +375,14 @@ void CRYPT_SHA1Update(CRYPT_sha1_context* context,
   const auto block_span = pdfium::make_span(context->block);
   context->total_bytes += data.size();
   if (context->blkused && data.size() < 64 - context->blkused) {
-    fxcrt::spancpy(block_span.subspan(context->blkused), data);
+    fxcrt::Copy(data, block_span.subspan(context->blkused));
     context->blkused += data.size();
     return;
   }
   std::array<uint32_t, 16> wordblock;
   while (data.size() >= 64 - context->blkused) {
-    fxcrt::spancpy(block_span.subspan(context->blkused),
-                   data.first(64 - context->blkused));
+    fxcrt::Copy(data.first(64 - context->blkused),
+                block_span.subspan(context->blkused));
     data = data.subspan(64 - context->blkused);
     for (int i = 0; i < 16; i++) {
       wordblock[i] = (((uint32_t)context->block[i * 4 + 0]) << 24) |
@@ -394,7 +393,7 @@ void CRYPT_SHA1Update(CRYPT_sha1_context* context,
     SHATransform(context->h, wordblock);
     context->blkused = 0;
   }
-  fxcrt::spancpy(block_span, data);
+  fxcrt::Copy(data, block_span);
   context->blkused = static_cast<uint32_t>(data.size());
 }
 
@@ -461,7 +460,7 @@ void CRYPT_SHA256Update(CRYPT_sha2_context* context,
   uint32_t fill = 64 - left;
   context->total_bytes += data.size();
   if (left && data.size() >= fill) {
-    fxcrt::spancpy(buffer_span.subspan(left), data.first(fill));
+    fxcrt::Copy(data.first(fill), buffer_span.subspan(left));
     sha256_process(context, buffer_span);
     data = data.subspan(fill);
     left = 0;
@@ -471,7 +470,7 @@ void CRYPT_SHA256Update(CRYPT_sha2_context* context,
     data = data.subspan(64u);
   }
   if (!data.empty()) {
-    fxcrt::spancpy(buffer_span.subspan(left), data);
+    fxcrt::Copy(data, buffer_span.subspan(left));
   }
 }
 
@@ -527,7 +526,7 @@ void CRYPT_SHA384Update(CRYPT_sha2_context* context,
   uint32_t fill = 128 - left;
   context->total_bytes += data.size();
   if (left && data.size() >= fill) {
-    fxcrt::spancpy(buffer_span.subspan(left), data.first(fill));
+    fxcrt::Copy(data.first(fill), buffer_span.subspan(left));
     sha384_process(context, buffer_span);
     data = data.subspan(fill);
     left = 0;
@@ -537,7 +536,7 @@ void CRYPT_SHA384Update(CRYPT_sha2_context* context,
     data = data.subspan(128);
   }
   if (!data.empty()) {
-    fxcrt::spancpy(buffer_span.subspan(left), data);
+    fxcrt::Copy(data, buffer_span.subspan(left));
   }
 }
 

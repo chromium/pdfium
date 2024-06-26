@@ -83,7 +83,7 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
       CRYPT_MD5Generate(digest_span, digest);
     }
   }
-  fxcrt::spancpy(key, digest_span);
+  fxcrt::Copy(digest_span, key);
 }
 
 bool IsValidKeyLengthForCipher(CPDF_CryptoHandler::Cipher cipher,
@@ -676,8 +676,8 @@ void CPDF_SecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict) {
   // to 15 should be random data.
   uint32_t random_value;
   FX_Random_GenerateMT(pdfium::span_from_ref(random_value));
-  fxcrt::spancpy(pdfium::make_span(buf).subspan(12, 4),
-                 pdfium::byte_span_from_ref(random_value));
+  fxcrt::Copy(pdfium::byte_span_from_ref(random_value),
+              pdfium::make_span(buf).subspan(12, 4));
 
   CRYPT_aes_context aes = {};
   CRYPT_AESSetKey(&aes, m_EncryptKey.data(), m_EncryptKey.size());
