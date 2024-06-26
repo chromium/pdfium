@@ -30,3 +30,5 @@ Local Modifications:
 0039-opj_mqc_renorme.patch: Remove unused opj_mqc_renorme().
 0041-remove_opj_clock.patch: Remove unused opj_clock.h include.
 0046-func-ptr-mixup.patch: Prevent mixing up function pointer types.
+0047-validate_opj_stream_read_data.patch: Avoid potential heap-buffer-overflow in non-strict mode.
+0048-check_corruption_non_strict_mode.patch: Avoid heap-buffer-overflow in non-strict mode.
