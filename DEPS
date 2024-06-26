@@ -88,7 +88,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang
   # and whatever else without interference from each other.
-  'clang_revision': 'fa1d0062545bd223d0ae7110cc1afe9b30a2bb2e',
+  'clang_revision': '7637a9e0243b44d816d3adc823d7e484f7279fbe',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling code_coverage
   # and whatever else without interference from each other.
@@ -372,45 +372,45 @@ deps = {
     'bucket': 'chromium-browser-clang',
     'objects': [
       {
-        'object_name': 'Linux_x64/clang-llvmorg-19-init-10646-g084e2b53-57.tar.xz',
-        'sha256sum': '2c95e921b2a26b968e5f2160560ed1f35559f5cc8a64a4f87974d51eff8eea8b',
-        'size_bytes': 50869256,
-        'generation': 1717767135920224,
+        'object_name': 'Linux_x64/clang-llvmorg-19-init-14561-gecea8371-1.tar.xz',
+        'sha256sum': '9b1bac96be0b06fd6e04cdf96dc07e7184e8612940ddf8bb507e184c16afd87f',
+        'size_bytes': 51499624,
+        'generation': 1718612840583170,
         'condition': 'host_os == "linux" and non_git_source',
       },
       {
-        'object_name': 'Mac/clang-llvmorg-19-init-10646-g084e2b53-57.tar.xz',
-        'sha256sum': '6e21ef43878368e499c009f6c383cebf318a109ed7c68a77017d1f898ac6ebd1',
-        'size_bytes': 45828024,
-        'generation': 1717767137856220,
+        'object_name': 'Mac/clang-llvmorg-19-init-14561-gecea8371-1.tar.xz',
+        'sha256sum': 'd2d237921be6243664608170aff3fb135cfc803281ba033123d6255ca1604424',
+        'size_bytes': 46442580,
+        'generation': 1718612843273440,
         'condition': 'host_os == "mac" and host_cpu == "x64"',
       },
       {
-        'object_name': 'Mac/clang-mac-runtime-library-llvmorg-19-init-10646-g084e2b53-57.tar.xz',
-        'sha256sum': '70d8f252b65542c474f7b909767f70a6ca7e39396f0d8b2f9d3a74f065e0c241',
-        'size_bytes': 842840,
-        'generation': 1717767144188942,
+        'object_name': 'Mac/clang-mac-runtime-library-llvmorg-19-init-14561-gecea8371-1.tar.xz',
+        'sha256sum': '6013fda94e4de6f7606c0396632965a306cb7ea124e7dfd9db9892208e5d6793',
+        'size_bytes': 864076,
+        'generation': 1718612856108114,
         'condition': 'checkout_mac and not host_os == "mac"',
       },
       {
-        'object_name': 'Mac_arm64/clang-llvmorg-19-init-10646-g084e2b53-57.tar.xz',
-        'sha256sum': '81cf4c48c346e7332cd83917d3f82660634d1123ab53fc93740f80fabd37de2e',
-        'size_bytes': 41487688,
-        'generation': 1717767147110695,
+        'object_name': 'Mac_arm64/clang-llvmorg-19-init-14561-gecea8371-1.tar.xz',
+        'sha256sum': '1fd706820978993faabf81fd49d906cce5d20a679345a704cf2edcf8d4961221',
+        'size_bytes': 42067252,
+        'generation': 1718612860537568,
         'condition': 'host_os == "mac" and host_cpu == "arm64"',
       },
       {
-        'object_name': 'Win/clang-llvmorg-19-init-10646-g084e2b53-57.tar.xz',
-        'sha256sum': '5b42a3e8f5847e9333263af5faa002ccd798893caf2ff47734a047e098bbb284',
-        'size_bytes': 40135748,
-        'generation': 1717767156694710,
+        'object_name': 'Win/clang-llvmorg-19-init-14561-gecea8371-1.tar.xz',
+        'sha256sum': 'edd36b71fdb914f003f84f9e87a23e695fe2431cc2720b0648cd7d24605b6718',
+        'size_bytes': 41781452,
+        'generation': 1718612878886786,
         'condition': 'host_os == "win"',
       },
       {
-        'object_name': 'Win/clang-win-runtime-library-llvmorg-19-init-10646-g084e2b53-57.tar.xz',
-        'sha256sum': 'f8609347334a99b0363dd14d43b84d4db139630b43a8eefc8f8d4ec5b4b0fa49',
-        'size_bytes': 2804644,
-        'generation': 1717767164441105,
+        'object_name': 'Win/clang-win-runtime-library-llvmorg-19-init-14561-gecea8371-1.tar.xz',
+        'sha256sum': '952e09dabc9b2f09a5056e21086f05cad67992837967a96e20a5b64ca2d37568',
+        'size_bytes': 2841316,
+        'generation': 1718612894981280,
         'condition': 'checkout_win and not host_os == "win"',
       },
     ]
