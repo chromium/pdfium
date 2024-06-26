@@ -51,7 +51,7 @@ ByteString ByteString::FormatInteger(int i) {
 // static
 ByteString ByteString::FormatFloat(float f) {
   char buf[32];
-  return ByteString(buf, FloatToString(f, buf));
+  return UNSAFE_TODO(ByteString(buf, FloatToString(f, buf)));
 }
 
 // static

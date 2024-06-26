@@ -274,7 +274,10 @@ executable("pdfium_test") {
     "../testing/image_diff",
     "//build/win:default_exe_manifest",
   ]
-  configs += [ ":pdfium_test_config" ]
+  configs += [
+    ":pdfium_test_config",
+    "../:pdfium_common_config",
+  ]
 
   if (is_win) {
     sources += [

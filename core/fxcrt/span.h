@@ -267,7 +267,8 @@ class TRIVIAL_ABI GSL_POINTER span {
   // [span.sub], span subviews
   const span first(size_t count) const {
     CHECK(count <= size_);
-    return span(static_cast<T*>(data_), count);
+    // SAFETY: CHECK() on line above.
+    return UNSAFE_BUFFERS(span(static_cast<T*>(data_), count));
   }
 
   const span last(size_t count) const {
@@ -279,8 +280,9 @@ class TRIVIAL_ABI GSL_POINTER span {
   const span subspan(size_t pos, size_t count = dynamic_extent) const {
     CHECK(pos <= size_);
     CHECK(count == dynamic_extent || count <= size_ - pos);
-    return span(UNSAFE_BUFFERS(static_cast<T*>(data_) + pos),
-                count == dynamic_extent ? size_ - pos : count);
+    // SAFETY: CHECK()s on lines above.
+    return UNSAFE_BUFFERS(span(static_cast<T*>(data_) + pos,
+                               count == dynamic_extent ? size_ - pos : count));
   }
 
   // [span.obs], span observers

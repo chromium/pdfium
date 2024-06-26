@@ -267,7 +267,8 @@ class StringViewTemplate {
     if (pos == 0)
       return StringViewTemplate();
 
-    return StringViewTemplate(m_Span.data(), pos);
+    // SAFETY: Loop above keeps `pos` at length of string or less.
+    return UNSAFE_BUFFERS(StringViewTemplate(m_Span.data(), pos));
   }
 
   bool operator<(const StringViewTemplate& that) const {

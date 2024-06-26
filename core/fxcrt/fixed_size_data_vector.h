@@ -35,7 +35,8 @@ class FixedSizeDataVector {
     if (size == 0) {
       return FixedSizeDataVector();
     }
-    return FixedSizeDataVector(FX_AllocUninit(T, size), size);
+    // SAFETY: same `size` value passed to FX_Alloc() as to the ctor.
+    return UNSAFE_BUFFERS(FixedSizeDataVector(FX_AllocUninit(T, size), size));
   }
 
   // Allocates a vector of the given size with zeroed memory.
@@ -44,7 +45,8 @@ class FixedSizeDataVector {
     if (size == 0) {
       return FixedSizeDataVector();
     }
-    return FixedSizeDataVector(FX_Alloc(T, size), size);
+    // SAFETY: same `size` value passed to FX_Alloc() as to the ctor.
+    return UNSAFE_BUFFERS(FixedSizeDataVector(FX_Alloc(T, size), size));
   }
 
   // Same as above, but return an empty vector when insufficient memory.
@@ -53,7 +55,9 @@ class FixedSizeDataVector {
       return FixedSizeDataVector();
     }
     T* ptr = FX_TryAlloc(T, size);
-    return FixedSizeDataVector(ptr, ptr ? size : 0u);
+    // SAFETY: same `size` value passed to FX_TryAlloc() above as
+    // passed to ctor when the ptr is non-null.
+    return UNSAFE_BUFFERS(FixedSizeDataVector(ptr, ptr ? size : 0u));
   }
 
   FixedSizeDataVector(const FixedSizeDataVector&) = delete;
