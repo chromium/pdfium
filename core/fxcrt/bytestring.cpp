@@ -91,7 +91,6 @@ ByteString ByteString::Format(const char* pFormat, ...) {
   return ret;
 }
 
-// TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
 ByteString::ByteString(const char* pStr, size_t nLen) {
   if (nLen) {
     // SAFETY: caller ensures `pStr` points to at least `nLen` chars.

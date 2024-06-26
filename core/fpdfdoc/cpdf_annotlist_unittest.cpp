@@ -58,7 +58,7 @@ class CPDFAnnotListTest : public TestWithPageModule {
 
 ByteString MakeByteString(std::initializer_list<uint8_t> bytes) {
   // SAFETY: compiler determines size of initializer_list.
-  return UNSAFE_BUFFERS(ByteString::Create(std::data(bytes), std::size(bytes)));
+  return UNSAFE_BUFFERS(ByteString(std::data(bytes), std::size(bytes)));
 }
 
 ByteString GetRawContents(const CPDF_Annot* annotation) {

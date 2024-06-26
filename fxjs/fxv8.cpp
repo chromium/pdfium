@@ -129,7 +129,7 @@ WideString ToWideString(v8::Isolate* pIsolate, v8::Local<v8::String> pValue) {
 ByteString ToByteString(v8::Isolate* pIsolate, v8::Local<v8::String> pValue) {
   v8::String::Utf8Value s(pIsolate, pValue);
   // SAFETY: required from V8.
-  return UNSAFE_BUFFERS(ByteString::Create(*s, s.length()));
+  return UNSAFE_BUFFERS(ByteString(*s, s.length()));
 }
 
 int ReentrantToInt32Helper(v8::Isolate* pIsolate, v8::Local<v8::Value> pValue) {

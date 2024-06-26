@@ -115,7 +115,7 @@ std::optional<WideString> ExtractSubString(const wchar_t* lpszFullString,
       return std::nullopt;
     }
 
-    return WideString::Create(lpszFullString, static_cast<size_t>(nLen));
+    return WideString(lpszFullString, static_cast<size_t>(nLen));
   });
 }
 

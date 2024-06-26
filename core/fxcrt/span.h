@@ -206,6 +206,11 @@ class TRIVIAL_ABI GSL_POINTER span {
   // [span.cons], span constructors, copy, assignment, and destructor
   constexpr span() noexcept = default;
 
+  UNSAFE_BUFFER_USAGE constexpr span(T* data, size_t size) noexcept
+      : data_(data), size_(size) {
+    DCHECK(data_ || size_ == 0);
+  }
+
   // TODO(dcheng): Implement construction from a |begin| and |end| pointer.
   template <size_t N>
   constexpr span(T (&array)[N]) noexcept : span(array, N) {
@@ -332,14 +337,6 @@ class TRIVIAL_ABI GSL_POINTER span {
   }
 
  private:
-  // Move to public section once clang starts enforcing UNSAFE_BUFFERS on
-  // constructors (https://github.com/llvm/llvm-project/issues/80482). Until
-  // then, force calls into two-arg make_span() which enforces the unsafe
-  // buffer usage checks.
-  UNSAFE_BUFFER_USAGE constexpr span(T* data, size_t size) noexcept
-      : data_(data), size_(size) {
-    DCHECK(data_ || size_ == 0);
-  }
   template <typename U>
   friend constexpr span<U> make_span(U* data, size_t size) noexcept;
 

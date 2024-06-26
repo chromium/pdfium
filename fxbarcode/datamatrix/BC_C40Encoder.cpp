@@ -43,7 +43,7 @@ WideString EncodeToC40Codewords(const WideString& sb) {
   wchar_t cw[2];
   cw[0] = static_cast<wchar_t>(v / 256);
   cw[1] = static_cast<wchar_t>(v % 256);
-  return UNSAFE_TODO(WideString::Create(cw, std::size(cw)));
+  return UNSAFE_TODO(WideString(cw, std::size(cw)));
 }
 
 }  // namespace

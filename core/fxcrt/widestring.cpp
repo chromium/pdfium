@@ -392,7 +392,6 @@ WideString WideString::Format(const wchar_t* pFormat, ...) {
   return ret;
 }
 
-// TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
 WideString::WideString(const wchar_t* pStr, size_t nLen) {
   if (nLen) {
     // SAFETY: caller ensures `pStr` points to al least `nLen` wchar_t.

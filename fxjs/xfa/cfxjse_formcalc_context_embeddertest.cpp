@@ -762,8 +762,8 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, bug_854623) {
   const uint8_t test_string[] = {
       0x4c, 0x6f, 0x77, 0x65, 0x72, 0x28, 0x22, 0xc3,
       0x85, 0xc3, 0x85, 0xc3, 0x85, 0x22, 0x29};  // Lower("ÅÅÅ")
-  Execute(UNSAFE_TODO(ByteString::Create(test_string, sizeof(test_string)))
-              .AsStringView());
+  Execute(
+      UNSAFE_TODO(ByteString(test_string, sizeof(test_string))).AsStringView());
 }
 
 TEST_F(CFXJSE_FormCalcContextEmbedderTest, Ltrim) {

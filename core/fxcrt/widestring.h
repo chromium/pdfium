@@ -32,12 +32,6 @@ class WideString : public StringTemplate<wchar_t> {
   [[nodiscard]] static WideString FormatV(const wchar_t* lpszFormat,
                                           va_list argList);
 
-  // Remove when UNSAFE_BUFFER_USAGE enforced on ctors.
-  UNSAFE_BUFFER_USAGE static WideString Create(const wchar_t* pStr,
-                                               size_t len) {
-    return UNSAFE_BUFFERS(WideString(pStr, len));
-  }
-
   WideString() = default;
   WideString(const WideString& other) = default;
 
@@ -45,6 +39,8 @@ class WideString : public StringTemplate<wchar_t> {
   WideString(WideString&& other) noexcept = default;
 
   ~WideString() = default;
+
+  UNSAFE_BUFFER_USAGE WideString(const wchar_t* pStr, size_t len);
 
   // Make a one-character string from one wide char.
   explicit WideString(wchar_t ch);
@@ -134,9 +130,6 @@ class WideString : public StringTemplate<wchar_t> {
   WideString EncodeEntities() const;
 
  protected:
-  // Make public UNSAFE_BUFFER_USAGE enforced on ctors.
-  UNSAFE_BUFFER_USAGE WideString(const wchar_t* pStr, size_t len);
-
   intptr_t ReferenceCountForTesting() const;
 
   friend class WideString_Assign_Test;
