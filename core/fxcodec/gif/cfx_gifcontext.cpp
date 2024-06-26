@@ -43,13 +43,12 @@ bool CFX_GifContext::GetRecordPosition(uint32_t cur_pos,
                                        int32_t top,
                                        int32_t width,
                                        int32_t height,
-                                       int32_t pal_num,
-                                       CFX_GifPalette* pal,
+                                       pdfium::span<CFX_GifPalette> pal,
                                        int32_t trans_index,
                                        bool interlace) {
   return delegate_->GifInputRecordPositionBuf(
-      cur_pos, FX_RECT(left, top, left + width, top + height), pal_num, pal,
-      trans_index, interlace);
+      cur_pos, FX_RECT(left, top, left + width, top + height), pal, trans_index,
+      interlace);
 }
 
 GifDecoder::Status CFX_GifContext::ReadHeader() {
@@ -171,18 +170,12 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
   if (decode_status_ == GIF_D_STATUS_TAIL) {
     gif_image->row_buffer.resize(gif_img_row_bytes);
     CFX_GifGraphicControlExtension* gif_img_gce = gif_image->image_GCE.get();
-    int32_t loc_pal_num =
-        gif_image->image_info.local_flags.local_pal
-            ? (2 << gif_image->image_info.local_flags.pal_bits)
-            : 0;
-    CFX_GifPalette* pLocalPalette = gif_image->local_palettes.empty()
-                                        ? nullptr
-                                        : gif_image->local_palettes.data();
+    pdfium::span<CFX_GifPalette> pLocalPalette = gif_image->local_palettes;
     if (!gif_img_gce) {
       bool bRes = GetRecordPosition(
           gif_image->data_pos, gif_image->image_info.left,
           gif_image->image_info.top, gif_image->image_info.width,
-          gif_image->image_info.height, loc_pal_num, pLocalPalette, -1,
+          gif_image->image_info.height, pLocalPalette, -1,
           gif_image->image_info.local_flags.interlace);
       if (!bRes) {
         gif_image->row_buffer.clear();
@@ -192,7 +185,7 @@ GifDecoder::Status CFX_GifContext::LoadFrame(size_t frame_num) {
       bool bRes = GetRecordPosition(
           gif_image->data_pos, gif_image->image_info.left,
           gif_image->image_info.top, gif_image->image_info.width,
-          gif_image->image_info.height, loc_pal_num, pLocalPalette,
+          gif_image->image_info.height, pLocalPalette,
           gif_image->image_GCE->gce_flags.transparency
               ? static_cast<int32_t>(gif_image->image_GCE->trans_index)
               : -1,
