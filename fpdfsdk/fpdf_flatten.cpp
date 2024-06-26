@@ -15,6 +15,7 @@
 
 #include "constants/annotation_common.h"
 #include "constants/annotation_flags.h"
+#include "constants/font_encodings.h"
 #include "constants/page_object.h"
 #include "core/fpdfapi/edit/cpdf_contentstream_write_utils.h"
 #include "core/fpdfapi/page/cpdf_page.h"
@@ -245,6 +246,47 @@ CFX_Matrix GetMatrix(const CFX_FloatRect& rcAnnot,
   return CFX_Matrix(a, 0.0f, 0.0f, d, e, f);
 }
 
+bool IsValidBaseEncoding(ByteString base_encoding) {
+  // ISO 32000-1:2008 spec, table 114.
+  // ISO 32000-2:2020 spec, table 112.
+  return base_encoding == pdfium::font_encodings::kWinAnsiEncoding ||
+         base_encoding == pdfium::font_encodings::kMacRomanEncoding ||
+         base_encoding == pdfium::font_encodings::kMacExpertEncoding;
+}
+
+void SanitizeFont(RetainPtr<CPDF_Dictionary> font_dict) {
+  if (!font_dict) {
+    return;
+  }
+
+  RetainPtr<CPDF_Dictionary> encoding_dict =
+      font_dict->GetMutableDictFor("Encoding");
+  if (encoding_dict) {
+    if (!IsValidBaseEncoding(encoding_dict->GetNameFor("BaseEncoding"))) {
+      font_dict->RemoveFor("Encoding");
+    }
+  }
+}
+
+void SanitizeFontResources(RetainPtr<CPDF_Dictionary> font_resource_dict) {
+  if (!font_resource_dict) {
+    return;
+  }
+
+  CPDF_DictionaryLocker locker(font_resource_dict);
+  for (auto it : locker) {
+    SanitizeFont(ToDictionary(it.second->GetMutableDirect()));
+  }
+}
+
+void SanitizeResources(RetainPtr<CPDF_Dictionary> resources_dict) {
+  if (!resources_dict) {
+    return;
+  }
+
+  SanitizeFontResources(resources_dict->GetMutableDictFor("Font"));
+}
+
 }  // namespace
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
@@ -391,6 +433,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPage_Flatten(FPDF_PAGE page, int nFlag) {
     RetainPtr<CPDF_Dictionary> ap_stream_dict = ap_stream->GetMutableDict();
     ap_stream_dict->SetNewFor<CPDF_Name>("Type", "XObject");
     ap_stream_dict->SetNewFor<CPDF_Name>("Subtype", "Form");
+    SanitizeResources(ap_stream_dict->GetMutableDictFor("Resources"));
 
     RetainPtr<CPDF_Dictionary> pXObject =
         pNewXORes->GetOrCreateDictFor("XObject");

@@ -11,6 +11,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 using testing::HasSubstr;
+using testing::Not;
 
 namespace {
 
@@ -53,8 +54,7 @@ TEST_F(FPDFFlattenEmbedderTest, FlatWithBadFont) {
   EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_PRINT));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-  // TODO(crbug.com/344775293): HasSubstr() should be negated with Not().
-  EXPECT_THAT(GetString(), HasSubstr("/PDFDocEncoding"));
+  EXPECT_THAT(GetString(), Not(HasSubstr("/PDFDocEncoding")));
   UnloadPage(page);
 }
 
