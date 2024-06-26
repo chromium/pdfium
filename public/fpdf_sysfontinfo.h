@@ -7,6 +7,8 @@
 #ifndef PUBLIC_FPDF_SYSFONTINFO_H_
 #define PUBLIC_FPDF_SYSFONTINFO_H_
 
+#include <stddef.h>
+
 // clang-format off
 // NOLINTNEXTLINE(build/include)
 #include "fpdfview.h"
@@ -221,7 +223,34 @@ typedef struct FPDF_CharsetFontMap_ {
 //     None.
 // Return Value:
 //     Pointer to the Charset Font Map.
+// Note:
+//     Once FPDF_GetDefaultTTFMapCount() and FPDF_GetDefaultTTFMapEntry() are no
+//     longer experimental, this API will be marked as deprecated.
+//     See https://crbug.com/348468114
 FPDF_EXPORT const FPDF_CharsetFontMap* FPDF_CALLCONV FPDF_GetDefaultTTFMap();
+
+// Experimental API.
+//
+// Function: FPDF_GetDefaultTTFMapCount
+//    Returns the number of entries in the default character set to TT Font name
+//    map.
+// Parameters:
+//    None.
+// Return Value:
+//    The number of entries in the map.
+FPDF_EXPORT size_t FPDF_CALLCONV FPDF_GetDefaultTTFMapCount();
+
+// Experimental API.
+//
+// Function: FPDF_GetDefaultTTFMapEntry
+//    Returns an entry in the default character set to TT Font name map.
+// Parameters:
+//    index    -   The index to the entry in the map to retrieve.
+// Return Value:
+//     A pointer to the entry, if it is in the map, or NULL if the index is out
+//     of bounds.
+FPDF_EXPORT const FPDF_CharsetFontMap* FPDF_CALLCONV
+FPDF_GetDefaultTTFMapEntry(size_t index);
 
 // Function: FPDF_AddInstalledFont
 //          Add a system font to the list in PDFium.

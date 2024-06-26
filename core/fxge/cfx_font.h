@@ -48,17 +48,13 @@ class CFX_Font {
     kCIDTrueType,
   };
 
-  // Pointer to the default character set to TT Font name map. The map is an
-  // array of CharsetFontMap structs, with its end indicated by a {-1, nullptr}
-  // entry.
-  static const CharsetFontMap kDefaultTTFMap[];
-
   // Used when the font name is empty.
   static const char kUntitledFontName[];
 
   static const char kDefaultAnsiFontName[];
   static const char kUniversalDefaultFontName[];
 
+  static pdfium::span<const CharsetFontMap> GetDefaultTTFMapSpan();
   static ByteString GetDefaultFontNameByCharset(FX_Charset nCharset);
   static FX_Charset GetCharSetFromUnicode(uint16_t word);
 

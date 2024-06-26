@@ -403,6 +403,8 @@ int CheckPDFiumCApi() {
     CHK(FPDF_FreeDefaultSystemFontInfo);
     CHK(FPDF_GetDefaultSystemFontInfo);
     CHK(FPDF_GetDefaultTTFMap);
+    CHK(FPDF_GetDefaultTTFMapCount);
+    CHK(FPDF_GetDefaultTTFMapEntry);
     CHK(FPDF_SetSystemFontInfo);
 
     // fpdf_text.h

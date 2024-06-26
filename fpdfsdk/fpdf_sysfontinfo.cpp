@@ -178,7 +178,21 @@ FPDF_SetSystemFontInfo(FPDF_SYSFONTINFO* pFontInfoExt) {
 }
 
 FPDF_EXPORT const FPDF_CharsetFontMap* FPDF_CALLCONV FPDF_GetDefaultTTFMap() {
-  return reinterpret_cast<const FPDF_CharsetFontMap*>(CFX_Font::kDefaultTTFMap);
+  return reinterpret_cast<const FPDF_CharsetFontMap*>(
+      CFX_Font::GetDefaultTTFMapSpan().data());
+}
+
+FPDF_EXPORT size_t FPDF_CALLCONV FPDF_GetDefaultTTFMapCount() {
+  return CFX_Font::GetDefaultTTFMapSpan().size();
+}
+
+FPDF_EXPORT const FPDF_CharsetFontMap* FPDF_CALLCONV
+FPDF_GetDefaultTTFMapEntry(size_t index) {
+  pdfium::span<const CFX_Font::CharsetFontMap> entries =
+      CFX_Font::GetDefaultTTFMapSpan();
+  return index < entries.size()
+             ? reinterpret_cast<const FPDF_CharsetFontMap*>(&entries[index])
+             : nullptr;
 }
 
 struct FPDF_SYSFONTINFO_DEFAULT final : public FPDF_SYSFONTINFO {

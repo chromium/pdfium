@@ -4,8 +4,10 @@
 
 #include "public/fpdf_sysfontinfo.h"
 
+#include <string>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_environment.h"
@@ -171,4 +173,43 @@ TEST_F(FPDFSysFontInfoEmbedderTest, DefaultTTFMap) {
   EXPECT_EQ(cfmap->fontname, nullptr);
 
   EXPECT_THAT(charsets, testing::UnorderedElementsAreArray(kExpectedCharsets));
+}
+
+TEST_F(FPDFSysFontInfoEmbedderTest, DefaultTTFMapCountAndEntries) {
+  static constexpr int kExpectedCharsets[] = {
+      FXFONT_ANSI_CHARSET,
+      FXFONT_GB2312_CHARSET,
+      FXFONT_CHINESEBIG5_CHARSET,
+      FXFONT_SHIFTJIS_CHARSET,
+      FXFONT_HANGEUL_CHARSET,
+      FXFONT_CYRILLIC_CHARSET,
+      FXFONT_EASTERNEUROPEAN_CHARSET,
+      FXFONT_ARABIC_CHARSET,
+  };
+  static const std::string kExpectedFontNames[] = {
+      "Helvetica", "SimSun", "MingLiU", "MS Gothic", "Batang", "Arial",
+#if BUILDFLAG(IS_WIN)
+      "Tahoma",
+#else
+      "Arial",
+#endif
+      "Arial",
+  };
+  std::vector<int> charsets;
+  std::vector<const char*> font_names;
+
+  const size_t count = FPDF_GetDefaultTTFMapCount();
+  for (size_t i = 0; i < count; ++i) {
+    const FPDF_CharsetFontMap* entry = FPDF_GetDefaultTTFMapEntry(i);
+    ASSERT_TRUE(entry);
+    charsets.push_back(entry->charset);
+    font_names.push_back(entry->fontname);
+  }
+
+  EXPECT_THAT(charsets, testing::ElementsAreArray(kExpectedCharsets));
+  EXPECT_THAT(font_names, testing::ElementsAreArray(kExpectedFontNames));
+
+  // Test out of bound indices.
+  EXPECT_FALSE(FPDF_GetDefaultTTFMapEntry(count));
+  EXPECT_FALSE(FPDF_GetDefaultTTFMapEntry(9999));
 }
