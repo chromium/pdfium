@@ -51,11 +51,8 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
     uint32_t objnum,
     uint32_t gennum,
     pdfium::span<const uint8_t> source) const {
-  DataVector<uint8_t> dest(EncryptGetSize(source));
   if (m_Cipher == Cipher::kNone) {
-    fxcrt::Copy(source, dest);
-    dest.resize(source.size());
-    return dest;
+    return DataVector<uint8_t>(source.begin(), source.end());
   }
   uint8_t realkey[16];
   size_t realkeylen = sizeof(realkey);
@@ -78,9 +75,10 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
       v = (uint8_t)rand();
     }
     CRYPT_AESSetIV(m_pAESContext.get(), iv);
+    const int nblocks = source.size() / 16;
+    DataVector<uint8_t> dest(32 + nblocks * 16);
     auto dest_span = pdfium::make_span(dest);
     fxcrt::Copy(iv, dest_span);
-    int nblocks = source.size() / 16;
     CRYPT_AESEncrypt(m_pAESContext.get(), dest_span.subspan(16).data(),
                      source.data(), nblocks * 16);
     uint8_t padding[16];
@@ -89,11 +87,9 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
                 16 - source.size() % 16);
     CRYPT_AESEncrypt(m_pAESContext.get(),
                      dest_span.subspan(nblocks * 16 + 16).data(), padding, 16);
-    dest.resize(32 + nblocks * 16);
     return dest;
   }
-  CHECK_EQ(dest.size(), source.size());
-  fxcrt::Copy(source, dest);
+  DataVector<uint8_t> dest(source.begin(), source.end());
   CRYPT_ArcFourCryptBlock(dest, pdfium::make_span(realkey).first(realkeylen));
   return dest;
 }
@@ -312,11 +308,6 @@ bool CPDF_CryptoHandler::DecryptObjectTree(RetainPtr<CPDF_Object> object) {
     }
   }
   return true;
-}
-
-size_t CPDF_CryptoHandler::EncryptGetSize(
-    pdfium::span<const uint8_t> source) const {
-  return m_Cipher == Cipher::kAES ? source.size() + 32 : source.size();
 }
 
 CPDF_CryptoHandler::CPDF_CryptoHandler(Cipher cipher,

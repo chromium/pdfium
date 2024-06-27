@@ -47,7 +47,6 @@ class CPDF_CryptoHandler {
   bool IsCipherAES() const;
 
  private:
-  size_t EncryptGetSize(pdfium::span<const uint8_t> source) const;
   size_t DecryptGetSize(size_t src_size);
   void* DecryptStart(uint32_t objnum, uint32_t gennum);
   ByteString Decrypt(uint32_t objnum, uint32_t gennum, const ByteString& str);
