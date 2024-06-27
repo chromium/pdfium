@@ -306,7 +306,7 @@ TEST(CXFA_FMLexerTest, Whitespace) {
 TEST(CXFA_FMLexerTest, NullData) {
   CXFA_FMLexer lexer(
       // SAFETY: required for test, manual length computation for fixed string.
-      UNSAFE_BUFFERS(WideStringView::Create(L"\x2d\x32\x00\x2d\x32", 5)));
+      UNSAFE_BUFFERS(WideStringView(L"\x2d\x32\x00\x2d\x32", 5)));
   CXFA_FMLexer::Token token = lexer.NextToken();
   EXPECT_EQ(TOKminus, token.GetType());
 

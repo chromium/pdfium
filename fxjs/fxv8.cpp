@@ -122,8 +122,7 @@ v8::Local<v8::Date> NewDateHelper(v8::Isolate* pIsolate, double d) {
 WideString ToWideString(v8::Isolate* pIsolate, v8::Local<v8::String> pValue) {
   v8::String::Utf8Value s(pIsolate, pValue);
   // SAFETY: required from V8.
-  return WideString::FromUTF8(
-      UNSAFE_BUFFERS(ByteStringView::Create(*s, s.length())));
+  return WideString::FromUTF8(UNSAFE_BUFFERS(ByteStringView(*s, s.length())));
 }
 
 ByteString ToByteString(v8::Isolate* pIsolate, v8::Local<v8::String> pValue) {

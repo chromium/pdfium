@@ -46,7 +46,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
       iLength--;
     }
     WideString wsReplace = WideString::FromASCII(
-        UNSAFE_TODO(ByteStringView::Create(pReplace, pNameText - pReplace)));
+        UNSAFE_TODO(ByteStringView(pReplace, pNameText - pReplace)));
     pFont =
         pFontMgr->LoadFont(wsReplace.c_str(), dwStyle, FX_CodePage::kFailure);
     if (pFont)

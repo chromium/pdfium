@@ -38,8 +38,8 @@ TEST_F(CFGAS_TxtBreakTest, BidiLine) {
   txt_break->SetFontSize(12);
 
   // SAFETY: known fixed-length string.
-  WideString input = WideString::FromUTF8(
-      UNSAFE_BUFFERS(ByteStringView::Create("\xa\x0\xa\xa", 4)));
+  WideString input =
+      WideString::FromUTF8(UNSAFE_BUFFERS(ByteStringView("\xa\x0\xa\xa", 4)));
   for (wchar_t ch : input)
     txt_break->AppendChar(ch);
 

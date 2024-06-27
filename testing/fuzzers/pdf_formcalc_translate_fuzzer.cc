@@ -16,7 +16,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   auto* state = static_cast<XFAProcessState*>(FPDF_GetFuzzerPerProcessState());
   // SAFETY: required from fuzzer.
   WideString input =
-      WideString::FromUTF8(UNSAFE_BUFFERS(ByteStringView::Create(data, size)));
+      WideString::FromUTF8(UNSAFE_BUFFERS(ByteStringView(data, size)));
   CFXJSE_FormCalcContext::Translate(state->GetHeap(), input.AsStringView());
   state->ForceGCAndPump();
   return 0;

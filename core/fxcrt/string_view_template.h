@@ -42,22 +42,6 @@ class StringViewTemplate {
   using const_iterator = const CharType*;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-  UNSAFE_BUFFER_USAGE static constexpr StringViewTemplate Create(
-      const CharType* ptr,
-      size_t size) {
-    // SAFETY: required from caller, enforced via UNSAFE_BUFFER_USAGE.
-    return UNSAFE_BUFFERS(StringViewTemplate(ptr, size));
-  }
-
-  template <typename E = typename std::enable_if_t<
-                !std::is_same_v<UnsignedType, CharType>>>
-  UNSAFE_BUFFER_USAGE static constexpr StringViewTemplate Create(
-      const UnsignedType* ptr,
-      size_t size) {
-    // SAFETY: required from caller, enforced via UNSAFE_BUFFER_USAGE.
-    return UNSAFE_BUFFERS(StringViewTemplate(ptr, size));
-  }
-
   constexpr StringViewTemplate() noexcept = default;
   constexpr StringViewTemplate(const StringViewTemplate& src) noexcept =
       default;
@@ -92,6 +76,20 @@ class StringViewTemplate {
   constexpr StringViewTemplate(const CharType& ch) noexcept
       : m_Span(
             reinterpret_span<const UnsignedType>(pdfium::span_from_ref(ch))) {}
+
+  UNSAFE_BUFFER_USAGE
+  constexpr StringViewTemplate(const CharType* ptr, size_t size) noexcept
+      // SAFETY: propagated to caller via UNSAFE_BUFFER_USAGE.
+      : m_Span(UNSAFE_BUFFERS(
+            pdfium::make_span(reinterpret_cast<const UnsignedType*>(ptr),
+                              size))) {}
+
+  template <typename E = typename std::enable_if<
+                !std::is_same<UnsignedType, CharType>::value>::type>
+  UNSAFE_BUFFER_USAGE constexpr StringViewTemplate(const UnsignedType* ptr,
+                                                   size_t size) noexcept
+      // SAFETY: propagated to caller via UNSAFE_BUFFER_USAGE.
+      : m_Span(UNSAFE_BUFFERS(pdfium::make_span(ptr, size))) {}
 
   StringViewTemplate& operator=(const CharType* src) {
     // SAFETY: caller ensures `src` is nul-terminated so `length()` is correct.
@@ -294,20 +292,6 @@ class StringViewTemplate {
   }
 
  protected:
-  UNSAFE_BUFFER_USAGE
-  constexpr StringViewTemplate(const CharType* ptr, size_t size) noexcept
-      // SAFETY: propagated to caller via UNSAFE_BUFFER_USAGE.
-      : m_Span(UNSAFE_BUFFERS(
-            pdfium::make_span(reinterpret_cast<const UnsignedType*>(ptr),
-                              size))) {}
-
-  template <typename E = typename std::enable_if<
-                !std::is_same<UnsignedType, CharType>::value>::type>
-  UNSAFE_BUFFER_USAGE constexpr StringViewTemplate(const UnsignedType* ptr,
-                                                   size_t size) noexcept
-      // SAFETY: propagated to caller via UNSAFE_BUFFER_USAGE.
-      : m_Span(UNSAFE_BUFFERS(pdfium::make_span(ptr, size))) {}
-
   // This is not a raw_span<> because StringViewTemplates must be passed by
   // value without introducing BackupRefPtr churn. Also, repeated re-assignment
   // of substrings of a StringViewTemplate to itself must avoid the same issue.

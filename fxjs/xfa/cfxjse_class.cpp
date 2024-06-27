@@ -206,7 +206,7 @@ v8::Intercepted NamedPropertyQueryCallback(
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   // SAFETY: required from V8.
   auto szFxPropName =
-      UNSAFE_BUFFERS(ByteStringView::Create(*szPropName, szPropName.length()));
+      UNSAFE_BUFFERS(ByteStringView(*szPropName, szPropName.length()));
   if (DynPropQueryAdapter(info.GetIsolate(), pClass, info.Holder(),
                           szFxPropName)) {
     info.GetReturnValue().Set(v8::DontDelete);
@@ -228,7 +228,7 @@ v8::Intercepted NamedPropertyGetterCallback(
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   // SAFETY: required from V8.
   auto szFxPropName =
-      UNSAFE_BUFFERS(ByteStringView::Create(*szPropName, szPropName.length()));
+      UNSAFE_BUFFERS(ByteStringView(*szPropName, szPropName.length()));
   std::unique_ptr<CFXJSE_Value> pNewValue = DynPropGetterAdapter(
       info.GetIsolate(), pClass, info.Holder(), szFxPropName);
   info.GetReturnValue().Set(pNewValue->DirectGetValue());
@@ -248,7 +248,7 @@ v8::Intercepted NamedPropertySetterCallback(
   v8::String::Utf8Value szPropName(info.GetIsolate(), property);
   // SAFETY: required from V8.
   auto szFxPropName =
-      UNSAFE_BUFFERS(ByteStringView::Create(*szPropName, szPropName.length()));
+      UNSAFE_BUFFERS(ByteStringView(*szPropName, szPropName.length()));
   auto pNewValue = std::make_unique<CFXJSE_Value>(info.GetIsolate(), value);
   DynPropSetterAdapter(info.GetIsolate(), pClass, info.Holder(), szFxPropName,
                        pNewValue.get());

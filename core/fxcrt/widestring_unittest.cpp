@@ -2141,7 +2141,7 @@ TEST(WideStringView, OStreamOverload) {
   {
     wchar_t stringWithNulls[]{'x', 'y', '\0', 'z'};
     // SAFETY: known array above.
-    auto str = UNSAFE_BUFFERS(WideStringView::Create(stringWithNulls, 4));
+    auto str = UNSAFE_BUFFERS(WideStringView(stringWithNulls, 4));
     std::ostringstream stream;
     EXPECT_EQ(4u, str.GetLength());
     stream << str;
@@ -2220,7 +2220,7 @@ TEST(WideStringView, WideOStreamOverload) {
   {
     wchar_t stringWithNulls[]{'x', 'y', '\0', 'z'};
     // SAFETY: known array above.
-    auto str = UNSAFE_BUFFERS(WideStringView::Create(stringWithNulls, 4));
+    auto str = UNSAFE_BUFFERS(WideStringView(stringWithNulls, 4));
     std::wostringstream stream;
     EXPECT_EQ(4u, str.GetLength());
     stream << str;
