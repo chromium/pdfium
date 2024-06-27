@@ -11,6 +11,7 @@
 #include <ostream>
 
 #include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/span.h"
 
 namespace {
 
@@ -98,49 +99,50 @@ double pow10(int e) {
 // Motivation: "PDF does not support [numbers] in exponential format
 // (such as 6.02e23)."  Otherwise, this function would rely on a
 // sprintf-type function from the standard library.
-// TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
-unsigned SkFloatToDecimal(float value,
-                          char output[kMaximumSkFloatToDecimalLength]) {
+unsigned SkFloatToDecimal(
+    float value,
+    pdfium::span<char, kMaximumSkFloatToDecimalLength> output) {
   // The longest result is -FLT_MIN.
   // We serialize it as "-.0000000000000000000000000000000000000117549435"
   // which has 48 characters plus a terminating '\0'.
-
   static_assert(kMaximumSkFloatToDecimalLength == 49, "");
+
   // 3 = '-', '.', and '\0' characters.
   // 9 = number of significant digits
   // abs(FLT_MIN_10_EXP) = number of zeros in FLT_MIN
   static_assert(kMaximumSkFloatToDecimalLength == 3 + 9 - FLT_MIN_10_EXP, "");
 
-  UNSAFE_TODO({
-    // section C.1 of the PDF 1.4 spec (http://goo.gl/0SCswJ) says that
-    // most PDF rasterizers will use fixed-point scalars that lack the
-    // dynamic range of floats.  Even if this is the case, I want to
-    // serialize these (uncommon) very small and very large scalar
-    // values with enough precision to allow a floating-point
-    // rasterizer to read them in with perfect accuracy.
-    // Experimentally, rasterizers such as pdfium do seem to benefit
-    // from this.  Rasterizers that rely on fixed-point scalars should
-    // gracefully ignore these values that they can not parse.
-    char* output_ptr = &output[0];
-    const char* const end = &output[kMaximumSkFloatToDecimalLength - 1];
-    // subtract one to leave space for '\0'.
+  // section C.1 of the PDF 1.4 spec (http://goo.gl/0SCswJ) says that
+  // most PDF rasterizers will use fixed-point scalars that lack the
+  // dynamic range of floats.  Even if this is the case, I want to
+  // serialize these (uncommon) very small and very large scalar
+  // values with enough precision to allow a floating-point
+  // rasterizer to read them in with perfect accuracy.
+  // Experimentally, rasterizers such as pdfium do seem to benefit
+  // from this.  Rasterizers that rely on fixed-point scalars should
+  // gracefully ignore these values that they can not parse.
+  char* output_ptr = output.data();
 
-    // This function is written to accept any possible input value,
-    // including non-finite values such as INF and NAN.  In that case,
-    // we ignore value-correctness and output a syntacticly-valid
-    // number.
-    if (value == INFINITY) {
-      value = FLT_MAX;  // nearest finite float.
-    }
-    if (value == -INFINITY) {
-      value = -FLT_MAX;  // nearest finite float.
-    }
+  // last(1) leaves space for '\0'.
+  const char* const end = output.last(1u).data();
+
+  // This function is written to accept any possible input value,
+  // including non-finite values such as INF and NAN.  In that case,
+  // we ignore value-correctness and output a syntacticly-valid
+  // number.
+  if (value == INFINITY) {
+    value = FLT_MAX;  // nearest finite float.
+  }
+  if (value == -INFINITY) {
+    value = -FLT_MAX;  // nearest finite float.
+  }
+  UNSAFE_TODO({
     if (!std::isfinite(value) || value == 0.0f) {
       // NAN is unsupported in PDF.  Always output a valid number.
       // Also catch zero here, as a special case.
       *output_ptr++ = '0';
       *output_ptr = '\0';
-      return static_cast<unsigned>(output_ptr - output);
+      return static_cast<unsigned>(output_ptr - output.data());
     }
     if (value < 0.0) {
       *output_ptr++ = '-';
@@ -207,14 +209,14 @@ unsigned SkFloatToDecimal(float value,
         *output_ptr++ = '0' + buffer[bufferIndex];
         if (output_ptr == end) {
           break;  // denormalized: don't need extra precision.
-                  // Note: denormalized numbers will not have the same number of
-                  // significantDigits, but do not need them to round-trip.
+          // Note: denormalized numbers will not have the same number
+          // of significantDigits, but do not need them to round-trip.
         }
       }
     }
     assert(output_ptr <= end);
     *output_ptr = '\0';
-    return static_cast<unsigned>(output_ptr - output);
+    return static_cast<unsigned>(output_ptr - output.data());
   });
 }
 
