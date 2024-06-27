@@ -70,23 +70,31 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
   if (m_Cipher == Cipher::kAES) {
     CRYPT_AESSetKey(m_pAESContext.get(),
                     m_KeyLen == 32 ? m_EncryptKey.data() : realkey, m_KeyLen);
-    uint8_t iv[16];
-    for (auto& v : iv) {
-      v = (uint8_t)rand();
-    }
-    CRYPT_AESSetIV(m_pAESContext.get(), iv);
-    const int nblocks = source.size() / 16;
-    DataVector<uint8_t> dest(32 + nblocks * 16);
+
+    constexpr size_t kIVSize = 16;
+    constexpr size_t kPaddingSize = 16;
+    const size_t source_padding_size = source.size() % kPaddingSize;
+    const size_t source_data_size = source.size() - source_padding_size;
+
+    DataVector<uint8_t> dest(kIVSize + source_data_size + kPaddingSize);
     auto dest_span = pdfium::make_span(dest);
-    fxcrt::Copy(iv, dest_span);
-    CRYPT_AESEncrypt(m_pAESContext.get(), dest_span.subspan(16),
-                     source.first(nblocks * 16));
-    uint8_t padding[16];
-    fxcrt::Copy(source.subspan(nblocks * 16, source.size() % 16), padding);
-    fxcrt::Fill(pdfium::make_span(padding).subspan(source.size() % 16),
-                16 - source.size() % 16);
-    CRYPT_AESEncrypt(m_pAESContext.get(), dest_span.subspan(nblocks * 16 + 16),
-                     padding);
+    auto dest_iv_span = dest_span.first(kIVSize);
+    auto dest_data_span = dest_span.subspan(kIVSize, source_data_size);
+    auto dest_padding_span = dest_span.subspan(kIVSize + source_data_size);
+
+    for (auto& v : dest_iv_span) {
+      v = static_cast<uint8_t>(rand());
+    }
+    CRYPT_AESSetIV(m_pAESContext.get(), dest_iv_span.data());
+
+    CRYPT_AESEncrypt(m_pAESContext.get(), dest_data_span,
+                     source.first(source_data_size));
+
+    std::array<uint8_t, kPaddingSize> padding;
+    fxcrt::Copy(source.subspan(source_data_size, source_padding_size), padding);
+    fxcrt::Fill(pdfium::make_span(padding).subspan(source_padding_size),
+                16 - source_padding_size);
+    CRYPT_AESEncrypt(m_pAESContext.get(), dest_padding_span, padding);
     return dest;
   }
   DataVector<uint8_t> dest(source.begin(), source.end());
