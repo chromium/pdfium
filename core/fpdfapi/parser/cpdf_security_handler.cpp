@@ -151,10 +151,10 @@ void Revision6_Hash(const ByteString& password,
         }
       });
     }
+    CHECK_EQ(content.size(), encrypted_output.size());
     CRYPT_AESSetKey(&aes, key, 16);
     CRYPT_AESSetIV(&aes, iv);
-    CRYPT_AESEncrypt(&aes, encrypted_output_span.data(), content.data(),
-                     encrypted_output_span.size());
+    CRYPT_AESEncrypt(&aes, encrypted_output_span, content);
 
     switch (BigOrder64BitsMod3(encrypted_output_span)) {
       case 0:
@@ -652,7 +652,7 @@ void CPDF_SecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
   CRYPT_AESSetKey(&aes, digest1, 32);
   uint8_t iv[16] = {};
   CRYPT_AESSetIV(&aes, iv);
-  CRYPT_AESEncrypt(&aes, digest1, m_EncryptKey.data(), m_EncryptKey.size());
+  CRYPT_AESEncrypt(&aes, digest1, m_EncryptKey);
   pEncryptDict->SetNewFor<CPDF_String>("UE",
                                        UNSAFE_TODO(ByteString(digest1, 32)));
 }
@@ -685,10 +685,10 @@ void CPDF_SecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict) {
   uint8_t iv[16] = {};
   CRYPT_AESSetIV(&aes, iv);
 
-  uint8_t buf1[16];
-  CRYPT_AESEncrypt(&aes, buf1, buf, 16);
+  uint8_t dest[16];
+  CRYPT_AESEncrypt(&aes, dest, buf);
   pEncryptDict->SetNewFor<CPDF_String>("Perms",
-                                       UNSAFE_TODO(ByteString(buf1, 16)));
+                                       UNSAFE_TODO(ByteString(dest, 16)));
 }
 
 void CPDF_SecurityHandler::InitCryptoHandler() {

@@ -79,14 +79,14 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
     DataVector<uint8_t> dest(32 + nblocks * 16);
     auto dest_span = pdfium::make_span(dest);
     fxcrt::Copy(iv, dest_span);
-    CRYPT_AESEncrypt(m_pAESContext.get(), dest_span.subspan(16).data(),
-                     source.data(), nblocks * 16);
+    CRYPT_AESEncrypt(m_pAESContext.get(), dest_span.subspan(16),
+                     source.first(nblocks * 16));
     uint8_t padding[16];
     fxcrt::Copy(source.subspan(nblocks * 16, source.size() % 16), padding);
     fxcrt::Fill(pdfium::make_span(padding).subspan(source.size() % 16),
                 16 - source.size() % 16);
-    CRYPT_AESEncrypt(m_pAESContext.get(),
-                     dest_span.subspan(nblocks * 16 + 16).data(), padding, 16);
+    CRYPT_AESEncrypt(m_pAESContext.get(), dest_span.subspan(nblocks * 16 + 16),
+                     padding);
     return dest;
   }
   DataVector<uint8_t> dest(source.begin(), source.end());

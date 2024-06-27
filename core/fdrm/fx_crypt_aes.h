@@ -11,6 +11,8 @@
 
 #include <array>
 
+#include "core/fxcrt/span.h"
+
 struct CRYPT_aes_context {
   static constexpr int kMaxNb = 8;
   static constexpr int kMaxNr = 14;
@@ -32,8 +34,7 @@ void CRYPT_AESDecrypt(CRYPT_aes_context* ctx,
                       const uint8_t* src,
                       uint32_t size);
 void CRYPT_AESEncrypt(CRYPT_aes_context* ctx,
-                      uint8_t* dest,
-                      const uint8_t* src,
-                      uint32_t size);
+                      pdfium::span<uint8_t> dest,
+                      pdfium::span<const uint8_t> src);
 
 #endif  // CORE_FDRM_FX_CRYPT_AES_H_

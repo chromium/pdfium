@@ -622,26 +622,19 @@ void CRYPT_AESDecrypt(CRYPT_aes_context* ctx,
 }
 
 void CRYPT_AESEncrypt(CRYPT_aes_context* ctx,
-                      uint8_t* dest,
-                      const uint8_t* src,
-                      uint32_t size) {
-  unsigned int iv[4];
-  int i;
-  CHECK_EQ((size & 15), 0);
-  UNSAFE_TODO({
-    FXSYS_memcpy(iv, ctx->iv.data(), sizeof(iv));
-    while (size != 0) {
-      for (i = 0; i < 4; i++) {
-        iv[i] ^= fxcrt::GetUInt32MSBFirst(pdfium::make_span(src + 4 * i, 4u));
-      }
-      aes_encrypt_nb_4(ctx, iv);
-      for (i = 0; i < 4; i++) {
-        fxcrt::PutUInt32MSBFirst(iv[i], pdfium::make_span(dest + 4 * i, 4u));
-      }
-      dest += 16;
-      src += 16;
-      size -= 16;
+                      pdfium::span<uint8_t> dest,
+                      pdfium::span<const uint8_t> src) {
+  CHECK_EQ((src.size() & 15), 0);
+  auto ctx_iv = pdfium::make_span(ctx->iv).first(4u);
+  while (!src.empty()) {
+    for (auto& iv_element : ctx_iv) {
+      iv_element ^= fxcrt::GetUInt32MSBFirst(src.first(4u));
+      src = src.subspan(4u);
     }
-    FXSYS_memcpy(ctx->iv.data(), iv, sizeof(iv));
-  });
+    aes_encrypt_nb_4(ctx, ctx_iv.data());
+    for (auto& iv_element : ctx_iv) {
+      fxcrt::PutUInt32MSBFirst(iv_element, dest.first(4u));
+      dest = dest.subspan(4u);
+    }
+  }
 }
