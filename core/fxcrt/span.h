@@ -171,9 +171,6 @@ using EnableIfConstSpanCompatibleContainer =
 // - no constructor from a pointer range
 //
 // Differences from [span.sub]:
-// - no templated first()
-// - no templated last()
-// - no templated subspan()
 // - using size_t instead of ptrdiff_t for indexing
 //
 // Differences from [span.obs]:
@@ -270,18 +267,33 @@ class TRIVIAL_ABI GSL_POINTER span {
   ~span() noexcept = default;
 
   // [span.sub], span subviews
+  template <size_t Count>
+  span first() const {
+    // TODO(tsepez): replace this sugar with compile-time checks.
+    return first(Count);
+  }
   const span first(size_t count) const {
     CHECK(count <= size_);
     // SAFETY: CHECK() on line above.
     return UNSAFE_BUFFERS(span(static_cast<T*>(data_), count));
   }
 
+  template <size_t Count>
+  span last() const {
+    // TODO(tsepez): replace this sugar with compile-time checks.
+    return last(Count);
+  }
   const span last(size_t count) const {
     CHECK(count <= size_);
     return UNSAFE_BUFFERS(
         span(static_cast<T*>(data_) + (size_ - count), count));
   }
 
+  template <size_t Offset, size_t Count = dynamic_extent>
+  span subspan() const {
+    // TODO(tsepez): replace this sugar with compile-time checks.
+    return subspan(Offset, Count);
+  }
   const span subspan(size_t pos, size_t count = dynamic_extent) const {
     CHECK(pos <= size_);
     CHECK(count == dynamic_extent || count <= size_ - pos);

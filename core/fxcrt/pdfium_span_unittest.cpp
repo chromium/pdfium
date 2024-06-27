@@ -20,19 +20,66 @@ TEST(PdfiumSpan, EmptySpan) {
   int stuff[] = {1, 2, 3};
   pdfium::span<int> null_span;
   pdfium::span<int> stuff_span(stuff);
-  pdfium::span<int> empty_first_span = stuff_span.first(0);
-  pdfium::span<int> empty_last_span = stuff_span.last(0);
-  pdfium::span<int> empty_sub_span1 = stuff_span.subspan(0, 0);
-  pdfium::span<int> empty_sub_span2 = stuff_span.subspan(3, 0);
   EXPECT_TRUE(null_span.empty());
-  EXPECT_TRUE(empty_first_span.empty());
-  EXPECT_TRUE(empty_last_span.empty());
-  EXPECT_TRUE(empty_sub_span1.empty());
-  EXPECT_TRUE(empty_sub_span2.empty());
+  EXPECT_FALSE(stuff_span.empty());
+  {
+    pdfium::span<int> empty_first_span = stuff_span.first(0u);
+    pdfium::span<int> empty_last_span = stuff_span.last(0u);
+    pdfium::span<int> empty_sub_span1 = stuff_span.subspan(0u, 0u);
+    pdfium::span<int> empty_sub_span2 = stuff_span.subspan(3u, 0u);
+    pdfium::span<int> empty_sub_span3 = stuff_span.subspan(3u);
+    EXPECT_TRUE(empty_first_span.empty());
+    EXPECT_TRUE(empty_last_span.empty());
+    EXPECT_TRUE(empty_sub_span1.empty());
+    EXPECT_TRUE(empty_sub_span2.empty());
+    EXPECT_TRUE(empty_sub_span3.empty());
+  }
+  {
+    pdfium::span<int> empty_first_span = stuff_span.first<0>();
+    pdfium::span<int> empty_last_span = stuff_span.last<0>();
+    pdfium::span<int> empty_sub_span1 = stuff_span.subspan<0, 0>();
+    pdfium::span<int> empty_sub_span2 = stuff_span.subspan<3, 0>();
+    pdfium::span<int> empty_sub_span3 = stuff_span.subspan<3>();
+    EXPECT_TRUE(empty_first_span.empty());
+    EXPECT_TRUE(empty_last_span.empty());
+    EXPECT_TRUE(empty_sub_span1.empty());
+    EXPECT_TRUE(empty_sub_span2.empty());
+    EXPECT_TRUE(empty_sub_span3.empty());
+  }
 }
 
-// Custom implementation of first()/last().
-TEST(PdfiumSpan, FirstLast) {
+TEST(PdfiumSpan, ValidSpan) {
+  int stuff[] = {1, 2, 3};
+  pdfium::span<int> stuff_span(stuff);
+  EXPECT_FALSE(stuff_span.empty());
+  {
+    pdfium::span<int> first_span = stuff_span.first(2u);
+    pdfium::span<int> last_span = stuff_span.last(2u);
+    pdfium::span<int> sub_span1 = stuff_span.subspan(1u, 1u);
+    pdfium::span<int> sub_span2 = stuff_span.subspan(2u, 1u);
+    pdfium::span<int> sub_span3 = stuff_span.subspan(1u);
+    EXPECT_THAT(first_span, ElementsAre(1, 2));
+    EXPECT_THAT(last_span, ElementsAre(2, 3));
+    EXPECT_THAT(sub_span1, ElementsAre(2));
+    EXPECT_THAT(sub_span2, ElementsAre(3));
+    EXPECT_THAT(sub_span3, ElementsAre(2, 3));
+  }
+  {
+    pdfium::span<int> first_span = stuff_span.first<2>();
+    pdfium::span<int> last_span = stuff_span.last<2>();
+    pdfium::span<int> sub_span1 = stuff_span.subspan<1, 1>();
+    pdfium::span<int> sub_span2 = stuff_span.subspan<2, 1>();
+    pdfium::span<int> sub_span3 = stuff_span.subspan<1>();
+    EXPECT_THAT(first_span, ElementsAre(1, 2));
+    EXPECT_THAT(last_span, ElementsAre(2, 3));
+    EXPECT_THAT(sub_span1, ElementsAre(2));
+    EXPECT_THAT(sub_span2, ElementsAre(3));
+    EXPECT_THAT(sub_span3, ElementsAre(2, 3));
+  }
+}
+
+// Custom implementation of front()/back().
+TEST(PdfiumSpan, FrontBack) {
   int one[] = {1};
   int stuff[] = {1, 2, 3};
   pdfium::span<int> one_span(one);
