@@ -13,8 +13,8 @@ namespace fxcodec {
 
 struct DataAndBytesConsumed {
   DataAndBytesConsumed(DataVector<uint8_t> data, uint32_t bytes_consumed);
-  DataAndBytesConsumed(DataAndBytesConsumed&) = delete;
-  DataAndBytesConsumed& operator=(DataAndBytesConsumed&) = delete;
+  DataAndBytesConsumed(const DataAndBytesConsumed&) = delete;
+  DataAndBytesConsumed& operator=(const DataAndBytesConsumed&) = delete;
   DataAndBytesConsumed(DataAndBytesConsumed&&) noexcept;
   DataAndBytesConsumed& operator=(DataAndBytesConsumed&&) noexcept;
   ~DataAndBytesConsumed();

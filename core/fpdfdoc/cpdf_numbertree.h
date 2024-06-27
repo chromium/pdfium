@@ -20,8 +20,8 @@ class CPDF_NumberTree {
  public:
   struct KeyValue {
     KeyValue(int key, RetainPtr<const CPDF_Object> value);
-    KeyValue(KeyValue&) = delete;
-    KeyValue& operator=(KeyValue&) = delete;
+    KeyValue(const KeyValue&) = delete;
+    KeyValue& operator=(const KeyValue&) = delete;
     KeyValue(KeyValue&&) noexcept;
     KeyValue& operator=(KeyValue&&) noexcept;
     ~KeyValue();
