@@ -37,7 +37,9 @@ void CRYPT_ArcFourCrypt(CRYPT_rc4_context* context, pdfium::span<uint8_t> data);
 CRYPT_md5_context CRYPT_MD5Start();
 void CRYPT_MD5Update(CRYPT_md5_context* context,
                      pdfium::span<const uint8_t> data);
-void CRYPT_MD5Finish(CRYPT_md5_context* context, uint8_t digest[16]);
-void CRYPT_MD5Generate(pdfium::span<const uint8_t> data, uint8_t digest[16]);
+void CRYPT_MD5Finish(CRYPT_md5_context* context,
+                     pdfium::span<uint8_t, 16> digest);
+void CRYPT_MD5Generate(pdfium::span<const uint8_t> data,
+                       pdfium::span<uint8_t, 16> digest);
 
 #endif  // CORE_FDRM_FX_CRYPT_H_
