@@ -269,7 +269,10 @@ class TRIVIAL_ABI GSL_POINTER span {
   // [span.sub], span subviews
   template <size_t Count>
   span first() const {
-    // TODO(tsepez): replace this sugar with compile-time checks.
+    // TODO(tsepez): The following check isn't yet good enough to replace
+    // the runtime check since we are still allowing unchecked conversions
+    // to arbitrary non-dynamic_extent spans.
+    static_assert(Extent == dynamic_extent || Count <= Extent);
     return first(Count);
   }
   const span first(size_t count) const {
@@ -280,7 +283,10 @@ class TRIVIAL_ABI GSL_POINTER span {
 
   template <size_t Count>
   span last() const {
-    // TODO(tsepez): replace this sugar with compile-time checks.
+    // TODO(tsepez): The following check isn't yet good enough to replace
+    // the runtime check since we are still allowing unchecked conversions
+    // to arbitrary non-dynamic_extent spans.
+    static_assert(Extent == dynamic_extent || Count <= Extent);
     return last(Count);
   }
   const span last(size_t count) const {
@@ -291,7 +297,11 @@ class TRIVIAL_ABI GSL_POINTER span {
 
   template <size_t Offset, size_t Count = dynamic_extent>
   span subspan() const {
-    // TODO(tsepez): replace this sugar with compile-time checks.
+    // TODO(tsepez): The following check isn't yet good enough to replace
+    // the runtime check since we are still allowing unchecked conversions
+    // to arbitrary non-dynamic_extent spans.
+    static_assert(Extent == dynamic_extent || Count == dynamic_extent ||
+                  Offset + Count <= Extent);
     return subspan(Offset, Count);
   }
   const span subspan(size_t pos, size_t count = dynamic_extent) const {
