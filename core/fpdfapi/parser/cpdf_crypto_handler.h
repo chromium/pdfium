@@ -16,6 +16,7 @@
 #include "core/fdrm/fx_crypt.h"
 #include "core/fxcrt/binary_buffer.h"
 #include "core/fxcrt/bytestring.h"
+#include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memory_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
@@ -38,17 +39,15 @@ class CPDF_CryptoHandler {
   ~CPDF_CryptoHandler();
 
   bool DecryptObjectTree(RetainPtr<CPDF_Object> object);
-  size_t EncryptGetSize(pdfium::span<const uint8_t> source) const;
 
-  // Returns number of valid bytes in `dest`.
-  [[nodiscard]] size_t EncryptContent(uint32_t objnum,
-                                      uint32_t gennum,
-                                      pdfium::span<const uint8_t> source,
-                                      pdfium::span<uint8_t> dest) const;
+  DataVector<uint8_t> EncryptContent(uint32_t objnum,
+                                     uint32_t gennum,
+                                     pdfium::span<const uint8_t> source) const;
 
   bool IsCipherAES() const;
 
  private:
+  size_t EncryptGetSize(pdfium::span<const uint8_t> source) const;
   size_t DecryptGetSize(size_t src_size);
   void* DecryptStart(uint32_t objnum, uint32_t gennum);
   ByteString Decrypt(uint32_t objnum, uint32_t gennum, const ByteString& str);

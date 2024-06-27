@@ -22,11 +22,7 @@ DataVector<uint8_t> CPDF_Encryptor::Encrypt(
   if (src_data.empty()) {
     return DataVector<uint8_t>();
   }
-  size_t estimated = m_pHandler->EncryptGetSize(src_data);
-  DataVector<uint8_t> result(estimated);
-  size_t actual = m_pHandler->EncryptContent(m_ObjNum, 0, src_data, result);
-  result.resize(actual);
-  return result;
+  return m_pHandler->EncryptContent(m_ObjNum, 0, src_data);
 }
 
 CPDF_Encryptor::~CPDF_Encryptor() = default;

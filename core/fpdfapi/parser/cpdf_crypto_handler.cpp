@@ -47,13 +47,15 @@ bool CPDF_CryptoHandler::IsSignatureDictionary(
   return type_obj && type_obj->GetString() == pdfium::form_fields::kSig;
 }
 
-size_t CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
-                                          uint32_t gennum,
-                                          pdfium::span<const uint8_t> source,
-                                          pdfium::span<uint8_t> dest) const {
+DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
+    uint32_t objnum,
+    uint32_t gennum,
+    pdfium::span<const uint8_t> source) const {
+  DataVector<uint8_t> dest(EncryptGetSize(source));
   if (m_Cipher == Cipher::kNone) {
     fxcrt::Copy(source, dest);
-    return source.size();
+    dest.resize(source.size());
+    return dest;
   }
   uint8_t realkey[16];
   size_t realkeylen = sizeof(realkey);
@@ -76,24 +78,24 @@ size_t CPDF_CryptoHandler::EncryptContent(uint32_t objnum,
       v = (uint8_t)rand();
     }
     CRYPT_AESSetIV(m_pAESContext.get(), iv);
-    fxcrt::Copy(iv, dest);
+    auto dest_span = pdfium::make_span(dest);
+    fxcrt::Copy(iv, dest_span);
     int nblocks = source.size() / 16;
-    CRYPT_AESEncrypt(m_pAESContext.get(), dest.subspan(16).data(),
+    CRYPT_AESEncrypt(m_pAESContext.get(), dest_span.subspan(16).data(),
                      source.data(), nblocks * 16);
     uint8_t padding[16];
     fxcrt::Copy(source.subspan(nblocks * 16, source.size() % 16), padding);
     fxcrt::Fill(pdfium::make_span(padding).subspan(source.size() % 16),
                 16 - source.size() % 16);
     CRYPT_AESEncrypt(m_pAESContext.get(),
-                     dest.subspan(nblocks * 16 + 16).data(), padding, 16);
-    return 32 + nblocks * 16;
+                     dest_span.subspan(nblocks * 16 + 16).data(), padding, 16);
+    dest.resize(32 + nblocks * 16);
+    return dest;
   }
-  DCHECK_EQ(dest.size(), source.size());
-  if (dest.data() != source.data()) {
-    fxcrt::Copy(source, dest);
-  }
+  CHECK_EQ(dest.size(), source.size());
+  fxcrt::Copy(source, dest);
   CRYPT_ArcFourCryptBlock(dest, pdfium::make_span(realkey).first(realkeylen));
-  return dest.size();
+  return dest;
 }
 
 struct AESCryptContext {
