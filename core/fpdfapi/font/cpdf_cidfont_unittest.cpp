@@ -16,7 +16,7 @@
 
 using CPDF_CIDFontTest = TestWithPageModule;
 
-TEST_F(CPDF_CIDFontTest, BUG_920636) {
+TEST_F(CPDF_CIDFontTest, Bug920636) {
   CPDF_TestDocument doc;
   auto font_dict = pdfium::MakeRetain<CPDF_Dictionary>();
   font_dict->SetNewFor<CPDF_Name>("Encoding", "Identity−H");

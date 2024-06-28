@@ -352,14 +352,14 @@ TEST_F(FPDFPPOEmbedderTest, XObjectNullParams) {
   EXPECT_FALSE(FPDF_NewFormObjectFromXObject(nullptr));
 }
 
-TEST_F(FPDFPPOEmbedderTest, BUG_925981) {
+TEST_F(FPDFPPOEmbedderTest, Bug925981) {
   ASSERT_TRUE(OpenDocument("bug_925981.pdf"));
   ScopedFPDFDocument output_doc_2up(
       FPDF_ImportNPagesToOne(document(), 612, 792, 2, 1));
   EXPECT_EQ(1, FPDF_GetPageCount(output_doc_2up.get()));
 }
 
-TEST_F(FPDFPPOEmbedderTest, BUG_1229106) {
+TEST_F(FPDFPPOEmbedderTest, Bug1229106) {
   static constexpr int kPageCount = 4;
   static constexpr int kTwoUpPageCount = 2;
   static const char kRectsChecksum[] = "140d629b3c96a07ced2e3e408ea85a1d";
@@ -567,7 +567,7 @@ TEST_F(FPDFPPOEmbedderTest, GoodRanges) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFPPOEmbedderTest, BUG_664284) {
+TEST_F(FPDFPPOEmbedderTest, Bug664284) {
   ASSERT_TRUE(OpenDocument("bug_664284.pdf"));
 
   FPDF_PAGE page = LoadPage(0);
@@ -583,7 +583,7 @@ TEST_F(FPDFPPOEmbedderTest, BUG_664284) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFPPOEmbedderTest, BUG_750568) {
+TEST_F(FPDFPPOEmbedderTest, Bug750568) {
   ASSERT_TRUE(OpenDocument("bug_750568.pdf"));
   ASSERT_EQ(4, FPDF_GetPageCount(document()));
 

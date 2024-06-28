@@ -719,7 +719,7 @@ TEST_F(FPDFEditEmbedderTest, ClipPath) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFEditEmbedderTest, BUG_1399) {
+TEST_F(FPDFEditEmbedderTest, Bug1399) {
   // Load document with a clipped rectangle.
   ASSERT_TRUE(OpenDocument("bug_1399.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -758,7 +758,7 @@ TEST_F(FPDFEditEmbedderTest, BUG_1399) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFEditEmbedderTest, BUG_1549) {
+TEST_F(FPDFEditEmbedderTest, Bug1549) {
   static const char kOriginalChecksum[] = "126366fb95e6caf8ea196780075b22b2";
   static const char kRemovedChecksum[] = "6ec2f27531927882624b37bc7d8e12f4";
 
@@ -939,7 +939,7 @@ TEST_F(FPDFEditEmbedderTest, SetTextKeepClippingPath) {
   CloseSavedDocument();
 }
 
-TEST_F(FPDFEditEmbedderTest, BUG_1574) {
+TEST_F(FPDFEditEmbedderTest, Bug1574) {
   // Load document with some text within a clipping path.
   ASSERT_TRUE(OpenDocument("bug_1574.pdf"));
   FPDF_PAGE page = LoadPage(0);

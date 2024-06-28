@@ -756,7 +756,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Lower) {
 }
 
 // This is testing for an OOB read, so will likely only fail under ASAN.
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, bug_854623) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Bug854623) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   const uint8_t test_string[] = {
@@ -1176,7 +1176,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, ComplexTextChangeEvent) {
 }
 
 // Should not crash.
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, BUG_1223) {
+TEST_F(CFXJSE_FormCalcContextEmbedderTest, Bug1223) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
   EXPECT_TRUE(Execute("!.somExpression=0"));
 }

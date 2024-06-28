@@ -8,7 +8,7 @@
 class CJX_HostPseudoModelEmbedderTest : public XFAJSEmbedderTest {};
 
 // Should not crash.
-TEST_F(CJX_HostPseudoModelEmbedderTest, BUG_1256) {
+TEST_F(CJX_HostPseudoModelEmbedderTest, Bug1256) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   EXPECT_TRUE(Execute("$host.openList(1)"));

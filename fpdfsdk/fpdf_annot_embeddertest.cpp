@@ -2229,7 +2229,7 @@ TEST_F(FPDFAnnotEmbedderTest, Bug1206) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFAnnotEmbedderTest, BUG_1212) {
+TEST_F(FPDFAnnotEmbedderTest, Bug1212) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);

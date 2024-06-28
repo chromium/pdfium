@@ -8,7 +8,7 @@
 class CFXJSE_AppEmbedderTest : public XFAJSEmbedderTest {};
 
 // Should not crash.
-TEST_F(CFXJSE_AppEmbedderTest, BUG_1252) {
+TEST_F(CFXJSE_AppEmbedderTest, Bug1252) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   EXPECT_FALSE(Execute("app.activeDocs()"));

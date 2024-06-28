@@ -1164,7 +1164,7 @@ TEST_F(FPDFTextEmbedderTest, IsInvalidUnicode) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbedderTest, Bug_921) {
+TEST_F(FPDFTextEmbedderTest, Bug921) {
   ASSERT_TRUE(OpenDocument("bug_921.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -1241,7 +1241,7 @@ TEST_F(FPDFTextEmbedderTest, GetTextWithHyphen) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbedderTest, bug_782596) {
+TEST_F(FPDFTextEmbedderTest, Bug782596) {
   // If there is a regression in this test, it will only fail under ASAN
   ASSERT_TRUE(OpenDocument("bug_782596.pdf"));
   FPDF_PAGE page = LoadPage(0);
@@ -1287,7 +1287,7 @@ TEST_F(FPDFTextEmbedderTest, ControlCharacters) {
 
 // Testing that hyphen makers (0x0002) are replacing hard hyphens when
 // the word contains non-ASCII characters.
-TEST_F(FPDFTextEmbedderTest, bug_1029) {
+TEST_F(FPDFTextEmbedderTest, Bug1029) {
   ASSERT_TRUE(OpenDocument("bug_1029.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -1501,7 +1501,7 @@ TEST_F(FPDFTextEmbedderTest, CroppedText) {
   }
 }
 
-TEST_F(FPDFTextEmbedderTest, Bug_1139) {
+TEST_F(FPDFTextEmbedderTest, Bug1139) {
   ASSERT_TRUE(OpenDocument("bug_1139.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
@@ -1524,7 +1524,7 @@ TEST_F(FPDFTextEmbedderTest, Bug_1139) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFTextEmbedderTest, Bug_642) {
+TEST_F(FPDFTextEmbedderTest, Bug642) {
   ASSERT_TRUE(OpenDocument("bug_642.pdf"));
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);

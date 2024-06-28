@@ -209,14 +209,14 @@ TEST_F(FPDFSaveEmbedderTest, SaveXFADoc) {
 }
 #endif  // PDF_ENABLE_XFA
 
-TEST_F(FPDFSaveEmbedderTest, BUG_342) {
+TEST_F(FPDFSaveEmbedderTest, Bug342) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   EXPECT_THAT(GetString(), HasSubstr("0000000000 65535 f\r\n"));
   EXPECT_THAT(GetString(), Not(HasSubstr("0000000000 65536 f\r\n")));
 }
 
-TEST_F(FPDFSaveEmbedderTest, BUG_905142) {
+TEST_F(FPDFSaveEmbedderTest, Bug905142) {
   ASSERT_TRUE(OpenDocument("bug_905142.pdf"));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   EXPECT_THAT(GetString(), HasSubstr("/Length 0"));

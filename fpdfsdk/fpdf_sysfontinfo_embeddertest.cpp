@@ -123,7 +123,7 @@ class FPDFSysFontInfoEmbedderTest : public EmbedderTest {
 
 }  // namespace
 
-TEST_F(FPDFUnavailableSysFontInfoEmbedderTest, Bug_972518) {
+TEST_F(FPDFUnavailableSysFontInfoEmbedderTest, Bug972518) {
   ASSERT_TRUE(OpenDocument("bug_972518.pdf"));
   ASSERT_EQ(1, FPDF_GetPageCount(document()));
 

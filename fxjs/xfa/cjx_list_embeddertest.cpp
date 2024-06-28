@@ -8,7 +8,7 @@
 class CJX_ListEmbedderTest : public XFAJSEmbedderTest {};
 
 // Should not crash.
-TEST_F(CJX_ListEmbedderTest, BUG_1263) {
+TEST_F(CJX_ListEmbedderTest, Bug1263) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   EXPECT_FALSE(Execute("nodes.insert($form,$)"));

@@ -410,14 +410,14 @@ TEST_F(FPDFDataAvailEmbedderTest, NegativePageIndex) {
             FPDFAvail_IsPageAvail(avail(), -1, loader.hints()));
 }
 
-TEST_F(FPDFDataAvailEmbedderTest, Bug_1324189) {
+TEST_F(FPDFDataAvailEmbedderTest, Bug1324189) {
   // Test passes if it doesn't crash.
   TestAsyncLoader loader("bug_1324189.pdf");
   CreateAvail(loader.file_avail(), loader.file_access());
   ASSERT_EQ(PDF_DATA_NOTAVAIL, FPDFAvail_IsDocAvail(avail(), loader.hints()));
 }
 
-TEST_F(FPDFDataAvailEmbedderTest, Bug_1324503) {
+TEST_F(FPDFDataAvailEmbedderTest, Bug1324503) {
   // Test passes if it doesn't crash.
   TestAsyncLoader loader("bug_1324503.pdf");
   CreateAvail(loader.file_avail(), loader.file_access());

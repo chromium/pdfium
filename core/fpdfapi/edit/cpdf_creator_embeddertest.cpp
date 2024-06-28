@@ -45,7 +45,7 @@ TEST_F(CPDF_CreatorEmbedderTest, SavedDocsAreEqualAfterParse) {
   EXPECT_EQ(saved_doc_1.size(), saved_doc_2.size());
 }
 
-TEST_F(CPDF_CreatorEmbedderTest, BUG_873) {
+TEST_F(CPDF_CreatorEmbedderTest, Bug873) {
   ASSERT_TRUE(OpenDocument("embedded_attachments.pdf"));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
