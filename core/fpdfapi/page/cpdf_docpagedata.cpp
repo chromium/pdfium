@@ -573,7 +573,7 @@ RetainPtr<CPDF_Font> CPDF_DocPageData::AddFont(std::unique_ptr<CFX_Font> pFont,
     static constexpr char kStemChars[] = {'i', 'I', '!', '1'};
     static constexpr pdfium::span<const char> kStemSpan{kStemChars};
     uint32_t glyph = pEncoding->GlyphFromCharCode(kStemSpan.front());
-    const auto remaining = kStemSpan.subspan(1);
+    const auto remaining = kStemSpan.subspan<1>();
     nStemV = pFont->GetGlyphWidth(glyph);
     for (auto ch : remaining) {
       glyph = pEncoding->GlyphFromCharCode(ch);

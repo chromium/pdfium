@@ -594,7 +594,8 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
       CRYPT_MD5Update(&md5, file_id.unsigned_span());
 
     uint8_t digest[32];
-    auto partial_digest_span = pdfium::make_span(digest).first(16u);
+    auto partial_digest_span = pdfium::make_span(digest).first<16u>();
+    auto remaining_digest_span = pdfium::make_span(digest).subspan<16u>();
     CRYPT_MD5Finish(&md5, partial_digest_span);
     CRYPT_ArcFourCryptBlock(partial_digest_span,
                             pdfium::make_span(m_EncryptKey).first(key_len));
@@ -606,8 +607,7 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
       CRYPT_ArcFourCryptBlock(partial_digest_span,
                               pdfium::make_span(tempkey).first(key_len));
     }
-    CRYPT_MD5Generate(pdfium::make_span(digest).first(16u),
-                      pdfium::make_span(digest).subspan(16u));
+    CRYPT_MD5Generate(partial_digest_span, remaining_digest_span);
     pEncryptDict->SetNewFor<CPDF_String>("U",
                                          UNSAFE_TODO(ByteString(digest, 32)));
   }
@@ -634,8 +634,8 @@ void CPDF_SecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
   } else {
     CRYPT_SHA256Start(&sha2);
     CRYPT_SHA256Update(&sha2, password.unsigned_span());
-    CRYPT_SHA256Update(&sha2, pdfium::make_span(digest).first(8u));
-    CRYPT_SHA256Finish(&sha2, pdfium::make_span(digest1).first(32u));
+    CRYPT_SHA256Update(&sha2, pdfium::make_span(digest).first<8u>());
+    CRYPT_SHA256Finish(&sha2, pdfium::make_span(digest1).first<32u>());
   }
   UNSAFE_TODO(FXSYS_memcpy(digest1 + 32, digest, 16));
   pEncryptDict->SetNewFor<CPDF_String>("U",
@@ -645,8 +645,8 @@ void CPDF_SecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
   } else {
     CRYPT_SHA256Start(&sha2);
     CRYPT_SHA256Update(&sha2, password.unsigned_span());
-    CRYPT_SHA256Update(&sha2, pdfium::make_span(digest).subspan(8, 8));
-    CRYPT_SHA256Finish(&sha2, pdfium::make_span(digest1).first(32));
+    CRYPT_SHA256Update(&sha2, pdfium::make_span(digest).subspan<8, 8>());
+    CRYPT_SHA256Finish(&sha2, pdfium::make_span(digest1).first<32>());
   }
   CRYPT_aes_context aes = {};
   CRYPT_AESSetKey(&aes, digest1, 32);
@@ -677,7 +677,7 @@ void CPDF_SecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict) {
   uint32_t random_value;
   FX_Random_GenerateMT(pdfium::span_from_ref(random_value));
   fxcrt::Copy(pdfium::byte_span_from_ref(random_value),
-              pdfium::make_span(buf).subspan(12, 4));
+              pdfium::make_span(buf).subspan<12, 4>());
 
   CRYPT_aes_context aes = {};
   CRYPT_AESSetKey(&aes, m_EncryptKey.data(), m_EncryptKey.size());

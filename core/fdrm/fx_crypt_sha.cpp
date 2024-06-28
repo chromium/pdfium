@@ -418,7 +418,7 @@ void CRYPT_SHA1Finish(CRYPT_sha1_context* context,
   c[5] = (total_bits >> 16) & 0xFF;
   c[6] = (total_bits >> 8) & 0xFF;
   c[7] = (total_bits >> 0) & 0xFF;
-  CRYPT_SHA1Update(context, pdfium::make_span(c).first(8u));
+  CRYPT_SHA1Update(context, pdfium::make_span(c).first<8u>());
   for (int i = 0; i < 5; i++) {
     digest[i * 4] = (context->h[i] >> 24) & 0xFF;
     digest[i * 4 + 1] = (context->h[i] >> 16) & 0xFF;

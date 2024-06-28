@@ -215,7 +215,7 @@ FX_RGB_STRUCT<float> CPDF_MeshStream::ReadColor() const {
   float result[kMaxComponents] = {};
   for (const auto& func : m_funcs) {
     if (func && func->OutputCount() <= kMaxComponents) {
-      func->Call(pdfium::make_span(color_value).first(1u), result);
+      func->Call(pdfium::make_span(color_value).first<1u>(), result);
     }
   }
   return m_pCS->GetRGBOrZerosOnError(result);

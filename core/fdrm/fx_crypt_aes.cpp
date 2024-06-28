@@ -625,7 +625,7 @@ void CRYPT_AESEncrypt(CRYPT_aes_context* ctx,
                       pdfium::span<uint8_t> dest,
                       pdfium::span<const uint8_t> src) {
   CHECK_EQ((src.size() & 15), 0);
-  auto ctx_iv = pdfium::make_span(ctx->iv).first(4u);
+  auto ctx_iv = pdfium::make_span(ctx->iv).first<4u>();
   while (!src.empty()) {
     for (auto& iv_element : ctx_iv) {
       iv_element ^= fxcrt::GetUInt32MSBFirst(src.first(4u));

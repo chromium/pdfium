@@ -101,7 +101,7 @@ CFX_SeekableStreamProxy::CFX_SeekableStreamProxy(
   Seek(From::Begin, 0);
 
   uint32_t bom = 0;
-  ReadData(pdfium::byte_span_from_ref(bom).first(3));
+  ReadData(pdfium::byte_span_from_ref(bom).first<3>());
 
   bom &= BOM_UTF8_MASK;
   if (bom == BOM_UTF8) {

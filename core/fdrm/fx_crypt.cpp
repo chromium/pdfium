@@ -20,23 +20,24 @@ const uint8_t md5_padding[64] = {
     0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 void md5_process(CRYPT_md5_context* ctx, pdfium::span<const uint8_t, 64> data) {
-  uint32_t X[16];
-  X[0] = fxcrt::GetUInt32LSBFirst(data.subspan(0, 4));
-  X[1] = fxcrt::GetUInt32LSBFirst(data.subspan(4, 4));
-  X[2] = fxcrt::GetUInt32LSBFirst(data.subspan(8, 4));
-  X[3] = fxcrt::GetUInt32LSBFirst(data.subspan(12, 4));
-  X[4] = fxcrt::GetUInt32LSBFirst(data.subspan(16, 4));
-  X[5] = fxcrt::GetUInt32LSBFirst(data.subspan(20, 4));
-  X[6] = fxcrt::GetUInt32LSBFirst(data.subspan(24, 4));
-  X[7] = fxcrt::GetUInt32LSBFirst(data.subspan(28, 4));
-  X[8] = fxcrt::GetUInt32LSBFirst(data.subspan(32, 4));
-  X[9] = fxcrt::GetUInt32LSBFirst(data.subspan(36, 4));
-  X[10] = fxcrt::GetUInt32LSBFirst(data.subspan(40, 4));
-  X[11] = fxcrt::GetUInt32LSBFirst(data.subspan(44, 4));
-  X[12] = fxcrt::GetUInt32LSBFirst(data.subspan(48, 4));
-  X[13] = fxcrt::GetUInt32LSBFirst(data.subspan(52, 4));
-  X[14] = fxcrt::GetUInt32LSBFirst(data.subspan(56, 4));
-  X[15] = fxcrt::GetUInt32LSBFirst(data.subspan(60, 4));
+  uint32_t X[16] = {
+      fxcrt::GetUInt32LSBFirst(data.subspan<0, 4>()),
+      fxcrt::GetUInt32LSBFirst(data.subspan<4, 4>()),
+      fxcrt::GetUInt32LSBFirst(data.subspan<8, 4>()),
+      fxcrt::GetUInt32LSBFirst(data.subspan<12, 4>()),
+      fxcrt::GetUInt32LSBFirst(data.subspan<16, 4>()),
+      fxcrt::GetUInt32LSBFirst(data.subspan<20, 4>()),
+      fxcrt::GetUInt32LSBFirst(data.subspan<24, 4>()),
+      fxcrt::GetUInt32LSBFirst(data.subspan<28, 4>()),
+      fxcrt::GetUInt32LSBFirst(data.subspan<32, 4>()),
+      fxcrt::GetUInt32LSBFirst(data.subspan<36, 4>()),
+      fxcrt::GetUInt32LSBFirst(data.subspan<40, 4>()),
+      fxcrt::GetUInt32LSBFirst(data.subspan<44, 4>()),
+      fxcrt::GetUInt32LSBFirst(data.subspan<48, 4>()),
+      fxcrt::GetUInt32LSBFirst(data.subspan<52, 4>()),
+      fxcrt::GetUInt32LSBFirst(data.subspan<56, 4>()),
+      fxcrt::GetUInt32LSBFirst(data.subspan<60, 4>()),
+  };
   uint32_t A = ctx->state[0];
   uint32_t B = ctx->state[1];
   uint32_t C = ctx->state[2];
@@ -203,16 +204,16 @@ void CRYPT_MD5Finish(CRYPT_md5_context* context,
                      pdfium::span<uint8_t, 16> digest) {
   uint8_t msglen[8];
   auto msglen_span = pdfium::make_span(msglen);
-  fxcrt::PutUInt32LSBFirst(context->total[0], msglen_span.subspan(0, 4));
-  fxcrt::PutUInt32LSBFirst(context->total[1], msglen_span.subspan(4, 4));
+  fxcrt::PutUInt32LSBFirst(context->total[0], msglen_span.subspan<0, 4>());
+  fxcrt::PutUInt32LSBFirst(context->total[1], msglen_span.subspan<4, 4>());
   uint32_t last = (context->total[0] >> 3) & 0x3F;
   uint32_t padn = (last < 56) ? (56 - last) : (120 - last);
   CRYPT_MD5Update(context, pdfium::make_span(md5_padding).first(padn));
   CRYPT_MD5Update(context, msglen);
-  fxcrt::PutUInt32LSBFirst(context->state[0], digest.subspan(0, 4));
-  fxcrt::PutUInt32LSBFirst(context->state[1], digest.subspan(4, 4));
-  fxcrt::PutUInt32LSBFirst(context->state[2], digest.subspan(8, 4));
-  fxcrt::PutUInt32LSBFirst(context->state[3], digest.subspan(12, 4));
+  fxcrt::PutUInt32LSBFirst(context->state[0], digest.subspan<0, 4>());
+  fxcrt::PutUInt32LSBFirst(context->state[1], digest.subspan<4, 4>());
+  fxcrt::PutUInt32LSBFirst(context->state[2], digest.subspan<8, 4>());
+  fxcrt::PutUInt32LSBFirst(context->state[3], digest.subspan<12, 4>());
 }
 
 void CRYPT_MD5Generate(pdfium::span<const uint8_t> data,

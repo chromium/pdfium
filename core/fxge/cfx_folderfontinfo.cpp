@@ -194,14 +194,14 @@ void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
     return;
   }
   uint32_t magic =
-      fxcrt::GetUInt32MSBFirst(pdfium::make_span(buffer).first(4u));
+      fxcrt::GetUInt32MSBFirst(pdfium::make_span(buffer).first<4u>());
   if (magic != kTableTTCF) {
     ReportFace(path, pFile.get(), filesize, 0);
     return;
   }
 
   uint32_t nFaces =
-      fxcrt::GetUInt32MSBFirst(pdfium::make_span(buffer).subspan(8));
+      fxcrt::GetUInt32MSBFirst(pdfium::make_span(buffer).subspan<8u>());
   FX_SAFE_SIZE_T safe_face_bytes = nFaces;
   safe_face_bytes *= 4;
   if (!safe_face_bytes.IsValid())
@@ -231,7 +231,7 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
     return;
 
   uint32_t nTables =
-      fxcrt::GetUInt16MSBFirst(pdfium::as_byte_span(buffer).subspan(4));
+      fxcrt::GetUInt16MSBFirst(pdfium::as_byte_span(buffer).subspan<4, 2>());
   ByteString tables = ReadStringFromFile(pFile, nTables * 16);
   if (tables.IsEmpty())
     return;
