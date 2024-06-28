@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <stdint.h>
+
 #include <vector>
 
 #include "core/fxcrt/raw_span.h"
@@ -10,6 +12,7 @@
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
+using ::testing::AnyOf;
 using ::testing::ElementsAre;
 using ::testing::ElementsAreArray;
 
@@ -88,6 +91,33 @@ TEST(PdfiumSpan, FrontBack) {
   EXPECT_EQ(one_span.back(), 1);
   EXPECT_EQ(stuff_span.front(), 1);
   EXPECT_EQ(stuff_span.back(), 3);
+}
+
+TEST(PdfiumSpan, AsByteSpan) {
+  int32_t c_style[] = {1, 2};
+  const int32_t const_c_style[] = {3, 4};
+  std::array<int32_t, 2> cxx_style = {1, 2};
+  std::array<const int32_t, 2> const_cxx_style = {3, 4};
+
+  // Don't assume a specific endian architecture.
+  EXPECT_THAT(pdfium::as_byte_span(c_style),
+              AnyOf(ElementsAre(0, 0, 0, 1, 0, 0, 0, 2),
+                    ElementsAre(1, 0, 0, 0, 2, 0, 0, 0)));
+  EXPECT_THAT(pdfium::as_writable_byte_span(c_style),
+              AnyOf(ElementsAre(0, 0, 0, 1, 0, 0, 0, 2),
+                    ElementsAre(1, 0, 0, 0, 2, 0, 0, 0)));
+  EXPECT_THAT(pdfium::as_byte_span(cxx_style),
+              AnyOf(ElementsAre(0, 0, 0, 1, 0, 0, 0, 2),
+                    ElementsAre(1, 0, 0, 0, 2, 0, 0, 0)));
+  EXPECT_THAT(pdfium::as_writable_byte_span(cxx_style),
+              AnyOf(ElementsAre(0, 0, 0, 1, 0, 0, 0, 2),
+                    ElementsAre(1, 0, 0, 0, 2, 0, 0, 0)));
+  EXPECT_THAT(pdfium::as_byte_span(const_c_style),
+              AnyOf(ElementsAre(0, 0, 0, 3, 0, 0, 0, 4),
+                    ElementsAre(3, 0, 0, 0, 4, 0, 0, 0)));
+  EXPECT_THAT(pdfium::as_byte_span(const_cxx_style),
+              AnyOf(ElementsAre(0, 0, 0, 3, 0, 0, 0, 4),
+                    ElementsAre(3, 0, 0, 0, 4, 0, 0, 0)));
 }
 
 TEST(PdfiumSpan, GMockMacroCompatibility) {

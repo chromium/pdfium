@@ -573,9 +573,8 @@ void CPDF_Creator::InitID() {
   } else {
     std::array<uint32_t, 4> file_id =
         GenerateFileID((uint32_t)(uintptr_t)this, m_dwLastObjNum);
-    m_pIDArray->AppendNew<CPDF_String>(
-        pdfium::as_bytes(pdfium::make_span(file_id)),
-        CPDF_String::DataType::kIsHex);
+    m_pIDArray->AppendNew<CPDF_String>(pdfium::as_byte_span(file_id),
+                                       CPDF_String::DataType::kIsHex);
   }
 
   if (pOldIDArray) {
@@ -586,9 +585,8 @@ void CPDF_Creator::InitID() {
     }
     std::array<uint32_t, 4> file_id =
         GenerateFileID((uint32_t)(uintptr_t)this, m_dwLastObjNum);
-    m_pIDArray->AppendNew<CPDF_String>(
-        pdfium::as_bytes(pdfium::make_span(file_id)),
-        CPDF_String::DataType::kIsHex);
+    m_pIDArray->AppendNew<CPDF_String>(pdfium::as_byte_span(file_id),
+                                       CPDF_String::DataType::kIsHex);
     return;
   }
 

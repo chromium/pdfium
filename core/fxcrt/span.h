@@ -463,6 +463,10 @@ template <typename T>
 span<const uint8_t> as_byte_span(const T& arg) {
   return as_bytes(make_span(arg));
 }
+template <typename T>
+span<const uint8_t> as_byte_span(T&& arg) {
+  return as_bytes(make_span(arg));
+}
 
 // Convenience function for converting an object which is itself convertible
 // to span into a span of mutable bytes (i.e. span of uint8_t). Typically used
@@ -470,7 +474,7 @@ span<const uint8_t> as_byte_span(const T& arg) {
 // or vector-like objects holding other scalar types, prior to passing them
 // into an API that requires mutable byte spans.
 template <typename T>
-constexpr span<uint8_t> as_writable_byte_span(T& arg) {
+constexpr span<uint8_t> as_writable_byte_span(T&& arg) {
   return as_writable_bytes(make_span(arg));
 }
 
