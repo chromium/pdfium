@@ -471,7 +471,7 @@ bool CPDF_HintTables::LoadHintStream(CPDF_Stream* pHintStream) {
     return false;
   }
 
-  CFX_BitStream bs(pAcc->GetSpan().subspan(0, size));
+  CFX_BitStream bs(pAcc->GetSpan().first(size));
   return ReadPageHintTable(&bs) &&
          ReadSharedObjHintTable(&bs, shared_hint_table_offset);
 }

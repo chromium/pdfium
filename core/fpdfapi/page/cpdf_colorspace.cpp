@@ -1204,8 +1204,7 @@ std::optional<FX_RGB_STRUCT<float>> CPDF_DeviceNCS::GetRGB(
   // Using at least 16 elements due to the call m_pAltCS->GetRGB() below.
   std::vector<float> results(std::max(m_pFunc->OutputCount(), 16u));
   uint32_t nresults =
-      m_pFunc->Call(pBuf.first(ComponentCount()), pdfium::make_span(results))
-          .value_or(0);
+      m_pFunc->Call(pBuf.first(ComponentCount()), results).value_or(0);
 
   if (nresults == 0) {
     return std::nullopt;

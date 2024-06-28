@@ -325,7 +325,7 @@ TEST_F(ProgressiveDecoderTest, LargeBmp) {
         bitmap->GetScanline(kHeight - row - 1);
 
     EXPECT_THAT(
-        scanline.subspan(0, kScanlineSize - 1),
+        scanline.first(kScanlineSize - 1),
         ElementsAreArray(IotaArray<kScanlineSize - 1>(row * kScanlineSize)));
 
     // Last byte is padding to a 32-bit boundary.

@@ -255,8 +255,9 @@ BmpDecoder::Status CFX_BmpDecompressor::ReadBmpBitfields() {
     return BmpDecoder::Status::kFail;
 
   uint32_t masks[3];
-  if (!ReadAllOrNone(pdfium::as_writable_bytes(pdfium::make_span(masks))))
+  if (!ReadAllOrNone(pdfium::as_writable_byte_span(masks))) {
     return BmpDecoder::Status::kContinue;
+  }
 
   mask_red_ = fxcrt::FromLE32(masks[0]);
   mask_green_ = fxcrt::FromLE32(masks[1]);

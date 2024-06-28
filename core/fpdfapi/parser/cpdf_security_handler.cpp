@@ -565,8 +565,8 @@ void CPDF_SecurityHandler::OnCreate(CPDF_Dictionary* pEncryptDict,
     FX_Random_GenerateMT(random);
     CRYPT_sha2_context sha;
     CRYPT_SHA256Start(&sha);
-    CRYPT_SHA256Update(&sha, pdfium::as_bytes(pdfium::make_span(random)));
-    CRYPT_SHA256Finish(&sha, pdfium::make_span(m_EncryptKey));
+    CRYPT_SHA256Update(&sha, pdfium::as_byte_span(random));
+    CRYPT_SHA256Finish(&sha, m_EncryptKey);
     AES256_SetPassword(pEncryptDict, password);
     AES256_SetPerms(pEncryptDict);
     return;
@@ -620,9 +620,7 @@ void CPDF_SecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
   CRYPT_sha1_context sha;
   CRYPT_SHA1Start(&sha);
   CRYPT_SHA1Update(&sha, m_EncryptKey);
-  // SAFETY: fixed-length string "hello" contains 5 characters.
-  CRYPT_SHA1Update(
-      &sha, pdfium::as_bytes(UNSAFE_BUFFERS(pdfium::make_span("hello", 5))));
+  CRYPT_SHA1Update(&sha, pdfium::as_byte_span("hello").first<5u>());
 
   uint8_t digest[20];
   CRYPT_SHA1Finish(&sha, digest);

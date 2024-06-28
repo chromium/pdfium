@@ -416,14 +416,13 @@ std::unique_ptr<SystemFontInfoIface> CFX_FontMapper::TakeSystemFontInfo() {
 
 uint32_t CFX_FontMapper::GetChecksumFromTT(void* font_handle) {
   uint32_t buffer[256];
-  m_pFontInfo->GetFontData(
-      font_handle, kTableTTCF,
-      pdfium::as_writable_bytes(pdfium::make_span(buffer)));
+  m_pFontInfo->GetFontData(font_handle, kTableTTCF,
+                           pdfium::as_writable_byte_span(buffer));
 
   uint32_t checksum = 0;
-  for (auto x : buffer)
+  for (auto x : buffer) {
     checksum += x;
-
+  }
   return checksum;
 }
 

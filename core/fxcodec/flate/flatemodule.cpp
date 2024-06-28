@@ -810,16 +810,15 @@ DataAndBytesConsumed FlateModule::FlateOrLZWDecode(
       return {std::move(dest_buf), bytes_consumed};
     }
     case PredictorType::kPng: {
-      std::optional<DataVector<uint8_t>> result = PNG_Predictor(
-          Colors, BitsPerComponent, Columns, pdfium::make_span(dest_buf));
+      std::optional<DataVector<uint8_t>> result =
+          PNG_Predictor(Colors, BitsPerComponent, Columns, dest_buf);
       if (!result.has_value()) {
         return {std::move(dest_buf), FX_INVALID_OFFSET};
       }
       return {std::move(result.value()), bytes_consumed};
     }
     case PredictorType::kFlate: {
-      bool ret = TIFF_Predictor(Colors, BitsPerComponent, Columns,
-                                pdfium::make_span(dest_buf));
+      bool ret = TIFF_Predictor(Colors, BitsPerComponent, Columns, dest_buf);
       return {std::move(dest_buf), ret ? bytes_consumed : FX_INVALID_OFFSET};
     }
   }
