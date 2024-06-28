@@ -176,9 +176,9 @@ vars = {
   # and whatever else without interference from each other.
   'resultdb_version': 'git_revision:ebc74d10fa0d64057daa6f128e89f3672eeeec95',
   # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling clang
+  # the commit queue can handle CLs rolling rust
   # and whatever else without interference from each other.
-  'rust_revision': 'b40b86555ee5e6f9749749072665fb052cb90012',
+  'rust_revision': '73996f7ff683f4a0f51ea9f87a9fc05d6d0d0b9e',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling skia
   # and whatever else without interference from each other.
@@ -188,13 +188,17 @@ vars = {
   # and whatever else without interference from each other.
   'test_fonts_revision': '7f51783942943e965cd56facf786544ccfc07713',
   # Three lines of non-changing comments so that
-  # the commit queue can handle CLs rolling clang
+  # the commit queue can handle CLs rolling testing_rust
   # and whatever else without interference from each other.
   'testing_rust_revision': '1938e1e7b5fa41992992e9f2fceff9b8a77de6c3',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling tools_memory
   # and whatever else without interference from each other.
   'tools_memory_revision': 'c5b623b3ba22e626ff51ab4f0b8d2bde749e970f',
+  # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling tools_rust
+  # and whatever else without interference from each other.
+  'tools_rust_revision': 'b40b86555ee5e6f9749749072665fb052cb90012',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling v8
   # and whatever else without interference from each other.
@@ -435,6 +439,12 @@ deps = {
     'dep_type': 'cipd',
   },
 
+  'third_party/rust': {
+    'url': Var('chromium_git') + '/chromium/src/third_party/rust@' +
+        Var('rust_revision'),
+    'condition': 'checkout_rust',
+  },
+
   'third_party/rust-toolchain': {
     'dep_type': 'gcs',
     'bucket': 'chromium-browser-clang',
@@ -506,7 +516,7 @@ deps = {
 
   'tools/rust': {
     'url': Var('chromium_git') + '/chromium/src/tools/rust@' +
-        Var('rust_revision'),
+        Var('tools_rust_revision'),
     'condition': 'checkout_rust',
   },
 

@@ -9,6 +9,7 @@ import("//testing/test.gni")
 import("//third_party/skia/gn/codec.gni")
 import("//third_party/skia/gn/shared_sources.gni")
 import("//third_party/skia/modules/skcms/skcms.gni")
+import("../pdfium.gni")
 import("features.gni")
 
 if (current_cpu == "arm") {
@@ -20,6 +21,17 @@ if (current_cpu == "mipsel" || current_cpu == "mips64el") {
 
 skia_use_ganesh_backend = !is_ios
 skia_support_pdf = false
+
+# TODO(crbug.com/42271123): Add real build rules to support Fontations.
+if (pdf_enable_fontations) {
+  group("bridge_rust_side_deps") {
+    deps = [
+      "//third_party/rust/font_types/v0_5:lib",
+      "//third_party/rust/read_fonts/v0_19:lib",
+      "//third_party/rust/skrifa/v0_19:lib",
+    ]
+  }
+}
 
 # External-facing config for dependent code.
 config("skia_config") {
