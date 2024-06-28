@@ -435,6 +435,41 @@ deps = {
     'dep_type': 'cipd',
   },
 
+  'third_party/rust-toolchain': {
+    'dep_type': 'gcs',
+    'bucket': 'chromium-browser-clang',
+    'objects': [
+      {
+        'object_name': 'Linux_x64/rust-toolchain-3cf924b934322fd7b514600a7dc84fc517515346-2-llvmorg-19-init-14561-gecea8371.tar.xz',
+        'sha256sum': '85805dfacd22e4a3ff787652c02efc661897101ab429f97785456d985800f497',
+        'size_bytes': 148800304,
+        'generation': 1719351433540994,
+        'condition': 'checkout_rust and host_os == "linux" and non_git_source',
+      },
+      {
+        'object_name': 'Mac/rust-toolchain-3cf924b934322fd7b514600a7dc84fc517515346-2-llvmorg-19-init-14561-gecea8371.tar.xz',
+        'sha256sum': 'f3a3cc410b00882326144ec230b8eae5d65bac9dbd6ebb4decd37ea592419db6',
+        'size_bytes': 141628840,
+        'generation': 1719351434659239,
+        'condition': 'checkout_rust and host_os == "mac" and host_cpu == "x64"',
+      },
+      {
+        'object_name': 'Mac_arm64/rust-toolchain-3cf924b934322fd7b514600a7dc84fc517515346-2-llvmorg-19-init-14561-gecea8371.tar.xz',
+        'sha256sum': '03dddc8e950a03ee531fd2cfa872bff866a843a17d6f336c9c2c9b5186ebb9eb',
+        'size_bytes': 133059288,
+        'generation': 1719351435926070,
+        'condition': 'checkout_rust and host_os == "mac" and host_cpu == "arm64"',
+      },
+      {
+        'object_name': 'Win/rust-toolchain-3cf924b934322fd7b514600a7dc84fc517515346-2-llvmorg-19-init-14561-gecea8371.tar.xz',
+        'sha256sum': '5a839d4cb975e3e1fbea2d35abcf6719edc249eb9f4aceacf001588901761f61',
+        'size_bytes': 204511892,
+        'generation': 1719351437183262,
+        'condition': 'checkout_rust and host_os == "win"',
+      },
+    ],
+  },
+
   'third_party/skia': {
     'url': Var('skia_git') + '/skia.git@' + Var('skia_revision'),
     'condition': 'checkout_skia',
@@ -639,14 +674,6 @@ hooks = [
                 '-s', 'tools/clang/dsymutil/bin/dsymutil.x64.sha1',
                 '-o', 'tools/clang/dsymutil/bin/dsymutil',
     ],
-  },
-  {
-    'name': 'rust',
-    'pattern': '.',
-    'action': ['python3',
-               'tools/rust/update_rust.py'
-    ],
-    'condition': 'checkout_rust',
   },
   {
     'name': 'test_fonts',
