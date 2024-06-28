@@ -30,16 +30,17 @@
 #include "core/fxcrt/fx_bidi.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_unicode.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/stl_util.h"
 
 namespace {
 
 constexpr float kDefaultFontSize = 1.0f;
 constexpr float kSizeEpsilon = 0.01f;
-
-const uint16_t* const kUnicodeDataNormalizationMaps[] = {
-    kUnicodeDataNormalizationMap2, kUnicodeDataNormalizationMap3,
-    kUnicodeDataNormalizationMap4};
+constexpr std::array<pdfium::span<const uint16_t>, 3>
+    kUnicodeDataNormalizationMaps = {{kUnicodeDataNormalizationMap2,
+                                      kUnicodeDataNormalizationMap3,
+                                      kUnicodeDataNormalizationMap4}};
 
 float NormalizeThreshold(float threshold, int t1, int t2, int t3) {
   DCHECK(t1 < t2);
@@ -80,27 +81,24 @@ float CalculateBaseSpace(const CPDF_TextObject* pTextObj,
 }
 
 DataVector<wchar_t> GetUnicodeNormalization(wchar_t wch) {
-  UNSAFE_TODO({
-    wch = wch & 0xFFFF;
-    wchar_t wFind = kUnicodeDataNormalization[wch];
-    if (!wFind) {
-      return DataVector<wchar_t>(1, wch);
-    }
-
-    if (wFind >= 0x8000) {
-      return DataVector<wchar_t>(1,
-                                 kUnicodeDataNormalizationMap1[wFind - 0x8000]);
-    }
-
-    wch = wFind & 0x0FFF;
-    wFind >>= 12;
-    const uint16_t* pMap = kUnicodeDataNormalizationMaps[wFind - 2] + wch;
-    if (wFind == 4) {
-      wFind = static_cast<wchar_t>(*pMap++);
-    }
-
-    return DataVector<wchar_t>(pMap, pMap + wFind);
-  });
+  wch = wch & 0xFFFF;
+  wchar_t wFind = kUnicodeDataNormalization[wch];
+  if (!wFind) {
+    return DataVector<wchar_t>(1, wch);
+  }
+  if (wFind >= 0x8000) {
+    return DataVector<wchar_t>(1,
+                               kUnicodeDataNormalizationMap1[wFind - 0x8000]);
+  }
+  wch = wFind & 0x0FFF;
+  wFind >>= 12;
+  auto pMap = kUnicodeDataNormalizationMaps[wFind - 2].subspan(wch);
+  if (wFind == 4) {
+    wFind = pMap.front();
+    pMap = pMap.subspan(1);
+  }
+  const auto range = pMap.first(wFind);
+  return DataVector<wchar_t>(range.begin(), range.end());
 }
 
 float MaskPercentFilled(const std::vector<bool>& mask,

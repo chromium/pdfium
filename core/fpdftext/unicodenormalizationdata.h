@@ -9,10 +9,12 @@
 
 #include <stdint.h>
 
-extern const uint16_t kUnicodeDataNormalization[];
-extern const uint16_t kUnicodeDataNormalizationMap1[];
-extern const uint16_t kUnicodeDataNormalizationMap2[];
-extern const uint16_t kUnicodeDataNormalizationMap3[];
-extern const uint16_t kUnicodeDataNormalizationMap4[];
+#include <array>
+
+extern const std::array<uint16_t, 65536> kUnicodeDataNormalization;
+extern const std::array<uint16_t, 5376> kUnicodeDataNormalizationMap1;
+extern const std::array<uint16_t, 1724> kUnicodeDataNormalizationMap2;
+extern const std::array<uint16_t, 1164> kUnicodeDataNormalizationMap3;
+extern const std::array<uint16_t, 488> kUnicodeDataNormalizationMap4;
 
 #endif  // CORE_FPDFTEXT_UNICODENORMALIZATIONDATA_H_
