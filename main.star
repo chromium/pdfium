@@ -105,6 +105,9 @@ def get_properties_by_name(name):
     if name.find("component") != -1:
         properties.update({"component": True})
 
+    if name.find("rust") != -1:
+        properties.update({"rust": True})
+
     if name.find("skia") != -1:
         properties.update({"skia": True})
 
@@ -480,6 +483,7 @@ add_entries_for_builder(name = "linux_no_v8", category = "no v8", short_name = "
 add_entries_for_builder(name = "linux_skia", category = "skia|linux", swarm_tests = True)
 add_entries_for_builder(name = "linux_skia_asan_lsan", category = "skia|linux", short_name = "asan", swarm_tests = True)
 add_entries_for_builder(name = "linux_skia_msan", category = "skia|linux", short_name = "msan", swarm_tests = True)
+add_entries_for_builder(name = "linux_skia_rust", category = "skia|linux", swarm_tests = True, skip_ci_builder = True)
 add_entries_for_builder(name = "linux_skia_ubsan", category = "skia|linux", short_name = "ubsan", swarm_tests = True)
 add_entries_for_builder(name = "linux_ubsan", category = "main|linux", short_name = "ubsan", swarm_tests = True)
 add_entries_for_builder(name = "linux_xfa", category = "xfa|linux", swarm_tests = True)
