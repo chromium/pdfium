@@ -76,28 +76,38 @@ void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& pBitmap,
   int Bpp = pBitmap->GetBPP() / 8;
   int dib_argb = FXARGB_TOBGRORDERDIB(argb);
   pdfium::span<uint8_t> pBuffer = pBitmap->GetWritableBuffer();
-  UNSAFE_TODO({
-    if (src_alpha == 255) {
+  if (src_alpha == 255) {
+    if (Bpp == 4) {
       for (int row = rect.top; row < rect.bottom; row++) {
-        uint8_t* dest_scan =
-            pBuffer.subspan(row * pBitmap->GetPitch() + rect.left * Bpp).data();
-        if (Bpp == 4) {
+        UNSAFE_TODO({
+          uint8_t* dest_scan =
+              pBuffer.subspan(row * pBitmap->GetPitch() + rect.left * Bpp)
+                  .data();
           std::fill_n(reinterpret_cast<uint32_t*>(dest_scan), width, dib_argb);
-        } else {
-          for (int col = 0; col < width; col++) {
-            *dest_scan++ = src_r;
-            *dest_scan++ = src_g;
-            *dest_scan++ = src_b;
-          }
-        }
+        });
       }
       return;
     }
-    bool bAlpha = pBitmap->IsAlphaFormat();
+
     for (int row = rect.top; row < rect.bottom; row++) {
-      uint8_t* dest_scan =
-          pBuffer.subspan(row * pBitmap->GetPitch() + rect.left * Bpp).data();
-      if (bAlpha) {
+      UNSAFE_TODO({
+        uint8_t* dest_scan =
+            pBuffer.subspan(row * pBitmap->GetPitch() + rect.left * Bpp).data();
+        for (int col = 0; col < width; col++) {
+          *dest_scan++ = src_r;
+          *dest_scan++ = src_g;
+          *dest_scan++ = src_b;
+        }
+      });
+    }
+    return;
+  }
+
+  if (pBitmap->IsAlphaFormat()) {
+    for (int row = rect.top; row < rect.bottom; row++) {
+      UNSAFE_TODO({
+        uint8_t* dest_scan =
+            pBuffer.subspan(row * pBitmap->GetPitch() + rect.left * Bpp).data();
         for (int col = 0; col < width; col++) {
           uint8_t back_alpha = dest_scan[3];
           if (back_alpha == 0) {
@@ -116,8 +126,15 @@ void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& pBitmap,
           *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_b, alpha_ratio);
           dest_scan += 2;
         }
-        continue;
-      }
+      });
+    }
+    return;
+  }
+
+  for (int row = rect.top; row < rect.bottom; row++) {
+    UNSAFE_TODO({
+      uint8_t* dest_scan =
+          pBuffer.subspan(row * pBitmap->GetPitch() + rect.left * Bpp).data();
       for (int col = 0; col < width; col++) {
         *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_r, src_alpha);
         dest_scan++;
@@ -129,8 +146,8 @@ void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& pBitmap,
           dest_scan++;
         }
       }
-    }
-  });
+    });
+  }
 }
 
 void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
@@ -158,37 +175,49 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
   pdfium::span<uint8_t> dest_span = pBitmap->GetWritableBuffer()
                                         .subspan(dest_y_offset)
                                         .subspan(dest_x_offset);
-  UNSAFE_TODO({
-    if (dest_format == src_format) {
-      const size_t src_x_offset = Fx2DSizeOrDie(src_left, Bpp);
+  if (dest_format == src_format) {
+    const size_t src_x_offset = Fx2DSizeOrDie(src_left, Bpp);
+    if (Bpp == 4) {
       for (int row = 0; row < height; row++) {
-        uint8_t* dest_scan = dest_span.data();
-        const uint8_t* src_scan =
-            pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
-        if (Bpp == 4) {
+        UNSAFE_TODO({
+          uint8_t* dest_scan = dest_span.data();
+          const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row)
+                                        .subspan(src_x_offset)
+                                        .data();
           for (int col = 0; col < width; col++) {
             FXARGB_SetRGBOrderDIB(dest_scan,
                                   *reinterpret_cast<const uint32_t*>(src_scan));
             dest_scan += 4;
             src_scan += 4;
           }
-        } else {
-          for (int col = 0; col < width; col++) {
-            *dest_scan++ = src_scan[2];
-            *dest_scan++ = src_scan[1];
-            *dest_scan++ = src_scan[0];
-            src_scan += 3;
-          }
-        }
+        });
         dest_span = dest_span.subspan(dest_pitch);
       }
       return;
     }
 
-    if (dest_format == FXDIB_Format::kRgb) {
-      DCHECK_EQ(src_format, FXDIB_Format::kRgb32);
-      const size_t src_x_offset = Fx2DSizeOrDie(src_left, 4);
-      for (int row = 0; row < height; row++) {
+    for (int row = 0; row < height; row++) {
+      UNSAFE_TODO({
+        uint8_t* dest_scan = dest_span.data();
+        const uint8_t* src_scan =
+            pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
+        for (int col = 0; col < width; col++) {
+          *dest_scan++ = src_scan[2];
+          *dest_scan++ = src_scan[1];
+          *dest_scan++ = src_scan[0];
+          src_scan += 3;
+        }
+      });
+      dest_span = dest_span.subspan(dest_pitch);
+    }
+    return;
+  }
+
+  if (dest_format == FXDIB_Format::kRgb) {
+    DCHECK_EQ(src_format, FXDIB_Format::kRgb32);
+    const size_t src_x_offset = Fx2DSizeOrDie(src_left, 4);
+    for (int row = 0; row < height; row++) {
+      UNSAFE_TODO({
         uint8_t* dest_scan = dest_span.data();
         const uint8_t* src_scan =
             pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
@@ -198,21 +227,23 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
           *dest_scan++ = src_scan[0];
           src_scan += 4;
         }
-        if (row < height - 1) {
-          // Since `dest_scan` was initialized in a way that takes
-          // `dest_x_offset` and `dest_y_offset` into account, it may go past
-          // the end of the span after processing the last row.
-          dest_span = dest_span.subspan(dest_pitch);
-        }
+      });
+      if (row < height - 1) {
+        // Since `dest_scan` was initialized in a way that takes
+        // `dest_x_offset` and `dest_y_offset` into account, it may go past
+        // the end of the span after processing the last row.
+        dest_span = dest_span.subspan(dest_pitch);
       }
-      return;
     }
+    return;
+  }
 
-    DCHECK(dest_format == FXDIB_Format::kArgb ||
-           dest_format == FXDIB_Format::kRgb32);
-    if (src_format == FXDIB_Format::kRgb) {
-      const size_t src_x_offset = Fx2DSizeOrDie(src_left, 3);
-      for (int row = 0; row < height; row++) {
+  DCHECK(dest_format == FXDIB_Format::kArgb ||
+         dest_format == FXDIB_Format::kRgb32);
+  if (src_format == FXDIB_Format::kRgb) {
+    const size_t src_x_offset = Fx2DSizeOrDie(src_left, 3);
+    for (int row = 0; row < height; row++) {
+      UNSAFE_TODO({
         uint8_t* dest_scan = dest_span.data();
         const uint8_t* src_scan =
             pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
@@ -222,16 +253,18 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
           dest_scan += 4;
           src_scan += 3;
         }
-        dest_span = dest_span.subspan(dest_pitch);
-      }
-      return;
+      });
+      dest_span = dest_span.subspan(dest_pitch);
     }
-    if (src_format != FXDIB_Format::kRgb32) {
-      return;
-    }
-    DCHECK_EQ(dest_format, FXDIB_Format::kArgb);
-    const size_t src_x_offset = Fx2DSizeOrDie(src_left, 4);
-    for (int row = 0; row < height; row++) {
+    return;
+  }
+  if (src_format != FXDIB_Format::kRgb32) {
+    return;
+  }
+  DCHECK_EQ(dest_format, FXDIB_Format::kArgb);
+  const size_t src_x_offset = Fx2DSizeOrDie(src_left, 4);
+  for (int row = 0; row < height; row++) {
+    UNSAFE_TODO({
       uint8_t* dest_scan = dest_span.data();
       const uint8_t* src_scan =
           pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
@@ -241,9 +274,9 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
         src_scan += 4;
         dest_scan += 4;
       }
-      dest_span = dest_span.subspan(dest_pitch);
-    }
-  });
+    });
+    dest_span = dest_span.subspan(dest_pitch);
+  }
 }
 
 void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
