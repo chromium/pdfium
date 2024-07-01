@@ -39,7 +39,9 @@ class LZWDecompressor {
                                                  uint8_t code_exp);
   ~LZWDecompressor();
 
-  void SetSource(pdfium::span<const uint8_t> src_buf);
+  void SetSource(pdfium::span<const uint8_t> src_buf) {
+    avail_input_ = src_buf;
+  }
   UNSAFE_BUFFER_USAGE Status Decode(uint8_t* dest_buf, uint32_t* dest_size);
 
   // Used by unittests, should not be called in production code.
@@ -69,8 +71,7 @@ class LZWDecompressor {
   DataVector<uint8_t> decompressed_;
   size_t decompressed_next_ = 0;
   uint16_t code_old_ = 0;
-  const uint8_t* next_in_ = nullptr;
-  uint32_t avail_in_ = 0;
+  pdfium::span<const uint8_t> avail_input_;
   uint8_t bits_left_ = 0;
   uint32_t code_store_ = 0;
   std::array<CodeEntry, GIF_MAX_LZW_CODE> code_table_;

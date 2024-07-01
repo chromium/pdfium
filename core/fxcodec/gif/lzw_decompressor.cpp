@@ -40,18 +40,15 @@ LZWDecompressor::LZWDecompressor(uint8_t color_exp, uint8_t code_exp)
 
 LZWDecompressor::~LZWDecompressor() = default;
 
-void LZWDecompressor::SetSource(pdfium::span<const uint8_t> src_buf) {
-  next_in_ = src_buf.data();
-  avail_in_ = pdfium::checked_cast<uint32_t>(src_buf.size());
-}
-
 LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
                                                 uint32_t* dest_size) {
-  if (!next_in_ || !dest_buf || !dest_size)
+  if (!dest_buf || !dest_size) {
     return Status::kError;
+  }
 
-  if (avail_in_ == 0)
+  if (avail_input_.empty()) {
     return Status::kUnfinished;
+  }
 
   if (*dest_size == 0)
     return Status::kInsufficientDestSize;
@@ -68,22 +65,22 @@ LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
   }
 
   while (i.ValueOrDie() <= *dest_size &&
-         (avail_in_ > 0 || bits_left_ >= code_size_cur_)) {
+         (!avail_input_.empty() || bits_left_ >= code_size_cur_)) {
     if (code_size_cur_ > GIF_MAX_LZW_EXP)
       return Status::kError;
 
-    if (avail_in_ > 0) {
+    if (!avail_input_.empty()) {
       if (bits_left_ > 31)
         return Status::kError;
 
-      FX_SAFE_UINT32 safe_code = UNSAFE_TODO(*next_in_++);
+      FX_SAFE_UINT32 safe_code = avail_input_.front();
       safe_code <<= bits_left_;
       safe_code |= code_store_;
       if (!safe_code.IsValid())
         return Status::kError;
 
       code_store_ = safe_code.ValueOrDie();
-      --avail_in_;
+      avail_input_ = avail_input_.subspan(1u);
       bits_left_ += 8;
     }
 
@@ -133,9 +130,9 @@ LZWDecompressor::Status LZWDecompressor::Decode(uint8_t* dest_buf,
     }
   }
 
-  if (avail_in_ != 0)
+  if (!avail_input_.empty()) {
     return Status::kError;
-
+  }
   *dest_size = i.ValueOrDie();
   return Status::kUnfinished;
 }

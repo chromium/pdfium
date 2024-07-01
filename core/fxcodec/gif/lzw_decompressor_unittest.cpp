@@ -97,7 +97,7 @@ TEST(LZWDecompressor, DecodeBadParams) {
   uint32_t output_size = std::size(output_data);
 
   decompressor->SetSource(pdfium::span<uint8_t>());
-  EXPECT_EQ(LZWDecompressor::Status::kError,
+  EXPECT_EQ(LZWDecompressor::Status::kUnfinished,
             UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
 
   decompressor->SetSource(image_data);
