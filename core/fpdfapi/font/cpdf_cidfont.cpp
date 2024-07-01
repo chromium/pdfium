@@ -44,13 +44,14 @@ struct LowHighVal {
   int val;
 };
 
-struct LowHighValXY {
-  int low;
-  int high;
-  int val;
+struct LowHighValXY : LowHighVal {
   int x;
   int y;
 };
+
+bool IsMetricForCID(const LowHighVal& val, uint16_t cid) {
+  return val.low <= cid && cid <= val.high;
+}
 
 constexpr std::array<FX_CodePage, CIDSET_NUM_SETS> kCharsetCodePages = {
     FX_CodePage::kDefANSI,
@@ -553,7 +554,7 @@ int CPDF_CIDFont::GetCharWidthF(uint32_t charcode) {
   auto lhv_span = fxcrt::truncating_reinterpret_span<const LowHighVal>(
       pdfium::make_span(m_WidthList));
   for (const auto& lhv : lhv_span) {
-    if (lhv.low <= cid && cid <= lhv.high) {
+    if (IsMetricForCID(lhv, cid)) {
       return lhv.val;
     }
   }
@@ -564,7 +565,7 @@ int16_t CPDF_CIDFont::GetVertWidth(uint16_t cid) const {
   auto lhvxy_span = fxcrt::truncating_reinterpret_span<const LowHighValXY>(
       pdfium::make_span(m_VertMetrics));
   for (const auto& lhvxy : lhvxy_span) {
-    if (lhvxy.low <= cid && cid <= lhvxy.high) {
+    if (IsMetricForCID(lhvxy, cid)) {
       return lhvxy.val;
     }
   }
@@ -575,7 +576,7 @@ CFX_Point16 CPDF_CIDFont::GetVertOrigin(uint16_t cid) const {
   auto lhvxy_span = fxcrt::truncating_reinterpret_span<const LowHighValXY>(
       pdfium::make_span(m_VertMetrics));
   for (const auto& lhvxy : lhvxy_span) {
-    if (lhvxy.low <= cid & cid <= lhvxy.high) {
+    if (IsMetricForCID(lhvxy, cid)) {
       return {static_cast<int16_t>(lhvxy.x), static_cast<int16_t>(lhvxy.y)};
     }
   }
@@ -583,7 +584,7 @@ CFX_Point16 CPDF_CIDFont::GetVertOrigin(uint16_t cid) const {
   auto lhv_span = fxcrt::truncating_reinterpret_span<const LowHighVal>(
       pdfium::make_span(m_WidthList));
   for (const auto& lhv : lhv_span) {
-    if (lhv.low <= cid && cid <= lhv.high) {
+    if (IsMetricForCID(lhv, cid)) {
       width = lhv.val;
       break;
     }
