@@ -154,9 +154,8 @@ bool CPSPrinterDriver::DrawPath(const CFX_Path& path,
                                stroke_color, fill_options);
 }
 
-bool CPSPrinterDriver::GetClipBox(FX_RECT* pRect) {
-  *pRect = m_PSRenderer.GetClipBox();
-  return true;
+FX_RECT CPSPrinterDriver::GetClipBox() const {
+  return m_PSRenderer.GetClipBox();
 }
 
 bool CPSPrinterDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,

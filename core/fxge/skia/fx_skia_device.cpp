@@ -125,10 +125,9 @@ void DebugShowCanvasClip(CFX_SkiaDeviceDriver* driver, const SkCanvas* canvas) {
          local.fBottom);
   printf("device bounds %d %d %d %d\n", device.fLeft, device.fTop,
          device.fRight, device.fBottom);
-  FX_RECT clipBox;
-  driver->GetClipBox(&clipBox);
-  printf("reported bounds %d %d %d %d\n", clipBox.left, clipBox.top,
-         clipBox.right, clipBox.bottom);
+  FX_RECT clip_box = driver->GetClipBox();
+  printf("reported bounds %d %d %d %d\n", clip_box.left, clip_box.top,
+         clip_box.right, clip_box.bottom);
 #endif  // SHOW_SKIA_PATH
 }
 
@@ -1360,13 +1359,9 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
   return true;
 }
 
-bool CFX_SkiaDeviceDriver::GetClipBox(FX_RECT* pRect) {
+FX_RECT CFX_SkiaDeviceDriver::GetClipBox() const {
   SkIRect clip = m_pCanvas->getDeviceClipBounds();
-  pRect->left = clip.fLeft;
-  pRect->top = clip.fTop;
-  pRect->right = clip.fRight;
-  pRect->bottom = clip.fBottom;
-  return true;
+  return FX_RECT(clip.fLeft, clip.fTop, clip.fRight, clip.fBottom);
 }
 
 bool CFX_SkiaDeviceDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,

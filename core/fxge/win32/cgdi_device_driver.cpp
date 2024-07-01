@@ -551,8 +551,12 @@ bool CGdiDeviceDriver::GDI_StretchBitMask(RetainPtr<const CFX_DIBBase> source,
   return true;
 }
 
-bool CGdiDeviceDriver::GetClipBox(FX_RECT* pRect) {
-  return !!(::GetClipBox(m_hDC, (RECT*)pRect));
+FX_RECT CGdiDeviceDriver::GetClipBox() const {
+  FX_RECT rect;
+  if (::GetClipBox(m_hDC, reinterpret_cast<RECT*>(&rect))) {
+    return rect;
+  }
+  return FX_RECT(0, 0, m_Width, m_Height);
 }
 
 bool CGdiDeviceDriver::MultiplyAlpha(float alpha) {

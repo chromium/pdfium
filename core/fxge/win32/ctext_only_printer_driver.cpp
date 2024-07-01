@@ -93,12 +93,8 @@ bool CTextOnlyPrinterDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
   return false;
 }
 
-bool CTextOnlyPrinterDriver::GetClipBox(FX_RECT* pRect) {
-  pRect->left = 0;
-  pRect->right = m_Width;
-  pRect->top = 0;
-  pRect->bottom = m_Height;
-  return true;
+FX_RECT CTextOnlyPrinterDriver::GetClipBox() const {
+  return FX_RECT(0, 0, m_Width, m_Height);
 }
 
 bool CTextOnlyPrinterDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,

@@ -522,12 +522,7 @@ void CFX_RenderDevice::InitDeviceInfo() {
   m_bpp = m_pDeviceDriver->GetDeviceCaps(FXDC_BITS_PIXEL);
   m_RenderCaps = m_pDeviceDriver->GetDeviceCaps(FXDC_RENDER_CAPS);
   m_DeviceType = m_pDeviceDriver->GetDeviceType();
-  if (!m_pDeviceDriver->GetClipBox(&m_ClipBox)) {
-    m_ClipBox.left = 0;
-    m_ClipBox.top = 0;
-    m_ClipBox.right = m_Width;
-    m_ClipBox.bottom = m_Height;
-  }
+  m_ClipBox = m_pDeviceDriver->GetClipBox();
 }
 
 void CFX_RenderDevice::SaveState() {
@@ -604,12 +599,7 @@ bool CFX_RenderDevice::SetClip_Rect(const FX_RECT& rect) {
 }
 
 void CFX_RenderDevice::UpdateClipBox() {
-  if (m_pDeviceDriver->GetClipBox(&m_ClipBox))
-    return;
-  m_ClipBox.left = 0;
-  m_ClipBox.top = 0;
-  m_ClipBox.right = m_Width;
-  m_ClipBox.bottom = m_Height;
+  m_ClipBox = m_pDeviceDriver->GetClipBox();
 }
 
 bool CFX_RenderDevice::DrawPath(const CFX_Path& path,

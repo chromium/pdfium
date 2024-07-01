@@ -69,7 +69,7 @@ class CFX_PSRenderer {
   void SetClip_PathStroke(const CFX_Path& path,
                           const CFX_Matrix* pObject2Device,
                           const CFX_GraphStateData* pGraphState);
-  FX_RECT GetClipBox() { return m_ClipBox; }
+  FX_RECT GetClipBox() const { return m_ClipBox; }
   bool DrawPath(const CFX_Path& path,
                 const CFX_Matrix* pObject2Device,
                 const CFX_GraphStateData* pGraphState,

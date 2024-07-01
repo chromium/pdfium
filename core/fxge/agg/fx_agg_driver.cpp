@@ -1259,8 +1259,7 @@ bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
   if (m_pBitmap->GetBuffer().empty())
     return true;
 
-  FX_RECT clip_rect;
-  GetClipBox(&clip_rect);
+  FX_RECT clip_rect = GetClipBox();
   FX_RECT draw_rect = clip_rect;
   draw_rect.Intersect(rect);
   if (draw_rect.IsEmpty())
@@ -1285,15 +1284,12 @@ bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
   return true;
 }
 
-bool CFX_AggDeviceDriver::GetClipBox(FX_RECT* pRect) {
-  if (!m_pClipRgn) {
-    pRect->left = pRect->top = 0;
-    pRect->right = GetDeviceCaps(FXDC_PIXEL_WIDTH);
-    pRect->bottom = GetDeviceCaps(FXDC_PIXEL_HEIGHT);
-    return true;
+FX_RECT CFX_AggDeviceDriver::GetClipBox() const {
+  if (m_pClipRgn) {
+    return m_pClipRgn->GetBox();
   }
-  *pRect = m_pClipRgn->GetBox();
-  return true;
+  return FX_RECT(0, 0, GetDeviceCaps(FXDC_PIXEL_WIDTH),
+                 GetDeviceCaps(FXDC_PIXEL_HEIGHT));
 }
 
 bool CFX_AggDeviceDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,

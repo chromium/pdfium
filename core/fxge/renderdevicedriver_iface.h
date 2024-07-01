@@ -67,7 +67,7 @@ class RenderDeviceDriverIface {
                                 uint32_t color,
                                 BlendMode blend_type);
 
-  virtual bool GetClipBox(FX_RECT* pRect) = 0;
+  virtual FX_RECT GetClipBox() const = 0;
   virtual bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                          int left,
                          int top) const;

@@ -86,7 +86,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                         uint32_t color,
                         BlendMode blend_type) override;
 
-  bool GetClipBox(FX_RECT* pRect) override;
+  FX_RECT GetClipBox() const override;
 
   /** Load device buffer into a DIB */
   bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
