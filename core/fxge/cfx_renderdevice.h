@@ -93,7 +93,7 @@ class CFX_RenderDevice {
     return FillRectWithBlend(rect, color, BlendMode::kNormal);
   }
 
-  RetainPtr<CFX_DIBitmap> GetBackDrop();
+  RetainPtr<const CFX_DIBitmap> GetBackDrop() const;
   bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap, int left, int top);
   bool SetDIBits(RetainPtr<const CFX_DIBBase> bitmap, int left, int top);
   bool SetDIBitsWithBlend(RetainPtr<const CFX_DIBBase> bitmap,

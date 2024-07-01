@@ -902,7 +902,7 @@ bool CFX_RenderDevice::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
   return SetDIBitsWithBlend(std::move(bitmap), left, top, BlendMode::kNormal);
 }
 
-RetainPtr<CFX_DIBitmap> CFX_RenderDevice::GetBackDrop() {
+RetainPtr<const CFX_DIBitmap> CFX_RenderDevice::GetBackDrop() const {
   return m_pDeviceDriver->GetBackDrop();
 }
 

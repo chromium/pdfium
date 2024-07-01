@@ -1328,7 +1328,7 @@ bool CFX_AggDeviceDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                                 std::move(pBack), left, top);
 }
 
-RetainPtr<CFX_DIBitmap> CFX_AggDeviceDriver::GetBackDrop() {
+RetainPtr<const CFX_DIBitmap> CFX_AggDeviceDriver::GetBackDrop() const {
   return m_pBackdropBitmap;
 }
 

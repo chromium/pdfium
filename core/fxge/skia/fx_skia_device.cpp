@@ -1397,7 +1397,7 @@ bool CFX_SkiaDeviceDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
   return true;
 }
 
-RetainPtr<CFX_DIBitmap> CFX_SkiaDeviceDriver::GetBackDrop() {
+RetainPtr<const CFX_DIBitmap> CFX_SkiaDeviceDriver::GetBackDrop() const {
   return m_pBackdropBitmap;
 }
 

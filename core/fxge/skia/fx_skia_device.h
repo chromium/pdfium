@@ -91,7 +91,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   /** Load device buffer into a DIB */
   bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap, int left, int top) override;
 
-  RetainPtr<CFX_DIBitmap> GetBackDrop() override;
+  RetainPtr<const CFX_DIBitmap> GetBackDrop() const override;
 
   bool SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                  uint32_t color,

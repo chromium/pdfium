@@ -40,7 +40,7 @@ bool RenderDeviceDriverIface::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
   return false;
 }
 
-RetainPtr<CFX_DIBitmap> RenderDeviceDriverIface::GetBackDrop() {
+RetainPtr<const CFX_DIBitmap> RenderDeviceDriverIface::GetBackDrop() const {
   return RetainPtr<CFX_DIBitmap>();
 }
 
