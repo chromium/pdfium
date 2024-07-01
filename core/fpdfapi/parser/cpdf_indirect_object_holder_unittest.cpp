@@ -18,7 +18,7 @@ class MockIndirectObjectHolder final : public CPDF_IndirectObjectHolder {
   MockIndirectObjectHolder() = default;
   ~MockIndirectObjectHolder() override = default;
 
-  MOCK_METHOD1(ParseIndirectObject, RetainPtr<CPDF_Object>(uint32_t objnum));
+  MOCK_METHOD(RetainPtr<CPDF_Object>, ParseIndirectObject, (uint32_t objnum));
 };
 
 }  // namespace

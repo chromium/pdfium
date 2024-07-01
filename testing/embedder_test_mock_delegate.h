@@ -10,27 +10,29 @@
 
 class EmbedderTestMockDelegate : public EmbedderTest::Delegate {
  public:
-  MOCK_METHOD1(UnsupportedHandler, void(int type));
-  MOCK_METHOD4(
+  MOCK_METHOD(void, UnsupportedHandler, (int type));
+  MOCK_METHOD(
+      int,
       Alert,
-      int(FPDF_WIDESTRING message, FPDF_WIDESTRING title, int type, int icon));
-  MOCK_METHOD2(SetTimer, int(int msecs, TimerCallback fn));
-  MOCK_METHOD1(KillTimer, void(int msecs));
-  MOCK_METHOD1(DoURIAction, void(FPDF_BYTESTRING uri));
-  MOCK_METHOD5(DoGoToAction,
-               void(FPDF_FORMFILLINFO* info,
-                    int page_index,
-                    int zoom_mode,
-                    float* pos_array,
-                    int array_size));
-  MOCK_METHOD3(OnFocusChange,
-               void(FPDF_FORMFILLINFO* info,
-                    FPDF_ANNOTATION annot,
-                    int page_index));
-  MOCK_METHOD3(DoURIActionWithKeyboardModifier,
-               void(FPDF_FORMFILLINFO* info,
-                    FPDF_BYTESTRING uri,
-                    int modifiers));
+      (FPDF_WIDESTRING message, FPDF_WIDESTRING title, int type, int icon));
+  MOCK_METHOD(int, SetTimer, (int msecs, TimerCallback fn));
+  MOCK_METHOD(void, KillTimer, (int msecs));
+  MOCK_METHOD(void, DoURIAction, (FPDF_BYTESTRING uri));
+  MOCK_METHOD(void,
+              DoGoToAction,
+              (FPDF_FORMFILLINFO * info,
+               int page_index,
+               int zoom_mode,
+               float* pos_array,
+               int array_size));
+  MOCK_METHOD(void,
+              OnFocusChange,
+              (FPDF_FORMFILLINFO * info,
+               FPDF_ANNOTATION annot,
+               int page_index));
+  MOCK_METHOD(void,
+              DoURIActionWithKeyboardModifier,
+              (FPDF_FORMFILLINFO * info, FPDF_BYTESTRING uri, int modifiers));
 };
 
 #endif  // TESTING_EMBEDDER_TEST_MOCK_DELEGATE_H_

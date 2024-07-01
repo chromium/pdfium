@@ -18,13 +18,13 @@ namespace {
 
 class MockTimerScheduler : public CFX_Timer::HandlerIface {
  public:
-  MOCK_METHOD2(SetTimer, int(int32_t uElapse, TimerCallback lpTimerFunc));
-  MOCK_METHOD1(KillTimer, void(int32_t nID));
+  MOCK_METHOD(int, SetTimer, (int32_t uElapse, TimerCallback lpTimerFunc));
+  MOCK_METHOD(void, KillTimer, (int32_t nID));
 };
 
 class MockTimerCallback : public CFX_Timer::CallbackIface {
  public:
-  MOCK_METHOD0(OnTimerFired, void());
+  MOCK_METHOD(void, OnTimerFired, ());
 };
 
 }  // namespace

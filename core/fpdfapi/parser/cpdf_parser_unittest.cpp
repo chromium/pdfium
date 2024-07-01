@@ -49,7 +49,7 @@ class TestObjectsHolder final : public CPDF_Parser::ParsedObjectsHolder {
 
   // CPDF_Parser::ParsedObjectsHolder:
   bool TryInit() override { return true; }
-  MOCK_METHOD1(ParseIndirectObject, RetainPtr<CPDF_Object>(uint32_t objnum));
+  MOCK_METHOD(RetainPtr<CPDF_Object>, ParseIndirectObject, (uint32_t objnum));
 };
 
 }  // namespace
