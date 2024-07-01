@@ -183,14 +183,10 @@ FX_FILESIZE CPDF_Parser::GetObjectPositionOrZero(uint32_t objnum) const {
   return (info && info->type == ObjectType::kNormal) ? info->pos : 0;
 }
 
-ObjectType CPDF_Parser::GetObjectType(uint32_t objnum) const {
+bool CPDF_Parser::IsObjectFree(uint32_t objnum) const {
   DCHECK(IsValidObjectNumber(objnum));
   const auto* info = m_CrossRefTable->GetObjectInfo(objnum);
-  return info ? info->type : ObjectType::kFree;
-}
-
-bool CPDF_Parser::IsObjectFree(uint32_t objnum) const {
-  return GetObjectType(objnum) == ObjectType::kFree;
+  return !info || info->type == ObjectType::kFree;
 }
 
 bool CPDF_Parser::InitSyntaxParser(RetainPtr<CPDF_ReadValidator> validator) {
@@ -1002,31 +998,40 @@ uint32_t CPDF_Parser::GetRootObjNum() const {
 }
 
 RetainPtr<CPDF_Object> CPDF_Parser::ParseIndirectObject(uint32_t objnum) {
-  if (!IsValidObjectNumber(objnum))
+  if (!IsValidObjectNumber(objnum)) {
     return nullptr;
+  }
 
   // Prevent circular parsing the same object.
-  if (pdfium::Contains(m_ParsingObjNums, objnum))
+  if (pdfium::Contains(m_ParsingObjNums, objnum)) {
     return nullptr;
+  }
 
   ScopedSetInsertion<uint32_t> local_insert(&m_ParsingObjNums, objnum);
-  if (GetObjectType(objnum) == ObjectType::kNormal) {
-    FX_FILESIZE pos = GetObjectPositionOrZero(objnum);
-    if (pos <= 0)
+  const auto* info = m_CrossRefTable->GetObjectInfo(objnum);
+  if (!info) {
+    return nullptr;
+  }
+
+  switch (info->type) {
+    case ObjectType::kFree: {
       return nullptr;
-    return ParseIndirectObjectAt(pos, objnum);
+    }
+    case ObjectType::kNormal: {
+      if (info->pos <= 0) {
+        return nullptr;
+      }
+      return ParseIndirectObjectAt(info->pos, objnum);
+    }
+    case ObjectType::kCompressed: {
+      const auto* obj_stream = GetObjectStream(info->archive.obj_num);
+      if (!obj_stream) {
+        return nullptr;
+      }
+      return obj_stream->ParseObject(m_pObjectsHolder, objnum,
+                                     info->archive.obj_index);
+    }
   }
-  if (GetObjectType(objnum) != ObjectType::kCompressed) {
-    return nullptr;
-  }
-
-  const auto& info = *m_CrossRefTable->GetObjectInfo(objnum);
-  const CPDF_ObjectStream* pObjStream = GetObjectStream(info.archive.obj_num);
-  if (!pObjStream)
-    return nullptr;
-
-  return pObjStream->ParseObject(m_pObjectsHolder, objnum,
-                                 info.archive.obj_index);
 }
 
 const CPDF_ObjectStream* CPDF_Parser::GetObjectStream(uint32_t object_number) {

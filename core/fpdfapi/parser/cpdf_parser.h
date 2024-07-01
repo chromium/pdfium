@@ -174,8 +174,6 @@ class CPDF_Parser {
   bool InitSyntaxParser(RetainPtr<CPDF_ReadValidator> validator);
   bool ParseFileVersion();
 
-  CPDF_CrossRefTable::ObjectType GetObjectType(uint32_t objnum) const;
-
   std::unique_ptr<CPDF_SyntaxParser> m_pSyntax;
   std::unique_ptr<ParsedObjectsHolder> m_pOwnedObjectsHolder;
   UnownedPtr<ParsedObjectsHolder> m_pObjectsHolder;
