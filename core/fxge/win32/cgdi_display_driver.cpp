@@ -55,6 +55,9 @@ bool CGdiDisplayDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
     ret = ::GetDIBits(hDCMemory, hbmp, 0, height,
                       bitmap->GetWritableBuffer().data(), &bmi,
                       DIB_RGB_COLORS) == height;
+    if (ret && bitmap->IsAlphaFormat()) {
+      bitmap->SetUniformOpaqueAlpha();
+    }
   } else {
     auto rgb_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (rgb_bitmap->Create(width, height, FXDIB_Format::kRgb)) {
@@ -66,9 +69,6 @@ bool CGdiDisplayDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
     } else {
       ret = false;
     }
-  }
-  if (ret && bitmap->IsAlphaFormat()) {
-    bitmap->SetUniformOpaqueAlpha();
   }
 
   DeleteObject(hbmp);

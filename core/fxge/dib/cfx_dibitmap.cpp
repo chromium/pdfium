@@ -317,11 +317,9 @@ void CFX_DIBitmap::SetRedFromAlpha() {
   }
 }
 
-bool CFX_DIBitmap::SetUniformOpaqueAlpha() {
+void CFX_DIBitmap::SetUniformOpaqueAlpha() {
   CHECK_EQ(FXDIB_Format::kArgb, GetFormat());
-
-  if (!m_pBuffer)
-    return false;
+  CHECK(m_pBuffer);
 
   for (int row = 0; row < m_Height; row++) {
     auto scanline =
@@ -330,7 +328,6 @@ bool CFX_DIBitmap::SetUniformOpaqueAlpha() {
       pixel.alpha = 0xff;
     }
   }
-  return true;
 }
 
 bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
