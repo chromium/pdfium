@@ -20,6 +20,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/span.h"
+#include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
@@ -57,96 +58,92 @@ CFX_PointF HardClip(const CFX_PointF& pos) {
                     std::clamp(pos.y, -kMaxPos, kMaxPos));
 }
 
-void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& pBitmap,
+template <typename T>
+void DoAlphaMerge(T& pixel, int src_r, int src_g, int src_b, int src_alpha) {
+  pixel.red = FXDIB_ALPHA_MERGE(pixel.red, src_r, src_alpha);
+  pixel.green = FXDIB_ALPHA_MERGE(pixel.green, src_g, src_alpha);
+  pixel.blue = FXDIB_ALPHA_MERGE(pixel.blue, src_b, src_alpha);
+}
+
+void RgbByteOrderCompositeRect(const RetainPtr<CFX_DIBitmap>& bitmap,
                                int left,
                                int top,
                                int width,
                                int height,
-                               FX_ARGB argb) {
-  int src_alpha = FXARGB_A(argb);
-  if (src_alpha == 0)
+                               FX_ARGB src_argb) {
+  int src_alpha = FXARGB_A(src_argb);
+  if (src_alpha == 0) {
     return;
+  }
 
   FX_RECT rect(left, top, left + width, top + height);
-  rect.Intersect(0, 0, pBitmap->GetWidth(), pBitmap->GetHeight());
+  rect.Intersect(0, 0, bitmap->GetWidth(), bitmap->GetHeight());
   width = rect.Width();
-  int src_r = FXARGB_R(argb);
-  int src_g = FXARGB_G(argb);
-  int src_b = FXARGB_B(argb);
-  int Bpp = pBitmap->GetBPP() / 8;
-  int dib_argb = FXARGB_TOBGRORDERDIB(argb);
-  pdfium::span<uint8_t> pBuffer = pBitmap->GetWritableBuffer();
+  const int src_r = FXARGB_R(src_argb);
+  const int src_g = FXARGB_G(src_argb);
+  const int src_b = FXARGB_B(src_argb);
+  const int Bpp = bitmap->GetBPP() / 8;
   if (src_alpha == 255) {
     if (Bpp == 4) {
+      const int src_abgr = FXARGB_TOBGRORDERDIB(src_argb);
       for (int row = rect.top; row < rect.bottom; row++) {
-        UNSAFE_TODO({
-          uint8_t* dest_scan =
-              pBuffer.subspan(row * pBitmap->GetPitch() + rect.left * Bpp)
-                  .data();
-          std::fill_n(reinterpret_cast<uint32_t*>(dest_scan), width, dib_argb);
-        });
+        auto dest_row_span = bitmap->GetWritableScanlineAs<uint32_t>(row);
+        fxcrt::Fill(dest_row_span.subspan(rect.left, width), src_abgr);
       }
       return;
     }
 
     for (int row = rect.top; row < rect.bottom; row++) {
-      UNSAFE_TODO({
-        uint8_t* dest_scan =
-            pBuffer.subspan(row * pBitmap->GetPitch() + rect.left * Bpp).data();
-        for (int col = 0; col < width; col++) {
-          *dest_scan++ = src_r;
-          *dest_scan++ = src_g;
-          *dest_scan++ = src_b;
-        }
-      });
+      auto dest_row_span =
+          bitmap->GetWritableScanlineAs<FX_RGB_STRUCT<uint8_t>>(row);
+      for (auto& rgb : dest_row_span.subspan(rect.left, width)) {
+        rgb.red = src_r;
+        rgb.green = src_g;
+        rgb.blue = src_b;
+      }
     }
     return;
   }
 
-  if (pBitmap->IsAlphaFormat()) {
+  if (bitmap->IsAlphaFormat()) {
     for (int row = rect.top; row < rect.bottom; row++) {
-      UNSAFE_TODO({
-        uint8_t* dest_scan =
-            pBuffer.subspan(row * pBitmap->GetPitch() + rect.left * Bpp).data();
-        for (int col = 0; col < width; col++) {
-          uint8_t back_alpha = dest_scan[3];
-          if (back_alpha == 0) {
-            FXARGB_SetRGBOrderDIB(dest_scan, argb);
-            dest_scan += 4;
-            continue;
-          }
-          uint8_t dest_alpha =
-              back_alpha + src_alpha - back_alpha * src_alpha / 255;
-          dest_scan[3] = dest_alpha;
-          int alpha_ratio = src_alpha * 255 / dest_alpha;
-          *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_r, alpha_ratio);
-          dest_scan++;
-          *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_g, alpha_ratio);
-          dest_scan++;
-          *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_b, alpha_ratio);
-          dest_scan += 2;
+      auto dest_row_span =
+          bitmap->GetWritableScanlineAs<FX_RGBA_STRUCT<uint8_t>>(row);
+      for (auto& rgba : dest_row_span.subspan(rect.left, width)) {
+        if (rgba.alpha == 0) {
+          rgba.red = src_r;
+          rgba.green = src_g;
+          rgba.blue = src_b;
+          rgba.alpha = src_alpha;
+          continue;
         }
-      });
+
+        const uint8_t dest_alpha =
+            rgba.alpha + src_alpha - rgba.alpha * src_alpha / 255;
+        const int alpha_ratio = src_alpha * 255 / dest_alpha;
+        DoAlphaMerge(rgba, src_r, src_g, src_b, alpha_ratio);
+      }
+    }
+    return;
+  }
+
+  if (Bpp == 4) {
+    for (int row = rect.top; row < rect.bottom; row++) {
+      auto dest_row_span =
+          bitmap->GetWritableScanlineAs<FX_RGBA_STRUCT<uint8_t>>(row);
+      for (auto& rgba : dest_row_span.subspan(rect.left, width)) {
+        DoAlphaMerge(rgba, src_r, src_g, src_b, src_alpha);
+      }
     }
     return;
   }
 
   for (int row = rect.top; row < rect.bottom; row++) {
-    UNSAFE_TODO({
-      uint8_t* dest_scan =
-          pBuffer.subspan(row * pBitmap->GetPitch() + rect.left * Bpp).data();
-      for (int col = 0; col < width; col++) {
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_r, src_alpha);
-        dest_scan++;
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_g, src_alpha);
-        dest_scan++;
-        *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_b, src_alpha);
-        dest_scan++;
-        if (Bpp == 4) {
-          dest_scan++;
-        }
-      }
-    });
+    auto dest_row_span =
+        bitmap->GetWritableScanlineAs<FX_RGB_STRUCT<uint8_t>>(row);
+    for (auto& rgb : dest_row_span.subspan(rect.left, width)) {
+      DoAlphaMerge(rgb, src_r, src_g, src_b, src_alpha);
+    }
   }
 }
 
