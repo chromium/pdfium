@@ -19,7 +19,7 @@ using ::testing::ElementsAre;
 
 }  // namespace
 
-TEST(CFX_DIBitmap, Create) {
+TEST(CFXDIBitmapTest, Create) {
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   EXPECT_FALSE(pBitmap->Create(400, 300, FXDIB_Format::kInvalid));
 
@@ -27,7 +27,7 @@ TEST(CFX_DIBitmap, Create) {
   EXPECT_TRUE(pBitmap->Create(400, 300, FXDIB_Format::k1bppRgb));
 }
 
-TEST(CFX_DIBitmap, CalculatePitchAndSizeGood) {
+TEST(CFXDIBitmapTest, CalculatePitchAndSizeGood) {
   // Simple case with no provided pitch.
   std::optional<CFX_DIBitmap::PitchAndSize> result =
       CFX_DIBitmap::CalculatePitchAndSize(100, 200, FXDIB_Format::kArgb, 0);
@@ -57,7 +57,7 @@ TEST(CFX_DIBitmap, CalculatePitchAndSizeGood) {
   EXPECT_EQ(91000u, result.value().size);
 }
 
-TEST(CFX_DIBitmap, CalculatePitchAndSizeBad) {
+TEST(CFXDIBitmapTest, CalculatePitchAndSizeBad) {
   // Bad width / height.
   static const CFX_Size kBadDimensions[] = {
       {0, 0},   {-1, -1}, {-1, 0},   {0, -1},
@@ -97,7 +97,7 @@ TEST(CFX_DIBitmap, CalculatePitchAndSizeBad) {
       4194304, 1024, FXDIB_Format::k8bppRgb, 4194304));
 }
 
-TEST(CFX_DIBitmap, CalculatePitchAndSizeBoundary) {
+TEST(CFXDIBitmapTest, CalculatePitchAndSizeBoundary) {
   // Test boundary condition for pitch overflow.
   std::optional<CFX_DIBitmap::PitchAndSize> result =
       CFX_DIBitmap::CalculatePitchAndSize(536870908, 4, FXDIB_Format::k8bppRgb,
@@ -119,7 +119,7 @@ TEST(CFX_DIBitmap, CalculatePitchAndSizeBoundary) {
 }
 
 #if defined(PDF_USE_SKIA)
-TEST(CFX_DIBitmap, UnPreMultiply_FromCleared) {
+TEST(CFXDIBitmapTest, UnPreMultiplyFromCleared) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
   UNSAFE_TODO(FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'7f'7f'7f));
@@ -128,7 +128,7 @@ TEST(CFX_DIBitmap, UnPreMultiply_FromCleared) {
   EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0xff, 0xff, 0xff, 0x7f));
 }
 
-TEST(CFX_DIBitmap, UnPreMultiply_FromPreMultiplied) {
+TEST(CFXDIBitmapTest, UnPreMultiplyFromPreMultiplied) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
   bitmap->ForcePreMultiply();
@@ -138,7 +138,7 @@ TEST(CFX_DIBitmap, UnPreMultiply_FromPreMultiplied) {
   EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0xff, 0xff, 0xff, 0x7f));
 }
 
-TEST(CFX_DIBitmap, UnPreMultiply_FromUnPreMultiplied) {
+TEST(CFXDIBitmapTest, UnPreMultiplyFromUnPreMultiplied) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
   bitmap->UnPreMultiply();
