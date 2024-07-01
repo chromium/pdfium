@@ -27,7 +27,7 @@
 /third_party/llvm-build
 /third_party/markupsafe
 /third_party/nasm
-/third_party/ninja/ninja*
+/third_party/ninja
 /third_party/rust
 /third_party/rust-toolchain
 /third_party/skia
