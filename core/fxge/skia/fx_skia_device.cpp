@@ -1371,7 +1371,7 @@ bool CFX_SkiaDeviceDriver::GetClipBox(FX_RECT* pRect) {
 
 bool CFX_SkiaDeviceDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                                      int left,
-                                     int top) {
+                                     int top) const {
   const uint8_t* input_buffer = m_pBitmap->GetBuffer().data();
   if (!input_buffer) {
     return true;

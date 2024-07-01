@@ -1298,7 +1298,7 @@ bool CFX_AggDeviceDriver::GetClipBox(FX_RECT* pRect) {
 
 bool CFX_AggDeviceDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                                     int left,
-                                    int top) {
+                                    int top) const {
   if (m_pBitmap->GetBuffer().empty())
     return true;
 

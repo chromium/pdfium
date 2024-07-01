@@ -891,7 +891,7 @@ void CFX_RenderDevice::DrawZeroAreaPath(
 
 bool CFX_RenderDevice::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                                  int left,
-                                 int top) {
+                                 int top) const {
   return (m_RenderCaps & FXRC_GET_BITS) &&
          m_pDeviceDriver->GetDIBits(std::move(bitmap), left, top);
 }

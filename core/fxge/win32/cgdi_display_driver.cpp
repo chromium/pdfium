@@ -36,7 +36,7 @@ int CGdiDisplayDriver::GetDeviceCaps(int caps_id) const {
 
 bool CGdiDisplayDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                                   int left,
-                                  int top) {
+                                  int top) const {
   bool ret = false;
   int width = bitmap->GetWidth();
   int height = bitmap->GetHeight();

@@ -89,7 +89,9 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   bool GetClipBox(FX_RECT* pRect) override;
 
   /** Load device buffer into a DIB */
-  bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap, int left, int top) override;
+  bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
+                 int left,
+                 int top) const override;
 
   RetainPtr<const CFX_DIBitmap> GetBackDrop() const override;
 
