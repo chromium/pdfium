@@ -19,16 +19,33 @@ if (current_cpu == "mipsel" || current_cpu == "mips64el") {
   import("//build/config/mips.gni")
 }
 
+if (pdf_enable_fontations) {
+  import("//build/rust/rust_static_library.gni")
+}
+
 skia_use_ganesh_backend = !is_ios
 skia_support_pdf = false
 
-# TODO(crbug.com/42271123): Add real build rules to support Fontations.
 if (pdf_enable_fontations) {
-  group("bridge_rust_side_deps") {
+  source_set("path_bridge") {
+    sources = [ "//third_party/skia/src/ports/fontations/src/skpath_bridge.h" ]
+  }
+
+  rust_static_library("bridge_rust_side") {
+    allow_unsafe = true
+    crate_root = "//third_party/skia/src/ports/fontations/src/ffi.rs"
+    sources = [ "//third_party/skia/src/ports/fontations/src/ffi.rs" ]
+    cxx_bindings = [ "//third_party/skia/src/ports/fontations/src/ffi.rs" ]
     deps = [
+      ":path_bridge",
       "//third_party/rust/font_types/v0_5:lib",
       "//third_party/rust/read_fonts/v0_19:lib",
       "//third_party/rust/skrifa/v0_19:lib",
+    ]
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [
+      ":skia_config",
+      "//build/config/compiler:no_chromium_code",
     ]
   }
 }
@@ -92,6 +109,10 @@ config("skia_config") {
 
   if (is_win) {
     defines += [ "GR_GL_FUNCTION_TYPE=__stdcall" ]
+  }
+
+  if (pdf_enable_fontations) {
+    include_dirs += [ "$root_gen_dir/third_party/skia" ]
   }
 }
 
@@ -318,6 +339,19 @@ component("skia") {
       # Add the FreeType custom font manager as a fallback backend for variable fonts.
       "//third_party/skia/src/ports/SkFontMgr_custom.cpp",
       "//third_party/skia/src/ports/SkFontMgr_custom_empty.cpp",
+    ]
+  }
+
+  if (pdf_enable_fontations) {
+    sources += [
+      "//third_party/skia/src/ports/SkTypeface_fontations.cpp",
+      "//third_party/skia/src/ports/SkTypeface_fontations_priv.h",
+    ]
+
+    # Fontations Rust/C++ bridge interfaces.
+    deps += [
+      ":bridge_rust_side",
+      ":path_bridge",
     ]
   }
 
