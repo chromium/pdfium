@@ -140,6 +140,7 @@ source_set("fxcrt") {
     "xml/cfx_xmlparser.h",
     "xml/cfx_xmltext.cpp",
     "xml/cfx_xmltext.h",
+    "zip.h",
   ]
   configs += [
     "../../:pdfium_strict_config",
@@ -251,6 +252,7 @@ pdfium_unittest_source_set("unittests") {
     "xml/cfx_xmlnode_unittest.cpp",
     "xml/cfx_xmlparser_unittest.cpp",
     "xml/cfx_xmltext_unittest.cpp",
+    "zip_unittest.cpp",
   ]
   deps = [ ":unit_test_support" ]
   pdfium_root_dir = "../../"
