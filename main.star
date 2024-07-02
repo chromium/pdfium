@@ -507,6 +507,7 @@ add_entries_for_builder(name = "mac_xfa_asan", skip_ci_builder = True)
 add_entries_for_builder(name = "mac_xfa_component", category = "xfa|mac", short_name = "comp")
 add_entries_for_builder(name = "mac_xfa_rel", category = "xfa|mac", short_name = "rel")
 add_entries_for_builder(name = "mac_xfa_skia", category = "skia|mac", short_name = "xfa")
+add_entries_for_builder(name = "mac_xfa_skia_rust", category = "skia|mac", short_name = "rust", skip_ci_builder = True)
 add_entries_for_builder(name = "mac_xfa_skia_component", category = "skia|mac", short_name = "comp")
 add_entries_for_builder(name = "win", category = "main|win", swarm_tests = True)
 add_entries_for_builder(name = "win_asan", category = "main|win", short_name = "asan")
@@ -525,6 +526,7 @@ add_entries_for_builder(name = "win_xfa_skia", category = "skia|win", short_name
 add_entries_for_builder(name = "win_xfa_skia_asan", category = "skia|win", short_name = "asan")
 add_entries_for_builder(name = "win_xfa_skia_component", category = "skia|win", short_name = "comp")
 add_entries_for_builder(name = "win_xfa_skia_gdi", category = "skia|win", short_name = "gdi")
+add_entries_for_builder(name = "win_xfa_skia_rust", category = "skia|win", short_name = "rust", skip_ci_builder = True)
 
 # Console Views
 luci.console_view(
