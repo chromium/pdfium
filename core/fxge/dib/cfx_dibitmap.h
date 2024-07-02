@@ -148,12 +148,10 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   void UnPreMultiply();
 
   // Forces pre-multiplied alpha without conversion.
-  // TODO(crbug.com/pdfium/2011): Remove the need for this.
+  // TODO(crbug.com/42271020): Remove the need for this.
   void ForcePreMultiply();
-#endif
 
- protected:
-#if defined(PDF_USE_SKIA)
+  // CFX_DIBBase:
   bool IsPremultiplied() const override;
 #endif  // defined(PDF_USE_SKIA)
 

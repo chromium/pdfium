@@ -122,29 +122,39 @@ TEST(CFXDIBitmapTest, CalculatePitchAndSizeBoundary) {
 TEST(CFXDIBitmapTest, UnPreMultiplyFromCleared) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
+  // TODO(crbug.com/42271020): This is wrong. Either IsPremultiplied() should
+  // return true, or UnPreMultiply() should do nothing.
+  EXPECT_FALSE(bitmap->IsPremultiplied());
   UNSAFE_TODO(FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'7f'7f'7f));
 
   bitmap->UnPreMultiply();
+  EXPECT_FALSE(bitmap->IsPremultiplied());
   EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0xff, 0xff, 0xff, 0x7f));
 }
 
 TEST(CFXDIBitmapTest, UnPreMultiplyFromPreMultiplied) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
+  EXPECT_FALSE(bitmap->IsPremultiplied());
   bitmap->ForcePreMultiply();
+  EXPECT_TRUE(bitmap->IsPremultiplied());
   UNSAFE_TODO(FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'7f'7f'7f));
 
   bitmap->UnPreMultiply();
+  EXPECT_FALSE(bitmap->IsPremultiplied());
   EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0xff, 0xff, 0xff, 0x7f));
 }
 
 TEST(CFXDIBitmapTest, UnPreMultiplyFromUnPreMultiplied) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(1, 1, FXDIB_Format::kArgb));
+  EXPECT_FALSE(bitmap->IsPremultiplied());
   bitmap->UnPreMultiply();
+  EXPECT_FALSE(bitmap->IsPremultiplied());
   UNSAFE_TODO(FXARGB_SetDIB(bitmap->GetWritableBuffer().data(), 0x7f'ff'ff'ff));
 
   bitmap->UnPreMultiply();
+  EXPECT_FALSE(bitmap->IsPremultiplied());
   EXPECT_THAT(bitmap->GetBuffer(), ElementsAre(0xff, 0xff, 0xff, 0x7f));
 }
 #endif  // defined(PDF_USE_SKIA)

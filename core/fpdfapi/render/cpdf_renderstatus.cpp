@@ -672,7 +672,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
 #if defined(PDF_USE_SKIA)
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     // Safe because `CFX_SkiaDeviceDriver` always uses pre-multiplied alpha.
-    // TODO(crbug.com/pdfium/2011): Remove the need for this.
+    // TODO(crbug.com/42271020): Remove the need for this.
     bitmap_device.GetBitmap()->ForcePreMultiply();
   }
 #endif

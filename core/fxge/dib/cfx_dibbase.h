@@ -109,6 +109,9 @@ class CFX_DIBBase : public Retainable {
   // This may share the underlying pixels, in which case, this DIB should not be
   // modified during the lifetime of the `SkImage`.
   virtual sk_sp<SkImage> RealizeSkImage() const;
+
+  // Whether alpha is premultiplied (if `IsAlphaFormat()`).
+  virtual bool IsPremultiplied() const;
 #endif  // defined(PDF_USE_SKIA)
 
  protected:
@@ -125,11 +128,6 @@ class CFX_DIBBase : public Retainable {
       const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
       int src_left,
       int src_top);
-
-#if defined(PDF_USE_SKIA)
-  // Whether alpha is premultiplied (if `IsAlphaFormat()`).
-  virtual bool IsPremultiplied() const;
-#endif  // defined(PDF_USE_SKIA)
 
   RetainPtr<CFX_DIBitmap> ClipToInternal(const FX_RECT* pClip) const;
   void BuildPalette();
