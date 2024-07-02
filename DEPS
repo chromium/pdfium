@@ -114,6 +114,10 @@ vars = {
   # and whatever else without interference from each other.
   'gn_version': 'git_revision:b2afae122eeb6ce09c52d63f67dc53fc517dbdc8',
   # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling goldctl CIPD package version
+  # and whatever else without interference from each other.
+  'goldctl_version': 'git_revision:46a1e3bbf2a0c3f2553b80e09430ea22d9d37911',
+  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling gtest
   # and whatever else without interference from each other.
   'gtest_revision': '1d17ea141d2c11b8917d2c7d029f1c4e2b9769b2',
@@ -520,12 +524,11 @@ deps = {
     'condition': 'checkout_rust',
   },
 
-  # TODO(crbug.com/pdfium/1650): Set up autorollers for goldctl.
   'tools/skia_goldctl/linux': {
     'packages': [
       {
         'package': 'skia/tools/goldctl/linux-amd64',
-        'version': 'LDPByLYqasHSy5ZxdGy0llSDaUnwdxFfx6L2NvZjxhwC',
+        'version': Var('goldctl_version'),
       }
     ],
     'dep_type': 'cipd',
@@ -536,7 +539,7 @@ deps = {
     'packages': [
       {
         'package': 'skia/tools/goldctl/mac-amd64',
-        'version': 'Ri84uKWwD6OsP-lJpo7z2X68GibM6ynfZZaSXer2GoYC',
+        'version': Var('goldctl_version'),
       }
     ],
     'dep_type': 'cipd',
@@ -547,7 +550,7 @@ deps = {
     'packages': [
       {
         'package': 'skia/tools/goldctl/mac-arm64',
-        'version': '8Yalv78nDvaIEFLlX-HbY-a-QueK4PQzFMEEhzt0bZQC',
+        'version': Var('goldctl_version'),
       }
     ],
     'dep_type': 'cipd',
@@ -558,7 +561,7 @@ deps = {
     'packages': [
       {
         'package': 'skia/tools/goldctl/windows-amd64',
-        'version': 'KhS-PwKl3anmwJCxKIGQYybgN0loA5nw8vVRglJNhngC',
+        'version': Var('goldctl_version'),
       }
     ],
     'dep_type': 'cipd',
