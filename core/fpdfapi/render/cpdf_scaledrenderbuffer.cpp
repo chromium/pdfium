@@ -52,7 +52,7 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
       return false;
 
     if (pitch_size.value().size <= kImageSizeLimitBytes &&
-        m_pBitmapDevice->Create(width, height, dibFormat, nullptr)) {
+        m_pBitmapDevice->Create(width, height, dibFormat)) {
       break;
     }
     m_Matrix.Scale(0.5f, 0.5f);

@@ -79,14 +79,21 @@ bool CFX_DefaultRenderDevice::CFX_DefaultRenderDevice::AttachImpl(
 
 bool CFX_DefaultRenderDevice::Create(int width,
                                      int height,
-                                     FXDIB_Format format,
-                                     RetainPtr<CFX_DIBitmap> pBackdropBitmap) {
+                                     FXDIB_Format format) {
+  return CreateWithBackdrop(width, height, format, nullptr);
+}
+
+bool CFX_DefaultRenderDevice::CreateWithBackdrop(
+    int width,
+    int height,
+    FXDIB_Format format,
+    RetainPtr<CFX_DIBitmap> backdrop) {
 #if defined(PDF_USE_SKIA)
   if (UseSkiaRenderer()) {
-    return CreateSkia(width, height, format, pBackdropBitmap);
+    return CreateSkia(width, height, format, backdrop);
   }
 #endif
-  return CreateAgg(width, height, format, pBackdropBitmap);
+  return CreateAgg(width, height, format, backdrop);
 }
 
 void CFX_DefaultRenderDevice::Clear(uint32_t color) {

@@ -633,8 +633,10 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
       return true;
     m_pDevice->GetDIBits(backdrop, rect.left, rect.top);
   }
-  if (!bitmap_device.Create(width, height, FXDIB_Format::kArgb, backdrop))
+  if (!bitmap_device.CreateWithBackdrop(width, height, FXDIB_Format::kArgb,
+                                        backdrop)) {
     return true;
+  }
 
   CFX_Matrix new_matrix = mtObj2Device;
   new_matrix.Translate(-rect.left, -rect.top);
@@ -955,7 +957,7 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
 
         CFX_DefaultRenderDevice bitmap_device;
         if (!bitmap_device.Create(rect.Width(), rect.Height(),
-                                  FXDIB_Format::kArgb, nullptr)) {
+                                  FXDIB_Format::kArgb)) {
           return true;
         }
         CPDF_RenderStatus status(m_pContext, &bitmap_device);
@@ -1350,7 +1352,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
   const int width = clip_rect.Width();
   const int height = clip_rect.Height();
   const FXDIB_Format format = GetFormatForLuminosity(bLuminosity);
-  if (!bitmap_device.Create(width, height, format, nullptr)) {
+  if (!bitmap_device.Create(width, height, format)) {
     return nullptr;
   }
 

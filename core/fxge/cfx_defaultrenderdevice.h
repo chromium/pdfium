@@ -27,15 +27,17 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
       RetainPtr<CFX_DIBitmap> pBitmap,
       RetainPtr<CFX_DIBitmap> pBackdropBitmap,
       bool bGroupKnockout);
-  bool Create(int width,
-              int height,
-              FXDIB_Format format,
-              RetainPtr<CFX_DIBitmap> pBackdropBitmap);
-  void Clear(uint32_t color);
-
 #if defined(PDF_USE_SKIA)
   bool AttachCanvas(SkCanvas* canvas);
 #endif
+
+  bool Create(int width, int height, FXDIB_Format format);
+  bool CreateWithBackdrop(int width,
+                          int height,
+                          FXDIB_Format format,
+                          RetainPtr<CFX_DIBitmap> backdrop);
+
+  void Clear(uint32_t color);
 
   // Runtime check to see if Skia is the renderer variant in use.
   static bool UseSkiaRenderer();
