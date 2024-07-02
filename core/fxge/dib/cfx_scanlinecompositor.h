@@ -80,6 +80,30 @@ class CFX_ScanlineCompositor {
 
   void InitSourceMask(uint32_t mask_color);
 
+  void CompositeRgbBitmapLineSrcRgbx(
+      pdfium::span<uint8_t> dest_scan,
+      pdfium::span<const uint8_t> src_scan,
+      int width,
+      pdfium::span<const uint8_t> clip_scan) const;
+  void CompositeRgbBitmapLineSrcArgb(
+      pdfium::span<uint8_t> dest_scan,
+      pdfium::span<const uint8_t> src_scan,
+      int width,
+      pdfium::span<const uint8_t> clip_scan) const;
+
+  void CompositePalBitmapLineSrcBpp1(
+      pdfium::span<uint8_t> dest_scan,
+      pdfium::span<const uint8_t> src_scan,
+      int src_left,
+      int width,
+      pdfium::span<const uint8_t> clip_scan) const;
+  void CompositePalBitmapLineSrcBpp8(
+      pdfium::span<uint8_t> dest_scan,
+      pdfium::span<const uint8_t> src_scan,
+      int src_left,
+      int width,
+      pdfium::span<const uint8_t> clip_scan) const;
+
   FXDIB_Format m_SrcFormat;
   FXDIB_Format m_DestFormat;
   Palette m_SrcPalette;
