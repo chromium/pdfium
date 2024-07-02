@@ -1133,6 +1133,11 @@ DataVector<uint32_t> CFX_DIBBase::ConvertBuffer(
   FXDIB_Format src_format = pSrcBitmap->GetFormat();
   const int src_bpp = GetBppFromFormat(src_format);
   switch (dest_format) {
+    case FXDIB_Format::kInvalid:
+    case FXDIB_Format::k1bppRgb:
+    case FXDIB_Format::k1bppMask: {
+      NOTREACHED_NORETURN();
+    }
     case FXDIB_Format::k8bppMask: {
       ConvertBuffer_8bppMask(src_bpp, dest_buf, dest_pitch, width, height,
                              pSrcBitmap, src_left, src_top);
@@ -1162,7 +1167,5 @@ DataVector<uint32_t> CFX_DIBBase::ConvertBuffer(
                          height, pSrcBitmap, src_left, src_top);
       return {};
     }
-    default:
-      NOTREACHED_NORETURN();
   }
 }

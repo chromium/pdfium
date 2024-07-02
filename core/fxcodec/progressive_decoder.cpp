@@ -231,8 +231,8 @@ bool ProgressiveDecoder::PngReadHeader(int width,
     m_clipBox = FX_RECT(0, 0, width, height);
     return false;
   }
-  FXDIB_Format format = m_pDeviceBitmap->GetFormat();
-  switch (format) {
+  switch (m_pDeviceBitmap->GetFormat()) {
+    case FXDIB_Format::kInvalid:
     case FXDIB_Format::k1bppMask:
     case FXDIB_Format::k1bppRgb:
       NOTREACHED_NORETURN();
@@ -247,8 +247,6 @@ bool ProgressiveDecoder::PngReadHeader(int width,
     case FXDIB_Format::kArgb:
       *color_type = 6;
       break;
-    default:
-      NOTREACHED_NORETURN();
   }
   *gamma = kPngGamma;
   return true;
@@ -277,14 +275,13 @@ bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
 
   UNSAFE_TODO({
     switch (pDIBitmap->GetFormat()) {
+      case FXDIB_Format::kInvalid:
+        return false;
       case FXDIB_Format::k1bppMask:
       case FXDIB_Format::k1bppRgb:
         for (int32_t src_col = 0; src_col < m_sizeX; src_col++) {
           PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(src_col);
-          if (pPixelWeights->m_SrcStart != pPixelWeights->m_SrcEnd) {
-            continue;
-          }
-          NOTREACHED_NORETURN();
+          CHECK_NE(pPixelWeights->m_SrcStart, pPixelWeights->m_SrcEnd);
         }
         return true;
       case FXDIB_Format::k8bppMask:
@@ -337,8 +334,6 @@ bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
           *pDes = dest_a;
         }
         return true;
-      default:
-        return false;
     }
   });
 }
@@ -1092,6 +1087,7 @@ void ProgressiveDecoder::PngOneOneMapResampleHorz(
                            .data();
   UNSAFE_TODO({
     switch (pDeviceBitmap->GetFormat()) {
+      case FXDIB_Format::kInvalid:
       case FXDIB_Format::k1bppMask:
       case FXDIB_Format::k1bppRgb:
         NOTREACHED_NORETURN();
@@ -1146,8 +1142,6 @@ void ProgressiveDecoder::PngOneOneMapResampleHorz(
           *dest_scan++ = CStretchEngine::PixelFromFixed(dest_a);
         }
         break;
-      default:
-        return;
     }
   });
 }
@@ -1196,6 +1190,13 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {
   }
   m_offSet = 0;
   switch (m_pDeviceBitmap->GetFormat()) {
+    case FXDIB_Format::kInvalid:
+    case FXDIB_Format::k1bppMask:
+    case FXDIB_Format::k1bppRgb:
+      m_pDeviceBitmap = nullptr;
+      m_pFile = nullptr;
+      m_status = FXCODEC_STATUS::kError;
+      return m_status;
     case FXDIB_Format::k8bppMask:
     case FXDIB_Format::k8bppRgb:
       m_SrcComponents = 1;
@@ -1210,12 +1211,6 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {
       m_SrcComponents = 4;
       m_SrcFormat = FXCodec_Argb;
       break;
-    default: {
-      m_pDeviceBitmap = nullptr;
-      m_pFile = nullptr;
-      m_status = FXCODEC_STATUS::kError;
-      return m_status;
-    }
   }
   GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
   int scanline_size = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
@@ -1330,6 +1325,10 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
   RetainPtr<CFX_DIBitmap> pFormatBitmap;
   bool created_format_bitmap = false;
   switch (m_pDeviceBitmap->GetFormat()) {
+    case FXDIB_Format::kInvalid:
+    case FXDIB_Format::k1bppRgb:
+    case FXDIB_Format::k1bppMask:
+      break;
     case FXDIB_Format::k8bppRgb:
       pFormatBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
       created_format_bitmap = pFormatBitmap->Create(pClipBitmap->GetWidth(),
@@ -1358,8 +1357,6 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
       pFormatBitmap = pClipBitmap;
       created_format_bitmap = true;
       break;
-    default:
-      break;
   }
   if (!created_format_bitmap) {
     m_pDeviceBitmap = nullptr;
@@ -1370,6 +1367,11 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
 
   UNSAFE_TODO({
     switch (m_pDeviceBitmap->GetFormat()) {
+      case FXDIB_Format::kInvalid:
+      case FXDIB_Format::k1bppRgb:
+      case FXDIB_Format::k1bppMask:
+      case FXDIB_Format::kArgb:
+        break;
       case FXDIB_Format::k8bppRgb:
       case FXDIB_Format::k8bppMask: {
         for (int32_t row = 0; row < pClipBitmap->GetHeight(); row++) {
@@ -1407,8 +1409,6 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
         }
         break;
       }
-      default:
-        break;
     }
   });
   FXDIB_ResampleOptions options;
@@ -1536,7 +1536,8 @@ FXCODEC_STATUS ProgressiveDecoder::LoadImageInfo(
     case FXCODEC_STATUS::kDecodeReady:
     case FXCODEC_STATUS::kDecodeToBeContinued:
       return FXCODEC_STATUS::kError;
-    default:
+    case FXCODEC_STATUS::kError:
+    case FXCODEC_STATUS::kDecodeFinished:
       break;
   }
   m_pFile = std::move(pFile);
@@ -1620,6 +1621,9 @@ int ProgressiveDecoder::GetDownScale() {
 void ProgressiveDecoder::GetTransMethod(FXDIB_Format dest_format,
                                         FXCodec_Format src_format) {
   switch (dest_format) {
+    case FXDIB_Format::kInvalid:
+      m_TransMethod = -1;
+      break;
     case FXDIB_Format::k1bppMask:
     case FXDIB_Format::k1bppRgb: {
       switch (src_format) {
@@ -1714,8 +1718,6 @@ void ProgressiveDecoder::GetTransMethod(FXDIB_Format dest_format,
       }
       break;
     }
-    default:
-      m_TransMethod = -1;
   }
 }
 

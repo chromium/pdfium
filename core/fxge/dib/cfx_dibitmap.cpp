@@ -137,6 +137,8 @@ void CFX_DIBitmap::Clear(uint32_t color) {
   uint8_t* pBuffer = m_pBuffer.Get();
   UNSAFE_TODO({
     switch (GetFormat()) {
+      case FXDIB_Format::kInvalid:
+        break;
       case FXDIB_Format::k1bppMask:
         FXSYS_memset(pBuffer, (color & 0xff000000) ? 0xff : 0,
                      m_Pitch * m_Height);
@@ -191,8 +193,6 @@ void CFX_DIBitmap::Clear(uint32_t color) {
         }
         break;
       }
-      default:
-        break;
     }
   });
 }
@@ -408,6 +408,8 @@ uint32_t CFX_DIBitmap::GetPixelForTesting(int x, int y) const {
   uint8_t* pos =
       UNSAFE_TODO(m_pBuffer.Get() + y * m_Pitch + offset.ValueOrDie());
   switch (GetFormat()) {
+    case FXDIB_Format::kInvalid:
+      return 0;
     case FXDIB_Format::k1bppMask: {
       if ((*pos) & (1 << (7 - x % 8))) {
         return 0xff000000;
@@ -430,10 +432,7 @@ uint32_t CFX_DIBitmap::GetPixelForTesting(int x, int y) const {
       return UNSAFE_TODO(FXARGB_GetDIB(pos) | 0xff000000);
     case FXDIB_Format::kArgb:
       return UNSAFE_TODO(FXARGB_GetDIB(pos));
-    default:
-      break;
   }
-  return 0;
 }
 #endif  // defined(PDF_USE_SKIA)
 

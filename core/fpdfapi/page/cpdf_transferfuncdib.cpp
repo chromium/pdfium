@@ -54,6 +54,9 @@ void CPDF_TransferFuncDIB::TranslateScanline(
   const uint8_t* src_buf = src_span.data();
   bool bSkip = false;
   switch (m_pSrc->GetFormat()) {
+    case FXDIB_Format::kInvalid: {
+      break;
+    }
     case FXDIB_Format::k1bppRgb: {
       int r0 = m_RampR[0];
       int g0 = m_RampG[0];
@@ -156,8 +159,6 @@ void CPDF_TransferFuncDIB::TranslateScanline(
       });
       break;
     }
-    default:
-      break;
   }
 }
 

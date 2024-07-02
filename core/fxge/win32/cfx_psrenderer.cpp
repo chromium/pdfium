@@ -567,7 +567,11 @@ bool CFX_PSRenderer::DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,
           bitmap = bitmap->ConvertTo(FXDIB_Format::kRgb);
         }
         break;
-      default:
+      case FXDIB_Format::kInvalid:
+      case FXDIB_Format::k1bppMask:
+      case FXDIB_Format::k8bppMask:
+      case FXDIB_Format::kRgb:
+      case FXDIB_Format::kArgb:
         break;
     }
     if (!bitmap) {

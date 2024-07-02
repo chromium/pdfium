@@ -319,7 +319,8 @@ bool CPDF_RenderStatus::DrawObjWithBlend(CPDF_PageObject* pObj,
       return ProcessImage(pObj->AsImage(), mtObj2Device);
     case CPDF_PageObject::Type::kForm:
       return ProcessForm(pObj->AsForm(), mtObj2Device);
-    default:
+    case CPDF_PageObject::Type::kText:
+    case CPDF_PageObject::Type::kShading:
       return false;
   }
 }
