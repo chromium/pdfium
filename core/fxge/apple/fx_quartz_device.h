@@ -22,14 +22,14 @@ class CQuartz2D {
   void* CreateGraphics(const RetainPtr<CFX_DIBitmap>& bitmap);
   void DestroyGraphics(void* graphics);
 
-  void* CreateFont(pdfium::span<const uint8_t> pFontData);
-  void DestroyFont(void* pFont);
+  void* CreateFont(pdfium::span<const uint8_t> font_data);
+  void DestroyFont(void* font);
   void SetGraphicsTextMatrix(void* graphics, const CFX_Matrix& matrix);
   bool DrawGraphicsString(void* graphics,
                           void* font,
-                          float fontSize,
-                          pdfium::span<uint16_t> glyphIndices,
-                          pdfium::span<CGPoint> glyphPositions,
+                          float font_size,
+                          pdfium::span<uint16_t> glyph_indices,
+                          pdfium::span<CGPoint> glyph_positions,
                           FX_ARGB argb);
 };
 

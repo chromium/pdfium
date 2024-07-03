@@ -8,8 +8,10 @@
 
 #include <CoreGraphics/CoreGraphics.h>
 
-#include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/fixed_size_data_vector.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_memory_wrappers.h"
+#include "core/fxcrt/zip.h"
 #include "core/fxge/cfx_graphstatedata.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/cfx_renderdevice.h"
@@ -18,6 +20,8 @@
 #ifndef CGFLOAT_IS_DOUBLE
 #error Expected CGFLOAT_IS_DOUBLE to be defined by CoreGraphics headers
 #endif
+
+FX_DATA_PARTITION_EXCEPTION(CGPoint);
 
 void* CQuartz2D::CreateGraphics(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   if (!pBitmap)
@@ -44,19 +48,20 @@ void CQuartz2D::DestroyGraphics(void* graphics) {
     CGContextRelease((CGContextRef)graphics);
 }
 
-void* CQuartz2D::CreateFont(pdfium::span<const uint8_t> pFontData) {
-  CGDataProviderRef pDataProvider = CGDataProviderCreateWithData(
-      nullptr, pFontData.data(), pFontData.size(), nullptr);
-  if (!pDataProvider)
+void* CQuartz2D::CreateFont(pdfium::span<const uint8_t> font_data) {
+  CGDataProviderRef data_provider = CGDataProviderCreateWithData(
+      nullptr, font_data.data(), font_data.size(), nullptr);
+  if (!data_provider) {
     return nullptr;
+  }
 
-  CGFontRef pCGFont = CGFontCreateWithDataProvider(pDataProvider);
-  CGDataProviderRelease(pDataProvider);
-  return pCGFont;
+  CGFontRef cg_font = CGFontCreateWithDataProvider(data_provider);
+  CGDataProviderRelease(data_provider);
+  return cg_font;
 }
 
-void CQuartz2D::DestroyFont(void* pFont) {
-  CGFontRelease((CGFontRef)pFont);
+void CQuartz2D::DestroyFont(void* font) {
+  CGFontRelease((CGFontRef)font);
 }
 
 void CQuartz2D::SetGraphicsTextMatrix(void* graphics,
@@ -72,16 +77,16 @@ void CQuartz2D::SetGraphicsTextMatrix(void* graphics,
 
 bool CQuartz2D::DrawGraphicsString(void* graphics,
                                    void* font,
-                                   float fontSize,
-                                   pdfium::span<uint16_t> glyphIndices,
-                                   pdfium::span<CGPoint> glyphPositions,
+                                   float font_size,
+                                   pdfium::span<uint16_t> glyph_indices,
+                                   pdfium::span<CGPoint> glyph_positions,
                                    FX_ARGB argb) {
   if (!graphics)
     return false;
 
   CGContextRef context = (CGContextRef)graphics;
   CGContextSetFont(context, (CGFontRef)font);
-  CGContextSetFontSize(context, fontSize);
+  CGContextSetFontSize(context, font_size);
 
   int32_t a;
   int32_t r;
@@ -91,22 +96,20 @@ bool CQuartz2D::DrawGraphicsString(void* graphics,
   CGContextSetRGBFillColor(context, r / 255.f, g / 255.f, b / 255.f, a / 255.f);
   CGContextSaveGState(context);
 #if CGFLOAT_IS_DOUBLE
-  CGPoint* glyphPositionsCG = new CGPoint[glyphPositions.size()];
-  UNSAFE_TODO({
-    for (size_t index = 0; index < glyphPositions.size(); ++index) {
-      glyphPositionsCG[index].x = glyphPositions[index].x;
-      glyphPositionsCG[index].y = glyphPositions[index].y;
-    }
-  });
+  auto glyph_positions_cg =
+      FixedSizeDataVector<CGPoint>::Uninit(glyph_positions.size());
+  for (auto [input, output] :
+       fxcrt::Zip(glyph_positions, glyph_positions_cg.span())) {
+    output.x = input.x;
+    output.y = input.y;
+  }
+  const CGPoint* glyph_positions_cg_ptr = glyph_positions_cg.span().data();
 #else
-  CGPoint* glyphPositionsCG = glyphPositions.data();
+  const CGPoint* glyph_positions_cg_ptr = glyph_positions.data();
 #endif
   CGContextShowGlyphsAtPositions(
-      context, reinterpret_cast<CGGlyph*>(glyphIndices.data()),
-      glyphPositionsCG, glyphPositions.size());
-#if CGFLOAT_IS_DOUBLE
-  delete[] glyphPositionsCG;
-#endif
+      context, reinterpret_cast<CGGlyph*>(glyph_indices.data()),
+      glyph_positions_cg_ptr, glyph_positions.size());
   CGContextRestoreGState(context);
   return true;
 }
