@@ -301,9 +301,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
       float y_span = end_y - start_y;
       float axis_len_square = (x_span * x_span) + (y_span * y_span);
       for (int32_t row = 0; row < height; row++) {
-        uint32_t* dib_buf =
-            fxcrt::reinterpret_span<uint32_t>(bmp->GetWritableScanline(row))
-                .data();
+        uint32_t* dib_buf = bmp->GetWritableScanlineAs<uint32_t>(row).data();
         for (int32_t column = 0; column < width; column++) {
           float scale = 0.0f;
           if (axis_len_square) {
@@ -335,9 +333,7 @@ void CFGAS_GEGraphics::FillPathWithShading(
                 ((start_y - end_y) * (start_y - end_y)) -
                 ((start_r - end_r) * (start_r - end_r));
       for (int32_t row = 0; row < height; row++) {
-        uint32_t* dib_buf =
-            fxcrt::reinterpret_span<uint32_t>(bmp->GetWritableScanline(row))
-                .data();
+        uint32_t* dib_buf = bmp->GetWritableScanlineAs<uint32_t>(row).data();
         for (int32_t column = 0; column < width; column++) {
           float x = (float)(column);
           float y = (float)(row);
