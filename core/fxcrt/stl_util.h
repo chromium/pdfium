@@ -47,7 +47,7 @@ bool IndexInBounds(const Collection& collection, IndexType index) {
 
 // Equivalent of C++20 std::ranges::fill().
 template <typename T, typename V>
-void Fill(T& container, const V& value) {
+void Fill(T&& container, const V& value) {
   std::fill(std::begin(container), std::end(container), value);
 }
 

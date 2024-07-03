@@ -60,6 +60,10 @@ bool FXDIB_ResampleOptions::HasAnyOptions() const {
   return bInterpolateBilinear || bHalftone || bNoSmoothing || bLossy;
 }
 
+FX_BGR_STRUCT<uint8_t> ArgbToBGRStruct(FX_ARGB argb) {
+  return {FXARGB_B(argb), FXARGB_G(argb), FXARGB_R(argb)};
+}
+
 std::tuple<int, int, int, int> ArgbDecode(FX_ARGB argb) {
   return std::make_tuple(FXARGB_A(argb), FXARGB_R(argb), FXARGB_G(argb),
                          FXARGB_B(argb));

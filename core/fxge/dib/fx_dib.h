@@ -162,6 +162,9 @@ inline bool GetIsMaskFromFormat(FXDIB_Format format) {
 
 FXDIB_Format MakeRGBFormat(int bpp);
 
+// Ignores alpha.
+FX_BGR_STRUCT<uint8_t> ArgbToBGRStruct(FX_ARGB argb);
+
 // Returns (a, r, g, b)
 std::tuple<int, int, int, int> ArgbDecode(FX_ARGB argb);
 
