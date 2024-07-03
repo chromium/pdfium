@@ -31,6 +31,7 @@
 #include "v8/include/v8-object.h"
 #include "v8/include/v8-primitive.h"
 #include "xfa/fgas/crt/cfgas_decimal.h"
+#include "xfa/fgas/graphics/cfgas_gecolor.h"
 #include "xfa/fxfa/cxfa_ffnotify.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_border.h"
@@ -99,10 +100,8 @@ std::tuple<int32_t, int32_t, int32_t> StrToRGB(const WideString& strRGB) {
 }
 
 v8::Local<v8::String> ColorToV8String(v8::Isolate* isolate, FX_ARGB color) {
-  FX_BGR_STRUCT<uint8_t> bgr = ArgbToBGRStruct(color);
   return fxv8::NewStringHelper(
-      isolate, ByteString::Format("%d,%d,%d", bgr.red, bgr.green, bgr.blue)
-                   .AsStringView());
+      isolate, CFGAS_GEColor::ColorToString(color).AsStringView());
 }
 
 }  // namespace

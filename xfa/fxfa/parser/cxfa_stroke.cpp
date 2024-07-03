@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "fxjs/xfa/cjx_object.h"
+#include "xfa/fgas/graphics/cfgas_gecolor.h"
 #include "xfa/fgas/graphics/cfgas_gegraphics.h"
 #include "xfa/fxfa/cxfa_ffwidget.h"
 #include "xfa/fxfa/parser/cxfa_color.h"
@@ -125,10 +126,9 @@ void CXFA_Stroke::SetColor(FX_ARGB argb) {
   if (!pNode)
     return;
 
-  FX_BGR_STRUCT<uint8_t> bgr = ArgbToBGRStruct(argb);
   pNode->JSObject()->SetCData(
       XFA_Attribute::Value,
-      WideString::Format(L"%d,%d,%d", bgr.red, bgr.green, bgr.blue));
+      WideString::FromASCII(CFGAS_GEColor::ColorToString(argb).AsStringView()));
 }
 
 XFA_AttributeValue CXFA_Stroke::GetJoinType() {

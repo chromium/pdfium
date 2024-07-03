@@ -7,6 +7,7 @@
 #ifndef XFA_FGAS_GRAPHICS_CFGAS_GECOLOR_H_
 #define XFA_FGAS_GRAPHICS_CFGAS_GECOLOR_H_
 
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -19,9 +20,9 @@ class CFGAS_GEColor {
  public:
   enum Type { Invalid, Solid, Pattern, Shading };
 
-  explicit CFGAS_GEColor(const FX_ARGB argb);
+  explicit CFGAS_GEColor(FX_ARGB argb);
   explicit CFGAS_GEColor(CFGAS_GEShading* shading);
-  CFGAS_GEColor(CFGAS_GEPattern* pattern, const FX_ARGB argb);
+  CFGAS_GEColor(CFGAS_GEPattern* pattern, FX_ARGB argb);
   CFGAS_GEColor(const CFGAS_GEColor& that);
   ~CFGAS_GEColor();
 
@@ -40,6 +41,8 @@ class CFGAS_GEColor {
   }
 
   CFGAS_GEColor& operator=(const CFGAS_GEColor& that);
+
+  static ByteString ColorToString(FX_ARGB argb);
 
  private:
   Type m_type = Invalid;

@@ -8,6 +8,7 @@
 
 #include "core/fxcrt/fx_extension.h"
 #include "fxjs/xfa/cjx_node.h"
+#include "xfa/fgas/graphics/cfgas_gecolor.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
 namespace {
@@ -110,8 +111,7 @@ FX_ARGB CXFA_Color::GetValueOrDefault(FX_ARGB defaultValue) const {
 }
 
 void CXFA_Color::SetValue(FX_ARGB color) {
-  FX_BGR_STRUCT<uint8_t> bgr = ArgbToBGRStruct(color);
-  JSObject()->SetCData(
-      XFA_Attribute::Value,
-      WideString::Format(L"%d,%d,%d", bgr.red, bgr.green, bgr.blue));
+  JSObject()->SetCData(XFA_Attribute::Value,
+                       WideString::FromASCII(
+                           CFGAS_GEColor::ColorToString(color).AsStringView()));
 }
