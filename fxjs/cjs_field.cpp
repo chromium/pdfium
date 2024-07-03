@@ -1912,13 +1912,10 @@ CJS_Result CJS_Field::get_text_color(CJS_Runtime* pRuntime) {
   if (maybe_type_argb_pair.has_value() &&
       maybe_type_argb_pair.value().color_type !=
           CFX_Color::Type::kTransparent) {
-    int32_t a;
-    int32_t r;
-    int32_t g;
-    int32_t b;
-    std::tie(a, r, g, b) = ArgbDecode(maybe_type_argb_pair.value().argb);
-    crRet =
-        CFX_Color(CFX_Color::Type::kRGB, r / 255.0f, g / 255.0f, b / 255.0f);
+    FX_BGR_STRUCT<uint8_t> bgr =
+        ArgbToBGRStruct(maybe_type_argb_pair.value().argb);
+    crRet = CFX_Color(CFX_Color::Type::kRGB, bgr.red / 255.0f,
+                      bgr.green / 255.0f, bgr.blue / 255.0f);
   }
 
   v8::Local<v8::Value> array =

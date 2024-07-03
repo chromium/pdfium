@@ -115,15 +115,12 @@ void MergeGammaAdjust(uint8_t src, int channel, int alpha, uint8_t* dest) {
 }
 
 void MergeGammaAdjustRgb(const uint8_t* src,
-                         int r,
-                         int g,
-                         int b,
-                         int a,
+                         const FX_BGRA_STRUCT<uint8_t>& bgra,
                          uint8_t* dest) {
   UNSAFE_TODO({
-    MergeGammaAdjust(src[2], b, a, &dest[0]);
-    MergeGammaAdjust(src[1], g, a, &dest[1]);
-    MergeGammaAdjust(src[0], r, a, &dest[2]);
+    MergeGammaAdjust(src[2], bgra.blue, bgra.alpha, &dest[0]);
+    MergeGammaAdjust(src[1], bgra.green, bgra.alpha, &dest[1]);
+    MergeGammaAdjust(src[0], bgra.red, bgra.alpha, &dest[2]);
   });
 }
 
@@ -135,75 +132,65 @@ uint8_t CalculateDestAlpha(uint8_t back_alpha, int src_alpha) {
   return back_alpha + src_alpha - back_alpha * src_alpha / 255;
 }
 
-void ApplyAlpha(uint8_t* dest, int b, int g, int r, int alpha) {
+void ApplyAlpha(uint8_t* dest, const FX_BGRA_STRUCT<uint8_t>& bgra, int alpha) {
   UNSAFE_TODO({
-    dest[0] = FXDIB_ALPHA_MERGE(dest[0], b, alpha);
-    dest[1] = FXDIB_ALPHA_MERGE(dest[1], g, alpha);
-    dest[2] = FXDIB_ALPHA_MERGE(dest[2], r, alpha);
+    dest[0] = FXDIB_ALPHA_MERGE(dest[0], bgra.blue, alpha);
+    dest[1] = FXDIB_ALPHA_MERGE(dest[1], bgra.green, alpha);
+    dest[2] = FXDIB_ALPHA_MERGE(dest[2], bgra.red, alpha);
   });
 }
 
 void ApplyDestAlpha(uint8_t back_alpha,
                     int src_alpha,
-                    int r,
-                    int g,
-                    int b,
+                    const FX_BGRA_STRUCT<uint8_t>& bgra,
                     uint8_t* dest) {
   uint8_t dest_alpha = CalculateDestAlpha(back_alpha, src_alpha);
-  ApplyAlpha(dest, b, g, r, src_alpha * 255 / dest_alpha);
+  ApplyAlpha(dest, bgra, src_alpha * 255 / dest_alpha);
   UNSAFE_TODO(dest[3] = dest_alpha);
 }
 
 void NormalizeArgb(int src_value,
-                   int r,
-                   int g,
-                   int b,
-                   int a,
+                   const FX_BGRA_STRUCT<uint8_t>& bgra,
                    uint8_t* dest,
                    int src_alpha) {
   UNSAFE_TODO({
     uint8_t back_alpha = dest[3];
     if (back_alpha == 0) {
-      FXARGB_SetDIB(dest, ArgbEncode(src_alpha, r, g, b));
+      FXARGB_SetDIB(dest,
+                    ArgbEncode(src_alpha, bgra.red, bgra.green, bgra.blue));
     } else if (src_alpha != 0) {
-      ApplyDestAlpha(back_alpha, src_alpha, r, g, b, dest);
+      ApplyDestAlpha(back_alpha, src_alpha, bgra, dest);
     }
   });
 }
 
 void NormalizeDest(bool has_alpha,
                    int src_value,
-                   int r,
-                   int g,
-                   int b,
-                   int a,
+                   const FX_BGRA_STRUCT<uint8_t>& bgra,
                    uint8_t* dest) {
   if (has_alpha) {
-    NormalizeArgb(src_value, r, g, b, a, dest,
-                  CalcAlpha(TextGammaAdjust(src_value), a));
+    NormalizeArgb(src_value, bgra, dest,
+                  CalcAlpha(TextGammaAdjust(src_value), bgra.alpha));
     return;
   }
-  int src_alpha = CalcAlpha(TextGammaAdjust(src_value), a);
+  int src_alpha = CalcAlpha(TextGammaAdjust(src_value), bgra.alpha);
   if (src_alpha == 0)
     return;
 
-  ApplyAlpha(dest, b, g, r, src_alpha);
+  ApplyAlpha(dest, bgra, src_alpha);
 }
 
 void NormalizeSrc(bool has_alpha,
                   int src_value,
-                  int r,
-                  int g,
-                  int b,
-                  int a,
+                  const FX_BGRA_STRUCT<uint8_t>& bgra,
                   uint8_t* dest) {
   if (!has_alpha) {
-    ApplyAlpha(dest, b, g, r, CalcAlpha(TextGammaAdjust(src_value), a));
+    ApplyAlpha(dest, bgra, CalcAlpha(TextGammaAdjust(src_value), bgra.alpha));
     return;
   }
-  int src_alpha = CalcAlpha(TextGammaAdjust(src_value), a);
+  int src_alpha = CalcAlpha(TextGammaAdjust(src_value), bgra.alpha);
   if (src_alpha != 0)
-    NormalizeArgb(src_value, r, g, b, a, dest, src_alpha);
+    NormalizeArgb(src_value, bgra, dest, src_alpha);
 }
 
 void NextPixel(const uint8_t** src_scan, uint8_t** dst_scan, int bpp) {
@@ -228,10 +215,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
                           int end_col,
                           bool normalize,
                           int x_subpixel,
-                          int a,
-                          int r,
-                          int g,
-                          int b) {
+                          const FX_BGRA_STRUCT<uint8_t>& bgra) {
   const bool has_alpha = bitmap->GetFormat() == FXDIB_Format::kArgb;
   const int Bpp = has_alpha ? 4 : bitmap->GetBPP() / 8;
   for (int row = 0; row < nrows; ++row) {
@@ -247,9 +231,9 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
       for (int col = start_col; col < end_col; ++col) {
         if (normalize) {
           int src_value = AverageRgb(&src_scan[0]);
-          NormalizeDest(has_alpha, src_value, r, g, b, a, dest_scan);
+          NormalizeDest(has_alpha, src_value, bgra, dest_scan);
         } else {
-          MergeGammaAdjustRgb(&src_scan[0], r, g, b, a, &dest_scan[0]);
+          MergeGammaAdjustRgb(&src_scan[0], bgra, &dest_scan[0]);
           SetAlpha(has_alpha, dest_scan);
         }
         NextPixel(&src_scan, &dest_scan, Bpp);
@@ -261,22 +245,22 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
         if (normalize) {
           int src_value = start_col > left ? AverageRgb(&src_scan[-1])
                                            : (src_scan[0] + src_scan[1]) / 3;
-          NormalizeSrc(has_alpha, src_value, r, g, b, a, dest_scan);
+          NormalizeSrc(has_alpha, src_value, bgra, dest_scan);
         } else {
           if (start_col > left) {
-            MergeGammaAdjust(src_scan[-1], r, a, &dest_scan[2]);
+            MergeGammaAdjust(src_scan[-1], bgra.red, bgra.alpha, &dest_scan[2]);
           }
-          MergeGammaAdjust(src_scan[0], g, a, &dest_scan[1]);
-          MergeGammaAdjust(src_scan[1], b, a, &dest_scan[0]);
+          MergeGammaAdjust(src_scan[0], bgra.green, bgra.alpha, &dest_scan[1]);
+          MergeGammaAdjust(src_scan[1], bgra.blue, bgra.alpha, &dest_scan[0]);
           SetAlpha(has_alpha, dest_scan);
         }
         NextPixel(&src_scan, &dest_scan, Bpp);
         for (int col = start_col + 1; col < end_col; ++col) {
           if (normalize) {
             int src_value = AverageRgb(&src_scan[-1]);
-            NormalizeDest(has_alpha, src_value, r, g, b, a, dest_scan);
+            NormalizeDest(has_alpha, src_value, bgra, dest_scan);
           } else {
-            MergeGammaAdjustRgb(&src_scan[-1], r, g, b, a, &dest_scan[0]);
+            MergeGammaAdjustRgb(&src_scan[-1], bgra, &dest_scan[0]);
             SetAlpha(has_alpha, dest_scan);
           }
           NextPixel(&src_scan, &dest_scan, Bpp);
@@ -286,22 +270,22 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
       if (normalize) {
         int src_value =
             start_col > left ? AverageRgb(&src_scan[-2]) : src_scan[0] / 3;
-        NormalizeSrc(has_alpha, src_value, r, g, b, a, dest_scan);
+        NormalizeSrc(has_alpha, src_value, bgra, dest_scan);
       } else {
         if (start_col > left) {
-          MergeGammaAdjust(src_scan[-2], r, a, &dest_scan[2]);
-          MergeGammaAdjust(src_scan[-1], g, a, &dest_scan[1]);
+          MergeGammaAdjust(src_scan[-2], bgra.red, bgra.alpha, &dest_scan[2]);
+          MergeGammaAdjust(src_scan[-1], bgra.green, bgra.alpha, &dest_scan[1]);
         }
-        MergeGammaAdjust(src_scan[0], b, a, &dest_scan[0]);
+        MergeGammaAdjust(src_scan[0], bgra.blue, bgra.alpha, &dest_scan[0]);
         SetAlpha(has_alpha, dest_scan);
       }
       NextPixel(&src_scan, &dest_scan, Bpp);
       for (int col = start_col + 1; col < end_col; ++col) {
         if (normalize) {
           int src_value = AverageRgb(&src_scan[-2]);
-          NormalizeDest(has_alpha, src_value, r, g, b, a, dest_scan);
+          NormalizeDest(has_alpha, src_value, bgra, dest_scan);
         } else {
-          MergeGammaAdjustRgb(&src_scan[-2], r, g, b, a, &dest_scan[0]);
+          MergeGammaAdjustRgb(&src_scan[-2], bgra, &dest_scan[0]);
           SetAlpha(has_alpha, dest_scan);
         }
         NextPixel(&src_scan, &dest_scan, Bpp);
@@ -1184,12 +1168,10 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
       return false;
   }
   int dest_width = pixel_width;
-  int a = 0;
-  int r = 0;
-  int g = 0;
-  int b = 0;
-  if (anti_alias == FT_RENDER_MODE_LCD)
-    std::tie(a, r, g, b) = ArgbDecode(fill_color);
+  FX_BGRA_STRUCT<uint8_t> bgra;
+  if (anti_alias == FT_RENDER_MODE_LCD) {
+    bgra = ArgbToBGRAStruct(fill_color);
+  }
 
   for (const TextGlyphPos& glyph : glyphs) {
     if (!glyph.m_pGlyph)
@@ -1223,7 +1205,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
       continue;
 
     DrawNormalTextHelper(bitmap, pGlyph, nrows, point->x, point->y, start_col,
-                         end_col, normalize, x_subpixel, a, r, g, b);
+                         end_col, normalize, x_subpixel, bgra);
   }
 
   if (bitmap->IsMaskFormat()) {

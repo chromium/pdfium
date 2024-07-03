@@ -52,7 +52,7 @@ class CFGAS_GEShading final {
  private:
   static constexpr size_t kSteps = 256;
 
-  void InitArgbArray(FX_ARGB beginArgb, FX_ARGB endArgb);
+  void InitArgbArray(FX_ARGB begin_argb, FX_ARGB end_argb);
 
   const Type m_type;
   const CFX_PointF m_beginPoint;

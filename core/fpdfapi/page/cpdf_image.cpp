@@ -196,23 +196,15 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
   size_t dest_pitch = 0;
   bool bCopyWithoutAlpha = true;
   if (bpp == 1) {
-    int32_t reset_a = 0;
-    int32_t reset_r = 0;
-    int32_t reset_g = 0;
-    int32_t reset_b = 0;
-    int32_t set_a = 0;
-    int32_t set_r = 0;
-    int32_t set_g = 0;
-    int32_t set_b = 0;
+    FX_BGRA_STRUCT<uint8_t> reset_bgra;
+    FX_BGRA_STRUCT<uint8_t> set_bgra;
     if (!pBitmap->IsMaskFormat()) {
-      std::tie(reset_a, reset_r, reset_g, reset_b) =
-          ArgbDecode(pBitmap->GetPaletteArgb(0));
-      std::tie(set_a, set_r, set_g, set_b) =
-          ArgbDecode(pBitmap->GetPaletteArgb(1));
+      reset_bgra = ArgbToBGRAStruct(pBitmap->GetPaletteArgb(0));
+      set_bgra = ArgbToBGRAStruct(pBitmap->GetPaletteArgb(1));
     }
-    if (set_a == 0 || reset_a == 0) {
+    if (set_bgra.alpha == 0 || reset_bgra.alpha == 0) {
       pDict->SetNewFor<CPDF_Boolean>("ImageMask", true);
-      if (reset_a == 0) {
+      if (reset_bgra.alpha == 0) {
         auto pArray = pDict->SetNewFor<CPDF_Array>("Decode");
         pArray->AppendNew<CPDF_Number>(1);
         pArray->AppendNew<CPDF_Number>(0);
@@ -222,10 +214,8 @@ void CPDF_Image::SetImage(const RetainPtr<CFX_DIBitmap>& pBitmap) {
       pCS->AppendNew<CPDF_Name>("Indexed");
       pCS->AppendNew<CPDF_Name>("DeviceRGB");
       pCS->AppendNew<CPDF_Number>(1);
-      uint8_t ct[6] = {
-          static_cast<uint8_t>(reset_r), static_cast<uint8_t>(reset_g),
-          static_cast<uint8_t>(reset_b), static_cast<uint8_t>(set_r),
-          static_cast<uint8_t>(set_g),   static_cast<uint8_t>(set_b)};
+      const uint8_t ct[6] = {reset_bgra.red, reset_bgra.green, reset_bgra.blue,
+                             set_bgra.red,   set_bgra.green,   set_bgra.blue};
       pCS->AppendNew<CPDF_String>(ct, CPDF_String::DataType::kIsHex);
     }
     pDict->SetNewFor<CPDF_Number>("BitsPerComponent", 1);

@@ -36,13 +36,9 @@ FX_ARGB CPDF_RenderOptions::TranslateColor(FX_ARGB argb) const {
   if (ColorModeIs(kAlpha))
     return argb;
 
-  int a;
-  int r;
-  int g;
-  int b;
-  std::tie(a, r, g, b) = ArgbDecode(argb);
-  int gray = FXRGB2GRAY(r, g, b);
-  return ArgbEncode(a, gray, gray, gray);
+  const FX_BGRA_STRUCT<uint8_t> bgra = ArgbToBGRAStruct(argb);
+  const int gray = FXRGB2GRAY(bgra.red, bgra.green, bgra.blue);
+  return ArgbEncode(bgra.alpha, gray, gray, gray);
 }
 
 FX_ARGB CPDF_RenderOptions::TranslateObjectFillColor(

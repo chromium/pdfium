@@ -9,7 +9,6 @@
 
 #include <stdint.h>
 
-#include <tuple>
 #include <utility>
 
 #include "core/fxcrt/compiler_specific.h"
@@ -162,11 +161,10 @@ inline bool GetIsMaskFromFormat(FXDIB_Format format) {
 
 FXDIB_Format MakeRGBFormat(int bpp);
 
+FX_BGRA_STRUCT<uint8_t> ArgbToBGRAStruct(FX_ARGB argb);
+
 // Ignores alpha.
 FX_BGR_STRUCT<uint8_t> ArgbToBGRStruct(FX_ARGB argb);
-
-// Returns (a, r, g, b)
-std::tuple<int, int, int, int> ArgbDecode(FX_ARGB argb);
 
 // Returns (a, FX_COLORREF)
 std::pair<int, FX_COLORREF> ArgbToAlphaAndColorRef(FX_ARGB argb);

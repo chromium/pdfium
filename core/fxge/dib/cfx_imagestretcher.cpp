@@ -44,24 +44,18 @@ DataVector<uint32_t> BuildPaletteFrom1BppSource(
   DCHECK_EQ(FXDIB_Format::k1bppRgb, source->GetFormat());
   DCHECK(source->HasPalette());
 
-  int a0;
-  int r0;
-  int g0;
-  int b0;
-  std::tie(a0, r0, g0, b0) = ArgbDecode(source->GetPaletteArgb(0));
-  int a1;
-  int r1;
-  int g1;
-  int b1;
-  std::tie(a1, r1, g1, b1) = ArgbDecode(source->GetPaletteArgb(1));
-  DCHECK_EQ(255, a0);
-  DCHECK_EQ(255, a1);
+  const FX_BGRA_STRUCT<uint8_t> bgra0 =
+      ArgbToBGRAStruct(source->GetPaletteArgb(0));
+  const FX_BGRA_STRUCT<uint8_t> bgra1 =
+      ArgbToBGRAStruct(source->GetPaletteArgb(1));
+  CHECK_EQ(255, bgra0.alpha);
+  CHECK_EQ(255, bgra1.alpha);
 
   DataVector<uint32_t> palette(CFX_DIBBase::kPaletteSize);
   for (int i = 0; i < static_cast<int>(CFX_DIBBase::kPaletteSize); ++i) {
-    int r = r0 + (r1 - r0) * i / 255;
-    int g = g0 + (g1 - g0) * i / 255;
-    int b = b0 + (b1 - b0) * i / 255;
+    int r = bgra0.red + (bgra1.red - bgra0.red) * i / 255;
+    int g = bgra0.green + (bgra1.green - bgra0.green) * i / 255;
+    int b = bgra0.blue + (bgra1.blue - bgra0.blue) * i / 255;
     palette[i] = ArgbEncode(255, r, g, b);
   }
   return palette;

@@ -125,13 +125,10 @@ void CXFA_Stroke::SetColor(FX_ARGB argb) {
   if (!pNode)
     return;
 
-  int a;
-  int r;
-  int g;
-  int b;
-  std::tie(a, r, g, b) = ArgbDecode(argb);
-  pNode->JSObject()->SetCData(XFA_Attribute::Value,
-                              WideString::Format(L"%d,%d,%d", r, g, b));
+  FX_BGR_STRUCT<uint8_t> bgr = ArgbToBGRStruct(argb);
+  pNode->JSObject()->SetCData(
+      XFA_Attribute::Value,
+      WideString::Format(L"%d,%d,%d", bgr.red, bgr.green, bgr.blue));
 }
 
 XFA_AttributeValue CXFA_Stroke::GetJoinType() {
