@@ -26,12 +26,12 @@ class CFPF_SkiaFontMgr {
   ~CFPF_SkiaFontMgr();
 
   void LoadSystemFonts();
-  CFPF_SkiaFont* CreateFont(ByteStringView bsFamilyname,
-                            FX_Charset uCharset,
-                            uint32_t dwStyle);
+  CFPF_SkiaFont* CreateFont(ByteStringView family_name,
+                            FX_Charset charset,
+                            uint32_t style);
 
   bool InitFTLibrary();
-  RetainPtr<CFX_Face> GetFontFace(ByteStringView bsFile, int32_t iFaceIndex);
+  RetainPtr<CFX_Face> GetFontFace(ByteStringView filename, int32_t face_index);
 
  private:
   void ScanPath(const ByteString& path);
@@ -39,10 +39,11 @@ class CFPF_SkiaFontMgr {
   std::unique_ptr<CFPF_SkiaPathFont> ReportFace(RetainPtr<CFX_Face> face,
                                                 const ByteString& file);
 
-  bool m_bLoaded = false;
-  ScopedFXFTLibraryRec m_FTLibrary;
-  std::vector<std::unique_ptr<CFPF_SkiaPathFont>> m_FontFaces;
-  std::map<uint32_t, std::unique_ptr<CFPF_SkiaFont>> m_FamilyFonts;
+  bool loaded_system_fonts_ = false;
+  ScopedFXFTLibraryRec ft_library_;
+  std::vector<std::unique_ptr<CFPF_SkiaPathFont>> font_faces_;
+  // Key is a hash based on CreateFont() parameters.
+  std::map<uint32_t, std::unique_ptr<CFPF_SkiaFont>> family_font_map_;
 };
 
 #endif  // CORE_FXGE_ANDROID_CFPF_SKIAFONTMGR_H_
