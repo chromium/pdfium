@@ -29,6 +29,7 @@
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
+#include "third_party/abseil-cpp/absl/types/variant.h"
 
 // Ignore fallthrough warnings in agg23 headers.
 #if defined(__clang__)
@@ -473,10 +474,13 @@ class CFX_Renderer {
                                              : clip_right - span_left;
   }
 
-  int m_Alpha;
-  FX_BGR_STRUCT<uint8_t> m_BGR;
-  // TODO(thestig): Should `m_BGR` and `m_Gray` be together in a variant?
-  int m_Gray;
+  const FX_BGR_STRUCT<uint8_t>& GetBGR() const {
+    return absl::get<FX_BGR_STRUCT<uint8_t>>(m_ColorData);
+  }
+  int GetGray() const { return absl::get<int>(m_ColorData); }
+
+  const int m_Alpha;
+  absl::variant<FX_BGR_STRUCT<uint8_t>, int> m_ColorData;
   const uint32_t m_Color;
   const bool m_bFullCover;
   const bool m_bRgbByteOrder;
@@ -500,7 +504,7 @@ void CFX_Renderer::CompositeSpan(uint8_t* dest_scan,
                                  const uint8_t* clip_scan) {
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
-  const auto& bgr = m_BGR;
+  const auto& bgr = GetBGR();
   UNSAFE_TODO({
     if (Bpp) {
       dest_scan += col_start * Bpp;
@@ -620,7 +624,7 @@ void CFX_Renderer::CompositeSpan(uint8_t* dest_scan,
       return;
     }
     if (Bpp == 1) {
-      const int gray = m_Gray;
+      const int gray = GetGray();
       for (int col = col_start; col < col_end; col++) {
         int src_alpha = GetSrcAlpha(clip_scan, col);
         if (m_bFullCover) {
@@ -666,7 +670,7 @@ void CFX_Renderer::CompositeSpanGray(uint8_t* dest_scan,
   DCHECK(!m_bRgbByteOrder);
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
-  const int gray = m_Gray;
+  const int gray = GetGray();
   UNSAFE_TODO({
     dest_scan += col_start;
     for (int col = col_start; col < col_end; col++) {
@@ -693,7 +697,7 @@ void CFX_Renderer::CompositeSpanARGB(uint8_t* dest_scan,
                                      const uint8_t* clip_scan) {
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
-  const auto& bgr = m_BGR;
+  const auto& bgr = GetBGR();
   UNSAFE_TODO({
     dest_scan += col_start * Bpp;
     if (m_bRgbByteOrder) {
@@ -765,7 +769,7 @@ void CFX_Renderer::CompositeSpanRGB(uint8_t* dest_scan,
                                     const uint8_t* clip_scan) {
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
-  const auto& bgr = m_BGR;
+  const auto& bgr = GetBGR();
   UNSAFE_TODO({
     dest_scan += col_start * Bpp;
     if (m_bRgbByteOrder) {
@@ -841,14 +845,16 @@ CFX_Renderer::CFX_Renderer(const RetainPtr<CFX_DIBitmap>& pDevice,
       m_CompositeSpanFunc(GetCompositeSpanFunc(m_pDevice)) {
   if (m_pDevice->GetBPP() == 8) {
     DCHECK(!m_bRgbByteOrder);
-    if (m_pDevice->IsMaskFormat())
-      m_Gray = 255;
-    else
-      m_Gray = FXRGB2GRAY(FXARGB_R(color), FXARGB_G(color), FXARGB_B(color));
+    if (m_pDevice->IsMaskFormat()) {
+      m_ColorData = 255;
+    } else {
+      m_ColorData =
+          FXRGB2GRAY(FXARGB_R(color), FXARGB_G(color), FXARGB_B(color));
+    }
     return;
   }
 
-  m_BGR = ArgbToBGRStruct(color);
+  m_ColorData = ArgbToBGRStruct(color);
 }
 
 template <class Scanline>
