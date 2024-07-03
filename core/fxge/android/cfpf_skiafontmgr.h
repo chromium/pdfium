@@ -25,13 +25,13 @@ class CFPF_SkiaFontMgr {
   CFPF_SkiaFontMgr();
   ~CFPF_SkiaFontMgr();
 
-  void LoadSystemFonts();
+  void LoadFonts(const char** user_paths);
   CFPF_SkiaFont* CreateFont(ByteStringView family_name,
                             FX_Charset charset,
                             uint32_t style);
 
   bool InitFTLibrary();
-  RetainPtr<CFX_Face> GetFontFace(ByteStringView filename, int32_t face_index);
+  RetainPtr<CFX_Face> GetFontFace(ByteStringView path, int32_t face_index);
 
  private:
   void ScanPath(const ByteString& path);
@@ -39,7 +39,7 @@ class CFPF_SkiaFontMgr {
   std::unique_ptr<CFPF_SkiaPathFont> ReportFace(RetainPtr<CFX_Face> face,
                                                 const ByteString& file);
 
-  bool loaded_system_fonts_ = false;
+  bool loaded_fonts_ = false;
   ScopedFXFTLibraryRec ft_library_;
   std::vector<std::unique_ptr<CFPF_SkiaPathFont>> font_faces_;
   // Key is a hash based on CreateFont() parameters.

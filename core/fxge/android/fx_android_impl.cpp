@@ -29,7 +29,7 @@ class CAndroidPlatform : public CFX_GEModule::PlatformIface {
       return nullptr;
 
     auto pFontInfo = std::make_unique<CFX_AndroidFontInfo>();
-    pFontInfo->Init(pFontMgr);
+    pFontInfo->Init(pFontMgr, CFX_GEModule::Get()->GetUserFontPaths());
     return pFontInfo;
   }
 

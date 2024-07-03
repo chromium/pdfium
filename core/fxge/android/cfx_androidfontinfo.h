@@ -21,7 +21,7 @@ class CFX_AndroidFontInfo final : public SystemFontInfoIface {
   CFX_AndroidFontInfo();
   ~CFX_AndroidFontInfo() override;
 
-  bool Init(CFPF_SkiaFontMgr* pFontMgr);
+  bool Init(CFPF_SkiaFontMgr* pFontMgr, const char** user_paths);
 
   // SystemFontInfoIface:
   bool EnumFontList(CFX_FontMapper* pMapper) override;

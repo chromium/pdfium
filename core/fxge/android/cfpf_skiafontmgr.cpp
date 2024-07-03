@@ -11,6 +11,7 @@
 #include <iterator>
 #include <utility>
 
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/containers/adapters.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
@@ -235,12 +236,23 @@ bool CFPF_SkiaFontMgr::InitFTLibrary() {
   return true;
 }
 
-void CFPF_SkiaFontMgr::LoadSystemFonts() {
-  if (loaded_system_fonts_) {
+void CFPF_SkiaFontMgr::LoadFonts(const char** user_paths) {
+  if (loaded_fonts_) {
     return;
   }
+
   ScanPath("/system/fonts");
-  loaded_system_fonts_ = true;
+
+  if (user_paths) {
+    // SAFETY: nullptr-terminated array required from caller.
+    UNSAFE_BUFFERS({
+      for (const char** path = user_paths; *path; ++path) {
+        ScanPath(*path);
+      }
+    });
+  }
+
+  loaded_fonts_ = true;
 }
 
 CFPF_SkiaFont* CFPF_SkiaFontMgr::CreateFont(ByteStringView family_name,

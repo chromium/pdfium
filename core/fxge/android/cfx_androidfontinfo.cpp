@@ -16,12 +16,14 @@ CFX_AndroidFontInfo::CFX_AndroidFontInfo() = default;
 
 CFX_AndroidFontInfo::~CFX_AndroidFontInfo() = default;
 
-bool CFX_AndroidFontInfo::Init(CFPF_SkiaFontMgr* pFontMgr) {
-  if (!pFontMgr)
+bool CFX_AndroidFontInfo::Init(CFPF_SkiaFontMgr* pFontMgr,
+                               const char** user_paths) {
+  if (!pFontMgr) {
     return false;
+  }
 
-  pFontMgr->LoadSystemFonts();
   m_pFontMgr = pFontMgr;
+  m_pFontMgr->LoadFonts(user_paths);
   return true;
 }
 
