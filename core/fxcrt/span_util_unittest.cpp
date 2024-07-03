@@ -188,11 +188,6 @@ TEST(ReinterpretSpan, LegalConversions) {
   EXPECT_EQ(converted[1], 0x62626262u);
 }
 
-TEST(ReinterpretSpan, BadLength) {
-  uint8_t ab[2] = {0x61, 0x62};
-  EXPECT_DEATH(fxcrt::reinterpret_span<uint32_t>(pdfium::make_span(ab)), "");
-}
-
 TEST(ReinterpretSpan, BadAlignment) {
   uint8_t abcabc[6] = {0x61, 0x62, 0x63, 0x61, 0x62, 0x63};
   EXPECT_DEATH(fxcrt::reinterpret_span<uint32_t>(

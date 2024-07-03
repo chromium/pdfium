@@ -52,8 +52,7 @@ std::optional<FX_RGB_STRUCT<float>> CPDF_DeviceCS::GetRGB(
     }
     case Family::kDeviceRGB: {
       const auto& rgb =
-          fxcrt::truncating_reinterpret_span<const FX_RGB_STRUCT<float>>(pBuf)
-              .front();
+          fxcrt::reinterpret_span<const FX_RGB_STRUCT<float>>(pBuf).front();
       return FX_RGB_STRUCT<float>{
           NormalizeChannel(rgb.red),
           NormalizeChannel(rgb.green),
@@ -62,8 +61,7 @@ std::optional<FX_RGB_STRUCT<float>> CPDF_DeviceCS::GetRGB(
     }
     case Family::kDeviceCMYK: {
       const auto& cmyk =
-          fxcrt::truncating_reinterpret_span<const FX_CMYK_STRUCT<float>>(pBuf)
-              .front();
+          fxcrt::reinterpret_span<const FX_CMYK_STRUCT<float>>(pBuf).front();
       if (IsStdConversionEnabled()) {
         return FX_RGB_STRUCT<float>{
             1.0f - std::min(1.0f, cmyk.cyan + cmyk.key),
@@ -86,8 +84,7 @@ void CPDF_DeviceCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
                                        int image_width,
                                        int image_height,
                                        bool bTransMask) const {
-  auto rgb_out =
-      fxcrt::truncating_reinterpret_span<FX_RGB_STRUCT<uint8_t>>(dest_span);
+  auto rgb_out = fxcrt::reinterpret_span<FX_RGB_STRUCT<uint8_t>>(dest_span);
   switch (GetFamily()) {
     case Family::kDeviceGray:
       CHECK(!bTransMask);  // bTransMask only allowed for CMYK colorspaces.
@@ -106,8 +103,7 @@ void CPDF_DeviceCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
       break;
     case Family::kDeviceCMYK: {
       auto cmyk_in =
-          fxcrt::truncating_reinterpret_span<const FX_CMYK_STRUCT<uint8_t>>(
-              src_span);
+          fxcrt::reinterpret_span<const FX_CMYK_STRUCT<uint8_t>>(src_span);
       if (bTransMask) {
         // Compiler can't conclude src/dest don't overlap, avoid interleaved
         // loads and stores by not using an auto& reference here.

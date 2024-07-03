@@ -25,12 +25,11 @@ void ReverseRGB(pdfium::span<uint8_t> pDestBuf,
                 int pixels) {
   const size_t count = pdfium::checked_cast<size_t>(pixels);
   auto dst_span =
-      fxcrt::truncating_reinterpret_span<FX_RGB_STRUCT<uint8_t>>(pDestBuf)
-          .first(count);
+      fxcrt::reinterpret_span<FX_RGB_STRUCT<uint8_t>>(pDestBuf).first(count);
 
   const auto src_span =
-      fxcrt::truncating_reinterpret_span<const FX_RGB_STRUCT<uint8_t>>(pSrcBuf)
-          .first(count);
+      fxcrt::reinterpret_span<const FX_RGB_STRUCT<uint8_t>>(pSrcBuf).first(
+          count);
 
   if (dst_span.data() == src_span.data()) {
     for (auto& pix : dst_span) {

@@ -63,7 +63,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
 
   template <typename T>
   pdfium::span<T> GetWritableScanlineAs(int line) {
-    return fxcrt::truncating_reinterpret_span<T>(GetWritableScanline(line));
+    return fxcrt::reinterpret_span<T>(GetWritableScanline(line));
   }
 
   void TakeOver(RetainPtr<CFX_DIBitmap>&& pSrcBitmap);

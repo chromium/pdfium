@@ -551,8 +551,8 @@ int CPDF_CIDFont::GetCharWidthF(uint32_t charcode) {
     return (charcode >= 32 && charcode < 127) ? 500 : 0;
   }
   uint16_t cid = CIDFromCharCode(charcode);
-  auto lhv_span = fxcrt::truncating_reinterpret_span<const LowHighVal>(
-      pdfium::make_span(m_WidthList));
+  auto lhv_span =
+      fxcrt::reinterpret_span<const LowHighVal>(pdfium::make_span(m_WidthList));
   for (const auto& lhv : lhv_span) {
     if (IsMetricForCID(lhv, cid)) {
       return lhv.val;
@@ -562,7 +562,7 @@ int CPDF_CIDFont::GetCharWidthF(uint32_t charcode) {
 }
 
 int16_t CPDF_CIDFont::GetVertWidth(uint16_t cid) const {
-  auto lhvxy_span = fxcrt::truncating_reinterpret_span<const LowHighValXY>(
+  auto lhvxy_span = fxcrt::reinterpret_span<const LowHighValXY>(
       pdfium::make_span(m_VertMetrics));
   for (const auto& lhvxy : lhvxy_span) {
     if (IsMetricForCID(lhvxy, cid)) {
@@ -573,7 +573,7 @@ int16_t CPDF_CIDFont::GetVertWidth(uint16_t cid) const {
 }
 
 CFX_Point16 CPDF_CIDFont::GetVertOrigin(uint16_t cid) const {
-  auto lhvxy_span = fxcrt::truncating_reinterpret_span<const LowHighValXY>(
+  auto lhvxy_span = fxcrt::reinterpret_span<const LowHighValXY>(
       pdfium::make_span(m_VertMetrics));
   for (const auto& lhvxy : lhvxy_span) {
     if (IsMetricForCID(lhvxy, cid)) {
@@ -581,8 +581,8 @@ CFX_Point16 CPDF_CIDFont::GetVertOrigin(uint16_t cid) const {
     }
   }
   int width = m_DefaultWidth;
-  auto lhv_span = fxcrt::truncating_reinterpret_span<const LowHighVal>(
-      pdfium::make_span(m_WidthList));
+  auto lhv_span =
+      fxcrt::reinterpret_span<const LowHighVal>(pdfium::make_span(m_WidthList));
   for (const auto& lhv : lhv_span) {
     if (IsMetricForCID(lhv, cid)) {
       width = lhv.val;
