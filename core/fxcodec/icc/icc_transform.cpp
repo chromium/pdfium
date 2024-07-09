@@ -127,7 +127,7 @@ void IccTransform::Translate(pdfium::span<const float> pSrcValues,
   } else {
     DataVector<uint8_t> inputs(std::max<size_t>(pSrcValues.size(), 16));
     for (size_t i = 0; i < pSrcValues.size(); ++i) {
-      inputs[i] = std::clamp(static_cast<int>(pSrcValues[i] * 255.0f), 0, 255);
+      inputs[i] = static_cast<int>(std::clamp(pSrcValues[i] * 255.0f, 0.0f, 255.0f));
     }
     cmsDoTransform(m_hTransform, inputs.data(), output, 1);
   }
