@@ -271,7 +271,7 @@ bool CPDF_DIB::ContinueInternal() {
     if (!m_bpc || !m_nComponents)
       return false;
 
-    m_Format = MakeRGBFormat(CalculateBitsPerPixel(m_bpc, m_nComponents));
+    SetFormat(MakeRGBFormat(CalculateBitsPerPixel(m_bpc, m_nComponents)));
   }
 
   std::optional<uint32_t> pitch = fxge::CalculatePitch32(GetBPP(), m_Width);
@@ -281,7 +281,7 @@ bool CPDF_DIB::ContinueInternal() {
   m_LineBuf = DataVector<uint8_t>(pitch.value());
   LoadPalette();
   if (m_bColorKey) {
-    m_Format = FXDIB_Format::kArgb;
+    SetFormat(FXDIB_Format::kArgb);
     pitch = fxge::CalculatePitch32(GetBPP(), m_Width);
     if (!pitch.has_value())
       return false;
@@ -1310,7 +1310,7 @@ bool CPDF_DIB::TransMask() const {
 void CPDF_DIB::SetMaskProperties() {
   m_bpc = 1;
   m_nComponents = 1;
-  m_Format = FXDIB_Format::k1bppMask;
+  SetFormat(FXDIB_Format::k1bppMask);
 }
 
 uint32_t CPDF_DIB::Get1BitSetValue() const {

@@ -40,7 +40,7 @@ bool CFX_DIBitmap::Create(int width,
                           uint8_t* pBuffer,
                           uint32_t pitch) {
   m_pBuffer = nullptr;
-  m_Format = format;
+  SetFormat(format);
   m_Width = 0;
   m_Height = 0;
   m_Pitch = 0;
@@ -125,7 +125,7 @@ void CFX_DIBitmap::TakeOver(RetainPtr<CFX_DIBitmap>&& pSrcBitmap) {
   m_pBuffer = std::move(pSrcBitmap->m_pBuffer);
   m_palette = std::move(pSrcBitmap->m_palette);
   pSrcBitmap->m_pBuffer = nullptr;
-  m_Format = pSrcBitmap->m_Format;
+  SetFormat(pSrcBitmap->GetFormat());
   m_Width = pSrcBitmap->m_Width;
   m_Height = pSrcBitmap->m_Height;
   m_Pitch = pSrcBitmap->m_Pitch;
@@ -820,16 +820,18 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
          dest_format == FXDIB_Format::kRgb32 ||
          dest_format == FXDIB_Format::kRgb);
 
-  if (dest_format == m_Format)
-    return true;
-
-  if (dest_format == FXDIB_Format::k8bppMask &&
-      m_Format == FXDIB_Format::k8bppRgb && !HasPalette()) {
-    m_Format = FXDIB_Format::k8bppMask;
+  if (dest_format == GetFormat()) {
     return true;
   }
-  if (dest_format == FXDIB_Format::kArgb && m_Format == FXDIB_Format::kRgb32) {
-    m_Format = FXDIB_Format::kArgb;
+
+  if (dest_format == FXDIB_Format::k8bppMask &&
+      GetFormat() == FXDIB_Format::k8bppRgb && !HasPalette()) {
+    SetFormat(FXDIB_Format::k8bppMask);
+    return true;
+  }
+  if (dest_format == FXDIB_Format::kArgb &&
+      GetFormat() == FXDIB_Format::kRgb32) {
+    SetFormat(FXDIB_Format::kArgb);
     UNSAFE_TODO({
       for (int row = 0; row < m_Height; row++) {
         uint8_t* scanline = m_pBuffer.Get() + row * m_Pitch + 3;
@@ -859,7 +861,7 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
       UNSAFE_BUFFERS(pdfium::make_span(dest_buf.get(), dest_buf_size)),
       dest_pitch, m_Width, m_Height, holder, /*src_left=*/0, /*src_top=*/0);
   m_pBuffer = std::move(dest_buf);
-  m_Format = dest_format;
+  SetFormat(dest_format);
   m_Pitch = dest_pitch;
   return true;
 }

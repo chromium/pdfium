@@ -51,7 +51,7 @@ class CachedImage final : public CFX_DIBBase {
  public:
   explicit CachedImage(RetainPtr<CFX_DIBBase> image)
       : image_(std::move(image)) {
-    m_Format = image_->GetFormat();
+    SetFormat(image_->GetFormat());
     m_Width = image_->GetWidth();
     m_Height = image_->GetHeight();
     m_Pitch = image_->GetPitch();

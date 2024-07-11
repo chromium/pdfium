@@ -31,7 +31,7 @@ CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
       m_RampB(m_pTransferFunc->GetSamplesB()) {
   m_Width = m_pSrc->GetWidth();
   m_Height = m_pSrc->GetHeight();
-  m_Format = GetDestFormat();
+  SetFormat(GetDestFormat());
   m_Pitch = fxge::CalculatePitch32OrDie(GetBPP(), m_Width);
   m_Scanline.resize(m_Pitch);
   DCHECK(m_palette.empty());

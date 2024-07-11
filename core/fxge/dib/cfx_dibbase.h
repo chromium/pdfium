@@ -61,9 +61,9 @@ class CFX_DIBBase : public Retainable {
   uint32_t GetPitch() const { return m_Pitch; }
 
   FXDIB_Format GetFormat() const { return m_Format; }
-  int GetBPP() const { return GetBppFromFormat(m_Format); }
-  bool IsMaskFormat() const { return GetIsMaskFromFormat(m_Format); }
-  bool IsAlphaFormat() const { return m_Format == FXDIB_Format::kArgb; }
+  int GetBPP() const { return GetBppFromFormat(GetFormat()); }
+  bool IsMaskFormat() const { return GetIsMaskFromFormat(GetFormat()); }
+  bool IsAlphaFormat() const { return GetFormat() == FXDIB_Format::kArgb; }
   bool IsOpaqueImage() const { return !IsMaskFormat() && !IsAlphaFormat(); }
 
   bool HasPalette() const { return !m_palette.empty(); }
@@ -133,11 +133,15 @@ class CFX_DIBBase : public Retainable {
   void BuildPalette();
   int FindPalette(uint32_t color) const;
 
-  FXDIB_Format m_Format = FXDIB_Format::kInvalid;
+  void SetFormat(FXDIB_Format format) { m_Format = format; }
+
   int m_Width = 0;
   int m_Height = 0;
   uint32_t m_Pitch = 0;
   DataVector<uint32_t> m_palette;
+
+ private:
+  FXDIB_Format m_Format = FXDIB_Format::kInvalid;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_DIBBASE_H_
