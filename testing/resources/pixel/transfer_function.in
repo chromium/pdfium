@@ -1,0 +1,180 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /MediaBox [0 0 200 300]
+  /Count 2
+  /Kids [3 0 R 5 0 R]
+  /Resources <<
+    /ExtGState <<
+      /GS0 7 0 R
+    >>
+    /XObject <<
+      /IM_mask 9 0 R
+      /IM_1bpp 10 0 R
+      /IM_8bpp 12 0 R
+      /IM_24bpp 13 0 R
+      /IM_colorkey 14 0 R
+    >>
+  >>
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+0.8 g
+0 0 200 300 re f
+q 100 0 0 100 0 0 cm /IM_mask Do Q
+q 100 0 0 100 100 0 cm /IM_1bpp Do Q
+q 100 0 0 100 0 100 cm /IM_8bpp Do Q
+q 100 0 0 100 100 100 cm /IM_24bpp Do Q
+q 100 0 0 100 0 200 cm /IM_colorkey Do Q
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 6 0 R
+>>
+endobj
+{{object 6 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+/GS0 gs
+0.8 g
+0 0 200 300 re f
+q 100 0 0 100 0 0 cm /IM_mask Do Q
+q 100 0 0 100 100 0 cm /IM_1bpp Do Q
+q 100 0 0 100 0 100 cm /IM_8bpp Do Q
+q 100 0 0 100 100 100 cm /IM_24bpp Do Q
+q 100 0 0 100 0 200 cm /IM_colorkey Do Q
+Q
+endstream
+endobj
+{{object 7 0}} <<
+  /TR 8 0 R
+>>
+endobj
+{{object 8 0}} <<
+  /FunctionType 0
+  /BitsPerSample 8
+  /Domain [0 1]
+  /Filter /ASCIIHexDecode
+  /Range [0 1]
+  /Size [2]
+  {{streamlen}}
+>>
+stream
+FF 00
+endstream
+endobj
+{{object 9 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 1
+  /Decode [1 0]
+  /DecodeParms [null <</Columns 44 /K -1>>]
+  /Filter [/ASCIIHexDecode /CCITTFaxDecode]
+  /Height 46
+  /ImageMask true
+  /Width 44
+  {{streamlen}}
+>>
+stream
+26a08680de081e11e187840830f4137a4df0ef4dbedbffff6ffdaf0c2f1f
+fff21b34c82e33044e7c11a09c205e105e97a5e97a5ffa5fe0a3f5ffafff
+b5c9aaa30bed27adb4ad70da4da5b6128f0c426b216818500100100a
+endstream
+endobj
+{{object 10 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /Width 400
+  /Height 400
+  /BitsPerComponent 1
+  /Filter [/ASCIIHexDecode /JBIG2Decode]
+  /ColorSpace /DeviceGray
+  /JBIG2Globals 11 0 R
+  {{streamlen}}
+>>
+stream
+000000003000010000001300000dea00000353000017110000171151000000000001260001000000
+3500000dea000003530000000000000000020003fffdff02fefefeff7f86530fb6c922cfff7fff7f
+ff7fff7fff7fff7fff7fff7fffac
+endstream
+endobj
+{{object 11 0}} <<
+  /Filter /ASCIIHexDecode
+  {{streamlen}}
+>>
+stream
+0000000000010000000027000003fffdff02fefefe00000001000000010aabcf6e691c9aa3b0303f
+ff7fff7fff7f4fdfffac
+endstream
+endobj
+{{object 12 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /Width 50
+  /Height 50
+  /BitsPerComponent 8
+  /ColorSpace /DeviceGray
+  /Filter [/ASCIIHexDecode /FlateDecode]
+  /Matte [0.0 0.2 1]
+  {{streamlen}}
+>>
+stream
+789cabaa1a05a3808e4061148c027a028351300ae809a246c128a027e0020065c9c90d
+endstream
+endobj
+{{object 13 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /Width 50
+  /Height 50
+  /BitsPerComponent 8
+  /ColorSpace /DeviceRGB
+  /Filter [/ASCIIHexDecode /FlateDecode]
+  {{streamlen}}
+>>
+stream
+789cedc2310d00000c03a07f2aaab3ea7bcf03842655555555555555f5bf01cc7818dc
+endstream
+endobj
+{{object 14 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace /DeviceRGB
+  /Filter /ASCIIHexDecode
+  /Height 4
+  /Width 4
+  /Mask [0 255 0 0 0 0]
+  {{streamlen}}
+>>
+stream
+ff0000ff0000ff0000ff0000
+ff0000ff0000ff0000ff0000
+00ff0000ff0000ff0000ff00
+00ff0000ff0000ff0000ff00
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
