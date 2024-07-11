@@ -56,18 +56,18 @@ class CFX_DIBBase : public Retainable {
     return fxcrt::reinterpret_span<const T>(GetScanline(line));
   }
 
-  int GetWidth() const { return m_Width; }
-  int GetHeight() const { return m_Height; }
-  uint32_t GetPitch() const { return m_Pitch; }
+  int GetWidth() const { return width_; }
+  int GetHeight() const { return height_; }
+  uint32_t GetPitch() const { return pitch_; }
 
-  FXDIB_Format GetFormat() const { return m_Format; }
+  FXDIB_Format GetFormat() const { return format_; }
   int GetBPP() const { return GetBppFromFormat(GetFormat()); }
   bool IsMaskFormat() const { return GetIsMaskFromFormat(GetFormat()); }
   bool IsAlphaFormat() const { return GetFormat() == FXDIB_Format::kArgb; }
   bool IsOpaqueImage() const { return !IsMaskFormat() && !IsAlphaFormat(); }
 
-  bool HasPalette() const { return !m_palette.empty(); }
-  pdfium::span<const uint32_t> GetPaletteSpan() const { return m_palette; }
+  bool HasPalette() const { return !palette_.empty(); }
+  pdfium::span<const uint32_t> GetPaletteSpan() const { return palette_; }
   size_t GetRequiredPaletteSize() const;
   uint32_t GetPaletteArgb(int index) const;
   void SetPaletteArgb(int index, uint32_t color);
@@ -133,18 +133,18 @@ class CFX_DIBBase : public Retainable {
   void BuildPalette();
   int FindPalette(uint32_t color) const;
 
-  void SetFormat(FXDIB_Format format) { m_Format = format; }
-  void SetWidth(int width) { m_Width = width; }
-  void SetHeight(int height) { m_Height = height; }
-  void SetPitch(uint32_t pitch) { m_Pitch = pitch; }
+  void SetFormat(FXDIB_Format format) { format_ = format; }
+  void SetWidth(int width) { width_ = width; }
+  void SetHeight(int height) { height_ = height; }
+  void SetPitch(uint32_t pitch) { pitch_ = pitch; }
 
-  DataVector<uint32_t> m_palette;
+  DataVector<uint32_t> palette_;
 
  private:
-  FXDIB_Format m_Format = FXDIB_Format::kInvalid;
-  int m_Width = 0;
-  int m_Height = 0;
-  uint32_t m_Pitch = 0;
+  FXDIB_Format format_ = FXDIB_Format::kInvalid;
+  int width_ = 0;
+  int height_ = 0;
+  uint32_t pitch_ = 0;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_DIBBASE_H_

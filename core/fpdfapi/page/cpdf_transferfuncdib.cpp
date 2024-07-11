@@ -34,7 +34,7 @@ CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
   SetFormat(GetDestFormat());
   SetPitch(fxge::CalculatePitch32OrDie(GetBPP(), GetWidth()));
   m_Scanline.resize(GetPitch());
-  DCHECK(m_palette.empty());
+  CHECK(!HasPalette());
 }
 
 CPDF_TransferFuncDIB::~CPDF_TransferFuncDIB() = default;

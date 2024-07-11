@@ -732,11 +732,11 @@ void CFX_DIBBase::BuildPalette() {
     return;
 
   if (GetBPP() == 1) {
-    m_palette = {0xff000000, 0xffffffff};
+    palette_ = {0xff000000, 0xffffffff};
   } else if (GetBPP() == 8) {
-    m_palette.resize(256);
+    palette_.resize(256);
     for (int i = 0; i < 256; ++i)
-      m_palette[i] = ArgbEncode(0xff, i, i, i);
+      palette_[i] = ArgbEncode(0xff, i, i, i);
   }
 }
 
@@ -768,7 +768,7 @@ uint32_t CFX_DIBBase::GetPaletteArgb(int index) const {
 void CFX_DIBBase::SetPaletteArgb(int index, uint32_t color) {
   DCHECK((GetBPP() == 1 || GetBPP() == 8) && !IsMaskFormat());
   BuildPalette();
-  m_palette[index] = color;
+  palette_[index] = color;
 }
 
 int CFX_DIBBase::FindPalette(uint32_t color) const {
@@ -889,14 +889,14 @@ void CFX_DIBBase::SetPalette(pdfium::span<const uint32_t> src_palette) {
 
 void CFX_DIBBase::TakePalette(DataVector<uint32_t> src_palette) {
   if (src_palette.empty() || GetBPP() > 8) {
-    m_palette.clear();
+    palette_.clear();
     return;
   }
 
-  m_palette = std::move(src_palette);
+  palette_ = std::move(src_palette);
   uint32_t pal_size = 1 << GetBPP();
   CHECK_LE(pal_size, kPaletteSize);
-  m_palette.resize(pal_size);
+  palette_.resize(pal_size);
 }
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneAlphaMask() const {

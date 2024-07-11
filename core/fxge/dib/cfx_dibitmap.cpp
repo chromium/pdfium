@@ -124,7 +124,7 @@ RetainPtr<const CFX_DIBitmap> CFX_DIBitmap::RealizeIfNeeded() const {
 
 void CFX_DIBitmap::TakeOver(RetainPtr<CFX_DIBitmap>&& pSrcBitmap) {
   m_pBuffer = std::move(pSrcBitmap->m_pBuffer);
-  m_palette = std::move(pSrcBitmap->m_palette);
+  palette_ = std::move(pSrcBitmap->palette_);
   pSrcBitmap->m_pBuffer = nullptr;
   SetFormat(pSrcBitmap->GetFormat());
   SetWidth(pSrcBitmap->GetWidth());
@@ -435,9 +435,9 @@ void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
     BuildPalette();
     int size = 1 << GetBPP();
     for (int i = 0; i < size; ++i) {
-      int gray = FXRGB2GRAY(FXARGB_R(m_palette[i]), FXARGB_G(m_palette[i]),
-                            FXARGB_B(m_palette[i]));
-      m_palette[i] =
+      int gray = FXRGB2GRAY(FXARGB_R(palette_[i]), FXARGB_G(palette_[i]),
+                            FXARGB_B(palette_[i]));
+      palette_[i] =
           ArgbEncode(0xff, br + (fr - br) * gray / 255,
                      bg + (fg - bg) * gray / 255, bb + (fb - bb) * gray / 255);
     }
@@ -859,7 +859,7 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   }
   RetainPtr<CFX_DIBBase> holder(this);
   // SAFETY: `dest_buf` allocated with `dest_buf_size` bytes above.
-  m_palette = ConvertBuffer(
+  palette_ = ConvertBuffer(
       dest_format,
       UNSAFE_BUFFERS(pdfium::make_span(dest_buf.get(), dest_buf_size)),
       dest_pitch, GetWidth(), GetHeight(), holder, /*src_left=*/0,
