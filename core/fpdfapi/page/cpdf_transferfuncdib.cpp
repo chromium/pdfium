@@ -29,11 +29,11 @@ CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
       m_RampR(m_pTransferFunc->GetSamplesR()),
       m_RampG(m_pTransferFunc->GetSamplesG()),
       m_RampB(m_pTransferFunc->GetSamplesB()) {
-  m_Width = m_pSrc->GetWidth();
-  m_Height = m_pSrc->GetHeight();
+  SetWidth(m_pSrc->GetWidth());
+  SetHeight(m_pSrc->GetHeight());
   SetFormat(GetDestFormat());
-  m_Pitch = fxge::CalculatePitch32OrDie(GetBPP(), m_Width);
-  m_Scanline.resize(m_Pitch);
+  SetPitch(fxge::CalculatePitch32OrDie(GetBPP(), GetWidth()));
+  m_Scanline.resize(GetPitch());
   DCHECK(m_palette.empty());
 }
 
@@ -66,7 +66,7 @@ void CPDF_TransferFuncDIB::TranslateScanline(
       int b1 = m_RampB[255];
       int index = 0;
       UNSAFE_TODO({
-        for (int i = 0; i < m_Width; i++) {
+        for (int i = 0; i < GetWidth(); i++) {
           if (src_buf[i / 8] & (1 << (7 - i % 8))) {
             m_Scanline[index++] = b1;
             m_Scanline[index++] = g1;
@@ -86,7 +86,7 @@ void CPDF_TransferFuncDIB::TranslateScanline(
       int m1 = m_RampR[255];
       int index = 0;
       UNSAFE_TODO({
-        for (int i = 0; i < m_Width; i++) {
+        for (int i = 0; i < GetWidth(); i++) {
           if (src_buf[i / 8] & (1 << (7 - i % 8))) {
             m_Scanline[index++] = m1;
           } else {
@@ -100,7 +100,7 @@ void CPDF_TransferFuncDIB::TranslateScanline(
       pdfium::span<const uint32_t> src_palette = m_pSrc->GetPaletteSpan();
       int index = 0;
       UNSAFE_TODO({
-        for (int i = 0; i < m_Width; i++) {
+        for (int i = 0; i < GetWidth(); i++) {
           if (m_pSrc->HasPalette()) {
             FX_ARGB src_argb = src_palette[*src_buf];
             m_Scanline[index++] = m_RampB[FXARGB_R(src_argb)];
@@ -121,7 +121,7 @@ void CPDF_TransferFuncDIB::TranslateScanline(
     case FXDIB_Format::k8bppMask: {
       int index = 0;
       UNSAFE_TODO({
-        for (int i = 0; i < m_Width; i++) {
+        for (int i = 0; i < GetWidth(); i++) {
           m_Scanline[index++] = m_RampR[*(src_buf++)];
         }
       });
@@ -130,7 +130,7 @@ void CPDF_TransferFuncDIB::TranslateScanline(
     case FXDIB_Format::kRgb: {
       int index = 0;
       UNSAFE_TODO({
-        for (int i = 0; i < m_Width; i++) {
+        for (int i = 0; i < GetWidth(); i++) {
           m_Scanline[index++] = m_RampB[*(src_buf++)];
           m_Scanline[index++] = m_RampG[*(src_buf++)];
           m_Scanline[index++] = m_RampR[*(src_buf++)];
@@ -145,7 +145,7 @@ void CPDF_TransferFuncDIB::TranslateScanline(
     case FXDIB_Format::kArgb: {
       int index = 0;
       UNSAFE_TODO({
-        for (int i = 0; i < m_Width; i++) {
+        for (int i = 0; i < GetWidth(); i++) {
           m_Scanline[index++] = m_RampB[*(src_buf++)];
           m_Scanline[index++] = m_RampG[*(src_buf++)];
           m_Scanline[index++] = m_RampR[*(src_buf++)];

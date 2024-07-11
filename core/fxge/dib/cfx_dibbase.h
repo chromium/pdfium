@@ -134,14 +134,17 @@ class CFX_DIBBase : public Retainable {
   int FindPalette(uint32_t color) const;
 
   void SetFormat(FXDIB_Format format) { m_Format = format; }
+  void SetWidth(int width) { m_Width = width; }
+  void SetHeight(int height) { m_Height = height; }
+  void SetPitch(uint32_t pitch) { m_Pitch = pitch; }
 
-  int m_Width = 0;
-  int m_Height = 0;
-  uint32_t m_Pitch = 0;
   DataVector<uint32_t> m_palette;
 
  private:
   FXDIB_Format m_Format = FXDIB_Format::kInvalid;
+  int m_Width = 0;
+  int m_Height = 0;
+  uint32_t m_Pitch = 0;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_DIBBASE_H_
