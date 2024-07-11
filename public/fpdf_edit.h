@@ -284,6 +284,21 @@ FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
                       double f);
 
 // Experimental API.
+// Transform |page_object| by the given matrix.
+//
+//   page_object - handle to a page object.
+//   matrix      - the transform matrix.
+//
+// Returns TRUE on success.
+//
+// This can be used to scale, rotate, shear and translate the |page_object|.
+// It is an improved version of FPDFPageObj_Transform() that does not do
+// unnecessary double to float conversions, and only uses 1 parameter for the
+// matrix. It also returns whether the operation succeeded or not.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_TransformF(FPDF_PAGEOBJECT page_object, const FS_MATRIX* matrix);
+
+// Experimental API.
 // Get the transform matrix of a page object.
 //
 //   page_object - handle to a page object.

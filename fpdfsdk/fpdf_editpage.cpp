@@ -640,12 +640,24 @@ FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
                       double d,
                       double e,
                       double f) {
-  CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!pPageObj)
-    return;
+  const FS_MATRIX matrix((float)a, (float)b, (float)c, (float)d, (float)e,
+                         (float)f);
+  FPDFPageObj_TransformF(page_object, &matrix);
+}
 
-  CFX_Matrix matrix((float)a, (float)b, (float)c, (float)d, (float)e, (float)f);
-  pPageObj->Transform(matrix);
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_TransformF(FPDF_PAGEOBJECT page_object, const FS_MATRIX* matrix) {
+  if (!matrix) {
+    return false;
+  }
+
+  CPDF_PageObject* cpage_object = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!cpage_object) {
+    return false;
+  }
+
+  cpage_object->Transform(CFXMatrixFromFSMatrix(*matrix));
+  return true;
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

@@ -232,6 +232,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPageObj_SetStrokeColor);
     CHK(FPDFPageObj_SetStrokeWidth);
     CHK(FPDFPageObj_Transform);
+    CHK(FPDFPageObj_TransformF);
     CHK(FPDFPage_CountObjects);
     CHK(FPDFPage_Delete);
     CHK(FPDFPage_GenerateContent);
