@@ -274,8 +274,7 @@ bool CPDF_DIB::ContinueInternal() {
     m_Format = MakeRGBFormat(CalculateBitsPerPixel(m_bpc, m_nComponents));
   }
 
-  std::optional<uint32_t> pitch =
-      fxge::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
+  std::optional<uint32_t> pitch = fxge::CalculatePitch32(GetBPP(), m_Width);
   if (!pitch.has_value())
     return false;
 
@@ -283,7 +282,7 @@ bool CPDF_DIB::ContinueInternal() {
   LoadPalette();
   if (m_bColorKey) {
     m_Format = FXDIB_Format::kArgb;
-    pitch = fxge::CalculatePitch32(GetBppFromFormat(m_Format), m_Width);
+    pitch = fxge::CalculatePitch32(GetBPP(), m_Width);
     if (!pitch.has_value())
       return false;
     m_MaskBuf = DataVector<uint8_t>(pitch.value());

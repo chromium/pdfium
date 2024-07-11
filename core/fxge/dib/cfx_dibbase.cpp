@@ -711,7 +711,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipToInternal(
     copy_len = std::min<uint32_t>(m_Pitch, copy_len.value());
 
     FX_SAFE_UINT32 offset = rect.left;
-    offset *= GetBppFromFormat(m_Format);
+    offset *= GetBPP();
     offset /= 8;
     if (!offset.IsValid())
       return nullptr;
@@ -744,7 +744,7 @@ size_t CFX_DIBBase::GetRequiredPaletteSize() const {
   if (IsMaskFormat())
     return 0;
 
-  switch (GetBppFromFormat(m_Format)) {
+  switch (GetBPP()) {
     case 1:
       return 2;
     case 8:
@@ -923,7 +923,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
     return nullptr;
 
   pFlipped->SetPalette(GetPaletteSpan());
-  int Bpp = GetBppFromFormat(m_Format) / 8;
+  const int Bpp = GetBPP() / 8;
   UNSAFE_TODO({
     for (int row = 0; row < m_Height; ++row) {
       const uint8_t* src_scan = GetScanline(row).data();
@@ -934,7 +934,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
         FXSYS_memcpy(dest_scan, src_scan, m_Pitch);
         continue;
       }
-      if (GetBppFromFormat(m_Format) == 1) {
+      if (GetBPP() == 1) {
         FXSYS_memset(dest_scan, 0, m_Pitch);
         for (int col = 0; col < m_Width; ++col) {
           if (src_scan[col / 8] & (1 << (7 - col % 8))) {
@@ -1128,8 +1128,7 @@ DataVector<uint32_t> CFX_DIBBase::ConvertBuffer(
     const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
     int src_left,
     int src_top) {
-  FXDIB_Format src_format = pSrcBitmap->GetFormat();
-  const int src_bpp = GetBppFromFormat(src_format);
+  const int src_bpp = pSrcBitmap->GetBPP();
   switch (dest_format) {
     case FXDIB_Format::kInvalid:
     case FXDIB_Format::k1bppRgb:

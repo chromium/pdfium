@@ -224,8 +224,9 @@ bool CFX_DIBitmap::TransferWithUnequalFormats(
   if (HasPalette())
     return false;
 
-  if (GetBppFromFormat(m_Format) == 8)
+  if (GetBPP() == 8) {
     dest_format = FXDIB_Format::k8bppMask;
+  }
 
   FX_SAFE_UINT32 offset = dest_left;
   offset *= GetBPP();
@@ -425,12 +426,12 @@ void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
   int br = FXSYS_GetRValue(backcolor);
   int bg = FXSYS_GetGValue(backcolor);
   int bb = FXSYS_GetBValue(backcolor);
-  if (GetBppFromFormat(m_Format) <= 8) {
+  if (GetBPP() <= 8) {
     if (forecolor == 0 && backcolor == 0xffffff && !HasPalette())
       return;
 
     BuildPalette();
-    int size = 1 << GetBppFromFormat(m_Format);
+    int size = 1 << GetBPP();
     for (int i = 0; i < size; ++i) {
       int gray = FXRGB2GRAY(FXARGB_R(m_palette[i]), FXARGB_G(m_palette[i]),
                             FXARGB_B(m_palette[i]));
@@ -444,7 +445,7 @@ void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
     if (forecolor == 0 && backcolor == 0xffffff) {
       for (int row = 0; row < m_Height; ++row) {
         uint8_t* scanline = m_pBuffer.Get() + row * m_Pitch;
-        int gap = GetBppFromFormat(m_Format) / 8 - 2;
+        int gap = GetBPP() / 8 - 2;
         for (int col = 0; col < m_Width; ++col) {
           int gray = FXRGB2GRAY(scanline[2], scanline[1], scanline[0]);
           *scanline++ = gray;
@@ -457,7 +458,7 @@ void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
     }
     for (int row = 0; row < m_Height; ++row) {
       uint8_t* scanline = m_pBuffer.Get() + row * m_Pitch;
-      int gap = GetBppFromFormat(m_Format) / 8 - 2;
+      int gap = GetBPP() / 8 - 2;
       for (int col = 0; col < m_Width; ++col) {
         int gray = FXRGB2GRAY(scanline[2], scanline[1], scanline[0]);
         *scanline++ = bb + (fb - bb) * gray / 255;
@@ -527,8 +528,9 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
   if (!m_pBuffer)
     return false;
 
-  if (GetBppFromFormat(m_Format) < 8)
+  if (GetBPP() < 8) {
     return false;
+  }
 
   if (!GetOverlapRect(dest_left, dest_top, width, height, source->GetWidth(),
                       source->GetHeight(), src_left, src_top, pClipRgn)) {
@@ -547,7 +549,7 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
                        pClipMask != nullptr, bRgbByteOrder)) {
     return false;
   }
-  const int dest_Bpp = GetBppFromFormat(m_Format) / 8;
+  const int dest_Bpp = GetBPP() / 8;
   const int src_Bpp = source->GetBPP() / 8;
   const bool bRgb = src_Bpp > 1;
   if (!bRgb && !source->HasPalette()) {
@@ -591,8 +593,9 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
   if (!m_pBuffer)
     return false;
 
-  if (GetBppFromFormat(m_Format) < 8)
+  if (GetBPP() < 8) {
     return false;
+  }
 
   if (!GetOverlapRect(dest_left, dest_top, width, height, pMask->GetWidth(),
                       pMask->GetHeight(), src_left, src_top, pClipRgn)) {
@@ -686,7 +689,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
   uint32_t dst_color = color;
   uint8_t* color_p = reinterpret_cast<uint8_t*>(&dst_color);
   UNSAFE_TODO({
-    if (GetBppFromFormat(m_Format) == 8) {
+    if (GetBPP() == 8) {
       uint8_t gray =
           IsMaskFormat()
               ? 255
@@ -704,7 +707,7 @@ bool CFX_DIBitmap::CompositeRect(int left,
       }
       return true;
     }
-    if (GetBppFromFormat(m_Format) == 1) {
+    if (GetBPP() == 1) {
       int left_shift = rect.left % 8;
       int right_shift = rect.right % 8;
       int new_width = rect.right / 8 - rect.left / 8;
@@ -745,9 +748,9 @@ bool CFX_DIBitmap::CompositeRect(int left,
       return true;
     }
 
-    CHECK_GE(GetBppFromFormat(m_Format), 24);
+    CHECK_GE(GetBPP(), 24);
     color_p[3] = static_cast<uint8_t>(src_alpha);
-    int Bpp = GetBppFromFormat(m_Format) / 8;
+    int Bpp = GetBPP() / 8;
     const bool bAlpha = IsAlphaFormat();
     if (bAlpha) {
       // Other formats with alpha have already been handled above.
