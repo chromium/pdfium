@@ -7,7 +7,6 @@
 #include "fxjs/xfa/cjx_instancemanager.h"
 
 #include <algorithm>
-#include <vector>
 
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/span.h"

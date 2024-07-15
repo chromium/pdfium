@@ -6,8 +6,6 @@
 
 #include "fxjs/xfa/cjx_hostpseudomodel.h"
 
-#include <vector>
-
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/span.h"
 #include "fxjs/fxv8.h"

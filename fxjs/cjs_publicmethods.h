@@ -7,8 +7,6 @@
 #ifndef FXJS_CJS_PUBLICMETHODS_H_
 #define FXJS_CJS_PUBLICMETHODS_H_
 
-#include <vector>
-
 #include "core/fxcrt/span.h"
 #include "fxjs/cjs_object.h"
 #include "fxjs/cjs_result.h"

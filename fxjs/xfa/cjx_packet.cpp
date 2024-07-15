@@ -7,7 +7,6 @@
 #include "fxjs/xfa/cjx_packet.h"
 
 #include <utility>
-#include <vector>
 
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/xml/cfx_xmldocument.h"

@@ -8,11 +8,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <algorithm>
 #include <array>
 #include <iterator>
 #include <type_traits>
-#include <utility>
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/compiler_specific.h"

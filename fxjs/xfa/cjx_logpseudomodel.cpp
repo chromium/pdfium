@@ -6,8 +6,6 @@
 
 #include "fxjs/xfa/cjx_logpseudomodel.h"
 
-#include <vector>
-
 #include "core/fxcrt/span.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "xfa/fxfa/parser/cscript_logpseudomodel.h"

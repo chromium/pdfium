@@ -6,8 +6,6 @@
 
 #include "fxjs/cjs_console.h"
 
-#include <vector>
-
 #include "core/fxcrt/span.h"
 #include "fxjs/cjs_event_context.h"
 #include "fxjs/cjs_object.h"

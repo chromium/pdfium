@@ -7,8 +7,6 @@
 #ifndef FXJS_CJS_COLOR_H_
 #define FXJS_CJS_COLOR_H_
 
-#include <vector>
-
 #include "core/fxcrt/span.h"
 #include "core/fxge/cfx_color.h"
 #include "fxjs/cjs_object.h"

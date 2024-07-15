@@ -6,8 +6,6 @@
 
 #include "fxjs/xfa/cjx_subform.h"
 
-#include <vector>
-
 #include "core/fxcrt/span.h"
 #include "fxjs/cfx_v8.h"
 #include "fxjs/fxv8.h"

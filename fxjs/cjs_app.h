@@ -9,7 +9,6 @@
 
 #include <memory>
 #include <set>
-#include <vector>
 
 #include "core/fxcrt/span.h"
 #include "fxjs/cjs_object.h"

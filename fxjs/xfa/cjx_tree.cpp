@@ -6,8 +6,6 @@
 
 #include "fxjs/xfa/cjx_tree.h"
 
-#include <vector>
-
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "fxjs/fxv8.h"

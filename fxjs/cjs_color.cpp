@@ -7,7 +7,6 @@
 #include "fxjs/cjs_color.h"
 
 #include <algorithm>
-#include <vector>
 
 #include "core/fxcrt/span.h"
 #include "core/fxge/cfx_color.h"

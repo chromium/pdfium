@@ -7,7 +7,6 @@
 #include "fxjs/xfa/cjx_eventpseudomodel.h"
 
 #include <algorithm>
-#include <vector>
 
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/safe_conversions.h"

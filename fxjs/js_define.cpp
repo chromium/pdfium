@@ -11,7 +11,6 @@
 
 #include <algorithm>
 #include <limits>
-#include <vector>
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_extension.h"

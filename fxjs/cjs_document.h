@@ -9,7 +9,6 @@
 
 #include <list>
 #include <memory>
-#include <vector>
 
 #include "core/fxcrt/observed_ptr.h"
 #include "core/fxcrt/span.h"

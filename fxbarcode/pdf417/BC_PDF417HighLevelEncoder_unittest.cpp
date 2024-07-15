@@ -4,8 +4,6 @@
 
 #include "fxbarcode/pdf417/BC_PDF417HighLevelEncoder.h"
 
-#include <vector>
-
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(PDF417HighLevelEncoderTest, EncodeHighLevel) {

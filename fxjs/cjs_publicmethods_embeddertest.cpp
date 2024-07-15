@@ -4,8 +4,6 @@
 
 #include <math.h>
 
-#include <vector>
-
 #include "core/fxcrt/fx_string.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 #include "fxjs/cjs_event_context.h"

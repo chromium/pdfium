@@ -6,8 +6,6 @@
 
 #include "fxjs/xfa/cjx_source.h"
 
-#include <vector>
-
 #include "core/fxcrt/span.h"
 #include "fxjs/js_resources.h"
 #include "fxjs/xfa/cfxjse_value.h"

@@ -7,8 +7,6 @@
 #ifndef FXJS_CJS_UTIL_H_
 #define FXJS_CJS_UTIL_H_
 
-#include <vector>
-
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/widestring.h"
 #include "fxjs/cjs_object.h"

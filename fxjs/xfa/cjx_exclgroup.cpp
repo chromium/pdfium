@@ -6,8 +6,6 @@
 
 #include "fxjs/xfa/cjx_exclgroup.h"
 
-#include <vector>
-
 #include "core/fxcrt/span.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/js_resources.h"
