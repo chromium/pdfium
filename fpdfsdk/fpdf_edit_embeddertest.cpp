@@ -308,7 +308,7 @@ TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFont) {
   ScopedFPDFWideString text = GetFPDFWideString(L"这是第一句。 这是第二行。");
   EXPECT_TRUE(FPDFText_SetText(text_object, text.get()));
 
-  const FS_MATRIX matrix(1, 0, 0, 1, 50, 200);
+  const FS_MATRIX matrix{1, 0, 0, 1, 50, 200};
   ASSERT_TRUE(FPDFPageObj_TransformF(text_object, &matrix));
   FPDFPage_InsertObject(page.get(), text_object);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
@@ -356,7 +356,7 @@ TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFontWithCharcodes) {
   EXPECT_TRUE(
       FPDFText_SetCharcodes(text_object, charcodes.data(), charcodes.size()));
 
-  const FS_MATRIX matrix(1, 0, 0, 1, 50, 200);
+  const FS_MATRIX matrix{1, 0, 0, 1, 50, 200};
   ASSERT_TRUE(FPDFPageObj_TransformF(text_object, &matrix));
   FPDFPage_InsertObject(page.get(), text_object);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
@@ -5331,7 +5331,7 @@ TEST_F(FPDFEditEmbedderTest, PageObjTransformFWithBadParameters) {
   ScopedFPDFPageObject image(FPDFPageObj_NewImageObj(doc.get()));
   ASSERT_TRUE(image);
 
-  const FS_MATRIX matrix(1, 2, 3, 4, 5, 6);
+  const FS_MATRIX matrix{1, 2, 3, 4, 5, 6};
   EXPECT_FALSE(FPDFPageObj_TransformF(nullptr, nullptr));
   EXPECT_FALSE(FPDFPageObj_TransformF(image.get(), nullptr));
   EXPECT_FALSE(FPDFPageObj_TransformF(nullptr, &matrix));

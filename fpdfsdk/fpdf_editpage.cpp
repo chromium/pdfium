@@ -640,8 +640,9 @@ FPDFPageObj_Transform(FPDF_PAGEOBJECT page_object,
                       double d,
                       double e,
                       double f) {
-  const FS_MATRIX matrix((float)a, (float)b, (float)c, (float)d, (float)e,
-                         (float)f);
+  const FS_MATRIX matrix{static_cast<float>(a), static_cast<float>(b),
+                         static_cast<float>(c), static_cast<float>(d),
+                         static_cast<float>(e), static_cast<float>(f)};
   FPDFPageObj_TransformF(page_object, &matrix);
 }
 
