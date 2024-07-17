@@ -25,6 +25,8 @@
 class CFX_Font;
 class CFX_Matrix;
 class SkCanvas;
+class SkPaint;
+class SkPath;
 class SkSurface;
 class TextCharPos;
 struct CFX_TextRenderOptions;
@@ -214,6 +216,9 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                        const CFX_Matrix& matrix,
                        const FXDIB_ResampleOptions& options,
                        BlendMode blend_type);
+
+  // A wrapper around SkCanvas::drawPath() that optionally can show debug data.
+  void DrawPathImpl(const SkPath& path, const SkPaint& paint);
 
   RetainPtr<CFX_DIBitmap> m_pBitmap;
   RetainPtr<CFX_DIBitmap> m_pBackdropBitmap;

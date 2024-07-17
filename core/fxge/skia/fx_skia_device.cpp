@@ -1127,8 +1127,7 @@ bool CFX_SkiaDeviceDriver::DrawPath(
     }
     skPaint.setStyle(SkPaint::kFill_Style);
     skPaint.setColor(fill_color);
-    DebugShowSkiaDrawPath(this, m_pCanvas, skPaint, *fillPath);
-    m_pCanvas->drawPath(*fillPath, skPaint);
+    DrawPathImpl(*fillPath, skPaint);
   }
   if (stroke_alpha && do_stroke) {
     skPaint.setStyle(SkPaint::kStroke_Style);
@@ -1141,8 +1140,7 @@ bool CFX_SkiaDeviceDriver::DrawPath(
       // Do nothing. A closed 0-length closed path can be rendered only if
       // its line cap type is round.
     } else {
-      DebugShowSkiaDrawPath(this, m_pCanvas, skPaint, skia_path);
-      m_pCanvas->drawPath(skia_path, skPaint);
+      DrawPathImpl(skia_path, skPaint);
     }
   }
   return true;
@@ -1355,7 +1353,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
   if (!skClip.isEmpty())
     m_pCanvas->clipPath(skClip, SkClipOp::kIntersect, true);
   m_pCanvas->concat(skMatrix);
-  m_pCanvas->drawPath(skPath, paint);
+  DrawPathImpl(skPath, paint);
   return true;
 }
 
@@ -1632,6 +1630,12 @@ bool CFX_SkiaDeviceDriver::StartDIBitsSkia(RetainPtr<const CFX_DIBBase> bitmap,
 
   DebugValidate(m_pBitmap);
   return true;
+}
+
+void CFX_SkiaDeviceDriver::DrawPathImpl(const SkPath& path,
+                                        const SkPaint& paint) {
+  DebugShowSkiaDrawPath(this, m_pCanvas, paint, path);
+  m_pCanvas->drawPath(path, paint);
 }
 
 CFX_SkiaDeviceDriver::CharDetail::CharDetail() = default;
