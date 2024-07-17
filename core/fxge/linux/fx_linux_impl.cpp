@@ -33,13 +33,13 @@ enum JpFontFamilyRowIndex : uint8_t {
   kJpFontMincho,
 };
 
-constexpr size_t kJpFontFamilyColumnCount = 4;
+constexpr size_t kJpFontFamilyColumnCount = 5;
 using JpFontFamilyRow = std::array<const char*, kJpFontFamilyColumnCount>;
 constexpr auto kJpFontTable = fxcrt::ToArray<const JpFontFamilyRow>({
-    {{"TakaoPGothic", "VL PGothic", "IPAPGothic", "VL Gothic"}},
-    {{"TakaoGothic", "VL Gothic", "IPAGothic", "Kochi Gothic"}},
-    {{"TakaoPMincho", "IPAPMincho", "VL Gothic", "Kochi Mincho"}},
-    {{"TakaoMincho", "IPAMincho", "VL Gothic", "Kochi Mincho"}},
+    {{"MS PGothic", "TakaoPGothic", "VL PGothic", "IPAPGothic", "VL Gothic"}},
+    {{"MS Gothic", "TakaoGothic", "VL Gothic", "IPAGothic", "Kochi Gothic"}},
+    {{"MS PMincho", "TakaoPMincho", "IPAPMincho", "VL Gothic", "Kochi Mincho"}},
+    {{"MS Mincho", "TakaoMincho", "IPAMincho", "VL Gothic", "Kochi Mincho"}},
 });
 
 const char* const kGbFontList[] = {
