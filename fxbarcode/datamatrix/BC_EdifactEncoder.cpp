@@ -48,7 +48,8 @@ WideString EncodeToEdifactCodewords(const WideString& sb) {
   cw[1] = static_cast<wchar_t>((v >> 8) & 255);
   cw[2] = static_cast<wchar_t>(v & 255);
   // TODO(tsepez): stop putting binary data in strings.
-  return UNSAFE_TODO(WideString(cw, std::min(len, kBuflen)));
+  return WideString(
+      WideStringView(pdfium::make_span(cw).first(std::min(len, kBuflen))));
 }
 
 bool HandleEOD(CBC_EncoderContext* context, const WideString& buffer) {
