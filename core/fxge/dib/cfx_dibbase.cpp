@@ -7,6 +7,7 @@
 #include "core/fxge/dib/cfx_dibbase.h"
 
 #include <algorithm>
+#include <array>
 #include <utility>
 #include <vector>
 
@@ -22,6 +23,7 @@
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
+#include "core/fxcrt/zip.h"
 #include "core/fxge/calculate_pitch.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_bitmapstorer.h"
@@ -63,10 +65,10 @@ CFX_Palette::CFX_Palette(const RetainPtr<const CFX_DIBBase>& pBitmap)
   int bpp = pBitmap->GetBPP() / 8;
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
-  UNSAFE_TODO({
-    for (int row = 0; row < height; ++row) {
-      pdfium::span<const uint8_t> scan_line = pBitmap->GetScanline(row);
-      for (int col = 0; col < width; ++col) {
+  for (int row = 0; row < height; ++row) {
+    pdfium::span<const uint8_t> scan_line = pBitmap->GetScanline(row);
+    for (int col = 0; col < width; ++col) {
+      UNSAFE_TODO({
         const uint8_t* src_port =
             scan_line.subspan(Fx2DSizeOrDie(col, bpp)).data();
         uint32_t b = src_port[0] & 0xf0;
@@ -74,22 +76,24 @@ CFX_Palette::CFX_Palette(const RetainPtr<const CFX_DIBBase>& pBitmap)
         uint32_t r = src_port[2] & 0xf0;
         uint32_t index = (r << 4) + g + (b >> 4);
         ++m_Luts[index].first;
-      }
+      });
     }
-    // Move non-zeros to the front and count them
-    for (uint32_t row = 0; row < m_Luts.size(); ++row) {
+  }
+  // Move non-zeros to the front and count them
+  for (uint32_t row = 0; row < m_Luts.size(); ++row) {
+    UNSAFE_TODO({
       if (m_Luts[row].first != 0) {
         m_Luts[m_lut].first = m_Luts[row].first;
         m_Luts[m_lut].second = row;
         ++m_lut;
       }
-    }
-    pdfium::span<LutsData> lut_span = pdfium::make_span(m_Luts).first(m_lut);
-    std::sort(lut_span.begin(), lut_span.end(),
-              [](const LutsData& arg1, const LutsData& arg2) {
-                return arg1.first < arg2.first;
-              });
-  });
+    });
+  }
+  pdfium::span<LutsData> lut_span = pdfium::make_span(m_Luts).first(m_lut);
+  std::sort(lut_span.begin(), lut_span.end(),
+            [](const LutsData& arg1, const LutsData& arg2) {
+              return arg1.first < arg2.first;
+            });
   ObtainPalette();
 }
 
@@ -213,26 +217,22 @@ void ConvertBuffer_8bppPlt2Gray(pdfium::span<uint8_t> dest_buf,
                                 int dest_pitch,
                                 int width,
                                 int height,
-                                const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
+                                const RetainPtr<const CFX_DIBBase>& src,
                                 int src_left,
                                 int src_top) {
-  pdfium::span<const uint32_t> src_palette = pSrcBitmap->GetPaletteSpan();
-  uint8_t gray[256];
-  UNSAFE_TODO({
-    for (size_t i = 0; i < std::size(gray); ++i) {
-      gray[i] = FXRGB2GRAY(FXARGB_R(src_palette[i]), FXARGB_G(src_palette[i]),
-                           FXARGB_B(src_palette[i]));
+  pdfium::span<const uint32_t> src_palette = src->GetPaletteSpan();
+  CHECK_EQ(256u, src_palette.size());
+  std::array<uint8_t, 256> gray;
+  for (auto [input, output] : fxcrt::Zip(src_palette, gray)) {
+    output = FXRGB2GRAY(FXARGB_R(input), FXARGB_G(input), FXARGB_B(input));
+  }
+  for (int row = 0; row < height; ++row) {
+    auto dest_scan = dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch));
+    auto src_scan = src->GetScanline(src_top + row).subspan(src_left, width);
+    for (auto [input, output] : fxcrt::Zip(src_scan, dest_scan)) {
+      output = gray[input];
     }
-    for (int row = 0; row < height; ++row) {
-      uint8_t* dest_scan =
-          dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
-      const uint8_t* src_scan =
-          pSrcBitmap->GetScanline(src_top + row).subspan(src_left).data();
-      for (int col = 0; col < width; ++col) {
-        *dest_scan++ = gray[*src_scan++];
-      }
-    }
-  });
+  }
 }
 
 void ConvertBuffer_Rgb2Gray(pdfium::span<uint8_t> dest_buf,
@@ -438,6 +438,7 @@ void ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dest_format,
                                int src_left,
                                int src_top) {
   pdfium::span<const uint32_t> src_palette = pSrcBitmap->GetPaletteSpan();
+  CHECK_EQ(256u, src_palette.size());
   uint8_t dst_palette[768];
   UNSAFE_TODO({
     for (int i = 0; i < 256; ++i) {
@@ -445,19 +446,21 @@ void ConvertBuffer_8bppPlt2Rgb(FXDIB_Format dest_format,
       dst_palette[3 * i + 1] = FXARGB_G(src_palette[i]);
       dst_palette[3 * i + 2] = FXARGB_R(src_palette[i]);
     }
-    int comps = GetCompsFromFormat(dest_format);
-    for (int row = 0; row < height; ++row) {
-      uint8_t* dest_scan =
-          dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
-      const uint8_t* src_scan =
-          pSrcBitmap->GetScanline(src_top + row).subspan(src_left).data();
-      for (int col = 0; col < width; ++col) {
+  });
+  const int comps = GetCompsFromFormat(dest_format);
+  for (int row = 0; row < height; ++row) {
+    uint8_t* dest_scan =
+        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
+    const uint8_t* src_scan =
+        pSrcBitmap->GetScanline(src_top + row).subspan(src_left).data();
+    for (int col = 0; col < width; ++col) {
+      UNSAFE_TODO({
         uint8_t* src_pixel = dst_palette + 3 * (*src_scan++);
         FXSYS_memcpy(dest_scan, src_pixel, 3);
         dest_scan += comps;
-      }
+      });
     }
-  });
+  }
 }
 
 void ConvertBuffer_24bppRgb2Rgb24(

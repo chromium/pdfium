@@ -443,9 +443,9 @@ void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
     }
     return;
   }
-  UNSAFE_TODO({
-    if (forecolor == 0 && backcolor == 0xffffff) {
-      for (int row = 0; row < GetHeight(); ++row) {
+  if (forecolor == 0 && backcolor == 0xffffff) {
+    for (int row = 0; row < GetHeight(); ++row) {
+      UNSAFE_TODO({
         uint8_t* scanline = m_pBuffer.Get() + row * GetPitch();
         int gap = GetBPP() / 8 - 2;
         for (int col = 0; col < GetWidth(); ++col) {
@@ -455,10 +455,12 @@ void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
           *scanline = gray;
           scanline += gap;
         }
-      }
-      return;
+      });
     }
-    for (int row = 0; row < GetHeight(); ++row) {
+    return;
+  }
+  for (int row = 0; row < GetHeight(); ++row) {
+    UNSAFE_TODO({
       uint8_t* scanline = m_pBuffer.Get() + row * GetPitch();
       int gap = GetBPP() / 8 - 2;
       for (int col = 0; col < GetWidth(); ++col) {
@@ -468,8 +470,8 @@ void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
         *scanline = br + (fr - br) * gray / 255;
         scanline += gap;
       }
-    }
-  });
+    });
+  }
 }
 
 bool CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
@@ -690,8 +692,8 @@ bool CFX_DIBitmap::CompositeRect(int left,
   width = rect.Width();
   uint32_t dst_color = color;
   uint8_t* color_p = reinterpret_cast<uint8_t*>(&dst_color);
-  UNSAFE_TODO({
-    if (GetBPP() == 8) {
+  if (GetBPP() == 8) {
+    UNSAFE_TODO({
       uint8_t gray =
           IsMaskFormat()
               ? 255
@@ -707,9 +709,11 @@ bool CFX_DIBitmap::CompositeRect(int left,
           }
         }
       }
-      return true;
-    }
-    if (GetBPP() == 1) {
+    });
+    return true;
+  }
+  if (GetBPP() == 1) {
+    UNSAFE_TODO({
       int left_shift = rect.left % 8;
       int right_shift = rect.right % 8;
       int new_width = rect.right / 8 - rect.left / 8;
@@ -747,19 +751,21 @@ bool CFX_DIBitmap::CompositeRect(int left,
           }
         }
       }
-      return true;
-    }
+    });
+    return true;
+  }
 
-    CHECK_GE(GetBPP(), 24);
-    color_p[3] = static_cast<uint8_t>(src_alpha);
-    int Bpp = GetBPP() / 8;
-    const bool bAlpha = IsAlphaFormat();
-    if (bAlpha) {
-      // Other formats with alpha have already been handled above.
-      DCHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
-    }
-    if (src_alpha == 255) {
-      for (int row = rect.top; row < rect.bottom; row++) {
+  CHECK_GE(GetBPP(), 24);
+  UNSAFE_TODO({ color_p[3] = static_cast<uint8_t>(src_alpha); });
+  int Bpp = GetBPP() / 8;
+  const bool bAlpha = IsAlphaFormat();
+  if (bAlpha) {
+    // Other formats with alpha have already been handled above.
+    DCHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
+  }
+  if (src_alpha == 255) {
+    for (int row = rect.top; row < rect.bottom; row++) {
+      UNSAFE_TODO({
         uint8_t* dest_scan =
             m_pBuffer.Get() + row * GetPitch() + rect.left * Bpp;
         if (Bpp == 4) {
@@ -774,10 +780,12 @@ bool CFX_DIBitmap::CompositeRect(int left,
             *dest_scan++ = color_p[2];
           }
         }
-      }
-      return true;
+      });
     }
-    for (int row = rect.top; row < rect.bottom; row++) {
+    return true;
+  }
+  for (int row = rect.top; row < rect.bottom; row++) {
+    UNSAFE_TODO({
       uint8_t* dest_scan = m_pBuffer.Get() + row * GetPitch() + rect.left * Bpp;
       if (bAlpha) {
         for (int col = 0; col < width; col++) {
@@ -812,8 +820,8 @@ bool CFX_DIBitmap::CompositeRect(int left,
           }
         }
       }
-    }
-  });
+    });
+  }
   return true;
 }
 
