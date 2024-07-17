@@ -930,17 +930,26 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
 
   pFlipped->SetPalette(GetPaletteSpan());
   const int Bpp = GetBPP() / 8;
-  UNSAFE_TODO({
+  if (!bXFlip) {
     for (int row = 0; row < GetHeight(); ++row) {
-      const uint8_t* src_scan = GetScanline(row).data();
-      uint8_t* dest_scan =
-          pFlipped->GetWritableScanline(bYFlip ? GetHeight() - row - 1 : row)
-              .data();
-      if (!bXFlip) {
+      UNSAFE_TODO({
+        const uint8_t* src_scan = GetScanline(row).data();
+        uint8_t* dest_scan =
+            pFlipped->GetWritableScanline(bYFlip ? GetHeight() - row - 1 : row)
+                .data();
         FXSYS_memcpy(dest_scan, src_scan, GetPitch());
-        continue;
-      }
-      if (GetBPP() == 1) {
+      });
+    }
+    return pFlipped;
+  }
+
+  if (GetBPP() == 1) {
+    for (int row = 0; row < GetHeight(); ++row) {
+      UNSAFE_TODO({
+        const uint8_t* src_scan = GetScanline(row).data();
+        uint8_t* dest_scan =
+            pFlipped->GetWritableScanline(bYFlip ? GetHeight() - row - 1 : row)
+                .data();
         FXSYS_memset(dest_scan, 0, GetPitch());
         for (int col = 0; col < GetWidth(); ++col) {
           if (src_scan[col / 8] & (1 << (7 - col % 8))) {
@@ -948,34 +957,64 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
             dest_scan[dest_col / 8] |= (1 << (7 - dest_col % 8));
           }
         }
-        continue;
-      }
+      });
+    }
+    return pFlipped;
+  }
 
-      dest_scan += (GetWidth() - 1) * Bpp;
-      if (Bpp == 1) {
+  if (Bpp == 1) {
+    for (int row = 0; row < GetHeight(); ++row) {
+      UNSAFE_TODO({
+        const uint8_t* src_scan = GetScanline(row).data();
+        uint8_t* dest_scan =
+            pFlipped->GetWritableScanline(bYFlip ? GetHeight() - row - 1 : row)
+                .data();
+        dest_scan += (GetWidth() - 1) * Bpp;
         for (int col = 0; col < GetWidth(); ++col) {
           *dest_scan = *src_scan;
           --dest_scan;
           ++src_scan;
         }
-      } else if (Bpp == 3) {
+      });
+    }
+    return pFlipped;
+  }
+
+  if (Bpp == 3) {
+    for (int row = 0; row < GetHeight(); ++row) {
+      UNSAFE_TODO({
+        const uint8_t* src_scan = GetScanline(row).data();
+        uint8_t* dest_scan =
+            pFlipped->GetWritableScanline(bYFlip ? GetHeight() - row - 1 : row)
+                .data();
+        dest_scan += (GetWidth() - 1) * Bpp;
         for (int col = 0; col < GetWidth(); ++col) {
           FXSYS_memcpy(dest_scan, src_scan, 3);
           dest_scan -= 3;
           src_scan += 3;
         }
-      } else {
-        DCHECK_EQ(Bpp, 4);
-        for (int col = 0; col < GetWidth(); ++col) {
-          const auto* src_scan32 = reinterpret_cast<const uint32_t*>(src_scan);
-          uint32_t* dest_scan32 = reinterpret_cast<uint32_t*>(dest_scan);
-          *dest_scan32 = *src_scan32;
-          dest_scan -= 4;
-          src_scan += 4;
-        }
-      }
+      });
     }
-  });
+    return pFlipped;
+  }
+
+  CHECK_EQ(Bpp, 4);
+  for (int row = 0; row < GetHeight(); ++row) {
+    UNSAFE_TODO({
+      const uint8_t* src_scan = GetScanline(row).data();
+      uint8_t* dest_scan =
+          pFlipped->GetWritableScanline(bYFlip ? GetHeight() - row - 1 : row)
+              .data();
+      dest_scan += (GetWidth() - 1) * Bpp;
+      for (int col = 0; col < GetWidth(); ++col) {
+        const auto* src_scan32 = reinterpret_cast<const uint32_t*>(src_scan);
+        uint32_t* dest_scan32 = reinterpret_cast<uint32_t*>(dest_scan);
+        *dest_scan32 = *src_scan32;
+        dest_scan -= 4;
+        src_scan += 4;
+      }
+    });
+  }
   return pFlipped;
 }
 
@@ -1023,14 +1062,14 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
   const int row_end = bXFlip ? GetHeight() - dest_clip.left : dest_clip.right;
   const int col_start = bYFlip ? GetWidth() - dest_clip.bottom : dest_clip.top;
   const int col_end = bYFlip ? GetWidth() - dest_clip.top : dest_clip.bottom;
-  UNSAFE_TODO({
-    if (GetBPP() == 1) {
-      fxcrt::Fill(dest_span, 0xff);
-      if (bYFlip) {
-        dest_span = dest_span.subspan(dest_last_row_offset);
-      }
-      const int dest_step = bYFlip ? -dest_pitch : dest_pitch;
-      for (int row = row_start; row < row_end; ++row) {
+  if (GetBPP() == 1) {
+    fxcrt::Fill(dest_span, 0xff);
+    if (bYFlip) {
+      dest_span = dest_span.subspan(dest_last_row_offset);
+    }
+    const int dest_step = bYFlip ? -dest_pitch : dest_pitch;
+    for (int row = row_start; row < row_end; ++row) {
+      UNSAFE_TODO({
         const uint8_t* src_scan = GetScanline(row).data();
         int dest_col =
             (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
@@ -1042,50 +1081,76 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
           }
           dest_scan += dest_step;
         }
-      }
-    } else {
-      int nBytes = GetBPP() / 8;
-      int dest_step = bYFlip ? -dest_pitch : dest_pitch;
-      if (nBytes == 3) {
-        dest_step -= 2;
-      }
-      if (bYFlip) {
-        dest_span = dest_span.subspan(dest_last_row_offset);
-      }
-      for (int row = row_start; row < row_end; ++row) {
+      });
+    }
+    return pTransBitmap;
+  }
+
+  const int nBytes = GetBPP() / 8;
+  int dest_step = bYFlip ? -dest_pitch : dest_pitch;
+  if (nBytes == 3) {
+    dest_step -= 2;
+  }
+  if (bYFlip) {
+    dest_span = dest_span.subspan(dest_last_row_offset);
+  }
+
+  if (nBytes == 1) {
+    for (int row = row_start; row < row_end; ++row) {
+      UNSAFE_TODO({
         int dest_col =
             (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
             dest_clip.left;
         size_t dest_offset = Fx2DSizeOrDie(dest_col, nBytes);
         uint8_t* dest_scan = dest_span.subspan(dest_offset).data();
-        if (nBytes == 4) {
-          const uint32_t* src_scan =
-              GetScanlineAs<const uint32_t>(row).subspan(col_start).data();
-          for (int col = col_start; col < col_end; ++col) {
-            uint32_t* dest_scan32 = reinterpret_cast<uint32_t*>(dest_scan);
-            *dest_scan32 = *src_scan++;
-            dest_scan += dest_step;
-          }
-        } else {
-          const uint8_t* src_scan =
-              GetScanline(row).subspan(col_start * nBytes).data();
-          if (nBytes == 1) {
-            for (int col = col_start; col < col_end; ++col) {
-              *dest_scan = *src_scan++;
-              dest_scan += dest_step;
-            }
-          } else {
-            for (int col = col_start; col < col_end; ++col) {
-              FXSYS_memcpy(dest_scan, src_scan, 3);
-              dest_scan += 2 + dest_step;
-              src_scan += 3;
-            }
-          }
+        const uint8_t* src_scan =
+            GetScanline(row).subspan(col_start * nBytes).data();
+        for (int col = col_start; col < col_end; ++col) {
+          *dest_scan = *src_scan++;
+          dest_scan += dest_step;
         }
-      }
+      });
     }
     return pTransBitmap;
-  });
+  }
+
+  if (nBytes == 3) {
+    for (int row = row_start; row < row_end; ++row) {
+      UNSAFE_TODO({
+        int dest_col =
+            (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
+            dest_clip.left;
+        size_t dest_offset = Fx2DSizeOrDie(dest_col, nBytes);
+        uint8_t* dest_scan = dest_span.subspan(dest_offset).data();
+        const uint8_t* src_scan =
+            GetScanline(row).subspan(col_start * nBytes).data();
+        for (int col = col_start; col < col_end; ++col) {
+          FXSYS_memcpy(dest_scan, src_scan, 3);
+          dest_scan += 2 + dest_step;
+          src_scan += 3;
+        }
+      });
+    }
+    return pTransBitmap;
+  }
+
+  CHECK_EQ(nBytes, 4);
+  for (int row = row_start; row < row_end; ++row) {
+    UNSAFE_TODO({
+      int dest_col = (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
+                     dest_clip.left;
+      size_t dest_offset = Fx2DSizeOrDie(dest_col, nBytes);
+      uint8_t* dest_scan = dest_span.subspan(dest_offset).data();
+      const uint32_t* src_scan =
+          GetScanlineAs<const uint32_t>(row).subspan(col_start).data();
+      for (int col = col_start; col < col_end; ++col) {
+        uint32_t* dest_scan32 = reinterpret_cast<uint32_t*>(dest_scan);
+        *dest_scan32 = *src_scan++;
+        dest_scan += dest_step;
+      }
+    });
+  }
+  return pTransBitmap;
 }
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::TransformTo(const CFX_Matrix& mtDest,

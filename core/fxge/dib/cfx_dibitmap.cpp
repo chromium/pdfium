@@ -784,10 +784,11 @@ bool CFX_DIBitmap::CompositeRect(int left,
     }
     return true;
   }
-  for (int row = rect.top; row < rect.bottom; row++) {
-    UNSAFE_TODO({
-      uint8_t* dest_scan = m_pBuffer.Get() + row * GetPitch() + rect.left * Bpp;
-      if (bAlpha) {
+  if (bAlpha) {
+    for (int row = rect.top; row < rect.bottom; row++) {
+      UNSAFE_TODO({
+        uint8_t* dest_scan =
+            m_pBuffer.Get() + row * GetPitch() + rect.left * Bpp;
         for (int col = 0; col < width; col++) {
           uint8_t back_alpha = dest_scan[3];
           if (back_alpha == 0) {
@@ -807,17 +808,22 @@ bool CFX_DIBitmap::CompositeRect(int left,
           dest_scan++;
           *dest_scan++ = dest_alpha;
         }
-      } else {
-        for (int col = 0; col < width; col++) {
-          for (int comps = 0; comps < Bpp; comps++) {
-            if (comps == 3) {
-              *dest_scan++ = 255;
-              continue;
-            }
-            *dest_scan =
-                FXDIB_ALPHA_MERGE(*dest_scan, color_p[comps], src_alpha);
-            dest_scan++;
+      });
+    }
+    return true;
+  }
+
+  for (int row = rect.top; row < rect.bottom; row++) {
+    UNSAFE_TODO({
+      uint8_t* dest_scan = m_pBuffer.Get() + row * GetPitch() + rect.left * Bpp;
+      for (int col = 0; col < width; col++) {
+        for (int comps = 0; comps < Bpp; comps++) {
+          if (comps == 3) {
+            *dest_scan++ = 255;
+            continue;
           }
+          *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, color_p[comps], src_alpha);
+          dest_scan++;
         }
       }
     });
