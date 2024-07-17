@@ -96,16 +96,6 @@ bool AreColorIndicesOutOfBounds(const uint8_t* indices,
   return false;
 }
 
-int CalculateBitsPerPixel(uint32_t bpc, uint32_t comps) {
-  uint32_t bpp = bpc * comps;
-  CHECK(bpp);
-  if (bpp == 1)
-    return 1;
-  if (bpp <= 8)
-    return 8;
-  return 24;
-}
-
 CJPX_Decoder::ColorSpaceOption ColorSpaceOptionFromColorSpace(
     CPDF_ColorSpace* pCS) {
   if (!pCS) {
@@ -268,10 +258,18 @@ bool CPDF_DIB::ContinueInternal() {
   if (m_bImageMask) {
     SetMaskProperties();
   } else {
-    if (!m_bpc || !m_nComponents)
+    const uint32_t bpp = m_bpc * m_nComponents;
+    if (bpp == 0) {
       return false;
+    }
 
-    SetFormat(MakeRGBFormat(CalculateBitsPerPixel(m_bpc, m_nComponents)));
+    if (bpp == 1) {
+      SetFormat(FXDIB_Format::k1bppRgb);
+    } else if (bpp <= 8) {
+      SetFormat(FXDIB_Format::k8bppRgb);
+    } else {
+      SetFormat(FXDIB_Format::kRgb);
+    }
   }
 
   std::optional<uint32_t> pitch = fxge::CalculatePitch32(GetBPP(), GetWidth());

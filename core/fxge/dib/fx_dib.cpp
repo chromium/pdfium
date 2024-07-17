@@ -39,21 +39,6 @@ static_assert(std::is_aggregate_v<FX_RGBA_STRUCT<float>>);
 static_assert(std::is_aggregate_v<FX_BGRA_STRUCT<float>>);
 static_assert(std::is_aggregate_v<FX_CMYK_STRUCT<float>>);
 
-FXDIB_Format MakeRGBFormat(int bpp) {
-  switch (bpp) {
-    case 1:
-      return FXDIB_Format::k1bppRgb;
-    case 8:
-      return FXDIB_Format::k8bppRgb;
-    case 24:
-      return FXDIB_Format::kRgb;
-    case 32:
-      return FXDIB_Format::kRgb32;
-    default:
-      return FXDIB_Format::kInvalid;
-  }
-}
-
 FXDIB_ResampleOptions::FXDIB_ResampleOptions() = default;
 
 bool FXDIB_ResampleOptions::HasAnyOptions() const {

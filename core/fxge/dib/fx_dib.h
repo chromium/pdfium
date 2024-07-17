@@ -159,8 +159,6 @@ inline bool GetIsMaskFromFormat(FXDIB_Format format) {
   return !!(static_cast<uint16_t>(format) & 0x100);
 }
 
-FXDIB_Format MakeRGBFormat(int bpp);
-
 FX_BGRA_STRUCT<uint8_t> ArgbToBGRAStruct(FX_ARGB argb);
 
 // Ignores alpha.
