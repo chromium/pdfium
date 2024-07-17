@@ -25,19 +25,19 @@ class CPDF_TransferFuncDIB final : public CFX_DIBBase {
   pdfium::span<const uint8_t> GetScanline(int line) const override;
 
  private:
-  CPDF_TransferFuncDIB(RetainPtr<CFX_DIBBase> pSrc,
-                       RetainPtr<CPDF_TransferFunc> pTransferFunc);
+  CPDF_TransferFuncDIB(RetainPtr<const CFX_DIBBase> src,
+                       RetainPtr<CPDF_TransferFunc> transfer_func);
   ~CPDF_TransferFuncDIB() override;
 
   void TranslateScanline(pdfium::span<const uint8_t> src_span) const;
   FXDIB_Format GetDestFormat() const;
 
-  RetainPtr<CFX_DIBBase> const m_pSrc;
-  RetainPtr<CPDF_TransferFunc> const m_pTransferFunc;
-  const pdfium::raw_span<const uint8_t> m_RampR;
-  const pdfium::raw_span<const uint8_t> m_RampG;
-  const pdfium::raw_span<const uint8_t> m_RampB;
-  mutable DataVector<uint8_t> m_Scanline;
+  RetainPtr<const CFX_DIBBase> const src_;
+  RetainPtr<CPDF_TransferFunc> const transfer_func_;
+  const pdfium::raw_span<const uint8_t> r_samples_;
+  const pdfium::raw_span<const uint8_t> g_samples_;
+  const pdfium::raw_span<const uint8_t> b_samples_;
+  mutable DataVector<uint8_t> scanline_;
 };
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_TRANSFERFUNCDIB_H_
