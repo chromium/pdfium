@@ -439,7 +439,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFText_GetSchResultIndex);
     CHK(FPDFText_GetStrokeColor);
     CHK(FPDFText_GetText);
-    CHK(FPDFText_GetTextRenderMode);
+    CHK(FPDFText_GetTextObject);
     CHK(FPDFText_GetUnicode);
     CHK(FPDFText_HasUnicodeMapError);
     CHK(FPDFText_IsGenerated);

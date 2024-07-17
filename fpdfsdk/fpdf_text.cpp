@@ -74,6 +74,17 @@ FPDFText_GetUnicode(FPDF_TEXTPAGE text_page, int index) {
   return charinfo.m_Unicode;
 }
 
+FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
+FPDFText_GetTextObject(FPDF_TEXTPAGE text_page, int index) {
+  CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
+  if (!textpage) {
+    return nullptr;
+  }
+
+  return FPDFPageObjectFromCPDFPageObject(
+      textpage->GetCharInfo(index).m_pTextObj);
+}
+
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_IsGenerated(FPDF_TEXTPAGE text_page,
                                                    int index) {
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
@@ -151,20 +162,6 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetFontWeight(FPDF_TEXTPAGE text_page,
     return -1;
 
   return charinfo.m_pTextObj->GetFont()->GetFontWeight();
-}
-
-FPDF_EXPORT FPDF_TEXT_RENDERMODE FPDF_CALLCONV
-FPDFText_GetTextRenderMode(FPDF_TEXTPAGE text_page, int index) {
-  CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
-  if (!textpage)
-    return FPDF_TEXTRENDERMODE_UNKNOWN;
-
-  const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
-  if (!charinfo.m_pTextObj)
-    return FPDF_TEXTRENDERMODE_UNKNOWN;
-
-  return static_cast<FPDF_TEXT_RENDERMODE>(
-      charinfo.m_pTextObj->GetTextRenderMode());
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

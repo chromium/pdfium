@@ -1618,24 +1618,29 @@ TEST_F(FPDFTextEmbedderTest, GetTextRenderMode) {
   FPDF_PAGE page = LoadPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
-  ASSERT_TRUE(text_page);
+  {
+    ScopedFPDFTextPage text_page(FPDFText_LoadPage(page));
+    ASSERT_TRUE(text_page);
 
-  ASSERT_EQ(12, FPDFText_CountChars(text_page));
+    ASSERT_EQ(12, FPDFText_CountChars(text_page.get()));
 
-  ASSERT_EQ(FPDF_TEXTRENDERMODE_UNKNOWN,
-            FPDFText_GetTextRenderMode(nullptr, 0));
-  ASSERT_EQ(FPDF_TEXTRENDERMODE_UNKNOWN,
-            FPDFText_GetTextRenderMode(text_page, -1));
-  ASSERT_EQ(FPDF_TEXTRENDERMODE_UNKNOWN,
-            FPDFText_GetTextRenderMode(text_page, 314));
+    ASSERT_FALSE(FPDFText_GetTextObject(nullptr, 0));
+    ASSERT_FALSE(FPDFText_GetTextObject(text_page.get(), -1));
+    ASSERT_FALSE(FPDFText_GetTextObject(text_page.get(), 314));
 
-  ASSERT_EQ(FPDF_TEXTRENDERMODE_FILL, FPDFText_GetTextRenderMode(text_page, 0));
+    FPDF_PAGEOBJECT text_object = FPDFText_GetTextObject(text_page.get(), 0);
+    ASSERT_TRUE(text_object);
+    ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object));
+    EXPECT_EQ(FPDF_TEXTRENDERMODE_FILL,
+              FPDFTextObj_GetTextRenderMode(text_object));
 
-  ASSERT_EQ(FPDF_TEXTRENDERMODE_STROKE,
-            FPDFText_GetTextRenderMode(text_page, 7));
+    text_object = FPDFText_GetTextObject(text_page.get(), 7);
+    ASSERT_TRUE(text_object);
+    ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_object));
+    EXPECT_EQ(FPDF_TEXTRENDERMODE_STROKE,
+              FPDFTextObj_GetTextRenderMode(text_object));
+  }
 
-  FPDFText_ClosePage(text_page);
   UnloadPage(page);
 }
 

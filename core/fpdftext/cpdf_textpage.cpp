@@ -473,12 +473,17 @@ WideString CPDF_TextPage::GetTextByObject(
 }
 
 const CPDF_TextPage::CharInfo& CPDF_TextPage::GetCharInfo(size_t index) const {
-  CHECK(index < m_CharList.size());
+  CHECK_LT(index, m_CharList.size());
+  return m_CharList[index];
+}
+
+CPDF_TextPage::CharInfo& CPDF_TextPage::GetCharInfo(size_t index) {
+  CHECK_LT(index, m_CharList.size());
   return m_CharList[index];
 }
 
 float CPDF_TextPage::GetCharFontSize(size_t index) const {
-  CHECK(index < m_CharList.size());
+  CHECK_LT(index, m_CharList.size());
   return GetFontSize(m_CharList[index].m_pTextObj);
 }
 
@@ -872,7 +877,7 @@ CPDF_TextPage::MarkedContentState CPDF_TextPage::PreMarkedContent(
 }
 
 void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
-  const CPDF_TextObject* pTextObj = obj.m_pTextObj;
+  CPDF_TextObject* pTextObj = obj.m_pTextObj;
   const CPDF_ContentMarks* pMarks = pTextObj->GetContentMarks();
   const size_t nContentMarks = pMarks->CountItems();
   WideString actText;
@@ -950,7 +955,7 @@ void CPDF_TextPage::SwapTempTextBuf(size_t iCharListStartAppend,
 }
 
 void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
-  const CPDF_TextObject* pTextObj = obj.m_pTextObj;
+  CPDF_TextObject* pTextObj = obj.m_pTextObj;
   if (fabs(pTextObj->GetRect().Width()) < kSizeEpsilon)
     return;
 

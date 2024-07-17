@@ -55,7 +55,7 @@ class CPDF_TextPage {
     CharType m_CharType = CharType::kNormal;
     CFX_PointF m_Origin;
     CFX_FloatRect m_CharBox;
-    UnownedPtr<const CPDF_TextObject> m_pTextObj;
+    UnownedPtr<CPDF_TextObject> m_pTextObj;
     CFX_Matrix m_Matrix;
   };
 
@@ -69,6 +69,7 @@ class CPDF_TextPage {
 
   // These methods CHECK() to make sure |index| is within bounds.
   const CharInfo& GetCharInfo(size_t index) const;
+  CharInfo& GetCharInfo(size_t index);
   float GetCharFontSize(size_t index) const;
   CFX_FloatRect GetCharLooseBounds(size_t index) const;
 
@@ -107,7 +108,7 @@ class CPDF_TextPage {
     TransformedTextObject(const TransformedTextObject& that);
     ~TransformedTextObject();
 
-    UnownedPtr<const CPDF_TextObject> m_pTextObj;
+    UnownedPtr<CPDF_TextObject> m_pTextObj;
     CFX_Matrix m_formMatrix;
   };
 
