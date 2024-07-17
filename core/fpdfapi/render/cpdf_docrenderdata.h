@@ -39,9 +39,10 @@ class CPDF_DocRenderData : public CPDF_Document::RenderDataIface {
   CPDF_DocRenderData(const CPDF_DocRenderData&) = delete;
   CPDF_DocRenderData& operator=(const CPDF_DocRenderData&) = delete;
 
-  RetainPtr<CPDF_Type3Cache> GetCachedType3(CPDF_Type3Font* pFont);
+  // The argument to these methods must be non-null.
+  RetainPtr<CPDF_Type3Cache> GetCachedType3(CPDF_Type3Font* font);
   RetainPtr<CPDF_TransferFunc> GetTransferFunc(
-      RetainPtr<const CPDF_Object> pObj);
+      RetainPtr<const CPDF_Object> obj);
 
 #if BUILDFLAG(IS_WIN)
   CFX_PSFontTracker* GetPSFontTracker();

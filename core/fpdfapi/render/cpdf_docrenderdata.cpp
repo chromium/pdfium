@@ -44,28 +44,28 @@ CPDF_DocRenderData::CPDF_DocRenderData() = default;
 CPDF_DocRenderData::~CPDF_DocRenderData() = default;
 
 RetainPtr<CPDF_Type3Cache> CPDF_DocRenderData::GetCachedType3(
-    CPDF_Type3Font* pFont) {
-  auto it = m_Type3FaceMap.find(pFont);
+    CPDF_Type3Font* font) {
+  CHECK(font);
+  auto it = m_Type3FaceMap.find(font);
   if (it != m_Type3FaceMap.end() && it->second)
     return pdfium::WrapRetain(it->second.Get());
 
-  auto pCache = pdfium::MakeRetain<CPDF_Type3Cache>(pFont);
-  m_Type3FaceMap[pFont].Reset(pCache.Get());
-  return pCache;
+  auto cache = pdfium::MakeRetain<CPDF_Type3Cache>(font);
+  m_Type3FaceMap[font].Reset(cache.Get());
+  return cache;
 }
 
 RetainPtr<CPDF_TransferFunc> CPDF_DocRenderData::GetTransferFunc(
-    RetainPtr<const CPDF_Object> pObj) {
-  if (!pObj)
-    return nullptr;
-
-  auto it = m_TransferFuncMap.find(pObj);
-  if (it != m_TransferFuncMap.end() && it->second)
+    RetainPtr<const CPDF_Object> obj) {
+  CHECK(obj);
+  auto it = m_TransferFuncMap.find(obj);
+  if (it != m_TransferFuncMap.end() && it->second) {
     return pdfium::WrapRetain(it->second.Get());
+  }
 
-  auto pFunc = CreateTransferFunc(pObj);
-  m_TransferFuncMap[pObj].Reset(pFunc.Get());
-  return pFunc;
+  auto func = CreateTransferFunc(obj);
+  m_TransferFuncMap[obj].Reset(func.Get());
+  return func;
 }
 
 #if BUILDFLAG(IS_WIN)
