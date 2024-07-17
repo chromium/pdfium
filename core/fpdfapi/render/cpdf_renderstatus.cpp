@@ -347,6 +347,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
   status.SetTransparency(m_Transparency);
   status.SetDropObjects(m_bDropObjects);
   status.SetFormResource(std::move(pFormResource));
+  status.SetInGroup(m_bInGroup);
   status.Initialize(nullptr, nullptr);
   status.RenderSingleObject(pObj, matrix);
   buffer.OutputToDevice();
@@ -368,6 +369,7 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
   status.SetTransparency(m_Transparency);
   status.SetDropObjects(m_bDropObjects);
   status.SetFormResource(std::move(pResources));
+  status.SetInGroup(m_bInGroup);
   status.Initialize(this, &pFormObj->graphic_states());
   status.m_curBlend = m_curBlend;
   {
@@ -585,6 +587,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   }
   RetainPtr<const CPDF_Dictionary> pFormResource;
   float group_alpha = 1.0f;
+  float initial_alpha = 1.0f;
   CPDF_Transparency transparency = m_Transparency;
   bool bGroupTransparent = false;
   const CPDF_FormObject* pFormObj = pPageObj->AsForm();
@@ -593,13 +596,14 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     transparency = pFormObj->form()->GetTransparency();
     bGroupTransparent = transparency.IsIsolated();
     pFormResource = pFormObj->form()->GetDict()->GetDictFor("Resources");
+    initial_alpha = m_InitialStates.general_state().GetFillAlpha();
   }
   bool bTextClip =
       (pPageObj->clip_path().HasRef() &&
        pPageObj->clip_path().GetTextCount() > 0 && !m_bPrint &&
        !(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP));
   if (!pSMaskDict && group_alpha == 1.0f && blend_type == BlendMode::kNormal &&
-      !bTextClip && !bGroupTransparent) {
+      !bTextClip && !bGroupTransparent && initial_alpha == 1.0f) {
     return false;
   }
   if (m_bPrint) {
@@ -670,6 +674,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   bitmap_render.SetStdCS(true);
   bitmap_render.SetDropObjects(m_bDropObjects);
   bitmap_render.SetFormResource(std::move(pFormResource));
+  bitmap_render.SetInGroup(transparency.IsGroup());
   bitmap_render.Initialize(nullptr, nullptr);
   bitmap_render.ProcessObjectNoClip(pPageObj, new_matrix);
 #if defined(PDF_USE_SKIA)
@@ -694,6 +699,9 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   }
   if (transparency.IsGroup()) {
     bitmap_device.MultiplyAlpha(group_alpha);
+  }
+  if (initial_alpha != 1.0f && !m_bInGroup) {
+    bitmap_device.MultiplyAlpha(initial_alpha);
   }
   transparency = m_Transparency;
   if (pPageObj->IsForm()) {
