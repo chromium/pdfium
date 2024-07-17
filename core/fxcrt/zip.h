@@ -58,8 +58,8 @@ class ZipView {
       return {*first, *second};
     }
 
-    T::iterator first;
-    U::iterator second;
+    typename T::iterator first;
+    typename U::iterator second;
   };
 
   ZipView(T first, U second) : first_(first), second_(second) {
