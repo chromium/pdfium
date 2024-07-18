@@ -37,8 +37,10 @@ class CFX_DIBBase : public Retainable {
 #if BUILDFLAG(IS_APPLE)
   // Matches Apple's kCGBitmapByteOrder32Little in fx_quartz_device.cpp.
   static constexpr FXDIB_Format kPlatformRGBFormat = FXDIB_Format::kRgb32;
+  using kPlatformRGBStruct = FX_BGRA_STRUCT<uint8_t>;
 #else   // BUILDFLAG(IS_APPLE)
   static constexpr FXDIB_Format kPlatformRGBFormat = FXDIB_Format::kRgb;
+  using kPlatformRGBStruct = FX_BGR_STRUCT<uint8_t>;
 #endif  // BUILDFLAG(IS_APPLE)
 
   static constexpr uint32_t kPaletteSize = 256;

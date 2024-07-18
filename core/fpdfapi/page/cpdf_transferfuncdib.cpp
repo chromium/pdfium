@@ -10,16 +10,24 @@
 
 #include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_transferfunc.h"
-#include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fxcrt/check.h"
-#include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/zip.h"
 #include "core/fxge/calculate_pitch.h"
 
-#if BUILDFLAG(IS_APPLE)
-#define INCR_ON_APPLE(x) ++x
-#else
-#define INCR_ON_APPLE(x)
-#endif
+namespace {
+
+CFX_DIBBase::kPlatformRGBStruct MakePlatformRGBStruct(uint8_t red,
+                                                      uint8_t green,
+                                                      uint8_t blue) {
+  // Note that the return value may have an alpha value that will be set to 0.
+  return {
+      .blue = blue,
+      .green = green,
+      .red = red,
+  };
+}
+
+}  // namespace
 
 CPDF_TransferFuncDIB::CPDF_TransferFuncDIB(
     RetainPtr<const CFX_DIBBase> src,
@@ -53,112 +61,93 @@ FXDIB_Format CPDF_TransferFuncDIB::GetDestFormat() const {
 
 void CPDF_TransferFuncDIB::TranslateScanline(
     pdfium::span<const uint8_t> src_span) const {
-  const uint8_t* src_buf = src_span.data();
-  bool skip = false;
+  auto scanline_span = pdfium::make_span(scanline_);
   switch (src_->GetFormat()) {
     case FXDIB_Format::kInvalid: {
       break;
     }
     case FXDIB_Format::k1bppRgb: {
-      int r0 = r_samples_[0];
-      int g0 = g_samples_[0];
-      int b0 = b_samples_[0];
-      int r1 = r_samples_[255];
-      int g1 = g_samples_[255];
-      int b1 = b_samples_[255];
-      int index = 0;
-      UNSAFE_TODO({
-        for (int i = 0; i < GetWidth(); i++) {
-          if (src_buf[i / 8] & (1 << (7 - i % 8))) {
-            scanline_[index++] = b1;
-            scanline_[index++] = g1;
-            scanline_[index++] = r1;
-          } else {
-            scanline_[index++] = b0;
-            scanline_[index++] = g0;
-            scanline_[index++] = r0;
-          }
-          INCR_ON_APPLE(index);
-        }
-      });
+      const auto color0 =
+          MakePlatformRGBStruct(r_samples_[0], g_samples_[0], b_samples_[0]);
+      const auto color1 = MakePlatformRGBStruct(
+          r_samples_[255], g_samples_[255], b_samples_[255]);
+      auto dest = fxcrt::reinterpret_span<kPlatformRGBStruct>(scanline_span);
+      for (int i = 0; i < GetWidth(); i++) {
+        const bool is_on = (src_span[i / 8] & (1 << (7 - i % 8)));
+        dest[i] = is_on ? color1 : color0;
+      }
       break;
     }
     case FXDIB_Format::k1bppMask: {
-      int m0 = r_samples_[0];
-      int m1 = r_samples_[255];
-      int index = 0;
-      UNSAFE_TODO({
-        for (int i = 0; i < GetWidth(); i++) {
-          if (src_buf[i / 8] & (1 << (7 - i % 8))) {
-            scanline_[index++] = m1;
-          } else {
-            scanline_[index++] = m0;
-          }
-        }
-      });
+      const int m0 = r_samples_[0];
+      const int m1 = r_samples_[255];
+      for (int i = 0; i < GetWidth(); i++) {
+        const bool is_on = (src_span[i / 8] & (1 << (7 - i % 8)));
+        scanline_[i] = is_on ? m1 : m0;
+      }
       break;
     }
     case FXDIB_Format::k8bppRgb: {
       pdfium::span<const uint32_t> src_palette = src_->GetPaletteSpan();
-      int index = 0;
-      UNSAFE_TODO({
-        for (int i = 0; i < GetWidth(); i++) {
-          if (src_->HasPalette()) {
-            FX_ARGB src_argb = src_palette[*src_buf];
-            scanline_[index++] = b_samples_[FXARGB_R(src_argb)];
-            scanline_[index++] = g_samples_[FXARGB_G(src_argb)];
-            scanline_[index++] = r_samples_[FXARGB_B(src_argb)];
-          } else {
-            uint32_t src_byte = *src_buf;
-            scanline_[index++] = b_samples_[src_byte];
-            scanline_[index++] = g_samples_[src_byte];
-            scanline_[index++] = r_samples_[src_byte];
-          }
-          src_buf++;
-          INCR_ON_APPLE(index);
+      auto dest = fxcrt::reinterpret_span<kPlatformRGBStruct>(scanline_span);
+      auto zip = fxcrt::Zip(src_span.first(GetWidth()), dest);
+      if (src_->HasPalette()) {
+        for (auto [input, output] : zip) {
+          const FX_ARGB src_argb = src_palette[input];
+          output = MakePlatformRGBStruct(r_samples_[FXARGB_B(src_argb)],
+                                         g_samples_[FXARGB_G(src_argb)],
+                                         b_samples_[FXARGB_R(src_argb)]);
         }
-      });
+      } else {
+        for (auto [input, output] : zip) {
+          output = MakePlatformRGBStruct(r_samples_[input], g_samples_[input],
+                                         b_samples_[input]);
+        }
+      }
       break;
     }
     case FXDIB_Format::k8bppMask: {
-      int index = 0;
-      UNSAFE_TODO({
-        for (int i = 0; i < GetWidth(); i++) {
-          scanline_[index++] = r_samples_[*(src_buf++)];
-        }
-      });
+      for (auto [input, output] :
+           fxcrt::Zip(src_span.first(GetWidth()), scanline_span)) {
+        output = r_samples_[input];
+      }
       break;
     }
     case FXDIB_Format::kRgb: {
-      int index = 0;
-      UNSAFE_TODO({
-        for (int i = 0; i < GetWidth(); i++) {
-          scanline_[index++] = b_samples_[*(src_buf++)];
-          scanline_[index++] = g_samples_[*(src_buf++)];
-          scanline_[index++] = r_samples_[*(src_buf++)];
-          INCR_ON_APPLE(index);
-        }
-      });
+      auto src =
+          fxcrt::reinterpret_span<const FX_BGR_STRUCT<uint8_t>>(src_span);
+      auto dest = fxcrt::reinterpret_span<kPlatformRGBStruct>(scanline_span);
+      for (auto [input, output] : fxcrt::Zip(src.first(GetWidth()), dest)) {
+        output = MakePlatformRGBStruct(r_samples_[input.red],
+                                       g_samples_[input.green],
+                                       b_samples_[input.blue]);
+      }
       break;
     }
-    case FXDIB_Format::kRgb32:
-      skip = true;
-      [[fallthrough]];
+    case FXDIB_Format::kRgb32: {
+      auto src =
+          fxcrt::reinterpret_span<const FX_BGRA_STRUCT<uint8_t>>(src_span);
+      auto dest = fxcrt::reinterpret_span<kPlatformRGBStruct>(scanline_span);
+      for (auto [input, output] : fxcrt::Zip(src.first(GetWidth()), dest)) {
+        output = MakePlatformRGBStruct(r_samples_[input.red],
+                                       g_samples_[input.green],
+                                       b_samples_[input.blue]);
+      }
+      break;
+    }
     case FXDIB_Format::kArgb: {
-      int index = 0;
-      UNSAFE_TODO({
-        for (int i = 0; i < GetWidth(); i++) {
-          scanline_[index++] = b_samples_[*(src_buf++)];
-          scanline_[index++] = g_samples_[*(src_buf++)];
-          scanline_[index++] = r_samples_[*(src_buf++)];
-          if (skip) {
-            INCR_ON_APPLE(index);
-          } else {
-            scanline_[index++] = *src_buf;
-          }
-          src_buf++;
-        }
-      });
+      auto src =
+          fxcrt::reinterpret_span<const FX_BGRA_STRUCT<uint8_t>>(src_span);
+      auto dest =
+          fxcrt::reinterpret_span<FX_BGRA_STRUCT<uint8_t>>(scanline_span);
+      for (auto [input, output] : fxcrt::Zip(src.first(GetWidth()), dest)) {
+        output = {
+            .blue = b_samples_[input.blue],
+            .green = g_samples_[input.green],
+            .red = r_samples_[input.red],
+            .alpha = input.alpha,
+        };
+      }
       break;
     }
   }
