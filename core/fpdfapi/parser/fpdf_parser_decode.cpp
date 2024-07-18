@@ -531,7 +531,7 @@ WideString PDF_DecodeText(pdfium::span<const uint8_t> span) {
     dest_pos = StripLanguageCodes(dest_buf, result.GetLength());
   } else if (span.size() >= 3 && span[0] == 0xef && span[1] == 0xbb &&
              span[2] == 0xbf) {
-    result = WideString::FromUTF8(span.subspan(3));
+    result = WideString::FromUTF8(ByteStringView(span.subspan(3)));
     pdfium::span<wchar_t> dest_buf = result.GetBuffer(result.GetLength());
     dest_pos = StripLanguageCodes(dest_buf, result.GetLength());
   } else {

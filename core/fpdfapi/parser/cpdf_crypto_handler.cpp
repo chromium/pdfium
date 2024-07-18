@@ -226,7 +226,7 @@ ByteString CPDF_CryptoHandler::Decrypt(uint32_t objnum,
   void* context = DecryptStart(objnum, gennum);
   DecryptStream(context, str.unsigned_span(), dest_buf);
   DecryptFinish(context, dest_buf);
-  return ByteString(dest_buf.GetSpan());
+  return ByteString(ByteStringView(dest_buf.GetSpan()));
 }
 
 size_t CPDF_CryptoHandler::DecryptGetSize(size_t src_size) {

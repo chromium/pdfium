@@ -210,6 +210,6 @@ restore
                                     CFX_Matrix(), FXDIB_ResampleOptions()));
   }
 
-  ByteString output(output_stream->GetSpan());
+  auto output = ByteString(ByteStringView(output_stream->GetSpan()));
   EXPECT_EQ(output, kExpectedOutput);
 }

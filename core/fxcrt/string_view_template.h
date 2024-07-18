@@ -63,7 +63,7 @@ class StringViewTemplate {
 
   template <typename E = typename std::enable_if<
                 !std::is_same<UnsignedType, CharType>::value>::type>
-  constexpr StringViewTemplate(
+  explicit constexpr StringViewTemplate(
       const pdfium::span<const UnsignedType>& other) noexcept {
     if (!other.empty()) {
       m_Span = other;

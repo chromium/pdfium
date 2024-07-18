@@ -1182,7 +1182,7 @@ TEST(ByteStringView, Null) {
   EXPECT_TRUE(copied_null_string.IsEmpty());
   EXPECT_EQ(null_string, copied_null_string);
 
-  ByteStringView span_null_string = pdfium::span<const uint8_t>();
+  auto span_null_string = ByteStringView(pdfium::span<const uint8_t>());
   EXPECT_FALSE(span_null_string.unterminated_unsigned_str());
   EXPECT_EQ(0u, span_null_string.GetLength());
   EXPECT_TRUE(span_null_string.IsEmpty());
@@ -1209,7 +1209,7 @@ TEST(ByteStringView, Null) {
   EXPECT_EQ(null_string, assigned_nullptr_string);
 
   ByteStringView assigned_span_null_string("initially not null span");
-  assigned_span_null_string = pdfium::span<const uint8_t>();
+  assigned_span_null_string = ByteStringView(pdfium::span<const uint8_t>());
   EXPECT_FALSE(assigned_span_null_string.unterminated_unsigned_str());
   EXPECT_EQ(0u, assigned_span_null_string.GetLength());
   EXPECT_TRUE(assigned_span_null_string.IsEmpty());

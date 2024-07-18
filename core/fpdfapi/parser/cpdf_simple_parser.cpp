@@ -57,14 +57,14 @@ ByteStringView CPDF_SimpleParser::GetWord() {
           break;
         }
       }
-      return data_.subspan(start_pos, dwSize);
+      return ByteStringView(data_.subspan(start_pos, dwSize));
     }
 
     dwSize = 1;
     if (ch == '<') {
-      if (data_.size() <= cur_pos_)
-        return data_.subspan(start_pos, dwSize);
-
+      if (data_.size() <= cur_pos_) {
+        return ByteStringView(data_.subspan(start_pos, dwSize));
+      }
       ch = data_[cur_pos_++];
       if (ch == '<') {
         dwSize = 2;
@@ -78,9 +78,9 @@ ByteStringView CPDF_SimpleParser::GetWord() {
         dwSize = cur_pos_ - start_pos;
       }
     } else if (ch == '>') {
-      if (data_.size() <= cur_pos_)
-        return data_.subspan(start_pos, dwSize);
-
+      if (data_.size() <= cur_pos_) {
+        return ByteStringView(data_.subspan(start_pos, dwSize));
+      }
       ch = data_[cur_pos_++];
       if (ch == '>')
         dwSize = 2;
@@ -113,7 +113,7 @@ ByteStringView CPDF_SimpleParser::GetWord() {
 
       dwSize = cur_pos_ - start_pos;
     }
-    return data_.subspan(start_pos, dwSize);
+    return ByteStringView(data_.subspan(start_pos, dwSize));
   }
 
   dwSize = 1;
@@ -126,5 +126,5 @@ ByteStringView CPDF_SimpleParser::GetWord() {
     }
     dwSize++;
   }
-  return data_.subspan(start_pos, dwSize);
+  return ByteStringView(data_.subspan(start_pos, dwSize));
 }
