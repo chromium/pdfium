@@ -213,7 +213,7 @@ void SetPageContents(const ByteString& key,
     {
       auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(pContentsStream);
       pAcc->LoadAllDataFiltered();
-      sStream += ByteString(ByteStringView(pAcc->GetSpan()));
+      sStream += ByteStringView(pAcc->GetSpan());
       sStream += "\nQ";
     }
     pContentsStream->SetDataAndRemoveFilter(sStream.unsigned_span());

@@ -648,27 +648,26 @@ RetainPtr<CPDF_Stream> CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
   new_xobject_dict->SetNewFor<CPDF_Number>("FormType", 1);
   new_xobject_dict->SetRectFor("BBox", src_page->GetBBox());
   new_xobject_dict->SetMatrixFor("Matrix", src_page->GetPageMatrix());
-
-  if (src_contents) {
-    ByteString src_content_stream;
-    const CPDF_Array* src_contents_array = src_contents->AsArray();
-    if (src_contents_array) {
-      for (size_t i = 0; i < src_contents_array->size(); ++i) {
-        RetainPtr<const CPDF_Stream> stream =
-            src_contents_array->GetStreamAt(i);
-        auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(stream));
-        acc->LoadAllDataFiltered();
-        src_content_stream += ByteString(ByteStringView(acc->GetSpan()));
-        src_content_stream += "\n";
-      }
-    } else {
-      RetainPtr<const CPDF_Stream> stream(src_contents->AsStream());
-      auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(stream));
-      acc->LoadAllDataFiltered();
-      src_content_stream = ByteString(ByteStringView(acc->GetSpan()));
-    }
-    new_xobject->SetDataAndRemoveFilter(src_content_stream.unsigned_span());
+  if (!src_contents) {
+    return new_xobject;
   }
+  const CPDF_Array* src_contents_array = src_contents->AsArray();
+  if (!src_contents_array) {
+    RetainPtr<const CPDF_Stream> stream(src_contents->AsStream());
+    auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(stream));
+    acc->LoadAllDataFiltered();
+    new_xobject->SetDataAndRemoveFilter(acc->GetSpan());
+    return new_xobject;
+  }
+  ByteString src_content_stream;
+  for (size_t i = 0; i < src_contents_array->size(); ++i) {
+    RetainPtr<const CPDF_Stream> stream = src_contents_array->GetStreamAt(i);
+    auto acc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(stream));
+    acc->LoadAllDataFiltered();
+    src_content_stream += ByteStringView(acc->GetSpan());
+    src_content_stream += "\n";
+  }
+  new_xobject->SetDataAndRemoveFilter(src_content_stream.unsigned_span());
   return new_xobject;
 }
 
