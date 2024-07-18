@@ -46,6 +46,7 @@
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/scoped_set_insertion.h"
 #include "core/fxcrt/stl_util.h"
+#include "core/fxcrt/zip.h"
 #include "core/fxge/dib/fx_dib.h"
 
 namespace {
@@ -705,17 +706,15 @@ void CPDF_CalGray::TranslateImageLine(pdfium::span<uint8_t> dest_span,
                                       bool bTransMask) const {
   CHECK(!bTransMask);  // Only applies to CMYK colorspaces.
 
-  uint8_t* pDestBuf = dest_span.data();
-  const uint8_t* pSrcBuf = src_span.data();
-  UNSAFE_TODO({
-    for (int i = 0; i < pixels; i++) {
-      // Compiler can not conclude that src/dest don't overlap.
-      const uint8_t pix = pSrcBuf[i];
-      *pDestBuf++ = pix;
-      *pDestBuf++ = pix;
-      *pDestBuf++ = pix;
-    }
-  });
+  auto gray_span = src_span.first(pixels);
+  auto rgb_span = fxcrt::reinterpret_span<FX_RGB_STRUCT<uint8_t>>(dest_span);
+  for (auto [gray_ref, rgb_ref] : fxcrt::Zip(gray_span, rgb_span)) {
+    // Compiler can not conclude that src/dest don't overlap.
+    const uint8_t pix = gray_ref;
+    rgb_ref.red = pix;
+    rgb_ref.green = pix;
+    rgb_ref.blue = pix;
+  }
 }
 
 CPDF_CalRGB::CPDF_CalRGB() : CPDF_ColorSpace(Family::kCalRGB) {}
@@ -872,23 +871,21 @@ void CPDF_LabCS::TranslateImageLine(pdfium::span<uint8_t> dest_span,
                                     bool bTransMask) const {
   CHECK(!bTransMask);  // Only applies to CMYK colorspaces.
 
-  uint8_t* pDestBuf = dest_span.data();
-  const uint8_t* pSrcBuf = src_span.data();
-  UNSAFE_TODO({
-    for (int i = 0; i < pixels; i++) {
-      const float lab[3] = {
-          static_cast<float>(pSrcBuf[0] * 100) / 255.0f,
-          static_cast<float>(pSrcBuf[1] - 128),
-          static_cast<float>(pSrcBuf[2] - 128),
-      };
-      auto rgb = GetRGBOrZerosOnError(lab);
-      pDestBuf[0] = static_cast<int32_t>(rgb.blue * 255);
-      pDestBuf[1] = static_cast<int32_t>(rgb.green * 255);
-      pDestBuf[2] = static_cast<int32_t>(rgb.red * 255);
-      pDestBuf += 3;
-      pSrcBuf += 3;
-    }
-  });
+  auto bgr_span = fxcrt::reinterpret_span<FX_BGR_STRUCT<uint8_t>>(dest_span);
+  auto lab_span =
+      fxcrt::reinterpret_span<const FX_LAB_STRUCT<uint8_t>>(src_span).first(
+          pixels);
+  for (auto [lab_ref, bgr_ref] : fxcrt::Zip(lab_span, bgr_span)) {
+    const float lab[3] = {
+        static_cast<float>(lab_ref.lightness_star * 100) / 255.0f,
+        static_cast<float>(lab_ref.a_star - 128),
+        static_cast<float>(lab_ref.b_star - 128),
+    };
+    FX_RGB_STRUCT<float> rgb = GetRGBOrZerosOnError(lab);
+    bgr_ref.blue = static_cast<int32_t>(rgb.blue * 255);
+    bgr_ref.green = static_cast<int32_t>(rgb.green * 255);
+    bgr_ref.red = static_cast<int32_t>(rgb.red * 255);
+  }
 }
 
 CPDF_ICCBasedCS::CPDF_ICCBasedCS() : CPDF_BasedCS(Family::kICCBased) {}

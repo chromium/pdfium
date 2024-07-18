@@ -92,6 +92,13 @@ struct FX_CMYK_STRUCT {
   T key = 0;
 };
 
+template <typename T>
+struct FX_LAB_STRUCT {
+  T lightness_star = 0;
+  T a_star = 0;
+  T b_star = 0;
+};
+
 struct FXDIB_ResampleOptions {
   FXDIB_ResampleOptions();
 
