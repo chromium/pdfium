@@ -4,6 +4,8 @@
 
 #include "core/fxcrt/widestring.h"
 
+#include <limits.h>
+
 #include <algorithm>
 #include <iterator>
 #include <vector>
