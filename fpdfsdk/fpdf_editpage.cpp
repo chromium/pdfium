@@ -307,6 +307,16 @@ FPDFPageObj_Destroy(FPDF_PAGEOBJECT page_object) {
 }
 
 FPDF_EXPORT int FPDF_CALLCONV
+FPDFPageObj_GetMarkedContentID(FPDF_PAGEOBJECT page_object) {
+  CPDF_PageObject* cpage_object = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!cpage_object) {
+    return -1;
+  }
+
+  return cpage_object->GetContentMarks()->GetMarkedContentID();
+}
+
+FPDF_EXPORT int FPDF_CALLCONV
 FPDFPageObj_CountMarks(FPDF_PAGEOBJECT page_object) {
   CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
   if (!pPageObj)

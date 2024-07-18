@@ -1424,6 +1424,24 @@ void CheckMarkCounts(FPDF_PAGE page,
   EXPECT_EQ(expected_bounds_count, bounds_count);
 }
 
+TEST_F(FPDFEditEmbedderTest, GetMarkedContentId) {
+  ASSERT_TRUE(OpenDocument("tagged_marked_content.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  constexpr int kExpectedObjectCount = 4;
+  ASSERT_EQ(kExpectedObjectCount, FPDFPage_CountObjects(page.get()));
+  for (int i = 0; i < kExpectedObjectCount; ++i) {
+    FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), i);
+    ASSERT_TRUE(page_object);
+    ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(page_object));
+    EXPECT_EQ(i, FPDFPageObj_GetMarkedContentID(page_object));
+  }
+
+  // Negative testing.
+  EXPECT_EQ(-1, FPDFPageObj_GetMarkedContentID(nullptr));
+}
+
 TEST_F(FPDFEditEmbedderTest, ReadMarkedObjectsIndirectDict) {
   // Load document with some text marked with an indirect property.
   ASSERT_TRUE(OpenDocument("text_in_page_marked_indirect.pdf"));

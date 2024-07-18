@@ -364,6 +364,15 @@ FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
 FPDFPageObj_NewImageObj(FPDF_DOCUMENT document);
 
 // Experimental API.
+// Get the marked content ID for the object.
+//
+//   page_object - handle to a page object.
+//
+// Returns the page object's marked content ID, or -1 on error.
+FPDF_EXPORT int FPDF_CALLCONV
+FPDFPageObj_GetMarkedContentID(FPDF_PAGEOBJECT page_object);
+
+// Experimental API.
 // Get number of content marks in |page_object|.
 //
 //   page_object - handle to a page object.
