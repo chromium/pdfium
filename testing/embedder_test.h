@@ -89,7 +89,7 @@ class EmbedderTest : public ::testing::Test,
   };
 
   EmbedderTest();
-  virtual ~EmbedderTest();
+  ~EmbedderTest() override;
 
   void SetUp() override;
   void TearDown() override;
@@ -150,16 +150,16 @@ class EmbedderTest : public ::testing::Test,
   int GetPageCount();
 
   // Load a specific page of the open document with a given non-negative
-  // |page_number|. On success, fire form events for the page and return a page
+  // `page_index`. On success, fire form events for the page and return a page
   // handle. On failure, return nullptr.
   // The caller does not own the returned page handle, but must call
   // UnloadPage() on it when done.
-  // The caller cannot call this for a |page_number| if it already obtained and
+  // The caller cannot call this for a `page_index` if it already obtained and
   // holds the page handle for that page.
-  FPDF_PAGE LoadPage(int page_number);
+  FPDF_PAGE LoadPage(int page_index);
 
   // Same as LoadPage(), but does not fire form events.
-  FPDF_PAGE LoadPageNoEvents(int page_number);
+  FPDF_PAGE LoadPageNoEvents(int page_index);
 
   // Fire form unload events and release the resources for a |page| obtained
   // from LoadPage(). Further use of |page| is prohibited after calling this.
@@ -254,7 +254,7 @@ class EmbedderTest : public ::testing::Test,
   FPDF_DOCUMENT OpenSavedDocument();
   FPDF_DOCUMENT OpenSavedDocumentWithPassword(const char* password);
   void CloseSavedDocument();
-  FPDF_PAGE LoadSavedPage(int page_number);
+  FPDF_PAGE LoadSavedPage(int page_index);
   void CloseSavedPage(FPDF_PAGE page);
 
   void VerifySavedRendering(FPDF_PAGE page,
@@ -290,7 +290,7 @@ class EmbedderTest : public ::testing::Test,
   int GetPageNumberForSavedPage(FPDF_PAGE page) const;
 
   void UnloadPageCommon(FPDF_PAGE page, bool do_events);
-  FPDF_PAGE LoadPageCommon(int page_number, bool do_events);
+  FPDF_PAGE LoadPageCommon(int page_index, bool do_events);
 
   std::unique_ptr<Delegate> default_delegate_;
   Delegate* delegate_;

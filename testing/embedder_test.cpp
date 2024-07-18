@@ -298,7 +298,7 @@ void EmbedderTest::CreateEmptyDocument() {
 
 void EmbedderTest::CreateEmptyDocumentWithoutFormFillEnvironment() {
   document_.reset(FPDF_CreateNewDocument());
-  DCHECK(document_);
+  CHECK(document_);
 }
 
 bool EmbedderTest::OpenDocument(const std::string& filename) {
@@ -489,7 +489,7 @@ FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(
 }
 
 void EmbedderTest::DoOpenActions() {
-  DCHECK(form_handle());
+  CHECK(form_handle());
   FORM_DoDocumentJSAction(form_handle());
   FORM_DoDocumentOpenAction(form_handle());
 }
@@ -509,20 +509,20 @@ int EmbedderTest::GetPageCount() {
   return page_count;
 }
 
-FPDF_PAGE EmbedderTest::LoadPage(int page_number) {
-  return LoadPageCommon(page_number, true);
+FPDF_PAGE EmbedderTest::LoadPage(int page_index) {
+  return LoadPageCommon(page_index, /*do_events=*/true);
 }
 
-FPDF_PAGE EmbedderTest::LoadPageNoEvents(int page_number) {
-  return LoadPageCommon(page_number, false);
+FPDF_PAGE EmbedderTest::LoadPageNoEvents(int page_index) {
+  return LoadPageCommon(page_index, /*do_events=*/false);
 }
 
-FPDF_PAGE EmbedderTest::LoadPageCommon(int page_number, bool do_events) {
-  DCHECK(form_handle());
-  DCHECK(page_number >= 0);
-  DCHECK(!pdfium::Contains(page_map_, page_number));
+FPDF_PAGE EmbedderTest::LoadPageCommon(int page_index, bool do_events) {
+  CHECK(form_handle());
+  CHECK_GE(page_index, 0);
+  CHECK(!pdfium::Contains(page_map_, page_index));
 
-  FPDF_PAGE page = FPDF_LoadPage(document(), page_number);
+  FPDF_PAGE page = FPDF_LoadPage(document(), page_index);
   if (!page)
     return nullptr;
 
@@ -530,7 +530,7 @@ FPDF_PAGE EmbedderTest::LoadPageCommon(int page_number, bool do_events) {
     FORM_OnAfterLoadPage(page, form_handle());
     FORM_DoPageAAction(page, form_handle(), FPDFPAGE_AACTION_OPEN);
   }
-  page_map_[page_number] = page;
+  page_map_[page_index] = page;
   return page;
 }
 
@@ -543,16 +543,16 @@ void EmbedderTest::UnloadPageNoEvents(FPDF_PAGE page) {
 }
 
 void EmbedderTest::UnloadPageCommon(FPDF_PAGE page, bool do_events) {
-  DCHECK(form_handle());
-  int page_number = GetPageNumberForLoadedPage(page);
-  CHECK_GE(page_number, 0);
+  CHECK(form_handle());
+  int page_index = GetPageNumberForLoadedPage(page);
+  CHECK_GE(page_index, 0);
 
   if (do_events) {
     FORM_DoPageAAction(page, form_handle(), FPDFPAGE_AACTION_CLOSE);
     FORM_OnBeforeClosePage(page, form_handle());
   }
   FPDF_ClosePage(page);
-  page_map_.erase(page_number);
+  page_map_.erase(page_index);
 }
 
 void EmbedderTest::SetInitialFormFieldHighlight(FPDF_FORMHANDLE form) {
@@ -566,8 +566,8 @@ ScopedFPDFBitmap EmbedderTest::RenderLoadedPage(FPDF_PAGE page) {
 
 ScopedFPDFBitmap EmbedderTest::RenderLoadedPageWithFlags(FPDF_PAGE page,
                                                          int flags) {
-  int page_number = GetPageNumberForLoadedPage(page);
-  CHECK_GE(page_number, 0);
+  int page_index = GetPageNumberForLoadedPage(page);
+  CHECK_GE(page_index, 0);
   return RenderPageWithFlags(page, form_handle(), flags);
 }
 
@@ -577,8 +577,8 @@ ScopedFPDFBitmap EmbedderTest::RenderSavedPage(FPDF_PAGE page) {
 
 ScopedFPDFBitmap EmbedderTest::RenderSavedPageWithFlags(FPDF_PAGE page,
                                                         int flags) {
-  int page_number = GetPageNumberForSavedPage(page);
-  CHECK_GE(page_number, 0);
+  int page_index = GetPageNumberForSavedPage(page);
+  CHECK_GE(page_index, 0);
   return RenderPageWithFlags(page, saved_form_handle(), flags);
 }
 
@@ -705,47 +705,47 @@ FPDF_DOCUMENT EmbedderTest::OpenSavedDocumentWithPassword(
 }
 
 void EmbedderTest::CloseSavedDocument() {
-  DCHECK(saved_document());
+  CHECK(saved_document());
 
   saved_form_handle_.reset();
   saved_document_.reset();
   saved_avail_.reset();
 }
 
-FPDF_PAGE EmbedderTest::LoadSavedPage(int page_number) {
-  DCHECK(saved_form_handle());
-  DCHECK(page_number >= 0);
-  DCHECK(!pdfium::Contains(saved_page_map_, page_number));
+FPDF_PAGE EmbedderTest::LoadSavedPage(int page_index) {
+  CHECK(saved_form_handle());
+  CHECK_GE(page_index, 0);
+  CHECK(!pdfium::Contains(saved_page_map_, page_index));
 
-  FPDF_PAGE page = FPDF_LoadPage(saved_document(), page_number);
+  FPDF_PAGE page = FPDF_LoadPage(saved_document(), page_index);
   if (!page)
     return nullptr;
 
   FORM_OnAfterLoadPage(page, saved_form_handle());
   FORM_DoPageAAction(page, saved_form_handle(), FPDFPAGE_AACTION_OPEN);
-  saved_page_map_[page_number] = page;
+  saved_page_map_[page_index] = page;
   return page;
 }
 
 void EmbedderTest::CloseSavedPage(FPDF_PAGE page) {
-  DCHECK(saved_form_handle());
+  CHECK(saved_form_handle());
 
-  int page_number = GetPageNumberForSavedPage(page);
-  CHECK_GE(page_number, 0);
+  int page_index = GetPageNumberForSavedPage(page);
+  CHECK_GE(page_index, 0);
 
   FORM_DoPageAAction(page, saved_form_handle(), FPDFPAGE_AACTION_CLOSE);
   FORM_OnBeforeClosePage(page, saved_form_handle());
   FPDF_ClosePage(page);
 
-  saved_page_map_.erase(page_number);
+  saved_page_map_.erase(page_index);
 }
 
 void EmbedderTest::VerifySavedRendering(FPDF_PAGE page,
                                         int width,
                                         int height,
                                         const char* md5) {
-  DCHECK(saved_document());
-  DCHECK(page);
+  CHECK(saved_document());
+  CHECK(page);
 
   ScopedFPDFBitmap bitmap = RenderSavedPageWithFlags(page, FPDF_ANNOT);
   CompareBitmap(bitmap.get(), width, height, md5);
@@ -760,7 +760,7 @@ void EmbedderTest::VerifySavedDocument(int width, int height, const char* md5) {
 }
 
 void EmbedderTest::SetWholeFileAvailable() {
-  DCHECK(fake_file_access_);
+  CHECK(fake_file_access_);
   fake_file_access_->SetWholeFileAvailable();
 }
 
@@ -864,9 +864,9 @@ int EmbedderTest::GetPageNumberForPage(const PageNumberToHandleMap& page_map,
                                        FPDF_PAGE page) {
   for (const auto& it : page_map) {
     if (it.second == page) {
-      int page_number = it.first;
-      DCHECK(page_number >= 0);
-      return page_number;
+      int page_index = it.first;
+      CHECK_GE(page_index, 0);
+      return page_index;
     }
   }
   return -1;
