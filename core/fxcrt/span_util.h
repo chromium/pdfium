@@ -153,7 +153,8 @@ template <typename T,
           typename = typename std::enable_if_t<std::is_const_v<T> ||
                                                !std::is_const_v<U>>>
 inline pdfium::span<T> reinterpret_span(pdfium::span<U> s) noexcept {
-  CHECK_EQ(reinterpret_cast<uintptr_t>(s.data()) % alignof(T), 0u);
+  CHECK(alignof(T) == alignof(U) ||
+        reinterpret_cast<uintptr_t>(s.data()) % alignof(T) == 0u);
   // SAFETY: relies on correct conversion of size_bytes() result.
   return UNSAFE_BUFFERS(pdfium::make_span(reinterpret_cast<T*>(s.data()),
                                           s.size_bytes() / sizeof(T)));
