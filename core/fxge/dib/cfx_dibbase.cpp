@@ -81,13 +81,11 @@ CFX_Palette::CFX_Palette(const RetainPtr<const CFX_DIBBase>& pBitmap)
   }
   // Move non-zeros to the front and count them
   for (uint32_t row = 0; row < m_Luts.size(); ++row) {
-    UNSAFE_TODO({
-      if (m_Luts[row].first != 0) {
-        m_Luts[m_lut].first = m_Luts[row].first;
-        m_Luts[m_lut].second = row;
-        ++m_lut;
-      }
-    });
+    if (m_Luts[row].first != 0) {
+      m_Luts[m_lut].first = m_Luts[row].first;
+      m_Luts[m_lut].second = row;
+      ++m_lut;
+    }
   }
   pdfium::span<LutsData> lut_span = pdfium::make_span(m_Luts).first(m_lut);
   std::sort(lut_span.begin(), lut_span.end(),
