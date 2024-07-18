@@ -754,31 +754,28 @@ uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
 
 std::optional<FX_RGB_STRUCT<float>> CPDF_CalRGB::GetRGB(
     pdfium::span<const float> pBuf) const {
-  UNSAFE_TODO({
-    float A_ = pBuf[0];
-    float B_ = pBuf[1];
-    float C_ = pBuf[2];
-    if (m_bHasGamma) {
-      A_ = powf(A_, m_Gamma[0]);
-      B_ = powf(B_, m_Gamma[1]);
-      C_ = powf(C_, m_Gamma[2]);
-    }
-
-    float X;
-    float Y;
-    float Z;
-    if (m_bHasMatrix) {
-      X = m_Matrix[0] * A_ + m_Matrix[3] * B_ + m_Matrix[6] * C_;
-      Y = m_Matrix[1] * A_ + m_Matrix[4] * B_ + m_Matrix[7] * C_;
-      Z = m_Matrix[2] * A_ + m_Matrix[5] * B_ + m_Matrix[8] * C_;
-    } else {
-      X = A_;
-      Y = B_;
-      Z = C_;
-    }
-    return XYZ_to_sRGB_WhitePoint(X, Y, Z, m_WhitePoint[0], m_WhitePoint[1],
-                                  m_WhitePoint[2]);
-  });
+  float A_ = pBuf[0];
+  float B_ = pBuf[1];
+  float C_ = pBuf[2];
+  if (m_bHasGamma) {
+    A_ = powf(A_, m_Gamma[0]);
+    B_ = powf(B_, m_Gamma[1]);
+    C_ = powf(C_, m_Gamma[2]);
+  }
+  float X;
+  float Y;
+  float Z;
+  if (m_bHasMatrix) {
+    X = m_Matrix[0] * A_ + m_Matrix[3] * B_ + m_Matrix[6] * C_;
+    Y = m_Matrix[1] * A_ + m_Matrix[4] * B_ + m_Matrix[7] * C_;
+    Z = m_Matrix[2] * A_ + m_Matrix[5] * B_ + m_Matrix[8] * C_;
+  } else {
+    X = A_;
+    Y = B_;
+    Z = C_;
+  }
+  return XYZ_to_sRGB_WhitePoint(X, Y, Z, m_WhitePoint[0], m_WhitePoint[1],
+                                m_WhitePoint[2]);
 }
 
 void CPDF_CalRGB::TranslateImageLine(pdfium::span<uint8_t> dest_span,
