@@ -108,7 +108,6 @@ class CFX_Font {
   bool IsVertical() const { return m_bVertical; }
   ByteString GetPsName() const;
   ByteString GetFamilyName() const;
-  ByteString GetFaceName() const;
   ByteString GetBaseFontName() const;
   bool IsTTFont() const;
 

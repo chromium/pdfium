@@ -396,19 +396,6 @@ ByteString CFX_Font::GetFamilyNameOrUntitled() const {
   return facename.IsEmpty() ? kUntitledFontName : facename;
 }
 
-ByteString CFX_Font::GetFaceName() const {
-  if (!m_Face && !m_pSubstFont)
-    return ByteString();
-  if (m_Face) {
-    ByteString style = m_Face->GetStyleName();
-    ByteString facename = GetFamilyNameOrUntitled();
-    if (ShouldAppendStyle(style))
-      facename += " " + style;
-    return facename;
-  }
-  return m_pSubstFont->m_Family;
-}
-
 ByteString CFX_Font::GetBaseFontName() const {
   ByteString psname = GetPsName();
   if (!psname.IsEmpty() && psname != kUntitledFontName)

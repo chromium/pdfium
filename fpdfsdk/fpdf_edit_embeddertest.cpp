@@ -3669,13 +3669,13 @@ TEST_F(FPDFEditEmbedderTest, TransformAnnot) {
 TEST_F(FPDFEditEmbedderTest, AddCIDFontText) {
   // Start with a blank page
   FPDF_PAGE page = FPDFPage_New(CreateNewDocument(), 0, 612, 792);
-  CFX_Font CIDfont;
+  CFX_Font cid_font;
   {
     // First, get the data from the font
-    CIDfont.LoadSubst("Noto Sans CJK JP", true, 0, 400, 0,
-                      FX_CodePage::kShiftJIS, false);
-    EXPECT_EQ("Noto Sans CJK JP", CIDfont.GetFaceName());
-    pdfium::span<const uint8_t> span = CIDfont.GetFontSpan();
+    cid_font.LoadSubst("Noto Sans CJK JP", true, 0, 400, 0,
+                       FX_CodePage::kShiftJIS, false);
+    EXPECT_EQ("Noto Sans CJK JP", cid_font.GetFamilyName());
+    pdfium::span<const uint8_t> span = cid_font.GetFontSpan();
 
     // Load the data into a FPDF_Font.
     ScopedFPDFFont font(FPDFText_LoadFont(document(), span.data(), span.size(),
