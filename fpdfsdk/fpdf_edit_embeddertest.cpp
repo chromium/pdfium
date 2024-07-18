@@ -2917,7 +2917,7 @@ TEST_F(FPDFEditEmbedderTest, SetTextRenderMode) {
 TEST_F(FPDFEditEmbedderTest, TextFontProperties) {
   // bad object tests
   EXPECT_FALSE(FPDFTextObj_GetFont(nullptr));
-  EXPECT_EQ(0U, FPDFFont_GetFontName(nullptr, nullptr, 5));
+  EXPECT_EQ(0U, FPDFFont_GetFamilyName(nullptr, nullptr, 5));
   EXPECT_EQ(-1, FPDFFont_GetFlags(nullptr));
   EXPECT_EQ(-1, FPDFFont_GetWeight(nullptr));
   EXPECT_FALSE(FPDFFont_GetItalicAngle(nullptr, nullptr));
@@ -2970,21 +2970,21 @@ TEST_F(FPDFEditEmbedderTest, TextFontProperties) {
   }
 
   {
-    // FPDFFont_GetFontName() positive testing.
-    unsigned long size = FPDFFont_GetFontName(font, nullptr, 0);
+    // FPDFFont_GetFamilyName() positive testing.
+    unsigned long size = FPDFFont_GetFamilyName(font, nullptr, 0);
     const char kExpectedFontName[] = "Liberation Serif";
     ASSERT_EQ(sizeof(kExpectedFontName), size);
     std::vector<char> font_name(size);
-    ASSERT_EQ(size, FPDFFont_GetFontName(font, font_name.data(), size));
+    ASSERT_EQ(size, FPDFFont_GetFamilyName(font, font_name.data(), size));
     ASSERT_STREQ(kExpectedFontName, font_name.data());
 
-    // FPDFFont_GetFontName() negative testing.
-    ASSERT_EQ(0U, FPDFFont_GetFontName(nullptr, nullptr, 0));
+    // FPDFFont_GetFamilyName() negative testing.
+    ASSERT_EQ(0U, FPDFFont_GetFamilyName(nullptr, nullptr, 0));
 
     font_name.resize(2);
     font_name[0] = 'x';
     font_name[1] = '\0';
-    size = FPDFFont_GetFontName(font, font_name.data(), font_name.size());
+    size = FPDFFont_GetFamilyName(font, font_name.data(), font_name.size());
     ASSERT_EQ(sizeof(kExpectedFontName), size);
     ASSERT_STREQ("x", font_name.data());
   }

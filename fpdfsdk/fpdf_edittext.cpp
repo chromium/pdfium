@@ -850,14 +850,15 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFTextObj_GetFont(FPDF_PAGEOBJECT text) {
 }
 
 FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFFont_GetFontName(FPDF_FONT font, char* buffer, unsigned long length) {
-  auto* pFont = CPDFFontFromFPDFFont(font);
-  if (!pFont)
+FPDFFont_GetFamilyName(FPDF_FONT font, char* buffer, unsigned long length) {
+  auto* cfont = CPDFFontFromFPDFFont(font);
+  if (!cfont) {
     return 0;
+  }
 
   // SAFETY: required from caller.
   auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, length));
-  ByteString name = pFont->GetFont()->GetFamilyName();
+  ByteString name = cfont->GetFont()->GetFamilyName();
   pdfium::span<const char> name_span = name.span_with_terminator();
   fxcrt::try_spancpy(result_span, name_span);
   return static_cast<unsigned long>(name_span.size());
