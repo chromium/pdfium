@@ -283,7 +283,7 @@ class FPDFViewEmbedderTest : public EmbedderTest {
 // Test for conversion of a point in device coordinates to page coordinates
 TEST_F(FPDFViewEmbedderTest, DeviceCoordinatesToPageCoordinates) {
   ASSERT_TRUE(OpenDocument("about_blank.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   // Error tolerance for floating point comparison
@@ -304,29 +304,29 @@ TEST_F(FPDFViewEmbedderTest, DeviceCoordinatesToPageCoordinates) {
 
   double page_x = 0.0;
   double page_y = 0.0;
-  EXPECT_TRUE(FPDF_DeviceToPage(page, start_x, start_y, size_x, size_y, rotate,
-                                device_x, device_y, &page_x, &page_y));
+  EXPECT_TRUE(FPDF_DeviceToPage(page.get(), start_x, start_y, size_x, size_y,
+                                rotate, device_x, device_y, &page_x, &page_y));
   EXPECT_NEAR(9.5625, page_x, kTolerance);
   EXPECT_NEAR(775.5, page_y, kTolerance);
 
   // Rotate 90 degrees clockwise
   rotate = 1;
-  EXPECT_TRUE(FPDF_DeviceToPage(page, start_x, start_y, size_x, size_y, rotate,
-                                device_x, device_y, &page_x, &page_y));
+  EXPECT_TRUE(FPDF_DeviceToPage(page.get(), start_x, start_y, size_x, size_y,
+                                rotate, device_x, device_y, &page_x, &page_y));
   EXPECT_NEAR(12.75, page_x, kTolerance);
   EXPECT_NEAR(12.375, page_y, kTolerance);
 
   // Rotate 180 degrees
   rotate = 2;
-  EXPECT_TRUE(FPDF_DeviceToPage(page, start_x, start_y, size_x, size_y, rotate,
-                                device_x, device_y, &page_x, &page_y));
+  EXPECT_TRUE(FPDF_DeviceToPage(page.get(), start_x, start_y, size_x, size_y,
+                                rotate, device_x, device_y, &page_x, &page_y));
   EXPECT_NEAR(602.4374, page_x, kTolerance);
   EXPECT_NEAR(16.5, page_y, kTolerance);
 
   // Rotate 90 degrees counter-clockwise
   rotate = 3;
-  EXPECT_TRUE(FPDF_DeviceToPage(page, start_x, start_y, size_x, size_y, rotate,
-                                device_x, device_y, &page_x, &page_y));
+  EXPECT_TRUE(FPDF_DeviceToPage(page.get(), start_x, start_y, size_x, size_y,
+                                rotate, device_x, device_y, &page_x, &page_y));
   EXPECT_NEAR(599.25, page_x, kTolerance);
   EXPECT_NEAR(779.625, page_y, kTolerance);
 
@@ -334,16 +334,16 @@ TEST_F(FPDFViewEmbedderTest, DeviceCoordinatesToPageCoordinates) {
   // modulo by 4. A value of 4 is expected to be converted into 0 (normal
   // rotation)
   rotate = 4;
-  EXPECT_TRUE(FPDF_DeviceToPage(page, start_x, start_y, size_x, size_y, rotate,
-                                device_x, device_y, &page_x, &page_y));
+  EXPECT_TRUE(FPDF_DeviceToPage(page.get(), start_x, start_y, size_x, size_y,
+                                rotate, device_x, device_y, &page_x, &page_y));
   EXPECT_NEAR(9.5625, page_x, kTolerance);
   EXPECT_NEAR(775.5, page_y, kTolerance);
 
   // FPDF_DeviceToPage returns untransformed coordinates if |rotate| % 4 is
   // negative.
   rotate = -1;
-  EXPECT_TRUE(FPDF_DeviceToPage(page, start_x, start_y, size_x, size_y, rotate,
-                                device_x, device_y, &page_x, &page_y));
+  EXPECT_TRUE(FPDF_DeviceToPage(page.get(), start_x, start_y, size_x, size_y,
+                                rotate, device_x, device_y, &page_x, &page_y));
   EXPECT_NEAR(device_x, page_x, kTolerance);
   EXPECT_NEAR(device_y, page_y, kTolerance);
 
@@ -357,10 +357,8 @@ TEST_F(FPDFViewEmbedderTest, DeviceCoordinatesToPageCoordinates) {
   EXPECT_NEAR(5678.0, page_y, kTolerance);
 
   // Negative case - invalid output parameters
-  EXPECT_FALSE(FPDF_DeviceToPage(page, start_x, start_y, size_x, size_y, rotate,
-                                 device_x, device_y, nullptr, nullptr));
-
-  UnloadPage(page);
+  EXPECT_FALSE(FPDF_DeviceToPage(page.get(), start_x, start_y, size_x, size_y,
+                                 rotate, device_x, device_y, nullptr, nullptr));
 }
 
 // Test for conversion of a point in page coordinates to device coordinates.
@@ -910,9 +908,8 @@ TEST_F(FPDFViewEmbedderTest, Crasher_451830) {
 
 TEST_F(FPDFViewEmbedderTest, Crasher_452455) {
   ASSERT_TRUE(OpenDocument("bug_452455.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
-  UnloadPage(page);
 }
 
 TEST_F(FPDFViewEmbedderTest, Crasher_454695) {
@@ -2151,22 +2148,21 @@ TEST_F(FPDFViewEmbedderTest, NoSmoothTextItalicOverlappingGlyphs) {
 
 TEST_F(FPDFViewEmbedderTest, RenderTransparencyOnWhiteBackground) {
   ASSERT_TRUE(OpenDocument("bug_1302355.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   constexpr int kWidth = 200;
   constexpr int kHeight = 200;
-  EXPECT_EQ(kWidth, static_cast<int>(FPDF_GetPageWidthF(page)));
-  EXPECT_EQ(kHeight, static_cast<int>(FPDF_GetPageHeightF(page)));
-  EXPECT_TRUE(FPDFPage_HasTransparency(page));
+  EXPECT_EQ(kWidth, static_cast<int>(FPDF_GetPageWidthF(page.get())));
+  EXPECT_EQ(kHeight, static_cast<int>(FPDF_GetPageHeightF(page.get())));
+  EXPECT_TRUE(FPDFPage_HasTransparency(page.get()));
   ScopedFPDFBitmap bitmap(FPDFBitmap_Create(kWidth, kHeight, /*alpha=*/true));
   FPDFBitmap_FillRect(bitmap.get(), 0, 0, kWidth, kHeight, 0xFFFFFFFF);
-  FPDF_RenderPageBitmap(bitmap.get(), page, /*start_x=*/0, /*start_y=*/0,
-                        kWidth, kHeight, /*rotate=*/0, /*flags=*/0);
+  FPDF_RenderPageBitmap(bitmap.get(), page.get(), /*start_x=*/0,
+                        /*start_y=*/0, kWidth, kHeight, /*rotate=*/0,
+                        /*flags=*/0);
   // TODO(crbug.com/1302355): This page should not render blank.
   EXPECT_EQ("eee4600ac08b458ac7ac2320e225674c", HashBitmap(bitmap.get()));
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFViewEmbedderTest, Bug2112) {

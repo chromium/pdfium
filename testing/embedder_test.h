@@ -15,6 +15,7 @@
 
 #include "build/build_config.h"
 #include "core/fxcrt/span.h"
+#include "core/fxcrt/unowned_ptr.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_ext.h"
@@ -88,6 +89,20 @@ class EmbedderTest : public ::testing::Test,
                                                  int modifiers) {}
   };
 
+  class ScopedEmbedderTestPage {
+   public:
+    ScopedEmbedderTestPage(EmbedderTest* test, int page_index);
+    ~ScopedEmbedderTestPage();
+
+    FPDF_PAGE get() { return page_; }
+
+    explicit operator bool() const { return !!page_; }
+
+   private:
+    UnownedPtr<EmbedderTest> const test_;
+    const FPDF_PAGE page_;
+  };
+
   EmbedderTest();
   ~EmbedderTest() override;
 
@@ -149,6 +164,19 @@ class EmbedderTest : public ::testing::Test,
   int GetFirstPageNum();
   int GetPageCount();
 
+  // Load a specific page of the open document with a given non-negative
+  // `page_index`. On success, fire form events for the page and return a
+  // ScopedEmbedderTestPage with the page handle. On failure, return an empty
+  // ScopedEmbedderTestPage.
+  // The caller needs to let the ScopedEmbedderTestPage go out of scope to
+  // properly unload the page, and must do so before the page's document and
+  // `this` get destroyed.
+  // The caller cannot call this for a `page_index` if it already obtained and
+  // holds the page handle for that page.
+  ScopedEmbedderTestPage LoadScopedPage(int page_index);
+
+  // Prefer LoadScopedPage() above.
+  //
   // Load a specific page of the open document with a given non-negative
   // `page_index`. On success, fire form events for the page and return a page
   // handle. On failure, return nullptr.

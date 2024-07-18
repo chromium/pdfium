@@ -509,6 +509,11 @@ int EmbedderTest::GetPageCount() {
   return page_count;
 }
 
+EmbedderTest::ScopedEmbedderTestPage EmbedderTest::LoadScopedPage(
+    int page_index) {
+  return ScopedEmbedderTestPage(this, page_index);
+}
+
 FPDF_PAGE EmbedderTest::LoadPage(int page_index) {
   return LoadPageCommon(page_index, /*do_events=*/true);
 }
@@ -889,3 +894,11 @@ void EmbedderTest::ClosePDFFileForWrite() {
   filestream_.close();
 }
 #endif
+
+EmbedderTest::ScopedEmbedderTestPage::ScopedEmbedderTestPage(EmbedderTest* test,
+                                                             int page_index)
+    : test_(test), page_(test->LoadPage(page_index)) {}
+
+EmbedderTest::ScopedEmbedderTestPage::~ScopedEmbedderTestPage() {
+  test_->UnloadPage(page_);
+}
