@@ -108,6 +108,19 @@ const char kRedRectangleChecksum[] = "66d02eaa6181e2c069ce2ea99beda497";
 // In embedded_images.pdf.
 const char kEmbeddedImage33Checksum[] = "cb3637934bb3b95a6e4ae1ea9eb9e56e";
 
+const char* NotoSansSCChecksum() {
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+#if BUILDFLAG(IS_WIN)
+    return "a1bc9e4007dc2155e9f56bf16234573e";
+#elif BUILDFLAG(IS_APPLE)
+    return "9a31fb87d1c6d2346bba22d1196041cd";
+#else
+    return "5bb65e15fc0a685934cd5006dec08a76";
+#endif
+  }
+  return "9a31fb87d1c6d2346bba22d1196041cd";
+}
+
 struct FPDFEditMoveEmbedderTestCase {
   std::vector<int> page_indices;
   int page_indices_len;
@@ -313,23 +326,11 @@ TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFont) {
   FPDFPage_InsertObject(page.get(), text_object);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
 
-  const char* checksum = []() {
-    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-#if BUILDFLAG(IS_WIN)
-      return "a1bc9e4007dc2155e9f56bf16234573e";
-#elif BUILDFLAG(IS_APPLE)
-      return "9a31fb87d1c6d2346bba22d1196041cd";
-#else
-      return "5bb65e15fc0a685934cd5006dec08a76";
-#endif
-    }
-    return "9a31fb87d1c6d2346bba22d1196041cd";
-  }();
   ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
-  CompareBitmap(page_bitmap.get(), 400, 400, checksum);
+  CompareBitmap(page_bitmap.get(), 400, 400, NotoSansSCChecksum());
 
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  VerifySavedDocument(400, 400, checksum);
+  VerifySavedDocument(400, 400, NotoSansSCChecksum());
 }
 
 TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFontWithCharcodes) {
@@ -361,23 +362,11 @@ TEST_F(FPDFEditEmbedderTest, EmbedNotoSansSCFontWithCharcodes) {
   FPDFPage_InsertObject(page.get(), text_object);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
 
-  const char* checksum = []() {
-    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-#if BUILDFLAG(IS_WIN)
-      return "a1bc9e4007dc2155e9f56bf16234573e";
-#elif BUILDFLAG(IS_APPLE)
-      return "9a31fb87d1c6d2346bba22d1196041cd";
-#else
-      return "5bb65e15fc0a685934cd5006dec08a76";
-#endif
-    }
-    return "9a31fb87d1c6d2346bba22d1196041cd";
-  }();
   ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
-  CompareBitmap(page_bitmap.get(), 400, 400, checksum);
+  CompareBitmap(page_bitmap.get(), 400, 400, NotoSansSCChecksum());
 
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  VerifySavedDocument(400, 400, checksum);
+  VerifySavedDocument(400, 400, NotoSansSCChecksum());
 }
 
 TEST_F(FPDFEditEmbedderTest, Bug2094) {
@@ -3805,23 +3794,11 @@ end
   FPDFPage_InsertObject(page.get(), text_object);
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
 
-  const char* checksum = []() {
-    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-#if BUILDFLAG(IS_WIN)
-      return "a1bc9e4007dc2155e9f56bf16234573e";
-#elif BUILDFLAG(IS_APPLE)
-      return "9a31fb87d1c6d2346bba22d1196041cd";
-#else
-      return "5bb65e15fc0a685934cd5006dec08a76";
-#endif
-    }
-    return "9a31fb87d1c6d2346bba22d1196041cd";
-  }();
   ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
-  CompareBitmap(page_bitmap.get(), 400, 400, checksum);
+  CompareBitmap(page_bitmap.get(), 400, 400, NotoSansSCChecksum());
 
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  VerifySavedDocument(400, 400, checksum);
+  VerifySavedDocument(400, 400, NotoSansSCChecksum());
 }
 
 TEST_F(FPDFEditEmbedderTest, LoadCidType2FontWithBadParameters) {
