@@ -1500,7 +1500,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 #endif
     }
 #if BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
-    return "0c3448974a4e8da2395da917935e5de1";
+    return "8eabf79dcdcfc6474c593bc60d996def";
 #elif BUILDFLAG(IS_APPLE) && !defined(ARCH_CPU_ARM64)
     return "5d449d36926c9f212c6cdb6c276d18cc";
 #else
@@ -1518,7 +1518,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 #endif
     }
 #if BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
-    return "9cf1c024a9d2d356bcdd14cb71a32324";
+    return "704f3eb56f82377753a816a43de250ea";
 #elif BUILDFLAG(IS_APPLE) && !defined(ARCH_CPU_ARM64)
     return "8c992808db99dbe3d74006358a671f05";
 #else
