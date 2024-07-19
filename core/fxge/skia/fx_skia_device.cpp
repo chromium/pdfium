@@ -1456,11 +1456,6 @@ bool CFX_SkiaDeviceDriver::StartDIBits(
                          blend_type);
 }
 
-bool CFX_SkiaDeviceDriver::ContinueDIBits(CFX_ImageRenderer* handle,
-                                          PauseIndicatorIface* pPause) {
-  return false;
-}
-
 void CFX_DIBitmap::UnPreMultiply() {
   if (m_nFormat == Format::kUnPreMultiplied || GetBPP() != 32) {
     return;
