@@ -31,9 +31,9 @@
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fxcrt/check.h"
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/maybe_owned.h"
+#include "core/fxcrt/zip.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_path.h"
@@ -250,27 +250,24 @@ RetainPtr<const CFX_DIBitmap> CPDF_ImageRenderer::CalculateDrawImage(
       mask_renderer.Continue(nullptr);
     }
     if (m_pLoader->MatteColor() != 0xffffffff) {
-      int matte_r = FXARGB_R(m_pLoader->MatteColor());
-      int matte_g = FXARGB_G(m_pLoader->MatteColor());
-      int matte_b = FXARGB_B(m_pLoader->MatteColor());
+      const int matte_r = FXARGB_R(m_pLoader->MatteColor());
+      const int matte_g = FXARGB_G(m_pLoader->MatteColor());
+      const int matte_b = FXARGB_B(m_pLoader->MatteColor());
+      RetainPtr<CFX_DIBitmap> dest_bitmap = bitmap_device.GetBitmap();
       for (int row = 0; row < rect.Height(); row++) {
-        uint8_t* dest_scan =
-            bitmap_device.GetBitmap()->GetWritableScanline(row).data();
-        const uint8_t* mask_scan =
-            mask_device.GetBitmap()->GetScanline(row).data();
-        for (int col = 0; col < rect.Width(); col++) {
-          int alpha = UNSAFE_TODO(*mask_scan++);
-          if (!alpha) {
-            UNSAFE_TODO(dest_scan += 4);
+        auto mask_scan = mask_bitmap->GetScanline(row).first(rect.Width());
+        auto dest_scan =
+            dest_bitmap->GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row);
+        for (auto [mask_ref, dest_ref] : fxcrt::Zip(mask_scan, dest_scan)) {
+          if (mask_ref == 0) {
             continue;
           }
-          int orig = (*dest_scan - matte_b) * 255 / alpha + matte_b;
-          UNSAFE_TODO(*dest_scan++) = std::clamp(orig, 0, 255);
-          orig = (*dest_scan - matte_g) * 255 / alpha + matte_g;
-          UNSAFE_TODO(*dest_scan++) = std::clamp(orig, 0, 255);
-          orig = (*dest_scan - matte_r) * 255 / alpha + matte_r;
-          UNSAFE_TODO(*dest_scan++) = std::clamp(orig, 0, 255);
-          UNSAFE_TODO(dest_scan++);
+          int orig_b = (dest_ref.blue - matte_b) * 255 / mask_ref + matte_b;
+          int orig_g = (dest_ref.green - matte_g) * 255 / mask_ref + matte_g;
+          int orig_r = (dest_ref.red - matte_r) * 255 / mask_ref + matte_r;
+          dest_ref.blue = std::clamp(orig_b, 0, 255);
+          dest_ref.green = std::clamp(orig_g, 0, 255);
+          dest_ref.red = std::clamp(orig_r, 0, 255);
         }
       }
     }
