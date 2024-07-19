@@ -76,6 +76,21 @@ TEST(fxcrt, FXTryAllocOOM) {
   FX_Free(ptr);
 }
 
+TEST(fxcrt, FXTryAllocUninit) {
+  int* ptr = FX_TryAllocUninit(int, 4);
+  EXPECT_TRUE(ptr);
+  FX_Free(ptr);
+
+  ptr = FX_TryAllocUninit2D(int, 4, 4);
+  EXPECT_TRUE(ptr);
+  FX_Free(ptr);
+}
+
+TEST(fxcrt, FXTryAllocUninitOOM) {
+  EXPECT_FALSE(FX_TryAllocUninit(int, kCloseToMaxIntAlloc));
+  EXPECT_FALSE(FX_TryAllocUninit2D(int, kWidth, kOverflowIntAlloc2D));
+}
+
 #if !defined(COMPILER_GCC)
 TEST(fxcrt, FX_TryAllocOverflow) {
   // |ptr| needs to be defined and used to avoid Clang optimizes away the

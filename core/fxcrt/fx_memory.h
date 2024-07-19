@@ -51,11 +51,16 @@ NOINLINE void FX_OutOfMemoryTerminate(size_t size);
   static_cast<type*>(pdfium::internal::Realloc(ptr, size, sizeof(type)))
 
 // These never return nullptr, but return uninitialized memory.
-// TODO(thestig): Add FX_TryAllocUninit() if there is a use case.
 #define FX_AllocUninit(type, size) \
   static_cast<type*>(pdfium::internal::AllocOrDie(size, sizeof(type)))
 #define FX_AllocUninit2D(type, w, h) \
   static_cast<type*>(pdfium::internal::AllocOrDie2D(w, h, sizeof(type)))
+
+// May return nullptr, but returns uninitialized memory otherwise.
+#define FX_TryAllocUninit(type, size) \
+  static_cast<type*>(pdfium::internal::Alloc(size, sizeof(type)))
+#define FX_TryAllocUninit2D(type, w, h) \
+  static_cast<type*>(pdfium::internal::Alloc2D(w, h, sizeof(type)))
 
 // FX_Free frees memory from the above.
 #define FX_Free(ptr) pdfium::internal::Dealloc(ptr)
@@ -102,6 +107,7 @@ namespace internal {
 
 // General partition.
 void* Alloc(size_t num_members, size_t member_size);
+void* Alloc2D(size_t w, size_t h, size_t member_size);
 void* AllocOrDie(size_t num_members, size_t member_size);
 void* AllocOrDie2D(size_t w, size_t h, size_t member_size);
 void* Calloc(size_t num_members, size_t member_size);

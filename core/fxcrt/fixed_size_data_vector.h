@@ -39,6 +39,17 @@ class FixedSizeDataVector {
     return UNSAFE_BUFFERS(FixedSizeDataVector(FX_AllocUninit(T, size), size));
   }
 
+  // Same as above, but return an empty vector when insufficient memory.
+  static FixedSizeDataVector TryUninit(size_t size) {
+    if (size == 0) {
+      return FixedSizeDataVector();
+    }
+    T* ptr = FX_TryAllocUninit(T, size);
+    // SAFETY: same `size` value passed to FX_TryAlloc() above as
+    // passed to ctor when the ptr is non-null.
+    return UNSAFE_BUFFERS(FixedSizeDataVector(ptr, ptr ? size : 0u));
+  }
+
   // Allocates a vector of the given size with zeroed memory.
   // A CHECK() failure occurs when insufficient memory.
   static FixedSizeDataVector Zeroed(size_t size) {

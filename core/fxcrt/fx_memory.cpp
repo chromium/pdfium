@@ -131,6 +131,14 @@ void* FX_AlignedAlloc(size_t size, size_t alignment) {
 
 namespace pdfium::internal {
 
+void* Alloc2D(size_t w, size_t h, size_t member_size) {
+  if (w >= std::numeric_limits<size_t>::max() / h) {
+    return nullptr;
+  }
+
+  return Alloc(w * h, member_size);
+}
+
 void* AllocOrDie(size_t num_members, size_t member_size) {
   void* result = Alloc(num_members, member_size);
   if (!result)

@@ -31,6 +31,17 @@ TEST(FixedSizeDataVector, UninitData) {
   EXPECT_THAT(vec.span(), testing::ElementsAre(1, 2, 3, 4));
 }
 
+TEST(FixedSizeDataVector, TryUninitData) {
+  auto vec = FixedSizeDataVector<int>::TryUninit(4);
+  EXPECT_FALSE(vec.empty());
+  ASSERT_EQ(4u, vec.size());
+  ASSERT_EQ(4u, vec.span().size());
+
+  constexpr int kData[] = {1, 2, 3, 4};
+  fxcrt::Copy(kData, vec.span());
+  EXPECT_THAT(vec.span(), testing::ElementsAre(1, 2, 3, 4));
+}
+
 TEST(FixedSizeDataVector, ZeroedData) {
   auto vec = FixedSizeDataVector<int>::Zeroed(4);
   EXPECT_FALSE(vec.empty());
@@ -55,10 +66,15 @@ TEST(FixedSizeDataVector, TryZeroedData) {
   EXPECT_THAT(vec.span(), testing::ElementsAre(1, 2, 3, 4));
 }
 
-TEST(FixedSizeDataVector, TryAllocFailure) {
+TEST(FixedSizeDataVector, TryAllocFailures) {
   constexpr size_t kCloseToMaxByteAlloc =
       std::numeric_limits<size_t>::max() - 100;
   auto vec = FixedSizeDataVector<int>::TryZeroed(kCloseToMaxByteAlloc);
+  EXPECT_TRUE(vec.empty());
+  EXPECT_EQ(0u, vec.size());
+  EXPECT_EQ(0u, vec.span().size());
+
+  vec = FixedSizeDataVector<int>::TryUninit(kCloseToMaxByteAlloc);
   EXPECT_TRUE(vec.empty());
   EXPECT_EQ(0u, vec.size());
   EXPECT_EQ(0u, vec.span().size());
