@@ -389,9 +389,12 @@ bool CPDF_ImageRenderer::StartDIBBase() {
       m_ResampleOptions.bInterpolateBilinear = true;
     }
   }
-  if (m_pRenderStatus->GetRenderDevice()->StartDIBitsWithBlend(
+  RenderDeviceDriverIface::StartResult result =
+      m_pRenderStatus->GetRenderDevice()->StartDIBitsWithBlend(
           m_pDIBBase, m_Alpha, m_FillArgb, m_ImageMatrix, m_ResampleOptions,
-          &m_DeviceHandle, m_BlendType)) {
+          m_BlendType);
+  if (result.success) {
+    m_DeviceHandle = std::move(result.agg_image_renderer);
     if (m_DeviceHandle) {
       m_Mode = Mode::kBlend;
       return true;

@@ -14,6 +14,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/render_defines.h"
 #include "core/fxge/win32/cwin32_platform.h"
 
@@ -214,12 +215,12 @@ bool CGdiDisplayDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                            dest_height, FXDIB_ResampleOptions());
 }
 
-bool CGdiDisplayDriver::StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
-                                    float alpha,
-                                    uint32_t color,
-                                    const CFX_Matrix& matrix,
-                                    const FXDIB_ResampleOptions& options,
-                                    std::unique_ptr<CFX_ImageRenderer>* handle,
-                                    BlendMode blend_type) {
-  return false;
+RenderDeviceDriverIface::StartResult CGdiDisplayDriver::StartDIBits(
+    RetainPtr<const CFX_DIBBase> bitmap,
+    float alpha,
+    uint32_t color,
+    const CFX_Matrix& matrix,
+    const FXDIB_ResampleOptions& options,
+    BlendMode blend_type) {
+  return {false, nullptr};
 }

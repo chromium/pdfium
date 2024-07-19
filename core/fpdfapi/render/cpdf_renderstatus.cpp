@@ -1227,11 +1227,10 @@ void CPDF_RenderStatus::CompositeDIBitmap(
     if (!bitmap->IsMaskFormat()) {
       if (alpha != 1.0f) {
         if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-          std::unique_ptr<CFX_ImageRenderer> dummy;
           CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(
               bitmap->GetWidth(), bitmap->GetHeight(), left, top);
           m_pDevice->StartDIBits(std::move(bitmap), alpha, /*argb=*/0, matrix,
-                                 FXDIB_ResampleOptions(), &dummy);
+                                 FXDIB_ResampleOptions());
           return;
         }
         bitmap->MultiplyAlpha(alpha);

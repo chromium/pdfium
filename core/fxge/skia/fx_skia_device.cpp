@@ -1443,17 +1443,17 @@ bool CFX_SkiaDeviceDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                          sampling_options, blend_type);
 }
 
-bool CFX_SkiaDeviceDriver::StartDIBits(
+RenderDeviceDriverIface::StartResult CFX_SkiaDeviceDriver::StartDIBits(
     RetainPtr<const CFX_DIBBase> bitmap,
     float alpha,
     uint32_t color,
     const CFX_Matrix& matrix,
     const FXDIB_ResampleOptions& options,
-    std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_type) {
   FX_RECT rect(0, 0, bitmap->GetWidth(), bitmap->GetHeight());
-  return StartDIBitsSkia(std::move(bitmap), rect, alpha, color, matrix, options,
-                         blend_type);
+  return {StartDIBitsSkia(std::move(bitmap), rect, alpha, color, matrix,
+                          options, blend_type),
+          nullptr};
 }
 
 void CFX_DIBitmap::UnPreMultiply() {

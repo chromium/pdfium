@@ -18,6 +18,7 @@
 #include "core/fxge/cfx_font.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "core/fxge/dib/cfx_imagerenderer.h"
 #include "core/fxge/text_char_pos.h"
 
 CTextOnlyPrinterDriver::CTextOnlyPrinterDriver(HDC hDC)
@@ -109,15 +110,14 @@ bool CTextOnlyPrinterDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
   return false;
 }
 
-bool CTextOnlyPrinterDriver::StartDIBits(
+RenderDeviceDriverIface::StartResult CTextOnlyPrinterDriver::StartDIBits(
     RetainPtr<const CFX_DIBBase> bitmap,
     float alpha,
     uint32_t color,
     const CFX_Matrix& matrix,
     const FXDIB_ResampleOptions& options,
-    std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_type) {
-  return false;
+  return {false, nullptr};
 }
 
 bool CTextOnlyPrinterDriver::DrawDeviceText(

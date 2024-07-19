@@ -129,19 +129,19 @@ class CFX_RenderDevice {
                                int dest_height,
                                uint32_t argb,
                                const FXDIB_ResampleOptions& options);
-  bool StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
-                   float alpha,
-                   uint32_t argb,
-                   const CFX_Matrix& matrix,
-                   const FXDIB_ResampleOptions& options,
-                   std::unique_ptr<CFX_ImageRenderer>* handle);
-  bool StartDIBitsWithBlend(RetainPtr<const CFX_DIBBase> bitmap,
-                            float alpha,
-                            uint32_t argb,
-                            const CFX_Matrix& matrix,
-                            const FXDIB_ResampleOptions& options,
-                            std::unique_ptr<CFX_ImageRenderer>* handle,
-                            BlendMode blend_mode);
+  RenderDeviceDriverIface::StartResult StartDIBits(
+      RetainPtr<const CFX_DIBBase> bitmap,
+      float alpha,
+      uint32_t argb,
+      const CFX_Matrix& matrix,
+      const FXDIB_ResampleOptions& options);
+  RenderDeviceDriverIface::StartResult StartDIBitsWithBlend(
+      RetainPtr<const CFX_DIBBase> bitmap,
+      float alpha,
+      uint32_t argb,
+      const CFX_Matrix& matrix,
+      const FXDIB_ResampleOptions& options,
+      BlendMode blend_mode);
   bool ContinueDIBits(CFX_ImageRenderer* handle, PauseIndicatorIface* pPause);
 
   bool DrawNormalText(pdfium::span<const TextCharPos> pCharPos,

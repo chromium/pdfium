@@ -37,6 +37,15 @@ enum class DeviceType : bool {
 
 class RenderDeviceDriverIface {
  public:
+  struct StartResult {
+    StartResult(bool success,
+                std::unique_ptr<CFX_ImageRenderer> agg_image_renderer);
+    ~StartResult();
+
+    const bool success;
+    std::unique_ptr<CFX_ImageRenderer> agg_image_renderer;
+  };
+
   virtual ~RenderDeviceDriverIface();
 
   virtual DeviceType GetDeviceType() const = 0;
@@ -87,13 +96,12 @@ class RenderDeviceDriverIface {
                              const FX_RECT* pClipRect,
                              const FXDIB_ResampleOptions& options,
                              BlendMode blend_type) = 0;
-  virtual bool StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
-                           float alpha,
-                           uint32_t color,
-                           const CFX_Matrix& matrix,
-                           const FXDIB_ResampleOptions& options,
-                           std::unique_ptr<CFX_ImageRenderer>* handle,
-                           BlendMode blend_type) = 0;
+  virtual StartResult StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
+                                  float alpha,
+                                  uint32_t color,
+                                  const CFX_Matrix& matrix,
+                                  const FXDIB_ResampleOptions& options,
+                                  BlendMode blend_type) = 0;
   virtual bool ContinueDIBits(CFX_ImageRenderer* handle,
                               PauseIndicatorIface* pPause);
   virtual bool DrawDeviceText(pdfium::span<const TextCharPos> pCharPos,

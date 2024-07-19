@@ -985,26 +985,25 @@ bool CFX_RenderDevice::StretchBitMaskWithFlags(
                                         options, BlendMode::kNormal);
 }
 
-bool CFX_RenderDevice::StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
-                                   float alpha,
-                                   uint32_t argb,
-                                   const CFX_Matrix& matrix,
-                                   const FXDIB_ResampleOptions& options,
-                                   std::unique_ptr<CFX_ImageRenderer>* handle) {
+RenderDeviceDriverIface::StartResult CFX_RenderDevice::StartDIBits(
+    RetainPtr<const CFX_DIBBase> bitmap,
+    float alpha,
+    uint32_t argb,
+    const CFX_Matrix& matrix,
+    const FXDIB_ResampleOptions& options) {
   return StartDIBitsWithBlend(std::move(bitmap), alpha, argb, matrix, options,
-                              handle, BlendMode::kNormal);
+                              BlendMode::kNormal);
 }
 
-bool CFX_RenderDevice::StartDIBitsWithBlend(
+RenderDeviceDriverIface::StartResult CFX_RenderDevice::StartDIBitsWithBlend(
     RetainPtr<const CFX_DIBBase> bitmap,
     float alpha,
     uint32_t argb,
     const CFX_Matrix& matrix,
     const FXDIB_ResampleOptions& options,
-    std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_mode) {
   return m_pDeviceDriver->StartDIBits(std::move(bitmap), alpha, argb, matrix,
-                                      options, handle, blend_mode);
+                                      options, blend_mode);
 }
 
 bool CFX_RenderDevice::ContinueDIBits(CFX_ImageRenderer* handle,

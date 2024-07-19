@@ -1425,21 +1425,20 @@ bool CFX_AggDeviceDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
   return true;
 }
 
-bool CFX_AggDeviceDriver::StartDIBits(
+RenderDeviceDriverIface::StartResult CFX_AggDeviceDriver::StartDIBits(
     RetainPtr<const CFX_DIBBase> bitmap,
     float alpha,
     uint32_t argb,
     const CFX_Matrix& matrix,
     const FXDIB_ResampleOptions& options,
-    std::unique_ptr<CFX_ImageRenderer>* handle,
     BlendMode blend_type) {
-  if (m_pBitmap->GetBuffer().empty())
-    return true;
+  if (m_pBitmap->GetBuffer().empty()) {
+    return {true, nullptr};
+  }
 
-  *handle = std::make_unique<CFX_ImageRenderer>(
-      m_pBitmap, m_pClipRgn.get(), std::move(bitmap), alpha, argb, matrix,
-      options, m_bRgbByteOrder);
-  return true;
+  return {true, std::make_unique<CFX_ImageRenderer>(
+                    m_pBitmap, m_pClipRgn.get(), std::move(bitmap), alpha, argb,
+                    matrix, options, m_bRgbByteOrder)};
 }
 
 bool CFX_AggDeviceDriver::ContinueDIBits(CFX_ImageRenderer* pHandle,

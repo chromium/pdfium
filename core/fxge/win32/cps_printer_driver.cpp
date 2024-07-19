@@ -183,19 +183,19 @@ bool CPSPrinterDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
                                     dest_top, dest_width, dest_height, options);
 }
 
-bool CPSPrinterDriver::StartDIBits(RetainPtr<const CFX_DIBBase> bitmap,
-                                   float alpha,
-                                   uint32_t color,
-                                   const CFX_Matrix& matrix,
-                                   const FXDIB_ResampleOptions& options,
-                                   std::unique_ptr<CFX_ImageRenderer>* handle,
-                                   BlendMode blend_type) {
+RenderDeviceDriverIface::StartResult CPSPrinterDriver::StartDIBits(
+    RetainPtr<const CFX_DIBBase> bitmap,
+    float alpha,
+    uint32_t color,
+    const CFX_Matrix& matrix,
+    const FXDIB_ResampleOptions& options,
+    BlendMode blend_type) {
   if (blend_type != BlendMode::kNormal || alpha != 1.0f) {
-    return false;
+    return {false, nullptr};
   }
 
-  *handle = nullptr;
-  return m_PSRenderer.DrawDIBits(std::move(bitmap), color, matrix, options);
+  return {m_PSRenderer.DrawDIBits(std::move(bitmap), color, matrix, options),
+          nullptr};
 }
 
 bool CPSPrinterDriver::DrawDeviceText(
