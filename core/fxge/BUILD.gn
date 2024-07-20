@@ -8,6 +8,8 @@ import("../../testing/test.gni")
 
 source_set("fxge") {
   sources = [
+    "agg/cfx_agg_bitmapcomposer.cpp",
+    "agg/cfx_agg_bitmapcomposer.h",
     "agg/cfx_agg_imagerenderer.cpp",
     "agg/cfx_agg_imagerenderer.h",
     "agg/fx_agg_driver.cpp",
@@ -56,8 +58,6 @@ source_set("fxge") {
     "cfx_unicodeencoding.h",
     "dib/blend.cpp",
     "dib/blend.h",
-    "dib/cfx_bitmapcomposer.cpp",
-    "dib/cfx_bitmapcomposer.h",
     "dib/cfx_bitmapstorer.cpp",
     "dib/cfx_bitmapstorer.h",
     "dib/cfx_cmyk_to_srgb.cpp",

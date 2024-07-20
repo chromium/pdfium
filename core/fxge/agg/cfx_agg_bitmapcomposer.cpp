@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/dib/cfx_bitmapcomposer.h"
+#include "core/fxge/agg/cfx_agg_bitmapcomposer.h"
 
 #include <stddef.h>
 

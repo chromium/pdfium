@@ -12,7 +12,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "core/fxge/dib/cfx_bitmapcomposer.h"
+#include "core/fxge/agg/cfx_agg_bitmapcomposer.h"
 
 class CFX_DIBBase;
 class CFX_DIBitmap;

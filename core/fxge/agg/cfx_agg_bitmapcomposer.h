@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_DIB_CFX_BITMAPCOMPOSER_H_
-#define CORE_FXGE_DIB_CFX_BITMAPCOMPOSER_H_
+#ifndef CORE_FXGE_AGG_CFX_AGG_BITMAPCOMPOSER_H_
+#define CORE_FXGE_AGG_CFX_AGG_BITMAPCOMPOSER_H_
 
 #include <stdint.h>
 
@@ -71,4 +71,4 @@ class CFX_BitmapComposer final : public ScanlineComposerIface {
   DataVector<uint8_t> m_pAddClipScan;
 };
 
-#endif  // CORE_FXGE_DIB_CFX_BITMAPCOMPOSER_H_
+#endif  // CORE_FXGE_AGG_CFX_AGG_BITMAPCOMPOSER_H_
