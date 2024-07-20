@@ -123,6 +123,17 @@ TEST(FixedSizeDataVector, MoveAssign) {
   EXPECT_THAT(vec.span(), testing::ElementsAre(1, 2, 3, 4));
 }
 
+TEST(FixedSizeDataVector, TruncatedFrom) {
+  constexpr int kData[] = {1, 2, 3, 4};
+  auto vec1 = FixedSizeDataVector<int>::Uninit(4);
+  fxcrt::Copy(kData, vec1.span());
+
+  auto vec2 = FixedSizeDataVector<int>::TruncatedFrom(std::move(vec1), 3);
+  EXPECT_EQ(0u, vec1.span().size());
+  EXPECT_EQ(nullptr, vec1.span().data());
+  EXPECT_THAT(vec2.span(), testing::ElementsAre(1, 2, 3));
+}
+
 TEST(FixedSizeDataVector, Subspan) {
   auto vec = FixedSizeDataVector<uint32_t>::Uninit(4);
   std::iota(vec.span().begin(), vec.span().end(), 0u);
