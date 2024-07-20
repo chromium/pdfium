@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_DIB_CFX_IMAGERENDERER_H_
-#define CORE_FXGE_DIB_CFX_IMAGERENDERER_H_
+#ifndef CORE_FXGE_AGG_CFX_AGG_IMAGERENDERER_H_
+#define CORE_FXGE_AGG_CFX_AGG_IMAGERENDERER_H_
 
 #include <memory>
 
@@ -50,4 +50,4 @@ class CFX_ImageRenderer {
   const bool m_bRgbByteOrder;
 };
 
-#endif  // CORE_FXGE_DIB_CFX_IMAGERENDERER_H_
+#endif  // CORE_FXGE_AGG_CFX_AGG_IMAGERENDERER_H_

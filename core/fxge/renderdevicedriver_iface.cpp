@@ -9,9 +9,9 @@
 #include <utility>
 
 #include "core/fxcrt/fx_coordinates.h"
+#include "core/fxge/agg/cfx_agg_imagerenderer.h"
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
-#include "core/fxge/dib/cfx_imagerenderer.h"
 
 RenderDeviceDriverIface::~RenderDeviceDriverIface() = default;
 
