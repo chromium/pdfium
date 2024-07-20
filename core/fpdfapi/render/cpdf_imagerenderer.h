@@ -15,10 +15,10 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "core/fxge/dib/fx_dib.h"
 
+class CFX_AggImageRenderer;
 class CFX_DIBBase;
 class CFX_DIBitmap;
 class CFX_DefaultRenderDevice;
-class CFX_ImageRenderer;
 class CFX_ImageTransformer;
 class CPDF_ImageLoader;
 class CPDF_ImageObject;
@@ -89,7 +89,7 @@ class CPDF_ImageRenderer {
   CFX_Matrix m_ImageMatrix;
   std::unique_ptr<CPDF_ImageLoader> const m_pLoader;
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
-  std::unique_ptr<CFX_ImageRenderer> m_DeviceHandle;
+  std::unique_ptr<CFX_AggImageRenderer> m_DeviceHandle;
   Mode m_Mode = Mode::kNone;
   float m_Alpha = 0.0f;
   BlendMode m_BlendType = BlendMode::kNormal;

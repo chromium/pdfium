@@ -20,17 +20,17 @@ class CFX_ImageTransformer;
 class CFX_ImageStretcher;
 class PauseIndicatorIface;
 
-class CFX_ImageRenderer {
+class CFX_AggImageRenderer {
  public:
-  CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
-                    const CFX_ClipRgn* pClipRgn,
-                    RetainPtr<const CFX_DIBBase> source,
-                    float alpha,
-                    uint32_t mask_color,
-                    const CFX_Matrix& matrix,
-                    const FXDIB_ResampleOptions& options,
-                    bool bRgbByteOrder);
-  ~CFX_ImageRenderer();
+  CFX_AggImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
+                       const CFX_ClipRgn* pClipRgn,
+                       RetainPtr<const CFX_DIBBase> source,
+                       float alpha,
+                       uint32_t mask_color,
+                       const CFX_Matrix& matrix,
+                       const FXDIB_ResampleOptions& options,
+                       bool bRgbByteOrder);
+  ~CFX_AggImageRenderer();
 
   bool Continue(PauseIndicatorIface* pPause);
 

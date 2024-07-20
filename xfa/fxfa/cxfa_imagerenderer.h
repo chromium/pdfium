@@ -13,11 +13,11 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
-class CFX_RenderDevice;
+class CFX_AggImageRenderer;
 class CFX_DIBBase;
 class CFX_DIBitmap;
 class CFX_ImageTransformer;
-class CFX_ImageRenderer;
+class CFX_RenderDevice;
 
 class CXFA_ImageRenderer {
  public:
@@ -40,7 +40,7 @@ class CXFA_ImageRenderer {
   RetainPtr<CFX_DIBBase> m_pDIBBase;
   RetainPtr<CFX_DIBitmap> m_pCloneConvert;
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
-  std::unique_ptr<CFX_ImageRenderer> m_DeviceHandle;
+  std::unique_ptr<CFX_AggImageRenderer> m_DeviceHandle;
 };
 
 #endif  // XFA_FXFA_CXFA_IMAGERENDERER_H_

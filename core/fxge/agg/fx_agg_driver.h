@@ -88,7 +88,7 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
                           const CFX_Matrix& matrix,
                           const FXDIB_ResampleOptions& options,
                           BlendMode blend_type) override;
-  bool ContinueDIBits(CFX_ImageRenderer* handle,
+  bool ContinueDIBits(CFX_AggImageRenderer* handle,
                       PauseIndicatorIface* pPause) override;
   bool DrawDeviceText(pdfium::span<const TextCharPos> pCharPos,
                       CFX_Font* pFont,

@@ -1436,12 +1436,12 @@ RenderDeviceDriverIface::StartResult CFX_AggDeviceDriver::StartDIBits(
     return {true, nullptr};
   }
 
-  return {true, std::make_unique<CFX_ImageRenderer>(
+  return {true, std::make_unique<CFX_AggImageRenderer>(
                     m_pBitmap, m_pClipRgn.get(), std::move(bitmap), alpha, argb,
                     matrix, options, m_bRgbByteOrder)};
 }
 
-bool CFX_AggDeviceDriver::ContinueDIBits(CFX_ImageRenderer* pHandle,
+bool CFX_AggDeviceDriver::ContinueDIBits(CFX_AggImageRenderer* pHandle,
                                          PauseIndicatorIface* pPause) {
   return m_pBitmap->GetBuffer().empty() || pHandle->Continue(pPause);
 }

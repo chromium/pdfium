@@ -17,14 +17,15 @@
 #include "core/fxge/dib/cfx_imagestretcher.h"
 #include "core/fxge/dib/cfx_imagetransformer.h"
 
-CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
-                                     const CFX_ClipRgn* pClipRgn,
-                                     RetainPtr<const CFX_DIBBase> source,
-                                     float alpha,
-                                     uint32_t mask_color,
-                                     const CFX_Matrix& matrix,
-                                     const FXDIB_ResampleOptions& options,
-                                     bool bRgbByteOrder)
+CFX_AggImageRenderer::CFX_AggImageRenderer(
+    const RetainPtr<CFX_DIBitmap>& pDevice,
+    const CFX_ClipRgn* pClipRgn,
+    RetainPtr<const CFX_DIBBase> source,
+    float alpha,
+    uint32_t mask_color,
+    const CFX_Matrix& matrix,
+    const FXDIB_ResampleOptions& options,
+    bool bRgbByteOrder)
     : m_pDevice(pDevice),
       m_pClipRgn(pClipRgn),
       m_Matrix(matrix),
@@ -91,9 +92,9 @@ CFX_ImageRenderer::CFX_ImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
   m_Stretcher->Start();
 }
 
-CFX_ImageRenderer::~CFX_ImageRenderer() = default;
+CFX_AggImageRenderer::~CFX_AggImageRenderer() = default;
 
-bool CFX_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
+bool CFX_AggImageRenderer::Continue(PauseIndicatorIface* pPause) {
   if (m_State == State::kStretching)
     return m_Stretcher->Continue(pPause);
   if (m_State != State::kTransforming)

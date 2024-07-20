@@ -20,11 +20,11 @@
 #include "core/fxge/render_defines.h"
 #include "core/fxge/renderdevicedriver_iface.h"
 
+class CFX_AggImageRenderer;
 class CFX_DIBBase;
 class CFX_DIBitmap;
 class CFX_Font;
 class CFX_GraphStateData;
-class CFX_ImageRenderer;
 class PauseIndicatorIface;
 class TextCharPos;
 struct CFX_Color;
@@ -142,7 +142,8 @@ class CFX_RenderDevice {
       const CFX_Matrix& matrix,
       const FXDIB_ResampleOptions& options,
       BlendMode blend_mode);
-  bool ContinueDIBits(CFX_ImageRenderer* handle, PauseIndicatorIface* pPause);
+  bool ContinueDIBits(CFX_AggImageRenderer* handle,
+                      PauseIndicatorIface* pPause);
 
   bool DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
                       CFX_Font* pFont,

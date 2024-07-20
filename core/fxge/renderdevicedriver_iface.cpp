@@ -47,7 +47,7 @@ RetainPtr<const CFX_DIBitmap> RenderDeviceDriverIface::GetBackDrop() const {
   return RetainPtr<const CFX_DIBitmap>();
 }
 
-bool RenderDeviceDriverIface::ContinueDIBits(CFX_ImageRenderer* handle,
+bool RenderDeviceDriverIface::ContinueDIBits(CFX_AggImageRenderer* handle,
                                              PauseIndicatorIface* pPause) {
   return false;
 }
@@ -94,7 +94,7 @@ bool RenderDeviceDriverIface::SyncInternalBitmaps() {
 
 RenderDeviceDriverIface::StartResult::StartResult(
     bool success,
-    std::unique_ptr<CFX_ImageRenderer> agg_image_renderer)
+    std::unique_ptr<CFX_AggImageRenderer> agg_image_renderer)
     : success(success), agg_image_renderer(std::move(agg_image_renderer)) {}
 
 RenderDeviceDriverIface::StartResult::~StartResult() = default;
