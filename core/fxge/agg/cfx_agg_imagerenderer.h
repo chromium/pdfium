@@ -42,7 +42,7 @@ class CFX_AggImageRenderer {
   const CFX_Matrix m_Matrix;
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
   std::unique_ptr<CFX_ImageStretcher> m_Stretcher;
-  CFX_BitmapComposer m_Composer;
+  CFX_AggBitmapComposer m_Composer;
   FX_RECT m_ClipBox;
   const float m_Alpha;
   uint32_t m_MaskColor;

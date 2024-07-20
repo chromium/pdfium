@@ -18,20 +18,20 @@
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
-CFX_BitmapComposer::CFX_BitmapComposer() = default;
+CFX_AggBitmapComposer::CFX_AggBitmapComposer() = default;
 
-CFX_BitmapComposer::~CFX_BitmapComposer() = default;
+CFX_AggBitmapComposer::~CFX_AggBitmapComposer() = default;
 
-void CFX_BitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
-                                 const CFX_ClipRgn* pClipRgn,
-                                 float alpha,
-                                 uint32_t mask_color,
-                                 const FX_RECT& dest_rect,
-                                 bool bVertical,
-                                 bool bFlipX,
-                                 bool bFlipY,
-                                 bool bRgbByteOrder,
-                                 BlendMode blend_mode) {
+void CFX_AggBitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
+                                    const CFX_ClipRgn* pClipRgn,
+                                    float alpha,
+                                    uint32_t mask_color,
+                                    const FX_RECT& dest_rect,
+                                    bool bVertical,
+                                    bool bFlipX,
+                                    bool bFlipY,
+                                    bool bRgbByteOrder,
+                                    BlendMode blend_mode) {
   m_pBitmap = pDest;
   m_pClipRgn = pClipRgn;
   m_DestLeft = dest_rect.left;
@@ -50,10 +50,10 @@ void CFX_BitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
   m_BlendMode = blend_mode;
 }
 
-bool CFX_BitmapComposer::SetInfo(int width,
-                                 int height,
-                                 FXDIB_Format src_format,
-                                 DataVector<uint32_t> src_palette) {
+bool CFX_AggBitmapComposer::SetInfo(int width,
+                                    int height,
+                                    FXDIB_Format src_format,
+                                    DataVector<uint32_t> src_palette) {
   DCHECK_NE(src_format, FXDIB_Format::k1bppMask);
   DCHECK_NE(src_format, FXDIB_Format::k1bppRgb);
   m_SrcFormat = src_format;
@@ -73,10 +73,10 @@ bool CFX_BitmapComposer::SetInfo(int width,
   return true;
 }
 
-void CFX_BitmapComposer::DoCompose(pdfium::span<uint8_t> dest_scan,
-                                   pdfium::span<const uint8_t> src_scan,
-                                   int dest_width,
-                                   pdfium::span<const uint8_t> clip_scan) {
+void CFX_AggBitmapComposer::DoCompose(pdfium::span<uint8_t> dest_scan,
+                                      pdfium::span<const uint8_t> src_scan,
+                                      int dest_width,
+                                      pdfium::span<const uint8_t> clip_scan) {
   if (m_Alpha != 1.0f) {
     if (!clip_scan.empty()) {
       for (int i = 0; i < dest_width; ++i) {
@@ -100,8 +100,9 @@ void CFX_BitmapComposer::DoCompose(pdfium::span<uint8_t> dest_scan,
   }
 }
 
-void CFX_BitmapComposer::ComposeScanline(int line,
-                                         pdfium::span<const uint8_t> scanline) {
+void CFX_AggBitmapComposer::ComposeScanline(
+    int line,
+    pdfium::span<const uint8_t> scanline) {
   if (m_bVertical) {
     ComposeScanlineV(line, scanline);
     return;
@@ -127,7 +128,7 @@ void CFX_BitmapComposer::ComposeScanline(int line,
   DoCompose(dest_scan, scanline, m_DestWidth, clip_scan);
 }
 
-void CFX_BitmapComposer::ComposeScanlineV(
+void CFX_AggBitmapComposer::ComposeScanlineV(
     int line,
     pdfium::span<const uint8_t> scanline) {
   int Bpp = m_pBitmap->GetBPP() / 8;

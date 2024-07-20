@@ -1413,7 +1413,7 @@ bool CFX_AggDeviceDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
   dest_rect.Normalize();
   FX_RECT dest_clip = dest_rect;
   dest_clip.Intersect(*pClipRect);
-  CFX_BitmapComposer composer;
+  CFX_AggBitmapComposer composer;
   composer.Compose(m_pBitmap, m_pClipRgn.get(), /*alpha=*/1.0f, argb, dest_clip,
                    /*bVertical=*/false, /*bFlipX=*/false, /*bFlipY=*/false,
                    m_bRgbByteOrder, blend_type);

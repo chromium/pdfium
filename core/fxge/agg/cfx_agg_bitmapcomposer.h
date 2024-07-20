@@ -20,10 +20,10 @@ class CFX_ClipRgn;
 class CFX_DIBitmap;
 struct FX_RECT;
 
-class CFX_BitmapComposer final : public ScanlineComposerIface {
+class CFX_AggBitmapComposer final : public ScanlineComposerIface {
  public:
-  CFX_BitmapComposer();
-  ~CFX_BitmapComposer() override;
+  CFX_AggBitmapComposer();
+  ~CFX_AggBitmapComposer() override;
 
   void Compose(const RetainPtr<CFX_DIBitmap>& pDest,
                const CFX_ClipRgn* pClipRgn,
