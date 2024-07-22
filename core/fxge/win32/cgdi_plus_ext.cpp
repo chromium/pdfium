@@ -16,12 +16,12 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/fx_system.h"
-#include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
@@ -60,7 +60,6 @@ enum {
   FuncId_GdipDeleteGraphics,
   FuncId_GdipDisposeImage,
   FuncId_GdipCreateBitmapFromScan0,
-  FuncId_GdipSetImagePalette,
   FuncId_GdipSetInterpolationMode,
   FuncId_GdipDrawImagePointsI,
   FuncId_GdiplusStartup,
@@ -98,7 +97,6 @@ LPCSTR g_GdipFuncNames[] = {
     "GdipDeleteGraphics",
     "GdipDisposeImage",
     "GdipCreateBitmapFromScan0",
-    "GdipSetImagePalette",
     "GdipSetInterpolationMode",
     "GdipDrawImagePointsI",
     "GdiplusStartup",
@@ -150,8 +148,6 @@ using FuncType_GdipDisposeImage =
     decltype(&Gdiplus::DllExports::GdipDisposeImage);
 using FuncType_GdipCreateBitmapFromScan0 =
     decltype(&Gdiplus::DllExports::GdipCreateBitmapFromScan0);
-using FuncType_GdipSetImagePalette =
-    decltype(&Gdiplus::DllExports::GdipSetImagePalette);
 using FuncType_GdipSetInterpolationMode =
     decltype(&Gdiplus::DllExports::GdipSetInterpolationMode);
 using FuncType_GdipDrawImagePointsI =
@@ -212,19 +208,10 @@ void OutputImage(Gdiplus::GpGraphics* pGraphics,
                  int dest_top,
                  int dest_width,
                  int dest_height) {
+  CHECK_EQ(FXDIB_Format::kArgb, source->GetFormat());
   int src_width = src_rect.Width();
   int src_height = src_rect.Height();
   const CGdiplusExt& GdiplusExt = GetGdiplusExt();
-  if (source->GetBPP() == 1 && (src_rect.left % 8)) {
-    FX_RECT new_rect(0, 0, src_width, src_height);
-    source = source->ClipTo(src_rect);
-    if (!source) {
-      return;
-    }
-    OutputImage(pGraphics, std::move(source), new_rect, dest_left, dest_top,
-                dest_width, dest_height);
-    return;
-  }
 
   RetainPtr<const CFX_DIBitmap> realized_source = source->RealizeIfNeeded();
   if (!realized_source) {
@@ -242,43 +229,8 @@ void OutputImage(Gdiplus::GpGraphics* pGraphics,
                    realized_source->GetBPP() * src_rect.left / 8)
           .data());
   Gdiplus::GpBitmap* bitmap = nullptr;
-  switch (source->GetFormat()) {
-    case FXDIB_Format::kArgb:
-      CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
-                                          PixelFormat32bppARGB, scan0, &bitmap);
-      break;
-    case FXDIB_Format::kRgb32:
-      CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
-                                          PixelFormat32bppRGB, scan0, &bitmap);
-      break;
-    case FXDIB_Format::kRgb:
-      CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
-                                          PixelFormat24bppRGB, scan0, &bitmap);
-      break;
-    case FXDIB_Format::k8bppRgb: {
-      CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
-                                          PixelFormat8bppIndexed, scan0,
-                                          &bitmap);
-      std::array<UINT, 258> pal;
-      pal[0] = 0;
-      pal[1] = 256;
-      for (int i = 0; i < 256; i++) {
-        pal[i + 2] = realized_source->GetPaletteArgb(i);
-      }
-      CallFunc(GdipSetImagePalette)(bitmap, (Gdiplus::ColorPalette*)pal.data());
-      break;
-    }
-    case FXDIB_Format::k1bppRgb: {
-      CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
-                                          PixelFormat1bppIndexed, scan0,
-                                          &bitmap);
-      break;
-    }
-    case FXDIB_Format::kInvalid:
-    case FXDIB_Format::k1bppMask:
-    case FXDIB_Format::k8bppMask:
-      NOTREACHED_NORETURN();
-  }
+  CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
+                                      PixelFormat32bppARGB, scan0, &bitmap);
   if (dest_height < 0) {
     dest_height--;
   }
@@ -604,6 +556,7 @@ bool CGdiplusExt::StretchDIBits(HDC hDC,
                                 int dest_height,
                                 const FX_RECT* pClipRect,
                                 const FXDIB_ResampleOptions& options) {
+  CHECK(source->IsAlphaFormat());
   Gdiplus::GpGraphics* pGraphics;
   const CGdiplusExt& GdiplusExt = GetGdiplusExt();
   CallFunc(GdipCreateFromHDC)(hDC, &pGraphics);
@@ -622,7 +575,6 @@ bool CGdiplusExt::StretchDIBits(HDC hDC,
   FX_RECT src_rect(0, 0, source->GetWidth(), source->GetHeight());
   OutputImage(pGraphics, std::move(source), src_rect, dest_left, dest_top,
               dest_width, dest_height);
-  CallFunc(GdipDeleteGraphics)(pGraphics);
   CallFunc(GdipDeleteGraphics)(pGraphics);
   return true;
 }
