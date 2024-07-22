@@ -1530,13 +1530,9 @@ void ProgressiveDecoder::SetTransMethod() {
         case FXCodec_Invalid:
           m_TransMethod = -1;
           break;
-        case FXCodec_1bppGray:
-          m_TransMethod = 6;
-          break;
         case FXCodec_8bppGray:
           m_TransMethod = 7;
           break;
-        case FXCodec_1bppRgb:
         case FXCodec_8bppRgb:
           m_TransMethod = 8;
           break;
@@ -1557,13 +1553,9 @@ void ProgressiveDecoder::SetTransMethod() {
         case FXCodec_Invalid:
           m_TransMethod = -1;
           break;
-        case FXCodec_1bppGray:
-          m_TransMethod = 6;
-          break;
         case FXCodec_8bppGray:
           m_TransMethod = 7;
           break;
-        case FXCodec_1bppRgb:
         case FXCodec_8bppRgb:
           if (m_pDeviceBitmap->GetFormat() == FXDIB_Format::kArgb) {
             m_TransMethod = 12;

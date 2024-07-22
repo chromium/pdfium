@@ -58,8 +58,6 @@ class ProgressiveDecoder final :
  public:
   enum FXCodec_Format {
     FXCodec_Invalid = 0,
-    FXCodec_1bppGray = 0x101,
-    FXCodec_1bppRgb = 0x001,
     FXCodec_8bppGray = 0x108,
     FXCodec_8bppRgb = 0x008,
     FXCodec_Rgb = 0x018,
