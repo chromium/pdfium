@@ -2157,8 +2157,6 @@ std::pair<FXCODEC_STATUS, size_t> ProgressiveDecoder::GetFrames() {
 
 FXCODEC_STATUS ProgressiveDecoder::StartDecode(
     const RetainPtr<CFX_DIBitmap>& pDIBitmap,
-    int start_x,
-    int start_y,
     int size_x,
     int size_y) {
   if (m_status != FXCODEC_STATUS::kDecodeReady)
@@ -2173,8 +2171,7 @@ FXCODEC_STATUS ProgressiveDecoder::StartDecode(
   if (size_x <= 0 || size_x > 65535 || size_y <= 0 || size_y > 65535)
     return FXCODEC_STATUS::kError;
 
-  FX_RECT device_rc =
-      FX_RECT(start_x, start_y, start_x + size_x, start_y + size_y);
+  FX_RECT device_rc(0, 0, size_x, size_y);
   int32_t out_range_x = device_rc.right - pDIBitmap->GetWidth();
   int32_t out_range_y = device_rc.bottom - pDIBitmap->GetHeight();
   device_rc.Intersect(
@@ -2187,25 +2184,14 @@ FXCODEC_STATUS ProgressiveDecoder::StartDecode(
   m_sizeX = device_rc.Width();
   m_sizeY = device_rc.Height();
   m_FrameCur = 0;
-  if (start_x < 0 || out_range_x > 0) {
+  if (out_range_x > 0) {
     float scaleX = (float)m_clipBox.Width() / (float)size_x;
-    if (start_x < 0) {
-      m_clipBox.left -= static_cast<int32_t>(ceil((float)start_x * scaleX));
-    }
-    if (out_range_x > 0) {
-      m_clipBox.right -=
-          static_cast<int32_t>(floor((float)out_range_x * scaleX));
-    }
+    m_clipBox.right -= static_cast<int32_t>(floor((float)out_range_x * scaleX));
   }
-  if (start_y < 0 || out_range_y > 0) {
+  if (out_range_y > 0) {
     float scaleY = (float)m_clipBox.Height() / (float)size_y;
-    if (start_y < 0) {
-      m_clipBox.top -= static_cast<int32_t>(ceil((float)start_y * scaleY));
-    }
-    if (out_range_y > 0) {
-      m_clipBox.bottom -=
-          static_cast<int32_t>(floor((float)out_range_y * scaleY));
-    }
+    m_clipBox.bottom -=
+        static_cast<int32_t>(floor((float)out_range_y * scaleY));
   }
   if (m_clipBox.IsEmpty()) {
     return FXCODEC_STATUS::kError;

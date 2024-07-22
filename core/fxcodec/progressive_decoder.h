@@ -84,8 +84,6 @@ class ProgressiveDecoder final :
 
   std::pair<FXCODEC_STATUS, size_t> GetFrames();
   FXCODEC_STATUS StartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
-                             int start_x,
-                             int start_y,
                              int size_x,
                              int size_y);
 
