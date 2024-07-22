@@ -912,10 +912,8 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
     clip_rect_bbox.Intersect(
         mtMatrix.TransformRect(pDict->GetRectFor("BBox")).GetOuterRect());
   }
-  bool bAlphaMode = options.ColorModeIs(CPDF_RenderOptions::kAlpha);
   if (pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SHADING &&
-      pDevice->DrawShading(pPattern, &mtMatrix, clip_rect_bbox, alpha,
-                           bAlphaMode)) {
+      pDevice->DrawShading(*pPattern, mtMatrix, clip_rect_bbox, alpha)) {
     return;
   }
   CPDF_DeviceBuffer buffer(pContext, pDevice, clip_rect_bbox, pCurObj, 150);
@@ -981,12 +979,12 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
       break;
     }
   }
-  if (bAlphaMode) {
-    pBitmap->SetRedFromAlpha();
-  }
 
-  if (options.ColorModeIs(CPDF_RenderOptions::kGray))
+  if (options.ColorModeIs(CPDF_RenderOptions::kAlpha)) {
+    pBitmap->SetRedFromAlpha();
+  } else if (options.ColorModeIs(CPDF_RenderOptions::kGray)) {
     pBitmap->ConvertColorScale(0, 0xffffff);
+  }
 
   buffer.OutputToDevice();
 }

@@ -1167,32 +1167,32 @@ bool CFX_SkiaDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
   return true;
 }
 
-bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
-                                       const CFX_Matrix* pMatrix,
+bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
+                                       const CFX_Matrix& matrix,
                                        const FX_RECT& clip_rect,
-                                       int alpha,
-                                       bool bAlphaMode) {
-  ShadingType shadingType = pPattern->GetShadingType();
-  if (kAxialShading != shadingType && kRadialShading != shadingType &&
-      kCoonsPatchMeshShading != shadingType) {
+                                       int alpha) {
+  const ShadingType shading_type = pattern.GetShadingType();
+  if (shading_type != kAxialShading && shading_type != kRadialShading &&
+      shading_type != kCoonsPatchMeshShading) {
     // TODO(caryclark) more types
     return false;
   }
-  CPDF_ColorSpace::Family csFamily = pPattern->GetCS()->GetFamily();
-  if (CPDF_ColorSpace::Family::kDeviceRGB != csFamily &&
-      CPDF_ColorSpace::Family::kDeviceGray != csFamily) {
+  CPDF_ColorSpace::Family cs_family = pattern.GetCS()->GetFamily();
+  if (CPDF_ColorSpace::Family::kDeviceRGB != cs_family &&
+      CPDF_ColorSpace::Family::kDeviceGray != cs_family) {
     return false;
   }
   const std::vector<std::unique_ptr<CPDF_Function>>& pFuncs =
-      pPattern->GetFuncs();
+      pattern.GetFuncs();
   size_t nFuncs = pFuncs.size();
   if (nFuncs > 1)  // TODO(caryclark) remove this restriction
     return false;
   RetainPtr<const CPDF_Dictionary> pDict =
-      pPattern->GetShadingObject()->GetDict();
+      pattern.GetShadingObject()->GetDict();
   RetainPtr<const CPDF_Array> pCoords = pDict->GetArrayFor("Coords");
-  if (!pCoords && kCoonsPatchMeshShading != shadingType)
+  if (!pCoords && shading_type != kCoonsPatchMeshShading) {
     return false;
+  }
   // TODO(caryclark) Respect Domain[0], Domain[1]. (Don't know what they do
   // yet.)
   DataVector<SkColor> sk_colors;
@@ -1229,12 +1229,12 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
   SkPaint paint;
   paint.setAntiAlias(true);
   paint.setAlpha(alpha);
-  SkMatrix skMatrix = ToSkMatrix(*pMatrix);
+  SkMatrix skMatrix = ToSkMatrix(matrix);
   SkRect skRect = SkRect::MakeLTRB(clip_rect.left, clip_rect.top,
                                    clip_rect.right, clip_rect.bottom);
   SkPath skClip;
   SkPath skPath;
-  if (kAxialShading == shadingType) {
+  if (shading_type == kAxialShading) {
     float start_x = pCoords->GetFloatAt(0);
     float start_y = pCoords->GetFloatAt(1);
     float end_x = pCoords->GetFloatAt(2);
@@ -1274,7 +1274,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     }
     skPath.addRect(skRect);
     skMatrix.setIdentity();
-  } else if (kRadialShading == shadingType) {
+  } else if (shading_type == kRadialShading) {
     float start_x = pCoords->GetFloatAt(0);
     float start_y = pCoords->GetFloatAt(1);
     float start_r = pCoords->GetFloatAt(2);
@@ -1301,13 +1301,12 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern* pPattern,
     skPath.addRect(skRect);
     skPath.transform(inverse);
   } else {
-    DCHECK_EQ(kCoonsPatchMeshShading, shadingType);
-    RetainPtr<const CPDF_Stream> pStream =
-        ToStream(pPattern->GetShadingObject());
+    CHECK_EQ(kCoonsPatchMeshShading, shading_type);
+    RetainPtr<const CPDF_Stream> pStream = ToStream(pattern.GetShadingObject());
     if (!pStream)
       return false;
-    CPDF_MeshStream stream(shadingType, pPattern->GetFuncs(),
-                           std::move(pStream), pPattern->GetCS());
+    CPDF_MeshStream stream(shading_type, pattern.GetFuncs(), std::move(pStream),
+                           pattern.GetCS());
     if (!stream.Load())
       return false;
     SkPoint cubics[12];

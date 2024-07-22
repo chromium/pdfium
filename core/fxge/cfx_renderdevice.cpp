@@ -1336,13 +1336,11 @@ void CFX_RenderDevice::DrawShadow(const CFX_Matrix& mtUser2Device,
   }
 }
 
-bool CFX_RenderDevice::DrawShading(const CPDF_ShadingPattern* pPattern,
-                                   const CFX_Matrix* pMatrix,
+bool CFX_RenderDevice::DrawShading(const CPDF_ShadingPattern& pattern,
+                                   const CFX_Matrix& matrix,
                                    const FX_RECT& clip_rect,
-                                   int alpha,
-                                   bool bAlphaMode) {
-  return m_pDeviceDriver->DrawShading(pPattern, pMatrix, clip_rect, alpha,
-                                      bAlphaMode);
+                                   int alpha) {
+  return m_pDeviceDriver->DrawShading(pattern, matrix, clip_rect, alpha);
 }
 
 void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,

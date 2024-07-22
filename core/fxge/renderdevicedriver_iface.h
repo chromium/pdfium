@@ -111,11 +111,10 @@ class RenderDeviceDriverIface {
                               uint32_t color,
                               const CFX_TextRenderOptions& options);
   virtual int GetDriverType() const;
-  virtual bool DrawShading(const CPDF_ShadingPattern* pPattern,
-                           const CFX_Matrix* pMatrix,
+  virtual bool DrawShading(const CPDF_ShadingPattern& pattern,
+                           const CFX_Matrix& matrix,
                            const FX_RECT& clip_rect,
-                           int alpha,
-                           bool bAlphaMode);
+                           int alpha);
 #if defined(PDF_USE_SKIA)
   virtual bool SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
                                RetainPtr<const CFX_DIBBase> mask,

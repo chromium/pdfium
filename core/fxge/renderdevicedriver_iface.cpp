@@ -66,11 +66,10 @@ int RenderDeviceDriverIface::GetDriverType() const {
   return 0;
 }
 
-bool RenderDeviceDriverIface::DrawShading(const CPDF_ShadingPattern* pPattern,
-                                          const CFX_Matrix* pMatrix,
+bool RenderDeviceDriverIface::DrawShading(const CPDF_ShadingPattern& pattern,
+                                          const CFX_Matrix& matrix,
                                           const FX_RECT& clip_rect,
-                                          int alpha,
-                                          bool bAlphaMode) {
+                                          int alpha) {
   return false;
 }
 

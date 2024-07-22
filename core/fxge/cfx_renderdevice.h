@@ -194,11 +194,10 @@ class CFX_RenderDevice {
                   int32_t nTransparency,
                   int32_t nStartGray,
                   int32_t nEndGray);
-  bool DrawShading(const CPDF_ShadingPattern* pPattern,
-                   const CFX_Matrix* pMatrix,
+  bool DrawShading(const CPDF_ShadingPattern& pattern,
+                   const CFX_Matrix& matrix,
                    const FX_RECT& clip_rect,
-                   int alpha,
-                   bool bAlphaMode);
+                   int alpha);
 
   // See RenderDeviceDriverIface methods of the same name.
   bool MultiplyAlpha(float alpha);

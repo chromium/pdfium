@@ -117,11 +117,10 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                       uint32_t color,
                       const CFX_TextRenderOptions& options) override;
   int GetDriverType() const override;
-  bool DrawShading(const CPDF_ShadingPattern* pPattern,
-                   const CFX_Matrix* pMatrix,
+  bool DrawShading(const CPDF_ShadingPattern& pattern,
+                   const CFX_Matrix& matrix,
                    const FX_RECT& clip_rect,
-                   int alpha,
-                   bool bAlphaMode) override;
+                   int alpha) override;
 
   bool MultiplyAlpha(float alpha) override;
   bool MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) override;
