@@ -402,11 +402,6 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(
     pdfium::span<uint8_t> scan_span =
         pDevice->GetWritableScanline(row + startY).subspan(startX * Bpp);
     switch (m_TransMethod) {
-      case 3: {
-        fxcrt::Fill(scan_span,
-                    FXRGB2GRAY(FXARGB_R(argb), FXARGB_G(argb), FXARGB_B(argb)));
-        break;
-      }
       case 8: {
         uint8_t* pScanline = scan_span.data();
         UNSAFE_TODO({
@@ -1599,91 +1594,6 @@ void ProgressiveDecoder::ResampleScanline(
     switch (m_TransMethod) {
       case -1:
         return;
-      case 0:
-        return;
-      case 1:
-        return;
-      case 2: {
-        UNSAFE_TODO({
-          uint32_t dest_g = 0;
-          for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd;
-               j++) {
-            uint32_t pixel_weight =
-                pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-            dest_g += pixel_weight * src_scan[j];
-          }
-          *dest_scan++ = CStretchEngine::PixelFromFixed(dest_g);
-          break;
-        });
-      }
-      case 3: {
-        UNSAFE_TODO({
-          uint32_t dest_r = 0;
-          uint32_t dest_g = 0;
-          uint32_t dest_b = 0;
-          for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd;
-               j++) {
-            uint32_t pixel_weight =
-                pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-            uint32_t argb = m_SrcPalette[src_scan[j]];
-            dest_r += pixel_weight * FXARGB_R(argb);
-            dest_g += pixel_weight * FXARGB_G(argb);
-            dest_b += pixel_weight * FXARGB_B(argb);
-          }
-          *dest_scan++ = static_cast<uint8_t>(
-              FXRGB2GRAY(CStretchEngine::PixelFromFixed(dest_r),
-                         CStretchEngine::PixelFromFixed(dest_g),
-                         CStretchEngine::PixelFromFixed(dest_b)));
-          break;
-        });
-      }
-      case 4: {
-        UNSAFE_TODO({
-          uint32_t dest_b = 0;
-          uint32_t dest_g = 0;
-          uint32_t dest_r = 0;
-          for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd;
-               j++) {
-            uint32_t pixel_weight =
-                pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-            const uint8_t* src_pixel = src_scan + j * src_bytes_per_pixel;
-            dest_b += pixel_weight * (*src_pixel++);
-            dest_g += pixel_weight * (*src_pixel++);
-            dest_r += pixel_weight * (*src_pixel);
-          }
-          *dest_scan++ = static_cast<uint8_t>(
-              FXRGB2GRAY(CStretchEngine::PixelFromFixed(dest_r),
-                         CStretchEngine::PixelFromFixed(dest_g),
-                         CStretchEngine::PixelFromFixed(dest_b)));
-          break;
-        });
-      }
-      case 5: {
-        UNSAFE_TODO({
-          uint32_t dest_r = 0;
-          uint32_t dest_g = 0;
-          uint32_t dest_b = 0;
-          for (int j = pPixelWeights->m_SrcStart; j <= pPixelWeights->m_SrcEnd;
-               j++) {
-            uint32_t pixel_weight =
-                pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-            const uint8_t* src_pixel = src_scan + j * src_bytes_per_pixel;
-            FX_RGB_STRUCT<uint8_t> src_rgb =
-                AdobeCMYK_to_sRGB1(255 - src_pixel[0], 255 - src_pixel[1],
-                                   255 - src_pixel[2], 255 - src_pixel[3]);
-            dest_r += pixel_weight * src_rgb.red;
-            dest_g += pixel_weight * src_rgb.green;
-            dest_b += pixel_weight * src_rgb.blue;
-          }
-          *dest_scan++ = static_cast<uint8_t>(
-              FXRGB2GRAY(CStretchEngine::PixelFromFixed(dest_r),
-                         CStretchEngine::PixelFromFixed(dest_g),
-                         CStretchEngine::PixelFromFixed(dest_b)));
-          break;
-        });
-      }
-      case 6:
-        return;
       case 7: {
         UNSAFE_TODO({
           uint32_t dest_g = 0;
@@ -1835,7 +1745,7 @@ void ProgressiveDecoder::ResampleScanline(
         });
       }
       default:
-        return;
+        NOTREACHED_NORETURN();
     }
   }
 }
