@@ -234,11 +234,9 @@ bool ProgressiveDecoder::PngReadHeader(int width,
     case FXDIB_Format::kInvalid:
     case FXDIB_Format::k1bppMask:
     case FXDIB_Format::k1bppRgb:
-      NOTREACHED_NORETURN();
     case FXDIB_Format::k8bppMask:
     case FXDIB_Format::k8bppRgb:
-      *color_type = 0;
-      break;
+      NOTREACHED_NORETURN();
     case FXDIB_Format::kRgb:
       *color_type = 2;
       break;
@@ -275,29 +273,11 @@ bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
   UNSAFE_TODO({
     switch (pDIBitmap->GetFormat()) {
       case FXDIB_Format::kInvalid:
-        return false;
       case FXDIB_Format::k1bppMask:
       case FXDIB_Format::k1bppRgb:
-        for (int32_t src_col = 0; src_col < m_sizeX; src_col++) {
-          PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(src_col);
-          CHECK_NE(pPixelWeights->m_SrcStart, pPixelWeights->m_SrcEnd);
-        }
-        return true;
       case FXDIB_Format::k8bppMask:
       case FXDIB_Format::k8bppRgb:
-        if (pDIBitmap->HasPalette()) {
-          return false;
-        }
-        for (int32_t src_col = 0; src_col < m_sizeX; src_col++) {
-          PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(src_col);
-          if (pPixelWeights->m_SrcStart != pPixelWeights->m_SrcEnd) {
-            continue;
-          }
-          uint32_t dest_g = pPixelWeights->m_Weights[0] * src_scan[src_col];
-          dest_scan[pPixelWeights->m_SrcStart] =
-              CStretchEngine::PixelFromFixed(dest_g);
-        }
-        return true;
+        NOTREACHED_NORETURN();
       case FXDIB_Format::kRgb:
       case FXDIB_Format::kRgb32:
         for (int32_t src_col = 0; src_col < m_sizeX; src_col++) {
@@ -603,19 +583,9 @@ void ProgressiveDecoder::ResampleVertBT(
         case FXDIB_Format::kInvalid:
         case FXDIB_Format::k1bppMask:
         case FXDIB_Format::k1bppRgb:
-          return;
         case FXDIB_Format::k8bppMask:
         case FXDIB_Format::k8bppRgb:
-          if (pDeviceBitmap->HasPalette()) {
-            return;
-          }
-          for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
-            uint32_t dest_g = 0;
-            dest_g += pWeight->m_Weights[0] * (*scan_src1++);
-            dest_g += pWeight->m_Weights[1] * (*scan_src2++);
-            *scan_des++ = CStretchEngine::PixelFromFixed(dest_g);
-          }
-          break;
+          NOTREACHED_NORETURN();
         case FXDIB_Format::kRgb:
         case FXDIB_Format::kRgb32:
           for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
@@ -737,7 +707,7 @@ bool ProgressiveDecoder::BmpReadMoreData(
 }
 
 FXCODEC_STATUS ProgressiveDecoder::BmpStartDecode() {
-  GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
+  SetTransMethod();
   m_ScanlineSize = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
   m_DecodeBuf.resize(m_ScanlineSize);
   FXDIB_ResampleOptions options;
@@ -807,7 +777,7 @@ bool ProgressiveDecoder::GifDetectImageTypeInBuffer() {
 
 FXCODEC_STATUS ProgressiveDecoder::GifStartDecode() {
   m_SrcFormat = FXCodec_8bppRgb;
-  GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
+  SetTransMethod();
   int scanline_size = FxAlignToBoundary<4>(m_SrcWidth);
   m_DecodeBuf.resize(scanline_size);
   FXDIB_ResampleOptions options;
@@ -878,19 +848,9 @@ void ProgressiveDecoder::GifDoubleLineResampleVert(
         case FXDIB_Format::kInvalid:
         case FXDIB_Format::k1bppMask:
         case FXDIB_Format::k1bppRgb:
-          return;
         case FXDIB_Format::k8bppMask:
         case FXDIB_Format::k8bppRgb:
-          if (pDeviceBitmap->HasPalette()) {
-            return;
-          }
-          for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
-            uint32_t dest_g = 0;
-            dest_g += pWeight->m_Weights[0] * (*scan_src1++);
-            dest_g += pWeight->m_Weights[1] * (*scan_src2++);
-            *scan_des++ = CStretchEngine::PixelFromFixed(dest_g);
-          }
-          break;
+          NOTREACHED_NORETURN();
         case FXDIB_Format::kRgb:
         case FXDIB_Format::kRgb32:
           for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
@@ -982,7 +942,7 @@ bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
   return false;
 }
 
-FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode(FXDIB_Format format) {
+FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode() {
   int down_scale = GetDownScale();
   // Setting jump marker before calling StartScanLine, since a longjmp to
   // the marker indicates a fatal error.
@@ -1025,7 +985,7 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode(FXDIB_Format format) {
       m_SrcFormat = FXCodec_Cmyk;
       break;
   }
-  GetTransMethod(format, m_SrcFormat);
+  SetTransMethod();
   m_status = FXCODEC_STATUS::kDecodeToBeContinued;
   return m_status;
 }
@@ -1089,21 +1049,9 @@ void ProgressiveDecoder::PngOneOneMapResampleHorz(
       case FXDIB_Format::kInvalid:
       case FXDIB_Format::k1bppMask:
       case FXDIB_Format::k1bppRgb:
-        NOTREACHED_NORETURN();
       case FXDIB_Format::k8bppMask:
       case FXDIB_Format::k8bppRgb:
-        if (pDeviceBitmap->HasPalette()) {
-          return;
-        }
-        for (int32_t dest_col = 0; dest_col < m_sizeX; dest_col++) {
-          PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(dest_col);
-          uint32_t dest_g =
-              pPixelWeights->m_Weights[0] * src_scan[pPixelWeights->m_SrcStart];
-          dest_g +=
-              pPixelWeights->m_Weights[1] * src_scan[pPixelWeights->m_SrcEnd];
-          *dest_scan++ = CStretchEngine::PixelFromFixed(dest_g);
-        }
-        break;
+        NOTREACHED_NORETURN();
       case FXDIB_Format::kRgb:
       case FXDIB_Format::kRgb32:
         for (int32_t dest_col = 0; dest_col < m_sizeX; dest_col++) {
@@ -1192,15 +1140,9 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {
     case FXDIB_Format::kInvalid:
     case FXDIB_Format::k1bppMask:
     case FXDIB_Format::k1bppRgb:
-      m_pDeviceBitmap = nullptr;
-      m_pFile = nullptr;
-      m_status = FXCODEC_STATUS::kError;
-      return m_status;
     case FXDIB_Format::k8bppMask:
     case FXDIB_Format::k8bppRgb:
-      m_SrcComponents = 1;
-      m_SrcFormat = FXCodec_8bppGray;
-      break;
+      NOTREACHED_NORETURN();
     case FXDIB_Format::kRgb:
       m_SrcComponents = 3;
       m_SrcFormat = FXCodec_Rgb;
@@ -1211,7 +1153,7 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {
       m_SrcFormat = FXCodec_Argb;
       break;
   }
-  GetTransMethod(m_pDeviceBitmap->GetFormat(), m_SrcFormat);
+  SetTransMethod();
   int scanline_size = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
   m_DecodeBuf.resize(scanline_size);
   m_WeightHorzOO.CalculateWeights(m_sizeX, m_clipBox.Width());
@@ -1327,19 +1269,9 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
     case FXDIB_Format::kInvalid:
     case FXDIB_Format::k1bppRgb:
     case FXDIB_Format::k1bppMask:
-      break;
     case FXDIB_Format::k8bppRgb:
-      pFormatBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-      created_format_bitmap = pFormatBitmap->Create(pClipBitmap->GetWidth(),
-                                                    pClipBitmap->GetHeight(),
-                                                    FXDIB_Format::k8bppRgb);
-      break;
     case FXDIB_Format::k8bppMask:
-      pFormatBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-      created_format_bitmap = pFormatBitmap->Create(pClipBitmap->GetWidth(),
-                                                    pClipBitmap->GetHeight(),
-                                                    FXDIB_Format::k8bppMask);
-      break;
+      NOTREACHED_NORETURN();
     case FXDIB_Format::kRgb:
       pFormatBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
       created_format_bitmap =
@@ -1369,24 +1301,9 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
       case FXDIB_Format::kInvalid:
       case FXDIB_Format::k1bppRgb:
       case FXDIB_Format::k1bppMask:
-      case FXDIB_Format::kArgb:
-        break;
       case FXDIB_Format::k8bppRgb:
-      case FXDIB_Format::k8bppMask: {
-        for (int32_t row = 0; row < pClipBitmap->GetHeight(); row++) {
-          const uint8_t* src_line = pClipBitmap->GetScanline(row).data();
-          uint8_t* dest_line = pFormatBitmap->GetWritableScanline(row).data();
-          for (int32_t col = 0; col < pClipBitmap->GetWidth(); col++) {
-            uint8_t _a = 255 - src_line[3];
-            uint8_t b = (src_line[0] * src_line[3] + 0xFF * _a) / 255;
-            uint8_t g = (src_line[1] * src_line[3] + 0xFF * _a) / 255;
-            uint8_t r = (src_line[2] * src_line[3] + 0xFF * _a) / 255;
-            *dest_line++ = FXRGB2GRAY(r, g, b);
-            src_line += 4;
-          }
-        }
-        break;
-      }
+      case FXDIB_Format::k8bppMask:
+        NOTREACHED_NORETURN();
       case FXDIB_Format::kRgb:
       case FXDIB_Format::kRgb32: {
         int32_t desBpp =
@@ -1408,6 +1325,8 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
         }
         break;
       }
+      case FXDIB_Format::kArgb:
+        break;
     }
   });
   FXDIB_ResampleOptions options;
@@ -1598,51 +1517,19 @@ int ProgressiveDecoder::GetDownScale() {
   return down_scale;
 }
 
-void ProgressiveDecoder::GetTransMethod(FXDIB_Format dest_format,
-                                        FXCodec_Format src_format) {
-  switch (dest_format) {
+void ProgressiveDecoder::SetTransMethod() {
+  switch (m_pDeviceBitmap->GetFormat()) {
     case FXDIB_Format::kInvalid:
-      m_TransMethod = -1;
-      break;
     case FXDIB_Format::k1bppMask:
-    case FXDIB_Format::k1bppRgb: {
-      switch (src_format) {
-        case FXCodec_1bppGray:
-          m_TransMethod = 0;
-          break;
-        default:
-          m_TransMethod = -1;
-      }
-      break;
-    }
+    case FXDIB_Format::k1bppRgb:
     case FXDIB_Format::k8bppMask:
-    case FXDIB_Format::k8bppRgb: {
-      switch (src_format) {
-        case FXCodec_1bppGray:
-          m_TransMethod = 1;
-          break;
-        case FXCodec_8bppGray:
-          m_TransMethod = 2;
-          break;
-        case FXCodec_1bppRgb:
-        case FXCodec_8bppRgb:
-          m_TransMethod = 3;
-          break;
-        case FXCodec_Rgb:
-        case FXCodec_Rgb32:
-        case FXCodec_Argb:
-          m_TransMethod = 4;
-          break;
-        case FXCodec_Cmyk:
-          m_TransMethod = 5;
-          break;
-        default:
-          m_TransMethod = -1;
-      }
-      break;
-    }
+    case FXDIB_Format::k8bppRgb:
+      NOTREACHED_NORETURN();
     case FXDIB_Format::kRgb: {
-      switch (src_format) {
+      switch (m_SrcFormat) {
+        case FXCodec_Invalid:
+          m_TransMethod = -1;
+          break;
         case FXCodec_1bppGray:
           m_TransMethod = 6;
           break;
@@ -1661,14 +1548,15 @@ void ProgressiveDecoder::GetTransMethod(FXDIB_Format dest_format,
         case FXCodec_Cmyk:
           m_TransMethod = 10;
           break;
-        default:
-          m_TransMethod = -1;
       }
       break;
     }
     case FXDIB_Format::kRgb32:
     case FXDIB_Format::kArgb: {
-      switch (src_format) {
+      switch (m_SrcFormat) {
+        case FXCodec_Invalid:
+          m_TransMethod = -1;
+          break;
         case FXCodec_1bppGray:
           m_TransMethod = 6;
           break;
@@ -1677,7 +1565,7 @@ void ProgressiveDecoder::GetTransMethod(FXDIB_Format dest_format,
           break;
         case FXCodec_1bppRgb:
         case FXCodec_8bppRgb:
-          if (dest_format == FXDIB_Format::kArgb) {
+          if (m_pDeviceBitmap->GetFormat() == FXDIB_Format::kArgb) {
             m_TransMethod = 12;
           } else {
             m_TransMethod = 8;
@@ -1693,8 +1581,6 @@ void ProgressiveDecoder::GetTransMethod(FXDIB_Format dest_format,
         case FXCodec_Argb:
           m_TransMethod = 11;
           break;
-        default:
-          m_TransMethod = -1;
       }
       break;
     }
@@ -2004,19 +1890,9 @@ void ProgressiveDecoder::ResampleVert(
         case FXDIB_Format::kInvalid:
         case FXDIB_Format::k1bppMask:
         case FXDIB_Format::k1bppRgb:
-          return;
         case FXDIB_Format::k8bppMask:
         case FXDIB_Format::k8bppRgb:
-          if (pDeviceBitmap->HasPalette()) {
-            return;
-          }
-          for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
-            uint32_t dest_g = 0;
-            dest_g += pWeight->m_Weights[0] * (*scan_src1++);
-            dest_g += pWeight->m_Weights[1] * (*scan_src2++);
-            *scan_des++ = CStretchEngine::PixelFromFixed(dest_g);
-          }
-          break;
+          NOTREACHED_NORETURN();
         case FXDIB_Format::kRgb:
         case FXDIB_Format::kRgb32:
           for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
@@ -2141,15 +2017,21 @@ FXCODEC_STATUS ProgressiveDecoder::StartDecode(RetainPtr<CFX_DIBitmap> bitmap) {
   CHECK_GT(bitmap->GetWidth(), 0);
   CHECK_GT(bitmap->GetHeight(), 0);
 
-  if (m_status != FXCODEC_STATUS::kDecodeReady)
-    return FXCODEC_STATUS::kError;
+  const FXDIB_Format format = bitmap->GetFormat();
+  CHECK(format == FXDIB_Format::kArgb || format == FXDIB_Format::kRgb ||
+        format == FXDIB_Format::kRgb32);
 
-  if (bitmap->GetBPP() < 8 || m_FrameNumber == 0) {
+  if (m_status != FXCODEC_STATUS::kDecodeReady) {
     return FXCODEC_STATUS::kError;
   }
 
-  if (m_clipBox.IsEmpty())
+  if (m_FrameNumber == 0) {
     return FXCODEC_STATUS::kError;
+  }
+
+  if (m_clipBox.IsEmpty()) {
+    return FXCODEC_STATUS::kError;
+  }
   if (bitmap->GetWidth() > 65535 || bitmap->GetHeight() > 65535) {
     return FXCODEC_STATUS::kError;
   }
@@ -2170,7 +2052,7 @@ FXCODEC_STATUS ProgressiveDecoder::StartDecode(RetainPtr<CFX_DIBitmap> bitmap) {
       return GifStartDecode();
 #endif  // PDF_ENABLE_XFA_GIF
     case FXCODEC_IMAGE_JPG:
-      return JpegStartDecode(m_pDeviceBitmap->GetFormat());
+      return JpegStartDecode();
 #ifdef PDF_ENABLE_XFA_PNG
     case FXCODEC_IMAGE_PNG:
       return PngStartDecode();

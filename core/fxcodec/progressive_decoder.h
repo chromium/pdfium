@@ -189,7 +189,7 @@ class ProgressiveDecoder final :
 
   bool JpegReadMoreData(FXCODEC_STATUS* err_status);
   bool JpegDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
-  FXCODEC_STATUS JpegStartDecode(FXDIB_Format format);
+  FXCODEC_STATUS JpegStartDecode();
   FXCODEC_STATUS JpegContinueDecode();
 
   bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
@@ -199,7 +199,7 @@ class ProgressiveDecoder final :
                     FXCODEC_STATUS* err_status);
 
   int GetDownScale();
-  void GetTransMethod(FXDIB_Format dest_format, FXCodec_Format src_format);
+  void SetTransMethod();
 
   void ResampleScanline(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
                         int32_t dest_line,
