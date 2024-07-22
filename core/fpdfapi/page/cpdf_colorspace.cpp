@@ -142,9 +142,9 @@ class CPDF_CalGray final : public CPDF_ColorSpace {
 
   CPDF_CalGray();
 
-  float m_Gamma = kDefaultGamma;
-  std::array<float, kBlackWhitePointCount> m_WhitePoint = {{1.0f, 1.0f, 1.0f}};
-  std::array<float, kBlackWhitePointCount> m_BlackPoint = {{0.0f, 0.0f, 0.0f}};
+  float gamma_ = kDefaultGamma;
+  std::array<float, kBlackWhitePointCount> white_point_ = {{1.0f, 1.0f, 1.0f}};
+  std::array<float, kBlackWhitePointCount> black_point_ = {{0.0f, 0.0f, 0.0f}};
 };
 
 class CPDF_CalRGB final : public CPDF_ColorSpace {
@@ -171,12 +171,12 @@ class CPDF_CalRGB final : public CPDF_ColorSpace {
 
   CPDF_CalRGB();
 
-  std::array<float, kBlackWhitePointCount> m_WhitePoint = {{1.0f, 1.0f, 1.0f}};
-  std::array<float, kBlackWhitePointCount> m_BlackPoint = {{0.0f, 0.0f, 0.0f}};
-  std::array<float, kGammaCount> m_Gamma = {};
-  std::array<float, kMatrixCount> m_Matrix = {};
-  bool m_bHasGamma = false;
-  bool m_bHasMatrix = false;
+  std::array<float, kBlackWhitePointCount> white_point_ = {{1.0f, 1.0f, 1.0f}};
+  std::array<float, kBlackWhitePointCount> black_point_ = {{0.0f, 0.0f, 0.0f}};
+  std::array<float, kGammaCount> gamma_ = {};
+  std::array<float, kMatrixCount> matrix_ = {};
+  bool has_gamma_ = false;
+  bool has_matrix_ = false;
 };
 
 class CPDF_LabCS final : public CPDF_ColorSpace {
@@ -206,8 +206,8 @@ class CPDF_LabCS final : public CPDF_ColorSpace {
 
   CPDF_LabCS();
 
-  std::array<float, kBlackWhitePointCount> m_WhitePoint = {{1.0f, 1.0f, 1.0f}};
-  std::array<float, kBlackWhitePointCount> m_BlackPoint = {{0.0f, 0.0f, 0.0f}};
+  std::array<float, kBlackWhitePointCount> white_point_ = {{1.0f, 1.0f, 1.0f}};
+  std::array<float, kBlackWhitePointCount> black_point_ = {{0.0f, 0.0f, 0.0f}};
   std::array<float, kRangesCount> m_Ranges = {};
 };
 
@@ -681,14 +681,16 @@ uint32_t CPDF_CalGray::v_Load(CPDF_Document* pDoc,
   if (!pDict)
     return 0;
 
-  if (!GetWhitePoint(pDict.Get(), m_WhitePoint))
+  if (!GetWhitePoint(pDict.Get(), white_point_)) {
     return 0;
+  }
 
-  GetBlackPoint(pDict.Get(), m_BlackPoint);
+  GetBlackPoint(pDict.Get(), black_point_);
 
-  m_Gamma = pDict->GetFloatFor("Gamma");
-  if (m_Gamma == 0)
-    m_Gamma = kDefaultGamma;
+  gamma_ = pDict->GetFloatFor("Gamma");
+  if (gamma_ == 0) {
+    gamma_ = kDefaultGamma;
+  }
   return 1;
 }
 
@@ -728,24 +730,25 @@ uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
   if (!pDict)
     return 0;
 
-  if (!GetWhitePoint(pDict.Get(), m_WhitePoint))
+  if (!GetWhitePoint(pDict.Get(), white_point_)) {
     return 0;
+  }
 
-  GetBlackPoint(pDict.Get(), m_BlackPoint);
+  GetBlackPoint(pDict.Get(), black_point_);
 
   RetainPtr<const CPDF_Array> pGamma = pDict->GetArrayFor("Gamma");
   if (pGamma) {
-    m_bHasGamma = true;
-    for (size_t i = 0; i < std::size(m_Gamma); ++i) {
-      m_Gamma[i] = pGamma->GetFloatAt(i);
+    has_gamma_ = true;
+    for (size_t i = 0; i < std::size(gamma_); ++i) {
+      gamma_[i] = pGamma->GetFloatAt(i);
     }
   }
 
   RetainPtr<const CPDF_Array> pMatrix = pDict->GetArrayFor("Matrix");
   if (pMatrix) {
-    m_bHasMatrix = true;
-    for (size_t i = 0; i < std::size(m_Matrix); ++i) {
-      m_Matrix[i] = pMatrix->GetFloatAt(i);
+    has_matrix_ = true;
+    for (size_t i = 0; i < std::size(matrix_); ++i) {
+      matrix_[i] = pMatrix->GetFloatAt(i);
     }
   }
   return 3;
@@ -753,28 +756,28 @@ uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
 
 std::optional<FX_RGB_STRUCT<float>> CPDF_CalRGB::GetRGB(
     pdfium::span<const float> pBuf) const {
-  float A_ = pBuf[0];
-  float B_ = pBuf[1];
-  float C_ = pBuf[2];
-  if (m_bHasGamma) {
-    A_ = powf(A_, m_Gamma[0]);
-    B_ = powf(B_, m_Gamma[1]);
-    C_ = powf(C_, m_Gamma[2]);
+  float a = pBuf[0];
+  float b = pBuf[1];
+  float c = pBuf[2];
+  if (has_gamma_) {
+    a = powf(a, gamma_[0]);
+    b = powf(b, gamma_[1]);
+    c = powf(c, gamma_[2]);
   }
-  float X;
-  float Y;
-  float Z;
-  if (m_bHasMatrix) {
-    X = m_Matrix[0] * A_ + m_Matrix[3] * B_ + m_Matrix[6] * C_;
-    Y = m_Matrix[1] * A_ + m_Matrix[4] * B_ + m_Matrix[7] * C_;
-    Z = m_Matrix[2] * A_ + m_Matrix[5] * B_ + m_Matrix[8] * C_;
+  float x;
+  float y;
+  float z;
+  if (has_matrix_) {
+    x = matrix_[0] * a + matrix_[3] * b + matrix_[6] * c;
+    y = matrix_[1] * a + matrix_[4] * b + matrix_[7] * c;
+    z = matrix_[2] * a + matrix_[5] * b + matrix_[8] * c;
   } else {
-    X = A_;
-    Y = B_;
-    Z = C_;
+    x = a;
+    y = b;
+    z = c;
   }
-  return XYZ_to_sRGB_WhitePoint(X, Y, Z, m_WhitePoint[0], m_WhitePoint[1],
-                                m_WhitePoint[2]);
+  return XYZ_to_sRGB_WhitePoint(x, y, z, white_point_[0], white_point_[1],
+                                white_point_[2]);
 }
 
 void CPDF_CalRGB::TranslateImageLine(pdfium::span<uint8_t> dest_span,
@@ -820,10 +823,11 @@ uint32_t CPDF_LabCS::v_Load(CPDF_Document* pDoc,
   if (!pDict)
     return 0;
 
-  if (!GetWhitePoint(pDict.Get(), m_WhitePoint))
+  if (!GetWhitePoint(pDict.Get(), white_point_)) {
     return 0;
+  }
 
-  GetBlackPoint(pDict.Get(), m_BlackPoint);
+  GetBlackPoint(pDict.Get(), black_point_);
 
   RetainPtr<const CPDF_Array> pParam = pDict->GetArrayFor("Range");
   static constexpr std::array<float, kRangesCount> kDefaultRanges = {
