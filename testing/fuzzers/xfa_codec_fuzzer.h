@@ -29,8 +29,9 @@ class XFACodecFuzzer {
     CFX_DIBAttribute attr;
     FXCODEC_STATUS status =
         decoder->LoadImageInfo(std::move(source), type, &attr, true);
-    if (status != FXCODEC_STATUS::kFrameReady)
+    if (status != FXCODEC_STATUS::kFrameReady) {
       return 0;
+    }
 
     // Skipping very large images, since they will take a long time and may lead
     // to OOM.
@@ -50,11 +51,11 @@ class XFACodecFuzzer {
 
     size_t frames;
     std::tie(status, frames) = decoder->GetFrames();
-    if (status != FXCODEC_STATUS::kDecodeReady || frames == 0)
+    if (status != FXCODEC_STATUS::kDecodeReady || frames == 0) {
       return 0;
+    }
 
-    status =
-        decoder->StartDecode(bitmap, bitmap->GetWidth(), bitmap->GetHeight());
+    status = decoder->StartDecode(std::move(bitmap));
     while (status == FXCODEC_STATUS::kDecodeToBeContinued) {
       status = decoder->ContinueDecode();
     }

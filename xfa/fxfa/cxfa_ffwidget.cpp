@@ -185,8 +185,7 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
     return nullptr;
   }
 
-  status = pProgressiveDecoder->StartDecode(pBitmap, pBitmap->GetWidth(),
-                                            pBitmap->GetHeight());
+  status = pProgressiveDecoder->StartDecode(pBitmap);
   if (status == FXCODEC_STATUS::kError) {
     return nullptr;
   }

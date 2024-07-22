@@ -50,9 +50,8 @@ constexpr std::array<uint8_t, Size> IotaArray(uint8_t start) {
 }
 
 FXCODEC_STATUS DecodeToBitmap(ProgressiveDecoder& decoder,
-                              const fxcrt::RetainPtr<CFX_DIBitmap>& bitmap) {
-  FXCODEC_STATUS status =
-      decoder.StartDecode(bitmap, bitmap->GetWidth(), bitmap->GetHeight());
+                              RetainPtr<CFX_DIBitmap> bitmap) {
+  FXCODEC_STATUS status = decoder.StartDecode(std::move(bitmap));
   while (status == FXCODEC_STATUS::kDecodeToBeContinued) {
     status = decoder.ContinueDecode();
   }

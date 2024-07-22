@@ -83,9 +83,7 @@ class ProgressiveDecoder final :
   void SetClipBox(FX_RECT* clip);
 
   std::pair<FXCODEC_STATUS, size_t> GetFrames();
-  FXCODEC_STATUS StartDecode(const RetainPtr<CFX_DIBitmap>& pDIBitmap,
-                             int size_x,
-                             int size_y);
+  FXCODEC_STATUS StartDecode(RetainPtr<CFX_DIBitmap> bitmap);
 
   FXCODEC_STATUS ContinueDecode();
 

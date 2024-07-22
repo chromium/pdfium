@@ -2155,47 +2155,30 @@ std::pair<FXCODEC_STATUS, size_t> ProgressiveDecoder::GetFrames() {
   }
 }
 
-FXCODEC_STATUS ProgressiveDecoder::StartDecode(
-    const RetainPtr<CFX_DIBitmap>& pDIBitmap,
-    int size_x,
-    int size_y) {
+FXCODEC_STATUS ProgressiveDecoder::StartDecode(RetainPtr<CFX_DIBitmap> bitmap) {
+  CHECK(bitmap);
+  CHECK_GT(bitmap->GetWidth(), 0);
+  CHECK_GT(bitmap->GetHeight(), 0);
+
   if (m_status != FXCODEC_STATUS::kDecodeReady)
     return FXCODEC_STATUS::kError;
 
-  if (!pDIBitmap || pDIBitmap->GetBPP() < 8 || m_FrameNumber == 0)
+  if (bitmap->GetBPP() < 8 || m_FrameNumber == 0) {
     return FXCODEC_STATUS::kError;
+  }
 
-  m_pDeviceBitmap = pDIBitmap;
   if (m_clipBox.IsEmpty())
     return FXCODEC_STATUS::kError;
-  if (size_x <= 0 || size_x > 65535 || size_y <= 0 || size_y > 65535)
+  if (bitmap->GetWidth() > 65535 || bitmap->GetHeight() > 65535) {
     return FXCODEC_STATUS::kError;
+  }
 
-  FX_RECT device_rc(0, 0, size_x, size_y);
-  int32_t out_range_x = device_rc.right - pDIBitmap->GetWidth();
-  int32_t out_range_y = device_rc.bottom - pDIBitmap->GetHeight();
-  device_rc.Intersect(
-      FX_RECT(0, 0, pDIBitmap->GetWidth(), pDIBitmap->GetHeight()));
-  if (device_rc.IsEmpty())
-    return FXCODEC_STATUS::kError;
-
-  m_startX = device_rc.left;
-  m_startY = device_rc.top;
-  m_sizeX = device_rc.Width();
-  m_sizeY = device_rc.Height();
+  m_startX = 0;
+  m_startY = 0;
+  m_sizeX = bitmap->GetWidth();
+  m_sizeY = bitmap->GetHeight();
   m_FrameCur = 0;
-  if (out_range_x > 0) {
-    float scaleX = (float)m_clipBox.Width() / (float)size_x;
-    m_clipBox.right -= static_cast<int32_t>(floor((float)out_range_x * scaleX));
-  }
-  if (out_range_y > 0) {
-    float scaleY = (float)m_clipBox.Height() / (float)size_y;
-    m_clipBox.bottom -=
-        static_cast<int32_t>(floor((float)out_range_y * scaleY));
-  }
-  if (m_clipBox.IsEmpty()) {
-    return FXCODEC_STATUS::kError;
-  }
+  m_pDeviceBitmap = std::move(bitmap);
   switch (m_imageType) {
 #ifdef PDF_ENABLE_XFA_BMP
     case FXCODEC_IMAGE_BMP:
@@ -2206,7 +2189,7 @@ FXCODEC_STATUS ProgressiveDecoder::StartDecode(
       return GifStartDecode();
 #endif  // PDF_ENABLE_XFA_GIF
     case FXCODEC_IMAGE_JPG:
-      return JpegStartDecode(pDIBitmap->GetFormat());
+      return JpegStartDecode(m_pDeviceBitmap->GetFormat());
 #ifdef PDF_ENABLE_XFA_PNG
     case FXCODEC_IMAGE_PNG:
       return PngStartDecode();
