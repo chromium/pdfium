@@ -1575,25 +1575,6 @@ FXCODEC_STATUS ProgressiveDecoder::LoadImageInfo(
   return m_status;
 }
 
-void ProgressiveDecoder::SetClipBox(FX_RECT* clip) {
-  if (m_status != FXCODEC_STATUS::kFrameReady)
-    return;
-
-  if (clip->IsEmpty()) {
-    m_clipBox = FX_RECT();
-    return;
-  }
-  clip->left = std::max(clip->left, 0);
-  clip->right = std::min(clip->right, m_SrcWidth);
-  clip->top = std::max(clip->top, 0);
-  clip->bottom = std::min(clip->bottom, m_SrcHeight);
-  if (clip->IsEmpty()) {
-    m_clipBox = FX_RECT();
-    return;
-  }
-  m_clipBox = *clip;
-}
-
 int ProgressiveDecoder::GetDownScale() {
   int down_scale = 1;
   int ratio_w = m_clipBox.Width() / m_sizeX;
