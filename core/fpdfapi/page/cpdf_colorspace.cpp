@@ -173,10 +173,8 @@ class CPDF_CalRGB final : public CPDF_ColorSpace {
 
   std::array<float, kBlackWhitePointCount> white_point_ = {{1.0f, 1.0f, 1.0f}};
   std::array<float, kBlackWhitePointCount> black_point_ = {{0.0f, 0.0f, 0.0f}};
-  std::array<float, kGammaCount> gamma_ = {};
-  std::array<float, kMatrixCount> matrix_ = {};
-  bool has_gamma_ = false;
-  bool has_matrix_ = false;
+  std::optional<std::array<float, kGammaCount>> gamma_;
+  std::optional<std::array<float, kMatrixCount>> matrix_;
 };
 
 class CPDF_LabCS final : public CPDF_ColorSpace {
@@ -738,17 +736,17 @@ uint32_t CPDF_CalRGB::v_Load(CPDF_Document* pDoc,
 
   RetainPtr<const CPDF_Array> pGamma = pDict->GetArrayFor("Gamma");
   if (pGamma) {
-    has_gamma_ = true;
-    for (size_t i = 0; i < std::size(gamma_); ++i) {
-      gamma_[i] = pGamma->GetFloatAt(i);
+    auto& gamma = gamma_.emplace();
+    for (size_t i = 0; i < std::size(gamma); ++i) {
+      gamma[i] = pGamma->GetFloatAt(i);
     }
   }
 
   RetainPtr<const CPDF_Array> pMatrix = pDict->GetArrayFor("Matrix");
   if (pMatrix) {
-    has_matrix_ = true;
-    for (size_t i = 0; i < std::size(matrix_); ++i) {
-      matrix_[i] = pMatrix->GetFloatAt(i);
+    auto& matrix = matrix_.emplace();
+    for (size_t i = 0; i < std::size(matrix); ++i) {
+      matrix[i] = pMatrix->GetFloatAt(i);
     }
   }
   return 3;
@@ -759,18 +757,20 @@ std::optional<FX_RGB_STRUCT<float>> CPDF_CalRGB::GetRGB(
   float a = pBuf[0];
   float b = pBuf[1];
   float c = pBuf[2];
-  if (has_gamma_) {
-    a = powf(a, gamma_[0]);
-    b = powf(b, gamma_[1]);
-    c = powf(c, gamma_[2]);
+  if (gamma_.has_value()) {
+    const auto& gamma = gamma_.value();
+    a = powf(a, gamma[0]);
+    b = powf(b, gamma[1]);
+    c = powf(c, gamma[2]);
   }
   float x;
   float y;
   float z;
-  if (has_matrix_) {
-    x = matrix_[0] * a + matrix_[3] * b + matrix_[6] * c;
-    y = matrix_[1] * a + matrix_[4] * b + matrix_[7] * c;
-    z = matrix_[2] * a + matrix_[5] * b + matrix_[8] * c;
+  if (matrix_.has_value()) {
+    const auto& matrix = matrix_.value();
+    x = matrix[0] * a + matrix[3] * b + matrix[6] * c;
+    y = matrix[1] * a + matrix[4] * b + matrix[7] * c;
+    z = matrix[2] * a + matrix[5] * b + matrix[8] * c;
   } else {
     x = a;
     y = b;
