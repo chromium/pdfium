@@ -255,7 +255,7 @@ bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
   if (line < m_clipBox.top || line >= m_clipBox.bottom)
     return true;
 
-  double scale_y = static_cast<double>(m_sizeY) / m_clipBox.Height();
+  double scale_y = static_cast<double>(m_SrcHeight) / m_clipBox.Height();
   int32_t row = static_cast<int32_t>((line - m_clipBox.top) * scale_y);
   *pSrcBuf = m_DecodeBuf.data();
   int32_t src_Bpp = pDIBitmap->GetBPP() >> 3;
@@ -279,7 +279,7 @@ bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
         NOTREACHED_NORETURN();
       case FXDIB_Format::kRgb:
       case FXDIB_Format::kRgb32:
-        for (int32_t src_col = 0; src_col < m_sizeX; src_col++) {
+        for (int32_t src_col = 0; src_col < m_SrcWidth; src_col++) {
           PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(src_col);
           if (pPixelWeights->m_SrcStart != pPixelWeights->m_SrcEnd) {
             continue;
@@ -295,7 +295,7 @@ bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
         }
         return true;
       case FXDIB_Format::kArgb:
-        for (int32_t src_col = 0; src_col < m_sizeX; src_col++) {
+        for (int32_t src_col = 0; src_col < m_SrcWidth; src_col++) {
           PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(src_col);
           if (pPixelWeights->m_SrcStart != pPixelWeights->m_SrcEnd) {
             continue;
@@ -323,7 +323,7 @@ void ProgressiveDecoder::PngFillScanlineBufCompleted(int pass, int line) {
   int src_bottom = m_clipBox.bottom;
   int dest_top = 0;
   int src_height = m_clipBox.Height();
-  int dest_height = m_sizeY;
+  int dest_height = m_SrcHeight;
   if (line >= src_top && line < src_bottom) {
     double scale_y = static_cast<double>(dest_height) / src_height;
     int src_row = line - src_top;
@@ -393,8 +393,8 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(
   }
   int startX = 0;
   int startY = 0;
-  int sizeX = m_sizeX;
-  int sizeY = m_sizeY;
+  int sizeX = m_SrcWidth;
+  int sizeY = m_SrcHeight;
   int Bpp = pDevice->GetBPP() / 8;
   FX_ARGB argb = m_SrcPalette[pal_index];
   for (int row = 0; row < sizeY; row++) {
@@ -457,7 +457,7 @@ void ProgressiveDecoder::GifReadScanline(int32_t row_num,
   int src_bottom = m_clipBox.bottom;
   int dest_top = 0;
   int src_height = m_clipBox.Height();
-  int dest_height = m_sizeY;
+  int dest_height = m_SrcHeight;
   if (line < src_top || line >= src_bottom)
     return;
 
@@ -475,14 +475,14 @@ void ProgressiveDecoder::GifReadScanline(int32_t row_num,
   if (scale_y <= 1.0)
     return;
 
-  int dest_bottom = dest_top + m_sizeY;
+  int dest_bottom = dest_top + m_SrcHeight;
   int dest_Bpp = pDIBitmap->GetBPP() >> 3;
   if (dest_row + (int)scale_y >= dest_bottom - 1) {
     const uint8_t* scan_src = pDIBitmap->GetScanline(dest_row).data();
     int cur_row = dest_row;
     while (++cur_row < dest_bottom) {
       uint8_t* scan_des = pDIBitmap->GetWritableScanline(cur_row).data();
-      uint32_t size = m_sizeX * dest_Bpp;
+      uint32_t size = m_SrcWidth * dest_Bpp;
       UNSAFE_TODO(FXSYS_memmove(scan_des, scan_src, size));
     }
   }
@@ -509,7 +509,7 @@ void ProgressiveDecoder::BmpReadScanline(uint32_t row_num,
   int src_bottom = m_clipBox.bottom;
   int dest_top = 0;
   int src_height = m_clipBox.Height();
-  int dest_height = m_sizeY;
+  int dest_height = m_SrcHeight;
   if ((src_top >= 0 && row_num < static_cast<uint32_t>(src_top)) ||
       src_bottom < 0 || row_num >= static_cast<uint32_t>(src_bottom)) {
     return;
@@ -538,7 +538,7 @@ void ProgressiveDecoder::ResampleVertBT(
     int dest_row) {
   int dest_Bpp = pDeviceBitmap->GetBPP() >> 3;
   int dest_top = 0;
-  int dest_bottom = m_sizeY;
+  int dest_bottom = m_SrcHeight;
   FX_SAFE_INT32 check_dest_row_1 = dest_row;
   check_dest_row_1 += pdfium::checked_cast<int>(scale_y);
   int dest_row_1 = check_dest_row_1.ValueOrDie();
@@ -547,7 +547,7 @@ void ProgressiveDecoder::ResampleVertBT(
     while (++dest_row < dest_bottom) {
       uint8_t* scan_des = pDeviceBitmap->GetWritableScanline(dest_row)
                               .data();
-      uint32_t size = m_sizeX * dest_Bpp;
+      uint32_t size = m_SrcWidth * dest_Bpp;
       UNSAFE_TODO(FXSYS_memmove(scan_des, scan_src, size));
     }
     return;
@@ -572,7 +572,7 @@ void ProgressiveDecoder::ResampleVertBT(
           NOTREACHED_NORETURN();
         case FXDIB_Format::kRgb:
         case FXDIB_Format::kRgb32:
-          for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
+          for (int dest_col = 0; dest_col < m_SrcWidth; dest_col++) {
             uint32_t dest_b = pWeight->m_Weights[0] * (*scan_src1++);
             uint32_t dest_g = pWeight->m_Weights[0] * (*scan_src1++);
             uint32_t dest_r = pWeight->m_Weights[0] * (*scan_src1++);
@@ -588,7 +588,7 @@ void ProgressiveDecoder::ResampleVertBT(
           }
           break;
         case FXDIB_Format::kArgb:
-          for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
+          for (int dest_col = 0; dest_col < m_SrcWidth; dest_col++) {
             uint32_t dest_b = pWeight->m_Weights[0] * (*scan_src1++);
             uint32_t dest_g = pWeight->m_Weights[0] * (*scan_src1++);
             uint32_t dest_r = pWeight->m_Weights[0] * (*scan_src1++);
@@ -696,9 +696,9 @@ FXCODEC_STATUS ProgressiveDecoder::BmpStartDecode() {
   m_DecodeBuf.resize(m_ScanlineSize);
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
-  m_WeightHorz.CalculateWeights(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
+  m_WeightHorz.CalculateWeights(m_SrcWidth, 0, m_SrcWidth, m_clipBox.Width(), 0,
                                 m_clipBox.Width(), options);
-  m_WeightVert.CalculateWeights(m_sizeY, m_clipBox.Height());
+  m_WeightVert.CalculateWeights(m_SrcHeight, m_clipBox.Height());
   m_status = FXCODEC_STATUS::kDecodeToBeContinued;
   return m_status;
 }
@@ -766,9 +766,9 @@ FXCODEC_STATUS ProgressiveDecoder::GifStartDecode() {
   m_DecodeBuf.resize(scanline_size);
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
-  m_WeightHorz.CalculateWeights(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
+  m_WeightHorz.CalculateWeights(m_SrcWidth, 0, m_SrcWidth, m_clipBox.Width(), 0,
                                 m_clipBox.Width(), options);
-  m_WeightVert.CalculateWeights(m_sizeY, m_clipBox.Height());
+  m_WeightVert.CalculateWeights(m_SrcHeight, m_clipBox.Height());
   m_FrameCur = 0;
   m_status = FXCODEC_STATUS::kDecodeToBeContinued;
   return m_status;
@@ -833,7 +833,7 @@ void ProgressiveDecoder::GifDoubleLineResampleVert(
           NOTREACHED_NORETURN();
         case FXDIB_Format::kRgb:
         case FXDIB_Format::kRgb32:
-          for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
+          for (int dest_col = 0; dest_col < m_SrcWidth; dest_col++) {
             uint32_t dest_b = pWeight->m_Weights[0] * (*scan_src1++);
             uint32_t dest_g = pWeight->m_Weights[0] * (*scan_src1++);
             uint32_t dest_r = pWeight->m_Weights[0] * (*scan_src1++);
@@ -849,7 +849,7 @@ void ProgressiveDecoder::GifDoubleLineResampleVert(
           }
           break;
         case FXDIB_Format::kArgb:
-          for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
+          for (int dest_col = 0; dest_col < m_SrcWidth; dest_col++) {
             uint32_t dest_b = pWeight->m_Weights[0] * (*scan_src1++);
             uint32_t dest_g = pWeight->m_Weights[0] * (*scan_src1++);
             uint32_t dest_r = pWeight->m_Weights[0] * (*scan_src1++);
@@ -866,7 +866,7 @@ void ProgressiveDecoder::GifDoubleLineResampleVert(
           break;
       }
     }
-    int dest_bottom = dest_top + m_sizeY - 1;
+    int dest_bottom = dest_top + m_SrcHeight - 1;
     if (dest_row + (int)(2 * scale_y) >= dest_bottom &&
         dest_row + (int)scale_y < dest_bottom) {
       GifDoubleLineResampleVert(pDeviceBitmap, scale_y,
@@ -951,9 +951,9 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode() {
   m_DecodeBuf.resize(scanline_size);
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
-  m_WeightHorz.CalculateWeights(m_sizeX, 0, m_sizeX, m_clipBox.Width(), 0,
+  m_WeightHorz.CalculateWeights(m_SrcWidth, 0, m_SrcWidth, m_clipBox.Width(), 0,
                                 m_clipBox.Width(), options);
-  m_WeightVert.CalculateWeights(m_sizeY, m_clipBox.Height());
+  m_WeightVert.CalculateWeights(m_SrcHeight, m_clipBox.Height());
   switch (m_SrcComponents) {
     case 1:
       m_SrcFormat = FXCodec_8bppGray;
@@ -1034,7 +1034,7 @@ void ProgressiveDecoder::PngOneOneMapResampleHorz(
         NOTREACHED_NORETURN();
       case FXDIB_Format::kRgb:
       case FXDIB_Format::kRgb32:
-        for (int32_t dest_col = 0; dest_col < m_sizeX; dest_col++) {
+        for (int32_t dest_col = 0; dest_col < m_SrcWidth; dest_col++) {
           PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(dest_col);
           const uint8_t* p = src_scan + pPixelWeights->m_SrcStart * src_Bpp;
           uint32_t dest_b = pPixelWeights->m_Weights[0] * (*p++);
@@ -1051,7 +1051,7 @@ void ProgressiveDecoder::PngOneOneMapResampleHorz(
         }
         break;
       case FXDIB_Format::kArgb:
-        for (int32_t dest_col = 0; dest_col < m_sizeX; dest_col++) {
+        for (int32_t dest_col = 0; dest_col < m_SrcWidth; dest_col++) {
           PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(dest_col);
           const uint8_t* p = src_scan + pPixelWeights->m_SrcStart * src_Bpp;
           uint32_t dest_b = pPixelWeights->m_Weights[0] * (*p++);
@@ -1136,8 +1136,8 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {
   SetTransMethod();
   int scanline_size = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
   m_DecodeBuf.resize(scanline_size);
-  m_WeightHorzOO.CalculateWeights(m_sizeX, m_clipBox.Width());
-  m_WeightVert.CalculateWeights(m_sizeY, m_clipBox.Height());
+  m_WeightHorzOO.CalculateWeights(m_SrcWidth, m_clipBox.Width());
+  m_WeightVert.CalculateWeights(m_SrcHeight, m_clipBox.Height());
   m_status = FXCODEC_STATUS::kDecodeToBeContinued;
   return m_status;
 }
@@ -1202,8 +1202,6 @@ bool ProgressiveDecoder::TiffDetectImageTypeFromFile(
 FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
   bool ret = false;
   if (m_pDeviceBitmap->GetBPP() == 32 &&
-      m_pDeviceBitmap->GetWidth() == m_SrcWidth && m_SrcWidth == m_sizeX &&
-      m_pDeviceBitmap->GetHeight() == m_SrcHeight && m_SrcHeight == m_sizeY &&
       m_clipBox.left == 0 && m_clipBox.top == 0 &&
       m_clipBox.right == m_SrcWidth && m_clipBox.bottom == m_SrcHeight) {
     ret = TiffDecoder::Decode(m_pTiffContext.get(), m_pDeviceBitmap);
@@ -1311,7 +1309,7 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
   RetainPtr<CFX_DIBitmap> pStrechBitmap =
-      pFormatBitmap->StretchTo(m_sizeX, m_sizeY, options, nullptr);
+      pFormatBitmap->StretchTo(m_SrcWidth, m_SrcHeight, options, nullptr);
   pFormatBitmap = nullptr;
   if (!pStrechBitmap) {
     m_pDeviceBitmap = nullptr;
@@ -1319,7 +1317,7 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
     m_status = FXCODEC_STATUS::kError;
     return m_status;
   }
-  m_pDeviceBitmap->TransferBitmap(0, 0, m_sizeX, m_sizeY,
+  m_pDeviceBitmap->TransferBitmap(0, 0, m_SrcWidth, m_SrcHeight,
                                   std::move(pStrechBitmap), 0, 0);
   m_pDeviceBitmap = nullptr;
   m_pFile = nullptr;
@@ -1446,7 +1444,6 @@ FXCODEC_STATUS ProgressiveDecoder::LoadImageInfo(
   m_SrcWidth = m_SrcHeight = 0;
   m_SrcComponents = m_SrcBPC = 0;
   m_clipBox = FX_RECT();
-  m_sizeX = m_sizeY = 0;
   m_SrcPassNumber = 0;
   if (imageType != FXCODEC_IMAGE_UNKNOWN &&
       DetectImageType(imageType, pAttribute)) {
@@ -1474,8 +1471,8 @@ FXCODEC_STATUS ProgressiveDecoder::LoadImageInfo(
 
 int ProgressiveDecoder::GetDownScale() {
   int down_scale = 1;
-  int ratio_w = m_clipBox.Width() / m_sizeX;
-  int ratio_h = m_clipBox.Height() / m_sizeY;
+  int ratio_w = m_clipBox.Width() / m_SrcWidth;
+  int ratio_h = m_clipBox.Height() / m_SrcHeight;
   int ratio = std::min(ratio_w, ratio_h);
   if (ratio >= 8)
     down_scale = 8;
@@ -1572,7 +1569,7 @@ void ProgressiveDecoder::ResampleScanline(
     src_scan += src_left * src_bytes_per_pixel;
     dest_scan += dest_left * dest_bytes_per_pixel;
   });
-  for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
+  for (int dest_col = 0; dest_col < m_SrcWidth; dest_col++) {
     PixelWeight* pPixelWeights = m_WeightHorz.GetPixelWeight(dest_col);
     switch (m_TransMethod) {
       case -1:
@@ -1743,10 +1740,10 @@ void ProgressiveDecoder::ResampleVert(
   check_dest_row_1 -= pdfium::checked_cast<int>(scale_y);
   int dest_row_1 = check_dest_row_1.ValueOrDie();
   if (dest_row_1 < dest_top) {
-    int dest_bottom = dest_top + m_sizeY;
+    int dest_bottom = dest_top + m_SrcHeight;
     if (dest_row + (int)scale_y >= dest_bottom - 1) {
       pdfium::span<const uint8_t> scan_src =
-          pDeviceBitmap->GetScanline(dest_row).first(m_sizeX * dest_Bpp);
+          pDeviceBitmap->GetScanline(dest_row).first(m_SrcWidth * dest_Bpp);
       while (++dest_row < dest_bottom) {
         fxcrt::spanmove(pDeviceBitmap->GetWritableScanline(dest_row), scan_src);
       }
@@ -1773,7 +1770,7 @@ void ProgressiveDecoder::ResampleVert(
           NOTREACHED_NORETURN();
         case FXDIB_Format::kRgb:
         case FXDIB_Format::kRgb32:
-          for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
+          for (int dest_col = 0; dest_col < m_SrcWidth; dest_col++) {
             uint32_t dest_b = pWeight->m_Weights[0] * (*scan_src1++);
             uint32_t dest_g = pWeight->m_Weights[0] * (*scan_src1++);
             uint32_t dest_r = pWeight->m_Weights[0] * (*scan_src1++);
@@ -1789,7 +1786,7 @@ void ProgressiveDecoder::ResampleVert(
           }
           break;
         case FXDIB_Format::kArgb:
-          for (int dest_col = 0; dest_col < m_sizeX; dest_col++) {
+          for (int dest_col = 0; dest_col < m_SrcWidth; dest_col++) {
             uint32_t dest_b = pWeight->m_Weights[0] * (*scan_src1++);
             uint32_t dest_g = pWeight->m_Weights[0] * (*scan_src1++);
             uint32_t dest_r = pWeight->m_Weights[0] * (*scan_src1++);
@@ -1807,10 +1804,10 @@ void ProgressiveDecoder::ResampleVert(
       }
     }
   });
-  int dest_bottom = dest_top + m_sizeY;
+  int dest_bottom = dest_top + m_SrcHeight;
   if (dest_row + (int)scale_y >= dest_bottom - 1) {
     pdfium::span<const uint8_t> scan_src =
-        pDeviceBitmap->GetScanline(dest_row).first(m_sizeX * dest_Bpp);
+        pDeviceBitmap->GetScanline(dest_row).first(m_SrcWidth * dest_Bpp);
     while (++dest_row < dest_bottom) {
       fxcrt::spanmove(pDeviceBitmap->GetWritableScanline(dest_row), scan_src);
     }
@@ -1824,7 +1821,7 @@ void ProgressiveDecoder::Resample(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
   int src_top = m_clipBox.top;
   int dest_top = 0;
   int src_height = m_clipBox.Height();
-  int dest_height = m_sizeY;
+  int dest_height = m_SrcHeight;
   if (src_line >= src_top) {
     double scale_y = static_cast<double>(dest_height) / src_height;
     int src_row = src_line - src_top;
@@ -1889,8 +1886,10 @@ std::pair<FXCODEC_STATUS, size_t> ProgressiveDecoder::GetFrames() {
 
 FXCODEC_STATUS ProgressiveDecoder::StartDecode(RetainPtr<CFX_DIBitmap> bitmap) {
   CHECK(bitmap);
-  CHECK_GT(bitmap->GetWidth(), 0);
-  CHECK_GT(bitmap->GetHeight(), 0);
+  CHECK_EQ(bitmap->GetWidth(), m_SrcWidth);
+  CHECK_EQ(bitmap->GetHeight(), m_SrcHeight);
+  CHECK_GT(m_SrcWidth, 0);
+  CHECK_GT(m_SrcHeight, 0);
 
   const FXDIB_Format format = bitmap->GetFormat();
   CHECK(format == FXDIB_Format::kArgb || format == FXDIB_Format::kRgb ||
@@ -1911,8 +1910,6 @@ FXCODEC_STATUS ProgressiveDecoder::StartDecode(RetainPtr<CFX_DIBitmap> bitmap) {
     return FXCODEC_STATUS::kError;
   }
 
-  m_sizeX = bitmap->GetWidth();
-  m_sizeY = bitmap->GetHeight();
   m_FrameCur = 0;
   m_pDeviceBitmap = std::move(bitmap);
   switch (m_imageType) {
