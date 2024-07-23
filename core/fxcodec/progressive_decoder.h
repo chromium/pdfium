@@ -135,23 +135,6 @@ class ProgressiveDecoder final :
     DataVector<uint8_t> m_pWeightTables;
   };
 
-  class VertTable {
-   public:
-    VertTable();
-    ~VertTable();
-
-    void CalculateWeights(int dest_len, int src_len);
-    PixelWeight* GetPixelWeight(int pixel) {
-      return reinterpret_cast<PixelWeight*>(pdfium::make_span(m_pWeightTables)
-                                                .subspan(pixel * m_ItemSize)
-                                                .data());
-    }
-
-   private:
-    int m_ItemSize = 0;
-    DataVector<uint8_t> m_pWeightTables;
-  };
-
 #ifdef PDF_ENABLE_XFA_BMP
   bool BmpReadMoreData(ProgressiveDecoderIface::Context* pBmpContext,
                        FXCODEC_STATUS* err_status);
@@ -227,7 +210,6 @@ class ProgressiveDecoder final :
   uint32_t m_offSet = 0;
   int m_ScanlineSize = 0;
   WeightTable m_WeightHorz;
-  VertTable m_WeightVert;
   HorzTable m_WeightHorzOO;
   int m_SrcWidth = 0;
   int m_SrcHeight = 0;

@@ -130,69 +130,6 @@ void ProgressiveDecoder::HorzTable::CalculateWeights(int dest_len,
   });
 }
 
-ProgressiveDecoder::VertTable::VertTable() = default;
-
-ProgressiveDecoder::VertTable::~VertTable() = default;
-
-void ProgressiveDecoder::VertTable::CalculateWeights(int dest_len,
-                                                     int src_len) {
-  CHECK_GE(dest_len, 0);
-  m_ItemSize =
-      pdfium::checked_cast<int>(PixelWeight::TotalBytesForWeightCount(2));
-  FX_SAFE_SIZE_T safe_size = m_ItemSize;
-  safe_size *= dest_len;
-  m_pWeightTables.resize(safe_size.ValueOrDie(), 0);
-  double scale = (double)dest_len / (double)src_len;
-  UNSAFE_TODO({
-    if (scale <= 1) {
-      for (int dest_row = 0; dest_row < dest_len; dest_row++) {
-        PixelWeight* pWeight = GetPixelWeight(dest_row);
-        pWeight->m_SrcStart = dest_row;
-        pWeight->m_SrcEnd = dest_row;
-        pWeight->m_Weights[0] = CStretchEngine::kFixedPointOne;
-        pWeight->m_Weights[1] = 0;
-      }
-      return;
-    }
-
-    double step = 0.0;
-    int src_row = 0;
-    while (step < (double)dest_len) {
-      int start_step = (int)step;
-      step = scale * (++src_row);
-      int end_step = (int)step;
-      if (end_step >= dest_len) {
-        end_step = dest_len;
-        for (int dest_row = start_step; dest_row < end_step; dest_row++) {
-          PixelWeight* pWeight = GetPixelWeight(dest_row);
-          pWeight->m_SrcStart = start_step;
-          pWeight->m_SrcEnd = start_step;
-          pWeight->m_Weights[0] = CStretchEngine::kFixedPointOne;
-          pWeight->m_Weights[1] = 0;
-        }
-        return;
-      }
-      int length = end_step - start_step;
-      {
-        PixelWeight* pWeight = GetPixelWeight(start_step);
-        pWeight->m_SrcStart = start_step;
-        pWeight->m_SrcEnd = start_step;
-        pWeight->m_Weights[0] = CStretchEngine::kFixedPointOne;
-        pWeight->m_Weights[1] = 0;
-      }
-      for (int dest_row = start_step + 1; dest_row < end_step; dest_row++) {
-        PixelWeight* pWeight = GetPixelWeight(dest_row);
-        pWeight->m_SrcStart = start_step;
-        pWeight->m_SrcEnd = end_step;
-        pWeight->m_Weights[0] = CStretchEngine::FixedFromFloat(
-            (float)(end_step - dest_row) / (float)length);
-        pWeight->m_Weights[1] =
-            CStretchEngine::kFixedPointOne - pWeight->m_Weights[0];
-      }
-    }
-  });
-}
-
 ProgressiveDecoder::ProgressiveDecoder() = default;
 
 ProgressiveDecoder::~ProgressiveDecoder() = default;
@@ -546,7 +483,6 @@ FXCODEC_STATUS ProgressiveDecoder::BmpStartDecode() {
   options.bInterpolateBilinear = true;
   m_WeightHorz.CalculateWeights(m_SrcWidth, 0, m_SrcWidth, m_SrcWidth, 0,
                                 m_SrcWidth, options);
-  m_WeightVert.CalculateWeights(m_SrcHeight, m_SrcHeight);
   m_status = FXCODEC_STATUS::kDecodeToBeContinued;
   return m_status;
 }
@@ -615,7 +551,6 @@ FXCODEC_STATUS ProgressiveDecoder::GifStartDecode() {
   options.bInterpolateBilinear = true;
   m_WeightHorz.CalculateWeights(m_SrcWidth, 0, m_SrcWidth, m_SrcWidth, 0,
                                 m_SrcWidth, options);
-  m_WeightVert.CalculateWeights(m_SrcHeight, m_SrcHeight);
   m_FrameCur = 0;
   m_status = FXCODEC_STATUS::kDecodeToBeContinued;
   return m_status;
@@ -721,7 +656,6 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode() {
   options.bInterpolateBilinear = true;
   m_WeightHorz.CalculateWeights(m_SrcWidth, 0, m_SrcWidth, m_SrcWidth, 0,
                                 m_SrcWidth, options);
-  m_WeightVert.CalculateWeights(m_SrcHeight, m_SrcHeight);
   switch (m_SrcComponents) {
     case 1:
       m_SrcFormat = FXCodec_8bppGray;
@@ -899,7 +833,6 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {
   int scanline_size = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
   m_DecodeBuf.resize(scanline_size);
   m_WeightHorzOO.CalculateWeights(m_SrcWidth, m_SrcWidth);
-  m_WeightVert.CalculateWeights(m_SrcHeight, m_SrcHeight);
   m_status = FXCODEC_STATUS::kDecodeToBeContinued;
   return m_status;
 }
