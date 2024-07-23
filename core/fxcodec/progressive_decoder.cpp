@@ -923,7 +923,8 @@ bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
 }
 
 FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode() {
-  int down_scale = GetDownScale();
+  CHECK_EQ(m_clipBox.Width(), m_SrcWidth);
+  CHECK_EQ(m_clipBox.Height(), m_SrcHeight);
   // Setting jump marker before calling StartScanLine, since a longjmp to
   // the marker indicates a fatal error.
   if (setjmp(JpegProgressiveDecoder::GetJumpMark(m_pJpegContext.get())) == -1) {
@@ -932,9 +933,9 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode() {
     return FXCODEC_STATUS::kError;
   }
 
-  bool startStatus =
-      JpegProgressiveDecoder::StartScanline(m_pJpegContext.get(), down_scale);
-  while (!startStatus) {
+  bool start_status =
+      JpegProgressiveDecoder::StartScanline(m_pJpegContext.get());
+  while (!start_status) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
     if (!JpegReadMoreData(&error_status)) {
       m_pDeviceBitmap = nullptr;
@@ -943,12 +944,9 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode() {
       return m_status;
     }
 
-    startStatus =
-        JpegProgressiveDecoder::StartScanline(m_pJpegContext.get(), down_scale);
+    start_status = JpegProgressiveDecoder::StartScanline(m_pJpegContext.get());
   }
-  int scanline_size = (m_SrcWidth + down_scale - 1) / down_scale;
-  scanline_size = FxAlignToBoundary<4>(scanline_size * m_SrcComponents);
-  m_DecodeBuf.resize(scanline_size);
+  m_DecodeBuf.resize(FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents));
   FXDIB_ResampleOptions options;
   options.bInterpolateBilinear = true;
   m_WeightHorz.CalculateWeights(m_SrcWidth, 0, m_SrcWidth, m_clipBox.Width(), 0,
@@ -1467,29 +1465,6 @@ FXCODEC_STATUS ProgressiveDecoder::LoadImageInfo(
   m_status = FXCODEC_STATUS::kError;
   m_pFile = nullptr;
   return m_status;
-}
-
-int ProgressiveDecoder::GetDownScale() {
-  int down_scale = 1;
-  int ratio_w = m_clipBox.Width() / m_SrcWidth;
-  int ratio_h = m_clipBox.Height() / m_SrcHeight;
-  int ratio = std::min(ratio_w, ratio_h);
-  if (ratio >= 8)
-    down_scale = 8;
-  else if (ratio >= 4)
-    down_scale = 4;
-  else if (ratio >= 2)
-    down_scale = 2;
-
-  m_clipBox.left /= down_scale;
-  m_clipBox.right /= down_scale;
-  m_clipBox.top /= down_scale;
-  m_clipBox.bottom /= down_scale;
-  if (m_clipBox.right == m_clipBox.left)
-    m_clipBox.right = m_clipBox.left + 1;
-  if (m_clipBox.bottom == m_clipBox.top)
-    m_clipBox.bottom = m_clipBox.top + 1;
-  return down_scale;
 }
 
 void ProgressiveDecoder::SetTransMethod() {

@@ -153,9 +153,9 @@ int JpegProgressiveDecoder::ReadHeader(Context* pContext,
 }
 
 // static
-bool JpegProgressiveDecoder::StartScanline(Context* pContext, int down_scale) {
+bool JpegProgressiveDecoder::StartScanline(Context* pContext) {
   auto* ctx = static_cast<CJpegContext*>(pContext);
-  ctx->m_Info.scale_denom = static_cast<unsigned int>(down_scale);
+  ctx->m_Info.scale_denom = 1;
   return !!jpeg_start_decompress(&ctx->m_Info);
 }
 

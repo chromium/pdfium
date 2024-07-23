@@ -34,7 +34,7 @@ class JpegProgressiveDecoder final : public ProgressiveDecoderIface {
                         int* nComps,
                         CFX_DIBAttribute* pAttribute);
 
-  static bool StartScanline(Context* pContext, int down_scale);
+  static bool StartScanline(Context* pContext);
   static bool ReadScanline(Context* pContext, uint8_t* dest_buf);
 
   // ProgressiveDecoderIface:

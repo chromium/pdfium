@@ -196,7 +196,6 @@ class ProgressiveDecoder final :
                     ProgressiveDecoderIface::Context* pContext,
                     FXCODEC_STATUS* err_status);
 
-  int GetDownScale();
   void SetTransMethod();
 
   void ResampleScanline(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
