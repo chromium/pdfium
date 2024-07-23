@@ -700,25 +700,24 @@ bool CFX_RenderDevice::DrawPathWithBlend(
   }
 
   if (fill && fill_alpha && stroke_alpha < 0xff && fill_options.stroke) {
-    if (m_RenderCaps & FXRC_FILLSTROKE_PATH) {
 #if defined(PDF_USE_SKIA)
-      if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+    if (m_RenderCaps & FXRC_FILLSTROKE_PATH) {
+      const bool using_skia = CFX_DefaultRenderDevice::UseSkiaRenderer();
+      if (using_skia) {
         m_pDeviceDriver->SetGroupKnockout(true);
       }
-#endif
       bool draw_fillstroke_path_result = m_pDeviceDriver->DrawPath(
           path, pObject2Device, pGraphState, fill_color, stroke_color,
           fill_options, blend_type);
 
-#if defined(PDF_USE_SKIA)
-      if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+      if (using_skia) {
         // Restore the group knockout status for `m_pDeviceDriver` after
         // finishing painting a fill-and-stroke path.
         m_pDeviceDriver->SetGroupKnockout(false);
       }
-#endif
       return draw_fillstroke_path_result;
     }
+#endif  // defined(PDF_USE_SKIA)
     return DrawFillStrokePath(path, pObject2Device, pGraphState, fill_color,
                               stroke_color, fill_options, blend_type);
   }
@@ -1011,6 +1010,13 @@ bool CFX_RenderDevice::ContinueDIBits(CFX_AggImageRenderer* handle,
 }
 
 #if defined(PDF_USE_SKIA)
+bool CFX_RenderDevice::DrawShading(const CPDF_ShadingPattern& pattern,
+                                   const CFX_Matrix& matrix,
+                                   const FX_RECT& clip_rect,
+                                   int alpha) {
+  return m_pDeviceDriver->DrawShading(pattern, matrix, clip_rect, alpha);
+}
+
 bool CFX_RenderDevice::SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
                                        RetainPtr<const CFX_DIBBase> mask,
                                        int left,
@@ -1024,7 +1030,7 @@ bool CFX_RenderDevice::SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
 bool CFX_RenderDevice::SyncInternalBitmaps() {
   return m_pDeviceDriver->SyncInternalBitmaps();
 }
-#endif
+#endif  // defined(PDF_USE_SKIA)
 
 bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
                                       CFX_Font* pFont,
@@ -1334,13 +1340,6 @@ void CFX_RenderDevice::DrawShadow(const CFX_Matrix& mtUser2Device,
     FX_ARGB color = ArgbEncode(nTransparency, nGray, nGray, nGray);
     DrawStrokeLine(&mtUser2Device, start, end, color, kLineWidth);
   }
-}
-
-bool CFX_RenderDevice::DrawShading(const CPDF_ShadingPattern& pattern,
-                                   const CFX_Matrix& matrix,
-                                   const FX_RECT& clip_rect,
-                                   int alpha) {
-  return m_pDeviceDriver->DrawShading(pattern, matrix, clip_rect, alpha);
 }
 
 void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,

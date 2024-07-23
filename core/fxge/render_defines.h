@@ -22,7 +22,11 @@
 #define FXRC_BLEND_MODE 0x80
 #define FXRC_SOFT_CLIP 0x100
 #define FXRC_BYTEMASK_OUTPUT 0x800
+// Assuming these are Skia-only for now. If this assumption changes, update both
+// the #if logic here, as well as the callsites that check these capabilities.
+#if defined(PDF_USE_SKIA)
 #define FXRC_FILLSTROKE_PATH 0x2000
 #define FXRC_SHADING 0x4000
+#endif
 
 #endif  // CORE_FXGE_RENDER_DEFINES_H_

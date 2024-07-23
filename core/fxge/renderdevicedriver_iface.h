@@ -111,11 +111,11 @@ class RenderDeviceDriverIface {
                               uint32_t color,
                               const CFX_TextRenderOptions& options);
   virtual int GetDriverType() const;
+#if defined(PDF_USE_SKIA)
   virtual bool DrawShading(const CPDF_ShadingPattern& pattern,
                            const CFX_Matrix& matrix,
                            const FX_RECT& clip_rect,
                            int alpha);
-#if defined(PDF_USE_SKIA)
   virtual bool SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
                                RetainPtr<const CFX_DIBBase> mask,
                                int left,
@@ -128,7 +128,7 @@ class RenderDeviceDriverIface {
   // Syncs the current rendering result from the internal buffer to the output
   // bitmap if such internal buffer exists.
   virtual bool SyncInternalBitmaps();
-#endif
+#endif  // defined(PDF_USE_SKIA)
 
   // Multiplies the device by a constant alpha, returning `true` on success.
   // Implementations CHECK the following conditions:

@@ -194,16 +194,16 @@ class CFX_RenderDevice {
                   int32_t nTransparency,
                   int32_t nStartGray,
                   int32_t nEndGray);
-  bool DrawShading(const CPDF_ShadingPattern& pattern,
-                   const CFX_Matrix& matrix,
-                   const FX_RECT& clip_rect,
-                   int alpha);
 
   // See RenderDeviceDriverIface methods of the same name.
   bool MultiplyAlpha(float alpha);
   bool MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask);
 
 #if defined(PDF_USE_SKIA)
+  bool DrawShading(const CPDF_ShadingPattern& pattern,
+                   const CFX_Matrix& matrix,
+                   const FX_RECT& clip_rect,
+                   int alpha);
   bool SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
                        RetainPtr<const CFX_DIBBase> mask,
                        int left,
@@ -211,7 +211,7 @@ class CFX_RenderDevice {
                        float alpha,
                        BlendMode blend_type);
   bool SyncInternalBitmaps();
-#endif
+#endif  // defined(PDF_USE_SKIA)
 
  protected:
   CFX_RenderDevice();

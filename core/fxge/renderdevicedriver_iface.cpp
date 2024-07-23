@@ -66,6 +66,7 @@ int RenderDeviceDriverIface::GetDriverType() const {
   return 0;
 }
 
+#if defined(PDF_USE_SKIA)
 bool RenderDeviceDriverIface::DrawShading(const CPDF_ShadingPattern& pattern,
                                           const CFX_Matrix& matrix,
                                           const FX_RECT& clip_rect,
@@ -73,7 +74,6 @@ bool RenderDeviceDriverIface::DrawShading(const CPDF_ShadingPattern& pattern,
   return false;
 }
 
-#if defined(PDF_USE_SKIA)
 bool RenderDeviceDriverIface::SetBitsWithMask(
     RetainPtr<const CFX_DIBBase> bitmap,
     RetainPtr<const CFX_DIBBase> mask,
@@ -89,7 +89,7 @@ void RenderDeviceDriverIface::SetGroupKnockout(bool group_knockout) {}
 bool RenderDeviceDriverIface::SyncInternalBitmaps() {
   return true;
 }
-#endif
+#endif  // defined(PDF_USE_SKIA)
 
 RenderDeviceDriverIface::StartResult::StartResult(
     bool success,

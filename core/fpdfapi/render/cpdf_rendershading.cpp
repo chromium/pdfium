@@ -912,10 +912,12 @@ void CPDF_RenderShading::Draw(CFX_RenderDevice* pDevice,
     clip_rect_bbox.Intersect(
         mtMatrix.TransformRect(pDict->GetRectFor("BBox")).GetOuterRect());
   }
-  if (pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SHADING &&
+#if defined(PDF_USE_SKIA)
+  if ((pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SHADING) &&
       pDevice->DrawShading(*pPattern, mtMatrix, clip_rect_bbox, alpha)) {
     return;
   }
+#endif  // defined(PDF_USE_SKIA)
   CPDF_DeviceBuffer buffer(pContext, pDevice, clip_rect_bbox, pCurObj, 150);
   RetainPtr<CFX_DIBitmap> pBitmap = buffer.Initialize();
   if (!pBitmap) {
