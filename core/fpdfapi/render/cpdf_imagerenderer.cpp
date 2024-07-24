@@ -206,9 +206,14 @@ bool CPDF_ImageRenderer::Start(RetainPtr<CFX_DIBBase> pDIBBase,
 }
 
 bool CPDF_ImageRenderer::NotDrawing() const {
-  return m_pRenderStatus->IsPrint() &&
-         !(m_pRenderStatus->GetRenderDevice()->GetRenderCaps() &
-           FXRC_BLEND_MODE);
+  if (!m_pRenderStatus->IsPrint()) {
+    return false;
+  }
+
+  // Make sure the assumption that no printer device supports blend mode holds.
+  CHECK(
+      !(m_pRenderStatus->GetRenderDevice()->GetRenderCaps() & FXRC_BLEND_MODE));
+  return true;
 }
 
 FX_RECT CPDF_ImageRenderer::GetDrawRect() const {
