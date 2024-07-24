@@ -109,17 +109,15 @@ int GetAlpha(uint8_t src_alpha, const uint8_t* clip_scan, int col) {
 }
 
 int GetAlphaWithSrc(uint8_t src_alpha,
-                    const uint8_t* clip_scan,
-                    const uint8_t* src_scan,
-                    int col) {
-  UNSAFE_TODO({
-    int result = src_alpha * src_scan[col];
-    if (clip_scan) {
-      result *= clip_scan[col];
-      result /= 255;
-    }
-    return result / 255;
-  });
+                    pdfium::span<const uint8_t> clip_scan,
+                    pdfium::span<const uint8_t> src_scan,
+                    size_t col) {
+  int result = src_alpha * src_scan[col];
+  if (col < clip_scan.size()) {
+    result *= clip_scan[col];
+    result /= 255;
+  }
+  return result / 255;
 }
 
 void CompositeRow_AlphaToMask(pdfium::span<uint8_t> dest_span,
@@ -947,11 +945,9 @@ void CompositeRow_ByteMask2Argb(pdfium::span<uint8_t> dest_span,
                                 BlendMode blend_type,
                                 pdfium::span<const uint8_t> clip_span) {
   uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  const uint8_t* clip_scan = clip_span.data();
   UNSAFE_TODO({
     for (int col = 0; col < pixel_count; col++) {
-      int src_alpha = GetAlphaWithSrc(mask_alpha, clip_scan, src_scan, col);
+      int src_alpha = GetAlphaWithSrc(mask_alpha, clip_span, src_span, col);
       uint8_t back_alpha = dest_scan[3];
       if (back_alpha == 0) {
         FXARGB_SetDIB(dest_scan, ArgbEncode(src_alpha, src_r, src_g, src_b));
@@ -1015,11 +1011,9 @@ void CompositeRow_ByteMask2Rgb(pdfium::span<uint8_t> dest_span,
                                int Bpp,
                                pdfium::span<const uint8_t> clip_span) {
   uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  const uint8_t* clip_scan = clip_span.data();
   UNSAFE_TODO({
     for (int col = 0; col < pixel_count; col++) {
-      int src_alpha = GetAlphaWithSrc(mask_alpha, clip_scan, src_scan, col);
+      int src_alpha = GetAlphaWithSrc(mask_alpha, clip_span, src_span, col);
       if (src_alpha == 0) {
         dest_scan += Bpp;
         continue;
@@ -1065,10 +1059,8 @@ void CompositeRow_ByteMask2Mask(pdfium::span<uint8_t> dest_span,
                                 int pixel_count,
                                 pdfium::span<const uint8_t> clip_span) {
   uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  const uint8_t* clip_scan = clip_span.data();
   for (int col = 0; col < pixel_count; col++) {
-    int src_alpha = GetAlphaWithSrc(mask_alpha, clip_scan, src_scan, col);
+    int src_alpha = GetAlphaWithSrc(mask_alpha, clip_span, src_span, col);
     uint8_t back_alpha = *dest_scan;
     if (!back_alpha) {
       *dest_scan = src_alpha;
@@ -1086,10 +1078,8 @@ void CompositeRow_ByteMask2Gray(pdfium::span<uint8_t> dest_span,
                                 int pixel_count,
                                 pdfium::span<const uint8_t> clip_span) {
   uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  const uint8_t* clip_scan = clip_span.data();
   for (int col = 0; col < pixel_count; col++) {
-    int src_alpha = GetAlphaWithSrc(mask_alpha, clip_scan, src_scan, col);
+    int src_alpha = GetAlphaWithSrc(mask_alpha, clip_span, src_span, col);
     if (src_alpha) {
       *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, src_gray, src_alpha);
     }
@@ -1959,11 +1949,9 @@ void CompositeRow_ByteMask2Argb_RgbByteOrder(
     BlendMode blend_type,
     pdfium::span<const uint8_t> clip_span) {
   uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  const uint8_t* clip_scan = clip_span.data();
   UNSAFE_TODO({
     for (int col = 0; col < pixel_count; col++) {
-      int src_alpha = GetAlphaWithSrc(mask_alpha, clip_scan, src_scan, col);
+      int src_alpha = GetAlphaWithSrc(mask_alpha, clip_span, src_span, col);
       uint8_t back_alpha = dest_scan[3];
       if (back_alpha == 0) {
         FXARGB_SetRGBOrderDIB(dest_scan,
@@ -2025,11 +2013,9 @@ void CompositeRow_ByteMask2Rgb_RgbByteOrder(
     int Bpp,
     pdfium::span<const uint8_t> clip_span) {
   uint8_t* dest_scan = dest_span.data();
-  const uint8_t* src_scan = src_span.data();
-  const uint8_t* clip_scan = clip_span.data();
   UNSAFE_TODO({
     for (int col = 0; col < pixel_count; col++) {
-      int src_alpha = GetAlphaWithSrc(mask_alpha, clip_scan, src_scan, col);
+      int src_alpha = GetAlphaWithSrc(mask_alpha, clip_span, src_span, col);
       if (src_alpha == 0) {
         dest_scan += Bpp;
         continue;
