@@ -22,41 +22,40 @@ RetainPtr<CFGAS_GEFont> CFGAS_DefaultFontManager::GetFont(
   CFGAS_FontMgr* pFontMgr = CFGAS_GEModule::Get()->GetFontMgr();
   RetainPtr<CFGAS_GEFont> pFont = pFontMgr->LoadFont(
       wsFontName.c_str(), dwFontStyles, FX_CodePage::kFailure);
-  if (pFont)
+  if (pFont) {
     return pFont;
-
+  }
   const FGAS_FontInfo* pCurFont =
       FGAS_FontInfoByFontName(wsFontName.AsStringView());
-  if (!pCurFont || !pCurFont->pReplaceFont)
-    return pFont;
-
+  if (!pCurFont || !pCurFont->pReplaceFont) {
+    return nullptr;
+  }
   uint32_t dwStyle = 0;
   // TODO(dsinclair): Why doesn't this check the other flags?
-  if (FontStyleIsForceBold(dwFontStyles))
+  if (FontStyleIsForceBold(dwFontStyles)) {
     dwStyle |= FXFONT_FORCE_BOLD;
-  if (FontStyleIsItalic(dwFontStyles))
-    dwStyle |= FXFONT_ITALIC;
-
-  const char* pReplace = pCurFont->pReplaceFont;
-  int32_t iLength = pdfium::checked_cast<int32_t>(strlen(pReplace));
-  while (iLength > 0) {
-    const char* pNameText = pReplace;
-    while (*pNameText != ',' && iLength > 0) {
-      UNSAFE_TODO(pNameText++);
-      iLength--;
-    }
-    WideString wsReplace = WideString::FromASCII(
-        UNSAFE_TODO(ByteStringView(pReplace, pNameText - pReplace)));
-    pFont =
-        pFontMgr->LoadFont(wsReplace.c_str(), dwStyle, FX_CodePage::kFailure);
-    if (pFont)
-      break;
-
-    iLength--;
-    UNSAFE_TODO(pNameText++);
-    pReplace = pNameText;
   }
-  return pFont;
+  if (FontStyleIsItalic(dwFontStyles)) {
+    dwStyle |= FXFONT_ITALIC;
+  }
+  ByteStringView replace_view(pCurFont->pReplaceFont);
+  while (!replace_view.IsEmpty()) {
+    ByteStringView segment;
+    auto found = replace_view.Find(',');
+    if (found.has_value()) {
+      segment = replace_view.First(found.value());
+      replace_view = replace_view.Substr(found.value() + 1);
+    } else {
+      segment = replace_view;
+      replace_view = ByteStringView();
+    }
+    pFont = pFontMgr->LoadFont(WideString::FromASCII(segment).c_str(), dwStyle,
+                               FX_CodePage::kFailure);
+    if (pFont) {
+      return pFont;
+    }
+  }
+  return nullptr;
 }
 
 // static
