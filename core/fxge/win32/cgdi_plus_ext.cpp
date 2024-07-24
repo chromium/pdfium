@@ -201,16 +201,13 @@ Gdiplus::GpBrush* GdipCreateBrushImpl(DWORD argb) {
   return solidBrush;
 }
 
-void OutputImage(Gdiplus::GpGraphics* pGraphics,
+void OutputImage(Gdiplus::GpGraphics* graphics,
                  RetainPtr<const CFX_DIBBase> source,
-                 const FX_RECT& src_rect,
                  int dest_left,
                  int dest_top,
                  int dest_width,
                  int dest_height) {
   CHECK_EQ(FXDIB_Format::kArgb, source->GetFormat());
-  int src_width = src_rect.Width();
-  int src_height = src_rect.Height();
   const CGdiplusExt& GdiplusExt = GetGdiplusExt();
 
   RetainPtr<const CFX_DIBitmap> realized_source = source->RealizeIfNeeded();
@@ -218,30 +215,26 @@ void OutputImage(Gdiplus::GpGraphics* pGraphics,
     return;
   }
 
-  int src_pitch = realized_source->GetPitch();
-
   // `GdipCreateBitmapFromScan0()` requires a `BYTE*` scanline buffer, but in
   // this case, the bitmap only gets read by `GdipDrawImagePointsI()`, then
   // disposed of, so it's safe to cast away `const` here.
-  uint8_t* scan0 = const_cast<uint8_t*>(
-      realized_source->GetBuffer()
-          .subspan(src_rect.top * src_pitch +
-                   realized_source->GetBPP() * src_rect.left / 8)
-          .data());
+  uint8_t* scan0 = const_cast<uint8_t*>(realized_source->GetBuffer().data());
   Gdiplus::GpBitmap* bitmap = nullptr;
-  CallFunc(GdipCreateBitmapFromScan0)(src_width, src_height, src_pitch,
-                                      PixelFormat32bppARGB, scan0, &bitmap);
+  CallFunc(GdipCreateBitmapFromScan0)(
+      realized_source->GetWidth(), realized_source->GetHeight(),
+      realized_source->GetPitch(), PixelFormat32bppARGB, scan0, &bitmap);
   if (dest_height < 0) {
     dest_height--;
   }
   if (dest_width < 0) {
     dest_width--;
   }
-  Gdiplus::Point destinationPoints[] = {
+  const Gdiplus::Point destination_points[] = {
       Gdiplus::Point(dest_left, dest_top),
       Gdiplus::Point(dest_left + dest_width, dest_top),
       Gdiplus::Point(dest_left, dest_top + dest_height)};
-  CallFunc(GdipDrawImagePointsI)(pGraphics, bitmap, destinationPoints, 3);
+  CallFunc(GdipDrawImagePointsI)(graphics, bitmap, destination_points,
+                                 std::size(destination_points));
   CallFunc(GdipDisposeImage)(bitmap);
 }
 
@@ -572,9 +565,8 @@ bool CGdiplusExt::StretchDIBits(HDC hDC,
     CallFunc(GdipSetInterpolationMode)(pGraphics,
                                        Gdiplus::InterpolationModeBilinear);
   }
-  FX_RECT src_rect(0, 0, source->GetWidth(), source->GetHeight());
-  OutputImage(pGraphics, std::move(source), src_rect, dest_left, dest_top,
-              dest_width, dest_height);
+  OutputImage(pGraphics, std::move(source), dest_left, dest_top, dest_width,
+              dest_height);
   CallFunc(GdipDeleteGraphics)(pGraphics);
   return true;
 }
