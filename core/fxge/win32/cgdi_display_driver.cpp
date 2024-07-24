@@ -203,9 +203,9 @@ bool CGdiDisplayDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
     auto* pPlatform =
         static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
     if (pPlatform->m_GdiplusExt.IsAvailable()) {
-      return pPlatform->m_GdiplusExt.StretchDIBits(
-          m_hDC, std::move(bitmap), dest_left, dest_top, dest_width,
-          dest_height, pClipRect, FXDIB_ResampleOptions());
+      return pPlatform->m_GdiplusExt.StretchDIBits(m_hDC, std::move(bitmap),
+                                                   dest_left, dest_top,
+                                                   dest_width, dest_height);
     }
     return UseFoxitStretchEngine(std::move(bitmap), color, dest_left, dest_top,
                                  dest_width, dest_height, pClipRect,

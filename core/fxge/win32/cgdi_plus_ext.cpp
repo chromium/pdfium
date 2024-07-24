@@ -546,19 +546,14 @@ bool CGdiplusExt::StretchDIBits(HDC hDC,
                                 int dest_left,
                                 int dest_top,
                                 int dest_width,
-                                int dest_height,
-                                const FX_RECT* pClipRect,
-                                const FXDIB_ResampleOptions& options) {
+                                int dest_height) {
   CHECK(source->IsAlphaFormat());
   Gdiplus::GpGraphics* pGraphics;
   const CGdiplusExt& GdiplusExt = GetGdiplusExt();
   CallFunc(GdipCreateFromHDC)(hDC, &pGraphics);
   CallFunc(GdipSetPageUnit)(pGraphics, Gdiplus::UnitPixel);
-  if (options.bNoSmoothing) {
-    CallFunc(GdipSetInterpolationMode)(
-        pGraphics, Gdiplus::InterpolationModeNearestNeighbor);
-  } else if (source->GetWidth() > abs(dest_width) / 2 ||
-             source->GetHeight() > abs(dest_height) / 2) {
+  if (source->GetWidth() > abs(dest_width) / 2 ||
+      source->GetHeight() > abs(dest_height) / 2) {
     CallFunc(GdipSetInterpolationMode)(pGraphics,
                                        Gdiplus::InterpolationModeHighQuality);
   } else {
