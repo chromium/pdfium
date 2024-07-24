@@ -115,6 +115,21 @@ class PixelTransformTraits<24, PixelTransform> {
   }
 };
 
+template <typename PixelTransform>
+class PixelTransformTraits<32, PixelTransform> {
+ public:
+  using Result =
+      std::invoke_result_t<PixelTransform, uint8_t, uint8_t, uint8_t>;
+
+  static Result Invoke(PixelTransform&& pixel_transform,
+                       pdfium::span<const uint8_t> scanline,
+                       size_t column) {
+    size_t offset = column * 4;
+    return pixel_transform(scanline[offset + 2], scanline[offset + 1],
+                           scanline[offset]);
+  }
+};
+
 void ValidateScanlineSize(pdfium::span<const uint8_t> scanline,
                           size_t min_row_bytes) {
   DCHECK_GE(scanline.size(), min_row_bytes);
@@ -233,6 +248,14 @@ sk_sp<SkImage> CFX_DIBBase::RealizeSkImage() const {
           });
 
     case 32:
+      if (GetFormat() == FXDIB_Format::kRgb32) {
+        return CreateSkiaImageFromTransformedDib</*source_bits_per_pixel=*/32>(
+            *this, kBGRA_8888_SkColorType, kOpaque_SkAlphaType,
+            [](uint8_t red, uint8_t green, uint8_t blue) {
+              return SkPackARGB32(0xFF, red, green, blue);
+            });
+      }
+      CHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
       return CreateSkiaImageFromDib(
           this, kBGRA_8888_SkColorType,
           IsPremultiplied() ? kPremul_SkAlphaType : kUnpremul_SkAlphaType);
