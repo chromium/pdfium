@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/span.h"
 
 namespace fxcmap {
 
@@ -100,23 +101,24 @@ uint32_t CharCodeFromCID(const CMap* pMap, uint16_t cid) {
   while (pMap) {
     switch (pMap->m_WordMapType) {
       case CMap::Type::kSingle: {
-        const auto* pCur =
-            reinterpret_cast<const SingleCmap*>(pMap->m_pWordMap);
-        const auto* pEnd = UNSAFE_TODO(pCur + pMap->m_WordCount);
-        while (pCur < pEnd) {
-          if (pCur->cid == cid)
-            return pCur->code;
-          UNSAFE_TODO(++pCur);
+        auto single_span = UNSAFE_TODO(pdfium::make_span(
+            reinterpret_cast<const SingleCmap*>(pMap->m_pWordMap),
+            pMap->m_WordCount));
+        for (const auto& single : single_span) {
+          if (single.cid == cid) {
+            return single.code;
+          }
         }
         break;
       }
       case CMap::Type::kRange: {
-        const auto* pCur = reinterpret_cast<const RangeCmap*>(pMap->m_pWordMap);
-        const auto* pEnd = UNSAFE_TODO(pCur + pMap->m_WordCount);
-        while (pCur < pEnd) {
-          if (cid >= pCur->cid && cid <= pCur->cid + pCur->high - pCur->low)
-            return pCur->low + cid - pCur->cid;
-          UNSAFE_TODO(++pCur);
+        auto range_span = UNSAFE_TODO(pdfium::make_span(
+            reinterpret_cast<const RangeCmap*>(pMap->m_pWordMap),
+            pMap->m_WordCount));
+        for (const auto& range : range_span) {
+          if (cid >= range.cid && cid <= range.cid + range.high - range.low) {
+            return range.low + cid - range.cid;
+          }
         }
         break;
       }
