@@ -1377,8 +1377,9 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFTextObj_GetFont(FPDF_PAGEOBJECT text);
 // Regardless of the platform, the |buffer| is always in UTF-8 encoding.
 // If |length| is less than the returned length, or |buffer| is NULL, |buffer|
 // will not be modified.
-FPDF_EXPORT unsigned long FPDF_CALLCONV
-FPDFFont_GetFamilyName(FPDF_FONT font, char* buffer, unsigned long length);
+FPDF_EXPORT size_t FPDF_CALLCONV FPDFFont_GetFamilyName(FPDF_FONT font,
+                                                        char* buffer,
+                                                        size_t length);
 
 // Experimental API.
 // Get the decoded data from the |font| object.
