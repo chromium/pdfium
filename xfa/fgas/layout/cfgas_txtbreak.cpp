@@ -635,8 +635,8 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
     return 0;
 
   Engine* pEngine = run.pEdtEngine;
-  const wchar_t* pStr = run.wsStr.c_str();
-  int32_t* pWidths = run.pWidths;
+  WideStringView pStr = run.wsStr.AsStringView();
+  pdfium::span<int32_t> pWidths = run.pWidths;
   int32_t iLength = run.iLength - 1;
   RetainPtr<CFGAS_GEFont> pFont = run.pFont;
   Mask<LayoutStyle> dwStyles = run.dwStyles;
@@ -672,8 +672,10 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
       wch = pEngine->GetChar(iAbsolute);
       iWidth = pEngine->GetWidthOfChar(iAbsolute);
     } else {
-      wch = UNSAFE_TODO(*pStr++);
-      iWidth = UNSAFE_TODO(*pWidths++);
+      wch = pStr.Front();
+      pStr = pStr.Substr(1);
+      iWidth = pWidths.front();
+      pWidths = pWidths.subspan(1);
     }
 
     FX_CHARTYPE chartype = pdfium::unicode::GetCharType(wch);
@@ -702,10 +704,10 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
           int32_t j = -1;
           do {
             j++;
-            if (i + j >= iLength)
+            if (i + j >= iLength) {
               break;
-
-            wNext = UNSAFE_TODO(pStr[j]);
+            }
+            wNext = pStr[j];
           } while (pdfium::unicode::GetCharType(wNext) ==
                    FX_CHARTYPE::kCombination);
           if (i + j >= iLength)
@@ -734,7 +736,7 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
               wNext = pEngine->GetChar(iNextAbsolute);
             }
           } else if (i < iLength) {
-            wNext = *pStr;
+            wNext = pStr.Front();
           }
           std::optional<uint16_t> maybe_shadda;
           if (wch == pdfium::arabic::kArabicShadda) {
@@ -882,8 +884,8 @@ std::vector<CFX_RectF> CFGAS_TxtBreak::GetCharRects(const Run& run) const {
     return std::vector<CFX_RectF>();
 
   Engine* pEngine = run.pEdtEngine;
-  const wchar_t* pStr = run.wsStr.c_str();
-  int32_t* pWidths = run.pWidths;
+  WideStringView pStr = run.wsStr.AsStringView();
+  pdfium::span<int32_t> pWidths = run.pWidths;
   int32_t iLength = run.iLength;
   CFX_RectF rect(*run.pRect);
   float fFontSize = run.fFontSize;
@@ -900,8 +902,10 @@ std::vector<CFX_RectF> CFGAS_TxtBreak::GetCharRects(const Run& run) const {
       wch = pEngine->GetChar(iAbsolute);
       iCharSize = pEngine->GetWidthOfChar(iAbsolute);
     } else {
-      wch = UNSAFE_TODO(*pStr++);
-      iCharSize = UNSAFE_TODO(*pWidths++);
+      wch = pStr.Front();
+      pStr = pStr.Substr(1);
+      iCharSize = pWidths.front();
+      pWidths = pWidths.subspan(1);
     }
     float fCharSize = static_cast<float>(iCharSize) / kConversionFactor;
     bool bRet = (!bSingleLine && IsCtrlCode(wch));

@@ -510,7 +510,7 @@ size_t CFDE_TextOut::GetDisplayPos(const Piece* pPiece) {
 
   CFGAS_TxtBreak::Run tr;
   tr.wsStr = m_wsText.Substr(pPiece->start_char);
-  tr.pWidths = &m_CharWidths[pPiece->start_char];
+  tr.pWidths = pdfium::make_span(m_CharWidths).subspan(pPiece->start_char);
   tr.iLength = pdfium::checked_cast<int32_t>(pPiece->char_count);
   tr.pFont = m_pFont;
   tr.fFontSize = m_fFontSize;
