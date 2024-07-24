@@ -121,8 +121,8 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   if (GetRenderOptions().GetOptions().bForceHalftone)
     m_ResampleOptions.bHalftone = true;
 
-  if (m_pRenderStatus->GetRenderDevice()->GetDeviceType() !=
-      DeviceType::kDisplay) {
+  if (m_pRenderStatus->GetRenderDevice()->GetDeviceType() ==
+      DeviceType::kPrinter) {
     HandleFilters();
   }
 

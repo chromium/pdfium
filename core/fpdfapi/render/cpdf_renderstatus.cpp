@@ -177,7 +177,7 @@ CPDF_RenderStatus::~CPDF_RenderStatus() = default;
 
 void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentStatus,
                                    const CPDF_GraphicStates* pInitialStates) {
-  m_bPrint = m_pDevice->GetDeviceType() != DeviceType::kDisplay;
+  m_bPrint = m_pDevice->GetDeviceType() == DeviceType::kPrinter;
   m_pPageResource.Reset(m_pContext->GetPageResources());
   if (pInitialStates && !m_pType3Char) {
     m_InitialStates = *pInitialStates;

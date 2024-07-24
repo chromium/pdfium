@@ -70,7 +70,7 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
     pContext->m_pAnnots = std::move(pOwnedList);
     bool bPrinting =
         (flags & FPDF_PRINTING) ||
-        pContext->m_pDevice->GetDeviceType() != DeviceType::kDisplay;
+        pContext->m_pDevice->GetDeviceType() == DeviceType::kPrinter;
 
     // TODO(https://crbug.com/pdfium/993) - maybe pass true here.
     const bool bShowWidget = false;

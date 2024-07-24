@@ -1081,7 +1081,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
     }
   }
 
-  if (GetDeviceType() != DeviceType::kDisplay) {
+  if (GetDeviceType() == DeviceType::kPrinter) {
     if (ShouldDrawDeviceText(pFont, options) &&
         m_pDeviceDriver->DrawDeviceText(pCharPos, pFont, mtText2Device,
                                         font_size, fill_color, text_options)) {
