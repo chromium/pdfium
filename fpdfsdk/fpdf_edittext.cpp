@@ -849,6 +849,22 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFTextObj_GetFont(FPDF_PAGEOBJECT text) {
   return FPDFFontFromCPDFFont(pTextObj->GetFont());
 }
 
+FPDF_EXPORT size_t FPDF_CALLCONV FPDFFont_GetBaseName(FPDF_FONT font,
+                                                      char* buffer,
+                                                      size_t length) {
+  auto* cfont = CPDFFontFromFPDFFont(font);
+  if (!cfont) {
+    return 0;
+  }
+
+  // SAFETY: required from caller.
+  auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, length));
+  ByteString name = cfont->GetFont()->GetBaseFontName();
+  pdfium::span<const char> name_span = name.span_with_terminator();
+  fxcrt::try_spancpy(result_span, name_span);
+  return name_span.size();
+}
+
 FPDF_EXPORT size_t FPDF_CALLCONV FPDFFont_GetFamilyName(FPDF_FONT font,
                                                         char* buffer,
                                                         size_t length) {

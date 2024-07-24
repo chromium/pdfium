@@ -2924,6 +2924,7 @@ TEST_F(FPDFEditEmbedderTest, SetTextRenderMode) {
 TEST_F(FPDFEditEmbedderTest, TextFontProperties) {
   // bad object tests
   EXPECT_FALSE(FPDFTextObj_GetFont(nullptr));
+  EXPECT_EQ(0U, FPDFFont_GetBaseName(nullptr, nullptr, 5));
   EXPECT_EQ(0U, FPDFFont_GetFamilyName(nullptr, nullptr, 5));
   EXPECT_EQ(-1, FPDFFont_GetFlags(nullptr));
   EXPECT_EQ(-1, FPDFFont_GetWeight(nullptr));
@@ -2974,6 +2975,26 @@ TEST_F(FPDFEditEmbedderTest, TextFontProperties) {
     EXPECT_FLOAT_EQ(a12, 5.316f);
     EXPECT_TRUE(FPDFFont_GetGlyphWidth(font, 'a', 24.0f, &a24));
     EXPECT_FLOAT_EQ(a24, 10.632f);
+  }
+
+  {
+    // FPDFFont_GetBaseName() positive testing.
+    unsigned long size = FPDFFont_GetBaseName(font, nullptr, 0);
+    const char kExpectedFontName[] = "LiberationSerif";
+    ASSERT_EQ(sizeof(kExpectedFontName), size);
+    std::vector<char> font_name(size);
+    ASSERT_EQ(size, FPDFFont_GetBaseName(font, font_name.data(), size));
+    ASSERT_STREQ(kExpectedFontName, font_name.data());
+
+    // FPDFFont_GetBaseName() negative testing.
+    ASSERT_EQ(0U, FPDFFont_GetBaseName(nullptr, nullptr, 0));
+
+    font_name.resize(2);
+    font_name[0] = 'x';
+    font_name[1] = '\0';
+    size = FPDFFont_GetBaseName(font, font_name.data(), font_name.size());
+    ASSERT_EQ(sizeof(kExpectedFontName), size);
+    ASSERT_STREQ("x", font_name.data());
   }
 
   {
