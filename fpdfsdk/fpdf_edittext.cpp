@@ -873,8 +873,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetFontData(FPDF_FONT font,
     return false;
 
   // SAFETY: required from caller.
-  auto result_span = UNSAFE_BUFFERS(
-      SpanFromFPDFApiArgs(buffer, pdfium::checked_cast<unsigned long>(buflen)));
+  auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, buflen));
   pdfium::span<const uint8_t> data = cfont->GetFont()->GetFontSpan();
   fxcrt::try_spancpy(result_span, data);
   *out_buflen = data.size();
