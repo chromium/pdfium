@@ -205,7 +205,7 @@ bool CPDF_ImageRenderer::Start(RetainPtr<CFX_DIBBase> pDIBBase,
   return StartDIBBase();
 }
 
-bool CPDF_ImageRenderer::NotDrawing() const {
+bool CPDF_ImageRenderer::IsPrinting() const {
   if (!m_pRenderStatus->IsPrint()) {
     return false;
   }
@@ -288,7 +288,7 @@ const CPDF_RenderOptions& CPDF_ImageRenderer::GetRenderOptions() const {
 }
 
 bool CPDF_ImageRenderer::DrawPatternImage() {
-  if (NotDrawing()) {
+  if (IsPrinting()) {
     m_Result = false;
     return false;
   }
@@ -334,7 +334,7 @@ bool CPDF_ImageRenderer::DrawPatternImage() {
 }
 
 bool CPDF_ImageRenderer::DrawMaskedImage() {
-  if (NotDrawing()) {
+  if (IsPrinting()) {
     m_Result = false;
     return false;
   }
@@ -410,7 +410,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
 
   if ((fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
       (fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {
-    if (NotDrawing()) {
+    if (IsPrinting()) {
       m_Result = false;
       return false;
     }
@@ -457,7 +457,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
       return false;
     }
   }
-  if (NotDrawing()) {
+  if (IsPrinting()) {
     m_Result = false;
     return true;
   }

@@ -63,7 +63,7 @@ class CPDF_ImageRenderer {
   bool ContinueTransform(PauseIndicatorIface* pPause);
   bool DrawMaskedImage();
   bool DrawPatternImage();
-  bool NotDrawing() const;
+  bool IsPrinting() const;
   FX_RECT GetDrawRect() const;
   CFX_Matrix GetDrawMatrix(const FX_RECT& rect) const;
   // Returns the mask, or nullptr if the mask could not be created.
