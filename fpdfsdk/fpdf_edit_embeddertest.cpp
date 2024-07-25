@@ -3118,8 +3118,7 @@ TEST_F(FPDFEditEmbedderTest, Type1BaseFontName) {
     FPDF_FONT font = FPDFTextObj_GetFont(page_object);
     ASSERT_TRUE(font);
     size_t size = FPDFFont_GetBaseFontName(font, nullptr, 0);
-    // TODO(crbug.com/353746891): Should be Times-Roman.
-    const char kExpectedFontName[] = "Tinos-Regular";
+    const char kExpectedFontName[] = "Times-Roman";
     ASSERT_EQ(sizeof(kExpectedFontName), size);
     std::vector<char> font_name(size);
     ASSERT_EQ(size, FPDFFont_GetBaseFontName(font, font_name.data(), size));
@@ -3131,8 +3130,7 @@ TEST_F(FPDFEditEmbedderTest, Type1BaseFontName) {
     FPDF_FONT font = FPDFTextObj_GetFont(page_object);
     ASSERT_TRUE(font);
     size_t size = FPDFFont_GetBaseFontName(font, nullptr, 0);
-    // TODO(crbug.com/353746891): Should be Helvetica.
-    const char kExpectedFontName[] = "Arimo-Regular";
+    const char kExpectedFontName[] = "Helvetica";
     ASSERT_EQ(sizeof(kExpectedFontName), size);
     std::vector<char> font_name(size);
     ASSERT_EQ(size, FPDFFont_GetBaseFontName(font, font_name.data(), size));

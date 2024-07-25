@@ -859,7 +859,7 @@ FPDF_EXPORT size_t FPDF_CALLCONV FPDFFont_GetBaseFontName(FPDF_FONT font,
 
   // SAFETY: required from caller.
   auto result_span = UNSAFE_BUFFERS(SpanFromFPDFApiArgs(buffer, length));
-  ByteString name = cfont->GetFont()->GetBaseFontName();
+  ByteString name = cfont->GetBaseFontName();
   pdfium::span<const char> name_span = name.span_with_terminator();
   fxcrt::try_spancpy(result_span, name_span);
   return name_span.size();
