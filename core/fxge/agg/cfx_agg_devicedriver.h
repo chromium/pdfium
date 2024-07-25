@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_AGG_FX_AGG_DRIVER_H_
-#define CORE_FXGE_AGG_FX_AGG_DRIVER_H_
+#ifndef CORE_FXGE_AGG_CFX_AGG_DEVICEDRIVER_H_
+#define CORE_FXGE_AGG_CFX_AGG_DEVICEDRIVER_H_
 
 #include <memory>
 #include <vector>
@@ -124,4 +124,4 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
 
 }  // namespace pdfium
 
-#endif  // CORE_FXGE_AGG_FX_AGG_DRIVER_H_
+#endif  // CORE_FXGE_AGG_CFX_AGG_DEVICEDRIVER_H_

@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/agg/fx_agg_driver.h"
+#include "core/fxge/agg/cfx_agg_devicedriver.h"
 
 #include <math.h>
 #include <stdint.h>
@@ -363,14 +363,14 @@ FX_RECT GetClipBoxFromRegion(const RetainPtr<CFX_DIBitmap>& device,
   return FX_RECT(0, 0, device->GetWidth(), device->GetHeight());
 }
 
-class CFX_Renderer {
+class CFX_AggRenderer {
  public:
-  CFX_Renderer(const RetainPtr<CFX_DIBitmap>& pDevice,
-               const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
-               const CFX_ClipRgn* pClipRgn,
-               uint32_t color,
-               bool bFullCover,
-               bool bRgbByteOrder);
+  CFX_AggRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
+                  const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
+                  const CFX_ClipRgn* pClipRgn,
+                  uint32_t color,
+                  bool bFullCover,
+                  bool bRgbByteOrder);
 
   // Needed for agg caller
   void prepare(unsigned) {}
@@ -379,14 +379,14 @@ class CFX_Renderer {
   void render(const Scanline& sl);
 
  private:
-  using CompositeSpanFunc = void (CFX_Renderer::*)(uint8_t*,
-                                                   int,
-                                                   int,
-                                                   int,
-                                                   const uint8_t*,
-                                                   int,
-                                                   int,
-                                                   const uint8_t*);
+  using CompositeSpanFunc = void (CFX_AggRenderer::*)(uint8_t*,
+                                                      int,
+                                                      int,
+                                                      int,
+                                                      const uint8_t*,
+                                                      int,
+                                                      int,
+                                                      const uint8_t*);
 
   void CompositeSpan(uint8_t* dest_scan,
                      const uint8_t* backdrop_scan,
@@ -445,12 +445,12 @@ class CFX_Renderer {
   static CompositeSpanFunc GetCompositeSpanFunc(
       const RetainPtr<CFX_DIBitmap>& device) {
     if (device->GetBPP() == 1)
-      return &CFX_Renderer::CompositeSpan1bpp;
+      return &CFX_AggRenderer::CompositeSpan1bpp;
     if (device->GetBPP() == 8)
-      return &CFX_Renderer::CompositeSpanGray;
+      return &CFX_AggRenderer::CompositeSpanGray;
     if (device->GetFormat() == FXDIB_Format::kArgb)
-      return &CFX_Renderer::CompositeSpanARGB;
-    return &CFX_Renderer::CompositeSpanRGB;
+      return &CFX_AggRenderer::CompositeSpanARGB;
+    return &CFX_AggRenderer::CompositeSpanRGB;
   }
 
   inline int GetSrcAlpha(const uint8_t* clip_scan, int col) const {
@@ -492,16 +492,16 @@ class CFX_Renderer {
   const CompositeSpanFunc m_CompositeSpanFunc;
 };
 
-void CFX_Renderer::CompositeSpan(uint8_t* dest_scan,
-                                 const uint8_t* backdrop_scan,
-                                 int Bpp,
-                                 bool bDestAlpha,
-                                 int span_left,
-                                 int span_len,
-                                 const uint8_t* cover_scan,
-                                 int clip_left,
-                                 int clip_right,
-                                 const uint8_t* clip_scan) {
+void CFX_AggRenderer::CompositeSpan(uint8_t* dest_scan,
+                                    const uint8_t* backdrop_scan,
+                                    int Bpp,
+                                    bool bDestAlpha,
+                                    int span_left,
+                                    int span_len,
+                                    const uint8_t* cover_scan,
+                                    int clip_left,
+                                    int clip_right,
+                                    const uint8_t* clip_scan) {
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
   const auto& bgr = GetBGR();
@@ -643,14 +643,14 @@ void CFX_Renderer::CompositeSpan(uint8_t* dest_scan,
   });
 }
 
-void CFX_Renderer::CompositeSpan1bpp(uint8_t* dest_scan,
-                                     int Bpp,
-                                     int span_left,
-                                     int span_len,
-                                     const uint8_t* cover_scan,
-                                     int clip_left,
-                                     int clip_right,
-                                     const uint8_t* clip_scan) {
+void CFX_AggRenderer::CompositeSpan1bpp(uint8_t* dest_scan,
+                                        int Bpp,
+                                        int span_left,
+                                        int span_len,
+                                        const uint8_t* cover_scan,
+                                        int clip_left,
+                                        int clip_right,
+                                        const uint8_t* clip_scan) {
   DCHECK(!m_bRgbByteOrder);
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
@@ -659,14 +659,14 @@ void CFX_Renderer::CompositeSpan1bpp(uint8_t* dest_scan,
                           span_left);
 }
 
-void CFX_Renderer::CompositeSpanGray(uint8_t* dest_scan,
-                                     int Bpp,
-                                     int span_left,
-                                     int span_len,
-                                     const uint8_t* cover_scan,
-                                     int clip_left,
-                                     int clip_right,
-                                     const uint8_t* clip_scan) {
+void CFX_AggRenderer::CompositeSpanGray(uint8_t* dest_scan,
+                                        int Bpp,
+                                        int span_left,
+                                        int span_len,
+                                        const uint8_t* cover_scan,
+                                        int clip_left,
+                                        int clip_right,
+                                        const uint8_t* clip_scan) {
   DCHECK(!m_bRgbByteOrder);
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
@@ -687,14 +687,14 @@ void CFX_Renderer::CompositeSpanGray(uint8_t* dest_scan,
   });
 }
 
-void CFX_Renderer::CompositeSpanARGB(uint8_t* dest_scan,
-                                     int Bpp,
-                                     int span_left,
-                                     int span_len,
-                                     const uint8_t* cover_scan,
-                                     int clip_left,
-                                     int clip_right,
-                                     const uint8_t* clip_scan) {
+void CFX_AggRenderer::CompositeSpanARGB(uint8_t* dest_scan,
+                                        int Bpp,
+                                        int span_left,
+                                        int span_len,
+                                        const uint8_t* cover_scan,
+                                        int clip_left,
+                                        int clip_right,
+                                        const uint8_t* clip_scan) {
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
   const auto& bgr = GetBGR();
@@ -759,14 +759,14 @@ void CFX_Renderer::CompositeSpanARGB(uint8_t* dest_scan,
   });
 }
 
-void CFX_Renderer::CompositeSpanRGB(uint8_t* dest_scan,
-                                    int Bpp,
-                                    int span_left,
-                                    int span_len,
-                                    const uint8_t* cover_scan,
-                                    int clip_left,
-                                    int clip_right,
-                                    const uint8_t* clip_scan) {
+void CFX_AggRenderer::CompositeSpanRGB(uint8_t* dest_scan,
+                                       int Bpp,
+                                       int span_left,
+                                       int span_len,
+                                       const uint8_t* cover_scan,
+                                       int clip_left,
+                                       int clip_right,
+                                       const uint8_t* clip_scan) {
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
   const auto& bgr = GetBGR();
@@ -827,12 +827,12 @@ void CFX_Renderer::CompositeSpanRGB(uint8_t* dest_scan,
   });
 }
 
-CFX_Renderer::CFX_Renderer(const RetainPtr<CFX_DIBitmap>& pDevice,
-                           const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
-                           const CFX_ClipRgn* pClipRgn,
-                           uint32_t color,
-                           bool bFullCover,
-                           bool bRgbByteOrder)
+CFX_AggRenderer::CFX_AggRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
+                                 const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
+                                 const CFX_ClipRgn* pClipRgn,
+                                 uint32_t color,
+                                 bool bFullCover,
+                                 bool bRgbByteOrder)
     : m_Alpha(FXARGB_A(color)),
       m_Color(bRgbByteOrder ? FXARGB_TOBGRORDERDIB(color) : color),
       m_bFullCover(bFullCover),
@@ -858,7 +858,7 @@ CFX_Renderer::CFX_Renderer(const RetainPtr<CFX_DIBitmap>& pDevice,
 }
 
 template <class Scanline>
-void CFX_Renderer::render(const Scanline& sl) {
+void CFX_AggRenderer::render(const Scanline& sl) {
   int y = sl.y();
   if (y < m_ClipBox.top || y >= m_ClipBox.bottom)
     return;
@@ -914,12 +914,12 @@ void CFX_Renderer::render(const Scanline& sl) {
   });
 }
 
-void CFX_Renderer::CompositeSpan1bppHelper(uint8_t* dest_scan,
-                                           int col_start,
-                                           int col_end,
-                                           const uint8_t* cover_scan,
-                                           const uint8_t* clip_scan,
-                                           int span_left) {
+void CFX_AggRenderer::CompositeSpan1bppHelper(uint8_t* dest_scan,
+                                              int col_start,
+                                              int col_end,
+                                              const uint8_t* cover_scan,
+                                              const uint8_t* clip_scan,
+                                              int span_left) {
   int index = 0;
   if (m_pDevice->HasPalette()) {
     for (int i = 0; i < 2; i++) {
@@ -1219,8 +1219,8 @@ void CFX_AggDeviceDriver::RenderRasterizer(
     bool bFullCover,
     bool bGroupKnockout) {
   RetainPtr<CFX_DIBitmap> pt = bGroupKnockout ? m_pBackdropBitmap : nullptr;
-  CFX_Renderer render(m_pBitmap, pt, m_pClipRgn.get(), color, bFullCover,
-                      m_bRgbByteOrder);
+  CFX_AggRenderer render(m_pBitmap, pt, m_pClipRgn.get(), color, bFullCover,
+                         m_bRgbByteOrder);
   agg::scanline_u8 scanline;
   agg::render_scanlines(rasterizer, scanline, render,
                         m_FillOptions.aliased_path);

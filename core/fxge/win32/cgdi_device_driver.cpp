@@ -20,7 +20,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
-#include "core/fxge/agg/fx_agg_driver.h"
+#include "core/fxge/agg/cfx_agg_devicedriver.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
 #include "core/fxge/cfx_graphstatedata.h"

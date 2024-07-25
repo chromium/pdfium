@@ -10,10 +10,10 @@ source_set("fxge") {
   sources = [
     "agg/cfx_agg_bitmapcomposer.cpp",
     "agg/cfx_agg_bitmapcomposer.h",
+    "agg/cfx_agg_devicedriver.cpp",
+    "agg/cfx_agg_devicedriver.h",
     "agg/cfx_agg_imagerenderer.cpp",
     "agg/cfx_agg_imagerenderer.h",
-    "agg/fx_agg_driver.cpp",
-    "agg/fx_agg_driver.h",
     "calculate_pitch.cpp",
     "calculate_pitch.h",
     "cfx_cliprgn.cpp",

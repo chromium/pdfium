@@ -6,7 +6,7 @@
 
 #include <utility>
 
-#include "core/fxge/agg/fx_agg_driver.h"
+#include "core/fxge/agg/cfx_agg_devicedriver.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
 #if defined(PDF_USE_SKIA)

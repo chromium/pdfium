@@ -12,7 +12,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/span.h"
-#include "core/fxge/agg/fx_agg_driver.h"
+#include "core/fxge/agg/cfx_agg_devicedriver.h"
 #include "core/fxge/apple/fx_apple_platform.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_font.h"
