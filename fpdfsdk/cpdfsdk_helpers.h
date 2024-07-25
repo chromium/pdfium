@@ -257,21 +257,11 @@ UNSAFE_BUFFER_USAGE WideString
 WideStringFromFPDFWideString(FPDF_WIDESTRING wide_string);
 
 // Public APIs are not consistent w.r.t. the type used to represent buffer
-// length, while internal code generally expects size_t. To get consistent
-// behavior regardless of size type, templatize SpanFromFPDFApiArgs().
-//
-// TODO(crbug.com/42270941): Switch to concepts.
-template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
-UNSAFE_BUFFER_USAGE pdfium::span<char> SpanFromFPDFApiArgs(void* buffer,
-                                                           T buflen) {
-  if (!buffer) {
-    // API convention is to ignore `buflen` arg when `buffer` is NULL.
-    return pdfium::span<char>();
-  }
-  // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE in header.
-  return UNSAFE_BUFFERS(pdfium::make_span(
-      static_cast<char*>(buffer), pdfium::checked_cast<size_t>(buflen)));
-}
+// length, while internal code generally expects size_t. Use StrictNumeric here
+// to make sure the length types fit in a size_t.
+UNSAFE_BUFFER_USAGE pdfium::span<char> SpanFromFPDFApiArgs(
+    void* buffer,
+    pdfium::StrictNumeric<size_t> buflen);
 
 #ifdef PDF_ENABLE_XFA
 // Layering prevents fxcrt from knowing about FPDF_FILEHANDLER, so this can't

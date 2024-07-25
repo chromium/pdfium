@@ -237,6 +237,17 @@ WideString WideStringFromFPDFWideString(FPDF_WIDESTRING wide_string) {
                         FPDFWideStringLength(wide_string) * 2)));
 }
 
+UNSAFE_BUFFER_USAGE pdfium::span<char> SpanFromFPDFApiArgs(
+    void* buffer,
+    pdfium::StrictNumeric<size_t> buflen) {
+  if (!buffer) {
+    // API convention is to ignore `buflen` arg when `buffer` is NULL.
+    return pdfium::span<char>();
+  }
+  // SAFETY: required from caller, enforced by UNSAFE_BUFFER_USAGE in header.
+  return UNSAFE_BUFFERS(pdfium::make_span(static_cast<char*>(buffer), buflen));
+}
+
 #ifdef PDF_ENABLE_XFA
 RetainPtr<IFX_SeekableStream> MakeSeekableStream(
     FPDF_FILEHANDLER* pFilehandler) {
