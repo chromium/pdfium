@@ -2979,7 +2979,7 @@ TEST_F(FPDFEditEmbedderTest, TextFontProperties) {
 
   {
     // FPDFFont_GetBaseFontName() positive testing.
-    unsigned long size = FPDFFont_GetBaseFontName(font, nullptr, 0);
+    size_t size = FPDFFont_GetBaseFontName(font, nullptr, 0);
     const char kExpectedFontName[] = "LiberationSerif";
     ASSERT_EQ(sizeof(kExpectedFontName), size);
     std::vector<char> font_name(size);
@@ -3104,6 +3104,40 @@ TEST_F(FPDFEditEmbedderTest, NoEmbeddedFontData) {
   EXPECT_EQ(0, FPDFFont_GetIsEmbedded(font));
 
   UnloadPage(page);
+}
+
+TEST_F(FPDFEditEmbedderTest, Type1BaseFontName) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  ASSERT_EQ(2, FPDFPage_CountObjects(page.get()));
+
+  {
+    FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 0);
+    ASSERT_TRUE(page_object);
+    FPDF_FONT font = FPDFTextObj_GetFont(page_object);
+    ASSERT_TRUE(font);
+    size_t size = FPDFFont_GetBaseFontName(font, nullptr, 0);
+    // TODO(crbug.com/353746891): Should be Times-Roman.
+    const char kExpectedFontName[] = "Tinos-Regular";
+    ASSERT_EQ(sizeof(kExpectedFontName), size);
+    std::vector<char> font_name(size);
+    ASSERT_EQ(size, FPDFFont_GetBaseFontName(font, font_name.data(), size));
+    EXPECT_STREQ(kExpectedFontName, font_name.data());
+  }
+  {
+    FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), 1);
+    ASSERT_TRUE(page_object);
+    FPDF_FONT font = FPDFTextObj_GetFont(page_object);
+    ASSERT_TRUE(font);
+    size_t size = FPDFFont_GetBaseFontName(font, nullptr, 0);
+    // TODO(crbug.com/353746891): Should be Helvetica.
+    const char kExpectedFontName[] = "Arimo-Regular";
+    ASSERT_EQ(sizeof(kExpectedFontName), size);
+    std::vector<char> font_name(size);
+    ASSERT_EQ(size, FPDFFont_GetBaseFontName(font, font_name.data(), size));
+    ASSERT_STREQ(kExpectedFontName, font_name.data());
+  }
 }
 
 TEST_F(FPDFEditEmbedderTest, GlyphPaths) {
