@@ -14,32 +14,27 @@
 #include "core/fxcrt/unowned_ptr.h"
 
 class CFX_AggImageRenderer;
-class CFX_DIBBase;
 class CFX_DIBitmap;
-class CFX_ImageTransformer;
 class CFX_RenderDevice;
 
 class CXFA_ImageRenderer {
  public:
-  CXFA_ImageRenderer(CFX_RenderDevice* pDevice,
-                     const RetainPtr<CFX_DIBBase>& pDIBBase,
-                     const CFX_Matrix& mtImage2Device);
+  CXFA_ImageRenderer(CFX_RenderDevice* device,
+                     RetainPtr<CFX_DIBitmap> bitmap,
+                     const CFX_Matrix& image_to_device);
   ~CXFA_ImageRenderer();
 
+  // Returns whether to continue or not.
   bool Start();
   bool Continue();
 
  private:
-  enum class State : uint8_t { kInitial = 0, kTransforming, kStarted };
-
-  void CompositeDIBitmap(RetainPtr<CFX_DIBitmap> bitmap, int left, int top);
+  enum class State : bool { kInitial = 0, kStarted };
 
   State m_State = State::kInitial;
-  CFX_Matrix m_ImageMatrix;
-  UnownedPtr<CFX_RenderDevice> m_pDevice;
-  RetainPtr<CFX_DIBBase> m_pDIBBase;
-  RetainPtr<CFX_DIBitmap> m_pCloneConvert;
-  std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
+  const CFX_Matrix m_ImageMatrix;
+  UnownedPtr<CFX_RenderDevice> const m_pDevice;
+  RetainPtr<CFX_DIBitmap> const m_pBitmap;
   std::unique_ptr<CFX_AggImageRenderer> m_DeviceHandle;
 };
 
