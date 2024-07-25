@@ -65,7 +65,7 @@
 #define SHA384_R(t) \
   (W[t] = SHA384_S1(W[t - 2]) + W[t - 7] + SHA384_S0(W[t - 15]) + W[t - 16])
 
-#define rol(x, y) (((x) << (y)) | (((unsigned int)x) >> (32 - y)))
+#define rol(x, y) (((x) << (y)) | (((uint32_t)x) >> (32 - y)))
 #define SHR(x, n) ((x & 0xFFFFFFFF) >> n)
 #define ROTR(x, n) (SHR(x, n) | (x << (32 - n)))
 #define S0(x) (ROTR(x, 7) ^ ROTR(x, 18) ^ SHR(x, 3))
@@ -101,16 +101,16 @@ void SHATransform(pdfium::span<uint32_t> digest, pdfium::span<uint32_t> block) {
     w[t] = block[t];
   }
   for (t = 16; t < 80; t++) {
-    unsigned int tmp = w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16];
+    uint32_t tmp = w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16];
     w[t] = rol(tmp, 1);
   }
-  unsigned int a = digest[0];
-  unsigned int b = digest[1];
-  unsigned int c = digest[2];
-  unsigned int d = digest[3];
-  unsigned int e = digest[4];
+  uint32_t a = digest[0];
+  uint32_t b = digest[1];
+  uint32_t c = digest[2];
+  uint32_t d = digest[3];
+  uint32_t e = digest[4];
   for (t = 0; t < 20; t++) {
-    unsigned int tmp = rol(a, 5) + ((b & c) | (d & ~b)) + e + w[t] + 0x5a827999;
+    uint32_t tmp = rol(a, 5) + ((b & c) | (d & ~b)) + e + w[t] + 0x5a827999;
     e = d;
     d = c;
     c = rol(b, 30);
@@ -118,7 +118,7 @@ void SHATransform(pdfium::span<uint32_t> digest, pdfium::span<uint32_t> block) {
     a = tmp;
   }
   for (t = 20; t < 40; t++) {
-    unsigned int tmp = rol(a, 5) + (b ^ c ^ d) + e + w[t] + 0x6ed9eba1;
+    uint32_t tmp = rol(a, 5) + (b ^ c ^ d) + e + w[t] + 0x6ed9eba1;
     e = d;
     d = c;
     c = rol(b, 30);
@@ -126,7 +126,7 @@ void SHATransform(pdfium::span<uint32_t> digest, pdfium::span<uint32_t> block) {
     a = tmp;
   }
   for (t = 40; t < 60; t++) {
-    unsigned int tmp =
+    uint32_t tmp =
         rol(a, 5) + ((b & c) | (b & d) | (c & d)) + e + w[t] + 0x8f1bbcdc;
     e = d;
     d = c;
@@ -135,7 +135,7 @@ void SHATransform(pdfium::span<uint32_t> digest, pdfium::span<uint32_t> block) {
     a = tmp;
   }
   for (t = 60; t < 80; t++) {
-    unsigned int tmp = rol(a, 5) + (b ^ c ^ d) + e + w[t] + 0xca62c1d6;
+    uint32_t tmp = rol(a, 5) + (b ^ c ^ d) + e + w[t] + 0xca62c1d6;
     e = d;
     d = c;
     c = rol(b, 30);

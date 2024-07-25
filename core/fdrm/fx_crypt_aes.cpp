@@ -447,14 +447,14 @@ constexpr std::array<uint32_t, 256> D3 = {{
                      (Sbox[(block[(i + C2) % Nb] >> 8) & 0xFF] << 8) |   \
                      (Sbox[(block[(i + C3) % Nb]) & 0xFF])))
 
-void aes_encrypt_nb_4(CRYPT_aes_context* ctx, unsigned int* block) {
+void aes_encrypt_nb_4(CRYPT_aes_context* ctx, uint32_t* block) {
   int i;
   const int C1 = 1;
   const int C2 = 2;
   const int C3 = 3;
   const int Nb = 4;
-  unsigned int* keysched = ctx->keysched.data();
-  unsigned int newstate[4];
+  uint32_t* keysched = ctx->keysched.data();
+  uint32_t newstate[4];
   for (i = 0; i < ctx->Nr - 1; i++) {
     ADD_ROUND_KEY_4();
     FMAKEWORD(0);
@@ -492,14 +492,14 @@ void aes_encrypt_nb_4(CRYPT_aes_context* ctx, unsigned int* block) {
                      (Sboxinv[(block[(i + C2) % Nb] >> 8) & 0xFF] << 8) |   \
                      (Sboxinv[(block[(i + C3) % Nb]) & 0xFF])))
 
-void aes_decrypt_nb_4(CRYPT_aes_context* ctx, unsigned int* block) {
+void aes_decrypt_nb_4(CRYPT_aes_context* ctx, uint32_t* block) {
   int i;
   const int C1 = 4 - 1;
   const int C2 = 4 - 2;
   const int C3 = 4 - 3;
   const int Nb = 4;
-  unsigned int* keysched = ctx->invkeysched.data();
-  unsigned int newstate[4];
+  uint32_t* keysched = ctx->invkeysched.data();
+  uint32_t newstate[4];
   for (i = 0; i < ctx->Nr - 1; i++) {
     ADD_ROUND_KEY_4();
     FMAKEWORD(0);
@@ -540,7 +540,7 @@ void CRYPT_AESSetKey(CRYPT_aes_context* ctx,
     if (i < Nk) {
       ctx->keysched[i] = fxcrt::GetUInt32MSBFirst(keyspan.subspan(4 * i));
     } else {
-      unsigned int temp = ctx->keysched[i - 1];
+      uint32_t temp = ctx->keysched[i - 1];
       if (i % Nk == 0) {
         int a = (temp >> 16) & 0xFF;
         int b = (temp >> 8) & 0xFF;
@@ -566,7 +566,7 @@ void CRYPT_AESSetKey(CRYPT_aes_context* ctx,
   }
   for (int i = 0; i <= ctx->Nr; i++) {
     for (int j = 0; j < ctx->Nb; j++) {
-      unsigned int temp;
+      uint32_t temp;
       temp = ctx->keysched[(ctx->Nr - i) * ctx->Nb + j];
       if (i != 0 && i != ctx->Nr) {
         int a = (temp >> 24) & 0xFF;
@@ -595,9 +595,9 @@ void CRYPT_AESDecrypt(CRYPT_aes_context* ctx,
                       uint8_t* dest,
                       const uint8_t* src,
                       uint32_t size) {
-  unsigned int iv[4];
-  unsigned int x[4];
-  unsigned int ct[4];
+  uint32_t iv[4];
+  uint32_t x[4];
+  uint32_t ct[4];
   int i;
   CHECK_EQ((size & 15), 0);
   UNSAFE_TODO({
