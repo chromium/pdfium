@@ -849,9 +849,9 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFTextObj_GetFont(FPDF_PAGEOBJECT text) {
   return FPDFFontFromCPDFFont(pTextObj->GetFont());
 }
 
-FPDF_EXPORT size_t FPDF_CALLCONV FPDFFont_GetBaseName(FPDF_FONT font,
-                                                      char* buffer,
-                                                      size_t length) {
+FPDF_EXPORT size_t FPDF_CALLCONV FPDFFont_GetBaseFontName(FPDF_FONT font,
+                                                          char* buffer,
+                                                          size_t length) {
   auto* cfont = CPDFFontFromFPDFFont(font);
   if (!cfont) {
     return 0;

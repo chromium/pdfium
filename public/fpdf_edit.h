@@ -1373,14 +1373,14 @@ FPDF_EXPORT FPDF_FONT FPDF_CALLCONV FPDFTextObj_GetFont(FPDF_PAGEOBJECT text);
 //
 // Returns the number of bytes in the base name (including the trailing NUL
 // character) on success, 0 on error. The base name is typically the font's
-// PostScript name.
+// PostScript name. See descriptions of "BaseFont" in ISO 32000-1:2008 spec.
 //
 // Regardless of the platform, the |buffer| is always in UTF-8 encoding.
 // If |length| is less than the returned length, or |buffer| is NULL, |buffer|
 // will not be modified.
-FPDF_EXPORT size_t FPDF_CALLCONV FPDFFont_GetBaseName(FPDF_FONT font,
-                                                      char* buffer,
-                                                      size_t length);
+FPDF_EXPORT size_t FPDF_CALLCONV FPDFFont_GetBaseFontName(FPDF_FONT font,
+                                                          char* buffer,
+                                                          size_t length);
 
 // Experimental API.
 // Get the family name of a font.

@@ -163,7 +163,7 @@ int CheckPDFiumCApi() {
     // fpdf_edit.h
     CHK(FPDFFont_Close);
     CHK(FPDFFont_GetAscent);
-    CHK(FPDFFont_GetBaseName);
+    CHK(FPDFFont_GetBaseFontName);
     CHK(FPDFFont_GetDescent);
     CHK(FPDFFont_GetFamilyName);
     CHK(FPDFFont_GetFlags);
