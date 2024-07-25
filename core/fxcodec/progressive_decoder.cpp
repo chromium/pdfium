@@ -1295,7 +1295,7 @@ void ProgressiveDecoder::ResampleScanline(
                j++) {
             uint32_t pixel_weight =
                 pPixelWeights->m_Weights[j - pPixelWeights->m_SrcStart];
-            unsigned long argb = m_SrcPalette[src_scan[j]];
+            FX_ARGB argb = m_SrcPalette[src_scan[j]];
             dest_a += pixel_weight * FXARGB_A(argb);
             dest_r += pixel_weight * FXARGB_R(argb);
             dest_g += pixel_weight * FXARGB_G(argb);
