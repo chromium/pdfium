@@ -42,7 +42,10 @@
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
+
+#if BUILDFLAG(IS_WIN)
 #include "core/fxge/dib/cfx_imagetransformer.h"
+#endif
 
 namespace {
 
@@ -576,8 +579,10 @@ bool CPDF_ImageRenderer::Continue(PauseIndicatorIface* pPause) {
       return ContinueDefault(pPause);
     case Mode::kBlend:
       return ContinueBlend(pPause);
+#if BUILDFLAG(IS_WIN)
     case Mode::kTransform:
       return ContinueTransform(pPause);
+#endif
   }
 }
 
@@ -599,6 +604,7 @@ bool CPDF_ImageRenderer::ContinueBlend(PauseIndicatorIface* pPause) {
       m_DeviceHandle.get(), pPause);
 }
 
+#if BUILDFLAG(IS_WIN)
 bool CPDF_ImageRenderer::ContinueTransform(PauseIndicatorIface* pPause) {
   if (m_pTransformer->Continue(pPause))
     return true;
@@ -623,6 +629,7 @@ bool CPDF_ImageRenderer::ContinueTransform(PauseIndicatorIface* pPause) {
   }
   return false;
 }
+#endif  // BUILDFLAG(IS_WIN)
 
 std::optional<FX_RECT> CPDF_ImageRenderer::GetUnitRect() const {
   CFX_FloatRect image_rect_f = m_ImageMatrix.GetUnitRect();

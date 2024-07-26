@@ -20,13 +20,16 @@ class CFX_AggImageRenderer;
 class CFX_DIBBase;
 class CFX_DIBitmap;
 class CFX_DefaultRenderDevice;
-class CFX_ImageTransformer;
 class CPDF_ImageLoader;
 class CPDF_ImageObject;
 class CPDF_Pattern;
 class CPDF_RenderOptions;
 class CPDF_RenderStatus;
 class PauseIndicatorIface;
+
+#if BUILDFLAG(IS_WIN)
+class CFX_ImageTransformer;
+#endif
 
 class CPDF_ImageRenderer {
  public:
@@ -51,8 +54,10 @@ class CPDF_ImageRenderer {
   enum class Mode {
     kNone = 0,
     kDefault,
-    kBlend,
+    kBlend,  // AGG-specific
+#if BUILDFLAG(IS_WIN)
     kTransform,
+#endif
   };
 
   bool StartBitmapAlpha();
@@ -61,11 +66,11 @@ class CPDF_ImageRenderer {
   bool StartLoadDIBBase();
   bool ContinueDefault(PauseIndicatorIface* pPause);
   bool ContinueBlend(PauseIndicatorIface* pPause);
-  bool ContinueTransform(PauseIndicatorIface* pPause);
   bool DrawMaskedImage();
   bool DrawPatternImage();
 #if BUILDFLAG(IS_WIN)
   bool StartDIBBaseFallback();
+  bool ContinueTransform(PauseIndicatorIface* pPause);
   bool IsPrinting() const;
   void HandleFilters();
 #endif
@@ -92,7 +97,9 @@ class CPDF_ImageRenderer {
   CFX_Matrix m_mtObj2Device;
   CFX_Matrix m_ImageMatrix;
   std::unique_ptr<CPDF_ImageLoader> const m_pLoader;
+#if BUILDFLAG(IS_WIN)
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
+#endif
   std::unique_ptr<CFX_AggImageRenderer> m_DeviceHandle;
   Mode m_Mode = Mode::kNone;
   float m_Alpha = 0.0f;
