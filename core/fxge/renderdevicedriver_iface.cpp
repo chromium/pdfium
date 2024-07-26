@@ -92,8 +92,8 @@ bool RenderDeviceDriverIface::SyncInternalBitmaps() {
 #endif  // defined(PDF_USE_SKIA)
 
 RenderDeviceDriverIface::StartResult::StartResult(
-    bool success,
+    Result result,
     std::unique_ptr<CFX_AggImageRenderer> agg_image_renderer)
-    : success(success), agg_image_renderer(std::move(agg_image_renderer)) {}
+    : result(result), agg_image_renderer(std::move(agg_image_renderer)) {}
 
 RenderDeviceDriverIface::StartResult::~StartResult() = default;

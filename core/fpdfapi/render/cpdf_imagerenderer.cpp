@@ -423,7 +423,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
       m_pRenderStatus->GetRenderDevice()->StartDIBitsWithBlend(
           m_pDIBBase, m_Alpha, m_FillArgb, m_ImageMatrix, m_ResampleOptions,
           m_BlendType);
-  if (result.success) {
+  if (result.result == RenderDeviceDriverIface::Result::kSuccess) {
     m_DeviceHandle = std::move(result.agg_image_renderer);
     if (m_DeviceHandle) {
       m_Mode = Mode::kBlend;
@@ -432,6 +432,12 @@ bool CPDF_ImageRenderer::StartDIBBase() {
     return false;
   }
 
+  if (result.result == RenderDeviceDriverIface::Result::kFailure) {
+    m_Result = false;
+    return false;
+  }
+
+  CHECK_EQ(result.result, RenderDeviceDriverIface::Result::kNotSupported);
   if ((fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
       (fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {
 #if BUILDFLAG(IS_WIN)

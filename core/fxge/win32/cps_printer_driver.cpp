@@ -191,11 +191,12 @@ RenderDeviceDriverIface::StartResult CPSPrinterDriver::StartDIBits(
     const FXDIB_ResampleOptions& options,
     BlendMode blend_type) {
   if (blend_type != BlendMode::kNormal || alpha != 1.0f) {
-    return {false, nullptr};
+    return {Result::kNotSupported, nullptr};
   }
 
-  return {m_PSRenderer.DrawDIBits(std::move(bitmap), color, matrix, options),
-          nullptr};
+  bool success =
+      m_PSRenderer.DrawDIBits(std::move(bitmap), color, matrix, options);
+  return {success ? Result::kSuccess : Result::kFailure, nullptr};
 }
 
 bool CPSPrinterDriver::DrawDeviceText(

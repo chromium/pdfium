@@ -1450,9 +1450,9 @@ RenderDeviceDriverIface::StartResult CFX_SkiaDeviceDriver::StartDIBits(
     const FXDIB_ResampleOptions& options,
     BlendMode blend_type) {
   FX_RECT rect(0, 0, bitmap->GetWidth(), bitmap->GetHeight());
-  return {StartDIBitsSkia(std::move(bitmap), rect, alpha, color, matrix,
-                          options, blend_type),
-          nullptr};
+  bool success = StartDIBitsSkia(std::move(bitmap), rect, alpha, color, matrix,
+                                 options, blend_type);
+  return {success ? Result::kSuccess : Result::kFailure, nullptr};
 }
 
 void CFX_DIBitmap::UnPreMultiply() {

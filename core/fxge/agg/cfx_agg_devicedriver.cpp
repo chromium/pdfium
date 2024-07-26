@@ -1433,12 +1433,12 @@ RenderDeviceDriverIface::StartResult CFX_AggDeviceDriver::StartDIBits(
     const FXDIB_ResampleOptions& options,
     BlendMode blend_type) {
   if (m_pBitmap->GetBuffer().empty()) {
-    return {true, nullptr};
+    return {Result::kSuccess, nullptr};
   }
 
-  return {true, std::make_unique<CFX_AggImageRenderer>(
-                    m_pBitmap, m_pClipRgn.get(), std::move(bitmap), alpha, argb,
-                    matrix, options, m_bRgbByteOrder)};
+  return {Result::kSuccess, std::make_unique<CFX_AggImageRenderer>(
+                                m_pBitmap, m_pClipRgn.get(), std::move(bitmap),
+                                alpha, argb, matrix, options, m_bRgbByteOrder)};
 }
 
 bool CFX_AggDeviceDriver::ContinueDIBits(CFX_AggImageRenderer* pHandle,

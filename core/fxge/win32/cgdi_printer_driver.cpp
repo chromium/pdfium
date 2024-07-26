@@ -132,7 +132,7 @@ RenderDeviceDriverIface::StartResult CGdiPrinterDriver::StartDIBits(
     BlendMode blend_type) {
   if (alpha != 1.0f || bitmap->IsAlphaFormat() ||
       (bitmap->IsMaskFormat() && (bitmap->GetBPP() != 1))) {
-    return {false, nullptr};
+    return {Result::kNotSupported, nullptr};
   }
   CFX_FloatRect unit_rect = matrix.GetUnitRect();
   FX_RECT full_rect = unit_rect.GetOuterRect();
@@ -140,29 +140,30 @@ RenderDeviceDriverIface::StartResult CGdiPrinterDriver::StartDIBits(
       matrix.d != 0) {
     bool bFlipX = matrix.a < 0;
     bool bFlipY = matrix.d > 0;
-    return {StretchDIBits(std::move(bitmap), color,
-                          bFlipX ? full_rect.right : full_rect.left,
-                          bFlipY ? full_rect.bottom : full_rect.top,
-                          bFlipX ? -full_rect.Width() : full_rect.Width(),
-                          bFlipY ? -full_rect.Height() : full_rect.Height(),
-                          nullptr, FXDIB_ResampleOptions(), blend_type),
-            nullptr};
+    bool success = StretchDIBits(
+        std::move(bitmap), color, bFlipX ? full_rect.right : full_rect.left,
+        bFlipY ? full_rect.bottom : full_rect.top,
+        bFlipX ? -full_rect.Width() : full_rect.Width(),
+        bFlipY ? -full_rect.Height() : full_rect.Height(), nullptr,
+        FXDIB_ResampleOptions(), blend_type);
+    return {success ? Result::kSuccess : Result::kFailure, nullptr};
   }
   if (fabs(matrix.a) >= 0.5f || fabs(matrix.d) >= 0.5f) {
-    return {false, nullptr};
+    return {Result::kNotSupported, nullptr};
   }
 
   const bool flip_x = matrix.c > 0;
   const bool flip_y = matrix.b < 0;
   bitmap = bitmap->SwapXY(flip_x, flip_y);
   if (!bitmap) {
-    return {false, nullptr};
+    return {Result::kFailure, nullptr};
   }
 
-  return {StretchDIBits(std::move(bitmap), color, full_rect.left, full_rect.top,
-                        full_rect.Width(), full_rect.Height(), nullptr,
-                        FXDIB_ResampleOptions(), blend_type),
-          nullptr};
+  bool success =
+      StretchDIBits(std::move(bitmap), color, full_rect.left, full_rect.top,
+                    full_rect.Width(), full_rect.Height(), nullptr,
+                    FXDIB_ResampleOptions(), blend_type);
+  return {success ? Result::kSuccess : Result::kFailure, nullptr};
 }
 
 bool CGdiPrinterDriver::DrawDeviceText(

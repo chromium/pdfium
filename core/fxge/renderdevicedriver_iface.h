@@ -40,12 +40,14 @@ enum class DeviceType : bool {
 
 class RenderDeviceDriverIface {
  public:
+  enum class Result { kFailure, kSuccess, kNotSupported };
+
   struct StartResult {
-    StartResult(bool success,
+    StartResult(Result result,
                 std::unique_ptr<CFX_AggImageRenderer> agg_image_renderer);
     ~StartResult();
 
-    const bool success;
+    const Result result;
     std::unique_ptr<CFX_AggImageRenderer> agg_image_renderer;
   };
 

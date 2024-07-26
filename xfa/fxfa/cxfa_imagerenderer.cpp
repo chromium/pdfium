@@ -33,10 +33,11 @@ bool CXFA_ImageRenderer::Start() {
   options.bInterpolateBilinear = true;
   RenderDeviceDriverIface::StartResult result = m_pDevice->StartDIBits(
       m_pBitmap, /*alpha=*/1.0f, /*argb=*/0, m_ImageMatrix, options);
-  if (!result.success) {
+  if (result.result == RenderDeviceDriverIface::Result::kFailure) {
     return false;
   }
 
+  CHECK_EQ(result.result, RenderDeviceDriverIface::Result::kSuccess);
   m_DeviceHandle = std::move(result.agg_image_renderer);
   if (!m_DeviceHandle) {
     return false;

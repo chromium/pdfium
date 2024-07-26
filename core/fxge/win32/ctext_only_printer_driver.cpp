@@ -117,7 +117,7 @@ RenderDeviceDriverIface::StartResult CTextOnlyPrinterDriver::StartDIBits(
     const CFX_Matrix& matrix,
     const FXDIB_ResampleOptions& options,
     BlendMode blend_type) {
-  return {false, nullptr};
+  return {Result::kNotSupported, nullptr};
 }
 
 bool CTextOnlyPrinterDriver::DrawDeviceText(
