@@ -32,10 +32,6 @@ class CStretchEngine {
     return static_cast<uint32_t>(FXSYS_round(d * kFixedPointOne));
   }
 
-  static inline uint32_t FixedFromFloat(float f) {
-    return static_cast<uint32_t>(FXSYS_roundf(f * kFixedPointOne));
-  }
-
   static inline uint8_t PixelFromFixed(uint32_t fixed) {
     return static_cast<uint8_t>(fixed >> kFixedPointBits);
   }
@@ -49,8 +45,6 @@ class CStretchEngine {
                                      int src_height);
 
   struct PixelWeight {
-    static size_t TotalBytesForWeightCount(size_t weight_count);
-
     void SetStartEnd(int src_start, int src_end, size_t weight_count) {
       CHECK_LT(src_end - src_start, static_cast<int>(weight_count));
       m_SrcStart = src_start;

@@ -26,6 +26,21 @@ static_assert(
     std::is_trivially_destructible<CStretchEngine::PixelWeight>::value,
     "PixelWeight storage may be re-used without invoking its destructor");
 
+namespace {
+
+size_t TotalBytesForWeightCount(size_t weight_count) {
+  // Always room for one weight even for empty ranges due to declaration
+  // of m_Weights[1] in the header. Don't shrink below this since
+  // CalculateWeights() relies on this later.
+  const size_t extra_weights = weight_count > 0 ? weight_count - 1 : 0;
+  FX_SAFE_SIZE_T total_bytes = extra_weights;
+  total_bytes *= sizeof(CStretchEngine::PixelWeight::m_Weights[0]);
+  total_bytes += sizeof(CStretchEngine::PixelWeight);
+  return total_bytes.ValueOrDie();
+}
+
+}  // namespace
+
 // static
 bool CStretchEngine::UseInterpolateBilinear(
     const FXDIB_ResampleOptions& options,
@@ -37,19 +52,6 @@ bool CStretchEngine::UseInterpolateBilinear(
          abs(dest_width) != 0 &&
          abs(dest_height) / 8 <
              static_cast<long long>(src_width) * src_height / abs(dest_width);
-}
-
-// static
-size_t CStretchEngine::PixelWeight::TotalBytesForWeightCount(
-    size_t weight_count) {
-  // Always room for one weight even for empty ranges due to declaration
-  // of m_Weights[1] in the header. Don't shrink below this since
-  // CalculateWeights() relies on this later.
-  const size_t extra_weights = weight_count > 0 ? weight_count - 1 : 0;
-  FX_SAFE_SIZE_T total_bytes = extra_weights;
-  total_bytes *= sizeof(m_Weights[0]);
-  total_bytes += sizeof(PixelWeight);
-  return total_bytes.ValueOrDie();
 }
 
 CStretchEngine::WeightTable::WeightTable() = default;
@@ -85,7 +87,7 @@ bool CStretchEngine::WeightTable::CalculateWeights(
   const double scale = static_cast<double>(src_len) / dest_len;
   const double base = dest_len < 0 ? src_len : 0;
   const size_t weight_count = static_cast<size_t>(ceil(fabs(scale))) + 1;
-  m_ItemSizeBytes = PixelWeight::TotalBytesForWeightCount(weight_count);
+  m_ItemSizeBytes = TotalBytesForWeightCount(weight_count);
 
   const size_t dest_range = static_cast<size_t>(dest_max - dest_min);
   const size_t kMaxTableItemsAllowed = kMaxTableBytesAllowed / m_ItemSizeBytes;
