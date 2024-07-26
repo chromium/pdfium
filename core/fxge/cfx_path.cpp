@@ -136,7 +136,7 @@ void UpdateLineEndPoints(CFX_FloatRect* rect,
   }
 
   CFX_PointF diff = end_pos - start_pos;
-  float ll = FXSYS_sqrt2(diff.x, diff.y);
+  float ll = hypotf(diff.x, diff.y);
   float mx = end_pos.x + hw * diff.x / ll;
   float my = end_pos.y + hw * diff.y / ll;
   float dx1 = hw * diff.y / ll;
@@ -175,14 +175,14 @@ void UpdateLineJoinPoints(CFX_FloatRect* rect,
     CFX_PointF start_to_mid = start_pos - mid_pos;
     start_k = (mid_pos.y - start_pos.y) / (mid_pos.x - start_pos.x);
     start_c = mid_pos.y - (start_k * mid_pos.x);
-    start_len = FXSYS_sqrt2(start_to_mid.x, start_to_mid.y);
+    start_len = hypotf(start_to_mid.x, start_to_mid.y);
     start_dc = fabsf(half_width * start_len / start_to_mid.x);
   }
   if (!bEndVert) {
     CFX_PointF end_to_mid = end_pos - mid_pos;
     end_k = end_to_mid.y / end_to_mid.x;
     end_c = mid_pos.y - (end_k * mid_pos.x);
-    end_len = FXSYS_sqrt2(end_to_mid.x, end_to_mid.y);
+    end_len = hypotf(end_to_mid.x, end_to_mid.y);
     end_dc = fabs(half_width * end_len / end_to_mid.x);
   }
   if (bStartVert) {

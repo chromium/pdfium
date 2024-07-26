@@ -204,7 +204,7 @@ void DrawRadialShading(const RetainPtr<CFX_DIBitmap>& pBitmap,
 
   int width = pBitmap->GetWidth();
   int height = pBitmap->GetHeight();
-  bool bDecreasing = dr < 0 && static_cast<int>(FXSYS_sqrt2(dx, dy)) < -dr;
+  bool bDecreasing = dr < 0 && static_cast<int>(hypotf(dx, dy)) < -dr;
 
   CFX_Matrix matrix = mtObject2Bitmap.GetInverse();
   for (int row = 0; row < height; row++) {

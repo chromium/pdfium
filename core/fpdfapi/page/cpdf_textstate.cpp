@@ -122,7 +122,7 @@ void CPDF_TextState::TextData::SetFont(RetainPtr<CPDF_Font> pFont) {
 }
 
 float CPDF_TextState::TextData::GetFontSizeH() const {
-  return fabs(FXSYS_sqrt2(m_Matrix[0], m_Matrix[2]) * m_FontSize);
+  return fabs(hypotf(m_Matrix[0], m_Matrix[2]) * m_FontSize);
 }
 
 bool SetTextRenderingModeFromInt(int iMode, TextRenderingMode* mode) {
