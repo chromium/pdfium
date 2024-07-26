@@ -75,59 +75,21 @@ ProgressiveDecoder::HorzTable::HorzTable() = default;
 
 ProgressiveDecoder::HorzTable::~HorzTable() = default;
 
-void ProgressiveDecoder::HorzTable::CalculateWeights(int dest_len,
-                                                     int src_len) {
-  CHECK_GE(dest_len, 0);
+void ProgressiveDecoder::HorzTable::CalculateWeights(int width) {
+  CHECK_GE(width, 0);
   m_ItemSize =
       pdfium::checked_cast<int>(PixelWeight::TotalBytesForWeightCount(2));
   FX_SAFE_SIZE_T safe_size = m_ItemSize;
-  safe_size *= dest_len;
+  safe_size *= width;
   m_pWeightTables.resize(safe_size.ValueOrDie(), 0);
-  double scale = (double)dest_len / (double)src_len;
-  UNSAFE_TODO({
-    if (scale > 1) {
-      int pre_dest_col = 0;
-      for (int src_col = 0; src_col < src_len; src_col++) {
-        double dest_col_f = src_col * scale;
-        int dest_col = FXSYS_roundf((float)dest_col_f);
-        PixelWeight* pWeight = GetPixelWeight(dest_col);
-        pWeight->m_SrcStart = pWeight->m_SrcEnd = src_col;
-        pWeight->m_Weights[0] = CStretchEngine::kFixedPointOne;
-        pWeight->m_Weights[1] = 0;
-        if (src_col == src_len - 1 && dest_col < dest_len - 1) {
-          for (int dest_col_index = pre_dest_col + 1; dest_col_index < dest_len;
-               dest_col_index++) {
-            pWeight = GetPixelWeight(dest_col_index);
-            pWeight->m_SrcStart = pWeight->m_SrcEnd = src_col;
-            pWeight->m_Weights[0] = CStretchEngine::kFixedPointOne;
-            pWeight->m_Weights[1] = 0;
-          }
-          return;
-        }
-        int dest_col_len = dest_col - pre_dest_col;
-        for (int dest_col_index = pre_dest_col + 1; dest_col_index < dest_col;
-             dest_col_index++) {
-          pWeight = GetPixelWeight(dest_col_index);
-          pWeight->m_SrcStart = src_col - 1;
-          pWeight->m_SrcEnd = src_col;
-          pWeight->m_Weights[0] = CStretchEngine::FixedFromFloat(
-              ((float)dest_col - (float)dest_col_index) / (float)dest_col_len);
-          pWeight->m_Weights[1] =
-              CStretchEngine::kFixedPointOne - pWeight->m_Weights[0];
-        }
-        pre_dest_col = dest_col;
-      }
-      return;
-    }
-    for (int dest_col = 0; dest_col < dest_len; dest_col++) {
-      double src_col_f = dest_col / scale;
-      int src_col = FXSYS_roundf((float)src_col_f);
-      PixelWeight* pWeight = GetPixelWeight(dest_col);
-      pWeight->m_SrcStart = pWeight->m_SrcEnd = src_col;
+  for (int col = 0; col < width; col++) {
+    PixelWeight* pWeight = GetPixelWeight(col);
+    pWeight->m_SrcStart = pWeight->m_SrcEnd = col;
+    UNSAFE_TODO({
       pWeight->m_Weights[0] = CStretchEngine::kFixedPointOne;
       pWeight->m_Weights[1] = 0;
-    }
-  });
+    });
+  }
 }
 
 ProgressiveDecoder::ProgressiveDecoder() = default;
@@ -834,7 +796,7 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {
   SetTransMethod();
   int scanline_size = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
   m_DecodeBuf.resize(scanline_size);
-  m_WeightHorzOO.CalculateWeights(m_SrcWidth, m_SrcWidth);
+  m_WeightHorzOO.CalculateWeights(m_SrcWidth);
   m_status = FXCODEC_STATUS::kDecodeToBeContinued;
   return m_status;
 }

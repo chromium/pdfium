@@ -133,7 +133,7 @@ class ProgressiveDecoder final :
     HorzTable();
     ~HorzTable();
 
-    void CalculateWeights(int dest_len, int src_len);
+    void CalculateWeights(int width);
     PixelWeight* GetPixelWeight(int pixel) {
       return reinterpret_cast<PixelWeight*>(pdfium::make_span(m_pWeightTables)
                                                 .subspan(pixel * m_ItemSize)
