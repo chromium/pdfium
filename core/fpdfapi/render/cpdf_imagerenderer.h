@@ -65,6 +65,7 @@ class CPDF_ImageRenderer {
   bool DrawMaskedImage();
   bool DrawPatternImage();
 #if BUILDFLAG(IS_WIN)
+  bool StartDIBBaseFallback();
   bool IsPrinting() const;
   void HandleFilters();
 #endif

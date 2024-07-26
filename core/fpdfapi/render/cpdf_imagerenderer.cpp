@@ -432,20 +432,25 @@ bool CPDF_ImageRenderer::StartDIBBase() {
     return false;
   }
 
-  if (result.result == RenderDeviceDriverIface::Result::kFailure) {
-    m_Result = false;
-    return false;
+#if BUILDFLAG(IS_WIN)
+  if (result.result == RenderDeviceDriverIface::Result::kNotSupported) {
+    return StartDIBBaseFallback();
   }
+#endif
 
-  CHECK_EQ(result.result, RenderDeviceDriverIface::Result::kNotSupported);
+  CHECK_EQ(result.result, RenderDeviceDriverIface::Result::kFailure);
+  m_Result = false;
+  return false;
+}
+
+#if BUILDFLAG(IS_WIN)
+bool CPDF_ImageRenderer::StartDIBBaseFallback() {
   if ((fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
       (fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {
-#if BUILDFLAG(IS_WIN)
     if (IsPrinting()) {
       m_Result = false;
       return false;
     }
-#endif
 
     std::optional<FX_RECT> image_rect = GetUnitRect();
     if (!image_rect.has_value())
@@ -490,12 +495,10 @@ bool CPDF_ImageRenderer::StartDIBBase() {
     }
   }
 
-#if BUILDFLAG(IS_WIN)
   if (IsPrinting()) {
     m_Result = false;
     return true;
   }
-#endif
 
   FX_RECT clip_box = m_pRenderStatus->GetRenderDevice()->GetClipBox();
   FX_RECT dest_rect = clip_box;
@@ -512,6 +515,7 @@ bool CPDF_ImageRenderer::StartDIBBase() {
   }
   return false;
 }
+#endif  // BUILDFLAG(IS_WIN)
 
 bool CPDF_ImageRenderer::StartBitmapAlpha() {
   if (m_pDIBBase->IsOpaqueImage()) {

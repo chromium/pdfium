@@ -40,7 +40,13 @@ enum class DeviceType : bool {
 
 class RenderDeviceDriverIface {
  public:
-  enum class Result { kFailure, kSuccess, kNotSupported };
+  enum class Result {
+    kFailure,
+    kSuccess,
+#if BUILDFLAG(IS_WIN)
+    kNotSupported
+#endif
+  };
 
   struct StartResult {
     StartResult(Result result,
