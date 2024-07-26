@@ -71,26 +71,6 @@ void RGB2BGR(uint8_t* buffer, int width = 1) {
 
 }  // namespace
 
-ProgressiveDecoder::HorzTable::HorzTable() = default;
-
-ProgressiveDecoder::HorzTable::~HorzTable() = default;
-
-void ProgressiveDecoder::HorzTable::CalculateWeights(int width) {
-  CHECK_GE(width, 0);
-  m_ItemSize =
-      pdfium::checked_cast<int>(PixelWeight::TotalBytesForWeightCount(1));
-  FX_SAFE_SIZE_T safe_size = m_ItemSize;
-  safe_size *= width;
-  m_pWeightTables.resize(safe_size.ValueOrDie(), 0);
-  for (int col = 0; col < width; col++) {
-    PixelWeight* pWeight = GetPixelWeight(col);
-    pWeight->m_SrcStart = pWeight->m_SrcEnd = col;
-    UNSAFE_TODO({
-      pWeight->m_Weights[0] = CStretchEngine::kFixedPointOne;
-    });
-  }
-}
-
 ProgressiveDecoder::ProgressiveDecoder() = default;
 
 ProgressiveDecoder::~ProgressiveDecoder() = default;
@@ -172,35 +152,27 @@ bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
       case FXDIB_Format::kRgb:
       case FXDIB_Format::kRgb32:
         for (int32_t src_col = 0; src_col < m_SrcWidth; src_col++) {
-          PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(src_col);
-          if (pPixelWeights->m_SrcStart != pPixelWeights->m_SrcEnd) {
-            continue;
-          }
           const uint8_t* p = src_scan + src_col * src_Bpp;
-          uint32_t dest_b = pPixelWeights->m_Weights[0] * (*p++);
-          uint32_t dest_g = pPixelWeights->m_Weights[0] * (*p++);
-          uint32_t dest_r = pPixelWeights->m_Weights[0] * (*p);
-          uint8_t* pDes = &dest_scan[pPixelWeights->m_SrcStart * dest_Bpp];
-          *pDes++ = CStretchEngine::PixelFromFixed(dest_b);
-          *pDes++ = CStretchEngine::PixelFromFixed(dest_g);
-          *pDes = CStretchEngine::PixelFromFixed(dest_r);
+          uint8_t dest_b = *p++;
+          uint8_t dest_g = *p++;
+          uint8_t dest_r = *p;
+          uint8_t* pDes = &dest_scan[src_col * dest_Bpp];
+          *pDes++ = dest_b;
+          *pDes++ = dest_g;
+          *pDes = dest_r;
         }
         return true;
       case FXDIB_Format::kArgb:
         for (int32_t src_col = 0; src_col < m_SrcWidth; src_col++) {
-          PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(src_col);
-          if (pPixelWeights->m_SrcStart != pPixelWeights->m_SrcEnd) {
-            continue;
-          }
           const uint8_t* p = src_scan + src_col * src_Bpp;
-          uint32_t dest_b = pPixelWeights->m_Weights[0] * (*p++);
-          uint32_t dest_g = pPixelWeights->m_Weights[0] * (*p++);
-          uint32_t dest_r = pPixelWeights->m_Weights[0] * (*p++);
+          uint8_t dest_b = *p++;
+          uint8_t dest_g = *p++;
+          uint8_t dest_r = *p++;
           uint8_t dest_a = *p;
-          uint8_t* pDes = &dest_scan[pPixelWeights->m_SrcStart * dest_Bpp];
-          *pDes++ = CStretchEngine::PixelFromFixed(dest_b);
-          *pDes++ = CStretchEngine::PixelFromFixed(dest_g);
-          *pDes++ = CStretchEngine::PixelFromFixed(dest_r);
+          uint8_t* pDes = &dest_scan[src_col * dest_Bpp];
+          *pDes++ = dest_b;
+          *pDes++ = dest_g;
+          *pDes++ = dest_r;
           *pDes = dest_a;
         }
         return true;
@@ -694,29 +666,27 @@ void ProgressiveDecoder::PngOneOneMapResampleHorz(
       case FXDIB_Format::kRgb:
       case FXDIB_Format::kRgb32:
         for (int32_t dest_col = 0; dest_col < m_SrcWidth; dest_col++) {
-          PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(dest_col);
-          const uint8_t* p = src_scan + pPixelWeights->m_SrcStart * src_Bpp;
-          uint32_t dest_b = pPixelWeights->m_Weights[0] * (*p++);
-          uint32_t dest_g = pPixelWeights->m_Weights[0] * (*p++);
-          uint32_t dest_r = pPixelWeights->m_Weights[0] * (*p);
-          *dest_scan++ = CStretchEngine::PixelFromFixed(dest_b);
-          *dest_scan++ = CStretchEngine::PixelFromFixed(dest_g);
-          *dest_scan++ = CStretchEngine::PixelFromFixed(dest_r);
+          const uint8_t* p = src_scan + dest_col * src_Bpp;
+          uint8_t dest_b = *p++;
+          uint8_t dest_g = *p++;
+          uint8_t dest_r = *p;
+          *dest_scan++ = dest_b;
+          *dest_scan++ = dest_g;
+          *dest_scan++ = dest_r;
           dest_scan += dest_Bpp - 3;
         }
         break;
       case FXDIB_Format::kArgb:
         for (int32_t dest_col = 0; dest_col < m_SrcWidth; dest_col++) {
-          PixelWeight* pPixelWeights = m_WeightHorzOO.GetPixelWeight(dest_col);
-          const uint8_t* p = src_scan + pPixelWeights->m_SrcStart * src_Bpp;
-          uint32_t dest_b = pPixelWeights->m_Weights[0] * (*p++);
-          uint32_t dest_g = pPixelWeights->m_Weights[0] * (*p++);
-          uint32_t dest_r = pPixelWeights->m_Weights[0] * (*p++);
-          uint32_t dest_a = pPixelWeights->m_Weights[0] * (*p);
-          *dest_scan++ = CStretchEngine::PixelFromFixed(dest_b);
-          *dest_scan++ = CStretchEngine::PixelFromFixed(dest_g);
-          *dest_scan++ = CStretchEngine::PixelFromFixed(dest_r);
-          *dest_scan++ = CStretchEngine::PixelFromFixed(dest_a);
+          const uint8_t* p = src_scan + dest_col * src_Bpp;
+          uint8_t dest_b = *p++;
+          uint8_t dest_g = *p++;
+          uint8_t dest_r = *p++;
+          uint8_t dest_a = *p;
+          *dest_scan++ = dest_b;
+          *dest_scan++ = dest_g;
+          *dest_scan++ = dest_r;
+          *dest_scan++ = dest_a;
         }
         break;
     }
@@ -786,7 +756,6 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {
   SetTransMethod();
   int scanline_size = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
   m_DecodeBuf.resize(scanline_size);
-  m_WeightHorzOO.CalculateWeights(m_SrcWidth);
   m_status = FXCODEC_STATUS::kDecodeToBeContinued;
   return m_status;
 }
@@ -1175,7 +1144,8 @@ void ProgressiveDecoder::ResampleScanline(
   int src_bytes_per_pixel = (src_format & 0xff) / 8;
   int dest_bytes_per_pixel = pDeviceBitmap->GetBPP() / 8;
   for (int dest_col = 0; dest_col < m_SrcWidth; dest_col++) {
-    PixelWeight* pPixelWeights = m_WeightHorz.GetPixelWeight(dest_col);
+    CStretchEngine::PixelWeight* pPixelWeights =
+        m_WeightHorz.GetPixelWeight(dest_col);
     switch (m_TransMethod) {
       case TransformMethod::kInvalid:
         return;

@@ -116,7 +116,6 @@ class ProgressiveDecoder final :
 
  private:
   using WeightTable = CStretchEngine::WeightTable;
-  using PixelWeight = CStretchEngine::PixelWeight;
 
   enum class TransformMethod : uint8_t {
     kInvalid,
@@ -126,23 +125,6 @@ class ProgressiveDecoder final :
     kRgbMaybeAlphaToRgbMaybeAlpha,
     kCmykToRgbMaybeAlpha,
     kArgbToArgb,
-  };
-
-  class HorzTable {
-   public:
-    HorzTable();
-    ~HorzTable();
-
-    void CalculateWeights(int width);
-    PixelWeight* GetPixelWeight(int pixel) {
-      return reinterpret_cast<PixelWeight*>(pdfium::make_span(m_pWeightTables)
-                                                .subspan(pixel * m_ItemSize)
-                                                .data());
-    }
-
-   private:
-    int m_ItemSize = 0;
-    DataVector<uint8_t> m_pWeightTables;
   };
 
 #ifdef PDF_ENABLE_XFA_BMP
@@ -220,7 +202,6 @@ class ProgressiveDecoder final :
   uint32_t m_offSet = 0;
   int m_ScanlineSize = 0;
   WeightTable m_WeightHorz;
-  HorzTable m_WeightHorzOO;
   int m_SrcWidth = 0;
   int m_SrcHeight = 0;
   int m_SrcComponents = 0;
