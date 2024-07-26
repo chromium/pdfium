@@ -9,6 +9,7 @@
 
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -56,9 +57,11 @@ class CPDF_RenderContext {
                              const CPDF_PageObject* object,
                              const CPDF_RenderOptions* options,
                              const CFX_Matrix& matrix);
+#if BUILDFLAG(IS_WIN)
   void GetBackgroundToBitmap(RetainPtr<CFX_DIBitmap> bitmap,
                              const CPDF_PageObject* object,
                              const CFX_Matrix& matrix);
+#endif
 
   size_t CountLayers() const { return m_Layers.size(); }
   Layer* GetLayer(uint32_t index) { return &m_Layers[index]; }

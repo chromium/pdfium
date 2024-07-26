@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_pageimagecache.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/page/cpdf_pageobjectholder.h"
@@ -43,6 +44,7 @@ void CPDF_RenderContext::GetBackgroundToDevice(
   Render(device, object, options, &matrix);
 }
 
+#if BUILDFLAG(IS_WIN)
 void CPDF_RenderContext::GetBackgroundToBitmap(RetainPtr<CFX_DIBitmap> bitmap,
                                                const CPDF_PageObject* object,
                                                const CFX_Matrix& matrix) {
@@ -50,6 +52,7 @@ void CPDF_RenderContext::GetBackgroundToBitmap(RetainPtr<CFX_DIBitmap> bitmap,
   device.Attach(std::move(bitmap));
   GetBackgroundToDevice(&device, object, /*options=*/nullptr, matrix);
 }
+#endif
 
 void CPDF_RenderContext::AppendLayer(CPDF_PageObjectHolder* pObjectHolder,
                                      const CFX_Matrix& mtObject2Device) {

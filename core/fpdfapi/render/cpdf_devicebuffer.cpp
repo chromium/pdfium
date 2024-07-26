@@ -11,19 +11,24 @@
 #include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_pageobject.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
-#include "core/fpdfapi/render/cpdf_rendercontext.h"
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_renderdevice.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/fx_dib.h"
 
+#if BUILDFLAG(IS_WIN)
+#include "core/fpdfapi/render/cpdf_rendercontext.h"
+#else
+#include "core/fxcrt/notreached.h"
+#endif
+
 namespace {
 
-#if BUILDFLAG(IS_APPLE)
-constexpr bool kScaleDeviceBuffer = false;
-#else
+#if BUILDFLAG(IS_WIN)
 constexpr bool kScaleDeviceBuffer = true;
+#else
+constexpr bool kScaleDeviceBuffer = false;
 #endif
 
 }  // namespace
@@ -58,11 +63,14 @@ CPDF_DeviceBuffer::CPDF_DeviceBuffer(CPDF_RenderContext* pContext,
                                      const CPDF_PageObject* pObj,
                                      int max_dpi)
     : m_pDevice(pDevice),
+#if BUILDFLAG(IS_WIN)
       m_pContext(pContext),
+#endif
       m_pObject(pObj),
       m_pBitmap(pdfium::MakeRetain<CFX_DIBitmap>()),
       m_Rect(rect),
-      m_Matrix(CalculateMatrix(pDevice, rect, max_dpi, kScaleDeviceBuffer)) {}
+      m_Matrix(CalculateMatrix(pDevice, rect, max_dpi, kScaleDeviceBuffer)) {
+}
 
 CPDF_DeviceBuffer::~CPDF_DeviceBuffer() = default;
 
@@ -80,12 +88,19 @@ void CPDF_DeviceBuffer::OutputToDevice() {
   if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_GET_BITS) {
     if (m_Matrix.a == 1.0f && m_Matrix.d == 1.0f) {
       m_pDevice->SetDIBits(m_pBitmap, m_Rect.left, m_Rect.top);
-    } else {
-      m_pDevice->StretchDIBits(m_pBitmap, m_Rect.left, m_Rect.top,
-                               m_Rect.Width(), m_Rect.Height());
+      return;
     }
+
+#if BUILDFLAG(IS_WIN)
+    m_pDevice->StretchDIBits(m_pBitmap, m_Rect.left, m_Rect.top, m_Rect.Width(),
+                             m_Rect.Height());
     return;
+#else
+    NOTREACHED_NORETURN();
+#endif
   }
+
+#if BUILDFLAG(IS_WIN)
   auto buffer = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!m_pDevice->CreateCompatibleBitmap(buffer, m_pBitmap->GetWidth(),
                                          m_pBitmap->GetHeight())) {
@@ -96,4 +111,7 @@ void CPDF_DeviceBuffer::OutputToDevice() {
                           m_pBitmap, 0, 0, BlendMode::kNormal, nullptr, false);
   m_pDevice->StretchDIBits(std::move(buffer), m_Rect.left, m_Rect.top,
                            m_Rect.Width(), m_Rect.Height());
+#else
+  NOTREACHED_NORETURN();
+#endif
 }

@@ -7,6 +7,7 @@
 #ifndef CORE_FPDFAPI_RENDER_CPDF_DEVICEBUFFER_H_
 #define CORE_FPDFAPI_RENDER_CPDF_DEVICEBUFFER_H_
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -38,7 +39,9 @@ class CPDF_DeviceBuffer {
 
  private:
   UnownedPtr<CFX_RenderDevice> const m_pDevice;
+#if BUILDFLAG(IS_WIN)
   UnownedPtr<CPDF_RenderContext> const m_pContext;
+#endif
   UnownedPtr<const CPDF_PageObject> const m_pObject;
   RetainPtr<CFX_DIBitmap> const m_pBitmap;
   const FX_RECT m_Rect;
