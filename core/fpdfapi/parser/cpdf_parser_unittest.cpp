@@ -38,7 +38,8 @@ struct OffsetAndType {
 
 CPDF_CrossRefTable::ObjectInfo GetObjInfo(const CPDF_Parser& parser,
                                           uint32_t obj_num) {
-  const auto* info = parser.GetCrossRefTable()->GetObjectInfo(obj_num);
+  const auto* info =
+      parser.GetCrossRefTableForTesting()->GetObjectInfo(obj_num);
   return info ? *info : CPDF_CrossRefTable::ObjectInfo();
 }
 
@@ -159,7 +160,9 @@ TEST(ParserTest, RebuildCrossRefCorrectly) {
   for (size_t i = 0; i < std::size(versions); ++i) {
     EXPECT_EQ(versions[i], GetObjInfo(parser, i).gennum);
   }
-  const CPDF_CrossRefTable* cross_ref_table = parser.GetCrossRefTable();
+
+  const CPDF_CrossRefTable* cross_ref_table =
+      parser.GetCrossRefTableForTesting();
   ASSERT_TRUE(cross_ref_table);
   EXPECT_EQ(0u, cross_ref_table->trailer_object_number());
 }
@@ -336,7 +339,7 @@ TEST(ParserTest, ParseStartXRef) {
 
   EXPECT_EQ(100940, parser.ParseStartXRef());
   RetainPtr<CPDF_Object> cross_ref_stream_obj =
-      parser.ParseIndirectObjectAt(100940, 0);
+      parser.ParseIndirectObjectAtForTesting(100940);
   ASSERT_TRUE(cross_ref_stream_obj);
   EXPECT_EQ(75u, cross_ref_stream_obj->GetObjNum());
 }
@@ -358,7 +361,7 @@ TEST(ParserTest, ParseStartXRefWithHeaderOffset) {
 
   EXPECT_EQ(100940, parser.ParseStartXRef());
   RetainPtr<CPDF_Object> cross_ref_stream_obj =
-      parser.ParseIndirectObjectAt(100940, 0);
+      parser.ParseIndirectObjectAtForTesting(100940);
   ASSERT_TRUE(cross_ref_stream_obj);
   EXPECT_EQ(75u, cross_ref_stream_obj->GetObjNum());
 }
@@ -379,7 +382,8 @@ TEST(ParserTest, ParseLinearizedWithHeaderOffset) {
   parser.InitTestFromBufferWithOffset(data, kTestHeaderOffset);
   EXPECT_TRUE(parser.ParseLinearizedHeader());
 
-  const CPDF_CrossRefTable* cross_ref_table = parser.GetCrossRefTable();
+  const CPDF_CrossRefTable* cross_ref_table =
+      parser.GetCrossRefTableForTesting();
   ASSERT_TRUE(cross_ref_table);
   EXPECT_EQ(0u, cross_ref_table->trailer_object_number());
 }
@@ -397,8 +401,8 @@ TEST(ParserTest, BadStartXrefShouldNotBuildCrossRefTable) {
   CPDF_TestParser parser;
   ASSERT_TRUE(parser.InitTestFromBuffer(kData));
   EXPECT_EQ(CPDF_Parser::FORMAT_ERROR, parser.StartParseInternal());
-  ASSERT_TRUE(parser.GetCrossRefTable());
-  EXPECT_EQ(0u, parser.GetCrossRefTable()->objects_info().size());
+  ASSERT_TRUE(parser.GetCrossRefTableForTesting());
+  EXPECT_EQ(0u, parser.GetCrossRefTableForTesting()->objects_info().size());
 }
 
 class ParserXRefTest : public testing::Test {
@@ -448,8 +452,9 @@ TEST_F(ParserXRefTest, XrefObjectIndicesTooBig) {
   ASSERT_TRUE(parser().InitTestFromBuffer(kData));
   EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
   EXPECT_FALSE(parser().xref_table_rebuilt());
-  ASSERT_TRUE(parser().GetCrossRefTable());
-  const auto& objects_info = parser().GetCrossRefTable()->objects_info();
+  ASSERT_TRUE(parser().GetCrossRefTableForTesting());
+  const auto& objects_info =
+      parser().GetCrossRefTableForTesting()->objects_info();
 
   // This should be the only object from table. Subsequent objects have object
   // numbers that are too big.
@@ -489,7 +494,8 @@ TEST_F(ParserXRefTest, XrefHasInvalidArchiveObjectNumber) {
   EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
   EXPECT_FALSE(parser().xref_table_rebuilt());
 
-  const CPDF_CrossRefTable* cross_ref_table = parser().GetCrossRefTable();
+  const CPDF_CrossRefTable* cross_ref_table =
+      parser().GetCrossRefTableForTesting();
   ASSERT_TRUE(cross_ref_table);
   EXPECT_EQ(7u, cross_ref_table->trailer_object_number());
   const auto& objects_info = cross_ref_table->objects_info();
@@ -626,8 +632,9 @@ TEST_F(ParserXRefTest, XrefFirstWidthEntryIsZero) {
   ASSERT_TRUE(parser().InitTestFromBuffer(kData));
   EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
   EXPECT_FALSE(parser().xref_table_rebuilt());
-  ASSERT_TRUE(parser().GetCrossRefTable());
-  const auto& objects_info = parser().GetCrossRefTable()->objects_info();
+  ASSERT_TRUE(parser().GetCrossRefTableForTesting());
+  const auto& objects_info =
+      parser().GetCrossRefTableForTesting()->objects_info();
 
   CPDF_CrossRefTable::ObjectInfo expected_result[2] = {
       {.type = CPDF_CrossRefTable::ObjectType::kNormal, .pos = 15},
@@ -664,8 +671,9 @@ TEST_F(ParserXRefTest, XrefWithValidIndex) {
   ASSERT_TRUE(parser().InitTestFromBuffer(kData));
   EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
   EXPECT_FALSE(parser().xref_table_rebuilt());
-  ASSERT_TRUE(parser().GetCrossRefTable());
-  const auto& objects_info = parser().GetCrossRefTable()->objects_info();
+  ASSERT_TRUE(parser().GetCrossRefTableForTesting());
+  const auto& objects_info =
+      parser().GetCrossRefTableForTesting()->objects_info();
 
   CPDF_CrossRefTable::ObjectInfo expected_result[6] = {
       {.type = CPDF_CrossRefTable::ObjectType::kNormal, .pos = 0},
@@ -706,8 +714,9 @@ TEST_F(ParserXRefTest, XrefIndexWithRepeatedObject) {
   ASSERT_TRUE(parser().InitTestFromBuffer(kData));
   EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
   EXPECT_FALSE(parser().xref_table_rebuilt());
-  ASSERT_TRUE(parser().GetCrossRefTable());
-  const auto& objects_info = parser().GetCrossRefTable()->objects_info();
+  ASSERT_TRUE(parser().GetCrossRefTableForTesting());
+  const auto& objects_info =
+      parser().GetCrossRefTableForTesting()->objects_info();
 
   CPDF_CrossRefTable::ObjectInfo expected_result[2] = {
       {.type = CPDF_CrossRefTable::ObjectType::kNormal, .pos = 0},
@@ -743,8 +752,9 @@ TEST_F(ParserXRefTest, XrefIndexWithOutOfOrderObjects) {
   ASSERT_TRUE(parser().InitTestFromBuffer(kData));
   EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
   EXPECT_FALSE(parser().xref_table_rebuilt());
-  ASSERT_TRUE(parser().GetCrossRefTable());
-  const auto& objects_info = parser().GetCrossRefTable()->objects_info();
+  ASSERT_TRUE(parser().GetCrossRefTableForTesting());
+  const auto& objects_info =
+      parser().GetCrossRefTableForTesting()->objects_info();
 
   // Although the /Index does not follow the spec, the parser tolerates it.
   CPDF_CrossRefTable::ObjectInfo expected_result[3] = {
@@ -782,8 +792,9 @@ TEST_F(ParserXRefTest, XrefWithIndexAndWrongSize) {
   ASSERT_TRUE(parser().InitTestFromBuffer(kData));
   EXPECT_EQ(CPDF_Parser::SUCCESS, parser().StartParseInternal());
   EXPECT_FALSE(parser().xref_table_rebuilt());
-  ASSERT_TRUE(parser().GetCrossRefTable());
-  const auto& objects_info = parser().GetCrossRefTable()->objects_info();
+  ASSERT_TRUE(parser().GetCrossRefTableForTesting());
+  const auto& objects_info =
+      parser().GetCrossRefTableForTesting()->objects_info();
 
   const CPDF_CrossRefTable::ObjectInfo expected_result[3] = {
       {.type = CPDF_CrossRefTable::ObjectType::kNormal, .pos = 0},
