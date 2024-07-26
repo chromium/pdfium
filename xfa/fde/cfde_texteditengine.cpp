@@ -1034,8 +1034,8 @@ std::vector<TextCharPos> CFDE_TextEditEngine::GetDisplayPos(
   tr.dwCharStyles = piece.dwCharStyles;
   tr.pRect = &piece.rtPiece;
 
-  std::vector<TextCharPos> data(text_break_.GetDisplayPos(tr, nullptr));
-  text_break_.GetDisplayPos(tr, data.data());
+  std::vector<TextCharPos> data(text_break_.GetDisplayPos(tr, {}));
+  text_break_.GetDisplayPos(tr, data);
   return data;
 }
 

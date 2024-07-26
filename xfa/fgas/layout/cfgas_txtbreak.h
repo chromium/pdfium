@@ -75,7 +75,8 @@ class CFGAS_TxtBreak final : public CFGAS_Break {
   void SetCombWidth(float fCombWidth);
   CFGAS_Char::BreakType EndBreak(CFGAS_Char::BreakType dwStatus);
 
-  size_t GetDisplayPos(const Run& run, TextCharPos* pCharPos) const;
+  size_t GetDisplayPos(const Run& run,
+                       pdfium::span<TextCharPos> pCharPos) const;
   std::vector<CFX_RectF> GetCharRects(const Run& run) const;
   CFGAS_Char::BreakType AppendChar(wchar_t wch);
 

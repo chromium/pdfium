@@ -630,7 +630,7 @@ void CFGAS_TxtBreak::SplitTextLine(CFGAS_BreakLine* pCurLine,
 }
 
 size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
-                                     TextCharPos* pCharPos) const {
+                                     pdfium::span<TextCharPos> pCharPos) const {
   if (run.iLength < 1)
     return 0;
 
@@ -775,7 +775,7 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
 
     int32_t iForms = bLam ? 3 : 1;
     szCount += (bEmptyChar && bSkipSpace) ? 0 : iForms;
-    if (!pCharPos) {
+    if (pCharPos.empty()) {
       if (iWidth > 0)
         wPrev = wch;
       wLast = wch;
@@ -802,6 +802,7 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
     }
 
     for (int32_t j = 0; j < iForms; j++) {
+      TextCharPos& front_ref = pCharPos.front();
       wForm = (wchar_t)form_chars[j].wForm;
       iCharWidth = form_chars[j].iWidth;
       if (j > 0) {
@@ -810,11 +811,11 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
         wLast = (wchar_t)form_chars[j - 1].wForm;
       }
       if (!bEmptyChar || (bEmptyChar && !bSkipSpace)) {
-        pCharPos->m_GlyphIndex = pFont->GetGlyphIndex(wForm);
+        front_ref.m_GlyphIndex = pFont->GetGlyphIndex(wForm);
 #if BUILDFLAG(IS_APPLE)
-        pCharPos->m_ExtGID = pCharPos->m_GlyphIndex;
+        front_ref.m_ExtGID = front_ref.m_GlyphIndex;
 #endif
-        pCharPos->m_FontCharWidth = iCharWidth;
+        front_ref.m_FontCharWidth = iCharWidth;
       }
 
       const float fCharWidth = fFontSize * iCharWidth / 1000.0f;
@@ -822,17 +823,17 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
         fX -= fCharWidth;
 
       if (!bEmptyChar || (bEmptyChar && !bSkipSpace)) {
-        pCharPos->m_Origin = CFX_PointF(fX, fY);
+        front_ref.m_Origin = CFX_PointF(fX, fY);
 
         if (!!(dwStyles & LayoutStyle::kCombText)) {
           int32_t iFormWidth = pFont->GetCharWidth(wForm).value_or(iCharWidth);
           float fOffset = fFontSize * (iCharWidth - iFormWidth) / 2000.0f;
-          pCharPos->m_Origin.x += fOffset;
+          front_ref.m_Origin.x += fOffset;
         }
         if (chartype == FX_CHARTYPE::kCombination) {
           std::optional<FX_RECT> rtBBox = pFont->GetCharBBox(wForm);
           if (rtBBox.has_value()) {
-            pCharPos->m_Origin.y =
+            front_ref.m_Origin.y =
                 fYBase + fFontSize -
                 fFontSize * rtBBox.value().Height() / iMaxHeight;
           }
@@ -842,7 +843,7 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
                 FX_CHARTYPE::kCombination) {
               std::optional<FX_RECT> rtOtherBox = pFont->GetCharBBox(wLast);
               if (rtOtherBox.has_value()) {
-                pCharPos->m_Origin.y -=
+                front_ref.m_Origin.y -=
                     fFontSize * rtOtherBox.value().Height() / iMaxHeight;
               }
             }
@@ -853,23 +854,23 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
         fX += fCharWidth;
 
       if (!bEmptyChar || (bEmptyChar && !bSkipSpace)) {
-        pCharPos->m_bGlyphAdjust = true;
-        pCharPos->m_AdjustMatrix[0] = -1;
-        pCharPos->m_AdjustMatrix[1] = 0;
-        pCharPos->m_AdjustMatrix[2] = 0;
-        pCharPos->m_AdjustMatrix[3] = 1;
+        front_ref.m_bGlyphAdjust = true;
+        front_ref.m_AdjustMatrix[0] = -1;
+        front_ref.m_AdjustMatrix[1] = 0;
+        front_ref.m_AdjustMatrix[2] = 0;
+        front_ref.m_AdjustMatrix[3] = 1;
 
         if (iHorScale != 100 || iVerScale != 100) {
-          pCharPos->m_AdjustMatrix[0] =
-              pCharPos->m_AdjustMatrix[0] * iHorScale / 100.0f;
-          pCharPos->m_AdjustMatrix[1] =
-              pCharPos->m_AdjustMatrix[1] * iHorScale / 100.0f;
-          pCharPos->m_AdjustMatrix[2] =
-              pCharPos->m_AdjustMatrix[2] * iVerScale / 100.0f;
-          pCharPos->m_AdjustMatrix[3] =
-              pCharPos->m_AdjustMatrix[3] * iVerScale / 100.0f;
+          front_ref.m_AdjustMatrix[0] =
+              front_ref.m_AdjustMatrix[0] * iHorScale / 100.0f;
+          front_ref.m_AdjustMatrix[1] =
+              front_ref.m_AdjustMatrix[1] * iHorScale / 100.0f;
+          front_ref.m_AdjustMatrix[2] =
+              front_ref.m_AdjustMatrix[2] * iVerScale / 100.0f;
+          front_ref.m_AdjustMatrix[3] =
+              front_ref.m_AdjustMatrix[3] * iVerScale / 100.0f;
         }
-        UNSAFE_TODO(pCharPos++);
+        pCharPos = pCharPos.subspan(1);
       }
     }
     if (iWidth > 0)
