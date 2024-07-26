@@ -10,6 +10,7 @@
 #include <memory>
 #include <optional>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
@@ -63,7 +64,10 @@ class CPDF_ImageRenderer {
   bool ContinueTransform(PauseIndicatorIface* pPause);
   bool DrawMaskedImage();
   bool DrawPatternImage();
+#if BUILDFLAG(IS_WIN)
   bool IsPrinting() const;
+  void HandleFilters();
+#endif
   FX_RECT GetDrawRect() const;
   CFX_Matrix GetDrawMatrix(const FX_RECT& rect) const;
   // Returns the mask, or nullptr if the mask could not be created.
@@ -73,7 +77,6 @@ class CPDF_ImageRenderer {
       const CFX_Matrix& mtNewMatrix,
       const FX_RECT& rect) const;
   const CPDF_RenderOptions& GetRenderOptions() const;
-  void HandleFilters();
   std::optional<FX_RECT> GetUnitRect() const;
   bool GetDimensionsFromUnitRect(const FX_RECT& rect,
                                  int* left,

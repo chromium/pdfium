@@ -177,7 +177,9 @@ CPDF_RenderStatus::~CPDF_RenderStatus() = default;
 
 void CPDF_RenderStatus::Initialize(const CPDF_RenderStatus* pParentStatus,
                                    const CPDF_GraphicStates* pInitialStates) {
+#if BUILDFLAG(IS_WIN)
   m_bPrint = m_pDevice->GetDeviceType() == DeviceType::kPrinter;
+#endif
   m_pPageResource.Reset(m_pContext->GetPageResources());
   if (pInitialStates && !m_pType3Char) {
     m_InitialStates = *pInitialStates;
@@ -332,7 +334,7 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
   if (rect.IsEmpty())
     return;
 
-  int res = (pObj->IsImage() && m_bPrint) ? 0 : 300;
+  int res = (pObj->IsImage() && IsPrint()) ? 0 : 300;
   CPDF_ScaledRenderBuffer buffer;
   if (!buffer.Initialize(m_pContext, m_pDevice, rect, pObj, &m_Options, res)) {
     return;
@@ -519,7 +521,7 @@ void CPDF_RenderStatus::ProcessClipPath(const CPDF_ClipPath& ClipPath,
   if (ClipPath.GetTextCount() == 0)
     return;
 
-  if (!m_bPrint &&
+  if (!IsPrint() &&
       !(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP)) {
     return;
   }
@@ -600,14 +602,15 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     initial_alpha = m_InitialStates.general_state().GetFillAlpha();
   }
   bool bTextClip =
-      (pPageObj->clip_path().HasRef() &&
-       pPageObj->clip_path().GetTextCount() > 0 && !m_bPrint &&
-       !(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP));
+      !IsPrint() && pPageObj->clip_path().HasRef() &&
+      pPageObj->clip_path().GetTextCount() > 0 &&
+      !(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_SOFT_CLIP);
   if (!pSMaskDict && group_alpha == 1.0f && blend_type == BlendMode::kNormal &&
       !bTextClip && !bGroupTransparent && initial_alpha == 1.0f) {
     return false;
   }
-  if (m_bPrint) {
+#if BUILDFLAG(IS_WIN)
+  if (IsPrint()) {
     bool bRet = false;
     int rendCaps = m_pDevice->GetRenderCaps();
     if (!(transparency.IsIsolated() || pSMaskDict || bTextClip) &&
@@ -622,6 +625,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
     }
     return true;
   }
+#endif
   FX_RECT rect = pPageObj->GetTransformedBBox(mtObj2Device);
   rect.Intersect(m_pDevice->GetClipBox());
   if (rect.IsEmpty())
@@ -890,8 +894,11 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
 
   FX_ARGB fill_argb = GetFillArgbForType3(textobj);
   int fill_alpha = FXARGB_A(fill_argb);
-  if (m_bPrint && fill_alpha < 255)
+#if BUILDFLAG(IS_WIN)
+  if (IsPrint() && fill_alpha < 255) {
     return false;
+  }
+#endif
 
   CFX_Matrix text_matrix = textobj->GetTextMatrix();
   CFX_Matrix char_matrix = pType3Font->GetFontMatrix();
@@ -901,8 +908,9 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
   // Must come before |glyphs|, because |glyphs| points into |refTypeCache|.
   std::set<RetainPtr<CPDF_Type3Cache>> refTypeCache;
   std::vector<TextGlyphPos> glyphs;
-  if (!m_bPrint)
+  if (!IsPrint()) {
     glyphs.resize(textobj->GetCharCodes().size());
+  }
 
   for (size_t iChar = 0; iChar < textobj->GetCharCodes().size(); ++iChar) {
     uint32_t charcode = textobj->GetCharCodes()[iChar];
@@ -984,44 +992,51 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
         m_pDevice->SetDIBits(bitmap_device.GetBitmap(), rect.left, rect.top);
       }
     } else if (pType3Char->GetBitmap()) {
-      if (m_bPrint) {
+#if BUILDFLAG(IS_WIN)
+      if (IsPrint()) {
         CFX_Matrix image_matrix = pType3Char->matrix() * matrix;
         CPDF_ImageRenderer renderer(this);
         if (renderer.Start(pType3Char->GetBitmap(), fill_argb, image_matrix,
                            FXDIB_ResampleOptions(), false)) {
           renderer.Continue(nullptr);
         }
-        if (!renderer.GetResult())
+        if (!renderer.GetResult()) {
           return false;
-      } else {
-        CPDF_Document* pDoc = pType3Font->GetDocument();
-        RetainPtr<CPDF_Type3Cache> pCache =
-            CPDF_DocRenderData::FromDocument(pDoc)->GetCachedType3(pType3Font);
-
-        const CFX_GlyphBitmap* pBitmap = pCache->LoadGlyph(charcode, matrix);
-        if (!pBitmap)
-          continue;
-
-        refTypeCache.insert(std::move(pCache));
-
-        CFX_Point origin(FXSYS_roundf(matrix.e), FXSYS_roundf(matrix.f));
-        if (glyphs.empty()) {
-          FX_SAFE_INT32 left = origin.x;
-          left += pBitmap->left();
-          if (!left.IsValid())
-            continue;
-
-          FX_SAFE_INT32 top = origin.y;
-          top -= pBitmap->top();
-          if (!top.IsValid())
-            continue;
-
-          m_pDevice->SetBitMask(pBitmap->GetBitmap(), left.ValueOrDie(),
-                                top.ValueOrDie(), fill_argb);
-        } else {
-          glyphs[iChar].m_pGlyph = pBitmap;
-          glyphs[iChar].m_Origin = origin;
         }
+        continue;
+      }
+#endif
+
+      CPDF_Document* pDoc = pType3Font->GetDocument();
+      RetainPtr<CPDF_Type3Cache> pCache =
+          CPDF_DocRenderData::FromDocument(pDoc)->GetCachedType3(pType3Font);
+
+      const CFX_GlyphBitmap* pBitmap = pCache->LoadGlyph(charcode, matrix);
+      if (!pBitmap) {
+        continue;
+      }
+
+      refTypeCache.insert(std::move(pCache));
+
+      CFX_Point origin(FXSYS_roundf(matrix.e), FXSYS_roundf(matrix.f));
+      if (glyphs.empty()) {
+        FX_SAFE_INT32 left = origin.x;
+        left += pBitmap->left();
+        if (!left.IsValid()) {
+          continue;
+        }
+
+        FX_SAFE_INT32 top = origin.y;
+        top -= pBitmap->top();
+        if (!top.IsValid()) {
+          continue;
+        }
+
+        m_pDevice->SetBitMask(pBitmap->GetBitmap(), left.ValueOrDie(),
+                              top.ValueOrDie(), fill_argb);
+      } else {
+        glyphs[iChar].m_pGlyph = pBitmap;
+        glyphs[iChar].m_Origin = origin;
       }
     }
   }

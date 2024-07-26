@@ -12,6 +12,7 @@
 #include <memory>
 #include <utility>
 
+#include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_dib.h"
 #include "core/fpdfapi/page/cpdf_docpagedata.h"
 #include "core/fpdfapi/page/cpdf_image.h"
@@ -121,10 +122,12 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
   if (GetRenderOptions().GetOptions().bForceHalftone)
     m_ResampleOptions.bHalftone = true;
 
+#if BUILDFLAG(IS_WIN)
   if (m_pRenderStatus->GetRenderDevice()->GetDeviceType() ==
       DeviceType::kPrinter) {
     HandleFilters();
   }
+#endif
 
   if (GetRenderOptions().GetOptions().bNoImageSmooth)
     m_ResampleOptions.bNoSmoothing = true;
@@ -205,6 +208,7 @@ bool CPDF_ImageRenderer::Start(RetainPtr<CFX_DIBBase> pDIBBase,
   return StartDIBBase();
 }
 
+#if BUILDFLAG(IS_WIN)
 bool CPDF_ImageRenderer::IsPrinting() const {
   if (!m_pRenderStatus->IsPrint()) {
     return false;
@@ -215,6 +219,22 @@ bool CPDF_ImageRenderer::IsPrinting() const {
       !(m_pRenderStatus->GetRenderDevice()->GetRenderCaps() & FXRC_BLEND_MODE));
   return true;
 }
+
+void CPDF_ImageRenderer::HandleFilters() {
+  std::optional<DecoderArray> decoder_array =
+      GetDecoderArray(m_pImageObject->GetImage()->GetStream()->GetDict());
+  if (!decoder_array.has_value()) {
+    return;
+  }
+
+  for (const auto& decoder : decoder_array.value()) {
+    if (decoder.first == "DCTDecode" || decoder.first == "JPXDecode") {
+      m_ResampleOptions.bLossy = true;
+      return;
+    }
+  }
+}
+#endif  // BUILDFLAG(IS_WIN)
 
 FX_RECT CPDF_ImageRenderer::GetDrawRect() const {
   FX_RECT rect = m_ImageMatrix.GetUnitRect().GetOuterRect();
@@ -288,10 +308,12 @@ const CPDF_RenderOptions& CPDF_ImageRenderer::GetRenderOptions() const {
 }
 
 bool CPDF_ImageRenderer::DrawPatternImage() {
+#if BUILDFLAG(IS_WIN)
   if (IsPrinting()) {
     m_Result = false;
     return false;
   }
+#endif
 
   FX_RECT rect = GetDrawRect();
   if (rect.IsEmpty())
@@ -334,10 +356,12 @@ bool CPDF_ImageRenderer::DrawPatternImage() {
 }
 
 bool CPDF_ImageRenderer::DrawMaskedImage() {
+#if BUILDFLAG(IS_WIN)
   if (IsPrinting()) {
     m_Result = false;
     return false;
   }
+#endif
 
   FX_RECT rect = GetDrawRect();
   if (rect.IsEmpty())
@@ -410,10 +434,12 @@ bool CPDF_ImageRenderer::StartDIBBase() {
 
   if ((fabs(m_ImageMatrix.b) >= 0.5f || m_ImageMatrix.a == 0) ||
       (fabs(m_ImageMatrix.c) >= 0.5f || m_ImageMatrix.d == 0)) {
+#if BUILDFLAG(IS_WIN)
     if (IsPrinting()) {
       m_Result = false;
       return false;
     }
+#endif
 
     std::optional<FX_RECT> image_rect = GetUnitRect();
     if (!image_rect.has_value())
@@ -457,10 +483,13 @@ bool CPDF_ImageRenderer::StartDIBBase() {
       return false;
     }
   }
+
+#if BUILDFLAG(IS_WIN)
   if (IsPrinting()) {
     m_Result = false;
     return true;
   }
+#endif
 
   FX_RECT clip_box = m_pRenderStatus->GetRenderDevice()->GetClipBox();
   FX_RECT dest_rect = clip_box;
@@ -583,20 +612,6 @@ bool CPDF_ImageRenderer::ContinueTransform(PauseIndicatorIface* pPause) {
         m_pTransformer->result().top, m_BlendType);
   }
   return false;
-}
-
-void CPDF_ImageRenderer::HandleFilters() {
-  std::optional<DecoderArray> decoder_array =
-      GetDecoderArray(m_pImageObject->GetImage()->GetStream()->GetDict());
-  if (!decoder_array.has_value())
-    return;
-
-  for (const auto& decoder : decoder_array.value()) {
-    if (decoder.first == "DCTDecode" || decoder.first == "JPXDecode") {
-      m_ResampleOptions.bLossy = true;
-      return;
-    }
-  }
 }
 
 std::optional<FX_RECT> CPDF_ImageRenderer::GetUnitRect() const {

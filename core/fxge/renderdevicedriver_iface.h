@@ -11,6 +11,7 @@
 
 #include <memory>
 
+#include "build/build_config.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
@@ -32,7 +33,9 @@ struct FX_RECT;
 
 enum class DeviceType : bool {
   kDisplay,
+#if BUILDFLAG(IS_WIN)
   kPrinter,
+#endif
 };
 
 class RenderDeviceDriverIface {

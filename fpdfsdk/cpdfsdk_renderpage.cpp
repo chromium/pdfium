@@ -9,6 +9,7 @@
 #include <memory>
 #include <utility>
 
+#include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_pageimagecache.h"
 #include "core/fpdfapi/render/cpdf_pagerendercontext.h"
 #include "core/fpdfapi/render/cpdf_progressiverenderer.h"
@@ -68,13 +69,14 @@ void RenderPageImpl(CPDF_PageRenderContext* pContext,
     auto pOwnedList = std::make_unique<CPDF_AnnotList>(pPage);
     CPDF_AnnotList* pList = pOwnedList.get();
     pContext->m_pAnnots = std::move(pOwnedList);
-    bool bPrinting =
-        (flags & FPDF_PRINTING) ||
-        pContext->m_pDevice->GetDeviceType() == DeviceType::kPrinter;
+    bool is_printing = (flags & FPDF_PRINTING);
+#if BUILDFLAG(IS_WIN)
+    is_printing |= pContext->m_pDevice->GetDeviceType() == DeviceType::kPrinter;
+#endif
 
     // TODO(https://crbug.com/pdfium/993) - maybe pass true here.
     const bool bShowWidget = false;
-    pList->DisplayAnnots(pContext->m_pContext.get(), bPrinting, matrix,
+    pList->DisplayAnnots(pContext->m_pContext.get(), is_printing, matrix,
                          bShowWidget);
   }
 

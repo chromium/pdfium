@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_clippath.h"
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_graphicstates.h"
@@ -83,7 +84,13 @@ class CPDF_RenderStatus {
   CPDF_ColorSpace::Family GetGroupFamily() const { return m_GroupFamily; }
   bool GetLoadMask() const { return m_bLoadMask; }
   bool GetDropObjects() const { return m_bDropObjects; }
-  bool IsPrint() const { return m_bPrint; }
+  bool IsPrint() const {
+#if BUILDFLAG(IS_WIN)
+    return m_bPrint;
+#else
+    return false;
+#endif
+  }
   bool IsStopped() const { return m_bStopped; }
   CPDF_RenderContext* GetContext() const { return m_pContext; }
   const CPDF_Dictionary* GetFormResource() const {
@@ -197,7 +204,9 @@ class CPDF_RenderStatus {
   UnownedPtr<const CPDF_Type3Char> m_pType3Char;
   CPDF_Transparency m_Transparency;
   bool m_bStopped = false;
+#if BUILDFLAG(IS_WIN)
   bool m_bPrint = false;
+#endif
   bool m_bDropObjects = false;
   bool m_bStdCS = false;
   bool m_bLoadMask = false;

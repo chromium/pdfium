@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/render/cpdf_progressiverenderer.h"
 
+#include "build/build_config.h"
 #include "core/fpdfapi/page/cpdf_image.h"
 #include "core/fpdfapi/page/cpdf_imageobject.h"
 #include "core/fpdfapi/page/cpdf_pageimagecache.h"
@@ -81,12 +82,14 @@ void CPDF_ProgressiveRenderer::Continue(PauseIndicatorIface* pPause) {
           pCurObj->GetRect().top >= m_ClipRect.bottom) {
         if (m_pOptions->GetOptions().bBreakForMasks && pCurObj->IsImage() &&
             pCurObj->AsImage()->GetImage()->IsMask()) {
+#if BUILDFLAG(IS_WIN)
           if (m_pDevice->GetDeviceType() == DeviceType::kPrinter) {
             m_LastObjectRendered = iter;
             m_pRenderStatus->ProcessClipPath(pCurObj->clip_path(),
                                              m_pCurrentLayer->GetMatrix());
             return;
           }
+#endif
           is_mask = true;
         }
         if (m_pRenderStatus->ContinueSingleObject(

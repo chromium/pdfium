@@ -1081,15 +1081,30 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
     }
   }
 
+#if BUILDFLAG(IS_WIN)
+  const bool is_printer = GetDeviceType() == DeviceType::kPrinter;
+  bool try_native_text = true;
+#else
+  constexpr bool is_printer = false;
+  constexpr bool try_native_text = true;
+#endif
+
+#if BUILDFLAG(IS_WIN)
   if (GetDeviceType() == DeviceType::kPrinter) {
     if (ShouldDrawDeviceText(pFont, options) &&
         m_pDeviceDriver->DrawDeviceText(pCharPos, pFont, mtText2Device,
                                         font_size, fill_color, text_options)) {
       return true;
     }
-    if (FXARGB_A(fill_color) < 255)
+    if (FXARGB_A(fill_color) < 255) {
       return false;
-  } else if (options.native_text) {
+    }
+
+    try_native_text = false;
+  }
+#endif
+
+  if (try_native_text && options.native_text) {
     if (ShouldDrawDeviceText(pFont, options) &&
         m_pDeviceDriver->DrawDeviceText(pCharPos, pFont, mtText2Device,
                                         font_size, fill_color, text_options)) {
@@ -1100,8 +1115,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   CFX_Matrix char2device = mtText2Device;
   CFX_Matrix text2Device = mtText2Device;
   char2device.Scale(font_size, -font_size);
-  if (fabs(char2device.a) + fabs(char2device.b) > 50 * 1.0f ||
-      GetDeviceType() == DeviceType::kPrinter) {
+  if (fabs(char2device.a) + fabs(char2device.b) > 50 * 1.0f || is_printer) {
     if (pFont->GetFaceRec()) {
       CFX_FillRenderOptions path_options;
       path_options.aliased_path = !is_text_smooth;
