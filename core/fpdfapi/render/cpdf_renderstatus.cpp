@@ -1255,10 +1255,10 @@ void CPDF_RenderStatus::CompositeDIBitmap(
         return;
       }
     } else {
-      uint32_t fill_argb = m_Options.TranslateColor(mask_argb);
+      FX_ARGB fill_argb = m_Options.TranslateColor(mask_argb);
       if (alpha != 1.0f) {
-        uint8_t* fill_argb8 = reinterpret_cast<uint8_t*>(&fill_argb);
-        UNSAFE_TODO(fill_argb8[3]) *= FXSYS_roundf(alpha * 255) / 255;
+        auto& bgra = reinterpret_cast<FX_BGRA_STRUCT<uint8_t>&>(fill_argb);
+        bgra.alpha *= FXSYS_roundf(alpha * 255) / 255;
       }
       if (m_pDevice->SetBitMask(bitmap, left, top, fill_argb)) {
         return;
