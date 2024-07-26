@@ -78,7 +78,7 @@ ProgressiveDecoder::HorzTable::~HorzTable() = default;
 void ProgressiveDecoder::HorzTable::CalculateWeights(int width) {
   CHECK_GE(width, 0);
   m_ItemSize =
-      pdfium::checked_cast<int>(PixelWeight::TotalBytesForWeightCount(2));
+      pdfium::checked_cast<int>(PixelWeight::TotalBytesForWeightCount(1));
   FX_SAFE_SIZE_T safe_size = m_ItemSize;
   safe_size *= width;
   m_pWeightTables.resize(safe_size.ValueOrDie(), 0);
@@ -87,7 +87,6 @@ void ProgressiveDecoder::HorzTable::CalculateWeights(int width) {
     pWeight->m_SrcStart = pWeight->m_SrcEnd = col;
     UNSAFE_TODO({
       pWeight->m_Weights[0] = CStretchEngine::kFixedPointOne;
-      pWeight->m_Weights[1] = 0;
     });
   }
 }
@@ -700,10 +699,6 @@ void ProgressiveDecoder::PngOneOneMapResampleHorz(
           uint32_t dest_b = pPixelWeights->m_Weights[0] * (*p++);
           uint32_t dest_g = pPixelWeights->m_Weights[0] * (*p++);
           uint32_t dest_r = pPixelWeights->m_Weights[0] * (*p);
-          p = src_scan + pPixelWeights->m_SrcEnd * src_Bpp;
-          dest_b += pPixelWeights->m_Weights[1] * (*p++);
-          dest_g += pPixelWeights->m_Weights[1] * (*p++);
-          dest_r += pPixelWeights->m_Weights[1] * (*p);
           *dest_scan++ = CStretchEngine::PixelFromFixed(dest_b);
           *dest_scan++ = CStretchEngine::PixelFromFixed(dest_g);
           *dest_scan++ = CStretchEngine::PixelFromFixed(dest_r);
@@ -718,11 +713,6 @@ void ProgressiveDecoder::PngOneOneMapResampleHorz(
           uint32_t dest_g = pPixelWeights->m_Weights[0] * (*p++);
           uint32_t dest_r = pPixelWeights->m_Weights[0] * (*p++);
           uint32_t dest_a = pPixelWeights->m_Weights[0] * (*p);
-          p = src_scan + pPixelWeights->m_SrcEnd * src_Bpp;
-          dest_b += pPixelWeights->m_Weights[1] * (*p++);
-          dest_g += pPixelWeights->m_Weights[1] * (*p++);
-          dest_r += pPixelWeights->m_Weights[1] * (*p++);
-          dest_a += pPixelWeights->m_Weights[1] * (*p);
           *dest_scan++ = CStretchEngine::PixelFromFixed(dest_b);
           *dest_scan++ = CStretchEngine::PixelFromFixed(dest_g);
           *dest_scan++ = CStretchEngine::PixelFromFixed(dest_r);
