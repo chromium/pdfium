@@ -143,10 +143,6 @@ class ProgressiveDecoder final :
 #endif  // PDF_ENABLE_XFA_GIF
 
 #ifdef PDF_ENABLE_XFA_PNG
-  void PngOneOneMapResampleHorz(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
-                                int32_t dest_line,
-                                pdfium::span<uint8_t> src_span,
-                                FXCodec_Format src_format);
   bool PngDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
   FXCODEC_STATUS PngStartDecode();
   FXCODEC_STATUS PngContinueDecode();

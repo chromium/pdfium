@@ -16,6 +16,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
@@ -127,65 +128,32 @@ bool ProgressiveDecoder::PngReadHeader(int width,
 }
 
 bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
-  RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
-  CHECK(pDIBitmap);
   if (line < 0 || line >= m_SrcHeight) {
     return true;
   }
 
-  *pSrcBuf = m_DecodeBuf.data();
-  int32_t src_Bpp = pDIBitmap->GetBPP() >> 3;
-  int32_t dest_Bpp = (m_SrcFormat & 0xff) >> 3;
-  pdfium::span<const uint8_t> src_span = pDIBitmap->GetScanline(line);
+  CHECK_EQ(m_pDeviceBitmap->GetFormat(), FXDIB_Format::kArgb);
+  CHECK_EQ(m_SrcFormat, FXCodec_Argb);
+  pdfium::span<const uint8_t> src_span = m_pDeviceBitmap->GetScanline(line);
   pdfium::span<uint8_t> dest_span = pdfium::make_span(m_DecodeBuf);
-  const uint8_t* src_scan = src_span.data();
-  uint8_t* dest_scan = dest_span.data();
-
-  UNSAFE_TODO({
-    switch (pDIBitmap->GetFormat()) {
-      case FXDIB_Format::kInvalid:
-      case FXDIB_Format::k1bppMask:
-      case FXDIB_Format::k1bppRgb:
-      case FXDIB_Format::k8bppMask:
-      case FXDIB_Format::k8bppRgb:
-        NOTREACHED_NORETURN();
-      case FXDIB_Format::kRgb:
-      case FXDIB_Format::kRgb32:
-        for (int32_t src_col = 0; src_col < m_SrcWidth; src_col++) {
-          const uint8_t* p = src_scan + src_col * src_Bpp;
-          uint8_t dest_b = *p++;
-          uint8_t dest_g = *p++;
-          uint8_t dest_r = *p;
-          uint8_t* pDes = &dest_scan[src_col * dest_Bpp];
-          *pDes++ = dest_b;
-          *pDes++ = dest_g;
-          *pDes = dest_r;
-        }
-        return true;
-      case FXDIB_Format::kArgb:
-        for (int32_t src_col = 0; src_col < m_SrcWidth; src_col++) {
-          const uint8_t* p = src_scan + src_col * src_Bpp;
-          uint8_t dest_b = *p++;
-          uint8_t dest_g = *p++;
-          uint8_t dest_r = *p++;
-          uint8_t dest_a = *p;
-          uint8_t* pDes = &dest_scan[src_col * dest_Bpp];
-          *pDes++ = dest_b;
-          *pDes++ = dest_g;
-          *pDes++ = dest_r;
-          *pDes = dest_a;
-        }
-        return true;
-    }
-  });
+  const size_t byte_size = Fx2DSizeOrDie(
+      m_SrcWidth, GetCompsFromFormat(m_pDeviceBitmap->GetFormat()));
+  fxcrt::Copy(src_span.first(byte_size), dest_span);
+  *pSrcBuf = m_DecodeBuf.data();
+  return true;
 }
 
 void ProgressiveDecoder::PngFillScanlineBufCompleted(int pass, int line) {
-  RetainPtr<CFX_DIBitmap> pDIBitmap = m_pDeviceBitmap;
-  DCHECK(pDIBitmap);
-  if (line >= 0 && line < m_SrcHeight) {
-    PngOneOneMapResampleHorz(pDIBitmap, line, m_DecodeBuf, m_SrcFormat);
+  if (line < 0 || line >= m_SrcHeight) {
+    return;
   }
+
+  CHECK_EQ(m_pDeviceBitmap->GetFormat(), FXDIB_Format::kArgb);
+  pdfium::span<const uint8_t> src_span = pdfium::make_span(m_DecodeBuf);
+  pdfium::span<uint8_t> dest_span = m_pDeviceBitmap->GetWritableScanline(line);
+  const size_t byte_size = Fx2DSizeOrDie(
+      m_SrcWidth, GetCompsFromFormat(m_pDeviceBitmap->GetFormat()));
+  fxcrt::Copy(src_span.first(byte_size), dest_span);
 }
 #endif  // PDF_ENABLE_XFA_PNG
 
@@ -646,53 +614,6 @@ FXCODEC_STATUS ProgressiveDecoder::JpegContinueDecode() {
 }
 
 #ifdef PDF_ENABLE_XFA_PNG
-void ProgressiveDecoder::PngOneOneMapResampleHorz(
-    const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
-    int32_t dest_line,
-    pdfium::span<uint8_t> src_span,
-    FXCodec_Format src_format) {
-  int32_t src_Bpp = (m_SrcFormat & 0xff) >> 3;
-  int32_t dest_Bpp = pDeviceBitmap->GetBPP() >> 3;
-  uint8_t* src_scan = src_span.data();
-  uint8_t* dest_scan = pDeviceBitmap->GetWritableScanline(dest_line).data();
-  UNSAFE_TODO({
-    switch (pDeviceBitmap->GetFormat()) {
-      case FXDIB_Format::kInvalid:
-      case FXDIB_Format::k1bppMask:
-      case FXDIB_Format::k1bppRgb:
-      case FXDIB_Format::k8bppMask:
-      case FXDIB_Format::k8bppRgb:
-        NOTREACHED_NORETURN();
-      case FXDIB_Format::kRgb:
-      case FXDIB_Format::kRgb32:
-        for (int32_t dest_col = 0; dest_col < m_SrcWidth; dest_col++) {
-          const uint8_t* p = src_scan + dest_col * src_Bpp;
-          uint8_t dest_b = *p++;
-          uint8_t dest_g = *p++;
-          uint8_t dest_r = *p;
-          *dest_scan++ = dest_b;
-          *dest_scan++ = dest_g;
-          *dest_scan++ = dest_r;
-          dest_scan += dest_Bpp - 3;
-        }
-        break;
-      case FXDIB_Format::kArgb:
-        for (int32_t dest_col = 0; dest_col < m_SrcWidth; dest_col++) {
-          const uint8_t* p = src_scan + dest_col * src_Bpp;
-          uint8_t dest_b = *p++;
-          uint8_t dest_g = *p++;
-          uint8_t dest_r = *p++;
-          uint8_t dest_a = *p;
-          *dest_scan++ = dest_b;
-          *dest_scan++ = dest_g;
-          *dest_scan++ = dest_r;
-          *dest_scan++ = dest_a;
-        }
-        break;
-    }
-  });
-}
-
 bool ProgressiveDecoder::PngDetectImageTypeInBuffer(
     CFX_DIBAttribute* pAttribute) {
   m_pPngContext = PngDecoder::StartDecode(this);
@@ -736,23 +657,9 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {
     return m_status;
   }
   m_offSet = 0;
-  switch (m_pDeviceBitmap->GetFormat()) {
-    case FXDIB_Format::kInvalid:
-    case FXDIB_Format::k1bppMask:
-    case FXDIB_Format::k1bppRgb:
-    case FXDIB_Format::k8bppMask:
-    case FXDIB_Format::k8bppRgb:
-      NOTREACHED_NORETURN();
-    case FXDIB_Format::kRgb:
-      m_SrcComponents = 3;
-      m_SrcFormat = FXCodec_Rgb;
-      break;
-    case FXDIB_Format::kRgb32:
-    case FXDIB_Format::kArgb:
-      m_SrcComponents = 4;
-      m_SrcFormat = FXCodec_Argb;
-      break;
-  }
+  CHECK_EQ(m_pDeviceBitmap->GetFormat(), FXDIB_Format::kArgb);
+  m_SrcComponents = 4;
+  m_SrcFormat = FXCodec_Argb;
   SetTransMethod();
   int scanline_size = FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents);
   m_DecodeBuf.resize(scanline_size);
