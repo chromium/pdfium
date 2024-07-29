@@ -715,11 +715,15 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
     // Save the input bitmap as `m_pOriginalBitmap` and save its 32 bpp
     // equivalent at `m_pBitmap` for Skia's internal process.
     m_pOriginalBitmap = std::move(m_pBitmap);
+    const int width = m_pOriginalBitmap->GetWidth();
+    const int height = m_pOriginalBitmap->GetHeight();
+
     m_pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     // TODO(crbug.com/42271020): Consider adding support for
     // `FXDIB_Format::kArgbPremul`
-    if (!m_pBitmap->Copy(m_pOriginalBitmap) ||
-        !m_pBitmap->ConvertFormat(FXDIB_Format::kArgb)) {
+    if (!m_pBitmap->Create(width, height, FXDIB_Format::kArgb) ||
+        !m_pBitmap->TransferBitmap(width, height, m_pOriginalBitmap,
+                                   /*src_left=*/0, /*src_top=*/0)) {
       // Skip creating SkCanvas if the 32-bpp bitmap creation fails.
       // CFX_SkiaDeviceDriver::Create() will check for the missing `m_pCanvas`
       // and not use `this`.
