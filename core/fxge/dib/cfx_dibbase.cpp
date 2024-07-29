@@ -1019,16 +1019,13 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
 }
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::ConvertTo(FXDIB_Format dest_format) const {
-  if (dest_format == GetFormat())
-    return Realize();
+  CHECK(dest_format == FXDIB_Format::kRgb ||
+        dest_format == FXDIB_Format::k8bppRgb);
+  CHECK_NE(dest_format, GetFormat());
 
   auto pClone = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pClone->Create(GetWidth(), GetHeight(), dest_format)) {
     return nullptr;
-  }
-
-  if (dest_format == FXDIB_Format::kArgb) {
-    pClone->SetUniformOpaqueAlpha();
   }
 
   RetainPtr<const CFX_DIBBase> holder(this);

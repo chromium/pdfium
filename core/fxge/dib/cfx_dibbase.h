@@ -82,6 +82,8 @@ class CFX_DIBBase : public Retainable {
 
   RetainPtr<CFX_DIBitmap> Realize() const;
   RetainPtr<CFX_DIBitmap> ClipTo(const FX_RECT& rect) const;
+  // `format` must be different from the existing format.
+  // Only supports `FXDIB_Format::kRgb` and `FXDIB_Format::k8bppRgb`.
   RetainPtr<CFX_DIBitmap> ConvertTo(FXDIB_Format format) const;
   RetainPtr<CFX_DIBitmap> StretchTo(int dest_width,
                                     int dest_height,
