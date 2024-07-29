@@ -366,9 +366,10 @@ CGdiDeviceDriver::CGdiDeviceDriver(HDC hDC, DeviceType device_type)
     m_Width = ::GetDeviceCaps(m_hDC, HORZRES);
     m_Height = ::GetDeviceCaps(m_hDC, VERTRES);
   }
-  m_RenderCaps = FXRC_BIT_MASK;
   if (m_DeviceType == DeviceType::kDisplay) {
-    m_RenderCaps |= FXRC_GET_BITS;
+    m_RenderCaps = FXRC_GET_BITS;
+  } else {
+    m_RenderCaps = 0;
   }
 }
 

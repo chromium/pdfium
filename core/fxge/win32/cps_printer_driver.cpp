@@ -107,7 +107,7 @@ int CPSPrinterDriver::GetDeviceCaps(int caps_id) const {
     case FXDC_BITS_PIXEL:
       return m_nBitsPerPixel;
     case FXDC_RENDER_CAPS:
-      return FXRC_BIT_MASK;
+      return 0;
     case FXDC_HORZ_SIZE:
       return m_HorzSize;
     case FXDC_VERT_SIZE:
