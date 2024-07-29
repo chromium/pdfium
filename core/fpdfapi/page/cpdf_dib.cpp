@@ -39,6 +39,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/zip.h"
 #include "core/fxge/calculate_pitch.h"
@@ -1201,13 +1202,13 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
     }
     uint32_t reset_argb = Get1BitResetValue();
     uint32_t set_argb = Get1BitSetValue();
-    uint32_t* dest_scan = reinterpret_cast<uint32_t*>(m_MaskBuf.data());
-    UNSAFE_TODO({
-      for (int col = 0; col < GetWidth(); col++, dest_scan++) {
-        *dest_scan = GetBitValue(pSrcLine.data(), col) ? set_argb : reset_argb;
-      }
-    });
-    return pdfium::make_span(m_MaskBuf).first(GetWidth() * sizeof(uint32_t));
+    auto mask32_span =
+        fxcrt::reinterpret_span<uint32_t>(pdfium::make_span(m_MaskBuf));
+    for (int col = 0; col < GetWidth(); col++) {
+      mask32_span[col] =
+          GetBitValue(pSrcLine.data(), col) ? set_argb : reset_argb;
+    }
+    return fxcrt::reinterpret_span<uint8_t>(mask32_span.first(GetWidth()));
   }
   if (m_bpc * m_nComponents <= 8) {
     pdfium::span<uint8_t> result = m_LineBuf;

@@ -234,8 +234,10 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
             start_y >= clip_box.Height()) {
           continue;
         }
-        uint32_t* dest_buf = reinterpret_cast<uint32_t*>(
-            pScreen->GetWritableScanline(start_y).subspan(start_x * 4).data());
+        uint32_t* dest_buf = fxcrt::reinterpret_span<uint32_t>(
+                                 pScreen->GetWritableScanline(start_y))
+                                 .subspan(start_x)
+                                 .data();
         if (pPattern->colored()) {
           const uint32_t* src_buf32 =
               fxcrt::reinterpret_span<const uint32_t>(src_buf).data();
