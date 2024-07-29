@@ -36,7 +36,6 @@ class CFWL_Barcode final : public CFWL_Edit {
   void SetType(BC_TYPE type);
   bool IsProtectedType() const;
 
-  void SetCharEncoding(BC_CHAR_ENCODING encoding);
   void SetModuleHeight(int32_t height);
   void SetModuleWidth(int32_t width);
   void SetDataLength(int32_t dataLength);
@@ -63,7 +62,6 @@ class CFWL_Barcode final : public CFWL_Edit {
   BC_TYPE m_type = BC_TYPE::kUnknown;
   Status m_eStatus = Status::kNormal;
   std::optional<BC_TEXT_LOC> m_eTextLocation;
-  std::optional<BC_CHAR_ENCODING> m_eCharEncoding;
   std::optional<bool> m_bCalChecksum;
   std::optional<bool> m_bPrintChecksum;
   std::optional<char> m_cStartChar;

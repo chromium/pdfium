@@ -93,17 +93,6 @@ const BarCodeInfo kBarCodeData[] = {
     {0xfb48155c, "code3Of9", BC_TYPE::kCode39},
 };
 
-std::optional<BC_CHAR_ENCODING> CharEncodingFromString(
-    const WideString& value) {
-  if (value.EqualsASCIINoCase("UTF-16")) {
-    return BC_CHAR_ENCODING::kUnicode;
-  }
-  if (value.EqualsASCIINoCase("UTF-8")) {
-    return BC_CHAR_ENCODING::kUTF8;
-  }
-  return std::nullopt;
-}
-
 std::optional<BC_TEXT_LOC> TextLocFromAttribute(XFA_AttributeValue value) {
   switch (value) {
     case XFA_AttributeValue::None:
@@ -199,14 +188,6 @@ void CXFA_FFBarcode::UpdateWidgetProperty() {
 
   auto* pBarCodeWidget = static_cast<CFWL_Barcode*>(GetNormalWidget());
   pBarCodeWidget->SetType(bc_type);
-
-  std::optional<WideString> encoding_string = barcode_->GetCharEncoding();
-  if (encoding_string.has_value()) {
-    std::optional<BC_CHAR_ENCODING> encoding =
-        CharEncodingFromString(encoding_string.value());
-    if (encoding.has_value())
-      pBarCodeWidget->SetCharEncoding(encoding.value());
-  }
 
   std::optional<bool> calcChecksum = barcode_->GetChecksum();
   if (calcChecksum.has_value())

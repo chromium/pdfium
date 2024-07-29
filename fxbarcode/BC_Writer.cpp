@@ -10,10 +10,6 @@ CBC_Writer::CBC_Writer() = default;
 
 CBC_Writer::~CBC_Writer() = default;
 
-void CBC_Writer::SetCharEncoding(BC_CHAR_ENCODING encoding) {
-  m_CharEncoding = encoding;
-}
-
 bool CBC_Writer::SetModuleHeight(int32_t moduleHeight) {
   if (moduleHeight > 10 || moduleHeight < 1)
     return false;

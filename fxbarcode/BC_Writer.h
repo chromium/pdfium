@@ -15,7 +15,6 @@ class CBC_Writer {
   CBC_Writer();
   virtual ~CBC_Writer();
 
-  void SetCharEncoding(BC_CHAR_ENCODING encoding);
   bool SetModuleHeight(int32_t moduleHeight);
   bool SetModuleWidth(int32_t moduleWidth);
   void SetHeight(int32_t height);
@@ -35,7 +34,6 @@ class CBC_Writer {
   int32_t m_ModuleWidth = 1;
   int32_t m_Height = 320;
   int32_t m_Width = 640;
-  BC_CHAR_ENCODING m_CharEncoding = BC_CHAR_ENCODING::kUTF8;
 };
 
 #endif  // FXBARCODE_BC_WRITER_H_

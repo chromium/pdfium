@@ -69,11 +69,6 @@ BC_TYPE CFX_Barcode::GetType() {
   return m_pBCEngine ? m_pBCEngine->GetType() : BC_TYPE::kUnknown;
 }
 
-void CFX_Barcode::SetCharEncoding(BC_CHAR_ENCODING encoding) {
-  if (m_pBCEngine)
-    m_pBCEngine->SetCharEncoding(encoding);
-}
-
 bool CFX_Barcode::SetModuleHeight(int32_t moduleHeight) {
   return m_pBCEngine && m_pBCEngine->SetModuleHeight(moduleHeight);
 }

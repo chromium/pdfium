@@ -32,7 +32,6 @@ const CXFA_Node::AttributeData kBarcodeAttributeData[] = {
      (void*)XFA_AttributeValue::UsCarrier},
     {XFA_Attribute::Checksum, XFA_AttributeType::Enum,
      (void*)XFA_AttributeValue::None},
-    {XFA_Attribute::CharEncoding, XFA_AttributeType::CData, (void*)L"UTF-8"},
     {XFA_Attribute::Usehref, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::DataColumnCount, XFA_AttributeType::CData, nullptr},
     {XFA_Attribute::RowColumnRatio, XFA_AttributeType::CData, nullptr},
@@ -69,10 +68,6 @@ XFA_FFWidgetType CXFA_Barcode::GetDefaultFFWidgetType() const {
 
 WideString CXFA_Barcode::GetBarcodeType() {
   return WideString(JSObject()->GetCData(XFA_Attribute::Type));
-}
-
-std::optional<WideString> CXFA_Barcode::GetCharEncoding() {
-  return JSObject()->TryCData(XFA_Attribute::CharEncoding, true);
 }
 
 std::optional<bool> CXFA_Barcode::GetChecksum() {

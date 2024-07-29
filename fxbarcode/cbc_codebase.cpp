@@ -50,10 +50,6 @@ bool CBC_CodeBase::SetErrorCorrectionLevel(int32_t level) {
   return m_pBCWriter->SetErrorCorrectionLevel(level);
 }
 
-void CBC_CodeBase::SetCharEncoding(BC_CHAR_ENCODING encoding) {
-  m_pBCWriter->SetCharEncoding(encoding);
-}
-
 bool CBC_CodeBase::SetModuleHeight(int32_t moduleHeight) {
   return m_pBCWriter->SetModuleHeight(moduleHeight);
 }

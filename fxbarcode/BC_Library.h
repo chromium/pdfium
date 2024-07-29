@@ -17,11 +17,6 @@ enum class BC_TEXT_LOC : uint8_t {
   kBelowEmbed,
 };
 
-enum class BC_CHAR_ENCODING : uint8_t {
-  kUTF8 = 0,
-  kUnicode,
-};
-
 enum class BC_TYPE : int8_t {
   kUnknown = -1,
   kCode39 = 0,

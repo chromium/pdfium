@@ -21,7 +21,6 @@ class CXFA_Barcode final : public CXFA_Node {
   XFA_FFWidgetType GetDefaultFFWidgetType() const override;
 
   WideString GetBarcodeType();
-  std::optional<WideString> GetCharEncoding();
   std::optional<bool> GetChecksum();
   std::optional<int32_t> GetDataLength();
   std::optional<char> GetStartChar();

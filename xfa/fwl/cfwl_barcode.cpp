@@ -90,10 +90,6 @@ void CFWL_Barcode::OnProcessEvent(CFWL_Event* pEvent) {
   CFWL_Edit::OnProcessEvent(pEvent);
 }
 
-void CFWL_Barcode::SetCharEncoding(BC_CHAR_ENCODING encoding) {
-  m_eCharEncoding = encoding;
-}
-
 void CFWL_Barcode::SetModuleHeight(int32_t height) {
   m_nModuleHeight = height;
 }
@@ -154,8 +150,6 @@ void CFWL_Barcode::GenerateBarcodeImageCache() {
   m_pBarcodeEngine->SetFontColor(pTheme->GetTextColor(part));
   m_pBarcodeEngine->SetHeight(int32_t(GetRTClient().height));
   m_pBarcodeEngine->SetWidth(int32_t(GetRTClient().width));
-  if (m_eCharEncoding.has_value())
-    m_pBarcodeEngine->SetCharEncoding(m_eCharEncoding.value());
   if (m_nModuleHeight.has_value())
     m_pBarcodeEngine->SetModuleHeight(m_nModuleHeight.value());
   if (m_nModuleWidth.has_value())
