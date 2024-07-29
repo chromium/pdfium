@@ -849,15 +849,7 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   if (dest_format == FXDIB_Format::kArgb &&
       GetFormat() == FXDIB_Format::kRgb32) {
     SetFormat(FXDIB_Format::kArgb);
-    UNSAFE_TODO({
-      for (int row = 0; row < GetHeight(); row++) {
-        uint8_t* scanline = m_pBuffer.Get() + row * GetPitch() + 3;
-        for (int col = 0; col < GetWidth(); col++) {
-          *scanline = 0xff;
-          scanline += 4;
-        }
-      }
-    });
+    SetUniformOpaqueAlpha();
     return true;
   }
   int dest_bpp = GetBppFromFormat(dest_format);
