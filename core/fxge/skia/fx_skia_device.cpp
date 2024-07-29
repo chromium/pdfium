@@ -1565,8 +1565,7 @@ bool CFX_SkiaDeviceDriver::SyncInternalBitmaps() {
   DCHECK_EQ(width, m_pBitmap->GetWidth());
   DCHECK_EQ(height, m_pBitmap->GetHeight());
   DCHECK_EQ(FXDIB_Format::kRgb, m_pOriginalBitmap->GetFormat());
-  m_pOriginalBitmap->TransferBitmap(/*dest_left=*/0, /*dest_top=*/0, width,
-                                    height, m_pBitmap, /*src_left=*/0,
+  m_pOriginalBitmap->TransferBitmap(width, height, m_pBitmap, /*src_left=*/0,
                                     /*src_top=*/0);
   return true;
 }

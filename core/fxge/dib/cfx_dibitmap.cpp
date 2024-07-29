@@ -190,9 +190,7 @@ void CFX_DIBitmap::Clear(uint32_t color) {
   }
 }
 
-bool CFX_DIBitmap::TransferBitmap(int dest_left,
-                                  int dest_top,
-                                  int width,
+bool CFX_DIBitmap::TransferBitmap(int width,
                                   int height,
                                   RetainPtr<const CFX_DIBBase> source,
                                   int src_left,
@@ -200,6 +198,8 @@ bool CFX_DIBitmap::TransferBitmap(int dest_left,
   if (!m_pBuffer)
     return false;
 
+  int dest_left = 0;
+  int dest_top = 0;
   if (!GetOverlapRect(dest_left, dest_top, width, height, source->GetWidth(),
                       source->GetHeight(), src_left, src_top, nullptr)) {
     return true;

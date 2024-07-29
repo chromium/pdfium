@@ -84,9 +84,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   bool MultiplyAlpha(float alpha);
   bool MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask);
 
-  bool TransferBitmap(int dest_left,
-                      int dest_top,
-                      int width,
+  bool TransferBitmap(int width,
                       int height,
                       RetainPtr<const CFX_DIBBase> source,
                       int src_left,

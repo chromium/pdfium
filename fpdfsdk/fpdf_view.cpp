@@ -537,7 +537,7 @@ RetainPtr<CFX_DIBitmap> GetMaskBitmap(CPDF_Page* pPage,
     return nullptr;
   }
   pDst->Clear(0x00ffffff);
-  pDst->TransferBitmap(0, 0, bitmap_area->Width(), bitmap_area->Height(),
+  pDst->TransferBitmap(bitmap_area->Width(), bitmap_area->Height(),
                        std::move(source), bitmap_area->left, bitmap_area->top);
   return pDst;
 }

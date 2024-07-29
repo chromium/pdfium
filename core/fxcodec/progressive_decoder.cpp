@@ -846,7 +846,7 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
     m_status = FXCODEC_STATUS::kError;
     return m_status;
   }
-  m_pDeviceBitmap->TransferBitmap(0, 0, m_SrcWidth, m_SrcHeight,
+  m_pDeviceBitmap->TransferBitmap(m_SrcWidth, m_SrcHeight,
                                   std::move(pStrechBitmap), 0, 0);
   m_pDeviceBitmap = nullptr;
   m_pFile = nullptr;

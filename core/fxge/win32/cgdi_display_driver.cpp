@@ -65,8 +65,7 @@ bool CGdiDisplayDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
       bmi.bmiHeader.biBitCount = 24;
       ::GetDIBits(hDCMemory, hbmp, 0, height,
                   rgb_bitmap->GetWritableBuffer().data(), &bmi, DIB_RGB_COLORS);
-      ret = bitmap->TransferBitmap(0, 0, width, height, std::move(rgb_bitmap),
-                                   0, 0);
+      ret = bitmap->TransferBitmap(width, height, std::move(rgb_bitmap), 0, 0);
     } else {
       ret = false;
     }
