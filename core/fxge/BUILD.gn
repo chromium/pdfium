@@ -217,6 +217,7 @@ pdfium_unittest_source_set("unittests") {
     "dib/cfx_dibbase_unittest.cpp",
     "dib/cfx_dibitmap_unittest.cpp",
     "dib/cstretchengine_unittest.cpp",
+    "dib/fx_dib_unittest.cpp",
     "fx_font_unittest.cpp",
   ]
   deps = [

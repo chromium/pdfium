@@ -234,4 +234,20 @@ UNSAFE_BUFFER_USAGE inline void ReverseCopy3Bytes(uint8_t* dest,
   UNSAFE_BUFFERS(dest[0] = src[2]);
 }
 
+#if defined(PDF_USE_SKIA)
+template <typename T>
+T PreMultiplyColor(const T& input) {
+  if (input.alpha == 255) {
+    return input;
+  }
+
+  T output;
+  output.alpha = input.alpha;
+  output.blue = static_cast<float>(input.blue) * input.alpha / 255.0f;
+  output.green = static_cast<float>(input.green) * input.alpha / 255.0f;
+  output.red = static_cast<float>(input.red) * input.alpha / 255.0f;
+  return output;
+}
+#endif  // defined(PDF_USE_SKIA)
+
 #endif  // CORE_FXGE_DIB_FX_DIB_H_
