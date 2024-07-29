@@ -161,7 +161,7 @@ bool CJBig2_HuffmanTable::ParseFromStandardTable(size_t idx) {
       RANGELOW[i] = pTable[i].RANGELOW;
     }
   });
-  return CJBig2_Context::HuffmanAssignCode(CODES.data(), NTEMP);
+  return CJBig2_Context::HuffmanAssignCode(CODES);
 }
 
 bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
@@ -227,7 +227,8 @@ bool CJBig2_HuffmanTable::ParseFromCodedBuffer(CJBig2_BitStream* pStream) {
     ++NTEMP;
   }
 
-  return CJBig2_Context::HuffmanAssignCode(CODES.data(), NTEMP);
+  return CJBig2_Context::HuffmanAssignCode(
+      pdfium::make_span(CODES).first(NTEMP));
 }
 
 void CJBig2_HuffmanTable::ExtendBuffers(bool increment) {

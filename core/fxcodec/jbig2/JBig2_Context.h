@@ -41,7 +41,7 @@ class CJBig2_Context {
 
   ~CJBig2_Context();
 
-  static bool HuffmanAssignCode(JBig2HuffmanCode* SBSYMCODES, uint32_t NTEMP);
+  static bool HuffmanAssignCode(pdfium::span<JBig2HuffmanCode> symcodes);
 
   bool GetFirstPage(pdfium::span<uint8_t> pBuf,
                     int32_t width,

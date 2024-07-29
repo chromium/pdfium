@@ -1123,7 +1123,7 @@ std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(
     if (m_pStream->readNBits(4, &huffman_codes[i].codelen) != 0)
       return std::vector<JBig2HuffmanCode>();
   }
-  if (!HuffmanAssignCode(huffman_codes.data(), kRunCodesSize)) {
+  if (!HuffmanAssignCode(huffman_codes)) {
     return std::vector<JBig2HuffmanCode>();
   }
 
@@ -1184,8 +1184,9 @@ std::vector<JBig2HuffmanCode> CJBig2_Context::DecodeSymbolIDHuffmanTable(
       ++i;
     }
   }
-  if (!HuffmanAssignCode(SBSYMCODES.data(), SBNUMSYMS))
+  if (!HuffmanAssignCode(SBSYMCODES)) {
     return std::vector<JBig2HuffmanCode>();
+  }
   return SBSYMCODES;
 }
 
@@ -1198,35 +1199,32 @@ const CJBig2_HuffmanTable* CJBig2_Context::GetHuffmanTable(size_t idx) {
 }
 
 // static
-bool CJBig2_Context::HuffmanAssignCode(JBig2HuffmanCode* SBSYMCODES,
-                                       uint32_t NTEMP) {
-  int LENMAX = 0;
-  for (uint32_t i = 0; i < NTEMP; ++i) {
-    LENMAX = std::max(UNSAFE_TODO(SBSYMCODES[i].codelen), LENMAX);
+bool CJBig2_Context::HuffmanAssignCode(
+    pdfium::span<JBig2HuffmanCode> symcodes) {
+  int lenmax = 0;
+  for (const auto& symcode : symcodes) {
+    lenmax = std::max(symcode.codelen, lenmax);
   }
-  std::vector<int> LENCOUNT(LENMAX + 1);
-  std::vector<int> FIRSTCODE(LENMAX + 1);
-  for (uint32_t i = 0; i < NTEMP; ++i) {
-    UNSAFE_TODO(++LENCOUNT[SBSYMCODES[i].codelen]);
+  std::vector<int> lencounts(lenmax + 1);
+  std::vector<int> firstcodes(lenmax + 1);
+  for (const auto& symcode : symcodes) {
+    ++lencounts[symcode.codelen];
   }
-  LENCOUNT[0] = 0;
-
-  for (int i = 1; i <= LENMAX; ++i) {
-    FX_SAFE_INT32 shifted = FIRSTCODE[i - 1];
-    shifted += LENCOUNT[i - 1];
+  lencounts[0] = 0;
+  for (int i = 1; i <= lenmax; ++i) {
+    FX_SAFE_INT32 shifted = firstcodes[i - 1];
+    shifted += lencounts[i - 1];
     shifted <<= 1;
-    if (!shifted.IsValid())
+    if (!shifted.IsValid()) {
       return false;
-
-    FIRSTCODE[i] = shifted.ValueOrDie();
-    int CURCODE = FIRSTCODE[i];
-    UNSAFE_TODO({
-      for (uint32_t j = 0; j < NTEMP; ++j) {
-        if (SBSYMCODES[j].codelen == i) {
-          SBSYMCODES[j].code = CURCODE++;
-        }
+    }
+    firstcodes[i] = shifted.ValueOrDie();
+    int curcode = firstcodes[i];
+    for (auto& symcode : symcodes) {
+      if (symcode.codelen == i) {
+        symcode.code = curcode++;
       }
-    });
+    }
   }
   return true;
 }
