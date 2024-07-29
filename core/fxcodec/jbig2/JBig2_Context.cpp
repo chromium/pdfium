@@ -422,9 +422,9 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
   }
   pSymbolDictDecoder->SDNUMINSYMS = dwNumSyms.ValueOrDie();
 
-  std::unique_ptr<CJBig2_Image*, FxFreeDeleter> SDINSYMS;
-  if (pSymbolDictDecoder->SDNUMINSYMS != 0) {
-    SDINSYMS.reset(FX_Alloc(CJBig2_Image*, pSymbolDictDecoder->SDNUMINSYMS));
+  std::vector<UnownedPtr<CJBig2_Image>> SDINSYMS(
+      pSymbolDictDecoder->SDNUMINSYMS);
+  if (!SDINSYMS.empty()) {
     dwNumSyms = 0;
     for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
       CJBig2_Segment* pSeg =
@@ -433,13 +433,13 @@ JBig2_Result CJBig2_Context::ParseSymbolDict(CJBig2_Segment* pSegment) {
         const CJBig2_SymbolDict& dict = *pSeg->m_SymbolDict;
         for (uint32_t j = 0; j < dict.NumImages(); ++j) {
           uint32_t dwTemp = (dwNumSyms + j).ValueOrDie();
-          UNSAFE_TODO(SDINSYMS.get()[dwTemp] = dict.GetImage(j));
+          SDINSYMS[dwTemp] = dict.GetImage(j);
         }
         dwNumSyms += dict.NumImages();
       }
     }
   }
-  pSymbolDictDecoder->SDINSYMS = SDINSYMS.get();
+  pSymbolDictDecoder->SDINSYMS = std::move(SDINSYMS);
 
   uint8_t cSDHUFFDH = (wFlags >> 2) & 0x0003;
   uint8_t cSDHUFFDW = (wFlags >> 4) & 0x0003;
@@ -639,9 +639,8 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
   }
   pTRD->SBNUMSYMS = dwNumSyms.ValueOrDie();
 
-  std::unique_ptr<CJBig2_Image*, FxFreeDeleter> SBSYMS;
-  if (pTRD->SBNUMSYMS > 0) {
-    SBSYMS.reset(FX_Alloc(CJBig2_Image*, pTRD->SBNUMSYMS));
+  std::vector<UnownedPtr<CJBig2_Image>> SBSYMS(pTRD->SBNUMSYMS);
+  if (!SBSYMS.empty()) {
     dwNumSyms = 0;
     for (int32_t i = 0; i < pSegment->m_nReferred_to_segment_count; ++i) {
       CJBig2_Segment* pSeg =
@@ -650,15 +649,13 @@ JBig2_Result CJBig2_Context::ParseTextRegion(CJBig2_Segment* pSegment) {
         const CJBig2_SymbolDict& dict = *pSeg->m_SymbolDict;
         for (uint32_t j = 0; j < dict.NumImages(); ++j) {
           uint32_t dwIndex = (dwNumSyms + j).ValueOrDie();
-          UNSAFE_TODO(SBSYMS.get()[dwIndex] = dict.GetImage(j));
+          SBSYMS[dwIndex] = dict.GetImage(j);
         }
         dwNumSyms += dict.NumImages();
       }
     }
-    pTRD->SBSYMS = SBSYMS.get();
-  } else {
-    pTRD->SBSYMS = nullptr;
   }
+  pTRD->SBSYMS = std::move(SBSYMS);
 
   if (pTRD->SBHUFF) {
     std::vector<JBig2HuffmanCode> SBSYMCODES =

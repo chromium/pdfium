@@ -22,6 +22,7 @@
 #include "core/fxcodec/jbig2/JBig2_TrdProc.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/stl_util.h"
 
 CJBig2_SDDProc::CJBig2_SDDProc() = default;
 
@@ -125,13 +126,13 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeArith(
           }
           uint8_t SBSYMCODELEN = (uint8_t)nTmp;
           pDecoder->SBSYMCODELEN = SBSYMCODELEN;
-          std::vector<CJBig2_Image*> SBSYMS;  // Pointers are not owned
-          SBSYMS.resize(pDecoder->SBNUMSYMS);
-          std::copy(SDINSYMS, UNSAFE_TODO(SDINSYMS + SDNUMINSYMS),
-                    SBSYMS.begin());
-          for (size_t i = 0; i < NSYMSDECODED; ++i)
+          std::vector<UnownedPtr<CJBig2_Image>> SBSYMS(pDecoder->SBNUMSYMS);
+          fxcrt::Copy(pdfium::make_span(SDINSYMS).first(SDNUMINSYMS),
+                      pdfium::make_span(SBSYMS));
+          for (size_t i = 0; i < NSYMSDECODED; ++i) {
             SBSYMS[i + SDNUMINSYMS] = SDNEWSYMS[i].get();
-          pDecoder->SBSYMS = SBSYMS.data();
+          }
+          pDecoder->SBSYMS = std::move(SBSYMS);
           pDecoder->SBDEFPIXEL = false;
           pDecoder->SBCOMBOP = JBIG2_COMPOSE_OR;
           pDecoder->TRANSPOSED = false;
@@ -320,13 +321,13 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
             SBSYMCODES[i].code = i;
           }
           pDecoder->SBSYMCODES = std::move(SBSYMCODES);
-          std::vector<CJBig2_Image*> SBSYMS;  // Pointers are not owned
-          SBSYMS.resize(pDecoder->SBNUMSYMS);
-          std::copy(SDINSYMS, UNSAFE_TODO(SDINSYMS + SDNUMINSYMS),
-                    SBSYMS.begin());
-          for (size_t i = 0; i < NSYMSDECODED; ++i)
+          std::vector<UnownedPtr<CJBig2_Image>> SBSYMS(pDecoder->SBNUMSYMS);
+          fxcrt::Copy(pdfium::make_span(SDINSYMS).first(SDNUMINSYMS),
+                      pdfium::make_span(SBSYMS));
+          for (size_t i = 0; i < NSYMSDECODED; ++i) {
             SBSYMS[i + SDNUMINSYMS] = SDNEWSYMS[i].get();
-          pDecoder->SBSYMS = SBSYMS.data();
+          }
+          pDecoder->SBSYMS = std::move(SBSYMS);
           pDecoder->SBDEFPIXEL = false;
           pDecoder->SBCOMBOP = JBIG2_COMPOSE_OR;
           pDecoder->TRANSPOSED = false;
@@ -509,6 +510,5 @@ std::unique_ptr<CJBig2_SymbolDict> CJBig2_SDDProc::DecodeHuffman(
 CJBig2_Image* CJBig2_SDDProc::GetImage(
     uint32_t i,
     pdfium::span<const std::unique_ptr<CJBig2_Image>> new_syms) const {
-  return i < SDNUMINSYMS ? UNSAFE_TODO(SDINSYMS[i])
-                         : new_syms[i - SDNUMINSYMS].get();
+  return i < SDNUMINSYMS ? SDINSYMS[i].get() : new_syms[i - SDNUMINSYMS].get();
 }
