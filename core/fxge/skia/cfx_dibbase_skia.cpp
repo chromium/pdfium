@@ -255,6 +255,8 @@ sk_sp<SkImage> CFX_DIBBase::RealizeSkImage() const {
               return SkPackARGB32(0xFF, red, green, blue);
             });
       }
+      // TODO(crbug.com/42271020): Consider adding support for
+      // `FXDIB_Format::kArgbPremul`
       CHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
       return CreateSkiaImageFromDib(
           this, kBGRA_8888_SkColorType,

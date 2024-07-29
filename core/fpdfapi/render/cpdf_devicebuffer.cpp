@@ -77,6 +77,8 @@ CPDF_DeviceBuffer::~CPDF_DeviceBuffer() = default;
 RetainPtr<CFX_DIBitmap> CPDF_DeviceBuffer::Initialize() {
   FX_RECT bitmap_rect =
       m_Matrix.TransformRect(CFX_FloatRect(m_Rect)).GetOuterRect();
+  // TODO(crbug.com/355630557): Consider adding support for
+  // `FXDIB_Format::kArgbPremul`
   if (!m_pBitmap->Create(bitmap_rect.Width(), bitmap_rect.Height(),
                          FXDIB_Format::kArgb)) {
     return nullptr;

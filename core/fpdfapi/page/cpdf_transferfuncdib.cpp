@@ -14,6 +14,10 @@
 #include "core/fxcrt/zip.h"
 #include "core/fxge/calculate_pitch.h"
 
+#if defined(PDF_USE_SKIA)
+#include "core/fxcrt/notreached.h"
+#endif
+
 namespace {
 
 CFX_DIBBase::kPlatformRGBStruct MakePlatformRGBStruct(uint8_t red,
@@ -53,6 +57,8 @@ FXDIB_Format CPDF_TransferFuncDIB::GetDestFormat() const {
   }
 
   if (src_->IsAlphaFormat()) {
+    // TODO(crbug.com/355676038): Consider adding support for
+    // `FXDIB_Format::kArgbPremul`
     return FXDIB_Format::kArgb;
   }
 
@@ -150,6 +156,13 @@ void CPDF_TransferFuncDIB::TranslateScanline(
       }
       break;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      // TODO(crbug.com/355676038): Consider adding support for
+      // `FXDIB_Format::kArgbPremul`
+      NOTREACHED_NORETURN();
+    }
+#endif
   }
 }
 

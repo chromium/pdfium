@@ -2426,6 +2426,13 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcRgbx(
                                          m_BlendType, src_Bpp);
       return;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      // TODO(crbug.com/42271020): Consider adding support for
+      // `FXDIB_Format::kArgbPremul`
+      NOTREACHED_NORETURN();
+    }
+#endif
   }
 }
 
@@ -2486,6 +2493,13 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcArgb(
                              clip_scan);
       return;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      // TODO(crbug.com/42271020): Consider adding support for
+      // `FXDIB_Format::kArgbPremul`
+      NOTREACHED_NORETURN();
+    }
+#endif
   }
 }
 
@@ -2555,6 +2569,13 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp1(
                                         clip_scan);
       return;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      // TODO(crbug.com/42271020): Consider adding support for
+      // `FXDIB_Format::kArgbPremul`
+      NOTREACHED_NORETURN();
+    }
+#endif
   }
 }
 
@@ -2609,6 +2630,13 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp8(
                                         clip_scan);
       return;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      // TODO(crbug.com/42271020): Consider adding support for
+      // `FXDIB_Format::kArgbPremul`
+      NOTREACHED_NORETURN();
+    }
+#endif
   }
 }
 
@@ -2663,6 +2691,13 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(
                                  clip_scan);
       return;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      // TODO(crbug.com/42271020): Consider adding support for
+      // `FXDIB_Format::kArgbPremul`
+      NOTREACHED_NORETURN();
+    }
+#endif
   }
 }
 
@@ -2719,6 +2754,13 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(
                                 m_BlendType, clip_scan);
       return;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      // TODO(crbug.com/42271020): Consider adding support for
+      // `FXDIB_Format::kArgbPremul`
+      NOTREACHED_NORETURN();
+    }
+#endif
   }
 }
 

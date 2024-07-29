@@ -17,6 +17,7 @@
 // - Bits-per-pixel: value & 0xFF
 // - Is mask: value & 0x100
 // - Has alpha: value & 0x200
+// - Is premultiplied-alpha: value & 0x400
 enum class FXDIB_Format : uint16_t {
   kInvalid = 0,
   k1bppRgb = 0x001,
@@ -26,6 +27,9 @@ enum class FXDIB_Format : uint16_t {
   k1bppMask = 0x101,
   k8bppMask = 0x108,
   kArgb = 0x220,
+#if defined(PDF_USE_SKIA)
+  kArgbPremul = 0x620,
+#endif
 };
 
 // Endian-dependent (in theory).
@@ -164,6 +168,10 @@ inline int GetCompsFromFormat(FXDIB_Format format) {
 
 inline bool GetIsMaskFromFormat(FXDIB_Format format) {
   return !!(static_cast<uint16_t>(format) & 0x100);
+}
+
+inline bool GetIsAlphaFromFormat(FXDIB_Format format) {
+  return !!(static_cast<uint16_t>(format) & 0x200);
 }
 
 FX_BGRA_STRUCT<uint8_t> ArgbToBGRAStruct(FX_ARGB argb);

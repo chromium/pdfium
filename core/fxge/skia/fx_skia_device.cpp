@@ -620,6 +620,8 @@ void SetBitmapPaintForMerge(bool is_mask,
 // Makes a bitmap filled with a solid color for debugging with `SkPicture`.
 RetainPtr<CFX_DIBitmap> MakeDebugBitmap(int width, int height, uint32_t color) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  // TODO(crbug.com/42271020): Consider adding support for
+  // `FXDIB_Format::kArgbPremul`
   if (!bitmap->Create(width, height, FXDIB_Format::kArgb))
     return nullptr;
 
@@ -714,6 +716,8 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
     // equivalent at `m_pBitmap` for Skia's internal process.
     m_pOriginalBitmap = std::move(m_pBitmap);
     m_pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+    // TODO(crbug.com/42271020): Consider adding support for
+    // `FXDIB_Format::kArgbPremul`
     if (!m_pBitmap->Copy(m_pOriginalBitmap) ||
         !m_pBitmap->ConvertFormat(FXDIB_Format::kArgb)) {
       // Skip creating SkCanvas if the 32-bpp bitmap creation fails.

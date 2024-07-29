@@ -901,6 +901,8 @@ void CFX_DIBBase::TakePalette(DataVector<uint32_t> src_palette) {
 }
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneAlphaMask() const {
+  // TODO(crbug.com/355676038): Consider adding support for
+  // `FXDIB_Format::kArgbPremul`
   DCHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
   auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pMask->Create(GetWidth(), GetHeight(), FXDIB_Format::k8bppMask)) {
@@ -1235,5 +1237,12 @@ DataVector<uint32_t> CFX_DIBBase::ConvertBuffer(
                          height, pSrcBitmap, src_left, src_top);
       return {};
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      // TODO(crbug.com/42271020): Consider adding support for
+      // `FXDIB_Format::kArgbPremul`
+      NOTREACHED_NORETURN();
+    }
+#endif
   }
 }

@@ -249,6 +249,13 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
     case FXDIB_Format::kInvalid: {
       NOTREACHED_NORETURN();
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      // TODO(crbug.com/355676038): Consider adding support for
+      // `FXDIB_Format::kArgbPremul`
+      NOTREACHED_NORETURN();
+    }
+#endif
   }
 
   RetainPtr<CFX_DIBitmap> pBitmap;

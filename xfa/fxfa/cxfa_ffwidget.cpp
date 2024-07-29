@@ -51,6 +51,8 @@ FXDIB_Format XFA_GetDIBFormat(FXCODEC_IMAGE_TYPE type, int32_t bpp) {
     case FXCODEC_IMAGE_PNG:
 #endif  // PDF_ENABLE_XFA_PNG
     default:
+      // TODO(crbug.com/355630556): Consider adding support for
+      // `FXDIB_Format::kArgbPremul`
       return FXDIB_Format::kArgb;
   }
 }

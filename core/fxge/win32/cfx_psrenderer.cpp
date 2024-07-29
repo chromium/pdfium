@@ -22,6 +22,7 @@
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/stl_util.h"
@@ -571,8 +572,13 @@ bool CFX_PSRenderer::DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,
       case FXDIB_Format::k1bppMask:
       case FXDIB_Format::k8bppMask:
       case FXDIB_Format::kRgb:
-      case FXDIB_Format::kArgb:
         break;
+      case FXDIB_Format::kArgb:
+#if defined(PDF_USE_SKIA)
+      case FXDIB_Format::kArgbPremul:
+#endif
+        // Should have returned early due to IsAlphaFormat() check above.
+        NOTREACHED_NORETURN();
     }
     if (!bitmap) {
       WriteString("\nQ\n");

@@ -122,6 +122,12 @@ bool ProgressiveDecoder::PngReadHeader(int width,
     case FXDIB_Format::kArgb:
       *color_type = 6;
       break;
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul:
+      // TODO(crbug.com/355630556): Consider adding support for
+      // `FXDIB_Format::kArgbPremul`
+      NOTREACHED_NORETURN();
+#endif
   }
   *gamma = kPngGamma;
   return true;
@@ -737,6 +743,8 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
     return m_status;
   }
 
+  // TODO(crbug.com/355630556): Consider adding support for
+  // `FXDIB_Format::kArgbPremul`
   auto pDIBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pDIBitmap->Create(m_SrcWidth, m_SrcHeight, FXDIB_Format::kArgb)) {
     m_pDeviceBitmap = nullptr;
@@ -774,6 +782,12 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
       pFormatBitmap = pDIBitmap;
       created_format_bitmap = true;
       break;
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul:
+      // TODO(crbug.com/355630556): Consider adding support for
+      // `FXDIB_Format::kArgbPremul`
+      NOTREACHED_NORETURN();
+#endif
   }
   if (!created_format_bitmap) {
     m_pDeviceBitmap = nullptr;
@@ -813,6 +827,12 @@ FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
       }
       case FXDIB_Format::kArgb:
         break;
+#if defined(PDF_USE_SKIA)
+      case FXDIB_Format::kArgbPremul:
+        // TODO(crbug.com/355630556): Consider adding support for
+        // `FXDIB_Format::kArgbPremul`
+        NOTREACHED_NORETURN();
+#endif
     }
   });
   FXDIB_ResampleOptions options;
@@ -1038,6 +1058,12 @@ void ProgressiveDecoder::SetTransMethod() {
       }
       break;
     }
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul:
+      // TODO(crbug.com/355630556): Consider adding support for
+      // `FXDIB_Format::kArgbPremul`
+      NOTREACHED_NORETURN();
+#endif
   }
 }
 

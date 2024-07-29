@@ -176,6 +176,17 @@ void CFX_DIBitmap::Clear(uint32_t color) {
         fxcrt::Fill(GetWritableScanlineAs<uint32_t>(row), color);
       }
       break;
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul: {
+      CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+      const FX_BGRA_STRUCT<uint8_t> bgra =
+          PreMultiplyColor(ArgbToBGRAStruct(color));
+      for (int row = 0; row < GetHeight(); row++) {
+        fxcrt::Fill(GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row), bgra);
+      }
+      break;
+    }
+#endif  // defined(PDF_USE_SKIA)
   }
 }
 
@@ -321,6 +332,8 @@ bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
   CHECK(m_pBuffer);
 
   if (GetFormat() == FXDIB_Format::kRgb32) {
+    // TODO(crbug.com/42271020): Consider adding support for
+    // `FXDIB_Format::kArgbPremul`
     if (!ConvertFormat(FXDIB_Format::kArgb)) {
       return false;
     }
@@ -363,6 +376,8 @@ bool CFX_DIBitmap::MultiplyAlpha(float alpha) {
     return false;
   }
 
+  // TODO(crbug.com/42271020): Consider adding support for
+  // `FXDIB_Format::kArgbPremul`
   if (!ConvertFormat(FXDIB_Format::kArgb)) {
     return false;
   }
@@ -416,6 +431,11 @@ uint32_t CFX_DIBitmap::GetPixelForTesting(int x, int y) const {
       return UNSAFE_TODO(FXARGB_GetDIB(pos) | 0xff000000);
     case FXDIB_Format::kArgb:
       return UNSAFE_TODO(FXARGB_GetDIB(pos));
+    case FXDIB_Format::kArgbPremul: {
+      // TODO(crbug.com/42271020): Consider testing with
+      // `FXDIB_Format::kArgbPremul`
+      NOTREACHED_NORETURN();
+    }
   }
 }
 #endif  // defined(PDF_USE_SKIA)
@@ -761,6 +781,9 @@ bool CFX_DIBitmap::CompositeRect(int left,
   const bool bAlpha = IsAlphaFormat();
   if (bAlpha) {
     // Other formats with alpha have already been handled above.
+    //
+    // TODO(crbug.com/42271020): Consider adding support for
+    // `FXDIB_Format::kArgbPremul`
     DCHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
   }
   if (src_alpha == 255) {
@@ -832,6 +855,8 @@ bool CFX_DIBitmap::CompositeRect(int left,
 }
 
 bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
+  // TODO(crbug.com/42271020): Consider adding support for
+  // `FXDIB_Format::kArgbPremul`
   DCHECK(dest_format == FXDIB_Format::k8bppMask ||
          dest_format == FXDIB_Format::kArgb ||
          dest_format == FXDIB_Format::kRgb32 ||

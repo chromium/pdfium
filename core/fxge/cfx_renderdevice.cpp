@@ -215,7 +215,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
                           bool normalize,
                           int x_subpixel,
                           const FX_BGRA_STRUCT<uint8_t>& bgra) {
-  const bool has_alpha = bitmap->GetFormat() == FXDIB_Format::kArgb;
+  const bool has_alpha = bitmap->IsAlphaFormat();
   const int Bpp = has_alpha ? 4 : bitmap->GetBPP() / 8;
   for (int row = 0; row < nrows; ++row) {
     int dest_row = row + top;
@@ -468,10 +468,14 @@ bool GetZeroAreaPath(pdfium::span<const CFX_Path::Point> points,
 }
 
 FXDIB_Format GetCreateCompatibleBitmapFormat(int render_caps) {
-  if (render_caps & FXRC_BYTEMASK_OUTPUT)
+  if (render_caps & FXRC_BYTEMASK_OUTPUT) {
     return FXDIB_Format::k8bppMask;
-  if (render_caps & FXRC_ALPHA_OUTPUT)
+  }
+  if (render_caps & FXRC_ALPHA_OUTPUT) {
+    // TODO(crbug.com/42271020): Consider adding support for
+    // `FXDIB_Format::kArgbPremul`
     return FXDIB_Format::kArgb;
+  }
   return CFX_DIBBase::kPlatformRGBFormat;
 }
 

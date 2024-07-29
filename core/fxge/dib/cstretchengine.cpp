@@ -204,6 +204,8 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
       m_DestHeight(dest_height),
       m_DestClip(clip_rect) {
   if (m_bHasAlpha) {
+    // TODO(crbug.com/42271020): Consider adding support for
+    // `FXDIB_Format::kArgbPremul`
     DCHECK_EQ(m_DestFormat, FXDIB_Format::kArgb);
     DCHECK_EQ(m_DestBpp, GetBppFromFormat(FXDIB_Format::kArgb));
     DCHECK_EQ(m_pSource->GetFormat(), FXDIB_Format::kArgb);

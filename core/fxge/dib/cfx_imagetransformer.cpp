@@ -241,6 +241,8 @@ void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
     return;
 
   auto pTransformed = pdfium::MakeRetain<CFX_DIBitmap>();
+  // TODO(crbug.com/42271020): Consider adding support for
+  // `FXDIB_Format::kArgbPremul`
   FXDIB_Format format = m_Stretcher->source()->IsMaskFormat()
                             ? FXDIB_Format::k8bppMask
                             : FXDIB_Format::kArgb;

@@ -43,6 +43,8 @@ class XFACodecFuzzer {
       return 0;
     }
 
+    // TODO(crbug.com/355630556): Consider adding support for
+    // `FXDIB_Format::kArgbPremul`
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!bitmap->Create(decoder->GetWidth(), decoder->GetHeight(),
                         FXDIB_Format::kArgb)) {

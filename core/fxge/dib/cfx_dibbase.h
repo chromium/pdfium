@@ -65,7 +65,7 @@ class CFX_DIBBase : public Retainable {
   FXDIB_Format GetFormat() const { return format_; }
   int GetBPP() const { return GetBppFromFormat(GetFormat()); }
   bool IsMaskFormat() const { return GetIsMaskFromFormat(GetFormat()); }
-  bool IsAlphaFormat() const { return GetFormat() == FXDIB_Format::kArgb; }
+  bool IsAlphaFormat() const { return GetIsAlphaFromFormat(GetFormat()); }
   bool IsOpaqueImage() const { return !IsMaskFormat() && !IsAlphaFormat(); }
 
   bool HasPalette() const { return !palette_.empty(); }

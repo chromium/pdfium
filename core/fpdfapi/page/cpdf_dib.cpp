@@ -280,6 +280,8 @@ bool CPDF_DIB::ContinueInternal() {
   m_LineBuf = DataVector<uint8_t>(pitch.value());
   LoadPalette();
   if (m_bColorKey) {
+    // TODO(crbug.com/355676038): Consider adding support for
+    // `FXDIB_Format::kArgbPremul`
     SetFormat(FXDIB_Format::kArgb);
     pitch = fxge::CalculatePitch32(GetBPP(), GetWidth());
     if (!pitch.has_value())
