@@ -92,7 +92,7 @@ class ProgressiveDecoder final :
                      int pass,
                      int* color_type,
                      double* gamma) override;
-  bool PngAskScanlineBuf(int line, uint8_t** pSrcBuf) override;
+  uint8_t* PngAskScanlineBuf(int line) override;
   void PngFillScanlineBufCompleted(int pass, int line) override;
 #endif  // PDF_ENABLE_XFA_PNG
 

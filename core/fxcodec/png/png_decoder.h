@@ -31,9 +31,8 @@ class PngDecoder {
                                int* color_type,
                                double* gamma) = 0;
 
-    // Returns true on success. |pSrcBuf| will be set if this succeeds.
-    // |pSrcBuf| does not take ownership of the buffer.
-    virtual bool PngAskScanlineBuf(int line, uint8_t** pSrcBuf) = 0;
+    // `line` must be within [0, height].
+    virtual uint8_t* PngAskScanlineBuf(int line) = 0;
 
     virtual void PngFillScanlineBufCompleted(int pass, int line) = 0;
   };

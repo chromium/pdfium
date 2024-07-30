@@ -159,12 +159,9 @@ void _png_get_row_func(png_structp png_ptr,
   if (!pContext)
     return;
 
-  uint8_t* src_buf;
-  if (!pContext->m_pDelegate->PngAskScanlineBuf(row_num, &src_buf))
-    png_error(png_ptr, "Ask Scanline buffer Callback Error");
-
-  if (src_buf)
-    png_progressive_combine_row(png_ptr, src_buf, new_row);
+  uint8_t* src_buf = pContext->m_pDelegate->PngAskScanlineBuf(row_num);
+  CHECK(src_buf);
+  png_progressive_combine_row(png_ptr, src_buf, new_row);
 
   pContext->m_pDelegate->PngFillScanlineBufCompleted(pass, row_num);
 }

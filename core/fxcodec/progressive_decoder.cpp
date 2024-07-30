@@ -133,11 +133,9 @@ bool ProgressiveDecoder::PngReadHeader(int width,
   return true;
 }
 
-bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
-  if (line < 0 || line >= m_SrcHeight) {
-    return true;
-  }
-
+uint8_t* ProgressiveDecoder::PngAskScanlineBuf(int line) {
+  CHECK_GE(line, 0);
+  CHECK_LT(line, m_SrcHeight);
   CHECK_EQ(m_pDeviceBitmap->GetFormat(), FXDIB_Format::kArgb);
   CHECK_EQ(m_SrcFormat, FXCodec_Argb);
   pdfium::span<const uint8_t> src_span = m_pDeviceBitmap->GetScanline(line);
@@ -145,8 +143,7 @@ bool ProgressiveDecoder::PngAskScanlineBuf(int line, uint8_t** pSrcBuf) {
   const size_t byte_size = Fx2DSizeOrDie(
       m_SrcWidth, GetCompsFromFormat(m_pDeviceBitmap->GetFormat()));
   fxcrt::Copy(src_span.first(byte_size), dest_span);
-  *pSrcBuf = m_DecodeBuf.data();
-  return true;
+  return m_DecodeBuf.data();
 }
 
 void ProgressiveDecoder::PngFillScanlineBufCompleted(int pass, int line) {
