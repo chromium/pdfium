@@ -761,10 +761,8 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkCanvas* canvas)
 
 CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver() {
   // Convert and transfer the internal processed result to the original 24 bpp
-  // bitmap provided by the render device.
-  if (m_pOriginalBitmap && m_pBitmap->ConvertFormat(FXDIB_Format::kRgb)) {
-    SyncInternalBitmaps();
-  }
+  // bitmap provided by the render device if needed.
+  SyncInternalBitmaps();
 }
 
 bool CFX_SkiaDeviceDriver::DrawDeviceText(
