@@ -727,127 +727,14 @@ bool ProgressiveDecoder::TiffDetectImageTypeFromFile(
 }
 
 FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
-  bool ret = false;
-  if (m_pDeviceBitmap->GetBPP() == 32) {
-    ret = TiffDecoder::Decode(m_pTiffContext.get(), m_pDeviceBitmap);
-    m_pDeviceBitmap = nullptr;
-    m_pFile = nullptr;
-    if (!ret) {
-      m_status = FXCODEC_STATUS::kError;
-      return m_status;
-    }
-    m_status = FXCODEC_STATUS::kDecodeFinished;
-    return m_status;
-  }
-
   // TODO(crbug.com/355630556): Consider adding support for
   // `FXDIB_Format::kArgbPremul`
-  auto pDIBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pDIBitmap->Create(m_SrcWidth, m_SrcHeight, FXDIB_Format::kArgb)) {
-    m_pDeviceBitmap = nullptr;
-    m_pFile = nullptr;
-    m_status = FXCODEC_STATUS::kError;
-    return m_status;
-  }
-  ret = TiffDecoder::Decode(m_pTiffContext.get(), pDIBitmap);
-  if (!ret) {
-    m_pDeviceBitmap = nullptr;
-    m_pFile = nullptr;
-    m_status = FXCODEC_STATUS::kError;
-    return m_status;
-  }
-  RetainPtr<CFX_DIBitmap> pFormatBitmap;
-  bool created_format_bitmap = false;
-  switch (m_pDeviceBitmap->GetFormat()) {
-    case FXDIB_Format::kInvalid:
-    case FXDIB_Format::k1bppRgb:
-    case FXDIB_Format::k1bppMask:
-    case FXDIB_Format::k8bppRgb:
-    case FXDIB_Format::k8bppMask:
-      NOTREACHED_NORETURN();
-    case FXDIB_Format::kRgb:
-      pFormatBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-      created_format_bitmap = pFormatBitmap->Create(
-          pDIBitmap->GetWidth(), pDIBitmap->GetHeight(), FXDIB_Format::kRgb);
-      break;
-    case FXDIB_Format::kRgb32:
-      pFormatBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-      created_format_bitmap = pFormatBitmap->Create(
-          pDIBitmap->GetWidth(), pDIBitmap->GetHeight(), FXDIB_Format::kRgb32);
-      break;
-    case FXDIB_Format::kArgb:
-      pFormatBitmap = pDIBitmap;
-      created_format_bitmap = true;
-      break;
-#if defined(PDF_USE_SKIA)
-    case FXDIB_Format::kArgbPremul:
-      // TODO(crbug.com/355630556): Consider adding support for
-      // `FXDIB_Format::kArgbPremul`
-      NOTREACHED_NORETURN();
-#endif
-  }
-  if (!created_format_bitmap) {
-    m_pDeviceBitmap = nullptr;
-    m_pFile = nullptr;
-    m_status = FXCODEC_STATUS::kError;
-    return m_status;
-  }
-
-  UNSAFE_TODO({
-    switch (m_pDeviceBitmap->GetFormat()) {
-      case FXDIB_Format::kInvalid:
-      case FXDIB_Format::k1bppRgb:
-      case FXDIB_Format::k1bppMask:
-      case FXDIB_Format::k8bppRgb:
-      case FXDIB_Format::k8bppMask:
-        NOTREACHED_NORETURN();
-      case FXDIB_Format::kRgb:
-      case FXDIB_Format::kRgb32: {
-        int32_t desBpp =
-            (m_pDeviceBitmap->GetFormat() == FXDIB_Format::kRgb) ? 3 : 4;
-        for (int32_t row = 0; row < pDIBitmap->GetHeight(); row++) {
-          const uint8_t* src_line = pDIBitmap->GetScanline(row).data();
-          uint8_t* dest_line = pFormatBitmap->GetWritableScanline(row).data();
-          for (int32_t col = 0; col < pDIBitmap->GetWidth(); col++) {
-            uint8_t _a = 255 - src_line[3];
-            uint8_t b = (src_line[0] * src_line[3] + 0xFF * _a) / 255;
-            uint8_t g = (src_line[1] * src_line[3] + 0xFF * _a) / 255;
-            uint8_t r = (src_line[2] * src_line[3] + 0xFF * _a) / 255;
-            *dest_line++ = b;
-            *dest_line++ = g;
-            *dest_line++ = r;
-            dest_line += desBpp - 3;
-            src_line += 4;
-          }
-        }
-        break;
-      }
-      case FXDIB_Format::kArgb:
-        break;
-#if defined(PDF_USE_SKIA)
-      case FXDIB_Format::kArgbPremul:
-        // TODO(crbug.com/355630556): Consider adding support for
-        // `FXDIB_Format::kArgbPremul`
-        NOTREACHED_NORETURN();
-#endif
-    }
-  });
-  FXDIB_ResampleOptions options;
-  options.bInterpolateBilinear = true;
-  RetainPtr<CFX_DIBitmap> pStrechBitmap =
-      pFormatBitmap->StretchTo(m_SrcWidth, m_SrcHeight, options, nullptr);
-  pFormatBitmap = nullptr;
-  if (!pStrechBitmap) {
-    m_pDeviceBitmap = nullptr;
-    m_pFile = nullptr;
-    m_status = FXCODEC_STATUS::kError;
-    return m_status;
-  }
-  m_pDeviceBitmap->TransferBitmap(m_SrcWidth, m_SrcHeight,
-                                  std::move(pStrechBitmap), 0, 0);
-  m_pDeviceBitmap = nullptr;
+  CHECK_EQ(m_pDeviceBitmap->GetFormat(), FXDIB_Format::kArgb);
+  m_status =
+      TiffDecoder::Decode(m_pTiffContext.get(), std::move(m_pDeviceBitmap))
+          ? FXCODEC_STATUS::kDecodeFinished
+          : FXCODEC_STATUS::kError;
   m_pFile = nullptr;
-  m_status = FXCODEC_STATUS::kDecodeFinished;
   return m_status;
 }
 #endif  // PDF_ENABLE_XFA_TIFF
@@ -1250,14 +1137,14 @@ FXDIB_Format ProgressiveDecoder::GetBitmapFormat() const {
 #ifdef PDF_ENABLE_XFA_BMP
     case FXCODEC_IMAGE_BMP:
 #endif  // PDF_ENABLE_XFA_BMP
-#ifdef PDF_ENABLE_XFA_TIFF
-    case FXCODEC_IMAGE_TIFF:
-#endif  // PDF_ENABLE_XFA_TIFF
       return GetBitsPerPixel() <= 24 ? FXDIB_Format::kRgb
                                      : FXDIB_Format::kRgb32;
 #ifdef PDF_ENABLE_XFA_PNG
     case FXCODEC_IMAGE_PNG:
 #endif  // PDF_ENABLE_XFA_PNG
+#ifdef PDF_ENABLE_XFA_TIFF
+    case FXCODEC_IMAGE_TIFF:
+#endif  // PDF_ENABLE_XFA_TIFF
     default:
       // TODO(crbug.com/355630556): Consider adding support for
       // `FXDIB_Format::kArgbPremul`

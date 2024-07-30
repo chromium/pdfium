@@ -35,8 +35,9 @@ class TiffDecoder {
                             int32_t* comps,
                             int32_t* bpc,
                             CFX_DIBAttribute* pAttribute);
+  // `bitmap` must be `FXDIB_Format::kArgb`.
   static bool Decode(ProgressiveDecoderIface::Context* ctx,
-                     const RetainPtr<CFX_DIBitmap>& pDIBitmap);
+                     RetainPtr<CFX_DIBitmap> bitmap);
 
   TiffDecoder() = delete;
   TiffDecoder(const TiffDecoder&) = delete;
