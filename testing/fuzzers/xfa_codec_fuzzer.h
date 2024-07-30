@@ -15,6 +15,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
+#include "core/fxge/dib/fx_dib.h"
 
 // Support up to 64 MB. This prevents trivial OOM when MSAN is on and
 // time outs.
@@ -37,17 +38,15 @@ class XFACodecFuzzer {
     // to OOM.
     FX_SAFE_UINT32 bitmap_size = decoder->GetHeight();
     bitmap_size *= decoder->GetWidth();
-    bitmap_size *= 4;  // From CFX_DIBitmap impl.
-    if (!bitmap_size.IsValid() ||
+    bitmap_size *= GetCompsFromFormat(decoder->GetBitmapFormat());
+    if (!bitmap_size.IsValid() || bitmap_size.ValueOrDie() == 0 ||
         bitmap_size.ValueOrDie() > kXFACodecFuzzerPixelLimit) {
       return 0;
     }
 
-    // TODO(crbug.com/355630556): Consider adding support for
-    // `FXDIB_Format::kArgbPremul`
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!bitmap->Create(decoder->GetWidth(), decoder->GetHeight(),
-                        FXDIB_Format::kArgb)) {
+                        decoder->GetBitmapFormat())) {
       return 0;
     }
 
