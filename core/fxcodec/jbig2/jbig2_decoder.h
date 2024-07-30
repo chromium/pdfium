@@ -14,7 +14,6 @@
 #include "core/fxcodec/fx_codec_def.h"
 #include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/span.h"
-#include "core/fxcrt/unowned_ptr_exclusion.h"
 
 class CJBig2_Context;
 class JBig2_DocumentContext;
@@ -33,7 +32,7 @@ class Jbig2Context {
   uint64_t m_nSrcKey = 0;
   pdfium::raw_span<const uint8_t> m_pGlobalSpan;
   pdfium::raw_span<const uint8_t> m_pSrcSpan;
-  UNOWNED_PTR_EXCLUSION uint8_t* m_dest_buf = nullptr;
+  pdfium::raw_span<uint8_t> m_dest_buf;
   uint32_t m_dest_pitch = 0;
   std::unique_ptr<CJBig2_Context> m_pContext;
 };
