@@ -11,6 +11,8 @@
 
 #include <memory>
 
+#include "core/fxcrt/span.h"
+
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_LCD_FILTER_H
@@ -60,6 +62,6 @@ class ScopedFXFTMMVar {
 #define FXFT_Get_Glyph_HoriAdvance(face) (face)->glyph->metrics.horiAdvance
 
 int FXFT_unicode_from_adobe_name(const char* glyph_name);
-void FXFT_adobe_name_from_unicode(char* name, wchar_t unicode);
+void FXFT_adobe_name_from_unicode(pdfium::span<char> name_buf, wchar_t unicode);
 
 #endif  // CORE_FXGE_FREETYPE_FX_FREETYPE_H_

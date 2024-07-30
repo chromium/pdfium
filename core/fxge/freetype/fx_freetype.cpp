@@ -19,52 +19,48 @@ namespace {
 
 constexpr uint32_t kVariantBit = 0x80000000;
 
-int xyq_search_node(char* glyph_name,
-                    int name_offset,
-                    int table_offset,
-                    wchar_t unicode) {
-  UNSAFE_TODO({
-    // copy letters
-    while (true) {
-      glyph_name[name_offset] = ft_adobe_glyph_list[table_offset] & 0x7f;
-      name_offset++;
-      table_offset++;
-      if (!(ft_adobe_glyph_list[table_offset - 1] & 0x80)) {
-        break;
-      }
+bool SearchNode(pdfium::span<const uint8_t> glyph_span,
+                pdfium::span<char> name_buf,
+                int name_offset,
+                int table_offset,
+                wchar_t unicode) {
+  // copy letters
+  while (true) {
+    name_buf[name_offset] = glyph_span[table_offset] & 0x7f;
+    name_offset++;
+    table_offset++;
+    if (!(glyph_span[table_offset - 1] & 0x80)) {
+      break;
     }
-    glyph_name[name_offset] = 0;
+  }
+  name_buf[name_offset] = 0;
 
-    // get child count
-    int count = ft_adobe_glyph_list[table_offset] & 0x7f;
+  // get child count
+  int count = glyph_span[table_offset] & 0x7f;
 
-    // check if we have value for this node
-    if (ft_adobe_glyph_list[table_offset] & 0x80) {
-      unsigned short thiscode = ft_adobe_glyph_list[table_offset + 1] * 256 +
-                                ft_adobe_glyph_list[table_offset + 2];
-      if (thiscode == (unsigned short)unicode) {  // found it!
-        return 1;
-      }
-      table_offset += 3;
-    } else {
-      table_offset++;
+  // check if we have value for this node
+  if (glyph_span[table_offset] & 0x80) {
+    unsigned short thiscode =
+        glyph_span[table_offset + 1] * 256 + glyph_span[table_offset + 2];
+    if (thiscode == (unsigned short)unicode) {  // found it!
+      return true;
     }
+    table_offset += 3;
+  } else {
+    table_offset++;
+  }
 
-    // now search in sub-nodes
-    if (count == 0) {
-      return 0;
+  // now search in sub-nodes
+  for (int i = 0; i < count; i++) {
+    int child_offset = glyph_span[table_offset + i * 2] * 256 +
+                       glyph_span[table_offset + i * 2 + 1];
+    if (SearchNode(glyph_span, name_buf, name_offset, child_offset, unicode)) {
+      // found in child
+      return true;
     }
+  }
 
-    for (int i = 0; i < count; i++) {
-      int child_offset = ft_adobe_glyph_list[table_offset + i * 2] * 256 +
-                         ft_adobe_glyph_list[table_offset + i * 2 + 1];
-      if (xyq_search_node(glyph_name, name_offset, child_offset, unicode)) {
-        // found in child
-        return 1;
-      }
-    }
-  });
-  return 0;
+  return false;
 }
 
 FT_MM_Var* GetVariationDescriptor(FXFT_FaceRec* face) {
@@ -205,16 +201,19 @@ int FXFT_unicode_from_adobe_name(const char* glyph_name) {
   });
 }
 
-void FXFT_adobe_name_from_unicode(char* glyph_name, wchar_t unicode) {
+void FXFT_adobe_name_from_unicode(pdfium::span<char> name_buf,
+                                  wchar_t unicode) {
+  pdfium::span<const uint8_t> glyph_span(ft_adobe_glyph_list);
+
   // start from top level node
-  int count = ft_adobe_glyph_list[1];
+  int count = glyph_span[1];
   for (int i = 0; i < count; i++) {
-    int child_offset = UNSAFE_TODO(ft_adobe_glyph_list[i * 2 + 2] * 256 +
-                                   ft_adobe_glyph_list[i * 2 + 3]);
-    if (xyq_search_node(glyph_name, 0, child_offset, unicode))
+    int child_offset = glyph_span[i * 2 + 2] * 256 + glyph_span[i * 2 + 3];
+    if (SearchNode(glyph_span, name_buf, 0, child_offset, unicode)) {
       return;
+    }
   }
 
   // failed, clear the buffer
-  glyph_name[0] = 0;
+  name_buf[0] = 0;
 }
