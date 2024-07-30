@@ -210,7 +210,7 @@ class CFX_RenderDevice {
                        int top,
                        float alpha,
                        BlendMode blend_type);
-  bool SyncInternalBitmaps();
+  void SyncInternalBitmaps();
 #endif  // defined(PDF_USE_SKIA)
 
  protected:

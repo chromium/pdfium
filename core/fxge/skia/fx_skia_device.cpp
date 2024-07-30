@@ -763,7 +763,7 @@ CFX_SkiaDeviceDriver::~CFX_SkiaDeviceDriver() {
   // Convert and transfer the internal processed result to the original 24 bpp
   // bitmap provided by the render device.
   if (m_pOriginalBitmap && m_pBitmap->ConvertFormat(FXDIB_Format::kRgb)) {
-    CHECK(SyncInternalBitmaps());
+    SyncInternalBitmaps();
   }
 }
 
@@ -1559,9 +1559,9 @@ void CFX_SkiaDeviceDriver::SetGroupKnockout(bool group_knockout) {
   m_bGroupKnockout = group_knockout;
 }
 
-bool CFX_SkiaDeviceDriver::SyncInternalBitmaps() {
+void CFX_SkiaDeviceDriver::SyncInternalBitmaps() {
   if (!m_pOriginalBitmap) {
-    return true;
+    return;
   }
 
   int width = m_pOriginalBitmap->GetWidth();
@@ -1571,7 +1571,6 @@ bool CFX_SkiaDeviceDriver::SyncInternalBitmaps() {
   DCHECK_EQ(FXDIB_Format::kRgb, m_pOriginalBitmap->GetFormat());
   m_pOriginalBitmap->TransferBitmap(width, height, m_pBitmap, /*src_left=*/0,
                                     /*src_top=*/0);
-  return true;
 }
 
 void CFX_SkiaDeviceDriver::Clear(uint32_t color) {

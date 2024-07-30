@@ -1031,8 +1031,8 @@ bool CFX_RenderDevice::SetBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
                                           left, top, alpha, blend_type);
 }
 
-bool CFX_RenderDevice::SyncInternalBitmaps() {
-  return m_pDeviceDriver->SyncInternalBitmaps();
+void CFX_RenderDevice::SyncInternalBitmaps() {
+  m_pDeviceDriver->SyncInternalBitmaps();
 }
 #endif  // defined(PDF_USE_SKIA)
 

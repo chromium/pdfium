@@ -138,7 +138,7 @@ class RenderDeviceDriverIface {
   // For `CFX_SkiaDeviceDriver` only:
   // Syncs the current rendering result from the internal buffer to the output
   // bitmap if such internal buffer exists.
-  virtual bool SyncInternalBitmaps();
+  virtual void SyncInternalBitmaps();
 #endif  // defined(PDF_USE_SKIA)
 
   // Multiplies the device by a constant alpha, returning `true` on success.
