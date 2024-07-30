@@ -350,15 +350,14 @@ void ConvertBuffer_Rgb2Rgb32(pdfium::span<uint8_t> dest_buf,
   }
 }
 
-void ConvertBuffer_8bppMask(int bpp,
-                            pdfium::span<uint8_t> dest_buf,
+void ConvertBuffer_8bppMask(pdfium::span<uint8_t> dest_buf,
                             int dest_pitch,
                             int width,
                             int height,
                             const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
                             int src_left,
                             int src_top) {
-  switch (bpp) {
+  switch (pSrcBitmap->GetBPP()) {
     case 1:
       CHECK(!pSrcBitmap->HasPalette());
       ConvertBuffer_1bppMask2Gray(dest_buf, dest_pitch, width, height,
@@ -383,8 +382,7 @@ void ConvertBuffer_8bppMask(int bpp,
   }
 }
 
-void ConvertBuffer_Rgb(int bpp,
-                       FXDIB_Format dest_format,
+void ConvertBuffer_Rgb(FXDIB_Format dest_format,
                        pdfium::span<uint8_t> dest_buf,
                        int dest_pitch,
                        int width,
@@ -392,7 +390,7 @@ void ConvertBuffer_Rgb(int bpp,
                        const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
                        int src_left,
                        int src_top) {
-  switch (bpp) {
+  switch (pSrcBitmap->GetBPP()) {
     case 1:
       if (pSrcBitmap->HasPalette()) {
         ConvertBuffer_1bppPlt2Rgb(dest_format, dest_buf, dest_pitch, width,
@@ -424,8 +422,7 @@ void ConvertBuffer_Rgb(int bpp,
   }
 }
 
-void ConvertBuffer_Argb(int bpp,
-                        FXDIB_Format dest_format,
+void ConvertBuffer_Argb(FXDIB_Format dest_format,
                         pdfium::span<uint8_t> dest_buf,
                         int dest_pitch,
                         int width,
@@ -433,7 +430,7 @@ void ConvertBuffer_Argb(int bpp,
                         const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
                         int src_left,
                         int src_top) {
-  switch (bpp) {
+  switch (pSrcBitmap->GetBPP()) {
     case 1:
       if (pSrcBitmap->HasPalette()) {
         ConvertBuffer_1bppPlt2Rgb(dest_format, dest_buf, dest_pitch, width,
@@ -1018,7 +1015,6 @@ DataVector<uint32_t> CFX_DIBBase::ConvertBuffer(
     const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
     int src_left,
     int src_top) {
-  const int src_bpp = pSrcBitmap->GetBPP();
   switch (dest_format) {
     case FXDIB_Format::kInvalid:
     case FXDIB_Format::k1bppRgb:
@@ -1026,29 +1022,30 @@ DataVector<uint32_t> CFX_DIBBase::ConvertBuffer(
       NOTREACHED_NORETURN();
     }
     case FXDIB_Format::k8bppMask: {
-      ConvertBuffer_8bppMask(src_bpp, dest_buf, dest_pitch, width, height,
-                             pSrcBitmap, src_left, src_top);
+      ConvertBuffer_8bppMask(dest_buf, dest_pitch, width, height, pSrcBitmap,
+                             src_left, src_top);
       return {};
     }
     case FXDIB_Format::k8bppRgb: {
+      const int src_bpp = pSrcBitmap->GetBPP();
       CHECK(src_bpp == 1 || src_bpp == 8);
       if (pSrcBitmap->HasPalette()) {
         return ConvertBuffer_Plt2PltRgb8(dest_buf, dest_pitch, width, height,
                                          pSrcBitmap, src_left, src_top);
       }
-      ConvertBuffer_8bppMask(src_bpp, dest_buf, dest_pitch, width, height,
-                             pSrcBitmap, src_left, src_top);
+      ConvertBuffer_8bppMask(dest_buf, dest_pitch, width, height, pSrcBitmap,
+                             src_left, src_top);
       return {};
     }
     case FXDIB_Format::kRgb: {
-      ConvertBuffer_Rgb(src_bpp, dest_format, dest_buf, dest_pitch, width,
-                        height, pSrcBitmap, src_left, src_top);
+      ConvertBuffer_Rgb(dest_format, dest_buf, dest_pitch, width, height,
+                        pSrcBitmap, src_left, src_top);
       return {};
     }
     case FXDIB_Format::kArgb:
     case FXDIB_Format::kRgb32: {
-      ConvertBuffer_Argb(src_bpp, dest_format, dest_buf, dest_pitch, width,
-                         height, pSrcBitmap, src_left, src_top);
+      ConvertBuffer_Argb(dest_format, dest_buf, dest_pitch, width, height,
+                         pSrcBitmap, src_left, src_top);
       return {};
     }
 #if defined(PDF_USE_SKIA)
