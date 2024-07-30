@@ -202,7 +202,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling tools_rust
   # and whatever else without interference from each other.
-  'tools_rust_revision': 'b40b86555ee5e6f9749749072665fb052cb90012',
+  'tools_rust_revision': '402380629f9854b05753084c0867c6c6804f3979',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling v8
   # and whatever else without interference from each other.
@@ -454,31 +454,31 @@ deps = {
     'bucket': 'chromium-browser-clang',
     'objects': [
       {
-        'object_name': 'Linux_x64/rust-toolchain-3cf924b934322fd7b514600a7dc84fc517515346-2-llvmorg-19-init-14561-gecea8371.tar.xz',
-        'sha256sum': '85805dfacd22e4a3ff787652c02efc661897101ab429f97785456d985800f497',
-        'size_bytes': 148800304,
-        'generation': 1719351433540994,
+        'object_name': 'Linux_x64/rust-toolchain-3cf924b934322fd7b514600a7dc84fc517515346-3-llvmorg-19-init-14561-gecea8371.tar.xz',
+        'sha256sum': 'd3532ada45f1e47d5d7a197190842beebc20acbd1a9ec8fe442b67b9fd9c0074',
+        'size_bytes': 148907072,
+        'generation': 1721105673940838,
         'condition': 'checkout_rust and host_os == "linux" and non_git_source',
       },
       {
-        'object_name': 'Mac/rust-toolchain-3cf924b934322fd7b514600a7dc84fc517515346-2-llvmorg-19-init-14561-gecea8371.tar.xz',
-        'sha256sum': 'f3a3cc410b00882326144ec230b8eae5d65bac9dbd6ebb4decd37ea592419db6',
-        'size_bytes': 141628840,
-        'generation': 1719351434659239,
+        'object_name': 'Mac/rust-toolchain-3cf924b934322fd7b514600a7dc84fc517515346-3-llvmorg-19-init-14561-gecea8371.tar.xz',
+        'sha256sum': 'a0fa4c395c7bcac8240793dc6c81eb067614210aab817dbf9b825ede1e5980ce',
+        'size_bytes': 141660688,
+        'generation': 1721105675261013,
         'condition': 'checkout_rust and host_os == "mac" and host_cpu == "x64"',
       },
       {
-        'object_name': 'Mac_arm64/rust-toolchain-3cf924b934322fd7b514600a7dc84fc517515346-2-llvmorg-19-init-14561-gecea8371.tar.xz',
-        'sha256sum': '03dddc8e950a03ee531fd2cfa872bff866a843a17d6f336c9c2c9b5186ebb9eb',
-        'size_bytes': 133059288,
-        'generation': 1719351435926070,
+        'object_name': 'Mac_arm64/rust-toolchain-3cf924b934322fd7b514600a7dc84fc517515346-3-llvmorg-19-init-14561-gecea8371.tar.xz',
+        'sha256sum': '6ee658298d8c43a2cba6ccf99373cd861560845788b419446787d890ff9494ba',
+        'size_bytes': 133032452,
+        'generation': 1721105676505827,
         'condition': 'checkout_rust and host_os == "mac" and host_cpu == "arm64"',
       },
       {
-        'object_name': 'Win/rust-toolchain-3cf924b934322fd7b514600a7dc84fc517515346-2-llvmorg-19-init-14561-gecea8371.tar.xz',
-        'sha256sum': '5a839d4cb975e3e1fbea2d35abcf6719edc249eb9f4aceacf001588901761f61',
-        'size_bytes': 204511892,
-        'generation': 1719351437183262,
+        'object_name': 'Win/rust-toolchain-3cf924b934322fd7b514600a7dc84fc517515346-3-llvmorg-19-init-14561-gecea8371.tar.xz',
+        'sha256sum': 'dc14ef350334c38fdca58ccf0e341ec357ded991e2e81e353a3f9311e979a199',
+        'size_bytes': 204514276,
+        'generation': 1721105677747562,
         'condition': 'checkout_rust and host_os == "win"',
       },
     ],
