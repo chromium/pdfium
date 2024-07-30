@@ -74,10 +74,10 @@ class ProgressiveDecoder final :
                                CFX_DIBAttribute* pAttribute,
                                bool bSkipImageTypeCheck);
 
-  FXCODEC_IMAGE_TYPE GetType() const { return m_imageType; }
   int32_t GetWidth() const { return m_SrcWidth; }
   int32_t GetHeight() const { return m_SrcHeight; }
-  int32_t GetBitsPerPixel() const { return m_SrcComponents * m_SrcBPC; }
+
+  FXDIB_Format GetBitmapFormat() const;
 
   std::pair<FXCODEC_STATUS, size_t> GetFrames();
   FXCODEC_STATUS StartDecode(RetainPtr<CFX_DIBitmap> bitmap);
@@ -157,6 +157,8 @@ class ProgressiveDecoder final :
   bool JpegDetectImageTypeInBuffer(CFX_DIBAttribute* pAttribute);
   FXCODEC_STATUS JpegStartDecode();
   FXCODEC_STATUS JpegContinueDecode();
+
+  int32_t GetBitsPerPixel() const { return m_SrcComponents * m_SrcBPC; }
 
   bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
                        CFX_DIBAttribute* pAttribute);

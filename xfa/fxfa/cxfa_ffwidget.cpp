@@ -35,30 +35,6 @@
 #include "xfa/fxfa/parser/cxfa_margin.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-namespace {
-
-FXDIB_Format XFA_GetDIBFormat(FXCODEC_IMAGE_TYPE type, int32_t bpp) {
-  switch (type) {
-    case FXCODEC_IMAGE_JPG:
-#ifdef PDF_ENABLE_XFA_BMP
-    case FXCODEC_IMAGE_BMP:
-#endif  // PDF_ENABLE_XFA_BMP
-#ifdef PDF_ENABLE_XFA_TIFF
-    case FXCODEC_IMAGE_TIFF:
-#endif  // PDF_ENABLE_XFA_TIFF
-      return bpp <= 24 ? FXDIB_Format::kRgb : FXDIB_Format::kRgb32;
-#ifdef PDF_ENABLE_XFA_PNG
-    case FXCODEC_IMAGE_PNG:
-#endif  // PDF_ENABLE_XFA_PNG
-    default:
-      // TODO(crbug.com/355630556): Consider adding support for
-      // `FXDIB_Format::kArgbPremul`
-      return FXDIB_Format::kArgb;
-  }
-}
-
-}  // namespace
-
 void XFA_DrawImage(CFGAS_GEGraphics* pGS,
                    const CFX_RectF& rtImage,
                    const CFX_Matrix& matrix,
@@ -171,12 +147,10 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
     return nullptr;
   }
 
-  type = pProgressiveDecoder->GetType();
-  FXDIB_Format format =
-      XFA_GetDIBFormat(type, pProgressiveDecoder->GetBitsPerPixel());
   RetainPtr<CFX_DIBitmap> pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pBitmap->Create(pProgressiveDecoder->GetWidth(),
-                       pProgressiveDecoder->GetHeight(), format)) {
+                       pProgressiveDecoder->GetHeight(),
+                       pProgressiveDecoder->GetBitmapFormat())) {
     return nullptr;
   }
 

@@ -1244,6 +1244,27 @@ void ProgressiveDecoder::Resample(const RetainPtr<CFX_DIBitmap>& pDeviceBitmap,
   ResampleScanline(pDeviceBitmap, src_line, m_DecodeBuf, src_format);
 }
 
+FXDIB_Format ProgressiveDecoder::GetBitmapFormat() const {
+  switch (m_imageType) {
+    case FXCODEC_IMAGE_JPG:
+#ifdef PDF_ENABLE_XFA_BMP
+    case FXCODEC_IMAGE_BMP:
+#endif  // PDF_ENABLE_XFA_BMP
+#ifdef PDF_ENABLE_XFA_TIFF
+    case FXCODEC_IMAGE_TIFF:
+#endif  // PDF_ENABLE_XFA_TIFF
+      return GetBitsPerPixel() <= 24 ? FXDIB_Format::kRgb
+                                     : FXDIB_Format::kRgb32;
+#ifdef PDF_ENABLE_XFA_PNG
+    case FXCODEC_IMAGE_PNG:
+#endif  // PDF_ENABLE_XFA_PNG
+    default:
+      // TODO(crbug.com/355630556): Consider adding support for
+      // `FXDIB_Format::kArgbPremul`
+      return FXDIB_Format::kArgb;
+  }
+}
+
 std::pair<FXCODEC_STATUS, size_t> ProgressiveDecoder::GetFrames() {
   if (!(m_status == FXCODEC_STATUS::kFrameReady ||
         m_status == FXCODEC_STATUS::kFrameToBeContinued)) {
