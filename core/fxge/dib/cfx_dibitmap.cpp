@@ -28,6 +28,16 @@
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/dib/cfx_scanlinecompositor.h"
 
+namespace {
+
+size_t GetAllocSizeOrZero(uint32_t size) {
+  FX_SAFE_SIZE_T safe_buffer_size = size;
+  safe_buffer_size += 4;
+  return safe_buffer_size.ValueOrDefault(0);
+}
+
+}  // namespace
+
 CFX_DIBitmap::CFX_DIBitmap() = default;
 
 bool CFX_DIBitmap::Create(int width, int height, FXDIB_Format format) {
@@ -47,21 +57,23 @@ bool CFX_DIBitmap::Create(int width,
 
   std::optional<PitchAndSize> pitch_size =
       CalculatePitchAndSize(width, height, format, pitch);
-  if (!pitch_size.has_value())
+  if (!pitch_size.has_value()) {
     return false;
+  }
 
   if (pBuffer) {
     m_pBuffer.Reset(pBuffer);
   } else {
-    FX_SAFE_SIZE_T safe_buffer_size = pitch_size.value().size;
-    safe_buffer_size += 4;
-    if (!safe_buffer_size.IsValid())
+    const size_t buffer_size = GetAllocSizeOrZero(pitch_size.value().size);
+    if (buffer_size == 0) {
       return false;
+    }
 
     m_pBuffer = std::unique_ptr<uint8_t, FxFreeDeleter>(
-        FX_TryAlloc(uint8_t, safe_buffer_size.ValueOrDie()));
-    if (!m_pBuffer)
+        FX_TryAlloc(uint8_t, buffer_size));
+    if (!m_pBuffer) {
       return false;
+    }
   }
   SetWidth(width);
   SetHeight(height);
@@ -859,7 +871,6 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   // `FXDIB_Format::kArgbPremul`
   DCHECK(dest_format == FXDIB_Format::k8bppMask ||
          dest_format == FXDIB_Format::kArgb ||
-         dest_format == FXDIB_Format::kRgb32 ||
          dest_format == FXDIB_Format::kRgb);
 
   if (dest_format == GetFormat()) {
@@ -871,30 +882,43 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
     SetFormat(FXDIB_Format::k8bppMask);
     return true;
   }
+
   if (dest_format == FXDIB_Format::kArgb &&
       GetFormat() == FXDIB_Format::kRgb32) {
     SetFormat(FXDIB_Format::kArgb);
     SetUniformOpaqueAlpha();
     return true;
   }
-  int dest_bpp = GetBppFromFormat(dest_format);
-  int dest_pitch = fxge::CalculatePitch32OrDie(dest_bpp, GetWidth());
-  const size_t dest_buf_size = dest_pitch * GetHeight() + 4;
+
+  std::optional<PitchAndSize> pitch_size =
+      CalculatePitchAndSize(GetWidth(), GetHeight(), dest_format, /*pitch=*/0);
+  if (!pitch_size.has_value()) {
+    return false;
+  }
+
+  const size_t dest_buf_size = GetAllocSizeOrZero(pitch_size.value().size);
+  if (dest_buf_size == 0) {
+    return false;
+  }
+
   std::unique_ptr<uint8_t, FxFreeDeleter> dest_buf(
       FX_TryAlloc(uint8_t, dest_buf_size));
-  if (!dest_buf)
+  if (!dest_buf) {
     return false;
-
-  if (dest_format == FXDIB_Format::kArgb) {
-    UNSAFE_TODO(FXSYS_memset(dest_buf.get(), 0xff, dest_buf_size));
   }
-  RetainPtr<CFX_DIBBase> holder(this);
+
   // SAFETY: `dest_buf` allocated with `dest_buf_size` bytes above.
-  palette_ = ConvertBuffer(
-      dest_format,
-      UNSAFE_BUFFERS(pdfium::make_span(dest_buf.get(), dest_buf_size)),
-      dest_pitch, GetWidth(), GetHeight(), holder, /*src_left=*/0,
-      /*src_top=*/0);
+  auto dest_span =
+      UNSAFE_BUFFERS(pdfium::make_span(dest_buf.get(), dest_buf_size));
+  if (dest_format == FXDIB_Format::kArgb) {
+    fxcrt::Fill(dest_span, 0xff);
+  }
+
+  RetainPtr<CFX_DIBBase> holder(this);
+  const uint32_t dest_pitch = pitch_size.value().pitch;
+  palette_ = ConvertBuffer(dest_format, dest_span, dest_pitch, GetWidth(),
+                           GetHeight(), holder, /*src_left=*/0,
+                           /*src_top=*/0);
   m_pBuffer = std::move(dest_buf);
   SetFormat(dest_format);
   SetPitch(dest_pitch);
