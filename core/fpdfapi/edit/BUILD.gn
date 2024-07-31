@@ -39,7 +39,10 @@ source_set("edit") {
 }
 
 pdfium_unittest_source_set("unittests") {
-  sources = [ "cpdf_pagecontentgenerator_unittest.cpp" ]
+  sources = [
+    "cpdf_npagetooneexporter_unittest.cpp",
+    "cpdf_pagecontentgenerator_unittest.cpp",
+  ]
   deps = [
     ":edit",
     "../../fxge",

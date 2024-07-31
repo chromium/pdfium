@@ -64,6 +64,12 @@ class CPDF_NPageToOneExporter final : public CPDF_PageOrganizer {
   std::unique_ptr<XObjectContext> CreateXObjectContextFromPage(
       int src_page_index);
 
+  // Helper that generates the content stream for a sub-page. Exposed for
+  // testing.
+  static ByteString GenerateSubPageContentStreamForTesting(
+      const ByteString& xobject_name,
+      const NupPageSettings& settings);
+
  private:
   // Map page object number to XObject object name.
   using PageXObjectMap = std::map<uint32_t, ByteString>;

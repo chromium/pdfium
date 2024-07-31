@@ -1,4 +1,3 @@
-
 // Copyright 2024 The PDFium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -130,6 +129,23 @@ CPDF_NPageToOneExporter::NupPageSettings NupState::CalculateNewPagePosition(
   return CalculatePageEdit(sub_x, sub_y, pagesize);
 }
 
+// Helper that generates the content stream for a sub-page.
+ByteString GenerateSubPageContentStream(
+    const ByteString& xobject_name,
+    const CPDF_NPageToOneExporter::NupPageSettings& settings) {
+  CFX_Matrix matrix;
+  matrix.Scale(settings.scale, settings.scale);
+  matrix.Translate(settings.sub_page_start_point.x,
+                   settings.sub_page_start_point.y);
+
+  fxcrt::ostringstream contentStream;
+  contentStream << "q\n"
+                << matrix.a << " " << matrix.b << " " << matrix.c << " "
+                << matrix.d << " " << matrix.e << " " << matrix.f << " cm\n"
+                << "/" << xobject_name << " Do Q\n";
+  return ByteString(contentStream);
+}
+
 }  // namespace
 
 CPDF_NPageToOneExporter::CPDF_NPageToOneExporter(CPDF_Document* dest_doc,
@@ -196,6 +212,13 @@ bool CPDF_NPageToOneExporter::ExportNPagesToOne(
   return true;
 }
 
+// static
+ByteString CPDF_NPageToOneExporter::GenerateSubPageContentStreamForTesting(
+    const ByteString& xobject_name,
+    const NupPageSettings& settings) {
+  return GenerateSubPageContentStream(xobject_name, settings);
+}
+
 ByteString CPDF_NPageToOneExporter::AddSubPage(
     const RetainPtr<CPDF_Page>& src_page,
     const NupPageSettings& settings) {
@@ -204,18 +227,7 @@ ByteString CPDF_NPageToOneExporter::AddSubPage(
   ByteString xobject_name = it != src_page_xobject_map_.end()
                                 ? it->second
                                 : MakeXObjectFromPage(src_page);
-
-  CFX_Matrix matrix;
-  matrix.Scale(settings.scale, settings.scale);
-  matrix.Translate(settings.sub_page_start_point.x,
-                   settings.sub_page_start_point.y);
-
-  fxcrt::ostringstream contentStream;
-  contentStream << "q\n"
-                << matrix.a << " " << matrix.b << " " << matrix.c << " "
-                << matrix.d << " " << matrix.e << " " << matrix.f << " cm\n"
-                << "/" << xobject_name << " Do Q\n";
-  return ByteString(contentStream);
+  return GenerateSubPageContentStream(xobject_name, settings);
 }
 
 RetainPtr<CPDF_Stream> CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
