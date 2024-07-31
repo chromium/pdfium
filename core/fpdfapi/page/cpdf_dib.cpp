@@ -52,23 +52,23 @@ bool IsValidDimension(int value) {
   return value > 0 && value <= kMaxImageDimension;
 }
 
-unsigned int GetBits8(const uint8_t* pData, uint64_t bitpos, size_t nbits) {
+unsigned int GetBits8(pdfium::span<const uint8_t> pData,
+                      uint64_t bitpos,
+                      size_t nbits) {
   DCHECK(nbits == 1 || nbits == 2 || nbits == 4 || nbits == 8 || nbits == 16);
   DCHECK_EQ((bitpos & (nbits - 1)), 0u);
-  UNSAFE_TODO({
-    unsigned int byte = pData[bitpos / 8];
-    if (nbits == 8) {
-      return byte;
-    }
-    if (nbits == 16) {
-      return byte * 256 + pData[bitpos / 8 + 1];
-    }
-    return (byte >> (8 - nbits - (bitpos % 8))) & ((1 << nbits) - 1);
-  });
+  unsigned int byte = pData[bitpos / 8];
+  if (nbits == 8) {
+    return byte;
+  }
+  if (nbits == 16) {
+    return byte * 256 + pData[bitpos / 8 + 1];
+  }
+  return (byte >> (8 - nbits - (bitpos % 8))) & ((1 << nbits) - 1);
 }
 
-bool GetBitValue(const uint8_t* pSrc, uint32_t pos) {
-  return UNSAFE_TODO(pSrc[pos / 8] & (1 << (7 - pos % 8)));
+bool GetBitValue(pdfium::span<const uint8_t> pSrc, uint32_t pos) {
+  return pSrc[pos / 8] & (1 << (7 - pos % 8));
 }
 
 // Just to sanity check and filter out obvious bad values.
@@ -1058,7 +1058,7 @@ void CPDF_DIB::TranslateScanline24bpp(
         color_values[color] = m_CompData[color].m_DecodeMin +
                               m_CompData[color].m_DecodeStep * data;
       } else {
-        unsigned int data = GetBits8(src_scan.data(), src_bit_pos, m_bpc);
+        unsigned int data = GetBits8(src_scan, src_bit_pos, m_bpc);
         color_values[color] = m_CompData[color].m_DecodeMin +
                               m_CompData[color].m_DecodeStep * data;
         src_bit_pos += m_bpc;
@@ -1130,23 +1130,23 @@ bool CPDF_DIB::TranslateScanline24bppDefaultDecode(
       const unsigned int max_data = (1 << m_bpc) - 1;
       uint64_t src_bit_pos = 0;
       size_t dest_byte_pos = 0;
-      UNSAFE_TODO({
-        for (int column = 0; column < GetWidth(); column++) {
-          unsigned int R = GetBits8(src_scan.data(), src_bit_pos, m_bpc);
-          src_bit_pos += m_bpc;
-          unsigned int G = GetBits8(src_scan.data(), src_bit_pos, m_bpc);
-          src_bit_pos += m_bpc;
-          unsigned int B = GetBits8(src_scan.data(), src_bit_pos, m_bpc);
-          src_bit_pos += m_bpc;
-          R = std::min(R, max_data);
-          G = std::min(G, max_data);
-          B = std::min(B, max_data);
+      for (int column = 0; column < GetWidth(); column++) {
+        unsigned int R = GetBits8(src_scan, src_bit_pos, m_bpc);
+        src_bit_pos += m_bpc;
+        unsigned int G = GetBits8(src_scan, src_bit_pos, m_bpc);
+        src_bit_pos += m_bpc;
+        unsigned int B = GetBits8(src_scan, src_bit_pos, m_bpc);
+        src_bit_pos += m_bpc;
+        R = std::min(R, max_data);
+        G = std::min(G, max_data);
+        B = std::min(B, max_data);
+        UNSAFE_TODO({
           dest_pos[dest_byte_pos] = B * 255 / max_data;
           dest_pos[dest_byte_pos + 1] = G * 255 / max_data;
           dest_pos[dest_byte_pos + 2] = R * 255 / max_data;
           dest_byte_pos += 3;
-        }
-      });
+        });
+      }
       break;
   }
   return true;
@@ -1207,8 +1207,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
     auto mask32_span =
         fxcrt::reinterpret_span<uint32_t>(pdfium::make_span(m_MaskBuf));
     for (int col = 0; col < GetWidth(); col++) {
-      mask32_span[col] =
-          GetBitValue(pSrcLine.data(), col) ? set_argb : reset_argb;
+      mask32_span[col] = GetBitValue(pSrcLine, col) ? set_argb : reset_argb;
     }
     return fxcrt::reinterpret_span<uint8_t>(mask32_span.first(GetWidth()));
   }
@@ -1222,7 +1221,7 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
       for (int col = 0; col < GetWidth(); col++) {
         unsigned int color_index = 0;
         for (uint32_t color = 0; color < m_nComponents; color++) {
-          unsigned int data = GetBits8(pSrcLine.data(), src_bit_pos, m_bpc);
+          unsigned int data = GetBits8(pSrcLine, src_bit_pos, m_bpc);
           color_index |= data << (color * m_bpc);
           src_bit_pos += m_bpc;
         }
