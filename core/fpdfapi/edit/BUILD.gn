@@ -11,6 +11,8 @@ source_set("edit") {
     "cpdf_contentstream_write_utils.h",
     "cpdf_creator.cpp",
     "cpdf_creator.h",
+    "cpdf_npagetooneexporter.cpp",
+    "cpdf_npagetooneexporter.h",
     "cpdf_pagecontentgenerator.cpp",
     "cpdf_pagecontentgenerator.h",
     "cpdf_pagecontentmanager.cpp",
