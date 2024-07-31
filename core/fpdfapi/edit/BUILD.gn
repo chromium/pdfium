@@ -15,6 +15,8 @@ source_set("edit") {
     "cpdf_pagecontentgenerator.h",
     "cpdf_pagecontentmanager.cpp",
     "cpdf_pagecontentmanager.h",
+    "cpdf_pageexporter.cpp",
+    "cpdf_pageexporter.h",
     "cpdf_pageorganizer.cpp",
     "cpdf_pageorganizer.h",
     "cpdf_stringarchivestream.cpp",

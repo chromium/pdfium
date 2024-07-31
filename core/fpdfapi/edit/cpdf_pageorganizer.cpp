@@ -9,6 +9,7 @@
 #include <utility>
 #include <vector>
 
+#include "constants/page_object.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
@@ -18,6 +19,7 @@
 #include "core/fpdfapi/parser/cpdf_reference.h"
 #include "core/fpdfapi/parser/cpdf_stream.h"
 #include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/check.h"
 
 CPDF_PageOrganizer::CPDF_PageOrganizer(CPDF_Document* dest_doc,
@@ -157,4 +159,65 @@ uint32_t CPDF_PageOrganizer::GetNewObjId(CPDF_Reference* ref) {
   }
 
   return new_obj_num;
+}
+
+// static
+bool CPDF_PageOrganizer::CopyInheritable(
+    RetainPtr<CPDF_Dictionary> dest_page_dict,
+    RetainPtr<const CPDF_Dictionary> src_page_dict,
+    const ByteString& key) {
+  if (dest_page_dict->KeyExist(key)) {
+    return true;
+  }
+
+  RetainPtr<const CPDF_Object> inheritable =
+      PageDictGetInheritableTag(std::move(src_page_dict), key);
+  if (!inheritable) {
+    return false;
+  }
+
+  dest_page_dict->SetFor(key, inheritable->Clone());
+  return true;
+}
+
+// static
+RetainPtr<const CPDF_Object> CPDF_PageOrganizer::PageDictGetInheritableTag(
+    RetainPtr<const CPDF_Dictionary> dict,
+    const ByteString& src_tag) {
+  if (!dict || src_tag.IsEmpty()) {
+    return nullptr;
+  }
+  if (!dict->KeyExist(pdfium::page_object::kParent) ||
+      !dict->KeyExist(pdfium::page_object::kType)) {
+    return nullptr;
+  }
+
+  RetainPtr<const CPDF_Name> name =
+      ToName(dict->GetObjectFor(pdfium::page_object::kType)->GetDirect());
+  if (!name || name->GetString() != "Page") {
+    return nullptr;
+  }
+
+  RetainPtr<const CPDF_Dictionary> pp = ToDictionary(
+      dict->GetObjectFor(pdfium::page_object::kParent)->GetDirect());
+  if (!pp) {
+    return nullptr;
+  }
+
+  if (dict->KeyExist(src_tag)) {
+    return dict->GetObjectFor(src_tag);
+  }
+
+  while (pp) {
+    if (pp->KeyExist(src_tag)) {
+      return pp->GetObjectFor(src_tag);
+    }
+    if (!pp->KeyExist(pdfium::page_object::kParent)) {
+      break;
+    }
+
+    pp = ToDictionary(
+        pp->GetObjectFor(pdfium::page_object::kParent)->GetDirect());
+  }
+  return nullptr;
 }

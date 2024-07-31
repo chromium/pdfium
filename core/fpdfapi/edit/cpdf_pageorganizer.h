@@ -11,9 +11,11 @@
 
 #include <map>
 
+#include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
 
+class CPDF_Dictionary;
 class CPDF_Document;
 class CPDF_Object;
 class CPDF_Reference;
@@ -39,6 +41,14 @@ class CPDF_PageOrganizer {
   }
 
   void ClearObjectNumberMap() { object_number_map_.clear(); }
+
+  static bool CopyInheritable(RetainPtr<CPDF_Dictionary> dest_page_dict,
+                              RetainPtr<const CPDF_Dictionary> src_page_dict,
+                              const ByteString& key);
+
+  static RetainPtr<const CPDF_Object> PageDictGetInheritableTag(
+      RetainPtr<const CPDF_Dictionary> dict,
+      const ByteString& src_tag);
 
  private:
   bool InitDestDoc();

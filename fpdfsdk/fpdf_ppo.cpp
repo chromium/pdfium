@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "constants/page_object.h"
+#include "core/fpdfapi/edit/cpdf_pageexporter.h"
 #include "core/fpdfapi/edit/cpdf_pageorganizer.h"
 #include "core/fpdfapi/page/cpdf_form.h"
 #include "core/fpdfapi/page/cpdf_formobject.h"
@@ -152,62 +153,6 @@ NupPageSettings NupState::CalculateNewPagePosition(const CFX_SizeF& pagesize) {
   return CalculatePageEdit(sub_x, sub_y, pagesize);
 }
 
-RetainPtr<const CPDF_Object> PageDictGetInheritableTag(
-    RetainPtr<const CPDF_Dictionary> dict,
-    const ByteString& src_tag) {
-  if (!dict || src_tag.IsEmpty()) {
-    return nullptr;
-  }
-  if (!dict->KeyExist(pdfium::page_object::kParent) ||
-      !dict->KeyExist(pdfium::page_object::kType)) {
-    return nullptr;
-  }
-
-  RetainPtr<const CPDF_Name> name =
-      ToName(dict->GetObjectFor(pdfium::page_object::kType)->GetDirect());
-  if (!name || name->GetString() != "Page") {
-    return nullptr;
-  }
-
-  RetainPtr<const CPDF_Dictionary> pp = ToDictionary(
-      dict->GetObjectFor(pdfium::page_object::kParent)->GetDirect());
-  if (!pp)
-    return nullptr;
-
-  if (dict->KeyExist(src_tag)) {
-    return dict->GetObjectFor(src_tag);
-  }
-
-  while (pp) {
-    if (pp->KeyExist(src_tag)) {
-      return pp->GetObjectFor(src_tag);
-    }
-    if (!pp->KeyExist(pdfium::page_object::kParent))
-      break;
-
-    pp = ToDictionary(
-        pp->GetObjectFor(pdfium::page_object::kParent)->GetDirect());
-  }
-  return nullptr;
-}
-
-bool CopyInheritable(RetainPtr<CPDF_Dictionary> dest_page_dict,
-                     RetainPtr<const CPDF_Dictionary> src_page_dict,
-                     const ByteString& key) {
-  if (dest_page_dict->KeyExist(key)) {
-    return true;
-  }
-
-  RetainPtr<const CPDF_Object> inheritable =
-      PageDictGetInheritableTag(std::move(src_page_dict), key);
-  if (!inheritable) {
-    return false;
-  }
-
-  dest_page_dict->SetFor(key, inheritable->Clone());
-  return true;
-}
-
 std::vector<uint32_t> GetPageIndices(const CPDF_Document& doc,
                                      const ByteString& page_range) {
   uint32_t count = doc.GetPageCount();
@@ -218,98 +163,6 @@ std::vector<uint32_t> GetPageIndices(const CPDF_Document& doc,
   std::vector<uint32_t> page_indices(count);
   std::iota(page_indices.begin(), page_indices.end(), 0);
   return page_indices;
-}
-
-// Copies pages from a source document into a destination document.
-// This class is intended to be used once via ExportPages() and then destroyed.
-class CPDF_PageExporter final : public CPDF_PageOrganizer {
- public:
-  CPDF_PageExporter(CPDF_Document* dest_doc, CPDF_Document* src_doc);
-  ~CPDF_PageExporter();
-
-  // For the pages from the source document with `page_indices` as their page
-  // indices, insert them into the destination document at page `nIndex`.
-  // `page_indices` and `nIndex` are 0-based.
-  bool ExportPages(pdfium::span<const uint32_t> page_indices, int nIndex);
-};
-
-CPDF_PageExporter::CPDF_PageExporter(CPDF_Document* dest_doc,
-                                     CPDF_Document* src_doc)
-    : CPDF_PageOrganizer(dest_doc, src_doc) {}
-
-CPDF_PageExporter::~CPDF_PageExporter() = default;
-
-bool CPDF_PageExporter::ExportPages(pdfium::span<const uint32_t> page_indices,
-                                    int nIndex) {
-  if (!Init())
-    return false;
-
-  int curpage = nIndex;
-  for (uint32_t pageIndex : page_indices) {
-    RetainPtr<CPDF_Dictionary> dest_page_dict = dest()->CreateNewPage(curpage);
-    RetainPtr<const CPDF_Dictionary> src_page_dict =
-        src()->GetPageDictionary(pageIndex);
-    if (!src_page_dict || !dest_page_dict) {
-      return false;
-    }
-
-    // Clone the page dictionary
-    CPDF_DictionaryLocker locker(src_page_dict);
-    for (const auto& it : locker) {
-      const ByteString& src_key = it.first;
-      const RetainPtr<CPDF_Object>& obj = it.second;
-      if (src_key == pdfium::page_object::kType ||
-          src_key == pdfium::page_object::kParent) {
-        continue;
-      }
-      dest_page_dict->SetFor(src_key, obj->Clone());
-    }
-
-    // inheritable item
-    // Even though some entries are required by the PDF spec, there exist
-    // PDFs that omit them. Set some defaults in this case.
-    // 1 MediaBox - required
-    if (!CopyInheritable(dest_page_dict, src_page_dict,
-                         pdfium::page_object::kMediaBox)) {
-      // Search for "CropBox" in the source page dictionary.
-      // If it does not exist, use the default letter size.
-      RetainPtr<const CPDF_Object> inheritable = PageDictGetInheritableTag(
-          src_page_dict, pdfium::page_object::kCropBox);
-      if (inheritable) {
-        dest_page_dict->SetFor(pdfium::page_object::kMediaBox,
-                               inheritable->Clone());
-      } else {
-        // Make the default size letter size (8.5"x11")
-        static const CFX_FloatRect kDefaultLetterRect(0, 0, 612, 792);
-        dest_page_dict->SetRectFor(pdfium::page_object::kMediaBox,
-                                   kDefaultLetterRect);
-      }
-    }
-
-    // 2 Resources - required
-    if (!CopyInheritable(dest_page_dict, src_page_dict,
-                         pdfium::page_object::kResources)) {
-      // Use a default empty resources if it does not exist.
-      dest_page_dict->SetNewFor<CPDF_Dictionary>(
-          pdfium::page_object::kResources);
-    }
-
-    // 3 CropBox - optional
-    CopyInheritable(dest_page_dict, src_page_dict,
-                    pdfium::page_object::kCropBox);
-    // 4 Rotate - optional
-    CopyInheritable(dest_page_dict, src_page_dict,
-                    pdfium::page_object::kRotate);
-
-    // Update the reference
-    uint32_t old_page_obj_num = src_page_dict->GetObjNum();
-    uint32_t new_page_obj_num = dest_page_dict->GetObjNum();
-    AddObjectMapping(old_page_obj_num, new_page_obj_num);
-    UpdateReference(dest_page_dict);
-    ++curpage;
-  }
-
-  return true;
 }
 
 // Copies pages from a source document into a destination document. Creates 1
@@ -466,7 +319,8 @@ RetainPtr<CPDF_Stream> CPDF_NPageToOneExporter::MakeXObjectFromPageRaw(
       dest()->NewIndirect<CPDF_Stream>(dest()->New<CPDF_Dictionary>());
   RetainPtr<CPDF_Dictionary> new_xobject_dict = new_xobject->GetMutableDict();
   static const char kResourceString[] = "Resources";
-  if (!CopyInheritable(new_xobject_dict, src_page_dict, kResourceString)) {
+  if (!CPDF_PageOrganizer::CopyInheritable(new_xobject_dict, src_page_dict,
+                                           kResourceString)) {
     // Use a default empty resources if it does not exist.
     new_xobject_dict->SetNewFor<CPDF_Dictionary>(kResourceString);
   }
