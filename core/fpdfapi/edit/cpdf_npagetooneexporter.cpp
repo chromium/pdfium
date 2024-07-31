@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "constants/page_object.h"
+#include "core/fpdfapi/edit/cpdf_contentstream_write_utils.h"
 #include "core/fpdfapi/page/cpdf_page.h"
 #include "core/fpdfapi/parser/cpdf_array.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -138,12 +139,11 @@ ByteString GenerateSubPageContentStream(
   matrix.Translate(settings.sub_page_start_point.x,
                    settings.sub_page_start_point.y);
 
-  fxcrt::ostringstream contentStream;
-  contentStream << "q\n"
-                << matrix.a << " " << matrix.b << " " << matrix.c << " "
-                << matrix.d << " " << matrix.e << " " << matrix.f << " cm\n"
-                << "/" << xobject_name << " Do Q\n";
-  return ByteString(contentStream);
+  fxcrt::ostringstream content_stream;
+  content_stream << "q\n";
+  WriteMatrix(content_stream, matrix) << " cm\n"
+                                      << "/" << xobject_name << " Do Q\n";
+  return ByteString(content_stream);
 }
 
 }  // namespace

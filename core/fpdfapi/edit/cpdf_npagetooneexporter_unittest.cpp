@@ -8,9 +8,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 
 TEST(NPageToOneExporter, GenerateSubPageContentStream) {
-  // TODO(crbug.com/356075497): Content stream should not contain floats with
-  // exponents.
-  const char kExpected[] = "q\n0.5 0 0 0.5 1e-06 1e+12 cm\n/foo Do Q\n";
+  const char kExpected[] = "q\n.5 0 0 .5 .000001 1000000000000 cm\n/foo Do Q\n";
 
   CPDF_NPageToOneExporter::NupPageSettings settings;
   settings.sub_page_start_point = {0.000001f, 1000000000000.0f};
