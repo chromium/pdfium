@@ -28,7 +28,7 @@ class CFX_DefaultRenderDevice final : public CFX_RenderDevice {
       RetainPtr<CFX_DIBitmap> pBackdropBitmap,
       bool bGroupKnockout);
 #if defined(PDF_USE_SKIA)
-  bool AttachCanvas(SkCanvas* canvas);
+  [[nodiscard]] bool AttachCanvas(SkCanvas& canvas);
 #endif
 
   bool Create(int width, int height, FXDIB_Format format);

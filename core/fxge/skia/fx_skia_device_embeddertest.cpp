@@ -168,7 +168,7 @@ void RenderPageToSkCanvas(FPDF_PAGE page,
                           int start_y,
                           int size_x,
                           int size_y,
-                          SkCanvas* canvas) {
+                          SkCanvas& canvas) {
   CPDF_Page* cpdf_page = CPDFPageFromFPDFPage(page);
 
   auto context = std::make_unique<CPDF_PageRenderContext>();
@@ -178,7 +178,7 @@ void RenderPageToSkCanvas(FPDF_PAGE page,
   cpdf_page->SetRenderContext(std::move(context));
 
   auto default_device = std::make_unique<CFX_DefaultRenderDevice>();
-  default_device->AttachCanvas(canvas);
+  CHECK(default_device->AttachCanvas(canvas));
   unowned_context->m_pDevice = std::move(default_device);
 
   CPDFSDK_RenderPageWithContext(unowned_context, cpdf_page, start_x, start_y,
@@ -283,11 +283,11 @@ TEST_F(FxgeSkiaEmbedderTest, RenderBigImageTwice) {
 
   // Render top half.
   RenderPageToSkCanvas(page, /*start_x=*/0, /*start_y=*/0,
-                       /*size_x=*/kPageWidth, /*size_y=*/kPageHeight, &canvas);
+                       /*size_x=*/kPageWidth, /*size_y=*/kPageHeight, canvas);
 
   // Render bottom half.
   RenderPageToSkCanvas(page, /*start_x=*/0, /*start_y=*/-kPageHeight / 2,
-                       /*size_x=*/kPageWidth, /*size_y=*/kPageHeight, &canvas);
+                       /*size_x=*/kPageWidth, /*size_y=*/kPageHeight, canvas);
 
   EXPECT_THAT(image_ids, SizeIs(1));
 

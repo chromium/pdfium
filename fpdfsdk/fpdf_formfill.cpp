@@ -203,7 +203,9 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
 #if defined(PDF_USE_SKIA)
   SkCanvas* sk_canvas = SkCanvasFromFPDFSkiaCanvas(canvas);
   if (sk_canvas && CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    pDevice->AttachCanvas(sk_canvas);
+    if (!pDevice->AttachCanvas(*sk_canvas)) {
+      return;
+    }
   }
 #endif
 

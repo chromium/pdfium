@@ -681,11 +681,7 @@ std::unique_ptr<CFX_SkiaDeviceDriver> CFX_SkiaDeviceDriver::Create(
 
 // static
 std::unique_ptr<CFX_SkiaDeviceDriver> CFX_SkiaDeviceDriver::Create(
-    SkCanvas* canvas) {
-  if (!canvas) {
-    return nullptr;
-  }
-
+    SkCanvas& canvas) {
   auto driver = pdfium::WrapUnique(new CFX_SkiaDeviceDriver(canvas));
   if (!driver->m_pBitmap || !driver->m_pBackdropBitmap) {
     return nullptr;
@@ -747,8 +743,8 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
   m_pCanvas = surface_->getCanvas();
 }
 
-CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkCanvas* canvas)
-    : m_pCanvas(canvas), m_bGroupKnockout(false) {
+CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkCanvas& canvas)
+    : m_pCanvas(&canvas), m_bGroupKnockout(false) {
   int width = m_pCanvas->imageInfo().width();
   int height = m_pCanvas->imageInfo().height();
   DCHECK_EQ(kUnknown_SkColorType, m_pCanvas->imageInfo().colorType());
@@ -1659,7 +1655,7 @@ bool CFX_DefaultRenderDevice::AttachSkiaImpl(
   return true;
 }
 
-bool CFX_DefaultRenderDevice::AttachCanvas(SkCanvas* canvas) {
+bool CFX_DefaultRenderDevice::AttachCanvas(SkCanvas& canvas) {
   auto driver = CFX_SkiaDeviceDriver::Create(canvas);
   if (!driver) {
     return false;
