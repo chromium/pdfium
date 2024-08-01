@@ -117,6 +117,7 @@ source_set("page") {
     "../../fxcodec",
     "../../fxcrt",
     "../font",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
   ]
   allow_circular_includes_from = []
   if (pdf_use_skia) {
