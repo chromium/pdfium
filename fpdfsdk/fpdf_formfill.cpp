@@ -28,6 +28,7 @@
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "public/fpdfview.h"
+#include "third_party/abseil-cpp/absl/types/variant.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
@@ -176,22 +177,50 @@ CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
   return pFormFillEnv ? pFormFillEnv->GetOrCreatePageView(pPage) : nullptr;
 }
 
+#if defined(PDF_USE_SKIA)
+using BitmapOrCanvas = absl::variant<CFX_DIBitmap*, SkCanvas*>;
+#else
+using BitmapOrCanvas = absl::variant<CFX_DIBitmap*>;
+#endif
+
+// `dest` must be non-null.
 void FFLCommon(FPDF_FORMHANDLE hHandle,
-               FPDF_BITMAP bitmap,
-               FPDF_SKIA_CANVAS canvas,
                FPDF_PAGE fpdf_page,
+               BitmapOrCanvas dest,
                int start_x,
                int start_y,
                int size_x,
                int size_y,
                int rotate,
                int flags) {
-  if (!hHandle)
+  if (!hHandle) {
     return;
+  }
 
   IPDF_Page* pPage = IPDFPageFromFPDFPage(fpdf_page);
-  if (!pPage)
+  if (!pPage) {
     return;
+  }
+
+  RetainPtr<CFX_DIBitmap> holder;
+#if defined(PDF_USE_SKIA)
+  SkCanvas* canvas = nullptr;
+#endif
+
+  const bool dest_is_bitmap = absl::holds_alternative<CFX_DIBitmap*>(dest);
+  if (dest_is_bitmap) {
+    holder.Reset(absl::get<CFX_DIBitmap*>(dest));
+    CHECK(holder);
+  } else {
+#if defined(PDF_USE_SKIA)
+    if (!CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+      return;
+    }
+
+    canvas = absl::get<SkCanvas*>(dest);
+    CHECK(canvas);
+#endif
+  }
 
   CPDF_Document* pPDFDoc = pPage->GetDocument();
   CPDFSDK_PageView* pPageView = FormHandleToPageView(hHandle, fpdf_page);
@@ -200,17 +229,19 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   CFX_Matrix matrix = pPage->GetDisplayMatrix(rect, rotate);
 
   auto pDevice = std::make_unique<CFX_DefaultRenderDevice>();
-#if defined(PDF_USE_SKIA)
-  SkCanvas* sk_canvas = SkCanvasFromFPDFSkiaCanvas(canvas);
-  if (sk_canvas && CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    if (!pDevice->AttachCanvas(*sk_canvas)) {
+  if (dest_is_bitmap) {
+    if (!pDevice->AttachWithRgbByteOrder(holder,
+                                         !!(flags & FPDF_REVERSE_BYTE_ORDER))) {
       return;
     }
-  }
+  } else {
+#if defined(PDF_USE_SKIA)
+    if (!pDevice->AttachCanvas(*canvas)) {
+      return;
+    }
 #endif
+  }
 
-  RetainPtr<CFX_DIBitmap> holder(CFXDIBitmapFromFPDFBitmap(bitmap));
-  pDevice->AttachWithRgbByteOrder(holder, !!(flags & FPDF_REVERSE_BYTE_ORDER));
   {
     CFX_RenderDevice::StateRestorer restorer(pDevice.get());
     pDevice->SetClip_Rect(rect);
@@ -696,8 +727,13 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
                                             int size_y,
                                             int rotate,
                                             int flags) {
-  FFLCommon(hHandle, bitmap, nullptr, page, start_x, start_y, size_x, size_y,
-            rotate, flags);
+  CFX_DIBitmap* cbitmap = CFXDIBitmapFromFPDFBitmap(bitmap);
+  if (!cbitmap) {
+    return;
+  }
+
+  FFLCommon(hHandle, page, cbitmap, start_x, start_y, size_x, size_y, rotate,
+            flags);
 }
 
 #if defined(PDF_USE_SKIA)
@@ -710,10 +746,15 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLDrawSkia(FPDF_FORMHANDLE hHandle,
                                                 int size_y,
                                                 int rotate,
                                                 int flags) {
-  FFLCommon(hHandle, nullptr, canvas, page, start_x, start_y, size_x, size_y,
-            rotate, flags);
+  SkCanvas* sk_canvas = SkCanvasFromFPDFSkiaCanvas(canvas);
+  if (!sk_canvas) {
+    return;
+  }
+
+  FFLCommon(hHandle, page, sk_canvas, start_x, start_y, size_x, size_y, rotate,
+            flags);
 }
-#endif
+#endif  // defined(PDF_USE_SKIA)
 
 FPDF_EXPORT void FPDF_CALLCONV
 FPDF_SetFormFieldHighlightColor(FPDF_FORMHANDLE hHandle,
