@@ -26,8 +26,6 @@ config("gtest_config") {
     "GTEST_HAS_TR1_TUPLE=0",
   ]
 
-  configs = [ "//third_party/abseil-cpp:absl_include_config" ]
-
   # Gtest headers need to be able to find themselves.
   include_dirs = [
     "custom",
@@ -123,8 +121,6 @@ source_set("gtest") {
     "custom/gtest/internal/custom/stack_trace_getter.cc",
     "custom/gtest/internal/custom/stack_trace_getter.h",
   ]
-
-  deps = [ "//third_party/abseil-cpp:absl" ]
 }
 
 # Do NOT depend on this directly. Use //testing/gtest:gtest_main instead.
