@@ -211,6 +211,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   if (dest_is_bitmap) {
     holder.Reset(absl::get<CFX_DIBitmap*>(dest));
     CHECK(holder);
+    CHECK(!holder->IsPremultiplied());
   } else {
 #if defined(PDF_USE_SKIA)
     if (!CFX_DefaultRenderDevice::UseSkiaRenderer()) {

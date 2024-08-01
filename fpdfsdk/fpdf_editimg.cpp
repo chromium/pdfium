@@ -176,6 +176,7 @@ FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
   if (!holder) {
     return false;
   }
+  CHECK(!holder->IsPremultiplied());
 
   if (pages) {
     for (int index = 0; index < count; index++) {
@@ -272,10 +273,14 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
       pBitmap = pSource->ConvertTo(FXDIB_Format::kRgb);
       break;
   }
-  if (pBitmap) {
-    CHECK(!pBitmap->HasPalette());
+  if (!pBitmap) {
+    return nullptr;
   }
 
+  CHECK(!pBitmap->HasPalette());
+  CHECK(!pBitmap->IsPremultiplied());
+
+  // Caller takes ownership.
   return FPDFBitmapFromCFXDIBitmap(pBitmap.Leak());
 }
 

@@ -107,15 +107,15 @@ class CFX_DIBBase : public Retainable {
                       int& src_top,
                       const CFX_ClipRgn* pClipRgn) const;
 
+  // Whether alpha is premultiplied (if `IsAlphaFormat()`).
+  virtual bool IsPremultiplied() const;
+
 #if defined(PDF_USE_SKIA)
   // Realizes an `SkImage` from this DIB.
   //
   // This may share the underlying pixels, in which case, this DIB should not be
   // modified during the lifetime of the `SkImage`.
   virtual sk_sp<SkImage> RealizeSkImage() const;
-
-  // Whether alpha is premultiplied (if `IsAlphaFormat()`).
-  virtual bool IsPremultiplied() const;
 #endif  // defined(PDF_USE_SKIA)
 
  protected:

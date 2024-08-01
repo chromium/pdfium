@@ -62,6 +62,7 @@ FPDF_RenderPageBitmapWithColorScheme_Start(FPDF_BITMAP bitmap,
   if (!pBitmap) {
     return FPDF_RENDER_FAILED;
   }
+  CHECK(!pBitmap->IsPremultiplied());
 
   auto owned_context = std::make_unique<CPDF_PageRenderContext>();
   CPDF_PageRenderContext* context = owned_context.get();

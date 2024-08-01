@@ -758,6 +758,8 @@ FPDFTextObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   if (rect.IsEmpty())
     return nullptr;
 
+  // TODO(crbug.com/42271020): Consider adding support for
+  // `FXDIB_Format::kArgbPremul`
   auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!result_bitmap->Create(rect.Width(), rect.Height(), FXDIB_Format::kArgb))
     return nullptr;
@@ -788,6 +790,8 @@ FPDFTextObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   CFX_Matrix render_matrix(1, 0, 0, -1, -text_rect.left, text_rect.top);
   render_matrix *= scale_matrix;
   status.RenderSingleObject(text, render_matrix);
+
+  CHECK(!result_bitmap->IsPremultiplied());
 
   // Caller takes ownership.
   return FPDFBitmapFromCFXDIBitmap(result_bitmap.Leak());
