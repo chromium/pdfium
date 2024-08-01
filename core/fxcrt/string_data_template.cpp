@@ -14,7 +14,7 @@
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxcrt/span_util.h"
+#include "core/fxcrt/stl_util.h"
 
 namespace fxcrt {
 
@@ -63,14 +63,14 @@ void StringDataTemplate<CharType>::Release() {
 template <typename CharType>
 void StringDataTemplate<CharType>::CopyContents(
     const StringDataTemplate& other) {
-  fxcrt::spancpy(capacity_span(),
-                 other.capacity_span().first(other.m_nDataLength + 1));
+  fxcrt::Copy(other.capacity_span().first(other.m_nDataLength + 1),
+              capacity_span());
 }
 
 template <typename CharType>
 void StringDataTemplate<CharType>::CopyContents(
     pdfium::span<const CharType> str) {
-  fxcrt::spancpy(capacity_span(), str);
+  fxcrt::Copy(str, capacity_span());
   capacity_span()[str.size()] = 0;
 }
 
@@ -78,7 +78,7 @@ template <typename CharType>
 void StringDataTemplate<CharType>::CopyContentsAt(
     size_t offset,
     pdfium::span<const CharType> str) {
-  fxcrt::spancpy(capacity_span().subspan(offset), str);
+  fxcrt::Copy(str, capacity_span().subspan(offset));
   capacity_span()[offset + str.size()] = 0;
 }
 
