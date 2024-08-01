@@ -49,18 +49,24 @@ FPDF_RenderPageBitmapWithColorScheme_Start(FPDF_BITMAP bitmap,
                                            int flags,
                                            const FPDF_COLORSCHEME* color_scheme,
                                            IFSDK_PAUSE* pause) {
-  if (!bitmap || !pause || pause->version != 1)
+  if (!pause || pause->version != 1) {
     return FPDF_RENDER_FAILED;
+  }
 
   CPDF_Page* pPage = CPDFPageFromFPDFPage(page);
-  if (!pPage)
+  if (!pPage) {
     return FPDF_RENDER_FAILED;
+  }
+
+  RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
+  if (!pBitmap) {
+    return FPDF_RENDER_FAILED;
+  }
 
   auto owned_context = std::make_unique<CPDF_PageRenderContext>();
   CPDF_PageRenderContext* context = owned_context.get();
   pPage->SetRenderContext(std::move(owned_context));
 
-  RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
   device->AttachWithRgbByteOrder(pBitmap, !!(flags & FPDF_REVERSE_BYTE_ORDER));
   context->m_pDevice = std::move(device);
