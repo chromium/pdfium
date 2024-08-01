@@ -45,6 +45,10 @@ class CFX_DIBitmap;
 struct CPDF_JavaScript;
 struct XObjectContext;
 
+#if defined(PDF_USE_SKIA)
+class SkCanvas;
+#endif
+
 // Conversions to/from underlying types.
 IPDF_Page* IPDFPageFromFPDFPage(FPDF_PAGE page);
 FPDF_PAGE FPDFPageFromIPDFPage(IPDF_Page* page);
@@ -82,6 +86,15 @@ inline FPDF_BITMAP FPDFBitmapFromCFXDIBitmap(CFX_DIBitmap* bitmap) {
 inline CFX_DIBitmap* CFXDIBitmapFromFPDFBitmap(FPDF_BITMAP bitmap) {
   return reinterpret_cast<CFX_DIBitmap*>(bitmap);
 }
+
+#if defined(PDF_USE_SKIA)
+inline FPDF_SKIA_CANVAS FPDFSkiaCanvasFromSkCanvas(SkCanvas* canvas) {
+  return reinterpret_cast<FPDF_SKIA_CANVAS>(canvas);
+}
+inline SkCanvas* SkCanvasFromFPDFSkiaCanvas(FPDF_SKIA_CANVAS canvas) {
+  return reinterpret_cast<SkCanvas*>(canvas);
+}
+#endif
 
 inline FPDF_BOOKMARK FPDFBookmarkFromCPDFDictionary(
     const CPDF_Dictionary* bookmark) {

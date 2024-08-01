@@ -238,8 +238,8 @@ class FPDFViewEmbedderTest : public EmbedderTest {
       recorder->beginRecording(width, height);
 
       FPDF_RenderPageSkia(
-          reinterpret_cast<FPDF_SKIA_CANVAS>(recorder->getRecordingCanvas()),
-          page, width, height);
+          FPDFSkiaCanvasFromSkCanvas(recorder->getRecordingCanvas()), page,
+          width, height);
       picture = recorder->finishRecordingAsPicture();
       ASSERT_TRUE(picture);
     }

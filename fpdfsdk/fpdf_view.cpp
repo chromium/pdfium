@@ -778,7 +778,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageSkia(FPDF_SKIA_CANVAS canvas,
                                                    FPDF_PAGE page,
                                                    int size_x,
                                                    int size_y) {
-  if (!canvas) {
+  SkCanvas* sk_canvas = SkCanvasFromFPDFSkiaCanvas(canvas);
+  if (!sk_canvas) {
     return;
   }
 
@@ -793,7 +794,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageSkia(FPDF_SKIA_CANVAS canvas,
   cpdf_page->SetRenderContext(std::move(owned_context));
 
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
-  device->AttachCanvas(reinterpret_cast<SkCanvas*>(canvas));
+  device->AttachCanvas(sk_canvas);
   context->m_pDevice = std::move(device);
 
   CPDFSDK_RenderPageWithContext(context, cpdf_page, 0, 0, size_x, size_y, 0, 0,
