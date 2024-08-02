@@ -1387,11 +1387,11 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
   const char* md5_new_image = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "38c4bdbb9fd3fcc81e8b3f7d015a8c80";
+      return "256f4673854c0f4399d4768c7df73922";
 #elif BUILDFLAG(IS_APPLE)
-      return "fab7e76a223f7fd4f2f9da88b2ced171";
+      return "57a55882da9caf4d0feb2de68fac2f94";
 #else
-      return "5efd7ff61ff87e5a615a546c55450c7d";
+      return "92d2c4d7d8e56edd972f7f092c815bb0";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)

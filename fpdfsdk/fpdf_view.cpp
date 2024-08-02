@@ -967,12 +967,50 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
   }
   CHECK(!pBitmap->IsPremultiplied());
 
-  CFX_DefaultRenderDevice device;
-  device.Attach(pBitmap);
-  if (!pBitmap->IsAlphaFormat())
+  FX_RECT fill_rect(left, top, left + width, top + height);
+
+  if (!pBitmap->IsAlphaFormat()) {
     color |= 0xFF000000;
-  device.FillRect(FX_RECT(left, top, left + width, top + height),
-                  static_cast<uint32_t>(color));
+  }
+
+  // Let CFX_DefaultRenderDevice handle the 8-bit case.
+  const int bpp = pBitmap->GetBPP();
+  if (bpp == 8) {
+    CFX_DefaultRenderDevice device;
+    device.Attach(std::move(pBitmap));
+    device.FillRect(fill_rect, static_cast<uint32_t>(color));
+    return;
+  }
+
+  // Handle filling 24/32-bit bitmaps directly without CFX_DefaultRenderDevice.
+  // When CFX_DefaultRenderDevice is using Skia, this avoids extra work to
+  // change `pBitmap` to be premultiplied and back, or extra work to change
+  // `pBitmap` to 32 BPP and back.
+  fill_rect.Intersect(FX_RECT(0, 0, pBitmap->GetWidth(), pBitmap->GetHeight()));
+  if (fill_rect.IsEmpty()) {
+    return;
+  }
+
+  const int row_end = fill_rect.top + fill_rect.Height();
+  if (bpp == 32) {
+    for (int row = fill_rect.top; row < row_end; ++row) {
+      auto span32 = pBitmap->GetWritableScanlineAs<uint32_t>(row).subspan(
+          fill_rect.left, fill_rect.Width());
+      fxcrt::Fill(span32, static_cast<uint32_t>(color));
+    }
+    return;
+  }
+
+  CHECK_EQ(bpp, 24);
+  const FX_BGR_STRUCT<uint8_t> bgr = {.blue = FXARGB_B(color),
+                                      .green = FXARGB_G(color),
+                                      .red = FXARGB_R(color)};
+  for (int row = fill_rect.top; row < row_end; ++row) {
+    auto bgr_span =
+        pBitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(row).subspan(
+            fill_rect.left, fill_rect.Width());
+    fxcrt::Fill(bgr_span, bgr);
+  }
 }
 
 FPDF_EXPORT void* FPDF_CALLCONV FPDFBitmap_GetBuffer(FPDF_BITMAP bitmap) {
