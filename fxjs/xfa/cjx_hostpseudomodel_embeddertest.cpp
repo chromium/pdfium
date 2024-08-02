@@ -5,10 +5,10 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/xfa_js_embedder_test.h"
 
-class CJX_HostPseudoModelEmbedderTest : public XFAJSEmbedderTest {};
+class CJXHostPseudoModelEmbedderTest : public XFAJSEmbedderTest {};
 
 // Should not crash.
-TEST_F(CJX_HostPseudoModelEmbedderTest, Bug1256) {
+TEST_F(CJXHostPseudoModelEmbedderTest, Bug1256) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   EXPECT_TRUE(Execute("$host.openList(1)"));

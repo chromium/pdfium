@@ -12,9 +12,9 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/xfa_js_embedder_test.h"
 
-class CFXJSE_ValueEmbedderTest : public XFAJSEmbedderTest {};
+class CFXJSEValueEmbedderTest : public XFAJSEmbedderTest {};
 
-TEST_F(CFXJSE_ValueEmbedderTest, Empty) {
+TEST_F(CFXJSEValueEmbedderTest, Empty) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   auto pValue = std::make_unique<CFXJSE_Value>();
@@ -29,7 +29,7 @@ TEST_F(CFXJSE_ValueEmbedderTest, Empty) {
   EXPECT_FALSE(pValue->IsFunction(isolate()));
 }
 
-TEST_F(CFXJSE_ValueEmbedderTest, EmptyArrayInsert) {
+TEST_F(CFXJSEValueEmbedderTest, EmptyArrayInsert) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   // Test inserting empty values into arrays.

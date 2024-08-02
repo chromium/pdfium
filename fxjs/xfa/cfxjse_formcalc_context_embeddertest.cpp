@@ -17,10 +17,10 @@
 #include "testing/xfa_js_embedder_test.h"
 #include "xfa/fxfa/cxfa_eventparam.h"
 
-class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {
+class CFXJSEFormCalcContextEmbedderTest : public XFAJSEmbedderTest {
  public:
-  CFXJSE_FormCalcContextEmbedderTest() = default;
-  ~CFXJSE_FormCalcContextEmbedderTest() override = default;
+  CFXJSEFormCalcContextEmbedderTest() = default;
+  ~CFXJSEFormCalcContextEmbedderTest() override = default;
 
  protected:
   CFXJSE_Context* GetJseContext() {
@@ -106,7 +106,7 @@ class CFXJSE_FormCalcContextEmbedderTest : public XFAJSEmbedderTest {
 
 // TODO(dsinclair): Comment out tests are broken and need to be fixed.
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, TranslateEmpty) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, TranslateEmpty) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   const char input[] = "";
@@ -115,12 +115,12 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, TranslateEmpty) {
   // is invalid.
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, TranslateNumber) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, TranslateNumber) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
   ExecuteExpectInt32("123", 123);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Numeric) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Numeric) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectInt32("123 + 456", 579);
@@ -154,7 +154,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Numeric) {
       0);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Strings) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Strings) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("\"abc\"", "abc");
@@ -163,7 +163,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Strings) {
       "The total is 2 dollars and 57 cents.");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Booleans) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Booleans) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectBool("0 and 1 or 2 > 1", true);
@@ -195,7 +195,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Booleans) {
 #endif
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Abs) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Abs) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloat("Abs(1.03)", 1.03f);
@@ -203,14 +203,14 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Abs) {
   ExecuteExpectFloat("Abs(0)", 0.0f);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Avg) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Avg) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloat("Avg(0, 32, 16)", 16.0f);
   ExecuteExpectFloat("Avg(2.5, 17, null)", 9.75f);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Ceil) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Ceil) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectInt32("Ceil(2.5875)", 3);
@@ -218,13 +218,13 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Ceil) {
   ExecuteExpectInt32("Ceil(\"abc\")", 0);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Count) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Count) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectInt32("Count(\"Tony\", \"Blue\", 41)", 3);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Floor) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Floor) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectInt32("Floor(21.3409873)", 21);
@@ -232,7 +232,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Floor) {
   ExecuteExpectInt32("Floor(3.2 * 15)", 48);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Max) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Max) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectInt32("Max(234, 15, 107)", 234);
@@ -240,7 +240,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Max) {
   ExecuteExpectInt32("Max(\"abc\")", 0);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Min) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Min) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectInt32("Min(234, 15, 107)", 15);
@@ -252,7 +252,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Min) {
   ExecuteExpectInt32("Min(\"abc\")", 0);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Mod) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Mod) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectInt32("Mod(64, -3)", 1);
@@ -263,7 +263,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Mod) {
   ExecuteExpectNaN("Mod(10, Infinity)");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Round) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Round) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloat("Round(12.389764537, 4)", 12.3898f);
@@ -272,7 +272,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Round) {
   ExecuteExpectFloat("Round(FV(400, 0.10/12, 30*12), 2)", 904195.17f);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Sum) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Sum) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectInt32("Sum(2, 4, 6, 8)", 20);
@@ -280,7 +280,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Sum) {
   ExecuteExpectInt32("Sum(4, 16, \"abc\", 19)", 39);
 }
 
-// TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Date) {
+// TEST_F(CFXJSEFormCalcContextEmbedderTest, DISABLED_Date) {
 //   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 //
 //   TODO(dsinclair): Make compatible with windows.
@@ -294,7 +294,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Sum) {
 //   EXPECT_EQ(days, value->ToInteger());
 // }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Date2Num) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Date2Num) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectInt32("Date2Num(\"1/1/1900\", \"D/M/YYYY\")", 1);
@@ -310,7 +310,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Date2Num) {
 #endif
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, DateFmt) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, DateFmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("DateFmt(3, \"de_DE\")", "D. MMMM YYYY");
@@ -322,7 +322,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, DateFmt) {
 #endif
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, IsoDate2Num) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, IsoDate2Num) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectInt32("IsoDate2Num(\"1900\")", 1);
@@ -333,13 +333,13 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, IsoDate2Num) {
                      29);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_IsoTime2Num) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, DISABLED_IsoTime2Num) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectInt32("IsoTime2Num(\"00:00:00Z\")", 1);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, LocalDateFmt) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, LocalDateFmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("LocalDateFmt(3, \"de_CH\")", "t. MMMM jjjj");
@@ -351,7 +351,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, LocalDateFmt) {
 #endif
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_LocalTimeFmt) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, DISABLED_LocalTimeFmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("LocalTimeFmt(1, \"de_DE\")", "HH:mm");
@@ -360,7 +360,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_LocalTimeFmt) {
   ExecuteExpectString("LocalTimeFmt(4, \"fr_FR\")", "HH' h 'mm z");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Num2Date) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Num2Date) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Num2Date(1, \"DD/MM/YYYY\")", "01/01/1900");
@@ -375,7 +375,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Num2Date) {
 #endif
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Num2GMTime) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, DISABLED_Num2GMTime) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   // Broken on Windows only.
@@ -387,13 +387,13 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Num2GMTime) {
 }
 
 // TODO(dsinclair): Broken on Mac ...
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Num2Time) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, DISABLED_Num2Time) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Num2Time(1, \"HH:MM:SS\")", "00:00:00");
 }
 
-// TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Time) {
+// TEST_F(CFXJSEFormCalcContextEmbedderTest, DISABLED_Time) {
 //   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 //   TODO(dsinclair): Make compatible with windows.
 //   struct timeval tp;
@@ -407,7 +407,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Num2Time) {
 //       << "Program: Time()";
 // }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Time2Num) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Time2Num) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectInt32("Time2Num(\"00:00:00 GMT\", \"HH:MM:SS Z\")", 1);
@@ -421,7 +421,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Time2Num) {
                      47593001);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Time2NumWithTZ) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Time2NumWithTZ) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   static constexpr const char* kTimeZones[] = {
@@ -444,7 +444,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Time2NumWithTZ) {
   }
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, TimeFmt) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, TimeFmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("TimeFmt(2, \"fr_CA\")", "HH:MM:SS");
@@ -456,7 +456,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, TimeFmt) {
 #endif
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Apr) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Apr) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloatNear("Apr(35000, 269.50, 360)", 0.08515404566f);
@@ -466,7 +466,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Apr) {
   ExecuteExpectError("Apr(2, 2, 2147483648)");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, CTerm) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, CTerm) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloat("CTerm(0.10, 500000, 12000)", 39.13224648502f);
@@ -478,7 +478,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, CTerm) {
 #endif
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, FV) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, FV) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloat("FV(400, 0.10 / 12, 30 * 12)", 904195.16991842445f);
@@ -487,7 +487,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, FV) {
   ExecuteExpectError("FV(2, 2, 2147483648)");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, IPmt) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, IPmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloat("IPmt(30000, 0.085, 295.50, 7, 3)", 624.8839283142f);
@@ -495,7 +495,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, IPmt) {
   ExecuteExpectFloat("IPmt(15000, 0.065, 65.50, 15, 1)", 0.0f);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, NPV) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, NPV) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloat("NPV(0.065, 5000)", 4694.83568075117f);
@@ -503,7 +503,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, NPV) {
   ExecuteExpectFloat("NPV(0.0275 / 12, 50, 60, 40, 100, 25)", 273.14193838457f);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Pmt) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Pmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloat("Pmt(25000, 0.085, 12)", 3403.82145169876f);
@@ -517,7 +517,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Pmt) {
   ExecuteExpectError("Pmt(2, 2, 99999997952)");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, PPmt) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, PPmt) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloat("PPmt(30000, 0.085, 295.50, 7, 3)", 261.6160716858f);
@@ -528,7 +528,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, PPmt) {
 #endif
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, PV) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, PV) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloat("PV(400, 0.10 / 12, 30 * 12)", 45580.32799074439f);
@@ -538,7 +538,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, PV) {
   ExecuteExpectError("PV(2, 2, 2147483648)");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Rate) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Rate) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloatNear("Rate(12000, 8000, 5)", 0.0844717712f);
@@ -547,7 +547,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Rate) {
   ExecuteExpectError("Rate(2, 2, 2147483648)");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Term) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Term) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloat("Term(2500, 0.0275 + 0.0025, 5000)", 1.97128786369f);
@@ -557,7 +557,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Term) {
 #endif
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Choose) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Choose) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Choose(3, \"Taxes\", \"Price\", \"Person\", \"Teller\")",
@@ -568,19 +568,19 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Choose) {
       "F");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Exists) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Exists) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
   ExecuteExpectBool("Exists(\"hello world\")", false);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, HasValue) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, HasValue) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectBool("HasValue(2)", true);
   ExecuteExpectBool("HasValue(\" \")", false);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Oneof) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Oneof) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectBool("Oneof(3, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)", true);
@@ -592,7 +592,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Oneof) {
   ExecuteExpectBool("Oneof(3, null, null)", false);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Within) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Within) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectBool("Within(\"C\", \"A\", \"D\")", true);
@@ -600,13 +600,13 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Within) {
   ExecuteExpectBool("Within(-1, 0, 2)", false);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Eval) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Eval) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectInt32("eval(\"10*3+5*4\")", 50);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Null) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, DISABLED_Null) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Null()", "null");
@@ -614,14 +614,14 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Null) {
   ExecuteExpectInt32("Null() + 5", 5);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Ref) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Ref) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Ref(\"10*3+5*4\")", "10*3+5*4");
   ExecuteExpectString("Ref(\"hello\")", "hello");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, UnitType) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, UnitType) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("UnitType(\"36 in\")", "in");
@@ -632,7 +632,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, UnitType) {
   ExecuteExpectString("UnitType(\"kilometers\")", "in");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, UnitValue) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, UnitValue) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectFloat("UnitValue(\"2in\")", 2.0f);
@@ -646,7 +646,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, UnitValue) {
 #endif
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, At) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, At) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectInt32("At(\"ABCDEFGH\", \"AB\")", 1);
@@ -654,7 +654,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, At) {
   ExecuteExpectInt32("At(23412931298471, 29)", 5);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Concat) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Concat) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Concat(\"ABC\", \"DEF\")", "ABCDEF");
@@ -664,7 +664,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Concat) {
                       "Sixty-seven Cents.");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Decode) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Decode) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   // HTML
@@ -699,7 +699,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Decode) {
   ExecuteExpectString(R"(Decode("?%"))", "");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Encode) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Encode) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Encode(\"X/~&^*<=>?|\")",
@@ -725,21 +725,21 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Encode) {
   ExecuteExpectString("Encode(\"\\uD83D\\uDCA9\", \"html\")", "");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Format) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, DISABLED_Format) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Format(\"MMM D, YYYY\", \"20020901\")", "Sep 1, 2002");
   ExecuteExpectString("Format(\"$9,999,999.99\", 1234567.89)", "$1,234,567.89");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Left) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Left) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Left(\"ABCDEFGH\", 3)", "ABC");
   ExecuteExpectString("Left(\"Tony Blue\", 5)", "Tony ");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Len) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Len) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectInt32("Len(\"ABCDEFGH\")", 8);
@@ -747,7 +747,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Len) {
   ExecuteExpectInt32("Len(Str(4.532, 6, 4))", 6);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Lower) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Lower) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Lower(\"ABC\")", "abc");
@@ -756,7 +756,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Lower) {
 }
 
 // This is testing for an OOB read, so will likely only fail under ASAN.
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Bug854623) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Bug854623) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   const uint8_t test_string[] = {
@@ -765,14 +765,14 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Bug854623) {
   Execute(ByteStringView(pdfium::make_span(test_string)));
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Ltrim) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Ltrim) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Ltrim(\"   ABCD\")", "ABCD");
   ExecuteExpectString("Ltrim(Rtrim(\"    Tony Blue    \"))", "Tony Blue");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Parse) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, DISABLED_Parse) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Parse(\"MMM D, YYYY\", \"Sep 1, 2002\")", "2002-09-01");
@@ -780,7 +780,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, DISABLED_Parse) {
                      1234567.89f);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Replace) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Replace) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Replace(\"Tony Blue\", \"Tony\", \"Chris\")",
@@ -789,21 +789,21 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Replace) {
   ExecuteExpectString("Replace(\"ABCDEFGH\", \"d\")", "ABCDEFGH");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Right) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Right) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Right(\"ABCDEFGH\", 3)", "FGH");
   ExecuteExpectString("Right(\"Tony Blue\", 5)", " Blue");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Rtrim) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Rtrim) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Rtrim(\"ABCD   \")", "ABCD");
   ExecuteExpectString("Rtrim(\"Tony Blue      \t\")", "Tony Blue");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Space) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Space) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Space(5)", "     ");
@@ -817,7 +817,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Space) {
   ExecuteExpectNull("Space( $)");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Str) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Str) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Str(2.456)", "         2");
@@ -837,7 +837,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Str) {
   ExecuteExpectNull("Str( $)");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Stuff) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Stuff) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   // Test wrong number of parameters.
@@ -877,7 +877,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Stuff) {
       "abcd");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Substr) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Substr) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   // Test wrong number of parameters.
@@ -911,7 +911,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Substr) {
   ExecuteExpectString("Substr(\"21 Waterloo St.\", 4, 5)", "Water");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Uuid) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Uuid) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
   EXPECT_TRUE(Execute("Uuid()"));
 
@@ -925,7 +925,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Uuid) {
       std::any_of(bstr.begin(), bstr.end(), [](char c) { return c != '0'; }));
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Upper) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Upper) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   ExecuteExpectString("Upper(\"abc\")", "ABC");
@@ -933,7 +933,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, Upper) {
   ExecuteExpectString("Upper(15)", "15");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, WordNum) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, WordNum) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   // Wrong number of parameters.
@@ -998,24 +998,24 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, WordNum) {
   ExecuteExpectString("WordNum(1.234e+30)", "*");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Get) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Get) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
   ExecuteExpectString("Get(\"https://example.com\")", "<body>secrets</body>");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Post) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Post) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
   ExecuteExpectString(
       "Post(\"http://example.com\", \"secret stuff\", \"text/plain\")",
       "posted");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Put) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Put) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
   ExecuteExpectString("Put(\"http://example.com\", \"secret stuff\")", "");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, InvalidFunctions) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, InvalidFunctions) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   EXPECT_FALSE(ExecuteSilenceFailure("F()"));
@@ -1024,14 +1024,14 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, InvalidFunctions) {
   EXPECT_FALSE(ExecuteSilenceFailure("Round(2.0)()"));
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, MethodCall) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, MethodCall) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   const char test[] = {"$form.form1.TextField11.getAttribute(\"h\")"};
   ExecuteExpectString(test, "12.7mm");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, GetXFAEventChange) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, GetXFAEventChange) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   CXFA_EventParam params(XFA_EVENT_Unknown);
@@ -1044,7 +1044,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, GetXFAEventChange) {
   ExecuteExpectString(test, "changed");
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, SetXFAEventChange) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, SetXFAEventChange) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   CXFA_EventParam params(XFA_EVENT_Unknown);
@@ -1056,7 +1056,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, SetXFAEventChange) {
   EXPECT_EQ(L"changed", params.m_wsChange);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, SetXFAEventFullTextFails) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, SetXFAEventFullTextFails) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   CXFA_EventParam params(XFA_EVENT_Unknown);
@@ -1070,7 +1070,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, SetXFAEventFullTextFails) {
   EXPECT_EQ(L"Original Full Text", params.m_wsFullText);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, EventChangeSelection) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, EventChangeSelection) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   CXFA_EventParam params(XFA_EVENT_Unknown);
@@ -1124,7 +1124,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, EventChangeSelection) {
   EXPECT_EQ(4, params.m_iSelEnd);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, XFAEventCancelAction) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, XFAEventCancelAction) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   CXFA_EventParam params(XFA_EVENT_Unknown);
@@ -1137,7 +1137,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, XFAEventCancelAction) {
   EXPECT_TRUE(params.m_bCancelAction);
 }
 
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, ComplexTextChangeEvent) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, ComplexTextChangeEvent) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   CXFA_EventParam params(XFA_EVENT_Unknown);
@@ -1175,7 +1175,7 @@ TEST_F(CFXJSE_FormCalcContextEmbedderTest, ComplexTextChangeEvent) {
 }
 
 // Should not crash.
-TEST_F(CFXJSE_FormCalcContextEmbedderTest, Bug1223) {
+TEST_F(CFXJSEFormCalcContextEmbedderTest, Bug1223) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
   EXPECT_TRUE(Execute("!.somExpression=0"));
 }

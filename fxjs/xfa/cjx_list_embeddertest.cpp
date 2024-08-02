@@ -5,10 +5,10 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/xfa_js_embedder_test.h"
 
-class CJX_ListEmbedderTest : public XFAJSEmbedderTest {};
+class CJXListEmbedderTest : public XFAJSEmbedderTest {};
 
 // Should not crash.
-TEST_F(CJX_ListEmbedderTest, Bug1263) {
+TEST_F(CJXListEmbedderTest, Bug1263) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   EXPECT_FALSE(Execute("nodes.insert($form,$)"));

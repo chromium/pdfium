@@ -8,7 +8,7 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(CJS_Util, ParseDataType) {
+TEST(CJSUtilTest, ParseDataType) {
   struct ParseDataTypeCase {
     const wchar_t* const input_string;
     const CJS_Util::DataType expected;

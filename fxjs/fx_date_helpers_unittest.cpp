@@ -15,7 +15,7 @@ constexpr double kMilliSecondsInADay = 1000 * 60 * 60 * 24;
 
 using fxjs::ConversionStatus;
 
-TEST(FX_DateHelper, GetYearFromTime) {
+TEST(FXDateHelperTest, GetYearFromTime) {
   static constexpr struct {
     double time_ms;
     int expected_year;
@@ -39,7 +39,7 @@ TEST(FX_DateHelper, GetYearFromTime) {
   }
 }
 
-TEST(FX_DateHelper, GetMonthFromTime) {
+TEST(FXDateHelperTest, GetMonthFromTime) {
   static constexpr struct {
     double time_ms;
     int expected_month;  // Zero-based.

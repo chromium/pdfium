@@ -24,9 +24,9 @@ double RoundDownDate(double date) {
 
 }  // namespace
 
-class CJS_PublicMethodsEmbedderTest : public ExternalEngineEmbedderTest {};
+class CJSPublicMethodsEmbedderTest : public ExternalEngineEmbedderTest {};
 
-TEST_F(CJS_PublicMethodsEmbedderTest, ParseDateUsingFormat) {
+TEST_F(CJSPublicMethodsEmbedderTest, ParseDateUsingFormat) {
   v8::Isolate::Scope isolate_scope(isolate());
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
@@ -114,7 +114,7 @@ TEST_F(CJS_PublicMethodsEmbedderTest, ParseDateUsingFormat) {
   EXPECT_FALSE(bWrongFormat);
 }
 
-TEST_F(CJS_PublicMethodsEmbedderTest, PrintDateUsingFormat) {
+TEST_F(CJSPublicMethodsEmbedderTest, PrintDateUsingFormat) {
   v8::Isolate::Scope isolate_scope(isolate());
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
@@ -181,7 +181,7 @@ TEST_F(CJS_PublicMethodsEmbedderTest, PrintDateUsingFormat) {
   EXPECT_EQ(L"02012095", formatted_date);
 }
 
-TEST_F(CJS_PublicMethodsEmbedderTest, AFSimple_CalculateSum) {
+TEST_F(CJSPublicMethodsEmbedderTest, AFSimpleCalculateSum) {
   v8::Isolate::Scope isolate_scope(isolate());
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());
@@ -215,7 +215,7 @@ TEST_F(CJS_PublicMethodsEmbedderTest, AFSimple_CalculateSum) {
   ASSERT_EQ(L"7", result);
 }
 
-TEST_F(CJS_PublicMethodsEmbedderTest, AFNumber_Keystroke) {
+TEST_F(CJSPublicMethodsEmbedderTest, AFNumberKeystroke) {
   v8::Isolate::Scope isolate_scope(isolate());
   v8::HandleScope handle_scope(isolate());
   v8::Context::Scope context_scope(GetV8Context());

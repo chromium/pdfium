@@ -8,7 +8,7 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(CJS_PublicMethods, IsNumber) {
+TEST(CJSPublicMethodsTest, IsNumber) {
   // TODO(weili): Check whether results from case 0, 1, 10, 15 are intended.
   struct {
     const wchar_t* input;
