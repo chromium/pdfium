@@ -224,7 +224,9 @@ bool PDFiumFuzzerHelper::RenderPage(FPDF_DOCUMENT doc,
   int height = static_cast<int>(FPDF_GetPageHeightF(page.get()) * scale);
   ScopedFPDFBitmap bitmap(FPDFBitmap_Create(width, height, 0));
   if (bitmap) {
-    FPDFBitmap_FillRect(bitmap.get(), 0, 0, width, height, 0xFFFFFFFF);
+    if (!FPDFBitmap_FillRect(bitmap.get(), 0, 0, width, height, 0xFFFFFFFF)) {
+      return false;
+    }
     FPDF_RenderPageBitmap(bitmap.get(), page.get(), 0, 0, width, height, 0,
                           render_flags);
     FPDF_FFLDraw(form, bitmap.get(), page.get(), 0, 0, width, height, 0,

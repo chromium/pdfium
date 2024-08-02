@@ -154,7 +154,8 @@ void Harness(void (*Test)(CFX_SkiaDeviceDriver*, const State&),
   constexpr int kHeight = 1;
   ScopedFPDFBitmap bitmap(FPDFBitmap_Create(kWidth, kHeight, 1));
   ASSERT_TRUE(bitmap);
-  FPDFBitmap_FillRect(bitmap.get(), 0, 0, kWidth, kHeight, 0x00000000);
+  ASSERT_TRUE(
+      FPDFBitmap_FillRect(bitmap.get(), 0, 0, kWidth, kHeight, 0x00000000));
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap.get()));
   auto driver = CFX_SkiaDeviceDriver::Create(pBitmap, false, nullptr, false);
   ASSERT_TRUE(driver);

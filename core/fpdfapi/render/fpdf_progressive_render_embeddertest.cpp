@@ -153,8 +153,10 @@ bool FPDFProgressiveRenderEmbedderTest::StartRenderPageWithFlags(
   progressive_render_bitmap_ =
       ScopedFPDFBitmap(FPDFBitmap_Create(width, height, alpha));
   FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
-  FPDFBitmap_FillRect(progressive_render_bitmap_.get(), 0, 0, width, height,
-                      fill_color);
+  if (!FPDFBitmap_FillRect(progressive_render_bitmap_.get(), 0, 0, width,
+                           height, fill_color)) {
+    return false;
+  }
   int rv = FPDF_RenderPageBitmap_Start(progressive_render_bitmap_.get(), page,
                                        0, 0, width, height, 0,
                                        progressive_render_flags_, pause);
@@ -175,8 +177,10 @@ bool FPDFProgressiveRenderEmbedderTest::
   progressive_render_bitmap_ =
       ScopedFPDFBitmap(FPDFBitmap_Create(width, height, alpha));
   DCHECK(progressive_render_bitmap_);
-  FPDFBitmap_FillRect(progressive_render_bitmap_.get(), 0, 0, width, height,
-                      background_color);
+  if (!FPDFBitmap_FillRect(progressive_render_bitmap_.get(), 0, 0, width,
+                           height, background_color)) {
+    return false;
+  }
   int rv = FPDF_RenderPageBitmapWithColorScheme_Start(
       progressive_render_bitmap_.get(), page, 0, 0, width, height, 0,
       progressive_render_flags_, color_scheme, pause);

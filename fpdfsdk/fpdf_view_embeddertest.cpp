@@ -166,8 +166,8 @@ class FPDFViewEmbedderTest : public EmbedderTest {
                                       const FS_RECTF& rect,
                                       const char* expected_checksum) {
     ScopedFPDFBitmap bitmap(FPDFBitmap_Create(bitmap_width, bitmap_height, 0));
-    FPDFBitmap_FillRect(bitmap.get(), 0, 0, bitmap_width, bitmap_height,
-                        0xFFFFFFFF);
+    ASSERT_TRUE(FPDFBitmap_FillRect(bitmap.get(), 0, 0, bitmap_width,
+                                    bitmap_height, 0xFFFFFFFF));
     FPDF_RenderPageBitmapWithMatrix(bitmap.get(), page, &matrix, &rect, 0);
     CompareBitmap(bitmap.get(), bitmap_width, bitmap_height, expected_checksum);
   }
@@ -178,8 +178,8 @@ class FPDFViewEmbedderTest : public EmbedderTest {
     int bitmap_width = static_cast<int>(FPDF_GetPageWidth(page));
     int bitmap_height = static_cast<int>(FPDF_GetPageHeight(page));
     ScopedFPDFBitmap bitmap(FPDFBitmap_Create(bitmap_width, bitmap_height, 0));
-    FPDFBitmap_FillRect(bitmap.get(), 0, 0, bitmap_width, bitmap_height,
-                        0xFFFFFFFF);
+    ASSERT_TRUE(FPDFBitmap_FillRect(bitmap.get(), 0, 0, bitmap_width,
+                                    bitmap_height, 0xFFFFFFFF));
     FPDF_RenderPageBitmap(bitmap.get(), page, 0, 0, bitmap_width, bitmap_height,
                           0, flags);
     CompareBitmap(bitmap.get(), bitmap_width, bitmap_height, expected_checksum);
@@ -273,7 +273,8 @@ class FPDFViewEmbedderTest : public EmbedderTest {
     int bitmap_height = FPDFBitmap_GetHeight(bitmap);
     EXPECT_EQ(bitmap_width, static_cast<int>(FPDF_GetPageWidth(page)));
     EXPECT_EQ(bitmap_height, static_cast<int>(FPDF_GetPageHeight(page)));
-    FPDFBitmap_FillRect(bitmap, 0, 0, bitmap_width, bitmap_height, 0xFFFFFFFF);
+    ASSERT_TRUE(FPDFBitmap_FillRect(bitmap, 0, 0, bitmap_width, bitmap_height,
+                                    0xFFFFFFFF));
     FPDF_RenderPageBitmap(bitmap, page, 0, 0, bitmap_width, bitmap_height, 0,
                           FPDF_ANNOT);
     CompareBitmap(bitmap, bitmap_width, bitmap_height, expected_checksum);
@@ -2157,7 +2158,8 @@ TEST_F(FPDFViewEmbedderTest, RenderTransparencyOnWhiteBackground) {
   EXPECT_EQ(kHeight, static_cast<int>(FPDF_GetPageHeightF(page.get())));
   EXPECT_TRUE(FPDFPage_HasTransparency(page.get()));
   ScopedFPDFBitmap bitmap(FPDFBitmap_Create(kWidth, kHeight, /*alpha=*/true));
-  FPDFBitmap_FillRect(bitmap.get(), 0, 0, kWidth, kHeight, 0xFFFFFFFF);
+  ASSERT_TRUE(
+      FPDFBitmap_FillRect(bitmap.get(), 0, 0, kWidth, kHeight, 0xFFFFFFFF));
   FPDF_RenderPageBitmap(bitmap.get(), page.get(), /*start_x=*/0,
                         /*start_y=*/0, kWidth, kHeight, /*rotate=*/0,
                         /*flags=*/0);
@@ -2202,26 +2204,30 @@ TEST_F(FPDFViewEmbedderTest, BadFillRectInput) {
   constexpr int kHeight = 200;
   constexpr char kExpectedChecksum[] = "acc736435c9f84aa82941ba561bc5dbc";
   ScopedFPDFBitmap bitmap(FPDFBitmap_Create(200, 200, /*alpha=*/true));
-  FPDFBitmap_FillRect(bitmap.get(), /*left=*/0, /*top=*/0, /*width=*/kWidth,
-                      /*height=*/kHeight, 0xFFFF0000);
+  ASSERT_TRUE(FPDFBitmap_FillRect(bitmap.get(), /*left=*/0, /*top=*/0,
+                                  /*width=*/kWidth,
+                                  /*height=*/kHeight, 0xFFFF0000));
   EXPECT_EQ(kExpectedChecksum, HashBitmap(bitmap.get()));
 
   // Empty rect dimensions is a no-op.
-  FPDFBitmap_FillRect(bitmap.get(), /*left=*/0, /*top=*/0, /*width=*/0,
-                      /*height=*/0, 0xFF0000FF);
+  ASSERT_TRUE(FPDFBitmap_FillRect(bitmap.get(), /*left=*/0, /*top=*/0,
+                                  /*width=*/0,
+                                  /*height=*/0, 0xFF0000FF));
   EXPECT_EQ(kExpectedChecksum, HashBitmap(bitmap.get()));
 
   // Rect dimension overflows are also no-ops.
-  FPDFBitmap_FillRect(bitmap.get(), /*left=*/std::numeric_limits<int>::max(),
-                      /*top=*/0, /*width=*/std::numeric_limits<int>::max(),
-                      /*height=*/kHeight, 0xFF0000FF);
+  ASSERT_FALSE(FPDFBitmap_FillRect(
+      bitmap.get(), /*left=*/std::numeric_limits<int>::max(),
+      /*top=*/0, /*width=*/std::numeric_limits<int>::max(),
+      /*height=*/kHeight, 0xFF0000FF));
   EXPECT_EQ(kExpectedChecksum, HashBitmap(bitmap.get()));
 
-  FPDFBitmap_FillRect(bitmap.get(), /*left=*/0,
-                      /*top=*/std::numeric_limits<int>::max(), /*width=*/kWidth,
-                      /*height=*/std::numeric_limits<int>::max(), 0xFF0000FF);
+  ASSERT_FALSE(FPDFBitmap_FillRect(
+      bitmap.get(), /*left=*/0,
+      /*top=*/std::numeric_limits<int>::max(), /*width=*/kWidth,
+      /*height=*/std::numeric_limits<int>::max(), 0xFF0000FF));
   EXPECT_EQ(kExpectedChecksum, HashBitmap(bitmap.get()));
 
   // Make sure null bitmap handle does not trigger a crash.
-  FPDFBitmap_FillRect(nullptr, 0, 0, kWidth, kHeight, 0xFF0000FF);
+  ASSERT_FALSE(FPDFBitmap_FillRect(nullptr, 0, 0, kWidth, kHeight, 0xFF0000FF));
 }

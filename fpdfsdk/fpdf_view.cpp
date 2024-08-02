@@ -955,28 +955,28 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFBitmap_GetFormat(FPDF_BITMAP bitmap) {
   }
 }
 
-FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
-                                                   int left,
-                                                   int top,
-                                                   int width,
-                                                   int height,
-                                                   FPDF_DWORD color) {
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
+                                                        int left,
+                                                        int top,
+                                                        int width,
+                                                        int height,
+                                                        FPDF_DWORD color) {
   RetainPtr<CFX_DIBitmap> pBitmap(CFXDIBitmapFromFPDFBitmap(bitmap));
   if (!pBitmap) {
-    return;
+    return false;
   }
   CHECK(!pBitmap->IsPremultiplied());
 
   FX_SAFE_INT32 right = left;
   right += width;
   if (!right.IsValid()) {
-    return;
+    return false;
   }
 
   FX_SAFE_INT32 bottom = top;
   bottom += height;
   if (!bottom.IsValid()) {
-    return;
+    return false;
   }
 
   FX_RECT fill_rect(left, top, right.ValueOrDie(), bottom.ValueOrDie());
@@ -990,8 +990,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
   if (bpp == 8) {
     CFX_DefaultRenderDevice device;
     device.Attach(std::move(pBitmap));
-    device.FillRect(fill_rect, static_cast<uint32_t>(color));
-    return;
+    return device.FillRect(fill_rect, static_cast<uint32_t>(color));
   }
 
   // Handle filling 24/32-bit bitmaps directly without CFX_DefaultRenderDevice.
@@ -1000,7 +999,8 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
   // `pBitmap` to 32 BPP and back.
   fill_rect.Intersect(FX_RECT(0, 0, pBitmap->GetWidth(), pBitmap->GetHeight()));
   if (fill_rect.IsEmpty()) {
-    return;
+    // CFX_DefaultRenderDevice treats this as success. Match that.
+    return true;
   }
 
   const int row_end = fill_rect.top + fill_rect.Height();
@@ -1010,7 +1010,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
           fill_rect.left, fill_rect.Width());
       fxcrt::Fill(span32, static_cast<uint32_t>(color));
     }
-    return;
+    return true;
   }
 
   CHECK_EQ(bpp, 24);
@@ -1023,6 +1023,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
             fill_rect.left, fill_rect.Width());
     fxcrt::Fill(bgr_span, bgr);
   }
+  return true;
 }
 
 FPDF_EXPORT void* FPDF_CALLCONV FPDFBitmap_GetBuffer(FPDF_BITMAP bitmap) {

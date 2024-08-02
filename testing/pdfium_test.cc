@@ -1000,9 +1000,9 @@ class BitmapPageRenderer : public PageRenderer {
     }
 
     FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
-    FPDFBitmap_FillRect(bitmap(), /*left=*/0, /*top=*/0, /*width=*/width(),
-                        /*height=*/height(), /*color=*/fill_color);
-    return true;
+    return FPDFBitmap_FillRect(bitmap(), /*left=*/0, /*top=*/0,
+                               /*width=*/width(),
+                               /*height=*/height(), /*color=*/fill_color);
   }
 
   void ResetBitmap() { bitmap_.reset(); }

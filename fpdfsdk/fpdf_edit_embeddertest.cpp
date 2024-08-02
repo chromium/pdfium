@@ -5250,8 +5250,8 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForRotatedImage) {
   constexpr int kBitmapWidth = 50;
   constexpr int kBitmapHeight = 100;
   ScopedFPDFBitmap bitmap(FPDFBitmap_Create(kBitmapWidth, kBitmapHeight, 0));
-  FPDFBitmap_FillRect(bitmap.get(), 0, 0, kBitmapWidth, kBitmapHeight,
-                      0x00000000);
+  ASSERT_TRUE(FPDFBitmap_FillRect(bitmap.get(), 0, 0, kBitmapWidth,
+                                  kBitmapHeight, 0x00000000));
   ScopedFPDFPageObject page_image(FPDFPageObj_NewImageObj(doc.get()));
   ASSERT_TRUE(
       FPDFImageObj_SetBitmap(nullptr, 0, page_image.get(), bitmap.get()));

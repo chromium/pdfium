@@ -1154,7 +1154,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFBitmap_GetFormat(FPDF_BITMAP bitmap);
 //          color       -   A 32-bit value specifing the color, in 8888 ARGB
 //                          format.
 // Return value:
-//          None.
+//          Returns whether the operation succeeded or not.
 // Comments:
 //          This function sets the color and (optionally) alpha value in the
 //          specified region of the bitmap.
@@ -1164,12 +1164,12 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFBitmap_GetFormat(FPDF_BITMAP bitmap);
 //          background will be replaced by the source color and the alpha.
 //
 //          If the alpha channel is not used, the alpha parameter is ignored.
-FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
-                                                   int left,
-                                                   int top,
-                                                   int width,
-                                                   int height,
-                                                   FPDF_DWORD color);
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
+                                                        int left,
+                                                        int top,
+                                                        int width,
+                                                        int height,
+                                                        FPDF_DWORD color);
 
 // Function: FPDFBitmap_GetBuffer
 //          Get data buffer of a bitmap.

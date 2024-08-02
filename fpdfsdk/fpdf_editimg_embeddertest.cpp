@@ -42,7 +42,8 @@ TEST_F(PDFEditImgTest, NewImageObjGenerateContent) {
 
   constexpr int kBitmapSize = 50;
   ScopedFPDFBitmap bitmap(FPDFBitmap_Create(kBitmapSize, kBitmapSize, 0));
-  FPDFBitmap_FillRect(bitmap.get(), 0, 0, kBitmapSize, kBitmapSize, 0x00000000);
+  ASSERT_TRUE(FPDFBitmap_FillRect(bitmap.get(), 0, 0, kBitmapSize, kBitmapSize,
+                                  0x00000000));
   EXPECT_EQ(kBitmapSize, FPDFBitmap_GetWidth(bitmap.get()));
   EXPECT_EQ(kBitmapSize, FPDFBitmap_GetHeight(bitmap.get()));
 

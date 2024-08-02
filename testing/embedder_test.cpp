@@ -596,7 +596,9 @@ ScopedFPDFBitmap EmbedderTest::RenderPageWithFlags(FPDF_PAGE page,
   int alpha = FPDFPage_HasTransparency(page) ? 1 : 0;
   ScopedFPDFBitmap bitmap(FPDFBitmap_Create(width, height, alpha));
   FPDF_DWORD fill_color = alpha ? 0x00000000 : 0xFFFFFFFF;
-  FPDFBitmap_FillRect(bitmap.get(), 0, 0, width, height, fill_color);
+  if (!FPDFBitmap_FillRect(bitmap.get(), 0, 0, width, height, fill_color)) {
+    return nullptr;
+  }
   FPDF_RenderPageBitmap(bitmap.get(), page, 0, 0, width, height, 0, flags);
   FPDF_FFLDraw(handle, bitmap.get(), page, 0, 0, width, height, 0, flags);
   return bitmap;

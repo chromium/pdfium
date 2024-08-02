@@ -1445,8 +1445,8 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
 
     // Add a solid-color translucent image object to the new annotation.
     image_bitmap = FPDFBitmap_Create(kBitmapSize, kBitmapSize, 1);
-    FPDFBitmap_FillRect(image_bitmap, 0, 0, kBitmapSize, kBitmapSize,
-                        0xeeeecccc);
+    ASSERT_TRUE(FPDFBitmap_FillRect(image_bitmap, 0, 0, kBitmapSize,
+                                    kBitmapSize, 0xeeeecccc));
     EXPECT_EQ(kBitmapSize, FPDFBitmap_GetWidth(image_bitmap));
     EXPECT_EQ(kBitmapSize, FPDFBitmap_GetHeight(image_bitmap));
     FPDF_PAGEOBJECT image_object = FPDFPageObj_NewImageObj(document());
@@ -1473,8 +1473,8 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
     EXPECT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(image_object));
 
     // Modify the image in the new annotation.
-    FPDFBitmap_FillRect(image_bitmap, 0, 0, kBitmapSize, kBitmapSize,
-                        0xff000000);
+    ASSERT_TRUE(FPDFBitmap_FillRect(image_bitmap, 0, 0, kBitmapSize,
+                                    kBitmapSize, 0xff000000));
     ASSERT_TRUE(FPDFImageObj_SetBitmap(&page, 0, image_object, image_bitmap));
     EXPECT_TRUE(FPDFAnnot_UpdateObject(annot.get(), image_object));
   }
