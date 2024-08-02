@@ -72,32 +72,45 @@ FX_RGB_STRUCT<int> SetSat(FX_RGB_STRUCT<int> color, int s) {
   return color;
 }
 
+template <typename T, typename U>
+FX_RGB_STRUCT<int> RgbBlend(BlendMode blend_type,
+                            const T& src_in,
+                            const U& back_in) {
+  FX_RGB_STRUCT<int> src = {
+      .red = src_in.red, .green = src_in.green, .blue = src_in.blue};
+  FX_RGB_STRUCT<int> back = {
+      .red = back_in.red, .green = back_in.green, .blue = back_in.blue};
+  FX_RGB_STRUCT<int> result;
+  switch (blend_type) {
+    case BlendMode::kHue:
+      result = SetLum(SetSat(src, Sat(back)), Lum(back));
+      break;
+    case BlendMode::kSaturation:
+      result = SetLum(SetSat(back, Sat(src)), Lum(back));
+      break;
+    case BlendMode::kColor:
+      result = SetLum(src, Lum(back));
+      break;
+    case BlendMode::kLuminosity:
+      result = SetLum(back, Lum(src));
+      break;
+    default:
+      break;
+  }
+  return result;
+}
+
+// Prefer RgbBlend() above in new code.
 void RGB_Blend(BlendMode blend_mode,
                const uint8_t* src_scan,
                const uint8_t* dest_scan,
                int results[3]) {
   UNSAFE_TODO({
-    FX_RGB_STRUCT<int> result = {};
-    FX_RGB_STRUCT<int> src = {
-        .red = src_scan[2], .green = src_scan[1], .blue = src_scan[0]};
-    FX_RGB_STRUCT<int> back = {
-        .red = dest_scan[2], .green = dest_scan[1], .blue = dest_scan[0]};
-    switch (blend_mode) {
-      case BlendMode::kHue:
-        result = SetLum(SetSat(src, Sat(back)), Lum(back));
-        break;
-      case BlendMode::kSaturation:
-        result = SetLum(SetSat(back, Sat(src)), Lum(back));
-        break;
-      case BlendMode::kColor:
-        result = SetLum(src, Lum(back));
-        break;
-      case BlendMode::kLuminosity:
-        result = SetLum(back, Lum(src));
-        break;
-      default:
-        break;
-    }
+    FX_BGR_STRUCT<uint8_t> src = {
+        .blue = src_scan[0], .green = src_scan[1], .red = src_scan[2]};
+    FX_BGR_STRUCT<uint8_t> back = {
+        .blue = dest_scan[0], .green = dest_scan[1], .red = dest_scan[2]};
+    FX_RGB_STRUCT<int> result = RgbBlend(blend_mode, src, back);
     results[0] = result.blue;
     results[1] = result.green;
     results[2] = result.red;
