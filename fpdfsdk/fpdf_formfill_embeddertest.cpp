@@ -664,7 +664,7 @@ TEST_F(FPDFFormFillEmbedderTest, Bug900552) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFFormFillEmbedderTest, Bug901654) {
+TEST_F(FPDFFormFillEmbedderTest, Bug901654Case1) {
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
 
@@ -683,7 +683,7 @@ TEST_F(FPDFFormFillEmbedderTest, Bug901654) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFFormFillEmbedderTest, Bug901654_2) {
+TEST_F(FPDFFormFillEmbedderTest, Bug901654Case2) {
   EmbedderTestTimerHandlingDelegate delegate;
   SetDelegate(&delegate);
 

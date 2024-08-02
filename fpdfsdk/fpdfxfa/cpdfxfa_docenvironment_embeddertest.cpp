@@ -5,10 +5,10 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/xfa_js_embedder_test.h"
 
-class CPDFXFA_DocEnvironmentEmbedderTest : public XFAJSEmbedderTest {};
+class CPDFXFADocEnvironmentEmbedderTest : public XFAJSEmbedderTest {};
 
 // Should not crash.
-TEST_F(CPDFXFA_DocEnvironmentEmbedderTest, Bug1223) {
+TEST_F(CPDFXFADocEnvironmentEmbedderTest, Bug1223) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   EXPECT_FALSE(Execute("URL=y"));

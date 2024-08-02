@@ -13,7 +13,7 @@
 using ::testing::ElementsAre;
 using ::testing::IsEmpty;
 
-TEST(CPDFSDK_HelpersTest, NulTerminateMaybeCopyAndReturnLength) {
+TEST(CPDFSDKHelpersTest, NulTerminateMaybeCopyAndReturnLength) {
   {
     const ByteString to_be_copied("toBeCopied");
     constexpr size_t kExpectedToBeCopiedLen = 10;
@@ -48,7 +48,7 @@ TEST(CPDFSDK_HelpersTest, NulTerminateMaybeCopyAndReturnLength) {
   }
 }
 
-TEST(CPDFSDK_HelpersTest, ParsePageRangeString) {
+TEST(CPDFSDKHelpersTest, ParsePageRangeString) {
   EXPECT_THAT(ParsePageRangeString("", 1), IsEmpty());
   EXPECT_THAT(ParsePageRangeString(" ", 1), IsEmpty());
   EXPECT_THAT(ParsePageRangeString("clams", 1), IsEmpty());

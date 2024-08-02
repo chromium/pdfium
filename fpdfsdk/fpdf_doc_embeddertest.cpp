@@ -623,7 +623,7 @@ TEST_F(FPDFDocEmbedderTest, FindBookmarks) {
 }
 
 // Check circular bookmarks will not cause infinite loop.
-TEST_F(FPDFDocEmbedderTest, FindBookmarks_bug420) {
+TEST_F(FPDFDocEmbedderTest, FindBookmarksBug420) {
   // Open a file with circular bookmarks.
   ASSERT_TRUE(OpenDocument("bookmarks_circular.pdf"));
 

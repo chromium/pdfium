@@ -13,7 +13,7 @@
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "testing/embedder_test.h"
 
-class CPDFSDK_BAAnnotTest : public EmbedderTest {
+class CPDFSDKBAAnnotTest : public EmbedderTest {
  public:
   void SetUp() override {
     EmbedderTest::SetUp();
@@ -62,7 +62,7 @@ class CPDFSDK_BAAnnotTest : public EmbedderTest {
   CPDFSDK_FormFillEnvironment* m_pFormFillEnv = nullptr;
 };
 
-TEST_F(CPDFSDK_BAAnnotTest, TabToLinkOrHighlightAnnot) {
+TEST_F(CPDFSDKBAAnnotTest, TabToLinkOrHighlightAnnot) {
   std::vector<CPDF_Annot::Subtype> focusable_annot_types = {
       CPDF_Annot::Subtype::WIDGET, CPDF_Annot::Subtype::LINK,
       CPDF_Annot::Subtype::HIGHLIGHT};

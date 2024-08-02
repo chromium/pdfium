@@ -897,42 +897,42 @@ TEST_F(FPDFViewEmbedderTest, NamedDestsOldStyle) {
 }
 
 // The following tests pass if the document opens without crashing.
-TEST_F(FPDFViewEmbedderTest, Crasher_113) {
+TEST_F(FPDFViewEmbedderTest, Crasher113) {
   ASSERT_TRUE(OpenDocument("bug_113.pdf"));
 }
 
-TEST_F(FPDFViewEmbedderTest, Crasher_451830) {
+TEST_F(FPDFViewEmbedderTest, Crasher451830) {
   // Document is damaged and can't be opened.
   EXPECT_FALSE(OpenDocument("bug_451830.pdf"));
 }
 
-TEST_F(FPDFViewEmbedderTest, Crasher_452455) {
+TEST_F(FPDFViewEmbedderTest, Crasher452455) {
   ASSERT_TRUE(OpenDocument("bug_452455.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 }
 
-TEST_F(FPDFViewEmbedderTest, Crasher_454695) {
+TEST_F(FPDFViewEmbedderTest, Crasher454695) {
   // Document is damaged and can't be opened.
   EXPECT_FALSE(OpenDocument("bug_454695.pdf"));
 }
 
-TEST_F(FPDFViewEmbedderTest, Crasher_572871) {
+TEST_F(FPDFViewEmbedderTest, Crasher572871) {
   ASSERT_TRUE(OpenDocument("bug_572871.pdf"));
 }
 
 // It tests that document can still be loaded even the trailer has no 'Size'
 // field if other information is right.
-TEST_F(FPDFViewEmbedderTest, Failed_213) {
+TEST_F(FPDFViewEmbedderTest, Failed213) {
   ASSERT_TRUE(OpenDocument("bug_213.pdf"));
 }
 
 // The following tests pass if the document opens without infinite looping.
-TEST_F(FPDFViewEmbedderTest, Hang_298) {
+TEST_F(FPDFViewEmbedderTest, Hang298) {
   EXPECT_FALSE(OpenDocument("bug_298.pdf"));
 }
 
-TEST_F(FPDFViewEmbedderTest, Crasher_773229) {
+TEST_F(FPDFViewEmbedderTest, Crasher773229) {
   ASSERT_TRUE(OpenDocument("bug_773229.pdf"));
 }
 
@@ -954,36 +954,36 @@ TEST_F(FPDFViewEmbedderTest, CrossRefV4Loop) {
 
 // The test should pass when circular references to ParseIndirectObject will not
 // cause infinite loop.
-TEST_F(FPDFViewEmbedderTest, Hang_343) {
+TEST_F(FPDFViewEmbedderTest, Hang343) {
   EXPECT_FALSE(OpenDocument("bug_343.pdf"));
 }
 
 // The test should pass when the absence of 'Contents' field in a signature
 // dictionary will not cause an infinite loop in CPDF_SyntaxParser::GetObject().
-TEST_F(FPDFViewEmbedderTest, Hang_344) {
+TEST_F(FPDFViewEmbedderTest, Hang344) {
   EXPECT_FALSE(OpenDocument("bug_344.pdf"));
 }
 
 // The test should pass when there is no infinite recursion in
 // CPDF_SyntaxParser::GetString().
-TEST_F(FPDFViewEmbedderTest, Hang_355) {
+TEST_F(FPDFViewEmbedderTest, Hang355) {
   EXPECT_FALSE(OpenDocument("bug_355.pdf"));
 }
 // The test should pass even when the file has circular references to pages.
-TEST_F(FPDFViewEmbedderTest, Hang_360) {
+TEST_F(FPDFViewEmbedderTest, Hang360) {
   EXPECT_FALSE(OpenDocument("bug_360.pdf"));
 }
 
 // Deliberately damaged version of linearized.pdf with bad data in the shared
 // object hint table.
-TEST_F(FPDFViewEmbedderTest, Hang_1055) {
+TEST_F(FPDFViewEmbedderTest, Hang1055) {
   ASSERT_TRUE(OpenDocumentLinearized("linearized_bug_1055.pdf"));
   int version;
   EXPECT_TRUE(FPDF_GetFileVersion(document(), &version));
   EXPECT_EQ(16, version);
 }
 
-TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
+TEST_F(FPDFViewEmbedderTest, FPDFRenderPageBitmapWithMatrix) {
   const char* clipped_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "d2929fae285593cd1c1d446750d47d60";
@@ -1199,7 +1199,7 @@ TEST_F(FPDFViewEmbedderTest, FPDF_RenderPageBitmapWithMatrix) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFViewEmbedderTest, FPDF_GetPageSizeByIndexF) {
+TEST_F(FPDFViewEmbedderTest, FPDFGetPageSizeByIndexF) {
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
 
   FS_SIZEF size;
@@ -1234,7 +1234,7 @@ TEST_F(FPDFViewEmbedderTest, FPDF_GetPageSizeByIndexF) {
   UnloadPage(page);
 }
 
-TEST_F(FPDFViewEmbedderTest, FPDF_GetPageSizeByIndex) {
+TEST_F(FPDFViewEmbedderTest, FPDFGetPageSizeByIndex) {
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
 
   double width = 0;
@@ -1373,7 +1373,7 @@ class RecordUnsupportedErrorDelegate final : public EmbedderTest::Delegate {
   int type_ = -1;
 };
 
-TEST_F(FPDFViewEmbedderTest, UnSupportedOperations_NotFound) {
+TEST_F(FPDFViewEmbedderTest, UnSupportedOperationsNotFound) {
   RecordUnsupportedErrorDelegate delegate;
   SetDelegate(&delegate);
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
@@ -1381,7 +1381,7 @@ TEST_F(FPDFViewEmbedderTest, UnSupportedOperations_NotFound) {
   SetDelegate(nullptr);
 }
 
-TEST_F(FPDFViewEmbedderTest, UnSupportedOperations_LoadCustomDocument) {
+TEST_F(FPDFViewEmbedderTest, UnSupportedOperationsLoadCustomDocument) {
   RecordUnsupportedErrorDelegate delegate;
   SetDelegate(&delegate);
   ASSERT_TRUE(OpenDocument("unsupported_feature.pdf"));
@@ -1389,7 +1389,7 @@ TEST_F(FPDFViewEmbedderTest, UnSupportedOperations_LoadCustomDocument) {
   SetDelegate(nullptr);
 }
 
-TEST_F(FPDFViewEmbedderTest, UnSupportedOperations_LoadDocument) {
+TEST_F(FPDFViewEmbedderTest, UnSupportedOperationsLoadDocument) {
   std::string file_path =
       PathService::GetTestFilePath("unsupported_feature.pdf");
   ASSERT_FALSE(file_path.empty());
