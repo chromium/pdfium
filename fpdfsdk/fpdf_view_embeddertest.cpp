@@ -2196,3 +2196,32 @@ TEST_F(FPDFViewEmbedderTest, RenderAnnotsGrayScale) {
   TestRenderPageBitmapWithInternalMemory(page.get(), FPDFBitmap_Gray,
                                          gray_checksum);
 }
+
+TEST_F(FPDFViewEmbedderTest, BadFillRectInput) {
+  constexpr int kWidth = 200;
+  constexpr int kHeight = 200;
+  constexpr char kExpectedChecksum[] = "acc736435c9f84aa82941ba561bc5dbc";
+  ScopedFPDFBitmap bitmap(FPDFBitmap_Create(200, 200, /*alpha=*/true));
+  FPDFBitmap_FillRect(bitmap.get(), /*left=*/0, /*top=*/0, /*width=*/kWidth,
+                      /*height=*/kHeight, 0xFFFF0000);
+  EXPECT_EQ(kExpectedChecksum, HashBitmap(bitmap.get()));
+
+  // Empty rect dimensions is a no-op.
+  FPDFBitmap_FillRect(bitmap.get(), /*left=*/0, /*top=*/0, /*width=*/0,
+                      /*height=*/0, 0xFF0000FF);
+  EXPECT_EQ(kExpectedChecksum, HashBitmap(bitmap.get()));
+
+  // Rect dimension overflows are also no-ops.
+  FPDFBitmap_FillRect(bitmap.get(), /*left=*/std::numeric_limits<int>::max(),
+                      /*top=*/0, /*width=*/std::numeric_limits<int>::max(),
+                      /*height=*/kHeight, 0xFF0000FF);
+  EXPECT_EQ(kExpectedChecksum, HashBitmap(bitmap.get()));
+
+  FPDFBitmap_FillRect(bitmap.get(), /*left=*/0,
+                      /*top=*/std::numeric_limits<int>::max(), /*width=*/kWidth,
+                      /*height=*/std::numeric_limits<int>::max(), 0xFF0000FF);
+  EXPECT_EQ(kExpectedChecksum, HashBitmap(bitmap.get()));
+
+  // Make sure null bitmap handle does not trigger a crash.
+  FPDFBitmap_FillRect(nullptr, 0, 0, kWidth, kHeight, 0xFF0000FF);
+}

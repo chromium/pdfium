@@ -967,7 +967,19 @@ FPDF_EXPORT void FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
   }
   CHECK(!pBitmap->IsPremultiplied());
 
-  FX_RECT fill_rect(left, top, left + width, top + height);
+  FX_SAFE_INT32 right = left;
+  right += width;
+  if (!right.IsValid()) {
+    return;
+  }
+
+  FX_SAFE_INT32 bottom = top;
+  bottom += height;
+  if (!bottom.IsValid()) {
+    return;
+  }
+
+  FX_RECT fill_rect(left, top, right.ValueOrDie(), bottom.ValueOrDie());
 
   if (!pBitmap->IsAlphaFormat()) {
     color |= 0xFF000000;
