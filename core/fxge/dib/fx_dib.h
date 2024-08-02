@@ -256,6 +256,26 @@ T PreMultiplyColor(const T& input) {
   output.red = static_cast<float>(input.red) * input.alpha / 255.0f;
   return output;
 }
+
+template <typename T>
+T UnPreMultiplyColor(const T& input) {
+  if (input.alpha == 255) {
+    return input;
+  }
+
+  T output;
+  output.alpha = input.alpha;
+  if (input.alpha == 0) {
+    output.blue = 0;
+    output.green = 0;
+    output.red = 0;
+  } else {
+    output.blue = static_cast<float>(input.blue) * 255.0f / input.alpha;
+    output.green = static_cast<float>(input.green) * 255.0f / input.alpha;
+    output.red = static_cast<float>(input.red) * 255.0f / input.alpha;
+  }
+  return output;
+}
 #endif  // defined(PDF_USE_SKIA)
 
 #endif  // CORE_FXGE_DIB_FX_DIB_H_
