@@ -1457,6 +1457,10 @@ RenderDeviceDriverIface::StartResult CFX_SkiaDeviceDriver::StartDIBits(
   return {success ? Result::kSuccess : Result::kFailure, nullptr};
 }
 
+void CFX_DIBitmap::PreMultiply() {
+  // TODO(crbug.com/42271020): Implement.
+}
+
 void CFX_DIBitmap::UnPreMultiply() {
   if (m_nFormat == Format::kUnPreMultiplied || GetBPP() != 32) {
     return;

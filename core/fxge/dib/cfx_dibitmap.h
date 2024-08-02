@@ -28,6 +28,22 @@ class CFX_DIBitmap final : public CFX_DIBBase {
     uint32_t size;
   };
 
+#if defined(PDF_USE_SKIA)
+  // Scoper that conditionally pre-multiplies a bitmap in the ctor and
+  // un-premultiplies in the dtor if pre-multiplication was required.
+  class ScopedPremultiplier {
+   public:
+    // `bitmap` must start out un-premultiplied.
+    // ScopedPremultiplier is a no-op if `do_premultiply` is false.
+    ScopedPremultiplier(RetainPtr<CFX_DIBitmap> bitmap, bool do_premultiply);
+    ~ScopedPremultiplier();
+
+   private:
+    RetainPtr<CFX_DIBitmap> const bitmap_;
+    const bool do_premultiply_;
+  };
+#endif  // defined(PDF_USE_SKIA)
+
   CONSTRUCT_VIA_MAKE_RETAIN;
 
   [[nodiscard]] bool Create(int width, int height, FXDIB_Format format);
@@ -142,7 +158,8 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                                                            uint32_t pitch);
 
 #if defined(PDF_USE_SKIA)
-  // Converts to un-pre-multiplied alpha if necessary.
+  // Converts from/to un-pre-multiplied alpha if necessary.
+  void PreMultiply();
   void UnPreMultiply();
 
   // Forces pre-multiplied alpha without conversion.
