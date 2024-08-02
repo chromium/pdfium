@@ -34,6 +34,8 @@ RetainPtr<CFX_DIBitmap> DrawPatternBitmap(
     int height,
     const CPDF_RenderOptions::Options& draw_options) {
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  // TODO(crbug.com/42271020): Consider adding support for
+  // `FXDIB_Format::kArgbPremul`
   if (!pBitmap->Create(width, height,
                        pPattern->colored() ? FXDIB_Format::kArgb
                                            : FXDIB_Format::k8bppMask)) {

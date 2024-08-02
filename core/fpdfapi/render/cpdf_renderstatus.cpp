@@ -642,6 +642,8 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
       return true;
     m_pDevice->GetDIBits(backdrop, rect.left, rect.top);
   }
+  // TODO(crbug.com/42271020): Consider adding support for
+  // `FXDIB_Format::kArgbPremul`
   if (!bitmap_device.CreateWithBackdrop(width, height, FXDIB_Format::kArgb,
                                         backdrop)) {
     return true;
@@ -736,6 +738,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
   int height = bbox.Height();
   auto backdrop = pdfium::MakeRetain<CFX_DIBitmap>();
   if (bBackAlphaRequired && !m_bDropObjects) {
+    // TODO(crbug.com/42271020): Consider adding support for
+    // `FXDIB_Format::kArgbPremul`
     if (!backdrop->Create(width, height, FXDIB_Format::kArgb)) {
       return nullptr;
     }
@@ -973,6 +977,8 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
           continue;
 
         CFX_DefaultRenderDevice bitmap_device;
+        // TODO(crbug.com/42271020): Consider adding support for
+        // `FXDIB_Format::kArgbPremul`
         if (!bitmap_device.Create(rect.Width(), rect.Height(),
                                   FXDIB_Format::kArgb)) {
           return true;

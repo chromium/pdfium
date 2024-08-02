@@ -102,10 +102,6 @@ class CPDF_RenderStatus {
   CFX_RenderDevice* GetRenderDevice() const { return m_pDevice; }
   const CPDF_RenderOptions& GetRenderOptions() const { return m_Options; }
 
-#if defined(PDF_USE_SKIA)
-  void DebugVerifyDeviceIsPreMultiplied() const;
-#endif
-
   RetainPtr<CPDF_TransferFunc> GetTransferFunc(
       RetainPtr<const CPDF_Object> pObject) const;
 
