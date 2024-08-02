@@ -16,12 +16,12 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
-#include "core/fxcrt/fx_2d_size.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/unowned_ptr_exclusion.h"
+#include "core/fxcrt/zip.h"
 #include "core/fxge/agg/cfx_agg_imagerenderer.h"
 #include "core/fxge/cfx_cliprgn.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
@@ -162,118 +162,109 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
     return;
   }
 
-  const int Bpp = pBitmap->GetBPP() / 8;
   const FXDIB_Format dest_format = pBitmap->GetFormat();
   const FXDIB_Format src_format = pSrcBitmap->GetFormat();
-  const int dest_pitch = pBitmap->GetPitch();
 
-  const size_t dest_x_offset = Fx2DSizeOrDie(dest_left, Bpp);
-  const size_t dest_y_offset = Fx2DSizeOrDie(dest_top, dest_pitch);
-
-  pdfium::span<uint8_t> dest_span = pBitmap->GetWritableBuffer()
-                                        .subspan(dest_y_offset)
-                                        .subspan(dest_x_offset);
   if (dest_format == src_format) {
-    const size_t src_x_offset = Fx2DSizeOrDie(src_left, Bpp);
-    if (Bpp == 4) {
+    if (pBitmap->GetBPP() == 32) {
       for (int row = 0; row < height; row++) {
-        UNSAFE_TODO({
-          uint8_t* dest_scan = dest_span.data();
-          const uint8_t* src_scan = pSrcBitmap->GetScanline(src_top + row)
-                                        .subspan(src_x_offset)
-                                        .data();
-          for (int col = 0; col < width; col++) {
-            FXARGB_SetRGBOrderDIB(dest_scan,
-                                  *reinterpret_cast<const uint32_t*>(src_scan));
-            dest_scan += 4;
-            src_scan += 4;
-          }
-        });
-        dest_span = dest_span.subspan(dest_pitch);
+        int dest_row = dest_top + row;
+        auto dest_scan =
+            pBitmap->GetWritableScanlineAs<FX_RGBA_STRUCT<uint8_t>>(dest_row)
+                .subspan(dest_left);
+        int src_row = src_top + row;
+        auto src_scan =
+            pSrcBitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(src_row).subspan(
+                src_left, width);
+        for (auto [input, output] : fxcrt::Zip(src_scan, dest_scan)) {
+          output.red = input.red;
+          output.green = input.green;
+          output.blue = input.blue;
+          output.alpha = input.alpha;
+        }
       }
       return;
     }
 
+    CHECK_EQ(FXDIB_Format::kRgb, src_format);
     for (int row = 0; row < height; row++) {
-      UNSAFE_TODO({
-        uint8_t* dest_scan = dest_span.data();
-        const uint8_t* src_scan =
-            pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
-        for (int col = 0; col < width; col++) {
-          *dest_scan++ = src_scan[2];
-          *dest_scan++ = src_scan[1];
-          *dest_scan++ = src_scan[0];
-          src_scan += 3;
-        }
-      });
-      dest_span = dest_span.subspan(dest_pitch);
+      int dest_row = dest_top + row;
+      auto dest_scan =
+          pBitmap->GetWritableScanlineAs<FX_RGB_STRUCT<uint8_t>>(dest_row)
+              .subspan(dest_left);
+      int src_row = src_top + row;
+      auto src_scan =
+          pSrcBitmap->GetScanlineAs<FX_BGR_STRUCT<uint8_t>>(src_row).subspan(
+              src_left, width);
+      for (auto [input, output] : fxcrt::Zip(src_scan, dest_scan)) {
+        output.red = input.red;
+        output.green = input.green;
+        output.blue = input.blue;
+      }
     }
     return;
   }
 
   if (dest_format == FXDIB_Format::kRgb) {
-    DCHECK_EQ(src_format, FXDIB_Format::kRgb32);
-    const size_t src_x_offset = Fx2DSizeOrDie(src_left, 4);
+    CHECK_EQ(src_format, FXDIB_Format::kRgb32);
     for (int row = 0; row < height; row++) {
-      UNSAFE_TODO({
-        uint8_t* dest_scan = dest_span.data();
-        const uint8_t* src_scan =
-            pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
-        for (int col = 0; col < width; col++) {
-          *dest_scan++ = src_scan[2];
-          *dest_scan++ = src_scan[1];
-          *dest_scan++ = src_scan[0];
-          src_scan += 4;
-        }
-      });
-      if (row < height - 1) {
-        // Since `dest_scan` was initialized in a way that takes
-        // `dest_x_offset` and `dest_y_offset` into account, it may go past
-        // the end of the span after processing the last row.
-        dest_span = dest_span.subspan(dest_pitch);
+      int dest_row = dest_top + row;
+      auto dest_scan =
+          pBitmap->GetWritableScanlineAs<FX_RGB_STRUCT<uint8_t>>(dest_row)
+              .subspan(dest_left);
+      int src_row = src_top + row;
+      auto src_scan =
+          pSrcBitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(src_row).subspan(
+              src_left, width);
+      for (auto [input, output] : fxcrt::Zip(src_scan, dest_scan)) {
+        output.red = input.red;
+        output.green = input.green;
+        output.blue = input.blue;
       }
     }
     return;
   }
 
-  DCHECK(dest_format == FXDIB_Format::kArgb ||
-         dest_format == FXDIB_Format::kRgb32);
+  CHECK(dest_format == FXDIB_Format::kArgb ||
+        dest_format == FXDIB_Format::kRgb32);
   if (src_format == FXDIB_Format::kRgb) {
-    const size_t src_x_offset = Fx2DSizeOrDie(src_left, 3);
     for (int row = 0; row < height; row++) {
-      UNSAFE_TODO({
-        uint8_t* dest_scan = dest_span.data();
-        const uint8_t* src_scan =
-            pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
-        for (int col = 0; col < width; col++) {
-          FXARGB_SetDIB(dest_scan, ArgbEncode(0xff, src_scan[0], src_scan[1],
-                                              src_scan[2]));
-          dest_scan += 4;
-          src_scan += 3;
-        }
-      });
-      dest_span = dest_span.subspan(dest_pitch);
+      int dest_row = dest_top + row;
+      auto dest_scan =
+          pBitmap->GetWritableScanlineAs<FX_RGBA_STRUCT<uint8_t>>(dest_row)
+              .subspan(dest_left);
+      int src_row = src_top + row;
+      auto src_scan =
+          pSrcBitmap->GetScanlineAs<FX_BGR_STRUCT<uint8_t>>(src_row).subspan(
+              src_left, width);
+      for (auto [input, output] : fxcrt::Zip(src_scan, dest_scan)) {
+        output.red = input.red;
+        output.green = input.green;
+        output.blue = input.blue;
+        output.alpha = 255;
+      }
     }
     return;
   }
   if (src_format != FXDIB_Format::kRgb32) {
     return;
   }
-  DCHECK_EQ(dest_format, FXDIB_Format::kArgb);
-  const size_t src_x_offset = Fx2DSizeOrDie(src_left, 4);
+  CHECK_EQ(dest_format, FXDIB_Format::kArgb);
   for (int row = 0; row < height; row++) {
-    UNSAFE_TODO({
-      uint8_t* dest_scan = dest_span.data();
-      const uint8_t* src_scan =
-          pSrcBitmap->GetScanline(src_top + row).subspan(src_x_offset).data();
-      for (int col = 0; col < width; col++) {
-        FXARGB_SetDIB(dest_scan,
-                      ArgbEncode(0xff, src_scan[0], src_scan[1], src_scan[2]));
-        src_scan += 4;
-        dest_scan += 4;
-      }
-    });
-    dest_span = dest_span.subspan(dest_pitch);
+    int dest_row = dest_top + row;
+    auto dest_scan =
+        pBitmap->GetWritableScanlineAs<FX_RGBA_STRUCT<uint8_t>>(dest_row)
+            .subspan(dest_left);
+    int src_row = src_top + row;
+    auto src_scan =
+        pSrcBitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(src_row).subspan(
+            src_left, width);
+    for (auto [input, output] : fxcrt::Zip(src_scan, dest_scan)) {
+      output.red = input.red;
+      output.green = input.green;
+      output.blue = input.blue;
+      output.alpha = 255;
+    }
   }
 }
 
