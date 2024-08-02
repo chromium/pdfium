@@ -32,6 +32,77 @@
 
 namespace {
 
+#if defined(PDF_USE_SKIA)
+void ConvertBuffer_Rgb2ArgbPremul(
+    pdfium::span<uint8_t> dest_buf,
+    int dest_pitch,
+    int width,
+    int height,
+    const RetainPtr<const CFX_DIBBase>& src_bitmap,
+    int src_left,
+    int src_top) {
+  for (int row = 0; row < height; ++row) {
+    auto dest_span = fxcrt::reinterpret_span<FX_BGRA_STRUCT<uint8_t>>(
+        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)));
+    auto src_span =
+        src_bitmap->GetScanlineAs<FX_BGR_STRUCT<uint8_t>>(src_top + row)
+            .subspan(src_left);
+    for (auto [input, output] : fxcrt::Zip(src_span, dest_span)) {
+      output.blue = input.blue;
+      output.green = input.green;
+      output.red = input.red;
+      output.alpha = 255;
+    }
+  }
+}
+
+void ConvertBuffer_ArgbPremulToRgb(
+    pdfium::span<uint8_t> dest_buf,
+    int dest_pitch,
+    int width,
+    int height,
+    const RetainPtr<const CFX_DIBBase>& src_bitmap,
+    int src_left,
+    int src_top) {
+  for (int row = 0; row < height; ++row) {
+    auto dest_span = fxcrt::reinterpret_span<FX_BGR_STRUCT<uint8_t>>(
+        dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)));
+    auto src_span =
+        src_bitmap->GetScanlineAs<FX_BGRA_STRUCT<uint8_t>>(src_top + row)
+            .subspan(src_left);
+    for (auto [input, output] : fxcrt::Zip(src_span, dest_span)) {
+      auto unpremultiplied_input = UnPreMultiplyColor(input);
+      output.blue = unpremultiplied_input.blue;
+      output.green = unpremultiplied_input.green;
+      output.red = unpremultiplied_input.red;
+    }
+  }
+}
+
+void ConvertBuffer_ArgbPremul(pdfium::span<uint8_t> dest_buf,
+                              int dest_pitch,
+                              int width,
+                              int height,
+                              const RetainPtr<const CFX_DIBBase>& src_bitmap,
+                              int src_left,
+                              int src_top) {
+  switch (src_bitmap->GetBPP()) {
+    case 8:
+      // TODO(crbug.com/42271020): Determine if this ever happens.
+      NOTREACHED_NORETURN();
+    case 24:
+      ConvertBuffer_Rgb2ArgbPremul(dest_buf, dest_pitch, width, height,
+                                   src_bitmap, src_left, src_top);
+      break;
+    case 32:
+      // TODO(crbug.com/42271020): Determine if this ever happens.
+      NOTREACHED_NORETURN();
+    default:
+      NOTREACHED_NORETURN();
+  }
+}
+#endif  // default(PDF_USE_SKIA)
+
 void ConvertBuffer_1bppMask2Gray(pdfium::span<uint8_t> dest_buf,
                                  int dest_pitch,
                                  int width,
@@ -370,6 +441,10 @@ void ConvertBuffer_8bppMask(pdfium::span<uint8_t> dest_buf,
       break;
     case 24:
     case 32:
+#if defined(PDF_USE_SKIA)
+      // TODO(crbug.com/42271020): Determine if this ever happens.
+      CHECK_NE(pSrcBitmap->GetFormat(), FXDIB_Format::kArgbPremul);
+#endif
       ConvertBuffer_Rgb2Gray(dest_buf, dest_pitch, width, height, pSrcBitmap,
                              src_left, src_top);
       break;
@@ -410,6 +485,13 @@ void ConvertBuffer_Rgb(FXDIB_Format dest_format,
                                    pSrcBitmap, src_left, src_top);
       break;
     case 32:
+#if defined(PDF_USE_SKIA)
+      if (pSrcBitmap->GetFormat() == FXDIB_Format::kArgbPremul) {
+        ConvertBuffer_ArgbPremulToRgb(dest_buf, dest_pitch, width, height,
+                                      pSrcBitmap, src_left, src_top);
+        break;
+      }
+#endif
       ConvertBuffer_32bppRgb2Rgb24(dest_buf, dest_pitch, width, height,
                                    pSrcBitmap, src_left, src_top);
       break;
@@ -438,6 +520,10 @@ void ConvertBuffer_Argb(FXDIB_Format dest_format,
       break;
     case 24:
     case 32:
+#if defined(PDF_USE_SKIA)
+      // TODO(crbug.com/42271020): Determine if this ever happens.
+      CHECK_NE(pSrcBitmap->GetFormat(), FXDIB_Format::kArgbPremul);
+#endif
       ConvertBuffer_Rgb2Rgb32(dest_buf, dest_pitch, width, height, pSrcBitmap,
                               src_left, src_top);
       break;
@@ -492,7 +578,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::ClipToInternal(
     int right_shift = 32 - left_shift;
     int dword_count = pNewBitmap->GetPitch() / 4;
     for (int row = rect.top; row < rect.bottom; ++row) {
-      auto src_span = GetScanlineAs<const uint32_t>(row);
+      auto src_span = GetScanlineAs<uint32_t>(row);
       auto dst_span =
           pNewBitmap->GetWritableScanlineAs<uint32_t>(row - rect.top);
       // Bounds check for free with first/subspan.
@@ -943,7 +1029,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
       size_t dest_offset = Fx2DSizeOrDie(dest_col, nBytes);
       uint8_t* dest_scan = dest_span.subspan(dest_offset).data();
       const uint32_t* src_scan =
-          GetScanlineAs<const uint32_t>(row).subspan(col_start).data();
+          GetScanlineAs<uint32_t>(row).subspan(col_start).data();
       for (int col = col_start; col < col_end; ++col) {
         uint32_t* dest_scan32 = reinterpret_cast<uint32_t*>(dest_scan);
         *dest_scan32 = *src_scan++;
@@ -1037,9 +1123,9 @@ DataVector<uint32_t> CFX_DIBBase::ConvertBuffer(
     }
 #if defined(PDF_USE_SKIA)
     case FXDIB_Format::kArgbPremul: {
-      // TODO(crbug.com/42271020): Consider adding support for
-      // `FXDIB_Format::kArgbPremul`
-      NOTREACHED_NORETURN();
+      ConvertBuffer_ArgbPremul(dest_buf, dest_pitch, width, height, pSrcBitmap,
+                               src_left, src_top);
+      return {};
     }
 #endif
   }
