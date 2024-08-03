@@ -474,11 +474,10 @@ void CompositePixelArgb2RgbNoBlend(const FX_BGRA_STRUCT<uint8_t>& input,
 }
 
 template <typename DestPixelStruct>
-void CompositeRowArgb2RgbBlend(
-    pdfium::span<const FX_BGRA_STRUCT<uint8_t>> src_span,
-    pdfium::span<const uint8_t> clip_span,
-    pdfium::span<DestPixelStruct> dest_span,
-    BlendMode blend_type) {
+void CompositeRowArgb2Rgb(pdfium::span<const FX_BGRA_STRUCT<uint8_t>> src_span,
+                          pdfium::span<const uint8_t> clip_span,
+                          pdfium::span<DestPixelStruct> dest_span,
+                          BlendMode blend_type) {
   const bool non_separable_blend = IsNonSeparableBlendMode(blend_type);
   if (clip_span.empty()) {
     if (non_separable_blend) {
@@ -488,8 +487,14 @@ void CompositeRowArgb2RgbBlend(
       }
       return;
     }
+    if (blend_type != BlendMode::kNormal) {
+      for (auto [input, output] : fxcrt::Zip(src_span, dest_span)) {
+        CompositePixelArgb2RgbBlend(input, /*clip=*/255, output, blend_type);
+      }
+      return;
+    }
     for (auto [input, output] : fxcrt::Zip(src_span, dest_span)) {
-      CompositePixelArgb2RgbBlend(input, /*clip=*/255, output, blend_type);
+      CompositePixelArgb2RgbNoBlend(input, /*clip=*/255, output);
     }
     return;
   }
@@ -501,24 +506,13 @@ void CompositeRowArgb2RgbBlend(
     }
     return;
   }
-  for (auto [input, clip, output] :
-       fxcrt::Zip(src_span, clip_span, dest_span)) {
-    CompositePixelArgb2RgbBlend(input, clip, output, blend_type);
-  }
-}
-
-template <typename DestPixelStruct>
-void CompositeRowArgb2RgbNoBlend(
-    pdfium::span<const FX_BGRA_STRUCT<uint8_t>> src_span,
-    pdfium::span<const uint8_t> clip_span,
-    pdfium::span<DestPixelStruct> dest_span) {
-  if (clip_span.empty()) {
-    for (auto [input, output] : fxcrt::Zip(src_span, dest_span)) {
-      CompositePixelArgb2RgbNoBlend(input, /*clip=*/255, output);
+  if (blend_type != BlendMode::kNormal) {
+    for (auto [input, clip, output] :
+         fxcrt::Zip(src_span, clip_span, dest_span)) {
+      CompositePixelArgb2RgbBlend(input, clip, output, blend_type);
     }
     return;
   }
-
   for (auto [input, clip, output] :
        fxcrt::Zip(src_span, clip_span, dest_span)) {
     CompositePixelArgb2RgbNoBlend(input, clip, output);
@@ -2431,21 +2425,13 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcArgb(
       if (m_bRgbByteOrder) {
         auto dest_span =
             fxcrt::reinterpret_span<FX_RGB_STRUCT<uint8_t>>(dest_scan);
-        if (m_BlendType == BlendMode::kNormal) {
-          CompositeRowArgb2RgbNoBlend(src_span, clip_scan, dest_span);
-          return;
-        }
-        CompositeRowArgb2RgbBlend(src_span, clip_scan, dest_span, m_BlendType);
+        CompositeRowArgb2Rgb(src_span, clip_scan, dest_span, m_BlendType);
         return;
       }
 
       auto dest_span =
           fxcrt::reinterpret_span<FX_BGR_STRUCT<uint8_t>>(dest_scan);
-      if (m_BlendType == BlendMode::kNormal) {
-        CompositeRowArgb2RgbNoBlend(src_span, clip_scan, dest_span);
-        return;
-      }
-      CompositeRowArgb2RgbBlend(src_span, clip_scan, dest_span, m_BlendType);
+      CompositeRowArgb2Rgb(src_span, clip_scan, dest_span, m_BlendType);
       return;
     }
     case FXDIB_Format::kRgb32: {
@@ -2455,21 +2441,13 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcArgb(
       if (m_bRgbByteOrder) {
         auto dest_span =
             fxcrt::reinterpret_span<FX_RGBA_STRUCT<uint8_t>>(dest_scan);
-        if (m_BlendType == BlendMode::kNormal) {
-          CompositeRowArgb2RgbNoBlend(src_span, clip_scan, dest_span);
-          return;
-        }
-        CompositeRowArgb2RgbBlend(src_span, clip_scan, dest_span, m_BlendType);
+        CompositeRowArgb2Rgb(src_span, clip_scan, dest_span, m_BlendType);
         return;
       }
 
       auto dest_span =
           fxcrt::reinterpret_span<FX_BGRA_STRUCT<uint8_t>>(dest_scan);
-      if (m_BlendType == BlendMode::kNormal) {
-        CompositeRowArgb2RgbNoBlend(src_span, clip_scan, dest_span);
-        return;
-      }
-      CompositeRowArgb2RgbBlend(src_span, clip_scan, dest_span, m_BlendType);
+      CompositeRowArgb2Rgb(src_span, clip_scan, dest_span, m_BlendType);
       return;
     }
     case FXDIB_Format::kArgb: {
