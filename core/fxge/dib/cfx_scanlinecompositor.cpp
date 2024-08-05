@@ -269,7 +269,7 @@ void CompositeRow_Rgb2Gray(pdfium::span<uint8_t> dest_span,
   const uint8_t* clip_scan = clip_span.data();
   UNSAFE_TODO({
     for (int col = 0; col < pixel_count; ++col) {
-      FX_BGR_STRUCT input = {
+      FX_BGR_STRUCT<uint8_t> input = {
           .blue = src_scan[0], .green = src_scan[1], .red = src_scan[2]};
       uint8_t gray = GetGrayWithBlend(input, *dest_scan, blend_type);
       if (clip_scan && clip_scan[col] < 255) {
