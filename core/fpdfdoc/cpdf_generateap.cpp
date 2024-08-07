@@ -433,11 +433,11 @@ ByteString GenerateTextSymbolAP(const CFX_FloatRect& rect) {
   sAppStream << GenerateColorAP(CFX_Color(CFX_Color::Type::kRGB, 0, 0, 0),
                                 PaintOperation::kStroke);
 
-  constexpr float kBorderWidth = 1;
-  WriteFloat(sAppStream, kBorderWidth) << " w\n";
+  constexpr int kBorderWidth = 1;
+  sAppStream << kBorderWidth << " w\n";
 
-  constexpr float kHalfWidth = kBorderWidth / 2;
-  constexpr float kTipDelta = 4;
+  constexpr float kHalfWidth = kBorderWidth / 2.0f;
+  constexpr int kTipDelta = 4;
 
   CFX_FloatRect outerRect1 = rect;
   outerRect1.Deflate(kHalfWidth, kHalfWidth);
@@ -722,7 +722,7 @@ bool GenerateUnderlineAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 
   RetainPtr<const CPDF_Array> pArray = pAnnotDict->GetArrayFor("QuadPoints");
   if (pArray) {
-    static constexpr float kLineWidth = 1.0f;
+    static constexpr int kLineWidth = 1;
     sAppStream << kLineWidth << " w ";
     size_t nQuadPointCount = CPDF_Annot::QuadPointCount(pArray.Get());
     for (size_t i = 0; i < nQuadPointCount; ++i) {
@@ -839,8 +839,8 @@ bool GenerateSquigglyAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 
   RetainPtr<const CPDF_Array> pArray = pAnnotDict->GetArrayFor("QuadPoints");
   if (pArray) {
-    static constexpr float kLineWidth = 1.0f;
-    static constexpr float kDelta = 2.0f;
+    static constexpr int kLineWidth = 1;
+    static constexpr int kDelta = 2;
     sAppStream << kLineWidth << " w ";
     size_t nQuadPointCount = CPDF_Annot::QuadPointCount(pArray.Get());
     for (size_t i = 0; i < nQuadPointCount; ++i) {
@@ -889,13 +889,13 @@ bool GenerateStrikeOutAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 
   RetainPtr<const CPDF_Array> pArray = pAnnotDict->GetArrayFor("QuadPoints");
   if (pArray) {
-    static constexpr float kLineWidth = 1.0f;
     size_t nQuadPointCount = CPDF_Annot::QuadPointCount(pArray.Get());
     for (size_t i = 0; i < nQuadPointCount; ++i) {
       CFX_FloatRect rect = CPDF_Annot::RectFromQuadPoints(pAnnotDict, i);
       rect.Normalize();
 
       float fY = (rect.top + rect.bottom) / 2;
+      constexpr int kLineWidth = 1;
       sAppStream << kLineWidth << " w " << rect.left << " " << fY << " m "
                  << rect.right << " " << fY << " l S\n";
     }
