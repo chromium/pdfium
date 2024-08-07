@@ -390,15 +390,6 @@ class CFX_AggRenderer {
                      int clip_right,
                      const uint8_t* clip_scan);
 
-  void CompositeSpan1bpp(uint8_t* dest_scan,
-                         int Bpp,
-                         int span_left,
-                         int span_len,
-                         const uint8_t* cover_scan,
-                         int clip_left,
-                         int clip_right,
-                         const uint8_t* clip_scan);
-
   void CompositeSpanGray(uint8_t* dest_scan,
                          int Bpp,
                          int span_left,
@@ -426,21 +417,17 @@ class CFX_AggRenderer {
                         int clip_right,
                         const uint8_t* clip_scan);
 
-  void CompositeSpan1bppHelper(uint8_t* dest_scan,
-                               int col_start,
-                               int col_end,
-                               const uint8_t* cover_scan,
-                               const uint8_t* clip_scan,
-                               int span_left);
-
   static CompositeSpanFunc GetCompositeSpanFunc(
       const RetainPtr<CFX_DIBitmap>& device) {
-    if (device->GetBPP() == 1)
-      return &CFX_AggRenderer::CompositeSpan1bpp;
-    if (device->GetBPP() == 8)
+    CHECK_NE(device->GetBPP(), 1);
+    if (device->GetBPP() == 8) {
       return &CFX_AggRenderer::CompositeSpanGray;
-    if (device->GetFormat() == FXDIB_Format::kArgb)
+    }
+    const FXDIB_Format format = device->GetFormat();
+    if (format == FXDIB_Format::kArgb) {
       return &CFX_AggRenderer::CompositeSpanARGB;
+    }
+    CHECK(format == FXDIB_Format::kRgb || format == FXDIB_Format::kRgb32);
     return &CFX_AggRenderer::CompositeSpanRGB;
   }
 
@@ -493,17 +480,13 @@ void CFX_AggRenderer::CompositeSpan(uint8_t* dest_scan,
                                     int clip_left,
                                     int clip_right,
                                     const uint8_t* clip_scan) {
+  CHECK(Bpp);
   int col_start = GetColStart(span_left, clip_left);
   int col_end = GetColEnd(span_left, span_len, clip_right);
   const auto& bgr = GetBGR();
   UNSAFE_TODO({
-    if (Bpp) {
-      dest_scan += col_start * Bpp;
-      backdrop_scan += col_start * Bpp;
-    } else {
-      dest_scan += col_start / 8;
-      backdrop_scan += col_start / 8;
-    }
+    dest_scan += col_start * Bpp;
+    backdrop_scan += col_start * Bpp;
     if (m_bRgbByteOrder) {
       if (Bpp == 4 && bDestAlpha) {
         for (int col = col_start; col < col_end; col++) {
@@ -614,40 +597,19 @@ void CFX_AggRenderer::CompositeSpan(uint8_t* dest_scan,
       }
       return;
     }
-    if (Bpp == 1) {
-      const int gray = GetGray();
-      for (int col = col_start; col < col_end; col++) {
-        int src_alpha = GetSrcAlpha(clip_scan, col);
-        if (m_bFullCover) {
-          *dest_scan = FXDIB_ALPHA_MERGE(*backdrop_scan++, gray, src_alpha);
-          continue;
-        }
-        int gray_merged = FXDIB_ALPHA_MERGE(*backdrop_scan++, gray, src_alpha);
-        *dest_scan =
-            FXDIB_ALPHA_MERGE(*dest_scan, gray_merged, cover_scan[col]);
-        dest_scan++;
+    CHECK_EQ(Bpp, 1);
+    const int gray = GetGray();
+    for (int col = col_start; col < col_end; col++) {
+      int src_alpha = GetSrcAlpha(clip_scan, col);
+      if (m_bFullCover) {
+        *dest_scan = FXDIB_ALPHA_MERGE(*backdrop_scan++, gray, src_alpha);
+        continue;
       }
-      return;
+      int gray_merged = FXDIB_ALPHA_MERGE(*backdrop_scan++, gray, src_alpha);
+      *dest_scan = FXDIB_ALPHA_MERGE(*dest_scan, gray_merged, cover_scan[col]);
+      dest_scan++;
     }
-    CompositeSpan1bppHelper(dest_scan, col_start, col_end, cover_scan,
-                            clip_scan, span_left);
   });
-}
-
-void CFX_AggRenderer::CompositeSpan1bpp(uint8_t* dest_scan,
-                                        int Bpp,
-                                        int span_left,
-                                        int span_len,
-                                        const uint8_t* cover_scan,
-                                        int clip_left,
-                                        int clip_right,
-                                        const uint8_t* clip_scan) {
-  DCHECK(!m_bRgbByteOrder);
-  int col_start = GetColStart(span_left, clip_left);
-  int col_end = GetColEnd(span_left, span_len, clip_right);
-  UNSAFE_TODO(dest_scan += col_start / 8);
-  CompositeSpan1bppHelper(dest_scan, col_start, col_end, cover_scan, clip_scan,
-                          span_left);
 }
 
 void CFX_AggRenderer::CompositeSpanGray(uint8_t* dest_scan,
@@ -862,7 +824,8 @@ void CFX_AggRenderer::render(const Scanline& sl) {
                         .subspan(m_pBackdropDevice->GetPitch() * y)
                         .data();
   }
-  int Bpp = m_pDevice->GetBPP() / 8;
+  const int Bpp = m_pDevice->GetBPP() / 8;
+  CHECK_NE(Bpp, 0);
   bool bDestAlpha = m_pDevice->IsAlphaFormat() || m_pDevice->IsMaskFormat();
   unsigned num_spans = sl.num_spans();
   typename Scanline::const_iterator span = sl.begin();
@@ -873,15 +836,9 @@ void CFX_AggRenderer::render(const Scanline& sl) {
       }
 
       int x = span->x;
-      uint8_t* dest_pos = nullptr;
-      const uint8_t* backdrop_pos = nullptr;
-      if (Bpp) {
-        backdrop_pos = backdrop_scan ? backdrop_scan + x * Bpp : nullptr;
-        dest_pos = dest_scan + x * Bpp;
-      } else {
-        dest_pos = dest_scan + x / 8;
-        backdrop_pos = backdrop_scan ? backdrop_scan + x / 8 : nullptr;
-      }
+      uint8_t* dest_pos = dest_scan + x * Bpp;
+      const uint8_t* backdrop_pos =
+          backdrop_scan ? backdrop_scan + x * Bpp : nullptr;
       const uint8_t* clip_pos = nullptr;
       if (m_pClipMask) {
         // TODO(crbug.com/1382604): use subspan arithmetic.
@@ -901,37 +858,6 @@ void CFX_AggRenderer::render(const Scanline& sl) {
       }
 
       ++span;
-    }
-  });
-}
-
-void CFX_AggRenderer::CompositeSpan1bppHelper(uint8_t* dest_scan,
-                                              int col_start,
-                                              int col_end,
-                                              const uint8_t* cover_scan,
-                                              const uint8_t* clip_scan,
-                                              int span_left) {
-  int index = 0;
-  if (m_pDevice->HasPalette()) {
-    for (int i = 0; i < 2; i++) {
-      if (m_pDevice->GetPaletteSpan()[i] == m_Color)
-        index = i;
-    }
-  } else {
-    index = (static_cast<uint8_t>(m_Color) == 0xff) ? 1 : 0;
-  }
-  uint8_t* dest_scan1 = dest_scan;
-  UNSAFE_TODO({
-    for (int col = col_start; col < col_end; col++) {
-      int src_alpha = GetSourceAlpha(cover_scan, clip_scan, col);
-      if (src_alpha) {
-        if (!index) {
-          *dest_scan1 &= ~(1 << (7 - (col + span_left) % 8));
-        } else {
-          *dest_scan1 |= 1 << (7 - (col + span_left) % 8);
-        }
-      }
-      dest_scan1 = dest_scan + (span_left % 8 + col - col_start + 1) / 8;
     }
   });
 }
@@ -1031,9 +957,9 @@ CFX_AggDeviceDriver::CFX_AggDeviceDriver(
       m_bRgbByteOrder(bRgbByteOrder),
       m_bGroupKnockout(bGroupKnockout),
       m_pBackdropBitmap(std::move(pBackdropBitmap)) {
-  DCHECK(m_pBitmap);
-  DCHECK_NE(m_pBitmap->GetFormat(), FXDIB_Format::k1bppMask);
-  DCHECK_NE(m_pBitmap->GetFormat(), FXDIB_Format::k1bppRgb);
+  CHECK(m_pBitmap);
+  CHECK_NE(m_pBitmap->GetFormat(), FXDIB_Format::k1bppMask);
+  CHECK_NE(m_pBitmap->GetFormat(), FXDIB_Format::k1bppRgb);
   InitPlatform();
 }
 
