@@ -215,6 +215,8 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
                           bool normalize,
                           int x_subpixel,
                           const FX_BGRA_STRUCT<uint8_t>& bgra) {
+  // TODO(crbug.com/42271020): Add support for `FXDIB_Format::kArgbPremul`.
+  CHECK(!bitmap->IsPremultiplied());
   const bool has_alpha = bitmap->IsAlphaFormat();
   const int Bpp = has_alpha ? 4 : bitmap->GetBPP() / 8;
   for (int row = 0; row < nrows; ++row) {
@@ -467,13 +469,17 @@ bool GetZeroAreaPath(pdfium::span<const CFX_Path::Point> points,
   return new_path_size != 0;
 }
 
-FXDIB_Format GetCreateCompatibleBitmapFormat(int render_caps) {
+FXDIB_Format GetCreateCompatibleBitmapFormat(int render_caps,
+                                             bool use_argb_premul) {
   if (render_caps & FXRC_BYTEMASK_OUTPUT) {
     return FXDIB_Format::k8bppMask;
   }
+#if defined(PDF_USE_SKIA)
+  if (use_argb_premul && (render_caps & FXRC_PREMULTIPLIED_ALPHA)) {
+    return FXDIB_Format::kArgbPremul;
+  }
+#endif
   if (render_caps & FXRC_ALPHA_OUTPUT) {
-    // TODO(crbug.com/42271020): Consider adding support for
-    // `FXDIB_Format::kArgbPremul`
     return FXDIB_Format::kArgb;
   }
   return CFX_DIBBase::kPlatformRGBFormat;
@@ -543,8 +549,9 @@ bool CFX_RenderDevice::CreateCompatibleBitmap(
     const RetainPtr<CFX_DIBitmap>& pDIB,
     int width,
     int height) const {
-  return pDIB->Create(width, height,
-                      GetCreateCompatibleBitmapFormat(m_RenderCaps));
+  return pDIB->Create(
+      width, height,
+      GetCreateCompatibleBitmapFormat(m_RenderCaps, /*use_argb_premul=*/true));
 }
 
 void CFX_RenderDevice::SetBaseClip(const FX_RECT& rect) {
@@ -1181,8 +1188,13 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
     if (!bitmap->Create(pixel_width, pixel_height, FXDIB_Format::k8bppMask))
       return false;
   } else {
-    if (!CreateCompatibleBitmap(bitmap, pixel_width, pixel_height))
+    // TODO(crbug.com/42271020): Switch to CreateCompatibleBitmap() once
+    // DrawNormalTextHelper() supports `FXDIB_Format::kArgbPremul`.
+    if (!bitmap->Create(pixel_width, pixel_height,
+                        GetCreateCompatibleBitmapFormat(
+                            m_RenderCaps, /*use_argb_premul=*/false))) {
       return false;
+    }
   }
   if (!bitmap->IsAlphaFormat() && !bitmap->IsMaskFormat()) {
     bitmap->Clear(0xFFFFFFFF);

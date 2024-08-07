@@ -184,6 +184,8 @@ class CPDF_RenderStatus {
   FX_ARGB GetStrokeArgb(CPDF_PageObject* pObj) const;
   FX_RECT GetObjectClippedRect(const CPDF_PageObject* pObj,
                                const CFX_Matrix& mtObj2Device) const;
+  // Returns the format that is compatible with `m_pDevice`.
+  FXDIB_Format GetCompatibleArgbFormat() const;
 
   CPDF_RenderOptions m_Options;
   RetainPtr<const CPDF_Dictionary> m_pFormResource;

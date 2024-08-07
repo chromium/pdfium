@@ -107,8 +107,13 @@ class CFX_DIBBase : public Retainable {
                       int& src_top,
                       const CFX_ClipRgn* pClipRgn) const;
 
-  // Whether alpha is premultiplied (if `IsAlphaFormat()`).
-  virtual bool IsPremultiplied() const;
+  bool IsPremultiplied() const {
+#if defined(PDF_USE_SKIA)
+    return GetFormat() == FXDIB_Format::kArgbPremul;
+#else
+    return false;
+#endif
+  }
 
 #if defined(PDF_USE_SKIA)
   // Realizes an `SkImage` from this DIB.

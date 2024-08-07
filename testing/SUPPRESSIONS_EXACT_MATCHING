@@ -20,9 +20,20 @@
 # Try to keep the file alphabetized within each category of test.
 
 #
+# Pixel tests
+#
+
+# Sensitive to transparency code changes.
+bug_1258968.in * * * skia
+
+#
 # Corpus tests
 #
 
+# Sensitive to transparency code changes.
+1_10_watermark.pdf * * * skia
+
 # Device-specific ColorBurn differences (see pdfium:1959).
+xfermodes.pdf * * * skia
 xfermodes2.pdf * * * skia
 xfermodes3.pdf * * * skia

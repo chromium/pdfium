@@ -4635,13 +4635,13 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSMask) {
 
   const char* smask_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "0653a18f3bf9b4d8413a2aa10bc11c38";
+      return "a85ca0183ac6aee8851c30c5bdc2f594";
     }
     return "5a3ae4a660ce919e29c42ec2258142f1";
   }();
   const char* no_smask_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "0da49e63e7d6337aca78b19938e3bf65";
+      return "712f832dcbfb6cefc74f39bef459bea4";
     }
     return "67504e83f5d78214ea00efc19082c5c1";
   }();
@@ -4975,7 +4975,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForHelloWorldText) {
     const char* checksum = []() {
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-        return "5cef5b3e56e91e1a66b6780fb26bb5e3";
+        return "764e3503960ef0b176796faa3543b9c7";
 #elif BUILDFLAG(IS_APPLE)
         return "9e7774173acee966fcaa72e599eb9a93";
 #else
@@ -5031,7 +5031,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForHelloWorldText) {
     const char* checksum = []() {
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-        return "336be21110c795cefcab9bbdbc3afcdd";
+        return "4cdba7492317bcae2643bd4090e18812";
 #elif BUILDFLAG(IS_APPLE)
         return "0b9efedcb8f5aa9246c52e90811cb046";
 #else
@@ -5155,7 +5155,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForColorText) {
   ASSERT_TRUE(bitmap);
   const char* checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "1d74731d23a056c0e3fb88f2f85b2581";
+      return "2a45a0034911f21b528621bebe0aab4b";
     }
     return "e8154fa8ededf4d9b8b35b5260897b6c";
   }();
@@ -5181,7 +5181,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForNewlyCreatedText) {
   const char* checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "ef501232372617a545ae35d7664fd9ec";
+      return "6d88537a49fa2dccfa0f58ac325c5b75";
 #elif BUILDFLAG(IS_APPLE)
       return "a637d62f2e8ae10c3267b2ff5fcc2246";
 #else

@@ -14,6 +14,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
+#include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
@@ -867,27 +868,58 @@ bool CFX_DIBitmap::CompositeRect(int left,
 }
 
 bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
-  // TODO(crbug.com/42271020): Consider adding support for
-  // `FXDIB_Format::kArgbPremul`
-  DCHECK(dest_format == FXDIB_Format::k8bppMask ||
-         dest_format == FXDIB_Format::kArgb ||
-         dest_format == FXDIB_Format::kRgb);
+  static constexpr FXDIB_Format kAllowedDestFormats[] = {
+      FXDIB_Format::k8bppMask,
+      FXDIB_Format::kArgb,
+#if defined(PDF_USE_SKIA)
+      FXDIB_Format::kArgbPremul,
+#endif
+      FXDIB_Format::kRgb,
+  };
+  CHECK(pdfium::Contains(kAllowedDestFormats, dest_format));
 
   if (dest_format == GetFormat()) {
     return true;
   }
 
-  if (dest_format == FXDIB_Format::k8bppMask &&
-      GetFormat() == FXDIB_Format::k8bppRgb && !HasPalette()) {
-    SetFormat(FXDIB_Format::k8bppMask);
-    return true;
-  }
+  switch (dest_format) {
+    case FXDIB_Format::k8bppMask:
+      if (GetFormat() == FXDIB_Format::k8bppRgb && !HasPalette()) {
+        SetFormat(FXDIB_Format::k8bppMask);
+        return true;
+      }
+      break;
 
-  if (dest_format == FXDIB_Format::kArgb &&
-      GetFormat() == FXDIB_Format::kRgb32) {
-    SetFormat(FXDIB_Format::kArgb);
-    SetUniformOpaqueAlpha();
-    return true;
+    case FXDIB_Format::kArgb:
+      if (GetFormat() == FXDIB_Format::kRgb32) {
+        SetFormat(FXDIB_Format::kArgb);
+        SetUniformOpaqueAlpha();
+        return true;
+      }
+#if defined(PDF_USE_SKIA)
+      if (GetFormat() == FXDIB_Format::kArgbPremul) {
+        UnPreMultiply();
+        return true;
+      }
+#endif  // defined(PDF_USE_SKIA)
+      break;
+
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kArgbPremul:
+      if (GetFormat() == FXDIB_Format::kRgb32) {
+        SetFormat(FXDIB_Format::kArgbPremul);
+        SetUniformOpaqueAlpha();
+        return true;
+      }
+      if (GetFormat() == FXDIB_Format::kArgb) {
+        PreMultiply();
+        return true;
+      }
+      break;
+#endif  // defined(PDF_USE_SKIA)
+
+    default:
+      break;
   }
 
   std::optional<PitchAndSize> pitch_size =

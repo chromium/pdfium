@@ -161,21 +161,10 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   // Converts from/to un-pre-multiplied alpha if necessary.
   void PreMultiply();
   void UnPreMultiply();
-
-  // Forces pre-multiplied alpha without conversion.
-  // TODO(crbug.com/42271020): Remove the need for this.
-  void ForcePreMultiply();
-
-  // CFX_DIBBase:
-  bool IsPremultiplied() const override;
 #endif  // defined(PDF_USE_SKIA)
 
  private:
   enum class Channel : uint8_t { kRed, kAlpha };
-
-#if defined(PDF_USE_SKIA)
-  enum class Format { kCleared, kPreMultiplied, kUnPreMultiplied };
-#endif
 
   CFX_DIBitmap();
   CFX_DIBitmap(const CFX_DIBitmap& src);
@@ -206,9 +195,6 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                                   int src_top);
 
   MaybeOwned<uint8_t, FxFreeDeleter> m_pBuffer;
-#if defined(PDF_USE_SKIA)
-  Format m_nFormat = Format::kCleared;
-#endif
 };
 
 #endif  // CORE_FXGE_DIB_CFX_DIBITMAP_H_

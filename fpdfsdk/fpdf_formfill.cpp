@@ -211,7 +211,6 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   if (dest_is_bitmap) {
     holder.Reset(absl::get<CFX_DIBitmap*>(dest));
     CHECK(holder);
-    CHECK(!holder->IsPremultiplied());
   } else {
 #if defined(PDF_USE_SKIA)
     if (!CFX_DefaultRenderDevice::UseSkiaRenderer()) {
@@ -733,6 +732,10 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
     return;
   }
 
+#if defined(PDF_USE_SKIA)
+  CFX_DIBitmap::ScopedPremultiplier scoped_premultiplier(
+      pdfium::WrapRetain(cbitmap), CFX_DefaultRenderDevice::UseSkiaRenderer());
+#endif
   FFLCommon(hHandle, page, cbitmap, start_x, start_y, size_x, size_y, rotate,
             flags);
 }

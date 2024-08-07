@@ -97,7 +97,7 @@ TEST_F(CFDETextOutTest, DrawLogicTextBasic) {
   const char* checksum = []() {
 #if BUILDFLAG(IS_WIN)
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "cdd8f00144e421bf18f22d09896838b0";
+      return "bc1f736237b08d13db06c09f6becc9f7";
     }
 #endif
     return "b26f1c171fcdbf185823364185adacf0";
@@ -134,7 +134,7 @@ class CFDETextOutLargeBitmapTest : public CFDETextOutTest {
 
   const char* GetLargeTextBlobChecksum() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "cd357c6afbf17bb2ac48817df5d9eaad";
+      return "6181929583fd7651169306852397806f";
     }
     return "268b71a8660b51e31c6bf30fc7ff1e08";
   }

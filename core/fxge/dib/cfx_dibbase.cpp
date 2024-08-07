@@ -1130,7 +1130,3 @@ DataVector<uint32_t> CFX_DIBBase::ConvertBuffer(
 #endif
   }
 }
-
-bool CFX_DIBBase::IsPremultiplied() const {
-  return false;
-}

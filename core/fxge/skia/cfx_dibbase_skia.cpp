@@ -248,20 +248,23 @@ sk_sp<SkImage> CFX_DIBBase::RealizeSkImage() const {
           });
 
     case 32:
-      if (GetFormat() == FXDIB_Format::kRgb32) {
-        return CreateSkiaImageFromTransformedDib</*source_bits_per_pixel=*/32>(
-            *this, kBGRA_8888_SkColorType, kOpaque_SkAlphaType,
-            [](uint8_t red, uint8_t green, uint8_t blue) {
-              return SkPackARGB32(0xFF, red, green, blue);
-            });
+      switch (GetFormat()) {
+        case FXDIB_Format::kRgb32:
+          return CreateSkiaImageFromTransformedDib<
+              /*source_bits_per_pixel=*/32>(
+              *this, kBGRA_8888_SkColorType, kOpaque_SkAlphaType,
+              [](uint8_t red, uint8_t green, uint8_t blue) {
+                return SkPackARGB32(0xFF, red, green, blue);
+              });
+        case FXDIB_Format::kArgb:
+          return CreateSkiaImageFromDib(this, kBGRA_8888_SkColorType,
+                                        kUnpremul_SkAlphaType);
+        case FXDIB_Format::kArgbPremul:
+          return CreateSkiaImageFromDib(this, kBGRA_8888_SkColorType,
+                                        kPremul_SkAlphaType);
+        default:
+          NOTREACHED_NORETURN();
       }
-      // TODO(crbug.com/42271020): Consider adding support for
-      // `FXDIB_Format::kArgbPremul`
-      CHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
-      return CreateSkiaImageFromDib(
-          this, kBGRA_8888_SkColorType,
-          IsPremultiplied() ? kPremul_SkAlphaType : kUnpremul_SkAlphaType);
-
     default:
       NOTREACHED_NORETURN();
   }

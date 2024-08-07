@@ -642,10 +642,8 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
       return true;
     m_pDevice->GetDIBits(backdrop, rect.left, rect.top);
   }
-  // TODO(crbug.com/42271020): Consider adding support for
-  // `FXDIB_Format::kArgbPremul`
-  if (!bitmap_device.CreateWithBackdrop(width, height, FXDIB_Format::kArgb,
-                                        backdrop)) {
+  if (!bitmap_device.CreateWithBackdrop(
+          width, height, GetCompatibleArgbFormat(), std::move(backdrop))) {
     return true;
   }
 
@@ -684,13 +682,6 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   bitmap_render.SetInGroup(transparency.IsGroup());
   bitmap_render.Initialize(nullptr, nullptr);
   bitmap_render.ProcessObjectNoClip(pPageObj, new_matrix);
-#if defined(PDF_USE_SKIA)
-  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    // Safe because `CFX_SkiaDeviceDriver` always uses pre-multiplied alpha.
-    // TODO(crbug.com/42271020): Remove the need for this.
-    bitmap_device.GetBitmap()->ForcePreMultiply();
-  }
-#endif
   m_bStopped = bitmap_render.m_bStopped;
   if (pSMaskDict) {
     CFX_Matrix smask_matrix =
@@ -714,11 +705,6 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   if (pPageObj->IsForm()) {
     transparency.SetGroup();
   }
-#if defined(PDF_USE_SKIA)
-  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    bitmap_device.GetBitmap()->UnPreMultiply();
-  }
-#endif
   CompositeDIBitmap(bitmap_device.GetBitmap(), rect.left, rect.top,
                     /*mask_argb=*/0, /*alpha=*/1.0f, blend_type, transparency);
   return true;
@@ -1493,4 +1479,13 @@ FX_ARGB CPDF_RenderStatus::GetBackgroundColor(
   return ArgbEncode(255, static_cast<int>(rgb.red * 255),
                     static_cast<int>(rgb.green * 255),
                     static_cast<int>(rgb.blue * 255));
+}
+
+FXDIB_Format CPDF_RenderStatus::GetCompatibleArgbFormat() const {
+#if defined(PDF_USE_SKIA)
+  if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_PREMULTIPLIED_ALPHA) {
+    return FXDIB_Format::kArgbPremul;
+  }
+#endif
+  return FXDIB_Format::kArgb;
 }

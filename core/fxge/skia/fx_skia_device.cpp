@@ -701,6 +701,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
       m_bGroupKnockout(bGroupKnockout) {
   SkColorType color_type;
   const int bpp = m_pBitmap->GetBPP();
+  SkAlphaType alpha_type = kPremul_SkAlphaType;
   if (bpp == 8) {
     color_type = m_pBitmap->IsAlphaFormat() || m_pBitmap->IsMaskFormat()
                      ? kAlpha_8_SkColorType
@@ -715,9 +716,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
     const int height = m_pOriginalBitmap->GetHeight();
 
     m_pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    // TODO(crbug.com/42271020): Consider adding support for
-    // `FXDIB_Format::kArgbPremul`
-    if (!m_pBitmap->Create(width, height, FXDIB_Format::kArgb) ||
+    if (!m_pBitmap->Create(width, height, FXDIB_Format::kArgbPremul) ||
         !m_pBitmap->TransferBitmap(width, height, m_pOriginalBitmap,
                                    /*src_left=*/0, /*src_top=*/0)) {
       // Skip creating SkCanvas if the 32-bpp bitmap creation fails.
@@ -733,11 +732,16 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
   } else {
     DCHECK_EQ(bpp, 32);
     color_type = Get32BitSkColorType(bRgbByteOrder);
+    FXDIB_Format format = m_pBitmap->GetFormat();
+    if (format == FXDIB_Format::kRgb32) {
+      alpha_type = kOpaque_SkAlphaType;
+    } else if (format == FXDIB_Format::kArgb) {
+      alpha_type = kUnpremul_SkAlphaType;
+    }
   }
 
-  SkImageInfo imageInfo =
-      SkImageInfo::Make(m_pBitmap->GetWidth(), m_pBitmap->GetHeight(),
-                        color_type, kPremul_SkAlphaType);
+  SkImageInfo imageInfo = SkImageInfo::Make(
+      m_pBitmap->GetWidth(), m_pBitmap->GetHeight(), color_type, alpha_type);
   surface_ = SkSurfaces::WrapPixels(
       imageInfo, m_pBitmap->GetWritableBuffer().data(), m_pBitmap->GetPitch());
   m_pCanvas = surface_->getCanvas();
@@ -1013,7 +1017,7 @@ int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id) const {
     case FXDC_RENDER_CAPS:
       return FXRC_GET_BITS | FXRC_ALPHA_PATH | FXRC_ALPHA_IMAGE |
              FXRC_BLEND_MODE | FXRC_SOFT_CLIP | FXRC_ALPHA_OUTPUT |
-             FXRC_FILLSTROKE_PATH | FXRC_SHADING;
+             FXRC_FILLSTROKE_PATH | FXRC_SHADING | FXRC_PREMULTIPLIED_ALPHA;
     default:
       NOTREACHED_NORETURN();
   }
@@ -1374,16 +1378,16 @@ bool CFX_SkiaDeviceDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
   uint8_t* output_buffer = bitmap->GetWritableBuffer().data();
   DCHECK(output_buffer);
 
-  SkImageInfo input_info =
-      SkImageInfo::Make(m_pBitmap->GetWidth(), m_pBitmap->GetHeight(),
-                        SkColorType::kN32_SkColorType, kPremul_SkAlphaType);
+  SkImageInfo input_info = m_pCanvas->imageInfo();
   sk_sp<SkImage> input = SkImages::RasterFromPixmap(
       SkPixmap(input_info, input_buffer, m_pBitmap->GetPitch()),
       /*rasterReleaseProc=*/nullptr, /*releaseContext=*/nullptr);
 
+  CHECK_EQ(32, bitmap->GetBPP());
   SkImageInfo output_info = SkImageInfo::Make(
       bitmap->GetWidth(), bitmap->GetHeight(),
-      Get32BitSkColorType(m_bRgbByteOrder), kPremul_SkAlphaType);
+      Get32BitSkColorType(m_bRgbByteOrder),
+      bitmap->IsPremultiplied() ? kPremul_SkAlphaType : kUnpremul_SkAlphaType);
   sk_sp<SkSurface> output =
       SkSurfaces::WrapPixels(output_info, output_buffer, bitmap->GetPitch());
 
@@ -1458,11 +1462,8 @@ RenderDeviceDriverIface::StartResult CFX_SkiaDeviceDriver::StartDIBits(
 }
 
 void CFX_DIBitmap::PreMultiply() {
-  // TODO(crbug.com/42271020): Implement.
-}
-
-void CFX_DIBitmap::UnPreMultiply() {
-  if (m_nFormat == Format::kUnPreMultiplied || GetBPP() != 32) {
+  CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+  if (GetFormat() != FXDIB_Format::kArgb) {
     return;
   }
 
@@ -1471,7 +1472,31 @@ void CFX_DIBitmap::UnPreMultiply() {
     return;
   }
 
-  m_nFormat = Format::kUnPreMultiplied;
+  SetFormat(FXDIB_Format::kArgbPremul);
+  int height = GetHeight();
+  int width = GetWidth();
+  int row_bytes = GetPitch();
+  SkImageInfo premultiplied_info =
+      SkImageInfo::Make(width, height, kN32_SkColorType, kPremul_SkAlphaType);
+  SkPixmap premultiplied(premultiplied_info, buffer, row_bytes);
+  SkImageInfo unpremultiplied_info =
+      SkImageInfo::Make(width, height, kN32_SkColorType, kUnpremul_SkAlphaType);
+  SkPixmap unpremultiplied(unpremultiplied_info, buffer, row_bytes);
+  unpremultiplied.readPixels(premultiplied);
+}
+
+void CFX_DIBitmap::UnPreMultiply() {
+  CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
+  if (GetFormat() != FXDIB_Format::kArgbPremul) {
+    return;
+  }
+
+  void* buffer = GetWritableBuffer().data();
+  if (!buffer) {
+    return;
+  }
+
+  SetFormat(FXDIB_Format::kArgb);
   int height = GetHeight();
   int width = GetWidth();
   int row_bytes = GetPitch();
@@ -1482,14 +1507,6 @@ void CFX_DIBitmap::UnPreMultiply() {
       SkImageInfo::Make(width, height, kN32_SkColorType, kUnpremul_SkAlphaType);
   SkPixmap unpremultiplied(unpremultiplied_info, buffer, row_bytes);
   premultiplied.readPixels(unpremultiplied);
-}
-
-void CFX_DIBitmap::ForcePreMultiply() {
-  m_nFormat = Format::kPreMultiplied;
-}
-
-bool CFX_DIBitmap::IsPremultiplied() const {
-  return m_nFormat == Format::kPreMultiplied;
 }
 
 bool CFX_SkiaDeviceDriver::DrawBitsWithMask(RetainPtr<const CFX_DIBBase> bitmap,
