@@ -31,6 +31,7 @@ class CPDF_Image final : public Retainable {
   static bool IsValidJpegComponent(int32_t comps);
   static bool IsValidJpegBitsPerComponent(int32_t bpc);
 
+  // Can only be called when `IsInline()` returns true.
   void ConvertStreamToIndirectObject();
 
   RetainPtr<const CPDF_Dictionary> GetDict() const;

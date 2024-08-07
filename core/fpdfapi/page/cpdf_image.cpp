@@ -78,9 +78,7 @@ void CPDF_Image::FinishInitialization() {
 }
 
 void CPDF_Image::ConvertStreamToIndirectObject() {
-  if (!m_pStream->IsInline())
-    return;
-
+  CHECK(m_pStream->IsInline());
   m_pDocument->AddIndirectObject(m_pStream);
 }
 
