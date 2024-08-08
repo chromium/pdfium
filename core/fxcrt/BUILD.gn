@@ -185,7 +185,11 @@ source_set("fxcrt") {
 
 source_set("test_support") {
   testonly = true
-  sources = [ "string_test_support.cpp" ]
+  sources = [
+    "fx_coordinates_test_support.cpp",
+    "fx_coordinates_test_support.h",
+    "string_test_support.cpp",
+  ]
   configs += [ "../../:pdfium_strict_config" ]
   deps = [ ":fxcrt" ]
 }
@@ -254,7 +258,10 @@ pdfium_unittest_source_set("unittests") {
     "xml/cfx_xmltext_unittest.cpp",
     "zip_unittest.cpp",
   ]
-  deps = [ ":unit_test_support" ]
+  deps = [
+    ":test_support",
+    ":unit_test_support",
+  ]
   pdfium_root_dir = "../../"
   if (pdf_use_partition_alloc) {
     deps += [ "//base/allocator/partition_allocator/src/partition_alloc" ]

@@ -18,10 +18,6 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 
-#ifndef NDEBUG
-#include <ostream>
-#endif
-
 namespace {
 
 void MatchFloatRange(float f1, float f2, int* i1, int* i2) {
@@ -372,20 +368,6 @@ FX_RECT CFX_RectF::GetOuterRect() const {
                  static_cast<int32_t>(ceil(right())),
                  static_cast<int32_t>(ceil(bottom())));
 }
-
-#ifndef NDEBUG
-std::ostream& operator<<(std::ostream& os, const CFX_FloatRect& rect) {
-  os << "rect[w " << rect.Width() << " x h " << rect.Height() << " (left "
-     << rect.left << ", bot " << rect.bottom << ")]";
-  return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const CFX_RectF& rect) {
-  os << "rect[w " << rect.Width() << " x h " << rect.Height() << " (left "
-     << rect.left << ", top " << rect.top << ")]";
-  return os;
-}
-#endif  // NDEBUG
 
 CFX_Matrix CFX_Matrix::GetInverse() const {
   CFX_Matrix inverse;

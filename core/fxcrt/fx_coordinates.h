@@ -9,10 +9,6 @@
 
 #include <stdint.h>
 
-#ifndef NDEBUG
-#include <iosfwd>
-#endif
-
 #include "core/fxcrt/span.h"
 
 template <class BaseType>
@@ -276,10 +272,6 @@ class CFX_FloatRect {
   float top = 0.0f;
 };
 
-#ifndef NDEBUG
-std::ostream& operator<<(std::ostream& os, const CFX_FloatRect& rect);
-#endif
-
 // LTWH rectangles (y-axis runs downwards).
 class CFX_RectF {
  public:
@@ -438,10 +430,6 @@ class CFX_RectF {
   float width = 0.0f;
   float height = 0.0f;
 };
-
-#ifndef NDEBUG
-std::ostream& operator<<(std::ostream& os, const CFX_RectF& rect);
-#endif  // NDEBUG
 
 // The matrix is of the form:
 // | a  b  0 |
