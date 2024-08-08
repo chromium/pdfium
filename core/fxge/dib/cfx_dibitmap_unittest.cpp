@@ -118,6 +118,22 @@ TEST(CFXDIBitmapTest, CalculatePitchAndSizeBoundary) {
                                                    FXDIB_Format::k8bppRgb, 0));
 }
 
+TEST(CFXDIBitmapTest, GetScanlineAsWith24Bpp) {
+  auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
+  ASSERT_TRUE(bitmap->Create(3, 3, FXDIB_Format::kRgb));
+  EXPECT_EQ(3, bitmap->GetWidth());
+  EXPECT_EQ(12u, bitmap->GetPitch());
+
+  EXPECT_EQ(36u, bitmap->GetBuffer().size());
+  EXPECT_EQ(12u, bitmap->GetScanline(0).size());
+  EXPECT_EQ(3u, bitmap->GetScanlineAs<FX_BGR_STRUCT<uint8_t>>(0).size());
+
+  EXPECT_EQ(36u, bitmap->GetWritableBuffer().size());
+  EXPECT_EQ(12u, bitmap->GetWritableScanline(0).size());
+  EXPECT_EQ(3u,
+            bitmap->GetWritableScanlineAs<FX_BGR_STRUCT<uint8_t>>(0).size());
+}
+
 #if defined(PDF_USE_SKIA)
 TEST(CFXDIBitmapTest, UnPreMultiplyFromPreMultiplied) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();

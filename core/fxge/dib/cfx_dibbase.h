@@ -45,6 +45,7 @@ class CFX_DIBBase : public Retainable {
 
   static constexpr uint32_t kPaletteSize = 256;
 
+  // Note that the returned scanline includes unused space at the end, if any.
   virtual pdfium::span<const uint8_t> GetScanline(int line) const = 0;
   virtual bool SkipToScanline(int line, PauseIndicatorIface* pPause) const;
   virtual size_t GetEstimatedImageMemoryBurden() const;
@@ -53,9 +54,12 @@ class CFX_DIBBase : public Retainable {
   virtual RetainPtr<const CFX_DIBitmap> RealizeIfNeeded() const;
 #endif
 
+  // Note that the returned scanline does not include unused space at the end,
+  // if any.
   template <typename T>
   pdfium::span<const T> GetScanlineAs(int line) const {
-    return fxcrt::reinterpret_span<const T>(GetScanline(line));
+    return fxcrt::reinterpret_span<const T>(GetScanline(line))
+        .first(GetWidth());
   }
 
   int GetWidth() const { return width_; }
