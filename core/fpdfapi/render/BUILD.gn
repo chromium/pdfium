@@ -29,8 +29,6 @@ source_set("render") {
     "cpdf_renderstatus.h",
     "cpdf_rendertiling.cpp",
     "cpdf_rendertiling.h",
-    "cpdf_scaledrenderbuffer.cpp",
-    "cpdf_scaledrenderbuffer.h",
     "cpdf_textrenderer.cpp",
     "cpdf_textrenderer.h",
     "cpdf_type3cache.cpp",
@@ -54,6 +52,8 @@ source_set("render") {
   visibility = [ "../../../*" ]
   if (is_win) {
     sources += [
+      "cpdf_scaledrenderbuffer.cpp",
+      "cpdf_scaledrenderbuffer.h",
       "cpdf_windowsrenderdevice.cpp",
       "cpdf_windowsrenderdevice.h",
     ]

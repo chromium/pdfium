@@ -136,6 +136,10 @@ class CPDF_RenderStatus {
                            const CFX_Matrix& mtObj2Device);
   void DrawObjWithBackground(CPDF_PageObject* pObj,
                              const CFX_Matrix& mtObj2Device);
+  void DrawObjWithBackgroundToDevice(CPDF_PageObject* obj,
+                                     const CFX_Matrix& object_to_device,
+                                     CFX_RenderDevice* device,
+                                     const CFX_Matrix& device_matrix);
   bool DrawObjWithBlend(CPDF_PageObject* pObj, const CFX_Matrix& mtObj2Device);
   bool ProcessPath(CPDF_PathObject* path_obj, const CFX_Matrix& mtObj2Device);
   void ProcessPathPattern(CPDF_PathObject* path_obj,

@@ -48,7 +48,6 @@
 #include "core/fpdfapi/render/cpdf_renderoptions.h"
 #include "core/fpdfapi/render/cpdf_rendershading.h"
 #include "core/fpdfapi/render/cpdf_rendertiling.h"
-#include "core/fpdfapi/render/cpdf_scaledrenderbuffer.h"
 #include "core/fpdfapi/render/cpdf_textrenderer.h"
 #include "core/fpdfapi/render/cpdf_type3cache.h"
 #include "core/fxcrt/autorestorer.h"
@@ -73,6 +72,10 @@
 #include "core/fxge/renderdevicedriver_iface.h"
 #include "core/fxge/text_char_pos.h"
 #include "core/fxge/text_glyph_pos.h"
+
+#if BUILDFLAG(IS_WIN)
+#include "core/fpdfapi/render/cpdf_scaledrenderbuffer.h"
+#endif
 
 namespace {
 
@@ -334,26 +337,48 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
   if (rect.IsEmpty())
     return;
 
-  int res = (pObj->IsImage() && IsPrint()) ? 0 : 300;
+  const bool needs_buffer =
+      !(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_GET_BITS);
+  if (!needs_buffer) {
+    DrawObjWithBackgroundToDevice(pObj, mtObj2Device, m_pDevice, CFX_Matrix());
+    return;
+  }
+
+#if BUILDFLAG(IS_WIN)
   CPDF_ScaledRenderBuffer buffer(m_pDevice, rect);
+  int res = (pObj->IsImage() && IsPrint()) ? 0 : 300;
   if (!buffer.Initialize(m_pContext, pObj, m_Options, res)) {
     return;
   }
+
+  DrawObjWithBackgroundToDevice(pObj, mtObj2Device, buffer.GetDevice(),
+                                buffer.GetMatrix());
+  buffer.OutputToDevice();
+#else
+  NOTREACHED_NORETURN();
+#endif
+}
+
+void CPDF_RenderStatus::DrawObjWithBackgroundToDevice(
+    CPDF_PageObject* obj,
+    const CFX_Matrix& object_to_device,
+    CFX_RenderDevice* device,
+    const CFX_Matrix& device_matrix) {
   RetainPtr<const CPDF_Dictionary> pFormResource;
-  CFX_Matrix matrix = mtObj2Device * buffer.GetMatrix();
-  const CPDF_FormObject* pFormObj = pObj->AsForm();
-  if (pFormObj)
+  const CPDF_FormObject* pFormObj = obj->AsForm();
+  if (pFormObj) {
     pFormResource = pFormObj->form()->GetDict()->GetDictFor("Resources");
-  CPDF_RenderStatus status(m_pContext, buffer.GetDevice());
+  }
+
+  CPDF_RenderStatus status(m_pContext, device);
   status.SetOptions(m_Options);
-  status.SetDeviceMatrix(buffer.GetMatrix());
+  status.SetDeviceMatrix(device_matrix);
   status.SetTransparency(m_Transparency);
   status.SetDropObjects(m_bDropObjects);
   status.SetFormResource(std::move(pFormResource));
   status.SetInGroup(m_bInGroup);
   status.Initialize(nullptr, nullptr);
-  status.RenderSingleObject(pObj, matrix);
-  buffer.OutputToDevice();
+  status.RenderSingleObject(obj, object_to_device * device_matrix);
 }
 
 bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,

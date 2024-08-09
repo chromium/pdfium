@@ -6,6 +6,7 @@
 
 #include "core/fpdfapi/render/cpdf_scaledrenderbuffer.h"
 
+#include "build/build_config.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/render/cpdf_devicebuffer.h"
 #include "core/fpdfapi/render/cpdf_rendercontext.h"
@@ -20,7 +21,9 @@ constexpr size_t kImageSizeLimitBytes = 30 * 1024 * 1024;
 
 CPDF_ScaledRenderBuffer::CPDF_ScaledRenderBuffer(CFX_RenderDevice* device,
                                                  const FX_RECT& rect)
-    : device_(device), rect_(rect) {}
+    : device_(device),
+      bitmap_device_(std::make_unique<CFX_DefaultRenderDevice>()),
+      rect_(rect) {}
 
 CPDF_ScaledRenderBuffer::~CPDF_ScaledRenderBuffer() = default;
 
@@ -28,13 +31,8 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
                                          const CPDF_PageObject* pObj,
                                          const CPDF_RenderOptions& options,
                                          int max_dpi) {
-  if (device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_GET_BITS) {
-    return true;
-  }
-
   matrix_ = CPDF_DeviceBuffer::CalculateMatrix(device_, rect_, max_dpi,
                                                /*scale=*/true);
-  bitmap_device_ = std::make_unique<CFX_DefaultRenderDevice>();
   bool bIsAlpha =
       !!(device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_ALPHA_OUTPUT);
   FXDIB_Format dibFormat = bIsAlpha ? FXDIB_Format::kArgb : FXDIB_Format::kRgb;
@@ -61,17 +59,14 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
   return true;
 }
 
-CFX_RenderDevice* CPDF_ScaledRenderBuffer::GetDevice() const {
-  return bitmap_device_ ? static_cast<CFX_RenderDevice*>(bitmap_device_.get())
-                        : device_.get();
+CFX_DefaultRenderDevice* CPDF_ScaledRenderBuffer::GetDevice() {
+  return bitmap_device_.get();
 }
 
 void CPDF_ScaledRenderBuffer::OutputToDevice() {
-  if (bitmap_device_) {
 #if defined(PDF_USE_SKIA)
-    bitmap_device_->SyncInternalBitmaps();
+  bitmap_device_->SyncInternalBitmaps();
 #endif
-    device_->StretchDIBits(bitmap_device_->GetBitmap(), rect_.left, rect_.top,
-                           rect_.Width(), rect_.Height());
-  }
+  device_->StretchDIBits(bitmap_device_->GetBitmap(), rect_.left, rect_.top,
+                         rect_.Width(), rect_.Height());
 }
