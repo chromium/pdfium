@@ -335,8 +335,8 @@ void CPDF_RenderStatus::DrawObjWithBackground(CPDF_PageObject* pObj,
     return;
 
   int res = (pObj->IsImage() && IsPrint()) ? 0 : 300;
-  CPDF_ScaledRenderBuffer buffer;
-  if (!buffer.Initialize(m_pContext, m_pDevice, rect, pObj, &m_Options, res)) {
+  CPDF_ScaledRenderBuffer buffer(m_pDevice, rect);
+  if (!buffer.Initialize(m_pContext, pObj, m_Options, res)) {
     return;
   }
   RetainPtr<const CPDF_Dictionary> pFormResource;

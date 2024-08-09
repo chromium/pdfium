@@ -18,23 +18,21 @@ constexpr size_t kImageSizeLimitBytes = 30 * 1024 * 1024;
 
 }  // namespace
 
-CPDF_ScaledRenderBuffer::CPDF_ScaledRenderBuffer() = default;
+CPDF_ScaledRenderBuffer::CPDF_ScaledRenderBuffer(CFX_RenderDevice* device,
+                                                 const FX_RECT& rect)
+    : device_(device), rect_(rect) {}
 
 CPDF_ScaledRenderBuffer::~CPDF_ScaledRenderBuffer() = default;
 
 bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
-                                         CFX_RenderDevice* pDevice,
-                                         const FX_RECT& rect,
                                          const CPDF_PageObject* pObj,
-                                         const CPDF_RenderOptions* pOptions,
+                                         const CPDF_RenderOptions& options,
                                          int max_dpi) {
-  device_ = pDevice;
   if (device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_GET_BITS) {
     return true;
   }
 
-  rect_ = rect;
-  matrix_ = CPDF_DeviceBuffer::CalculateMatrix(pDevice, rect, max_dpi,
+  matrix_ = CPDF_DeviceBuffer::CalculateMatrix(device_, rect_, max_dpi,
                                                /*scale=*/true);
   bitmap_device_ = std::make_unique<CFX_DefaultRenderDevice>();
   bool bIsAlpha =
@@ -42,7 +40,7 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
   FXDIB_Format dibFormat = bIsAlpha ? FXDIB_Format::kArgb : FXDIB_Format::kRgb;
   while (true) {
     FX_RECT bitmap_rect =
-        matrix_.TransformRect(CFX_FloatRect(rect)).GetOuterRect();
+        matrix_.TransformRect(CFX_FloatRect(rect_)).GetOuterRect();
     int32_t width = bitmap_rect.Width();
     int32_t height = bitmap_rect.Height();
     // Set to 0 to make CalculatePitchAndSize() calculate it.
@@ -58,7 +56,7 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
     }
     matrix_.Scale(0.5f, 0.5f);
   }
-  pContext->GetBackgroundToDevice(bitmap_device_.get(), pObj, pOptions,
+  pContext->GetBackgroundToDevice(bitmap_device_.get(), pObj, &options,
                                   matrix_);
   return true;
 }
