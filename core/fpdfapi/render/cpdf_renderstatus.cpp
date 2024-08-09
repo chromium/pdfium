@@ -1232,7 +1232,20 @@ void CPDF_RenderStatus::CompositeDIBitmap(
   CHECK(bitmap);
 
   if (blend_mode == BlendMode::kNormal) {
-    if (!bitmap->IsMaskFormat()) {
+    if (bitmap->IsMaskFormat()) {
+#if BUILDFLAG(IS_WIN)
+      FX_ARGB fill_argb = m_Options.TranslateColor(mask_argb);
+      if (alpha != 1.0f) {
+        auto& bgra = reinterpret_cast<FX_BGRA_STRUCT<uint8_t>&>(fill_argb);
+        bgra.alpha *= FXSYS_roundf(alpha * 255) / 255;
+      }
+      if (m_pDevice->SetBitMask(bitmap, left, top, fill_argb)) {
+        return;
+      }
+#else
+      NOTREACHED_NORETURN();
+#endif
+    } else {
       if (alpha != 1.0f) {
         if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
           CFX_Matrix matrix = CFX_RenderDevice::GetFlipMatrix(
@@ -1244,15 +1257,6 @@ void CPDF_RenderStatus::CompositeDIBitmap(
         bitmap->MultiplyAlpha(alpha);
       }
       if (m_pDevice->SetDIBits(bitmap, left, top)) {
-        return;
-      }
-    } else {
-      FX_ARGB fill_argb = m_Options.TranslateColor(mask_argb);
-      if (alpha != 1.0f) {
-        auto& bgra = reinterpret_cast<FX_BGRA_STRUCT<uint8_t>&>(fill_argb);
-        bgra.alpha *= FXSYS_roundf(alpha * 255) / 255;
-      }
-      if (m_pDevice->SetBitMask(bitmap, left, top, fill_argb)) {
         return;
       }
     }
@@ -1287,9 +1291,13 @@ void CPDF_RenderStatus::CompositeDIBitmap(
       left = std::min(left, 0);
       top = std::min(top, 0);
       if (bitmap->IsMaskFormat()) {
+#if BUILDFLAG(IS_WIN)
         pClone->CompositeMask(0, 0, pClone->GetWidth(), pClone->GetHeight(),
                               bitmap, mask_argb, left, top, blend_mode, nullptr,
                               false);
+#else
+        NOTREACHED_NORETURN();
+#endif
       } else {
         pClone->CompositeBitmap(0, 0, pClone->GetWidth(), pClone->GetHeight(),
                                 bitmap, left, top, blend_mode, nullptr, false);
@@ -1319,9 +1327,13 @@ void CPDF_RenderStatus::CompositeDIBitmap(
   const int width = bitmap->GetWidth();
   const int height = bitmap->GetHeight();
   if (bitmap->IsMaskFormat()) {
+#if BUILDFLAG(IS_WIN)
     backdrop->CompositeMask(left - bbox.left, top - bbox.top, width, height,
                             std::move(bitmap), mask_argb, 0, 0, blend_mode,
                             nullptr, false);
+#else
+    NOTREACHED_NORETURN();
+#endif
   } else {
     backdrop->CompositeBitmap(left - bbox.left, top - bbox.top, width, height,
                               std::move(bitmap), 0, 0, blend_mode, nullptr,
