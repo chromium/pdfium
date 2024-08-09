@@ -27,14 +27,6 @@ uint8_t AlphaUnion(uint8_t dest, uint8_t src) {
   return dest + src - dest * src / 255;
 }
 
-template <typename T, typename U>
-void CopyInputAndAlpha(const T& input, uint8_t alpha, U& output) {
-  output.blue = input.blue;
-  output.green = input.green;
-  output.red = input.red;
-  output.alpha = alpha;
-}
-
 int Lum(FX_RGB_STRUCT<int> color) {
   return (color.red * 30 + color.green * 59 + color.blue * 11) / 100;
 }
@@ -534,21 +526,30 @@ void CompositeRowArgb2Rgb(pdfium::span<const FX_BGRA_STRUCT<uint8_t>> src_span,
   }
 }
 
+// Returns 0 when no further work is required by the caller. Otherwise, returns
+// `src_alpha` and the caller needs to use that to do more work.
+template <typename DestPixelStruct>
+uint8_t CompositePixelArgb2ArgbCommon(const FX_BGRA_STRUCT<uint8_t>& input,
+                                      uint8_t clip,
+                                      DestPixelStruct& output) {
+  const uint8_t src_alpha = input.alpha * clip / 255;
+  if (output.alpha != 0) {
+    return src_alpha;
+  }
+
+  output.blue = input.blue;
+  output.green = input.green;
+  output.red = input.red;
+  output.alpha = src_alpha;
+  return 0;
+}
+
 template <typename DestPixelStruct>
 void CompositePixelArgb2ArgbNonSeparableBlend(
     const FX_BGRA_STRUCT<uint8_t>& input,
-    uint8_t clip,
+    uint8_t src_alpha,
     DestPixelStruct& output,
     BlendMode blend_type) {
-  const uint8_t src_alpha = input.alpha * clip / 255;
-  if (output.alpha == 0) {
-    CopyInputAndAlpha(input, src_alpha, output);
-    return;
-  }
-  if (src_alpha == 0) {
-    return;
-  }
-
   const uint8_t dest_alpha = AlphaUnion(output.alpha, src_alpha);
   const int alpha_ratio = src_alpha * 255 / dest_alpha;
   FX_RGB_STRUCT<int> blended_color = RgbBlend(blend_type, input, output);
@@ -559,18 +560,9 @@ void CompositePixelArgb2ArgbNonSeparableBlend(
 
 template <typename DestPixelStruct>
 void CompositePixelArgb2ArgbBlend(const FX_BGRA_STRUCT<uint8_t>& input,
-                                  uint8_t clip,
+                                  uint8_t src_alpha,
                                   DestPixelStruct& output,
                                   BlendMode blend_type) {
-  const uint8_t src_alpha = input.alpha * clip / 255;
-  if (output.alpha == 0) {
-    CopyInputAndAlpha(input, src_alpha, output);
-    return;
-  }
-  if (src_alpha == 0) {
-    return;
-  }
-
   const uint8_t dest_alpha = AlphaUnion(output.alpha, src_alpha);
   const int alpha_ratio = src_alpha * 255 / dest_alpha;
   FX_RGB_STRUCT<int> blended_color = {
@@ -585,17 +577,8 @@ void CompositePixelArgb2ArgbBlend(const FX_BGRA_STRUCT<uint8_t>& input,
 
 template <typename DestPixelStruct>
 void CompositePixelArgb2ArgbNoBlend(const FX_BGRA_STRUCT<uint8_t>& input,
-                                    uint8_t clip,
+                                    uint8_t src_alpha,
                                     DestPixelStruct& output) {
-  const uint8_t src_alpha = input.alpha * clip / 255;
-  if (output.alpha == 0) {
-    CopyInputAndAlpha(input, src_alpha, output);
-    return;
-  }
-  if (src_alpha == 0) {
-    return;
-  }
-
   const uint8_t dest_alpha = AlphaUnion(output.alpha, src_alpha);
   const int alpha_ratio = src_alpha * 255 / dest_alpha;
   AlphaMerge(input, output, alpha_ratio);
@@ -611,19 +594,31 @@ void CompositeRowArgb2Argb(pdfium::span<const FX_BGRA_STRUCT<uint8_t>> src_span,
   if (clip_span.empty()) {
     if (non_separable_blend) {
       for (auto [input, output] : fxcrt::Zip(src_span, dest_span)) {
-        CompositePixelArgb2ArgbNonSeparableBlend(input, /*clip=*/255, output,
-                                                 blend_type);
+        const uint8_t src_alpha =
+            CompositePixelArgb2ArgbCommon(input, /*clip=*/255, output);
+        if (src_alpha != 0) {
+          CompositePixelArgb2ArgbNonSeparableBlend(input, src_alpha, output,
+                                                   blend_type);
+        }
       }
       return;
     }
     if (blend_type != BlendMode::kNormal) {
       for (auto [input, output] : fxcrt::Zip(src_span, dest_span)) {
-        CompositePixelArgb2ArgbBlend(input, /*clip=*/255, output, blend_type);
+        const uint8_t src_alpha =
+            CompositePixelArgb2ArgbCommon(input, /*clip=*/255, output);
+        if (src_alpha != 0) {
+          CompositePixelArgb2ArgbBlend(input, src_alpha, output, blend_type);
+        }
       }
       return;
     }
     for (auto [input, output] : fxcrt::Zip(src_span, dest_span)) {
-      CompositePixelArgb2ArgbNoBlend(input, /*clip=*/255, output);
+      const uint8_t src_alpha =
+          CompositePixelArgb2ArgbCommon(input, /*clip=*/255, output);
+      if (src_alpha != 0) {
+        CompositePixelArgb2ArgbNoBlend(input, src_alpha, output);
+      }
     }
     return;
   }
@@ -631,20 +626,33 @@ void CompositeRowArgb2Argb(pdfium::span<const FX_BGRA_STRUCT<uint8_t>> src_span,
   if (non_separable_blend) {
     for (auto [input, clip, output] :
          fxcrt::Zip(src_span, clip_span, dest_span)) {
-      CompositePixelArgb2ArgbNonSeparableBlend(input, clip, output, blend_type);
+      const uint8_t src_alpha =
+          CompositePixelArgb2ArgbCommon(input, clip, output);
+      if (src_alpha != 0) {
+        CompositePixelArgb2ArgbNonSeparableBlend(input, src_alpha, output,
+                                                 blend_type);
+      }
     }
     return;
   }
   if (blend_type != BlendMode::kNormal) {
     for (auto [input, clip, output] :
          fxcrt::Zip(src_span, clip_span, dest_span)) {
-      CompositePixelArgb2ArgbBlend(input, clip, output, blend_type);
+      const uint8_t src_alpha =
+          CompositePixelArgb2ArgbCommon(input, clip, output);
+      if (src_alpha != 0) {
+        CompositePixelArgb2ArgbBlend(input, src_alpha, output, blend_type);
+      }
     }
     return;
   }
   for (auto [input, clip, output] :
        fxcrt::Zip(src_span, clip_span, dest_span)) {
-    CompositePixelArgb2ArgbNoBlend(input, clip, output);
+    const uint8_t src_alpha =
+        CompositePixelArgb2ArgbCommon(input, clip, output);
+    if (src_alpha != 0) {
+      CompositePixelArgb2ArgbNoBlend(input, src_alpha, output);
+    }
   }
 }
 
