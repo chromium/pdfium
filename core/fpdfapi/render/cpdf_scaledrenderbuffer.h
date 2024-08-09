@@ -31,14 +31,14 @@ class CPDF_ScaledRenderBuffer {
                   int max_dpi);
 
   CFX_RenderDevice* GetDevice() const;
-  const CFX_Matrix& GetMatrix() const { return m_Matrix; }
+  const CFX_Matrix& GetMatrix() const { return matrix_; }
   void OutputToDevice();
 
  private:
-  UnownedPtr<CFX_RenderDevice> m_pDevice;
-  std::unique_ptr<CFX_DefaultRenderDevice> m_pBitmapDevice;
-  FX_RECT m_Rect;
-  CFX_Matrix m_Matrix;
+  UnownedPtr<CFX_RenderDevice> device_;
+  std::unique_ptr<CFX_DefaultRenderDevice> bitmap_device_;
+  FX_RECT rect_;
+  CFX_Matrix matrix_;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_SCALEDRENDERBUFFER_H_

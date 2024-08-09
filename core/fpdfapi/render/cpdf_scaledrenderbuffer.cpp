@@ -28,20 +28,21 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
                                          const CPDF_PageObject* pObj,
                                          const CPDF_RenderOptions* pOptions,
                                          int max_dpi) {
-  m_pDevice = pDevice;
-  if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_GET_BITS)
+  device_ = pDevice;
+  if (device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_GET_BITS) {
     return true;
+  }
 
-  m_Rect = rect;
-  m_Matrix = CPDF_DeviceBuffer::CalculateMatrix(pDevice, rect, max_dpi,
-                                                /*scale=*/true);
-  m_pBitmapDevice = std::make_unique<CFX_DefaultRenderDevice>();
+  rect_ = rect;
+  matrix_ = CPDF_DeviceBuffer::CalculateMatrix(pDevice, rect, max_dpi,
+                                               /*scale=*/true);
+  bitmap_device_ = std::make_unique<CFX_DefaultRenderDevice>();
   bool bIsAlpha =
-      !!(m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_ALPHA_OUTPUT);
+      !!(device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_ALPHA_OUTPUT);
   FXDIB_Format dibFormat = bIsAlpha ? FXDIB_Format::kArgb : FXDIB_Format::kRgb;
   while (true) {
     FX_RECT bitmap_rect =
-        m_Matrix.TransformRect(CFX_FloatRect(rect)).GetOuterRect();
+        matrix_.TransformRect(CFX_FloatRect(rect)).GetOuterRect();
     int32_t width = bitmap_rect.Width();
     int32_t height = bitmap_rect.Height();
     // Set to 0 to make CalculatePitchAndSize() calculate it.
@@ -52,27 +53,27 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
       return false;
 
     if (pitch_size.value().size <= kImageSizeLimitBytes &&
-        m_pBitmapDevice->Create(width, height, dibFormat)) {
+        bitmap_device_->Create(width, height, dibFormat)) {
       break;
     }
-    m_Matrix.Scale(0.5f, 0.5f);
+    matrix_.Scale(0.5f, 0.5f);
   }
-  pContext->GetBackgroundToDevice(m_pBitmapDevice.get(), pObj, pOptions,
-                                  m_Matrix);
+  pContext->GetBackgroundToDevice(bitmap_device_.get(), pObj, pOptions,
+                                  matrix_);
   return true;
 }
 
 CFX_RenderDevice* CPDF_ScaledRenderBuffer::GetDevice() const {
-  return m_pBitmapDevice ? static_cast<CFX_RenderDevice*>(m_pBitmapDevice.get())
-                         : m_pDevice.get();
+  return bitmap_device_ ? static_cast<CFX_RenderDevice*>(bitmap_device_.get())
+                        : device_.get();
 }
 
 void CPDF_ScaledRenderBuffer::OutputToDevice() {
-  if (m_pBitmapDevice) {
+  if (bitmap_device_) {
 #if defined(PDF_USE_SKIA)
-    m_pBitmapDevice->SyncInternalBitmaps();
+    bitmap_device_->SyncInternalBitmaps();
 #endif
-    m_pDevice->StretchDIBits(m_pBitmapDevice->GetBitmap(), m_Rect.left,
-                             m_Rect.top, m_Rect.Width(), m_Rect.Height());
+    device_->StretchDIBits(bitmap_device_->GetBitmap(), rect_.left, rect_.top,
+                           rect_.Width(), rect_.Height());
   }
 }
