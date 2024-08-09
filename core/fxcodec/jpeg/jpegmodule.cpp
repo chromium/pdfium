@@ -421,8 +421,8 @@ bool JpegModule::JpegEncode(const RetainPtr<const CFX_DIBBase>& pSource,
   static_assert(std::is_aggregate_v<decltype(cinfo)>);
   cinfo.err = &jerr;
   jpeg_create_compress(&cinfo);
-  int Bpp = pSource->GetBPP() / 8;
-  uint32_t nComponents = Bpp >= 3 ? 3 : 1;
+  const int bytes_per_pixel = pSource->GetBPP() / 8;
+  uint32_t nComponents = bytes_per_pixel >= 3 ? 3 : 1;
   uint32_t pitch = pSource->GetPitch();
   uint32_t width = pdfium::checked_cast<uint32_t>(pSource->GetWidth());
   uint32_t height = pdfium::checked_cast<uint32_t>(pSource->GetHeight());
@@ -478,7 +478,7 @@ bool JpegModule::JpegEncode(const RetainPtr<const CFX_DIBBase>& pSource,
           for (uint32_t i = 0; i < width; i++) {
             ReverseCopy3Bytes(dest_scan, src_scan.data());
             dest_scan += 3;
-            src_scan = src_scan.subspan(Bpp);
+            src_scan = src_scan.subspan(bytes_per_pixel);
           }
         });
       } else {

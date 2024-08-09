@@ -67,7 +67,10 @@ class CFX_DIBBase : public Retainable {
   uint32_t GetPitch() const { return pitch_; }
 
   FXDIB_Format GetFormat() const { return format_; }
+
+  // Bits per pixel, not bytes.
   int GetBPP() const { return GetBppFromFormat(GetFormat()); }
+
   bool IsMaskFormat() const { return GetIsMaskFromFormat(GetFormat()); }
   bool IsAlphaFormat() const { return GetIsAlphaFromFormat(GetFormat()); }
   bool IsOpaqueImage() const { return !IsMaskFormat() && !IsAlphaFormat(); }

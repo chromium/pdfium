@@ -585,7 +585,7 @@ bool CFX_PSRenderer::DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,
       return false;
     }
 
-    int bpp = bitmap->GetBPP() / 8;
+    const int bytes_per_pixel = bitmap->GetBPP() / 8;
     uint8_t* output_buf = nullptr;
     size_t output_size = 0;
     bool output_buf_is_owned = true;
@@ -595,13 +595,13 @@ bool CFX_PSRenderer::DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,
         m_pEncoderIface->pJpegEncodeFunc(bitmap, &output_buf, &output_size)) {
       filter = "/DCTDecode filter ";
     } else {
-      int src_pitch = width * bpp;
+      int src_pitch = width * bytes_per_pixel;
       output_size = height * src_pitch;
       output_buf = FX_Alloc(uint8_t, output_size);
       for (int row = 0; row < height; row++) {
         const uint8_t* src_scan = bitmap->GetScanline(row).data();
         uint8_t* dest_scan = UNSAFE_TODO(output_buf + row * src_pitch);
-        if (bpp == 3) {
+        if (bytes_per_pixel == 3) {
           UNSAFE_TODO({
             for (int col = 0; col < width; col++) {
               *dest_scan++ = src_scan[2];
@@ -631,7 +631,7 @@ bool CFX_PSRenderer::DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,
     if (!filter.IsEmpty())
       buf << filter;
 
-    buf << "false " << bpp;
+    buf << "false " << bytes_per_pixel;
     buf << " colorimage\n";
     WriteStream(buf);
 

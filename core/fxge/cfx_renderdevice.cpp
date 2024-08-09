@@ -218,7 +218,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
   // TODO(crbug.com/42271020): Add support for `FXDIB_Format::kArgbPremul`.
   CHECK(!bitmap->IsPremultiplied());
   const bool has_alpha = bitmap->IsAlphaFormat();
-  const int Bpp = has_alpha ? 4 : bitmap->GetBPP() / 8;
+  const int bytes_per_pixel = has_alpha ? 4 : bitmap->GetBPP() / 8;
   for (int row = 0; row < nrows; ++row) {
     int dest_row = row + top;
     if (dest_row < 0 || dest_row >= bitmap->GetHeight())
@@ -226,8 +226,9 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
 
     const uint8_t* src_scan =
         pGlyph->GetScanline(row).subspan((start_col - left) * 3).data();
-    uint8_t* dest_scan =
-        bitmap->GetWritableScanline(dest_row).subspan(start_col * Bpp).data();
+    uint8_t* dest_scan = bitmap->GetWritableScanline(dest_row)
+                             .subspan(start_col * bytes_per_pixel)
+                             .data();
     if (x_subpixel == 0) {
       for (int col = start_col; col < end_col; ++col) {
         if (normalize) {
@@ -237,7 +238,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
           MergeGammaAdjustRgb(&src_scan[0], bgra, &dest_scan[0]);
           SetAlpha(has_alpha, dest_scan);
         }
-        NextPixel(&src_scan, &dest_scan, Bpp);
+        NextPixel(&src_scan, &dest_scan, bytes_per_pixel);
       }
       continue;
     }
@@ -255,7 +256,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
           MergeGammaAdjust(src_scan[1], bgra.blue, bgra.alpha, &dest_scan[0]);
           SetAlpha(has_alpha, dest_scan);
         }
-        NextPixel(&src_scan, &dest_scan, Bpp);
+        NextPixel(&src_scan, &dest_scan, bytes_per_pixel);
         for (int col = start_col + 1; col < end_col; ++col) {
           if (normalize) {
             int src_value = AverageRgb(&src_scan[-1]);
@@ -264,7 +265,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
             MergeGammaAdjustRgb(&src_scan[-1], bgra, &dest_scan[0]);
             SetAlpha(has_alpha, dest_scan);
           }
-          NextPixel(&src_scan, &dest_scan, Bpp);
+          NextPixel(&src_scan, &dest_scan, bytes_per_pixel);
         }
         continue;
       }
@@ -280,7 +281,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
         MergeGammaAdjust(src_scan[0], bgra.blue, bgra.alpha, &dest_scan[0]);
         SetAlpha(has_alpha, dest_scan);
       }
-      NextPixel(&src_scan, &dest_scan, Bpp);
+      NextPixel(&src_scan, &dest_scan, bytes_per_pixel);
       for (int col = start_col + 1; col < end_col; ++col) {
         if (normalize) {
           int src_value = AverageRgb(&src_scan[-2]);
@@ -289,7 +290,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
           MergeGammaAdjustRgb(&src_scan[-2], bgra, &dest_scan[0]);
           SetAlpha(has_alpha, dest_scan);
         }
-        NextPixel(&src_scan, &dest_scan, Bpp);
+        NextPixel(&src_scan, &dest_scan, bytes_per_pixel);
       }
     });
   }

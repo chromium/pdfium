@@ -1416,7 +1416,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
     std::iota(transfers.begin(), transfers.end(), 0);
   }
   if (bLuminosity) {
-    const int Bpp = bitmap->GetBPP() / 8;
+    const int bytes_per_pixel = bitmap->GetBPP() / 8;
     for (int row = 0; row < height; row++) {
       const size_t dest_offset = Fx2DSizeOrDie(row, dest_pitch);
       const size_t src_offset = Fx2DSizeOrDie(row, src_pitch);
@@ -1425,7 +1425,7 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::LoadSMask(
       for (int col = 0; col < width; col++) {
         UNSAFE_TODO({
           *dest_pos++ = transfers[FXRGB2GRAY(src_pos[2], src_pos[1], *src_pos)];
-          src_pos += Bpp;
+          src_pos += bytes_per_pixel;
         });
       }
     }

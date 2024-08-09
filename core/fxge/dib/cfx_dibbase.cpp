@@ -173,8 +173,8 @@ void ConvertBuffer_Rgb2Gray(pdfium::span<uint8_t> dest_buf,
                             const RetainPtr<const CFX_DIBBase>& pSrcBitmap,
                             int src_left,
                             int src_top) {
-  const int Bpp = pSrcBitmap->GetBPP() / 8;
-  const size_t x_offset = Fx2DSizeOrDie(src_left, Bpp);
+  const int bytes_per_pixel = pSrcBitmap->GetBPP() / 8;
+  const size_t x_offset = Fx2DSizeOrDie(src_left, bytes_per_pixel);
   for (int row = 0; row < height; ++row) {
     uint8_t* dest_scan =
         dest_buf.subspan(Fx2DSizeOrDie(row, dest_pitch)).data();
@@ -183,7 +183,7 @@ void ConvertBuffer_Rgb2Gray(pdfium::span<uint8_t> dest_buf,
     UNSAFE_TODO({
       for (int col = 0; col < width; ++col) {
         *dest_scan++ = FXRGB2GRAY(src_scan[2], src_scan[1], src_scan[0]);
-        src_scan += Bpp;
+        src_scan += bytes_per_pixel;
       }
     });
   }
@@ -819,7 +819,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
   }
 
   pFlipped->SetPalette(GetPaletteSpan());
-  const int Bpp = GetBPP() / 8;
+  const int bytes_per_pixel = GetBPP() / 8;
   if (!bXFlip) {
     for (int row = 0; row < GetHeight(); ++row) {
       UNSAFE_TODO({
@@ -852,14 +852,14 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
     return pFlipped;
   }
 
-  if (Bpp == 1) {
+  if (bytes_per_pixel == 1) {
     for (int row = 0; row < GetHeight(); ++row) {
       UNSAFE_TODO({
         const uint8_t* src_scan = GetScanline(row).data();
         uint8_t* dest_scan =
             pFlipped->GetWritableScanline(bYFlip ? GetHeight() - row - 1 : row)
                 .data();
-        dest_scan += (GetWidth() - 1) * Bpp;
+        dest_scan += (GetWidth() - 1) * bytes_per_pixel;
         for (int col = 0; col < GetWidth(); ++col) {
           *dest_scan = *src_scan;
           --dest_scan;
@@ -870,14 +870,14 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
     return pFlipped;
   }
 
-  if (Bpp == 3) {
+  if (bytes_per_pixel == 3) {
     for (int row = 0; row < GetHeight(); ++row) {
       UNSAFE_TODO({
         const uint8_t* src_scan = GetScanline(row).data();
         uint8_t* dest_scan =
             pFlipped->GetWritableScanline(bYFlip ? GetHeight() - row - 1 : row)
                 .data();
-        dest_scan += (GetWidth() - 1) * Bpp;
+        dest_scan += (GetWidth() - 1) * bytes_per_pixel;
         for (int col = 0; col < GetWidth(); ++col) {
           FXSYS_memcpy(dest_scan, src_scan, 3);
           dest_scan -= 3;
@@ -888,14 +888,14 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
     return pFlipped;
   }
 
-  CHECK_EQ(Bpp, 4);
+  CHECK_EQ(bytes_per_pixel, 4);
   for (int row = 0; row < GetHeight(); ++row) {
     UNSAFE_TODO({
       const uint8_t* src_scan = GetScanline(row).data();
       uint8_t* dest_scan =
           pFlipped->GetWritableScanline(bYFlip ? GetHeight() - row - 1 : row)
               .data();
-      dest_scan += (GetWidth() - 1) * Bpp;
+      dest_scan += (GetWidth() - 1) * bytes_per_pixel;
       for (int col = 0; col < GetWidth(); ++col) {
         const auto* src_scan32 = reinterpret_cast<const uint32_t*>(src_scan);
         uint32_t* dest_scan32 = reinterpret_cast<uint32_t*>(dest_scan);
@@ -973,25 +973,25 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
     return pTransBitmap;
   }
 
-  const int nBytes = GetBPP() / 8;
+  const int bytes_per_pixel = GetBPP() / 8;
   int dest_step = bYFlip ? -dest_pitch : dest_pitch;
-  if (nBytes == 3) {
+  if (bytes_per_pixel == 3) {
     dest_step -= 2;
   }
   if (bYFlip) {
     dest_span = dest_span.subspan(dest_last_row_offset);
   }
 
-  if (nBytes == 1) {
+  if (bytes_per_pixel == 1) {
     for (int row = row_start; row < row_end; ++row) {
       UNSAFE_TODO({
         int dest_col =
             (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
             dest_clip.left;
-        size_t dest_offset = Fx2DSizeOrDie(dest_col, nBytes);
+        size_t dest_offset = Fx2DSizeOrDie(dest_col, bytes_per_pixel);
         uint8_t* dest_scan = dest_span.subspan(dest_offset).data();
         const uint8_t* src_scan =
-            GetScanline(row).subspan(col_start * nBytes).data();
+            GetScanline(row).subspan(col_start * bytes_per_pixel).data();
         for (int col = col_start; col < col_end; ++col) {
           *dest_scan = *src_scan++;
           dest_scan += dest_step;
@@ -1001,16 +1001,16 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
     return pTransBitmap;
   }
 
-  if (nBytes == 3) {
+  if (bytes_per_pixel == 3) {
     for (int row = row_start; row < row_end; ++row) {
       UNSAFE_TODO({
         int dest_col =
             (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
             dest_clip.left;
-        size_t dest_offset = Fx2DSizeOrDie(dest_col, nBytes);
+        size_t dest_offset = Fx2DSizeOrDie(dest_col, bytes_per_pixel);
         uint8_t* dest_scan = dest_span.subspan(dest_offset).data();
         const uint8_t* src_scan =
-            GetScanline(row).subspan(col_start * nBytes).data();
+            GetScanline(row).subspan(col_start * bytes_per_pixel).data();
         for (int col = col_start; col < col_end; ++col) {
           FXSYS_memcpy(dest_scan, src_scan, 3);
           dest_scan += 2 + dest_step;
@@ -1021,12 +1021,12 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::SwapXY(bool bXFlip, bool bYFlip) const {
     return pTransBitmap;
   }
 
-  CHECK_EQ(nBytes, 4);
+  CHECK_EQ(bytes_per_pixel, 4);
   for (int row = row_start; row < row_end; ++row) {
     UNSAFE_TODO({
       int dest_col = (bXFlip ? dest_clip.right - (row - row_start) - 1 : row) -
                      dest_clip.left;
-      size_t dest_offset = Fx2DSizeOrDie(dest_col, nBytes);
+      size_t dest_offset = Fx2DSizeOrDie(dest_col, bytes_per_pixel);
       uint8_t* dest_scan = dest_span.subspan(dest_offset).data();
       const uint32_t* src_scan =
           GetScanlineAs<uint32_t>(row).subspan(col_start).data();

@@ -131,12 +131,12 @@ void CFX_AggBitmapComposer::ComposeScanline(
 void CFX_AggBitmapComposer::ComposeScanlineV(
     int line,
     pdfium::span<const uint8_t> scanline) {
-  int Bpp = m_pBitmap->GetBPP() / 8;
+  const int bytes_per_pixel = m_pBitmap->GetBPP() / 8;
   int dest_pitch = m_pBitmap->GetPitch();
   int dest_x = m_DestLeft + (m_bFlipX ? (m_DestWidth - line - 1) : line);
   pdfium::span<uint8_t> dest_span = m_pBitmap->GetWritableBuffer();
   if (!dest_span.empty()) {
-    const size_t dest_x_offset = Fx2DSizeOrDie(dest_x, Bpp);
+    const size_t dest_x_offset = Fx2DSizeOrDie(dest_x, bytes_per_pixel);
     const size_t dest_y_offset = Fx2DSizeOrDie(m_DestTop, dest_pitch);
     dest_span = dest_span.subspan(dest_y_offset).subspan(dest_x_offset);
     if (m_bFlipY) {
@@ -151,7 +151,7 @@ void CFX_AggBitmapComposer::ComposeScanlineV(
   uint8_t* dest_scan = dest_buf;
   UNSAFE_TODO({
     for (int i = 0; i < m_DestHeight; ++i) {
-      for (int j = 0; j < Bpp; ++j) {
+      for (int j = 0; j < bytes_per_pixel; ++j) {
         *src_scan++ = dest_scan[j];
       }
       dest_scan += y_step;
@@ -177,7 +177,7 @@ void CFX_AggBitmapComposer::ComposeScanlineV(
     src_scan = m_pScanlineV.data();
     dest_scan = dest_buf;
     for (int i = 0; i < m_DestHeight; ++i) {
-      for (int j = 0; j < Bpp; ++j) {
+      for (int j = 0; j < bytes_per_pixel; ++j) {
         dest_scan[j] = *src_scan++;
       }
       dest_scan += y_step;

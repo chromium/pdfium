@@ -63,7 +63,9 @@ class CFX_ImageTransformer {
 
   void CalcAlpha(const CalcData& calc_data);
   void CalcMono(const CalcData& calc_data);
-  void CalcColor(const CalcData& calc_data, FXDIB_Format format, int Bpp);
+  void CalcColor(const CalcData& calc_data,
+                 FXDIB_Format format,
+                 int src_bytes_per_pixel);
 
   RetainPtr<const CFX_DIBBase> const m_pSrc;
   const CFX_Matrix m_matrix;

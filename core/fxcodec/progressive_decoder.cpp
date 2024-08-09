@@ -212,11 +212,11 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(
   int startY = 0;
   int sizeX = m_SrcWidth;
   int sizeY = m_SrcHeight;
-  int Bpp = pDevice->GetBPP() / 8;
+  const int bytes_per_pixel = pDevice->GetBPP() / 8;
   FX_ARGB argb = m_SrcPalette[pal_index];
   for (int row = 0; row < sizeY; row++) {
-    pdfium::span<uint8_t> scan_span =
-        pDevice->GetWritableScanline(row + startY).subspan(startX * Bpp);
+    pdfium::span<uint8_t> scan_span = pDevice->GetWritableScanline(row + startY)
+                                          .subspan(startX * bytes_per_pixel);
     switch (m_TransMethod) {
       case TransformMethod::k8BppRgbToRgbNoAlpha: {
         uint8_t* pScanline = scan_span.data();
@@ -225,7 +225,7 @@ bool ProgressiveDecoder::GifInputRecordPositionBuf(
             *pScanline++ = FXARGB_B(argb);
             *pScanline++ = FXARGB_G(argb);
             *pScanline++ = FXARGB_R(argb);
-            pScanline += Bpp - 3;
+            pScanline += bytes_per_pixel - 3;
           }
         });
         break;
@@ -958,8 +958,8 @@ void ProgressiveDecoder::ResampleScanline(
     FXCodec_Format src_format) {
   uint8_t* src_scan = src_span.data();
   uint8_t* dest_scan = pDeviceBitmap->GetWritableScanline(dest_line).data();
-  int src_bytes_per_pixel = (src_format & 0xff) / 8;
-  int dest_bytes_per_pixel = pDeviceBitmap->GetBPP() / 8;
+  const int src_bytes_per_pixel = (src_format & 0xff) / 8;
+  const int dest_bytes_per_pixel = pDeviceBitmap->GetBPP() / 8;
   for (int dest_col = 0; dest_col < m_SrcWidth; dest_col++) {
     CStretchEngine::PixelWeight* pPixelWeights =
         m_WeightHorz.GetPixelWeight(dest_col);
