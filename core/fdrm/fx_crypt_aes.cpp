@@ -527,18 +527,17 @@ void aes_decrypt_nb_4(CRYPT_aes_context* ctx, uint32_t* block) {
 
 }  // namespace
 
-void CRYPT_AESSetKey(CRYPT_aes_context* ctx,
-                     const uint8_t* key,
-                     uint32_t keylen) {
-  DCHECK(keylen == 16 || keylen == 24 || keylen == 32);
-  auto keyspan = UNSAFE_TODO(pdfium::make_span(key, keylen));
-  int Nk = keylen / 4;
+void CRYPT_AESSetKey(CRYPT_aes_context* ctx, pdfium::span<const uint8_t> key) {
+  size_t keylen = key.size();
+  CHECK(keylen == 16 || keylen == 24 || keylen == 32);
+
+  int Nk = static_cast<int>(keylen / 4);
   ctx->Nb = 4;
   ctx->Nr = 6 + (ctx->Nb > Nk ? ctx->Nb : Nk);
   int rconst = 1;
   for (int i = 0; i < (ctx->Nr + 1) * ctx->Nb; i++) {
     if (i < Nk) {
-      ctx->keysched[i] = fxcrt::GetUInt32MSBFirst(keyspan.subspan(4 * i));
+      ctx->keysched[i] = fxcrt::GetUInt32MSBFirst(key.subspan(4 * i));
     } else {
       uint32_t temp = ctx->keysched[i - 1];
       if (i % Nk == 0) {
@@ -583,11 +582,9 @@ void CRYPT_AESSetKey(CRYPT_aes_context* ctx,
   }
 }
 
-void CRYPT_AESSetIV(CRYPT_aes_context* ctx, const uint8_t* iv) {
+void CRYPT_AESSetIV(CRYPT_aes_context* ctx, pdfium::span<const uint8_t> iv) {
   for (int i = 0; i < ctx->Nb; i++) {
-    // TODO(tsepez): Pass actual span.
-    ctx->iv[i] = fxcrt::GetUInt32MSBFirst(
-        UNSAFE_TODO(pdfium::make_span(iv + 4 * i, 4u)));
+    ctx->iv[i] = fxcrt::GetUInt32MSBFirst(iv.subspan(4u * i, 4u));
   }
 }
 
