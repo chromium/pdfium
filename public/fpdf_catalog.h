@@ -25,6 +25,16 @@ extern "C" {
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFCatalog_IsTagged(FPDF_DOCUMENT document);
 
+// Experimental API.
+// Sets the language of |document| to |language|.
+//
+// document - handle to a document.
+// language - the language to set to.
+//
+// Returns TRUE on success.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFCatalog_SetLanguage(FPDF_DOCUMENT document, FPDF_BYTESTRING language);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif  // __cplusplus

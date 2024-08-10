@@ -127,6 +127,7 @@ pdfium_embeddertest_source_set("embeddertests") {
     "cpdfsdk_baannot_embeddertest.cpp",
     "fpdf_annot_embeddertest.cpp",
     "fpdf_attachment_embeddertest.cpp",
+    "fpdf_catalog_embeddertest.cpp",
     "fpdf_dataavail_embeddertest.cpp",
     "fpdf_doc_embeddertest.cpp",
     "fpdf_edit_embeddertest.cpp",

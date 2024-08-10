@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_document.h"
+#include "core/fpdfapi/parser/cpdf_string.h"
+#include "core/fxcrt/retain_ptr.h"
 #include "fpdfsdk/cpdfsdk_helpers.h"
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -20,4 +22,24 @@ FPDFCatalog_IsTagged(FPDF_DOCUMENT document) {
 
   RetainPtr<const CPDF_Dictionary> pMarkInfo = pCatalog->GetDictFor("MarkInfo");
   return pMarkInfo && pMarkInfo->GetIntegerFor("Marked") != 0;
+}
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFCatalog_SetLanguage(FPDF_DOCUMENT document, FPDF_BYTESTRING language) {
+  if (!language) {
+    return false;
+  }
+
+  CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
+  if (!doc) {
+    return false;
+  }
+
+  RetainPtr<CPDF_Dictionary> catalog = doc->GetMutableRoot();
+  if (!catalog) {
+    return false;
+  }
+
+  catalog->SetNewFor<CPDF_String>("Lang", language);
+  return true;
 }

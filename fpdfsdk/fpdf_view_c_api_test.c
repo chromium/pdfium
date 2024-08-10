@@ -120,6 +120,7 @@ int CheckPDFiumCApi() {
 
     // fpdf_catalog.h
     CHK(FPDFCatalog_IsTagged);
+    CHK(FPDFCatalog_SetLanguage);
 
     // fpdf_dataavail.h
     CHK(FPDFAvail_Create);

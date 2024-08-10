@@ -161,10 +161,11 @@ class CPDF_Document : public Observable,
   void IncrementParsedPageCount() { ++m_ParsedPageCount; }
   uint32_t GetParsedPageCountForTesting() { return m_ParsedPageCount; }
 
+  void SetRootForTesting(RetainPtr<CPDF_Dictionary> root);
+
  protected:
   void SetParser(std::unique_ptr<CPDF_Parser> pParser);
 
-  void SetRootForTesting(RetainPtr<CPDF_Dictionary> root);
   void ResizePageListForTesting(size_t size);
 
  private:
