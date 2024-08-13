@@ -59,3 +59,17 @@ TEST(SimpleParserTest, GetWord) {
     ++i;
   }
 }
+
+TEST(SimpleParserTest, Bug358381390) {
+  const char kInput[] = "1 beginbfchar\n<01> <>\nendbfchar\n1 beginbfchar";
+
+  CPDF_SimpleParser parser(pdfium::as_byte_span(kInput));
+  EXPECT_EQ(parser.GetWord(), "1");
+  EXPECT_EQ(parser.GetWord(), "beginbfchar");
+  EXPECT_EQ(parser.GetWord(), "<01>");
+  // TODO(crbug.com/358381390): Should parse to:
+  // {"<>", "endbfchar", "1", "beginbfchar"}
+  // Note that the span below includes the NUL at the end of the string.
+  const char kWrongResult[] = "<>\nendbfchar\n1 beginbfchar";
+  EXPECT_EQ(parser.GetWord(), ByteStringView(pdfium::make_span(kWrongResult)));
+}
