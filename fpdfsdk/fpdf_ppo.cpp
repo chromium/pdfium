@@ -99,9 +99,16 @@ FPDF_ImportPagesByIndex(FPDF_DOCUMENT dest_doc,
   if (length == 0) {
     return false;
   }
-  auto page_span = UNSAFE_TODO(pdfium::make_span(
-      reinterpret_cast<const uint32_t*>(page_indices), length));
-  return exporter.ExportPages(page_span, index);
+
+  // SAFETY: required from caller.
+  auto page_span = UNSAFE_BUFFERS(pdfium::make_span(page_indices, length));
+  for (int page_index : page_span) {
+    if (page_index < 0) {
+      return false;
+    }
+  }
+  return exporter.ExportPages(
+      fxcrt::reinterpret_span<const uint32_t>(page_span), index);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_ImportPages(FPDF_DOCUMENT dest_doc,
