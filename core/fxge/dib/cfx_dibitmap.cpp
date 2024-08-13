@@ -584,7 +584,7 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
   CFX_ScanlineCompositor compositor;
   if (!compositor.Init(GetFormat(), source->GetFormat(),
                        source->GetPaletteSpan(), 0, blend_type,
-                       pClipMask != nullptr, bRgbByteOrder)) {
+                       bRgbByteOrder)) {
     return false;
   }
   const int dest_bytes_per_pixel = GetBPP() / 8;
@@ -656,7 +656,7 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
   const int bytes_per_pixel = GetBPP() / 8;
   CFX_ScanlineCompositor compositor;
   if (!compositor.Init(GetFormat(), pMask->GetFormat(), {}, color, blend_type,
-                       pClipMask != nullptr, bRgbByteOrder)) {
+                       bRgbByteOrder)) {
     return false;
   }
   for (int row = 0; row < height; row++) {

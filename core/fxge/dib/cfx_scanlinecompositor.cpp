@@ -2184,13 +2184,11 @@ bool CFX_ScanlineCompositor::Init(FXDIB_Format dest_format,
                                   pdfium::span<const uint32_t> src_palette,
                                   uint32_t mask_color,
                                   BlendMode blend_type,
-                                  bool bClip,
                                   bool bRgbByteOrder) {
   m_SrcFormat = src_format;
   m_DestFormat = dest_format;
   m_BlendType = blend_type;
   m_bRgbByteOrder = bRgbByteOrder;
-  m_bClip = bClip;
   if (m_DestFormat == FXDIB_Format::kInvalid ||
       m_DestFormat == FXDIB_Format::k1bppMask ||
       m_DestFormat == FXDIB_Format::k1bppRgb) {
@@ -2317,7 +2315,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcRgbx(
       const int dest_Bpp = GetCompsFromFormat(m_DestFormat);
       if (m_bRgbByteOrder) {
         if (m_BlendType == BlendMode::kNormal) {
-          if (m_bClip) {
+          if (!clip_scan.empty()) {
             CompositeRow_Rgb2Rgb_NoBlend_Clip_RgbByteOrder(
                 dest_scan, src_scan, width, dest_Bpp, src_Bpp, clip_scan);
             return;
@@ -2326,7 +2324,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcRgbx(
               dest_scan, src_scan, width, dest_Bpp, src_Bpp);
           return;
         }
-        if (m_bClip) {
+        if (!clip_scan.empty()) {
           CompositeRow_Rgb2Rgb_Blend_Clip_RgbByteOrder(
               dest_scan, src_scan, width, m_BlendType, dest_Bpp, src_Bpp,
               clip_scan);
@@ -2338,7 +2336,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcRgbx(
       }
 
       if (m_BlendType == BlendMode::kNormal) {
-        if (m_bClip) {
+        if (!clip_scan.empty()) {
           CompositeRow_Rgb2Rgb_NoBlend_Clip(dest_scan, src_scan, width,
                                             dest_Bpp, src_Bpp, clip_scan);
           return;
@@ -2347,7 +2345,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcRgbx(
                                             dest_Bpp, src_Bpp);
         return;
       }
-      if (m_bClip) {
+      if (!clip_scan.empty()) {
         CompositeRow_Rgb2Rgb_Blend_Clip(dest_scan, src_scan, width, m_BlendType,
                                         dest_Bpp, src_Bpp, clip_scan);
         return;
@@ -2359,7 +2357,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcRgbx(
     case FXDIB_Format::kArgb: {
       if (m_bRgbByteOrder) {
         if (m_BlendType == BlendMode::kNormal) {
-          if (m_bClip) {
+          if (!clip_scan.empty()) {
             CompositeRow_Rgb2Argb_NoBlend_Clip_RgbByteOrder(
                 dest_scan, src_scan, width, src_Bpp, clip_scan);
             return;
@@ -2368,7 +2366,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcRgbx(
                                                             width, src_Bpp);
           return;
         }
-        if (m_bClip) {
+        if (!clip_scan.empty()) {
           CompositeRow_Rgb2Argb_Blend_Clip_RgbByteOrder(
               dest_scan, src_scan, width, m_BlendType, src_Bpp, clip_scan);
           return;
@@ -2379,7 +2377,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcRgbx(
       }
 
       if (m_BlendType == BlendMode::kNormal) {
-        if (m_bClip) {
+        if (!clip_scan.empty()) {
           CompositeRow_Rgb2Argb_NoBlend_Clip(dest_scan, src_scan, width,
                                              src_Bpp, clip_scan);
           return;
@@ -2388,7 +2386,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcRgbx(
                                              src_Bpp);
         return;
       }
-      if (m_bClip) {
+      if (!clip_scan.empty()) {
         CompositeRow_Rgb2Argb_Blend_Clip(dest_scan, src_scan, width,
                                          m_BlendType, src_Bpp, clip_scan);
         return;

@@ -58,8 +58,7 @@ bool CFX_AggBitmapComposer::SetInfo(int width,
   DCHECK_NE(src_format, FXDIB_Format::k1bppRgb);
   m_SrcFormat = src_format;
   if (!m_Compositor.Init(m_pBitmap->GetFormat(), src_format, src_palette,
-                         m_MaskColor, m_BlendMode,
-                         m_pClipMask || m_Alpha != 1.0f, m_bRgbByteOrder)) {
+                         m_MaskColor, m_BlendMode, m_bRgbByteOrder)) {
     return false;
   }
   if (m_bVertical) {

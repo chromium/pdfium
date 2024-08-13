@@ -26,7 +26,6 @@ class CFX_ScanlineCompositor {
             pdfium::span<const uint32_t> src_palette,
             uint32_t mask_color,
             BlendMode blend_type,
-            bool bClip,
             bool bRgbByteOrder);
 
   void CompositeRgbBitmapLine(pdfium::span<uint8_t> dest_scan,
@@ -113,7 +112,6 @@ class CFX_ScanlineCompositor {
   int m_MaskBlue;
   BlendMode m_BlendType = BlendMode::kNormal;
   bool m_bRgbByteOrder = false;
-  bool m_bClip = false;
 };
 
 #endif  // CORE_FXGE_DIB_CFX_SCANLINECOMPOSITOR_H_
