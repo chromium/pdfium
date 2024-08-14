@@ -9,6 +9,7 @@
 #include <stdint.h>
 
 #include <algorithm>
+#include <array>
 #include <limits>
 #include <memory>
 #include <utility>
@@ -393,10 +394,12 @@ bool AddStitching(const CPDF_StitchFunc* func,
 }
 
 // see https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
-SkScalar LineSide(const SkPoint line[2], const SkPoint& pt) {
-  return UNSAFE_TODO((line[1].fY - line[0].fY) * pt.fX -
-                     (line[1].fX - line[0].fX) * pt.fY +
-                     line[1].fX * line[0].fY - line[1].fY * line[0].fX);
+SkScalar LineSide(const SkPoint& line_start,
+                  const SkPoint& line_end,
+                  const SkPoint& pt) {
+  return (line_end.fY - line_start.fY) * pt.fX -
+         (line_end.fX - line_start.fX) * pt.fY + line_end.fX * line_start.fY -
+         line_end.fY * line_start.fX;
 }
 
 SkPoint IntersectSides(const SkPoint& parallelPt,
@@ -416,93 +419,92 @@ SkPoint IntersectSides(const SkPoint& parallelPt,
   return result;
 }
 
-void ClipAngledGradient(const SkPoint pts[2],
-                        SkPoint rectPts[4],
-                        bool clipStart,
-                        bool clipEnd,
+void ClipAngledGradient(pdfium::span<const SkPoint, 2> pts,
+                        pdfium::span<const SkPoint, 4> rect_pts,
+                        bool clip_start,
+                        bool clip_end,
                         SkPath* clip) {
   // find the corners furthest from the gradient perpendiculars
   SkScalar minPerpDist = SK_ScalarMax;
   SkScalar maxPerpDist = SK_ScalarMin;
   int minPerpPtIndex = -1;
   int maxPerpPtIndex = -1;
-  UNSAFE_TODO({
-    SkVector slope = pts[1] - pts[0];
-    SkPoint startPerp[2] = {pts[0],
-                            {pts[0].fX + slope.fY, pts[0].fY - slope.fX}};
-    SkPoint endPerp[2] = {pts[1], {pts[1].fX + slope.fY, pts[1].fY - slope.fX}};
-    for (int i = 0; i < 4; ++i) {
-      SkScalar sDist = LineSide(startPerp, rectPts[i]);
-      SkScalar eDist = LineSide(endPerp, rectPts[i]);
-      if (sDist * eDist <= 0) {  // if the signs are different,
-        continue;                // the point is inside the gradient
+  SkVector slope = pts[1] - pts[0];
+  const SkPoint start_perp[2] = {pts[0],
+                                 {pts[0].fX + slope.fY, pts[0].fY - slope.fX}};
+  const SkPoint end_perp[2] = {pts[1],
+                               {pts[1].fX + slope.fY, pts[1].fY - slope.fX}};
+  for (int i = 0; i < 4; ++i) {
+    SkScalar sDist = LineSide(start_perp[0], start_perp[1], rect_pts[i]);
+    SkScalar eDist = LineSide(end_perp[0], end_perp[1], rect_pts[i]);
+    if (sDist * eDist <= 0) {  // if the signs are different,
+      continue;                // the point is inside the gradient
+    }
+    if (sDist < 0) {
+      SkScalar smaller = std::min(sDist, eDist);
+      if (minPerpDist > smaller) {
+        minPerpDist = smaller;
+        minPerpPtIndex = i;
       }
-      if (sDist < 0) {
-        SkScalar smaller = std::min(sDist, eDist);
-        if (minPerpDist > smaller) {
-          minPerpDist = smaller;
-          minPerpPtIndex = i;
-        }
-      } else {
-        SkScalar larger = std::max(sDist, eDist);
-        if (maxPerpDist < larger) {
-          maxPerpDist = larger;
-          maxPerpPtIndex = i;
-        }
-      }
-    }
-    if (minPerpPtIndex < 0 && maxPerpPtIndex < 0) {  // nothing's outside
-      return;
-    }
-
-    // determine if negative distances are before start or after end
-    SkPoint beforeStart = {pts[0].fX * 2 - pts[1].fX,
-                           pts[0].fY * 2 - pts[1].fY};
-    bool beforeNeg = LineSide(startPerp, beforeStart) < 0;
-
-    int noClipStartIndex = maxPerpPtIndex;
-    int noClipEndIndex = minPerpPtIndex;
-    if (beforeNeg) {
-      std::swap(noClipStartIndex, noClipEndIndex);
-    }
-    if ((!clipStart && noClipStartIndex < 0) ||
-        (!clipEnd && noClipEndIndex < 0)) {
-      return;
-    }
-
-    const SkPoint& startEdgePt = clipStart ? pts[0] : rectPts[noClipStartIndex];
-    const SkPoint& endEdgePt = clipEnd ? pts[1] : rectPts[noClipEndIndex];
-
-    // find the corners that bound the gradient
-    SkScalar minDist = SK_ScalarMax;
-    SkScalar maxDist = SK_ScalarMin;
-    int minBounds = -1;
-    int maxBounds = -1;
-    for (int i = 0; i < 4; ++i) {
-      SkScalar dist = LineSide(pts, rectPts[i]);
-      if (minDist > dist) {
-        minDist = dist;
-        minBounds = i;
-      }
-      if (maxDist < dist) {
-        maxDist = dist;
-        maxBounds = i;
+    } else {
+      SkScalar larger = std::max(sDist, eDist);
+      if (maxPerpDist < larger) {
+        maxPerpDist = larger;
+        maxPerpPtIndex = i;
       }
     }
-    if (minBounds < 0 || maxBounds < 0) {
-      return;
+  }
+  if (minPerpPtIndex < 0 && maxPerpPtIndex < 0) {  // nothing's outside
+    return;
+  }
+
+  // determine if negative distances are before start or after end
+  const SkPoint before_start = {pts[0].fX * 2 - pts[1].fX,
+                                pts[0].fY * 2 - pts[1].fY};
+  bool before_neg = LineSide(start_perp[0], start_perp[1], before_start) < 0;
+
+  int noClipStartIndex = maxPerpPtIndex;
+  int noClipEndIndex = minPerpPtIndex;
+  if (before_neg) {
+    std::swap(noClipStartIndex, noClipEndIndex);
+  }
+  if ((!clip_start && noClipStartIndex < 0) ||
+      (!clip_end && noClipEndIndex < 0)) {
+    return;
+  }
+
+  const SkPoint& startEdgePt = clip_start ? pts[0] : rect_pts[noClipStartIndex];
+  const SkPoint& endEdgePt = clip_end ? pts[1] : rect_pts[noClipEndIndex];
+
+  // find the corners that bound the gradient
+  SkScalar minDist = SK_ScalarMax;
+  SkScalar maxDist = SK_ScalarMin;
+  int minBounds = -1;
+  int maxBounds = -1;
+  for (int i = 0; i < 4; ++i) {
+    SkScalar dist = LineSide(pts[0], pts[1], rect_pts[i]);
+    if (minDist > dist) {
+      minDist = dist;
+      minBounds = i;
     }
-    if (minBounds == maxBounds) {
-      return;
+    if (maxDist < dist) {
+      maxDist = dist;
+      maxBounds = i;
     }
-    // construct a clip parallel to the gradient that goes through
-    // rectPts[minBounds] and rectPts[maxBounds] and perpendicular to the
-    // gradient that goes through startEdgePt, endEdgePt.
-    clip->moveTo(IntersectSides(rectPts[minBounds], slope, startEdgePt));
-    clip->lineTo(IntersectSides(rectPts[minBounds], slope, endEdgePt));
-    clip->lineTo(IntersectSides(rectPts[maxBounds], slope, endEdgePt));
-    clip->lineTo(IntersectSides(rectPts[maxBounds], slope, startEdgePt));
-  });
+  }
+  if (minBounds < 0 || maxBounds < 0) {
+    return;
+  }
+  if (minBounds == maxBounds) {
+    return;
+  }
+  // construct a clip parallel to the gradient that goes through
+  // rect_pts[minBounds] and rect_pts[maxBounds] and perpendicular to the
+  // gradient that goes through startEdgePt, endEdgePt.
+  clip->moveTo(IntersectSides(rect_pts[minBounds], slope, startEdgePt));
+  clip->lineTo(IntersectSides(rect_pts[minBounds], slope, endEdgePt));
+  clip->lineTo(IntersectSides(rect_pts[maxBounds], slope, endEdgePt));
+  clip->lineTo(IntersectSides(rect_pts[maxBounds], slope, startEdgePt));
 }
 
 // Converts a stroking path to scanlines
@@ -1315,43 +1317,40 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
                            pattern.GetCS());
     if (!stream.Load())
       return false;
-    SkPoint cubics[12];
-    SkColor colors[4];
+    std::array<SkPoint, 12> cubics;
+    std::array<SkColor, 4> colors;
     SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
     if (!skClip.isEmpty())
       m_pCanvas->clipPath(skClip, SkClipOp::kIntersect, true);
     m_pCanvas->concat(skMatrix);
-    UNSAFE_TODO({
-      while (!stream.IsEOF()) {
-        uint32_t flag = stream.ReadFlag();
-        size_t start_point = flag ? 4 : 0;
-        size_t start_color = flag ? 2 : 0;
-        if (flag) {
-          SkPoint temp_cubics[4];
-          for (size_t i = 0; i < std::size(temp_cubics); ++i) {
-            temp_cubics[i] = cubics[(flag * 3 + i) % 12];
-          }
-          std::copy(std::begin(temp_cubics), std::end(temp_cubics),
-                    std::begin(cubics));
-          SkColor temp_colors[2] = {colors[flag % 4], colors[(flag + 1) % 4]};
-          std::copy(std::begin(temp_colors), std::end(temp_colors),
-                    std::begin(colors));
+    while (!stream.IsEOF()) {
+      const uint32_t flag = stream.ReadFlag();
+      if (flag) {
+        std::array<SkPoint, 4> temp_cubics;
+        for (size_t i = 0; i < temp_cubics.size(); ++i) {
+          temp_cubics[i] = cubics[(flag * 3 + i) % cubics.size()];
         }
-        for (size_t i = start_point; i < std::size(cubics); ++i) {
-          CFX_PointF point = stream.ReadCoords();
-          cubics[i].fX = point.x;
-          cubics[i].fY = point.y;
-        }
-        for (size_t i = start_color; i < std::size(colors); ++i) {
-          FX_RGB_STRUCT<float> rgb = stream.ReadColor();
-          colors[i] =
-              SkColorSetARGB(0xFF, (U8CPU)(rgb.red * 255),
-                             (U8CPU)(rgb.green * 255), (U8CPU)(rgb.blue * 255));
-        }
-        m_pCanvas->drawPatch(cubics, colors, /*texCoords=*/nullptr,
-                             SkBlendMode::kDst, paint);
+        fxcrt::Copy(temp_cubics, cubics);
+        SkColor temp_colors[2] = {colors[flag % 4],
+                                  colors[(flag + 1) % colors.size()]};
+        fxcrt::Copy(temp_colors, colors);
       }
-    });
+      const size_t start_point = flag ? 4 : 0;
+      for (size_t i = start_point; i < cubics.size(); ++i) {
+        CFX_PointF point = stream.ReadCoords();
+        cubics[i].fX = point.x;
+        cubics[i].fY = point.y;
+      }
+      const size_t start_color = flag ? 2 : 0;
+      for (size_t i = start_color; i < colors.size(); ++i) {
+        FX_RGB_STRUCT<float> rgb = stream.ReadColor();
+        colors[i] =
+            SkColorSetARGB(0xFF, (U8CPU)(rgb.red * 255),
+                           (U8CPU)(rgb.green * 255), (U8CPU)(rgb.blue * 255));
+      }
+      m_pCanvas->drawPatch(cubics.data(), colors.data(), /*texCoords=*/nullptr,
+                           SkBlendMode::kDst, paint);
+    }
     return true;
   }
   SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
