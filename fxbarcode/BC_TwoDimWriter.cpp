@@ -32,13 +32,12 @@ bool CBC_TwoDimWriter::RenderResult(pdfium::span<const uint8_t> code,
   m_inputHeight = codeHeight;
   int32_t tempWidth = m_inputWidth + 2;
   int32_t tempHeight = m_inputHeight + 2;
-  float moduleHSize = std::min(m_ModuleWidth, m_ModuleHeight);
-  moduleHSize = std::min(moduleHSize, 8.0f);
-  moduleHSize = std::max(moduleHSize, 1.0f);
+  const float module_size =
+      std::clamp<float>(std::min(m_ModuleWidth, m_ModuleHeight), 1.0f, 8.0f);
   FX_SAFE_INT32 scaledWidth = tempWidth;
   FX_SAFE_INT32 scaledHeight = tempHeight;
-  scaledWidth *= moduleHSize;
-  scaledHeight *= moduleHSize;
+  scaledWidth *= module_size;
+  scaledHeight *= module_size;
   m_outputWidth = scaledWidth.ValueOrDie();
   m_outputHeight = scaledHeight.ValueOrDie();
 
