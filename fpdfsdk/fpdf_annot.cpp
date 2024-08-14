@@ -535,10 +535,12 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAnnot_AddInkStroke(FPDF_ANNOTATION annot,
   if (!safe_ink_size.IsValid<int32_t>())
     return -1;
 
+  // SAFETY: required from caller.
+  auto points_span = UNSAFE_BUFFERS(pdfium::make_span(points, point_count));
   auto ink_coord_list = inklist->AppendNew<CPDF_Array>();
-  for (size_t i = 0; i < point_count; i++) {
-    ink_coord_list->AppendNew<CPDF_Number>(UNSAFE_TODO(points[i].x));
-    ink_coord_list->AppendNew<CPDF_Number>(UNSAFE_TODO(points[i].y));
+  for (const auto& point : points_span) {
+    ink_coord_list->AppendNew<CPDF_Number>(point.x);
+    ink_coord_list->AppendNew<CPDF_Number>(point.y);
   }
   return static_cast<int>(inklist->size() - 1);
 }
@@ -894,9 +896,11 @@ FPDFAnnot_GetVertices(FPDF_ANNOTATION annot,
   const unsigned long points_len =
       fxcrt::CollectionSize<unsigned long>(*vertices) / 2;
   if (buffer && length >= points_len) {
+    // SAFETY: required from caller.
+    auto buffer_span = UNSAFE_BUFFERS(pdfium::make_span(buffer, length));
     for (unsigned long i = 0; i < points_len; ++i) {
-      UNSAFE_TODO(buffer[i].x) = vertices->GetFloatAt(i * 2);
-      UNSAFE_TODO(buffer[i].y) = vertices->GetFloatAt(i * 2 + 1);
+      buffer_span[i].x = vertices->GetFloatAt(i * 2);
+      buffer_span[i].y = vertices->GetFloatAt(i * 2 + 1);
     }
   }
   return points_len;
@@ -925,9 +929,11 @@ FPDFAnnot_GetInkListPath(FPDF_ANNOTATION annot,
   const unsigned long points_len =
       fxcrt::CollectionSize<unsigned long>(*path) / 2;
   if (buffer && length >= points_len) {
+    // SAFETY: required from caller.
+    auto buffer_span = UNSAFE_BUFFERS(pdfium::make_span(buffer, length));
     for (unsigned long i = 0; i < points_len; ++i) {
-      UNSAFE_TODO(buffer[i].x) = path->GetFloatAt(i * 2);
-      UNSAFE_TODO(buffer[i].y) = path->GetFloatAt(i * 2 + 1);
+      buffer_span[i].x = path->GetFloatAt(i * 2);
+      buffer_span[i].y = path->GetFloatAt(i * 2 + 1);
     }
   }
   return points_len;
@@ -1418,11 +1424,13 @@ FPDFAnnot_SetFocusableSubtypes(FPDF_FORMHANDLE hHandle,
   if (count > 0 && !subtypes)
     return false;
 
+  // SAFETY: required from caller.
+  auto subtypes_span = UNSAFE_BUFFERS(pdfium::make_span(subtypes, count));
   std::vector<CPDF_Annot::Subtype> focusable_annot_types;
   focusable_annot_types.reserve(count);
   for (size_t i = 0; i < count; ++i) {
     focusable_annot_types.push_back(
-        static_cast<CPDF_Annot::Subtype>(UNSAFE_TODO(subtypes[i])));
+        static_cast<CPDF_Annot::Subtype>(subtypes_span[i]));
   }
 
   pFormFillEnv->SetFocusableAnnotSubtypes(focusable_annot_types);
@@ -1459,11 +1467,12 @@ FPDFAnnot_GetFocusableSubtypes(FPDF_FORMHANDLE hHandle,
   if (count < focusable_annot_types.size())
     return false;
 
+  // SAFETY: required from caller.
+  auto subtypes_span = UNSAFE_BUFFERS(pdfium::make_span(subtypes, count));
   for (size_t i = 0; i < focusable_annot_types.size(); ++i) {
-    UNSAFE_TODO(subtypes[i]) =
+    subtypes_span[i] =
         static_cast<FPDF_ANNOTATION_SUBTYPE>(focusable_annot_types[i]);
   }
-
   return true;
 }
 
