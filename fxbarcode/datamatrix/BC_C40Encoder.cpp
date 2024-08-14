@@ -27,7 +27,6 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_extension.h"
-#include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_EncoderContext.h"
 #include "fxbarcode/datamatrix/BC_HighLevelEncoder.h"

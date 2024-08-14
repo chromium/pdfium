@@ -30,7 +30,6 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/stl_util.h"
 #include "fxbarcode/BC_Writer.h"
-#include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
 
 namespace {

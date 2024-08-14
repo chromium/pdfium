@@ -30,7 +30,6 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_extension.h"
-#include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_ASCIIEncoder.h"
 #include "fxbarcode/datamatrix/BC_Base256Encoder.h"
 #include "fxbarcode/datamatrix/BC_C40Encoder.h"

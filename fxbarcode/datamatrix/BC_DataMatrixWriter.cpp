@@ -30,7 +30,6 @@
 #include "core/fxcrt/data_vector.h"
 #include "fxbarcode/BC_TwoDimWriter.h"
 #include "fxbarcode/BC_Writer.h"
-#include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/common/BC_CommonByteMatrix.h"
 #include "fxbarcode/datamatrix/BC_ASCIIEncoder.h"
 #include "fxbarcode/datamatrix/BC_Base256Encoder.h"

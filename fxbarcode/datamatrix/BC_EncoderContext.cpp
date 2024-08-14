@@ -25,7 +25,6 @@
 #include <utility>
 
 #include "core/fxcrt/fx_string.h"
-#include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 #include "fxbarcode/datamatrix/BC_SymbolInfo.h"
 

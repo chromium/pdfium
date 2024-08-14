@@ -25,7 +25,6 @@
 #include <memory>
 #include <vector>
 
-#include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/qrcode/BC_QRCoderBitVector.h"
 #include "fxbarcode/qrcode/BC_QRCoderECBlockData.h"
 #include "fxbarcode/qrcode/BC_QRCoderErrorCorrectionLevel.h"

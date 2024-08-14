@@ -26,7 +26,6 @@
 #include <iterator>
 
 #include "core/fxcrt/notreached.h"
-#include "fxbarcode/common/BC_CommonBitMatrix.h"
 #include "fxbarcode/datamatrix/BC_DataMatrixSymbolInfo144.h"
 #include "fxbarcode/datamatrix/BC_Encoder.h"
 
