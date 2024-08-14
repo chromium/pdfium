@@ -178,7 +178,15 @@ CFX_ImageTransformer::CFX_ImageTransformer(RetainPtr<const CFX_DIBBase> source,
   }
 
   int stretch_width = static_cast<int>(ceil(hypotf(m_matrix.a, m_matrix.b)));
+  if (stretch_width == 0) {
+    return;
+  }
+
   int stretch_height = static_cast<int>(ceil(hypotf(m_matrix.c, m_matrix.d)));
+  if (stretch_height == 0) {
+    return;
+  }
+
   CFX_Matrix stretch_to_dest(1.0f, 0.0f, 0.0f, -1.0f, 0.0f, stretch_height);
   stretch_to_dest.Concat(
       CFX_Matrix(m_matrix.a / stretch_width, m_matrix.b / stretch_width,
