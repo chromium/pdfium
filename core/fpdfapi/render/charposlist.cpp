@@ -20,13 +20,19 @@ bool ShouldUseExistingFont(const CPDF_Font* font,
                            uint32_t glyph_id,
                            bool has_to_unicode) {
   // Check for invalid glyph ID.
-  if (glyph_id == static_cast<uint32_t>(-1))
+  if (glyph_id == static_cast<uint32_t>(-1)) {
     return false;
+  }
 
-  if (!font->IsTrueTypeFont())
+  if (font->IsEmbedded()) {
     return true;
+  }
 
-  // For TrueType fonts, a glyph ID of 0 may be invalid.
+  if (!font->IsTrueTypeFont()) {
+    return true;
+  }
+
+  // For non-embedded TrueType fonts, a glyph ID of 0 may be invalid.
   //
   // When a "ToUnicode" entry exists in the font dictionary, it indicates
   // a "ToUnicode" mapping file is used to convert from CIDs (which
