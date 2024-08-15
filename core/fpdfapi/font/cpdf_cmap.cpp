@@ -16,6 +16,7 @@
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
+#include "core/fxcrt/notreached.h"
 
 namespace {
 
@@ -357,7 +358,7 @@ uint32_t CPDF_CMap::GetNextChar(ByteStringView pString, size_t* pOffset) const {
       }
     }
   }
-  return 0;
+  NOTREACHED_NORETURN();
 }
 
 int CPDF_CMap::GetCharSize(uint32_t charcode) const {
@@ -379,7 +380,7 @@ int CPDF_CMap::GetCharSize(uint32_t charcode) const {
         return 3;
       return 4;
   }
-  return 1;
+  NOTREACHED_NORETURN();
 }
 
 size_t CPDF_CMap::CountChar(ByteStringView pString) const {
@@ -407,7 +408,7 @@ size_t CPDF_CMap::CountChar(ByteStringView pString) const {
       return count;
     }
   }
-  return pString.GetLength();
+  NOTREACHED_NORETURN();
 }
 
 void CPDF_CMap::AppendChar(ByteString* str, uint32_t charcode) const {
@@ -455,6 +456,7 @@ void CPDF_CMap::AppendChar(ByteString* str, uint32_t charcode) const {
       *str += static_cast<char>(charcode);
       return;
   }
+  NOTREACHED_NORETURN();
 }
 
 void CPDF_CMap::SetAdditionalMappings(std::vector<CIDRange> mappings) {
