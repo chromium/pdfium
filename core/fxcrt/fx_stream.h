@@ -49,8 +49,7 @@ class IFX_SeekableWriteStream : virtual public IFX_StreamWithSize,
   bool WriteBlock(pdfium::span<const uint8_t> buffer) override;
 
   virtual bool Flush() = 0;
-  virtual bool WriteBlockAtOffset(pdfium::span<const uint8_t> data,
-                                  FX_FILESIZE offset) = 0;
+  virtual bool AppendBlock(pdfium::span<const uint8_t> buffer) = 0;
 };
 
 class IFX_SeekableReadStream : virtual public Retainable,

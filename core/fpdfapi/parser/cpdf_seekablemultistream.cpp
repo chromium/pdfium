@@ -75,8 +75,6 @@ bool CPDF_SeekableMultiStream::Flush() {
   NOTREACHED_NORETURN();
 }
 
-bool CPDF_SeekableMultiStream::WriteBlockAtOffset(
-    pdfium::span<const uint8_t> buffer,
-    FX_FILESIZE offset) {
+bool CPDF_SeekableMultiStream::AppendBlock(pdfium::span<const uint8_t> buffer) {
   NOTREACHED_NORETURN();
 }

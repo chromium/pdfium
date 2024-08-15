@@ -67,18 +67,15 @@ size_t CFX_MemoryStream::ReadBlock(pdfium::span<uint8_t> buffer) {
   return nRead;
 }
 
-bool CFX_MemoryStream::WriteBlockAtOffset(pdfium::span<const uint8_t> buffer,
-                                          FX_FILESIZE offset) {
-  if (offset < 0)
-    return false;
-
+bool CFX_MemoryStream::AppendBlock(pdfium::span<const uint8_t> buffer) {
   if (buffer.empty())
     return true;
 
   FX_SAFE_SIZE_T safe_new_pos = buffer.size();
-  safe_new_pos += offset;
-  if (!safe_new_pos.IsValid())
+  safe_new_pos += m_nCurSize;
+  if (!safe_new_pos.IsValid()) {
     return false;
+  }
 
   size_t new_pos = safe_new_pos.ValueOrDie();
   if (new_pos > m_data.size()) {
@@ -95,10 +92,7 @@ bool CFX_MemoryStream::WriteBlockAtOffset(pdfium::span<const uint8_t> buffer,
   }
   m_nCurPos = new_pos;
 
-  // Safe to cast `offset` because it was used to calculate `safe_new_pos`
-  // above, and `safe_new_pos` is valid.
-  fxcrt::Copy(buffer,
-              pdfium::make_span(m_data).subspan(static_cast<size_t>(offset)));
+  fxcrt::Copy(buffer, pdfium::make_span(m_data).subspan(m_nCurSize));
   m_nCurSize = std::max(m_nCurSize, m_nCurPos);
 
   return true;

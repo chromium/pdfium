@@ -23,8 +23,7 @@ class CFX_MemoryStream final : public IFX_SeekableStream {
   size_t ReadBlock(pdfium::span<uint8_t> buffer) override;
   bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
                          FX_FILESIZE offset) override;
-  bool WriteBlockAtOffset(pdfium::span<const uint8_t> buffer,
-                          FX_FILESIZE offset) override;
+  bool AppendBlock(pdfium::span<const uint8_t> buffer) override;
   bool Flush() override;
 
   pdfium::span<const uint8_t> GetSpan() const;

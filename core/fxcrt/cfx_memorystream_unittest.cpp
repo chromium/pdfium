@@ -8,44 +8,43 @@
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-namespace {
-
-const uint8_t kSomeText[] = "Lets make holes in streams";
-const size_t kSomeTextLen = sizeof(kSomeText) - 1;
-
-}  // namespace
-
-TEST(CFXMemoryStreamTest, SparseBlockWrites) {
+TEST(CFXMemoryStreamTest, ReadBlockAtOffset) {
   auto stream = pdfium::MakeRetain<CFX_MemoryStream>();
-  for (FX_FILESIZE offset = 0; offset <= 200000; offset += 100000) {
-    stream->WriteBlockAtOffset(pdfium::make_span(kSomeText).first(kSomeTextLen),
-                               offset);
-  }
-  EXPECT_EQ(200000 + kSomeTextLen, static_cast<size_t>(stream->GetSize()));
+  const uint8_t kData1[] = {'a', 'b', 'c', 'd', 'e', 'f'};
+  ASSERT_TRUE(stream->WriteBlock(kData1));
+  ASSERT_THAT(stream->GetSpan(),
+              testing::ElementsAre('a', 'b', 'c', 'd', 'e', 'f'));
+
+  uint8_t buffer[3];
+  ASSERT_TRUE(stream->ReadBlockAtOffset(buffer, 2));
+  ASSERT_THAT(buffer, testing::ElementsAre('c', 'd', 'e'));
+
+  ASSERT_TRUE(stream->ReadBlockAtOffset(buffer, 0));
+  ASSERT_THAT(buffer, testing::ElementsAre('a', 'b', 'c'));
+
+  ASSERT_TRUE(stream->ReadBlockAtOffset(buffer, 3));
+  ASSERT_THAT(buffer, testing::ElementsAre('d', 'e', 'f'));
+
+  ASSERT_FALSE(stream->ReadBlockAtOffset(buffer, 4));
+  ASSERT_THAT(buffer, testing::ElementsAre('d', 'e', 'f'));
 }
 
-TEST(CFXMemoryStreamTest, OverlappingBlockWrites) {
+TEST(CFXMemoryStreamTest, AppendBlock) {
   auto stream = pdfium::MakeRetain<CFX_MemoryStream>();
-  for (FX_FILESIZE offset = 0; offset <= 100; ++offset) {
-    stream->WriteBlockAtOffset(pdfium::make_span(kSomeText).first(kSomeTextLen),
-                               offset);
-  }
-  EXPECT_EQ(100 + kSomeTextLen, static_cast<size_t>(stream->GetSize()));
-}
+  ASSERT_TRUE(stream->AppendBlock({}));
+  ASSERT_TRUE(stream->GetSpan().empty());
 
-TEST(CFXMemoryStreamTest, ReadWriteBlockAtOffset) {
-  auto stream = pdfium::MakeRetain<CFX_MemoryStream>();
   const uint8_t kData1[] = {'a', 'b', 'c'};
   ASSERT_TRUE(stream->WriteBlock(kData1));
   ASSERT_THAT(stream->GetSpan(), testing::ElementsAre('a', 'b', 'c'));
 
-  ASSERT_TRUE(stream->WriteBlockAtOffset(kData1, 5));
+  ASSERT_TRUE(stream->AppendBlock(kData1));
   ASSERT_THAT(stream->GetSpan(),
-              testing::ElementsAre('a', 'b', 'c', '\0', '\0', 'a', 'b', 'c'));
+              testing::ElementsAre('a', 'b', 'c', 'a', 'b', 'c'));
 
-  uint8_t buffer[4];
-  ASSERT_TRUE(stream->ReadBlockAtOffset(buffer, 2));
-  ASSERT_THAT(buffer, testing::ElementsAre('c', '\0', '\0', 'a'));
+  ASSERT_TRUE(stream->AppendBlock({}));
+  ASSERT_THAT(stream->GetSpan(),
+              testing::ElementsAre('a', 'b', 'c', 'a', 'b', 'c'));
 }
 
 TEST(CFXMemoryStreamTest, WriteZeroBytes) {
