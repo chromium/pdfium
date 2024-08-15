@@ -9,6 +9,8 @@
 
 #include "core/fxcrt/fx_coordinates.h"
 
+namespace pdfium {
+
 enum class FDE_TextAlignment : uint8_t {
   kTopLeft = 0,
   kCenterLeft,
@@ -30,5 +32,11 @@ struct FDE_TextStyle {
   bool line_wrap_ = false;
   bool last_line_height_ = false;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::FDE_TextAlignment;
+using pdfium::FDE_TextStyle;
 
 #endif  // XFA_FDE_CFDE_DATA_H_

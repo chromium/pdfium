@@ -13,6 +13,8 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/span.h"
 
+namespace pdfium {
+
 namespace {
 
 enum WordBreakMask : uint16_t {
@@ -82,7 +84,7 @@ constexpr uint16_t kWordBreakTableData[] = {
                             kWordBreakMaskExtendNumLet)),
 };
 
-const pdfium::span<const uint16_t> kWordBreakTable{kWordBreakTableData};
+const span<const uint16_t> kWordBreakTable{kWordBreakTableData};
 
 // Table of |WordBreakProperty| for each of the possible uint16_t values,
 // packed as nibbles, with the low nibble first.
@@ -2838,3 +2840,5 @@ WordBreakProperty FX_GetWordBreakProperty(wchar_t wcCodePoint) {
   return static_cast<WordBreakProperty>((wcCodePoint & 1) ? (dwProperty & 0x0F)
                                                           : (dwProperty >> 4));
 }
+
+}  // namespace pdfium

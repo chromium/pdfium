@@ -24,12 +24,14 @@ class CFGAS_TxtBreak;
 class CFX_RenderDevice;
 class TextCharPos;
 
+namespace pdfium {
+
 class CFDE_TextOut {
  public:
   static bool DrawString(CFX_RenderDevice* device,
                          FX_ARGB color,
                          const RetainPtr<CFGAS_GEFont>& pFont,
-                         pdfium::span<TextCharPos> pCharPos,
+                         span<TextCharPos> pCharPos,
                          float fFontSize,
                          const CFX_Matrix& matrix);
 
@@ -120,5 +122,10 @@ class CFDE_TextOut {
   int32_t m_iTotalLines = 0;
   std::vector<TextCharPos> m_CharPos;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFDE_TextOut;
 
 #endif  // XFA_FDE_CFDE_TEXTOUT_H_

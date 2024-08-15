@@ -17,7 +17,10 @@
 #include "v8/include/cppgc/prefinalizer.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
+namespace pdfium {
 class CFDE_TextOut;
+}  // namespace pdfium
+
 class CXFA_FFApp;
 class CXFA_FFDoc;
 
@@ -52,7 +55,7 @@ class CXFA_FWLTheme final : public cppgc::GarbageCollected<CXFA_FWLTheme>,
  private:
   CXFA_FWLTheme(cppgc::Heap* pHeap, CXFA_FFApp* pApp);
 
-  std::unique_ptr<CFDE_TextOut> m_pTextOut;
+  std::unique_ptr<pdfium::CFDE_TextOut> m_pTextOut;
   RetainPtr<CFGAS_GEFont> m_pFWLFont;
   RetainPtr<CFGAS_GEFont> m_pCalendarFont;
   cppgc::Member<CXFA_FFApp> const m_pApp;

@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+namespace pdfium {
+
 enum class WordBreakProperty : uint8_t {
   // Internal tables depend on constants computed from these values, so do
   // not re-order.
@@ -30,5 +32,7 @@ enum class WordBreakProperty : uint8_t {
 bool FX_CheckStateChangeForWordBreak(WordBreakProperty from,
                                      WordBreakProperty to);
 WordBreakProperty FX_GetWordBreakProperty(wchar_t wcCodePoint);
+
+}  // namespace pdfium
 
 #endif  // XFA_FDE_CFDE_WORDBREAK_DATA_H_

@@ -21,6 +21,8 @@
 class CFGAS_GEFont;
 class TextCharPos;
 
+namespace pdfium {
+
 struct FDE_TEXTEDITPIECE {
   FDE_TEXTEDITPIECE();
   FDE_TEXTEDITPIECE(const FDE_TEXTEDITPIECE& that);
@@ -250,5 +252,11 @@ class CFDE_TextEditEngine final : public CFGAS_TxtBreak::Engine {
   bool has_selection_ = false;
   Selection selection_{0, 0};
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFDE_TextEditEngine;
+using pdfium::FDE_TEXTEDITPIECE;
 
 #endif  // XFA_FDE_CFDE_TEXTEDITENGINE_H_

@@ -28,6 +28,8 @@
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfgas_txtbreak.h"
 
+namespace pdfium {
+
 namespace {
 
 bool TextAlignmentVerticallyCentered(const FDE_TextAlignment align) {
@@ -46,7 +48,7 @@ bool IsTextAlignmentTop(const FDE_TextAlignment align) {
 bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
                               FX_ARGB color,
                               const RetainPtr<CFGAS_GEFont>& pFont,
-                              pdfium::span<TextCharPos> pCharPos,
+                              span<TextCharPos> pCharPos,
                               float fFontSize,
                               const CFX_Matrix& matrix) {
   DCHECK(pFont);
@@ -93,8 +95,8 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
 #else
         font = pFxFont;
 #endif
-        device->DrawNormalText(UNSAFE_TODO(pdfium::make_span(pCurCP, count)),
-                               font, -fFontSize, matrix, color, kOptions);
+        device->DrawNormalText(UNSAFE_TODO(make_span(pCurCP, count)), font,
+                               -fFontSize, matrix, color, kOptions);
       }
       pCurFont = pSTFont;
       pCurCP = &pos;
@@ -113,8 +115,8 @@ bool CFDE_TextOut::DrawString(CFX_RenderDevice* device,
 #else
     font = pFxFont;
 #endif
-    return device->DrawNormalText(UNSAFE_TODO(pdfium::make_span(pCurCP, count)),
-                                  font, -fFontSize, matrix, color, kOptions);
+    return device->DrawNormalText(UNSAFE_TODO(make_span(pCurCP, count)), font,
+                                  -fFontSize, matrix, color, kOptions);
   }
   return true;
 }
@@ -303,8 +305,8 @@ void CFDE_TextOut::DrawLogicText(CFX_RenderDevice* device,
         continue;
       }
       CFDE_TextOut::DrawString(device, m_TxtColor, m_pFont,
-                               pdfium::make_span(m_CharPos).first(szCount),
-                               m_fFontSize, m_Matrix);
+                               make_span(m_CharPos).first(szCount), m_fFontSize,
+                               m_Matrix);
     }
   }
   device->RestoreState(false);
@@ -455,7 +457,7 @@ void CFDE_TextOut::Reload(const CFX_RectF& rect) {
 }
 
 void CFDE_TextOut::ReloadLinePiece(Line* line, const CFX_RectF& rect) {
-  pdfium::span<const wchar_t> text_span = m_wsText.span();
+  span<const wchar_t> text_span = m_wsText.span();
   size_t start_char = 0;
   size_t piece_count = line->GetSize();
   int32_t piece_widths = 0;
@@ -510,8 +512,8 @@ size_t CFDE_TextOut::GetDisplayPos(const Piece* pPiece) {
 
   CFGAS_TxtBreak::Run tr;
   tr.wsStr = m_wsText.Substr(pPiece->start_char);
-  tr.pWidths = pdfium::make_span(m_CharWidths).subspan(pPiece->start_char);
-  tr.iLength = pdfium::checked_cast<int32_t>(pPiece->char_count);
+  tr.pWidths = make_span(m_CharWidths).subspan(pPiece->start_char);
+  tr.iLength = checked_cast<int32_t>(pPiece->char_count);
   tr.pFont = m_pFont;
   tr.fFontSize = m_fFontSize;
   tr.dwStyles = m_dwTxtBkStyles;
@@ -554,3 +556,5 @@ CFDE_TextOut::Piece* CFDE_TextOut::Line::GetPieceAtIndex(size_t index) {
 void CFDE_TextOut::Line::RemoveLast(size_t count) {
   pieces_.erase(pieces_.end() - std::min(count, pieces_.size()), pieces_.end());
 }
+
+}  // namespace pdfium

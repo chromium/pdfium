@@ -21,6 +21,8 @@
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/font/cfgas_gemodule.h"
 
+namespace pdfium {
+
 class CFDETextOutTest : public testing::Test {
  public:
   CFDETextOutTest() = default;
@@ -31,7 +33,7 @@ class CFDETextOutTest : public testing::Test {
     CFX_GlyphCache::InitializeGlobals();
 #endif
     CFX_Size bitmap_size = GetBitmapSize();
-    bitmap_ = pdfium::MakeRetain<CFX_DIBitmap>();
+    bitmap_ = MakeRetain<CFX_DIBitmap>();
     ASSERT_TRUE(bitmap_->Create(bitmap_size.width, bitmap_size.height,
                                 FXDIB_Format::kArgb));
 
@@ -184,3 +186,5 @@ TEST_F(CFDETextOutLargeBitmapTest, DrawLogicTextBug1342078) {
   EXPECT_EQ(GetLargeTextBlobChecksum(), GetBitmapChecksum());
 }
 #endif  // !BUILDFLAG(IS_WIN)
+
+}  // namespace pdfium

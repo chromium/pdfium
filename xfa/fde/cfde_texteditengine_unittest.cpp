@@ -11,6 +11,8 @@
 #include "testing/xfa_test_environment.h"
 #include "xfa/fgas/font/cfgas_gefont.h"
 
+namespace pdfium {
+
 class CFDE_TextEditEngineTest : public testing::Test {
  public:
   class Delegate final : public CFDE_TextEditEngine::Delegate {
@@ -842,3 +844,5 @@ TEST_F(CFDE_TextEditEngineTest, CursorMovement) {
   engine()->SetSelection(engine()->GetIndexRight(5U), 5);
   EXPECT_EQ(L"World", engine()->GetSelectedText());
 }
+
+}  // namespace pdfium

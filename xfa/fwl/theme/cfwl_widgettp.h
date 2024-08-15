@@ -17,7 +17,10 @@
 #include "v8/include/cppgc/garbage-collected.h"
 #include "xfa/fwl/theme/cfwl_utils.h"
 
+namespace pdfium {
 class CFDE_TextOut;
+}  // namespace pdfium
+
 class CFGAS_GEGraphics;
 class CFWL_ThemeBackground;
 class CFWL_ThemeText;
@@ -74,7 +77,7 @@ class CFWL_WidgetTP : public cppgc::GarbageCollected<CFWL_WidgetTP> {
                     FWLTHEME_STATE eState,
                     const CFX_Matrix& matrix);
 
-  std::unique_ptr<CFDE_TextOut> m_pTextOut;
+  std::unique_ptr<pdfium::CFDE_TextOut> m_pTextOut;
   std::unique_ptr<CColorData> m_pColorData;
 };
 
