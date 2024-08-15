@@ -67,7 +67,7 @@ size_t CFX_MemoryStream::ReadBlock(pdfium::span<uint8_t> buffer) {
   return nRead;
 }
 
-bool CFX_MemoryStream::AppendBlock(pdfium::span<const uint8_t> buffer) {
+bool CFX_MemoryStream::WriteBlock(pdfium::span<const uint8_t> buffer) {
   if (buffer.empty())
     return true;
 

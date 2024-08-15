@@ -21,14 +21,14 @@ class CPDF_SeekableMultiStream final : public IFX_SeekableStream {
       std::vector<RetainPtr<const CPDF_Stream>> streams);
   ~CPDF_SeekableMultiStream() override;
 
-  // IFX_SeekableReadStream:
+  // IFX_SeekableStream:
   FX_FILESIZE GetPosition() override;
   FX_FILESIZE GetSize() override;
   bool IsEOF() override;
   size_t ReadBlock(pdfium::span<uint8_t> buffer) override;
   bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
                          FX_FILESIZE offset) override;
-  bool AppendBlock(pdfium::span<const uint8_t> buffer) override;
+  bool WriteBlock(pdfium::span<const uint8_t> buffer) override;
   bool Flush() override;
 
  private:

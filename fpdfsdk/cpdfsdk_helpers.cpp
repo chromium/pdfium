@@ -102,7 +102,7 @@ class FPDF_FileHandlerContext final : public IFX_SeekableStream {
   size_t ReadBlock(pdfium::span<uint8_t> buffer) override;
   bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
                          FX_FILESIZE offset) override;
-  bool AppendBlock(pdfium::span<const uint8_t> buffer) override;
+  bool WriteBlock(pdfium::span<const uint8_t> buffer) override;
   bool Flush() override;
 
   void SetPosition(FX_FILESIZE pos) { m_nCurPos = pos; }
@@ -171,7 +171,7 @@ size_t FPDF_FileHandlerContext::ReadBlock(pdfium::span<uint8_t> buffer) {
   return 0;
 }
 
-bool FPDF_FileHandlerContext::AppendBlock(pdfium::span<const uint8_t> buffer) {
+bool FPDF_FileHandlerContext::WriteBlock(pdfium::span<const uint8_t> buffer) {
   if (!m_pFS || !m_pFS->WriteBlock) {
     return false;
   }

@@ -28,7 +28,7 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
   size_t ReadBlock(pdfium::span<uint8_t> buffer) override {
     return m_pFile->Read(buffer);
   }
-  bool AppendBlock(pdfium::span<const uint8_t> buffer) override {
+  bool WriteBlock(pdfium::span<const uint8_t> buffer) override {
     return !!m_pFile->WritePos(buffer, GetSize());
   }
   bool Flush() override { return m_pFile->Flush(); }
@@ -73,10 +73,6 @@ RetainPtr<IFX_SeekableReadStream> IFX_SeekableReadStream::CreateFromFilename(
   return pdfium::MakeRetain<CFX_CRTFileStream>(std::move(pFA));
 }
 
-bool IFX_SeekableWriteStream::WriteBlock(pdfium::span<const uint8_t> buffer) {
-  return AppendBlock(buffer);
-}
-
 bool IFX_SeekableReadStream::IsEOF() {
   return false;
 }
@@ -87,8 +83,4 @@ FX_FILESIZE IFX_SeekableReadStream::GetPosition() {
 
 size_t IFX_SeekableReadStream::ReadBlock(pdfium::span<uint8_t> buffer) {
   return 0;
-}
-
-bool IFX_SeekableStream::WriteBlock(pdfium::span<const uint8_t> buffer) {
-  return AppendBlock(buffer);
 }

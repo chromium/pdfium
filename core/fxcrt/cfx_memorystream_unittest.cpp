@@ -29,20 +29,20 @@ TEST(CFXMemoryStreamTest, ReadBlockAtOffset) {
   ASSERT_THAT(buffer, testing::ElementsAre('d', 'e', 'f'));
 }
 
-TEST(CFXMemoryStreamTest, AppendBlock) {
+TEST(CFXMemoryStreamTest, WriteBlock) {
   auto stream = pdfium::MakeRetain<CFX_MemoryStream>();
-  ASSERT_TRUE(stream->AppendBlock({}));
+  ASSERT_TRUE(stream->WriteBlock({}));
   ASSERT_TRUE(stream->GetSpan().empty());
 
   const uint8_t kData1[] = {'a', 'b', 'c'};
   ASSERT_TRUE(stream->WriteBlock(kData1));
   ASSERT_THAT(stream->GetSpan(), testing::ElementsAre('a', 'b', 'c'));
 
-  ASSERT_TRUE(stream->AppendBlock(kData1));
+  ASSERT_TRUE(stream->WriteBlock(kData1));
   ASSERT_THAT(stream->GetSpan(),
               testing::ElementsAre('a', 'b', 'c', 'a', 'b', 'c'));
 
-  ASSERT_TRUE(stream->AppendBlock({}));
+  ASSERT_TRUE(stream->WriteBlock({}));
   ASSERT_THAT(stream->GetSpan(),
               testing::ElementsAre('a', 'b', 'c', 'a', 'b', 'c'));
 }
