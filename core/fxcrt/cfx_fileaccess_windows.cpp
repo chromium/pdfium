@@ -118,17 +118,6 @@ size_t CFX_FileAccess_Windows::ReadPos(pdfium::span<uint8_t> buffer,
   return Read(buffer);
 }
 
-size_t CFX_FileAccess_Windows::WritePos(pdfium::span<const uint8_t> buffer,
-                                        FX_FILESIZE pos) {
-  if (!m_hFile) {
-    return 0;
-  }
-  if (SetPosition(pos) == (FX_FILESIZE)-1) {
-    return 0;
-  }
-  return Write(buffer);
-}
-
 bool CFX_FileAccess_Windows::Flush() {
   if (!m_hFile)
     return false;

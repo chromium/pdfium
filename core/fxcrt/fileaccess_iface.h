@@ -26,8 +26,6 @@ class FileAccessIface {
   virtual size_t Read(pdfium::span<uint8_t> buffer) = 0;
   virtual size_t Write(pdfium::span<const uint8_t> buffer) = 0;
   virtual size_t ReadPos(pdfium::span<uint8_t> buffer, FX_FILESIZE pos) = 0;
-  virtual size_t WritePos(pdfium::span<const uint8_t> buffer,
-                          FX_FILESIZE pos) = 0;
   virtual bool Flush() = 0;
   virtual bool Truncate(FX_FILESIZE szFile) = 0;
 };

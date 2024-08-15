@@ -29,7 +29,10 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
     return m_pFile->Read(buffer);
   }
   bool WriteBlock(pdfium::span<const uint8_t> buffer) override {
-    return !!m_pFile->WritePos(buffer, GetSize());
+    if (m_pFile->SetPosition(GetSize()) == static_cast<FX_FILESIZE>(-1)) {
+      return false;
+    }
+    return !!m_pFile->Write(buffer);
   }
   bool Flush() override { return m_pFile->Flush(); }
 

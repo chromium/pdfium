@@ -67,24 +67,28 @@ FX_FILESIZE CFX_FileAccess_Posix::GetPosition() const {
   }
   return lseek(m_nFD, 0, SEEK_CUR);
 }
+
 FX_FILESIZE CFX_FileAccess_Posix::SetPosition(FX_FILESIZE pos) {
   if (m_nFD < 0) {
     return (FX_FILESIZE)-1;
   }
   return lseek(m_nFD, pos, SEEK_SET);
 }
+
 size_t CFX_FileAccess_Posix::Read(pdfium::span<uint8_t> buffer) {
   if (m_nFD < 0) {
     return 0;
   }
   return read(m_nFD, buffer.data(), buffer.size());
 }
+
 size_t CFX_FileAccess_Posix::Write(pdfium::span<const uint8_t> buffer) {
   if (m_nFD < 0) {
     return 0;
   }
   return write(m_nFD, buffer.data(), buffer.size());
 }
+
 size_t CFX_FileAccess_Posix::ReadPos(pdfium::span<uint8_t> buffer,
                                      FX_FILESIZE pos) {
   if (m_nFD < 0) {
@@ -97,16 +101,6 @@ size_t CFX_FileAccess_Posix::ReadPos(pdfium::span<uint8_t> buffer,
     return 0;
   }
   return Read(buffer);
-}
-size_t CFX_FileAccess_Posix::WritePos(pdfium::span<const uint8_t> buffer,
-                                      FX_FILESIZE pos) {
-  if (m_nFD < 0) {
-    return 0;
-  }
-  if (SetPosition(pos) == (FX_FILESIZE)-1) {
-    return 0;
-  }
-  return Write(buffer);
 }
 
 bool CFX_FileAccess_Posix::Flush() {
