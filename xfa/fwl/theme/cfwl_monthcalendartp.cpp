@@ -16,6 +16,8 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
+namespace pdfium {
+
 namespace {
 
 constexpr FX_ARGB kCaptionColor = ArgbEncode(0xff, 0, 153, 255);
@@ -264,3 +266,5 @@ void CFWL_MonthCalendarTP::DrawTodayCircle(const CFWL_ThemeBackground& pParams,
   pParams.GetGraphics()->SetStrokeColor(CFGAS_GEColor(kDatesCircleColor));
   pParams.GetGraphics()->StrokePath(path, matrix);
 }
+
+}  // namespace pdfium

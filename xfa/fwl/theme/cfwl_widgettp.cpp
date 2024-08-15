@@ -21,6 +21,8 @@
 #include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
+namespace pdfium {
+
 CFWL_WidgetTP::CFWL_WidgetTP() = default;
 
 CFWL_WidgetTP::~CFWL_WidgetTP() = default;
@@ -205,3 +207,5 @@ void CFWL_WidgetTP::DrawArrowBtn(CFGAS_GEGraphics* pGraphics,
   DrawArrow(pGraphics, rect, eDict,
             m_pColorData->clrSign[static_cast<size_t>(eState) - 1], matrix);
 }
+
+}  // namespace pdfium

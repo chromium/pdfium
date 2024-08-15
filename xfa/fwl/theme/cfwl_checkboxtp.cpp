@@ -21,6 +21,8 @@
 #include "xfa/fwl/cfwl_themetext.h"
 #include "xfa/fwl/cfwl_widget.h"
 
+namespace pdfium {
+
 namespace {
 
 constexpr int kSignPath = 100;
@@ -251,3 +253,5 @@ void CFWL_CheckBoxTP::DrawCheckSign(CFWL_Widget* pWidget,
       break;
   }
 }
+
+}  // namespace pdfium

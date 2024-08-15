@@ -11,6 +11,8 @@
 #include "xfa/fwl/cfwl_themepart.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
+namespace pdfium {
+
 class CFWL_ListBoxTP final : public CFWL_WidgetTP {
  public:
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
@@ -28,5 +30,10 @@ class CFWL_ListBoxTP final : public CFWL_WidgetTP {
                        const CFX_RectF* pData,
                        const CFX_Matrix& matrix);
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_ListBoxTP;
 
 #endif  // XFA_FWL_THEME_CFWL_LISTBOXTP_H_

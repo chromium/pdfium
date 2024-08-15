@@ -14,6 +14,8 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
+namespace pdfium {
+
 namespace {
 
 constexpr float kPushbuttonSizeCorner = 2.0f;
@@ -124,3 +126,5 @@ int32_t CFWL_PushButtonTP::GetColorID(Mask<CFWL_PartState> dwStates) const {
   }
   return color;
 }
+
+}  // namespace pdfium

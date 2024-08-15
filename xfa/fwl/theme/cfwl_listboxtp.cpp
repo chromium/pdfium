@@ -14,6 +14,8 @@
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
 
+namespace pdfium {
+
 CFWL_ListBoxTP::CFWL_ListBoxTP() = default;
 
 CFWL_ListBoxTP::~CFWL_ListBoxTP() = default;
@@ -75,3 +77,5 @@ void CFWL_ListBoxTP::DrawListBoxItem(CFGAS_GEGraphics* pGraphics,
   if ((dwStates & CFWL_PartState::kFocused) && pData)
     DrawFocus(pGraphics, *pData, matrix);
 }
+
+}  // namespace pdfium

@@ -13,6 +13,8 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
+namespace pdfium {
+
 CFWL_ComboBoxTP::CFWL_ComboBoxTP() = default;
 
 CFWL_ComboBoxTP::~CFWL_ComboBoxTP() = default;
@@ -51,3 +53,5 @@ void CFWL_ComboBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       break;
   }
 }
+
+}  // namespace pdfium

@@ -10,6 +10,8 @@
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
 
+namespace pdfium {
+
 CFWL_PictureBoxTP::CFWL_PictureBoxTP() = default;
 
 CFWL_PictureBoxTP::~CFWL_PictureBoxTP() = default;
@@ -23,3 +25,5 @@ void CFWL_PictureBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       break;
   }
 }
+
+}  // namespace pdfium

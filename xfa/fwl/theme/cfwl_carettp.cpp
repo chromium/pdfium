@@ -13,6 +13,8 @@
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
 
+namespace pdfium {
+
 CFWL_CaretTP::CFWL_CaretTP() = default;
 
 CFWL_CaretTP::~CFWL_CaretTP() = default;
@@ -41,3 +43,5 @@ void CFWL_CaretTP::DrawCaretBK(CFGAS_GEGraphics* pGraphics,
   pGraphics->SetFillColor(CFGAS_GEColor(ArgbEncode(255, 0, 0, 0)));
   pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kWinding, matrix);
 }
+
+}  // namespace pdfium

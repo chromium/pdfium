@@ -11,6 +11,8 @@
 #include "xfa/fwl/cfwl_themepart.h"
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
+namespace pdfium {
+
 class CFWL_CaretTP final : public CFWL_WidgetTP {
  public:
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
@@ -27,5 +29,10 @@ class CFWL_CaretTP final : public CFWL_WidgetTP {
                    const CFX_RectF& rect,
                    const CFX_Matrix& matrix);
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_CaretTP;
 
 #endif  // XFA_FWL_THEME_CFWL_CARETTP_H_

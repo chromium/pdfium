@@ -9,6 +9,8 @@
 #include "xfa/fwl/cfwl_datetimepicker.h"
 #include "xfa/fwl/cfwl_themebackground.h"
 
+namespace pdfium {
+
 CFWL_DateTimePickerTP::CFWL_DateTimePickerTP() = default;
 
 CFWL_DateTimePickerTP::~CFWL_DateTimePickerTP() = default;
@@ -28,3 +30,5 @@ void CFWL_DateTimePickerTP::DrawBackground(
       break;
   }
 }
+
+}  // namespace pdfium

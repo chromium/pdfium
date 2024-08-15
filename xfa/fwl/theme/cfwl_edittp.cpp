@@ -13,6 +13,8 @@
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/cfwl_widget.h"
 
+namespace pdfium {
+
 CFWL_EditTP::CFWL_EditTP() = default;
 
 CFWL_EditTP::~CFWL_EditTP() = default;
@@ -68,3 +70,5 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       break;
   }
 }
+
+}  // namespace pdfium

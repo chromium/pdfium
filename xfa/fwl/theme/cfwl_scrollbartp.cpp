@@ -14,6 +14,8 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
+namespace pdfium {
+
 CFWL_ScrollBarTP::CFWL_ScrollBarTP() : m_pThemeData(new SBThemeData) {
   SetThemeData();
 }
@@ -143,3 +145,5 @@ void CFWL_ScrollBarTP::SetThemeData() {
   m_pThemeData->clrBtnBorder[2] = ArgbEncode(0xff, 124, 159, 211);
   m_pThemeData->clrBtnBorder[3] = ArgbEncode(0xff, 236, 233, 216);
 }
+
+}  // namespace pdfium
