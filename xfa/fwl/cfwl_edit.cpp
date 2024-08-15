@@ -35,6 +35,8 @@
 #include "xfa/fwl/ifwl_themeprovider.h"
 #include "xfa/fwl/theme/cfwl_utils.h"
 
+namespace pdfium {
+
 namespace {
 
 constexpr int kEditMargin = 3;
@@ -346,8 +348,7 @@ void CFWL_Edit::DrawContentNonComb(CFGAS_GEGraphics* pGraphics,
     size_t count;
     std::tie(sel_start, count) = m_pEditEngine->GetSelection();
     std::vector<CFX_RectF> rects = m_pEditEngine->GetCharacterRectsInRange(
-        pdfium::checked_cast<int32_t>(sel_start),
-        pdfium::checked_cast<int32_t>(count));
+        checked_cast<int32_t>(sel_start), checked_cast<int32_t>(count));
 
     CFGAS_GEPath path;
     for (auto& rect : rects) {
@@ -757,7 +758,7 @@ void CFWL_Edit::UpdateCursorRect() {
   int32_t bidi_level;
   if (m_pEditEngine->CanGenerateCharacterInfo()) {
     std::tie(bidi_level, m_CaretRect) = m_pEditEngine->GetCharacterInfo(
-        pdfium::checked_cast<int32_t>(m_CursorPosition));
+        checked_cast<int32_t>(m_CursorPosition));
   } else {
     bidi_level = 0;
     m_CaretRect = CFX_RectF();
@@ -1115,3 +1116,5 @@ bool CFWL_Edit::OnScroll(CFWL_ScrollBar* pScrollBar,
   RepaintRect(CFX_RectF(0, 0, rect.width + 2, rect.height + 2));
   return true;
 }
+
+}  // namespace pdfium

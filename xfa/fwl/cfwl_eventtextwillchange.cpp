@@ -6,6 +6,8 @@
 
 #include "xfa/fwl/cfwl_eventtextwillchange.h"
 
+namespace pdfium {
+
 CFWL_EventTextWillChange::CFWL_EventTextWillChange(
     CFWL_Widget* pSrcTarget,
     const WideString& change_text,
@@ -19,3 +21,5 @@ CFWL_EventTextWillChange::CFWL_EventTextWillChange(
       selection_end_(selection_end) {}
 
 CFWL_EventTextWillChange::~CFWL_EventTextWillChange() = default;
+
+}  // namespace pdfium

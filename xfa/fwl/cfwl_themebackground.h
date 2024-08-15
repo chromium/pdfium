@@ -14,6 +14,8 @@
 class CFGAS_GEGraphics;
 class CFGAS_GEPath;
 
+namespace pdfium {
+
 class CFWL_ThemeBackground final : public CFWL_ThemePart {
  public:
   FX_STACK_ALLOCATED();
@@ -31,5 +33,10 @@ class CFWL_ThemeBackground final : public CFWL_ThemePart {
   UnownedPtr<const CFGAS_GEPath> m_pPath;
   UnownedPtr<CFGAS_GEGraphics> const m_pGraphics;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_ThemeBackground;
 
 #endif  // XFA_FWL_CFWL_THEMEBACKGROUND_H_

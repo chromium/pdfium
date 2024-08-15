@@ -10,6 +10,8 @@
 #include "xfa/fwl/cfwl_edit.h"
 #include "xfa/fwl/cfwl_widget.h"
 
+namespace pdfium {
+
 class CFWL_ComboEdit final : public CFWL_Edit {
  public:
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
@@ -26,5 +28,10 @@ class CFWL_ComboEdit final : public CFWL_Edit {
                  const Properties& properties,
                  CFWL_Widget* pOuter);
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_ComboEdit;
 
 #endif  // XFA_FWL_CFWL_COMBOEDIT_H_

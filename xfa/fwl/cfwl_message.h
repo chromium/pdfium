@@ -11,6 +11,8 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "v8/include/cppgc/macros.h"
 
+namespace pdfium {
+
 class CFWL_Widget;
 
 class CFWL_Message {
@@ -34,5 +36,10 @@ class CFWL_Message {
   const Type m_type;
   UnownedPtr<CFWL_Widget> m_pDstTarget;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_Message;
 
 #endif  // XFA_FWL_CFWL_MESSAGE_H_

@@ -10,6 +10,8 @@
 #include "core/fxcrt/widestring.h"
 #include "xfa/fwl/cfwl_event.h"
 
+namespace pdfium {
+
 class CFWL_EventValidate final : public CFWL_Event {
  public:
   CFWL_EventValidate(CFWL_Widget* pSrcTarget, const WideString& wsInsert);
@@ -23,5 +25,10 @@ class CFWL_EventValidate final : public CFWL_Event {
   const WideString m_wsInsert;
   bool m_bValidate = true;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_EventValidate;
 
 #endif  // XFA_FWL_CFWL_EVENTVALIDATE_H_

@@ -21,7 +21,10 @@
 class CFGAS_GEGraphics;
 class CXFA_FFDocView;
 class CXFA_FFWidget;
+
+namespace pdfium {
 enum class FWL_WidgetHit;
+}  // namespace pdfium
 
 class CXFA_FFWidgetHandler final
     : public cppgc::GarbageCollected<CXFA_FFWidgetHandler> {
@@ -75,7 +78,8 @@ class CXFA_FFWidgetHandler final
   bool OnChar(CXFA_FFWidget* hWidget,
               uint32_t dwChar,
               Mask<XFA_FWL_KeyFlag> dwFlags);
-  FWL_WidgetHit HitTest(CXFA_FFWidget* pWidget, const CFX_PointF& point);
+  pdfium::FWL_WidgetHit HitTest(CXFA_FFWidget* pWidget,
+                                const CFX_PointF& point);
   void RenderWidget(CXFA_FFWidget* hWidget,
                     CFGAS_GEGraphics* pGS,
                     const CFX_Matrix& matrix,

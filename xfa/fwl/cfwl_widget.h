@@ -24,6 +24,8 @@
 #include "xfa/fwl/fwl_widgethit.h"
 #include "xfa/fwl/ifwl_widgetdelegate.h"
 
+namespace pdfium {
+
 class CFWL_App;
 class CFWL_Event;
 class CFWL_Widget;
@@ -202,5 +204,11 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
   cppgc::Member<IFWL_WidgetDelegate> m_pDelegate;
   cppgc::Member<CFWL_Widget> const m_pOuter;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_Widget;
+using pdfium::FWL_Type;
 
 #endif  // XFA_FWL_CFWL_WIDGET_H_

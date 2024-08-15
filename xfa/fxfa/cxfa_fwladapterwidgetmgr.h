@@ -11,7 +11,6 @@
 #include "v8/include/cppgc/garbage-collected.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 
-class CFWL_Widget;
 class CFX_RectF;
 
 class CXFA_FWLAdapterWidgetMgr final
@@ -23,8 +22,8 @@ class CXFA_FWLAdapterWidgetMgr final
 
   // CFWL_WidgetMgr::AdapterIface:
   void Trace(cppgc::Visitor* visitor) const override;
-  void RepaintWidget(CFWL_Widget* pWidget) override;
-  bool GetPopupPos(CFWL_Widget* pWidget,
+  void RepaintWidget(pdfium::CFWL_Widget* pWidget) override;
+  bool GetPopupPos(pdfium::CFWL_Widget* pWidget,
                    float fMinHeight,
                    float fMaxHeight,
                    const CFX_RectF& rtAnchor,

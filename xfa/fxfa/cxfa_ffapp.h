@@ -14,12 +14,14 @@
 #include "v8/include/cppgc/member.h"
 #include "xfa/fwl/cfwl_app.h"
 
-class CFWL_WidgetMgr;
 class CXFA_FFDoc;
 class CXFA_FWLAdapterWidgetMgr;
-class CXFA_FWLTheme;
 class CXFA_FontMgr;
 class IFX_SeekableReadStream;
+
+namespace pdfium {
+class CXFA_FWLTheme;
+}  // namespace pdfium
 
 class CXFA_FFApp final : public cppgc::GarbageCollected<CXFA_FFApp>,
                          public CFWL_App::AdapterIface {
@@ -136,7 +138,7 @@ class CXFA_FFApp final : public cppgc::GarbageCollected<CXFA_FFApp>,
   void Trace(cppgc::Visitor* visitor) const override;
   CFWL_WidgetMgr::AdapterIface* GetWidgetMgrAdapter() override;
   CFX_Timer::HandlerIface* GetTimerHandler() override;
-  IFWL_ThemeProvider* GetThemeProvider() override;
+  pdfium::IFWL_ThemeProvider* GetThemeProvider() override;
   cppgc::Heap* GetHeap() override;
 
   bool LoadFWLTheme(CXFA_FFDoc* doc);
@@ -151,7 +153,7 @@ class CXFA_FFApp final : public cppgc::GarbageCollected<CXFA_FFApp>,
   UnownedPtr<CallbackIface> const m_pProvider;
   cppgc::Member<CXFA_FontMgr> m_pXFAFontMgr;
   cppgc::Member<CXFA_FWLAdapterWidgetMgr> m_pAdapterWidgetMgr;
-  cppgc::Member<CXFA_FWLTheme> m_pFWLTheme;
+  cppgc::Member<pdfium::CXFA_FWLTheme> m_pFWLTheme;
   cppgc::Member<CFWL_App> m_pFWLApp;
 };
 

@@ -13,6 +13,8 @@
 #include "xfa/fwl/cfwl_themebackground.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
+namespace pdfium {
+
 namespace {
 
 const uint32_t kBlinkPeriodMs = 600;
@@ -85,3 +87,5 @@ void CFWL_Caret::OnTimerFired() {
   CFX_RectF rt = GetWidgetRect();
   RepaintRect(CFX_RectF(0, 0, rt.width + 1, rt.height));
 }
+
+}  // namespace pdfium

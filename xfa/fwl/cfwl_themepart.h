@@ -15,6 +15,8 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "xfa/fwl/theme/cfwl_utils.h"
 
+namespace pdfium {
+
 class CFWL_Widget;
 
 enum class CFWL_PartState : uint16_t {
@@ -102,5 +104,11 @@ class CFWL_ThemePart {
   const Part m_iPart;
   UnownedPtr<CFWL_Widget> const m_pWidget;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_PartState;
+using pdfium::CFWL_ThemePart;
 
 #endif  // XFA_FWL_CFWL_THEMEPART_H_

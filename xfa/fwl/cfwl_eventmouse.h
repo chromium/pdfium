@@ -10,6 +10,8 @@
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 
+namespace pdfium {
+
 class CFWL_EventMouse final : public CFWL_Event {
  public:
   CFWL_EventMouse(CFWL_Widget* pSrcTarget,
@@ -22,5 +24,10 @@ class CFWL_EventMouse final : public CFWL_Event {
  private:
   const CFWL_MessageMouse::MouseCommand m_dwCmd;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_EventMouse;
 
 #endif  // XFA_FWL_CFWL_EVENTMOUSE_H_

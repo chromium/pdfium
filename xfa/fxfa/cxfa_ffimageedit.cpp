@@ -145,7 +145,7 @@ void CXFA_FFImageEdit::OnProcessMessage(CFWL_Message* pMessage) {
   m_pOldDelegate->OnProcessMessage(pMessage);
 }
 
-void CXFA_FFImageEdit::OnProcessEvent(CFWL_Event* pEvent) {
+void CXFA_FFImageEdit::OnProcessEvent(pdfium::CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
   m_pOldDelegate->OnProcessEvent(pEvent);
 }

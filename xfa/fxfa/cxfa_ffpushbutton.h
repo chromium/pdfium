@@ -33,7 +33,7 @@ class CXFA_FFPushButton final : public CXFA_FFField {
   bool PerformLayout() override;
   void UpdateWidgetProperty() override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnProcessEvent(pdfium::CFWL_Event* pEvent) override;
   void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                     const CFX_Matrix& matrix) override;
   FormFieldType GetFormFieldType() override;

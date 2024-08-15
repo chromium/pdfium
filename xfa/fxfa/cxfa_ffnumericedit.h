@@ -10,8 +10,9 @@
 #include "core/fxcrt/widestring.h"
 #include "xfa/fxfa/cxfa_fftextedit.h"
 
-class CFWL_Event;
+namespace pdfium {
 class CFWL_Widget;
+}  // namespace pdfium
 
 class CXFA_FFNumericEdit final : public CXFA_FFTextEdit {
  public:
@@ -21,7 +22,7 @@ class CXFA_FFNumericEdit final : public CXFA_FFTextEdit {
   // CXFA_FFTextEdit
   bool LoadWidget() override;
   void UpdateWidgetProperty() override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnProcessEvent(pdfium::CFWL_Event* pEvent) override;
 
  private:
   bool OnValidate(CFWL_Widget* pWidget, const WideString& wsText);

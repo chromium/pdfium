@@ -12,12 +12,14 @@
 #include "v8/include/cppgc/prefinalizer.h"
 #include "xfa/fxfa/cxfa_fffield.h"
 
-class CFWL_Event;
-class CFWL_EventTextWillChange;
-class CFWL_Widget;
 class CFX_Matrix;
 class CXFA_FFWidget;
+
+namespace pdfium {
+class CFWL_EventTextWillChange;
+class CFWL_Widget;
 class IFWL_WidgetDelegate;
+}  // namespace pdfium
 
 class CXFA_FFTextEdit : public CXFA_FFField {
   CPPGC_USING_PRE_FINALIZER(CXFA_FFTextEdit, PreFinalize);
@@ -46,11 +48,12 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   [[nodiscard]] bool OnSetFocus(CXFA_FFWidget* pOldWidget) override;
   [[nodiscard]] bool OnKillFocus(CXFA_FFWidget* pNewWidget) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnProcessEvent(pdfium::CFWL_Event* pEvent) override;
   void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                     const CFX_Matrix& matrix) override;
 
-  void OnTextWillChange(CFWL_Widget* pWidget, CFWL_EventTextWillChange* change);
+  void OnTextWillChange(pdfium::CFWL_Widget* pWidget,
+                        pdfium::CFWL_EventTextWillChange* change);
   void OnTextFull(CFWL_Widget* pWidget);
 
   // CXFA_FFWidget

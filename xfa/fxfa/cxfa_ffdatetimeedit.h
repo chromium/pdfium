@@ -10,9 +10,10 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fxfa/cxfa_fftextedit.h"
 
+namespace pdfium {
 class CFWL_DateTimePicker;
-class CFWL_Event;
 class CFWL_Widget;
+}  // namespace pdfium
 
 class CXFA_FFDateTimeEdit final : public CXFA_FFTextEdit {
  public:
@@ -23,9 +24,9 @@ class CXFA_FFDateTimeEdit final : public CXFA_FFTextEdit {
   CFX_RectF GetBBox(FocusOption focus) override;
   bool LoadWidget() override;
   void UpdateWidgetProperty() override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnProcessEvent(pdfium::CFWL_Event* pEvent) override;
 
-  void OnSelectChanged(CFWL_Widget* pWidget,
+  void OnSelectChanged(pdfium::CFWL_Widget* pWidget,
                        int32_t iYear,
                        int32_t iMonth,
                        int32_t iDay);
@@ -53,7 +54,7 @@ class CXFA_FFDateTimeEdit final : public CXFA_FFTextEdit {
   bool UpdateFWLData() override;
   bool IsDataChanged() override;
 
-  CFWL_DateTimePicker* GetPickerWidget();
+  pdfium::CFWL_DateTimePicker* GetPickerWidget();
 
   uint32_t GetAlignment();
 };

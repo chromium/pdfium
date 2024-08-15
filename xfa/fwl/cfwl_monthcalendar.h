@@ -14,6 +14,8 @@
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_widget.h"
 
+namespace pdfium {
+
 class CFWL_MessageMouse;
 
 class CFWL_MonthCalendar final : public CFWL_Widget {
@@ -156,5 +158,10 @@ class CFWL_MonthCalendar final : public CFWL_Widget {
   std::vector<int32_t> m_SelDayArray;
   CFX_RectF m_ClientRect;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_MonthCalendar;
 
 #endif  // XFA_FWL_CFWL_MONTHCALENDAR_H_

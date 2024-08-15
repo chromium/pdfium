@@ -11,6 +11,8 @@
 
 #include "xfa/fwl/cfwl_event.h"
 
+namespace pdfium {
+
 class CFWL_EventSelectChanged final : public CFWL_Event {
  public:
   CFWL_EventSelectChanged(CFWL_Widget* pSrcTarget, bool bLButtonUp);
@@ -34,5 +36,10 @@ class CFWL_EventSelectChanged final : public CFWL_Event {
   const int32_t m_iMonth;
   const int32_t m_iDay;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_EventSelectChanged;
 
 #endif  // XFA_FWL_CFWL_EVENTSELECTCHANGED_H_

@@ -14,6 +14,8 @@
 #include "xfa/fwl/cfwl_notedriver.h"
 #include "xfa/fwl/cfwl_pushbutton.h"
 
+namespace pdfium {
+
 CFWL_WidgetMgr::CFWL_WidgetMgr(AdapterIface* pAdapter, CFWL_App* pApp)
     : m_pAdapter(pAdapter), m_pApp(pApp) {
   DCHECK(m_pAdapter);
@@ -241,3 +243,5 @@ void CFWL_WidgetMgr::Item::Trace(cppgc::Visitor* visitor) const {
   GCedTreeNode<Item>::Trace(visitor);
   visitor->Trace(pWidget);
 }
+
+}  // namespace pdfium

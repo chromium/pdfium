@@ -25,6 +25,8 @@
 #include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
+namespace pdfium {
+
 namespace {
 
 const int kItemTextMargin = 2;
@@ -824,7 +826,7 @@ int32_t CFWL_ListBox::GetItemIndex(CFWL_Widget* pWidget, Item* pItem) {
                            return candidate.get() == pItem;
                          });
   return it != m_ItemArray.end()
-             ? pdfium::checked_cast<int32_t>(it - m_ItemArray.begin())
+             ? checked_cast<int32_t>(it - m_ItemArray.begin())
              : -1;
 }
 
@@ -862,3 +864,5 @@ void CFWL_ListBox::DeleteAll() {
 CFWL_ListBox::Item::Item(const WideString& text) : m_wsText(text) {}
 
 CFWL_ListBox::Item::~Item() = default;
+
+}  // namespace pdfium

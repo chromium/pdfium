@@ -33,7 +33,7 @@ class CXFA_FFImageEdit final : public CXFA_FFField {
   bool OnLButtonDown(Mask<XFA_FWL_KeyFlag> dwFlags,
                      const CFX_PointF& point) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnProcessEvent(pdfium::CFWL_Event* pEvent) override;
   void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                     const CFX_Matrix& matrix) override;
   FormFieldType GetFormFieldType() override;

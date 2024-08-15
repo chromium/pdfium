@@ -6,7 +6,11 @@
 
 #include "xfa/fwl/cfwl_message.h"
 
+namespace pdfium {
+
 CFWL_Message::CFWL_Message(Type type, CFWL_Widget* pDstTarget)
     : m_type(type), m_pDstTarget(pDstTarget) {}
 
 CFWL_Message::~CFWL_Message() = default;
+
+}  // namespace pdfium

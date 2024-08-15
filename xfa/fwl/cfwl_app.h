@@ -14,6 +14,8 @@
 #include "v8/include/cppgc/visitor.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 
+namespace pdfium {
+
 class CFWL_NoteDriver;
 class IFWL_ThemeProvider;
 
@@ -53,5 +55,10 @@ class CFWL_App final : public cppgc::GarbageCollected<CFWL_App> {
   cppgc::Member<CFWL_WidgetMgr> m_pWidgetMgr;
   cppgc::Member<CFWL_NoteDriver> m_pNoteDriver;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_App;
 
 #endif  // XFA_FWL_CFWL_APP_H_

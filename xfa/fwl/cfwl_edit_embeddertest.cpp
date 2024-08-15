@@ -16,6 +16,8 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/xfa_js_embedder_test.h"
 
+namespace pdfium {
+
 namespace {
 
 const char kEmailRecommendedFilledChecksum[] =
@@ -318,3 +320,5 @@ TEST_F(CFWLEditEmbedderTest, ComboBoxTest) {
     // CompareBitmap(page_bitmap.get(), 612, 792, kFilledMD5);
   }
 }
+
+}  // namespace pdfium

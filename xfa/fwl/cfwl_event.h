@@ -10,6 +10,8 @@
 #include "core/fxcrt/unowned_ptr.h"
 #include "v8/include/cppgc/macros.h"
 
+namespace pdfium {
+
 class CFWL_Widget;
 
 class CFWL_Event {
@@ -45,5 +47,10 @@ class CFWL_Event {
   UnownedPtr<CFWL_Widget> const m_pSrcTarget;
   UnownedPtr<CFWL_Widget> const m_pDstTarget;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_Event;
 
 #endif  // XFA_FWL_CFWL_EVENT_H_

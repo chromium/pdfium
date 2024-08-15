@@ -6,6 +6,8 @@
 
 #include "xfa/fwl/cfwl_event.h"
 
+namespace pdfium {
+
 CFWL_Event::CFWL_Event(CFWL_Event::Type type) : m_type(type) {}
 
 CFWL_Event::CFWL_Event(Type type, CFWL_Widget* pSrcTarget)
@@ -17,3 +19,5 @@ CFWL_Event::CFWL_Event(Type type,
     : m_type(type), m_pSrcTarget(pSrcTarget), m_pDstTarget(pDstTarget) {}
 
 CFWL_Event::~CFWL_Event() = default;
+
+}  // namespace pdfium

@@ -15,6 +15,8 @@
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/fwl_widgetdef.h"
 
+namespace pdfium {
+
 CFWL_ComboList::CFWL_ComboList(CFWL_App* app,
                                const Properties& properties,
                                CFWL_Widget* pOuter)
@@ -227,3 +229,5 @@ void CFWL_ComboList::OnDropListKeyDown(CFWL_MessageKey* pKey) {
       break;
   }
 }
+
+}  // namespace pdfium

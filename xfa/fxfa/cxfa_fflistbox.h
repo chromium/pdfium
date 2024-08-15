@@ -25,7 +25,7 @@ class CXFA_FFListBox final : public CXFA_FFDropDown {
   bool LoadWidget() override;
   [[nodiscard]] bool OnKillFocus(CXFA_FFWidget* pNewWidget) override;
   void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnProcessEvent(pdfium::CFWL_Event* pEvent) override;
   void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                     const CFX_Matrix& matrix) override;
   FormFieldType GetFormFieldType() override;

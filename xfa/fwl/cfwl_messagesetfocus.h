@@ -9,10 +9,17 @@
 
 #include "xfa/fwl/cfwl_message.h"
 
+namespace pdfium {
+
 class CFWL_MessageSetFocus final : public CFWL_Message {
  public:
   explicit CFWL_MessageSetFocus(CFWL_Widget* pDstTarget);
   ~CFWL_MessageSetFocus() override;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_MessageSetFocus;
 
 #endif  // XFA_FWL_CFWL_MESSAGESETFOCUS_H_

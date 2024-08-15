@@ -16,6 +16,10 @@
 #include "xfa/fwl/cfwl_scrollbar.h"
 #include "xfa/fwl/cfwl_widget.h"
 
+class CFX_RenderDevice;
+
+namespace pdfium {
+
 #define FWL_STYLEEXT_EDT_ReadOnly (1L << 0)
 #define FWL_STYLEEXT_EDT_MultiLine (1L << 1)
 #define FWL_STYLEEXT_EDT_WantReturn (1L << 2)
@@ -41,7 +45,6 @@
 class CFWL_MessageKey;
 class CFWL_MessageMouse;
 class CFWL_Caret;
-class CFX_RenderDevice;
 
 class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
  public:
@@ -162,5 +165,10 @@ class CFWL_Edit : public CFWL_Widget, public CFDE_TextEditEngine::Delegate {
   WideString m_wsCache;
   WideString m_wsFont;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_Edit;
 
 #endif  // XFA_FWL_CFWL_EDIT_H_

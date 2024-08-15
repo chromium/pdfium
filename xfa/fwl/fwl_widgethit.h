@@ -7,6 +7,8 @@
 #ifndef XFA_FWL_FWL_WIDGETHIT_H_
 #define XFA_FWL_FWL_WIDGETHIT_H_
 
+namespace pdfium {
+
 enum class FWL_WidgetHit {
   Unknown = 0,
   Client,
@@ -31,5 +33,10 @@ enum class FWL_WidgetHit {
   UpButton,
   DownButton
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::FWL_WidgetHit;
 
 #endif  // XFA_FWL_FWL_WIDGETHIT_H_

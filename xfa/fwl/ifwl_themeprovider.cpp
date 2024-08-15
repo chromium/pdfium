@@ -19,6 +19,8 @@
 #include "xfa/fwl/theme/cfwl_pushbuttontp.h"
 #include "xfa/fwl/theme/cfwl_scrollbartp.h"
 
+namespace pdfium {
+
 IFWL_ThemeProvider::IFWL_ThemeProvider(cppgc::Heap* pHeap)
     : m_pCheckBoxTP(cppgc::MakeGarbageCollected<CFWL_CheckBoxTP>(
           pHeap->GetAllocationHandle())),
@@ -87,3 +89,5 @@ CFWL_WidgetTP* IFWL_ThemeProvider::GetTheme(const CFWL_Widget* pWidget) const {
       return nullptr;
   }
 }
+
+}  // namespace pdfium

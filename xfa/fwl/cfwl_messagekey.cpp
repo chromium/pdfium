@@ -6,6 +6,8 @@
 
 #include "xfa/fwl/cfwl_messagekey.h"
 
+namespace pdfium {
+
 CFWL_MessageKey::CFWL_MessageKey(CFWL_Widget* pDstTarget,
                                  KeyCommand cmd,
                                  Mask<XFA_FWL_KeyFlag> flags,
@@ -16,3 +18,5 @@ CFWL_MessageKey::CFWL_MessageKey(CFWL_Widget* pDstTarget,
       m_dwKeyCodeOrChar(dwKeyCodeOrChar) {}
 
 CFWL_MessageKey::~CFWL_MessageKey() = default;
+
+}  // namespace pdfium

@@ -23,6 +23,8 @@
 #include "xfa/fwl/cfwl_themetext.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
+namespace pdfium {
+
 namespace {
 
 constexpr float kMonthCalHSepHeight = 1.0f;
@@ -464,7 +466,7 @@ void CFWL_MonthCalendar::ResetDateItem() {
 
     const bool bFlagged =
         m_iYear == m_iCurYear && m_iMonth == m_iCurMonth && m_iDay == i + 1;
-    const bool bSelected = pdfium::Contains(m_SelDayArray, i + 1);
+    const bool bSelected = Contains(m_SelDayArray, i + 1);
     m_DateArray.push_back(
         std::make_unique<DATEINFO>(i + 1, iDayOfWeek, bFlagged, bSelected,
                                    WideString::FormatInteger(i + 1)));
@@ -528,8 +530,9 @@ void CFWL_MonthCalendar::RemoveSelDay() {
 
 void CFWL_MonthCalendar::AddSelDay(int32_t iDay) {
   DCHECK(iDay > 0);
-  if (!pdfium::Contains(m_SelDayArray, iDay))
+  if (!Contains(m_SelDayArray, iDay)) {
     return;
+  }
 
   RemoveSelDay();
   if (iDay <= fxcrt::CollectionSize<int32_t>(m_DateArray))
@@ -547,8 +550,9 @@ void CFWL_MonthCalendar::JumpToToday() {
     return;
   }
 
-  if (!pdfium::Contains(m_SelDayArray, m_iDay))
+  if (!Contains(m_SelDayArray, m_iDay)) {
     AddSelDay(m_iDay);
+  }
 }
 
 WideString CFWL_MonthCalendar::GetHeadText(int32_t iYear, int32_t iMonth) {
@@ -732,3 +736,5 @@ Mask<CFWL_PartState> CFWL_MonthCalendar::DATEINFO::AsPartStateMask() const {
     dwStates |= CFWL_PartState::kSelected;
   return dwStates;
 }
+
+}  // namespace pdfium

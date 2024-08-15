@@ -29,6 +29,8 @@
 #include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
+namespace pdfium {
+
 namespace {
 
 constexpr float kCalcHeight = 2048.0f;
@@ -351,3 +353,5 @@ CFWL_Widget::ScopedUpdateLock::ScopedUpdateLock(CFWL_Widget* widget)
 CFWL_Widget::ScopedUpdateLock::~ScopedUpdateLock() {
   widget_->UnlockUpdate();
 }
+
+}  // namespace pdfium

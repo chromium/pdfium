@@ -10,6 +10,8 @@
 #include "core/fxcrt/widestring.h"
 #include "xfa/fwl/cfwl_event.h"
 
+namespace pdfium {
+
 class CFWL_EventTextWillChange final : public CFWL_Event {
  public:
   CFWL_EventTextWillChange(CFWL_Widget* pSrcTarget,
@@ -44,5 +46,10 @@ class CFWL_EventTextWillChange final : public CFWL_Event {
   size_t selection_end_;
   bool cancelled_ = false;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_EventTextWillChange;
 
 #endif  // XFA_FWL_CFWL_EVENTTEXTWILLCHANGE_H_

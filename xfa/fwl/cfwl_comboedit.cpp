@@ -10,6 +10,8 @@
 #include "xfa/fwl/cfwl_combobox.h"
 #include "xfa/fwl/cfwl_messagemouse.h"
 
+namespace pdfium {
+
 CFWL_ComboEdit::CFWL_ComboEdit(CFWL_App* app,
                                const Properties& properties,
                                CFWL_Widget* pOuter)
@@ -54,3 +56,5 @@ void CFWL_ComboEdit::OnProcessMessage(CFWL_Message* pMessage) {
   if (backDefault)
     CFWL_Edit::OnProcessMessage(pMessage);
 }
+
+}  // namespace pdfium

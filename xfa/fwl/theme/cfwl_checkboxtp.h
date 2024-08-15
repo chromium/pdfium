@@ -14,9 +14,10 @@
 #include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFGAS_GEPath;
-class CFWL_Widget;
 
 namespace pdfium {
+
+class CFWL_Widget;
 
 class CFWL_CheckBoxTP final : public CFWL_WidgetTP {
  public:

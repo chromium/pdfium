@@ -10,6 +10,8 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "xfa/fwl/cfwl_message.h"
 
+namespace pdfium {
+
 class CFWL_MessageMouseWheel final : public CFWL_Message {
  public:
   CFWL_MessageMouseWheel(CFWL_Widget* destination,
@@ -26,5 +28,10 @@ class CFWL_MessageMouseWheel final : public CFWL_Message {
   CFX_PointF pos_;
   const CFX_Vector delta_;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_MessageMouseWheel;
 
 #endif  // XFA_FWL_CFWL_MESSAGEMOUSEWHEEL_H_

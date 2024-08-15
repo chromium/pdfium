@@ -6,6 +6,8 @@
 
 #include "xfa/fwl/cfwl_eventselectchanged.h"
 
+namespace pdfium {
+
 CFWL_EventSelectChanged::CFWL_EventSelectChanged(CFWL_Widget* pSrcTarget,
                                                  bool bLButtonUp)
     : CFWL_Event(CFWL_Event::Type::SelectChanged, pSrcTarget),
@@ -25,3 +27,5 @@ CFWL_EventSelectChanged::CFWL_EventSelectChanged(CFWL_Widget* pSrcTarget,
       m_iDay(iDay) {}
 
 CFWL_EventSelectChanged::~CFWL_EventSelectChanged() = default;
+
+}  // namespace pdfium

@@ -6,6 +6,8 @@
 
 #include "xfa/fwl/cfwl_themepart.h"
 
+namespace pdfium {
+
 CFWL_ThemePart::CFWL_ThemePart(Part iPart, CFWL_Widget* pWidget)
     : m_iPart(iPart), m_pWidget(pWidget) {}
 
@@ -20,3 +22,5 @@ FWLTHEME_STATE CFWL_ThemePart::GetThemeState() const {
     return FWLTHEME_STATE::kHover;
   return FWLTHEME_STATE::kNormal;
 }
+
+}  // namespace pdfium

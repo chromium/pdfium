@@ -10,9 +10,12 @@
 #include "v8/include/cppgc/garbage-collected.h"
 
 class CFGAS_GEGraphics;
+class CFX_Matrix;
+
+namespace pdfium {
+
 class CFWL_Event;
 class CFWL_Message;
-class CFX_Matrix;
 
 class IFWL_WidgetDelegate : public cppgc::GarbageCollectedMixin {
  public:
@@ -23,5 +26,10 @@ class IFWL_WidgetDelegate : public cppgc::GarbageCollectedMixin {
   virtual void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                             const CFX_Matrix& matrix) = 0;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::IFWL_WidgetDelegate;
 
 #endif  // XFA_FWL_IFWL_WIDGETDELEGATE_H_

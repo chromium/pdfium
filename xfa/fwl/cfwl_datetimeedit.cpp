@@ -10,6 +10,8 @@
 #include "xfa/fwl/cfwl_messagemouse.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 
+namespace pdfium {
+
 CFWL_DateTimeEdit::CFWL_DateTimeEdit(CFWL_App* app,
                                      const Properties& properties,
                                      CFWL_Widget* pOuter)
@@ -40,3 +42,5 @@ void CFWL_DateTimeEdit::OnProcessMessage(CFWL_Message* pMessage) {
   }
   CFWL_Edit::OnProcessMessage(pMessage);
 }
+
+}  // namespace pdfium

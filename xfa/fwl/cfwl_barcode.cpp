@@ -13,6 +13,8 @@
 #include "xfa/fwl/ifwl_themeprovider.h"
 #include "xfa/fwl/theme/cfwl_utils.h"
 
+namespace pdfium {
+
 CFWL_Barcode::CFWL_Barcode(CFWL_App* app)
     : CFWL_Edit(app, Properties(), nullptr) {}
 
@@ -182,3 +184,5 @@ void CFWL_Barcode::CreateBarcodeEngine() {
 
   m_pBarcodeEngine = CFX_Barcode::Create(m_type);
 }
+
+}  // namespace pdfium

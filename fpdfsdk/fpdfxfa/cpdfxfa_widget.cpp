@@ -16,9 +16,10 @@
 #include "xfa/fxfa/cxfa_ffwidgethandler.h"
 #include "xfa/fxfa/parser/cxfa_node.h"
 
-#define CHECK_FWL_VKEY_ENUM____(name)                                   \
-  static_assert(static_cast<int>(name) == static_cast<int>(XFA_##name), \
-                "FWL_VKEYCODE enum mismatch")
+#define CHECK_FWL_VKEY_ENUM____(name)                                 \
+  static_assert(                                                      \
+      static_cast<int>(name) == static_cast<int>(pdfium::XFA_##name), \
+      "FWL_VKEYCODE enum mismatch")
 
 CHECK_FWL_VKEY_ENUM____(FWL_VKEY_Back);
 CHECK_FWL_VKEY_ENUM____(FWL_VKEY_Tab);

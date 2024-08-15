@@ -10,6 +10,8 @@
 #include "xfa/fwl/cfwl_listbox.h"
 #include "xfa/fwl/cfwl_widget.h"
 
+namespace pdfium {
+
 class CFWL_ComboList final : public CFWL_ListBox {
  public:
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
@@ -36,5 +38,10 @@ class CFWL_ComboList final : public CFWL_ListBox {
 
   bool m_bNotifyOwner = true;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_ComboList;
 
 #endif  // XFA_FWL_CFWL_COMBOLIST_H_

@@ -22,6 +22,8 @@
 #include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fwl/fwl_widgetdef.h"
 
+namespace pdfium {
+
 namespace {
 
 uint64_t g_next_listener_key = 1;
@@ -274,3 +276,5 @@ bool CFWL_NoteDriver::Target::ProcessEvent(CFWL_Event* pEvent) {
   pDelegate->OnProcessEvent(pEvent);
   return true;
 }
+
+}  // namespace pdfium

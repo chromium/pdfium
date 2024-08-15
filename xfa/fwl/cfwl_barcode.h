@@ -17,6 +17,8 @@
 
 class CFX_Barcode;
 
+namespace pdfium {
+
 class CFWL_Barcode final : public CFWL_Edit {
  public:
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
@@ -73,5 +75,10 @@ class CFWL_Barcode final : public CFWL_Edit {
   std::optional<int32_t> m_nECLevel;
   std::unique_ptr<CFX_Barcode> m_pBarcodeEngine;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_Barcode;
 
 #endif  // XFA_FWL_CFWL_BARCODE_H_

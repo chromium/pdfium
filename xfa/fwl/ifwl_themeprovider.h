@@ -13,14 +13,16 @@
 #include "fxjs/gc/heap.h"
 #include "v8/include/cppgc/garbage-collected.h"
 #include "v8/include/cppgc/member.h"
-// TODO(crbug.com/42271761): Remove and forward declare CFWL_WidgetTP.
-#include "xfa/fwl/theme/cfwl_widgettp.h"
 
 class CFGAS_GEFont;
+
+namespace pdfium {
+
 class CFWL_ThemeBackground;
 class CFWL_ThemePart;
 class CFWL_ThemeText;
 class CFWL_Widget;
+class CFWL_WidgetTP;
 
 class IFWL_ThemeProvider : public cppgc::GarbageCollectedMixin {
  public:
@@ -63,5 +65,10 @@ class IFWL_ThemeProvider : public cppgc::GarbageCollectedMixin {
   cppgc::Member<CFWL_WidgetTP> m_pCaretTP;
   cppgc::Member<CFWL_WidgetTP> m_pBarcodeTP;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::IFWL_ThemeProvider;
 
 #endif  // XFA_FWL_IFWL_THEMEPROVIDER_H_

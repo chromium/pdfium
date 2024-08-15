@@ -16,6 +16,8 @@
 #include "xfa/fwl/cfwl_widgetmgr.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
+namespace pdfium {
+
 namespace {
 
 constexpr int kDateTimePickerHeight = 20;
@@ -463,3 +465,5 @@ bool CFWL_DateTimePicker::CanUndo() {
 bool CFWL_DateTimePicker::CanRedo() {
   return m_pEdit->CanRedo();
 }
+
+}  // namespace pdfium

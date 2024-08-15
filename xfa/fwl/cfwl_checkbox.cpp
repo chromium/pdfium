@@ -21,6 +21,8 @@
 #include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
+namespace pdfium {
+
 namespace {
 
 const int kCaptionMargin = 5;
@@ -319,3 +321,5 @@ void CFWL_CheckBox::OnKeyDown(CFWL_MessageKey* pMsg) {
     NextStates();
   }
 }
+
+}  // namespace pdfium

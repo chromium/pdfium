@@ -15,6 +15,8 @@
 #include "xfa/fwl/cfwl_monthcalendar.h"
 #include "xfa/fwl/cfwl_widget.h"
 
+namespace pdfium {
+
 #define FWL_STYLEEXT_DTP_ShortDateFormat (1L << 1)
 #define FWL_STYLEEXT_DTP_EditHAlignMask (3L << 4)
 #define FWL_STYLEEXT_DTP_EditHNear (0L << 4)
@@ -109,5 +111,10 @@ class CFWL_DateTimePicker final : public CFWL_Widget {
   cppgc::Member<CFWL_DateTimeEdit> const m_pEdit;
   cppgc::Member<CFWL_MonthCalendar> const m_pMonthCal;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_DateTimePicker;
 
 #endif  // XFA_FWL_CFWL_DATETIMEPICKER_H_

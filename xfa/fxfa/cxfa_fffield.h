@@ -65,8 +65,8 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
   FWL_WidgetHit HitTest(const CFX_PointF& point) override;
 
   // IFWL_WidgetDelegate:
-  void OnProcessMessage(CFWL_Message* pMessage) override;
-  void OnProcessEvent(CFWL_Event* pEvent) override;
+  void OnProcessMessage(pdfium::CFWL_Message* pMessage) override;
+  void OnProcessEvent(pdfium::CFWL_Event* pEvent) override;
   void OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                     const CFX_Matrix& matrix) override;
 

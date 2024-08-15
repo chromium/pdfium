@@ -6,6 +6,8 @@
 
 #include "xfa/fwl/cfwl_eventscroll.h"
 
+namespace pdfium {
+
 CFWL_EventScroll::CFWL_EventScroll(CFWL_Widget* pSrcTarget,
                                    Code code,
                                    float pos)
@@ -14,3 +16,5 @@ CFWL_EventScroll::CFWL_EventScroll(CFWL_Widget* pSrcTarget,
       m_fPos(pos) {}
 
 CFWL_EventScroll::~CFWL_EventScroll() = default;
+
+}  // namespace pdfium

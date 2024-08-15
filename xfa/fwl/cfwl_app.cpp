@@ -11,6 +11,8 @@
 #include "xfa/fwl/cfwl_widget.h"
 #include "xfa/fwl/cfwl_widgetmgr.h"
 
+namespace pdfium {
+
 CFWL_App::CFWL_App(AdapterIface* pAdapter)
     : m_pAdapter(pAdapter),
       m_pWidgetMgr(cppgc::MakeGarbageCollected<CFWL_WidgetMgr>(
@@ -28,3 +30,5 @@ void CFWL_App::Trace(cppgc::Visitor* visitor) const {
   visitor->Trace(m_pWidgetMgr);
   visitor->Trace(m_pNoteDriver);
 }
+
+}  // namespace pdfium

@@ -25,6 +25,8 @@
 #include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
+namespace pdfium {
+
 CFWL_ComboBox::CFWL_ComboBox(CFWL_App* app)
     : CFWL_Widget(app, Properties(), nullptr),
       m_pEdit(cppgc::MakeGarbageCollected<CFWL_ComboEdit>(
@@ -527,3 +529,5 @@ void CFWL_ComboBox::GetPopupPos(float fMinHeight,
   GetWidgetMgr()->GetAdapterPopupPos(this, fMinHeight, fMaxHeight, rtAnchor,
                                      pPopupRect);
 }
+
+}  // namespace pdfium

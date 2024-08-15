@@ -9,6 +9,8 @@
 
 #include "xfa/fwl/cfwl_widget.h"
 
+namespace pdfium {
+
 class CFWL_PictureBox final : public CFWL_Widget {
  public:
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
@@ -29,5 +31,10 @@ class CFWL_PictureBox final : public CFWL_Widget {
   CFX_RectF m_ImageRect;
   CFX_Matrix m_matrix;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_PictureBox;
 
 #endif  // XFA_FWL_CFWL_PICTUREBOX_H_

@@ -31,6 +31,8 @@
 #include "xfa/fxfa/cxfa_fontmgr.h"
 #include "xfa/fxfa/parser/cxfa_para.h"
 
+namespace pdfium {
+
 namespace {
 
 constexpr const wchar_t* kFWLThemeCalFonts[] = {
@@ -251,3 +253,5 @@ void CXFA_FWLTheme::CalcTextRect(const CFWL_ThemeText& pParams,
   m_pTextOut->SetStyles(pParams.m_dwTTOStyles);
   m_pTextOut->CalcLogicSize(pParams.m_wsText.AsStringView(), pRect);
 }
+
+}  // namespace pdfium

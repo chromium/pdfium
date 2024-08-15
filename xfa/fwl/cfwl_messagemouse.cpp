@@ -6,6 +6,8 @@
 
 #include "xfa/fwl/cfwl_messagemouse.h"
 
+namespace pdfium {
+
 CFWL_MessageMouse::CFWL_MessageMouse(CFWL_Widget* pDstTarget,
                                      MouseCommand cmd,
                                      Mask<XFA_FWL_KeyFlag> flags,
@@ -16,3 +18,5 @@ CFWL_MessageMouse::CFWL_MessageMouse(CFWL_Widget* pDstTarget,
       m_pos(pos) {}
 
 CFWL_MessageMouse::~CFWL_MessageMouse() = default;
+
+}  // namespace pdfium

@@ -17,6 +17,8 @@
 #include "xfa/fwl/cfwl_themepart.h"
 #include "xfa/fwl/cfwl_widget.h"
 
+namespace pdfium {
+
 #define FWL_STYLEEXT_SCB_Horz (0L << 0)
 #define FWL_STYLEEXT_SCB_Vert (1L << 0)
 
@@ -126,5 +128,10 @@ class CFWL_ScrollBar final : public CFWL_Widget,
   CFX_RectF m_MaxTrackRect;
   std::unique_ptr<CFX_Timer> m_pTimer;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_ScrollBar;
 
 #endif  // XFA_FWL_CFWL_SCROLLBAR_H_

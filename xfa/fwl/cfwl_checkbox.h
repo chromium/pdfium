@@ -10,6 +10,8 @@
 #include "xfa/fwl/cfwl_event.h"
 #include "xfa/fwl/cfwl_widget.h"
 
+namespace pdfium {
+
 #define FWL_STYLEEXT_CKB_3State (1L << 6)
 #define FWL_STYLEEXT_CKB_RadioButton (1L << 7)
 #define FWL_STYLEEXT_CKB_SignShapeCheck 0
@@ -71,5 +73,10 @@ class CFWL_CheckBox final : public CFWL_Widget {
   bool m_bBtnDown = false;
   float m_fBoxHeight = 16.0f;
 };
+
+}  // namespace pdfium
+
+// TODO(crbug.com/42271761): Remove.
+using pdfium::CFWL_CheckBox;
 
 #endif  // XFA_FWL_CFWL_CHECKBOX_H_

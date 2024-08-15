@@ -18,13 +18,13 @@
 #include "xfa/fwl/theme/cfwl_utils.h"
 
 class CFGAS_GEGraphics;
-class CFWL_ThemeBackground;
-class CFWL_ThemeText;
-class IFWL_ThemeProvider;
 
 namespace pdfium {
 
 class CFDE_TextOut;
+class CFWL_ThemeBackground;
+class CFWL_ThemeText;
+class IFWL_ThemeProvider;
 
 class CFWL_WidgetTP : public cppgc::GarbageCollected<CFWL_WidgetTP> {
  public:

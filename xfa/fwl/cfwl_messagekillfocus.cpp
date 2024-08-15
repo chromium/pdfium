@@ -6,7 +6,11 @@
 
 #include "xfa/fwl/cfwl_messagekillfocus.h"
 
+namespace pdfium {
+
 CFWL_MessageKillFocus::CFWL_MessageKillFocus(CFWL_Widget* pDstTarget)
     : CFWL_Message(CFWL_Message::Type::kKillFocus, pDstTarget) {}
 
 CFWL_MessageKillFocus::~CFWL_MessageKillFocus() = default;
+
+}  // namespace pdfium

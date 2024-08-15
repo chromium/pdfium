@@ -6,6 +6,8 @@
 
 #include "xfa/fwl/cfwl_picturebox.h"
 
+namespace pdfium {
+
 CFWL_PictureBox::CFWL_PictureBox(CFWL_App* app)
     : CFWL_Widget(app, CFWL_Widget::Properties(), nullptr) {}
 
@@ -35,3 +37,5 @@ void CFWL_PictureBox::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                                    const CFX_Matrix& matrix) {
   DrawWidget(pGraphics, matrix);
 }
+
+}  // namespace pdfium

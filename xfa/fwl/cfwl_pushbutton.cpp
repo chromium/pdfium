@@ -17,6 +17,8 @@
 #include "xfa/fwl/fwl_widgetdef.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
+namespace pdfium {
+
 CFWL_PushButton::CFWL_PushButton(CFWL_App* app)
     : CFWL_Widget(app, Properties(), nullptr) {}
 
@@ -215,3 +217,5 @@ void CFWL_PushButton::OnKeyDown(CFWL_MessageKey* pMsg) {
   CFWL_Event wmClick(CFWL_Event::Type::Click, this);
   DispatchEvent(&wmClick);
 }
+
+}  // namespace pdfium

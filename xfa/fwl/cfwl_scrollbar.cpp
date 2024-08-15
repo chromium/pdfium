@@ -18,6 +18,8 @@
 #include "xfa/fwl/cfwl_themepart.h"
 #include "xfa/fwl/ifwl_themeprovider.h"
 
+namespace pdfium {
+
 namespace {
 
 constexpr int kScrollbarElapsedMsecs = 500;
@@ -465,3 +467,5 @@ void CFWL_ScrollBar::OnTimerFired() {
         std::make_unique<CFX_Timer>(GetFWLApp()->GetTimerHandler(), this, 0);
   }
 }
+
+}  // namespace pdfium
