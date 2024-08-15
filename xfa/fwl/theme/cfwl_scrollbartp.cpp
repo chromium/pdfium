@@ -16,7 +16,8 @@
 
 namespace pdfium {
 
-CFWL_ScrollBarTP::CFWL_ScrollBarTP() : m_pThemeData(new SBThemeData) {
+CFWL_ScrollBarTP::CFWL_ScrollBarTP()
+    : m_pThemeData(std::make_unique<SBThemeData>()) {
   SetThemeData();
 }
 

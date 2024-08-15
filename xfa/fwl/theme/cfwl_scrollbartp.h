@@ -51,7 +51,7 @@ class CFWL_ScrollBarTP final : public CFWL_WidgetTP {
                      const CFX_Matrix& matrix);
   void SetThemeData();
 
-  std::unique_ptr<SBThemeData> m_pThemeData;
+  std::unique_ptr<SBThemeData> const m_pThemeData;
 };
 
 }  // namespace pdfium
