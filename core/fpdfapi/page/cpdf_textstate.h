@@ -74,14 +74,14 @@ class CPDF_TextState {
     float GetFontSizeV() const;
     float GetFontSizeH() const;
 
-    RetainPtr<CPDF_Font> m_pFont;
-    UnownedPtr<const CPDF_Document> m_pDocument;
-    float m_FontSize = 1.0f;
-    float m_CharSpace = 0.0f;
-    float m_WordSpace = 0.0f;
-    TextRenderingMode m_TextMode = TextRenderingMode::MODE_FILL;
-    std::array<float, 4> m_Matrix = {1.0f, 0.0f, 0.0f, 1.0f};
-    std::array<float, 4> m_CTM = {1.0f, 0.0f, 0.0f, 1.0f};
+    RetainPtr<CPDF_Font> font_;
+    UnownedPtr<const CPDF_Document> document_;
+    float font_size_ = 1.0f;
+    float char_space_ = 0.0f;
+    float word_space_ = 0.0f;
+    TextRenderingMode text_rendering_mode_ = TextRenderingMode::MODE_FILL;
+    std::array<float, 4> matrix_ = {1.0f, 0.0f, 0.0f, 1.0f};
+    std::array<float, 4> ctm_ = {1.0f, 0.0f, 0.0f, 1.0f};
 
    private:
     TextData();
