@@ -68,10 +68,10 @@ void CFGAS_TxtBreak::AppendChar_Combination(CFGAS_Char* pCurChar) {
         (pLastChar->m_dwCharStyles & FX_TXTCHARSTYLE_ArabicShadda) == 0) {
       wchar_t wLast = pLastChar->char_code();
       std::optional<uint16_t> maybe_shadda;
-      if (wch == pdfium::arabic::kArabicShadda) {
-        maybe_shadda = pdfium::arabic::GetArabicFromShaddaTable(wLast);
-      } else if (wLast == pdfium::arabic::kArabicShadda) {
-        maybe_shadda = pdfium::arabic::GetArabicFromShaddaTable(wch);
+      if (wch == pdfium::kArabicShadda) {
+        maybe_shadda = pdfium::GetArabicFromShaddaTable(wLast);
+      } else if (wLast == pdfium::kArabicShadda) {
+        maybe_shadda = pdfium::GetArabicFromShaddaTable(wch);
       }
       if (maybe_shadda.has_value()) {
         wch = maybe_shadda.value();
@@ -140,7 +140,7 @@ CFGAS_Char::BreakType CFGAS_TxtBreak::AppendChar_Arabic(CFGAS_Char* pCurChar) {
       iCharWidth = pLastChar->m_iCharWidth;
 
       CFGAS_Char* pPrevChar = GetLastChar(2, true, false);
-      wForm = pdfium::arabic::GetFormChar(pLastChar, pPrevChar, pCurChar);
+      wForm = pdfium::GetArabicFormChar(pLastChar, pPrevChar, pCurChar);
       bAlef = (wForm == pdfium::unicode::kZeroWidthNoBreakSpace &&
                pLastChar->GetCharType() == FX_CHARTYPE::kArabicAlef);
       if (m_pFont) {
@@ -160,8 +160,8 @@ CFGAS_Char::BreakType CFGAS_TxtBreak::AppendChar_Arabic(CFGAS_Char* pCurChar) {
   }
 
   m_eCharType = chartype;
-  wForm = pdfium::arabic::GetFormChar(pCurChar, bAlef ? nullptr : pLastChar,
-                                      nullptr);
+  wForm =
+      pdfium::GetArabicFormChar(pCurChar, bAlef ? nullptr : pLastChar, nullptr);
   FX_SAFE_INT32 iCharWidth = 0;
   if (m_bCombText) {
     iCharWidth = m_iCombWidth;
@@ -717,10 +717,10 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
         wNext = pdfium::unicode::kZeroWidthNoBreakSpace;
       }
 
-      wForm = pdfium::arabic::GetFormChar(wch, wPrev, wNext);
-      bLam = (wPrev == pdfium::arabic::kArabicLetterLam &&
-              wch == pdfium::arabic::kArabicLetterLam &&
-              wNext == pdfium::arabic::kArabicLetterHeh);
+      wForm = pdfium::GetArabicFormChar(wch, wPrev, wNext);
+      bLam = (wPrev == pdfium::kArabicLetterLam &&
+              wch == pdfium::kArabicLetterLam &&
+              wNext == pdfium::kArabicLetterHeh);
     } else if (chartype == FX_CHARTYPE::kCombination) {
       wForm = wch;
       if (wch >= 0x064C && wch <= 0x0651) {
@@ -739,10 +739,10 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
             wNext = pStr.Front();
           }
           std::optional<uint16_t> maybe_shadda;
-          if (wch == pdfium::arabic::kArabicShadda) {
-            maybe_shadda = pdfium::arabic::GetArabicFromShaddaTable(wNext);
-          } else if (wNext == pdfium::arabic::kArabicShadda) {
-            maybe_shadda = pdfium::arabic::GetArabicFromShaddaTable(wch);
+          if (wch == pdfium::kArabicShadda) {
+            maybe_shadda = pdfium::GetArabicFromShaddaTable(wNext);
+          } else if (wNext == pdfium::kArabicShadda) {
+            maybe_shadda = pdfium::GetArabicFromShaddaTable(wch);
           }
           if (maybe_shadda.has_value()) {
             wForm = maybe_shadda.value();
@@ -792,13 +792,12 @@ size_t CFGAS_TxtBreak::GetDisplayPos(const Run& run,
     form_chars[0].wForm = wForm;
     form_chars[0].iWidth = iCharWidth;
     if (bLam) {
-      form_chars[1].wForm = pdfium::arabic::kArabicShadda;
+      form_chars[1].wForm = pdfium::kArabicShadda;
       form_chars[1].iWidth =
-          pFont->GetCharWidth(pdfium::arabic::kArabicShadda).value_or(0);
-      form_chars[2].wForm = pdfium::arabic::kArabicLetterSuperscriptAlef;
+          pFont->GetCharWidth(pdfium::kArabicShadda).value_or(0);
+      form_chars[2].wForm = pdfium::kArabicLetterSuperscriptAlef;
       form_chars[2].iWidth =
-          pFont->GetCharWidth(pdfium::arabic::kArabicLetterSuperscriptAlef)
-              .value_or(0);
+          pFont->GetCharWidth(pdfium::kArabicLetterSuperscriptAlef).value_or(0);
     }
 
     for (int32_t j = 0; j < iForms; j++) {

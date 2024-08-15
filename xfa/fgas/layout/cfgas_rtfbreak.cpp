@@ -208,7 +208,7 @@ CFGAS_Char::BreakType CFGAS_RTFBreak::AppendChar_Arabic(CFGAS_Char* pCurChar) {
     if (pLastChar) {
       m_pCurLine->m_iWidth -= pLastChar->m_iCharWidth;
       CFGAS_Char* pPrevChar = GetLastChar(2, false, true);
-      wForm = pdfium::arabic::GetFormChar(pLastChar, pPrevChar, pCurChar);
+      wForm = pdfium::GetArabicFormChar(pLastChar, pPrevChar, pCurChar);
       bAlef = (wForm == pdfium::unicode::kZeroWidthNoBreakSpace &&
                pLastChar->GetCharType() == FX_CHARTYPE::kArabicAlef);
       FX_SAFE_INT32 iCharWidth = 0;
@@ -238,8 +238,8 @@ CFGAS_Char::BreakType CFGAS_RTFBreak::AppendChar_Arabic(CFGAS_Char* pCurChar) {
     }
   }
 
-  wForm = pdfium::arabic::GetFormChar(pCurChar, bAlef ? nullptr : pLastChar,
-                                      nullptr);
+  wForm =
+      pdfium::GetArabicFormChar(pCurChar, bAlef ? nullptr : pLastChar, nullptr);
   FX_SAFE_INT32 iCharWidth = 0;
   if (m_pFont) {
     std::optional<uint16_t> iCharWidthRet = m_pFont->GetCharWidth(wForm);
@@ -757,7 +757,7 @@ size_t CFGAS_RTFBreak::GetDisplayPos(const CFGAS_TextPiece* pPiece,
       } else {
         wNext = pdfium::unicode::kZeroWidthNoBreakSpace;
       }
-      wForm = pdfium::arabic::GetFormChar(wch, wPrev, wNext);
+      wForm = pdfium::GetArabicFormChar(wch, wPrev, wNext);
     } else if (bRTLPiece) {
       wForm = pdfium::unicode::GetMirrorChar(wch);
     }
