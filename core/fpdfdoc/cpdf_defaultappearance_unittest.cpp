@@ -24,7 +24,7 @@ struct FindTagTestStruct {
   const char* token;
   int num_params;
   bool result;
-  unsigned int result_pos;
+  unsigned int result_position;
 };
 
 }  // namespace
@@ -55,7 +55,7 @@ TEST(CPDFDefaultAppearanceTest, FindTagParamFromStart) {
               CPDF_DefaultAppearance::FindTagParamFromStartForTesting(
                   &parser, item.token, item.num_params))
         << " for case " << item.input;
-    EXPECT_EQ(item.result_pos, parser.GetCurPos())
+    EXPECT_EQ(item.result_position, parser.GetCurrentPosition())
         << " for case " << item.input;
   }
 }

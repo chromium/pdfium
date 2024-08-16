@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/parser/cpdf_simple_parser.h"
 
+#include <stdint.h>
+
 #include "core/fpdfapi/parser/fpdf_parser_utility.h"
 
 CPDF_SimpleParser::CPDF_SimpleParser(pdfium::span<const uint8_t> input)
@@ -14,117 +16,129 @@ CPDF_SimpleParser::CPDF_SimpleParser(pdfium::span<const uint8_t> input)
 CPDF_SimpleParser::~CPDF_SimpleParser() = default;
 
 ByteStringView CPDF_SimpleParser::GetWord() {
-  uint8_t ch;
+  uint8_t cur_char;
 
   // Skip whitespace and comment lines.
   while (true) {
-    if (data_.size() <= cur_pos_)
+    if (data_.size() <= cur_position_) {
       return ByteStringView();
-
-    ch = data_[cur_pos_++];
-    while (PDFCharIsWhitespace(ch)) {
-      if (data_.size() <= cur_pos_)
-        return ByteStringView();
-      ch = data_[cur_pos_++];
     }
 
-    if (ch != '%')
+    cur_char = data_[cur_position_++];
+    while (PDFCharIsWhitespace(cur_char)) {
+      if (data_.size() <= cur_position_) {
+        return ByteStringView();
+      }
+      cur_char = data_[cur_position_++];
+    }
+
+    if (cur_char != '%') {
       break;
+    }
 
     while (true) {
-      if (data_.size() <= cur_pos_)
+      if (data_.size() <= cur_position_) {
         return ByteStringView();
+      }
 
-      ch = data_[cur_pos_++];
-      if (PDFCharIsLineEnding(ch))
+      cur_char = data_[cur_position_++];
+      if (PDFCharIsLineEnding(cur_char)) {
         break;
+      }
     }
   }
 
-  uint8_t dwSize = 0;
-  uint32_t start_pos = cur_pos_ - 1;
-  if (PDFCharIsDelimiter(ch)) {
+  uint8_t size = 0;
+  uint32_t start_position = cur_position_ - 1;
+  if (PDFCharIsDelimiter(cur_char)) {
     // Find names
-    if (ch == '/') {
+    if (cur_char == '/') {
       while (true) {
-        if (data_.size() <= cur_pos_)
+        if (data_.size() <= cur_position_) {
           break;
+        }
 
-        ch = data_[cur_pos_++];
-        if (!PDFCharIsOther(ch) && !PDFCharIsNumeric(ch)) {
-          cur_pos_--;
-          dwSize = cur_pos_ - start_pos;
+        cur_char = data_[cur_position_++];
+        if (!PDFCharIsOther(cur_char) && !PDFCharIsNumeric(cur_char)) {
+          cur_position_--;
+          size = cur_position_ - start_position;
           break;
         }
       }
-      return ByteStringView(data_.subspan(start_pos, dwSize));
+      return ByteStringView(data_.subspan(start_position, size));
     }
 
-    dwSize = 1;
-    if (ch == '<') {
-      if (data_.size() <= cur_pos_) {
-        return ByteStringView(data_.subspan(start_pos, dwSize));
+    size = 1;
+    if (cur_char == '<') {
+      if (data_.size() <= cur_position_) {
+        return ByteStringView(data_.subspan(start_position, size));
       }
-      ch = data_[cur_pos_++];
-      if (ch == '<') {
-        dwSize = 2;
+      cur_char = data_[cur_position_++];
+      if (cur_char == '<') {
+        size = 2;
       } else {
-        while (cur_pos_ < data_.size() && data_[cur_pos_] != '>')
-          cur_pos_++;
+        while (cur_position_ < data_.size() && data_[cur_position_] != '>') {
+          cur_position_++;
+        }
 
-        if (cur_pos_ < data_.size())
-          cur_pos_++;
+        if (cur_position_ < data_.size()) {
+          cur_position_++;
+        }
 
-        dwSize = cur_pos_ - start_pos;
+        size = cur_position_ - start_position;
       }
-    } else if (ch == '>') {
-      if (data_.size() <= cur_pos_) {
-        return ByteStringView(data_.subspan(start_pos, dwSize));
+    } else if (cur_char == '>') {
+      if (data_.size() <= cur_position_) {
+        return ByteStringView(data_.subspan(start_position, size));
       }
-      ch = data_[cur_pos_++];
-      if (ch == '>')
-        dwSize = 2;
-      else
-        cur_pos_--;
-    } else if (ch == '(') {
+      cur_char = data_[cur_position_++];
+      if (cur_char == '>') {
+        size = 2;
+      } else {
+        cur_position_--;
+      }
+    } else if (cur_char == '(') {
       int level = 1;
-      while (cur_pos_ < data_.size()) {
-        if (data_[cur_pos_] == ')') {
+      while (cur_position_ < data_.size()) {
+        if (data_[cur_position_] == ')') {
           level--;
           if (level == 0)
             break;
         }
 
-        if (data_[cur_pos_] == '\\') {
-          if (data_.size() <= cur_pos_)
+        if (data_[cur_position_] == '\\') {
+          if (data_.size() <= cur_position_) {
             break;
+          }
 
-          cur_pos_++;
-        } else if (data_[cur_pos_] == '(') {
+          cur_position_++;
+        } else if (data_[cur_position_] == '(') {
           level++;
         }
-        if (data_.size() <= cur_pos_)
+        if (data_.size() <= cur_position_) {
           break;
+        }
 
-        cur_pos_++;
+        cur_position_++;
       }
-      if (cur_pos_ < data_.size())
-        cur_pos_++;
+      if (cur_position_ < data_.size()) {
+        cur_position_++;
+      }
 
-      dwSize = cur_pos_ - start_pos;
+      size = cur_position_ - start_position;
     }
-    return ByteStringView(data_.subspan(start_pos, dwSize));
+    return ByteStringView(data_.subspan(start_position, size));
   }
 
-  dwSize = 1;
-  while (cur_pos_ < data_.size()) {
-    ch = data_[cur_pos_++];
+  size = 1;
+  while (cur_position_ < data_.size()) {
+    cur_char = data_[cur_position_++];
 
-    if (PDFCharIsDelimiter(ch) || PDFCharIsWhitespace(ch)) {
-      cur_pos_--;
+    if (PDFCharIsDelimiter(cur_char) || PDFCharIsWhitespace(cur_char)) {
+      cur_position_--;
       break;
     }
-    dwSize++;
+    size++;
   }
-  return ByteStringView(data_.subspan(start_pos, dwSize));
+  return ByteStringView(data_.subspan(start_position, size));
 }

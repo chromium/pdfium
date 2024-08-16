@@ -28,9 +28,9 @@ bool FindTagParamFromStart(CPDF_SimpleParser* parser,
   int buf_index = 0;
   int buf_count = 0;
 
-  parser->SetCurPos(0);
+  parser->SetCurrentPosition(0);
   while (true) {
-    pBuf[buf_index++] = parser->GetCurPos();
+    pBuf[buf_index++] = parser->GetCurrentPosition();
     if (buf_index == nParams)
       buf_index = 0;
 
@@ -46,7 +46,7 @@ bool FindTagParamFromStart(CPDF_SimpleParser* parser,
       if (buf_count < nParams)
         continue;
 
-      parser->SetCurPos(pBuf[buf_index]);
+      parser->SetCurrentPosition(pBuf[buf_index]);
       return true;
     }
   }
