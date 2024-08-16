@@ -23,6 +23,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
+#include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
@@ -178,13 +179,20 @@ bool FPDF_FileHandlerContext::WriteBlock(pdfium::span<const uint8_t> buffer) {
     return false;
   }
 
-  if (m_pFS->WriteBlock(m_pFS->clientData, static_cast<FPDF_DWORD>(GetSize()),
+  const FX_FILESIZE size = GetSize();
+  FX_SAFE_FILESIZE new_position = size;
+  new_position += buffer.size();
+  if (!new_position.IsValid()) {
+    return false;
+  }
+
+  if (m_pFS->WriteBlock(m_pFS->clientData, static_cast<FPDF_DWORD>(size),
                         buffer.data(),
                         static_cast<FPDF_DWORD>(buffer.size())) != 0) {
     return false;
   }
 
-  m_nCurPos = GetSize() + buffer.size();
+  m_nCurPos = new_position.ValueOrDie();
   return true;
 }
 
