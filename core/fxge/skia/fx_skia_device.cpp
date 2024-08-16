@@ -623,9 +623,10 @@ void SetBitmapPaintForMerge(bool is_mask,
 RetainPtr<CFX_DIBitmap> MakeDebugBitmap(int width, int height, uint32_t color) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   // TODO(crbug.com/42271020): Consider adding support for
-  // `FXDIB_Format::kArgbPremul`
-  if (!bitmap->Create(width, height, FXDIB_Format::kArgb))
+  // `FXDIB_Format::kBgraPremul`
+  if (!bitmap->Create(width, height, FXDIB_Format::kBgra)) {
     return nullptr;
+  }
 
   bitmap->Clear(color);
   return bitmap;
@@ -709,7 +710,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
                      ? kAlpha_8_SkColorType
                      : kGray_8_SkColorType;
   } else if (bpp == 24) {
-    DCHECK_EQ(m_pBitmap->GetFormat(), FXDIB_Format::kRgb);
+    DCHECK_EQ(m_pBitmap->GetFormat(), FXDIB_Format::kBgr);
 
     // Save the input bitmap as `m_pOriginalBitmap` and save its 32 bpp
     // equivalent at `m_pBitmap` for Skia's internal process.
@@ -718,7 +719,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
     const int height = m_pOriginalBitmap->GetHeight();
 
     m_pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (!m_pBitmap->Create(width, height, FXDIB_Format::kArgbPremul) ||
+    if (!m_pBitmap->Create(width, height, FXDIB_Format::kBgraPremul) ||
         !m_pBitmap->TransferBitmap(width, height, m_pOriginalBitmap,
                                    /*src_left=*/0, /*src_top=*/0)) {
       // Skip creating SkCanvas if the 32-bpp bitmap creation fails.
@@ -735,9 +736,9 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
     DCHECK_EQ(bpp, 32);
     color_type = Get32BitSkColorType(bRgbByteOrder);
     FXDIB_Format format = m_pBitmap->GetFormat();
-    if (format == FXDIB_Format::kRgb32) {
+    if (format == FXDIB_Format::kBgrx) {
       alpha_type = kOpaque_SkAlphaType;
-    } else if (format == FXDIB_Format::kArgb) {
+    } else if (format == FXDIB_Format::kBgra) {
       alpha_type = kUnpremul_SkAlphaType;
     }
   }
@@ -1462,7 +1463,7 @@ RenderDeviceDriverIface::StartResult CFX_SkiaDeviceDriver::StartDIBits(
 
 void CFX_DIBitmap::PreMultiply() {
   CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
-  if (GetFormat() != FXDIB_Format::kArgb) {
+  if (GetFormat() != FXDIB_Format::kBgra) {
     return;
   }
 
@@ -1471,7 +1472,7 @@ void CFX_DIBitmap::PreMultiply() {
     return;
   }
 
-  SetFormat(FXDIB_Format::kArgbPremul);
+  SetFormat(FXDIB_Format::kBgraPremul);
   int height = GetHeight();
   int width = GetWidth();
   int row_bytes = GetPitch();
@@ -1486,7 +1487,7 @@ void CFX_DIBitmap::PreMultiply() {
 
 void CFX_DIBitmap::UnPreMultiply() {
   CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
-  if (GetFormat() != FXDIB_Format::kArgbPremul) {
+  if (GetFormat() != FXDIB_Format::kBgraPremul) {
     return;
   }
 
@@ -1495,7 +1496,7 @@ void CFX_DIBitmap::UnPreMultiply() {
     return;
   }
 
-  SetFormat(FXDIB_Format::kArgb);
+  SetFormat(FXDIB_Format::kBgra);
   int height = GetHeight();
   int width = GetWidth();
   int row_bytes = GetPitch();
@@ -1582,7 +1583,7 @@ void CFX_SkiaDeviceDriver::SyncInternalBitmaps() {
   int height = m_pOriginalBitmap->GetHeight();
   DCHECK_EQ(width, m_pBitmap->GetWidth());
   DCHECK_EQ(height, m_pBitmap->GetHeight());
-  DCHECK_EQ(FXDIB_Format::kRgb, m_pOriginalBitmap->GetFormat());
+  DCHECK_EQ(FXDIB_Format::kBgr, m_pOriginalBitmap->GetFormat());
   m_pOriginalBitmap->TransferBitmap(width, height, m_pBitmap, /*src_left=*/0,
                                     /*src_top=*/0);
 }

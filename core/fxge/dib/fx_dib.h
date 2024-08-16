@@ -22,13 +22,13 @@ enum class FXDIB_Format : uint16_t {
   kInvalid = 0,
   k1bppRgb = 0x001,
   k8bppRgb = 0x008,
-  kRgb = 0x018,
-  kRgb32 = 0x020,
+  kBgr = 0x018,
+  kBgrx = 0x020,
   k1bppMask = 0x101,
   k8bppMask = 0x108,
-  kArgb = 0x220,
+  kBgra = 0x220,
 #if defined(PDF_USE_SKIA)
-  kArgbPremul = 0x620,
+  kBgraPremul = 0x620,
 #endif
 };
 

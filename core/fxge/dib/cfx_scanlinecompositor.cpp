@@ -2276,8 +2276,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLine(
     pdfium::span<const uint8_t> src_scan,
     int width,
     pdfium::span<const uint8_t> clip_scan) const {
-  if (m_SrcFormat == FXDIB_Format::kRgb ||
-      m_SrcFormat == FXDIB_Format::kRgb32) {
+  if (m_SrcFormat == FXDIB_Format::kBgr || m_SrcFormat == FXDIB_Format::kBgrx) {
     CompositeRgbBitmapLineSrcRgbx(dest_scan, src_scan, width, clip_scan);
     return;
   }
@@ -2289,8 +2288,8 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcRgbx(
     pdfium::span<const uint8_t> src_scan,
     int width,
     pdfium::span<const uint8_t> clip_scan) const {
-  CHECK(m_SrcFormat == FXDIB_Format::kRgb ||
-        m_SrcFormat == FXDIB_Format::kRgb32);
+  CHECK(m_SrcFormat == FXDIB_Format::kBgr ||
+        m_SrcFormat == FXDIB_Format::kBgrx);
 
   const int src_Bpp = GetCompsFromFormat(m_SrcFormat);
   switch (m_DestFormat) {
@@ -2310,8 +2309,8 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcRgbx(
       CompositeRow_Rgb2Mask(dest_scan, width, clip_scan);
       return;
     }
-    case FXDIB_Format::kRgb:
-    case FXDIB_Format::kRgb32: {
+    case FXDIB_Format::kBgr:
+    case FXDIB_Format::kBgrx: {
       const int dest_Bpp = GetCompsFromFormat(m_DestFormat);
       if (m_bRgbByteOrder) {
         if (m_BlendType == BlendMode::kNormal) {
@@ -2354,7 +2353,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcRgbx(
                                         dest_Bpp, src_Bpp);
       return;
     }
-    case FXDIB_Format::kArgb: {
+    case FXDIB_Format::kBgra: {
       if (m_bRgbByteOrder) {
         if (m_BlendType == BlendMode::kNormal) {
           if (!clip_scan.empty()) {
@@ -2396,9 +2395,9 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcRgbx(
       return;
     }
 #if defined(PDF_USE_SKIA)
-    case FXDIB_Format::kArgbPremul: {
+    case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/42271020): Consider adding support for
-      // `FXDIB_Format::kArgbPremul`
+      // `FXDIB_Format::kBgraPremul`
       NOTREACHED_NORETURN();
     }
 #endif
@@ -2410,7 +2409,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcArgb(
     pdfium::span<const uint8_t> src_scan,
     int width,
     pdfium::span<const uint8_t> clip_scan) const {
-  CHECK_EQ(m_SrcFormat, FXDIB_Format::kArgb);
+  CHECK_EQ(m_SrcFormat, FXDIB_Format::kBgra);
 
   auto src_span =
       fxcrt::reinterpret_span<const FX_BGRA_STRUCT<uint8_t>>(src_scan).first(
@@ -2432,7 +2431,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcArgb(
       CompositeRowArgb2Mask(src_span, clip_scan, dest_scan);
       return;
     }
-    case FXDIB_Format::kRgb: {
+    case FXDIB_Format::kBgr: {
       if (m_bRgbByteOrder) {
         auto dest_span =
             fxcrt::reinterpret_span<FX_RGB_STRUCT<uint8_t>>(dest_scan);
@@ -2445,7 +2444,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcArgb(
       CompositeRowArgb2Rgb(src_span, clip_scan, dest_span, m_BlendType);
       return;
     }
-    case FXDIB_Format::kRgb32: {
+    case FXDIB_Format::kBgrx: {
       if (m_bRgbByteOrder) {
         auto dest_span =
             fxcrt::reinterpret_span<FX_RGBA_STRUCT<uint8_t>>(dest_scan);
@@ -2458,7 +2457,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcArgb(
       CompositeRowArgb2Rgb(src_span, clip_scan, dest_span, m_BlendType);
       return;
     }
-    case FXDIB_Format::kArgb: {
+    case FXDIB_Format::kBgra: {
       if (m_bRgbByteOrder) {
         auto dest_span =
             fxcrt::reinterpret_span<FX_RGBA_STRUCT<uint8_t>>(dest_scan);
@@ -2471,9 +2470,9 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcArgb(
       return;
     }
 #if defined(PDF_USE_SKIA)
-    case FXDIB_Format::kArgbPremul: {
+    case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/42271020): Consider adding support for
-      // `FXDIB_Format::kArgbPremul`
+      // `FXDIB_Format::kBgraPremul`
       NOTREACHED_NORETURN();
     }
 #endif
@@ -2521,8 +2520,8 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp1(
       CompositeRow_Rgb2Mask(dest_scan, width, clip_scan);
       return;
     }
-    case FXDIB_Format::kRgb:
-    case FXDIB_Format::kRgb32: {
+    case FXDIB_Format::kBgr:
+    case FXDIB_Format::kBgrx: {
       if (m_bRgbByteOrder) {
         CompositeRow_1bppRgb2Rgb_NoBlend_RgbByteOrder(
             dest_scan, src_scan, src_left, m_SrcPalette.Get32BitPalette(),
@@ -2534,7 +2533,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp1(
           GetCompsFromFormat(m_DestFormat), clip_scan);
       return;
     }
-    case FXDIB_Format::kArgb: {
+    case FXDIB_Format::kBgra: {
       if (m_bRgbByteOrder) {
         CompositeRow_1bppRgb2Argb_NoBlend_RgbByteOrder(
             dest_scan, src_scan, src_left, width,
@@ -2547,9 +2546,9 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp1(
       return;
     }
 #if defined(PDF_USE_SKIA)
-    case FXDIB_Format::kArgbPremul: {
+    case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/42271020): Consider adding support for
-      // `FXDIB_Format::kArgbPremul`
+      // `FXDIB_Format::kBgraPremul`
       NOTREACHED_NORETURN();
     }
 #endif
@@ -2582,8 +2581,8 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp8(
       CompositeRow_Rgb2Mask(dest_scan, width, clip_scan);
       return;
     }
-    case FXDIB_Format::kRgb:
-    case FXDIB_Format::kRgb32: {
+    case FXDIB_Format::kBgr:
+    case FXDIB_Format::kBgrx: {
       if (m_bRgbByteOrder) {
         CompositeRow_8bppRgb2Rgb_NoBlend_RgbByteOrder(
             dest_scan, src_scan, m_SrcPalette.Get32BitPalette().data(), width,
@@ -2595,7 +2594,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp8(
           GetCompsFromFormat(m_DestFormat), clip_scan);
       return;
     }
-    case FXDIB_Format::kArgb: {
+    case FXDIB_Format::kBgra: {
       if (m_bRgbByteOrder) {
         CompositeRow_8bppRgb2Argb_NoBlend_RgbByteOrder(
             dest_scan, src_scan, width, m_SrcPalette.Get32BitPalette().data(),
@@ -2608,9 +2607,9 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp8(
       return;
     }
 #if defined(PDF_USE_SKIA)
-    case FXDIB_Format::kArgbPremul: {
+    case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/42271020): Consider adding support for
-      // `FXDIB_Format::kArgbPremul`
+      // `FXDIB_Format::kBgraPremul`
       NOTREACHED_NORETURN();
     }
 #endif
@@ -2642,8 +2641,8 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(
                                  clip_scan);
       return;
     }
-    case FXDIB_Format::kRgb:
-    case FXDIB_Format::kRgb32: {
+    case FXDIB_Format::kBgr:
+    case FXDIB_Format::kBgrx: {
       if (m_bRgbByteOrder) {
         CompositeRow_ByteMask2Rgb_RgbByteOrder(
             dest_scan, src_scan, m_MaskAlpha, m_MaskRed, m_MaskGreen,
@@ -2656,7 +2655,7 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(
                                 GetCompsFromFormat(m_DestFormat), clip_scan);
       return;
     }
-    case FXDIB_Format::kArgb: {
+    case FXDIB_Format::kBgra: {
       if (m_bRgbByteOrder) {
         CompositeRow_ByteMask2Argb_RgbByteOrder(
             dest_scan, src_scan, m_MaskAlpha, m_MaskRed, m_MaskGreen,
@@ -2669,9 +2668,9 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(
       return;
     }
 #if defined(PDF_USE_SKIA)
-    case FXDIB_Format::kArgbPremul: {
+    case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/42271020): Consider adding support for
-      // `FXDIB_Format::kArgbPremul`
+      // `FXDIB_Format::kBgraPremul`
       NOTREACHED_NORETURN();
     }
 #endif
@@ -2704,8 +2703,8 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(
                                 width, clip_scan);
       return;
     }
-    case FXDIB_Format::kRgb:
-    case FXDIB_Format::kRgb32: {
+    case FXDIB_Format::kBgr:
+    case FXDIB_Format::kBgrx: {
       if (m_bRgbByteOrder) {
         CompositeRow_BitMask2Rgb_RgbByteOrder(
             dest_scan, src_scan, m_MaskAlpha, m_MaskRed, m_MaskGreen,
@@ -2719,7 +2718,7 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(
                                clip_scan);
       return;
     }
-    case FXDIB_Format::kArgb: {
+    case FXDIB_Format::kBgra: {
       if (m_bRgbByteOrder) {
         CompositeRow_BitMask2Argb_RgbByteOrder(
             dest_scan, src_scan, m_MaskAlpha, m_MaskRed, m_MaskGreen,
@@ -2732,9 +2731,9 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(
       return;
     }
 #if defined(PDF_USE_SKIA)
-    case FXDIB_Format::kArgbPremul: {
+    case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/42271020): Consider adding support for
-      // `FXDIB_Format::kArgbPremul`
+      // `FXDIB_Format::kBgraPremul`
       NOTREACHED_NORETURN();
     }
 #endif

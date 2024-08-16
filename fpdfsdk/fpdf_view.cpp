@@ -533,7 +533,7 @@ RetainPtr<CFX_DIBitmap> GetMaskBitmap(CPDF_Page* pPage,
   // Create a new bitmap to transfer part of the page bitmap to.
   RetainPtr<CFX_DIBitmap> pDst = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pDst->Create(bitmap_area->Width(), bitmap_area->Height(),
-                    FXDIB_Format::kArgb)) {
+                    FXDIB_Format::kBgra)) {
     return nullptr;
   }
   pDst->Clear(0x00ffffff);
@@ -552,7 +552,7 @@ void RenderBitmap(CFX_RenderDevice* device,
 
   // Create a new bitmap from the old one
   RetainPtr<CFX_DIBitmap> dest = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!dest->Create(size_x_bm, size_y_bm, FXDIB_Format::kRgb32)) {
+  if (!dest->Create(size_x_bm, size_y_bm, FXDIB_Format::kBgrx)) {
     return;
   }
 
@@ -610,7 +610,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
   }
 
   RetainPtr<CFX_DIBitmap> pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  CHECK(pBitmap->Create(size_x, size_y, FXDIB_Format::kArgb));
+  CHECK(pBitmap->Create(size_x, size_y, FXDIB_Format::kBgra));
   if (!CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     // Not needed by Skia. Call it for AGG to preserve pre-existing behavior.
     pBitmap->Clear(0x00ffffff);
@@ -634,7 +634,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
     bool bitsStretched = false;
     if (win_dc.GetDeviceType() == DeviceType::kPrinter) {
       auto dest_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-      if (dest_bitmap->Create(size_x, size_y, FXDIB_Format::kRgb32)) {
+      if (dest_bitmap->Create(size_x, size_y, FXDIB_Format::kBgrx)) {
         fxcrt::Fill(dest_bitmap->GetWritableBuffer().first(pBitmap->GetPitch() *
                                                            size_y),
                     -1);
@@ -885,7 +885,7 @@ FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV FPDFBitmap_Create(int width,
                                                         int alpha) {
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pBitmap->Create(width, height,
-                       alpha ? FXDIB_Format::kArgb : FXDIB_Format::kRgb32)) {
+                       alpha ? FXDIB_Format::kBgra : FXDIB_Format::kBgrx)) {
     return nullptr;
   }
 
@@ -906,13 +906,13 @@ FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV FPDFBitmap_CreateEx(int width,
       fx_format = FXDIB_Format::k8bppRgb;
       break;
     case FPDFBitmap_BGR:
-      fx_format = FXDIB_Format::kRgb;
+      fx_format = FXDIB_Format::kBgr;
       break;
     case FPDFBitmap_BGRx:
-      fx_format = FXDIB_Format::kRgb32;
+      fx_format = FXDIB_Format::kBgrx;
       break;
     case FPDFBitmap_BGRA:
-      fx_format = FXDIB_Format::kArgb;
+      fx_format = FXDIB_Format::kBgra;
       break;
     default:
       return nullptr;
@@ -941,11 +941,11 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFBitmap_GetFormat(FPDF_BITMAP bitmap) {
     case FXDIB_Format::k8bppRgb:
     case FXDIB_Format::k8bppMask:
       return FPDFBitmap_Gray;
-    case FXDIB_Format::kRgb:
+    case FXDIB_Format::kBgr:
       return FPDFBitmap_BGR;
-    case FXDIB_Format::kRgb32:
+    case FXDIB_Format::kBgrx:
       return FPDFBitmap_BGRx;
-    case FXDIB_Format::kArgb:
+    case FXDIB_Format::kBgra:
       return FPDFBitmap_BGRA;
     default:
       return FPDFBitmap_Unknown;

@@ -166,7 +166,7 @@ void CFX_DIBitmap::Clear(uint32_t color) {
     case FXDIB_Format::k8bppRgb:
       fxcrt::Fill(buffer, FindPalette(color));
       break;
-    case FXDIB_Format::kRgb: {
+    case FXDIB_Format::kBgr: {
       const FX_BGR_STRUCT<uint8_t> bgr = ArgbToBGRStruct(color);
       if (bgr.red == bgr.green && bgr.green == bgr.blue) {
         fxcrt::Fill(buffer, bgr.red);
@@ -177,20 +177,20 @@ void CFX_DIBitmap::Clear(uint32_t color) {
       }
       break;
     }
-    case FXDIB_Format::kRgb32:
+    case FXDIB_Format::kBgrx:
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
         // TODO(crbug.com/pdfium/2016): This is not reliable because alpha may
         // be modified outside of this operation.
         color |= 0xFF000000;
       }
       [[fallthrough]];
-    case FXDIB_Format::kArgb:
+    case FXDIB_Format::kBgra:
       for (int row = 0; row < GetHeight(); row++) {
         fxcrt::Fill(GetWritableScanlineAs<uint32_t>(row), color);
       }
       break;
 #if defined(PDF_USE_SKIA)
-    case FXDIB_Format::kArgbPremul: {
+    case FXDIB_Format::kBgraPremul: {
       CHECK(CFX_DefaultRenderDevice::UseSkiaRenderer());
       const FX_BGRA_STRUCT<uint8_t> bgra =
           PreMultiplyColor(ArgbToBGRAStruct(color));
@@ -314,7 +314,7 @@ void CFX_DIBitmap::TransferEqualFormatsOneBPP(
 }
 
 void CFX_DIBitmap::SetRedFromAlpha() {
-  CHECK_EQ(FXDIB_Format::kArgb, GetFormat());
+  CHECK_EQ(FXDIB_Format::kBgra, GetFormat());
   CHECK(m_pBuffer);
 
   for (int row = 0; row < GetHeight(); row++) {
@@ -327,7 +327,7 @@ void CFX_DIBitmap::SetRedFromAlpha() {
 }
 
 void CFX_DIBitmap::SetUniformOpaqueAlpha() {
-  CHECK_EQ(FXDIB_Format::kArgb, GetFormat());
+  CHECK_EQ(FXDIB_Format::kBgra, GetFormat());
   CHECK(m_pBuffer);
 
   for (int row = 0; row < GetHeight(); row++) {
@@ -345,10 +345,10 @@ bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
   CHECK_EQ(FXDIB_Format::k8bppMask, mask->GetFormat());
   CHECK(m_pBuffer);
 
-  if (GetFormat() == FXDIB_Format::kRgb32) {
+  if (GetFormat() == FXDIB_Format::kBgrx) {
     // TODO(crbug.com/42271020): Consider adding support for
-    // `FXDIB_Format::kArgbPremul`
-    if (!ConvertFormat(FXDIB_Format::kArgb)) {
+    // `FXDIB_Format::kBgraPremul`
+    if (!ConvertFormat(FXDIB_Format::kBgra)) {
       return false;
     }
 
@@ -365,7 +365,7 @@ bool CFX_DIBitmap::MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) {
     return true;
   }
 
-  CHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
+  CHECK_EQ(GetFormat(), FXDIB_Format::kBgra);
   for (int row = 0; row < GetHeight(); row++) {
     auto dest_scan =
         GetWritableScanlineAs<FX_BGRA_STRUCT<uint8_t>>(row).first(GetWidth());
@@ -391,8 +391,8 @@ bool CFX_DIBitmap::MultiplyAlpha(float alpha) {
   }
 
   // TODO(crbug.com/42271020): Consider adding support for
-  // `FXDIB_Format::kArgbPremul`
-  if (!ConvertFormat(FXDIB_Format::kArgb)) {
+  // `FXDIB_Format::kBgraPremul`
+  if (!ConvertFormat(FXDIB_Format::kBgra)) {
     return false;
   }
 
@@ -440,14 +440,14 @@ uint32_t CFX_DIBitmap::GetPixelForTesting(int x, int y) const {
     case FXDIB_Format::k8bppRgb:
       return HasPalette() ? GetPaletteSpan()[*pos]
                           : ArgbEncode(0xff, *pos, *pos, *pos);
-    case FXDIB_Format::kRgb:
-    case FXDIB_Format::kRgb32:
+    case FXDIB_Format::kBgr:
+    case FXDIB_Format::kBgrx:
       return UNSAFE_TODO(FXARGB_GetDIB(pos) | 0xff000000);
-    case FXDIB_Format::kArgb:
+    case FXDIB_Format::kBgra:
       return UNSAFE_TODO(FXARGB_GetDIB(pos));
-    case FXDIB_Format::kArgbPremul: {
+    case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/42271020): Consider testing with
-      // `FXDIB_Format::kArgbPremul`
+      // `FXDIB_Format::kBgraPremul`
       NOTREACHED_NORETURN();
     }
   }
@@ -799,8 +799,8 @@ bool CFX_DIBitmap::CompositeRect(int left,
     // Other formats with alpha have already been handled above.
     //
     // TODO(crbug.com/42271020): Consider adding support for
-    // `FXDIB_Format::kArgbPremul`
-    DCHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
+    // `FXDIB_Format::kBgraPremul`
+    DCHECK_EQ(GetFormat(), FXDIB_Format::kBgra);
   }
   if (src_alpha == 255) {
     for (int row = rect.top; row < rect.bottom; row++) {
@@ -874,11 +874,11 @@ bool CFX_DIBitmap::CompositeRect(int left,
 bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   static constexpr FXDIB_Format kAllowedDestFormats[] = {
       FXDIB_Format::k8bppMask,
-      FXDIB_Format::kArgb,
+      FXDIB_Format::kBgra,
 #if defined(PDF_USE_SKIA)
-      FXDIB_Format::kArgbPremul,
+      FXDIB_Format::kBgraPremul,
 #endif
-      FXDIB_Format::kRgb,
+      FXDIB_Format::kBgr,
   };
   CHECK(pdfium::Contains(kAllowedDestFormats, dest_format));
 
@@ -894,14 +894,14 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
       }
       break;
 
-    case FXDIB_Format::kArgb:
-      if (GetFormat() == FXDIB_Format::kRgb32) {
-        SetFormat(FXDIB_Format::kArgb);
+    case FXDIB_Format::kBgra:
+      if (GetFormat() == FXDIB_Format::kBgrx) {
+        SetFormat(FXDIB_Format::kBgra);
         SetUniformOpaqueAlpha();
         return true;
       }
 #if defined(PDF_USE_SKIA)
-      if (GetFormat() == FXDIB_Format::kArgbPremul) {
+      if (GetFormat() == FXDIB_Format::kBgraPremul) {
         UnPreMultiply();
         return true;
       }
@@ -909,13 +909,13 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
       break;
 
 #if defined(PDF_USE_SKIA)
-    case FXDIB_Format::kArgbPremul:
-      if (GetFormat() == FXDIB_Format::kRgb32) {
-        SetFormat(FXDIB_Format::kArgbPremul);
+    case FXDIB_Format::kBgraPremul:
+      if (GetFormat() == FXDIB_Format::kBgrx) {
+        SetFormat(FXDIB_Format::kBgraPremul);
         SetUniformOpaqueAlpha();
         return true;
       }
-      if (GetFormat() == FXDIB_Format::kArgb) {
+      if (GetFormat() == FXDIB_Format::kBgra) {
         PreMultiply();
         return true;
       }
@@ -946,7 +946,7 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
   // SAFETY: `dest_buf` allocated with `dest_buf_size` bytes above.
   auto dest_span =
       UNSAFE_BUFFERS(pdfium::make_span(dest_buf.get(), dest_buf_size));
-  if (dest_format == FXDIB_Format::kArgb) {
+  if (dest_format == FXDIB_Format::kBgra) {
     fxcrt::Fill(dest_span, 0xff);
   }
 

@@ -33,7 +33,7 @@ FXDIB_Format GetStretchedFormat(const CFX_DIBBase& src) {
   if (format == FXDIB_Format::k1bppRgb)
     return FXDIB_Format::k8bppRgb;
   if (format == FXDIB_Format::k8bppRgb && src.HasPalette())
-    return FXDIB_Format::kRgb;
+    return FXDIB_Format::kBgr;
   return format;
 }
 

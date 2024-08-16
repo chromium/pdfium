@@ -208,7 +208,7 @@ void OutputImage(Gdiplus::GpGraphics* graphics,
                  int dest_top,
                  int dest_width,
                  int dest_height) {
-  CHECK_EQ(FXDIB_Format::kArgb, source->GetFormat());
+  CHECK_EQ(FXDIB_Format::kBgra, source->GetFormat());
   const CGdiplusExt& gdi_plus_ext = GetGdiplusExt();
 
   RetainPtr<const CFX_DIBitmap> realized_source = source->RealizeIfNeeded();

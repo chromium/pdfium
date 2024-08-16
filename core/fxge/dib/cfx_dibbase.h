@@ -36,10 +36,10 @@ class CFX_DIBBase : public Retainable {
  public:
 #if BUILDFLAG(IS_APPLE)
   // Matches Apple's kCGBitmapByteOrder32Little in fx_quartz_device.cpp.
-  static constexpr FXDIB_Format kPlatformRGBFormat = FXDIB_Format::kRgb32;
+  static constexpr FXDIB_Format kPlatformRGBFormat = FXDIB_Format::kBgrx;
   using kPlatformRGBStruct = FX_BGRA_STRUCT<uint8_t>;
 #else   // BUILDFLAG(IS_APPLE)
-  static constexpr FXDIB_Format kPlatformRGBFormat = FXDIB_Format::kRgb;
+  static constexpr FXDIB_Format kPlatformRGBFormat = FXDIB_Format::kBgr;
   using kPlatformRGBStruct = FX_BGR_STRUCT<uint8_t>;
 #endif  // BUILDFLAG(IS_APPLE)
 
@@ -90,7 +90,7 @@ class CFX_DIBBase : public Retainable {
   RetainPtr<CFX_DIBitmap> Realize() const;
   RetainPtr<CFX_DIBitmap> ClipTo(const FX_RECT& rect) const;
   // `format` must be different from the existing format.
-  // Only supports `FXDIB_Format::kRgb` and `FXDIB_Format::k8bppRgb`.
+  // Only supports `FXDIB_Format::kBgr` and `FXDIB_Format::k8bppRgb`.
   RetainPtr<CFX_DIBitmap> ConvertTo(FXDIB_Format format) const;
   RetainPtr<CFX_DIBitmap> StretchTo(int dest_width,
                                     int dest_height,
@@ -116,7 +116,7 @@ class CFX_DIBBase : public Retainable {
 
   bool IsPremultiplied() const {
 #if defined(PDF_USE_SKIA)
-    return GetFormat() == FXDIB_Format::kArgbPremul;
+    return GetFormat() == FXDIB_Format::kBgraPremul;
 #else
     return false;
 #endif

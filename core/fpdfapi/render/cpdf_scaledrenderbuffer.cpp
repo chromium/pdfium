@@ -35,7 +35,7 @@ bool CPDF_ScaledRenderBuffer::Initialize(CPDF_RenderContext* pContext,
                                                /*scale=*/true);
   bool bIsAlpha =
       !!(device_->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_ALPHA_OUTPUT);
-  FXDIB_Format dibFormat = bIsAlpha ? FXDIB_Format::kArgb : FXDIB_Format::kRgb;
+  FXDIB_Format dibFormat = bIsAlpha ? FXDIB_Format::kBgra : FXDIB_Format::kBgr;
   while (true) {
     FX_RECT bitmap_rect =
         matrix_.TransformRect(CFX_FloatRect(rect_)).GetOuterRect();

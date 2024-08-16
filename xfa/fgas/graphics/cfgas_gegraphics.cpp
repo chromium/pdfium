@@ -249,8 +249,8 @@ void CFGAS_GEGraphics::FillPathWithPattern(
   int32_t height = bitmap->GetHeight();
   auto bmp = pdfium::MakeRetain<CFX_DIBitmap>();
   // TODO(crbug.com/355630556): Consider adding support for
-  // `FXDIB_Format::kArgbPremul`
-  CHECK(bmp->Create(width, height, FXDIB_Format::kArgb));
+  // `FXDIB_Format::kBgraPremul`
+  CHECK(bmp->Create(width, height, FXDIB_Format::kBgra));
   m_renderDevice->GetDIBits(bmp, 0, 0);
 
   CFGAS_GEPattern::HatchStyle hatchStyle =
@@ -294,8 +294,8 @@ void CFGAS_GEGraphics::FillPathWithShading(
   float end_y = m_info.fillColor.GetShading()->GetEndPoint().y;
   auto bmp = pdfium::MakeRetain<CFX_DIBitmap>();
   // TODO(crbug.com/355630556): Consider adding support for
-  // `FXDIB_Format::kArgbPremul`
-  CHECK(bmp->Create(width, height, FXDIB_Format::kArgb));
+  // `FXDIB_Format::kBgraPremul`
+  CHECK(bmp->Create(width, height, FXDIB_Format::kBgra));
   m_renderDevice->GetDIBits(bmp, 0, 0);
   bool result = false;
   switch (m_info.fillColor.GetShading()->GetType()) {

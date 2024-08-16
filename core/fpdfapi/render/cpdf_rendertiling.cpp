@@ -35,9 +35,9 @@ RetainPtr<CFX_DIBitmap> DrawPatternBitmap(
     const CPDF_RenderOptions::Options& draw_options) {
   auto pBitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   // TODO(crbug.com/42271020): Consider adding support for
-  // `FXDIB_Format::kArgbPremul`
+  // `FXDIB_Format::kBgraPremul`
   if (!pBitmap->Create(width, height,
-                       pPattern->colored() ? FXDIB_Format::kArgb
+                       pPattern->colored() ? FXDIB_Format::kBgra
                                            : FXDIB_Format::k8bppMask)) {
     return nullptr;
   }
@@ -198,8 +198,9 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderTiling::Draw(
   int clip_width = clip_box.right - clip_box.left;
   int clip_height = clip_box.bottom - clip_box.top;
   auto pScreen = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!pScreen->Create(clip_width, clip_height, FXDIB_Format::kArgb))
+  if (!pScreen->Create(clip_width, clip_height, FXDIB_Format::kBgra)) {
     return nullptr;
+  }
 
   pdfium::span<const uint8_t> src_buf = pPatternBitmap->GetBuffer();
   for (int col = min_col; col <= max_col; col++) {

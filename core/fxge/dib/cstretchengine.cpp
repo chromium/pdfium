@@ -205,11 +205,11 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
       m_DestClip(clip_rect) {
   if (m_bHasAlpha) {
     // TODO(crbug.com/42271020): Consider adding support for
-    // `FXDIB_Format::kArgbPremul`
-    DCHECK_EQ(m_DestFormat, FXDIB_Format::kArgb);
-    DCHECK_EQ(m_DestBpp, GetBppFromFormat(FXDIB_Format::kArgb));
-    DCHECK_EQ(m_pSource->GetFormat(), FXDIB_Format::kArgb);
-    DCHECK_EQ(m_SrcBpp, GetBppFromFormat(FXDIB_Format::kArgb));
+    // `FXDIB_Format::kBgraPremul`
+    DCHECK_EQ(m_DestFormat, FXDIB_Format::kBgra);
+    DCHECK_EQ(m_DestBpp, GetBppFromFormat(FXDIB_Format::kBgra));
+    DCHECK_EQ(m_pSource->GetFormat(), FXDIB_Format::kBgra);
+    DCHECK_EQ(m_SrcBpp, GetBppFromFormat(FXDIB_Format::kBgra));
   }
 
   std::optional<uint32_t> maybe_size =
@@ -218,8 +218,9 @@ CStretchEngine::CStretchEngine(ScanlineComposerIface* pDestBitmap,
     return;
 
   m_DestScanline.resize(maybe_size.value());
-  if (dest_format == FXDIB_Format::kRgb32)
+  if (dest_format == FXDIB_Format::kBgrx) {
     std::fill(m_DestScanline.begin(), m_DestScanline.end(), 255);
+  }
   m_InterPitch = fxge::CalculatePitch32OrDie(m_DestBpp, m_DestClip.Width());
   m_ExtraMaskPitch = fxge::CalculatePitch32OrDie(8, m_DestClip.Width());
   if (options.bNoSmoothing) {
@@ -364,7 +365,7 @@ bool CStretchEngine::ContinueStretchHorz(PauseIndicatorIface* pPause) {
             for (int j = pWeights->m_SrcStart; j <= pWeights->m_SrcEnd; ++j) {
               uint32_t pixel_weight = pWeights->GetWeightForPosition(j);
               FX_ARGB argb = m_pSrcPalette[src_scan[j]];
-              if (m_DestFormat == FXDIB_Format::kRgb) {
+              if (m_DestFormat == FXDIB_Format::kBgr) {
                 dest_r += pixel_weight * static_cast<uint8_t>(argb >> 16);
                 dest_g += pixel_weight * static_cast<uint8_t>(argb >> 8);
                 dest_b += pixel_weight * static_cast<uint8_t>(argb);

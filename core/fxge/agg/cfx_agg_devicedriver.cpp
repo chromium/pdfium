@@ -186,7 +186,7 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
       return;
     }
 
-    CHECK_EQ(FXDIB_Format::kRgb, src_format);
+    CHECK_EQ(FXDIB_Format::kBgr, src_format);
     for (int row = 0; row < height; row++) {
       int dest_row = dest_top + row;
       auto dest_scan =
@@ -205,8 +205,8 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
     return;
   }
 
-  if (dest_format == FXDIB_Format::kRgb) {
-    CHECK_EQ(src_format, FXDIB_Format::kRgb32);
+  if (dest_format == FXDIB_Format::kBgr) {
+    CHECK_EQ(src_format, FXDIB_Format::kBgrx);
     for (int row = 0; row < height; row++) {
       int dest_row = dest_top + row;
       auto dest_scan =
@@ -225,9 +225,9 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
     return;
   }
 
-  CHECK(dest_format == FXDIB_Format::kArgb ||
-        dest_format == FXDIB_Format::kRgb32);
-  if (src_format == FXDIB_Format::kRgb) {
+  CHECK(dest_format == FXDIB_Format::kBgra ||
+        dest_format == FXDIB_Format::kBgrx);
+  if (src_format == FXDIB_Format::kBgr) {
     for (int row = 0; row < height; row++) {
       int dest_row = dest_top + row;
       auto dest_scan =
@@ -246,10 +246,10 @@ void RgbByteOrderTransferBitmap(RetainPtr<CFX_DIBitmap> pBitmap,
     }
     return;
   }
-  if (src_format != FXDIB_Format::kRgb32) {
+  if (src_format != FXDIB_Format::kBgrx) {
     return;
   }
-  CHECK_EQ(dest_format, FXDIB_Format::kArgb);
+  CHECK_EQ(dest_format, FXDIB_Format::kBgra);
   for (int row = 0; row < height; row++) {
     int dest_row = dest_top + row;
     auto dest_scan =
@@ -414,10 +414,10 @@ class CFX_AggRenderer {
       return &CFX_AggRenderer::CompositeSpanGray;
     }
     const FXDIB_Format format = device->GetFormat();
-    if (format == FXDIB_Format::kArgb) {
+    if (format == FXDIB_Format::kBgra) {
       return &CFX_AggRenderer::CompositeSpanARGB;
     }
-    CHECK(format == FXDIB_Format::kRgb || format == FXDIB_Format::kRgb32);
+    CHECK(format == FXDIB_Format::kBgr || format == FXDIB_Format::kBgrx);
     return &CFX_AggRenderer::CompositeSpanRGB;
   }
 

@@ -101,7 +101,7 @@ TEST_F(ProgressiveDecoderTest, Indexed8Bmp) {
 
   ASSERT_EQ(1, decoder.GetWidth());
   ASSERT_EQ(1, decoder.GetHeight());
-  ASSERT_EQ(FXDIB_Format::kRgb, decoder.GetBitmapFormat());
+  ASSERT_EQ(FXDIB_Format::kBgr, decoder.GetBitmapFormat());
 
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(decoder.GetWidth(), decoder.GetHeight(),
@@ -136,7 +136,7 @@ TEST_F(ProgressiveDecoderTest, Indexed8BmpWithInvalidIndex) {
 
   ASSERT_EQ(1, decoder.GetWidth());
   ASSERT_EQ(1, decoder.GetHeight());
-  ASSERT_EQ(FXDIB_Format::kRgb, decoder.GetBitmapFormat());
+  ASSERT_EQ(FXDIB_Format::kBgr, decoder.GetBitmapFormat());
 
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(decoder.GetWidth(), decoder.GetHeight(),
@@ -169,7 +169,7 @@ TEST_F(ProgressiveDecoderTest, Direct24Bmp) {
 
   ASSERT_EQ(1, decoder.GetWidth());
   ASSERT_EQ(1, decoder.GetHeight());
-  ASSERT_EQ(FXDIB_Format::kRgb, decoder.GetBitmapFormat());
+  ASSERT_EQ(FXDIB_Format::kBgr, decoder.GetBitmapFormat());
 
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(decoder.GetWidth(), decoder.GetHeight(),
@@ -203,7 +203,7 @@ TEST_F(ProgressiveDecoderTest, Direct32Bmp) {
 
   ASSERT_EQ(1, decoder.GetWidth());
   ASSERT_EQ(1, decoder.GetHeight());
-  ASSERT_EQ(FXDIB_Format::kRgb32, decoder.GetBitmapFormat());
+  ASSERT_EQ(FXDIB_Format::kBgrx, decoder.GetBitmapFormat());
 
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(decoder.GetWidth(), decoder.GetHeight(),
@@ -237,7 +237,7 @@ TEST_F(ProgressiveDecoderTest, BmpWithDataOffsetBeforeEndOfHeader) {
 
   ASSERT_EQ(1, decoder.GetWidth());
   ASSERT_EQ(1, decoder.GetHeight());
-  ASSERT_EQ(FXDIB_Format::kRgb, decoder.GetBitmapFormat());
+  ASSERT_EQ(FXDIB_Format::kBgr, decoder.GetBitmapFormat());
 
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(decoder.GetWidth(), decoder.GetHeight(),
@@ -271,7 +271,7 @@ TEST_F(ProgressiveDecoderTest, BmpWithDataOffsetAfterEndOfHeader) {
 
   ASSERT_EQ(1, decoder.GetWidth());
   ASSERT_EQ(1, decoder.GetHeight());
-  ASSERT_EQ(FXDIB_Format::kRgb, decoder.GetBitmapFormat());
+  ASSERT_EQ(FXDIB_Format::kBgr, decoder.GetBitmapFormat());
 
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(decoder.GetWidth(), decoder.GetHeight(),
@@ -312,7 +312,7 @@ TEST_F(ProgressiveDecoderTest, LargeBmp) {
 
   ASSERT_EQ(kWidth, decoder.GetWidth());
   ASSERT_EQ(kHeight, decoder.GetHeight());
-  ASSERT_EQ(FXDIB_Format::kRgb, decoder.GetBitmapFormat());
+  ASSERT_EQ(FXDIB_Format::kBgr, decoder.GetBitmapFormat());
 
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(decoder.GetWidth(), decoder.GetHeight(),
@@ -358,7 +358,7 @@ TEST_F(ProgressiveDecoderTest, Gif87a) {
 
   ASSERT_EQ(1, decoder.GetWidth());
   ASSERT_EQ(1, decoder.GetHeight());
-  ASSERT_EQ(FXDIB_Format::kArgb, decoder.GetBitmapFormat());
+  ASSERT_EQ(FXDIB_Format::kBgra, decoder.GetBitmapFormat());
 
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(decoder.GetWidth(), decoder.GetHeight(),
@@ -391,7 +391,7 @@ TEST_F(ProgressiveDecoderTest, Gif89a) {
 
   ASSERT_EQ(1, decoder.GetWidth());
   ASSERT_EQ(1, decoder.GetHeight());
-  ASSERT_EQ(FXDIB_Format::kArgb, decoder.GetBitmapFormat());
+  ASSERT_EQ(FXDIB_Format::kBgra, decoder.GetBitmapFormat());
 
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(decoder.GetWidth(), decoder.GetHeight(),
@@ -427,7 +427,7 @@ TEST_F(ProgressiveDecoderTest, GifInsufficientCodeSize) {
 
   ASSERT_EQ(1, decoder.GetWidth());
   ASSERT_EQ(1, decoder.GetHeight());
-  ASSERT_EQ(FXDIB_Format::kArgb, decoder.GetBitmapFormat());
+  ASSERT_EQ(FXDIB_Format::kBgra, decoder.GetBitmapFormat());
 
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(decoder.GetWidth(), decoder.GetHeight(),
@@ -460,7 +460,7 @@ TEST_F(ProgressiveDecoderTest, GifDecodeAcrossScanlines) {
 
   ASSERT_EQ(4, decoder.GetWidth());
   ASSERT_EQ(2, decoder.GetHeight());
-  ASSERT_EQ(FXDIB_Format::kArgb, decoder.GetBitmapFormat());
+  ASSERT_EQ(FXDIB_Format::kBgra, decoder.GetBitmapFormat());
 
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(decoder.GetWidth(), decoder.GetHeight(),
@@ -500,7 +500,7 @@ TEST_F(ProgressiveDecoderTest, GifDecodeAcrossSubblocks) {
 
   ASSERT_EQ(4, decoder.GetWidth());
   ASSERT_EQ(2, decoder.GetHeight());
-  ASSERT_EQ(FXDIB_Format::kArgb, decoder.GetBitmapFormat());
+  ASSERT_EQ(FXDIB_Format::kBgra, decoder.GetBitmapFormat());
 
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   ASSERT_TRUE(bitmap->Create(decoder.GetWidth(), decoder.GetHeight(),

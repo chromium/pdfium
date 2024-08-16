@@ -269,7 +269,7 @@ bool CPDF_DIB::ContinueInternal() {
     } else if (bpp <= 8) {
       SetFormat(FXDIB_Format::k8bppRgb);
     } else {
-      SetFormat(FXDIB_Format::kRgb);
+      SetFormat(FXDIB_Format::kBgr);
     }
   }
 
@@ -281,8 +281,8 @@ bool CPDF_DIB::ContinueInternal() {
   LoadPalette();
   if (m_bColorKey) {
     // TODO(crbug.com/355676038): Consider adding support for
-    // `FXDIB_Format::kArgbPremul`
-    SetFormat(FXDIB_Format::kArgb);
+    // `FXDIB_Format::kBgraPremul`
+    SetFormat(FXDIB_Format::kBgra);
     pitch = fxge::CalculatePitch32(GetBPP(), GetWidth());
     if (!pitch.has_value())
       return false;
@@ -726,15 +726,15 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
   if (action == JpxDecodeAction::kUseGray) {
     format = FXDIB_Format::k8bppRgb;
   } else if (action == JpxDecodeAction::kUseRgb && image_info.channels == 3) {
-    format = FXDIB_Format::kRgb;
+    format = FXDIB_Format::kBgr;
   } else if (action == JpxDecodeAction::kUseRgb && image_info.channels == 4) {
-    format = FXDIB_Format::kRgb32;
+    format = FXDIB_Format::kBgrx;
   } else if (action == JpxDecodeAction::kConvertArgbToRgb) {
     CHECK_GE(image_info.channels, 4);
-    format = FXDIB_Format::kRgb32;
+    format = FXDIB_Format::kBgrx;
   } else {
     image_info.width = (image_info.width * image_info.channels + 2) / 3;
-    format = FXDIB_Format::kRgb;
+    format = FXDIB_Format::kBgr;
   }
 
   auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
@@ -751,7 +751,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
     DCHECK_EQ(3u, m_nComponents);
     auto rgb_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
     if (!rgb_bitmap->Create(image_info.width, image_info.height,
-                            FXDIB_Format::kRgb)) {
+                            FXDIB_Format::kBgr)) {
       return nullptr;
     }
     if (m_pDict->GetIntegerFor("SMaskInData") == 1) {

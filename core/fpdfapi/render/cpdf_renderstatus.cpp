@@ -133,12 +133,12 @@ FXDIB_Format GetFormatForLuminosity(bool is_luminosity) {
   if (!is_luminosity)
     return FXDIB_Format::k8bppMask;
 #if BUILDFLAG(IS_APPLE)
-  return FXDIB_Format::kRgb32;
+  return FXDIB_Format::kBgrx;
 #else
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-    return FXDIB_Format::kRgb32;
+    return FXDIB_Format::kBgrx;
   }
-  return FXDIB_Format::kRgb;
+  return FXDIB_Format::kBgr;
 #endif
 }
 
@@ -750,8 +750,8 @@ RetainPtr<CFX_DIBitmap> CPDF_RenderStatus::GetBackdrop(
   auto backdrop = pdfium::MakeRetain<CFX_DIBitmap>();
   if (bBackAlphaRequired && !m_bDropObjects) {
     // TODO(crbug.com/42271020): Consider adding support for
-    // `FXDIB_Format::kArgbPremul`
-    if (!backdrop->Create(width, height, FXDIB_Format::kArgb)) {
+    // `FXDIB_Format::kBgraPremul`
+    if (!backdrop->Create(width, height, FXDIB_Format::kBgra)) {
       return nullptr;
     }
   } else {
@@ -989,9 +989,9 @@ bool CPDF_RenderStatus::ProcessType3Text(CPDF_TextObject* textobj,
 
         CFX_DefaultRenderDevice bitmap_device;
         // TODO(crbug.com/42271020): Consider adding support for
-        // `FXDIB_Format::kArgbPremul`
+        // `FXDIB_Format::kBgraPremul`
         if (!bitmap_device.Create(rect.Width(), rect.Height(),
-                                  FXDIB_Format::kArgb)) {
+                                  FXDIB_Format::kBgra)) {
           return true;
         }
         CPDF_RenderStatus status(m_pContext, &bitmap_device);
@@ -1367,7 +1367,7 @@ void CPDF_RenderStatus::CompositeDIBitmap(
 
   auto new_backdrop = pdfium::MakeRetain<CFX_DIBitmap>();
   CHECK(new_backdrop->Create(backdrop->GetWidth(), backdrop->GetHeight(),
-                             FXDIB_Format::kRgb32));
+                             FXDIB_Format::kBgrx));
   new_backdrop->Clear(0xffffffff);
   new_backdrop->CompositeBitmap(0, 0, new_backdrop->GetWidth(),
                                 new_backdrop->GetHeight(), std::move(backdrop),
@@ -1521,8 +1521,8 @@ FX_ARGB CPDF_RenderStatus::GetBackgroundColor(
 FXDIB_Format CPDF_RenderStatus::GetCompatibleArgbFormat() const {
 #if defined(PDF_USE_SKIA)
   if (m_pDevice->GetDeviceCaps(FXDC_RENDER_CAPS) & FXRC_PREMULTIPLIED_ALPHA) {
-    return FXDIB_Format::kArgbPremul;
+    return FXDIB_Format::kBgraPremul;
   }
 #endif
-  return FXDIB_Format::kArgb;
+  return FXDIB_Format::kBgra;
 }

@@ -24,8 +24,9 @@ class BarcodeTest : public testing::Test {
 
     auto device = std::make_unique<CFX_DefaultRenderDevice>();
     auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (bitmap->Create(640, 480, FXDIB_Format::kRgb32))
+    if (bitmap->Create(640, 480, FXDIB_Format::kBgrx)) {
       bitmap_ = bitmap;
+    }
     ASSERT_TRUE(bitmap_);
     ASSERT_TRUE(device->Attach(bitmap_));
     device_ = std::move(device);

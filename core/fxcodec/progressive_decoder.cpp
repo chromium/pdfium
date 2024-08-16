@@ -115,17 +115,17 @@ bool ProgressiveDecoder::PngReadHeader(int width,
     case FXDIB_Format::k8bppMask:
     case FXDIB_Format::k8bppRgb:
       NOTREACHED_NORETURN();
-    case FXDIB_Format::kRgb:
+    case FXDIB_Format::kBgr:
       *color_type = 2;
       break;
-    case FXDIB_Format::kRgb32:
-    case FXDIB_Format::kArgb:
+    case FXDIB_Format::kBgrx:
+    case FXDIB_Format::kBgra:
       *color_type = 6;
       break;
 #if defined(PDF_USE_SKIA)
-    case FXDIB_Format::kArgbPremul:
+    case FXDIB_Format::kBgraPremul:
       // TODO(crbug.com/355630556): Consider adding support for
-      // `FXDIB_Format::kArgbPremul`
+      // `FXDIB_Format::kBgraPremul`
       NOTREACHED_NORETURN();
 #endif
   }
@@ -136,7 +136,7 @@ bool ProgressiveDecoder::PngReadHeader(int width,
 uint8_t* ProgressiveDecoder::PngAskScanlineBuf(int line) {
   CHECK_GE(line, 0);
   CHECK_LT(line, m_SrcHeight);
-  CHECK_EQ(m_pDeviceBitmap->GetFormat(), FXDIB_Format::kArgb);
+  CHECK_EQ(m_pDeviceBitmap->GetFormat(), FXDIB_Format::kBgra);
   CHECK_EQ(m_SrcFormat, FXCodec_Argb);
   pdfium::span<const uint8_t> src_span = m_pDeviceBitmap->GetScanline(line);
   pdfium::span<uint8_t> dest_span = pdfium::make_span(m_DecodeBuf);
@@ -151,7 +151,7 @@ void ProgressiveDecoder::PngFillScanlineBufCompleted(int pass, int line) {
     return;
   }
 
-  CHECK_EQ(m_pDeviceBitmap->GetFormat(), FXDIB_Format::kArgb);
+  CHECK_EQ(m_pDeviceBitmap->GetFormat(), FXDIB_Format::kBgra);
   pdfium::span<const uint8_t> src_span = pdfium::make_span(m_DecodeBuf);
   pdfium::span<uint8_t> dest_span = m_pDeviceBitmap->GetWritableScanline(line);
   const size_t byte_size = Fx2DSizeOrDie(
@@ -334,11 +334,11 @@ bool ProgressiveDecoder::BmpDetectImageTypeInBuffer(
       break;
     case 3:
       m_SrcFormat = FXCodec_Rgb;
-      format = FXDIB_Format::kRgb;
+      format = FXDIB_Format::kBgr;
       break;
     case 4:
       m_SrcFormat = FXCodec_Rgb32;
-      format = FXDIB_Format::kRgb32;
+      format = FXDIB_Format::kBgrx;
       break;
     default:
       m_status = FXCODEC_STATUS::kError;
@@ -660,7 +660,7 @@ FXCODEC_STATUS ProgressiveDecoder::PngStartDecode() {
     return m_status;
   }
   m_offSet = 0;
-  CHECK_EQ(m_pDeviceBitmap->GetFormat(), FXDIB_Format::kArgb);
+  CHECK_EQ(m_pDeviceBitmap->GetFormat(), FXDIB_Format::kBgra);
   m_SrcComponents = 4;
   m_SrcFormat = FXCodec_Argb;
   SetTransMethod();
@@ -728,8 +728,8 @@ bool ProgressiveDecoder::TiffDetectImageTypeFromFile(
 
 FXCODEC_STATUS ProgressiveDecoder::TiffContinueDecode() {
   // TODO(crbug.com/355630556): Consider adding support for
-  // `FXDIB_Format::kArgbPremul`
-  CHECK_EQ(m_pDeviceBitmap->GetFormat(), FXDIB_Format::kArgb);
+  // `FXDIB_Format::kBgraPremul`
+  CHECK_EQ(m_pDeviceBitmap->GetFormat(), FXDIB_Format::kBgra);
   m_status =
       TiffDecoder::Decode(m_pTiffContext.get(), std::move(m_pDeviceBitmap))
           ? FXCODEC_STATUS::kDecodeFinished
@@ -891,7 +891,7 @@ void ProgressiveDecoder::SetTransMethod() {
     case FXDIB_Format::k8bppMask:
     case FXDIB_Format::k8bppRgb:
       NOTREACHED_NORETURN();
-    case FXDIB_Format::kRgb: {
+    case FXDIB_Format::kBgr: {
       switch (m_SrcFormat) {
         case FXCodec_Invalid:
           m_TransMethod = TransformMethod::kInvalid;
@@ -913,8 +913,8 @@ void ProgressiveDecoder::SetTransMethod() {
       }
       break;
     }
-    case FXDIB_Format::kRgb32:
-    case FXDIB_Format::kArgb: {
+    case FXDIB_Format::kBgrx:
+    case FXDIB_Format::kBgra: {
       switch (m_SrcFormat) {
         case FXCodec_Invalid:
           m_TransMethod = TransformMethod::kInvalid;
@@ -923,7 +923,7 @@ void ProgressiveDecoder::SetTransMethod() {
           m_TransMethod = TransformMethod::k8BppGrayToRgbMaybeAlpha;
           break;
         case FXCodec_8bppRgb:
-          if (m_pDeviceBitmap->GetFormat() == FXDIB_Format::kArgb) {
+          if (m_pDeviceBitmap->GetFormat() == FXDIB_Format::kBgra) {
             m_TransMethod = TransformMethod::k8BppRgbToArgb;
           } else {
             m_TransMethod = TransformMethod::k8BppRgbToRgbNoAlpha;
@@ -943,9 +943,9 @@ void ProgressiveDecoder::SetTransMethod() {
       break;
     }
 #if defined(PDF_USE_SKIA)
-    case FXDIB_Format::kArgbPremul:
+    case FXDIB_Format::kBgraPremul:
       // TODO(crbug.com/355630556): Consider adding support for
-      // `FXDIB_Format::kArgbPremul`
+      // `FXDIB_Format::kBgraPremul`
       NOTREACHED_NORETURN();
 #endif
   }
@@ -1137,8 +1137,7 @@ FXDIB_Format ProgressiveDecoder::GetBitmapFormat() const {
 #ifdef PDF_ENABLE_XFA_BMP
     case FXCODEC_IMAGE_BMP:
 #endif  // PDF_ENABLE_XFA_BMP
-      return GetBitsPerPixel() <= 24 ? FXDIB_Format::kRgb
-                                     : FXDIB_Format::kRgb32;
+      return GetBitsPerPixel() <= 24 ? FXDIB_Format::kBgr : FXDIB_Format::kBgrx;
 #ifdef PDF_ENABLE_XFA_PNG
     case FXCODEC_IMAGE_PNG:
 #endif  // PDF_ENABLE_XFA_PNG
@@ -1147,8 +1146,8 @@ FXDIB_Format ProgressiveDecoder::GetBitmapFormat() const {
 #endif  // PDF_ENABLE_XFA_TIFF
     default:
       // TODO(crbug.com/355630556): Consider adding support for
-      // `FXDIB_Format::kArgbPremul`
-      return FXDIB_Format::kArgb;
+      // `FXDIB_Format::kBgraPremul`
+      return FXDIB_Format::kBgra;
   }
 }
 
@@ -1209,8 +1208,8 @@ FXCODEC_STATUS ProgressiveDecoder::StartDecode(RetainPtr<CFX_DIBitmap> bitmap) {
   CHECK_GT(m_SrcHeight, 0);
 
   const FXDIB_Format format = bitmap->GetFormat();
-  CHECK(format == FXDIB_Format::kArgb || format == FXDIB_Format::kRgb ||
-        format == FXDIB_Format::kRgb32);
+  CHECK(format == FXDIB_Format::kBgra || format == FXDIB_Format::kBgr ||
+        format == FXDIB_Format::kBgrx);
 
   if (m_status != FXCODEC_STATUS::kDecodeReady) {
     return FXCODEC_STATUS::kError;

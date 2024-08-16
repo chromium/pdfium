@@ -215,7 +215,7 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
                           bool normalize,
                           int x_subpixel,
                           const FX_BGRA_STRUCT<uint8_t>& bgra) {
-  // TODO(crbug.com/42271020): Add support for `FXDIB_Format::kArgbPremul`.
+  // TODO(crbug.com/42271020): Add support for `FXDIB_Format::kBgraPremul`.
   CHECK(!bitmap->IsPremultiplied());
   const bool has_alpha = bitmap->IsAlphaFormat();
   const int bytes_per_pixel = has_alpha ? 4 : bitmap->GetBPP() / 8;
@@ -477,11 +477,11 @@ FXDIB_Format GetCreateCompatibleBitmapFormat(int render_caps,
   }
 #if defined(PDF_USE_SKIA)
   if (use_argb_premul && (render_caps & FXRC_PREMULTIPLIED_ALPHA)) {
-    return FXDIB_Format::kArgbPremul;
+    return FXDIB_Format::kBgraPremul;
   }
 #endif
   if (render_caps & FXRC_ALPHA_OUTPUT) {
-    return FXDIB_Format::kArgb;
+    return FXDIB_Format::kBgra;
   }
   return CFX_DIBBase::kPlatformRGBFormat;
 }
@@ -917,7 +917,7 @@ bool CFX_RenderDevice::SetDIBitsWithBlend(RetainPtr<const CFX_DIBBase> bitmap,
   int bg_pixel_height = dest_rect.Height();
   auto background = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!background->Create(bg_pixel_width, bg_pixel_height,
-                          FXDIB_Format::kRgb32)) {
+                          FXDIB_Format::kBgrx)) {
     return false;
   }
   if (!m_pDeviceDriver->GetDIBits(background, dest_rect.left, dest_rect.top))
@@ -1190,7 +1190,7 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
       return false;
   } else {
     // TODO(crbug.com/42271020): Switch to CreateCompatibleBitmap() once
-    // DrawNormalTextHelper() supports `FXDIB_Format::kArgbPremul`.
+    // DrawNormalTextHelper() supports `FXDIB_Format::kBgraPremul`.
     if (!bitmap->Create(pixel_width, pixel_height,
                         GetCreateCompatibleBitmapFormat(
                             m_RenderCaps, /*use_argb_premul=*/false))) {

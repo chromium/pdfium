@@ -759,10 +759,12 @@ FPDFTextObj_GetRenderedBitmap(FPDF_DOCUMENT document,
     return nullptr;
 
   // TODO(crbug.com/42271020): Consider adding support for
-  // `FXDIB_Format::kArgbPremul`
+  // `FXDIB_Format::kBgraPremul`
   auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!result_bitmap->Create(rect.Width(), rect.Height(), FXDIB_Format::kArgb))
+  if (!result_bitmap->Create(rect.Width(), rect.Height(),
+                             FXDIB_Format::kBgra)) {
     return nullptr;
+  }
 
   auto render_context = std::make_unique<CPDF_PageRenderContext>();
   CPDF_PageRenderContext* render_context_ptr = render_context.get();

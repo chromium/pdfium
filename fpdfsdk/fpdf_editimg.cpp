@@ -233,17 +233,17 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
       break;
     }
     case FXDIB_Format::k1bppRgb: {
-      // If there is a palette, then convert to `FXDIB_Format::kRgb` to avoid
+      // If there is a palette, then convert to `FXDIB_Format::kBgr` to avoid
       // creating a bitmap with a palette.
       op = pSource->HasPalette() ? ConversionOp::kConvertToRgb
                                  : ConversionOp::kConvertTo8bppRgb;
       break;
     }
     case FXDIB_Format::k8bppRgb:
-    case FXDIB_Format::kArgb:
-    case FXDIB_Format::kRgb:
-    case FXDIB_Format::kRgb32: {
-      // If there is a palette, then convert to `FXDIB_Format::kRgb` to avoid
+    case FXDIB_Format::kBgra:
+    case FXDIB_Format::kBgr:
+    case FXDIB_Format::kBgrx: {
+      // If there is a palette, then convert to `FXDIB_Format::kBgr` to avoid
       // creating a bitmap with a palette.
       op = pSource->HasPalette() ? ConversionOp::kConvertToRgb
                                  : ConversionOp::kRealize;
@@ -253,9 +253,9 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
       NOTREACHED_NORETURN();
     }
 #if defined(PDF_USE_SKIA)
-    case FXDIB_Format::kArgbPremul: {
+    case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/355676038): Consider adding support for
-      // `FXDIB_Format::kArgbPremul`
+      // `FXDIB_Format::kBgraPremul`
       NOTREACHED_NORETURN();
     }
 #endif
@@ -270,7 +270,7 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
       pBitmap = pSource->ConvertTo(FXDIB_Format::k8bppRgb);
       break;
     case ConversionOp::kConvertToRgb:
-      pBitmap = pSource->ConvertTo(FXDIB_Format::kRgb);
+      pBitmap = pSource->ConvertTo(FXDIB_Format::kBgr);
       break;
   }
   if (!pBitmap) {
@@ -307,7 +307,7 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   auto result_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!result_bitmap->Create(static_cast<int>(output_width),
                              static_cast<int>(output_height),
-                             FXDIB_Format::kArgb)) {
+                             FXDIB_Format::kBgra)) {
     return nullptr;
   }
 

@@ -35,7 +35,7 @@ class CFDETextOutTest : public testing::Test {
     CFX_Size bitmap_size = GetBitmapSize();
     bitmap_ = MakeRetain<CFX_DIBitmap>();
     ASSERT_TRUE(bitmap_->Create(bitmap_size.width, bitmap_size.height,
-                                FXDIB_Format::kArgb));
+                                FXDIB_Format::kBgra));
 
     device_ = std::make_unique<CFX_DefaultRenderDevice>();
     device_->Attach(bitmap_);

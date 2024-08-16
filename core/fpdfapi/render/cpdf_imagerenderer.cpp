@@ -324,7 +324,7 @@ bool CPDF_ImageRenderer::DrawPatternImage() {
 
   CFX_Matrix new_matrix = GetDrawMatrix(rect);
   CFX_DefaultRenderDevice bitmap_device;
-  if (!bitmap_device.Create(rect.Width(), rect.Height(), FXDIB_Format::kArgb)) {
+  if (!bitmap_device.Create(rect.Width(), rect.Height(), FXDIB_Format::kBgra)) {
     return true;
   }
 
@@ -372,8 +372,7 @@ bool CPDF_ImageRenderer::DrawMaskedImage() {
 
   CFX_Matrix new_matrix = GetDrawMatrix(rect);
   CFX_DefaultRenderDevice bitmap_device;
-  if (!bitmap_device.Create(rect.Width(), rect.Height(),
-                            FXDIB_Format::kRgb32)) {
+  if (!bitmap_device.Create(rect.Width(), rect.Height(), FXDIB_Format::kBgrx)) {
     return true;
   }
   bitmap_device.Clear(0xffffffff);

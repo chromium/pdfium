@@ -241,8 +241,8 @@ bool CTiffContext::LoadFrameInfo(int32_t frame,
 
 bool CTiffContext::Decode(RetainPtr<CFX_DIBitmap> bitmap) {
   // TODO(crbug.com/355630556): Consider adding support for
-  // `FXDIB_Format::kArgbPremul`
-  CHECK_EQ(bitmap->GetFormat(), FXDIB_Format::kArgb);
+  // `FXDIB_Format::kBgraPremul`
+  CHECK_EQ(bitmap->GetFormat(), FXDIB_Format::kBgra);
   const uint32_t img_width = bitmap->GetWidth();
   const uint32_t img_height = bitmap->GetHeight();
   uint32_t width = 0;

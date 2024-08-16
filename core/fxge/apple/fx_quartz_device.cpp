@@ -28,10 +28,10 @@ void* CQuartz2D::CreateGraphics(const RetainPtr<CFX_DIBitmap>& pBitmap) {
     return nullptr;
   CGBitmapInfo bmpInfo = kCGBitmapByteOrder32Little;
   switch (pBitmap->GetFormat()) {
-    case FXDIB_Format::kRgb32:
+    case FXDIB_Format::kBgrx:
       bmpInfo |= kCGImageAlphaNoneSkipFirst;
       break;
-    case FXDIB_Format::kArgb:
+    case FXDIB_Format::kBgra:
     default:
       return nullptr;
   }

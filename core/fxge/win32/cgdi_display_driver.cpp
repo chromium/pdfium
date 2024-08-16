@@ -61,7 +61,7 @@ bool CGdiDisplayDriver::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
     }
   } else {
     auto rgb_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (rgb_bitmap->Create(width, height, FXDIB_Format::kRgb)) {
+    if (rgb_bitmap->Create(width, height, FXDIB_Format::kBgr)) {
       bmi.bmiHeader.biBitCount = 24;
       ::GetDIBits(hDCMemory, hbmp, 0, height,
                   rgb_bitmap->GetWritableBuffer().data(), &bmi, DIB_RGB_COLORS);
@@ -89,7 +89,7 @@ bool CGdiDisplayDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
     int alpha = FXARGB_A(color);
     if (bitmap->GetBPP() != 1 || alpha != 255) {
       auto background = pdfium::MakeRetain<CFX_DIBitmap>();
-      if (!background->Create(width, height, FXDIB_Format::kRgb32) ||
+      if (!background->Create(width, height, FXDIB_Format::kBgrx) ||
           !GetDIBits(background, left, top) ||
           !background->CompositeMask(0, 0, width, height, std::move(bitmap),
                                      color, 0, 0, BlendMode::kNormal, nullptr,
@@ -110,7 +110,7 @@ bool CGdiDisplayDriver::SetDIBits(RetainPtr<const CFX_DIBBase> bitmap,
   int height = src_rect.Height();
   if (bitmap->IsAlphaFormat()) {
     auto rgb_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (!rgb_bitmap->Create(width, height, FXDIB_Format::kRgb) ||
+    if (!rgb_bitmap->Create(width, height, FXDIB_Format::kBgr) ||
         !GetDIBits(rgb_bitmap, left, top) ||
         !rgb_bitmap->CompositeBitmap(0, 0, width, height, std::move(bitmap),
                                      src_rect.left, src_rect.top,
@@ -185,7 +185,7 @@ bool CGdiDisplayDriver::StretchDIBits(RetainPtr<const CFX_DIBBase> bitmap,
     }
 
     auto background = pdfium::MakeRetain<CFX_DIBitmap>();
-    if (!background->Create(clip_width, clip_height, FXDIB_Format::kRgb32) ||
+    if (!background->Create(clip_width, clip_height, FXDIB_Format::kBgrx) ||
         !GetDIBits(background, image_rect.left + clip_rect.left,
                    image_rect.top + clip_rect.top) ||
         !background->CompositeMask(0, 0, clip_width, clip_height,

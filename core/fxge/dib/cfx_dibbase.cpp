@@ -443,7 +443,7 @@ void ConvertBuffer_8bppMask(pdfium::span<uint8_t> dest_buf,
     case 32:
 #if defined(PDF_USE_SKIA)
       // TODO(crbug.com/42271020): Determine if this ever happens.
-      CHECK_NE(pSrcBitmap->GetFormat(), FXDIB_Format::kArgbPremul);
+      CHECK_NE(pSrcBitmap->GetFormat(), FXDIB_Format::kBgraPremul);
 #endif
       ConvertBuffer_Rgb2Gray(dest_buf, dest_pitch, width, height, pSrcBitmap,
                              src_left, src_top);
@@ -486,7 +486,7 @@ void ConvertBuffer_Rgb(FXDIB_Format dest_format,
       break;
     case 32:
 #if defined(PDF_USE_SKIA)
-      if (pSrcBitmap->GetFormat() == FXDIB_Format::kArgbPremul) {
+      if (pSrcBitmap->GetFormat() == FXDIB_Format::kBgraPremul) {
         ConvertBuffer_ArgbPremulToRgb(dest_buf, dest_pitch, width, height,
                                       pSrcBitmap, src_left, src_top);
         break;
@@ -522,7 +522,7 @@ void ConvertBuffer_Argb(FXDIB_Format dest_format,
     case 32:
 #if defined(PDF_USE_SKIA)
       // TODO(crbug.com/42271020): Determine if this ever happens.
-      CHECK_NE(pSrcBitmap->GetFormat(), FXDIB_Format::kArgbPremul);
+      CHECK_NE(pSrcBitmap->GetFormat(), FXDIB_Format::kBgraPremul);
 #endif
       ConvertBuffer_Rgb2Rgb32(dest_buf, dest_pitch, width, height, pSrcBitmap,
                               src_left, src_top);
@@ -792,8 +792,8 @@ void CFX_DIBBase::TakePalette(DataVector<uint32_t> src_palette) {
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::CloneAlphaMask() const {
   // TODO(crbug.com/355676038): Consider adding support for
-  // `FXDIB_Format::kArgbPremul`
-  DCHECK_EQ(GetFormat(), FXDIB_Format::kArgb);
+  // `FXDIB_Format::kBgraPremul`
+  DCHECK_EQ(GetFormat(), FXDIB_Format::kBgra);
   auto pMask = pdfium::MakeRetain<CFX_DIBitmap>();
   if (!pMask->Create(GetWidth(), GetHeight(), FXDIB_Format::k8bppMask)) {
     return nullptr;
@@ -909,7 +909,7 @@ RetainPtr<CFX_DIBitmap> CFX_DIBBase::FlipImage(bool bXFlip, bool bYFlip) const {
 }
 
 RetainPtr<CFX_DIBitmap> CFX_DIBBase::ConvertTo(FXDIB_Format dest_format) const {
-  CHECK(dest_format == FXDIB_Format::kRgb ||
+  CHECK(dest_format == FXDIB_Format::kBgr ||
         dest_format == FXDIB_Format::k8bppRgb);
   CHECK_NE(dest_format, GetFormat());
 
@@ -1110,19 +1110,19 @@ DataVector<uint32_t> CFX_DIBBase::ConvertBuffer(
                              src_left, src_top);
       return {};
     }
-    case FXDIB_Format::kRgb: {
+    case FXDIB_Format::kBgr: {
       ConvertBuffer_Rgb(dest_format, dest_buf, dest_pitch, width, height,
                         pSrcBitmap, src_left, src_top);
       return {};
     }
-    case FXDIB_Format::kArgb:
-    case FXDIB_Format::kRgb32: {
+    case FXDIB_Format::kBgra:
+    case FXDIB_Format::kBgrx: {
       ConvertBuffer_Argb(dest_format, dest_buf, dest_pitch, width, height,
                          pSrcBitmap, src_left, src_top);
       return {};
     }
 #if defined(PDF_USE_SKIA)
-    case FXDIB_Format::kArgbPremul: {
+    case FXDIB_Format::kBgraPremul: {
       ConvertBuffer_ArgbPremul(dest_buf, dest_pitch, width, height, pSrcBitmap,
                                src_left, src_top);
       return {};

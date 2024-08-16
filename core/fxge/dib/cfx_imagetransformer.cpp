@@ -250,10 +250,10 @@ void CFX_ImageTransformer::ContinueOther(PauseIndicatorIface* pPause) {
 
   auto pTransformed = pdfium::MakeRetain<CFX_DIBitmap>();
   // TODO(crbug.com/42271020): Consider adding support for
-  // `FXDIB_Format::kArgbPremul`
+  // `FXDIB_Format::kBgraPremul`
   FXDIB_Format dest_format = m_Stretcher->source()->IsMaskFormat()
                                  ? FXDIB_Format::k8bppMask
-                                 : FXDIB_Format::kArgb;
+                                 : FXDIB_Format::kBgra;
   if (!pTransformed->Create(m_result.Width(), m_result.Height(), dest_format)) {
     return;
   }
@@ -314,7 +314,7 @@ void CFX_ImageTransformer::CalcColor(const CalcData& calc_data,
                                      FXDIB_Format dest_format,
                                      int src_bytes_per_pixel) {
   DCHECK(dest_format == FXDIB_Format::k8bppMask ||
-         dest_format == FXDIB_Format::kArgb);
+         dest_format == FXDIB_Format::kBgra);
   const int dest_bytes_per_pixel = calc_data.bitmap->GetBPP() / 8;
   if (!m_Storer.GetBitmap()->IsAlphaFormat()) {
     auto func = [&calc_data, src_bytes_per_pixel](const BilinearData& data,
@@ -332,7 +332,7 @@ void CFX_ImageTransformer::CalcColor(const CalcData& calc_data,
     return;
   }
 
-  if (dest_format == FXDIB_Format::kArgb) {
+  if (dest_format == FXDIB_Format::kBgra) {
     auto func = [&calc_data, src_bytes_per_pixel](const BilinearData& data,
                                                   uint8_t* dest) {
       uint8_t b =

@@ -560,22 +560,22 @@ bool CFX_PSRenderer::DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,
   } else {
     switch (bitmap->GetFormat()) {
       case FXDIB_Format::k1bppRgb:
-      case FXDIB_Format::kRgb32:
-        bitmap = bitmap->ConvertTo(FXDIB_Format::kRgb);
+      case FXDIB_Format::kBgrx:
+        bitmap = bitmap->ConvertTo(FXDIB_Format::kBgr);
         break;
       case FXDIB_Format::k8bppRgb:
         if (bitmap->HasPalette()) {
-          bitmap = bitmap->ConvertTo(FXDIB_Format::kRgb);
+          bitmap = bitmap->ConvertTo(FXDIB_Format::kBgr);
         }
         break;
       case FXDIB_Format::kInvalid:
       case FXDIB_Format::k1bppMask:
       case FXDIB_Format::k8bppMask:
-      case FXDIB_Format::kRgb:
+      case FXDIB_Format::kBgr:
         break;
-      case FXDIB_Format::kArgb:
+      case FXDIB_Format::kBgra:
 #if defined(PDF_USE_SKIA)
-      case FXDIB_Format::kArgbPremul:
+      case FXDIB_Format::kBgraPremul:
 #endif
         // Should have returned early due to IsAlphaFormat() check above.
         NOTREACHED_NORETURN();
