@@ -141,16 +141,24 @@ FX_FILESIZE FPDF_FileHandlerContext::GetPosition() {
 
 bool FPDF_FileHandlerContext::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
                                                 FX_FILESIZE offset) {
-  if (buffer.empty() || !m_pFS->ReadBlock)
+  if (buffer.empty() || !m_pFS->ReadBlock) {
     return false;
+  }
+
+  FX_SAFE_FILESIZE new_position = offset;
+  new_position += buffer.size();
+  if (!new_position.IsValid()) {
+    return false;
+  }
 
   if (m_pFS->ReadBlock(m_pFS->clientData, static_cast<FPDF_DWORD>(offset),
                        buffer.data(),
-                       static_cast<FPDF_DWORD>(buffer.size())) == 0) {
-    m_nCurPos = offset + buffer.size();
-    return true;
+                       static_cast<FPDF_DWORD>(buffer.size())) != 0) {
+    return false;
   }
-  return false;
+
+  m_nCurPos = new_position.ValueOrDie();
+  return true;
 }
 
 bool FPDF_FileHandlerContext::WriteBlock(pdfium::span<const uint8_t> buffer) {
