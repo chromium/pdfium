@@ -4225,12 +4225,12 @@ void CFXJSE_FormCalcContext::Get(
     return;
 
   FX_FILESIZE size = pFile->GetSize();
-  DataVector<uint8_t> dataBuf(size);
+  DataVector<uint8_t> data_buf(size);
 
   // TODO(tsepez): check return value?
-  (void)pFile->ReadBlock(dataBuf);
+  (void)pFile->ReadBlockAtOffset(data_buf, 0);
   info.GetReturnValue().Set(
-      fxv8::NewStringHelper(info.GetIsolate(), ByteStringView(dataBuf)));
+      fxv8::NewStringHelper(info.GetIsolate(), ByteStringView(data_buf)));
 }
 
 // static

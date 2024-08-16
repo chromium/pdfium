@@ -100,7 +100,6 @@ class FPDF_FileHandlerContext final : public IFX_SeekableStream {
   FX_FILESIZE GetSize() override;
   FX_FILESIZE GetPosition() override;
   bool IsEOF() override;
-  size_t ReadBlock(pdfium::span<uint8_t> buffer) override;
   bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
                          FX_FILESIZE offset) override;
   bool WriteBlock(pdfium::span<const uint8_t> buffer) override;
@@ -152,26 +151,6 @@ bool FPDF_FileHandlerContext::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
     return true;
   }
   return false;
-}
-
-size_t FPDF_FileHandlerContext::ReadBlock(pdfium::span<uint8_t> buffer) {
-  if (buffer.empty() || !m_pFS->ReadBlock)
-    return 0;
-
-  FX_FILESIZE nSize = GetSize();
-  if (m_nCurPos >= nSize)
-    return 0;
-  FX_FILESIZE dwAvail = nSize - m_nCurPos;
-  if (dwAvail < (FX_FILESIZE)buffer.size())
-    buffer = buffer.first(static_cast<size_t>(dwAvail));
-  if (m_pFS->ReadBlock(m_pFS->clientData, static_cast<FPDF_DWORD>(m_nCurPos),
-                       buffer.data(),
-                       static_cast<FPDF_DWORD>(buffer.size())) == 0) {
-    m_nCurPos += buffer.size();
-    return buffer.size();
-  }
-
-  return 0;
 }
 
 bool FPDF_FileHandlerContext::WriteBlock(pdfium::span<const uint8_t> buffer) {

@@ -25,9 +25,6 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
                          FX_FILESIZE offset) override {
     return m_pFile->ReadPos(buffer, offset) > 0;
   }
-  size_t ReadBlock(pdfium::span<uint8_t> buffer) override {
-    return m_pFile->Read(buffer);
-  }
   bool WriteBlock(pdfium::span<const uint8_t> buffer) override {
     if (m_pFile->SetPosition(GetSize()) == static_cast<FX_FILESIZE>(-1)) {
       return false;
@@ -81,9 +78,5 @@ bool IFX_SeekableReadStream::IsEOF() {
 }
 
 FX_FILESIZE IFX_SeekableReadStream::GetPosition() {
-  return 0;
-}
-
-size_t IFX_SeekableReadStream::ReadBlock(pdfium::span<uint8_t> buffer) {
   return 0;
 }

@@ -56,7 +56,6 @@ class IFX_SeekableReadStream : virtual public Retainable,
 
   virtual bool IsEOF();
   virtual FX_FILESIZE GetPosition();
-  [[nodiscard]] virtual size_t ReadBlock(pdfium::span<uint8_t> buffer);
   [[nodiscard]] virtual bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
                                                FX_FILESIZE offset) = 0;
 };

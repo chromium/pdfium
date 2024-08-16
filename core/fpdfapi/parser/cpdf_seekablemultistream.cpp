@@ -59,10 +59,6 @@ bool CPDF_SeekableMultiStream::ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
   return false;
 }
 
-size_t CPDF_SeekableMultiStream::ReadBlock(pdfium::span<uint8_t> buffer) {
-  NOTREACHED_NORETURN();
-}
-
 FX_FILESIZE CPDF_SeekableMultiStream::GetPosition() {
   return 0;
 }
