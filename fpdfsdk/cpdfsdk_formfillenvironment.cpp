@@ -536,14 +536,18 @@ FPDF_FILEHANDLER* CPDFSDK_FormFillEnvironment::OpenFile(int fileType,
 
 RetainPtr<IFX_SeekableReadStream> CPDFSDK_FormFillEnvironment::DownloadFromURL(
     const WideString& url) {
-  if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_DownloadFromURL)
+  if (!m_pInfo || m_pInfo->version < 2 || !m_pInfo->FFI_DownloadFromURL) {
     return nullptr;
+  }
 
   ByteString bstrURL = url.ToUTF16LE();
-  FPDF_FILEHANDLER* fileHandler =
+  FPDF_FILEHANDLER* file_handler =
       m_pInfo->FFI_DownloadFromURL(m_pInfo, AsFPDFWideString(&bstrURL));
+  if (!file_handler) {
+    return nullptr;
+  }
 
-  return MakeSeekableStream(fileHandler);
+  return MakeSeekableStream(file_handler);
 }
 
 WideString CPDFSDK_FormFillEnvironment::PostRequestURL(
