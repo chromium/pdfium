@@ -83,7 +83,7 @@ TEST_F(FPDFSaveEmbedderTest, SaveSimpleDocBadFlags) {
 TEST_F(FPDFSaveEmbedderTest, SaveCopiedDoc) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
 
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   ScopedFPDFDocument output_doc(FPDF_CreateNewDocument());
@@ -91,23 +91,21 @@ TEST_F(FPDFSaveEmbedderTest, SaveCopiedDoc) {
   EXPECT_TRUE(FPDF_ImportPages(output_doc.get(), document(), "1", 0));
   EXPECT_TRUE(FPDF_SaveAsCopy(output_doc.get(), this, 0));
 
-  UnloadPage(page);
 }
 
 TEST_F(FPDFSaveEmbedderTest, Bug42271133) {
   ASSERT_TRUE(OpenDocument("bug_42271133.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Arbitrarily remove the first page object.
-  auto text_object = FPDFPage_GetObject(page, 0);
+  auto text_object = FPDFPage_GetObject(page.get(), 0);
   ASSERT_TRUE(text_object);
-  ASSERT_TRUE(FPDFPage_RemoveObject(page, text_object));
+  ASSERT_TRUE(FPDFPage_RemoveObject(page.get(), text_object));
   FPDFPageObj_Destroy(text_object);
 
   // Regenerate dirty stream and save the document.
-  ASSERT_TRUE(FPDFPage_GenerateContent(page));
-  UnloadPage(page);
+  ASSERT_TRUE(FPDFPage_GenerateContent(page.get()));
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
   // Reload saved document.
@@ -137,13 +135,12 @@ TEST_F(FPDFSaveEmbedderTest, SaveLinearizedDoc) {
 
   ASSERT_TRUE(OpenDocument("linearized.pdf"));
   for (int i = 0; i < kPageCount; ++i) {
-    FPDF_PAGE page = LoadPage(i);
+    ScopedEmbedderTestPage page = LoadScopedPage(i);
     ASSERT_TRUE(page);
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     EXPECT_EQ(612, FPDFBitmap_GetWidth(bitmap.get()));
     EXPECT_EQ(792, FPDFBitmap_GetHeight(bitmap.get()));
     original_md5[i] = HashBitmap(bitmap.get());
-    UnloadPage(page);
   }
 
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
@@ -171,15 +168,14 @@ TEST_F(FPDFSaveEmbedderTest, SaveLinearizedDoc) {
 
 TEST_F(FPDFSaveEmbedderTest, Bug1409) {
   ASSERT_TRUE(OpenDocument("jpx_lzw.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  while (FPDFPage_CountObjects(page) > 0) {
-    ScopedFPDFPageObject object(FPDFPage_GetObject(page, 0));
+  while (FPDFPage_CountObjects(page.get()) > 0) {
+    ScopedFPDFPageObject object(FPDFPage_GetObject(page.get(), 0));
     ASSERT_TRUE(object);
-    ASSERT_TRUE(FPDFPage_RemoveObject(page, object.get()));
+    ASSERT_TRUE(FPDFPage_RemoveObject(page.get(), object.get()));
   }
-  ASSERT_TRUE(FPDFPage_GenerateContent(page));
-  UnloadPage(page);
+  ASSERT_TRUE(FPDFPage_GenerateContent(page.get()));
 
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
