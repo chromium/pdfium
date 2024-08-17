@@ -51,6 +51,8 @@ TEST(SimpleParserTest, GetWord) {
       STR_IN_OUT_CASE(">> end ", ">>"),
       // No ending delimiters.
       STR_IN_OUT_CASE("(sdfgfgbcv", "(sdfgfgbcv"),
+      // Other delimiters.
+      STR_IN_OUT_CASE("}", "}"),
       // Regular cases.
       STR_IN_OUT_CASE("apple pear", "apple"),
       STR_IN_OUT_CASE(" pi=3.1415 ", "pi=3.1415"),

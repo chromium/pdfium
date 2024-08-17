@@ -9,6 +9,8 @@
 
 #include <stdint.h>
 
+#include <optional>
+
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/span.h"
 
@@ -23,6 +25,16 @@ class CPDF_SimpleParser {
   uint32_t GetCurrentPosition() const { return cur_position_; }
 
  private:
+  // Skips whitespace and comment lines. Returns the first parseable character
+  // if `data_` can still be parsed, nullopt otherwise.
+  std::optional<uint8_t> SkipSpacesAndComments();
+
+  ByteStringView HandleName();
+  ByteStringView HandleBeginAngleBracket();
+  ByteStringView HandleEndAngleBracket();
+  ByteStringView HandleParentheses();
+  ByteStringView HandleNonDelimiter();
+
   const pdfium::span<const uint8_t> data_;
 
   // The current unread position.
