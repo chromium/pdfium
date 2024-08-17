@@ -20,13 +20,13 @@ ByteStringView CPDF_SimpleParser::GetWord() {
 
   // Skip whitespace and comment lines.
   while (true) {
-    if (data_.size() <= cur_position_) {
+    if (cur_position_ >= data_.size()) {
       return ByteStringView();
     }
 
     cur_char = data_[cur_position_++];
     while (PDFCharIsWhitespace(cur_char)) {
-      if (data_.size() <= cur_position_) {
+      if (cur_position_ >= data_.size()) {
         return ByteStringView();
       }
       cur_char = data_[cur_position_++];
@@ -37,7 +37,7 @@ ByteStringView CPDF_SimpleParser::GetWord() {
     }
 
     while (true) {
-      if (data_.size() <= cur_position_) {
+      if (cur_position_ >= data_.size()) {
         return ByteStringView();
       }
 
@@ -54,7 +54,7 @@ ByteStringView CPDF_SimpleParser::GetWord() {
     // Find names
     if (cur_char == '/') {
       while (true) {
-        if (data_.size() <= cur_position_) {
+        if (cur_position_ >= data_.size()) {
           break;
         }
 
@@ -70,7 +70,7 @@ ByteStringView CPDF_SimpleParser::GetWord() {
 
     size = 1;
     if (cur_char == '<') {
-      if (data_.size() <= cur_position_) {
+      if (cur_position_ >= data_.size()) {
         return ByteStringView(data_.subspan(start_position, size));
       }
       cur_char = data_[cur_position_++];
@@ -88,7 +88,7 @@ ByteStringView CPDF_SimpleParser::GetWord() {
         size = cur_position_ - start_position;
       }
     } else if (cur_char == '>') {
-      if (data_.size() <= cur_position_) {
+      if (cur_position_ >= data_.size()) {
         return ByteStringView(data_.subspan(start_position, size));
       }
       cur_char = data_[cur_position_++];
@@ -107,7 +107,7 @@ ByteStringView CPDF_SimpleParser::GetWord() {
         }
 
         if (data_[cur_position_] == '\\') {
-          if (data_.size() <= cur_position_) {
+          if (cur_position_ >= data_.size()) {
             break;
           }
 
@@ -115,7 +115,7 @@ ByteStringView CPDF_SimpleParser::GetWord() {
         } else if (data_[cur_position_] == '(') {
           level++;
         }
-        if (data_.size() <= cur_position_) {
+        if (cur_position_ >= data_.size()) {
           break;
         }
 
