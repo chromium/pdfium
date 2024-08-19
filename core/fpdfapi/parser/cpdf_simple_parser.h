@@ -25,6 +25,10 @@ class CPDF_SimpleParser {
   uint32_t GetCurrentPosition() const { return cur_position_; }
 
  private:
+  // Returns the ByteStringView of the subspan of `data_` from `start_position`
+  // to `cur_position_`.
+  ByteStringView GetDataToCurrentPosition(uint32_t start_position) const;
+
   // Skips whitespace and comment lines. Returns the first parseable character
   // if `data_` can still be parsed, nullopt otherwise.
   std::optional<uint8_t> SkipSpacesAndComments();
