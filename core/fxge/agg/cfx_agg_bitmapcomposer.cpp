@@ -15,7 +15,7 @@
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/stl_util.h"
-#include "core/fxge/cfx_cliprgn.h"
+#include "core/fxge/agg/cfx_agg_cliprgn.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 
 CFX_AggBitmapComposer::CFX_AggBitmapComposer() = default;

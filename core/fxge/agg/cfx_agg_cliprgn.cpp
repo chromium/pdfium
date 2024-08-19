@@ -4,7 +4,7 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#include "core/fxge/cfx_cliprgn.h"
+#include "core/fxge/agg/cfx_agg_cliprgn.h"
 
 #include <stdint.h>
 

@@ -4,8 +4,8 @@
 
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
-#ifndef CORE_FXGE_CFX_CLIPRGN_H_
-#define CORE_FXGE_CFX_CLIPRGN_H_
+#ifndef CORE_FXGE_AGG_CFX_AGG_CLIPRGN_H_
+#define CORE_FXGE_AGG_CFX_AGG_CLIPRGN_H_
 
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/retain_ptr.h"
@@ -37,4 +37,4 @@ class CFX_ClipRgn {
   RetainPtr<CFX_DIBitmap> m_Mask;
 };
 
-#endif  // CORE_FXGE_CFX_CLIPRGN_H_
+#endif  // CORE_FXGE_AGG_CFX_AGG_CLIPRGN_H_
