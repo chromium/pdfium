@@ -104,14 +104,15 @@ ByteStringView CPDF_SimpleParser::HandleBeginAngleBracket() {
     return GetDataToCurrentPosition(start_position);
   }
 
-  if (data_[cur_position_++] != '<') {
-    while (cur_position_ < data_.size() && data_[cur_position_] != '>') {
-      ++cur_position_;
-    }
+  uint8_t cur_char = data_[cur_position_++];
+  // Stop parsing if encountering "<<".
+  if (cur_char == '<') {
+    return GetDataToCurrentPosition(start_position);
+  }
 
-    if (cur_position_ < data_.size()) {
-      ++cur_position_;
-    }
+  // Continue parsing until end of `data_` or closing bracket.
+  while (cur_position_ < data_.size() && cur_char != '>') {
+    cur_char = data_[cur_position_++];
   }
   return GetDataToCurrentPosition(start_position);
 }
