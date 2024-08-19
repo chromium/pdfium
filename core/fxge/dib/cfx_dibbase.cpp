@@ -687,7 +687,7 @@ bool CFX_DIBBase::GetOverlapRect(int& dest_left,
                                  int src_height,
                                  int& src_left,
                                  int& src_top,
-                                 const CFX_ClipRgn* pClipRgn) const {
+                                 const CFX_AggClipRgn* pClipRgn) const {
   if (width == 0 || height == 0)
     return false;
 

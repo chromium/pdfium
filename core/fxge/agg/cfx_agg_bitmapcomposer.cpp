@@ -23,7 +23,7 @@ CFX_AggBitmapComposer::CFX_AggBitmapComposer() = default;
 CFX_AggBitmapComposer::~CFX_AggBitmapComposer() = default;
 
 void CFX_AggBitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
-                                    const CFX_ClipRgn* pClipRgn,
+                                    const CFX_AggClipRgn* pClipRgn,
                                     float alpha,
                                     uint32_t mask_color,
                                     const FX_RECT& dest_rect,
@@ -41,8 +41,9 @@ void CFX_AggBitmapComposer::Compose(const RetainPtr<CFX_DIBitmap>& pDest,
   m_Alpha = alpha;
   m_MaskColor = mask_color;
   m_pClipMask = nullptr;
-  if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::kRectI)
+  if (pClipRgn && pClipRgn->GetType() != CFX_AggClipRgn::kRectI) {
     m_pClipMask = pClipRgn->GetMask();
+  }
   m_bVertical = bVertical;
   m_bFlipX = bFlipX;
   m_bFlipY = bFlipY;

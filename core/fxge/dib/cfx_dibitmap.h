@@ -118,7 +118,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                        int src_left,
                        int src_top,
                        BlendMode blend_type,
-                       const CFX_ClipRgn* pClipRgn,
+                       const CFX_AggClipRgn* pClipRgn,
                        bool bRgbByteOrder);
 
   bool CompositeMask(int dest_left,
@@ -130,7 +130,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                      int src_left,
                      int src_top,
                      BlendMode blend_type,
-                     const CFX_ClipRgn* pClipRgn,
+                     const CFX_AggClipRgn* pClipRgn,
                      bool bRgbByteOrder);
 
   void CompositeOneBPPMask(int dest_left,

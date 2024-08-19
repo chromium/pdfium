@@ -19,7 +19,7 @@
 
 CFX_AggImageRenderer::CFX_AggImageRenderer(
     const RetainPtr<CFX_DIBitmap>& pDevice,
-    const CFX_ClipRgn* pClipRgn,
+    const CFX_AggClipRgn* pClipRgn,
     RetainPtr<const CFX_DIBBase> source,
     float alpha,
     uint32_t mask_color,

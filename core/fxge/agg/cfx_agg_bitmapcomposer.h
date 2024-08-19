@@ -16,7 +16,7 @@
 #include "core/fxge/dib/fx_dib.h"
 #include "core/fxge/dib/scanlinecomposer_iface.h"
 
-class CFX_ClipRgn;
+class CFX_AggClipRgn;
 class CFX_DIBitmap;
 struct FX_RECT;
 
@@ -26,7 +26,7 @@ class CFX_AggBitmapComposer final : public ScanlineComposerIface {
   ~CFX_AggBitmapComposer() override;
 
   void Compose(const RetainPtr<CFX_DIBitmap>& pDest,
-               const CFX_ClipRgn* pClipRgn,
+               const CFX_AggClipRgn* pClipRgn,
                float alpha,
                uint32_t mask_color,
                const FX_RECT& dest_rect,
@@ -51,7 +51,7 @@ class CFX_AggBitmapComposer final : public ScanlineComposerIface {
   void ComposeScanlineV(int line, pdfium::span<const uint8_t> scanline);
 
   RetainPtr<CFX_DIBitmap> m_pBitmap;
-  UnownedPtr<const CFX_ClipRgn> m_pClipRgn;
+  UnownedPtr<const CFX_AggClipRgn> m_pClipRgn;
   FXDIB_Format m_SrcFormat;
   int m_DestLeft;
   int m_DestTop;

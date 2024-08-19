@@ -23,7 +23,7 @@ class PauseIndicatorIface;
 class CFX_AggImageRenderer {
  public:
   CFX_AggImageRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
-                       const CFX_ClipRgn* pClipRgn,
+                       const CFX_AggClipRgn* pClipRgn,
                        RetainPtr<const CFX_DIBBase> source,
                        float alpha,
                        uint32_t mask_color,
@@ -38,7 +38,7 @@ class CFX_AggImageRenderer {
   enum class State : uint8_t { kInitial = 0, kStretching, kTransforming };
 
   RetainPtr<CFX_DIBitmap> const m_pDevice;
-  UnownedPtr<const CFX_ClipRgn> const m_pClipRgn;
+  UnownedPtr<const CFX_AggClipRgn> const m_pClipRgn;
   const CFX_Matrix m_Matrix;
   std::unique_ptr<CFX_ImageTransformer> m_pTransformer;
   std::unique_ptr<CFX_ImageStretcher> m_Stretcher;

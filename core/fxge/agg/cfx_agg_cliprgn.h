@@ -12,13 +12,13 @@
 
 class CFX_DIBitmap;
 
-class CFX_ClipRgn {
+class CFX_AggClipRgn {
  public:
   enum ClipType : bool { kRectI, kMaskF };
 
-  CFX_ClipRgn(int device_width, int device_height);
-  CFX_ClipRgn(const CFX_ClipRgn& src);
-  ~CFX_ClipRgn();
+  CFX_AggClipRgn(int device_width, int device_height);
+  CFX_AggClipRgn(const CFX_AggClipRgn& src);
+  ~CFX_AggClipRgn();
 
   ClipType GetType() const { return m_Type; }
   const FX_RECT& GetBox() const { return m_Box; }

@@ -19,7 +19,7 @@
 #include "core/fxcrt/unowned_ptr_exclusion.h"
 #endif
 
-class CFX_ClipRgn;
+class CFX_AggClipRgn;
 class CFX_GraphStateData;
 class CFX_Matrix;
 class CFX_Path;
@@ -111,8 +111,8 @@ class CFX_AggDeviceDriver final : public RenderDeviceDriverIface {
   void SetClipMask(pdfium::agg::rasterizer_scanline_aa& rasterizer);
 
   RetainPtr<CFX_DIBitmap> const m_pBitmap;
-  std::unique_ptr<CFX_ClipRgn> m_pClipRgn;
-  std::vector<std::unique_ptr<CFX_ClipRgn>> m_StateStack;
+  std::unique_ptr<CFX_AggClipRgn> m_pClipRgn;
+  std::vector<std::unique_ptr<CFX_AggClipRgn>> m_StateStack;
 #if BUILDFLAG(IS_APPLE)
   UNOWNED_PTR_EXCLUSION void* m_pPlatformGraphics = nullptr;
 #endif

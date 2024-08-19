@@ -558,7 +558,7 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
                                    int src_left,
                                    int src_top,
                                    BlendMode blend_type,
-                                   const CFX_ClipRgn* pClipRgn,
+                                   const CFX_AggClipRgn* pClipRgn,
                                    bool bRgbByteOrder) {
   // Should have called CompositeMask().
   CHECK(!source->IsMaskFormat());
@@ -577,7 +577,7 @@ bool CFX_DIBitmap::CompositeBitmap(int dest_left,
 
   RetainPtr<CFX_DIBitmap> pClipMask;
   FX_RECT clip_box;
-  if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::kRectI) {
+  if (pClipRgn && pClipRgn->GetType() != CFX_AggClipRgn::kRectI) {
     pClipMask = pClipRgn->GetMask();
     clip_box = pClipRgn->GetBox();
   }
@@ -625,7 +625,7 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
                                  int src_left,
                                  int src_top,
                                  BlendMode blend_type,
-                                 const CFX_ClipRgn* pClipRgn,
+                                 const CFX_AggClipRgn* pClipRgn,
                                  bool bRgbByteOrder) {
   // Should have called CompositeBitmap().
   CHECK(pMask->IsMaskFormat());
@@ -648,7 +648,7 @@ bool CFX_DIBitmap::CompositeMask(int dest_left,
 
   RetainPtr<CFX_DIBitmap> pClipMask;
   FX_RECT clip_box;
-  if (pClipRgn && pClipRgn->GetType() != CFX_ClipRgn::kRectI) {
+  if (pClipRgn && pClipRgn->GetType() != CFX_AggClipRgn::kRectI) {
     pClipMask = pClipRgn->GetMask();
     clip_box = pClipRgn->GetBox();
   }

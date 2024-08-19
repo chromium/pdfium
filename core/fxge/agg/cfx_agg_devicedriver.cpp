@@ -343,12 +343,12 @@ agg::filling_rule_e GetAlternateOrWindingFillType(
              : agg::fill_even_odd;
 }
 
-RetainPtr<CFX_DIBitmap> GetClipMaskFromRegion(const CFX_ClipRgn* r) {
-  return (r && r->GetType() == CFX_ClipRgn::kMaskF) ? r->GetMask() : nullptr;
+RetainPtr<CFX_DIBitmap> GetClipMaskFromRegion(const CFX_AggClipRgn* r) {
+  return (r && r->GetType() == CFX_AggClipRgn::kMaskF) ? r->GetMask() : nullptr;
 }
 
 FX_RECT GetClipBoxFromRegion(const RetainPtr<CFX_DIBitmap>& device,
-                             const CFX_ClipRgn* region) {
+                             const CFX_AggClipRgn* region) {
   if (region)
     return region->GetBox();
   return FX_RECT(0, 0, device->GetWidth(), device->GetHeight());
@@ -358,7 +358,7 @@ class CFX_AggRenderer {
  public:
   CFX_AggRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
                   const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
-                  const CFX_ClipRgn* pClipRgn,
+                  const CFX_AggClipRgn* pClipRgn,
                   uint32_t color,
                   bool bFullCover,
                   bool bRgbByteOrder);
@@ -456,7 +456,7 @@ class CFX_AggRenderer {
   RetainPtr<CFX_DIBitmap> const m_pBackdropDevice;
   RetainPtr<CFX_DIBitmap> const m_pClipMask;
   RetainPtr<CFX_DIBitmap> const m_pDevice;
-  UnownedPtr<const CFX_ClipRgn> m_pClipRgn;
+  UnownedPtr<const CFX_AggClipRgn> m_pClipRgn;
   const CompositeSpanFunc m_CompositeSpanFunc;
 };
 
@@ -756,7 +756,7 @@ void CFX_AggRenderer::CompositeSpanRGB(uint8_t* dest_scan,
 
 CFX_AggRenderer::CFX_AggRenderer(const RetainPtr<CFX_DIBitmap>& pDevice,
                                  const RetainPtr<CFX_DIBitmap>& pBackdropDevice,
-                                 const CFX_ClipRgn* pClipRgn,
+                                 const CFX_AggClipRgn* pClipRgn,
                                  uint32_t color,
                                  bool bFullCover,
                                  bool bRgbByteOrder)
@@ -991,9 +991,9 @@ int CFX_AggDeviceDriver::GetDeviceCaps(int caps_id) const {
 }
 
 void CFX_AggDeviceDriver::SaveState() {
-  std::unique_ptr<CFX_ClipRgn> pClip;
+  std::unique_ptr<CFX_AggClipRgn> pClip;
   if (m_pClipRgn)
-    pClip = std::make_unique<CFX_ClipRgn>(*m_pClipRgn);
+    pClip = std::make_unique<CFX_AggClipRgn>(*m_pClipRgn);
   m_StateStack.push_back(std::move(pClip));
 }
 
@@ -1005,7 +1005,7 @@ void CFX_AggDeviceDriver::RestoreState(bool bKeepSaved) {
 
   if (bKeepSaved) {
     if (m_StateStack.back())
-      m_pClipRgn = std::make_unique<CFX_ClipRgn>(*m_StateStack.back());
+      m_pClipRgn = std::make_unique<CFX_AggClipRgn>(*m_StateStack.back());
   } else {
     m_pClipRgn = std::move(m_StateStack.back());
     m_StateStack.pop_back();
@@ -1044,7 +1044,7 @@ bool CFX_AggDeviceDriver::SetClip_PathFill(
 
   m_FillOptions = fill_options;
   if (!m_pClipRgn) {
-    m_pClipRgn = std::make_unique<CFX_ClipRgn>(
+    m_pClipRgn = std::make_unique<CFX_AggClipRgn>(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
   }
   std::optional<CFX_FloatRect> maybe_rectf = path.GetRect(pObject2Device);
@@ -1074,7 +1074,7 @@ bool CFX_AggDeviceDriver::SetClip_PathStroke(
     const CFX_Matrix* pObject2Device,
     const CFX_GraphStateData* pGraphState) {
   if (!m_pClipRgn) {
-    m_pClipRgn = std::make_unique<CFX_ClipRgn>(
+    m_pClipRgn = std::make_unique<CFX_AggClipRgn>(
         GetDeviceCaps(FXDC_PIXEL_WIDTH), GetDeviceCaps(FXDC_PIXEL_HEIGHT));
   }
   agg::path_storage path_data = BuildAggPath(path, nullptr);
@@ -1200,7 +1200,7 @@ bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
   if (draw_rect.IsEmpty())
     return true;
 
-  if (!m_pClipRgn || m_pClipRgn->GetType() == CFX_ClipRgn::kRectI) {
+  if (!m_pClipRgn || m_pClipRgn->GetType() == CFX_AggClipRgn::kRectI) {
     if (m_bRgbByteOrder) {
       RgbByteOrderCompositeRect(m_pBitmap, draw_rect.left, draw_rect.top,
                                 draw_rect.Width(), draw_rect.Height(),
