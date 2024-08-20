@@ -215,8 +215,10 @@ component("skia") {
 
   # The skia sources values are relative to the skia_dir, so we need to rebase.
   sources += skia_core_public
-  sources += skia_sksl_gpu_sources
-  sources += skia_sksl_sources
+  sources += skia_sksl_pipeline_sources
+  sources += skia_sksl_codegen_sources
+  sources += skia_sksl_core_sources
+  sources += skia_sksl_default_module_sources
   sources += skia_utils_private
   sources += skia_xps_sources
   sources += skia_codec_core
