@@ -210,9 +210,6 @@ config("pdfium_common_config") {
     # Override -Wno-c++11-narrowing.
     cflags += [ "-Wc++11-narrowing" ]
 
-    # TODO(crbug.com/1213098): Remove once this is in //build.
-    cflags += [ "-Wdeprecated-copy" ]
-
     # May flag some issues when converting int to size_t.
     cflags += [ "-Wtautological-unsigned-zero-compare" ]
   }
