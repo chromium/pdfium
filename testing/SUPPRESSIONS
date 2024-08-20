@@ -762,3 +762,6 @@ bug_632.in * * * gdi
 bug_660850.in * * * gdi
 long_dashed_line.in * * * gdi
 matte.in * * * gdi
+
+# TODO(crbug.com/361002664): Remove after associated bug is fixed
+smask_blend.in * * * gdi

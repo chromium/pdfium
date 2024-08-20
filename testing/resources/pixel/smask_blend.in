@@ -1,0 +1,106 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /MediaBox [0 0 200 200]
+  /Parent 2 0 R
+  /Resources <<
+    /ExtGState <<
+      /GS0 <<
+        /Type /ExtGState
+        /SMask 5 0 R
+      >>
+    >>
+    /XObject <<
+      /Fm0 7 0 R
+    >>
+  >>
+  /Contents [4 0 R]
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+/GS0 gs
+/Fm0 Do
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /Mask
+  /G 6 0 R
+  /S /Alpha
+>>
+endobj
+{{object 6 0}} <<
+  /Type XObject
+  /Subtype /Form
+  /BBox [0 0 100 100]
+  {{streamlen}}
+>>
+stream
+q
+1 g
+0 0 100 50 re f
+0 g
+0 50 100 100 re f
+Q
+endstream
+endobj
+{{object 7 0}} <<
+  /Type XObject
+  /Subtype /Form
+  /Resources <<
+    /ExtGState <<
+      /GS1 <<
+        /Type /ExtGState
+        /BM /Screen
+        /CA 0.6
+        /ca 0.6
+      >>
+    >>
+    /XObject <<
+      /Fm1 8 0 R
+    >>
+  >>
+  /BBox [0 0 100 100]
+  {{streamlen}}
+>>
+stream
+q
+/GS1 gs
+/Fm1 Do
+Q
+endstream
+endobj
+{{object 8 0}} <<
+  /Type XObject
+  /Subtype /Form
+  /BBox [0 0 100 100]
+  {{streamlen}}
+>>
+stream
+q
+1 g
+0 0 50 100 re f
+0 g
+50 0 100 100 re f
+Q
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
