@@ -53,6 +53,8 @@ class ScopedFXFTMMVar {
 
  private:
   std::unique_ptr<FT_MM_Var, FXFTMMVarDeleter> const variation_desc_;
+  // Points into `variation_desc_`.
+  const pdfium::span<const FT_Var_Axis> axis_;
 };
 
 #define FXFT_Get_Glyph_HoriBearingX(face) (face)->glyph->metrics.horiBearingX

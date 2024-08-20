@@ -69,6 +69,17 @@ FT_MM_Var* GetVariationDescriptor(FXFT_FaceRec* face) {
   return variation_desc;
 }
 
+pdfium::span<const FT_Var_Axis> GetVariationAxis(
+    const FT_MM_Var* variation_desc) {
+  if (!variation_desc) {
+    return {};
+  }
+
+  // SAFETY: Required from library.
+  return UNSAFE_BUFFERS(
+      pdfium::make_span(variation_desc->axis, variation_desc->num_axis));
+}
+
 }  // namespace
 
 void FXFTMMVarDeleter::operator()(FT_MM_Var* variation_desc) {
@@ -77,20 +88,21 @@ void FXFTMMVarDeleter::operator()(FT_MM_Var* variation_desc) {
 }
 
 ScopedFXFTMMVar::ScopedFXFTMMVar(FXFT_FaceRec* face)
-    : variation_desc_(GetVariationDescriptor(face)) {}
+    : variation_desc_(GetVariationDescriptor(face)),
+      axis_(GetVariationAxis(variation_desc_.get())) {}
 
 ScopedFXFTMMVar::~ScopedFXFTMMVar() = default;
 
 FT_Pos ScopedFXFTMMVar::GetAxisDefault(size_t index) const {
-  return UNSAFE_TODO(variation_desc_->axis[index].def);
+  return axis_[index].def;
 }
 
 FT_Long ScopedFXFTMMVar::GetAxisMin(size_t index) const {
-  return UNSAFE_TODO(variation_desc_->axis[index].minimum);
+  return axis_[index].minimum;
 }
 
 FT_Long ScopedFXFTMMVar::GetAxisMax(size_t index) const {
-  return UNSAFE_TODO(variation_desc_->axis[index].maximum);
+  return axis_[index].maximum;
 }
 
 int FXFT_unicode_from_adobe_name(const char* glyph_name) {
