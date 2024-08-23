@@ -212,7 +212,6 @@ SK_API void SkDebugf_FileLine(const char* file,
 
 #define SK_ATTR_DEPRECATED SK_NOTHING_ARG1
 #define SK_ENABLE_INST_COUNT 0
-#define GR_GL_CUSTOM_SETUP_HEADER "GrGLConfig_chrome.h"
 
 // Blink layout tests are baselined to Clang optimizing through the UB in
 // SkDivBits.
