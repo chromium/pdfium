@@ -69,9 +69,7 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
   }
   if (m_Cipher == Cipher::kAES) {
     CRYPT_AESSetKey(m_pAESContext.get(),
-                    m_KeyLen == 32
-                        ? pdfium::span<const uint8_t>(m_EncryptKey)
-                        : pdfium::span<const uint8_t>(realkey).first(m_KeyLen));
+                    m_KeyLen == 32 ? m_EncryptKey.data() : realkey, m_KeyLen);
 
     constexpr size_t kIVSize = 16;
     constexpr size_t kPaddingSize = 16;
@@ -87,7 +85,8 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
     for (auto& v : dest_iv_span) {
       v = static_cast<uint8_t>(rand());
     }
-    CRYPT_AESSetIV(m_pAESContext.get(), dest_iv_span);
+    CRYPT_AESSetIV(m_pAESContext.get(), dest_iv_span.data());
+
     CRYPT_AESEncrypt(m_pAESContext.get(), dest_data_span,
                      source.first(source_data_size));
 
@@ -118,7 +117,7 @@ void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
     AESCryptContext* pContext = FX_Alloc(AESCryptContext, 1);
     pContext->m_bIV = true;
     pContext->m_BlockOffset = 0;
-    CRYPT_AESSetKey(&pContext->m_Context, m_EncryptKey);
+    CRYPT_AESSetKey(&pContext->m_Context, m_EncryptKey.data(), 32);
     return pContext;
   }
   uint8_t key1[48];
@@ -137,7 +136,7 @@ void* CPDF_CryptoHandler::DecryptStart(uint32_t objnum, uint32_t gennum) {
     AESCryptContext* pContext = FX_Alloc(AESCryptContext, 1);
     pContext->m_bIV = true;
     pContext->m_BlockOffset = 0;
-    CRYPT_AESSetKey(&pContext->m_Context, realkey);
+    CRYPT_AESSetKey(&pContext->m_Context, realkey, 16);
     return pContext;
   }
   CRYPT_rc4_context* pContext = FX_Alloc(CRYPT_rc4_context, 1);

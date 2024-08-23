@@ -25,8 +25,10 @@ struct CRYPT_aes_context {
   std::array<uint32_t, kMaxNb> iv;
 };
 
-void CRYPT_AESSetKey(CRYPT_aes_context* ctx, pdfium::span<const uint8_t> key);
-void CRYPT_AESSetIV(CRYPT_aes_context* ctx, pdfium::span<const uint8_t> iv);
+void CRYPT_AESSetKey(CRYPT_aes_context* ctx,
+                     const uint8_t* key,
+                     uint32_t keylen);
+void CRYPT_AESSetIV(CRYPT_aes_context* ctx, const uint8_t* iv);
 void CRYPT_AESDecrypt(CRYPT_aes_context* ctx,
                       uint8_t* dest,
                       const uint8_t* src,
