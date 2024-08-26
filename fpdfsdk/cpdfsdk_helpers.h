@@ -17,6 +17,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/cfx_path.h"
+#include "core/fxge/dib/fx_dib.h"
 #include "public/fpdf_doc.h"
 #include "public/fpdf_ext.h"
 #include "public/fpdfview.h"
@@ -25,6 +26,7 @@
 #include "core/fxcrt/fx_stream.h"
 #endif  // PDF_ENABLE_XFA
 
+class CFX_DIBitmap;
 class CPDF_Annot;
 class CPDF_AnnotContext;
 class CPDF_ClipPath;
@@ -41,7 +43,6 @@ class CPDF_TextPage;
 class CPDF_TextPageFind;
 class CPDFSDK_FormFillEnvironment;
 class CPDFSDK_InteractiveForm;
-class CFX_DIBitmap;
 struct CPDF_JavaScript;
 struct XObjectContext;
 
@@ -260,6 +261,8 @@ inline FPDF_XOBJECT FPDFXObjectFromXObjectContext(XObjectContext* xobject) {
 inline XObjectContext* XObjectContextFromFPDFXObject(FPDF_XOBJECT xobject) {
   return reinterpret_cast<XObjectContext*>(xobject);
 }
+
+FXDIB_Format FXDIBFormatFromFPDFFormat(int format);
 
 CPDFSDK_InteractiveForm* FormHandleToInteractiveForm(FPDF_FORMHANDLE hHandle);
 

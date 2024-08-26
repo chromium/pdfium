@@ -900,22 +900,9 @@ FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV FPDFBitmap_CreateEx(int width,
                                                           int format,
                                                           void* first_scan,
                                                           int stride) {
-  FXDIB_Format fx_format;
-  switch (format) {
-    case FPDFBitmap_Gray:
-      fx_format = FXDIB_Format::k8bppRgb;
-      break;
-    case FPDFBitmap_BGR:
-      fx_format = FXDIB_Format::kBgr;
-      break;
-    case FPDFBitmap_BGRx:
-      fx_format = FXDIB_Format::kBgrx;
-      break;
-    case FPDFBitmap_BGRA:
-      fx_format = FXDIB_Format::kBgra;
-      break;
-    default:
-      return nullptr;
+  FXDIB_Format fx_format = FXDIBFormatFromFPDFFormat(format);
+  if (fx_format == FXDIB_Format::kInvalid) {
+    return nullptr;
   }
 
   // Ensure external memory is good at least for the duration of this call.

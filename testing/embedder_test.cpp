@@ -15,9 +15,9 @@
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
-#include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/checked_math.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
+#include "fpdfsdk/cpdfsdk_helpers.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_dataavail.h"
 #include "public/fpdf_edit.h"
@@ -678,17 +678,9 @@ FPDF_DOCUMENT EmbedderTest::OpenSavedDocument() {
 
 // static
 int EmbedderTest::BytesPerPixelForFormat(int format) {
-  switch (format) {
-    case FPDFBitmap_Gray:
-      return 1;
-    case FPDFBitmap_BGR:
-      return 3;
-    case FPDFBitmap_BGRx:
-    case FPDFBitmap_BGRA:
-      return 4;
-    default:
-      NOTREACHED_NORETURN();
-  }
+  FXDIB_Format fx_format = FXDIBFormatFromFPDFFormat(format);
+  CHECK_NE(fx_format, FXDIB_Format::kInvalid);
+  return GetCompsFromFormat(fx_format);
 }
 
 FPDF_DOCUMENT EmbedderTest::OpenSavedDocumentWithPassword(
