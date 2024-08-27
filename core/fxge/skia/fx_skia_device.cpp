@@ -1149,13 +1149,6 @@ bool CFX_SkiaDeviceDriver::DrawPath(
   return true;
 }
 
-bool CFX_SkiaDeviceDriver::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
-                                            const CFX_PointF& ptLineTo,
-                                            uint32_t color,
-                                            BlendMode blend_type) {
-  return false;
-}
-
 bool CFX_SkiaDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
                                              uint32_t fill_color,
                                              BlendMode blend_type) {

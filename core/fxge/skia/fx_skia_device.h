@@ -67,10 +67,6 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   bool FillRectWithBlend(const FX_RECT& rect,
                          uint32_t fill_color,
                          BlendMode blend_type) override;
-  bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
-                        const CFX_PointF& ptLineTo,
-                        uint32_t color,
-                        BlendMode blend_type) override;
   FX_RECT GetClipBox() const override;
   bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                  int left,

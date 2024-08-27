@@ -45,8 +45,7 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
                          BlendMode blend_type) override;
   bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
                         const CFX_PointF& ptLineTo,
-                        uint32_t color,
-                        BlendMode blend_type) override;
+                        uint32_t color) override;
   FX_RECT GetClipBox() const override;
   bool MultiplyAlpha(float alpha) override;
   bool MultiplyAlphaMask(RetainPtr<const CFX_DIBitmap> mask) override;

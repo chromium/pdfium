@@ -626,12 +626,11 @@ bool CGdiDeviceDriver::DrawPath(const CFX_Path& path,
     if (bbox.Width() <= 0) {
       return DrawCosmeticLine(CFX_PointF(bbox.left, bbox.top),
                               CFX_PointF(bbox.left, bbox.bottom + 1),
-                              fill_color, BlendMode::kNormal);
+                              fill_color);
     }
     if (bbox.Height() <= 0) {
       return DrawCosmeticLine(CFX_PointF(bbox.left, bbox.top),
-                              CFX_PointF(bbox.right + 1, bbox.top), fill_color,
-                              BlendMode::kNormal);
+                              CFX_PointF(bbox.right + 1, bbox.top), fill_color);
     }
   }
   int fill_alpha = FXARGB_A(fill_color);
@@ -770,16 +769,13 @@ bool CGdiDeviceDriver::SetClip_PathStroke(
 
 bool CGdiDeviceDriver::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
                                         const CFX_PointF& ptLineTo,
-                                        uint32_t color,
-                                        BlendMode blend_type) {
-  if (blend_type != BlendMode::kNormal)
-    return false;
-
+                                        uint32_t color) {
   int alpha;
   FX_COLORREF colorref;
   std::tie(alpha, colorref) = ArgbToAlphaAndColorRef(color);
-  if (alpha == 0)
+  if (alpha == 0) {
     return true;
+  }
 
   HPEN hPen = CreatePen(PS_SOLID, 1, colorref);
   hPen = (HPEN)SelectObject(m_hDC, hPen);

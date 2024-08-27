@@ -814,8 +814,7 @@ bool CFX_RenderDevice::DrawCosmeticLine(
     uint32_t color,
     const CFX_FillRenderOptions& fill_options) {
   if ((color >= 0xff000000) &&
-      m_pDeviceDriver->DrawCosmeticLine(ptMoveTo, ptLineTo, color,
-                                        BlendMode::kNormal)) {
+      m_pDeviceDriver->DrawCosmeticLine(ptMoveTo, ptLineTo, color)) {
     return true;
   }
   CFX_GraphStateData graph_state;

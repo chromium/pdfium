@@ -32,8 +32,7 @@ bool RenderDeviceDriverIface::FillRectWithBlend(const FX_RECT& rect,
 
 bool RenderDeviceDriverIface::DrawCosmeticLine(const CFX_PointF& ptMoveTo,
                                                const CFX_PointF& ptLineTo,
-                                               uint32_t color,
-                                               BlendMode blend_type) {
+                                               uint32_t color) {
   return false;
 }
 

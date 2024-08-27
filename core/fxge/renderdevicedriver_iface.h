@@ -84,8 +84,7 @@ class RenderDeviceDriverIface {
                                  BlendMode blend_type);
   virtual bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
                                 const CFX_PointF& ptLineTo,
-                                uint32_t color,
-                                BlendMode blend_type);
+                                uint32_t color);
 
   virtual FX_RECT GetClipBox() const = 0;
   virtual bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
