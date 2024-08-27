@@ -330,10 +330,10 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   render_matrix.Translate(-min_x, min_y);
 
   // Do the actual rendering.
-  bool should_continue = renderer.Start(image, render_matrix,
-                                        /*bStdCS=*/false, BlendMode::kNormal);
-  while (should_continue)
+  bool should_continue = renderer.Start(image, render_matrix, /*bStdCS=*/false);
+  while (should_continue) {
     should_continue = renderer.Continue(/*pPause=*/nullptr);
+  }
 
   if (!renderer.GetResult())
     return nullptr;

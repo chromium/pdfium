@@ -178,12 +178,11 @@ bool CPDF_ImageRenderer::StartRenderDIBBase() {
 
 bool CPDF_ImageRenderer::Start(CPDF_ImageObject* pImageObject,
                                const CFX_Matrix& mtObj2Device,
-                               bool bStdCS,
-                               BlendMode blendType) {
+                               bool bStdCS) {
   DCHECK(pImageObject);
   m_bStdCS = bStdCS;
   m_pImageObject = pImageObject;
-  m_BlendType = blendType;
+  m_BlendType = BlendMode::kNormal;
   m_mtObj2Device = mtObj2Device;
   RetainPtr<const CPDF_Dictionary> pOC = m_pImageObject->GetImage()->GetOC();
   if (pOC && !GetRenderOptions().CheckOCGDictVisible(pOC))

@@ -274,8 +274,8 @@ bool CPDF_RenderStatus::ContinueSingleObject(CPDF_PageObject* pObj,
   }
 
   m_pImageRenderer = std::make_unique<CPDF_ImageRenderer>(this);
-  if (!m_pImageRenderer->Start(pObj->AsImage(), mtObj2Device, false,
-                               BlendMode::kNormal)) {
+  if (!m_pImageRenderer->Start(pObj->AsImage(), mtObj2Device,
+                               /*bStdCS=*/false)) {
     if (!m_pImageRenderer->GetResult())
       DrawObjWithBackground(pObj, mtObj2Device);
     m_pImageRenderer.reset();
@@ -1229,7 +1229,7 @@ void CPDF_RenderStatus::ProcessPathPattern(
 bool CPDF_RenderStatus::ProcessImage(CPDF_ImageObject* pImageObj,
                                      const CFX_Matrix& mtObj2Device) {
   CPDF_ImageRenderer render(this);
-  if (render.Start(pImageObj, mtObj2Device, m_bStdCS, BlendMode::kNormal)) {
+  if (render.Start(pImageObj, mtObj2Device, m_bStdCS)) {
     render.Continue(nullptr);
   }
   return render.GetResult();

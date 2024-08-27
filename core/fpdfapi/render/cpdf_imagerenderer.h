@@ -38,8 +38,7 @@ class CPDF_ImageRenderer {
 
   bool Start(CPDF_ImageObject* pImageObject,
              const CFX_Matrix& mtObj2Device,
-             bool bStdCS,
-             BlendMode blendType);
+             bool bStdCS);
 
   bool Start(RetainPtr<CFX_DIBBase> pDIBBase,
              FX_ARGB bitmap_argb,
