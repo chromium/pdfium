@@ -399,7 +399,6 @@ bool CPDF_RenderStatus::ProcessForm(const CPDF_FormObject* pFormObj,
   status.SetFormResource(std::move(pResources));
   status.SetInGroup(m_bInGroup);
   status.Initialize(this, &pFormObj->graphic_states());
-  status.m_curBlend = m_curBlend;
   {
     CFX_RenderDevice::StateRestorer restorer(m_pDevice);
     status.RenderObjectList(pFormObj->form(), matrix);
@@ -439,7 +438,7 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* path_obj,
       path_obj->graph_state().GetObject(), fill_argb, stroke_argb,
       GetFillOptionsForDrawPathWithBlend(options, path_obj, fill_type, stroke,
                                          m_pType3Char),
-      m_curBlend);
+      BlendMode::kNormal);
 }
 
 RetainPtr<CPDF_TransferFunc> CPDF_RenderStatus::GetTransferFunc(
@@ -1230,8 +1229,9 @@ void CPDF_RenderStatus::ProcessPathPattern(
 bool CPDF_RenderStatus::ProcessImage(CPDF_ImageObject* pImageObj,
                                      const CFX_Matrix& mtObj2Device) {
   CPDF_ImageRenderer render(this);
-  if (render.Start(pImageObj, mtObj2Device, m_bStdCS, m_curBlend))
+  if (render.Start(pImageObj, mtObj2Device, m_bStdCS, BlendMode::kNormal)) {
     render.Continue(nullptr);
+  }
   return render.GetResult();
 }
 

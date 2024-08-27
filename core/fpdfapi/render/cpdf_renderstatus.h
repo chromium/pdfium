@@ -215,7 +215,6 @@ class CPDF_RenderStatus {
   bool m_bInGroup = false;
   CPDF_ColorSpace::Family m_GroupFamily = CPDF_ColorSpace::Family::kUnknown;
   FX_ARGB m_T3FillColor = 0;
-  BlendMode m_curBlend = BlendMode::kNormal;
 };
 
 #endif  // CORE_FPDFAPI_RENDER_CPDF_RENDERSTATUS_H_
