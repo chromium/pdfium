@@ -1124,13 +1124,10 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_Path& path,
                                    const CFX_GraphStateData* pGraphState,
                                    uint32_t fill_color,
                                    uint32_t stroke_color,
-                                   const CFX_FillRenderOptions& fill_options,
-                                   BlendMode blend_type) {
-  if (blend_type != BlendMode::kNormal)
-    return false;
-
-  if (m_pBitmap->GetBuffer().empty())
+                                   const CFX_FillRenderOptions& fill_options) {
+  if (m_pBitmap->GetBuffer().empty()) {
     return true;
+  }
 
   m_FillOptions = fill_options;
   if (fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill &&

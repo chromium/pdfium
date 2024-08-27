@@ -705,9 +705,9 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
       if (using_skia) {
         m_pDeviceDriver->SetGroupKnockout(true);
       }
-      bool draw_fillstroke_path_result = m_pDeviceDriver->DrawPath(
-          path, pObject2Device, pGraphState, fill_color, stroke_color,
-          fill_options, BlendMode::kNormal);
+      bool draw_fillstroke_path_result =
+          m_pDeviceDriver->DrawPath(path, pObject2Device, pGraphState,
+                                    fill_color, stroke_color, fill_options);
 
       if (using_skia) {
         // Restore the group knockout status for `m_pDeviceDriver` after
@@ -721,8 +721,7 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
                               stroke_color, fill_options);
   }
   return m_pDeviceDriver->DrawPath(path, pObject2Device, pGraphState,
-                                   fill_color, stroke_color, fill_options,
-                                   BlendMode::kNormal);
+                                   fill_color, stroke_color, fill_options);
 }
 
 // This can be removed once PDFium entirely relies on Skia
@@ -770,8 +769,7 @@ bool CFX_RenderDevice::DrawFillStrokePath(
     matrix = *pObject2Device;
   matrix.Translate(-rect.left, -rect.top);
   if (!bitmap_device.GetDeviceDriver()->DrawPath(
-          path, &matrix, pGraphState, fill_color, stroke_color, fill_options,
-          BlendMode::kNormal)) {
+          path, &matrix, pGraphState, fill_color, stroke_color, fill_options)) {
     return false;
   }
   FX_RECT src_rect(0, 0, rect.Width(), rect.Height());
@@ -821,7 +819,7 @@ bool CFX_RenderDevice::DrawCosmeticLine(
   path.AppendPoint(ptMoveTo, CFX_Path::Point::Type::kMove);
   path.AppendPoint(ptLineTo, CFX_Path::Point::Type::kLine);
   return m_pDeviceDriver->DrawPath(path, nullptr, &graph_state, 0, color,
-                                   fill_options, BlendMode::kNormal);
+                                   fill_options);
 }
 
 void CFX_RenderDevice::DrawZeroAreaPath(
@@ -857,7 +855,7 @@ void CFX_RenderDevice::DrawZeroAreaPath(
   path_options.aliased_path = aliased_path;
 
   m_pDeviceDriver->DrawPath(new_path, new_matrix, &graph_state, 0, stroke_color,
-                            path_options, BlendMode::kNormal);
+                            path_options);
 }
 
 bool CFX_RenderDevice::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,

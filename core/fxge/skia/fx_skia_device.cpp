@@ -1081,15 +1081,12 @@ bool CFX_SkiaDeviceDriver::SetClip_PathStroke(
   return true;
 }
 
-// TODO(crbug.com/pdfium/1963): `blend_type` isn't used?
-bool CFX_SkiaDeviceDriver::DrawPath(
-    const CFX_Path& path,                   // path info
-    const CFX_Matrix* pObject2Device,       // optional transformation
-    const CFX_GraphStateData* pGraphState,  // graphic state, for pen attributes
-    uint32_t fill_color,                    // fill color
-    uint32_t stroke_color,                  // stroke color
-    const CFX_FillRenderOptions& fill_options,
-    BlendMode blend_type) {
+bool CFX_SkiaDeviceDriver::DrawPath(const CFX_Path& path,
+                                    const CFX_Matrix* pObject2Device,
+                                    const CFX_GraphStateData* pGraphState,
+                                    uint32_t fill_color,
+                                    uint32_t stroke_color,
+                                    const CFX_FillRenderOptions& fill_options) {
   m_FillOptions = fill_options;
 
   SkPath skia_path = BuildPath(path);

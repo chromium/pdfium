@@ -75,13 +75,13 @@ bool CTextOnlyPrinterDriver::SetClip_PathStroke(
   return false;
 }
 
-bool CTextOnlyPrinterDriver::DrawPath(const CFX_Path& path,
-                                      const CFX_Matrix* pObject2Device,
-                                      const CFX_GraphStateData* pGraphState,
-                                      uint32_t fill_color,
-                                      uint32_t stroke_color,
-                                      const CFX_FillRenderOptions& fill_options,
-                                      BlendMode blend_type) {
+bool CTextOnlyPrinterDriver::DrawPath(
+    const CFX_Path& path,
+    const CFX_Matrix* pObject2Device,
+    const CFX_GraphStateData* pGraphState,
+    uint32_t fill_color,
+    uint32_t stroke_color,
+    const CFX_FillRenderOptions& fill_options) {
   return false;
 }
 

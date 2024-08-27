@@ -77,8 +77,7 @@ class RenderDeviceDriverIface {
                         const CFX_GraphStateData* pGraphState,
                         uint32_t fill_color,
                         uint32_t stroke_color,
-                        const CFX_FillRenderOptions& fill_options,
-                        BlendMode blend_type) = 0;
+                        const CFX_FillRenderOptions& fill_options) = 0;
   virtual bool FillRect(const FX_RECT& rect, uint32_t fill_color);
   virtual bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
                                 const CFX_PointF& ptLineTo,

@@ -609,11 +609,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_Path& path,
                                 const CFX_GraphStateData* pGraphState,
                                 uint32_t fill_color,
                                 uint32_t stroke_color,
-                                const CFX_FillRenderOptions& fill_options,
-                                BlendMode blend_type) {
-  if (blend_type != BlendMode::kNormal)
-    return false;
-
+                                const CFX_FillRenderOptions& fill_options) {
   auto* pPlatform =
       static_cast<CWin32Platform*>(CFX_GEModule::Get()->GetPlatform());
   if (!(pGraphState || stroke_color == 0) &&

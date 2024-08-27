@@ -146,10 +146,7 @@ bool CPSPrinterDriver::DrawPath(const CFX_Path& path,
                                 const CFX_GraphStateData* pGraphState,
                                 FX_ARGB fill_color,
                                 FX_ARGB stroke_color,
-                                const CFX_FillRenderOptions& fill_options,
-                                BlendMode blend_type) {
-  if (blend_type != BlendMode::kNormal)
-    return false;
+                                const CFX_FillRenderOptions& fill_options) {
   return m_PSRenderer.DrawPath(path, pObject2Device, pGraphState, fill_color,
                                stroke_color, fill_options);
 }
