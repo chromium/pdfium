@@ -224,20 +224,17 @@ class CFX_RenderDevice {
                           const CFX_GraphStateData* pGraphState,
                           uint32_t fill_color,
                           uint32_t stroke_color,
-                          const CFX_FillRenderOptions& fill_options,
-                          BlendMode blend_type);
+                          const CFX_FillRenderOptions& fill_options);
   bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
                         const CFX_PointF& ptLineTo,
                         uint32_t color,
-                        const CFX_FillRenderOptions& fill_options,
-                        BlendMode blend_type);
+                        const CFX_FillRenderOptions& fill_options);
   void DrawZeroAreaPath(const std::vector<CFX_Path::Point>& path,
                         const CFX_Matrix* matrix,
                         bool adjust,
                         bool aliased_path,
                         uint32_t fill_color,
-                        uint8_t fill_alpha,
-                        BlendMode blend_type);
+                        uint8_t fill_alpha);
   bool FillRectWithBlend(const FX_RECT& rect,
                          uint32_t color,
                          BlendMode blend_type);

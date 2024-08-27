@@ -615,7 +615,7 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
       pos1 = pObject2Device->Transform(pos1);
       pos2 = pObject2Device->Transform(pos2);
     }
-    DrawCosmeticLine(pos1, pos2, fill_color, fill_options, BlendMode::kNormal);
+    DrawCosmeticLine(pos1, pos2, fill_color, fill_options);
     return true;
   }
 
@@ -674,8 +674,7 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
       if (point_type == CFX_Path::Point::Type::kMove) {
         // Process the existing sub path.
         DrawZeroAreaPath(sub_path, pObject2Device, adjust,
-                         fill_options.aliased_path, fill_color, fill_alpha,
-                         BlendMode::kNormal);
+                         fill_options.aliased_path, fill_color, fill_alpha);
         sub_path.clear();
 
         // Start forming the next sub path.
@@ -696,8 +695,7 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
     }
     // Process the last sub paths.
     DrawZeroAreaPath(sub_path, pObject2Device, adjust,
-                     fill_options.aliased_path, fill_color, fill_alpha,
-                     BlendMode::kNormal);
+                     fill_options.aliased_path, fill_color, fill_alpha);
   }
 
   if (fill && fill_alpha && stroke_alpha < 0xff && fill_options.stroke) {
@@ -720,7 +718,7 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
     }
 #endif  // defined(PDF_USE_SKIA)
     return DrawFillStrokePath(path, pObject2Device, pGraphState, fill_color,
-                              stroke_color, fill_options, BlendMode::kNormal);
+                              stroke_color, fill_options);
   }
   return m_pDeviceDriver->DrawPath(path, pObject2Device, pGraphState,
                                    fill_color, stroke_color, fill_options,
@@ -734,8 +732,7 @@ bool CFX_RenderDevice::DrawFillStrokePath(
     const CFX_GraphStateData* pGraphState,
     uint32_t fill_color,
     uint32_t stroke_color,
-    const CFX_FillRenderOptions& fill_options,
-    BlendMode blend_type) {
+    const CFX_FillRenderOptions& fill_options) {
   if (!(m_RenderCaps & FXRC_GET_BITS))
     return false;
   CFX_FloatRect bbox;
@@ -772,9 +769,9 @@ bool CFX_RenderDevice::DrawFillStrokePath(
   if (pObject2Device)
     matrix = *pObject2Device;
   matrix.Translate(-rect.left, -rect.top);
-  if (!bitmap_device.GetDeviceDriver()->DrawPath(path, &matrix, pGraphState,
-                                                 fill_color, stroke_color,
-                                                 fill_options, blend_type)) {
+  if (!bitmap_device.GetDeviceDriver()->DrawPath(
+          path, &matrix, pGraphState, fill_color, stroke_color, fill_options,
+          BlendMode::kNormal)) {
     return false;
   }
   FX_RECT src_rect(0, 0, rect.Width(), rect.Height());
@@ -811,10 +808,10 @@ bool CFX_RenderDevice::DrawCosmeticLine(
     const CFX_PointF& ptMoveTo,
     const CFX_PointF& ptLineTo,
     uint32_t color,
-    const CFX_FillRenderOptions& fill_options,
-    BlendMode blend_type) {
-  if ((color >= 0xff000000) && m_pDeviceDriver->DrawCosmeticLine(
-                                   ptMoveTo, ptLineTo, color, blend_type)) {
+    const CFX_FillRenderOptions& fill_options) {
+  if ((color >= 0xff000000) &&
+      m_pDeviceDriver->DrawCosmeticLine(ptMoveTo, ptLineTo, color,
+                                        BlendMode::kNormal)) {
     return true;
   }
   CFX_GraphStateData graph_state;
@@ -822,7 +819,7 @@ bool CFX_RenderDevice::DrawCosmeticLine(
   path.AppendPoint(ptMoveTo, CFX_Path::Point::Type::kMove);
   path.AppendPoint(ptLineTo, CFX_Path::Point::Type::kLine);
   return m_pDeviceDriver->DrawPath(path, nullptr, &graph_state, 0, color,
-                                   fill_options, blend_type);
+                                   fill_options, BlendMode::kNormal);
 }
 
 void CFX_RenderDevice::DrawZeroAreaPath(
@@ -831,8 +828,7 @@ void CFX_RenderDevice::DrawZeroAreaPath(
     bool adjust,
     bool aliased_path,
     uint32_t fill_color,
-    uint8_t fill_alpha,
-    BlendMode blend_type) {
+    uint8_t fill_alpha) {
   if (path.empty())
     return;
 
@@ -859,7 +855,7 @@ void CFX_RenderDevice::DrawZeroAreaPath(
   path_options.aliased_path = aliased_path;
 
   m_pDeviceDriver->DrawPath(new_path, new_matrix, &graph_state, 0, stroke_color,
-                            path_options, blend_type);
+                            path_options, BlendMode::kNormal);
 }
 
 bool CFX_RenderDevice::GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
