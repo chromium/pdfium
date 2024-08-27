@@ -636,18 +636,7 @@ bool CPDF_RenderStatus::ProcessTransparency(CPDF_PageObject* pPageObj,
   }
 #if BUILDFLAG(IS_WIN)
   if (IsPrint()) {
-    bool bRet = false;
-    int rendCaps = m_pDevice->GetRenderCaps();
-    if (!(transparency.IsIsolated() || pSMaskDict || bTextClip) &&
-        (rendCaps & FXRC_BLEND_MODE)) {
-      BlendMode oldBlend = m_curBlend;
-      m_curBlend = blend_type;
-      bRet = DrawObjWithBlend(pPageObj, mtObj2Device);
-      m_curBlend = oldBlend;
-    }
-    if (!bRet) {
-      DrawObjWithBackground(pPageObj, mtObj2Device);
-    }
+    DrawObjWithBackground(pPageObj, mtObj2Device);
     return true;
   }
 #endif
