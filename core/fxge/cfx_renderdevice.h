@@ -82,13 +82,6 @@ class CFX_RenderDevice {
                 uint32_t fill_color,
                 uint32_t stroke_color,
                 const CFX_FillRenderOptions& fill_options);
-  bool DrawPathWithBlend(const CFX_Path& path,
-                         const CFX_Matrix* pObject2Device,
-                         const CFX_GraphStateData* pGraphState,
-                         uint32_t fill_color,
-                         uint32_t stroke_color,
-                         const CFX_FillRenderOptions& fill_options,
-                         BlendMode blend_type);
   bool FillRect(const FX_RECT& rect, uint32_t color) {
     return FillRectWithBlend(rect, color, BlendMode::kNormal);
   }

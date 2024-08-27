@@ -603,18 +603,6 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
                                 uint32_t fill_color,
                                 uint32_t stroke_color,
                                 const CFX_FillRenderOptions& fill_options) {
-  return DrawPathWithBlend(path, pObject2Device, pGraphState, fill_color,
-                           stroke_color, fill_options, BlendMode::kNormal);
-}
-
-bool CFX_RenderDevice::DrawPathWithBlend(
-    const CFX_Path& path,
-    const CFX_Matrix* pObject2Device,
-    const CFX_GraphStateData* pGraphState,
-    uint32_t fill_color,
-    uint32_t stroke_color,
-    const CFX_FillRenderOptions& fill_options,
-    BlendMode blend_type) {
   const bool fill =
       fill_options.fill_type != CFX_FillRenderOptions::FillType::kNoFill;
   uint8_t fill_alpha = fill ? FXARGB_A(fill_color) : 0;
@@ -627,7 +615,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(
       pos1 = pObject2Device->Transform(pos1);
       pos2 = pObject2Device->Transform(pos2);
     }
-    DrawCosmeticLine(pos1, pos2, fill_color, fill_options, blend_type);
+    DrawCosmeticLine(pos1, pos2, fill_color, fill_options, BlendMode::kNormal);
     return true;
   }
 
@@ -671,8 +659,9 @@ bool CFX_RenderDevice::DrawPathWithBlend(
           --rect_i.bottom;
         }
       }
-      if (FillRectWithBlend(rect_i, fill_color, blend_type))
+      if (FillRectWithBlend(rect_i, fill_color, BlendMode::kNormal)) {
         return true;
+      }
     }
   }
 
@@ -686,7 +675,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(
         // Process the existing sub path.
         DrawZeroAreaPath(sub_path, pObject2Device, adjust,
                          fill_options.aliased_path, fill_color, fill_alpha,
-                         blend_type);
+                         BlendMode::kNormal);
         sub_path.clear();
 
         // Start forming the next sub path.
@@ -708,7 +697,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(
     // Process the last sub paths.
     DrawZeroAreaPath(sub_path, pObject2Device, adjust,
                      fill_options.aliased_path, fill_color, fill_alpha,
-                     blend_type);
+                     BlendMode::kNormal);
   }
 
   if (fill && fill_alpha && stroke_alpha < 0xff && fill_options.stroke) {
@@ -720,7 +709,7 @@ bool CFX_RenderDevice::DrawPathWithBlend(
       }
       bool draw_fillstroke_path_result = m_pDeviceDriver->DrawPath(
           path, pObject2Device, pGraphState, fill_color, stroke_color,
-          fill_options, blend_type);
+          fill_options, BlendMode::kNormal);
 
       if (using_skia) {
         // Restore the group knockout status for `m_pDeviceDriver` after
@@ -731,11 +720,11 @@ bool CFX_RenderDevice::DrawPathWithBlend(
     }
 #endif  // defined(PDF_USE_SKIA)
     return DrawFillStrokePath(path, pObject2Device, pGraphState, fill_color,
-                              stroke_color, fill_options, blend_type);
+                              stroke_color, fill_options, BlendMode::kNormal);
   }
   return m_pDeviceDriver->DrawPath(path, pObject2Device, pGraphState,
                                    fill_color, stroke_color, fill_options,
-                                   blend_type);
+                                   BlendMode::kNormal);
 }
 
 // This can be removed once PDFium entirely relies on Skia
@@ -1280,14 +1269,14 @@ bool CFX_RenderDevice::DrawTextPath(pdfium::span<const TextCharPos> pCharPos,
         options.fill_type = CFX_FillRenderOptions::FillType::kWinding;
       }
       options.text_mode = true;
-      if (!DrawPathWithBlend(transformed_path, pUser2Device, pGraphState,
-                             fill_color, stroke_color, options,
-                             BlendMode::kNormal)) {
+      if (!DrawPath(transformed_path, pUser2Device, pGraphState, fill_color,
+                    stroke_color, options)) {
         return false;
       }
     }
-    if (pClippingPath)
+    if (pClippingPath) {
       pClippingPath->Append(transformed_path, pUser2Device);
+    }
   }
   return true;
 }

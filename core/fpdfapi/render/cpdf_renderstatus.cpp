@@ -430,15 +430,15 @@ bool CPDF_RenderStatus::ProcessPath(CPDF_PathObject* path_obj,
                            : 0;
   uint32_t stroke_argb = stroke ? GetStrokeArgb(path_obj) : 0;
   CFX_Matrix path_matrix = path_obj->matrix() * mtObj2Device;
-  if (!IsAvailableMatrix(path_matrix))
+  if (!IsAvailableMatrix(path_matrix)) {
     return true;
+  }
 
-  return m_pDevice->DrawPathWithBlend(
+  return m_pDevice->DrawPath(
       *path_obj->path().GetObject(), &path_matrix,
       path_obj->graph_state().GetObject(), fill_argb, stroke_argb,
       GetFillOptionsForDrawPathWithBlend(options, path_obj, fill_type, stroke,
-                                         m_pType3Char),
-      BlendMode::kNormal);
+                                         m_pType3Char));
 }
 
 RetainPtr<CPDF_TransferFunc> CPDF_RenderStatus::GetTransferFunc(
