@@ -873,30 +873,24 @@ bool CFX_SkiaDeviceDriver::TryDrawText(pdfium::span<const TextCharPos> char_pos,
     return false;
   }
 
-  m_charDetails.SetCount(0);
-  m_rsxform.resize(0);
-
-  const size_t original_count = m_charDetails.Count();
-  FX_SAFE_SIZE_T safe_count = original_count;
-  safe_count += char_pos.size();
-  const size_t total_count = safe_count.ValueOrDie();
-  m_charDetails.SetCount(total_count);
+  m_charDetails.SetCount(char_pos.size());
   if (hasRSX) {
-    m_rsxform.resize(total_count);
+    m_rsxform.resize(char_pos.size());
+  } else {
+    m_rsxform.resize(0);
   }
 
   const SkScalar horizontal_flip = font_size < 0 ? -1 : 1;
   const SkScalar vertical_flip = pFont->IsVertical() ? -1 : 1;
   for (size_t index = 0; index < char_pos.size(); ++index) {
     const TextCharPos& cp = char_pos[index];
-    size_t cur_index = index + original_count;
-    m_charDetails.SetPositionAt(cur_index, {cp.m_Origin.x * horizontal_flip,
-                                            cp.m_Origin.y * vertical_flip});
-    m_charDetails.SetGlyphAt(cur_index, static_cast<uint16_t>(cp.m_GlyphIndex));
-    m_charDetails.SetFontCharWidthAt(cur_index, cp.m_FontCharWidth);
+    m_charDetails.SetPositionAt(index, {cp.m_Origin.x * horizontal_flip,
+                                        cp.m_Origin.y * vertical_flip});
+    m_charDetails.SetGlyphAt(index, static_cast<uint16_t>(cp.m_GlyphIndex));
+    m_charDetails.SetFontCharWidthAt(index, cp.m_FontCharWidth);
 #if BUILDFLAG(IS_APPLE)
     if (cp.m_ExtGID) {
-      m_charDetails.SetGlyphAt(cur_index, static_cast<uint16_t>(cp.m_ExtGID));
+      m_charDetails.SetGlyphAt(index, static_cast<uint16_t>(cp.m_ExtGID));
     }
 #endif
   }
@@ -904,7 +898,7 @@ bool CFX_SkiaDeviceDriver::TryDrawText(pdfium::span<const TextCharPos> char_pos,
     const DataVector<SkPoint>& positions = m_charDetails.GetPositions();
     for (size_t index = 0; index < char_pos.size(); ++index) {
       const TextCharPos& cp = char_pos[index];
-      SkRSXform& rsxform = m_rsxform[index + original_count];
+      SkRSXform& rsxform = m_rsxform[index];
       if (cp.m_bGlyphAdjust) {
         rsxform.fSCos = cp.m_AdjustMatrix[0];
         rsxform.fSSin = cp.m_AdjustMatrix[1];
