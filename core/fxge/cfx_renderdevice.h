@@ -82,9 +82,7 @@ class CFX_RenderDevice {
                 uint32_t fill_color,
                 uint32_t stroke_color,
                 const CFX_FillRenderOptions& fill_options);
-  bool FillRect(const FX_RECT& rect, uint32_t color) {
-    return FillRectWithBlend(rect, color, BlendMode::kNormal);
-  }
+  bool FillRect(const FX_RECT& rect, uint32_t color);
 
   RetainPtr<const CFX_DIBitmap> GetBackDrop() const;
   bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap, int left, int top) const;
@@ -235,9 +233,6 @@ class CFX_RenderDevice {
                         bool aliased_path,
                         uint32_t fill_color,
                         uint8_t fill_alpha);
-  bool FillRectWithBlend(const FX_RECT& rect,
-                         uint32_t color,
-                         BlendMode blend_type);
 
   RetainPtr<CFX_DIBitmap> m_pBitmap;
   int m_Width = 0;

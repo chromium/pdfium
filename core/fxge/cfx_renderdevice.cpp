@@ -659,7 +659,7 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
           --rect_i.bottom;
         }
       }
-      if (FillRectWithBlend(rect_i, fill_color, BlendMode::kNormal)) {
+      if (FillRect(rect_i, fill_color)) {
         return true;
       }
     }
@@ -779,24 +779,28 @@ bool CFX_RenderDevice::DrawFillStrokePath(
                                     rect.left, rect.top, BlendMode::kNormal);
 }
 
-bool CFX_RenderDevice::FillRectWithBlend(const FX_RECT& rect,
-                                         uint32_t fill_color,
-                                         BlendMode blend_type) {
-  if (m_pDeviceDriver->FillRectWithBlend(rect, fill_color, blend_type))
+bool CFX_RenderDevice::FillRect(const FX_RECT& rect, uint32_t fill_color) {
+  if (m_pDeviceDriver->FillRectWithBlend(rect, fill_color,
+                                         BlendMode::kNormal)) {
     return true;
+  }
 
-  if (!(m_RenderCaps & FXRC_GET_BITS))
+  if (!(m_RenderCaps & FXRC_GET_BITS)) {
     return false;
+  }
 
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
-  if (!CreateCompatibleBitmap(bitmap, rect.Width(), rect.Height()))
+  if (!CreateCompatibleBitmap(bitmap, rect.Width(), rect.Height())) {
     return false;
+  }
 
-  if (!m_pDeviceDriver->GetDIBits(bitmap, rect.left, rect.top))
+  if (!m_pDeviceDriver->GetDIBits(bitmap, rect.left, rect.top)) {
     return false;
+  }
 
-  if (!bitmap->CompositeRect(0, 0, rect.Width(), rect.Height(), fill_color))
+  if (!bitmap->CompositeRect(0, 0, rect.Width(), rect.Height(), fill_color)) {
     return false;
+  }
 
   FX_RECT src_rect(0, 0, rect.Width(), rect.Height());
   m_pDeviceDriver->SetDIBits(std::move(bitmap), /*color=*/0, src_rect,
