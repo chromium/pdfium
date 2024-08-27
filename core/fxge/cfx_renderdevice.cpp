@@ -780,8 +780,7 @@ bool CFX_RenderDevice::DrawFillStrokePath(
 }
 
 bool CFX_RenderDevice::FillRect(const FX_RECT& rect, uint32_t fill_color) {
-  if (m_pDeviceDriver->FillRectWithBlend(rect, fill_color,
-                                         BlendMode::kNormal)) {
+  if (m_pDeviceDriver->FillRect(rect, fill_color)) {
     return true;
   }
 

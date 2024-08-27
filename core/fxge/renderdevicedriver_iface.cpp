@@ -24,9 +24,8 @@ bool RenderDeviceDriverIface::SetClip_PathStroke(
 
 void RenderDeviceDriverIface::SetBaseClip(const FX_RECT& rect) {}
 
-bool RenderDeviceDriverIface::FillRectWithBlend(const FX_RECT& rect,
-                                                uint32_t fill_color,
-                                                BlendMode blend_type) {
+bool RenderDeviceDriverIface::FillRect(const FX_RECT& rect,
+                                       uint32_t fill_color) {
   return false;
 }
 

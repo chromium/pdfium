@@ -1149,13 +1149,10 @@ bool CFX_SkiaDeviceDriver::DrawPath(
   return true;
 }
 
-bool CFX_SkiaDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
-                                             uint32_t fill_color,
-                                             BlendMode blend_type) {
+bool CFX_SkiaDeviceDriver::FillRect(const FX_RECT& rect, uint32_t fill_color) {
   SkPaint spaint;
   spaint.setAntiAlias(true);
   spaint.setColor(fill_color);
-  spaint.setBlendMode(GetSkiaBlendMode(blend_type));
   SkRect srect = SkRect::MakeLTRB(rect.left, std::min(rect.top, rect.bottom),
                                   rect.right, std::max(rect.bottom, rect.top));
   DebugShowSkiaDrawRect(this, m_pCanvas, spaint, srect);

@@ -40,9 +40,7 @@ class CGdiDeviceDriver : public RenderDeviceDriverIface {
                 uint32_t stroke_color,
                 const CFX_FillRenderOptions& fill_options,
                 BlendMode blend_type) override;
-  bool FillRectWithBlend(const FX_RECT& rect,
-                         uint32_t fill_color,
-                         BlendMode blend_type) override;
+  bool FillRect(const FX_RECT& rect, uint32_t fill_color) override;
   bool DrawCosmeticLine(const CFX_PointF& ptMoveTo,
                         const CFX_PointF& ptLineTo,
                         uint32_t color) override;

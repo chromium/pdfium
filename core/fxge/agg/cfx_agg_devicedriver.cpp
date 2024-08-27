@@ -1185,20 +1185,17 @@ bool CFX_AggDeviceDriver::DrawPath(const CFX_Path& path,
   return true;
 }
 
-bool CFX_AggDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
-                                            uint32_t fill_color,
-                                            BlendMode blend_type) {
-  if (blend_type != BlendMode::kNormal)
-    return false;
-
-  if (m_pBitmap->GetBuffer().empty())
+bool CFX_AggDeviceDriver::FillRect(const FX_RECT& rect, uint32_t fill_color) {
+  if (m_pBitmap->GetBuffer().empty()) {
     return true;
+  }
 
   FX_RECT clip_rect = GetClipBox();
   FX_RECT draw_rect = clip_rect;
   draw_rect.Intersect(rect);
-  if (draw_rect.IsEmpty())
+  if (draw_rect.IsEmpty()) {
     return true;
+  }
 
   if (!m_pClipRgn || m_pClipRgn->GetType() == CFX_AggClipRgn::kRectI) {
     if (m_bRgbByteOrder) {

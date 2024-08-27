@@ -706,20 +706,17 @@ bool CGdiDeviceDriver::DrawPath(const CFX_Path& path,
   return true;
 }
 
-bool CGdiDeviceDriver::FillRectWithBlend(const FX_RECT& rect,
-                                         uint32_t fill_color,
-                                         BlendMode blend_type) {
-  if (blend_type != BlendMode::kNormal)
-    return false;
-
+bool CGdiDeviceDriver::FillRect(const FX_RECT& rect, uint32_t fill_color) {
   int alpha;
   FX_COLORREF colorref;
   std::tie(alpha, colorref) = ArgbToAlphaAndColorRef(fill_color);
-  if (alpha == 0)
+  if (alpha == 0) {
     return true;
+  }
 
-  if (alpha < 255)
+  if (alpha < 255) {
     return false;
+  }
 
   HBRUSH hBrush = CreateSolidBrush(colorref);
   const RECT* pRect = reinterpret_cast<const RECT*>(&rect);

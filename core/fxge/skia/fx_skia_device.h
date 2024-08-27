@@ -64,9 +64,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
                 uint32_t stroke_color,
                 const CFX_FillRenderOptions& fill_options,
                 BlendMode blend_type) override;
-  bool FillRectWithBlend(const FX_RECT& rect,
-                         uint32_t fill_color,
-                         BlendMode blend_type) override;
+  bool FillRect(const FX_RECT& rect, uint32_t fill_color) override;
   FX_RECT GetClipBox() const override;
   bool GetDIBits(RetainPtr<CFX_DIBitmap> bitmap,
                  int left,
