@@ -218,13 +218,10 @@ FXDIB_Format FXDIBFormatFromFPDFFormat(int format) {
   switch (format) {
     case FPDFBitmap_Gray:
       return FXDIB_Format::k8bppRgb;
-      break;
     case FPDFBitmap_BGR:
       return FXDIB_Format::kBgr;
-      break;
     case FPDFBitmap_BGRx:
       return FXDIB_Format::kBgrx;
-      break;
     case FPDFBitmap_BGRA:
       return FXDIB_Format::kBgra;
     default:
