@@ -53,7 +53,7 @@ FX_BGR_STRUCT<uint8_t> ArgbToBGRStruct(FX_ARGB argb) {
   return {FXARGB_B(argb), FXARGB_G(argb), FXARGB_R(argb)};
 }
 
-std::pair<int, FX_COLORREF> ArgbToAlphaAndColorRef(FX_ARGB argb) {
+std::pair<uint8_t, FX_COLORREF> ArgbToAlphaAndColorRef(FX_ARGB argb) {
   return {FXARGB_A(argb), ArgbToColorRef(argb)};
 }
 

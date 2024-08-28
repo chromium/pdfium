@@ -180,7 +180,7 @@ FX_BGRA_STRUCT<uint8_t> ArgbToBGRAStruct(FX_ARGB argb);
 FX_BGR_STRUCT<uint8_t> ArgbToBGRStruct(FX_ARGB argb);
 
 // Returns (a, FX_COLORREF)
-std::pair<int, FX_COLORREF> ArgbToAlphaAndColorRef(FX_ARGB argb);
+std::pair<uint8_t, FX_COLORREF> ArgbToAlphaAndColorRef(FX_ARGB argb);
 
 FX_COLORREF ArgbToColorRef(FX_ARGB argb);
 FX_ARGB AlphaAndColorRefToArgb(int a, FX_COLORREF colorref);
