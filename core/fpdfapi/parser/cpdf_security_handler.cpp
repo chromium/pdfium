@@ -150,8 +150,12 @@ void Revision6_Hash(const ByteString& password,
       }
     }
     CHECK_EQ(content.size(), encrypted_output.size());
-    CRYPT_AESSetKey(&aes, input.first<16u>());
-    CRYPT_AESSetIV(&aes, input.subspan<16u>());
+    {
+      pdfium::span<uint8_t> key = input.first<16u>();
+      pdfium::span<uint8_t> iv = input.subspan<16u>();
+      CRYPT_AESSetKey(&aes, key.data(), 16);
+      CRYPT_AESSetIV(&aes, iv.data());
+    }
     CRYPT_AESEncrypt(&aes, encrypted_output_span, content);
 
     input = pdfium::span<uint8_t>();  // Dangling after assignments below.
@@ -362,11 +366,11 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
     return false;
 
   CRYPT_aes_context aes = {};
-  CRYPT_AESSetKey(&aes, digest);
+  CRYPT_AESSetKey(&aes, digest, sizeof(digest));
   uint8_t iv[16] = {};
   CRYPT_AESSetIV(&aes, iv);
   CRYPT_AESDecrypt(&aes, m_EncryptKey.data(), ekey.unsigned_str(), 32);
-  CRYPT_AESSetKey(&aes, m_EncryptKey);
+  CRYPT_AESSetKey(&aes, m_EncryptKey.data(), m_EncryptKey.size());
   CRYPT_AESSetIV(&aes, iv);
   ByteString perms = m_pEncryptDict->GetByteStringFor("Perms");
   if (perms.IsEmpty())
@@ -644,7 +648,7 @@ void CPDF_SecurityHandler::AES256_SetPassword(CPDF_Dictionary* pEncryptDict,
     CRYPT_SHA256Finish(&sha2, pdfium::make_span(digest1).first<32>());
   }
   CRYPT_aes_context aes = {};
-  CRYPT_AESSetKey(&aes, pdfium::make_span(digest1).first<32u>());
+  CRYPT_AESSetKey(&aes, digest1, 32);
   uint8_t iv[16] = {};
   CRYPT_AESSetIV(&aes, iv);
   CRYPT_AESEncrypt(&aes, digest1, m_EncryptKey);
@@ -675,7 +679,7 @@ void CPDF_SecurityHandler::AES256_SetPerms(CPDF_Dictionary* pEncryptDict) {
               pdfium::make_span(buf).subspan<12, 4>());
 
   CRYPT_aes_context aes = {};
-  CRYPT_AESSetKey(&aes, m_EncryptKey);
+  CRYPT_AESSetKey(&aes, m_EncryptKey.data(), m_EncryptKey.size());
 
   uint8_t iv[16] = {};
   CRYPT_AESSetIV(&aes, iv);
