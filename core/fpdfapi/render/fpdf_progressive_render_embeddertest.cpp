@@ -475,11 +475,11 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderStampWithColorScheme) {
   const char* content_with_stamp_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "ebe483b5e9b8375b3c06417b59d70c4a";
+      return "c35d1256f6684da13023a0e74622c885";
 #elif BUILDFLAG(IS_APPLE)
-      return "49dfb40a174f2525a2c33079aec7ae33";
+      return "bb302d8808633fede3b6e2e39ac8aaa7";
 #else
-      return "9095a907e943ade4be06b6e508fa74ee";
+      return "1bd68054628cf193b399a16638ecb5f9";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)

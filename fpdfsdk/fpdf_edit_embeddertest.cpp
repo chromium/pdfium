@@ -5155,7 +5155,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForColorText) {
   ASSERT_TRUE(bitmap);
   const char* checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "2a45a0034911f21b528621bebe0aab4b";
+      return "9199f0c27c8a61a57189b1b044941e5e";
     }
     return "e8154fa8ededf4d9b8b35b5260897b6c";
   }();
