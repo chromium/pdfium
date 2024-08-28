@@ -62,9 +62,7 @@ void CXFA_Stipple::Draw(CFGAS_GEGraphics* pGS,
   CXFA_Color* pColor = GetColorIfExists();
   FX_ARGB crColor = pColor ? pColor->GetValue() : CXFA_Color::kBlackColor;
 
-  int32_t alpha;
-  FX_COLORREF colorref;
-  std::tie(alpha, colorref) = ArgbToAlphaAndColorRef(crColor);
+  auto [alpha, colorref] = ArgbToAlphaAndColorRef(crColor);
   FX_ARGB cr = AlphaAndColorRefToArgb(iRate * alpha / 100, colorref);
 
   CFGAS_GEGraphics::StateRestorer restorer(pGS);

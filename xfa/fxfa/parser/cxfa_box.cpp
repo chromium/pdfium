@@ -124,16 +124,15 @@ CXFA_Fill* CXFA_Box::GetOrCreateFillIfPossible() {
 }
 
 std::tuple<XFA_AttributeValue, bool, float> CXFA_Box::Get3DStyle() {
-  if (GetElementType() == XFA_Element::Arc)
+  if (GetElementType() == XFA_Element::Arc) {
     return {XFA_AttributeValue::Unknown, false, 0.0f};
+  }
 
   std::vector<CXFA_Stroke*> strokes = GetStrokesInternal(true);
-  CXFA_Stroke* stroke;
-  XFA_AttributeValue iType;
-
-  std::tie(iType, stroke) = Style3D(strokes);
-  if (iType == XFA_AttributeValue::Unknown)
+  auto [iType, stroke] = Style3D(strokes);
+  if (iType == XFA_AttributeValue::Unknown) {
     return {XFA_AttributeValue::Unknown, false, 0.0f};
+  }
 
   return {iType, stroke->IsVisible(), stroke->GetThickness()};
 }
@@ -276,10 +275,7 @@ void CXFA_Box::StrokeArcOrRounded(CFGAS_GEGraphics* pGS,
   if (!edge || !edge->IsVisible())
     return;
 
-  bool bVisible;
-  float fThickness;
-  XFA_AttributeValue i3DType;
-  std::tie(i3DType, bVisible, fThickness) = Get3DStyle();
+  auto [i3DType, bVisible, fThickness] = Get3DStyle();
   bool lowered3d = false;
   if (i3DType != XFA_AttributeValue::Unknown) {
     if (bVisible && fThickness >= 0.001f)

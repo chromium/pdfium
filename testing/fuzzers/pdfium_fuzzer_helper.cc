@@ -115,10 +115,7 @@ bool PDFiumFuzzerHelper::OnFormFillEnvLoaded(FPDF_DOCUMENT doc) {
 }
 
 void PDFiumFuzzerHelper::RenderPdf(const char* data, size_t len) {
-  int render_flags;
-  int form_flags;
-  std::tie(render_flags, form_flags) =
-      GetRenderingAndFormFlagFromData(data, len);
+  auto [render_flags, form_flags] = GetRenderingAndFormFlagFromData(data, len);
 
   IPDF_JSPLATFORM platform_callbacks;
   memset(&platform_callbacks, '\0', sizeof(platform_callbacks));

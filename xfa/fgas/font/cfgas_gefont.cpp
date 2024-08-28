@@ -155,9 +155,7 @@ std::optional<uint16_t> CFGAS_GEFont::GetCharWidth(wchar_t wUnicode) {
   if (it != m_CharWidthMap.end())
     return it->second;
 
-  RetainPtr<CFGAS_GEFont> pFont;
-  int32_t glyph;
-  std::tie(glyph, pFont) = GetGlyphIndexAndFont(wUnicode, true);
+  auto [glyph, pFont] = GetGlyphIndexAndFont(wUnicode, true);
   if (!pFont || glyph == 0xffff) {
     m_CharWidthMap[wUnicode] = std::nullopt;
     return std::nullopt;
@@ -180,9 +178,7 @@ std::optional<FX_RECT> CFGAS_GEFont::GetCharBBox(wchar_t wUnicode) {
   if (it != m_BBoxMap.end())
     return it->second;
 
-  RetainPtr<CFGAS_GEFont> pFont;
-  int32_t iGlyph;
-  std::tie(iGlyph, pFont) = GetGlyphIndexAndFont(wUnicode, true);
+  auto [iGlyph, pFont] = GetGlyphIndexAndFont(wUnicode, true);
   if (!pFont || iGlyph == 0xFFFF)
     return std::nullopt;
 
@@ -197,10 +193,7 @@ std::optional<FX_RECT> CFGAS_GEFont::GetCharBBox(wchar_t wUnicode) {
 }
 
 int32_t CFGAS_GEFont::GetGlyphIndex(wchar_t wUnicode) {
-  int32_t glyph;
-  RetainPtr<CFGAS_GEFont> font;
-  std::tie(glyph, font) = GetGlyphIndexAndFont(wUnicode, true);
-  return glyph;
+  return GetGlyphIndexAndFont(wUnicode, true).first;
 }
 
 std::pair<int32_t, RetainPtr<CFGAS_GEFont>> CFGAS_GEFont::GetGlyphIndexAndFont(

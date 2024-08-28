@@ -344,9 +344,7 @@ void CFWL_Edit::DrawContentNonComb(CFGAS_GEGraphics* pGraphics,
 
   bool bShowSel = !!(m_Properties.m_dwStates & FWL_STATE_WGT_Focused);
   if (bShowSel && m_pEditEngine->HasSelection()) {
-    size_t sel_start;
-    size_t count;
-    std::tie(sel_start, count) = m_pEditEngine->GetSelection();
+    auto [sel_start, count] = m_pEditEngine->GetSelection();
     std::vector<CFX_RectF> rects = m_pEditEngine->GetCharacterRectsInRange(
         checked_cast<int32_t>(sel_start), checked_cast<int32_t>(count));
 
@@ -917,9 +915,7 @@ void CFWL_Edit::OnLButtonUp(CFWL_MessageMouse* pMsg) {
 void CFWL_Edit::OnButtonDoubleClick(CFWL_MessageMouse* pMsg) {
   size_t click_idx =
       m_pEditEngine->GetIndexForPoint(DeviceToEngine(pMsg->m_pos));
-  size_t start_idx;
-  size_t count;
-  std::tie(start_idx, count) = m_pEditEngine->BoundsForWordAt(click_idx);
+  auto [start_idx, count] = m_pEditEngine->BoundsForWordAt(click_idx);
 
   m_pEditEngine->SetSelection(start_idx, count);
   m_CursorPosition = start_idx + count;
@@ -959,9 +955,7 @@ void CFWL_Edit::OnKeyDown(CFWL_MessageKey* pMsg) {
 
   size_t sel_start = m_CursorPosition;
   if (m_pEditEngine->HasSelection()) {
-    size_t start_idx;
-    size_t count;
-    std::tie(start_idx, count) = m_pEditEngine->GetSelection();
+    auto [start_idx, count] = m_pEditEngine->GetSelection();
     sel_start = start_idx;
   }
 

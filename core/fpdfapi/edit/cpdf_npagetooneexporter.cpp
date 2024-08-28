@@ -123,9 +123,7 @@ CPDF_NPageToOneExporter::NupPageSettings NupState::CalculateNewPagePosition(
     sub_page_index_ = 0;
   }
 
-  size_t sub_x;
-  size_t sub_y;
-  std::tie(sub_x, sub_y) = ConvertPageOrder();
+  auto [sub_x, sub_y] = ConvertPageOrder();
   ++sub_page_index_;
   return CalculatePageEdit(sub_x, sub_y, pagesize);
 }

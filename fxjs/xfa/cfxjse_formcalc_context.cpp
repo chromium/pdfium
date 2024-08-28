@@ -3490,9 +3490,7 @@ void CFXJSE_FormCalcContext::Format(
   GCedLocaleIface* pLocale = pThisNode->GetLocale();
   WideString wsPattern = WideString::FromUTF8(bsPattern.AsStringView());
   WideString wsValue = WideString::FromUTF8(bsValue.AsStringView());
-  bool bPatternIsString;
-  CXFA_LocaleValue::ValueType dwPatternType;
-  std::tie(bPatternIsString, dwPatternType) =
+  auto [bPatternIsString, dwPatternType] =
       PatternStringType(bsPattern.AsStringView());
   if (!bPatternIsString) {
     switch (dwPatternType) {
@@ -3667,9 +3665,7 @@ void CFXJSE_FormCalcContext::Parse(
   GCedLocaleIface* pLocale = pThisNode->GetLocale();
   WideString wsPattern = WideString::FromUTF8(bsPattern.AsStringView());
   WideString wsValue = WideString::FromUTF8(bsValue.AsStringView());
-  bool bPatternIsString;
-  CXFA_LocaleValue::ValueType dwPatternType;
-  std::tie(bPatternIsString, dwPatternType) =
+  auto [bPatternIsString, dwPatternType] =
       PatternStringType(bsPattern.AsStringView());
   if (bPatternIsString) {
     CXFA_LocaleValue localeValue(dwPatternType, wsValue, wsPattern, pLocale,

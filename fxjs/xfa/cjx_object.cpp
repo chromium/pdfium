@@ -1087,10 +1087,7 @@ void CJX_Object::ScriptSomFontColor(v8::Isolate* pIsolate,
     return;
 
   if (bSetting) {
-    int32_t r;
-    int32_t g;
-    int32_t b;
-    std::tie(r, g, b) =
+    auto [r, g, b] =
         StrToRGB(fxv8::ReentrantToWideStringHelper(pIsolate, *pValue));
     FX_ARGB color = ArgbEncode(0xff, r, g, b);
     font->SetColor(color);
@@ -1110,10 +1107,7 @@ void CJX_Object::ScriptSomFillColor(v8::Isolate* pIsolate,
     return;
 
   if (bSetting) {
-    int32_t r;
-    int32_t g;
-    int32_t b;
-    std::tie(r, g, b) =
+    auto [r, g, b] =
         StrToRGB(fxv8::ReentrantToWideStringHelper(pIsolate, *pValue));
     FX_ARGB color = ArgbEncode(0xff, r, g, b);
     borderfill->SetColor(color);
@@ -1130,10 +1124,7 @@ void CJX_Object::ScriptSomBorderColor(v8::Isolate* pIsolate,
   CXFA_Border* border = ToNode(object_.Get())->GetOrCreateBorderIfPossible();
   int32_t iSize = border->CountEdges();
   if (bSetting) {
-    int32_t r = 0;
-    int32_t g = 0;
-    int32_t b = 0;
-    std::tie(r, g, b) =
+    auto [r, g, b] =
         StrToRGB(fxv8::ReentrantToWideStringHelper(pIsolate, *pValue));
     FX_ARGB rgb = ArgbEncode(100, r, g, b);
     for (int32_t i = 0; i < iSize; ++i) {

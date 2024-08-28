@@ -1140,11 +1140,10 @@ CXFA_Node* CXFA_Node::GetOrCreateProperty(int32_t index,
   if (index < 0 || index >= PropertyOccurrenceCount(eProperty))
     return nullptr;
 
-  int32_t iCount = 0;
-  CXFA_Node* node;
-  std::tie(node, iCount) = GetProperty(index, eProperty);
-  if (node)
+  auto [node, iCount] = GetProperty(index, eProperty);
+  if (node) {
     return node;
+  }
 
   if (HasPropertyFlag(eProperty, XFA_PropertyFlag::kOneOf)) {
     for (CXFA_Node* pNode = GetFirstChild(); pNode;
@@ -3012,10 +3011,7 @@ CFX_RectF CXFA_Node::GetUIMargin() {
   std::optional<float> right = mgUI->TryRightInset();
   std::optional<float> bottom = mgUI->TryBottomInset();
   if (border) {
-    bool bVisible = false;
-    float fThickness = 0;
-    XFA_AttributeValue iType = XFA_AttributeValue::Unknown;
-    std::tie(iType, bVisible, fThickness) = border->Get3DStyle();
+    auto [iType, bVisible, fThickness] = border->Get3DStyle();
     if (!left.has_value() || !top.has_value() || !right.has_value() ||
         !bottom.has_value()) {
       std::vector<CXFA_Stroke*> strokes = border->GetStrokes();

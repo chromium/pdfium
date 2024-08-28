@@ -299,9 +299,7 @@ TEST_F(CFDE_TextEditEngineTest, Selection) {
   EXPECT_EQ(L"", engine()->GetSelectedText());
 
   engine()->SelectAll();
-  size_t start_idx;
-  size_t count;
-  std::tie(start_idx, count) = engine()->GetSelection();
+  auto [start_idx, count] = engine()->GetSelection();
   EXPECT_EQ(0U, start_idx);
   EXPECT_EQ(11U, count);
 
@@ -564,10 +562,7 @@ TEST_F(CFDE_TextEditEngineTest, GetCharacterInfo) {
 }
 
 TEST_F(CFDE_TextEditEngineTest, BoundsForWordAt) {
-  size_t start_idx;
-  size_t count;
-
-  std::tie(start_idx, count) = engine()->BoundsForWordAt(100);
+  auto [start_idx, count] = engine()->BoundsForWordAt(100);
   EXPECT_EQ(0U, start_idx);
   EXPECT_EQ(0U, count);
   engine()->SetSelection(start_idx, count);

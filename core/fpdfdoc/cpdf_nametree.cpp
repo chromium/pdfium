@@ -215,9 +215,7 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
     pLimits.Reset();
 
   if (pLimits) {
-    WideString csLeft;
-    WideString csRight;
-    std::tie(csLeft, csRight) = GetNodeLimitsAndSanitize(pLimits.Get());
+    auto [csLeft, csRight] = GetNodeLimitsAndSanitize(pLimits.Get());
     // Skip this node if the name to look for is smaller than its lower limit.
     if (csName.Compare(csLeft) < 0)
       return nullptr;

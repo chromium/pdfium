@@ -281,10 +281,7 @@ void CXFA_Rectangle::Stroke(const std::vector<CXFA_Stroke*>& strokes,
                             CFGAS_GEGraphics* pGS,
                             CFX_RectF rtWidget,
                             const CFX_Matrix& matrix) {
-  bool bVisible;
-  float fThickness;
-  XFA_AttributeValue i3DType;
-  std::tie(i3DType, bVisible, fThickness) = Get3DStyle();
+  auto [i3DType, bVisible, fThickness] = Get3DStyle();
   if (i3DType != XFA_AttributeValue::Unknown) {
     if (!bVisible || fThickness < 0.001f)
       return;

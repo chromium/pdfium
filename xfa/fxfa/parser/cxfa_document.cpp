@@ -413,10 +413,7 @@ CXFA_Node* FindMatchingDataNode(
     CXFA_Occur* pTemplateNodeOccur =
         pCurTemplateNode->GetFirstChildByClass<CXFA_Occur>(XFA_Element::Occur);
     if (pTemplateNodeOccur) {
-      int32_t iMin;
-      int32_t iMax;
-      int32_t iInit;
-      std::tie(iMin, iMax, iInit) = pTemplateNodeOccur->GetOccurInfo();
+      auto [iMin, iMax, iInit] = pTemplateNodeOccur->GetOccurInfo();
       if (iMax == 0) {
         pCurTemplateNode = pIterator->MoveToNext();
         continue;

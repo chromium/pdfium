@@ -172,11 +172,11 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFAvail_IsDocAvail(FPDF_AVAIL avail,
 FPDF_EXPORT FPDF_DOCUMENT FPDF_CALLCONV
 FPDFAvail_GetDocument(FPDF_AVAIL avail, FPDF_BYTESTRING password) {
   auto* avail_context = FPDFAvailContextFromFPDFAvail(avail);
-  if (!avail_context)
+  if (!avail_context) {
     return nullptr;
-  CPDF_Parser::Error error;
-  std::unique_ptr<CPDF_Document> document;
-  std::tie(error, document) = avail_context->data_avail()->ParseDocument(
+  }
+
+  auto [error, document] = avail_context->data_avail()->ParseDocument(
       std::make_unique<CPDF_DocRenderData>(),
       std::make_unique<CPDF_DocPageData>(), password);
   if (error != CPDF_Parser::SUCCESS) {

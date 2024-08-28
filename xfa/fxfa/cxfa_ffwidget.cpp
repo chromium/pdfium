@@ -156,9 +156,7 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
 
   pBitmap->Clear(0xffffffff);
 
-  size_t nFrames;
-  FXCODEC_STATUS status;
-  std::tie(status, nFrames) = pProgressiveDecoder->GetFrames();
+  auto [status, nFrames] = pProgressiveDecoder->GetFrames();
   if (status != FXCODEC_STATUS::kDecodeReady || nFrames == 0) {
     return nullptr;
   }

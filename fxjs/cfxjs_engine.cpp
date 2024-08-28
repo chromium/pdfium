@@ -607,9 +607,7 @@ std::optional<IJS_Runtime::JS_Error> CFXJS_Engine::Execute(
            .ToLocal(&compiled_script)) {
     v8::String::Utf8Value error(GetIsolate(), try_catch.Exception());
     v8::Local<v8::Message> msg = try_catch.Message();
-    int line = -1;
-    int column = -1;
-    std::tie(line, column) = GetLineAndColumnFromError(msg, context);
+    auto [line, column] = GetLineAndColumnFromError(msg, context);
     return IJS_Runtime::JS_Error(line, column, WideString::FromUTF8(*error));
   }
 
@@ -617,9 +615,7 @@ std::optional<IJS_Runtime::JS_Error> CFXJS_Engine::Execute(
   if (!compiled_script->Run(context).ToLocal(&result)) {
     v8::String::Utf8Value error(GetIsolate(), try_catch.Exception());
     auto msg = try_catch.Message();
-    int line = -1;
-    int column = -1;
-    std::tie(line, column) = GetLineAndColumnFromError(msg, context);
+    auto [line, column] = GetLineAndColumnFromError(msg, context);
     return IJS_Runtime::JS_Error(line, column, WideString::FromUTF8(*error));
   }
   return std::nullopt;
