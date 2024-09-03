@@ -58,6 +58,19 @@ TEST_F(FPDFFlattenEmbedderTest, FlatWithBadFont) {
   UnloadPage(page);
 }
 
+TEST_F(FPDFFlattenEmbedderTest, FlatWithFontNoBaseEncoding) {
+  ASSERT_TRUE(OpenDocument("363015187.pdf"));
+  FPDF_PAGE page = LoadPage(0);
+  EXPECT_TRUE(page);
+
+  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_PRINT));
+  EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+
+  // TODO(crbug.com/363015187): Restore missing /Differences.
+  EXPECT_THAT(GetString(), Not(HasSubstr("/Differences")));
+  UnloadPage(page);
+}
+
 TEST_F(FPDFFlattenEmbedderTest, Bug861842) {
   const char* checkbox_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {

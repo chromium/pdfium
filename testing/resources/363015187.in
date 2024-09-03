@@ -1,0 +1,83 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Annots [4 0 R]
+  /MediaBox [0 0 200 200]
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Tx
+  /AP <<
+    /N 5 0 R
+  >>
+  /F 4
+  /Ff 4097
+  /P 3 0 R
+  /DA (/TimesNewRomanPSMT 10 Tf)
+  /Rect [90 90 110 105]
+  /T (Text)
+>>
+endobj
+{{object 5 0}} <<
+  /Subtype /Form
+  /Type /XObject
+  /FormType 1
+  /BBox [0 0 20 15]
+  /Resources <<
+    /Font <<
+      /F1 6 0 R
+    >>
+  >>
+{{streamlen}}
+>>
+stream
+BT
+/F1 12 Tf
+(1) Tj
+ET
+endstream
+endobj
+{{object 6 0}} <<
+  /Type /Font
+  /Subtype /TrueType
+  /BaseFont /TimesNewRomanPSMT
+  /Encoding <<
+    /Type /Encoding
+    /Differences [49 /Alpha]
+  >>
+  /FirstChar 49
+  /FontDescriptor 7 0 R
+  /LastChar 49
+  /Widths [722]
+>>
+endobj
+{{object 7 0}} <<
+  /Type /FontDescriptor
+  /Ascent 693
+  /CapHeight 662
+  /Descent -215
+  /Flags 32
+  /FontBBox [-568 -306 2000 1006]
+  /FontName /TimesNewRomanPSMT
+  /ItalicAngle 0
+  /StemV 80
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
