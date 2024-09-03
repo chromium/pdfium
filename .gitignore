@@ -11,6 +11,7 @@
 /third_party/clang-format
 /third_party/cpu_features/src
 /third_party/depot_tools
+/third_party/fast_float/src
 /third_party/fp16/src
 /third_party/freetype/src
 /third_party/googletest/src

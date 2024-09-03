@@ -1,0 +1,18 @@
+# Copyright 2024 The PDFium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/gclient_args.gni")
+
+config("fast_float_config") {
+  include_dirs = [ "src/include" ]
+}
+
+source_set("fast_float") {
+  public = [ "src/include/fast_float/fast_float.h" ]
+
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [ "//build/config/compiler:no_chromium_code" ]
+
+  public_configs = [ ":fast_float_config" ]
+}

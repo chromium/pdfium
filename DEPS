@@ -102,6 +102,10 @@ vars = {
   # and whatever else without interference from each other.
   'depot_tools_revision': 'caa77da9568fb7c48c9db679cf9dc0ae20080585',
   # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling fast_float
+  # and whatever else without interference from each other.
+  'fast_float_revision': '3e57d8dcfb0a04b5a8a26b486b54490a2e9b310f',
+  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling fp16
   # and whatever else without interference from each other.
   'fp16_revision': '581ac1c79dd9d9f6f4e8b2934e7a55c7becf0799',
@@ -327,6 +331,10 @@ deps = {
   'third_party/depot_tools':
     Var('chromium_git') + '/chromium/tools/depot_tools.git@' +
         Var('depot_tools_revision'),
+
+  'third_party/fast_float/src':
+    Var('chromium_git') + '/external/github.com/fastfloat/fast_float.git@' +
+        Var('fast_float_revision'),
 
   'third_party/fp16/src':
     Var('chromium_git') + '/external/github.com/Maratyszcza/FP16.git@' +
