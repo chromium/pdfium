@@ -894,5 +894,7 @@ EmbedderTest::ScopedEmbedderTestPage::ScopedEmbedderTestPage(EmbedderTest* test,
     : test_(test), page_(test->LoadPage(page_index)) {}
 
 EmbedderTest::ScopedEmbedderTestPage::~ScopedEmbedderTestPage() {
-  test_->UnloadPage(page_);
+  if (page_) {
+    test_->UnloadPage(page_);
+  }
 }
