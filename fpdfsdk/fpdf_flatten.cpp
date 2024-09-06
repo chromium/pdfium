@@ -249,7 +249,10 @@ CFX_Matrix GetMatrix(const CFX_FloatRect& rcAnnot,
 bool IsValidBaseEncoding(ByteString base_encoding) {
   // ISO 32000-1:2008 spec, table 114.
   // ISO 32000-2:2020 spec, table 112.
-  return base_encoding == pdfium::font_encodings::kWinAnsiEncoding ||
+  //
+  // Since /BaseEncoding is optional, `base_encoding` can be empty.
+  return base_encoding.IsEmpty() ||
+         base_encoding == pdfium::font_encodings::kWinAnsiEncoding ||
          base_encoding == pdfium::font_encodings::kMacRomanEncoding ||
          base_encoding == pdfium::font_encodings::kMacExpertEncoding;
 }

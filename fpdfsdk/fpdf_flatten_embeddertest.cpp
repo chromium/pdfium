@@ -66,8 +66,7 @@ TEST_F(FPDFFlattenEmbedderTest, FlatWithFontNoBaseEncoding) {
   EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_PRINT));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-  // TODO(crbug.com/363015187): Restore missing /Differences.
-  EXPECT_THAT(GetString(), Not(HasSubstr("/Differences")));
+  EXPECT_THAT(GetString(), HasSubstr("/Differences"));
   UnloadPage(page);
 }
 
