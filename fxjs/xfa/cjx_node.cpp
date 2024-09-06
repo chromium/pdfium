@@ -313,7 +313,7 @@ CJS_Result CJX_Node::loadXML(CFXJSE_Engine* runtime,
   }
 
   if (pFakeXMLRoot) {
-    pFakeRoot->SetXMLMappingNode(std::move(pFakeXMLRoot));
+    pFakeRoot->SetXMLMappingNode(pFakeXMLRoot);
   }
   pFakeRoot->SetFlag(XFA_NodeFlag::kHasRemovedChildren);
 

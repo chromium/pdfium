@@ -481,7 +481,7 @@ void CPDF_DocPageData::MaybePurgeFontFileStreamAcc(
     return;
 
   pStreamAcc.Reset();  // Drop moved caller's reference.
-  auto it = m_FontFileMap.find(std::move(pFontStream));
+  auto it = m_FontFileMap.find(pFontStream);
   if (it != m_FontFileMap.end() && it->second->HasOneRef())
     m_FontFileMap.erase(it);
 }

@@ -125,7 +125,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                      int dest_top,
                      int width,
                      int height,
-                     const RetainPtr<const CFX_DIBBase>& pMask,
+                     RetainPtr<const CFX_DIBBase> pMask,
                      uint32_t color,
                      int src_left,
                      int src_top,

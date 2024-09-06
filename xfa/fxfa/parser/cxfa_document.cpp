@@ -1285,7 +1285,7 @@ CXFA_Document::CXFA_Document(CXFA_FFNotify* notify,
       notify_(notify),
       node_owner_(cppgc::MakeGarbageCollected<CXFA_NodeOwner>(
           heap->GetAllocationHandle())),
-      m_pLayoutProcessor(std::move(pLayout)) {
+      m_pLayoutProcessor(pLayout) {
   if (m_pLayoutProcessor)
     m_pLayoutProcessor->SetDocument(this);
 }
