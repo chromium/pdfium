@@ -744,9 +744,8 @@ bool CPDF_Parser::RebuildCrossRef() {
       const uint32_t gen_num = numbers[1].first;
 
       m_pSyntax->SetPos(obj_pos);
-      const RetainPtr<CPDF_Stream> pStream =
-          ToStream(m_pSyntax->GetIndirectObject(
-              nullptr, CPDF_SyntaxParser::ParseType::kStrict));
+      RetainPtr<CPDF_Stream> pStream = ToStream(m_pSyntax->GetIndirectObject(
+          nullptr, CPDF_SyntaxParser::ParseType::kStrict));
 
       if (pStream && pStream->GetDict()->GetNameFor("Type") == "XRef") {
         cross_ref_table = CPDF_CrossRefTable::MergeUp(
