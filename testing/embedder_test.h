@@ -94,6 +94,8 @@ class EmbedderTest : public ::testing::Test,
     ScopedEmbedderTestPage(EmbedderTest* test, int page_index);
     ScopedEmbedderTestPage(const ScopedEmbedderTestPage&) = delete;
     ScopedEmbedderTestPage& operator=(const ScopedEmbedderTestPage&) = delete;
+    ScopedEmbedderTestPage(ScopedEmbedderTestPage&&) noexcept;
+    ScopedEmbedderTestPage& operator=(ScopedEmbedderTestPage&&) noexcept;
     ~ScopedEmbedderTestPage();
 
     FPDF_PAGE get() { return page_; }

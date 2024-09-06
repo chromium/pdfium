@@ -893,6 +893,18 @@ EmbedderTest::ScopedEmbedderTestPage::ScopedEmbedderTestPage(EmbedderTest* test,
                                                              int page_index)
     : test_(test), page_(test->LoadPage(page_index)) {}
 
+EmbedderTest::ScopedEmbedderTestPage::ScopedEmbedderTestPage(
+    EmbedderTest::ScopedEmbedderTestPage&& that) noexcept
+    : test_(std::move(that.test_)), page_(std::exchange(that.page_, nullptr)) {}
+
+EmbedderTest::ScopedEmbedderTestPage&
+EmbedderTest::ScopedEmbedderTestPage::operator=(
+    EmbedderTest::ScopedEmbedderTestPage&& that) noexcept {
+  test_ = std::move(that.test_);
+  page_ = std::exchange(that.page_, nullptr);
+  return *this;
+}
+
 EmbedderTest::ScopedEmbedderTestPage::~ScopedEmbedderTestPage() {
   if (page_) {
     test_->UnloadPage(page_);
