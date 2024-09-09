@@ -154,7 +154,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libpng
   # and whatever else without interference from each other.
-  'libpng_revision': '68c9960bdc0aa723a9481ab848fd928604d928e9',
+  'libpng_revision': 'cf7c36ed084cd051100c4a1597a901c08377b835',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libunwind
   # and whatever else without interference from each other.
