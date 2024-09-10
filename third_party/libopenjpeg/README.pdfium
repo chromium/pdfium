@@ -5,6 +5,7 @@ Revision: 39e8c50a2f9bdcf36810ee3d41bcbf1cc78968ae
 Security Critical: yes
 Shipped: yes
 License: 2-clause BSD
+License File: LICENSE
 CPEPrefix: cpe:/a:uclouvain:openjpeg:2.5.2
 
 Description:
