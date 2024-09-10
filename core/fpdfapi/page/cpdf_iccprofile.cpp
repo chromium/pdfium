@@ -23,7 +23,7 @@ bool DetectSRGB(pdfium::span<const uint8_t> span) {
 CPDF_IccProfile::CPDF_IccProfile(RetainPtr<const CPDF_StreamAcc> stream_acc,
                                  uint32_t expected_components)
     : m_pStreamAcc(std::move(stream_acc)),
-      m_bsRGB(DetectSRGB(m_pStreamAcc->GetSpan())) {
+      m_bsRGB(expected_components == 3 && DetectSRGB(m_pStreamAcc->GetSpan())) {
   if (m_bsRGB) {
     m_nSrcComponents = 3;
     return;

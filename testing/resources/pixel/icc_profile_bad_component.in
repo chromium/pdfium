@@ -1,0 +1,50 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents [4 0 R]
+  /MediaBox [0 0 100 100]
+  /Resources <<
+    /ColorSpace <<
+      /CS0 [/ICCBased 5 0 R]
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+/CS0 cs
+1 0 0 sc
+0 0 100 100 re f
+Q
+endstream
+endobj
+% This dummy ICC profile has the right characteristics so DetectSRGB() returns
+% true, but the component count is 1 instead of 3.
+{{object 5 0}} <<
+  /Filter [/ASCII85Decode /FlateDecode]
+  /N 1
+  {{streamlen}}
+>>
+stream
+GhQ(m(^5Nu'F201.<rEbRi,CuRHYXS)3+pC-l<,_?keQO;(r>H_'g.JJ-u>hNJc`~>
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
