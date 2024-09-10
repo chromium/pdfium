@@ -628,35 +628,52 @@ bool CFX_RenderDevice::DrawPath(const CFX_Path& path,
       // Depending on the top/bottom, left/right values of the rect it's
       // possible to overflow the Width() and Height() calculations. Check that
       // the rect will have valid dimension before continuing.
-      if (!rect_i.Valid())
+      if (!rect_i.Valid()) {
         return false;
+      }
 
       int width = static_cast<int>(ceil(rect_f.right - rect_f.left));
       if (width < 1) {
         width = 1;
-        if (rect_i.left == rect_i.right)
-          ++rect_i.right;
+        if (rect_i.left == rect_i.right) {
+          if (!pdfium::CheckAdd(rect_i.right, 1).AssignIfValid(&rect_i.right)) {
+            return false;
+          }
+        }
       }
       int height = static_cast<int>(ceil(rect_f.top - rect_f.bottom));
       if (height < 1) {
         height = 1;
-        if (rect_i.bottom == rect_i.top)
-          ++rect_i.bottom;
+        if (rect_i.bottom == rect_i.top) {
+          if (!pdfium::CheckAdd(rect_i.bottom, 1)
+                   .AssignIfValid(&rect_i.bottom)) {
+            return false;
+          }
+        }
       }
       if (rect_i.Width() >= width + 1) {
         if (rect_f.left - static_cast<float>(rect_i.left) >
             static_cast<float>(rect_i.right) - rect_f.right) {
-          ++rect_i.left;
+          if (!pdfium::CheckAdd(rect_i.left, 1).AssignIfValid(&rect_i.left)) {
+            return false;
+          }
         } else {
-          --rect_i.right;
+          if (!pdfium::CheckSub(rect_i.right, 1).AssignIfValid(&rect_i.right)) {
+            return false;
+          }
         }
       }
       if (rect_i.Height() >= height + 1) {
         if (rect_f.top - static_cast<float>(rect_i.top) >
             static_cast<float>(rect_i.bottom) - rect_f.bottom) {
-          ++rect_i.top;
+          if (!pdfium::CheckAdd(rect_i.top, 1).AssignIfValid(&rect_i.top)) {
+            return false;
+          }
         } else {
-          --rect_i.bottom;
+          if (!pdfium::CheckSub(rect_i.bottom, 1)
+                   .AssignIfValid(&rect_i.bottom)) {
+            return false;
+          }
         }
       }
       if (FillRect(rect_i, fill_color)) {
