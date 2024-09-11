@@ -1,0 +1,116 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+  /AcroForm <<
+    /Fields [4 0 R 5 0 R 6 0 R 7 0 R 8 0 R 9 0 R]
+  >>
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /MediaBox [0 0 200 200]
+  /Annots [4 0 R 5 0 R 6 0 R 7 0 R 8 0 R 9 0 R]
+>>
+endobj
+{{object 4 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Btn
+  /AS /Yes
+  /F 4
+  /MK <<
+    /CA (4)
+  >>
+  /P 3 0 R
+  /Rect [40 50 60 70]
+  /T (B0)
+  /V /Yes
+>>
+endobj
+{{object 5 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Btn
+  /AS /Yes
+  /F 4
+  /MK <<
+    /CA (8)
+  >>
+  /P 3 0 R
+  /Rect [90 50 110 70]
+  /T (B1)
+  /V /Yes
+>>
+endobj
+{{object 6 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Btn
+  /AS /Yes
+  /F 4
+  /MK <<
+    /CA (H)
+  >>
+  /P 3 0 R
+  /Rect [140 50 160 70]
+  /T (B2)
+  /V /Yes
+>>
+endobj
+{{object 7 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Btn
+  /AS /Yes
+  /F 4
+  /MK <<
+    /CA (l)
+  >>
+  /P 3 0 R
+  /Rect [40 130 60 150]
+  /T (B3)
+  /V /Yes
+>>
+endobj
+{{object 8 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Btn
+  /AS /Yes
+  /F 4
+  /MK <<
+    /CA (n)
+  >>
+  /P 3 0 R
+  /Rect [90 130 110 150]
+  /T (B4)
+  /V /Yes
+>>
+endobj
+{{object 9 0}} <<
+  /Type /Annot
+  /Subtype /Widget
+  /FT /Btn
+  /AS /Yes
+  /F 4
+  /MK <<
+    /CA (u)
+  >>
+  /P 3 0 R
+  /Rect [140 130 160 150]
+  /T (B5)
+  /V /Yes
+>>
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
