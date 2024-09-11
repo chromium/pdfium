@@ -10,11 +10,11 @@
 
 CPDF_Number::CPDF_Number() = default;
 
-CPDF_Number::CPDF_Number(int value) : m_Number(value) {}
+CPDF_Number::CPDF_Number(int value) : number_(value) {}
 
-CPDF_Number::CPDF_Number(float value) : m_Number(value) {}
+CPDF_Number::CPDF_Number(float value) : number_(value) {}
 
-CPDF_Number::CPDF_Number(ByteStringView str) : m_Number(str) {}
+CPDF_Number::CPDF_Number(ByteStringView str) : number_(str) {}
 
 CPDF_Number::~CPDF_Number() = default;
 
@@ -23,17 +23,17 @@ CPDF_Object::Type CPDF_Number::GetType() const {
 }
 
 RetainPtr<CPDF_Object> CPDF_Number::Clone() const {
-  return m_Number.IsInteger()
-             ? pdfium::MakeRetain<CPDF_Number>(m_Number.GetSigned())
-             : pdfium::MakeRetain<CPDF_Number>(m_Number.GetFloat());
+  return number_.IsInteger()
+             ? pdfium::MakeRetain<CPDF_Number>(number_.GetSigned())
+             : pdfium::MakeRetain<CPDF_Number>(number_.GetFloat());
 }
 
 float CPDF_Number::GetNumber() const {
-  return m_Number.GetFloat();
+  return number_.GetFloat();
 }
 
 int CPDF_Number::GetInteger() const {
-  return m_Number.GetSigned();
+  return number_.GetSigned();
 }
 
 CPDF_Number* CPDF_Number::AsMutableNumber() {
@@ -41,12 +41,12 @@ CPDF_Number* CPDF_Number::AsMutableNumber() {
 }
 
 void CPDF_Number::SetString(const ByteString& str) {
-  m_Number = FX_Number(str.AsStringView());
+  number_ = FX_Number(str.AsStringView());
 }
 
 ByteString CPDF_Number::GetString() const {
-  return m_Number.IsInteger() ? ByteString::FormatInteger(m_Number.GetSigned())
-                              : ByteString::FormatFloat(m_Number.GetFloat());
+  return number_.IsInteger() ? ByteString::FormatInteger(number_.GetSigned())
+                             : ByteString::FormatFloat(number_.GetFloat());
 }
 
 bool CPDF_Number::WriteTo(IFX_ArchiveStream* archive,

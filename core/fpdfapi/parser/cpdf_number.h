@@ -27,7 +27,7 @@ class CPDF_Number final : public CPDF_Object {
   bool WriteTo(IFX_ArchiveStream* archive,
                const CPDF_Encryptor* encryptor) const override;
 
-  bool IsInteger() const { return m_Number.IsInteger(); }
+  bool IsInteger() const { return number_.IsInteger(); }
 
  private:
   CPDF_Number();
@@ -36,7 +36,7 @@ class CPDF_Number final : public CPDF_Object {
   explicit CPDF_Number(ByteStringView str);
   ~CPDF_Number() override;
 
-  FX_Number m_Number;
+  FX_Number number_;
 };
 
 inline CPDF_Number* ToNumber(CPDF_Object* obj) {
