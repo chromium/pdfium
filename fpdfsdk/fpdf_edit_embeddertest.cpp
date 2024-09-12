@@ -594,24 +594,33 @@ TEST_F(FPDFEditEmbedderTest, AddPaths) {
   EXPECT_TRUE(FPDFPath_BezierTo(blue_path, 375, 330, 390, 360, 400, 400));
   EXPECT_TRUE(FPDFPath_Close(blue_path));
   FPDFPage_InsertObject(page, blue_path);
-  const char* last_checksum = []() {
-    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "ed14c60702b1489c597c7d46ece7f86d";
-    }
-    return "9823e1a21bd9b72b6a442ba4f12af946";
-  }();
   {
+    const char* blue_path_checksum = []() {
+      if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+        return "ed14c60702b1489c597c7d46ece7f86d";
+      }
+      return "9823e1a21bd9b72b6a442ba4f12af946";
+    }();
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
-    CompareBitmap(page_bitmap.get(), 612, 792, last_checksum);
+    CompareBitmap(page_bitmap.get(), 612, 792, blue_path_checksum);
   }
 
-  // Now save the result, closing the page and document
+  // Now save the result, closing the page and document.
   EXPECT_TRUE(FPDFPage_GenerateContent(page));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
   FPDF_ClosePage(page);
 
-  // Render the saved result
-  VerifySavedDocument(612, 792, last_checksum);
+  // Render the saved result. The checksum will change due to floating point
+  // precision error.
+  {
+    const char* last_checksum = []() {
+      if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+        return "423b20c18c177e78c93d8b67594e49f1";
+      }
+      return "111c38e9bf9e2ba0a57b875cca596fff";
+    }();
+    VerifySavedDocument(612, 792, last_checksum);
+  }
 }
 
 TEST_F(FPDFEditEmbedderTest, ClipPath) {

@@ -7,8 +7,6 @@ import("../../../testing/test.gni")
 
 source_set("edit") {
   sources = [
-    "cpdf_contentstream_write_utils.cpp",
-    "cpdf_contentstream_write_utils.h",
     "cpdf_creator.cpp",
     "cpdf_creator.h",
     "cpdf_npagetooneexporter.cpp",
@@ -29,6 +27,7 @@ source_set("edit") {
     "../../../:pdfium_noshorten_config",
   ]
   deps = [
+    ":contentstream_write_utils",
     "../../../constants",
     "../../fxcrt",
     "../font",
@@ -36,6 +35,18 @@ source_set("edit") {
     "../parser",
   ]
   visibility = [ "../../../*" ]
+}
+
+source_set("contentstream_write_utils") {
+  sources = [
+    "cpdf_contentstream_write_utils.cpp",
+    "cpdf_contentstream_write_utils.h",
+  ]
+  configs += [
+    "../../../:pdfium_strict_config",
+    "../../../:pdfium_noshorten_config",
+  ]
+  deps = [ "../../fxcrt" ]
 }
 
 pdfium_unittest_source_set("unittests") {

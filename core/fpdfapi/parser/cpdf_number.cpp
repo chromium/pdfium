@@ -6,7 +6,21 @@
 
 #include "core/fpdfapi/parser/cpdf_number.h"
 
+#include <sstream>
+
+#include "core/fpdfapi/edit/cpdf_contentstream_write_utils.h"
 #include "core/fxcrt/fx_stream.h"
+#include "core/fxcrt/fx_string_wrappers.h"
+
+namespace {
+
+ByteString FloatToString(float value) {
+  fxcrt::ostringstream sstream;
+  WriteFloat(sstream, value);
+  return ByteString(sstream);
+}
+
+}  // namespace
 
 CPDF_Number::CPDF_Number() = default;
 
@@ -45,12 +59,17 @@ void CPDF_Number::SetString(const ByteString& str) {
 }
 
 ByteString CPDF_Number::GetString() const {
+  // TODO(crbug.com/352496170): Try using FloatToString() here.
   return number_.IsInteger() ? ByteString::FormatInteger(number_.GetSigned())
                              : ByteString::FormatFloat(number_.GetFloat());
 }
 
 bool CPDF_Number::WriteTo(IFX_ArchiveStream* archive,
                           const CPDF_Encryptor* encryptor) const {
+  // For floats, because this is writing to file, use WriteFloat() instead of
+  // GetString().
   return archive->WriteString(" ") &&
-         archive->WriteString(GetString().AsStringView());
+         archive->WriteString(
+             (number_.IsInteger() ? GetString() : FloatToString(GetNumber()))
+                 .AsStringView());
 }

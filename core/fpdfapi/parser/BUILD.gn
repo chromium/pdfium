@@ -81,6 +81,7 @@ source_set("parser") {
     "../../../constants",
     "../../fdrm",
     "../../fxcodec",
+    "../edit:contentstream_write_utils",
   ]
   public_deps = [ "../../fxcrt" ]
   allow_circular_includes_from = []
