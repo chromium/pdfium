@@ -200,8 +200,8 @@ class PDFObjectsTest : public testing::Test {
 
 TEST_F(PDFObjectsTest, GetString) {
   constexpr auto direct_obj_results = fxcrt::ToArray<const char*>(
-      {"false", "true", "1245", "9.00345", "A simple test", "\t\n", "space", "",
-       "", "", ""});
+      {"false", "true", "1245", "9.0034504", "A simple test", "\t\n", "space",
+       "", "", "", ""});
   // Check for direct objects.
   for (size_t i = 0; i < m_DirectObjs.size(); ++i) {
     EXPECT_EQ(direct_obj_results[i], m_DirectObjs[i]->GetString());
@@ -291,7 +291,7 @@ TEST_F(PDFObjectsTest, GetNameFor) {
 
   EXPECT_EQ("", m_DictObj->GetByteStringFor("invalid"));
   EXPECT_EQ("false", m_DictObj->GetByteStringFor("bool"));
-  EXPECT_EQ("0.23", m_DictObj->GetByteStringFor("num"));
+  EXPECT_EQ(".23", m_DictObj->GetByteStringFor("num"));
   EXPECT_EQ("ium", m_DictObj->GetByteStringFor("string"));
   EXPECT_EQ("Pdf", m_DictObj->GetByteStringFor("name"));
 }
@@ -540,8 +540,9 @@ TEST(PDFArrayTest, GetTypeAt) {
     for (size_t i = 0; i < vals.size(); ++i) {
       arr->InsertNewAt<CPDF_Number>(i, vals[i]);
     }
-    constexpr auto expected_str = fxcrt::ToArray<const char*>(
-        {"0", "0", "10", "10", "0.0345", "897.34", "-2.5", "-1", "-345", "0"});
+    constexpr auto expected_str =
+        fxcrt::ToArray<const char*>({"0", "0", "10", "10", ".034499999",
+                                     "897.34003", "-2.5", "-1", "-345", "0"});
     for (size_t i = 0; i < vals.size(); ++i) {
       TestArrayAccessors(arr.Get(), i,     // Array and index.
                          expected_str[i],  // String value.
@@ -715,8 +716,8 @@ TEST(PDFArrayTest, GetTypeAt) {
     arr->InsertNewAt<CPDF_Reference>(13, &object_holder,
                                      stream_val->GetObjNum());
     constexpr auto expected_str = fxcrt::ToArray<const char*>(
-        {"true", "false", "0", "-1234", "2345", "0.05", "", "It is a test!",
-         "NAME", "test", "", "", "", ""});
+        {"true", "false", "0", "-1234", "2345", ".050000001", "",
+         "It is a test!", "NAME", "test", "", "", "", ""});
     constexpr auto expected_int = fxcrt::ToArray<const int>(
         {1, 0, 0, -1234, 2345, 0, 0, 0, 0, 0, 0, 0, 0, 0});
     constexpr auto expected_float = fxcrt::ToArray<const float>(
