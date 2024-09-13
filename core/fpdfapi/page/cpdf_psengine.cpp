@@ -17,7 +17,6 @@
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/fx_string.h"
-#include "core/fxcrt/notreached.h"
 
 namespace {
 
@@ -107,10 +106,8 @@ void CPDF_PSOP::Execute(CPDF_PSEngine* pEngine) {
 }
 
 float CPDF_PSOP::GetFloatValue() const {
-  if (m_op == PSOP_CONST)
-    return m_value;
-
-  NOTREACHED_NORETURN();
+  CHECK_EQ(m_op, PSOP_CONST);
+  return m_value;
 }
 
 bool CPDF_PSEngine::Execute() {
