@@ -49,12 +49,6 @@ ByteString ByteString::FormatInteger(int i) {
 }
 
 // static
-ByteString ByteString::FormatFloat(float f) {
-  char buf[32];
-  return UNSAFE_TODO(ByteString(buf, FloatToString(f, buf)));
-}
-
-// static
 ByteString ByteString::FormatV(const char* pFormat, va_list argList) {
   va_list argListCopy;
   va_copy(argListCopy, argList);

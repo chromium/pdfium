@@ -25,7 +25,6 @@ namespace fxcrt {
 class ByteString : public StringTemplate<char> {
  public:
   [[nodiscard]] static ByteString FormatInteger(int i);
-  [[nodiscard]] static ByteString FormatFloat(float f);
   [[nodiscard]] static ByteString Format(const char* pFormat, ...);
   [[nodiscard]] static ByteString FormatV(const char* pFormat, va_list argList);
 

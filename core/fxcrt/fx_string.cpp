@@ -9,16 +9,14 @@
 #include <stdint.h>
 
 #include <array>
-#include <iterator>
+#include <string>
+#include <vector>
 
 #include "build/build_config.h"
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/code_point_view.h"
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/span.h"
-#include "core/fxcrt/stl_util.h"
-#include "core/fxcrt/string_view_template.h"
 #include "core/fxcrt/utf16.h"
 #include "core/fxcrt/widestring.h"
 
@@ -150,54 +148,6 @@ T StringTo(ByteStringView strc, pdfium::span<const T> fractional_scales) {
   return bNegative ? -value : value;
 }
 
-template <class T>
-size_t ToString(T value, int (*round_func)(T), pdfium::span<char> buf) {
-  buf[0] = '0';
-  buf[1] = '\0';
-  if (value == 0) {
-    return 1;
-  }
-  bool bNegative = false;
-  if (value < 0) {
-    bNegative = true;
-    value = -value;
-  }
-  int scale = 1;
-  int scaled = round_func(value);
-  while (scaled < 100000) {
-    if (scale == 1000000) {
-      break;
-    }
-    scale *= 10;
-    scaled = round_func(value * scale);
-  }
-  if (scaled == 0) {
-    return 1;
-  }
-  char buf2[32];
-  size_t buf_size = 0;
-  if (bNegative) {
-    buf[buf_size++] = '-';
-  }
-  int i = scaled / scale;
-  FXSYS_itoa(i, buf2, 10);
-  size_t len = strlen(buf2);
-  fxcrt::Copy(pdfium::make_span(buf2).first(len), buf.subspan(buf_size));
-  buf_size += len;
-  int fraction = scaled % scale;
-  if (fraction == 0) {
-    return buf_size;
-  }
-  buf[buf_size++] = '.';
-  scale /= 10;
-  while (fraction) {
-    buf[buf_size++] = '0' + fraction / scale;
-    fraction %= scale;
-    scale /= 10;
-  }
-  return buf_size;
-}
-
 }  // namespace
 
 float StringToFloat(ByteStringView strc) {
@@ -208,20 +158,12 @@ float StringToFloat(WideStringView wsStr) {
   return StringToFloat(FX_UTF8Encode(wsStr).AsStringView());
 }
 
-size_t FloatToString(float f, pdfium::span<char> buf) {
-  return ToString<float>(f, FXSYS_roundf, buf);
-}
-
 double StringToDouble(ByteStringView strc) {
   return StringTo<double>(strc, kFractionScalesDouble);
 }
 
 double StringToDouble(WideStringView wsStr) {
   return StringToDouble(FX_UTF8Encode(wsStr).AsStringView());
-}
-
-size_t DoubleToString(double d, pdfium::span<char> buf) {
-  return ToString<double>(d, FXSYS_round, buf);
 }
 
 namespace fxcrt {

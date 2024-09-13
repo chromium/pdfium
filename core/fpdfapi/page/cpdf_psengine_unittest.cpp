@@ -7,6 +7,7 @@
 #include <iterator>
 #include <limits>
 
+#include "core/fxcrt/notreached.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace {
@@ -80,10 +81,17 @@ TEST(CPDF_PSProc, AddOperator) {
     EXPECT_EQ(item.op, new_op);
     if (new_op == PSOP_CONST) {
       float fv = new_psop->GetFloatValue();
-      if (word == "invalid")
-        EXPECT_FLOAT_EQ(0, fv);
-      else
-        EXPECT_EQ(word, ByteString::FormatFloat(fv));
+      if (word == "55") {
+        EXPECT_FLOAT_EQ(55.0f, fv);
+      } else if (word == "123.4") {
+        EXPECT_FLOAT_EQ(123.4f, fv);
+      } else if (word == "-5") {
+        EXPECT_FLOAT_EQ(-5.0f, fv);
+      } else if (word == "invalid") {
+        EXPECT_FLOAT_EQ(0.0f, fv);
+      } else {
+        NOTREACHED_NORETURN();
+      }
     }
   }
 }
