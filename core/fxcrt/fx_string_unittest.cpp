@@ -99,49 +99,49 @@ TEST(fxstring, WideStringToFloat) {
 }
 
 TEST(fxstring, ByteStringToDouble) {
-  EXPECT_FLOAT_EQ(0.0, StringToDouble(""));
-  EXPECT_FLOAT_EQ(0.0, StringToDouble("0"));
-  EXPECT_FLOAT_EQ(0.0, StringToDouble("0.0"));
-  EXPECT_FLOAT_EQ(0.0, StringToDouble("-0.0"));
+  EXPECT_DOUBLE_EQ(0.0, StringToDouble(""));
+  EXPECT_DOUBLE_EQ(0.0, StringToDouble("0"));
+  EXPECT_DOUBLE_EQ(0.0, StringToDouble("0.0"));
+  EXPECT_DOUBLE_EQ(0.0, StringToDouble("-0.0"));
 
-  EXPECT_FLOAT_EQ(0.25, StringToDouble("0.25"));
-  EXPECT_FLOAT_EQ(-0.25, StringToDouble("-0.25"));
+  EXPECT_DOUBLE_EQ(0.25, StringToDouble("0.25"));
+  EXPECT_DOUBLE_EQ(-0.25, StringToDouble("-0.25"));
 
-  EXPECT_FLOAT_EQ(100.0, StringToDouble("100"));
-  EXPECT_FLOAT_EQ(100.0, StringToDouble("100.0"));
-  EXPECT_FLOAT_EQ(100.0, StringToDouble("    100.0"));
-  EXPECT_FLOAT_EQ(-100.0, StringToDouble("-100.0000"));
+  EXPECT_DOUBLE_EQ(100.0, StringToDouble("100"));
+  EXPECT_DOUBLE_EQ(100.0, StringToDouble("100.0"));
+  EXPECT_DOUBLE_EQ(100.0, StringToDouble("    100.0"));
+  EXPECT_DOUBLE_EQ(-100.0, StringToDouble("-100.0000"));
 
-  EXPECT_FLOAT_EQ(3.402823e+38,
-                  StringToDouble("340282300000000000000000000000000000000"));
-  EXPECT_FLOAT_EQ(-3.402823e+38,
-                  StringToDouble("-340282300000000000000000000000000000000"));
+  EXPECT_DOUBLE_EQ(3.402823e+38,
+                   StringToDouble("340282300000000000000000000000000000000"));
+  EXPECT_DOUBLE_EQ(-3.402823e+38,
+                   StringToDouble("-340282300000000000000000000000000000000"));
 
-  EXPECT_FLOAT_EQ(1.000000119, StringToDouble("1.000000119"));
-  EXPECT_FLOAT_EQ(1.999999881, StringToDouble("1.999999881"));
+  EXPECT_DOUBLE_EQ(1.000000119, StringToDouble("1.000000119"));
+  EXPECT_DOUBLE_EQ(1.999999881, StringToDouble("1.999999881"));
 }
 
 TEST(fxstring, WideStringToDouble) {
-  EXPECT_FLOAT_EQ(0.0, StringToDouble(L""));
-  EXPECT_FLOAT_EQ(0.0, StringToDouble(L"0"));
-  EXPECT_FLOAT_EQ(0.0, StringToDouble(L"0.0"));
-  EXPECT_FLOAT_EQ(0.0, StringToDouble(L"-0.0"));
+  EXPECT_DOUBLE_EQ(0.0, StringToDouble(L""));
+  EXPECT_DOUBLE_EQ(0.0, StringToDouble(L"0"));
+  EXPECT_DOUBLE_EQ(0.0, StringToDouble(L"0.0"));
+  EXPECT_DOUBLE_EQ(0.0, StringToDouble(L"-0.0"));
 
-  EXPECT_FLOAT_EQ(0.25, StringToDouble(L"0.25"));
-  EXPECT_FLOAT_EQ(-0.25, StringToDouble(L"-0.25"));
+  EXPECT_DOUBLE_EQ(0.25, StringToDouble(L"0.25"));
+  EXPECT_DOUBLE_EQ(-0.25, StringToDouble(L"-0.25"));
 
-  EXPECT_FLOAT_EQ(100.0, StringToDouble(L"100"));
-  EXPECT_FLOAT_EQ(100.0, StringToDouble(L"100.0"));
-  EXPECT_FLOAT_EQ(100.0, StringToDouble(L"    100.0"));
-  EXPECT_FLOAT_EQ(-100.0, StringToDouble(L"-100.0000"));
+  EXPECT_DOUBLE_EQ(100.0, StringToDouble(L"100"));
+  EXPECT_DOUBLE_EQ(100.0, StringToDouble(L"100.0"));
+  EXPECT_DOUBLE_EQ(100.0, StringToDouble(L"    100.0"));
+  EXPECT_DOUBLE_EQ(-100.0, StringToDouble(L"-100.0000"));
 
-  EXPECT_FLOAT_EQ(3.402823e+38,
-                  StringToDouble(L"340282300000000000000000000000000000000"));
-  EXPECT_FLOAT_EQ(-3.402823e+38,
-                  StringToDouble(L"-340282300000000000000000000000000000000"));
+  EXPECT_DOUBLE_EQ(3.402823e+38,
+                   StringToDouble(L"340282300000000000000000000000000000000"));
+  EXPECT_DOUBLE_EQ(-3.402823e+38,
+                   StringToDouble(L"-340282300000000000000000000000000000000"));
 
-  EXPECT_FLOAT_EQ(1.000000119, StringToDouble(L"1.000000119"));
-  EXPECT_FLOAT_EQ(1.999999881, StringToDouble(L"1.999999881"));
+  EXPECT_DOUBLE_EQ(1.000000119, StringToDouble(L"1.000000119"));
+  EXPECT_DOUBLE_EQ(1.999999881, StringToDouble(L"1.999999881"));
 }
 
 TEST(fxstring, SplitByteString) {
