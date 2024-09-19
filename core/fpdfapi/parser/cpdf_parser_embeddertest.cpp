@@ -17,9 +17,7 @@ TEST_F(CPDFParserEmbedderTest, LoadErrorBug454695) {
 TEST_F(CPDFParserEmbedderTest, Bug481363) {
   // Test colorspace object with malformed dictionary.
   ASSERT_TRUE(OpenDocument("bug_481363.pdf"));
-  FPDF_PAGE page = LoadPage(0);
-  EXPECT_TRUE(page);
-  UnloadPage(page);
+  EXPECT_TRUE(LoadScopedPage(0));
 }
 
 TEST_F(CPDFParserEmbedderTest, Bug544880) {
@@ -43,15 +41,14 @@ TEST_F(CPDFParserEmbedderTest, Bug602650) {
   // Test the case that cross reference entries, which are well formed,
   // but do not match with the objects.
   ASSERT_TRUE(OpenDocument("bug_602650.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
-  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
+  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page.get());
   EXPECT_TRUE(text_page);
   // The page should not be blank.
   EXPECT_LT(0, FPDFText_CountChars(text_page));
 
   FPDFText_ClosePage(text_page);
-  UnloadPage(page);
 }
 
 TEST_F(CPDFParserEmbedderTest, Bug757705) {
@@ -64,21 +61,19 @@ TEST_F(CPDFParserEmbedderTest, LoadMainCrossRefTable) {
   // check that the second page was correctly loaded. Because it is contains
   // crossrefs for second page.
   EXPECT_EQ(2, GetPageCount());
-  FPDF_PAGE page = LoadPage(1);
+  ScopedEmbedderTestPage page = LoadScopedPage(1);
   EXPECT_TRUE(page);
-  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page);
+  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page.get());
   EXPECT_TRUE(text_page);
   // The page should not be blank.
   EXPECT_LT(0, FPDFText_CountChars(text_page));
   FPDFText_ClosePage(text_page);
-  UnloadPage(page);
 }
 
 TEST_F(CPDFParserEmbedderTest, Bug828049) {
   ASSERT_TRUE(OpenDocument("bug_828049.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
-  UnloadPage(page);
 }
 
 // crbug.com/1191313

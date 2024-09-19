@@ -605,9 +605,8 @@ TEST_F(FPDFFormFillEmbedderTest, FirstTest) {
   SetDelegate(&mock);
 
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, Bug487928) {
@@ -615,11 +614,10 @@ TEST_F(FPDFFormFillEmbedderTest, Bug487928) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocument("bug_487928.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
   DoOpenActions();
   delegate.AdvanceTime(5000);
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, Bug507316) {
@@ -627,23 +625,20 @@ TEST_F(FPDFFormFillEmbedderTest, Bug507316) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocument("bug_507316.pdf"));
-  FPDF_PAGE page = LoadPage(2);
+  ScopedEmbedderTestPage page = LoadScopedPage(2);
   EXPECT_TRUE(page);
   DoOpenActions();
   delegate.AdvanceTime(4000);
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, Bug514690) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   // Test that FORM_OnMouseMove() etc. permit null HANDLES and PAGES.
-  FORM_OnMouseMove(nullptr, page, 0, 10.0, 10.0);
+  FORM_OnMouseMove(nullptr, page.get(), 0, 10.0, 10.0);
   FORM_OnMouseMove(form_handle(), nullptr, 0, 10.0, 10.0);
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, Bug900552) {
@@ -651,7 +646,7 @@ TEST_F(FPDFFormFillEmbedderTest, Bug900552) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocument("bug_900552.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   DoOpenActions();
   delegate.AdvanceTime(4000);
@@ -659,9 +654,9 @@ TEST_F(FPDFFormFillEmbedderTest, Bug900552) {
   // Simulate a repaint.
   FPDF_BITMAP bitmap = FPDFBitmap_Create(512, 512, 0);
   ASSERT_TRUE(bitmap);
-  FPDF_RenderPageBitmap_Start(bitmap, page, 0, 0, 512, 512, 0, 0, nullptr);
+  FPDF_RenderPageBitmap_Start(bitmap, page.get(), 0, 0, 512, 512, 0, 0,
+                              nullptr);
   FPDFBitmap_Destroy(bitmap);
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, Bug901654Case1) {
@@ -669,7 +664,7 @@ TEST_F(FPDFFormFillEmbedderTest, Bug901654Case1) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocument("bug_901654.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   DoOpenActions();
   delegate.AdvanceTime(4000);
@@ -677,10 +672,9 @@ TEST_F(FPDFFormFillEmbedderTest, Bug901654Case1) {
   // Simulate a repaint.
   {
     ScopedFPDFBitmap bitmap(FPDFBitmap_Create(512, 512, 0));
-    FPDF_RenderPageBitmap_Start(bitmap.get(), page, 0, 0, 512, 512, 0, 0,
+    FPDF_RenderPageBitmap_Start(bitmap.get(), page.get(), 0, 0, 512, 512, 0, 0,
                                 nullptr);
   }
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, Bug901654Case2) {
@@ -688,7 +682,7 @@ TEST_F(FPDFFormFillEmbedderTest, Bug901654Case2) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocument("bug_901654_2.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   DoOpenActions();
   delegate.AdvanceTime(4000);
@@ -696,17 +690,16 @@ TEST_F(FPDFFormFillEmbedderTest, Bug901654Case2) {
   // Simulate a repaint.
   {
     ScopedFPDFBitmap bitmap(FPDFBitmap_Create(512, 512, 0));
-    FPDF_RenderPageBitmap_Start(bitmap.get(), page, 0, 0, 512, 512, 0, 0,
+    FPDF_RenderPageBitmap_Start(bitmap.get(), page.get(), 0, 0, 512, 512, 0, 0,
                                 nullptr);
   }
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, GetFocusedAnnotation) {
   ASSERT_TRUE(OpenDocument("annotiter.pdf"));
-  std::vector<FPDF_PAGE> pages;
+  std::vector<ScopedEmbedderTestPage> pages;
   for (size_t i = 0; i < 3; ++i) {
-    pages.push_back(LoadPage(i));
+    pages.push_back(LoadScopedPage(i));
     ASSERT_TRUE(pages.back());
   }
 
@@ -727,31 +720,29 @@ TEST_F(FPDFFormFillEmbedderTest, GetFocusedAnnotation) {
 
   for (size_t i = 0; i < pages.size(); ++i) {
     // Invoke click on the form field to bring it to focus.
-    FORM_OnMouseMove(form_handle(), pages[i], 0, right_bottom_annot_point.x,
-                     right_bottom_annot_point.y);
-    FORM_OnLButtonDown(form_handle(), pages[i], 0, right_bottom_annot_point.x,
-                       right_bottom_annot_point.y);
-    FORM_OnLButtonUp(form_handle(), pages[i], 0, right_bottom_annot_point.x,
-                     right_bottom_annot_point.y);
+    FORM_OnMouseMove(form_handle(), pages[i].get(), 0,
+                     right_bottom_annot_point.x, right_bottom_annot_point.y);
+    FORM_OnLButtonDown(form_handle(), pages[i].get(), 0,
+                       right_bottom_annot_point.x, right_bottom_annot_point.y);
+    FORM_OnLButtonUp(form_handle(), pages[i].get(), 0,
+                     right_bottom_annot_point.x, right_bottom_annot_point.y);
 
     ASSERT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
     ASSERT_TRUE(annot);
 
-    EXPECT_EQ(kExpectedAnnotIndex, FPDFPage_GetAnnotIndex(pages[i], annot));
+    EXPECT_EQ(kExpectedAnnotIndex,
+              FPDFPage_GetAnnotIndex(pages[i].get(), annot));
     EXPECT_EQ(static_cast<int>(i), page_index);
 
     FPDFPage_CloseAnnot(annot);
   }
-
-  for (FPDF_PAGE page : pages)
-    UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, SetFocusedAnnotation) {
   ASSERT_TRUE(OpenDocument("annotiter.pdf"));
-  std::vector<FPDF_PAGE> pages;
+  std::vector<ScopedEmbedderTestPage> pages;
   for (size_t i = 0; i < 3; ++i) {
-    pages.push_back(LoadPage(i));
+    pages.push_back(LoadScopedPage(i));
     ASSERT_TRUE(pages.back());
   }
 
@@ -771,132 +762,120 @@ TEST_F(FPDFFormFillEmbedderTest, SetFocusedAnnotation) {
   for (size_t i = 0; i < pages.size(); ++i) {
     // Setting focus on an annotation on page i.
     ScopedFPDFAnnotation focused_annot(
-        FPDFPage_GetAnnot(pages[i], kExpectedAnnotIndex));
+        FPDFPage_GetAnnot(pages[i].get(), kExpectedAnnotIndex));
     ASSERT_TRUE(focused_annot);
 
     ASSERT_TRUE(FORM_SetFocusedAnnot(form_handle(), focused_annot.get()));
 
     ASSERT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
-    EXPECT_EQ(kExpectedAnnotIndex, FPDFPage_GetAnnotIndex(pages[i], annot));
+    EXPECT_EQ(kExpectedAnnotIndex,
+              FPDFPage_GetAnnotIndex(pages[i].get(), annot));
     EXPECT_EQ(static_cast<int>(i), page_index);
 
     FPDFPage_CloseAnnot(annot);
   }
-
-  for (FPDF_PAGE page : pages)
-    UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, FormFillFirstTab) {
   ASSERT_TRUE(OpenDocument("annotiter.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Invoking first tab on the page.
-  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab, 0));
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab, 0));
   int page_index = -2;
   FPDF_ANNOTATION annot = nullptr;
   EXPECT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
   EXPECT_EQ(0, page_index);
   ASSERT_TRUE(annot);
-  EXPECT_EQ(1, FPDFPage_GetAnnotIndex(page, annot));
+  EXPECT_EQ(1, FPDFPage_GetAnnotIndex(page.get(), annot));
   FPDFPage_CloseAnnot(annot);
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, FormFillFirstShiftTab) {
   ASSERT_TRUE(OpenDocument("annotiter.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Invoking first shift-tab on the page.
-  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab,
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                              FWL_EVENTFLAG_ShiftKey));
   int page_index = -2;
   FPDF_ANNOTATION annot = nullptr;
   EXPECT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
   EXPECT_EQ(0, page_index);
   ASSERT_TRUE(annot);
-  EXPECT_EQ(0, FPDFPage_GetAnnotIndex(page, annot));
+  EXPECT_EQ(0, FPDFPage_GetAnnotIndex(page.get(), annot));
   FPDFPage_CloseAnnot(annot);
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, FormFillContinuousTab) {
   ASSERT_TRUE(OpenDocument("annotiter.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Tabs should iterate focus over annotations.
   for (int expected : {1, 2, 3, 0}) {
-    ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab, 0));
+    ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab, 0));
     int page_index = -2;
     FPDF_ANNOTATION annot = nullptr;
     EXPECT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
     EXPECT_EQ(0, page_index);
     ASSERT_TRUE(annot);
-    EXPECT_EQ(expected, FPDFPage_GetAnnotIndex(page, annot));
+    EXPECT_EQ(expected, FPDFPage_GetAnnotIndex(page.get(), annot));
     FPDFPage_CloseAnnot(annot);
   }
 
   // Tab should not be handled as the last annotation of the page is in focus.
-  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab, 0));
-
-  UnloadPage(page);
+  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab, 0));
 }
 
 TEST_F(FPDFFormFillEmbedderTest, FormFillContinuousShiftTab) {
   ASSERT_TRUE(OpenDocument("annotiter.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Shift-tabs should iterate focus over annotations.
   for (int expected : {0, 3, 2, 1}) {
-    ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab,
+    ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                                FWL_EVENTFLAG_ShiftKey));
     int page_index = -2;
     FPDF_ANNOTATION annot = nullptr;
     EXPECT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
     EXPECT_EQ(0, page_index);
     ASSERT_TRUE(annot);
-    EXPECT_EQ(expected, FPDFPage_GetAnnotIndex(page, annot));
+    EXPECT_EQ(expected, FPDFPage_GetAnnotIndex(page.get(), annot));
     FPDFPage_CloseAnnot(annot);
   }
 
   // Shift-tab should not be handled as the first annotation of the page is in
   // focus.
-  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab,
+  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                               FWL_EVENTFLAG_ShiftKey));
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, TabWithModifiers) {
   ASSERT_TRUE(OpenDocument("annotiter.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab,
+  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                               FWL_EVENTFLAG_ControlKey));
 
-  ASSERT_FALSE(
-      FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab, FWL_EVENTFLAG_AltKey));
+  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
+                              FWL_EVENTFLAG_AltKey));
 
   ASSERT_FALSE(
-      FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab,
+      FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                      (FWL_EVENTFLAG_ControlKey | FWL_EVENTFLAG_ShiftKey)));
 
-  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab,
+  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                               (FWL_EVENTFLAG_AltKey | FWL_EVENTFLAG_ShiftKey)));
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, KeyPressWithNoFocusedAnnot) {
   ASSERT_TRUE(OpenDocument("annotiter.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // There should be no focused annotation to start with.
@@ -913,80 +892,70 @@ TEST_F(FPDFFormFillEmbedderTest, KeyPressWithNoFocusedAnnot) {
   };
   for (int key : kKeysToPress) {
     // Pressing random keys when there is no focus should not trigger focus.
-    EXPECT_FALSE(FORM_OnKeyDown(form_handle(), page, key, 0));
+    EXPECT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), key, 0));
     page_index = -2;
     annot = nullptr;
     EXPECT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
     EXPECT_EQ(-1, page_index);
     EXPECT_FALSE(annot);
   }
-
-  UnloadPage(page);
 }
 
 #ifdef PDF_ENABLE_XFA
 TEST_F(FPDFFormFillEmbedderTest, XFAFormFillFirstTab) {
   ASSERT_TRUE(OpenDocument("xfa/email_recommended.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Invoking first tab on the page.
-  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab, 0));
-
-  UnloadPage(page);
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab, 0));
 }
 
 TEST_F(FPDFFormFillEmbedderTest, XFAFormFillFirstShiftTab) {
   ASSERT_TRUE(OpenDocument("xfa/email_recommended.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Invoking first shift-tab on the page.
-  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab,
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                              FWL_EVENTFLAG_ShiftKey));
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, XFAFormFillContinuousTab) {
   ASSERT_TRUE(OpenDocument("xfa/email_recommended.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Invoking first tab on the page.
-  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab, 0));
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab, 0));
 
   // Subsequent tabs should move focus over annotations.
   for (size_t i = 0; i < 9; ++i)
-    ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab, 0));
+    ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab, 0));
 
   // Tab should not be handled as the last annotation of the page is in focus.
-  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab, 0));
-
-  UnloadPage(page);
+  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab, 0));
 }
 
 TEST_F(FPDFFormFillEmbedderTest, XFAFormFillContinuousShiftTab) {
   ASSERT_TRUE(OpenDocument("xfa/email_recommended.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Invoking first shift-tab on the page.
-  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab,
+  ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                              FWL_EVENTFLAG_ShiftKey));
 
   // Subsequent shift-tabs should move focus over annotations.
   for (size_t i = 0; i < 9; ++i) {
-    ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab,
+    ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                                FWL_EVENTFLAG_ShiftKey));
   }
 
   // Shift-tab should not be handled as the first annotation of the page is in
   // focus.
-  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab,
+  ASSERT_FALSE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                               FWL_EVENTFLAG_ShiftKey));
-
-  UnloadPage(page);
 }
 #endif  // PDF_ENABLE_XFA
 
@@ -1002,11 +971,9 @@ TEST_F(FPDFFormFillEmbedderTest, Bug851821) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocument("redirect.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
   DoOpenActions();
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, CheckReadOnlyInCheckbox) {
@@ -1014,34 +981,35 @@ TEST_F(FPDFFormFillEmbedderTest, CheckReadOnlyInCheckbox) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocument("click_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     // Check for read-only checkbox.
-    ScopedFPDFAnnotation focused_annot(FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation focused_annot(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(FORM_SetFocusedAnnot(form_handle(), focused_annot.get()));
 
     // Shift-tab to the previous control.
-    ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab,
+    ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab,
                                FWL_EVENTFLAG_ShiftKey));
     FPDF_ANNOTATION annot = nullptr;
     int page_index = -1;
     ASSERT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
-    EXPECT_EQ(0, FPDFPage_GetAnnotIndex(page, annot));
+    EXPECT_EQ(0, FPDFPage_GetAnnotIndex(page.get(), annot));
 
     // The read-only checkbox is initially in checked state.
     EXPECT_TRUE(FPDFAnnot_IsChecked(form_handle(), annot));
 
-    EXPECT_TRUE(FORM_OnChar(form_handle(), page, pdfium::ascii::kReturn, 0));
+    EXPECT_TRUE(
+        FORM_OnChar(form_handle(), page.get(), pdfium::ascii::kReturn, 0));
     EXPECT_TRUE(FPDFAnnot_IsChecked(form_handle(), annot));
 
-    EXPECT_TRUE(FORM_OnChar(form_handle(), page, pdfium::ascii::kSpace, 0));
+    EXPECT_TRUE(
+        FORM_OnChar(form_handle(), page.get(), pdfium::ascii::kSpace, 0));
     EXPECT_TRUE(FPDFAnnot_IsChecked(form_handle(), annot));
 
     FPDFPage_CloseAnnot(annot);
   }
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, CheckReadOnlyInRadiobutton) {
@@ -1049,33 +1017,34 @@ TEST_F(FPDFFormFillEmbedderTest, CheckReadOnlyInRadiobutton) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocument("click_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     // Check for read-only radio button.
-    ScopedFPDFAnnotation focused_annot(FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation focused_annot(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(FORM_SetFocusedAnnot(form_handle(), focused_annot.get()));
 
     // Tab to the next control.
-    ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page, FWL_VKEY_Tab, 0));
+    ASSERT_TRUE(FORM_OnKeyDown(form_handle(), page.get(), FWL_VKEY_Tab, 0));
 
     FPDF_ANNOTATION annot = nullptr;
     int page_index = -1;
     ASSERT_TRUE(FORM_GetFocusedAnnot(form_handle(), &page_index, &annot));
-    EXPECT_EQ(2, FPDFPage_GetAnnotIndex(page, annot));
+    EXPECT_EQ(2, FPDFPage_GetAnnotIndex(page.get(), annot));
     // The read-only radio button is initially in checked state.
     EXPECT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot));
 
-    EXPECT_TRUE(FORM_OnChar(form_handle(), page, pdfium::ascii::kReturn, 0));
+    EXPECT_TRUE(
+        FORM_OnChar(form_handle(), page.get(), pdfium::ascii::kReturn, 0));
     EXPECT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot));
 
-    EXPECT_TRUE(FORM_OnChar(form_handle(), page, pdfium::ascii::kSpace, 0));
+    EXPECT_TRUE(
+        FORM_OnChar(form_handle(), page.get(), pdfium::ascii::kSpace, 0));
     EXPECT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot));
 
     FPDFPage_CloseAnnot(annot);
   }
-  UnloadPage(page);
 }
 
 #ifdef PDF_ENABLE_V8
@@ -1085,7 +1054,7 @@ TEST_F(FPDFFormFillEmbedderTest, DisableJavaScript) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocumentWithoutJavaScript("bug_551248.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
   DoOpenActions();
 
@@ -1106,7 +1075,6 @@ TEST_F(FPDFFormFillEmbedderTest, DisableJavaScript) {
   EXPECT_EQ(0U, alerts.size());  // nothing fired.
   delegate.AdvanceTime(1000);
   EXPECT_EQ(0U, alerts.size());  // nothing fired.
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, DocumentAActions) {
@@ -1114,7 +1082,7 @@ TEST_F(FPDFFormFillEmbedderTest, DocumentAActions) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocument("document_aactions.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   const auto& alerts = delegate.GetAlerts();
@@ -1124,7 +1092,6 @@ TEST_F(FPDFFormFillEmbedderTest, DocumentAActions) {
   FORM_DoDocumentAAction(form_handle(), FPDFDOC_AACTION_DS);
   FORM_DoDocumentAAction(form_handle(), FPDFDOC_AACTION_WP);
   FORM_DoDocumentAAction(form_handle(), FPDFDOC_AACTION_DP);
-  UnloadPage(page);
 
   ASSERT_EQ(4U, alerts.size());
   EXPECT_EQ(L"Will Save", alerts[0].message);
@@ -1138,7 +1105,7 @@ TEST_F(FPDFFormFillEmbedderTest, DocumentAActionsDisableJavaScript) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocumentWithoutJavaScript("document_aactions.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   const auto& alerts = delegate.GetAlerts();
@@ -1148,7 +1115,6 @@ TEST_F(FPDFFormFillEmbedderTest, DocumentAActionsDisableJavaScript) {
   FORM_DoDocumentAAction(form_handle(), FPDFDOC_AACTION_DS);
   FORM_DoDocumentAAction(form_handle(), FPDFDOC_AACTION_WP);
   FORM_DoDocumentAAction(form_handle(), FPDFDOC_AACTION_DP);
-  UnloadPage(page);
 
   ASSERT_EQ(0U, alerts.size());
 }
@@ -1159,7 +1125,7 @@ TEST_F(FPDFFormFillEmbedderTest, Bug551248) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocument("bug_551248.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
   DoOpenActions();
 
@@ -1180,7 +1146,6 @@ TEST_F(FPDFFormFillEmbedderTest, Bug551248) {
   EXPECT_EQ(4U, alerts.size());  // interval fired again.
   delegate.AdvanceTime(1000);
   EXPECT_EQ(4U, alerts.size());  // nothing fired.
-  UnloadPage(page);
 
   ASSERT_EQ(4U, alerts.size());  // nothing else fired.
 
@@ -1211,11 +1176,10 @@ TEST_F(FPDFFormFillEmbedderTest, Bug620428) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocument("bug_620428.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
   DoOpenActions();
   delegate.AdvanceTime(5000);
-  UnloadPage(page);
 
   const auto& alerts = delegate.GetAlerts();
   ASSERT_EQ(1U, alerts.size());
@@ -1228,7 +1192,7 @@ TEST_F(FPDFFormFillEmbedderTest, Bug634394) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocument("bug_634394.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
   DoOpenActions();
 
@@ -1239,7 +1203,6 @@ TEST_F(FPDFFormFillEmbedderTest, Bug634394) {
   delegate.AdvanceTime(1000);
   delegate.AdvanceTime(1000);
   delegate.AdvanceTime(1000);
-  UnloadPage(page);
 
   const auto& alerts = delegate.GetAlerts();
   EXPECT_EQ(2U, alerts.size());
@@ -1250,7 +1213,7 @@ TEST_F(FPDFFormFillEmbedderTest, Bug634716) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocument("bug_634716.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
   DoOpenActions();
 
@@ -1261,7 +1224,6 @@ TEST_F(FPDFFormFillEmbedderTest, Bug634716) {
   delegate.AdvanceTime(1000);
   delegate.AdvanceTime(1000);
   delegate.AdvanceTime(1000);
-  UnloadPage(page);
 
   const auto& alerts = delegate.GetAlerts();
   EXPECT_EQ(2U, alerts.size());
@@ -1272,13 +1234,12 @@ TEST_F(FPDFFormFillEmbedderTest, Bug679649) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocument("bug_679649.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   delegate.SetFailNextTimer();
   DoOpenActions();
   delegate.AdvanceTime(2000);
-  UnloadPage(page);
 
   const auto& alerts = delegate.GetAlerts();
   EXPECT_EQ(0u, alerts.size());
@@ -1289,14 +1250,13 @@ TEST_F(FPDFFormFillEmbedderTest, Bug707673) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocument("bug_707673.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   DoOpenActions();
-  FORM_OnLButtonDown(form_handle(), page, 0, 140, 590);
-  FORM_OnLButtonUp(form_handle(), page, 0, 140, 590);
+  FORM_OnLButtonDown(form_handle(), page.get(), 0, 140, 590);
+  FORM_OnLButtonUp(form_handle(), page.get(), 0, 140, 590);
   delegate.AdvanceTime(1000);
-  UnloadPage(page);
 
   const auto& alerts = delegate.GetAlerts();
   EXPECT_EQ(0u, alerts.size());
@@ -1304,13 +1264,12 @@ TEST_F(FPDFFormFillEmbedderTest, Bug707673) {
 
 TEST_F(FPDFFormFillEmbedderTest, Bug765384) {
   ASSERT_TRUE(OpenDocument("bug_765384.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   DoOpenActions();
-  FORM_OnLButtonDown(form_handle(), page, 0, 140, 590);
-  FORM_OnLButtonUp(form_handle(), page, 0, 140, 590);
-  UnloadPage(page);
+  FORM_OnLButtonDown(form_handle(), page.get(), 0, 140, 590);
+  FORM_OnLButtonUp(form_handle(), page.get(), 0, 140, 590);
 }
 
 // Test passes if DCHECK() not hit.
@@ -1319,13 +1278,12 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1477093) {
   SetDelegate(&delegate);
 
   ASSERT_TRUE(OpenDocument("bug_1477093.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
   DoOpenActions();
   delegate.AdvanceTime(1000);
   delegate.AdvanceTime(1000);
-  UnloadPage(page);
 }
 
 #endif  // PDF_ENABLE_V8
@@ -1365,46 +1323,44 @@ TEST_F(FPDFFormFillEmbedderTest, FormText) {
   }();
   {
     ASSERT_TRUE(OpenDocument("text_form.pdf"));
-    FPDF_PAGE page = LoadPage(0);
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
-    ScopedFPDFBitmap bitmap1 = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap1 = RenderLoadedPage(page.get());
     CompareBitmap(bitmap1.get(), 300, 300, TextFormChecksum());
 
     // Click on the textfield
-    EXPECT_EQ(FPDF_FORMFIELD_TEXTFIELD,
-              FPDFPage_HasFormFieldAtPoint(form_handle(), page, 120.0, 120.0));
     EXPECT_EQ(
-        0, FPDFPage_FormFieldZOrderAtPoint(form_handle(), page, 120.0, 120.0));
-    FORM_OnMouseMove(form_handle(), page, 0, 120.0, 120.0);
-    FORM_OnLButtonDown(form_handle(), page, 0, 120.0, 120.0);
-    FORM_OnLButtonUp(form_handle(), page, 0, 120.0, 120.0);
+        FPDF_FORMFIELD_TEXTFIELD,
+        FPDFPage_HasFormFieldAtPoint(form_handle(), page.get(), 120.0, 120.0));
+    EXPECT_EQ(0, FPDFPage_FormFieldZOrderAtPoint(form_handle(), page.get(),
+                                                 120.0, 120.0));
+    FORM_OnMouseMove(form_handle(), page.get(), 0, 120.0, 120.0);
+    FORM_OnLButtonDown(form_handle(), page.get(), 0, 120.0, 120.0);
+    FORM_OnLButtonUp(form_handle(), page.get(), 0, 120.0, 120.0);
 
     // Write "ABC"
-    FORM_OnChar(form_handle(), page, 'A', 0);
-    FORM_OnChar(form_handle(), page, 'B', 0);
-    FORM_OnChar(form_handle(), page, 'C', 0);
-    ScopedFPDFBitmap bitmap2 = RenderLoadedPage(page);
+    FORM_OnChar(form_handle(), page.get(), 'A', 0);
+    FORM_OnChar(form_handle(), page.get(), 'B', 0);
+    FORM_OnChar(form_handle(), page.get(), 'C', 0);
+    ScopedFPDFBitmap bitmap2 = RenderLoadedPage(page.get());
     CompareBitmap(bitmap2.get(), 300, 300, focused_text_form_with_abc_checksum);
 
     // Focus remains despite right clicking out of the textfield
-    FORM_OnMouseMove(form_handle(), page, 0, 15.0, 15.0);
-    FORM_OnRButtonDown(form_handle(), page, 0, 15.0, 15.0);
-    FORM_OnRButtonUp(form_handle(), page, 0, 15.0, 15.0);
-    ScopedFPDFBitmap bitmap3 = RenderLoadedPage(page);
+    FORM_OnMouseMove(form_handle(), page.get(), 0, 15.0, 15.0);
+    FORM_OnRButtonDown(form_handle(), page.get(), 0, 15.0, 15.0);
+    FORM_OnRButtonUp(form_handle(), page.get(), 0, 15.0, 15.0);
+    ScopedFPDFBitmap bitmap3 = RenderLoadedPage(page.get());
     CompareBitmap(bitmap3.get(), 300, 300, focused_text_form_with_abc_checksum);
 
     // Take out focus by clicking out of the textfield
-    FORM_OnMouseMove(form_handle(), page, 0, 15.0, 15.0);
-    FORM_OnLButtonDown(form_handle(), page, 0, 15.0, 15.0);
-    FORM_OnLButtonUp(form_handle(), page, 0, 15.0, 15.0);
-    ScopedFPDFBitmap bitmap4 = RenderLoadedPage(page);
+    FORM_OnMouseMove(form_handle(), page.get(), 0, 15.0, 15.0);
+    FORM_OnLButtonDown(form_handle(), page.get(), 0, 15.0, 15.0);
+    FORM_OnLButtonUp(form_handle(), page.get(), 0, 15.0, 15.0);
+    ScopedFPDFBitmap bitmap4 = RenderLoadedPage(page.get());
     CompareBitmap(bitmap4.get(), 300, 300,
                   unfocused_text_form_with_abc_checksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-
-    // Close page
-    UnloadPage(page);
   }
   // Check saved document
   VerifySavedDocument(300, 300, unfocused_text_form_with_abc_checksum);
@@ -1421,18 +1377,16 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1281) {
   }();
 
   ASSERT_TRUE(OpenDocument("bug_890322.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  ScopedFPDFBitmap bitmap_normal = RenderLoadedPage(page);
+  ScopedFPDFBitmap bitmap_normal = RenderLoadedPage(page.get());
   CompareBitmap(bitmap_normal.get(), 200, 200, pdfium::Bug890322Checksum());
 
   ScopedFPDFBitmap bitmap_reverse_byte_order =
-      RenderLoadedPageWithFlags(page, FPDF_REVERSE_BYTE_ORDER);
+      RenderLoadedPageWithFlags(page.get(), FPDF_REVERSE_BYTE_ORDER);
   CompareBitmap(bitmap_reverse_byte_order.get(), 200, 200,
                 reverse_byte_order_checksum);
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, Bug1302455RenderOnly) {
@@ -1444,15 +1398,14 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1302455RenderOnly) {
   }();
   {
     ASSERT_TRUE(OpenDocument("bug_1302455.pdf"));
-    FPDF_PAGE page = LoadPage(0);
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
 
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), 300, 300, checksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-    UnloadPage(page);
   }
   VerifySavedDocument(300, 300, checksum);
 }
@@ -1476,23 +1429,23 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditFirstForm) {
   }();
   {
     ASSERT_TRUE(OpenDocument("bug_1302455.pdf"));
-    FPDF_PAGE page = LoadPage(0);
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
 
-    EXPECT_EQ(FPDF_FORMFIELD_TEXTFIELD,
-              FPDFPage_HasFormFieldAtPoint(form_handle(), page, 110, 110));
-    FORM_OnMouseMove(form_handle(), page, 0, 110, 110);
-    FORM_OnLButtonDown(form_handle(), page, 0, 110, 110);
-    FORM_OnLButtonUp(form_handle(), page, 0, 110, 110);
-    FORM_OnChar(form_handle(), page, 'A', 0);
+    EXPECT_EQ(
+        FPDF_FORMFIELD_TEXTFIELD,
+        FPDFPage_HasFormFieldAtPoint(form_handle(), page.get(), 110, 110));
+    FORM_OnMouseMove(form_handle(), page.get(), 0, 110, 110);
+    FORM_OnLButtonDown(form_handle(), page.get(), 0, 110, 110);
+    FORM_OnLButtonUp(form_handle(), page.get(), 0, 110, 110);
+    FORM_OnChar(form_handle(), page.get(), 'A', 0);
 
     FORM_ForceToKillFocus(form_handle());
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), 300, 300, checksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-    UnloadPage(page);
   }
   VerifySavedDocument(300, 300, checksum);
 }
@@ -1516,23 +1469,23 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditSecondForm) {
   }();
   {
     ASSERT_TRUE(OpenDocument("bug_1302455.pdf"));
-    FPDF_PAGE page = LoadPage(0);
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
 
-    EXPECT_EQ(FPDF_FORMFIELD_TEXTFIELD,
-              FPDFPage_HasFormFieldAtPoint(form_handle(), page, 110, 170));
-    FORM_OnMouseMove(form_handle(), page, 0, 110, 170);
-    FORM_OnLButtonDown(form_handle(), page, 0, 110, 170);
-    FORM_OnLButtonUp(form_handle(), page, 0, 110, 170);
-    FORM_OnChar(form_handle(), page, 'B', 0);
+    EXPECT_EQ(
+        FPDF_FORMFIELD_TEXTFIELD,
+        FPDFPage_HasFormFieldAtPoint(form_handle(), page.get(), 110, 170));
+    FORM_OnMouseMove(form_handle(), page.get(), 0, 110, 170);
+    FORM_OnLButtonDown(form_handle(), page.get(), 0, 110, 170);
+    FORM_OnLButtonUp(form_handle(), page.get(), 0, 110, 170);
+    FORM_OnChar(form_handle(), page.get(), 'B', 0);
 
     FORM_ForceToKillFocus(form_handle());
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), 300, 300, checksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-    UnloadPage(page);
   }
   VerifySavedDocument(300, 300, checksum);
 }
@@ -1556,30 +1509,31 @@ TEST_F(FPDFFormFillEmbedderTest, Bug1302455EditBothForms) {
   }();
   {
     ASSERT_TRUE(OpenDocument("bug_1302455.pdf"));
-    FPDF_PAGE page = LoadPage(0);
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
 
-    EXPECT_EQ(FPDF_FORMFIELD_TEXTFIELD,
-              FPDFPage_HasFormFieldAtPoint(form_handle(), page, 110, 110));
-    FORM_OnMouseMove(form_handle(), page, 0, 110, 110);
-    FORM_OnLButtonDown(form_handle(), page, 0, 110, 110);
-    FORM_OnLButtonUp(form_handle(), page, 0, 110, 110);
-    FORM_OnChar(form_handle(), page, 'A', 0);
+    EXPECT_EQ(
+        FPDF_FORMFIELD_TEXTFIELD,
+        FPDFPage_HasFormFieldAtPoint(form_handle(), page.get(), 110, 110));
+    FORM_OnMouseMove(form_handle(), page.get(), 0, 110, 110);
+    FORM_OnLButtonDown(form_handle(), page.get(), 0, 110, 110);
+    FORM_OnLButtonUp(form_handle(), page.get(), 0, 110, 110);
+    FORM_OnChar(form_handle(), page.get(), 'A', 0);
 
-    EXPECT_EQ(FPDF_FORMFIELD_TEXTFIELD,
-              FPDFPage_HasFormFieldAtPoint(form_handle(), page, 110, 170));
-    FORM_OnMouseMove(form_handle(), page, 0, 110, 170);
-    FORM_OnLButtonDown(form_handle(), page, 0, 110, 170);
-    FORM_OnLButtonUp(form_handle(), page, 0, 110, 170);
-    FORM_OnChar(form_handle(), page, 'B', 0);
+    EXPECT_EQ(
+        FPDF_FORMFIELD_TEXTFIELD,
+        FPDFPage_HasFormFieldAtPoint(form_handle(), page.get(), 110, 170));
+    FORM_OnMouseMove(form_handle(), page.get(), 0, 110, 170);
+    FORM_OnLButtonDown(form_handle(), page.get(), 0, 110, 170);
+    FORM_OnLButtonUp(form_handle(), page.get(), 0, 110, 170);
+    FORM_OnChar(form_handle(), page.get(), 'B', 0);
 
     FORM_ForceToKillFocus(form_handle());
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), 300, 300, checksum);
 
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-    UnloadPage(page);
   }
   VerifySavedDocument(300, 300, checksum);
 }
@@ -1603,22 +1557,20 @@ TEST_F(FPDFFormFillEmbedderTest, RemoveFormFieldHighlight) {
   }();
 
   ASSERT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  ScopedFPDFBitmap bitmap1 = RenderLoadedPage(page);
+  ScopedFPDFBitmap bitmap1 = RenderLoadedPage(page.get());
   CompareBitmap(bitmap1.get(), 300, 300, TextFormChecksum());
 
   // Removing the highlight changes the rendering.
   FPDF_RemoveFormFieldHighlight(form_handle());
-  ScopedFPDFBitmap bitmap2 = RenderLoadedPage(page);
+  ScopedFPDFBitmap bitmap2 = RenderLoadedPage(page.get());
   CompareBitmap(bitmap2.get(), 300, 300, no_highlight_checksum);
 
   // Restoring it gives the original rendering.
   SetInitialFormFieldHighlight(form_handle());
-  ScopedFPDFBitmap bitmap3 = RenderLoadedPage(page);
+  ScopedFPDFBitmap bitmap3 = RenderLoadedPage(page.get());
   CompareBitmap(bitmap3.get(), 300, 300, TextFormChecksum());
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillEmbedderTest, HasFormInfoNone) {
@@ -1643,53 +1595,48 @@ TEST_F(FPDFFormFillEmbedderTest, HasFormInfoXFAForeground) {
 
 TEST_F(FPDFFormFillEmbedderTest, BadApiInputsText) {
   ASSERT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   EXPECT_FALSE(FORM_SetIndexSelected(nullptr, nullptr, 0, true));
-  EXPECT_FALSE(FORM_SetIndexSelected(nullptr, page, 0, true));
+  EXPECT_FALSE(FORM_SetIndexSelected(nullptr, page.get(), 0, true));
   EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), nullptr, 0, true));
-  EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), page, -1, true));
+  EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), page.get(), -1, true));
   EXPECT_FALSE(FORM_IsIndexSelected(nullptr, nullptr, 0));
-  EXPECT_FALSE(FORM_IsIndexSelected(nullptr, page, 0));
+  EXPECT_FALSE(FORM_IsIndexSelected(nullptr, page.get(), 0));
   EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), nullptr, 0));
-  EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), page, -1));
-
-  UnloadPage(page);
+  EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), page.get(), -1));
 }
 
 TEST_F(FPDFFormFillEmbedderTest, BadApiInputsComboBox) {
   ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), page, -1, true));
-  EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), page, 100, true));
-  EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), page, -1));
-  EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), page, 100));
-
-  UnloadPage(page);
+  EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), page.get(), -1, true));
+  EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), page.get(), 100, true));
+  EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), page.get(), -1));
+  EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), page.get(), 100));
 }
 
 TEST_F(FPDFFormFillEmbedderTest, BadApiInputsListBox) {
   ASSERT_TRUE(OpenDocument("listbox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), page, -1, true));
-  EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), page, 100, true));
-  EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), page, -1));
-  EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), page, 100));
-
-  UnloadPage(page);
+  EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), page.get(), -1, true));
+  EXPECT_FALSE(FORM_SetIndexSelected(form_handle(), page.get(), 100, true));
+  EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), page.get(), -1));
+  EXPECT_FALSE(FORM_IsIndexSelected(form_handle(), page.get(), 100));
 }
 
 TEST_F(FPDFFormFillEmbedderTest, HasFormFieldAtPointForXFADoc) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  EXPECT_EQ(-1, FPDFPage_HasFormFieldAtPoint(form_handle(), page, 612, 792));
+  EXPECT_EQ(-1,
+            FPDFPage_HasFormFieldAtPoint(form_handle(), page.get(), 612, 792));
 
 #ifdef PDF_ENABLE_XFA
   constexpr int kExpectedFieldType = FPDF_FORMFIELD_XFA_TEXTFIELD;
@@ -1697,47 +1644,43 @@ TEST_F(FPDFFormFillEmbedderTest, HasFormFieldAtPointForXFADoc) {
   constexpr int kExpectedFieldType = -1;
 #endif
   EXPECT_EQ(kExpectedFieldType,
-            FPDFPage_HasFormFieldAtPoint(form_handle(), page, 50, 30));
-
-  UnloadPage(page);
+            FPDFPage_HasFormFieldAtPoint(form_handle(), page.get(), 50, 30));
 }
 
 TEST_F(FPDFFormFillEmbedderTest, SelectAllText) {
   ASSERT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Test bad arguments.
   EXPECT_FALSE(FORM_SelectAllText(nullptr, nullptr));
   EXPECT_FALSE(FORM_SelectAllText(form_handle(), nullptr));
-  EXPECT_FALSE(FORM_SelectAllText(nullptr, page));
+  EXPECT_FALSE(FORM_SelectAllText(nullptr, page.get()));
 
   // Focus on the text field and add some text.
-  EXPECT_TRUE(FORM_OnFocus(form_handle(), page, 0, 115, 115));
+  EXPECT_TRUE(FORM_OnFocus(form_handle(), page.get(), 0, 115, 115));
   ScopedFPDFWideString text_to_insert = GetFPDFWideString(L"Hello");
-  FORM_ReplaceSelection(form_handle(), page, text_to_insert.get());
+  FORM_ReplaceSelection(form_handle(), page.get(), text_to_insert.get());
 
   // Sanity check text field data.
   uint16_t buffer[6];
-  ASSERT_EQ(12u, FORM_GetFocusedText(form_handle(), page, nullptr, 0));
-  ASSERT_EQ(12u,
-            FORM_GetFocusedText(form_handle(), page, buffer, sizeof(buffer)));
+  ASSERT_EQ(12u, FORM_GetFocusedText(form_handle(), page.get(), nullptr, 0));
+  ASSERT_EQ(12u, FORM_GetFocusedText(form_handle(), page.get(), buffer,
+                                     sizeof(buffer)));
   EXPECT_EQ("Hello", GetPlatformString(buffer));
 
   // Check there is no selection.
-  ASSERT_EQ(2u, FORM_GetSelectedText(form_handle(), page, nullptr, 0));
-  ASSERT_EQ(2u,
-            FORM_GetSelectedText(form_handle(), page, buffer, sizeof(buffer)));
+  ASSERT_EQ(2u, FORM_GetSelectedText(form_handle(), page.get(), nullptr, 0));
+  ASSERT_EQ(2u, FORM_GetSelectedText(form_handle(), page.get(), buffer,
+                                     sizeof(buffer)));
   EXPECT_EQ("", GetPlatformString(buffer));
 
   // Check FORM_SelectAllText() works.
-  EXPECT_TRUE(FORM_SelectAllText(form_handle(), page));
-  ASSERT_EQ(12u, FORM_GetSelectedText(form_handle(), page, nullptr, 0));
-  ASSERT_EQ(12u,
-            FORM_GetSelectedText(form_handle(), page, buffer, sizeof(buffer)));
+  EXPECT_TRUE(FORM_SelectAllText(form_handle(), page.get()));
+  ASSERT_EQ(12u, FORM_GetSelectedText(form_handle(), page.get(), nullptr, 0));
+  ASSERT_EQ(12u, FORM_GetSelectedText(form_handle(), page.get(), buffer,
+                                      sizeof(buffer)));
   EXPECT_EQ("Hello", GetPlatformString(buffer));
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFormFillTextFormEmbedderTest, GetSelectedTextEmptyAndBasicKeyboard) {

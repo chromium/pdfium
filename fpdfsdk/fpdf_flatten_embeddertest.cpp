@@ -21,53 +21,49 @@ class FPDFFlattenEmbedderTest : public EmbedderTest {};
 
 TEST_F(FPDFFlattenEmbedderTest, FlatNothing) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
-  EXPECT_EQ(FLATTEN_NOTHINGTODO, FPDFPage_Flatten(page, FLAT_NORMALDISPLAY));
-  UnloadPage(page);
+  EXPECT_EQ(FLATTEN_NOTHINGTODO,
+            FPDFPage_Flatten(page.get(), FLAT_NORMALDISPLAY));
 }
 
 TEST_F(FPDFFlattenEmbedderTest, FlatNormal) {
   ASSERT_TRUE(OpenDocument("annotiter.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
-  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_NORMALDISPLAY));
-  UnloadPage(page);
+  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_NORMALDISPLAY));
 }
 
 TEST_F(FPDFFlattenEmbedderTest, FlatPrint) {
   ASSERT_TRUE(OpenDocument("annotiter.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
-  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_PRINT));
-  UnloadPage(page);
+  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
 }
 
 TEST_F(FPDFFlattenEmbedderTest, FlatWithBadFont) {
   ASSERT_TRUE(OpenDocument("344775293.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
-  FORM_OnLButtonDown(form_handle(), page, 0, 20, 30);
-  FORM_OnLButtonUp(form_handle(), page, 0, 20, 30);
+  FORM_OnLButtonDown(form_handle(), page.get(), 0, 20, 30);
+  FORM_OnLButtonUp(form_handle(), page.get(), 0, 20, 30);
 
-  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_PRINT));
+  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
   EXPECT_THAT(GetString(), Not(HasSubstr("/PDFDocEncoding")));
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFlattenEmbedderTest, FlatWithFontNoBaseEncoding) {
   ASSERT_TRUE(OpenDocument("363015187.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   EXPECT_TRUE(page);
 
-  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_PRINT));
+  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
   EXPECT_THAT(GetString(), HasSubstr("/Differences"));
-  UnloadPage(page);
 }
 
 TEST_F(FPDFFlattenEmbedderTest, Bug861842) {
@@ -87,16 +83,15 @@ TEST_F(FPDFFlattenEmbedderTest, Bug861842) {
   }();
 
   ASSERT_TRUE(OpenDocument("bug_861842.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+  ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
   CompareBitmap(bitmap.get(), 100, 120, checkbox_checksum);
 
-  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_PRINT));
+  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-  UnloadPage(page);
 
   // TODO(crbug.com/861842): This should not render blank.
   static constexpr char kBlankPageHash[] = "48400809c3862dae64b0cd00d51057a4";
@@ -138,17 +133,16 @@ TEST_F(FPDFFlattenEmbedderTest, Bug889099) {
   }();
 
   ASSERT_TRUE(OpenDocument("bug_889099.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // The original document has a malformed media box; the height is -400.
-  ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+  ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
   CompareBitmap(bitmap.get(), 300, 400, page_checksum);
 
-  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_PRINT));
+  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-  UnloadPage(page);
 
   VerifySavedDocument(300, 400, flattened_page_checksum);
 }
@@ -161,16 +155,15 @@ TEST_F(FPDFFlattenEmbedderTest, Bug890322) {
     return "6c674642154408e877d88c6c082d67e9";
   }();
   ASSERT_TRUE(OpenDocument("bug_890322.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+  ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
   CompareBitmap(bitmap.get(), 200, 200, checksum);
 
-  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_PRINT));
+  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-  UnloadPage(page);
 
   VerifySavedDocument(200, 200, checksum);
 }
@@ -183,16 +176,15 @@ TEST_F(FPDFFlattenEmbedderTest, Bug896366) {
     return "f71ab085c52c8445ae785eca3ec858b1";
   }();
   ASSERT_TRUE(OpenDocument("bug_896366.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+  ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
   CompareBitmap(bitmap.get(), 612, 792, checksum);
 
-  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page, FLAT_PRINT));
+  EXPECT_EQ(FLATTEN_SUCCESS, FPDFPage_Flatten(page.get(), FLAT_PRINT));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-  UnloadPage(page);
 
   VerifySavedDocument(612, 792, checksum);
 }

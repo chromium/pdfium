@@ -44,9 +44,8 @@ class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {
   void OpenAndVerifyHelloWorldDocumentWithPassword(const char* filename,
                                                    const char* password) {
     ASSERT_TRUE(OpenDocumentWithPassword(filename, password));
-    FPDF_PAGE page = LoadPage(0);
-    VerifyHelloWorldPage(page);
-    UnloadPage(page);
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    VerifyHelloWorldPage(page.get());
   }
 
   void VerifySavedHelloWorldDocumentWithPassword(const char* password) {
@@ -79,15 +78,14 @@ class CPDFSecurityHandlerEmbedderTest : public EmbedderTest {
   }
 
   void RemoveGoodbyeObject() {
-    FPDF_PAGE page = LoadPage(0);
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
     {
-      ScopedFPDFPageObject goodbye_object(FPDFPage_GetObject(page, 1));
+      ScopedFPDFPageObject goodbye_object(FPDFPage_GetObject(page.get(), 1));
       ASSERT_TRUE(goodbye_object);
-      ASSERT_TRUE(FPDFPage_RemoveObject(page, goodbye_object.get()));
+      ASSERT_TRUE(FPDFPage_RemoveObject(page.get(), goodbye_object.get()));
     }
-    ASSERT_TRUE(FPDFPage_GenerateContent(page));
-    VerifyModifiedHelloWorldPage(page);
-    UnloadPage(page);
+    ASSERT_TRUE(FPDFPage_GenerateContent(page.get()));
+    VerifyModifiedHelloWorldPage(page.get());
   }
 
  private:
@@ -162,19 +160,18 @@ TEST_F(CPDFSecurityHandlerEmbedderTest, PasswordAfterGenerateSave) {
     ASSERT_TRUE(OpenDocumentWithOptions("encrypted.pdf", "5678",
                                         LinearizeOption::kMustLinearize,
                                         JavaScriptOption::kEnableJavaScript));
-    FPDF_PAGE page = LoadPage(0);
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
     FPDF_PAGEOBJECT red_rect = FPDFPageObj_CreateNewRect(10, 10, 20, 20);
     ASSERT_TRUE(red_rect);
     EXPECT_TRUE(FPDFPageObj_SetFillColor(red_rect, 255, 0, 0, 255));
     EXPECT_TRUE(FPDFPath_SetDrawMode(red_rect, FPDF_FILLMODE_ALTERNATE, 0));
-    FPDFPage_InsertObject(page, red_rect);
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    FPDFPage_InsertObject(page.get(), red_rect);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), 612, 792, checksum);
-    EXPECT_TRUE(FPDFPage_GenerateContent(page));
+    EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
     SetWholeFileAvailable();
     EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-    UnloadPage(page);
   }
   std::string new_file = GetString();
   FPDF_FILEACCESS file_access = {};  // Aggregate initialization.

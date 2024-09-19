@@ -346,7 +346,7 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveInkList) {
 
 TEST_F(FPDFAnnotEmbedderTest, BadParams) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   EXPECT_EQ(0, FPDFPage_GetAnnotCount(nullptr));
@@ -354,8 +354,8 @@ TEST_F(FPDFAnnotEmbedderTest, BadParams) {
   EXPECT_FALSE(FPDFPage_GetAnnot(nullptr, 0));
   EXPECT_FALSE(FPDFPage_GetAnnot(nullptr, -1));
   EXPECT_FALSE(FPDFPage_GetAnnot(nullptr, 1));
-  EXPECT_FALSE(FPDFPage_GetAnnot(page, -1));
-  EXPECT_FALSE(FPDFPage_GetAnnot(page, 1));
+  EXPECT_FALSE(FPDFPage_GetAnnot(page.get(), -1));
+  EXPECT_FALSE(FPDFPage_GetAnnot(page.get(), 1));
 
   EXPECT_EQ(FPDF_ANNOT_UNKNOWN, FPDFAnnot_GetSubtype(nullptr));
 
@@ -376,35 +376,29 @@ TEST_F(FPDFAnnotEmbedderTest, BadParams) {
   EXPECT_EQ(0u, FPDFAnnot_GetStringValue(nullptr, "foo", buffer, 0));
   EXPECT_EQ(0u,
             FPDFAnnot_GetStringValue(nullptr, "foo", buffer, sizeof(buffer)));
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, BadAnnotsEntry) {
   ASSERT_TRUE(OpenDocument("bad_annots_entry.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
-  EXPECT_FALSE(FPDFPage_GetAnnot(page, 0));
-
-  UnloadPage(page);
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page.get()));
+  EXPECT_FALSE(FPDFPage_GetAnnot(page.get(), 0));
 }
 
 TEST_F(FPDFAnnotEmbedderTest, RenderAnnotWithOnlyRolloverAP) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_rollover_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // This annotation has a malformed appearance stream, which does not have its
   // normal appearance defined, only its rollover appearance. In this case, its
   // normal appearance should be generated, allowing the highlight annotation to
   // still display.
-  ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+  ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
   CompareBitmap(bitmap.get(), 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, RenderMultilineMarkupAnnotWithoutAP) {
@@ -417,13 +411,11 @@ TEST_F(FPDFAnnotEmbedderTest, RenderMultilineMarkupAnnotWithoutAP) {
 
   // Open a file with multiline markup annotations.
   ASSERT_TRUE(OpenDocument("annotation_markup_multiline_no_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+  ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
   CompareBitmap(bitmap.get(), 595, 842, checksum);
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, ExtractHighlightLongContent) {
@@ -572,36 +564,35 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
 TEST_F(FPDFAnnotEmbedderTest, AddIllegalSubtypeAnnotation) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_long_content.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Add an annotation with an illegal subtype.
-  ASSERT_FALSE(FPDFPage_CreateAnnot(page, -1));
-
-  UnloadPage(page);
+  ASSERT_FALSE(FPDFPage_CreateAnnot(page.get(), -1));
 }
 
 TEST_F(FPDFAnnotEmbedderTest, AddFirstTextAnnotation) {
   // Open a file with no annotation and load its first page.
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(0, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(0, FPDFPage_GetAnnotCount(page.get()));
 
   {
     // Add a text annotation to the page.
-    ScopedFPDFAnnotation annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_TEXT));
+    ScopedFPDFAnnotation annot(
+        FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_TEXT));
     ASSERT_TRUE(annot);
 
     // Check that there is now 1 annotations on this page.
-    EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+    EXPECT_EQ(1, FPDFPage_GetAnnotCount(page.get()));
 
     // Check that the subtype of the annotation is correct.
     EXPECT_EQ(FPDF_ANNOT_TEXT, FPDFAnnot_GetSubtype(annot.get()));
   }
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_TEXT, FPDFAnnot_GetSubtype(annot.get()));
 
@@ -663,26 +654,26 @@ TEST_F(FPDFAnnotEmbedderTest, AddFirstTextAnnotation) {
                                             buf.data(), length_bytes));
     EXPECT_EQ(kContents, GetPlatformWString(buf.data()));
   }
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndSaveLinkAnnotation) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 200, 200, pdfium::HelloWorldChecksum());
   }
-  EXPECT_EQ(0, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(0, FPDFPage_GetAnnotCount(page.get()));
 
   constexpr char kUri[] = "https://pdfium.org/";
 
   {
     // Add a link annotation to the page and set its URI.
-    ScopedFPDFAnnotation annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_LINK));
+    ScopedFPDFAnnotation annot(
+        FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_LINK));
     ASSERT_TRUE(annot);
-    EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+    EXPECT_EQ(1, FPDFPage_GetAnnotCount(page.get()));
     EXPECT_EQ(FPDF_ANNOT_LINK, FPDFAnnot_GetSubtype(annot.get()));
     EXPECT_TRUE(FPDFAnnot_SetURI(annot.get(), kUri));
     VerifyUriActionInLink(document(), FPDFAnnot_GetLink(annot.get()), kUri);
@@ -702,60 +693,59 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveLinkAnnotation) {
                                     /*vertical_radius=*/0.0f,
                                     /*border_width=*/0.0f));
 
-    VerifyUriActionInLink(document(), FPDFLink_GetLinkAtPoint(page, 40.0, 50.0),
-                          kUri);
+    VerifyUriActionInLink(
+        document(), FPDFLink_GetLinkAtPoint(page.get(), 40.0, 50.0), kUri);
   }
 
   {
     // Add an ink annotation to the page. Trying to add a link to it fails.
-    ScopedFPDFAnnotation annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_INK));
+    ScopedFPDFAnnotation annot(
+        FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_INK));
     ASSERT_TRUE(annot);
-    EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+    EXPECT_EQ(2, FPDFPage_GetAnnotCount(page.get()));
     EXPECT_EQ(FPDF_ANNOT_INK, FPDFAnnot_GetSubtype(annot.get()));
     EXPECT_FALSE(FPDFAnnot_SetURI(annot.get(), kUri));
   }
 
   // Remove the ink annotation added above for negative testing.
-  EXPECT_TRUE(FPDFPage_RemoveAnnot(page, 1));
-  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+  EXPECT_TRUE(FPDFPage_RemoveAnnot(page.get(), 1));
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page.get()));
 
-  // Save the document, closing the page.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  UnloadPage(page);
 
   // Reopen the document and make sure it still renders the same. Since the link
   // does not have a border, it does not affect the rendering.
   ASSERT_TRUE(OpenSavedDocument());
-  page = LoadSavedPage(0);
-  ASSERT_TRUE(page);
-  VerifySavedRendering(page, 200, 200, pdfium::HelloWorldChecksum());
-  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
+  VerifySavedRendering(saved_page, 200, 200, pdfium::HelloWorldChecksum());
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(saved_page));
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(saved_page, 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_LINK, FPDFAnnot_GetSubtype(annot.get()));
     VerifyUriActionInLink(document(), FPDFAnnot_GetLink(annot.get()), kUri);
-    VerifyUriActionInLink(document(), FPDFLink_GetLinkAtPoint(page, 40.0, 50.0),
-                          kUri);
+    VerifyUriActionInLink(
+        document(), FPDFLink_GetLinkAtPoint(saved_page, 40.0, 50.0), kUri);
   }
 
-  CloseSavedPage(page);
+  CloseSavedPage(saved_page);
   CloseSavedDocument();
 }
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
   // Open a file with one annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_long_content.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Check that there is a total of one annotation on its first page, and verify
   // its quadpoints.
-  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page.get()));
   FS_QUADPOINTSF quadpoints;
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot.get(), 0, &quadpoints));
     EXPECT_EQ(115.802643f, quadpoints.x1);
@@ -767,16 +757,14 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
   // Add an underline annotation to the page and set its quadpoints.
   {
     ScopedFPDFAnnotation annot(
-        FPDFPage_CreateAnnot(page, FPDF_ANNOT_UNDERLINE));
+        FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_UNDERLINE));
     ASSERT_TRUE(annot);
     quadpoints.x1 = 140.802643f;
     quadpoints.x3 = 140.802643f;
     ASSERT_TRUE(FPDFAnnot_AppendAttachmentPoints(annot.get(), &quadpoints));
   }
 
-  // Save the document and close the page.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  UnloadPage(page);
 
   // Open the saved document.
   const char* checksum = []() {
@@ -793,17 +781,17 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
   }();
 
   ASSERT_TRUE(OpenSavedDocument());
-  page = LoadSavedPage(0);
-  ASSERT_TRUE(page);
-  VerifySavedRendering(page, 612, 792, checksum);
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
+  VerifySavedRendering(saved_page, 612, 792, checksum);
 
   // Check that the saved document has 2 annotations on the first page
-  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(2, FPDFPage_GetAnnotCount(saved_page));
 
   {
     // Check that the second annotation is an underline annotation and verify
     // its quadpoints.
-    ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(saved_page, 1));
     ASSERT_TRUE(new_annot);
     EXPECT_EQ(FPDF_ANNOT_UNDERLINE, FPDFAnnot_GetSubtype(new_annot.get()));
     FS_QUADPOINTSF new_quadpoints;
@@ -815,19 +803,19 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
     EXPECT_NEAR(quadpoints.y4, new_quadpoints.y4, 0.001f);
   }
 
-  CloseSavedPage(page);
+  CloseSavedPage(saved_page);
   CloseSavedDocument();
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetAndSetQuadPoints) {
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(4, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(4, FPDFPage_GetAnnotCount(page.get()));
 
   // Retrieve the highlight annotation.
-  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page, 0);
+  FPDF_ANNOTATION annot = FPDFPage_GetAnnot(page.get(), 0);
   ASSERT_TRUE(annot);
   ASSERT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot));
 
@@ -889,7 +877,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetAndSetQuadPoints) {
   FPDFPage_CloseAnnot(annot);
 
   // Retrieve the square annotation
-  FPDF_ANNOTATION squareAnnot = FPDFPage_GetAnnot(page, 2);
+  FPDF_ANNOTATION squareAnnot = FPDFPage_GetAnnot(page.get(), 2);
 
   {
     // Check that attempting to set its quadpoints would fail
@@ -900,7 +888,6 @@ TEST_F(FPDFAnnotEmbedderTest, GetAndSetQuadPoints) {
   }
 
   FPDFPage_CloseAnnot(squareAnnot);
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
@@ -955,13 +942,13 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
 
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(4, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(4, FPDFPage_GetAnnotCount(page.get()));
 
   // Check that the original file renders correctly.
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, md5_original);
   }
 
@@ -970,7 +957,7 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
 
   // Retrieve the highlight annotation which has its AP stream already defined.
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot.get()));
 
@@ -1001,7 +988,8 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
 
     // Check that updating quadpoints does not change the annotation's position.
     {
-      ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      ScopedFPDFBitmap bitmap =
+          RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
       CompareBitmap(bitmap.get(), 612, 792, md5_original);
     }
 
@@ -1022,13 +1010,13 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
 
   // Check that updating the rectangle changes the annotation's position.
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, md5_modified_highlight);
   }
 
   {
     // Retrieve the square annotation which has its AP stream already defined.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 2));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_SQUARE, FPDFAnnot_GetSubtype(annot.get()));
 
@@ -1042,26 +1030,23 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
 
     // Check that updating the rectangle changes the square annotation's
     // position.
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, md5_modified_square);
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, CountAttachmentPoints) {
   // Open a file with multiline markup annotations.
   ASSERT_TRUE(OpenDocument("annotation_markup_multiline_no_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // This is a three line annotation.
     EXPECT_EQ(3u, FPDFAnnot_CountAttachmentPoints(annot.get()));
   }
-  UnloadPage(page);
 
   // null annotation should return 0
   EXPECT_EQ(0u, FPDFAnnot_CountAttachmentPoints(nullptr));
@@ -1193,24 +1178,24 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 
   // Open a file with two annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page.get()));
 
   // Check that the page renders correctly.
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 595, 842, AnnotationStampWithApChecksum());
   }
 
   {
     // Retrieve the stamp annotation which has its AP stream already defined.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // Check that this annotation has one path object and retrieve it.
     EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
-    ASSERT_EQ(32, FPDFPage_CountObjects(page));
+    ASSERT_EQ(32, FPDFPage_CountObjects(page.get()));
     FPDF_PAGEOBJECT path = FPDFAnnot_GetObject(annot.get(), 1);
     EXPECT_FALSE(path);
     path = FPDFAnnot_GetObject(annot.get(), 0);
@@ -1223,7 +1208,8 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 
     // Check that the page with the modified annotation renders correctly.
     {
-      ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      ScopedFPDFBitmap bitmap =
+          RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
       CompareBitmap(bitmap.get(), 595, 842, md5_modified_path);
     }
 
@@ -1238,23 +1224,24 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 
     // The object is in the annontation, not in the page, so the page object
     // array should not change.
-    ASSERT_EQ(32, FPDFPage_CountObjects(page));
+    ASSERT_EQ(32, FPDFPage_CountObjects(page.get()));
 
     // Check that the page with an annotation with two paths renders correctly.
     {
-      ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      ScopedFPDFBitmap bitmap =
+          RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
       CompareBitmap(bitmap.get(), 595, 842, md5_two_paths);
     }
 
     // Delete the newly added path object.
     EXPECT_TRUE(FPDFAnnot_RemoveObject(annot.get(), 1));
     EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
-    ASSERT_EQ(32, FPDFPage_CountObjects(page));
+    ASSERT_EQ(32, FPDFPage_CountObjects(page.get()));
   }
 
   // Check that the page renders the same as before.
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 595, 842, md5_modified_path);
   }
 
@@ -1262,7 +1249,8 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
 
   {
     // Create another stamp annotation and set its annotation rectangle.
-    ScopedFPDFAnnotation annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP));
+    ScopedFPDFAnnotation annot(
+        FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_STAMP));
     ASSERT_TRUE(annot);
     rect.left = 200.f;
     rect.bottom = 400.f;
@@ -1291,21 +1279,19 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
     EXPECT_EQ(rect.top, new_rect.top);
   }
 
-  // Save the document and close the page.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  UnloadPage(page);
 
   // Open the saved document.
   ASSERT_TRUE(OpenSavedDocument());
-  page = LoadSavedPage(0);
-  ASSERT_TRUE(page);
-  VerifySavedRendering(page, 595, 842, md5_new_annot);
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
+  VerifySavedRendering(saved_page, 595, 842, md5_new_annot);
 
   // Check that the document has a correct count of annotations and objects.
-  EXPECT_EQ(3, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(3, FPDFPage_GetAnnotCount(saved_page));
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(saved_page, 2));
     ASSERT_TRUE(annot);
     EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
 
@@ -1318,25 +1304,25 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
     EXPECT_EQ(rect.top, new_rect.top);
   }
 
-  CloseSavedPage(page);
+  CloseSavedPage(saved_page);
   CloseSavedDocument();
 }
 
 TEST_F(FPDFAnnotEmbedderTest, ModifyAnnotationFlags) {
   // Open a file with an annotation and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_rollover_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Check that the page renders correctly.
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
   }
 
   {
     // Retrieve the annotation.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // Check that the original flag values are as expected.
@@ -1360,7 +1346,8 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyAnnotationFlags) {
 
     // Check that the page renders correctly without rendering the annotation.
     {
-      ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      ScopedFPDFBitmap bitmap =
+          RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
       CompareBitmap(bitmap.get(), 612, 792, pdfium::kBlankPage612By792Checksum);
     }
 
@@ -1375,12 +1362,11 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyAnnotationFlags) {
 
     // Check that the page renders correctly as before.
     {
-      ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      ScopedFPDFBitmap bitmap =
+          RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
       CompareBitmap(bitmap.get(), 612, 792, "dc98f06da047bd8aabfa99562d2cbd1e");
     }
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
@@ -1419,13 +1405,13 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
 
   // Open a file with two annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page.get()));
 
   // Check that the page renders correctly.
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 595, 842, AnnotationStampWithApChecksum());
   }
 
@@ -1434,7 +1420,9 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
 
   {
     // Create a stamp annotation and set its annotation rectangle.
-    ScopedFPDFAnnotation annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP));
+    ScopedFPDFAnnotation annot(
+        FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_STAMP));
+    FPDF_PAGE page0 = page.get();
     ASSERT_TRUE(annot);
     FS_RECTF rect;
     rect.left = 200.f;
@@ -1450,7 +1438,7 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
     EXPECT_EQ(kBitmapSize, FPDFBitmap_GetWidth(image_bitmap));
     EXPECT_EQ(kBitmapSize, FPDFBitmap_GetHeight(image_bitmap));
     FPDF_PAGEOBJECT image_object = FPDFPageObj_NewImageObj(document());
-    ASSERT_TRUE(FPDFImageObj_SetBitmap(&page, 0, image_object, image_bitmap));
+    ASSERT_TRUE(FPDFImageObj_SetBitmap(&page0, 0, image_object, image_bitmap));
     static constexpr FS_MATRIX kBitmapScaleMatrix{kBitmapSize, 0, 0,
                                                   kBitmapSize, 0, 0};
     ASSERT_TRUE(FPDFPageObj_SetMatrix(image_object, &kBitmapScaleMatrix));
@@ -1460,13 +1448,13 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
 
   // Check that the page renders correctly with the new image object.
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 595, 842, md5_new_image);
   }
 
   {
     // Retrieve the newly added stamp annotation and its image object.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 2));
     ASSERT_TRUE(annot);
     EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
     FPDF_PAGEOBJECT image_object = FPDFAnnot_GetObject(annot.get(), 0);
@@ -1475,13 +1463,14 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
     // Modify the image in the new annotation.
     ASSERT_TRUE(FPDFBitmap_FillRect(image_bitmap, 0, 0, kBitmapSize,
                                     kBitmapSize, 0xff000000));
-    ASSERT_TRUE(FPDFImageObj_SetBitmap(&page, 0, image_object, image_bitmap));
+    FPDF_PAGE page_ptr = page.get();
+    ASSERT_TRUE(
+        FPDFImageObj_SetBitmap(&page_ptr, 0, image_object, image_bitmap));
     EXPECT_TRUE(FPDFAnnot_UpdateObject(annot.get(), image_object));
   }
 
   // Save the document and close the page.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  UnloadPage(page);
   FPDFBitmap_Destroy(image_bitmap);
 
   // Test that the saved document renders the modified image object correctly.
@@ -1528,19 +1517,20 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 
   // Open a file with two annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page.get()));
 
   // Check that the page renders correctly.
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 595, 842, AnnotationStampWithApChecksum());
   }
 
   {
     // Create a stamp annotation and set its annotation rectangle.
-    ScopedFPDFAnnotation annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP));
+    ScopedFPDFAnnotation annot(
+        FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_STAMP));
     ASSERT_TRUE(annot);
     FS_RECTF rect;
     rect.left = 200.f;
@@ -1563,13 +1553,13 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 
   // Check that the page renders correctly with the new text object.
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 595, 842, md5_new_text);
   }
 
   {
     // Retrieve the newly added stamp annotation and its text object.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 2));
     ASSERT_TRUE(annot);
     EXPECT_EQ(1, FPDFAnnot_GetObjectCount(annot.get()));
     FPDF_PAGEOBJECT text_object = FPDFAnnot_GetObject(annot.get(), 0);
@@ -1583,31 +1573,29 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
 
   // Check that the page renders correctly with the modified text object.
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 595, 842, md5_modified_text);
   }
 
   // Remove the new annotation, and check that the page renders as before.
-  EXPECT_TRUE(FPDFPage_RemoveAnnot(page, 2));
+  EXPECT_TRUE(FPDFPage_RemoveAnnot(page.get(), 2));
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 595, 842, AnnotationStampWithApChecksum());
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   static const wchar_t kNewDate[] = L"D:201706282359Z00'00'";
 
   {
     // Retrieve the first annotation.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // Check that a non-existent key does not exist.
@@ -1650,7 +1638,6 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
 
   // Save the document and close the page.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  UnloadPage(page);
 
   const char* md5 = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
@@ -1671,11 +1658,11 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
 
   // Open the saved annotation.
   ASSERT_TRUE(OpenSavedDocument());
-  page = LoadSavedPage(0);
-  ASSERT_TRUE(page);
-  VerifySavedRendering(page, 595, 842, md5);
+  FPDF_PAGE saved_page = LoadSavedPage(0);
+  ASSERT_TRUE(saved_page);
+  VerifySavedRendering(saved_page, 595, 842, md5);
   {
-    ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(saved_page, 0));
 
     // Check that the string value of the modified date is the newly-set
     // value.
@@ -1691,19 +1678,19 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
     EXPECT_EQ(kNewDate, GetPlatformWString(buf.data()));
   }
 
-  CloseSavedPage(page);
+  CloseSavedPage(saved_page);
   CloseSavedDocument();
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetNumberValue) {
   // Open a file with four text annotations and load its first page.
   ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   {
     // First two annotations do not have "MaxLen" attribute.
     for (int i = 0; i < 2; i++) {
-      ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, i));
+      ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), i));
       ASSERT_TRUE(annot);
 
       // Verify that no "MaxLen" key present.
@@ -1714,7 +1701,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetNumberValue) {
     }
 
     // Annotation in index 2 has "MaxLen" of 10.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 2));
     ASSERT_TRUE(annot);
 
     // Verify that "MaxLen" key present.
@@ -1731,14 +1718,12 @@ TEST_F(FPDFAnnotEmbedderTest, GetNumberValue) {
     // Ask for key that exists but is not a number.
     EXPECT_FALSE(FPDFAnnot_GetNumberValue(annot.get(), "V", &value));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -1746,7 +1731,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
     static constexpr size_t kExpectNormalAPLength = 73970;
 
     // Retrieve the first annotation.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // Check that the string value of an AP returns the expected length.
@@ -1826,13 +1811,12 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
 
   // Save the modified document, then reopen it.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  UnloadPage(page);
 
   ASSERT_TRUE(OpenSavedDocument());
-  page = LoadSavedPage(0);
+  FPDF_PAGE saved_page = LoadSavedPage(0);
   ASSERT_TRUE(page);
   {
-    ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(saved_page, 0));
 
     // Check that the new annotation value is equal to the value we set before
     // saving.
@@ -1848,19 +1832,19 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetAP) {
   }
 
   // Close saved document.
-  CloseSavedPage(page);
+  CloseSavedPage(saved_page);
   CloseSavedDocument();
 }
 
 TEST_F(FPDFAnnotEmbedderTest, RemoveOptionalAP) {
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     // Retrieve the first annotation.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // Set Down AP. Normal AP is already set.
@@ -1883,19 +1867,17 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveOptionalAP) {
     EXPECT_EQ(2u, FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_DOWN,
                                   nullptr, 0));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, RemoveRequiredAP) {
   // Open a file with four annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     // Retrieve the first annotation.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // Set Down AP. Normal AP is already set.
@@ -1916,23 +1898,21 @@ TEST_F(FPDFAnnotEmbedderTest, RemoveRequiredAP) {
     EXPECT_EQ(2u, FPDFAnnot_GetAP(annot.get(), FPDF_ANNOT_APPEARANCEMODE_DOWN,
                                   nullptr, 0));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, ExtractLinkedAnnotations) {
   // Open a file with annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_highlight_square_with_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(-1, FPDFPage_GetAnnotIndex(page, nullptr));
+  EXPECT_EQ(-1, FPDFPage_GetAnnotIndex(page.get(), nullptr));
 
   {
     // Retrieve the highlight annotation which has its popup defined.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot.get()));
-    EXPECT_EQ(0, FPDFPage_GetAnnotIndex(page, annot.get()));
+    EXPECT_EQ(0, FPDFPage_GetAnnotIndex(page.get(), annot.get()));
     static const char kPopupKey[] = "Popup";
     ASSERT_TRUE(FPDFAnnot_HasKey(annot.get(), kPopupKey));
     ASSERT_EQ(FPDF_OBJECT_REFERENCE,
@@ -1943,7 +1923,7 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractLinkedAnnotations) {
         FPDFAnnot_GetLinkedAnnot(annot.get(), kPopupKey));
     ASSERT_TRUE(popup);
     EXPECT_EQ(FPDF_ANNOT_POPUP, FPDFAnnot_GetSubtype(popup.get()));
-    EXPECT_EQ(1, FPDFPage_GetAnnotIndex(page, popup.get()));
+    EXPECT_EQ(1, FPDFPage_GetAnnotIndex(page.get(), popup.get()));
     FS_RECTF rect;
     ASSERT_TRUE(FPDFAnnot_GetRect(popup.get(), &rect));
     EXPECT_NEAR(612.0f, rect.left, 0.001f);
@@ -1962,19 +1942,17 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractLinkedAnnotations) {
               FPDFAnnot_GetValueType(annot.get(), pdfium::annotation::kP));
     EXPECT_FALSE(FPDFAnnot_GetLinkedAnnot(annot.get(), pdfium::annotation::kP));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormFieldFlagsTextField) {
   // Open file with form text fields.
   ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     // Retrieve the first annotation: user-editable text field.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // Check that the flag values are as expected.
@@ -1988,7 +1966,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldFlagsTextField) {
 
   {
     // Retrieve the second annotation: read-only text field.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     // Check that the flag values are as expected.
@@ -2002,7 +1980,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldFlagsTextField) {
 
   {
     // Retrieve the fourth annotation: user-editable password text field.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 3));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 3));
     ASSERT_TRUE(annot);
 
     // Check that the flag values are as expected.
@@ -2013,19 +1991,17 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldFlagsTextField) {
     EXPECT_FALSE(flags & FPDF_FORMFLAG_TEXT_MULTILINE);
     EXPECT_TRUE(flags & FPDF_FORMFLAG_TEXT_PASSWORD);
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormFieldFlagsComboBox) {
   // Open file with form text fields.
   ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     // Retrieve the first annotation: user-editable combobox.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // Check that the flag values are as expected.
@@ -2040,7 +2016,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldFlagsComboBox) {
 
   {
     // Retrieve the second annotation: regular combobox.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     // Check that the flag values are as expected.
@@ -2055,7 +2031,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldFlagsComboBox) {
 
   {
     // Retrieve the third annotation: read-only combobox.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 2));
     ASSERT_TRUE(annot);
 
     // Check that the flag values are as expected.
@@ -2067,49 +2043,46 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldFlagsComboBox) {
     EXPECT_FALSE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
     EXPECT_FALSE(flags & FPDF_FORMFLAG_CHOICE_MULTI_SELECT);
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotNull) {
   // Open file with form text fields.
   ASSERT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Attempt to get an annotation where no annotation exists on page.
   static const FS_POINTF kOriginPoint = {0.0f, 0.0f};
   EXPECT_FALSE(
-      FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, &kOriginPoint));
+      FPDFAnnot_GetFormFieldAtPoint(form_handle(), page.get(), &kOriginPoint));
 
   static const FS_POINTF kValidPoint = {120.0f, 120.0f};
   {
     // Verify there is an annotation.
     ScopedFPDFAnnotation annot(
-        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, &kValidPoint));
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page.get(), &kValidPoint));
     EXPECT_TRUE(annot);
   }
 
   // Try other bad inputs at a valid location.
   EXPECT_FALSE(FPDFAnnot_GetFormFieldAtPoint(nullptr, nullptr, &kValidPoint));
-  EXPECT_FALSE(FPDFAnnot_GetFormFieldAtPoint(nullptr, page, &kValidPoint));
+  EXPECT_FALSE(
+      FPDFAnnot_GetFormFieldAtPoint(nullptr, page.get(), &kValidPoint));
   EXPECT_FALSE(
       FPDFAnnot_GetFormFieldAtPoint(form_handle(), nullptr, &kValidPoint));
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsTextField) {
   // Open file with form text fields.
   ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     // Retrieve user-editable text field annotation.
     static const FS_POINTF kPoint = {105.0f, 118.0f};
     ScopedFPDFAnnotation annot(
-        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, &kPoint));
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page.get(), &kPoint));
     ASSERT_TRUE(annot);
 
     // Check that interactive form annotation flag values are as expected.
@@ -2123,7 +2096,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsTextField) {
     // Retrieve read-only text field annotation.
     static const FS_POINTF kPoint = {105.0f, 202.0f};
     ScopedFPDFAnnotation annot(
-        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, &kPoint));
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page.get(), &kPoint));
     ASSERT_TRUE(annot);
 
     // Check that interactive form annotation flag values are as expected.
@@ -2132,21 +2105,19 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsTextField) {
     EXPECT_FALSE(flags & FPDF_FORMFLAG_REQUIRED);
     EXPECT_FALSE(flags & FPDF_FORMFLAG_NOEXPORT);
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsComboBox) {
   // Open file with form comboboxes.
   ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     // Retrieve user-editable combobox annotation.
     static const FS_POINTF kPoint = {102.0f, 363.0f};
     ScopedFPDFAnnotation annot(
-        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, &kPoint));
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page.get(), &kPoint));
     ASSERT_TRUE(annot);
 
     // Check that interactive form annotation flag values are as expected.
@@ -2163,7 +2134,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsComboBox) {
     // Retrieve regular combobox annotation.
     static const FS_POINTF kPoint = {102.0f, 413.0f};
     ScopedFPDFAnnotation annot(
-        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, &kPoint));
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page.get(), &kPoint));
     ASSERT_TRUE(annot);
 
     // Check that interactive form annotation flag values are as expected.
@@ -2180,7 +2151,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsComboBox) {
     // Retrieve read-only combobox annotation.
     static const FS_POINTF kPoint = {102.0f, 513.0f};
     ScopedFPDFAnnotation annot(
-        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page, &kPoint));
+        FPDFAnnot_GetFormFieldAtPoint(form_handle(), page.get(), &kPoint));
     ASSERT_TRUE(annot);
 
     // Check that interactive form annotation flag values are as expected.
@@ -2192,8 +2163,6 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormAnnotAndCheckFlagsComboBox) {
     EXPECT_FALSE(flags & FPDF_FORMFLAG_CHOICE_EDIT);
     EXPECT_FALSE(flags & FPDF_FORMFLAG_CHOICE_MULTI_SELECT);
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, Bug1206) {
@@ -2207,7 +2176,7 @@ TEST_F(FPDFAnnotEmbedderTest, Bug1206) {
 
   ASSERT_TRUE(OpenDocument("bug_1206.pdf"));
 
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
@@ -2216,7 +2185,7 @@ TEST_F(FPDFAnnotEmbedderTest, Bug1206) {
   ClearString();
 
   for (size_t i = 0; i < 10; ++i) {
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, expected_bitmap);
 
     ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
@@ -2225,15 +2194,13 @@ TEST_F(FPDFAnnotEmbedderTest, Bug1206) {
     EXPECT_GT(GetString().size(), original_size);
     ClearString();
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, Bug1212) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(0, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(0, FPDFPage_GetAnnotCount(page.get()));
 
   static const char kTestKey[] = "test";
   static const wchar_t kData[] = L"\xf6\xe4";
@@ -2242,9 +2209,10 @@ TEST_F(FPDFAnnotEmbedderTest, Bug1212) {
 
   {
     // Add a text annotation to the page.
-    ScopedFPDFAnnotation annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_TEXT));
+    ScopedFPDFAnnotation annot(
+        FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_TEXT));
     ASSERT_TRUE(annot);
-    EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+    EXPECT_EQ(1, FPDFPage_GetAnnotCount(page.get()));
     EXPECT_EQ(FPDF_ANNOT_TEXT, FPDFAnnot_GetSubtype(annot.get()));
 
     // Make sure there is no test key, add set a value there, and read it back.
@@ -2263,11 +2231,12 @@ TEST_F(FPDFAnnotEmbedderTest, Bug1212) {
   }
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_STAMP));
+    ScopedFPDFAnnotation annot(
+        FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_STAMP));
     ASSERT_TRUE(annot);
     const FS_RECTF bounding_rect{206.0f, 753.0f, 339.0f, 709.0f};
     EXPECT_TRUE(FPDFAnnot_SetRect(annot.get(), &bounding_rect));
-    EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+    EXPECT_EQ(2, FPDFPage_GetAnnotCount(page.get()));
     EXPECT_EQ(FPDF_ANNOT_STAMP, FPDFAnnot_GetSubtype(annot.get()));
     // Also do the same test for its appearance string.
     std::fill(buf.begin(), buf.end(), 'x');
@@ -2287,7 +2256,6 @@ TEST_F(FPDFAnnotEmbedderTest, Bug1212) {
     EXPECT_EQ(kData, GetPlatformWString(buf.data()));
   }
 
-  UnloadPage(page);
 
   {
     // Save a copy, open the copy, and check the annotation again.
@@ -2329,16 +2297,16 @@ TEST_F(FPDFAnnotEmbedderTest, Bug1212) {
 TEST_F(FPDFAnnotEmbedderTest, GetOptionCountCombobox) {
   // Open a file with combobox widget annotations and load its first page.
   ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     EXPECT_EQ(3, FPDFAnnot_GetOptionCount(form_handle(), annot.get()));
 
-    annot.reset(FPDFPage_GetAnnot(page, 1));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     EXPECT_EQ(26, FPDFAnnot_GetOptionCount(form_handle(), annot.get()));
@@ -2348,61 +2316,55 @@ TEST_F(FPDFAnnotEmbedderTest, GetOptionCountCombobox) {
     EXPECT_EQ(-1, FPDFAnnot_GetOptionCount(form_handle(), nullptr));
     EXPECT_EQ(-1, FPDFAnnot_GetOptionCount(nullptr, annot.get()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetOptionCountListbox) {
   // Open a file with listbox widget annotations and load its first page.
   ASSERT_TRUE(OpenDocument("listbox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     EXPECT_EQ(3, FPDFAnnot_GetOptionCount(form_handle(), annot.get()));
 
-    annot.reset(FPDFPage_GetAnnot(page, 1));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     EXPECT_EQ(26, FPDFAnnot_GetOptionCount(form_handle(), annot.get()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetOptionCountInvalidAnnotations) {
   // Open a file with ink annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     // annotations do not have "Opt" array and will return -1
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     EXPECT_EQ(-1, FPDFAnnot_GetOptionCount(form_handle(), annot.get()));
 
-    annot.reset(FPDFPage_GetAnnot(page, 1));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     EXPECT_EQ(-1, FPDFAnnot_GetOptionCount(form_handle(), annot.get()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetOptionLabelCombobox) {
   // Open a file with combobox widget annotations and load its first page.
   ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     int index = 0;
@@ -2414,7 +2376,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetOptionLabelCombobox) {
                                            buf.data(), length_bytes));
     EXPECT_EQ(L"Foo", GetPlatformWString(buf.data()));
 
-    annot.reset(FPDFPage_GetAnnot(page, 1));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     index = 0;
@@ -2447,18 +2409,16 @@ TEST_F(FPDFAnnotEmbedderTest, GetOptionLabelCombobox) {
     EXPECT_EQ(0u,
               FPDFAnnot_GetOptionLabel(form_handle(), nullptr, 0, nullptr, 0));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetOptionLabelListbox) {
   // Open a file with listbox widget annotations and load its first page.
   ASSERT_TRUE(OpenDocument("listbox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     int index = 0;
@@ -2470,7 +2430,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetOptionLabelListbox) {
                                            buf.data(), length_bytes));
     EXPECT_EQ(L"Foo", GetPlatformWString(buf.data()));
 
-    annot.reset(FPDFPage_GetAnnot(page, 1));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     index = 0;
@@ -2497,42 +2457,38 @@ TEST_F(FPDFAnnotEmbedderTest, GetOptionLabelListbox) {
     EXPECT_EQ(0u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), 26,
                                            nullptr, 0));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetOptionLabelInvalidAnnotations) {
   // Open a file with ink annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     // annotations do not have "Opt" array and will return 0
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     EXPECT_EQ(0u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), 0,
                                            nullptr, 0));
 
-    annot.reset(FPDFPage_GetAnnot(page, 1));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     EXPECT_EQ(0u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), 0,
                                            nullptr, 0));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, IsOptionSelectedCombobox) {
   // Open a file with combobox widget annotations and load its first page.
   ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // Checks for Combobox with no Values (/V) or Selected Indices (/I) objects.
@@ -2542,7 +2498,7 @@ TEST_F(FPDFAnnotEmbedderTest, IsOptionSelectedCombobox) {
       EXPECT_FALSE(FPDFAnnot_IsOptionSelected(form_handle(), annot.get(), i));
     }
 
-    annot.reset(FPDFPage_GetAnnot(page, 1));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     // Checks for Combobox with Values (/V) object which is just a string.
@@ -2566,18 +2522,16 @@ TEST_F(FPDFAnnotEmbedderTest, IsOptionSelectedCombobox) {
         FPDFAnnot_IsOptionSelected(form_handle(), nullptr, /*index=*/0));
     EXPECT_FALSE(FPDFAnnot_IsOptionSelected(nullptr, annot.get(), /*index=*/0));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, IsOptionSelectedListbox) {
   // Open a file with listbox widget annotations and load its first page.
   ASSERT_TRUE(OpenDocument("listbox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // Checks for Listbox with no Values (/V) or Selected Indices (/I) objects.
@@ -2587,7 +2541,7 @@ TEST_F(FPDFAnnotEmbedderTest, IsOptionSelectedListbox) {
       EXPECT_FALSE(FPDFAnnot_IsOptionSelected(form_handle(), annot.get(), i));
     }
 
-    annot.reset(FPDFPage_GetAnnot(page, 1));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     // Checks for Listbox with Values (/V) object which is just a string.
@@ -2598,7 +2552,7 @@ TEST_F(FPDFAnnotEmbedderTest, IsOptionSelectedListbox) {
                 FPDFAnnot_IsOptionSelected(form_handle(), annot.get(), i));
     }
 
-    annot.reset(FPDFPage_GetAnnot(page, 3));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 3));
     ASSERT_TRUE(annot);
 
     // Checks for Listbox with only Selected indices (/I) object which is an
@@ -2611,7 +2565,7 @@ TEST_F(FPDFAnnotEmbedderTest, IsOptionSelectedListbox) {
                 FPDFAnnot_IsOptionSelected(form_handle(), annot.get(), i));
     }
 
-    annot.reset(FPDFPage_GetAnnot(page, 4));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 4));
     ASSERT_TRUE(annot);
 
     // Checks for Listbox with Values (/V) object which is an array with
@@ -2624,7 +2578,7 @@ TEST_F(FPDFAnnotEmbedderTest, IsOptionSelectedListbox) {
                 FPDFAnnot_IsOptionSelected(form_handle(), annot.get(), i));
     }
 
-    annot.reset(FPDFPage_GetAnnot(page, 5));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 5));
     ASSERT_TRUE(annot);
 
     // Checks for Listbox with both Values (/V) and Selected Indices (/I)
@@ -2637,58 +2591,54 @@ TEST_F(FPDFAnnotEmbedderTest, IsOptionSelectedListbox) {
                 FPDFAnnot_IsOptionSelected(form_handle(), annot.get(), i));
     }
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, IsOptionSelectedInvalidAnnotations) {
   // Open a file with multiple form field annotations and load its first page.
   ASSERT_TRUE(OpenDocument("multiple_form_types.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // Checks for link annotation.
     EXPECT_FALSE(FPDFAnnot_IsOptionSelected(form_handle(), annot.get(),
                                             /*index=*/0));
 
-    annot.reset(FPDFPage_GetAnnot(page, 3));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 3));
     ASSERT_TRUE(annot);
 
     // Checks for text field annotation.
     EXPECT_FALSE(FPDFAnnot_IsOptionSelected(form_handle(), annot.get(),
                                             /*index=*/0));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFontSizeCombobox) {
   // Open a file with combobox annotations and load its first page.
   ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     // All 3 widgets have Tf font size 12.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     float value;
     ASSERT_TRUE(FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value));
     EXPECT_EQ(12.0, value);
 
-    annot.reset(FPDFPage_GetAnnot(page, 1));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     float value_two;
     ASSERT_TRUE(FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value_two));
     EXPECT_EQ(12.0, value_two);
 
-    annot.reset(FPDFPage_GetAnnot(page, 2));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 2));
     ASSERT_TRUE(annot);
 
     float value_three;
@@ -2696,33 +2646,31 @@ TEST_F(FPDFAnnotEmbedderTest, GetFontSizeCombobox) {
         FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value_three));
     EXPECT_EQ(12.0, value_three);
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFontSizeTextField) {
   // Open a file with textfield annotations and load its first page.
   ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     // All 4 widgets have Tf font size 12.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     float value;
     ASSERT_TRUE(FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value));
     EXPECT_EQ(12.0, value);
 
-    annot.reset(FPDFPage_GetAnnot(page, 1));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     float value_two;
     ASSERT_TRUE(FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value_two));
     EXPECT_EQ(12.0, value_two);
 
-    annot.reset(FPDFPage_GetAnnot(page, 2));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 2));
     ASSERT_TRUE(annot);
 
     float value_three;
@@ -2734,41 +2682,37 @@ TEST_F(FPDFAnnotEmbedderTest, GetFontSizeTextField) {
     ASSERT_TRUE(FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value_four));
     EXPECT_EQ(12.0, value_four);
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFontSizeInvalidAnnotationTypes) {
   // Open a file with ink annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     // Annotations that do not have variable text and will return -1.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     float value;
     ASSERT_FALSE(FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value));
 
-    annot.reset(FPDFPage_GetAnnot(page, 1));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     ASSERT_FALSE(FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFontSizeInvalidArguments) {
   // Open a file with combobox annotations and load its first page.
   ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // Check bad form handle / annot.
@@ -2777,38 +2721,34 @@ TEST_F(FPDFAnnotEmbedderTest, GetFontSizeInvalidArguments) {
     ASSERT_FALSE(FPDFAnnot_GetFontSize(form_handle(), nullptr, &value));
     ASSERT_FALSE(FPDFAnnot_GetFontSize(nullptr, nullptr, &value));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFontSizeNegative) {
   // Open a file with textfield annotations and load its first page.
   ASSERT_TRUE(OpenDocument("text_form_negative_fontsize.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     // Obtain the first annotation, a text field with negative font size, -12.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     float value;
     ASSERT_TRUE(FPDFAnnot_GetFontSize(form_handle(), annot.get(), &value));
     EXPECT_EQ(-12.0, value);
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFontColor) {
   // Open a file with textfield annotations and load its first page.
   ASSERT_TRUE(OpenDocument("text_form_color.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     // Obtain the first annotation, a text field with orange color.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // Negative testing.
@@ -2833,128 +2773,114 @@ TEST_F(FPDFAnnotEmbedderTest, GetFontColor) {
     EXPECT_EQ(0x80U, G);
     EXPECT_EQ(0x00U, B);
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, IsCheckedCheckbox) {
   // Open a file with checkbox and radiobuttons widget annotations and load its
   // first page.
   ASSERT_TRUE(OpenDocument("click_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
     ASSERT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, IsCheckedCheckboxReadOnly) {
   // Open a file with checkbox and radiobutton widget annotations and load its
   // first page.
   ASSERT_TRUE(OpenDocument("click_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     ASSERT_TRUE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, IsCheckedRadioButton) {
   // Open a file with checkbox and radiobutton widget annotations and load its
   // first page.
   ASSERT_TRUE(OpenDocument("click_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 5));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 5));
     ASSERT_TRUE(annot);
     ASSERT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
 
-    annot.reset(FPDFPage_GetAnnot(page, 6));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 6));
     ASSERT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
 
-    annot.reset(FPDFPage_GetAnnot(page, 7));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 7));
     ASSERT_TRUE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, IsCheckedRadioButtonReadOnly) {
   // Open a file with checkbox and radiobutton widget annotations and load its
   // first page.
   ASSERT_TRUE(OpenDocument("click_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 2));
     ASSERT_TRUE(annot);
     ASSERT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
 
-    annot.reset(FPDFPage_GetAnnot(page, 3));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 3));
     ASSERT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
 
-    annot.reset(FPDFPage_GetAnnot(page, 4));
+    annot.reset(FPDFPage_GetAnnot(page.get(), 4));
     ASSERT_TRUE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, IsCheckedInvalidArguments) {
   // Open a file with checkbox and radiobuttons widget annotations and load its
   // first page.
   ASSERT_TRUE(OpenDocument("click_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     ASSERT_FALSE(FPDFAnnot_IsChecked(nullptr, annot.get()));
     ASSERT_FALSE(FPDFAnnot_IsChecked(form_handle(), nullptr));
     ASSERT_FALSE(FPDFAnnot_IsChecked(nullptr, nullptr));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, IsCheckedInvalidWidgetType) {
   // Open a file with text widget annotations and load its first page.
   ASSERT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     ASSERT_FALSE(FPDFAnnot_IsChecked(form_handle(), annot.get()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormFieldType) {
   ASSERT_TRUE(OpenDocument("multiple_form_types.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   EXPECT_EQ(-1, FPDFAnnot_GetFormFieldType(form_handle(), nullptr));
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
     EXPECT_EQ(-1, FPDFAnnot_GetFormFieldType(nullptr, annot.get()));
   }
@@ -2969,24 +2895,23 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldType) {
                 {4, FPDF_FORMFIELD_CHECKBOX},
                 {5, FPDF_FORMFIELD_RADIOBUTTON}};
   for (const auto& test : kTests) {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, test.input));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), test.input));
     ASSERT_TRUE(annot);
     EXPECT_EQ(test.output,
               FPDFAnnot_GetFormFieldType(form_handle(), annot.get()));
   }
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormFieldValueTextField) {
   ASSERT_TRUE(OpenDocument("text_form_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     EXPECT_EQ(0u,
               FPDFAnnot_GetFormFieldValue(form_handle(), nullptr, nullptr, 0));
 
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     EXPECT_EQ(0u,
@@ -3001,7 +2926,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldValueTextField) {
     EXPECT_EQ(L"", GetPlatformWString(buf.data()));
   }
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 2));
     ASSERT_TRUE(annot);
 
     unsigned long length_bytes =
@@ -3012,16 +2937,15 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldValueTextField) {
                                                buf.data(), length_bytes));
     EXPECT_EQ(L"Elephant", GetPlatformWString(buf.data()));
   }
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormFieldValueComboBox) {
   ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     unsigned long length_bytes =
@@ -3033,7 +2957,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldValueComboBox) {
     EXPECT_EQ(L"", GetPlatformWString(buf.data()));
   }
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     unsigned long length_bytes =
@@ -3044,19 +2968,18 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldValueComboBox) {
                                                buf.data(), length_bytes));
     EXPECT_EQ(L"Banana", GetPlatformWString(buf.data()));
   }
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormFieldNameTextField) {
   ASSERT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     EXPECT_EQ(0u,
               FPDFAnnot_GetFormFieldName(form_handle(), nullptr, nullptr, 0));
 
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     EXPECT_EQ(0u, FPDFAnnot_GetFormFieldName(nullptr, annot.get(), nullptr, 0));
@@ -3069,16 +2992,15 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldNameTextField) {
                                               buf.data(), length_bytes));
     EXPECT_EQ(L"Text Box", GetPlatformWString(buf.data()));
   }
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormFieldNameComboBox) {
   ASSERT_TRUE(OpenDocument("combobox_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     unsigned long length_bytes =
@@ -3089,12 +3011,11 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldNameComboBox) {
                                               buf.data(), length_bytes));
     EXPECT_EQ(L"Combo_Editable", GetPlatformWString(buf.data()));
   }
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotSubtypes) {
   ASSERT_TRUE(OpenDocument("annots.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   // Verify widgets are by default focusable.
@@ -3110,7 +3031,7 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotSubtypes) {
 
   const FPDF_ANNOTATION_SUBTYPE kExpectedDefaultFocusableSubtypes[] = {
       FPDF_ANNOT_WIDGET};
-  VerifyAnnotationSubtypesAndFocusability(form_handle(), page,
+  VerifyAnnotationSubtypesAndFocusability(form_handle(), page.get(),
                                           kExpectedAnnotSubtypes,
                                           kExpectedDefaultFocusableSubtypes);
 
@@ -3125,7 +3046,7 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotSubtypes) {
       FPDFAnnot_SetFocusableSubtypes(form_handle(), kDefaultSubtypes, 0));
   ASSERT_EQ(0, FPDFAnnot_GetFocusableSubtypesCount(form_handle()));
 
-  VerifyAnnotationSubtypesAndFocusability(form_handle(), page,
+  VerifyAnnotationSubtypesAndFocusability(form_handle(), page.get(),
                                           kExpectedAnnotSubtypes, {});
 
   // Now make links focusable.
@@ -3134,7 +3055,7 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotSubtypes) {
 
   const FPDF_ANNOTATION_SUBTYPE kExpectedLinkocusableSubtypes[] = {
       FPDF_ANNOT_LINK};
-  VerifyAnnotationSubtypesAndFocusability(form_handle(), page,
+  VerifyAnnotationSubtypesAndFocusability(form_handle(), page.get(),
                                           kExpectedAnnotSubtypes,
                                           kExpectedLinkocusableSubtypes);
 
@@ -3152,13 +3073,11 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotSubtypes) {
       FPDFAnnot_GetFocusableSubtypes(form_handle(), nullptr, subtypes.size()));
   EXPECT_FALSE(
       FPDFAnnot_GetFocusableSubtypes(form_handle(), subtypes.data(), 0));
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
   ASSERT_TRUE(OpenDocument("annots.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -3179,7 +3098,7 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
 #endif
     }();
     // Check the initial rendering.
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, md5_sum);
   }
 
@@ -3214,11 +3133,11 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
 #endif
     }();
     // Focus the first link and check the rendering.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_LINK, FPDFAnnot_GetSubtype(annot.get()));
     EXPECT_TRUE(FORM_SetFocusedAnnot(form_handle(), annot.get()));
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, md5_sum);
   }
 
@@ -3240,27 +3159,25 @@ TEST_F(FPDFAnnotEmbedderTest, FocusableAnnotRendering) {
 #endif
     }();
     // Focus the first highlight and check the rendering.
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 4));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 4));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot.get()));
     EXPECT_TRUE(FORM_SetFocusedAnnot(form_handle(), annot.get()));
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, md5_sum);
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetLinkFromAnnotation) {
   ASSERT_TRUE(OpenDocument("annots.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   {
     constexpr char kExpectedResult[] =
         "https://cs.chromium.org/chromium/src/third_party/pdfium/public/"
         "fpdf_text.h";
 
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 3));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 3));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_LINK, FPDFAnnot_GetSubtype(annot.get()));
     VerifyUriActionInLink(document(), FPDFAnnot_GetLink(annot.get()),
@@ -3268,21 +3185,19 @@ TEST_F(FPDFAnnotEmbedderTest, GetLinkFromAnnotation) {
   }
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 4));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 4));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_HIGHLIGHT, FPDFAnnot_GetSubtype(annot.get()));
     EXPECT_FALSE(FPDFAnnot_GetLink(annot.get()));
   }
 
   EXPECT_FALSE(FPDFAnnot_GetLink(nullptr));
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormControlCountRadioButton) {
   // Open a file with radio button widget annotations and load its first page.
   ASSERT_TRUE(OpenDocument("click_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -3290,7 +3205,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormControlCountRadioButton) {
     EXPECT_EQ(-1,
               FPDFAnnot_GetFormControlCount(form_handle(), /*annot=*/nullptr));
 
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 3));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 3));
     ASSERT_TRUE(annot);
 
     // Checks for bad form handle.
@@ -3299,44 +3214,38 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormControlCountRadioButton) {
 
     EXPECT_EQ(3, FPDFAnnot_GetFormControlCount(form_handle(), annot.get()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormControlCountCheckBox) {
   // Open a file with checkbox widget annotations and load its first page.
   ASSERT_TRUE(OpenDocument("click_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(1, FPDFAnnot_GetFormControlCount(form_handle(), annot.get()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormControlCountInvalidAnnotation) {
   // Open a file with ink annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(-1, FPDFAnnot_GetFormControlCount(form_handle(), annot.get()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormControlIndexRadioButton) {
   // Open a file with radio button widget annotations and load its first page.
   ASSERT_TRUE(OpenDocument("click_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -3344,7 +3253,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormControlIndexRadioButton) {
     EXPECT_EQ(-1,
               FPDFAnnot_GetFormControlIndex(form_handle(), /*annot=*/nullptr));
 
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 3));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 3));
     ASSERT_TRUE(annot);
 
     // Checks for bad form handle.
@@ -3353,44 +3262,38 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormControlIndexRadioButton) {
 
     EXPECT_EQ(1, FPDFAnnot_GetFormControlIndex(form_handle(), annot.get()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormControlIndexCheckBox) {
   // Open a file with checkbox widget annotations and load its first page.
   ASSERT_TRUE(OpenDocument("click_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(0, FPDFAnnot_GetFormControlIndex(form_handle(), annot.get()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormControlIndexInvalidAnnotation) {
   // Open a file with ink annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(-1, FPDFAnnot_GetFormControlIndex(form_handle(), annot.get()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormFieldExportValueRadioButton) {
   // Open a file with radio button widget annotations and load its first page.
   ASSERT_TRUE(OpenDocument("click_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
@@ -3399,7 +3302,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldExportValueRadioButton) {
                       form_handle(), /*annot=*/nullptr,
                       /*buffer=*/nullptr, /*buflen=*/0));
 
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 6));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 6));
     ASSERT_TRUE(annot);
 
     // Checks for bad form handle.
@@ -3416,18 +3319,16 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldExportValueRadioButton) {
                                                      buf.data(), length_bytes));
     EXPECT_EQ(L"value2", GetPlatformWString(buf.data()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormFieldExportValueCheckBox) {
   // Open a file with checkbox widget annotations and load its first page.
   ASSERT_TRUE(OpenDocument("click_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     unsigned long length_bytes =
@@ -3439,50 +3340,44 @@ TEST_F(FPDFAnnotEmbedderTest, GetFormFieldExportValueCheckBox) {
                                                     buf.data(), length_bytes));
     EXPECT_EQ(L"Yes", GetPlatformWString(buf.data()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetFormFieldExportValueInvalidAnnotation) {
   // Open a file with ink annotations and load its first page.
   ASSERT_TRUE(OpenDocument("annotation_ink_multiple.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(0u, FPDFAnnot_GetFormFieldExportValue(form_handle(), annot.get(),
                                                     /*buffer=*/nullptr,
                                                     /*buflen=*/0));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, Redactannotation) {
   ASSERT_TRUE(OpenDocument("redact_annot.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page.get()));
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_REDACT, FPDFAnnot_GetSubtype(annot.get()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, PolygonAnnotation) {
   ASSERT_TRUE(OpenDocument("polygon_annot.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page.get()));
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // FPDFAnnot_GetVertices() positive testing.
@@ -3514,7 +3409,7 @@ TEST_F(FPDFAnnotEmbedderTest, PolygonAnnotation) {
   }
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     // This has an odd number of elements in the vertices array, ignore the last
@@ -3535,21 +3430,20 @@ TEST_F(FPDFAnnotEmbedderTest, PolygonAnnotation) {
 
   {
     // Wrong annotation type.
-    ScopedFPDFAnnotation ink_annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_INK));
+    ScopedFPDFAnnotation ink_annot(
+        FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_INK));
     EXPECT_EQ(0U, FPDFAnnot_GetVertices(ink_annot.get(), nullptr, 0));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, InkAnnotation) {
   ASSERT_TRUE(OpenDocument("ink_annot.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page.get()));
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // FPDFAnnot_GetInkListCount() and FPDFAnnot_GetInkListPath() positive
@@ -3593,7 +3487,7 @@ TEST_F(FPDFAnnotEmbedderTest, InkAnnotation) {
   }
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     // This has an odd number of elements in the path array, ignore the last
@@ -3621,24 +3515,22 @@ TEST_F(FPDFAnnotEmbedderTest, InkAnnotation) {
   {
     // Wrong annotation type.
     ScopedFPDFAnnotation polygon_annot(
-        FPDFPage_CreateAnnot(page, FPDF_ANNOT_POLYGON));
+        FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_POLYGON));
     EXPECT_EQ(0U, FPDFAnnot_GetInkListCount(polygon_annot.get()));
     const unsigned long kPathIndex = 0;
     EXPECT_EQ(0U, FPDFAnnot_GetInkListPath(polygon_annot.get(), kPathIndex,
                                            nullptr, 0));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, LineAnnotation) {
   ASSERT_TRUE(OpenDocument("line_annot.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page.get()));
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // FPDFAnnot_GetVertices() positive testing.
@@ -3656,7 +3548,7 @@ TEST_F(FPDFAnnotEmbedderTest, LineAnnotation) {
   }
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     // Too few elements in the line array.
@@ -3667,23 +3559,22 @@ TEST_F(FPDFAnnotEmbedderTest, LineAnnotation) {
 
   {
     // Wrong annotation type.
-    ScopedFPDFAnnotation ink_annot(FPDFPage_CreateAnnot(page, FPDF_ANNOT_INK));
+    ScopedFPDFAnnotation ink_annot(
+        FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_INK));
     FS_POINTF start;
     FS_POINTF end;
     EXPECT_FALSE(FPDFAnnot_GetLine(ink_annot.get(), &start, &end));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, AnnotationBorder) {
   ASSERT_TRUE(OpenDocument("line_annot.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(2, FPDFPage_GetAnnotCount(page.get()));
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // FPDFAnnot_GetBorder() positive testing.
@@ -3702,7 +3593,7 @@ TEST_F(FPDFAnnotEmbedderTest, AnnotationBorder) {
   }
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
 
     // Too few elements in the border array.
@@ -3728,18 +3619,16 @@ TEST_F(FPDFAnnotEmbedderTest, AnnotationBorder) {
                                      /*vertical_radius=*/2.5f,
                                      /*border_width=*/3.0f));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, AnnotationJavaScript) {
   ASSERT_TRUE(OpenDocument("annot_javascript.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page.get()));
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // FPDFAnnot_GetFormAdditionalActionJavaScript() positive testing.
@@ -3764,18 +3653,16 @@ TEST_F(FPDFAnnotEmbedderTest, AnnotationJavaScript) {
                       form_handle(), annot.get(), FPDF_ANNOT_AACTION_KEY_STROKE,
                       nullptr, 0));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, FormFieldAlternateName) {
   ASSERT_TRUE(OpenDocument("click_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(8, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(8, FPDFPage_GetAnnotCount(page.get()));
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     // FPDFAnnot_GetFormFieldAlternateName() positive testing.
@@ -3793,8 +3680,6 @@ TEST_F(FPDFAnnotEmbedderTest, FormFieldAlternateName) {
     EXPECT_EQ(0u, FPDFAnnot_GetFormFieldAlternateName(nullptr, annot.get(),
                                                       nullptr, 0));
   }
-
-  UnloadPage(page);
 }
 
 // Due to https://crbug.com/pdfium/570, the AnnotationBorder test above cannot
@@ -3802,9 +3687,9 @@ TEST_F(FPDFAnnotEmbedderTest, FormFieldAlternateName) {
 // square annotation in annots.pdf for testing.
 TEST_F(FPDFAnnotEmbedderTest, AnnotationBorderRendering) {
   ASSERT_TRUE(OpenDocument("annots.pdf"));
-  FPDF_PAGE page = LoadPage(1);
+  ScopedEmbedderTestPage page = LoadScopedPage(1);
   ASSERT_TRUE(page);
-  EXPECT_EQ(3, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(3, FPDFPage_GetAnnotCount(page.get()));
 
   const char* original_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
@@ -3840,12 +3725,13 @@ TEST_F(FPDFAnnotEmbedderTest, AnnotationBorderRendering) {
   }();
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 2));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 2));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_SQUARE, FPDFAnnot_GetSubtype(annot.get()));
 
     {
-      ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      ScopedFPDFBitmap bitmap =
+          RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
       CompareBitmap(bitmap.get(), 612, 792, original_checksum);
     }
 
@@ -3854,32 +3740,32 @@ TEST_F(FPDFAnnotEmbedderTest, AnnotationBorderRendering) {
                                     /*border_width=*/4.0f));
 
     {
-      ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+      ScopedFPDFBitmap bitmap =
+          RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
       CompareBitmap(bitmap.get(), 612, 792, modified_checksum);
     }
   }
 
   // Save the document and close the page.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
-  UnloadPage(page);
 
   ASSERT_TRUE(OpenSavedDocument());
-  page = LoadSavedPage(1);
-  ASSERT_TRUE(page);
-  VerifySavedRendering(page, 612, 792, modified_checksum);
+  FPDF_PAGE saved_page = LoadSavedPage(1);
+  ASSERT_TRUE(saved_page);
+  VerifySavedRendering(saved_page, 612, 792, modified_checksum);
 
-  CloseSavedPage(page);
+  CloseSavedPage(saved_page);
   CloseSavedDocument();
 }
 
 TEST_F(FPDFAnnotEmbedderTest, GetAndAddFileAttachmentAnnotation) {
   ASSERT_TRUE(OpenDocument("annotation_fileattachment.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page.get()));
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_FILEATTACHMENT, FPDFAnnot_GetSubtype(annot.get()));
 
@@ -3907,11 +3793,11 @@ TEST_F(FPDFAnnotEmbedderTest, GetAndAddFileAttachmentAnnotation) {
   {
     // Add a file attachment annotation to the page.
     ScopedFPDFAnnotation annot(
-        FPDFPage_CreateAnnot(page, FPDF_ANNOT_FILEATTACHMENT));
+        FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_FILEATTACHMENT));
     ASSERT_TRUE(annot);
 
     // Check that there is now 2 annotations on this page.
-    EXPECT_EQ(2, FPDFPage_GetAnnotCount(page));
+    EXPECT_EQ(2, FPDFPage_GetAnnotCount(page.get()));
 
     ScopedFPDFWideString file_name = GetFPDFWideString(L"0.txt");
     FPDF_ATTACHMENT attachment =
@@ -3923,7 +3809,7 @@ TEST_F(FPDFAnnotEmbedderTest, GetAndAddFileAttachmentAnnotation) {
   }
 
   {
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 1));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 1));
     ASSERT_TRUE(annot);
     EXPECT_EQ(FPDF_ANNOT_FILEATTACHMENT, FPDFAnnot_GetSubtype(annot.get()));
 
@@ -3939,26 +3825,24 @@ TEST_F(FPDFAnnotEmbedderTest, GetAndAddFileAttachmentAnnotation) {
               FPDFAttachment_GetName(attachment, buf.data(), length_bytes));
     EXPECT_EQ(L"0.txt", GetPlatformWString(buf.data()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFAnnotEmbedderTest, BadCasesFileAttachmentAnnotation) {
   ASSERT_TRUE(OpenDocument("annotation_fileattachment.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page));
+  EXPECT_EQ(1, FPDFPage_GetAnnotCount(page.get()));
 
   {
     ASSERT_FALSE(FPDFAnnot_GetFileAttachment(nullptr));
 
     ScopedFPDFAnnotation text_annot(
-        FPDFPage_CreateAnnot(page, FPDF_ANNOT_TEXT));
+        FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_TEXT));
     ASSERT_TRUE(text_annot);
     ASSERT_FALSE(FPDFAnnot_GetFileAttachment(text_annot.get()));
 
     ScopedFPDFAnnotation newly_file_annot(
-        FPDFPage_CreateAnnot(page, FPDF_ANNOT_FILEATTACHMENT));
+        FPDFPage_CreateAnnot(page.get(), FPDF_ANNOT_FILEATTACHMENT));
     ASSERT_TRUE(newly_file_annot);
     ASSERT_FALSE(FPDFAnnot_GetFileAttachment(newly_file_annot.get()));
   }
@@ -3971,7 +3855,7 @@ TEST_F(FPDFAnnotEmbedderTest, BadCasesFileAttachmentAnnotation) {
     ASSERT_FALSE(FPDFAnnot_AddFileAttachment(nullptr, empty_name.get()));
     ASSERT_FALSE(FPDFAnnot_AddFileAttachment(nullptr, not_empty_name.get()));
 
-    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page, 0));
+    ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 0));
     ASSERT_TRUE(annot);
 
     ASSERT_FALSE(FPDFAnnot_AddFileAttachment(annot.get(), nullptr));
@@ -3981,6 +3865,4 @@ TEST_F(FPDFAnnotEmbedderTest, BadCasesFileAttachmentAnnotation) {
     EXPECT_NE(old_attachment,
               FPDFAnnot_AddFileAttachment(annot.get(), not_empty_name.get()));
   }
-
-  UnloadPage(page);
 }

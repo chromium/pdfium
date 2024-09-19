@@ -236,70 +236,67 @@ TEST_F(FPDFProgressiveRenderEmbedderTest, RenderWithoutPause) {
   // Test rendering of page content using progressive render APIs
   // without pausing the rendering.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   FakePause pause(false);
-  EXPECT_TRUE(StartRenderPage(page, &pause));
-  ScopedFPDFBitmap bitmap = FinishRenderPage(page);
+  EXPECT_TRUE(StartRenderPage(page.get(), &pause));
+  ScopedFPDFBitmap bitmap = FinishRenderPage(page.get());
   CompareBitmap(bitmap.get(), 595, 842,
                 AnnotationStampWithApBaseContentChecksum());
-  UnloadPage(page);
 }
 
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderWithPause) {
   // Test rendering of page content using progressive render APIs
   // with pause in rendering.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   FakePause pause(true);
-  bool render_done = StartRenderPage(page, &pause);
+  bool render_done = StartRenderPage(page.get(), &pause);
   EXPECT_FALSE(render_done);
 
   while (!render_done) {
-    render_done = ContinueRenderPage(page, &pause);
+    render_done = ContinueRenderPage(page.get(), &pause);
   }
-  ScopedFPDFBitmap bitmap = FinishRenderPage(page);
+  ScopedFPDFBitmap bitmap = FinishRenderPage(page.get());
   CompareBitmap(bitmap.get(), 595, 842,
                 AnnotationStampWithApBaseContentChecksum());
-  UnloadPage(page);
 }
 
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderAnnotWithPause) {
   // Test rendering of the page with annotations using progressive render APIs
   // with pause in rendering.
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   FakePause pause(true);
-  bool render_done = StartRenderPageWithFlags(page, &pause, FPDF_ANNOT);
+  bool render_done = StartRenderPageWithFlags(page.get(), &pause, FPDF_ANNOT);
   EXPECT_FALSE(render_done);
 
   while (!render_done) {
-    render_done = ContinueRenderPage(page, &pause);
+    render_done = ContinueRenderPage(page.get(), &pause);
   }
-  ScopedFPDFBitmap bitmap = FinishRenderPage(page);
+  ScopedFPDFBitmap bitmap = FinishRenderPage(page.get());
   CompareBitmap(bitmap.get(), 595, 842,
                 pdfium::AnnotationStampWithApChecksum());
-  UnloadPage(page);
 }
 
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderFormsWithPause) {
   // Test rendering of the page with forms using progressive render APIs
   // with pause in rendering.
   ASSERT_TRUE(OpenDocument("text_form.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
   FakePause pause(true);
-  bool render_done = StartRenderPage(page, &pause);
+  bool render_done = StartRenderPage(page.get(), &pause);
   EXPECT_FALSE(render_done);
 
   while (!render_done) {
-    render_done = ContinueRenderPage(page, &pause);
+    render_done = ContinueRenderPage(page.get(), &pause);
   }
-  ScopedFPDFBitmap bitmap = FinishRenderPageWithForms(page, form_handle());
+  ScopedFPDFBitmap bitmap =
+      FinishRenderPageWithForms(page.get(), form_handle());
   CompareBitmap(bitmap.get(), 300, 300, pdfium::TextFormChecksum());
-  UnloadPage(page);
 }
 
 void FPDFProgressiveRenderEmbedderTest::VerifyRenderingWithColorScheme(
@@ -312,14 +309,13 @@ void FPDFProgressiveRenderEmbedderTest::VerifyRenderingWithColorScheme(
     const char* md5) {
   ASSERT_TRUE(document());
 
-  FPDF_PAGE page = LoadPage(page_num);
+  ScopedEmbedderTestPage page = LoadScopedPage(page_num);
   ASSERT_TRUE(page);
 
   ScopedFPDFBitmap bitmap = RenderPageWithForcedColorScheme(
-      page, form_handle(), flags, color_scheme, background_color);
+      page.get(), form_handle(), flags, color_scheme, background_color);
   ASSERT_TRUE(bitmap);
   CompareBitmap(bitmap.get(), bitmap_width, bitmap_height, md5);
-  UnloadPage(page);
 }
 
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderTextWithColorScheme) {

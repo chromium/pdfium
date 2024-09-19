@@ -18,9 +18,8 @@ TEST_F(JBig2EmbedderTest, MAYBE_Bug631912) {
   // Test jbig2 image in PDF file can be loaded successfully.
   // Should not crash.
   ASSERT_TRUE(OpenDocument("bug_631912.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+  ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
   CompareBitmap(bitmap.get(), 691, 432, "726c2b8c89df0ab40627322d1dddd521");
-  UnloadPage(page);
 }

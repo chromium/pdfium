@@ -28,12 +28,11 @@ TEST_F(CPDF_CreatorEmbedderTest, SavedDocsAreEqualAfterParse) {
   {
     // Do some read only operations.
     ASSERT_GE(1, FPDF_GetPageCount(document()));
-    FPDF_PAGE page = LoadPage(0);
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
     ASSERT_TRUE(page);
-    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
+    ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page.get(), FPDF_ANNOT);
     EXPECT_EQ(595, FPDFBitmap_GetWidth(bitmap.get()));
     EXPECT_EQ(842, FPDFBitmap_GetHeight(bitmap.get()));
-    UnloadPage(page);
   }
 
   // Save when we have additional loaded data.

@@ -127,26 +127,23 @@ TEST_F(FPDFUnavailableSysFontInfoEmbedderTest, Bug972518) {
   ASSERT_TRUE(OpenDocument("bug_972518.pdf"));
   ASSERT_EQ(1, FPDF_GetPageCount(document()));
 
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  UnloadPage(page);
 }
 
 TEST_F(FPDFSysFontInfoEmbedderTest, DefaultSystemFontInfo) {
   ASSERT_TRUE(OpenDocument("hello_world.pdf"));
   ASSERT_EQ(1, FPDF_GetPageCount(document()));
 
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
     // Not checking the rendering because it will depend on the fonts installed.
-    ScopedFPDFBitmap bitmap = RenderPage(page);
+    ScopedFPDFBitmap bitmap = RenderPage(page.get());
     ASSERT_EQ(200, FPDFBitmap_GetWidth(bitmap.get()));
     ASSERT_EQ(200, FPDFBitmap_GetHeight(bitmap.get()));
   }
-
-  UnloadPage(page);
 }
 
 TEST_F(FPDFSysFontInfoEmbedderTest, DefaultTTFMap) {

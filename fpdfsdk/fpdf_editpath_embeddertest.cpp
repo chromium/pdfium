@@ -92,16 +92,16 @@ TEST_F(FPDFEditPathEmbedderTest, VerifyCorrectColoursReturned) {
 
 TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForPath) {
   OpenDocument("rectangles_double_flipped.pdf");
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
                   kExpectedRectangleHeight, RectanglesChecksum());
   }
 
-  FPDF_PAGEOBJECT path = FPDFPage_GetObject(page, 0);
+  FPDF_PAGEOBJECT path = FPDFPage_GetObject(page.get(), 0);
   ASSERT_TRUE(path);
   ASSERT_EQ(FPDF_PAGEOBJ_PATH, FPDFPageObj_GetType(path));
 
@@ -116,21 +116,20 @@ TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForPath) {
 
   ASSERT_TRUE(FPDFPageObj_SetMatrix(path, &matrix));
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
                   kExpectedRectangleHeight, RectanglesChecksum());
   }
 
-  ASSERT_TRUE(FPDFPage_GenerateContent(page));
+  ASSERT_TRUE(FPDFPage_GenerateContent(page.get()));
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
                   kExpectedRectangleHeight, RectanglesChecksum());
   }
 
-  UnloadPage(page);
 
   VerifySavedDocument(kExpectedRectangleWidth, kExpectedRectangleHeight,
                       RectanglesChecksum());
@@ -138,16 +137,16 @@ TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForPath) {
 
 TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForFormWithPath) {
   OpenDocument("form_object_with_path.pdf");
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
                   kExpectedRectangleHeight, RectanglesChecksum());
   }
 
-  FPDF_PAGEOBJECT form = FPDFPage_GetObject(page, 0);
+  FPDF_PAGEOBJECT form = FPDFPage_GetObject(page.get(), 0);
   ASSERT_TRUE(form);
   ASSERT_EQ(FPDF_PAGEOBJ_FORM, FPDFPageObj_GetType(form));
 
@@ -162,7 +161,7 @@ TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForFormWithPath) {
 
   ASSERT_TRUE(FPDFPageObj_SetMatrix(form, &matrix));
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
                   kExpectedRectangleHeight, RectanglesChecksum());
   }
@@ -181,21 +180,20 @@ TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForFormWithPath) {
 
   ASSERT_TRUE(FPDFPageObj_SetMatrix(path, &matrix));
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
                   kExpectedRectangleHeight, RectanglesChecksum());
   }
 
-  ASSERT_TRUE(FPDFPage_GenerateContent(page));
+  ASSERT_TRUE(FPDFPage_GenerateContent(page.get()));
   ASSERT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
                   kExpectedRectangleHeight, RectanglesChecksum());
   }
 
-  UnloadPage(page);
 
   VerifySavedDocument(kExpectedRectangleWidth, kExpectedRectangleHeight,
                       RectanglesChecksum());
@@ -203,35 +201,34 @@ TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForFormWithPath) {
 
 TEST_F(FPDFEditPathEmbedderTest, AddPathToRectangles) {
   OpenDocument("rectangles.pdf");
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
                   kExpectedRectangleHeight, RectanglesChecksum());
   }
 
   ScopedFPDFPageObject path = CreateBlackTriangle();
   ASSERT_TRUE(path);
-  FPDFPage_InsertObject(page, path.release());
+  FPDFPage_InsertObject(page.get(), path.release());
 
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
                   kExpectedRectangleHeight, RectanglesAndTriangleChecksum());
   }
 
-  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
                   kExpectedRectangleHeight, RectanglesAndTriangleChecksum());
   }
 
-  UnloadPage(page);
 
   VerifySavedDocument(kExpectedRectangleWidth, kExpectedRectangleHeight,
                       RectanglesAndTriangleChecksum());
@@ -239,35 +236,34 @@ TEST_F(FPDFEditPathEmbedderTest, AddPathToRectangles) {
 
 TEST_F(FPDFEditPathEmbedderTest, AddPathToRectanglesWithLeakyCTM) {
   OpenDocument("rectangles_with_leaky_ctm.pdf");
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
                   kExpectedRectangleHeight, RectanglesChecksum());
   }
 
   ScopedFPDFPageObject path = CreateBlackTriangle();
   ASSERT_TRUE(path);
-  FPDFPage_InsertObject(page, path.release());
+  FPDFPage_InsertObject(page.get(), path.release());
 
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
                   kExpectedRectangleHeight, RectanglesAndTriangleChecksum());
   }
 
-  EXPECT_TRUE(FPDFPage_GenerateContent(page));
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
   {
-    ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
     CompareBitmap(bitmap.get(), kExpectedRectangleWidth,
                   kExpectedRectangleHeight, RectanglesAndTriangleChecksum());
   }
 
-  UnloadPage(page);
 
   VerifySavedDocument(kExpectedRectangleWidth, kExpectedRectangleHeight,
                       RectanglesAndTriangleChecksum());

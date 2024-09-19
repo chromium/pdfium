@@ -263,7 +263,7 @@ TEST_F(FxgeSkiaEmbedderTest, RenderBigImageTwice) {
   }
 
   ASSERT_TRUE(OpenDocument("bug_2034.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
   std::set<int> image_ids;
@@ -281,14 +281,12 @@ TEST_F(FxgeSkiaEmbedderTest, RenderBigImageTwice) {
       }));
 
   // Render top half.
-  RenderPageToSkCanvas(page, /*start_x=*/0, /*start_y=*/0,
+  RenderPageToSkCanvas(page.get(), /*start_x=*/0, /*start_y=*/0,
                        /*size_x=*/kPageWidth, /*size_y=*/kPageHeight, canvas);
 
   // Render bottom half.
-  RenderPageToSkCanvas(page, /*start_x=*/0, /*start_y=*/-kPageHeight / 2,
+  RenderPageToSkCanvas(page.get(), /*start_x=*/0, /*start_y=*/-kPageHeight / 2,
                        /*size_x=*/kPageWidth, /*size_y=*/kPageHeight, canvas);
 
   EXPECT_THAT(image_ids, SizeIs(1));
-
-  UnloadPage(page);
 }

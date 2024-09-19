@@ -23,10 +23,9 @@ class FXGETextEmbedderTest : public EmbedderTest {
 TEST_F(FXGETextEmbedderTest, BadItalic) {
   // Shouldn't crash.
   ASSERT_TRUE(OpenDocument("bug_601362.pdf"));
-  FPDF_PAGE page = LoadPage(0);
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  ScopedFPDFBitmap bitmap = RenderLoadedPage(page);
+  ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
   EXPECT_EQ(612, FPDFBitmap_GetWidth(bitmap.get()));
   EXPECT_EQ(792, FPDFBitmap_GetHeight(bitmap.get()));
-  UnloadPage(page);
 }
