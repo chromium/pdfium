@@ -60,18 +60,6 @@ bool IsComboOrListField(CPDF_FormField::Type type) {
   }
 }
 
-bool HasOptField(CPDF_FormField::Type type) {
-  switch (type) {
-    case CPDF_FormField::kCheckBox:
-    case CPDF_FormField::kRadioButton:
-    case CPDF_FormField::kComboBox:
-    case CPDF_FormField::kListBox:
-      return true;
-    default:
-      return false;
-  }
-}
-
 }  // namespace
 
 // static
@@ -592,14 +580,26 @@ int CPDF_FormField::GetDefaultSelectedItem() const {
   return -1;
 }
 
+bool CPDF_FormField::HasOptField() const {
+  switch (GetType()) {
+    case CPDF_FormField::kCheckBox:
+    case CPDF_FormField::kRadioButton:
+    case CPDF_FormField::kComboBox:
+    case CPDF_FormField::kListBox:
+      return true;
+    default:
+      return false;
+  }
+}
+
 int CPDF_FormField::CountOptions() const {
-  CHECK(HasOptField(GetType()));
+  CHECK(HasOptField());
   RetainPtr<const CPDF_Array> pArray = ToArray(GetFieldAttrInternal("Opt"));
   return pArray ? fxcrt::CollectionSize<int>(*pArray) : 0;
 }
 
 WideString CPDF_FormField::GetOptionText(int index, int sub_index) const {
-  CHECK(HasOptField(GetType()));
+  CHECK(HasOptField());
   RetainPtr<const CPDF_Array> pArray = ToArray(GetFieldAttrInternal("Opt"));
   if (!pArray)
     return WideString();

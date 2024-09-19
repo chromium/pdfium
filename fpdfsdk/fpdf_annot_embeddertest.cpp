@@ -2357,6 +2357,28 @@ TEST_F(FPDFAnnotEmbedderTest, GetOptionCountInvalidAnnotations) {
   }
 }
 
+TEST_F(FPDFAnnotEmbedderTest, GetOptionCountWrongAnnotationType) {
+  // Open a file with annotations and load its first page.
+  ASSERT_TRUE(OpenDocument("multiple_form_types.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  // This annotation is a form field, but does not support Options.
+  ScopedFPDFAnnotation annot(FPDFPage_GetAnnot(page.get(), 3));
+  ASSERT_TRUE(annot);
+
+  // Check types.
+  EXPECT_EQ(FPDF_ANNOT_WIDGET, FPDFAnnot_GetSubtype(annot.get()));
+  EXPECT_EQ(FPDF_FORMFIELD_TEXTFIELD,
+            FPDFAnnot_GetFormFieldType(form_handle(), annot.get()));
+
+  // Option APIs do not support this annot type. They gracefully return an error
+  // and do not crash.
+  EXPECT_EQ(-1, FPDFAnnot_GetOptionCount(form_handle(), annot.get()));
+  EXPECT_EQ(
+      0u, FPDFAnnot_GetOptionLabel(form_handle(), annot.get(), 0, nullptr, 0));
+}
+
 TEST_F(FPDFAnnotEmbedderTest, GetOptionLabelCombobox) {
   // Open a file with combobox widget annotations and load its first page.
   ASSERT_TRUE(OpenDocument("combobox_form.pdf"));

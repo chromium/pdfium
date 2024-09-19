@@ -117,6 +117,10 @@ class CPDF_FormField {
   bool SetItemSelection(int index, NotificationOption notify);
 
   int GetDefaultSelectedItem() const;
+
+  bool HasOptField() const;
+
+  // These can only be called if HasOptField() returns true.
   int CountOptions() const;
   WideString GetOptionLabel(int index) const;
   WideString GetOptionValue(int index) const;
