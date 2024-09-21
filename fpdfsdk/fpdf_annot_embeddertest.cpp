@@ -496,8 +496,8 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractHighlightLongContent) {
     ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot.get(), 0, &quadpoints));
     EXPECT_EQ(115.802643f, quadpoints.x1);
     EXPECT_EQ(718.913940f, quadpoints.y1);
-    EXPECT_EQ(157.211182f, quadpoints.x4);
-    EXPECT_EQ(706.264465f, quadpoints.y4);
+    EXPECT_EQ(157.211166f, quadpoints.x4);
+    EXPECT_EQ(706.264404f, quadpoints.y4);
   }
   UnloadPageNoEvents(page);
 }
@@ -537,23 +537,23 @@ TEST_F(FPDFAnnotEmbedderTest, ExtractInkMultiple) {
     // Note that upon rendering, the rectangle coordinates will be adjusted.
     FS_RECTF rect;
     ASSERT_TRUE(FPDFAnnot_GetRect(annot.get(), &rect));
-    EXPECT_EQ(351.820404f, rect.left);
-    EXPECT_EQ(583.830688f, rect.bottom);
-    EXPECT_EQ(475.336090f, rect.right);
+    EXPECT_EQ(351.820435f, rect.left);
+    EXPECT_EQ(583.830750f, rect.bottom);
+    EXPECT_EQ(475.336121f, rect.right);
     EXPECT_EQ(681.535034f, rect.top);
   }
   {
     const char* expected_hash = []() {
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-        return "b4698da8e2f9e8cb82b7bbb6e7d559a9";
+        return "42e03089ef2392579d73bf9065896488";
 #elif BUILDFLAG(IS_APPLE)
-        return "e3da57011a3d66238d15be1bedcb6696";
+        return "5891aa346046c3f5b8c3cd8607f0d256";
 #else
-        return "c2404a7a9a86ee78487cd1993949c56d";
+        return "d02d468d9022ddf35014daa50191a895";
 #endif
       }
-      return "354002e1c4386d38fdde29ef8d61074a";
+      return "738a3881cb2cfb3e69e2a3adbc7c1d5b";
     }();
     ScopedFPDFBitmap bitmap = RenderLoadedPageWithFlags(page, FPDF_ANNOT);
     CompareBitmap(bitmap.get(), 612, 792, expected_hash);
@@ -750,8 +750,8 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndSaveUnderlineAnnotation) {
     ASSERT_TRUE(FPDFAnnot_GetAttachmentPoints(annot.get(), 0, &quadpoints));
     EXPECT_EQ(115.802643f, quadpoints.x1);
     EXPECT_EQ(718.913940f, quadpoints.y1);
-    EXPECT_EQ(157.211182f, quadpoints.x4);
-    EXPECT_EQ(706.264465f, quadpoints.y4);
+    EXPECT_EQ(157.211166f, quadpoints.x4);
+    EXPECT_EQ(706.264404f, quadpoints.y4);
   }
 
   // Add an underline annotation to the page and set its quadpoints.
@@ -926,11 +926,11 @@ TEST_F(FPDFAnnotEmbedderTest, ModifyRectQuadpointsWithAP) {
   const char* md5_modified_square = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "cebb3bd3209f63f6dfd15b8425229e90";
+      return "25bb74224a3519a397a8b987069085a5";
 #elif BUILDFLAG(IS_APPLE)
-      return "613102f8b6d74d6d9f95c8eacd17b756";
+      return "8b9df3824179d3757932bda23b95c8ce";
 #else
-      return "879c77a2cb9f79ba65ffe0bbdd720ce3";
+      return "4f66924b2d246f9e8a1b926e956b615b";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -1130,49 +1130,49 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyPath) {
   const char* md5_modified_path = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "c8ae5b9ebd9982d9fde526f50f936971";
+      return "02c0628d5e1da4d0f2d481272c7e5a9b";
 #elif BUILDFLAG(IS_APPLE)
-      return "3adf48360ca55e8794a9fc9f1ea87df1";
+      return "c81ee833f81ae0fa674e0c16872156d2";
 #else
-      return "94f7f4568385c16498604ddc46f18be9";
+      return "4a3a53f2b1b0cb40e9a32305eef9197a";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
-    return "34614087e04b729b7b8c37739dcf9af9";
+    return "ac6a1526c71bb0cebe3c3c0b6bf59aab";
 #else
-    return "31a94d22460171cd83169daf6a6956ee";
+    return "fb9e6f707986e5daf2f7bb75b4ed28ec";
 #endif
   }();
   const char* md5_two_paths = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "d29d4258bd9344abf20bb55e6679c065";
+      return "cf7119f478a5daf7fa7c707514f39e13";
 #elif BUILDFLAG(IS_APPLE)
-      return "5f7d44d3a4ffaadb6bf20b4f1ac2a1f0";
+      return "c3ce00fda0bcaad52536b49991a24aba";
 #else
-      return "1052cd0fe1c3e73865fc842525245551";
+      return "db4c609adaa0dcfba213450bbd62264e";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
-    return "6cdaf6b3e5145f435d8ccae6db5cf9af";
+    return "48a03185099a335f60b158ade04ff22c";
 #else
-    return "ed49fefef45f14121f8150cde10006c4";
+    return "1abd24eb0ec89cd429ea7080d9762713";
 #endif
   }();
   const char* md5_new_annot = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "9ca0a274d1ae0db09ad814ee455dd88c";
+      return "df816a3ea0b92e597fa04e8a0a80e5a7";
 #elif BUILDFLAG(IS_APPLE)
-      return "71c8fb8eee9720c19851c48745dde152";
+      return "75f8d0866cda9bc7545a9c1162841aad";
 #else
-      return "f522e1262f487cc1976bb3fc585ef469";
+      return "d4d1b116d5f23dfec894e25db4c5ebdb";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
-    return "e6015f42eb81ed6003224cb2f27dcb51";
+    return "eae62b0038343c77141eedea842f01eb";
 #else
-    return "2e567a33390cd2ebad9dc33d82a8b054";
+    return "897415260f33a8b553c85466ffcf4a56";
 #endif
   }();
 
@@ -1373,33 +1373,33 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyImage) {
   const char* md5_new_image = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "3515dee02973f010516e4c6c774ee281";
+      return "795cf0ce02f6f2d3a23ed06a148af82f";
 #elif BUILDFLAG(IS_APPLE)
-      return "f740480598ff3732fb31871634509eec";
+      return "617f9f6f00167f83e9ffb31751624a9e";
 #else
-      return "77bf1781c60370bfcd8d81cf91ab7b09";
+      return "5526f05092a0253d56a0e79e0e104f71";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
-    return "17ac49518eabbb6a7632a547269c40a3";
+    return "4c63afd81a7835579485f056e2d5f951";
 #else
-    return "e79446398d4508bc2cb47e6cf2a677ed";
+    return "727380057983d1ce10c7f51cbcd0917f";
 #endif
   }();
   const char* md5_modified_image = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "aeb7cfb0bf6ac2bcdef4412276f3bad4";
+      return "7c33121197cf13a83b96e913d70fe12d";
 #elif BUILDFLAG(IS_APPLE)
-      return "5beae8949ee6b5c99fe17475e90aea02";
+      return "0bd1b3bbefa3bae4199ce9c8b5bf840b";
 #else
-      return "cfa8aa132250a1c0fec505bd13c15916";
+      return "e3f115b37181ce0ffd02c7b5288ea99a";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
-    return "25bf5ec7c197cf9ff3d12b41fc336b25";
+    return "5d242652769254acd9a1f91311ff6b65";
 #else
-    return "dcb492d8e32528dd81bb60fa5bc900f8";
+    return "f0d4f77fee46e77f79edae2d93d574a3";
 #endif
   }();
 
@@ -1481,37 +1481,37 @@ TEST_F(FPDFAnnotEmbedderTest, AddAndModifyText) {
   const char* md5_new_text = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "9fbad802120d58b2b8b7edd043eeaf55";
+      return "d9b4f92933bbde80a123048ae2ef7296";
 #elif BUILDFLAG(IS_APPLE)
-      return "eefdf26393df536e7f125816e7d967ff";
+      return "f63c9d35c6c19f88ffb92471e97b7e22";
 #else
-      return "f89c413c7155ae9b4a0b7c8e4013613e";
+      return "6b1cfec7e9c89da93dc14172afffc5db";
 #endif
     }
 #if BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
     return "8eabf79dcdcfc6474c593bc60d996def";
 #elif BUILDFLAG(IS_APPLE) && !defined(ARCH_CPU_ARM64)
-    return "5d449d36926c9f212c6cdb6c276d18cc";
+    return "8cfa6f61f5a03b3f2306d0924ef6c000";
 #else
-    return "a9532f555aca2fd099e2107fa40b61e6";
+    return "c9b2be9f9bcb8998ee181f149a979cb8";
 #endif
   }();
   const char* md5_modified_text = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "850564e273ad58f651af09d880103e82";
+      return "a393718c0bc2144131e3c60b51cd985c";
 #elif BUILDFLAG(IS_APPLE)
-      return "25c03a641c8a7cac9845f8d38e54f90b";
+      return "76b7f0cb6f0e52aa25a2c1e11c9abd62";
 #else
-      return "707320c806ed846c73ca2be8b2328bcd";
+      return "007960dd422d0999f71a9de0faa29b07";
 #endif
     }
 #if BUILDFLAG(IS_APPLE) && defined(ARCH_CPU_ARM64)
     return "704f3eb56f82377753a816a43de250ea";
 #elif BUILDFLAG(IS_APPLE) && !defined(ARCH_CPU_ARM64)
-    return "8c992808db99dbe3d74006358a671f05";
+    return "c39124df1815dd6fce3b2f113169c8c9";
 #else
-    return "03cae68322d6a6ba120e738ab325408c";
+    return "c08913614721f4337ff893c3cf53026d";
 #endif
   }();
 
@@ -1642,17 +1642,17 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   const char* md5 = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "25b2a610cab9d656b9ab5f72746c9e2e";
+      return "d0dfc003b3e08160e698355b599f7eb8";
 #elif BUILDFLAG(IS_APPLE)
-      return "0f6501f8e22441630bdd535363c93e59";
+      return "8774ac1779ea66056860290ae7df8f44";
 #else
-      return "1814140b1a9a9776546af7894e21d17f";
+      return "8b8618de537ec6aee1f3fc53fedfbcfc";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
-    return "0521eaa52fe2aa43aafd3e4495f63f0b";
+    return "587311ad93447614cbe5887df14caa78";
 #else
-    return "5f19ddad9d48f5b7b87ee7d92f577db6";
+    return "2908fd6166f795dfd73c607ec12c5356";
 #endif
   }();
 

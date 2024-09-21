@@ -19,6 +19,7 @@
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/utf16.h"
 #include "core/fxcrt/widestring.h"
+#include "third_party/fast_float/src/include/fast_float/fast_float.h"
 
 #if !defined(WCHAR_T_IS_16_BIT) && !defined(WCHAR_T_IS_32_BIT)
 #error "Unknown wchar_t size"
@@ -98,60 +99,36 @@ std::u16string FX_UTF16Encode(WideStringView wsStr) {
 
 namespace {
 
-constexpr float kFractionScalesFloat[] = {
-    0.1f,         0.01f,         0.001f,        0.0001f,
-    0.00001f,     0.000001f,     0.0000001f,    0.00000001f,
-    0.000000001f, 0.0000000001f, 0.00000000001f};
-
-const double kFractionScalesDouble[] = {
-    0.1,       0.01,       0.001,       0.0001,       0.00001,      0.000001,
-    0.0000001, 0.00000001, 0.000000001, 0.0000000001, 0.00000000001};
-
 template <class T>
-T StringTo(ByteStringView strc, pdfium::span<const T> fractional_scales) {
-  if (strc.IsEmpty())
-    return 0;
-
-  bool bNegative = false;
-  size_t cc = 0;
+T StringTo(ByteStringView strc) {
+  // Skip leading whitespaces.
+  size_t start = 0;
   size_t len = strc.GetLength();
-  if (strc[0] == '+') {
-    cc++;
-  } else if (strc[0] == '-') {
-    bNegative = true;
-    cc++;
+  while (start < len && strc[start] == ' ') {
+    ++start;
   }
-  while (cc < len) {
-    if (strc[cc] != '+' && strc[cc] != '-')
-      break;
-    cc++;
+
+  // Skip a leading '+' sign.
+  if (start < len && strc[start] == '+') {
+    ++start;
   }
-  T value = 0;
-  while (cc < len) {
-    if (strc[cc] == '.')
-      break;
-    value = value * 10 + FXSYS_DecimalCharToInt(strc.CharAt(cc));
-    cc++;
-  }
-  size_t scale = 0;
-  if (cc < len && strc[cc] == '.') {
-    cc++;
-    while (cc < len) {
-      value +=
-          fractional_scales[scale] * FXSYS_DecimalCharToInt(strc.CharAt(cc));
-      scale++;
-      if (scale == fractional_scales.size())
-        break;
-      cc++;
-    }
-  }
-  return bNegative ? -value : value;
+
+  ByteStringView sub_strc = strc.Substr(start, len - start);
+
+  T value;
+  auto result = fast_float::from_chars(sub_strc.begin(), sub_strc.end(), value);
+
+  // Return 0 for parsing errors. Some examples of errors are an empty string
+  // and a string that cannot be converted to T.
+  return result.ec == std::errc() || result.ec == std::errc::result_out_of_range
+             ? value
+             : 0;
 }
 
 }  // namespace
 
 float StringToFloat(ByteStringView strc) {
-  return StringTo<float>(strc, kFractionScalesFloat);
+  return StringTo<float>(strc);
 }
 
 float StringToFloat(WideStringView wsStr) {
@@ -159,7 +136,7 @@ float StringToFloat(WideStringView wsStr) {
 }
 
 double StringToDouble(ByteStringView strc) {
-  return StringTo<double>(strc, kFractionScalesDouble);
+  return StringTo<double>(strc);
 }
 
 double StringToDouble(WideStringView wsStr) {

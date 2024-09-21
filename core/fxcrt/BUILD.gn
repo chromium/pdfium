@@ -146,6 +146,7 @@ source_set("fxcrt") {
     "../../:pdfium_strict_config",
     "../../:pdfium_noshorten_config",
   ]
+  deps = [ "//third_party/fast_float" ]
   public_deps = [
     "../../:freetype_common",
     "//third_party/abseil-cpp:absl",

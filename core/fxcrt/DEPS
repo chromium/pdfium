@@ -2,3 +2,9 @@ include_rules = [
   '+partition_alloc',
   '+third_party/icu',
 ]
+
+specific_include_rules = {
+  'fx_string.cpp': [
+    '+third_party/fast_float/src/include/fast_float/fast_float.h',
+  ],
+}

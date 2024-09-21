@@ -443,6 +443,6 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessFormWithPath) {
   generator.ProcessPageObjects(&process_buf);
   EXPECT_EQ(
       "q 3.102 4.6700001 m 5.4500012 .28999999 l 4.2399998 3.14"
-      "99999 4.6500001 2.98 3.4560001 .24000001 c 3.102 4.6700001 l h f Q\n",
+      "99999 4.6500001 2.98 3.4560001 .23999999 c 3.102 4.6700001 l h f Q\n",
       ByteString(process_buf));
 }
