@@ -26,6 +26,12 @@ vars = {
   # support libraries.
   'checkout_android_native_support': 'checkout_android',
 
+  'checkout_clang_coverage_tools': 'False',
+
+  'checkout_clang_tidy': 'False',
+
+  'checkout_clangd': 'False',
+
   'checkout_instrumented_libraries': 'checkout_linux and checkout_configuration != "small" and checkout_configuration != "minimal"',
 
   # Fetch the rust toolchain.
