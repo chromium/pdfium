@@ -382,6 +382,13 @@ luci.recipe(
     use_python3 = True,
 )
 
+luci.recipe(
+    name = "gcs_dep_autoroller",
+    cipd_package = "infra/recipe_bundles/chromium.googlesource.com/infra/infra",
+    use_bbagent = True,
+    use_python3 = True,
+)
+
 # Buckets
 luci.bucket(
     name = "ci",
@@ -431,6 +438,26 @@ luci.bucket(
 )
 
 # Builders
+luci.builder(
+    name = "pdfium_gcs_dep_autoroller",
+    bucket = "ci",
+    executable = "gcs_dep_autoroller",
+    service_account = "pdfium-ci-builder@chops-service-accounts.iam.gserviceaccount.com",
+    dimensions = {
+        "cores": "8",
+        "cpu": "x86-64",
+        "os": "Ubuntu-20.04",
+        "pool": "luci.flex.ci",
+    },
+    properties = {
+        "source_url": "https://chromium.googlesource.com/chromium/src.git",
+        "destination_url": "https://pdfium.googlesource.com/pdfium.git",
+        "source_packages": "src/third_party/llvm-build/Release+Asserts",
+        "destination_packages": "third_party/llvm-build/Release+Asserts"
+    },
+    # TODO(kimstephanie): Add schedule once builder is ready
+)
+
 luci.builder(
     name = "pdfium_analysis",
     bucket = "try",
