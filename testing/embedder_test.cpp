@@ -889,6 +889,9 @@ void EmbedderTest::ClosePDFFileForWrite() {
 }
 #endif
 
+EmbedderTest::ScopedEmbedderTestPage::ScopedEmbedderTestPage()
+    : test_(nullptr), page_(nullptr) {}
+
 EmbedderTest::ScopedEmbedderTestPage::ScopedEmbedderTestPage(EmbedderTest* test,
                                                              int page_index)
     : test_(test), page_(test->LoadPage(page_index)) {}

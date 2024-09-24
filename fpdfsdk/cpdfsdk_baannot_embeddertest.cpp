@@ -17,25 +17,31 @@ class CPDFSDKBAAnnotTest : public EmbedderTest {
  public:
   void SetUp() override {
     EmbedderTest::SetUp();
-    SetUpBAAnnot();
-  }
-
-  void TearDown() override {
-    UnloadPage(m_page);
-    EmbedderTest::TearDown();
-  }
-
-  void SetUpBAAnnot() {
     ASSERT_TRUE(OpenDocument("links_highlights_annots.pdf"));
-    m_page = LoadPage(0);
-    ASSERT_TRUE(m_page);
+  }
 
+  ScopedEmbedderTestPage SetUpBAAnnot() {
+    ScopedEmbedderTestPage page = LoadScopedPage(0);
+    if (!page) {
+      ADD_FAILURE();
+      return ScopedEmbedderTestPage();
+    }
     m_pFormFillEnv =
         CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
-    ASSERT_TRUE(m_pFormFillEnv);
+    if (!m_pFormFillEnv) {
+      ADD_FAILURE();
+      return ScopedEmbedderTestPage();
+    }
+
     m_pPageView =
-        m_pFormFillEnv->GetOrCreatePageView(IPDFPageFromFPDFPage(m_page));
-    ASSERT_TRUE(m_pPageView);
+        m_pFormFillEnv->GetOrCreatePageView(IPDFPageFromFPDFPage(page.get()));
+
+    if (!m_pPageView) {
+      ADD_FAILURE();
+      return ScopedEmbedderTestPage();
+    }
+
+    return page;
   }
 
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const { return m_pFormFillEnv; }
@@ -57,12 +63,14 @@ class CPDFSDKBAAnnotTest : public EmbedderTest {
   }
 
  private:
-  FPDF_PAGE m_page = nullptr;
   CPDFSDK_PageView* m_pPageView = nullptr;
   CPDFSDK_FormFillEnvironment* m_pFormFillEnv = nullptr;
 };
 
 TEST_F(CPDFSDKBAAnnotTest, TabToLinkOrHighlightAnnot) {
+  ScopedEmbedderTestPage page = SetUpBAAnnot();
+  ASSERT_TRUE(page);
+
   std::vector<CPDF_Annot::Subtype> focusable_annot_types = {
       CPDF_Annot::Subtype::WIDGET, CPDF_Annot::Subtype::LINK,
       CPDF_Annot::Subtype::HIGHLIGHT};

@@ -15,20 +15,14 @@ class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
  protected:
   void SetUp() override {
     EmbedderTest::SetUp();
-    CreateAndInitializeFormPDF();
+    ASSERT_TRUE(OpenDocument("click_form.pdf"));
   }
 
   void TearDown() override {
-    UnloadPage(page_);
     EmbedderTest::TearDown();
   }
 
   void CreateAndInitializeFormPDF() {
-    ASSERT_TRUE(OpenDocument("click_form.pdf"));
-
-    page_ = LoadPage(0);
-    ASSERT_TRUE(page_);
-
     formfill_env_ = CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
     CPDFSDK_AnnotIterator it(formfill_env_->GetPageViewAtIndex(0),
                              {CPDF_Annot::Subtype::WIDGET});
@@ -98,7 +92,6 @@ class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
   CPWL_Wnd* GetWindow() const { return window_; }
 
  private:
-  FPDF_PAGE page_;
   CFFL_FormField* form_filler_;
   CPDFSDK_Widget* widget_checkbox_;
   CPDFSDK_Widget* widget_readonly_checkbox_;
@@ -109,6 +102,10 @@ class CPWLSpecialButtonEmbedderTest : public EmbedderTest {
 };
 
 TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnReadOnlyCheckBox) {
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  CreateAndInitializeFormPDF();
+
   FormFillerAndWindowSetup(GetCPDFSDKWidgetReadOnlyCheckBox());
   CPWL_CheckBox* check_box = static_cast<CPWL_CheckBox*>(GetWindow());
   EXPECT_TRUE(check_box->IsChecked());
@@ -118,6 +115,10 @@ TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnReadOnlyCheckBox) {
 }
 
 TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnCheckBox) {
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  CreateAndInitializeFormPDF();
+
   FormFillerAndWindowSetup(GetCPDFSDKWidgetCheckBox());
   CPWL_CheckBox* check_box = static_cast<CPWL_CheckBox*>(GetWindow());
   EXPECT_TRUE(GetCPDFSDKFormFillEnv()->GetInteractiveFormFiller()->OnChar(
@@ -130,6 +131,10 @@ TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnCheckBox) {
 }
 
 TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnReadOnlyRadioButton) {
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  CreateAndInitializeFormPDF();
+
   FormFillerAndWindowSetup(GetCPDFSDKWidgetReadOnlyRadioButton());
   CPWL_RadioButton* radio_button = static_cast<CPWL_RadioButton*>(GetWindow());
   EXPECT_FALSE(radio_button->IsChecked());
@@ -139,6 +144,10 @@ TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnReadOnlyRadioButton) {
 }
 
 TEST_F(CPWLSpecialButtonEmbedderTest, EnterOnRadioButton) {
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  CreateAndInitializeFormPDF();
+
   FormFillerAndWindowSetup(GetCPDFSDKWidgetRadioButton());
   CPWL_RadioButton* radio_button = static_cast<CPWL_RadioButton*>(GetWindow());
   EXPECT_TRUE(GetCPDFSDKFormFillEnv()->GetInteractiveFormFiller()->OnChar(
