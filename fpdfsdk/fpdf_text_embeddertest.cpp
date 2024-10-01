@@ -8,7 +8,6 @@
 #include <vector>
 
 #include "build/build_config.h"
-#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/fx_font.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -63,9 +62,12 @@ TEST_F(FPDFTextEmbedderTest, Text) {
               ElementsAreArray(kHelloGoodbyeText));
 
   // Count does not include the terminating NUL in the string literal.
-  EXPECT_EQ(kHelloGoodbyeTextSize - 1, FPDFText_CountChars(textpage.get()));
-  for (size_t i = 0; i < kHelloGoodbyeTextSize - 1; ++i) {
-    EXPECT_EQ(static_cast<unsigned int>(UNSAFE_TODO(kHelloGoodbyeText[i])),
+  // Neither does ByteStringView::GetLength().
+  ByteStringView expected_text(kHelloGoodbyeText);
+  EXPECT_EQ(static_cast<int>(expected_text.GetLength()),
+            FPDFText_CountChars(textpage.get()));
+  for (size_t i = 0; i < expected_text.GetLength(); ++i) {
+    EXPECT_EQ(static_cast<unsigned int>(expected_text[i]),
               FPDFText_GetUnicode(textpage.get(), i))
         << " at " << i;
   }
@@ -1768,7 +1770,7 @@ TEST_F(FPDFTextEmbedderTest, SmallType3Glyph) {
 TEST_F(FPDFTextEmbedderTest, BigtableTextExtraction) {
   constexpr char kExpectedText[] =
       "{fay,jeff,sanjay,wilsonh,kerr,m3b,tushar,\x02k es,gruber}@google.com";
-  constexpr int kExpectedTextCount = std::size(kExpectedText) - 1;
+  ByteStringView expected_text(kExpectedText);
 
   ASSERT_TRUE(OpenDocument("bigtable_mini.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
@@ -1777,11 +1779,10 @@ TEST_F(FPDFTextEmbedderTest, BigtableTextExtraction) {
   ScopedFPDFTextPage text_page(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(text_page);
   int char_count = FPDFText_CountChars(text_page.get());
-  ASSERT_GE(char_count, 0);
-  ASSERT_EQ(kExpectedTextCount, char_count);
+  ASSERT_EQ(static_cast<int>(expected_text.GetLength()), char_count);
 
-  for (int i = 0; i < kExpectedTextCount; ++i) {
-    EXPECT_EQ(static_cast<uint32_t>(UNSAFE_TODO(kExpectedText[i])),
+  for (size_t i = 0; i < expected_text.GetLength(); ++i) {
+    EXPECT_EQ(static_cast<uint32_t>(expected_text[i]),
               FPDFText_GetUnicode(text_page.get(), i));
   }
 }
