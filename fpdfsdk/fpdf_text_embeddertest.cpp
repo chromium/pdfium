@@ -1787,6 +1787,51 @@ TEST_F(FPDFTextEmbedderTest, BigtableTextExtraction) {
   }
 }
 
+TEST_F(FPDFTextEmbedderTest, BigtableTextRects) {
+  struct TextRect {
+    double left;
+    double top;
+    double right;
+    double bottom;
+  };
+  // TODO(crbug.com/40448046): The PDF uses fonts [/F2, /F1, /F2, /F1] with a
+  // constant size on a single line. FPDFText_CountRects() should merge the text
+  // into 4 rects.
+  constexpr auto kExpectedRects = fxcrt::ToArray<TextRect>({
+      {7.0195, 657.8847, 10.3102, 648.9273},
+      {11.1978, 657.4722, 13.9057, 651.1599},
+      {14.1085, 655.3652, 22.2230, 649.2321},
+      {21.9279, 657.4722, 33.2883, 649.2590},
+      {33.3711, 657.4722, 61.1938, 649.2321},
+      {60.8897, 657.3826, 97.9119, 649.7881},
+      {98.0787, 655.3831, 107.6010, 651.0792},
+      {107.6535, 657.3826, 149.5713, 649.7881},
+      {149.5072, 657.3826, 158.1329, 649.7881},
+      {161.1511, 657.3826, 193.8335, 649.2321},
+      {194.4253, 657.8847, 197.7160, 648.9273},
+      {198.8009, 657.3826, 248.5284, 649.2321},
+  });
+
+  ASSERT_TRUE(OpenDocument("bigtable_mini.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(textpage);
+
+  ASSERT_EQ(65, FPDFText_CountChars(textpage.get()));
+  ASSERT_EQ(12, FPDFText_CountRects(textpage.get(), 0, 65));
+  for (size_t i = 0; i < kExpectedRects.size(); ++i) {
+    TextRect result;
+    ASSERT_TRUE(FPDFText_GetRect(textpage.get(), i, &result.left, &result.top,
+                                 &result.right, &result.bottom));
+    EXPECT_NEAR(kExpectedRects[i].left, result.left, 0.001);
+    EXPECT_NEAR(kExpectedRects[i].top, result.top, 0.001);
+    EXPECT_NEAR(kExpectedRects[i].right, result.right, 0.001);
+    EXPECT_NEAR(kExpectedRects[i].bottom, result.bottom, 0.001);
+  }
+}
+
 TEST_F(FPDFTextEmbedderTest, Bug1769) {
   ASSERT_TRUE(OpenDocument("bug_1769.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
