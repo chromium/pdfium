@@ -52,36 +52,36 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
   unsigned short buffer[128];
   fxcrt::Fill(buffer, 0xbdbd);
 
   // Check that edge cases are handled gracefully
-  EXPECT_EQ(0, FPDFText_GetText(textpage, 0, 128, nullptr));
-  EXPECT_EQ(0, FPDFText_GetText(textpage, -1, 128, buffer));
-  EXPECT_EQ(0, FPDFText_GetText(textpage, 0, -1, buffer));
-  EXPECT_EQ(1, FPDFText_GetText(textpage, 0, 0, buffer));
+  EXPECT_EQ(0, FPDFText_GetText(textpage.get(), 0, 128, nullptr));
+  EXPECT_EQ(0, FPDFText_GetText(textpage.get(), -1, 128, buffer));
+  EXPECT_EQ(0, FPDFText_GetText(textpage.get(), 0, -1, buffer));
+  EXPECT_EQ(1, FPDFText_GetText(textpage.get(), 0, 0, buffer));
   EXPECT_EQ(0, buffer[0]);
 
   // Keep going and check the next case.
   fxcrt::Fill(buffer, 0xbdbd);
-  EXPECT_EQ(2, FPDFText_GetText(textpage, 0, 1, buffer));
+  EXPECT_EQ(2, FPDFText_GetText(textpage.get(), 0, 1, buffer));
   EXPECT_EQ(kHelloGoodbyeText[0], buffer[0]);
   EXPECT_EQ(0, buffer[1]);
 
   // Check includes the terminating NUL that is provided.
-  int num_chars = FPDFText_GetText(textpage, 0, 128, buffer);
+  int num_chars = FPDFText_GetText(textpage.get(), 0, 128, buffer);
   ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
   EXPECT_TRUE(
       check_unsigned_shorts(kHelloGoodbyeText, buffer, kHelloGoodbyeTextSize));
 
   // Count does not include the terminating NUL in the string literal.
-  EXPECT_EQ(kHelloGoodbyeTextSize - 1, FPDFText_CountChars(textpage));
+  EXPECT_EQ(kHelloGoodbyeTextSize - 1, FPDFText_CountChars(textpage.get()));
   for (size_t i = 0; i < kHelloGoodbyeTextSize - 1; ++i) {
     EXPECT_EQ(static_cast<unsigned int>(UNSAFE_TODO(kHelloGoodbyeText[i])),
-              FPDFText_GetUnicode(textpage, i))
+              FPDFText_GetUnicode(textpage.get(), i))
         << " at " << i;
   }
 
@@ -91,12 +91,12 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   static const char kSmallExpected[] = "Hello";
   unsigned short small_buffer[12];
   fxcrt::Fill(buffer, 0xbdbd);
-  EXPECT_EQ(6, FPDFText_GetText(textpage, 0, 5, small_buffer));
+  EXPECT_EQ(6, FPDFText_GetText(textpage.get(), 0, 5, small_buffer));
   EXPECT_TRUE(check_unsigned_shorts(kSmallExpected, small_buffer,
                                     sizeof(kSmallExpected)));
 
-  EXPECT_EQ(12.0, FPDFText_GetFontSize(textpage, 0));
-  EXPECT_EQ(16.0, FPDFText_GetFontSize(textpage, 15));
+  EXPECT_EQ(12.0, FPDFText_GetFontSize(textpage.get(), 0));
+  EXPECT_EQ(16.0, FPDFText_GetFontSize(textpage.get(), 15));
 
   double left = 1.0;
   double right = 2.0;
@@ -107,26 +107,31 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   EXPECT_DOUBLE_EQ(2.0, right);
   EXPECT_DOUBLE_EQ(3.0, bottom);
   EXPECT_DOUBLE_EQ(4.0, top);
-  EXPECT_FALSE(FPDFText_GetCharBox(textpage, -1, &left, &right, &bottom, &top));
+  EXPECT_FALSE(
+      FPDFText_GetCharBox(textpage.get(), -1, &left, &right, &bottom, &top));
   EXPECT_DOUBLE_EQ(1.0, left);
   EXPECT_DOUBLE_EQ(2.0, right);
   EXPECT_DOUBLE_EQ(3.0, bottom);
   EXPECT_DOUBLE_EQ(4.0, top);
-  EXPECT_FALSE(FPDFText_GetCharBox(textpage, 55, &left, &right, &bottom, &top));
+  EXPECT_FALSE(
+      FPDFText_GetCharBox(textpage.get(), 55, &left, &right, &bottom, &top));
   EXPECT_DOUBLE_EQ(1.0, left);
   EXPECT_DOUBLE_EQ(2.0, right);
   EXPECT_DOUBLE_EQ(3.0, bottom);
   EXPECT_DOUBLE_EQ(4.0, top);
   EXPECT_FALSE(
-      FPDFText_GetCharBox(textpage, 4, nullptr, &right, &bottom, &top));
-  EXPECT_FALSE(FPDFText_GetCharBox(textpage, 4, &left, nullptr, &bottom, &top));
-  EXPECT_FALSE(FPDFText_GetCharBox(textpage, 4, &left, &right, nullptr, &top));
+      FPDFText_GetCharBox(textpage.get(), 4, nullptr, &right, &bottom, &top));
   EXPECT_FALSE(
-      FPDFText_GetCharBox(textpage, 4, &left, &right, &bottom, nullptr));
+      FPDFText_GetCharBox(textpage.get(), 4, &left, nullptr, &bottom, &top));
   EXPECT_FALSE(
-      FPDFText_GetCharBox(textpage, 4, nullptr, nullptr, nullptr, nullptr));
+      FPDFText_GetCharBox(textpage.get(), 4, &left, &right, nullptr, &top));
+  EXPECT_FALSE(
+      FPDFText_GetCharBox(textpage.get(), 4, &left, &right, &bottom, nullptr));
+  EXPECT_FALSE(FPDFText_GetCharBox(textpage.get(), 4, nullptr, nullptr, nullptr,
+                                   nullptr));
 
-  EXPECT_TRUE(FPDFText_GetCharBox(textpage, 4, &left, &right, &bottom, &top));
+  EXPECT_TRUE(
+      FPDFText_GetCharBox(textpage.get(), 4, &left, &right, &bottom, &top));
   EXPECT_NEAR(41.120, left, 0.001);
   EXPECT_NEAR(46.208, right, 0.001);
   EXPECT_NEAR(49.892, bottom, 0.001);
@@ -138,19 +143,19 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   EXPECT_FLOAT_EQ(3.0f, rect.right);
   EXPECT_FLOAT_EQ(2.0f, rect.bottom);
   EXPECT_FLOAT_EQ(1.0f, rect.top);
-  EXPECT_FALSE(FPDFText_GetLooseCharBox(textpage, -1, &rect));
+  EXPECT_FALSE(FPDFText_GetLooseCharBox(textpage.get(), -1, &rect));
   EXPECT_FLOAT_EQ(4.0f, rect.left);
   EXPECT_FLOAT_EQ(3.0f, rect.right);
   EXPECT_FLOAT_EQ(2.0f, rect.bottom);
   EXPECT_FLOAT_EQ(1.0f, rect.top);
-  EXPECT_FALSE(FPDFText_GetLooseCharBox(textpage, 55, &rect));
+  EXPECT_FALSE(FPDFText_GetLooseCharBox(textpage.get(), 55, &rect));
   EXPECT_FLOAT_EQ(4.0f, rect.left);
   EXPECT_FLOAT_EQ(3.0f, rect.right);
   EXPECT_FLOAT_EQ(2.0f, rect.bottom);
   EXPECT_FLOAT_EQ(1.0f, rect.top);
-  EXPECT_FALSE(FPDFText_GetLooseCharBox(textpage, 4, nullptr));
+  EXPECT_FALSE(FPDFText_GetLooseCharBox(textpage.get(), 4, nullptr));
 
-  EXPECT_TRUE(FPDFText_GetLooseCharBox(textpage, 4, &rect));
+  EXPECT_TRUE(FPDFText_GetLooseCharBox(textpage.get(), 4, &rect));
   EXPECT_FLOAT_EQ(40.664001f, rect.left);
   EXPECT_FLOAT_EQ(46.664001f, rect.right);
   EXPECT_FLOAT_EQ(47.667271f, rect.bottom);
@@ -158,27 +163,32 @@ TEST_F(FPDFTextEmbedderTest, Text) {
 
   double x = 0.0;
   double y = 0.0;
-  EXPECT_TRUE(FPDFText_GetCharOrigin(textpage, 4, &x, &y));
+  EXPECT_TRUE(FPDFText_GetCharOrigin(textpage.get(), 4, &x, &y));
   EXPECT_NEAR(40.664, x, 0.001);
   EXPECT_NEAR(50.000, y, 0.001);
 
-  EXPECT_EQ(4, FPDFText_GetCharIndexAtPos(textpage, 42.0, 50.0, 1.0, 1.0));
-  EXPECT_EQ(-1, FPDFText_GetCharIndexAtPos(textpage, 0.0, 0.0, 1.0, 1.0));
-  EXPECT_EQ(-1, FPDFText_GetCharIndexAtPos(textpage, 199.0, 199.0, 1.0, 1.0));
-
-  // Test out of range indicies.
+  EXPECT_EQ(4,
+            FPDFText_GetCharIndexAtPos(textpage.get(), 42.0, 50.0, 1.0, 1.0));
+  EXPECT_EQ(-1, FPDFText_GetCharIndexAtPos(textpage.get(), 0.0, 0.0, 1.0, 1.0));
   EXPECT_EQ(-1,
-            FPDFText_GetCharIndexAtPos(textpage, 42.0, 10000000.0, 1.0, 1.0));
-  EXPECT_EQ(-1, FPDFText_GetCharIndexAtPos(textpage, -1.0, 50.0, 1.0, 1.0));
+            FPDFText_GetCharIndexAtPos(textpage.get(), 199.0, 199.0, 1.0, 1.0));
+
+  // Test out of range indices.
+  EXPECT_EQ(-1, FPDFText_GetCharIndexAtPos(textpage.get(), 42.0, 10000000.0,
+                                           1.0, 1.0));
+  EXPECT_EQ(-1,
+            FPDFText_GetCharIndexAtPos(textpage.get(), -1.0, 50.0, 1.0, 1.0));
 
   // Count does not include the terminating NUL in the string literal.
-  EXPECT_EQ(2, FPDFText_CountRects(textpage, 0, kHelloGoodbyeTextSize - 1));
+  EXPECT_EQ(2,
+            FPDFText_CountRects(textpage.get(), 0, kHelloGoodbyeTextSize - 1));
 
   left = 0.0;
   right = 0.0;
   bottom = 0.0;
   top = 0.0;
-  EXPECT_TRUE(FPDFText_GetRect(textpage, 1, &left, &top, &right, &bottom));
+  EXPECT_TRUE(
+      FPDFText_GetRect(textpage.get(), 1, &left, &top, &right, &bottom));
   EXPECT_NEAR(20.800, left, 0.001);
   EXPECT_NEAR(135.040, right, 0.001);
   EXPECT_NEAR(96.688, bottom, 0.001);
@@ -189,7 +199,8 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   right = -1.0;
   bottom = -1.0;
   top = -1.0;
-  EXPECT_FALSE(FPDFText_GetRect(textpage, -1, &left, &top, &right, &bottom));
+  EXPECT_FALSE(
+      FPDFText_GetRect(textpage.get(), -1, &left, &top, &right, &bottom));
   EXPECT_EQ(0.0, left);
   EXPECT_EQ(0.0, right);
   EXPECT_EQ(0.0, bottom);
@@ -199,39 +210,38 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   right = -2.0;
   bottom = -2.0;
   top = -2.0;
-  EXPECT_FALSE(FPDFText_GetRect(textpage, 2, &left, &top, &right, &bottom));
+  EXPECT_FALSE(
+      FPDFText_GetRect(textpage.get(), 2, &left, &top, &right, &bottom));
   EXPECT_EQ(0.0, left);
   EXPECT_EQ(0.0, right);
   EXPECT_EQ(0.0, bottom);
   EXPECT_EQ(0.0, top);
 
-  EXPECT_EQ(
-      9, FPDFText_GetBoundedText(textpage, 41.0, 56.0, 82.0, 48.0, nullptr, 0));
+  EXPECT_EQ(9, FPDFText_GetBoundedText(textpage.get(), 41.0, 56.0, 82.0, 48.0,
+                                       nullptr, 0));
 
   // Extract starting at character 4 as above.
   fxcrt::Fill(buffer, 0xbdbd);
-  EXPECT_EQ(
-      1, FPDFText_GetBoundedText(textpage, 41.0, 56.0, 82.0, 48.0, buffer, 1));
+  EXPECT_EQ(1, FPDFText_GetBoundedText(textpage.get(), 41.0, 56.0, 82.0, 48.0,
+                                       buffer, 1));
   EXPECT_TRUE(
       check_unsigned_shorts(UNSAFE_TODO(kHelloGoodbyeText + 4), buffer, 1));
   EXPECT_EQ(0xbdbd, buffer[1]);
 
   fxcrt::Fill(buffer, 0xbdbd);
-  EXPECT_EQ(
-      9, FPDFText_GetBoundedText(textpage, 41.0, 56.0, 82.0, 48.0, buffer, 9));
+  EXPECT_EQ(9, FPDFText_GetBoundedText(textpage.get(), 41.0, 56.0, 82.0, 48.0,
+                                       buffer, 9));
   EXPECT_TRUE(
       check_unsigned_shorts(UNSAFE_TODO(kHelloGoodbyeText + 4), buffer, 8));
   EXPECT_EQ(0xbdbd, buffer[9]);
 
   fxcrt::Fill(buffer, 0xbdbd);
-  EXPECT_EQ(10, FPDFText_GetBoundedText(textpage, 41.0, 56.0, 82.0, 48.0,
+  EXPECT_EQ(10, FPDFText_GetBoundedText(textpage.get(), 41.0, 56.0, 82.0, 48.0,
                                         buffer, 128));
   EXPECT_TRUE(
       check_unsigned_shorts(UNSAFE_TODO(kHelloGoodbyeText + 4), buffer, 9));
   EXPECT_EQ(0u, buffer[9]);
   EXPECT_EQ(0xbdbd, buffer[10]);
-
-  FPDFText_ClosePage(textpage);
 }
 
 TEST_F(FPDFTextEmbedderTest, TextVertical) {
@@ -239,35 +249,33 @@ TEST_F(FPDFTextEmbedderTest, TextVertical) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
-  EXPECT_EQ(12.0, FPDFText_GetFontSize(textpage, 0));
+  EXPECT_EQ(12.0, FPDFText_GetFontSize(textpage.get(), 0));
 
   double x = 0.0;
   double y = 0.0;
-  EXPECT_TRUE(FPDFText_GetCharOrigin(textpage, 1, &x, &y));
+  EXPECT_TRUE(FPDFText_GetCharOrigin(textpage.get(), 1, &x, &y));
   EXPECT_NEAR(6.664, x, 0.001);
   EXPECT_NEAR(171.508, y, 0.001);
 
-  EXPECT_TRUE(FPDFText_GetCharOrigin(textpage, 2, &x, &y));
+  EXPECT_TRUE(FPDFText_GetCharOrigin(textpage.get(), 2, &x, &y));
   EXPECT_NEAR(8.668, x, 0.001);
   EXPECT_NEAR(160.492, y, 0.001);
 
   FS_RECTF rect;
-  EXPECT_TRUE(FPDFText_GetLooseCharBox(textpage, 1, &rect));
+  EXPECT_TRUE(FPDFText_GetLooseCharBox(textpage.get(), 1, &rect));
   EXPECT_NEAR(4, rect.left, 0.001);
   EXPECT_NEAR(16, rect.right, 0.001);
   EXPECT_NEAR(178.984, rect.bottom, 0.001);
   EXPECT_NEAR(170.308, rect.top, 0.001);
 
-  EXPECT_TRUE(FPDFText_GetLooseCharBox(textpage, 2, &rect));
+  EXPECT_TRUE(FPDFText_GetLooseCharBox(textpage.get(), 2, &rect));
   EXPECT_NEAR(4, rect.left, 0.001);
   EXPECT_NEAR(16, rect.right, 0.001);
   EXPECT_NEAR(170.308, rect.bottom, 0.001);
   EXPECT_NEAR(159.292, rect.top, 0.001);
-
-  FPDFText_ClosePage(textpage);
 }
 
 TEST_F(FPDFTextEmbedderTest, TextHebrewMirrored) {
@@ -302,7 +310,7 @@ TEST_F(FPDFTextEmbedderTest, TextSearch) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
   ScopedFPDFWideString nope = GetFPDFWideString(L"nope");
@@ -312,7 +320,8 @@ TEST_F(FPDFTextEmbedderTest, TextSearch) {
 
   {
     // No occurrences of "nope" in test page.
-    ScopedFPDFTextFind search(FPDFText_FindStart(textpage, nope.get(), 0, 0));
+    ScopedFPDFTextFind search(
+        FPDFText_FindStart(textpage.get(), nope.get(), 0, 0));
     EXPECT_TRUE(search);
     EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
     EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
@@ -330,7 +339,8 @@ TEST_F(FPDFTextEmbedderTest, TextSearch) {
 
   {
     // Two occurrences of "world" in test page.
-    ScopedFPDFTextFind search(FPDFText_FindStart(textpage, world.get(), 0, 2));
+    ScopedFPDFTextFind search(
+        FPDFText_FindStart(textpage.get(), world.get(), 0, 2));
     EXPECT_TRUE(search);
 
     // Remains not found until advanced.
@@ -366,7 +376,7 @@ TEST_F(FPDFTextEmbedderTest, TextSearch) {
   {
     // Exact search unaffected by case sensitiity and whole word flags.
     ScopedFPDFTextFind search(FPDFText_FindStart(
-        textpage, world.get(), FPDF_MATCHCASE | FPDF_MATCHWHOLEWORD, 0));
+        textpage.get(), world.get(), FPDF_MATCHCASE | FPDF_MATCHWHOLEWORD, 0));
     EXPECT_TRUE(search);
     EXPECT_TRUE(FPDFText_FindNext(search.get()));
     EXPECT_EQ(7, FPDFText_GetSchResultIndex(search.get()));
@@ -376,7 +386,7 @@ TEST_F(FPDFTextEmbedderTest, TextSearch) {
   {
     // Default is case-insensitive, so matching agaist caps works.
     ScopedFPDFTextFind search(
-        FPDFText_FindStart(textpage, world_caps.get(), 0, 0));
+        FPDFText_FindStart(textpage.get(), world_caps.get(), 0, 0));
     EXPECT_TRUE(search);
     EXPECT_TRUE(FPDFText_FindNext(search.get()));
     EXPECT_EQ(7, FPDFText_GetSchResultIndex(search.get()));
@@ -385,8 +395,8 @@ TEST_F(FPDFTextEmbedderTest, TextSearch) {
 
   {
     // But can be made case sensitive, in which case this fails.
-    ScopedFPDFTextFind search(
-        FPDFText_FindStart(textpage, world_caps.get(), FPDF_MATCHCASE, 0));
+    ScopedFPDFTextFind search(FPDFText_FindStart(
+        textpage.get(), world_caps.get(), FPDF_MATCHCASE, 0));
     EXPECT_FALSE(FPDFText_FindNext(search.get()));
     EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
     EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
@@ -395,7 +405,7 @@ TEST_F(FPDFTextEmbedderTest, TextSearch) {
   {
     // Default is match anywhere within word, so matching substring works.
     ScopedFPDFTextFind search(
-        FPDFText_FindStart(textpage, world_substr.get(), 0, 0));
+        FPDFText_FindStart(textpage.get(), world_substr.get(), 0, 0));
     EXPECT_TRUE(FPDFText_FindNext(search.get()));
     EXPECT_EQ(8, FPDFText_GetSchResultIndex(search.get()));
     EXPECT_EQ(4, FPDFText_GetSchCount(search.get()));
@@ -403,13 +413,11 @@ TEST_F(FPDFTextEmbedderTest, TextSearch) {
 
   {
     // But can be made to mach word boundaries, in which case this fails.
-    ScopedFPDFTextFind search(FPDFText_FindStart(textpage, world_substr.get(),
-                                                 FPDF_MATCHWHOLEWORD, 0));
+    ScopedFPDFTextFind search(FPDFText_FindStart(
+        textpage.get(), world_substr.get(), FPDF_MATCHWHOLEWORD, 0));
     EXPECT_FALSE(FPDFText_FindNext(search.get()));
     // TODO(tsepez): investigate strange index/count values in this state.
   }
-
-  FPDFText_ClosePage(textpage);
 }
 
 TEST_F(FPDFTextEmbedderTest, TextSearchConsecutive) {
@@ -417,14 +425,15 @@ TEST_F(FPDFTextEmbedderTest, TextSearchConsecutive) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
   ScopedFPDFWideString aaaa = GetFPDFWideString(L"aaaa");
 
   {
     // Search for "aaaa" yields 2 results in "aaaaaaaaaa".
-    ScopedFPDFTextFind search(FPDFText_FindStart(textpage, aaaa.get(), 0, 0));
+    ScopedFPDFTextFind search(
+        FPDFText_FindStart(textpage.get(), aaaa.get(), 0, 0));
     EXPECT_TRUE(search);
 
     // Remains not found until advanced.
@@ -461,7 +470,7 @@ TEST_F(FPDFTextEmbedderTest, TextSearchConsecutive) {
     // Search for "aaaa" yields 7 results in "aaaaaaaaaa", when searching with
     // FPDF_CONSECUTIVE.
     ScopedFPDFTextFind search(
-        FPDFText_FindStart(textpage, aaaa.get(), FPDF_CONSECUTIVE, 0));
+        FPDFText_FindStart(textpage.get(), aaaa.get(), FPDF_CONSECUTIVE, 0));
     EXPECT_TRUE(search);
 
     // Remains not found until advanced.
@@ -491,8 +500,6 @@ TEST_F(FPDFTextEmbedderTest, TextSearchConsecutive) {
     EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
     EXPECT_EQ(4, FPDFText_GetSchCount(search.get()));
   }
-
-  FPDFText_ClosePage(textpage);
 }
 
 TEST_F(FPDFTextEmbedderTest, TextSearchTermAtEnd) {
@@ -599,7 +606,7 @@ TEST_F(FPDFTextEmbedderTest, MAYBE_TextSearchLatinExtended) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
   // Upper/lowercase 'a' with breve.
@@ -607,7 +614,7 @@ TEST_F(FPDFTextEmbedderTest, MAYBE_TextSearchLatinExtended) {
   constexpr FPDF_WCHAR kNeedleLower[] = {0x0103, 0x0000};
 
   for (const auto* needle : {kNeedleUpper, kNeedleLower}) {
-    ScopedFPDFTextFind search(FPDFText_FindStart(textpage, needle, 0, 0));
+    ScopedFPDFTextFind search(FPDFText_FindStart(textpage.get(), needle, 0, 0));
     EXPECT_TRUE(search);
     EXPECT_EQ(0, FPDFText_GetSchResultIndex(search.get()));
     EXPECT_EQ(0, FPDFText_GetSchCount(search.get()));
@@ -622,8 +629,6 @@ TEST_F(FPDFTextEmbedderTest, MAYBE_TextSearchLatinExtended) {
     // And no more than 2 results.
     EXPECT_FALSE(FPDFText_FindNext(search.get()));
   }
-
-  FPDFText_ClosePage(textpage);
 }
 
 // Test that the page has characters despite a bad stream length.
@@ -632,11 +637,9 @@ TEST_F(FPDFTextEmbedderTest, StreamLengthPastEndOfFile) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
-  EXPECT_EQ(13, FPDFText_CountChars(textpage));
-
-  FPDFText_ClosePage(textpage);
+  EXPECT_EQ(13, FPDFText_CountChars(textpage.get()));
 }
 
 TEST_F(FPDFTextEmbedderTest, WebLinks) {
@@ -644,11 +647,11 @@ TEST_F(FPDFTextEmbedderTest, WebLinks) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
   {
-    ScopedFPDFPageLink pagelink(FPDFLink_LoadWebLinks(textpage));
+    ScopedFPDFPageLink pagelink(FPDFLink_LoadWebLinks(textpage.get()));
     EXPECT_TRUE(pagelink);
 
     // Page contains two HTTP-style URLs.
@@ -660,7 +663,7 @@ TEST_F(FPDFTextEmbedderTest, WebLinks) {
     EXPECT_EQ(1, FPDFLink_GetURL(pagelink.get(), -1, nullptr, 0));
   }
 
-  FPDF_PAGELINK pagelink = FPDFLink_LoadWebLinks(textpage);
+  FPDF_PAGELINK pagelink = FPDFLink_LoadWebLinks(textpage.get());
   EXPECT_TRUE(pagelink);
 
   // Query the number of characters required for each link (incl NUL).
@@ -746,7 +749,6 @@ TEST_F(FPDFTextEmbedderTest, WebLinks) {
   EXPECT_EQ(-2.0, top);
 
   FPDFLink_CloseWebLinks(pagelink);
-  FPDFText_ClosePage(textpage);
 }
 
 TEST_F(FPDFTextEmbedderTest, WebLinksAcrossLines) {
@@ -754,10 +756,10 @@ TEST_F(FPDFTextEmbedderTest, WebLinksAcrossLines) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
-  FPDF_PAGELINK pagelink = FPDFLink_LoadWebLinks(textpage);
+  FPDF_PAGELINK pagelink = FPDFLink_LoadWebLinks(textpage.get());
   EXPECT_TRUE(pagelink);
 
   static constexpr auto kExpectedUrls = fxcrt::ToArray<const char*>({
@@ -784,7 +786,6 @@ TEST_F(FPDFTextEmbedderTest, WebLinksAcrossLines) {
   }
 
   FPDFLink_CloseWebLinks(pagelink);
-  FPDFText_ClosePage(textpage);
 }
 
 TEST_F(FPDFTextEmbedderTest, WebLinksAcrossLinesBug) {
@@ -792,10 +793,10 @@ TEST_F(FPDFTextEmbedderTest, WebLinksAcrossLinesBug) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
-  FPDF_PAGELINK pagelink = FPDFLink_LoadWebLinks(textpage);
+  FPDF_PAGELINK pagelink = FPDFLink_LoadWebLinks(textpage.get());
   EXPECT_TRUE(pagelink);
 
   EXPECT_EQ(2, FPDFLink_CountWebLinks(pagelink));
@@ -809,7 +810,6 @@ TEST_F(FPDFTextEmbedderTest, WebLinksAcrossLinesBug) {
   EXPECT_TRUE(check_unsigned_shorts(kExpectedUrl, buffer, kUrlSize));
 
   FPDFLink_CloseWebLinks(pagelink);
-  FPDFText_ClosePage(textpage);
 }
 
 TEST_F(FPDFTextEmbedderTest, WebLinksCharRanges) {
@@ -817,10 +817,10 @@ TEST_F(FPDFTextEmbedderTest, WebLinksCharRanges) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage text_page(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(text_page);
 
-  FPDF_PAGELINK page_link = FPDFLink_LoadWebLinks(text_page);
+  FPDF_PAGELINK page_link = FPDFLink_LoadWebLinks(text_page.get());
   EXPECT_TRUE(page_link);
 
   // Test for char indices of a valid link
@@ -856,7 +856,6 @@ TEST_F(FPDFTextEmbedderTest, WebLinksCharRanges) {
   EXPECT_EQ(char_count, -8);
 
   FPDFLink_CloseWebLinks(page_link);
-  FPDFText_ClosePage(text_page);
 }
 
 TEST_F(FPDFTextEmbedderTest, AnnotLinks) {
@@ -927,19 +926,19 @@ TEST_F(FPDFTextEmbedderTest, GetFontSize) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
   constexpr auto kExpectedFontsSizes = fxcrt::ToArray<const double>(
       {12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 1,  1,
        16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16});
 
-  int count = FPDFText_CountChars(textpage);
+  int count = FPDFText_CountChars(textpage.get());
   ASSERT_EQ(std::size(kExpectedFontsSizes), static_cast<size_t>(count));
   for (int i = 0; i < count; ++i) {
-    EXPECT_EQ(kExpectedFontsSizes[i], FPDFText_GetFontSize(textpage, i)) << i;
+    EXPECT_EQ(kExpectedFontsSizes[i], FPDFText_GetFontSize(textpage.get(), i))
+        << i;
   }
-  FPDFText_ClosePage(textpage);
 }
 
 TEST_F(FPDFTextEmbedderTest, GetFontInfo) {
@@ -947,7 +946,7 @@ TEST_F(FPDFTextEmbedderTest, GetFontInfo) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
   std::vector<char> font_name;
   size_t num_chars1 = strlen("Hello, world!");
@@ -956,7 +955,7 @@ TEST_F(FPDFTextEmbedderTest, GetFontInfo) {
   for (size_t i = 0; i < num_chars1; i++) {
     int flags = -1;
     unsigned long length =
-        FPDFText_GetFontInfo(textpage, i, nullptr, 0, &flags);
+        FPDFText_GetFontInfo(textpage.get(), i, nullptr, 0, &flags);
     static constexpr unsigned long expected_length = sizeof(kExpectedFontName1);
     ASSERT_EQ(expected_length, length);
     EXPECT_EQ(FXFONT_NONSYMBOLIC, flags);
@@ -964,7 +963,7 @@ TEST_F(FPDFTextEmbedderTest, GetFontInfo) {
     std::fill(font_name.begin(), font_name.end(), 'a');
     flags = -1;
     EXPECT_EQ(expected_length,
-              FPDFText_GetFontInfo(textpage, i, font_name.data(),
+              FPDFText_GetFontInfo(textpage.get(), i, font_name.data(),
                                    font_name.size(), &flags));
     EXPECT_STREQ(kExpectedFontName1, font_name.data());
     EXPECT_EQ(FXFONT_NONSYMBOLIC, flags);
@@ -974,24 +973,26 @@ TEST_F(FPDFTextEmbedderTest, GetFontInfo) {
   font_name.pop_back();
   std::fill(font_name.begin(), font_name.end(), 'a');
   EXPECT_EQ(sizeof(kExpectedFontName1),
-            FPDFText_GetFontInfo(textpage, 0, font_name.data(),
+            FPDFText_GetFontInfo(textpage.get(), 0, font_name.data(),
                                  font_name.size(), nullptr));
   for (char a : font_name)
     EXPECT_EQ('a', a);
 
   // The text is "Hello, world!\r\nGoodbye, world!", so the next two characters
   // do not have any font information.
-  EXPECT_EQ(0u, FPDFText_GetFontInfo(textpage, num_chars1, font_name.data(),
-                                     font_name.size(), nullptr));
-  EXPECT_EQ(0u, FPDFText_GetFontInfo(textpage, num_chars1 + 1, font_name.data(),
-                                     font_name.size(), nullptr));
+  EXPECT_EQ(0u,
+            FPDFText_GetFontInfo(textpage.get(), num_chars1, font_name.data(),
+                                 font_name.size(), nullptr));
+  EXPECT_EQ(
+      0u, FPDFText_GetFontInfo(textpage.get(), num_chars1 + 1, font_name.data(),
+                               font_name.size(), nullptr));
 
   size_t num_chars2 = strlen("Goodbye, world!");
   const char kExpectedFontName2[] = "Helvetica";
   for (size_t i = num_chars1 + 2; i < num_chars1 + num_chars2 + 2; i++) {
     int flags = -1;
     unsigned long length =
-        FPDFText_GetFontInfo(textpage, i, nullptr, 0, &flags);
+        FPDFText_GetFontInfo(textpage.get(), i, nullptr, 0, &flags);
     static constexpr unsigned long expected_length = sizeof(kExpectedFontName2);
     ASSERT_EQ(expected_length, length);
     EXPECT_EQ(FXFONT_NONSYMBOLIC, flags);
@@ -999,7 +1000,7 @@ TEST_F(FPDFTextEmbedderTest, GetFontInfo) {
     std::fill(font_name.begin(), font_name.end(), 'a');
     flags = -1;
     EXPECT_EQ(expected_length,
-              FPDFText_GetFontInfo(textpage, i, font_name.data(),
+              FPDFText_GetFontInfo(textpage.get(), i, font_name.data(),
                                    font_name.size(), &flags));
     EXPECT_STREQ(kExpectedFontName2, font_name.data());
     EXPECT_EQ(FXFONT_NONSYMBOLIC, flags);
@@ -1012,15 +1013,13 @@ TEST_F(FPDFTextEmbedderTest, GetFontInfo) {
                                      font_name.size(), nullptr));
   // No buffer.
   EXPECT_EQ(sizeof(kExpectedFontName1),
-            FPDFText_GetFontInfo(textpage, 0, nullptr, 0, nullptr));
+            FPDFText_GetFontInfo(textpage.get(), 0, nullptr, 0, nullptr));
   // Negative index.
-  EXPECT_EQ(0u, FPDFText_GetFontInfo(textpage, -1, font_name.data(),
+  EXPECT_EQ(0u, FPDFText_GetFontInfo(textpage.get(), -1, font_name.data(),
                                      font_name.size(), nullptr));
   // Out of bounds index.
-  EXPECT_EQ(0u, FPDFText_GetFontInfo(textpage, 1000, font_name.data(),
+  EXPECT_EQ(0u, FPDFText_GetFontInfo(textpage.get(), 1000, font_name.data(),
                                      font_name.size(), nullptr));
-
-  FPDFText_ClosePage(textpage);
 }
 
 TEST_F(FPDFTextEmbedderTest, ToUnicode) {
@@ -1028,13 +1027,11 @@ TEST_F(FPDFTextEmbedderTest, ToUnicode) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
-  ASSERT_EQ(1, FPDFText_CountChars(textpage));
-  EXPECT_EQ(0U, FPDFText_GetUnicode(textpage, 0));
-
-  FPDFText_ClosePage(textpage);
+  ASSERT_EQ(1, FPDFText_CountChars(textpage.get()));
+  EXPECT_EQ(0U, FPDFText_GetUnicode(textpage.get(), 0));
 }
 
 TEST_F(FPDFTextEmbedderTest, IsGenerated) {
@@ -1122,7 +1119,7 @@ TEST_F(FPDFTextEmbedderTest, Bug921) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
   static constexpr auto kData = fxcrt::ToArray<const unsigned int>(
@@ -1130,22 +1127,20 @@ TEST_F(FPDFTextEmbedderTest, Bug921) {
        32,   1089, 1090, 1088, 1072, 1076, 1072, 1085, 1080, 1077, 46,   32});
   static constexpr int kStartIndex = 238;
 
-  ASSERT_EQ(268, FPDFText_CountChars(textpage));
+  ASSERT_EQ(268, FPDFText_CountChars(textpage.get()));
   for (size_t i = 0; i < std::size(kData); ++i) {
-    EXPECT_EQ(kData[i], FPDFText_GetUnicode(textpage, kStartIndex + i));
+    EXPECT_EQ(kData[i], FPDFText_GetUnicode(textpage.get(), kStartIndex + i));
   }
   std::array<unsigned short, std::size(kData) + 1> buffer;
   fxcrt::Fill(buffer, 0xbdbd);
-  int count =
-      FPDFText_GetText(textpage, kStartIndex, kData.size(), buffer.data());
+  int count = FPDFText_GetText(textpage.get(), kStartIndex, kData.size(),
+                               buffer.data());
   ASSERT_GT(count, 0);
   ASSERT_EQ(std::size(kData) + 1, static_cast<size_t>(count));
   for (size_t i = 0; i < std::size(kData); ++i) {
     EXPECT_EQ(kData[i], buffer[i]);
   }
   EXPECT_EQ(0, buffer[kData.size()]);
-
-  FPDFText_ClosePage(textpage);
 }
 
 TEST_F(FPDFTextEmbedderTest, GetTextWithHyphen) {
@@ -1153,7 +1148,7 @@ TEST_F(FPDFTextEmbedderTest, GetTextWithHyphen) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
   // Check that soft hyphens are not included
@@ -1166,7 +1161,8 @@ TEST_F(FPDFTextEmbedderTest, GetTextWithHyphen) {
   {
     constexpr int count = std::size(soft_expected) - 1;
     std::array<unsigned short, soft_expected.size()> buffer = {};
-    EXPECT_EQ(count + 1, FPDFText_GetText(textpage, 0, count, buffer.data()));
+    EXPECT_EQ(count + 1,
+              FPDFText_GetText(textpage.get(), 0, count, buffer.data()));
     EXPECT_THAT(buffer, ElementsAreArray(soft_expected));
   }
 
@@ -1183,13 +1179,11 @@ TEST_F(FPDFTextEmbedderTest, GetTextWithHyphen) {
     constexpr int count = std::size(hard_expected) - 1;
     std::array<unsigned short, hard_expected.size()> buffer;
     EXPECT_EQ(count + 1,
-              FPDFText_GetText(textpage, offset, count, buffer.data()));
+              FPDFText_GetText(textpage.get(), offset, count, buffer.data()));
     for (int i = 0; i < count; i++) {
       EXPECT_EQ(hard_expected[i], buffer[i]);
     }
   }
-
-  FPDFText_ClosePage(textpage);
 }
 
 TEST_F(FPDFTextEmbedderTest, Bug782596) {
@@ -1197,9 +1191,8 @@ TEST_F(FPDFTextEmbedderTest, Bug782596) {
   ASSERT_TRUE(OpenDocument("bug_782596.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
-  FPDFText_ClosePage(textpage);
 }
 
 TEST_F(FPDFTextEmbedderTest, ControlCharacters) {
@@ -1207,13 +1200,13 @@ TEST_F(FPDFTextEmbedderTest, ControlCharacters) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
   // Should not include the control characters in the output
   unsigned short buffer[128];
   fxcrt::Fill(buffer, 0xbdbd);
-  int num_chars = FPDFText_GetText(textpage, 0, 128, buffer);
+  int num_chars = FPDFText_GetText(textpage.get(), 0, 128, buffer);
   ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
   EXPECT_TRUE(
       check_unsigned_shorts(kHelloGoodbyeText, buffer, kHelloGoodbyeTextSize));
@@ -1224,14 +1217,12 @@ TEST_F(FPDFTextEmbedderTest, ControlCharacters) {
   // original stream
   static const int offset = 17;
   fxcrt::Fill(buffer, 0xbdbd);
-  num_chars = FPDFText_GetText(textpage, offset, 128, buffer);
+  num_chars = FPDFText_GetText(textpage.get(), offset, 128, buffer);
 
   ASSERT_GE(num_chars, 0);
   EXPECT_EQ(sizeof(expected_substring), static_cast<size_t>(num_chars));
   EXPECT_TRUE(check_unsigned_shorts(expected_substring, buffer,
                                     sizeof(expected_substring)));
-
-  FPDFText_ClosePage(textpage);
 }
 
 // Testing that hyphen makers (0x0002) are replacing hard hyphens when
@@ -1241,7 +1232,7 @@ TEST_F(FPDFTextEmbedderTest, Bug1029) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
   constexpr int page_range_offset = 171;
@@ -1266,14 +1257,12 @@ TEST_F(FPDFTextEmbedderTest, Bug1029) {
                 "Expected should be the same size as the range being "
                 "extracted from page.");
   EXPECT_LT(page_range_offset + page_range_length,
-            FPDFText_CountChars(textpage));
+            FPDFText_CountChars(textpage.get()));
 
   for (int i = 0; i < page_range_length; ++i) {
     EXPECT_EQ(expected[i],
-              FPDFText_GetUnicode(textpage, page_range_offset + i));
+              FPDFText_GetUnicode(textpage.get(), page_range_offset + i));
   }
-
-  FPDFText_ClosePage(textpage);
 }
 
 TEST_F(FPDFTextEmbedderTest, CountRects) {
@@ -1281,14 +1270,14 @@ TEST_F(FPDFTextEmbedderTest, CountRects) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE textpage = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
   // Sanity check hello_world.pdf.
   // |num_chars| check includes the terminating NUL that is provided.
   {
     unsigned short buffer[128];
-    int num_chars = FPDFText_GetText(textpage, 0, 128, buffer);
+    int num_chars = FPDFText_GetText(textpage.get(), 0, 128, buffer);
     ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
     EXPECT_TRUE(check_unsigned_shorts(kHelloGoodbyeText, buffer,
                                       kHelloGoodbyeTextSize));
@@ -1300,51 +1289,49 @@ TEST_F(FPDFTextEmbedderTest, CountRects) {
   for (int start = 0; start < kHelloWorldEnd; ++start) {
     // Always grab some part of "hello world" and some part of "goodbye world"
     // Since -1 means "all".
-    EXPECT_EQ(2, FPDFText_CountRects(textpage, start, -1));
+    EXPECT_EQ(2, FPDFText_CountRects(textpage.get(), start, -1));
 
     // No characters always means 0 rects.
-    EXPECT_EQ(0, FPDFText_CountRects(textpage, start, 0));
+    EXPECT_EQ(0, FPDFText_CountRects(textpage.get(), start, 0));
 
     // 1 character stays within "hello world"
-    EXPECT_EQ(1, FPDFText_CountRects(textpage, start, 1));
+    EXPECT_EQ(1, FPDFText_CountRects(textpage.get(), start, 1));
 
     // When |start| is 0, Having |kGoodbyeWorldStart| char count does not reach
     // "goodbye world".
     int expected_value = start ? 2 : 1;
     EXPECT_EQ(expected_value,
-              FPDFText_CountRects(textpage, start, kGoodbyeWorldStart));
+              FPDFText_CountRects(textpage.get(), start, kGoodbyeWorldStart));
 
     // Extremely large character count will always return 2 rects because
     // |start| starts inside "hello world".
-    EXPECT_EQ(2, FPDFText_CountRects(textpage, start, 500));
+    EXPECT_EQ(2, FPDFText_CountRects(textpage.get(), start, 500));
   }
 
   // Now test negative counts.
   for (int start = 0; start < kHelloWorldEnd; ++start) {
-    EXPECT_EQ(2, FPDFText_CountRects(textpage, start, -100));
-    EXPECT_EQ(2, FPDFText_CountRects(textpage, start, -2));
+    EXPECT_EQ(2, FPDFText_CountRects(textpage.get(), start, -100));
+    EXPECT_EQ(2, FPDFText_CountRects(textpage.get(), start, -2));
   }
 
   // Now test larger start values.
   const int kExpectedLength = strlen(kHelloGoodbyeText);
   for (int start = kGoodbyeWorldStart + 1; start < kExpectedLength; ++start) {
-    EXPECT_EQ(1, FPDFText_CountRects(textpage, start, -1));
-    EXPECT_EQ(0, FPDFText_CountRects(textpage, start, 0));
-    EXPECT_EQ(1, FPDFText_CountRects(textpage, start, 1));
-    EXPECT_EQ(1, FPDFText_CountRects(textpage, start, 2));
-    EXPECT_EQ(1, FPDFText_CountRects(textpage, start, 500));
+    EXPECT_EQ(1, FPDFText_CountRects(textpage.get(), start, -1));
+    EXPECT_EQ(0, FPDFText_CountRects(textpage.get(), start, 0));
+    EXPECT_EQ(1, FPDFText_CountRects(textpage.get(), start, 1));
+    EXPECT_EQ(1, FPDFText_CountRects(textpage.get(), start, 2));
+    EXPECT_EQ(1, FPDFText_CountRects(textpage.get(), start, 500));
   }
 
   // Now test start values that starts beyond the end of the text.
   for (int start = kExpectedLength; start < 100; ++start) {
-    EXPECT_EQ(0, FPDFText_CountRects(textpage, start, -1));
-    EXPECT_EQ(0, FPDFText_CountRects(textpage, start, 0));
-    EXPECT_EQ(0, FPDFText_CountRects(textpage, start, 1));
-    EXPECT_EQ(0, FPDFText_CountRects(textpage, start, 2));
-    EXPECT_EQ(0, FPDFText_CountRects(textpage, start, 500));
+    EXPECT_EQ(0, FPDFText_CountRects(textpage.get(), start, -1));
+    EXPECT_EQ(0, FPDFText_CountRects(textpage.get(), start, 0));
+    EXPECT_EQ(0, FPDFText_CountRects(textpage.get(), start, 1));
+    EXPECT_EQ(0, FPDFText_CountRects(textpage.get(), start, 2));
+    EXPECT_EQ(0, FPDFText_CountRects(textpage.get(), start, 500));
   }
-
-  FPDFText_ClosePage(textpage);
 }
 
 TEST_F(FPDFTextEmbedderTest, GetText) {
@@ -1352,7 +1339,7 @@ TEST_F(FPDFTextEmbedderTest, GetText) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage text_page(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(text_page);
 
   EXPECT_EQ(2, FPDFPage_CountObjects(page.get()));
@@ -1364,16 +1351,17 @@ TEST_F(FPDFTextEmbedderTest, GetText) {
   // Return value includes the terminating NUL that is provided.
   constexpr unsigned long kHelloUTF16Size = std::size(kHelloText) * 2;
   constexpr wchar_t kHelloWideText[] = L"Hello, world!";
-  unsigned long size = FPDFTextObj_GetText(text_object, text_page, nullptr, 0);
+  unsigned long size =
+      FPDFTextObj_GetText(text_object, text_page.get(), nullptr, 0);
   ASSERT_EQ(kHelloUTF16Size, size);
 
   std::vector<unsigned short> buffer(size);
-  ASSERT_EQ(size,
-            FPDFTextObj_GetText(text_object, text_page, buffer.data(), size));
+  ASSERT_EQ(size, FPDFTextObj_GetText(text_object, text_page.get(),
+                                      buffer.data(), size));
   ASSERT_EQ(kHelloWideText, GetPlatformWString(buffer.data()));
 
   // Negative testing.
-  ASSERT_EQ(0U, FPDFTextObj_GetText(nullptr, text_page, nullptr, 0));
+  ASSERT_EQ(0U, FPDFTextObj_GetText(nullptr, text_page.get(), nullptr, 0));
   ASSERT_EQ(0U, FPDFTextObj_GetText(text_object, nullptr, nullptr, 0));
   ASSERT_EQ(0U, FPDFTextObj_GetText(nullptr, nullptr, nullptr, 0));
 
@@ -1381,13 +1369,11 @@ TEST_F(FPDFTextEmbedderTest, GetText) {
   buffer.resize(2);
   buffer[0] = 'x';
   buffer[1] = '\0';
-  size =
-      FPDFTextObj_GetText(text_object, text_page, buffer.data(), buffer.size());
+  size = FPDFTextObj_GetText(text_object, text_page.get(), buffer.data(),
+                             buffer.size());
   ASSERT_EQ(kHelloUTF16Size, size);
   ASSERT_EQ('x', buffer[0]);
   ASSERT_EQ('\0', buffer[1]);
-
-  FPDFText_ClosePage(text_page);
 }
 
 TEST_F(FPDFTextEmbedderTest, CroppedText) {
@@ -1448,21 +1434,20 @@ TEST_F(FPDFTextEmbedderTest, Bug1139) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage text_page(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(text_page);
 
   // -1 for CountChars not including the \0, but +1 for the extra control
   // character.
-  EXPECT_EQ(kHelloGoodbyeTextSize, FPDFText_CountChars(text_page));
+  EXPECT_EQ(kHelloGoodbyeTextSize, FPDFText_CountChars(text_page.get()));
 
   // There is an extra control character at the beginning of the string, but it
   // should not appear in the output nor prevent extracting the text.
   unsigned short buffer[128];
-  int num_chars = FPDFText_GetText(text_page, 0, 128, buffer);
+  int num_chars = FPDFText_GetText(text_page.get(), 0, 128, buffer);
   ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
   EXPECT_TRUE(
       check_unsigned_shorts(kHelloGoodbyeText, buffer, kHelloGoodbyeTextSize));
-  FPDFText_ClosePage(text_page);
 }
 
 TEST_F(FPDFTextEmbedderTest, Bug642) {
@@ -1491,7 +1476,7 @@ TEST_F(FPDFTextEmbedderTest, GetCharAngle) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage text_page(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(text_page);
 
   static constexpr int kSubstringsSize[] = {
@@ -1499,28 +1484,27 @@ TEST_F(FPDFTextEmbedderTest, GetCharAngle) {
 
   // -1 for CountChars not including the \0, but +1 for the extra control
   // character.
-  EXPECT_EQ(kHelloGoodbyeTextSize, FPDFText_CountChars(text_page));
+  EXPECT_EQ(kHelloGoodbyeTextSize, FPDFText_CountChars(text_page.get()));
 
   EXPECT_FLOAT_EQ(-1.0f, FPDFText_GetCharAngle(nullptr, 0));
-  EXPECT_FLOAT_EQ(-1.0f, FPDFText_GetCharAngle(text_page, -1));
-  EXPECT_FLOAT_EQ(-1.0f,
-                  FPDFText_GetCharAngle(text_page, kHelloGoodbyeTextSize + 1));
+  EXPECT_FLOAT_EQ(-1.0f, FPDFText_GetCharAngle(text_page.get(), -1));
+  EXPECT_FLOAT_EQ(
+      -1.0f, FPDFText_GetCharAngle(text_page.get(), kHelloGoodbyeTextSize + 1));
 
   // Test GetCharAngle for every quadrant
-  EXPECT_NEAR(FXSYS_PI / 4.0, FPDFText_GetCharAngle(text_page, 0), 0.001);
+  EXPECT_NEAR(FXSYS_PI / 4.0, FPDFText_GetCharAngle(text_page.get(), 0), 0.001);
   EXPECT_NEAR(3 * FXSYS_PI / 4.0,
-              FPDFText_GetCharAngle(text_page, kSubstringsSize[0]), 0.001);
-  EXPECT_NEAR(
-      5 * FXSYS_PI / 4.0,
-      FPDFText_GetCharAngle(text_page, kSubstringsSize[0] + kSubstringsSize[1]),
-      0.001);
-  EXPECT_NEAR(
-      7 * FXSYS_PI / 4.0,
-      FPDFText_GetCharAngle(text_page, kSubstringsSize[0] + kSubstringsSize[1] +
-                                           kSubstringsSize[2]),
-      0.001);
-
-  FPDFText_ClosePage(text_page);
+              FPDFText_GetCharAngle(text_page.get(), kSubstringsSize[0]),
+              0.001);
+  EXPECT_NEAR(5 * FXSYS_PI / 4.0,
+              FPDFText_GetCharAngle(text_page.get(),
+                                    kSubstringsSize[0] + kSubstringsSize[1]),
+              0.001);
+  EXPECT_NEAR(7 * FXSYS_PI / 4.0,
+              FPDFText_GetCharAngle(
+                  text_page.get(),
+                  kSubstringsSize[0] + kSubstringsSize[1] + kSubstringsSize[2]),
+              0.001);
 }
 
 TEST_F(FPDFTextEmbedderTest, GetFontWeight) {
@@ -1528,25 +1512,23 @@ TEST_F(FPDFTextEmbedderTest, GetFontWeight) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage text_page(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(text_page);
 
-  EXPECT_EQ(2, FPDFText_CountChars(text_page));
+  EXPECT_EQ(2, FPDFText_CountChars(text_page.get()));
 
   EXPECT_EQ(-1, FPDFText_GetFontWeight(nullptr, 0));
-  EXPECT_EQ(-1, FPDFText_GetFontWeight(text_page, -1));
-  EXPECT_EQ(-1, FPDFText_GetFontWeight(text_page, 314));
+  EXPECT_EQ(-1, FPDFText_GetFontWeight(text_page.get(), -1));
+  EXPECT_EQ(-1, FPDFText_GetFontWeight(text_page.get(), 314));
 
   // The font used for this text only specifies /StemV (80); the weight value
   // that is returned should be calculated from that (80*5 == 400).
-  EXPECT_EQ(400, FPDFText_GetFontWeight(text_page, 0));
+  EXPECT_EQ(400, FPDFText_GetFontWeight(text_page.get(), 0));
 
   // Using a /StemV value of 82, the estimate comes out to 410, even though
   // /FontWeight is 400.
   // TODO(crbug.com/pdfium/1420): Fix this the return value here.
-  EXPECT_EQ(410, FPDFText_GetFontWeight(text_page, 1));
-
-  FPDFText_ClosePage(text_page);
+  EXPECT_EQ(410, FPDFText_GetFontWeight(text_page.get(), 1));
 }
 
 TEST_F(FPDFTextEmbedderTest, GetTextRenderMode) {
@@ -1581,31 +1563,29 @@ TEST_F(FPDFTextEmbedderTest, GetFillColor) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage text_page(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(text_page);
 
-  ASSERT_EQ(1, FPDFText_CountChars(text_page));
+  ASSERT_EQ(1, FPDFText_CountChars(text_page.get()));
 
   ASSERT_FALSE(
       FPDFText_GetFillColor(nullptr, 0, nullptr, nullptr, nullptr, nullptr));
-  ASSERT_FALSE(
-      FPDFText_GetFillColor(text_page, -1, nullptr, nullptr, nullptr, nullptr));
-  ASSERT_FALSE(FPDFText_GetFillColor(text_page, 314, nullptr, nullptr, nullptr,
-                                     nullptr));
-  ASSERT_FALSE(
-      FPDFText_GetFillColor(text_page, 0, nullptr, nullptr, nullptr, nullptr));
+  ASSERT_FALSE(FPDFText_GetFillColor(text_page.get(), -1, nullptr, nullptr,
+                                     nullptr, nullptr));
+  ASSERT_FALSE(FPDFText_GetFillColor(text_page.get(), 314, nullptr, nullptr,
+                                     nullptr, nullptr));
+  ASSERT_FALSE(FPDFText_GetFillColor(text_page.get(), 0, nullptr, nullptr,
+                                     nullptr, nullptr));
 
   unsigned int r;
   unsigned int g;
   unsigned int b;
   unsigned int a;
-  ASSERT_TRUE(FPDFText_GetFillColor(text_page, 0, &r, &g, &b, &a));
+  ASSERT_TRUE(FPDFText_GetFillColor(text_page.get(), 0, &r, &g, &b, &a));
   ASSERT_EQ(0xffu, r);
   ASSERT_EQ(0u, g);
   ASSERT_EQ(0u, b);
   ASSERT_EQ(0xffu, a);
-
-  FPDFText_ClosePage(text_page);
 }
 
 TEST_F(FPDFTextEmbedderTest, GetStrokeColor) {
@@ -1613,31 +1593,29 @@ TEST_F(FPDFTextEmbedderTest, GetStrokeColor) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  FPDF_TEXTPAGE text_page = FPDFText_LoadPage(page.get());
+  ScopedFPDFTextPage text_page(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(text_page);
 
-  ASSERT_EQ(1, FPDFText_CountChars(text_page));
+  ASSERT_EQ(1, FPDFText_CountChars(text_page.get()));
 
   ASSERT_FALSE(
       FPDFText_GetStrokeColor(nullptr, 0, nullptr, nullptr, nullptr, nullptr));
-  ASSERT_FALSE(FPDFText_GetStrokeColor(text_page, -1, nullptr, nullptr, nullptr,
-                                       nullptr));
-  ASSERT_FALSE(FPDFText_GetStrokeColor(text_page, 314, nullptr, nullptr,
+  ASSERT_FALSE(FPDFText_GetStrokeColor(text_page.get(), -1, nullptr, nullptr,
                                        nullptr, nullptr));
-  ASSERT_FALSE(FPDFText_GetStrokeColor(text_page, 0, nullptr, nullptr, nullptr,
-                                       nullptr));
+  ASSERT_FALSE(FPDFText_GetStrokeColor(text_page.get(), 314, nullptr, nullptr,
+                                       nullptr, nullptr));
+  ASSERT_FALSE(FPDFText_GetStrokeColor(text_page.get(), 0, nullptr, nullptr,
+                                       nullptr, nullptr));
 
   unsigned int r;
   unsigned int g;
   unsigned int b;
   unsigned int a;
-  ASSERT_TRUE(FPDFText_GetStrokeColor(text_page, 0, &r, &g, &b, &a));
+  ASSERT_TRUE(FPDFText_GetStrokeColor(text_page.get(), 0, &r, &g, &b, &a));
   ASSERT_EQ(0u, r);
   ASSERT_EQ(0xffu, g);
   ASSERT_EQ(0u, b);
   ASSERT_EQ(0xffu, a);
-
-  FPDFText_ClosePage(text_page);
 }
 
 TEST_F(FPDFTextEmbedderTest, GetMatrix) {
