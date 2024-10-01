@@ -32,8 +32,6 @@ void CFX_DrawUtils::DrawFocusRect(CFX_RenderDevice* render_device,
 
   CFX_GraphStateData graph_state_data;
   graph_state_data.m_DashArray = {1.0f};
-  graph_state_data.m_DashPhase = 0;
-  graph_state_data.m_LineWidth = 1.0f;
 
   render_device->DrawPath(path, &user_to_device, &graph_state_data, 0,
                           ArgbEncode(255, 0, 0, 0),

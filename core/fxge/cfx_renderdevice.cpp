@@ -1405,7 +1405,6 @@ void CFX_RenderDevice::DrawBorder(const CFX_Matrix* pUser2Device,
     case BorderStyle::kDash: {
       CFX_GraphStateData gsd;
       gsd.m_DashArray = {3.0f, 3.0f};
-      gsd.m_DashPhase = 0;
       gsd.m_LineWidth = fWidth;
 
       CFX_Path path;

@@ -1274,13 +1274,8 @@ void CXFA_TextLayout::RenderPath(CFX_RenderDevice* pDevice,
     }
   }
 
-  CFX_GraphStateData graphState;
-  graphState.m_LineCap = CFX_GraphStateData::LineCap::kButt;
-  graphState.m_LineJoin = CFX_GraphStateData::LineJoin::kMiter;
-  graphState.m_LineWidth = 1;
-  graphState.m_MiterLimit = 10;
-  graphState.m_DashPhase = 0;
-  pDevice->DrawPath(path, &mtDoc2Device, &graphState, 0, pPiece->dwColor,
+  const CFX_GraphStateData graph_state;
+  pDevice->DrawPath(path, &mtDoc2Device, &graph_state, 0, pPiece->dwColor,
                     CFX_FillRenderOptions());
 }
 
