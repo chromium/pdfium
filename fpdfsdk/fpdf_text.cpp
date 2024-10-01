@@ -247,10 +247,10 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetCharBox(FPDF_TEXTPAGE text_page,
     return false;
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
-  *left = charinfo.m_CharBox.left;
-  *right = charinfo.m_CharBox.right;
-  *bottom = charinfo.m_CharBox.bottom;
-  *top = charinfo.m_CharBox.top;
+  *left = charinfo.char_box().left;
+  *right = charinfo.char_box().right;
+  *bottom = charinfo.char_box().bottom;
+  *top = charinfo.char_box().top;
   return true;
 }
 
@@ -292,8 +292,8 @@ FPDFText_GetCharOrigin(FPDF_TEXTPAGE text_page,
     return false;
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
-  *x = charinfo.m_Origin.x;
-  *y = charinfo.m_Origin.y;
+  *x = charinfo.origin().x;
+  *y = charinfo.origin().y;
   return true;
 }
 
