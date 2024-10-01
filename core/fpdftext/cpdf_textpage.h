@@ -49,6 +49,9 @@ class CPDF_TextPage {
     CharInfo(const CharInfo&);
     ~CharInfo();
 
+    const CFX_Matrix& matrix() const { return matrix_; }
+    void set_matrix(const CFX_Matrix& matrix) { matrix_ = matrix; }
+
     int m_Index = 0;
     uint32_t m_CharCode = 0;
     wchar_t m_Unicode = 0;
@@ -56,7 +59,9 @@ class CPDF_TextPage {
     CFX_PointF m_Origin;
     CFX_FloatRect m_CharBox;
     UnownedPtr<CPDF_TextObject> m_pTextObj;
-    CFX_Matrix m_Matrix;
+
+   private:
+    CFX_Matrix matrix_;
   };
 
   CPDF_TextPage(const CPDF_Page* pPage, bool rtl);
@@ -116,14 +121,14 @@ class CPDF_TextPage {
   bool IsHyphen(wchar_t curChar) const;
   void ProcessObject();
   void ProcessFormObject(CPDF_FormObject* pFormObj,
-                         const CFX_Matrix& formMatrix);
+                         const CFX_Matrix& form_matrix);
   void ProcessTextObject(const TransformedTextObject& obj);
   void ProcessTextObject(CPDF_TextObject* pTextObj,
-                         const CFX_Matrix& formMatrix,
+                         const CFX_Matrix& form_matrix,
                          const CPDF_PageObjectHolder* pObjList,
                          CPDF_PageObjectHolder::const_iterator ObjPos);
   GenerateCharacter ProcessInsertObject(const CPDF_TextObject* pObj,
-                                        const CFX_Matrix& formMatrix);
+                                        const CFX_Matrix& form_matrix);
   const CharInfo* GetPrevCharInfo() const;
   std::optional<CharInfo> GenerateCharInfo(wchar_t unicode);
   bool IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
@@ -140,7 +145,7 @@ class CPDF_TextPage {
   TextOrientation GetTextObjectWritingMode(
       const CPDF_TextObject* pTextObj) const;
   TextOrientation FindTextlineFlowOrientation() const;
-  void AppendGeneratedCharacter(wchar_t unicode, const CFX_Matrix& formMatrix);
+  void AppendGeneratedCharacter(wchar_t unicode, const CFX_Matrix& form_matrix);
   void SwapTempTextBuf(size_t iCharListStartAppend, size_t iBufStartAppend);
   WideString GetTextByPredicate(
       const std::function<bool(const CharInfo&)>& predicate) const;

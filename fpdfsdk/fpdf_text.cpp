@@ -226,7 +226,7 @@ FPDF_EXPORT float FPDF_CALLCONV FPDFText_GetCharAngle(FPDF_TEXTPAGE text_page,
   // | c  d  0 |    | sin(t)   cos(t)  0 |
   // | e  f  1 |    |   0        0     1 |
   // Calculate the angle of the vector
-  float angle = atan2f(charinfo.m_Matrix.c, charinfo.m_Matrix.a);
+  float angle = atan2f(charinfo.matrix().c, charinfo.matrix().a);
   if (angle < 0)
     angle = 2 * FXSYS_PI + angle;
 
@@ -278,7 +278,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFText_GetMatrix(FPDF_TEXTPAGE text_page,
     return false;
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
-  *matrix = FSMatrixFromCFXMatrix(charinfo.m_Matrix);
+  *matrix = FSMatrixFromCFXMatrix(charinfo.matrix());
   return true;
 }
 
