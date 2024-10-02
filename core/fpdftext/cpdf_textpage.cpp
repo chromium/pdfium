@@ -236,7 +236,7 @@ CFX_FloatRect GetLooseBounds(const CPDF_TextPage::CharInfo& charinfo) {
     bool is_vert_writing = charinfo.text_object()->GetFont()->IsVertWriting();
     if (is_vert_writing && charinfo.text_object()->GetFont()->IsCIDFont()) {
       CPDF_CIDFont* pCIDFont = charinfo.text_object()->GetFont()->AsCIDFont();
-      uint16_t cid = pCIDFont->CIDFromCharCode(charinfo.m_CharCode);
+      uint16_t cid = pCIDFont->CIDFromCharCode(charinfo.char_code());
 
       CFX_Point16 vertical_origin = pCIDFont->GetVertOrigin(cid);
       double offsetx = (vertical_origin.x - 500) * font_size / 1000.0;
@@ -255,7 +255,7 @@ CFX_FloatRect GetLooseBounds(const CPDF_TextPage::CharInfo& charinfo) {
     int descent = charinfo.text_object()->GetFont()->GetTypeDescent();
     if (ascent != descent) {
       float width = charinfo.matrix().a *
-                    charinfo.text_object()->GetCharWidth(charinfo.m_CharCode);
+                    charinfo.text_object()->GetCharWidth(charinfo.char_code());
       float font_scale = charinfo.matrix().a * font_size / (ascent - descent);
 
       float left = charinfo.origin().x;
@@ -305,7 +305,7 @@ void CPDF_TextPage::Init() {
     const CharInfo& charinfo = m_CharList[i];
     if (charinfo.char_type() == CPDF_TextPage::CharType::kGenerated ||
         (charinfo.m_Unicode != 0 && !IsControlChar(charinfo)) ||
-        (charinfo.m_Unicode == 0 && charinfo.m_CharCode != 0)) {
+        (charinfo.m_Unicode == 0 && charinfo.char_code() != 0)) {
       m_CharIndices.back().count++;
       skipped = true;
     } else {
@@ -911,8 +911,8 @@ void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
 
     CharInfo charinfo;
     charinfo.m_Unicode = wChar;
-    charinfo.m_CharCode = pFont->CharCodeFromUnicode(wChar);
     charinfo.set_char_type(CPDF_TextPage::CharType::kPiece);
+    charinfo.set_char_code(pFont->CharCodeFromUnicode(wChar));
     charinfo.set_text_object(pTextObj);
     charinfo.set_origin(pTextObj->GetPos());
     CFX_FloatRect char_box(rect);
@@ -1078,13 +1078,13 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
         charinfo.m_Unicode = L' ';
         charinfo.set_char_type(CPDF_TextPage::CharType::kGenerated);
         charinfo.set_text_object(pTextObj);
-        m_TempTextBuf.AppendChar(L' ');
-        charinfo.m_CharCode = CPDF_Font::kInvalidCharCode;
+        charinfo.set_char_code(CPDF_Font::kInvalidCharCode);
         charinfo.set_origin(matrix.Transform(item.m_Origin));
         charinfo.set_char_box(
             CFX_FloatRect(charinfo.origin().x, charinfo.origin().y,
                           charinfo.origin().x, charinfo.origin().y));
         charinfo.set_matrix(form_matrix);
+        m_TempTextBuf.AppendChar(L' ');
         m_TempCharList.push_back(charinfo);
       }
       if (item.m_CharCode == CPDF_Font::kInvalidCharCode)
@@ -1097,14 +1097,14 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
       wstrItem += static_cast<wchar_t>(item.m_CharCode);
       bNoUnicode = true;
     }
-    charinfo.m_CharCode = item.m_CharCode;
     charinfo.set_char_type(bNoUnicode ? CPDF_TextPage::CharType::kNotUnicode
                                       : CPDF_TextPage::CharType::kNormal);
+    charinfo.set_char_code(item.m_CharCode);
     charinfo.set_text_object(pTextObj);
     charinfo.set_origin(matrix.Transform(item.m_Origin));
 
     const FX_RECT rect =
-        charinfo.text_object()->GetFont()->GetCharBBox(charinfo.m_CharCode);
+        charinfo.text_object()->GetFont()->GetCharBBox(charinfo.char_code());
     const float fFontSize = pTextObj->GetFontSize() / 1000;
     CFX_FloatRect char_box(rect.left * fFontSize + item.m_Origin.x,
                            rect.bottom * fFontSize + item.m_Origin.y,
@@ -1115,7 +1115,7 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
     }
     if (fabsf(char_box.right - char_box.left) < kSizeEpsilon) {
       char_box.right =
-          char_box.left + pTextObj->GetCharWidth(charinfo.m_CharCode);
+          char_box.left + pTextObj->GetCharWidth(charinfo.char_code());
     }
     char_box = matrix.TransformRect(char_box);
     charinfo.set_char_box(char_box);
@@ -1136,7 +1136,7 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
          n > fxcrt::CollectionSize<int>(m_TempCharList) - count; --n) {
       const CharInfo& charinfo1 = m_TempCharList[n - 1];
       CFX_PointF diff = charinfo1.origin() - charinfo.origin();
-      if (charinfo1.m_CharCode == charinfo.m_CharCode &&
+      if (charinfo1.char_code() == charinfo.char_code() &&
           charinfo1.text_object()->GetFont() ==
               charinfo.text_object()->GetFont() &&
           fabs(diff.x) < threshold && fabs(diff.y) < threshold) {
@@ -1424,14 +1424,14 @@ std::optional<CPDF_TextPage::CharInfo> CPDF_TextPage::GenerateCharInfo(
     return std::nullopt;
 
   CharInfo info;
-  info.m_CharCode = CPDF_Font::kInvalidCharCode;
-  info.m_Unicode = unicode;
   info.set_char_type(CPDF_TextPage::CharType::kGenerated);
+  info.set_char_code(CPDF_Font::kInvalidCharCode);
+  info.m_Unicode = unicode;
 
   int pre_width = 0;
   if (pPrevCharInfo->text_object() &&
-      pPrevCharInfo->m_CharCode != CPDF_Font::kInvalidCharCode) {
-    pre_width = GetCharWidth(pPrevCharInfo->m_CharCode,
+      pPrevCharInfo->char_code() != CPDF_Font::kInvalidCharCode) {
+    pre_width = GetCharWidth(pPrevCharInfo->char_code(),
                              pPrevCharInfo->text_object()->GetFont().Get());
   }
 

@@ -52,6 +52,9 @@ class CPDF_TextPage {
     CharType char_type() const { return char_type_; }
     void set_char_type(CharType char_type) { char_type_ = char_type; }
 
+    uint32_t char_code() const { return char_code_; }
+    void set_char_code(uint32_t char_code) { char_code_ = char_code; }
+
     const CFX_PointF& origin() const { return origin_; }
     void set_origin(const CFX_PointF& origin) { origin_ = origin; }
 
@@ -67,11 +70,11 @@ class CPDF_TextPage {
       text_object_ = text_object;
     }
 
-    uint32_t m_CharCode = 0;
     wchar_t m_Unicode = 0;
 
    private:
     CharType char_type_ = CharType::kNormal;
+    uint32_t char_code_ = 0;
     CFX_PointF origin_;
     CFX_FloatRect char_box_;
     CFX_Matrix matrix_;
