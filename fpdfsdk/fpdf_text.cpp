@@ -82,7 +82,7 @@ FPDFText_GetTextObject(FPDF_TEXTPAGE text_page, int index) {
   }
 
   return FPDFPageObjectFromCPDFPageObject(
-      textpage->GetCharInfo(index).m_pTextObj);
+      textpage->GetCharInfo(index).text_object());
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_IsGenerated(FPDF_TEXTPAGE text_page,
@@ -136,10 +136,11 @@ FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
     return 0;
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
-  if (!charinfo.m_pTextObj)
+  if (!charinfo.text_object()) {
     return 0;
+  }
 
-  RetainPtr<CPDF_Font> font = charinfo.m_pTextObj->GetFont();
+  RetainPtr<CPDF_Font> font = charinfo.text_object()->GetFont();
   if (flags)
     *flags = font->GetFontFlags();
 
@@ -158,10 +159,11 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetFontWeight(FPDF_TEXTPAGE text_page,
     return -1;
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
-  if (!charinfo.m_pTextObj)
+  if (!charinfo.text_object()) {
     return -1;
+  }
 
-  return charinfo.m_pTextObj->GetFont()->GetFontWeight();
+  return charinfo.text_object()->GetFont()->GetFontWeight();
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
@@ -176,15 +178,17 @@ FPDFText_GetFillColor(FPDF_TEXTPAGE text_page,
     return false;
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
-  if (!charinfo.m_pTextObj)
+  if (!charinfo.text_object()) {
     return false;
+  }
 
-  FX_COLORREF fill_color = charinfo.m_pTextObj->color_state().GetFillColorRef();
+  FX_COLORREF fill_color =
+      charinfo.text_object()->color_state().GetFillColorRef();
   *R = FXSYS_GetRValue(fill_color);
   *G = FXSYS_GetGValue(fill_color);
   *B = FXSYS_GetBValue(fill_color);
   *A = FXSYS_GetUnsignedAlpha(
-      charinfo.m_pTextObj->general_state().GetFillAlpha());
+      charinfo.text_object()->general_state().GetFillAlpha());
   return true;
 }
 
@@ -200,16 +204,17 @@ FPDFText_GetStrokeColor(FPDF_TEXTPAGE text_page,
     return false;
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
-  if (!charinfo.m_pTextObj)
+  if (!charinfo.text_object()) {
     return false;
+  }
 
   FX_COLORREF stroke_color =
-      charinfo.m_pTextObj->color_state().GetStrokeColorRef();
+      charinfo.text_object()->color_state().GetStrokeColorRef();
   *R = FXSYS_GetRValue(stroke_color);
   *G = FXSYS_GetGValue(stroke_color);
   *B = FXSYS_GetBValue(stroke_color);
   *A = FXSYS_GetUnsignedAlpha(
-      charinfo.m_pTextObj->general_state().GetStrokeAlpha());
+      charinfo.text_object()->general_state().GetStrokeAlpha());
   return true;
 }
 

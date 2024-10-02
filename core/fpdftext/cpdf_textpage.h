@@ -58,16 +58,22 @@ class CPDF_TextPage {
     const CFX_Matrix& matrix() const { return matrix_; }
     void set_matrix(const CFX_Matrix& matrix) { matrix_ = matrix; }
 
+    const CPDF_TextObject* text_object() const { return text_object_; }
+    CPDF_TextObject* text_object() { return text_object_; }
+    void set_text_object(CPDF_TextObject* text_object) {
+      text_object_ = text_object;
+    }
+
     int m_Index = 0;
     uint32_t m_CharCode = 0;
     wchar_t m_Unicode = 0;
     CharType m_CharType = CharType::kNormal;
-    UnownedPtr<CPDF_TextObject> m_pTextObj;
 
    private:
     CFX_PointF origin_;
     CFX_FloatRect char_box_;
     CFX_Matrix matrix_;
+    UnownedPtr<CPDF_TextObject> text_object_;
   };
 
   CPDF_TextPage(const CPDF_Page* pPage, bool rtl);
