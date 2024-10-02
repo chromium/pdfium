@@ -140,14 +140,15 @@ void CFGAS_GEGraphics::SetLineCap(CFX_GraphStateData::LineCap lineCap) {
   m_info.graphState.m_LineCap = lineCap;
 }
 
-void CFGAS_GEGraphics::SetLineDash(float dashPhase,
-                                   pdfium::span<const float> dashArray) {
-  DCHECK(!dashArray.empty());
-  float scale = m_info.isActOnDash ? m_info.graphState.m_LineWidth : 1.0;
-  m_info.graphState.m_DashPhase = dashPhase;
-  m_info.graphState.m_DashArray.resize(dashArray.size());
-  for (size_t i = 0; i < dashArray.size(); ++i)
-    m_info.graphState.m_DashArray[i] = dashArray[i] * scale;
+void CFGAS_GEGraphics::SetLineDash(std::vector<float> dash_array) {
+  // For `dash_array` to be empty, call SetSolidLineDash() instead.
+  CHECK(!dash_array.empty());
+  const float scale = m_info.isActOnDash ? m_info.graphState.m_LineWidth : 1.0;
+  for (float& f : dash_array) {
+    f *= scale;
+  }
+  m_info.graphState.m_DashArray = std::move(dash_array);
+  m_info.graphState.m_DashPhase = 0;
 }
 
 void CFGAS_GEGraphics::SetSolidLineDash() {

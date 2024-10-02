@@ -9,6 +9,7 @@
 #include <math.h>
 
 #include <utility>
+#include <vector>
 
 #include "fxjs/xfa/cjx_object.h"
 #include "xfa/fgas/graphics/cfgas_gecolor.h"
@@ -25,38 +26,38 @@ void XFA_StrokeTypeSetLineDash(CFGAS_GEGraphics* pGraphics,
                                XFA_AttributeValue iCapType) {
   switch (iStrokeType) {
     case XFA_AttributeValue::DashDot: {
-      float dashArray[] = {4, 1, 2, 1};
+      std::vector<float> dash_array = {4, 1, 2, 1};
       if (iCapType != XFA_AttributeValue::Butt) {
-        dashArray[1] = 2;
-        dashArray[3] = 2;
+        dash_array[1] = 2;
+        dash_array[3] = 2;
       }
-      pGraphics->SetLineDash(0, dashArray);
+      pGraphics->SetLineDash(std::move(dash_array));
       break;
     }
     case XFA_AttributeValue::DashDotDot: {
-      float dashArray[] = {4, 1, 2, 1, 2, 1};
+      std::vector<float> dash_array = {4, 1, 2, 1, 2, 1};
       if (iCapType != XFA_AttributeValue::Butt) {
-        dashArray[1] = 2;
-        dashArray[3] = 2;
-        dashArray[5] = 2;
+        dash_array[1] = 2;
+        dash_array[3] = 2;
+        dash_array[5] = 2;
       }
-      pGraphics->SetLineDash(0, dashArray);
+      pGraphics->SetLineDash(std::move(dash_array));
       break;
     }
     case XFA_AttributeValue::Dashed: {
-      float dashArray[] = {5, 1};
-      if (iCapType != XFA_AttributeValue::Butt)
-        dashArray[1] = 2;
-
-      pGraphics->SetLineDash(0, dashArray);
+      std::vector<float> dash_array = {5, 1};
+      if (iCapType != XFA_AttributeValue::Butt) {
+        dash_array[1] = 2;
+      }
+      pGraphics->SetLineDash(std::move(dash_array));
       break;
     }
     case XFA_AttributeValue::Dotted: {
-      float dashArray[] = {2, 1};
-      if (iCapType != XFA_AttributeValue::Butt)
-        dashArray[1] = 2;
-
-      pGraphics->SetLineDash(0, dashArray);
+      std::vector<float> dash_array = {2, 1};
+      if (iCapType != XFA_AttributeValue::Butt) {
+        dash_array[1] = 2;
+      }
+      pGraphics->SetLineDash(std::move(dash_array));
       break;
     }
     default:
