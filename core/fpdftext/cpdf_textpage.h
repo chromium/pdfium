@@ -55,6 +55,9 @@ class CPDF_TextPage {
     uint32_t char_code() const { return char_code_; }
     void set_char_code(uint32_t char_code) { char_code_ = char_code; }
 
+    wchar_t unicode() const { return unicode_; }
+    void set_unicode(wchar_t unicode) { unicode_ = unicode; }
+
     const CFX_PointF& origin() const { return origin_; }
     void set_origin(const CFX_PointF& origin) { origin_ = origin; }
 
@@ -70,10 +73,9 @@ class CPDF_TextPage {
       text_object_ = text_object;
     }
 
-    wchar_t m_Unicode = 0;
-
    private:
     CharType char_type_ = CharType::kNormal;
+    wchar_t unicode_ = 0;  // Above `char_code_` to potentially pack tighter.
     uint32_t char_code_ = 0;
     CFX_PointF origin_;
     CFX_FloatRect char_box_;

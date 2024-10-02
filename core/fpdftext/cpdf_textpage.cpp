@@ -112,7 +112,7 @@ float MaskPercentFilled(const std::vector<bool>& mask,
 }
 
 bool IsControlChar(const CPDF_TextPage::CharInfo& char_info) {
-  switch (char_info.m_Unicode) {
+  switch (char_info.unicode()) {
     case 0x2:
     case 0x3:
     case 0x93:
@@ -304,8 +304,8 @@ void CPDF_TextPage::Init() {
   for (int i = 0; i < nCount; ++i) {
     const CharInfo& charinfo = m_CharList[i];
     if (charinfo.char_type() == CPDF_TextPage::CharType::kGenerated ||
-        (charinfo.m_Unicode != 0 && !IsControlChar(charinfo)) ||
-        (charinfo.m_Unicode == 0 && charinfo.char_code() != 0)) {
+        (charinfo.unicode() != 0 && !IsControlChar(charinfo)) ||
+        (charinfo.unicode() == 0 && charinfo.char_code() != 0)) {
       m_CharIndices.back().count++;
       skipped = true;
     } else {
@@ -444,9 +444,10 @@ WideString CPDF_TextPage::GetTextByPredicate(
       }
       IsContainPreChar = true;
       IsAddLineFeed = false;
-      if (charinfo.m_Unicode)
-        strText += charinfo.m_Unicode;
-    } else if (charinfo.m_Unicode == L' ') {
+      if (charinfo.unicode()) {
+        strText += charinfo.unicode();
+      }
+    } else if (charinfo.unicode() == L' ') {
       if (IsContainPreChar) {
         strText += L' ';
         IsContainPreChar = false;
@@ -676,9 +677,9 @@ void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
     return;
   }
   for (wchar_t normalized_char : normalized) {
-    info2.m_Unicode = normalized_char;
+    info2.set_unicode(normalized_char);
     info2.set_char_type(CPDF_TextPage::CharType::kPiece);
-    m_TextBuf.AppendChar(info2.m_Unicode);
+    m_TextBuf.AppendChar(normalized_char);
     m_CharList.push_back(info2);
   }
 }
@@ -693,15 +694,15 @@ void CPDF_TextPage::AddCharInfoByRLDirection(wchar_t wChar,
   wChar = pdfium::unicode::GetMirrorChar(wChar);
   DataVector<wchar_t> normalized = GetUnicodeNormalization(wChar);
   if (normalized.empty()) {
-    info2.m_Unicode = wChar;
-    m_TextBuf.AppendChar(info2.m_Unicode);
+    info2.set_unicode(wChar);
+    m_TextBuf.AppendChar(wChar);
     m_CharList.push_back(info2);
     return;
   }
   for (wchar_t normalized_char : normalized) {
-    info2.m_Unicode = normalized_char;
     info2.set_char_type(CPDF_TextPage::CharType::kPiece);
-    m_TextBuf.AppendChar(info2.m_Unicode);
+    info2.set_unicode(normalized_char);
+    m_TextBuf.AppendChar(normalized_char);
     m_CharList.push_back(info2);
   }
 }
@@ -910,9 +911,9 @@ void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
       continue;
 
     CharInfo charinfo;
-    charinfo.m_Unicode = wChar;
     charinfo.set_char_type(CPDF_TextPage::CharType::kPiece);
     charinfo.set_char_code(pFont->CharCodeFromUnicode(wChar));
+    charinfo.set_unicode(wChar);
     charinfo.set_text_object(pTextObj);
     charinfo.set_origin(pTextObj->GetPos());
     CFX_FloatRect char_box(rect);
@@ -1012,7 +1013,7 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
         }
         CharInfo* charinfo = &m_TempCharList.back();
         m_TempTextBuf.Delete(m_TempTextBuf.GetLength() - 1, 1);
-        charinfo->m_Unicode = 0x2;
+        charinfo->set_unicode(0x2);
         charinfo->set_char_type(CPDF_TextPage::CharType::kHyphen);
         m_TempTextBuf.AppendChar(0xfffe);
         break;
@@ -1075,7 +1076,7 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
         threshold = fontsize_h * threshold / 1000;
       }
       if (threshold && (spacing && spacing >= threshold)) {
-        charinfo.m_Unicode = L' ';
+        charinfo.set_unicode(L' ');
         charinfo.set_char_type(CPDF_TextPage::CharType::kGenerated);
         charinfo.set_text_object(pTextObj);
         charinfo.set_char_code(CPDF_Font::kInvalidCharCode);
@@ -1121,7 +1122,7 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
     charinfo.set_char_box(char_box);
     charinfo.set_matrix(matrix);
     if (wstrItem.IsEmpty()) {
-      charinfo.m_Unicode = 0;
+      charinfo.set_unicode(0);
       m_TempCharList.push_back(charinfo);
       m_TempTextBuf.AppendChar(0xfffe);
       continue;
@@ -1146,9 +1147,9 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
     }
     if (!bDel) {
       for (size_t nIndex = 0; nIndex < nTotal; ++nIndex) {
-        charinfo.m_Unicode = wstrItem[nIndex];
-        if (charinfo.m_Unicode) {
-          m_TempTextBuf.AppendChar(charinfo.m_Unicode);
+        charinfo.set_unicode(wstrItem[nIndex]);
+        if (charinfo.unicode()) {
+          m_TempTextBuf.AppendChar(charinfo.unicode());
         } else {
           m_TempTextBuf.AppendChar(0xfffe);
         }
@@ -1218,7 +1219,7 @@ bool CPDF_TextPage::IsHyphen(wchar_t curChar) const {
   const CharInfo* pPrevCharInfo = GetPrevCharInfo();
   return pPrevCharInfo &&
          pPrevCharInfo->char_type() == CPDF_TextPage::CharType::kPiece &&
-         IsHyphenCode(pPrevCharInfo->m_Unicode);
+         IsHyphenCode(pPrevCharInfo->unicode());
 }
 
 const CPDF_TextPage::CharInfo* CPDF_TextPage::GetPrevCharInfo() const {
@@ -1426,7 +1427,7 @@ std::optional<CPDF_TextPage::CharInfo> CPDF_TextPage::GenerateCharInfo(
   CharInfo info;
   info.set_char_type(CPDF_TextPage::CharType::kGenerated);
   info.set_char_code(CPDF_Font::kInvalidCharCode);
-  info.m_Unicode = unicode;
+  info.set_unicode(unicode);
 
   int pre_width = 0;
   if (pPrevCharInfo->text_object() &&

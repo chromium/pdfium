@@ -123,11 +123,11 @@ void CPDF_LinkExtract::ExtractLinks() {
   while (pos < nTotalChar) {
     const CPDF_TextPage::CharInfo& char_info = m_pTextPage->GetCharInfo(pos);
     if (char_info.char_type() != CPDF_TextPage::CharType::kGenerated &&
-        char_info.m_Unicode != L' ' && pos != nTotalChar - 1) {
+        char_info.unicode() != L' ' && pos != nTotalChar - 1) {
       bAfterHyphen =
           (char_info.char_type() == CPDF_TextPage::CharType::kHyphen ||
            (char_info.char_type() == CPDF_TextPage::CharType::kNormal &&
-            char_info.m_Unicode == L'-'));
+            char_info.unicode() == L'-'));
       ++pos;
       continue;
     }
@@ -136,7 +136,7 @@ void CPDF_LinkExtract::ExtractLinks() {
     if (pos == nTotalChar - 1) {
       ++nCount;
     } else if (bAfterHyphen &&
-               (char_info.m_Unicode == L'\n' || char_info.m_Unicode == L'\r')) {
+               (char_info.unicode() == L'\n' || char_info.unicode() == L'\r')) {
       // Handle text breaks with a hyphen to the next line.
       bLineBreak = true;
       ++pos;

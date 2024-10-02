@@ -71,7 +71,7 @@ FPDFText_GetUnicode(FPDF_TEXTPAGE text_page, int index) {
     return 0;
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
-  return charinfo.m_Unicode;
+  return charinfo.unicode();
 }
 
 FPDF_EXPORT FPDF_PAGEOBJECT FPDF_CALLCONV
