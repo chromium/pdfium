@@ -388,7 +388,7 @@ void CFX_PSRenderer::SetClip_PathStroke(const CFX_Path& path,
 
   OutputPath(path, nullptr);
   CFX_FloatRect rect = path.GetBoundingBoxForStrokePath(
-      pGraphState->m_LineWidth, pGraphState->m_MiterLimit);
+      pGraphState->line_width(), pGraphState->miter_limit());
   m_ClipBox.Intersect(pObject2Device->TransformRect(rect).GetOuterRect());
 
   WriteString("strokepath W n sm\n");
@@ -453,8 +453,8 @@ bool CFX_PSRenderer::DrawPath(const CFX_Path& path,
 void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
   fxcrt::ostringstream buf;
   if (!m_bGraphStateSet ||
-      m_CurGraphState.m_LineCap != pGraphState->m_LineCap) {
-    buf << static_cast<int>(pGraphState->m_LineCap) << " J\n";
+      m_CurGraphState.line_cap() != pGraphState->line_cap()) {
+    buf << static_cast<int>(pGraphState->line_cap()) << " J\n";
   }
   if (!m_bGraphStateSet ||
       m_CurGraphState.dash_array() != pGraphState->dash_array()) {
@@ -465,16 +465,16 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
     buf << "]" << pGraphState->dash_phase() << " d\n";
   }
   if (!m_bGraphStateSet ||
-      m_CurGraphState.m_LineJoin != pGraphState->m_LineJoin) {
-    buf << static_cast<int>(pGraphState->m_LineJoin) << " j\n";
+      m_CurGraphState.line_join() != pGraphState->line_join()) {
+    buf << static_cast<int>(pGraphState->line_join()) << " j\n";
   }
   if (!m_bGraphStateSet ||
-      m_CurGraphState.m_LineWidth != pGraphState->m_LineWidth) {
-    buf << pGraphState->m_LineWidth << " w\n";
+      m_CurGraphState.line_width() != pGraphState->line_width()) {
+    buf << pGraphState->line_width() << " w\n";
   }
   if (!m_bGraphStateSet ||
-      m_CurGraphState.m_MiterLimit != pGraphState->m_MiterLimit) {
-    buf << pGraphState->m_MiterLimit << " M\n";
+      m_CurGraphState.miter_limit() != pGraphState->miter_limit()) {
+    buf << pGraphState->miter_limit() << " M\n";
   }
   m_CurGraphState = *pGraphState;
   m_bGraphStateSet = true;

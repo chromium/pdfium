@@ -275,7 +275,7 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
                      float scale,
                      bool bTextMode) {
   agg::line_cap_e cap;
-  switch (pGraphState->m_LineCap) {
+  switch (pGraphState->line_cap()) {
     case CFX_GraphStateData::LineCap::kRound:
       cap = agg::round_cap;
       break;
@@ -287,7 +287,7 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
       break;
   }
   agg::line_join_e join;
-  switch (pGraphState->m_LineJoin) {
+  switch (pGraphState->line_join()) {
     case CFX_GraphStateData::LineJoin::kRound:
       join = agg::round_join;
       break;
@@ -298,7 +298,7 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
       join = agg::miter_join_revert;
       break;
   }
-  float width = pGraphState->m_LineWidth * scale;
+  float width = pGraphState->line_width() * scale;
   float unit = 1.0f;
   if (pObject2Device) {
     unit =
@@ -323,7 +323,7 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
     DashStroke stroke(dash);
     stroke.line_join(join);
     stroke.line_cap(cap);
-    stroke.miter_limit(pGraphState->m_MiterLimit);
+    stroke.miter_limit(pGraphState->miter_limit());
     stroke.width(width);
     rasterizer->add_path_transformed(stroke, pObject2Device);
     return;
@@ -331,7 +331,7 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
   agg::conv_stroke<agg::path_storage> stroke(*path_data);
   stroke.line_join(join);
   stroke.line_cap(cap);
-  stroke.miter_limit(pGraphState->m_MiterLimit);
+  stroke.miter_limit(pGraphState->miter_limit());
   stroke.width(width);
   rasterizer->add_path_transformed(stroke, pObject2Device);
 }

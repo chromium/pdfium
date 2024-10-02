@@ -51,34 +51,34 @@ float CFX_GraphState::GetLineDashPhase() const {
 }
 
 float CFX_GraphState::GetLineWidth() const {
-  return m_Ref.GetObject() ? m_Ref.GetObject()->m_LineWidth : 1.0f;
+  return m_Ref.GetObject() ? m_Ref.GetObject()->line_width() : 1.0f;
 }
 
 void CFX_GraphState::SetLineWidth(float width) {
-  m_Ref.GetPrivateCopy()->m_LineWidth = width;
+  m_Ref.GetPrivateCopy()->set_line_width(width);
 }
 
 CFX_GraphStateData::LineCap CFX_GraphState::GetLineCap() const {
-  return m_Ref.GetObject() ? m_Ref.GetObject()->m_LineCap
+  return m_Ref.GetObject() ? m_Ref.GetObject()->line_cap()
                            : CFX_GraphStateData::LineCap::kButt;
 }
 void CFX_GraphState::SetLineCap(CFX_GraphStateData::LineCap cap) {
-  m_Ref.GetPrivateCopy()->m_LineCap = cap;
+  m_Ref.GetPrivateCopy()->set_line_cap(cap);
 }
 
 CFX_GraphStateData::LineJoin CFX_GraphState::GetLineJoin() const {
-  return m_Ref.GetObject() ? m_Ref.GetObject()->m_LineJoin
+  return m_Ref.GetObject() ? m_Ref.GetObject()->line_join()
                            : CFX_GraphStateData::LineJoin::kMiter;
 }
 
 void CFX_GraphState::SetLineJoin(CFX_GraphStateData::LineJoin join) {
-  m_Ref.GetPrivateCopy()->m_LineJoin = join;
+  m_Ref.GetPrivateCopy()->set_line_join(join);
 }
 
 float CFX_GraphState::GetMiterLimit() const {
-  return m_Ref.GetObject() ? m_Ref.GetObject()->m_MiterLimit : 10.f;
+  return m_Ref.GetObject() ? m_Ref.GetObject()->miter_limit() : 10.f;
 }
 
 void CFX_GraphState::SetMiterLimit(float limit) {
-  m_Ref.GetPrivateCopy()->m_MiterLimit = limit;
+  m_Ref.GetPrivateCopy()->set_miter_limit(limit);
 }

@@ -137,13 +137,13 @@ void CFGAS_GEGraphics::RestoreGraphState() {
 }
 
 void CFGAS_GEGraphics::SetLineCap(CFX_GraphStateData::LineCap lineCap) {
-  m_info.graphState.m_LineCap = lineCap;
+  m_info.graphState.set_line_cap(lineCap);
 }
 
 void CFGAS_GEGraphics::SetLineDash(std::vector<float> dash_array) {
   // For `dash_array` to be empty, call SetSolidLineDash() instead.
   CHECK(!dash_array.empty());
-  const float scale = m_info.isActOnDash ? m_info.graphState.m_LineWidth : 1.0;
+  const float scale = m_info.isActOnDash ? m_info.graphState.line_width() : 1.0;
   for (float& f : dash_array) {
     f *= scale;
   }
@@ -156,7 +156,7 @@ void CFGAS_GEGraphics::SetSolidLineDash() {
 }
 
 void CFGAS_GEGraphics::SetLineWidth(float lineWidth) {
-  m_info.graphState.m_LineWidth = lineWidth;
+  m_info.graphState.set_line_width(lineWidth);
 }
 
 void CFGAS_GEGraphics::EnableActOnDash() {

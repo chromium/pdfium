@@ -244,7 +244,7 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
                                   DWORD argb,
                                   bool bTextMode) {
   const CGdiplusExt& gdi_plus_ext = GetGdiplusExt();
-  float width = pGraphState->m_LineWidth;
+  float width = pGraphState->line_width();
   if (!bTextMode) {
     float unit = pMatrix
                      ? 1.0f / ((pMatrix->GetXUnit() + pMatrix->GetYUnit()) / 2)
@@ -257,7 +257,7 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
   Gdiplus::LineCap lineCap = Gdiplus::LineCapFlat;
   Gdiplus::DashCap dashCap = Gdiplus::DashCapFlat;
   bool bDashExtend = false;
-  switch (pGraphState->m_LineCap) {
+  switch (pGraphState->line_cap()) {
     case CFX_GraphStateData::LineCap::kButt:
       lineCap = Gdiplus::LineCapFlat;
       break;
@@ -274,7 +274,7 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
   CALLFUNC(gdi_plus_ext, GdipSetPenLineCap197819, pPen, lineCap, lineCap,
            dashCap);
   Gdiplus::LineJoin lineJoin = Gdiplus::LineJoinMiterClipped;
-  switch (pGraphState->m_LineJoin) {
+  switch (pGraphState->line_join()) {
     case CFX_GraphStateData::LineJoin::kMiter:
       lineJoin = Gdiplus::LineJoinMiterClipped;
       break;
@@ -342,7 +342,8 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
     FX_Free(gdi_dash_array);
     gdi_dash_array = nullptr;
   }
-  CALLFUNC(gdi_plus_ext, GdipSetPenMiterLimit, pPen, pGraphState->m_MiterLimit);
+  CALLFUNC(gdi_plus_ext, GdipSetPenMiterLimit, pPen,
+           pGraphState->miter_limit());
   return pPen;
 }
 
@@ -661,7 +662,7 @@ bool CGdiplusExt::DrawPath(HDC hDC,
     if (!bSmooth && fill)
       bSmooth = true;
 
-    if (bSmooth || (pGraphState && pGraphState->m_LineWidth > 2)) {
+    if (bSmooth || (pGraphState && pGraphState->line_width() > 2)) {
       CALLFUNC(gdi_plus_ext, GdipSetSmoothingMode, pGraphics,
                Gdiplus::SmoothingModeAntiAlias);
     }

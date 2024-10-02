@@ -27,18 +27,30 @@ class CFX_GraphStateData {
   CFX_GraphStateData& operator=(const CFX_GraphStateData& that);
   CFX_GraphStateData& operator=(CFX_GraphStateData&& that) noexcept;
 
+  LineCap line_cap() const { return line_cap_; }
+  void set_line_cap(LineCap line_cap) { line_cap_ = line_cap; }
+
+  LineJoin line_join() const { return line_join_; }
+  void set_line_join(LineJoin line_join) { line_join_ = line_join; }
+
+  float miter_limit() const { return miter_limit_; }
+  void set_miter_limit(float miter_limit) { miter_limit_ = miter_limit; }
+
+  float line_width() const { return line_width_; }
+  void set_line_width(float line_width) { line_width_ = line_width; }
+
   float dash_phase() const { return dash_phase_; }
   void set_dash_phase(float dash_phase) { dash_phase_ = dash_phase; }
 
   const std::vector<float>& dash_array() const { return dash_array_; }
   void set_dash_array(std::vector<float> dash_array);
 
-  LineCap m_LineCap = LineCap::kButt;
-  LineJoin m_LineJoin = LineJoin::kMiter;
-  float m_MiterLimit = 10.0f;
-  float m_LineWidth = 1.0f;
-
  private:
+  LineCap line_cap_ = LineCap::kButt;
+  LineJoin line_join_ = LineJoin::kMiter;
+  float miter_limit_ = 10.0f;
+  float line_width_ = 1.0f;
+
   float dash_phase_ = 0.0f;
   std::vector<float> dash_array_;
 };

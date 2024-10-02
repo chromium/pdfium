@@ -178,7 +178,7 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
 
   if (draw_border) {
     CFX_GraphStateData gsd;
-    gsd.m_LineWidth = GetBorderWidth();
+    gsd.set_line_width(GetBorderWidth());
     if (border_style == BorderStyle::kDash) {
       gsd.set_dash_array({static_cast<float>(GetBorderDash().nDash),
                           static_cast<float>(GetBorderDash().nGap)});

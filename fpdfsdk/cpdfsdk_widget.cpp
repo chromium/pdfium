@@ -916,7 +916,7 @@ void CPDFSDK_Widget::DrawAppearance(CFX_RenderDevice* pDevice,
       mode == CPDF_Annot::AppearanceMode::kNormal &&
       !IsWidgetAppearanceValid(CPDF_Annot::AppearanceMode::kNormal)) {
     CFX_GraphStateData gsd;
-    gsd.m_LineWidth = 0.0f;
+    gsd.set_line_width(0.0f);
 
     CFX_Path path;
     path.AppendFloatRect(GetRect());

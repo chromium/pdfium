@@ -102,10 +102,11 @@ void CommonTest(CFX_SkiaDeviceDriver* driver, const State& state) {
   CFX_Path path2;
   path2.AppendRect(0, 0, 2, 2);
   if (state.m_change == State::Change::kYes) {
-    if (state.m_graphic == State::Graphic::kPath)
-      graphState.m_LineCap = CFX_GraphStateData::LineCap::kRound;
-    else if (state.m_graphic == State::Graphic::kText)
+    if (state.m_graphic == State::Graphic::kPath) {
+      graphState.set_line_cap(CFX_GraphStateData::LineCap::kRound);
+    } else if (state.m_graphic == State::Graphic::kText) {
       fontSize = 2;
+    }
   }
   if (state.m_clip == State::Clip::kSame)
     driver->SetClip_PathFill(clipPath, &clipMatrix, CFX_FillRenderOptions());

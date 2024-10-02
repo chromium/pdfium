@@ -513,7 +513,7 @@ void PaintStroke(SkPaint* spaint,
                  const SkMatrix& matrix,
                  const CFX_FillRenderOptions& fill_options) {
   SkPaint::Cap cap;
-  switch (graph_state->m_LineCap) {
+  switch (graph_state->line_cap()) {
     case CFX_GraphStateData::LineCap::kRound:
       cap = SkPaint::kRound_Cap;
       break;
@@ -525,7 +525,7 @@ void PaintStroke(SkPaint* spaint,
       break;
   }
   SkPaint::Join join;
-  switch (graph_state->m_LineJoin) {
+  switch (graph_state->line_join()) {
     case CFX_GraphStateData::LineJoin::kRound:
       join = SkPaint::kRound_Join;
       break;
@@ -547,7 +547,7 @@ void PaintStroke(SkPaint* spaint,
 
   float width = fill_options.zero_area
                     ? 0.0f
-                    : std::max(graph_state->m_LineWidth,
+                    : std::max(graph_state->line_width(),
                                std::min(deviceUnits[0].length(),
                                         deviceUnits[1].length()));
   const std::vector<float>& dash_array = graph_state->dash_array();
@@ -572,7 +572,7 @@ void PaintStroke(SkPaint* spaint,
   spaint->setStyle(SkPaint::kStroke_Style);
   spaint->setAntiAlias(!fill_options.aliased_path);
   spaint->setStrokeWidth(width);
-  spaint->setStrokeMiter(graph_state->m_MiterLimit);
+  spaint->setStrokeMiter(graph_state->miter_limit());
   spaint->setStrokeCap(cap);
   spaint->setStrokeJoin(join);
 }
