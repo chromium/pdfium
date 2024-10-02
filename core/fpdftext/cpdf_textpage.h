@@ -67,7 +67,6 @@ class CPDF_TextPage {
       text_object_ = text_object;
     }
 
-    int m_Index = 0;
     uint32_t m_CharCode = 0;
     wchar_t m_Unicode = 0;
 
