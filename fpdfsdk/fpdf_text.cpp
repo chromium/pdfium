@@ -92,7 +92,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_IsGenerated(FPDF_TEXTPAGE text_page,
     return -1;
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
-  return charinfo.m_CharType == CPDF_TextPage::CharType::kGenerated ? 1 : 0;
+  return charinfo.char_type() == CPDF_TextPage::CharType::kGenerated ? 1 : 0;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_IsHyphen(FPDF_TEXTPAGE text_page,
@@ -103,7 +103,7 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFText_IsHyphen(FPDF_TEXTPAGE text_page,
   }
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
-  return charinfo.m_CharType == CPDF_TextPage::CharType::kHyphen;
+  return charinfo.char_type() == CPDF_TextPage::CharType::kHyphen;
 }
 
 FPDF_EXPORT int FPDF_CALLCONV
@@ -113,7 +113,7 @@ FPDFText_HasUnicodeMapError(FPDF_TEXTPAGE text_page, int index) {
     return -1;
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
-  return charinfo.m_CharType == CPDF_TextPage::CharType::kNotUnicode;
+  return charinfo.char_type() == CPDF_TextPage::CharType::kNotUnicode;
 }
 
 FPDF_EXPORT double FPDF_CALLCONV FPDFText_GetFontSize(FPDF_TEXTPAGE text_page,

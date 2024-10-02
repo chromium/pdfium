@@ -121,7 +121,7 @@ bool IsControlChar(const CPDF_TextPage::CharInfo& char_info) {
     case 0x97:
     case 0x98:
     case 0xfffe:
-      return char_info.m_CharType != CPDF_TextPage::CharType::kHyphen;
+      return char_info.char_type() != CPDF_TextPage::CharType::kHyphen;
     default:
       return false;
   }
@@ -303,7 +303,7 @@ void CPDF_TextPage::Init() {
   bool skipped = false;
   for (int i = 0; i < nCount; ++i) {
     const CharInfo& charinfo = m_CharList[i];
-    if (charinfo.m_CharType == CPDF_TextPage::CharType::kGenerated ||
+    if (charinfo.char_type() == CPDF_TextPage::CharType::kGenerated ||
         (charinfo.m_Unicode != 0 && !IsControlChar(charinfo)) ||
         (charinfo.m_Unicode == 0 && charinfo.m_CharCode != 0)) {
       m_CharIndices.back().count++;
@@ -365,8 +365,9 @@ std::vector<CFX_FloatRect> CPDF_TextPage::GetRectArray(int start,
   bool is_new_rect = true;
   while (count--) {
     const CharInfo& charinfo = m_CharList[pos++];
-    if (charinfo.m_CharType == CPDF_TextPage::CharType::kGenerated)
+    if (charinfo.char_type() == CPDF_TextPage::CharType::kGenerated) {
       continue;
+    }
     if (charinfo.char_box().Width() < kSizeEpsilon ||
         charinfo.char_box().Height() < kSizeEpsilon) {
       continue;
@@ -678,7 +679,7 @@ void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
   }
   for (wchar_t normalized_char : normalized) {
     info2.m_Unicode = normalized_char;
-    info2.m_CharType = CPDF_TextPage::CharType::kPiece;
+    info2.set_char_type(CPDF_TextPage::CharType::kPiece);
     m_TextBuf.AppendChar(info2.m_Unicode);
     m_CharList.push_back(info2);
   }
@@ -703,7 +704,7 @@ void CPDF_TextPage::AddCharInfoByRLDirection(wchar_t wChar,
   }
   for (wchar_t normalized_char : normalized) {
     info2.m_Unicode = normalized_char;
-    info2.m_CharType = CPDF_TextPage::CharType::kPiece;
+    info2.set_char_type(CPDF_TextPage::CharType::kPiece);
     m_TextBuf.AppendChar(info2.m_Unicode);
     m_CharList.push_back(info2);
   }
@@ -916,7 +917,7 @@ void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
     charinfo.m_Index = m_TextBuf.GetLength();
     charinfo.m_Unicode = wChar;
     charinfo.m_CharCode = pFont->CharCodeFromUnicode(wChar);
-    charinfo.m_CharType = CPDF_TextPage::CharType::kPiece;
+    charinfo.set_char_type(CPDF_TextPage::CharType::kPiece);
     charinfo.set_text_object(pTextObj);
     charinfo.set_origin(pTextObj->GetPos());
     CFX_FloatRect char_box(rect);
@@ -1018,7 +1019,7 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
         CharInfo* charinfo = &m_TempCharList.back();
         m_TempTextBuf.Delete(m_TempTextBuf.GetLength() - 1, 1);
         charinfo->m_Unicode = 0x2;
-        charinfo->m_CharType = CPDF_TextPage::CharType::kHyphen;
+        charinfo->set_char_type(CPDF_TextPage::CharType::kHyphen);
         m_TempTextBuf.AppendChar(0xfffe);
         break;
     }
@@ -1081,7 +1082,7 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
       }
       if (threshold && (spacing && spacing >= threshold)) {
         charinfo.m_Unicode = L' ';
-        charinfo.m_CharType = CPDF_TextPage::CharType::kGenerated;
+        charinfo.set_char_type(CPDF_TextPage::CharType::kGenerated);
         charinfo.set_text_object(pTextObj);
         charinfo.m_Index = m_TextBuf.GetLength();
         m_TempTextBuf.AppendChar(L' ');
@@ -1105,8 +1106,8 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
     }
     charinfo.m_Index = -1;
     charinfo.m_CharCode = item.m_CharCode;
-    charinfo.m_CharType = bNoUnicode ? CPDF_TextPage::CharType::kNotUnicode
-                                     : CPDF_TextPage::CharType::kNormal;
+    charinfo.set_char_type(bNoUnicode ? CPDF_TextPage::CharType::kNotUnicode
+                                      : CPDF_TextPage::CharType::kNormal);
     charinfo.set_text_object(pTextObj);
     charinfo.set_origin(matrix.Transform(item.m_Origin));
 
@@ -1225,7 +1226,7 @@ bool CPDF_TextPage::IsHyphen(wchar_t curChar) const {
 
   const CharInfo* pPrevCharInfo = GetPrevCharInfo();
   return pPrevCharInfo &&
-         pPrevCharInfo->m_CharType == CPDF_TextPage::CharType::kPiece &&
+         pPrevCharInfo->char_type() == CPDF_TextPage::CharType::kPiece &&
          IsHyphenCode(pPrevCharInfo->m_Unicode);
 }
 
@@ -1435,7 +1436,7 @@ std::optional<CPDF_TextPage::CharInfo> CPDF_TextPage::GenerateCharInfo(
   info.m_Index = m_TextBuf.GetLength();
   info.m_CharCode = CPDF_Font::kInvalidCharCode;
   info.m_Unicode = unicode;
-  info.m_CharType = CPDF_TextPage::CharType::kGenerated;
+  info.set_char_type(CPDF_TextPage::CharType::kGenerated);
 
   int pre_width = 0;
   if (pPrevCharInfo->text_object() &&
