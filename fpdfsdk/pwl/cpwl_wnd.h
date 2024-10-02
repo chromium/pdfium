@@ -59,16 +59,6 @@ struct PWL_SCROLL_INFO;
 #define PCBS_ALLOWCUSTOMTEXT 0x0001L
 
 struct CPWL_Dash {
-  CPWL_Dash() : nDash(0), nGap(0), nPhase(0) {}
-  CPWL_Dash(int32_t dash, int32_t gap, int32_t phase)
-      : nDash(dash), nGap(gap), nPhase(phase) {}
-
-  void Reset() {
-    nDash = 0;
-    nGap = 0;
-    nPhase = 0;
-  }
-
   int32_t nDash;
   int32_t nGap;
   int32_t nPhase;
