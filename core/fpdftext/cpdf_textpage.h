@@ -148,6 +148,13 @@ class CPDF_TextPage {
                          CPDF_PageObjectHolder::const_iterator ObjPos);
   GenerateCharacter ProcessInsertObject(const CPDF_TextObject* pObj,
                                         const CFX_Matrix& form_matrix);
+  // Returns whether to continue or not.
+  bool ProcessGenerateCharacter(GenerateCharacter type,
+                                const CPDF_TextObject* text_object,
+                                const CFX_Matrix& form_matrix);
+  void ProcessTextObjectItems(CPDF_TextObject* text_object,
+                              const CFX_Matrix& form_matrix,
+                              const CFX_Matrix& matrix);
   const CharInfo* GetPrevCharInfo() const;
   std::optional<CharInfo> GenerateCharInfo(wchar_t unicode);
   bool IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
