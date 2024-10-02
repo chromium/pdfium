@@ -550,25 +550,24 @@ void PaintStroke(SkPaint* spaint,
                     : std::max(graph_state->m_LineWidth,
                                std::min(deviceUnits[0].length(),
                                         deviceUnits[1].length()));
-  if (!graph_state->m_DashArray.empty()) {
-    size_t count = (graph_state->m_DashArray.size() + 1) / 2;
+  const std::vector<float>& dash_array = graph_state->dash_array();
+  if (!dash_array.empty()) {
+    size_t count = (dash_array.size() + 1) / 2;
     DataVector<SkScalar> intervals(count * 2);
     // Set dash pattern
     for (size_t i = 0; i < count; i++) {
-      float on = graph_state->m_DashArray[i * 2];
+      float on = dash_array[i * 2];
       if (on <= 0.000001f) {
         on = 0.1f;
       }
-      float off = i * 2 + 1 == graph_state->m_DashArray.size()
-                      ? on
-                      : graph_state->m_DashArray[i * 2 + 1];
+      float off = i * 2 + 1 == dash_array.size() ? on : dash_array[i * 2 + 1];
       off = std::max(off, 0.0f);
       intervals[i * 2] = on;
       intervals[i * 2 + 1] = off;
     }
     spaint->setPathEffect(SkDashPathEffect::Make(
         intervals.data(), pdfium::checked_cast<int>(intervals.size()),
-        graph_state->m_DashPhase));
+        graph_state->dash_phase()));
   }
   spaint->setStyle(SkPaint::kStroke_Style);
   spaint->setAntiAlias(!fill_options.aliased_path);

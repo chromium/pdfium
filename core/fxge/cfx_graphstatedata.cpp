@@ -6,6 +6,8 @@
 
 #include "core/fxge/cfx_graphstatedata.h"
 
+#include <utility>
+
 CFX_GraphStateData::CFX_GraphStateData() = default;
 
 CFX_GraphStateData::CFX_GraphStateData(const CFX_GraphStateData& src) = default;
@@ -20,6 +22,10 @@ CFX_GraphStateData& CFX_GraphStateData::operator=(
 
 CFX_GraphStateData& CFX_GraphStateData::operator=(
     CFX_GraphStateData&& that) noexcept = default;
+
+void CFX_GraphStateData::set_dash_array(std::vector<float> dash_array) {
+  dash_array_ = std::move(dash_array);
+}
 
 CFX_RetainableGraphStateData::CFX_RetainableGraphStateData() = default;
 

@@ -180,9 +180,9 @@ void CPWL_Edit::DrawThisAppearance(CFX_RenderDevice* pDevice,
     CFX_GraphStateData gsd;
     gsd.m_LineWidth = GetBorderWidth();
     if (border_style == BorderStyle::kDash) {
-      gsd.m_DashArray = {static_cast<float>(GetBorderDash().nDash),
-                         static_cast<float>(GetBorderDash().nGap)};
-      gsd.m_DashPhase = GetBorderDash().nPhase;
+      gsd.set_dash_array({static_cast<float>(GetBorderDash().nDash),
+                          static_cast<float>(GetBorderDash().nGap)});
+      gsd.set_dash_phase(GetBorderDash().nPhase);
     }
 
     const float width = (rcClient.right - rcClient.left) / nCharArray;

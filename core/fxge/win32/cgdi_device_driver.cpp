@@ -57,32 +57,30 @@ HPEN CreateExtPen(const CFX_GraphStateData* pGraphState,
   }
   float width = std::max(scale * pGraphState->m_LineWidth, 1.0f);
 
-  uint32_t PenStyle = PS_GEOMETRIC;
-  if (!pGraphState->m_DashArray.empty())
-    PenStyle |= PS_USERSTYLE;
-  else
-    PenStyle |= PS_SOLID;
+  uint32_t pen_style = PS_GEOMETRIC;
+  const std::vector<float>& dash_array = pGraphState->dash_array();
+  pen_style |= dash_array.empty() ? PS_SOLID : PS_USERSTYLE;
 
   switch (pGraphState->m_LineCap) {
     case CFX_GraphStateData::LineCap::kButt:
-      PenStyle |= PS_ENDCAP_FLAT;
+      pen_style |= PS_ENDCAP_FLAT;
       break;
     case CFX_GraphStateData::LineCap::kRound:
-      PenStyle |= PS_ENDCAP_ROUND;
+      pen_style |= PS_ENDCAP_ROUND;
       break;
     case CFX_GraphStateData::LineCap::kSquare:
-      PenStyle |= PS_ENDCAP_SQUARE;
+      pen_style |= PS_ENDCAP_SQUARE;
       break;
   }
   switch (pGraphState->m_LineJoin) {
     case CFX_GraphStateData::LineJoin::kMiter:
-      PenStyle |= PS_JOIN_MITER;
+      pen_style |= PS_JOIN_MITER;
       break;
     case CFX_GraphStateData::LineJoin::kRound:
-      PenStyle |= PS_JOIN_ROUND;
+      pen_style |= PS_JOIN_ROUND;
       break;
     case CFX_GraphStateData::LineJoin::kBevel:
-      PenStyle |= PS_JOIN_BEVEL;
+      pen_style |= PS_JOIN_BEVEL;
       break;
   }
 
@@ -92,19 +90,17 @@ HPEN CreateExtPen(const CFX_GraphStateData* pGraphState,
   lb.lbStyle = BS_SOLID;
   lb.lbHatch = 0;
   std::vector<uint32_t> dashes;
-  if (!pGraphState->m_DashArray.empty()) {
-    dashes.resize(pGraphState->m_DashArray.size());
-    for (size_t i = 0; i < pGraphState->m_DashArray.size(); i++) {
+  if (!dash_array.empty()) {
+    dashes.resize(dash_array.size());
+    for (size_t i = 0; i < dash_array.size(); i++) {
       dashes[i] = FXSYS_roundf(
-          pMatrix ? pMatrix->TransformDistance(pGraphState->m_DashArray[i])
-                  : pGraphState->m_DashArray[i]);
+          pMatrix ? pMatrix->TransformDistance(dash_array[i]) : dash_array[i]);
       dashes[i] = std::max(dashes[i], 1U);
     }
   }
-  return ExtCreatePen(
-      PenStyle, (DWORD)ceil(width), &lb,
-      pdfium::checked_cast<DWORD>(pGraphState->m_DashArray.size()),
-      reinterpret_cast<const DWORD*>(dashes.data()));
+  return ExtCreatePen(pen_style, (DWORD)ceil(width), &lb,
+                      pdfium::checked_cast<DWORD>(dash_array.size()),
+                      reinterpret_cast<const DWORD*>(dashes.data()));
 }
 
 HBRUSH CreateBrush(uint32_t argb) {
@@ -639,7 +635,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_Path& path,
   if (pPlatform->m_GdiplusExt.IsAvailable()) {
     if (bDrawAlpha ||
         ((m_DeviceType != DeviceType::kPrinter && !fill_options.full_cover) ||
-         (pGraphState && !pGraphState->m_DashArray.empty()))) {
+         (pGraphState && !pGraphState->dash_array().empty()))) {
       if (!((!pMatrix || !pMatrix->WillScale()) && pGraphState &&
             pGraphState->m_LineWidth == 1.0f && path.IsRect())) {
         if (pPlatform->m_GdiplusExt.DrawPath(m_hDC, path, pMatrix, pGraphState,
@@ -665,7 +661,7 @@ bool CGdiDeviceDriver::DrawPath(const CFX_Path& path,
     hBrush = (HBRUSH)SelectObject(m_hDC, hBrush);
   }
   if (path.GetPoints().size() == 2 && pGraphState &&
-      !pGraphState->m_DashArray.empty()) {
+      !pGraphState->dash_array().empty()) {
     CFX_PointF pos1 = path.GetPoint(0);
     CFX_PointF pos2 = path.GetPoint(1);
     if (pMatrix) {

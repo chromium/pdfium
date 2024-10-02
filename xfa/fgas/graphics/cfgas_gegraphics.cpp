@@ -147,12 +147,12 @@ void CFGAS_GEGraphics::SetLineDash(std::vector<float> dash_array) {
   for (float& f : dash_array) {
     f *= scale;
   }
-  m_info.graphState.m_DashArray = std::move(dash_array);
-  m_info.graphState.m_DashPhase = 0;
+  m_info.graphState.set_dash_array(std::move(dash_array));
+  m_info.graphState.set_dash_phase(0);
 }
 
 void CFGAS_GEGraphics::SetSolidLineDash() {
-  m_info.graphState.m_DashArray.clear();
+  m_info.graphState.set_dash_array({});
 }
 
 void CFGAS_GEGraphics::SetLineWidth(float lineWidth) {

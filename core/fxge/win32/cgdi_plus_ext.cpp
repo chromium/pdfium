@@ -286,20 +286,17 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
       break;
   }
   CALLFUNC(gdi_plus_ext, GdipSetPenLineJoin, pPen, lineJoin);
-  if (!pGraphState->m_DashArray.empty()) {
-    float* pDashArray =
-        FX_Alloc(float, FxAlignToBoundary<2>(pGraphState->m_DashArray.size()));
+  const std::vector<float>& dash_array = pGraphState->dash_array();
+  if (!dash_array.empty()) {
+    float* gdi_dash_array =
+        FX_Alloc(float, FxAlignToBoundary<2>(dash_array.size()));
     int nCount = 0;
     float on_leftover = 0;
     float off_leftover = 0;
-    for (size_t i = 0; i < pGraphState->m_DashArray.size(); i += 2) {
-      float on_phase = pGraphState->m_DashArray[i];
-      float off_phase;
-      if (i + 1 < pGraphState->m_DashArray.size()) {
-        off_phase = pGraphState->m_DashArray[i + 1];
-      } else {
-        off_phase = on_phase;
-      }
+    for (size_t i = 0; i < dash_array.size(); i += 2) {
+      float on_phase = dash_array[i];
+      float off_phase =
+          i + 1 < dash_array.size() ? dash_array[i + 1] : on_phase;
       on_phase /= width;
       off_phase /= width;
       if (on_phase + off_phase <= 0.00002f) {
@@ -319,30 +316,31 @@ Gdiplus::GpPen* GdipCreatePenImpl(const CFX_GraphStateData* pGraphState,
           off_leftover += off_phase;
         } else {
           UNSAFE_TODO({
-            pDashArray[nCount - 2] += on_phase;
-            pDashArray[nCount - 1] += off_phase;
+            gdi_dash_array[nCount - 2] += on_phase;
+            gdi_dash_array[nCount - 1] += off_phase;
           });
         }
       } else {
         UNSAFE_TODO({
-          pDashArray[nCount++] = on_phase + on_leftover;
+          gdi_dash_array[nCount++] = on_phase + on_leftover;
           on_leftover = 0;
-          pDashArray[nCount++] = off_phase + off_leftover;
+          gdi_dash_array[nCount++] = off_phase + off_leftover;
           off_leftover = 0;
         });
       }
     }
-    CALLFUNC(gdi_plus_ext, GdipSetPenDashArray, pPen, pDashArray, nCount);
-    float phase = pGraphState->m_DashPhase;
+    CALLFUNC(gdi_plus_ext, GdipSetPenDashArray, pPen, gdi_dash_array, nCount);
+    float phase = pGraphState->dash_phase();
     if (bDashExtend) {
-      if (phase < 0.5f)
+      if (phase < 0.5f) {
         phase = 0;
-      else
+      } else {
         phase -= 0.5f;
+      }
     }
     CALLFUNC(gdi_plus_ext, GdipSetPenDashOffset, pPen, phase);
-    FX_Free(pDashArray);
-    pDashArray = nullptr;
+    FX_Free(gdi_dash_array);
+    gdi_dash_array = nullptr;
   }
   CALLFUNC(gdi_plus_ext, GdipSetPenMiterLimit, pPen, pGraphState->m_MiterLimit);
   return pPen;

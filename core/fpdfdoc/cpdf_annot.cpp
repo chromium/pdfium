@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <utility>
+#include <vector>
 
 #include "build/build_config.h"
 #include "constants/annotation_common.h"
@@ -540,12 +541,14 @@ void CPDF_Annot::DrawBorder(CFX_RenderDevice* pDevice,
 
   if (style_char == 'D') {
     if (pDashArray) {
-      graph_state.m_DashArray =
+      std::vector<float> dash_array =
           ReadArrayElementsToVector(pDashArray.Get(), pDashArray->size());
-      if (graph_state.m_DashArray.size() % 2)
-        graph_state.m_DashArray.push_back(graph_state.m_DashArray.back());
+      if (dash_array.size() % 2) {
+        dash_array.push_back(dash_array.back());
+      }
+      graph_state.set_dash_array(std::move(dash_array));
     } else {
-      graph_state.m_DashArray = {3.0f, 3.0f};
+      graph_state.set_dash_array({3.0f, 3.0f});
     }
   }
 

@@ -305,20 +305,20 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
         1.0f / ((pObject2Device->GetXUnit() + pObject2Device->GetYUnit()) / 2);
   }
   width = std::max(width, unit);
-  if (!pGraphState->m_DashArray.empty()) {
+  const std::vector<float>& dash_array = pGraphState->dash_array();
+  if (!dash_array.empty()) {
     using DashConverter = agg::conv_dash<agg::path_storage>;
     DashConverter dash(*path_data);
-    for (size_t i = 0; i < (pGraphState->m_DashArray.size() + 1) / 2; i++) {
-      float on = pGraphState->m_DashArray[i * 2];
-      if (on <= 0.000001f)
+    for (size_t i = 0; i < (dash_array.size() + 1) / 2; i++) {
+      float on = dash_array[i * 2];
+      if (on <= 0.000001f) {
         on = 0.1f;
-      float off = i * 2 + 1 == pGraphState->m_DashArray.size()
-                      ? on
-                      : pGraphState->m_DashArray[i * 2 + 1];
+      }
+      float off = i * 2 + 1 == dash_array.size() ? on : dash_array[i * 2 + 1];
       off = std::max(off, 0.0f);
       dash.add_dash(on * scale, off * scale);
     }
-    dash.dash_start(pGraphState->m_DashPhase * scale);
+    dash.dash_start(pGraphState->dash_phase() * scale);
     using DashStroke = agg::conv_stroke<DashConverter>;
     DashStroke stroke(dash);
     stroke.line_join(join);

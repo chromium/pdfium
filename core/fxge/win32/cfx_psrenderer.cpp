@@ -457,11 +457,12 @@ void CFX_PSRenderer::SetGraphState(const CFX_GraphStateData* pGraphState) {
     buf << static_cast<int>(pGraphState->m_LineCap) << " J\n";
   }
   if (!m_bGraphStateSet ||
-      m_CurGraphState.m_DashArray != pGraphState->m_DashArray) {
+      m_CurGraphState.dash_array() != pGraphState->dash_array()) {
     buf << "[";
-    for (const auto& dash : pGraphState->m_DashArray)
+    for (float dash : pGraphState->dash_array()) {
       buf << dash << " ";
-    buf << "]" << pGraphState->m_DashPhase << " d\n";
+    }
+    buf << "]" << pGraphState->dash_phase() << " d\n";
   }
   if (!m_bGraphStateSet ||
       m_CurGraphState.m_LineJoin != pGraphState->m_LineJoin) {

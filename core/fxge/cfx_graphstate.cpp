@@ -22,32 +22,32 @@ void CFX_GraphState::SetLineDash(std::vector<float> dashes,
                                  float phase,
                                  float scale) {
   CFX_GraphStateData* pData = m_Ref.GetPrivateCopy();
-  pData->m_DashPhase = phase * scale;
-  for (float& val : dashes)
+  pData->set_dash_phase(phase * scale);
+  for (float& val : dashes) {
     val *= scale;
-  pData->m_DashArray = std::move(dashes);
+  }
+  pData->set_dash_array(std::move(dashes));
 }
 
 void CFX_GraphState::SetLineDashPhase(float phase) {
   CFX_GraphStateData* pData = m_Ref.GetPrivateCopy();
-  pData->m_DashPhase = phase;
+  pData->set_dash_phase(phase);
 }
 
 std::vector<float> CFX_GraphState::GetLineDashArray() const {
   std::vector<float> ret;
-
-  if (m_Ref.GetObject())
-    ret = m_Ref.GetObject()->m_DashArray;
-
+  if (m_Ref.GetObject()) {
+    ret = m_Ref.GetObject()->dash_array();
+  }
   return ret;
 }
 
 size_t CFX_GraphState::GetLineDashSize() const {
-  return m_Ref.GetObject() ? m_Ref.GetObject()->m_DashArray.size() : 0;
+  return m_Ref.GetObject() ? m_Ref.GetObject()->dash_array().size() : 0;
 }
 
 float CFX_GraphState::GetLineDashPhase() const {
-  return m_Ref.GetObject() ? m_Ref.GetObject()->m_DashPhase : 1.0f;
+  return m_Ref.GetObject() ? m_Ref.GetObject()->dash_phase() : 1.0f;
 }
 
 float CFX_GraphState::GetLineWidth() const {
