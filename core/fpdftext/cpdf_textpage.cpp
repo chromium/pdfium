@@ -58,18 +58,18 @@ float NormalizeThreshold(float threshold, int t1, int t2, int t3) {
 float CalculateBaseSpace(const CPDF_TextObject* pTextObj,
                          const CFX_Matrix& matrix) {
   const size_t nItems = pTextObj->CountItems();
-  if (!pTextObj->text_state().GetCharSpace() || nItems < 3) {
+  const float char_space = pTextObj->text_state().GetCharSpace();
+  if (char_space == 0.0f || nItems < 3) {
     return 0.0f;
   }
 
   bool bAllChar = true;
-  float spacing =
-      matrix.TransformDistance(pTextObj->text_state().GetCharSpace());
+  const float spacing = matrix.TransformDistance(char_space);
+  const float fontsize_h = pTextObj->text_state().GetFontSizeH();
   float base_space = spacing;
   for (size_t i = 0; i < nItems; ++i) {
     CPDF_TextObject::Item item = pTextObj->GetItemInfo(i);
     if (item.m_CharCode == 0xffffffff) {
-      float fontsize_h = pTextObj->text_state().GetFontSizeH();
       float kerning = -fontsize_h * item.m_Origin.x / 1000;
       base_space = std::min(base_space, kerning + spacing);
       bAllChar = false;
@@ -80,6 +80,18 @@ float CalculateBaseSpace(const CPDF_TextObject* pTextObj,
   }
 
   return base_space;
+}
+
+float CalculateBaseSpaceAdjustment(const CPDF_TextObject* pTextObj,
+                                   const CFX_Matrix& matrix) {
+  float char_space = pTextObj->text_state().GetCharSpace();
+  if (char_space > 0.001f) {
+    return -matrix.TransformDistance(char_space);
+  }
+  if (char_space < -0.001f) {
+    return matrix.TransformDistance(fabs(char_space));
+  }
+  return 0.0f;
 }
 
 DataVector<wchar_t> GetUnicodeNormalization(wchar_t wch) {
@@ -139,7 +151,8 @@ bool IsRectIntersect(const CFX_FloatRect& rect1, const CFX_FloatRect& rect2) {
   return !rect.IsEmpty();
 }
 
-bool IsRightToLeft(const CPDF_TextObject& text_obj, const CPDF_Font& font) {
+bool IsRightToLeft(const CPDF_TextObject& text_obj) {
+  RetainPtr<const CPDF_Font> font = text_obj.GetFont();
   const size_t nItems = text_obj.CountItems();
   WideString str;
   str.Reserve(nItems);
@@ -147,7 +160,7 @@ bool IsRightToLeft(const CPDF_TextObject& text_obj, const CPDF_Font& font) {
     CPDF_TextObject::Item item = text_obj.GetItemInfo(i);
     if (item.m_CharCode == 0xffffffff)
       continue;
-    WideString unicode = font.UnicodeFromCharCode(item.m_CharCode);
+    WideString unicode = font->UnicodeFromCharCode(item.m_CharCode);
     wchar_t wChar = !unicode.IsEmpty() ? unicode[0] : 0;
     if (wChar == 0)
       wChar = item.m_CharCode;
@@ -177,6 +190,27 @@ int GetCharWidth(uint32_t charCode, CPDF_Font* pFont) {
     return 0;
 
   return std::max(rect.Width(), 0);
+}
+
+float CalculateSpaceThreshold(CPDF_Font* font,
+                              float fontsize_h,
+                              uint32_t char_code) {
+  const uint32_t space_charcode = font->CharCodeFromUnicode(' ');
+  float threshold = 0;
+  if (space_charcode != CPDF_Font::kInvalidCharCode) {
+    threshold = fontsize_h * font->GetCharWidthF(space_charcode) / 1000;
+  }
+  if (threshold > fontsize_h / 3) {
+    threshold = 0;
+  } else {
+    threshold /= 2;
+  }
+  if (threshold == 0) {
+    threshold = GetCharWidth(char_code, font);
+    threshold = NormalizeThreshold(threshold, 300, 500, 700);
+    threshold = fontsize_h * threshold / 1000;
+  }
+  return threshold;
 }
 
 bool GenerateSpace(const CFX_PointF& pos,
@@ -880,7 +914,7 @@ CPDF_TextPage::MarkedContentState CPDF_TextPage::PreMarkedContent(
 }
 
 void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
-  CPDF_TextObject* pTextObj = obj.m_pTextObj;
+  CPDF_TextObject* const pTextObj = obj.m_pTextObj;
   const CPDF_ContentMarks* pMarks = pTextObj->GetContentMarks();
   const size_t nContentMarks = pMarks->CountItems();
   WideString actual_text;
@@ -895,8 +929,7 @@ void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
     return;
   }
 
-  RetainPtr<CPDF_Font> pFont = pTextObj->GetFont();
-  const bool bR2L = IsRightToLeft(*pTextObj, *pFont);
+  const bool bR2L = IsRightToLeft(*pTextObj);
   CFX_Matrix matrix = pTextObj->GetTextMatrix() * obj.m_formMatrix;
   CFX_FloatRect rect = pTextObj->GetRect();
   float step = 0;
@@ -909,6 +942,7 @@ void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
     step = rect.Width();
   }
 
+  RetainPtr<CPDF_Font> const font = pTextObj->GetFont();
   for (size_t k = 0; k < actual_text.GetLength(); ++k) {
     wchar_t wChar = actual_text[k];
     if (wChar <= 0x80 && !isprint(wChar)) {
@@ -920,7 +954,7 @@ void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
 
     CharInfo charinfo;
     charinfo.set_char_type(CharType::kPiece);
-    charinfo.set_char_code(pFont->CharCodeFromUnicode(wChar));
+    charinfo.set_char_code(font->CharCodeFromUnicode(wChar));
     charinfo.set_unicode(wChar);
     charinfo.set_text_object(pTextObj);
     charinfo.set_origin(pTextObj->GetPos());
@@ -1000,7 +1034,7 @@ void CPDF_TextPage::ProcessTextObject(const TransformedTextObject& obj) {
   m_pPrevTextObj = pTextObj;
   m_PrevMatrix = form_matrix;
 
-  const bool bR2L = IsRightToLeft(*pTextObj, *pTextObj->GetFont());
+  const bool bR2L = IsRightToLeft(*pTextObj);
   const CFX_Matrix matrix = pTextObj->GetTextMatrix() * form_matrix;
   const bool bIsBidiAndMirrorInverse =
       bR2L && (matrix.a * matrix.d - matrix.b * matrix.c) < 0;
@@ -1248,52 +1282,33 @@ bool CPDF_TextPage::ProcessGenerateCharacter(GenerateCharacter type,
 void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,
                                            const CFX_Matrix& form_matrix,
                                            const CFX_Matrix& matrix) {
-  const float base_space = CalculateBaseSpace(text_object, matrix);
+  const float base_space = CalculateBaseSpace(text_object, matrix) +
+                           CalculateBaseSpaceAdjustment(text_object, matrix);
   RetainPtr<CPDF_Font> const font = text_object->GetFont();
 
   float spacing = 0;
   const size_t nItems = text_object->CountItems();
   for (size_t i = 0; i < nItems; ++i) {
-    CharInfo charinfo;
     CPDF_TextObject::Item item = text_object->GetItemInfo(i);
     if (item.m_CharCode == 0xffffffff) {
       WideString str = m_TempTextBuf.MakeString();
       if (str.IsEmpty()) {
         str = m_TextBuf.AsStringView();
       }
-      if (str.IsEmpty() || str.Back() == L' ') {
-        continue;
+      if (!str.IsEmpty() && str.Back() != L' ') {
+        float fontsize_h = text_object->text_state().GetFontSizeH();
+        spacing = -fontsize_h * item.m_Origin.x / 1000;
       }
-
-      float fontsize_h = text_object->text_state().GetFontSizeH();
-      spacing = -fontsize_h * item.m_Origin.x / 1000;
       continue;
     }
-    float charSpace = text_object->text_state().GetCharSpace();
-    if (charSpace > 0.001) {
-      spacing += matrix.TransformDistance(charSpace);
-    } else if (charSpace < -0.001) {
-      spacing -= matrix.TransformDistance(fabs(charSpace));
-    }
+
     spacing -= base_space;
+
+    CharInfo charinfo;
     if (spacing && i > 0) {
-      float fontsize_h = text_object->text_state().GetFontSizeH();
-      uint32_t space_charcode = font->CharCodeFromUnicode(' ');
-      float threshold = 0;
-      if (space_charcode != CPDF_Font::kInvalidCharCode) {
-        threshold = fontsize_h * font->GetCharWidthF(space_charcode) / 1000;
-      }
-      if (threshold > fontsize_h / 3) {
-        threshold = 0;
-      } else {
-        threshold /= 2;
-      }
-      if (threshold == 0) {
-        threshold = GetCharWidth(item.m_CharCode, font.Get());
-        threshold = NormalizeThreshold(threshold, 300, 500, 700);
-        threshold = fontsize_h * threshold / 1000;
-      }
-      if (threshold && (spacing && spacing >= threshold)) {
+      const float threshold = CalculateSpaceThreshold(
+          font, text_object->text_state().GetFontSizeH(), item.m_CharCode);
+      if (threshold && spacing && spacing >= threshold) {
         charinfo.set_unicode(L' ');
         charinfo.set_char_type(CharType::kGenerated);
         charinfo.set_text_object(text_object);
@@ -1310,6 +1325,7 @@ void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,
         continue;
       }
     }
+
     spacing = 0;
     WideString unicode = font->UnicodeFromCharCode(item.m_CharCode);
     CharType char_type = CharType::kNormal;
@@ -1317,13 +1333,13 @@ void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,
       unicode += static_cast<wchar_t>(item.m_CharCode);
       char_type = CharType::kNotUnicode;
     }
+
     charinfo.set_char_type(char_type);
     charinfo.set_char_code(item.m_CharCode);
     charinfo.set_text_object(text_object);
     charinfo.set_origin(matrix.Transform(item.m_Origin));
 
-    const FX_RECT rect =
-        charinfo.text_object()->GetFont()->GetCharBBox(charinfo.char_code());
+    const FX_RECT rect = font->GetCharBBox(item.m_CharCode);
     const float fFontSize = text_object->GetFontSize() / 1000;
     CFX_FloatRect char_box(rect.left * fFontSize + item.m_Origin.x,
                            rect.bottom * fFontSize + item.m_Origin.y,
@@ -1345,8 +1361,8 @@ void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,
       m_TempTextBuf.AppendChar(0xfffe);
       continue;
     }
-    size_t nTotal = unicode.GetLength();
-    bool bDel = false;
+
+    bool add_unicode = true;
     const int count = std::min(fxcrt::CollectionSize<int>(m_TempCharList), 7);
     constexpr float kTextCharRatioGapDelta = 0.07f;
     float threshold = charinfo.matrix().TransformXDistance(
@@ -1359,18 +1375,14 @@ void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,
           charinfo1.text_object()->GetFont() ==
               charinfo.text_object()->GetFont() &&
           fabs(diff.x) < threshold && fabs(diff.y) < threshold) {
-        bDel = true;
+        add_unicode = false;
         break;
       }
     }
-    if (!bDel) {
-      for (size_t nIndex = 0; nIndex < nTotal; ++nIndex) {
-        charinfo.set_unicode(unicode[nIndex]);
-        if (charinfo.unicode()) {
-          m_TempTextBuf.AppendChar(charinfo.unicode());
-        } else {
-          m_TempTextBuf.AppendChar(0xfffe);
-        }
+    if (add_unicode) {
+      for (wchar_t c : unicode) {
+        charinfo.set_unicode(c);
+        m_TempTextBuf.AppendChar(c ? c : 0xfffe);
         m_TempCharList.push_back(charinfo);
       }
     } else if (i == 0) {
