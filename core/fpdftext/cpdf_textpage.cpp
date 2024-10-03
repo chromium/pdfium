@@ -317,6 +317,21 @@ CPDF_TextPage::TransformedTextObject::~TransformedTextObject() = default;
 
 CPDF_TextPage::CharInfo::CharInfo() = default;
 
+CPDF_TextPage::CharInfo::CharInfo(CharType char_type,
+                                  uint32_t char_code,
+                                  wchar_t unicode,
+                                  CFX_PointF origin,
+                                  CFX_FloatRect char_box,
+                                  CFX_Matrix matrix,
+                                  CPDF_TextObject* text_object)
+    : char_type_(char_type),
+      unicode_(unicode),
+      char_code_(char_code),
+      origin_(origin),
+      char_box_(char_box),
+      matrix_(matrix),
+      text_object_(text_object) {}
+
 CPDF_TextPage::CharInfo::CharInfo(const CharInfo&) = default;
 
 CPDF_TextPage::CharInfo::~CharInfo() = default;
@@ -651,16 +666,20 @@ CPDF_TextPage::TextOrientation CPDF_TextPage::FindTextlineFlowOrientation()
 }
 
 void CPDF_TextPage::AppendGeneratedCharacter(wchar_t unicode,
-                                             const CFX_Matrix& form_matrix) {
-  std::optional<CharInfo> pGenerateChar = GenerateCharInfo(unicode);
-  if (!pGenerateChar.has_value())
+                                             const CFX_Matrix& form_matrix,
+                                             bool use_temp_buffer) {
+  std::optional<CharInfo> charinfo = GenerateCharInfo(unicode, form_matrix);
+  if (!charinfo.has_value()) {
     return;
-
-  m_TextBuf.AppendChar(unicode);
-  if (!form_matrix.IsIdentity()) {
-    pGenerateChar->set_matrix(form_matrix);
   }
-  m_CharList.push_back(pGenerateChar.value());
+
+  if (use_temp_buffer) {
+    m_TempTextBuf.AppendChar(unicode);
+    m_TempCharList.push_back(charinfo.value());
+  } else {
+    m_TextBuf.AppendChar(unicode);
+    m_CharList.push_back(charinfo.value());
+  }
 }
 
 void CPDF_TextPage::ProcessObject() {
@@ -712,9 +731,9 @@ void CPDF_TextPage::AddCharInfoByLRDirection(wchar_t wChar,
     m_CharList.push_back(info2);
     return;
   }
+  info2.set_char_type(CharType::kPiece);
   for (wchar_t normalized_char : normalized) {
     info2.set_unicode(normalized_char);
-    info2.set_char_type(CharType::kPiece);
     m_TextBuf.AppendChar(normalized_char);
     m_CharList.push_back(info2);
   }
@@ -735,8 +754,8 @@ void CPDF_TextPage::AddCharInfoByRLDirection(wchar_t wChar,
     m_CharList.push_back(info2);
     return;
   }
+  info2.set_char_type(CharType::kPiece);
   for (wchar_t normalized_char : normalized) {
-    info2.set_char_type(CharType::kPiece);
     info2.set_unicode(normalized_char);
     m_TextBuf.AppendChar(normalized_char);
     m_CharList.push_back(info2);
@@ -952,18 +971,11 @@ void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
       continue;
     }
 
-    CharInfo charinfo;
-    charinfo.set_char_type(CharType::kPiece);
-    charinfo.set_char_code(font->CharCodeFromUnicode(wChar));
-    charinfo.set_unicode(wChar);
-    charinfo.set_text_object(pTextObj);
-    charinfo.set_origin(pTextObj->GetPos());
     CFX_FloatRect char_box(rect);
     char_box.Translate(k * step, 0);
-    charinfo.set_char_box(char_box);
-    charinfo.set_matrix(matrix);
-    m_TempTextBuf.AppendChar(wChar);
-    m_TempCharList.push_back(charinfo);
+    m_TempCharList.push_back(
+        CharInfo(CharType::kPiece, font->CharCodeFromUnicode(wChar), wChar,
+                 pTextObj->GetPos(), char_box, matrix, pTextObj));
   }
 }
 
@@ -1234,21 +1246,14 @@ bool CPDF_TextPage::ProcessGenerateCharacter(GenerateCharacter type,
     case GenerateCharacter::kNone:
       return true;
     case GenerateCharacter::kSpace: {
-      std::optional<CharInfo> pGenerateChar = GenerateCharInfo(L' ');
-      if (pGenerateChar.has_value()) {
-        if (!form_matrix.IsIdentity()) {
-          pGenerateChar->set_matrix(form_matrix);
-        }
-        m_TempTextBuf.AppendChar(L' ');
-        m_TempCharList.push_back(pGenerateChar.value());
-      }
+      AppendGeneratedCharacter(L' ', form_matrix, /*use_temp_buffer=*/true);
       return true;
     }
     case GenerateCharacter::kLineBreak:
       CloseTempLine();
       if (m_TextBuf.GetSize()) {
-        AppendGeneratedCharacter(L'\r', form_matrix);
-        AppendGeneratedCharacter(L'\n', form_matrix);
+        AppendGeneratedCharacter(L'\r', form_matrix, /*use_temp_buffer=*/false);
+        AppendGeneratedCharacter(L'\n', form_matrix, /*use_temp_buffer=*/false);
       }
       return true;
     case GenerateCharacter::kHyphen:
@@ -1269,10 +1274,10 @@ bool CPDF_TextPage::ProcessGenerateCharacter(GenerateCharacter type,
         m_TempTextBuf.Delete(m_TempTextBuf.GetLength() - 1, 1);
         m_TempCharList.pop_back();
       }
-      CharInfo* charinfo = &m_TempCharList.back();
+      CharInfo& charinfo = m_TempCharList.back();
       m_TempTextBuf.Delete(m_TempTextBuf.GetLength() - 1, 1);
-      charinfo->set_unicode(0x2);
-      charinfo->set_char_type(CharType::kHyphen);
+      charinfo.set_char_type(CharType::kHyphen);
+      charinfo.set_unicode(0x2);
       m_TempTextBuf.AppendChar(0xfffe);
       return true;
   }
@@ -1304,22 +1309,16 @@ void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,
 
     spacing -= base_space;
 
-    CharInfo charinfo;
     if (spacing && i > 0) {
       const float threshold = CalculateSpaceThreshold(
           font, text_object->text_state().GetFontSizeH(), item.m_CharCode);
       if (threshold && spacing && spacing >= threshold) {
-        charinfo.set_unicode(L' ');
-        charinfo.set_char_type(CharType::kGenerated);
-        charinfo.set_text_object(text_object);
-        charinfo.set_char_code(CPDF_Font::kInvalidCharCode);
-        charinfo.set_origin(matrix.Transform(item.m_Origin));
-        charinfo.set_char_box(
-            CFX_FloatRect(charinfo.origin().x, charinfo.origin().y,
-                          charinfo.origin().x, charinfo.origin().y));
-        charinfo.set_matrix(form_matrix);
         m_TempTextBuf.AppendChar(L' ');
-        m_TempCharList.push_back(charinfo);
+        CFX_PointF origin = matrix.Transform(item.m_Origin);
+        m_TempCharList.push_back(CharInfo(
+            CharType::kGenerated, CPDF_Font::kInvalidCharCode, L' ', origin,
+            CFX_FloatRect(origin.x, origin.y, origin.x, origin.y), form_matrix,
+            text_object));
       }
       if (item.m_CharCode == CPDF_Font::kInvalidCharCode) {
         continue;
@@ -1334,11 +1333,6 @@ void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,
       char_type = CharType::kNotUnicode;
     }
 
-    charinfo.set_char_type(char_type);
-    charinfo.set_char_code(item.m_CharCode);
-    charinfo.set_text_object(text_object);
-    charinfo.set_origin(matrix.Transform(item.m_Origin));
-
     const FX_RECT rect = font->GetCharBBox(item.m_CharCode);
     const float fFontSize = text_object->GetFontSize() / 1000;
     CFX_FloatRect char_box(rect.left * fFontSize + item.m_Origin.x,
@@ -1350,13 +1344,14 @@ void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,
     }
     if (fabsf(char_box.right - char_box.left) < kSizeEpsilon) {
       char_box.right =
-          char_box.left + text_object->GetCharWidth(charinfo.char_code());
+          char_box.left + text_object->GetCharWidth(item.m_CharCode);
     }
     char_box = matrix.TransformRect(char_box);
-    charinfo.set_char_box(char_box);
-    charinfo.set_matrix(matrix);
+
+    CharInfo charinfo(char_type, item.m_CharCode, 0,
+                      matrix.Transform(item.m_Origin), char_box, matrix,
+                      text_object);
     if (unicode.IsEmpty()) {
-      charinfo.set_unicode(0);
       m_TempCharList.push_back(charinfo);
       m_TempTextBuf.AppendChar(0xfffe);
       continue;
@@ -1467,15 +1462,12 @@ bool CPDF_TextPage::IsSameAsPreTextObject(
 }
 
 std::optional<CPDF_TextPage::CharInfo> CPDF_TextPage::GenerateCharInfo(
-    wchar_t unicode) {
+    wchar_t unicode,
+    const CFX_Matrix& form_matrix) {
   const CharInfo* pPrevCharInfo = GetPrevCharInfo();
-  if (!pPrevCharInfo)
+  if (!pPrevCharInfo) {
     return std::nullopt;
-
-  CharInfo info;
-  info.set_char_type(CharType::kGenerated);
-  info.set_char_code(CPDF_Font::kInvalidCharCode);
-  info.set_unicode(unicode);
+  }
 
   int pre_width = 0;
   if (pPrevCharInfo->text_object() &&
@@ -1490,10 +1482,9 @@ std::optional<CPDF_TextPage::CharInfo> CPDF_TextPage::GenerateCharInfo(
   if (!fFontSize)
     fFontSize = kDefaultFontSize;
 
-  info.set_origin(
-      CFX_PointF(pPrevCharInfo->origin().x + pre_width * (fFontSize) / 1000,
-                 pPrevCharInfo->origin().y));
-  info.set_char_box(CFX_FloatRect(info.origin().x, info.origin().y,
-                                  info.origin().x, info.origin().y));
-  return info;
+  CFX_PointF origin(pPrevCharInfo->origin().x + pre_width * (fFontSize) / 1000,
+                    pPrevCharInfo->origin().y);
+  return CharInfo(CharType::kGenerated, CPDF_Font::kInvalidCharCode, unicode,
+                  origin, CFX_FloatRect(origin.x, origin.y, origin.x, origin.y),
+                  form_matrix, /*text_object=*/nullptr);
 }

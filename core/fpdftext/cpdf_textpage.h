@@ -46,6 +46,13 @@ class CPDF_TextPage {
   class CharInfo {
    public:
     CharInfo();
+    CharInfo(CharType char_type,
+             uint32_t char_code,
+             wchar_t unicode,
+             CFX_PointF origin,
+             CFX_FloatRect char_box,
+             CFX_Matrix matrix,
+             CPDF_TextObject* text_object);
     CharInfo(const CharInfo&);
     ~CharInfo();
 
@@ -53,25 +60,18 @@ class CPDF_TextPage {
     void set_char_type(CharType char_type) { char_type_ = char_type; }
 
     uint32_t char_code() const { return char_code_; }
-    void set_char_code(uint32_t char_code) { char_code_ = char_code; }
 
     wchar_t unicode() const { return unicode_; }
     void set_unicode(wchar_t unicode) { unicode_ = unicode; }
 
     const CFX_PointF& origin() const { return origin_; }
-    void set_origin(const CFX_PointF& origin) { origin_ = origin; }
 
     const CFX_FloatRect& char_box() const { return char_box_; }
-    void set_char_box(const CFX_FloatRect& char_box) { char_box_ = char_box; }
 
     const CFX_Matrix& matrix() const { return matrix_; }
-    void set_matrix(const CFX_Matrix& matrix) { matrix_ = matrix; }
 
     const CPDF_TextObject* text_object() const { return text_object_; }
     CPDF_TextObject* text_object() { return text_object_; }
-    void set_text_object(CPDF_TextObject* text_object) {
-      text_object_ = text_object;
-    }
 
    private:
     CharType char_type_ = CharType::kNormal;
@@ -156,7 +156,8 @@ class CPDF_TextPage {
                               const CFX_Matrix& form_matrix,
                               const CFX_Matrix& matrix);
   const CharInfo* GetPrevCharInfo() const;
-  std::optional<CharInfo> GenerateCharInfo(wchar_t unicode);
+  std::optional<CharInfo> GenerateCharInfo(wchar_t unicode,
+                                           const CFX_Matrix& form_matrix);
   bool IsSameAsPreTextObject(CPDF_TextObject* pTextObj,
                              const CPDF_PageObjectHolder* pObjList,
                              CPDF_PageObjectHolder::const_iterator iter) const;
@@ -171,7 +172,9 @@ class CPDF_TextPage {
   TextOrientation GetTextObjectWritingMode(
       const CPDF_TextObject* pTextObj) const;
   TextOrientation FindTextlineFlowOrientation() const;
-  void AppendGeneratedCharacter(wchar_t unicode, const CFX_Matrix& form_matrix);
+  void AppendGeneratedCharacter(wchar_t unicode,
+                                const CFX_Matrix& form_matrix,
+                                bool use_temp_buffer);
   void SwapTempTextBuf(size_t iCharListStartAppend, size_t iBufStartAppend);
   WideString GetTextByPredicate(
       const std::function<bool(const CharInfo&)>& predicate) const;
