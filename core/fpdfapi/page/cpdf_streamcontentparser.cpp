@@ -719,7 +719,7 @@ void CPDF_StreamContentParser::Handle_SetDash() {
   if (!pArray)
     return;
 
-  m_pCurStates->SetLineDash(pArray.Get(), GetNumber(0), 1.0f);
+  m_pCurStates->SetLineDash(pArray.Get(), GetNumber(0));
 }
 
 void CPDF_StreamContentParser::Handle_SetCharWidth() {

@@ -18,14 +18,9 @@ void CFX_GraphState::Emplace() {
   m_Ref.Emplace();
 }
 
-void CFX_GraphState::SetLineDash(std::vector<float> dashes,
-                                 float phase,
-                                 float scale) {
+void CFX_GraphState::SetLineDash(std::vector<float> dashes, float phase) {
   CFX_GraphStateData* pData = m_Ref.GetPrivateCopy();
-  pData->set_dash_phase(phase * scale);
-  for (float& val : dashes) {
-    val *= scale;
-  }
+  pData->set_dash_phase(phase);
   pData->set_dash_array(std::move(dashes));
 }
 

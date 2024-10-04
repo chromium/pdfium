@@ -31,11 +31,9 @@ void CPDF_AllStates::SetDefaultStates() {
   m_GraphicStates.SetDefaultStates();
 }
 
-void CPDF_AllStates::SetLineDash(const CPDF_Array* pArray,
-                                 float phase,
-                                 float scale) {
+void CPDF_AllStates::SetLineDash(const CPDF_Array* pArray, float phase) {
   std::vector<float> dashes = ReadArrayElementsToVector(pArray, pArray->size());
-  mutable_graph_state().SetLineDash(std::move(dashes), phase, scale);
+  mutable_graph_state().SetLineDash(std::move(dashes), phase);
 }
 
 void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
@@ -71,7 +69,7 @@ void CPDF_AllStates::ProcessExtGS(const CPDF_Dictionary* pGS,
         if (!pArray)
           break;
 
-        SetLineDash(pArray.Get(), pDash->GetFloatAt(1), 1.0f);
+        SetLineDash(pArray.Get(), pDash->GetFloatAt(1));
         break;
       }
       case FXBSTR_ID('R', 'I', 0, 0):
