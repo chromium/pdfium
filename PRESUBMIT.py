@@ -537,6 +537,8 @@ def ChecksCommon(input_api, output_api):
           project_name='PDFium',
           source_file_filter=lambda x: input_api.FilterSourceFile(
               x, files_to_check=files_to_check)))
+  results.extend(
+      input_api.canned_checks.CheckInclusiveLanguage(input_api, output_api))
 
   return results
 
