@@ -452,10 +452,11 @@ luci.builder(
     properties = {
         "source_url": "https://chromium.googlesource.com/chromium/src.git",
         "destination_url": "https://pdfium.googlesource.com/pdfium.git",
-        "source_packages": "src/third_party/llvm-build/Release+Asserts",
-        "destination_packages": "third_party/llvm-build/Release+Asserts"
+        "source_packages": "src/third_party/llvm-build/Release+Asserts,src/third_party/rust-toolchain",
+        "destination_packages": "third_party/llvm-build/Release+Asserts,third_party/rust-toolchain"
     },
-    # TODO(kimstephanie): Add schedule once builder is ready
+    # Run every 2 weeks on the 1st and the 15th of each month at 1:30 AM
+    schedule = "30 1 1,15 * *",
 )
 
 luci.builder(
