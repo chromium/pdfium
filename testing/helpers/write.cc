@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "core/fxcrt/check.h"
 #include "core/fxcrt/notreached.h"
 #include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_annot.h"
@@ -554,7 +555,8 @@ void WriteEmf(FPDF_PAGE page, const char* pdf_name, int num) {
   // If a PS_NULL pen is used, the dimensions of the rectangle are 1 pixel less.
   Rectangle(dc, 0, 0, width + 1, height + 1);
 
-  FPDF_RenderPage(dc, page, 0, 0, width, height, 0, FPDF_ANNOT | FPDF_PRINTING);
+  CHECK(FPDF_RenderPage(dc, page, 0, 0, width, height, 0,
+                        FPDF_ANNOT | FPDF_PRINTING));
 
   DeleteEnhMetaFile(CloseEnhMetaFile(dc));
 }
@@ -573,7 +575,8 @@ void WritePS(FPDF_PAGE page, const char* pdf_name, int num) {
 
   int width = static_cast<int>(FPDF_GetPageWidthF(page));
   int height = static_cast<int>(FPDF_GetPageHeightF(page));
-  FPDF_RenderPage(dc, page, 0, 0, width, height, 0, FPDF_ANNOT | FPDF_PRINTING);
+  CHECK(FPDF_RenderPage(dc, page, 0, 0, width, height, 0,
+                        FPDF_ANNOT | FPDF_PRINTING));
 
   HENHMETAFILE emf = CloseEnhMetaFile(dc);
   std::vector<const ENHMETARECORD*> items;

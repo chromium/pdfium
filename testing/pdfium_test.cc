@@ -1189,9 +1189,13 @@ class GdiDisplayPageRenderer : public BitmapPageRenderer {
     CHECK_NE(old_obj, HGDI_ERROR);
 
     // Render into the in-memory DC.
-    FPDF_RenderPage(dc_.Get(), page(), /*start_x=*/0, /*start_y=*/0,
-                    /*size_x=*/width(), /*size_y=*/height(), /*rotate=*/0,
-                    /*flags=*/flags());
+    FPDF_BOOL render_result =
+        FPDF_RenderPage(dc_.Get(), page(), /*start_x=*/0, /*start_y=*/0,
+                        /*size_x=*/width(), /*size_y=*/height(), /*rotate=*/0,
+                        /*flags=*/flags());
+    if (!render_result) {
+      return false;
+    }
 
     bool result = !!GdiFlush();
     HGDIOBJ dib_obj = SelectObject(dc_.Get(), old_obj);

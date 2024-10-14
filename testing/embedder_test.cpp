@@ -626,7 +626,7 @@ std::vector<uint8_t> EmbedderTest::RenderPageWithFlagsToEmf(FPDF_PAGE page,
   // If a PS_NULL pen is used, the dimensions of the rectangle are 1 pixel less.
   Rectangle(dc, 0, 0, width + 1, height + 1);
 
-  FPDF_RenderPage(dc, page, 0, 0, width, height, 0, flags);
+  CHECK(FPDF_RenderPage(dc, page, 0, 0, width, height, 0, flags));
 
   HENHMETAFILE emf = CloseEnhMetaFile(dc);
   UINT size_in_bytes = GetEnhMetaFileBits(emf, 0, nullptr);

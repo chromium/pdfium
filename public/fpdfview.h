@@ -850,8 +850,9 @@ typedef struct FPDF_COLORSCHEME_ {
 //          flags       -   0 for normal display, or combination of flags
 //                          defined above.
 // Return value:
-//          None.
-FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPage(HDC dc,
+//          Returns true if the page is rendered successfully, false otherwise.
+
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_RenderPage(HDC dc,
                                                FPDF_PAGE page,
                                                int start_x,
                                                int start_y,
