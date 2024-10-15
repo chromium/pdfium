@@ -182,6 +182,8 @@ source_set("embedder_test_support") {
     "fake_file_access.h",
     "range_set.cpp",
     "range_set.h",
+    "utils/compare_coordinates.cc",
+    "utils/compare_coordinates.h",
   ]
   deps = [
     "../:pdfium_public_headers",
