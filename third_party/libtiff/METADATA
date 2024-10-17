@@ -6,18 +6,5 @@
 
 third_party {
   security {
-    # PDFium's copy of libtiff does not ship tools like tiffcrop.
-    mitigated_security_patch: "CVE-2022-48281"
-    mitigated_security_patch: "CVE-2023-1916"
-    mitigated_security_patch: "CVE-2023-3164"
-    mitigated_security_patch: "CVE-2023-25433"
-    mitigated_security_patch: "CVE-2023-25434"
-    mitigated_security_patch: "CVE-2023-25435"
-    mitigated_security_patch: "CVE-2023-26965"
-    mitigated_security_patch: "CVE-2023-40745"
-    mitigated_security_patch: "CVE-2023-41175"
-
-    # There are no callers to TIFFRasterScanlineSize() in PDFium's code base.
-    mitigated_security_patch: "CVE-2023-52355"
   }
 }
