@@ -101,7 +101,7 @@ void FillNameTreeDict(CPDF_Dictionary* pRootDict) {
 
 }  // namespace
 
-TEST(cpdf_nametree, GetUnicodeNameWithBOM) {
+TEST(CPDFNameTreeTest, GetUnicodeNameWithBOM) {
   // Set up the root dictionary with a Names array.
   auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
   auto pNames = pRootDict->SetNewFor<CPDF_Array>("Names");
@@ -124,7 +124,7 @@ TEST(cpdf_nametree, GetUnicodeNameWithBOM) {
   EXPECT_EQ(100, pNumber->GetInteger());
 }
 
-TEST(cpdf_nametree, GetFromTreeWithLimitsArrayWith4Items) {
+TEST(CPDFNameTreeTest, GetFromTreeWithLimitsArrayWith4Items) {
   // After creating a name tree, mutate a /Limits array so it has excess
   // elements.
   auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
@@ -149,7 +149,7 @@ TEST(cpdf_nametree, GetFromTreeWithLimitsArrayWith4Items) {
   CheckLimitsArray(pGrandKid3.Get(), "9.txt", "9.txt");
 }
 
-TEST(cpdf_nametree, AddIntoNames) {
+TEST(CPDFNameTreeTest, AddIntoNames) {
   // Set up a name tree with a single Names array.
   auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
   auto pNames = pRootDict->SetNewFor<CPDF_Array>("Names");
@@ -183,7 +183,7 @@ TEST(cpdf_nametree, AddIntoNames) {
   CheckNameKeyValue(pNames.Get(), 4, "9.txt", 999);
 }
 
-TEST(cpdf_nametree, AddIntoEmptyNames) {
+TEST(CPDFNameTreeTest, AddIntoEmptyNames) {
   // Set up a name tree with an empty Names array.
   auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
   auto pNames = pRootDict->SetNewFor<CPDF_Array>("Names");
@@ -218,7 +218,7 @@ TEST(cpdf_nametree, AddIntoEmptyNames) {
   CheckNameKeyValue(pNames.Get(), 3, "9.txt", 999);
 }
 
-TEST(cpdf_nametree, AddIntoKids) {
+TEST(CPDFNameTreeTest, AddIntoKids) {
   auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
   FillNameTreeDict(pRootDict.Get());
   std::unique_ptr<CPDF_NameTree> name_tree =
@@ -293,7 +293,7 @@ TEST(cpdf_nametree, AddIntoKids) {
   CheckNameKeyValue(pNames.Get(), 3, "6.txt", 666);
 }
 
-TEST(cpdf_nametree, DeleteFromKids) {
+TEST(CPDFNameTreeTest, DeleteFromKids) {
   auto pRootDict = pdfium::MakeRetain<CPDF_Dictionary>();
   FillNameTreeDict(pRootDict.Get());
   std::unique_ptr<CPDF_NameTree> name_tree =

@@ -67,7 +67,7 @@ void TestMultiselectFieldDict(RetainPtr<CPDF_Array> opt_array,
 
 }  // namespace
 
-TEST(CPDF_FormFieldTest, GetFullNameForDict) {
+TEST(CPDFFormFieldTest, GetFullNameForDict) {
   WideString name = CPDF_FormField::GetFullNameForDict(nullptr);
   EXPECT_TRUE(name.IsEmpty());
 
@@ -105,7 +105,7 @@ TEST(CPDF_FormFieldTest, GetFullNameForDict) {
   EXPECT_EQ("bar.foo.qux", name.ToUTF8());
 }
 
-TEST(CPDF_FormFieldTest, IsItemSelected) {
+TEST(CPDFFormFieldTest, IsItemSelected) {
   ScopedCPDF_PageModule page_module;
 
   auto opt_array = pdfium::MakeRetain<CPDF_Array>();

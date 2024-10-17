@@ -12,7 +12,7 @@
 #include "core/fpdfapi/parser/cpdf_number.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(cpdf_dest, GetXYZ) {
+TEST(CPDFDestTest, GetXYZ) {
   bool hasX;
   bool hasY;
   bool hasZoom;

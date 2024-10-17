@@ -20,7 +20,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/test_support.h"
 
-TEST(cpdf_filespec, EncodeDecodeFileName) {
+TEST(CPDFFileSpecTest, EncodeDecodeFileName) {
   static const std::vector<pdfium::NullTermWstrFuncTestData> test_data = {
     // Empty src string.
     {L"", L""},
@@ -58,7 +58,7 @@ TEST(cpdf_filespec, EncodeDecodeFileName) {
   }
 }
 
-TEST(cpdf_filespec, GetFileName) {
+TEST(CPDFFileSpecTest, GetFileName) {
   {
     // String object.
     static const pdfium::NullTermWstrFuncTestData test_data = {
@@ -136,7 +136,7 @@ TEST(cpdf_filespec, GetFileName) {
   }
 }
 
-TEST(cpdf_filespec, GetFileStream) {
+TEST(CPDFFileSpecTest, GetFileStream) {
   {
     // Invalid object.
     auto name_obj = pdfium::MakeRetain<CPDF_Name>(nullptr, "test.pdf");
@@ -197,7 +197,7 @@ TEST(cpdf_filespec, GetFileStream) {
   }
 }
 
-TEST(cpdf_filespec, GetParamsDict) {
+TEST(CPDFFileSpecTest, GetParamsDict) {
   {
     // Invalid object.
     auto name_obj = pdfium::MakeRetain<CPDF_Name>(nullptr, "test.pdf");
