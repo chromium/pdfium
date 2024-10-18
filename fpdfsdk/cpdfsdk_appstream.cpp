@@ -1055,7 +1055,7 @@ ByteString GetDropButtonAppStream(const CFX_FloatRect& rcBBox) {
         rcBBox, 2, CFX_Color(CFX_Color::Type::kGray, 0),
         CFX_Color(CFX_Color::Type::kGray, 1),
         CFX_Color(CFX_Color::Type::kGray, 0.5), BorderStyle::kBeveled,
-        CPWL_Dash(3, 0, 0));
+        CPWL_Dash{3, 0, 0});
   }
 
   CFX_PointF ptCenter = CFX_PointF((rcBBox.left + rcBBox.right) / 2,
@@ -1162,14 +1162,14 @@ void CPDFSDK_AppStream::SetAsPushButton() {
   CFX_Color crBorder = pControl->GetOriginalBorderColor();
 
   float fBorderWidth = static_cast<float>(widget_->GetBorderWidth());
-  CPWL_Dash dsBorder(3, 0, 0);
+  CPWL_Dash dsBorder{3, 0, 0};
   CFX_Color crLeftTop;
   CFX_Color crRightBottom;
 
   BorderStyle nBorderStyle = widget_->GetBorderStyle();
   switch (nBorderStyle) {
     case BorderStyle::kDash:
-      dsBorder = CPWL_Dash(3, 3, 0);
+      dsBorder = CPWL_Dash{3, 3, 0};
       break;
     case BorderStyle::kBeveled:
       fBorderWidth *= 2;
@@ -1313,14 +1313,14 @@ void CPDFSDK_AppStream::SetAsCheckBox() {
   CFX_Color crBackground = pControl->GetOriginalBackgroundColor();
   CFX_Color crBorder = pControl->GetOriginalBorderColor();
   float fBorderWidth = static_cast<float>(widget_->GetBorderWidth());
-  CPWL_Dash dsBorder(3, 0, 0);
+  CPWL_Dash dsBorder{3, 0, 0};
   CFX_Color crLeftTop;
   CFX_Color crRightBottom;
 
   BorderStyle nBorderStyle = widget_->GetBorderStyle();
   switch (nBorderStyle) {
     case BorderStyle::kDash:
-      dsBorder = CPWL_Dash(3, 3, 0);
+      dsBorder = CPWL_Dash{3, 3, 0};
       break;
     case BorderStyle::kBeveled:
       fBorderWidth *= 2;
@@ -1392,14 +1392,14 @@ void CPDFSDK_AppStream::SetAsRadioButton() {
   CFX_Color crBackground = pControl->GetOriginalBackgroundColor();
   CFX_Color crBorder = pControl->GetOriginalBorderColor();
   float fBorderWidth = static_cast<float>(widget_->GetBorderWidth());
-  CPWL_Dash dsBorder(3, 0, 0);
+  CPWL_Dash dsBorder{3, 0, 0};
   CFX_Color crLeftTop;
   CFX_Color crRightBottom;
 
   BorderStyle nBorderStyle = widget_->GetBorderStyle();
   switch (nBorderStyle) {
     case BorderStyle::kDash:
-      dsBorder = CPWL_Dash(3, 3, 0);
+      dsBorder = CPWL_Dash{3, 3, 0};
       break;
     case BorderStyle::kBeveled:
       fBorderWidth *= 2;
@@ -1769,7 +1769,7 @@ void CPDFSDK_AppStream::SetAsTextField(std::optional<WideString> sValue) {
         ByteString sColor =
             GetStrokeColorAppStream(widget_->GetBorderPWLColor());
         if (sColor.GetLength() > 0) {
-          CPWL_Dash dsBorder = CPWL_Dash(3, 3, 0);
+          CPWL_Dash dsBorder = CPWL_Dash{3, 3, 0};
           AutoClosedQCommand q(&sLines);
           sLines << widget_->GetBorderWidth() << " " << kSetLineWidthOperator
                  << "\n"
@@ -1876,12 +1876,12 @@ ByteString CPDFSDK_AppStream::GetBorderAppStream() const {
   CFX_Color crRightBottom;
 
   float fBorderWidth = static_cast<float>(widget_->GetBorderWidth());
-  CPWL_Dash dsBorder(3, 0, 0);
+  CPWL_Dash dsBorder{3, 0, 0};
 
   BorderStyle nBorderStyle = widget_->GetBorderStyle();
   switch (nBorderStyle) {
     case BorderStyle::kDash:
-      dsBorder = CPWL_Dash(3, 3, 0);
+      dsBorder = CPWL_Dash{3, 3, 0};
       break;
     case BorderStyle::kBeveled:
       fBorderWidth *= 2;

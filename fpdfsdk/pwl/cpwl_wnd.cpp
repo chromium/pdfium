@@ -40,7 +40,7 @@ CPWL_Wnd::CreateParams::CreateParams(CFX_Timer::HandlerIface* timer_handler,
       pFillerNotify(filler_notify),
       pProvider(provider),
       fFontSize(kDefaultFontSize),
-      sDash(3, 0, 0) {}
+      sDash{3, 0, 0} {}
 
 CPWL_Wnd::CreateParams::CreateParams(const CreateParams& other) = default;
 

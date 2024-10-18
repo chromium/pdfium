@@ -336,7 +336,7 @@ CPWL_Wnd::CreateParams CFFL_FormField::GetCreateParam() {
   cp.nBorderStyle = m_pWidget->GetBorderStyle();
   switch (cp.nBorderStyle) {
     case BorderStyle::kDash:
-      cp.sDash = CPWL_Dash(3, 3, 0);
+      cp.sDash = CPWL_Dash{3, 3, 0};
       break;
     case BorderStyle::kBeveled:
     case BorderStyle::kInset:
