@@ -14,7 +14,7 @@
 
 using ::testing::ElementsAre;
 
-TEST(CPDF_CalGray, TranslateImageLine) {
+TEST(CPDFCalGrayTest, TranslateImageLine) {
   RetainPtr<CPDF_ColorSpace> pCal = CPDF_ColorSpace::AllocateColorSpace("CalG");
   ASSERT_TRUE(pCal);
 
@@ -26,7 +26,7 @@ TEST(CPDF_CalGray, TranslateImageLine) {
   EXPECT_THAT(dst, ElementsAre(255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0));
 }
 
-TEST(CPDF_CalRGB, TranslateImageLine) {
+TEST(CPDFCalRGBTest, TranslateImageLine) {
   RetainPtr<CPDF_ColorSpace> pCal = CPDF_ColorSpace::AllocateColorSpace("CalR");
   ASSERT_TRUE(pCal);
 

@@ -9,17 +9,17 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/string_write_stream.h"
 
-TEST(CFX_XMLElementTest, GetType) {
+TEST(CFXXMLElementTest, GetType) {
   CFX_XMLElement node(L"node");
   EXPECT_EQ(CFX_XMLNode::Type::kElement, node.GetType());
 }
 
-TEST(CFX_XMLElementTest, GetName) {
+TEST(CFXXMLElementTest, GetName) {
   CFX_XMLElement node(L"node");
   EXPECT_EQ(L"node", node.GetName());
 }
 
-TEST(CFX_XMLElementTest, GetLocalTagName) {
+TEST(CFXXMLElementTest, GetLocalTagName) {
   CFX_XMLElement node1(L"node1");
   EXPECT_EQ(L"node1", node1.GetLocalTagName());
 
@@ -27,7 +27,7 @@ TEST(CFX_XMLElementTest, GetLocalTagName) {
   EXPECT_EQ(L"node2", node2.GetLocalTagName());
 }
 
-TEST(CFX_XMLElementTest, GetNamespacePrefix) {
+TEST(CFXXMLElementTest, GetNamespacePrefix) {
   CFX_XMLElement node1(L"node1");
   EXPECT_EQ(L"", node1.GetNamespacePrefix());
 
@@ -35,7 +35,7 @@ TEST(CFX_XMLElementTest, GetNamespacePrefix) {
   EXPECT_EQ(L"test", node2.GetNamespacePrefix());
 }
 
-TEST(CFX_XMLElementTest, GetNamespaceURI) {
+TEST(CFXXMLElementTest, GetNamespaceURI) {
   CFX_XMLElement node1(L"node1");
   EXPECT_EQ(L"", node1.GetNamespaceURI());
 
@@ -52,7 +52,7 @@ TEST(CFX_XMLElementTest, GetNamespaceURI) {
   EXPECT_EQ(L"https://example.org/ns2", node2.GetNamespaceURI());
 }
 
-TEST(CFX_XMLElementTest, Attributes) {
+TEST(CFXXMLElementTest, Attributes) {
   CFX_XMLElement node(L"test:node");
   node.SetAttribute(L"first", L"one");
   node.SetAttribute(L"second", L"two");
@@ -70,7 +70,7 @@ TEST(CFX_XMLElementTest, Attributes) {
   ASSERT_EQ(1U, node.GetAttributes().size());
 }
 
-TEST(CFX_XMLElementTest, Clone) {
+TEST(CFXXMLElementTest, Clone) {
   CFX_XMLDocument doc;
   CFX_XMLElement node(L"test:node");
   node.SetAttribute(L"first", L"one");
@@ -107,7 +107,7 @@ TEST(CFX_XMLElementTest, Clone) {
   EXPECT_EQ(L"Text Child", text->GetText());
 }
 
-TEST(CFX_XMLElementTest, Save) {
+TEST(CFXXMLElementTest, Save) {
   auto stream = pdfium::MakeRetain<StringWriteStream>();
   CFX_XMLElement node(L"root");
 
@@ -115,7 +115,7 @@ TEST(CFX_XMLElementTest, Save) {
   EXPECT_EQ("<root />\n", stream->ToString());
 }
 
-TEST(CFX_XMLElementTest, SaveWithAttributes) {
+TEST(CFXXMLElementTest, SaveWithAttributes) {
   auto stream = pdfium::MakeRetain<StringWriteStream>();
   CFX_XMLElement node(L"root");
   node.SetAttribute(L"first", L"one");
@@ -125,7 +125,7 @@ TEST(CFX_XMLElementTest, SaveWithAttributes) {
   EXPECT_EQ("<root first=\"one\" second=\"two\" />\n", stream->ToString());
 }
 
-TEST(CFX_XMLElementTest, SaveWithChildren) {
+TEST(CFXXMLElementTest, SaveWithChildren) {
   auto stream = pdfium::MakeRetain<StringWriteStream>();
   CFX_XMLElement node(L"node");
 
@@ -151,7 +151,7 @@ TEST(CFX_XMLElementTest, SaveWithChildren) {
       stream->ToString());
 }
 
-TEST(CFX_XMLElementTest, SaveWithNamespace) {
+TEST(CFXXMLElementTest, SaveWithNamespace) {
   auto stream = pdfium::MakeRetain<StringWriteStream>();
   CFX_XMLElement node(L"test:root");
   node.SetAttribute(L"xmlns:test", L"https://example.org/ns1");
@@ -161,7 +161,7 @@ TEST(CFX_XMLElementTest, SaveWithNamespace) {
             stream->ToString());
 }
 
-TEST(CFX_XMLElementTest, GetFirstChildNamed) {
+TEST(CFXXMLElementTest, GetFirstChildNamed) {
   CFX_XMLElement node(L"node");
   CFX_XMLElement node_child1(L"node-child");
   node.AppendLastChild(&node_child1);
@@ -171,7 +171,7 @@ TEST(CFX_XMLElementTest, GetFirstChildNamed) {
   EXPECT_EQ(&node_child1, found);
 }
 
-TEST(CFX_XMLElementTest, GetFirstChildNamedMissing) {
+TEST(CFXXMLElementTest, GetFirstChildNamedMissing) {
   CFX_XMLElement node(L"node");
   CFX_XMLElement node_child1(L"node-child");
   node.AppendLastChild(&node_child1);
@@ -180,7 +180,7 @@ TEST(CFX_XMLElementTest, GetFirstChildNamedMissing) {
   EXPECT_TRUE(found == nullptr);
 }
 
-TEST(CFX_XMLElementTest, GetNthChildNamed) {
+TEST(CFXXMLElementTest, GetNthChildNamed) {
   CFX_XMLElement node(L"node");
   CFX_XMLElement node_child1(L"node-child");
   CFX_XMLElement node_child2(L"node-child");
@@ -194,7 +194,7 @@ TEST(CFX_XMLElementTest, GetNthChildNamed) {
   EXPECT_EQ(&node_child3, found);
 }
 
-TEST(CFX_XMLElementTest, GetNthChildNamedMissingChild) {
+TEST(CFXXMLElementTest, GetNthChildNamedMissingChild) {
   CFX_XMLElement node(L"node");
   CFX_XMLElement node_child1(L"node-child");
   CFX_XMLElement node_child2(L"node-child");
@@ -207,7 +207,7 @@ TEST(CFX_XMLElementTest, GetNthChildNamedMissingChild) {
   EXPECT_TRUE(found == nullptr);
 }
 
-TEST(CFX_XMLElementTest, GetTextData) {
+TEST(CFXXMLElementTest, GetTextData) {
   CFX_XMLElement node(L"node");
 
   CFX_XMLText text_child1(L"Text Child 1");

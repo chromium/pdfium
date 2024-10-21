@@ -28,7 +28,7 @@ WideString ReverseChildrenString(CFX_XMLElement* pParent) {
 
 }  // namespace
 
-TEST(CFX_XMLNodeTest, GetParent) {
+TEST(CFXXMLNodeTest, GetParent) {
   CFX_XMLElement node1(L"node");
   CFX_XMLElement node2(L"node2");
   CFX_XMLElement node3(L"node3");
@@ -41,7 +41,7 @@ TEST(CFX_XMLNodeTest, GetParent) {
   EXPECT_EQ(&node2, node3.GetParent());
 }
 
-TEST(CFX_XMLNodeTest, GetRoot) {
+TEST(CFXXMLNodeTest, GetRoot) {
   CFX_XMLElement node1(L"node");
   CFX_XMLElement node2(L"node2");
   CFX_XMLElement node3(L"node3");
@@ -54,7 +54,7 @@ TEST(CFX_XMLNodeTest, GetRoot) {
   EXPECT_EQ(&node1, node3.GetRoot());
 }
 
-TEST(CFX_XMLNodeTest, GetChildren) {
+TEST(CFXXMLNodeTest, GetChildren) {
   CFX_XMLElement node1(L"node");
   CFX_XMLElement node2(L"node2");
   CFX_XMLElement node3(L"node3");
@@ -76,7 +76,7 @@ TEST(CFX_XMLNodeTest, GetChildren) {
   EXPECT_TRUE(node4.GetFirstChild() == nullptr);
 }
 
-TEST(CFX_XMLNodeTest, DeleteChildren) {
+TEST(CFXXMLNodeTest, DeleteChildren) {
   CFX_XMLElement node1(L"node");
   CFX_XMLElement node2(L"node2");
   CFX_XMLElement node3(L"node3");
@@ -100,7 +100,7 @@ TEST(CFX_XMLNodeTest, DeleteChildren) {
   EXPECT_TRUE(node3.GetParent() == &node2);
 }
 
-TEST(CFX_XMLNodeTest, AddingChildren) {
+TEST(CFXXMLNodeTest, AddingChildren) {
   CFX_XMLElement parent(L"Root");
   CFX_XMLElement nodeA(L"A");
   CFX_XMLElement nodeB(L"B");
@@ -144,7 +144,7 @@ TEST(CFX_XMLNodeTest, AddingChildren) {
   EXPECT_EQ(L"EADBCF", ReverseChildrenString(&parent));
 }
 
-TEST(CFX_XMLNodeTest, RemovingMiddleChild) {
+TEST(CFXXMLNodeTest, RemovingMiddleChild) {
   CFX_XMLElement node1(L"node1");
   CFX_XMLElement node2(L"node2");
   CFX_XMLElement node3(L"node3");
@@ -174,7 +174,7 @@ TEST(CFX_XMLNodeTest, RemovingMiddleChild) {
   EXPECT_TRUE(node4.GetNextSibling() == nullptr);
 }
 
-TEST(CFX_XMLNodeTest, RemovingFirstChild) {
+TEST(CFXXMLNodeTest, RemovingFirstChild) {
   CFX_XMLElement node1(L"node1");
   CFX_XMLElement node2(L"node2");
   CFX_XMLElement node3(L"node3");
@@ -204,7 +204,7 @@ TEST(CFX_XMLNodeTest, RemovingFirstChild) {
   EXPECT_TRUE(node4.GetNextSibling() == nullptr);
 }
 
-TEST(CFX_XMLNodeTest, RemovingLastChild) {
+TEST(CFXXMLNodeTest, RemovingLastChild) {
   CFX_XMLElement node1(L"node1");
   CFX_XMLElement node2(L"node2");
   CFX_XMLElement node3(L"node3");
@@ -233,7 +233,7 @@ TEST(CFX_XMLNodeTest, RemovingLastChild) {
   EXPECT_TRUE(node3.GetNextSibling() == nullptr);
 }
 
-TEST(CFX_XMLNodeTest, RemovingOnlyChild) {
+TEST(CFXXMLNodeTest, RemovingOnlyChild) {
   CFX_XMLElement node1(L"node1");
   CFX_XMLElement node2(L"node2");
 
@@ -250,7 +250,7 @@ TEST(CFX_XMLNodeTest, RemovingOnlyChild) {
   EXPECT_TRUE(node2.GetPrevSibling() == nullptr);
 }
 
-TEST(CFX_XMLNodeTest, RemoveMissingChild) {
+TEST(CFXXMLNodeTest, RemoveMissingChild) {
   CFX_XMLElement node1(L"node1");
   CFX_XMLElement node2(L"node2");
   CFX_XMLElement node3(L"node3");

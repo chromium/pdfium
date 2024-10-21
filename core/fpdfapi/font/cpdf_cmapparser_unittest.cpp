@@ -19,7 +19,7 @@ bool uint_ranges_equal(pdfium::span<const uint8_t> a,
 
 }  // namespace
 
-TEST(cpdf_cmapparser, GetCode) {
+TEST(CPDFCMapParserTest, GetCode) {
   EXPECT_EQ(0u, CPDF_CMapParser::GetCode(""));
   EXPECT_EQ(0u, CPDF_CMapParser::GetCode("<"));
   EXPECT_EQ(194u, CPDF_CMapParser::GetCode("<c2"));
@@ -37,7 +37,7 @@ TEST(cpdf_cmapparser, GetCode) {
   EXPECT_EQ(0u, CPDF_CMapParser::GetCode("<100000000"));
 }
 
-TEST(cpdf_cmapparser, GetCodeRange) {
+TEST(CPDFCMapParserTest, GetCodeRange) {
   std::optional<CPDF_CMap::CodeRange> range;
 
   // Must start with a <

@@ -16,9 +16,9 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/file_util.h"
 
-class CPDF_CreatorEmbedderTest : public EmbedderTest {};
+class CPDFCreatorEmbedderTest : public EmbedderTest {};
 
-TEST_F(CPDF_CreatorEmbedderTest, SavedDocsAreEqualAfterParse) {
+TEST_F(CPDFCreatorEmbedderTest, SavedDocsAreEqualAfterParse) {
   ASSERT_TRUE(OpenDocument("annotation_stamp_with_ap.pdf"));
   // Save without additional data reading.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
@@ -44,7 +44,7 @@ TEST_F(CPDF_CreatorEmbedderTest, SavedDocsAreEqualAfterParse) {
   EXPECT_EQ(saved_doc_1.size(), saved_doc_2.size());
 }
 
-TEST_F(CPDF_CreatorEmbedderTest, Bug873) {
+TEST_F(CPDFCreatorEmbedderTest, Bug873) {
   ASSERT_TRUE(OpenDocument("embedded_attachments.pdf"));
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
@@ -62,7 +62,7 @@ TEST_F(CPDF_CreatorEmbedderTest, Bug873) {
   EXPECT_THAT(data_after_second_id, testing::StartsWith(">]>>\r\n"));
 }
 
-TEST_F(CPDF_CreatorEmbedderTest, SaveLinearizedInfo) {
+TEST_F(CPDFCreatorEmbedderTest, SaveLinearizedInfo) {
   FileAccessForTesting file_acc("linearized.pdf");
   FakeFileAccess fake_acc(&file_acc);
 

@@ -6,7 +6,7 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(JBig2_BitStream, ReadNBits) {
+TEST(JBig2BitStreamTest, ReadNBits) {
   const uint8_t kData[] = {0xb1};  // 10110001
   CJBig2_BitStream stream(kData, 0);
 
@@ -25,7 +25,7 @@ TEST(JBig2_BitStream, ReadNBits) {
   EXPECT_EQ(1, val2);
 }
 
-TEST(JBig2_BitStream, ReadNBitsLargerThenData) {
+TEST(JBig2BitStreamTest, ReadNBitsLargerThenData) {
   const uint8_t kData[] = {0xb1};  // 10110001
   CJBig2_BitStream stream(kData, 42);
 
@@ -34,7 +34,7 @@ TEST(JBig2_BitStream, ReadNBitsLargerThenData) {
   EXPECT_EQ(0xb1U, val1);
 }
 
-TEST(JBig2_BitStream, ReadNBitsNullStream) {
+TEST(JBig2BitStreamTest, ReadNBitsNullStream) {
   CJBig2_BitStream stream({}, 0);
 
   uint32_t val1;
@@ -44,7 +44,7 @@ TEST(JBig2_BitStream, ReadNBitsNullStream) {
   EXPECT_EQ(-1, stream.readNBits(2, &val2));
 }
 
-TEST(JBig2_BitStream, ReadNBitsOutOfBounds) {
+TEST(JBig2BitStreamTest, ReadNBitsOutOfBounds) {
   const uint8_t kData[] = {0xb1};  // 10110001
   CJBig2_BitStream stream(kData, 42);
 
@@ -55,7 +55,7 @@ TEST(JBig2_BitStream, ReadNBitsOutOfBounds) {
   EXPECT_EQ(-1, stream.readNBits(2, &val2));
 }
 
-TEST(JBig2_BitStream, ReadNBitsWhereNIs36) {
+TEST(JBig2BitStreamTest, ReadNBitsWhereNIs36) {
   const uint8_t kData[] = {0xb0, 0x01, 0x00, 0x00, 0x40};
   CJBig2_BitStream stream(kData, 42);
 

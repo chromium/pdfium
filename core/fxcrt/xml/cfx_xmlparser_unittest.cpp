@@ -13,7 +13,7 @@
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class CFX_XMLParserTest : public testing::Test {
+class CFXXMLParserTest : public testing::Test {
  public:
   std::unique_ptr<CFX_XMLDocument> Parse(pdfium::span<const char> input) {
     CFX_XMLParser parser(
@@ -22,14 +22,14 @@ class CFX_XMLParserTest : public testing::Test {
   }
 };
 
-TEST_F(CFX_XMLParserTest, AttributesMustBeQuoted) {
+TEST_F(CFXXMLParserTest, AttributesMustBeQuoted) {
   static const char input[] =
       "<script display=1>\n"
       "</script>";
   ASSERT_TRUE(Parse(input) == nullptr);
 }
 
-TEST_F(CFX_XMLParserTest, Attributes) {
+TEST_F(CFXXMLParserTest, Attributes) {
   static const char input[] =
       "<script contentType=\"application/x-javascript\" display=\"1\">\n"
       "</script>";
@@ -44,7 +44,7 @@ TEST_F(CFX_XMLParserTest, Attributes) {
   EXPECT_EQ(L"1", script->GetAttribute(L"display"));
 }
 
-TEST_F(CFX_XMLParserTest, CData) {
+TEST_F(CFXXMLParserTest, CData) {
   static const char input[] =
       "<script>\n"
       "  <![CDATA[\n"
@@ -67,7 +67,7 @@ TEST_F(CFX_XMLParserTest, CData) {
   EXPECT_EQ(cdata, script->GetTextData());
 }
 
-TEST_F(CFX_XMLParserTest, CDataWithInnerScript) {
+TEST_F(CFXXMLParserTest, CDataWithInnerScript) {
   static const char input[] =
       "<script>\n"
       "  <![CDATA[\n"
@@ -92,7 +92,7 @@ TEST_F(CFX_XMLParserTest, CDataWithInnerScript) {
   EXPECT_EQ(cdata, script->GetTextData());
 }
 
-TEST_F(CFX_XMLParserTest, ArrowBangArrow) {
+TEST_F(CFXXMLParserTest, ArrowBangArrow) {
   static const char input[] =
       "<script>\n"
       "  <!>\n"
@@ -106,7 +106,7 @@ TEST_F(CFX_XMLParserTest, ArrowBangArrow) {
   EXPECT_EQ(L"\n  \n", script->GetTextData());
 }
 
-TEST_F(CFX_XMLParserTest, ArrowBangBracketArrow) {
+TEST_F(CFXXMLParserTest, ArrowBangBracketArrow) {
   static const char input[] =
       "<script>\n"
       "  <![>\n"
@@ -120,7 +120,7 @@ TEST_F(CFX_XMLParserTest, ArrowBangBracketArrow) {
   EXPECT_EQ(L"\n  ", script->GetTextData());
 }
 
-TEST_F(CFX_XMLParserTest, IncompleteCData) {
+TEST_F(CFXXMLParserTest, IncompleteCData) {
   static const char input[] =
       "<script>\n"
       "  <![CDATA>\n"
@@ -134,7 +134,7 @@ TEST_F(CFX_XMLParserTest, IncompleteCData) {
   EXPECT_EQ(L"\n  ", script->GetTextData());
 }
 
-TEST_F(CFX_XMLParserTest, UnClosedCData) {
+TEST_F(CFXXMLParserTest, UnClosedCData) {
   static const char input[] =
       "<script>\n"
       "  <![CDATA[\n"
@@ -148,7 +148,7 @@ TEST_F(CFX_XMLParserTest, UnClosedCData) {
   EXPECT_EQ(L"\n  ", script->GetTextData());
 }
 
-TEST_F(CFX_XMLParserTest, EmptyCData) {
+TEST_F(CFXXMLParserTest, EmptyCData) {
   static const char input[] =
       "<script>\n"
       "  <![CDATA[]]>\n"
@@ -162,7 +162,7 @@ TEST_F(CFX_XMLParserTest, EmptyCData) {
   EXPECT_EQ(L"\n  \n", script->GetTextData());
 }
 
-TEST_F(CFX_XMLParserTest, Comment) {
+TEST_F(CFXXMLParserTest, Comment) {
   static const char input[] =
       "<script>\n"
       "  <!-- A Comment -->\n"
@@ -176,7 +176,7 @@ TEST_F(CFX_XMLParserTest, Comment) {
   EXPECT_EQ(L"\n  \n", script->GetTextData());
 }
 
-TEST_F(CFX_XMLParserTest, IncorrectCommentStart) {
+TEST_F(CFXXMLParserTest, IncorrectCommentStart) {
   static const char input[] =
       "<script>\n"
       "  <!- A Comment -->\n"
@@ -190,7 +190,7 @@ TEST_F(CFX_XMLParserTest, IncorrectCommentStart) {
   EXPECT_EQ(L"\n  \n", script->GetTextData());
 }
 
-TEST_F(CFX_XMLParserTest, CommentEmpty) {
+TEST_F(CFXXMLParserTest, CommentEmpty) {
   static const char input[] =
       "<script>\n"
       "  <!---->\n"
@@ -204,7 +204,7 @@ TEST_F(CFX_XMLParserTest, CommentEmpty) {
   EXPECT_EQ(L"\n  \n", script->GetTextData());
 }
 
-TEST_F(CFX_XMLParserTest, CommentThreeDash) {
+TEST_F(CFXXMLParserTest, CommentThreeDash) {
   static const char input[] =
       "<script>\n"
       "  <!--->\n"
@@ -218,7 +218,7 @@ TEST_F(CFX_XMLParserTest, CommentThreeDash) {
   EXPECT_EQ(L"\n  ", script->GetTextData());
 }
 
-TEST_F(CFX_XMLParserTest, CommentTwoDash) {
+TEST_F(CFXXMLParserTest, CommentTwoDash) {
   static const char input[] =
       "<script>\n"
       "  <!-->\n"
@@ -231,7 +231,7 @@ TEST_F(CFX_XMLParserTest, CommentTwoDash) {
   EXPECT_EQ(L"\n  ", script->GetTextData());
 }
 
-TEST_F(CFX_XMLParserTest, Entities) {
+TEST_F(CFXXMLParserTest, Entities) {
   static const char input[] =
       "<script>"
       "&#66;"                     // B
@@ -256,7 +256,7 @@ TEST_F(CFX_XMLParserTest, Entities) {
   EXPECT_EQ(L"BTjH\xab48&<>'\"", script->GetTextData());
 }
 
-TEST_F(CFX_XMLParserTest, EntityOverflowHex) {
+TEST_F(CFXXMLParserTest, EntityOverflowHex) {
   static const char input[] =
       "<script>"
       "&#xaDBDFFFFF;"
@@ -271,7 +271,7 @@ TEST_F(CFX_XMLParserTest, EntityOverflowHex) {
   EXPECT_EQ(L"  ", script->GetTextData());
 }
 
-TEST_F(CFX_XMLParserTest, EntityOverflowDecimal) {
+TEST_F(CFXXMLParserTest, EntityOverflowDecimal) {
   static const char input[] =
       "<script>"
       "&#2914910205;"
@@ -286,7 +286,7 @@ TEST_F(CFX_XMLParserTest, EntityOverflowDecimal) {
   EXPECT_EQ(L"  ", script->GetTextData());
 }
 
-TEST_F(CFX_XMLParserTest, IsXMLNameChar) {
+TEST_F(CFXXMLParserTest, IsXMLNameChar) {
   EXPECT_FALSE(CFX_XMLParser::IsXMLNameChar(L'-', true));
   EXPECT_TRUE(CFX_XMLParser::IsXMLNameChar(L'-', false));
 
@@ -324,15 +324,15 @@ TEST_F(CFX_XMLParserTest, IsXMLNameChar) {
   EXPECT_FALSE(CFX_XMLParser::IsXMLNameChar(0xFFFE, true));
 }
 
-TEST_F(CFX_XMLParserTest, BadElementClose) {
+TEST_F(CFXXMLParserTest, BadElementClose) {
   ASSERT_TRUE(Parse("</endtag>") == nullptr);
 }
 
-TEST_F(CFX_XMLParserTest, DoubleElementClose) {
+TEST_F(CFXXMLParserTest, DoubleElementClose) {
   ASSERT_TRUE(Parse("<p></p></p>") == nullptr);
 }
 
-TEST_F(CFX_XMLParserTest, ParseInstruction) {
+TEST_F(CFXXMLParserTest, ParseInstruction) {
   static const char input[] =
       "<?originalXFAVersion http://www.xfa.org/schema/xfa-template/3.3/ ?>"
       "<form></form>";
@@ -348,7 +348,7 @@ TEST_F(CFX_XMLParserTest, ParseInstruction) {
   EXPECT_TRUE(instruction->IsOriginalXFAVersion());
 }
 
-TEST_F(CFX_XMLParserTest, BadEntity) {
+TEST_F(CFXXMLParserTest, BadEntity) {
   static const char input[] =
       "<script>"
       "Test &<p>; thing"

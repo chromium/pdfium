@@ -55,7 +55,7 @@ void RunOverlapRectTest(const CFX_DIBitmap* bitmap,
 
 }  // namespace
 
-TEST(CFX_DIBBaseTest, GetOverlapRectTrivialOverlap) {
+TEST(CFXDIBBaseTest, GetOverlapRectTrivialOverlap) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   EXPECT_TRUE(bitmap->Create(400, 300, FXDIB_Format::k1bppRgb));
 
@@ -68,7 +68,7 @@ TEST(CFX_DIBBaseTest, GetOverlapRectTrivialOverlap) {
   RunOverlapRectTest(bitmap.Get(), kInput, &kExpectedOutput);
 }
 
-TEST(CFX_DIBBaseTest, GetOverlapRectOverlapNoLimit) {
+TEST(CFXDIBBaseTest, GetOverlapRectOverlapNoLimit) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   EXPECT_TRUE(bitmap->Create(400, 300, FXDIB_Format::k1bppRgb));
 
@@ -81,7 +81,7 @@ TEST(CFX_DIBBaseTest, GetOverlapRectOverlapNoLimit) {
   RunOverlapRectTest(bitmap.Get(), kInput, &kExpectedOutput);
 }
 
-TEST(CFX_DIBBaseTest, GetOverlapRectOverlapLimitedBySource) {
+TEST(CFXDIBBaseTest, GetOverlapRectOverlapLimitedBySource) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   EXPECT_TRUE(bitmap->Create(400, 300, FXDIB_Format::k1bppRgb));
 
@@ -94,7 +94,7 @@ TEST(CFX_DIBBaseTest, GetOverlapRectOverlapLimitedBySource) {
   RunOverlapRectTest(bitmap.Get(), kInput, &kExpectedOutput);
 }
 
-TEST(CFX_DIBBaseTest, GetOverlapRectOverlapLimitedByDestination) {
+TEST(CFXDIBBaseTest, GetOverlapRectOverlapLimitedByDestination) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   EXPECT_TRUE(bitmap->Create(400, 300, FXDIB_Format::k1bppRgb));
 
@@ -107,7 +107,7 @@ TEST(CFX_DIBBaseTest, GetOverlapRectOverlapLimitedByDestination) {
   RunOverlapRectTest(bitmap.Get(), kInput, &kExpectedOutput);
 }
 
-TEST(CFX_DIBBaseTest, GetOverlapRectBadInputs) {
+TEST(CFXDIBBaseTest, GetOverlapRectBadInputs) {
   auto bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   EXPECT_TRUE(bitmap->Create(400, 300, FXDIB_Format::k1bppRgb));
 

@@ -14,9 +14,9 @@
 #include "core/fpdfapi/parser/cpdf_test_document.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-using CPDF_CIDFontTest = TestWithPageModule;
+using CPDFCIDFontTest = TestWithPageModule;
 
-TEST_F(CPDF_CIDFontTest, Bug920636) {
+TEST_F(CPDFCIDFontTest, Bug920636) {
   CPDF_TestDocument doc;
   auto font_dict = pdfium::MakeRetain<CPDF_Dictionary>();
   font_dict->SetNewFor<CPDF_Name>("Encoding", "Identity−H");

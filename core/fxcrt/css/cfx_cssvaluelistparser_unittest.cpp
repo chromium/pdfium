@@ -11,7 +11,7 @@
 #include "core/fxcrt/widestring.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(CFX_CSSValueListParserTest, rgb_short) {
+TEST(CFXCSSValueListParserTest, RGBShort) {
   auto parser = std::make_unique<CFX_CSSValueListParser>(L"#abc", L' ');
   auto maybe_next = parser->NextValue();
   ASSERT_TRUE(maybe_next.has_value());
@@ -39,7 +39,7 @@ TEST(CFX_CSSValueListParserTest, rgb_short) {
   EXPECT_FALSE(parser->NextValue());
 }
 
-TEST(CFX_CSSValueListParserTest, number_parsing) {
+TEST(CFXCSSValueListParserTest, NumberParsing) {
   auto parser = std::make_unique<CFX_CSSValueListParser>(L"1234", L' ');
   auto maybe_next = parser->NextValue();
   ASSERT_TRUE(maybe_next.has_value());
@@ -84,7 +84,7 @@ TEST(CFX_CSSValueListParserTest, number_parsing) {
   EXPECT_EQ(L"43a1.12.34", maybe_next.value().string_view);
 }
 
-TEST(CFX_CSSValueListParserTest, string_parsing) {
+TEST(CFXCSSValueListParserTest, StringParsing) {
   auto parser = std::make_unique<CFX_CSSValueListParser>(L"'string'", L' ');
   auto maybe_next = parser->NextValue();
   ASSERT_TRUE(maybe_next.has_value());
@@ -105,7 +105,7 @@ TEST(CFX_CSSValueListParserTest, string_parsing) {
   EXPECT_EQ(L"standalone", maybe_next.value().string_view);
 }
 
-TEST(CFX_CSSValueListParserTest, multiparsing) {
+TEST(CFXCSSValueListParserTest, MultiParsing) {
   auto parser = std::make_unique<CFX_CSSValueListParser>(L"1, 2, 3", L',');
   auto maybe_next = parser->NextValue();
   ASSERT_TRUE(maybe_next.has_value());

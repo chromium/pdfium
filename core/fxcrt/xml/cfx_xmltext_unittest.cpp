@@ -7,17 +7,17 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/string_write_stream.h"
 
-TEST(CFX_XMLTextTest, GetType) {
+TEST(CFXXMLTextTest, GetType) {
   CFX_XMLText text(L"My Text");
   EXPECT_EQ(CFX_XMLNode::Type::kText, text.GetType());
 }
 
-TEST(CFX_XMLTextTest, GetText) {
+TEST(CFXXMLTextTest, GetText) {
   CFX_XMLText data(L"My Data");
   EXPECT_EQ(L"My Data", data.GetText());
 }
 
-TEST(CFX_XMLTextTest, Clone) {
+TEST(CFXXMLTextTest, Clone) {
   CFX_XMLDocument doc;
 
   CFX_XMLText data(L"My Data");
@@ -27,7 +27,7 @@ TEST(CFX_XMLTextTest, Clone) {
   EXPECT_EQ(L"My Data", ToXMLText(clone)->GetText());
 }
 
-TEST(CFX_XMLTextTest, Save) {
+TEST(CFXXMLTextTest, Save) {
   auto stream = pdfium::MakeRetain<StringWriteStream>();
   CFX_XMLText data(L"My Data & this is < and > and ' and \" stuff.");
   data.Save(stream);
@@ -35,7 +35,7 @@ TEST(CFX_XMLTextTest, Save) {
             stream->ToString());
 }
 
-TEST(CFX_XMLTextTest, SetText) {
+TEST(CFXXMLTextTest, SetText) {
   CFX_XMLText data(L"My Data");
   EXPECT_EQ(L"My Data", data.GetText());
   data.SetText(L"New Text");

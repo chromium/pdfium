@@ -31,8 +31,8 @@ class CPDF_ToUnicodeMap {
   size_t GetUnicodeCountByCharcodeForTesting(uint32_t charcode) const;
 
  private:
-  friend class cpdf_tounicodemap_StringToCode_Test;
-  friend class cpdf_tounicodemap_StringToWideString_Test;
+  friend class CPDFToUnicodeMapTest_StringToCode_Test;
+  friend class CPDFToUnicodeMapTest_StringToWideString_Test;
 
   static std::optional<uint32_t> StringToCode(ByteStringView input);
   static WideString StringToWideString(ByteStringView str);

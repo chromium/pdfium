@@ -9,7 +9,7 @@
 #include "core/fxcrt/retain_ptr.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(CPDF_DeviceCSTest, GetRGBFromGray) {
+TEST(CPDFDeviceCSTest, GetRGBFromGray) {
   auto device_gray =
       pdfium::MakeRetain<CPDF_DeviceCS>(CPDF_ColorSpace::Family::kDeviceGray);
 
@@ -59,7 +59,7 @@ TEST(CPDF_DeviceCSTest, GetRGBFromGray) {
   EXPECT_FLOAT_EQ(1.0f, maybe_rgb.value().blue);
 }
 
-TEST(CPDF_DeviceCSTest, GetRGBFromRGB) {
+TEST(CPDFDeviceCSTest, GetRGBFromRGB) {
   auto device_rgb =
       pdfium::MakeRetain<CPDF_DeviceCS>(CPDF_ColorSpace::Family::kDeviceRGB);
 
@@ -90,7 +90,7 @@ TEST(CPDF_DeviceCSTest, GetRGBFromRGB) {
   EXPECT_FLOAT_EQ(0.78f, maybe_rgb.value().blue);
 }
 
-TEST(CPDF_DeviceCSTest, GetRGBFromCMYK) {
+TEST(CPDFDeviceCSTest, GetRGBFromCMYK) {
   auto device_cmyk =
       pdfium::MakeRetain<CPDF_DeviceCS>(CPDF_ColorSpace::Family::kDeviceCMYK);
 

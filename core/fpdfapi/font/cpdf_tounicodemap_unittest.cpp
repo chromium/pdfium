@@ -10,7 +10,7 @@
 #include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(cpdf_tounicodemap, StringToCode) {
+TEST(CPDFToUnicodeMapTest, StringToCode) {
   EXPECT_THAT(CPDF_ToUnicodeMap::StringToCode("<0001>"), testing::Optional(1u));
   EXPECT_THAT(CPDF_ToUnicodeMap::StringToCode("<c2>"), testing::Optional(194u));
   EXPECT_THAT(CPDF_ToUnicodeMap::StringToCode("<A2>"), testing::Optional(162u));
@@ -42,7 +42,7 @@ TEST(cpdf_tounicodemap, StringToCode) {
   EXPECT_FALSE(CPDF_ToUnicodeMap::StringToCode("<00NN>").has_value());
 }
 
-TEST(cpdf_tounicodemap, StringToWideString) {
+TEST(CPDFToUnicodeMapTest, StringToWideString) {
   EXPECT_EQ(L"", CPDF_ToUnicodeMap::StringToWideString(""));
   EXPECT_EQ(L"", CPDF_ToUnicodeMap::StringToWideString("1234"));
   EXPECT_EQ(L"", CPDF_ToUnicodeMap::StringToWideString("<c2"));
@@ -59,7 +59,7 @@ TEST(cpdf_tounicodemap, StringToWideString) {
   EXPECT_EQ(res, CPDF_ToUnicodeMap::StringToWideString("<c2abFaAb12>"));
 }
 
-TEST(cpdf_tounicodemap, HandleBeginBFRangeAvoidIntegerOverflow) {
+TEST(CPDFToUnicodeMapTest, HandleBeginBFRangeAvoidIntegerOverflow) {
   // Make sure there won't be infinite loops due to integer overflows in
   // HandleBeginBFRange().
   {
@@ -85,7 +85,7 @@ TEST(cpdf_tounicodemap, HandleBeginBFRangeAvoidIntegerOverflow) {
   }
 }
 
-TEST(cpdf_tounicodemap, InsertIntoMultimap) {
+TEST(CPDFToUnicodeMapTest, InsertIntoMultimap) {
   {
     // Both the CIDs and the unicodes are different.
     static constexpr uint8_t kInput1[] =

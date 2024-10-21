@@ -17,7 +17,7 @@
 #include "core/fxcrt/css/cfx_cssvaluelist.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-class CFX_CSSStyleSheetTest : public testing::Test {
+class CFXCSSStyleSheetTest : public testing::Test {
  public:
   void SetUp() override {
     sheet_ = std::make_unique<CFX_CSSStyleSheet>();
@@ -105,35 +105,35 @@ class CFX_CSSStyleSheetTest : public testing::Test {
   CFX_CSSDeclaration* decl_;
 };
 
-TEST_F(CFX_CSSStyleSheetTest, ParseEmpty) {
+TEST_F(CFXCSSStyleSheetTest, ParseEmpty) {
   LoadAndVerifyRuleCount(L"", 0);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseBlankEmpty) {
+TEST_F(CFXCSSStyleSheetTest, ParseBlankEmpty) {
   LoadAndVerifyRuleCount(L"  \n\r\t", 0);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseStrayClose1) {
+TEST_F(CFXCSSStyleSheetTest, ParseStrayClose1) {
   VerifyLoadFails(L"}");
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseStrayClose2) {
+TEST_F(CFXCSSStyleSheetTest, ParseStrayClose2) {
   LoadAndVerifyRuleCount(L"foo }", 0);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseStrayClose3) {
+TEST_F(CFXCSSStyleSheetTest, ParseStrayClose3) {
   VerifyLoadFails(L"foo {a: b}}");
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseEmptySelector) {
+TEST_F(CFXCSSStyleSheetTest, ParseEmptySelector) {
   VerifyLoadFails(L"{a: b}");
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseEmptyBody) {
+TEST_F(CFXCSSStyleSheetTest, ParseEmptyBody) {
   LoadAndVerifyRuleCount(L"foo {}", 0);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
+TEST_F(CFXCSSStyleSheetTest, ParseMultipleSelectors) {
   const wchar_t* buf =
       L"a { border: 10px; }\n"
       L"bcdef { text-decoration: underline; }\n"
@@ -187,7 +187,7 @@ TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectors) {
               CFX_CSSNumber::Unit::kNumber);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseChildSelectors) {
+TEST_F(CFXCSSStyleSheetTest, ParseChildSelectors) {
   const wchar_t* buf = L"a b c { border: 10px; }";
   EXPECT_TRUE(sheet_->LoadBuffer(buf));
   EXPECT_EQ(1u, sheet_->CountRules());
@@ -225,7 +225,7 @@ TEST_F(CFX_CSSStyleSheetTest, ParseChildSelectors) {
               CFX_CSSNumber::Unit::kPixels);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseUnhandledSelectors) {
+TEST_F(CFXCSSStyleSheetTest, ParseUnhandledSelectors) {
   const wchar_t* buf = L"a > b { padding: 0; }";
   EXPECT_TRUE(sheet_->LoadBuffer(buf));
   EXPECT_EQ(0u, sheet_->CountRules());
@@ -243,11 +243,11 @@ TEST_F(CFX_CSSStyleSheetTest, ParseUnhandledSelectors) {
   EXPECT_EQ(0u, sheet_->CountRules());
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseMultipleSelectorsCombined) {
+TEST_F(CFXCSSStyleSheetTest, ParseMultipleSelectorsCombined) {
   LoadAndVerifyDecl(L"a, b, c { border: 5px; }", {L"a", L"b", L"c"}, 4);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseBorder) {
+TEST_F(CFXCSSStyleSheetTest, ParseBorder) {
   LoadAndVerifyDecl(L"a { border: 5px; }", {L"a"}, 4);
   VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 5.0,
               CFX_CSSNumber::Unit::kPixels);
@@ -259,7 +259,7 @@ TEST_F(CFX_CSSStyleSheetTest, ParseBorder) {
               CFX_CSSNumber::Unit::kPixels);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseBorderFull) {
+TEST_F(CFXCSSStyleSheetTest, ParseBorderFull) {
   LoadAndVerifyDecl(L"a { border: 5px solid red; }", {L"a"}, 4);
   VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 5.0,
               CFX_CSSNumber::Unit::kPixels);
@@ -271,62 +271,62 @@ TEST_F(CFX_CSSStyleSheetTest, ParseBorderFull) {
               CFX_CSSNumber::Unit::kPixels);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseBorderLeft) {
+TEST_F(CFXCSSStyleSheetTest, ParseBorderLeft) {
   LoadAndVerifyDecl(L"a { border-left: 2.5pc; }", {L"a"}, 1);
   VerifyFloat(CFX_CSSProperty::BorderLeftWidth, 2.5,
               CFX_CSSNumber::Unit::kPicas);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseBorderLeftThick) {
+TEST_F(CFXCSSStyleSheetTest, ParseBorderLeftThick) {
   LoadAndVerifyDecl(L"a { border-left: thick; }", {L"a"}, 1);
   VerifyEnum(CFX_CSSProperty::BorderLeftWidth, CFX_CSSPropertyValue::Thick);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseBorderRight) {
+TEST_F(CFXCSSStyleSheetTest, ParseBorderRight) {
   LoadAndVerifyDecl(L"a { border-right: 2.5pc; }", {L"a"}, 1);
   VerifyFloat(CFX_CSSProperty::BorderRightWidth, 2.5,
               CFX_CSSNumber::Unit::kPicas);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseBorderTop) {
+TEST_F(CFXCSSStyleSheetTest, ParseBorderTop) {
   LoadAndVerifyDecl(L"a { border-top: 2.5pc; }", {L"a"}, 1);
   VerifyFloat(CFX_CSSProperty::BorderTopWidth, 2.5,
               CFX_CSSNumber::Unit::kPicas);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseBorderBottom) {
+TEST_F(CFXCSSStyleSheetTest, ParseBorderBottom) {
   LoadAndVerifyDecl(L"a { border-bottom: 2.5pc; }", {L"a"}, 1);
   VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 2.5,
               CFX_CSSNumber::Unit::kPicas);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseWithCommentsInSelector) {
+TEST_F(CFXCSSStyleSheetTest, ParseWithCommentsInSelector) {
   LoadAndVerifyDecl(L"/**{*/a/**}*/ { border-bottom: 2.5pc; }", {L"a"}, 1);
   VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 2.5,
               CFX_CSSNumber::Unit::kPicas);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseWithCommentsInProperty) {
+TEST_F(CFXCSSStyleSheetTest, ParseWithCommentsInProperty) {
   LoadAndVerifyDecl(L"a { /*}*/border-bottom: 2.5pc; }", {L"a"}, 1);
   VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 2.5,
               CFX_CSSNumber::Unit::kPicas);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseWithCommentsInValue) {
+TEST_F(CFXCSSStyleSheetTest, ParseWithCommentsInValue) {
   LoadAndVerifyDecl(L"a { border-bottom: /*;*/2.5pc;/* color:red;*/ }", {L"a"},
                     1);
   VerifyFloat(CFX_CSSProperty::BorderBottomWidth, 2.5,
               CFX_CSSNumber::Unit::kPicas);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseWithUnterminatedCommentInSelector) {
+TEST_F(CFXCSSStyleSheetTest, ParseWithUnterminatedCommentInSelector) {
   LoadAndVerifyRuleCount(L"a/* { border-bottom: 2.5pc; }", 0);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseWithUnterminatedCommentInProperty) {
+TEST_F(CFXCSSStyleSheetTest, ParseWithUnterminatedCommentInProperty) {
   LoadAndVerifyRuleCount(L"a { /*border-bottom: 2.5pc; }", 1);
 }
 
-TEST_F(CFX_CSSStyleSheetTest, ParseWithUnterminatedCommentInValue) {
+TEST_F(CFXCSSStyleSheetTest, ParseWithUnterminatedCommentInValue) {
   LoadAndVerifyRuleCount(L"a { border-bottom: /*2.5pc; }", 1);
 }

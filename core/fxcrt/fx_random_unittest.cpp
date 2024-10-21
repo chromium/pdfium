@@ -9,7 +9,7 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(FX_Random, GenerateMT3600times) {
+TEST(FXRandomTest, GenerateMT3600times) {
   // Prove this doesn't spin wait for a second each time.
   // Since our global seeds are sequential, they wont't collide once
   // seeded until 2^32 calls, and if the PNRG is any good, we won't

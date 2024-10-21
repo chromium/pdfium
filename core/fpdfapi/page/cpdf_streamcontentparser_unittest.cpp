@@ -5,7 +5,7 @@
 #include "core/fpdfapi/page/cpdf_streamcontentparser.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(cpdf_streamcontentparser, PDF_FindKeyAbbreviation) {
+TEST(CPDFStreamContentParserTest, PDFFindKeyAbbreviation) {
   EXPECT_EQ(ByteStringView("BitsPerComponent"),
             CPDF_StreamContentParser::FindKeyAbbreviationForTesting(
                 ByteStringView("BPC")));
@@ -24,7 +24,7 @@ TEST(cpdf_streamcontentparser, PDF_FindKeyAbbreviation) {
                 ByteStringView("WW")));
 }
 
-TEST(cpdf_streamcontentparser, PDF_FindValueAbbreviation) {
+TEST(CPDFStreamContentParserTest, PDFFindValueAbbreviation) {
   EXPECT_EQ(ByteStringView("DeviceGray"),
             CPDF_StreamContentParser::FindValueAbbreviationForTesting(
                 ByteStringView("G")));

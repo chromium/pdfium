@@ -147,8 +147,8 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   bool HasSameArray(const CPDF_Object* pObj) const { return m_pArray == pObj; }
 
  private:
-  friend class CPDF_CalGray_TranslateImageLine_Test;
-  friend class CPDF_CalRGB_TranslateImageLine_Test;
+  friend class CPDFCalGrayTest_TranslateImageLine_Test;
+  friend class CPDFCalRGBTest_TranslateImageLine_Test;
 
   static RetainPtr<CPDF_ColorSpace> AllocateColorSpace(
       ByteStringView bsFamilyName);

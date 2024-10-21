@@ -8,7 +8,7 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(CFX_CSSDeclarationTest, HexEncodingParsing) {
+TEST(CFXCSSDeclarationTest, HexEncodingParsing) {
   std::optional<FX_ARGB> maybe_color;
 
   // Length value invalid.
@@ -49,7 +49,7 @@ TEST(CFX_CSSDeclarationTest, HexEncodingParsing) {
   EXPECT_EQ(60, FXARGB_B(maybe_color.value()));
 }
 
-TEST(CFX_CSSDeclarationTest, RGBEncodingParsing) {
+TEST(CFXCSSDeclarationTest, RGBEncodingParsing) {
   std::optional<FX_ARGB> maybe_color;
 
   // Invalid input for rgb() syntax.

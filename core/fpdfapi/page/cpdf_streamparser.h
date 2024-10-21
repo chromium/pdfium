@@ -47,7 +47,7 @@ class CPDF_StreamParser {
                                           const CPDF_Object* pCSObj);
 
  private:
-  friend class cpdf_streamparser_ReadHexString_Test;
+  friend class CPDFStreamParserTest_ReadHexString_Test;
   static constexpr uint32_t kMaxWordLength = 255;
 
   void GetNextWord(bool& bIsNumber);

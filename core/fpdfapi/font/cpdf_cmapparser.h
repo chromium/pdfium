@@ -26,8 +26,8 @@ class CPDF_CMapParser {
   static CIDSet CharsetFromOrdering(ByteStringView ordering);
 
  private:
-  friend class cpdf_cmapparser_GetCode_Test;
-  friend class cpdf_cmapparser_GetCodeRange_Test;
+  friend class CPDFCMapParserTest_GetCode_Test;
+  friend class CPDFCMapParserTest_GetCodeRange_Test;
 
   enum Status {
     kStart,

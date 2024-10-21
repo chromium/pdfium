@@ -169,7 +169,7 @@ class TestDocRenderData : public CPDF_DocRenderData {
   }
 };
 
-TEST(CPDF_DocRenderDataTest, TransferFunctionOne) {
+TEST(CPDFDocRenderDataTest, TransferFunctionOne) {
   RetainPtr<CPDF_Dictionary> func_dict = CreateType2FunctionDict();
 
   TestDocRenderData render_data;
@@ -194,7 +194,7 @@ TEST(CPDF_DocRenderDataTest, TransferFunctionOne) {
   EXPECT_EQ(0x001a1a1au, func->TranslateColor(0x99000000));
 }
 
-TEST(CPDF_DocRenderDataTest, TransferFunctionArray) {
+TEST(CPDFDocRenderDataTest, TransferFunctionArray) {
   CPDF_IndirectObjectHolder holder;
   auto func_array = pdfium::MakeRetain<CPDF_Array>();
   func_array->Append(CreateType0FunctionStreamReference(holder));
@@ -223,7 +223,7 @@ TEST(CPDF_DocRenderDataTest, TransferFunctionArray) {
   EXPECT_EQ(0x00191a00u, func->TranslateColor(0x99000000));
 }
 
-TEST(CPDF_DocRenderDataTest, BadTransferFunctions) {
+TEST(CPDFDocRenderDataTest, BadTransferFunctions) {
   {
     auto func_stream = CreateBadType4FunctionStream();
 

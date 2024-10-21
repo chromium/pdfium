@@ -13,24 +13,24 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/string_write_stream.h"
 
-TEST(CFX_XMLInstructionTest, GetType) {
+TEST(CFXXMLInstructionTest, GetType) {
   CFX_XMLInstruction node(L"acrobat");
   EXPECT_EQ(CFX_XMLNode::Type::kInstruction, node.GetType());
 }
 
-TEST(CFX_XMLInstructionTest, AcrobatInstruction) {
+TEST(CFXXMLInstructionTest, AcrobatInstruction) {
   CFX_XMLInstruction node(L"acrobat");
   EXPECT_TRUE(node.IsAcrobat());
   EXPECT_FALSE(node.IsOriginalXFAVersion());
 }
 
-TEST(CFX_XMLInstructionTest, OriginalXFAInstruction) {
+TEST(CFXXMLInstructionTest, OriginalXFAInstruction) {
   CFX_XMLInstruction node(L"originalXFAVersion");
   EXPECT_TRUE(node.IsOriginalXFAVersion());
   EXPECT_FALSE(node.IsAcrobat());
 }
 
-TEST(CFX_XMLInstructionTest, TargetData) {
+TEST(CFXXMLInstructionTest, TargetData) {
   CFX_XMLInstruction node(L"acrobat");
   EXPECT_EQ(0U, node.GetTargetData().size());
 
@@ -43,7 +43,7 @@ TEST(CFX_XMLInstructionTest, TargetData) {
   EXPECT_EQ(L"secondString", data[1]);
 }
 
-TEST(CFX_XMLInstructionTest, Clone) {
+TEST(CFXXMLInstructionTest, Clone) {
   CFX_XMLDocument doc;
 
   CFX_XMLInstruction node(L"acrobat");
@@ -63,14 +63,14 @@ TEST(CFX_XMLInstructionTest, Clone) {
   EXPECT_EQ(L"secondString", data[1]);
 }
 
-TEST(CFX_XMLInstructionTest, SaveXML) {
+TEST(CFXXMLInstructionTest, SaveXML) {
   auto stream = pdfium::MakeRetain<StringWriteStream>();
   CFX_XMLInstruction node(L"xml");
   node.Save(stream);
   EXPECT_EQ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", stream->ToString());
 }
 
-TEST(CFX_XMLInstructionTest, SaveAcrobat) {
+TEST(CFXXMLInstructionTest, SaveAcrobat) {
   auto stream = pdfium::MakeRetain<StringWriteStream>();
   CFX_XMLInstruction node(L"acrobat");
   node.AppendData(L"http://www.xfa.org/schema/xfa-template/3.3/");
@@ -82,7 +82,7 @@ TEST(CFX_XMLInstructionTest, SaveAcrobat) {
       stream->ToString());
 }
 
-TEST(CFX_XMLInstructionTest, ParseAndReSave) {
+TEST(CFXXMLInstructionTest, ParseAndReSave) {
   static const char input[] =
       "<?acrobat http://www.xfa.org/schema/xfa-template/3.3/ Display:1 ?>\n"
       "<node></node>";
@@ -114,7 +114,7 @@ TEST(CFX_XMLInstructionTest, ParseAndReSave) {
       out_stream->ToString());
 }
 
-TEST(CFX_XMLInstructionTest, ParseAndReSaveInnerInstruction) {
+TEST(CFXXMLInstructionTest, ParseAndReSaveInnerInstruction) {
   static const char input[] =
       "<node>\n"
       "<?acrobat http://www.xfa.org/schema/xfa-template/3.3/ Display:1 ?>\n"

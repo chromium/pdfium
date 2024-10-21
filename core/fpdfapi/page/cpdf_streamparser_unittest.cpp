@@ -9,7 +9,7 @@
 using testing::ElementsAre;
 using testing::IsEmpty;
 
-TEST(cpdf_streamparser, ReadHexString) {
+TEST(CPDFStreamParserTest, ReadHexString) {
   {
     // Position out of bounds.
     uint8_t data[] = "12ab>";

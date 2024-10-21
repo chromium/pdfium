@@ -7,12 +7,12 @@
 #include "core/fxcrt/xml/cfx_xmlinstruction.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(CFX_XMLDocumentTest, Root) {
+TEST(CFXXMLDocumentTest, Root) {
   CFX_XMLDocument doc;
   EXPECT_TRUE(doc.GetRoot() != nullptr);
 }
 
-TEST(CFX_XMLDocumentTest, CreateNode) {
+TEST(CFXXMLDocumentTest, CreateNode) {
   CFX_XMLDocument doc;
   auto* node = doc.CreateNode<CFX_XMLElement>(L"elem");
 
