@@ -1287,6 +1287,9 @@ CXFA_Node* CXFA_Node::CloneTemplateToForm(bool bRecursive) {
   if (bRecursive) {
     for (CXFA_Node* pChild = GetFirstChild(); pChild;
          pChild = pChild->GetNextSibling()) {
+      if (pChild->GetPacketType() != XFA_PacketType::Template) {
+        continue;
+      }
       pClone->InsertChildAndNotify(pChild->CloneTemplateToForm(bRecursive),
                                    nullptr);
     }
