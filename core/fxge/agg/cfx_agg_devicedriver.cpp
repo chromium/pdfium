@@ -469,12 +469,12 @@ void CFX_AggRenderer::CompositeSpan(uint8_t* dest_scan,
                                     const uint8_t* cover_scan,
                                     const uint8_t* clip_scan) {
   CHECK(bytes_per_pixel);
-  const auto& bgr = GetBGR();
   UNSAFE_TODO({
     dest_scan += col_start * bytes_per_pixel;
     backdrop_scan += col_start * bytes_per_pixel;
     if (m_bRgbByteOrder) {
       if (bytes_per_pixel == 4 && bDestAlpha) {
+        const auto& bgr = GetBGR();
         for (int col = col_start; col < col_end; col++) {
           int src_alpha = GetSrcAlpha(clip_scan, col);
           uint8_t dest_alpha =
@@ -506,6 +506,7 @@ void CFX_AggRenderer::CompositeSpan(uint8_t* dest_scan,
         return;
       }
       if (bytes_per_pixel == 3 || bytes_per_pixel == 4) {
+        const auto& bgr = GetBGR();
         for (int col = col_start; col < col_end; col++) {
           int src_alpha = GetSrcAlpha(clip_scan, col);
           int r = FXDIB_ALPHA_MERGE(*backdrop_scan++, bgr.red, src_alpha);
@@ -523,6 +524,7 @@ void CFX_AggRenderer::CompositeSpan(uint8_t* dest_scan,
       return;
     }
     if (bytes_per_pixel == 4 && bDestAlpha) {
+      const auto& bgr = GetBGR();
       for (int col = col_start; col < col_end; col++) {
         int src_alpha = GetSrcAlpha(clip_scan, col);
         int src_alpha_covered = src_alpha * cover_scan[col] / 255;
@@ -558,6 +560,7 @@ void CFX_AggRenderer::CompositeSpan(uint8_t* dest_scan,
       return;
     }
     if (bytes_per_pixel == 3 || bytes_per_pixel == 4) {
+      const auto& bgr = GetBGR();
       for (int col = col_start; col < col_end; col++) {
         int src_alpha = GetSrcAlpha(clip_scan, col);
         if (m_bFullCover) {
