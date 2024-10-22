@@ -15,7 +15,7 @@
 #include "v8/include/cppgc/persistent.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
 
-class CXFA_DocumentBuilderTest : public FXGCUnitTest {
+class CXFADocumentBuilderTest : public FXGCUnitTest {
  public:
   void SetUp() override {
     FXGCUnitTest::SetUp();
@@ -46,21 +46,21 @@ class CXFA_DocumentBuilderTest : public FXGCUnitTest {
   cppgc::Persistent<CXFA_Document> doc_;
 };
 
-TEST_F(CXFA_DocumentBuilderTest, EmptyInput) {
+TEST_F(CXFADocumentBuilderTest, EmptyInput) {
   static const char kInput[] = "";
   auto stream =
       pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pdfium::as_byte_span(kInput));
   EXPECT_FALSE(ParseAndBuild(stream));
 }
 
-TEST_F(CXFA_DocumentBuilderTest, BadInput) {
+TEST_F(CXFADocumentBuilderTest, BadInput) {
   static const char kInput[] = "<<<>bar?>>>>>>>";
   auto stream =
       pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pdfium::as_byte_span(kInput));
   EXPECT_FALSE(ParseAndBuild(stream));
 }
 
-TEST_F(CXFA_DocumentBuilderTest, XMLInstructionsScriptOff) {
+TEST_F(CXFADocumentBuilderTest, XMLInstructionsScriptOff) {
   static const char kInput[] =
       "<config>\n"
       "<?originalXFAVersion http://www.xfa.org/schema/xfa-template/2.7 "
@@ -76,7 +76,7 @@ TEST_F(CXFA_DocumentBuilderTest, XMLInstructionsScriptOff) {
   EXPECT_FALSE(GetDoc()->is_scripting());
 }
 
-TEST_F(CXFA_DocumentBuilderTest, XMLInstructionsScriptOn) {
+TEST_F(CXFADocumentBuilderTest, XMLInstructionsScriptOn) {
   static const char kInput[] =
       "<config>\n"
       "<?originalXFAVersion http://www.xfa.org/schema/xfa-template/2.7 "
@@ -93,7 +93,7 @@ TEST_F(CXFA_DocumentBuilderTest, XMLInstructionsScriptOn) {
   EXPECT_TRUE(GetDoc()->is_scripting());
 }
 
-TEST_F(CXFA_DocumentBuilderTest, XMLInstructionsStrictScope) {
+TEST_F(CXFADocumentBuilderTest, XMLInstructionsStrictScope) {
   static const char kInput[] =
       "<config>"
       "<?acrobat JavaScript strictScoping ?>\n"
@@ -109,7 +109,7 @@ TEST_F(CXFA_DocumentBuilderTest, XMLInstructionsStrictScope) {
   EXPECT_TRUE(GetDoc()->is_strict_scoping());
 }
 
-TEST_F(CXFA_DocumentBuilderTest, XMLInstructionsStrictScopeBad) {
+TEST_F(CXFADocumentBuilderTest, XMLInstructionsStrictScopeBad) {
   static const char kInput[] =
       "<config>"
       "<?acrobat JavaScript otherScoping ?>\n"
@@ -125,7 +125,7 @@ TEST_F(CXFA_DocumentBuilderTest, XMLInstructionsStrictScopeBad) {
   EXPECT_FALSE(GetDoc()->is_strict_scoping());
 }
 
-TEST_F(CXFA_DocumentBuilderTest, MultipleXMLInstructions) {
+TEST_F(CXFADocumentBuilderTest, MultipleXMLInstructions) {
   static const char kInput[] =
       "<config>"
       "<?originalXFAVersion http://www.xfa.org/schema/xfa-template/2.7 "

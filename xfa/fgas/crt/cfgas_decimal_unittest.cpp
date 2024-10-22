@@ -10,35 +10,35 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(CFGAS_Decimal, Empty) {
+TEST(CFGASDecimalTest, Empty) {
   CFGAS_Decimal empty;
   EXPECT_EQ(L"0", empty.ToWideString());
   EXPECT_EQ(0.0f, empty.ToFloat());
   EXPECT_EQ(0.0, empty.ToDouble());
 }
 
-TEST(CFGAS_Decimal, FromInt32) {
+TEST(CFGASDecimalTest, FromInt32) {
   CFGAS_Decimal big(std::numeric_limits<int32_t>::max());
   CFGAS_Decimal small(std::numeric_limits<int32_t>::min());
   EXPECT_EQ(L"2147483647", big.ToWideString());
   EXPECT_EQ(L"-2147483648", small.ToWideString());
 }
 
-TEST(CFGAS_Decimal, FromUint32) {
+TEST(CFGASDecimalTest, FromUint32) {
   CFGAS_Decimal big(std::numeric_limits<uint32_t>::max());
   CFGAS_Decimal small(std::numeric_limits<uint32_t>::min());
   EXPECT_EQ(L"4294967295", big.ToWideString());
   EXPECT_EQ(L"0", small.ToWideString());
 }
 
-TEST(CFGAS_Decimal, FromUint64) {
+TEST(CFGASDecimalTest, FromUint64) {
   CFGAS_Decimal big(std::numeric_limits<uint64_t>::max());
   CFGAS_Decimal small(std::numeric_limits<uint64_t>::min());
   EXPECT_EQ(L"18446744073709551615", big.ToWideString());
   EXPECT_EQ(L"0", small.ToWideString());
 }
 
-TEST(CFGAS_Decimal, FromFloat) {
+TEST(CFGASDecimalTest, FromFloat) {
   WideString big = CFGAS_Decimal(powf(2.0f, 95.0f), 0).ToWideString();
   WideString big_expected = L"39614081257132168796771975168";
 
@@ -57,7 +57,7 @@ TEST(CFGAS_Decimal, FromFloat) {
   EXPECT_EQ(teeny_expected.First(8).c_str(), teeny.First(8));
 }
 
-TEST(CFGAS_Decimal, FromFloatFractional) {
+TEST(CFGASDecimalTest, FromFloatFractional) {
   WideString case1 = CFGAS_Decimal(123.456f, 10).ToWideString();
   WideString case1_expected = L"123.4560000000";
 
@@ -66,14 +66,14 @@ TEST(CFGAS_Decimal, FromFloatFractional) {
   EXPECT_EQ(case1_expected.First(8).c_str(), case1.First(8));
 }
 
-TEST(CFGAS_Decimal, FromString) {
+TEST(CFGASDecimalTest, FromString) {
   CFGAS_Decimal big(L"100000000000000000000000000");
   CFGAS_Decimal small(L"-1000000000000000000000000");
   EXPECT_EQ(L"100000000000000000000000000", big.ToWideString());
   EXPECT_EQ(L"-1000000000000000000000000", small.ToWideString());
 }
 
-TEST(CFGAS_Decimal, FromString28Digits) {
+TEST(CFGASDecimalTest, FromString28Digits) {
   CFGAS_Decimal frac(L"32109876543210.0123456890123");
   EXPECT_EQ(L"32109876543210.0123456890123", frac.ToWideString());
 }

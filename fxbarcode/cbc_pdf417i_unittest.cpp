@@ -8,12 +8,12 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(CBC_PDF417ITest, Normal) {
+TEST(CBCPDF417ITest, Normal) {
   CBC_PDF417I encoder;
   EXPECT_TRUE(encoder.Encode(L"Foo"));
 }
 
-TEST(CBC_PDF417ITest, MaxLength) {
+TEST(CBCPDF417ITest, MaxLength) {
   std::vector<wchar_t> input(2711, L'1');
   CBC_PDF417I encoder;
   EXPECT_FALSE(encoder.Encode(WideStringView(input)));

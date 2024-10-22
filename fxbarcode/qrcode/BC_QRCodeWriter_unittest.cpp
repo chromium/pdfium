@@ -12,17 +12,17 @@
 
 using ::testing::ElementsAreArray;
 
-class CBC_QRCodeWriterTest : public testing::Test {
+class CBCQRCodeWriterTest : public testing::Test {
  public:
-  CBC_QRCodeWriterTest() = default;
-  ~CBC_QRCodeWriterTest() override = default;
+  CBCQRCodeWriterTest() = default;
+  ~CBCQRCodeWriterTest() override = default;
 
   // testing::Test:
   void SetUp() override { BC_Library_Init(); }
   void TearDown() override { BC_Library_Destroy(); }
 };
 
-TEST_F(CBC_QRCodeWriterTest, Encode) {
+TEST_F(CBCQRCodeWriterTest, Encode) {
   CBC_QRCodeWriter writer;
   int32_t width;
   int32_t height;

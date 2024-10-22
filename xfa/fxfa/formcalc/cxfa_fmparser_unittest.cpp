@@ -9,9 +9,9 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "xfa/fxfa/formcalc/cxfa_fmtojavascriptdepth.h"
 
-class CXFA_FMParserTest : public FXGCUnitTest {};
+class CXFAFMParserTest : public FXGCUnitTest {};
 
-TEST_F(CXFA_FMParserTest, Empty) {
+TEST_F(CXFAFMParserTest, Empty) {
   CXFA_FMLexer lexer(L"");
   CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
@@ -25,7 +25,7 @@ TEST_F(CXFA_FMParserTest, Empty) {
   EXPECT_EQ(L"// comments only", buf.value().MakeString());
 }
 
-TEST_F(CXFA_FMParserTest, CommentOnlyIsError) {
+TEST_F(CXFAFMParserTest, CommentOnlyIsError) {
   CXFA_FMLexer lexer(L"; Just comment");
   CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
@@ -40,7 +40,7 @@ TEST_F(CXFA_FMParserTest, CommentOnlyIsError) {
   EXPECT_EQ(L"// comments only", buf.value().MakeString());
 }
 
-TEST_F(CXFA_FMParserTest, CommentThenValue) {
+TEST_F(CXFAFMParserTest, CommentThenValue) {
   const wchar_t ret[] =
       LR"***((function() {
 let pfm_method_runner = function(obj, cb) {
@@ -70,7 +70,7 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_EQ(ret, buf.value().MakeString());
 }
 
-TEST_F(CXFA_FMParserTest, Parse) {
+TEST_F(CXFAFMParserTest, Parse) {
   const wchar_t input[] =
       LR"***($ = Avg (-3, 5, -6, 12, -13);
 $ = Avg (Table2..Row[*].Cell1);
@@ -140,7 +140,7 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_EQ(ret, buf.value().AsStringView());
 }
 
-TEST_F(CXFA_FMParserTest, MaxParseDepth) {
+TEST_F(CXFAFMParserTest, MaxParseDepth) {
   CXFA_FMLexer lexer(L"foo(bar[baz(fizz[0])])");
   CXFA_FMParser parser(heap(), &lexer);
   parser.SetMaxParseDepthForTest(5);
@@ -148,7 +148,7 @@ TEST_F(CXFA_FMParserTest, MaxParseDepth) {
   EXPECT_TRUE(parser.HasError());
 }
 
-TEST_F(CXFA_FMParserTest, chromium752201) {
+TEST_F(CXFAFMParserTest, chromium752201) {
   CXFA_FMLexer lexer(
       LR"***(fTep a
 .#
@@ -159,7 +159,7 @@ fo@ =[=l)***");
   EXPECT_TRUE(parser.HasError());
 }
 
-TEST_F(CXFA_FMParserTest, MultipleAssignmentIsNotAllowed) {
+TEST_F(CXFAFMParserTest, MultipleAssignmentIsNotAllowed) {
   CXFA_FMLexer lexer(L"(a=(b=t))=u");
   CXFA_FMParser parser(heap(), &lexer);
   CXFA_FMAST* ast = parser.Parse();
@@ -167,7 +167,7 @@ TEST_F(CXFA_FMParserTest, MultipleAssignmentIsNotAllowed) {
   EXPECT_TRUE(parser.HasError());
 }
 
-TEST_F(CXFA_FMParserTest, ParseFuncWithParams) {
+TEST_F(CXFAFMParserTest, ParseFuncWithParams) {
   const wchar_t input[] =
       LR"***(func MyFunction(param1, param2) do
   param1 * param2
@@ -206,7 +206,7 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_EQ(ret, buf.value().MakeString());
 }
 
-TEST_F(CXFA_FMParserTest, ParseFuncWithoutParams) {
+TEST_F(CXFAFMParserTest, ParseFuncWithoutParams) {
   const wchar_t input[] =
       LR"***(func MyFunction() do
   42
@@ -245,7 +245,7 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_EQ(ret, buf.value().MakeString());
 }
 
-TEST_F(CXFA_FMParserTest, ParseFuncWithBadParamsList) {
+TEST_F(CXFAFMParserTest, ParseFuncWithBadParamsList) {
   const wchar_t input[] =
       LR"***(func MyFunction(param1,) do
   param1 * param2
@@ -258,7 +258,7 @@ endfunc)***";
   EXPECT_TRUE(parser.HasError());
 }
 
-TEST_F(CXFA_FMParserTest, ParseBadIfExpression) {
+TEST_F(CXFAFMParserTest, ParseBadIfExpression) {
   const wchar_t input[] = L"if ( then";
   CXFA_FMLexer lexer(input);
   CXFA_FMParser parser(heap(), &lexer);
@@ -267,7 +267,7 @@ TEST_F(CXFA_FMParserTest, ParseBadIfExpression) {
   EXPECT_TRUE(parser.HasError());
 }
 
-TEST_F(CXFA_FMParserTest, ParseBadElseIfExpression) {
+TEST_F(CXFAFMParserTest, ParseBadElseIfExpression) {
   const wchar_t input[] =
       LR"***(if ($ ne -1) then"
 elseif( then)***";
@@ -279,7 +279,7 @@ elseif( then)***";
   EXPECT_TRUE(parser.HasError());
 }
 
-TEST_F(CXFA_FMParserTest, ParseDepthWithWideTree) {
+TEST_F(CXFAFMParserTest, ParseDepthWithWideTree) {
   const wchar_t input[] = L"a <> b <> c <> d <> e <> f <> g <> h <> i <> j";
 
   {
@@ -300,7 +300,7 @@ TEST_F(CXFA_FMParserTest, ParseDepthWithWideTree) {
   }
 }
 
-TEST_F(CXFA_FMParserTest, ParseCallSmall) {
+TEST_F(CXFAFMParserTest, ParseCallSmall) {
   const wchar_t input[] = L"i.f(O)";
   const wchar_t ret[] =
       LR"***((function() {
@@ -334,7 +334,7 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_EQ(ret, buf.value().MakeString());
 }
 
-TEST_F(CXFA_FMParserTest, ParseCallBig) {
+TEST_F(CXFAFMParserTest, ParseCallBig) {
   const wchar_t input[] = L"i.f(O.e(O.e(O)))";
   const wchar_t ret[] =
       LR"***((function() {
@@ -376,7 +376,7 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_EQ(ret, buf.value().MakeString());
 }
 
-TEST_F(CXFA_FMParserTest, ParseVar) {
+TEST_F(CXFAFMParserTest, ParseVar) {
   const wchar_t input[] = LR"(var s = "")";
   const wchar_t ret[] =
       LR"***((function() {
@@ -408,7 +408,7 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_EQ(ret, buf.value().MakeString());
 }
 
-TEST_F(CXFA_FMParserTest, ParseFunctionCallNoArguments) {
+TEST_F(CXFAFMParserTest, ParseFunctionCallNoArguments) {
   const wchar_t input[] = L"P.x()";
   const wchar_t ret[] =
       LR"***((function() {
@@ -442,7 +442,7 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_EQ(ret, buf.value().MakeString());
 }
 
-TEST_F(CXFA_FMParserTest, ParseFunctionCallSingleArgument) {
+TEST_F(CXFAFMParserTest, ParseFunctionCallSingleArgument) {
   const wchar_t input[] = L"P.x(foo)";
   const wchar_t ret[] =
       LR"***((function() {
@@ -476,7 +476,7 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_EQ(ret, buf.value().MakeString());
 }
 
-TEST_F(CXFA_FMParserTest, ParseFunctionCallMultipleArguments) {
+TEST_F(CXFAFMParserTest, ParseFunctionCallMultipleArguments) {
   const wchar_t input[] = L"P.x(foo, bar, baz)";
   const wchar_t ret[] =
       LR"***((function() {
@@ -510,7 +510,7 @@ return pfm_rt.get_val(pfm_ret);
   EXPECT_EQ(ret, buf.value().MakeString());
 }
 
-TEST_F(CXFA_FMParserTest, ParseFunctionCallMissingCommas) {
+TEST_F(CXFAFMParserTest, ParseFunctionCallMissingCommas) {
   const wchar_t input[] = L"P.x(!foo!bar!baz)";
   CXFA_FMLexer lexer(input);
   CXFA_FMParser parser(heap(), &lexer);
@@ -519,7 +519,7 @@ TEST_F(CXFA_FMParserTest, ParseFunctionCallMissingCommas) {
   EXPECT_TRUE(parser.HasError());
 }
 
-TEST_F(CXFA_FMParserTest, ParseFunctionCallTrailingComma) {
+TEST_F(CXFAFMParserTest, ParseFunctionCallTrailingComma) {
   const wchar_t input[] = L"P.x(foo,bar,baz,)";
   CXFA_FMLexer lexer(input);
   CXFA_FMParser parser(heap(), &lexer);
@@ -528,7 +528,7 @@ TEST_F(CXFA_FMParserTest, ParseFunctionCallTrailingComma) {
   EXPECT_TRUE(parser.HasError());
 }
 
-TEST_F(CXFA_FMParserTest, ParseFunctionCallExtraComma) {
+TEST_F(CXFAFMParserTest, ParseFunctionCallExtraComma) {
   const wchar_t input[] = L"P.x(foo,bar,,baz)";
   CXFA_FMLexer lexer(input);
   CXFA_FMParser parser(heap(), &lexer);

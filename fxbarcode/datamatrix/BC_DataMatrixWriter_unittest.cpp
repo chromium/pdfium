@@ -12,17 +12,17 @@
 
 using testing::ElementsAreArray;
 
-class CBC_DataMatrixWriterTest : public testing::Test {
+class CBCDataMatrixWriterTest : public testing::Test {
  public:
-  CBC_DataMatrixWriterTest() = default;
-  ~CBC_DataMatrixWriterTest() override = default;
+  CBCDataMatrixWriterTest() = default;
+  ~CBCDataMatrixWriterTest() override = default;
 
   // testing::Test:
   void SetUp() override { BC_Library_Init(); }
   void TearDown() override { BC_Library_Destroy(); }
 };
 
-TEST_F(CBC_DataMatrixWriterTest, Encode) {
+TEST_F(CBCDataMatrixWriterTest, Encode) {
   CBC_DataMatrixWriter writer;
   int32_t width = -1;
   int32_t height = -1;
@@ -134,7 +134,7 @@ TEST_F(CBC_DataMatrixWriterTest, Encode) {
   }
 }
 
-TEST_F(CBC_DataMatrixWriterTest, EncodeLimitAlphaNumeric) {
+TEST_F(CBCDataMatrixWriterTest, EncodeLimitAlphaNumeric) {
   CBC_DataMatrixWriter writer;
   int32_t width = -1;
   int32_t height = -1;
@@ -164,7 +164,7 @@ TEST_F(CBC_DataMatrixWriterTest, EncodeLimitAlphaNumeric) {
   }
 }
 
-TEST_F(CBC_DataMatrixWriterTest, EncodeLimitNumbers) {
+TEST_F(CBCDataMatrixWriterTest, EncodeLimitNumbers) {
   CBC_DataMatrixWriter writer;
   int32_t width = -1;
   int32_t height = -1;

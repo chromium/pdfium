@@ -7,7 +7,7 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/scoped_set_tz.h"
 
-TEST(CXFA_TimeZoneProviderTest, HourOffsets) {
+TEST(CXFATimeZoneProviderTest, HourOffsets) {
   {
     ScopedSetTZ scoped_set_tz("UTC");
     EXPECT_EQ(0, CXFA_TimeZoneProvider().GetTimeZoneInMinutes());
@@ -30,7 +30,7 @@ TEST(CXFA_TimeZoneProviderTest, HourOffsets) {
   }
 }
 
-TEST(CXFA_TimeZoneProviderTest, HalfHourOffsets) {
+TEST(CXFATimeZoneProviderTest, HalfHourOffsets) {
   {
     ScopedSetTZ scoped_set_tz("UTC+0:30");
     EXPECT_EQ(-30, CXFA_TimeZoneProvider().GetTimeZoneInMinutes());

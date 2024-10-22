@@ -146,9 +146,9 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
   void SetPendingNodesUnusedAndUnbound();
 
  private:
-  friend class CXFA_DocumentTest_ParseXFAVersion_Test;
-  friend class CXFA_DocumentTest_ParseUseHref_Test;
-  friend class CXFA_DocumentTest_ParseUse_Test;
+  friend class CXFADocumentTest_ParseXFAVersion_Test;
+  friend class CXFADocumentTest_ParseUseHref_Test;
+  friend class CXFADocumentTest_ParseUse_Test;
 
   static XFA_VERSION ParseXFAVersion(const WideString& wsTemplateNS);
   static void ParseUseHref(const WideString& wsUseVal,

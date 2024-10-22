@@ -14,7 +14,7 @@
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfgas_char.h"
 
-class CFGAS_TxtBreakTest : public testing::Test {
+class CFGASTxtBreakTest : public testing::Test {
  public:
   void SetUp() override {
     const wchar_t kFontFamily[] = L"Arimo Bold";
@@ -32,7 +32,7 @@ class CFGAS_TxtBreakTest : public testing::Test {
   RetainPtr<CFGAS_GEFont> font_;
 };
 
-TEST_F(CFGAS_TxtBreakTest, BidiLine) {
+TEST_F(CFGASTxtBreakTest, BidiLine) {
   auto txt_break = CreateBreak();
   txt_break->SetLineBreakTolerance(1);
   txt_break->SetFontSize(12);

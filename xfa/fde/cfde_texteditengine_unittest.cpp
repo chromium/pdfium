@@ -13,7 +13,7 @@
 
 namespace pdfium {
 
-class CFDE_TextEditEngineTest : public testing::Test {
+class CFDETextEditEngineTest : public testing::Test {
  public:
   class Delegate final : public CFDE_TextEditEngine::Delegate {
    public:
@@ -37,8 +37,8 @@ class CFDE_TextEditEngineTest : public testing::Test {
     bool text_is_full = false;
   };
 
-  CFDE_TextEditEngineTest() = default;
-  ~CFDE_TextEditEngineTest() override = default;
+  CFDETextEditEngineTest() = default;
+  ~CFDETextEditEngineTest() override = default;
 
   void SetUp() override {
     const wchar_t kFontFamily[] = L"Arimo Bold";
@@ -62,7 +62,7 @@ class CFDE_TextEditEngineTest : public testing::Test {
   std::unique_ptr<CFDE_TextEditEngine> engine_;
 };
 
-TEST_F(CFDE_TextEditEngineTest, Insert) {
+TEST_F(CFDETextEditEngineTest, Insert) {
   EXPECT_EQ(L"", engine()->GetText());
 
   engine()->Insert(0, L"");
@@ -100,7 +100,7 @@ TEST_F(CFDE_TextEditEngineTest, Insert) {
   engine()->Clear();
 
   // With Delegate
-  auto delegate = std::make_unique<CFDE_TextEditEngineTest::Delegate>();
+  auto delegate = std::make_unique<CFDETextEditEngineTest::Delegate>();
   engine()->SetDelegate(delegate.get());
 
   engine()->SetCharacterLimit(5);
@@ -167,7 +167,7 @@ TEST_F(CFDE_TextEditEngineTest, Insert) {
   engine()->SetDelegate(nullptr);
 }
 
-TEST_F(CFDE_TextEditEngineTest, InsertToggleLimit) {
+TEST_F(CFDETextEditEngineTest, InsertToggleLimit) {
   engine()->SetHasCharacterLimit(true);
   engine()->Insert(0, L"Hello World");
   engine()->SetCharacterLimit(5);
@@ -181,7 +181,7 @@ TEST_F(CFDE_TextEditEngineTest, InsertToggleLimit) {
   EXPECT_EQ(L"Inserted before Hello World", engine()->GetText());
 }
 
-TEST_F(CFDE_TextEditEngineTest, InsertSkipNotify) {
+TEST_F(CFDETextEditEngineTest, InsertSkipNotify) {
   engine()->SetHasCharacterLimit(true);
   engine()->SetCharacterLimit(8);
   engine()->Insert(0, L"Hello");
@@ -199,7 +199,7 @@ TEST_F(CFDE_TextEditEngineTest, InsertSkipNotify) {
   EXPECT_EQ(L"*HelloWorld", engine()->GetText());
 }
 
-TEST_F(CFDE_TextEditEngineTest, InsertGrowGap) {
+TEST_F(CFDETextEditEngineTest, InsertGrowGap) {
   engine()->Insert(0, L"||");
   for (size_t i = 1; i < 1023; ++i) {
     engine()->Insert(i, L"a");
@@ -214,7 +214,7 @@ TEST_F(CFDE_TextEditEngineTest, InsertGrowGap) {
   EXPECT_EQ(result[1023], L'|');
 }
 
-TEST_F(CFDE_TextEditEngineTest, Delete) {
+TEST_F(CFDETextEditEngineTest, Delete) {
   EXPECT_EQ(L"", engine()->Delete(0, 50));
   EXPECT_EQ(L"", engine()->GetText());
 
@@ -231,7 +231,7 @@ TEST_F(CFDE_TextEditEngineTest, Delete) {
   EXPECT_EQ(L"H", engine()->GetText());
 }
 
-TEST_F(CFDE_TextEditEngineTest, Clear) {
+TEST_F(CFDETextEditEngineTest, Clear) {
   EXPECT_EQ(L"", engine()->GetText());
 
   engine()->Clear();
@@ -245,7 +245,7 @@ TEST_F(CFDE_TextEditEngineTest, Clear) {
   EXPECT_EQ(0U, engine()->GetLength());
 }
 
-TEST_F(CFDE_TextEditEngineTest, GetChar) {
+TEST_F(CFDETextEditEngineTest, GetChar) {
   // Out of bounds.
   EXPECT_EQ(L'\0', engine()->GetChar(0));
 
@@ -265,7 +265,7 @@ TEST_F(CFDE_TextEditEngineTest, GetChar) {
   EXPECT_EQ(L'+', engine()->GetChar(8));
 }
 
-TEST_F(CFDE_TextEditEngineTest, GetWidthOfChar) {
+TEST_F(CFDETextEditEngineTest, GetWidthOfChar) {
   // Out of Bounds.
   EXPECT_EQ(0, engine()->GetWidthOfChar(0));
 
@@ -277,11 +277,11 @@ TEST_F(CFDE_TextEditEngineTest, GetWidthOfChar) {
   EXPECT_EQ(0, engine()->GetWidthOfChar(0));
 }
 
-TEST_F(CFDE_TextEditEngineTest, GetDisplayPos) {
+TEST_F(CFDETextEditEngineTest, GetDisplayPos) {
   EXPECT_EQ(0U, engine()->GetDisplayPos(FDE_TEXTEDITPIECE()).size());
 }
 
-TEST_F(CFDE_TextEditEngineTest, Selection) {
+TEST_F(CFDETextEditEngineTest, Selection) {
   EXPECT_FALSE(engine()->HasSelection());
   engine()->SelectAll();
   EXPECT_FALSE(engine()->HasSelection());
@@ -359,7 +359,7 @@ TEST_F(CFDE_TextEditEngineTest, Selection) {
   EXPECT_EQ(L"Hello World", engine()->GetText());
 }
 
-TEST_F(CFDE_TextEditEngineTest, UndoRedo) {
+TEST_F(CFDETextEditEngineTest, UndoRedo) {
   EXPECT_FALSE(engine()->CanUndo());
   EXPECT_FALSE(engine()->CanRedo());
   EXPECT_FALSE(engine()->Undo());
@@ -463,7 +463,7 @@ TEST_F(CFDE_TextEditEngineTest, UndoRedo) {
   EXPECT_EQ(L"Hell", engine()->GetText());
 }
 
-TEST_F(CFDE_TextEditEngineTest, GetIndexForPoint) {
+TEST_F(CFDETextEditEngineTest, GetIndexForPoint) {
   engine()->SetFontSize(10.0f);
   engine()->Insert(0, L"Hello World");
   EXPECT_EQ(0U, engine()->GetIndexForPoint({0.0f, 0.0f}));
@@ -473,7 +473,7 @@ TEST_F(CFDE_TextEditEngineTest, GetIndexForPoint) {
   EXPECT_EQ(2U, engine()->GetIndexForPoint({10.0f, 5.0f}));
 }
 
-TEST_F(CFDE_TextEditEngineTest, GetIndexForPointLineWrap) {
+TEST_F(CFDETextEditEngineTest, GetIndexForPointLineWrap) {
   engine()->SetFontSize(10.0f);
   engine()->Insert(0,
                    L"A text long enough to span multiple lines and test "
@@ -486,7 +486,7 @@ TEST_F(CFDE_TextEditEngineTest, GetIndexForPointLineWrap) {
   EXPECT_EQ(2U, engine()->GetIndexForPoint({10.0f, 5.0f}));
 }
 
-TEST_F(CFDE_TextEditEngineTest, GetIndexForPointSpaceAtEnd) {
+TEST_F(CFDETextEditEngineTest, GetIndexForPointSpaceAtEnd) {
   engine()->SetFontSize(10.0f);
   engine()->Insert(0, L"Hello World ");
   EXPECT_EQ(0U, engine()->GetIndexForPoint({0.0f, 0.0f}));
@@ -494,7 +494,7 @@ TEST_F(CFDE_TextEditEngineTest, GetIndexForPointSpaceAtEnd) {
   EXPECT_EQ(12U, engine()->GetIndexForPoint({999999.0f, 0.0f}));
 }
 
-TEST_F(CFDE_TextEditEngineTest, GetIndexForPointLineBreaks) {
+TEST_F(CFDETextEditEngineTest, GetIndexForPointLineBreaks) {
   engine()->SetFontSize(10.0f);
   engine()->Insert(0, L"Hello\nWorld");
   EXPECT_EQ(0U, engine()->GetIndexForPoint({0.0f, 0.0f}));
@@ -503,7 +503,7 @@ TEST_F(CFDE_TextEditEngineTest, GetIndexForPointLineBreaks) {
   EXPECT_EQ(11U, engine()->GetIndexForPoint({999999.0f, 9999999.0f}));
 }
 
-TEST_F(CFDE_TextEditEngineTest, CanGenerateCharacterInfo) {
+TEST_F(CFDETextEditEngineTest, CanGenerateCharacterInfo) {
   RetainPtr<CFGAS_GEFont> font = engine()->GetFont();
   ASSERT_TRUE(font);
 
@@ -523,7 +523,7 @@ TEST_F(CFDE_TextEditEngineTest, CanGenerateCharacterInfo) {
   EXPECT_FALSE(engine()->CanGenerateCharacterInfo());
 }
 
-TEST_F(CFDE_TextEditEngineTest, GetCharacterInfo) {
+TEST_F(CFDETextEditEngineTest, GetCharacterInfo) {
   std::pair<int32_t, CFX_RectF> char_info;
 
   engine()->Insert(0, L"Hi!");
@@ -561,7 +561,7 @@ TEST_F(CFDE_TextEditEngineTest, GetCharacterInfo) {
   EXPECT_FLOAT_EQ(12.0f, char_info.second.Height());
 }
 
-TEST_F(CFDE_TextEditEngineTest, BoundsForWordAt) {
+TEST_F(CFDETextEditEngineTest, BoundsForWordAt) {
   auto [start_idx, count] = engine()->BoundsForWordAt(100);
   EXPECT_EQ(0U, start_idx);
   EXPECT_EQ(0U, count);
@@ -712,7 +712,7 @@ TEST_F(CFDE_TextEditEngineTest, BoundsForWordAt) {
   }
 }
 
-TEST_F(CFDE_TextEditEngineTest, CursorMovement) {
+TEST_F(CFDETextEditEngineTest, CursorMovement) {
   engine()->Clear();
   engine()->Insert(0, L"Hello");
 

@@ -17,7 +17,7 @@
 #include "xfa/fgas/font/cfgas_gefont.h"
 #include "xfa/fgas/layout/cfgas_char.h"
 
-class CFGAS_RTFBreakTest : public testing::Test {
+class CFGASRTFBreakTest : public testing::Test {
  public:
   void SetUp() override {
     const wchar_t kFontFamily[] = L"Arimo Bold";
@@ -39,7 +39,7 @@ class CFGAS_RTFBreakTest : public testing::Test {
 // As soon as you get one of the control characters the break is complete
 // and must be consumed before you get any more characters ....
 
-TEST_F(CFGAS_RTFBreakTest, AddChars) {
+TEST_F(CFGASRTFBreakTest, AddChars) {
   auto rtf_break = CreateBreak(CFGAS_Break::LayoutStyle::kExpandTab);
   WideString str(L"Input String.");
   for (wchar_t ch : str)
@@ -63,7 +63,7 @@ TEST_F(CFGAS_RTFBreakTest, AddChars) {
   EXPECT_EQ(str, rtf_break->GetBreakPieceUnstable(0)->GetString());
 }
 
-TEST_F(CFGAS_RTFBreakTest, ControlCharacters) {
+TEST_F(CFGASRTFBreakTest, ControlCharacters) {
   auto rtf_break = CreateBreak(CFGAS_Break::LayoutStyle::kExpandTab);
   EXPECT_EQ(CFGAS_Char::BreakType::kLine, rtf_break->AppendChar(L'\v'));
   EXPECT_EQ(CFGAS_Char::BreakType::kPage, rtf_break->AppendChar(L'\f'));
@@ -75,7 +75,7 @@ TEST_F(CFGAS_RTFBreakTest, ControlCharacters) {
   EXPECT_EQ(L"\v", rtf_break->GetBreakPieceUnstable(0)->GetString());
 }
 
-TEST_F(CFGAS_RTFBreakTest, BidiLine) {
+TEST_F(CFGASRTFBreakTest, BidiLine) {
   auto rtf_break = CreateBreak(CFGAS_Break::LayoutStyle::kExpandTab);
   rtf_break->SetLineBreakTolerance(1);
   rtf_break->SetFontSize(12);

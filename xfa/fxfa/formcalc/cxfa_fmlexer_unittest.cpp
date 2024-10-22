@@ -9,7 +9,7 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(CXFA_FMLexerTest, NullString) {
+TEST(CXFAFMLexerTest, NullString) {
   WideStringView null_string;
   CXFA_FMLexer lexer(null_string);
   CXFA_FMLexer::Token token = lexer.NextToken();
@@ -17,14 +17,14 @@ TEST(CXFA_FMLexerTest, NullString) {
   EXPECT_TRUE(lexer.IsComplete());
 }
 
-TEST(CXFA_FMLexerTest, EmptyString) {
+TEST(CXFAFMLexerTest, EmptyString) {
   CXFA_FMLexer lexer(L"");
   CXFA_FMLexer::Token token = lexer.NextToken();
   EXPECT_EQ(TOKeof, token.GetType());
   EXPECT_TRUE(lexer.IsComplete());
 }
 
-TEST(CXFA_FMLexerTest, Numbers) {
+TEST(CXFAFMLexerTest, Numbers) {
   {
     CXFA_FMLexer lexer(L"-12");
     CXFA_FMLexer::Token token = lexer.NextToken();
@@ -80,7 +80,7 @@ TEST(CXFA_FMLexerTest, Numbers) {
 }
 
 // The quotes are stripped in CXFA_FMStringExpression::ToJavaScript.
-TEST(CXFA_FMLexerTest, Strings) {
+TEST(CXFAFMLexerTest, Strings) {
   {
     CXFA_FMLexer lexer(L"\"The cat jumped over the fence.\"");
     CXFA_FMLexer::Token token = lexer.NextToken();
@@ -117,7 +117,7 @@ TEST(CXFA_FMLexerTest, Strings) {
 }
 
 // Note, 'this' is a keyword but is not matched by the lexer.
-TEST(CXFA_FMLexerTest, OperatorsAndKeywords) {
+TEST(CXFAFMLexerTest, OperatorsAndKeywords) {
   static const struct {
     const wchar_t* op;
     XFA_FM_TOKEN token;
@@ -189,7 +189,7 @@ TEST(CXFA_FMLexerTest, OperatorsAndKeywords) {
   }
 }
 
-TEST(CXFA_FMLexerTest, Comments) {
+TEST(CXFAFMLexerTest, Comments) {
   {
     CXFA_FMLexer lexer(L"// Empty.");
     CXFA_FMLexer::Token token = lexer.NextToken();
@@ -239,7 +239,7 @@ TEST(CXFA_FMLexerTest, Comments) {
   }
 }
 
-TEST(CXFA_FMLexerTest, ValidIdentifiers) {
+TEST(CXFAFMLexerTest, ValidIdentifiers) {
   std::vector<const wchar_t*> identifiers = {
       L"a", L"an_identifier", L"_ident", L"$ident", L"!ident", L"GetAddr"};
   for (const auto* ident : identifiers) {
@@ -251,7 +251,7 @@ TEST(CXFA_FMLexerTest, ValidIdentifiers) {
   }
 }
 
-TEST(CXFA_FMLexerTest, InvalidIdentifiers) {
+TEST(CXFAFMLexerTest, InvalidIdentifiers) {
   {
     CXFA_FMLexer lexer(L"#a");
     CXFA_FMLexer::Token token = lexer.NextToken();
@@ -281,7 +281,7 @@ TEST(CXFA_FMLexerTest, InvalidIdentifiers) {
   }
 }
 
-TEST(CXFA_FMLexerTest, Whitespace) {
+TEST(CXFAFMLexerTest, Whitespace) {
   {
     CXFA_FMLexer lexer(L" \t\xc\x9\xb");
     CXFA_FMLexer::Token token = lexer.NextToken();
@@ -303,7 +303,7 @@ TEST(CXFA_FMLexerTest, Whitespace) {
   }
 }
 
-TEST(CXFA_FMLexerTest, NullData) {
+TEST(CXFAFMLexerTest, NullData) {
   CXFA_FMLexer lexer(
       // SAFETY: required for test, manual length computation for fixed string.
       UNSAFE_BUFFERS(WideStringView(L"\x2d\x32\x00\x2d\x32", 5)));

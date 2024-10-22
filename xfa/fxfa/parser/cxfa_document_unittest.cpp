@@ -7,7 +7,7 @@
 #include "core/fxcrt/fx_string.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(CXFA_DocumentTest, ParseXFAVersion) {
+TEST(CXFADocumentTest, ParseXFAVersion) {
   // Malformed
   EXPECT_EQ(XFA_VERSION_UNKNOWN, CXFA_Document::ParseXFAVersion(L""));
   EXPECT_EQ(XFA_VERSION_UNKNOWN,
@@ -82,7 +82,7 @@ TEST(CXFA_DocumentTest, ParseXFAVersion) {
                      L"http://www.xfa.org/schema/xfa-template/3.17"));
 }
 
-TEST(CXFA_DocumentTest, ParseUseHref) {
+TEST(CXFADocumentTest, ParseUseHref) {
   {
     WideString wsEmpty;  // Must outlive views.
     WideStringView wsURI;
@@ -146,7 +146,7 @@ TEST(CXFA_DocumentTest, ParseUseHref) {
   }
 }
 
-TEST(CXFA_DocumentTest, ParseUse) {
+TEST(CXFADocumentTest, ParseUse) {
   {
     WideString wsUseVal(L"");  // Must outlive views.
     WideStringView wsID;

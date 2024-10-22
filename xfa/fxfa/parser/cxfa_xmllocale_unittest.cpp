@@ -93,26 +93,26 @@ CXFA_XMLLocale* CreateLocaleHelper(cppgc::Heap* heap) {
 
 }  // namespace
 
-class CXFA_XMLLocaleTest : public FXGCUnitTest {};
+class CXFAXMLLocaleTest : public FXGCUnitTest {};
 
-TEST_F(CXFA_XMLLocaleTest, Create) {
+TEST_F(CXFAXMLLocaleTest, Create) {
   auto* locale = CreateLocaleHelper(heap());
   EXPECT_TRUE(locale != nullptr);
 }
 
-TEST_F(CXFA_XMLLocaleTest, CreateBadXML) {
+TEST_F(CXFAXMLLocaleTest, CreateBadXML) {
   auto* locale = CXFA_XMLLocale::Create(heap(), pdfium::span<uint8_t>());
   EXPECT_TRUE(locale == nullptr);
 }
 
-TEST_F(CXFA_XMLLocaleTest, GetName) {
+TEST_F(CXFAXMLLocaleTest, GetName) {
   auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"en_US", locale->GetName());
 }
 
-TEST_F(CXFA_XMLLocaleTest, GetNumericSymbols) {
+TEST_F(CXFAXMLLocaleTest, GetNumericSymbols) {
   auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
@@ -123,14 +123,14 @@ TEST_F(CXFA_XMLLocaleTest, GetNumericSymbols) {
   EXPECT_EQ(L"$", locale->GetCurrencySymbol());
 }
 
-TEST_F(CXFA_XMLLocaleTest, GetDateTimeSymbols) {
+TEST_F(CXFAXMLLocaleTest, GetDateTimeSymbols) {
   auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
   EXPECT_EQ(L"GyMdkHmsSEDFwWahKzZ", locale->GetDateTimeSymbols());
 }
 
-TEST_F(CXFA_XMLLocaleTest, GetMonthName) {
+TEST_F(CXFAXMLLocaleTest, GetMonthName) {
   auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
@@ -140,7 +140,7 @@ TEST_F(CXFA_XMLLocaleTest, GetMonthName) {
   EXPECT_EQ(L"February", locale->GetMonthName(1, false));
 }
 
-TEST_F(CXFA_XMLLocaleTest, GetDayName) {
+TEST_F(CXFAXMLLocaleTest, GetDayName) {
   auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
@@ -150,7 +150,7 @@ TEST_F(CXFA_XMLLocaleTest, GetDayName) {
   EXPECT_EQ(L"Monday", locale->GetDayName(1, false));
 }
 
-TEST_F(CXFA_XMLLocaleTest, GetMeridiemName) {
+TEST_F(CXFAXMLLocaleTest, GetMeridiemName) {
   auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
@@ -158,7 +158,7 @@ TEST_F(CXFA_XMLLocaleTest, GetMeridiemName) {
   EXPECT_EQ(L"PM", locale->GetMeridiemName(false));
 }
 
-TEST_F(CXFA_XMLLocaleTest, GetEraName) {
+TEST_F(CXFAXMLLocaleTest, GetEraName) {
   auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
@@ -166,7 +166,7 @@ TEST_F(CXFA_XMLLocaleTest, GetEraName) {
   EXPECT_EQ(L"BC", locale->GetEraName(false));
 }
 
-TEST_F(CXFA_XMLLocaleTest, GetDatePattern) {
+TEST_F(CXFAXMLLocaleTest, GetDatePattern) {
   auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
@@ -182,7 +182,7 @@ TEST_F(CXFA_XMLLocaleTest, GetDatePattern) {
             locale->GetDatePattern(LocaleIface::DateTimeSubcategory::kLong));
 }
 
-TEST_F(CXFA_XMLLocaleTest, GetTimePattern) {
+TEST_F(CXFAXMLLocaleTest, GetTimePattern) {
   auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 
@@ -198,7 +198,7 @@ TEST_F(CXFA_XMLLocaleTest, GetTimePattern) {
             locale->GetTimePattern(LocaleIface::DateTimeSubcategory::kLong));
 }
 
-TEST_F(CXFA_XMLLocaleTest, GetNumPattern) {
+TEST_F(CXFAXMLLocaleTest, GetNumPattern) {
   auto* locale = CreateLocaleHelper(heap());
   ASSERT_TRUE(locale != nullptr);
 

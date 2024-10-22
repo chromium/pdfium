@@ -9,7 +9,7 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-class CXFA_NodeIteratorTemplateTest : public testing::Test {
+class CXFANodeIteratorTemplateTest : public testing::Test {
  public:
   class Node {
    public:
@@ -92,7 +92,7 @@ class CXFA_NodeIteratorTemplateTest : public testing::Test {
   std::unique_ptr<Node> child9_;
 };
 
-TEST_F(CXFA_NodeIteratorTemplateTest, Empty) {
+TEST_F(CXFANodeIteratorTemplateTest, Empty) {
   Iterator iter(nullptr);
   EXPECT_FALSE(iter.GetRoot());
   EXPECT_FALSE(iter.GetCurrent());
@@ -101,27 +101,27 @@ TEST_F(CXFA_NodeIteratorTemplateTest, Empty) {
   EXPECT_FALSE(iter.SkipChildrenAndMoveToNext());
 }
 
-TEST_F(CXFA_NodeIteratorTemplateTest, Root) {
+TEST_F(CXFANodeIteratorTemplateTest, Root) {
   Iterator iter(root());
   EXPECT_EQ(root(), iter.GetRoot());
   EXPECT_EQ(root(), iter.GetCurrent());
 }
 
-TEST_F(CXFA_NodeIteratorTemplateTest, Current) {
+TEST_F(CXFANodeIteratorTemplateTest, Current) {
   Iterator iter(root());
   iter.SetCurrent(child1());
   EXPECT_EQ(root(), iter.GetRoot());
   EXPECT_EQ(child1(), iter.GetCurrent());
 }
 
-TEST_F(CXFA_NodeIteratorTemplateTest, CurrentOutsideRootDisallowed) {
+TEST_F(CXFANodeIteratorTemplateTest, CurrentOutsideRootDisallowed) {
   Iterator iter(child1());
   iter.SetCurrent(root());
   EXPECT_EQ(child1(), iter.GetRoot());
   EXPECT_FALSE(iter.GetCurrent());
 }
 
-TEST_F(CXFA_NodeIteratorTemplateTest, CurrentNull) {
+TEST_F(CXFANodeIteratorTemplateTest, CurrentNull) {
   Iterator iter(root());
   EXPECT_EQ(child1(), iter.MoveToNext());
 
@@ -132,7 +132,7 @@ TEST_F(CXFA_NodeIteratorTemplateTest, CurrentNull) {
   EXPECT_FALSE(iter.GetCurrent());
 }
 
-TEST_F(CXFA_NodeIteratorTemplateTest, MoveToPrev) {
+TEST_F(CXFANodeIteratorTemplateTest, MoveToPrev) {
   Iterator iter(root());
   iter.SetCurrent(child9());
 
@@ -170,7 +170,7 @@ TEST_F(CXFA_NodeIteratorTemplateTest, MoveToPrev) {
   EXPECT_EQ(root(), iter.GetCurrent());
 }
 
-TEST_F(CXFA_NodeIteratorTemplateTest, MoveToNext) {
+TEST_F(CXFANodeIteratorTemplateTest, MoveToNext) {
   Iterator iter(root());
   iter.SetCurrent(child2());
 
@@ -202,7 +202,7 @@ TEST_F(CXFA_NodeIteratorTemplateTest, MoveToNext) {
   EXPECT_FALSE(iter.GetCurrent());
 }
 
-TEST_F(CXFA_NodeIteratorTemplateTest, SkipChildrenAndMoveToNext) {
+TEST_F(CXFANodeIteratorTemplateTest, SkipChildrenAndMoveToNext) {
   Iterator iter(root());
   iter.SetCurrent(child3());
   EXPECT_EQ(child7(), iter.SkipChildrenAndMoveToNext());
@@ -210,7 +210,7 @@ TEST_F(CXFA_NodeIteratorTemplateTest, SkipChildrenAndMoveToNext) {
   EXPECT_FALSE(iter.SkipChildrenAndMoveToNext());
 }
 
-TEST_F(CXFA_NodeIteratorTemplateTest, BackAndForth) {
+TEST_F(CXFANodeIteratorTemplateTest, BackAndForth) {
   Iterator iter(root());
   EXPECT_EQ(child1(), iter.MoveToNext());
   EXPECT_EQ(child2(), iter.MoveToNext());
@@ -223,21 +223,21 @@ TEST_F(CXFA_NodeIteratorTemplateTest, BackAndForth) {
   EXPECT_EQ(child1(), iter.MoveToPrev());
 }
 
-TEST_F(CXFA_NodeIteratorTemplateTest, NextFromBeforeTheBeginning) {
+TEST_F(CXFANodeIteratorTemplateTest, NextFromBeforeTheBeginning) {
   Iterator iter(root());
   EXPECT_FALSE(iter.MoveToPrev());
   EXPECT_EQ(root(), iter.GetCurrent());
   EXPECT_EQ(child1(), iter.MoveToNext());
 }
 
-TEST_F(CXFA_NodeIteratorTemplateTest, PrevFromAfterTheEnd) {
+TEST_F(CXFANodeIteratorTemplateTest, PrevFromAfterTheEnd) {
   Iterator iter(root());
   iter.SetCurrent(child9());
   EXPECT_FALSE(iter.MoveToNext());
   EXPECT_EQ(child9(), iter.MoveToPrev());
 }
 
-TEST_F(CXFA_NodeIteratorTemplateTest, ChildAsRootPrev) {
+TEST_F(CXFANodeIteratorTemplateTest, ChildAsRootPrev) {
   Iterator iter(child3());
   EXPECT_FALSE(iter.MoveToPrev());
 
@@ -246,7 +246,7 @@ TEST_F(CXFA_NodeIteratorTemplateTest, ChildAsRootPrev) {
   EXPECT_FALSE(iter.MoveToPrev());
 }
 
-TEST_F(CXFA_NodeIteratorTemplateTest, ChildAsRootNext) {
+TEST_F(CXFANodeIteratorTemplateTest, ChildAsRootNext) {
   Iterator iter(child3());
   iter.SetCurrent(child4());
   EXPECT_EQ(child5(), iter.MoveToNext());

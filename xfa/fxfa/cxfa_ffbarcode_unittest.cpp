@@ -6,7 +6,7 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(CXFA_FFBarcode, GetBarcodeTypeByName) {
+TEST(CXFAFFBarcodeTest, GetBarcodeTypeByName) {
   EXPECT_EQ(BC_TYPE::kUnknown, CXFA_FFBarcode::GetBarcodeTypeByName(L""));
   EXPECT_EQ(BC_TYPE::kUnknown,
             CXFA_FFBarcode::GetBarcodeTypeByName(L"not_found"));

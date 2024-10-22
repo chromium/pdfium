@@ -21,11 +21,11 @@
 
 using ::testing::ElementsAre;
 
-class CFGAS_StringFormatterTest : public FXGCUnitTest {
+class CFGASStringFormatterTest : public FXGCUnitTest {
  public:
-  CFGAS_StringFormatterTest() : scoped_tz_("UTC") { CPDF_PageModule::Create(); }
+  CFGASStringFormatterTest() : scoped_tz_("UTC") { CPDF_PageModule::Create(); }
 
-  ~CFGAS_StringFormatterTest() override { CPDF_PageModule::Destroy(); }
+  ~CFGASStringFormatterTest() override { CPDF_PageModule::Destroy(); }
 
   CXFA_LocaleMgr* Mgr(const WideString& locale) {
     return cppgc::MakeGarbageCollected<CXFA_LocaleMgr>(
@@ -38,7 +38,7 @@ class CFGAS_StringFormatterTest : public FXGCUnitTest {
 
 // TODO(dsinclair): Looks like the formatter/parser does not handle the various
 // 'g' flags.
-TEST_F(CFGAS_StringFormatterTest, DateFormat) {
+TEST_F(CFGASStringFormatterTest, DateFormat) {
   struct {
     const wchar_t* locale;
     const wchar_t* input;
@@ -105,7 +105,7 @@ TEST_F(CFGAS_StringFormatterTest, DateFormat) {
   }
 }
 
-TEST_F(CFGAS_StringFormatterTest, TimeFormat) {
+TEST_F(CFGASStringFormatterTest, TimeFormat) {
   static const struct {
     const wchar_t* locale;
     const wchar_t* input;
@@ -159,7 +159,7 @@ TEST_F(CFGAS_StringFormatterTest, TimeFormat) {
   }
 }
 
-TEST_F(CFGAS_StringFormatterTest, DateTimeFormat) {
+TEST_F(CFGASStringFormatterTest, DateTimeFormat) {
   static const struct {
     const wchar_t* locale;
     const wchar_t* input;
@@ -192,7 +192,7 @@ TEST_F(CFGAS_StringFormatterTest, DateTimeFormat) {
   }
 }
 
-TEST_F(CFGAS_StringFormatterTest, TimeDateFormat) {
+TEST_F(CFGASStringFormatterTest, TimeDateFormat) {
   static const struct {
     const wchar_t* locale;
     const wchar_t* input;
@@ -223,7 +223,7 @@ TEST_F(CFGAS_StringFormatterTest, TimeDateFormat) {
   }
 }
 
-TEST_F(CFGAS_StringFormatterTest, DateParse) {
+TEST_F(CFGASStringFormatterTest, DateParse) {
   static const struct {
     const wchar_t* locale;
     const wchar_t* input;
@@ -289,7 +289,7 @@ TEST_F(CFGAS_StringFormatterTest, DateParse) {
 
 // TODO(dsinclair): GetDateTimeFormat is broken and doesn't allow just returning
 // a parsed Time. It will assume it's a Date. The method needs to be re-written.
-// TEST_F(CFGAS_StringFormatterTest, TimeParse) {
+// TEST_F(CFGASStringFormatterTest, TimeParse) {
 //   struct {
 //     const wchar_t* locale;
 //     const wchar_t* input;
@@ -315,7 +315,7 @@ TEST_F(CFGAS_StringFormatterTest, DateParse) {
 //   }
 // }
 
-TEST_F(CFGAS_StringFormatterTest, SplitFormatString) {
+TEST_F(CFGASStringFormatterTest, SplitFormatString) {
   std::vector<WideString> results = CFGAS_StringFormatter::SplitOnBars(L"");
   EXPECT_EQ(1UL, results.size());
   EXPECT_TRUE(results[0].IsEmpty());
@@ -332,7 +332,7 @@ TEST_F(CFGAS_StringFormatterTest, SplitFormatString) {
                           L" text{999*999*9999}"));
 }
 
-TEST_F(CFGAS_StringFormatterTest, NumParse) {
+TEST_F(CFGASStringFormatterTest, NumParse) {
   struct TestCase {
     const wchar_t* locale;
     const wchar_t* input;
@@ -480,7 +480,7 @@ TEST_F(CFGAS_StringFormatterTest, NumParse) {
   }
 }
 
-TEST_F(CFGAS_StringFormatterTest, NumFormat) {
+TEST_F(CFGASStringFormatterTest, NumFormat) {
   struct TestCase {
     const wchar_t* locale;
     const wchar_t* input;
@@ -611,7 +611,7 @@ TEST_F(CFGAS_StringFormatterTest, NumFormat) {
   }
 }
 
-TEST_F(CFGAS_StringFormatterTest, TextParse) {
+TEST_F(CFGASStringFormatterTest, TextParse) {
   static const struct {
     const wchar_t* input;
     const wchar_t* pattern;
@@ -636,14 +636,14 @@ TEST_F(CFGAS_StringFormatterTest, TextParse) {
   }
 }
 
-TEST_F(CFGAS_StringFormatterTest, InvalidTextParse) {
+TEST_F(CFGASStringFormatterTest, InvalidTextParse) {
   // Input does not match mask.
   WideString result;
   CFGAS_StringFormatter fmt(L"AAA-9999-X");
   EXPECT_FALSE(fmt.ParseText(L"123-4567-8", &result));
 }
 
-TEST_F(CFGAS_StringFormatterTest, TextFormat) {
+TEST_F(CFGASStringFormatterTest, TextFormat) {
   static const struct {
     const wchar_t* locale;
     const wchar_t* input;
@@ -669,7 +669,7 @@ TEST_F(CFGAS_StringFormatterTest, TextFormat) {
   }
 }
 
-TEST_F(CFGAS_StringFormatterTest, NullParse) {
+TEST_F(CFGASStringFormatterTest, NullParse) {
   static const struct {
     const wchar_t* input;
     const wchar_t* pattern;
@@ -685,7 +685,7 @@ TEST_F(CFGAS_StringFormatterTest, NullParse) {
   }
 }
 
-TEST_F(CFGAS_StringFormatterTest, NullFormat) {
+TEST_F(CFGASStringFormatterTest, NullFormat) {
   static const struct {
     const wchar_t* pattern;
     const wchar_t* output;
@@ -701,7 +701,7 @@ TEST_F(CFGAS_StringFormatterTest, NullFormat) {
   }
 }
 
-TEST_F(CFGAS_StringFormatterTest, ZeroParse) {
+TEST_F(CFGASStringFormatterTest, ZeroParse) {
   static const struct {
     const wchar_t* input;
     const wchar_t* pattern;
@@ -715,7 +715,7 @@ TEST_F(CFGAS_StringFormatterTest, ZeroParse) {
   }
 }
 
-TEST_F(CFGAS_StringFormatterTest, ZeroFormat) {
+TEST_F(CFGASStringFormatterTest, ZeroFormat) {
   static const struct {
     const wchar_t* input;
     const wchar_t* pattern;
@@ -737,7 +737,7 @@ TEST_F(CFGAS_StringFormatterTest, ZeroFormat) {
   }
 }
 
-TEST_F(CFGAS_StringFormatterTest, GetCategory) {
+TEST_F(CFGASStringFormatterTest, GetCategory) {
   EXPECT_EQ(CFGAS_StringFormatter::Category::kUnknown,
             CFGAS_StringFormatter(L"'just text'").GetCategory());
   EXPECT_EQ(CFGAS_StringFormatter::Category::kNull,
