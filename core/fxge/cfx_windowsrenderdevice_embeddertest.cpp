@@ -20,7 +20,7 @@ constexpr CFX_Matrix kIdentityMatrix;
 
 }  // namespace
 
-class CFX_WindowsRenderDeviceTest : public EmbedderTest {
+class CFXWindowsRenderDeviceTest : public EmbedderTest {
  public:
   void SetUp() override {
     EmbedderTest::SetUp();
@@ -46,7 +46,7 @@ class CFX_WindowsRenderDeviceTest : public EmbedderTest {
   std::unique_ptr<CFX_WindowsRenderDevice> m_driver;
 };
 
-TEST_F(CFX_WindowsRenderDeviceTest, SimpleClipTriangle) {
+TEST_F(CFXWindowsRenderDeviceTest, SimpleClipTriangle) {
   CFX_Path path_data;
   CFX_PointF p1(0.0f, 0.0f);
   CFX_PointF p2(0.0f, 100.0f);
@@ -60,7 +60,7 @@ TEST_F(CFX_WindowsRenderDeviceTest, SimpleClipTriangle) {
       path_data, &kIdentityMatrix, CFX_FillRenderOptions::WindingOptions()));
 }
 
-TEST_F(CFX_WindowsRenderDeviceTest, SimpleClipRect) {
+TEST_F(CFXWindowsRenderDeviceTest, SimpleClipRect) {
   CFX_Path path_data;
 
   path_data.AppendRect(0.0f, 100.0f, 200.0f, 0.0f);
@@ -69,7 +69,7 @@ TEST_F(CFX_WindowsRenderDeviceTest, SimpleClipRect) {
       path_data, &kIdentityMatrix, CFX_FillRenderOptions::WindingOptions()));
 }
 
-TEST_F(CFX_WindowsRenderDeviceTest, GargantuanClipRect) {
+TEST_F(CFXWindowsRenderDeviceTest, GargantuanClipRect) {
   CFX_Path path_data;
 
   path_data.AppendRect(-257698020.0f, -257697252.0f, 257698044.0f,
@@ -83,7 +83,7 @@ TEST_F(CFX_WindowsRenderDeviceTest, GargantuanClipRect) {
       path_data, &kIdentityMatrix, CFX_FillRenderOptions::WindingOptions()));
 }
 
-TEST_F(CFX_WindowsRenderDeviceTest, GargantuanClipRectWithBaseClip) {
+TEST_F(CFXWindowsRenderDeviceTest, GargantuanClipRectWithBaseClip) {
   CFX_Path path_data;
   const FX_RECT kBaseClip(0, 0, 5100, 6600);
 

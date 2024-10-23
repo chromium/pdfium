@@ -31,9 +31,9 @@ constexpr char kComicSansMS[] = "Comic Sans MS";
 
 }  // namespace
 
-class CFX_FolderFontInfoTest : public ::testing::Test {
+class CFXFolderFontInfoTest : public ::testing::Test {
  public:
-  CFX_FolderFontInfoTest() {
+  CFXFolderFontInfoTest() {
     AddDummyFont(kArial, CHARSET_FLAG_ANSI);
     AddDummyFont(kCourierNew, CHARSET_FLAG_ANSI);
     AddDummyFont(kTimesNewRoman, 0);
@@ -71,7 +71,7 @@ class CFX_FolderFontInfoTest : public ::testing::Test {
   CFX_FolderFontInfo font_info_;
 };
 
-TEST_F(CFX_FolderFontInfoTest, TestFindFont) {
+TEST_F(CFXFolderFontInfoTest, TestFindFont) {
   // Find "Symbol" font
   void* font = FindFont(/*weight=*/0, /*bItalic=*/false, FX_Charset::kSymbol,
                         FXFONT_FF_ROMAN, kSymbol, /*bMatchName=*/true);

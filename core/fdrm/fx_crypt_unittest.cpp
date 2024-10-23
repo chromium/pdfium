@@ -245,7 +245,7 @@ TEST(FXCRYPT, Sha256TestB2) {
                           0xd4, 0x19, 0xdb, 0x06, 0xc1));
 }
 
-TEST(FXCRYPT, CRYPT_ArcFourSetup) {
+TEST(FXCRYPT, CRYPTArcFourSetup) {
   {
     static const uint8_t
         kNullPermutation[CRYPT_rc4_context::kPermutationLength] = {
@@ -303,7 +303,7 @@ TEST(FXCRYPT, CRYPT_ArcFourSetup) {
   }
 }
 
-TEST(FXCRYPT, CRYPT_ArcFourCrypt) {
+TEST(FXCRYPT, CRYPTArcFourCrypt) {
   static const uint8_t kDataShort[] =
       "The Quick Fox Jumped Over The Lazy Brown Dog.";
   static const uint8_t kDataLong[] =
