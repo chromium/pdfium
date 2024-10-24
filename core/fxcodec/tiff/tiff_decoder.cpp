@@ -41,6 +41,13 @@ struct TiffDeleter {
   inline void operator()(TIFF* context) { TIFFClose(context); }
 };
 
+// For use with std::unique_ptr<TIFFOpenOptions>.
+struct TIFFOpenOptionsDeleter {
+  inline void operator()(TIFFOpenOptions* options) {
+    TIFFOpenOptionsFree(options);
+  }
+};
+
 }  // namespace
 
 class CTiffContext final : public ProgressiveDecoderIface::Context {
@@ -178,10 +185,19 @@ void tiff_unmap(thandle_t context, tdata_t, toff_t) {}
 
 bool CTiffContext::InitDecoder(
     const RetainPtr<IFX_SeekableReadStream>& file_ptr) {
+  // Limit set to make fuzzers happy. If this causes problems in the real world,
+  // then adjust as needed.
+  constexpr tmsize_t kMaxTiffAllocBytes = 1536 * 1024 * 1024;  // 1.5 GB
+  std::unique_ptr<TIFFOpenOptions, TIFFOpenOptionsDeleter> options(
+      TIFFOpenOptionsAlloc());
+  CHECK(options);
+  TIFFOpenOptionsSetMaxCumulatedMemAlloc(options.get(), kMaxTiffAllocBytes);
+
   m_io_in = file_ptr;
-  m_tif_ctx.reset(TIFFClientOpen(
+  m_tif_ctx.reset(TIFFClientOpenExt(
       /*name=*/"Tiff Image", /*mode=*/"r", /*clientdata=*/this, tiff_read,
-      tiff_write, tiff_seek, tiff_close, tiff_get_size, tiff_map, tiff_unmap));
+      tiff_write, tiff_seek, tiff_close, tiff_get_size, tiff_map, tiff_unmap,
+      options.get()));
   return !!m_tif_ctx;
 }
 
