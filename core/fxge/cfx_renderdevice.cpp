@@ -220,9 +220,12 @@ void DrawNormalTextHelper(const RetainPtr<CFX_DIBitmap>& bitmap,
   const bool has_alpha = bitmap->IsAlphaFormat();
   const int bytes_per_pixel = has_alpha ? 4 : bitmap->GetBPP() / 8;
   for (int row = 0; row < nrows; ++row) {
-    int dest_row = row + top;
-    if (dest_row < 0 || dest_row >= bitmap->GetHeight())
+    FX_SAFE_INT32 safe_dest_row = row;
+    safe_dest_row += top;
+    const int dest_row = safe_dest_row.ValueOrDefault(-1);
+    if (dest_row < 0 || dest_row >= bitmap->GetHeight()) {
       continue;
+    }
 
     const uint8_t* src_scan =
         pGlyph->GetScanline(row).subspan((start_col - left) * 3).data();
