@@ -1629,7 +1629,7 @@ CXFA_Node* CXFA_Document::DataMerge_CopyContainer(CXFA_Node* pTemplateNode,
                                                   bool bOneInstance,
                                                   bool bDataMerge,
                                                   bool bUpLevel) {
-  DCHECK(pTemplateNode->IsContainerNode());
+  CHECK(pTemplateNode->IsContainerNode());
   switch (pTemplateNode->GetElementType()) {
     case XFA_Element::Area:
     case XFA_Element::PageArea:

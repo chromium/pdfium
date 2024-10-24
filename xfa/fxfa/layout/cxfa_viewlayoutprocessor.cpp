@@ -921,15 +921,17 @@ CXFA_Node* CXFA_ViewLayoutProcessor::ProcessBookendLeaderOrTrailer(
   CXFA_Node* pFormNode = pBookendNode->GetContainerParent();
   CXFA_Node* pLeaderTemplate =
       ResolveBookendLeaderOrTrailer(pBookendNode, bLeader);
-  if (!pLeaderTemplate)
+  if (!pLeaderTemplate || !pLeaderTemplate->IsContainerNode()) {
     return nullptr;
+  }
 
   CXFA_Document* pDocument = pBookendNode->GetDocument();
   CXFA_Node* pDataScope = XFA_DataMerge_FindDataScope(pFormNode);
   CXFA_Node* pBookendAppendNode = pDocument->DataMerge_CopyContainer(
       pLeaderTemplate, pFormNode, pDataScope, true, true, true);
-  if (!pBookendAppendNode)
+  if (!pBookendAppendNode) {
     return nullptr;
+  }
 
   pDocument->DataMerge_UpdateBindingRelations(pBookendAppendNode);
   SetLayoutGeneratedNodeFlag(pBookendAppendNode);
