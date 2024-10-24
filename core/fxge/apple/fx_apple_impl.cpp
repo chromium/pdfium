@@ -103,7 +103,7 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
     CFX_Font* pFont,
     const CFX_Matrix& mtObject2Device,
     float font_size,
-    uint32_t argb,
+    uint32_t color,
     const CFX_TextRenderOptions& /*options*/) {
   if (!pFont)
     return false;
@@ -150,8 +150,15 @@ bool CFX_AggDeviceDriver::DrawDeviceText(
   else
     CGContextClipToRect(ctx, rect_cg);
 
+  if (m_bRgbByteOrder) {
+    uint8_t a = FXARGB_A(color);
+    uint8_t r = FXARGB_R(color);
+    uint8_t g = FXARGB_G(color);
+    uint8_t b = FXARGB_B(color);
+    color = ArgbEncode(a, b, g, r);
+  }
   bool ret =
-      CGDrawGlyphRun(ctx, pCharPos, pFont, mtObject2Device, font_size, argb);
+      CGDrawGlyphRun(ctx, pCharPos, pFont, mtObject2Device, font_size, color);
   if (pImageCG)
     CGImageRelease(pImageCG);
   CGContextRestoreGState(ctx);

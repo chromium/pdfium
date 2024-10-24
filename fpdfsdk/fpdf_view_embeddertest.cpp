@@ -1442,12 +1442,11 @@ TEST_F(FPDFViewEmbedderTest, RenderBug664284WithNoNativeText) {
   // CFX_SkiaDeviceDriver::DrawDeviceText(). In this case, it returns false and
   // affects the rendering results across all platforms.
 
-  // For AGG, since CFX_AggDeviceDriver::DrawDeviceText() always returns false,
-  // FPDF_NO_NATIVETEXT won't affect device-specific rendering path and it will
-  // only disable native text support on macOS. Therefore Windows and Linux
-  // rendering results remain the same as rendering with no flags, while the
-  // macOS rendering result doesn't.
-
+  // For AGG, since CFX_AggDeviceDriver::DrawDeviceText() is only implemented
+  // for macOS, FPDF_NO_NATIVETEXT will not affect the device-specific rendering
+  // path on other platforms and it will only disable native text support on
+  // macOS. Therefore Windows and Linux rendering results remain the same as
+  // rendering with no flags, while the macOS rendering result does not.
   const char* original_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
