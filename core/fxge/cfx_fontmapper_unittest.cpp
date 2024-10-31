@@ -89,7 +89,7 @@ class CFXFontMapperSystemFontInfoTest : public testing::Test {
 // Deliberately give this global variable external linkage.
 char g_maybe_changes = '\xff';
 
-TEST(CFX_FontMapper, IsStandardFontName) {
+TEST(CFXFontMapperTest, IsStandardFontName) {
   EXPECT_TRUE(CFX_FontMapper::IsStandardFontName("Courier"));
   EXPECT_TRUE(CFX_FontMapper::IsStandardFontName("Courier-Bold"));
   EXPECT_TRUE(CFX_FontMapper::IsStandardFontName("Courier-BoldOblique"));
@@ -111,7 +111,7 @@ TEST(CFX_FontMapper, IsStandardFontName) {
   EXPECT_FALSE(CFX_FontMapper::IsStandardFontName("YapfDingbats"));
 }
 
-TEST(CFX_FontMapper, MakeTag) {
+TEST(CFXFontMapperTest, MakeTag) {
   EXPECT_EQ(0x61626364u, CFX_FontMapper::MakeTag('a', 'b', 'c', 'd'));
   EXPECT_EQ(0x00000000u, CFX_FontMapper::MakeTag('\0', '\0', '\0', '\0'));
   EXPECT_EQ(0xfffe0a08u, CFX_FontMapper::MakeTag('\xff', '\xfe', '\n', '\b'));
@@ -125,7 +125,7 @@ TEST(CFX_FontMapper, MakeTag) {
             CFX_FontMapper::MakeTag('G', 'S', 'U', 'B'));
 }
 
-TEST(CFX_FontMapper, AddInstalledFontBasic) {
+TEST(CFXFontMapperTest, AddInstalledFontBasic) {
   const char kFontName[] = "dummy";
   CFX_FontMapper font_mapper(nullptr);
   font_mapper.SetSystemFontInfo(std::make_unique<MockSystemFontInfo>());

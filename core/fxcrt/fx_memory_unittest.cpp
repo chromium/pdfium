@@ -27,7 +27,7 @@ constexpr size_t kCloseToMaxByteAlloc = kMaxByteAlloc - 100;
 
 }  // namespace
 
-TEST(fxcrt, FX_AllocZero) {
+TEST(fxcrt, FXAllocZero) {
   uint8_t* ptr = FX_Alloc(uint8_t, 0);
   uint8_t* ptr2 = FX_Alloc(uint8_t, 0);
   EXPECT_TRUE(ptr);      // Malloc(0) is distinguishable from OOM.
@@ -46,7 +46,7 @@ TEST(fxcrt, FXAllocOOM) {
   FX_Free(ptr);
 }
 
-TEST(fxcrt, FX_AllocOverflow) {
+TEST(fxcrt, FXAllocOverflow) {
   // |ptr| needs to be defined and used to avoid Clang optimizes away the
   // FX_Alloc() statement overzealously for optimized builds.
   int* ptr = nullptr;
@@ -58,7 +58,7 @@ TEST(fxcrt, FX_AllocOverflow) {
   FX_Free(ptr);
 }
 
-TEST(fxcrt, FX_AllocOverflow2D) {
+TEST(fxcrt, FXAllocOverflow2D) {
   // |ptr| needs to be defined and used to avoid Clang optimizes away the
   // FX_Alloc() statement overzealously for optimized builds.
   int* ptr = nullptr;
@@ -92,7 +92,7 @@ TEST(fxcrt, FXTryAllocUninitOOM) {
 }
 
 #if !defined(COMPILER_GCC)
-TEST(fxcrt, FX_TryAllocOverflow) {
+TEST(fxcrt, FXTryAllocOverflow) {
   // |ptr| needs to be defined and used to avoid Clang optimizes away the
   // calloc() statement overzealously for optimized builds.
   int* ptr = (int*)calloc(sizeof(int), kOverflowIntAlloc);

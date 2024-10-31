@@ -13,7 +13,7 @@
 #include "core/fxcrt/compiler_specific.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(fxcrt, FXSYS_IsLowerASCII) {
+TEST(fxcrt, FXSYSIsLowerASCII) {
   EXPECT_TRUE(FXSYS_IsLowerASCII('a'));
   EXPECT_TRUE(FXSYS_IsLowerASCII(L'a'));
   EXPECT_TRUE(FXSYS_IsLowerASCII('b'));
@@ -34,7 +34,7 @@ TEST(fxcrt, FXSYS_IsLowerASCII) {
   EXPECT_FALSE(FXSYS_IsLowerASCII(static_cast<wchar_t>(0xb2)));
 }
 
-TEST(fxcrt, FXSYS_IsUpperASCII) {
+TEST(fxcrt, FXSYSIsUpperASCII) {
   EXPECT_TRUE(FXSYS_IsUpperASCII('A'));
   EXPECT_TRUE(FXSYS_IsUpperASCII(L'A'));
   EXPECT_TRUE(FXSYS_IsUpperASCII('B'));
@@ -55,14 +55,14 @@ TEST(fxcrt, FXSYS_IsUpperASCII) {
   EXPECT_FALSE(FXSYS_IsUpperASCII(static_cast<wchar_t>(0xb2)));
 }
 
-TEST(fxcrt, FXSYS_HexCharToInt) {
+TEST(fxcrt, FXSYSHexCharToInt) {
   EXPECT_EQ(10, FXSYS_HexCharToInt('a'));
   EXPECT_EQ(10, FXSYS_HexCharToInt('A'));
   EXPECT_EQ(7, FXSYS_HexCharToInt('7'));
   EXPECT_EQ(0, FXSYS_HexCharToInt('i'));
 }
 
-TEST(fxcrt, FXSYS_DecimalCharToInt) {
+TEST(fxcrt, FXSYSDecimalCharToInt) {
   EXPECT_EQ(7, FXSYS_DecimalCharToInt('7'));
   EXPECT_EQ(0, FXSYS_DecimalCharToInt('a'));
   EXPECT_EQ(7, FXSYS_DecimalCharToInt(L'7'));
@@ -71,7 +71,7 @@ TEST(fxcrt, FXSYS_DecimalCharToInt) {
   EXPECT_EQ(0, FXSYS_DecimalCharToInt(static_cast<wchar_t>(0xb2)));
 }
 
-TEST(fxcrt, FXSYS_IsDecimalDigit) {
+TEST(fxcrt, FXSYSIsDecimalDigit) {
   EXPECT_TRUE(FXSYS_IsDecimalDigit('7'));
   EXPECT_TRUE(FXSYS_IsDecimalDigit(L'7'));
   EXPECT_FALSE(FXSYS_IsDecimalDigit('a'));
@@ -80,7 +80,7 @@ TEST(fxcrt, FXSYS_IsDecimalDigit) {
   EXPECT_FALSE(FXSYS_IsDecimalDigit(static_cast<wchar_t>(0xb2)));
 }
 
-TEST(fxcrt, FXSYS_IntToTwoHexChars) {
+TEST(fxcrt, FXSYSIntToTwoHexChars) {
   char buf[3] = {0};
   FXSYS_IntToTwoHexChars(0x0, buf);
   EXPECT_STREQ("00", buf);
@@ -98,7 +98,7 @@ TEST(fxcrt, FXSYS_IntToTwoHexChars) {
   EXPECT_STREQ("FF", buf);
 }
 
-TEST(fxcrt, FXSYS_IntToFourHexChars) {
+TEST(fxcrt, FXSYSIntToFourHexChars) {
   char buf[5] = {0};
   FXSYS_IntToFourHexChars(0x0, buf);
   EXPECT_STREQ("0000", buf);
@@ -110,7 +110,7 @@ TEST(fxcrt, FXSYS_IntToFourHexChars) {
   EXPECT_STREQ("FFFF", buf);
 }
 
-TEST(fxcrt, FXSYS_ToUTF16BE) {
+TEST(fxcrt, FXSYSToUTF16BE) {
   char buf[9] = {0};
   // Test U+0000 to U+D7FF and U+E000 to U+FFFF
   EXPECT_EQ(4U, FXSYS_ToUTF16BE(0x0, buf));
@@ -130,7 +130,7 @@ TEST(fxcrt, FXSYS_ToUTF16BE) {
   EXPECT_STREQ("D840DC3E", buf);
 }
 
-TEST(fxcrt, FXSYS_wcstof) {
+TEST(fxcrt, FXSYSwcstof) {
   size_t used_len = 0;
   EXPECT_FLOAT_EQ(-12.0f, FXSYS_wcstof(L"-12", &used_len));
   EXPECT_EQ(3u, used_len);
@@ -221,7 +221,7 @@ TEST(fxcrt, FXSYS_wcstof) {
   EXPECT_EQ(131u, used_len);
 }
 
-TEST(fxcrt, FXSYS_SafeOps) {
+TEST(fxcrt, FXSYSSafeOps) {
   const float fMin = std::numeric_limits<float>::min();
   const float fMax = std::numeric_limits<float>::max();
   const float fInf = std::numeric_limits<float>::infinity();

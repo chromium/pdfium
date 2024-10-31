@@ -7,7 +7,7 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(CFX_Path, BasicTest) {
+TEST(CFXPath, BasicTest) {
   CFX_Path path;
   path.AppendRect(/*left=*/1, /*bottom=*/2, /*right=*/3, /*top=*/5);
   EXPECT_EQ(5u, path.GetPoints().size());
@@ -65,7 +65,7 @@ TEST(CFX_Path, BasicTest) {
   EXPECT_EQ(CFX_FloatRect(1, 2, 3, 5), path.GetBoundingBox());
 }
 
-TEST(CFX_Path, ShearTransform) {
+TEST(CFXPath, ShearTransform) {
   CFX_Path path;
   path.AppendRect(/*left=*/1, /*bottom=*/2, /*right=*/3, /*top=*/5);
 
@@ -95,7 +95,7 @@ TEST(CFX_Path, ShearTransform) {
   EXPECT_EQ(CFX_FloatRect(1, 2, 3, 5), path.GetBoundingBox());
 }
 
-TEST(CFX_Path, Hexagon) {
+TEST(CFXPath, Hexagon) {
   CFX_Path path;
   path.AppendPoint({1, 0}, CFX_Path::Point::Type::kMove);
   path.AppendPoint({2, 0}, CFX_Path::Point::Type::kLine);
@@ -139,7 +139,7 @@ TEST(CFX_Path, Hexagon) {
   EXPECT_EQ(CFX_FloatRect(0, 0, 3, 2), path.GetBoundingBox());
 }
 
-TEST(CFX_Path, ClosePath) {
+TEST(CFXPath, ClosePath) {
   CFX_Path path;
   path.AppendLine({0, 0}, {0, 1});
   path.AppendLine({0, 1}, {1, 1});
@@ -189,7 +189,7 @@ TEST(CFX_Path, ClosePath) {
   EXPECT_EQ(CFX_FloatRect(0, 0, 1, 1), rect.value());
 }
 
-TEST(CFX_Path, FivePointRect) {
+TEST(CFXPath, FivePointRect) {
   CFX_Path path;
   path.AppendPoint({0, 0}, CFX_Path::Point::Type::kMove);
   path.AppendPoint({2, 0}, CFX_Path::Point::Type::kLine);
@@ -214,7 +214,7 @@ TEST(CFX_Path, FivePointRect) {
   EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), rect.value());
 }
 
-TEST(CFX_Path, SixPlusPointRect) {
+TEST(CFXPath, SixPlusPointRect) {
   CFX_Path path;
   path.AppendPoint({0, 0}, CFX_Path::Point::Type::kMove);
   path.AppendPoint({0, 0}, CFX_Path::Point::Type::kLine);
@@ -249,7 +249,7 @@ TEST(CFX_Path, SixPlusPointRect) {
   EXPECT_EQ(CFX_FloatRect(0, 0, 2, 1), path.GetBoundingBox());
 }
 
-TEST(CFX_Path, NotRect) {
+TEST(CFXPath, NotRect) {
   CFX_Path path;
   path.AppendPoint({0, 0}, CFX_Path::Point::Type::kMove);
   path.AppendPoint({2, 0}, CFX_Path::Point::Type::kLine);
@@ -333,7 +333,7 @@ TEST(CFX_Path, NotRect) {
   EXPECT_EQ(CFX_FloatRect(0, 0, 2, 2), path.GetBoundingBox());
 }
 
-TEST(CFX_Path, EmptyRect) {
+TEST(CFXPath, EmptyRect) {
   // Document existing behavior where an empty rect is still considered a rect.
   CFX_Path path;
   path.AppendPoint({0, 0}, CFX_Path::Point::Type::kMove);
@@ -348,7 +348,7 @@ TEST(CFX_Path, EmptyRect) {
   EXPECT_EQ(CFX_FloatRect(0, 0, 0, 1), path.GetBoundingBox());
 }
 
-TEST(CFX_Path, Append) {
+TEST(CFXPath, Append) {
   CFX_Path path;
   path.AppendPoint({5, 6}, CFX_Path::Point::Type::kMove);
   ASSERT_EQ(1u, path.GetPoints().size());
@@ -373,7 +373,7 @@ TEST(CFX_Path, Append) {
   EXPECT_EQ(CFX_PointF(65, 82), path.GetPoint(3));
 }
 
-TEST(CFX_Path, GetBoundingBoxForStrokePath) {
+TEST(CFXPath, GetBoundingBoxForStrokePath) {
   static constexpr float kLineWidth = 1.0f;
   static constexpr float kMiterLimit = 1.0f;
 

@@ -18,7 +18,7 @@ class FMExpressionTest : public FXGCUnitTest {};
 class FMCallExpressionTest : public FXGCUnitTest {};
 class FMStringExpressionTest : public FXGCUnitTest {};
 
-TEST_F(FMCallExpressionTest, more_than_32_arguments) {
+TEST_F(FMCallExpressionTest, MoreThan32Arguments) {
   // Use sign as it has 3 object parameters at positions 0, 5, and 6.
   auto* exp = cppgc::MakeGarbageCollected<CXFA_FMIdentifierExpression>(
       heap()->GetAllocationHandle(), L"sign");

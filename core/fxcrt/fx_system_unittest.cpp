@@ -90,7 +90,7 @@ void Check64BitBase2Itoa(int64_t input, const char* expected_output) {
 
 }  // namespace
 
-TEST(fxcrt, FXSYS_roundf) {
+TEST(fxcrt, FXSYSroundf) {
   EXPECT_EQ(0, FXSYS_roundf(0.0f));
   EXPECT_EQ(0, FXSYS_roundf(-0.0f));
   EXPECT_EQ(0, FXSYS_roundf(0.00001f));
@@ -140,7 +140,7 @@ TEST(fxcrt, FXSYS_roundf) {
   EXPECT_EQ(0, FXSYS_roundf(NAN));
 }
 
-TEST(fxcrt, FXSYS_round) {
+TEST(fxcrt, FXSYSround) {
   EXPECT_EQ(0, FXSYS_round(0.0));
   EXPECT_EQ(0, FXSYS_round(-0.0));
   EXPECT_EQ(0, FXSYS_round(0.00001));
@@ -191,7 +191,7 @@ TEST(fxcrt, FXSYS_round) {
   EXPECT_EQ(0, FXSYS_round(NAN));
 }
 
-TEST(fxcrt, FXSYS_itoa_InvalidRadix) {
+TEST(fxcrt, FXSYSitoaInvalidRadix) {
   char buf[32];
 
   FXSYS_itoa(42, buf, 17);  // Ours stops at 16.
@@ -207,7 +207,7 @@ TEST(fxcrt, FXSYS_itoa_InvalidRadix) {
   EXPECT_STREQ("", buf);
 }
 
-TEST(fxcrt, FXSYS_itoa) {
+TEST(fxcrt, FXSYSitoa) {
   Check32BitBase16Itoa(std::numeric_limits<int32_t>::min(), "-80000000");
   Check32BitBase10Itoa(std::numeric_limits<int32_t>::min(), "-2147483648");
   Check32BitBase2Itoa(std::numeric_limits<int32_t>::min(),
@@ -231,7 +231,7 @@ TEST(fxcrt, FXSYS_itoa) {
                       "1111111111111111111111111111111");
 }
 
-TEST(fxcrt, FXSYS_i64toa_InvalidRadix) {
+TEST(fxcrt, FXSYSi64toaInvalidRadix) {
   char buf[32];
 
   FXSYS_i64toa(42, buf, 17);  // Ours stops at 16.
@@ -247,7 +247,7 @@ TEST(fxcrt, FXSYS_i64toa_InvalidRadix) {
   EXPECT_STREQ("", buf);
 }
 
-TEST(fxcrt, FXSYS_i64toa) {
+TEST(fxcrt, FXSYSi64toa) {
   Check64BitBase16Itoa(std::numeric_limits<int64_t>::min(),
                        "-8000000000000000");
   Check64BitBase10Itoa(std::numeric_limits<int64_t>::min(),
@@ -278,7 +278,7 @@ TEST(fxcrt, FXSYS_i64toa) {
 
 #endif  // !BUILDFLAG(IS_WIN)
 
-TEST(fxcrt, FXSYS_wcsftime) {
+TEST(fxcrt, FXSYSwcsftime) {
   struct tm good_time = {};
   good_time.tm_year = 74;  // 1900-based.
   good_time.tm_mon = 7;    // 0-based.
@@ -332,7 +332,7 @@ TEST(fxcrt, FXSYS_wcsftime) {
       FXSYS_wcsftime(buf, std::size(buf), L"%y-%m-%dT%H:%M:%S", &feb_time));
 }
 
-TEST(fxcrt, FXSYS_atoi) {
+TEST(fxcrt, FXSYSatoi) {
   EXPECT_EQ(0, FXSYS_atoi(""));
   EXPECT_EQ(0, FXSYS_atoi("0"));
   EXPECT_EQ(-1, FXSYS_atoi("-1"));
@@ -355,7 +355,7 @@ TEST(fxcrt, FXSYS_atoi) {
   EXPECT_EQ(-2147483647 - 1, FXSYS_atoi("-2147483650"));
 }
 
-TEST(fxcrt, FXSYS_atoi64) {
+TEST(fxcrt, FXSYSatoi64) {
   EXPECT_EQ(0, FXSYS_atoi64(""));
   EXPECT_EQ(0, FXSYS_atoi64("0"));
   EXPECT_EQ(-1, FXSYS_atoi64("-1"));
@@ -377,7 +377,7 @@ TEST(fxcrt, FXSYS_atoi64) {
   EXPECT_EQ(-9223372036854775807LL - 1LL, FXSYS_atoi64("-9223372036854775810"));
 }
 
-TEST(fxcrt, FXSYS_wtoi) {
+TEST(fxcrt, FXSYSwtoi) {
   EXPECT_EQ(0, FXSYS_wtoi(L""));
   EXPECT_EQ(0, FXSYS_wtoi(L"0"));
   EXPECT_EQ(-1, FXSYS_wtoi(L"-1"));
@@ -394,7 +394,7 @@ TEST(fxcrt, FXSYS_wtoi) {
   EXPECT_EQ(-2147483647 - 1, FXSYS_wtoi(L"-2147483652"));
 }
 
-TEST(fxcrt, FXSYS_atoui) {
+TEST(fxcrt, FXSYSatoui) {
   EXPECT_EQ(0u, FXSYS_atoui(""));
   EXPECT_EQ(0u, FXSYS_atoui("0"));
   EXPECT_EQ(4294967295, FXSYS_atoui("-1"));

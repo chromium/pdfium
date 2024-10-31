@@ -6,52 +6,52 @@
 
 #include "testing/gtest/include/gtest/gtest.h"
 
-TEST(fxcrt, FXSYS_memset) {
+TEST(fxcrt, FXSYSmemset) {
   // Test passes if it does not trigger UBSAN warnings.
   EXPECT_EQ(nullptr, UNSAFE_BUFFERS(FXSYS_memset(nullptr, 0, 0)));
 }
 
-TEST(fxcrt, FXSYS_wmemset) {
+TEST(fxcrt, FXSYSwmemset) {
   // Test passes if it does not trigger UBSAN warnings.
   EXPECT_EQ(nullptr, UNSAFE_BUFFERS(FXSYS_wmemset(nullptr, 0, 0)));
 }
 
-TEST(fxcrt, FXSYS_memcpy) {
+TEST(fxcrt, FXSYSmemcpy) {
   // Test passes if it does not trigger UBSAN warnings.
   EXPECT_EQ(nullptr, UNSAFE_BUFFERS(FXSYS_memcpy(nullptr, nullptr, 0)));
 }
 
-TEST(fxcrt, FXSYS_wmemcpy) {
+TEST(fxcrt, FXSYSwmemcpy) {
   // Test passes if it does not trigger UBSAN warnings.
   EXPECT_EQ(nullptr, UNSAFE_BUFFERS(FXSYS_wmemcpy(nullptr, nullptr, 0)));
 }
 
-TEST(fxcrt, FXSYS_memmove) {
+TEST(fxcrt, FXSYSmemmove) {
   // Test passes if it does not trigger UBSAN warnings.
   EXPECT_EQ(nullptr, UNSAFE_BUFFERS(FXSYS_memmove(nullptr, nullptr, 0)));
 }
 
-TEST(fxcrt, FXSYS_wmemmove) {
+TEST(fxcrt, FXSYSwmemmove) {
   // Test passes if it does not trigger UBSAN warnings.
   EXPECT_EQ(nullptr, UNSAFE_BUFFERS(FXSYS_wmemmove(nullptr, nullptr, 0)));
 }
 
-TEST(fxcrt, FXSYS_memcmp) {
+TEST(fxcrt, FXSYSmemcmp) {
   // Test passes if it does not trigger UBSAN warnings.
   EXPECT_EQ(0, UNSAFE_BUFFERS(FXSYS_memcmp(nullptr, nullptr, 0)));
 }
 
-TEST(fxcrt, FXSYS_wmemcmp) {
+TEST(fxcrt, FXSYSwmemcmp) {
   // Test passes if it does not trigger UBSAN warnings.
   EXPECT_EQ(0, UNSAFE_BUFFERS(FXSYS_wmemcmp(nullptr, nullptr, 0)));
 }
 
-TEST(fxcrt, FXSYS_memchr) {
+TEST(fxcrt, FXSYSmemchr) {
   // Test passes if it does not trigger UBSAN warnings.
   EXPECT_EQ(nullptr, UNSAFE_BUFFERS(FXSYS_memchr(nullptr, 0, 0)));
 }
 
-TEST(fxcrt, FXSYS_wmemchr) {
+TEST(fxcrt, FXSYSwmemchr) {
   // Test passes if it does not trigger UBSAN warnings.
   EXPECT_EQ(nullptr, UNSAFE_BUFFERS(FXSYS_wmemchr(nullptr, 0, 0)));
 }

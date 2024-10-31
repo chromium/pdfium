@@ -17,7 +17,7 @@ struct TestCase {
 
 }  // namespace
 
-TEST(XfaUtilsImpTest, XFA_MapRotation) {
+TEST(XfaUtilsImpTest, XFAMapRotation) {
   static const TestCase kTestCases[] = {
       {-1000000, 80}, {-361, 359},  {-360, 0}, {-359, 1},  {-91, 269},
       {-90, 270},     {-89, 271},   {-1, 359}, {0, 0},     {1, 1},

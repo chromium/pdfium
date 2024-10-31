@@ -1850,7 +1850,7 @@ TEST(ByteString, AnyAllNoneOf) {
   EXPECT_FALSE(pdfium::Contains(str, 'z'));
 }
 
-TEST(CFX_BytrString, EqualNoCase) {
+TEST(ByteString, EqualNoCase) {
   ByteString str("aaa");
   EXPECT_TRUE(str.EqualNoCase("aaa"));
   EXPECT_TRUE(str.EqualNoCase("AAA"));
@@ -2000,7 +2000,7 @@ TEST(ByteString, FormatInteger) {
   EXPECT_EQ("-2147483648", ByteString::FormatInteger(INT_MIN));
 }
 
-TEST(ByteString, FX_HashCode_Ascii) {
+TEST(ByteString, FXHashCodeAscii) {
   EXPECT_EQ(0u, FX_HashCode_GetA(""));
   EXPECT_EQ(65u, FX_HashCode_GetA("A"));
   EXPECT_EQ(97u, FX_HashCode_GetLoweredA("A"));
@@ -2009,7 +2009,7 @@ TEST(ByteString, FX_HashCode_Ascii) {
   EXPECT_EQ(31u * 97u + 255u, FX_HashCode_GetLoweredA("A\xff"));
 }
 
-TEST(ByteString, FX_HashCode_Wide) {
+TEST(ByteString, FXHashCodeWide) {
   EXPECT_EQ(0u, FX_HashCode_GetAsIfW(""));
   EXPECT_EQ(65u, FX_HashCode_GetAsIfW("A"));
   EXPECT_EQ(97u, FX_HashCode_GetLoweredAsIfW("A"));

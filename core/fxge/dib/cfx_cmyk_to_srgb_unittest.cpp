@@ -13,7 +13,7 @@ union Float_t {
   float f;
 };
 
-TEST(fxge, CMYK_Rounding) {
+TEST(fxge, CMYKRounding) {
   // Testing all floats from 0.0 to 1.0 takes about 35 seconds in release
   // builds and much longer in debug builds, so just test the known-dangerous
   // range.

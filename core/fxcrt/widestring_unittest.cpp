@@ -1892,7 +1892,7 @@ TEST(WideString, Empty) {
   EXPECT_FALSE(cspan.data());
 }
 
-TEST(CFX_WidString, InitializerList) {
+TEST(WideString, InitializerList) {
   WideString many_str({L"clams", L" and ", L"oysters"});
   EXPECT_EQ(L"clams and oysters", many_str);
   many_str = {L"fish", L" and ", L"chips", L" and ", L"soda"};
@@ -2254,7 +2254,7 @@ TEST(WideString, FormatInteger) {
   EXPECT_EQ(L"-2147483648", WideString::FormatInteger(INT_MIN));
 }
 
-TEST(WideString, FX_HashCode_Wide) {
+TEST(WideString, FXHashCodeWide) {
   EXPECT_EQ(0u, FX_HashCode_GetW(L""));
   EXPECT_EQ(65u, FX_HashCode_GetW(L"A"));
   EXPECT_EQ(97u, FX_HashCode_GetLoweredW(L"A"));
