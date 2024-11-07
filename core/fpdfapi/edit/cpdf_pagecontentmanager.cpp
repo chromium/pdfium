@@ -176,6 +176,9 @@ void CPDF_PageContentManager::ExecuteScheduledRemovals() {
   // Since CPDF_PageContentManager is only instantiated in
   // CPDF_PageContentGenerator::GenerateContent(), which cleans up the dirty
   // streams first, this should always be true.
+  // This method does not bother to inspect IsActive() for page objects; it will
+  // remove any object that has been scheduled for removal, regardless of active
+  // status.
   DCHECK(!page_obj_holder_->HasDirtyStreams());
 
   if (streams_to_remove_.empty()) {

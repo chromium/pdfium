@@ -495,3 +495,72 @@ TEST_F(FPDFEditPageEmbedderTest, VerifyDashArraySaved) {
   CloseSavedPage(page);
   CloseSavedDocument();
 }
+
+TEST_F(FPDFEditPageEmbedderTest, PageObjectIsActive) {
+  const char* one_rectangle_inactive_checksum = []() {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+      return "cf5bb4e61609162c03f4c8a6d9791230";
+    }
+    return "0481e8936b35ac9484b51a0966ab4ab6";
+  }();
+
+  ASSERT_TRUE(OpenDocument("rectangles.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  const int page_width = static_cast<int>(FPDF_GetPageWidth(page.get()));
+  const int page_height = static_cast<int>(FPDF_GetPageHeight(page.get()));
+
+  // Note the original count of page objects for the rectangles.
+  EXPECT_EQ(8, FPDFPage_CountObjects(page.get()));
+
+  {
+    // Render the page as is.
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
+    CompareBitmap(bitmap.get(), page_width, page_height,
+                  pdfium::RectanglesChecksum());
+  }
+
+  {
+    // Save a copy, open the copy, and render it.
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    ASSERT_TRUE(OpenSavedDocument());
+    FPDF_PAGE saved_page = LoadSavedPage(0);
+    ASSERT_TRUE(saved_page);
+
+    // Note that all page objects for the rectangles are present in the copy.
+    EXPECT_EQ(8, FPDFPage_CountObjects(saved_page));
+
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
+    CompareBitmap(bitmap.get(), page_width, page_height,
+                  pdfium::RectanglesChecksum());
+
+    CloseSavedPage(saved_page);
+    CloseSavedDocument();
+  }
+
+  // Mark one of the page objects as inactive.  It is still present in the page.
+  FPDF_PAGEOBJECT page_obj = FPDFPage_GetObject(page.get(), 4);
+  ASSERT_TRUE(page_obj);
+  ASSERT_TRUE(FPDFPageObj_SetIsActive(page_obj, /*active=*/false));
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+  EXPECT_EQ(8, FPDFPage_CountObjects(page.get()));
+
+  {
+    // Save a copy, open the copy, and render it.
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    ASSERT_TRUE(OpenSavedDocument());
+    FPDF_PAGE saved_page = LoadSavedPage(0);
+    ASSERT_TRUE(saved_page);
+
+    // Note that a rectangle is absent from the copy.
+    EXPECT_EQ(7, FPDFPage_CountObjects(saved_page));
+
+    // The absence of the inactive page object affects the rendered result.
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
+    CompareBitmap(bitmap.get(), page_width, page_height,
+                  one_rectangle_inactive_checksum);
+
+    CloseSavedPage(saved_page);
+    CloseSavedDocument();
+  }
+}

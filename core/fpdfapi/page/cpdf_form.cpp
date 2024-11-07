@@ -90,18 +90,22 @@ void CPDF_Form::ParseContentInternal(const CPDF_AllStates* pGraphicStates,
 }
 
 bool CPDF_Form::HasPageObjects() const {
-  return GetPageObjectCount() != 0;
+  return GetActivePageObjectCount() != 0;
 }
 
 CFX_FloatRect CPDF_Form::CalcBoundingBox() const {
-  if (GetPageObjectCount() == 0)
+  if (GetActivePageObjectCount() == 0) {
     return CFX_FloatRect();
+  }
 
   float left = 1000000.0f;
   float right = -1000000.0f;
   float bottom = 1000000.0f;
   float top = -1000000.0f;
   for (const auto& pObj : *this) {
+    if (!pObj->IsActive()) {
+      continue;
+    }
     const auto& rect = pObj->GetRect();
     left = std::min(left, rect.left);
     right = std::max(right, rect.right);
@@ -117,12 +121,16 @@ RetainPtr<const CPDF_Stream> CPDF_Form::GetStream() const {
 
 std::optional<std::pair<RetainPtr<CFX_DIBitmap>, CFX_Matrix>>
 CPDF_Form::GetBitmapAndMatrixFromSoleImageOfForm() const {
-  if (GetPageObjectCount() != 1)
+  // TODO(crbug.com/377660088): Determine if there is a case where only a single
+  // active object but other inactive objects is problematic for this method.
+  if (GetActivePageObjectCount() != 1) {
     return std::nullopt;
+  }
 
   CPDF_ImageObject* pImageObject = (*begin())->AsImage();
-  if (!pImageObject)
+  if (!pImageObject) {
     return std::nullopt;
+  }
 
   return {{pImageObject->GetIndependentBitmap(), pImageObject->matrix()}};
 }

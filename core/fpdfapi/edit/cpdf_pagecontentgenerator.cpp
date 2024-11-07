@@ -136,6 +136,7 @@ void RemoveUnusedResources(RetainPtr<CPDF_Dictionary> resources_dict,
 CPDF_PageContentGenerator::CPDF_PageContentGenerator(
     CPDF_PageObjectHolder* pObjHolder)
     : m_pObjHolder(pObjHolder), m_pDocument(pObjHolder->GetDocument()) {
+  // Copy all page objects, even if they are inactive.
   for (const auto& pObj : *pObjHolder) {
     m_pageObjects.emplace_back(pObj.get());
   }
@@ -161,6 +162,9 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
   // Figure out which streams are dirty.
   std::set<int32_t> all_dirty_streams;
   for (auto& pPageObj : m_pageObjects) {
+    // Must include dirty page objects even if they are marked as inactive.
+    // Otherwise an inactive object will not be detected that its stream needs
+    // to be removed as part of regeneration.
     if (pPageObj->IsDirty())
       all_dirty_streams.insert(pPageObj->GetContentStream());
   }
@@ -195,6 +199,10 @@ CPDF_PageContentGenerator::GenerateModifiedStreams() {
 
   // Process the page objects, write into each dirty stream.
   for (auto& pPageObj : m_pageObjects) {
+    if (!pPageObj->IsActive()) {
+      continue;
+    }
+
     int stream_index = pPageObj->GetContentStream();
     auto it = streams.find(stream_index);
     if (it == streams.end())
@@ -301,6 +309,9 @@ void CPDF_PageContentGenerator::UpdateResourcesDict() {
 
   ResourcesMap seen_resources;
   for (auto& page_object : m_pageObjects) {
+    if (!page_object->IsActive()) {
+      continue;
+    }
     RecordPageObjectResourceUsage(page_object, seen_resources);
   }
   if (!m_DefaultGraphicsName.IsEmpty()) {
@@ -344,8 +355,10 @@ bool CPDF_PageContentGenerator::ProcessPageObjects(fxcrt::ostringstream* buf) {
   const CPDF_ContentMarks* content_marks = empty_content_marks.get();
 
   for (auto& pPageObj : m_pageObjects) {
-    if (m_pObjHolder->IsPage() && !pPageObj->IsDirty())
+    if (m_pObjHolder->IsPage() &&
+        (!pPageObj->IsDirty() || !pPageObj->IsActive())) {
       continue;
+    }
 
     bDirty = true;
     content_marks = ProcessContentMarks(buf, pPageObj, content_marks);
@@ -358,8 +371,13 @@ bool CPDF_PageContentGenerator::ProcessPageObjects(fxcrt::ostringstream* buf) {
 void CPDF_PageContentGenerator::UpdateStreamlessPageObjects(
     int new_content_stream_index) {
   for (auto& pPageObj : m_pageObjects) {
-    if (pPageObj->GetContentStream() == CPDF_PageObject::kNoContentStream)
+    if (!pPageObj->IsActive()) {
+      continue;
+    }
+
+    if (pPageObj->GetContentStream() == CPDF_PageObject::kNoContentStream) {
       pPageObj->SetContentStream(new_content_stream_index);
+    }
   }
 }
 

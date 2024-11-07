@@ -229,6 +229,9 @@ CPDF_ContentParser::Stage CPDF_ContentParser::CheckClip() {
   }
 
   for (auto& pObj : *m_pPageObjectHolder) {
+    if (!pObj->IsActive()) {
+      continue;
+    }
     CPDF_ClipPath& clip_path = pObj->mutable_clip_path();
     if (!clip_path.HasRef()) {
       continue;

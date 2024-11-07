@@ -10,6 +10,7 @@
 #include "core/fxcrt/check.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/dib/fx_dib.h"
+#include "public/cpp/fpdf_scopers.h"
 #include "public/fpdf_progressive.h"
 #include "testing/embedder_test.h"
 #include "testing/embedder_test_constants.h"
@@ -377,6 +378,51 @@ TEST_F(FPDFProgressiveRenderEmbedderTest,
   VerifyRenderingWithColorScheme(/*page_num=*/0, FPDF_CONVERT_FILL_TO_STROKE,
                                  &color_scheme, kBlack, 200, 300,
                                  rectangles_checksum);
+}
+
+TEST_F(FPDFProgressiveRenderEmbedderTest, RenderPathObjectUsability) {
+  // Test rendering of paths with one of the page objects active vs. inactive.
+  const char* all_rectangles_used_checksum = []() {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+      return "b4e411a6b5ffa59a50efede2efece597";
+    }
+    return "0a90de37f52127619c3dfb642b5fa2fe";
+  }();
+  const char* one_rectangle_inactive_checksum = []() {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+      return "cf5bb4e61609162c03f4c8a6d9791230";
+    }
+    return "0481e8936b35ac9484b51a0966ab4ab6";
+  }();
+
+  ASSERT_TRUE(OpenDocument("rectangles.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  // Check rendering result before modifications.
+  {
+    ScopedFPDFBitmap bitmap = RenderPage(page.get());
+    CompareBitmap(bitmap.get(), 200, 300, all_rectangles_used_checksum);
+  }
+
+  ASSERT_EQ(FPDFPage_CountObjects(page.get()), 8);
+  FPDF_PAGEOBJECT page_obj = FPDFPage_GetObject(page.get(), 4);
+  ASSERT_TRUE(page_obj);
+
+  // Check rendering result after a page object is made inactive.
+  // Contents do not need to be regenerated to observe an effect.
+  ASSERT_TRUE(FPDFPageObj_SetIsActive(page_obj, /*active=*/false));
+  {
+    ScopedFPDFBitmap bitmap = RenderPage(page.get());
+    CompareBitmap(bitmap.get(), 200, 300, one_rectangle_inactive_checksum);
+  }
+
+  // Check rendering result after the same page object is active again.
+  ASSERT_TRUE(FPDFPageObj_SetIsActive(page_obj, /*active=*/true));
+  {
+    ScopedFPDFBitmap bitmap = RenderPage(page.get());
+    CompareBitmap(bitmap.get(), 200, 300, all_rectangles_used_checksum);
+  }
 }
 
 TEST_F(FPDFProgressiveRenderEmbedderTest, RenderHighlightWithColorScheme) {

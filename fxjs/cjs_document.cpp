@@ -1235,7 +1235,7 @@ CJS_Result CJS_Document::getPageNthWord(
   int nWords = 0;
   WideString swRet;
   for (auto& pPageObj : *page) {
-    if (pPageObj->IsText()) {
+    if (pPageObj->IsActive() && pPageObj->IsText()) {
       CPDF_TextObject* pTextObj = pPageObj->AsText();
       int nObjWords = pTextObj->CountWords();
       if (nWords + nObjWords >= nWordNo) {
@@ -1290,8 +1290,9 @@ CJS_Result CJS_Document::getPageNumWords(
 
   int nWords = 0;
   for (auto& pPageObj : *page) {
-    if (pPageObj->IsText())
+    if (pPageObj->IsActive() && pPageObj->IsText()) {
       nWords += pPageObj->AsText()->CountWords();
+    }
   }
   return CJS_Result::Success(pRuntime->NewNumber(nWords));
 }

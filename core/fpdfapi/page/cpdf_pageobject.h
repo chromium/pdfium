@@ -62,6 +62,8 @@ class CPDF_PageObject {
 
   void SetDirty(bool value) { m_bDirty = value; }
   bool IsDirty() const { return m_bDirty; }
+  void SetIsActive(bool value);
+  bool IsActive() const { return m_bIsActive; }
   void TransformClipPath(const CFX_Matrix& matrix);
 
   void SetOriginalRect(const CFX_FloatRect& rect) { m_OriginalRect = rect; }
@@ -141,7 +143,12 @@ class CPDF_PageObject {
   CFX_FloatRect m_Rect;
   CFX_FloatRect m_OriginalRect;
   CPDF_ContentMarks m_ContentMarks;
+  // Modifying `m_bIsActive` automatically set `m_bDirty` to be true, but
+  // otherwise `m_bDirty` and `m_bIsActive` are independent.  A
+  // `CPDF_PageObject` can remain dirty until page object processing completes
+  // and marks it no longer dirty.
   bool m_bDirty = false;
+  bool m_bIsActive = true;
   int32_t m_ContentStream;
   // The resource name for this object.
   ByteString m_ResourceName;

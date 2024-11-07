@@ -87,6 +87,7 @@ class CPDF_PageObjectHolder {
     return m_pPageResources;
   }
   size_t GetPageObjectCount() const { return m_PageObjectList.size(); }
+  size_t GetActivePageObjectCount() const;
   CPDF_PageObject* GetPageObjectByIndex(size_t index) const;
   void AppendPageObject(std::unique_ptr<CPDF_PageObject> pPageObj);
 

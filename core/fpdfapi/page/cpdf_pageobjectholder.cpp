@@ -156,6 +156,16 @@ void CPDF_PageObjectHolder::LoadTransparencyInfo() {
     m_Transparency.SetIsolated();
 }
 
+size_t CPDF_PageObjectHolder::GetActivePageObjectCount() const {
+  size_t count = 0;
+  for (const auto& page_object : m_PageObjectList) {
+    if (page_object->IsActive()) {
+      ++count;
+    }
+  }
+  return count;
+}
+
 CPDF_PageObject* CPDF_PageObjectHolder::GetPageObjectByIndex(
     size_t index) const {
   return fxcrt::IndexInBounds(m_PageObjectList, index)

@@ -215,8 +215,9 @@ void CPDF_RenderStatus::RenderObjectList(
       m_bStopped = true;
       return;
     }
-    if (!pCurObj)
+    if (!pCurObj || !pCurObj->IsActive()) {
       continue;
+    }
 
     if (pCurObj->GetRect().left > clip_rect.right ||
         pCurObj->GetRect().right < clip_rect.left ||

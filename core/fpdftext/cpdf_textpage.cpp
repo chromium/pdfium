@@ -605,8 +605,6 @@ bool CPDF_TextPage::GetRect(int rectIndex, CFX_FloatRect* pRect) const {
 
 CPDF_TextPage::TextOrientation CPDF_TextPage::FindTextlineFlowOrientation()
     const {
-  DCHECK_NE(m_pPage->GetPageObjectCount(), 0u);
-
   const int32_t nPageWidth = static_cast<int32_t>(m_pPage->GetPageWidth());
   const int32_t nPageHeight = static_cast<int32_t>(m_pPage->GetPageHeight());
   if (nPageWidth <= 0 || nPageHeight <= 0)
@@ -620,8 +618,9 @@ CPDF_TextPage::TextOrientation CPDF_TextPage::FindTextlineFlowOrientation()
   int32_t nStartV = nPageHeight;
   int32_t nEndV = 0;
   for (const auto& pPageObj : *m_pPage) {
-    if (!pPageObj->IsText())
+    if (!pPageObj->IsActive() || !pPageObj->IsText()) {
       continue;
+    }
 
     int32_t minH = static_cast<int32_t>(
         std::clamp<float>(pPageObj->GetRect().left, 0.0f, nPageWidth));
@@ -683,12 +682,17 @@ void CPDF_TextPage::AppendGeneratedCharacter(wchar_t unicode,
 }
 
 void CPDF_TextPage::ProcessObject() {
-  if (m_pPage->GetPageObjectCount() == 0)
+  if (m_pPage->GetActivePageObjectCount() == 0) {
     return;
+  }
 
   m_TextlineDir = FindTextlineFlowOrientation();
   for (auto it = m_pPage->begin(); it != m_pPage->end(); ++it) {
     CPDF_PageObject* pObj = it->get();
+    if (!pObj->IsActive()) {
+      continue;
+    }
+
     if (pObj->IsText()) {
       ProcessTextObject(pObj->AsText(), CFX_Matrix(), m_pPage, it);
     } else if (pObj->IsForm()) {
@@ -708,6 +712,10 @@ void CPDF_TextPage::ProcessFormObject(CPDF_FormObject* pFormObj,
   const CPDF_PageObjectHolder* pHolder = pFormObj->form();
   for (auto it = pHolder->begin(); it != pHolder->end(); ++it) {
     CPDF_PageObject* pPageObj = it->get();
+    if (!pPageObj->IsActive()) {
+      continue;
+    }
+
     if (pPageObj->IsText()) {
       ProcessTextObject(pPageObj->AsText(), curFormMatrix, pHolder, it);
     } else if (pPageObj->IsForm()) {
