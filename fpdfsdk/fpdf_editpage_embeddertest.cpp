@@ -496,7 +496,7 @@ TEST_F(FPDFEditPageEmbedderTest, VerifyDashArraySaved) {
   CloseSavedDocument();
 }
 
-TEST_F(FPDFEditPageEmbedderTest, PageObjectIsActive) {
+TEST_F(FPDFEditPageEmbedderTest, PageObjectSetIsActive) {
   const char* one_rectangle_inactive_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "cf5bb4e61609162c03f4c8a6d9791230";
@@ -563,4 +563,55 @@ TEST_F(FPDFEditPageEmbedderTest, PageObjectIsActive) {
     CloseSavedPage(saved_page);
     CloseSavedDocument();
   }
+}
+
+TEST_F(FPDFEditPageEmbedderTest, Bug378120423) {
+  const char kChecksum[] = "b53fb03e2bc41ef18d4ba61f0f681365";
+  const char kBlankChecksum[] = "eee4600ac08b458ac7ac2320e225674c";
+
+  ASSERT_TRUE(OpenDocument("bug_378120423.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  const int page_width = static_cast<int>(FPDF_GetPageWidth(page.get()));
+  const int page_height = static_cast<int>(FPDF_GetPageHeight(page.get()));
+
+  {
+    // Render the page as is.
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
+    CompareBitmap(bitmap.get(), page_width, page_height, kChecksum);
+    EXPECT_EQ(1, FPDFPage_CountObjects(page.get()));
+  }
+
+  // Deactivate `page_obj` and render.
+  FPDF_PAGEOBJECT page_obj = FPDFPage_GetObject(page.get(), 0);
+  ASSERT_TRUE(FPDFPageObj_SetIsActive(page_obj, false));
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
+    CompareBitmap(bitmap.get(), page_width, page_height, kBlankChecksum);
+    // `page_obj` can still be found. It is just deactivated.
+    EXPECT_EQ(1, FPDFPage_CountObjects(page.get()));
+  }
+
+  {
+    // Save a copy, open the copy, and render it.
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    ASSERT_TRUE(OpenSavedDocument());
+    FPDF_PAGE saved_page = LoadSavedPage(0);
+    ASSERT_TRUE(saved_page);
+
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
+    CompareBitmap(bitmap.get(), page_width, page_height, kBlankChecksum);
+    // `page_obj` did not get written out to the saved PDF.
+    EXPECT_EQ(0, FPDFPage_CountObjects(saved_page));
+
+    CloseSavedPage(saved_page);
+    CloseSavedDocument();
+  }
+
+  // Reactivate `page_obj` and render.
+  ASSERT_TRUE(FPDFPageObj_SetIsActive(page_obj, true));
+  // TODO(crbug.com/378120423): The test should be able to call
+  // FPDFPage_GenerateContent() without crashing. Then check the in-memory
+  // representation and the saved outputs.
 }
