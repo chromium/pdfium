@@ -33,6 +33,8 @@ class CPDF_PageContentManager {
   // is empty, then schedule the removal of the stream instead.
   void UpdateStream(size_t stream_index, fxcrt::ostringstream* buf);
 
+  bool HasStreamAtIndex(size_t stream_index);
+
  private:
   // Gets the Content stream at a given index. If Contents is a single stream
   // rather than an array, it is retrievable at index 0.

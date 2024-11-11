@@ -70,6 +70,10 @@ CPDF_PageContentManager::~CPDF_PageContentManager() {
   ExecuteScheduledRemovals();
 }
 
+bool CPDF_PageContentManager::HasStreamAtIndex(size_t stream_index) {
+  return !!GetStreamByIndex(stream_index);
+}
+
 RetainPtr<CPDF_Stream> CPDF_PageContentManager::GetStreamByIndex(
     size_t stream_index) {
   RetainPtr<CPDF_Stream> contents_stream = GetContentsStream();

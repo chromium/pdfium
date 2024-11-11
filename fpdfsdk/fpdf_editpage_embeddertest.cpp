@@ -611,7 +611,25 @@ TEST_F(FPDFEditPageEmbedderTest, Bug378120423) {
 
   // Reactivate `page_obj` and render.
   ASSERT_TRUE(FPDFPageObj_SetIsActive(page_obj, true));
-  // TODO(crbug.com/378120423): The test should be able to call
-  // FPDFPage_GenerateContent() without crashing. Then check the in-memory
-  // representation and the saved outputs.
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
+    CompareBitmap(bitmap.get(), page_width, page_height, kChecksum);
+    EXPECT_EQ(1, FPDFPage_CountObjects(page.get()));
+  }
+
+  {
+    // Save a copy, open the copy, and render it.
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    ASSERT_TRUE(OpenSavedDocument());
+    FPDF_PAGE saved_page = LoadSavedPage(0);
+    ASSERT_TRUE(saved_page);
+
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
+    CompareBitmap(bitmap.get(), page_width, page_height, kChecksum);
+    EXPECT_EQ(1, FPDFPage_CountObjects(saved_page));
+
+    CloseSavedPage(saved_page);
+    CloseSavedDocument();
+  }
 }

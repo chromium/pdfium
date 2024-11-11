@@ -282,7 +282,11 @@ void CPDF_PageContentGenerator::UpdateContentStreams(
       continue;
     }
 
-    page_content_manager.UpdateStream(stream_index, buf);
+    if (page_content_manager.HasStreamAtIndex(stream_index)) {
+      page_content_manager.UpdateStream(stream_index, buf);
+    } else {
+      page_content_manager.AddStream(buf);
+    }
   }
 }
 
