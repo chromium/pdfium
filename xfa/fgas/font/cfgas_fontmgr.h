@@ -62,6 +62,7 @@ class CFGAS_FontDescriptor {
   int32_t m_nFaceIndex = 0;
   uint32_t m_dwFontStyles = 0;
   WideString m_wsFaceName;
+  RetainPtr<CFX_Face> m_pFace;
   std::vector<WideString> m_wsFamilyNames;
   std::array<uint32_t, 4> m_dwUsb = {};
   std::array<uint32_t, 2> m_dwCsb = {};

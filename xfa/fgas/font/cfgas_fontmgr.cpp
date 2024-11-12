@@ -546,22 +546,20 @@ RetainPtr<CFX_Face> LoadFace(
 
 bool VerifyUnicodeForFontDescriptor(CFGAS_FontDescriptor* pDesc,
                                     wchar_t wcUnicode) {
-  RetainPtr<IFX_SeekableReadStream> pFileRead =
-      CreateFontStream(pDesc->m_wsFaceName.ToUTF8());
-  if (!pFileRead)
-    return false;
-
-  RetainPtr<CFX_Face> pFace = LoadFace(pFileRead, pDesc->m_nFaceIndex);
-  if (!pFace)
-    return false;
-
-  bool select_charmap_result =
-      pFace->SelectCharMap(fxge::FontEncoding::kUnicode);
-  int ret_index = pFace->GetCharIndex(wcUnicode);
-
-  pFace->ClearExternalStream();
-
-  return select_charmap_result && ret_index;
+  if (!pDesc->m_pFace) {
+    RetainPtr<IFX_SeekableReadStream> pFileRead =
+        CreateFontStream(pDesc->m_wsFaceName.ToUTF8());
+    if (!pFileRead) {
+      return false;
+    }
+    pDesc->m_pFace = LoadFace(pFileRead, pDesc->m_nFaceIndex);
+    if (!pDesc->m_pFace) {
+      return false;
+    }
+    pDesc->m_pFace->ClearExternalStream();
+  }
+  return pDesc->m_pFace->SelectCharMap(fxge::FontEncoding::kUnicode) &&
+         pDesc->m_pFace->GetCharIndex(wcUnicode);
 }
 
 bool IsPartName(const WideString& name1, const WideString& name2) {
