@@ -90,7 +90,7 @@ TEST(CPDFPSProcTest, AddOperator) {
       } else if (word == "invalid") {
         EXPECT_FLOAT_EQ(0.0f, fv);
       } else {
-        NOTREACHED_NORETURN();
+        NOTREACHED();
       }
     }
   }

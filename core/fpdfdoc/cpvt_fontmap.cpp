@@ -77,14 +77,14 @@ ByteString CPVT_FontMap::GetPDFFontAlias(int32_t nFontIndex) {
 int32_t CPVT_FontMap::GetWordFontIndex(uint16_t word,
                                        FX_Charset charset,
                                        int32_t nFontIndex) {
-  NOTREACHED_NORETURN();
+  NOTREACHED();
 }
 
 int32_t CPVT_FontMap::CharCodeFromUnicode(int32_t nFontIndex, uint16_t word) {
-  NOTREACHED_NORETURN();
+  NOTREACHED();
 }
 
 FX_Charset CPVT_FontMap::CharSetFromUnicode(uint16_t word,
                                             FX_Charset nOldCharset) {
-  NOTREACHED_NORETURN();
+  NOTREACHED();
 }

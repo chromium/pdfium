@@ -250,7 +250,7 @@ void CFX_CSSDeclaration::AddProperty(const CFX_CSSData::Property* property,
       ParseValueListProperty(property, value, bImportant);
       return;
     default:
-      NOTREACHED_NORETURN();
+      NOTREACHED();
   }
 }
 

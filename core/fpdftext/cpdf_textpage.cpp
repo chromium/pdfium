@@ -1289,7 +1289,7 @@ bool CPDF_TextPage::ProcessGenerateCharacter(GenerateCharacter type,
       m_TempTextBuf.AppendChar(0xfffe);
       return true;
   }
-  NOTREACHED_NORETURN();
+  NOTREACHED();
 }
 
 void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,

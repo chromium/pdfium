@@ -160,7 +160,7 @@ void CPDF_TransferFuncDIB::TranslateScanline(
     case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/355676038): Consider adding support for
       // `FXDIB_Format::kBgraPremul`
-      NOTREACHED_NORETURN();
+      NOTREACHED();
     }
 #endif
   }

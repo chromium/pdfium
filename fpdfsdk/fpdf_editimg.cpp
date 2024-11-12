@@ -250,13 +250,13 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
       break;
     }
     case FXDIB_Format::kInvalid: {
-      NOTREACHED_NORETURN();
+      NOTREACHED();
     }
 #if defined(PDF_USE_SKIA)
     case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/355676038): Consider adding support for
       // `FXDIB_Format::kBgraPremul`
-      NOTREACHED_NORETURN();
+      NOTREACHED();
     }
 #endif
   }

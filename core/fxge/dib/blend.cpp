@@ -98,7 +98,7 @@ int Blend(BlendMode blend_mode, int back_color, int src_color) {
       return back_color + src_color - 2 * back_color * src_color / 255;
     default:
       // This function does not handle non-separable blend modes.
-      NOTREACHED_NORETURN();
+      NOTREACHED();
   }
 }
 

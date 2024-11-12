@@ -2426,7 +2426,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcBgrx(
     case FXDIB_Format::kInvalid:
     case FXDIB_Format::k1bppRgb:
     case FXDIB_Format::k1bppMask: {
-      NOTREACHED_NORETURN();  // Disallowed by Init().
+      NOTREACHED();  // Disallowed by Init().
     }
     case FXDIB_Format::k8bppRgb: {
       CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
@@ -2528,7 +2528,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcBgrx(
     case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/42271020): Consider adding support for
       // `FXDIB_Format::kBgraPremul`
-      NOTREACHED_NORETURN();
+      NOTREACHED();
     }
 #endif
   }
@@ -2549,7 +2549,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcBgra(
     case FXDIB_Format::kInvalid:
     case FXDIB_Format::k1bppRgb:
     case FXDIB_Format::k1bppMask: {
-      NOTREACHED_NORETURN();  // Disallowed by Init().
+      NOTREACHED();  // Disallowed by Init().
     }
     case FXDIB_Format::k8bppRgb: {
       CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
@@ -2603,7 +2603,7 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcBgra(
     case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/42271020): Consider adding support for
       // `FXDIB_Format::kBgraPremul`
-      NOTREACHED_NORETURN();
+      NOTREACHED();
     }
 #endif
   }
@@ -2624,23 +2624,23 @@ void CFX_ScanlineCompositor::CompositeRgbBitmapLineSrcBgraPremul(
     case FXDIB_Format::kInvalid:
     case FXDIB_Format::k1bppRgb:
     case FXDIB_Format::k1bppMask: {
-      NOTREACHED_NORETURN();  // Disallowed by Init().
+      NOTREACHED();  // Disallowed by Init().
     }
     case FXDIB_Format::k8bppRgb: {
       CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
       // TODO(crbug.com/42271020): Consider adding support.
-      NOTREACHED_NORETURN();
+      NOTREACHED();
     }
     case FXDIB_Format::k8bppMask: {
       CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
       // TODO(crbug.com/42271020): Consider adding support.
-      NOTREACHED_NORETURN();
+      NOTREACHED();
     }
     case FXDIB_Format::kBgr:
     case FXDIB_Format::kBgrx:
     case FXDIB_Format::kBgra: {
       // TODO(crbug.com/42271020): Consider adding support.
-      NOTREACHED_NORETURN();
+      NOTREACHED();
     }
     case FXDIB_Format::kBgraPremul: {
       if (m_bRgbByteOrder) {
@@ -2685,7 +2685,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp1(
     case FXDIB_Format::kInvalid:
     case FXDIB_Format::k1bppRgb:
     case FXDIB_Format::k1bppMask: {
-      NOTREACHED_NORETURN();  // Disallowed by Init().
+      NOTREACHED();  // Disallowed by Init().
     }
     case FXDIB_Format::k8bppRgb: {
       CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
@@ -2728,7 +2728,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp1(
     case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/42271020): Consider adding support for
       // `FXDIB_Format::kBgraPremul`
-      NOTREACHED_NORETURN();
+      NOTREACHED();
     }
 #endif
   }
@@ -2746,7 +2746,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp8(
     case FXDIB_Format::kInvalid:
     case FXDIB_Format::k1bppRgb:
     case FXDIB_Format::k1bppMask: {
-      NOTREACHED_NORETURN();  // Disallowed by Init().
+      NOTREACHED();  // Disallowed by Init().
     }
     case FXDIB_Format::k8bppRgb: {
       CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
@@ -2789,7 +2789,7 @@ void CFX_ScanlineCompositor::CompositePalBitmapLineSrcBpp8(
     case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/42271020): Consider adding support for
       // `FXDIB_Format::kBgraPremul`
-      NOTREACHED_NORETURN();
+      NOTREACHED();
     }
 #endif
   }
@@ -2806,7 +2806,7 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(
     case FXDIB_Format::kInvalid:
     case FXDIB_Format::k1bppRgb:
     case FXDIB_Format::k1bppMask: {
-      NOTREACHED_NORETURN();  // Disallowed by Init().
+      NOTREACHED();  // Disallowed by Init().
     }
     case FXDIB_Format::k8bppRgb: {
       CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
@@ -2850,7 +2850,7 @@ void CFX_ScanlineCompositor::CompositeByteMaskLine(
     case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/42271020): Consider adding support for
       // `FXDIB_Format::kBgraPremul`
-      NOTREACHED_NORETURN();
+      NOTREACHED();
     }
 #endif
   }
@@ -2868,7 +2868,7 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(
     case FXDIB_Format::kInvalid:
     case FXDIB_Format::k1bppRgb:
     case FXDIB_Format::k1bppMask: {
-      NOTREACHED_NORETURN();  // Disallowed by Init().
+      NOTREACHED();  // Disallowed by Init().
     }
     case FXDIB_Format::k8bppRgb: {
       CHECK(!m_bRgbByteOrder);  // Disallowed by Init();
@@ -2913,7 +2913,7 @@ void CFX_ScanlineCompositor::CompositeBitMaskLine(
     case FXDIB_Format::kBgraPremul: {
       // TODO(crbug.com/42271020): Consider adding support for
       // `FXDIB_Format::kBgraPremul`
-      NOTREACHED_NORETURN();
+      NOTREACHED();
     }
 #endif
   }

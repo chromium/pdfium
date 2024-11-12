@@ -579,7 +579,7 @@ bool CFX_PSRenderer::DrawDIBits(RetainPtr<const CFX_DIBBase> bitmap,
       case FXDIB_Format::kBgraPremul:
 #endif
         // Should have returned early due to IsAlphaFormat() check above.
-        NOTREACHED_NORETURN();
+        NOTREACHED();
     }
     if (!bitmap) {
       WriteString("\nQ\n");

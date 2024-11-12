@@ -282,7 +282,7 @@ fxge::FontEncoding ToFontEncoding(uint32_t ft_encoding) {
     case FT_ENCODING_WANSUNG:
       return fxge::FontEncoding::kWansung;
   }
-  NOTREACHED_NORETURN();
+  NOTREACHED();
 }
 
 }  // namespace

@@ -491,7 +491,7 @@ RetainPtr<CPDF_Object> CPDF_StreamContentParser::GetObject(uint32_t index) {
   if (param.m_Type == ContentParam::Type::kObject)
     return param.m_pObject;
 
-  NOTREACHED_NORETURN();
+  NOTREACHED();
 }
 
 ByteString CPDF_StreamContentParser::GetString(uint32_t index) const {

@@ -255,7 +255,7 @@ void DecodeInfoCallback(png_struct* png_ptr, png_info* info_ptr) {
         state->output_channels = 1;
         break;
       default:
-        NOTREACHED_NORETURN();
+        NOTREACHED();
     }
   } else if (channels == 4) {
     switch (state->output_format) {
@@ -272,10 +272,10 @@ void DecodeInfoCallback(png_struct* png_ptr, png_info* info_ptr) {
         state->output_channels = 4;
         break;
       default:
-        NOTREACHED_NORETURN();
+        NOTREACHED();
     }
   } else {
-    NOTREACHED_NORETURN();
+    NOTREACHED();
   }
 
   state->output->resize(state->width * state->output_channels * state->height);

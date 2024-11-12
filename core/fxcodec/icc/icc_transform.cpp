@@ -100,7 +100,7 @@ std::unique_ptr<IccTransform> IccTransform::CreateTransformSRGB(
     case cmsSigGrayData:
     case cmsSigCmykData:
       // Check3Components() already filtered these types.
-      NOTREACHED_NORETURN();
+      NOTREACHED();
     default:
       break;
   }

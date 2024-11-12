@@ -702,7 +702,7 @@ void FlatePredictorScanlineDecoder::GetNextLineWithPredictedPitch() {
       break;
     }
     case PredictorType::kNone: {
-      NOTREACHED_NORETURN();
+      NOTREACHED();
     }
   }
 }
@@ -741,7 +741,7 @@ void FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
       break;
     }
     case PredictorType::kNone: {
-      NOTREACHED_NORETURN();
+      NOTREACHED();
     }
   }
 }

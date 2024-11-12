@@ -98,7 +98,7 @@ void CPDF_DeviceBuffer::OutputToDevice() {
                              m_Rect.Height());
     return;
 #else
-    NOTREACHED_NORETURN();
+    NOTREACHED();
 #endif
   }
 
@@ -114,6 +114,6 @@ void CPDF_DeviceBuffer::OutputToDevice() {
   m_pDevice->StretchDIBits(std::move(buffer), m_Rect.left, m_Rect.top,
                            m_Rect.Width(), m_Rect.Height());
 #else
-  NOTREACHED_NORETURN();
+  NOTREACHED();
 #endif
 }

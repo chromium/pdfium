@@ -48,7 +48,7 @@ void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
       case XFA_AttributeValue::Even:
         break;
       default:
-        NOTREACHED_NORETURN();
+        NOTREACHED();
     }
   } else if (rect.width < 1.0f) {
     switch (iHand) {
@@ -61,7 +61,7 @@ void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
       case XFA_AttributeValue::Even:
         break;
       default:
-        NOTREACHED_NORETURN();
+        NOTREACHED();
     }
   } else {
     switch (iHand) {
@@ -74,7 +74,7 @@ void CXFA_FFLine::GetRectFromHand(CFX_RectF& rect,
       case XFA_AttributeValue::Even:
         break;
       default:
-        NOTREACHED_NORETURN();
+        NOTREACHED();
     }
   }
 }

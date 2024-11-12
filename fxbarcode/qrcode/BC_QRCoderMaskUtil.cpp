@@ -196,7 +196,7 @@ bool CBC_QRCoderMaskUtil::GetDataMaskBit(int32_t maskPattern,
       intermediate = (((temp % 3) + ((y + x) & 0x1)) & 0x1);
       break;
     default:
-      NOTREACHED_NORETURN();
+      NOTREACHED();
   }
   return intermediate == 0;
 }

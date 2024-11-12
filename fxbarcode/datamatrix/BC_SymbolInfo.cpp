@@ -100,7 +100,7 @@ int32_t CBC_SymbolInfo::GetHorizontalDataRegions() const {
     case 36:
       return 6;
     default:
-      NOTREACHED_NORETURN();
+      NOTREACHED();
   }
 }
 
@@ -117,7 +117,7 @@ int32_t CBC_SymbolInfo::GetVerticalDataRegions() const {
     case 36:
       return 6;
     default:
-      NOTREACHED_NORETURN();
+      NOTREACHED();
   }
 }
 

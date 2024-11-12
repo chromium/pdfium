@@ -14,7 +14,7 @@ CPDF_StringArchiveStream::CPDF_StringArchiveStream(fxcrt::ostringstream* stream)
 CPDF_StringArchiveStream::~CPDF_StringArchiveStream() = default;
 
 FX_FILESIZE CPDF_StringArchiveStream::CurrentOffset() const {
-  NOTREACHED_NORETURN();
+  NOTREACHED();
 }
 
 bool CPDF_StringArchiveStream::WriteBlock(pdfium::span<const uint8_t> buffer) {

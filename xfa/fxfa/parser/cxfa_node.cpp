@@ -2918,7 +2918,7 @@ CXFA_Node::CreateChildUIAndValueNodesIfNeeded() {
       widget_type = XFA_FFWidgetType::kTextEdit;
     }
   } else {
-    NOTREACHED_NORETURN();
+    NOTREACHED();
   }
 
   if (!pUIChild) {
@@ -2933,7 +2933,7 @@ CXFA_Node::CreateChildUIAndValueNodesIfNeeded() {
 }
 
 XFA_FFWidgetType CXFA_Node::GetDefaultFFWidgetType() const {
-  NOTREACHED_NORETURN();
+  NOTREACHED();
 }
 
 CXFA_Node* CXFA_Node::CreateUINodeIfNeeded(CXFA_Ui* ui, XFA_Element type) {
@@ -2978,7 +2978,7 @@ CXFA_Node* CXFA_Node::GetUIChildNode() {
   } else if (type == XFA_Element::ExclGroup) {
     ff_widget_type_ = XFA_FFWidgetType::kExclGroup;
   } else {
-    NOTREACHED_NORETURN();
+    NOTREACHED();
   }
   return ui_ ? ui_->GetFirstChild() : nullptr;
 }
@@ -3706,7 +3706,7 @@ std::optional<float> CXFA_Node::FindSplitPos(CXFA_FFDocView* pDocView,
           fStartOffset += (fHeight - fTextHeight + fSpaceAbove);
           break;
         default:
-          NOTREACHED_NORETURN();
+          NOTREACHED();
       }
     }
     if (fStartOffset < 0.1f)
@@ -5090,7 +5090,7 @@ void CXFA_Node::SetToXML(const WideString& value) {
       ToXMLText(GetXMLMappingNode())->SetText(value);
       break;
     default:
-      NOTREACHED_NORETURN();
+      NOTREACHED();
   }
 }
 

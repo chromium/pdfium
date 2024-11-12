@@ -50,7 +50,7 @@ std::unique_ptr<CBC_CodeBase> CreateBarCodeEngineObject(BC_TYPE type) {
     case BC_TYPE::kUnknown:
       return nullptr;
   }
-  NOTREACHED_NORETURN();
+  NOTREACHED();
 }
 
 }  // namespace

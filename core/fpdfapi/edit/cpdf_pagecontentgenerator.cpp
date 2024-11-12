@@ -425,7 +425,7 @@ const CPDF_ContentMarks* CPDF_PageContentGenerator::ProcessContentMarks(
         break;
       }
       case CPDF_ContentMarkItem::kNone:
-        NOTREACHED_NORETURN();
+        NOTREACHED();
     }
 
     // Write BDC (begin dictionary content) operator.
@@ -643,7 +643,7 @@ void CPDF_PageContentGenerator::ProcessGraphics(fxcrt::ostringstream* buf,
           *buf << " W* ";
           break;
         case CFX_FillRenderOptions::FillType::kNoFill:
-          NOTREACHED_NORETURN();
+          NOTREACHED();
       }
 
       // Use a no-op path-painting operator to terminate the path without

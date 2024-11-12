@@ -358,7 +358,7 @@ uint32_t CPDF_CMap::GetNextChar(ByteStringView pString, size_t* pOffset) const {
       }
     }
   }
-  NOTREACHED_NORETURN();
+  NOTREACHED();
 }
 
 int CPDF_CMap::GetCharSize(uint32_t charcode) const {
@@ -380,7 +380,7 @@ int CPDF_CMap::GetCharSize(uint32_t charcode) const {
         return 3;
       return 4;
   }
-  NOTREACHED_NORETURN();
+  NOTREACHED();
 }
 
 size_t CPDF_CMap::CountChar(ByteStringView pString) const {
@@ -408,7 +408,7 @@ size_t CPDF_CMap::CountChar(ByteStringView pString) const {
       return count;
     }
   }
-  NOTREACHED_NORETURN();
+  NOTREACHED();
 }
 
 void CPDF_CMap::AppendChar(ByteString* str, uint32_t charcode) const {
@@ -456,7 +456,7 @@ void CPDF_CMap::AppendChar(ByteString* str, uint32_t charcode) const {
       *str += static_cast<char>(charcode);
       return;
   }
-  NOTREACHED_NORETURN();
+  NOTREACHED();
 }
 
 void CPDF_CMap::SetAdditionalMappings(std::vector<CIDRange> mappings) {

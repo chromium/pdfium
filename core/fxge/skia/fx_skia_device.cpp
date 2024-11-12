@@ -1015,7 +1015,7 @@ int CFX_SkiaDeviceDriver::GetDeviceCaps(int caps_id) const {
              FXRC_BLEND_MODE | FXRC_SOFT_CLIP | FXRC_ALPHA_OUTPUT |
              FXRC_FILLSTROKE_PATH | FXRC_SHADING | FXRC_PREMULTIPLIED_ALPHA;
     default:
-      NOTREACHED_NORETURN();
+      NOTREACHED();
   }
 }
 

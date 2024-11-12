@@ -24,7 +24,7 @@ class ByteStringArchiveStream : public IFX_ArchiveStream {
     str_ += ByteStringView(buffer);
     return true;
   }
-  FX_FILESIZE CurrentOffset() const override { NOTREACHED_NORETURN(); }
+  FX_FILESIZE CurrentOffset() const override { NOTREACHED(); }
 
   const ByteString& str() const { return str_; }
 

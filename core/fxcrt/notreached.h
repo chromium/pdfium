@@ -9,10 +9,8 @@
 
 #include "core/fxcrt/check.h"
 
-// NOTREACHED_NORETURN() annotates paths that are supposed to be unreachable.
-// They crash if they are ever hit.
-// TODO(crbug.com/pdfium/2008): Rename back to NOTREACHED() once there are no
-// callers of the old non-CHECK-fatal macro.
-#define NOTREACHED_NORETURN() CHECK(false)
+// NOTREACHED() annotates paths that are supposed to be unreachable. They crash
+// if they are ever hit.
+#define NOTREACHED() CHECK(false)
 
 #endif  // CORE_FXCRT_NOTREACHED_H_

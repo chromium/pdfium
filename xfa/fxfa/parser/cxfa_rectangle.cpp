@@ -300,7 +300,7 @@ void CXFA_Rectangle::Stroke(const std::vector<CXFA_Stroke*>& strokes,
         StrokeEmbossed(pGS, rtWidget, fThickness, matrix);
         break;
       default:
-        NOTREACHED_NORETURN();
+        NOTREACHED();
     }
     return;
   }
