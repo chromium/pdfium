@@ -1027,7 +1027,9 @@ CPDF_DataAvail::ParseDocument(
 
   // Additional check, that all ok.
   if (GetValidator()->has_read_problems()) {
-    NOTREACHED();
+    // TODO(crbug.com/42271016): Figure out if this should be a CHECK() or the
+    // DCHECK() removed.
+    DCHECK(false);
     return std::make_pair(CPDF_Parser::HANDLER_ERROR, nullptr);
   }
 
