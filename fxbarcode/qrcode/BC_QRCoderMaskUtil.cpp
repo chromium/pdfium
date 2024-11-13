@@ -22,6 +22,8 @@
 
 #include "fxbarcode/qrcode/BC_QRCoderMaskUtil.h"
 
+#include <stdlib.h>
+
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/notreached.h"
 #include "fxbarcode/common/BC_CommonByteMatrix.h"
