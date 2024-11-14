@@ -110,6 +110,28 @@ TEST(CPDFToUnicodeMapTest, HandleBeginBFRangeRejectsInvalidCidValues) {
   }
 }
 
+TEST(CPDFToUnicodeMapTest, HandleBeginBFRangeGoodCount) {
+  static constexpr uint8_t kInput[] =
+      "2 beginbfrange<1><2><0040><4><5><0050>endbfrange";
+  auto stream = pdfium::MakeRetain<CPDF_Stream>(kInput);
+  CPDF_ToUnicodeMap map(stream);
+  EXPECT_EQ(0u, map.ReverseLookup(0x0039));
+  EXPECT_EQ(1u, map.ReverseLookup(0x0040));
+  EXPECT_EQ(2u, map.ReverseLookup(0x0041));
+  EXPECT_EQ(0u, map.ReverseLookup(0x0042));
+  EXPECT_EQ(0u, map.ReverseLookup(0x0049));
+  EXPECT_EQ(4u, map.ReverseLookup(0x0050));
+  EXPECT_EQ(5u, map.ReverseLookup(0x0051));
+  EXPECT_EQ(0u, map.ReverseLookup(0x0052));
+  EXPECT_EQ(0u, map.GetUnicodeCountByCharcodeForTesting(0u));
+  EXPECT_EQ(1u, map.GetUnicodeCountByCharcodeForTesting(1u));
+  EXPECT_EQ(1u, map.GetUnicodeCountByCharcodeForTesting(2u));
+  EXPECT_EQ(0u, map.GetUnicodeCountByCharcodeForTesting(3u));
+  EXPECT_EQ(1u, map.GetUnicodeCountByCharcodeForTesting(4u));
+  EXPECT_EQ(1u, map.GetUnicodeCountByCharcodeForTesting(5u));
+  EXPECT_EQ(0u, map.GetUnicodeCountByCharcodeForTesting(6u));
+}
+
 TEST(CPDFToUnicodeMapTest, InsertIntoMultimap) {
   {
     // Both the CIDs and the unicodes are different.
