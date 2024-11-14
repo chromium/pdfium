@@ -110,6 +110,15 @@ TEST(CPDFToUnicodeMapTest, HandleBeginBFRangeRejectsInvalidCidValues) {
   }
 }
 
+TEST(CPDFToUnicodeMapTest, HandleBeginBFRangeRejectsMismatchedBracket) {
+  static constexpr uint8_t kInput[] = "1 beginbfrange<3><3>[<0041>}endbfrange";
+  auto stream = pdfium::MakeRetain<CPDF_Stream>(kInput);
+  CPDF_ToUnicodeMap map(stream);
+  // TODO(thestig): The calls below should both return 0.
+  EXPECT_EQ(3u, map.ReverseLookup(0x0041));
+  EXPECT_EQ(1u, map.GetUnicodeCountByCharcodeForTesting(3u));
+}
+
 TEST(CPDFToUnicodeMapTest, HandleBeginBFRangeGoodCount) {
   static constexpr uint8_t kInput[] =
       "2 beginbfrange<1><2><0040><4><5><0050>endbfrange";
