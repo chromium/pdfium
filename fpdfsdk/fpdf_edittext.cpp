@@ -180,49 +180,33 @@ RetainPtr<CPDF_Array> CreateWidthsArray(
     const std::map<uint32_t, uint32_t>& widths) {
   auto widths_array = doc->NewIndirect<CPDF_Array>();
   for (auto it = widths.begin(); it != widths.end(); ++it) {
-    int ch = it->first;
-    int w = it->second;
-    if (std::next(it) == widths.end()) {
-      // Only one char left, use format c [w]
-      auto single_w_array = pdfium::MakeRetain<CPDF_Array>();
-      single_w_array->AppendNew<CPDF_Number>(w);
-      widths_array->AppendNew<CPDF_Number>(ch);
-      widths_array->Append(std::move(single_w_array));
-      break;
-    }
-    ++it;
-    int next_ch = it->first;
-    int next_w = it->second;
-    if (next_ch == ch + 1 && next_w == w) {
+    auto next_it = std::next(it);
+
+    if (next_it != widths.end() && next_it->first == it->first + 1 &&
+        next_it->second == it->second) {
       // The array can have a group c_first c_last w: all CIDs in the range from
       // c_first to c_last will have width w
-      widths_array->AppendNew<CPDF_Number>(ch);
-      ch = next_ch;
-      while (true) {
-        auto next_it = std::next(it);
-        if (next_it == widths.end() || next_it->first != it->first + 1 ||
-            next_it->second != it->second) {
-          break;
-        }
-        ++it;
-        ch = it->first;
+      widths_array->AppendNew<CPDF_Number>(static_cast<int>(it->first));
+
+      while (next_it != widths.end() && next_it->first == it->first + 1 &&
+             next_it->second == it->second) {
+        it = next_it;
+        next_it = std::next(it);
       }
-      widths_array->AppendNew<CPDF_Number>(ch);
-      widths_array->AppendNew<CPDF_Number>(w);
+      widths_array->AppendNew<CPDF_Number>(static_cast<int>(it->first));
+      widths_array->AppendNew<CPDF_Number>(static_cast<int>(it->second));
       continue;
     }
     // Otherwise we can have a group of the form c [w1 w2 ...]: c has width
     // w1, c+1 has width w2, etc.
-    widths_array->AppendNew<CPDF_Number>(ch);
+    // A group may contain only a single item, e.g. c[w]
+    widths_array->AppendNew<CPDF_Number>(static_cast<int>(it->first));
     auto current_width_array = pdfium::MakeRetain<CPDF_Array>();
-    current_width_array->AppendNew<CPDF_Number>(w);
-    current_width_array->AppendNew<CPDF_Number>(next_w);
-    while (true) {
-      auto next_it = std::next(it);
-      if (next_it == widths.end() || next_it->first != it->first + 1) {
-        break;
-      }
-      ++it;
+    current_width_array->AppendNew<CPDF_Number>(static_cast<int>(it->second));
+
+    while (next_it != widths.end() && next_it->first == it->first + 1) {
+      it = next_it;
+      next_it = std::next(it);
       current_width_array->AppendNew<CPDF_Number>(static_cast<int>(it->second));
     }
     widths_array->Append(std::move(current_width_array));
