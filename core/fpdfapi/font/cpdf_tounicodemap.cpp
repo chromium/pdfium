@@ -6,7 +6,6 @@
 
 #include "core/fpdfapi/font/cpdf_tounicodemap.h"
 
-#include <limits>
 #include <set>
 #include <utility>
 
@@ -20,6 +19,8 @@
 #include "core/fxcrt/fx_safe_types.h"
 
 namespace {
+
+constexpr uint32_t kCidLimit = 0xffff;
 
 WideString StringDataAdd(WideString str) {
   WideString ret;
@@ -176,8 +177,9 @@ void CPDF_ToUnicodeMap::HandleBeginBFChar(CPDF_SimpleParser* pParser) {
       return;
 
     std::optional<uint32_t> code = StringToCode(word);
-    if (!code.has_value())
+    if (!code.has_value() || code.value() > kCidLimit) {
       return;
+    }
 
     SetCode(code.value(), StringToWideString(pParser->GetWord()));
   }
@@ -200,14 +202,14 @@ void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
 
     uint32_t lowcode = lowcode_opt.value();
     uint32_t highcode = (lowcode & 0xffffff00) | (highcode_opt.value() & 0xff);
+    if (lowcode > kCidLimit || highcode > kCidLimit || lowcode > highcode) {
+      return;
+    }
 
     ByteStringView start = pParser->GetWord();
     if (start == "[") {
       for (uint32_t code = lowcode; code <= highcode; ++code) {
         SetCode(code, StringToWideString(pParser->GetWord()));
-        if (code == std::numeric_limits<uint32_t>::max()) {
-          break;
-        }
       }
       pParser->GetWord();
       continue;
@@ -222,9 +224,6 @@ void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
       uint32_t value = value_or_error.value();
       for (uint32_t code = lowcode; code <= highcode; ++code) {
         InsertIntoMultimap(code, value++);
-        if (code == std::numeric_limits<uint32_t>::max()) {
-          break;
-        }
       }
     } else {
       for (uint32_t code = lowcode; code <= highcode; ++code) {
@@ -233,9 +232,6 @@ void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
         InsertIntoMultimap(code, GetMultiCharIndexIndicator());
         m_MultiCharVec.push_back(retcode);
         destcode = std::move(retcode);
-        if (code == std::numeric_limits<uint32_t>::max()) {
-          break;
-        }
       }
     }
   }

@@ -59,29 +59,54 @@ TEST(CPDFToUnicodeMapTest, StringToWideString) {
   EXPECT_EQ(res, CPDF_ToUnicodeMap::StringToWideString("<c2abFaAb12>"));
 }
 
-TEST(CPDFToUnicodeMapTest, HandleBeginBFRangeAvoidIntegerOverflow) {
-  // Make sure there won't be infinite loops due to integer overflows in
-  // HandleBeginBFRange().
+TEST(CPDFToUnicodeMapTest, HandleBeginBFRangeRejectsInvalidCidValues) {
   {
     static constexpr uint8_t kInput1[] =
         "beginbfrange<FFFFFFFF><FFFFFFFF>[<0041>]endbfrange";
     auto stream = pdfium::MakeRetain<CPDF_Stream>(kInput1);
     CPDF_ToUnicodeMap map(stream);
-    EXPECT_EQ(L"A", map.Lookup(0xffffffff));
+    EXPECT_EQ(L"", map.Lookup(0xffffffff));
   }
   {
     static constexpr uint8_t kInput2[] =
         "beginbfrange<FFFFFFFF><FFFFFFFF><0042>endbfrange";
     auto stream = pdfium::MakeRetain<CPDF_Stream>(kInput2);
     CPDF_ToUnicodeMap map(stream);
-    EXPECT_EQ(L"B", map.Lookup(0xffffffff));
+    EXPECT_EQ(L"", map.Lookup(0xffffffff));
   }
   {
     static constexpr uint8_t kInput3[] =
         "beginbfrange<FFFFFFFF><FFFFFFFF><00410042>endbfrange";
     auto stream = pdfium::MakeRetain<CPDF_Stream>(kInput3);
     CPDF_ToUnicodeMap map(stream);
-    EXPECT_EQ(L"AB", map.Lookup(0xffffffff));
+    EXPECT_EQ(L"", map.Lookup(0xffffffff));
+  }
+  {
+    static constexpr uint8_t kInput4[] =
+        "beginbfrange<0001><10000>[<0041>]endbfrange";
+    auto stream = pdfium::MakeRetain<CPDF_Stream>(kInput4);
+    CPDF_ToUnicodeMap map(stream);
+    EXPECT_EQ(L"", map.Lookup(0xffffffff));
+    EXPECT_EQ(L"", map.Lookup(0x0001));
+    EXPECT_EQ(L"", map.Lookup(0xffff));
+    EXPECT_EQ(L"", map.Lookup(0x10000));
+  }
+  {
+    static constexpr uint8_t kInput5[] =
+        "beginbfrange<10000><10001>[<0041>]endbfrange";
+    auto stream = pdfium::MakeRetain<CPDF_Stream>(kInput5);
+    CPDF_ToUnicodeMap map(stream);
+    EXPECT_EQ(L"", map.Lookup(0x10000));
+    EXPECT_EQ(L"", map.Lookup(0x10001));
+  }
+  {
+    static constexpr uint8_t kInput6[] =
+        "beginbfrange<0006><0004>[<0041>]endbfrange";
+    auto stream = pdfium::MakeRetain<CPDF_Stream>(kInput6);
+    CPDF_ToUnicodeMap map(stream);
+    EXPECT_EQ(L"", map.Lookup(0x0004));
+    EXPECT_EQ(L"", map.Lookup(0x0005));
+    EXPECT_EQ(L"", map.Lookup(0x0006));
   }
 }
 
