@@ -52,6 +52,66 @@ TEST(fxstring, FXUTF8EncodeSurrogateErrorRecovery) {
 }
 #endif  // defined(WCHAR_T_IS_16_BIT)
 
+TEST(fxstring, ByteStringToInt) {
+  EXPECT_EQ(0, StringToInt(""));
+  EXPECT_EQ(0, StringToInt("0"));
+  EXPECT_EQ(-1, StringToInt("-1"));
+  EXPECT_EQ(2345, StringToInt("+2345"));
+  EXPECT_EQ(2345, StringToInt("2345"));
+  EXPECT_EQ(-2147483647, StringToInt("-2147483647"));
+  // The max value.
+  EXPECT_EQ(2147483647, StringToInt("2147483647"));
+  // The min value.
+  EXPECT_EQ(-2147483647 - 1, StringToInt("-2147483648"));
+
+  // Out of range values.
+  EXPECT_EQ(2147483647, StringToInt("2147483623423412348"));
+  EXPECT_EQ(2147483647, StringToInt("2147483648"));
+  EXPECT_EQ(-2147483647 - 1, StringToInt("-2147483652"));
+
+  // Other edge cases.
+  EXPECT_EQ(0, StringToInt("-"));
+  EXPECT_EQ(0, StringToInt("c--"));
+  EXPECT_EQ(0, StringToInt("--i"));
+  EXPECT_EQ(0, StringToInt("+"));
+  EXPECT_EQ(0, StringToInt("c++"));
+  EXPECT_EQ(0, StringToInt("++i"));
+  EXPECT_EQ(1, StringToInt("1beef"));
+  EXPECT_EQ(0, StringToInt("beef1"));
+  EXPECT_EQ(0, StringToInt("b33f"));
+  EXPECT_EQ(33, StringToInt("33f"));
+}
+
+TEST(fxstring, WideStringToInt) {
+  EXPECT_EQ(0, StringToInt(L""));
+  EXPECT_EQ(0, StringToInt(L"0"));
+  EXPECT_EQ(-1, StringToInt(L"-1"));
+  EXPECT_EQ(2345, StringToInt(L"2345"));
+  EXPECT_EQ(2345, StringToInt(L"+2345"));
+  EXPECT_EQ(-2147483647, StringToInt(L"-2147483647"));
+  // The max value.
+  EXPECT_EQ(2147483647, StringToInt(L"2147483647"));
+  // The min value.
+  EXPECT_EQ(-2147483647 - 1, StringToInt(L"-2147483648"));
+
+  // Out of range values.
+  EXPECT_EQ(2147483647, StringToInt(L"2147483623423412348"));
+  EXPECT_EQ(2147483647, StringToInt(L"2147483648"));
+  EXPECT_EQ(-2147483647 - 1, StringToInt(L"-2147483652"));
+
+  // Other edge cases.
+  EXPECT_EQ(0, StringToInt(L"-"));
+  EXPECT_EQ(0, StringToInt(L"c--"));
+  EXPECT_EQ(0, StringToInt(L"--i"));
+  EXPECT_EQ(0, StringToInt(L"+"));
+  EXPECT_EQ(0, StringToInt(L"c++"));
+  EXPECT_EQ(0, StringToInt(L"++i"));
+  EXPECT_EQ(1, StringToInt(L"1beef"));
+  EXPECT_EQ(0, StringToInt(L"beef1"));
+  EXPECT_EQ(0, StringToInt(L"b33f"));
+  EXPECT_EQ(33, StringToInt(L"33f"));
+}
+
 TEST(fxstring, ByteStringToFloat) {
   EXPECT_FLOAT_EQ(0.0f, StringToFloat(""));
   EXPECT_FLOAT_EQ(0.0f, StringToFloat("0"));

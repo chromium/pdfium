@@ -35,6 +35,7 @@
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/notreached.h"
 #include "core/fxcrt/scoped_set_insertion.h"
 #include "core/fxcrt/span.h"
@@ -566,8 +567,8 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
         info.pos = offset.ValueOrDie();
 
         // TODO(art-snake): The info.gennum is uint16_t, but version may be
-        // greated than max<uint16_t>. Needs solve this issue.
-        const int32_t version = FXSYS_atoi(pEntry.subspan(11).data());
+        // greater than max<uint16_t>. Need to solve this issue.
+        const int32_t version = StringToInt(ByteStringView(pEntry.subspan(11)));
         info.gennum = version;
         info.type = ObjectType::kNormal;
       }

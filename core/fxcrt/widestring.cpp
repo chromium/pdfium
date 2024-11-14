@@ -829,7 +829,7 @@ void WideString::TrimWhitespaceBack() {
   TrimBack(kWideTrimChars);
 }
 int WideString::GetInteger() const {
-  return m_pData ? FXSYS_wtoi(m_pData->m_String) : 0;
+  return m_pData ? StringToInt(m_pData->m_String) : 0;
 }
 
 std::wostream& operator<<(std::wostream& os, const WideString& str) {

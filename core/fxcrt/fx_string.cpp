@@ -9,6 +9,7 @@
 #include <stdint.h>
 
 #include <array>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -64,6 +65,67 @@ void AppendCodePointToByteString(char32_t code_point, ByteString& buffer) {
   }
 }
 
+template <typename IntType, typename StringViewType>
+IntType StringToIntImpl(StringViewType str) {
+  if (str.IsEmpty()) {
+    return 0;
+  }
+
+  // Process the sign.
+  bool neg = str.CharAt(0u) == '-';
+  if (neg || str.CharAt(0u) == '+') {
+    str = str.Substr(1u);
+  }
+
+  IntType num = 0;
+  while (!str.IsEmpty() && FXSYS_IsDecimalDigit(str.CharAt(0u))) {
+    IntType val = FXSYS_DecimalCharToInt(str.CharAt(0u));
+    if (num > (std::numeric_limits<IntType>::max() - val) / 10) {
+      if (neg && std::numeric_limits<IntType>::is_signed) {
+        // Return MIN when the represented number is signed type and is smaller
+        // than the min value.
+        return std::numeric_limits<IntType>::min();
+      }
+      // Return MAX when the represented number is signed type and is larger
+      // than the max value, or the number is unsigned type and out of range.
+      return std::numeric_limits<IntType>::max();
+    }
+    num = num * 10 + val;
+    str = str.Substr(1u);
+  }
+  // When it is a negative value, -num should be returned. Since num may be of
+  // unsigned type, use ~num + 1 to avoid the warning of applying unary minus
+  // operator to unsigned type.
+  return neg ? ~num + 1 : num;
+}
+
+// Intended to work for the cases where `T` is float or double.
+template <class T>
+T StringToFloatImpl(ByteStringView strc) {
+  // Skip leading whitespaces.
+  size_t start = 0;
+  size_t len = strc.GetLength();
+  while (start < len && strc[start] == ' ') {
+    ++start;
+  }
+
+  // Skip a leading '+' sign.
+  if (start < len && strc[start] == '+') {
+    ++start;
+  }
+
+  ByteStringView sub_strc = strc.Substr(start, len - start);
+
+  T value;
+  auto result = fast_float::from_chars(sub_strc.begin(), sub_strc.end(), value);
+
+  // Return 0 for parsing errors. Some examples of errors are an empty string
+  // and a string that cannot be converted to T.
+  return result.ec == std::errc() || result.ec == std::errc::result_out_of_range
+             ? value
+             : 0;
+}
+
 }  // namespace
 
 ByteString FX_UTF8Encode(WideStringView wsStr) {
@@ -97,38 +159,16 @@ std::u16string FX_UTF16Encode(WideStringView wsStr) {
   return result;
 }
 
-namespace {
-
-template <class T>
-T StringTo(ByteStringView strc) {
-  // Skip leading whitespaces.
-  size_t start = 0;
-  size_t len = strc.GetLength();
-  while (start < len && strc[start] == ' ') {
-    ++start;
-  }
-
-  // Skip a leading '+' sign.
-  if (start < len && strc[start] == '+') {
-    ++start;
-  }
-
-  ByteStringView sub_strc = strc.Substr(start, len - start);
-
-  T value;
-  auto result = fast_float::from_chars(sub_strc.begin(), sub_strc.end(), value);
-
-  // Return 0 for parsing errors. Some examples of errors are an empty string
-  // and a string that cannot be converted to T.
-  return result.ec == std::errc() || result.ec == std::errc::result_out_of_range
-             ? value
-             : 0;
+int32_t StringToInt(ByteStringView str) {
+  return StringToIntImpl<int32_t, ByteStringView>(str);
 }
 
-}  // namespace
+int32_t StringToInt(WideStringView wsStr) {
+  return StringToIntImpl<int32_t, WideStringView>(wsStr);
+}
 
 float StringToFloat(ByteStringView strc) {
-  return StringTo<float>(strc);
+  return StringToFloatImpl<float>(strc);
 }
 
 float StringToFloat(WideStringView wsStr) {
@@ -136,7 +176,7 @@ float StringToFloat(WideStringView wsStr) {
 }
 
 double StringToDouble(ByteStringView strc) {
-  return StringTo<double>(strc);
+  return StringToFloatImpl<double>(strc);
 }
 
 double StringToDouble(WideStringView wsStr) {
