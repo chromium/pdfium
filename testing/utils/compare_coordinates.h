@@ -8,5 +8,6 @@
 #include "public/fpdfview.h"
 
 void CompareFS_RECTF(const FS_RECTF& val1, const FS_RECTF& val2);
+void CompareFS_MATRIX(const FS_MATRIX& val1, const FS_MATRIX& val2);
 
 #endif  // TESTING_UTILS_COMPARE_COORDINATES_H_
