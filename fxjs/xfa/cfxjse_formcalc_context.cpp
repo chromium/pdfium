@@ -28,6 +28,7 @@
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_random.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/widetext_buffer.h"
@@ -1078,8 +1079,8 @@ int32_t ValueToInteger(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
     return ValueToInteger(pIsolate, extracted);
 
   if (fxv8::IsString(extracted)) {
-    ByteString bsValue = fxv8::ReentrantToByteStringHelper(pIsolate, extracted);
-    return FXSYS_atoi(bsValue.c_str());
+    ByteString value = fxv8::ReentrantToByteStringHelper(pIsolate, extracted);
+    return StringToInt(value.AsStringView());
   }
 
   return fxv8::ReentrantToInt32Helper(pIsolate, extracted);

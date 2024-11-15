@@ -28,6 +28,7 @@
 #include <memory>
 
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/fx_string.h"
 #include "fxbarcode/BC_Writer.h"
 #include "fxbarcode/oned/BC_OneDimWriter.h"
 
@@ -169,16 +170,17 @@ int32_t CBC_OnedCode128Writer::Encode128C(const ByteString& contents,
   patterns->push_back(CODE_START_C);
   int32_t checkSum = CODE_START_C * checkWeight;
   size_t position = 0;
-  while (position < contents.GetLength()) {
+  const ByteStringView view = contents.AsStringView();
+  while (position < view.GetLength()) {
     int32_t patternIndex;
-    char ch = contents[position];
+    char ch = view[position];
     if (isdigit(ch)) {
-      patternIndex = FXSYS_atoi(
-          contents.Substr(position, contents.IsValidIndex(position + 1) ? 2 : 1)
-              .c_str());
+      patternIndex = StringToInt(
+          view.Substr(position, view.IsValidIndex(position + 1) ? 2 : 1));
       ++position;
-      if (position < contents.GetLength() && isdigit(contents[position]))
+      if (position < view.GetLength() && isdigit(view[position])) {
         ++position;
+      }
     } else {
       patternIndex = static_cast<int32_t>(ch);
       ++position;

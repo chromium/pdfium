@@ -6,6 +6,7 @@
 
 #include "fxjs/xfa/cjx_boolean.h"
 
+#include "core/fxcrt/fx_string.h"
 #include "fxjs/fxv8.h"
 #include "fxjs/xfa/cfxjse_value.h"
 #include "v8/include/v8-primitive.h"
@@ -30,10 +31,11 @@ void CJX_Boolean::defaultValue(v8::Isolate* pIsolate,
   }
 
   ByteString newValue;
-  if (pValue && !(fxv8::IsNull(*pValue) || fxv8::IsUndefined(*pValue)))
+  if (pValue && !(fxv8::IsNull(*pValue) || fxv8::IsUndefined(*pValue))) {
     newValue = fxv8::ReentrantToByteStringHelper(pIsolate, *pValue);
+  }
 
-  int32_t iValue = FXSYS_atoi(newValue.c_str());
+  int32_t iValue = StringToInt(newValue.AsStringView());
   WideString wsNewValue(iValue == 0 ? L"0" : L"1");
   WideString wsFormatValue(wsNewValue);
   CXFA_Node* pContainerNode = GetXFANode()->GetContainerNode();
