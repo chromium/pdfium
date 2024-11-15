@@ -9,6 +9,7 @@
 #include <wchar.h>
 
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/utf16.h"
@@ -79,23 +80,20 @@ void FXSYS_IntToFourHexChars(uint16_t n, char* buf) {
   });
 }
 
-// TODO(tsepez): This is UNSAFE_BUFFER_USAGE as well.
-size_t FXSYS_ToUTF16BE(uint32_t unicode, char* buf) {
-  DCHECK(unicode <= pdfium::kMaximumSupplementaryCodePoint);
+pdfium::span<const char> FXSYS_ToUTF16BE(uint32_t unicode,
+                                         pdfium::span<char, 8u> buf) {
+  DCHECK_LE(unicode, pdfium::kMaximumSupplementaryCodePoint);
   DCHECK(!pdfium::IsHighSurrogate(unicode));
   DCHECK(!pdfium::IsLowSurrogate(unicode));
 
   if (unicode <= 0xFFFF) {
-    FXSYS_IntToFourHexChars(unicode, buf);
-    return 4;
+    FXSYS_IntToFourHexChars(unicode, buf.data());
+    return buf.first(4u);
   }
-  // SAFETY: required from caller.
-  UNSAFE_BUFFERS({
-    pdfium::SurrogatePair surrogate_pair(unicode);
-    FXSYS_IntToFourHexChars(surrogate_pair.high(), buf);
-    FXSYS_IntToFourHexChars(surrogate_pair.low(), buf + 4);
-  });
-  return 8;
+  pdfium::SurrogatePair surrogate_pair(unicode);
+  FXSYS_IntToFourHexChars(surrogate_pair.high(), buf.data());
+  FXSYS_IntToFourHexChars(surrogate_pair.low(), buf.subspan(4u).data());
+  return buf;
 }
 
 void FXSYS_SetTimeFunction(time_t (*func)()) {

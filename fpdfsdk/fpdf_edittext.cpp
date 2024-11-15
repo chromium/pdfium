@@ -256,12 +256,11 @@ void AddUnicode(fxcrt::ostringstream& buffer, uint32_t unicode) {
     unicode = 0;
   }
 
-  char ans[8];
-  size_t char_count = FXSYS_ToUTF16BE(unicode, ans);
+  char unicode_buf[8];
+  pdfium::span<const char> unicode_span = FXSYS_ToUTF16BE(unicode, unicode_buf);
+  CHECK(!unicode_span.empty());
   buffer << "<";
-  CHECK_LE(char_count, std::size(ans));
-  auto ans_span = pdfium::make_span(ans).first(char_count);
-  for (char c : ans_span) {
+  for (char c : unicode_span) {
     buffer << c;
   }
   buffer << ">";
@@ -319,7 +318,8 @@ RetainPtr<CPDF_Stream> LoadUnicode(
         next_it = std::next(it);
       }
       CHECK_EQ(it->first - first_charcode + 1, unicodes.size());
-      map_range_vector[std::make_pair(first_charcode, it->first)] = unicodes;
+      map_range_vector[std::make_pair(first_charcode, it->first)] =
+          std::move(unicodes);
       continue;
     }
     // Consecutive charcodes mapping to consecutive unicodes

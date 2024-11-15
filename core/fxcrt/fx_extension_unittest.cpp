@@ -11,7 +11,10 @@
 #include <limits>
 
 #include "core/fxcrt/compiler_specific.h"
+#include "testing/gmock/include/gmock/gmock.h"
 #include "testing/gtest/include/gtest/gtest.h"
+
+using testing::ElementsAre;
 
 TEST(fxcrt, FXSYSIsLowerASCII) {
   EXPECT_TRUE(FXSYS_IsLowerASCII('a'));
@@ -111,23 +114,23 @@ TEST(fxcrt, FXSYSIntToFourHexChars) {
 }
 
 TEST(fxcrt, FXSYSToUTF16BE) {
-  char buf[9] = {0};
+  char buf[8] = {0};
   // Test U+0000 to U+D7FF and U+E000 to U+FFFF
-  EXPECT_EQ(4U, FXSYS_ToUTF16BE(0x0, buf));
-  EXPECT_STREQ("0000", buf);
-  EXPECT_EQ(4U, FXSYS_ToUTF16BE(0xD7FF, buf));
-  EXPECT_STREQ("D7FF", buf);
-  EXPECT_EQ(4U, FXSYS_ToUTF16BE(0xE000, buf));
-  EXPECT_STREQ("E000", buf);
-  EXPECT_EQ(4U, FXSYS_ToUTF16BE(0xFFFF, buf));
-  EXPECT_STREQ("FFFF", buf);
+  pdfium::span<const char> result = FXSYS_ToUTF16BE(0x0, buf);
+  EXPECT_THAT(result, ElementsAre('0', '0', '0', '0'));
+  result = FXSYS_ToUTF16BE(0xD7FF, buf);
+  EXPECT_THAT(result, ElementsAre('D', '7', 'F', 'F'));
+  result = FXSYS_ToUTF16BE(0xE000, buf);
+  EXPECT_THAT(result, ElementsAre('E', '0', '0', '0'));
+  result = FXSYS_ToUTF16BE(0xFFFF, buf);
+  EXPECT_THAT(result, ElementsAre('F', 'F', 'F', 'F'));
   // Test U+10000 to U+10FFFF
-  EXPECT_EQ(8U, FXSYS_ToUTF16BE(0x10000, buf));
-  EXPECT_STREQ("D800DC00", buf);
-  EXPECT_EQ(8U, FXSYS_ToUTF16BE(0x10FFFF, buf));
-  EXPECT_STREQ("DBFFDFFF", buf);
-  EXPECT_EQ(8U, FXSYS_ToUTF16BE(0x2003E, buf));
-  EXPECT_STREQ("D840DC3E", buf);
+  result = FXSYS_ToUTF16BE(0x10000, buf);
+  EXPECT_THAT(result, ElementsAre('D', '8', '0', '0', 'D', 'C', '0', '0'));
+  result = FXSYS_ToUTF16BE(0x10FFFF, buf);
+  EXPECT_THAT(result, ElementsAre('D', 'B', 'F', 'F', 'D', 'F', 'F', 'F'));
+  result = FXSYS_ToUTF16BE(0x2003E, buf);
+  EXPECT_THAT(result, ElementsAre('D', '8', '4', '0', 'D', 'C', '3', 'E'));
 }
 
 TEST(fxcrt, FXSYSwcstof) {
