@@ -91,7 +91,7 @@ begincmap
 1 begincodespacerange
 <00><ff>
 endcodespacerange
-82 beginbfrange
+10 beginbfrange
 <20><20><0020>
 <21><21><0021>
 <2c><2c><002c>

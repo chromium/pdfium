@@ -17,6 +17,7 @@
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "third_party/abseil-cpp/absl/types/variant.h"
 
 namespace {
 
@@ -147,94 +148,216 @@ void CPDF_ToUnicodeMap::Load(RetainPtr<const CPDF_Stream> pStream) {
   auto pAcc = pdfium::MakeRetain<CPDF_StreamAcc>(std::move(pStream));
   pAcc->LoadAllDataFiltered();
   CPDF_SimpleParser parser(pAcc->GetSpan());
+  ByteStringView previous_word;
   while (true) {
     ByteStringView word = parser.GetWord();
-    if (word.IsEmpty())
+    if (word.IsEmpty()) {
       break;
+    }
 
-    if (word == "beginbfchar")
-      HandleBeginBFChar(&parser);
-    else if (word == "beginbfrange")
-      HandleBeginBFRange(&parser);
-    else if (word == "/Adobe-Korea1-UCS2")
+    if (word == "beginbfchar") {
+      word = HandleBeginBFChar(parser, previous_word);
+    } else if (word == "beginbfrange") {
+      word = HandleBeginBFRange(parser, previous_word);
+    } else if (word == "/Adobe-Korea1-UCS2") {
       cid_set = CIDSET_KOREA1;
-    else if (word == "/Adobe-Japan1-UCS2")
+    } else if (word == "/Adobe-Japan1-UCS2") {
       cid_set = CIDSET_JAPAN1;
-    else if (word == "/Adobe-CNS1-UCS2")
+    } else if (word == "/Adobe-CNS1-UCS2") {
       cid_set = CIDSET_CNS1;
-    else if (word == "/Adobe-GB1-UCS2")
+    } else if (word == "/Adobe-GB1-UCS2") {
       cid_set = CIDSET_GB1;
+    }
+
+    previous_word = word;
   }
   if (cid_set != CIDSET_UNKNOWN) {
     m_pBaseMap = CPDF_FontGlobals::GetInstance()->GetCID2UnicodeMap(cid_set);
   }
 }
 
-void CPDF_ToUnicodeMap::HandleBeginBFChar(CPDF_SimpleParser* pParser) {
+ByteStringView CPDF_ToUnicodeMap::HandleBeginBFChar(
+    CPDF_SimpleParser& parser,
+    ByteStringView previous_word) {
+  struct CodeWord {
+    uint32_t code;
+    ByteStringView word;
+  };
+  std::vector<CodeWord> code_words;
+
+  const int raw_count = StringToInt(previous_word);
+  bool is_valid = raw_count >= 0 && raw_count <= 100;
+  const size_t expected_count = is_valid ? static_cast<size_t>(raw_count) : 0;
+  code_words.reserve(expected_count);
+
+  ByteStringView word;
   while (true) {
-    ByteStringView word = pParser->GetWord();
-    if (word.IsEmpty() || word == "endbfchar")
-      return;
+    word = parser.GetWord();
+    if (word.IsEmpty() || word == "endbfchar") {
+      break;
+    }
+    if (!is_valid) {
+      continue;  // Keep consuming words. Do nothing else.
+    }
 
     std::optional<uint32_t> code = StringToCode(word);
     if (!code.has_value() || code.value() > kCidLimit) {
-      return;
+      is_valid = false;
+      continue;
     }
 
-    SetCode(code.value(), StringToWideString(pParser->GetWord()));
+    word = parser.GetWord();
+    code_words.emplace_back(code.value(), word);
+
+    if (code_words.size() > expected_count) {
+      is_valid = false;
+    }
   }
+
+  if (is_valid && code_words.size() == expected_count) {
+    for (const auto& entry : code_words) {
+      SetCode(entry.code, StringToWideString(entry.word));
+    }
+  }
+  return word;
 }
 
-void CPDF_ToUnicodeMap::HandleBeginBFRange(CPDF_SimpleParser* pParser) {
+ByteStringView CPDF_ToUnicodeMap::HandleBeginBFRange(
+    CPDF_SimpleParser& parser,
+    ByteStringView previous_word) {
+  struct CodeWordRange {
+    uint32_t low_code;
+    std::vector<ByteStringView> code_words;
+  };
+  struct MultimapSingleDestRange {
+    uint32_t low_code;
+    uint32_t high_code;
+    uint32_t start_value;
+  };
+  struct MultimapMultiDestRange {
+    uint32_t low_code;
+    std::vector<WideString> retcodes;
+  };
+  using Range = absl::variant<CodeWordRange, MultimapSingleDestRange,
+                              MultimapMultiDestRange>;
+  std::vector<Range> ranges;
+
+  const int raw_count = StringToInt(previous_word);
+  bool is_valid = raw_count >= 0 && raw_count <= 100;
+  const size_t expected_count = is_valid ? static_cast<size_t>(raw_count) : 0;
+  ranges.reserve(expected_count);
+
+  ByteStringView word;
   while (true) {
-    ByteStringView lowcode_str = pParser->GetWord();
-    if (lowcode_str.IsEmpty() || lowcode_str == "endbfrange")
-      return;
+    word = parser.GetWord();
+    if (word.IsEmpty() || word == "endbfrange") {
+      break;
+    }
+    if (!is_valid) {
+      continue;  // Keep consuming words. Do nothing else.
+    }
 
-    std::optional<uint32_t> lowcode_opt = StringToCode(lowcode_str);
-    if (!lowcode_opt.has_value())
-      return;
+    std::optional<uint32_t> lowcode_opt = StringToCode(word);
+    if (!lowcode_opt.has_value()) {
+      is_valid = false;
+      continue;
+    }
 
-    ByteStringView highcode_str = pParser->GetWord();
-    std::optional<uint32_t> highcode_opt = StringToCode(highcode_str);
-    if (!highcode_opt.has_value())
-      return;
+    word = parser.GetWord();
+    std::optional<uint32_t> highcode_opt = StringToCode(word);
+    if (!highcode_opt.has_value()) {
+      is_valid = false;
+      continue;
+    }
 
     uint32_t lowcode = lowcode_opt.value();
     uint32_t highcode = (lowcode & 0xffffff00) | (highcode_opt.value() & 0xff);
     if (lowcode > kCidLimit || highcode > kCidLimit || lowcode > highcode) {
-      return;
+      is_valid = false;
+      continue;
     }
 
-    ByteStringView start = pParser->GetWord();
+    word = parser.GetWord();
+    ByteStringView start = word;
     if (start == "[") {
+      CodeWordRange range;
+      range.low_code = lowcode;
+      range.code_words.reserve(1 + highcode - lowcode);
       for (uint32_t code = lowcode; code <= highcode; ++code) {
-        SetCode(code, StringToWideString(pParser->GetWord()));
+        word = parser.GetWord();
+        range.code_words.push_back(word);
       }
-      pParser->GetWord();
+      ranges.push_back(std::move(range));
+
+      if (ranges.size() > expected_count) {
+        is_valid = false;
+        continue;
+      }
+
+      word = parser.GetWord();
+      if (word != "]") {
+        is_valid = false;
+      }
       continue;
     }
 
     WideString destcode = StringToWideString(start);
     if (destcode.GetLength() == 1) {
       std::optional<uint32_t> value_or_error = StringToCode(start);
-      if (!value_or_error.has_value())
-        return;
-
-      uint32_t value = value_or_error.value();
-      for (uint32_t code = lowcode; code <= highcode; ++code) {
-        InsertIntoMultimap(code, value++);
+      if (!value_or_error.has_value()) {
+        is_valid = false;
+        continue;
       }
+
+      ranges.push_back(
+          MultimapSingleDestRange{.low_code = lowcode,
+                                  .high_code = highcode,
+                                  .start_value = value_or_error.value()});
     } else {
-      for (uint32_t code = lowcode; code <= highcode; ++code) {
-        WideString retcode =
-            code == lowcode ? destcode : StringDataAdd(destcode);
-        InsertIntoMultimap(code, GetMultiCharIndexIndicator());
-        m_MultiCharVec.push_back(retcode);
-        destcode = std::move(retcode);
+      MultimapMultiDestRange range;
+      range.low_code = lowcode;
+      range.retcodes.reserve(1 + highcode - lowcode);
+      range.retcodes.push_back(destcode);
+      for (uint32_t code = lowcode + 1; code <= highcode; ++code) {
+        WideString retcode = StringDataAdd(range.retcodes.back());
+        range.retcodes.push_back(std::move(retcode));
+      }
+      ranges.push_back(std::move(range));
+    }
+
+    if (ranges.size() > expected_count) {
+      is_valid = false;
+    }
+  }
+
+  if (is_valid && ranges.size() == expected_count) {
+    for (const auto& entry : ranges) {
+      if (absl::holds_alternative<CodeWordRange>(entry)) {
+        const auto& range = absl::get<CodeWordRange>(entry);
+        uint32_t code = range.low_code;
+        for (const auto& code_word : range.code_words) {
+          SetCode(code, StringToWideString(code_word));
+          ++code;
+        }
+      } else if (absl::holds_alternative<MultimapSingleDestRange>(entry)) {
+        const auto& range = absl::get<MultimapSingleDestRange>(entry);
+        uint32_t value = range.start_value;
+        for (uint32_t code = range.low_code; code <= range.high_code; ++code) {
+          InsertIntoMultimap(code, value++);
+        }
+      } else {
+        CHECK(absl::holds_alternative<MultimapMultiDestRange>(entry));
+        const auto& range = absl::get<MultimapMultiDestRange>(entry);
+        uint32_t code = range.low_code;
+        for (const auto& retcode : range.retcodes) {
+          InsertIntoMultimap(code, GetMultiCharIndexIndicator());
+          m_MultiCharVec.push_back(retcode);
+          ++code;
+        }
       }
     }
   }
+  return word;
 }
 
 uint32_t CPDF_ToUnicodeMap::GetMultiCharIndexIndicator() const {
