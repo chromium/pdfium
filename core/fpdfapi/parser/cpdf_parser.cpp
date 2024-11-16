@@ -6,7 +6,6 @@
 
 #include "core/fpdfapi/parser/cpdf_parser.h"
 
-#include <ctype.h>
 #include <stdint.h>
 
 #include <algorithm>
@@ -205,17 +204,23 @@ bool CPDF_Parser::InitSyntaxParser(RetainPtr<CPDF_ReadValidator> validator) {
 bool CPDF_Parser::ParseFileVersion() {
   m_FileVersion = 0;
   uint8_t ch;
-  if (!m_pSyntax->GetCharAt(5, ch))
+  if (!m_pSyntax->GetCharAt(5, ch)) {
     return false;
+  }
 
-  if (isdigit(ch))
-    m_FileVersion = FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch)) * 10;
+  wchar_t wch = static_cast<wchar_t>(ch);
+  if (FXSYS_IsDecimalDigit(wch)) {
+    m_FileVersion = FXSYS_DecimalCharToInt(wch) * 10;
+  }
 
-  if (!m_pSyntax->GetCharAt(7, ch))
+  if (!m_pSyntax->GetCharAt(7, ch)) {
     return false;
+  }
 
-  if (isdigit(ch))
-    m_FileVersion += FXSYS_DecimalCharToInt(static_cast<wchar_t>(ch));
+  wch = static_cast<wchar_t>(ch);
+  if (FXSYS_IsDecimalDigit(wch)) {
+    m_FileVersion += FXSYS_DecimalCharToInt(wch);
+  }
   return true;
 }
 
@@ -559,8 +564,9 @@ bool CPDF_Parser::ParseAndAppendCrossRefSubsectionData(
 
         if (offset.ValueOrDie() == 0) {
           for (int32_t c = 0; c < 10; c++) {
-            if (!isdigit(pEntry[c]))
+            if (!FXSYS_IsDecimalDigit(pEntry[c])) {
               return false;
+            }
           }
         }
 

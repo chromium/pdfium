@@ -6,7 +6,6 @@
 
 #include "fxjs/xfa/cfxjse_formcalc_context.h"
 
-#include <ctype.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -509,7 +508,7 @@ bool IsWhitespace(char c) {
 }
 
 bool IsPartOfNumber(char ch) {
-  return isdigit(ch) || ch == '-' || ch == '.';
+  return FXSYS_IsDecimalDigit(ch) || ch == '-' || ch == '.';
 }
 
 bool IsPartOfNumberW(wchar_t ch) {
@@ -3224,7 +3223,7 @@ void CFXJSE_FormCalcContext::UnitValue(
       }
 
       while (uVal < bsUnitTemp.GetLength()) {
-        if (!isdigit(pChar[uVal]) && pChar[uVal] != '.') {
+        if (!FXSYS_IsDecimalDigit(pChar[uVal]) && pChar[uVal] != '.') {
           break;
         }
         ++uVal;
@@ -5175,7 +5174,7 @@ bool CFXJSE_FormCalcContext::IsIsoDateFormat(ByteStringView bsData,
 
   std::array<char, 5> szYear = {};
   for (int32_t i = 0; i < 4; ++i) {
-    if (!isdigit(pData[i])) {
+    if (!FXSYS_IsDecimalDigit(pData[i])) {
       return false;
     }
     szYear[i] = pData[i];
@@ -5187,7 +5186,8 @@ bool CFXJSE_FormCalcContext::IsIsoDateFormat(ByteStringView bsData,
 
   int32_t iStyle = pData[4] == '-' ? 1 : 0;
   size_t iPosOff = iStyle == 0 ? 4 : 5;
-  if (!isdigit(pData[iPosOff]) || !isdigit(pData[iPosOff + 1])) {
+  if (!FXSYS_IsDecimalDigit(pData[iPosOff]) ||
+      !FXSYS_IsDecimalDigit(pData[iPosOff + 1])) {
     return false;
   }
 
@@ -5210,7 +5210,8 @@ bool CFXJSE_FormCalcContext::IsIsoDateFormat(ByteStringView bsData,
       return true;
     }
   }
-  if (!isdigit(pData[iPosOff]) || !isdigit(pData[iPosOff + 1])) {
+  if (!FXSYS_IsDecimalDigit(pData[iPosOff]) ||
+      !FXSYS_IsDecimalDigit(pData[iPosOff + 1])) {
     return false;
   }
 
@@ -5244,7 +5245,7 @@ bool CFXJSE_FormCalcContext::IsIsoTimeFormat(ByteStringView bsData) {
   size_t iZone = 0;
   size_t i = 0;
   while (i < pData.size()) {
-    if (!isdigit(pData[i]) && pData[i] != ':') {
+    if (!FXSYS_IsDecimalDigit(pData[i]) && pData[i] != ':') {
       iZone = i;
       break;
     }
@@ -5260,7 +5261,8 @@ bool CFXJSE_FormCalcContext::IsIsoTimeFormat(ByteStringView bsData) {
   while (iIndex + 1 < iZone) {
     szBuffer[0] = pData[iIndex];
     szBuffer[1] = pData[iIndex + 1];
-    if (!isdigit(szBuffer[0]) || !isdigit(szBuffer[1])) {
+    if (!FXSYS_IsDecimalDigit(szBuffer[0]) ||
+        !FXSYS_IsDecimalDigit(szBuffer[1])) {
       return false;
     }
     int32_t value = FXSYS_atoi(szBuffer);
@@ -5299,7 +5301,7 @@ bool CFXJSE_FormCalcContext::IsIsoTimeFormat(ByteStringView bsData) {
     std::array<char, kSubSecondLength + 1> szMilliSeconds = {};
     for (int j = 0; j < kSubSecondLength; ++j) {
       char c = pData[iIndex + j];
-      if (!isdigit(c)) {
+      if (!FXSYS_IsDecimalDigit(c)) {
         return false;
       }
       szMilliSeconds[j] = c;
@@ -5325,7 +5327,8 @@ bool CFXJSE_FormCalcContext::IsIsoTimeFormat(ByteStringView bsData) {
   while (iIndex + 1 < pData.size()) {
     szBuffer[0] = pData[iIndex];
     szBuffer[1] = pData[iIndex + 1];
-    if (!isdigit(szBuffer[0]) || !isdigit(szBuffer[1])) {
+    if (!FXSYS_IsDecimalDigit(szBuffer[0]) ||
+        !FXSYS_IsDecimalDigit(szBuffer[1])) {
       return false;
     }
     int32_t value = FXSYS_atoi(szBuffer);
