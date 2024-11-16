@@ -271,17 +271,18 @@ RetainPtr<CPDF_Stream> LoadUnicode(
     CPDF_Document* doc,
     const std::multimap<uint32_t, uint32_t>& to_unicode) {
   // A map charcode->unicode
-  std::map<uint32_t, uint32_t> char_to_uni;
+  std::map<uint32_t, uint32_t> char_to_unicode_map;
   // A map <char_start, char_end> to vector v of unicode characters of size (end
   // - start + 1). This abbreviates: start->v[0], start+1->v[1], etc. PDF spec
   // 1.7 Section 5.9.2 says that only the last byte of the unicode may change.
   std::map<std::pair<uint32_t, uint32_t>, std::vector<uint32_t>>
-      map_range_vector;
+      char_range_to_unicodes_map;
   // A map <start, end> -> unicode
   // This abbreviates: start->unicode, start+1->unicode+1, etc.
   // PDF spec 1.7 Section 5.9.2 says that only the last byte of the unicode may
   // change.
-  std::map<std::pair<uint32_t, uint32_t>, uint32_t> map_range;
+  std::map<std::pair<uint32_t, uint32_t>, uint32_t>
+      char_range_to_consecutive_unicodes_map;
 
   // Calculate the maps
   for (auto it = to_unicode.begin(); it != to_unicode.end(); ++it) {
@@ -290,7 +291,7 @@ RetainPtr<CPDF_Stream> LoadUnicode(
     {
       auto next_it = std::next(it);
       if (next_it == to_unicode.end() || first_charcode + 1 != next_it->first) {
-        char_to_uni[first_charcode] = first_unicode;
+        char_to_unicode_map[first_charcode] = first_unicode;
         continue;
       }
     }
@@ -298,8 +299,8 @@ RetainPtr<CPDF_Stream> LoadUnicode(
     uint32_t current_charcode = it->first;
     uint32_t current_unicode = it->second;
     if (current_charcode % 256 == 0) {
-      char_to_uni[first_charcode] = first_unicode;
-      char_to_uni[current_charcode] = current_unicode;
+      char_to_unicode_map[first_charcode] = first_unicode;
+      char_to_unicode_map[current_charcode] = current_unicode;
       continue;
     }
     const size_t max_extra = 255 - (current_charcode % 256);
@@ -318,7 +319,7 @@ RetainPtr<CPDF_Stream> LoadUnicode(
         next_it = std::next(it);
       }
       CHECK_EQ(it->first - first_charcode + 1, unicodes.size());
-      map_range_vector[std::make_pair(first_charcode, it->first)] =
+      char_range_to_unicodes_map[std::make_pair(first_charcode, it->first)] =
           std::move(unicodes);
       continue;
     }
@@ -334,22 +335,24 @@ RetainPtr<CPDF_Stream> LoadUnicode(
       ++current_unicode;
       next_it = std::next(it);
     }
-    map_range[std::make_pair(first_charcode, current_charcode)] = first_unicode;
+    char_range_to_consecutive_unicodes_map[std::make_pair(
+        first_charcode, current_charcode)] = first_unicode;
   }
 
   fxcrt::ostringstream buffer;
   buffer << kToUnicodeStart;
 
   {
-    // Add `char_to_uni` to `buffer`.
-    uint32_t to_process = pdfium::checked_cast<uint32_t>(char_to_uni.size());
-    auto it = char_to_uni.begin();
+    // Add `char_to_unicode_map` to `buffer`.
+    uint32_t to_process =
+        pdfium::checked_cast<uint32_t>(char_to_unicode_map.size());
+    auto it = char_to_unicode_map.begin();
     while (to_process) {
       const uint32_t to_process_this_iteration =
           std::min(to_process, kMaxBfCharBfRangeEntries);
       buffer << to_process_this_iteration << " beginbfchar\n";
       for (uint32_t i = 0; i < to_process_this_iteration; ++i) {
-        CHECK(it != char_to_uni.end());
+        CHECK(it != char_to_unicode_map.end());
         AddCharcode(buffer, it->first);
         buffer << " ";
         AddUnicode(buffer, it->second);
@@ -362,16 +365,16 @@ RetainPtr<CPDF_Stream> LoadUnicode(
   }
 
   {
-    // Add `map_range_vector` to `buffer`.
+    // Add `char_range_to_unicodes_map` to `buffer`.
     uint32_t to_process =
-        pdfium::checked_cast<uint32_t>(map_range_vector.size());
-    auto it = map_range_vector.begin();
+        pdfium::checked_cast<uint32_t>(char_range_to_unicodes_map.size());
+    auto it = char_range_to_unicodes_map.begin();
     while (to_process) {
       const uint32_t to_process_this_iteration =
           std::min(to_process, kMaxBfCharBfRangeEntries);
       buffer << to_process_this_iteration << " beginbfrange\n";
       for (uint32_t i = 0; i < to_process_this_iteration; ++i) {
-        CHECK(it != map_range_vector.end());
+        CHECK(it != char_range_to_unicodes_map.end());
         const std::pair<uint32_t, uint32_t>& charcode_range = it->first;
         AddCharcode(buffer, charcode_range.first);
         buffer << " ";
@@ -392,15 +395,16 @@ RetainPtr<CPDF_Stream> LoadUnicode(
   }
 
   {
-    // Add `map_range` to `buffer`.
-    uint32_t to_process = pdfium::checked_cast<uint32_t>(map_range.size());
-    auto it = map_range.begin();
+    // Add `char_range_to_consecutive_unicodes_map` to `buffer`.
+    uint32_t to_process = pdfium::checked_cast<uint32_t>(
+        char_range_to_consecutive_unicodes_map.size());
+    auto it = char_range_to_consecutive_unicodes_map.begin();
     while (to_process) {
       const uint32_t to_process_this_iteration =
           std::min(to_process, kMaxBfCharBfRangeEntries);
       buffer << to_process_this_iteration << " beginbfrange\n";
       for (uint32_t i = 0; i < to_process_this_iteration; ++i) {
-        CHECK(it != map_range.end());
+        CHECK(it != char_range_to_consecutive_unicodes_map.end());
         const std::pair<uint32_t, uint32_t>& charcode_range = it->first;
         AddCharcode(buffer, charcode_range.first);
         buffer << " ";
