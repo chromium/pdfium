@@ -19,7 +19,9 @@
 #include <windows.h>
 #endif
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 
 #undef FAR
 #if defined(USE_SYSTEM_LIBJPEG)
@@ -33,13 +35,15 @@ extern "C" {
 #include "third_party/libjpeg/jpeglib.h"
 #endif
 
-void src_do_nothing(jpeg_decompress_struct* cinfo);
+void src_do_nothing(j_decompress_ptr cinfo);
 boolean src_fill_buffer(j_decompress_ptr cinfo);
 boolean src_resync(j_decompress_ptr cinfo, int desired);
 void error_do_nothing(j_common_ptr cinfo);
-void error_do_nothing_int(j_common_ptr cinfo, int);
-void error_do_nothing_char(j_common_ptr cinfo, char*);
+void error_do_nothing_int(j_common_ptr cinfo, int arg);
+void error_do_nothing_char(j_common_ptr cinfo, char* arg);
 
+#ifdef __cplusplus
 }  // extern "C"
+#endif
 
 #endif  // CORE_FXCODEC_JPEG_JPEG_COMMON_H_
