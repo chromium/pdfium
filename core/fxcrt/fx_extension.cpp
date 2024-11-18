@@ -8,6 +8,8 @@
 
 #include <wchar.h>
 
+#include <array>
+
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
@@ -61,23 +63,18 @@ wchar_t* FXSYS_wcsncpy(wchar_t* dstStr, const wchar_t* srcStr, size_t count) {
   return dstStr;
 }
 
-// TODO(tsepez): should be UNSAFE_BUFFER_USAGE.
-void FXSYS_IntToTwoHexChars(uint8_t n, char* buf) {
-  static const char kHex[] = "0123456789ABCDEF";
-  // SAFETY: range of uint8_t keeps indices in bound.
-  UNSAFE_BUFFERS({
-    buf[0] = kHex[n / 16];
-    buf[1] = kHex[n % 16];
-  });
+void FXSYS_IntToTwoHexChars(uint8_t n, pdfium::span<char, 2u> buf) {
+  static constexpr std::array<const char, 16> kHex = {
+      '0', '1', '2', '3', '4', '5', '6', '7',
+      '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
+  };
+  buf[0] = kHex[n / 16];
+  buf[1] = kHex[n % 16];
 }
 
-// TODO(tsepez): This is UNSAFE_BUFFER_USAGE as well.
-void FXSYS_IntToFourHexChars(uint16_t n, char* buf) {
-  // SAFETY: required from caller.
-  UNSAFE_BUFFERS({
-    FXSYS_IntToTwoHexChars(n / 256, buf);
-    FXSYS_IntToTwoHexChars(n % 256, buf + 2);
-  });
+void FXSYS_IntToFourHexChars(uint16_t n, pdfium::span<char, 4u> buf) {
+  FXSYS_IntToTwoHexChars(n / 256, buf.first<2u>());
+  FXSYS_IntToTwoHexChars(n % 256, buf.subspan<2u>());
 }
 
 pdfium::span<const char> FXSYS_ToUTF16BE(uint32_t unicode,
@@ -87,12 +84,12 @@ pdfium::span<const char> FXSYS_ToUTF16BE(uint32_t unicode,
   DCHECK(!pdfium::IsLowSurrogate(unicode));
 
   if (unicode <= 0xFFFF) {
-    FXSYS_IntToFourHexChars(unicode, buf.data());
-    return buf.first(4u);
+    FXSYS_IntToFourHexChars(unicode, buf);
+    return buf.first<4u>();
   }
   pdfium::SurrogatePair surrogate_pair(unicode);
-  FXSYS_IntToFourHexChars(surrogate_pair.high(), buf.data());
-  FXSYS_IntToFourHexChars(surrogate_pair.low(), buf.subspan(4u).data());
+  FXSYS_IntToFourHexChars(surrogate_pair.high(), buf);
+  FXSYS_IntToFourHexChars(surrogate_pair.low(), buf.subspan<4u>());
   return buf;
 }
 

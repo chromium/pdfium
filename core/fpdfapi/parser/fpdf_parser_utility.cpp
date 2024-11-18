@@ -132,7 +132,7 @@ ByteString PDF_NameEncode(const ByteString& orig) {
       if (ch >= 0x80 || PDFCharIsWhitespace(ch) || ch == '#' ||
           PDFCharIsDelimiter(ch)) {
         dest_buf[dest_len++] = '#';
-        FXSYS_IntToTwoHexChars(ch, &dest_buf[dest_len]);
+        FXSYS_IntToTwoHexChars(ch, dest_buf.subspan(dest_len, 2u));
         dest_len += 2;
         continue;
       }

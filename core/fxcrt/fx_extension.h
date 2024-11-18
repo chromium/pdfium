@@ -115,8 +115,8 @@ inline int FXSYS_DecimalCharToInt(wchar_t c) {
   return FXSYS_IsDecimalDigit(c) ? c - L'0' : 0;
 }
 
-void FXSYS_IntToTwoHexChars(uint8_t n, char* buf);
-void FXSYS_IntToFourHexChars(uint16_t n, char* buf);
+void FXSYS_IntToTwoHexChars(uint8_t n, pdfium::span<char, 2u> buf);
+void FXSYS_IntToFourHexChars(uint16_t n, pdfium::span<char, 4u> buf);
 
 // Converts `unicode` to a UTF16-BE hex string. Writes the string into `buf` and
 // returns the portion of `buf` used to store the string. The returned span is

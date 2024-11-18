@@ -523,13 +523,13 @@ ByteString GUIDString(bool bSeparator) {
   ByteString bsGUID;
   {
     // Span's lifetime must end before ReleaseBuffer() below.
-    pdfium::span<char> pBuf = bsGUID.GetBuffer(40);
+    pdfium::span<char> guid_span = bsGUID.GetBuffer(40);
     size_t out_index = 0;
     for (size_t i = 0; i < 16; ++i, out_index += 2) {
       if (bSeparator && (i == 4 || i == 6 || i == 8 || i == 10)) {
-        pBuf[out_index++] = L'-';
+        guid_span[out_index++] = L'-';
       }
-      FXSYS_IntToTwoHexChars(data[i], &pBuf[out_index]);
+      FXSYS_IntToTwoHexChars(data[i], guid_span.subspan(out_index, 2u));
     }
   }
   bsGUID.ReleaseBuffer(bSeparator ? 36 : 32);

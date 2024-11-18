@@ -84,33 +84,33 @@ TEST(fxcrt, FXSYSIsDecimalDigit) {
 }
 
 TEST(fxcrt, FXSYSIntToTwoHexChars) {
-  char buf[3] = {0};
+  char buf[2] = {0};
   FXSYS_IntToTwoHexChars(0x0, buf);
-  EXPECT_STREQ("00", buf);
+  EXPECT_THAT(buf, ElementsAre('0', '0'));
   FXSYS_IntToTwoHexChars(0x9, buf);
-  EXPECT_STREQ("09", buf);
+  EXPECT_THAT(buf, ElementsAre('0', '9'));
   FXSYS_IntToTwoHexChars(0xA, buf);
-  EXPECT_STREQ("0A", buf);
+  EXPECT_THAT(buf, ElementsAre('0', 'A'));
   FXSYS_IntToTwoHexChars(0x8C, buf);
-  EXPECT_STREQ("8C", buf);
+  EXPECT_THAT(buf, ElementsAre('8', 'C'));
   FXSYS_IntToTwoHexChars(0xBE, buf);
-  EXPECT_STREQ("BE", buf);
+  EXPECT_THAT(buf, ElementsAre('B', 'E'));
   FXSYS_IntToTwoHexChars(0xD0, buf);
-  EXPECT_STREQ("D0", buf);
+  EXPECT_THAT(buf, ElementsAre('D', '0'));
   FXSYS_IntToTwoHexChars(0xFF, buf);
-  EXPECT_STREQ("FF", buf);
+  EXPECT_THAT(buf, ElementsAre('F', 'F'));
 }
 
 TEST(fxcrt, FXSYSIntToFourHexChars) {
-  char buf[5] = {0};
+  char buf[4] = {0};
   FXSYS_IntToFourHexChars(0x0, buf);
-  EXPECT_STREQ("0000", buf);
+  EXPECT_THAT(buf, ElementsAre('0', '0', '0', '0'));
   FXSYS_IntToFourHexChars(0xA23, buf);
-  EXPECT_STREQ("0A23", buf);
+  EXPECT_THAT(buf, ElementsAre('0', 'A', '2', '3'));
   FXSYS_IntToFourHexChars(0xB701, buf);
-  EXPECT_STREQ("B701", buf);
+  EXPECT_THAT(buf, ElementsAre('B', '7', '0', '1'));
   FXSYS_IntToFourHexChars(0xFFFF, buf);
-  EXPECT_STREQ("FFFF", buf);
+  EXPECT_THAT(buf, ElementsAre('F', 'F', 'F', 'F'));
 }
 
 TEST(fxcrt, FXSYSToUTF16BE) {
