@@ -255,13 +255,9 @@ class TRIVIAL_ABI GSL_POINTER span {
   constexpr span(const span<U, M, R>& other)
       : span(other.data(), other.size()) {}
 
-  span& operator=(const span& other) noexcept {
-    if (this != &other) {
-      data_ = other.data_;
-      size_ = other.size_;
-    }
-    return *this;
-  }
+  span& operator=(const span& other) noexcept = default;
+  span& operator=(span&& other) noexcept = default;
+
   ~span() noexcept = default;
 
   // [span.sub], span subviews
