@@ -78,11 +78,11 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
-  'build_revision': '9b11bd3a6a523134ac35bcc9d1f59d04cc6f5821',
+  'build_revision': 'fcec87a316876a76c28e0cd5682dd32d9a597ec9',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
-  'buildtools_revision': '7f979120bfa80658a4e48c596e9de989477b3311',
+  'buildtools_revision': '1760ff6d7267dd97ae1968c7bee9ce04a2a8489d',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling catapult
   # and whatever else without interference from each other.
@@ -94,7 +94,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang
   # and whatever else without interference from each other.
-  'clang_revision': '7566fe852151a611ee6138cb60b5e878a213f0e4',
+  'clang_revision': '37d1894d5350b2cdfde3b4a81858c8d14c7c5eb8',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling code_coverage
   # and whatever else without interference from each other.
@@ -152,7 +152,7 @@ vars = {
   # and whatever else without interference from each other.
   # If you change this, also update the libc++ revision in
   # //buildtools/deps_revisions.gni.
-  'libcxx_revision': 'e2d898ca22f1d5863d8f6a7a0df849109483e05f',
+  'libcxx_revision': 'e9288ebce451f6203b72e159aa30109206ca5fdc',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling libc++abi
   # and whatever else without interference from each other.
@@ -165,6 +165,10 @@ vars = {
   # the commit queue can handle CLs rolling libunwind
   # and whatever else without interference from each other.
   'libunwind_revision': '5b01ea4a6f3b666b7d190e7cb7c31db2ed4d94ce',
+  # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling llvm-libc
+  # and whatever else without interference from each other.
+  'llvm_libc_revision': '9e360f42377fe23ddc6d3125d5e494609f3ea55e',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling markupsafe
   # and whatever else without interference from each other.
@@ -192,7 +196,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling rust
   # and whatever else without interference from each other.
-  'rust_revision': '0e0ef14876a32128574eaf80bc7fc1c7cde92006',
+  'rust_revision': '7c0544c9d6752871fe7107618bc4ea0ce811c9e5',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling skia
   # and whatever else without interference from each other.
@@ -212,7 +216,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling tools_rust
   # and whatever else without interference from each other.
-  'tools_rust_revision': 'a7d3d8af53052ee94aba128d223befe1e48adbef',
+  'tools_rust_revision': 'e4fd8fdeeac06e3bc44655d9490aa68367e794af',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling v8
   # and whatever else without interference from each other.
@@ -394,49 +398,53 @@ deps = {
     'bucket': 'chromium-browser-clang',
     'objects': [
       {
-        'object_name': 'Linux_x64/clang-llvmorg-20-init-3847-g69c43468-28.tar.xz',
-        'sha256sum': '6a30f7bc7c5f0eac02a40a4ec9a1ab906ddff2adacf2c9ff065916047c79f0fb',
-        'size_bytes': 52892060,
-        'generation': 1726118358890940,
+        'object_name': 'Linux_x64/clang-llvmorg-20-init-9764-gb81d8e90-7.tar.xz',
+        'sha256sum': '8e2ae60cff735abf36e5fe5e77c00b544d1487b65f89207a42102b680898a46b',
+        'size_bytes': 54095864,
+        'generation': 1731544264198178,
         'condition': 'host_os == "linux" and non_git_source',
       },
       {
-        'object_name': 'Mac/clang-llvmorg-20-init-3847-g69c43468-28.tar.xz',
-        'sha256sum': 'cabfc7ca792ef13d3e665c3a7811f9a76cc39094059c11606cea1724f0394bbc',
-        'size_bytes': 47551968,
-        'generation': 1726118361528729,
+        'object_name': 'Mac/clang-llvmorg-20-init-9764-gb81d8e90-7.tar.xz',
+        'sha256sum': '77f32455f2089476a93721d93ec03ac9f30cc95d488c866b5718ce387f92c1a5',
+        'size_bytes': 48571252,
+        'generation': 1731544266598769,
         'condition': 'host_os == "mac" and host_cpu == "x64"',
       },
       {
-        'object_name': 'Mac/clang-mac-runtime-library-llvmorg-20-init-3847-g69c43468-28.tar.xz',
-        'sha256sum': '50a618246d7fd23645640fc50ccb0d4684c1895def378b90963a289f920ea88a',
-        'size_bytes': 879508,
-        'generation': 1726118377526206,
+        'object_name': 'Mac/clang-mac-runtime-library-llvmorg-20-init-9764-gb81d8e90-7.tar.xz',
+        'sha256sum': 'a07d63759d4b5512fed86fa8f424365171d4015fe47c501c5caa3269dfe51032',
+        'size_bytes': 974716,
+        'generation': 1731544279261384,
         'condition': 'checkout_mac and not host_os == "mac"',
       },
       {
-        'object_name': 'Mac_arm64/clang-llvmorg-20-init-3847-g69c43468-28.tar.xz',
-        'sha256sum': 'e87eb4caa95c98ef36c40aec5b8cd07a6c4fb8959d3c7e7d452f6ed860c8c2bf',
-        'size_bytes': 41352592,
-        'generation': 1726118378868177,
+        'object_name': 'Mac_arm64/clang-llvmorg-20-init-9764-gb81d8e90-7.tar.xz',
+        'sha256sum': 'ee885ab3b8e7f25e5d92d06306295f01f35324cf3a0ceb66448c47b29879770d',
+        'size_bytes': 42642352,
+        'generation': 1731544280524902,
         'condition': 'host_os == "mac" and host_cpu == "arm64"',
       },
       {
-        'object_name': 'Win/clang-llvmorg-20-init-3847-g69c43468-28.tar.xz',
-        'sha256sum': 'cb416511e6379b7fd3f362f637ebb8a28957d0d2ff2dc6e2d9f4484a381f2885',
-        'size_bytes': 44655000,
-        'generation': 1726118399720986,
+        'object_name': 'Win/clang-llvmorg-20-init-9764-gb81d8e90-7.tar.xz',
+        'sha256sum': 'd13af8c578f9108c4bb6e2b2a629f1a1b8ae5b91746b1eed42292b37849a7561',
+        'size_bytes': 45523728,
+        'generation': 1731544289415557,
         'condition': 'host_os == "win"',
       },
       {
-        'object_name': 'Win/clang-win-runtime-library-llvmorg-20-init-3847-g69c43468-28.tar.xz',
-        'sha256sum': '81d66840357d83ca1a2c85ebca5259a7a86d9e99c77b37727fbaee87ccacf675',
-        'size_bytes': 2897452,
-        'generation': 1726118416326356,
+        'object_name': 'Win/clang-win-runtime-library-llvmorg-20-init-9764-gb81d8e90-7.tar.xz',
+        'sha256sum': 'ab71c7e8706207edc1b728de2d10cbd512a255486666addc40efd6f4f33e4e3c',
+        'size_bytes': 2480384,
+        'generation': 1731544296156413,
         'condition': 'checkout_win and not host_os == "win"',
       },
     ]
   },
+
+  'third_party/llvm-libc/src':
+    Var('chromium_git') + '/external/github.com/llvm/llvm-project/libc.git@' +
+        Var('llvm_libc_revision'),
 
   'third_party/markupsafe':
     Var('chromium_git') + '/chromium/src/third_party/markupsafe.git@' +
@@ -468,31 +476,31 @@ deps = {
     'bucket': 'chromium-browser-clang',
     'objects': [
       {
-        'object_name': 'Linux_x64/rust-toolchain-009e73825af0e59ad4fc603562e038b3dbd6593a-2-llvmorg-20-init-3847-g69c43468.tar.xz',
-        'sha256sum': '043bc520520424fad9fdfc87102e3af7c8f1ca4da3f7885e18f54fd29fc783e4',
-        'size_bytes': 115068636,
-        'generation': 1725552307196828,
+        'object_name': 'Linux_x64/rust-toolchain-bca5fdebe0e539d123f33df5f2149d5976392e76-1-llvmorg-20-init-9764-gb81d8e90.tar.xz',
+        'sha256sum': '0c4092f5769c5ececd096732b00f2c5c4e1741d4112881a2c83fe7e78271d792',
+        'size_bytes': 122758604,
+        'generation': 1729629177370195,
         'condition': 'host_os == "linux" and non_git_source',
       },
       {
-        'object_name': 'Mac/rust-toolchain-009e73825af0e59ad4fc603562e038b3dbd6593a-2-llvmorg-20-init-3847-g69c43468.tar.xz',
-        'sha256sum': '100befb02da0940fdede41a0ad0e28ded1ce4b6794b5e488bccc91ba1d27348a',
-        'size_bytes': 108415524,
-        'generation': 1725552308530261,
+        'object_name': 'Mac/rust-toolchain-bca5fdebe0e539d123f33df5f2149d5976392e76-1-llvmorg-20-init-9764-gb81d8e90.tar.xz',
+        'sha256sum': '41c0265504ce0ace325f87e7db24329170fcc88d3931ff76e61126db46f2b5e1',
+        'size_bytes': 115814060,
+        'generation': 1729629179200874,
         'condition': 'host_os == "mac" and host_cpu == "x64"',
       },
       {
-        'object_name': 'Mac_arm64/rust-toolchain-009e73825af0e59ad4fc603562e038b3dbd6593a-2-llvmorg-20-init-3847-g69c43468.tar.xz',
-        'sha256sum': '6f3ba8fe5a9590b476c087b412bd60e7e46ec59bc37aac76d9f7894c6bc34a75',
-        'size_bytes': 97820200,
-        'generation': 1725552309875662,
+        'object_name': 'Mac_arm64/rust-toolchain-bca5fdebe0e539d123f33df5f2149d5976392e76-1-llvmorg-20-init-9764-gb81d8e90.tar.xz',
+        'sha256sum': '4c264b2fcc4a4bb7d908cf7838c70878cbcfa6dabec5b5b97a5fcfdab8658eb6',
+        'size_bytes': 104504052,
+        'generation': 1729629180998449,
         'condition': 'host_os == "mac" and host_cpu == "arm64"',
       },
       {
-        'object_name': 'Win/rust-toolchain-009e73825af0e59ad4fc603562e038b3dbd6593a-2-llvmorg-20-init-3847-g69c43468.tar.xz',
-        'sha256sum': '1d04274c7a96aa0148a9bb5b29fa5b33c24b97971e33634bed62ce504b1cb346',
-        'size_bytes': 172453420,
-        'generation': 1725552311180142,
+        'object_name': 'Win/rust-toolchain-bca5fdebe0e539d123f33df5f2149d5976392e76-1-llvmorg-20-init-9764-gb81d8e90.tar.xz',
+        'sha256sum': 'afade008b0eea5d8d30e19ceef22e9f9c4fe9b4cdcb9c61926665ec1658379cc',
+        'size_bytes': 181085496,
+        'generation': 1729629182819402,
         'condition': 'host_os == "win"',
       },
     ],

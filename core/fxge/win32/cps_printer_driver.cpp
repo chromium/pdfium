@@ -73,7 +73,8 @@ CPSPrinterDriver::CPSPrinterDriver(HDC hDC,
     DWORD dwCount = ::GetRegionData(hRgn, 0, nullptr);
     if (dwCount) {
       DataVector<uint8_t> buffer(dwCount);
-      RGNDATA* pData = reinterpret_cast<RGNDATA*>(buffer.data());
+      // TODO(crbug.com/42271176): Resolve safety issue.
+      UNSAFE_TODO(RGNDATA* pData = reinterpret_cast<RGNDATA*>(buffer.data()));
       if (::GetRegionData(hRgn, dwCount, pData)) {
         CFX_Path path;
         for (uint32_t i = 0; i < pData->rdh.nCount; i++) {
