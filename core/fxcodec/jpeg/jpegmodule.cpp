@@ -65,46 +65,44 @@ static boolean dest_empty(j_compress_ptr cinfo) {
 static bool JpegLoadInfo(pdfium::span<const uint8_t> src_span,
                          JpegModule::ImageInfo* pInfo) {
   src_span = JpegScanSOI(src_span);
-  jpeg_decompress_struct cinfo;
-  jpeg_error_mgr jerr;
-  jerr.error_exit = error_fatal;
-  jerr.emit_message = error_do_nothing_int;
-  jerr.output_message = error_do_nothing;
-  jerr.format_message = error_do_nothing_char;
-  jerr.reset_error_mgr = error_do_nothing;
-  jerr.trace_level = 0;
-  cinfo.err = &jerr;
-  jmp_buf mark;
-  cinfo.client_data = &mark;
-  if (setjmp(mark) == -1)
+  JpegCommon jpeg_common = {};
+  jpeg_common.error_mgr.error_exit = error_fatal;
+  jpeg_common.error_mgr.emit_message = error_do_nothing_int;
+  jpeg_common.error_mgr.output_message = error_do_nothing;
+  jpeg_common.error_mgr.format_message = error_do_nothing_char;
+  jpeg_common.error_mgr.reset_error_mgr = error_do_nothing;
+  jpeg_common.error_mgr.trace_level = 0;
+  jpeg_common.cinfo.err = &jpeg_common.error_mgr;
+  jpeg_common.cinfo.client_data = &jpeg_common.jmpbuf;
+  if (setjmp(jpeg_common.jmpbuf) == -1) {
     return false;
+  }
 
-  jpeg_create_decompress(&cinfo);
-  jpeg_source_mgr src;
-  src.init_source = src_do_nothing;
-  src.term_source = src_do_nothing;
-  src.skip_input_data = src_skip_data;
-  src.fill_input_buffer = src_fill_buffer;
-  src.resync_to_restart = src_resync;
-  src.bytes_in_buffer = src_span.size();
-  src.next_input_byte = src_span.data();
-  cinfo.src = &src;
-  if (setjmp(mark) == -1) {
-    jpeg_destroy_decompress(&cinfo);
+  jpeg_create_decompress(&jpeg_common.cinfo);
+  jpeg_common.source_mgr.init_source = src_do_nothing;
+  jpeg_common.source_mgr.term_source = src_do_nothing;
+  jpeg_common.source_mgr.skip_input_data = src_skip_data;
+  jpeg_common.source_mgr.fill_input_buffer = src_fill_buffer;
+  jpeg_common.source_mgr.resync_to_restart = src_resync;
+  jpeg_common.source_mgr.bytes_in_buffer = src_span.size();
+  jpeg_common.source_mgr.next_input_byte = src_span.data();
+  jpeg_common.cinfo.src = &jpeg_common.source_mgr;
+  if (setjmp(jpeg_common.jmpbuf) == -1) {
+    jpeg_destroy_decompress(&jpeg_common.cinfo);
     return false;
   }
-  int ret = jpeg_read_header(&cinfo, TRUE);
+  int ret = jpeg_read_header(&jpeg_common.cinfo, TRUE);
   if (ret != JPEG_HEADER_OK) {
-    jpeg_destroy_decompress(&cinfo);
+    jpeg_destroy_decompress(&jpeg_common.cinfo);
     return false;
   }
-  pInfo->width = cinfo.image_width;
-  pInfo->height = cinfo.image_height;
-  pInfo->num_components = cinfo.num_components;
-  pInfo->color_transform =
-      cinfo.jpeg_color_space == JCS_YCbCr || cinfo.jpeg_color_space == JCS_YCCK;
-  pInfo->bits_per_components = cinfo.data_precision;
-  jpeg_destroy_decompress(&cinfo);
+  pInfo->width = jpeg_common.cinfo.image_width;
+  pInfo->height = jpeg_common.cinfo.image_height;
+  pInfo->num_components = jpeg_common.cinfo.num_components;
+  pInfo->color_transform = jpeg_common.cinfo.jpeg_color_space == JCS_YCbCr ||
+                           jpeg_common.cinfo.jpeg_color_space == JCS_YCCK;
+  pInfo->bits_per_components = jpeg_common.cinfo.data_precision;
+  jpeg_destroy_decompress(&jpeg_common.cinfo);
   return true;
 }
 
