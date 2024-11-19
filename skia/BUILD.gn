@@ -218,7 +218,7 @@ component("skia") {
   sources += skia_sksl_pipeline_sources
   sources += skia_sksl_codegen_sources
   sources += skia_sksl_core_sources
-  sources += skia_sksl_default_module_sources
+  sources += skia_sksl_core_module_sources
   sources += skia_utils_private
   sources += skia_xps_sources
   sources += skia_codec_decode_bmp
