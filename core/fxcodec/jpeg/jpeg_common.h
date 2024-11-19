@@ -10,6 +10,7 @@
 // Common code for interacting with libjpeg shared by other files in
 // core/fxcodec/jpeg/. Not intended to be included in headers.
 
+#include <setjmp.h>
 #include <stdio.h>
 
 #include "build/build_config.h"
@@ -34,6 +35,14 @@ extern "C" {
 #include "third_party/libjpeg/jerror.h"
 #include "third_party/libjpeg/jpeglib.h"
 #endif
+
+struct JpegCommon {
+  jmp_buf jmpbuf;
+  struct jpeg_decompress_struct cinfo;
+  struct jpeg_error_mgr error_mgr;
+  struct jpeg_source_mgr source_mgr;
+};
+typedef struct JpegCommon JpegCommon;
 
 void src_do_nothing(j_decompress_ptr cinfo);
 boolean src_fill_buffer(j_decompress_ptr cinfo);
