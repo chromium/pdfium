@@ -40,10 +40,14 @@ _MACOS_ARM_DIMENSIONS = {
     "cpu": "arm64",
     "os": "Mac-13",
 }
-_WINDOWS_DIMENSIONS = {
+_WINDOWS_INTEL_DIMENSIONS = {
     "cores": "8",
     "cpu": "x86-64",
     "os": "Windows-10",
+}
+_WINDOWS_ARM_DIMENSIONS = {
+    "cpu": "arm64",
+    "os": "Windows-11",
 }
 
 # Dicts for OS-specifc properties.
@@ -180,8 +184,10 @@ def pdfium_internal_builder(name, bucket, swarm_tests):
     elif name.startswith("mac"):
         dimensions.update(_MACOS_INTEL_DIMENSIONS)
         caches = [swarming.cache("osx_sdk", name = "osx_sdk")]
+    elif name.startswith("win") and "_arm" in name:
+        dimensions.update(_WINDOWS_ARM_DIMENSIONS)
     elif name.startswith("win"):
-        dimensions.update(_WINDOWS_DIMENSIONS)
+        dimensions.update(_WINDOWS_INTEL_DIMENSIONS)
     elif name.startswith("android"):
         dimensions.update(_LINUX_FOCAL_DIMENSIONS)
     else:
@@ -546,6 +552,7 @@ add_entries_for_builder(name = "win_skia", category = "skia|win")
 add_entries_for_builder(name = "win_skia_asan", category = "skia|win", short_name = "asan")
 add_entries_for_builder(name = "win_xfa", category = "xfa|win")
 add_entries_for_builder(name = "win_xfa_32", category = "xfa|win", short_name = "32")
+add_entries_for_builder(name = "win_xfa_arm", category = "xfa|win", skip_ci_builder = True)
 add_entries_for_builder(name = "win_xfa_asan", category = "xfa|win", short_name = "asan")
 add_entries_for_builder(name = "win_xfa_component", category = "xfa|win", short_name = "comp")
 add_entries_for_builder(name = "win_xfa_gdi", category = "xfa|win", short_name = "gdi")
