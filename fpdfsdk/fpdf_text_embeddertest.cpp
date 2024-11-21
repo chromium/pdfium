@@ -1849,3 +1849,59 @@ TEST_F(FPDFTextEmbedderTest, Bug1769) {
   EXPECT_THAT(pdfium::make_span(buffer).first(10u),
               ElementsAreArray(kNeedsImprovementResult));
 }
+
+TEST_F(FPDFTextEmbedderTest, TextObjectSetIsActive) {
+  ASSERT_TRUE(OpenDocument("hello_world.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  {
+    // First, sanity check hello_world.pdf.
+    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+    ASSERT_TRUE(textpage);
+
+    unsigned short buffer[128];
+    int num_chars =
+        FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer);
+    ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
+    EXPECT_THAT(pdfium::make_span(buffer).first(kHelloGoodbyeTextSize),
+                ElementsAreArray(kHelloGoodbyeText));
+  }
+
+  FPDF_PAGEOBJECT text_obj = FPDFPage_GetObject(page.get(), 0);
+  ASSERT_TRUE(text_obj);
+  ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(text_obj));
+
+  {
+    // Deactivate `text_obj` and check `textpage` again.
+    ASSERT_TRUE(FPDFPageObj_SetIsActive(text_obj, false));
+
+    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+    ASSERT_TRUE(textpage);
+
+    static constexpr int kGoodbyeTextSize = 16;
+    static constexpr int kOffset = kHelloGoodbyeTextSize - kGoodbyeTextSize;
+    unsigned short buffer[128];
+    int num_chars =
+        FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer);
+    ASSERT_EQ(kGoodbyeTextSize, num_chars);
+    EXPECT_THAT(pdfium::make_span(buffer).first(kGoodbyeTextSize),
+                ElementsAreArray(
+                    pdfium::make_span(kHelloGoodbyeText).subspan<kOffset>()));
+  }
+
+  {
+    // Reactivate `text_obj` and check `textpage` again.
+    ASSERT_TRUE(FPDFPageObj_SetIsActive(text_obj, true));
+
+    ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
+    ASSERT_TRUE(textpage);
+
+    unsigned short buffer[128];
+    int num_chars =
+        FPDFText_GetText(textpage.get(), 0, std::size(buffer), buffer);
+    ASSERT_EQ(kHelloGoodbyeTextSize, num_chars);
+    EXPECT_THAT(pdfium::make_span(buffer).first(kHelloGoodbyeTextSize),
+                ElementsAreArray(kHelloGoodbyeText));
+  }
+}
