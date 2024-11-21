@@ -633,3 +633,120 @@ TEST_F(FPDFEditPageEmbedderTest, Bug378120423) {
     CloseSavedDocument();
   }
 }
+
+TEST_F(FPDFEditPageEmbedderTest, Bug378464305) {
+  ASSERT_TRUE(OpenDocument("rectangles.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+  const int page_width = static_cast<int>(FPDF_GetPageWidth(page.get()));
+  const int page_height = static_cast<int>(FPDF_GetPageHeight(page.get()));
+  constexpr int kOriginalObjectCount = 8;
+  {
+    // Sanity check rectangles.pdf before modifying it.
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
+    CompareBitmap(bitmap.get(), page_width, page_height,
+                  pdfium::RectanglesChecksum());
+    EXPECT_EQ(kOriginalObjectCount, FPDFPage_CountObjects(page.get()));
+  }
+
+  // Add a new path.
+  constexpr int kObjectCountWithNewPath = kOriginalObjectCount + 1;
+  ScopedFPDFPageObject path_wrapper(FPDFPageObj_CreateNewPath(50, 50));
+  FPDF_PAGEOBJECT path = path_wrapper.get();
+  ASSERT_TRUE(path);
+  EXPECT_TRUE(
+      FPDFPath_SetDrawMode(path, FPDF_FILLMODE_WINDING, /*stroke=*/false));
+  EXPECT_TRUE(
+      FPDFPageObj_SetFillColor(path, /*R=*/255, /*G=*/0, /*B=*/0, /*A=*/127));
+  EXPECT_TRUE(FPDFPath_LineTo(path, 40, 60));
+  EXPECT_TRUE(FPDFPath_LineTo(path, 40, 50));
+  EXPECT_TRUE(FPDFPath_Close(path));
+  FPDFPage_InsertObject(page.get(), path_wrapper.release());
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+
+  // Render `page` with the new path.
+  const char* new_path_checksum = []() {
+    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+      return "34b57c038e2927ac490c20dc2c7fb706";
+    }
+    return "725702098ecb591a356827d54bd26cb2";
+  }();
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
+    CompareBitmap(bitmap.get(), page_width, page_height, new_path_checksum);
+    EXPECT_EQ(kObjectCountWithNewPath, FPDFPage_CountObjects(page.get()));
+  }
+  {
+    // Save a copy, open the copy, and render it.
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    ASSERT_TRUE(OpenSavedDocument());
+    FPDF_PAGE saved_page = LoadSavedPage(0);
+    ASSERT_TRUE(saved_page);
+
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
+    CompareBitmap(bitmap.get(), page_width, page_height, new_path_checksum);
+    EXPECT_EQ(kObjectCountWithNewPath, FPDFPage_CountObjects(saved_page));
+
+    CloseSavedPage(saved_page);
+    CloseSavedDocument();
+  }
+
+  // Deactivate `path` and render.
+  ASSERT_TRUE(FPDFPageObj_SetIsActive(path, false));
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
+    CompareBitmap(bitmap.get(), page_width, page_height,
+                  pdfium::RectanglesChecksum());
+    // `path` can still be found. It is just deactivated.
+    EXPECT_EQ(kObjectCountWithNewPath, FPDFPage_CountObjects(page.get()));
+  }
+
+  {
+    // Save a copy, open the copy, and render it.
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    ASSERT_TRUE(OpenSavedDocument());
+    FPDF_PAGE saved_page = LoadSavedPage(0);
+    ASSERT_TRUE(saved_page);
+
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
+    CompareBitmap(bitmap.get(), page_width, page_height,
+                  pdfium::RectanglesChecksum());
+    // `path` did not get written out to the saved PDF.
+    EXPECT_EQ(kOriginalObjectCount, FPDFPage_CountObjects(saved_page));
+
+    CloseSavedPage(saved_page);
+    CloseSavedDocument();
+  }
+
+  // Reactivate `path` and render.
+  ASSERT_TRUE(FPDFPageObj_SetIsActive(path, true));
+  EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
+  {
+    ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
+    CompareBitmap(bitmap.get(), page_width, page_height, new_path_checksum);
+    EXPECT_EQ(kObjectCountWithNewPath, FPDFPage_CountObjects(page.get()));
+  }
+
+  {
+    // Save a copy, open the copy, and render it.
+    EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
+    ASSERT_TRUE(OpenSavedDocument());
+    FPDF_PAGE saved_page = LoadSavedPage(0);
+    ASSERT_TRUE(saved_page);
+
+    ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
+    // TODO(crbug.com/378464305): Should be `new_path_checksum`.
+    const char* wrong_checksum = []() {
+      if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+        return "1da7ed00781f0b3b5c0c6b34af6ed4fd";
+      }
+      return "b95170fe98422dbc583388f9ad48e6b8";
+    }();
+    CompareBitmap(bitmap.get(), page_width, page_height, wrong_checksum);
+    EXPECT_EQ(kObjectCountWithNewPath, FPDFPage_CountObjects(saved_page));
+
+    CloseSavedPage(saved_page);
+    CloseSavedDocument();
+  }
+}
