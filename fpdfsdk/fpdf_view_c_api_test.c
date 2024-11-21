@@ -212,6 +212,7 @@ int CheckPDFiumCApi() {
     CHK(FPDFPageObj_GetDashCount);
     CHK(FPDFPageObj_GetDashPhase);
     CHK(FPDFPageObj_GetFillColor);
+    CHK(FPDFPageObj_GetIsActive);
     CHK(FPDFPageObj_GetLineCap);
     CHK(FPDFPageObj_GetLineJoin);
     CHK(FPDFPageObj_GetMark);

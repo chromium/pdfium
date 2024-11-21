@@ -630,6 +630,21 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFPageObj_GetType(FPDF_PAGEOBJECT page_object) {
                   : FPDF_PAGEOBJ_UNKNOWN;
 }
 
+FPDF_EXPORT FPDF_BOOL FPDFPageObj_GetIsActive(FPDF_PAGEOBJECT page_object,
+                                              FPDF_BOOL* active) {
+  if (!active) {
+    return false;
+  }
+
+  CPDF_PageObject* cpage_object = CPDFPageObjectFromFPDFPageObject(page_object);
+  if (!cpage_object) {
+    return false;
+  }
+
+  *active = cpage_object->IsActive();
+  return true;
+}
+
 FPDF_EXPORT FPDF_BOOL FPDFPageObj_SetIsActive(FPDF_PAGEOBJECT page_object,
                                               FPDF_BOOL active) {
   CPDF_PageObject* cpage_object = CPDFPageObjectFromFPDFPageObject(page_object);

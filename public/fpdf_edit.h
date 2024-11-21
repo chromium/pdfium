@@ -261,6 +261,22 @@ FPDFPageObj_HasTransparency(FPDF_PAGEOBJECT page_object);
 FPDF_EXPORT int FPDF_CALLCONV FPDFPageObj_GetType(FPDF_PAGEOBJECT page_object);
 
 // Experimental API.
+// Gets active state for |page_object| within page.
+//
+//   page_object - handle to a page object.
+//   active      - pointer to variable that will receive if the page object is
+//                 active. This is a required parameter. Not filled if FALSE
+//                 is returned.
+//
+// For page objects where |active| is filled with FALSE, the |page_object| is
+// treated as if it wasn't in the document even though it is still held
+// internally.
+//
+// Returns TRUE if the operation succeeded, FALSE if it failed.
+FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
+FPDFPageObj_GetIsActive(FPDF_PAGEOBJECT page_object, FPDF_BOOL* active);
+
+// Experimental API.
 // Sets if |page_object| is active within page.
 //
 //   page_object - handle to a page object.

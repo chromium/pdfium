@@ -496,7 +496,7 @@ TEST_F(FPDFEditPageEmbedderTest, VerifyDashArraySaved) {
   CloseSavedDocument();
 }
 
-TEST_F(FPDFEditPageEmbedderTest, PageObjectSetIsActive) {
+TEST_F(FPDFEditPageEmbedderTest, PageObjectActiveState) {
   const char* one_rectangle_inactive_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
       return "cf5bb4e61609162c03f4c8a6d9791230";
@@ -541,9 +541,22 @@ TEST_F(FPDFEditPageEmbedderTest, PageObjectSetIsActive) {
   // Mark one of the page objects as inactive.  It is still present in the page.
   FPDF_PAGEOBJECT page_obj = FPDFPage_GetObject(page.get(), 4);
   ASSERT_TRUE(page_obj);
+
+  // Negative testing.
+  EXPECT_FALSE(FPDFPageObj_GetIsActive(page_obj, nullptr));
+  FPDF_BOOL page_obj_is_active;
+  EXPECT_FALSE(FPDFPageObj_GetIsActive(nullptr, &page_obj_is_active));
+  EXPECT_FALSE(FPDFPageObj_GetIsActive(nullptr, nullptr));
+
+  // Positive testing.
+  page_obj_is_active = false;
+  EXPECT_TRUE(FPDFPageObj_GetIsActive(page_obj, &page_obj_is_active));
+  EXPECT_TRUE(page_obj_is_active);
   ASSERT_TRUE(FPDFPageObj_SetIsActive(page_obj, /*active=*/false));
   EXPECT_TRUE(FPDFPage_GenerateContent(page.get()));
   EXPECT_EQ(8, FPDFPage_CountObjects(page.get()));
+  EXPECT_TRUE(FPDFPageObj_GetIsActive(page_obj, &page_obj_is_active));
+  EXPECT_FALSE(page_obj_is_active);
 
   {
     // Save a copy, open the copy, and render it.
