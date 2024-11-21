@@ -207,7 +207,7 @@ ByteStringView CPDF_ToUnicodeMap::HandleBeginBFChar(
     }
 
     word = parser.GetWord();
-    code_words.emplace_back(code.value(), word);
+    code_words.emplace_back(CodeWord{code.value(), word});
 
     if (code_words.size() > expected_count) {
       is_valid = false;
