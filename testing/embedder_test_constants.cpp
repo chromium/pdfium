@@ -26,6 +26,8 @@ const char* AnnotationStampWithApChecksum() {
 #endif
 }
 
+const char kBlankPage200By200Checksum[] = "eee4600ac08b458ac7ac2320e225674c";
+
 const char kBlankPage612By792Checksum[] = "1940568c9ba33bac5d0b1ee9558c76b3";
 
 const char* Bug890322Checksum() {

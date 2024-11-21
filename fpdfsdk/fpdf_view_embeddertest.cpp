@@ -2139,7 +2139,7 @@ TEST_F(FPDFViewEmbedderTest, RenderTransparencyOnWhiteBackground) {
                         /*start_y=*/0, kWidth, kHeight, /*rotate=*/0,
                         /*flags=*/0);
   // TODO(crbug.com/1302355): This page should not render blank.
-  EXPECT_EQ("eee4600ac08b458ac7ac2320e225674c", HashBitmap(bitmap.get()));
+  EXPECT_EQ(pdfium::kBlankPage200By200Checksum, HashBitmap(bitmap.get()));
 }
 
 TEST_F(FPDFViewEmbedderTest, Bug2112) {

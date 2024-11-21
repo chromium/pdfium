@@ -10,6 +10,9 @@ namespace pdfium {
 // MD5 hash for rendering annotation_stamp_with_ap.pdf with annotations.
 const char* AnnotationStampWithApChecksum();
 
+// MD5 hash for rendering a 200x200 blank page.
+extern const char kBlankPage200By200Checksum[];
+
 // MD5 hash for rendering a 612x792 blank page.
 extern const char kBlankPage612By792Checksum[];
 

@@ -44,13 +44,12 @@
 #include "testing/utils/path_service.h"
 
 using pdfium::HelloWorldChecksum;
+using pdfium::kBlankPage200By200Checksum;
 using testing::HasSubstr;
 using testing::Not;
 using testing::UnorderedElementsAreArray;
 
 namespace {
-
-const char kAllRemovedChecksum[] = "eee4600ac08b458ac7ac2320e225674c";
 
 const wchar_t kBottomText[] = L"I'm at the bottom of the page";
 
@@ -2045,7 +2044,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromSingleStream) {
 
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
-    CompareBitmap(page_bitmap.get(), 200, 200, kAllRemovedChecksum);
+    CompareBitmap(page_bitmap.get(), 200, 200, kBlankPage200By200Checksum);
   }
 
   // Save the file
@@ -2059,7 +2058,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromSingleStream) {
   EXPECT_EQ(0, FPDFPage_CountObjects(saved_page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kAllRemovedChecksum);
+    CompareBitmap(page_bitmap.get(), 200, 200, kBlankPage200By200Checksum);
   }
 
   CloseSavedPage(saved_page);
@@ -2219,7 +2218,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromMultipleStreams) {
 
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(page.get());
-    CompareBitmap(page_bitmap.get(), 200, 200, kAllRemovedChecksum);
+    CompareBitmap(page_bitmap.get(), 200, 200, kBlankPage200By200Checksum);
   }
 
   // Save the file
@@ -2233,7 +2232,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveAllFromMultipleStreams) {
   EXPECT_EQ(0, FPDFPage_CountObjects(saved_page));
   {
     ScopedFPDFBitmap page_bitmap = RenderPage(saved_page);
-    CompareBitmap(page_bitmap.get(), 200, 200, kAllRemovedChecksum);
+    CompareBitmap(page_bitmap.get(), 200, 200, kBlankPage200By200Checksum);
   }
 
   CloseSavedPage(saved_page);
