@@ -26,7 +26,7 @@ TEST(FixedSizeDataVector, UninitData) {
   ASSERT_EQ(4u, vec.size());
   ASSERT_EQ(4u, vec.span().size());
 
-  constexpr int kData[] = {1, 2, 3, 4};
+  static constexpr int kData[] = {1, 2, 3, 4};
   fxcrt::Copy(kData, vec.span());
   EXPECT_THAT(vec.span(), testing::ElementsAre(1, 2, 3, 4));
 }
@@ -37,7 +37,7 @@ TEST(FixedSizeDataVector, TryUninitData) {
   ASSERT_EQ(4u, vec.size());
   ASSERT_EQ(4u, vec.span().size());
 
-  constexpr int kData[] = {1, 2, 3, 4};
+  static constexpr int kData[] = {1, 2, 3, 4};
   fxcrt::Copy(kData, vec.span());
   EXPECT_THAT(vec.span(), testing::ElementsAre(1, 2, 3, 4));
 }
@@ -49,7 +49,7 @@ TEST(FixedSizeDataVector, ZeroedData) {
   EXPECT_EQ(4u, vec.span().size());
   EXPECT_THAT(vec.span(), testing::ElementsAre(0, 0, 0, 0));
 
-  constexpr int kData[] = {1, 2, 3, 4};
+  static constexpr int kData[] = {1, 2, 3, 4};
   fxcrt::Copy(kData, vec.span());
   EXPECT_THAT(vec.span(), testing::ElementsAre(1, 2, 3, 4));
 }
@@ -61,13 +61,13 @@ TEST(FixedSizeDataVector, TryZeroedData) {
   ASSERT_EQ(4u, vec.span().size());
   EXPECT_THAT(vec.span(), testing::ElementsAre(0, 0, 0, 0));
 
-  constexpr int kData[] = {1, 2, 3, 4};
+  static constexpr int kData[] = {1, 2, 3, 4};
   fxcrt::Copy(kData, vec.span());
   EXPECT_THAT(vec.span(), testing::ElementsAre(1, 2, 3, 4));
 }
 
 TEST(FixedSizeDataVector, TryAllocFailures) {
-  constexpr size_t kCloseToMaxByteAlloc =
+  static constexpr size_t kCloseToMaxByteAlloc =
       std::numeric_limits<size_t>::max() - 100;
   auto vec = FixedSizeDataVector<int>::TryZeroed(kCloseToMaxByteAlloc);
   EXPECT_TRUE(vec.empty());
@@ -81,7 +81,7 @@ TEST(FixedSizeDataVector, TryAllocFailures) {
 }
 
 TEST(FixedSizeDataVector, MoveConstruct) {
-  constexpr int kData[] = {1, 2, 3, 4};
+  static constexpr int kData[] = {1, 2, 3, 4};
   auto vec = FixedSizeDataVector<int>::Uninit(4);
   ASSERT_EQ(4u, vec.span().size());
   fxcrt::Copy(kData, vec.span());
@@ -113,7 +113,7 @@ TEST(FixedSizeDataVector, MoveConstruct) {
 TEST(FixedSizeDataVector, MoveAssign) {
   auto vec = FixedSizeDataVector<int>();
   auto vec2 = FixedSizeDataVector<int>::Zeroed(4);
-  constexpr int kData[] = {1, 2, 3, 4};
+  static constexpr int kData[] = {1, 2, 3, 4};
   ASSERT_EQ(4u, vec2.span().size());
   fxcrt::Copy(kData, vec2.span());
 
@@ -124,7 +124,7 @@ TEST(FixedSizeDataVector, MoveAssign) {
 }
 
 TEST(FixedSizeDataVector, TruncatedFrom) {
-  constexpr int kData[] = {1, 2, 3, 4};
+  static constexpr int kData[] = {1, 2, 3, 4};
   auto vec1 = FixedSizeDataVector<int>::Uninit(4);
   fxcrt::Copy(kData, vec1.span());
 

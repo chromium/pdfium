@@ -17,8 +17,8 @@ TEST(fxge, CMYKRounding) {
   // Testing all floats from 0.0 to 1.0 takes about 35 seconds in release
   // builds and much longer in debug builds, so just test the known-dangerous
   // range.
-  constexpr float kStartValue = 0.001f;
-  constexpr float kEndValue = 0.003f;
+  static constexpr float kStartValue = 0.001f;
+  static constexpr float kEndValue = 0.003f;
   FX_RGB_STRUCT<float> rgb;
   // Iterate through floats by incrementing the representation, as discussed in
   // https://randomascii.wordpress.com/2012/01/23/stupid-float-tricks-2/

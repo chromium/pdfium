@@ -132,7 +132,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetStringAttribute) {
         FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
     ASSERT_TRUE(document);
 
-    constexpr int kBufLen = 100;
+    static constexpr int kBufLen = 100;
     uint16_t buffer[kBufLen] = {0};
     EXPECT_EQ(18U, FPDF_StructElement_GetType(document, buffer, kBufLen));
     EXPECT_EQ("Document", GetPlatformString(buffer));
@@ -193,7 +193,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetStringAttributeBadStructElement) {
         FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
     ASSERT_TRUE(document);
 
-    constexpr int kBufLen = 100;
+    static constexpr int kBufLen = 100;
     uint16_t buffer[kBufLen] = {0};
     EXPECT_EQ(18U, FPDF_StructElement_GetType(document, buffer, kBufLen));
     EXPECT_EQ("Document", GetPlatformString(buffer));
@@ -231,7 +231,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetID) {
         FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
     ASSERT_TRUE(document);
 
-    constexpr int kBufLen = 100;
+    static constexpr int kBufLen = 100;
     uint16_t buffer[kBufLen] = {0};
     EXPECT_EQ(18U, FPDF_StructElement_GetType(document, buffer, kBufLen));
     EXPECT_EQ("Document", GetPlatformString(buffer));
@@ -274,7 +274,7 @@ TEST_F(FPDFStructTreeEmbedderTest, GetLang) {
         FPDF_StructTree_GetChildAtIndex(struct_tree.get(), 0);
     ASSERT_TRUE(document);
 
-    constexpr int kBufLen = 100;
+    static constexpr int kBufLen = 100;
     uint16_t buffer[kBufLen] = {0};
     EXPECT_EQ(18U, FPDF_StructElement_GetType(document, buffer, kBufLen));
     EXPECT_EQ("Document", GetPlatformString(buffer));

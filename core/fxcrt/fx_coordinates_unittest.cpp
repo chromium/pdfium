@@ -394,7 +394,7 @@ TEST(CFXMatrixTest, SetIdentity) {
 }
 
 TEST(CFXMatrixTest, GetInverse) {
-  constexpr CFX_Matrix m(3, 0, 2, 3, 1, 4);
+  static constexpr CFX_Matrix m(3, 0, 2, 3, 1, 4);
   CFX_Matrix rev = m.GetInverse();
 
   EXPECT_FLOAT_EQ(0.33333334f, rev.a);
@@ -413,8 +413,8 @@ TEST(CFXMatrixTest, GetInverse) {
 // Note, I think these are a bug and the matrix should be the identity.
 TEST(CFXMatrixTest, GetInverseCR702041) {
   // The determinate is < std::numeric_limits<float>::epsilon()
-  constexpr CFX_Matrix m(0.947368443f, -0.108947366f, -0.923076928f,
-                         0.106153846f, 18.0f, 787.929993f);
+  static constexpr CFX_Matrix m(0.947368443f, -0.108947366f, -0.923076928f,
+                                0.106153846f, 18.0f, 787.929993f);
   CFX_Matrix rev = m.GetInverse();
 
   EXPECT_FLOAT_EQ(14247728.0f, rev.a);
@@ -433,8 +433,8 @@ TEST(CFXMatrixTest, GetInverseCR702041) {
 
 TEST(CFXMatrixTest, GetInverseCR714187) {
   // The determinate is < std::numeric_limits<float>::epsilon()
-  constexpr CFX_Matrix m(0.000037f, 0.0f, 0.0f, -0.000037f, 182.413101f,
-                         136.977646f);
+  static constexpr CFX_Matrix m(0.000037f, 0.0f, 0.0f, -0.000037f, 182.413101f,
+                                136.977646f);
   CFX_Matrix rev = m.GetInverse();
 
   EXPECT_FLOAT_EQ(27027.025f, rev.a);

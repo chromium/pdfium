@@ -25,7 +25,7 @@ std::vector<WideString> GetNames(uint8_t count,
   names.reserve(count);
   for (size_t i = 0; i < count; ++i) {
     // The name is not that interesting here. Keep it short.
-    constexpr size_t kMaxNameLen = 10;
+    static constexpr size_t kMaxNameLen = 10;
     std::string str = data_provider->ConsumeRandomLengthString(kMaxNameLen);
     names.push_back(WideString::FromUTF16LE(pdfium::as_byte_span(str)));
   }

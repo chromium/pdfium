@@ -56,7 +56,7 @@ const char* RectanglesMultiPagesExpectedChecksum(int page_index) {
 }
 
 const char* Bug750568PageHash(int page_index) {
-  constexpr int kBug750568PageCount = 4;
+  static constexpr int kBug750568PageCount = 4;
   if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
     static constexpr std::array<const char*, kBug750568PageCount> kChecksums = {
         {"eaa139e944eafb43d31e8742a0e158de", "226485e9d4fa6a67dfe0a88723f12060",
@@ -223,7 +223,7 @@ TEST_F(FPDFPPOEmbedderTest, ImportPageToXObject) {
     FPDF_CloseXObject(xobject);
   }
 
-  constexpr int kExpectedPageCount = 2;
+  static constexpr int kExpectedPageCount = 2;
   ASSERT_TRUE(OpenSavedDocument());
 
   std::array<FPDF_PAGE, kExpectedPageCount> saved_pages;

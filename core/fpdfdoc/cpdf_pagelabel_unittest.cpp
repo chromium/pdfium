@@ -84,8 +84,8 @@ void AddLimitsArray(CPDF_Dictionary* node, int least, int greatest) {
 //   {900: |"D",,999|}
 //
 void FillPageLabelsTreeDict(CPDF_Dictionary* page_labels_root) {
-  constexpr char kKids[] = "Kids";
-  constexpr char kNums[] = "Nums";
+  static constexpr char kKids[] = "Kids";
+  static constexpr char kNums[] = "Nums";
 
   auto page_labels_root_kids = page_labels_root->SetNewFor<CPDF_Array>(kKids);
   auto kid1 = page_labels_root_kids->AppendNew<CPDF_Dictionary>();

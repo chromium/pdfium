@@ -118,7 +118,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraNormal) {
                               /*blend_type=*/BlendMode::kNormal,
                               /*bRgbByteOrder=*/false));
 
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations1[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations1[] = {
       {.blue = 255, .green = 100, .red = 0, .alpha = 0},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -129,7 +129,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraNormal) {
       {.blue = 255, .green = 100, .red = 0, .alpha = 244},
   };
   RunTest(compositor, kSrcScan1, kExpectations1);
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations2[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations2[] = {
       {.blue = 100, .green = 0, .red = 255, .alpha = 0},
       {.blue = 100, .green = 0, .red = 255, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -140,7 +140,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraNormal) {
       {.blue = 127, .green = 18, .red = 209, .alpha = 244},
   };
   RunTest(compositor, kSrcScan2, kExpectations2);
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations3[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations3[] = {
       {.blue = 0, .green = 255, .red = 100, .alpha = 0},
       {.blue = 0, .green = 255, .red = 100, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -162,7 +162,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraDarken) {
                               /*blend_type=*/BlendMode::kDarken,
                               /*bRgbByteOrder=*/false));
 
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations1[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations1[] = {
       {.blue = 255, .green = 100, .red = 0, .alpha = 0},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -173,7 +173,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraDarken) {
       {.blue = 255, .green = 100, .red = 0, .alpha = 244},
   };
   RunTest(compositor, kSrcScan1, kExpectations1);
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations2[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations2[] = {
       {.blue = 100, .green = 0, .red = 255, .alpha = 0},
       {.blue = 100, .green = 0, .red = 255, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -184,7 +184,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraDarken) {
       {.blue = 127, .green = 18, .red = 45, .alpha = 244},
   };
   RunTest(compositor, kSrcScan2, kExpectations2);
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations3[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations3[] = {
       {.blue = 0, .green = 255, .red = 100, .alpha = 0},
       {.blue = 0, .green = 255, .red = 100, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -206,7 +206,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraHue) {
                               /*blend_type=*/BlendMode::kHue,
                               /*bRgbByteOrder=*/false));
 
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations1[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations1[] = {
       {.blue = 255, .green = 100, .red = 0, .alpha = 0},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -217,7 +217,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraHue) {
       {.blue = 255, .green = 100, .red = 0, .alpha = 244},
   };
   RunTest(compositor, kSrcScan1, kExpectations1);
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations2[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations2[] = {
       {.blue = 100, .green = 0, .red = 255, .alpha = 0},
       {.blue = 100, .green = 0, .red = 255, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -228,7 +228,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraHue) {
       {.blue = 127, .green = 18, .red = 209, .alpha = 244},
   };
   RunTest(compositor, kSrcScan2, kExpectations2);
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations3[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations3[] = {
       {.blue = 0, .green = 255, .red = 100, .alpha = 0},
       {.blue = 0, .green = 255, .red = 100, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -251,7 +251,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraPremulNormal) {
                               /*blend_type=*/BlendMode::kNormal,
                               /*bRgbByteOrder=*/false));
 
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations1[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations1[] = {
       {.blue = 0, .green = 0, .red = 0, .alpha = 0},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -262,7 +262,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraPremulNormal) {
       {.blue = 253, .green = 98, .red = 0, .alpha = 244},
   };
   RunPreMultiplyTest(compositor, kSrcScan1, kExpectations1);
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations2[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations2[] = {
       {.blue = 0, .green = 0, .red = 0, .alpha = 0},
       {.blue = 100, .green = 0, .red = 255, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -273,7 +273,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraPremulNormal) {
       {.blue = 126, .green = 16, .red = 209, .alpha = 244},
   };
   RunPreMultiplyTest(compositor, kSrcScan2, kExpectations2);
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations3[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations3[] = {
       {.blue = 0, .green = 0, .red = 0, .alpha = 0},
       {.blue = 0, .green = 255, .red = 100, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -295,7 +295,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraPremulDarken) {
                               /*blend_type=*/BlendMode::kDarken,
                               /*bRgbByteOrder=*/false));
 
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations1[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations1[] = {
       {.blue = 0, .green = 0, .red = 0, .alpha = 0},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -306,7 +306,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraPremulDarken) {
       {.blue = 252, .green = 98, .red = 0, .alpha = 244},
   };
   RunPreMultiplyTest(compositor, kSrcScan1, kExpectations1);
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations2[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations2[] = {
       {.blue = 0, .green = 0, .red = 0, .alpha = 0},
       {.blue = 100, .green = 0, .red = 255, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -317,7 +317,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraPremulDarken) {
       {.blue = 125, .green = 16, .red = 44, .alpha = 244},
   };
   RunPreMultiplyTest(compositor, kSrcScan2, kExpectations2);
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations3[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations3[] = {
       {.blue = 0, .green = 0, .red = 0, .alpha = 0},
       {.blue = 0, .green = 255, .red = 100, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -339,7 +339,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraPremulHue) {
                               /*blend_type=*/BlendMode::kHue,
                               /*bRgbByteOrder=*/false));
 
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations1[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations1[] = {
       {.blue = 0, .green = 0, .red = 0, .alpha = 0},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -350,7 +350,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraPremulHue) {
       {.blue = 252, .green = 98, .red = 0, .alpha = 244},
   };
   RunPreMultiplyTest(compositor, kSrcScan1, kExpectations1);
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations2[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations2[] = {
       {.blue = 0, .green = 0, .red = 0, .alpha = 0},
       {.blue = 100, .green = 0, .red = 255, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},
@@ -361,7 +361,7 @@ TEST(ScanlineCompositorTest, CompositeRgbBitmapLineBgraPremulHue) {
       {.blue = 125, .green = 16, .red = 207, .alpha = 244},
   };
   RunPreMultiplyTest(compositor, kSrcScan2, kExpectations2);
-  constexpr FX_BGRA_STRUCT<uint8_t> kExpectations3[] = {
+  static constexpr FX_BGRA_STRUCT<uint8_t> kExpectations3[] = {
       {.blue = 0, .green = 0, .red = 0, .alpha = 0},
       {.blue = 0, .green = 255, .red = 100, .alpha = 255},
       {.blue = 255, .green = 100, .red = 0, .alpha = 255},

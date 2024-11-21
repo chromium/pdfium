@@ -102,7 +102,7 @@ TEST(CPDFFileSpecTest, GetFileName) {
 #endif
         }};
     // Keyword fields in reverse order of precedence to retrieve the file name.
-    constexpr std::array<const char*, 5> keywords = {
+    static constexpr std::array<const char*, 5> keywords = {
         {"Unix", "Mac", "DOS", "F", "UF"}};
     auto dict_obj = pdfium::MakeRetain<CPDF_Dictionary>();
     CPDF_FileSpec file_spec(dict_obj);
@@ -163,10 +163,10 @@ TEST(CPDFFileSpecTest, GetFileStream) {
     dict_obj->SetNewFor<CPDF_Dictionary>("EF");
     CPDF_FileSpec file_spec(dict_obj);
 
-    const wchar_t file_name[] = L"test.pdf";
-    constexpr std::array<const char*, 5> keys = {
+    static constexpr wchar_t file_name[] = L"test.pdf";
+    static constexpr std::array<const char*, 5> keys = {
         {"Unix", "Mac", "DOS", "F", "UF"}};
-    constexpr std::array<const char*, 5> streams = {
+    static constexpr std::array<const char*, 5> streams = {
         {"test1", "test2", "test3", "test4", "test5"}};
     static_assert(std::size(keys) == std::size(streams), "size mismatch");
     RetainPtr<CPDF_Dictionary> file_dict = dict_obj->GetMutableDictFor("EF");

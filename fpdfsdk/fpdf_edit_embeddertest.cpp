@@ -1400,7 +1400,7 @@ TEST_F(FPDFEditEmbedderTest, GetMarkedContentId) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  constexpr int kExpectedObjectCount = 4;
+  static constexpr int kExpectedObjectCount = 4;
   ASSERT_EQ(kExpectedObjectCount, FPDFPage_CountObjects(page.get()));
   for (int i = 0; i < kExpectedObjectCount; ++i) {
     FPDF_PAGEOBJECT page_object = FPDFPage_GetObject(page.get(), i);
@@ -1454,7 +1454,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkedObjectsPrime) {
     CompareBitmap(page_bitmap.get(), 200, 200, original_checksum);
   }
 
-  constexpr int expected_object_count = 19;
+  static constexpr int expected_object_count = 19;
   CheckMarkCounts(page.get(), 1, expected_object_count, 8, 4, 9, 1);
 
   // Get all objects marked with "Prime"
@@ -1556,7 +1556,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarks) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  constexpr int kExpectedObjectCount = 19;
+  static constexpr int kExpectedObjectCount = 19;
   CheckMarkCounts(page.get(), 1, kExpectedObjectCount, 8, 4, 9, 1);
 
   // Remove all "Prime" content marks.
@@ -1608,7 +1608,7 @@ TEST_F(FPDFEditEmbedderTest, RemoveMarkParam) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  constexpr int kExpectedObjectCount = 19;
+  static constexpr int kExpectedObjectCount = 19;
   CheckMarkCounts(page.get(), 1, kExpectedObjectCount, 8, 4, 9, 1);
 
   // Remove all "Square" content marks parameters.
@@ -2969,7 +2969,7 @@ TEST_F(FPDFEditEmbedderTest, TextFontProperties) {
 
   {
     // FPDFFont_GetFontData() positive testing.
-    constexpr size_t kExpectedSize = 8268;
+    static constexpr size_t kExpectedSize = 8268;
     std::vector<uint8_t> buf;
     size_t buf_bytes_required = 123;
     ASSERT_TRUE(FPDFFont_GetFontData(font, nullptr, 0, &buf_bytes_required));
@@ -3024,7 +3024,7 @@ TEST_F(FPDFEditEmbedderTest, NoEmbeddedFontData) {
   // Since hello_world.pdf does not embed any font data, FPDFFont_GetFontData()
   // will return the substitution font data. Since pdfium_embeddertest is
   // hermetic, this first object consistently maps to Tinos-Regular.ttf.
-  constexpr size_t kTinosRegularSize = 469968;
+  static constexpr size_t kTinosRegularSize = 469968;
   FPDF_PAGEOBJECT text = FPDFPage_GetObject(page.get(), 0);
   ASSERT_TRUE(text);
   FPDF_FONT font = FPDFTextObj_GetFont(text);
@@ -3039,7 +3039,7 @@ TEST_F(FPDFEditEmbedderTest, NoEmbeddedFontData) {
   EXPECT_EQ(0, FPDFFont_GetIsEmbedded(font));
 
   // Similarly, the second object consistently maps to Arimo-Regular.ttf.
-  constexpr size_t kArimoRegularSize = 436180;
+  static constexpr size_t kArimoRegularSize = 436180;
   text = FPDFPage_GetObject(page.get(), 1);
   ASSERT_TRUE(text);
   font = FPDFTextObj_GetFont(text);
@@ -3934,7 +3934,7 @@ TEST_F(FPDFEditEmbedderTest, SetMarkParam) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  constexpr int kExpectedObjectCount = 19;
+  static constexpr int kExpectedObjectCount = 19;
   CheckMarkCounts(page.get(), 1, kExpectedObjectCount, 8, 4, 9, 1);
 
   // Check the "Bounds" mark's "Position" param is "Last".
@@ -4028,7 +4028,8 @@ TEST_F(FPDFEditEmbedderTest, AddMarkedText) {
   // - blob "BlobKey": "\x01\x02\x03\0BlobValue1\0\0\0BlobValue2\0"
   //
   // Note that the trailing NUL is in `kBlobData` implicitly.
-  constexpr uint8_t kBlobData[] = "\x01\x02\x03\0BlobValue1\0\0\0BlobValue2";
+  static constexpr uint8_t kBlobData[] =
+      "\x01\x02\x03\0BlobValue1\0\0\0BlobValue2";
   EXPECT_EQ(0, FPDFPageObjMark_CountParams(mark));
   EXPECT_TRUE(
       FPDFPageObjMark_SetIntParam(document(), text_object, mark, "IntKey", 42));
@@ -4058,7 +4059,7 @@ TEST_F(FPDFEditEmbedderTest, AddMarkedText) {
   EXPECT_EQ(FPDF_OBJECT_STRING,
             FPDFPageObjMark_GetParamValueType(mark, "BlobKey"));
   out_buffer_len = 0;
-  constexpr size_t kBlobLen = 28;
+  static constexpr size_t kBlobLen = 28;
   unsigned char blob_buffer[kBlobLen];
   EXPECT_TRUE(FPDFPageObjMark_GetParamBlobValue(
       mark, "BlobKey", blob_buffer, sizeof(blob_buffer), &out_buffer_len));
@@ -4427,7 +4428,7 @@ TEST_F(FPDFEditEmbedderTest, GetBitmapIgnoresSMask) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  constexpr int kExpectedObjects = 4;
+  static constexpr int kExpectedObjects = 4;
   ASSERT_EQ(kExpectedObjects, FPDFPage_CountObjects(page.get()));
 
   for (int i = 0; i < kExpectedObjects; ++i) {
@@ -4446,7 +4447,7 @@ TEST_F(FPDFEditEmbedderTest, GetBitmapWithArgbImageWithPalette) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  constexpr int kExpectedObjects = 2;
+  static constexpr int kExpectedObjects = 2;
   ASSERT_EQ(kExpectedObjects, FPDFPage_CountObjects(page.get()));
   FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 1);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
@@ -4517,7 +4518,7 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapHandlesSMask) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  constexpr int kExpectedObjects = 4;
+  static constexpr int kExpectedObjects = 4;
   ASSERT_EQ(kExpectedObjects, FPDFPage_CountObjects(page.get()));
 
   const char* smask_checksum = []() {
@@ -5096,8 +5097,8 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForRotatedImage) {
   ScopedFPDFPage page(FPDFPage_New(doc.get(), 0, 100, 100));
   EXPECT_EQ(0, FPDFPage_CountObjects(page.get()));
 
-  constexpr int kBitmapWidth = 50;
-  constexpr int kBitmapHeight = 100;
+  static constexpr int kBitmapWidth = 50;
+  static constexpr int kBitmapHeight = 100;
   ScopedFPDFBitmap bitmap(FPDFBitmap_Create(kBitmapWidth, kBitmapHeight, 0));
   ASSERT_TRUE(FPDFBitmap_FillRect(bitmap.get(), 0, 0, kBitmapWidth,
                                   kBitmapHeight, 0x00000000));
@@ -5106,8 +5107,8 @@ TEST_F(FPDFEditEmbedderTest, GetRenderedBitmapForRotatedImage) {
       FPDFImageObj_SetBitmap(nullptr, 0, page_image.get(), bitmap.get()));
 
   // Set bitmap matrix with scaling and 90 degrees clockwise rotation.
-  constexpr int kScaleX = 2;
-  constexpr int kScaleY = 3;
+  static constexpr int kScaleX = 2;
+  static constexpr int kScaleY = 3;
   static constexpr FS_MATRIX kBitmapMatrix{
       0, -kScaleX * kBitmapWidth, kScaleY * kBitmapHeight, 0, 0, 0};
   ASSERT_TRUE(FPDFPageObj_SetMatrix(page_image.get(), &kBitmapMatrix));
@@ -5155,8 +5156,8 @@ TEST_F(FPDFEditEmbedderTest, MultipleGraphicsStates) {
 }
 
 TEST_F(FPDFEditEmbedderTest, GetAndSetMatrixForFormWithText) {
-  constexpr int kExpectedWidth = 200;
-  constexpr int kExpectedHeight = 200;
+  static constexpr int kExpectedWidth = 200;
+  static constexpr int kExpectedHeight = 200;
 
   OpenDocument("form_object_with_text.pdf");
   ScopedEmbedderTestPage page = LoadScopedPage(0);

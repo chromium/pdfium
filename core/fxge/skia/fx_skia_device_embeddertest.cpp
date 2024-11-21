@@ -149,8 +149,8 @@ void OutOfSequenceClipTest(CFX_SkiaDeviceDriver* driver, const State&) {
 
 void Harness(void (*Test)(CFX_SkiaDeviceDriver*, const State&),
              const State& state) {
-  constexpr int kWidth = 4;
-  constexpr int kHeight = 1;
+  static constexpr int kWidth = 4;
+  static constexpr int kHeight = 1;
   ScopedFPDFBitmap bitmap(FPDFBitmap_Create(kWidth, kHeight, 1));
   ASSERT_TRUE(bitmap);
   ASSERT_TRUE(

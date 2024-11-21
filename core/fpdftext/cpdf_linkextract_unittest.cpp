@@ -43,7 +43,7 @@ TEST(CPDFLinkExtractTest, CheckMailLink) {
     const wchar_t* expected_output;
   };
   // Check cases that can extract valid mail link.
-  constexpr IOPair kValidStrings[] = {
+  static constexpr IOPair kValidStrings[] = {
       {L"peter@abc.d", L"peter@abc.d"},
       {L"red.teddy.b@abc.com", L"red.teddy.b@abc.com"},
       {L"abc_@gmail.com", L"abc_@gmail.com"},  // '_' is ok before '@'.

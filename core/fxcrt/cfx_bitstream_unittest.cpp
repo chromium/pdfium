@@ -164,8 +164,9 @@ TEST(fxcrt, BitStreamBig) {
   // the bitstream arithmetic, but as long as we don't try to extract
   // any bits, the calculations should be unaffected.
   const uint8_t kNotReallyBigEnough[32] = {};
-  constexpr size_t kAllocationBytes = std::numeric_limits<size_t>::max() / 8;
-  constexpr size_t kAllocationBits = kAllocationBytes * 8;
+  static constexpr size_t kAllocationBytes =
+      std::numeric_limits<size_t>::max() / 8;
+  static constexpr size_t kAllocationBits = kAllocationBytes * 8;
 
   // SAFETY: intentionally not safe, see above.
   CFX_BitStream bitstream(

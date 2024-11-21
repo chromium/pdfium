@@ -32,7 +32,7 @@ static_assert(sizeof(Mask<Privilege>) == sizeof(Privilege),
               "Mask size must be the same as enum");
 
 TEST(Mask, Empty) {
-  constexpr Mask<Privilege> privs;
+  static constexpr Mask<Privilege> privs;
   EXPECT_EQ(0u, privs.UncheckedValue());
   EXPECT_FALSE(privs & Privilege::kPriv1);
   EXPECT_FALSE(privs & Privilege::kPriv4);

@@ -74,7 +74,7 @@ TEST_F(FPDFJavaScriptEmbedderTest, GetJSName) {
     EXPECT_EQ(0u, FPDFJavaScriptAction_GetName(nullptr, buf, sizeof(buf)));
   }
 
-  constexpr size_t kExpectedLength = 22;
+  static constexpr size_t kExpectedLength = 22;
   ASSERT_EQ(kExpectedLength,
             FPDFJavaScriptAction_GetName(js.get(), nullptr, 0));
 
@@ -104,7 +104,7 @@ TEST_F(FPDFJavaScriptEmbedderTest, GetJSScript) {
     EXPECT_EQ(0u, FPDFJavaScriptAction_GetScript(nullptr, buf, sizeof(buf)));
   }
 
-  constexpr size_t kExpectedLength = 218;
+  static constexpr size_t kExpectedLength = 218;
   ASSERT_EQ(kExpectedLength,
             FPDFJavaScriptAction_GetScript(js.get(), nullptr, 0));
 

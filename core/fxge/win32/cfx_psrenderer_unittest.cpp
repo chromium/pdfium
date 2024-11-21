@@ -48,7 +48,7 @@ TEST(PSRendererTest, GenerateType42SfntData) {
   result = CFX_PSRenderer::GenerateType42SfntDataForTesting("empty", {});
   EXPECT_FALSE(result.has_value());
 
-  constexpr uint8_t kOddByteCountTestData[] = {0, 32, 55};
+  static constexpr uint8_t kOddByteCountTestData[] = {0, 32, 55};
   static constexpr char kExpectedOddByteCountResult[] = R"(/odd_sfnts [
 <
 002037
@@ -61,7 +61,7 @@ TEST(PSRendererTest, GenerateType42SfntData) {
   EXPECT_EQ(kExpectedOddByteCountResult, result.value());
 
   // Requires padding.
-  constexpr uint8_t kEvenByteCountTestData[] = {0, 32, 66, 77};
+  static constexpr uint8_t kEvenByteCountTestData[] = {0, 32, 66, 77};
   static constexpr char kExpectedEvenByteCountResult[] = R"(/even_sfnts [
 <
 0020424D00
@@ -194,8 +194,8 @@ restore
   auto output_stream = pdfium::MakeRetain<TestWriteStream>();
 
   {
-    constexpr int kWidth = 10;
-    constexpr int kHeight = 2;
+    static constexpr int kWidth = 10;
+    static constexpr int kHeight = 2;
     CFX_PSFontTracker font_tracker;
     const EncoderIface encoder_interface{&FakeA85Encode, nullptr, nullptr,
                                          nullptr, nullptr};

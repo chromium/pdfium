@@ -275,7 +275,7 @@ TEST_F(FPDFTextEmbedderTest, TextHebrewMirrored) {
   ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
-  constexpr int kCharCount = 10;
+  static constexpr int kCharCount = 10;
   ASSERT_EQ(kCharCount, FPDFText_CountChars(textpage.get()));
 
   unsigned short buffer[kCharCount + 1];
@@ -599,8 +599,8 @@ TEST_F(FPDFTextEmbedderTest, MAYBE_TextSearchLatinExtended) {
   ASSERT_TRUE(textpage);
 
   // Upper/lowercase 'a' with breve.
-  constexpr FPDF_WCHAR kNeedleUpper[] = {0x0102, 0x0000};
-  constexpr FPDF_WCHAR kNeedleLower[] = {0x0103, 0x0000};
+  static constexpr FPDF_WCHAR kNeedleUpper[] = {0x0102, 0x0000};
+  static constexpr FPDF_WCHAR kNeedleLower[] = {0x0103, 0x0000};
 
   for (const auto* needle : {kNeedleUpper, kNeedleLower}) {
     ScopedFPDFTextFind search(FPDFText_FindStart(textpage.get(), needle, 0, 0));
@@ -927,7 +927,7 @@ TEST_F(FPDFTextEmbedderTest, GetFontSize) {
   ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
-  constexpr auto kExpectedFontsSizes = fxcrt::ToArray<const double>(
+  static constexpr auto kExpectedFontsSizes = fxcrt::ToArray<const double>(
       {12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 1,  1,
        16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16});
 
@@ -1092,7 +1092,7 @@ TEST_F(FPDFTextEmbedderTest, IsInvalidUnicode) {
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
-  constexpr int kExpectedCharCount = 5;
+  static constexpr int kExpectedCharCount = 5;
   ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
   EXPECT_EQ(kExpectedCharCount, FPDFText_CountChars(textpage.get()));
@@ -1154,11 +1154,11 @@ TEST_F(FPDFTextEmbedderTest, GetTextWithHyphen) {
   // Expecting 'Veritaserum', except there is a \uFFFE where the hyphen was in
   // the original text. This is a weird thing that Adobe does, which we
   // replicate.
-  constexpr auto soft_expected = fxcrt::ToArray<unsigned short>(
+  static constexpr auto soft_expected = fxcrt::ToArray<unsigned short>(
       {0x0056, 0x0065, 0x0072, 0x0069, 0x0074, 0x0061, 0xfffe, 0x0073, 0x0065,
        0x0072, 0x0075, 0x006D, 0x0000});
   {
-    constexpr int count = std::size(soft_expected) - 1;
+    static constexpr int count = std::size(soft_expected) - 1;
     std::array<unsigned short, soft_expected.size()> buffer = {};
     EXPECT_EQ(count + 1,
               FPDFText_GetText(textpage.get(), 0, count, buffer.data()));
@@ -1169,13 +1169,13 @@ TEST_F(FPDFTextEmbedderTest, GetTextWithHyphen) {
   {
     // There isn't the \0 in the actual doc, but there is a \r\n, so need to
     // add 1 to get aligned.
-    constexpr size_t offset = std::size(soft_expected) + 1;
+    static constexpr size_t offset = std::size(soft_expected) + 1;
     // Expecting 'User-\r\ngenerated', the - is a unicode character, so cannot
     // store in a char[].
-    constexpr auto hard_expected = fxcrt::ToArray<unsigned short>(
+    static constexpr auto hard_expected = fxcrt::ToArray<unsigned short>(
         {0x0055, 0x0073, 0x0065, 0x0072, 0x2010, 0x000d, 0x000a, 0x0067, 0x0065,
          0x006e, 0x0065, 0x0072, 0x0061, 0x0074, 0x0065, 0x0064, 0x0000});
-    constexpr int count = std::size(hard_expected) - 1;
+    static constexpr int count = std::size(hard_expected) - 1;
     std::array<unsigned short, hard_expected.size()> buffer;
     EXPECT_EQ(count + 1,
               FPDFText_GetText(textpage.get(), offset, count, buffer.data()));
@@ -1233,8 +1233,8 @@ TEST_F(FPDFTextEmbedderTest, Bug1029) {
   ScopedFPDFTextPage textpage(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(textpage);
 
-  constexpr int page_range_offset = 171;
-  constexpr int page_range_length = 56;
+  static constexpr int page_range_offset = 171;
+  static constexpr int page_range_length = 56;
 
   // This text is:
   // 'METADATA table. When the split has committed, it noti' followed
@@ -1345,10 +1345,10 @@ TEST_F(FPDFTextEmbedderTest, GetText) {
   ASSERT_TRUE(text_object);
 
   // Positive testing.
-  constexpr char kHelloText[] = "Hello, world!";
+  static constexpr char kHelloText[] = "Hello, world!";
   // Return value includes the terminating NUL that is provided.
-  constexpr unsigned long kHelloUTF16Size = std::size(kHelloText) * 2;
-  constexpr wchar_t kHelloWideText[] = L"Hello, world!";
+  static constexpr unsigned long kHelloUTF16Size = std::size(kHelloText) * 2;
+  static constexpr wchar_t kHelloWideText[] = L"Hello, world!";
   unsigned long size =
       FPDFTextObj_GetText(text_object, text_page.get(), nullptr, 0);
   ASSERT_EQ(kHelloUTF16Size, size);
@@ -1453,8 +1453,8 @@ TEST_F(FPDFTextEmbedderTest, Bug642) {
   ScopedFPDFTextPage text_page(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(text_page);
 
-  constexpr char kText[] = "ABCD";
-  constexpr size_t kTextSize = std::size(kText);
+  static constexpr char kText[] = "ABCD";
+  static constexpr size_t kTextSize = std::size(kText);
   // -1 for CountChars not including the \0
   EXPECT_EQ(static_cast<int>(kTextSize) - 1,
             FPDFText_CountChars(text_page.get()));
@@ -1614,9 +1614,9 @@ TEST_F(FPDFTextEmbedderTest, GetStrokeColor) {
 }
 
 TEST_F(FPDFTextEmbedderTest, GetMatrix) {
-  constexpr char kExpectedText[] = "A1\r\nA2\r\nA3";
-  constexpr size_t kExpectedTextSize = std::size(kExpectedText);
-  constexpr auto kExpectedMatrices = fxcrt::ToArray<const FS_MATRIX>({
+  static constexpr char kExpectedText[] = "A1\r\nA2\r\nA3";
+  static constexpr size_t kExpectedTextSize = std::size(kExpectedText);
+  static constexpr auto kExpectedMatrices = fxcrt::ToArray<const FS_MATRIX>({
       {12.0f, 0.0f, 0.0f, 10.0f, 66.0f, 90.0f},
       {12.0f, 0.0f, 0.0f, 10.0f, 66.0f, 90.0f},
       {1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f},
@@ -1628,7 +1628,7 @@ TEST_F(FPDFTextEmbedderTest, GetMatrix) {
       {1.0f, 0.0f, 0.0f, 0.833333, 60.0f, 130.0f},
       {1.0f, 0.0f, 0.0f, 0.833333, 60.0f, 130.0f},
   });
-  constexpr size_t kExpectedCount = std::size(kExpectedMatrices);
+  static constexpr size_t kExpectedCount = std::size(kExpectedMatrices);
   static_assert(kExpectedCount + 1 == kExpectedTextSize,
                 "Bad expected matrix size");
 
@@ -1671,10 +1671,10 @@ TEST_F(FPDFTextEmbedderTest, GetMatrix) {
 
 TEST_F(FPDFTextEmbedderTest, CharBox) {
   // For a size 12 letter 'A'.
-  constexpr double kExpectedCharWidth = 8.460;
-  constexpr double kExpectedCharHeight = 6.600;
-  constexpr float kExpectedLooseCharWidth = 8.664f;
-  constexpr float kExpectedLooseCharHeight = 12.0f;
+  static constexpr double kExpectedCharWidth = 8.460;
+  static constexpr double kExpectedCharHeight = 6.600;
+  static constexpr float kExpectedLooseCharWidth = 8.664f;
+  static constexpr float kExpectedLooseCharHeight = 12.0f;
 
   ASSERT_TRUE(OpenDocument("font_matrix.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
@@ -1767,7 +1767,7 @@ TEST_F(FPDFTextEmbedderTest, SmallType3Glyph) {
 }
 
 TEST_F(FPDFTextEmbedderTest, BigtableTextExtraction) {
-  constexpr char kExpectedText[] =
+  static constexpr char kExpectedText[] =
       "{fay,jeff,sanjay,wilsonh,kerr,m3b,tushar,\x02k es,gruber}@google.com";
   ByteStringView expected_text(kExpectedText);
 
@@ -1796,7 +1796,7 @@ TEST_F(FPDFTextEmbedderTest, BigtableTextRects) {
   // TODO(crbug.com/40448046): The PDF uses fonts [/F2, /F1, /F2, /F1] with a
   // constant size on a single line. FPDFText_CountRects() should merge the text
   // into 4 rects.
-  constexpr auto kExpectedRects = fxcrt::ToArray<TextRect>({
+  static constexpr auto kExpectedRects = fxcrt::ToArray<TextRect>({
       {7.0195, 657.8847, 10.3102, 648.9273},
       {11.1978, 657.4722, 13.9057, 651.1599},
       {14.1085, 655.3652, 22.2230, 649.2321},
@@ -1844,7 +1844,7 @@ TEST_F(FPDFTextEmbedderTest, Bug1769) {
   // The first instance of "world" is visible to the human eye and should be
   // extracted as is. The second instance is not, so how it should be
   // extracted is debatable.
-  constexpr char kNeedsImprovementResult[] = "wo d wo d";
+  static constexpr char kNeedsImprovementResult[] = "wo d wo d";
   ASSERT_EQ(10, FPDFText_GetText(textpage.get(), 0, 128, buffer));
   EXPECT_THAT(pdfium::make_span(buffer).first(10u),
               ElementsAreArray(kNeedsImprovementResult));

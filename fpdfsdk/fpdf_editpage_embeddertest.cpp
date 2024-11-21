@@ -83,7 +83,7 @@ TEST_F(FPDFEditPageEmbedderTest, Rotation) {
 }
 
 TEST_F(FPDFEditPageEmbedderTest, HasTransparencyImage) {
-  constexpr int kExpectedObjectCount = 39;
+  static constexpr int kExpectedObjectCount = 39;
   ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
@@ -103,7 +103,7 @@ TEST_F(FPDFEditPageEmbedderTest, HasTransparencyInvalid) {
 }
 
 TEST_F(FPDFEditPageEmbedderTest, HasTransparencyPath) {
-  constexpr int kExpectedObjectCount = 8;
+  static constexpr int kExpectedObjectCount = 8;
   ASSERT_TRUE(OpenDocument("rectangles.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
@@ -119,7 +119,7 @@ TEST_F(FPDFEditPageEmbedderTest, HasTransparencyPath) {
 }
 
 TEST_F(FPDFEditPageEmbedderTest, HasTransparencyText) {
-  constexpr int kExpectedObjectCount = 2;
+  static constexpr int kExpectedObjectCount = 2;
   ASSERT_TRUE(OpenDocument("text_render_mode.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
@@ -135,8 +135,8 @@ TEST_F(FPDFEditPageEmbedderTest, HasTransparencyText) {
 }
 
 TEST_F(FPDFEditPageEmbedderTest, GetFillAndStrokeForImage) {
-  constexpr int kExpectedObjectCount = 39;
-  constexpr int kImageObjectsStartIndex = 33;
+  static constexpr int kExpectedObjectCount = 39;
+  static constexpr int kImageObjectsStartIndex = 33;
   ASSERT_TRUE(OpenDocument("embedded_images.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
@@ -182,7 +182,7 @@ TEST_F(FPDFEditPageEmbedderTest, DashingArrayAndPhase) {
                                           set_array.size(), 5.0f));
   }
 
-  constexpr int kExpectedObjectCount = 3;
+  static constexpr int kExpectedObjectCount = 3;
   ASSERT_TRUE(OpenDocument("dashed_lines.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
@@ -317,10 +317,10 @@ TEST_F(FPDFEditPageEmbedderTest, GetBoundsForNormalText) {
   FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 0);
   ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(obj));
 
-  constexpr float kExpectedLeft = 20.348f;
-  constexpr float kExpectedBottom = 48.164f;
-  constexpr float kExpectedRight = 83.36f;
-  constexpr float kExpectedTop = 58.328f;
+  static constexpr float kExpectedLeft = 20.348f;
+  static constexpr float kExpectedBottom = 48.164f;
+  static constexpr float kExpectedRight = 83.36f;
+  static constexpr float kExpectedTop = 58.328f;
 
   float left;
   float bottom;
@@ -352,10 +352,10 @@ TEST_F(FPDFEditPageEmbedderTest, GetBoundsForRotatedText) {
   FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 0);
   ASSERT_EQ(FPDF_PAGEOBJ_TEXT, FPDFPageObj_GetType(obj));
 
-  constexpr float kExpectedLeft = 98.9478f;
-  constexpr float kExpectedBottom = 78.2607f;
-  constexpr float kExpectedRight = 126.32983f;
-  constexpr float kExpectedTop = 105.64272f;
+  static constexpr float kExpectedLeft = 98.9478f;
+  static constexpr float kExpectedBottom = 78.2607f;
+  static constexpr float kExpectedRight = 126.32983f;
+  static constexpr float kExpectedTop = 105.64272f;
 
   float left;
   float bottom;
@@ -387,10 +387,10 @@ TEST_F(FPDFEditPageEmbedderTest, GetBoundsForNormalImage) {
   FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 2);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
 
-  constexpr float kExpectedLeft = 0.0f;
-  constexpr float kExpectedBottom = 90.0f;
-  constexpr float kExpectedRight = 40.0f;
-  constexpr float kExpectedTop = 150.0f;
+  static constexpr float kExpectedLeft = 0.0f;
+  static constexpr float kExpectedBottom = 90.0f;
+  static constexpr float kExpectedRight = 40.0f;
+  static constexpr float kExpectedTop = 150.0f;
 
   float left;
   float bottom;
@@ -422,10 +422,10 @@ TEST_F(FPDFEditPageEmbedderTest, GetBoundsForRotatedImage) {
   FPDF_PAGEOBJECT obj = FPDFPage_GetObject(page.get(), 0);
   ASSERT_EQ(FPDF_PAGEOBJ_IMAGE, FPDFPageObj_GetType(obj));
 
-  constexpr float kExpectedLeft = 100.0f;
-  constexpr float kExpectedBottom = 70.0f;
-  constexpr float kExpectedRight = 170.0f;
-  constexpr float kExpectedTop = 140.0f;
+  static constexpr float kExpectedLeft = 100.0f;
+  static constexpr float kExpectedBottom = 70.0f;
+  static constexpr float kExpectedRight = 170.0f;
+  static constexpr float kExpectedTop = 140.0f;
 
   float left;
   float bottom;
@@ -450,8 +450,8 @@ TEST_F(FPDFEditPageEmbedderTest, GetBoundsForRotatedImage) {
 }
 
 TEST_F(FPDFEditPageEmbedderTest, VerifyDashArraySaved) {
-  constexpr float kDashArray[] = {2.5, 3.6};
-  constexpr float kDashPhase = 1.2;
+  static constexpr float kDashArray[] = {2.5, 3.6};
+  static constexpr float kDashPhase = 1.2;
 
   CreateEmptyDocument();
   {
@@ -653,7 +653,7 @@ TEST_F(FPDFEditPageEmbedderTest, Bug378464305) {
   ASSERT_TRUE(page);
   const int page_width = static_cast<int>(FPDF_GetPageWidth(page.get()));
   const int page_height = static_cast<int>(FPDF_GetPageHeight(page.get()));
-  constexpr int kOriginalObjectCount = 8;
+  static constexpr int kOriginalObjectCount = 8;
   {
     // Sanity check rectangles.pdf before modifying it.
     ScopedFPDFBitmap bitmap = RenderLoadedPage(page.get());
@@ -663,7 +663,7 @@ TEST_F(FPDFEditPageEmbedderTest, Bug378464305) {
   }
 
   // Add a new path.
-  constexpr int kObjectCountWithNewPath = kOriginalObjectCount + 1;
+  static constexpr int kObjectCountWithNewPath = kOriginalObjectCount + 1;
   ScopedFPDFPageObject path_wrapper(FPDFPageObj_CreateNewPath(50, 50));
   FPDF_PAGEOBJECT path = path_wrapper.get();
   ASSERT_TRUE(path);

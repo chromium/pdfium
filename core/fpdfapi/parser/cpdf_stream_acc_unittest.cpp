@@ -25,7 +25,7 @@ TEST(StreamAccTest, ReadRawDataFailed) {
 // Regression test for crbug.com/1361849. Should not trigger dangling pointer
 // failure with UnownedPtr.
 TEST(StreamAccTest, DataStreamLifeTime) {
-  constexpr uint8_t kData[] = {'a', 'b', 'c'};
+  static constexpr uint8_t kData[] = {'a', 'b', 'c'};
   auto stream = pdfium::MakeRetain<CPDF_Stream>(kData);
   auto stream_acc = pdfium::MakeRetain<CPDF_StreamAcc>(stream);
   stream_acc->LoadAllDataRaw();

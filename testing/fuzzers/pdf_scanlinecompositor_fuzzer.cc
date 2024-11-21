@@ -36,7 +36,7 @@ constexpr FXDIB_Format kFormat[] = {
 }  // namespace
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
-  constexpr size_t kParameterSize = 33;
+  static constexpr size_t kParameterSize = 33;
   if (size < kParameterSize)
     return 0;
 

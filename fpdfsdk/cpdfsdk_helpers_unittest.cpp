@@ -16,7 +16,7 @@ using ::testing::IsEmpty;
 TEST(CPDFSDKHelpersTest, NulTerminateMaybeCopyAndReturnLength) {
   {
     const ByteString to_be_copied("toBeCopied");
-    constexpr size_t kExpectedToBeCopiedLen = 10;
+    static constexpr size_t kExpectedToBeCopiedLen = 10;
     ASSERT_EQ(kExpectedToBeCopiedLen, to_be_copied.GetLength());
     EXPECT_EQ(kExpectedToBeCopiedLen + 1,
               NulTerminateMaybeCopyAndReturnLength(to_be_copied,

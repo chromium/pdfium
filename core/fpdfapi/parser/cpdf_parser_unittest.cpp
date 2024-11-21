@@ -151,9 +151,9 @@ TEST(ParserTest, RebuildCrossRefCorrectly) {
   ASSERT_TRUE(parser.InitTestFromFile(test_file.c_str())) << test_file;
 
   ASSERT_TRUE(parser.RebuildCrossRef());
-  constexpr std::array<FX_FILESIZE, 7> offsets = {
+  static constexpr std::array<FX_FILESIZE, 7> offsets = {
       {0, 15, 61, 154, 296, 374, 450}};
-  constexpr std::array<uint16_t, 7> versions = {{0, 0, 2, 4, 6, 8, 0}};
+  static constexpr std::array<uint16_t, 7> versions = {{0, 0, 2, 4, 6, 8, 0}};
   for (size_t i = 0; i < std::size(offsets); ++i) {
     EXPECT_EQ(offsets[i], GetObjInfo(parser, i).pos);
   }
