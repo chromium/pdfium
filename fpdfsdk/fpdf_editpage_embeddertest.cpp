@@ -736,14 +736,7 @@ TEST_F(FPDFEditPageEmbedderTest, Bug378464305) {
     ASSERT_TRUE(saved_page);
 
     ScopedFPDFBitmap bitmap = RenderSavedPage(saved_page);
-    // TODO(crbug.com/378464305): Should be `new_path_checksum`.
-    const char* wrong_checksum = []() {
-      if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-        return "1da7ed00781f0b3b5c0c6b34af6ed4fd";
-      }
-      return "b95170fe98422dbc583388f9ad48e6b8";
-    }();
-    CompareBitmap(bitmap.get(), page_width, page_height, wrong_checksum);
+    CompareBitmap(bitmap.get(), page_width, page_height, new_path_checksum);
     EXPECT_EQ(kObjectCountWithNewPath, FPDFPage_CountObjects(saved_page));
 
     CloseSavedPage(saved_page);
