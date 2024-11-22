@@ -41,7 +41,7 @@ WideString EncodeToEdifactCodewords(const WideString& sb) {
   wchar_t c3 = len >= 3 ? sb[2] : 0;
   wchar_t c4 = len >= 4 ? sb[3] : 0;
   int32_t v = (c1 << 18) + (c2 << 12) + (c3 << 6) + c4;
-  constexpr size_t kBuflen = 3;
+  static constexpr size_t kBuflen = 3;
   wchar_t cw[kBuflen];
   cw[0] = static_cast<wchar_t>((v >> 16) & 255);
   cw[1] = static_cast<wchar_t>((v >> 8) & 255);

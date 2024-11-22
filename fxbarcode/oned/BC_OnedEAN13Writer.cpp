@@ -135,14 +135,14 @@ bool CBC_OnedEAN13Writer::ShowChars(WideStringView contents,
   if (!device)
     return false;
 
-  constexpr float kLeftPosition = 10.0f;
+  static constexpr float kLeftPosition = 10.0f;
   ByteString str = FX_UTF8Encode(contents);
   size_t length = str.GetLength();
   std::vector<TextCharPos> charpos(length);
   int32_t iFontSize = static_cast<int32_t>(fabs(m_fFontSize));
   int32_t iTextHeight = iFontSize + 1;
   ByteString tempStr = str.Substr(1, 6);
-  constexpr int32_t kWidth = 42;
+  static constexpr int32_t kWidth = 42;
 
   CFX_Matrix matr(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
   CFX_FloatRect rect(kLeftPosition, (float)(m_Height - iTextHeight),

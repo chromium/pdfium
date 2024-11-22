@@ -295,9 +295,9 @@ CJS_Result CJX_HostPseudoModel::openList(
     if (!pObject)
       return CJS_Result::Success();
 
-    constexpr Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kChildren,
-                                              XFA_ResolveFlag::kParent,
-                                              XFA_ResolveFlag::kSiblings};
+    static constexpr Mask<XFA_ResolveFlag> kFlags = {
+        XFA_ResolveFlag::kChildren, XFA_ResolveFlag::kParent,
+        XFA_ResolveFlag::kSiblings};
     std::optional<CFXJSE_Engine::ResolveResult> maybeResult =
         runtime->ResolveObjects(
             pObject, runtime->ToWideString(params[0]).AsStringView(), kFlags);
@@ -380,9 +380,9 @@ CJS_Result CJX_HostPseudoModel::resetData(
     if (!pObject)
       return CJS_Result::Success();
 
-    constexpr Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kChildren,
-                                              XFA_ResolveFlag::kParent,
-                                              XFA_ResolveFlag::kSiblings};
+    static constexpr Mask<XFA_ResolveFlag> kFlags = {
+        XFA_ResolveFlag::kChildren, XFA_ResolveFlag::kParent,
+        XFA_ResolveFlag::kSiblings};
     std::optional<CFXJSE_Engine::ResolveResult> maybeResult =
         runtime->ResolveObjects(pObject, wsName.AsStringView(), kFlags);
     if (!maybeResult.has_value() ||
@@ -443,9 +443,9 @@ CJS_Result CJX_HostPseudoModel::setFocus(
       if (!pObject)
         return CJS_Result::Success();
 
-      constexpr Mask<XFA_ResolveFlag> kFlags = {XFA_ResolveFlag::kChildren,
-                                                XFA_ResolveFlag::kParent,
-                                                XFA_ResolveFlag::kSiblings};
+      static constexpr Mask<XFA_ResolveFlag> kFlags = {
+          XFA_ResolveFlag::kChildren, XFA_ResolveFlag::kParent,
+          XFA_ResolveFlag::kSiblings};
       std::optional<CFXJSE_Engine::ResolveResult> maybeResult =
           runtime->ResolveObjects(
               pObject, runtime->ToWideString(params[0]).AsStringView(), kFlags);

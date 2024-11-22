@@ -651,7 +651,7 @@ void CFFL_InteractiveFormFiller::QueryWherePopup(
       break;
   }
 
-  constexpr float kMaxListBoxHeight = 140;
+  static constexpr float kMaxListBoxHeight = 140;
   const float fMaxListBoxHeight =
       std::clamp(kMaxListBoxHeight, fPopupMin, fPopupMax);
 

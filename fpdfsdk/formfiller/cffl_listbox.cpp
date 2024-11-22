@@ -31,7 +31,7 @@ CPWL_Wnd::CreateParams CFFL_ListBox::GetCreateParam() {
   cp.dwFlags |= PWS_VSCROLL;
 
   if (cp.dwFlags & PWS_AUTOFONTSIZE) {
-    constexpr float kDefaultListBoxFontSize = 12.0f;
+    static constexpr float kDefaultListBoxFontSize = 12.0f;
     cp.fFontSize = kDefaultListBoxFontSize;
   }
 

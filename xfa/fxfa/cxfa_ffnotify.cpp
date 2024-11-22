@@ -483,9 +483,9 @@ void CXFA_FFNotify::OnLayoutItemAdded(CXFA_LayoutProcessor* pLayout,
     return;
 
   CXFA_FFPageView* pNewPageView = pDocView->GetPageView(iPageIdx);
-  constexpr Mask<XFA_WidgetStatus> kRemove{XFA_WidgetStatus::kVisible,
-                                           XFA_WidgetStatus::kViewable,
-                                           XFA_WidgetStatus::kPrintable};
+  static constexpr Mask<XFA_WidgetStatus> kRemove{XFA_WidgetStatus::kVisible,
+                                                  XFA_WidgetStatus::kViewable,
+                                                  XFA_WidgetStatus::kPrintable};
   pWidget->ModifyStatus(dwStatus, kRemove);
   CXFA_FFPageView* pPrePageView = pWidget->GetPageView();
   if (pPrePageView != pNewPageView ||

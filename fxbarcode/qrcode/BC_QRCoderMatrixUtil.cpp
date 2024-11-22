@@ -323,7 +323,7 @@ bool EmbedPositionDetectionPattern(int32_t xStart,
 }
 
 bool EmbedPositionDetectionPatternsAndSeparators(CBC_CommonByteMatrix* matrix) {
-  constexpr int32_t pdpWidth = 7;
+  static constexpr int32_t pdpWidth = 7;
   if (!EmbedPositionDetectionPattern(0, 0, matrix))
     return false;
   if (!EmbedPositionDetectionPattern(matrix->GetWidth() - pdpWidth, 0, matrix))
@@ -331,7 +331,7 @@ bool EmbedPositionDetectionPatternsAndSeparators(CBC_CommonByteMatrix* matrix) {
   if (!EmbedPositionDetectionPattern(0, matrix->GetWidth() - pdpWidth, matrix))
     return false;
 
-  constexpr int32_t hspWidth = 8;
+  static constexpr int32_t hspWidth = 8;
   if (!EmbedHorizontalSeparationPattern(0, hspWidth - 1, matrix))
     return false;
   if (!EmbedHorizontalSeparationPattern(matrix->GetWidth() - hspWidth,
@@ -343,7 +343,7 @@ bool EmbedPositionDetectionPatternsAndSeparators(CBC_CommonByteMatrix* matrix) {
     return false;
   }
 
-  constexpr int32_t vspSize = 7;
+  static constexpr int32_t vspSize = 7;
   if (!EmbedVerticalSeparationPattern(vspSize, 0, matrix))
     return false;
   if (!EmbedVerticalSeparationPattern(matrix->GetHeight() - vspSize - 1, 0,

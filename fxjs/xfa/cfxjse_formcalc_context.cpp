@@ -2173,7 +2173,7 @@ void CFXJSE_FormCalcContext::Time2Num(
   const int32_t second = uniTime.GetSecond();
   const int32_t millisecond = uniTime.GetMillisecond();
 
-  constexpr int kMinutesInDay = 24 * 60;
+  static constexpr int kMinutesInDay = 24 * 60;
   int32_t minutes_with_tz =
       hour * 60 + minute - CXFA_TimeZoneProvider().GetTimeZoneInMinutes();
   minutes_with_tz %= kMinutesInDay;
@@ -3899,7 +3899,7 @@ void CFXJSE_FormCalcContext::Str(
   }
   float fNumber = ValueToFloat(info.GetIsolate(), numberValue);
 
-  constexpr int32_t kDefaultWidth = 10;
+  static constexpr int32_t kDefaultWidth = 10;
   int32_t iWidth = kDefaultWidth;
   if (argc > 1) {
     v8::Local<v8::Value> widthValue = GetSimpleValue(info, 1);
@@ -3910,10 +3910,10 @@ void CFXJSE_FormCalcContext::Str(
     }
   }
 
-  constexpr int32_t kDefaultPrecision = 0;
+  static constexpr int32_t kDefaultPrecision = 0;
   int32_t iPrecision = kDefaultPrecision;
   if (argc > 2) {
-    constexpr int32_t kMaxPrecision = 15;
+    static constexpr int32_t kMaxPrecision = 15;
     v8::Local<v8::Value> precision_value = GetSimpleValue(info, 2);
     iPrecision = std::max(0, static_cast<int32_t>(ValueToFloat(
                                  info.GetIsolate(), precision_value)));
@@ -5292,7 +5292,7 @@ bool CFXJSE_FormCalcContext::IsIsoTimeFormat(ByteStringView bsData) {
   }
 
   if (iIndex < pData.size() && pData[iIndex] == '.') {
-    constexpr int kSubSecondLength = 3;
+    static constexpr int kSubSecondLength = 3;
     if (iIndex + kSubSecondLength >= pData.size()) {
       return false;
     }

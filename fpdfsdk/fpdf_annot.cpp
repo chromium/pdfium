@@ -337,7 +337,7 @@ const CPDFSDK_Widget* GetWidgetOfTypes(
 
 const CPDFSDK_Widget* GetRadioButtonOrCheckBoxWidget(FPDF_FORMHANDLE handle,
                                                      FPDF_ANNOTATION annot) {
-  constexpr std::array<CPDF_FormField::Type, 2> kAllowedTypes = {
+  static constexpr std::array<CPDF_FormField::Type, 2> kAllowedTypes = {
       CPDF_FormField::kCheckBox, CPDF_FormField::kRadioButton};
   return GetWidgetOfTypes(handle, annot, kAllowedTypes);
 }
@@ -1113,7 +1113,7 @@ FPDFAnnot_SetAP(FPDF_ANNOTATION annot,
   // Annotation object's non-empty bounding rect will be used as the /BBox
   // for the associated /XObject object
   CFX_FloatRect rect = pAnnotDict->GetRectFor(pdfium::annotation::kRect);
-  constexpr float kMinSize = 0.000001f;
+  static constexpr float kMinSize = 0.000001f;
   if (rect.Width() < kMinSize || rect.Height() < kMinSize) {
     return false;
   }

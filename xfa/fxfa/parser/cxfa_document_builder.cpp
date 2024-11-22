@@ -638,7 +638,7 @@ CXFA_Node* CXFA_DocumentBuilder::NormalLoader(CXFA_Node* pXFANode,
                                               CFX_XMLNode* pXMLDoc,
                                               XFA_PacketType ePacketID,
                                               bool bUseAttribute) {
-  constexpr size_t kMaxExecuteRecursion = 1000;
+  static constexpr size_t kMaxExecuteRecursion = 1000;
   if (execute_recursion_depth_ > kMaxExecuteRecursion)
     return nullptr;
   AutoRestorer<size_t> restorer(&execute_recursion_depth_);

@@ -46,7 +46,7 @@ void CFGAS_GEShading::InitArgbArray(FX_ARGB begin_argb, FX_ARGB end_argb) {
   FX_BGRA_STRUCT<uint8_t> bgra0 = ArgbToBGRAStruct(begin_argb);
   FX_BGRA_STRUCT<uint8_t> bgra1 = ArgbToBGRAStruct(end_argb);
 
-  constexpr float f = static_cast<float>(kSteps - 1);
+  static constexpr float f = static_cast<float>(kSteps - 1);
   const float a_scale = 1.0 * (bgra1.alpha - bgra0.alpha) / f;
   const float r_scale = 1.0 * (bgra1.red - bgra0.red) / f;
   const float g_scale = 1.0 * (bgra1.green - bgra0.green) / f;

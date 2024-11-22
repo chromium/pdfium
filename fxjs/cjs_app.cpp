@@ -544,8 +544,8 @@ CJS_Result CJS_App::response(CJS_Runtime* pRuntime,
   if (IsExpandedParamKnown(newParams[4]))
     swLabel = pRuntime->ToWideString(newParams[4]);
 
-  constexpr int kMaxWideChars = 1024;
-  constexpr int kMaxBytes = kMaxWideChars * sizeof(uint16_t);
+  static constexpr int kMaxWideChars = 1024;
+  static constexpr int kMaxBytes = kMaxWideChars * sizeof(uint16_t);
   auto buffer = FixedSizeDataVector<uint8_t>::Zeroed(kMaxBytes);
   int byte_length = pRuntime->GetFormFillEnv()->JS_appResponse(
       swQuestion, swTitle, swDefault, swLabel, bPassword, buffer.span());

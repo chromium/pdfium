@@ -152,8 +152,8 @@ DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
     return DataVector<uint8_t>();
 
   std::array<uint8_t, kArraySize> widths = {};
-  constexpr int32_t kWideStrideNum = 3;
-  constexpr int32_t kNarrowStrideNum = kArraySize - kWideStrideNum;
+  static constexpr int32_t kWideStrideNum = 3;
+  static constexpr int32_t kNarrowStrideNum = kArraySize - kWideStrideNum;
   ByteString encodedContents = contents;
   if (m_bCalcChecksum)
     encodedContents += checksum;

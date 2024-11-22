@@ -97,12 +97,12 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
   if (!device)
     return false;
 
-  constexpr float kLeftPosition = 17.0f;
+  static constexpr float kLeftPosition = 17.0f;
   ByteString str = FX_UTF8Encode(contents);
   size_t length = str.GetLength();
   std::vector<TextCharPos> charpos(length);
   ByteString tempStr = str.Substr(1, 5);
-  constexpr float kWidth = 35.0f;
+  static constexpr float kWidth = 35.0f;
   float blank = 0.0f;
 
   length = tempStr.GetLength();
@@ -121,7 +121,7 @@ bool CBC_OnedUPCAWriter::ShowChars(WideStringView contents,
   matr1.Concat(matrix);
   re = matr1.TransformRect(rect1).GetOuterRect();
   device->FillRect(re, kBackgroundColor);
-  constexpr float kWidth1 = 7.0f;
+  static constexpr float kWidth1 = 7.0f;
   CFX_Matrix matr2(m_outputHScale, 0.0, 0.0, 1.0, 0.0, 0.0);
   CFX_FloatRect rect2(0.0, (float)(m_Height - iTextHeight), kWidth1 - 1,
                       (float)m_Height);
