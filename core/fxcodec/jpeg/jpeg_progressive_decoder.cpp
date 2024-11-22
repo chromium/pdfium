@@ -27,20 +27,19 @@ class CJpegContext final : public ProgressiveDecoderIface::Context {
   jmp_buf& GetJumpMark() { return m_Common.jmpbuf; }
 
   JpegCommon m_Common = {};
-  unsigned int m_SkipSize = 0;
 };
 
 extern "C" {
 
 static void error_fatal(j_common_ptr cinfo) {
-  auto* pContext = reinterpret_cast<CJpegContext*>(cinfo->client_data);
-  longjmp(pContext->m_Common.jmpbuf, -1);
+  auto* pCommon = reinterpret_cast<JpegCommon*>(cinfo->client_data);
+  longjmp(pCommon->jmpbuf, -1);
 }
 
 static void src_skip_data(jpeg_decompress_struct* cinfo, long num) {
   if (cinfo->src->bytes_in_buffer < static_cast<size_t>(num)) {
-    auto* pContext = reinterpret_cast<CJpegContext*>(cinfo->client_data);
-    pContext->m_SkipSize = (unsigned int)(num - cinfo->src->bytes_in_buffer);
+    auto* pCommon = reinterpret_cast<JpegCommon*>(cinfo->client_data);
+    pCommon->skip_size = (unsigned int)(num - cinfo->src->bytes_in_buffer);
     cinfo->src->bytes_in_buffer = 0;
   } else {
     // SAFETY: required from library during callback.
@@ -60,7 +59,7 @@ static void JpegLoadAttribute(const jpeg_decompress_struct& info,
 }
 
 CJpegContext::CJpegContext() {
-  m_Common.cinfo.client_data = this;
+  m_Common.cinfo.client_data = &m_Common;
   m_Common.cinfo.err = &m_Common.error_mgr;
 
   m_Common.error_mgr.error_exit = error_fatal;
@@ -113,7 +112,7 @@ JpegProgressiveDecoder::Start() {
     return nullptr;
   }
   pContext->m_Common.cinfo.src = &pContext->m_Common.source_mgr;
-  pContext->m_SkipSize = 0;
+  pContext->m_Common.skip_size = 0;
   return pContext;
 }
 
@@ -168,14 +167,14 @@ bool JpegProgressiveDecoder::Input(Context* pContext,
                                    RetainPtr<CFX_CodecMemory> codec_memory) {
   pdfium::span<uint8_t> src_buf = codec_memory->GetUnconsumedSpan();
   auto* ctx = static_cast<CJpegContext*>(pContext);
-  if (ctx->m_SkipSize) {
-    if (ctx->m_SkipSize > src_buf.size()) {
+  if (ctx->m_Common.skip_size) {
+    if (ctx->m_Common.skip_size > src_buf.size()) {
       ctx->m_Common.source_mgr.bytes_in_buffer = 0;
-      ctx->m_SkipSize -= src_buf.size();
+      ctx->m_Common.skip_size -= src_buf.size();
       return true;
     }
-    src_buf = src_buf.subspan(ctx->m_SkipSize);
-    ctx->m_SkipSize = 0;
+    src_buf = src_buf.subspan(ctx->m_Common.skip_size);
+    ctx->m_Common.skip_size = 0;
   }
   ctx->m_Common.source_mgr.next_input_byte = src_buf.data();
   ctx->m_Common.source_mgr.bytes_in_buffer = src_buf.size();

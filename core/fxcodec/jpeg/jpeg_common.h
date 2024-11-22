@@ -41,6 +41,7 @@ struct JpegCommon {
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr error_mgr;
   struct jpeg_source_mgr source_mgr;
+  unsigned int skip_size;
 };
 typedef struct JpegCommon JpegCommon;
 

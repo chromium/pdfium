@@ -38,7 +38,8 @@ static pdfium::span<const uint8_t> JpegScanSOI(
 extern "C" {
 
 static void error_fatal(j_common_ptr cinfo) {
-  longjmp(*(jmp_buf*)cinfo->client_data, -1);
+  auto* pCommon = reinterpret_cast<JpegCommon*>(cinfo->client_data);
+  longjmp(pCommon->jmpbuf, -1);
 }
 
 static void src_skip_data(jpeg_decompress_struct* cinfo, long num) {
@@ -72,7 +73,7 @@ static bool JpegLoadInfo(pdfium::span<const uint8_t> src_span,
   jpeg_common.error_mgr.reset_error_mgr = jpeg_common_error_do_nothing;
   jpeg_common.error_mgr.trace_level = 0;
   jpeg_common.cinfo.err = &jpeg_common.error_mgr;
-  jpeg_common.cinfo.client_data = &jpeg_common.jmpbuf;
+  jpeg_common.cinfo.client_data = &jpeg_common;
   if (!jpeg_common_create_decompress(&jpeg_common)) {
     return false;
   }
@@ -168,7 +169,7 @@ JpegDecoder::~JpegDecoder() {
 
 bool JpegDecoder::InitDecode(bool bAcceptKnownBadHeader) {
   m_Common.cinfo.err = &m_Common.error_mgr;
-  m_Common.cinfo.client_data = &m_Common.jmpbuf;
+  m_Common.cinfo.client_data = &m_Common;
   if (!jpeg_common_create_decompress(&m_Common)) {
     return false;
   }
