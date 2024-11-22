@@ -87,7 +87,7 @@ NOINLINE void FX_OutOfMemoryTerminate(size_t size) {
 
 #if BUILDFLAG(IS_WIN)
   // The same custom Windows exception code used in Chromium and Breakpad.
-  constexpr DWORD kOomExceptionCode = 0xe0000008;
+  static constexpr DWORD kOomExceptionCode = 0xe0000008;
   ULONG_PTR exception_args[] = {size};
   ::RaiseException(kOomExceptionCode, EXCEPTION_NONCONTINUABLE,
                    std::size(exception_args), exception_args);

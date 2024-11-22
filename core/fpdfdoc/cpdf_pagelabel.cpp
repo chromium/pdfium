@@ -18,12 +18,12 @@
 namespace {
 
 WideString MakeRoman(int num) {
-  constexpr auto kArabic = fxcrt::ToArray<const int>(
+  static constexpr auto kArabic = fxcrt::ToArray<const int>(
       {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1});
   const auto kRoman = fxcrt::ToArray<const WideStringView>(
       {L"m", L"cm", L"d", L"cd", L"c", L"xc", L"l", L"xl", L"x", L"ix", L"v",
        L"iv", L"i"});
-  constexpr int kMaxNum = 1000000;
+  static constexpr int kMaxNum = 1000000;
 
   num %= kMaxNum;
   int i = 0;
@@ -44,8 +44,8 @@ WideString MakeLetters(int num) {
     return WideString();
   }
 
-  constexpr int kMaxCount = 1000;
-  constexpr int kLetterCount = 26;
+  static constexpr int kMaxCount = 1000;
+  static constexpr int kLetterCount = 26;
 
   --num;
   const int count = (num / kLetterCount + 1) % kMaxCount;

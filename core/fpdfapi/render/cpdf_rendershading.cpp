@@ -592,7 +592,7 @@ struct CoonBezier {
   }
 
   void GetPoints(pdfium::span<CFX_Path::Point> path_points) const {
-    constexpr size_t kPointsCount = 4;
+    static constexpr size_t kPointsCount = 4;
     std::array<float, kPointsCount> points_x;
     std::array<float, kPointsCount> points_y;
     x.GetPoints(points_x);
@@ -602,7 +602,7 @@ struct CoonBezier {
   }
 
   void GetPointsReverse(pdfium::span<CFX_Path::Point> path_points) const {
-    constexpr size_t kPointsCount = 4;
+    static constexpr size_t kPointsCount = 4;
     std::array<float, kPointsCount> points_x;
     std::array<float, kPointsCount> points_y;
     x.GetPoints(points_x);

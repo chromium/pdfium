@@ -71,8 +71,8 @@ DataVector<uint8_t> CPDF_CryptoHandler::EncryptContent(
     CRYPT_AESSetKey(m_pAESContext.get(),
                     m_KeyLen == 32 ? m_EncryptKey.data() : realkey, m_KeyLen);
 
-    constexpr size_t kIVSize = 16;
-    constexpr size_t kPaddingSize = 16;
+    static constexpr size_t kIVSize = 16;
+    static constexpr size_t kPaddingSize = 16;
     const size_t source_padding_size = source.size() % kPaddingSize;
     const size_t source_data_size = source.size() - source_padding_size;
 

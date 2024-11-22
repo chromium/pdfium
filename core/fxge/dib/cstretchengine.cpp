@@ -499,7 +499,7 @@ void CStretchEngine::StretchVert() {
             uint32_t dest_r = 0;
             uint32_t dest_g = 0;
             uint32_t dest_b = 0;
-            constexpr size_t kPixelBytes = 4;
+            static constexpr size_t kPixelBytes = 4;
             for (int j = pWeights->m_SrcStart; j <= pWeights->m_SrcEnd; ++j) {
               uint32_t pixel_weight = pWeights->GetWeightForPosition(j);
               pdfium::span<const uint8_t> src_pixel = src_span.subspan(

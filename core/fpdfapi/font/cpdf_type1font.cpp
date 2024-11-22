@@ -150,7 +150,8 @@ void CPDF_Type1Font::LoadGlyphMap() {
     if (UseTTCharmapMSSymbol(face)) {
       bool bGotOne = false;
       for (uint32_t charcode = 0; charcode < kInternalTableSize; charcode++) {
-        constexpr std::array<uint8_t, 4> prefix = {{0x00, 0xf0, 0xf1, 0xf2}};
+        static constexpr std::array<uint8_t, 4> prefix = {
+            {0x00, 0xf0, 0xf1, 0xf2}};
         for (int j = 0; j < 4; j++) {
           uint16_t unicode = prefix[j] * 256 + charcode;
           m_GlyphIndex[charcode] = face->GetCharIndex(unicode);

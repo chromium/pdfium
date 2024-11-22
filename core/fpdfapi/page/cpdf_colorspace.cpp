@@ -386,12 +386,12 @@ FX_RGB_STRUCT<float> XYZ_to_sRGB_WhitePoint(float X,
   // The following RGB_xyz is based on
   // sRGB value {Rx,Ry}={0.64, 0.33}, {Gx,Gy}={0.30, 0.60}, {Bx,By}={0.15, 0.06}
 
-  constexpr float Rx = 0.64f;
-  constexpr float Ry = 0.33f;
-  constexpr float Gx = 0.30f;
-  constexpr float Gy = 0.60f;
-  constexpr float Bx = 0.15f;
-  constexpr float By = 0.06f;
+  static constexpr float Rx = 0.64f;
+  static constexpr float Ry = 0.33f;
+  static constexpr float Gx = 0.30f;
+  static constexpr float Gy = 0.60f;
+  static constexpr float Bx = 0.15f;
+  static constexpr float By = 0.06f;
   Matrix_3by3 RGB_xyz(Rx, Gx, Bx, Ry, Gy, By, 1 - Rx - Ry, 1 - Gx - Gy,
                       1 - Bx - By);
   Vector_3by1 whitePoint(Xw, Yw, Zw);

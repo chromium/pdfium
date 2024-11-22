@@ -48,7 +48,7 @@
 namespace {
 
 bool IsValidDimension(int value) {
-  constexpr int kMaxImageDimension = 0x01FFFF;
+  static constexpr int kMaxImageDimension = 0x01FFFF;
   return value > 0 && value <= kMaxImageDimension;
 }
 

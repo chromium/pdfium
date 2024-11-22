@@ -1102,8 +1102,8 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
   const bool is_printer = GetDeviceType() == DeviceType::kPrinter;
   bool try_native_text = true;
 #else
-  constexpr bool is_printer = false;
-  constexpr bool try_native_text = true;
+  static constexpr bool is_printer = false;
+  static constexpr bool try_native_text = true;
 #endif
 
 #if BUILDFLAG(IS_WIN)
@@ -1360,9 +1360,9 @@ void CFX_RenderDevice::DrawShadow(const CFX_Matrix& mtUser2Device,
                                   int32_t nTransparency,
                                   int32_t nStartGray,
                                   int32_t nEndGray) {
-  constexpr float kBorder = 0.5f;
-  constexpr float kSegmentWidth = 1.0f;
-  constexpr float kLineWidth = 1.5f;
+  static constexpr float kBorder = 0.5f;
+  static constexpr float kSegmentWidth = 1.0f;
+  static constexpr float kLineWidth = 1.5f;
 
   float fStepGray = (nEndGray - nStartGray) / rect.Height();
   CFX_PointF start(rect.left, 0);

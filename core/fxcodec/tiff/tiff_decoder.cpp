@@ -187,7 +187,7 @@ bool CTiffContext::InitDecoder(
     const RetainPtr<IFX_SeekableReadStream>& file_ptr) {
   // Limit set to make fuzzers happy. If this causes problems in the real world,
   // then adjust as needed.
-  constexpr tmsize_t kMaxTiffAllocBytes = 1536 * 1024 * 1024;  // 1.5 GB
+  static constexpr tmsize_t kMaxTiffAllocBytes = 1536 * 1024 * 1024;  // 1.5 GB
   std::unique_ptr<TIFFOpenOptions, TIFFOpenOptionsDeleter> options(
       TIFFOpenOptionsAlloc());
   CHECK(options);

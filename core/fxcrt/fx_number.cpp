@@ -61,7 +61,7 @@ FX_Number::FX_Number(ByteStringView strc) {
 
   // We have a sign, so if the value was greater then the signed integer
   // limits, then we've overflowed and must reset to the default value.
-  constexpr uint32_t uLimit =
+  static constexpr uint32_t uLimit =
       static_cast<uint32_t>(std::numeric_limits<int>::max());
 
   if (uValue > (bNegative ? uLimit + 1 : uLimit))

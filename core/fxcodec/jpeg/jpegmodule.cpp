@@ -459,7 +459,7 @@ bool JpegModule::JpegEncode(const RetainPtr<const CFX_DIBBase>& pSource,
     jpeg_write_scanlines(&cinfo, row_pointer, 1);
     UNSAFE_TODO({
       if (cinfo.next_scanline == row) {
-        constexpr size_t kJpegBlockSize = 1048576;
+        static constexpr size_t kJpegBlockSize = 1048576;
         *dest_buf =
             FX_Realloc(uint8_t, *dest_buf, dest_buf_length + kJpegBlockSize);
         dest.next_output_byte =

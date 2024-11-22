@@ -755,8 +755,8 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkCanvas& canvas)
   int height = m_pCanvas->imageInfo().height();
   DCHECK_EQ(kUnknown_SkColorType, m_pCanvas->imageInfo().colorType());
 
-  constexpr uint32_t kMagenta = 0xffff00ff;
-  constexpr uint32_t kGreen = 0xff00ff00;
+  static constexpr uint32_t kMagenta = 0xffff00ff;
+  static constexpr uint32_t kGreen = 0xff00ff00;
   m_pBitmap = MakeDebugBitmap(width, height, kMagenta);
   m_pBackdropBitmap = MakeDebugBitmap(width, height, kGreen);
 }

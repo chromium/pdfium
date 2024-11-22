@@ -48,14 +48,14 @@ std::optional<ByteString> GenerateType42SfntData(
     return std::nullopt;
 
   // Per Type 42 font spec.
-  constexpr size_t kMaxSfntStringSize = 65535;
+  static constexpr size_t kMaxSfntStringSize = 65535;
   if (font_data.size() > kMaxSfntStringSize) {
     // TODO(thestig): Fonts that are too big need to be written out in sections.
     return std::nullopt;
   }
 
   // Each byte is written as 2 ASCIIHex characters, so really 64 chars per line.
-  constexpr size_t kMaxBytesPerLine = 32;
+  static constexpr size_t kMaxBytesPerLine = 32;
   fxcrt::ostringstream output;
   output << "/" << psname << "_sfnts [\n<\n";
   size_t bytes_per_line = 0;
@@ -668,7 +668,7 @@ void CFX_PSRenderer::FindPSFontGlyph(CFX_GlyphCache* pGlyphCache,
         glyph.adjust_matrix.has_value() == charpos.m_bGlyphAdjust) {
       bool found;
       if (glyph.adjust_matrix.has_value()) {
-        constexpr float kEpsilon = 0.01f;
+        static constexpr float kEpsilon = 0.01f;
         const auto& adjust_matrix = glyph.adjust_matrix.value();
         found = fabs(adjust_matrix[0] - charpos.m_AdjustMatrix[0]) < kEpsilon &&
                 fabs(adjust_matrix[1] - charpos.m_AdjustMatrix[1]) < kEpsilon &&

@@ -1743,7 +1743,7 @@ FX_RGB_STRUCT<float> AdobeCMYK_to_sRGB(float c, float m, float y, float k) {
   // That value is close to the cusp but zero is the correct answer, and
   // getting the same answer as before is desirable.
   // All floats from 0.0 to 1.0 were tested and now give the same results.
-  constexpr float kRoundingOffset = 0.49999997f;
+  static constexpr float kRoundingOffset = 0.49999997f;
   uint8_t c1 = static_cast<int>(c * 255.f + kRoundingOffset);
   uint8_t m1 = static_cast<int>(m * 255.f + kRoundingOffset);
   uint8_t y1 = static_cast<int>(y * 255.f + kRoundingOffset);
@@ -1757,7 +1757,7 @@ FX_RGB_STRUCT<float> AdobeCMYK_to_sRGB(float c, float m, float y, float k) {
   FX_RGB_STRUCT<uint8_t> int_results = AdobeCMYK_to_sRGB1(c1, m1, y1, k1);
   // Multiply by a constant rather than dividing because division is much
   // more expensive.
-  constexpr float kToFloat = 1.0f / 255.0f;
+  static constexpr float kToFloat = 1.0f / 255.0f;
   return {
       int_results.red * kToFloat,
       int_results.green * kToFloat,

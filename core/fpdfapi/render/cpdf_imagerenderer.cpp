@@ -52,7 +52,7 @@ namespace {
 bool IsImageValueTooBig(int val) {
   // Likely large enough for any real rendering need, but sufficiently small
   // that operations like val1 + val2 or -val will not overflow.
-  constexpr int kLimit = 256 * 1024 * 1024;
+  static constexpr int kLimit = 256 * 1024 * 1024;
   FX_SAFE_INT32 safe_val = val;
   safe_val = safe_val.Abs();
   return safe_val.ValueOrDefault(kLimit) >= kLimit;

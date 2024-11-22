@@ -71,7 +71,7 @@ void CalcEncryptKey(const CPDF_Dictionary* pEncrypt,
   const bool is_revision_3_or_greater = pEncrypt->GetIntegerFor("R") >= 3;
   if (!ignore_metadata && is_revision_3_or_greater &&
       !pEncrypt->GetBooleanFor("EncryptMetadata", true)) {
-    constexpr uint32_t tag = 0xFFFFFFFF;
+    static constexpr uint32_t tag = 0xFFFFFFFF;
     CRYPT_MD5Update(&md5, pdfium::byte_span_from_ref(tag));
   }
   uint8_t digest[16];
@@ -479,7 +479,7 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
 
 ByteString CPDF_SecurityHandler::GetUserPassword(
     const ByteString& owner_password) const {
-  constexpr size_t kRequiredOkeyLength = 32;
+  static constexpr size_t kRequiredOkeyLength = 32;
   ByteString okey = m_pEncryptDict->GetByteStringFor("O");
   size_t okeylen = std::min<size_t>(okey.GetLength(), kRequiredOkeyLength);
   if (okeylen < kRequiredOkeyLength)

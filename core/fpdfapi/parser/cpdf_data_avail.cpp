@@ -36,7 +36,7 @@
 namespace {
 
 RetainPtr<CPDF_Object> GetResourceObject(RetainPtr<CPDF_Dictionary> pDict) {
-  constexpr size_t kMaxHierarchyDepth = 64;
+  static constexpr size_t kMaxHierarchyDepth = 64;
   size_t depth = 0;
 
   while (pDict) {

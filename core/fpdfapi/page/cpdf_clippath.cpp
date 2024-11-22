@@ -100,7 +100,7 @@ void CPDF_ClipPath::AppendPathWithAutoMerge(
 
 void CPDF_ClipPath::AppendTexts(
     std::vector<std::unique_ptr<CPDF_TextObject>>* pTexts) {
-  constexpr size_t kMaxTextObjects = 1024;
+  static constexpr size_t kMaxTextObjects = 1024;
   PathData* pData = m_Ref.GetPrivateCopy();
   if (pData->m_TextList.size() + pTexts->size() <= kMaxTextObjects) {
     for (size_t i = 0; i < pTexts->size(); i++)

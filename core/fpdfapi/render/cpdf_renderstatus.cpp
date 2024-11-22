@@ -1184,7 +1184,7 @@ void CPDF_RenderStatus::DrawTilingPattern(CPDF_TilingPattern* pattern,
     return;
   }
 
-  constexpr FX_ARGB kMask = 0;
+  static constexpr FX_ARGB kMask = 0;
   CompositeDIBitmap(std::move(screen), clip_box.left, clip_box.top, kMask,
                     /*alpha=*/1.0f, BlendMode::kNormal, CPDF_Transparency());
 }

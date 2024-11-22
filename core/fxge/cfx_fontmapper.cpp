@@ -352,7 +352,7 @@ bool IsStrUpper(const ByteString& str) {
 }
 
 void RemoveSubsettedFontPrefix(ByteString* subst_name) {
-  constexpr size_t kPrefixLength = 6;
+  static constexpr size_t kPrefixLength = 6;
   if (subst_name->GetLength() > kPrefixLength &&
       (*subst_name)[kPrefixLength] == '+' &&
       IsStrUpper(subst_name->First(kPrefixLength))) {

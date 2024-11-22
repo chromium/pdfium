@@ -1367,7 +1367,7 @@ void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,
 
     bool add_unicode = true;
     const int count = std::min(fxcrt::CollectionSize<int>(m_TempCharList), 7);
-    constexpr float kTextCharRatioGapDelta = 0.07f;
+    static constexpr float kTextCharRatioGapDelta = 0.07f;
     float threshold = charinfo.matrix().TransformXDistance(
         kTextCharRatioGapDelta * text_object->GetFontSize());
     for (int n = fxcrt::CollectionSize<int>(m_TempCharList);

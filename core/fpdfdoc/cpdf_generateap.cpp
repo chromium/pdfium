@@ -421,11 +421,11 @@ ByteString GenerateTextSymbolAP(const CFX_FloatRect& rect) {
   sAppStream << GenerateColorAP(CFX_Color(CFX_Color::Type::kRGB, 0, 0, 0),
                                 PaintOperation::kStroke);
 
-  constexpr int kBorderWidth = 1;
+  static constexpr int kBorderWidth = 1;
   sAppStream << kBorderWidth << " w\n";
 
-  constexpr float kHalfWidth = kBorderWidth / 2.0f;
-  constexpr int kTipDelta = 4;
+  static constexpr float kHalfWidth = kBorderWidth / 2.0f;
+  static constexpr int kTipDelta = 4;
 
   CFX_FloatRect outerRect1 = rect;
   outerRect1.Deflate(kHalfWidth, kHalfWidth);
@@ -883,7 +883,7 @@ bool GenerateStrikeOutAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
       rect.Normalize();
 
       float fY = (rect.top + rect.bottom) / 2;
-      constexpr int kLineWidth = 1;
+      static constexpr int kLineWidth = 1;
       sAppStream << kLineWidth << " w " << rect.left << " " << fY << " m "
                  << rect.right << " " << fY << " l S\n";
     }

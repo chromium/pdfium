@@ -474,7 +474,7 @@ bool TIFF_Predictor(int Colors,
 
 uint32_t EstimateFlateUncompressBufferSize(uint32_t orig_size,
                                            size_t src_size) {
-  constexpr uint32_t kMaxInitialAllocSize = 10000000;
+  static constexpr uint32_t kMaxInitialAllocSize = 10000000;
   uint32_t guess_size =
       orig_size ? orig_size : pdfium::checked_cast<uint32_t>(src_size * 2);
   return std::min(guess_size, kMaxInitialAllocSize);
