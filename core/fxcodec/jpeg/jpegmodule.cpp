@@ -149,7 +149,7 @@ class JpegDecoder final : public ScanlineDecoder {
   JpegCommon m_Common = {};
   pdfium::raw_span<const uint8_t> m_SrcSpan;
   DataVector<uint8_t> m_ScanlineBuf;
-  bool m_bInited = false;
+  bool m_bDecompressCreated = false;
   bool m_bStarted = false;
   bool m_bJpegTransform = false;
   uint32_t m_nDefaultScaleDenom = 1;
@@ -158,7 +158,7 @@ class JpegDecoder final : public ScanlineDecoder {
 JpegDecoder::JpegDecoder() = default;
 
 JpegDecoder::~JpegDecoder() {
-  if (m_bInited) {
+  if (m_bDecompressCreated) {
     jpeg_common_destroy_decompress(&m_Common);
   }
 
@@ -172,10 +172,10 @@ bool JpegDecoder::InitDecode(bool bAcceptKnownBadHeader) {
   if (!jpeg_common_create_decompress(&m_Common)) {
     return false;
   }
-  InitDecompressSrc();
-  m_bInited = true;
+  m_bDecompressCreated = true;
   m_Common.cinfo.image_width = m_OrigWidth;
   m_Common.cinfo.image_height = m_OrigHeight;
+  InitDecompressSrc();
   if (jpeg_common_read_header(&m_Common, TRUE) != JPEG_HEADER_OK) {
     std::optional<size_t> known_bad_header_offset;
     if (bAcceptKnownBadHeader) {
@@ -187,19 +187,21 @@ bool JpegDecoder::InitDecode(bool bAcceptKnownBadHeader) {
       }
     }
     jpeg_common_destroy_decompress(&m_Common);
+    m_bDecompressCreated = false;
     if (!known_bad_header_offset.has_value()) {
-      m_bInited = false;
       return false;
     }
     PatchUpKnownBadHeaderWithInvalidHeight(known_bad_header_offset.value());
     if (!jpeg_common_create_decompress(&m_Common)) {
       return false;
     }
-    InitDecompressSrc();
+    m_bDecompressCreated = true;
     m_Common.cinfo.image_width = m_OrigWidth;
     m_Common.cinfo.image_height = m_OrigHeight;
+    InitDecompressSrc();
     if (jpeg_common_read_header(&m_Common, TRUE) != JPEG_HEADER_OK) {
       jpeg_common_destroy_decompress(&m_Common);
+      m_bDecompressCreated = false;
       return false;
     }
   }
