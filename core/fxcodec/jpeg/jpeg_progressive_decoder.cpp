@@ -113,12 +113,16 @@ int JpegProgressiveDecoder::ReadHeader(Context* pContext,
   DCHECK(pAttribute);
 
   auto* ctx = static_cast<CJpegContext*>(pContext);
-  int ret = jpeg_read_header(&ctx->m_Common.cinfo, TRUE);
-  if (ret == JPEG_SUSPENDED)
+  int ret = jpeg_common_read_header(&ctx->m_Common, TRUE);
+  if (ret == -1) {
+    return -1;
+  }
+  if (ret == JPEG_SUSPENDED) {
     return 2;
-  if (ret != JPEG_HEADER_OK)
+  }
+  if (ret != JPEG_HEADER_OK) {
     return 1;
-
+  }
   *width = ctx->m_Common.cinfo.image_width;
   *height = ctx->m_Common.cinfo.image_height;
   *nComps = ctx->m_Common.cinfo.num_components;

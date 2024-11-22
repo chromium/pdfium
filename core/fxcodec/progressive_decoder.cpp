@@ -505,17 +505,15 @@ bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
   JpegProgressiveDecoder::GetInstance()->Input(m_pJpegContext.get(),
                                                m_pCodecMemory);
 
-  // Setting jump marker before calling ReadHeader, since a longjmp to
-  // the marker indicates a fatal error.
-  if (setjmp(JpegProgressiveDecoder::GetJumpMark(m_pJpegContext.get())) == -1) {
-    m_pJpegContext.reset();
+  int32_t readResult = JpegProgressiveDecoder::ReadHeader(
+      m_pJpegContext.get(), &m_SrcWidth, &m_SrcHeight, &m_SrcComponents,
+      pAttribute);
+  if (readResult == -1) {
+    // Fatal error signalled by longjmp,
     m_status = FXCODEC_STATUS::kError;
     return false;
   }
 
-  int32_t readResult = JpegProgressiveDecoder::ReadHeader(
-      m_pJpegContext.get(), &m_SrcWidth, &m_SrcHeight, &m_SrcComponents,
-      pAttribute);
   while (readResult == 2) {
     FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
     if (!JpegReadMoreData(&error_status)) {
@@ -525,6 +523,10 @@ bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
     readResult = JpegProgressiveDecoder::ReadHeader(
         m_pJpegContext.get(), &m_SrcWidth, &m_SrcHeight, &m_SrcComponents,
         pAttribute);
+    if (readResult == -1) {
+      m_status = FXCODEC_STATUS::kError;
+      return false;
+    }
   }
   if (!readResult) {
     m_SrcBPC = 8;
