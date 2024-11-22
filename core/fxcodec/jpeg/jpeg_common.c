@@ -5,6 +5,7 @@
 // Original code copyright 2014 Foxit Software Inc. http://www.foxitsoftware.com
 
 #include "core/fxcodec/jpeg/jpeg_common.h"
+#include "core/fxcrt/compiler_specific.h"
 
 // This is a thin C wrapper around the JPEG API to avoid calling setjmp() from
 // C++ code.
@@ -54,6 +55,27 @@ boolean jpeg_common_src_resync(j_decompress_ptr cinfo, int desired) {
   return FALSE;
 }
 
+void jpeg_common_src_skip_data_or_record(j_decompress_ptr cinfo, long num) {
+  if (cinfo->src->bytes_in_buffer < (size_t)num) {
+    JpegCommon* pCommon = (JpegCommon*)(cinfo->client_data);
+    pCommon->skip_size = (unsigned int)(num - cinfo->src->bytes_in_buffer);
+    cinfo->src->bytes_in_buffer = 0;
+  } else {
+    // SAFETY: required from library during callback.
+    UNSAFE_BUFFERS(cinfo->src->next_input_byte += num);
+    cinfo->src->bytes_in_buffer -= num;
+  }
+}
+
+void jpeg_common_src_skip_data_or_trap(j_decompress_ptr cinfo, long num) {
+  if (num > (long)cinfo->src->bytes_in_buffer) {
+    jpeg_common_error_fatal((j_common_ptr)cinfo);
+  }
+  // SAFETY: required from library API as checked above.
+  UNSAFE_BUFFERS(cinfo->src->next_input_byte += num);
+  cinfo->src->bytes_in_buffer -= num;
+}
+
 void jpeg_common_error_do_nothing(j_common_ptr cinfo) {}
 
 void jpeg_common_error_do_nothing_int(j_common_ptr cinfo, int arg) {}
@@ -65,3 +87,10 @@ void jpeg_common_error_fatal(j_common_ptr cinfo) {
   longjmp(pCommon->jmpbuf, -1);
 }
 
+#if BUILDFLAG(IS_WIN)
+void jpeg_common_dest_do_nothing(j_compress_ptr cinfo) {}
+
+boolean jpeg_common_dest_empty(j_compress_ptr cinfo) {
+  return FALSE;
+}
+#endif  // BUILDFLAG(IS_WIN)

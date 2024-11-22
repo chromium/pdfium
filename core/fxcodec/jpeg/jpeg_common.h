@@ -57,10 +57,17 @@ int jpeg_common_read_scanlines(JpegCommon* jpeg_common,
 void jpeg_common_src_do_nothing(j_decompress_ptr cinfo);
 boolean jpeg_common_src_fill_buffer(j_decompress_ptr cinfo);
 boolean jpeg_common_src_resync(j_decompress_ptr cinfo, int desired);
+void jpeg_common_src_skip_data_or_record(j_decompress_ptr cinfo, long num);
+void jpeg_common_src_skip_data_or_trap(j_decompress_ptr cinfo, long num);
 void jpeg_common_error_do_nothing(j_common_ptr cinfo);
 void jpeg_common_error_do_nothing_int(j_common_ptr cinfo, int arg);
 void jpeg_common_error_do_nothing_char(j_common_ptr cinfo, char* arg);
 void jpeg_common_error_fatal(j_common_ptr cinfo);
+
+#if BUILDFLAG(IS_WIN)
+void jpeg_common_dest_do_nothing(j_compress_ptr cinfo);
+boolean jpeg_common_dest_empty(j_compress_ptr cinfo);
+#endif  // BUILDFLAG(IS_WIN)
 
 #ifdef __cplusplus
 }  // extern "C"

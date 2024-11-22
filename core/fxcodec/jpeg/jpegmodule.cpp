@@ -35,27 +35,6 @@ static pdfium::span<const uint8_t> JpegScanSOI(
   return src_span;
 }
 
-extern "C" {
-
-static void src_skip_data(jpeg_decompress_struct* cinfo, long num) {
-  if (num > (long)cinfo->src->bytes_in_buffer) {
-    jpeg_common_error_fatal((j_common_ptr)cinfo);
-  }
-  // SAFETY: required from library API as checked above.
-  UNSAFE_BUFFERS(cinfo->src->next_input_byte += num);
-  cinfo->src->bytes_in_buffer -= num;
-}
-
-#if BUILDFLAG(IS_WIN)
-static void dest_do_nothing(j_compress_ptr cinfo) {}
-
-static boolean dest_empty(j_compress_ptr cinfo) {
-  return false;
-}
-#endif  // BUILDFLAG(IS_WIN)
-
-}  // extern "C"
-
 static bool JpegLoadInfo(pdfium::span<const uint8_t> src_span,
                          JpegModule::ImageInfo* pInfo) {
   src_span = JpegScanSOI(src_span);
@@ -75,7 +54,7 @@ static bool JpegLoadInfo(pdfium::span<const uint8_t> src_span,
 
   jpeg_common.source_mgr.init_source = jpeg_common_src_do_nothing;
   jpeg_common.source_mgr.term_source = jpeg_common_src_do_nothing;
-  jpeg_common.source_mgr.skip_input_data = src_skip_data;
+  jpeg_common.source_mgr.skip_input_data = jpeg_common_src_skip_data_or_trap;
   jpeg_common.source_mgr.fill_input_buffer = jpeg_common_src_fill_buffer;
   jpeg_common.source_mgr.resync_to_restart = jpeg_common_src_resync;
   jpeg_common.source_mgr.bytes_in_buffer = src_span.size();
@@ -235,7 +214,7 @@ bool JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
   m_Common.error_mgr.reset_error_mgr = jpeg_common_error_do_nothing;
   m_Common.source_mgr.init_source = jpeg_common_src_do_nothing;
   m_Common.source_mgr.term_source = jpeg_common_src_do_nothing;
-  m_Common.source_mgr.skip_input_data = src_skip_data;
+  m_Common.source_mgr.skip_input_data = jpeg_common_src_skip_data_or_trap;
   m_Common.source_mgr.fill_input_buffer = jpeg_common_src_fill_buffer;
   m_Common.source_mgr.resync_to_restart = jpeg_common_src_resync;
   m_bJpegTransform = ColorTransform;
@@ -427,9 +406,9 @@ bool JpegModule::JpegEncode(const RetainPtr<const CFX_DIBBase>& pSource,
     return false;
 
   jpeg_destination_mgr dest;
-  dest.init_destination = dest_do_nothing;
-  dest.term_destination = dest_do_nothing;
-  dest.empty_output_buffer = dest_empty;
+  dest.init_destination = jpeg_common_dest_do_nothing;
+  dest.term_destination = jpeg_common_dest_do_nothing;
+  dest.empty_output_buffer = jpeg_common_dest_empty;
   dest.next_output_byte = *dest_buf;
   dest.free_in_buffer = dest_buf_length;
   cinfo.dest = &dest;

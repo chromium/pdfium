@@ -31,18 +31,6 @@ class CJpegContext final : public ProgressiveDecoderIface::Context {
 
 extern "C" {
 
-static void src_skip_data(jpeg_decompress_struct* cinfo, long num) {
-  if (cinfo->src->bytes_in_buffer < static_cast<size_t>(num)) {
-    auto* pCommon = reinterpret_cast<JpegCommon*>(cinfo->client_data);
-    pCommon->skip_size = (unsigned int)(num - cinfo->src->bytes_in_buffer);
-    cinfo->src->bytes_in_buffer = 0;
-  } else {
-    // SAFETY: required from library during callback.
-    UNSAFE_BUFFERS(cinfo->src->next_input_byte += num);
-    cinfo->src->bytes_in_buffer -= num;
-  }
-}
-
 }  // extern "C"
 
 static void JpegLoadAttribute(const jpeg_decompress_struct& info,
@@ -65,7 +53,7 @@ CJpegContext::CJpegContext() {
 
   m_Common.source_mgr.init_source = jpeg_common_src_do_nothing;
   m_Common.source_mgr.term_source = jpeg_common_src_do_nothing;
-  m_Common.source_mgr.skip_input_data = src_skip_data;
+  m_Common.source_mgr.skip_input_data = jpeg_common_src_skip_data_or_record;
   m_Common.source_mgr.fill_input_buffer = jpeg_common_src_fill_buffer;
   m_Common.source_mgr.resync_to_restart = jpeg_common_src_resync;
 }
