@@ -505,36 +505,30 @@ bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
   JpegProgressiveDecoder::GetInstance()->Input(m_pJpegContext.get(),
                                                m_pCodecMemory);
 
-  int32_t readResult = JpegProgressiveDecoder::ReadHeader(
-      m_pJpegContext.get(), &m_SrcWidth, &m_SrcHeight, &m_SrcComponents,
-      pAttribute);
-  if (readResult == -1) {
-    // Fatal error signalled by longjmp,
-    m_status = FXCODEC_STATUS::kError;
-    return false;
-  }
-
-  while (readResult == 2) {
-    FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
-    if (!JpegReadMoreData(&error_status)) {
-      m_status = error_status;
-      return false;
-    }
-    readResult = JpegProgressiveDecoder::ReadHeader(
+  while (1) {
+    int read_result = JpegProgressiveDecoder::ReadHeader(
         m_pJpegContext.get(), &m_SrcWidth, &m_SrcHeight, &m_SrcComponents,
         pAttribute);
-    if (readResult == -1) {
-      m_status = FXCODEC_STATUS::kError;
-      return false;
+    switch (read_result) {
+      case JpegProgressiveDecoder::kFatal:
+      case JpegProgressiveDecoder::kError:
+        m_status = FXCODEC_STATUS::kError;
+        return false;
+      case JpegProgressiveDecoder::kOk:
+        m_SrcBPC = 8;
+        return true;
+      case JpegProgressiveDecoder::kNeedsMoreInput: {
+        FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
+        if (!JpegReadMoreData(&error_status)) {
+          m_status = error_status;
+          return false;
+        }
+        break;
+      }
+      default:
+        NOTREACHED();
     }
   }
-  if (!readResult) {
-    m_SrcBPC = 8;
-    return true;
-  }
-  m_pJpegContext.reset();
-  m_status = FXCODEC_STATUS::kError;
-  return false;
 }
 
 FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode() {

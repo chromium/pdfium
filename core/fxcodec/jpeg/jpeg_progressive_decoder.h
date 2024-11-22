@@ -21,12 +21,15 @@ class JpegProgressiveDecoder final : public ProgressiveDecoderIface {
  public:
   static void InitializeGlobals();
   static void DestroyGlobals();
-
   static JpegProgressiveDecoder* GetInstance();
-
   static std::unique_ptr<Context> Start();
-
   static jmp_buf& GetJumpMark(Context* pContext);
+
+  // Result codes for ReadHeader():
+  static constexpr int kFatal = -1;
+  static constexpr int kOk = 0;
+  static constexpr int kError = 1;
+  static constexpr int kNeedsMoreInput = 2;
 
   static int ReadHeader(Context* pContext,
                         int* width,

@@ -29,10 +29,6 @@ class CJpegContext final : public ProgressiveDecoderIface::Context {
   JpegCommon m_Common = {};
 };
 
-extern "C" {
-
-}  // extern "C"
-
 static void JpegLoadAttribute(const jpeg_decompress_struct& info,
                               CFX_DIBAttribute* pAttribute) {
   pAttribute->m_nXDPI = info.X_density;
@@ -115,19 +111,19 @@ int JpegProgressiveDecoder::ReadHeader(Context* pContext,
   auto* ctx = static_cast<CJpegContext*>(pContext);
   int ret = jpeg_common_read_header(&ctx->m_Common, TRUE);
   if (ret == -1) {
-    return -1;
+    return kFatal;
   }
   if (ret == JPEG_SUSPENDED) {
-    return 2;
+    return kNeedsMoreInput;
   }
   if (ret != JPEG_HEADER_OK) {
-    return 1;
+    return kError;
   }
   *width = ctx->m_Common.cinfo.image_width;
   *height = ctx->m_Common.cinfo.image_height;
   *nComps = ctx->m_Common.cinfo.num_components;
   JpegLoadAttribute(ctx->m_Common.cinfo, pAttribute);
-  return 0;
+  return kOk;
 }
 
 // static
