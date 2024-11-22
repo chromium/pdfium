@@ -16,7 +16,6 @@
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "core/fxcrt/ptr_util.h"
 #include "core/fxge/dib/cfx_dibbase.h"
 #include "core/fxge/dib/fx_dib.h"
 
@@ -65,16 +64,16 @@ CJpegContext::CJpegContext() {
   m_Common.cinfo.err = &m_Common.error_mgr;
 
   m_Common.error_mgr.error_exit = error_fatal;
-  m_Common.error_mgr.emit_message = error_do_nothing_int;
-  m_Common.error_mgr.output_message = error_do_nothing;
-  m_Common.error_mgr.format_message = error_do_nothing_char;
-  m_Common.error_mgr.reset_error_mgr = error_do_nothing;
+  m_Common.error_mgr.emit_message = jpeg_common_error_do_nothing_int;
+  m_Common.error_mgr.output_message = jpeg_common_error_do_nothing;
+  m_Common.error_mgr.format_message = jpeg_common_error_do_nothing_char;
+  m_Common.error_mgr.reset_error_mgr = jpeg_common_error_do_nothing;
 
-  m_Common.source_mgr.init_source = src_do_nothing;
-  m_Common.source_mgr.term_source = src_do_nothing;
+  m_Common.source_mgr.init_source = jpeg_common_src_do_nothing;
+  m_Common.source_mgr.term_source = jpeg_common_src_do_nothing;
   m_Common.source_mgr.skip_input_data = src_skip_data;
-  m_Common.source_mgr.fill_input_buffer = src_fill_buffer;
-  m_Common.source_mgr.resync_to_restart = src_resync;
+  m_Common.source_mgr.fill_input_buffer = jpeg_common_src_fill_buffer;
+  m_Common.source_mgr.resync_to_restart = jpeg_common_src_resync;
 }
 
 CJpegContext::~CJpegContext() {
@@ -109,17 +108,13 @@ JpegProgressiveDecoder* JpegProgressiveDecoder::GetInstance() {
 // static
 std::unique_ptr<ProgressiveDecoderIface::Context>
 JpegProgressiveDecoder::Start() {
-  // Use ordinary pointer until past the possibility of a longjump.
-  auto* pContext = new CJpegContext();
-  if (setjmp(pContext->m_Common.jmpbuf) == -1) {
-    delete pContext;
+  auto pContext = std::make_unique<CJpegContext>();
+  if (!jpeg_common_create_decompress(&pContext->m_Common)) {
     return nullptr;
   }
-
-  jpeg_create_decompress(&pContext->m_Common.cinfo);
   pContext->m_Common.cinfo.src = &pContext->m_Common.source_mgr;
   pContext->m_SkipSize = 0;
-  return pdfium::WrapUnique(pContext);
+  return pContext;
 }
 
 // static
