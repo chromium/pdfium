@@ -31,11 +31,6 @@ class CJpegContext final : public ProgressiveDecoderIface::Context {
 
 extern "C" {
 
-static void error_fatal(j_common_ptr cinfo) {
-  auto* pCommon = reinterpret_cast<JpegCommon*>(cinfo->client_data);
-  longjmp(pCommon->jmpbuf, -1);
-}
-
 static void src_skip_data(jpeg_decompress_struct* cinfo, long num) {
   if (cinfo->src->bytes_in_buffer < static_cast<size_t>(num)) {
     auto* pCommon = reinterpret_cast<JpegCommon*>(cinfo->client_data);
@@ -62,7 +57,7 @@ CJpegContext::CJpegContext() {
   m_Common.cinfo.client_data = &m_Common;
   m_Common.cinfo.err = &m_Common.error_mgr;
 
-  m_Common.error_mgr.error_exit = error_fatal;
+  m_Common.error_mgr.error_exit = jpeg_common_error_fatal;
   m_Common.error_mgr.emit_message = jpeg_common_error_do_nothing_int;
   m_Common.error_mgr.output_message = jpeg_common_error_do_nothing;
   m_Common.error_mgr.format_message = jpeg_common_error_do_nothing_char;

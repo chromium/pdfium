@@ -60,6 +60,7 @@ boolean jpeg_common_src_resync(j_decompress_ptr cinfo, int desired);
 void jpeg_common_error_do_nothing(j_common_ptr cinfo);
 void jpeg_common_error_do_nothing_int(j_common_ptr cinfo, int arg);
 void jpeg_common_error_do_nothing_char(j_common_ptr cinfo, char* arg);
+void jpeg_common_error_fatal(j_common_ptr cinfo);
 
 #ifdef __cplusplus
 }  // extern "C"

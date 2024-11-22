@@ -37,14 +37,9 @@ static pdfium::span<const uint8_t> JpegScanSOI(
 
 extern "C" {
 
-static void error_fatal(j_common_ptr cinfo) {
-  auto* pCommon = reinterpret_cast<JpegCommon*>(cinfo->client_data);
-  longjmp(pCommon->jmpbuf, -1);
-}
-
 static void src_skip_data(jpeg_decompress_struct* cinfo, long num) {
   if (num > (long)cinfo->src->bytes_in_buffer) {
-    error_fatal((j_common_ptr)cinfo);
+    jpeg_common_error_fatal((j_common_ptr)cinfo);
   }
   // SAFETY: required from library API as checked above.
   UNSAFE_BUFFERS(cinfo->src->next_input_byte += num);
@@ -66,7 +61,7 @@ static bool JpegLoadInfo(pdfium::span<const uint8_t> src_span,
   src_span = JpegScanSOI(src_span);
 
   JpegCommon jpeg_common = {};
-  jpeg_common.error_mgr.error_exit = error_fatal;
+  jpeg_common.error_mgr.error_exit = jpeg_common_error_fatal;
   jpeg_common.error_mgr.emit_message = jpeg_common_error_do_nothing_int;
   jpeg_common.error_mgr.output_message = jpeg_common_error_do_nothing;
   jpeg_common.error_mgr.format_message = jpeg_common_error_do_nothing_char;
@@ -233,7 +228,7 @@ bool JpegDecoder::Create(pdfium::span<const uint8_t> src_span,
 
   PatchUpTrailer();
 
-  m_Common.error_mgr.error_exit = error_fatal;
+  m_Common.error_mgr.error_exit = jpeg_common_error_fatal;
   m_Common.error_mgr.emit_message = jpeg_common_error_do_nothing_int;
   m_Common.error_mgr.output_message = jpeg_common_error_do_nothing;
   m_Common.error_mgr.format_message = jpeg_common_error_do_nothing_char;
