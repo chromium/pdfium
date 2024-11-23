@@ -130,7 +130,7 @@ int JpegProgressiveDecoder::ReadHeader(Context* pContext,
 bool JpegProgressiveDecoder::StartScanline(Context* pContext) {
   auto* ctx = static_cast<CJpegContext*>(pContext);
   ctx->m_Common.cinfo.scale_denom = 1;
-  return !!jpeg_start_decompress(&ctx->m_Common.cinfo);
+  return !!jpeg_common_start_decompress(&ctx->m_Common);
 }
 
 // static

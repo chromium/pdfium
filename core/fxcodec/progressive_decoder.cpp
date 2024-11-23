@@ -532,17 +532,8 @@ bool ProgressiveDecoder::JpegDetectImageTypeInBuffer(
 }
 
 FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode() {
-  // Setting jump marker before calling StartScanLine, since a longjmp to
-  // the marker indicates a fatal error.
-  if (setjmp(JpegProgressiveDecoder::GetJumpMark(m_pJpegContext.get())) == -1) {
-    m_pJpegContext.reset();
-    m_status = FXCODEC_STATUS::kError;
-    return FXCODEC_STATUS::kError;
-  }
-
-  bool start_status =
-      JpegProgressiveDecoder::StartScanline(m_pJpegContext.get());
-  while (!start_status) {
+  while (!JpegProgressiveDecoder::StartScanline(m_pJpegContext.get())) {
+    // Maybe it needs more data.
     FXCODEC_STATUS error_status = FXCODEC_STATUS::kError;
     if (!JpegReadMoreData(&error_status)) {
       m_pDeviceBitmap = nullptr;
@@ -550,8 +541,6 @@ FXCODEC_STATUS ProgressiveDecoder::JpegStartDecode() {
       m_status = error_status;
       return m_status;
     }
-
-    start_status = JpegProgressiveDecoder::StartScanline(m_pJpegContext.get());
   }
   m_DecodeBuf.resize(FxAlignToBoundary<4>(m_SrcWidth * m_SrcComponents));
   FXDIB_ResampleOptions options;
