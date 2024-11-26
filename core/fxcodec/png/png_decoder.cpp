@@ -166,6 +166,29 @@ void _png_get_row_func(png_structp png_ptr,
   pContext->m_pDelegate->PngFillScanlineBufCompleted(pass, row_num);
 }
 
+int _png_set_read_and_error_fns(png_structrp png_ptr,
+                                void* user_ctx,
+                                char* error_buf) {
+  if (setjmp(png_jmpbuf(png_ptr))) {
+    return 0;
+  }
+  png_set_progressive_read_fn(png_ptr, user_ctx, _png_get_header_func,
+                              _png_get_row_func, _png_get_end_func);
+  png_set_error_fn(png_ptr, error_buf, _png_error_data, _png_warning_data);
+  return 1;
+}
+
+int _png_continue_decode(png_structrp png_ptr,
+                         png_inforp info_ptr,
+                         uint8_t* buffer,
+                         size_t size) {
+  if (setjmp(png_jmpbuf(png_ptr))) {
+    return 0;
+  }
+  png_process_data(png_ptr, info_ptr, buffer, size);
+  return 1;
+}
+
 }  // extern "C"
 
 CPngContext::CPngContext(PngDecoder::Delegate* pDelegate)
@@ -184,20 +207,16 @@ std::unique_ptr<ProgressiveDecoderIface::Context> PngDecoder::StartDecode(
   auto p = std::make_unique<CPngContext>(pDelegate);
   p->m_pPng =
       png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-  if (!p->m_pPng)
+  if (!p->m_pPng) {
     return nullptr;
-
+  }
   p->m_pInfo = png_create_info_struct(p->m_pPng);
-  if (!p->m_pInfo)
+  if (!p->m_pInfo) {
     return nullptr;
-
-  if (setjmp(png_jmpbuf(p->m_pPng)))
+  }
+  if (!_png_set_read_and_error_fns(p->m_pPng, p.get(), p->m_szLastError)) {
     return nullptr;
-
-  png_set_progressive_read_fn(p->m_pPng, p.get(), _png_get_header_func,
-                              _png_get_row_func, _png_get_end_func);
-  png_set_error_fn(p->m_pPng, p->m_szLastError, _png_error_data,
-                   _png_warning_data);
+  }
   return p;
 }
 
@@ -206,15 +225,15 @@ bool PngDecoder::ContinueDecode(ProgressiveDecoderIface::Context* pContext,
                                 RetainPtr<CFX_CodecMemory> codec_memory,
                                 CFX_DIBAttribute* pAttribute) {
   auto* ctx = static_cast<CPngContext*>(pContext);
-  if (setjmp(png_jmpbuf(ctx->m_pPng))) {
+  pdfium::span<uint8_t> src_buf = codec_memory->GetUnconsumedSpan();
+  if (!_png_continue_decode(ctx->m_pPng, ctx->m_pInfo, src_buf.data(),
+                            src_buf.size())) {
     if (pAttribute &&
         strcmp(ctx->m_szLastError, "Read Header Callback Error") == 0) {
       _png_load_bmp_attribute(ctx->m_pPng, ctx->m_pInfo, pAttribute);
     }
     return false;
   }
-  pdfium::span<uint8_t> src_buf = codec_memory->GetUnconsumedSpan();
-  png_process_data(ctx->m_pPng, ctx->m_pInfo, src_buf.data(), src_buf.size());
   return true;
 }
 
