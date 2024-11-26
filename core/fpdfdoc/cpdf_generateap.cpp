@@ -41,6 +41,8 @@
 
 namespace {
 
+constexpr char kGSDictName[] = "GS";
+
 struct CPVT_Dash {
   CPVT_Dash(int32_t dash, int32_t gap, int32_t phase)
       : dash(dash), gap(gap), phase(phase) {}
@@ -535,7 +537,6 @@ ByteString GenerateTextSymbolAP(const CFX_FloatRect& rect) {
 
 RetainPtr<CPDF_Dictionary> GenerateExtGStateDict(
     const CPDF_Dictionary& annot_dict,
-    const ByteString& sExtGSDictName,
     const ByteString& blend_mode) {
   auto gs_dict =
       pdfium::MakeRetain<CPDF_Dictionary>(annot_dict.GetByteStringPool());
@@ -549,7 +550,7 @@ RetainPtr<CPDF_Dictionary> GenerateExtGStateDict(
 
   auto resources_dict =
       pdfium::MakeRetain<CPDF_Dictionary>(annot_dict.GetByteStringPool());
-  resources_dict->SetFor(sExtGSDictName, std::move(gs_dict));
+  resources_dict->SetFor(kGSDictName, std::move(gs_dict));
   return resources_dict;
 }
 
@@ -594,8 +595,7 @@ void GenerateAndSetAPDict(CPDF_Document* doc,
 
 bool GenerateCircleAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
   fxcrt::ostringstream app_stream;
-  ByteString sExtGSDictName = "GS";
-  app_stream << "/" << sExtGSDictName << " gs ";
+  app_stream << "/" << kGSDictName << " gs ";
 
   RetainPtr<const CPDF_Array> interior_color = annot_dict->GetArrayFor("IC");
   app_stream << GetColorStringWithDefault(
@@ -656,7 +656,7 @@ bool GenerateCircleAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
   bool is_fill_rect = interior_color && !interior_color->IsEmpty();
   app_stream << GetPaintOperatorString(is_stroke_rect, is_fill_rect) << "\n";
 
-  auto gs_dict = GenerateExtGStateDict(*annot_dict, sExtGSDictName, "Normal");
+  auto gs_dict = GenerateExtGStateDict(*annot_dict, "Normal");
   auto resources_dict = GenerateResourcesDict(doc, std::move(gs_dict), nullptr);
   GenerateAndSetAPDict(doc, annot_dict, &app_stream, std::move(resources_dict),
                        false /*IsTextMarkupAnnotation*/);
@@ -665,8 +665,7 @@ bool GenerateCircleAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
 
 bool GenerateHighlightAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
   fxcrt::ostringstream app_stream;
-  ByteString sExtGSDictName = "GS";
-  app_stream << "/" << sExtGSDictName << " gs ";
+  app_stream << "/" << kGSDictName << " gs ";
 
   app_stream << GetColorStringWithDefault(
       annot_dict->GetArrayFor(pdfium::annotation::kC).Get(),
@@ -687,7 +686,7 @@ bool GenerateHighlightAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
     }
   }
 
-  auto gs_dict = GenerateExtGStateDict(*annot_dict, sExtGSDictName, "Multiply");
+  auto gs_dict = GenerateExtGStateDict(*annot_dict, "Multiply");
   auto resources_dict = GenerateResourcesDict(doc, std::move(gs_dict), nullptr);
   GenerateAndSetAPDict(doc, annot_dict, &app_stream, std::move(resources_dict),
                        true /*IsTextMarkupAnnotation*/);
@@ -707,9 +706,8 @@ bool GenerateInkAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
     return false;
   }
 
-  ByteString sExtGSDictName = "GS";
   fxcrt::ostringstream app_stream;
-  app_stream << "/" << sExtGSDictName << " gs ";
+  app_stream << "/" << kGSDictName << " gs ";
   app_stream << GetColorStringWithDefault(
       annot_dict->GetArrayFor(pdfium::annotation::kC).Get(),
       CFX_Color(CFX_Color::Type::kRGB, 0, 0, 0), PaintOperation::kStroke);
@@ -740,7 +738,7 @@ bool GenerateInkAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
     app_stream << "S\n";
   }
 
-  auto gs_dict = GenerateExtGStateDict(*annot_dict, sExtGSDictName, "Normal");
+  auto gs_dict = GenerateExtGStateDict(*annot_dict, "Normal");
   auto resources_dict = GenerateResourcesDict(doc, std::move(gs_dict), nullptr);
   GenerateAndSetAPDict(doc, annot_dict, &app_stream, std::move(resources_dict),
                        false /*IsTextMarkupAnnotation*/);
@@ -749,8 +747,7 @@ bool GenerateInkAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
 
 bool GenerateTextAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
   fxcrt::ostringstream app_stream;
-  ByteString sExtGSDictName = "GS";
-  app_stream << "/" << sExtGSDictName << " gs ";
+  app_stream << "/" << kGSDictName << " gs ";
 
   CFX_FloatRect rect = annot_dict->GetRectFor(pdfium::annotation::kRect);
   const float note_length = 20;
@@ -760,7 +757,7 @@ bool GenerateTextAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
 
   app_stream << GenerateTextSymbolAP(note_rect);
 
-  auto gs_dict = GenerateExtGStateDict(*annot_dict, sExtGSDictName, "Normal");
+  auto gs_dict = GenerateExtGStateDict(*annot_dict, "Normal");
   auto resources_dict = GenerateResourcesDict(doc, std::move(gs_dict), nullptr);
   GenerateAndSetAPDict(doc, annot_dict, &app_stream, std::move(resources_dict),
                        false /*IsTextMarkupAnnotation*/);
@@ -769,8 +766,7 @@ bool GenerateTextAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
 
 bool GenerateUnderlineAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
   fxcrt::ostringstream app_stream;
-  ByteString sExtGSDictName = "GS";
-  app_stream << "/" << sExtGSDictName << " gs ";
+  app_stream << "/" << kGSDictName << " gs ";
 
   app_stream << GetColorStringWithDefault(
       annot_dict->GetArrayFor(pdfium::annotation::kC).Get(),
@@ -791,7 +787,7 @@ bool GenerateUnderlineAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
     }
   }
 
-  auto gs_dict = GenerateExtGStateDict(*annot_dict, sExtGSDictName, "Normal");
+  auto gs_dict = GenerateExtGStateDict(*annot_dict, "Normal");
   auto resources_dict = GenerateResourcesDict(doc, std::move(gs_dict), nullptr);
   GenerateAndSetAPDict(doc, annot_dict, &app_stream, std::move(resources_dict),
                        true /*IsTextMarkupAnnotation*/);
@@ -800,8 +796,7 @@ bool GenerateUnderlineAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
 
 bool GeneratePopupAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
   fxcrt::ostringstream app_stream;
-  ByteString sExtGSDictName = "GS";
-  app_stream << "/" << sExtGSDictName << " gs\n";
+  app_stream << "/" << kGSDictName << " gs\n";
 
   app_stream << GenerateColorAP(CFX_Color(CFX_Color::Type::kRGB, 1, 1, 0),
                                 PaintOperation::kFill);
@@ -829,7 +824,7 @@ bool GeneratePopupAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
   RetainPtr<CPDF_Dictionary> resource_font_dict =
       GenerateResourceFontDict(doc, font_name, font_dict->GetObjNum());
   RetainPtr<CPDF_Dictionary> gs_dict =
-      GenerateExtGStateDict(*annot_dict, sExtGSDictName, "Normal");
+      GenerateExtGStateDict(*annot_dict, "Normal");
   RetainPtr<CPDF_Dictionary> resources_dict = GenerateResourcesDict(
       doc, std::move(gs_dict), std::move(resource_font_dict));
 
@@ -841,9 +836,8 @@ bool GeneratePopupAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
 }
 
 bool GenerateSquareAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
-  const ByteString sExtGSDictName = "GS";
   fxcrt::ostringstream app_stream;
-  app_stream << "/" << sExtGSDictName << " gs ";
+  app_stream << "/" << kGSDictName << " gs ";
 
   RetainPtr<const CPDF_Array> interior_color = annot_dict->GetArrayFor("IC");
   app_stream << GetColorStringWithDefault(
@@ -876,7 +870,7 @@ bool GenerateSquareAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
              << rect.Height() << " re "
              << GetPaintOperatorString(is_stroke_rect, is_fill_rect) << "\n";
 
-  auto gs_dict = GenerateExtGStateDict(*annot_dict, sExtGSDictName, "Normal");
+  auto gs_dict = GenerateExtGStateDict(*annot_dict, "Normal");
   auto resources_dict = GenerateResourcesDict(doc, std::move(gs_dict), nullptr);
   GenerateAndSetAPDict(doc, annot_dict, &app_stream, std::move(resources_dict),
                        false /*IsTextMarkupAnnotation*/);
@@ -885,8 +879,7 @@ bool GenerateSquareAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
 
 bool GenerateSquigglyAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
   fxcrt::ostringstream app_stream;
-  ByteString sExtGSDictName = "GS";
-  app_stream << "/" << sExtGSDictName << " gs ";
+  app_stream << "/" << kGSDictName << " gs ";
 
   app_stream << GetColorStringWithDefault(
       annot_dict->GetArrayFor(pdfium::annotation::kC).Get(),
@@ -926,7 +919,7 @@ bool GenerateSquigglyAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
     }
   }
 
-  auto gs_dict = GenerateExtGStateDict(*annot_dict, sExtGSDictName, "Normal");
+  auto gs_dict = GenerateExtGStateDict(*annot_dict, "Normal");
   auto resources_dict = GenerateResourcesDict(doc, std::move(gs_dict), nullptr);
   GenerateAndSetAPDict(doc, annot_dict, &app_stream, std::move(resources_dict),
                        true /*IsTextMarkupAnnotation*/);
@@ -935,8 +928,7 @@ bool GenerateSquigglyAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
 
 bool GenerateStrikeOutAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
   fxcrt::ostringstream app_stream;
-  ByteString sExtGSDictName = "GS";
-  app_stream << "/" << sExtGSDictName << " gs ";
+  app_stream << "/" << kGSDictName << " gs ";
 
   app_stream << GetColorStringWithDefault(
       annot_dict->GetArrayFor(pdfium::annotation::kC).Get(),
@@ -958,7 +950,7 @@ bool GenerateStrikeOutAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
     }
   }
 
-  auto gs_dict = GenerateExtGStateDict(*annot_dict, sExtGSDictName, "Normal");
+  auto gs_dict = GenerateExtGStateDict(*annot_dict, "Normal");
   auto resources_dict = GenerateResourcesDict(doc, std::move(gs_dict), nullptr);
   GenerateAndSetAPDict(doc, annot_dict, &app_stream, std::move(resources_dict),
                        true /*IsTextMarkupAnnotation*/);
@@ -1374,7 +1366,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
 // static
 void CPDF_GenerateAP::GenerateEmptyAP(CPDF_Document* doc,
                                       CPDF_Dictionary* annot_dict) {
-  auto gs_dict = GenerateExtGStateDict(*annot_dict, "GS", "Normal");
+  auto gs_dict = GenerateExtGStateDict(*annot_dict, "Normal");
   auto resources_dict = GenerateResourcesDict(doc, std::move(gs_dict), nullptr);
 
   fxcrt::ostringstream stream;
