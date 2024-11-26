@@ -7,8 +7,6 @@
 #ifndef CORE_FXCODEC_JPEG_JPEG_PROGRESSIVE_DECODER_H_
 #define CORE_FXCODEC_JPEG_JPEG_PROGRESSIVE_DECODER_H_
 
-#include <setjmp.h>
-
 #include <memory>
 
 #include "core/fxcodec/progressive_decoder_iface.h"
@@ -23,9 +21,8 @@ class JpegProgressiveDecoder final : public ProgressiveDecoderIface {
   static void DestroyGlobals();
   static JpegProgressiveDecoder* GetInstance();
   static std::unique_ptr<Context> Start();
-  static jmp_buf& GetJumpMark(Context* pContext);
 
-  // Result codes for ReadHeader():
+  // Result codes for ReadHeader()/ReadScanline():
   static constexpr int kFatal = -1;
   static constexpr int kOk = 0;
   static constexpr int kError = 1;
@@ -38,7 +35,7 @@ class JpegProgressiveDecoder final : public ProgressiveDecoderIface {
                         CFX_DIBAttribute* pAttribute);
 
   static bool StartScanline(Context* pContext);
-  static bool ReadScanline(Context* pContext, uint8_t* dest_buf);
+  static int ReadScanline(Context* pContext, uint8_t* dest_buf);
 
   // ProgressiveDecoderIface:
   FX_FILESIZE GetAvailInput(Context* pContext) const override;

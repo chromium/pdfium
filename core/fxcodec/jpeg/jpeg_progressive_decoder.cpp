@@ -24,8 +24,6 @@ class CJpegContext final : public ProgressiveDecoderIface::Context {
   CJpegContext();
   ~CJpegContext() override;
 
-  jmp_buf& GetJumpMark() { return m_Common.jmpbuf; }
-
   JpegCommon m_Common = {};
 };
 
@@ -96,11 +94,6 @@ JpegProgressiveDecoder::Start() {
 }
 
 // static
-jmp_buf& JpegProgressiveDecoder::GetJumpMark(Context* pContext) {
-  return static_cast<CJpegContext*>(pContext)->GetJumpMark();
-}
-
-// static
 int JpegProgressiveDecoder::ReadHeader(Context* pContext,
                                        int* width,
                                        int* height,
@@ -134,11 +127,14 @@ bool JpegProgressiveDecoder::StartScanline(Context* pContext) {
 }
 
 // static
-bool JpegProgressiveDecoder::ReadScanline(Context* pContext,
-                                          unsigned char* dest_buf) {
+int JpegProgressiveDecoder::ReadScanline(Context* pContext,
+                                         unsigned char* dest_buf) {
   auto* ctx = static_cast<CJpegContext*>(pContext);
-  unsigned int nlines = jpeg_read_scanlines(&ctx->m_Common.cinfo, &dest_buf, 1);
-  return nlines == 1;
+  int nlines = jpeg_common_read_scanlines(&ctx->m_Common, &dest_buf, 1);
+  if (nlines == -1) {
+    return kFatal;
+  }
+  return nlines == 1 ? kOk : kError;
 }
 
 FX_FILESIZE JpegProgressiveDecoder::GetAvailInput(Context* pContext) const {
