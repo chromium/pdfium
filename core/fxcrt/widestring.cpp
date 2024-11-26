@@ -60,8 +60,13 @@ std::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
                                             va_list argList) {
   size_t nMaxLen = 0;
   for (WideStringView view(pFormat); !view.IsEmpty(); view = view.Substr(1u)) {
-    if (view.Front() != '%' ||
-        (view.GetLength() > 1 && view.CharAt(1u) == '%')) {
+    if (view.Front() != '%') {
+      ++nMaxLen;
+      continue;
+    }
+
+    view = view.Substr(1u);
+    if (view.Front() == '%') {
       ++nMaxLen;
       continue;
     }
@@ -75,7 +80,6 @@ std::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
       } else if (c != '-' && c != '+' && c != '0' && c != ' ') {
         break;
       }
-      view = view.Substr(1u);
     }
     if (iWidth == 0) {
       iWidth = StringToInt(view);
