@@ -215,8 +215,6 @@ ByteString GenerateColorAP(const CFX_Color& color, PaintOperation operation) {
 ByteString GenerateBorderAP(const CFX_FloatRect& rect,
                             float width,
                             const CFX_Color& border_color,
-                            const CFX_Color& left_top_color,
-                            const CFX_Color& right_bottom_color,
                             BorderStyle style,
                             const CPVT_Dash& dash) {
   if (width <= 0) {
@@ -263,33 +261,35 @@ ByteString GenerateBorderAP(const CFX_FloatRect& rect,
     }
     case BorderStyle::kBeveled:
     case BorderStyle::kInset: {
+      const float left_top_gray_value =
+          style == BorderStyle::kBeveled ? 1.0f : 0.5f;
+      app_stream << GenerateColorAP(
+          CFX_Color(CFX_Color::Type::kGray, left_top_gray_value),
+          PaintOperation::kFill);
+      WritePoint(app_stream, {left + half_width, bottom + half_width})
+          << " m\n";
+      WritePoint(app_stream, {left + half_width, top - half_width}) << " l\n";
+      WritePoint(app_stream, {right - half_width, top - half_width}) << " l\n";
+      WritePoint(app_stream, {right - width, top - width}) << " l\n";
+      WritePoint(app_stream, {left + width, top - width}) << " l\n";
+      WritePoint(app_stream, {left + width, bottom + width}) << " l f\n";
+
+      const float right_bottom_gray_value =
+          style == BorderStyle::kBeveled ? 0.5f : 0.75f;
+      app_stream << GenerateColorAP(
+          CFX_Color(CFX_Color::Type::kGray, right_bottom_gray_value),
+          PaintOperation::kFill);
+      WritePoint(app_stream, {right - half_width, top - half_width}) << " m\n";
+      WritePoint(app_stream, {right - half_width, bottom + half_width})
+          << " l\n";
+      WritePoint(app_stream, {left + half_width, bottom + half_width})
+          << " l\n";
+      WritePoint(app_stream, {left + width, bottom + width}) << " l\n";
+      WritePoint(app_stream, {right - width, bottom + width}) << " l\n";
+      WritePoint(app_stream, {right - width, top - width}) << " l f\n";
+
       ByteString color_string =
-          GenerateColorAP(left_top_color, PaintOperation::kFill);
-      if (color_string.GetLength() > 0) {
-        app_stream << color_string;
-        WritePoint(app_stream, {left + half_width, bottom + half_width})
-            << " m\n";
-        WritePoint(app_stream, {left + half_width, top - half_width}) << " l\n";
-        WritePoint(app_stream, {right - half_width, top - half_width})
-            << " l\n";
-        WritePoint(app_stream, {right - width, top - width}) << " l\n";
-        WritePoint(app_stream, {left + width, top - width}) << " l\n";
-        WritePoint(app_stream, {left + width, bottom + width}) << " l f\n";
-      }
-      color_string = GenerateColorAP(right_bottom_color, PaintOperation::kFill);
-      if (color_string.GetLength() > 0) {
-        app_stream << color_string;
-        WritePoint(app_stream, {right - half_width, top - half_width})
-            << " m\n";
-        WritePoint(app_stream, {right - half_width, bottom + half_width})
-            << " l\n";
-        WritePoint(app_stream, {left + half_width, bottom + half_width})
-            << " l\n";
-        WritePoint(app_stream, {left + width, bottom + width}) << " l\n";
-        WritePoint(app_stream, {right - width, bottom + width}) << " l\n";
-        WritePoint(app_stream, {right - width, top - width}) << " l f\n";
-      }
-      color_string = GenerateColorAP(border_color, PaintOperation::kFill);
+          GenerateColorAP(border_color, PaintOperation::kFill);
       if (color_string.GetLength() > 0) {
         app_stream << color_string;
         WriteRect(app_stream, rect) << " re\n";
@@ -1011,8 +1011,6 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
   BorderStyle border_style = BorderStyle::kSolid;
   float border_width = 1;
   CPVT_Dash dash_pattern(3, 0, 0);
-  CFX_Color left_top_color;
-  CFX_Color right_bottom_color;
   if (RetainPtr<const CPDF_Dictionary> border_style_dict =
           annot_dict->GetDictFor("BS")) {
     if (border_style_dict->KeyExist("W")) {
@@ -1036,14 +1034,10 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
         case 'B':
           border_style = BorderStyle::kBeveled;
           border_width *= 2;
-          left_top_color = CFX_Color(CFX_Color::Type::kGray, 1);
-          right_bottom_color = CFX_Color(CFX_Color::Type::kGray, 0.5);
           break;
         case 'I':
           border_style = BorderStyle::kInset;
           border_width *= 2;
-          left_top_color = CFX_Color(CFX_Color::Type::kGray, 0.5);
-          right_bottom_color = CFX_Color(CFX_Color::Type::kGray, 0.75);
           break;
         case 'U':
           border_style = BorderStyle::kUnderline;
@@ -1072,9 +1066,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
     app_stream << "q\n" << background;
     WriteRect(app_stream, bbox_rect) << " re f\nQ\n";
   }
-  ByteString border_stream =
-      GenerateBorderAP(bbox_rect, border_width, border_color, left_top_color,
-                       right_bottom_color, border_style, dash_pattern);
+  ByteString border_stream = GenerateBorderAP(
+      bbox_rect, border_width, border_color, border_style, dash_pattern);
   if (border_stream.GetLength() > 0) {
     app_stream << "q\n" << border_stream << "Q\n";
   }
@@ -1231,9 +1224,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
         app_stream << "Q\n";
         ByteString button_border = GenerateBorderAP(
             button_rect, 2, CFX_Color(CFX_Color::Type::kGray, 0),
-            CFX_Color(CFX_Color::Type::kGray, 1),
-            CFX_Color(CFX_Color::Type::kGray, 0.5), BorderStyle::kBeveled,
-            CPVT_Dash(3, 0, 0));
+            BorderStyle::kBeveled, CPVT_Dash(3, 0, 0));
         if (button_border.GetLength() > 0) {
           app_stream << "q\n" << button_border << "Q\n";
         }
