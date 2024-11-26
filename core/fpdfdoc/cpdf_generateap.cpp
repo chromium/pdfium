@@ -36,6 +36,7 @@
 #include "core/fpdfdoc/cpvt_variabletext.h"
 #include "core/fpdfdoc/cpvt_word.h"
 #include "core/fxcrt/fx_string_wrappers.h"
+#include "core/fxcrt/notreached.h"
 #include "core/fxge/cfx_renderdevice.h"
 
 namespace {
@@ -186,12 +187,12 @@ ByteString GenerateColorAP(const CFX_Color& color, PaintOperation nOperation) {
       WriteFloat(sColorStream, color.fColor3) << " ";
       sColorStream << (nOperation == PaintOperation::kStroke ? "RG" : "rg")
                    << "\n";
-      break;
+      return ByteString(sColorStream);
     case CFX_Color::Type::kGray:
       WriteFloat(sColorStream, color.fColor1) << " ";
       sColorStream << (nOperation == PaintOperation::kStroke ? "G" : "g")
                    << "\n";
-      break;
+      return ByteString(sColorStream);
     case CFX_Color::Type::kCMYK:
       WriteFloat(sColorStream, color.fColor1) << " ";
       WriteFloat(sColorStream, color.fColor2) << " ";
@@ -199,11 +200,11 @@ ByteString GenerateColorAP(const CFX_Color& color, PaintOperation nOperation) {
       WriteFloat(sColorStream, color.fColor4) << " ";
       sColorStream << (nOperation == PaintOperation::kStroke ? "K" : "k")
                    << "\n";
-      break;
+      return ByteString(sColorStream);
     case CFX_Color::Type::kTransparent:
-      break;
+      return ByteString();
   }
-  return ByteString(sColorStream);
+  NOTREACHED();
 }
 
 ByteString GenerateBorderAP(const CFX_FloatRect& rect,
@@ -213,93 +214,95 @@ ByteString GenerateBorderAP(const CFX_FloatRect& rect,
                             const CFX_Color& crRightBottom,
                             BorderStyle nStyle,
                             const CPVT_Dash& dash) {
+  if (width <= 0) {
+    return ByteString();
+  }
+
   fxcrt::ostringstream sAppStream;
   ByteString sColor;
   const float fLeft = rect.left;
   const float fRight = rect.right;
   const float fTop = rect.top;
   const float fBottom = rect.bottom;
-  if (width > 0.0f) {
-    const float half_width = width / 2.0f;
-    switch (nStyle) {
-      case BorderStyle::kSolid:
-        sColor = GenerateColorAP(color, PaintOperation::kFill);
-        if (sColor.GetLength() > 0) {
-          sAppStream << sColor;
-          WriteRect(sAppStream, rect) << " re\n";
-          CFX_FloatRect inner_rect = rect;
-          inner_rect.Deflate(width, width);
-          WriteRect(sAppStream, inner_rect) << " re f*\n";
-        }
-        break;
-      case BorderStyle::kDash:
-        sColor = GenerateColorAP(color, PaintOperation::kStroke);
-        if (sColor.GetLength() > 0) {
-          sAppStream << sColor;
-          WriteFloat(sAppStream, width)
-              << " w [" << dash.nDash << " " << dash.nGap << "] " << dash.nPhase
-              << " d\n";
-          WritePoint(sAppStream, {fLeft + half_width, fBottom + half_width})
-              << " m\n";
-          WritePoint(sAppStream, {fLeft + half_width, fTop - half_width})
-              << " l\n";
-          WritePoint(sAppStream, {fRight - half_width, fTop - half_width})
-              << " l\n";
-          WritePoint(sAppStream, {fRight - half_width, fBottom + half_width})
-              << " l\n";
-          WritePoint(sAppStream, {fLeft + half_width, fBottom + half_width})
-              << " l S\n";
-        }
-        break;
-      case BorderStyle::kBeveled:
-      case BorderStyle::kInset:
-        sColor = GenerateColorAP(crLeftTop, PaintOperation::kFill);
-        if (sColor.GetLength() > 0) {
-          sAppStream << sColor;
-          WritePoint(sAppStream, {fLeft + half_width, fBottom + half_width})
-              << " m\n";
-          WritePoint(sAppStream, {fLeft + half_width, fTop - half_width})
-              << " l\n";
-          WritePoint(sAppStream, {fRight - half_width, fTop - half_width})
-              << " l\n";
-          WritePoint(sAppStream, {fRight - width, fTop - width}) << " l\n";
-          WritePoint(sAppStream, {fLeft + width, fTop - width}) << " l\n";
-          WritePoint(sAppStream, {fLeft + width, fBottom + width}) << " l f\n";
-        }
-        sColor = GenerateColorAP(crRightBottom, PaintOperation::kFill);
-        if (sColor.GetLength() > 0) {
-          sAppStream << sColor;
-          WritePoint(sAppStream, {fRight - half_width, fTop - half_width})
-              << " m\n";
-          WritePoint(sAppStream, {fRight - half_width, fBottom + half_width})
-              << " l\n";
-          WritePoint(sAppStream, {fLeft + half_width, fBottom + half_width})
-              << " l\n";
-          WritePoint(sAppStream, {fLeft + width, fBottom + width}) << " l\n";
-          WritePoint(sAppStream, {fRight - width, fBottom + width}) << " l\n";
-          WritePoint(sAppStream, {fRight - width, fTop - width}) << " l f\n";
-        }
-        sColor = GenerateColorAP(color, PaintOperation::kFill);
-        if (sColor.GetLength() > 0) {
-          sAppStream << sColor;
-          WriteRect(sAppStream, rect) << " re\n";
-          CFX_FloatRect inner_rect = rect;
-          inner_rect.Deflate(half_width, half_width);
-          WriteRect(sAppStream, inner_rect) << " re f*\n";
-        }
-        break;
-      case BorderStyle::kUnderline:
-        sColor = GenerateColorAP(color, PaintOperation::kStroke);
-        if (sColor.GetLength() > 0) {
-          sAppStream << sColor;
-          WriteFloat(sAppStream, width) << " w\n";
-          WritePoint(sAppStream, {fLeft, fBottom + half_width}) << " m\n";
-          WritePoint(sAppStream, {fRight, fBottom + half_width}) << " l S\n";
-        }
-        break;
-    }
+  const float half_width = width / 2.0f;
+  switch (nStyle) {
+    case BorderStyle::kSolid:
+      sColor = GenerateColorAP(color, PaintOperation::kFill);
+      if (sColor.GetLength() > 0) {
+        sAppStream << sColor;
+        WriteRect(sAppStream, rect) << " re\n";
+        CFX_FloatRect inner_rect = rect;
+        inner_rect.Deflate(width, width);
+        WriteRect(sAppStream, inner_rect) << " re f*\n";
+      }
+      return ByteString(sAppStream);
+    case BorderStyle::kDash:
+      sColor = GenerateColorAP(color, PaintOperation::kStroke);
+      if (sColor.GetLength() > 0) {
+        sAppStream << sColor;
+        WriteFloat(sAppStream, width)
+            << " w [" << dash.nDash << " " << dash.nGap << "] " << dash.nPhase
+            << " d\n";
+        WritePoint(sAppStream, {fLeft + half_width, fBottom + half_width})
+            << " m\n";
+        WritePoint(sAppStream, {fLeft + half_width, fTop - half_width})
+            << " l\n";
+        WritePoint(sAppStream, {fRight - half_width, fTop - half_width})
+            << " l\n";
+        WritePoint(sAppStream, {fRight - half_width, fBottom + half_width})
+            << " l\n";
+        WritePoint(sAppStream, {fLeft + half_width, fBottom + half_width})
+            << " l S\n";
+      }
+      return ByteString(sAppStream);
+    case BorderStyle::kBeveled:
+    case BorderStyle::kInset:
+      sColor = GenerateColorAP(crLeftTop, PaintOperation::kFill);
+      if (sColor.GetLength() > 0) {
+        sAppStream << sColor;
+        WritePoint(sAppStream, {fLeft + half_width, fBottom + half_width})
+            << " m\n";
+        WritePoint(sAppStream, {fLeft + half_width, fTop - half_width})
+            << " l\n";
+        WritePoint(sAppStream, {fRight - half_width, fTop - half_width})
+            << " l\n";
+        WritePoint(sAppStream, {fRight - width, fTop - width}) << " l\n";
+        WritePoint(sAppStream, {fLeft + width, fTop - width}) << " l\n";
+        WritePoint(sAppStream, {fLeft + width, fBottom + width}) << " l f\n";
+      }
+      sColor = GenerateColorAP(crRightBottom, PaintOperation::kFill);
+      if (sColor.GetLength() > 0) {
+        sAppStream << sColor;
+        WritePoint(sAppStream, {fRight - half_width, fTop - half_width})
+            << " m\n";
+        WritePoint(sAppStream, {fRight - half_width, fBottom + half_width})
+            << " l\n";
+        WritePoint(sAppStream, {fLeft + half_width, fBottom + half_width})
+            << " l\n";
+        WritePoint(sAppStream, {fLeft + width, fBottom + width}) << " l\n";
+        WritePoint(sAppStream, {fRight - width, fBottom + width}) << " l\n";
+        WritePoint(sAppStream, {fRight - width, fTop - width}) << " l f\n";
+      }
+      sColor = GenerateColorAP(color, PaintOperation::kFill);
+      if (sColor.GetLength() > 0) {
+        sAppStream << sColor;
+        WriteRect(sAppStream, rect) << " re\n";
+        CFX_FloatRect inner_rect = rect;
+        inner_rect.Deflate(half_width, half_width);
+        WriteRect(sAppStream, inner_rect) << " re f*\n";
+      }
+      return ByteString(sAppStream);
+    case BorderStyle::kUnderline:
+      sColor = GenerateColorAP(color, PaintOperation::kStroke);
+      if (sColor.GetLength() > 0) {
+        sAppStream << sColor;
+        WriteFloat(sAppStream, width) << " w\n";
+        WritePoint(sAppStream, {fLeft, fBottom + half_width}) << " m\n";
+        WritePoint(sAppStream, {fRight, fBottom + half_width}) << " l S\n";
+      }
+      return ByteString(sAppStream);
   }
-  return ByteString(sAppStream);
+  NOTREACHED();
 }
 
 ByteString GetColorStringWithDefault(const CPDF_Array* pColor,
