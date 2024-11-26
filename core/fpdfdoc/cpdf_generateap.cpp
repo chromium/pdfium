@@ -103,6 +103,56 @@ ByteString GetFontSetString(IPVT_FontMap* font_map,
   return ByteString(font_stream);
 }
 
+struct BorderStyleInfo {
+  float width = 1;
+  BorderStyle style = BorderStyle::kSolid;
+  CPVT_Dash dash_pattern{3, 0, 0};
+};
+
+BorderStyleInfo GetBorderStyleInfo(const CPDF_Dictionary* border_style_dict) {
+  BorderStyleInfo border_style_info;
+  if (!border_style_dict) {
+    return border_style_info;
+  }
+
+  if (border_style_dict->KeyExist("W")) {
+    border_style_info.width = border_style_dict->GetFloatFor("W");
+  }
+
+  const ByteString border_style_string =
+      border_style_dict->GetByteStringFor("S");
+  if (border_style_string.GetLength()) {
+    switch (border_style_string[0]) {
+      case 'S':
+        border_style_info.style = BorderStyle::kSolid;
+        break;
+      case 'D':
+        border_style_info.style = BorderStyle::kDash;
+        break;
+      case 'B':
+        border_style_info.style = BorderStyle::kBeveled;
+        border_style_info.width *= 2;
+        break;
+      case 'I':
+        border_style_info.style = BorderStyle::kInset;
+        border_style_info.width *= 2;
+        break;
+      case 'U':
+        border_style_info.style = BorderStyle::kUnderline;
+        break;
+    }
+  }
+
+  RetainPtr<const CPDF_Array> dash_array = border_style_dict->GetArrayFor("D");
+  if (dash_array) {
+    border_style_info.dash_pattern =
+        CPVT_Dash(dash_array->GetIntegerAt(0), dash_array->GetIntegerAt(1),
+                  dash_array->GetIntegerAt(2));
+  }
+
+  return border_style_info;
+}
+
 ByteString GenerateEditAP(IPVT_FontMap* font_map,
                           CPVT_VariableText::Iterator* vt_iterator,
                           const CFX_PointF& offset,
@@ -213,10 +263,9 @@ ByteString GenerateColorAP(const CFX_Color& color, PaintOperation operation) {
 }
 
 ByteString GenerateBorderAP(const CFX_FloatRect& rect,
-                            float width,
-                            const CFX_Color& border_color,
-                            BorderStyle style,
-                            const CPVT_Dash& dash) {
+                            const BorderStyleInfo& border_style_info,
+                            const CFX_Color& border_color) {
+  const float width = border_style_info.width;
   if (width <= 0) {
     return ByteString();
   }
@@ -227,7 +276,7 @@ ByteString GenerateBorderAP(const CFX_FloatRect& rect,
   const float right = rect.right;
   const float top = rect.top;
   const float half_width = width / 2.0f;
-  switch (style) {
+  switch (border_style_info.style) {
     case BorderStyle::kSolid: {
       ByteString color_string =
           GenerateColorAP(border_color, PaintOperation::kFill);
@@ -244,6 +293,7 @@ ByteString GenerateBorderAP(const CFX_FloatRect& rect,
       ByteString color_string =
           GenerateColorAP(border_color, PaintOperation::kStroke);
       if (color_string.GetLength() > 0) {
+        const auto& dash = border_style_info.dash_pattern;
         app_stream << color_string;
         WriteFloat(app_stream, width) << " w [" << dash.dash << " " << dash.gap
                                       << "] " << dash.phase << " d\n";
@@ -262,7 +312,7 @@ ByteString GenerateBorderAP(const CFX_FloatRect& rect,
     case BorderStyle::kBeveled:
     case BorderStyle::kInset: {
       const float left_top_gray_value =
-          style == BorderStyle::kBeveled ? 1.0f : 0.5f;
+          border_style_info.style == BorderStyle::kBeveled ? 1.0f : 0.5f;
       app_stream << GenerateColorAP(
           CFX_Color(CFX_Color::Type::kGray, left_top_gray_value),
           PaintOperation::kFill);
@@ -275,7 +325,7 @@ ByteString GenerateBorderAP(const CFX_FloatRect& rect,
       WritePoint(app_stream, {left + width, bottom + width}) << " l f\n";
 
       const float right_bottom_gray_value =
-          style == BorderStyle::kBeveled ? 0.5f : 0.75f;
+          border_style_info.style == BorderStyle::kBeveled ? 0.5f : 0.75f;
       app_stream << GenerateColorAP(
           CFX_Color(CFX_Color::Type::kGray, right_bottom_gray_value),
           PaintOperation::kFill);
@@ -1008,43 +1058,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
       break;
   }
 
-  BorderStyle border_style = BorderStyle::kSolid;
-  float border_width = 1;
-  CPVT_Dash dash_pattern(3, 0, 0);
-  if (RetainPtr<const CPDF_Dictionary> border_style_dict =
-          annot_dict->GetDictFor("BS")) {
-    if (border_style_dict->KeyExist("W")) {
-      border_width = border_style_dict->GetFloatFor("W");
-    }
-
-    if (RetainPtr<const CPDF_Array> dash_array =
-            border_style_dict->GetArrayFor("D")) {
-      dash_pattern =
-          CPVT_Dash(dash_array->GetIntegerAt(0), dash_array->GetIntegerAt(1),
-                    dash_array->GetIntegerAt(2));
-    }
-    if (border_style_dict->GetByteStringFor("S").GetLength()) {
-      switch (border_style_dict->GetByteStringFor("S")[0]) {
-        case 'S':
-          border_style = BorderStyle::kSolid;
-          break;
-        case 'D':
-          border_style = BorderStyle::kDash;
-          break;
-        case 'B':
-          border_style = BorderStyle::kBeveled;
-          border_width *= 2;
-          break;
-        case 'I':
-          border_style = BorderStyle::kInset;
-          border_width *= 2;
-          break;
-        case 'U':
-          border_style = BorderStyle::kUnderline;
-          break;
-      }
-    }
-  }
+  const BorderStyleInfo border_style_info =
+      GetBorderStyleInfo(annot_dict->GetDictFor("BS"));
   CFX_Color border_color;
   CFX_Color background_color;
   if (mk_dict) {
@@ -1066,16 +1081,14 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
     app_stream << "q\n" << background;
     WriteRect(app_stream, bbox_rect) << " re f\nQ\n";
   }
-  ByteString border_stream = GenerateBorderAP(
-      bbox_rect, border_width, border_color, border_style, dash_pattern);
+  ByteString border_stream =
+      GenerateBorderAP(bbox_rect, border_style_info, border_color);
   if (border_stream.GetLength() > 0) {
     app_stream << "q\n" << border_stream << "Q\n";
   }
 
-  CFX_FloatRect body_rect = CFX_FloatRect(
-      bbox_rect.left + border_width, bbox_rect.bottom + border_width,
-      bbox_rect.right - border_width, bbox_rect.top - border_width);
-  body_rect.Normalize();
+  CFX_FloatRect body_rect = bbox_rect;
+  body_rect.Deflate(border_style_info.width, border_style_info.width);
 
   RetainPtr<CPDF_Dictionary> ap_dict =
       annot_dict->GetOrCreateDictFor(pdfium::annotation::kAP);
@@ -1222,9 +1235,11 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
         app_stream << "q\n" << button;
         WriteRect(app_stream, button_rect) << " re f\n";
         app_stream << "Q\n";
-        ByteString button_border = GenerateBorderAP(
-            button_rect, 2, CFX_Color(CFX_Color::Type::kGray, 0),
-            BorderStyle::kBeveled, CPVT_Dash(3, 0, 0));
+        static const BorderStyleInfo kButtonBorderStyleInfo{
+            .width = 2, .style = BorderStyle::kBeveled, .dash_pattern{3, 0, 0}};
+        ByteString button_border =
+            GenerateBorderAP(button_rect, kButtonBorderStyleInfo,
+                             CFX_Color(CFX_Color::Type::kGray, 0));
         if (button_border.GetLength() > 0) {
           app_stream << "q\n" << button_border << "Q\n";
         }
