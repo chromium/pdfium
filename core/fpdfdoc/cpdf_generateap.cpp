@@ -105,6 +105,8 @@ ByteString GetFontSetString(IPVT_FontMap* font_map,
   return ByteString(font_stream);
 }
 
+// ISO 32000-1:2008 spec, table 166.
+// ISO 32000-2:2020 spec, table 168.
 struct BorderStyleInfo {
   float width = 1;
   BorderStyle style = BorderStyle::kSolid;
@@ -153,6 +155,100 @@ BorderStyleInfo GetBorderStyleInfo(const CPDF_Dictionary* border_style_dict) {
   }
 
   return border_style_info;
+}
+
+// ISO 32000-1:2008 spec, table 189.
+// ISO 32000-2:2020 spec, table 192.
+struct AppearanceCharacteristics {
+  int rotation = 0;  // In degrees.
+  CFX_Color border_color;
+  CFX_Color background_color;
+};
+
+AppearanceCharacteristics GetAppearanceCharacteristics(
+    const CPDF_Dictionary* mk_dict) {
+  AppearanceCharacteristics appearance_characteristics;
+  if (!mk_dict) {
+    return appearance_characteristics;
+  }
+
+  appearance_characteristics.rotation =
+      mk_dict->GetIntegerFor(pdfium::appearance::kR);
+
+  RetainPtr<const CPDF_Array> border_color_array =
+      mk_dict->GetArrayFor(pdfium::appearance::kBC);
+  if (border_color_array) {
+    appearance_characteristics.border_color =
+        fpdfdoc::CFXColorFromArray(*border_color_array);
+  }
+  RetainPtr<const CPDF_Array> background_color_array =
+      mk_dict->GetArrayFor(pdfium::appearance::kBG);
+  if (background_color_array) {
+    appearance_characteristics.background_color =
+        fpdfdoc::CFXColorFromArray(*background_color_array);
+  }
+  return appearance_characteristics;
+}
+
+struct AnnotationDimensionsAndColor {
+  CFX_FloatRect bbox;
+  CFX_Matrix matrix;
+  CFX_Color border_color;
+  CFX_Color background_color;
+};
+
+AnnotationDimensionsAndColor GetAnnotationDimensionsAndColor(
+    const CPDF_Dictionary* annot_dict) {
+  const AppearanceCharacteristics appearance_characteristics =
+      GetAppearanceCharacteristics(annot_dict->GetDictFor("MK"));
+  const CFX_FloatRect annot_rect =
+      annot_dict->GetRectFor(pdfium::annotation::kRect);
+
+  CFX_FloatRect bbox_rect;
+  CFX_Matrix matrix;
+  switch (appearance_characteristics.rotation % 360) {
+    case 0:
+      bbox_rect = CFX_FloatRect(0, 0, annot_rect.right - annot_rect.left,
+                                annot_rect.top - annot_rect.bottom);
+      break;
+    case 90:
+      matrix = CFX_Matrix(0, 1, -1, 0, annot_rect.right - annot_rect.left, 0);
+      bbox_rect = CFX_FloatRect(0, 0, annot_rect.top - annot_rect.bottom,
+                                annot_rect.right - annot_rect.left);
+      break;
+    case 180:
+      matrix = CFX_Matrix(-1, 0, 0, -1, annot_rect.right - annot_rect.left,
+                          annot_rect.top - annot_rect.bottom);
+      bbox_rect = CFX_FloatRect(0, 0, annot_rect.right - annot_rect.left,
+                                annot_rect.top - annot_rect.bottom);
+      break;
+    case 270:
+      matrix = CFX_Matrix(0, -1, 1, 0, 0, annot_rect.top - annot_rect.bottom);
+      bbox_rect = CFX_FloatRect(0, 0, annot_rect.top - annot_rect.bottom,
+                                annot_rect.right - annot_rect.left);
+      break;
+  }
+
+  return {
+      .bbox = bbox_rect,
+      .matrix = matrix,
+      .border_color = appearance_characteristics.border_color,
+      .background_color = appearance_characteristics.background_color,
+  };
+}
+
+ByteString GetDefaultAppearanceString(CPDF_Dictionary* annot_dict,
+                                      CPDF_Dictionary* form_dict) {
+  ByteString default_appearance_string;
+  RetainPtr<const CPDF_Object> default_appearance_object =
+      CPDF_FormField::GetFieldAttrForDict(annot_dict, "DA");
+  if (default_appearance_object) {
+    default_appearance_string = default_appearance_object->GetString();
+  }
+  if (default_appearance_string.IsEmpty()) {
+    default_appearance_string = form_dict->GetByteStringFor("DA");
+  }
+  return default_appearance_string;
 }
 
 ByteString GenerateEditAP(IPVT_FontMap* font_map,
@@ -974,15 +1070,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
     return;
   }
 
-  ByteString default_appearance_string;
-  RetainPtr<const CPDF_Object> default_appearance_object =
-      CPDF_FormField::GetFieldAttrForDict(annot_dict, "DA");
-  if (default_appearance_object) {
-    default_appearance_string = default_appearance_object->GetString();
-  }
-  if (default_appearance_string.IsEmpty()) {
-    default_appearance_string = form_dict->GetByteStringFor("DA");
-  }
+  const ByteString default_appearance_string =
+      GetDefaultAppearanceString(annot_dict, form_dict);
   if (default_appearance_string.IsEmpty()) {
     return;
   }
@@ -1020,66 +1109,26 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
     return;
   }
 
-  CFX_FloatRect annot_rect = annot_dict->GetRectFor(pdfium::annotation::kRect);
-  RetainPtr<const CPDF_Dictionary> mk_dict = annot_dict->GetDictFor("MK");
-  const int32_t rotate =
-      mk_dict ? mk_dict->GetIntegerFor(pdfium::appearance::kR) : 0;
-
-  CFX_FloatRect bbox_rect;
-  CFX_Matrix matrix;
-  switch (rotate % 360) {
-    case 0:
-      bbox_rect = CFX_FloatRect(0, 0, annot_rect.right - annot_rect.left,
-                                annot_rect.top - annot_rect.bottom);
-      break;
-    case 90:
-      matrix = CFX_Matrix(0, 1, -1, 0, annot_rect.right - annot_rect.left, 0);
-      bbox_rect = CFX_FloatRect(0, 0, annot_rect.top - annot_rect.bottom,
-                                annot_rect.right - annot_rect.left);
-      break;
-    case 180:
-      matrix = CFX_Matrix(-1, 0, 0, -1, annot_rect.right - annot_rect.left,
-                          annot_rect.top - annot_rect.bottom);
-      bbox_rect = CFX_FloatRect(0, 0, annot_rect.right - annot_rect.left,
-                                annot_rect.top - annot_rect.bottom);
-      break;
-    case 270:
-      matrix = CFX_Matrix(0, -1, 1, 0, 0, annot_rect.top - annot_rect.bottom);
-      bbox_rect = CFX_FloatRect(0, 0, annot_rect.top - annot_rect.bottom,
-                                annot_rect.right - annot_rect.left);
-      break;
+  const AnnotationDimensionsAndColor annot_dimensions_and_color =
+      GetAnnotationDimensionsAndColor(annot_dict);
+  fxcrt::ostringstream app_stream;
+  const ByteString background = GenerateColorAP(
+      annot_dimensions_and_color.background_color, PaintOperation::kFill);
+  if (background.GetLength() > 0) {
+    app_stream << "q\n" << background;
+    WriteRect(app_stream, annot_dimensions_and_color.bbox) << " re f\nQ\n";
   }
 
   const BorderStyleInfo border_style_info =
       GetBorderStyleInfo(annot_dict->GetDictFor("BS"));
-  CFX_Color border_color;
-  CFX_Color background_color;
-  if (mk_dict) {
-    RetainPtr<const CPDF_Array> border_color_array =
-        mk_dict->GetArrayFor(pdfium::appearance::kBC);
-    if (border_color_array) {
-      border_color = fpdfdoc::CFXColorFromArray(*border_color_array);
-    }
-    RetainPtr<const CPDF_Array> background_color_array =
-        mk_dict->GetArrayFor(pdfium::appearance::kBG);
-    if (background_color_array) {
-      background_color = fpdfdoc::CFXColorFromArray(*background_color_array);
-    }
-  }
-  fxcrt::ostringstream app_stream;
-  ByteString background =
-      GenerateColorAP(background_color, PaintOperation::kFill);
-  if (background.GetLength() > 0) {
-    app_stream << "q\n" << background;
-    WriteRect(app_stream, bbox_rect) << " re f\nQ\n";
-  }
-  ByteString border_stream =
-      GenerateBorderAP(bbox_rect, border_style_info, border_color);
+  const ByteString border_stream =
+      GenerateBorderAP(annot_dimensions_and_color.bbox, border_style_info,
+                       annot_dimensions_and_color.border_color);
   if (border_stream.GetLength() > 0) {
     app_stream << "q\n" << border_stream << "Q\n";
   }
 
-  CFX_FloatRect body_rect = bbox_rect;
+  CFX_FloatRect body_rect = annot_dimensions_and_color.bbox;
   body_rect.Deflate(border_style_info.width, border_style_info.width);
 
   RetainPtr<CPDF_Dictionary> ap_dict =
@@ -1107,8 +1156,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
     } else {
       stream_dict->SetFor("Resources", form_dict->GetDictFor("DR")->Clone());
     }
-    stream_dict->SetMatrixFor("Matrix", matrix);
-    stream_dict->SetRectFor("BBox", bbox_rect);
+    stream_dict->SetMatrixFor("Matrix", annot_dimensions_and_color.matrix);
+    stream_dict->SetRectFor("BBox", annot_dimensions_and_color.bbox);
   } else {
     normal_stream =
         doc->NewIndirect<CPDF_Stream>(pdfium::MakeRetain<CPDF_Dictionary>());
@@ -1338,8 +1387,8 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
 
   normal_stream->SetDataFromStringstreamAndRemoveFilter(&app_stream);
   stream_dict = normal_stream->GetMutableDict();
-  stream_dict->SetMatrixFor("Matrix", matrix);
-  stream_dict->SetRectFor("BBox", bbox_rect);
+  stream_dict->SetMatrixFor("Matrix", annot_dimensions_and_color.matrix);
+  stream_dict->SetRectFor("BBox", annot_dimensions_and_color.bbox);
   RetainPtr<CPDF_Dictionary> resources_dict =
       stream_dict->GetMutableDictFor("Resources");
   if (!resources_dict) {
