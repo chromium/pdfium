@@ -1134,11 +1134,10 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
   RetainPtr<CPDF_Dictionary> ap_dict =
       annot_dict->GetOrCreateDictFor(pdfium::annotation::kAP);
   RetainPtr<CPDF_Stream> normal_stream = ap_dict->GetMutableStreamFor("N");
-  RetainPtr<CPDF_Dictionary> stream_dict;
+  RetainPtr<CPDF_Dictionary> resources_dict;
   if (normal_stream) {
-    stream_dict = normal_stream->GetMutableDict();
-    RetainPtr<CPDF_Dictionary> resources_dict =
-        stream_dict->GetMutableDictFor("Resources");
+    RetainPtr<CPDF_Dictionary> stream_dict = normal_stream->GetMutableDict();
+    resources_dict = stream_dict->GetMutableDictFor("Resources");
     if (resources_dict) {
       RetainPtr<CPDF_Dictionary> font_resource_dict =
           resources_dict->GetMutableDictFor("Font");
@@ -1154,20 +1153,18 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
                                                       font_dict->GetObjNum());
       }
     } else {
-      stream_dict->SetFor("Resources", form_dict->GetDictFor("DR")->Clone());
+      resources_dict = ToDictionary(dr_dict->Clone());
+      stream_dict->SetFor("Resources", resources_dict);
     }
-    stream_dict->SetMatrixFor("Matrix", annot_dimensions_and_color.matrix);
-    stream_dict->SetRectFor("BBox", annot_dimensions_and_color.bbox);
   } else {
     normal_stream =
         doc->NewIndirect<CPDF_Stream>(pdfium::MakeRetain<CPDF_Dictionary>());
     ap_dict->SetNewFor<CPDF_Reference>("N", doc, normal_stream->GetObjNum());
   }
-  CPVT_FontMap map(
-      doc, stream_dict ? stream_dict->GetMutableDictFor("Resources") : nullptr,
-      std::move(default_font), font_name);
-  CPVT_VariableText::Provider prd(&map);
 
+  CPVT_FontMap map(doc, std::move(resources_dict), std::move(default_font),
+                   font_name);
+  CPVT_VariableText::Provider prd(&map);
   switch (type) {
     case CPDF_GenerateAP::kTextField: {
       RetainPtr<const CPDF_Object> v_field =
@@ -1381,18 +1378,13 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
     }
   }
 
-  if (!normal_stream) {
-    return;
-  }
-
   normal_stream->SetDataFromStringstreamAndRemoveFilter(&app_stream);
-  stream_dict = normal_stream->GetMutableDict();
+  RetainPtr<CPDF_Dictionary> stream_dict = normal_stream->GetMutableDict();
   stream_dict->SetMatrixFor("Matrix", annot_dimensions_and_color.matrix);
   stream_dict->SetRectFor("BBox", annot_dimensions_and_color.bbox);
-  RetainPtr<CPDF_Dictionary> resources_dict =
-      stream_dict->GetMutableDictFor("Resources");
+  resources_dict = stream_dict->GetMutableDictFor("Resources");
   if (!resources_dict) {
-    stream_dict->SetFor("Resources", form_dict->GetDictFor("DR")->Clone());
+    stream_dict->SetFor("Resources", dr_dict->Clone());
     return;
   }
 
