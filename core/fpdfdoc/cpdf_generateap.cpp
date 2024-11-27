@@ -689,6 +689,159 @@ void GenerateAndSetAPDict(CPDF_Document* doc,
   ap_dict->SetNewFor<CPDF_Reference>("N", doc, normal_stream->GetObjNum());
 }
 
+ByteString GenerateComboBoxAP(const CPDF_Dictionary* annot_dict,
+                              const CFX_FloatRect& body_rect,
+                              const CFX_Color& text_color,
+                              float font_size,
+                              CPVT_VariableText::Provider& provider) {
+  fxcrt::ostringstream body_stream;
+
+  RetainPtr<const CPDF_Object> v_field =
+      CPDF_FormField::GetFieldAttrForDict(annot_dict, pdfium::form_fields::kV);
+  WideString value = v_field ? v_field->GetUnicodeText() : WideString();
+  CPVT_VariableText vt(&provider);
+  CFX_FloatRect button_rect = body_rect;
+  button_rect.left = button_rect.right - 13;
+  button_rect.Normalize();
+  CFX_FloatRect edit_rect = body_rect;
+  edit_rect.right = button_rect.left;
+  edit_rect.Normalize();
+  vt.SetPlateRect(edit_rect);
+  if (FXSYS_IsFloatZero(font_size)) {
+    vt.SetAutoFontSize(true);
+  } else {
+    vt.SetFontSize(font_size);
+  }
+
+  vt.Initialize();
+  vt.SetText(value);
+  vt.RearrangeAll();
+  CFX_FloatRect content_rect = vt.GetContentRect();
+  CFX_PointF offset =
+      CFX_PointF(0.0f, (content_rect.Height() - edit_rect.Height()) / 2.0f);
+  ByteString edit =
+      GenerateEditAP(provider.GetFontMap(), vt.GetIterator(), offset, true, 0);
+  if (edit.GetLength() > 0) {
+    body_stream << "/Tx BMC\nq\n";
+    WriteRect(body_stream, edit_rect) << " re\nW\nn\n";
+    body_stream << "BT\n"
+                << GenerateColorAP(text_color, PaintOperation::kFill) << edit
+                << "ET\n"
+                << "Q\nEMC\n";
+  }
+  ByteString button =
+      GenerateColorAP(CFX_Color(CFX_Color::Type::kRGB, 220.0f / 255.0f,
+                                220.0f / 255.0f, 220.0f / 255.0f),
+                      PaintOperation::kFill);
+  if (button.GetLength() > 0 && !button_rect.IsEmpty()) {
+    body_stream << "q\n" << button;
+    WriteRect(body_stream, button_rect) << " re f\n";
+    body_stream << "Q\n";
+    static const BorderStyleInfo kButtonBorderStyleInfo{
+        .width = 2, .style = BorderStyle::kBeveled, .dash_pattern{3, 0, 0}};
+    ByteString button_border =
+        GenerateBorderAP(button_rect, kButtonBorderStyleInfo,
+                         CFX_Color(CFX_Color::Type::kGray, 0));
+    if (button_border.GetLength() > 0) {
+      body_stream << "q\n" << button_border << "Q\n";
+    }
+
+    CFX_PointF center((button_rect.left + button_rect.right) / 2,
+                      (button_rect.top + button_rect.bottom) / 2);
+    if (FXSYS_IsFloatBigger(button_rect.Width(), 6) &&
+        FXSYS_IsFloatBigger(button_rect.Height(), 6)) {
+      body_stream << "q\n0 g\n";
+      WritePoint(body_stream, {center.x - 3, center.y + 1.5f}) << " m\n";
+      WritePoint(body_stream, {center.x + 3, center.y + 1.5f}) << " l\n";
+      WritePoint(body_stream, {center.x, center.y - 1.5f}) << " l\n";
+      WritePoint(body_stream, {center.x - 3, center.y + 1.5f}) << " l f\n";
+      body_stream << button << "Q\n";
+    }
+  }
+  return ByteString(body_stream);
+}
+
+ByteString GenerateListBoxAP(const CPDF_Dictionary* annot_dict,
+                             const CFX_FloatRect& body_rect,
+                             const CFX_Color& text_color,
+                             float font_size,
+                             CPVT_VariableText::Provider& provider) {
+  RetainPtr<const CPDF_Array> opts =
+      ToArray(CPDF_FormField::GetFieldAttrForDict(annot_dict, "Opt"));
+  if (!opts) {
+    return ByteString();
+  }
+
+  RetainPtr<const CPDF_Array> selections =
+      ToArray(CPDF_FormField::GetFieldAttrForDict(annot_dict, "I"));
+  RetainPtr<const CPDF_Object> top_index =
+      CPDF_FormField::GetFieldAttrForDict(annot_dict, "TI");
+  const int32_t top = top_index ? top_index->GetInteger() : 0;
+  fxcrt::ostringstream body_stream;
+
+  float fy = body_rect.top;
+  for (size_t i = top, sz = opts->size(); i < sz; i++) {
+    if (FXSYS_IsFloatSmaller(fy, body_rect.bottom)) {
+      break;
+    }
+
+    if (RetainPtr<const CPDF_Object> opt = opts->GetDirectObjectAt(i)) {
+      WideString item;
+      if (opt->IsString()) {
+        item = opt->GetUnicodeText();
+      } else if (const CPDF_Array* opt_array = opt->AsArray()) {
+        RetainPtr<const CPDF_Object> opt_item = opt_array->GetDirectObjectAt(1);
+        if (opt_item) {
+          item = opt_item->GetUnicodeText();
+        }
+      }
+      bool is_selected = false;
+      if (selections) {
+        for (size_t s = 0, ssz = selections->size(); s < ssz; s++) {
+          int value = selections->GetIntegerAt(s);
+          if (value >= 0 && i == static_cast<size_t>(value)) {
+            is_selected = true;
+            break;
+          }
+        }
+      }
+      CPVT_VariableText vt(&provider);
+      vt.SetPlateRect(
+          CFX_FloatRect(body_rect.left, 0.0f, body_rect.right, 0.0f));
+      vt.SetFontSize(FXSYS_IsFloatZero(font_size) ? 12.0f : font_size);
+      vt.Initialize();
+      vt.SetText(item);
+      vt.RearrangeAll();
+
+      const float item_height = vt.GetContentRect().Height();
+      if (is_selected) {
+        CFX_FloatRect item_rect = CFX_FloatRect(
+            body_rect.left, fy - item_height, body_rect.right, fy);
+        body_stream << "q\n"
+                    << GenerateColorAP(
+                           CFX_Color(CFX_Color::Type::kRGB, 0, 51.0f / 255.0f,
+                                     113.0f / 255.0f),
+                           PaintOperation::kFill);
+        WriteRect(body_stream, item_rect) << " re f\nQ\n";
+        body_stream << "BT\n"
+                    << GenerateColorAP(CFX_Color(CFX_Color::Type::kGray, 1),
+                                       PaintOperation::kFill)
+                    << GenerateEditAP(provider.GetFontMap(), vt.GetIterator(),
+                                      CFX_PointF(0.0f, fy), true, 0)
+                    << "ET\n";
+      } else {
+        body_stream << "BT\n"
+                    << GenerateColorAP(text_color, PaintOperation::kFill)
+                    << GenerateEditAP(provider.GetFontMap(), vt.GetIterator(),
+                                      CFX_PointF(0.0f, fy), true, 0)
+                    << "ET\n";
+      }
+      fy -= item_height;
+    }
+  }
+  return ByteString(body_stream);
+}
+
 bool GenerateCircleAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
   fxcrt::ostringstream app_stream;
   app_stream << "/" << kGSDictName << " gs ";
@@ -1164,7 +1317,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
 
   CPVT_FontMap map(doc, std::move(resources_dict), std::move(default_font),
                    font_name);
-  CPVT_VariableText::Provider prd(&map);
+  CPVT_VariableText::Provider provider(&map);
   switch (type) {
     case CPDF_GenerateAP::kTextField: {
       RetainPtr<const CPDF_Object> v_field =
@@ -1181,7 +1334,7 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
       RetainPtr<const CPDF_Object> max_len_field =
           CPDF_FormField::GetFieldAttrForDict(annot_dict, "MaxLen");
       const uint32_t max_len = max_len_field ? max_len_field->GetInteger() : 0;
-      CPVT_VariableText vt(&prd);
+      CPVT_VariableText vt(&provider);
       vt.SetPlateRect(body_rect);
       vt.SetAlignment(align);
       if (FXSYS_IsFloatZero(font_size)) {
@@ -1232,147 +1385,16 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
       break;
     }
     case CPDF_GenerateAP::kComboBox: {
-      RetainPtr<const CPDF_Object> v_field =
-          CPDF_FormField::GetFieldAttrForDict(annot_dict,
-                                              pdfium::form_fields::kV);
-      WideString value = v_field ? v_field->GetUnicodeText() : WideString();
-      CPVT_VariableText vt(&prd);
-      CFX_FloatRect button_rect = body_rect;
-      button_rect.left = button_rect.right - 13;
-      button_rect.Normalize();
-      CFX_FloatRect edit_rect = body_rect;
-      edit_rect.right = button_rect.left;
-      edit_rect.Normalize();
-      vt.SetPlateRect(edit_rect);
-      if (FXSYS_IsFloatZero(font_size)) {
-        vt.SetAutoFontSize(true);
-      } else {
-        vt.SetFontSize(font_size);
-      }
-
-      vt.Initialize();
-      vt.SetText(value);
-      vt.RearrangeAll();
-      CFX_FloatRect content_rect = vt.GetContentRect();
-      CFX_PointF offset =
-          CFX_PointF(0.0f, (content_rect.Height() - edit_rect.Height()) / 2.0f);
-      ByteString edit = GenerateEditAP(&map, vt.GetIterator(), offset, true, 0);
-      if (edit.GetLength() > 0) {
-        app_stream << "/Tx BMC\nq\n";
-        WriteRect(app_stream, edit_rect) << " re\nW\nn\n";
-        app_stream << "BT\n"
-                   << GenerateColorAP(text_color, PaintOperation::kFill) << edit
-                   << "ET\n"
-                   << "Q\nEMC\n";
-      }
-      ByteString button =
-          GenerateColorAP(CFX_Color(CFX_Color::Type::kRGB, 220.0f / 255.0f,
-                                    220.0f / 255.0f, 220.0f / 255.0f),
-                          PaintOperation::kFill);
-      if (button.GetLength() > 0 && !button_rect.IsEmpty()) {
-        app_stream << "q\n" << button;
-        WriteRect(app_stream, button_rect) << " re f\n";
-        app_stream << "Q\n";
-        static const BorderStyleInfo kButtonBorderStyleInfo{
-            .width = 2, .style = BorderStyle::kBeveled, .dash_pattern{3, 0, 0}};
-        ByteString button_border =
-            GenerateBorderAP(button_rect, kButtonBorderStyleInfo,
-                             CFX_Color(CFX_Color::Type::kGray, 0));
-        if (button_border.GetLength() > 0) {
-          app_stream << "q\n" << button_border << "Q\n";
-        }
-
-        CFX_PointF center((button_rect.left + button_rect.right) / 2,
-                          (button_rect.top + button_rect.bottom) / 2);
-        if (FXSYS_IsFloatBigger(button_rect.Width(), 6) &&
-            FXSYS_IsFloatBigger(button_rect.Height(), 6)) {
-          app_stream << "q\n0 g\n";
-          WritePoint(app_stream, {center.x - 3, center.y + 1.5f}) << " m\n";
-          WritePoint(app_stream, {center.x + 3, center.y + 1.5f}) << " l\n";
-          WritePoint(app_stream, {center.x, center.y - 1.5f}) << " l\n";
-          WritePoint(app_stream, {center.x - 3, center.y + 1.5f}) << " l f\n";
-          app_stream << button << "Q\n";
-        }
-      }
+      app_stream << GenerateComboBoxAP(annot_dict, body_rect, text_color,
+                                       font_size, provider);
       break;
     }
     case CPDF_GenerateAP::kListBox: {
-      RetainPtr<const CPDF_Array> opts =
-          ToArray(CPDF_FormField::GetFieldAttrForDict(annot_dict, "Opt"));
-      RetainPtr<const CPDF_Array> selections =
-          ToArray(CPDF_FormField::GetFieldAttrForDict(annot_dict, "I"));
-      RetainPtr<const CPDF_Object> top_index =
-          CPDF_FormField::GetFieldAttrForDict(annot_dict, "TI");
-      const int32_t top = top_index ? top_index->GetInteger() : 0;
-      fxcrt::ostringstream body_stream;
-      if (opts) {
-        float fy = body_rect.top;
-        for (size_t i = top, sz = opts->size(); i < sz; i++) {
-          if (FXSYS_IsFloatSmaller(fy, body_rect.bottom)) {
-            break;
-          }
-
-          if (RetainPtr<const CPDF_Object> opt = opts->GetDirectObjectAt(i)) {
-            WideString item;
-            if (opt->IsString()) {
-              item = opt->GetUnicodeText();
-            } else if (const CPDF_Array* opt_array = opt->AsArray()) {
-              RetainPtr<const CPDF_Object> opt_item =
-                  opt_array->GetDirectObjectAt(1);
-              if (opt_item) {
-                item = opt_item->GetUnicodeText();
-              }
-            }
-            bool is_selected = false;
-            if (selections) {
-              for (size_t s = 0, ssz = selections->size(); s < ssz; s++) {
-                int value = selections->GetIntegerAt(s);
-                if (value >= 0 && i == static_cast<size_t>(value)) {
-                  is_selected = true;
-                  break;
-                }
-              }
-            }
-            CPVT_VariableText vt(&prd);
-            vt.SetPlateRect(
-                CFX_FloatRect(body_rect.left, 0.0f, body_rect.right, 0.0f));
-            vt.SetFontSize(FXSYS_IsFloatZero(font_size) ? 12.0f : font_size);
-            vt.Initialize();
-            vt.SetText(item);
-            vt.RearrangeAll();
-
-            const float item_height = vt.GetContentRect().Height();
-            if (is_selected) {
-              CFX_FloatRect item_rect = CFX_FloatRect(
-                  body_rect.left, fy - item_height, body_rect.right, fy);
-              body_stream << "q\n"
-                          << GenerateColorAP(
-                                 CFX_Color(CFX_Color::Type::kRGB, 0,
-                                           51.0f / 255.0f, 113.0f / 255.0f),
-                                 PaintOperation::kFill);
-              WriteRect(body_stream, item_rect) << " re f\nQ\n";
-              body_stream << "BT\n"
-                          << GenerateColorAP(
-                                 CFX_Color(CFX_Color::Type::kGray, 1),
-                                 PaintOperation::kFill)
-                          << GenerateEditAP(&map, vt.GetIterator(),
-                                            CFX_PointF(0.0f, fy), true, 0)
-                          << "ET\n";
-            } else {
-              body_stream << "BT\n"
-                          << GenerateColorAP(text_color, PaintOperation::kFill)
-                          << GenerateEditAP(&map, vt.GetIterator(),
-                                            CFX_PointF(0.0f, fy), true, 0)
-                          << "ET\n";
-            }
-            fy -= item_height;
-          }
-        }
-      }
-      if (body_stream.tellp() > 0) {
+      const ByteString body = GenerateListBoxAP(
+          annot_dict, body_rect, text_color, font_size, provider);
+      if (body.GetLength() > 0) {
         app_stream << "/Tx BMC\nq\n";
-        WriteRect(app_stream, body_rect) << " re\nW\nn\n"
-                                         << body_stream.str() << "Q\nEMC\n";
+        WriteRect(app_stream, body_rect) << " re\nW\nn\n" << body << "Q\nEMC\n";
       }
       break;
     }
