@@ -873,6 +873,10 @@ void CPVT_VariableText::SetProvider(Provider* pProvider) {
   m_pVTProvider = pProvider;
 }
 
+CPVT_VariableText::Provider* CPVT_VariableText::GetProvider() {
+  return m_pVTProvider;
+}
+
 CFX_PointF CPVT_VariableText::GetBTPoint() const {
   return CFX_PointF(m_rcPlate.left, m_rcPlate.top);
 }

@@ -689,6 +689,59 @@ void GenerateAndSetAPDict(CPDF_Document* doc,
   ap_dict->SetNewFor<CPDF_Reference>("N", doc, normal_stream->GetObjNum());
 }
 
+ByteString GenerateTextFieldAP(const CPDF_Dictionary* annot_dict,
+                               const CFX_FloatRect& body_rect,
+                               float font_size,
+                               CPVT_VariableText& vt) {
+  RetainPtr<const CPDF_Object> v_field =
+      CPDF_FormField::GetFieldAttrForDict(annot_dict, pdfium::form_fields::kV);
+  WideString value = v_field ? v_field->GetUnicodeText() : WideString();
+  RetainPtr<const CPDF_Object> q_field =
+      CPDF_FormField::GetFieldAttrForDict(annot_dict, "Q");
+  const int32_t align = q_field ? q_field->GetInteger() : 0;
+  RetainPtr<const CPDF_Object> ff_field =
+      CPDF_FormField::GetFieldAttrForDict(annot_dict, pdfium::form_fields::kFf);
+  const uint32_t flags = ff_field ? ff_field->GetInteger() : 0;
+  RetainPtr<const CPDF_Object> max_len_field =
+      CPDF_FormField::GetFieldAttrForDict(annot_dict, "MaxLen");
+  const uint32_t max_len = max_len_field ? max_len_field->GetInteger() : 0;
+  vt.SetPlateRect(body_rect);
+  vt.SetAlignment(align);
+  if (FXSYS_IsFloatZero(font_size)) {
+    vt.SetAutoFontSize(true);
+  } else {
+    vt.SetFontSize(font_size);
+  }
+
+  bool is_multi_line = (flags >> 12) & 1;
+  if (is_multi_line) {
+    vt.SetMultiLine(true);
+    vt.SetAutoReturn(true);
+  }
+  uint16_t sub_word = 0;
+  if ((flags >> 13) & 1) {
+    sub_word = '*';
+    vt.SetPasswordChar(sub_word);
+  }
+  bool is_char_array = (flags >> 24) & 1;
+  if (is_char_array) {
+    vt.SetCharArray(max_len);
+  } else {
+    vt.SetLimitChar(max_len);
+  }
+
+  vt.Initialize();
+  vt.SetText(value);
+  vt.RearrangeAll();
+  CFX_PointF offset;
+  if (!is_multi_line) {
+    offset = CFX_PointF(
+        0.0f, (vt.GetContentRect().Height() - body_rect.Height()) / 2.0f);
+  }
+  return GenerateEditAP(vt.GetProvider()->GetFontMap(), vt.GetIterator(),
+                        offset, !is_char_array, sub_word);
+}
+
 ByteString GenerateComboBoxAP(const CPDF_Dictionary* annot_dict,
                               const CFX_FloatRect& body_rect,
                               const CFX_Color& text_color,
@@ -1320,58 +1373,11 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
   CPVT_VariableText::Provider provider(&map);
   switch (type) {
     case CPDF_GenerateAP::kTextField: {
-      RetainPtr<const CPDF_Object> v_field =
-          CPDF_FormField::GetFieldAttrForDict(annot_dict,
-                                              pdfium::form_fields::kV);
-      WideString value = v_field ? v_field->GetUnicodeText() : WideString();
-      RetainPtr<const CPDF_Object> q_field =
-          CPDF_FormField::GetFieldAttrForDict(annot_dict, "Q");
-      const int32_t align = q_field ? q_field->GetInteger() : 0;
-      RetainPtr<const CPDF_Object> ff_field =
-          CPDF_FormField::GetFieldAttrForDict(annot_dict,
-                                              pdfium::form_fields::kFf);
-      const uint32_t flags = ff_field ? ff_field->GetInteger() : 0;
-      RetainPtr<const CPDF_Object> max_len_field =
-          CPDF_FormField::GetFieldAttrForDict(annot_dict, "MaxLen");
-      const uint32_t max_len = max_len_field ? max_len_field->GetInteger() : 0;
       CPVT_VariableText vt(&provider);
-      vt.SetPlateRect(body_rect);
-      vt.SetAlignment(align);
-      if (FXSYS_IsFloatZero(font_size)) {
-        vt.SetAutoFontSize(true);
-      } else {
-        vt.SetFontSize(font_size);
-      }
-
-      bool is_multi_line = (flags >> 12) & 1;
-      if (is_multi_line) {
-        vt.SetMultiLine(true);
-        vt.SetAutoReturn(true);
-      }
-      uint16_t sub_word = 0;
-      if ((flags >> 13) & 1) {
-        sub_word = '*';
-        vt.SetPasswordChar(sub_word);
-      }
-      bool is_char_array = (flags >> 24) & 1;
-      if (is_char_array) {
-        vt.SetCharArray(max_len);
-      } else {
-        vt.SetLimitChar(max_len);
-      }
-
-      vt.Initialize();
-      vt.SetText(value);
-      vt.RearrangeAll();
-      CFX_FloatRect content_rect = vt.GetContentRect();
-      CFX_PointF offset;
-      if (!is_multi_line) {
-        offset = CFX_PointF(
-            0.0f, (content_rect.Height() - body_rect.Height()) / 2.0f);
-      }
-      ByteString body = GenerateEditAP(&map, vt.GetIterator(), offset,
-                                       !is_char_array, sub_word);
+      ByteString body =
+          GenerateTextFieldAP(annot_dict, body_rect, font_size, vt);
       if (body.GetLength() > 0) {
+        const CFX_FloatRect content_rect = vt.GetContentRect();
         app_stream << "/Tx BMC\n" << "q\n";
         if (content_rect.Width() > body_rect.Width() ||
             content_rect.Height() > body_rect.Height()) {

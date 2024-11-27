@@ -70,6 +70,7 @@ class CPVT_VariableText {
   ~CPVT_VariableText();
 
   void SetProvider(Provider* pProvider);
+  Provider* GetProvider();
   CPVT_VariableText::Iterator* GetIterator();
 
   CFX_FloatRect GetContentRect() const;
