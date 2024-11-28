@@ -251,6 +251,41 @@ ByteString GetDefaultAppearanceString(CPDF_Dictionary* annot_dict,
   return default_appearance_string;
 }
 
+bool CloneResourcesDictIfMissingFromStream(CPDF_Dictionary* stream_dict,
+                                           const CPDF_Dictionary* dr_dict) {
+  RetainPtr<CPDF_Dictionary> resources_dict =
+      stream_dict->GetMutableDictFor("Resources");
+  if (resources_dict) {
+    return false;
+  }
+
+  stream_dict->SetFor("Resources", dr_dict->Clone());
+  return true;
+}
+
+bool ValidateOrCreateFontResources(CPDF_Document* doc,
+                                   CPDF_Dictionary* stream_dict,
+                                   const CPDF_Dictionary* font_dict,
+                                   const ByteString& font_name) {
+  RetainPtr<CPDF_Dictionary> resources_dict =
+      stream_dict->GetMutableDictFor("Resources");
+  RetainPtr<CPDF_Dictionary> font_resource_dict =
+      resources_dict->GetMutableDictFor("Font");
+  if (!font_resource_dict) {
+    font_resource_dict = resources_dict->SetNewFor<CPDF_Dictionary>("Font");
+  }
+
+  if (!ValidateFontResourceDict(font_resource_dict.Get())) {
+    return false;
+  }
+
+  if (!font_resource_dict->KeyExist(font_name)) {
+    font_resource_dict->SetNewFor<CPDF_Reference>(font_name, doc,
+                                                  font_dict->GetObjNum());
+  }
+  return true;
+}
+
 ByteString GenerateEditAP(IPVT_FontMap* font_map,
                           CPVT_VariableText::Iterator* vt_iterator,
                           const CFX_PointF& offset,
@@ -1343,25 +1378,15 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
   RetainPtr<CPDF_Dictionary> resources_dict;
   if (normal_stream) {
     RetainPtr<CPDF_Dictionary> stream_dict = normal_stream->GetMutableDict();
-    resources_dict = stream_dict->GetMutableDictFor("Resources");
-    if (resources_dict) {
-      RetainPtr<CPDF_Dictionary> font_resource_dict =
-          resources_dict->GetMutableDictFor("Font");
-      if (font_resource_dict) {
-        if (!ValidateFontResourceDict(font_resource_dict.Get())) {
-          return;
-        }
-      } else {
-        font_resource_dict = resources_dict->SetNewFor<CPDF_Dictionary>("Font");
+    const bool cloned =
+        CloneResourcesDictIfMissingFromStream(stream_dict, dr_dict);
+    if (!cloned) {
+      if (!ValidateOrCreateFontResources(doc, stream_dict, font_dict,
+                                         font_name)) {
+        return;
       }
-      if (!font_resource_dict->KeyExist(font_name)) {
-        font_resource_dict->SetNewFor<CPDF_Reference>(font_name, doc,
-                                                      font_dict->GetObjNum());
-      }
-    } else {
-      resources_dict = ToDictionary(dr_dict->Clone());
-      stream_dict->SetFor("Resources", resources_dict);
     }
+    resources_dict = stream_dict->GetMutableDictFor("Resources");
   } else {
     normal_stream =
         doc->NewIndirect<CPDF_Stream>(pdfium::MakeRetain<CPDF_Dictionary>());
@@ -1410,26 +1435,14 @@ void CPDF_GenerateAP::GenerateFormAP(CPDF_Document* doc,
   RetainPtr<CPDF_Dictionary> stream_dict = normal_stream->GetMutableDict();
   stream_dict->SetMatrixFor("Matrix", annot_dimensions_and_color.matrix);
   stream_dict->SetRectFor("BBox", annot_dimensions_and_color.bbox);
-  resources_dict = stream_dict->GetMutableDictFor("Resources");
-  if (!resources_dict) {
-    stream_dict->SetFor("Resources", dr_dict->Clone());
+
+  const bool cloned =
+      CloneResourcesDictIfMissingFromStream(stream_dict, dr_dict);
+  if (cloned) {
     return;
   }
 
-  RetainPtr<CPDF_Dictionary> font_resource_dict =
-      resources_dict->GetMutableDictFor("Font");
-  if (font_resource_dict) {
-    if (!ValidateFontResourceDict(font_resource_dict.Get())) {
-      return;
-    }
-  } else {
-    font_resource_dict = resources_dict->SetNewFor<CPDF_Dictionary>("Font");
-  }
-
-  if (!font_resource_dict->KeyExist(font_name)) {
-    font_resource_dict->SetNewFor<CPDF_Reference>(font_name, doc,
-                                                  font_dict->GetObjNum());
-  }
+  ValidateOrCreateFontResources(doc, stream_dict, font_dict, font_name);
 }
 
 // static
