@@ -5,7 +5,9 @@
   /AcroForm <<
     /Fields [4 0 R]
     /DR <<
-      /F1 5 0 R
+      /Font <<
+        /F1 5 0 R
+      >>
     >>
   >>
 >>
