@@ -93,7 +93,8 @@ ByteString::ByteString(const char* pStr, size_t nLen) {
 }
 
 ByteString::ByteString(const uint8_t* pStr, size_t nLen)
-    : ByteString(reinterpret_cast<const char*>(pStr), nLen) {}
+    // SAFETY: caller ensures `pStr` points to at least `nLen` chars.
+    : UNSAFE_BUFFERS(ByteString(reinterpret_cast<const char*>(pStr), nLen)) {}
 
 ByteString::ByteString(char ch) {
   m_pData = StringData::Create(1);
@@ -101,7 +102,8 @@ ByteString::ByteString(char ch) {
 }
 
 ByteString::ByteString(const char* ptr)
-    : ByteString(ptr, ptr ? strlen(ptr) : 0) {}
+    // SAFETY: caller ensures `ptr` is NUL-terminated.
+    : UNSAFE_BUFFERS(ByteString(ptr, ptr ? strlen(ptr) : 0)) {}
 
 ByteString::ByteString(ByteStringView bstrc) {
   if (!bstrc.IsEmpty()) {

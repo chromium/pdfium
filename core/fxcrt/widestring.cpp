@@ -410,7 +410,8 @@ WideString::WideString(wchar_t ch) {
 }
 
 WideString::WideString(const wchar_t* ptr)
-    : WideString(ptr, ptr ? wcslen(ptr) : 0) {}
+    // SAFETY: caller ensures `ptr` is NUL-terminated.
+    : UNSAFE_BUFFERS(WideString(ptr, ptr ? wcslen(ptr) : 0)) {}
 
 WideString::WideString(WideStringView stringSrc) {
   if (!stringSrc.IsEmpty()) {

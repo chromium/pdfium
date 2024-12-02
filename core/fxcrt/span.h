@@ -208,18 +208,23 @@ class TRIVIAL_ABI GSL_POINTER span {
 
   // TODO(dcheng): Implement construction from a |begin| and |end| pointer.
   template <size_t N>
-  constexpr span(T (&array)[N]) noexcept : span(array, N) {
+  constexpr span(T (&array)[N]) noexcept
+      // SAFETY: The type signature guarantees `array` contains `N` elements.
+      : UNSAFE_BUFFERS(span(array, N)) {
     static_assert(Extent == dynamic_extent || Extent == N);
   }
 
   template <size_t N>
-  constexpr span(std::array<T, N>& array) noexcept : span(array.data(), N) {
+  constexpr span(std::array<T, N>& array) noexcept
+      // SAFETY: The type signature guarantees `array` contains `N` elements.
+      : UNSAFE_BUFFERS(span(array.data(), N)) {
     static_assert(Extent == dynamic_extent || Extent == N);
   }
 
   template <size_t N>
   constexpr span(const std::array<std::remove_cv_t<T>, N>& array) noexcept
-      : span(array.data(), N) {
+      // SAFETY: The type signature guarantees `array` contains `N` elements.
+      : UNSAFE_BUFFERS(span(array.data(), N)) {
     static_assert(Extent == dynamic_extent || Extent == N);
   }
 
@@ -231,18 +236,26 @@ class TRIVIAL_ABI GSL_POINTER span {
   template <typename Container,
             typename = internal::EnableIfSpanCompatibleContainer<Container, T>>
   constexpr span(Container& container)
-      : span(container.size() ? container.data() : nullptr, container.size()) {}
+      // SAFETY: `size()` is the number of elements that can be safely accessed
+      // at `data()`, if non-empty.
+      : UNSAFE_BUFFERS(span(container.size() ? container.data() : nullptr,
+                            container.size())) {}
 #else
   template <typename Container,
             typename = internal::EnableIfSpanCompatibleContainer<Container, T>>
   constexpr span(Container& container)
-      : span(container.data(), container.size()) {}
+      // SAFETY: `size()` is the number of elements that can be safely accessed
+      // at `data()`.
+      : UNSAFE_BUFFERS(span(container.data(), container.size())) {}
 #endif
 
   template <
       typename Container,
       typename = internal::EnableIfConstSpanCompatibleContainer<Container, T>>
-  span(const Container& container) : span(container.data(), container.size()) {}
+  span(const Container& container)
+      // SAFETY: `size()` is exactly the number of elements in the initializer
+      // list, so accessing that many will be safe.
+      : UNSAFE_BUFFERS(span(container.data(), container.size())) {}
 
   constexpr span(const span& other) noexcept = default;
 
@@ -253,7 +266,9 @@ class TRIVIAL_ABI GSL_POINTER span {
             typename R,
             typename = internal::EnableIfLegalSpanConversion<U, T>>
   constexpr span(const span<U, M, R>& other)
-      : span(other.data(), other.size()) {}
+      // SAFETY: `size()` is the number of elements that can be safely accessed
+      // at `data()`.
+      : UNSAFE_BUFFERS(span(other.data(), other.size())) {}
 
   span& operator=(const span& other) noexcept = default;
   span& operator=(span&& other) noexcept = default;
