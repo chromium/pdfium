@@ -19,13 +19,15 @@
 #include "testing/gtest/include/gtest/gtest.h"
 #include "testing/utils/path_service.h"
 
+namespace pdfium {
+
 TEST(CPDFPageImageCache, RenderBug1924) {
   // If you render a page with a JPEG2000 image as a thumbnail (small picture)
   // first, the image that gets cached has a low resolution. If you afterwards
   // render it full-size, you should get a larger image - the image cache will
   // be regenerate.
 
-  CPDF_PageModule::Create();
+  InitializePageModule();
   {
     std::string file_path = PathService::GetTestFilePath("jpx_lzw.pdf");
     ASSERT_FALSE(file_path.empty());
@@ -77,5 +79,7 @@ TEST(CPDFPageImageCache, RenderBug1924) {
     ASSERT_TRUE(page->AsPDFPage());
     page->AsPDFPage()->ClearView();
   }
-  CPDF_PageModule::Destroy();
+  DestroyPageModule();
 }
+
+}  // namespace pdfium

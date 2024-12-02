@@ -10,17 +10,19 @@
 #include "core/fpdfapi/page/cpdf_colorspace.h"
 #include "core/fpdfapi/page/cpdf_streamcontentparser.h"
 
-// static
-void CPDF_PageModule::Create() {
+namespace pdfium {
+
+void InitializePageModule() {
   CPDF_ColorSpace::InitializeGlobals();
   CPDF_FontGlobals::Create();
   CPDF_FontGlobals::GetInstance()->LoadEmbeddedMaps();
   CPDF_StreamContentParser::InitializeGlobals();
 }
 
-// static
-void CPDF_PageModule::Destroy() {
+void DestroyPageModule() {
   CPDF_StreamContentParser::DestroyGlobals();
   CPDF_FontGlobals::Destroy();
   CPDF_ColorSpace::DestroyGlobals();
 }
+
+}  // namespace pdfium

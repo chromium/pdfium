@@ -7,9 +7,9 @@
 #include "core/fpdfapi/page/cpdf_pagemodule.h"
 
 void TestWithPageModule::SetUp() {
-  CPDF_PageModule::Create();
+  pdfium::InitializePageModule();
 }
 
 void TestWithPageModule::TearDown() {
-  CPDF_PageModule::Destroy();
+  pdfium::DestroyPageModule();
 }

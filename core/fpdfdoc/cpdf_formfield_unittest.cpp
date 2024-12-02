@@ -31,8 +31,8 @@ class ScopedCPDF_PageModule {
  public:
   FX_STACK_ALLOCATED();
 
-  ScopedCPDF_PageModule() { CPDF_PageModule::Create(); }
-  ~ScopedCPDF_PageModule() { CPDF_PageModule::Destroy(); }
+  ScopedCPDF_PageModule() { pdfium::InitializePageModule(); }
+  ~ScopedCPDF_PageModule() { pdfium::DestroyPageModule(); }
 };
 
 void TestMultiselectFieldDict(RetainPtr<CPDF_Array> opt_array,

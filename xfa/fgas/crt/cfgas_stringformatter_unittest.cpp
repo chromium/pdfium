@@ -23,9 +23,11 @@ using ::testing::ElementsAre;
 
 class CFGASStringFormatterTest : public FXGCUnitTest {
  public:
-  CFGASStringFormatterTest() : scoped_tz_("UTC") { CPDF_PageModule::Create(); }
+  CFGASStringFormatterTest() : scoped_tz_("UTC") {
+    pdfium::InitializePageModule();
+  }
 
-  ~CFGASStringFormatterTest() override { CPDF_PageModule::Destroy(); }
+  ~CFGASStringFormatterTest() override { pdfium::DestroyPageModule(); }
 
   CXFA_LocaleMgr* Mgr(const WideString& locale) {
     return cppgc::MakeGarbageCollected<CXFA_LocaleMgr>(

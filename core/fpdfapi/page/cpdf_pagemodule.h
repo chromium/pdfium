@@ -7,12 +7,14 @@
 #ifndef CORE_FPDFAPI_PAGE_CPDF_PAGEMODULE_H_
 #define CORE_FPDFAPI_PAGE_CPDF_PAGEMODULE_H_
 
-// TODO(thestig): Replace with class with standalone functions without polluting
-// the global namespace.
-class CPDF_PageModule {
- public:
-  static void Create();
-  static void Destroy();
-};
+namespace pdfium {
+
+// Initializes the page module.
+void InitializePageModule();
+
+// Tears down the page module.
+void DestroyPageModule();
+
+}  // namespace pdfium
 
 #endif  // CORE_FPDFAPI_PAGE_CPDF_PAGEMODULE_H_

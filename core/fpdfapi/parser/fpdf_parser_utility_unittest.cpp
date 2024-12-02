@@ -15,6 +15,8 @@
 #include "core/fpdfapi/parser/cpdf_test_document.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
+namespace pdfium {
+
 TEST(ParserUtilityTest, NameDecode) {
   EXPECT_EQ("", PDF_NameDecode(""));
   EXPECT_EQ("A", PDF_NameDecode("A"));
@@ -53,7 +55,7 @@ TEST(ParserUtilityTest, ValidateDictType) {
 }
 
 TEST(ParserUtilityTest, ValidateDictAllResourcesOfType) {
-  CPDF_PageModule::Create();
+  InitializePageModule();
 
   {
     // Direct dictionary.
@@ -102,7 +104,7 @@ TEST(ParserUtilityTest, ValidateDictAllResourcesOfType) {
     EXPECT_FALSE(ValidateDictAllResourcesOfType(dict.Get(), "bar"));
   }
 
-  CPDF_PageModule::Destroy();
+  DestroyPageModule();
 }
 
 TEST(ParserUtilityTest, ValidateDictOptionalType) {
@@ -122,3 +124,5 @@ TEST(ParserUtilityTest, ValidateDictOptionalType) {
   EXPECT_TRUE(ValidateDictOptionalType(dict.Get(), "foo"));
   EXPECT_FALSE(ValidateDictOptionalType(dict.Get(), "bar"));
 }
+
+}  // namespace pdfium
