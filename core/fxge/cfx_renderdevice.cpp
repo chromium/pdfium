@@ -18,6 +18,7 @@
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_safe_types.h"
 #include "core/fxcrt/span.h"
+#include "core/fxcrt/zip.h"
 #include "core/fxge/cfx_color.h"
 #include "core/fxge/cfx_defaultrenderdevice.h"
 #include "core/fxge/cfx_fillrenderoptions.h"
@@ -1141,15 +1142,12 @@ bool CFX_RenderDevice::DrawNormalText(pdfium::span<const TextCharPos> pCharPos,
     }
   }
   std::vector<TextGlyphPos> glyphs(pCharPos.size());
-  for (size_t i = 0; i < glyphs.size(); ++i) {
-    TextGlyphPos& glyph = glyphs[i];
-    const TextCharPos& charpos = pCharPos[i];
-
+  for (auto [charpos, glyph] :
+       fxcrt::Zip(pCharPos, pdfium::make_span(glyphs))) {
     glyph.m_fDeviceOrigin = text2Device.Transform(charpos.m_Origin);
-    if (anti_alias < FT_RENDER_MODE_LCD)
-      glyph.m_Origin.x = FXSYS_roundf(glyph.m_fDeviceOrigin.x);
-    else
-      glyph.m_Origin.x = static_cast<int>(floor(glyph.m_fDeviceOrigin.x));
+    glyph.m_Origin.x = anti_alias < FT_RENDER_MODE_LCD
+                           ? FXSYS_roundf(glyph.m_fDeviceOrigin.x)
+                           : static_cast<int>(floor(glyph.m_fDeviceOrigin.x));
     glyph.m_Origin.y = FXSYS_roundf(glyph.m_fDeviceOrigin.y);
 
     CFX_Matrix matrix = charpos.GetEffectiveMatrix(char2device);
