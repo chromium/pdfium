@@ -78,7 +78,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling build
   # and whatever else without interference from each other.
-  'build_revision': 'fcec87a316876a76c28e0cd5682dd32d9a597ec9',
+  'build_revision': '84fa09ff44bbdeef23b01d87078a63dac04dae8b',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling buildtools
   # and whatever else without interference from each other.
@@ -94,7 +94,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling clang
   # and whatever else without interference from each other.
-  'clang_revision': '37d1894d5350b2cdfde3b4a81858c8d14c7c5eb8',
+  'clang_revision': '634f2acc7bb334d2e6da78e206220f9c00e2e66a',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling code_coverage
   # and whatever else without interference from each other.
@@ -196,7 +196,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling rust
   # and whatever else without interference from each other.
-  'rust_revision': '7c0544c9d6752871fe7107618bc4ea0ce811c9e5',
+  'rust_revision': 'cecd4aabb2c2cc4342021f141997281a4f234faa',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling skia
   # and whatever else without interference from each other.
@@ -216,7 +216,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling tools_rust
   # and whatever else without interference from each other.
-  'tools_rust_revision': 'e4fd8fdeeac06e3bc44655d9490aa68367e794af',
+  'tools_rust_revision': 'f7e4078bb01913cc6c66eed10b6a6f45d5ee8027',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling v8
   # and whatever else without interference from each other.
@@ -398,45 +398,45 @@ deps = {
     'bucket': 'chromium-browser-clang',
     'objects': [
       {
-        'object_name': 'Linux_x64/clang-llvmorg-20-init-9764-gb81d8e90-7.tar.xz',
-        'sha256sum': '8e2ae60cff735abf36e5fe5e77c00b544d1487b65f89207a42102b680898a46b',
-        'size_bytes': 54095864,
-        'generation': 1731544264198178,
-        'condition': 'host_os == "linux" and non_git_source',
+        'object_name': 'Linux_x64/clang-llvmorg-20-init-13688-gdb273c6c-1.tar.xz',
+        'sha256sum': '0031098b8d09ca1f7525871b96ecfaf755a001f06d2d92ed42660da540576b9a',
+        'size_bytes': 54400564,
+        'generation': 1732785786707822,
+        'condition': '(host_os == "linux" or checkout_android) and non_git_source',
       },
       {
-        'object_name': 'Mac/clang-llvmorg-20-init-9764-gb81d8e90-7.tar.xz',
-        'sha256sum': '77f32455f2089476a93721d93ec03ac9f30cc95d488c866b5718ce387f92c1a5',
-        'size_bytes': 48571252,
-        'generation': 1731544266598769,
+        'object_name': 'Mac/clang-llvmorg-20-init-13688-gdb273c6c-1.tar.xz',
+        'sha256sum': '49443f33dadaccfdd5cb14f3f07c9a16e32e80aad12c982cb93917715684cd07',
+        'size_bytes': 48863172,
+        'generation': 1732785790297012,
         'condition': 'host_os == "mac" and host_cpu == "x64"',
       },
       {
-        'object_name': 'Mac/clang-mac-runtime-library-llvmorg-20-init-9764-gb81d8e90-7.tar.xz',
-        'sha256sum': 'a07d63759d4b5512fed86fa8f424365171d4015fe47c501c5caa3269dfe51032',
-        'size_bytes': 974716,
-        'generation': 1731544279261384,
+        'object_name': 'Mac/clang-mac-runtime-library-llvmorg-20-init-13688-gdb273c6c-1.tar.xz',
+        'sha256sum': '55452e2fec18e428d04c62bf091ef5c0a52ff169674dda891f83c4ec45c1a067',
+        'size_bytes': 978504,
+        'generation': 1732785809541591,
         'condition': 'checkout_mac and not host_os == "mac"',
       },
       {
-        'object_name': 'Mac_arm64/clang-llvmorg-20-init-9764-gb81d8e90-7.tar.xz',
-        'sha256sum': 'ee885ab3b8e7f25e5d92d06306295f01f35324cf3a0ceb66448c47b29879770d',
-        'size_bytes': 42642352,
-        'generation': 1731544280524902,
+        'object_name': 'Mac_arm64/clang-llvmorg-20-init-13688-gdb273c6c-1.tar.xz',
+        'sha256sum': '19387a1186fda9bbb71f8c7533bae301d3a633e0f4f1ea4c5351297a14034565',
+        'size_bytes': 42935384,
+        'generation': 1732785811123087,
         'condition': 'host_os == "mac" and host_cpu == "arm64"',
       },
       {
-        'object_name': 'Win/clang-llvmorg-20-init-9764-gb81d8e90-7.tar.xz',
-        'sha256sum': 'd13af8c578f9108c4bb6e2b2a629f1a1b8ae5b91746b1eed42292b37849a7561',
-        'size_bytes': 45523728,
-        'generation': 1731544289415557,
+        'object_name': 'Win/clang-llvmorg-20-init-13688-gdb273c6c-1.tar.xz',
+        'sha256sum': '7f03738ee525ac63fe5fa666fa4843e0ec674bc2b239364d7fe0d1913931dd6a',
+        'size_bytes': 46085992,
+        'generation': 1732785833280773,
         'condition': 'host_os == "win"',
       },
       {
-        'object_name': 'Win/clang-win-runtime-library-llvmorg-20-init-9764-gb81d8e90-7.tar.xz',
-        'sha256sum': 'ab71c7e8706207edc1b728de2d10cbd512a255486666addc40efd6f4f33e4e3c',
-        'size_bytes': 2480384,
-        'generation': 1731544296156413,
+        'object_name': 'Win/clang-win-runtime-library-llvmorg-20-init-13688-gdb273c6c-1.tar.xz',
+        'sha256sum': '6e368e70fb473304b7f6f643517fc098e610dfb1a82959c67b18976bc4723c33',
+        'size_bytes': 2477180,
+        'generation': 1732785853305263,
         'condition': 'checkout_win and not host_os == "win"',
       },
     ]
@@ -476,31 +476,31 @@ deps = {
     'bucket': 'chromium-browser-clang',
     'objects': [
       {
-        'object_name': 'Linux_x64/rust-toolchain-bca5fdebe0e539d123f33df5f2149d5976392e76-1-llvmorg-20-init-9764-gb81d8e90.tar.xz',
-        'sha256sum': '0c4092f5769c5ececd096732b00f2c5c4e1741d4112881a2c83fe7e78271d792',
-        'size_bytes': 122758604,
-        'generation': 1729629177370195,
+        'object_name': 'Linux_x64/rust-toolchain-66adeaf46b7a646daeed29518ef76235fcdb9726-1-llvmorg-20-init-13688-gdb273c6c.tar.xz',
+        'sha256sum': '7c8f45ec635f5ddfa5f3eaa6efb2ef971923d7a4225e70cf0a8bae93ce4dba96',
+        'size_bytes': 125062964,
+        'generation': 1732785780409127,
         'condition': 'host_os == "linux" and non_git_source',
       },
       {
-        'object_name': 'Mac/rust-toolchain-bca5fdebe0e539d123f33df5f2149d5976392e76-1-llvmorg-20-init-9764-gb81d8e90.tar.xz',
-        'sha256sum': '41c0265504ce0ace325f87e7db24329170fcc88d3931ff76e61126db46f2b5e1',
-        'size_bytes': 115814060,
-        'generation': 1729629179200874,
+        'object_name': 'Mac/rust-toolchain-66adeaf46b7a646daeed29518ef76235fcdb9726-1-llvmorg-20-init-13688-gdb273c6c.tar.xz',
+        'sha256sum': '20c25c694b499277ba215e5264cabfabf49b5d97a81023a2e026b21a4c726c0f',
+        'size_bytes': 117854488,
+        'generation': 1732785781809365,
         'condition': 'host_os == "mac" and host_cpu == "x64"',
       },
       {
-        'object_name': 'Mac_arm64/rust-toolchain-bca5fdebe0e539d123f33df5f2149d5976392e76-1-llvmorg-20-init-9764-gb81d8e90.tar.xz',
-        'sha256sum': '4c264b2fcc4a4bb7d908cf7838c70878cbcfa6dabec5b5b97a5fcfdab8658eb6',
-        'size_bytes': 104504052,
-        'generation': 1729629180998449,
+        'object_name': 'Mac_arm64/rust-toolchain-66adeaf46b7a646daeed29518ef76235fcdb9726-1-llvmorg-20-init-13688-gdb273c6c.tar.xz',
+        'sha256sum': '1d75526521a52da9dd733abd8caae1edd84f2edf31a29bd1366933da9d979590',
+        'size_bytes': 102676180,
+        'generation': 1732785783169390,
         'condition': 'host_os == "mac" and host_cpu == "arm64"',
       },
       {
-        'object_name': 'Win/rust-toolchain-bca5fdebe0e539d123f33df5f2149d5976392e76-1-llvmorg-20-init-9764-gb81d8e90.tar.xz',
-        'sha256sum': 'afade008b0eea5d8d30e19ceef22e9f9c4fe9b4cdcb9c61926665ec1658379cc',
-        'size_bytes': 181085496,
-        'generation': 1729629182819402,
+        'object_name': 'Win/rust-toolchain-66adeaf46b7a646daeed29518ef76235fcdb9726-1-llvmorg-20-init-13688-gdb273c6c.tar.xz',
+        'sha256sum': '1beca97823569fa896ea9f06364d357878ba764ecb6780fce5ae87e1471941f3',
+        'size_bytes': 177614080,
+        'generation': 1732785784464641,
         'condition': 'host_os == "win"',
       },
     ],
