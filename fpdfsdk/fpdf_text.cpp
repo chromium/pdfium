@@ -155,15 +155,16 @@ FPDFText_GetFontInfo(FPDF_TEXTPAGE text_page,
 FPDF_EXPORT int FPDF_CALLCONV FPDFText_GetFontWeight(FPDF_TEXTPAGE text_page,
                                                      int index) {
   CPDF_TextPage* textpage = GetTextPageForValidIndex(text_page, index);
-  if (!textpage)
+  if (!textpage) {
     return -1;
+  }
 
   const CPDF_TextPage::CharInfo& charinfo = textpage->GetCharInfo(index);
   if (!charinfo.text_object()) {
     return -1;
   }
 
-  return charinfo.text_object()->GetFont()->GetFontWeight();
+  return charinfo.text_object()->GetFont()->GetFontWeight().value_or(-1);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV

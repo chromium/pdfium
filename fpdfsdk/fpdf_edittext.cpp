@@ -952,8 +952,11 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFFont_GetFlags(FPDF_FONT font) {
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetWeight(FPDF_FONT font) {
-  auto* pFont = CPDFFontFromFPDFFont(font);
-  return pFont ? pFont->GetFontWeight() : -1;
+  auto* cfont = CPDFFontFromFPDFFont(font);
+  if (!cfont) {
+    return -1;
+  }
+  return cfont->GetFontWeight().value_or(-1);
 }
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFFont_GetItalicAngle(FPDF_FONT font,

@@ -116,7 +116,10 @@ class CPDF_Font : public Retainable, public Observable {
   int FallbackGlyphFromCharcode(int fallbackFont, uint32_t charcode);
   int GetFontFlags() const { return m_Flags; }
   int GetItalicAngle() const { return m_ItalicAngle; }
-  int GetFontWeight() const;
+
+  // Note that even when non-nullopt, the value may be outside the normal range
+  // of [100, 900].
+  std::optional<int> GetFontWeight() const;
 
   virtual int GetCharWidthF(uint32_t charcode) = 0;
   virtual FX_RECT GetCharBBox(uint32_t charcode) = 0;

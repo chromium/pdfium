@@ -415,11 +415,15 @@ bool CPDF_Font::UseTTCharmap(const RetainPtr<CFX_Face>& face,
   return false;
 }
 
-int CPDF_Font::GetFontWeight() const {
-  FX_SAFE_INT32 safeStemV(m_StemV);
-  if (m_StemV < 140)
-    safeStemV *= 5;
-  else
-    safeStemV = safeStemV * 4 + 140;
-  return safeStemV.ValueOrDefault(FXFONT_FW_NORMAL);
+std::optional<int> CPDF_Font::GetFontWeight() const {
+  FX_SAFE_INT32 safe_stem_v(m_StemV);
+  if (m_StemV < 140) {
+    safe_stem_v *= 5;
+  } else {
+    safe_stem_v = safe_stem_v * 4 + 140;
+  }
+  if (!safe_stem_v.IsValid()) {
+    return std::nullopt;
+  }
+  return safe_stem_v.ValueOrDie();
 }

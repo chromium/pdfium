@@ -269,19 +269,24 @@ void CPDF_SimpleFont::LoadSubstFont() {
     int width = 0;
     size_t i;
     for (i = 0; i < kInternalTableSize; i++) {
-      if (m_CharWidth[i] == 0 || m_CharWidth[i] == 0xffff)
+      if (m_CharWidth[i] == 0 || m_CharWidth[i] == 0xffff) {
         continue;
+      }
 
-      if (width == 0)
+      if (width == 0) {
         width = m_CharWidth[i];
-      else if (width != m_CharWidth[i])
+      } else if (width != m_CharWidth[i]) {
         break;
+      }
     }
-    if (i == kInternalTableSize && width)
+    if (i == kInternalTableSize && width) {
       m_Flags |= FXFONT_FIXED_PITCH;
+    }
   }
-  m_Font.LoadSubst(m_BaseFontName, IsTrueTypeFont(), m_Flags, GetFontWeight(),
-                   m_ItalicAngle, FX_CodePage::kDefANSI, false);
+
+  const int weight = GetFontWeight().value_or(FXFONT_FW_NORMAL);
+  m_Font.LoadSubst(m_BaseFontName, IsTrueTypeFont(), m_Flags, weight,
+                   m_ItalicAngle, FX_CodePage::kDefANSI, /*bVertical=*/false);
 }
 
 bool CPDF_SimpleFont::IsUnicodeCompatible() const {
