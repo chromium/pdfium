@@ -149,7 +149,7 @@ bool CPDF_Font::HasFontWidths() const {
 }
 
 void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* pFontDesc) {
-  m_Flags = pFontDesc->GetIntegerFor("Flags", FXFONT_NONSYMBOLIC);
+  m_Flags = pFontDesc->GetIntegerFor("Flags", pdfium::kFontStyleNonSymbolic);
   int ItalicAngle = 0;
   bool bExistItalicAngle = false;
   if (pFontDesc->KeyExist("ItalicAngle")) {
@@ -157,7 +157,7 @@ void CPDF_Font::LoadFontDescriptor(const CPDF_Dictionary* pFontDesc) {
     bExistItalicAngle = true;
   }
   if (ItalicAngle < 0) {
-    m_Flags |= FXFONT_ITALIC;
+    m_Flags |= pdfium::kFontStyleItalic;
     m_ItalicAngle = ItalicAngle;
   }
   bool bExistStemV = false;

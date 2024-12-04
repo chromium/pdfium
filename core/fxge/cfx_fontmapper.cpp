@@ -211,11 +211,11 @@ struct FX_FontStyle {
 };
 
 constexpr FX_FontStyle kFontStyles[] = {
-    {"Regular", 7, FXFONT_NORMAL},
-    {"Reg", 3, FXFONT_NORMAL},
-    {"BoldItalic", 10, FXFONT_FORCE_BOLD | FXFONT_ITALIC},
-    {"Italic", 6, FXFONT_ITALIC},
-    {"Bold", 4, FXFONT_FORCE_BOLD},
+    {"Regular", 7, pdfium::kFontStyleNormal},
+    {"Reg", 3, pdfium::kFontStyleNormal},
+    {"BoldItalic", 10, pdfium::kFontStyleForceBold | pdfium::kFontStyleItalic},
+    {"Italic", 6, pdfium::kFontStyleItalic},
+    {"Bold", 4, pdfium::kFontStyleForceBold},
 };
 
 const FX_FontStyle* GetStyleType(ByteStringView font_name,
@@ -256,7 +256,7 @@ bool ParseStyles(const ByteString& style_str,
       *is_style_available = true;
       parsed_style = style_result->style;
     } else {
-      parsed_style = FXFONT_NORMAL;
+      parsed_style = pdfium::kFontStyleNormal;
     }
 
     if (FontStyleIsForceBold(parsed_style)) {
@@ -265,18 +265,18 @@ bool ParseStyles(const ByteString& style_str,
         *weight = pdfium::kFontWeightExtraBold;
       } else {
         *weight = pdfium::kFontWeightBold;
-        *style |= FXFONT_FORCE_BOLD;
+        *style |= pdfium::kFontStyleForceBold;
       }
 
       is_first_item = false;
     }
     if (FontStyleIsItalic(parsed_style) && FontStyleIsForceBold(parsed_style)) {
-      *style |= FXFONT_ITALIC;
+      *style |= pdfium::kFontStyleItalic;
     } else if (FontStyleIsItalic(parsed_style)) {
       if (!is_first_item)
         return true;
 
-      *style |= FXFONT_ITALIC;
+      *style |= pdfium::kFontStyleItalic;
       break;
     }
     i += buf.GetLength() + 1;
@@ -293,11 +293,13 @@ bool CheckSupportThirdPartFont(const ByteString& name, int* pitch_family) {
 
 uint32_t GetStyleFromBaseFont(int base_font) {
   int pos = base_font % 4;
-  uint32_t style = FXFONT_NORMAL;
-  if (pos == 1 || pos == 2)
-    style |= FXFONT_FORCE_BOLD;
-  if (pos / 2)
-    style |= FXFONT_ITALIC;
+  uint32_t style = pdfium::kFontStyleNormal;
+  if (pos == 1 || pos == 2) {
+    style |= pdfium::kFontStyleForceBold;
+  }
+  if (pos / 2) {
+    style |= pdfium::kFontStyleItalic;
+  }
   return style;
 }
 
@@ -620,7 +622,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
     pitch_family = GetPitchFamilyFromBaseFont(base_font);
   } else {
     base_font = kNumStandardFonts;
-    nStyle = FXFONT_NORMAL;
+    nStyle = pdfium::kFontStyleNormal;
     if (!has_comma) {
       std::optional<size_t> pos = family.ReverseFind('-');
       if (pos.has_value()) {
@@ -690,7 +692,7 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
     }
   } else {
     italic_angle = 0;
-    if (nStyle == FXFONT_NORMAL) {
+    if (nStyle == pdfium::kFontStyleNormal) {
       weight = pdfium::kFontWeightNormal;
     }
   }
@@ -735,7 +737,8 @@ RetainPtr<CFX_Face> CFX_FontMapper::FindSubstFont(const ByteString& name,
                               subst_font);
     }
 #endif
-    return FindSubstFont(family, is_truetype, flags & ~FXFONT_SYMBOLIC, weight,
+    return FindSubstFont(family, is_truetype,
+                         flags & ~pdfium::kFontStyleSymbolic, weight,
                          italic_angle, FX_CodePage::kDefANSI, subst_font);
   }
 

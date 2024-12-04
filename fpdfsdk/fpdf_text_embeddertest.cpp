@@ -956,7 +956,7 @@ TEST_F(FPDFTextEmbedderTest, GetFontInfo) {
         FPDFText_GetFontInfo(textpage.get(), i, nullptr, 0, &flags);
     static constexpr unsigned long expected_length = sizeof(kExpectedFontName1);
     ASSERT_EQ(expected_length, length);
-    EXPECT_EQ(FXFONT_NONSYMBOLIC, flags);
+    EXPECT_EQ(pdfium::kFontStyleNonSymbolic, flags);
     font_name.resize(length);
     std::fill(font_name.begin(), font_name.end(), 'a');
     flags = -1;
@@ -964,7 +964,7 @@ TEST_F(FPDFTextEmbedderTest, GetFontInfo) {
               FPDFText_GetFontInfo(textpage.get(), i, font_name.data(),
                                    font_name.size(), &flags));
     EXPECT_STREQ(kExpectedFontName1, font_name.data());
-    EXPECT_EQ(FXFONT_NONSYMBOLIC, flags);
+    EXPECT_EQ(pdfium::kFontStyleNonSymbolic, flags);
   }
   // If the size of the buffer is not large enough, the buffer should remain
   // unchanged.
@@ -994,7 +994,7 @@ TEST_F(FPDFTextEmbedderTest, GetFontInfo) {
         FPDFText_GetFontInfo(textpage.get(), i, nullptr, 0, &flags);
     static constexpr unsigned long expected_length = sizeof(kExpectedFontName2);
     ASSERT_EQ(expected_length, length);
-    EXPECT_EQ(FXFONT_NONSYMBOLIC, flags);
+    EXPECT_EQ(pdfium::kFontStyleNonSymbolic, flags);
     font_name.resize(length);
     std::fill(font_name.begin(), font_name.end(), 'a');
     flags = -1;
@@ -1002,7 +1002,7 @@ TEST_F(FPDFTextEmbedderTest, GetFontInfo) {
               FPDFText_GetFontInfo(textpage.get(), i, font_name.data(),
                                    font_name.size(), &flags));
     EXPECT_STREQ(kExpectedFontName2, font_name.data());
-    EXPECT_EQ(FXFONT_NONSYMBOLIC, flags);
+    EXPECT_EQ(pdfium::kFontStyleNonSymbolic, flags);
   }
 
   // Now try some out of bounds indices and null pointers to make sure we do not

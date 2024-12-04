@@ -406,13 +406,13 @@ std::unique_ptr<CFPF_SkiaPathFont> CFPF_SkiaFontMgr::ReportFace(
     const ByteString& file) {
   uint32_t style = 0;
   if (face->IsBold()) {
-    style |= FXFONT_FORCE_BOLD;
+    style |= pdfium::kFontStyleForceBold;
   }
   if (face->IsItalic()) {
-    style |= FXFONT_ITALIC;
+    style |= pdfium::kFontStyleItalic;
   }
   if (face->IsFixedWidth()) {
-    style |= FXFONT_FIXED_PITCH;
+    style |= pdfium::kFontStyleFixedPitch;
   }
 
   uint32_t charset = SKIACHARSET_Default;
@@ -420,7 +420,7 @@ std::unique_ptr<CFPF_SkiaPathFont> CFPF_SkiaFontMgr::ReportFace(
       face->GetOs2CodePageRange();
   if (code_page_range.has_value()) {
     if (code_page_range.value()[0] & (1 << 31)) {
-      style |= FXFONT_SYMBOLIC;
+      style |= pdfium::kFontStyleSymbolic;
     }
     charset |= SkiaGetFaceCharset(code_page_range.value()[0]);
   }
@@ -429,7 +429,7 @@ std::unique_ptr<CFPF_SkiaPathFont> CFPF_SkiaFontMgr::ReportFace(
   if (panose.has_value() && panose.value()[0] == 2) {
     uint8_t serif = panose.value()[1];
     if ((serif > 1 && serif < 10) || serif > 13) {
-      style |= FXFONT_SERIF;
+      style |= pdfium::kFontStyleSerif;
     }
   }
 

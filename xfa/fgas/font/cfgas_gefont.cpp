@@ -141,14 +141,14 @@ uint32_t CFGAS_GEFont::GetFontStyles() const {
   auto* pSubstFont = m_pFont->GetSubstFont();
   if (pSubstFont) {
     if (pSubstFont->m_Weight == pdfium::kFontWeightBold) {
-      dwStyles |= FXFONT_FORCE_BOLD;
+      dwStyles |= pdfium::kFontStyleForceBold;
     }
   } else {
     if (m_pFont->IsBold()) {
-      dwStyles |= FXFONT_FORCE_BOLD;
+      dwStyles |= pdfium::kFontStyleForceBold;
     }
     if (m_pFont->IsItalic()) {
-      dwStyles |= FXFONT_ITALIC;
+      dwStyles |= pdfium::kFontStyleItalic;
     }
   }
   return dwStyles;

@@ -280,7 +280,7 @@ void CPDF_SimpleFont::LoadSubstFont() {
       }
     }
     if (i == kInternalTableSize && width) {
-      m_Flags |= FXFONT_FIXED_PITCH;
+      m_Flags |= pdfium::kFontStyleFixedPitch;
     }
   }
 

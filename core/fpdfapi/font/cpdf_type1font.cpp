@@ -101,9 +101,9 @@ bool CPDF_Type1Font::Load() {
   if (pFontDesc && pFontDesc->KeyExist("Flags")) {
     m_Flags = pFontDesc->GetIntegerFor("Flags");
   } else if (IsSymbolicFont()) {
-    m_Flags = FXFONT_SYMBOLIC;
+    m_Flags = pdfium::kFontStyleSymbolic;
   } else {
-    m_Flags = FXFONT_NONSYMBOLIC;
+    m_Flags = pdfium::kFontStyleNonSymbolic;
   }
   if (IsFixedFont()) {
     std::fill(std::begin(m_CharWidth), std::end(m_CharWidth), 600);

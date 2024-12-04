@@ -135,19 +135,19 @@ RetainPtr<CPDF_Dictionary> LoadFontDesc(CPDF_Document* doc,
   font_descriptor_dict->SetNewFor<CPDF_Name>("FontName", font_name);
   int flags = 0;
   if (font->GetFace()->IsFixedWidth()) {
-    flags |= FXFONT_FIXED_PITCH;
+    flags |= pdfium::kFontStyleFixedPitch;
   }
   if (font_name.Contains("Serif"))
-    flags |= FXFONT_SERIF;
+    flags |= pdfium::kFontStyleSerif;
   if (font->GetFace()->IsItalic()) {
-    flags |= FXFONT_ITALIC;
+    flags |= pdfium::kFontStyleItalic;
   }
   if (font->GetFace()->IsBold()) {
-    flags |= FXFONT_FORCE_BOLD;
+    flags |= pdfium::kFontStyleForceBold;
   }
 
   // TODO(npm): How do I know if a font is symbolic, script, allcap, smallcap?
-  flags |= FXFONT_NONSYMBOLIC;
+  flags |= pdfium::kFontStyleNonSymbolic;
 
   font_descriptor_dict->SetNewFor<CPDF_Number>("Flags", flags);
   FX_RECT bbox = font->GetBBox().value_or(FX_RECT());

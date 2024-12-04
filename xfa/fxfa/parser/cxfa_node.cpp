@@ -3931,10 +3931,12 @@ RetainPtr<CFGAS_GEFont> CXFA_Node::GetFGASFont(CXFA_FFDoc* doc) {
   uint32_t dwFontStyle = 0;
   CXFA_Font* font = GetFontIfExists();
   if (font) {
-    if (font->IsBold())
-      dwFontStyle |= FXFONT_FORCE_BOLD;
-    if (font->IsItalic())
-      dwFontStyle |= FXFONT_ITALIC;
+    if (font->IsBold()) {
+      dwFontStyle |= pdfium::kFontStyleForceBold;
+    }
+    if (font->IsItalic()) {
+      dwFontStyle |= pdfium::kFontStyleItalic;
+    }
 
     wsFontName = font->GetTypeface();
   }
