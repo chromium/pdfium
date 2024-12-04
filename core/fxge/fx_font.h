@@ -15,15 +15,22 @@
 #include "core/fxcrt/fx_coordinates.h"
 #include "core/fxcrt/span.h"
 
+namespace pdfium {
+
+// Font weight values that are in use.
+enum FontWeight {
+  kFontWeightExtraLight = 100,
+  kFontWeightNormal = 400,
+  kFontWeightBold = 700,
+  kFontWeightExtraBold = 900,
+};
+
+}  // namespace pdfium
+
 /* Font pitch and family flags */
 #define FXFONT_FF_FIXEDPITCH (1 << 0)
 #define FXFONT_FF_ROMAN (1 << 4)
 #define FXFONT_FF_SCRIPT (4 << 4)
-
-/* Typical weight values */
-#define FXFONT_FW_NORMAL 400
-#define FXFONT_FW_BOLD 700
-#define FXFONT_FW_BOLD_BOLD 900
 
 /* Font styles as defined in PDF 1.7 Table 5.20 */
 #define FXFONT_NORMAL (0)

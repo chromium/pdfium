@@ -284,9 +284,10 @@ void CPDF_SimpleFont::LoadSubstFont() {
     }
   }
 
-  int weight = GetFontWeight().value_or(FXFONT_FW_NORMAL);
-  if (weight < 100 || weight > FXFONT_FW_BOLD_BOLD) {
-    weight = FXFONT_FW_NORMAL;
+  int weight = GetFontWeight().value_or(pdfium::kFontWeightNormal);
+  if (weight < pdfium::kFontWeightExtraLight ||
+      weight > pdfium::kFontWeightExtraBold) {
+    weight = pdfium::kFontWeightNormal;
   }
   m_Font.LoadSubst(m_BaseFontName, IsTrueTypeFont(), m_Flags, weight,
                    m_ItalicAngle, FX_CodePage::kDefANSI, /*bVertical=*/false);

@@ -372,12 +372,12 @@ const char* CPDF_Font::GetAdobeCharName(
 uint32_t CPDF_Font::FallbackFontFromCharcode(uint32_t charcode) {
   if (m_FontFallbacks.empty()) {
     m_FontFallbacks.push_back(std::make_unique<CFX_Font>());
-    FX_SAFE_INT32 safeWeight = m_StemV;
-    safeWeight *= 5;
-    m_FontFallbacks[0]->LoadSubst("Arial", IsTrueTypeFont(), m_Flags,
-                                  safeWeight.ValueOrDefault(FXFONT_FW_NORMAL),
-                                  m_ItalicAngle, FX_CodePage::kDefANSI,
-                                  IsVertWriting());
+    FX_SAFE_INT32 safe_weight = m_StemV;
+    safe_weight *= 5;
+    m_FontFallbacks[0]->LoadSubst(
+        "Arial", IsTrueTypeFont(), m_Flags,
+        safe_weight.ValueOrDefault(pdfium::kFontWeightNormal), m_ItalicAngle,
+        FX_CodePage::kDefANSI, IsVertWriting());
   }
   return 0;
 }

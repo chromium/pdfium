@@ -75,6 +75,9 @@ static_assert(offsetof(CFX_Font::CharsetFontMap, fontname) ==
 static_assert(sizeof(CFX_Font::CharsetFontMap) == sizeof(FPDF_CharsetFontMap),
               "CFX_Font::CharsetFontMap must be same as FPDF_CharsetFontMap");
 
+static_assert(FXFONT_FW_NORMAL == pdfium::kFontWeightNormal);
+static_assert(FXFONT_FW_BOLD == pdfium::kFontWeightBold);
+
 class CFX_ExternalFontInfo final : public SystemFontInfoIface {
  public:
   explicit CFX_ExternalFontInfo(FPDF_SYSFONTINFO* pInfo) : m_pInfo(pInfo) {}

@@ -370,7 +370,8 @@ bool CFX_Font::IsFixedWidth() const {
 #if defined(PDF_USE_SKIA)
 bool CFX_Font::IsSubstFontBold() const {
   CFX_SubstFont* subst_font = GetSubstFont();
-  return subst_font && subst_font->GetOriginalWeight() >= FXFONT_FW_BOLD;
+  return subst_font &&
+         subst_font->GetOriginalWeight() >= pdfium::kFontWeightBold;
 }
 #endif
 
