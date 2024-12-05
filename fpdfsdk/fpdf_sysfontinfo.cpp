@@ -29,51 +29,37 @@
 #include "xfa/fgas/font/cfgas_gemodule.h"
 #endif
 
-static_assert(FXFONT_ANSI_CHARSET == static_cast<int>(FX_Charset::kANSI),
-              "Charset must match");
-static_assert(FXFONT_DEFAULT_CHARSET == static_cast<int>(FX_Charset::kDefault),
-              "Charset must match");
-static_assert(FXFONT_SYMBOL_CHARSET == static_cast<int>(FX_Charset::kSymbol),
-              "Charset must match");
+static_assert(FXFONT_ANSI_CHARSET == static_cast<int>(FX_Charset::kANSI));
+static_assert(FXFONT_DEFAULT_CHARSET == static_cast<int>(FX_Charset::kDefault));
+static_assert(FXFONT_SYMBOL_CHARSET == static_cast<int>(FX_Charset::kSymbol));
 static_assert(FXFONT_SHIFTJIS_CHARSET ==
-                  static_cast<int>(FX_Charset::kShiftJIS),
-              "Charset must match");
-static_assert(FXFONT_HANGEUL_CHARSET == static_cast<int>(FX_Charset::kHangul),
-              "Charset must match");
+              static_cast<int>(FX_Charset::kShiftJIS));
+static_assert(FXFONT_HANGEUL_CHARSET == static_cast<int>(FX_Charset::kHangul));
 static_assert(FXFONT_GB2312_CHARSET ==
-                  static_cast<int>(FX_Charset::kChineseSimplified),
-              "Charset must match");
+              static_cast<int>(FX_Charset::kChineseSimplified));
 static_assert(FXFONT_CHINESEBIG5_CHARSET ==
-                  static_cast<int>(FX_Charset::kChineseTraditional),
-              "Charset must match");
+              static_cast<int>(FX_Charset::kChineseTraditional));
 static_assert(FXFONT_GREEK_CHARSET ==
-                  static_cast<int>(FX_Charset::kMSWin_Greek),
-              "Charset must match");
+              static_cast<int>(FX_Charset::kMSWin_Greek));
 static_assert(FXFONT_VIETNAMESE_CHARSET ==
-                  static_cast<int>(FX_Charset::kMSWin_Vietnamese),
-              "Charset must match");
+              static_cast<int>(FX_Charset::kMSWin_Vietnamese));
 static_assert(FXFONT_HEBREW_CHARSET ==
-                  static_cast<int>(FX_Charset::kMSWin_Hebrew),
-              "Charset must match");
+              static_cast<int>(FX_Charset::kMSWin_Hebrew));
 static_assert(FXFONT_ARABIC_CHARSET ==
-                  static_cast<int>(FX_Charset::kMSWin_Arabic),
-              "Charset must match");
+              static_cast<int>(FX_Charset::kMSWin_Arabic));
 static_assert(FXFONT_CYRILLIC_CHARSET ==
-                  static_cast<int>(FX_Charset::kMSWin_Cyrillic),
-              "Charset must match");
-static_assert(FXFONT_THAI_CHARSET == static_cast<int>(FX_Charset::kThai),
-              "Charset must match");
+              static_cast<int>(FX_Charset::kMSWin_Cyrillic));
+static_assert(FXFONT_THAI_CHARSET == static_cast<int>(FX_Charset::kThai));
 static_assert(FXFONT_EASTERNEUROPEAN_CHARSET ==
-                  static_cast<int>(FX_Charset::kMSWin_EasternEuropean),
-              "Charset must match");
+              static_cast<int>(FX_Charset::kMSWin_EasternEuropean));
+static_assert(pdfium::kFontPitchFamilyFixed == FXFONT_FF_FIXEDPITCH);
+static_assert(pdfium::kFontPitchFamilyRoman == FXFONT_FF_ROMAN);
+static_assert(pdfium::kFontPitchFamilyScript == FXFONT_FF_SCRIPT);
 static_assert(offsetof(CFX_Font::CharsetFontMap, charset) ==
-                  offsetof(FPDF_CharsetFontMap, charset),
-              "CFX_Font::CharsetFontMap must be same as FPDF_CharsetFontMap");
+              offsetof(FPDF_CharsetFontMap, charset));
 static_assert(offsetof(CFX_Font::CharsetFontMap, fontname) ==
-                  offsetof(FPDF_CharsetFontMap, fontname),
-              "CFX_Font::CharsetFontMap must be same as FPDF_CharsetFontMap");
-static_assert(sizeof(CFX_Font::CharsetFontMap) == sizeof(FPDF_CharsetFontMap),
-              "CFX_Font::CharsetFontMap must be same as FPDF_CharsetFontMap");
+              offsetof(FPDF_CharsetFontMap, fontname));
+static_assert(sizeof(CFX_Font::CharsetFontMap) == sizeof(FPDF_CharsetFontMap));
 
 static_assert(FXFONT_FW_NORMAL == pdfium::kFontWeightNormal);
 static_assert(FXFONT_FW_BOLD == pdfium::kFontWeightBold);

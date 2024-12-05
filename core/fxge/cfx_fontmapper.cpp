@@ -287,7 +287,7 @@ bool ParseStyles(const ByteString& style_str,
 bool CheckSupportThirdPartFont(const ByteString& name, int* pitch_family) {
   if (name != "MyriadPro")
     return false;
-  *pitch_family &= ~FXFONT_FF_ROMAN;
+  *pitch_family &= ~pdfium::kFontPitchFamilyRoman;
   return true;
 }
 
@@ -304,21 +304,26 @@ uint32_t GetStyleFromBaseFont(int base_font) {
 }
 
 int GetPitchFamilyFromBaseFont(int base_font) {
-  if (base_font < 4)
-    return FXFONT_FF_FIXEDPITCH;
-  if (base_font >= 8)
-    return FXFONT_FF_ROMAN;
+  if (base_font < 4) {
+    return pdfium::kFontPitchFamilyFixed;
+  }
+  if (base_font >= 8) {
+    return pdfium::kFontPitchFamilyRoman;
+  }
   return 0;
 }
 
 int GetPitchFamilyFromFlags(uint32_t flags) {
   int pitch_family = 0;
-  if (FontStyleIsSerif(flags))
-    pitch_family |= FXFONT_FF_ROMAN;
-  if (FontStyleIsScript(flags))
-    pitch_family |= FXFONT_FF_SCRIPT;
-  if (FontStyleIsFixedPitch(flags))
-    pitch_family |= FXFONT_FF_FIXEDPITCH;
+  if (FontStyleIsSerif(flags)) {
+    pitch_family |= pdfium::kFontPitchFamilyRoman;
+  }
+  if (FontStyleIsScript(flags)) {
+    pitch_family |= pdfium::kFontPitchFamilyScript;
+  }
+  if (FontStyleIsFixedPitch(flags)) {
+    pitch_family |= pdfium::kFontPitchFamilyFixed;
+  }
   return pitch_family;
 }
 

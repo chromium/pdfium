@@ -17,6 +17,13 @@
 
 namespace pdfium {
 
+// Font pitch and family flags.
+enum FontPitchFamily {
+  kFontPitchFamilyFixed = 1 << 0,
+  kFontPitchFamilyRoman = 1 << 4,
+  kFontPitchFamilyScript = 1 << 6,
+};
+
 // Defined in ISO 32000-1:2008 spec, table 123.
 // Defined in ISO 32000-2:2020 spec, table 121.
 enum FontStyle {
@@ -41,11 +48,6 @@ enum FontWeight {
 };
 
 }  // namespace pdfium
-
-/* Font pitch and family flags */
-#define FXFONT_FF_FIXEDPITCH (1 << 0)
-#define FXFONT_FF_ROMAN (1 << 4)
-#define FXFONT_FF_SCRIPT (4 << 4)
 
 /* Other font flags */
 #define FXFONT_USEEXTERNATTR 0x80000
@@ -94,13 +96,13 @@ inline bool FontStyleIsScript(uint32_t style) {
 }
 
 inline bool FontFamilyIsFixedPitch(uint32_t family) {
-  return !!(family & FXFONT_FF_FIXEDPITCH);
+  return !!(family & pdfium::kFontPitchFamilyFixed);
 }
 inline bool FontFamilyIsRoman(uint32_t family) {
-  return !!(family & FXFONT_FF_ROMAN);
+  return !!(family & pdfium::kFontPitchFamilyRoman);
 }
 inline bool FontFamilyIsScript(int32_t family) {
-  return !!(family & FXFONT_FF_SCRIPT);
+  return !!(family & pdfium::kFontPitchFamilyScript);
 }
 
 wchar_t UnicodeFromAdobeName(const char* name);
