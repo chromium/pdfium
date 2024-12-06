@@ -60,3 +60,7 @@ void CPDF_IccProfile::TranslateScanline(pdfium::span<uint8_t> pDest,
                                         int pixels) {
   m_Transform->TranslateScanline(pDest, pSrc, pixels);
 }
+
+RetainPtr<const CPDF_StreamAcc> CPDF_IccProfile::GetStreamAcc() const {
+  return m_pStreamAcc;
+}

@@ -27,6 +27,7 @@
 #include "core/fxge/dib/fx_dib.h"
 
 class CPDF_Document;
+class CPDF_IccProfile;
 class CPDF_IndexedCS;
 class CPDF_PatternCS;
 
@@ -109,6 +110,8 @@ class CPDF_ColorSpace : public Retainable, public Observable {
   // Use CPDF_Pattern::GetPatternColorRef() instead of GetRGB() for patterns.
   virtual std::optional<FX_RGB_STRUCT<float>> GetRGB(
       pdfium::span<const float> pBuf) const = 0;
+
+  virtual RetainPtr<CPDF_IccProfile> GetIccProfile() const;
 
   virtual void GetDefaultValue(int iComponent,
                                float* value,

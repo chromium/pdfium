@@ -36,6 +36,8 @@ class CPDF_IccProfile final : public Retainable {
                          pdfium::span<const uint8_t> pSrc,
                          int pixels);
 
+  RetainPtr<const CPDF_StreamAcc> GetStreamAcc() const;
+
  private:
   CPDF_IccProfile(RetainPtr<const CPDF_StreamAcc> stream_acc,
                   uint32_t expected_components);
