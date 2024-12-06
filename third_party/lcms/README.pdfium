@@ -5,6 +5,7 @@ Revision: d0752309ff93f62be246ee9bf18338107f30d485
 Security Critical: yes
 Shipped: yes
 License: MIT License
+License File: LICENSE
 
 Description:
 Color Management Engine.
