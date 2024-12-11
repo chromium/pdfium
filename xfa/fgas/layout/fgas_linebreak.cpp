@@ -6,6 +6,8 @@
 
 #include "xfa/fgas/layout/fgas_linebreak.h"
 
+#include <stddef.h>
+
 #include <array>
 #include <iterator>
 

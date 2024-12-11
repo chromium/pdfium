@@ -7,6 +7,7 @@
 #ifndef XFA_FGAS_LAYOUT_CFGAS_CHAR_H_
 #define XFA_FGAS_LAYOUT_CFGAS_CHAR_H_
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include <vector>
