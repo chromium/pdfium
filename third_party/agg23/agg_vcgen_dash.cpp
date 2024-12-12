@@ -58,8 +58,17 @@ void vcgen_dash::add_dash(float dash_len, float gap_len)
 }
 void vcgen_dash::dash_start(float ds)
 {
-    m_dash_start = ds;
-    calc_dash_start(fabs(ds));
+  CHECK_GT(m_total_dash_len, 0);
+  // According to ISO 32000-2:2020 section 8.4.3.6:
+  // If the dash phase is negative, it shall be incremented by twice the sum of
+  // all lengths in the dash array until it is positive.
+  if (ds < 0.0f) {
+    float dash_len_sum = m_total_dash_len * 2;
+    ds += ceil(-ds / dash_len_sum) * dash_len_sum;
+  }
+  CHECK_GE(ds, 0);
+  m_dash_start = ds;
+  calc_dash_start(ds);
 }
 void vcgen_dash::calc_dash_start(float ds)
 {

@@ -35,3 +35,5 @@ shadow variable.
 0014-ubsan-render-line.patch: Fix some integer overflows in
 outline_aa::render_line().
 0015-include-string-h.patch: IWYU for <string.h>
+0016-support-negative-dash-phases.patch: Support negative dash phases in
+calc_dash_start().
