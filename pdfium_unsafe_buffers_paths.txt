@@ -22,6 +22,6 @@
 -samples/
 -skia/
 -testing/
--third_party
+-third_party/
 -tools/
 -v8/
