@@ -131,7 +131,8 @@ void JSMethod(const char* method_name_string,
   for (unsigned int i = 0; i < (unsigned int)info.Length(); i++)
     parameters.push_back(info[i]);
 
-  CJS_Result result = (pObj.get()->*M)(pRuntime, parameters);
+  // TODO(tsepez): why does the compiler think this is sometimes unsafe?
+  CJS_Result result = UNSAFE_TODO((pObj.get()->*M)(pRuntime, parameters));
   if (result.HasError()) {
     pRuntime->Error(JSFormatErrorString(class_name_string, method_name_string,
                                         result.Error()));

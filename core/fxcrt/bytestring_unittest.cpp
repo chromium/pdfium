@@ -39,21 +39,22 @@ TEST(ByteString, ElementAccess) {
 
   pdfium::span<const char> abc_span = abc.span();
   EXPECT_EQ(3u, abc_span.size());
-  EXPECT_EQ(0, memcmp(abc_span.data(), "abc", 3));
+  EXPECT_EQ(0, UNSAFE_TODO(memcmp(abc_span.data(), "abc", 3)));
 
   pdfium::span<const char> abc_span_with_terminator =
       abc.span_with_terminator();
   EXPECT_EQ(4u, abc_span_with_terminator.size());
-  EXPECT_EQ(0, memcmp(abc_span_with_terminator.data(), "abc", 4));
+  EXPECT_EQ(0, UNSAFE_TODO(memcmp(abc_span_with_terminator.data(), "abc", 4)));
 
   pdfium::span<const uint8_t> abc_raw_span = abc.unsigned_span();
   EXPECT_EQ(3u, abc_raw_span.size());
-  EXPECT_EQ(0, memcmp(abc_raw_span.data(), "abc", 3));
+  EXPECT_EQ(0, UNSAFE_TODO(memcmp(abc_raw_span.data(), "abc", 3)));
 
   pdfium::span<const uint8_t> abc_raw_span_with_terminator =
       abc.unsigned_span_with_terminator();
   EXPECT_EQ(4u, abc_raw_span_with_terminator.size());
-  EXPECT_EQ(0, memcmp(abc_raw_span_with_terminator.data(), "abc", 4));
+  EXPECT_EQ(0,
+            UNSAFE_TODO(memcmp(abc_raw_span_with_terminator.data(), "abc", 4)));
 
   ByteString mutable_abc = abc;
   EXPECT_EQ(abc.c_str(), mutable_abc.c_str());
@@ -1027,8 +1028,9 @@ TEST(ByteString, GetBuffer) {
   ByteString str1;
   {
     pdfium::span<char> buffer = str1.GetBuffer(12);
+    // SAFETY: required for test.
     // NOLINTNEXTLINE(runtime/printf)
-    strcpy(buffer.data(), "clams");
+    UNSAFE_BUFFERS(strcpy(buffer.data(), "clams"));
   }
   str1.ReleaseBuffer(str1.GetStringLength());
   EXPECT_EQ("clams", str1);
@@ -1036,8 +1038,9 @@ TEST(ByteString, GetBuffer) {
   ByteString str2("cl");
   {
     pdfium::span<char> buffer = str2.GetBuffer(12);
+    // SAFETY: required for test.
     // NOLINTNEXTLINE(runtime/printf)
-    strcpy(&buffer[2], "ams");
+    UNSAFE_BUFFERS(strcpy(&buffer[2], "ams"));
   }
   str2.ReleaseBuffer(str2.GetStringLength());
   EXPECT_EQ("clams", str2);
@@ -1756,7 +1759,7 @@ TEST(ByteString, Empty) {
 
   const char* cstr = empty_str.c_str();
   EXPECT_TRUE(cstr);
-  EXPECT_EQ(0u, strlen(cstr));
+  EXPECT_EQ(0u, UNSAFE_TODO(strlen(cstr)));
 
   const uint8_t* rstr = empty_str.unsigned_str();
   EXPECT_FALSE(rstr);

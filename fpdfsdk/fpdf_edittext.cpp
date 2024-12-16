@@ -703,8 +703,11 @@ FPDFText_LoadCidType2Font(FPDF_DOCUMENT document,
                           uint32_t cid_to_gid_map_data_size) {
   CPDF_Document* doc = CPDFDocumentFromFPDFDocument(document);
   if (!doc || !font_data || font_data_size == 0 || !to_unicode_cmap ||
-      strlen(to_unicode_cmap) == 0 || !cid_to_gid_map_data ||
-      cid_to_gid_map_data_size == 0) {
+      !cid_to_gid_map_data || cid_to_gid_map_data_size == 0) {
+    return nullptr;
+  }
+  // SAFETY: required from caller.
+  if (UNSAFE_BUFFERS(strlen(to_unicode_cmap)) == 0) {
     return nullptr;
   }
   // SAFETY: required from caller.

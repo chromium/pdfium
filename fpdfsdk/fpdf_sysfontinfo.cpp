@@ -240,9 +240,10 @@ static unsigned long DefaultGetFaceName(struct _FPDF_SYSFONTINFO* pThis,
 
   const unsigned long copy_length =
       pdfium::checked_cast<unsigned long>(name.GetLength() + 1);
-  if (copy_length <= buf_size)
-    strncpy(buffer, name.c_str(), copy_length * sizeof(ByteString::CharType));
-
+  if (copy_length <= buf_size) {
+    UNSAFE_TODO(strncpy(buffer, name.c_str(),
+                        copy_length * sizeof(ByteString::CharType)));
+  }
   return copy_length;
 }
 

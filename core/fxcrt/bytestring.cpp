@@ -16,6 +16,7 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
@@ -49,10 +50,13 @@ ByteString ByteString::FormatInteger(int i) {
 }
 
 // static
+// TODO(tsepez): Should be UNSAFE_BUFFER_USAGE.
 ByteString ByteString::FormatV(const char* pFormat, va_list argList) {
   va_list argListCopy;
   va_copy(argListCopy, argList);
-  int nMaxLen = vsnprintf(nullptr, 0, pFormat, argListCopy);
+
+  // SAFETY: required from caller.
+  int nMaxLen = UNSAFE_BUFFERS(vsnprintf(nullptr, 0, pFormat, argListCopy));
   va_end(argListCopy);
 
   if (nMaxLen <= 0)
@@ -68,7 +72,7 @@ ByteString ByteString::FormatV(const char* pFormat, va_list argList) {
     // included in the span.
     UNSAFE_BUFFERS(FXSYS_memset(buf.data(), 0, nMaxLen + 1));
     va_copy(argListCopy, argList);
-    vsnprintf(buf.data(), nMaxLen + 1, pFormat, argListCopy);
+    UNSAFE_TODO(vsnprintf(buf.data(), nMaxLen + 1, pFormat, argListCopy));
     va_end(argListCopy);
   }
   ret.ReleaseBuffer(ret.GetStringLength());
@@ -149,12 +153,14 @@ ByteString::ByteString(const fxcrt::ostringstream& outStream) {
   }
 }
 
+// TODO(tsepez): Should be UNSAFE_BUFFER_USAGE.
 ByteString& ByteString::operator=(const char* str) {
-  if (!str || !str[0])
+  if (!str || !str[0]) {
     clear();
-  else
-    AssignCopy(str, strlen(str));
-
+  } else {
+    // SAFETY: required from caller.
+    AssignCopy(str, UNSAFE_BUFFERS(strlen(str)));
+  }
   return *this;
 }
 
@@ -181,10 +187,12 @@ ByteString& ByteString::operator=(ByteString&& that) noexcept {
   return *this;
 }
 
+// TODO(tsepez): Should be UNSAFE_BUFFER_USAGE
 ByteString& ByteString::operator+=(const char* str) {
-  if (str)
-    Concat(str, strlen(str));
-
+  if (str) {
+    // SAFETY: required from caller.
+    Concat(str, UNSAFE_BUFFERS(strlen(str)));
+  }
   return *this;
 }
 
@@ -207,6 +215,7 @@ ByteString& ByteString::operator+=(ByteStringView str) {
   return *this;
 }
 
+// TODO(tsepez): Should be UNSAFE_BUFFER_USAGE
 bool ByteString::operator==(const char* ptr) const {
   if (!m_pData)
     return !ptr || !ptr[0];
@@ -215,8 +224,9 @@ bool ByteString::operator==(const char* ptr) const {
     return m_pData->m_nDataLength == 0;
 
   // SAFETY: `m_nDataLength` is within `m_String`, and the strlen() call
-  // ensures there are `m_nDataLength` bytes at `ptr` before the terminator.
-  return strlen(ptr) == m_pData->m_nDataLength &&
+  // (whose own safety is required from the caller) ensures there are
+  // `m_nDataLength` bytes at `ptr` before the terminator.
+  return UNSAFE_BUFFERS(strlen(ptr)) == m_pData->m_nDataLength &&
          UNSAFE_BUFFERS(
              FXSYS_memcmp(ptr, m_pData->m_String, m_pData->m_nDataLength)) == 0;
 }
@@ -234,28 +244,34 @@ bool ByteString::operator==(ByteStringView str) const {
 }
 
 bool ByteString::operator==(const ByteString& other) const {
-  if (m_pData == other.m_pData)
+  if (m_pData == other.m_pData) {
     return true;
-
-  if (IsEmpty())
+  }
+  if (IsEmpty()) {
     return other.IsEmpty();
-
-  if (other.IsEmpty())
+  }
+  if (other.IsEmpty()) {
     return false;
+  }
 
+  // SAFETY: m_nDataLength describes the length of m_String.
   return other.m_pData->m_nDataLength == m_pData->m_nDataLength &&
-         memcmp(other.m_pData->m_String, m_pData->m_String,
-                m_pData->m_nDataLength) == 0;
+         UNSAFE_BUFFERS(memcmp(other.m_pData->m_String, m_pData->m_String,
+                               m_pData->m_nDataLength)) == 0;
 }
 
+// TODO(tsepez): Should be UNSAFE_BUFFER_USAGE.
 bool ByteString::operator<(const char* ptr) const {
-  if (!m_pData && !ptr)
+  if (!m_pData && !ptr) {
     return false;
-  if (c_str() == ptr)
+  }
+  if (c_str() == ptr) {
     return false;
+  }
 
+  // SAFETY: required from caller.
+  size_t other_len = ptr ? UNSAFE_BUFFERS(strlen(ptr)) : 0;
   size_t len = GetLength();
-  size_t other_len = ptr ? strlen(ptr) : 0;
 
   // SAFETY: Comparison limited to minimum valid length of either argument.
   int result =

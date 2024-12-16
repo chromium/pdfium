@@ -73,21 +73,21 @@ TEST(CXFAFileReadTest, NormalStreams) {
   fxcrt::Fill(output_buffer, 0xbd);
   EXPECT_TRUE(fileread->ReadBlockAtOffset(
       pdfium::make_span(output_buffer).first(1u), 0));
-  EXPECT_EQ(0, memcmp(output_buffer, "o", 1));
+  EXPECT_EQ(0, UNSAFE_TODO(memcmp(output_buffer, "o", 1)));
   EXPECT_EQ(0xbd, output_buffer[1]);
 
   fxcrt::Fill(output_buffer, 0xbd);
   EXPECT_TRUE(fileread->ReadBlockAtOffset(output_buffer, 0));
-  EXPECT_EQ(0, memcmp(output_buffer, "one two three!!!", 16));
+  EXPECT_EQ(0, UNSAFE_TODO(memcmp(output_buffer, "one two three!!!", 16)));
 
   fxcrt::Fill(output_buffer, 0xbd);
   EXPECT_TRUE(fileread->ReadBlockAtOffset(
       pdfium::make_span(output_buffer).first(10u), 2));
-  EXPECT_EQ(0, memcmp(output_buffer, "e two thre", 10));
+  EXPECT_EQ(0, UNSAFE_TODO(memcmp(output_buffer, "e two thre", 10)));
   EXPECT_EQ(0xbd, output_buffer[11]);
 
   fxcrt::Fill(output_buffer, 0xbd);
   EXPECT_FALSE(fileread->ReadBlockAtOffset(output_buffer, 1));
-  EXPECT_EQ(0, memcmp(output_buffer, "ne two three!!!", 15));
+  EXPECT_EQ(0, UNSAFE_TODO(memcmp(output_buffer, "ne two three!!!", 15)));
   EXPECT_EQ(0xbd, output_buffer[15]);
 }

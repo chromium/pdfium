@@ -224,7 +224,8 @@ double CXFA_LocaleValue::GetDoubleNum() const {
     return 0;
   }
 
-  return wcstod(m_wsValue.c_str(), nullptr);
+  // SAFETY: WideStrings are always terminated.
+  return UNSAFE_BUFFERS(wcstod(m_wsValue.c_str(), nullptr));
 }
 
 CFX_DateTime CXFA_LocaleValue::GetDate() const {

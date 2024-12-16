@@ -10,12 +10,15 @@
 
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 #include "core/fxcodec/icc/icc_transform.h"
+#include "core/fxcrt/compiler_specific.h"
 
 namespace {
 
 bool DetectSRGB(pdfium::span<const uint8_t> span) {
   static const char kSRGB[] = "sRGB IEC61966-2.1";
-  return span.size() == 3144 && memcmp(&span[400], kSRGB, strlen(kSRGB)) == 0;
+  // SAFETY: size checked on LHS of &&-expression.
+  return span.size() == 3144 &&
+         UNSAFE_BUFFERS(memcmp(&span[400], kSRGB, strlen(kSRGB))) == 0;
 }
 
 }  // namespace

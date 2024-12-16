@@ -343,11 +343,10 @@ GifDecoder::Status CFX_GifContext::ReadGifSignature() {
   if (!ReadAllOrNone(pdfium::byte_span_from_ref(header))) {
     return GifDecoder::Status::kUnfinished;
   }
-  if (strncmp(header.signature, kGifSignature87, 6) != 0 &&
-      strncmp(header.signature, kGifSignature89, 6) != 0) {
+  if (UNSAFE_TODO(strncmp(header.signature, kGifSignature87, 6)) != 0 &&
+      UNSAFE_TODO(strncmp(header.signature, kGifSignature89, 6)) != 0) {
     return GifDecoder::Status::kError;
   }
-
   return GifDecoder::Status::kSuccess;
 }
 

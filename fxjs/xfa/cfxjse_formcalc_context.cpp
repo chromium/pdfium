@@ -549,7 +549,8 @@ void GetLocalTimeZone(int32_t* pHour, int32_t* pMin, int32_t* pSec) {
 
 bool HTMLSTR2Code(const WideString& pData, uint32_t* iCode) {
   auto cmpFunc = [](const XFA_FMHtmlReserveCode& iter, ByteStringView val) {
-    return strcmp(val.unterminated_c_str(), iter.m_htmlReserve) > 0;
+    return UNSAFE_TODO(strcmp(val.unterminated_c_str(), iter.m_htmlReserve)) >
+           0;
   };
   if (!pData.IsASCII())
     return false;
@@ -558,7 +559,7 @@ bool HTMLSTR2Code(const WideString& pData, uint32_t* iCode) {
       std::begin(kReservesForDecode), std::end(kReservesForDecode),
       temp.AsStringView(), cmpFunc);
   if (result != std::end(kReservesForDecode) &&
-      !strcmp(temp.c_str(), result->m_htmlReserve)) {
+      !UNSAFE_TODO(strcmp(temp.c_str(), result->m_htmlReserve))) {
     *iCode = result->m_uCode;
     return true;
   }
@@ -1098,7 +1099,8 @@ float ValueToFloat(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
 
   if (fxv8::IsString(extracted)) {
     ByteString bsValue = fxv8::ReentrantToByteStringHelper(pIsolate, extracted);
-    return strtof(bsValue.c_str(), nullptr);
+    // SAFETY: ByteStrings are always NUL-terminated.
+    return UNSAFE_BUFFERS(strtof(bsValue.c_str(), nullptr));
   }
 
   return fxv8::ReentrantToFloatHelper(pIsolate, extracted);
@@ -1117,7 +1119,8 @@ double ValueToDouble(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
 
   if (fxv8::IsString(extracted)) {
     ByteString bsValue = fxv8::ReentrantToByteStringHelper(pIsolate, extracted);
-    return strtod(bsValue.c_str(), nullptr);
+    // SAFETY: ByteStrings are always NUL_terminated.
+    return UNSAFE_BUFFERS(strtod(bsValue.c_str(), nullptr));
   }
 
   return fxv8::ReentrantToDoubleHelper(pIsolate, extracted);

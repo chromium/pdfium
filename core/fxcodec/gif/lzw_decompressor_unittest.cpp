@@ -127,7 +127,8 @@ TEST(LZWDecompressor, Decode1x1SingleColour) {
             UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
 
   EXPECT_EQ(std::size(output_data), output_size);
-  EXPECT_TRUE(0 == memcmp(expected_data, output_data, sizeof(expected_data)));
+  EXPECT_TRUE(0 == UNSAFE_TODO(memcmp(expected_data, output_data,
+                                      sizeof(expected_data))));
 }
 
 TEST(LZWDecompressor, Decode10x10SingleColour) {
@@ -156,7 +157,8 @@ TEST(LZWDecompressor, Decode10x10SingleColour) {
             UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
 
   EXPECT_EQ(std::size(output_data), output_size);
-  EXPECT_TRUE(0 == memcmp(kExpectedData, output_data, sizeof(kExpectedData)));
+  EXPECT_TRUE(0 == UNSAFE_TODO(memcmp(kExpectedData, output_data,
+                                      sizeof(kExpectedData))));
 }
 
 TEST(LZWDecompressor, Decode10x10MultipleColour) {
@@ -186,7 +188,8 @@ TEST(LZWDecompressor, Decode10x10MultipleColour) {
             UNSAFE_TODO(decompressor->Decode(output_data, &output_size)));
 
   EXPECT_EQ(std::size(output_data), output_size);
-  EXPECT_TRUE(0 == memcmp(kExpectedData, output_data, sizeof(kExpectedData)));
+  EXPECT_TRUE(0 == UNSAFE_TODO(memcmp(kExpectedData, output_data,
+                                      sizeof(kExpectedData))));
 }
 
 TEST(LZWDecompressor, MultipleDecodes) {

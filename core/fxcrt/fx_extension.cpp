@@ -36,7 +36,8 @@ float FXSYS_wcstof(WideStringView pwsStr, size_t* pUsedLen) {
   // Force NUL-termination via copied buffer.
   auto copied = WideString(pwsStr);
   wchar_t* endptr = nullptr;
-  float result = wcstof(copied.c_str(), &endptr);
+  // SAFETY: WideStrings are NUL-terminated.
+  float result = UNSAFE_BUFFERS(wcstof(copied.c_str(), &endptr));
   if (result != result) {
     result = 0.0f;  // Convert NAN to 0.0f;
   }

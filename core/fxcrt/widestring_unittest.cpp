@@ -39,12 +39,13 @@ TEST(WideString, ElementAccess) {
 
   pdfium::span<const wchar_t> abc_span = abc.span();
   EXPECT_EQ(3u, abc_span.size());
-  EXPECT_EQ(0, wmemcmp(abc_span.data(), L"abc", 3));
+  EXPECT_EQ(0, UNSAFE_TODO(wmemcmp(abc_span.data(), L"abc", 3)));
 
   pdfium::span<const wchar_t> abc_span_with_terminator =
       abc.span_with_terminator();
   EXPECT_EQ(4u, abc_span_with_terminator.size());
-  EXPECT_EQ(0, wmemcmp(abc_span_with_terminator.data(), L"abc", 4));
+  EXPECT_EQ(0,
+            UNSAFE_TODO(wmemcmp(abc_span_with_terminator.data(), L"abc", 4)));
 
   WideString mutable_abc = abc;
   EXPECT_EQ(abc.c_str(), mutable_abc.c_str());
@@ -1015,7 +1016,8 @@ TEST(WideString, GetBuffer) {
   WideString str1;
   {
     pdfium::span<wchar_t> buffer = str1.GetBuffer(12);
-    wcscpy(buffer.data(), L"clams");
+    // SAFETY: required for test.
+    UNSAFE_BUFFERS(wcscpy(buffer.data(), L"clams"));
   }
   str1.ReleaseBuffer(str1.GetStringLength());
   EXPECT_EQ(L"clams", str1);
@@ -1885,7 +1887,7 @@ TEST(WideString, Empty) {
 
   const wchar_t* cstr = empty_str.c_str();
   EXPECT_TRUE(cstr);
-  EXPECT_EQ(0u, wcslen(cstr));
+  EXPECT_EQ(0u, UNSAFE_TODO(wcslen(cstr)));
 
   pdfium::span<const wchar_t> cspan = empty_str.span();
   EXPECT_TRUE(cspan.empty());

@@ -13,6 +13,7 @@
 
 #include "build/build_config.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/span_util.h"
@@ -189,7 +190,8 @@ void CPDF_Type1Font::LoadGlyphMap() {
 #if BUILDFLAG(IS_APPLE)
       CalcExtGID(charcode);
 #endif
-      if (m_GlyphIndex[charcode] == 0 && strcmp(name, ".notdef") == 0) {
+      if (m_GlyphIndex[charcode] == 0 &&
+          UNSAFE_TODO(strcmp(name, ".notdef")) == 0) {
         m_Encoding.SetUnicode(charcode, 0x20);
         m_GlyphIndex[charcode] = face->GetCharIndex(0x20);
 #if BUILDFLAG(IS_APPLE)
@@ -298,7 +300,8 @@ void CPDF_Type1Font::LoadGlyphMap() {
     if (m_GlyphIndex[charcode] != 0)
       continue;
 
-    if (strcmp(name, ".notdef") != 0 && strcmp(name, "space") != 0) {
+    if (UNSAFE_TODO(strcmp(name, ".notdef")) != 0 &&
+        UNSAFE_TODO(strcmp(name, "space")) != 0) {
       m_GlyphIndex[charcode] =
           face->GetCharIndex(bUnicode ? m_Encoding.UnicodeFromCharCode(charcode)
                                       : static_cast<uint32_t>(charcode));

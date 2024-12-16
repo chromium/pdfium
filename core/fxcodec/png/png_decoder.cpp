@@ -12,6 +12,7 @@
 #include "core/fxcodec/cfx_codec_memory.h"
 #include "core/fxcodec/fx_codec.h"
 #include "core/fxcodec/fx_codec_def.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/unowned_ptr.h"
 
 #ifdef USE_SYSTEM_LIBPNG
@@ -37,8 +38,8 @@ extern "C" {
 
 void _png_error_data(png_structp png_ptr, png_const_charp error_msg) {
   if (png_get_error_ptr(png_ptr)) {
-    strncpy(static_cast<char*>(png_get_error_ptr(png_ptr)), error_msg,
-            PNG_ERROR_SIZE - 1);
+    UNSAFE_TODO(strncpy(static_cast<char*>(png_get_error_ptr(png_ptr)),
+                        error_msg, PNG_ERROR_SIZE - 1));
   }
 
   longjmp(png_jmpbuf(png_ptr), 1);
@@ -228,8 +229,8 @@ bool PngDecoder::ContinueDecode(ProgressiveDecoderIface::Context* pContext,
   pdfium::span<uint8_t> src_buf = codec_memory->GetUnconsumedSpan();
   if (!_png_continue_decode(ctx->m_pPng, ctx->m_pInfo, src_buf.data(),
                             src_buf.size())) {
-    if (pAttribute &&
-        strcmp(ctx->m_szLastError, "Read Header Callback Error") == 0) {
+    if (pAttribute && UNSAFE_TODO(strcmp(ctx->m_szLastError,
+                                         "Read Header Callback Error")) == 0) {
       _png_load_bmp_attribute(ctx->m_pPng, ctx->m_pInfo, pAttribute);
     }
     return false;

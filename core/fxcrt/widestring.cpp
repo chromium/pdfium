@@ -15,6 +15,7 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
@@ -149,7 +150,7 @@ std::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
       case 's': {
         const wchar_t* pstrNextArg = va_arg(argList, const wchar_t*);
         if (pstrNextArg) {
-          nItemLen = wcslen(pstrNextArg);
+          nItemLen = UNSAFE_TODO(wcslen(pstrNextArg));
           if (nItemLen < 1) {
             nItemLen = 1;
           }
@@ -160,7 +161,7 @@ std::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
       case 'S': {
         const char* pstrNextArg = va_arg(argList, const char*);
         if (pstrNextArg) {
-          nItemLen = strlen(pstrNextArg);
+          nItemLen = UNSAFE_TODO(strlen(pstrNextArg));
           if (nItemLen < 1) {
             nItemLen = 1;
           }
@@ -172,7 +173,7 @@ std::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
       case 'S' | FORCE_ANSI: {
         const char* pstrNextArg = va_arg(argList, const char*);
         if (pstrNextArg) {
-          nItemLen = strlen(pstrNextArg);
+          nItemLen = UNSAFE_TODO(strlen(pstrNextArg));
           if (nItemLen < 1) {
             nItemLen = 1;
           }
@@ -184,7 +185,7 @@ std::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
       case 'S' | FORCE_UNICODE: {
         const wchar_t* pstrNextArg = va_arg(argList, wchar_t*);
         if (pstrNextArg) {
-          nItemLen = wcslen(pstrNextArg);
+          nItemLen = UNSAFE_TODO(wcslen(pstrNextArg));
           if (nItemLen < 1) {
             nItemLen = 1;
           }
@@ -239,7 +240,7 @@ std::optional<size_t> GuessSizeForVSWPrintf(const wchar_t* pFormat,
             f = va_arg(argList, double);
             FXSYS_snprintf(pszTemp, sizeof(pszTemp), "%*.*f", nWidth,
                            nPrecision + 6, f);
-            nItemLen = strlen(pszTemp);
+            nItemLen = UNSAFE_TODO(strlen(pszTemp));
           }
           break;
         case 'p':
@@ -280,7 +281,7 @@ std::optional<WideString> TryVSWPrintf(size_t size,
     // See https://crbug.com/705912.
     UNSAFE_BUFFERS(
         FXSYS_memset(buffer.data(), 0, (size + 1) * sizeof(wchar_t)));
-    int ret = vswprintf(buffer.data(), size + 1, pFormat, argList);
+    int ret = UNSAFE_TODO(vswprintf(buffer.data(), size + 1, pFormat, argList));
     bool bSufficientBuffer = ret >= 0 || buffer[size - 1] == 0;
     if (!bSufficientBuffer)
       return std::nullopt;
@@ -359,7 +360,8 @@ static_assert(sizeof(WideString) <= sizeof(wchar_t*),
 // static
 WideString WideString::FormatInteger(int i) {
   wchar_t wbuf[32];
-  swprintf(wbuf, std::size(wbuf), L"%d", i);
+  // SAFTEY: 32 bytes accommodates biggest int representation plus NUL.
+  UNSAFE_BUFFERS(swprintf(wbuf, std::size(wbuf), L"%d", i));
   return WideString(wbuf);
 }
 
@@ -450,12 +452,14 @@ WideString::WideString(const std::initializer_list<WideStringView>& list) {
   }
 }
 
+// Should be UNSAFE_BUFFER_USAGE.
 WideString& WideString::operator=(const wchar_t* str) {
-  if (!str || !str[0])
+  if (!str || !str[0]) {
     clear();
-  else
-    AssignCopy(str, wcslen(str));
-
+  } else {
+    // SAFETY: required from caller.
+    AssignCopy(str, UNSAFE_BUFFERS(wcslen(str)));
+  }
   return *this;
 }
 
@@ -482,10 +486,12 @@ WideString& WideString::operator=(WideString&& that) noexcept {
   return *this;
 }
 
+// Should be UNSAFE_BUFFER_USAGE.
 WideString& WideString::operator+=(const wchar_t* str) {
-  if (str)
-    Concat(str, wcslen(str));
-
+  if (str) {
+    // SAFETY: required from caller.
+    Concat(str, UNSAFE_BUFFERS(wcslen(str)));
+  }
   return *this;
 }
 
@@ -508,16 +514,19 @@ WideString& WideString::operator+=(WideStringView str) {
   return *this;
 }
 
+// Should be UNSAFE_BUFFER_USAGE.
 bool WideString::operator==(const wchar_t* ptr) const {
-  if (!m_pData)
+  if (!m_pData) {
     return !ptr || !ptr[0];
-
-  if (!ptr)
+  }
+  if (!ptr) {
     return m_pData->m_nDataLength == 0;
+  }
 
-  // SAFTEY: `wsclen()` comparison ensures there are `m_nDataLength` wchars at
-  // `ptr` before the terminator, and `m_nDataLength` is within `m_String`.
-  return wcslen(ptr) == m_pData->m_nDataLength &&
+  // SAFTEY: `wsclen()` comparison (whose own safety depends upoon the caller)
+  // ensures there are `m_nDataLength` wchars at `ptr` before the terminator,
+  // and `m_nDataLength` is within `m_String`.
+  return UNSAFE_BUFFERS(wcslen(ptr)) == m_pData->m_nDataLength &&
          UNSAFE_BUFFERS(FXSYS_wmemcmp(ptr, m_pData->m_String,
                                       m_pData->m_nDataLength)) == 0;
 }
@@ -544,9 +553,11 @@ bool WideString::operator==(const WideString& other) const {
   if (other.IsEmpty())
     return false;
 
+  // SAFETY: m_nDataLength bytes available at m_String.
   return other.m_pData->m_nDataLength == m_pData->m_nDataLength &&
-         wmemcmp(other.m_pData->m_String, m_pData->m_String,
-                 m_pData->m_nDataLength) == 0;
+         UNSAFE_BUFFERS(FXSYS_wmemcmp(other.m_pData->m_String,
+                                      m_pData->m_String,
+                                      m_pData->m_nDataLength)) == 0;
 }
 
 bool WideString::operator<(const wchar_t* ptr) const {
@@ -790,9 +801,12 @@ WideString WideString::FromUTF16BE(pdfium::span<const uint8_t> data) {
   return result;
 }
 
+// Should be UNSAFE_BUFFER_USAGE/
 int WideString::Compare(const wchar_t* str) const {
-  if (m_pData)
-    return str ? wcscmp(m_pData->m_String, str) : 1;
+  if (m_pData) {
+    // SAFETY: required from caller.
+    return str ? UNSAFE_BUFFERS(wcscmp(m_pData->m_String, str)) : 1;
+  }
   return (!str || str[0] == 0) ? 0 : -1;
 }
 

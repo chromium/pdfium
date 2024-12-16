@@ -40,8 +40,8 @@ TEST(OnedUPCAWriterTest, Encode) {
       "## ##  "  // 2 R
       "# #";     // End
   DataVector<uint8_t> encoded = writer.Encode("123456789012");
-  ASSERT_EQ(strlen(kExpected1), encoded.size());
-  for (size_t i = 0; i < strlen(kExpected1); i++) {
+  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected1)), encoded.size());
+  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected1)); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i])) << i;
   }
 
@@ -62,8 +62,8 @@ TEST(OnedUPCAWriterTest, Encode) {
       "# ###  "  // 4 R
       "###  # "  // 0 R
       "# #";     // End
-  ASSERT_EQ(strlen(kExpected2), encoded.size());
-  for (size_t i = 0; i < strlen(kExpected2); i++) {
+  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected2)), encoded.size());
+  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected2)); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i])) << i;
   }
 }

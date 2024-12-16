@@ -524,7 +524,7 @@ TEST(FXCRYPT, Sha384Pad112) {
   static const char kInput[] =
       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-  EXPECT_EQ(112u, strlen(kInput));
+  EXPECT_EQ(112u, UNSAFE_TODO(strlen(kInput)));
   DataVector<uint8_t> actual =
       CRYPT_SHA384Generate(ByteStringView(kInput).unsigned_span());
   EXPECT_THAT(
@@ -573,7 +573,7 @@ TEST(FXCRYPT, Sha512Pad112) {
   static const char kInput[] =
       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
       "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-  EXPECT_EQ(112u, strlen(kInput));
+  EXPECT_EQ(112u, UNSAFE_TODO(strlen(kInput)));
   DataVector<uint8_t> actual =
       CRYPT_SHA512Generate(ByteStringView(kInput).unsigned_span());
   EXPECT_THAT(

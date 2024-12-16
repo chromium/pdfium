@@ -176,7 +176,8 @@ class PDFObjectsTest : public testing::Test {
         if (span1.size() != span2.size())
           return false;
 
-        return memcmp(span1.data(), span2.data(), span2.size()) == 0;
+        return UNSAFE_TODO(memcmp(span1.data(), span2.data(), span2.size())) ==
+               0;
       }
       case CPDF_Object::kReference:
         return obj1->AsReference()->GetRefObjNum() ==

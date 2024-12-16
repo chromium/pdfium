@@ -347,8 +347,9 @@ bool CPDF_SecurityHandler::AES256_CheckPassword(const ByteString& password,
     }
     CRYPT_SHA256Finish(&sha, digest);
   }
-  if (memcmp(digest, pkey, 32) != 0)
+  if (UNSAFE_TODO(FXSYS_memcmp(digest, pkey, 32)) != 0) {
     return false;
+  }
 
   if (m_Revision >= 6) {
     Revision6_Hash(password, UNSAFE_TODO(pkey + 40),
@@ -456,7 +457,7 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
         FXSYS_memcpy(ukeybuf, kDefaultPasscode, sizeof(kDefaultPasscode)));
     CRYPT_ArcFourCryptBlock(ukeybuf,
                             pdfium::make_span(m_EncryptKey).first(m_KeyLen));
-    return memcmp(ukey.c_str(), ukeybuf, 16) == 0;
+    return UNSAFE_TODO(memcmp(ukey.c_str(), ukeybuf, 16)) == 0;
   }
 
   uint8_t test[32] = {};
@@ -474,7 +475,7 @@ bool CPDF_SecurityHandler::CheckUserPassword(const ByteString& password,
   if (!m_FileId.IsEmpty())
     CRYPT_MD5Update(&md5, m_FileId.unsigned_span());
   CRYPT_MD5Finish(&md5, pdfium::make_span(ukeybuf).first(16u));
-  return memcmp(test, ukeybuf, 16) == 0;
+  return UNSAFE_TODO(memcmp(test, ukeybuf, 16)) == 0;
 }
 
 ByteString CPDF_SecurityHandler::GetUserPassword(

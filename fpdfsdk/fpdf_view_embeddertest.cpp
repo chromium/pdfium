@@ -684,7 +684,7 @@ TEST_F(FPDFViewEmbedderTest, ViewerRef) {
 
   // Make sure |buf| does not get written into when it appears to be too small.
   // NOLINTNEXTLINE(runtime/printf)
-  strcpy(buf, "ABCD");
+  UNSAFE_TODO(strcpy(buf, "ABCD"));
   EXPECT_EQ(4U, FPDF_VIEWERREF_GetName(document(), "Foo", buf, 1));
   EXPECT_STREQ("ABCD", buf);
 
@@ -1288,9 +1288,9 @@ TEST_F(FPDFViewEmbedderTest, GetXFAArrayData) {
 
   for (const auto& testcase : kTestCases) {
     char name_buffer[20] = {};
-    ASSERT_EQ(strlen(testcase.name) + 1,
+    ASSERT_EQ(UNSAFE_TODO(strlen(testcase.name)) + 1,
               FPDF_GetXFAPacketName(document(), testcase.index, nullptr, 0));
-    EXPECT_EQ(strlen(testcase.name) + 1,
+    EXPECT_EQ(UNSAFE_TODO(strlen(testcase.name)) + 1,
               FPDF_GetXFAPacketName(document(), testcase.index, name_buffer,
                                     sizeof(name_buffer)));
     EXPECT_STREQ(testcase.name, name_buffer);

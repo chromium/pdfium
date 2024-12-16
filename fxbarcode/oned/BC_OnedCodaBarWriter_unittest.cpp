@@ -19,8 +19,8 @@ TEST(OnedCodaBarWriterTest, Encode) {
       "# ##  #  # "  // A Start
       "#  #  # ##";  // B End
   DataVector<uint8_t> encoded = writer.Encode("");
-  ASSERT_EQ(strlen(kExpected1), encoded.size());
-  for (size_t i = 0; i < strlen(kExpected1); i++) {
+  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected1)), encoded.size());
+  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected1)); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i])) << i;
   }
   static const char kExpected2[] =
@@ -30,8 +30,8 @@ TEST(OnedCodaBarWriterTest, Encode) {
       "##  # # # "   // 3
       "#  #  # ##";  // B End
   encoded = writer.Encode("123");
-  ASSERT_EQ(strlen(kExpected2), encoded.size());
-  for (size_t i = 0; i < strlen(kExpected2); i++) {
+  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected2)), encoded.size());
+  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected2)); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i])) << i;
   }
   static const char kExpected3[] =
@@ -44,8 +44,8 @@ TEST(OnedCodaBarWriterTest, Encode) {
       "# ## ## ## "  // +
       "#  #  # ##";  // B End
   encoded = writer.Encode("-$./:+");
-  ASSERT_EQ(strlen(kExpected3), encoded.size());
-  for (size_t i = 0; i < strlen(kExpected3); i++) {
+  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected3)), encoded.size());
+  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected3)); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected3[i] != ' ', !!encoded[i])) << i;
   }
   static const char kExpected4[] =
@@ -69,8 +69,8 @@ TEST(OnedCodaBarWriterTest, Encode) {
       "# # ##  # "   // 1
       "#  #  # ##";  // B End
   encoded = writer.Encode("456.987987987/001");
-  ASSERT_EQ(strlen(kExpected4), encoded.size());
-  for (size_t i = 0; i < strlen(kExpected4); i++) {
+  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected4)), encoded.size());
+  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected4)); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected4[i] != ' ', !!encoded[i])) << i;
   }
 }
@@ -114,8 +114,8 @@ TEST(OnedCodaBarWriterTest, SetDelimiters) {
       "#  # ## # "   // 7
       "# #  #  ##";  // * (same as C) End
   DataVector<uint8_t> encoded = writer.Encode("987");
-  ASSERT_EQ(strlen(kExpected), encoded.size());
-  for (size_t i = 0; i < strlen(kExpected); i++) {
+  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected)), encoded.size());
+  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected)); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected[i] != ' ', !!encoded[i])) << i;
   }
 }

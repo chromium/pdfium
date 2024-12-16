@@ -180,19 +180,15 @@ void CPDF_LinkExtract::ExtractLinks() {
 
 std::optional<CPDF_LinkExtract::Link> CPDF_LinkExtract::CheckWebLink(
     const WideString& strBeCheck) {
-  static const wchar_t kHttpScheme[] = L"http";
-  static const wchar_t kWWWAddrStart[] = L"www.";
-
-  const size_t kHttpSchemeLen = wcslen(kHttpScheme);
-  const size_t kWWWAddrStartLen = wcslen(kWWWAddrStart);
-
+  const WideStringView kHttpScheme = L"http";
+  const WideStringView kWWWAddrStart = L"www.";
   WideString str = strBeCheck;
   str.MakeLower();
 
   // First, try to find the scheme.
   auto start = str.Find(kHttpScheme);
   if (start.has_value()) {
-    size_t off = start.value() + kHttpSchemeLen;  // move after "http".
+    size_t off = start.value() + kHttpScheme.GetLength();  // move after "http".
     if (str.GetLength() > off + 4) {  // At least "://<char>" follows.
       if (str[off] == L's')  // "https" scheme is accepted.
         off++;
@@ -214,7 +210,7 @@ std::optional<CPDF_LinkExtract::Link> CPDF_LinkExtract::CheckWebLink(
   // When there is no scheme, try to find url starting with "www.".
   start = str.Find(kWWWAddrStart);
   if (start.has_value()) {
-    size_t off = start.value() + kWWWAddrStartLen;
+    size_t off = start.value() + kWWWAddrStart.GetLength();
     if (str.GetLength() > off) {
       const size_t end =
           FindWebLinkEnding(str, start.value(),

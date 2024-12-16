@@ -57,7 +57,7 @@ TEST_F(CPDFCreatorEmbedderTest, Bug873) {
   size_t trailer_start = saved_data.find(kTrailerBeforeSecondID);
   static constexpr size_t kIdLen = 32;
   size_t trailer_continuation =
-      trailer_start + strlen(kTrailerBeforeSecondID) + kIdLen;
+      trailer_start + UNSAFE_TODO(strlen(kTrailerBeforeSecondID)) + kIdLen;
   std::string data_after_second_id = saved_data.substr(trailer_continuation);
   EXPECT_THAT(data_after_second_id, testing::StartsWith(">]>>\r\n"));
 }

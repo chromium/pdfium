@@ -217,7 +217,8 @@ bool GetNumericDotIndex(const WideString& wsNum,
       continue;
     }
     if (ccf + spDotSymbol.size() <= spNum.size() &&
-        wcsncmp(&spNum[ccf], spDotSymbol.data(), spDotSymbol.size()) == 0) {
+        UNSAFE_TODO(wcsncmp(&spNum[ccf], spDotSymbol.data(),
+                            spDotSymbol.size())) == 0) {
       *iDotIndex = ccf;
       return true;
     }

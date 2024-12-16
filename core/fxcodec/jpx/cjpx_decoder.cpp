@@ -454,7 +454,8 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
   m_Parameters.decod_format = 0;
   m_Parameters.cod_format = 3;
   m_Parameters.cp_reduce = resolution_levels_to_skip;
-  if (memcmp(m_SrcData.data(), kJP2Header, sizeof(kJP2Header)) == 0) {
+  if (UNSAFE_TODO(memcmp(m_SrcData.data(), kJP2Header, sizeof(kJP2Header))) ==
+      0) {
     m_Codec.reset(opj_create_decompress(OPJ_CODEC_JP2));
     m_Parameters.decod_format = 1;
   } else {

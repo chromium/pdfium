@@ -36,8 +36,8 @@ TEST(OnedEAN8WriterTest, Encode) {
       "###  # "  // 0 R
       "# #";     // End
   DataVector<uint8_t> encoded = writer.Encode("12345670");
-  ASSERT_EQ(strlen(kExpected1), encoded.size());
-  for (size_t i = 0; i < strlen(kExpected1); i++) {
+  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected1)), encoded.size());
+  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected1)); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected1[i] != ' ', !!encoded[i])) << i;
   }
   static const char kExpected2[] =
@@ -53,9 +53,10 @@ TEST(OnedEAN8WriterTest, Encode) {
       "# ###  "  // 4 R
       "# #";     // End
   encoded = writer.Encode("99441104");
-  ASSERT_EQ(strlen(kExpected2), encoded.size());
-  for (size_t i = 0; i < strlen(kExpected2); i++)
+  ASSERT_EQ(UNSAFE_TODO(strlen(kExpected2)), encoded.size());
+  for (size_t i = 0; i < UNSAFE_TODO(strlen(kExpected2)); i++) {
     UNSAFE_TODO(EXPECT_EQ(kExpected2[i] != ' ', !!encoded[i])) << i;
+  }
 }
 
 TEST(OnedEAN8WriterTest, Checksum) {

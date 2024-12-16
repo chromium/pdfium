@@ -19,6 +19,7 @@
 #include "core/fpdfapi/parser/cpdf_string.h"
 #include "core/fpdfapi/parser/fpdf_parser_decode.h"
 #include "core/fxcrt/check.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_stream.h"
 
@@ -82,8 +83,10 @@ std::optional<FX_FILESIZE> GetHeaderOffset(
     if (!pFile->ReadBlockAtOffset(buf, offset))
       return std::nullopt;
 
-    if (memcmp(buf, "%PDF", 4) == 0)
+    // SAFETY: string literal and `buf` can accommodate 4 byte comparisons.
+    if (UNSAFE_BUFFERS(memcmp(buf, "%PDF", 4)) == 0) {
       return offset;
+    }
   }
   return std::nullopt;
 }

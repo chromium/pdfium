@@ -80,8 +80,11 @@ ByteString ReadStringFromFile(FILE* pFile, uint32_t size) {
   {
     // Span's lifetime must end before ReleaseBuffer() below.
     pdfium::span<char> buffer = result.GetBuffer(size);
-    if (!fread(buffer.data(), size, 1, pFile))
+
+    // SAFETY: GetBuffer(size) ensures size bytes available.
+    if (!UNSAFE_BUFFERS(fread(buffer.data(), size, 1, pFile))) {
       return ByteString();
+    }
   }
   result.ReleaseBuffer(size);
   return result;
@@ -189,7 +192,9 @@ void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
   uint8_t buffer[16];
   fseek(pFile.get(), 0, SEEK_SET);
 
-  size_t items_read = fread(buffer, /*size=*/12, /*nmemb=*/1, pFile.get());
+  // SAFETY: 12 byte read fits into 16 byte buffer,
+  size_t items_read =
+      UNSAFE_BUFFERS(fread(buffer, /*size=*/12, /*nmemb=*/1, pFile.get()));
   if (items_read != 1) {
     return;
   }
@@ -210,8 +215,8 @@ void CFX_FolderFontInfo::ScanFile(const ByteString& path) {
   auto offsets =
       FixedSizeDataVector<uint8_t>::Uninit(safe_face_bytes.ValueOrDie());
   pdfium::span<uint8_t> offsets_span = offsets.span();
-  items_read = fread(offsets_span.data(), /*size=*/1,
-                     /*nmemb=*/offsets_span.size(), pFile.get());
+  items_read = UNSAFE_TODO(fread(offsets_span.data(), /*size=*/1,
+                                 /*nmemb=*/offsets_span.size(), pFile.get()));
   if (items_read != offsets_span.size()) {
     return;
   }
@@ -227,8 +232,13 @@ void CFX_FolderFontInfo::ReportFace(const ByteString& path,
                                     FX_FILESIZE filesize,
                                     uint32_t offset) {
   char buffer[16];
-  if (fseek(pFile, offset, SEEK_SET) < 0 || !fread(buffer, 12, 1, pFile))
+  if (fseek(pFile, offset, SEEK_SET) < 0) {
     return;
+  }
+  // SAFTEY: 12 byt read fits in 16 byte buffer.
+  if (UNSAFE_BUFFERS(!fread(buffer, 12, 1, pFile))) {
+    return;
+  }
 
   uint32_t nTables =
       fxcrt::GetUInt16MSBFirst(pdfium::as_byte_span(buffer).subspan<4, 2>());
@@ -417,8 +427,10 @@ size_t CFX_FolderFontInfo::GetFontData(void* hFont,
   if (!pFile)
     return 0;
 
-  if (fseek(pFile.get(), offset, SEEK_SET) < 0 ||
-      fread(buffer.data(), datasize, 1, pFile.get()) != 1) {
+  if (fseek(pFile.get(), offset, SEEK_SET) < 0) {
+    return 0;
+  }
+  if (UNSAFE_TODO(fread(buffer.data(), datasize, 1, pFile.get())) != 1) {
     return 0;
   }
   return datasize;

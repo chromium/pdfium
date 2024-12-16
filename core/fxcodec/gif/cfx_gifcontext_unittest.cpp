@@ -207,8 +207,9 @@ TEST(CFXGifContextTest, ReadLocalScreenDescriptor) {
     EXPECT_EQ(1u, context.global_palette_exp_);
     EXPECT_EQ(1, context.global_sort_flag_);
     EXPECT_EQ(2, context.global_color_resolution_);
-    EXPECT_EQ(0, memcmp(data.palette, context.global_palette_.data(),
-                        sizeof(data.palette)));
+    EXPECT_EQ(0,
+              UNSAFE_TODO(memcmp(data.palette, context.global_palette_.data(),
+                                 sizeof(data.palette))));
     context.SetTestInputBuffer({});
   }
 }
@@ -280,8 +281,9 @@ TEST(CFXGifContextTest, ReadHeader) {
     EXPECT_EQ(1u, context.global_palette_exp_);
     EXPECT_EQ(1, context.global_sort_flag_);
     EXPECT_EQ(2, context.global_color_resolution_);
-    EXPECT_EQ(0, memcmp(data.palette, context.global_palette_.data(),
-                        sizeof(data.palette)));
+    EXPECT_EQ(0,
+              UNSAFE_TODO(memcmp(data.palette, context.global_palette_.data(),
+                                 sizeof(data.palette))));
     context.SetTestInputBuffer({});
   }
 }

@@ -150,7 +150,7 @@ TEST_F(FPDFAttachmentEmbedderTest, AddAttachments) {
   // Set the new attachment's file.
   static constexpr char kContents1[] = "Hello!";
   EXPECT_TRUE(FPDFAttachment_SetFile(attachment, document(), kContents1,
-                                     strlen(kContents1)));
+                                     UNSAFE_TODO(strlen(kContents1))));
   EXPECT_EQ(3, FPDFDoc_GetAttachmentCount(document()));
 
   // Verify the name of the new attachment (i.e. the first attachment).
@@ -177,7 +177,7 @@ TEST_F(FPDFAttachmentEmbedderTest, AddAttachments) {
   ASSERT_TRUE(attachment);
   static constexpr char kContents2[] = "World!";
   EXPECT_TRUE(FPDFAttachment_SetFile(attachment, document(), kContents2,
-                                     strlen(kContents2)));
+                                     UNSAFE_TODO(strlen(kContents2))));
   EXPECT_EQ(4, FPDFDoc_GetAttachmentCount(document()));
 
   // Verify the name of the new attachment (i.e. the fourth attachment).
@@ -211,7 +211,7 @@ TEST_F(FPDFAttachmentEmbedderTest, AddAttachmentsWithParams) {
   ASSERT_TRUE(attachment);
   static constexpr char kContents[] = "Hello World!";
   EXPECT_TRUE(FPDFAttachment_SetFile(attachment, document(), kContents,
-                                     strlen(kContents)));
+                                     UNSAFE_TODO(strlen(kContents))));
 
   // Set the date to be an arbitrary value.
   static constexpr wchar_t kDateW[] = L"D:20170720161527-04'00'";
@@ -290,7 +290,7 @@ TEST_F(FPDFAttachmentEmbedderTest, AddAttachmentsToFileWithNoAttachments) {
   // Set the new attachment's file.
   static constexpr char kContents1[] = "Hello!";
   EXPECT_TRUE(FPDFAttachment_SetFile(attachment, document(), kContents1,
-                                     strlen(kContents1)));
+                                     UNSAFE_TODO(strlen(kContents1))));
   EXPECT_EQ(1, FPDFDoc_GetAttachmentCount(document()));
 
   // Verify the name of the new attachment (i.e. the first attachment).
@@ -317,7 +317,7 @@ TEST_F(FPDFAttachmentEmbedderTest, AddAttachmentsToFileWithNoAttachments) {
   ASSERT_TRUE(attachment);
   static constexpr char kContents2[] = "World!";
   EXPECT_TRUE(FPDFAttachment_SetFile(attachment, document(), kContents2,
-                                     strlen(kContents2)));
+                                     UNSAFE_TODO(strlen(kContents2))));
   EXPECT_EQ(2, FPDFDoc_GetAttachmentCount(document()));
 
   // Verify the name of the new attachment (i.e. the second attachment).

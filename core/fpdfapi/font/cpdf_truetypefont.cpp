@@ -101,7 +101,7 @@ void CPDF_TrueTypeFont::LoadGlyphMap() {
           !name) {
         continue;
       }
-      if (strcmp(name, ".notdef") == 0) {
+      if (UNSAFE_TODO(strcmp(name, ".notdef")) == 0) {
         m_GlyphIndex[charcode] = face->GetCharIndex(32);
         continue;
       }
