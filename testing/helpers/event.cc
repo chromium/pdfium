@@ -4,6 +4,7 @@
 
 #include "testing/helpers/event.h"
 
+#include <stdint.h>
 #include <stdio.h>
 
 #include <string>
