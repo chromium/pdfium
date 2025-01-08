@@ -15,6 +15,7 @@
 /third_party/fp16/src
 /third_party/freetype/src
 /third_party/googletest/src
+/third_party/highway/src
 /third_party/icu
 /third_party/instrumented_libraries
 /third_party/instrumented_libs

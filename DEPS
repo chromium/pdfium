@@ -132,6 +132,10 @@ vars = {
   # and whatever else without interference from each other.
   'gtest_revision': '7d76a231b0e29caf86e68d1df858308cd53b2a66',
   # Three lines of non-changing comments so that
+  # the commit queue can handle CLs rolling highway
+  # and whatever else without interference from each other.
+  'highway_revision': '00fe003dac355b979f36157f9407c7c46448958e',
+  # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling icu
   # and whatever else without interference from each other.
   'icu_revision': 'bbccc2f6efc1b825de5f2c903c48be685cd0cf22',
@@ -357,6 +361,10 @@ deps = {
   'third_party/googletest/src':
     Var('chromium_git') + '/external/github.com/google/googletest.git@' +
         Var('gtest_revision'),
+
+  'third_party/highway/src':
+    Var('chromium_git') + '/external/github.com/google/highway.git@' +
+        Var('highway_revision'),
 
   'third_party/icu':
     Var('chromium_git') + '/chromium/deps/icu.git@' + Var('icu_revision'),
