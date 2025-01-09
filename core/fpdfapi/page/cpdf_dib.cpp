@@ -84,16 +84,13 @@ bool IsColorIndexOutOfBounds(uint8_t index, const DIB_COMP_DATA& comp_datum) {
   return index < comp_datum.m_ColorKeyMin || index > comp_datum.m_ColorKeyMax;
 }
 
-bool AreColorIndicesOutOfBounds(const uint8_t* indices,
-                                const DIB_COMP_DATA* comp_data,
-                                size_t count) {
-  UNSAFE_TODO({
-    for (size_t i = 0; i < count; ++i) {
-      if (IsColorIndexOutOfBounds(indices[i], comp_data[i])) {
-        return true;
-      }
+bool AreColorIndicesOutOfBounds(pdfium::span<const uint8_t> indices,
+                                pdfium::span<const DIB_COMP_DATA> comp_data) {
+  for (auto [idx, datum] : fxcrt::Zip(indices, comp_data)) {
+    if (IsColorIndexOutOfBounds(idx, datum)) {
+      return true;
     }
-  });
+  }
   return false;
 }
 
@@ -1263,10 +1260,9 @@ pdfium::span<const uint8_t> CPDF_DIB::GetScanline(int line) const {
       UNSAFE_TODO({
         uint8_t* alpha_channel = m_MaskBuf.data() + 3;
         for (int col = 0; col < GetWidth(); col++) {
-          const uint8_t* pPixel = pSrcLine.data() + col * 3;
+          const auto pPixel = pSrcLine.subspan(col * 3, 3);
           alpha_channel[col * 4] =
-              AreColorIndicesOutOfBounds(pPixel, m_CompData.data(), 3) ? 0xFF
-                                                                       : 0;
+              AreColorIndicesOutOfBounds(pPixel, m_CompData) ? 0xFF : 0;
         }
       });
     } else {
