@@ -36,10 +36,12 @@ namespace fxcrt {
 // - Only zips together two or three views instead of N.
 // - Size is determined by the first view, which must be smaller than the
 //   other view(s).
-// - With two views, the first view is presumed to be "input-like" and is const,
-//   second view is presumed to be "output-like" and is non-const.
+// - With two views, the first view is presumed to be "input-like" and is const.
+//   The second view is presumed to be "output-like", can be non-const, and
+//   can be assigned-to if desired.
 // - With three views, the first two views are presumed to be "input-like" and
-//   are const.
+//   are const. The third view is is presumed to be "output-like", can be
+//   non-const, and can be assigned-to if desired.
 // - Only those methods required to support use in a range-based for-loop
 //   are provided.
 

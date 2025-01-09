@@ -43,6 +43,11 @@ TEST(Zip, ActualZip) {
     out = in;
   }
   EXPECT_THAT(output, ElementsAreArray(expected));
+
+  // The "output" span can, in fact, be const so long as we don't assign to it.
+  for (auto [in, expect] : Zip(stuff, expected)) {
+    EXPECT_EQ(in, expect);
+  }
 }
 
 TEST(Zip, ActualZip3) {
@@ -55,6 +60,11 @@ TEST(Zip, ActualZip3) {
     out = in1 + in2;
   }
   EXPECT_THAT(output, ElementsAreArray(expected));
+
+  // The "output" span can, in fact, be const so long as we don't assign to it.
+  for (auto [in1, in2, expect] : Zip(stuff1, stuff2, output)) {
+    EXPECT_EQ(in1 + in2, expect);
+  }
 }
 
 TEST(Zip, BadArgumentsZip) {
