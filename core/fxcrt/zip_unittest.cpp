@@ -37,16 +37,22 @@ TEST(Zip, EmptyZip) {
 TEST(Zip, ActualZip) {
   const int stuff[] = {1, 2, 3};
   const int expected[] = {1, 2, 3, 0};
-  int output[4] = {};
-
-  for (auto [in, out] : Zip(stuff, output)) {
-    out = in;
+  {
+    int output[4] = {};
+    for (auto [in, out] : Zip(stuff, output)) {
+      out = in;
+    }
+    EXPECT_THAT(output, ElementsAreArray(expected));
   }
-  EXPECT_THAT(output, ElementsAreArray(expected));
-
-  // The "output" span can, in fact, be const so long as we don't assign to it.
-  for (auto [in, expect] : Zip(stuff, expected)) {
-    EXPECT_EQ(in, expect);
+  {
+    // Test that ordering of args doesn't matter, except for the size
+    // determination.
+    int output[4] = {};
+    auto sub_output = pdfium::make_span(output).first(3);
+    for (auto [out, in] : Zip(sub_output, stuff)) {
+      out = in;
+    }
+    EXPECT_THAT(output, ElementsAreArray(expected));
   }
 }
 
@@ -54,16 +60,30 @@ TEST(Zip, ActualZip3) {
   const int stuff1[] = {1, 2, 3};
   const int stuff2[] = {4, 5, 6};
   const int expected[] = {5, 7, 9, 0};
-  int output[4] = {};
-
-  for (auto [in1, in2, out] : Zip(stuff1, stuff2, output)) {
-    out = in1 + in2;
+  {
+    int output[4] = {};
+    for (auto [in1, in2, out] : Zip(stuff1, stuff2, output)) {
+      out = in1 + in2;
+    }
+    EXPECT_THAT(output, ElementsAreArray(expected));
   }
-  EXPECT_THAT(output, ElementsAreArray(expected));
-
-  // The "output" span can, in fact, be const so long as we don't assign to it.
-  for (auto [in1, in2, expect] : Zip(stuff1, stuff2, output)) {
-    EXPECT_EQ(in1 + in2, expect);
+  {
+    // Test that ordering of args doesn't matter.
+    int output[4] = {};
+    for (auto [in1, out, in2] : Zip(stuff1, output, stuff2)) {
+      out = in1 + in2;
+    }
+    EXPECT_THAT(output, ElementsAreArray(expected));
+  }
+  {
+    // Test that ordering of args doesn't matter, except for the size
+    // determination.
+    int output[4] = {};
+    auto sub_output = pdfium::make_span(output).first(3);
+    for (auto [out, in1, in2] : Zip(sub_output, stuff1, stuff2)) {
+      out = in1 + in2;
+    }
+    EXPECT_THAT(output, ElementsAreArray(expected));
   }
 }
 

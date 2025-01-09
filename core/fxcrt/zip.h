@@ -19,7 +19,7 @@ namespace fxcrt {
 // Vastly simplified implementation of ideas from C++23 zip_view<>. Allows
 // safe traversal of two or three ranges with a single bounds check per
 // iteration.
-
+//
 // Example two range usage:
 //   struct RGB { uint8_t r; uint8_t g; uint8_t b; };
 //   const uint8_t gray[256] = { ... };
@@ -31,17 +31,13 @@ namespace fxcrt {
 //   }
 // which fills the first 256 elements of rgbs with the corresponding gray
 // value in each component, say.
-
+//
 // Differences include:
 // - Only zips together two or three views instead of N.
 // - Size is determined by the first view, which must be smaller than the
 //   other view(s).
-// - With two views, the first view is presumed to be "input-like" and is const.
-//   The second view is presumed to be "output-like", can be non-const, and
-//   can be assigned-to if desired.
-// - With three views, the first two views are presumed to be "input-like" and
-//   are const. The third view is is presumed to be "output-like", can be
-//   non-const, and can be assigned-to if desired.
+// - Views are passed as forwarding-references, so non-const views may be
+//   assigned-to in the body of the loop.
 // - Only those methods required to support use in a range-based for-loop
 //   are provided.
 
@@ -125,12 +121,12 @@ class ZipView3 {
 };
 
 template <typename T, typename U>
-auto Zip(const T& first, U&& second) {
+auto Zip(T&& first, U&& second) {
   return ZipView2(pdfium::span(first), pdfium::span(second));
 }
 
 template <typename T, typename U, typename V>
-auto Zip(const T& first, const U& second, V&& third) {
+auto Zip(T&& first, U&& second, V&& third) {
   return ZipView3(pdfium::span(first), pdfium::span(second),
                   pdfium::span(third));
 }
