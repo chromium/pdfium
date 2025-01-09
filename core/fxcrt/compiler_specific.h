@@ -86,7 +86,7 @@
 // clang-format off
 // Formatting is off so that we can put each _Pragma on its own line, as
 // recommended by the gcc docs.
-#if defined(PDF_USE_CHROME_PLUGINS)
+#if defined(UNSAFE_BUFFERS_BUILD)
 #define UNSAFE_BUFFERS(...)                  \
   _Pragma("clang unsafe_buffer_usage begin") \
   __VA_ARGS__                                \

@@ -226,8 +226,6 @@ config("pdfium_common_config") {
   }
 
   if (clang_use_chrome_plugins) {
-    defines += [ "PDF_USE_CHROME_PLUGINS" ]
-
     # Catch misuse of C-style pointers.
     # TODO(crbug.com/1320670): enable for non-debug builds once this stops
     # interfering with code generation.
