@@ -348,7 +348,7 @@ RetainPtr<CFGAS_GEFont> CXFA_TextParser::GetFont(
       dwStyle |= pdfium::kFontStyleForceBold;
     }
     if (font->IsItalic()) {
-      dwStyle |= pdfium::kFontStyleForceBold;
+      dwStyle |= pdfium::kFontStyleItalic;
     }
   }
 
