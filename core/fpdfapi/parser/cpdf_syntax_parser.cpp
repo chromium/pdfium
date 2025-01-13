@@ -915,19 +915,29 @@ FX_FILESIZE CPDF_SyntaxParser::FindTag(ByteStringView tag) {
   const int32_t taglen = tag.GetLength();
   DCHECK_GT(taglen, 0);
 
-  int32_t match = 0;
   while (true) {
-    uint8_t ch;
-    if (!GetNextChar(ch))
-      return -1;
+    const FX_FILESIZE match_start_pos = GetPos();
+    bool match_found = true;
 
-    if (ch == tag[match]) {
-      match++;
-      if (match == taglen)
-        return GetPos() - startpos - taglen;
-    } else {
-      match = ch == tag[0] ? 1 : 0;
+    for (int32_t i = 0; i < taglen; i++) {
+      uint8_t ch;
+      if (!GetNextChar(ch)) {
+        return -1;
+      }
+
+      if (ch != tag[i]) {
+        match_found = false;
+        break;
+      }
     }
+
+    if (match_found) {
+      return match_start_pos - startpos;
+    }
+
+    // On running into a mismatch, the code restarts from one place ahead w.r.t.
+    // the previous iteration.
+    SetPos(match_start_pos + 1);
   }
 }
 
