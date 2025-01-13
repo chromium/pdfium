@@ -1897,15 +1897,18 @@ int main(int argc, const char* argv[]) {
 
 #if defined(PDF_ENABLE_SKIA)
     case RendererType::kSkia:
-#if defined(BUILD_WITH_CHROMIUM)
-      // Needed to support Chromium's copy of Skia, which uses a
-      // `DiscardableMemoryAllocator`.
-      chromium_support::InitializeDiscardableMemoryAllocator();
-#endif  // defined(BUILD_WITH_CHROMIUM)
       config.m_RendererType = FPDF_RENDERERTYPE_SKIA;
       break;
 #endif  // defined(PDF_ENABLE_SKIA)
   }
+
+#if defined(PDF_ENABLE_SKIA) && defined(BUILD_WITH_CHROMIUM)
+  // Needed to support Chromium's copy of Skia, which uses a
+  // `DiscardableMemoryAllocator`.
+  if (config.m_RendererType == FPDF_RENDERERTYPE_SKIA) {
+    chromium_support::InitializeDiscardableMemoryAllocator();
+  }
+#endif
 
   std::function<void()> idler = []() {};
 #ifdef PDF_ENABLE_V8
