@@ -25,6 +25,7 @@
 #include "core/fxcodec/data_and_bytes_consumed.h"
 #include "core/fxcodec/jpeg/jpegmodule.h"
 #include "core/fxcodec/scanlinedecoder.h"
+#include "core/fxcrt/autorestorer.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_extension.h"
@@ -199,26 +200,20 @@ RetainPtr<CPDF_Stream> CPDF_StreamParser::ReadInlineStream(
       return nullptr;
     }
 
-    uint32_t saved_position = m_Pos;
-    m_Pos += stream_size;
-    while (true) {
-      uint32_t saved_iteration_position = m_Pos;
-      ElementType type = ParseNextElement();
-      if (type == ElementType::kEndOfData) {
-        break;
-      }
+    {
+      AutoRestorer<uint32_t> saved_position(&m_Pos);
+      m_Pos += stream_size;
+      while (true) {
+        uint32_t saved_iteration_position = m_Pos;
+        ElementType type = ParseNextElement();
+        if (type == ElementType::kEndOfData ||
+            (type == ElementType::kKeyword && GetWord() == "EI")) {
+          break;
+        }
 
-      if (type != ElementType::kKeyword) {
         stream_size += m_Pos - saved_iteration_position;
-        continue;
       }
-      if (GetWord() == "EI") {
-        m_Pos = saved_iteration_position;
-        break;
-      }
-      stream_size += m_Pos - saved_iteration_position;
     }
-    m_Pos = saved_position;
     auto src_span = m_pBuf.subspan(m_Pos, stream_size);
     data = DataVector<uint8_t>(src_span.begin(), src_span.end());
     m_Pos += stream_size;
