@@ -677,6 +677,9 @@ bug_725555.in * * * skia
 # TODO(chromium:983289): Remove after associated bug is fixed
 bug_983289.in * * * agg
 
+# TODO(crbug.com/370299908): Remove after associated bug is fixed
+dashed_line_negative_scale.in * * * agg
+
 # TODO(pdfium:1747): Remove after associated bug is fixed
 jpxdecode.in * * * *
 jpxdecode_without_bitspercomponent.in * * * *
