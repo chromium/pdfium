@@ -43,6 +43,9 @@ CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
     CXFA_Node* pTemplateNode,
     bool bRecursive,
     std::vector<CXFA_Node*>* pSubformArray) {
+  if (pTemplateNode->GetPacketType() != XFA_PacketType::Template) {
+    return nullptr;
+  }
   CXFA_Node* pExistingNode = nullptr;
   if (!pSubformArray) {
     pExistingNode = XFA_DataMerge_FindFormDOMInstance(
@@ -75,12 +78,22 @@ CXFA_Node* XFA_NodeMerge_CloneOrMergeContainer(
   }
 
   CXFA_Node* pNewNode = pTemplateNode->CloneTemplateToForm(false);
+  if (!pNewNode) {
+    return nullptr;
+  }
+
   pFormParent->InsertChildAndNotify(pNewNode, nullptr);
-  if (bRecursive) {
-    for (CXFA_Node* pTemplateChild = pTemplateNode->GetFirstChild();
-         pTemplateChild; pTemplateChild = pTemplateChild->GetNextSibling()) {
-      if (XFA_DataMerge_NeedGenerateForm(pTemplateChild, true)) {
-        CXFA_Node* pNewChild = pTemplateChild->CloneTemplateToForm(true);
+
+  if (!bRecursive) {
+    return pNewNode;
+  }
+
+  for (CXFA_Node* pTemplateChild = pTemplateNode->GetFirstChild();
+       pTemplateChild; pTemplateChild = pTemplateChild->GetNextSibling()) {
+    if (pTemplateChild->GetPacketType() == XFA_PacketType::Template &&
+        XFA_DataMerge_NeedGenerateForm(pTemplateChild, true)) {
+      CXFA_Node* pNewChild = pTemplateChild->CloneTemplateToForm(true);
+      if (pNewChild) {
         pNewNode->InsertChildAndNotify(pNewChild, nullptr);
       }
     }

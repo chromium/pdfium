@@ -1275,7 +1275,7 @@ CXFA_Node* CXFA_Node::CreateSamePacketNode(XFA_Element eType) {
 }
 
 CXFA_Node* CXFA_Node::CloneTemplateToForm(bool bRecursive) {
-  DCHECK_EQ(m_ePacket, XFA_PacketType::Template);
+  CHECK_EQ(m_ePacket, XFA_PacketType::Template);
   CXFA_Node* pClone =
       m_pDocument->CreateNode(XFA_PacketType::Form, m_elementType);
   if (!pClone)
