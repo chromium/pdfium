@@ -316,7 +316,7 @@ void RasterizeStroke(agg::rasterizer_scanline_aa* rasterizer,
       }
       float off = i * 2 + 1 == dash_array.size() ? on : dash_array[i * 2 + 1];
       off = std::max(off, 0.0f);
-      dash.add_dash(on * scale, off * scale);
+      dash.add_dash(fabs(on * scale), fabs(off * scale));
     }
     dash.dash_start(pGraphState->dash_phase() * scale);
     using DashStroke = agg::conv_stroke<DashConverter>;
