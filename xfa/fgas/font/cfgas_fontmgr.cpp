@@ -449,6 +449,11 @@ std::vector<WideString> GetNames(pdfium::span<const uint8_t> name_table) {
       continue;
     }
 
+    // Avoid out of bounds crashes if the length and/or offset are wrong.
+    if (static_cast<size_t>(nNameLength) + nNameOffset >= str.size()) {
+      continue;
+    }
+
     WideString wsFamily;
     for (uint16_t j = 0; j < nNameLength; ++j) {
       wchar_t wcTemp = str[nNameOffset + j];
