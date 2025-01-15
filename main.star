@@ -292,7 +292,6 @@ lucicfg.config(
         "luci-scheduler.cfg",
         "project.cfg",
         "realms.cfg",
-        "tricium-prod.cfg",
     ],
     fail_on_warnings = True,
     lint_checks = ["default"],
@@ -307,7 +306,6 @@ luci.project(
     notify = "luci-notify.appspot.com",
     scheduler = "luci-scheduler.appspot.com",
     swarming = "chromium-swarm.appspot.com",
-    tricium = "tricium-prod.appspot.com",
     acls = [
         acl.entry(
             roles = [
@@ -375,13 +373,6 @@ luci.recipe(
 )
 
 luci.recipe(
-    name = "pdfium_analysis",
-    cipd_package = _CIPD_PACKAGE,
-    use_bbagent = True,
-    use_python3 = True,
-)
-
-luci.recipe(
     name = "presubmit",
     cipd_package = _CIPD_PACKAGE,
     use_bbagent = True,
@@ -411,10 +402,6 @@ luci.bucket(
     acls = [
         acl.entry(
             acl.BUILDBUCKET_TRIGGERER,
-            # Allow Tricium prod to trigger analyzer tryjobs.
-            users = [
-                "tricium-prod@appspot.gserviceaccount.com",
-            ],
             groups = [
                 "project-pdfium-tryjob-access",
                 "service-account-cq",
@@ -459,26 +446,10 @@ luci.builder(
         "source_url": "https://chromium.googlesource.com/chromium/src.git",
         "destination_url": "https://pdfium.googlesource.com/pdfium.git",
         "source_packages": "src/third_party/llvm-build/Release+Asserts,src/third_party/rust-toolchain",
-        "destination_packages": "third_party/llvm-build/Release+Asserts,third_party/rust-toolchain"
+        "destination_packages": "third_party/llvm-build/Release+Asserts,third_party/rust-toolchain",
     },
     # Run every 2 weeks on the 1st and the 15th of each month at 1:30 AM
     schedule = "30 1 1,15 * *",
-)
-
-luci.builder(
-    name = "pdfium_analysis",
-    bucket = "try",
-    executable = "pdfium_analysis",
-    service_account = "pdfium-try-builder@chops-service-accounts.iam.gserviceaccount.com",
-    dimensions = {
-        "cores": "8",
-        "cpu": "x86-64",
-        "os": "Ubuntu-20.04",
-        "pool": "luci.flex.try",
-    },
-    properties = {
-        "builder_group": "tryserver.client.pdfium",
-    },
 )
 
 luci.builder(
@@ -580,11 +551,6 @@ luci.list_view(
 
 luci.list_view_entry(
     list_view = "try",
-    builder = "try/pdfium_analysis",
-)
-
-luci.list_view_entry(
-    list_view = "try",
     builder = "try/pdfium_presubmit",
 )
 
@@ -624,11 +590,6 @@ luci.cq_group(
         run = cq.run_limits(max_active = 4),
     ),
     verifiers = [
-        luci.cq_tryjob_verifier(
-            builder = "pdfium:try/pdfium_analysis",
-            owner_whitelist = ["project-pdfium-tryjob-access"],
-            mode_allowlist = [cq.MODE_ANALYZER_RUN],
-        ),
         luci.cq_tryjob_verifier(
             builder = "pdfium:try/pdfium_presubmit",
             disable_reuse = True,
