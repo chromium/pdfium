@@ -26,7 +26,7 @@ default_args = {
   v8_imminent_deprecation_warnings = false
 
   # PDFium has its own unsafe-buffers enforcement directories.
-  clang_unsafe_buffers_paths = "//pdfium_unsafe_buffers_paths.txt"
+  clang_unsafe_buffers_paths = "//unsafe_buffers_paths.txt"
 }
 
 no_check_targets = [
