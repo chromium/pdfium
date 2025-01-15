@@ -627,7 +627,8 @@ void CPDF_StreamContentParser::Handle_BeginImage() {
     if (type != CPDF_StreamParser::ElementType::kName) {
       break;
     }
-    auto word = m_pSyntax->GetWord();
+    // Next `m_pSyntax` read below may invalidate `word`. Must save to `key`.
+    ByteStringView word = m_pSyntax->GetWord();
     ByteString key(word.Last(word.GetLength() - 1));
     auto pObj = m_pSyntax->ReadNextObject(false, false, 0);
     if (pObj && !pObj->IsInline()) {
