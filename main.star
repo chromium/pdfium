@@ -80,9 +80,6 @@ def get_properties_by_name(name):
         if not name.endswith("lsan"):
             properties.update({"rel": True})
 
-    if name.startswith("win") and name.endswith("asan"):
-        properties.update({"clang": True})
-
     if name.endswith("msan"):
         properties.update({"memory_tool": "msan", "rel": True})
 
@@ -94,9 +91,6 @@ def get_properties_by_name(name):
 
     if name.find("xfa") != -1:
         properties.update({"xfa": True})
-
-    if name.find("msvc") != -1:
-        properties.update({"msvc": True})
 
     is_32_bit = name.endswith("32")
     if name.startswith("android"):
@@ -133,9 +127,6 @@ def get_reclient_properties(name, bucket):
     Returns:
         Reclient properties if the builder should use remote execution; empty dict otherwise.
     """
-    if name.find("msvc") != -1:
-        return {}
-
     props = {
         "instance": "rbe-chromium-trusted" if bucket == "ci" else "rbe-chromium-untrusted",
         "metrics_project": "chromium-reclient-metrics",
@@ -517,8 +508,6 @@ add_entries_for_builder(name = "mac_xfa_skia_component", category = "skia|mac", 
 add_entries_for_builder(name = "win", category = "main|win", swarm_tests = True)
 add_entries_for_builder(name = "win_asan", category = "main|win", short_name = "asan")
 add_entries_for_builder(name = "win_no_v8", category = "no v8", short_name = "win")
-add_entries_for_builder(name = "win_no_v8_msvc", category = "no v8|msvc", short_name = "64")
-add_entries_for_builder(name = "win_no_v8_msvc_32", category = "no v8|msvc", short_name = "32")
 add_entries_for_builder(name = "win_skia", category = "skia|win")
 add_entries_for_builder(name = "win_skia_asan", category = "skia|win", short_name = "asan")
 add_entries_for_builder(name = "win_xfa", category = "xfa|win")
