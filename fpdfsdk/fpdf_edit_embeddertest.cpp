@@ -149,6 +149,35 @@ std::ostream& operator<<(std::ostream& os,
   return os;
 }
 
+RetainPtr<const CPDF_Array> GetWidthsArrayForCidFont(const CPDF_Font* font) {
+  if (!font || !font->IsCIDFont()) {
+    ADD_FAILURE();
+    return nullptr;
+  }
+
+  RetainPtr<const CPDF_Dictionary> font_dict = font->GetFontDict();
+  if (!font_dict) {
+    ADD_FAILURE();
+    return nullptr;
+  }
+
+  RetainPtr<const CPDF_Array> descendant_array =
+      font_dict->GetArrayFor("DescendantFonts");
+  if (!descendant_array || descendant_array->size() != 1) {
+    ADD_FAILURE();
+    return nullptr;
+  }
+
+  RetainPtr<const CPDF_Dictionary> cidfont_dict =
+      descendant_array->GetDictAt(0);
+  if (!cidfont_dict) {
+    ADD_FAILURE();
+    return nullptr;
+  }
+
+  return cidfont_dict->GetArrayFor("W");
+}
+
 }  // namespace
 
 class FPDFEditEmbedderTest : public EmbedderTest {
@@ -5363,8 +5392,8 @@ TEST_F(FPDFEditMoveEmbedderTest, MovePagesTest) {
 // Regression test for https://issues.chromium.org/377948405
 // fonts/bug_377948405.ttf was made with harfbuzz* subset utility:
 // > hb-subset NotoSans-Regular.ttf -u 41,C0,C4-C6,C8 -o bug_377948405.ttf
-// Font W array state before bug fix: [ 1[ 639 639 639 639 881 556]]
-// Font W array state after bug fix: [ 1[ 639] 5 7 639 8[ 881 556]]
+// Font W array state before bug fix: [1 [639 639 639 639 881 556]]
+// Font W array state after bug fix: [1 [639] 5 7 639 8 [881 556]]
 // *At the moment of the bug detection harfbuzz version was 10.1.0
 TEST_F(FPDFEditEmbedderTest, Bug377948405) {
   CreateEmptyDocument();
@@ -5380,23 +5409,9 @@ TEST_F(FPDFEditEmbedderTest, Bug377948405) {
       document(), font_data.data(), font_data.size(), FPDF_FONT_TRUETYPE, 1));
   ASSERT_TRUE(font);
   CPDF_Font* typed_font = CPDFFontFromFPDFFont(font.get());
-  EXPECT_TRUE(typed_font->IsCIDFont());
-
-  // Get font descendant
-  RetainPtr<const CPDF_Dictionary> font_dict = typed_font->GetFontDict();
-  ASSERT_TRUE(font_dict);
-  RetainPtr<const CPDF_Array> descendant_array =
-      font_dict->GetArrayFor("DescendantFonts");
-  ASSERT_TRUE(descendant_array);
-  EXPECT_EQ(1u, descendant_array->size());
-
-  // Check the CIDFontDict width array
-  RetainPtr<const CPDF_Dictionary> cidfont_dict =
-      descendant_array->GetDictAt(0);
-  ASSERT_TRUE(cidfont_dict);
-  RetainPtr<const CPDF_Array> widths_array = cidfont_dict->GetArrayFor("W");
+  RetainPtr<const CPDF_Array> widths_array =
+      GetWidthsArrayForCidFont(typed_font);
   ASSERT_TRUE(widths_array);
-
   EXPECT_EQ(widths_array->GetIntegerAt(0), 1);
-  ASSERT_EQ(widths_array->GetIntegerAt(2), 5);
+  EXPECT_EQ(widths_array->GetIntegerAt(2), 5);
 }
