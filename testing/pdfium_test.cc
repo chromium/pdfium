@@ -1499,6 +1499,15 @@ bool PdfProcessor::ProcessPage(const int page_index) {
   }
 #endif  // _WIN32
 
+  // Client programs will be setting these values when rendering.
+  // This is a sample color scheme with distinct colors.
+  // Used only when `options().forced_color` is true.
+  static constexpr FPDF_COLORSCHEME kColorScheme = {
+      .path_fill_color = 0xFFFF0000,
+      .path_stroke_color = 0xFF00FF00,
+      .text_fill_color = 0xFF0000FF,
+      .text_stroke_color = 0xFF00FFFF};
+
   if (!renderer) {
     // Use a rasterizing page renderer by default.
     if (options().render_oneshot) {
@@ -1506,18 +1515,9 @@ bool PdfProcessor::ProcessPage(const int page_index) {
           page, /*width=*/width, /*height=*/height, /*flags=*/flags, idler(),
           std::move(writer));
     } else {
-      // Client programs will be setting these values when rendering.
-      // This is a sample color scheme with distinct colors.
-      // Used only when `options().forced_color` is true.
-      FPDF_COLORSCHEME color_scheme;
-      color_scheme.path_fill_color = 0xFFFF0000;
-      color_scheme.path_stroke_color = 0xFF00FF00;
-      color_scheme.text_fill_color = 0xFF0000FF;
-      color_scheme.text_stroke_color = 0xFF00FFFF;
-
       renderer = std::make_unique<ProgressiveBitmapPageRenderer>(
           page, /*width=*/width, /*height=*/height, /*flags=*/flags, idler(),
-          std::move(writer), options().forced_color ? &color_scheme : nullptr);
+          std::move(writer), options().forced_color ? &kColorScheme : nullptr);
     }
   }
 
