@@ -290,15 +290,18 @@ CFX_FloatRect GetLooseBounds(const CPDF_TextPage::CharInfo& charinfo) {
     int ascent = charinfo.text_object()->GetFont()->GetTypeAscent();
     int descent = charinfo.text_object()->GetFont()->GetTypeDescent();
     if (ascent != descent) {
-      float width = charinfo.matrix().a *
-                    charinfo.text_object()->GetCharWidth(charinfo.char_code());
-      float font_scale = charinfo.matrix().a * font_size / (ascent - descent);
+      float width = charinfo.text_object()->GetCharWidth(charinfo.char_code());
+      float font_scale = font_size / (ascent - descent);
 
-      float left = charinfo.origin().x;
-      float right = charinfo.origin().x + (is_vert_writing ? -width : width);
-      float bottom = charinfo.origin().y + descent * font_scale;
-      float top = charinfo.origin().y + ascent * font_scale;
-      return CFX_FloatRect(left, bottom, right, top);
+      CFX_Matrix inverse_matrix = charinfo.matrix().GetInverse();
+      CFX_PointF original_origin = inverse_matrix.Transform(charinfo.origin());
+
+      float left = original_origin.x;
+      float right = original_origin.x + (is_vert_writing ? -width : width);
+      float bottom = original_origin.y + descent * font_scale;
+      float top = original_origin.y + ascent * font_scale;
+      CFX_FloatRect char_box(left, bottom, right, top);
+      return charinfo.matrix().TransformRect(char_box);
     }
   }
 

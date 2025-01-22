@@ -1736,7 +1736,7 @@ TEST_F(FPDFTextEmbedderTest, CharBox) {
   static constexpr double kExpectedCharWidth = 8.460;
   static constexpr double kExpectedCharHeight = 6.600;
   static constexpr float kExpectedLooseCharWidth = 8.664f;
-  static constexpr float kExpectedLooseCharHeight = 12.0f;
+  static constexpr float kExpectedLooseCharHeight = 10.0f;
 
   ASSERT_TRUE(OpenDocument("font_matrix.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
@@ -1833,25 +1833,24 @@ TEST_F(FPDFTextEmbedderTest, CharBoxForRotated45DegreesText) {
   EXPECT_NEAR(10.055, top - bottom, 0.001);
 
   // Check the loose character box size.
-  // TODO(crbug.com/42270642): Sizes should be bigger than the
-  // FPDFText_GetCharBox() sizes, and certainly not negative.
+  static constexpr float kExpectedLooseCharDimension = 14.612f;
   FS_RECTF rect;
   ASSERT_TRUE(FPDFText_GetLooseCharBox(
       text_page.get(), GetRotatedTextFirstCharIndexForQuadrant(0), &rect));
-  EXPECT_NEAR(6.126f, rect.right - rect.left, 0.001f);
-  EXPECT_NEAR(8.485f, rect.top - rect.bottom, 0.001f);
+  EXPECT_NEAR(kExpectedLooseCharDimension, rect.right - rect.left, 0.001f);
+  EXPECT_NEAR(kExpectedLooseCharDimension, rect.top - rect.bottom, 0.001f);
   ASSERT_TRUE(FPDFText_GetLooseCharBox(
       text_page.get(), GetRotatedTextFirstCharIndexForQuadrant(1), &rect));
-  EXPECT_NEAR(-6.126f, rect.right - rect.left, 0.001f);
-  EXPECT_NEAR(-8.485f, rect.top - rect.bottom, 0.001f);
+  EXPECT_NEAR(kExpectedLooseCharDimension, rect.right - rect.left, 0.001f);
+  EXPECT_NEAR(kExpectedLooseCharDimension, rect.top - rect.bottom, 0.001f);
   ASSERT_TRUE(FPDFText_GetLooseCharBox(
       text_page.get(), GetRotatedTextFirstCharIndexForQuadrant(2), &rect));
-  EXPECT_NEAR(-6.126f, rect.right - rect.left, 0.001f);
-  EXPECT_NEAR(-8.485f, rect.top - rect.bottom, 0.001f);
+  EXPECT_NEAR(kExpectedLooseCharDimension, rect.right - rect.left, 0.001f);
+  EXPECT_NEAR(kExpectedLooseCharDimension, rect.top - rect.bottom, 0.001f);
   ASSERT_TRUE(FPDFText_GetLooseCharBox(
       text_page.get(), GetRotatedTextFirstCharIndexForQuadrant(3), &rect));
-  EXPECT_NEAR(6.126f, rect.right - rect.left, 0.001f);
-  EXPECT_NEAR(8.485f, rect.top - rect.bottom, 0.001f);
+  EXPECT_NEAR(kExpectedLooseCharDimension, rect.right - rect.left, 0.001f);
+  EXPECT_NEAR(kExpectedLooseCharDimension, rect.top - rect.bottom, 0.001f);
 }
 
 TEST_F(FPDFTextEmbedderTest, CharBoxForRotated90DegreesText) {
@@ -1903,25 +1902,25 @@ TEST_F(FPDFTextEmbedderTest, CharBoxForRotated90DegreesText) {
   EXPECT_NEAR(8.604, top - bottom, 0.001);
 
   // Check the loose character box size.
-  // TODO(crbug.com/42270642): Sizes should be bigger than the
-  // FPDFText_GetCharBox() sizes, and certainly not negative nor zero.
+  static constexpr float kExpectedLooseCharWidth = 8.664f;
+  static constexpr float kExpectedLooseCharHeight = 12.0f;
   FS_RECTF rect;
   ASSERT_TRUE(FPDFText_GetLooseCharBox(
       text_page.get(), GetRotatedText90FirstCharIndexForQuadrant(0), &rect));
-  EXPECT_NEAR(8.664f, rect.right - rect.left, 0.001f);
-  EXPECT_NEAR(12.0f, rect.top - rect.bottom, 0.001f);
+  EXPECT_NEAR(kExpectedLooseCharWidth, rect.right - rect.left, 0.001f);
+  EXPECT_NEAR(kExpectedLooseCharHeight, rect.top - rect.bottom, 0.001f);
   ASSERT_TRUE(FPDFText_GetLooseCharBox(
       text_page.get(), GetRotatedText90FirstCharIndexForQuadrant(1), &rect));
-  EXPECT_NEAR(0.0f, rect.right - rect.left, 0.001f);
-  EXPECT_NEAR(0.0f, rect.top - rect.bottom, 0.001f);
+  EXPECT_NEAR(kExpectedLooseCharHeight, rect.right - rect.left, 0.001f);
+  EXPECT_NEAR(kExpectedLooseCharWidth, rect.top - rect.bottom, 0.001f);
   ASSERT_TRUE(FPDFText_GetLooseCharBox(
       text_page.get(), GetRotatedText90FirstCharIndexForQuadrant(2), &rect));
-  EXPECT_NEAR(-8.664f, rect.right - rect.left, 0.001f);
-  EXPECT_NEAR(-12.0f, rect.top - rect.bottom, 0.001f);
+  EXPECT_NEAR(kExpectedLooseCharWidth, rect.right - rect.left, 0.001f);
+  EXPECT_NEAR(kExpectedLooseCharHeight, rect.top - rect.bottom, 0.001f);
   ASSERT_TRUE(FPDFText_GetLooseCharBox(
       text_page.get(), GetRotatedText90FirstCharIndexForQuadrant(3), &rect));
-  EXPECT_NEAR(0.0f, rect.right - rect.left, 0.001f);
-  EXPECT_NEAR(0.0f, rect.top - rect.bottom, 0.001f);
+  EXPECT_NEAR(kExpectedLooseCharHeight, rect.right - rect.left, 0.001f);
+  EXPECT_NEAR(kExpectedLooseCharWidth, rect.top - rect.bottom, 0.001f);
 }
 
 TEST_F(FPDFTextEmbedderTest, SmallType3Glyph) {
