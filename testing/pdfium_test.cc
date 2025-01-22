@@ -731,11 +731,9 @@ bool ParseCommandLine(const std::vector<std::string>& args,
       fprintf(stderr, "Unrecognized argument %s\n", cur_arg.c_str());
       return false;
     } else {
-      break;
+      files->push_back(cur_arg);
     }
   }
-  for (size_t i = cur_idx; i < args.size(); i++)
-    files->push_back(args[i]);
 
   return true;
 }
