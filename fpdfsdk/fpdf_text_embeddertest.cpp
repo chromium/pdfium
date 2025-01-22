@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "build/build_config.h"
+#include "core/fxcrt/notreached.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxge/fx_font.h"
 #include "public/cpp/fpdf_scopers.h"
@@ -27,6 +28,24 @@ namespace {
 
 constexpr char kHelloGoodbyeText[] = "Hello, world!\r\nGoodbye, world!";
 constexpr int kHelloGoodbyeTextSize = std::size(kHelloGoodbyeText);
+
+// For use with rotated_text.pdf.
+int GetRotatedTextFirstCharIndexForQuadrant(int quadrant) {
+  static constexpr int kSubstringsSize[] = {
+      std::size("Hello,"), std::size(" world!\r\n"), std::size("Goodbye,")};
+  switch (quadrant) {
+    case 0:
+      return 0;
+    case 1:
+      return kSubstringsSize[0];
+    case 2:
+      return kSubstringsSize[0] + kSubstringsSize[1];
+    case 3:
+      return kSubstringsSize[0] + kSubstringsSize[1] + kSubstringsSize[2];
+    default:
+      NOTREACHED();
+  }
+}
 
 }  // namespace
 
@@ -1474,9 +1493,6 @@ TEST_F(FPDFTextEmbedderTest, GetCharAngle) {
   ScopedFPDFTextPage text_page(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(text_page);
 
-  static constexpr int kSubstringsSize[] = {
-      std::size("Hello,"), std::size(" world!\r\n"), std::size("Goodbye,")};
-
   // -1 for CountChars not including the \0, but +1 for the extra control
   // character.
   EXPECT_EQ(kHelloGoodbyeTextSize, FPDFText_CountChars(text_page.get()));
@@ -1486,19 +1502,36 @@ TEST_F(FPDFTextEmbedderTest, GetCharAngle) {
   EXPECT_FLOAT_EQ(
       -1.0f, FPDFText_GetCharAngle(text_page.get(), kHelloGoodbyeTextSize + 1));
 
-  // Test GetCharAngle for every quadrant
-  EXPECT_NEAR(FXSYS_PI / 4.0, FPDFText_GetCharAngle(text_page.get(), 0), 0.001);
+  // Sanity check the characters.
+  EXPECT_EQ(static_cast<uint32_t>('H'),
+            FPDFText_GetUnicode(text_page.get(),
+                                GetRotatedTextFirstCharIndexForQuadrant(0)));
+  EXPECT_EQ(static_cast<uint32_t>('w'),
+            FPDFText_GetUnicode(text_page.get(),
+                                GetRotatedTextFirstCharIndexForQuadrant(1)));
+  EXPECT_EQ(static_cast<uint32_t>('o'),
+            FPDFText_GetUnicode(text_page.get(),
+                                GetRotatedTextFirstCharIndexForQuadrant(2)));
+  EXPECT_EQ(static_cast<uint32_t>('o'),
+            FPDFText_GetUnicode(text_page.get(),
+                                GetRotatedTextFirstCharIndexForQuadrant(3)));
+
+  // Test GetCharAngle for every quadrant.
+  EXPECT_NEAR(FXSYS_PI / 4.0,
+              FPDFText_GetCharAngle(text_page.get(),
+                                    GetRotatedTextFirstCharIndexForQuadrant(0)),
+              0.001);
   EXPECT_NEAR(3 * FXSYS_PI / 4.0,
-              FPDFText_GetCharAngle(text_page.get(), kSubstringsSize[0]),
+              FPDFText_GetCharAngle(text_page.get(),
+                                    GetRotatedTextFirstCharIndexForQuadrant(1)),
               0.001);
   EXPECT_NEAR(5 * FXSYS_PI / 4.0,
               FPDFText_GetCharAngle(text_page.get(),
-                                    kSubstringsSize[0] + kSubstringsSize[1]),
+                                    GetRotatedTextFirstCharIndexForQuadrant(2)),
               0.001);
   EXPECT_NEAR(7 * FXSYS_PI / 4.0,
-              FPDFText_GetCharAngle(
-                  text_page.get(),
-                  kSubstringsSize[0] + kSubstringsSize[1] + kSubstringsSize[2]),
+              FPDFText_GetCharAngle(text_page.get(),
+                                    GetRotatedTextFirstCharIndexForQuadrant(3)),
               0.001);
 }
 
