@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <array>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -31,8 +32,12 @@ constexpr int kHelloGoodbyeTextSize = std::size(kHelloGoodbyeText);
 
 // For use with rotated_text.pdf.
 int GetRotatedTextFirstCharIndexForQuadrant(int quadrant) {
-  static constexpr int kSubstringsSize[] = {
-      std::size("Hello,"), std::size(" world!\r\n"), std::size("Goodbye,")};
+  // Unlike hello_world.pdf, rotated_text.pdf has an extra space before
+  // "Goodbye".
+  static constexpr size_t kSubstringsSize[] = {
+      std::char_traits<char>::length("Hello, "),
+      std::char_traits<char>::length("world!\r\n "),
+      std::char_traits<char>::length("Goodbye, ")};
   switch (quadrant) {
     case 0:
       return 0;
@@ -261,6 +266,8 @@ TEST_F(FPDFTextEmbedderTest, TextVertical) {
   ASSERT_TRUE(textpage);
 
   EXPECT_EQ(12.0, FPDFText_GetFontSize(textpage.get(), 0));
+  EXPECT_EQ(static_cast<uint32_t>('e'), FPDFText_GetUnicode(textpage.get(), 1));
+  EXPECT_EQ(static_cast<uint32_t>('l'), FPDFText_GetUnicode(textpage.get(), 2));
 
   double x = 0.0;
   double y = 0.0;
@@ -1509,10 +1516,10 @@ TEST_F(FPDFTextEmbedderTest, GetCharAngle) {
   EXPECT_EQ(static_cast<uint32_t>('w'),
             FPDFText_GetUnicode(text_page.get(),
                                 GetRotatedTextFirstCharIndexForQuadrant(1)));
-  EXPECT_EQ(static_cast<uint32_t>('o'),
+  EXPECT_EQ(static_cast<uint32_t>('G'),
             FPDFText_GetUnicode(text_page.get(),
                                 GetRotatedTextFirstCharIndexForQuadrant(2)));
-  EXPECT_EQ(static_cast<uint32_t>('o'),
+  EXPECT_EQ(static_cast<uint32_t>('w'),
             FPDFText_GetUnicode(text_page.get(),
                                 GetRotatedTextFirstCharIndexForQuadrant(3)));
 
@@ -1715,6 +1722,14 @@ TEST_F(FPDFTextEmbedderTest, CharBox) {
 
   ScopedFPDFTextPage text_page(FPDFText_LoadPage(page.get()));
   ASSERT_TRUE(text_page);
+
+  // Make sure the tests below are testing the letter 'A'.
+  EXPECT_EQ(static_cast<uint32_t>('A'),
+            FPDFText_GetUnicode(text_page.get(), 0));
+  EXPECT_EQ(static_cast<uint32_t>('A'),
+            FPDFText_GetUnicode(text_page.get(), 4));
+  EXPECT_EQ(static_cast<uint32_t>('A'),
+            FPDFText_GetUnicode(text_page.get(), 8));
 
   // Check the character box size.
   double left;
