@@ -21,6 +21,10 @@ It is expected that there are still some places lurking in the code which will
 not function properly on big-endian architectures. Bugs and/or patches are
 welcome, however providing this support is **not** a priority at this time.
 
+### Compilers supported
+
+Clang. Former MSVC users should consider using clang-cl if needed.
+
 #### Google employees
 
 Run: `download_from_google_storage --config` and follow the
