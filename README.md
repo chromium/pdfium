@@ -23,7 +23,11 @@ welcome, however providing this support is **not** a priority at this time.
 
 ### Compilers supported
 
-Clang. Former MSVC users should consider using clang-cl if needed.
+PDFium aims to be compliant with the [Chromium policy](https://chromium.googlesource.com/chromium/src/+/main/docs/toolchain_support.md#existing-toolchain-support).
+
+Currently this means Clang. Former MSVC users should consider using clang-cl
+if needed. Community-contributed patches for gcc will be allowed. No MSVC
+patches will be taken.
 
 #### Google employees
 
