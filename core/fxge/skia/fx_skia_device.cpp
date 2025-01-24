@@ -750,7 +750,7 @@ CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(
 }
 
 CFX_SkiaDeviceDriver::CFX_SkiaDeviceDriver(SkCanvas& canvas)
-    : m_pCanvas(&canvas), m_bGroupKnockout(false) {
+    : m_pCanvas(&canvas), m_bRgbByteOrder(false), m_bGroupKnockout(false) {
   int width = m_pCanvas->imageInfo().width();
   int height = m_pCanvas->imageInfo().height();
   DCHECK_EQ(kUnknown_SkColorType, m_pCanvas->imageInfo().colorType());

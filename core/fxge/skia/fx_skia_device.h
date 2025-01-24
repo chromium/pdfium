@@ -191,7 +191,7 @@ class CFX_SkiaDeviceDriver final : public RenderDeviceDriverIface {
   sk_sp<SkSurface> surface_;
   UnownedPtr<SkCanvas> m_pCanvas;
   CFX_FillRenderOptions m_FillOptions;
-  bool m_bRgbByteOrder;
+  const bool m_bRgbByteOrder;
   bool m_bGroupKnockout;
 
   CharDetail m_charDetails;
