@@ -3802,7 +3802,7 @@ end
   RetainPtr<const CPDF_Array> widths_array =
       GetWidthsArrayForCidFont(typed_font);
   ASSERT_TRUE(widths_array);
-  CheckCompositeFontWidths(widths_array, typed_font, testing::Eq(9));
+  CheckCompositeFontWidths(widths_array, typed_font, testing::Eq(10));
 
   FPDF_PAGEOBJECT text_object =
       FPDFPageObj_CreateTextObj(document(), font.get(), 20.0f);
@@ -3869,9 +3869,7 @@ end
   RetainPtr<const CPDF_Array> widths_array =
       GetWidthsArrayForCidFont(typed_font);
   ASSERT_TRUE(widths_array);
-  // TODO(crbug.com/376781381): Reduce `widths_array` size, given the smaller
-  // `kCidToGidMap`.
-  CheckCompositeFontWidths(widths_array, typed_font, testing::Eq(9));
+  CheckCompositeFontWidths(widths_array, typed_font, testing::Eq(5));
 }
 
 TEST_F(FPDFEditEmbedderTest, LoadCidType2FontWithBadParameters) {

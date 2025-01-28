@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #include <algorithm>
+#include <limits>
 #include <map>
 #include <memory>
 #include <sstream>
@@ -28,6 +29,7 @@
 #include "core/fpdfapi/render/cpdf_renderstatus.h"
 #include "core/fpdfapi/render/cpdf_textrenderer.h"
 #include "core/fpdftext/cpdf_textpage.h"
+#include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
 #include "core/fxcrt/compiler_specific.h"
@@ -537,15 +539,11 @@ RetainPtr<CPDF_Font> LoadCustomCompositeFont(
     pdfium::span<const uint8_t> font_span,
     const char* to_unicode_cmap,
     pdfium::span<const uint8_t> cid_to_gid_map_span) {
+  CHECK_LE(cid_to_gid_map_span.size(), std::numeric_limits<uint32_t>::max());
+
   // If it doesn't have a single char, just fail.
   RetainPtr<CFX_Face> face = font->GetFace();
   if (face->GetGlyphCount() <= 0) {
-    return nullptr;
-  }
-
-  auto char_codes_and_indices =
-      face->GetCharCodesAndIndices(pdfium::kMaximumSupplementaryCodePoint);
-  if (char_codes_and_indices.empty()) {
     return nullptr;
   }
 
@@ -562,11 +560,13 @@ RetainPtr<CPDF_Font> LoadCustomCompositeFont(
                                            font_descriptor->GetObjNum());
 
   std::map<uint32_t, uint32_t> widths;
-  for (const auto& item : char_codes_and_indices) {
-    if (!pdfium::Contains(widths, item.glyph_index)) {
-      widths[item.glyph_index] = font->GetGlyphWidth(item.glyph_index);
-    }
+  for (size_t i = 0; i < cid_to_gid_map_span.size(); i += 2) {
+    uint16_t glyph_index =
+        fxcrt::GetUInt16MSBFirst(cid_to_gid_map_span.subspan(i, 2));
+    // Safe to cast since `cid_to_gid_map_span` has a size limit.
+    widths[static_cast<uint32_t>(i) / 2] = font->GetGlyphWidth(glyph_index);
   }
+
   RetainPtr<CPDF_Array> widths_array = CreateWidthsArray(doc, widths);
   cid_font_dict->SetNewFor<CPDF_Reference>("W", doc, widths_array->GetObjNum());
 
