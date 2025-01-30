@@ -24,6 +24,12 @@ namespace {
 
 constexpr int kNameTreeMaxRecursion = 32;
 
+// The node where a new name should be inserted at `index`.
+struct NodeToInsert {
+  RetainPtr<CPDF_Array> names;
+  int index = -1;
+};
+
 std::pair<WideString, WideString> GetNodeLimitsAndSanitize(
     CPDF_Array* pLimits) {
   DCHECK(pLimits);
@@ -190,19 +196,17 @@ bool IsArrayWithTraversedObject(const CPDF_Array* array,
   return false;
 }
 
-// Search for |csName| in the tree with root |pNode|. If successful, return the
-// value that |csName| points to; |nIndex| will be the index of |csName|,
-// |ppFind| will be the leaf array that |csName| is found in, and |pFindIndex|
-// will be the index of |csName| in |ppFind|. If |csName| is not found, |ppFind|
-// will be the leaf array that |csName| should be added to, and |pFindIndex|
-// will be the index that it should be added at.
+// Search for `csName` in the tree with root `pNode`. If successful, return the
+// value that `csName` points to; `nIndex` will be the index of `csName`. If
+// `node_to_insert` is non-nullptr, then on a successful search, it will contain
+// the leaf array where `csName` is found in at the provided index, or on
+// failure, the array that `csName` should be inserted in at the provided index.
 RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
     const RetainPtr<CPDF_Dictionary>& pNode,
     const WideString& csName,
     int nLevel,
     size_t* nIndex,
-    RetainPtr<CPDF_Array>* ppFind,
-    int* pFindIndex,
+    NodeToInsert* node_to_insert,
     std::set<uint32_t>* seen_obj_nums) {
   if (nLevel > kNameTreeMaxRecursion)
     return nullptr;
@@ -223,10 +227,10 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
     // Skip this node if the name to look for is greater than its higher limit,
     // and the node itself is a leaf node.
     if (csName.Compare(csRight) > 0 && pNames) {
-      if (ppFind)
-        *ppFind = pNames;
-      if (pFindIndex)
-        *pFindIndex = fxcrt::CollectionSize<int32_t>(*pNames) / 2 - 1;
+      if (node_to_insert) {
+        node_to_insert->names = pNames;
+        node_to_insert->index = fxcrt::CollectionSize<int32_t>(*pNames) / 2 - 1;
+      }
       return nullptr;
     }
   }
@@ -239,10 +243,10 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
       int32_t iCompare = csValue.Compare(csName);
       if (iCompare > 0)
         break;
-      if (ppFind)
-        *ppFind = pNames;
-      if (pFindIndex)
-        *pFindIndex = pdfium::checked_cast<int32_t>(i);
+      if (node_to_insert) {
+        node_to_insert->names = pNames;
+        node_to_insert->index = pdfium::checked_cast<int32_t>(i);
+      }
       if (iCompare < 0)
         continue;
 
@@ -264,7 +268,7 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
       continue;
 
     RetainPtr<const CPDF_Object> pFound = SearchNameNodeByNameInternal(
-        pKid, csName, nLevel + 1, nIndex, ppFind, pFindIndex, seen_obj_nums);
+        pKid, csName, nLevel + 1, nIndex, node_to_insert, seen_obj_nums);
     if (pFound)
       return pFound;
   }
@@ -276,12 +280,11 @@ RetainPtr<const CPDF_Object> SearchNameNodeByNameInternal(
 RetainPtr<const CPDF_Object> SearchNameNodeByName(
     const RetainPtr<CPDF_Dictionary>& pNode,
     const WideString& csName,
-    RetainPtr<CPDF_Array>* ppFind,
-    int* pFindIndex) {
+    NodeToInsert* node_to_insert) {
   size_t nIndex = 0;
   std::set<uint32_t> seen_obj_nums;
-  return SearchNameNodeByNameInternal(pNode, csName, 0, &nIndex, ppFind,
-                                      pFindIndex, &seen_obj_nums);
+  return SearchNameNodeByNameInternal(pNode, csName, 0, &nIndex, node_to_insert,
+                                      &seen_obj_nums);
 }
 
 struct IndexSearchResult {
@@ -484,25 +487,26 @@ size_t CPDF_NameTree::GetCount() const {
 
 bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
                                     const WideString& name) {
-  RetainPtr<CPDF_Array> pFind;
-  int nFindIndex = -1;
+  NodeToInsert node_to_insert;
   // Handle the corner case where the root node is empty. i.e. No kids and no
   // names. In which case, just insert into it and skip all the searches.
   RetainPtr<CPDF_Array> pNames = m_pRoot->GetMutableArrayFor("Names");
-  if (pNames && pNames->IsEmpty() && !m_pRoot->GetArrayFor("Kids"))
-    pFind = pNames;
-
-  if (!pFind) {
-    // Fail if the tree already contains this name or if the tree is too deep.
-    if (SearchNameNodeByName(m_pRoot, name, &pFind, &nFindIndex))
-      return false;
+  if (pNames && pNames->IsEmpty() && !m_pRoot->GetArrayFor("Kids")) {
+    node_to_insert.names = pNames;
   }
 
-  // If the returned |pFind| is a nullptr, then |name| is smaller than all
-  // existing entries in the tree, and we did not find a leaf array to place
-  // |name| into. We instead will find the leftmost leaf array in which to place
-  // |name| and |pObj|.
-  if (!pFind) {
+  if (!node_to_insert.names) {
+    // Fail if the tree already contains this name or if the tree is too deep.
+    if (SearchNameNodeByName(m_pRoot, name, &node_to_insert)) {
+      return false;
+    }
+  }
+
+  // If the returned `node_to_insert.names` is a nullptr, then `name` is smaller
+  // than all existing entries in the tree, and we did not find a leaf array to
+  // place `name` into. We instead will find the leftmost leaf array in which to
+  // place `name` and `pObj`.
+  if (!node_to_insert.names) {
     std::optional<IndexSearchResult> result =
         SearchNameNodeByIndex(m_pRoot.Get(), 0);
     if (!result.has_value()) {
@@ -510,21 +514,22 @@ bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
       return false;
     }
 
-    pFind = result.value().container;
-    DCHECK(pFind);
+    node_to_insert.names = result.value().container;
+    DCHECK(node_to_insert.names);
   }
 
   // Insert the name and the object into the leaf array found. Note that the
   // insertion position is right after the key-value pair returned by |index|.
-  size_t nNameIndex = (nFindIndex + 1) * 2;
+  size_t nNameIndex = (node_to_insert.index + 1) * 2;
   size_t nValueIndex = nNameIndex + 1;
-  pFind->InsertNewAt<CPDF_String>(nNameIndex, name.AsStringView());
-  pFind->InsertAt(nValueIndex, std::move(pObj));
+  node_to_insert.names->InsertNewAt<CPDF_String>(nNameIndex,
+                                                 name.AsStringView());
+  node_to_insert.names->InsertAt(nValueIndex, std::move(pObj));
 
   // Expand the limits that the newly added name is under, if the name falls
   // outside of the limits of its leaf array or any arrays above it.
   std::vector<CPDF_Array*> all_limits =
-      GetNodeAncestorsLimits(m_pRoot, pFind.Get());
+      GetNodeAncestorsLimits(m_pRoot, node_to_insert.names.Get());
   for (auto* pLimits : all_limits) {
     if (!pLimits)
       continue;
@@ -573,7 +578,7 @@ RetainPtr<CPDF_Object> CPDF_NameTree::LookupValueAndName(
 
 RetainPtr<const CPDF_Object> CPDF_NameTree::LookupValue(
     const WideString& csName) const {
-  return SearchNameNodeByName(m_pRoot, csName, nullptr, nullptr);
+  return SearchNameNodeByName(m_pRoot, csName, nullptr);
 }
 
 RetainPtr<const CPDF_Array> CPDF_NameTree::LookupNewStyleNamedDest(
