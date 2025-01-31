@@ -1307,7 +1307,7 @@ void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,
   for (size_t i = 0; i < nItems; ++i) {
     CPDF_TextObject::Item item = text_object->GetItemInfo(i);
     if (item.m_CharCode == 0xffffffff) {
-      WideString str = m_TempTextBuf.MakeString();
+      WideStringView str = m_TempTextBuf.AsStringView();
       if (str.IsEmpty()) {
         str = m_TextBuf.AsStringView();
       }
@@ -1392,7 +1392,7 @@ void CPDF_TextPage::ProcessTextObjectItems(CPDF_TextObject* text_object,
         m_TempCharList.push_back(charinfo);
       }
     } else if (i == 0) {
-      WideString str = m_TempTextBuf.MakeString();
+      WideStringView str = m_TempTextBuf.AsStringView();
       if (!str.IsEmpty() && str.Back() == L' ') {
         m_TempTextBuf.Delete(m_TempTextBuf.GetLength() - 1, 1);
         m_TempCharList.pop_back();
