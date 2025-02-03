@@ -9,6 +9,12 @@ buildconfig = "//build/config/BUILDCONFIG.gn"
 script_executable = "python3"
 
 default_args = {
+  # Use a production-performant allocator.
+  # TODO(tsepez): `enable_pkeys` is a workaround for a partition-alloc build
+  # issue and should be removed.
+  partition_alloc_is_debug = false
+  enable_pkeys = false
+
   # PDFs only need to run JavaScript.
   v8_enable_webassembly = false
 
