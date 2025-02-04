@@ -33,9 +33,7 @@ TEST(ByteString, ElementAccess) {
   EXPECT_EQ('a', abc[0]);
   EXPECT_EQ('b', abc[1]);
   EXPECT_EQ('c', abc[2]);
-#ifndef NDEBUG
-  EXPECT_DEATH({ abc[3]; }, "");
-#endif
+  EXPECT_DEATH_IF_SUPPORTED({ abc[3]; }, "");
 
   pdfium::span<const char> abc_span = abc.span();
   EXPECT_EQ(3u, abc_span.size());
@@ -78,10 +76,8 @@ TEST(ByteString, ElementAccess) {
   mutable_abc.SetAt(2, 'f');
   EXPECT_EQ("abc", abc);
   EXPECT_EQ("def", mutable_abc);
-#ifndef NDEBUG
-  EXPECT_DEATH({ mutable_abc.SetAt(3, 'g'); }, "");
-  EXPECT_EQ("abc", abc);
-#endif
+
+  EXPECT_DEATH_IF_SUPPORTED({ mutable_abc.SetAt(3, 'g'); }, "");
 }
 
 TEST(ByteString, Construct) {
@@ -1429,9 +1425,7 @@ TEST(ByteStringView, ElementAccess) {
   EXPECT_EQ('a', static_cast<char>(abc[0]));
   EXPECT_EQ('b', static_cast<char>(abc[1]));
   EXPECT_EQ('c', static_cast<char>(abc[2]));
-#ifndef NDEBUG
-  EXPECT_DEATH({ abc[3]; }, "");
-#endif
+  EXPECT_DEATH_IF_SUPPORTED({ abc[3]; }, "");
 }
 
 TEST(ByteStringView, OperatorLT) {
