@@ -82,28 +82,6 @@ const XFA_FMKeyword kKeyWords[] = {
     {TOKendif, "endif"},
 };
 
-#ifndef NDEBUG
-constexpr auto kTokenStrings = fxcrt::ToArray<const char*>({
-    "TOKand",        "TOKlparen",     "TOKrparen",   "TOKmul",
-    "TOKplus",       "TOKcomma",      "TOKminus",    "TOKdot",
-    "TOKdiv",        "TOKlt",         "TOKassign",   "TOKgt",
-    "TOKlbracket",   "TOKrbracket",   "TOKor",       "TOKdotscream",
-    "TOKdotstar",    "TOKdotdot",     "TOKle",       "TOKne",
-    "TOKeq",         "TOKge",         "TOKdo",       "TOKkseq",
-    "TOKksge",       "TOKksgt",       "TOKif",       "TOKin",
-    "TOKksle",       "TOKkslt",       "TOKksne",     "TOKksor",
-    "TOKnull",       "TOKbreak",      "TOKksand",    "TOKend",
-    "TOKeof",        "TOKfor",        "TOKnan",      "TOKksnot",
-    "TOKvar",        "TOKthen",       "TOKelse",     "TOKexit",
-    "TOKdownto",     "TOKreturn",     "TOKinfinity", "TOKendwhile",
-    "TOKforeach",    "TOKendfunc",    "TOKelseif",   "TOKwhile",
-    "TOKendfor",     "TOKthrow",      "TOKstep",     "TOKupto",
-    "TOKcontinue",   "TOKfunc",       "TOKendif",    "TOKstar",
-    "TOKidentifier", "TOKunderscore", "TOKdollar",   "TOKexclamation",
-    "TOKcall",       "TOKstring",     "TOKnumber",   "TOKreserver",
-});
-#endif  // NDEBUG
-
 XFA_FM_TOKEN TokenizeIdentifier(WideStringView str) {
   const XFA_FMKeyword* result =
       std::find_if(std::begin(kKeyWords), std::end(kKeyWords),
@@ -128,16 +106,6 @@ CXFA_FMLexer::Token::Token(XFA_FM_TOKEN token, WideStringView str)
 CXFA_FMLexer::Token::Token(const Token& that) = default;
 
 CXFA_FMLexer::Token::~Token() = default;
-
-#ifndef NDEBUG
-WideString CXFA_FMLexer::Token::ToDebugString() const {
-  WideString str = WideString::FromASCII("type = ");
-  str += WideString::FromASCII(kTokenStrings[m_type]);
-  str += WideString::FromASCII(", string = ");
-  str += m_string;
-  return str;
-}
-#endif  // NDEBUG
 
 CXFA_FMLexer::CXFA_FMLexer(WideStringView wsFormCalc)
     : m_spInput(wsFormCalc.span()) {}

@@ -96,9 +96,6 @@ class CXFA_FMLexer {
 
     XFA_FM_TOKEN GetType() const { return m_type; }
     WideStringView GetString() const { return m_string; }
-#ifndef NDEBUG
-    WideString ToDebugString() const;
-#endif  // NDEBUG
 
    private:
     XFA_FM_TOKEN m_type = TOKreserver;
