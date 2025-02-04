@@ -10,6 +10,7 @@
 
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/ptr_util.h"
 #include "fxjs/cfxjs_engine.h"
 #include "fxjs/fxv8.h"
@@ -283,7 +284,7 @@ CFXJSE_Context::ExecutionResult CFXJSE_Context::ExecuteScript(
 
 #ifndef NDEBUG
   v8::String::Utf8Value error(GetIsolate(), trycatch.Exception());
-  fprintf(stderr, "JS Error: %s\n", *error);
+  UNSAFE_TODO(fprintf(stderr, "JS Error: %s\n", *error));
 
   v8::Local<v8::Message> message = trycatch.Message();
   if (!message.IsEmpty()) {
@@ -291,7 +292,7 @@ CFXJSE_Context::ExecutionResult CFXJSE_Context::ExecuteScript(
     int linenum = message->GetLineNumber(context).FromJust();
     v8::String::Utf8Value sourceline(
         GetIsolate(), message->GetSourceLine(context).ToLocalChecked());
-    fprintf(stderr, "Line %d: %s\n", linenum, *sourceline);
+    UNSAFE_TODO(fprintf(stderr, "Line %d: %s\n", linenum, *sourceline));
   }
 #endif  // NDEBUG
 
