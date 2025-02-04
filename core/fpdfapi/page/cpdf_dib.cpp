@@ -109,6 +109,7 @@ enum class JpxDecodeAction {
   kFail,
   kDoNothing,
   kUseGray,
+  kUseIndexed,
   kUseRgb,
   kUseCmyk,
   kConvertArgbToRgb,
@@ -167,6 +168,11 @@ JpxDecodeAction GetJpxDecodeActionFromColorSpaces(
   if (pdf_colorspace->ComponentCount() == 3 && jpx_info.channels == 4 &&
       jpx_info.colorspace == OPJ_CLRSPC_SRGB) {
     return JpxDecodeAction::kConvertArgbToRgb;
+  }
+
+  if (pdf_colorspace->GetFamily() == CPDF_ColorSpace::Family::kIndexed &&
+      pdf_colorspace->ComponentCount() == 1) {
+    return JpxDecodeAction::kUseIndexed;
   }
 
   return JpxDecodeAction::kDoNothing;
@@ -690,6 +696,9 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
           CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kDeviceGray);
       break;
 
+    case JpxDecodeAction::kUseIndexed:
+      break;
+
     case JpxDecodeAction::kUseRgb:
       DCHECK(image_info.channels >= 3);
       swap_rgb = true;
@@ -705,6 +714,7 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
       swap_rgb = true;
       convert_argb_to_rgb = true;
       m_pColorSpace.Reset();
+      break;
   }
 
   // If |original_colorspace| exists, then LoadColorInfo() already set
@@ -720,7 +730,8 @@ RetainPtr<CFX_DIBitmap> CPDF_DIB::LoadJpxBitmap(
   }
 
   FXDIB_Format format;
-  if (action == JpxDecodeAction::kUseGray) {
+  if (action == JpxDecodeAction::kUseGray ||
+      action == JpxDecodeAction::kUseIndexed) {
     format = FXDIB_Format::k8bppRgb;
   } else if (action == JpxDecodeAction::kUseRgb && image_info.channels == 3) {
     format = FXDIB_Format::kBgr;
