@@ -182,6 +182,8 @@ TEST(fxstring, WideStringToFloat) {
                   StringToFloat(L"-999999999999999999999999999999999999999"));
 
   EXPECT_FLOAT_EQ(0.0f, StringToFloat(L"invalid"));
+  EXPECT_FLOAT_EQ(123.0f, StringToFloat(L"123\x3132\x6162.5"));
+  EXPECT_FLOAT_EQ(0.0f, StringToFloat(L"🎨987"));
 
   // Test the exact float value. Use EXPECT_EQ, which does an exact comparison,
   // instead of EXPECT_FLOAT_EQ, which allows slight precision error.
@@ -282,6 +284,8 @@ TEST(fxstring, WideStringToDouble) {
           L"999999999999999999999999999999999999999999"));
 
   EXPECT_DOUBLE_EQ(0.0, StringToDouble(L"invalid"));
+  EXPECT_FLOAT_EQ(123.0, StringToDouble(L"123\x3132\x6162.5"));
+  EXPECT_FLOAT_EQ(0.0, StringToDouble(L"🎨987"));
 
   // Test the exact double value. Use EXPECT_EQ, which does an exact comparison,
   // instead of EXPECT_DOUBLE_EQ, which allows slight precision error.
