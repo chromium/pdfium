@@ -4,6 +4,9 @@ include_rules = [
 ]
 
 specific_include_rules = {
+  'fx_extension.cpp': [
+    '+third_party/fast_float/src/include/fast_float/fast_float.h',
+  ],
   'fx_string.cpp': [
     '+third_party/fast_float/src/include/fast_float/fast_float.h',
   ],

@@ -16,6 +16,7 @@
 #include "core/fxcrt/fx_system.h"
 #include "core/fxcrt/utf16.h"
 #include "core/fxcrt/widestring.h"
+#include "third_party/fast_float/src/include/fast_float/fast_float.h"
 
 namespace {
 
@@ -33,18 +34,33 @@ struct tm* (*g_localtime_func)(const time_t*) = DefaultLocaltimeFunction;
 }  // namespace
 
 float FXSYS_wcstof(WideStringView pwsStr, size_t* pUsedLen) {
-  // Force NUL-termination via copied buffer.
-  auto copied = WideString(pwsStr);
-  wchar_t* endptr = nullptr;
-  // SAFETY: WideStrings are NUL-terminated.
-  float result = UNSAFE_BUFFERS(wcstof(copied.c_str(), &endptr));
-  if (result != result) {
-    result = 0.0f;  // Convert NAN to 0.0f;
+  // TODO(thestig): Consolidate code duplication with StringToFloatImpl().
+  // Skip leading whitespaces.
+  size_t start = 0;
+  size_t len = pwsStr.GetLength();
+  while (start < len && pwsStr[start] == ' ') {
+    ++start;
   }
+
+  // Skip a leading '+' sign.
+  if (start < len && pwsStr[start] == '+') {
+    ++start;
+  }
+
+  WideStringView sub_strc = pwsStr.Substr(start, len - start);
+
+  float value;
+  auto result = fast_float::from_chars(sub_strc.begin(), sub_strc.end(), value);
+
   if (pUsedLen) {
-    *pUsedLen = endptr - copied.c_str();
+    *pUsedLen = result.ptr - pwsStr.unterminated_c_str();
   }
-  return result;
+
+  // Return 0 for parsing errors. Some examples of errors are an empty string
+  // and a string that cannot be converted to `ReturnType`.
+  return result.ec == std::errc() || result.ec == std::errc::result_out_of_range
+             ? value
+             : 0;
 }
 
 wchar_t* FXSYS_wcsncpy(wchar_t* dstStr, const wchar_t* srcStr, size_t count) {
