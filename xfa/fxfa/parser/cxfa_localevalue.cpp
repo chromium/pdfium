@@ -6,8 +6,6 @@
 
 #include "xfa/fxfa/parser/cxfa_localevalue.h"
 
-#include <wchar.h>
-
 #include <memory>
 #include <utility>
 #include <vector>
@@ -15,6 +13,7 @@
 #include "core/fxcrt/cfx_datetime.h"
 #include "core/fxcrt/check.h"
 #include "core/fxcrt/fx_extension.h"
+#include "core/fxcrt/fx_string.h"
 #include "core/fxcrt/span.h"
 #include "xfa/fgas/crt/cfgas_stringformatter.h"
 #include "xfa/fxfa/parser/cxfa_document.h"
@@ -224,8 +223,7 @@ double CXFA_LocaleValue::GetDoubleNum() const {
     return 0;
   }
 
-  // SAFETY: WideStrings are always terminated.
-  return UNSAFE_BUFFERS(wcstod(m_wsValue.c_str(), nullptr));
+  return StringToDouble(m_wsValue.AsStringView());
 }
 
 CFX_DateTime CXFA_LocaleValue::GetDate() const {

@@ -1099,8 +1099,7 @@ float ValueToFloat(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
 
   if (fxv8::IsString(extracted)) {
     ByteString bsValue = fxv8::ReentrantToByteStringHelper(pIsolate, extracted);
-    // SAFETY: ByteStrings are always NUL-terminated.
-    return UNSAFE_BUFFERS(strtof(bsValue.c_str(), nullptr));
+    return StringToFloat(bsValue.AsStringView());
   }
 
   return fxv8::ReentrantToFloatHelper(pIsolate, extracted);
@@ -1119,8 +1118,7 @@ double ValueToDouble(v8::Isolate* pIsolate, v8::Local<v8::Value> arg) {
 
   if (fxv8::IsString(extracted)) {
     ByteString bsValue = fxv8::ReentrantToByteStringHelper(pIsolate, extracted);
-    // SAFETY: ByteStrings are always NUL_terminated.
-    return UNSAFE_BUFFERS(strtod(bsValue.c_str(), nullptr));
+    return StringToDouble(bsValue.AsStringView());
   }
 
   return fxv8::ReentrantToDoubleHelper(pIsolate, extracted);
