@@ -1,0 +1,56 @@
+{{header}}
+{{object 1 0}} <<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+{{object 2 0}} <<
+  /Type /Pages
+  /Count 1
+  /Kids [3 0 R]
+>>
+endobj
+{{object 3 0}} <<
+  /Type /Page
+  /Parent 2 0 R
+  /Contents 4 0 R
+  /MediaBox [0 0 100 100]
+  /Resources <<
+    /XObject <<
+      /ImIndexed 5 0 R
+    >>
+  >>
+>>
+endobj
+{{object 4 0}} <<
+  {{streamlen}}
+>>
+stream
+q
+100 0 0 100 0 0 cm
+/ImIndexed Do
+Q
+endstream
+endobj
+{{object 5 0}} <<
+  /Type /XObject
+  /Subtype /Image
+  /BitsPerComponent 8
+  /ColorSpace [/Indexed /DeviceRGB 3 <FFFFFF FF0000 0000FF 00FF00>]
+  /Filter [/ASCII85Decode /FlateDecode /JPXDecode]
+  /Height 100
+  /Width 100
+  {{streamlen}}
+>>
+stream
+GhQY8@,T-6:f-*3C?K&6?k>m[W@Z+?0N%nV)5)'SONmjS@[S)_76im;N#C=%6#%83POijQ(r8lH+;QV$
+c7*41AnG[grso5T@1XTFS=<Wr^]79Q#UC7T5]!+(aoD>>#;TtE[AQ8E%&!//fbk\-#;P^uQjh1i/.@L;
+@i0G2*'?=b+R":^K.6tuF&?[]8SX,L;Petp6#)umJ?-:K=_^fRAq$>'Oe/PD_>afM>[RY<JL4()holYJ
+?K>j?9r2`5_kKkB%1EjjhLElO@-6N(W;GL7nRkL7s2R"*"jXgoIDY-g*7*^g7oVWbS$c*_/ao(b3W!;*
+^)l>m9sX9!gS6m/^,PS)6W7tt*.J^0b?G`?+/)*m;Y:-D%>M9G%gXlm3$5V:^rc)IlJA982Z\[$Ab?~>
+endstream
+endobj
+{{xref}}
+{{trailer}}
+{{startxref}}
+%%EOF
