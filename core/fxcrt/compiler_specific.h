@@ -21,8 +21,6 @@
 #define NOINLINE [[clang::noinline]]
 #elif defined(COMPILER_GCC) && HAS_ATTRIBUTE(noinline)
 #define NOINLINE __attribute__((noinline))
-#elif defined(COMPILER_MSVC)
-#define NOINLINE __declspec(noinline)
 #else
 #define NOINLINE
 #endif

@@ -31,10 +31,6 @@ config("gtest_config") {
     "custom",
     "src/googletest/include",
   ]
-
-  if (is_win) {
-    cflags = [ "/wd4800" ]  # Unused variable warning.
-  }
 }
 
 config("gmock_config") {

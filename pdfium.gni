@@ -79,9 +79,6 @@ declare_args() {
 
   # Don't build against bundled zlib.
   use_system_zlib = false
-
-  # Enable SSE2 for MSVC builds. Ignored if it's not a MSVC build.
-  msvc_use_sse2 = true
 }
 
 assert(!pdf_is_complete_lib || !is_component_build,

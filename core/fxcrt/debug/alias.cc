@@ -8,18 +8,14 @@
 
 namespace pdfium {
 
-#if defined(COMPILER_MSVC)
-#pragma optimize("", off)
-#elif defined(__clang__)
+#if defined(__clang__)
 #pragma clang optimize off
 #endif
 
 void Alias(const void* var) {
 }
 
-#if defined(COMPILER_MSVC)
-#pragma optimize("", on)
-#elif defined(__clang__)
+#if defined(__clang__)
 #pragma clang optimize on
 #endif
 
