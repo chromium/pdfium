@@ -853,13 +853,13 @@ typedef struct FPDF_COLORSCHEME_ {
 //          Returns true if the page is rendered successfully, false otherwise.
 
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDF_RenderPage(HDC dc,
-                                               FPDF_PAGE page,
-                                               int start_x,
-                                               int start_y,
-                                               int size_x,
-                                               int size_y,
-                                               int rotate,
-                                               int flags);
+                                                    FPDF_PAGE page,
+                                                    int start_x,
+                                                    int start_y,
+                                                    int size_x,
+                                                    int size_y,
+                                                    int rotate,
+                                                    int flags);
 #endif
 
 // Function: FPDF_RenderPageBitmap
