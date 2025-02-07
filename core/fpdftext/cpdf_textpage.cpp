@@ -981,6 +981,7 @@ void CPDF_TextPage::ProcessMarkedContent(const TransformedTextObject& obj) {
 
     CFX_FloatRect char_box(rect);
     char_box.Translate(k * step, 0);
+    m_TempTextBuf.AppendChar(wChar);
     m_TempCharList.push_back(
         CharInfo(CharType::kPiece, font->CharCodeFromUnicode(wChar), wChar,
                  pTextObj->GetPos(), char_box, matrix, pTextObj));
