@@ -109,6 +109,9 @@ class TemplateProcessor:
     if self.streamlen_state == StreamLenState.FIND_ENDSTREAM:
       if line.rstrip() == b'endstream':
         self.streamlen_state = StreamLenState.START
+        # Don't count final newline.
+        # insert_includes() already stripped windows line endings.
+        self.streamlens[-1] -= 1
       else:
         self.streamlens[-1] += len(line)
 
