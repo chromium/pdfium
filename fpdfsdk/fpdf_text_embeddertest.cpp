@@ -1923,6 +1923,46 @@ TEST_F(FPDFTextEmbedderTest, CharBoxForRotated90DegreesText) {
   EXPECT_NEAR(kExpectedLooseCharWidth, rect.top - rect.bottom, 0.001f);
 }
 
+TEST_F(FPDFTextEmbedderTest, CharBoxForLatinExtendedText) {
+  ASSERT_TRUE(OpenDocument("latin_extended.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage text_page(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(text_page);
+
+  EXPECT_EQ(u'Ā', FPDFText_GetUnicode(text_page.get(), 0));
+
+  double left;
+  double right;
+  double bottom;
+  double top;
+  ASSERT_TRUE(
+      FPDFText_GetCharBox(text_page.get(), 0, &left, &right, &bottom, &top));
+  EXPECT_NEAR(7.512, right - left, 0.001);
+  EXPECT_NEAR(10.488, top - bottom, 0.001);
+  EXPECT_NEAR(750.238, top, 0.001);
+
+  FS_RECTF rect;
+  ASSERT_TRUE(FPDFText_GetLooseCharBox(text_page.get(), 0, &rect));
+  EXPECT_NEAR(7.824f, rect.right - rect.left, 0.001f);
+  EXPECT_NEAR(12.0f, rect.top - rect.bottom, 0.001f);
+  EXPECT_NEAR(749.25f, rect.top, 0.001f);
+
+  EXPECT_EQ(u'Ă', FPDFText_GetUnicode(text_page.get(), 2));
+
+  ASSERT_TRUE(
+      FPDFText_GetCharBox(text_page.get(), 2, &left, &right, &bottom, &top));
+  EXPECT_NEAR(7.512, right - left, 0.001);
+  EXPECT_NEAR(10.74, top - bottom, 0.001);
+  EXPECT_NEAR(750.49, top, 0.001);
+
+  ASSERT_TRUE(FPDFText_GetLooseCharBox(text_page.get(), 2, &rect));
+  EXPECT_NEAR(7.824f, rect.right - rect.left, 0.001f);
+  EXPECT_NEAR(12.0f, rect.top - rect.bottom, 0.001f);
+  EXPECT_NEAR(749.250f, rect.top, 0.001f);
+}
+
 TEST_F(FPDFTextEmbedderTest, SmallType3Glyph) {
   ASSERT_TRUE(OpenDocument("bug_1591.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
