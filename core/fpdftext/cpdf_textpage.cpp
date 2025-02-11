@@ -285,7 +285,9 @@ CFX_FloatRect GetLooseBounds(const CPDF_TextPage::CharInfo& charinfo) {
       float right = left + font_size;
       float top = charinfo.origin().y + offsety;
       float bottom = top + height;
-      return CFX_FloatRect(left, bottom, right, top);
+      CFX_FloatRect char_box(left, bottom, right, top);
+      char_box.Union(charinfo.char_box());
+      return char_box;
     }
 
     int ascent = charinfo.text_object()->GetFont()->GetTypeAscent();
@@ -302,7 +304,9 @@ CFX_FloatRect GetLooseBounds(const CPDF_TextPage::CharInfo& charinfo) {
       float bottom = original_origin.y + descent * font_scale;
       float top = original_origin.y + ascent * font_scale;
       CFX_FloatRect char_box(left, bottom, right, top);
-      return charinfo.matrix().TransformRect(char_box);
+      char_box = charinfo.matrix().TransformRect(char_box);
+      char_box.Union(charinfo.char_box());
+      return char_box;
     }
   }
 

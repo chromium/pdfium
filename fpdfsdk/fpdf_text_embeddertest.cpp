@@ -1979,8 +1979,8 @@ TEST_F(FPDFTextEmbedderTest, CharBoxForLatinExtendedText) {
   FS_RECTF rect;
   ASSERT_TRUE(FPDFText_GetLooseCharBox(text_page.get(), 0, &rect));
   EXPECT_NEAR(7.824f, rect.right - rect.left, 0.001f);
-  EXPECT_NEAR(12.0f, rect.top - rect.bottom, 0.001f);
-  EXPECT_NEAR(749.25f, rect.top, 0.001f);
+  EXPECT_NEAR(12.988f, rect.top - rect.bottom, 0.001f);
+  EXPECT_NEAR(750.238f, rect.top, 0.001f);
 
   EXPECT_EQ(u'Ă', FPDFText_GetUnicode(text_page.get(), 2));
 
@@ -1992,8 +1992,8 @@ TEST_F(FPDFTextEmbedderTest, CharBoxForLatinExtendedText) {
 
   ASSERT_TRUE(FPDFText_GetLooseCharBox(text_page.get(), 2, &rect));
   EXPECT_NEAR(7.824f, rect.right - rect.left, 0.001f);
-  EXPECT_NEAR(12.0f, rect.top - rect.bottom, 0.001f);
-  EXPECT_NEAR(749.250f, rect.top, 0.001f);
+  EXPECT_NEAR(13.24f, rect.top - rect.bottom, 0.001f);
+  EXPECT_NEAR(750.49f, rect.top, 0.001f);
 }
 
 TEST_F(FPDFTextEmbedderTest, SmallType3Glyph) {
