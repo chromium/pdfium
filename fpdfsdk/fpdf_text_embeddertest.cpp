@@ -338,14 +338,14 @@ TEST_F(FPDFTextEmbedderTest, TextVertical) {
   EXPECT_TRUE(FPDFText_GetLooseCharBox(textpage.get(), 1, &rect));
   EXPECT_NEAR(4, rect.left, 0.001);
   EXPECT_NEAR(16, rect.right, 0.001);
-  EXPECT_NEAR(178.984, rect.bottom, 0.001);
-  EXPECT_NEAR(170.308, rect.top, 0.001);
+  EXPECT_NEAR(170.308, rect.bottom, 0.001);
+  EXPECT_NEAR(178.984, rect.top, 0.001);
 
   EXPECT_TRUE(FPDFText_GetLooseCharBox(textpage.get(), 2, &rect));
   EXPECT_NEAR(4, rect.left, 0.001);
   EXPECT_NEAR(16, rect.right, 0.001);
-  EXPECT_NEAR(170.308, rect.bottom, 0.001);
-  EXPECT_NEAR(159.292, rect.top, 0.001);
+  EXPECT_NEAR(159.292, rect.bottom, 0.001);
+  EXPECT_NEAR(170.308, rect.top, 0.001);
 }
 
 TEST_F(FPDFTextEmbedderTest, TextHebrewMirrored) {

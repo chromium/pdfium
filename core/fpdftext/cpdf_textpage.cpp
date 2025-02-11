@@ -277,13 +277,14 @@ CFX_FloatRect GetLooseBounds(const CPDF_TextPage::CharInfo& charinfo) {
       CFX_Point16 vertical_origin = pCIDFont->GetVertOrigin(cid);
       double offsetx = (vertical_origin.x - 500) * font_size / 1000.0;
       double offsety = vertical_origin.y * font_size / 1000.0;
+      // Note that `vert_width` is generally negative, and then so is `height`.
       int16_t vert_width = pCIDFont->GetVertWidth(cid);
       double height = vert_width * font_size / 1000.0;
 
       float left = charinfo.origin().x + offsetx;
       float right = left + font_size;
-      float bottom = charinfo.origin().y + offsety;
-      float top = bottom + height;
+      float top = charinfo.origin().y + offsety;
+      float bottom = top + height;
       return CFX_FloatRect(left, bottom, right, top);
     }
 
