@@ -375,12 +375,6 @@ int16_t CFX_Face::GetDescender() const {
   return pdfium::checked_cast<int16_t>(GetRec()->descender);
 }
 
-#if BUILDFLAG(IS_ANDROID)
-int16_t CFX_Face::GetHeight() const {
-  return pdfium::checked_cast<int16_t>(GetRec()->height);
-}
-#endif
-
 pdfium::span<uint8_t> CFX_Face::GetData() const {
   // TODO(tsepez): justify safety from library API.
   return UNSAFE_BUFFERS(
