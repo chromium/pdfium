@@ -288,6 +288,7 @@ component("skia") {
     sources += skia_ports_fci_sources
     sources += skia_ports_fontmgr_custom_sources
     sources += skia_ports_fontmgr_empty_sources
+    sources += skia_ports_typeface_proxy_sources
   }
 
   if (is_android) {
