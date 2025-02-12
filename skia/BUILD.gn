@@ -262,10 +262,7 @@ component("skia") {
   # FreeType is needed everywhere (except on iOS), on Linux and Android as main
   # font backend, on Windows and Mac as fallback backend for Variations.
   if (!is_ios) {
-    sources += [
-      "//third_party/skia/src/ports/SkFontHost_FreeType.cpp",
-      "//third_party/skia/src/ports/SkFontHost_FreeType_common.cpp",
-    ]
+    sources += skia_ports_freetype_sources
   }
 
   if (is_win) {
@@ -279,14 +276,7 @@ component("skia") {
   frameworks = []
   if (is_apple) {
     # See SK_TYPEFACE_FACTORY_CORETEXT
-    sources += [
-      "//third_party/skia/include/ports/SkFontMgr_mac_ct.h",
-      "//third_party/skia/src/ports/SkFontMgr_mac_ct.cpp",
-      "//third_party/skia/src/ports/SkScalerContext_mac_ct.cpp",
-      "//third_party/skia/src/ports/SkScalerContext_mac_ct.h",
-      "//third_party/skia/src/ports/SkTypeface_mac_ct.cpp",
-      "//third_party/skia/src/ports/SkTypeface_mac_ct.h",
-    ]
+    sources += skia_ports_fontmgr_coretext_sources
     frameworks += [
       "CoreFoundation.framework",
       "CoreGraphics.framework",
@@ -295,40 +285,26 @@ component("skia") {
   }
 
   if (is_linux || is_chromeos) {
-    sources += [
-      "//third_party/skia/src/ports/SkFontConfigInterface.cpp",
-      "//third_party/skia/src/ports/SkFontConfigInterface_direct.cpp",
-      "//third_party/skia/src/ports/SkFontConfigInterface_direct_factory.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_FontConfigInterface.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_custom.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_custom_empty.cpp",
-    ]
+    sources += skia_ports_fci_sources
+    sources += skia_ports_fontmgr_custom_sources
+    sources += skia_ports_fontmgr_empty_sources
   }
 
   if (is_android) {
-    sources += [
-      # Unlike Chromium, standalone PDFium on Linux and Chrome OS does not
-      # require these files, since PDFium does not perform Android emulation.
-      # Note that this requires expat.
-      "//third_party/skia/src/ports/SkFontMgr_android.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_android_factory.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_android_parser.cpp",
-    ]
+    # Unlike Chromium, standalone PDFium on Linux and Chrome OS does not
+    # require these files, since PDFium does not perform Android emulation.
+    # Note that this requires expat.
+    sources += skia_ports_fontmgr_android_sources
   }
 
   if (is_win || (is_apple && use_blink)) {
-    sources += [
-      # Add the FreeType custom font manager as a fallback backend for variable fonts.
-      "//third_party/skia/src/ports/SkFontMgr_custom.cpp",
-      "//third_party/skia/src/ports/SkFontMgr_custom_empty.cpp",
-    ]
+    # Add the FreeType custom font manager as a fallback backend for variable fonts.
+    sources += skia_ports_fontmgr_custom_sources
+    sources += skia_ports_fontmgr_empty_sources
   }
 
   if (pdf_enable_fontations) {
-    sources += [
-      "//third_party/skia/src/ports/SkTypeface_fontations.cpp",
-      "//third_party/skia/src/ports/SkTypeface_fontations_priv.h",
-    ]
+    sources += skia_ports_typeface_fontations_sources
 
     # Fontations Rust/C++ bridge interfaces.
     deps += [
