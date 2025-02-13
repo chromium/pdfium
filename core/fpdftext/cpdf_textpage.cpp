@@ -290,23 +290,22 @@ CFX_FloatRect GetLooseBounds(const CPDF_TextPage::CharInfo& charinfo) {
       return char_box;
     }
 
-    int ascent = charinfo.text_object()->GetFont()->GetTypeAscent();
-    int descent = charinfo.text_object()->GetFont()->GetTypeDescent();
-    if (ascent != descent) {
+    FX_RECT font_bbox = charinfo.text_object()->GetFont()->GetFontBBox();
+    if (font_bbox.Height() != 0) {
+      // Compute `left` and `right` based on the individual character's `width`.
       float width = charinfo.text_object()->GetCharWidth(charinfo.char_code());
-      float font_scale = font_size / (ascent - descent);
-
       CFX_Matrix inverse_matrix = charinfo.matrix().GetInverse();
       CFX_PointF original_origin = inverse_matrix.Transform(charinfo.origin());
-
       float left = original_origin.x;
       float right = original_origin.x + (is_vert_writing ? -width : width);
-      float bottom = original_origin.y + descent * font_scale;
-      float top = original_origin.y + ascent * font_scale;
+
+      // Compute `bottom` and `top` based on the font bounding box. This allows
+      // the bounds to include diacritics, whereas using the ascent / descent
+      // values will not.
+      float bottom = font_bbox.bottom * font_size / 1000;
+      float top = font_bbox.top * font_size / 1000;
       CFX_FloatRect char_box(left, bottom, right, top);
-      char_box = charinfo.matrix().TransformRect(char_box);
-      char_box.Union(charinfo.char_box());
-      return char_box;
+      return charinfo.matrix().TransformRect(char_box);
     }
   }
 

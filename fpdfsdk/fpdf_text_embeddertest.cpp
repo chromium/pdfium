@@ -192,8 +192,8 @@ TEST_F(FPDFTextEmbedderTest, Text) {
   EXPECT_TRUE(FPDFText_GetLooseCharBox(textpage.get(), 4, &rect));
   EXPECT_FLOAT_EQ(40.664001f, rect.left);
   EXPECT_FLOAT_EQ(46.664001f, rect.right);
-  EXPECT_FLOAT_EQ(47.667271f, rect.bottom);
-  EXPECT_FLOAT_EQ(59.667271f, rect.top);
+  EXPECT_FLOAT_EQ(46.375999f, rect.bottom);
+  EXPECT_FLOAT_EQ(61.771999f, rect.top);
 
   double x = 0.0;
   double y = 0.0;
@@ -1769,7 +1769,7 @@ TEST_F(FPDFTextEmbedderTest, CharBox) {
   static constexpr double kExpectedCharWidth = 8.460;
   static constexpr double kExpectedCharHeight = 6.600;
   static constexpr float kExpectedLooseCharWidth = 8.664f;
-  static constexpr float kExpectedLooseCharHeight = 10.0f;
+  static constexpr float kExpectedLooseCharHeight = 12.82999f;
 
   ASSERT_TRUE(OpenDocument("font_matrix.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
@@ -1811,7 +1811,7 @@ TEST_F(FPDFTextEmbedderTest, CharBox) {
   EXPECT_FLOAT_EQ(kExpectedLooseCharHeight, rect.top - rect.bottom);
   ASSERT_TRUE(FPDFText_GetLooseCharBox(text_page.get(), 4, &rect));
   EXPECT_FLOAT_EQ(kExpectedLooseCharWidth, rect.right - rect.left);
-  EXPECT_FLOAT_EQ(kExpectedLooseCharHeight, rect.top - rect.bottom);
+  EXPECT_NEAR(kExpectedLooseCharHeight, rect.top - rect.bottom, 0.00001);
   ASSERT_TRUE(FPDFText_GetLooseCharBox(text_page.get(), 8, &rect));
   EXPECT_FLOAT_EQ(kExpectedLooseCharWidth, rect.right - rect.left);
   EXPECT_NEAR(kExpectedLooseCharHeight, rect.top - rect.bottom, 0.00001);
@@ -1866,7 +1866,7 @@ TEST_F(FPDFTextEmbedderTest, CharBoxForRotated45DegreesText) {
   EXPECT_NEAR(10.055, top - bottom, 0.001);
 
   // Check the loose character box size.
-  static constexpr float kExpectedLooseCharDimension = 14.612f;
+  static constexpr float kExpectedLooseCharDimension = 17.013f;
   FS_RECTF rect;
   ASSERT_TRUE(FPDFText_GetLooseCharBox(
       text_page.get(), GetRotatedTextFirstCharIndexForQuadrant(0), &rect));
@@ -1936,7 +1936,7 @@ TEST_F(FPDFTextEmbedderTest, CharBoxForRotated90DegreesText) {
 
   // Check the loose character box size.
   static constexpr float kExpectedLooseCharWidth = 8.664f;
-  static constexpr float kExpectedLooseCharHeight = 12.0f;
+  static constexpr float kExpectedLooseCharHeight = 15.396f;
   FS_RECTF rect;
   ASSERT_TRUE(FPDFText_GetLooseCharBox(
       text_page.get(), GetRotatedText90FirstCharIndexForQuadrant(0), &rect));
@@ -1979,8 +1979,8 @@ TEST_F(FPDFTextEmbedderTest, CharBoxForLatinExtendedText) {
   FS_RECTF rect;
   ASSERT_TRUE(FPDFText_GetLooseCharBox(text_page.get(), 0, &rect));
   EXPECT_NEAR(7.824f, rect.right - rect.left, 0.001f);
-  EXPECT_NEAR(12.988f, rect.top - rect.bottom, 0.001f);
-  EXPECT_NEAR(750.238f, rect.top, 0.001f);
+  EXPECT_NEAR(15.912f, rect.top - rect.bottom, 0.001f);
+  EXPECT_NEAR(752.422f, rect.top, 0.001f);
 
   EXPECT_EQ(u'Ă', FPDFText_GetUnicode(text_page.get(), 2));
 
@@ -1992,8 +1992,8 @@ TEST_F(FPDFTextEmbedderTest, CharBoxForLatinExtendedText) {
 
   ASSERT_TRUE(FPDFText_GetLooseCharBox(text_page.get(), 2, &rect));
   EXPECT_NEAR(7.824f, rect.right - rect.left, 0.001f);
-  EXPECT_NEAR(13.24f, rect.top - rect.bottom, 0.001f);
-  EXPECT_NEAR(750.49f, rect.top, 0.001f);
+  EXPECT_NEAR(15.912f, rect.top - rect.bottom, 0.001f);
+  EXPECT_NEAR(752.422f, rect.top, 0.001f);
 }
 
 TEST_F(FPDFTextEmbedderTest, SmallType3Glyph) {
