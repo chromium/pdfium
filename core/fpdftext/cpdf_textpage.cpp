@@ -267,11 +267,13 @@ float GetFontSize(const CPDF_TextObject* text_object) {
 }
 
 CFX_FloatRect GetLooseBounds(const CPDF_TextPage::CharInfo& charinfo) {
-  float font_size = GetFontSize(charinfo.text_object());
-  if (charinfo.text_object() && !FXSYS_IsFloatZero(font_size)) {
-    bool is_vert_writing = charinfo.text_object()->GetFont()->IsVertWriting();
-    if (is_vert_writing && charinfo.text_object()->GetFont()->IsCIDFont()) {
-      CPDF_CIDFont* pCIDFont = charinfo.text_object()->GetFont()->AsCIDFont();
+  const CPDF_TextObject* text_object = charinfo.text_object();
+  float font_size = GetFontSize(text_object);
+  if (text_object && !FXSYS_IsFloatZero(font_size)) {
+    RetainPtr<CPDF_Font> font = text_object->GetFont();
+    bool is_vert_writing = font->IsVertWriting();
+    if (is_vert_writing && font->IsCIDFont()) {
+      CPDF_CIDFont* pCIDFont = font->AsCIDFont();
       uint16_t cid = pCIDFont->CIDFromCharCode(charinfo.char_code());
 
       CFX_Point16 vertical_origin = pCIDFont->GetVertOrigin(cid);
@@ -290,10 +292,10 @@ CFX_FloatRect GetLooseBounds(const CPDF_TextPage::CharInfo& charinfo) {
       return char_box;
     }
 
-    FX_RECT font_bbox = charinfo.text_object()->GetFont()->GetFontBBox();
+    FX_RECT font_bbox = font->GetFontBBox();
     if (font_bbox.Height() != 0) {
       // Compute `left` and `right` based on the individual character's `width`.
-      float width = charinfo.text_object()->GetCharWidth(charinfo.char_code());
+      float width = text_object->GetCharWidth(charinfo.char_code());
       CFX_Matrix inverse_matrix = charinfo.matrix().GetInverse();
       CFX_PointF original_origin = inverse_matrix.Transform(charinfo.origin());
       float left = original_origin.x;
