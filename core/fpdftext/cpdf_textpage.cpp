@@ -339,7 +339,9 @@ CPDF_TextPage::CharInfo::CharInfo(CharType char_type,
       origin_(origin),
       char_box_(char_box),
       matrix_(matrix),
-      text_object_(text_object) {}
+      text_object_(text_object) {
+  loose_char_box_ = GetLooseBounds(*this);
+}
 
 CPDF_TextPage::CharInfo::CharInfo(const CharInfo&) = default;
 
@@ -550,7 +552,8 @@ float CPDF_TextPage::GetCharFontSize(size_t index) const {
 }
 
 CFX_FloatRect CPDF_TextPage::GetCharLooseBounds(size_t index) const {
-  return GetLooseBounds(GetCharInfo(index));
+  CHECK_LT(index, m_CharList.size());
+  return m_CharList[index].loose_char_box();
 }
 
 WideString CPDF_TextPage::GetPageText(int start, int count) const {

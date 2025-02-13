@@ -67,6 +67,7 @@ class CPDF_TextPage {
     const CFX_PointF& origin() const { return origin_; }
 
     const CFX_FloatRect& char_box() const { return char_box_; }
+    const CFX_FloatRect& loose_char_box() const { return loose_char_box_; }
 
     const CFX_Matrix& matrix() const { return matrix_; }
 
@@ -79,6 +80,7 @@ class CPDF_TextPage {
     uint32_t char_code_ = 0;
     CFX_PointF origin_;
     CFX_FloatRect char_box_;
+    CFX_FloatRect loose_char_box_;
     CFX_Matrix matrix_;
     UnownedPtr<CPDF_TextObject> text_object_;
   };
