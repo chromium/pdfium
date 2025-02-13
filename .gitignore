@@ -33,6 +33,7 @@
 /third_party/ninja
 /third_party/rust
 /third_party/rust-toolchain
+/third_party/simdutf
 /third_party/skia
 /third_party/test_fonts
 /third_party/zlib
