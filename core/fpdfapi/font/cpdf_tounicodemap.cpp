@@ -23,6 +23,12 @@ namespace {
 
 constexpr uint32_t kCidLimit = 0xffff;
 
+// Per spec, bfchar and bfrange sections should have at most 100 entries. Some
+// PDFs violate this part of the spec and other PDF parsers tolerate it. So set
+// an artificially high limit that should be good enough for PDFs in the wild,
+// but not too high to prevent fuzzers from slowing down fuzzing.
+constexpr int kOutOfSpecBFLimit = 160000;
+
 WideString StringDataAdd(WideString str) {
   WideString ret;
   wchar_t value = 1;
@@ -186,7 +192,7 @@ ByteStringView CPDF_ToUnicodeMap::HandleBeginBFChar(
   std::vector<CodeWord> code_words;
 
   const int raw_count = StringToInt(previous_word);
-  bool is_valid = raw_count >= 0 && raw_count <= 100;
+  bool is_valid = raw_count >= 0 && raw_count <= kOutOfSpecBFLimit;
   const size_t expected_count = is_valid ? static_cast<size_t>(raw_count) : 0;
   code_words.reserve(expected_count);
 
@@ -243,7 +249,7 @@ ByteStringView CPDF_ToUnicodeMap::HandleBeginBFRange(
   std::vector<Range> ranges;
 
   const int raw_count = StringToInt(previous_word);
-  bool is_valid = raw_count >= 0 && raw_count <= 100;
+  bool is_valid = raw_count >= 0 && raw_count <= kOutOfSpecBFLimit;
   const size_t expected_count = is_valid ? static_cast<size_t>(raw_count) : 0;
   ranges.reserve(expected_count);
 
