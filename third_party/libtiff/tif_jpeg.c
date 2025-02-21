@@ -76,12 +76,9 @@ int TIFFJPEGIsFullStripRequired_12(TIFF *tif);
 #if defined(USE_SYSTEM_LIBJPEG)
 #include <jerror.h>
 #include <jpeglib.h>
-#elif defined(USE_LIBJPEG_TURBO)
-#include "third_party/libjpeg_turbo/jerror.h"
-#include "third_party/libjpeg_turbo/jpeglib.h"
 #else
-#include "third_party/libjpeg/jerror.h"
-#include "third_party/libjpeg/jpeglib.h"
+#include "jerror.h"
+#include "jpeglib.h"
 #endif
 
 /* Do optional compile-time version check */

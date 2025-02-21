@@ -13,21 +13,16 @@ diff a/third_party/libtiff/tiffiop.h b/third_party/libtiff/tiffiop.h
 diff a/third_party/libtiff/tif_jpeg.c b/third_party/libtiff/tif_jpeg.c
 --- a/third_party/libtiff/tif_jpeg.c
 +++ b/third_party/libtiff/tif_jpeg.c
-@@ -110,8 +110,16 @@
+@@ -110,8 +110,13 @@
  #define HAVE_BOOLEAN /* prevent jmorecfg.h from redefining it */
  #endif
  
--#include "jerror.h"
--#include "jpeglib.h"
 +#if defined(USE_SYSTEM_LIBJPEG)
 +#include <jerror.h>
 +#include <jpeglib.h>
-+#elif defined(USE_LIBJPEG_TURBO)
-+#include "third_party/libjpeg_turbo/jerror.h"
-+#include "third_party/libjpeg_turbo/jpeglib.h"
 +#else
-+#include "third_party/libjpeg/jerror.h"
-+#include "third_party/libjpeg/jpeglib.h"
+ #include "jerror.h"
+ #include "jpeglib.h"
 +#endif
  
  /* Do optional compile-time version check */
