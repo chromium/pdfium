@@ -1996,6 +1996,34 @@ TEST_F(FPDFTextEmbedderTest, CharBoxForLatinExtendedText) {
   EXPECT_NEAR(752.422f, rect.top, 0.001f);
 }
 
+TEST_F(FPDFTextEmbedderTest, Bug399689604) {
+  ASSERT_TRUE(OpenDocument("bug_399689604.pdf"));
+  ScopedEmbedderTestPage page = LoadScopedPage(0);
+  ASSERT_TRUE(page);
+
+  ScopedFPDFTextPage text_page(FPDFText_LoadPage(page.get()));
+  ASSERT_TRUE(text_page);
+
+  EXPECT_EQ(1, FPDFText_IsGenerated(text_page.get(), 5));
+  double left;
+  double right;
+  double bottom;
+  double top;
+  ASSERT_TRUE(
+      FPDFText_GetCharBox(text_page.get(), 5, &left, &right, &bottom, &top));
+  EXPECT_DOUBLE_EQ(0.0, right - left);
+  EXPECT_DOUBLE_EQ(0.0, top - bottom);
+  EXPECT_NEAR(100.0, top, 0.001);
+
+  // TODO(crbug.com/399689604): Should have an empty rect like
+  // FPDFText_GetCharBox().
+  FS_RECTF rect;
+  ASSERT_TRUE(FPDFText_GetLooseCharBox(text_page.get(), 5, &rect));
+  EXPECT_NEAR(2.99f, rect.right - rect.left, 0.001f);
+  EXPECT_NEAR(15.345f, rect.top - rect.bottom, 0.001f);
+  EXPECT_NEAR(11.733f, rect.top, 0.001f);
+}
+
 TEST_F(FPDFTextEmbedderTest, SmallType3Glyph) {
   ASSERT_TRUE(OpenDocument("bug_1591.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
