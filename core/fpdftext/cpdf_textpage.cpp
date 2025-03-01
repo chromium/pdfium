@@ -267,6 +267,10 @@ float GetFontSize(const CPDF_TextObject* text_object) {
 }
 
 CFX_FloatRect GetLooseBounds(const CPDF_TextPage::CharInfo& charinfo) {
+  if (charinfo.char_box().IsEmpty()) {
+    return charinfo.char_box();
+  }
+
   const CPDF_TextObject* text_object = charinfo.text_object();
   float font_size = GetFontSize(text_object);
   if (text_object && !FXSYS_IsFloatZero(font_size)) {

@@ -2015,13 +2015,11 @@ TEST_F(FPDFTextEmbedderTest, Bug399689604) {
   EXPECT_DOUBLE_EQ(0.0, top - bottom);
   EXPECT_NEAR(100.0, top, 0.001);
 
-  // TODO(crbug.com/399689604): Should have an empty rect like
-  // FPDFText_GetCharBox().
   FS_RECTF rect;
   ASSERT_TRUE(FPDFText_GetLooseCharBox(text_page.get(), 5, &rect));
-  EXPECT_NEAR(2.99f, rect.right - rect.left, 0.001f);
-  EXPECT_NEAR(15.345f, rect.top - rect.bottom, 0.001f);
-  EXPECT_NEAR(11.733f, rect.top, 0.001f);
+  EXPECT_NEAR(0.0f, rect.right - rect.left, 0.001f);
+  EXPECT_NEAR(0.0f, rect.top - rect.bottom, 0.001f);
+  EXPECT_NEAR(100.0f, rect.top, 0.001f);
 }
 
 TEST_F(FPDFTextEmbedderTest, SmallType3Glyph) {
