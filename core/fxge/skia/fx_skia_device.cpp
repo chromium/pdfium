@@ -115,7 +115,7 @@ void DebugShowSkiaPath(const SkPath& path) {
 void DebugShowCanvasClip(CFX_SkiaDeviceDriver* driver, const SkCanvas* canvas) {
 #if SHOW_SKIA_PATH
   SkMatrix matrix = canvas->getTotalMatrix();
-  SkScalar m[9];
+  float m[9];
   matrix.get9(m);
   printf("matrix (%g,%g,%g) (%g,%g,%g) (%g,%g,%g)\n", m[0], m[1], m[2], m[3],
          m[4], m[5], m[6], m[7], m[8]);
@@ -230,7 +230,7 @@ SkMatrix ToSkMatrix(const CFX_Matrix& m) {
 }
 
 // use when pdf's y-axis points up instead of down
-SkMatrix ToFlippedSkMatrix(const CFX_Matrix& m, SkScalar flip) {
+SkMatrix ToFlippedSkMatrix(const CFX_Matrix& m, float flip) {
   SkMatrix skMatrix;
   skMatrix.setAll(m.a * flip, -m.c * flip, m.e, m.b * flip, -m.d * flip, m.f, 0,
                   0, 1);
@@ -274,6 +274,11 @@ SkBlendMode GetSkiaBlendMode(BlendMode blend_type) {
   }
 }
 
+// Clamps and scales a float in range [0.0, 1.0] to 0-255.
+uint8_t ClampFloatToByte(float f) {
+  return static_cast<uint8_t>(std::clamp(f, 0.0f, 1.0f) * 255.f + 0.5f);
+}
+
 // Add begin & end colors into `colors` array for each gradient transition.
 //
 // `is_encode_reversed` must be set to true when the parent function of `func`
@@ -294,28 +299,29 @@ bool AddColors(const CPDF_ExpIntFunc* func,
 
   pdfium::span<const float> begin_values = func->GetBeginValues();
   pdfium::span<const float> end_values = func->GetEndValues();
-  if (is_encode_reversed)
+  if (is_encode_reversed) {
     std::swap(begin_values, end_values);
+  }
 
-  colors.push_back(SkColorSetARGB(0xFF,
-                                  SkUnitScalarClampToByte(begin_values[0]),
-                                  SkUnitScalarClampToByte(begin_values[1]),
-                                  SkUnitScalarClampToByte(begin_values[2])));
-  colors.push_back(SkColorSetARGB(0xFF, SkUnitScalarClampToByte(end_values[0]),
-                                  SkUnitScalarClampToByte(end_values[1]),
-                                  SkUnitScalarClampToByte(end_values[2])));
+  colors.push_back(SkColorSetRGB(ClampFloatToByte(begin_values[0]),
+                                 ClampFloatToByte(begin_values[1]),
+                                 ClampFloatToByte(begin_values[2])));
+  colors.push_back(SkColorSetRGB(ClampFloatToByte(end_values[0]),
+                                 ClampFloatToByte(end_values[1]),
+                                 ClampFloatToByte(end_values[2])));
   return true;
 }
 
+// Scale a float in range [0.0, 1.0] to 0-255.
 uint8_t FloatToByte(float f) {
   DCHECK(f >= 0);
   DCHECK(f <= 1);
-  return (uint8_t)(f * 255.99f);
+  return static_cast<uint8_t>(f * 255.99f);
 }
 
 bool AddSamples(const CPDF_SampledFunc* func,
                 DataVector<SkColor>& colors,
-                DataVector<SkScalar>& pos) {
+                DataVector<float>& pos) {
   if (func->InputCount() != 1) {
     return false;
   }
@@ -359,9 +365,9 @@ bool AddSamples(const CPDF_SampledFunc* func,
         float_colors[j] =
             colors_min[j] + (colors_max[j] - colors_min[j]) * interp;
       }
-      colors.push_back(SkPackARGB32(0xFF, FloatToByte(float_colors[0]),
-                                    FloatToByte(float_colors[1]),
-                                    FloatToByte(float_colors[2])));
+      colors.push_back(SkColorSetRGB(FloatToByte(float_colors[0]),
+                                     FloatToByte(float_colors[1]),
+                                     FloatToByte(float_colors[2])));
       pos.push_back(static_cast<float>(i) / (sample_count - 1));
     }
   return true;
@@ -369,7 +375,7 @@ bool AddSamples(const CPDF_SampledFunc* func,
 
 bool AddStitching(const CPDF_StitchFunc* func,
                   DataVector<SkColor>& colors,
-                  DataVector<SkScalar>& pos) {
+                  DataVector<float>& pos) {
   float bounds_start = func->GetDomain(0);
 
   const auto& sub_functions = func->GetSubFunctions();
@@ -394,9 +400,9 @@ bool AddStitching(const CPDF_StitchFunc* func,
 }
 
 // see https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
-SkScalar LineSide(const SkPoint& line_start,
-                  const SkPoint& line_end,
-                  const SkPoint& pt) {
+float LineSide(const SkPoint& line_start,
+               const SkPoint& line_end,
+               const SkPoint& pt) {
   return (line_end.fY - line_start.fY) * pt.fX -
          (line_end.fX - line_start.fX) * pt.fY + line_end.fX * line_start.fY -
          line_end.fY * line_start.fX;
@@ -406,13 +412,13 @@ SkPoint IntersectSides(const SkPoint& parallelPt,
                        const SkVector& paraRay,
                        const SkPoint& perpendicularPt) {
   SkVector perpRay = {paraRay.fY, -paraRay.fX};
-  SkScalar denom = perpRay.fY * paraRay.fX - paraRay.fY * perpRay.fX;
+  float denom = perpRay.fY * paraRay.fX - paraRay.fY * perpRay.fX;
   if (!denom) {
     SkPoint zeroPt = {0, 0};
     return zeroPt;
   }
   SkVector ab0 = parallelPt - perpendicularPt;
-  SkScalar numerA = ab0.fY * perpRay.fX - perpRay.fY * ab0.fX;
+  float numerA = ab0.fY * perpRay.fX - perpRay.fY * ab0.fX;
   numerA /= denom;
   SkPoint result = {parallelPt.fX + paraRay.fX * numerA,
                     parallelPt.fY + paraRay.fY * numerA};
@@ -425,8 +431,8 @@ void ClipAngledGradient(pdfium::span<const SkPoint, 2> pts,
                         bool clip_end,
                         SkPath* clip) {
   // find the corners furthest from the gradient perpendiculars
-  SkScalar minPerpDist = SK_ScalarMax;
-  SkScalar maxPerpDist = SK_ScalarMin;
+  float minPerpDist = std::numeric_limits<float>::max();
+  float maxPerpDist = std::numeric_limits<float>::lowest();
   int minPerpPtIndex = -1;
   int maxPerpPtIndex = -1;
   SkVector slope = pts[1] - pts[0];
@@ -435,19 +441,19 @@ void ClipAngledGradient(pdfium::span<const SkPoint, 2> pts,
   const SkPoint end_perp[2] = {pts[1],
                                {pts[1].fX + slope.fY, pts[1].fY - slope.fX}};
   for (int i = 0; i < 4; ++i) {
-    SkScalar sDist = LineSide(start_perp[0], start_perp[1], rect_pts[i]);
-    SkScalar eDist = LineSide(end_perp[0], end_perp[1], rect_pts[i]);
+    float sDist = LineSide(start_perp[0], start_perp[1], rect_pts[i]);
+    float eDist = LineSide(end_perp[0], end_perp[1], rect_pts[i]);
     if (sDist * eDist <= 0) {  // if the signs are different,
       continue;                // the point is inside the gradient
     }
     if (sDist < 0) {
-      SkScalar smaller = std::min(sDist, eDist);
+      float smaller = std::min(sDist, eDist);
       if (minPerpDist > smaller) {
         minPerpDist = smaller;
         minPerpPtIndex = i;
       }
     } else {
-      SkScalar larger = std::max(sDist, eDist);
+      float larger = std::max(sDist, eDist);
       if (maxPerpDist < larger) {
         maxPerpDist = larger;
         maxPerpPtIndex = i;
@@ -477,12 +483,12 @@ void ClipAngledGradient(pdfium::span<const SkPoint, 2> pts,
   const SkPoint& endEdgePt = clip_end ? pts[1] : rect_pts[noClipEndIndex];
 
   // find the corners that bound the gradient
-  SkScalar minDist = SK_ScalarMax;
-  SkScalar maxDist = SK_ScalarMin;
+  float minDist = std::numeric_limits<float>::max();
+  float maxDist = std::numeric_limits<float>::lowest();
   int minBounds = -1;
   int maxBounds = -1;
   for (int i = 0; i < 4; ++i) {
-    SkScalar dist = LineSide(pts[0], pts[1], rect_pts[i]);
+    float dist = LineSide(pts[0], pts[1], rect_pts[i]);
     if (minDist > dist) {
       minDist = dist;
       minBounds = i;
@@ -553,7 +559,7 @@ void PaintStroke(SkPaint* spaint,
   const std::vector<float>& dash_array = graph_state->dash_array();
   if (!dash_array.empty()) {
     size_t count = (dash_array.size() + 1) / 2;
-    DataVector<SkScalar> intervals(count * 2);
+    DataVector<float> intervals(count * 2);
     // Set dash pattern
     for (size_t i = 0; i < count; i++) {
       float on = dash_array[i * 2];
@@ -800,8 +806,8 @@ bool CFX_SkiaDeviceDriver::DrawDeviceText(
   font.setEdging(GetFontEdgingType(options));
 
   SkAutoCanvasRestore scoped_save_restore(m_pCanvas, /*doSave=*/true);
-  const SkScalar horizontal_flip = font_size < 0 ? -1 : 1;
-  const SkScalar vertical_flip = pFont->IsVertical() ? -1 : 1;
+  const float horizontal_flip = font_size < 0 ? -1.f : 1.f;
+  const float vertical_flip = pFont->IsVertical() ? -1.f : 1.f;
   SkMatrix skMatrix = ToFlippedSkMatrix(mtObject2Device, horizontal_flip);
   m_pCanvas->concat(skMatrix);
   DataVector<SkPoint> positions(pCharPos.size());
@@ -879,8 +885,8 @@ bool CFX_SkiaDeviceDriver::TryDrawText(pdfium::span<const TextCharPos> char_pos,
     m_rsxform.resize(0);
   }
 
-  const SkScalar horizontal_flip = font_size < 0 ? -1 : 1;
-  const SkScalar vertical_flip = pFont->IsVertical() ? -1 : 1;
+  const float horizontal_flip = font_size < 0 ? -1.f : 1.f;
+  const float vertical_flip = pFont->IsVertical() ? -1.f : 1.f;
   for (size_t index = 0; index < char_pos.size(); ++index) {
     const TextCharPos& cp = char_pos[index];
     m_charDetails.SetPositionAt(index, {cp.m_Origin.x * horizontal_flip,
@@ -1185,7 +1191,7 @@ bool CFX_SkiaDeviceDriver::DrawShading(const CPDF_ShadingPattern& pattern,
   // TODO(caryclark) Respect Domain[0], Domain[1]. (Don't know what they do
   // yet.)
   DataVector<SkColor> sk_colors;
-  DataVector<SkScalar> sk_pos;
+  DataVector<float> sk_pos;
   for (size_t j = 0; j < nFuncs; j++) {
     if (!pFuncs[j])
       continue;
