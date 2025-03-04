@@ -392,10 +392,12 @@ deps = {
         '/external/github.com/llvm/llvm-project/libcxxabi.git@' +
         Var('libcxxabi_revision'),
 
-  'third_party/libunwind/src':
-    Var('chromium_git') +
+  'third_party/libunwind/src': {
+    'url': Var('chromium_git') +
         '/external/github.com/llvm/llvm-project/libunwind.git@' +
         Var('libunwind_revision'),
+    'condition': 'checkout_android',
+  },
 
   'third_party/libjpeg_turbo':
     Var('chromium_git') + '/chromium/deps/libjpeg_turbo.git@' +
