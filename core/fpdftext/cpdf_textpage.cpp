@@ -297,7 +297,7 @@ CFX_FloatRect GetLooseBounds(const CPDF_TextPage::CharInfo& charinfo) {
     }
 
     FX_RECT font_bbox = font->GetFontBBox();
-    if (font_bbox.Height() != 0) {
+    if (font_bbox.Valid() && font_bbox.Height() != 0) {
       // Compute `left` and `right` based on the individual character's `width`.
       float width = text_object->GetCharWidth(charinfo.char_code());
       CFX_Matrix inverse_matrix = charinfo.matrix().GetInverse();
