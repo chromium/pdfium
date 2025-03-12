@@ -52,7 +52,9 @@ bool ScanlineDecoder::SkipToScanline(int line, PauseIndicatorIface* pPause) {
     return false;
 
   if (m_NextLine < 0 || m_NextLine > line) {
-    Rewind();
+    if (!Rewind()) {
+      return false;
+    }
     m_NextLine = 0;
   }
   m_pLastScanline = pdfium::span<uint8_t>();
