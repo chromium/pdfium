@@ -34,7 +34,7 @@ class RLScanlineDecoder final : public ScanlineDecoder {
               int bpc);
 
   // ScanlineDecoder:
-  bool Rewind() override;
+  [[nodiscard]] bool Rewind() override;
   pdfium::span<uint8_t> GetNextLine() override;
   uint32_t GetSrcOffset() override;
 

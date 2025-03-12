@@ -39,7 +39,7 @@ class ScanlineDecoder {
   virtual uint32_t GetSrcOffset() = 0;
 
  protected:
-  virtual bool Rewind() = 0;
+  [[nodiscard]] virtual bool Rewind() = 0;
   virtual pdfium::span<uint8_t> GetNextLine() = 0;
 
   int m_OrigWidth;
