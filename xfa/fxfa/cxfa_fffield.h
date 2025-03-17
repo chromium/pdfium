@@ -33,7 +33,7 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
                     HighlightOption highlight) override;
   bool IsLoaded() override;
   bool LoadWidget() override;
-  bool PerformLayout() override;
+  void PerformLayout() override;
   bool AcceptsFocusOnButtonDown(
       Mask<XFA_FWL_KeyFlag> dwFlags,
       const CFX_PointF& point,

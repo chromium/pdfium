@@ -102,8 +102,8 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
                             HighlightOption highlight);
   virtual bool IsLoaded();
   virtual bool LoadWidget();
-  virtual bool PerformLayout();
-  virtual bool UpdateFWLData();
+  virtual void PerformLayout();
+  virtual void UpdateFWLData();
   virtual void UpdateWidgetProperty();
   // |command| must be LeftButtonDown or RightButtonDown.
   virtual bool AcceptsFocusOnButtonDown(

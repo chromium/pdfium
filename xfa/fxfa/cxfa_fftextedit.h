@@ -82,7 +82,7 @@ class CXFA_FFTextEdit : public CXFA_FFField {
 
  private:
   bool CommitData() override;
-  bool UpdateFWLData() override;
+  void UpdateFWLData() override;
   bool IsDataChanged() override;
   void ValidateNumberField(const WideString& wsText);
 };

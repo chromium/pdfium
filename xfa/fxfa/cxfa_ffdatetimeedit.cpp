@@ -152,9 +152,9 @@ bool CXFA_FFDateTimeEdit::CommitData() {
   return true;
 }
 
-bool CXFA_FFDateTimeEdit::UpdateFWLData() {
+void CXFA_FFDateTimeEdit::UpdateFWLData() {
   if (!GetNormalWidget())
-    return false;
+    return;
 
   XFA_ValuePicture eType = XFA_ValuePicture::kDisplay;
   if (IsFocused())
@@ -172,7 +172,6 @@ bool CXFA_FFDateTimeEdit::UpdateFWLData() {
     }
   }
   GetNormalWidget()->Update();
-  return true;
 }
 
 bool CXFA_FFDateTimeEdit::IsDataChanged() {

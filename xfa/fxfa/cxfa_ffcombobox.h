@@ -70,7 +70,7 @@ class CXFA_FFComboBox final : public CXFA_FFDropDown {
   // CXFA_FFField:
   bool PtInActiveRect(const CFX_PointF& point) override;
   bool CommitData() override;
-  bool UpdateFWLData() override;
+  void UpdateFWLData() override;
   bool IsDataChanged() override;
 
   uint32_t GetAlignment();

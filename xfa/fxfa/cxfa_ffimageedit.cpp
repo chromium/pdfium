@@ -135,10 +135,9 @@ bool CXFA_FFImageEdit::CommitData() {
   return true;
 }
 
-bool CXFA_FFImageEdit::UpdateFWLData() {
+void CXFA_FFImageEdit::UpdateFWLData() {
   m_pNode->SetEditImage(nullptr);
   m_pNode->LoadEditImage(GetDoc());
-  return true;
 }
 
 void CXFA_FFImageEdit::OnProcessMessage(CFWL_Message* pMessage) {

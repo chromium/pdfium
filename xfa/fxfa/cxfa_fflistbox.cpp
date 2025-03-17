@@ -143,10 +143,10 @@ uint32_t CXFA_FFListBox::GetAlignment() {
   return dwExtendedStyle;
 }
 
-bool CXFA_FFListBox::UpdateFWLData() {
+void CXFA_FFListBox::UpdateFWLData() {
   auto* pListBox = ToListBox(GetNormalWidget());
   if (!pListBox)
-    return false;
+    return;
 
   std::vector<int32_t> iSelArray = m_pNode->GetSelectedItems();
   std::vector<CFWL_ListBox::Item*> selItemArray(iSelArray.size());
@@ -158,7 +158,6 @@ bool CXFA_FFListBox::UpdateFWLData() {
     pListBox->SetSelItem(pItem, true);
 
   GetNormalWidget()->Update();
-  return true;
 }
 
 void CXFA_FFListBox::OnSelectChanged(CFWL_Widget* pWidget) {

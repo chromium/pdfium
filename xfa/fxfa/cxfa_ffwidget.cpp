@@ -289,14 +289,11 @@ bool CXFA_FFWidget::LoadWidget() {
   return true;
 }
 
-bool CXFA_FFWidget::PerformLayout() {
+void CXFA_FFWidget::PerformLayout() {
   RecacheWidgetRect();
-  return true;
 }
 
-bool CXFA_FFWidget::UpdateFWLData() {
-  return false;
-}
+void CXFA_FFWidget::UpdateFWLData() {}
 
 void CXFA_FFWidget::UpdateWidgetProperty() {}
 

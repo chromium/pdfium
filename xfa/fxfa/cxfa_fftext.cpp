@@ -67,19 +67,17 @@ bool CXFA_FFText::IsLoaded() {
   return pTextLayout && !pTextLayout->HasBlock();
 }
 
-bool CXFA_FFText::PerformLayout() {
+void CXFA_FFText::PerformLayout() {
   CXFA_FFWidget::PerformLayout();
   CXFA_TextLayout* pTextLayout = m_pNode->GetTextLayout();
-  if (!pTextLayout)
-    return false;
-  if (!pTextLayout->HasBlock())
-    return true;
-
+  if (!pTextLayout || !pTextLayout->HasBlock()) {
+    return;
+  }
   pTextLayout->ClearBlocks();
   CXFA_ContentLayoutItem* pItem = GetLayoutItem();
-  if (!pItem->GetPrev() && !pItem->GetNext())
-    return true;
-
+  if (!pItem->GetPrev() && !pItem->GetNext()) {
+    return;
+  }
   pItem = pItem->GetFirst();
   while (pItem) {
     CFX_RectF rtText = pItem->GetAbsoluteRect();
@@ -94,7 +92,6 @@ bool CXFA_FFText::PerformLayout() {
     pItem = pItem->GetNext();
   }
   pTextLayout->ResetHasBlock();
-  return true;
 }
 
 bool CXFA_FFText::AcceptsFocusOnButtonDown(

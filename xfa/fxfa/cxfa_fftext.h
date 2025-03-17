@@ -30,7 +30,7 @@ class CXFA_FFText final : public CXFA_FFWidget {
                     const CFX_Matrix& matrix,
                     HighlightOption highlight) override;
   bool IsLoaded() override;
-  bool PerformLayout() override;
+  void PerformLayout() override;
 
  private:
   explicit CXFA_FFText(CXFA_Node* pNode);

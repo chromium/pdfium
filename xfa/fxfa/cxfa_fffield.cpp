@@ -164,15 +164,15 @@ void CXFA_FFField::SetEditScrollOffset() {
   static_cast<CFWL_Edit*>(GetNormalWidget())->SetScrollOffset(fScrollOffset);
 }
 
-bool CXFA_FFField::PerformLayout() {
+void CXFA_FFField::PerformLayout() {
   CXFA_FFWidget::PerformLayout();
   CapPlacement();
   LayoutCaption();
   SetFWLRect();
   SetEditScrollOffset();
-  if (GetNormalWidget())
+  if (GetNormalWidget()) {
     GetNormalWidget()->Update();
-  return true;
+  }
 }
 
 void CXFA_FFField::CapPlacement() {

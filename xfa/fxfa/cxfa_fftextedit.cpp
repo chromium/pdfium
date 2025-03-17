@@ -267,10 +267,10 @@ uint32_t CXFA_FFTextEdit::GetAlignment() {
   return dwExtendedStyle;
 }
 
-bool CXFA_FFTextEdit::UpdateFWLData() {
+void CXFA_FFTextEdit::UpdateFWLData() {
   CFWL_Edit* pEdit = ToEdit(GetNormalWidget());
   if (!pEdit)
-    return false;
+    return;
 
   XFA_ValuePicture eType = XFA_ValuePicture::kDisplay;
   if (IsFocused())
@@ -303,10 +303,9 @@ bool CXFA_FFTextEdit::UpdateFWLData() {
     pEdit->SetTextSkipNotify(wsText);
     bUpdate = true;
   }
-  if (bUpdate)
+  if (bUpdate) {
     GetNormalWidget()->Update();
-
-  return true;
+  }
 }
 
 void CXFA_FFTextEdit::OnTextWillChange(CFWL_Widget* pWidget,

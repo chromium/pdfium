@@ -200,10 +200,10 @@ uint32_t CXFA_FFComboBox::GetAlignment() {
   return dwExtendedStyle;
 }
 
-bool CXFA_FFComboBox::UpdateFWLData() {
+void CXFA_FFComboBox::UpdateFWLData() {
   auto* pComboBox = ToComboBox(GetNormalWidget());
   if (!pComboBox)
-    return false;
+    return;
 
   std::vector<int32_t> iSelArray = m_pNode->GetSelectedItems();
   if (!iSelArray.empty()) {
@@ -213,7 +213,6 @@ bool CXFA_FFComboBox::UpdateFWLData() {
     pComboBox->SetEditText(m_pNode->GetValue(XFA_ValuePicture::kRaw));
   }
   pComboBox->Update();
-  return true;
 }
 
 bool CXFA_FFComboBox::CanUndo() {

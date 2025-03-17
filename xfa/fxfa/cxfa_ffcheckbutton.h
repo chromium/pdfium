@@ -27,8 +27,8 @@ class CXFA_FFCheckButton final : public CXFA_FFField {
                     HighlightOption highlight) override;
 
   bool LoadWidget() override;
-  bool PerformLayout() override;
-  bool UpdateFWLData() override;
+  void PerformLayout() override;
+  void UpdateFWLData() override;
   void UpdateWidgetProperty() override;
   bool OnLButtonUp(Mask<XFA_FWL_KeyFlag> dwFlags,
                    const CFX_PointF& point) override;

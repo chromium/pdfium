@@ -98,7 +98,7 @@ void CXFA_FFPushButton::UpdateWidgetProperty() {
   GetNormalWidget()->ModifyStyleExts(dwStyleEx, 0xFFFFFFFF);
 }
 
-bool CXFA_FFPushButton::PerformLayout() {
+void CXFA_FFPushButton::PerformLayout() {
   CXFA_FFWidget::PerformLayout();
   CFX_RectF rtWidget = GetRectWithoutRotate();
 
@@ -114,10 +114,9 @@ bool CXFA_FFPushButton::PerformLayout() {
 
   LayoutHighlightCaption();
   SetFWLRect();
-  if (GetNormalWidget())
+  if (GetNormalWidget()) {
     GetNormalWidget()->Update();
-
-  return true;
+  }
 }
 
 float CXFA_FFPushButton::GetLineWidth() {

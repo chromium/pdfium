@@ -97,7 +97,7 @@ void CXFA_FFCheckButton::UpdateWidgetProperty() {
       dwStyleEx, FWL_STYLEEXT_CKB_SignShapeMask | FWL_STYLEEXT_CKB_3State);
 }
 
-bool CXFA_FFCheckButton::PerformLayout() {
+void CXFA_FFCheckButton::PerformLayout() {
   CXFA_FFWidget::PerformLayout();
 
   float fCheckSize = m_pNode->GetCheckButtonSize();
@@ -193,8 +193,6 @@ bool CXFA_FFCheckButton::PerformLayout() {
   SetFWLRect();
   if (GetNormalWidget())
     GetNormalWidget()->Update();
-
-  return true;
 }
 
 void CXFA_FFCheckButton::CapLeftRightPlacement(
@@ -293,13 +291,12 @@ void CXFA_FFCheckButton::SetFWLCheckState(XFA_CheckState eCheckState) {
     GetNormalWidget()->RemoveStates(FWL_STATE_CKB_Checked);
 }
 
-bool CXFA_FFCheckButton::UpdateFWLData() {
-  if (!GetNormalWidget())
-    return false;
-
+void CXFA_FFCheckButton::UpdateFWLData() {
+  if (!GetNormalWidget()) {
+    return;
+  }
   SetFWLCheckState(m_pNode->GetCheckState());
   GetNormalWidget()->Update();
-  return true;
 }
 
 void CXFA_FFCheckButton::OnProcessMessage(CFWL_Message* pMessage) {

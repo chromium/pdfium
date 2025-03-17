@@ -51,7 +51,7 @@ class CXFA_FFDateTimeEdit final : public CXFA_FFTextEdit {
  private:
   bool PtInActiveRect(const CFX_PointF& point) override;
   bool CommitData() override;
-  bool UpdateFWLData() override;
+  void UpdateFWLData() override;
   bool IsDataChanged() override;
 
   pdfium::CFWL_DateTimePicker* GetPickerWidget();
