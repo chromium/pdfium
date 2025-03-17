@@ -68,7 +68,7 @@ class CXFA_LocaleValue {
   const WideString& GetValue() const { return m_wsValue; }
   ValueType GetType() const { return m_eType; }
   double GetDoubleNum() const;
-  bool SetDate(const CFX_DateTime& d);
+  void SetDate(const CFX_DateTime& d);
   CFX_DateTime GetDate() const;
   CFX_DateTime GetTime() const;
 
@@ -81,8 +81,8 @@ class CXFA_LocaleValue {
   bool ValidateCanonicalDate(const WideString& wsDate, CFX_DateTime* unDate);
   bool ValidateCanonicalTime(const WideString& wsTime);
 
-  bool SetTime(const CFX_DateTime& t);
-  bool SetDateTime(const CFX_DateTime& dt);
+  void SetTime(const CFX_DateTime& t);
+  void SetDateTime(const CFX_DateTime& dt);
 
   bool ParsePatternValue(const WideString& wsValue,
                          const WideString& wsPattern,
