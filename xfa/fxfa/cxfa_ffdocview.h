@@ -114,8 +114,8 @@ class CXFA_FFDocView : public cppgc::GarbageCollected<CXFA_FFDocView> {
   bool ResetSingleNodeData(CXFA_Node* pNode);
 
   bool IsUpdateLocked() const { return m_iLock > 0; }
-  bool InitValidate(CXFA_Node* pNode);
-  bool RunValidate();
+  void InitValidate(CXFA_Node* pNode);
+  void RunValidate();
   XFA_EventError RunCalculateWidgets();
   void RunSubformIndexChange();
 

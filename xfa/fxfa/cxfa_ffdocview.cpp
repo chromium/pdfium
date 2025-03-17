@@ -617,18 +617,17 @@ void CXFA_FFDocView::ProcessValueChanged(CXFA_Node* node) {
   RunValidate();
 }
 
-bool CXFA_FFDocView::InitValidate(CXFA_Node* pNode) {
+void CXFA_FFDocView::InitValidate(CXFA_Node* pNode) {
   if (!m_pDoc->IsValidationsEnabled())
-    return false;
+    return;
 
   ExecEventActivityByDeepFirst(pNode, XFA_EVENT_Validate, false, true);
   m_ValidateNodes.clear();
-  return true;
 }
 
-bool CXFA_FFDocView::RunValidate() {
+void CXFA_FFDocView::RunValidate() {
   if (!m_pDoc->IsValidationsEnabled())
-    return false;
+    return;
 
   while (!m_ValidateNodes.empty()) {
     CXFA_Node* node = m_ValidateNodes.front();
@@ -636,7 +635,6 @@ bool CXFA_FFDocView::RunValidate() {
     if (!node->HasRemovedChildren())
       node->ProcessValidate(this, 0);
   }
-  return true;
 }
 
 bool CXFA_FFDocView::RunEventLayoutReady() {
