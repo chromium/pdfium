@@ -855,7 +855,7 @@ bool CPDFSDK_FormFillEnvironment::DoActionJavaScript(
   return false;
 }
 
-bool CPDFSDK_FormFillEnvironment::DoActionFieldJavaScript(
+void CPDFSDK_FormFillEnvironment::DoActionFieldJavaScript(
     const CPDF_Action& JsAction,
     CPDF_AAction::AActionType type,
     CPDF_FormField* pFormField,
@@ -865,10 +865,8 @@ bool CPDFSDK_FormFillEnvironment::DoActionFieldJavaScript(
     WideString swJS = JsAction.GetJavaScript();
     if (!swJS.IsEmpty()) {
       RunFieldJavaScript(pFormField, type, data, swJS);
-      return true;
     }
   }
-  return false;
 }
 
 bool CPDFSDK_FormFillEnvironment::DoActionLink(const CPDF_Action& action,

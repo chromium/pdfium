@@ -127,7 +127,7 @@ class CPDFSDK_FormFillEnvironment final
                      CPDF_AAction::AActionType type,
                      CPDF_FormField* pFormField,
                      CFFL_FieldAction* data);
-  bool DoActionFieldJavaScript(const CPDF_Action& JsAction,
+  void DoActionFieldJavaScript(const CPDF_Action& JsAction,
                                CPDF_AAction::AActionType type,
                                CPDF_FormField* pFormField,
                                CFFL_FieldAction* data);
