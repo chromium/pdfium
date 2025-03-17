@@ -175,7 +175,8 @@ TEST(ReadValidatorTest, Session) {
   ASSERT_FALSE(validator->has_read_problems());
 
   // Data is unavailable
-  validator->ReadBlockAtOffset(pdfium::make_span(test_data).first(100), 0);
+  ASSERT_FALSE(
+      validator->ReadBlockAtOffset(pdfium::make_span(test_data).first(100), 0));
   EXPECT_TRUE(validator->has_read_problems());
   EXPECT_TRUE(validator->has_unavailable_data());
   EXPECT_FALSE(validator->read_error());
@@ -187,7 +188,8 @@ TEST(ReadValidatorTest, Session) {
 
     file_avail.SetAvailableRange(0, 100);
     // Read fail.
-    validator->ReadBlockAtOffset(pdfium::make_span(test_data).first(100), 0);
+    ASSERT_FALSE(validator->ReadBlockAtOffset(
+        pdfium::make_span(test_data).first(100), 0));
     EXPECT_TRUE(validator->has_read_problems());
     EXPECT_TRUE(validator->has_unavailable_data());
     EXPECT_TRUE(validator->read_error());
@@ -213,7 +215,8 @@ TEST(ReadValidatorTest, SessionReset) {
   ASSERT_FALSE(validator->has_read_problems());
 
   // Data is unavailable
-  validator->ReadBlockAtOffset(pdfium::make_span(test_data).first(100), 0);
+  ASSERT_FALSE(
+      validator->ReadBlockAtOffset(pdfium::make_span(test_data).first(100), 0));
   EXPECT_TRUE(validator->has_read_problems());
   EXPECT_TRUE(validator->has_unavailable_data());
   EXPECT_FALSE(validator->read_error());
@@ -225,7 +228,8 @@ TEST(ReadValidatorTest, SessionReset) {
 
     file_avail.SetAvailableRange(0, 100);
     // Read fail.
-    validator->ReadBlockAtOffset(pdfium::make_span(test_data).first(100), 0);
+    ASSERT_FALSE(validator->ReadBlockAtOffset(
+        pdfium::make_span(test_data).first(100), 0));
     EXPECT_TRUE(validator->has_read_problems());
     EXPECT_TRUE(validator->has_unavailable_data());
     EXPECT_TRUE(validator->read_error());

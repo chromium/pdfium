@@ -38,7 +38,7 @@ class CFDETextOutTest : public testing::Test {
                                 FXDIB_Format::kBgra));
 
     device_ = std::make_unique<CFX_DefaultRenderDevice>();
-    device_->Attach(bitmap_);
+    ASSERT_TRUE(device_->Attach(bitmap_));
 
     font_ = LoadFont();
     ASSERT_TRUE(font_);

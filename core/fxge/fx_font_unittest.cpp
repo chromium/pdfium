@@ -34,7 +34,7 @@ TEST(FXFontTest, AdobeNameFromUnicode) {
 
 TEST(FXFontTest, ReadFontNameFromMicrosoftEntries) {
   std::string test_data_dir;
-  PathService::GetTestDataDir(&test_data_dir);
+  ASSERT_TRUE(PathService::GetTestDataDir(&test_data_dir));
   DCHECK(!test_data_dir.empty());
 
   CFX_FontMapper font_mapper(nullptr);

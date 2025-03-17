@@ -104,8 +104,8 @@ TEST(OnedCodaBarWriterTest, SetDelimiters) {
   EXPECT_FALSE(writer.SetEndChar('\0'));
   EXPECT_FALSE(writer.SetEndChar('@'));
 
-  writer.SetStartChar('N');
-  writer.SetEndChar('*');
+  EXPECT_TRUE(writer.SetStartChar('N'));
+  EXPECT_TRUE(writer.SetEndChar('*'));
 
   static const char kExpected[] =
       "#  #  # ## "  // N (same as B) Start

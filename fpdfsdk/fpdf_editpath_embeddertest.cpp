@@ -91,7 +91,7 @@ TEST_F(FPDFEditPathEmbedderTest, VerifyCorrectColoursReturned) {
 }
 
 TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForPath) {
-  OpenDocument("rectangles_double_flipped.pdf");
+  ASSERT_TRUE(OpenDocument("rectangles_double_flipped.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
@@ -136,7 +136,7 @@ TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForPath) {
 }
 
 TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForFormWithPath) {
-  OpenDocument("form_object_with_path.pdf");
+  ASSERT_TRUE(OpenDocument("form_object_with_path.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
@@ -200,7 +200,7 @@ TEST_F(FPDFEditPathEmbedderTest, GetAndSetMatrixForFormWithPath) {
 }
 
 TEST_F(FPDFEditPathEmbedderTest, AddPathToRectangles) {
-  OpenDocument("rectangles.pdf");
+  ASSERT_TRUE(OpenDocument("rectangles.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
@@ -235,7 +235,7 @@ TEST_F(FPDFEditPathEmbedderTest, AddPathToRectangles) {
 }
 
 TEST_F(FPDFEditPathEmbedderTest, AddPathToRectanglesWithLeakyCTM) {
-  OpenDocument("rectangles_with_leaky_ctm.pdf");
+  ASSERT_TRUE(OpenDocument("rectangles_with_leaky_ctm.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 

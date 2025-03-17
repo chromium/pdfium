@@ -181,7 +181,7 @@ TEST_F(PDFEditImgTest, Bug2132) {
   static constexpr char kExpectedChecksum[] =
       "617b1d57c30c516beee86e0781ff7810";
 
-  OpenDocument("bug_2132.pdf");
+  ASSERT_TRUE(OpenDocument("bug_2132.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 
@@ -230,7 +230,7 @@ TEST_F(PDFEditImgTest, GetAndSetMatrixForFormWithImage) {
   static constexpr char kExpectedChecksum[] =
       "fcb9007fd901d2052e2bd1c147b82800";
 
-  OpenDocument("form_object_with_image.pdf");
+  ASSERT_TRUE(OpenDocument("form_object_with_image.pdf"));
   ScopedEmbedderTestPage page = LoadScopedPage(0);
   ASSERT_TRUE(page);
 

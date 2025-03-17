@@ -806,8 +806,8 @@ TEST(PDFArrayTest, AddReferenceAndGetObjectAt) {
   auto arr1 = pdfium::MakeRetain<CPDF_Array>();
   // Create two arrays of references by different AddReference() APIs.
   for (size_t i = 0; i < std::size(indirect_objs); ++i) {
-    holder->ReplaceIndirectObjectIfHigherGeneration(obj_nums[i],
-                                                    indirect_objs[i]);
+    ASSERT_TRUE(holder->ReplaceIndirectObjectIfHigherGeneration(
+        obj_nums[i], indirect_objs[i]));
     arr->AppendNew<CPDF_Reference>(holder.get(), obj_nums[i]);
     arr1->AppendNew<CPDF_Reference>(holder.get(),
                                     indirect_objs[i]->GetObjNum());

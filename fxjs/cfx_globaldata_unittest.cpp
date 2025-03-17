@@ -64,11 +64,11 @@ TEST(CFXGlobalData, StoreReload) {
   pInstance->SetGlobalVariableBoolean("boolean", true);
   pInstance->SetGlobalVariableNull("null");
   pInstance->SetGlobalVariableObject("array", std::move(array));
-  pInstance->SetGlobalVariablePersistent("double", true);
-  pInstance->SetGlobalVariablePersistent("string", true);
-  pInstance->SetGlobalVariablePersistent("boolean", true);
-  pInstance->SetGlobalVariablePersistent("null", true);
-  pInstance->SetGlobalVariablePersistent("array", true);
+  EXPECT_TRUE(pInstance->SetGlobalVariablePersistent("double", true));
+  EXPECT_TRUE(pInstance->SetGlobalVariablePersistent("string", true));
+  EXPECT_TRUE(pInstance->SetGlobalVariablePersistent("boolean", true));
+  EXPECT_TRUE(pInstance->SetGlobalVariablePersistent("null", true));
+  EXPECT_TRUE(pInstance->SetGlobalVariablePersistent("array", true));
   ASSERT_TRUE(pInstance->Release());
 
   pInstance = CFX_GlobalData::GetRetainedInstance(&delegate);
@@ -148,19 +148,19 @@ TEST(CFXGlobalData, DeleteValues) {
   pInstance->SetGlobalVariableNull("null");
   EXPECT_EQ(4, pInstance->GetSize());
 
-  pInstance->DeleteGlobalVariable("nonesuch");
+  EXPECT_FALSE(pInstance->DeleteGlobalVariable("nonesuch"));
   EXPECT_EQ(4, pInstance->GetSize());
 
-  pInstance->DeleteGlobalVariable("boolean");
+  EXPECT_TRUE(pInstance->DeleteGlobalVariable("boolean"));
   EXPECT_EQ(3, pInstance->GetSize());
 
-  pInstance->DeleteGlobalVariable("string");
+  EXPECT_TRUE(pInstance->DeleteGlobalVariable("string"));
   EXPECT_EQ(2, pInstance->GetSize());
 
-  pInstance->DeleteGlobalVariable("double");
+  EXPECT_TRUE(pInstance->DeleteGlobalVariable("double"));
   EXPECT_EQ(1, pInstance->GetSize());
 
-  pInstance->DeleteGlobalVariable("null");
+  EXPECT_TRUE(pInstance->DeleteGlobalVariable("null"));
   EXPECT_EQ(0, pInstance->GetSize());
 
   ASSERT_TRUE(pInstance->Release());

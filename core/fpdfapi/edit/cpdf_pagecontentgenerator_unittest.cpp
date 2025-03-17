@@ -418,7 +418,7 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessEmptyForm) {
   // The generated stream for the empty form should be an empty string.
   CPDF_PageContentGenerator generator(pTestForm.get());
   fxcrt::ostringstream buf;
-  generator.ProcessPageObjects(&buf);
+  EXPECT_FALSE(generator.ProcessPageObjects(&buf));
   EXPECT_EQ("", ByteString(buf));
 }
 
@@ -440,7 +440,7 @@ TEST_F(CPDFPageContentGeneratorTest, ProcessFormWithPath) {
 
   CPDF_PageContentGenerator generator(pTestForm.get());
   fxcrt::ostringstream process_buf;
-  generator.ProcessPageObjects(&process_buf);
+  ASSERT_TRUE(generator.ProcessPageObjects(&process_buf));
   EXPECT_EQ(
       "q 3.102 4.6700001 m 5.4500012 .28999999 l 4.2399998 3.14"
       "99999 4.6500001 2.98 3.4560001 .23999999 c 3.102 4.6700001 l h f Q\n",

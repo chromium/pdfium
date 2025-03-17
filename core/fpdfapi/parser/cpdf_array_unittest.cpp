@@ -148,8 +148,8 @@ TEST(ArrayTest, Clone) {
         auto obj = pdfium::MakeRetain<CPDF_Number>(elems[i][j]);
         // Starts object number from 1.
         int obj_num = i * kNumOfColumns + j + 1;
-        obj_holder->ReplaceIndirectObjectIfHigherGeneration(obj_num,
-                                                            std::move(obj));
+        ASSERT_TRUE(obj_holder->ReplaceIndirectObjectIfHigherGeneration(
+            obj_num, std::move(obj)));
         arr_elem->InsertNewAt<CPDF_Reference>(j, obj_holder.get(), obj_num);
       }
       arr->InsertAt(i, std::move(arr_elem));
