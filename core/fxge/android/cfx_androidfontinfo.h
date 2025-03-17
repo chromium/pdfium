@@ -24,7 +24,7 @@ class CFX_AndroidFontInfo final : public SystemFontInfoIface {
   bool Init(CFPF_SkiaFontMgr* pFontMgr, const char** user_paths);
 
   // SystemFontInfoIface:
-  bool EnumFontList(CFX_FontMapper* pMapper) override;
+  void EnumFontList(CFX_FontMapper* pMapper) override;
   void* MapFont(int weight,
                 bool bItalic,
                 FX_Charset charset,

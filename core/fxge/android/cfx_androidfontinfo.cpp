@@ -27,9 +27,7 @@ bool CFX_AndroidFontInfo::Init(CFPF_SkiaFontMgr* pFontMgr,
   return true;
 }
 
-bool CFX_AndroidFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
-  return false;
-}
+void CFX_AndroidFontInfo::EnumFontList(CFX_FontMapper* pMapper) {}
 
 void* CFX_AndroidFontInfo::MapFont(int weight,
                                    bool bItalic,

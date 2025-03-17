@@ -31,7 +31,7 @@ class CFX_FolderFontInfo : public SystemFontInfoIface {
   void AddPath(const ByteString& path);
 
   // SystemFontInfoIface:
-  bool EnumFontList(CFX_FontMapper* pMapper) override;
+  void EnumFontList(CFX_FontMapper* pMapper) override;
   void* MapFont(int weight,
                 bool bItalic,
                 FX_Charset charset,

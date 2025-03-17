@@ -146,11 +146,11 @@ void CFX_FolderFontInfo::AddPath(const ByteString& path) {
   m_PathList.push_back(path);
 }
 
-bool CFX_FolderFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
+void CFX_FolderFontInfo::EnumFontList(CFX_FontMapper* pMapper) {
   m_pMapper = pMapper;
-  for (const auto& path : m_PathList)
+  for (const auto& path : m_PathList) {
     ScanPath(path);
-  return true;
+  }
 }
 
 void CFX_FolderFontInfo::ScanPath(const ByteString& path) {

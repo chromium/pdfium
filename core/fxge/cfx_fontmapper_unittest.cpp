@@ -28,7 +28,7 @@ class MockSystemFontInfo : public SystemFontInfoIface {
   ~MockSystemFontInfo() override = default;
 
   // SystemFontInfoIface:
-  MOCK_METHOD(bool, EnumFontList, (CFX_FontMapper*), (override));
+  MOCK_METHOD(void, EnumFontList, (CFX_FontMapper*), (override));
   MOCK_METHOD(void*,
               MapFont,
               (int, bool, FX_Charset, int, const ByteString&),

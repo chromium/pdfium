@@ -48,7 +48,7 @@ TEST(FXFontTest, ReadFontNameFromMicrosoftEntries) {
 
     font_mapper.SetSystemFontInfo(
         CFX_GEModule::Get()->GetPlatform()->CreateDefaultSystemFontInfo());
-    ASSERT_TRUE(folder_font_info.EnumFontList(&font_mapper));
+    folder_font_info.EnumFontList(&font_mapper);
   }
 
   ASSERT_EQ(1u, font_mapper.GetFaceSize());

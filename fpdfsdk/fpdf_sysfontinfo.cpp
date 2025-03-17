@@ -72,12 +72,10 @@ class CFX_ExternalFontInfo final : public SystemFontInfoIface {
       m_pInfo->Release(m_pInfo);
   }
 
-  bool EnumFontList(CFX_FontMapper* pMapper) override {
+  void EnumFontList(CFX_FontMapper* pMapper) override {
     if (m_pInfo->EnumFonts) {
       m_pInfo->EnumFonts(m_pInfo, pMapper);
-      return true;
     }
-    return false;
   }
 
   void* MapFont(int weight,
