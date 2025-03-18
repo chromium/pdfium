@@ -659,18 +659,17 @@ CPVT_WordPlace CPVT_VariableText::NextLineHeaderPlace(
   return place;
 }
 
-bool CPVT_VariableText::ClearEmptySection(const CPVT_WordPlace& place) {
+void CPVT_VariableText::ClearEmptySection(const CPVT_WordPlace& place) {
   if (place.nSecIndex == 0 && m_SectionArray.size() == 1)
-    return false;
+    return;
 
   if (!fxcrt::IndexInBounds(m_SectionArray, place.nSecIndex))
-    return false;
+    return;
 
   if (m_SectionArray[place.nSecIndex]->GetWordArraySize() != 0)
-    return false;
+    return;
 
   m_SectionArray.erase(m_SectionArray.begin() + place.nSecIndex);
-  return true;
 }
 
 void CPVT_VariableText::ClearEmptySections(const CPVT_WordRange& PlaceRange) {

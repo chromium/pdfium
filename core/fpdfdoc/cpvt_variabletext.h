@@ -172,7 +172,7 @@ class CPVT_VariableText {
 
   void ClearSectionRightWords(const CPVT_WordPlace& place);
 
-  bool ClearEmptySection(const CPVT_WordPlace& place);
+  void ClearEmptySection(const CPVT_WordPlace& place);
   void ClearEmptySections(const CPVT_WordRange& PlaceRange);
   void LinkLatterSection(const CPVT_WordPlace& place);
   void ClearWords(const CPVT_WordRange& PlaceRange);
