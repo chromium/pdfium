@@ -167,7 +167,7 @@ RetainPtr<const CPDF_Dictionary> CPDF_FormField::GetFieldDict() const {
   return pdfium::WrapRetain(GetFieldDictInternal());
 }
 
-bool CPDF_FormField::ResetField() {
+void CPDF_FormField::ResetField() {
   switch (m_Type) {
     case kCheckBox:
     case kRadioButton: {
@@ -189,7 +189,7 @@ bool CPDF_FormField::ResetField() {
       if (iIndex >= 0)
         csValue = GetOptionLabel(iIndex);
       if (!NotifyListOrComboBoxBeforeChange(csValue)) {
-        return false;
+        return;
       }
       SetItemSelection(iIndex, NotificationOption::kDoNotNotify);
       NotifyListOrComboBoxAfterChange();
@@ -215,10 +215,10 @@ bool CPDF_FormField::ResetField() {
 
       bool bHasRV = !!GetFieldAttrInternal(pdfium::form_fields::kRV);
       if (!bHasRV && (csDValue == csValue))
-        return false;
+        return;
 
       if (!m_pForm->NotifyBeforeValueChange(this, csDValue))
-        return false;
+        return;
 
       {
         // Limit scope of |pDV| because it may get invalidated during
@@ -227,7 +227,7 @@ bool CPDF_FormField::ResetField() {
         if (pDV) {
           RetainPtr<CPDF_Object> pClone = pDV->Clone();
           if (!pClone)
-            return false;
+            return;
 
           m_pDict->SetFor(pdfium::form_fields::kV, std::move(pClone));
           if (bHasRV) {
@@ -242,7 +242,6 @@ bool CPDF_FormField::ResetField() {
       break;
     }
   }
-  return true;
 }
 
 int CPDF_FormField::CountControls() const {
@@ -518,15 +517,15 @@ bool CPDF_FormField::IsItemSelected(int index) const {
                                : IsSelectedOption(GetOptionValue(index));
 }
 
-bool CPDF_FormField::SetItemSelection(int index, NotificationOption notify) {
+void CPDF_FormField::SetItemSelection(int index, NotificationOption notify) {
   CHECK(IsComboOrListField(GetType()));
   if (index < 0 || index >= CountOptions()) {
-    return false;
+    return;
   }
   WideString opt_value = GetOptionValue(index);
   if (notify == NotificationOption::kNotify &&
       !NotifyListOrComboBoxBeforeChange(opt_value)) {
-    return false;
+    return;
   }
 
   SetItemSelectionSelected(index, opt_value);
@@ -538,7 +537,6 @@ bool CPDF_FormField::SetItemSelection(int index, NotificationOption notify) {
 
   if (notify == NotificationOption::kNotify)
     NotifyListOrComboBoxAfterChange();
-  return true;
 }
 
 void CPDF_FormField::SetItemSelectionSelected(int index,
@@ -635,16 +633,17 @@ int CPDF_FormField::FindOption(const WideString& csOptValue) const {
   return -1;
 }
 
-bool CPDF_FormField::CheckControl(int iControlIndex,
+void CPDF_FormField::CheckControl(int iControlIndex,
                                   bool bChecked,
                                   NotificationOption notify) {
   DCHECK(GetType() == kCheckBox || GetType() == kRadioButton);
   CPDF_FormControl* pControl = GetControl(iControlIndex);
-  if (!pControl)
-    return false;
-  if (!bChecked && pControl->IsChecked() == bChecked)
-    return false;
-
+  if (!pControl) {
+    return;
+  }
+  if (!bChecked && pControl->IsChecked() == bChecked) {
+    return;
+  }
   const WideString csWExport = pControl->GetExportValue();
   int iCount = CountControls();
   for (int i = 0; i < iCount; i++) {
@@ -686,7 +685,6 @@ bool CPDF_FormField::CheckControl(int iControlIndex,
   }
   if (notify == NotificationOption::kNotify)
     m_pForm->NotifyAfterCheckedStatusChange(this);
-  return true;
 }
 
 WideString CPDF_FormField::GetCheckValue(bool bDefault) const {

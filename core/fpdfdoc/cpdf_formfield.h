@@ -86,7 +86,7 @@ class CPDF_FormField {
 
   RetainPtr<const CPDF_Object> GetFieldAttr(const ByteString& name) const;
   RetainPtr<const CPDF_Dictionary> GetFieldDict() const;
-  bool ResetField();
+  void ResetField();
 
   int CountControls() const;
   CPDF_FormControl* GetControl(int index) const;
@@ -114,7 +114,7 @@ class CPDF_FormField {
 
   bool ClearSelection(NotificationOption notify);
   bool IsItemSelected(int index) const;
-  bool SetItemSelection(int index, NotificationOption notify);
+  void SetItemSelection(int index, NotificationOption notify);
 
   int GetDefaultSelectedItem() const;
 
@@ -126,7 +126,7 @@ class CPDF_FormField {
   WideString GetOptionValue(int index) const;
   int FindOption(const WideString& csOptValue) const;
 
-  bool CheckControl(int iControlIndex,
+  void CheckControl(int iControlIndex,
                     bool bChecked,
                     NotificationOption notify);
 
