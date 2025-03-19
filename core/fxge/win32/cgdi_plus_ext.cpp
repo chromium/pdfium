@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "core/fxcrt/check_op.h"
+#include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
 #include "core/fxcrt/fx_memory.h"
 #include "core/fxcrt/fx_string.h"
@@ -491,7 +492,7 @@ class GpStream final : public IStream {
     if (!pStatstg)
       return STG_E_INVALIDFUNCTION;
 
-    ZeroMemory(pStatstg, sizeof(STATSTG));
+    UNSAFE_TODO(ZeroMemory(pStatstg, sizeof(STATSTG)));
 
     if (m_InterStream.tellp() < 0)
       return STG_E_SEEKERROR;

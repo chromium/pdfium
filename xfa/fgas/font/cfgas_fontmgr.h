@@ -49,7 +49,7 @@ inline bool operator==(const FX_FONTDESCRIPTOR& left,
   return left.uCharSet == right.uCharSet &&
          left.dwFontStyles == right.dwFontStyles &&
          left.FontSignature == right.FontSignature &&
-         wcscmp(left.wsFontFace, right.wsFontFace) == 0;
+         UNSAFE_TODO(wcscmp(left.wsFontFace, right.wsFontFace)) == 0;
 }
 
 #else  // BUILDFLAG(IS_WIN)

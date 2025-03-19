@@ -57,8 +57,10 @@ int CALLBACK EnumFontFamExProc(ENUMLOGFONTEXA* lpelfe,
                                NEWTEXTMETRICEX* lpntme,
                                DWORD FontType,
                                LPARAM lParam) {
-  if (FontType != 0x004 || strchr(lpelfe->elfLogFont.lfFaceName, '@'))
+  if (FontType != 0x004 ||
+      UNSAFE_TODO(strchr(lpelfe->elfLogFont.lfFaceName, '@'))) {
     return 1;
+  }
 
   PDF_FONTDATA* pData = (PDF_FONTDATA*)lParam;
   pData->lf = lpelfe->elfLogFont;
@@ -76,7 +78,7 @@ bool RetrieveSpecificFont(FX_Charset charSet,
   if (pcsFontName) {
     // TODO(dsinclair): Should this be strncpy?
     // NOLINTNEXTLINE(runtime/printf)
-    strcpy(lf.lfFaceName, pcsFontName);
+    UNSAFE_TODO(strcpy(lf.lfFaceName, pcsFontName));
   }
 
   PDF_FONTDATA fd = {};  // Aggregate initialization, not construction.

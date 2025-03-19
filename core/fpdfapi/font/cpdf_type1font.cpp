@@ -248,7 +248,8 @@ void CPDF_Type1Font::LoadGlyphMap() {
       if (m_GlyphIndex[charcode] != 0)
         continue;
 
-      if (strcmp(name, ".notdef") != 0 && strcmp(name, "space") != 0) {
+      if (UNSAFE_TODO(strcmp(name, ".notdef")) != 0 &&
+          UNSAFE_TODO(strcmp(name, "space")) != 0) {
         m_GlyphIndex[charcode] = face->GetCharIndex(
             bUnicode ? m_Encoding.UnicodeFromCharCode(charcode) : charcode);
         CalcExtGID(charcode);
