@@ -147,7 +147,7 @@ class CFX_DIBitmap final : public CFX_DIBBase {
                      int height,
                      uint32_t color);
 
-  bool ConvertColorScale(uint32_t forecolor, uint32_t backcolor);
+  void ConvertColorScale(uint32_t forecolor, uint32_t backcolor);
 
   // |width| and |height| must be greater than 0.
   // |format| must have a valid bits per pixel count.

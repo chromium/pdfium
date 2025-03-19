@@ -508,12 +508,10 @@ void CFX_DIBitmap::ConvertBGRColorScale(uint32_t forecolor,
   }
 }
 
-bool CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
-  if (!m_pBuffer || IsMaskFormat())
-    return false;
-
-  ConvertBGRColorScale(forecolor, backcolor);
-  return true;
+void CFX_DIBitmap::ConvertColorScale(uint32_t forecolor, uint32_t backcolor) {
+  if (m_pBuffer && !IsMaskFormat()) {
+    ConvertBGRColorScale(forecolor, backcolor);
+  }
 }
 
 // static
