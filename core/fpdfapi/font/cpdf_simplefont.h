@@ -32,6 +32,9 @@ class CPDF_SimpleFont : public CPDF_Font {
 
   bool HasFontWidths() const override;
 
+  static constexpr char kNotDef[] = ".notdef";
+  static constexpr char kSpace[] = "space";
+
  protected:
   static constexpr size_t kInternalTableSize = 256;
 
