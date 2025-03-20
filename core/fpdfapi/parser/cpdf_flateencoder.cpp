@@ -6,6 +6,8 @@
 
 #include "core/fpdfapi/parser/cpdf_flateencoder.h"
 
+#include <variant>
+
 #include "constants/stream_dict_common.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
 #include "core/fpdfapi/parser/cpdf_name.h"
@@ -80,6 +82,6 @@ const CPDF_Dictionary* CPDF_FlateEncoder::GetDict() const {
 
 pdfium::span<const uint8_t> CPDF_FlateEncoder::GetSpan() const {
   if (is_owned())
-    return absl::get<DataVector<uint8_t>>(m_Data);
-  return absl::get<pdfium::raw_span<const uint8_t>>(m_Data);
+    return std::get<DataVector<uint8_t>>(m_Data);
+  return std::get<pdfium::raw_span<const uint8_t>>(m_Data);
 }

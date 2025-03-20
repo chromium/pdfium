@@ -11,12 +11,12 @@
 
 #include <memory>
 #include <set>
+#include <variant>
 
 #include "core/fpdfapi/parser/cpdf_object.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/fx_string_wrappers.h"
 #include "core/fxcrt/retain_ptr.h"
-#include "third_party/abseil-cpp/absl/types/variant.h"
 
 class IFX_SeekableReadStream;
 
@@ -57,10 +57,10 @@ class CPDF_Stream final : public CPDF_Object {
   DataVector<uint8_t> ReadAllRawData() const;
 
   bool IsFileBased() const {
-    return absl::holds_alternative<RetainPtr<IFX_SeekableReadStream>>(data_);
+    return std::holds_alternative<RetainPtr<IFX_SeekableReadStream>>(data_);
   }
   bool IsMemoryBased() const {
-    return absl::holds_alternative<DataVector<uint8_t>>(data_);
+    return std::holds_alternative<DataVector<uint8_t>>(data_);
   }
   bool HasFilter() const;
 
@@ -93,7 +93,7 @@ class CPDF_Stream final : public CPDF_Object {
 
   void SetLengthInDict(int length);
 
-  absl::variant<RetainPtr<IFX_SeekableReadStream>, DataVector<uint8_t>> data_;
+  std::variant<RetainPtr<IFX_SeekableReadStream>, DataVector<uint8_t>> data_;
   RetainPtr<CPDF_Dictionary> dict_;
 };
 

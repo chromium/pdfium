@@ -8,6 +8,7 @@
 
 #include <optional>
 #include <utility>
+#include <variant>
 
 #include "core/fpdfapi/page/cpdf_patterncs.h"
 #include "core/fxcrt/check.h"
@@ -22,7 +23,7 @@ CPDF_Color::CPDF_Color(const CPDF_Color& that) {
 CPDF_Color::~CPDF_Color() = default;
 
 bool CPDF_Color::IsNull() const {
-  return absl::holds_alternative<absl::monostate>(color_data_);
+  return std::holds_alternative<std::monostate>(color_data_);
 }
 
 bool CPDF_Color::IsPattern() const {
@@ -59,7 +60,7 @@ void CPDF_Color::SetValueForPattern(RetainPtr<CPDF_Pattern> pattern,
         CPDF_ColorSpace::GetStockCS(CPDF_ColorSpace::Family::kPattern));
   }
 
-  auto& pattern_value = absl::get<std::unique_ptr<PatternValue>>(color_data_);
+  auto& pattern_value = std::get<std::unique_ptr<PatternValue>>(color_data_);
   pattern_value->SetPattern(std::move(pattern));
   pattern_value->SetComps(values);
 }
@@ -71,15 +72,15 @@ CPDF_Color& CPDF_Color::operator=(const CPDF_Color& that) {
 
   cs_ = that.cs_;
 
-  if (absl::holds_alternative<std::vector<float>>(that.color_data_)) {
-    color_data_ = absl::get<std::vector<float>>(that.color_data_);
-  } else if (absl::holds_alternative<std::unique_ptr<PatternValue>>(
+  if (std::holds_alternative<std::vector<float>>(that.color_data_)) {
+    color_data_ = std::get<std::vector<float>>(that.color_data_);
+  } else if (std::holds_alternative<std::unique_ptr<PatternValue>>(
                  that.color_data_)) {
     auto& pattern_value =
-        absl::get<std::unique_ptr<PatternValue>>(that.color_data_);
+        std::get<std::unique_ptr<PatternValue>>(that.color_data_);
     color_data_ = std::make_unique<PatternValue>(*pattern_value);
   } else {
-    color_data_ = absl::monostate();
+    color_data_ = std::monostate();
   }
 
   return *this;
@@ -114,14 +115,14 @@ std::optional<FX_COLORREF> CPDF_Color::GetColorRef() const {
 
 std::optional<FX_RGB_STRUCT<float>> CPDF_Color::GetRGB() const {
   if (IsPatternInternal()) {
-    if (absl::holds_alternative<std::unique_ptr<PatternValue>>(color_data_)) {
+    if (std::holds_alternative<std::unique_ptr<PatternValue>>(color_data_)) {
       const auto& pattern_value =
-          absl::get<std::unique_ptr<PatternValue>>(color_data_);
+          std::get<std::unique_ptr<PatternValue>>(color_data_);
       return cs_->AsPatternCS()->GetPatternRGB(*pattern_value);
     }
   } else {
-    if (absl::holds_alternative<std::vector<float>>(color_data_)) {
-      const auto& buffer = absl::get<std::vector<float>>(color_data_);
+    if (std::holds_alternative<std::vector<float>>(color_data_)) {
+      const auto& buffer = std::get<std::vector<float>>(color_data_);
       return cs_->GetRGB(buffer);
     }
   }
@@ -132,6 +133,6 @@ RetainPtr<CPDF_Pattern> CPDF_Color::GetPattern() const {
   DCHECK(IsPattern());
 
   const auto& pattern_value =
-      absl::get<std::unique_ptr<PatternValue>>(color_data_);
+      std::get<std::unique_ptr<PatternValue>>(color_data_);
   return pattern_value->GetPattern();
 }

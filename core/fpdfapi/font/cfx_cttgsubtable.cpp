@@ -9,6 +9,7 @@
 #include <stdint.h>
 
 #include <utility>
+#include <variant>
 
 #include "core/fxcrt/byteorder.h"
 #include "core/fxcrt/data_vector.h"
@@ -100,17 +101,17 @@ std::optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub2(
     const Lookup& lookup,
     uint32_t glyphnum) const {
   for (const auto& sub_table : lookup.sub_tables) {
-    if (absl::holds_alternative<absl::monostate>(sub_table.table_data)) {
+    if (std::holds_alternative<std::monostate>(sub_table.table_data)) {
       continue;
     }
     int index = GetCoverageIndex(sub_table.coverage, glyphnum);
-    if (absl::holds_alternative<int16_t>(sub_table.table_data)) {
+    if (std::holds_alternative<int16_t>(sub_table.table_data)) {
       if (index >= 0) {
-        return glyphnum + absl::get<int16_t>(sub_table.table_data);
+        return glyphnum + std::get<int16_t>(sub_table.table_data);
       }
     } else {
       const auto& substitutes =
-          absl::get<DataVector<uint16_t>>(sub_table.table_data);
+          std::get<DataVector<uint16_t>>(sub_table.table_data);
       if (fxcrt::IndexInBounds(substitutes, index)) {
         return substitutes[index];
       }
@@ -121,13 +122,13 @@ std::optional<uint32_t> CFX_CTTGSUBTable::GetVerticalGlyphSub2(
 
 int CFX_CTTGSUBTable::GetCoverageIndex(const CoverageFormat& coverage,
                                        uint32_t g) const {
-  if (absl::holds_alternative<absl::monostate>(coverage)) {
+  if (std::holds_alternative<std::monostate>(coverage)) {
     return -1;
   }
 
-  if (absl::holds_alternative<DataVector<uint16_t>>(coverage)) {
+  if (std::holds_alternative<DataVector<uint16_t>>(coverage)) {
     int i = 0;
-    const auto& glyph_array = absl::get<DataVector<uint16_t>>(coverage);
+    const auto& glyph_array = std::get<DataVector<uint16_t>>(coverage);
     for (const auto& glyph : glyph_array) {
       if (static_cast<uint32_t>(glyph) == g) {
         return i;
@@ -137,7 +138,7 @@ int CFX_CTTGSUBTable::GetCoverageIndex(const CoverageFormat& coverage,
     return -1;
   }
 
-  const auto& range_records = absl::get<std::vector<RangeRecord>>(coverage);
+  const auto& range_records = std::get<std::vector<RangeRecord>>(coverage);
   for (const auto& range_rec : range_records) {
     uint32_t s = range_rec.start;
     uint32_t e = range_rec.end;
@@ -272,7 +273,7 @@ CFX_CTTGSUBTable::CoverageFormat CFX_CTTGSUBTable::ParseCoverage(
   pdfium::span<const uint8_t> sp = raw;
   uint16_t format = GetUInt16(sp);
   if (format != 1 && format != 2) {
-    return absl::monostate();
+    return std::monostate();
   }
   if (format == 1) {
     DataVector<uint16_t> glyph_array(GetUInt16(sp));

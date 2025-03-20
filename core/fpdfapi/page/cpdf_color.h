@@ -11,12 +11,12 @@
 
 #include <memory>
 #include <optional>
+#include <variant>
 #include <vector>
 
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
 #include "core/fxge/dib/fx_dib.h"
-#include "third_party/abseil-cpp/absl/types/variant.h"
 
 class CPDF_ColorSpace;
 class CPDF_Pattern;
@@ -53,9 +53,9 @@ class CPDF_Color {
  protected:
   bool IsPatternInternal() const;
 
-  absl::variant<absl::monostate,
-                std::vector<float>,  // Used for non-pattern colorspaces.
-                std::unique_ptr<PatternValue>>  // Used for pattern colorspaces.
+  std::variant<std::monostate,
+               std::vector<float>,  // Used for non-pattern colorspaces.
+               std::unique_ptr<PatternValue>>  // Used for pattern colorspaces.
       color_data_;
   RetainPtr<CPDF_ColorSpace> cs_;
 };

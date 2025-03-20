@@ -9,8 +9,9 @@
 
 #include <stdint.h>
 
+#include <variant>
+
 #include "core/fxcrt/bytestring.h"
-#include "third_party/abseil-cpp/absl/types/variant.h"
 
 class FX_Number {
  public:
@@ -27,7 +28,7 @@ class FX_Number {
   float GetFloat() const;
 
  private:
-  absl::variant<uint32_t, int32_t, float> value_ = 0u;
+  std::variant<uint32_t, int32_t, float> value_ = 0u;
 };
 
 #endif  // CORE_FXCRT_FX_NUMBER_H_

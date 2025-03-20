@@ -10,6 +10,7 @@
 #include <numeric>
 #include <sstream>
 #include <utility>
+#include <variant>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_pageobject.h"
@@ -24,7 +25,6 @@
 #include "core/fxcrt/containers/adapters.h"
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
-#include "third_party/abseil-cpp/absl/types/variant.h"
 
 CPDF_PageContentManager::CPDF_PageContentManager(
     CPDF_PageObjectHolder* page_obj_holder,
@@ -237,15 +237,15 @@ void CPDF_PageContentManager::ExecuteScheduledRemovals() {
 }
 
 RetainPtr<CPDF_Stream> CPDF_PageContentManager::GetContentsStream() {
-  if (absl::holds_alternative<RetainPtr<CPDF_Stream>>(contents_)) {
-    return absl::get<RetainPtr<CPDF_Stream>>(contents_);
+  if (std::holds_alternative<RetainPtr<CPDF_Stream>>(contents_)) {
+    return std::get<RetainPtr<CPDF_Stream>>(contents_);
   }
   return nullptr;
 }
 
 RetainPtr<CPDF_Array> CPDF_PageContentManager::GetContentsArray() {
-  if (absl::holds_alternative<RetainPtr<CPDF_Array>>(contents_)) {
-    return absl::get<RetainPtr<CPDF_Array>>(contents_);
+  if (std::holds_alternative<RetainPtr<CPDF_Array>>(contents_)) {
+    return std::get<RetainPtr<CPDF_Array>>(contents_);
   }
   return nullptr;
 }

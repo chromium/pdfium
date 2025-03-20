@@ -7,9 +7,9 @@
 
 #include <memory>
 #include <utility>
+#include <variant>
 
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/abseil-cpp/absl/types/variant.h"
 
 namespace fxcrt {
 
@@ -39,7 +39,7 @@ class MaybeOwned {
   void Reset(T* ptr = nullptr) { ptr_ = UnownedType(ptr); }
   void Reset(OwnedType ptr) { ptr_ = std::move(ptr); }
 
-  bool IsOwned() const { return absl::holds_alternative<OwnedType>(ptr_); }
+  bool IsOwned() const { return std::holds_alternative<OwnedType>(ptr_); }
 
   // Helpful for untangling a collection of intertwined MaybeOwned<>.
   void ResetIfUnowned() {
@@ -48,24 +48,24 @@ class MaybeOwned {
   }
 
   T* Get() const& {
-    return absl::visit([](const auto& obj) { return obj.get(); }, ptr_);
+    return std::visit([](const auto& obj) { return obj.get(); }, ptr_);
   }
   T* Get() && {
     auto local_variable_preventing_move_elision = std::move(ptr_);
-    return absl::visit([](const auto& obj) { return obj.get(); },
-                       local_variable_preventing_move_elision);
+    return std::visit([](const auto& obj) { return obj.get(); },
+                      local_variable_preventing_move_elision);
   }
 
   // Downgrades to unowned, caller takes ownership.
   OwnedType Release() {
-    auto result = std::move(absl::get<OwnedType>(ptr_));
+    auto result = std::move(std::get<OwnedType>(ptr_));
     ptr_ = UnownedType(result.get());
     return result;
   }
 
   // Downgrades to empty, caller takes ownership.
   OwnedType ReleaseAndClear() {
-    auto result = std::move(absl::get<OwnedType>(ptr_));
+    auto result = std::move(std::get<OwnedType>(ptr_));
     ptr_ = UnownedType();
     return result;
   }
@@ -96,7 +96,7 @@ class MaybeOwned {
   T* operator->() const { return Get(); }
 
  private:
-  absl::variant<UnownedType, OwnedType> ptr_;
+  std::variant<UnownedType, OwnedType> ptr_;
 };
 
 }  // namespace fxcrt

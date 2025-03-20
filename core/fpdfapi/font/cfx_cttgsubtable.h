@@ -11,11 +11,11 @@
 
 #include <optional>
 #include <set>
+#include <variant>
 #include <vector>
 
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/span.h"
-#include "third_party/abseil-cpp/absl/types/variant.h"
 
 class CFX_CTTGSUBTable {
  public:
@@ -46,8 +46,8 @@ class CFX_CTTGSUBTable {
 
   // GlyphArray for format 1.
   // RangeRecords for format 2.
-  using CoverageFormat = absl::
-      variant<absl::monostate, DataVector<uint16_t>, std::vector<RangeRecord>>;
+  using CoverageFormat = std::
+      variant<std::monostate, DataVector<uint16_t>, std::vector<RangeRecord>>;
 
   struct SubTable {
     SubTable();
@@ -60,7 +60,7 @@ class CFX_CTTGSUBTable {
     CoverageFormat coverage;
     // DeltaGlyphID for format 1.
     // Substitutes for format 2.
-    absl::variant<absl::monostate, int16_t, DataVector<uint16_t>> table_data;
+    std::variant<std::monostate, int16_t, DataVector<uint16_t>> table_data;
   };
 
   struct Lookup {

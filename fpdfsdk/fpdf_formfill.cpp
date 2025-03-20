@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <utility>
+#include <variant>
 
 #include "constants/form_fields.h"
 #include "core/fpdfapi/page/cpdf_annotcontext.h"
@@ -28,7 +29,6 @@
 #include "fpdfsdk/cpdfsdk_interactiveform.h"
 #include "fpdfsdk/cpdfsdk_pageview.h"
 #include "public/fpdfview.h"
-#include "third_party/abseil-cpp/absl/types/variant.h"
 
 #ifdef PDF_ENABLE_XFA
 #include "fpdfsdk/fpdfxfa/cpdfxfa_context.h"
@@ -178,9 +178,9 @@ CPDFSDK_PageView* FormHandleToPageView(FPDF_FORMHANDLE hHandle,
 }
 
 #if defined(PDF_USE_SKIA)
-using BitmapOrCanvas = absl::variant<CFX_DIBitmap*, SkCanvas*>;
+using BitmapOrCanvas = std::variant<CFX_DIBitmap*, SkCanvas*>;
 #else
-using BitmapOrCanvas = absl::variant<CFX_DIBitmap*>;
+using BitmapOrCanvas = std::variant<CFX_DIBitmap*>;
 #endif
 
 // `dest` must be non-null.
@@ -207,9 +207,9 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
   SkCanvas* canvas = nullptr;
 #endif
 
-  const bool dest_is_bitmap = absl::holds_alternative<CFX_DIBitmap*>(dest);
+  const bool dest_is_bitmap = std::holds_alternative<CFX_DIBitmap*>(dest);
   if (dest_is_bitmap) {
-    holder.Reset(absl::get<CFX_DIBitmap*>(dest));
+    holder.Reset(std::get<CFX_DIBitmap*>(dest));
     CHECK(holder);
   } else {
 #if defined(PDF_USE_SKIA)
@@ -217,7 +217,7 @@ void FFLCommon(FPDF_FORMHANDLE hHandle,
       return;
     }
 
-    canvas = absl::get<SkCanvas*>(dest);
+    canvas = std::get<SkCanvas*>(dest);
     CHECK(canvas);
 #endif
   }

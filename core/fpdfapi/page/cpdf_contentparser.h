@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 #include <memory>
+#include <variant>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_form.h"
@@ -19,7 +20,6 @@
 #include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/unowned_ptr.h"
-#include "third_party/abseil-cpp/absl/types/variant.h"
 
 class CPDF_AllStates;
 class CPDF_Array;
@@ -65,7 +65,7 @@ class CPDF_ContentParser {
   void HandlePageContentFailure();
 
   bool is_owned() const {
-    return absl::holds_alternative<FixedSizeDataVector<uint8_t>>(m_Data);
+    return std::holds_alternative<FixedSizeDataVector<uint8_t>>(m_Data);
   }
   pdfium::span<const uint8_t> GetData() const;
 
@@ -75,7 +75,7 @@ class CPDF_ContentParser {
   RetainPtr<CPDF_StreamAcc> m_pSingleStream;
   std::vector<RetainPtr<CPDF_StreamAcc>> m_StreamArray;
   std::vector<uint32_t> m_StreamSegmentOffsets;
-  absl::variant<pdfium::raw_span<const uint8_t>, FixedSizeDataVector<uint8_t>>
+  std::variant<pdfium::raw_span<const uint8_t>, FixedSizeDataVector<uint8_t>>
       m_Data;
   uint32_t m_nStreams = 0;
   uint32_t m_CurrentOffset = 0;

@@ -7,6 +7,7 @@
 #include "core/fxcrt/fx_number.h"
 
 #include <limits>
+#include <variant>
 
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
@@ -82,31 +83,31 @@ FX_Number::FX_Number(ByteStringView strc) {
 }
 
 bool FX_Number::IsInteger() const {
-  return absl::holds_alternative<uint32_t>(value_) ||
-         absl::holds_alternative<int32_t>(value_);
+  return std::holds_alternative<uint32_t>(value_) ||
+         std::holds_alternative<int32_t>(value_);
 }
 
 bool FX_Number::IsSigned() const {
-  return absl::holds_alternative<int32_t>(value_) ||
-         absl::holds_alternative<float>(value_);
+  return std::holds_alternative<int32_t>(value_) ||
+         std::holds_alternative<float>(value_);
 }
 
 int32_t FX_Number::GetSigned() const {
-  if (absl::holds_alternative<uint32_t>(value_)) {
-    return static_cast<int32_t>(absl::get<uint32_t>(value_));
+  if (std::holds_alternative<uint32_t>(value_)) {
+    return static_cast<int32_t>(std::get<uint32_t>(value_));
   }
-  if (absl::holds_alternative<int32_t>(value_)) {
-    return absl::get<int32_t>(value_);
+  if (std::holds_alternative<int32_t>(value_)) {
+    return std::get<int32_t>(value_);
   }
-  return pdfium::saturated_cast<int32_t>(absl::get<float>(value_));
+  return pdfium::saturated_cast<int32_t>(std::get<float>(value_));
 }
 
 float FX_Number::GetFloat() const {
-  if (absl::holds_alternative<uint32_t>(value_)) {
-    return static_cast<float>(absl::get<uint32_t>(value_));
+  if (std::holds_alternative<uint32_t>(value_)) {
+    return static_cast<float>(std::get<uint32_t>(value_));
   }
-  if (absl::holds_alternative<int32_t>(value_)) {
-    return static_cast<float>(absl::get<int32_t>(value_));
+  if (std::holds_alternative<int32_t>(value_)) {
+    return static_cast<float>(std::get<int32_t>(value_));
   }
-  return absl::get<float>(value_);
+  return std::get<float>(value_);
 }

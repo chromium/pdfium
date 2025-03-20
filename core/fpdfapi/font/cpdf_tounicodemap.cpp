@@ -8,6 +8,7 @@
 
 #include <set>
 #include <utility>
+#include <variant>
 
 #include "core/fpdfapi/font/cpdf_cid2unicodemap.h"
 #include "core/fpdfapi/font/cpdf_fontglobals.h"
@@ -17,7 +18,6 @@
 #include "core/fxcrt/containers/contains.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_safe_types.h"
-#include "third_party/abseil-cpp/absl/types/variant.h"
 
 namespace {
 
@@ -244,8 +244,8 @@ ByteStringView CPDF_ToUnicodeMap::HandleBeginBFRange(
     uint32_t low_code;
     std::vector<WideString> retcodes;
   };
-  using Range = absl::variant<CodeWordRange, MultimapSingleDestRange,
-                              MultimapMultiDestRange>;
+  using Range = std::variant<CodeWordRange, MultimapSingleDestRange,
+                             MultimapMultiDestRange>;
   std::vector<Range> ranges;
 
   const int raw_count = StringToInt(previous_word);
@@ -338,22 +338,22 @@ ByteStringView CPDF_ToUnicodeMap::HandleBeginBFRange(
 
   if (is_valid && ranges.size() == expected_count) {
     for (const auto& entry : ranges) {
-      if (absl::holds_alternative<CodeWordRange>(entry)) {
-        const auto& range = absl::get<CodeWordRange>(entry);
+      if (std::holds_alternative<CodeWordRange>(entry)) {
+        const auto& range = std::get<CodeWordRange>(entry);
         uint32_t code = range.low_code;
         for (const auto& code_word : range.code_words) {
           SetCode(code, StringToWideString(code_word));
           ++code;
         }
-      } else if (absl::holds_alternative<MultimapSingleDestRange>(entry)) {
-        const auto& range = absl::get<MultimapSingleDestRange>(entry);
+      } else if (std::holds_alternative<MultimapSingleDestRange>(entry)) {
+        const auto& range = std::get<MultimapSingleDestRange>(entry);
         uint32_t value = range.start_value;
         for (uint32_t code = range.low_code; code <= range.high_code; ++code) {
           InsertIntoMultimap(code, value++);
         }
       } else {
-        CHECK(absl::holds_alternative<MultimapMultiDestRange>(entry));
-        const auto& range = absl::get<MultimapMultiDestRange>(entry);
+        CHECK(std::holds_alternative<MultimapMultiDestRange>(entry));
+        const auto& range = std::get<MultimapMultiDestRange>(entry);
         uint32_t code = range.low_code;
         for (const auto& retcode : range.retcodes) {
           InsertIntoMultimap(code, GetMultiCharIndexIndicator());

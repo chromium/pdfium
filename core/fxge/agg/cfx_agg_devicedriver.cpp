@@ -29,7 +29,6 @@
 #include "core/fxge/cfx_path.h"
 #include "core/fxge/dib/cfx_dibitmap.h"
 #include "core/fxge/dib/cfx_imagestretcher.h"
-#include "third_party/abseil-cpp/absl/types/variant.h"
 
 // Ignore fallthrough warnings in agg23 headers.
 #if defined(__clang__)
@@ -443,12 +442,12 @@ class CFX_AggRenderer {
   }
 
   const FX_BGR_STRUCT<uint8_t>& GetBGR() const {
-    return absl::get<FX_BGR_STRUCT<uint8_t>>(m_ColorData);
+    return std::get<FX_BGR_STRUCT<uint8_t>>(m_ColorData);
   }
-  int GetGray() const { return absl::get<int>(m_ColorData); }
+  int GetGray() const { return std::get<int>(m_ColorData); }
 
   const int m_Alpha;
-  absl::variant<FX_BGR_STRUCT<uint8_t>, int> m_ColorData;
+  std::variant<FX_BGR_STRUCT<uint8_t>, int> m_ColorData;
   const uint32_t m_Color;
   const bool m_bFullCover;
   const bool m_bRgbByteOrder;

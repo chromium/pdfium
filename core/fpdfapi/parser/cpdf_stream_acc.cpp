@@ -7,6 +7,7 @@
 #include "core/fpdfapi/parser/cpdf_stream_acc.h"
 
 #include <utility>
+#include <variant>
 
 #include "core/fdrm/fx_crypt.h"
 #include "core/fpdfapi/parser/cpdf_dictionary.h"
@@ -74,7 +75,7 @@ uint32_t CPDF_StreamAcc::GetSize() const {
 
 pdfium::span<const uint8_t> CPDF_StreamAcc::GetSpan() const {
   if (is_owned())
-    return absl::get<DataVector<uint8_t>>(m_Data);
+    return std::get<DataVector<uint8_t>>(m_Data);
   if (m_pStream && m_pStream->IsMemoryBased())
     return m_pStream->GetInMemoryRawData();
   return {};
@@ -90,9 +91,9 @@ DataVector<uint8_t> CPDF_StreamAcc::ComputeDigest() const {
 
 DataVector<uint8_t> CPDF_StreamAcc::DetachData() {
   if (is_owned())
-    return std::move(absl::get<DataVector<uint8_t>>(m_Data));
+    return std::move(std::get<DataVector<uint8_t>>(m_Data));
 
-  auto span = absl::get<pdfium::raw_span<const uint8_t>>(m_Data);
+  auto span = std::get<pdfium::raw_span<const uint8_t>>(m_Data);
   return DataVector<uint8_t>(span.begin(), span.end());
 }
 
@@ -119,7 +120,7 @@ void CPDF_StreamAcc::ProcessFilteredData(uint32_t estimated_size,
   if (dwSrcSize == 0)
     return;
 
-  absl::variant<pdfium::raw_span<const uint8_t>, DataVector<uint8_t>> src_data;
+  std::variant<pdfium::raw_span<const uint8_t>, DataVector<uint8_t>> src_data;
   pdfium::span<const uint8_t> src_span;
   if (m_pStream->IsMemoryBased()) {
     src_span = m_pStream->GetInMemoryRawData();

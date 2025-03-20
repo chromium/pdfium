@@ -7,6 +7,7 @@
 #include "core/fpdfapi/page/cpdf_contentparser.h"
 
 #include <utility>
+#include <variant>
 
 #include "constants/page_object.h"
 #include "core/fpdfapi/font/cpdf_type3char.h"
@@ -279,7 +280,7 @@ void CPDF_ContentParser::HandlePageContentFailure() {
 
 pdfium::span<const uint8_t> CPDF_ContentParser::GetData() const {
   if (is_owned()) {
-    return absl::get<FixedSizeDataVector<uint8_t>>(m_Data).span();
+    return std::get<FixedSizeDataVector<uint8_t>>(m_Data).span();
   }
-  return absl::get<pdfium::raw_span<const uint8_t>>(m_Data);
+  return std::get<pdfium::raw_span<const uint8_t>>(m_Data);
 }

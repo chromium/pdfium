@@ -10,13 +10,13 @@
 #include <stdint.h>
 
 #include <memory>
+#include <variant>
 
 #include "core/fxcrt/bytestring.h"
 #include "core/fxcrt/data_vector.h"
 #include "core/fxcrt/raw_span.h"
 #include "core/fxcrt/retain_ptr.h"
 #include "core/fxcrt/span.h"
-#include "third_party/abseil-cpp/absl/types/variant.h"
 
 class CPDF_Dictionary;
 class CPDF_Stream;
@@ -57,14 +57,14 @@ class CPDF_StreamAcc final : public Retainable {
   DataVector<uint8_t> ReadRawStream() const;
 
   bool is_owned() const {
-    return absl::holds_alternative<DataVector<uint8_t>>(m_Data);
+    return std::holds_alternative<DataVector<uint8_t>>(m_Data);
   }
 
   ByteString m_ImageDecoder;
   RetainPtr<const CPDF_Dictionary> m_pImageParam;
   // Needs to outlive `m_Data` when the data is not owned.
   RetainPtr<const CPDF_Stream> const m_pStream;
-  absl::variant<pdfium::raw_span<const uint8_t>, DataVector<uint8_t>> m_Data;
+  std::variant<pdfium::raw_span<const uint8_t>, DataVector<uint8_t>> m_Data;
 };
 
 #endif  // CORE_FPDFAPI_PARSER_CPDF_STREAM_ACC_H_
