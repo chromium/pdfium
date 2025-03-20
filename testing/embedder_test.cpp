@@ -275,9 +275,10 @@ EmbedderTest::~EmbedderTest() = default;
 
 void EmbedderTest::SetUp() {
   UNSUPPORT_INFO* info = static_cast<UNSUPPORT_INFO*>(this);
-  FXSYS_memset(info, 0, sizeof(UNSUPPORT_INFO));
-  info->version = 1;
-  info->FSDK_UnSupport_Handler = UnsupportedHandlerTrampoline;
+  *info = {
+      .version = 1,
+      .FSDK_UnSupport_Handler = UnsupportedHandlerTrampoline,
+  };
   FSDK_SetUnSpObjProcessHandler(info);
 }
 
