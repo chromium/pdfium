@@ -97,6 +97,21 @@ _BANNED_CPP_FUNCTIONS = (
         True,
         [_THIRD_PARTY],
     ),
+    (
+        r'/absl::(bad_variant_access|get|holds_alternative|monostate|variant|'
+        r'visit)',
+        ('Abseil\'s variant library is banned, use std.',),
+        True,
+        [_THIRD_PARTY],
+    ),
+    (
+        r'/absl::(apply|exchange|forward|in_place|index_sequence|'
+        r'integer_sequence|make_from_tuple|make_index_sequence|'
+        r'make_integer_sequence|move)',
+        ('Abseil\'s util library is banned, use std.',),
+        True,
+        [_THIRD_PARTY],
+    ),
 )
 
 
