@@ -343,11 +343,11 @@ bool EmbedderTest::OpenDocumentWithOptions(const std::string& filename,
   EXPECT_TRUE(!loader_);
   loader_ = std::make_unique<TestLoader>(file_contents_);
 
-  FXSYS_memset(&file_access_, 0, sizeof(file_access_));
-  file_access_.m_FileLen =
-      pdfium::checked_cast<unsigned long>(file_contents_.size());
-  file_access_.m_GetBlock = TestLoader::GetBlock;
-  file_access_.m_Param = loader_.get();
+  file_access_ = {
+      .m_FileLen = pdfium::checked_cast<unsigned long>(file_contents_.size()),
+      .m_GetBlock = TestLoader::GetBlock,
+      .m_Param = loader_.get(),
+  };
 
   fake_file_access_ = std::make_unique<FakeFileAccess>(&file_access_);
   return OpenDocumentHelper(password, linearize_option, javascript_option,
@@ -428,7 +428,7 @@ void EmbedderTest::CloseDocument() {
   document_.reset();
   avail_.reset();
   fake_file_access_.reset();
-  FXSYS_memset(&file_access_, 0, sizeof(file_access_));
+  file_access_ = {};
   loader_.reset();
   file_contents_ = {};
 }
@@ -685,14 +685,13 @@ int EmbedderTest::BytesPerPixelForFormat(int format) {
 
 FPDF_DOCUMENT EmbedderTest::OpenSavedDocumentWithPassword(
     const char* password) {
-  FXSYS_memset(&saved_file_access_, 0, sizeof(saved_file_access_));
-  saved_file_access_.m_FileLen =
-      pdfium::checked_cast<unsigned long>(data_string_.size());
-  saved_file_access_.m_GetBlock = GetBlockFromString;
   // Copy data to prevent clearing it before saved document close.
   saved_document_file_data_ = data_string_;
-  saved_file_access_.m_Param = &saved_document_file_data_;
-
+  saved_file_access_ = {
+      .m_FileLen = pdfium::checked_cast<unsigned long>(data_string_.size()),
+      .m_GetBlock = GetBlockFromString,
+      .m_Param = &saved_document_file_data_,
+  };
   saved_fake_file_access_ =
       std::make_unique<FakeFileAccess>(&saved_file_access_);
 
