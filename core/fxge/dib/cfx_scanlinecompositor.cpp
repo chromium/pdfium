@@ -192,13 +192,13 @@ void CompositeRowBgra2Mask(pdfium::span<const FX_BGRA_STRUCT<uint8_t>> src_span,
 void CompositeRow_Rgb2Mask(pdfium::span<uint8_t> dest_span,
                            int width,
                            pdfium::span<const uint8_t> clip_span) {
+  if (clip_span.empty()) {
+    fxcrt::Fill(dest_span.first(width), 0xff);
+    return;
+  }
   uint8_t* dest_scan = dest_span.data();
   const uint8_t* clip_scan = clip_span.data();
   UNSAFE_TODO({
-    if (!clip_scan) {
-      FXSYS_memset(dest_scan, 0xff, width);
-      return;
-    }
     for (int i = 0; i < width; ++i) {
       *dest_scan = AlphaUnion(*dest_scan, *clip_scan);
       ++dest_scan;
