@@ -3210,7 +3210,7 @@ void CXFA_Node::CalcCaptionSize(CXFA_FFDoc* doc, CFX_SizeF* pszCap) {
   }
 }
 
-bool CXFA_Node::CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
+void CXFA_Node::CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
   CFX_SizeF szCap;
   CalcCaptionSize(doc, &szCap);
 
@@ -3239,10 +3239,10 @@ bool CXFA_Node::CalculateFieldAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
         break;
     }
   }
-  return CalculateWidgetAutoSize(pSize);
+  CalculateWidgetAutoSize(pSize);
 }
 
-bool CXFA_Node::CalculateWidgetAutoSize(CFX_SizeF* pSize) {
+void CXFA_Node::CalculateWidgetAutoSize(CFX_SizeF* pSize) {
   CXFA_Margin* margin = GetMarginIfExists();
   if (margin) {
     pSize->width += margin->GetLeftInset() + margin->GetRightInset();
@@ -3278,7 +3278,6 @@ bool CXFA_Node::CalculateWidgetAutoSize(CFX_SizeF* pSize) {
     if (max.has_value() && max.value() > 0)
       pSize->height = std::min(pSize->height, max.value());
   }
-  return true;
 }
 
 void CXFA_Node::CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
@@ -3311,7 +3310,7 @@ void CXFA_Node::CalculateTextContentSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
   layoutData->m_pTextOut->CalcLogicSize(wsText.AsStringView(), pSize);
 }
 
-bool CXFA_Node::CalculateTextEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
+void CXFA_Node::CalculateTextEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
   if (pSize->width > 0) {
     CFX_SizeF szOrz = *pSize;
     CFX_SizeF szCap;
@@ -3358,22 +3357,23 @@ bool CXFA_Node::CalculateTextEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
       }
     }
     pSize->width = szOrz.width;
-    return CalculateWidgetAutoSize(pSize);
+    CalculateWidgetAutoSize(pSize);
+    return;
   }
   CalculateTextContentSize(doc, pSize);
-  return CalculateFieldAutoSize(doc, pSize);
+  CalculateFieldAutoSize(doc, pSize);
 }
 
-bool CXFA_Node::CalculateCheckButtonAutoSize(CXFA_FFDoc* doc,
+void CXFA_Node::CalculateCheckButtonAutoSize(CXFA_FFDoc* doc,
                                              CFX_SizeF* pSize) {
   float fCheckSize = GetCheckButtonSize();
   *pSize = CFX_SizeF(fCheckSize, fCheckSize);
-  return CalculateFieldAutoSize(doc, pSize);
+  CalculateFieldAutoSize(doc, pSize);
 }
 
-bool CXFA_Node::CalculatePushButtonAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
+void CXFA_Node::CalculatePushButtonAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
   CalcCaptionSize(doc, pSize);
-  return CalculateWidgetAutoSize(pSize);
+  CalculateWidgetAutoSize(pSize);
 }
 
 CFX_SizeF CXFA_Node::CalculateImageSize(float img_width,
@@ -3402,32 +3402,30 @@ CFX_SizeF CXFA_Node::CalculateImageSize(float img_width,
   return rtFit.Size();
 }
 
-bool CXFA_Node::CalculateImageAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
+void CXFA_Node::CalculateImageAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
   if (!GetLayoutImage())
     LoadLayoutImage(doc);
 
   pSize->clear();
   RetainPtr<CFX_DIBitmap> pBitmap = GetLayoutImage();
-  if (!pBitmap)
-    return CalculateWidgetAutoSize(pSize);
-
-  *pSize = CalculateImageSize(pBitmap->GetWidth(), pBitmap->GetHeight(),
-                              GetLayoutImageDpi());
-  return CalculateWidgetAutoSize(pSize);
+  if (pBitmap) {
+    *pSize = CalculateImageSize(pBitmap->GetWidth(), pBitmap->GetHeight(),
+                                GetLayoutImageDpi());
+  }
+  CalculateWidgetAutoSize(pSize);
 }
 
-bool CXFA_Node::CalculateImageEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
-  if (!GetEditImage())
+void CXFA_Node::CalculateImageEditAutoSize(CXFA_FFDoc* doc, CFX_SizeF* pSize) {
+  if (!GetEditImage()) {
     LoadEditImage(doc);
-
+  }
   pSize->clear();
   RetainPtr<CFX_DIBitmap> pBitmap = GetEditImage();
-  if (!pBitmap)
-    return CalculateFieldAutoSize(doc, pSize);
-
-  *pSize = CalculateImageSize(pBitmap->GetWidth(), pBitmap->GetHeight(),
-                              GetEditImageDpi());
-  return CalculateFieldAutoSize(doc, pSize);
+  if (pBitmap) {
+    *pSize = CalculateImageSize(pBitmap->GetWidth(), pBitmap->GetHeight(),
+                                GetEditImageDpi());
+  }
+  CalculateFieldAutoSize(doc, pSize);
 }
 
 bool CXFA_Node::LoadLayoutImage(CXFA_FFDoc* doc) {
