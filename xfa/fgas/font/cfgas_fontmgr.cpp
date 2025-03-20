@@ -531,7 +531,8 @@ RetainPtr<CFX_Face> LoadFace(
   // https://bugs.chromium.org/p/pdfium/issues/detail?id=690
   FXFT_StreamRec* ftStream =
       static_cast<FXFT_StreamRec*>(ft_scalloc(sizeof(FXFT_StreamRec), 1));
-  UNSAFE_TODO(FXSYS_memset(ftStream, 0, sizeof(FXFT_StreamRec)));
+  *ftStream = {};  // Aggregate initialization.
+  static_assert(std::is_aggregate_v<std::remove_pointer_t<decltype(ftStream)>>);
   ftStream->base = nullptr;
   ftStream->descriptor.pointer = static_cast<void*>(pFontStream.Get());
   ftStream->pos = 0;
