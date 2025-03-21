@@ -438,12 +438,12 @@ FPDF_FORMHANDLE EmbedderTest::SetupFormFillEnvironment(
     FPDF_DOCUMENT doc,
     JavaScriptOption javascript_option) {
   IPDF_JSPLATFORM* platform = static_cast<IPDF_JSPLATFORM*>(this);
-  FXSYS_memset(platform, '\0', sizeof(IPDF_JSPLATFORM));
+  *platform = {};
   platform->version = 3;
   platform->app_alert = AlertTrampoline;
 
   FPDF_FORMFILLINFO* formfillinfo = static_cast<FPDF_FORMFILLINFO*>(this);
-  FXSYS_memset(formfillinfo, 0, sizeof(FPDF_FORMFILLINFO));
+  *formfillinfo = {};
   formfillinfo->version = form_fill_info_version_;
   formfillinfo->FFI_Invalidate = InvalidateStub;
   formfillinfo->FFI_OutputSelectedRect = OutputSelectedRectStub;
