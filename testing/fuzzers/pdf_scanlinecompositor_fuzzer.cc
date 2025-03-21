@@ -37,8 +37,9 @@ constexpr FXDIB_Format kFormat[] = {
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   static constexpr size_t kParameterSize = 33;
-  if (size < kParameterSize)
+  if (size < kParameterSize) {
     return 0;
+  }
 
   int width = GetInteger(data);
   int height = GetInteger(data + 4);
@@ -57,13 +58,14 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   size -= kParameterSize;
   data += kParameterSize;
 
-  static constexpr uint32_t kMemLimit = 512000000;  // 512 MB
+  static constexpr uint32_t kMemLimit = 128'000'000;
   static constexpr uint32_t kComponents = 4;
   FX_SAFE_UINT32 mem = width;
   mem *= height;
   mem *= kComponents;
-  if (!mem.IsValid() || mem.ValueOrDie() > kMemLimit)
+  if (!mem.IsValid() || mem.ValueOrDie() > kMemLimit) {
     return 0;
+  }
 
   auto src_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
   auto dest_bitmap = pdfium::MakeRetain<CFX_DIBitmap>();
@@ -76,8 +78,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
   }
 
   std::unique_ptr<CFX_AggClipRgn> clip_rgn;
-  if (is_clip)
+  if (is_clip) {
     clip_rgn = std::make_unique<CFX_AggClipRgn>(width, height);
+  }
   if (src_bitmap->IsMaskFormat()) {
     dest_bitmap->CompositeMask(dest_left, dest_top, width, height,
                                std::move(src_bitmap), argb, src_left, src_top,
