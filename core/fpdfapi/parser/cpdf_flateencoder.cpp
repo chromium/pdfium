@@ -42,8 +42,8 @@ CPDF_FlateEncoder::CPDF_FlateEncoder(RetainPtr<const CPDF_Stream> pStream,
     return;
   }
 
-  // TODO(thestig): Move to Init() and check for empty return value?
   m_Data = FlateModule::Encode(m_pAcc->GetSpan());
+  CHECK(!GetSpan().empty());
   m_pClonedDict = ToDictionary(pStream->GetDict()->Clone());
   m_pClonedDict->SetNewFor<CPDF_Number>(
       "Length", pdfium::checked_cast<int>(GetSpan().size()));
