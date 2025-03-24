@@ -1639,28 +1639,11 @@ TEST_F(FPDFAnnotEmbedderTest, GetSetStringValue) {
   // Save the document and close the page.
   EXPECT_TRUE(FPDF_SaveAsCopy(document(), this, 0));
 
-  const char* md5 = []() {
-    if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-#if BUILDFLAG(IS_WIN)
-      return "d0dfc003b3e08160e698355b599f7eb8";
-#elif BUILDFLAG(IS_APPLE)
-      return "8774ac1779ea66056860290ae7df8f44";
-#else
-      return "8b8618de537ec6aee1f3fc53fedfbcfc";
-#endif
-    }
-#if BUILDFLAG(IS_APPLE)
-    return "587311ad93447614cbe5887df14caa78";
-#else
-    return "2908fd6166f795dfd73c607ec12c5356";
-#endif
-  }();
-
   // Open the saved annotation.
   ASSERT_TRUE(OpenSavedDocument());
   FPDF_PAGE saved_page = LoadSavedPage(0);
   ASSERT_TRUE(saved_page);
-  VerifySavedRendering(saved_page, 595, 842, md5);
+  VerifySavedRendering(saved_page, 595, 842, AnnotationStampWithApChecksum());
   {
     ScopedFPDFAnnotation new_annot(FPDFPage_GetAnnot(saved_page, 0));
 
