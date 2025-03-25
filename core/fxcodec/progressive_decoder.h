@@ -67,7 +67,7 @@ class ProgressiveDecoder final :
   };
 
   ProgressiveDecoder();
-  virtual ~ProgressiveDecoder();
+  ~ProgressiveDecoder();
 
   FXCODEC_STATUS LoadImageInfo(RetainPtr<IFX_SeekableReadStream> pFile,
                                FXCODEC_IMAGE_TYPE imageType,
