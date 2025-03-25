@@ -192,7 +192,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling pdfium_tests
   # and whatever else without interference from each other.
-  'pdfium_tests_revision': '7e9430c92e07cf45bd151bd4158a7795d117ffeb',
+  'pdfium_tests_revision': '0d854e64bed7be71f32de54f1e81377a7cb7caab',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling resultdb
   # and whatever else without interference from each other.
@@ -208,7 +208,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling skia
   # and whatever else without interference from each other.
-  'skia_revision': '6ca926db528a7c0346649495ad19457ee76461ed',
+  'skia_revision': '2bc5ed5660c11561e435756128372eaf918a7ec4',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling test_fonts
   # and whatever else without interference from each other.

@@ -2508,11 +2508,11 @@ TEST_F(FPDFEditEmbedderTest, PathOnTopOfText) {
   const char* checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
 #if BUILDFLAG(IS_WIN)
-      return "52c133b5b6bf76760c59cffc12c1131a";
+      return "a78103bc6e22f52d17da01057370c14c";
 #elif BUILDFLAG(IS_APPLE)
-      return "9eba2a1a6599c2abcf002012217a6505";
+      return "c2d3b92224759e4c3f0fc5ab2907b974";
 #else
-      return "72523cfac069f8a81057164682998961";
+      return "c8813a6cd0cbf1e776f11c4b4d6314bf";
 #endif
     }
 #if BUILDFLAG(IS_APPLE)
@@ -2544,7 +2544,7 @@ TEST_F(FPDFEditEmbedderTest, EditOverExistingContent) {
 
   const char* original_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "1e82fbdd21490cee9d3479fe6125af67";
+      return "1982180b50c0c4dac503de293bd5eeb4";
     }
     return "ad04e5bd0f471a9a564fb034bd0fb073";
   }();
@@ -2574,7 +2574,7 @@ TEST_F(FPDFEditEmbedderTest, EditOverExistingContent) {
   FPDFPage_InsertObject(saved_page, green_rect2);
   const char* last_checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "8705d023e5fec3499d1e30cf2bcc5dc1";
+      return "0556aa9cc5c95087f010699cd1aff87a";
     }
     return "4b5b00f824620f8c9b8801ebb98e1cdd";
   }();
@@ -2657,7 +2657,7 @@ TEST_F(FPDFEditEmbedderTest, AddStrokedPaths) {
     ScopedFPDFBitmap page_bitmap = RenderPage(page);
     const char* checksum_3 = []() {
       if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-        return "e37dfe983eac22a3f936dfc86355fde5";
+        return "a5de6ddefcbae60924bebc99347e460b";
       }
       return "ff3e6a22326754944cc6e56609acd73b";
     }();
@@ -3903,7 +3903,7 @@ TEST_F(FPDFEditEmbedderTest, LoadCidType2FontWithBadParameters) {
 TEST_F(FPDFEditEmbedderTest, SaveAndRender) {
   const char* checksum = []() {
     if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
-      return "9a78649e85e69d220c22e0fc316da740";
+      return "edd4aed776c0eaf8c79dd24d9654af95";
     }
     return "3c20472b0552c0c22b88ab1ed8c6202b";
   }();
