@@ -32,9 +32,4 @@ CFX_Color CFXColorFromArray(const CPDF_Array& array) {
   return rt;
 }
 
-CFX_Color CFXColorFromString(const ByteString& str) {
-  CPDF_DefaultAppearance appearance(str);
-  return appearance.GetColor().value_or(CFX_Color());
-}
-
 }  // namespace fpdfdoc

@@ -11,14 +11,9 @@
 
 class CPDF_Array;
 
-namespace fxcrt {
-class ByteString;
-}
-
 namespace fpdfdoc {
 
 CFX_Color CFXColorFromArray(const CPDF_Array& array);
-CFX_Color CFXColorFromString(const fxcrt::ByteString& str);
 
 }  // namespace fpdfdoc
 

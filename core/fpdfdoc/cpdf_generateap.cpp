@@ -282,7 +282,7 @@ std::optional<DefaultAppearanceInfo> GetDefaultAppearanceInfo(
   return DefaultAppearanceInfo{
       .font_name = font.value(),
       .font_size = font_size,
-      .text_color = fpdfdoc::CFXColorFromString(default_appearance_string)};
+      .text_color = appearance.GetColor().value_or(CFX_Color())};
 }
 
 bool CloneResourcesDictIfMissingFromStream(CPDF_Dictionary* stream_dict,
