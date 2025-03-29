@@ -734,7 +734,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_FFLDraw(FPDF_FORMHANDLE hHandle,
 
 #if defined(PDF_USE_SKIA)
   CFX_DIBitmap::ScopedPremultiplier scoped_premultiplier(
-      pdfium::WrapRetain(cbitmap), CFX_DefaultRenderDevice::UseSkiaRenderer());
+      pdfium::WrapRetain(cbitmap));
 #endif
   FFLCommon(hHandle, page, cbitmap, start_x, start_y, size_x, size_y, rotate,
             flags);

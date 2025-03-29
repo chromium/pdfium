@@ -34,11 +34,15 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   class ScopedPremultiplier {
    public:
     // `bitmap` must start out un-premultiplied.
-    // ScopedPremultiplier is a no-op if `do_premultiply` is false.
-    ScopedPremultiplier(RetainPtr<CFX_DIBitmap> bitmap, bool do_premultiply);
+    // ScopedPremultiplier is a no-op if `bitmap` does not need to be
+    // pre-multiplied, as determined by NeedToPremultiplyBitmap().
+    explicit ScopedPremultiplier(RetainPtr<CFX_DIBitmap> bitmap);
     ~ScopedPremultiplier();
 
    private:
+    // Returns true if Skia is enabled at runtime.
+    bool NeedToPremultiplyBitmap() const;
+
     RetainPtr<CFX_DIBitmap> const bitmap_;
     const bool do_premultiply_;
   };

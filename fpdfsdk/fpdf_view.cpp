@@ -718,8 +718,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   pPage->SetRenderContext(std::move(owned_context));
 
 #if defined(PDF_USE_SKIA)
-  CFX_DIBitmap::ScopedPremultiplier scoped_premultiplier(
-      pBitmap, CFX_DefaultRenderDevice::UseSkiaRenderer());
+  CFX_DIBitmap::ScopedPremultiplier scoped_premultiplier(pBitmap);
 #endif
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
   device->AttachWithRgbByteOrder(std::move(pBitmap),
@@ -755,8 +754,7 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   pPage->SetRenderContext(std::move(owned_context));
 
 #if defined(PDF_USE_SKIA)
-  CFX_DIBitmap::ScopedPremultiplier scoped_premultiplier(
-      pBitmap, CFX_DefaultRenderDevice::UseSkiaRenderer());
+  CFX_DIBitmap::ScopedPremultiplier scoped_premultiplier(pBitmap);
 #endif
   auto device = std::make_unique<CFX_DefaultRenderDevice>();
   device->AttachWithRgbByteOrder(std::move(pBitmap),

@@ -961,9 +961,8 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
 
 #if defined(PDF_USE_SKIA)
 CFX_DIBitmap::ScopedPremultiplier::ScopedPremultiplier(
-    RetainPtr<CFX_DIBitmap> bitmap,
-    bool do_premultiply)
-    : bitmap_(std::move(bitmap)), do_premultiply_(do_premultiply) {
+    RetainPtr<CFX_DIBitmap> bitmap)
+    : bitmap_(std::move(bitmap)), do_premultiply_(NeedToPremultiplyBitmap()) {
   CHECK(!bitmap_->IsPremultiplied());
   if (do_premultiply_) {
     bitmap_->PreMultiply();
@@ -976,4 +975,9 @@ CFX_DIBitmap::ScopedPremultiplier::~ScopedPremultiplier() {
   }
   CHECK(!bitmap_->IsPremultiplied());
 }
+
+bool CFX_DIBitmap::ScopedPremultiplier::NeedToPremultiplyBitmap() const {
+  return CFX_DefaultRenderDevice::UseSkiaRenderer();
+}
+
 #endif  // defined(PDF_USE_SKIA)
