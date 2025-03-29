@@ -977,7 +977,8 @@ CFX_DIBitmap::ScopedPremultiplier::~ScopedPremultiplier() {
 }
 
 bool CFX_DIBitmap::ScopedPremultiplier::NeedToPremultiplyBitmap() const {
-  return CFX_DefaultRenderDevice::UseSkiaRenderer();
+  return CFX_DefaultRenderDevice::UseSkiaRenderer() &&
+         bitmap_->GetFormat() == FXDIB_Format::kBgra;
 }
 
 #endif  // defined(PDF_USE_SKIA)

@@ -40,7 +40,8 @@ class CFX_DIBitmap final : public CFX_DIBBase {
     ~ScopedPremultiplier();
 
    private:
-    // Returns true if Skia is enabled at runtime.
+    // Returns true if Skia is enabled at runtime and `bitmap_` is an format
+    // that has un-premultiplied alpha.
     bool NeedToPremultiplyBitmap() const;
 
     RetainPtr<CFX_DIBitmap> const bitmap_;
