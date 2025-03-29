@@ -38,45 +38,45 @@ class CPDF_InteractiveForm {
    public:
     virtual ~NotifierIface() = default;
 
-    virtual bool BeforeValueChange(CPDF_FormField* pField,
-                                   const WideString& csValue) = 0;
-    virtual void AfterValueChange(CPDF_FormField* pField) = 0;
-    virtual bool BeforeSelectionChange(CPDF_FormField* pField,
-                                       const WideString& csValue) = 0;
-    virtual void AfterSelectionChange(CPDF_FormField* pField) = 0;
-    virtual void AfterCheckedStatusChange(CPDF_FormField* pField) = 0;
-    virtual void AfterFormReset(CPDF_InteractiveForm* pForm) = 0;
+    virtual bool BeforeValueChange(CPDF_FormField* field,
+                                   const WideString& value) = 0;
+    virtual void AfterValueChange(CPDF_FormField* field) = 0;
+    virtual bool BeforeSelectionChange(CPDF_FormField* field,
+                                       const WideString& value) = 0;
+    virtual void AfterSelectionChange(CPDF_FormField* field) = 0;
+    virtual void AfterCheckedStatusChange(CPDF_FormField* field) = 0;
+    virtual void AfterFormReset(CPDF_InteractiveForm* form) = 0;
   };
 
-  explicit CPDF_InteractiveForm(CPDF_Document* pDocument);
+  explicit CPDF_InteractiveForm(CPDF_Document* document);
   ~CPDF_InteractiveForm();
 
   static bool IsUpdateAPEnabled();
   static void SetUpdateAP(bool bUpdateAP);
   static RetainPtr<CPDF_Font> AddNativeInteractiveFormFont(
-      CPDF_Document* pDocument,
-      ByteString* csNameTag);
+      CPDF_Document* document,
+      ByteString* name_tag);
   // Adds a new /AcroForm dictionary to the root dictionary of `document`.
   // Returns the newly created dictionary.
   static RetainPtr<CPDF_Dictionary> InitAcroFormDict(CPDF_Document* document);
 
-  size_t CountFields(const WideString& csFieldName) const;
-  CPDF_FormField* GetField(size_t index, const WideString& csFieldName) const;
-  CPDF_FormField* GetFieldByDict(const CPDF_Dictionary* pFieldDict) const;
+  size_t CountFields(const WideString& field_name) const;
+  CPDF_FormField* GetField(size_t index, const WideString& field_name) const;
+  CPDF_FormField* GetFieldByDict(const CPDF_Dictionary* field) const;
 
-  const CPDF_FormControl* GetControlAtPoint(const CPDF_Page* pPage,
+  const CPDF_FormControl* GetControlAtPoint(const CPDF_Page* page,
                                             const CFX_PointF& point,
                                             int* z_order) const;
-  CPDF_FormControl* GetControlByDict(const CPDF_Dictionary* pWidgetDict) const;
+  CPDF_FormControl* GetControlByDict(const CPDF_Dictionary* widget_dict) const;
 
   bool NeedConstructAP() const;
   int CountFieldsInCalculationOrder();
   CPDF_FormField* GetFieldInCalculationOrder(int index);
-  int FindFieldInCalculationOrder(const CPDF_FormField* pField);
+  int FindFieldInCalculationOrder(const CPDF_FormField* field);
 
-  RetainPtr<CPDF_Font> GetFormFont(ByteString csNameTag) const;
+  RetainPtr<CPDF_Font> GetFormFont(ByteString name_tag) const;
   RetainPtr<CPDF_Font> GetFontForElement(
-      RetainPtr<CPDF_Dictionary> pElement) const;
+      RetainPtr<CPDF_Dictionary> element) const;
   CPDF_DefaultAppearance GetDefaultAppearance() const;
   int GetFormAlignment() const;
   bool CheckRequiredFields(const std::vector<CPDF_FormField*>* fields,
@@ -91,26 +91,25 @@ class CPDF_InteractiveForm {
   void ResetForm();
   void ResetForm(pdfium::span<CPDF_FormField*> fields, bool bIncludeOrExclude);
 
-  void SetNotifierIface(NotifierIface* pNotify);
-  void FixPageFields(CPDF_Page* pPage);
+  void SetNotifierIface(NotifierIface* notify);
+  void FixPageFields(CPDF_Page* page);
 
   // Wrap callbacks thru NotifierIface.
-  bool NotifyBeforeValueChange(CPDF_FormField* pField,
-                               const WideString& csValue);
-  void NotifyAfterValueChange(CPDF_FormField* pField);
-  bool NotifyBeforeSelectionChange(CPDF_FormField* pField,
-                                   const WideString& csValue);
-  void NotifyAfterSelectionChange(CPDF_FormField* pField);
-  void NotifyAfterCheckedStatusChange(CPDF_FormField* pField);
+  bool NotifyBeforeValueChange(CPDF_FormField* field, const WideString& value);
+  void NotifyAfterValueChange(CPDF_FormField* field);
+  bool NotifyBeforeSelectionChange(CPDF_FormField* field,
+                                   const WideString& value);
+  void NotifyAfterSelectionChange(CPDF_FormField* field);
+  void NotifyAfterCheckedStatusChange(CPDF_FormField* field);
 
   const std::vector<UnownedPtr<CPDF_FormControl>>& GetControlsForField(
-      const CPDF_FormField* pField);
+      const CPDF_FormField* field);
 
  private:
-  void LoadField(RetainPtr<CPDF_Dictionary> pFieldDict, int nLevel);
-  void AddTerminalField(RetainPtr<CPDF_Dictionary> pFieldDict);
-  CPDF_FormControl* AddControl(CPDF_FormField* pField,
-                               RetainPtr<CPDF_Dictionary> pWidgetDict);
+  void LoadField(RetainPtr<CPDF_Dictionary> field_dict, int nLevel);
+  void AddTerminalField(RetainPtr<CPDF_Dictionary> field_dict);
+  CPDF_FormControl* AddControl(CPDF_FormField* field,
+                               RetainPtr<CPDF_Dictionary> widget_dict);
 
   static bool s_bUpdateAP;
 
