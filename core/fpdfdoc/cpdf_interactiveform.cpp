@@ -45,7 +45,7 @@
 
 namespace {
 
-const int nMaxRecursion = 32;
+constexpr int kMaxRecursion = 32;
 
 #if BUILDFLAG(IS_WIN)
 struct PDF_FONTDATA {
@@ -136,18 +136,17 @@ ByteString GetNativeFontName(FX_Charset charSet, void* pLogFont) {
 }
 
 ByteString GenerateNewFontResourceName(const CPDF_Dictionary* pResDict,
-                                       const ByteString& csPrefix) {
+                                       ByteString prefix) {
   static const char kDummyFontName[] = "ZiTi";
-  ByteString csStr = csPrefix;
-  if (csStr.IsEmpty()) {
-    csStr = kDummyFontName;
+  if (prefix.IsEmpty()) {
+    prefix = kDummyFontName;
   }
 
-  const size_t szCount = csStr.GetLength();
+  const size_t szCount = prefix.GetLength();
   size_t m = 0;
   ByteString csTmp;
   while (m < UNSAFE_TODO(strlen(kDummyFontName)) && m < szCount) {
-    csTmp += csStr[m++];
+    csTmp += prefix[m++];
   }
   while (m < UNSAFE_TODO(strlen(kDummyFontName))) {
     csTmp += '0' + m % 10;
@@ -166,7 +165,7 @@ ByteString GenerateNewFontResourceName(const CPDF_Dictionary* pResDict,
     }
 
     if (m < szCount) {
-      csTmp += csStr[m++];
+      csTmp += prefix[m++];
     } else {
       bsNum = ByteString::FormatInteger(num++);
     }
@@ -493,7 +492,7 @@ CFieldTree::Node* CFieldTree::AddChild(Node* pParent,
   }
 
   int level = pParent->GetLevel() + 1;
-  if (level > nMaxRecursion) {
+  if (level > kMaxRecursion) {
     return nullptr;
   }
 
@@ -785,8 +784,11 @@ int CPDF_InteractiveForm::FindFieldInCalculationOrder(
 
 RetainPtr<CPDF_Font> CPDF_InteractiveForm::GetFormFont(
     ByteString csNameTag) const {
+  if (!m_pFormDict) {
+    return nullptr;
+  }
   ByteString csAlias = PDF_NameDecode(csNameTag.AsStringView());
-  if (!m_pFormDict || csAlias.IsEmpty()) {
+  if (csAlias.IsEmpty()) {
     return nullptr;
   }
 
@@ -853,7 +855,7 @@ CPDF_InteractiveForm::GetControlsForField(const CPDF_FormField* pField) {
 
 void CPDF_InteractiveForm::LoadField(RetainPtr<CPDF_Dictionary> pFieldDict,
                                      int nLevel) {
-  if (nLevel > nMaxRecursion) {
+  if (nLevel > kMaxRecursion) {
     return;
   }
   if (!pFieldDict) {
@@ -916,8 +918,7 @@ void CPDF_InteractiveForm::AddTerminalField(
     return;
   }
 
-  CPDF_FormField* pField = nullptr;
-  pField = m_pFieldTree->GetField(csWName);
+  CPDF_FormField* pField = m_pFieldTree->GetField(csWName);
   if (!pField) {
     RetainPtr<CPDF_Dictionary> pParent(pFieldDict);
     if (!pFieldDict->KeyExist(pdfium::form_fields::kT) &&
@@ -1096,8 +1097,8 @@ std::unique_ptr<CFDF_Document> CPDF_InteractiveForm::ExportToFDF(
                                        fullname.AsStringView());
     if (pField->GetType() == CPDF_FormField::kCheckBox ||
         pField->GetType() == CPDF_FormField::kRadioButton) {
-      WideString csExport = pField->GetCheckValue(false);
-      ByteString csBExport = PDF_EncodeText(csExport.AsStringView());
+      ByteString csBExport =
+          PDF_EncodeText(pField->GetCheckValue(false).AsStringView());
       RetainPtr<const CPDF_Object> pOpt = pField->GetFieldAttr("Opt");
       if (pOpt) {
         pFieldDict->SetNewFor<CPDF_String>(pdfium::form_fields::kV, csBExport);
