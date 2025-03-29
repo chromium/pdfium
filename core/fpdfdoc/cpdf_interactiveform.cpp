@@ -300,18 +300,20 @@ RetainPtr<CPDF_Dictionary> InitDict(CPDF_Document* pDocument) {
   if (charSet != FX_Charset::kANSI) {
     ByteString csFontName = GetNativeFontName(charSet, nullptr);
     if (!pFont || csFontName != CFX_Font::kDefaultAnsiFontName) {
-      pFont = AddNativeFont(charSet, pDocument);
-      if (pFont) {
+      RetainPtr<CPDF_Font> native_font = AddNativeFont(charSet, pDocument);
+      if (native_font) {
         csBaseName.clear();
-        AddFont(pFormDict.Get(), pDocument, pFont, &csBaseName);
+        AddFont(pFormDict.Get(), pDocument, native_font, &csBaseName);
+        pFont = std::move(native_font);
       }
     }
   }
   ByteString csDA;
-  if (pFont)
-    csDA = "/" + PDF_NameEncode(csBaseName) + " 0 Tf ";
+  if (pFont) {
+    csDA = "/" + PDF_NameEncode(csBaseName) + " 12 Tf ";
+  }
   csDA += "0 g";
-  pFormDict->SetNewFor<CPDF_String>("DA", csDA);
+  pFormDict->SetNewFor<CPDF_String>("DA", std::move(csDA));
   return pFormDict;
 }
 
@@ -608,6 +610,12 @@ RetainPtr<CPDF_Font> CPDF_InteractiveForm::AddNativeInteractiveFormFont(
 
   AddFont(pFormDict.Get(), pDocument, pFont, csNameTag);
   return pFont;
+}
+
+// static
+RetainPtr<CPDF_Dictionary> CPDF_InteractiveForm::InitAcroFormDict(
+    CPDF_Document* document) {
+  return InitDict(document);
 }
 
 size_t CPDF_InteractiveForm::CountFields(const WideString& csFieldName) const {

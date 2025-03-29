@@ -56,6 +56,9 @@ class CPDF_InteractiveForm {
   static RetainPtr<CPDF_Font> AddNativeInteractiveFormFont(
       CPDF_Document* pDocument,
       ByteString* csNameTag);
+  // Adds a new /AcroForm dictionary to the root dictionary of `document`.
+  // Returns the newly created dictionary.
+  static RetainPtr<CPDF_Dictionary> InitAcroFormDict(CPDF_Document* document);
 
   size_t CountFields(const WideString& csFieldName) const;
   CPDF_FormField* GetField(size_t index, const WideString& csFieldName) const;

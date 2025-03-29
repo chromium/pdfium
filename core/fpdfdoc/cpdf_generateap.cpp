@@ -32,6 +32,7 @@
 #include "core/fpdfdoc/cpdf_color_utils.h"
 #include "core/fpdfdoc/cpdf_defaultappearance.h"
 #include "core/fpdfdoc/cpdf_formfield.h"
+#include "core/fpdfdoc/cpdf_interactiveform.h"
 #include "core/fpdfdoc/cpvt_fontmap.h"
 #include "core/fpdfdoc/cpvt_variabletext.h"
 #include "core/fpdfdoc/cpvt_word.h"
@@ -1051,7 +1052,8 @@ bool GenerateFreeTextAP(CPDF_Document* doc, CPDF_Dictionary* annot_dict) {
   RetainPtr<CPDF_Dictionary> form_dict =
       root_dict->GetMutableDictFor("AcroForm");
   if (!form_dict) {
-    return false;
+    form_dict = CPDF_InteractiveForm::InitAcroFormDict(doc);
+    CHECK(form_dict);
   }
 
   std::optional<DefaultAppearanceInfo> default_appearance_info =
