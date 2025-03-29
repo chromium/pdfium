@@ -710,7 +710,7 @@ FPDF_EXPORT void FPDF_CALLCONV FPDF_RenderPageBitmap(FPDF_BITMAP bitmap,
   if (!pBitmap) {
     return;
   }
-  CHECK(!pBitmap->IsPremultiplied());
+  ValidateBitmapPremultiplyState(pBitmap);
 
   auto owned_context = std::make_unique<CPDF_PageRenderContext>();
   CPDF_PageRenderContext* context = owned_context.get();
@@ -747,7 +747,7 @@ FPDF_RenderPageBitmapWithMatrix(FPDF_BITMAP bitmap,
   if (!pBitmap) {
     return;
   }
-  CHECK(!pBitmap->IsPremultiplied());
+  ValidateBitmapPremultiplyState(pBitmap);
 
   auto owned_context = std::make_unique<CPDF_PageRenderContext>();
   CPDF_PageRenderContext* context = owned_context.get();
@@ -893,7 +893,7 @@ FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV FPDFBitmap_Create(int width,
     return nullptr;
   }
 
-  CHECK(!pBitmap->IsPremultiplied());
+  ValidateBitmapPremultiplyState(pBitmap);
 
   // Caller takes ownership.
   return FPDFBitmapFromCFXDIBitmap(pBitmap.Leak());
@@ -916,7 +916,7 @@ FPDF_EXPORT FPDF_BITMAP FPDF_CALLCONV FPDFBitmap_CreateEx(int width,
     return nullptr;
   }
 
-  CHECK(!pBitmap->IsPremultiplied());
+  ValidateBitmapPremultiplyState(pBitmap);
 
   // Caller takes ownership.
   return FPDFBitmapFromCFXDIBitmap(pBitmap.Leak());
@@ -953,7 +953,7 @@ FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV FPDFBitmap_FillRect(FPDF_BITMAP bitmap,
   if (!pBitmap) {
     return false;
   }
-  CHECK(!pBitmap->IsPremultiplied());
+  ValidateBitmapPremultiplyState(pBitmap);
 
   FX_SAFE_INT32 right = left;
   right += width;

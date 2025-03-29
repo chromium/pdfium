@@ -828,7 +828,7 @@ FPDFTextObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   render_matrix *= scale_matrix;
   status.RenderSingleObject(text, render_matrix);
 
-  CHECK(!result_bitmap->IsPremultiplied());
+  ValidateBitmapPremultiplyState(result_bitmap);
 
   // Caller takes ownership.
   return FPDFBitmapFromCFXDIBitmap(result_bitmap.Leak());

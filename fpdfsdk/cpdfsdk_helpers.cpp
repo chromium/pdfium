@@ -28,6 +28,7 @@
 #include "core/fxcrt/span_util.h"
 #include "core/fxcrt/stl_util.h"
 #include "core/fxcrt/unowned_ptr.h"
+#include "core/fxge/dib/cfx_dibitmap.h"
 #include "fpdfsdk/cpdfsdk_formfillenvironment.h"
 
 namespace {
@@ -227,6 +228,10 @@ FXDIB_Format FXDIBFormatFromFPDFFormat(int format) {
     default:
       return FXDIB_Format::kInvalid;
   }
+}
+
+void ValidateBitmapPremultiplyState(CFX_DIBitmap* bitmap) {
+  CHECK(!bitmap->IsPremultiplied());
 }
 
 CPDFSDK_InteractiveForm* FormHandleToInteractiveForm(FPDF_FORMHANDLE hHandle) {

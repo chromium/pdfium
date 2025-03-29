@@ -86,6 +86,6 @@ FPDFPage_GetThumbnailAsBitmap(FPDF_PAGE page) {
     return nullptr;
   }
 
-  CHECK(!thumb_bitmap->IsPremultiplied());
+  ValidateBitmapPremultiplyState(thumb_bitmap);
   return FPDFBitmapFromCFXDIBitmap(thumb_bitmap.Leak());
 }

@@ -178,7 +178,7 @@ FPDFImageObj_SetBitmap(FPDF_PAGE* pages,
   if (!holder) {
     return false;
   }
-  CHECK(!holder->IsPremultiplied());
+  ValidateBitmapPremultiplyState(holder);
 
   if (pages) {
     for (int index = 0; index < count; index++) {
@@ -280,7 +280,7 @@ FPDFImageObj_GetBitmap(FPDF_PAGEOBJECT image_object) {
   }
 
   CHECK(!pBitmap->HasPalette());
-  CHECK(!pBitmap->IsPremultiplied());
+  ValidateBitmapPremultiplyState(pBitmap);
 
   // Caller takes ownership.
   return FPDFBitmapFromCFXDIBitmap(pBitmap.Leak());
@@ -340,7 +340,7 @@ FPDFImageObj_GetRenderedBitmap(FPDF_DOCUMENT document,
   if (!renderer.GetResult())
     return nullptr;
 
-  CHECK(!result_bitmap->IsPremultiplied());
+  ValidateBitmapPremultiplyState(result_bitmap);
 
   // Caller takes ownership.
   return FPDFBitmapFromCFXDIBitmap(result_bitmap.Leak());
