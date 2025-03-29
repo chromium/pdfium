@@ -264,8 +264,12 @@ inline XObjectContext* XObjectContextFromFPDFXObject(FPDF_XOBJECT xobject) {
 
 FXDIB_Format FXDIBFormatFromFPDFFormat(int format);
 
-// CHECK() `bitmap` is not pre-multiplied, as PDFium does not take or hand out
-// pre-multiplied bitmaps to the embedder.
+// CHECK() the pre-multiplied state for bitmaps from the embedder, or handed to
+// the embedder.
+// - When Skia is available and enabled at runtime, make sure its format matches
+//   its pre-multiplied state.
+// - When Skia is not available or not enabled at runtime, make sure `bitmap` is
+//   not pre-multiplied.
 void ValidateBitmapPremultiplyState(CFX_DIBitmap* bitmap);
 
 CPDFSDK_InteractiveForm* FormHandleToInteractiveForm(FPDF_FORMHANDLE hHandle);

@@ -936,6 +936,11 @@ FPDF_EXPORT int FPDF_CALLCONV FPDFBitmap_GetFormat(FPDF_BITMAP bitmap) {
       return FPDFBitmap_BGRx;
     case FXDIB_Format::kBgra:
       return FPDFBitmap_BGRA;
+#if defined(PDF_USE_SKIA)
+    case FXDIB_Format::kBgraPremul:
+      return CFX_DefaultRenderDevice::UseSkiaRenderer() ? FPDFBitmap_BGRA_Premul
+                                                        : FPDFBitmap_Unknown;
+#endif
     default:
       return FPDFBitmap_Unknown;
   }

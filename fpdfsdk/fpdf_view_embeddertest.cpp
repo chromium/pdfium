@@ -1632,6 +1632,20 @@ TEST_F(FPDFViewEmbedderTest, RenderManyRectanglesWithAndWithoutExternalMemory) {
                                          ManyRectanglesChecksum());
   TestRenderPageBitmapWithExternalMemoryAndNoStride(page.get(), FPDFBitmap_BGRA,
                                                     ManyRectanglesChecksum());
+
+#if defined(PDF_USE_SKIA)
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+    TestRenderPageBitmapWithInternalMemory(page.get(), FPDFBitmap_BGRA_Premul,
+                                           ManyRectanglesChecksum());
+    TestRenderPageBitmapWithInternalMemoryAndStride(
+        page.get(), FPDFBitmap_BGRA_Premul, kBgrxStride,
+        ManyRectanglesChecksum());
+    TestRenderPageBitmapWithExternalMemory(page.get(), FPDFBitmap_BGRA_Premul,
+                                           ManyRectanglesChecksum());
+    TestRenderPageBitmapWithExternalMemoryAndNoStride(
+        page.get(), FPDFBitmap_BGRA_Premul, ManyRectanglesChecksum());
+  }
+#endif
 }
 
 TEST_F(FPDFViewEmbedderTest, RenderHelloWorldWithFlags) {
@@ -2206,4 +2220,17 @@ TEST_F(FPDFViewEmbedderTest, BadFillRectInput) {
 
   // Make sure null bitmap handle does not trigger a crash.
   ASSERT_FALSE(FPDFBitmap_FillRect(nullptr, 0, 0, kWidth, kHeight, 0xFF0000FF));
+}
+
+TEST_F(FPDFViewEmbedderTest, BitmapBGRAPremulFormat) {
+  static constexpr int kWidth = 100;
+  static constexpr int kHeight = 200;
+  ScopedFPDFBitmap bitmap(
+      FPDFBitmap_CreateEx(kWidth, kHeight, FPDFBitmap_BGRA_Premul, nullptr, 0));
+  if (CFX_DefaultRenderDevice::UseSkiaRenderer()) {
+    ASSERT_TRUE(bitmap);
+    EXPECT_EQ(FPDFBitmap_BGRA_Premul, FPDFBitmap_GetFormat(bitmap.get()));
+  } else {
+    ASSERT_FALSE(bitmap);
+  }
 }

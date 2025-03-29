@@ -963,17 +963,17 @@ bool CFX_DIBitmap::ConvertFormat(FXDIB_Format dest_format) {
 CFX_DIBitmap::ScopedPremultiplier::ScopedPremultiplier(
     RetainPtr<CFX_DIBitmap> bitmap)
     : bitmap_(std::move(bitmap)), do_premultiply_(NeedToPremultiplyBitmap()) {
-  CHECK(!bitmap_->IsPremultiplied());
   if (do_premultiply_) {
+    CHECK(!bitmap_->IsPremultiplied());
     bitmap_->PreMultiply();
   }
 }
 
 CFX_DIBitmap::ScopedPremultiplier::~ScopedPremultiplier() {
   if (do_premultiply_) {
+    CHECK(bitmap_->IsPremultiplied());
     bitmap_->UnPreMultiply();
   }
-  CHECK(!bitmap_->IsPremultiplied());
 }
 
 bool CFX_DIBitmap::ScopedPremultiplier::NeedToPremultiplyBitmap() const {

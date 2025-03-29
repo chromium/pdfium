@@ -33,7 +33,6 @@ class CFX_DIBitmap final : public CFX_DIBBase {
   // un-premultiplies in the dtor if pre-multiplication was required.
   class ScopedPremultiplier {
    public:
-    // `bitmap` must start out un-premultiplied.
     // ScopedPremultiplier is a no-op if `bitmap` does not need to be
     // pre-multiplied, as determined by NeedToPremultiplyBitmap().
     explicit ScopedPremultiplier(RetainPtr<CFX_DIBitmap> bitmap);
