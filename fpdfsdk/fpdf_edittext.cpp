@@ -641,17 +641,19 @@ FPDFText_SetCharcodes(FPDF_PAGEOBJECT text_object,
                       const uint32_t* charcodes,
                       size_t count) {
   CPDF_TextObject* pTextObj = CPDFTextObjectFromFPDFPageObject(text_object);
-  if (!pTextObj)
+  if (!pTextObj) {
     return false;
+  }
 
-  if (!charcodes && count)
+  if (!charcodes && count) {
     return false;
+  }
 
   ByteString byte_text;
-  if (charcodes) {
-    for (size_t i = 0; i < count; ++i) {
-      pTextObj->GetFont()->AppendChar(&byte_text, UNSAFE_TODO(charcodes[i]));
-    }
+  // SAFETY: required from caller.
+  auto charcodes_span = UNSAFE_BUFFERS(pdfium::make_span(charcodes, count));
+  for (uint32_t c : charcodes_span) {
+    pTextObj->GetFont()->AppendChar(&byte_text, c);
   }
   pTextObj->SetText(byte_text);
   return true;
