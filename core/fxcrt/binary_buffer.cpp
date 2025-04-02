@@ -18,13 +18,13 @@ namespace fxcrt {
 BinaryBuffer::BinaryBuffer() = default;
 
 BinaryBuffer::BinaryBuffer(BinaryBuffer&& that) noexcept
-    : m_AllocStep(that.m_AllocStep),
-      m_DataSize(that.m_DataSize),
-      m_buffer(std::move(that.m_buffer)) {
+    : alloc_step_(that.alloc_step_),
+      data_size_(that.data_size_),
+      buffer_(std::move(that.buffer_)) {
   // Can't just default, need to leave |that| in a valid state, which means
   // that the size members reflect the (null) moved-from buffer.
-  that.m_AllocStep = 0;
-  that.m_DataSize = 0;
+  that.alloc_step_ = 0;
+  that.data_size_ = 0;
 }
 
 BinaryBuffer::~BinaryBuffer() = default;
@@ -32,30 +32,31 @@ BinaryBuffer::~BinaryBuffer() = default;
 BinaryBuffer& BinaryBuffer::operator=(BinaryBuffer&& that) noexcept {
   // Can't just default, need to leave |that| in a valid state, which means
   // that the size members reflect the (null) moved-from buffer.
-  m_AllocStep = that.m_AllocStep;
-  m_DataSize = that.m_DataSize;
-  m_buffer = std::move(that.m_buffer);
-  that.m_AllocStep = 0;
-  that.m_DataSize = 0;
+  alloc_step_ = that.alloc_step_;
+  data_size_ = that.data_size_;
+  buffer_ = std::move(that.buffer_);
+  that.alloc_step_ = 0;
+  that.data_size_ = 0;
   return *this;
 }
 
 void BinaryBuffer::DeleteBuf(size_t start_index, size_t count) {
-  if (m_buffer.empty() || count > GetSize() || start_index > GetSize() - count)
+  if (buffer_.empty() || count > GetSize() || start_index > GetSize() - count) {
     return;
+  }
 
   auto buffer_span = GetMutableSpan();
   fxcrt::spanmove(buffer_span.subspan(start_index),
                   buffer_span.subspan(start_index + count));
-  m_DataSize -= count;
+  data_size_ -= count;
 }
 
 pdfium::span<uint8_t> BinaryBuffer::GetMutableSpan() {
-  return pdfium::make_span(m_buffer).first(GetSize());
+  return pdfium::make_span(buffer_).first(GetSize());
 }
 
 pdfium::span<const uint8_t> BinaryBuffer::GetSpan() const {
-  return pdfium::make_span(m_buffer).first(GetSize());
+  return pdfium::make_span(buffer_).first(GetSize());
 }
 
 size_t BinaryBuffer::GetLength() const {
@@ -63,32 +64,34 @@ size_t BinaryBuffer::GetLength() const {
 }
 
 void BinaryBuffer::Clear() {
-  m_DataSize = 0;
+  data_size_ = 0;
 }
 
 DataVector<uint8_t> BinaryBuffer::DetachBuffer() {
-  m_buffer.resize(GetSize());
-  m_DataSize = 0;
-  return std::move(m_buffer);
+  buffer_.resize(GetSize());
+  data_size_ = 0;
+  return std::move(buffer_);
 }
 
 void BinaryBuffer::EstimateSize(size_t size) {
-  if (m_buffer.size() < size)
+  if (buffer_.size() < size) {
     ExpandBuf(size - GetSize());
+  }
 }
 
 void BinaryBuffer::ExpandBuf(size_t add_size) {
   FX_SAFE_SIZE_T new_size = GetSize();
   new_size += add_size;
-  if (m_buffer.size() >= new_size.ValueOrDie())
+  if (buffer_.size() >= new_size.ValueOrDie()) {
     return;
+  }
 
   size_t alloc_step = std::max(static_cast<size_t>(128),
-                               m_AllocStep ? m_AllocStep : m_buffer.size() / 4);
+                               alloc_step_ ? alloc_step_ : buffer_.size() / 4);
   new_size += alloc_step - 1;  // Quantize, don't combine these lines.
   new_size /= alloc_step;
   new_size *= alloc_step;
-  m_buffer.resize(new_size.ValueOrDie());
+  buffer_.resize(new_size.ValueOrDie());
 }
 
 void BinaryBuffer::AppendSpan(pdfium::span<const uint8_t> span) {
@@ -96,8 +99,8 @@ void BinaryBuffer::AppendSpan(pdfium::span<const uint8_t> span) {
     return;
 
   ExpandBuf(span.size());
-  fxcrt::Copy(span, pdfium::make_span(m_buffer).subspan(GetSize()));
-  m_DataSize += span.size();
+  fxcrt::Copy(span, pdfium::make_span(buffer_).subspan(GetSize()));
+  data_size_ += span.size();
 }
 
 void BinaryBuffer::AppendString(const ByteString& str) {

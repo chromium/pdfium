@@ -20,69 +20,68 @@ template <class T, class D = std::default_delete<T>>
 class WeakPtr {
  public:
   WeakPtr() = default;
-  WeakPtr(const WeakPtr& that) : m_pHandle(that.m_pHandle) {}
+  WeakPtr(const WeakPtr& that) : handle_(that.handle_) {}
   WeakPtr(WeakPtr&& that) noexcept { Swap(that); }
   explicit WeakPtr(std::unique_ptr<T, D> pObj)
-      : m_pHandle(new Handle(std::move(pObj))) {}
+      : handle_(new Handle(std::move(pObj))) {}
 
   // Deliberately implicit to allow passing nullptr.
   // NOLINTNEXTLINE(runtime/explicit)
   WeakPtr(std::nullptr_t arg) {}
 
-  explicit operator bool() const { return m_pHandle && !!m_pHandle->Get(); }
-  bool HasOneRef() const { return m_pHandle && m_pHandle->HasOneRef(); }
-  T* operator->() { return m_pHandle->Get(); }
-  const T* operator->() const { return m_pHandle->Get(); }
+  explicit operator bool() const { return handle_ && !!handle_->Get(); }
+  bool HasOneRef() const { return handle_ && handle_->HasOneRef(); }
+  T* operator->() { return handle_->Get(); }
+  const T* operator->() const { return handle_->Get(); }
   WeakPtr& operator=(const WeakPtr& that) {
-    m_pHandle = that.m_pHandle;
+    handle_ = that.handle_;
     return *this;
   }
-  bool operator==(const WeakPtr& that) const {
-    return m_pHandle == that.m_pHandle;
-  }
+  bool operator==(const WeakPtr& that) const { return handle_ == that.handle_; }
   bool operator!=(const WeakPtr& that) const { return !(*this == that); }
 
-  T* Get() const { return m_pHandle ? m_pHandle->Get() : nullptr; }
+  T* Get() const { return handle_ ? handle_->Get() : nullptr; }
   void DeleteObject() {
-    if (m_pHandle) {
-      m_pHandle->Clear();
-      m_pHandle.Reset();
+    if (handle_) {
+      handle_->Clear();
+      handle_.Reset();
     }
   }
-  void Reset() { m_pHandle.Reset(); }
+  void Reset() { handle_.Reset(); }
   void Reset(std::unique_ptr<T, D> pObj) {
-    m_pHandle.Reset(new Handle(std::move(pObj)));
+    handle_.Reset(new Handle(std::move(pObj)));
   }
-  void Swap(WeakPtr& that) { m_pHandle.Swap(that.m_pHandle); }
+  void Swap(WeakPtr& that) { handle_.Swap(that.handle_); }
 
  private:
   class Handle {
    public:
-    explicit Handle(std::unique_ptr<T, D> ptr) : m_pObj(std::move(ptr)) {}
+    explicit Handle(std::unique_ptr<T, D> ptr) : obj_(std::move(ptr)) {}
 
-    void Reset(std::unique_ptr<T, D> ptr) { m_pObj = std::move(ptr); }
+    void Reset(std::unique_ptr<T, D> ptr) { obj_ = std::move(ptr); }
     void Clear() {     // Now you're all weak ptrs ...
-      m_pObj.reset();  // unique_ptr nulls first before invoking delete.
+      obj_.reset();    // unique_ptr nulls first before invoking delete.
     }
-    T* Get() const { return m_pObj.get(); }
+    T* Get() const { return obj_.get(); }
     T* Retain() {
-      ++m_nCount;
-      return m_pObj.get();
+      ++count_;
+      return obj_.get();
     }
     void Release() {
-      if (--m_nCount == 0)
+      if (--count_ == 0) {
         delete this;
+      }
     }
-    bool HasOneRef() const { return m_nCount == 1; }
+    bool HasOneRef() const { return count_ == 1; }
 
    private:
     ~Handle() = default;
 
-    intptr_t m_nCount = 0;
-    std::unique_ptr<T, D> m_pObj;
+    intptr_t count_ = 0;
+    std::unique_ptr<T, D> obj_;
   };
 
-  RetainPtr<Handle> m_pHandle;
+  RetainPtr<Handle> handle_;
 };
 
 }  // namespace fxcrt

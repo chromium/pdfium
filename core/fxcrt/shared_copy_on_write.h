@@ -21,44 +21,45 @@ template <class ObjClass>
 class SharedCopyOnWrite {
  public:
   SharedCopyOnWrite() = default;
-  SharedCopyOnWrite(const SharedCopyOnWrite& other)
-      : m_pObject(other.m_pObject) {}
+  SharedCopyOnWrite(const SharedCopyOnWrite& other) : object_(other.object_) {}
   ~SharedCopyOnWrite() = default;
 
   template <typename... Args>
   ObjClass* Emplace(Args... params) {
-    m_pObject = pdfium::MakeRetain<ObjClass>(params...);
-    return m_pObject.Get();
+    object_ = pdfium::MakeRetain<ObjClass>(params...);
+    return object_.Get();
   }
 
   SharedCopyOnWrite& operator=(const SharedCopyOnWrite& that) {
     if (*this != that)
-      m_pObject = that.m_pObject;
+      object_ = that.object_;
     return *this;
   }
 
-  void SetNull() { m_pObject.Reset(); }
-  const ObjClass* GetObject() const { return m_pObject.Get(); }
+  void SetNull() { object_.Reset(); }
+  const ObjClass* GetObject() const { return object_.Get(); }
 
   template <typename... Args>
   ObjClass* GetPrivateCopy(Args... params) {
-    if (!m_pObject)
+    if (!object_) {
       return Emplace(params...);
-    if (!m_pObject->HasOneRef())
-      m_pObject = m_pObject->Clone();
-    return m_pObject.Get();
+    }
+    if (!object_->HasOneRef()) {
+      object_ = object_->Clone();
+    }
+    return object_.Get();
   }
 
   bool operator==(const SharedCopyOnWrite& that) const {
-    return m_pObject == that.m_pObject;
+    return object_ == that.object_;
   }
   bool operator!=(const SharedCopyOnWrite& that) const {
     return !(*this == that);
   }
-  explicit operator bool() const { return !!m_pObject; }
+  explicit operator bool() const { return !!object_; }
 
  private:
-  RetainPtr<ObjClass> m_pObject;
+  RetainPtr<ObjClass> object_;
 };
 
 }  // namespace fxcrt

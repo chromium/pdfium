@@ -26,7 +26,7 @@ class CFX_SeekableStreamProxy final : public Retainable {
   // Returns number of wchar_t elements placed into `buffer`.
   size_t ReadBlock(pdfium::span<wchar_t> buffer);
 
-  FX_CodePage GetCodePage() const { return m_wCodePage; }
+  FX_CodePage GetCodePage() const { return code_page_; }
   void SetCodePage(FX_CodePage wCodePage);
 
  private:
@@ -43,10 +43,10 @@ class CFX_SeekableStreamProxy final : public Retainable {
   void Seek(From eSeek, FX_FILESIZE iOffset);
   size_t ReadData(pdfium::span<uint8_t> buffer);
 
-  FX_CodePage m_wCodePage = FX_CodePage::kDefANSI;
-  size_t m_wBOMLength = 0;
-  FX_FILESIZE m_iPosition = 0;
-  RetainPtr<IFX_SeekableReadStream> const m_pStream;
+  FX_CodePage code_page_ = FX_CodePage::kDefANSI;
+  size_t bom_length_ = 0;
+  FX_FILESIZE position_ = 0;
+  RetainPtr<IFX_SeekableReadStream> const stream_;
 };
 
 #endif  // CORE_FXCRT_CFX_SEEKABLESTREAMPROXY_H_

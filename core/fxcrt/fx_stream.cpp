@@ -18,27 +18,27 @@ class CFX_CRTFileStream final : public IFX_SeekableStream {
   CONSTRUCT_VIA_MAKE_RETAIN;
 
   // IFX_SeekableStream:
-  FX_FILESIZE GetSize() override { return m_pFile->GetSize(); }
+  FX_FILESIZE GetSize() override { return file_->GetSize(); }
   bool IsEOF() override { return GetPosition() >= GetSize(); }
-  FX_FILESIZE GetPosition() override { return m_pFile->GetPosition(); }
+  FX_FILESIZE GetPosition() override { return file_->GetPosition(); }
   bool ReadBlockAtOffset(pdfium::span<uint8_t> buffer,
                          FX_FILESIZE offset) override {
-    return m_pFile->ReadPos(buffer, offset) > 0;
+    return file_->ReadPos(buffer, offset) > 0;
   }
   bool WriteBlock(pdfium::span<const uint8_t> buffer) override {
-    if (m_pFile->SetPosition(GetSize()) == static_cast<FX_FILESIZE>(-1)) {
+    if (file_->SetPosition(GetSize()) == static_cast<FX_FILESIZE>(-1)) {
       return false;
     }
-    return !!m_pFile->Write(buffer);
+    return !!file_->Write(buffer);
   }
-  bool Flush() override { return m_pFile->Flush(); }
+  bool Flush() override { return file_->Flush(); }
 
  private:
   explicit CFX_CRTFileStream(std::unique_ptr<FileAccessIface> pFA)
-      : m_pFile(std::move(pFA)) {}
+      : file_(std::move(pFA)) {}
   ~CFX_CRTFileStream() override = default;
 
-  std::unique_ptr<FileAccessIface> m_pFile;
+  std::unique_ptr<FileAccessIface> file_;
 };
 
 }  // namespace

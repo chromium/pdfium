@@ -26,20 +26,21 @@ class FX_WindowsFolder : public FX_Folder {
   friend class FX_Folder;
   FX_WindowsFolder();
 
-  HANDLE m_Handle = INVALID_HANDLE_VALUE;
-  bool m_bReachedEnd = false;
-  WIN32_FIND_DATAA m_FindData;
+  HANDLE handle_ = INVALID_HANDLE_VALUE;
+  bool reached_end_ = false;
+  WIN32_FIND_DATAA find_data_;
 };
 
 std::unique_ptr<FX_Folder> FX_Folder::OpenFolder(const ByteString& path) {
   // Private ctor.
   auto handle = pdfium::WrapUnique(new FX_WindowsFolder());
   ByteString search_path = path + "/*.*";
-  handle->m_Handle =
+  handle->handle_ =
       FindFirstFileExA(search_path.c_str(), FindExInfoStandard,
-                       &handle->m_FindData, FindExSearchNameMatch, nullptr, 0);
-  if (handle->m_Handle == INVALID_HANDLE_VALUE)
+                       &handle->find_data_, FindExSearchNameMatch, nullptr, 0);
+  if (handle->handle_ == INVALID_HANDLE_VALUE) {
     return nullptr;
+  }
 
   return handle;
 }
@@ -47,17 +48,20 @@ std::unique_ptr<FX_Folder> FX_Folder::OpenFolder(const ByteString& path) {
 FX_WindowsFolder::FX_WindowsFolder() = default;
 
 FX_WindowsFolder::~FX_WindowsFolder() {
-  if (m_Handle != INVALID_HANDLE_VALUE)
-    FindClose(m_Handle);
+  if (handle_ != INVALID_HANDLE_VALUE) {
+    FindClose(handle_);
+  }
 }
 
 bool FX_WindowsFolder::GetNextFile(ByteString* filename, bool* bFolder) {
-  if (m_bReachedEnd)
+  if (reached_end_) {
     return false;
+  }
 
-  *filename = m_FindData.cFileName;
-  *bFolder = !!(m_FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
-  if (!FindNextFileA(m_Handle, &m_FindData))
-    m_bReachedEnd = true;
+  *filename = find_data_.cFileName;
+  *bFolder = !!(find_data_.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
+  if (!FindNextFileA(handle_, &find_data_)) {
+    reached_end_ = true;
+  }
   return true;
 }

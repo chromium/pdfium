@@ -38,18 +38,18 @@ class StringTemplate {
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
   bool IsEmpty() const { return !GetLength(); }
-  size_t GetLength() const { return m_pData ? m_pData->m_nDataLength : 0; }
+  size_t GetLength() const { return data_ ? data_->data_length_ : 0; }
 
   // Return length as determined by the position of the first NUL.
   size_t GetStringLength() const {
-    return m_pData ? m_pData->GetStringLength() : 0;
+    return data_ ? data_->GetStringLength() : 0;
   }
 
   // Explicit conversion to UnsignedType*. May return nullptr.
   // Note: Any subsequent modification of |this| will invalidate the result.
   const UnsignedType* unsigned_str() const {
-    return m_pData ? reinterpret_cast<const UnsignedType*>(m_pData->m_String)
-                   : nullptr;
+    return data_ ? reinterpret_cast<const UnsignedType*>(data_->string_)
+                 : nullptr;
   }
 
   // Explicit conversion to StringView.
@@ -60,14 +60,14 @@ class StringTemplate {
   // and is always NUL terminated.
   // Note: Any subsequent modification of |this| will invalidate the result.
   const CharType* c_str() const {
-    return m_pData ? m_pData->m_String
-                   : EmptyString(static_cast<CharType*>(nullptr));
+    return data_ ? data_->string_
+                 : EmptyString(static_cast<CharType*>(nullptr));
   }
 
   // Explicit conversion to span.
   // Note: Any subsequent modification of |this| will invalidate the result.
   pdfium::span<const CharType> span() const {
-    return m_pData ? m_pData->span() : pdfium::span<const CharType>();
+    return data_ ? data_->span() : pdfium::span<const CharType>();
   }
 
   // Explicit conversion to spans of unsigned types.
@@ -82,9 +82,9 @@ class StringTemplate {
   // Note: Any subsequent modification of |this| will invalidate the result.
   pdfium::span<const CharType> span_with_terminator() const {
     // SAFETY: EmptyString() returns one NUL byte.
-    return m_pData ? m_pData->span_with_terminator()
-                   : UNSAFE_BUFFERS(pdfium::make_span(
-                         EmptyString(static_cast<CharType*>(nullptr)), 1u));
+    return data_ ? data_->span_with_terminator()
+                 : UNSAFE_BUFFERS(pdfium::make_span(
+                       EmptyString(static_cast<CharType*>(nullptr)), 1u));
   }
 
   // Explicit conversion to spans of unsigned types including the NUL
@@ -98,11 +98,9 @@ class StringTemplate {
 
   // Note: Any subsequent modification of |this| will invalidate iterators.
   const_iterator begin() const {
-    return m_pData ? m_pData->span().begin() : nullptr;
+    return data_ ? data_->span().begin() : nullptr;
   }
-  const_iterator end() const {
-    return m_pData ? m_pData->span().end() : nullptr;
-  }
+  const_iterator end() const { return data_ ? data_->span().end() : nullptr; }
 
   // Note: Any subsequent modification of |this| will invalidate iterators.
   const_reverse_iterator rbegin() const {
@@ -117,17 +115,17 @@ class StringTemplate {
 
   // CHECK() if index is out of range (via span's operator[]).
   CharType operator[](const size_t index) const {
-    CHECK(m_pData);
-    return m_pData->span()[index];
+    CHECK(data_);
+    return data_->span()[index];
   }
 
   // Unlike std::wstring::front(), this is always safe and returns a
   // NUL char when the string is empty.
-  CharType Front() const { return m_pData ? m_pData->Front() : 0; }
+  CharType Front() const { return data_ ? data_->Front() : 0; }
 
   // Unlike std::wstring::back(), this is always safe and returns a
   // NUL char when the string is empty.
-  CharType Back() const { return m_pData ? m_pData->Back() : 0; }
+  CharType Back() const { return data_ ? data_->Back() : 0; }
 
   // Holds on to buffer if possible for later re-use. Use assignment
   // to force immediate release if desired.
@@ -201,7 +199,7 @@ class StringTemplate {
   void AssignCopy(const T* pSrcData, size_t nSrcLen);
   void Concat(const T* pSrcData, size_t nSrcLen);
 
-  RetainPtr<StringData> m_pData;
+  RetainPtr<StringData> data_;
 };
 
 extern template class StringTemplate<char>;

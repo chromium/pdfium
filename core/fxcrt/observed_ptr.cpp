@@ -16,19 +16,20 @@ Observable::~Observable() {
 }
 
 void Observable::AddObserver(ObserverIface* pObserver) {
-  DCHECK(!pdfium::Contains(m_Observers, pObserver));
-  m_Observers.insert(pObserver);
+  DCHECK(!pdfium::Contains(observers_, pObserver));
+  observers_.insert(pObserver);
 }
 
 void Observable::RemoveObserver(ObserverIface* pObserver) {
-  DCHECK(pdfium::Contains(m_Observers, pObserver));
-  m_Observers.erase(pObserver);
+  DCHECK(pdfium::Contains(observers_, pObserver));
+  observers_.erase(pObserver);
 }
 
 void Observable::NotifyObservers() {
-  for (auto* pObserver : m_Observers)
+  for (auto* pObserver : observers_) {
     pObserver->OnObservableDestroyed();
-  m_Observers.clear();
+  }
+  observers_.clear();
 }
 
 }  // namespace fxcrt

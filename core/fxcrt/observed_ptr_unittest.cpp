@@ -21,7 +21,7 @@ class PseudoObservable final : public Observable {
 
 class SelfObservable final : public Observable {
  public:
-  ObservedPtr<SelfObservable> m_pOther;
+  ObservedPtr<SelfObservable> other_;
 };
 
 }  // namespace
@@ -202,8 +202,8 @@ TEST(ObservePtr, Bool) {
 
 TEST(ObservePtr, SelfObservable) {
   SelfObservable thing;
-  thing.m_pOther.Reset(&thing);
-  EXPECT_EQ(&thing, thing.m_pOther.Get());
+  thing.other_.Reset(&thing);
+  EXPECT_EQ(&thing, thing.other_.Get());
   // Must be no ASAN violations upon cleanup here.
 }
 
@@ -211,12 +211,12 @@ TEST(ObservePtr, PairwiseObservable) {
   SelfObservable thing1;
   {
     SelfObservable thing2;
-    thing1.m_pOther.Reset(&thing2);
-    thing2.m_pOther.Reset(&thing1);
-    EXPECT_EQ(&thing2, thing1.m_pOther.Get());
-    EXPECT_EQ(&thing1, thing2.m_pOther.Get());
+    thing1.other_.Reset(&thing2);
+    thing2.other_.Reset(&thing1);
+    EXPECT_EQ(&thing2, thing1.other_.Get());
+    EXPECT_EQ(&thing1, thing2.other_.Get());
   }
-  EXPECT_FALSE(thing1.m_pOther.Get());
+  EXPECT_FALSE(thing1.other_.Get());
   // Must be no ASAN violations upon cleanup here.
 }
 

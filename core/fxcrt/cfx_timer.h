@@ -43,16 +43,14 @@ class CFX_Timer {
             int32_t nInterval);
   ~CFX_Timer();
 
-  bool HasValidID() const {
-    return m_nTimerID != HandlerIface::kInvalidTimerID;
-  }
+  bool HasValidID() const { return timer_id_ != HandlerIface::kInvalidTimerID; }
 
  private:
   static void TimerProc(int32_t idEvent);
 
-  int32_t m_nTimerID = HandlerIface::kInvalidTimerID;
-  ObservedPtr<HandlerIface> m_pHandlerIface;
-  UnownedPtr<CallbackIface> const m_pCallbackIface;
+  int32_t timer_id_ = HandlerIface::kInvalidTimerID;
+  ObservedPtr<HandlerIface> handler_iface_;
+  UnownedPtr<CallbackIface> const callback_iface_;
 };
 
 #endif  // CORE_FXCRT_CFX_TIMER_H_

@@ -16,11 +16,11 @@ namespace fxcrt {
 template <typename StringType>
 class StringPoolTemplate {
  public:
-  StringType Intern(const StringType& str) { return *m_Pool.insert(str).first; }
-  void Clear() { m_Pool.clear(); }
+  StringType Intern(const StringType& str) { return *pool_.insert(str).first; }
+  void Clear() { pool_.clear(); }
 
  private:
-  std::unordered_set<StringType> m_Pool;
+  std::unordered_set<StringType> pool_;
 };
 
 extern template class StringPoolTemplate<ByteString>;

@@ -95,8 +95,8 @@ void SwapByteOrder(pdfium::span<uint16_t> str) {
 
 CFX_SeekableStreamProxy::CFX_SeekableStreamProxy(
     const RetainPtr<IFX_SeekableReadStream>& stream)
-    : m_pStream(stream) {
-  DCHECK(m_pStream);
+    : stream_(stream) {
+  DCHECK(stream_);
 
   Seek(From::Begin, 0);
 
@@ -105,73 +105,74 @@ CFX_SeekableStreamProxy::CFX_SeekableStreamProxy(
 
   bom &= BOM_UTF8_MASK;
   if (bom == BOM_UTF8) {
-    m_wBOMLength = 3;
-    m_wCodePage = FX_CodePage::kUTF8;
+    bom_length_ = 3;
+    code_page_ = FX_CodePage::kUTF8;
   } else {
     bom &= BOM_UTF16_MASK;
     if (bom == BOM_UTF16_BE) {
-      m_wBOMLength = 2;
-      m_wCodePage = FX_CodePage::kUTF16BE;
+      bom_length_ = 2;
+      code_page_ = FX_CodePage::kUTF16BE;
     } else if (bom == BOM_UTF16_LE) {
-      m_wBOMLength = 2;
-      m_wCodePage = FX_CodePage::kUTF16LE;
+      bom_length_ = 2;
+      code_page_ = FX_CodePage::kUTF16LE;
     } else {
-      m_wBOMLength = 0;
-      m_wCodePage = FX_GetACP();
+      bom_length_ = 0;
+      code_page_ = FX_GetACP();
     }
   }
 
-  Seek(From::Begin, static_cast<FX_FILESIZE>(m_wBOMLength));
+  Seek(From::Begin, static_cast<FX_FILESIZE>(bom_length_));
 }
 
 CFX_SeekableStreamProxy::~CFX_SeekableStreamProxy() = default;
 
 FX_FILESIZE CFX_SeekableStreamProxy::GetSize() const {
-  return m_pStream->GetSize();
+  return stream_->GetSize();
 }
 
 FX_FILESIZE CFX_SeekableStreamProxy::GetPosition() const {
-  return m_iPosition;
+  return position_;
 }
 
 bool CFX_SeekableStreamProxy::IsEOF() const {
-  return m_iPosition >= GetSize();
+  return position_ >= GetSize();
 }
 
 void CFX_SeekableStreamProxy::Seek(From eSeek, FX_FILESIZE iOffset) {
   switch (eSeek) {
     case From::Begin:
-      m_iPosition = iOffset;
+      position_ = iOffset;
       break;
     case From::Current: {
-      FX_SAFE_FILESIZE new_pos = m_iPosition;
+      FX_SAFE_FILESIZE new_pos = position_;
       new_pos += iOffset;
-      m_iPosition =
+      position_ =
           new_pos.ValueOrDefault(std::numeric_limits<FX_FILESIZE>::max());
     } break;
   }
-  m_iPosition = std::clamp(m_iPosition, static_cast<FX_FILESIZE>(0), GetSize());
+  position_ = std::clamp(position_, static_cast<FX_FILESIZE>(0), GetSize());
 }
 
 void CFX_SeekableStreamProxy::SetCodePage(FX_CodePage wCodePage) {
-  if (m_wBOMLength > 0)
+  if (bom_length_ > 0) {
     return;
-  m_wCodePage = wCodePage;
+  }
+  code_page_ = wCodePage;
 }
 
 size_t CFX_SeekableStreamProxy::ReadData(pdfium::span<uint8_t> buffer) {
   DCHECK(!buffer.empty());
-  const size_t remaining = static_cast<size_t>(GetSize() - m_iPosition);
+  const size_t remaining = static_cast<size_t>(GetSize() - position_);
   size_t read_size = std::min(buffer.size(), remaining);
   if (read_size == 0) {
     return 0;
   }
-  if (!m_pStream->ReadBlockAtOffset(buffer.first(read_size), m_iPosition)) {
+  if (!stream_->ReadBlockAtOffset(buffer.first(read_size), position_)) {
     return 0;
   }
-  FX_SAFE_FILESIZE new_pos = m_iPosition;
+  FX_SAFE_FILESIZE new_pos = position_;
   new_pos += read_size;
-  m_iPosition = new_pos.ValueOrDefault(m_iPosition);
+  position_ = new_pos.ValueOrDefault(position_);
   return new_pos.IsValid() ? read_size : 0;
 }
 
@@ -179,13 +180,13 @@ size_t CFX_SeekableStreamProxy::ReadBlock(pdfium::span<wchar_t> buffer) {
   if (buffer.empty()) {
     return 0;
   }
-  if (m_wCodePage == FX_CodePage::kUTF16LE ||
-      m_wCodePage == FX_CodePage::kUTF16BE) {
+  if (code_page_ == FX_CodePage::kUTF16LE ||
+      code_page_ == FX_CodePage::kUTF16BE) {
     size_t bytes_to_read = buffer.size() * sizeof(uint16_t);
     size_t bytes_read =
         ReadData(pdfium::as_writable_bytes(buffer).first(bytes_to_read));
     size_t elements = bytes_read / sizeof(uint16_t);
-    if (m_wCodePage == FX_CodePage::kUTF16BE) {
+    if (code_page_ == FX_CodePage::kUTF16BE) {
       SwapByteOrder(fxcrt::reinterpret_span<uint16_t>(buffer).first(elements));
     }
     UTF16ToWChar(buffer.first(elements));
@@ -199,7 +200,7 @@ size_t CFX_SeekableStreamProxy::ReadBlock(pdfium::span<wchar_t> buffer) {
   }
   DataVector<uint8_t> byte_buf(bytes_to_read);
   size_t bytes_read = ReadData(byte_buf);
-  if (m_wCodePage != FX_CodePage::kUTF8) {
+  if (code_page_ != FX_CodePage::kUTF8) {
     return 0;
   }
   auto [src_bytes_consumed, dest_wchars_produced] =

@@ -15,15 +15,16 @@ class AutoNuller {
  public:
   FX_STACK_ALLOCATED();
 
-  explicit AutoNuller(T* location) : m_Location(location) {}
+  explicit AutoNuller(T* location) : location_(location) {}
   ~AutoNuller() {
-    if (m_Location)
-      *m_Location = nullptr;
+    if (location_) {
+      *location_ = nullptr;
+    }
   }
-  void AbandonNullification() { m_Location = nullptr; }
+  void AbandonNullification() { location_ = nullptr; }
 
  private:
-  UnownedPtr<T> m_Location;
+  UnownedPtr<T> location_;
 };
 
 }  // namespace fxcrt

@@ -37,7 +37,7 @@ class CFX_FileAccess_Windows final : public FileAccessIface {
   bool Truncate(FX_FILESIZE szFile) override;
 
  private:
-  UNOWNED_PTR_EXCLUSION void* m_hFile = nullptr;  // void type incompatible.
+  UNOWNED_PTR_EXCLUSION void* file_ = nullptr;  // void type incompatible.
 };
 
 #endif  // CORE_FXCRT_CFX_FILEACCESS_WINDOWS_H_

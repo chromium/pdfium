@@ -28,70 +28,70 @@ std::unique_ptr<FileAccessIface> FileAccessIface::Create() {
   return std::make_unique<CFX_FileAccess_Posix>();
 }
 
-CFX_FileAccess_Posix::CFX_FileAccess_Posix() : m_nFD(-1) {}
+CFX_FileAccess_Posix::CFX_FileAccess_Posix() : fd_(-1) {}
 
 CFX_FileAccess_Posix::~CFX_FileAccess_Posix() {
   Close();
 }
 
 bool CFX_FileAccess_Posix::Open(ByteStringView fileName) {
-  if (m_nFD > -1)
+  if (fd_ > -1) {
     return false;
+  }
 
   // TODO(tsepez): check usage of c_str() below.
-  m_nFD =
-      open(fileName.unterminated_c_str(), O_BINARY | O_LARGEFILE | O_RDONLY);
-  return m_nFD > -1;
+  fd_ = open(fileName.unterminated_c_str(), O_BINARY | O_LARGEFILE | O_RDONLY);
+  return fd_ > -1;
 }
 
 void CFX_FileAccess_Posix::Close() {
-  if (m_nFD < 0) {
+  if (fd_ < 0) {
     return;
   }
-  close(m_nFD);
-  m_nFD = -1;
+  close(fd_);
+  fd_ = -1;
 }
 
 FX_FILESIZE CFX_FileAccess_Posix::GetSize() const {
-  if (m_nFD < 0) {
+  if (fd_ < 0) {
     return 0;
   }
   struct stat s = {};
-  fstat(m_nFD, &s);
+  fstat(fd_, &s);
   return pdfium::checked_cast<FX_FILESIZE>(s.st_size);
 }
 
 FX_FILESIZE CFX_FileAccess_Posix::GetPosition() const {
-  if (m_nFD < 0) {
+  if (fd_ < 0) {
     return (FX_FILESIZE)-1;
   }
-  return lseek(m_nFD, 0, SEEK_CUR);
+  return lseek(fd_, 0, SEEK_CUR);
 }
 
 FX_FILESIZE CFX_FileAccess_Posix::SetPosition(FX_FILESIZE pos) {
-  if (m_nFD < 0) {
+  if (fd_ < 0) {
     return (FX_FILESIZE)-1;
   }
-  return lseek(m_nFD, pos, SEEK_SET);
+  return lseek(fd_, pos, SEEK_SET);
 }
 
 size_t CFX_FileAccess_Posix::Read(pdfium::span<uint8_t> buffer) {
-  if (m_nFD < 0) {
+  if (fd_ < 0) {
     return 0;
   }
-  return read(m_nFD, buffer.data(), buffer.size());
+  return read(fd_, buffer.data(), buffer.size());
 }
 
 size_t CFX_FileAccess_Posix::Write(pdfium::span<const uint8_t> buffer) {
-  if (m_nFD < 0) {
+  if (fd_ < 0) {
     return 0;
   }
-  return write(m_nFD, buffer.data(), buffer.size());
+  return write(fd_, buffer.data(), buffer.size());
 }
 
 size_t CFX_FileAccess_Posix::ReadPos(pdfium::span<uint8_t> buffer,
                                      FX_FILESIZE pos) {
-  if (m_nFD < 0) {
+  if (fd_ < 0) {
     return 0;
   }
   if (pos >= GetSize()) {
@@ -104,15 +104,17 @@ size_t CFX_FileAccess_Posix::ReadPos(pdfium::span<uint8_t> buffer,
 }
 
 bool CFX_FileAccess_Posix::Flush() {
-  if (m_nFD < 0)
+  if (fd_ < 0) {
     return false;
+  }
 
-  return fsync(m_nFD) > -1;
+  return fsync(fd_) > -1;
 }
 
 bool CFX_FileAccess_Posix::Truncate(FX_FILESIZE szFile) {
-  if (m_nFD < 0)
+  if (fd_ < 0) {
     return false;
+  }
 
-  return !ftruncate(m_nFD, szFile);
+  return !ftruncate(fd_, szFile);
 }

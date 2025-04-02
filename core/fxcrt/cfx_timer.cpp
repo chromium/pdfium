@@ -32,20 +32,21 @@ void CFX_Timer::DestroyGlobals() {
 CFX_Timer::CFX_Timer(HandlerIface* pHandlerIface,
                      CallbackIface* pCallbackIface,
                      int32_t nInterval)
-    : m_pHandlerIface(pHandlerIface), m_pCallbackIface(pCallbackIface) {
-  DCHECK(m_pCallbackIface);
-  if (m_pHandlerIface) {
-    m_nTimerID = m_pHandlerIface->SetTimer(nInterval, TimerProc);
+    : handler_iface_(pHandlerIface), callback_iface_(pCallbackIface) {
+  DCHECK(callback_iface_);
+  if (handler_iface_) {
+    timer_id_ = handler_iface_->SetTimer(nInterval, TimerProc);
     if (HasValidID())
-      (*g_pwl_timer_map)[m_nTimerID] = this;
+      (*g_pwl_timer_map)[timer_id_] = this;
   }
 }
 
 CFX_Timer::~CFX_Timer() {
   if (HasValidID()) {
-    g_pwl_timer_map->erase(m_nTimerID);
-    if (m_pHandlerIface)
-      m_pHandlerIface->KillTimer(m_nTimerID);
+    g_pwl_timer_map->erase(timer_id_);
+    if (handler_iface_) {
+      handler_iface_->KillTimer(timer_id_);
+    }
   }
 }
 
@@ -53,6 +54,6 @@ CFX_Timer::~CFX_Timer() {
 void CFX_Timer::TimerProc(int32_t idEvent) {
   auto it = g_pwl_timer_map->find(idEvent);
   if (it != g_pwl_timer_map->end()) {
-    it->second->m_pCallbackIface->OnTimerFired();
+    it->second->callback_iface_->OnTimerFired();
   }
 }

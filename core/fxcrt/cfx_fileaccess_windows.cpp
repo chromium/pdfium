@@ -23,81 +23,92 @@ CFX_FileAccess_Windows::~CFX_FileAccess_Windows() {
 }
 
 bool CFX_FileAccess_Windows::Open(ByteStringView fileName) {
-  if (m_hFile)
+  if (file_) {
     return false;
+  }
 
   WideString wname = WideString::FromUTF8(fileName);
-  m_hFile = ::CreateFileW(wname.c_str(), GENERIC_READ,
-                          FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr,
-                          OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-  if (m_hFile == INVALID_HANDLE_VALUE)
-    m_hFile = nullptr;
+  file_ = ::CreateFileW(wname.c_str(), GENERIC_READ,
+                        FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr,
+                        OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+  if (file_ == INVALID_HANDLE_VALUE) {
+    file_ = nullptr;
+  }
 
-  return !!m_hFile;
+  return !!file_;
 }
 
 void CFX_FileAccess_Windows::Close() {
-  if (!m_hFile)
+  if (!file_) {
     return;
+  }
 
-  ::CloseHandle(m_hFile);
-  m_hFile = nullptr;
+  ::CloseHandle(file_);
+  file_ = nullptr;
 }
 
 FX_FILESIZE CFX_FileAccess_Windows::GetSize() const {
-  if (!m_hFile)
+  if (!file_) {
     return 0;
+  }
 
   LARGE_INTEGER size = {};
-  if (!::GetFileSizeEx(m_hFile, &size))
+  if (!::GetFileSizeEx(file_, &size)) {
     return 0;
+  }
 
   return (FX_FILESIZE)size.QuadPart;
 }
 
 FX_FILESIZE CFX_FileAccess_Windows::GetPosition() const {
-  if (!m_hFile)
+  if (!file_) {
     return (FX_FILESIZE)-1;
+  }
 
   LARGE_INTEGER dist = {};
   LARGE_INTEGER newPos = {};
-  if (!::SetFilePointerEx(m_hFile, dist, &newPos, FILE_CURRENT))
+  if (!::SetFilePointerEx(file_, dist, &newPos, FILE_CURRENT)) {
     return (FX_FILESIZE)-1;
+  }
 
   return (FX_FILESIZE)newPos.QuadPart;
 }
 
 FX_FILESIZE CFX_FileAccess_Windows::SetPosition(FX_FILESIZE pos) {
-  if (!m_hFile)
+  if (!file_) {
     return (FX_FILESIZE)-1;
+  }
 
   LARGE_INTEGER dist;
   dist.QuadPart = pos;
   LARGE_INTEGER newPos = {};
-  if (!::SetFilePointerEx(m_hFile, dist, &newPos, FILE_BEGIN))
+  if (!::SetFilePointerEx(file_, dist, &newPos, FILE_BEGIN)) {
     return (FX_FILESIZE)-1;
+  }
 
   return (FX_FILESIZE)newPos.QuadPart;
 }
 
 size_t CFX_FileAccess_Windows::Read(pdfium::span<uint8_t> buffer) {
-  if (!m_hFile)
+  if (!file_) {
     return 0;
+  }
 
   size_t szRead = 0;
-  if (!::ReadFile(m_hFile, buffer.data(), (DWORD)buffer.size(),
-                  (LPDWORD)&szRead, nullptr)) {
+  if (!::ReadFile(file_, buffer.data(), (DWORD)buffer.size(), (LPDWORD)&szRead,
+                  nullptr)) {
     return 0;
   }
   return szRead;
 }
 
 size_t CFX_FileAccess_Windows::Write(pdfium::span<const uint8_t> buffer) {
-  if (!m_hFile)
+  if (!file_) {
     return 0;
+  }
 
   size_t szWrite = 0;
-  if (!::WriteFile(m_hFile, buffer.data(), (DWORD)buffer.size(),
+  if (!::WriteFile(file_, buffer.data(), (DWORD)buffer.size(),
                    (LPDWORD)&szWrite, nullptr)) {
     return 0;
   }
@@ -106,8 +117,9 @@ size_t CFX_FileAccess_Windows::Write(pdfium::span<const uint8_t> buffer) {
 
 size_t CFX_FileAccess_Windows::ReadPos(pdfium::span<uint8_t> buffer,
                                        FX_FILESIZE pos) {
-  if (!m_hFile)
+  if (!file_) {
     return 0;
+  }
 
   if (pos >= GetSize())
     return 0;
@@ -119,15 +131,16 @@ size_t CFX_FileAccess_Windows::ReadPos(pdfium::span<uint8_t> buffer,
 }
 
 bool CFX_FileAccess_Windows::Flush() {
-  if (!m_hFile)
+  if (!file_) {
     return false;
+  }
 
-  return !!::FlushFileBuffers(m_hFile);
+  return !!::FlushFileBuffers(file_);
 }
 
 bool CFX_FileAccess_Windows::Truncate(FX_FILESIZE szFile) {
   if (SetPosition(szFile) == (FX_FILESIZE)-1)
     return false;
 
-  return !!::SetEndOfFile(m_hFile);
+  return !!::SetEndOfFile(file_);
 }

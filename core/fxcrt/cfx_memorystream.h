@@ -31,9 +31,9 @@ class CFX_MemoryStream final : public IFX_SeekableStream {
   CFX_MemoryStream();
   ~CFX_MemoryStream() override;
 
-  DataVector<uint8_t> m_data;
-  size_t m_nCurSize = 0;
-  size_t m_nCurPos = 0;
+  DataVector<uint8_t> data_;
+  size_t cur_size_ = 0;
+  size_t cur_pos_ = 0;
 };
 
 #endif  // CORE_FXCRT_CFX_MEMORYSTREAM_H_

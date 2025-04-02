@@ -30,8 +30,8 @@ class FX_PosixFolder : public FX_Folder {
   friend class FX_Folder;
   FX_PosixFolder(const ByteString& path, DIR* dir);
 
-  const ByteString m_Path;
-  UnownedPtr<DIR> m_Dir;
+  const ByteString path_;
+  UnownedPtr<DIR> dir_;
 };
 
 std::unique_ptr<FX_Folder> FX_Folder::OpenFolder(const ByteString& path) {
@@ -44,18 +44,18 @@ std::unique_ptr<FX_Folder> FX_Folder::OpenFolder(const ByteString& path) {
 }
 
 FX_PosixFolder::FX_PosixFolder(const ByteString& path, DIR* dir)
-    : m_Path(path), m_Dir(dir) {}
+    : path_(path), dir_(dir) {}
 
 FX_PosixFolder::~FX_PosixFolder() {
-  closedir(m_Dir.ExtractAsDangling());
+  closedir(dir_.ExtractAsDangling());
 }
 
 bool FX_PosixFolder::GetNextFile(ByteString* filename, bool* bFolder) {
-  struct dirent* de = readdir(m_Dir);
+  struct dirent* de = readdir(dir_);
   if (!de)
     return false;
 
-  ByteString fullpath = m_Path + "/" + de->d_name;
+  ByteString fullpath = path_ + "/" + de->d_name;
   struct stat deStat;
   if (stat(fullpath.c_str(), &deStat) < 0)
     return false;

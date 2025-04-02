@@ -37,13 +37,13 @@ class CFX_BidiChar {
 
   // Call after a change in direction is indicated by the above to get
   // information about the segment to process.
-  const Segment& GetSegmentInfo() const { return m_LastSegment; }
+  const Segment& GetSegmentInfo() const { return last_segment_; }
 
  private:
   void StartNewSegment(CFX_BidiChar::Direction direction);
 
-  Segment m_CurrentSegment;
-  Segment m_LastSegment;
+  Segment current_segment_;
+  Segment last_segment_;
 };
 
 class CFX_BidiString {
@@ -59,13 +59,13 @@ class CFX_BidiString {
   // Force the overall direction to be R2L regardless of what was detected.
   void SetOverallDirectionRight();
 
-  const_iterator begin() const { return m_Order.begin(); }
-  const_iterator end() const { return m_Order.end(); }
+  const_iterator begin() const { return order_.begin(); }
+  const_iterator end() const { return order_.end(); }
 
  private:
-  const WideString& m_Str;
-  std::vector<CFX_BidiChar::Segment> m_Order;
-  CFX_BidiChar::Direction m_eOverallDirection = CFX_BidiChar::Direction::kLeft;
+  const WideString& str_;
+  std::vector<CFX_BidiChar::Segment> order_;
+  CFX_BidiChar::Direction overall_direction_ = CFX_BidiChar::Direction::kLeft;
 };
 
 #endif  // CORE_FXCRT_FX_BIDI_H_

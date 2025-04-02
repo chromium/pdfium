@@ -77,7 +77,7 @@ pdfium::span<wchar_t> WideTextBuffer::ExpandWideBuf(size_t char_count) {
   safe_bytes *= sizeof(wchar_t);
   size_t bytes = safe_bytes.ValueOrDie();
   ExpandBuf(bytes);
-  m_DataSize += bytes;
+  data_size_ += bytes;
   return GetWideSpan().subspan(original_count);
 }
 

@@ -25,8 +25,8 @@ RetainPtr<StringDataTemplate<CharType>> StringDataTemplate<CharType>::Create(
   DCHECK_GT(nLen, 0u);
 
   // Calculate space needed for the fixed portion of the struct plus the
-  // NUL char that is not included in |m_nAllocLength|.
-  int overhead = offsetof(StringDataTemplate, m_String) + sizeof(CharType);
+  // NUL char that is not included in |alloc_length_|.
+  int overhead = offsetof(StringDataTemplate, string_) + sizeof(CharType);
   FX_SAFE_SIZE_T nSize = nLen;
   nSize *= sizeof(CharType);
   nSize += overhead;
@@ -56,14 +56,15 @@ RetainPtr<StringDataTemplate<CharType>> StringDataTemplate<CharType>::Create(
 
 template <typename CharType>
 void StringDataTemplate<CharType>::Release() {
-  if (--m_nRefs <= 0)
+  if (--refs_ <= 0) {
     FX_StringFree(this);
+  }
 }
 
 template <typename CharType>
 void StringDataTemplate<CharType>::CopyContents(
     const StringDataTemplate& other) {
-  fxcrt::Copy(other.capacity_span().first(other.m_nDataLength + 1),
+  fxcrt::Copy(other.capacity_span().first(other.data_length_ + 1),
               capacity_span());
 }
 
@@ -85,7 +86,7 @@ void StringDataTemplate<CharType>::CopyContentsAt(
 template <typename CharType>
 StringDataTemplate<CharType>::StringDataTemplate(size_t dataLen,
                                                  size_t allocLen)
-    : m_nDataLength(dataLen), m_nAllocLength(allocLen) {
+    : data_length_(dataLen), alloc_length_(allocLen) {
   capacity_span()[dataLen] = 0;
 }
 

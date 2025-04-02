@@ -104,8 +104,8 @@ enum class FX_Charset : uint8_t {
 
 // Hi-bytes to unicode codepoint mapping for various code pages.
 struct FX_CharsetUnicodes {
-  FX_Charset m_Charset;
-  pdfium::span<const uint16_t> m_pUnicodes;
+  FX_Charset charset_;
+  pdfium::span<const uint16_t> unicodes_;
 };
 
 extern const std::array<FX_CharsetUnicodes, 8> kFX_CharsetUnicodes;
