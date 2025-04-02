@@ -38,12 +38,12 @@ class IJS_Runtime {
     explicit ScopedEventContext(IJS_Runtime* pRuntime);
     ~ScopedEventContext();
 
-    IJS_EventContext* Get() const { return m_pContext; }
-    IJS_EventContext* operator->() const { return m_pContext; }
+    IJS_EventContext* Get() const { return context_; }
+    IJS_EventContext* operator->() const { return context_; }
 
    private:
-    UnownedPtr<IJS_Runtime> const m_pRuntime;
-    UnownedPtr<IJS_EventContext> m_pContext;
+    UnownedPtr<IJS_Runtime> const runtime_;
+    UnownedPtr<IJS_EventContext> context_;
   };
 
   static void Initialize(unsigned int slot, void* isolate, void* platform);

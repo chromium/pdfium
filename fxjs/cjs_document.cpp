@@ -140,8 +140,9 @@ CJS_Document::~CJS_Document() = default;
 
 // The total number of fields in document.
 CJS_Result CJS_Document::get_num_fields(CJS_Runtime* pRuntime) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   CPDF_InteractiveForm* pPDFForm = GetCoreInteractiveForm();
   return CJS_Result::Success(pRuntime->NewNumber(
@@ -154,20 +155,22 @@ CJS_Result CJS_Document::set_num_fields(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_dirty(CJS_Runtime* pRuntime) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   return CJS_Result::Success(
-      pRuntime->NewBoolean(!!m_pFormFillEnv->GetChangeMark()));
+      pRuntime->NewBoolean(!!form_fill_env_->GetChangeMark()));
 }
 
 CJS_Result CJS_Document::set_dirty(CJS_Runtime* pRuntime,
                                    v8::Local<v8::Value> vp) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
-  pRuntime->ToBoolean(vp) ? m_pFormFillEnv->SetChangeMark()
-                          : m_pFormFillEnv->ClearChangeMark();
+  pRuntime->ToBoolean(vp) ? form_fill_env_->SetChangeMark()
+                          : form_fill_env_->ClearChangeMark();
   return CJS_Result::Success();
 }
 
@@ -181,10 +184,11 @@ CJS_Result CJS_Document::set_ADBE(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_page_num(CJS_Runtime* pRuntime) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
-  CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetCurrentView();
+  CPDFSDK_PageView* pPageView = form_fill_env_->GetCurrentView();
   if (!pPageView)
     return CJS_Result::Success(pRuntime->NewUndefined());
 
@@ -193,17 +197,18 @@ CJS_Result CJS_Document::get_page_num(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Document::set_page_num(CJS_Runtime* pRuntime,
                                       v8::Local<v8::Value> vp) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
-  int iPageCount = m_pFormFillEnv->GetPageCount();
+  int iPageCount = form_fill_env_->GetPageCount();
   int iPageNum = pRuntime->ToInt32(vp);
   if (iPageNum >= 0 && iPageNum < iPageCount)
-    m_pFormFillEnv->JS_docgotoPage(iPageNum);
+    form_fill_env_->JS_docgotoPage(iPageNum);
   else if (iPageNum >= iPageCount)
-    m_pFormFillEnv->JS_docgotoPage(iPageCount - 1);
+    form_fill_env_->JS_docgotoPage(iPageCount - 1);
   else if (iPageNum < 0)
-    m_pFormFillEnv->JS_docgotoPage(0);
+    form_fill_env_->JS_docgotoPage(0);
 
   return CJS_Result::Success();
 }
@@ -246,8 +251,9 @@ CJS_Result CJS_Document::getField(CJS_Runtime* pRuntime,
   if (params.empty())
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   WideString wideName = pRuntime->ToWideString(params[0]);
   CPDF_InteractiveForm* pPDFForm = GetCoreInteractiveForm();
@@ -274,8 +280,9 @@ CJS_Result CJS_Document::getNthFieldName(
     pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   int nIndex = pRuntime->ToInt32(params[0]);
   if (nIndex < 0)
@@ -312,8 +319,9 @@ CJS_Result CJS_Document::importTextData(
 
 CJS_Result CJS_Document::mailDoc(CJS_Runtime* pRuntime,
                                  pdfium::span<v8::Local<v8::Value>> params) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   v8::LocalVector<v8::Value> newParams = ExpandKeywordParams(
       pRuntime, params, 6, "bUI", "cTo", "cCc", "cBcc", "cSubject", "cMsg");
@@ -343,7 +351,7 @@ CJS_Result CJS_Document::mailDoc(CJS_Runtime* pRuntime,
     cMsg = pRuntime->ToWideString(newParams[5]);
 
   pRuntime->BeginBlock();
-  m_pFormFillEnv->JS_docmailForm(pdfium::span<const uint8_t>(), bUI, cTo,
+  form_fill_env_->JS_docmailForm(pdfium::span<const uint8_t>(), bUI, cTo,
                                  cSubject, cCc, cBcc, cMsg);
   pRuntime->EndBlock();
   return CJS_Result::Success();
@@ -354,12 +362,14 @@ CJS_Result CJS_Document::mailDoc(CJS_Runtime* pRuntime,
 // comment: need reader supports
 CJS_Result CJS_Document::mailForm(CJS_Runtime* pRuntime,
                                   pdfium::span<v8::Local<v8::Value>> params) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   using pdfium::access_permissions::kExtractForAccessibility;
-  if (!m_pFormFillEnv->HasPermissions(kExtractForAccessibility))
+  if (!form_fill_env_->HasPermissions(kExtractForAccessibility)) {
     return CJS_Result::Failure(JSMessage::kPermissionError);
+  }
 
   CPDFSDK_InteractiveForm* pInteractiveForm = GetSDKInteractiveForm();
   ByteString sTextBuf = pInteractiveForm->ExportFormToFDFTextBuf();
@@ -395,7 +405,7 @@ CJS_Result CJS_Document::mailForm(CJS_Runtime* pRuntime,
     cMsg = pRuntime->ToWideString(newParams[5]);
 
   pRuntime->BeginBlock();
-  m_pFormFillEnv->JS_docmailForm(sTextBuf.unsigned_span(), bUI, cTo, cSubject,
+  form_fill_env_->JS_docmailForm(sTextBuf.unsigned_span(), bUI, cTo, cSubject,
                                  cCc, cBcc, cMsg);
   pRuntime->EndBlock();
   return CJS_Result::Success();
@@ -439,14 +449,15 @@ CJS_Result CJS_Document::print(CJS_Runtime* pRuntime,
   if (IsExpandedParamKnown(newParams[7]))
     bAnnotations = pRuntime->ToBoolean(newParams[7]);
 
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   CJS_EventContext* pHandler = pRuntime->GetCurrentEventContext();
   if (!pHandler->IsUserGesture())
     return CJS_Result::Failure(JSMessage::kUserGestureRequiredError);
 
-  m_pFormFillEnv->JS_docprint(bUI, nStart, nEnd, bSilent, bShrinkToFit,
+  form_fill_env_->JS_docprint(bUI, nStart, nEnd, bSilent, bShrinkToFit,
                               bPrintAsImage, bReverse, bAnnotations);
   return CJS_Result::Success();
 }
@@ -459,10 +470,11 @@ CJS_Result CJS_Document::removeField(
     pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
-  if (!m_pFormFillEnv->HasPermissions(
+  if (!form_fill_env_->HasPermissions(
           pdfium::access_permissions::kModifyContent |
           pdfium::access_permissions::kModifyAnnotation)) {
     return CJS_Result::Failure(JSMessage::kPermissionError);
@@ -485,7 +497,7 @@ CJS_Result CJS_Document::removeField(
     // If there is currently no pageview associated with the page being used
     // do not create one. We may be in the process of tearing down the document
     // and creating a new pageview at this point will cause bad things.
-    CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageView(pPage);
+    CPDFSDK_PageView* pPageView = form_fill_env_->GetPageView(pPage);
     if (!pPageView)
       continue;
 
@@ -495,7 +507,7 @@ CJS_Result CJS_Document::removeField(
     std::vector<CFX_FloatRect> aRefresh(1, rcAnnot);
     pPageView->UpdateRects(aRefresh);
   }
-  m_pFormFillEnv->SetChangeMark();
+  form_fill_env_->SetChangeMark();
   return CJS_Result::Success();
 }
 
@@ -505,10 +517,11 @@ CJS_Result CJS_Document::removeField(
 
 CJS_Result CJS_Document::resetForm(CJS_Runtime* pRuntime,
                                    pdfium::span<v8::Local<v8::Value>> params) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
-  if (!m_pFormFillEnv->HasPermissions(
+  if (!form_fill_env_->HasPermissions(
           pdfium::access_permissions::kModifyContent |
           pdfium::access_permissions::kModifyAnnotation |
           pdfium::access_permissions::kFillForm)) {
@@ -518,7 +531,7 @@ CJS_Result CJS_Document::resetForm(CJS_Runtime* pRuntime,
   CPDF_InteractiveForm* pPDFForm = GetCoreInteractiveForm();
   if (params.empty()) {
     pPDFForm->ResetForm();
-    m_pFormFillEnv->SetChangeMark();
+    form_fill_env_->SetChangeMark();
     return CJS_Result::Success();
   }
 
@@ -541,7 +554,7 @@ CJS_Result CJS_Document::resetForm(CJS_Runtime* pRuntime,
 
   if (!aFields.empty()) {
     pPDFForm->ResetForm(aFields, true);
-    m_pFormFillEnv->SetChangeMark();
+    form_fill_env_->SetChangeMark();
   }
 
   return CJS_Result::Success();
@@ -564,8 +577,9 @@ CJS_Result CJS_Document::submitForm(CJS_Runtime* pRuntime,
   size_t nSize = params.size();
   if (nSize < 1)
     return CJS_Result::Failure(JSMessage::kParamError);
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   CJS_EventContext* pHandler = pRuntime->GetCurrentEventContext();
   if (!pHandler->IsUserGesture())
@@ -627,7 +641,7 @@ CJS_Result CJS_Document::submitForm(CJS_Runtime* pRuntime,
 }
 
 void CJS_Document::SetFormFillEnv(CPDFSDK_FormFillEnvironment* pFormFillEnv) {
-  m_pFormFillEnv.Reset(pFormFillEnv);
+  form_fill_env_.Reset(pFormFillEnv);
 }
 
 CJS_Result CJS_Document::get_bookmark_root(CJS_Runtime* pRuntime) {
@@ -650,11 +664,12 @@ CJS_Result CJS_Document::set_author(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_info(CJS_Runtime* pRuntime) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   RetainPtr<const CPDF_Dictionary> pDictionary =
-      m_pFormFillEnv->GetPDFDocument()->GetInfo();
+      form_fill_env_->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
@@ -716,11 +731,12 @@ CJS_Result CJS_Document::set_info(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_Document::getPropertyInternal(CJS_Runtime* pRuntime,
                                              const ByteString& propName) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   RetainPtr<CPDF_Dictionary> pDictionary =
-      m_pFormFillEnv->GetPDFDocument()->GetInfo();
+      form_fill_env_->GetPDFDocument()->GetInfo();
   if (!pDictionary)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
@@ -749,30 +765,33 @@ CJS_Result CJS_Document::set_creator(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_delay(CJS_Runtime* pRuntime) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
-  return CJS_Result::Success(pRuntime->NewBoolean(m_bDelay));
+  }
+  return CJS_Result::Success(pRuntime->NewBoolean(delay_));
 }
 
 CJS_Result CJS_Document::set_delay(CJS_Runtime* pRuntime,
                                    v8::Local<v8::Value> vp) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   using pdfium::access_permissions::kModifyContent;
-  if (!m_pFormFillEnv->HasPermissions(kModifyContent))
+  if (!form_fill_env_->HasPermissions(kModifyContent)) {
     return CJS_Result::Failure(JSMessage::kPermissionError);
+  }
 
-  m_bDelay = pRuntime->ToBoolean(vp);
-  if (m_bDelay) {
-    m_DelayData.clear();
+  delay_ = pRuntime->ToBoolean(vp);
+  if (delay_) {
+    delay_data_.clear();
     return CJS_Result::Success();
   }
 
   std::list<std::unique_ptr<CJS_DelayData>> DelayDataToProcess;
-  DelayDataToProcess.swap(m_DelayData);
+  DelayDataToProcess.swap(delay_data_);
   for (const auto& pData : DelayDataToProcess)
-    CJS_Field::DoDelay(m_pFormFillEnv.Get(), pData.get());
+    CJS_Field::DoDelay(form_fill_env_.Get(), pData.get());
 
   return CJS_Result::Success();
 }
@@ -818,8 +837,9 @@ CJS_Result CJS_Document::set_subject(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_title(CJS_Runtime* pRuntime) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
   return getPropertyInternal(pRuntime, "Title");
 }
 
@@ -830,10 +850,11 @@ CJS_Result CJS_Document::set_title(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_num_pages(CJS_Runtime* pRuntime) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
   return CJS_Result::Success(
-      pRuntime->NewNumber(m_pFormFillEnv->GetPageCount()));
+      pRuntime->NewNumber(form_fill_env_->GetPageCount()));
 }
 
 CJS_Result CJS_Document::set_num_pages(CJS_Runtime* pRuntime,
@@ -879,10 +900,11 @@ CJS_Result CJS_Document::set_mouse_y(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_URL(CJS_Runtime* pRuntime) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
   return CJS_Result::Success(
-      pRuntime->NewString(m_pFormFillEnv->JS_docGetFilePath().AsStringView()));
+      pRuntime->NewString(form_fill_env_->JS_docGetFilePath().AsStringView()));
 }
 
 CJS_Result CJS_Document::set_URL(CJS_Runtime* pRuntime,
@@ -891,18 +913,19 @@ CJS_Result CJS_Document::set_URL(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_base_URL(CJS_Runtime* pRuntime) {
-  return CJS_Result::Success(pRuntime->NewString(m_cwBaseURL.AsStringView()));
+  return CJS_Result::Success(pRuntime->NewString(base_url_.AsStringView()));
 }
 
 CJS_Result CJS_Document::set_base_URL(CJS_Runtime* pRuntime,
                                       v8::Local<v8::Value> vp) {
-  m_cwBaseURL = pRuntime->ToWideString(vp);
+  base_url_ = pRuntime->ToWideString(vp);
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_Document::get_calculate(CJS_Runtime* pRuntime) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   CPDFSDK_InteractiveForm* pInteractiveForm = GetSDKInteractiveForm();
   return CJS_Result::Success(
@@ -911,8 +934,9 @@ CJS_Result CJS_Document::get_calculate(CJS_Runtime* pRuntime) {
 
 CJS_Result CJS_Document::set_calculate(CJS_Runtime* pRuntime,
                                        v8::Local<v8::Value> vp) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   CPDFSDK_InteractiveForm* pInteractiveForm = GetSDKInteractiveForm();
   pInteractiveForm->EnableCalculate(pRuntime->ToBoolean(vp));
@@ -920,10 +944,11 @@ CJS_Result CJS_Document::set_calculate(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_document_file_name(CJS_Runtime* pRuntime) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
-  WideString wsFilePath = m_pFormFillEnv->JS_docGetFilePath();
+  WideString wsFilePath = form_fill_env_->JS_docGetFilePath();
   size_t i = wsFilePath.GetLength();
   for (; i > 0; i--) {
     if (wsFilePath[i - 1] == L'\\' || wsFilePath[i - 1] == L'/')
@@ -942,10 +967,11 @@ CJS_Result CJS_Document::set_document_file_name(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_Document::get_path(CJS_Runtime* pRuntime) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
   return CJS_Result::Success(pRuntime->NewString(
-      CJS_App::SysPathToPDFPath(m_pFormFillEnv->JS_docGetFilePath())
+      CJS_App::SysPathToPDFPath(form_fill_env_->JS_docGetFilePath())
           .AsStringView()));
 }
 
@@ -991,12 +1017,13 @@ CJS_Result CJS_Document::getAnnot(CJS_Runtime* pRuntime,
                                   pdfium::span<v8::Local<v8::Value>> params) {
   if (params.size() != 2)
     return CJS_Result::Failure(JSMessage::kParamError);
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   int nPageNo = pRuntime->ToInt32(params[0]);
   WideString swAnnotName = pRuntime->ToWideString(params[1]);
-  CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageViewAtIndex(nPageNo);
+  CPDFSDK_PageView* pPageView = form_fill_env_->GetPageViewAtIndex(nPageNo);
   if (!pPageView)
     return CJS_Result::Failure(JSMessage::kBadObjectError);
 
@@ -1028,16 +1055,17 @@ CJS_Result CJS_Document::getAnnot(CJS_Runtime* pRuntime,
 
 CJS_Result CJS_Document::getAnnots(CJS_Runtime* pRuntime,
                                    pdfium::span<v8::Local<v8::Value>> params) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   // TODO(tonikitoo): Add support supported parameters as per
   // the PDF spec.
 
-  int nPageNo = m_pFormFillEnv->GetPageCount();
+  int nPageNo = form_fill_env_->GetPageCount();
   v8::Local<v8::Array> annots = pRuntime->NewArray();
   for (int i = 0; i < nPageNo; ++i) {
-    CPDFSDK_PageView* pPageView = m_pFormFillEnv->GetPageViewAtIndex(i);
+    CPDFSDK_PageView* pPageView = form_fill_env_->GetPageViewAtIndex(i);
     if (!pPageView)
       return CJS_Result::Failure(JSMessage::kBadObjectError);
 
@@ -1097,19 +1125,20 @@ CJS_Result CJS_Document::addIcon(CJS_Runtime* pRuntime,
     return CJS_Result::Failure(JSMessage::kTypeError);
 
   WideString swIconName = pRuntime->ToWideString(params[0]);
-  m_IconNames.push_back(swIconName);
+  icon_names_.push_back(swIconName);
   return CJS_Result::Success();
 }
 
 CJS_Result CJS_Document::get_icons(CJS_Runtime* pRuntime) {
   // TODO(tsepez): Maybe make consistent with Acrobat Reader behavior which
   // is to throw an exception under the default security settings.
-  if (m_IconNames.empty())
+  if (icon_names_.empty()) {
     return CJS_Result::Success(pRuntime->NewUndefined());
+  }
 
   v8::Local<v8::Array> Icons = pRuntime->NewArray();
   int i = 0;
-  for (const auto& name : m_IconNames) {
+  for (const auto& name : icon_names_) {
     v8::Local<v8::Object> pObj = pRuntime->NewFXJSBoundObject(
         CJS_Icon::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
     if (pObj.IsEmpty())
@@ -1137,9 +1166,10 @@ CJS_Result CJS_Document::getIcon(CJS_Runtime* pRuntime,
     return CJS_Result::Failure(JSMessage::kParamError);
 
   WideString swIconName = pRuntime->ToWideString(params[0]);
-  auto it = std::find(m_IconNames.begin(), m_IconNames.end(), swIconName);
-  if (it == m_IconNames.end())
+  auto it = std::find(icon_names_.begin(), icon_names_.end(), swIconName);
+  if (it == icon_names_.end()) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   v8::Local<v8::Object> pObj = pRuntime->NewFXJSBoundObject(
       CJS_Icon::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
@@ -1180,10 +1210,11 @@ CJS_Result CJS_Document::set_media(CJS_Runtime* pRuntime,
 CJS_Result CJS_Document::calculateNow(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
-  if (!m_pFormFillEnv->HasPermissions(
+  if (!form_fill_env_->HasPermissions(
           pdfium::access_permissions::kModifyContent |
           pdfium::access_permissions::kModifyAnnotation |
           pdfium::access_permissions::kFillForm)) {
@@ -1206,12 +1237,14 @@ CJS_Result CJS_Document::set_collab(CJS_Runtime* pRuntime,
 CJS_Result CJS_Document::getPageNthWord(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   using pdfium::access_permissions::kExtractForAccessibility;
-  if (!m_pFormFillEnv->HasPermissions(kExtractForAccessibility))
+  if (!form_fill_env_->HasPermissions(kExtractForAccessibility)) {
     return CJS_Result::Failure(JSMessage::kPermissionError);
+  }
 
   // TODO(tsepez): check maximum allowable params.
 
@@ -1219,7 +1252,7 @@ CJS_Result CJS_Document::getPageNthWord(
   int nWordNo = params.size() > 1 ? pRuntime->ToInt32(params[1]) : 0;
   bool bStrip = params.size() > 2 ? pRuntime->ToBoolean(params[2]) : true;
 
-  CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
+  CPDF_Document* pDocument = form_fill_env_->GetPDFDocument();
   if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount())
     return CJS_Result::Failure(JSMessage::kValueError);
 
@@ -1254,12 +1287,14 @@ CJS_Result CJS_Document::getPageNthWord(
 CJS_Result CJS_Document::getPageNthWordQuads(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   using pdfium::access_permissions::kExtractForAccessibility;
-  if (!m_pFormFillEnv->HasPermissions(kExtractForAccessibility))
+  if (!form_fill_env_->HasPermissions(kExtractForAccessibility)) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   return CJS_Result::Failure(JSMessage::kNotSupportedError);
 }
@@ -1267,15 +1302,17 @@ CJS_Result CJS_Document::getPageNthWordQuads(
 CJS_Result CJS_Document::getPageNumWords(
     CJS_Runtime* pRuntime,
     pdfium::span<v8::Local<v8::Value>> params) {
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
   using pdfium::access_permissions::kExtractForAccessibility;
-  if (!m_pFormFillEnv->HasPermissions(kExtractForAccessibility))
+  if (!form_fill_env_->HasPermissions(kExtractForAccessibility)) {
     return CJS_Result::Failure(JSMessage::kPermissionError);
+  }
 
   int nPageNo = params.size() > 0 ? pRuntime->ToInt32(params[0]) : 0;
-  CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
+  CPDF_Document* pDocument = form_fill_env_->GetPDFDocument();
   if (nPageNo < 0 || nPageNo >= pDocument->GetPageCount())
     return CJS_Result::Failure(JSMessage::kValueError);
 
@@ -1361,10 +1398,11 @@ CJS_Result CJS_Document::gotoNamedDest(
   if (params.size() != 1)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  if (!m_pFormFillEnv)
+  if (!form_fill_env_) {
     return CJS_Result::Failure(JSMessage::kBadObjectError);
+  }
 
-  CPDF_Document* pDocument = m_pFormFillEnv->GetPDFDocument();
+  CPDF_Document* pDocument = form_fill_env_->GetPDFDocument();
   RetainPtr<const CPDF_Array> dest_array = CPDF_NameTree::LookupNamedDest(
       pDocument, pRuntime->ToByteString(params[0]));
   if (!dest_array)
@@ -1373,31 +1411,31 @@ CJS_Result CJS_Document::gotoNamedDest(
   CPDF_Dest dest(std::move(dest_array));
   std::vector<float> positions = dest.GetScrollPositionArray();
   pRuntime->BeginBlock();
-  m_pFormFillEnv->DoGoToAction(dest.GetDestPageIndex(pDocument),
+  form_fill_env_->DoGoToAction(dest.GetDestPageIndex(pDocument),
                                dest.GetZoomMode(), positions);
   pRuntime->EndBlock();
   return CJS_Result::Success();
 }
 
 void CJS_Document::AddDelayData(std::unique_ptr<CJS_DelayData> pData) {
-  m_DelayData.push_back(std::move(pData));
+  delay_data_.push_back(std::move(pData));
 }
 
 void CJS_Document::DoFieldDelay(const WideString& sFieldName,
                                 int nControlIndex) {
   std::vector<std::unique_ptr<CJS_DelayData>> delayed_data;
-  auto iter = m_DelayData.begin();
-  while (iter != m_DelayData.end()) {
+  auto iter = delay_data_.begin();
+  while (iter != delay_data_.end()) {
     auto old = iter++;
     if ((*old)->sFieldName == sFieldName &&
         (*old)->nControlIndex == nControlIndex) {
       delayed_data.push_back(std::move(*old));
-      m_DelayData.erase(old);
+      delay_data_.erase(old);
     }
   }
 
   for (const auto& pData : delayed_data)
-    CJS_Field::DoDelay(m_pFormFillEnv.Get(), pData.get());
+    CJS_Field::DoDelay(form_fill_env_.Get(), pData.get());
 }
 
 CPDF_InteractiveForm* CJS_Document::GetCoreInteractiveForm() {
@@ -1405,5 +1443,5 @@ CPDF_InteractiveForm* CJS_Document::GetCoreInteractiveForm() {
 }
 
 CPDFSDK_InteractiveForm* CJS_Document::GetSDKInteractiveForm() {
-  return m_pFormFillEnv->GetInteractiveForm();
+  return form_fill_env_->GetInteractiveForm();
 }

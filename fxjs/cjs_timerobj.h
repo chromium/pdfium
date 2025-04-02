@@ -20,12 +20,12 @@ class CJS_TimerObj final : public CJS_Object {
   ~CJS_TimerObj() override;
 
   void SetTimer(GlobalTimer* pTimer);
-  int GetTimerID() const { return m_nTimerID; }
+  int GetTimerID() const { return timer_id_; }
 
  private:
   static uint32_t ObjDefnID;
 
-  int m_nTimerID = 0;  // Weak reference to GlobalTimer through global map.
+  int timer_id_ = 0;  // Weak reference to GlobalTimer through global map.
 };
 
 #endif  // FXJS_CJS_TIMEROBJ_H_

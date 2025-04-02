@@ -175,23 +175,24 @@ void CJS_Global::DefineJSObjects(CFXJS_Engine* pEngine) {
 
 CJS_Global::CJS_Global(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
     : CJS_Object(pObject, pRuntime),
-      m_pGlobalData(CFX_GlobalData::GetRetainedInstance(nullptr)) {
+      global_data_(CFX_GlobalData::GetRetainedInstance(nullptr)) {
   UpdateGlobalPersistentVariables();
 }
 
 CJS_Global::~CJS_Global() {
   DestroyGlobalPersisitentVariables();
-  m_pGlobalData.ExtractAsDangling()->Release();
+  global_data_.ExtractAsDangling()->Release();
 }
 
 bool CJS_Global::HasProperty(const ByteString& propname) {
-  return pdfium::Contains(m_MapGlobal, propname);
+  return pdfium::Contains(map_global_, propname);
 }
 
 bool CJS_Global::DelProperty(const ByteString& propname) {
-  auto it = m_MapGlobal.find(propname);
-  if (it == m_MapGlobal.end())
+  auto it = map_global_.find(propname);
+  if (it == map_global_.end()) {
     return false;
+  }
 
   it->second->bDeleted = true;
   return true;
@@ -199,9 +200,10 @@ bool CJS_Global::DelProperty(const ByteString& propname) {
 
 CJS_Result CJS_Global::GetProperty(CJS_Runtime* pRuntime,
                                    const ByteString& propname) {
-  auto it = m_MapGlobal.find(propname);
-  if (it == m_MapGlobal.end())
+  auto it = map_global_.find(propname);
+  if (it == map_global_.end()) {
     return CJS_Result::Success();
+  }
 
   JSGlobalData* pData = it->second.get();
   if (pData->bDeleted)
@@ -261,7 +263,7 @@ void CJS_Global::EnumProperties(
     const v8::PropertyCallbackInfo<v8::Array>& info) {
   v8::Local<v8::Array> result = pRuntime->NewArray();
   int idx = 0;
-  for (const auto& it : m_MapGlobal) {
+  for (const auto& it : map_global_) {
     if (it.second->bDeleted)
       continue;
     v8::Local<v8::Name> name = pRuntime->NewString(it.first.AsStringView());
@@ -277,9 +279,10 @@ CJS_Result CJS_Global::setPersistent(
   if (params.size() != 2)
     return CJS_Result::Failure(JSMessage::kParamError);
 
-  auto it = m_MapGlobal.find(pRuntime->ToByteString(params[0]));
-  if (it == m_MapGlobal.end() || it->second->bDeleted)
+  auto it = map_global_.find(pRuntime->ToByteString(params[0]));
+  if (it == map_global_.end() || it->second->bDeleted) {
     return CJS_Result::Failure(JSMessage::kGlobalNotFoundError);
+  }
 
   it->second->bPersistent = pRuntime->ToBoolean(params[1]);
   return CJS_Result::Success();
@@ -290,8 +293,8 @@ void CJS_Global::UpdateGlobalPersistentVariables() {
   if (!pRuntime)
     return;
 
-  for (int i = 0, sz = m_pGlobalData->GetSize(); i < sz; i++) {
-    CFX_GlobalData::Element* pData = m_pGlobalData->GetAt(i);
+  for (int i = 0, sz = global_data_->GetSize(); i < sz; i++) {
+    CFX_GlobalData::Element* pData = global_data_->GetAt(i);
     switch (pData->data.nType) {
       case CFX_Value::DataType::kNumber:
         SetGlobalVariables(pData->data.sKey, CFX_Value::DataType::kNumber,
@@ -343,36 +346,36 @@ void CJS_Global::CommitGlobalPersisitentVariables() {
   if (!pRuntime)
     return;
 
-  for (const auto& iter : m_MapGlobal) {
+  for (const auto& iter : map_global_) {
     ByteString name = iter.first;
     JSGlobalData* pData = iter.second.get();
     if (pData->bDeleted) {
-      m_pGlobalData->DeleteGlobalVariable(name);
+      global_data_->DeleteGlobalVariable(name);
       continue;
     }
     switch (pData->nType) {
       case CFX_Value::DataType::kNumber:
-        m_pGlobalData->SetGlobalVariableNumber(name, pData->dData);
-        m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
+        global_data_->SetGlobalVariableNumber(name, pData->dData);
+        global_data_->SetGlobalVariablePersistent(name, pData->bPersistent);
         break;
       case CFX_Value::DataType::kBoolean:
-        m_pGlobalData->SetGlobalVariableBoolean(name, pData->bData);
-        m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
+        global_data_->SetGlobalVariableBoolean(name, pData->bData);
+        global_data_->SetGlobalVariablePersistent(name, pData->bPersistent);
         break;
       case CFX_Value::DataType::kString:
-        m_pGlobalData->SetGlobalVariableString(name, pData->sData);
-        m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
+        global_data_->SetGlobalVariableString(name, pData->sData);
+        global_data_->SetGlobalVariablePersistent(name, pData->bPersistent);
         break;
       case CFX_Value::DataType::kObject: {
         v8::Local<v8::Object> obj =
             v8::Local<v8::Object>::New(pRuntime->GetIsolate(), pData->pData);
-        m_pGlobalData->SetGlobalVariableObject(name,
-                                               ObjectToArray(pRuntime, obj));
-        m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
+        global_data_->SetGlobalVariableObject(name,
+                                              ObjectToArray(pRuntime, obj));
+        global_data_->SetGlobalVariablePersistent(name, pData->bPersistent);
       } break;
       case CFX_Value::DataType::kNull:
-        m_pGlobalData->SetGlobalVariableNull(name);
-        m_pGlobalData->SetGlobalVariablePersistent(name, pData->bPersistent);
+        global_data_->SetGlobalVariableNull(name);
+        global_data_->SetGlobalVariablePersistent(name, pData->bPersistent);
         break;
     }
   }
@@ -469,7 +472,7 @@ void CJS_Global::PutObjectProperty(v8::Local<v8::Object> pObj,
 }
 
 void CJS_Global::DestroyGlobalPersisitentVariables() {
-  m_MapGlobal.clear();
+  map_global_.clear();
 }
 
 CJS_Result CJS_Global::SetGlobalVariables(const ByteString& propname,
@@ -482,8 +485,8 @@ CJS_Result CJS_Global::SetGlobalVariables(const ByteString& propname,
   if (propname.IsEmpty())
     return CJS_Result::Failure(JSMessage::kUnknownProperty);
 
-  auto it = m_MapGlobal.find(propname);
-  if (it != m_MapGlobal.end()) {
+  auto it = map_global_.find(propname);
+  if (it != map_global_.end()) {
     JSGlobalData* pTemp = it->second.get();
     if (pTemp->bDeleted || pTemp->nType != nType) {
       pTemp->dData = 0;
@@ -538,6 +541,6 @@ CJS_Result CJS_Global::SetGlobalVariables(const ByteString& propname,
       pNewData->bPersistent = bDefaultPersistent;
       break;
   }
-  m_MapGlobal[propname] = std::move(pNewData);
+  map_global_[propname] = std::move(pNewData);
   return CJS_Result::Success();
 }

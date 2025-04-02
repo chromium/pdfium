@@ -44,9 +44,9 @@ class CJS_Runtime final : public IJS_Runtime,
   bool AddEventToSet(const FieldEvent& event);
   void RemoveEventFromSet(const FieldEvent& event);
 
-  void BeginBlock() { m_bBlocking = true; }
-  void EndBlock() { m_bBlocking = false; }
-  bool IsBlocking() const { return m_bBlocking; }
+  void BeginBlock() { blocking_ = true; }
+  void EndBlock() { blocking_ = false; }
+  bool IsBlocking() const { return blocking_; }
 
   // Attempt to convert the |value| into a number. If successful the number
   // value will be returned, otherwise |value| is returned.
@@ -60,11 +60,11 @@ class CJS_Runtime final : public IJS_Runtime,
   void DefineJSObjects();
   void SetFormFillEnvToDocument();
 
-  std::vector<std::unique_ptr<CJS_EventContext>> m_EventContextArray;
-  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
-  bool m_bBlocking = false;
-  bool m_isolateManaged = false;
-  std::set<FieldEvent> m_FieldEventSet;
+  std::vector<std::unique_ptr<CJS_EventContext>> event_context_array_;
+  ObservedPtr<CPDFSDK_FormFillEnvironment> form_fill_env_;
+  bool blocking_ = false;
+  bool isolate_managed_ = false;
+  std::set<FieldEvent> field_event_set_;
 };
 
 #endif  // FXJS_CJS_RUNTIME_H_

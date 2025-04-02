@@ -28,5 +28,5 @@ CJS_TimerObj::CJS_TimerObj(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
 CJS_TimerObj::~CJS_TimerObj() = default;
 
 void CJS_TimerObj::SetTimer(GlobalTimer* pTimer) {
-  m_nTimerID = pTimer->GetTimerID();
+  timer_id_ = pTimer->GetTimerID();
 }

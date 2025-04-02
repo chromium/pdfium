@@ -106,24 +106,24 @@ class CJS_EventContext final : public IJS_EventContext {
                         bool* bRc) override;
   void OnExternal_Exec() override;
 
-  CJS_Runtime* GetJSRuntime() const { return m_pRuntime; }
+  CJS_Runtime* GetJSRuntime() const { return runtime_; }
   CPDFSDK_FormFillEnvironment* GetFormFillEnv() const {
-    return m_pFormFillEnv.Get();
+    return form_fill_env_.Get();
   }
   CJS_Field* SourceField();
   CJS_Field* TargetField();
 
-  Kind EventKind() const { return m_eKind; }
-  bool IsValid() const { return m_bValid; }
+  Kind EventKind() const { return kind_; }
+  bool IsValid() const { return valid_; }
   bool IsUserGesture() const;
   WideString& Change();
-  WideString ChangeEx() const { return m_WideStrChangeEx; }
-  WideString SourceName() const { return m_strSourceName; }
-  WideString TargetName() const { return m_strTargetName; }
-  int CommitKey() const { return m_nCommitKey; }
-  bool FieldFull() const { return m_bFieldFull; }
-  bool KeyDown() const { return m_bKeyDown; }
-  bool Modifier() const { return m_bModifier; }
+  WideString ChangeEx() const { return change_ex_; }
+  WideString SourceName() const { return source_name_; }
+  WideString TargetName() const { return target_name_; }
+  int CommitKey() const { return commit_key_; }
+  bool FieldFull() const { return field_full_; }
+  bool KeyDown() const { return key_down_; }
+  bool Modifier() const { return modifier_; }
   ByteStringView Name() const;
   ByteStringView Type() const;
   bool& Rc();
@@ -131,45 +131,43 @@ class CJS_EventContext final : public IJS_EventContext {
   int SelStart() const;
   void SetSelEnd(int value);
   void SetSelStart(int value);
-  bool Shift() const { return m_bShift; }
-  bool HasValue() const { return !!m_pValue; }
-  WideString& Value() { return *m_pValue; }
-  bool WillCommit() const { return m_bWillCommit; }
+  bool Shift() const { return shift_; }
+  bool HasValue() const { return !!value_; }
+  WideString& Value() { return *value_; }
+  bool WillCommit() const { return will_commit_; }
 
-  void SetValueForTest(WideString* pStr) { m_pValue = pStr; }
-  void SetRCForTest(bool* pRC) { m_pbRc = pRC; }
-  void SetStrChangeForTest(WideString* pStrChange) {
-    m_pWideStrChange = pStrChange;
-  }
-  void ResetWillCommitForTest() { m_bWillCommit = false; }
+  void SetValueForTest(WideString* pStr) { value_ = pStr; }
+  void SetRCForTest(bool* pRC) { pb_rc_ = pRC; }
+  void SetStrChangeForTest(WideString* pStrChange) { change_ = pStrChange; }
+  void ResetWillCommitForTest() { will_commit_ = false; }
 
  private:
   void Initialize(Kind kind);
   void Destroy();
 
-  UnownedPtr<CJS_Runtime> const m_pRuntime;
-  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
-  Kind m_eKind = Kind::kUnknown;
-  bool m_bBusy = false;
-  bool m_bValid = false;
-  UnownedPtr<WideString> m_pValue;
-  WideString m_strSourceName;
-  WideString m_strTargetName;
-  WideString m_WideStrChangeDu;
-  WideString m_WideStrChangeEx;
-  UnownedPtr<WideString> m_pWideStrChange;
-  int m_nCommitKey = -1;
-  bool m_bKeyDown = false;
-  bool m_bModifier = false;
-  bool m_bShift = false;
-  int m_nSelEndDu = 0;
-  int m_nSelStartDu = 0;
-  UnownedPtr<int> m_pISelEnd;
-  UnownedPtr<int> m_pISelStart;
-  bool m_bWillCommit = false;
-  bool m_bFieldFull = false;
-  bool m_bRcDu = false;
-  UnownedPtr<bool> m_pbRc;
+  UnownedPtr<CJS_Runtime> const runtime_;
+  ObservedPtr<CPDFSDK_FormFillEnvironment> form_fill_env_;
+  Kind kind_ = Kind::kUnknown;
+  bool busy_ = false;
+  bool valid_ = false;
+  UnownedPtr<WideString> value_;
+  WideString source_name_;
+  WideString target_name_;
+  WideString change_du_;
+  WideString change_ex_;
+  UnownedPtr<WideString> change_;
+  int commit_key_ = -1;
+  bool key_down_ = false;
+  bool modifier_ = false;
+  bool shift_ = false;
+  int sel_end_du_ = 0;
+  int sel_start_du_ = 0;
+  UnownedPtr<int> sel_end_;
+  UnownedPtr<int> sel_start_;
+  bool will_commit_ = false;
+  bool field_full_ = false;
+  bool rc_du_ = false;
+  UnownedPtr<bool> pb_rc_;
 };
 
 #endif  // FXJS_CJS_EVENT_CONTEXT_H_

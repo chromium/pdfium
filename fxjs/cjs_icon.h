@@ -18,8 +18,8 @@ class CJS_Icon final : public CJS_Object {
   CJS_Icon(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime);
   ~CJS_Icon() override;
 
-  WideString GetIconName() const { return m_swIconName; }
-  void SetIconName(WideString name) { m_swIconName = name; }
+  WideString GetIconName() const { return icon_name_; }
+  void SetIconName(WideString name) { icon_name_ = name; }
 
   JS_STATIC_PROP(name, name, CJS_Icon)
 
@@ -31,7 +31,7 @@ class CJS_Icon final : public CJS_Object {
   CJS_Result get_name(CJS_Runtime* pRuntime);
   CJS_Result set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp);
 
-  WideString m_swIconName;
+  WideString icon_name_;
 };
 
 #endif  // FXJS_CJS_ICON_H_

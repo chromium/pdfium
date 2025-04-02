@@ -96,8 +96,8 @@ class CJS_Global final : public CJS_Object {
   void EnumProperties(CJS_Runtime* pRuntime,
                       const v8::PropertyCallbackInfo<v8::Array>& info);
 
-  std::map<ByteString, std::unique_ptr<JSGlobalData>> m_MapGlobal;
-  UnownedPtr<CFX_GlobalData> m_pGlobalData;
+  std::map<ByteString, std::unique_ptr<JSGlobalData>> map_global_;
+  UnownedPtr<CFX_GlobalData> global_data_;
 };
 
 #endif  // FXJS_CJS_GLOBAL_H_

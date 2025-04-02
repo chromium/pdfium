@@ -361,12 +361,12 @@ class CJS_Field final : public CJS_Object {
                                 const std::vector<WideString>& array);
   void DoDelay();
 
-  ObservedPtr<CJS_Document> m_pJSDoc;
-  ObservedPtr<CPDFSDK_FormFillEnvironment> m_pFormFillEnv;
-  WideString m_FieldName;
-  int m_nFormControlIndex = -1;
-  bool m_bCanSet = false;
-  bool m_bDelay = false;
+  ObservedPtr<CJS_Document> js_doc_;
+  ObservedPtr<CPDFSDK_FormFillEnvironment> form_fill_env_;
+  WideString field_name_;
+  int form_control_index_ = -1;
+  bool can_set_ = false;
+  bool delay_ = false;
 };
 
 #endif  // FXJS_CJS_FIELD_H_

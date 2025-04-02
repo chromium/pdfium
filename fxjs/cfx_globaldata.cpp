@@ -88,20 +88,21 @@ CFX_GlobalData* CFX_GlobalData::GetRetainedInstance(Delegate* pDelegate) {
   if (!g_pInstance) {
     g_pInstance = new CFX_GlobalData(pDelegate);
   }
-  ++g_pInstance->m_RefCount;
+  ++g_pInstance->ref_count_;
   return g_pInstance;
 }
 
 bool CFX_GlobalData::Release() {
-  if (--m_RefCount)
+  if (--ref_count_) {
     return false;
+  }
 
   delete g_pInstance;
   g_pInstance = nullptr;
   return true;
 }
 
-CFX_GlobalData::CFX_GlobalData(Delegate* pDelegate) : m_pDelegate(pDelegate) {
+CFX_GlobalData::CFX_GlobalData(Delegate* pDelegate) : delegate_(pDelegate) {
   LoadGlobalPersistentVariables();
 }
 
@@ -111,18 +112,18 @@ CFX_GlobalData::~CFX_GlobalData() {
 
 CFX_GlobalData::iterator CFX_GlobalData::FindGlobalVariable(
     const ByteString& propname) {
-  for (auto it = m_arrayGlobalData.begin(); it != m_arrayGlobalData.end();
+  for (auto it = array_global_data_.begin(); it != array_global_data_.end();
        ++it) {
     if ((*it)->data.sKey == propname)
       return it;
   }
-  return m_arrayGlobalData.end();
+  return array_global_data_.end();
 }
 
 CFX_GlobalData::Element* CFX_GlobalData::GetGlobalVariable(
     const ByteString& propname) {
   auto iter = FindGlobalVariable(propname);
-  return iter != m_arrayGlobalData.end() ? iter->get() : nullptr;
+  return iter != array_global_data_.end() ? iter->get() : nullptr;
 }
 
 void CFX_GlobalData::SetGlobalVariableNumber(ByteString sPropName,
@@ -140,7 +141,7 @@ void CFX_GlobalData::SetGlobalVariableNumber(ByteString sPropName,
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = CFX_Value::DataType::kNumber;
   pNewData->data.dData = dData;
-  m_arrayGlobalData.push_back(std::move(pNewData));
+  array_global_data_.push_back(std::move(pNewData));
 }
 
 void CFX_GlobalData::SetGlobalVariableBoolean(ByteString sPropName,
@@ -158,7 +159,7 @@ void CFX_GlobalData::SetGlobalVariableBoolean(ByteString sPropName,
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = CFX_Value::DataType::kBoolean;
   pNewData->data.bData = bData;
-  m_arrayGlobalData.push_back(std::move(pNewData));
+  array_global_data_.push_back(std::move(pNewData));
 }
 
 void CFX_GlobalData::SetGlobalVariableString(ByteString sPropName,
@@ -176,7 +177,7 @@ void CFX_GlobalData::SetGlobalVariableString(ByteString sPropName,
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = CFX_Value::DataType::kString;
   pNewData->data.sData = sData;
-  m_arrayGlobalData.push_back(std::move(pNewData));
+  array_global_data_.push_back(std::move(pNewData));
 }
 
 void CFX_GlobalData::SetGlobalVariableObject(
@@ -195,7 +196,7 @@ void CFX_GlobalData::SetGlobalVariableObject(
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = CFX_Value::DataType::kObject;
   pNewData->data.objData = std::move(array);
-  m_arrayGlobalData.push_back(std::move(pNewData));
+  array_global_data_.push_back(std::move(pNewData));
 }
 
 void CFX_GlobalData::SetGlobalVariableNull(ByteString sPropName) {
@@ -210,7 +211,7 @@ void CFX_GlobalData::SetGlobalVariableNull(ByteString sPropName) {
   auto pNewData = std::make_unique<CFX_GlobalData::Element>();
   pNewData->data.sKey = std::move(sPropName);
   pNewData->data.nType = CFX_Value::DataType::kNull;
-  m_arrayGlobalData.push_back(std::move(pNewData));
+  array_global_data_.push_back(std::move(pNewData));
 }
 
 bool CFX_GlobalData::SetGlobalVariablePersistent(ByteString sPropName,
@@ -231,37 +232,39 @@ bool CFX_GlobalData::DeleteGlobalVariable(ByteString sPropName) {
     return false;
 
   auto iter = FindGlobalVariable(sPropName);
-  if (iter == m_arrayGlobalData.end())
+  if (iter == array_global_data_.end()) {
     return false;
+  }
 
-  m_arrayGlobalData.erase(iter);
+  array_global_data_.erase(iter);
   return true;
 }
 
 int32_t CFX_GlobalData::GetSize() const {
-  return fxcrt::CollectionSize<int32_t>(m_arrayGlobalData);
+  return fxcrt::CollectionSize<int32_t>(array_global_data_);
 }
 
 CFX_GlobalData::Element* CFX_GlobalData::GetAt(int index) {
   if (index < 0 || index >= GetSize())
     return nullptr;
-  return m_arrayGlobalData[index].get();
+  return array_global_data_[index].get();
 }
 
 bool CFX_GlobalData::LoadGlobalPersistentVariables() {
-  if (!m_pDelegate)
+  if (!delegate_) {
     return false;
+  }
 
   bool ret;
   {
     // Span can't outlive call to BufferDone().
-    std::optional<pdfium::span<uint8_t>> buffer = m_pDelegate->LoadBuffer();
+    std::optional<pdfium::span<uint8_t>> buffer = delegate_->LoadBuffer();
     if (!buffer.has_value() || buffer.value().empty())
       return false;
 
     ret = LoadGlobalPersistentVariablesFromBuffer(buffer.value());
   }
-  m_pDelegate->BufferDone();
+  delegate_->BufferDone();
   return ret;
 }
 
@@ -369,12 +372,13 @@ bool CFX_GlobalData::LoadGlobalPersistentVariablesFromBuffer(
 }
 
 bool CFX_GlobalData::SaveGlobalPersisitentVariables() {
-  if (!m_pDelegate)
+  if (!delegate_) {
     return false;
+  }
 
   uint32_t nCount = 0;
   BinaryBuffer sData;
-  for (const auto& pElement : m_arrayGlobalData) {
+  for (const auto& pElement : array_global_data_) {
     if (!pElement->bPersistent)
       continue;
 
@@ -399,7 +403,7 @@ bool CFX_GlobalData::SaveGlobalPersisitentVariables() {
   sFile.AppendSpan(sData.GetSpan());
 
   CRYPT_ArcFourCryptBlock(sFile.GetMutableSpan(), kRC4KEY);
-  return m_pDelegate->StoreBuffer(sFile.GetSpan());
+  return delegate_->StoreBuffer(sFile.GetSpan());
 }
 
 CFX_GlobalData::Element::Element() = default;

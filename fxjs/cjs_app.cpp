@@ -115,14 +115,13 @@ CJS_Result CJS_App::set_active_docs(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_App::get_calculate(CJS_Runtime* pRuntime) {
-  return CJS_Result::Success(pRuntime->NewBoolean(m_bCalculate));
+  return CJS_Result::Success(pRuntime->NewBoolean(calculate_));
 }
 
 CJS_Result CJS_App::set_calculate(CJS_Runtime* pRuntime,
                                   v8::Local<v8::Value> vp) {
-  m_bCalculate = pRuntime->ToBoolean(vp);
-  pRuntime->GetFormFillEnv()->GetInteractiveForm()->EnableCalculate(
-      m_bCalculate);
+  calculate_ = pRuntime->ToBoolean(vp);
+  pRuntime->GetFormFillEnv()->GetInteractiveForm()->EnableCalculate(calculate_);
   return CJS_Result::Success();
 }
 
@@ -312,7 +311,7 @@ CJS_Result CJS_App::setInterval(CJS_Runtime* pRuntime,
   auto timerRef = std::make_unique<GlobalTimer>(
       this, pRuntime, GlobalTimer::Type::kRepeating, script, dwInterval, 0);
   GlobalTimer* pTimerRef = timerRef.get();
-  m_Timers.insert(std::move(timerRef));
+  timers_.insert(std::move(timerRef));
 
   v8::Local<v8::Object> pRetObj = pRuntime->NewFXJSBoundObject(
       CJS_TimerObj::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
@@ -340,7 +339,7 @@ CJS_Result CJS_App::setTimeOut(CJS_Runtime* pRuntime,
       std::make_unique<GlobalTimer>(this, pRuntime, GlobalTimer::Type::kOneShot,
                                     script, dwTimeOut, dwTimeOut);
   GlobalTimer* pTimerRef = timerRef.get();
-  m_Timers.insert(std::move(timerRef));
+  timers_.insert(std::move(timerRef));
 
   v8::Local<v8::Object> pRetObj = pRuntime->NewFXJSBoundObject(
       CJS_TimerObj::GetObjDefnID(), FXJSOBJTYPE_DYNAMIC);
@@ -397,7 +396,7 @@ void CJS_App::TimerProc(GlobalTimer* pTimer) {
 }
 
 void CJS_App::CancelProc(GlobalTimer* pTimer) {
-  m_Timers.erase(fxcrt::MakeFakeUniquePtr(pTimer));
+  timers_.erase(fxcrt::MakeFakeUniquePtr(pTimer));
 }
 
 void CJS_App::RunJsScript(CJS_Runtime* pRuntime, const WideString& wsScript) {
@@ -469,12 +468,12 @@ CJS_Result CJS_App::launchURL(CJS_Runtime* pRuntime,
 }
 
 CJS_Result CJS_App::get_runtime_highlight(CJS_Runtime* pRuntime) {
-  return CJS_Result::Success(pRuntime->NewBoolean(m_bRuntimeHighLight));
+  return CJS_Result::Success(pRuntime->NewBoolean(runtime_high_light_));
 }
 
 CJS_Result CJS_App::set_runtime_highlight(CJS_Runtime* pRuntime,
                                           v8::Local<v8::Value> vp) {
-  m_bRuntimeHighLight = pRuntime->ToBoolean(vp);
+  runtime_high_light_ = pRuntime->ToBoolean(vp);
   return CJS_Result::Success();
 }
 

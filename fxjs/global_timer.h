@@ -33,22 +33,22 @@ class GlobalTimer {
   static void Trigger(int32_t nTimerID);
   static void Cancel(int32_t nTimerID);
 
-  bool IsOneShot() const { return m_nType == Type::kOneShot; }
-  uint32_t GetTimeOut() const { return m_dwTimeOut; }
-  int32_t GetTimerID() const { return m_nTimerID; }
-  CJS_Runtime* GetRuntime() const { return m_pRuntime.Get(); }
-  WideString GetJScript() const { return m_swJScript; }
+  bool IsOneShot() const { return type_ == Type::kOneShot; }
+  uint32_t GetTimeOut() const { return time_out_; }
+  int32_t GetTimerID() const { return timer_id_; }
+  CJS_Runtime* GetRuntime() const { return runtime_.Get(); }
+  WideString GetJScript() const { return jscript_; }
 
  private:
   bool HasValidID() const;
 
-  const Type m_nType;
-  bool m_bProcessing = false;
-  const int32_t m_nTimerID;
-  const uint32_t m_dwTimeOut;
-  const WideString m_swJScript;
-  ObservedPtr<CJS_Runtime> m_pRuntime;
-  UnownedPtr<CJS_App> const m_pEmbedApp;
+  const Type type_;
+  bool processing_ = false;
+  const int32_t timer_id_;
+  const uint32_t time_out_;
+  const WideString jscript_;
+  ObservedPtr<CJS_Runtime> runtime_;
+  UnownedPtr<CJS_App> const embed_app_;
 };
 
 #endif  // FXJS_GLOBAL_TIMER_H_

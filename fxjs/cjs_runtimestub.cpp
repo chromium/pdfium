@@ -9,20 +9,21 @@
 #include "fxjs/cjs_event_context_stub.h"
 
 CJS_RuntimeStub::CJS_RuntimeStub(CPDFSDK_FormFillEnvironment* pFormFillEnv)
-    : m_pFormFillEnv(pFormFillEnv) {}
+    : form_fill_env_(pFormFillEnv) {}
 
 CJS_RuntimeStub::~CJS_RuntimeStub() = default;
 
 IJS_EventContext* CJS_RuntimeStub::NewEventContext() {
-  if (!m_pContext)
-    m_pContext = std::make_unique<CJS_EventContextStub>();
-  return m_pContext.get();
+  if (!context_) {
+    context_ = std::make_unique<CJS_EventContextStub>();
+  }
+  return context_.get();
 }
 
 void CJS_RuntimeStub::ReleaseEventContext(IJS_EventContext* pContext) {}
 
 CPDFSDK_FormFillEnvironment* CJS_RuntimeStub::GetFormFillEnv() const {
-  return m_pFormFillEnv;
+  return form_fill_env_;
 }
 
 CJS_Runtime* CJS_RuntimeStub::AsCJSRuntime() {

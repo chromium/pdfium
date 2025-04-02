@@ -45,9 +45,9 @@
 #include "v8/include/v8-isolate.h"
 
 CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
-    : m_pFormFillEnv(pFormFillEnv) {
+    : form_fill_env_(pFormFillEnv) {
   v8::Isolate* pIsolate = nullptr;
-  IPDF_JSPLATFORM* pPlatform = m_pFormFillEnv->GetFormFillInfo()->m_pJsPlatform;
+  IPDF_JSPLATFORM* pPlatform = form_fill_env_->GetFormFillInfo()->m_pJsPlatform;
   if (pPlatform->version <= 2) {
     // Backwards compatibility - JS now initialized earlier in more modern
     // JSPLATFORM versions.
@@ -59,13 +59,14 @@ CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
     }
     FXJS_Initialize(embedderDataSlot, pExternalIsolate);
   }
-  m_isolateManaged = FXJS_GetIsolate(&pIsolate);
+  isolate_managed_ = FXJS_GetIsolate(&pIsolate);
   SetIsolate(pIsolate);
 
   v8::Isolate::Scope isolate_scope(pIsolate);
   v8::HandleScope handle_scope(pIsolate);
-  if (m_isolateManaged || FXJS_GlobalIsolateRefCount() == 0)
+  if (isolate_managed_ || FXJS_GlobalIsolateRefCount() == 0) {
     DefineJSObjects();
+  }
 
   ScopedEventContext pContext(this);
   InitializeEngine();
@@ -75,8 +76,9 @@ CJS_Runtime::CJS_Runtime(CPDFSDK_FormFillEnvironment* pFormFillEnv)
 CJS_Runtime::~CJS_Runtime() {
   NotifyObservers();
   ReleaseEngine();
-  if (m_isolateManaged)
+  if (isolate_managed_) {
     DisposeIsolate();
+  }
 }
 
 void CJS_Runtime::DefineJSObjects() {
@@ -127,22 +129,22 @@ void CJS_Runtime::DefineJSObjects() {
 }
 
 IJS_EventContext* CJS_Runtime::NewEventContext() {
-  m_EventContextArray.push_back(std::make_unique<CJS_EventContext>(this));
-  return m_EventContextArray.back().get();
+  event_context_array_.push_back(std::make_unique<CJS_EventContext>(this));
+  return event_context_array_.back().get();
 }
 
 void CJS_Runtime::ReleaseEventContext(IJS_EventContext* pContext) {
-  DCHECK_EQ(pContext, m_EventContextArray.back().get());
-  m_EventContextArray.pop_back();
+  DCHECK_EQ(pContext, event_context_array_.back().get());
+  event_context_array_.pop_back();
 }
 
 CJS_EventContext* CJS_Runtime::GetCurrentEventContext() const {
-  return m_EventContextArray.empty() ? nullptr
-                                     : m_EventContextArray.back().get();
+  return event_context_array_.empty() ? nullptr
+                                      : event_context_array_.back().get();
 }
 
 CFX_Timer::HandlerIface* CJS_Runtime::GetTimerHandler() const {
-  return m_pFormFillEnv ? m_pFormFillEnv->GetTimerHandler() : nullptr;
+  return form_fill_env_ ? form_fill_env_->GetTimerHandler() : nullptr;
 }
 
 void CJS_Runtime::SetFormFillEnvToDocument() {
@@ -159,11 +161,11 @@ void CJS_Runtime::SetFormFillEnvToDocument() {
   if (!pJSDocument)
     return;
 
-  pJSDocument->SetFormFillEnv(m_pFormFillEnv.Get());
+  pJSDocument->SetFormFillEnv(form_fill_env_.Get());
 }
 
 CPDFSDK_FormFillEnvironment* CJS_Runtime::GetFormFillEnv() const {
-  return m_pFormFillEnv.Get();
+  return form_fill_env_.Get();
 }
 
 std::optional<IJS_Runtime::JS_Error> CJS_Runtime::ExecuteScript(
@@ -172,11 +174,11 @@ std::optional<IJS_Runtime::JS_Error> CJS_Runtime::ExecuteScript(
 }
 
 bool CJS_Runtime::AddEventToSet(const FieldEvent& event) {
-  return m_FieldEventSet.insert(event).second;
+  return field_event_set_.insert(event).second;
 }
 
 void CJS_Runtime::RemoveEventFromSet(const FieldEvent& event) {
-  m_FieldEventSet.erase(event);
+  field_event_set_.erase(event);
 }
 
 CJS_Runtime* CJS_Runtime::AsCJSRuntime() {

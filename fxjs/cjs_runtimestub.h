@@ -31,8 +31,8 @@ class CJS_RuntimeStub final : public IJS_Runtime {
       const WideString& script) override;
 
  private:
-  UnownedPtr<CPDFSDK_FormFillEnvironment> const m_pFormFillEnv;
-  std::unique_ptr<IJS_EventContext> m_pContext;
+  UnownedPtr<CPDFSDK_FormFillEnvironment> const form_fill_env_;
+  std::unique_ptr<IJS_EventContext> context_;
 };
 
 #endif  // FXJS_CJS_RUNTIMESTUB_H_

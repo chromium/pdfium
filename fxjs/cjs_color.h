@@ -92,18 +92,18 @@ class CJS_Color final : public CJS_Object {
                                v8::Local<v8::Value> vp,
                                CFX_Color* val);
 
-  CFX_Color m_crTransparent;
-  CFX_Color m_crBlack;
-  CFX_Color m_crWhite;
-  CFX_Color m_crRed;
-  CFX_Color m_crGreen;
-  CFX_Color m_crBlue;
-  CFX_Color m_crCyan;
-  CFX_Color m_crMagenta;
-  CFX_Color m_crYellow;
-  CFX_Color m_crDKGray;
-  CFX_Color m_crGray;
-  CFX_Color m_crLTGray;
+  CFX_Color transparent_;
+  CFX_Color black_;
+  CFX_Color white_;
+  CFX_Color red_;
+  CFX_Color green_;
+  CFX_Color blue_;
+  CFX_Color cyan_;
+  CFX_Color magenta_;
+  CFX_Color yellow_;
+  CFX_Color dkgray_;
+  CFX_Color gray_;
+  CFX_Color ltgray_;
 };
 
 #endif  // FXJS_CJS_COLOR_H_

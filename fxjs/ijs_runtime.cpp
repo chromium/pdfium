@@ -17,10 +17,10 @@
 #endif  // PDF_ENABLE_V8
 
 IJS_Runtime::ScopedEventContext::ScopedEventContext(IJS_Runtime* pRuntime)
-    : m_pRuntime(pRuntime), m_pContext(pRuntime->NewEventContext()) {}
+    : runtime_(pRuntime), context_(pRuntime->NewEventContext()) {}
 
 IJS_Runtime::ScopedEventContext::~ScopedEventContext() {
-  m_pRuntime->ReleaseEventContext(m_pContext.ExtractAsDangling());
+  runtime_->ReleaseEventContext(context_.ExtractAsDangling());
 }
 
 // static

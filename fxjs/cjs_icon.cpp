@@ -30,7 +30,7 @@ CJS_Icon::CJS_Icon(v8::Local<v8::Object> pObject, CJS_Runtime* pRuntime)
 CJS_Icon::~CJS_Icon() = default;
 
 CJS_Result CJS_Icon::get_name(CJS_Runtime* pRuntime) {
-  return CJS_Result::Success(pRuntime->NewString(m_swIconName.AsStringView()));
+  return CJS_Result::Success(pRuntime->NewString(icon_name_.AsStringView()));
 }
 
 CJS_Result CJS_Icon::set_name(CJS_Runtime* pRuntime, v8::Local<v8::Value> vp) {

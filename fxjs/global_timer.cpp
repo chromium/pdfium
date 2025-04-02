@@ -38,15 +38,15 @@ GlobalTimer::GlobalTimer(CJS_App* pObj,
                          const WideString& script,
                          uint32_t dwElapse,
                          uint32_t dwTimeOut)
-    : m_nType(nType),
-      m_nTimerID(pRuntime->GetTimerHandler()->SetTimer(dwElapse, Trigger)),
-      m_dwTimeOut(dwTimeOut),
-      m_swJScript(script),
-      m_pRuntime(pRuntime),
-      m_pEmbedApp(pObj) {
+    : type_(nType),
+      timer_id_(pRuntime->GetTimerHandler()->SetTimer(dwElapse, Trigger)),
+      time_out_(dwTimeOut),
+      jscript_(script),
+      runtime_(pRuntime),
+      embed_app_(pObj) {
   if (HasValidID()) {
-    DCHECK(!pdfium::Contains((*g_global_timer_map), m_nTimerID));
-    (*g_global_timer_map)[m_nTimerID] = this;
+    DCHECK(!pdfium::Contains((*g_global_timer_map), timer_id_));
+    (*g_global_timer_map)[timer_id_] = this;
   }
 }
 
@@ -54,11 +54,12 @@ GlobalTimer::~GlobalTimer() {
   if (!HasValidID())
     return;
 
-  if (m_pRuntime && m_pRuntime->GetTimerHandler())
-    m_pRuntime->GetTimerHandler()->KillTimer(m_nTimerID);
+  if (runtime_ && runtime_->GetTimerHandler()) {
+    runtime_->GetTimerHandler()->KillTimer(timer_id_);
+  }
 
-  DCHECK(pdfium::Contains((*g_global_timer_map), m_nTimerID));
-  g_global_timer_map->erase(m_nTimerID);
+  DCHECK(pdfium::Contains((*g_global_timer_map), timer_id_));
+  g_global_timer_map->erase(timer_id_);
 }
 
 // static
@@ -69,12 +70,14 @@ void GlobalTimer::Trigger(int32_t nTimerID) {
   }
 
   GlobalTimer* pTimer = it->second;
-  if (pTimer->m_bProcessing)
+  if (pTimer->processing_) {
     return;
+  }
 
-  pTimer->m_bProcessing = true;
-  if (pTimer->m_pEmbedApp)
-    pTimer->m_pEmbedApp->TimerProc(pTimer);
+  pTimer->processing_ = true;
+  if (pTimer->embed_app_) {
+    pTimer->embed_app_->TimerProc(pTimer);
+  }
 
   // Timer proc may have destroyed timer, find it again.
   it = g_global_timer_map->find(nTimerID);
@@ -83,9 +86,9 @@ void GlobalTimer::Trigger(int32_t nTimerID) {
   }
 
   pTimer = it->second;
-  pTimer->m_bProcessing = false;
+  pTimer->processing_ = false;
   if (pTimer->IsOneShot())
-    pTimer->m_pEmbedApp->CancelProc(pTimer);
+    pTimer->embed_app_->CancelProc(pTimer);
 }
 
 // static
@@ -96,9 +99,9 @@ void GlobalTimer::Cancel(int32_t nTimerID) {
   }
 
   GlobalTimer* pTimer = it->second;
-  pTimer->m_pEmbedApp->CancelProc(pTimer);
+  pTimer->embed_app_->CancelProc(pTimer);
 }
 
 bool GlobalTimer::HasValidID() const {
-  return m_nTimerID != CFX_Timer::HandlerIface::kInvalidTimerID;
+  return timer_id_ != CFX_Timer::HandlerIface::kInvalidTimerID;
 }
