@@ -68,7 +68,7 @@ bool CBC_OnedCodaBarWriter::SetStartChar(char start) {
   if (!pdfium::Contains(kStartEndChars, start))
     return false;
 
-  m_chStart = start;
+  ch_start_ = start;
   return true;
 }
 
@@ -76,23 +76,23 @@ bool CBC_OnedCodaBarWriter::SetEndChar(char end) {
   if (!pdfium::Contains(kStartEndChars, end))
     return false;
 
-  m_chEnd = end;
+  ch_end_ = end;
   return true;
 }
 
 void CBC_OnedCodaBarWriter::SetDataLength(int32_t length) {
-  m_iDataLenth = length + 2;
+  data_length_ = length + 2;
 }
 
 void CBC_OnedCodaBarWriter::SetTextLocation(BC_TEXT_LOC location) {
-  m_locTextLoc = location;
+  loc_text_loc_ = location;
 }
 
 bool CBC_OnedCodaBarWriter::SetWideNarrowRatio(int8_t ratio) {
   if (ratio < 2 || ratio > 3)
     return false;
 
-  m_iWideNarrRatio = ratio;
+  wide_narr_ratio_ = ratio;
   return true;
 }
 
@@ -120,10 +120,10 @@ WideString CBC_OnedCodaBarWriter::FilterContents(WideStringView contents) {
 }
 
 DataVector<uint8_t> CBC_OnedCodaBarWriter::Encode(const ByteString& contents) {
-  ByteString data = m_chStart + contents + m_chEnd;
-  m_iContentLen = data.GetLength();
+  ByteString data = ch_start_ + contents + ch_end_;
+  content_len_ = data.GetLength();
   DataVector<uint8_t> result(
-      Fx2DSizeOrDie(m_iWideNarrRatio * 7, data.GetLength()));
+      Fx2DSizeOrDie(wide_narr_ratio_ * 7, data.GetLength()));
   char ch;
   int32_t position = 0;
   for (size_t index = 0; index < data.GetLength(); index++) {
@@ -157,7 +157,7 @@ DataVector<uint8_t> CBC_OnedCodaBarWriter::Encode(const ByteString& contents) {
     while (bit < 7) {
       result[position] = color;
       position++;
-      if (((code >> (6 - bit)) & 1) == 0 || counter == m_iWideNarrRatio - 1) {
+      if (((code >> (6 - bit)) & 1) == 0 || counter == wide_narr_ratio_ - 1) {
         color = !color;
         bit++;
         counter = 0;
@@ -175,8 +175,8 @@ DataVector<uint8_t> CBC_OnedCodaBarWriter::Encode(const ByteString& contents) {
 }
 
 WideString CBC_OnedCodaBarWriter::encodedContents(WideStringView contents) {
-  WideString strStart(static_cast<wchar_t>(m_chStart));
-  WideString strEnd(static_cast<wchar_t>(m_chEnd));
+  WideString strStart(static_cast<wchar_t>(ch_start_));
+  WideString strEnd(static_cast<wchar_t>(ch_end_));
   return strStart + contents + strEnd;
 }
 

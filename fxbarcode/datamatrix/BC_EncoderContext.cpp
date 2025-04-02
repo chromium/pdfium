@@ -36,53 +36,53 @@ CBC_EncoderContext::CBC_EncoderContext(const WideString& msg) {
   for (size_t i = 0; i < c; i++) {
     wchar_t ch = static_cast<wchar_t>(dststr[i] & 0xff);
     if (ch == '?' && dststr[i] != '?') {
-      m_bHasCharactersOutsideISO88591Encoding = true;
+      has_characters_outside_iso88591_encoding_ = true;
     }
     sb += ch;
   }
-  m_msg = std::move(sb);
-  m_codewords.Reserve(m_msg.GetLength());
+  msg_ = std::move(sb);
+  codewords_.Reserve(msg_.GetLength());
 }
 
 CBC_EncoderContext::~CBC_EncoderContext() = default;
 
 void CBC_EncoderContext::setSkipAtEnd(int32_t count) {
-  m_skipAtEnd = count;
+  skip_at_end_ = count;
 }
 wchar_t CBC_EncoderContext::getCurrentChar() {
-  return m_msg[m_pos];
+  return msg_[pos_];
 }
 wchar_t CBC_EncoderContext::getCurrent() {
-  return m_msg[m_pos];
+  return msg_[pos_];
 }
 
 void CBC_EncoderContext::writeCodewords(const WideString& codewords) {
-  m_codewords += codewords;
+  codewords_ += codewords;
 }
 
 void CBC_EncoderContext::writeCodeword(wchar_t codeword) {
-  m_codewords += codeword;
+  codewords_ += codeword;
 }
 
 size_t CBC_EncoderContext::getCodewordCount() {
-  return m_codewords.GetLength();
+  return codewords_.GetLength();
 }
 
 void CBC_EncoderContext::SignalEncoderChange(
     CBC_HighLevelEncoder::Encoding encoding) {
-  m_newEncoding = encoding;
+  new_encoding_ = encoding;
 }
 
 void CBC_EncoderContext::ResetEncoderSignal() {
-  m_newEncoding = CBC_HighLevelEncoder::Encoding::UNKNOWN;
+  new_encoding_ = CBC_HighLevelEncoder::Encoding::UNKNOWN;
 }
 
 bool CBC_EncoderContext::hasMoreCharacters() {
-  return m_pos < getTotalMessageCharCount();
+  return pos_ < getTotalMessageCharCount();
 }
 
 size_t CBC_EncoderContext::getRemainingCharacters() {
-  return getTotalMessageCharCount() - m_pos;
+  return getTotalMessageCharCount() - pos_;
 }
 
 bool CBC_EncoderContext::UpdateSymbolInfo() {
@@ -90,18 +90,19 @@ bool CBC_EncoderContext::UpdateSymbolInfo() {
 }
 
 bool CBC_EncoderContext::UpdateSymbolInfo(size_t len) {
-  if (!m_symbolInfo || len > m_symbolInfo->data_capacity()) {
-    m_symbolInfo = CBC_SymbolInfo::Lookup(len, m_bAllowRectangular);
-    if (!m_symbolInfo)
+  if (!symbol_info_ || len > symbol_info_->data_capacity()) {
+    symbol_info_ = CBC_SymbolInfo::Lookup(len, allow_rectangular_);
+    if (!symbol_info_) {
       return false;
+    }
   }
   return true;
 }
 
 void CBC_EncoderContext::resetSymbolInfo() {
-  m_bAllowRectangular = true;
+  allow_rectangular_ = true;
 }
 
 size_t CBC_EncoderContext::getTotalMessageCharCount() {
-  return m_msg.GetLength() - m_skipAtEnd;
+  return msg_.GetLength() - skip_at_end_;
 }

@@ -37,12 +37,12 @@ std::vector<std::unique_ptr<CBC_QRCoderVersion>>* g_VERSION = nullptr;
 
 CBC_QRCoderVersion::CBC_QRCoderVersion(int32_t versionNumber,
                                        const ECBlockDataRow& row)
-    : m_versionNumber(versionNumber) {
-  m_ecBlocksArray[0] = std::make_unique<CBC_QRCoderECBlockData>(row[0]);
-  m_ecBlocksArray[1] = std::make_unique<CBC_QRCoderECBlockData>(row[1]);
-  m_ecBlocksArray[2] = std::make_unique<CBC_QRCoderECBlockData>(row[2]);
-  m_ecBlocksArray[3] = std::make_unique<CBC_QRCoderECBlockData>(row[3]);
-  m_totalCodeWords = m_ecBlocksArray[0]->GetTotalDataCodeWords();
+    : version_number_(versionNumber) {
+  ec_blocks_array_[0] = std::make_unique<CBC_QRCoderECBlockData>(row[0]);
+  ec_blocks_array_[1] = std::make_unique<CBC_QRCoderECBlockData>(row[1]);
+  ec_blocks_array_[2] = std::make_unique<CBC_QRCoderECBlockData>(row[2]);
+  ec_blocks_array_[3] = std::make_unique<CBC_QRCoderECBlockData>(row[3]);
+  total_code_words_ = ec_blocks_array_[0]->GetTotalDataCodeWords();
 }
 
 CBC_QRCoderVersion::~CBC_QRCoderVersion() = default;
@@ -73,18 +73,18 @@ const CBC_QRCoderVersion* CBC_QRCoderVersion::GetVersionForNumber(
 }
 
 int32_t CBC_QRCoderVersion::GetVersionNumber() const {
-  return m_versionNumber;
+  return version_number_;
 }
 
 int32_t CBC_QRCoderVersion::GetTotalCodeWords() const {
-  return m_totalCodeWords;
+  return total_code_words_;
 }
 
 int32_t CBC_QRCoderVersion::GetDimensionForVersion() const {
-  return 17 + 4 * m_versionNumber;
+  return 17 + 4 * version_number_;
 }
 
 const CBC_QRCoderECBlockData* CBC_QRCoderVersion::GetECBlocksForLevel(
     const CBC_QRCoderErrorCorrectionLevel& ecLevel) const {
-  return m_ecBlocksArray[ecLevel.Ordinal()].get();
+  return ec_blocks_array_[ecLevel.Ordinal()].get();
 }

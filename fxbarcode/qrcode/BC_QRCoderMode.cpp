@@ -33,7 +33,8 @@ CBC_QRCoderMode* CBC_QRCoderMode::sALPHANUMERIC = nullptr;
 
 CBC_QRCoderMode::CBC_QRCoderMode(std::vector<int32_t> charCountBits,
                                  int32_t bits)
-    : m_characterCountBitsForVersions(std::move(charCountBits)), m_bits(bits) {}
+    : character_count_bits_for_versions_(std::move(charCountBits)),
+      bits_(bits) {}
 
 CBC_QRCoderMode::~CBC_QRCoderMode() = default;
 
@@ -53,12 +54,13 @@ void CBC_QRCoderMode::Finalize() {
 }
 
 int32_t CBC_QRCoderMode::GetBits() const {
-  return m_bits;
+  return bits_;
 }
 
 int32_t CBC_QRCoderMode::GetCharacterCountBits(int32_t number) const {
-  if (m_characterCountBitsForVersions.empty())
+  if (character_count_bits_for_versions_.empty()) {
     return 0;
+  }
 
   int32_t offset;
   if (number <= 9)
@@ -68,7 +70,7 @@ int32_t CBC_QRCoderMode::GetCharacterCountBits(int32_t number) const {
   else
     offset = 2;
 
-  int32_t result = m_characterCountBitsForVersions[offset];
+  int32_t result = character_count_bits_for_versions_[offset];
   DCHECK(result != 0);
   return result;
 }

@@ -32,10 +32,10 @@ class CBC_OnedCode128Writer final : public CBC_OneDimWriter {
   WideString FilterContents(WideStringView contents) override;
   void SetTextLocation(BC_TEXT_LOC location) override;
 
-  BC_TYPE GetType() const { return m_codeFormat; }
+  BC_TYPE GetType() const { return code_format_; }
 
  private:
-  const BC_TYPE m_codeFormat;
+  const BC_TYPE code_format_;
 };
 
 #endif  // FXBARCODE_ONED_BC_ONEDCODE128WRITER_H_

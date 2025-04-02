@@ -21,15 +21,15 @@ class CBC_BarcodeMatrix final {
   CBC_BarcodeMatrix(size_t width, size_t height);
   ~CBC_BarcodeMatrix();
 
-  CBC_BarcodeRow* getRow(size_t row) const { return m_matrix[row].get(); }
-  size_t getWidth() const { return m_width; }
-  size_t getHeight() const { return m_height; }
+  CBC_BarcodeRow* getRow(size_t row) const { return matrix_[row].get(); }
+  size_t getWidth() const { return width_; }
+  size_t getHeight() const { return height_; }
   DataVector<uint8_t> toBitArray();
 
  private:
-  std::vector<std::unique_ptr<CBC_BarcodeRow>> m_matrix;
-  size_t m_width;
-  size_t m_height;
+  std::vector<std::unique_ptr<CBC_BarcodeRow>> matrix_;
+  size_t width_;
+  size_t height_;
 };
 
 #endif  // FXBARCODE_PDF417_BC_PDF417BARCODEMATRIX_H_

@@ -62,8 +62,8 @@ bool CBC_PDF417Writer::SetErrorCorrectionLevel(int32_t level) {
 CBC_PDF417Writer::EncodeResult CBC_PDF417Writer::Encode(
     WideStringView contents) const {
   CBC_PDF417 encoder;
-  int32_t col = (m_Width / m_ModuleWidth - 69) / 17;
-  int32_t row = m_Height / (m_ModuleWidth * 20);
+  int32_t col = (width_ / module_width_ - 69) / 17;
+  int32_t row = height_ / (module_width_ * 20);
   if (row >= 3 && row <= 90 && col >= 1 && col <= 30)
     encoder.setDimensions(col, 1, row, 3);
   else if (col >= 1 && col <= 30)

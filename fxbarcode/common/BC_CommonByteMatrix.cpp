@@ -29,31 +29,31 @@
 #include "core/fxcrt/data_vector.h"
 
 CBC_CommonByteMatrix::CBC_CommonByteMatrix(size_t width, size_t height)
-    : m_width(width), m_height(height) {
+    : width_(width), height_(height) {
   static constexpr size_t kMaxBytes = 256 * 1024 * 1024;  // 256 MB.
   static constexpr uint8_t kDefaultFill = 0xff;
-  CHECK_LT(m_width, kMaxBytes / m_height);
-  m_bytes.resize(m_width * m_height, kDefaultFill);
+  CHECK_LT(width_, kMaxBytes / height_);
+  bytes_.resize(width_ * height_, kDefaultFill);
 }
 
 CBC_CommonByteMatrix::~CBC_CommonByteMatrix() = default;
 
 DataVector<uint8_t> CBC_CommonByteMatrix::TakeArray() {
-  return std::move(m_bytes);
+  return std::move(bytes_);
 }
 
 uint8_t CBC_CommonByteMatrix::Get(size_t x, size_t y) const {
-  const size_t offset = y * m_width + x;
-  CHECK_LT(offset, m_bytes.size());
-  return m_bytes[offset];
+  const size_t offset = y * width_ + x;
+  CHECK_LT(offset, bytes_.size());
+  return bytes_[offset];
 }
 
 void CBC_CommonByteMatrix::Set(size_t x, size_t y, uint8_t value) {
-  const size_t offset = y * m_width + x;
-  CHECK_LT(offset, m_bytes.size());
-  m_bytes[offset] = value;
+  const size_t offset = y * width_ + x;
+  CHECK_LT(offset, bytes_.size());
+  bytes_[offset] = value;
 }
 
 void CBC_CommonByteMatrix::Fill(uint8_t value) {
-  std::fill(std::begin(m_bytes), std::end(m_bytes), value);
+  std::fill(std::begin(bytes_), std::end(bytes_), value);
 }

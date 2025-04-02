@@ -54,5 +54,5 @@ BC_TYPE CBC_DataMatrix::GetType() {
 }
 
 CBC_DataMatrixWriter* CBC_DataMatrix::GetDataMatrixWriter() {
-  return static_cast<CBC_DataMatrixWriter*>(m_pBCWriter.get());
+  return static_cast<CBC_DataMatrixWriter*>(bc_writer_.get());
 }

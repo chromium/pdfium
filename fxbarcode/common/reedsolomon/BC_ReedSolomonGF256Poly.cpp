@@ -33,11 +33,11 @@
 CBC_ReedSolomonGF256Poly::CBC_ReedSolomonGF256Poly(
     CBC_ReedSolomonGF256* field,
     const std::vector<int32_t>& coefficients)
-    : m_field(field) {
-  DCHECK(m_field);
+    : field_(field) {
+  DCHECK(field_);
   DCHECK(!coefficients.empty());
   if (coefficients.size() == 1 || coefficients.front() != 0) {
-    m_coefficients = coefficients;
+    coefficients_ = coefficients;
     return;
   }
 
@@ -47,35 +47,35 @@ CBC_ReedSolomonGF256Poly::CBC_ReedSolomonGF256Poly(
     firstNonZero++;
   }
   if (firstNonZero == coefficients.size()) {
-    m_coefficients = m_field->GetZero()->GetCoefficients();
+    coefficients_ = field_->GetZero()->GetCoefficients();
   } else {
-    m_coefficients.resize(coefficients.size() - firstNonZero);
+    coefficients_.resize(coefficients.size() - firstNonZero);
     for (size_t i = firstNonZero, j = 0; i < coefficients.size(); i++, j++)
-      m_coefficients[j] = coefficients[i];
+      coefficients_[j] = coefficients[i];
   }
 }
 
 CBC_ReedSolomonGF256Poly::~CBC_ReedSolomonGF256Poly() = default;
 
 const std::vector<int32_t>& CBC_ReedSolomonGF256Poly::GetCoefficients() const {
-  return m_coefficients;
+  return coefficients_;
 }
 
 int32_t CBC_ReedSolomonGF256Poly::GetDegree() const {
-  return fxcrt::CollectionSize<int32_t>(m_coefficients) - 1;
+  return fxcrt::CollectionSize<int32_t>(coefficients_) - 1;
 }
 
 bool CBC_ReedSolomonGF256Poly::IsZero() const {
-  return m_coefficients.front() == 0;
+  return coefficients_.front() == 0;
 }
 
 int32_t CBC_ReedSolomonGF256Poly::GetCoefficients(int32_t degree) const {
-  return m_coefficients[m_coefficients.size() - 1 - degree];
+  return coefficients_[coefficients_.size() - 1 - degree];
 }
 
 std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Clone()
     const {
-  return std::make_unique<CBC_ReedSolomonGF256Poly>(m_field, m_coefficients);
+  return std::make_unique<CBC_ReedSolomonGF256Poly>(field_, coefficients_);
 }
 
 std::unique_ptr<CBC_ReedSolomonGF256Poly>
@@ -85,7 +85,7 @@ CBC_ReedSolomonGF256Poly::AddOrSubtract(const CBC_ReedSolomonGF256Poly* other) {
   if (other->IsZero())
     return Clone();
 
-  std::vector<int32_t> smallerCoefficients = m_coefficients;
+  std::vector<int32_t> smallerCoefficients = coefficients_;
   std::vector<int32_t> largerCoefficients = other->GetCoefficients();
   if (smallerCoefficients.size() > largerCoefficients.size())
     std::swap(smallerCoefficients, largerCoefficients);
@@ -99,15 +99,15 @@ CBC_ReedSolomonGF256Poly::AddOrSubtract(const CBC_ReedSolomonGF256Poly* other) {
     sumDiff[i] = CBC_ReedSolomonGF256::AddOrSubtract(
         smallerCoefficients[i - lengthDiff], largerCoefficients[i]);
   }
-  return std::make_unique<CBC_ReedSolomonGF256Poly>(m_field, sumDiff);
+  return std::make_unique<CBC_ReedSolomonGF256Poly>(field_, sumDiff);
 }
 
 std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Multiply(
     const CBC_ReedSolomonGF256Poly* other) {
   if (IsZero() || other->IsZero())
-    return m_field->GetZero()->Clone();
+    return field_->GetZero()->Clone();
 
-  const std::vector<int32_t>& aCoefficients = m_coefficients;
+  const std::vector<int32_t>& aCoefficients = coefficients_;
   const std::vector<int32_t>& bCoefficients = other->GetCoefficients();
   size_t aLength = aCoefficients.size();
   size_t bLength = bCoefficients.size();
@@ -116,10 +116,10 @@ std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Multiply(
     int32_t aCoeff = aCoefficients[i];
     for (size_t j = 0; j < bLength; j++) {
       product[i + j] = CBC_ReedSolomonGF256::AddOrSubtract(
-          product[i + j], m_field->Multiply(aCoeff, bCoefficients[j]));
+          product[i + j], field_->Multiply(aCoeff, bCoefficients[j]));
     }
   }
-  return std::make_unique<CBC_ReedSolomonGF256Poly>(m_field, product);
+  return std::make_unique<CBC_ReedSolomonGF256Poly>(field_, product);
 }
 
 std::unique_ptr<CBC_ReedSolomonGF256Poly>
@@ -128,14 +128,14 @@ CBC_ReedSolomonGF256Poly::MultiplyByMonomial(int32_t degree,
   if (degree < 0)
     return nullptr;
   if (coefficient == 0)
-    return m_field->GetZero()->Clone();
+    return field_->GetZero()->Clone();
 
-  size_t size = m_coefficients.size();
+  size_t size = coefficients_.size();
   std::vector<int32_t> product(size + degree);
   for (size_t i = 0; i < size; i++)
-    product[i] = m_field->Multiply(m_coefficients[i], coefficient);
+    product[i] = field_->Multiply(coefficients_[i], coefficient);
 
-  return std::make_unique<CBC_ReedSolomonGF256Poly>(m_field, product);
+  return std::make_unique<CBC_ReedSolomonGF256Poly>(field_, product);
 }
 
 std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Divide(
@@ -143,7 +143,7 @@ std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Divide(
   if (other->IsZero())
     return nullptr;
 
-  auto quotient = m_field->GetZero()->Clone();
+  auto quotient = field_->GetZero()->Clone();
   if (!quotient)
     return nullptr;
   auto remainder = Clone();
@@ -152,19 +152,19 @@ std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256Poly::Divide(
 
   int32_t denominatorLeadingTerm = other->GetCoefficients(other->GetDegree());
   std::optional<int32_t> inverseDenominatorLeadingTeam =
-      m_field->Inverse(denominatorLeadingTerm);
+      field_->Inverse(denominatorLeadingTerm);
   if (!inverseDenominatorLeadingTeam.has_value())
     return nullptr;
 
   while (remainder->GetDegree() >= other->GetDegree() && !remainder->IsZero()) {
     int32_t degreeDifference = remainder->GetDegree() - other->GetDegree();
     int32_t scale =
-        m_field->Multiply(remainder->GetCoefficients((remainder->GetDegree())),
-                          inverseDenominatorLeadingTeam.value());
+        field_->Multiply(remainder->GetCoefficients((remainder->GetDegree())),
+                         inverseDenominatorLeadingTeam.value());
     auto term = other->MultiplyByMonomial(degreeDifference, scale);
     if (!term)
       return nullptr;
-    auto iteratorQuotient = m_field->BuildMonomial(degreeDifference, scale);
+    auto iteratorQuotient = field_->BuildMonomial(degreeDifference, scale);
     if (!iteratorQuotient)
       return nullptr;
     quotient = quotient->AddOrSubtract(iteratorQuotient.get());

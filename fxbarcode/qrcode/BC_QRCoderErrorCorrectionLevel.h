@@ -21,14 +21,14 @@ class CBC_QRCoderErrorCorrectionLevel {
 
   ~CBC_QRCoderErrorCorrectionLevel();
 
-  int32_t Ordinal() const { return m_ordinal; }
-  int32_t GetBits() const { return m_bits; }
+  int32_t Ordinal() const { return ordinal_; }
+  int32_t GetBits() const { return bits_; }
 
  private:
   CBC_QRCoderErrorCorrectionLevel(int32_t ordinal, int32_t bits);
 
-  int32_t m_ordinal;
-  int32_t m_bits;
+  int32_t ordinal_;
+  int32_t bits_;
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERERRORCORRECTIONLEVEL_H_

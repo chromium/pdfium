@@ -28,7 +28,7 @@ class CBC_Code128 final : public CBC_OneCode {
  private:
   CBC_OnedCode128Writer* GetOnedCode128Writer();
 
-  WideString m_renderContents;
+  WideString render_contents_;
 };
 
 #endif  // FXBARCODE_CBC_CODE128_H_

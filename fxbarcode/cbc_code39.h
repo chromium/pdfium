@@ -29,7 +29,7 @@ class CBC_Code39 final : public CBC_OneCode {
  private:
   CBC_OnedCode39Writer* GetOnedCode39Writer();
 
-  WideString m_renderContents;
+  WideString render_contents_;
 };
 
 #endif  // FXBARCODE_CBC_CODE39_H_

@@ -31,8 +31,8 @@ class CBC_QRCoderBitVector {
  private:
   void AppendByte(int8_t value);
 
-  size_t m_sizeInBits = 0;
-  DataVector<uint8_t> m_array;
+  size_t size_in_bits_ = 0;
+  DataVector<uint8_t> array_;
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERBITVECTOR_H_

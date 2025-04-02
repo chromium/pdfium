@@ -77,23 +77,23 @@ class CBC_OneDimWriter : public CBC_Writer {
                                       pdfium::span<const uint8_t> pattern,
                                       bool startColor);
 
-  bool m_bPrintChecksum = true;
-  bool m_bCalcChecksum = false;
-  bool m_bLeftPadding = false;
-  bool m_bRightPadding = false;
+  bool print_checksum_ = true;
+  bool calc_checksum_ = false;
+  bool left_padding_ = false;
+  bool right_padding_ = false;
 
-  UnownedPtr<CFX_Font> m_pFont;
-  float m_fFontSize = 10.0f;
-  int32_t m_iFontStyle = 0;
-  uint32_t m_fontColor = 0xff000000;
-  BC_TEXT_LOC m_locTextLoc = BC_TEXT_LOC::kBelowEmbed;
+  UnownedPtr<CFX_Font> font_;
+  float font_size_ = 10.0f;
+  int32_t font_style_ = 0;
+  uint32_t font_color_ = 0xff000000;
+  BC_TEXT_LOC loc_text_loc_ = BC_TEXT_LOC::kBelowEmbed;
 
-  int32_t m_iDataLenth = 0;
-  size_t m_iContentLen = 0;
+  int32_t data_length_ = 0;
+  size_t content_len_ = 0;
 
-  std::vector<CFX_Path> m_output;
-  int32_t m_barWidth;
-  float m_outputHScale;
+  std::vector<CFX_Path> output_;
+  int32_t bar_width_;
+  float output_hscale_;
 };
 
 #endif  // FXBARCODE_ONED_BC_ONEDIMWRITER_H_

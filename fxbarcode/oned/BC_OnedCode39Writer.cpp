@@ -135,14 +135,14 @@ WideString CBC_OnedCode39Writer::RenderTextContents(WideStringView contents) {
 }
 
 void CBC_OnedCode39Writer::SetTextLocation(BC_TEXT_LOC location) {
-  m_locTextLoc = location;
+  loc_text_loc_ = location;
 }
 
 bool CBC_OnedCode39Writer::SetWideNarrowRatio(int8_t ratio) {
   if (ratio < 2 || ratio > 3)
     return false;
 
-  m_iWideNarrRatio = ratio;
+  wide_narr_ratio_ = ratio;
   return true;
 }
 
@@ -155,41 +155,42 @@ DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
   static constexpr int32_t kWideStrideNum = 3;
   static constexpr int32_t kNarrowStrideNum = kArraySize - kWideStrideNum;
   ByteString encodedContents = contents;
-  if (m_bCalcChecksum)
+  if (calc_checksum_) {
     encodedContents += checksum;
-  m_iContentLen = encodedContents.GetLength();
+  }
+  content_len_ = encodedContents.GetLength();
   size_t code_width =
-      (kWideStrideNum * m_iWideNarrRatio + kNarrowStrideNum) * 2 + 1 +
-      m_iContentLen;
-  for (size_t j = 0; j < m_iContentLen; j++) {
+      (kWideStrideNum * wide_narr_ratio_ + kNarrowStrideNum) * 2 + 1 +
+      content_len_;
+  for (size_t j = 0; j < content_len_; j++) {
     for (size_t i = 0; i < kOnedCode39AlphabetLen; i++) {
       if (kOnedCode39Alphabet[i] != encodedContents[j]) {
         continue;
       }
-      ToIntArray(kOnedCode39CharacterEncoding[i], m_iWideNarrRatio, widths);
+      ToIntArray(kOnedCode39CharacterEncoding[i], wide_narr_ratio_, widths);
       for (size_t k = 0; k < kArraySize; k++)
         code_width += widths[k];
     }
   }
   DataVector<uint8_t> result(code_width);
   auto result_span = pdfium::make_span(result);
-  ToIntArray(kOnedCode39CharacterEncoding[39], m_iWideNarrRatio, widths);
+  ToIntArray(kOnedCode39CharacterEncoding[39], wide_narr_ratio_, widths);
   result_span = AppendPattern(result_span, widths, true);
 
   static constexpr uint8_t kNarrowWhite[] = {1};
   result_span = AppendPattern(result_span, kNarrowWhite, false);
 
-  for (int32_t l = m_iContentLen - 1; l >= 0; l--) {
+  for (int32_t l = content_len_ - 1; l >= 0; l--) {
     for (size_t i = 0; i < kOnedCode39AlphabetLen; i++) {
       if (kOnedCode39Alphabet[i] != encodedContents[l]) {
         continue;
       }
-      ToIntArray(kOnedCode39CharacterEncoding[i], m_iWideNarrRatio, widths);
+      ToIntArray(kOnedCode39CharacterEncoding[i], wide_narr_ratio_, widths);
       result_span = AppendPattern(result_span, widths, true);
     }
     result_span = AppendPattern(result_span, kNarrowWhite, false);
   }
-  ToIntArray(kOnedCode39CharacterEncoding[39], m_iWideNarrRatio, widths);
+  ToIntArray(kOnedCode39CharacterEncoding[39], wide_narr_ratio_, widths);
   AppendPattern(result_span, widths, true);
 
   for (size_t i = 0; i < code_width / 2; i++) {
@@ -203,7 +204,7 @@ DataVector<uint8_t> CBC_OnedCode39Writer::Encode(const ByteString& contents) {
 bool CBC_OnedCode39Writer::encodedContents(WideStringView contents,
                                            WideString* result) {
   *result = WideString(contents);
-  if (m_bCalcChecksum && m_bPrintChecksum) {
+  if (calc_checksum_ && print_checksum_) {
     WideString checksumContent = FilterContents(contents);
     ByteString str = checksumContent.ToUTF8();
     char checksum;

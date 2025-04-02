@@ -28,8 +28,8 @@ class CBC_QRCoderMode final {
  private:
   CBC_QRCoderMode(std::vector<int32_t> charCountBits, int32_t bits);
 
-  std::vector<int32_t> m_characterCountBitsForVersions;
-  const int32_t m_bits;
+  std::vector<int32_t> character_count_bits_for_versions_;
+  const int32_t bits_;
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERMODE_H_

@@ -45,15 +45,15 @@ class CBC_QRCoder final {
   void SetMatrix(std::unique_ptr<CBC_CommonByteMatrix> pMatrix);
 
  private:
-  UnownedPtr<const CBC_QRCoderErrorCorrectionLevel> m_ecLevel;
-  int32_t m_version = -1;
-  int32_t m_matrixWidth = -1;
-  int32_t m_maskPattern = -1;
-  int32_t m_numTotalBytes = -1;
-  int32_t m_numDataBytes = -1;
-  int32_t m_numECBytes = -1;
-  int32_t m_numRSBlocks = -1;
-  std::unique_ptr<CBC_CommonByteMatrix> m_matrix;
+  UnownedPtr<const CBC_QRCoderErrorCorrectionLevel> ec_level_;
+  int32_t version_ = -1;
+  int32_t matrix_width_ = -1;
+  int32_t mask_pattern_ = -1;
+  int32_t num_total_bytes_ = -1;
+  int32_t num_data_bytes_ = -1;
+  int32_t num_ecbytes_ = -1;
+  int32_t num_rsblocks_ = -1;
+  std::unique_ptr<CBC_CommonByteMatrix> matrix_;
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODER_H_

@@ -86,9 +86,9 @@ bool IsInOnedCode128Alphabet(wchar_t ch) {
 }  // namespace
 
 CBC_OnedCode128Writer::CBC_OnedCode128Writer(BC_TYPE type)
-    : m_codeFormat(type) {
-  DCHECK(m_codeFormat == BC_TYPE::kCode128B ||
-         m_codeFormat == BC_TYPE::kCode128C);
+    : code_format_(type) {
+  DCHECK(code_format_ == BC_TYPE::kCode128B ||
+         code_format_ == BC_TYPE::kCode128C);
 }
 
 CBC_OnedCode128Writer::~CBC_OnedCode128Writer() = default;
@@ -99,7 +99,7 @@ bool CBC_OnedCode128Writer::CheckContentValidity(WideStringView contents) {
 }
 
 WideString CBC_OnedCode128Writer::FilterContents(WideStringView contents) {
-  const wchar_t limit = m_codeFormat == BC_TYPE::kCode128B ? 126 : 106;
+  const wchar_t limit = code_format_ == BC_TYPE::kCode128B ? 126 : 106;
 
   WideString filtered;
   filtered.Reserve(contents.GetLength());
@@ -116,7 +116,7 @@ WideString CBC_OnedCode128Writer::FilterContents(WideStringView contents) {
 }
 
 void CBC_OnedCode128Writer::SetTextLocation(BC_TEXT_LOC location) {
-  m_locTextLoc = location;
+  loc_text_loc_ = location;
 }
 
 DataVector<uint8_t> CBC_OnedCode128Writer::Encode(const ByteString& contents) {
@@ -125,15 +125,16 @@ DataVector<uint8_t> CBC_OnedCode128Writer::Encode(const ByteString& contents) {
 
   std::vector<int32_t> patterns;
   int32_t checkSum = 0;
-  if (m_codeFormat == BC_TYPE::kCode128B)
+  if (code_format_ == BC_TYPE::kCode128B) {
     checkSum = Encode128B(contents, &patterns);
-  else
+  } else {
     checkSum = Encode128C(contents, &patterns);
+  }
 
   checkSum %= 103;
   patterns.push_back(checkSum);
   patterns.push_back(CODE_STOP);
-  m_iContentLen = contents.GetLength() + 3;
+  content_len_ = contents.GetLength() + 3;
   int32_t codeWidth = 0;
   for (const auto& patternIndex : patterns) {
     for (size_t i = 0; i < kPatternSize; ++i)

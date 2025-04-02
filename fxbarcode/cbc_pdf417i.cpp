@@ -61,5 +61,5 @@ BC_TYPE CBC_PDF417I::GetType() {
 }
 
 CBC_PDF417Writer* CBC_PDF417I::GetPDF417Writer() {
-  return static_cast<CBC_PDF417Writer*>(m_pBCWriter.get());
+  return static_cast<CBC_PDF417Writer*>(bc_writer_.get());
 }

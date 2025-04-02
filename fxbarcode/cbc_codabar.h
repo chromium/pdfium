@@ -28,7 +28,7 @@ class CBC_Codabar final : public CBC_OneCode {
  private:
   CBC_OnedCodaBarWriter* GetOnedCodaBarWriter();
 
-  WideString m_renderContents;
+  WideString render_contents_;
 };
 
 #endif  // FXBARCODE_CBC_CODABAR_H_

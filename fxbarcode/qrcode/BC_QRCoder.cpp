@@ -33,77 +33,77 @@ CBC_QRCoder::CBC_QRCoder() = default;
 CBC_QRCoder::~CBC_QRCoder() = default;
 
 const CBC_QRCoderErrorCorrectionLevel* CBC_QRCoder::GetECLevel() const {
-  return m_ecLevel;
+  return ec_level_;
 }
 
 int32_t CBC_QRCoder::GetVersion() const {
-  return m_version;
+  return version_;
 }
 
 int32_t CBC_QRCoder::GetMatrixWidth() const {
-  return m_matrixWidth;
+  return matrix_width_;
 }
 
 int32_t CBC_QRCoder::GetMaskPattern() const {
-  return m_maskPattern;
+  return mask_pattern_;
 }
 
 int32_t CBC_QRCoder::GetNumTotalBytes() const {
-  return m_numTotalBytes;
+  return num_total_bytes_;
 }
 
 int32_t CBC_QRCoder::GetNumDataBytes() const {
-  return m_numDataBytes;
+  return num_data_bytes_;
 }
 
 int32_t CBC_QRCoder::GetNumRSBlocks() const {
-  return m_numRSBlocks;
+  return num_rsblocks_;
 }
 
 std::unique_ptr<CBC_CommonByteMatrix> CBC_QRCoder::TakeMatrix() {
-  return std::move(m_matrix);
+  return std::move(matrix_);
 }
 
 bool CBC_QRCoder::IsValid() const {
-  return m_ecLevel && m_version != -1 && m_matrixWidth != -1 &&
-         m_maskPattern != -1 && m_numTotalBytes != -1 && m_numDataBytes != -1 &&
-         m_numECBytes != -1 && m_numRSBlocks != -1 &&
-         IsValidMaskPattern(m_maskPattern) &&
-         m_numTotalBytes == m_numDataBytes + m_numECBytes && m_matrix &&
-         m_matrixWidth == pdfium::checked_cast<int32_t>(m_matrix->GetWidth()) &&
-         m_matrix->GetWidth() == m_matrix->GetHeight();
+  return ec_level_ && version_ != -1 && matrix_width_ != -1 &&
+         mask_pattern_ != -1 && num_total_bytes_ != -1 &&
+         num_data_bytes_ != -1 && num_ecbytes_ != -1 && num_rsblocks_ != -1 &&
+         IsValidMaskPattern(mask_pattern_) &&
+         num_total_bytes_ == num_data_bytes_ + num_ecbytes_ && matrix_ &&
+         matrix_width_ == pdfium::checked_cast<int32_t>(matrix_->GetWidth()) &&
+         matrix_->GetWidth() == matrix_->GetHeight();
 }
 
 void CBC_QRCoder::SetECLevel(const CBC_QRCoderErrorCorrectionLevel* ecLevel) {
-  m_ecLevel = ecLevel;
+  ec_level_ = ecLevel;
 }
 
 void CBC_QRCoder::SetVersion(int32_t version) {
-  m_version = version;
+  version_ = version;
 }
 
 void CBC_QRCoder::SetMatrixWidth(int32_t width) {
-  m_matrixWidth = width;
+  matrix_width_ = width;
 }
 
 void CBC_QRCoder::SetMaskPattern(int32_t pattern) {
-  m_maskPattern = pattern;
+  mask_pattern_ = pattern;
 }
 
 void CBC_QRCoder::SetNumDataBytes(int32_t bytes) {
-  m_numDataBytes = bytes;
+  num_data_bytes_ = bytes;
 }
 
 void CBC_QRCoder::SetNumTotalBytes(int32_t value) {
-  m_numTotalBytes = value;
+  num_total_bytes_ = value;
 }
 
 void CBC_QRCoder::SetNumRSBlocks(int32_t block) {
-  m_numRSBlocks = block;
+  num_rsblocks_ = block;
 }
 
 void CBC_QRCoder::SetNumECBytes(int32_t value) {
-  m_numECBytes = value;
+  num_ecbytes_ = value;
 }
 
 bool CBC_QRCoder::IsValidMaskPattern(int32_t maskPattern) {
@@ -111,5 +111,5 @@ bool CBC_QRCoder::IsValidMaskPattern(int32_t maskPattern) {
 }
 
 void CBC_QRCoder::SetMatrix(std::unique_ptr<CBC_CommonByteMatrix> pMatrix) {
-  m_matrix = std::move(pMatrix);
+  matrix_ = std::move(pMatrix);
 }

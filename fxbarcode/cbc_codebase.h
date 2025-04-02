@@ -40,7 +40,7 @@ class CBC_CodeBase {
   void SetWidth(int32_t width);
 
  protected:
-  std::unique_ptr<CBC_Writer> m_pBCWriter;
+  std::unique_ptr<CBC_Writer> bc_writer_;
 };
 
 #endif  // FXBARCODE_CBC_CODEBASE_H_

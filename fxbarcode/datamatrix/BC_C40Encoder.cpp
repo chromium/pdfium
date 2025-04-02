@@ -59,7 +59,7 @@ bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
   WideString buffer;
   while (context->hasMoreCharacters()) {
     wchar_t c = context->getCurrentChar();
-    context->m_pos++;
+    context->pos_++;
     int32_t lastCharSize = EncodeChar(c, &buffer);
     if (lastCharSize <= 0)
       return false;
@@ -70,7 +70,7 @@ bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
       return false;
 
     int32_t available =
-        context->m_symbolInfo->data_capacity() - curCodewordCount;
+        context->symbol_info_->data_capacity() - curCodewordCount;
     if (!context->hasMoreCharacters()) {
       if ((buffer.GetLength() % 3) == 2) {
         if (available < 2 || available > 2) {
@@ -90,7 +90,7 @@ bool CBC_C40Encoder::Encode(CBC_EncoderContext* context) {
     size_t count = buffer.GetLength();
     if ((count % 3) == 0) {
       CBC_HighLevelEncoder::Encoding newMode =
-          CBC_HighLevelEncoder::LookAheadTest(context->m_msg, context->m_pos,
+          CBC_HighLevelEncoder::LookAheadTest(context->msg_, context->pos_,
                                               GetEncodingMode());
       if (newMode != GetEncodingMode()) {
         context->SignalEncoderChange(newMode);
@@ -115,7 +115,7 @@ bool CBC_C40Encoder::HandleEOD(CBC_EncoderContext* context,
   if (!context->UpdateSymbolInfo(curCodewordCount))
     return false;
 
-  int32_t available = context->m_symbolInfo->data_capacity() - curCodewordCount;
+  int32_t available = context->symbol_info_->data_capacity() - curCodewordCount;
   if (rest == 2) {
     *buffer += (wchar_t)'\0';
     while (buffer->GetLength() >= 3)
@@ -129,7 +129,7 @@ bool CBC_C40Encoder::HandleEOD(CBC_EncoderContext* context,
     if (context->hasMoreCharacters()) {
       context->writeCodeword(CBC_HighLevelEncoder::C40_UNLATCH);
     }
-    context->m_pos--;
+    context->pos_--;
   } else if (rest == 0) {
     while (buffer->GetLength() >= 3)
       WriteNextTriplet(context, buffer);
@@ -195,15 +195,16 @@ int32_t CBC_C40Encoder::BacktrackOneCharacter(CBC_EncoderContext* context,
                                               int32_t lastCharSize) {
   DCHECK(lastCharSize >= 0);
 
-  if (context->m_pos < 1)
+  if (context->pos_ < 1) {
     return -1;
+  }
 
   size_t count = buffer->GetLength();
   if (count < static_cast<size_t>(lastCharSize))
     return -1;
 
   buffer->Delete(count - lastCharSize, lastCharSize);
-  context->m_pos--;
+  context->pos_--;
   wchar_t c = context->getCurrentChar();
   WideString removed;
   int32_t len = EncodeChar(c, &removed);

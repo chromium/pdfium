@@ -61,35 +61,38 @@ CFX_Barcode::~CFX_Barcode() = default;
 
 std::unique_ptr<CFX_Barcode> CFX_Barcode::Create(BC_TYPE type) {
   auto barcode = pdfium::WrapUnique(new CFX_Barcode());  // Private ctor.
-  barcode->m_pBCEngine = CreateBarCodeEngineObject(type);
+  barcode->bc_engine_ = CreateBarCodeEngineObject(type);
   return barcode;
 }
 
 BC_TYPE CFX_Barcode::GetType() {
-  return m_pBCEngine ? m_pBCEngine->GetType() : BC_TYPE::kUnknown;
+  return bc_engine_ ? bc_engine_->GetType() : BC_TYPE::kUnknown;
 }
 
 bool CFX_Barcode::SetModuleHeight(int32_t moduleHeight) {
-  return m_pBCEngine && m_pBCEngine->SetModuleHeight(moduleHeight);
+  return bc_engine_ && bc_engine_->SetModuleHeight(moduleHeight);
 }
 
 bool CFX_Barcode::SetModuleWidth(int32_t moduleWidth) {
-  return m_pBCEngine && m_pBCEngine->SetModuleWidth(moduleWidth);
+  return bc_engine_ && bc_engine_->SetModuleWidth(moduleWidth);
 }
 
 void CFX_Barcode::SetHeight(int32_t height) {
-  if (m_pBCEngine)
-    m_pBCEngine->SetHeight(height);
+  if (bc_engine_) {
+    bc_engine_->SetHeight(height);
+  }
 }
 
 void CFX_Barcode::SetWidth(int32_t width) {
-  if (m_pBCEngine)
-    m_pBCEngine->SetWidth(width);
+  if (bc_engine_) {
+    bc_engine_->SetWidth(width);
+  }
 }
 
 bool CFX_Barcode::SetPrintChecksum(bool checksum) {
-  if (!m_pBCEngine)
+  if (!bc_engine_) {
     return false;
+  }
 
   switch (GetType()) {
     case BC_TYPE::kCode39:
@@ -100,7 +103,7 @@ bool CFX_Barcode::SetPrintChecksum(bool checksum) {
     case BC_TYPE::kEAN8:
     case BC_TYPE::kEAN13:
     case BC_TYPE::kUPCA:
-      static_cast<CBC_OneCode*>(m_pBCEngine.get())->SetPrintChecksum(checksum);
+      static_cast<CBC_OneCode*>(bc_engine_.get())->SetPrintChecksum(checksum);
       return true;
     default:
       return false;
@@ -108,8 +111,9 @@ bool CFX_Barcode::SetPrintChecksum(bool checksum) {
 }
 
 bool CFX_Barcode::SetDataLength(int32_t length) {
-  if (!m_pBCEngine)
+  if (!bc_engine_) {
     return false;
+  }
 
   switch (GetType()) {
     case BC_TYPE::kCode39:
@@ -120,7 +124,7 @@ bool CFX_Barcode::SetDataLength(int32_t length) {
     case BC_TYPE::kEAN8:
     case BC_TYPE::kEAN13:
     case BC_TYPE::kUPCA:
-      static_cast<CBC_OneCode*>(m_pBCEngine.get())->SetDataLength(length);
+      static_cast<CBC_OneCode*>(bc_engine_.get())->SetDataLength(length);
       return true;
     default:
       return false;
@@ -128,8 +132,9 @@ bool CFX_Barcode::SetDataLength(int32_t length) {
 }
 
 bool CFX_Barcode::SetCalChecksum(bool state) {
-  if (!m_pBCEngine)
+  if (!bc_engine_) {
     return false;
+  }
 
   switch (GetType()) {
     case BC_TYPE::kCode39:
@@ -140,7 +145,7 @@ bool CFX_Barcode::SetCalChecksum(bool state) {
     case BC_TYPE::kEAN8:
     case BC_TYPE::kEAN13:
     case BC_TYPE::kUPCA:
-      static_cast<CBC_OneCode*>(m_pBCEngine.get())->SetCalChecksum(state);
+      static_cast<CBC_OneCode*>(bc_engine_.get())->SetCalChecksum(state);
       return true;
     default:
       return false;
@@ -148,8 +153,9 @@ bool CFX_Barcode::SetCalChecksum(bool state) {
 }
 
 bool CFX_Barcode::SetFont(CFX_Font* pFont) {
-  if (!m_pBCEngine)
+  if (!bc_engine_) {
     return false;
+  }
 
   switch (GetType()) {
     case BC_TYPE::kCode39:
@@ -160,15 +166,16 @@ bool CFX_Barcode::SetFont(CFX_Font* pFont) {
     case BC_TYPE::kEAN8:
     case BC_TYPE::kEAN13:
     case BC_TYPE::kUPCA:
-      return static_cast<CBC_OneCode*>(m_pBCEngine.get())->SetFont(pFont);
+      return static_cast<CBC_OneCode*>(bc_engine_.get())->SetFont(pFont);
     default:
       return false;
   }
 }
 
 bool CFX_Barcode::SetFontSize(float size) {
-  if (!m_pBCEngine)
+  if (!bc_engine_) {
     return false;
+  }
 
   switch (GetType()) {
     case BC_TYPE::kCode39:
@@ -179,7 +186,7 @@ bool CFX_Barcode::SetFontSize(float size) {
     case BC_TYPE::kEAN8:
     case BC_TYPE::kEAN13:
     case BC_TYPE::kUPCA:
-      static_cast<CBC_OneCode*>(m_pBCEngine.get())->SetFontSize(size);
+      static_cast<CBC_OneCode*>(bc_engine_.get())->SetFontSize(size);
       return true;
     default:
       return false;
@@ -187,8 +194,9 @@ bool CFX_Barcode::SetFontSize(float size) {
 }
 
 bool CFX_Barcode::SetFontColor(FX_ARGB color) {
-  if (!m_pBCEngine)
+  if (!bc_engine_) {
     return false;
+  }
 
   switch (GetType()) {
     case BC_TYPE::kCode39:
@@ -199,7 +207,7 @@ bool CFX_Barcode::SetFontColor(FX_ARGB color) {
     case BC_TYPE::kEAN8:
     case BC_TYPE::kEAN13:
     case BC_TYPE::kUPCA:
-      static_cast<CBC_OneCode*>(m_pBCEngine.get())->SetFontColor(color);
+      static_cast<CBC_OneCode*>(bc_engine_.get())->SetFontColor(color);
       return true;
     default:
       return false;
@@ -207,31 +215,32 @@ bool CFX_Barcode::SetFontColor(FX_ARGB color) {
 }
 
 void CFX_Barcode::SetTextLocation(BC_TEXT_LOC location) {
-  if (m_pBCEngine)
-    m_pBCEngine->SetTextLocation(location);
+  if (bc_engine_) {
+    bc_engine_->SetTextLocation(location);
+  }
 }
 
 bool CFX_Barcode::SetWideNarrowRatio(int8_t ratio) {
-  return m_pBCEngine && m_pBCEngine->SetWideNarrowRatio(ratio);
+  return bc_engine_ && bc_engine_->SetWideNarrowRatio(ratio);
 }
 
 bool CFX_Barcode::SetStartChar(char start) {
-  return m_pBCEngine && m_pBCEngine->SetStartChar(start);
+  return bc_engine_ && bc_engine_->SetStartChar(start);
 }
 
 bool CFX_Barcode::SetEndChar(char end) {
-  return m_pBCEngine && m_pBCEngine->SetEndChar(end);
+  return bc_engine_ && bc_engine_->SetEndChar(end);
 }
 
 bool CFX_Barcode::SetErrorCorrectionLevel(int32_t level) {
-  return m_pBCEngine && m_pBCEngine->SetErrorCorrectionLevel(level);
+  return bc_engine_ && bc_engine_->SetErrorCorrectionLevel(level);
 }
 
 bool CFX_Barcode::Encode(WideStringView contents) {
-  return m_pBCEngine && m_pBCEngine->Encode(contents);
+  return bc_engine_ && bc_engine_->Encode(contents);
 }
 
 bool CFX_Barcode::RenderDevice(CFX_RenderDevice* device,
                                const CFX_Matrix& matrix) {
-  return m_pBCEngine && m_pBCEngine->RenderDevice(device, matrix);
+  return bc_engine_ && bc_engine_->RenderDevice(device, matrix);
 }

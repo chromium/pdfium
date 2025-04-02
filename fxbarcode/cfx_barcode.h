@@ -52,7 +52,7 @@ class CFX_Barcode {
  private:
   CFX_Barcode();
 
-  std::unique_ptr<CBC_CodeBase> m_pBCEngine;
+  std::unique_ptr<CBC_CodeBase> bc_engine_;
 };
 
 #endif  // FXBARCODE_CFX_BARCODE_H_

@@ -33,9 +33,9 @@ class CBC_QRCoderVersion {
       const CBC_QRCoderErrorCorrectionLevel& ecLevel) const;
 
  private:
-  const int32_t m_versionNumber;
-  int32_t m_totalCodeWords;
-  std::array<std::unique_ptr<CBC_QRCoderECBlockData>, 4> m_ecBlocksArray;
+  const int32_t version_number_;
+  int32_t total_code_words_;
+  std::array<std::unique_ptr<CBC_QRCoderECBlockData>, 4> ec_blocks_array_;
 };
 
 #endif  // FXBARCODE_QRCODE_BC_QRCODERVERSION_H_

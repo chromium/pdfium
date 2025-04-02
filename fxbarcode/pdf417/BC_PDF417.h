@@ -49,11 +49,11 @@ class CBC_PDF417 {
       size_t sourceCodeWords,
       int32_t errorCorrectionCodeWords) const;
 
-  std::unique_ptr<CBC_BarcodeMatrix> m_barcodeMatrix;
-  int32_t m_minCols = 1;
-  int32_t m_maxCols = 30;
-  int32_t m_minRows = 3;
-  int32_t m_maxRows = 90;
+  std::unique_ptr<CBC_BarcodeMatrix> barcode_matrix_;
+  int32_t min_cols_ = 1;
+  int32_t max_cols_ = 30;
+  int32_t min_rows_ = 3;
+  int32_t max_rows_ = 90;
 };
 
 #endif  // FXBARCODE_PDF417_BC_PDF417_H_

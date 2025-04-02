@@ -33,9 +33,9 @@ class CBC_OnedCodaBarWriter final : public CBC_OneDimWriter {
   WideString encodedContents(WideStringView contents);
 
  private:
-  char m_chStart = 'A';
-  char m_chEnd = 'B';
-  int8_t m_iWideNarrRatio = 2;
+  char ch_start_ = 'A';
+  char ch_end_ = 'B';
+  int8_t wide_narr_ratio_ = 2;
 };
 
 #endif  // FXBARCODE_ONED_BC_ONEDCODABARWRITER_H_

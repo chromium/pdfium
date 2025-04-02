@@ -32,7 +32,7 @@ class CBC_OnedCode39Writer final : public CBC_OneDimWriter {
  private:
   static constexpr size_t kArraySize = 9;
 
-  int8_t m_iWideNarrRatio = 3;
+  int8_t wide_narr_ratio_ = 3;
 };
 
 #endif  // FXBARCODE_ONED_BC_ONEDCODE39WRITER_H_

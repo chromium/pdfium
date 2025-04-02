@@ -42,12 +42,12 @@ size_t GetIndex(size_t col, size_t row, size_t num_cols) {
 CBC_DefaultPlacement::CBC_DefaultPlacement(WideString codewords,
                                            int32_t numcols,
                                            int32_t numrows)
-    : m_codewords(std::move(codewords)),
-      m_numrows(numrows),
-      m_numcols(numcols),
-      m_bits(Fx2DSizeOrDie(numcols, numrows), 2) {
-  CHECK_GT(m_numrows, 0);
-  CHECK_GT(m_numcols, 0);
+    : codewords_(std::move(codewords)),
+      numrows_(numrows),
+      numcols_(numcols),
+      bits_(Fx2DSizeOrDie(numcols, numrows), 2) {
+  CHECK_GT(numrows_, 0);
+  CHECK_GT(numcols_, 0);
   Init();
 }
 
@@ -56,25 +56,25 @@ CBC_DefaultPlacement::~CBC_DefaultPlacement() = default;
 bool CBC_DefaultPlacement::GetBit(int32_t col, int32_t row) const {
   CHECK_GE(col, 0);
   CHECK_GE(row, 0);
-  CHECK_LT(col, m_numcols);
-  CHECK_LT(row, m_numrows);
-  return m_bits[GetIndex(col, row, m_numcols)] == 1;
+  CHECK_LT(col, numcols_);
+  CHECK_LT(row, numrows_);
+  return bits_[GetIndex(col, row, numcols_)] == 1;
 }
 
 void CBC_DefaultPlacement::SetBit(int32_t col, int32_t row, bool bit) {
   DCHECK_GE(col, 0);
   DCHECK_GE(row, 0);
-  DCHECK_LT(col, m_numcols);
-  DCHECK_LT(row, m_numrows);
-  m_bits[GetIndex(col, row, m_numcols)] = bit ? 1 : 0;
+  DCHECK_LT(col, numcols_);
+  DCHECK_LT(row, numrows_);
+  bits_[GetIndex(col, row, numcols_)] = bit ? 1 : 0;
 }
 
 bool CBC_DefaultPlacement::HasBit(int32_t col, int32_t row) const {
   DCHECK_GE(col, 0);
   DCHECK_GE(row, 0);
-  DCHECK_LT(col, m_numcols);
-  DCHECK_LT(row, m_numrows);
-  return m_bits[GetIndex(col, row, m_numcols)] != 2;
+  DCHECK_LT(col, numcols_);
+  DCHECK_LT(row, numrows_);
+  return bits_[GetIndex(col, row, numcols_)] != 2;
 }
 
 void CBC_DefaultPlacement::Init() {
@@ -82,40 +82,40 @@ void CBC_DefaultPlacement::Init() {
   int32_t row = 4;
   int32_t col = 0;
   do {
-    if ((row == m_numrows) && (col == 0)) {
+    if ((row == numrows_) && (col == 0)) {
       SetCorner1(pos++);
     }
-    if ((row == m_numrows - 2) && (col == 0) && ((m_numcols % 4) != 0)) {
+    if ((row == numrows_ - 2) && (col == 0) && ((numcols_ % 4) != 0)) {
       SetCorner2(pos++);
     }
-    if ((row == m_numrows - 2) && (col == 0) && (m_numcols % 8 == 4)) {
+    if ((row == numrows_ - 2) && (col == 0) && (numcols_ % 8 == 4)) {
       SetCorner3(pos++);
     }
-    if ((row == m_numrows + 4) && (col == 2) && ((m_numcols % 8) == 0)) {
+    if ((row == numrows_ + 4) && (col == 2) && ((numcols_ % 8) == 0)) {
       SetCorner4(pos++);
     }
     do {
-      if ((row < m_numrows) && (col >= 0) && !HasBit(col, row)) {
+      if ((row < numrows_) && (col >= 0) && !HasBit(col, row)) {
         SetUtah(row, col, pos++);
       }
       row -= 2;
       col += 2;
-    } while (row >= 0 && (col < m_numcols));
+    } while (row >= 0 && (col < numcols_));
     row++;
     col += 3;
     do {
-      if ((row >= 0) && (col < m_numcols) && !HasBit(col, row)) {
+      if ((row >= 0) && (col < numcols_) && !HasBit(col, row)) {
         SetUtah(row, col, pos++);
       }
       row += 2;
       col -= 2;
-    } while ((row < m_numrows) && (col >= 0));
+    } while ((row < numrows_) && (col >= 0));
     row += 3;
     col++;
-  } while ((row < m_numrows) || (col < m_numcols));
-  if (!HasBit(m_numcols - 1, m_numrows - 1)) {
-    SetBit(m_numcols - 1, m_numrows - 1, true);
-    SetBit(m_numcols - 2, m_numrows - 2, true);
+  } while ((row < numrows_) || (col < numcols_));
+  if (!HasBit(numcols_ - 1, numrows_ - 1)) {
+    SetBit(numcols_ - 1, numrows_ - 1, true);
+    SetBit(numcols_ - 2, numrows_ - 2, true);
   }
 }
 
@@ -124,14 +124,14 @@ void CBC_DefaultPlacement::SetModule(int32_t row,
                                      int32_t pos,
                                      int32_t bit) {
   if (row < 0) {
-    row += m_numrows;
-    col += 4 - ((m_numrows + 4) % 8);
+    row += numrows_;
+    col += 4 - ((numrows_ + 4) % 8);
   }
   if (col < 0) {
-    col += m_numcols;
-    row += 4 - ((m_numcols + 4) % 8);
+    col += numcols_;
+    row += 4 - ((numcols_ + 4) % 8);
   }
-  int32_t v = m_codewords[pos];
+  int32_t v = codewords_[pos];
   v &= 1 << (8 - bit);
   SetBit(col, row, v != 0);
 }
@@ -148,45 +148,45 @@ void CBC_DefaultPlacement::SetUtah(int32_t row, int32_t col, int32_t pos) {
 }
 
 void CBC_DefaultPlacement::SetCorner1(int32_t pos) {
-  SetModule(m_numrows - 1, 0, pos, 1);
-  SetModule(m_numrows - 1, 1, pos, 2);
-  SetModule(m_numrows - 1, 2, pos, 3);
-  SetModule(0, m_numcols - 2, pos, 4);
-  SetModule(0, m_numcols - 1, pos, 5);
-  SetModule(1, m_numcols - 1, pos, 6);
-  SetModule(2, m_numcols - 1, pos, 7);
-  SetModule(3, m_numcols - 1, pos, 8);
+  SetModule(numrows_ - 1, 0, pos, 1);
+  SetModule(numrows_ - 1, 1, pos, 2);
+  SetModule(numrows_ - 1, 2, pos, 3);
+  SetModule(0, numcols_ - 2, pos, 4);
+  SetModule(0, numcols_ - 1, pos, 5);
+  SetModule(1, numcols_ - 1, pos, 6);
+  SetModule(2, numcols_ - 1, pos, 7);
+  SetModule(3, numcols_ - 1, pos, 8);
 }
 
 void CBC_DefaultPlacement::SetCorner2(int32_t pos) {
-  SetModule(m_numrows - 3, 0, pos, 1);
-  SetModule(m_numrows - 2, 0, pos, 2);
-  SetModule(m_numrows - 1, 0, pos, 3);
-  SetModule(0, m_numcols - 4, pos, 4);
-  SetModule(0, m_numcols - 3, pos, 5);
-  SetModule(0, m_numcols - 2, pos, 6);
-  SetModule(0, m_numcols - 1, pos, 7);
-  SetModule(1, m_numcols - 1, pos, 8);
+  SetModule(numrows_ - 3, 0, pos, 1);
+  SetModule(numrows_ - 2, 0, pos, 2);
+  SetModule(numrows_ - 1, 0, pos, 3);
+  SetModule(0, numcols_ - 4, pos, 4);
+  SetModule(0, numcols_ - 3, pos, 5);
+  SetModule(0, numcols_ - 2, pos, 6);
+  SetModule(0, numcols_ - 1, pos, 7);
+  SetModule(1, numcols_ - 1, pos, 8);
 }
 
 void CBC_DefaultPlacement::SetCorner3(int32_t pos) {
-  SetModule(m_numrows - 3, 0, pos, 1);
-  SetModule(m_numrows - 2, 0, pos, 2);
-  SetModule(m_numrows - 1, 0, pos, 3);
-  SetModule(0, m_numcols - 2, pos, 4);
-  SetModule(0, m_numcols - 1, pos, 5);
-  SetModule(1, m_numcols - 1, pos, 6);
-  SetModule(2, m_numcols - 1, pos, 7);
-  SetModule(3, m_numcols - 1, pos, 8);
+  SetModule(numrows_ - 3, 0, pos, 1);
+  SetModule(numrows_ - 2, 0, pos, 2);
+  SetModule(numrows_ - 1, 0, pos, 3);
+  SetModule(0, numcols_ - 2, pos, 4);
+  SetModule(0, numcols_ - 1, pos, 5);
+  SetModule(1, numcols_ - 1, pos, 6);
+  SetModule(2, numcols_ - 1, pos, 7);
+  SetModule(3, numcols_ - 1, pos, 8);
 }
 
 void CBC_DefaultPlacement::SetCorner4(int32_t pos) {
-  SetModule(m_numrows - 1, 0, pos, 1);
-  SetModule(m_numrows - 1, m_numcols - 1, pos, 2);
-  SetModule(0, m_numcols - 3, pos, 3);
-  SetModule(0, m_numcols - 2, pos, 4);
-  SetModule(0, m_numcols - 1, pos, 5);
-  SetModule(1, m_numcols - 3, pos, 6);
-  SetModule(1, m_numcols - 2, pos, 7);
-  SetModule(1, m_numcols - 1, pos, 8);
+  SetModule(numrows_ - 1, 0, pos, 1);
+  SetModule(numrows_ - 1, numcols_ - 1, pos, 2);
+  SetModule(0, numcols_ - 3, pos, 3);
+  SetModule(0, numcols_ - 2, pos, 4);
+  SetModule(0, numcols_ - 1, pos, 5);
+  SetModule(1, numcols_ - 3, pos, 6);
+  SetModule(1, numcols_ - 2, pos, 7);
+  SetModule(1, numcols_ - 1, pos, 8);
 }

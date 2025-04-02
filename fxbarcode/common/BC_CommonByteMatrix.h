@@ -17,9 +17,9 @@ class CBC_CommonByteMatrix final {
   CBC_CommonByteMatrix(size_t width, size_t height);
   ~CBC_CommonByteMatrix();
 
-  size_t GetWidth() const { return m_width; }
-  size_t GetHeight() const { return m_height; }
-  pdfium::span<const uint8_t> GetArray() const { return m_bytes; }
+  size_t GetWidth() const { return width_; }
+  size_t GetHeight() const { return height_; }
+  pdfium::span<const uint8_t> GetArray() const { return bytes_; }
   DataVector<uint8_t> TakeArray();
 
   uint8_t Get(size_t x, size_t y) const;
@@ -27,9 +27,9 @@ class CBC_CommonByteMatrix final {
   void Fill(uint8_t value);
 
  private:
-  const size_t m_width;
-  const size_t m_height;
-  DataVector<uint8_t> m_bytes;
+  const size_t width_;
+  const size_t height_;
+  DataVector<uint8_t> bytes_;
 };
 
 #endif  // FXBARCODE_COMMON_BC_COMMONBYTEMATRIX_H_

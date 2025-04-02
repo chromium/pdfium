@@ -30,28 +30,28 @@ CBC_QRCoderBitVector::CBC_QRCoderBitVector() = default;
 CBC_QRCoderBitVector::~CBC_QRCoderBitVector() = default;
 
 int32_t CBC_QRCoderBitVector::At(size_t index) const {
-  CHECK(index < m_sizeInBits);
-  int32_t value = m_array[index >> 3] & 0xff;
+  CHECK(index < size_in_bits_);
+  int32_t value = array_[index >> 3] & 0xff;
   return (value >> (7 - (index & 0x7))) & 1;
 }
 
 size_t CBC_QRCoderBitVector::sizeInBytes() const {
-  return (m_sizeInBits + 7) >> 3;
+  return (size_in_bits_ + 7) >> 3;
 }
 
 size_t CBC_QRCoderBitVector::Size() const {
-  return m_sizeInBits;
+  return size_in_bits_;
 }
 
 void CBC_QRCoderBitVector::AppendBit(int32_t bit) {
   DCHECK(bit == 0 || bit == 1);
-  int32_t numBitsInLastByte = m_sizeInBits & 0x7;
+  int32_t numBitsInLastByte = size_in_bits_ & 0x7;
   if (numBitsInLastByte == 0) {
     AppendByte(0);
-    m_sizeInBits -= 8;
+    size_in_bits_ -= 8;
   }
-  m_array[m_sizeInBits >> 3] |= (bit << (7 - numBitsInLastByte));
-  ++m_sizeInBits;
+  array_[size_in_bits_ >> 3] |= (bit << (7 - numBitsInLastByte));
+  ++size_in_bits_;
 }
 
 void CBC_QRCoderBitVector::AppendBits(int32_t value, int32_t numBits) {
@@ -60,7 +60,7 @@ void CBC_QRCoderBitVector::AppendBits(int32_t value, int32_t numBits) {
 
   int32_t numBitsLeft = numBits;
   while (numBitsLeft > 0) {
-    if ((m_sizeInBits & 0x7) == 0 && numBitsLeft >= 8) {
+    if ((size_in_bits_ & 0x7) == 0 && numBitsLeft >= 8) {
       AppendByte(static_cast<int8_t>((value >> (numBitsLeft - 8)) & 0xff));
       numBitsLeft -= 8;
     } else {
@@ -76,22 +76,24 @@ void CBC_QRCoderBitVector::AppendBitVector(const CBC_QRCoderBitVector* bits) {
 }
 
 bool CBC_QRCoderBitVector::XOR(const CBC_QRCoderBitVector* other) {
-  if (m_sizeInBits != other->Size())
+  if (size_in_bits_ != other->Size()) {
     return false;
+  }
 
   pdfium::span<const uint8_t> other_span = other->GetArray();
   for (size_t i = 0; i < sizeInBytes(); ++i)
-    m_array[i] ^= other_span[i];
+    array_[i] ^= other_span[i];
   return true;
 }
 
 pdfium::span<const uint8_t> CBC_QRCoderBitVector::GetArray() const {
-  return m_array;
+  return array_;
 }
 
 void CBC_QRCoderBitVector::AppendByte(int8_t value) {
-  if ((m_sizeInBits >> 3) == m_array.size())
-    m_array.push_back(0);
-  m_array[m_sizeInBits >> 3] = value;
-  m_sizeInBits += 8;
+  if ((size_in_bits_ >> 3) == array_.size()) {
+    array_.push_back(0);
+  }
+  array_[size_in_bits_ >> 3] = value;
+  size_in_bits_ += 8;
 }

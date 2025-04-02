@@ -30,7 +30,7 @@ CBC_QRCoderErrorCorrectionLevel* CBC_QRCoderErrorCorrectionLevel::H = nullptr;
 CBC_QRCoderErrorCorrectionLevel::CBC_QRCoderErrorCorrectionLevel(
     int32_t ordinal,
     int32_t bits)
-    : m_ordinal(ordinal), m_bits(bits) {}
+    : ordinal_(ordinal), bits_(bits) {}
 
 CBC_QRCoderErrorCorrectionLevel::~CBC_QRCoderErrorCorrectionLevel() = default;
 

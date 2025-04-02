@@ -29,22 +29,22 @@
 CBC_ReedSolomonGF256::CBC_ReedSolomonGF256(int32_t primitive) {
   int32_t x = 1;
   for (int32_t j = 0; j < 256; j++) {
-    m_expTable[j] = x;
+    exp_table_[j] = x;
     x <<= 1;
     if (x >= 0x100) {
       x ^= primitive;
     }
   }
   for (int32_t i = 0; i < 255; i++) {
-    m_logTable[m_expTable[i]] = i;
+    log_table_[exp_table_[i]] = i;
   }
-  m_logTable[0] = 0;
+  log_table_[0] = 0;
 }
 
 void CBC_ReedSolomonGF256::Init() {
-  m_zero =
+  zero_ =
       std::make_unique<CBC_ReedSolomonGF256Poly>(this, std::vector<int32_t>{0});
-  m_one =
+  one_ =
       std::make_unique<CBC_ReedSolomonGF256Poly>(this, std::vector<int32_t>{1});
 }
 
@@ -57,7 +57,7 @@ std::unique_ptr<CBC_ReedSolomonGF256Poly> CBC_ReedSolomonGF256::BuildMonomial(
     return nullptr;
 
   if (coefficient == 0)
-    return m_zero->Clone();
+    return zero_->Clone();
 
   std::vector<int32_t> coefficients(degree + 1);
   coefficients[0] = coefficient;
@@ -70,13 +70,13 @@ int32_t CBC_ReedSolomonGF256::AddOrSubtract(int32_t a, int32_t b) {
 }
 
 int32_t CBC_ReedSolomonGF256::Exp(int32_t a) {
-  return m_expTable[a];
+  return exp_table_[a];
 }
 
 std::optional<int32_t> CBC_ReedSolomonGF256::Inverse(int32_t a) {
   if (a == 0)
     return std::nullopt;
-  return m_expTable[255 - m_logTable[a]];
+  return exp_table_[255 - log_table_[a]];
 }
 
 int32_t CBC_ReedSolomonGF256::Multiply(int32_t a, int32_t b) {
@@ -89,5 +89,5 @@ int32_t CBC_ReedSolomonGF256::Multiply(int32_t a, int32_t b) {
   if (b == 1) {
     return a;
   }
-  return m_expTable[(m_logTable[a] + m_logTable[b]) % 255];
+  return exp_table_[(log_table_[a] + log_table_[b]) % 255];
 }

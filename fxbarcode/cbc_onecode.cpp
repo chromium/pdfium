@@ -59,5 +59,5 @@ void CBC_OneCode::SetFontColor(FX_ARGB color) {
 }
 
 CBC_OneDimWriter* CBC_OneCode::GetOneDimWriter() {
-  return static_cast<CBC_OneDimWriter*>(m_pBCWriter.get());
+  return static_cast<CBC_OneDimWriter*>(bc_writer_.get());
 }

@@ -36,9 +36,9 @@ bool CBC_Codabar::Encode(WideStringView contents) {
   if (!pWriter->CheckContentValidity(contents))
     return false;
 
-  m_renderContents = pWriter->FilterContents(contents);
-  ByteString byteString = m_renderContents.ToUTF8();
-  return pWriter->RenderResult(m_renderContents.AsStringView(),
+  render_contents_ = pWriter->FilterContents(contents);
+  ByteString byteString = render_contents_.ToUTF8();
+  return pWriter->RenderResult(render_contents_.AsStringView(),
                                pWriter->Encode(byteString));
 }
 
@@ -46,7 +46,7 @@ bool CBC_Codabar::RenderDevice(CFX_RenderDevice* device,
                                const CFX_Matrix& matrix) {
   auto* pWriter = GetOnedCodaBarWriter();
   WideString renderCon =
-      pWriter->encodedContents(m_renderContents.AsStringView());
+      pWriter->encodedContents(render_contents_.AsStringView());
   return pWriter->RenderDeviceResult(device, matrix, renderCon.AsStringView());
 }
 
@@ -55,5 +55,5 @@ BC_TYPE CBC_Codabar::GetType() {
 }
 
 CBC_OnedCodaBarWriter* CBC_Codabar::GetOnedCodaBarWriter() {
-  return static_cast<CBC_OnedCodaBarWriter*>(m_pBCWriter.get());
+  return static_cast<CBC_OnedCodaBarWriter*>(bc_writer_.get());
 }

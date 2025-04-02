@@ -17,7 +17,7 @@ CBC_EANCode::CBC_EANCode(std::unique_ptr<CBC_OneDimEANWriter> pWriter)
 CBC_EANCode::~CBC_EANCode() = default;
 
 CBC_OneDimEANWriter* CBC_EANCode::GetOneDimEANWriter() {
-  return static_cast<CBC_OneDimEANWriter*>(m_pBCWriter.get());
+  return static_cast<CBC_OneDimEANWriter*>(bc_writer_.get());
 }
 
 bool CBC_EANCode::Encode(WideStringView contents) {
@@ -25,17 +25,17 @@ bool CBC_EANCode::Encode(WideStringView contents) {
   if (!pWriter->CheckContentValidity(contents))
     return false;
 
-  m_renderContents = Preprocess(contents);
-  ByteString str = m_renderContents.ToUTF8();
+  render_contents_ = Preprocess(contents);
+  ByteString str = render_contents_.ToUTF8();
   pWriter->InitEANWriter();
-  return pWriter->RenderResult(m_renderContents.AsStringView(),
+  return pWriter->RenderResult(render_contents_.AsStringView(),
                                pWriter->Encode(str));
 }
 
 bool CBC_EANCode::RenderDevice(CFX_RenderDevice* device,
                                const CFX_Matrix& matrix) {
   return GetOneDimEANWriter()->RenderDeviceResult(
-      device, matrix, m_renderContents.AsStringView());
+      device, matrix, render_contents_.AsStringView());
 }
 
 WideString CBC_EANCode::Preprocess(WideStringView contents) {

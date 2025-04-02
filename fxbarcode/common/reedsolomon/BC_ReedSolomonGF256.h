@@ -20,8 +20,8 @@ class CBC_ReedSolomonGF256 {
   explicit CBC_ReedSolomonGF256(int32_t primitive);
   ~CBC_ReedSolomonGF256();
 
-  CBC_ReedSolomonGF256Poly* GetZero() const { return m_zero.get(); }
-  CBC_ReedSolomonGF256Poly* GetOne() const { return m_one.get(); }
+  CBC_ReedSolomonGF256Poly* GetZero() const { return zero_.get(); }
+  CBC_ReedSolomonGF256Poly* GetOne() const { return one_.get(); }
 
   std::unique_ptr<CBC_ReedSolomonGF256Poly> BuildMonomial(int32_t degree,
                                                           int32_t coefficient);
@@ -32,10 +32,10 @@ class CBC_ReedSolomonGF256 {
   void Init();
 
  private:
-  std::unique_ptr<CBC_ReedSolomonGF256Poly> m_zero;
-  std::unique_ptr<CBC_ReedSolomonGF256Poly> m_one;
-  std::array<int32_t, 256> m_expTable;
-  std::array<int32_t, 256> m_logTable;
+  std::unique_ptr<CBC_ReedSolomonGF256Poly> zero_;
+  std::unique_ptr<CBC_ReedSolomonGF256Poly> one_;
+  std::array<int32_t, 256> exp_table_;
+  std::array<int32_t, 256> log_table_;
 };
 
 #endif  // FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256_H_

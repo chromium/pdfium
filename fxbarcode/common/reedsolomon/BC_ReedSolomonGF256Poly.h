@@ -36,8 +36,8 @@ class CBC_ReedSolomonGF256Poly final {
   std::unique_ptr<CBC_ReedSolomonGF256Poly> Clone() const;
 
  private:
-  UnownedPtr<CBC_ReedSolomonGF256> const m_field;
-  std::vector<int32_t> m_coefficients;
+  UnownedPtr<CBC_ReedSolomonGF256> const field_;
+  std::vector<int32_t> coefficients_;
 };
 
 #endif  // FXBARCODE_COMMON_REEDSOLOMON_BC_REEDSOLOMONGF256POLY_H_

@@ -14,7 +14,7 @@ bool CBC_Writer::SetModuleHeight(int32_t moduleHeight) {
   if (moduleHeight > 10 || moduleHeight < 1)
     return false;
 
-  m_ModuleHeight = moduleHeight;
+  module_height_ = moduleHeight;
   return true;
 }
 
@@ -22,16 +22,16 @@ bool CBC_Writer::SetModuleWidth(int32_t moduleWidth) {
   if (moduleWidth > 10 || moduleWidth < 1)
     return false;
 
-  m_ModuleWidth = moduleWidth;
+  module_width_ = moduleWidth;
   return true;
 }
 
 void CBC_Writer::SetHeight(int32_t height) {
-  m_Height = height;
+  height_ = height;
 }
 
 void CBC_Writer::SetWidth(int32_t width) {
-  m_Width = width;
+  width_ = width;
 }
 
 void CBC_Writer::SetTextLocation(BC_TEXT_LOC location) {}

@@ -31,10 +31,10 @@ class CBC_DefaultPlacement final {
   void SetBit(int32_t col, int32_t row, bool bit);
   bool HasBit(int32_t col, int32_t row) const;
 
-  const WideString m_codewords;
-  const int32_t m_numrows;
-  const int32_t m_numcols;
-  DataVector<uint8_t> m_bits;
+  const WideString codewords_;
+  const int32_t numrows_;
+  const int32_t numcols_;
+  DataVector<uint8_t> bits_;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_DEFAULTPLACEMENT_H_

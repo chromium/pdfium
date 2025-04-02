@@ -63,7 +63,7 @@ bool HandleEOD(CBC_EncoderContext* context, const WideString& buffer) {
       return false;
 
     int32_t available =
-        context->m_symbolInfo->data_capacity() - context->getCodewordCount();
+        context->symbol_info_->data_capacity() - context->getCodewordCount();
     int32_t remaining = context->getRemainingCharacters();
     if (remaining == 0 && available <= 2)
       return true;
@@ -81,7 +81,7 @@ bool HandleEOD(CBC_EncoderContext* context, const WideString& buffer) {
       return false;
 
     int32_t available =
-        context->m_symbolInfo->data_capacity() - context->getCodewordCount();
+        context->symbol_info_->data_capacity() - context->getCodewordCount();
     if (available >= 3) {
       restInAscii = false;
       if (!context->UpdateSymbolInfo(context->getCodewordCount() +
@@ -93,7 +93,7 @@ bool HandleEOD(CBC_EncoderContext* context, const WideString& buffer) {
 
   if (restInAscii) {
     context->resetSymbolInfo();
-    context->m_pos -= restChars;
+    context->pos_ -= restChars;
   } else {
     context->writeCodewords(encoded);
   }
@@ -132,7 +132,7 @@ bool CBC_EdifactEncoder::Encode(CBC_EncoderContext* context) {
     if (!AppendEncodedChar(c, &buffer))
       return false;
 
-    context->m_pos++;
+    context->pos_++;
     size_t count = buffer.GetLength();
     if (count >= 4) {
       WideString encoded = EncodeToEdifactCodewords(buffer);
@@ -142,7 +142,7 @@ bool CBC_EdifactEncoder::Encode(CBC_EncoderContext* context) {
       context->writeCodewords(encoded);
       buffer.Delete(0, 4);
       CBC_HighLevelEncoder::Encoding newMode =
-          CBC_HighLevelEncoder::LookAheadTest(context->m_msg, context->m_pos,
+          CBC_HighLevelEncoder::LookAheadTest(context->msg_, context->pos_,
                                               GetEncodingMode());
       if (newMode != GetEncodingMode()) {
         context->SignalEncoderChange(CBC_HighLevelEncoder::Encoding::ASCII);

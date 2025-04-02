@@ -52,5 +52,5 @@ BC_TYPE CBC_QRCode::GetType() {
 }
 
 CBC_QRCodeWriter* CBC_QRCode::GetQRCodeWriter() {
-  return static_cast<CBC_QRCodeWriter*>(m_pBCWriter.get());
+  return static_cast<CBC_QRCodeWriter*>(bc_writer_.get());
 }

@@ -32,7 +32,7 @@ class CBC_OnedEAN13Writer final : public CBC_OneDimEANWriter {
                  const CFX_Matrix& matrix,
                  int32_t barWidth) override;
 
-  int32_t m_codeWidth;
+  int32_t code_width_;
 };
 
 #endif  // FXBARCODE_ONED_BC_ONEDEAN13WRITER_H_

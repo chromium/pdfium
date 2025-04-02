@@ -361,7 +361,7 @@ CBC_PDF417::CBC_PDF417() = default;
 CBC_PDF417::~CBC_PDF417() = default;
 
 CBC_BarcodeMatrix* CBC_PDF417::getBarcodeMatrix() {
-  return m_barcodeMatrix.get();
+  return barcode_matrix_.get();
 }
 
 bool CBC_PDF417::GenerateBarcodeLogic(WideStringView msg,
@@ -409,9 +409,9 @@ bool CBC_PDF417::GenerateBarcodeLogic(WideStringView msg,
     return false;
 
   WideString fullCodewords = dataCodewords + ec.value();
-  m_barcodeMatrix = std::make_unique<CBC_BarcodeMatrix>(cols, rows);
+  barcode_matrix_ = std::make_unique<CBC_BarcodeMatrix>(cols, rows);
   encodeLowLevel(fullCodewords, cols, rows, errorCorrectionLevel,
-                 m_barcodeMatrix.get());
+                 barcode_matrix_.get());
   return true;
 }
 
@@ -419,10 +419,10 @@ void CBC_PDF417::setDimensions(int32_t maxCols,
                                int32_t minCols,
                                int32_t maxRows,
                                int32_t minRows) {
-  m_maxCols = maxCols;
-  m_minCols = minCols;
-  m_maxRows = maxRows;
-  m_minRows = minRows;
+  max_cols_ = maxCols;
+  min_cols_ = minCols;
+  max_rows_ = maxRows;
+  min_rows_ = minRows;
 }
 
 int32_t CBC_PDF417::calculateNumberOfRows(int32_t m, int32_t k, int32_t c) {
@@ -501,13 +501,15 @@ std::vector<int32_t> CBC_PDF417::determineDimensions(
     int32_t errorCorrectionCodeWords) const {
   std::vector<int32_t> dimensions;
   float ratio = 0.0f;
-  for (int32_t cols = m_minCols; cols <= m_maxCols; cols++) {
+  for (int32_t cols = min_cols_; cols <= max_cols_; cols++) {
     int32_t rows =
         calculateNumberOfRows(sourceCodeWords, errorCorrectionCodeWords, cols);
-    if (rows < m_minRows)
+    if (rows < min_rows_) {
       break;
-    if (rows > m_maxRows)
+    }
+    if (rows > max_rows_) {
       continue;
+    }
     float newRatio =
         ((17 * cols + 69) * DEFAULT_MODULE_WIDTH) / (rows * HEIGHT);
     if (!dimensions.empty() &&
@@ -521,14 +523,14 @@ std::vector<int32_t> CBC_PDF417::determineDimensions(
   }
   if (dimensions.empty()) {
     int32_t rows = calculateNumberOfRows(sourceCodeWords,
-                                         errorCorrectionCodeWords, m_maxCols);
-    if (rows < m_minRows) {
+                                         errorCorrectionCodeWords, max_cols_);
+    if (rows < min_rows_) {
       dimensions.resize(2);
-      dimensions[0] = m_maxCols;
-      dimensions[1] = m_minRows;
+      dimensions[0] = max_cols_;
+      dimensions[1] = min_rows_;
     } else if (rows >= 3 && rows <= 90) {
       dimensions.resize(2);
-      dimensions[0] = m_maxCols;
+      dimensions[0] = max_cols_;
       dimensions[1] = rows;
     }
   }

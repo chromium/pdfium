@@ -54,9 +54,9 @@ bool CBC_Base256Encoder::Encode(CBC_EncoderContext* context) {
   while (context->hasMoreCharacters()) {
     wchar_t c = context->getCurrentChar();
     buffer += c;
-    context->m_pos++;
+    context->pos_++;
     CBC_HighLevelEncoder::Encoding newMode =
-        CBC_HighLevelEncoder::LookAheadTest(context->m_msg, context->m_pos,
+        CBC_HighLevelEncoder::LookAheadTest(context->msg_, context->pos_,
                                             GetEncodingMode());
     if (newMode != GetEncodingMode()) {
       context->SignalEncoderChange(newMode);
@@ -73,7 +73,7 @@ bool CBC_Base256Encoder::Encode(CBC_EncoderContext* context) {
   if (!context->UpdateSymbolInfo(currentSize))
     return false;
 
-  bool mustPad = (context->m_symbolInfo->data_capacity() - currentSize) > 0;
+  bool mustPad = (context->symbol_info_->data_capacity() - currentSize) > 0;
   if (context->hasMoreCharacters() || mustPad) {
     if (dataCount <= 249) {
       buffer.SetAt(0, static_cast<wchar_t>(dataCount));

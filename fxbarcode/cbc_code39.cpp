@@ -37,9 +37,9 @@ bool CBC_Code39::Encode(WideStringView contents) {
     return false;
 
   WideString filtercontents = pWriter->FilterContents(contents);
-  m_renderContents = pWriter->RenderTextContents(contents);
+  render_contents_ = pWriter->RenderTextContents(contents);
   ByteString byteString = filtercontents.ToUTF8();
-  return pWriter->RenderResult(m_renderContents.AsStringView(),
+  return pWriter->RenderResult(render_contents_.AsStringView(),
                                pWriter->Encode(byteString));
 }
 
@@ -47,8 +47,9 @@ bool CBC_Code39::RenderDevice(CFX_RenderDevice* device,
                               const CFX_Matrix& matrix) {
   auto* pWriter = GetOnedCode39Writer();
   WideString renderCon;
-  if (!pWriter->encodedContents(m_renderContents.AsStringView(), &renderCon))
+  if (!pWriter->encodedContents(render_contents_.AsStringView(), &renderCon)) {
     return false;
+  }
   return pWriter->RenderDeviceResult(device, matrix, renderCon.AsStringView());
 }
 
@@ -57,5 +58,5 @@ BC_TYPE CBC_Code39::GetType() {
 }
 
 CBC_OnedCode39Writer* CBC_Code39::GetOnedCode39Writer() {
-  return static_cast<CBC_OnedCode39Writer*>(m_pBCWriter.get());
+  return static_cast<CBC_OnedCode39Writer*>(bc_writer_.get());
 }

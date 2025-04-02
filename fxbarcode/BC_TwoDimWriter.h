@@ -26,23 +26,23 @@ class CBC_TwoDimWriter : public CBC_Writer {
                     int32_t codeHeight);
   void RenderDeviceResult(CFX_RenderDevice* device, const CFX_Matrix& matrix);
 
-  int32_t error_correction_level() const { return m_iCorrectionLevel; }
+  int32_t error_correction_level() const { return correction_level_; }
 
  protected:
-  void set_error_correction_level(int32_t level) { m_iCorrectionLevel = level; }
+  void set_error_correction_level(int32_t level) { correction_level_ = level; }
 
  private:
-  std::unique_ptr<CBC_CommonBitMatrix> m_output;
-  int32_t m_multiX;
-  int32_t m_multiY;
-  int32_t m_leftPadding;
-  int32_t m_topPadding;
-  int32_t m_inputWidth;
-  int32_t m_inputHeight;
-  int32_t m_outputWidth;
-  int32_t m_outputHeight;
-  int32_t m_iCorrectionLevel = 1;
-  const bool m_bFixedSize;
+  std::unique_ptr<CBC_CommonBitMatrix> output_;
+  int32_t multi_x_;
+  int32_t multi_y_;
+  int32_t left_padding_;
+  int32_t top_padding_;
+  int32_t input_width_;
+  int32_t input_height_;
+  int32_t output_width_;
+  int32_t output_height_;
+  int32_t correction_level_ = 1;
+  const bool fixed_size_;
 };
 
 #endif  // FXBARCODE_BC_TWODIMWRITER_H_

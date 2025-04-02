@@ -21,9 +21,9 @@ class CBC_CommonBitMatrix {
   void Set(size_t x, size_t y);
 
  private:
-  const size_t m_height;
-  const size_t m_rowSize;
-  FixedSizeDataVector<uint32_t> m_bits;
+  const size_t height_;
+  const size_t row_size_;
+  FixedSizeDataVector<uint32_t> bits_;
 };
 
 #endif  // FXBARCODE_COMMON_BC_COMMONBITMATRIX_H_

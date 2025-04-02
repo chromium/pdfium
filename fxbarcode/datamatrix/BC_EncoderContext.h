@@ -33,22 +33,22 @@ class CBC_EncoderContext {
   void resetSymbolInfo();
 
   bool HasCharactersOutsideISO88591Encoding() const {
-    return m_bHasCharactersOutsideISO88591Encoding;
+    return has_characters_outside_iso88591_encoding_;
   }
 
-  WideString m_msg;
-  WideString m_codewords;
-  size_t m_pos = 0;
-  CBC_HighLevelEncoder::Encoding m_newEncoding =
+  WideString msg_;
+  WideString codewords_;
+  size_t pos_ = 0;
+  CBC_HighLevelEncoder::Encoding new_encoding_ =
       CBC_HighLevelEncoder::Encoding::UNKNOWN;
-  UnownedPtr<const CBC_SymbolInfo> m_symbolInfo;
+  UnownedPtr<const CBC_SymbolInfo> symbol_info_;
 
  private:
   size_t getTotalMessageCharCount();
 
-  bool m_bAllowRectangular = false;  // Force square when false.
-  bool m_bHasCharactersOutsideISO88591Encoding = false;
-  size_t m_skipAtEnd = 0;
+  bool allow_rectangular_ = false;  // Force square when false.
+  bool has_characters_outside_iso88591_encoding_ = false;
+  size_t skip_at_end_ = 0;
 };
 
 #endif  // FXBARCODE_DATAMATRIX_BC_ENCODERCONTEXT_H_

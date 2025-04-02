@@ -30,7 +30,7 @@ class CBC_EANCode : public CBC_OneCode {
   CBC_OneDimEANWriter* GetOneDimEANWriter();
   WideString Preprocess(WideStringView contents);
 
-  WideString m_renderContents;
+  WideString render_contents_;
 };
 
 #endif  // FXBARCODE_CBC_EANCODE_H_
