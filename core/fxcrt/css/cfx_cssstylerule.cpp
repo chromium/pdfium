@@ -13,19 +13,19 @@ CFX_CSSStyleRule::CFX_CSSStyleRule() = default;
 CFX_CSSStyleRule::~CFX_CSSStyleRule() = default;
 
 size_t CFX_CSSStyleRule::CountSelectorLists() const {
-  return m_ppSelector.size();
+  return selector_.size();
 }
 
 CFX_CSSSelector* CFX_CSSStyleRule::GetSelectorList(size_t index) const {
-  return m_ppSelector[index].get();
+  return selector_[index].get();
 }
 
 CFX_CSSDeclaration* CFX_CSSStyleRule::GetDeclaration() {
-  return &m_Declaration;
+  return &declaration_;
 }
 
 void CFX_CSSStyleRule::SetSelector(
     std::vector<std::unique_ptr<CFX_CSSSelector>>* list) {
-  DCHECK(m_ppSelector.empty());
-  m_ppSelector.swap(*list);
+  DCHECK(selector_.empty());
+  selector_.swap(*list);
 }

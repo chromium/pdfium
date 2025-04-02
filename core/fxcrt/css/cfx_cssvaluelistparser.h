@@ -25,22 +25,22 @@ class CFX_CSSValueListParser {
   ~CFX_CSSValueListParser();
 
   std::optional<Result> NextValue();
-  void UseCommaSeparator() { m_Separator = ','; }
+  void UseCommaSeparator() { separator_ = ','; }
 
  private:
-  bool CharsRemain() const { return !m_Cur.IsEmpty(); }
+  bool CharsRemain() const { return !cur_.IsEmpty(); }
 
   // Safe to call even when input exhausted, stays unchanged.
-  void Advance() { m_Cur = m_Cur.Substr(1); }
+  void Advance() { cur_ = cur_.Substr(1); }
 
   // Safe to call even when input exhausted, returns NUL.
-  wchar_t CurrentChar() const { return static_cast<wchar_t>(m_Cur.Front()); }
+  wchar_t CurrentChar() const { return static_cast<wchar_t>(cur_.Front()); }
 
   size_t SkipToChar(wchar_t wch);
   size_t SkipToCharMatchingParens(wchar_t wch);
 
-  WideStringView m_Cur;
-  wchar_t m_Separator;
+  WideStringView cur_;
+  wchar_t separator_;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSVALUELISTPARSER_H_

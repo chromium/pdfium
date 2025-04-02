@@ -79,9 +79,9 @@ class CFX_CSSStyleSelector {
       const RetainPtr<CFX_CSSValueList>& pList);
   CFX_CSSFontVariant ToFontVariant(CFX_CSSPropertyValue eValue);
 
-  float m_fDefaultFontSize = 12.0f;
-  std::unique_ptr<CFX_CSSStyleSheet> m_UAStyles;
-  CFX_CSSRuleCollection m_UARules;
+  float default_font_size_ = 12.0f;
+  std::unique_ptr<CFX_CSSStyleSheet> ua_styles_;
+  CFX_CSSRuleCollection ua_rules_;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSSTYLESELECTOR_H_

@@ -7,20 +7,21 @@
 #include "core/fxcrt/css/cfx_cssoutputtextbuf.h"
 
 CFX_CSSOutputTextBuf::CFX_CSSOutputTextBuf() {
-  m_Buffer.reserve(32);
+  buffer_.reserve(32);
 }
 
 CFX_CSSOutputTextBuf::~CFX_CSSOutputTextBuf() = default;
 
 void CFX_CSSOutputTextBuf::AppendCharIfNotLeadingBlank(wchar_t wch) {
-  if (m_Buffer.empty() && wch <= ' ')
+  if (buffer_.empty() && wch <= ' ') {
     return;
+  }
 
-  m_Buffer.push_back(wch);
+  buffer_.push_back(wch);
 }
 
 WideStringView CFX_CSSOutputTextBuf::GetTrailingBlankTrimmedString() const {
-  WideStringView result(m_Buffer);
+  WideStringView result(buffer_);
   while (!result.IsEmpty() && result.Back() <= ' ')
     result = result.First(result.GetLength() - 1);
 

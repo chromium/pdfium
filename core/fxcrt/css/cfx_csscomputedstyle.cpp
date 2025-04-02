@@ -16,7 +16,7 @@ CFX_CSSComputedStyle::~CFX_CSSComputedStyle() = default;
 
 bool CFX_CSSComputedStyle::GetCustomStyle(const WideString& wsName,
                                           WideString* pValue) const {
-  for (const auto& prop : pdfium::Reversed(m_CustomProperties)) {
+  for (const auto& prop : pdfium::Reversed(custom_properties_)) {
     if (wsName == prop.name()) {
       *pValue = prop.value();
       return true;
@@ -26,145 +26,146 @@ bool CFX_CSSComputedStyle::GetCustomStyle(const WideString& wsName,
 }
 
 std::optional<WideString> CFX_CSSComputedStyle::GetLastFontFamily() const {
-  if (!m_InheritedData.m_pFontFamily ||
-      m_InheritedData.m_pFontFamily->values().empty()) {
+  if (!inherited_data_.font_family_ ||
+      inherited_data_.font_family_->values().empty()) {
     return std::nullopt;
   }
 
-  return m_InheritedData.m_pFontFamily->values()
+  return inherited_data_.font_family_->values()
       .back()
       .AsRaw<CFX_CSSStringValue>()
       ->Value();
 }
 
 uint16_t CFX_CSSComputedStyle::GetFontWeight() const {
-  return m_InheritedData.m_wFontWeight;
+  return inherited_data_.wfont_weight_;
 }
 
 CFX_CSSFontVariant CFX_CSSComputedStyle::GetFontVariant() const {
-  return m_InheritedData.m_eFontVariant;
+  return inherited_data_.font_variant_;
 }
 
 CFX_CSSFontStyle CFX_CSSComputedStyle::GetFontStyle() const {
-  return m_InheritedData.m_eFontStyle;
+  return inherited_data_.font_style_;
 }
 
 float CFX_CSSComputedStyle::GetFontSize() const {
-  return m_InheritedData.m_fFontSize;
+  return inherited_data_.ffont_size_;
 }
 
 FX_ARGB CFX_CSSComputedStyle::GetColor() const {
-  return m_InheritedData.m_dwFontColor;
+  return inherited_data_.font_color_;
 }
 
 void CFX_CSSComputedStyle::SetFontWeight(uint16_t wFontWeight) {
-  m_InheritedData.m_wFontWeight = wFontWeight;
+  inherited_data_.wfont_weight_ = wFontWeight;
 }
 
 void CFX_CSSComputedStyle::SetFontVariant(CFX_CSSFontVariant eFontVariant) {
-  m_InheritedData.m_eFontVariant = eFontVariant;
+  inherited_data_.font_variant_ = eFontVariant;
 }
 
 void CFX_CSSComputedStyle::SetFontStyle(CFX_CSSFontStyle eFontStyle) {
-  m_InheritedData.m_eFontStyle = eFontStyle;
+  inherited_data_.font_style_ = eFontStyle;
 }
 
 void CFX_CSSComputedStyle::SetFontSize(float fFontSize) {
-  m_InheritedData.m_fFontSize = fFontSize;
+  inherited_data_.ffont_size_ = fFontSize;
 }
 
 void CFX_CSSComputedStyle::SetColor(FX_ARGB dwFontColor) {
-  m_InheritedData.m_dwFontColor = dwFontColor;
+  inherited_data_.font_color_ = dwFontColor;
 }
 
 const CFX_CSSRect* CFX_CSSComputedStyle::GetBorderWidth() const {
-  return m_NonInheritedData.m_bHasBorder ? &(m_NonInheritedData.m_BorderWidth)
+  return non_inherited_data_.has_border_ ? &(non_inherited_data_.border_width_)
                                          : nullptr;
 }
 
 const CFX_CSSRect* CFX_CSSComputedStyle::GetMarginWidth() const {
-  return m_NonInheritedData.m_bHasMargin ? &(m_NonInheritedData.m_MarginWidth)
+  return non_inherited_data_.has_margin_ ? &(non_inherited_data_.margin_width_)
                                          : nullptr;
 }
 
 const CFX_CSSRect* CFX_CSSComputedStyle::GetPaddingWidth() const {
-  return m_NonInheritedData.m_bHasPadding ? &(m_NonInheritedData.m_PaddingWidth)
-                                          : nullptr;
+  return non_inherited_data_.has_padding_
+             ? &(non_inherited_data_.padding_width_)
+             : nullptr;
 }
 
 void CFX_CSSComputedStyle::SetMarginWidth(const CFX_CSSRect& rect) {
-  m_NonInheritedData.m_MarginWidth = rect;
-  m_NonInheritedData.m_bHasMargin = true;
+  non_inherited_data_.margin_width_ = rect;
+  non_inherited_data_.has_margin_ = true;
 }
 
 void CFX_CSSComputedStyle::SetPaddingWidth(const CFX_CSSRect& rect) {
-  m_NonInheritedData.m_PaddingWidth = rect;
-  m_NonInheritedData.m_bHasPadding = true;
+  non_inherited_data_.padding_width_ = rect;
+  non_inherited_data_.has_padding_ = true;
 }
 
 CFX_CSSDisplay CFX_CSSComputedStyle::GetDisplay() const {
-  return m_NonInheritedData.m_eDisplay;
+  return non_inherited_data_.display_;
 }
 
 float CFX_CSSComputedStyle::GetLineHeight() const {
-  return m_InheritedData.m_fLineHeight;
+  return inherited_data_.fline_height_;
 }
 
 const CFX_CSSLength& CFX_CSSComputedStyle::GetTextIndent() const {
-  return m_InheritedData.m_TextIndent;
+  return inherited_data_.text_indent_;
 }
 
 CFX_CSSTextAlign CFX_CSSComputedStyle::GetTextAlign() const {
-  return m_InheritedData.m_eTextAlign;
+  return inherited_data_.text_align_;
 }
 
 CFX_CSSVerticalAlign CFX_CSSComputedStyle::GetVerticalAlign() const {
-  return m_NonInheritedData.m_eVerticalAlignType;
+  return non_inherited_data_.vertical_align_type_;
 }
 
 float CFX_CSSComputedStyle::GetNumberVerticalAlign() const {
-  return m_NonInheritedData.m_fVerticalAlign;
+  return non_inherited_data_.vertical_align_;
 }
 
 Mask<CFX_CSSTEXTDECORATION> CFX_CSSComputedStyle::GetTextDecoration() const {
-  return m_NonInheritedData.m_dwTextDecoration;
+  return non_inherited_data_.text_decoration_;
 }
 
 const CFX_CSSLength& CFX_CSSComputedStyle::GetLetterSpacing() const {
-  return m_InheritedData.m_LetterSpacing;
+  return inherited_data_.letter_spacing_;
 }
 
 void CFX_CSSComputedStyle::SetLineHeight(float fLineHeight) {
-  m_InheritedData.m_fLineHeight = fLineHeight;
+  inherited_data_.fline_height_ = fLineHeight;
 }
 
 void CFX_CSSComputedStyle::SetTextIndent(const CFX_CSSLength& textIndent) {
-  m_InheritedData.m_TextIndent = textIndent;
+  inherited_data_.text_indent_ = textIndent;
 }
 
 void CFX_CSSComputedStyle::SetTextAlign(CFX_CSSTextAlign eTextAlign) {
-  m_InheritedData.m_eTextAlign = eTextAlign;
+  inherited_data_.text_align_ = eTextAlign;
 }
 
 void CFX_CSSComputedStyle::SetNumberVerticalAlign(float fAlign) {
-  m_NonInheritedData.m_eVerticalAlignType = CFX_CSSVerticalAlign::Number,
-  m_NonInheritedData.m_fVerticalAlign = fAlign;
+  non_inherited_data_.vertical_align_type_ = CFX_CSSVerticalAlign::Number,
+  non_inherited_data_.vertical_align_ = fAlign;
 }
 
 void CFX_CSSComputedStyle::SetTextDecoration(
     Mask<CFX_CSSTEXTDECORATION> dwTextDecoration) {
-  m_NonInheritedData.m_dwTextDecoration = dwTextDecoration;
+  non_inherited_data_.text_decoration_ = dwTextDecoration;
 }
 
 void CFX_CSSComputedStyle::SetLetterSpacing(
     const CFX_CSSLength& letterSpacing) {
-  m_InheritedData.m_LetterSpacing = letterSpacing;
+  inherited_data_.letter_spacing_ = letterSpacing;
 }
 
 void CFX_CSSComputedStyle::AddCustomStyle(const CFX_CSSCustomProperty& prop) {
   // Force the property to be copied so we aren't dependent on the lifetime
   // of whatever currently owns it.
-  m_CustomProperties.push_back(prop);
+  custom_properties_.push_back(prop);
 }
 
 CFX_CSSComputedStyle::InheritedData::InheritedData() = default;

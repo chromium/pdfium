@@ -98,27 +98,27 @@ class CFX_CSSLength {
   CFX_CSSLength() = default;
 
   CFX_CSSLength(CFX_CSSLengthUnit eUnit, float fValue)
-      : m_unit(eUnit), m_fValue(fValue) {}
+      : unit_(eUnit), value_(fValue) {}
 
   CFX_CSSLength& Set(CFX_CSSLengthUnit eUnit) {
-    m_unit = eUnit;
+    unit_ = eUnit;
     return *this;
   }
 
   CFX_CSSLength& Set(CFX_CSSLengthUnit eUnit, float fValue) {
-    m_unit = eUnit;
-    m_fValue = fValue;
+    unit_ = eUnit;
+    value_ = fValue;
     return *this;
   }
 
-  CFX_CSSLengthUnit GetUnit() const { return m_unit; }
+  CFX_CSSLengthUnit GetUnit() const { return unit_; }
 
-  float GetValue() const { return m_fValue; }
-  bool NonZero() const { return static_cast<int>(m_fValue) != 0; }
+  float GetValue() const { return value_; }
+  bool NonZero() const { return static_cast<int>(value_) != 0; }
 
  private:
-  CFX_CSSLengthUnit m_unit;
-  float m_fValue;
+  CFX_CSSLengthUnit unit_;
+  float value_;
 };
 
 class CFX_CSSRect {

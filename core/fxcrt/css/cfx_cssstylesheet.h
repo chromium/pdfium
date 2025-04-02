@@ -28,7 +28,7 @@ class CFX_CSSStyleSheet {
   CFX_CSSSyntaxParser::Status LoadStyleRule(CFX_CSSSyntaxParser* pSyntax);
   void SkipRuleSet(CFX_CSSSyntaxParser* pSyntax);
 
-  std::vector<std::unique_ptr<CFX_CSSStyleRule>> m_RuleArray;
+  std::vector<std::unique_ptr<CFX_CSSStyleRule>> rule_array_;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSSTYLESHEET_H_

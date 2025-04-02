@@ -25,8 +25,8 @@ class CFX_CSSStyleRule {
   void SetSelector(std::vector<std::unique_ptr<CFX_CSSSelector>>* list);
 
  private:
-  CFX_CSSDeclaration m_Declaration;
-  std::vector<std::unique_ptr<CFX_CSSSelector>> m_ppSelector;
+  CFX_CSSDeclaration declaration_;
+  std::vector<std::unique_ptr<CFX_CSSSelector>> selector_;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSSTYLERULE_H_

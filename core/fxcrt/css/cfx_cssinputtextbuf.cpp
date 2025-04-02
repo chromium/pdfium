@@ -6,6 +6,6 @@
 
 #include "core/fxcrt/css/cfx_cssinputtextbuf.h"
 
-CFX_CSSInputTextBuf::CFX_CSSInputTextBuf(WideStringView str) : m_Buffer(str) {}
+CFX_CSSInputTextBuf::CFX_CSSInputTextBuf(WideStringView str) : buffer_(str) {}
 
 CFX_CSSInputTextBuf::~CFX_CSSInputTextBuf() = default;

@@ -18,15 +18,15 @@ CFX_CSSStyleSheet::CFX_CSSStyleSheet() = default;
 CFX_CSSStyleSheet::~CFX_CSSStyleSheet() = default;
 
 size_t CFX_CSSStyleSheet::CountRules() const {
-  return m_RuleArray.size();
+  return rule_array_.size();
 }
 
 CFX_CSSStyleRule* CFX_CSSStyleSheet::GetRule(size_t index) const {
-  return m_RuleArray[index].get();
+  return rule_array_[index].get();
 }
 
 bool CFX_CSSStyleSheet::LoadBuffer(WideStringView buffer) {
-  m_RuleArray.clear();
+  rule_array_.clear();
   auto pSyntax = std::make_unique<CFX_CSSSyntaxParser>(buffer);
   while (true) {
     CFX_CSSSyntaxParser::Status eStatus = pSyntax->DoSyntaxParse();
@@ -81,7 +81,7 @@ CFX_CSSSyntaxParser::Status CFX_CSSStyleSheet::LoadStyleRule(
           auto rule = std::make_unique<CFX_CSSStyleRule>();
           pStyleRule = rule.get();
           pStyleRule->SetSelector(&selectors);
-          m_RuleArray.push_back(std::move(rule));
+          rule_array_.push_back(std::move(rule));
         } else {
           SkipRuleSet(pSyntax);
           return CFX_CSSSyntaxParser::Status::kNone;
@@ -90,7 +90,7 @@ CFX_CSSSyntaxParser::Status CFX_CSSStyleSheet::LoadStyleRule(
       }
       case CFX_CSSSyntaxParser::Status::kDeclClose: {
         if (pStyleRule && pStyleRule->GetDeclaration()->empty()) {
-          m_RuleArray.pop_back();
+          rule_array_.pop_back();
           pStyleRule = nullptr;
         }
         return CFX_CSSSyntaxParser::Status::kNone;

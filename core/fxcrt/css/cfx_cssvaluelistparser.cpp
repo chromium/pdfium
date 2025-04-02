@@ -14,7 +14,7 @@
 
 CFX_CSSValueListParser::CFX_CSSValueListParser(WideStringView list,
                                                wchar_t separator)
-    : m_Cur(list), m_Separator(separator) {
+    : cur_(list), separator_(separator) {
   DCHECK(CharsRemain());
 }
 
@@ -23,14 +23,14 @@ CFX_CSSValueListParser::~CFX_CSSValueListParser() = default;
 std::optional<CFX_CSSValueListParser::Result>
 CFX_CSSValueListParser::NextValue() {
   while (CharsRemain() &&
-         (CurrentChar() <= ' ' || CurrentChar() == m_Separator)) {
+         (CurrentChar() <= ' ' || CurrentChar() == separator_)) {
     Advance();
   }
   if (!CharsRemain()) {
     return std::nullopt;
   }
   auto eType = CFX_CSSValue::PrimitiveType::kUnknown;
-  WideStringView start = m_Cur;
+  WideStringView start = cur_;
   size_t nLength = 0;
   wchar_t wch = CurrentChar();
   if (wch == '#') {
@@ -41,7 +41,7 @@ CFX_CSSValueListParser::NextValue() {
   } else if (FXSYS_IsDecimalDigit(wch) || wch == '.' || wch == '-' ||
              wch == '+') {
     while (CharsRemain() &&
-           (CurrentChar() > ' ' && CurrentChar() != m_Separator)) {
+           (CurrentChar() > ' ' && CurrentChar() != separator_)) {
       ++nLength;
       Advance();
     }
@@ -52,13 +52,12 @@ CFX_CSSValueListParser::NextValue() {
     nLength = SkipToChar(wch);
     Advance();
     eType = CFX_CSSValue::PrimitiveType::kString;
-  } else if (m_Cur.First(4).EqualsASCIINoCase(
-                 "rgb(")) {  // First() always safe.
+  } else if (cur_.First(4).EqualsASCIINoCase("rgb(")) {  // First() always safe.
     nLength = SkipToChar(')') + 1;
     Advance();
     eType = CFX_CSSValue::PrimitiveType::kRGB;
   } else {
-    nLength = SkipToCharMatchingParens(m_Separator);
+    nLength = SkipToCharMatchingParens(separator_);
     eType = CFX_CSSValue::PrimitiveType::kString;
   }
   if (nLength == 0) {

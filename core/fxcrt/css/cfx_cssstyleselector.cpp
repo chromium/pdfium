@@ -28,24 +28,24 @@ CFX_CSSStyleSelector::~CFX_CSSStyleSelector() = default;
 
 void CFX_CSSStyleSelector::SetDefaultFontSize(float fFontSize) {
   DCHECK(fFontSize > 0);
-  m_fDefaultFontSize = fFontSize;
+  default_font_size_ = fFontSize;
 }
 
 RetainPtr<CFX_CSSComputedStyle> CFX_CSSStyleSelector::CreateComputedStyle(
     const CFX_CSSComputedStyle* pParentStyle) {
   auto pStyle = pdfium::MakeRetain<CFX_CSSComputedStyle>();
   if (pParentStyle)
-    pStyle->m_InheritedData = pParentStyle->m_InheritedData;
+    pStyle->inherited_data_ = pParentStyle->inherited_data_;
   return pStyle;
 }
 
 void CFX_CSSStyleSelector::SetUAStyleSheet(
     std::unique_ptr<CFX_CSSStyleSheet> pSheet) {
-  m_UAStyles = std::move(pSheet);
+  ua_styles_ = std::move(pSheet);
 }
 
 void CFX_CSSStyleSelector::UpdateStyleIndex() {
-  m_UARules.SetRulesFromSheet(m_UAStyles.get());
+  ua_rules_.SetRulesFromSheet(ua_styles_.get());
 }
 
 std::vector<const CFX_CSSDeclaration*> CFX_CSSStyleSelector::MatchDeclarations(
@@ -54,7 +54,7 @@ std::vector<const CFX_CSSDeclaration*> CFX_CSSStyleSelector::MatchDeclarations(
   if (tagname.IsEmpty())
     return matchedDecls;
 
-  auto* rules = m_UARules.GetTagRuleData(tagname);
+  auto* rules = ua_rules_.GetTagRuleData(tagname);
   if (!rules)
     return matchedDecls;
 
@@ -177,10 +177,10 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
     if (!value_list->values().empty()) {
       switch (eProperty) {
         case CFX_CSSProperty::FontFamily:
-          pComputedStyle->m_InheritedData.m_pFontFamily = std::move(value_list);
+          pComputedStyle->inherited_data_.font_family_ = std::move(value_list);
           break;
         case CFX_CSSProperty::TextDecoration:
-          pComputedStyle->m_NonInheritedData.m_dwTextDecoration =
+          pComputedStyle->non_inherited_data_.text_decoration_ =
               ToTextDecoration(value_list);
           break;
         default:
@@ -193,12 +193,12 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
   switch (eProperty) {
     case CFX_CSSProperty::Display:
       if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
-        pComputedStyle->m_NonInheritedData.m_eDisplay =
+        pComputedStyle->non_inherited_data_.display_ =
             ToDisplay(pValue.AsRaw<CFX_CSSEnumValue>()->Value());
       }
       break;
     case CFX_CSSProperty::FontSize: {
-      float& fFontSize = pComputedStyle->m_InheritedData.m_fFontSize;
+      float& fFontSize = pComputedStyle->inherited_data_.ffont_size_;
       if (eType == CFX_CSSValue::PrimitiveType::kNumber) {
         fFontSize = pValue.AsRaw<CFX_CSSNumberValue>()->Apply(fFontSize);
       } else if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
@@ -210,154 +210,154 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
       if (eType == CFX_CSSValue::PrimitiveType::kNumber) {
         RetainPtr<CFX_CSSNumberValue> v = pValue.As<CFX_CSSNumberValue>();
         if (v->unit() == CFX_CSSNumber::Unit::kNumber) {
-          pComputedStyle->m_InheritedData.m_fLineHeight =
-              v->value() * pComputedStyle->m_InheritedData.m_fFontSize;
+          pComputedStyle->inherited_data_.fline_height_ =
+              v->value() * pComputedStyle->inherited_data_.ffont_size_;
         } else {
-          pComputedStyle->m_InheritedData.m_fLineHeight =
-              v->Apply(pComputedStyle->m_InheritedData.m_fFontSize);
+          pComputedStyle->inherited_data_.fline_height_ =
+              v->Apply(pComputedStyle->inherited_data_.ffont_size_);
         }
       }
       break;
     case CFX_CSSProperty::TextAlign:
       if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
-        pComputedStyle->m_InheritedData.m_eTextAlign =
+        pComputedStyle->inherited_data_.text_align_ =
             ToTextAlign(pValue.AsRaw<CFX_CSSEnumValue>()->Value());
       }
       break;
     case CFX_CSSProperty::TextIndent:
-      SetLengthWithPercent(pComputedStyle->m_InheritedData.m_TextIndent, eType,
-                           pValue, pComputedStyle->m_InheritedData.m_fFontSize);
+      SetLengthWithPercent(pComputedStyle->inherited_data_.text_indent_, eType,
+                           pValue, pComputedStyle->inherited_data_.ffont_size_);
       break;
     case CFX_CSSProperty::FontWeight:
       if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
-        pComputedStyle->m_InheritedData.m_wFontWeight =
+        pComputedStyle->inherited_data_.wfont_weight_ =
             ToFontWeight(pValue.AsRaw<CFX_CSSEnumValue>()->Value());
       } else if (eType == CFX_CSSValue::PrimitiveType::kNumber) {
         int32_t iValue =
             static_cast<int32_t>(pValue.AsRaw<CFX_CSSNumberValue>()->value()) /
             100;
         if (iValue >= 1 && iValue <= 9) {
-          pComputedStyle->m_InheritedData.m_wFontWeight = iValue * 100;
+          pComputedStyle->inherited_data_.wfont_weight_ = iValue * 100;
         }
       }
       break;
     case CFX_CSSProperty::FontStyle:
       if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
-        pComputedStyle->m_InheritedData.m_eFontStyle =
+        pComputedStyle->inherited_data_.font_style_ =
             ToFontStyle(pValue.AsRaw<CFX_CSSEnumValue>()->Value());
       }
       break;
     case CFX_CSSProperty::Color:
       if (eType == CFX_CSSValue::PrimitiveType::kRGB) {
-        pComputedStyle->m_InheritedData.m_dwFontColor =
+        pComputedStyle->inherited_data_.font_color_ =
             pValue.AsRaw<CFX_CSSColorValue>()->Value();
       }
       break;
     case CFX_CSSProperty::MarginLeft:
       if (SetLengthWithPercent(
-              pComputedStyle->m_NonInheritedData.m_MarginWidth.left, eType,
-              pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
-        pComputedStyle->m_NonInheritedData.m_bHasMargin = true;
+              pComputedStyle->non_inherited_data_.margin_width_.left, eType,
+              pValue, pComputedStyle->inherited_data_.ffont_size_)) {
+        pComputedStyle->non_inherited_data_.has_margin_ = true;
       }
       break;
     case CFX_CSSProperty::MarginTop:
       if (SetLengthWithPercent(
-              pComputedStyle->m_NonInheritedData.m_MarginWidth.top, eType,
-              pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
-        pComputedStyle->m_NonInheritedData.m_bHasMargin = true;
+              pComputedStyle->non_inherited_data_.margin_width_.top, eType,
+              pValue, pComputedStyle->inherited_data_.ffont_size_)) {
+        pComputedStyle->non_inherited_data_.has_margin_ = true;
       }
       break;
     case CFX_CSSProperty::MarginRight:
       if (SetLengthWithPercent(
-              pComputedStyle->m_NonInheritedData.m_MarginWidth.right, eType,
-              pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
-        pComputedStyle->m_NonInheritedData.m_bHasMargin = true;
+              pComputedStyle->non_inherited_data_.margin_width_.right, eType,
+              pValue, pComputedStyle->inherited_data_.ffont_size_)) {
+        pComputedStyle->non_inherited_data_.has_margin_ = true;
       }
       break;
     case CFX_CSSProperty::MarginBottom:
       if (SetLengthWithPercent(
-              pComputedStyle->m_NonInheritedData.m_MarginWidth.bottom, eType,
-              pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
-        pComputedStyle->m_NonInheritedData.m_bHasMargin = true;
+              pComputedStyle->non_inherited_data_.margin_width_.bottom, eType,
+              pValue, pComputedStyle->inherited_data_.ffont_size_)) {
+        pComputedStyle->non_inherited_data_.has_margin_ = true;
       }
       break;
     case CFX_CSSProperty::PaddingLeft:
       if (SetLengthWithPercent(
-              pComputedStyle->m_NonInheritedData.m_PaddingWidth.left, eType,
-              pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
-        pComputedStyle->m_NonInheritedData.m_bHasPadding = true;
+              pComputedStyle->non_inherited_data_.padding_width_.left, eType,
+              pValue, pComputedStyle->inherited_data_.ffont_size_)) {
+        pComputedStyle->non_inherited_data_.has_padding_ = true;
       }
       break;
     case CFX_CSSProperty::PaddingTop:
       if (SetLengthWithPercent(
-              pComputedStyle->m_NonInheritedData.m_PaddingWidth.top, eType,
-              pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
-        pComputedStyle->m_NonInheritedData.m_bHasPadding = true;
+              pComputedStyle->non_inherited_data_.padding_width_.top, eType,
+              pValue, pComputedStyle->inherited_data_.ffont_size_)) {
+        pComputedStyle->non_inherited_data_.has_padding_ = true;
       }
       break;
     case CFX_CSSProperty::PaddingRight:
       if (SetLengthWithPercent(
-              pComputedStyle->m_NonInheritedData.m_PaddingWidth.right, eType,
-              pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
-        pComputedStyle->m_NonInheritedData.m_bHasPadding = true;
+              pComputedStyle->non_inherited_data_.padding_width_.right, eType,
+              pValue, pComputedStyle->inherited_data_.ffont_size_)) {
+        pComputedStyle->non_inherited_data_.has_padding_ = true;
       }
       break;
     case CFX_CSSProperty::PaddingBottom:
       if (SetLengthWithPercent(
-              pComputedStyle->m_NonInheritedData.m_PaddingWidth.bottom, eType,
-              pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
-        pComputedStyle->m_NonInheritedData.m_bHasPadding = true;
+              pComputedStyle->non_inherited_data_.padding_width_.bottom, eType,
+              pValue, pComputedStyle->inherited_data_.ffont_size_)) {
+        pComputedStyle->non_inherited_data_.has_padding_ = true;
       }
       break;
     case CFX_CSSProperty::BorderLeftWidth:
       if (SetLengthWithPercent(
-              pComputedStyle->m_NonInheritedData.m_BorderWidth.left, eType,
-              pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
-        pComputedStyle->m_NonInheritedData.m_bHasBorder = true;
+              pComputedStyle->non_inherited_data_.border_width_.left, eType,
+              pValue, pComputedStyle->inherited_data_.ffont_size_)) {
+        pComputedStyle->non_inherited_data_.has_border_ = true;
       }
       break;
     case CFX_CSSProperty::BorderTopWidth:
       if (SetLengthWithPercent(
-              pComputedStyle->m_NonInheritedData.m_BorderWidth.top, eType,
-              pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
-        pComputedStyle->m_NonInheritedData.m_bHasBorder = true;
+              pComputedStyle->non_inherited_data_.border_width_.top, eType,
+              pValue, pComputedStyle->inherited_data_.ffont_size_)) {
+        pComputedStyle->non_inherited_data_.has_border_ = true;
       }
       break;
     case CFX_CSSProperty::BorderRightWidth:
       if (SetLengthWithPercent(
-              pComputedStyle->m_NonInheritedData.m_BorderWidth.right, eType,
-              pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
-        pComputedStyle->m_NonInheritedData.m_bHasBorder = true;
+              pComputedStyle->non_inherited_data_.border_width_.right, eType,
+              pValue, pComputedStyle->inherited_data_.ffont_size_)) {
+        pComputedStyle->non_inherited_data_.has_border_ = true;
       }
       break;
     case CFX_CSSProperty::BorderBottomWidth:
       if (SetLengthWithPercent(
-              pComputedStyle->m_NonInheritedData.m_BorderWidth.bottom, eType,
-              pValue, pComputedStyle->m_InheritedData.m_fFontSize)) {
-        pComputedStyle->m_NonInheritedData.m_bHasBorder = true;
+              pComputedStyle->non_inherited_data_.border_width_.bottom, eType,
+              pValue, pComputedStyle->inherited_data_.ffont_size_)) {
+        pComputedStyle->non_inherited_data_.has_border_ = true;
       }
       break;
     case CFX_CSSProperty::VerticalAlign:
       if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
-        pComputedStyle->m_NonInheritedData.m_eVerticalAlignType =
+        pComputedStyle->non_inherited_data_.vertical_align_type_ =
             ToVerticalAlign(pValue.AsRaw<CFX_CSSEnumValue>()->Value());
       } else if (eType == CFX_CSSValue::PrimitiveType::kNumber) {
-        pComputedStyle->m_NonInheritedData.m_eVerticalAlignType =
+        pComputedStyle->non_inherited_data_.vertical_align_type_ =
             CFX_CSSVerticalAlign::Number;
-        pComputedStyle->m_NonInheritedData.m_fVerticalAlign =
+        pComputedStyle->non_inherited_data_.vertical_align_ =
             pValue.AsRaw<CFX_CSSNumberValue>()->Apply(
-                pComputedStyle->m_InheritedData.m_fFontSize);
+                pComputedStyle->inherited_data_.ffont_size_);
       }
       break;
     case CFX_CSSProperty::FontVariant:
       if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
-        pComputedStyle->m_InheritedData.m_eFontVariant =
+        pComputedStyle->inherited_data_.font_variant_ =
             ToFontVariant(pValue.AsRaw<CFX_CSSEnumValue>()->Value());
       }
       break;
     case CFX_CSSProperty::LetterSpacing:
       if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
-        pComputedStyle->m_InheritedData.m_LetterSpacing.Set(
+        pComputedStyle->inherited_data_.letter_spacing_.Set(
             CFX_CSSLengthUnit::Normal);
       } else if (eType == CFX_CSSValue::PrimitiveType::kNumber) {
         if (pValue.AsRaw<CFX_CSSNumberValue>()->unit() ==
@@ -365,40 +365,40 @@ void CFX_CSSStyleSelector::ApplyProperty(CFX_CSSProperty eProperty,
           break;
         }
 
-        SetLengthWithPercent(pComputedStyle->m_InheritedData.m_LetterSpacing,
+        SetLengthWithPercent(pComputedStyle->inherited_data_.letter_spacing_,
                              eType, pValue,
-                             pComputedStyle->m_InheritedData.m_fFontSize);
+                             pComputedStyle->inherited_data_.ffont_size_);
       }
       break;
     case CFX_CSSProperty::WordSpacing:
       if (eType == CFX_CSSValue::PrimitiveType::kEnum) {
-        pComputedStyle->m_InheritedData.m_WordSpacing.Set(
+        pComputedStyle->inherited_data_.word_spacing_.Set(
             CFX_CSSLengthUnit::Normal);
       } else if (eType == CFX_CSSValue::PrimitiveType::kNumber) {
         if (pValue.AsRaw<CFX_CSSNumberValue>()->unit() ==
             CFX_CSSNumber::Unit::kPercent) {
           break;
         }
-        SetLengthWithPercent(pComputedStyle->m_InheritedData.m_WordSpacing,
+        SetLengthWithPercent(pComputedStyle->inherited_data_.word_spacing_,
                              eType, pValue,
-                             pComputedStyle->m_InheritedData.m_fFontSize);
+                             pComputedStyle->inherited_data_.ffont_size_);
       }
       break;
     case CFX_CSSProperty::Top:
-      SetLengthWithPercent(pComputedStyle->m_NonInheritedData.m_Top, eType,
-                           pValue, pComputedStyle->m_InheritedData.m_fFontSize);
+      SetLengthWithPercent(pComputedStyle->non_inherited_data_.top_, eType,
+                           pValue, pComputedStyle->inherited_data_.ffont_size_);
       break;
     case CFX_CSSProperty::Bottom:
-      SetLengthWithPercent(pComputedStyle->m_NonInheritedData.m_Bottom, eType,
-                           pValue, pComputedStyle->m_InheritedData.m_fFontSize);
+      SetLengthWithPercent(pComputedStyle->non_inherited_data_.bottom_, eType,
+                           pValue, pComputedStyle->inherited_data_.ffont_size_);
       break;
     case CFX_CSSProperty::Left:
-      SetLengthWithPercent(pComputedStyle->m_NonInheritedData.m_Left, eType,
-                           pValue, pComputedStyle->m_InheritedData.m_fFontSize);
+      SetLengthWithPercent(pComputedStyle->non_inherited_data_.left_, eType,
+                           pValue, pComputedStyle->inherited_data_.ffont_size_);
       break;
     case CFX_CSSProperty::Right:
-      SetLengthWithPercent(pComputedStyle->m_NonInheritedData.m_Right, eType,
-                           pValue, pComputedStyle->m_InheritedData.m_fFontSize);
+      SetLengthWithPercent(pComputedStyle->non_inherited_data_.right_, eType,
+                           pValue, pComputedStyle->inherited_data_.ffont_size_);
       break;
     default:
       break;
@@ -507,19 +507,19 @@ float CFX_CSSStyleSelector::ToFontSize(CFX_CSSPropertyValue eValue,
                                        float fCurFontSize) {
   switch (eValue) {
     case CFX_CSSPropertyValue::XxSmall:
-      return m_fDefaultFontSize / 1.2f / 1.2f / 1.2f;
+      return default_font_size_ / 1.2f / 1.2f / 1.2f;
     case CFX_CSSPropertyValue::XSmall:
-      return m_fDefaultFontSize / 1.2f / 1.2f;
+      return default_font_size_ / 1.2f / 1.2f;
     case CFX_CSSPropertyValue::Small:
-      return m_fDefaultFontSize / 1.2f;
+      return default_font_size_ / 1.2f;
     case CFX_CSSPropertyValue::Medium:
-      return m_fDefaultFontSize;
+      return default_font_size_;
     case CFX_CSSPropertyValue::Large:
-      return m_fDefaultFontSize * 1.2f;
+      return default_font_size_ * 1.2f;
     case CFX_CSSPropertyValue::XLarge:
-      return m_fDefaultFontSize * 1.2f * 1.2f;
+      return default_font_size_ * 1.2f * 1.2f;
     case CFX_CSSPropertyValue::XxLarge:
-      return m_fDefaultFontSize * 1.2f * 1.2f * 1.2f;
+      return default_font_size_ * 1.2f * 1.2f * 1.2f;
     case CFX_CSSPropertyValue::Larger:
       return fCurFontSize * 1.2f;
     case CFX_CSSPropertyValue::Smaller:

@@ -41,7 +41,7 @@ class CFX_CSSRuleCollection {
  private:
   void AddRule(CFX_CSSStyleRule* pRule);
 
-  std::map<uint32_t, std::vector<std::unique_ptr<Data>>> m_TagRules;
+  std::map<uint32_t, std::vector<std::unique_ptr<Data>>> tag_rules_;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSRULECOLLECTION_H_

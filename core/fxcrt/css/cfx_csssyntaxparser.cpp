@@ -20,42 +20,43 @@ bool IsSelectorStart(wchar_t wch) {
 
 }  // namespace
 
-CFX_CSSSyntaxParser::CFX_CSSSyntaxParser(WideStringView str) : m_Input(str) {}
+CFX_CSSSyntaxParser::CFX_CSSSyntaxParser(WideStringView str) : input_(str) {}
 
 CFX_CSSSyntaxParser::~CFX_CSSSyntaxParser() = default;
 
 void CFX_CSSSyntaxParser::SetParseOnlyDeclarations() {
-  m_eMode = Mode::kPropertyName;
+  mode_ = Mode::kPropertyName;
 }
 
 CFX_CSSSyntaxParser::Status CFX_CSSSyntaxParser::DoSyntaxParse() {
-  m_Output.Clear();
-  if (m_bHasError)
+  output_.Clear();
+  if (has_error_) {
     return Status::kError;
+  }
 
-  while (!m_Input.IsEOF()) {
-    wchar_t wch = m_Input.GetChar();
-    switch (m_eMode) {
+  while (!input_.IsEOF()) {
+    wchar_t wch = input_.GetChar();
+    switch (mode_) {
       case Mode::kRuleSet:
         switch (wch) {
           case '}':
-            m_bHasError = true;
+            has_error_ = true;
             return Status::kError;
           case '/':
-            if (m_Input.GetNextChar() == '*') {
+            if (input_.GetNextChar() == '*') {
               SaveMode(Mode::kRuleSet);
-              m_eMode = Mode::kComment;
+              mode_ = Mode::kComment;
               break;
             }
             [[fallthrough]];
           default:
             if (wch <= ' ') {
-              m_Input.MoveNext();
+              input_.MoveNext();
             } else if (IsSelectorStart(wch)) {
-              m_eMode = Mode::kSelector;
+              mode_ = Mode::kSelector;
               return Status::kStyleRule;
             } else {
-              m_bHasError = true;
+              has_error_ = true;
               return Status::kError;
             }
             break;
@@ -64,112 +65,118 @@ CFX_CSSSyntaxParser::Status CFX_CSSSyntaxParser::DoSyntaxParse() {
       case Mode::kSelector:
         switch (wch) {
           case ',':
-            m_Input.MoveNext();
-            if (!m_Output.IsEmpty())
+            input_.MoveNext();
+            if (!output_.IsEmpty()) {
               return Status::kSelector;
+            }
             break;
           case '{':
-            if (!m_Output.IsEmpty())
+            if (!output_.IsEmpty()) {
               return Status::kSelector;
-            m_Input.MoveNext();
+            }
+            input_.MoveNext();
             SaveMode(Mode::kRuleSet);  // Back to validate ruleset again.
-            m_eMode = Mode::kPropertyName;
+            mode_ = Mode::kPropertyName;
             return Status::kDeclOpen;
           case '/':
-            if (m_Input.GetNextChar() == '*') {
+            if (input_.GetNextChar() == '*') {
               SaveMode(Mode::kSelector);
-              m_eMode = Mode::kComment;
-              if (!m_Output.IsEmpty())
+              mode_ = Mode::kComment;
+              if (!output_.IsEmpty()) {
                 return Status::kSelector;
+              }
               break;
             }
             [[fallthrough]];
           default:
-            m_Output.AppendCharIfNotLeadingBlank(wch);
-            m_Input.MoveNext();
+            output_.AppendCharIfNotLeadingBlank(wch);
+            input_.MoveNext();
             break;
         }
         break;
       case Mode::kPropertyName:
         switch (wch) {
           case ':':
-            m_Input.MoveNext();
-            m_eMode = Mode::kPropertyValue;
+            input_.MoveNext();
+            mode_ = Mode::kPropertyValue;
             return Status::kPropertyName;
           case '}':
-            m_Input.MoveNext();
+            input_.MoveNext();
             if (!RestoreMode())
               return Status::kError;
 
             return Status::kDeclClose;
           case '/':
-            if (m_Input.GetNextChar() == '*') {
+            if (input_.GetNextChar() == '*') {
               SaveMode(Mode::kPropertyName);
-              m_eMode = Mode::kComment;
-              if (!m_Output.IsEmpty())
+              mode_ = Mode::kComment;
+              if (!output_.IsEmpty()) {
                 return Status::kPropertyName;
+              }
               break;
             }
             [[fallthrough]];
           default:
-            m_Output.AppendCharIfNotLeadingBlank(wch);
-            m_Input.MoveNext();
+            output_.AppendCharIfNotLeadingBlank(wch);
+            input_.MoveNext();
             break;
         }
         break;
       case Mode::kPropertyValue:
         switch (wch) {
           case ';':
-            m_Input.MoveNext();
+            input_.MoveNext();
             [[fallthrough]];
           case '}':
-            m_eMode = Mode::kPropertyName;
+            mode_ = Mode::kPropertyName;
             return Status::kPropertyValue;
           case '/':
-            if (m_Input.GetNextChar() == '*') {
+            if (input_.GetNextChar() == '*') {
               SaveMode(Mode::kPropertyValue);
-              m_eMode = Mode::kComment;
-              if (!m_Output.IsEmpty())
+              mode_ = Mode::kComment;
+              if (!output_.IsEmpty()) {
                 return Status::kPropertyValue;
+              }
               break;
             }
             [[fallthrough]];
           default:
-            m_Output.AppendCharIfNotLeadingBlank(wch);
-            m_Input.MoveNext();
+            output_.AppendCharIfNotLeadingBlank(wch);
+            input_.MoveNext();
             break;
         }
         break;
       case Mode::kComment:
-        if (wch == '*' && m_Input.GetNextChar() == '/') {
+        if (wch == '*' && input_.GetNextChar() == '/') {
           if (!RestoreMode())
             return Status::kError;
-          m_Input.MoveNext();
+          input_.MoveNext();
         }
-        m_Input.MoveNext();
+        input_.MoveNext();
         break;
     }
   }
-  if (m_eMode == Mode::kPropertyValue && !m_Output.IsEmpty())
+  if (mode_ == Mode::kPropertyValue && !output_.IsEmpty()) {
     return Status::kPropertyValue;
+  }
 
   return Status::kEOS;
 }
 
 void CFX_CSSSyntaxParser::SaveMode(Mode mode) {
-  m_ModeStack.push(mode);
+  mode_stack_.push(mode);
 }
 
 bool CFX_CSSSyntaxParser::RestoreMode() {
-  if (m_ModeStack.empty()) {
-    m_bHasError = true;
+  if (mode_stack_.empty()) {
+    has_error_ = true;
     return false;
   }
-  m_eMode = m_ModeStack.top();
-  m_ModeStack.pop();
+  mode_ = mode_stack_.top();
+  mode_stack_.pop();
   return true;
 }
 
 WideStringView CFX_CSSSyntaxParser::GetCurrentString() const {
-  return m_Output.GetTrailingBlankTrimmedString();
+  return output_.GetTrailingBlankTrimmedString();
 }

@@ -22,14 +22,14 @@ class CFX_CSSValue : public Retainable {
     kList,
   };
 
-  PrimitiveType GetType() const { return m_value; }
+  PrimitiveType GetType() const { return value_; }
 
  protected:
   explicit CFX_CSSValue(PrimitiveType type);
   ~CFX_CSSValue() override;
 
  private:
-  const PrimitiveType m_value;
+  const PrimitiveType value_;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSVALUE_H_

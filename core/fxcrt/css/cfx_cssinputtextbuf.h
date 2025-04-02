@@ -14,16 +14,16 @@ class CFX_CSSInputTextBuf {
   explicit CFX_CSSInputTextBuf(WideStringView str);
   ~CFX_CSSInputTextBuf();
 
-  bool IsEOF() const { return m_iPos >= m_Buffer.GetLength(); }
-  void MoveNext() { m_iPos++; }
-  wchar_t GetChar() const { return m_Buffer[m_iPos]; }
+  bool IsEOF() const { return pos_ >= buffer_.GetLength(); }
+  void MoveNext() { pos_++; }
+  wchar_t GetChar() const { return buffer_[pos_]; }
   wchar_t GetNextChar() const {
-    return m_iPos + 1 < m_Buffer.GetLength() ? m_Buffer[m_iPos + 1] : 0;
+    return pos_ + 1 < buffer_.GetLength() ? buffer_[pos_ + 1] : 0;
   }
 
  protected:
-  const WideStringView m_Buffer;
-  size_t m_iPos = 0;
+  const WideStringView buffer_;
+  size_t pos_ = 0;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSINPUTTEXTBUF_H_

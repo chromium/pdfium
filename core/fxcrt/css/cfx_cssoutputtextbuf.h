@@ -15,13 +15,13 @@ class CFX_CSSOutputTextBuf {
   CFX_CSSOutputTextBuf();
   ~CFX_CSSOutputTextBuf();
 
-  void Clear() { m_Buffer.clear(); }
-  bool IsEmpty() const { return m_Buffer.empty(); }
+  void Clear() { buffer_.clear(); }
+  bool IsEmpty() const { return buffer_.empty(); }
   void AppendCharIfNotLeadingBlank(wchar_t wch);
   WideStringView GetTrailingBlankTrimmedString() const;
 
  protected:
-  DataVector<wchar_t> m_Buffer;
+  DataVector<wchar_t> buffer_;
 };
 
 #endif  // CORE_FXCRT_CSS_CFX_CSSOUTPUTTEXTBUF_H_
