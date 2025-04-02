@@ -42,8 +42,9 @@ class CFGASRTFBreakTest : public testing::Test {
 TEST_F(CFGASRTFBreakTest, AddChars) {
   auto rtf_break = CreateBreak(CFGAS_Break::LayoutStyle::kExpandTab);
   WideString str(L"Input String.");
-  for (wchar_t ch : str)
+  for (wchar_t ch : str) {
     EXPECT_EQ(CFGAS_Char::BreakType::kNone, rtf_break->AppendChar(ch));
+  }
 
   EXPECT_EQ(CFGAS_Char::BreakType::kParagraph, rtf_break->AppendChar(L'\n'));
   ASSERT_EQ(1, rtf_break->CountBreakPieces());
@@ -54,8 +55,9 @@ TEST_F(CFGASRTFBreakTest, AddChars) {
   EXPECT_EQ(0, rtf_break->GetCurrentLineForTesting()->GetLineEnd());
 
   str = L"Second str.";
-  for (wchar_t ch : str)
+  for (wchar_t ch : str) {
     EXPECT_EQ(CFGAS_Char::BreakType::kNone, rtf_break->AppendChar(ch));
+  }
 
   // Force the end of the break at the end of the string.
   rtf_break->EndBreak(CFGAS_Char::BreakType::kParagraph);
@@ -83,8 +85,9 @@ TEST_F(CFGASRTFBreakTest, BidiLine) {
   // SAFETY: known fixed-length string.
   WideString input =
       WideString::FromUTF8(UNSAFE_BUFFERS(ByteStringView("\xa\x0\xa\xa", 4)));
-  for (wchar_t ch : input)
+  for (wchar_t ch : input) {
     rtf_break->AppendChar(ch);
+  }
 
   std::vector<CFGAS_Char> chars =
       rtf_break->GetCurrentLineForTesting()->m_LineChars;

@@ -95,8 +95,9 @@ class CFXCSSStyleSheetTest : public testing::Test {
   static bool HasSelector(CFX_CSSStyleRule* style, WideStringView selector) {
     uint32_t hash = FX_HashCode_GetLoweredW(selector);
     for (size_t i = 0; i < style->CountSelectorLists(); ++i) {
-      if (style->GetSelectorList(i)->name_hash() == hash)
+      if (style->GetSelectorList(i)->name_hash() == hash) {
         return true;
+      }
     }
     return false;
   }

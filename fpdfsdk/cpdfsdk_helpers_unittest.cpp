@@ -29,8 +29,9 @@ TEST(CPDFSDKHelpersTest, NulTerminateMaybeCopyAndReturnLength) {
               NulTerminateMaybeCopyAndReturnLength(
                   to_be_copied,
                   pdfium::make_span(buf).first(kExpectedToBeCopiedLen)));
-    for (char c : buf)
+    for (char c : buf) {
       EXPECT_EQ(0x42, c);
+    }
 
     // Buffer should copy over if long enough.
     ASSERT_EQ(kExpectedToBeCopiedLen + 1,

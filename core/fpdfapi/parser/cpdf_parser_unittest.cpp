@@ -109,8 +109,9 @@ class CPDF_TestParser final : public CPDF_Parser {
   bool InitTestFromFile(const char* path) {
     RetainPtr<IFX_SeekableReadStream> pFileAccess =
         IFX_SeekableReadStream::CreateFromFilename(path);
-    if (!pFileAccess)
+    if (!pFileAccess) {
       return false;
+    }
 
     // For the test file, the header is set at the beginning.
     SetSyntaxParserForTesting(

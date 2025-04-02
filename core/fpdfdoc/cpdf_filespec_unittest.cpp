@@ -22,33 +22,33 @@
 
 TEST(CPDFFileSpecTest, EncodeDecodeFileName) {
   static const std::vector<pdfium::NullTermWstrFuncTestData> test_data = {
-    // Empty src string.
-    {L"", L""},
-    // only file name.
-    {L"test.pdf", L"test.pdf"},
+      // Empty src string.
+      {L"", L""},
+      // only file name.
+      {L"test.pdf", L"test.pdf"},
 #if BUILDFLAG(IS_WIN)
-    // With drive identifier.
-    {L"r:\\pdfdocs\\spec.pdf", L"/r/pdfdocs/spec.pdf"},
-    // Relative path.
-    {L"My Document\\test.pdf", L"My Document/test.pdf"},
-    // Absolute path without drive identifier.
-    {L"\\pdfdocs\\spec.pdf", L"//pdfdocs/spec.pdf"},
-    // Absolute path with double backslashes.
-    {L"\\\\pdfdocs\\spec.pdf", L"/pdfdocs/spec.pdf"},
+      // With drive identifier.
+      {L"r:\\pdfdocs\\spec.pdf", L"/r/pdfdocs/spec.pdf"},
+      // Relative path.
+      {L"My Document\\test.pdf", L"My Document/test.pdf"},
+      // Absolute path without drive identifier.
+      {L"\\pdfdocs\\spec.pdf", L"//pdfdocs/spec.pdf"},
+      // Absolute path with double backslashes.
+      {L"\\\\pdfdocs\\spec.pdf", L"/pdfdocs/spec.pdf"},
 // Network resource name. It is not supported yet.
 // {L"pclib/eng:\\pdfdocs\\spec.pdf", L"/pclib/eng/pdfdocs/spec.pdf"},
 #elif BUILDFLAG(IS_APPLE)
-    // Absolute path with colon separator.
-    {L"Mac HD:PDFDocs:spec.pdf", L"/Mac HD/PDFDocs/spec.pdf"},
-    // Relative path with colon separator.
-    {L"PDFDocs:spec.pdf", L"PDFDocs/spec.pdf"},
+      // Absolute path with colon separator.
+      {L"Mac HD:PDFDocs:spec.pdf", L"/Mac HD/PDFDocs/spec.pdf"},
+      // Relative path with colon separator.
+      {L"PDFDocs:spec.pdf", L"PDFDocs/spec.pdf"},
 #else
-    // Relative path.
-    {L"./docs/test.pdf", L"./docs/test.pdf"},
-    // Relative path with parent dir.
-    {L"../test_docs/test.pdf", L"../test_docs/test.pdf"},
-    // Absolute path.
-    {L"/usr/local/home/test.pdf", L"/usr/local/home/test.pdf"},
+      // Relative path.
+      {L"./docs/test.pdf", L"./docs/test.pdf"},
+      // Relative path with parent dir.
+      {L"../test_docs/test.pdf", L"../test_docs/test.pdf"},
+      // Absolute path.
+      {L"/usr/local/home/test.pdf", L"/usr/local/home/test.pdf"},
 #endif
   };
   for (const auto& data : test_data) {
@@ -63,14 +63,11 @@ TEST(CPDFFileSpecTest, GetFileName) {
     // String object.
     static const pdfium::NullTermWstrFuncTestData test_data = {
 #if BUILDFLAG(IS_WIN)
-      L"/C/docs/test.pdf",
-      L"C:\\docs\\test.pdf"
+        L"/C/docs/test.pdf", L"C:\\docs\\test.pdf"
 #elif BUILDFLAG(IS_APPLE)
-      L"/Mac HD/docs/test.pdf",
-      L"Mac HD:docs:test.pdf"
+        L"/Mac HD/docs/test.pdf", L"Mac HD:docs:test.pdf"
 #else
-      L"/docs/test.pdf",
-      L"/docs/test.pdf"
+        L"/docs/test.pdf", L"/docs/test.pdf"
 #endif
     };
     auto str_obj = pdfium::MakeRetain<CPDF_String>(nullptr, test_data.input);

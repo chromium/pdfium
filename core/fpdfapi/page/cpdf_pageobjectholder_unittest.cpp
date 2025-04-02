@@ -28,8 +28,9 @@ TEST(CPDFPageObjectHolder, GraphicsDataAsKey) {
   // Verify self-comparisions.
   for (float c1 : {fMin, 1.0f, 2.0f, fMax, fInf, fNan}) {
     for (float c2 : {fMin, 1.0f, 2.0f, fMax, fInf, fNan}) {
-      for (BlendMode c3 : {BlendMode::kMultiply, BlendMode::kScreen})
+      for (BlendMode c3 : {BlendMode::kMultiply, BlendMode::kScreen}) {
         EXPECT_FALSE(GraphicsData({c1, c2, c3}) < GraphicsData({c1, c2, c3}));
+      }
     }
   }
 
@@ -76,8 +77,9 @@ TEST(CPDFPageObjectHolder, GraphicsDataAsKey) {
   // Erase in forward index permuted order.
   for (BlendMode c3 : {BlendMode::kMultiply, BlendMode::kScreen}) {
     for (float c2 : {fMin, 1.0f, 2.0f, fMax, fInf, fNan}) {
-      for (float c1 : {fMin, 1.0f, 2.0f, fMax, fInf, fNan})
+      for (float c1 : {fMin, 1.0f, 2.0f, fMax, fInf, fNan}) {
         graphics_map.erase({c1, c2, c3});
+      }
     }
   }
   EXPECT_EQ(0u, graphics_map.size());

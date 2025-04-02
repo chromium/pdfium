@@ -91,11 +91,8 @@ TEST(fxnumber, FromStringUnsigned) {
   // signed value. This is needed for things like the encryption permissions
   // flag (Table 3.20 PDF 1.7 spec)
   static constexpr TestCase kNegativeCases[] = {
-      {"4294965252", -2044},
-      {"4294967247", -49},
-      {"4294967248", -48},
-      {"4294967292", -4},
-      {"4294967295", -1},
+      {"4294965252", -2044}, {"4294967247", -49}, {"4294967248", -48},
+      {"4294967292", -4},    {"4294967295", -1},
   };
   test_func(kNegativeCases);
 }

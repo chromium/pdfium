@@ -70,8 +70,9 @@ TEST(fxcodec, RLEFullLengthInputs) {
   {
     // Case 2: Match, non-match
     std::array<uint8_t, 260> src_buf_2 = {{2}};
-    for (uint16_t i = 128; i < 260; i++)
+    for (uint16_t i = 128; i < 260; i++) {
       src_buf_2[i] = static_cast<uint8_t>(i - 125);
+    }
     DataVector<uint8_t> dest_buf = BasicModule::RunLengthEncode(src_buf_2);
     DataAndBytesConsumed result = RunLengthDecode(dest_buf);
     EXPECT_THAT(result.data, ElementsAreArray(src_buf_2));
@@ -79,8 +80,9 @@ TEST(fxcodec, RLEFullLengthInputs) {
   {
     // Case 3: Non-match, match
     std::array<uint8_t, 260> src_buf_3 = {};
-    for (uint8_t i = 0; i < 128; i++)
+    for (uint8_t i = 0; i < 128; i++) {
       src_buf_3[i] = i;
+    }
     DataVector<uint8_t> dest_buf = BasicModule::RunLengthEncode(src_buf_3);
     DataAndBytesConsumed result = RunLengthDecode(dest_buf);
     EXPECT_THAT(result.data, ElementsAreArray(src_buf_3));
@@ -88,8 +90,9 @@ TEST(fxcodec, RLEFullLengthInputs) {
   {
     // Case 4: Non-match, non-match
     std::array<uint8_t, 260> src_buf_4;
-    for (uint16_t i = 0; i < 260; i++)
+    for (uint16_t i = 0; i < 260; i++) {
       src_buf_4[i] = static_cast<uint8_t>(i);
+    }
     DataVector<uint8_t> dest_buf = BasicModule::RunLengthEncode(src_buf_4);
     DataAndBytesConsumed result = RunLengthDecode(dest_buf);
     EXPECT_THAT(result.data, ElementsAreArray(src_buf_4));

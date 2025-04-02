@@ -80,8 +80,9 @@ class CFDETextOutTest : public testing::Test {
 
   ByteString GetBitmapChecksum() {
     CRYPT_md5_context context = CRYPT_MD5Start();
-    for (int i = 0; i < bitmap_->GetHeight(); ++i)
+    for (int i = 0; i < bitmap_->GetHeight(); ++i) {
       CRYPT_MD5Update(&context, bitmap_->GetScanline(i));
+    }
     uint8_t digest[16];
     CRYPT_MD5Finish(&context, digest);
     return ByteString(CryptToBase16(digest).c_str());

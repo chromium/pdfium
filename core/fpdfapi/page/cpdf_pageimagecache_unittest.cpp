@@ -59,8 +59,9 @@ TEST(CPDFPageImageCache, RenderBug1924) {
     bool should_continue = page_image_cache->StartGetCachedBitmap(
         image->GetImage(), nullptr, page->GetMutablePageResources(), true,
         CPDF_ColorSpace::Family::kICCBased, false, {50, 50});
-    while (should_continue)
+    while (should_continue) {
       should_continue = page_image_cache->Continue(nullptr);
+    }
 
     RetainPtr<CFX_DIBBase> bitmap_small = page_image_cache->DetachCurBitmap();
 
@@ -68,8 +69,9 @@ TEST(CPDFPageImageCache, RenderBug1924) {
     should_continue = page_image_cache->StartGetCachedBitmap(
         image->GetImage(), nullptr, page->GetMutablePageResources(), true,
         CPDF_ColorSpace::Family::kICCBased, false, {100, 100});
-    while (should_continue)
+    while (should_continue) {
       should_continue = page_image_cache->Continue(nullptr);
+    }
 
     RetainPtr<CFX_DIBBase> bitmap_large = page_image_cache->DetachCurBitmap();
 

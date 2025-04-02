@@ -39,15 +39,17 @@ TEST_F(FMCallExpressionTest, MoreThan32Arguments) {
   // Generate the result javascript string.
   WideString result = L"sign(";
   for (size_t i = 0; i < 50; i++) {
-    if (i > 0)
+    if (i > 0) {
       result += L", ";
+    }
 
     result += L"pfm_rt.get_";
     // Object positions for sign() method.
-    if (i == 0 || i == 5 || i == 6)
+    if (i == 0 || i == 5 || i == 6) {
       result += L"jsobj(null)";
-    else
+    } else {
       result += L"val(null)";
+    }
   }
   result += L")";
 

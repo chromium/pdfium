@@ -68,8 +68,9 @@ TEST(FXCRYPT, MD5GenerateLongData) {
   const uint32_t length = 10 * 1024 * 1024 + 1;
   std::vector<uint8_t> data(length);
 
-  for (uint32_t i = 0; i < length; ++i)
+  for (uint32_t i = 0; i < length; ++i) {
     data[i] = i & 0xFF;
+  }
 
   uint8_t digest[16];
   CRYPT_MD5Generate(data, digest);
@@ -94,8 +95,9 @@ TEST(FXCRYPT, ContextWithLongData) {
   const uint32_t length = 10 * 1024 * 1024 + 1;
   std::vector<uint8_t> data(length);
 
-  for (uint32_t i = 0; i < length; ++i)
+  for (uint32_t i = 0; i < length; ++i) {
     data[i] = i & 0xFF;
+  }
 
   pdfium::span<const uint8_t> data_span = pdfium::make_span(data);
   uint32_t total = 0;

@@ -16,8 +16,9 @@ namespace {
 RetainPtr<CPDF_Array> CreateQuadPointArrayFromVector(
     const std::vector<int>& points) {
   auto array = pdfium::MakeRetain<CPDF_Array>();
-  for (float point : points)
+  for (float point : points) {
     array->AppendNew<CPDF_Number>(point);
+  }
   return array;
 }
 
@@ -130,7 +131,8 @@ TEST(CPDFAnnotTest, QuadPointCount) {
     array->AppendNew<CPDF_Number>(0);
     EXPECT_EQ(1u, CPDF_Annot::QuadPointCount(array.Get()));
   }
-  for (int i = 0; i < 50; ++i)
+  for (int i = 0; i < 50; ++i) {
     array->AppendNew<CPDF_Number>(0);
+  }
   EXPECT_EQ(8u, CPDF_Annot::QuadPointCount(array.Get()));
 }

@@ -29,8 +29,9 @@ class CXFANodeIteratorTemplateTest : public testing::Test {
 
     explicit Node(Node* parent) : parent_(parent) {
       if (parent) {
-        if (!parent->children_.empty())
+        if (!parent->children_.empty()) {
           parent->children_.back()->next_sibling_ = this;
+        }
         parent->children_.push_back(this);
       }
     }

@@ -287,10 +287,12 @@ TEST_F(DocumentTest, CountGreaterThanPageTree) {
   std::unique_ptr<CPDF_TestDocumentForPages> document =
       std::make_unique<CPDF_TestDocumentForPages>();
   document->SetTreeSize(kNumTestPages + 3);
-  for (int i = 0; i < kNumTestPages; i++)
+  for (int i = 0; i < kNumTestPages; i++) {
     EXPECT_TRUE(document->GetPageDictionary(i));
-  for (int i = kNumTestPages; i < kNumTestPages + 4; i++)
+  }
+  for (int i = kNumTestPages; i < kNumTestPages + 4; i++) {
     EXPECT_FALSE(document->GetPageDictionary(i));
+  }
   EXPECT_TRUE(document->GetPageDictionary(kNumTestPages - 1));
 }
 
@@ -299,8 +301,9 @@ TEST_F(DocumentTest, PagesWithoutKids) {
   auto pDoc = std::make_unique<CPDF_TestDocPagesWithoutKids>();
   EXPECT_TRUE(pDoc->GetPageDictionary(0));
   // Test GetPage does not fetch pages out of range
-  for (int i = 1; i < 5; i++)
+  for (int i = 1; i < 5; i++) {
     EXPECT_FALSE(pDoc->GetPageDictionary(i));
+  }
 
   EXPECT_TRUE(pDoc->GetPageDictionary(0));
 }

@@ -48,8 +48,8 @@ TEST(FormCalcContextTest, GenerateSomExpression) {
                                                          /*bIsStar=*/false);
   EXPECT_EQ(result, "barb[+2147483647]");
 
-  result = CFXJSE_FormCalcContext::GenerateSomExpression(
-      "bart", 2, -2147483648, /*bIsStar=*/false);
+  result = CFXJSE_FormCalcContext::GenerateSomExpression("bart", 2, -2147483648,
+                                                         /*bIsStar=*/false);
   EXPECT_EQ(result, "bart[-0]");
 
   result = CFXJSE_FormCalcContext::GenerateSomExpression("bark", 3, 0,
@@ -68,8 +68,8 @@ TEST(FormCalcContextTest, GenerateSomExpression) {
                                                          /*bIsStar=*/false);
   EXPECT_EQ(result, "cars[-2147483647]");
 
-  result = CFXJSE_FormCalcContext::GenerateSomExpression(
-      "mars", 3, -2147483648, /*bIsStar=*/false);
+  result = CFXJSE_FormCalcContext::GenerateSomExpression("mars", 3, -2147483648,
+                                                         /*bIsStar=*/false);
   EXPECT_EQ(result, "mars[0]");
 }
 

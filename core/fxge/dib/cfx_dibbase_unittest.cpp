@@ -125,8 +125,9 @@ TEST(CFXDIBBaseTest, GetOverlapRectBadInputs) {
        /*dest_top_left=*/{0, 0},
        /*overlap_size=*/{400, 300}},
   };
-  for (const Input& input : kEmptyInputs)
+  for (const Input& input : kEmptyInputs) {
     RunOverlapRectTest(bitmap.Get(), input, /*expected_output=*/nullptr);
+  }
 
   const Input kOutOfBoundInputs[] = {
       // Source out of bounds on x-axis.
@@ -158,6 +159,7 @@ TEST(CFXDIBBaseTest, GetOverlapRectBadInputs) {
        /*dest_top_left=*/{0, 300},
        /*overlap_size=*/{400, 300}},
   };
-  for (const Input& input : kOutOfBoundInputs)
+  for (const Input& input : kOutOfBoundInputs) {
     RunOverlapRectTest(bitmap.Get(), input, /*expected_output=*/nullptr);
+  }
 }

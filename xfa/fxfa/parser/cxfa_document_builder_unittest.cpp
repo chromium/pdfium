@@ -32,12 +32,14 @@ class CXFADocumentBuilderTest : public FXGCUnitTest {
 
   CXFA_Node* ParseAndBuild(const RetainPtr<CFX_ReadOnlySpanStream>& stream) {
     xml_ = CFX_XMLParser(stream).Parse();
-    if (!xml_)
+    if (!xml_) {
       return nullptr;
+    }
 
     CXFA_DocumentBuilder builder(doc_);
-    if (!builder.BuildDocument(xml_.get(), XFA_PacketType::Config))
+    if (!builder.BuildDocument(xml_.get(), XFA_PacketType::Config)) {
       return nullptr;
+    }
     return builder.GetRootNode();
   }
 

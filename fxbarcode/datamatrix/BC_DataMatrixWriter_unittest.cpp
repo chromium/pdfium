@@ -141,8 +141,9 @@ TEST_F(CBCDataMatrixWriterTest, EncodeLimitAlphaNumeric) {
 
   static constexpr int kMaxInputLength = 2335;  // Per spec.
   WideString input;
-  for (size_t i = 0; i < kMaxInputLength; ++i)
+  for (size_t i = 0; i < kMaxInputLength; ++i) {
     input.InsertAtBack(L'a');
+  }
 
   {
     static constexpr int kExpectedDimension = 144;
@@ -171,8 +172,9 @@ TEST_F(CBCDataMatrixWriterTest, EncodeLimitNumbers) {
 
   static constexpr int kMaxInputLength = 3116;  // Per spec.
   WideString input;
-  for (size_t i = 0; i < kMaxInputLength; ++i)
+  for (size_t i = 0; i < kMaxInputLength; ++i) {
     input.InsertAtBack(L'1');
+  }
 
   {
     static constexpr int kExpectedDimension = 144;
