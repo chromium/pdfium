@@ -158,13 +158,13 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   virtual WideString GetText();
   virtual FormFieldType GetFormFieldType();
 
-  CXFA_Node* GetNode() const { return m_pNode; }
-  CXFA_ContentLayoutItem* GetLayoutItem() const { return m_pLayoutItem; }
-  void SetLayoutItem(CXFA_ContentLayoutItem* pItem) { m_pLayoutItem = pItem; }
-  CXFA_FFPageView* GetPageView() const { return m_pPageView; }
-  void SetPageView(CXFA_FFPageView* pPageView) { m_pPageView = pPageView; }
-  CXFA_FFDocView* GetDocView() const { return m_pDocView; }
-  void SetDocView(CXFA_FFDocView* pDocView) { m_pDocView = pDocView; }
+  CXFA_Node* GetNode() const { return node_; }
+  CXFA_ContentLayoutItem* GetLayoutItem() const { return layout_item_; }
+  void SetLayoutItem(CXFA_ContentLayoutItem* pItem) { layout_item_ = pItem; }
+  CXFA_FFPageView* GetPageView() const { return page_view_; }
+  void SetPageView(CXFA_FFPageView* pPageView) { page_view_ = pPageView; }
+  CXFA_FFDocView* GetDocView() const { return doc_view_; }
+  void SetDocView(CXFA_FFDocView* pDocView) { doc_view_ = pDocView; }
 
   CXFA_FFWidget* GetNextFFWidget() const;
   const CFX_RectF& GetWidgetRect() const;
@@ -209,11 +209,11 @@ class CXFA_FFWidget : public cppgc::GarbageCollected<CXFA_FFWidget>,
   bool IsButtonDown();
   void SetButtonDown(bool bSet);
 
-  cppgc::Member<CXFA_ContentLayoutItem> m_pLayoutItem;
-  cppgc::Member<CXFA_FFDocView> m_pDocView;
-  cppgc::Member<CXFA_FFPageView> m_pPageView;
-  cppgc::Member<CXFA_Node> const m_pNode;
-  mutable CFX_RectF m_WidgetRect;
+  cppgc::Member<CXFA_ContentLayoutItem> layout_item_;
+  cppgc::Member<CXFA_FFDocView> doc_view_;
+  cppgc::Member<CXFA_FFPageView> page_view_;
+  cppgc::Member<CXFA_Node> const node_;
+  mutable CFX_RectF widget_rect_;
 };
 
 inline CXFA_FFField* ToField(CXFA_FFWidget* widget) {

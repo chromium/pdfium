@@ -46,25 +46,25 @@ class CXFA_LayoutProcessor final : public CXFA_Document::LayoutProcessorIface {
   CXFA_ViewLayoutItem* GetPage(int32_t index) const;
   CXFA_LayoutItem* GetLayoutItem(CXFA_Node* pFormItem);
   CXFA_ContentLayoutProcessor* GetRootContentLayoutProcessor() const {
-    return m_pContentLayoutProcessor;
+    return content_layout_processor_;
   }
   CXFA_ViewLayoutProcessor* GetLayoutPageMgr() const {
-    return m_pViewLayoutProcessor;
+    return view_layout_processor_;
   }
 
  private:
   explicit CXFA_LayoutProcessor(cppgc::Heap* pHeap);
 
-  cppgc::Heap* GetHeap() { return m_pHeap; }
+  cppgc::Heap* GetHeap() { return heap_; }
   bool NeedLayout() const;
   int32_t RestartLayout();
 
-  UnownedPtr<cppgc::Heap> const m_pHeap;
-  cppgc::Member<CXFA_ViewLayoutProcessor> m_pViewLayoutProcessor;
-  cppgc::Member<CXFA_ContentLayoutProcessor> m_pContentLayoutProcessor;
-  uint32_t m_nProgressCounter = 0;
-  bool m_bHasChangedContainers = false;
-  bool m_bNeedLayout = true;
+  UnownedPtr<cppgc::Heap> const heap_;
+  cppgc::Member<CXFA_ViewLayoutProcessor> view_layout_processor_;
+  cppgc::Member<CXFA_ContentLayoutProcessor> content_layout_processor_;
+  uint32_t progress_counter_ = 0;
+  bool has_changed_containers_ = false;
+  bool need_layout_ = true;
 };
 
 #endif  // XFA_FXFA_LAYOUT_CXFA_LAYOUTPROCESSOR_H_

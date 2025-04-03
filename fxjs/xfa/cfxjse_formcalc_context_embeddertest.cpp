@@ -1035,7 +1035,7 @@ TEST_F(CFXJSEFormCalcContextEmbedderTest, GetXFAEventChange) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   CXFA_EventParam params(XFA_EVENT_Unknown);
-  params.m_wsChange = L"changed";
+  params.change_ = L"changed";
 
   CFXJSE_Engine* context = GetScriptContext();
   CFXJSE_Engine::EventParamScope event_scope(context, nullptr, &params);
@@ -1053,125 +1053,125 @@ TEST_F(CFXJSEFormCalcContextEmbedderTest, SetXFAEventChange) {
 
   const char test[] = {"xfa.event.change = \"changed\""};
   EXPECT_TRUE(Execute(test));
-  EXPECT_EQ(L"changed", params.m_wsChange);
+  EXPECT_EQ(L"changed", params.change_);
 }
 
 TEST_F(CFXJSEFormCalcContextEmbedderTest, SetXFAEventFullTextFails) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   CXFA_EventParam params(XFA_EVENT_Unknown);
-  params.m_wsFullText = L"Original Full Text";
+  params.full_text_ = L"Original Full Text";
 
   CFXJSE_Engine* context = GetScriptContext();
   CFXJSE_Engine::EventParamScope event_scope(context, nullptr, &params);
 
   const char test[] = {"xfa.event.fullText = \"Changed Full Text\""};
   EXPECT_TRUE(Execute(test));
-  EXPECT_EQ(L"Original Full Text", params.m_wsFullText);
+  EXPECT_EQ(L"Original Full Text", params.full_text_);
 }
 
 TEST_F(CFXJSEFormCalcContextEmbedderTest, EventChangeSelection) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   CXFA_EventParam params(XFA_EVENT_Unknown);
-  params.m_wsPrevText = L"1234";
-  params.m_iSelStart = 1;
-  params.m_iSelEnd = 3;
+  params.prev_text_ = L"1234";
+  params.sel_start_ = 1;
+  params.sel_end_ = 3;
 
   CFXJSE_Engine* context = GetScriptContext();
   CFXJSE_Engine::EventParamScope event_scope(context, nullptr, &params);
 
   // Moving end to start works fine.
   EXPECT_TRUE(Execute("xfa.event.selEnd = \"1\""));
-  EXPECT_EQ(1, params.m_iSelStart);
-  EXPECT_EQ(1, params.m_iSelEnd);
+  EXPECT_EQ(1, params.sel_start_);
+  EXPECT_EQ(1, params.sel_end_);
 
   // Moving end before end, forces start to move in response.
   EXPECT_TRUE(Execute("xfa.event.selEnd = \"0\""));
-  EXPECT_EQ(0, params.m_iSelStart);
-  EXPECT_EQ(0, params.m_iSelEnd);
+  EXPECT_EQ(0, params.sel_start_);
+  EXPECT_EQ(0, params.sel_end_);
 
   // Negatives not allowed
   EXPECT_TRUE(Execute("xfa.event.selEnd = \"-1\""));
-  EXPECT_EQ(0, params.m_iSelStart);
-  EXPECT_EQ(0, params.m_iSelEnd);
+  EXPECT_EQ(0, params.sel_start_);
+  EXPECT_EQ(0, params.sel_end_);
 
   // Negatives not allowed
   EXPECT_TRUE(Execute("xfa.event.selStart = \"-1\""));
-  EXPECT_EQ(0, params.m_iSelStart);
-  EXPECT_EQ(0, params.m_iSelEnd);
+  EXPECT_EQ(0, params.sel_start_);
+  EXPECT_EQ(0, params.sel_end_);
 
-  params.m_iSelEnd = 1;
+  params.sel_end_ = 1;
 
   // Moving start to end works fine.
   EXPECT_TRUE(Execute("xfa.event.selStart = \"1\""));
-  EXPECT_EQ(1, params.m_iSelStart);
-  EXPECT_EQ(1, params.m_iSelEnd);
+  EXPECT_EQ(1, params.sel_start_);
+  EXPECT_EQ(1, params.sel_end_);
 
   // Moving start after end moves end.
   EXPECT_TRUE(Execute("xfa.event.selStart = \"2\""));
-  EXPECT_EQ(2, params.m_iSelStart);
-  EXPECT_EQ(2, params.m_iSelEnd);
+  EXPECT_EQ(2, params.sel_start_);
+  EXPECT_EQ(2, params.sel_end_);
 
   // Setting End past end of string clamps to string length;
   EXPECT_TRUE(Execute("xfa.event.selEnd = \"20\""));
-  EXPECT_EQ(2, params.m_iSelStart);
-  EXPECT_EQ(4, params.m_iSelEnd);
+  EXPECT_EQ(2, params.sel_start_);
+  EXPECT_EQ(4, params.sel_end_);
 
   // Setting Start past end of string clamps to string length;
   EXPECT_TRUE(Execute("xfa.event.selStart = \"20\""));
-  EXPECT_EQ(4, params.m_iSelStart);
-  EXPECT_EQ(4, params.m_iSelEnd);
+  EXPECT_EQ(4, params.sel_start_);
+  EXPECT_EQ(4, params.sel_end_);
 }
 
 TEST_F(CFXJSEFormCalcContextEmbedderTest, XFAEventCancelAction) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   CXFA_EventParam params(XFA_EVENT_Unknown);
-  params.m_bCancelAction = false;
+  params.cancel_action_ = false;
 
   CFXJSE_Engine* context = GetScriptContext();
   CFXJSE_Engine::EventParamScope event_scope(context, nullptr, &params);
   ExecuteExpectBool("xfa.event.cancelAction", false);
   EXPECT_TRUE(Execute("xfa.event.cancelAction = \"true\""));
-  EXPECT_TRUE(params.m_bCancelAction);
+  EXPECT_TRUE(params.cancel_action_);
 }
 
 TEST_F(CFXJSEFormCalcContextEmbedderTest, ComplexTextChangeEvent) {
   ASSERT_TRUE(OpenDocument("simple_xfa.pdf"));
 
   CXFA_EventParam params(XFA_EVENT_Unknown);
-  params.m_wsChange = L"g";
-  params.m_wsPrevText = L"abcd";
-  params.m_iSelStart = 1;
-  params.m_iSelEnd = 3;
+  params.change_ = L"g";
+  params.prev_text_ = L"abcd";
+  params.sel_start_ = 1;
+  params.sel_end_ = 3;
 
   CFXJSE_Engine* context = GetScriptContext();
   CFXJSE_Engine::EventParamScope event_scope(context, nullptr, &params);
 
-  EXPECT_EQ(L"abcd", params.m_wsPrevText);
+  EXPECT_EQ(L"abcd", params.prev_text_);
   EXPECT_EQ(L"agd", params.GetNewText());
-  EXPECT_EQ(L"g", params.m_wsChange);
-  EXPECT_EQ(1, params.m_iSelStart);
-  EXPECT_EQ(3, params.m_iSelEnd);
+  EXPECT_EQ(L"g", params.change_);
+  EXPECT_EQ(1, params.sel_start_);
+  EXPECT_EQ(3, params.sel_end_);
 
   const char change_event[] = {"xfa.event.change = \"xyz\""};
   EXPECT_TRUE(Execute(change_event));
 
-  EXPECT_EQ(L"abcd", params.m_wsPrevText);
-  EXPECT_EQ(L"xyz", params.m_wsChange);
+  EXPECT_EQ(L"abcd", params.prev_text_);
+  EXPECT_EQ(L"xyz", params.change_);
   EXPECT_EQ(L"axyzd", params.GetNewText());
-  EXPECT_EQ(1, params.m_iSelStart);
-  EXPECT_EQ(3, params.m_iSelEnd);
+  EXPECT_EQ(1, params.sel_start_);
+  EXPECT_EQ(3, params.sel_end_);
 
   const char sel_event[] = {"xfa.event.selEnd = \"1\""};
   EXPECT_TRUE(Execute(sel_event));
 
-  EXPECT_EQ(L"abcd", params.m_wsPrevText);
-  EXPECT_EQ(L"xyz", params.m_wsChange);
+  EXPECT_EQ(L"abcd", params.prev_text_);
+  EXPECT_EQ(L"xyz", params.change_);
   EXPECT_EQ(L"axyzbcd", params.GetNewText());
-  EXPECT_EQ(1, params.m_iSelStart);
-  EXPECT_EQ(1, params.m_iSelEnd);
+  EXPECT_EQ(1, params.sel_start_);
+  EXPECT_EQ(1, params.sel_end_);
 }
 
 // Should not crash.

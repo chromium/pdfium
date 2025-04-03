@@ -142,19 +142,19 @@ class CXFA_FFApp final : public cppgc::GarbageCollected<CXFA_FFApp>,
   cppgc::Heap* GetHeap() override;
 
   bool LoadFWLTheme(CXFA_FFDoc* doc);
-  CFWL_WidgetMgr* GetFWLWidgetMgr() const { return m_pFWLApp->GetWidgetMgr(); }
-  CallbackIface* GetAppProvider() const { return m_pProvider; }
-  CFWL_App* GetFWLApp() const { return m_pFWLApp; }
-  CXFA_FontMgr* GetXFAFontMgr() const { return m_pXFAFontMgr; }
+  CFWL_WidgetMgr* GetFWLWidgetMgr() const { return fwlapp_->GetWidgetMgr(); }
+  CallbackIface* GetAppProvider() const { return provider_; }
+  CFWL_App* GetFWLApp() const { return fwlapp_; }
+  CXFA_FontMgr* GetXFAFontMgr() const { return xfafont_mgr_; }
 
  private:
   explicit CXFA_FFApp(CallbackIface* pProvider);
 
-  UnownedPtr<CallbackIface> const m_pProvider;
-  cppgc::Member<CXFA_FontMgr> m_pXFAFontMgr;
-  cppgc::Member<CXFA_FWLAdapterWidgetMgr> m_pAdapterWidgetMgr;
-  cppgc::Member<pdfium::CXFA_FWLTheme> m_pFWLTheme;
-  cppgc::Member<CFWL_App> m_pFWLApp;
+  UnownedPtr<CallbackIface> const provider_;
+  cppgc::Member<CXFA_FontMgr> xfafont_mgr_;
+  cppgc::Member<CXFA_FWLAdapterWidgetMgr> adapter_widget_mgr_;
+  cppgc::Member<pdfium::CXFA_FWLTheme> fwltheme_;
+  cppgc::Member<CFWL_App> fwlapp_;
 };
 
 #endif  // XFA_FXFA_CXFA_FFAPP_H_

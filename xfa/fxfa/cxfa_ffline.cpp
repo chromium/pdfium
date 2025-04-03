@@ -85,7 +85,7 @@ void CXFA_FFLine::RenderWidget(CFGAS_GEGraphics* pGS,
   if (!HasVisibleStatus())
     return;
 
-  CXFA_Value* value = m_pNode->GetFormValueIfExists();
+  CXFA_Value* value = node_->GetFormValueIfExists();
   if (!value)
     return;
 
@@ -111,7 +111,7 @@ void CXFA_FFLine::RenderWidget(CFGAS_GEGraphics* pGS,
   mtRotate.Concat(matrix);
 
   CFX_RectF rtLine = GetRectWithoutRotate();
-  CXFA_Margin* margin = m_pNode->GetMarginIfExists();
+  CXFA_Margin* margin = node_->GetMarginIfExists();
   XFA_RectWithoutMargin(&rtLine, margin);
 
   GetRectFromHand(rtLine, line ? line->GetHand() : XFA_AttributeValue::Left,

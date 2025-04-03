@@ -43,8 +43,8 @@ class CXFA_TextProvider : public cppgc::GarbageCollected<CXFA_TextProvider> {
  private:
   CXFA_TextProvider(CXFA_Node* pNode, Type eType);
 
-  cppgc::Member<CXFA_Node> m_pNode;
-  const Type m_eType;
+  cppgc::Member<CXFA_Node> node_;
+  const Type type_;
 };
 
 #endif  // XFA_FXFA_CXFA_TEXTPROVIDER_H_

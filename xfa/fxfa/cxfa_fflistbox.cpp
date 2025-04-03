@@ -41,7 +41,7 @@ void CXFA_FFListBox::PreFinalize() {
 
 void CXFA_FFListBox::Trace(cppgc::Visitor* visitor) const {
   CXFA_FFDropDown::Trace(visitor);
-  visitor->Trace(m_pOldDelegate);
+  visitor->Trace(old_delegate_);
 }
 
 bool CXFA_FFListBox::LoadWidget() {
@@ -57,13 +57,13 @@ bool CXFA_FFListBox::LoadWidget() {
 
   CFWL_NoteDriver* pNoteDriver = pListBox->GetFWLApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pListBox, pListBox);
-  m_pOldDelegate = pListBox->GetDelegate();
+  old_delegate_ = pListBox->GetDelegate();
   pListBox->SetDelegate(this);
 
   {
     CFWL_Widget::ScopedUpdateLock update_lock(pListBox);
-    std::vector<WideString> displayables = m_pNode->GetChoiceListItems(false);
-    std::vector<WideString> settables = m_pNode->GetChoiceListItems(true);
+    std::vector<WideString> displayables = node_->GetChoiceListItems(false);
+    std::vector<WideString> settables = node_->GetChoiceListItems(true);
     if (displayables.size() > settables.size())
       displayables.resize(settables.size());
 
@@ -71,13 +71,15 @@ bool CXFA_FFListBox::LoadWidget() {
       pListBox->AddString(label);
 
     uint32_t dwExtendedStyle = FWL_STYLEEXT_LTB_ShowScrollBarFocus;
-    if (m_pNode->IsChoiceListMultiSelect())
+    if (node_->IsChoiceListMultiSelect()) {
       dwExtendedStyle |= FWL_STYLEEXT_LTB_MultiSelection;
+    }
 
     dwExtendedStyle |= GetAlignment();
     pListBox->ModifyStyleExts(dwExtendedStyle, 0xFFFFFFFF);
-    for (int32_t selected : m_pNode->GetSelectedItems())
+    for (int32_t selected : node_->GetSelectedItems()) {
       pListBox->SetSelItem(pListBox->GetItem(nullptr, selected), true);
+    }
   }
 
   return CXFA_FFField::LoadWidget();
@@ -97,12 +99,12 @@ bool CXFA_FFListBox::CommitData() {
   for (int32_t i = 0; i < iSels; ++i)
     iSelArray.push_back(pListBox->GetSelIndex(i));
 
-  m_pNode->SetSelectedItems(iSelArray, true, false, true);
+  node_->SetSelectedItems(iSelArray, true, false, true);
   return true;
 }
 
 bool CXFA_FFListBox::IsDataChanged() {
-  std::vector<int32_t> iSelArray = m_pNode->GetSelectedItems();
+  std::vector<int32_t> iSelArray = node_->GetSelectedItems();
   int32_t iOldSels = fxcrt::CollectionSize<int32_t>(iSelArray);
   auto* pListBox = ToListBox(GetNormalWidget());
   int32_t iSels = pListBox->CountSelItems();
@@ -118,7 +120,7 @@ bool CXFA_FFListBox::IsDataChanged() {
 }
 
 uint32_t CXFA_FFListBox::GetAlignment() {
-  CXFA_Para* para = m_pNode->GetParaIfExists();
+  CXFA_Para* para = node_->GetParaIfExists();
   if (!para)
     return 0;
 
@@ -148,7 +150,7 @@ void CXFA_FFListBox::UpdateFWLData() {
   if (!pListBox)
     return;
 
-  std::vector<int32_t> iSelArray = m_pNode->GetSelectedItems();
+  std::vector<int32_t> iSelArray = node_->GetSelectedItems();
   std::vector<CFWL_ListBox::Item*> selItemArray(iSelArray.size());
   std::transform(iSelArray.begin(), iSelArray.end(), selItemArray.begin(),
                  [pListBox](int32_t val) { return pListBox->GetSelItem(val); });
@@ -162,8 +164,8 @@ void CXFA_FFListBox::UpdateFWLData() {
 
 void CXFA_FFListBox::OnSelectChanged(CFWL_Widget* pWidget) {
   CXFA_EventParam eParam(XFA_EVENT_Change);
-  eParam.m_wsPrevText = m_pNode->GetValue(XFA_ValuePicture::kRaw);
-  m_pNode->ProcessEvent(GetDocView(), XFA_AttributeValue::Change, &eParam);
+  eParam.prev_text_ = node_->GetValue(XFA_ValuePicture::kRaw);
+  node_->ProcessEvent(GetDocView(), XFA_AttributeValue::Change, &eParam);
 }
 
 void CXFA_FFListBox::SetItemState(int32_t nIndex, bool bSelected) {
@@ -191,7 +193,7 @@ void CXFA_FFListBox::DeleteItem(int32_t nIndex) {
 }
 
 void CXFA_FFListBox::OnProcessMessage(CFWL_Message* pMessage) {
-  m_pOldDelegate->OnProcessMessage(pMessage);
+  old_delegate_->OnProcessMessage(pMessage);
 }
 
 void CXFA_FFListBox::OnProcessEvent(CFWL_Event* pEvent) {
@@ -203,12 +205,12 @@ void CXFA_FFListBox::OnProcessEvent(CFWL_Event* pEvent) {
     default:
       break;
   }
-  m_pOldDelegate->OnProcessEvent(pEvent);
+  old_delegate_->OnProcessEvent(pEvent);
 }
 
 void CXFA_FFListBox::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                                   const CFX_Matrix& matrix) {
-  m_pOldDelegate->OnDrawWidget(pGraphics, matrix);
+  old_delegate_->OnDrawWidget(pGraphics, matrix);
 }
 
 FormFieldType CXFA_FFListBox::GetFormFieldType() {

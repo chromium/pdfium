@@ -35,7 +35,7 @@ class CFGAS_RTFBreak final : public CFGAS_Break {
 
   void SetLineStartPos(float fLinePos);
 
-  void SetAlignment(LineAlignment align) { m_iAlignment = align; }
+  void SetAlignment(LineAlignment align) { alignment_ = align; }
   void SetUserData(const RetainPtr<CFGAS_TextUserData>& pUserData);
 
   void AddPositionedTab(float fTabPos);
@@ -70,10 +70,10 @@ class CFGAS_RTFBreak final : public CFGAS_Break {
                          bool bAllChars,
                          CFGAS_Char::BreakType dwStatus);
 
-  bool m_bPagination = false;
-  LineAlignment m_iAlignment = LineAlignment::Left;
-  std::vector<int32_t> m_PositionedTabs;
-  RetainPtr<CFGAS_TextUserData> m_pUserData;
+  bool pagination_ = false;
+  LineAlignment alignment_ = LineAlignment::Left;
+  std::vector<int32_t> positioned_tabs_;
+  RetainPtr<CFGAS_TextUserData> user_data_;
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFGAS_RTFBREAK_H_

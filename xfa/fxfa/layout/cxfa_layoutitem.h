@@ -29,15 +29,15 @@ class CXFA_LayoutItem : public GCedTreeNode<CXFA_LayoutItem> {
   // GCedTreeNode:
   void Trace(cppgc::Visitor* visitor) const override;
 
-  bool IsViewLayoutItem() const { return m_ItemType == kViewItem; }
-  bool IsContentLayoutItem() const { return m_ItemType == kContentItem; }
+  bool IsViewLayoutItem() const { return item_type_ == kViewItem; }
+  bool IsContentLayoutItem() const { return item_type_ == kContentItem; }
   CXFA_ViewLayoutItem* AsViewLayoutItem();
   const CXFA_ViewLayoutItem* AsViewLayoutItem() const;
   CXFA_ContentLayoutItem* AsContentLayoutItem();
   const CXFA_ContentLayoutItem* AsContentLayoutItem() const;
 
   const CXFA_ViewLayoutItem* GetPage() const;
-  CXFA_Node* GetFormNode() const { return m_pFormNode; }
+  CXFA_Node* GetFormNode() const { return form_node_; }
   void SetFormNode(CXFA_Node* pNode);
 
  protected:
@@ -45,8 +45,8 @@ class CXFA_LayoutItem : public GCedTreeNode<CXFA_LayoutItem> {
   CXFA_LayoutItem(CXFA_Node* pNode, ItemType type);
 
  private:
-  const ItemType m_ItemType;
-  cppgc::Member<CXFA_Node> m_pFormNode;
+  const ItemType item_type_;
+  cppgc::Member<CXFA_Node> form_node_;
 };
 
 inline CXFA_ViewLayoutItem* ToViewLayoutItem(CXFA_LayoutItem* item) {

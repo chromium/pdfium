@@ -29,11 +29,11 @@ class CXFA_TextTabstopsContext {
   void RemoveAll();
   void Reset();
 
-  int32_t m_iTabIndex = -1;
-  bool m_bHasTabstops = false;
-  float m_fTabWidth = 0.0f;
-  float m_fLeft = 0.0f;
-  std::vector<XFA_TABSTOPS> m_tabstops;
+  int32_t tab_index_ = -1;
+  bool has_tabstops_ = false;
+  float tab_width_ = 0.0f;
+  float left_ = 0.0f;
+  std::vector<XFA_TABSTOPS> tabstops_;
 };
 
 #endif  // XFA_FXFA_CXFA_TEXTTABSTOPSCONTEXT_H_

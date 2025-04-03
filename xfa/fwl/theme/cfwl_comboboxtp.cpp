@@ -22,31 +22,32 @@ CFWL_ComboBoxTP::~CFWL_ComboBoxTP() = default;
 void CFWL_ComboBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.GetPart()) {
     case CFWL_ThemePart::Part::kBorder: {
-      DrawBorder(pParams.GetGraphics(), pParams.m_PartRect, pParams.m_matrix);
+      DrawBorder(pParams.GetGraphics(), pParams.part_rect_, pParams.matrix_);
       break;
     }
     case CFWL_ThemePart::Part::kBackground: {
       CFGAS_GEPath path;
-      const CFX_RectF& rect = pParams.m_PartRect;
+      const CFX_RectF& rect = pParams.part_rect_;
       path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
       FX_ARGB argb_color;
-      if (pParams.m_dwStates & CFWL_PartState::kSelected)
+      if (pParams.states_ & CFWL_PartState::kSelected) {
         argb_color = FWLTHEME_COLOR_BKSelected;
-      else if (pParams.m_dwStates & CFWL_PartState::kDisabled)
+      } else if (pParams.states_ & CFWL_PartState::kDisabled) {
         argb_color = FWLTHEME_COLOR_EDGERB1;
-      else
+      } else {
         argb_color = 0xFFFFFFFF;
+      }
 
       CFGAS_GEGraphics::StateRestorer restorer(pParams.GetGraphics());
       pParams.GetGraphics()->SetFillColor(CFGAS_GEColor(argb_color));
       pParams.GetGraphics()->FillPath(
-          path, CFX_FillRenderOptions::FillType::kWinding, pParams.m_matrix);
+          path, CFX_FillRenderOptions::FillType::kWinding, pParams.matrix_);
       break;
     }
     case CFWL_ThemePart::Part::kDropDownButton: {
-      DrawArrowBtn(pParams.GetGraphics(), pParams.m_PartRect,
+      DrawArrowBtn(pParams.GetGraphics(), pParams.part_rect_,
                    FWLTHEME_DIRECTION::kDown, pParams.GetThemeState(),
-                   pParams.m_matrix);
+                   pParams.matrix_);
       break;
     }
     default:

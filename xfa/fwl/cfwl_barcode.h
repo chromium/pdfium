@@ -61,19 +61,19 @@ class CFWL_Barcode final : public CFWL_Edit {
   void GenerateBarcodeImageCache();
   void CreateBarcodeEngine();
 
-  BC_TYPE m_type = BC_TYPE::kUnknown;
-  Status m_eStatus = Status::kNormal;
-  std::optional<BC_TEXT_LOC> m_eTextLocation;
-  std::optional<bool> m_bCalChecksum;
-  std::optional<bool> m_bPrintChecksum;
-  std::optional<char> m_cStartChar;
-  std::optional<char> m_cEndChar;
-  std::optional<int8_t> m_nWideNarrowRatio;
-  std::optional<int32_t> m_nModuleHeight;
-  std::optional<int32_t> m_nModuleWidth;
-  std::optional<int32_t> m_nDataLength;
-  std::optional<int32_t> m_nECLevel;
-  std::unique_ptr<CFX_Barcode> m_pBarcodeEngine;
+  BC_TYPE type_ = BC_TYPE::kUnknown;
+  Status status_ = Status::kNormal;
+  std::optional<BC_TEXT_LOC> text_location_;
+  std::optional<bool> cal_checksum_;
+  std::optional<bool> print_checksum_;
+  std::optional<char> start_char_;
+  std::optional<char> end_char_;
+  std::optional<int8_t> wide_narrow_ratio_;
+  std::optional<int32_t> module_height_;
+  std::optional<int32_t> module_width_;
+  std::optional<int32_t> data_length_;
+  std::optional<int32_t> eclevel_;
+  std::unique_ptr<CFX_Barcode> barcode_engine_;
 };
 
 }  // namespace pdfium

@@ -59,13 +59,13 @@ class CFGAS_FontDescriptor {
   CFGAS_FontDescriptor();
   ~CFGAS_FontDescriptor();
 
-  int32_t m_nFaceIndex = 0;
-  uint32_t m_dwFontStyles = 0;
-  WideString m_wsFaceName;
-  RetainPtr<CFX_Face> m_pFace;
-  std::vector<WideString> m_wsFamilyNames;
-  std::array<uint32_t, 4> m_dwUsb = {};
-  std::array<uint32_t, 2> m_dwCsb = {};
+  int32_t face_index_ = 0;
+  uint32_t font_styles_ = 0;
+  WideString face_name_;
+  RetainPtr<CFX_Face> face_;
+  std::vector<WideString> family_names_;
+  std::array<uint32_t, 4> usb_ = {};
+  std::array<uint32_t, 2> csb_ = {};
 };
 
 struct CFGAS_FontDescriptorInfo {
@@ -131,15 +131,15 @@ class CFGAS_FontMgr {
                                            int32_t iFaceIndex);
 #endif  // BUILDFLAG(IS_WIN)
 
-  std::map<uint32_t, std::vector<RetainPtr<CFGAS_GEFont>>> m_Hash2Fonts;
-  std::set<wchar_t> m_FailedUnicodesSet;
+  std::map<uint32_t, std::vector<RetainPtr<CFGAS_GEFont>>> hash_2fonts_;
+  std::set<wchar_t> failed_unicodes_set_;
 
 #if BUILDFLAG(IS_WIN)
-  std::deque<FX_FONTDESCRIPTOR> m_FontFaces;
+  std::deque<FX_FONTDESCRIPTOR> font_faces_;
 #else
-  std::vector<std::unique_ptr<CFGAS_FontDescriptor>> m_InstalledFonts;
+  std::vector<std::unique_ptr<CFGAS_FontDescriptor>> installed_fonts_;
   std::map<uint32_t, std::vector<CFGAS_FontDescriptorInfo>>
-      m_Hash2CandidateList;
+      hash_2candidate_list_;
 #endif  // BUILDFLAG(IS_WIN)
 };
 

@@ -23,14 +23,14 @@ class CFGAS_GEPattern final {
   CFGAS_GEPattern(HatchStyle hatchStyle, FX_ARGB foreArgb, FX_ARGB backArgb);
   ~CFGAS_GEPattern();
 
-  HatchStyle GetHatchStyle() const { return m_hatchStyle; }
-  FX_ARGB GetForeArgb() const { return m_foreArgb; }
-  FX_ARGB GetBackArgb() const { return m_backArgb; }
+  HatchStyle GetHatchStyle() const { return hatch_style_; }
+  FX_ARGB GetForeArgb() const { return fore_argb_; }
+  FX_ARGB GetBackArgb() const { return back_argb_; }
 
  private:
-  const HatchStyle m_hatchStyle;
-  const FX_ARGB m_foreArgb;
-  const FX_ARGB m_backArgb;
+  const HatchStyle hatch_style_;
+  const FX_ARGB fore_argb_;
+  const FX_ARGB back_argb_;
 };
 
 #endif  // XFA_FGAS_GRAPHICS_CFGAS_GEPATTERN_H_

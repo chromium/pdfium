@@ -35,12 +35,12 @@ bool CXFA_FFPasswordEdit::LoadWidget() {
 
   CFWL_NoteDriver* pNoteDriver = pWidget->GetFWLApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
-  m_pOldDelegate = pWidget->GetDelegate();
+  old_delegate_ = pWidget->GetDelegate();
   pWidget->SetDelegate(this);
 
   {
     CFWL_Widget::ScopedUpdateLock update_lock(pWidget);
-    pWidget->SetText(m_pNode->GetValue(XFA_ValuePicture::kDisplay));
+    pWidget->SetText(node_->GetValue(XFA_ValuePicture::kDisplay));
     UpdateWidgetProperty();
   }
 
@@ -60,10 +60,12 @@ void CXFA_FFPasswordEdit::UpdateWidgetProperty() {
   WideString password = password_node_->GetPasswordChar();
   if (!password.IsEmpty())
     pWidget->SetAliasChar(password[0]);
-  if (!m_pNode->IsHorizontalScrollPolicyOff())
+  if (!node_->IsHorizontalScrollPolicyOff()) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_AutoHScroll;
-  if (!m_pNode->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive())
+  }
+  if (!node_->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive()) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_ReadOnly;
+  }
 
   dwExtendedStyle |= GetAlignment();
   GetNormalWidget()->ModifyStyleExts(dwExtendedStyle, 0xFFFFFFFF);

@@ -57,25 +57,25 @@ class CXFA_EventParam {
 
   WideString GetNewText() const;
 
-  XFA_EVENTTYPE m_eType;
-  bool m_bCancelAction = false;
-  bool m_bKeyDown = false;
-  bool m_bModifier = false;
-  bool m_bReenter = false;
-  bool m_bShift = false;
-  bool m_bIsFormReady = false;
-  bool m_bTargeted = true;
-  int32_t m_iCommitKey = 0;
-  int32_t m_iSelEnd = 0;
-  int32_t m_iSelStart = 0;
-  WideString m_wsResult;
-  WideString m_wsChange;
-  WideString m_wsFullText;
-  WideString m_wsNewContentType;
-  WideString m_wsPrevContentType;
-  WideString m_wsPrevText;
-  WideString m_wsSoapFaultCode;
-  WideString m_wsSoapFaultString;
+  XFA_EVENTTYPE type_;
+  bool cancel_action_ = false;
+  bool key_down_ = false;
+  bool modifier_ = false;
+  bool reenter_ = false;
+  bool shift_ = false;
+  bool is_form_ready_ = false;
+  bool targeted_ = true;
+  int32_t commit_key_ = 0;
+  int32_t sel_end_ = 0;
+  int32_t sel_start_ = 0;
+  WideString result_;
+  WideString change_;
+  WideString full_text_;
+  WideString new_content_type_;
+  WideString prev_content_type_;
+  WideString prev_text_;
+  WideString soap_fault_code_;
+  WideString soap_fault_string_;
 };
 
 #endif  // XFA_FXFA_CXFA_EVENTPARAM_H_

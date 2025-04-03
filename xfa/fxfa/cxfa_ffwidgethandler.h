@@ -90,7 +90,7 @@ class CXFA_FFWidgetHandler final
  private:
   explicit CXFA_FFWidgetHandler(CXFA_FFDocView* pDocView);
 
-  cppgc::Member<CXFA_FFDocView> m_pDocView;
+  cppgc::Member<CXFA_FFDocView> doc_view_;
 };
 
 #endif  //  XFA_FXFA_CXFA_FFWIDGETHANDLER_H_

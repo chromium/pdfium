@@ -19,12 +19,12 @@ class CXFA_Measurement {
   static XFA_Unit GetUnitFromString(WideStringView wsUnit);
 
   void Set(float fValue, XFA_Unit eUnit) {
-    m_fValue = fValue;
-    m_eUnit = eUnit;
+    value_ = fValue;
+    unit_ = eUnit;
   }
 
-  XFA_Unit GetUnit() const { return m_eUnit; }
-  float GetValue() const { return m_fValue; }
+  XFA_Unit GetUnit() const { return unit_; }
+  float GetValue() const { return value_; }
 
   WideString ToString() const;
   float ToUnit(XFA_Unit eUnit) const;
@@ -33,8 +33,8 @@ class CXFA_Measurement {
   void SetString(WideStringView wsMeasure);
   bool ToUnitInternal(XFA_Unit eUnit, float* fValue) const;
 
-  float m_fValue = 0.0f;
-  XFA_Unit m_eUnit = XFA_Unit::Percent;
+  float value_ = 0.0f;
+  XFA_Unit unit_ = XFA_Unit::Percent;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_MEASUREMENT_H_

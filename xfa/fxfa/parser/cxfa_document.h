@@ -74,11 +74,11 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
     virtual void SetForceRelayout() = 0;
     virtual void SetHasChangedContainer() = 0;
 
-    void SetDocument(CXFA_Document* pDocument) { m_pDocument = pDocument; }
-    CXFA_Document* GetDocument() const { return m_pDocument; }
+    void SetDocument(CXFA_Document* pDocument) { document_ = pDocument; }
+    CXFA_Document* GetDocument() const { return document_; }
 
    private:
-    cppgc::Member<CXFA_Document> m_pDocument;
+    cppgc::Member<CXFA_Document> document_;
   };
 
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
@@ -86,7 +86,7 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
 
   void Trace(cppgc::Visitor* visitor) const;
 
-  bool HasScriptContext() const { return !!m_pScriptContext; }
+  bool HasScriptContext() const { return !!script_context_; }
   CFXJSE_Engine* InitScriptContext(CJS_Runtime* fxjs_runtime);
 
   // Only safe to call in situations where the context is known to exist,
@@ -104,20 +104,18 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
   CXFA_Node* GetNotBindNode(
       pdfium::span<cppgc::Member<CXFA_Object>> arrayNodes) const;
 
-  LayoutProcessorIface* GetLayoutProcessor() const {
-    return m_pLayoutProcessor;
-  }
-  CXFA_Node* GetRoot() const { return m_pRootNode; }
-  void SetRoot(CXFA_Node* pNewRoot) { m_pRootNode = pNewRoot; }
+  LayoutProcessorIface* GetLayoutProcessor() const { return layout_processor_; }
+  CXFA_Node* GetRoot() const { return root_node_; }
+  void SetRoot(CXFA_Node* pNewRoot) { root_node_ = pNewRoot; }
 
-  bool is_strict_scoping() const { return m_bStrictScoping; }
-  void set_is_strict_scoping() { m_bStrictScoping = true; }
+  bool is_strict_scoping() const { return strict_scoping_; }
+  void set_is_strict_scoping() { strict_scoping_ = true; }
 
-  bool is_scripting() const { return m_bScripting; }
-  void set_is_scripting() { m_bScripting = true; }
+  bool is_scripting() const { return scripting_; }
+  void set_is_scripting() { scripting_ = true; }
 
   bool IsInteractive();
-  XFA_VERSION GetCurVersionMode() const { return m_eCurVersionMode; }
+  XFA_VERSION GetCurVersionMode() const { return cur_version_mode_; }
   XFA_VERSION RecognizeXFAVersionNumber(const WideString& wsTemplateNS);
   FormType GetFormType() const;
 
@@ -164,24 +162,24 @@ class CXFA_Document final : public cppgc::GarbageCollected<CXFA_Document> {
                 LayoutProcessorIface* pLayout);
 
   UnownedPtr<cppgc::Heap> heap_;
-  std::unique_ptr<CFXJSE_Engine> m_pScriptContext;
+  std::unique_ptr<CFXJSE_Engine> script_context_;
   cppgc::Member<CXFA_FFNotify> const notify_;
   cppgc::Member<CXFA_NodeOwner> const node_owner_;
-  cppgc::Member<CXFA_Node> m_pRootNode;
-  cppgc::Member<LayoutProcessorIface> m_pLayoutProcessor;
-  cppgc::Member<CXFA_LocaleMgr> m_pLocaleMgr;
-  cppgc::Member<CScript_DataWindow> m_pScriptDataWindow;
-  cppgc::Member<CScript_EventPseudoModel> m_pScriptEvent;
-  cppgc::Member<CScript_HostPseudoModel> m_pScriptHost;
-  cppgc::Member<CScript_LogPseudoModel> m_pScriptLog;
-  cppgc::Member<CScript_LayoutPseudoModel> m_pScriptLayout;
-  cppgc::Member<CScript_SignaturePseudoModel> m_pScriptSignature;
-  std::map<uint32_t, cppgc::Member<CXFA_Node>> m_rgGlobalBinding;
-  std::vector<cppgc::Member<CXFA_Node>> m_pPendingPageSet;
-  XFA_VERSION m_eCurVersionMode = XFA_VERSION_DEFAULT;
-  std::optional<bool> m_Interactive;
-  bool m_bStrictScoping = false;
-  bool m_bScripting = false;
+  cppgc::Member<CXFA_Node> root_node_;
+  cppgc::Member<LayoutProcessorIface> layout_processor_;
+  cppgc::Member<CXFA_LocaleMgr> locale_mgr_;
+  cppgc::Member<CScript_DataWindow> script_data_window_;
+  cppgc::Member<CScript_EventPseudoModel> script_event_;
+  cppgc::Member<CScript_HostPseudoModel> script_host_;
+  cppgc::Member<CScript_LogPseudoModel> script_log_;
+  cppgc::Member<CScript_LayoutPseudoModel> script_layout_;
+  cppgc::Member<CScript_SignaturePseudoModel> script_signature_;
+  std::map<uint32_t, cppgc::Member<CXFA_Node>> rg_global_binding_;
+  std::vector<cppgc::Member<CXFA_Node>> pending_page_set_;
+  XFA_VERSION cur_version_mode_ = XFA_VERSION_DEFAULT;
+  std::optional<bool> interactive_;
+  bool strict_scoping_ = false;
+  bool scripting_ = false;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_DOCUMENT_H_

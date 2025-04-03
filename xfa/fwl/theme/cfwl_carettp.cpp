@@ -22,11 +22,12 @@ CFWL_CaretTP::~CFWL_CaretTP() = default;
 void CFWL_CaretTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.GetPart()) {
     case CFWL_ThemePart::Part::kBackground: {
-      if (!(pParams.m_dwStates & CFWL_PartState::kHightLight))
+      if (!(pParams.states_ & CFWL_PartState::kHightLight)) {
         return;
+      }
 
-      DrawCaretBK(pParams.GetGraphics(), pParams.m_dwStates, pParams.m_PartRect,
-                  pParams.m_matrix);
+      DrawCaretBK(pParams.GetGraphics(), pParams.states_, pParams.part_rect_,
+                  pParams.matrix_);
       break;
     }
     default:

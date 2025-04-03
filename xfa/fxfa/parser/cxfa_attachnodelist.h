@@ -31,7 +31,7 @@ class CXFA_AttachNodeList final : public CXFA_TreeList {
  private:
   CXFA_AttachNodeList(CXFA_Document* pDocument, CXFA_Node* pAttachNode);
 
-  cppgc::Member<CXFA_Node> const m_pAttachNode;
+  cppgc::Member<CXFA_Node> const attach_node_;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_ATTACHNODELIST_H_

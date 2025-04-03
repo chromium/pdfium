@@ -47,10 +47,10 @@ class CFGAS_GEFont final : public Retainable {
   std::optional<FX_RECT> GetCharBBox(wchar_t wUnicode);
 
   RetainPtr<CFGAS_GEFont> GetSubstFont(int32_t iGlyphIndex);
-  CFX_Font* GetDevFont() const { return m_pFont.Get(); }
+  CFX_Font* GetDevFont() const { return font_.Get(); }
 
   void SetLogicalFontStyle(uint32_t dwLogFontStyle) {
-    m_dwLogFontStyle = dwLogFontStyle;
+    log_font_style_ = dwLogFontStyle;
   }
 
  private:
@@ -70,14 +70,14 @@ class CFGAS_GEFont final : public Retainable {
       bool bRecursive);
   WideString GetFamilyName() const;
 
-  std::optional<uint32_t> m_dwLogFontStyle;
-  RetainPtr<CPDF_Font> m_pPDFFont;  // Must come before |m_pFont|.
-  MaybeOwned<CFX_Font> m_pFont;     // Must come before |m_pFontEncoding|.
-  std::unique_ptr<CFX_UnicodeEncodingEx> m_pFontEncoding;
-  std::map<wchar_t, std::optional<uint16_t>> m_CharWidthMap;
-  std::map<wchar_t, FX_RECT> m_BBoxMap;
-  std::vector<RetainPtr<CFGAS_GEFont>> m_SubstFonts;
-  std::map<wchar_t, RetainPtr<CFGAS_GEFont>> m_FontMapper;
+  std::optional<uint32_t> log_font_style_;
+  RetainPtr<CPDF_Font> pdffont_;  // Must come before |font_|.
+  MaybeOwned<CFX_Font> font_;     // Must come before |font_encoding_|.
+  std::unique_ptr<CFX_UnicodeEncodingEx> font_encoding_;
+  std::map<wchar_t, std::optional<uint16_t>> char_width_map_;
+  std::map<wchar_t, FX_RECT> bbox_map_;
+  std::vector<RetainPtr<CFGAS_GEFont>> subst_fonts_;
+  std::map<wchar_t, RetainPtr<CFGAS_GEFont>> font_mapper_;
 };
 
 #endif  // XFA_FGAS_FONT_CFGAS_GEFONT_H_

@@ -55,12 +55,12 @@ class CXFA_FWLTheme final : public cppgc::GarbageCollected<CXFA_FWLTheme>,
  private:
   CXFA_FWLTheme(cppgc::Heap* pHeap, CXFA_FFApp* pApp);
 
-  std::unique_ptr<CFDE_TextOut> m_pTextOut;
-  RetainPtr<CFGAS_GEFont> m_pFWLFont;
-  RetainPtr<CFGAS_GEFont> m_pCalendarFont;
-  cppgc::Member<CXFA_FFApp> const m_pApp;
-  WideString m_wsResource;
-  CFX_RectF m_Rect;
+  std::unique_ptr<CFDE_TextOut> text_out_;
+  RetainPtr<CFGAS_GEFont> fwlfont_;
+  RetainPtr<CFGAS_GEFont> calendar_font_;
+  cppgc::Member<CXFA_FFApp> const app_;
+  WideString resource_;
+  CFX_RectF rect_;
 };
 
 }  // namespace pdfium

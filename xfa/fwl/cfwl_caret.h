@@ -40,7 +40,7 @@ class CFWL_Caret final : public CFWL_Widget, public CFX_Timer::CallbackIface {
 
   void DrawCaretBK(CFGAS_GEGraphics* pGraphics, const CFX_Matrix& mtMatrix);
 
-  std::unique_ptr<CFX_Timer> m_pTimer;
+  std::unique_ptr<CFX_Timer> timer_;
 };
 
 }  // namespace pdfium

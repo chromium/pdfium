@@ -35,7 +35,7 @@ class CFWL_NoteDriver final : public cppgc::GarbageCollected<CFWL_NoteDriver> {
   void UnregisterEventTarget(CFWL_Widget* pListener);
   void NotifyTargetHide(CFWL_Widget* pNoteTarget);
   void NotifyTargetDestroy(CFWL_Widget* pNoteTarget);
-  void SetGrab(CFWL_Widget* pGrab) { m_pGrab = pGrab; }
+  void SetGrab(CFWL_Widget* pGrab) { grab_ = pGrab; }
 
  private:
   class Target : public cppgc::GarbageCollected<Target> {
@@ -46,13 +46,13 @@ class CFWL_NoteDriver final : public cppgc::GarbageCollected<CFWL_NoteDriver> {
     void Trace(cppgc::Visitor* visitor) const;
     void SetEventSource(CFWL_Widget* pSource);
     bool ProcessEvent(CFWL_Event* pEvent);
-    bool IsValid() const { return m_bValid; }
-    void Invalidate() { m_bValid = false; }
+    bool IsValid() const { return valid_; }
+    void Invalidate() { valid_ = false; }
 
    private:
-    bool m_bValid = true;
-    cppgc::Member<CFWL_Widget> const m_pListener;
-    std::set<cppgc::Member<CFWL_Widget>> m_widgets;
+    bool valid_ = true;
+    cppgc::Member<CFWL_Widget> const listener_;
+    std::set<cppgc::Member<CFWL_Widget>> widgets_;
   };
 
   explicit CFWL_NoteDriver(CFWL_App* pApp);
@@ -66,11 +66,11 @@ class CFWL_NoteDriver final : public cppgc::GarbageCollected<CFWL_NoteDriver> {
   bool DoMouseEx(CFWL_Message* pMsg, CFWL_Widget* pMessageForm);
   void MouseSecondary(CFWL_Message* pMsg);
 
-  cppgc::Member<CFWL_App> m_pApp;
-  cppgc::Member<CFWL_Widget> m_pHover;
-  cppgc::Member<CFWL_Widget> m_pFocus;
-  cppgc::Member<CFWL_Widget> m_pGrab;
-  std::map<uint64_t, cppgc::Member<Target>> m_eventTargets;
+  cppgc::Member<CFWL_App> app_;
+  cppgc::Member<CFWL_Widget> hover_;
+  cppgc::Member<CFWL_Widget> focus_;
+  cppgc::Member<CFWL_Widget> grab_;
+  std::map<uint64_t, cppgc::Member<Target>> event_targets_;
 };
 
 }  // namespace pdfium

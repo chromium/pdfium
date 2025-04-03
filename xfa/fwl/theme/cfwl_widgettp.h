@@ -77,8 +77,8 @@ class CFWL_WidgetTP : public cppgc::GarbageCollected<CFWL_WidgetTP> {
                     FWLTHEME_STATE eState,
                     const CFX_Matrix& matrix);
 
-  std::unique_ptr<CFDE_TextOut> m_pTextOut;
-  std::unique_ptr<CColorData> m_pColorData;
+  std::unique_ptr<CFDE_TextOut> text_out_;
+  std::unique_ptr<CColorData> color_data_;
 };
 
 }  // namespace pdfium

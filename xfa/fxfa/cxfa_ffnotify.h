@@ -68,7 +68,7 @@ class CXFA_FFNotify : public cppgc::GarbageCollected<CXFA_FFNotify> {
                                       bool bIsFormReady,
                                       bool bRecursive);
   void AddCalcValidate(CXFA_Node* pNode);
-  CXFA_FFDoc* GetFFDoc() const { return m_pDoc; }
+  CXFA_FFDoc* GetFFDoc() const { return doc_; }
   CXFA_FFApp::CallbackIface* GetAppProvider();
   void HandleWidgetEvent(CXFA_Node* pNode, CXFA_EventParam* pParam);
   void OpenDropDownList(CXFA_Node* pNode);
@@ -82,7 +82,7 @@ class CXFA_FFNotify : public cppgc::GarbageCollected<CXFA_FFNotify> {
  private:
   explicit CXFA_FFNotify(CXFA_FFDoc* pDoc);
 
-  cppgc::Member<CXFA_FFDoc> const m_pDoc;
+  cppgc::Member<CXFA_FFDoc> const doc_;
 };
 
 #endif  // XFA_FXFA_CXFA_FFNOTIFY_H_

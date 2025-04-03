@@ -64,14 +64,14 @@ class CFWL_CheckBox final : public CFWL_Widget {
   void OnMouseLeave();
   void OnKeyDown(CFWL_MessageKey* pMsg);
 
-  CFX_RectF m_ClientRect;
-  CFX_RectF m_BoxRect;
-  CFX_RectF m_CaptionRect;
-  CFX_RectF m_FocusRect;
-  FDE_TextStyle m_TTOStyles;
-  FDE_TextAlignment m_iTTOAlign = FDE_TextAlignment::kCenter;
-  bool m_bBtnDown = false;
-  float m_fBoxHeight = 16.0f;
+  CFX_RectF client_rect_;
+  CFX_RectF box_rect_;
+  CFX_RectF caption_rect_;
+  CFX_RectF focus_rect_;
+  FDE_TextStyle tto_styles_;
+  FDE_TextAlignment tto_align_ = FDE_TextAlignment::kCenter;
+  bool btn_down_ = false;
+  float box_height_ = 16.0f;
 };
 
 }  // namespace pdfium

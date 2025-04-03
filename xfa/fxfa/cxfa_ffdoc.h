@@ -162,11 +162,11 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
   RetainPtr<IFX_SeekableReadStream> OpenLinkedFile(const WideString& wsLink);
 
   CXFA_FFDocView* CreateDocView();
-  FormType GetFormType() const { return m_FormType; }
-  cppgc::Heap* GetHeap() const { return m_pHeap; }
-  CXFA_Document* GetXFADoc() const { return m_pDocument; }
-  CXFA_FFApp* GetApp() const { return m_pApp; }
-  CPDF_Document* GetPDFDoc() const { return m_pPDFDoc; }
+  FormType GetFormType() const { return form_type_; }
+  cppgc::Heap* GetHeap() const { return heap_; }
+  CXFA_Document* GetXFADoc() const { return document_; }
+  CXFA_FFApp* GetApp() const { return app_; }
+  CPDF_Document* GetPDFDoc() const { return pdfdoc_; }
   CXFA_FFDocView* GetDocView(CXFA_LayoutProcessor* pLayout);
   CXFA_FFDocView* GetDocView();
   RetainPtr<CFGAS_GEFont> GetPDFFont(const WideString& family,
@@ -186,16 +186,16 @@ class CXFA_FFDoc : public cppgc::GarbageCollected<CXFA_FFDoc> {
              cppgc::Heap* pHeap);
   bool BuildDoc(CFX_XMLDocument* pXML);
 
-  UnownedPtr<CallbackIface> const m_pDocEnvironment;
-  UnownedPtr<CPDF_Document> const m_pPDFDoc;
-  UnownedPtr<cppgc::Heap> const m_pHeap;
-  cppgc::Member<CXFA_FFApp> const m_pApp;
-  cppgc::Member<CXFA_FFNotify> m_pNotify;
-  cppgc::Member<CXFA_Document> m_pDocument;
-  cppgc::Member<CXFA_FFDocView> m_DocView;
-  std::unique_ptr<CFGAS_PDFFontMgr> m_pPDFFontMgr;
-  std::map<uint32_t, FX_IMAGEDIB_AND_DPI> m_HashToDibDpiMap;
-  FormType m_FormType = FormType::kXFAForeground;
+  UnownedPtr<CallbackIface> const doc_environment_;
+  UnownedPtr<CPDF_Document> const pdfdoc_;
+  UnownedPtr<cppgc::Heap> const heap_;
+  cppgc::Member<CXFA_FFApp> const app_;
+  cppgc::Member<CXFA_FFNotify> notify_;
+  cppgc::Member<CXFA_Document> document_;
+  cppgc::Member<CXFA_FFDocView> doc_view_;
+  std::unique_ptr<CFGAS_PDFFontMgr> pdffont_mgr_;
+  std::map<uint32_t, FX_IMAGEDIB_AND_DPI> hash_to_dib_dpi_map_;
+  FormType form_type_ = FormType::kXFAForeground;
 };
 
 #endif  // XFA_FXFA_CXFA_FFDOC_H_

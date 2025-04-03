@@ -45,7 +45,7 @@ TEST_F(CFGASTxtBreakTest, BidiLine) {
   }
 
   std::vector<CFGAS_Char> chars =
-      txt_break->GetCurrentLineForTesting()->m_LineChars;
+      txt_break->GetCurrentLineForTesting()->line_chars_;
   CFGAS_Char::BidiLine(&chars, chars.size());
   EXPECT_EQ(3u, chars.size());
 }

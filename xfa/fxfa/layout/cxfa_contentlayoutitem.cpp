@@ -14,18 +14,19 @@
 
 CXFA_ContentLayoutItem::CXFA_ContentLayoutItem(CXFA_Node* pNode,
                                                CXFA_FFWidget* pWidget)
-    : CXFA_LayoutItem(pNode, kContentItem), m_pFFWidget(pWidget) {
-  if (m_pFFWidget)
-    m_pFFWidget->SetLayoutItem(this);
+    : CXFA_LayoutItem(pNode, kContentItem), ffwidget_(pWidget) {
+  if (ffwidget_) {
+    ffwidget_->SetLayoutItem(this);
+  }
 }
 
 CXFA_ContentLayoutItem::~CXFA_ContentLayoutItem() = default;
 
 void CXFA_ContentLayoutItem::Trace(cppgc::Visitor* visitor) const {
   CXFA_LayoutItem::Trace(visitor);
-  visitor->Trace(m_pPrev);
-  visitor->Trace(m_pNext);
-  visitor->Trace(m_pFFWidget);
+  visitor->Trace(prev_);
+  visitor->Trace(next_);
+  visitor->Trace(ffwidget_);
 }
 
 CXFA_ContentLayoutItem* CXFA_ContentLayoutItem::GetFirst() {
@@ -47,32 +48,35 @@ CXFA_ContentLayoutItem* CXFA_ContentLayoutItem::GetLast() {
 void CXFA_ContentLayoutItem::InsertAfter(CXFA_ContentLayoutItem* pItem) {
   CHECK_NE(this, pItem);
   pItem->RemoveSelf();
-  pItem->m_pNext = m_pNext;
-  pItem->m_pPrev = this;
-  m_pNext = pItem;
-  if (pItem->m_pNext)
-    pItem->m_pNext->m_pPrev = pItem;
+  pItem->next_ = next_;
+  pItem->prev_ = this;
+  next_ = pItem;
+  if (pItem->next_) {
+    pItem->next_->prev_ = pItem;
+  }
 }
 
 void CXFA_ContentLayoutItem::RemoveSelf() {
-  if (m_pNext)
-    m_pNext->m_pPrev = m_pPrev;
-  if (m_pPrev)
-    m_pPrev->m_pNext = m_pNext;
+  if (next_) {
+    next_->prev_ = prev_;
+  }
+  if (prev_) {
+    prev_->next_ = next_;
+  }
 }
 
 CFX_RectF CXFA_ContentLayoutItem::GetRelativeRect() const {
-  return CFX_RectF(m_sPos, m_sSize);
+  return CFX_RectF(s_pos_, s_size_);
 }
 
 CFX_RectF CXFA_ContentLayoutItem::GetAbsoluteRect() const {
-  CFX_PointF sPos = m_sPos;
-  CFX_SizeF sSize = m_sSize;
+  CFX_PointF sPos = s_pos_;
+  CFX_SizeF sSize = s_size_;
 
   for (CXFA_LayoutItem* pLayoutItem = GetParent(); pLayoutItem;
        pLayoutItem = pLayoutItem->GetParent()) {
     if (CXFA_ContentLayoutItem* pContent = pLayoutItem->AsContentLayoutItem()) {
-      sPos += pContent->m_sPos;
+      sPos += pContent->s_pos_;
       CXFA_Margin* pMarginNode =
           pContent->GetFormNode()->GetFirstChildByClass<CXFA_Margin>(
               XFA_Element::Margin);

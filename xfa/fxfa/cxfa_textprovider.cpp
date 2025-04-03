@@ -33,21 +33,21 @@
 #include "xfa/fxfa/parser/xfa_utils.h"
 
 CXFA_TextProvider::CXFA_TextProvider(CXFA_Node* pNode, Type eType)
-    : m_pNode(pNode), m_eType(eType) {
-  DCHECK(m_pNode);
+    : node_(pNode), type_(eType) {
+  DCHECK(node_);
 }
 
 CXFA_TextProvider::~CXFA_TextProvider() = default;
 
 void CXFA_TextProvider::Trace(cppgc::Visitor* visitor) const {
-  visitor->Trace(m_pNode);
+  visitor->Trace(node_);
 }
 
 CXFA_Node* CXFA_TextProvider::GetTextNode(bool* bRichText) {
   *bRichText = false;
-  if (m_eType == Type::kText) {
+  if (type_ == Type::kText) {
     CXFA_Value* pValueNode =
-        m_pNode->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
+        node_->GetChild<CXFA_Value>(0, XFA_Element::Value, false);
     if (!pValueNode)
       return nullptr;
 
@@ -64,9 +64,9 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool* bRichText) {
     return pChildNode;
   }
 
-  if (m_eType == Type::kCaption) {
+  if (type_ == Type::kCaption) {
     CXFA_Caption* pCaptionNode =
-        m_pNode->GetChild<CXFA_Caption>(0, XFA_Element::Caption, false);
+        node_->GetChild<CXFA_Caption>(0, XFA_Element::Caption, false);
     if (!pCaptionNode)
       return nullptr;
 
@@ -89,18 +89,19 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool* bRichText) {
   }
 
   CXFA_Items* pItemNode =
-      m_pNode->GetChild<CXFA_Items>(0, XFA_Element::Items, false);
+      node_->GetChild<CXFA_Items>(0, XFA_Element::Items, false);
   if (!pItemNode)
     return nullptr;
 
   CXFA_Node* pNode = pItemNode->GetFirstChild();
   while (pNode) {
     WideString wsName = pNode->JSObject()->GetCData(XFA_Attribute::Name);
-    if (m_eType == Type::kRollover && wsName.EqualsASCII("rollover")) {
+    if (type_ == Type::kRollover && wsName.EqualsASCII("rollover")) {
       return pNode;
     }
-    if (m_eType == Type::kDown && wsName.EqualsASCII("down"))
+    if (type_ == Type::kDown && wsName.EqualsASCII("down")) {
       return pNode;
+    }
 
     pNode = pNode->GetNextSibling();
   }
@@ -108,37 +109,41 @@ CXFA_Node* CXFA_TextProvider::GetTextNode(bool* bRichText) {
 }
 
 CXFA_Para* CXFA_TextProvider::GetParaIfExists() {
-  if (m_eType == Type::kText)
-    return m_pNode->GetParaIfExists();
+  if (type_ == Type::kText) {
+    return node_->GetParaIfExists();
+  }
 
   CXFA_Caption* pNode =
-      m_pNode->GetChild<CXFA_Caption>(0, XFA_Element::Caption, false);
+      node_->GetChild<CXFA_Caption>(0, XFA_Element::Caption, false);
   return pNode->GetChild<CXFA_Para>(0, XFA_Element::Para, false);
 }
 
 CXFA_Font* CXFA_TextProvider::GetFontIfExists() {
-  if (m_eType == Type::kText)
-    return m_pNode->GetFontIfExists();
+  if (type_ == Type::kText) {
+    return node_->GetFontIfExists();
+  }
 
   CXFA_Caption* pNode =
-      m_pNode->GetChild<CXFA_Caption>(0, XFA_Element::Caption, false);
+      node_->GetChild<CXFA_Caption>(0, XFA_Element::Caption, false);
   CXFA_Font* font = pNode->GetChild<CXFA_Font>(0, XFA_Element::Font, false);
-  return font ? font : m_pNode->GetFontIfExists();
+  return font ? font : node_->GetFontIfExists();
 }
 
 bool CXFA_TextProvider::IsCheckButtonAndAutoWidth() const {
-  if (m_pNode->GetFFWidgetType() != XFA_FFWidgetType::kCheckButton)
+  if (node_->GetFFWidgetType() != XFA_FFWidgetType::kCheckButton) {
     return false;
-  return !m_pNode->TryWidth().has_value();
+  }
+  return !node_->TryWidth().has_value();
 }
 
 std::optional<WideString> CXFA_TextProvider::GetEmbeddedObj(
     const WideString& wsAttr) const {
-  if (m_eType != Type::kText)
+  if (type_ != Type::kText) {
     return std::nullopt;
+  }
 
-  CXFA_Node* pParent = m_pNode->GetParent();
-  CXFA_Document* pDocument = m_pNode->GetDocument();
+  CXFA_Node* pParent = node_->GetParent();
+  CXFA_Document* pDocument = node_->GetDocument();
   CXFA_Node* pIDNode = nullptr;
   if (pParent)
     pIDNode = pDocument->GetNodeByID(pParent, wsAttr.AsStringView());

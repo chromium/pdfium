@@ -23,81 +23,84 @@ class CXFA_NodeIteratorTemplate {
 
  public:
   explicit CXFA_NodeIteratorTemplate(NodeType* pRoot)
-      : m_pRoot(pRoot), m_pCurrent(pRoot) {}
+      : root_(pRoot), current_(pRoot) {}
 
-  NodeType* GetRoot() const { return static_cast<NodeType*>(m_pRoot); }
-  NodeType* GetCurrent() const { return static_cast<NodeType*>(m_pCurrent); }
+  NodeType* GetRoot() const { return static_cast<NodeType*>(root_); }
+  NodeType* GetCurrent() const { return static_cast<NodeType*>(current_); }
 
-  void Reset() { m_pCurrent = m_pRoot; }
+  void Reset() { current_ = root_; }
   bool SetCurrent(NodeType* pNode) {
     if (!RootReachableFromNode(pNode)) {
-      m_pCurrent = nullptr;
+      current_ = nullptr;
       return false;
     }
-    m_pCurrent = pNode;
+    current_ = pNode;
     return true;
   }
 
   NodeType* MoveToPrev() {
-    if (!m_pRoot)
+    if (!root_) {
       return nullptr;
-    if (!m_pCurrent) {
-      m_pCurrent = LastDescendant(static_cast<NodeType*>(m_pRoot));
-      return static_cast<NodeType*>(m_pCurrent);
+    }
+    if (!current_) {
+      current_ = LastDescendant(static_cast<NodeType*>(root_));
+      return static_cast<NodeType*>(current_);
     }
     NodeType* pSibling =
-        PreviousSiblingWithinSubtree(static_cast<NodeType*>(m_pCurrent));
+        PreviousSiblingWithinSubtree(static_cast<NodeType*>(current_));
     if (pSibling) {
-      m_pCurrent = LastDescendant(pSibling);
-      return static_cast<NodeType*>(m_pCurrent);
+      current_ = LastDescendant(pSibling);
+      return static_cast<NodeType*>(current_);
     }
-    NodeType* pParent = ParentWithinSubtree(static_cast<NodeType*>(m_pCurrent));
+    NodeType* pParent = ParentWithinSubtree(static_cast<NodeType*>(current_));
     if (pParent)
-      m_pCurrent = pParent;
+      current_ = pParent;
     return pParent;
   }
 
   NodeType* MoveToNext() {
-    if (!m_pRoot || !m_pCurrent)
+    if (!root_ || !current_) {
       return nullptr;
+    }
     NodeType* pChild =
-        TraverseStrategy::GetFirstChild(static_cast<NodeType*>(m_pCurrent));
+        TraverseStrategy::GetFirstChild(static_cast<NodeType*>(current_));
     if (pChild) {
-      m_pCurrent = pChild;
+      current_ = pChild;
       return pChild;
     }
     return SkipChildrenAndMoveToNext();
   }
 
   NodeType* SkipChildrenAndMoveToNext() {
-    if (!m_pRoot)
+    if (!root_) {
       return nullptr;
-    NodeType* pNode = static_cast<NodeType*>(m_pCurrent);
+    }
+    NodeType* pNode = static_cast<NodeType*>(current_);
     while (pNode) {
       NodeType* pSibling = NextSiblingWithinSubtree(pNode);
       if (pSibling) {
-        m_pCurrent = pSibling;
+        current_ = pSibling;
         return pSibling;
       }
       pNode = ParentWithinSubtree(pNode);
     }
-    m_pCurrent = nullptr;
+    current_ = nullptr;
     return nullptr;
   }
 
  private:
   bool RootReachableFromNode(NodeType* pNode) {
-    return pNode && (pNode == m_pRoot ||
+    return pNode && (pNode == root_ ||
                      RootReachableFromNode(TraverseStrategy::GetParent(pNode)));
   }
 
   NodeType* ParentWithinSubtree(NodeType* pNode) {
-    return pNode && pNode != m_pRoot ? TraverseStrategy::GetParent(pNode)
-                                     : nullptr;
+    return pNode && pNode != root_ ? TraverseStrategy::GetParent(pNode)
+                                   : nullptr;
   }
 
   NodeType* NextSiblingWithinSubtree(NodeType* pNode) {
-    return pNode != m_pRoot ? TraverseStrategy::GetNextSibling(pNode) : nullptr;
+    return pNode != root_ ? TraverseStrategy::GetNextSibling(pNode) : nullptr;
   }
 
   NodeType* PreviousSiblingWithinSubtree(NodeType* pNode) {
@@ -128,8 +131,8 @@ class CXFA_NodeIteratorTemplate {
     return pChild ? LastDescendant(pChild) : pNode;
   }
 
-  HolderType m_pRoot;
-  HolderType m_pCurrent;
+  HolderType root_;
+  HolderType current_;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NODEITERATORTEMPLATE_H_

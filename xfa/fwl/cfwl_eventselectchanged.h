@@ -22,19 +22,19 @@ class CFWL_EventSelectChanged final : public CFWL_Event {
                           int32_t iDay);
   ~CFWL_EventSelectChanged() override;
 
-  bool GetLButtonUp() const { return m_bLButtonUp; }
-  int32_t GetYear() const { return m_iYear; }
-  int32_t GetMonth() const { return m_iMonth; }
-  int32_t GetDay() const { return m_iDay; }
+  bool GetLButtonUp() const { return lbutton_up_; }
+  int32_t GetYear() const { return year_; }
+  int32_t GetMonth() const { return month_; }
+  int32_t GetDay() const { return day_; }
 
  protected:
   // Used by ComboBox.
-  const bool m_bLButtonUp;
+  const bool lbutton_up_;
 
   // Used by DateTimePIcker
-  const int32_t m_iYear;
-  const int32_t m_iMonth;
-  const int32_t m_iDay;
+  const int32_t year_;
+  const int32_t month_;
+  const int32_t day_;
 };
 
 }  // namespace pdfium

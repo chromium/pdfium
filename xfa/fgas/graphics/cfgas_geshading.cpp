@@ -12,13 +12,13 @@ CFGAS_GEShading::CFGAS_GEShading(const CFX_PointF& beginPoint,
                                  bool isExtendedEnd,
                                  FX_ARGB beginArgb,
                                  FX_ARGB endArgb)
-    : m_type(Type::kAxial),
-      m_beginPoint(beginPoint),
-      m_endPoint(endPoint),
-      m_beginRadius(0),
-      m_endRadius(0),
-      m_isExtendedBegin(isExtendedBegin),
-      m_isExtendedEnd(isExtendedEnd) {
+    : type_(Type::kAxial),
+      begin_point_(beginPoint),
+      end_point_(endPoint),
+      begin_radius_(0),
+      end_radius_(0),
+      is_extended_begin_(isExtendedBegin),
+      is_extended_end_(isExtendedEnd) {
   InitArgbArray(beginArgb, endArgb);
 }
 
@@ -30,13 +30,13 @@ CFGAS_GEShading::CFGAS_GEShading(const CFX_PointF& beginPoint,
                                  bool isExtendedEnd,
                                  FX_ARGB beginArgb,
                                  FX_ARGB endArgb)
-    : m_type(Type::kRadial),
-      m_beginPoint(beginPoint),
-      m_endPoint(endPoint),
-      m_beginRadius(beginRadius),
-      m_endRadius(endRadius),
-      m_isExtendedBegin(isExtendedBegin),
-      m_isExtendedEnd(isExtendedEnd) {
+    : type_(Type::kRadial),
+      begin_point_(beginPoint),
+      end_point_(endPoint),
+      begin_radius_(beginRadius),
+      end_radius_(endRadius),
+      is_extended_begin_(isExtendedBegin),
+      is_extended_end_(isExtendedEnd) {
   InitArgbArray(beginArgb, endArgb);
 }
 
@@ -53,7 +53,7 @@ void CFGAS_GEShading::InitArgbArray(FX_ARGB begin_argb, FX_ARGB end_argb) {
   const float b_scale = 1.0 * (bgra1.blue - bgra0.blue) / f;
 
   for (size_t i = 0; i < kSteps; i++) {
-    m_argbArray[i] = ArgbEncode(static_cast<int32_t>(i * a_scale) + bgra0.alpha,
+    argb_array_[i] = ArgbEncode(static_cast<int32_t>(i * a_scale) + bgra0.alpha,
                                 static_cast<int32_t>(i * r_scale) + bgra0.red,
                                 static_cast<int32_t>(i * g_scale) + bgra0.green,
                                 static_cast<int32_t>(i * b_scale) + bgra0.blue);

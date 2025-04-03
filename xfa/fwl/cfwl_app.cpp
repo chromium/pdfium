@@ -14,21 +14,21 @@
 namespace pdfium {
 
 CFWL_App::CFWL_App(AdapterIface* pAdapter)
-    : m_pAdapter(pAdapter),
-      m_pWidgetMgr(cppgc::MakeGarbageCollected<CFWL_WidgetMgr>(
+    : adapter_(pAdapter),
+      widget_mgr_(cppgc::MakeGarbageCollected<CFWL_WidgetMgr>(
           pAdapter->GetHeap()->GetAllocationHandle(),
           pAdapter->GetWidgetMgrAdapter(),
           this)),
-      m_pNoteDriver(cppgc::MakeGarbageCollected<CFWL_NoteDriver>(
+      note_driver_(cppgc::MakeGarbageCollected<CFWL_NoteDriver>(
           pAdapter->GetHeap()->GetAllocationHandle(),
           this)) {}
 
 CFWL_App::~CFWL_App() = default;
 
 void CFWL_App::Trace(cppgc::Visitor* visitor) const {
-  visitor->Trace(m_pAdapter);
-  visitor->Trace(m_pWidgetMgr);
-  visitor->Trace(m_pNoteDriver);
+  visitor->Trace(adapter_);
+  visitor->Trace(widget_mgr_);
+  visitor->Trace(note_driver_);
 }
 
 }  // namespace pdfium

@@ -37,26 +37,26 @@ class CFGAS_Char {
   ~CFGAS_Char();
 
   FX_CHARTYPE GetCharType() const;
-  uint16_t char_code() const { return m_wCharCode; }
-  int16_t horizonal_scale() const { return m_iHorizontalScale; }
-  int16_t vertical_scale() const { return m_iVerticalScale; }
+  uint16_t char_code() const { return char_code_; }
+  int16_t horizonal_scale() const { return horizontal_scale_; }
+  int16_t vertical_scale() const { return vertical_scale_; }
 
-  BreakType m_dwStatus = BreakType::kNone;
-  FX_BIDICLASS m_iBidiClass = FX_BIDICLASS::kON;
-  FX_LINEBREAKTYPE m_eLineBreakType = FX_LINEBREAKTYPE::kUNKNOWN;
-  uint32_t m_dwCharStyles = 0;
-  int32_t m_iCharWidth = 0;
-  uint16_t m_iBidiLevel = 0;
-  uint16_t m_iBidiPos = 0;
-  uint16_t m_iBidiOrder = 0;
-  int32_t m_iFontSize = 0;
-  uint32_t m_dwIdentity = 0;
-  RetainPtr<CFGAS_TextUserData> m_pUserData;
+  BreakType status_ = BreakType::kNone;
+  FX_BIDICLASS bidi_class_ = FX_BIDICLASS::kON;
+  FX_LINEBREAKTYPE line_break_type_ = FX_LINEBREAKTYPE::kUNKNOWN;
+  uint32_t char_styles_ = 0;
+  int32_t char_width_ = 0;
+  uint16_t bidi_level_ = 0;
+  uint16_t bidi_pos_ = 0;
+  uint16_t bidi_order_ = 0;
+  int32_t font_size_ = 0;
+  uint32_t identity_ = 0;
+  RetainPtr<CFGAS_TextUserData> user_data_;
 
  private:
-  uint16_t m_wCharCode;
-  int32_t m_iHorizontalScale;
-  int32_t m_iVerticalScale;
+  uint16_t char_code_;
+  int32_t horizontal_scale_;
+  int32_t vertical_scale_;
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFGAS_CHAR_H_

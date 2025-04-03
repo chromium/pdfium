@@ -33,7 +33,7 @@ void CXFA_FFSignature::RenderWidget(CFGAS_GEGraphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
 
-  DrawBorder(pGS, m_pNode->GetUIBorder(), m_UIRect, mtRotate);
+  DrawBorder(pGS, node_->GetUIBorder(), uirect_, mtRotate);
   RenderCaption(pGS, mtRotate);
   DrawHighlight(pGS, mtRotate, highlight, kSquareShape);
 }
@@ -109,8 +109,9 @@ FWL_WidgetHit CXFA_FFSignature::HitTest(const CFX_PointF& point) {
     return FWL_WidgetHit::Client;
   if (!GetRectWithoutRotate().Contains(point))
     return FWL_WidgetHit::Unknown;
-  if (m_CaptionRect.Contains(point))
+  if (caption_rect_.Contains(point)) {
     return FWL_WidgetHit::Titlebar;
+  }
   return FWL_WidgetHit::Client;
 }
 

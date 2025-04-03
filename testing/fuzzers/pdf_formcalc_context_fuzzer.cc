@@ -523,7 +523,7 @@ class PDFiumFormCalcContextFuzzer : public PDFiumFuzzerHelper {
     CFXJSE_Engine* script_context = xfa_document->GetScriptContext();
 
     CXFA_EventParam params(XFA_EVENT_Unknown);
-    params.m_bCancelAction = false;
+    params.cancel_action_ = false;
     CFXJSE_Engine::EventParamScope param_scope(script_context, nullptr,
                                                &params);
     auto data_view = UNSAFE_TODO(ByteStringView(data_, size_));

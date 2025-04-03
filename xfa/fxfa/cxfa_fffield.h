@@ -106,11 +106,11 @@ class CXFA_FFField : public CXFA_FFWidget, public IFWL_WidgetDelegate {
                              XFA_AttributeValue iCapPlacement);
   void SetEditScrollOffset();
 
-  CFX_RectF m_UIRect;
-  CFX_RectF m_CaptionRect;
+  CFX_RectF uirect_;
+  CFX_RectF caption_rect_;
 
  private:
-  cppgc::Member<CFWL_Widget> m_pNormalWidget;
+  cppgc::Member<CFWL_Widget> normal_widget_;
 };
 
 inline CXFA_FFDropDown* ToDropDown(CXFA_FFField* field) {

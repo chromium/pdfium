@@ -17,18 +17,18 @@
 namespace pdfium {
 
 CFWL_WidgetMgr::CFWL_WidgetMgr(AdapterIface* pAdapter, CFWL_App* pApp)
-    : m_pAdapter(pAdapter), m_pApp(pApp) {
-  DCHECK(m_pAdapter);
-  m_mapWidgetItem[nullptr] = cppgc::MakeGarbageCollected<Item>(
+    : adapter_(pAdapter), app_(pApp) {
+  DCHECK(adapter_);
+  map_widget_item_[nullptr] = cppgc::MakeGarbageCollected<Item>(
       pApp->GetHeap()->GetAllocationHandle(), nullptr);
 }
 
 CFWL_WidgetMgr::~CFWL_WidgetMgr() = default;
 
 void CFWL_WidgetMgr::Trace(cppgc::Visitor* visitor) const {
-  visitor->Trace(m_pApp);
-  visitor->Trace(m_pAdapter);
-  ContainerTrace(visitor, m_mapWidgetItem);
+  visitor->Trace(app_);
+  visitor->Trace(adapter_);
+  ContainerTrace(visitor, map_widget_item_);
 }
 
 CFWL_Widget* CFWL_WidgetMgr::GetParentWidget(const CFWL_Widget* pWidget) const {
@@ -88,7 +88,7 @@ void CFWL_WidgetMgr::RepaintWidget(CFWL_Widget* pWidget,
     pNative = pOuter;
     pOuter = pOuter->GetOuter();
   }
-  m_pAdapter->RepaintWidget(pNative);
+  adapter_->RepaintWidget(pNative);
 }
 
 void CFWL_WidgetMgr::InsertWidget(CFWL_Widget* pParent, CFWL_Widget* pChild) {
@@ -113,7 +113,7 @@ void CFWL_WidgetMgr::RemoveWidget(CFWL_Widget* pWidget) {
     RemoveWidget(pItem->GetFirstChild()->pWidget);
 
   pItem->RemoveSelfIfParented();
-  m_mapWidgetItem.erase(pWidget);
+  map_widget_item_.erase(pWidget);
 }
 
 CFWL_Widget* CFWL_WidgetMgr::GetWidgetAtPoint(CFWL_Widget* parent,
@@ -162,15 +162,15 @@ CFWL_WidgetMgr::Item* CFWL_WidgetMgr::GetWidgetMgrRootItem() const {
 
 CFWL_WidgetMgr::Item* CFWL_WidgetMgr::GetWidgetMgrItem(
     const CFWL_Widget* pWidget) const {
-  auto it = m_mapWidgetItem.find(pWidget);
-  return it != m_mapWidgetItem.end() ? it->second : nullptr;
+  auto it = map_widget_item_.find(pWidget);
+  return it != map_widget_item_.end() ? it->second : nullptr;
 }
 
 CFWL_WidgetMgr::Item* CFWL_WidgetMgr::CreateWidgetMgrItem(
     CFWL_Widget* pWidget) {
   auto* pItem = cppgc::MakeGarbageCollected<Item>(
-      m_pApp->GetHeap()->GetAllocationHandle(), pWidget);
-  m_mapWidgetItem[pWidget] = pItem;
+      app_->GetHeap()->GetAllocationHandle(), pWidget);
+  map_widget_item_[pWidget] = pItem;
   return pItem;
 }
 
@@ -179,8 +179,7 @@ void CFWL_WidgetMgr::GetAdapterPopupPos(CFWL_Widget* pWidget,
                                         float fMaxHeight,
                                         const CFX_RectF& rtAnchor,
                                         CFX_RectF* pPopupRect) const {
-  m_pAdapter->GetPopupPos(pWidget, fMinHeight, fMaxHeight, rtAnchor,
-                          pPopupRect);
+  adapter_->GetPopupPos(pWidget, fMinHeight, fMaxHeight, rtAnchor, pPopupRect);
 }
 
 void CFWL_WidgetMgr::OnProcessMessageToForm(CFWL_Message* pMessage) {

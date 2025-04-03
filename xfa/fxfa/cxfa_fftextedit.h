@@ -78,7 +78,7 @@ class CXFA_FFTextEdit : public CXFA_FFField {
   explicit CXFA_FFTextEdit(CXFA_Node* pNode);
   uint32_t GetAlignment();
 
-  cppgc::Member<IFWL_WidgetDelegate> m_pOldDelegate;
+  cppgc::Member<IFWL_WidgetDelegate> old_delegate_;
 
  private:
   bool CommitData() override;

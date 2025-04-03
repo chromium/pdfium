@@ -21,7 +21,7 @@ void CFWL_PictureBox::Update() {
   if (IsLocked())
     return;
 
-  m_ClientRect = GetClientRect();
+  client_rect_ = GetClientRect();
 }
 
 void CFWL_PictureBox::DrawWidget(CFGAS_GEGraphics* pGraphics,

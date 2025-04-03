@@ -11,8 +11,7 @@ namespace pdfium {
 CFWL_EventMouse::CFWL_EventMouse(CFWL_Widget* pSrcTarget,
                                  CFWL_Widget* pDstTarget,
                                  CFWL_MessageMouse::MouseCommand cmd)
-    : CFWL_Event(CFWL_Event::Type::Mouse, pSrcTarget, pDstTarget),
-      m_dwCmd(cmd) {}
+    : CFWL_Event(CFWL_Event::Type::Mouse, pSrcTarget, pDstTarget), cmd_(cmd) {}
 
 CFWL_EventMouse::~CFWL_EventMouse() = default;
 

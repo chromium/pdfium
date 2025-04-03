@@ -18,11 +18,11 @@ class CFWL_MessageKillFocus final : public CFWL_Message {
   ~CFWL_MessageKillFocus() override;
 
   bool IsFocusedOnWidget(const CFWL_Widget* pWidget) const {
-    return pWidget == m_pSetFocus;
+    return pWidget == set_focus_;
   }
 
  private:
-  UnownedPtr<CFWL_Widget> m_pSetFocus;  // Ok, stack-only.
+  UnownedPtr<CFWL_Widget> set_focus_;  // Ok, stack-only.
 };
 
 }  // namespace pdfium

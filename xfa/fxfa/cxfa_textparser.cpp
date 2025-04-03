@@ -62,28 +62,29 @@ CXFA_TextParser::CXFA_TextParser() = default;
 CXFA_TextParser::~CXFA_TextParser() = default;
 
 void CXFA_TextParser::Reset() {
-  m_mapXMLNodeToParseContext.clear();
-  m_bParsed = false;
+  map_xmlnode_to_parse_context_.clear();
+  parsed_ = false;
 }
 
 void CXFA_TextParser::InitCSSData(CXFA_TextProvider* pTextProvider) {
   if (!pTextProvider)
     return;
 
-  if (!m_pSelector) {
-    m_pSelector = std::make_unique<CFX_CSSStyleSelector>();
+  if (!selector_) {
+    selector_ = std::make_unique<CFX_CSSStyleSelector>();
 
     CXFA_Font* font = pTextProvider->GetFontIfExists();
-    m_pSelector->SetDefaultFontSize(font ? font->GetFontSize() : 10.0f);
+    selector_->SetDefaultFontSize(font ? font->GetFontSize() : 10.0f);
   }
 
-  if (m_cssInitialized)
+  if (css_initialized_) {
     return;
+  }
 
-  m_cssInitialized = true;
+  css_initialized_ = true;
   auto uaSheet = LoadDefaultSheetStyle();
-  m_pSelector->SetUAStyleSheet(std::move(uaSheet));
-  m_pSelector->UpdateStyleIndex();
+  selector_->SetUAStyleSheet(std::move(uaSheet));
+  selector_->UpdateStyleIndex();
 }
 
 std::unique_ptr<CFX_CSSStyleSheet> CXFA_TextParser::LoadDefaultSheetStyle() {
@@ -108,7 +109,7 @@ std::unique_ptr<CFX_CSSStyleSheet> CXFA_TextParser::LoadDefaultSheetStyle() {
 RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateRootStyle(
     CXFA_TextProvider* pTextProvider) {
   CXFA_Para* para = pTextProvider->GetParaIfExists();
-  auto pStyle = m_pSelector->CreateComputedStyle(nullptr);
+  auto pStyle = selector_->CreateComputedStyle(nullptr);
   float fLineHeight = 0;
   float fFontSize = 10;
 
@@ -175,7 +176,7 @@ RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateRootStyle(
 
 RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateStyle(
     const CFX_CSSComputedStyle* pParentStyle) {
-  auto pNewStyle = m_pSelector->CreateComputedStyle(pParentStyle);
+  auto pNewStyle = selector_->CreateComputedStyle(pParentStyle);
   DCHECK(pNewStyle);
   if (!pParentStyle)
     return pNewStyle;
@@ -197,9 +198,10 @@ RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::CreateStyle(
 RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::ComputeStyle(
     const CFX_XMLNode* pXMLNode,
     RetainPtr<const CFX_CSSComputedStyle> pParentStyle) {
-  auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
-  if (it == m_mapXMLNodeToParseContext.end())
+  auto it = map_xmlnode_to_parse_context_.find(pXMLNode);
+  if (it == map_xmlnode_to_parse_context_.end()) {
     return nullptr;
+  }
 
   Context* pContext = it->second.get();
   if (!pContext)
@@ -208,22 +210,24 @@ RetainPtr<CFX_CSSComputedStyle> CXFA_TextParser::ComputeStyle(
   pContext->SetParentStyle(pParentStyle);
 
   auto tagProvider = ParseTagInfo(pXMLNode);
-  if (tagProvider->m_bContent)
+  if (tagProvider->content_) {
     return nullptr;
+  }
 
   auto pStyle = CreateStyle(pParentStyle);
-  m_pSelector->ComputeStyle(pContext->GetDecls(),
-                            tagProvider->GetAttribute(L"style"),
-                            tagProvider->GetAttribute(L"align"), pStyle.Get());
+  selector_->ComputeStyle(pContext->GetDecls(),
+                          tagProvider->GetAttribute(L"style"),
+                          tagProvider->GetAttribute(L"align"), pStyle.Get());
   return pStyle;
 }
 
 void CXFA_TextParser::DoParse(const CFX_XMLNode* pXMLContainer,
                               CXFA_TextProvider* pTextProvider) {
-  if (!pXMLContainer || !pTextProvider || m_bParsed)
+  if (!pXMLContainer || !pTextProvider || parsed_) {
     return;
+  }
 
-  m_bParsed = true;
+  parsed_ = true;
   InitCSSData(pTextProvider);
   auto pRootStyle = CreateRootStyle(pTextProvider);
   ParseRichText(pXMLContainer, pRootStyle.Get());
@@ -235,21 +239,21 @@ void CXFA_TextParser::ParseRichText(const CFX_XMLNode* pXMLNode,
     return;
 
   auto tagProvider = ParseTagInfo(pXMLNode);
-  if (!tagProvider->m_bTagAvailable)
+  if (!tagProvider->tag_available_) {
     return;
+  }
 
   RetainPtr<CFX_CSSComputedStyle> pNewStyle;
   if (!(tagProvider->GetTagName().EqualsASCII("body") &&
         tagProvider->GetTagName().EqualsASCII("html"))) {
     auto pTextContext = std::make_unique<Context>();
     CFX_CSSDisplay eDisplay = CFX_CSSDisplay::Inline;
-    if (!tagProvider->m_bContent) {
-      auto declArray =
-          m_pSelector->MatchDeclarations(tagProvider->GetTagName());
+    if (!tagProvider->content_) {
+      auto declArray = selector_->MatchDeclarations(tagProvider->GetTagName());
       pNewStyle = CreateStyle(pParentStyle);
-      m_pSelector->ComputeStyle(declArray, tagProvider->GetAttribute(L"style"),
-                                tagProvider->GetAttribute(L"align"),
-                                pNewStyle.Get());
+      selector_->ComputeStyle(declArray, tagProvider->GetAttribute(L"style"),
+                              tagProvider->GetAttribute(L"align"),
+                              pNewStyle.Get());
 
       if (!declArray.empty())
         pTextContext->SetDecls(std::move(declArray));
@@ -257,7 +261,7 @@ void CXFA_TextParser::ParseRichText(const CFX_XMLNode* pXMLNode,
       eDisplay = pNewStyle->GetDisplay();
     }
     pTextContext->SetDisplay(eDisplay);
-    m_mapXMLNodeToParseContext[pXMLNode] = std::move(pTextContext);
+    map_xmlnode_to_parse_context_[pXMLNode] = std::move(pTextContext);
   }
 
   for (CFX_XMLNode* pXMLChild = pXMLNode->GetFirstChild(); pXMLChild;
@@ -294,7 +298,7 @@ std::unique_ptr<CXFA_TextParser::TagProvider> CXFA_TextParser::ParseTagInfo(
   if (pXMLElement) {
     WideString wsName = pXMLElement->GetLocalTagName();
     tagProvider->SetTagName(wsName);
-    tagProvider->m_bTagAvailable = TagValidate(wsName);
+    tagProvider->tag_available_ = TagValidate(wsName);
     WideString wsValue = pXMLElement->GetAttribute(L"style");
     if (!wsValue.IsEmpty())
       tagProvider->SetAttribute(L"style", wsValue);
@@ -302,8 +306,8 @@ std::unique_ptr<CXFA_TextParser::TagProvider> CXFA_TextParser::ParseTagInfo(
     return tagProvider;
   }
   if (pXMLNode->GetType() == CFX_XMLNode::Type::kText) {
-    tagProvider->m_bTagAvailable = true;
-    tagProvider->m_bContent = true;
+    tagProvider->tag_available_ = true;
+    tagProvider->content_ = true;
   }
   return tagProvider;
 }
@@ -389,8 +393,8 @@ int32_t CXFA_TextParser::GetHorScale(CXFA_TextProvider* pTextProvider,
       return wsValue.GetInteger();
 
     while (pXMLNode) {
-      auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
-      if (it != m_mapXMLNodeToParseContext.end()) {
+      auto it = map_xmlnode_to_parse_context_.find(pXMLNode);
+      if (it != map_xmlnode_to_parse_context_.end()) {
         Context* pContext = it->second.get();
         if (pContext && pContext->GetParentStyle() &&
             pContext->GetParentStyle()->GetCustomStyle(
@@ -537,8 +541,8 @@ std::optional<WideString> CXFA_TextParser::GetEmbeddedObj(
 
 CXFA_TextParser::Context* CXFA_TextParser::GetParseContextFromMap(
     const CFX_XMLNode* pXMLNode) {
-  auto it = m_mapXMLNodeToParseContext.find(pXMLNode);
-  return it != m_mapXMLNodeToParseContext.end() ? it->second.get() : nullptr;
+  auto it = map_xmlnode_to_parse_context_.find(pXMLNode);
+  return it != map_xmlnode_to_parse_context_.end() ? it->second.get() : nullptr;
 }
 
 bool CXFA_TextParser::GetTabstops(const CFX_CSSComputedStyle* pStyle,
@@ -640,7 +644,7 @@ CXFA_TextParser::Context::~Context() = default;
 
 void CXFA_TextParser::Context::SetParentStyle(
     RetainPtr<const CFX_CSSComputedStyle> style) {
-  m_pParentStyle = std::move(style);
+  parent_style_ = std::move(style);
 }
 
 void CXFA_TextParser::Context::SetDecls(

@@ -124,7 +124,7 @@ bool PsNameMatchDRFontName(ByteStringView bsPsName,
 
 }  // namespace
 
-CFGAS_PDFFontMgr::CFGAS_PDFFontMgr(const CPDF_Document* pDoc) : m_pDoc(pDoc) {
+CFGAS_PDFFontMgr::CFGAS_PDFFontMgr(const CPDF_Document* pDoc) : doc_(pDoc) {
   DCHECK(pDoc);
 }
 
@@ -135,7 +135,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::FindFont(const ByteString& strPsName,
                                                    bool bItalic,
                                                    bool bStrictMatch) {
   RetainPtr<const CPDF_Dictionary> pFontSetDict =
-      m_pDoc->GetRoot()->GetDictFor("AcroForm")->GetDictFor("DR");
+      doc_->GetRoot()->GetDictFor("AcroForm")->GetDictFor("DR");
   if (!pFontSetDict) {
     return nullptr;
   }
@@ -148,7 +148,7 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::FindFont(const ByteString& strPsName,
   ByteString name = strPsName;
   name.Remove(' ');
 
-  auto* pData = CPDF_DocPageData::FromDocument(m_pDoc);
+  auto* pData = CPDF_DocPageData::FromDocument(doc_);
   CPDF_DictionaryLocker locker(pFontSetDict);
   for (const auto& it : locker) {
     const ByteString& key = it.first;
@@ -178,8 +178,8 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::GetFont(
     uint32_t dwFontStyles,
     bool bStrictMatch) {
   auto key = std::make_pair(wsFontFamily, dwFontStyles);
-  auto it = m_FontMap.find(key);
-  if (it != m_FontMap.end()) {
+  auto it = font_map_.find(key);
+  if (it != font_map_.end()) {
     return it->second;
   }
 
@@ -193,6 +193,6 @@ RetainPtr<CFGAS_GEFont> CFGAS_PDFFontMgr::GetFont(
     return nullptr;
   }
 
-  m_FontMap[key] = pFont;
+  font_map_[key] = pFont;
   return pFont;
 }

@@ -16,17 +16,18 @@
 
 CXFA_ViewLayoutItem::CXFA_ViewLayoutItem(CXFA_Node* pNode,
                                          CXFA_FFPageView* pPageView)
-    : CXFA_LayoutItem(pNode, kViewItem), m_pFFPageView(pPageView) {
-  if (m_pFFPageView)
-    m_pFFPageView->SetLayoutItem(this);
+    : CXFA_LayoutItem(pNode, kViewItem), ffpage_view_(pPageView) {
+  if (ffpage_view_) {
+    ffpage_view_->SetLayoutItem(this);
+  }
 }
 
 CXFA_ViewLayoutItem::~CXFA_ViewLayoutItem() = default;
 
 void CXFA_ViewLayoutItem::Trace(cppgc::Visitor* visitor) const {
   CXFA_LayoutItem::Trace(visitor);
-  visitor->Trace(m_pOldSubform);
-  visitor->Trace(m_pFFPageView);
+  visitor->Trace(old_subform_);
+  visitor->Trace(ffpage_view_);
 }
 
 CXFA_LayoutProcessor* CXFA_ViewLayoutItem::GetLayout() const {
@@ -61,5 +62,5 @@ CXFA_Node* CXFA_ViewLayoutItem::GetMasterPage() const {
 }
 
 void CXFA_ViewLayoutItem::SetOldSubform(CXFA_Node* pSubform) {
-  m_pOldSubform = pSubform;
+  old_subform_ = pSubform;
 }

@@ -36,19 +36,19 @@ class CFWL_ListBox : public CFWL_Widget {
     explicit Item(const WideString& text);
     ~Item();
 
-    bool IsSelected() const { return m_bIsSelected; }
-    void SetSelected(bool enable) { m_bIsSelected = enable; }
-    bool IsFocused() const { return m_bIsFocused; }
-    void SetFocused(bool enable) { m_bIsFocused = enable; }
-    CFX_RectF GetRect() const { return m_ItemRect; }
-    void SetRect(const CFX_RectF& rect) { m_ItemRect = rect; }
-    WideString GetText() const { return m_wsText; }
+    bool IsSelected() const { return is_selected_; }
+    void SetSelected(bool enable) { is_selected_ = enable; }
+    bool IsFocused() const { return is_focused_; }
+    void SetFocused(bool enable) { is_focused_ = enable; }
+    CFX_RectF GetRect() const { return item_rect_; }
+    void SetRect(const CFX_RectF& rect) { item_rect_ = rect; }
+    WideString GetText() const { return text_; }
 
    private:
-    bool m_bIsSelected = false;
-    bool m_bIsFocused = false;
-    CFX_RectF m_ItemRect;
-    const WideString m_wsText;
+    bool is_selected_ = false;
+    bool is_focused_ = false;
+    CFX_RectF item_rect_;
+    const WideString text_;
   };
 
   CONSTRUCT_VIA_MAKE_GARBAGE_COLLECTED;
@@ -93,8 +93,8 @@ class CFWL_ListBox : public CFWL_Widget {
   bool IsShowVertScrollBar() const;
   bool IsShowHorzScrollBar() const;
   bool ScrollBarPropertiesPresent() const;
-  CFWL_ScrollBar* GetVertScrollBar() const { return m_pVertScrollBar; }
-  const CFX_RectF& GetRTClient() const { return m_ClientRect; }
+  CFWL_ScrollBar* GetVertScrollBar() const { return vert_scroll_bar_; }
+  const CFX_RectF& GetRTClient() const { return client_rect_; }
 
  private:
   bool IsMultiSelection() const;
@@ -129,18 +129,18 @@ class CFWL_ListBox : public CFWL_Widget {
                 CFWL_EventScroll::Code dwCode,
                 float fPos);
 
-  CFX_RectF m_ClientRect;
-  CFX_RectF m_StaticRect;
-  CFX_RectF m_ContentRect;
-  cppgc::Member<CFWL_ScrollBar> m_pHorzScrollBar;
-  cppgc::Member<CFWL_ScrollBar> m_pVertScrollBar;
-  FDE_TextStyle m_TTOStyles;
-  FDE_TextAlignment m_iTTOAligns = FDE_TextAlignment::kTopLeft;
-  bool m_bLButtonDown = false;
-  float m_fItemHeight = 0.0f;
-  float m_fScorllBarWidth = 0.0f;
-  std::vector<std::unique_ptr<Item>> m_ItemArray;  // Must outlive `m_hAnchor`.
-  UnownedPtr<Item> m_hAnchor;
+  CFX_RectF client_rect_;
+  CFX_RectF static_rect_;
+  CFX_RectF content_rect_;
+  cppgc::Member<CFWL_ScrollBar> horz_scroll_bar_;
+  cppgc::Member<CFWL_ScrollBar> vert_scroll_bar_;
+  FDE_TextStyle tto_styles_;
+  FDE_TextAlignment ttoaligns_ = FDE_TextAlignment::kTopLeft;
+  bool lbutton_down_ = false;
+  float item_height_ = 0.0f;
+  float scorll_bar_width_ = 0.0f;
+  std::vector<std::unique_ptr<Item>> item_array_;  // Must outlive `h_anchor_`.
+  UnownedPtr<Item> h_anchor_;
 };
 
 }  // namespace pdfium

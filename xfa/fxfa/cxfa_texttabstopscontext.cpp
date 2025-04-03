@@ -17,17 +17,17 @@ void CXFA_TextTabstopsContext::Append(uint32_t dwAlign, float fTabstops) {
   tabstop.dwAlign = dwAlign;
   tabstop.fTabstops = fTabstops;
 
-  auto it = std::lower_bound(m_tabstops.begin(), m_tabstops.end(), tabstop);
-  m_tabstops.insert(it, tabstop);
+  auto it = std::lower_bound(tabstops_.begin(), tabstops_.end(), tabstop);
+  tabstops_.insert(it, tabstop);
 }
 
 void CXFA_TextTabstopsContext::RemoveAll() {
-  m_tabstops.clear();
+  tabstops_.clear();
 }
 
 void CXFA_TextTabstopsContext::Reset() {
-  m_iTabIndex = -1;
-  m_bHasTabstops = false;
-  m_fTabWidth = 0;
-  m_fLeft = 0;
+  tab_index_ = -1;
+  has_tabstops_ = false;
+  tab_width_ = 0;
+  left_ = 0;
 }

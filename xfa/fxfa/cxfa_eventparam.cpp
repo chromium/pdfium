@@ -6,7 +6,7 @@
 
 #include "xfa/fxfa/cxfa_eventparam.h"
 
-CXFA_EventParam::CXFA_EventParam(XFA_EVENTTYPE type) : m_eType(type) {}
+CXFA_EventParam::CXFA_EventParam(XFA_EVENTTYPE type) : type_(type) {}
 
 CXFA_EventParam::CXFA_EventParam(const CXFA_EventParam& other) = default;
 
@@ -19,6 +19,6 @@ CXFA_EventParam& CXFA_EventParam::operator=(CXFA_EventParam&& other) noexcept =
     default;
 
 WideString CXFA_EventParam::GetNewText() const {
-  return m_wsPrevText.First(m_iSelStart) + m_wsChange +
-         m_wsPrevText.Last(m_wsPrevText.GetLength() - m_iSelEnd);
+  return prev_text_.First(sel_start_) + change_ +
+         prev_text_.Last(prev_text_.GetLength() - sel_end_);
 }

@@ -9,23 +9,24 @@
 #include "xfa/fxfa/parser/cxfa_node.h"
 
 CXFA_ReadyNodeIterator::CXFA_ReadyNodeIterator(CXFA_Node* pTravelRoot)
-    : m_ContentIterator(pTravelRoot) {}
+    : content_iterator_(pTravelRoot) {}
 
 CXFA_ReadyNodeIterator::~CXFA_ReadyNodeIterator() = default;
 
 CXFA_Node* CXFA_ReadyNodeIterator::MoveToNext() {
-  CXFA_Node* pItem = m_pCurNode ? m_ContentIterator.MoveToNext()
-                                : m_ContentIterator.GetCurrent();
+  CXFA_Node* pItem = cur_node_ ? content_iterator_.MoveToNext()
+                               : content_iterator_.GetCurrent();
   while (pItem) {
-    m_pCurNode = pItem->IsWidgetReady() ? pItem : nullptr;
-    if (m_pCurNode)
-      return m_pCurNode;
-    pItem = m_ContentIterator.MoveToNext();
+    cur_node_ = pItem->IsWidgetReady() ? pItem : nullptr;
+    if (cur_node_) {
+      return cur_node_;
+    }
+    pItem = content_iterator_.MoveToNext();
   }
   return nullptr;
 }
 
 void CXFA_ReadyNodeIterator::SkipTree() {
-  m_ContentIterator.SkipChildrenAndMoveToNext();
-  m_pCurNode = nullptr;
+  content_iterator_.SkipChildrenAndMoveToNext();
+  cur_node_ = nullptr;
 }

@@ -33,51 +33,54 @@ void CFWL_WidgetTP::DrawBackground(const CFWL_ThemeBackground& pParams) {}
 
 void CFWL_WidgetTP::DrawText(const CFWL_ThemeText& pParams) {
   EnsureTTOInitialized(pParams.GetWidget()->GetThemeProvider());
-  if (pParams.m_wsText.IsEmpty())
+  if (pParams.text_.IsEmpty()) {
     return;
+  }
 
   CFGAS_GEGraphics* pGraphics = pParams.GetGraphics();
-  m_pTextOut->SetStyles(pParams.m_dwTTOStyles);
-  m_pTextOut->SetAlignment(pParams.m_iTTOAlign);
+  text_out_->SetStyles(pParams.tto_styles_);
+  text_out_->SetAlignment(pParams.tto_align_);
 
-  CFX_Matrix matrix = pParams.m_matrix;
+  CFX_Matrix matrix = pParams.matrix_;
   matrix.Concat(*pGraphics->GetMatrix());
-  m_pTextOut->SetMatrix(matrix);
-  m_pTextOut->DrawLogicText(pGraphics->GetRenderDevice(), pParams.m_wsText,
-                            pParams.m_PartRect);
+  text_out_->SetMatrix(matrix);
+  text_out_->DrawLogicText(pGraphics->GetRenderDevice(), pParams.text_,
+                           pParams.part_rect_);
 }
 
 void CFWL_WidgetTP::InitializeArrowColorData() {
-  if (m_pColorData)
+  if (color_data_) {
     return;
+  }
 
-  m_pColorData = std::make_unique<CColorData>();
-  m_pColorData->clrBorder[0] = ArgbEncode(255, 202, 216, 249);
-  m_pColorData->clrBorder[1] = ArgbEncode(255, 171, 190, 233);
-  m_pColorData->clrBorder[2] = ArgbEncode(255, 135, 147, 219);
-  m_pColorData->clrBorder[3] = ArgbEncode(255, 172, 168, 153);
-  m_pColorData->clrStart[0] = ArgbEncode(255, 225, 234, 254);
-  m_pColorData->clrStart[1] = ArgbEncode(255, 253, 255, 255);
-  m_pColorData->clrStart[2] = ArgbEncode(255, 110, 142, 241);
-  m_pColorData->clrStart[3] = ArgbEncode(255, 254, 254, 251);
-  m_pColorData->clrEnd[0] = ArgbEncode(255, 175, 204, 251);
-  m_pColorData->clrEnd[1] = ArgbEncode(255, 185, 218, 251);
-  m_pColorData->clrEnd[2] = ArgbEncode(255, 210, 222, 235);
-  m_pColorData->clrEnd[3] = ArgbEncode(255, 243, 241, 236);
-  m_pColorData->clrSign[0] = ArgbEncode(255, 77, 97, 133);
-  m_pColorData->clrSign[1] = ArgbEncode(255, 77, 97, 133);
-  m_pColorData->clrSign[2] = ArgbEncode(255, 77, 97, 133);
-  m_pColorData->clrSign[3] = ArgbEncode(255, 128, 128, 128);
+  color_data_ = std::make_unique<CColorData>();
+  color_data_->clrBorder[0] = ArgbEncode(255, 202, 216, 249);
+  color_data_->clrBorder[1] = ArgbEncode(255, 171, 190, 233);
+  color_data_->clrBorder[2] = ArgbEncode(255, 135, 147, 219);
+  color_data_->clrBorder[3] = ArgbEncode(255, 172, 168, 153);
+  color_data_->clrStart[0] = ArgbEncode(255, 225, 234, 254);
+  color_data_->clrStart[1] = ArgbEncode(255, 253, 255, 255);
+  color_data_->clrStart[2] = ArgbEncode(255, 110, 142, 241);
+  color_data_->clrStart[3] = ArgbEncode(255, 254, 254, 251);
+  color_data_->clrEnd[0] = ArgbEncode(255, 175, 204, 251);
+  color_data_->clrEnd[1] = ArgbEncode(255, 185, 218, 251);
+  color_data_->clrEnd[2] = ArgbEncode(255, 210, 222, 235);
+  color_data_->clrEnd[3] = ArgbEncode(255, 243, 241, 236);
+  color_data_->clrSign[0] = ArgbEncode(255, 77, 97, 133);
+  color_data_->clrSign[1] = ArgbEncode(255, 77, 97, 133);
+  color_data_->clrSign[2] = ArgbEncode(255, 77, 97, 133);
+  color_data_->clrSign[3] = ArgbEncode(255, 128, 128, 128);
 }
 
 void CFWL_WidgetTP::EnsureTTOInitialized(IFWL_ThemeProvider* pProvider) {
-  if (m_pTextOut)
+  if (text_out_) {
     return;
+  }
 
-  m_pTextOut = std::make_unique<CFDE_TextOut>();
-  m_pTextOut->SetFont(pProvider->GetFWLFont());
-  m_pTextOut->SetFontSize(FWLTHEME_CAPACITY_FontSize);
-  m_pTextOut->SetTextColor(FWLTHEME_CAPACITY_TextColor);
+  text_out_ = std::make_unique<CFDE_TextOut>();
+  text_out_->SetFont(pProvider->GetFWLFont());
+  text_out_->SetFontSize(FWLTHEME_CAPACITY_FontSize);
+  text_out_->SetTextColor(FWLTHEME_CAPACITY_TextColor);
 }
 
 void CFWL_WidgetTP::DrawBorder(CFGAS_GEGraphics* pGraphics,
@@ -185,14 +188,13 @@ void CFWL_WidgetTP::DrawBtn(CFGAS_GEGraphics* pGraphics,
                             FWLTHEME_STATE eState,
                             const CFX_Matrix& matrix) {
   InitializeArrowColorData();
-  FillSolidRect(pGraphics,
-                m_pColorData->clrEnd[static_cast<size_t>(eState) - 1], rect,
-                matrix);
+  FillSolidRect(pGraphics, color_data_->clrEnd[static_cast<size_t>(eState) - 1],
+                rect, matrix);
 
   CFGAS_GEPath path;
   path.AddRectangle(rect.left, rect.top, rect.width, rect.height);
   pGraphics->SetStrokeColor(
-      CFGAS_GEColor(m_pColorData->clrBorder[static_cast<size_t>(eState) - 1]));
+      CFGAS_GEColor(color_data_->clrBorder[static_cast<size_t>(eState) - 1]));
   pGraphics->StrokePath(path, matrix);
 }
 
@@ -204,7 +206,7 @@ void CFWL_WidgetTP::DrawArrowBtn(CFGAS_GEGraphics* pGraphics,
   DrawBtn(pGraphics, rect, eState, matrix);
   InitializeArrowColorData();
   DrawArrow(pGraphics, rect, eDict,
-            m_pColorData->clrSign[static_cast<size_t>(eState) - 1], matrix);
+            color_data_->clrSign[static_cast<size_t>(eState) - 1], matrix);
 }
 
 }  // namespace pdfium

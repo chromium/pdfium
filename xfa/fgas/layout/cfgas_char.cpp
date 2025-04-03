@@ -283,7 +283,7 @@ void SetDeferredRunClass(std::vector<CFGAS_Char>* chars,
 
   size_t iLast = iStart - iCount;
   for (size_t i = iStart; i > iLast; --i)
-    (*chars)[i - 1].m_iBidiClass = eValue;
+    (*chars)[i - 1].bidi_class_ = eValue;
 }
 
 void SetDeferredRunLevel(std::vector<CFGAS_Char>* chars,
@@ -295,27 +295,27 @@ void SetDeferredRunLevel(std::vector<CFGAS_Char>* chars,
 
   size_t iLast = iStart - iCount;
   for (size_t i = iStart; i > iLast; --i)
-    (*chars)[i - 1].m_iBidiLevel = static_cast<int16_t>(iValue);
+    (*chars)[i - 1].bidi_level_ = static_cast<int16_t>(iValue);
 }
 
 void Classify(std::vector<CFGAS_Char>* chars, size_t iCount) {
   for (size_t i = 0; i < iCount; ++i) {
     CFGAS_Char& cur = (*chars)[i];
-    cur.m_iBidiClass = pdfium::unicode::GetBidiClass(cur.char_code());
+    cur.bidi_class_ = pdfium::unicode::GetBidiClass(cur.char_code());
   }
 }
 
 void ClassifyWithTransform(std::vector<CFGAS_Char>* chars, size_t iCount) {
   for (size_t i = 0; i < iCount; ++i) {
     CFGAS_Char& cur = (*chars)[i];
-    cur.m_iBidiClass = kNTypes[static_cast<size_t>(
+    cur.bidi_class_ = kNTypes[static_cast<size_t>(
         pdfium::unicode::GetBidiClass(cur.char_code()))];
   }
 }
 
 void ResolveExplicit(std::vector<CFGAS_Char>* chars, size_t iCount) {
   for (size_t i = 0; i < iCount; ++i)
-    (*chars)[i].m_iBidiLevel = 0;
+    (*chars)[i].bidi_level_ = 0;
 }
 
 void ResolveWeak(std::vector<CFGAS_Char>* chars, size_t iCount) {
@@ -332,21 +332,21 @@ void ResolveWeak(std::vector<CFGAS_Char>* chars, size_t iCount) {
   size_t i = 0;
   for (; i <= iCount; ++i) {
     CFGAS_Char* pTC = &(*chars)[i];
-    eClsCur = pTC->m_iBidiClass;
+    eClsCur = pTC->bidi_class_;
     if (eClsCur == FX_BIDICLASS::kBN) {
-      pTC->m_iBidiLevel = (int16_t)iLevelCur;
+      pTC->bidi_level_ = (int16_t)iLevelCur;
       if (i == iCount && iLevelCur != 0) {
         eClsCur = Direction(iLevelCur);
-        pTC->m_iBidiClass = eClsCur;
+        pTC->bidi_class_ = eClsCur;
       } else if (i < iCount) {
         CFGAS_Char* pTCNext = &(*chars)[i + 1];
-        eClsNew = pTCNext->m_iBidiClass;
-        int32_t iLevelNext = pTCNext->m_iBidiLevel;
+        eClsNew = pTCNext->bidi_class_;
+        int32_t iLevelNext = pTCNext->bidi_level_;
         if (eClsNew != FX_BIDICLASS::kBN && iLevelCur != iLevelNext) {
           int32_t iLevelNew = std::max(iLevelNext, iLevelCur);
-          pTC->m_iBidiLevel = static_cast<int16_t>(iLevelNew);
+          pTC->bidi_level_ = static_cast<int16_t>(iLevelNew);
           eClsCur = Direction(iLevelNew);
-          pTC->m_iBidiClass = eClsCur;
+          pTC->bidi_class_ = eClsCur;
           iLevelCur = iLevelNext;
         } else {
           if (iNum > 0)
@@ -370,7 +370,7 @@ void ResolveWeak(std::vector<CFGAS_Char>* chars, size_t iCount) {
     }
     eClsNew = GetResolvedType(eAction);
     if (eClsNew != static_cast<FX_BIDICLASS>(0xF))
-      pTC->m_iBidiClass = eClsNew;
+      pTC->bidi_class_ = eClsNew;
     if (FX_BWAIX & eAction)
       ++iNum;
 
@@ -400,7 +400,7 @@ void ResolveNeutrals(std::vector<CFGAS_Char>* chars, size_t iCount) {
   FX_BIDICLASS eClsNew;
   for (; i <= iCount; ++i) {
     pTC = &(*chars)[i];
-    eClsCur = pTC->m_iBidiClass;
+    eClsCur = pTC->bidi_class_;
     if (eClsCur == FX_BIDICLASS::kBN) {
       if (iNum)
         ++iNum;
@@ -418,12 +418,12 @@ void ResolveNeutrals(std::vector<CFGAS_Char>* chars, size_t iCount) {
 
     eClsNew = GetResolvedNeutrals(eAction);
     if (eClsNew != FX_BIDICLASS::kN)
-      pTC->m_iBidiClass = eClsNew;
+      pTC->bidi_class_ = eClsNew;
     if (FX_BNAIn & eAction)
       ++iNum;
 
     eState = GetNeutralState(eState, eClsCur);
-    iLevel = pTC->m_iBidiLevel;
+    iLevel = pTC->bidi_level_;
   }
   if (iNum == 0)
     return;
@@ -436,14 +436,13 @@ void ResolveNeutrals(std::vector<CFGAS_Char>* chars, size_t iCount) {
 
 void ResolveImplicit(std::vector<CFGAS_Char>* chars, size_t iCount) {
   for (size_t i = 0; i < iCount; ++i) {
-    FX_BIDICLASS eCls = (*chars)[i].m_iBidiClass;
+    FX_BIDICLASS eCls = (*chars)[i].bidi_class_;
     if (eCls == FX_BIDICLASS::kBN || eCls <= FX_BIDICLASS::kON ||
         eCls >= FX_BIDICLASS::kAL) {
       continue;
     }
-    (*chars)[i].m_iBidiLevel +=
-        kAddLevelTable[FX_IsOdd((*chars)[i].m_iBidiLevel)]
-                      [static_cast<size_t>(eCls) - 1];
+    (*chars)[i].bidi_level_ += kAddLevelTable[FX_IsOdd((*chars)[i].bidi_level_)]
+                                             [static_cast<size_t>(eCls) - 1];
   }
 }
 
@@ -456,7 +455,7 @@ void ResolveWhitespace(std::vector<CFGAS_Char>* chars, size_t iCount) {
   size_t i = 0;
   size_t iNum = 0;
   for (; i <= iCount; ++i) {
-    switch (static_cast<FX_BIDICLASS>((*chars)[i].m_iBidiClass)) {
+    switch (static_cast<FX_BIDICLASS>((*chars)[i].bidi_class_)) {
       case FX_BIDICLASS::kWS:
         ++iNum;
         break;
@@ -466,7 +465,7 @@ void ResolveWhitespace(std::vector<CFGAS_Char>* chars, size_t iCount) {
       case FX_BIDICLASS::kRLO:
       case FX_BIDICLASS::kPDF:
       case FX_BIDICLASS::kBN:
-        (*chars)[i].m_iBidiLevel = static_cast<int16_t>(iLevel);
+        (*chars)[i].bidi_level_ = static_cast<int16_t>(iLevel);
         ++iNum;
         break;
       case FX_BIDICLASS::kS:
@@ -474,14 +473,14 @@ void ResolveWhitespace(std::vector<CFGAS_Char>* chars, size_t iCount) {
         if (iNum > 0)
           SetDeferredRunLevel(chars, i, iNum, 0);
 
-        (*chars)[i].m_iBidiLevel = 0;
+        (*chars)[i].bidi_level_ = 0;
         iNum = 0;
         break;
       default:
         iNum = 0;
         break;
     }
-    iLevel = (*chars)[i].m_iBidiLevel;
+    iLevel = (*chars)[i].bidi_level_;
   }
   if (iNum > 0)
     SetDeferredRunLevel(chars, i, iNum, 0);
@@ -502,7 +501,7 @@ size_t ReorderLevel(std::vector<CFGAS_Char>* chars,
   bReverse = bReverse || FX_IsOdd(iBaseLevel);
   size_t i = iStart;
   for (; i < iCount; ++i) {
-    int32_t iLevel = (*chars)[i].m_iBidiLevel;
+    int32_t iLevel = (*chars)[i].bidi_level_;
     if (iLevel == iBaseLevel)
       continue;
     if (iLevel < iBaseLevel)
@@ -525,10 +524,11 @@ void Reorder(std::vector<CFGAS_Char>* chars, size_t iCount) {
 
 void Position(std::vector<CFGAS_Char>* chars, size_t iCount) {
   for (size_t i = 0; i < iCount; ++i) {
-    if ((*chars)[i].m_iBidiPos > iCount)
+    if ((*chars)[i].bidi_pos_ > iCount) {
       continue;
+    }
 
-    (*chars)[(*chars)[i].m_iBidiPos].m_iBidiOrder = i;
+    (*chars)[(*chars)[i].bidi_pos_].bidi_order_ = i;
   }
 }
 
@@ -556,14 +556,14 @@ CFGAS_Char::CFGAS_Char(uint16_t wCharCode) : CFGAS_Char(wCharCode, 100, 100) {}
 CFGAS_Char::CFGAS_Char(uint16_t wCharCode,
                        int32_t iHorizontalScale,
                        int32_t iVerticalScale)
-    : m_wCharCode(wCharCode),
-      m_iHorizontalScale(iHorizontalScale),
-      m_iVerticalScale(iVerticalScale) {}
+    : char_code_(wCharCode),
+      horizontal_scale_(iHorizontalScale),
+      vertical_scale_(iVerticalScale) {}
 
 CFGAS_Char::CFGAS_Char(const CFGAS_Char& other) = default;
 
 CFGAS_Char::~CFGAS_Char() = default;
 
 FX_CHARTYPE CFGAS_Char::GetCharType() const {
-  return pdfium::unicode::GetCharType(m_wCharCode);
+  return pdfium::unicode::GetCharType(char_code_);
 }

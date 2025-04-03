@@ -31,7 +31,7 @@ class CXFA_FontMgr final : public cppgc::GarbageCollected<CXFA_FontMgr> {
  private:
   CXFA_FontMgr();
 
-  std::map<std::pair<WideString, uint32_t>, RetainPtr<CFGAS_GEFont>> m_FontMap;
+  std::map<std::pair<WideString, uint32_t>, RetainPtr<CFGAS_GEFont>> font_map_;
 };
 
 #endif  //  XFA_FXFA_CXFA_FONTMGR_H_

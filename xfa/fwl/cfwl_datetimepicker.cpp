@@ -28,23 +28,23 @@ CFWL_DateTimePicker::CFWL_DateTimePicker(CFWL_App* app)
     : CFWL_Widget(app,
                   Properties{0, FWL_STYLEEXT_DTP_ShortDateFormat, 0},
                   nullptr),
-      m_pEdit(cppgc::MakeGarbageCollected<CFWL_DateTimeEdit>(
+      edit_(cppgc::MakeGarbageCollected<CFWL_DateTimeEdit>(
           app->GetHeap()->GetAllocationHandle(),
           app,
           Properties(),
           this)),
-      m_pMonthCal(cppgc::MakeGarbageCollected<CFWL_MonthCalendar>(
+      month_cal_(cppgc::MakeGarbageCollected<CFWL_MonthCalendar>(
           app->GetHeap()->GetAllocationHandle(),
           app,
           Properties{FWL_STYLE_WGT_Popup | FWL_STYLE_WGT_Border, 0,
                      FWL_STATE_WGT_Invisible},
           this)) {
-  m_pMonthCal->SetWidgetRect(
-      CFX_RectF(0, 0, m_pMonthCal->GetAutosizedWidgetRect().Size()));
+  month_cal_->SetWidgetRect(
+      CFX_RectF(0, 0, month_cal_->GetAutosizedWidgetRect().Size()));
 
   CFWL_NoteDriver* pNoteDriver = GetFWLApp()->GetNoteDriver();
-  pNoteDriver->RegisterEventTarget(this, m_pMonthCal);
-  pNoteDriver->RegisterEventTarget(this, m_pEdit);
+  pNoteDriver->RegisterEventTarget(this, month_cal_);
+  pNoteDriver->RegisterEventTarget(this, edit_);
 }
 
 CFWL_DateTimePicker::~CFWL_DateTimePicker() = default;
@@ -56,8 +56,8 @@ void CFWL_DateTimePicker::PreFinalize() {
 
 void CFWL_DateTimePicker::Trace(cppgc::Visitor* visitor) const {
   CFWL_Widget::Trace(visitor);
-  visitor->Trace(m_pEdit);
-  visitor->Trace(m_pMonthCal);
+  visitor->Trace(edit_);
+  visitor->Trace(month_cal_);
 }
 
 FWL_Type CFWL_DateTimePicker::GetClassID() const {
@@ -68,30 +68,31 @@ void CFWL_DateTimePicker::Update() {
   if (IsLocked())
     return;
 
-  m_ClientRect = GetClientRect();
-  m_pEdit->SetWidgetRect(m_ClientRect);
+  client_rect_ = GetClientRect();
+  edit_->SetWidgetRect(client_rect_);
   ResetEditAlignment();
-  m_pEdit->Update();
+  edit_->Update();
 
-  m_fBtn = GetThemeProvider()->GetScrollBarWidth();
-  CFX_RectF rtMonthCal = m_pMonthCal->GetAutosizedWidgetRect();
+  btn_ = GetThemeProvider()->GetScrollBarWidth();
+  CFX_RectF rtMonthCal = month_cal_->GetAutosizedWidgetRect();
   CFX_RectF rtPopUp(rtMonthCal.left, rtMonthCal.top + kDateTimePickerHeight,
                     rtMonthCal.width, rtMonthCal.height);
-  m_pMonthCal->SetWidgetRect(rtPopUp);
-  m_pMonthCal->Update();
+  month_cal_->SetWidgetRect(rtPopUp);
+  month_cal_->Update();
 }
 
 FWL_WidgetHit CFWL_DateTimePicker::HitTest(const CFX_PointF& point) {
-  CFX_RectF rect(0, 0, m_WidgetRect.width, m_WidgetRect.height);
+  CFX_RectF rect(0, 0, widget_rect_.width, widget_rect_.height);
   if (rect.Contains(point))
     return FWL_WidgetHit::Edit;
   if (NeedsToShowButton())
-    rect.width += m_fBtn;
+    rect.width += btn_;
   if (rect.Contains(point))
     return FWL_WidgetHit::Client;
   if (IsMonthCalendarVisible()) {
-    if (m_pMonthCal->GetWidgetRect().Contains(point))
+    if (month_cal_->GetWidgetRect().Contains(point)) {
       return FWL_WidgetHit::Client;
+    }
   }
   return FWL_WidgetHit::Unknown;
 }
@@ -104,30 +105,31 @@ void CFWL_DateTimePicker::DrawWidget(CFGAS_GEGraphics* pGraphics,
   if (HasBorder())
     DrawBorder(pGraphics, CFWL_ThemePart::Part::kBorder, matrix);
 
-  if (!m_BtnRect.IsEmpty())
+  if (!btn_rect_.IsEmpty()) {
     DrawDropDownButton(pGraphics, matrix);
+  }
 
-  if (m_pEdit) {
-    CFX_RectF rtEdit = m_pEdit->GetWidgetRect();
+  if (edit_) {
+    CFX_RectF rtEdit = edit_->GetWidgetRect();
     CFX_Matrix mt(1, 0, 0, 1, rtEdit.left, rtEdit.top);
     mt.Concat(matrix);
-    m_pEdit->DrawWidget(pGraphics, mt);
+    edit_->DrawWidget(pGraphics, mt);
   }
   if (!IsMonthCalendarVisible())
     return;
 
-  CFX_RectF rtMonth = m_pMonthCal->GetWidgetRect();
+  CFX_RectF rtMonth = month_cal_->GetWidgetRect();
   CFX_Matrix mt(1, 0, 0, 1, rtMonth.left, rtMonth.top);
   mt.Concat(matrix);
-  m_pMonthCal->DrawWidget(pGraphics, mt);
+  month_cal_->DrawWidget(pGraphics, mt);
 }
 
 void CFWL_DateTimePicker::GetCurSel(int32_t& iYear,
                                     int32_t& iMonth,
                                     int32_t& iDay) {
-  iYear = m_iYear;
-  iMonth = m_iMonth;
-  iDay = m_iDay;
+  iYear = year_;
+  iMonth = month_;
+  iDay = day_;
 }
 
 void CFWL_DateTimePicker::SetCurSel(int32_t iYear,
@@ -140,64 +142,66 @@ void CFWL_DateTimePicker::SetCurSel(int32_t iYear,
   if (iDay <= 0 || iDay >= 32)
     return;
 
-  m_iYear = iYear;
-  m_iMonth = iMonth;
-  m_iDay = iDay;
-  m_pMonthCal->SetSelect(iYear, iMonth, iDay);
+  year_ = iYear;
+  month_ = iMonth;
+  day_ = iDay;
+  month_cal_->SetSelect(iYear, iMonth, iDay);
 }
 
 void CFWL_DateTimePicker::SetEditText(const WideString& wsText) {
-  if (!m_pEdit)
+  if (!edit_) {
     return;
+  }
 
-  m_pEdit->SetText(wsText);
-  RepaintRect(m_ClientRect);
+  edit_->SetText(wsText);
+  RepaintRect(client_rect_);
 
   CFWL_Event ev(CFWL_Event::Type::EditChanged);
   DispatchEvent(&ev);
 }
 
 WideString CFWL_DateTimePicker::GetEditText() const {
-  return m_pEdit ? m_pEdit->GetText() : WideString();
+  return edit_ ? edit_->GetText() : WideString();
 }
 
 size_t CFWL_DateTimePicker::GetEditTextLength() const {
-  return m_pEdit ? m_pEdit->GetTextLength() : 0;
+  return edit_ ? edit_->GetTextLength() : 0;
 }
 
 CFX_RectF CFWL_DateTimePicker::GetBBox() const {
-  CFX_RectF rect = m_WidgetRect;
+  CFX_RectF rect = widget_rect_;
   if (NeedsToShowButton())
-    rect.width += m_fBtn;
+    rect.width += btn_;
   if (!IsMonthCalendarVisible())
     return rect;
 
-  CFX_RectF rtMonth = m_pMonthCal->GetWidgetRect();
-  rtMonth.Offset(m_WidgetRect.left, m_WidgetRect.top);
+  CFX_RectF rtMonth = month_cal_->GetWidgetRect();
+  rtMonth.Offset(widget_rect_.left, widget_rect_.top);
   rect.Union(rtMonth);
   return rect;
 }
 
 void CFWL_DateTimePicker::ModifyEditStyleExts(uint32_t dwStyleExtsAdded,
                                               uint32_t dwStyleExtsRemoved) {
-  m_pEdit->ModifyStyleExts(dwStyleExtsAdded, dwStyleExtsRemoved);
+  edit_->ModifyStyleExts(dwStyleExtsAdded, dwStyleExtsRemoved);
 }
 
 void CFWL_DateTimePicker::DrawDropDownButton(CFGAS_GEGraphics* pGraphics,
                                              const CFX_Matrix& mtMatrix) {
   CFWL_ThemeBackground param(CFWL_ThemePart::Part::kDropDownButton, this,
                              pGraphics);
-  param.m_dwStates = m_iBtnState;
-  param.m_PartRect = m_BtnRect;
-  param.m_matrix = mtMatrix;
+  param.states_ = btn_state_;
+  param.part_rect_ = btn_rect_;
+  param.matrix_ = mtMatrix;
   GetThemeProvider()->DrawBackground(param);
 }
 
 WideString CFWL_DateTimePicker::FormatDateString(int32_t iYear,
                                                  int32_t iMonth,
                                                  int32_t iDay) {
-  if (m_Properties.m_dwStyleExts & FWL_STYLEEXT_DTP_ShortDateFormat)
+  if (properties_.style_exts_ & FWL_STYLEEXT_DTP_ShortDateFormat) {
     return WideString::Format(L"%d-%d-%d", iYear, iMonth, iDay);
+  }
 
   return WideString::Format(L"%d Year %d Month %d Day", iYear, iMonth, iDay);
 }
@@ -206,22 +210,23 @@ void CFWL_DateTimePicker::ShowMonthCalendar() {
   if (IsMonthCalendarVisible())
     return;
 
-  CFX_RectF rtMonthCal = m_pMonthCal->GetAutosizedWidgetRect();
+  CFX_RectF rtMonthCal = month_cal_->GetAutosizedWidgetRect();
   float fPopupMin = rtMonthCal.height;
   float fPopupMax = rtMonthCal.height;
-  CFX_RectF rtAnchor = m_WidgetRect;
+  CFX_RectF rtAnchor = widget_rect_;
   rtAnchor.width = rtMonthCal.width;
-  rtMonthCal.left = m_ClientRect.left;
+  rtMonthCal.left = client_rect_.left;
   rtMonthCal.top = rtAnchor.Height();
   GetPopupPos(fPopupMin, fPopupMax, rtAnchor, &rtMonthCal);
-  m_pMonthCal->SetWidgetRect(rtMonthCal);
-  if (m_iYear > 0 && m_iMonth > 0 && m_iDay > 0)
-    m_pMonthCal->SetSelect(m_iYear, m_iMonth, m_iDay);
-  m_pMonthCal->Update();
-  m_pMonthCal->RemoveStates(FWL_STATE_WGT_Invisible);
+  month_cal_->SetWidgetRect(rtMonthCal);
+  if (year_ > 0 && month_ > 0 && day_ > 0) {
+    month_cal_->SetSelect(year_, month_, day_);
+  }
+  month_cal_->Update();
+  month_cal_->RemoveStates(FWL_STATE_WGT_Invisible);
 
-  CFWL_MessageSetFocus msg(m_pMonthCal);
-  m_pEdit->GetDelegate()->OnProcessMessage(&msg);
+  CFWL_MessageSetFocus msg(month_cal_);
+  edit_->GetDelegate()->OnProcessMessage(&msg);
   RepaintInflatedMonthCalRect();
 }
 
@@ -229,28 +234,29 @@ void CFWL_DateTimePicker::HideMonthCalendar() {
   if (!IsMonthCalendarVisible())
     return;
 
-  m_pMonthCal->SetStates(FWL_STATE_WGT_Invisible);
+  month_cal_->SetStates(FWL_STATE_WGT_Invisible);
   RepaintInflatedMonthCalRect();
 }
 
 void CFWL_DateTimePicker::RepaintInflatedMonthCalRect() {
-  CFX_RectF rtInvalidate(0, 0, m_WidgetRect.width, m_WidgetRect.height);
-  CFX_RectF rtCal = m_pMonthCal->GetWidgetRect();
+  CFX_RectF rtInvalidate(0, 0, widget_rect_.width, widget_rect_.height);
+  CFX_RectF rtCal = month_cal_->GetWidgetRect();
   rtInvalidate.Union(rtCal);
   rtInvalidate.Inflate(2, 2);
   RepaintRect(rtInvalidate);
 }
 
 bool CFWL_DateTimePicker::IsMonthCalendarVisible() const {
-  return m_pMonthCal && m_pMonthCal->IsVisible();
+  return month_cal_ && month_cal_->IsVisible();
 }
 
 void CFWL_DateTimePicker::ResetEditAlignment() {
-  if (!m_pEdit)
+  if (!edit_) {
     return;
+  }
 
   uint32_t dwAdd = 0;
-  switch (m_Properties.m_dwStyleExts & FWL_STYLEEXT_DTP_EditHAlignMask) {
+  switch (properties_.style_exts_ & FWL_STYLEEXT_DTP_EditHAlignMask) {
     case FWL_STYLEEXT_DTP_EditHCenter: {
       dwAdd |= FWL_STYLEEXT_EDT_HCenter;
       break;
@@ -264,7 +270,7 @@ void CFWL_DateTimePicker::ResetEditAlignment() {
       break;
     }
   }
-  switch (m_Properties.m_dwStyleExts & FWL_STYLEEXT_DTP_EditVAlignMask) {
+  switch (properties_.style_exts_ & FWL_STYLEEXT_DTP_EditVAlignMask) {
     case FWL_STYLEEXT_DTP_EditVCenter: {
       dwAdd |= FWL_STYLEEXT_EDT_VCenter;
       break;
@@ -278,32 +284,33 @@ void CFWL_DateTimePicker::ResetEditAlignment() {
       break;
     }
   }
-  if (m_Properties.m_dwStyleExts & FWL_STYLEEXT_DTP_EditJustified)
+  if (properties_.style_exts_ & FWL_STYLEEXT_DTP_EditJustified) {
     dwAdd |= FWL_STYLEEXT_EDT_Justified;
+  }
 
-  m_pEdit->ModifyStyleExts(dwAdd, FWL_STYLEEXT_EDT_HAlignMask |
-                                      FWL_STYLEEXT_EDT_HAlignModeMask |
-                                      FWL_STYLEEXT_EDT_VAlignMask);
+  edit_->ModifyStyleExts(dwAdd, FWL_STYLEEXT_EDT_HAlignMask |
+                                    FWL_STYLEEXT_EDT_HAlignModeMask |
+                                    FWL_STYLEEXT_EDT_VAlignMask);
 }
 
 void CFWL_DateTimePicker::ProcessSelChanged(int32_t iYear,
                                             int32_t iMonth,
                                             int32_t iDay) {
-  m_iYear = iYear;
-  m_iMonth = iMonth;
-  m_iDay = iDay;
-  m_pEdit->SetText(FormatDateString(m_iYear, m_iMonth, m_iDay));
-  m_pEdit->Update();
-  RepaintRect(m_ClientRect);
+  year_ = iYear;
+  month_ = iMonth;
+  day_ = iDay;
+  edit_->SetText(FormatDateString(year_, month_, day_));
+  edit_->Update();
+  RepaintRect(client_rect_);
 
-  CFWL_EventSelectChanged ev(this, m_iYear, m_iMonth, m_iDay);
+  CFWL_EventSelectChanged ev(this, year_, month_, day_);
   DispatchEvent(&ev);
 }
 
 bool CFWL_DateTimePicker::NeedsToShowButton() const {
-  return m_Properties.m_dwStates & FWL_STATE_WGT_Focused ||
-         m_pMonthCal->GetStates() & FWL_STATE_WGT_Focused ||
-         m_pEdit->GetStates() & FWL_STATE_WGT_Focused;
+  return properties_.states_ & FWL_STATE_WGT_Focused ||
+         month_cal_->GetStates() & FWL_STATE_WGT_Focused ||
+         edit_->GetStates() & FWL_STATE_WGT_Focused;
 }
 
 void CFWL_DateTimePicker::OnProcessMessage(CFWL_Message* pMessage) {
@@ -316,7 +323,7 @@ void CFWL_DateTimePicker::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     case CFWL_Message::Type::kMouse: {
       CFWL_MessageMouse* pMouse = static_cast<CFWL_MessageMouse*>(pMessage);
-      switch (pMouse->m_dwCmd) {
+      switch (pMouse->cmd_) {
         case CFWL_MessageMouse::MouseCommand::kLeftButtonDown:
           OnLButtonDown(pMouse);
           break;
@@ -335,8 +342,8 @@ void CFWL_DateTimePicker::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     }
     case CFWL_Message::Type::kKey: {
-      if (m_pEdit->GetStates() & FWL_STATE_WGT_Focused) {
-        m_pEdit->GetDelegate()->OnProcessMessage(pMessage);
+      if (edit_->GetStates() & FWL_STATE_WGT_Focused) {
+        edit_->GetDelegate()->OnProcessMessage(pMessage);
         return;
       }
       break;
@@ -355,25 +362,25 @@ void CFWL_DateTimePicker::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
 }
 
 void CFWL_DateTimePicker::OnFocusGained(CFWL_Message* pMsg) {
-  m_Properties.m_dwStates |= FWL_STATE_WGT_Focused;
-  if (m_pEdit && !(m_pEdit->GetStyleExts() & FWL_STYLEEXT_EDT_ReadOnly)) {
-    m_BtnRect =
-        CFX_RectF(m_WidgetRect.width, 0, m_fBtn, m_WidgetRect.height - 1);
+  properties_.states_ |= FWL_STATE_WGT_Focused;
+  if (edit_ && !(edit_->GetStyleExts() & FWL_STYLEEXT_EDT_ReadOnly)) {
+    btn_rect_ = CFX_RectF(widget_rect_.width, 0, btn_, widget_rect_.height - 1);
   }
-  CFX_RectF rtInvalidate(m_BtnRect);
-  pMsg->SetDstTarget(m_pEdit);
-  m_pEdit->GetDelegate()->OnProcessMessage(pMsg);
+  CFX_RectF rtInvalidate(btn_rect_);
+  pMsg->SetDstTarget(edit_);
+  edit_->GetDelegate()->OnProcessMessage(pMsg);
   rtInvalidate.Inflate(2, 2);
   RepaintRect(rtInvalidate);
 }
 
 void CFWL_DateTimePicker::OnFocusLost(CFWL_Message* pMsg) {
-  CFX_RectF rtInvalidate(m_BtnRect);
-  m_Properties.m_dwStates &= ~FWL_STATE_WGT_Focused;
-  m_BtnRect = CFX_RectF();
+  CFX_RectF rtInvalidate(btn_rect_);
+  properties_.states_ &= ~FWL_STATE_WGT_Focused;
+  btn_rect_ = CFX_RectF();
   HideMonthCalendar();
-  if (m_pEdit->GetStates() & FWL_STATE_WGT_Focused)
-    m_pEdit->GetDelegate()->OnProcessMessage(pMsg);
+  if (edit_->GetStates() & FWL_STATE_WGT_Focused) {
+    edit_->GetDelegate()->OnProcessMessage(pMsg);
+  }
   rtInvalidate.Inflate(2, 2);
   RepaintRect(rtInvalidate);
 }
@@ -381,41 +388,44 @@ void CFWL_DateTimePicker::OnFocusLost(CFWL_Message* pMsg) {
 void CFWL_DateTimePicker::OnLButtonDown(CFWL_MessageMouse* pMsg) {
   if (!pMsg)
     return;
-  if (!m_BtnRect.Contains(pMsg->m_pos))
+  if (!btn_rect_.Contains(pMsg->pos_)) {
     return;
+  }
 
   if (IsMonthCalendarVisible()) {
     HideMonthCalendar();
     return;
   }
   ShowMonthCalendar();
-  m_bLBtnDown = true;
-  RepaintRect(m_ClientRect);
+  lbtn_down_ = true;
+  RepaintRect(client_rect_);
 }
 
 void CFWL_DateTimePicker::OnLButtonUp(CFWL_MessageMouse* pMsg) {
   if (!pMsg)
     return;
 
-  m_bLBtnDown = false;
-  if (m_BtnRect.Contains(pMsg->m_pos))
-    m_iBtnState = CFWL_PartState::kHovered;
-  else
-    m_iBtnState = CFWL_PartState::kNormal;
-  RepaintRect(m_BtnRect);
+  lbtn_down_ = false;
+  if (btn_rect_.Contains(pMsg->pos_)) {
+    btn_state_ = CFWL_PartState::kHovered;
+  } else {
+    btn_state_ = CFWL_PartState::kNormal;
+  }
+  RepaintRect(btn_rect_);
 }
 
 void CFWL_DateTimePicker::OnMouseMove(CFWL_MessageMouse* pMsg) {
-  if (!m_BtnRect.Contains(pMsg->m_pos))
-    m_iBtnState = CFWL_PartState::kNormal;
-  RepaintRect(m_BtnRect);
+  if (!btn_rect_.Contains(pMsg->pos_)) {
+    btn_state_ = CFWL_PartState::kNormal;
+  }
+  RepaintRect(btn_rect_);
 }
 
 void CFWL_DateTimePicker::OnMouseLeave(CFWL_MessageMouse* pMsg) {
   if (!pMsg)
     return;
-  m_iBtnState = CFWL_PartState::kNormal;
-  RepaintRect(m_BtnRect);
+  btn_state_ = CFWL_PartState::kNormal;
+  RepaintRect(btn_rect_);
 }
 
 void CFWL_DateTimePicker::GetPopupPos(float fMinHeight,
@@ -427,43 +437,43 @@ void CFWL_DateTimePicker::GetPopupPos(float fMinHeight,
 }
 
 void CFWL_DateTimePicker::ClearText() {
-  m_pEdit->ClearText();
+  edit_->ClearText();
 }
 
 void CFWL_DateTimePicker::SelectAll() {
-  m_pEdit->SelectAll();
+  edit_->SelectAll();
 }
 
 void CFWL_DateTimePicker::ClearSelection() {
-  m_pEdit->ClearSelection();
+  edit_->ClearSelection();
 }
 
 std::optional<WideString> CFWL_DateTimePicker::Copy() {
-  return m_pEdit->Copy();
+  return edit_->Copy();
 }
 
 std::optional<WideString> CFWL_DateTimePicker::Cut() {
-  return m_pEdit->Cut();
+  return edit_->Cut();
 }
 
 bool CFWL_DateTimePicker::Paste(const WideString& wsPaste) {
-  return m_pEdit->Paste(wsPaste);
+  return edit_->Paste(wsPaste);
 }
 
 bool CFWL_DateTimePicker::Undo() {
-  return m_pEdit->Undo();
+  return edit_->Undo();
 }
 
 bool CFWL_DateTimePicker::Redo() {
-  return m_pEdit->Redo();
+  return edit_->Redo();
 }
 
 bool CFWL_DateTimePicker::CanUndo() {
-  return m_pEdit->CanUndo();
+  return edit_->CanUndo();
 }
 
 bool CFWL_DateTimePicker::CanRedo() {
-  return m_pEdit->CanRedo();
+  return edit_->CanRedo();
 }
 
 }  // namespace pdfium

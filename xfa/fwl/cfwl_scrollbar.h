@@ -41,19 +41,19 @@ class CFWL_ScrollBar final : public CFWL_Widget,
   void OnTimerFired() override;
 
   void GetRange(float* fMin, float* fMax) const {
-    *fMin = m_fRangeMin;
-    *fMax = m_fRangeMax;
+    *fMin = range_min_;
+    *fMax = range_max_;
   }
   void SetRange(float fMin, float fMax) {
-    m_fRangeMin = fMin;
-    m_fRangeMax = fMax;
+    range_min_ = fMin;
+    range_max_ = fMax;
   }
-  float GetPageSize() const { return m_fPageSize; }
-  void SetPageSize(float fPageSize) { m_fPageSize = fPageSize; }
-  float GetStepSize() const { return m_fStepSize; }
-  void SetStepSize(float fStepSize) { m_fStepSize = fStepSize; }
-  float GetPos() const { return m_fPos; }
-  void SetPos(float fPos) { m_fPos = fPos; }
+  float GetPageSize() const { return page_size_; }
+  void SetPageSize(float fPageSize) { page_size_ = fPageSize; }
+  float GetStepSize() const { return step_size_; }
+  void SetStepSize(float fStepSize) { step_size_ = fStepSize; }
+  float GetPos() const { return pos_; }
+  void SetPos(float fPos) { pos_ = fPos; }
   void SetTrackPos(float fTrackPos);
 
  private:
@@ -103,30 +103,30 @@ class CFWL_ScrollBar final : public CFWL_Widget,
                     const CFX_RectF& rtItem,
                     CFWL_PartState* pState);
 
-  float m_fRangeMin = 0.0f;
-  float m_fRangeMax = -1.0f;
-  float m_fPageSize = 0.0f;
-  float m_fStepSize = 0.0f;
-  float m_fPos = 0.0f;
-  float m_fTrackPos = 0.0f;
-  CFWL_PartState m_iMinButtonState = CFWL_PartState::kNormal;
-  CFWL_PartState m_iMaxButtonState = CFWL_PartState::kNormal;
-  CFWL_PartState m_iThumbButtonState = CFWL_PartState::kNormal;
-  CFWL_PartState m_iMinTrackState = CFWL_PartState::kNormal;
-  CFWL_PartState m_iMaxTrackState = CFWL_PartState::kNormal;
-  float m_fLastTrackPos = 0.0f;
-  CFX_PointF m_cpTrackPoint;
-  int32_t m_iMouseWheel = 0;
-  float m_fButtonLen = 0.0f;
-  bool m_bMouseDown = false;
-  bool m_bMinSize = false;
-  CFX_RectF m_ClientRect;
-  CFX_RectF m_ThumbRect;
-  CFX_RectF m_MinBtnRect;
-  CFX_RectF m_MaxBtnRect;
-  CFX_RectF m_MinTrackRect;
-  CFX_RectF m_MaxTrackRect;
-  std::unique_ptr<CFX_Timer> m_pTimer;
+  float range_min_ = 0.0f;
+  float range_max_ = -1.0f;
+  float page_size_ = 0.0f;
+  float step_size_ = 0.0f;
+  float pos_ = 0.0f;
+  float track_pos_ = 0.0f;
+  CFWL_PartState min_button_state_ = CFWL_PartState::kNormal;
+  CFWL_PartState max_button_state_ = CFWL_PartState::kNormal;
+  CFWL_PartState thumb_button_state_ = CFWL_PartState::kNormal;
+  CFWL_PartState min_track_state_ = CFWL_PartState::kNormal;
+  CFWL_PartState max_track_state_ = CFWL_PartState::kNormal;
+  float last_track_pos_ = 0.0f;
+  CFX_PointF track_point_;
+  int32_t mouse_wheel_ = 0;
+  float button_len_ = 0.0f;
+  bool mouse_down_ = false;
+  bool min_size_ = false;
+  CFX_RectF client_rect_;
+  CFX_RectF thumb_rect_;
+  CFX_RectF min_btn_rect_;
+  CFX_RectF max_btn_rect_;
+  CFX_RectF min_track_rect_;
+  CFX_RectF max_track_rect_;
+  std::unique_ptr<CFX_Timer> timer_;
 };
 
 }  // namespace pdfium

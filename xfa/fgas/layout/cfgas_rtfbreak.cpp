@@ -27,68 +27,71 @@
 CFGAS_RTFBreak::CFGAS_RTFBreak(Mask<LayoutStyle> dwLayoutStyles)
     : CFGAS_Break(dwLayoutStyles) {
   SetBreakStatus();
-  m_bPagination = !!(m_dwLayoutStyles & LayoutStyle::kPagination);
+  pagination_ = !!(layout_styles_ & LayoutStyle::kPagination);
 }
 
 CFGAS_RTFBreak::~CFGAS_RTFBreak() = default;
 
 void CFGAS_RTFBreak::SetLineStartPos(float fLinePos) {
   int32_t iLinePos = FXSYS_roundf(fLinePos * kConversionFactor);
-  iLinePos = std::min(iLinePos, m_iLineWidth);
-  iLinePos = std::max(iLinePos, m_iLineStart);
-  m_pCurLine->m_iStart = iLinePos;
+  iLinePos = std::min(iLinePos, line_width_);
+  iLinePos = std::max(iLinePos, line_start_);
+  cur_line_->start_ = iLinePos;
 }
 
 void CFGAS_RTFBreak::AddPositionedTab(float fTabPos) {
   int32_t iTabPos = std::min(
-      FXSYS_roundf(fTabPos * kConversionFactor) + m_iLineStart, m_iLineWidth);
-  auto it = std::lower_bound(m_PositionedTabs.begin(), m_PositionedTabs.end(),
+      FXSYS_roundf(fTabPos * kConversionFactor) + line_start_, line_width_);
+  auto it = std::lower_bound(positioned_tabs_.begin(), positioned_tabs_.end(),
                              iTabPos);
-  if (it != m_PositionedTabs.end() && *it == iTabPos)
+  if (it != positioned_tabs_.end() && *it == iTabPos) {
     return;
-  m_PositionedTabs.insert(it, iTabPos);
+  }
+  positioned_tabs_.insert(it, iTabPos);
 }
 
 void CFGAS_RTFBreak::SetUserData(
     const RetainPtr<CFGAS_TextUserData>& pUserData) {
-  if (m_pUserData == pUserData)
+  if (user_data_ == pUserData) {
     return;
+  }
 
   SetBreakStatus();
-  m_pUserData = pUserData;
+  user_data_ = pUserData;
 }
 
 bool CFGAS_RTFBreak::GetPositionedTab(int32_t* iTabPos) const {
-  auto it = std::upper_bound(m_PositionedTabs.begin(), m_PositionedTabs.end(),
+  auto it = std::upper_bound(positioned_tabs_.begin(), positioned_tabs_.end(),
                              *iTabPos);
-  if (it == m_PositionedTabs.end())
+  if (it == positioned_tabs_.end()) {
     return false;
+  }
 
   *iTabPos = *it;
   return true;
 }
 
 CFGAS_Char::BreakType CFGAS_RTFBreak::AppendChar(wchar_t wch) {
-  DCHECK(m_pCurLine);
+  DCHECK(cur_line_);
 
   FX_CHARTYPE chartype = pdfium::unicode::GetCharType(wch);
-  m_pCurLine->m_LineChars.emplace_back(wch, m_iHorizontalScale,
-                                       m_iVerticalScale);
-  CFGAS_Char* pCurChar = &m_pCurLine->m_LineChars.back();
-  pCurChar->m_iFontSize = m_iFontSize;
-  pCurChar->m_dwIdentity = m_dwIdentity;
-  pCurChar->m_pUserData = m_pUserData;
+  cur_line_->line_chars_.emplace_back(wch, horizontal_scale_, vertical_scale_);
+  CFGAS_Char* pCurChar = &cur_line_->line_chars_.back();
+  pCurChar->font_size_ = font_size_;
+  pCurChar->identity_ = identity_;
+  pCurChar->user_data_ = user_data_;
 
   CFGAS_Char::BreakType dwRet1 = CFGAS_Char::BreakType::kNone;
   if (chartype != FX_CHARTYPE::kCombination &&
-      GetUnifiedCharType(m_eCharType) != GetUnifiedCharType(chartype) &&
-      m_eCharType != FX_CHARTYPE::kUnknown &&
-      IsGreaterThanLineWidth(m_pCurLine->GetLineEnd()) &&
-      (m_eCharType != FX_CHARTYPE::kSpace ||
+      GetUnifiedCharType(char_type_) != GetUnifiedCharType(chartype) &&
+      char_type_ != FX_CHARTYPE::kUnknown &&
+      IsGreaterThanLineWidth(cur_line_->GetLineEnd()) &&
+      (char_type_ != FX_CHARTYPE::kSpace ||
        chartype != FX_CHARTYPE::kControl)) {
     dwRet1 = EndBreak(CFGAS_Char::BreakType::kLine);
-    if (!m_pCurLine->m_LineChars.empty())
-      pCurChar = &m_pCurLine->m_LineChars.back();
+    if (!cur_line_->line_chars_.empty()) {
+      pCurChar = &cur_line_->line_chars_.back();
+    }
   }
 
   CFGAS_Char::BreakType dwRet2 = CFGAS_Char::BreakType::kNone;
@@ -118,57 +121,58 @@ CFGAS_Char::BreakType CFGAS_RTFBreak::AppendChar(wchar_t wch) {
       break;
   }
 
-  m_eCharType = chartype;
+  char_type_ = chartype;
   return std::max(dwRet1, dwRet2);
 }
 
 void CFGAS_RTFBreak::AppendChar_Combination(CFGAS_Char* pCurChar) {
   std::optional<uint16_t> iCharWidthRet;
-  if (m_pFont) {
-    iCharWidthRet = m_pFont->GetCharWidth(pCurChar->char_code());
+  if (font_) {
+    iCharWidthRet = font_->GetCharWidth(pCurChar->char_code());
   }
   FX_SAFE_INT32 iCharWidth = iCharWidthRet.value_or(0);
-  iCharWidth *= m_iFontSize;
-  iCharWidth *= m_iHorizontalScale;
+  iCharWidth *= font_size_;
+  iCharWidth *= horizontal_scale_;
   iCharWidth /= 100;
   CFGAS_Char* pLastChar = GetLastChar(0, false, true);
   if (pLastChar && pLastChar->GetCharType() > FX_CHARTYPE::kCombination)
     iCharWidth *= -1;
   else
-    m_eCharType = FX_CHARTYPE::kCombination;
+    char_type_ = FX_CHARTYPE::kCombination;
 
   int32_t iCharWidthValid = iCharWidth.ValueOrDefault(0);
-  pCurChar->m_iCharWidth = iCharWidthValid;
+  pCurChar->char_width_ = iCharWidthValid;
   if (iCharWidthValid > 0) {
-    FX_SAFE_INT32 checked_width = m_pCurLine->m_iWidth;
+    FX_SAFE_INT32 checked_width = cur_line_->width_;
     checked_width += iCharWidthValid;
     if (!checked_width.IsValid())
       return;
 
-    m_pCurLine->m_iWidth = checked_width.ValueOrDie();
+    cur_line_->width_ = checked_width.ValueOrDie();
   }
 }
 
 void CFGAS_RTFBreak::AppendChar_Tab(CFGAS_Char* pCurChar) {
-  if (!(m_dwLayoutStyles & LayoutStyle::kExpandTab))
+  if (!(layout_styles_ & LayoutStyle::kExpandTab)) {
     return;
+  }
 
-  int32_t& iLineWidth = m_pCurLine->m_iWidth;
+  int32_t& iLineWidth = cur_line_->width_;
   int32_t iCharWidth = iLineWidth;
   FX_SAFE_INT32 iSafeCharWidth;
   if (GetPositionedTab(&iCharWidth)) {
     iSafeCharWidth = iCharWidth;
   } else {
     // Tab width is >= 160000, so this part does not need to be checked.
-    DCHECK(m_iTabWidth >= kMinimumTabWidth);
-    iSafeCharWidth = iLineWidth / m_iTabWidth + 1;
-    iSafeCharWidth *= m_iTabWidth;
+    DCHECK(tab_width_ >= kMinimumTabWidth);
+    iSafeCharWidth = iLineWidth / tab_width_ + 1;
+    iSafeCharWidth *= tab_width_;
   }
   iSafeCharWidth -= iLineWidth;
 
   iCharWidth = iSafeCharWidth.ValueOrDefault(0);
 
-  pCurChar->m_iCharWidth = iCharWidth;
+  pCurChar->char_width_ = iCharWidth;
   iLineWidth += iCharWidth;
 }
 
@@ -186,8 +190,9 @@ CFGAS_Char::BreakType CFGAS_RTFBreak::AppendChar_Control(CFGAS_Char* pCurChar) {
       dwRet2 = CFGAS_Char::BreakType::kParagraph;
       break;
     default:
-      if (pCurChar->char_code() == m_wParagraphBreakChar)
+      if (pCurChar->char_code() == w_paragraph_break_char_) {
         dwRet2 = CFGAS_Char::BreakType::kParagraph;
+      }
       break;
   }
   if (dwRet2 != CFGAS_Char::BreakType::kNone)
@@ -197,43 +202,43 @@ CFGAS_Char::BreakType CFGAS_RTFBreak::AppendChar_Control(CFGAS_Char* pCurChar) {
 }
 
 CFGAS_Char::BreakType CFGAS_RTFBreak::AppendChar_Arabic(CFGAS_Char* pCurChar) {
-  m_pCurLine->IncrementArabicCharCount();
+  cur_line_->IncrementArabicCharCount();
 
   CFGAS_Char* pLastChar = nullptr;
   wchar_t wForm;
   bool bAlef = false;
-  if (m_eCharType >= FX_CHARTYPE::kArabicAlef &&
-      m_eCharType <= FX_CHARTYPE::kArabicDistortion) {
+  if (char_type_ >= FX_CHARTYPE::kArabicAlef &&
+      char_type_ <= FX_CHARTYPE::kArabicDistortion) {
     pLastChar = GetLastChar(1, false, true);
     if (pLastChar) {
-      m_pCurLine->m_iWidth -= pLastChar->m_iCharWidth;
+      cur_line_->width_ -= pLastChar->char_width_;
       CFGAS_Char* pPrevChar = GetLastChar(2, false, true);
       wForm = pdfium::GetArabicFormChar(pLastChar, pPrevChar, pCurChar);
       bAlef = (wForm == pdfium::unicode::kZeroWidthNoBreakSpace &&
                pLastChar->GetCharType() == FX_CHARTYPE::kArabicAlef);
       FX_SAFE_INT32 iCharWidth = 0;
-      if (m_pFont) {
-        std::optional<uint16_t> iCharWidthRet = m_pFont->GetCharWidth(wForm);
+      if (font_) {
+        std::optional<uint16_t> iCharWidthRet = font_->GetCharWidth(wForm);
         if (iCharWidthRet.has_value()) {
           iCharWidth = iCharWidthRet.value();
         } else {
-          iCharWidthRet = m_pFont->GetCharWidth(pLastChar->char_code());
+          iCharWidthRet = font_->GetCharWidth(pLastChar->char_code());
           iCharWidth = iCharWidthRet.value_or(0);
         }
       }
-      iCharWidth *= m_iFontSize;
-      iCharWidth *= m_iHorizontalScale;
+      iCharWidth *= font_size_;
+      iCharWidth *= horizontal_scale_;
       iCharWidth /= 100;
 
       int iCharWidthValid = iCharWidth.ValueOrDefault(0);
-      pLastChar->m_iCharWidth = iCharWidthValid;
+      pLastChar->char_width_ = iCharWidthValid;
 
-      FX_SAFE_INT32 checked_width = m_pCurLine->m_iWidth;
+      FX_SAFE_INT32 checked_width = cur_line_->width_;
       checked_width += iCharWidthValid;
       if (!checked_width.IsValid())
         return CFGAS_Char::BreakType::kNone;
 
-      m_pCurLine->m_iWidth = checked_width.ValueOrDie();
+      cur_line_->width_ = checked_width.ValueOrDie();
       iCharWidth = 0;
     }
   }
@@ -241,28 +246,29 @@ CFGAS_Char::BreakType CFGAS_RTFBreak::AppendChar_Arabic(CFGAS_Char* pCurChar) {
   wForm =
       pdfium::GetArabicFormChar(pCurChar, bAlef ? nullptr : pLastChar, nullptr);
   FX_SAFE_INT32 iCharWidth = 0;
-  if (m_pFont) {
-    std::optional<uint16_t> iCharWidthRet = m_pFont->GetCharWidth(wForm);
+  if (font_) {
+    std::optional<uint16_t> iCharWidthRet = font_->GetCharWidth(wForm);
     if (!iCharWidthRet.has_value())
-      iCharWidthRet = m_pFont->GetCharWidth(pCurChar->char_code());
+      iCharWidthRet = font_->GetCharWidth(pCurChar->char_code());
     iCharWidth = iCharWidthRet.value_or(0);
-    iCharWidth *= m_iFontSize;
-    iCharWidth *= m_iHorizontalScale;
+    iCharWidth *= font_size_;
+    iCharWidth *= horizontal_scale_;
     iCharWidth /= 100;
   }
 
   int iCharWidthValid = iCharWidth.ValueOrDefault(0);
-  pCurChar->m_iCharWidth = iCharWidthValid;
+  pCurChar->char_width_ = iCharWidthValid;
 
-  FX_SAFE_INT32 checked_width = m_pCurLine->m_iWidth;
+  FX_SAFE_INT32 checked_width = cur_line_->width_;
   checked_width += iCharWidthValid;
   if (!checked_width.IsValid())
     return CFGAS_Char::BreakType::kNone;
 
-  m_pCurLine->m_iWidth = checked_width.ValueOrDie();
+  cur_line_->width_ = checked_width.ValueOrDie();
 
-  if (IsGreaterThanLineWidth(m_pCurLine->GetLineEnd()))
+  if (IsGreaterThanLineWidth(cur_line_->GetLineEnd())) {
     return EndBreak(CFGAS_Char::BreakType::kLine);
+  }
   return CFGAS_Char::BreakType::kNone;
 }
 
@@ -270,25 +276,25 @@ CFGAS_Char::BreakType CFGAS_RTFBreak::AppendChar_Others(CFGAS_Char* pCurChar) {
   FX_CHARTYPE chartype = pCurChar->GetCharType();
   wchar_t wForm = pCurChar->char_code();
   FX_SAFE_INT32 iCharWidth = 0;
-  if (m_pFont) {
-    iCharWidth = m_pFont->GetCharWidth(wForm).value_or(0);
+  if (font_) {
+    iCharWidth = font_->GetCharWidth(wForm).value_or(0);
   }
-  iCharWidth *= m_iFontSize;
-  iCharWidth *= m_iHorizontalScale;
+  iCharWidth *= font_size_;
+  iCharWidth *= horizontal_scale_;
   iCharWidth /= 100;
-  iCharWidth += m_iCharSpace;
+  iCharWidth += char_space_;
 
   int iValidCharWidth = iCharWidth.ValueOrDefault(0);
-  pCurChar->m_iCharWidth = iValidCharWidth;
+  pCurChar->char_width_ = iValidCharWidth;
 
-  FX_SAFE_INT32 checked_width = m_pCurLine->m_iWidth;
+  FX_SAFE_INT32 checked_width = cur_line_->width_;
   checked_width += iValidCharWidth;
   if (!checked_width.IsValid())
     return CFGAS_Char::BreakType::kNone;
 
-  m_pCurLine->m_iWidth = checked_width.ValueOrDie();
+  cur_line_->width_ = checked_width.ValueOrDie();
   if (chartype != FX_CHARTYPE::kSpace &&
-      IsGreaterThanLineWidth(m_pCurLine->GetLineEnd())) {
+      IsGreaterThanLineWidth(cur_line_->GetLineEnd())) {
     return EndBreak(CFGAS_Char::BreakType::kLine);
   }
   return CFGAS_Char::BreakType::kNone;
@@ -297,45 +303,47 @@ CFGAS_Char::BreakType CFGAS_RTFBreak::AppendChar_Others(CFGAS_Char* pCurChar) {
 CFGAS_Char::BreakType CFGAS_RTFBreak::EndBreak(CFGAS_Char::BreakType dwStatus) {
   DCHECK(dwStatus != CFGAS_Char::BreakType::kNone);
 
-  ++m_dwIdentity;
-  if (!m_pCurLine->m_LinePieces.empty()) {
+  ++identity_;
+  if (!cur_line_->line_pieces_.empty()) {
     if (dwStatus != CFGAS_Char::BreakType::kPiece)
-      m_pCurLine->m_LinePieces.back().SetStatus(dwStatus);
-    return m_pCurLine->m_LinePieces.back().GetStatus();
+      cur_line_->line_pieces_.back().SetStatus(dwStatus);
+    return cur_line_->line_pieces_.back().GetStatus();
   }
 
   if (HasLine()) {
-    if (m_Lines[m_iReadyLineIndex].m_LinePieces.empty())
+    if (lines_[ready_line_index_].line_pieces_.empty()) {
       return CFGAS_Char::BreakType::kNone;
+    }
 
     if (dwStatus != CFGAS_Char::BreakType::kPiece)
-      m_Lines[m_iReadyLineIndex].m_LinePieces.back().SetStatus(dwStatus);
-    return m_Lines[m_iReadyLineIndex].m_LinePieces.back().GetStatus();
+      lines_[ready_line_index_].line_pieces_.back().SetStatus(dwStatus);
+    return lines_[ready_line_index_].line_pieces_.back().GetStatus();
   }
 
-  CFGAS_Char* tc = m_pCurLine->LastChar();
+  CFGAS_Char* tc = cur_line_->LastChar();
   if (!tc)
     return CFGAS_Char::BreakType::kNone;
 
-  tc->m_dwStatus = dwStatus;
+  tc->status_ = dwStatus;
   if (dwStatus == CFGAS_Char::BreakType::kPiece)
     return dwStatus;
 
-  m_iReadyLineIndex = m_pCurLine == &m_Lines[0] ? 0 : 1;
-  CFGAS_BreakLine* pNextLine = &m_Lines[1 - m_iReadyLineIndex];
-  bool bAllChars = m_iAlignment == LineAlignment::Justified ||
-                   m_iAlignment == LineAlignment::Distributed;
+  ready_line_index_ = cur_line_ == &lines_[0] ? 0 : 1;
+  CFGAS_BreakLine* pNextLine = &lines_[1 - ready_line_index_];
+  bool bAllChars = alignment_ == LineAlignment::Justified ||
+                   alignment_ == LineAlignment::Distributed;
 
   if (!EndBreakSplitLine(pNextLine, bAllChars, dwStatus)) {
     std::deque<TPO> tpos = EndBreakBidiLine(dwStatus);
-    if (!m_bPagination && m_iAlignment != LineAlignment::Left)
+    if (!pagination_ && alignment_ != LineAlignment::Left) {
       EndBreakAlignment(tpos, bAllChars, dwStatus);
+    }
   }
-  m_pCurLine = pNextLine;
-  m_pCurLine->m_iStart = m_iLineStart;
+  cur_line_ = pNextLine;
+  cur_line_->start_ = line_start_;
 
   CFGAS_Char* pTC = GetLastChar(0, false, true);
-  m_eCharType = pTC ? pTC->GetCharType() : FX_CHARTYPE::kUnknown;
+  char_type_ = pTC ? pTC->GetCharType() : FX_CHARTYPE::kUnknown;
   return dwStatus;
 }
 
@@ -343,34 +351,34 @@ bool CFGAS_RTFBreak::EndBreakSplitLine(CFGAS_BreakLine* pNextLine,
                                        bool bAllChars,
                                        CFGAS_Char::BreakType dwStatus) {
   bool bDone = false;
-  if (IsGreaterThanLineWidth(m_pCurLine->GetLineEnd())) {
-    const CFGAS_Char* tc = m_pCurLine->LastChar();
+  if (IsGreaterThanLineWidth(cur_line_->GetLineEnd())) {
+    const CFGAS_Char* tc = cur_line_->LastChar();
     switch (tc->GetCharType()) {
       case FX_CHARTYPE::kTab:
       case FX_CHARTYPE::kControl:
       case FX_CHARTYPE::kSpace:
         break;
       default:
-        SplitTextLine(m_pCurLine, pNextLine, !m_bPagination && bAllChars);
+        SplitTextLine(cur_line_, pNextLine, !pagination_ && bAllChars);
         bDone = true;
         break;
     }
   }
 
-  if (!m_bPagination) {
+  if (!pagination_) {
     if (bAllChars && !bDone) {
-      int32_t endPos = m_pCurLine->GetLineEnd();
-      GetBreakPos(m_pCurLine->m_LineChars, bAllChars, true, &endPos);
+      int32_t endPos = cur_line_->GetLineEnd();
+      GetBreakPos(cur_line_->line_chars_, bAllChars, true, &endPos);
     }
     return false;
   }
 
-  const CFGAS_Char* pCurChars = m_pCurLine->m_LineChars.data();
+  const CFGAS_Char* pCurChars = cur_line_->line_chars_.data();
   CFGAS_BreakPiece tp;
-  tp.SetChars(&m_pCurLine->m_LineChars);
+  tp.SetChars(&cur_line_->line_chars_);
   bool bNew = true;
   uint32_t dwIdentity = static_cast<uint32_t>(-1);
-  int32_t iLast = fxcrt::CollectionSize<int32_t>(m_pCurLine->m_LineChars) - 1;
+  int32_t iLast = fxcrt::CollectionSize<int32_t>(cur_line_->line_chars_) - 1;
   int32_t j = 0;
   for (int32_t i = 0; i <= iLast;) {
     const CFGAS_Char* pTC = UNSAFE_TODO(pCurChars + i);
@@ -378,28 +386,28 @@ bool CFGAS_RTFBreak::EndBreakSplitLine(CFGAS_BreakLine* pNextLine,
       tp.SetStartChar(i);
       tp.IncrementStartPos(tp.GetWidth());
       tp.SetWidth(0);
-      tp.SetStatus(pTC->m_dwStatus);
-      tp.SetFontSize(pTC->m_iFontSize);
+      tp.SetStatus(pTC->status_);
+      tp.SetFontSize(pTC->font_size_);
       tp.SetHorizontalScale(pTC->horizonal_scale());
       tp.SetVerticalScale(pTC->vertical_scale());
-      dwIdentity = pTC->m_dwIdentity;
-      tp.SetUserData(pTC->m_pUserData);
+      dwIdentity = pTC->identity_;
+      tp.SetUserData(pTC->user_data_);
       j = i;
       bNew = false;
     }
 
-    if (i == iLast || pTC->m_dwStatus != CFGAS_Char::BreakType::kNone ||
-        pTC->m_dwIdentity != dwIdentity) {
-      if (pTC->m_dwIdentity == dwIdentity) {
-        tp.SetStatus(pTC->m_dwStatus);
-        tp.IncrementWidth(pTC->m_iCharWidth);
+    if (i == iLast || pTC->status_ != CFGAS_Char::BreakType::kNone ||
+        pTC->identity_ != dwIdentity) {
+      if (pTC->identity_ == dwIdentity) {
+        tp.SetStatus(pTC->status_);
+        tp.IncrementWidth(pTC->char_width_);
         ++i;
       }
       tp.SetCharCount(i - j);
-      m_pCurLine->m_LinePieces.push_back(tp);
+      cur_line_->line_pieces_.push_back(tp);
       bNew = true;
     } else {
-      tp.IncrementWidth(pTC->m_iCharWidth);
+      tp.IncrementWidth(pTC->char_width_);
       ++i;
     }
   }
@@ -409,30 +417,30 @@ bool CFGAS_RTFBreak::EndBreakSplitLine(CFGAS_BreakLine* pNextLine,
 std::deque<CFGAS_Break::TPO> CFGAS_RTFBreak::EndBreakBidiLine(
     CFGAS_Char::BreakType dwStatus) {
   CFGAS_Char* pTC;
-  std::vector<CFGAS_Char>& chars = m_pCurLine->m_LineChars;
-  if (!m_bPagination && m_pCurLine->HasArabicChar()) {
+  std::vector<CFGAS_Char>& chars = cur_line_->line_chars_;
+  if (!pagination_ && cur_line_->HasArabicChar()) {
     size_t iBidiNum = 0;
-    for (size_t i = 0; i < m_pCurLine->m_LineChars.size(); ++i) {
+    for (size_t i = 0; i < cur_line_->line_chars_.size(); ++i) {
       pTC = &chars[i];
-      pTC->m_iBidiPos = static_cast<int32_t>(i);
+      pTC->bidi_pos_ = static_cast<int32_t>(i);
       if (pTC->GetCharType() != FX_CHARTYPE::kControl)
         iBidiNum = i;
       if (i == 0)
-        pTC->m_iBidiLevel = 1;
+        pTC->bidi_level_ = 1;
     }
     CFGAS_Char::BidiLine(&chars, iBidiNum + 1);
   } else {
-    for (size_t i = 0; i < m_pCurLine->m_LineChars.size(); ++i) {
+    for (size_t i = 0; i < cur_line_->line_chars_.size(); ++i) {
       pTC = &chars[i];
-      pTC->m_iBidiLevel = 0;
-      pTC->m_iBidiPos = 0;
-      pTC->m_iBidiOrder = 0;
+      pTC->bidi_level_ = 0;
+      pTC->bidi_pos_ = 0;
+      pTC->bidi_order_ = 0;
     }
   }
 
   CFGAS_BreakPiece tp;
   tp.SetStatus(CFGAS_Char::BreakType::kPiece);
-  tp.SetStartPos(m_pCurLine->m_iStart);
+  tp.SetStartPos(cur_line_->start_);
   tp.SetChars(&chars);
 
   int32_t iBidiLevel = -1;
@@ -441,32 +449,31 @@ std::deque<CFGAS_Break::TPO> CFGAS_RTFBreak::EndBreakBidiLine(
   uint32_t dwIdentity = static_cast<uint32_t>(-1);
   int32_t i = 0;
   int32_t j = 0;
-  int32_t iCount = fxcrt::CollectionSize<int32_t>(m_pCurLine->m_LineChars);
+  int32_t iCount = fxcrt::CollectionSize<int32_t>(cur_line_->line_chars_);
   while (i < iCount) {
     pTC = &chars[i];
     if (iBidiLevel < 0) {
-      iBidiLevel = pTC->m_iBidiLevel;
-      iCharWidth = pTC->m_iCharWidth;
+      iBidiLevel = pTC->bidi_level_;
+      iCharWidth = pTC->char_width_;
       tp.SetWidth(iCharWidth < 1 ? 0 : iCharWidth);
       tp.SetBidiLevel(iBidiLevel);
-      tp.SetBidiPos(pTC->m_iBidiOrder);
-      tp.SetFontSize(pTC->m_iFontSize);
+      tp.SetBidiPos(pTC->bidi_order_);
+      tp.SetFontSize(pTC->font_size_);
       tp.SetHorizontalScale(pTC->horizonal_scale());
       tp.SetVerticalScale(pTC->vertical_scale());
-      dwIdentity = pTC->m_dwIdentity;
-      tp.SetUserData(pTC->m_pUserData);
+      dwIdentity = pTC->identity_;
+      tp.SetUserData(pTC->user_data_);
       tp.SetStatus(CFGAS_Char::BreakType::kPiece);
       ++i;
-    } else if (iBidiLevel != pTC->m_iBidiLevel ||
-               pTC->m_dwIdentity != dwIdentity) {
+    } else if (iBidiLevel != pTC->bidi_level_ || pTC->identity_ != dwIdentity) {
       tp.SetCharCount(i - tp.GetStartChar());
-      m_pCurLine->m_LinePieces.push_back(tp);
+      cur_line_->line_pieces_.push_back(tp);
       tp.IncrementStartPos(tp.GetWidth());
       tp.SetStartChar(i);
       tpos.push_back({j++, tp.GetBidiPos()});
       iBidiLevel = -1;
     } else {
-      iCharWidth = pTC->m_iCharWidth;
+      iCharWidth = pTC->char_width_;
       if (iCharWidth > 0)
         tp.IncrementWidth(iCharWidth);
       ++i;
@@ -476,14 +483,14 @@ std::deque<CFGAS_Break::TPO> CFGAS_RTFBreak::EndBreakBidiLine(
   if (i > tp.GetStartChar()) {
     tp.SetStatus(dwStatus);
     tp.SetCharCount(i - tp.GetStartChar());
-    m_pCurLine->m_LinePieces.push_back(tp);
+    cur_line_->line_pieces_.push_back(tp);
     tpos.push_back({j, tp.GetBidiPos()});
   }
 
   std::sort(tpos.begin(), tpos.end());
-  int32_t iStartPos = m_pCurLine->m_iStart;
+  int32_t iStartPos = cur_line_->start_;
   for (const auto& it : tpos) {
-    CFGAS_BreakPiece& ttp = m_pCurLine->m_LinePieces[it.index];
+    CFGAS_BreakPiece& ttp = cur_line_->line_pieces_[it.index];
     ttp.SetStartPos(iStartPos);
     iStartPos += ttp.GetWidth();
   }
@@ -493,11 +500,11 @@ std::deque<CFGAS_Break::TPO> CFGAS_RTFBreak::EndBreakBidiLine(
 void CFGAS_RTFBreak::EndBreakAlignment(const std::deque<TPO>& tpos,
                                        bool bAllChars,
                                        CFGAS_Char::BreakType dwStatus) {
-  int32_t iNetWidth = m_pCurLine->m_iWidth;
+  int32_t iNetWidth = cur_line_->width_;
   int32_t iGapChars = 0;
   bool bFind = false;
   for (const TPO& pos : pdfium::Reversed(tpos)) {
-    const CFGAS_BreakPiece& ttp = m_pCurLine->m_LinePieces[pos.index];
+    const CFGAS_BreakPiece& ttp = cur_line_->line_pieces_[pos.index];
     if (!bFind)
       iNetWidth = ttp.GetEndPos();
 
@@ -505,15 +512,16 @@ void CFGAS_RTFBreak::EndBreakAlignment(const std::deque<TPO>& tpos,
     int32_t j = bArabic ? 0 : ttp.GetCharCount() - 1;
     while (j > -1 && j < ttp.GetCharCount()) {
       const CFGAS_Char* tc = ttp.GetChar(j);
-      if (tc->m_eLineBreakType == FX_LINEBREAKTYPE::kDIRECT_BRK)
+      if (tc->line_break_type_ == FX_LINEBREAKTYPE::kDIRECT_BRK) {
         ++iGapChars;
+      }
 
       if (!bFind || !bAllChars) {
         FX_CHARTYPE dwCharType = tc->GetCharType();
         if (dwCharType == FX_CHARTYPE::kSpace ||
             dwCharType == FX_CHARTYPE::kControl) {
           if (!bFind) {
-            int32_t iCharWidth = tc->m_iCharWidth;
+            int32_t iCharWidth = tc->char_width_;
             if (bAllChars && iCharWidth > 0)
               iNetWidth -= iCharWidth;
           }
@@ -529,13 +537,13 @@ void CFGAS_RTFBreak::EndBreakAlignment(const std::deque<TPO>& tpos,
       break;
   }
 
-  int32_t iOffset = m_iLineWidth - iNetWidth;
-  if (iGapChars > 0 && (m_iAlignment == LineAlignment::Distributed ||
-                        (m_iAlignment == LineAlignment::Justified &&
+  int32_t iOffset = line_width_ - iNetWidth;
+  if (iGapChars > 0 && (alignment_ == LineAlignment::Distributed ||
+                        (alignment_ == LineAlignment::Justified &&
                          dwStatus != CFGAS_Char::BreakType::kParagraph))) {
     int32_t iStart = -1;
     for (const auto& tpo : tpos) {
-      CFGAS_BreakPiece& ttp = m_pCurLine->m_LinePieces[tpo.index];
+      CFGAS_BreakPiece& ttp = cur_line_->line_pieces_[tpo.index];
       if (iStart < 0)
         iStart = ttp.GetStartPos();
       else
@@ -543,12 +551,12 @@ void CFGAS_RTFBreak::EndBreakAlignment(const std::deque<TPO>& tpos,
 
       for (int32_t j = 0; j < ttp.GetCharCount(); ++j) {
         CFGAS_Char* tc = ttp.GetChar(j);
-        if (tc->m_eLineBreakType != FX_LINEBREAKTYPE::kDIRECT_BRK ||
-            tc->m_iCharWidth < 0) {
+        if (tc->line_break_type_ != FX_LINEBREAKTYPE::kDIRECT_BRK ||
+            tc->char_width_ < 0) {
           continue;
         }
         int32_t k = iOffset / iGapChars;
-        tc->m_iCharWidth += k;
+        tc->char_width_ += k;
         ttp.IncrementWidth(k);
         iOffset -= k;
         --iGapChars;
@@ -557,13 +565,15 @@ void CFGAS_RTFBreak::EndBreakAlignment(const std::deque<TPO>& tpos,
       }
       iStart += ttp.GetWidth();
     }
-  } else if (m_iAlignment == LineAlignment::Right ||
-             m_iAlignment == LineAlignment::Center) {
-    if (m_iAlignment == LineAlignment::Center)
+  } else if (alignment_ == LineAlignment::Right ||
+             alignment_ == LineAlignment::Center) {
+    if (alignment_ == LineAlignment::Center) {
       iOffset /= 2;
+    }
     if (iOffset > 0) {
-      for (auto& ttp : m_pCurLine->m_LinePieces)
+      for (auto& ttp : cur_line_->line_pieces_) {
         ttp.IncrementStartPos(iOffset);
+      }
     }
   }
 }
@@ -582,7 +592,7 @@ int32_t CFGAS_RTFBreak::GetBreakPos(std::vector<CFGAS_Char>& tca,
   int32_t iIndirectPos = -1;
   int32_t iLast = -1;
   int32_t iLastPos = -1;
-  if (*pEndPos <= m_iLineWidth) {
+  if (*pEndPos <= line_width_) {
     if (!bAllChars)
       return iLength;
 
@@ -594,10 +604,10 @@ int32_t CFGAS_RTFBreak::GetBreakPos(std::vector<CFGAS_Char>& tca,
   CFGAS_Char* pCur = UNSAFE_TODO(pCharArray + iLength);
   --iLength;
   if (bAllChars)
-    pCur->m_eLineBreakType = FX_LINEBREAKTYPE::kUNKNOWN;
+    pCur->line_break_type_ = FX_LINEBREAKTYPE::kUNKNOWN;
 
   FX_BREAKPROPERTY nNext = pdfium::unicode::GetBreakProperty(pCur->char_code());
-  int32_t iCharWidth = pCur->m_iCharWidth;
+  int32_t iCharWidth = pCur->char_width_;
   if (iCharWidth > 0)
     *pEndPos -= iCharWidth;
 
@@ -621,11 +631,11 @@ int32_t CFGAS_RTFBreak::GetBreakPos(std::vector<CFGAS_Char>& tca,
                   : GetLineBreakTypeFromPair(nCur, nNext);
     }
     if (bAllChars)
-      pCur->m_eLineBreakType = eType;
+      pCur->line_break_type_ = eType;
 
     if (!bOnlyBrk) {
-      iCharWidth = pCur->m_iCharWidth;
-      if (*pEndPos <= m_iLineWidth || bNeedBreak) {
+      iCharWidth = pCur->char_width_;
+      if (*pEndPos <= line_width_ || bNeedBreak) {
         if (eType == FX_LINEBREAKTYPE::kDIRECT_BRK && iBreak < 0) {
           iBreak = iLength;
           iBreakPos = *pEndPos;
@@ -670,36 +680,37 @@ void CFGAS_RTFBreak::SplitTextLine(CFGAS_BreakLine* pCurLine,
   DCHECK(pCurLine);
   DCHECK(pNextLine);
 
-  if (pCurLine->m_LineChars.size() < 2)
+  if (pCurLine->line_chars_.size() < 2) {
     return;
+  }
 
   int32_t iEndPos = pCurLine->GetLineEnd();
-  std::vector<CFGAS_Char>& curChars = pCurLine->m_LineChars;
+  std::vector<CFGAS_Char>& curChars = pCurLine->line_chars_;
   int32_t iCharPos = GetBreakPos(curChars, bAllChars, false, &iEndPos);
   if (iCharPos < 0)
     iCharPos = 0;
 
   ++iCharPos;
-  if (iCharPos >= fxcrt::CollectionSize<int32_t>(pCurLine->m_LineChars)) {
+  if (iCharPos >= fxcrt::CollectionSize<int32_t>(pCurLine->line_chars_)) {
     pNextLine->Clear();
-    curChars[iCharPos - 1].m_eLineBreakType = FX_LINEBREAKTYPE::kUNKNOWN;
+    curChars[iCharPos - 1].line_break_type_ = FX_LINEBREAKTYPE::kUNKNOWN;
     return;
   }
 
-  pNextLine->m_LineChars =
+  pNextLine->line_chars_ =
       std::vector<CFGAS_Char>(curChars.begin() + iCharPos, curChars.end());
   curChars.erase(curChars.begin() + iCharPos, curChars.end());
-  pNextLine->m_iStart = pCurLine->m_iStart;
-  pNextLine->m_iWidth = pCurLine->GetLineEnd() - iEndPos;
-  pCurLine->m_iWidth = iEndPos;
-  curChars[iCharPos - 1].m_eLineBreakType = FX_LINEBREAKTYPE::kUNKNOWN;
+  pNextLine->start_ = pCurLine->start_;
+  pNextLine->width_ = pCurLine->GetLineEnd() - iEndPos;
+  pCurLine->width_ = iEndPos;
+  curChars[iCharPos - 1].line_break_type_ = FX_LINEBREAKTYPE::kUNKNOWN;
 
-  for (size_t i = 0; i < pNextLine->m_LineChars.size(); ++i) {
-    if (pNextLine->m_LineChars[i].GetCharType() >= FX_CHARTYPE::kArabicAlef) {
+  for (size_t i = 0; i < pNextLine->line_chars_.size(); ++i) {
+    if (pNextLine->line_chars_[i].GetCharType() >= FX_CHARTYPE::kArabicAlef) {
       pCurLine->DecrementArabicCharCount();
       pNextLine->IncrementArabicCharCount();
     }
-    pNextLine->m_LineChars[i].m_dwStatus = CFGAS_Char::BreakType::kNone;
+    pNextLine->line_chars_[i].status_ = CFGAS_Char::BreakType::kNone;
   }
 }
 
@@ -764,8 +775,9 @@ size_t CFGAS_RTFBreak::GetDisplayPos(const CFGAS_TextPiece* pPiece,
 
     if (!bEmptyChar) {
       current_char_pos.m_GlyphIndex = pFont->GetGlyphIndex(wForm);
-      if (current_char_pos.m_GlyphIndex == 0xFFFF)
+      if (current_char_pos.m_GlyphIndex == 0xFFFF) {
         current_char_pos.m_GlyphIndex = pFont->GetGlyphIndex(wch);
+      }
 #if BUILDFLAG(IS_APPLE)
       current_char_pos.m_ExtGID = current_char_pos.m_GlyphIndex;
 #endif

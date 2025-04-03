@@ -81,9 +81,9 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
 
   class Properties {
    public:
-    uint32_t m_dwStyles = FWL_STYLE_WGT_Child;  // Mask of FWL_STYLE_*_*.
-    uint32_t m_dwStyleExts = 0;                 // Mask of FWL_STYLEEXT_*_*.
-    uint32_t m_dwStates = 0;                    // Mask of FWL_STATE_*_*.
+    uint32_t styles_ = FWL_STYLE_WGT_Child;  // Mask of FWL_STYLE_*_*.
+    uint32_t style_exts_ = 0;                // Mask of FWL_STYLEEXT_*_*.
+    uint32_t states_ = 0;                    // Mask of FWL_STATE_*_*.
   };
 
   class ScopedUpdateLock {
@@ -129,38 +129,38 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
   bool IsPopup() const;
   bool IsChild() const;
 
-  CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr; }
-  CFWL_Widget* GetOuter() const { return m_pOuter; }
+  CFWL_WidgetMgr* GetWidgetMgr() const { return widget_mgr_; }
+  CFWL_Widget* GetOuter() const { return outer_; }
   CFWL_Widget* GetOutmost() const;
 
   void ModifyStyles(uint32_t dwStylesAdded, uint32_t dwStylesRemoved);
-  uint32_t GetStyleExts() const { return m_Properties.m_dwStyleExts; }
-  uint32_t GetStates() const { return m_Properties.m_dwStates; }
+  uint32_t GetStyleExts() const { return properties_.style_exts_; }
+  uint32_t GetStates() const { return properties_.states_; }
 
   CFX_PointF TransformTo(CFWL_Widget* pWidget, const CFX_PointF& point);
   CFX_Matrix GetMatrix() const;
   IFWL_ThemeProvider* GetThemeProvider() const;
-  void SetDelegate(IFWL_WidgetDelegate* delegate) { m_pDelegate = delegate; }
+  void SetDelegate(IFWL_WidgetDelegate* delegate) { delegate_ = delegate; }
   IFWL_WidgetDelegate* GetDelegate() {
-    return m_pDelegate ? m_pDelegate.Get() : this;
+    return delegate_ ? delegate_.Get() : this;
   }
   const IFWL_WidgetDelegate* GetDelegate() const {
-    return m_pDelegate ? m_pDelegate.Get() : this;
+    return delegate_ ? delegate_.Get() : this;
   }
 
-  CFWL_App* GetFWLApp() const { return m_pFWLApp; }
-  uint64_t GetEventKey() const { return m_nEventKey; }
-  void SetEventKey(uint64_t key) { m_nEventKey = key; }
+  CFWL_App* GetFWLApp() const { return fwlapp_; }
+  uint64_t GetEventKey() const { return event_key_; }
+  void SetEventKey(uint64_t key) { event_key_ = key; }
 
-  AdapterIface* GetAdapterIface() const { return m_pAdapterIface; }
-  void SetAdapterIface(AdapterIface* pItem) { m_pAdapterIface = pItem; }
+  AdapterIface* GetAdapterIface() const { return adapter_iface_; }
+  void SetAdapterIface(AdapterIface* pItem) { adapter_iface_ = pItem; }
   void RepaintRect(const CFX_RectF& pRect);
 
  protected:
   CFWL_Widget(CFWL_App* app, const Properties& properties, CFWL_Widget* pOuter);
 
   bool IsEnabled() const;
-  bool IsLocked() const { return m_iLock > 0; }
+  bool IsLocked() const { return lock_ > 0; }
   bool HasBorder() const;
   CFX_RectF GetEdgeRect() const;
   float GetCXBorderSize() const;
@@ -178,17 +178,17 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
                   CFWL_ThemePart::Part iPartBorder,
                   const CFX_Matrix& pMatrix);
 
-  Properties m_Properties;
-  CFX_RectF m_WidgetRect;
+  Properties properties_;
+  CFX_RectF widget_rect_;
 
  private:
-  void LockUpdate() { m_iLock++; }
+  void LockUpdate() { lock_++; }
   void UnlockUpdate() {
     if (IsLocked())
-      m_iLock--;
+      lock_--;
   }
 
-  CFWL_Widget* GetParent() const { return m_pWidgetMgr->GetParentWidget(this); }
+  CFWL_Widget* GetParent() const { return widget_mgr_->GetParentWidget(this); }
   CFX_SizeF GetOffsetFromParent(CFWL_Widget* pParent);
   void DrawBackground(CFGAS_GEGraphics* pGraphics,
                       CFWL_ThemePart::Part iPartBk,
@@ -196,13 +196,13 @@ class CFWL_Widget : public cppgc::GarbageCollected<CFWL_Widget>,
   void NotifyDriver();
   bool IsParent(CFWL_Widget* pParent);
 
-  int32_t m_iLock = 0;
-  uint64_t m_nEventKey = 0;
-  cppgc::Member<AdapterIface> m_pAdapterIface;
-  cppgc::Member<CFWL_App> const m_pFWLApp;
-  cppgc::Member<CFWL_WidgetMgr> const m_pWidgetMgr;
-  cppgc::Member<IFWL_WidgetDelegate> m_pDelegate;
-  cppgc::Member<CFWL_Widget> const m_pOuter;
+  int32_t lock_ = 0;
+  uint64_t event_key_ = 0;
+  cppgc::Member<AdapterIface> adapter_iface_;
+  cppgc::Member<CFWL_App> const fwlapp_;
+  cppgc::Member<CFWL_WidgetMgr> const widget_mgr_;
+  cppgc::Member<IFWL_WidgetDelegate> delegate_;
+  cppgc::Member<CFWL_Widget> const outer_;
 };
 
 }  // namespace pdfium

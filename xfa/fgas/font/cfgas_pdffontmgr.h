@@ -33,8 +33,8 @@ class CFGAS_PDFFontMgr final {
                                    bool bItalic,
                                    bool bStrictMatch);
 
-  UnownedPtr<const CPDF_Document> const m_pDoc;
-  std::map<std::pair<WideString, uint32_t>, RetainPtr<CFGAS_GEFont>> m_FontMap;
+  UnownedPtr<const CPDF_Document> const doc_;
+  std::map<std::pair<WideString, uint32_t>, RetainPtr<CFGAS_GEFont>> font_map_;
 };
 
 #endif  // XFA_FGAS_FONT_CFGAS_PDFFONTMGR_H_

@@ -77,8 +77,8 @@ class CXFA_FFComboBox final : public CXFA_FFDropDown {
   void FWLEventSelChange(CXFA_EventParam* pParam);
   WideString GetCurrentText() const;
 
-  WideString m_wsNewValue;
-  cppgc::Member<IFWL_WidgetDelegate> m_pOldDelegate;
+  WideString new_value_;
+  cppgc::Member<IFWL_WidgetDelegate> old_delegate_;
 };
 
 #endif  // XFA_FXFA_CXFA_FFCOMBOBOX_H_

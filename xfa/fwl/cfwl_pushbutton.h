@@ -47,9 +47,9 @@ class CFWL_PushButton final : public CFWL_Widget {
   void OnMouseLeave(CFWL_MessageMouse* pMsg);
   void OnKeyDown(CFWL_MessageKey* pMsg);
 
-  bool m_bBtnDown = false;
-  CFX_RectF m_ClientRect;
-  CFX_RectF m_CaptionRect;
+  bool btn_down_ = false;
+  CFX_RectF client_rect_;
+  CFX_RectF caption_rect_;
 };
 
 }  // namespace pdfium

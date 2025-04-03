@@ -37,7 +37,7 @@ class CFWL_PushButtonTP final : public CFWL_WidgetTP {
   int32_t GetColorID(Mask<CFWL_PartState> dwStates) const;
   void SetThemeData();
 
-  std::unique_ptr<PBThemeData> m_pThemeData;
+  std::unique_ptr<PBThemeData> theme_data_;
 };
 
 }  // namespace pdfium

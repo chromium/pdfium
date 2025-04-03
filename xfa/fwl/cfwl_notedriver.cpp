@@ -30,20 +30,20 @@ uint64_t g_next_listener_key = 1;
 
 }  // namespace
 
-CFWL_NoteDriver::CFWL_NoteDriver(CFWL_App* pApp) : m_pApp(pApp) {}
+CFWL_NoteDriver::CFWL_NoteDriver(CFWL_App* pApp) : app_(pApp) {}
 
 CFWL_NoteDriver::~CFWL_NoteDriver() = default;
 
 void CFWL_NoteDriver::Trace(cppgc::Visitor* visitor) const {
-  visitor->Trace(m_pApp);
-  visitor->Trace(m_pHover);
-  visitor->Trace(m_pFocus);
-  visitor->Trace(m_pGrab);
-  ContainerTrace(visitor, m_eventTargets);
+  visitor->Trace(app_);
+  visitor->Trace(hover_);
+  visitor->Trace(focus_);
+  visitor->Trace(grab_);
+  ContainerTrace(visitor, event_targets_);
 }
 
 void CFWL_NoteDriver::SendEvent(CFWL_Event* pNote) {
-  for (const auto& pair : m_eventTargets) {
+  for (const auto& pair : event_targets_) {
     if (pair.second->IsValid())
       pair.second->ProcessEvent(pNote);
   }
@@ -56,11 +56,11 @@ void CFWL_NoteDriver::RegisterEventTarget(CFWL_Widget* pListener,
     key = g_next_listener_key++;
     pListener->SetEventKey(key);
   }
-  if (!m_eventTargets[key]) {
-    m_eventTargets[key] = cppgc::MakeGarbageCollected<Target>(
-        m_pApp->GetHeap()->GetAllocationHandle(), pListener);
+  if (!event_targets_[key]) {
+    event_targets_[key] = cppgc::MakeGarbageCollected<Target>(
+        app_->GetHeap()->GetAllocationHandle(), pListener);
   }
-  m_eventTargets[key]->SetEventSource(pEventSource);
+  event_targets_[key]->SetEventSource(pEventSource);
 }
 
 void CFWL_NoteDriver::UnregisterEventTarget(CFWL_Widget* pListener) {
@@ -68,27 +68,34 @@ void CFWL_NoteDriver::UnregisterEventTarget(CFWL_Widget* pListener) {
   if (key == 0)
     return;
 
-  auto it = m_eventTargets.find(key);
-  if (it != m_eventTargets.end())
+  auto it = event_targets_.find(key);
+  if (it != event_targets_.end()) {
     it->second->Invalidate();
+  }
 }
 
 void CFWL_NoteDriver::NotifyTargetHide(CFWL_Widget* pNoteTarget) {
-  if (m_pFocus == pNoteTarget)
-    m_pFocus = nullptr;
-  if (m_pHover == pNoteTarget)
-    m_pHover = nullptr;
-  if (m_pGrab == pNoteTarget)
-    m_pGrab = nullptr;
+  if (focus_ == pNoteTarget) {
+    focus_ = nullptr;
+  }
+  if (hover_ == pNoteTarget) {
+    hover_ = nullptr;
+  }
+  if (grab_ == pNoteTarget) {
+    grab_ = nullptr;
+  }
 }
 
 void CFWL_NoteDriver::NotifyTargetDestroy(CFWL_Widget* pNoteTarget) {
-  if (m_pFocus == pNoteTarget)
-    m_pFocus = nullptr;
-  if (m_pHover == pNoteTarget)
-    m_pHover = nullptr;
-  if (m_pGrab == pNoteTarget)
-    m_pGrab = nullptr;
+  if (focus_ == pNoteTarget) {
+    focus_ = nullptr;
+  }
+  if (hover_ == pNoteTarget) {
+    hover_ = nullptr;
+  }
+  if (grab_ == pNoteTarget) {
+    grab_ = nullptr;
+  }
 
   UnregisterEventTarget(pNoteTarget);
 }
@@ -143,33 +150,34 @@ bool CFWL_NoteDriver::DispatchMessage(CFWL_Message* pMessage,
 
 bool CFWL_NoteDriver::DoSetFocus(CFWL_Message* pMessage,
                                  CFWL_Widget* pMessageForm) {
-  m_pFocus = pMessage->GetDstTarget();
+  focus_ = pMessage->GetDstTarget();
   return true;
 }
 
 bool CFWL_NoteDriver::DoKillFocus(CFWL_Message* pMessage,
                                   CFWL_Widget* pMessageForm) {
-  if (m_pFocus == pMessage->GetDstTarget())
-    m_pFocus = nullptr;
+  if (focus_ == pMessage->GetDstTarget()) {
+    focus_ = nullptr;
+  }
   return true;
 }
 
 bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {
   CFWL_MessageKey* pMsg = static_cast<CFWL_MessageKey*>(pMessage);
 #if !BUILDFLAG(IS_APPLE)
-  if (pMsg->m_dwCmd == CFWL_MessageKey::KeyCommand::kKeyDown &&
-      pMsg->m_dwKeyCodeOrChar == XFA_FWL_VKEY_Tab) {
+  if (pMsg->cmd_ == CFWL_MessageKey::KeyCommand::kKeyDown &&
+      pMsg->key_code_or_char_ == XFA_FWL_VKEY_Tab) {
     return true;
   }
 #endif
 
-  if (m_pFocus) {
-    pMsg->SetDstTarget(m_pFocus.Get());
+  if (focus_) {
+    pMsg->SetDstTarget(focus_.Get());
     return true;
   }
 
-  if (pMsg->m_dwCmd == CFWL_MessageKey::KeyCommand::kKeyDown &&
-      pMsg->m_dwKeyCodeOrChar == XFA_FWL_VKEY_Return) {
+  if (pMsg->cmd_ == CFWL_MessageKey::KeyCommand::kKeyDown &&
+      pMsg->key_code_or_char_ == XFA_FWL_VKEY_Return) {
     CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetFWLApp()->GetWidgetMgr();
     CFWL_Widget* pDefButton = pWidgetMgr->GetDefaultButton(pMessageForm);
     if (pDefButton) {
@@ -183,13 +191,13 @@ bool CFWL_NoteDriver::DoKey(CFWL_Message* pMessage, CFWL_Widget* pMessageForm) {
 bool CFWL_NoteDriver::DoMouse(CFWL_Message* pMessage,
                               CFWL_Widget* pMessageForm) {
   CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
-  if (pMsg->m_dwCmd == CFWL_MessageMouse::MouseCommand::kLeave ||
-      pMsg->m_dwCmd == CFWL_MessageMouse::MouseCommand::kHover ||
-      pMsg->m_dwCmd == CFWL_MessageMouse::MouseCommand::kEnter) {
+  if (pMsg->cmd_ == CFWL_MessageMouse::MouseCommand::kLeave ||
+      pMsg->cmd_ == CFWL_MessageMouse::MouseCommand::kHover ||
+      pMsg->cmd_ == CFWL_MessageMouse::MouseCommand::kEnter) {
     return !!pMsg->GetDstTarget();
   }
   if (pMsg->GetDstTarget() != pMessageForm)
-    pMsg->m_pos = pMsg->GetDstTarget()->TransformTo(pMessageForm, pMsg->m_pos);
+    pMsg->pos_ = pMsg->GetDstTarget()->TransformTo(pMessageForm, pMsg->pos_);
   if (!DoMouseEx(pMsg, pMessageForm))
     pMsg->SetDstTarget(pMessageForm);
   return true;
@@ -212,16 +220,17 @@ bool CFWL_NoteDriver::DoMouseEx(CFWL_Message* pMessage,
                                 CFWL_Widget* pMessageForm) {
   CFWL_WidgetMgr* pWidgetMgr = pMessageForm->GetFWLApp()->GetWidgetMgr();
   CFWL_Widget* pTarget = nullptr;
-  if (m_pGrab)
-    pTarget = m_pGrab.Get();
+  if (grab_) {
+    pTarget = grab_.Get();
+  }
 
   CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
   if (!pTarget)
-    pTarget = pWidgetMgr->GetWidgetAtPoint(pMessageForm, pMsg->m_pos);
+    pTarget = pWidgetMgr->GetWidgetAtPoint(pMessageForm, pMsg->pos_);
   if (!pTarget)
     return false;
   if (pTarget && pMessageForm != pTarget)
-    pMsg->m_pos = pMessageForm->TransformTo(pTarget, pMsg->m_pos);
+    pMsg->pos_ = pMessageForm->TransformTo(pTarget, pMsg->pos_);
 
   pMsg->SetDstTarget(pTarget);
   return true;
@@ -229,50 +238,53 @@ bool CFWL_NoteDriver::DoMouseEx(CFWL_Message* pMessage,
 
 void CFWL_NoteDriver::MouseSecondary(CFWL_Message* pMessage) {
   CFWL_Widget* pTarget = pMessage->GetDstTarget();
-  if (pTarget == m_pHover)
+  if (pTarget == hover_) {
     return;
+  }
 
   CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
-  if (m_pHover) {
-    CFWL_MessageMouse msLeave(
-        m_pHover.Get(), CFWL_MessageMouse::MouseCommand::kLeave,
-        Mask<XFA_FWL_KeyFlag>(),
-        pTarget->TransformTo(m_pHover.Get(), pMsg->m_pos));
+  if (hover_) {
+    CFWL_MessageMouse msLeave(hover_.Get(),
+                              CFWL_MessageMouse::MouseCommand::kLeave,
+                              Mask<XFA_FWL_KeyFlag>(),
+                              pTarget->TransformTo(hover_.Get(), pMsg->pos_));
     DispatchMessage(&msLeave, nullptr);
   }
   if (pTarget->GetClassID() == FWL_Type::Form) {
-    m_pHover = nullptr;
+    hover_ = nullptr;
     return;
   }
-  m_pHover = pTarget;
+  hover_ = pTarget;
 
   CFWL_MessageMouse msHover(pTarget, CFWL_MessageMouse::MouseCommand::kHover,
-                            Mask<XFA_FWL_KeyFlag>(), pMsg->m_pos);
+                            Mask<XFA_FWL_KeyFlag>(), pMsg->pos_);
   DispatchMessage(&msHover, nullptr);
 }
 
 CFWL_NoteDriver::Target::Target(CFWL_Widget* pListener)
-    : m_pListener(pListener) {}
+    : listener_(pListener) {}
 
 CFWL_NoteDriver::Target::~Target() = default;
 
 void CFWL_NoteDriver::Target::Trace(cppgc::Visitor* visitor) const {
-  visitor->Trace(m_pListener);
-  for (auto& widget : m_widgets)
+  visitor->Trace(listener_);
+  for (auto& widget : widgets_) {
     visitor->Trace(widget);
+  }
 }
 
 void CFWL_NoteDriver::Target::SetEventSource(CFWL_Widget* pSource) {
   if (pSource)
-    m_widgets.insert(pSource);
+    widgets_.insert(pSource);
 }
 
 bool CFWL_NoteDriver::Target::ProcessEvent(CFWL_Event* pEvent) {
-  IFWL_WidgetDelegate* pDelegate = m_pListener->GetDelegate();
+  IFWL_WidgetDelegate* pDelegate = listener_->GetDelegate();
   if (!pDelegate)
     return false;
-  if (!m_widgets.empty() && m_widgets.count(pEvent->GetSrcTarget()) == 0)
+  if (!widgets_.empty() && widgets_.count(pEvent->GetSrcTarget()) == 0) {
     return false;
+  }
   pDelegate->OnProcessEvent(pEvent);
   return true;
 }

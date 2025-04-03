@@ -21,18 +21,18 @@ CXFA_Object::CXFA_Object(CXFA_Document* pDocument,
                          XFA_ObjectType objectType,
                          XFA_Element elementType,
                          CJX_Object* jsObject)
-    : m_objectType(objectType),
-      m_elementType(elementType),
-      m_elementName(XFA_ElementToName(elementType)),
-      m_elementNameHash(FX_HashCode_GetAsIfW(m_elementName)),
-      m_pDocument(pDocument),
-      m_pJSObject(jsObject) {}
+    : object_type_(objectType),
+      element_type_(elementType),
+      element_name_(XFA_ElementToName(elementType)),
+      element_name_hash_(FX_HashCode_GetAsIfW(element_name_)),
+      document_(pDocument),
+      jsobject_(jsObject) {}
 
 CXFA_Object::~CXFA_Object() = default;
 
 void CXFA_Object::Trace(cppgc::Visitor* visitor) const {
-  visitor->Trace(m_pDocument);
-  visitor->Trace(m_pJSObject);
+  visitor->Trace(document_);
+  visitor->Trace(jsobject_);
 }
 
 WideString CXFA_Object::GetSOMExpression() {

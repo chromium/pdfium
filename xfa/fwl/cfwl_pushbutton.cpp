@@ -30,7 +30,7 @@ FWL_Type CFWL_PushButton::GetClassID() const {
 
 void CFWL_PushButton::SetStates(uint32_t dwStates) {
   if (dwStates & FWL_STATE_WGT_Disabled) {
-    m_Properties.m_dwStates = FWL_STATE_WGT_Disabled;
+    properties_.states_ = FWL_STATE_WGT_Disabled;
     return;
   }
   CFWL_Widget::SetStates(dwStates);
@@ -40,8 +40,8 @@ void CFWL_PushButton::Update() {
   if (IsLocked())
     return;
 
-  m_ClientRect = GetClientRect();
-  m_CaptionRect = m_ClientRect;
+  client_rect_ = GetClientRect();
+  caption_rect_ = client_rect_;
 }
 
 void CFWL_PushButton::DrawWidget(CFGAS_GEGraphics* pGraphics,
@@ -59,24 +59,27 @@ void CFWL_PushButton::DrawBkground(CFGAS_GEGraphics* pGraphics,
                                    const CFX_Matrix& matrix) {
   CFWL_ThemeBackground param(CFWL_ThemePart::Part::kBackground, this,
                              pGraphics);
-  param.m_dwStates = GetPartStates();
-  param.m_matrix = matrix;
-  param.m_PartRect = m_ClientRect;
-  if (m_Properties.m_dwStates & FWL_STATE_WGT_Focused)
-    param.m_pRtData = &m_CaptionRect;
+  param.states_ = GetPartStates();
+  param.matrix_ = matrix;
+  param.part_rect_ = client_rect_;
+  if (properties_.states_ & FWL_STATE_WGT_Focused) {
+    param.data_rect_ = &caption_rect_;
+  }
   GetThemeProvider()->DrawBackground(param);
 }
 
 Mask<CFWL_PartState> CFWL_PushButton::GetPartStates() {
   Mask<CFWL_PartState> dwStates = CFWL_PartState::kNormal;
-  if (m_Properties.m_dwStates & FWL_STATE_WGT_Focused)
+  if (properties_.states_ & FWL_STATE_WGT_Focused) {
     dwStates |= CFWL_PartState::kFocused;
-  if (m_Properties.m_dwStates & FWL_STATE_WGT_Disabled)
+  }
+  if (properties_.states_ & FWL_STATE_WGT_Disabled) {
     dwStates = CFWL_PartState::kDisabled;
-  else if (m_Properties.m_dwStates & FWL_STATE_PSB_Pressed)
+  } else if (properties_.states_ & FWL_STATE_PSB_Pressed) {
     dwStates |= CFWL_PartState::kPressed;
-  else if (m_Properties.m_dwStates & FWL_STATE_PSB_Hovered)
+  } else if (properties_.states_ & FWL_STATE_PSB_Hovered) {
     dwStates |= CFWL_PartState::kHovered;
+  }
   return dwStates;
 }
 
@@ -93,7 +96,7 @@ void CFWL_PushButton::OnProcessMessage(CFWL_Message* pMessage) {
       break;
     case CFWL_Message::Type::kMouse: {
       CFWL_MessageMouse* pMsg = static_cast<CFWL_MessageMouse*>(pMessage);
-      switch (pMsg->m_dwCmd) {
+      switch (pMsg->cmd_) {
         case CFWL_MessageMouse::MouseCommand::kLeftButtonDown:
           OnLButtonDown(pMsg);
           break;
@@ -113,8 +116,9 @@ void CFWL_PushButton::OnProcessMessage(CFWL_Message* pMessage) {
     }
     case CFWL_Message::Type::kKey: {
       CFWL_MessageKey* pKey = static_cast<CFWL_MessageKey*>(pMessage);
-      if (pKey->m_dwCmd == CFWL_MessageKey::KeyCommand::kKeyDown)
+      if (pKey->cmd_ == CFWL_MessageKey::KeyCommand::kKeyDown) {
         OnKeyDown(pKey);
+      }
       break;
     }
     default:
@@ -131,82 +135,84 @@ void CFWL_PushButton::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
 }
 
 void CFWL_PushButton::OnFocusGained() {
-  m_Properties.m_dwStates |= FWL_STATE_WGT_Focused;
-  RepaintRect(m_ClientRect);
+  properties_.states_ |= FWL_STATE_WGT_Focused;
+  RepaintRect(client_rect_);
 }
 
 void CFWL_PushButton::OnFocusLost() {
-  m_Properties.m_dwStates &= ~FWL_STATE_WGT_Focused;
-  RepaintRect(m_ClientRect);
+  properties_.states_ &= ~FWL_STATE_WGT_Focused;
+  RepaintRect(client_rect_);
 }
 
 void CFWL_PushButton::OnLButtonDown(CFWL_MessageMouse* pMsg) {
-  m_bBtnDown = true;
-  m_Properties.m_dwStates |= FWL_STATE_PSB_Hovered;
-  m_Properties.m_dwStates |= FWL_STATE_PSB_Pressed;
-  RepaintRect(m_ClientRect);
+  btn_down_ = true;
+  properties_.states_ |= FWL_STATE_PSB_Hovered;
+  properties_.states_ |= FWL_STATE_PSB_Pressed;
+  RepaintRect(client_rect_);
 }
 
 void CFWL_PushButton::OnLButtonUp(CFWL_MessageMouse* pMsg) {
-  m_bBtnDown = false;
-  if (m_ClientRect.Contains(pMsg->m_pos)) {
-    m_Properties.m_dwStates &= ~FWL_STATE_PSB_Pressed;
-    m_Properties.m_dwStates |= FWL_STATE_PSB_Hovered;
+  btn_down_ = false;
+  if (client_rect_.Contains(pMsg->pos_)) {
+    properties_.states_ &= ~FWL_STATE_PSB_Pressed;
+    properties_.states_ |= FWL_STATE_PSB_Hovered;
   } else {
-    m_Properties.m_dwStates &= ~FWL_STATE_PSB_Hovered;
-    m_Properties.m_dwStates &= ~FWL_STATE_PSB_Pressed;
+    properties_.states_ &= ~FWL_STATE_PSB_Hovered;
+    properties_.states_ &= ~FWL_STATE_PSB_Pressed;
   }
-  if (m_ClientRect.Contains(pMsg->m_pos)) {
+  if (client_rect_.Contains(pMsg->pos_)) {
     CFWL_Event wmClick(CFWL_Event::Type::Click, this);
     DispatchEvent(&wmClick);
   }
-  RepaintRect(m_ClientRect);
+  RepaintRect(client_rect_);
 }
 
 void CFWL_PushButton::OnMouseMove(CFWL_MessageMouse* pMsg) {
   bool bRepaint = false;
-  if (m_bBtnDown) {
-    if (m_ClientRect.Contains(pMsg->m_pos)) {
-      if ((m_Properties.m_dwStates & FWL_STATE_PSB_Pressed) == 0) {
-        m_Properties.m_dwStates |= FWL_STATE_PSB_Pressed;
+  if (btn_down_) {
+    if (client_rect_.Contains(pMsg->pos_)) {
+      if ((properties_.states_ & FWL_STATE_PSB_Pressed) == 0) {
+        properties_.states_ |= FWL_STATE_PSB_Pressed;
         bRepaint = true;
       }
-      if (m_Properties.m_dwStates & FWL_STATE_PSB_Hovered) {
-        m_Properties.m_dwStates &= ~FWL_STATE_PSB_Hovered;
+      if (properties_.states_ & FWL_STATE_PSB_Hovered) {
+        properties_.states_ &= ~FWL_STATE_PSB_Hovered;
         bRepaint = true;
       }
     } else {
-      if (m_Properties.m_dwStates & FWL_STATE_PSB_Pressed) {
-        m_Properties.m_dwStates &= ~FWL_STATE_PSB_Pressed;
+      if (properties_.states_ & FWL_STATE_PSB_Pressed) {
+        properties_.states_ &= ~FWL_STATE_PSB_Pressed;
         bRepaint = true;
       }
-      if ((m_Properties.m_dwStates & FWL_STATE_PSB_Hovered) == 0) {
-        m_Properties.m_dwStates |= FWL_STATE_PSB_Hovered;
+      if ((properties_.states_ & FWL_STATE_PSB_Hovered) == 0) {
+        properties_.states_ |= FWL_STATE_PSB_Hovered;
         bRepaint = true;
       }
     }
   } else {
-    if (!m_ClientRect.Contains(pMsg->m_pos))
+    if (!client_rect_.Contains(pMsg->pos_)) {
       return;
-    if ((m_Properties.m_dwStates & FWL_STATE_PSB_Hovered) == 0) {
-      m_Properties.m_dwStates |= FWL_STATE_PSB_Hovered;
+    }
+    if ((properties_.states_ & FWL_STATE_PSB_Hovered) == 0) {
+      properties_.states_ |= FWL_STATE_PSB_Hovered;
       bRepaint = true;
     }
   }
   if (bRepaint)
-    RepaintRect(m_ClientRect);
+    RepaintRect(client_rect_);
 }
 
 void CFWL_PushButton::OnMouseLeave(CFWL_MessageMouse* pMsg) {
-  m_bBtnDown = false;
-  m_Properties.m_dwStates &= ~FWL_STATE_PSB_Hovered;
-  m_Properties.m_dwStates &= ~FWL_STATE_PSB_Pressed;
-  RepaintRect(m_ClientRect);
+  btn_down_ = false;
+  properties_.states_ &= ~FWL_STATE_PSB_Hovered;
+  properties_.states_ &= ~FWL_STATE_PSB_Pressed;
+  RepaintRect(client_rect_);
 }
 
 void CFWL_PushButton::OnKeyDown(CFWL_MessageKey* pMsg) {
-  if (pMsg->m_dwKeyCodeOrChar != XFA_FWL_VKEY_Return)
+  if (pMsg->key_code_or_char_ != XFA_FWL_VKEY_Return) {
     return;
+  }
 
   CFWL_EventMouse wmMouse(this, nullptr,
                           CFWL_MessageMouse::MouseCommand::kLeftButtonUp);

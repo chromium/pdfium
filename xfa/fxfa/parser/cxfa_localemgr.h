@@ -62,22 +62,22 @@ class CXFA_LocaleMgr final : public cppgc::GarbageCollected<CXFA_LocaleMgr>,
   // May allocate a new object on the cppgc heap.
   CXFA_XMLLocale* GetLocale(LangID lcid);
 
-  UnownedPtr<cppgc::Heap> m_pHeap;
-  std::vector<cppgc::Member<CXFA_NodeLocale>> m_LocaleArray;
-  std::vector<cppgc::Member<CXFA_XMLLocale>> m_XMLLocaleArray;
-  cppgc::Member<GCedLocaleIface> m_pDefLocale;
+  UnownedPtr<cppgc::Heap> heap_;
+  std::vector<cppgc::Member<CXFA_NodeLocale>> locale_array_;
+  std::vector<cppgc::Member<CXFA_XMLLocale>> xmllocale_array_;
+  cppgc::Member<GCedLocaleIface> def_locale_;
 
   // Note: three possiblities
-  // 1. we might never have tried to determine |m_wsConfigLocale|.
+  // 1. we might never have tried to determine |config_locale_|.
   // 2. we might have tried but gotten nothing and want to continue
   //    to return nothing without ever trying again.
   // 3. we might have tried and gotten something.
-  // So |m_bConfigLocaleCached| indicates whether we've already tried,
-  // and |m_wsConfigLocale| is the possibly nothing we got if we tried.
-  mutable std::optional<WideString> m_wsConfigLocale;
-  mutable bool m_bConfigLocaleCached = false;
+  // So |config_locale_cached_| indicates whether we've already tried,
+  // and |config_locale_| is the possibly nothing we got if we tried.
+  mutable std::optional<WideString> config_locale_;
+  mutable bool config_locale_cached_ = false;
 
-  LangID m_eDeflcid;
+  LangID deflcid_;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LOCALEMGR_H_

@@ -24,15 +24,15 @@ class CFGAS_BreakLine {
 
   void IncrementArabicCharCount();
   void DecrementArabicCharCount();
-  bool HasArabicChar() const { return m_iArabicChars > 0; }
+  bool HasArabicChar() const { return arabic_chars_ > 0; }
 
-  std::vector<CFGAS_Char> m_LineChars;
-  std::vector<CFGAS_BreakPiece> m_LinePieces;
-  int32_t m_iStart = 0;
-  int32_t m_iWidth = 0;
+  std::vector<CFGAS_Char> line_chars_;
+  std::vector<CFGAS_BreakPiece> line_pieces_;
+  int32_t start_ = 0;
+  int32_t width_ = 0;
 
  private:
-  int32_t m_iArabicChars = 0;
+  int32_t arabic_chars_ = 0;
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFGAS_BREAKLINE_H_

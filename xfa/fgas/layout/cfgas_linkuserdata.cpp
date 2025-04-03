@@ -7,6 +7,6 @@
 #include "xfa/fgas/layout/cfgas_linkuserdata.h"
 
 CFGAS_LinkUserData::CFGAS_LinkUserData(const WideString& wsText)
-    : m_wsURLContent(wsText) {}
+    : urlcontent_(wsText) {}
 
 CFGAS_LinkUserData::~CFGAS_LinkUserData() = default;

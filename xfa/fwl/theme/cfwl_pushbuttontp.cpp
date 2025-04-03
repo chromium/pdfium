@@ -22,7 +22,7 @@ constexpr float kPushbuttonSizeCorner = 2.0f;
 
 }  // namespace
 
-CFWL_PushButtonTP::CFWL_PushButtonTP() : m_pThemeData(new PBThemeData) {
+CFWL_PushButtonTP::CFWL_PushButtonTP() : theme_data_(new PBThemeData) {
   SetThemeData();
 }
 
@@ -31,11 +31,11 @@ CFWL_PushButtonTP::~CFWL_PushButtonTP() = default;
 void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.GetPart()) {
     case CFWL_ThemePart::Part::kBorder: {
-      DrawBorder(pParams.GetGraphics(), pParams.m_PartRect, pParams.m_matrix);
+      DrawBorder(pParams.GetGraphics(), pParams.part_rect_, pParams.matrix_);
       break;
     }
     case CFWL_ThemePart::Part::kBackground: {
-      const CFX_RectF& rect = pParams.m_PartRect;
+      const CFX_RectF& rect = pParams.part_rect_;
       float fRight = rect.right();
       float fBottom = rect.bottom();
 
@@ -64,23 +64,23 @@ void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       fillPath.AddRectangle(rtInner.left, rtInner.top, rtInner.width,
                             rtInner.height);
 
-      int32_t iColor = GetColorID(pParams.m_dwStates);
-      FillSolidRect(pGraphics, m_pThemeData->clrEnd[iColor], rect,
-                    pParams.m_matrix);
+      int32_t iColor = GetColorID(pParams.states_);
+      FillSolidRect(pGraphics, theme_data_->clrEnd[iColor], rect,
+                    pParams.matrix_);
 
-      pGraphics->SetStrokeColor(CFGAS_GEColor(m_pThemeData->clrBorder[iColor]));
-      pGraphics->StrokePath(strokePath, pParams.m_matrix);
+      pGraphics->SetStrokeColor(CFGAS_GEColor(theme_data_->clrBorder[iColor]));
+      pGraphics->StrokePath(strokePath, pParams.matrix_);
 
       fillPath.Clear();
       fillPath.AddRectangle(rtInner.left, rtInner.top, rtInner.width,
                             rtInner.height);
 
-      pGraphics->SetFillColor(CFGAS_GEColor(m_pThemeData->clrFill[iColor]));
+      pGraphics->SetFillColor(CFGAS_GEColor(theme_data_->clrFill[iColor]));
       pGraphics->FillPath(fillPath, CFX_FillRenderOptions::FillType::kWinding,
-                          pParams.m_matrix);
-      if (pParams.m_dwStates & CFWL_PartState::kFocused) {
+                          pParams.matrix_);
+      if (pParams.states_ & CFWL_PartState::kFocused) {
         rtInner.Inflate(1, 1, 0, 0);
-        DrawFocus(pGraphics, rtInner, pParams.m_matrix);
+        DrawFocus(pGraphics, rtInner, pParams.matrix_);
       }
       break;
     }
@@ -90,26 +90,26 @@ void CFWL_PushButtonTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
 }
 
 void CFWL_PushButtonTP::SetThemeData() {
-  m_pThemeData->clrBorder[0] = ArgbEncode(255, 0, 60, 116);
-  m_pThemeData->clrBorder[1] = ArgbEncode(255, 0, 60, 116);
-  m_pThemeData->clrBorder[2] = ArgbEncode(255, 0, 60, 116);
-  m_pThemeData->clrBorder[3] = ArgbEncode(255, 0, 60, 116);
-  m_pThemeData->clrBorder[4] = ArgbEncode(255, 201, 199, 186);
-  m_pThemeData->clrStart[0] = ArgbEncode(255, 255, 255, 255);
-  m_pThemeData->clrStart[1] = ArgbEncode(255, 209, 204, 193);
-  m_pThemeData->clrStart[2] = ArgbEncode(255, 255, 240, 207);
-  m_pThemeData->clrStart[3] = ArgbEncode(255, 206, 231, 255);
-  m_pThemeData->clrStart[4] = ArgbEncode(255, 245, 244, 234);
-  m_pThemeData->clrEnd[0] = ArgbEncode(255, 214, 208, 197);
-  m_pThemeData->clrEnd[1] = ArgbEncode(255, 242, 241, 238);
-  m_pThemeData->clrEnd[2] = ArgbEncode(255, 229, 151, 0);
-  m_pThemeData->clrEnd[3] = ArgbEncode(255, 105, 130, 238);
-  m_pThemeData->clrEnd[4] = ArgbEncode(255, 245, 244, 234);
-  m_pThemeData->clrFill[0] = ArgbEncode(255, 255, 255, 255);
-  m_pThemeData->clrFill[1] = ArgbEncode(255, 226, 225, 218);
-  m_pThemeData->clrFill[2] = ArgbEncode(255, 255, 255, 255);
-  m_pThemeData->clrFill[3] = ArgbEncode(255, 255, 255, 255);
-  m_pThemeData->clrFill[4] = ArgbEncode(255, 245, 244, 234);
+  theme_data_->clrBorder[0] = ArgbEncode(255, 0, 60, 116);
+  theme_data_->clrBorder[1] = ArgbEncode(255, 0, 60, 116);
+  theme_data_->clrBorder[2] = ArgbEncode(255, 0, 60, 116);
+  theme_data_->clrBorder[3] = ArgbEncode(255, 0, 60, 116);
+  theme_data_->clrBorder[4] = ArgbEncode(255, 201, 199, 186);
+  theme_data_->clrStart[0] = ArgbEncode(255, 255, 255, 255);
+  theme_data_->clrStart[1] = ArgbEncode(255, 209, 204, 193);
+  theme_data_->clrStart[2] = ArgbEncode(255, 255, 240, 207);
+  theme_data_->clrStart[3] = ArgbEncode(255, 206, 231, 255);
+  theme_data_->clrStart[4] = ArgbEncode(255, 245, 244, 234);
+  theme_data_->clrEnd[0] = ArgbEncode(255, 214, 208, 197);
+  theme_data_->clrEnd[1] = ArgbEncode(255, 242, 241, 238);
+  theme_data_->clrEnd[2] = ArgbEncode(255, 229, 151, 0);
+  theme_data_->clrEnd[3] = ArgbEncode(255, 105, 130, 238);
+  theme_data_->clrEnd[4] = ArgbEncode(255, 245, 244, 234);
+  theme_data_->clrFill[0] = ArgbEncode(255, 255, 255, 255);
+  theme_data_->clrFill[1] = ArgbEncode(255, 226, 225, 218);
+  theme_data_->clrFill[2] = ArgbEncode(255, 255, 255, 255);
+  theme_data_->clrFill[3] = ArgbEncode(255, 255, 255, 255);
+  theme_data_->clrFill[4] = ArgbEncode(255, 245, 244, 234);
 }
 
 int32_t CFWL_PushButtonTP::GetColorID(Mask<CFWL_PartState> dwStates) const {

@@ -14,28 +14,29 @@ CFGAS_BreakLine::CFGAS_BreakLine() = default;
 CFGAS_BreakLine::~CFGAS_BreakLine() = default;
 
 CFGAS_Char* CFGAS_BreakLine::LastChar() {
-  if (m_LineChars.empty())
+  if (line_chars_.empty()) {
     return nullptr;
+  }
 
-  return &m_LineChars.back();
+  return &line_chars_.back();
 }
 
 int32_t CFGAS_BreakLine::GetLineEnd() const {
-  return m_iStart + m_iWidth;
+  return start_ + width_;
 }
 
 void CFGAS_BreakLine::Clear() {
-  m_LineChars.clear();
-  m_LinePieces.clear();
-  m_iWidth = 0;
-  m_iArabicChars = 0;
+  line_chars_.clear();
+  line_pieces_.clear();
+  width_ = 0;
+  arabic_chars_ = 0;
 }
 
 void CFGAS_BreakLine::IncrementArabicCharCount() {
-  ++m_iArabicChars;
+  ++arabic_chars_;
 }
 
 void CFGAS_BreakLine::DecrementArabicCharCount() {
-  DCHECK(m_iArabicChars > 0);
-  --m_iArabicChars;
+  DCHECK(arabic_chars_ > 0);
+  --arabic_chars_;
 }

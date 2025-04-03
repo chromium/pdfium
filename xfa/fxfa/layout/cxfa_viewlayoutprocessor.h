@@ -51,7 +51,7 @@ class CXFA_ViewLayoutProcessor
 
   void PreFinalize();
   void Trace(cppgc::Visitor* visitor) const;
-  cppgc::Heap* GetHeap() const { return m_pHeap; }
+  cppgc::Heap* GetHeap() const { return heap_; }
 
   bool InitLayoutPage(CXFA_Node* pFormNode);
   bool PrepareFirstPage(CXFA_Node* pRootSubform);
@@ -65,7 +65,7 @@ class CXFA_ViewLayoutProcessor
   CXFA_ViewLayoutItem* GetPage(int32_t index) const;
   int32_t GetPageIndex(const CXFA_ViewLayoutItem* pPage) const;
   CXFA_ViewLayoutItem* GetRootLayoutItem() const {
-    return m_pPageSetRootLayoutItem;
+    return page_set_root_layout_item_;
   }
   std::optional<BreakData> ProcessBreakBefore(const CXFA_Node* pBreakNode);
   std::optional<BreakData> ProcessBreakAfter(const CXFA_Node* pBreakNode);
@@ -98,20 +98,20 @@ class CXFA_ViewLayoutProcessor
   void RemoveLayoutRecord(CXFA_ViewRecord* pNewRecord,
                           CXFA_ViewRecord* pPrevRecord);
   bool HasCurrentViewRecord() const {
-    return m_CurrentViewRecordIter != m_ProposedViewRecords.end();
+    return current_view_record_iter_ != proposed_view_records_.end();
   }
   CXFA_ViewRecord* GetCurrentViewRecord() {
-    return HasCurrentViewRecord() ? m_CurrentViewRecordIter->Get() : nullptr;
+    return HasCurrentViewRecord() ? current_view_record_iter_->Get() : nullptr;
   }
   const CXFA_ViewRecord* GetCurrentViewRecord() const {
-    return HasCurrentViewRecord() ? m_CurrentViewRecordIter->Get() : nullptr;
+    return HasCurrentViewRecord() ? current_view_record_iter_->Get() : nullptr;
   }
   void ResetToFirstViewRecord() {
-    m_CurrentViewRecordIter = m_ProposedViewRecords.begin();
+    current_view_record_iter_ = proposed_view_records_.begin();
   }
   std::list<cppgc::Member<CXFA_ViewRecord>>::iterator GetTailPosition() {
-    auto iter = m_ProposedViewRecords.end();
-    return !m_ProposedViewRecords.empty() ? std::prev(iter) : iter;
+    auto iter = proposed_view_records_.end();
+    return !proposed_view_records_.empty() ? std::prev(iter) : iter;
   }
   void AppendNewRecord(CXFA_ViewRecord* pNewRecord);
   CXFA_ViewRecord* CreateViewRecord(CXFA_Node* pPageNode, bool bCreateNew);
@@ -172,7 +172,7 @@ class CXFA_ViewLayoutProcessor
   void InitPageSetMap();
   void ProcessLastPageSet();
   bool IsPageSetRootOrderedOccurrence() const {
-    return m_ePageSetMode == XFA_AttributeValue::OrderedOccurrence;
+    return page_set_mode_ == XFA_AttributeValue::OrderedOccurrence;
   }
   void ClearData();
   void MergePageSetContents();
@@ -182,20 +182,20 @@ class CXFA_ViewLayoutProcessor
   void ProcessSimplexOrDuplexPageSets(CXFA_ViewLayoutItem* pPageSetLayoutItem,
                                       bool bIsSimplex);
 
-  UnownedPtr<cppgc::Heap> m_pHeap;
-  cppgc::Member<CXFA_LayoutProcessor> m_pLayoutProcessor;
-  cppgc::Member<CXFA_Node> m_pPageSetNode;
-  cppgc::Member<CXFA_Node> m_pCurPageArea;
-  cppgc::Member<CXFA_ViewLayoutItem> m_pPageSetRootLayoutItem;
-  cppgc::Member<CXFA_ViewLayoutItem> m_pPageSetCurLayoutItem;
-  std::list<cppgc::Member<CXFA_ViewRecord>> m_ProposedViewRecords;
-  std::list<cppgc::Member<CXFA_ViewRecord>>::iterator m_CurrentViewRecordIter;
-  int32_t m_nAvailPages = 0;
-  int32_t m_nCurPageCount = 0;
-  XFA_AttributeValue m_ePageSetMode = XFA_AttributeValue::OrderedOccurrence;
-  bool m_bCreateOverFlowPage = false;
-  std::map<cppgc::Member<CXFA_Node>, int32_t> m_pPageSetMap;
-  std::vector<cppgc::Member<CXFA_ViewLayoutItem>> m_PageArray;
+  UnownedPtr<cppgc::Heap> heap_;
+  cppgc::Member<CXFA_LayoutProcessor> layout_processor_;
+  cppgc::Member<CXFA_Node> page_set_node_;
+  cppgc::Member<CXFA_Node> cur_page_area_;
+  cppgc::Member<CXFA_ViewLayoutItem> page_set_root_layout_item_;
+  cppgc::Member<CXFA_ViewLayoutItem> page_set_cur_layout_item_;
+  std::list<cppgc::Member<CXFA_ViewRecord>> proposed_view_records_;
+  std::list<cppgc::Member<CXFA_ViewRecord>>::iterator current_view_record_iter_;
+  int32_t avail_pages_ = 0;
+  int32_t cur_page_count_ = 0;
+  XFA_AttributeValue page_set_mode_ = XFA_AttributeValue::OrderedOccurrence;
+  bool create_over_flow_page_ = false;
+  std::map<cppgc::Member<CXFA_Node>, int32_t> page_set_map_;
+  std::vector<cppgc::Member<CXFA_ViewLayoutItem>> page_array_;
 };
 
 #endif  // XFA_FXFA_LAYOUT_CXFA_VIEWLAYOUTPROCESSOR_H_

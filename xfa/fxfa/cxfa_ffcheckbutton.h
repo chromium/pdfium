@@ -49,9 +49,9 @@ class CXFA_FFCheckButton final : public CXFA_FFField {
   void AddUIMargin(XFA_AttributeValue iCapPlacement);
   XFA_CheckState FWLState2XFAState();
 
-  cppgc::Member<IFWL_WidgetDelegate> m_pOldDelegate;
+  cppgc::Member<IFWL_WidgetDelegate> old_delegate_;
   cppgc::Member<CXFA_CheckButton> const button_;
-  CFX_RectF m_CheckBoxRect;
+  CFX_RectF check_box_rect_;
 };
 
 #endif  // XFA_FXFA_CXFA_FFCHECKBUTTON_H_

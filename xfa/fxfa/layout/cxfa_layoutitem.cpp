@@ -34,22 +34,23 @@ void XFA_ReleaseLayoutItem(CXFA_LayoutItem* pLayoutItem) {
 }
 
 CXFA_LayoutItem::CXFA_LayoutItem(CXFA_Node* pNode, ItemType type)
-    : m_ItemType(type), m_pFormNode(pNode) {}
+    : item_type_(type), form_node_(pNode) {}
 
 CXFA_LayoutItem::~CXFA_LayoutItem() = default;
 
 void CXFA_LayoutItem::PreFinalize() {
-  if (!m_pFormNode)
+  if (!form_node_) {
     return;
+  }
 
-  auto* pJSObj = m_pFormNode->JSObject();
+  auto* pJSObj = form_node_->JSObject();
   if (pJSObj && pJSObj->GetLayoutItem() == this)
     pJSObj->SetLayoutItem(nullptr);
 }
 
 void CXFA_LayoutItem::Trace(cppgc::Visitor* visitor) const {
   GCedTreeNode<CXFA_LayoutItem>::Trace(visitor);
-  visitor->Trace(m_pFormNode);
+  visitor->Trace(form_node_);
 }
 
 CXFA_ViewLayoutItem* CXFA_LayoutItem::AsViewLayoutItem() {
@@ -75,13 +76,14 @@ const CXFA_ContentLayoutItem* CXFA_LayoutItem::AsContentLayoutItem() const {
 const CXFA_ViewLayoutItem* CXFA_LayoutItem::GetPage() const {
   for (CXFA_LayoutItem* pCurNode = const_cast<CXFA_LayoutItem*>(this); pCurNode;
        pCurNode = pCurNode->GetParent()) {
-    if (pCurNode->m_pFormNode->GetElementType() == XFA_Element::PageArea)
+    if (pCurNode->form_node_->GetElementType() == XFA_Element::PageArea) {
       return pCurNode->AsViewLayoutItem();
+    }
   }
   return nullptr;
 }
 
 void CXFA_LayoutItem::SetFormNode(CXFA_Node* pNode) {
   // Not in header, assignment requires complete type, not just forward decl.
-  m_pFormNode = pNode;
+  form_node_ = pNode;
 }

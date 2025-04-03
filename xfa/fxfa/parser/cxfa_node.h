@@ -144,7 +144,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   // Note: returns XFA_Attribute::Unknown for invalid indicies.
   XFA_Attribute GetAttribute(size_t i) const;
 
-  XFA_PacketType GetPacketType() const { return m_ePacket; }
+  XFA_PacketType GetPacketType() const { return packet_; }
 
   void SetInitializedFlagAndNotify();
   void SetFlag(XFA_NodeFlag dwFlag);
@@ -178,7 +178,7 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
 
   bool IsAttributeInXML();
   bool IsFormContainer() const {
-    return m_ePacket == XFA_PacketType::Form && IsContainerNode();
+    return packet_ == XFA_PacketType::Form && IsContainerNode();
   }
 
   void SetXMLMappingNode(CFX_XMLNode* node) { xml_node_ = node; }
@@ -188,8 +188,8 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
 
   void SetToXML(const WideString& value);
 
-  uint32_t GetNameHash() const { return m_dwNameHash; }
-  bool IsUnnamed() const { return m_dwNameHash == 0; }
+  uint32_t GetNameHash() const { return name_hash_; }
+  bool IsUnnamed() const { return name_hash_ == 0; }
   CXFA_Node* GetModelNode();
   void UpdateNameHash();
 
@@ -320,9 +320,9 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   CFX_RectF GetUIMargin();
   CXFA_Border* GetUIBorder();
 
-  void SetPreNull(bool val) { m_bPreNull = val; }
-  bool IsNull() const { return m_bIsNull; }
-  void SetIsNull(bool val) { m_bIsNull = val; }
+  void SetPreNull(bool val) { pre_null_ = val; }
+  bool IsNull() const { return is_null_; }
+  void SetIsNull(bool val) { is_null_ = val; }
 
   void SetWidgetReady() { is_widget_ready_ = true; }
   bool IsWidgetReady() const { return is_widget_ready_; }
@@ -524,19 +524,19 @@ class CXFA_Node : public CXFA_Object, public GCedTreeNodeMixin<CXFA_Node> {
   CFX_XMLDocument* GetXMLDocument() const;
 
   XFA_FFWidgetType ff_widget_type_ = XFA_FFWidgetType::kNone;
-  bool m_bIsNull = true;
-  bool m_bPreNull = true;
+  bool is_null_ = true;
+  bool pre_null_ = true;
   bool is_widget_ready_ = false;
-  const pdfium::raw_span<const PropertyData> m_Properties;
-  const pdfium::raw_span<const AttributeData> m_Attributes;
-  const Mask<XFA_XDPPACKET> m_ValidPackets;
+  const pdfium::raw_span<const PropertyData> properties_;
+  const pdfium::raw_span<const AttributeData> attributes_;
+  const Mask<XFA_XDPPACKET> valid_packets_;
   UnownedPtr<CFX_XMLNode> xml_node_;
-  const XFA_PacketType m_ePacket;
-  uint8_t m_ExecuteRecursionDepth = 0;
-  Mask<XFA_NodeFlag> m_uNodeFlags = XFA_NodeFlag::kNone;
-  uint32_t m_dwNameHash = 0;
-  cppgc::Member<CXFA_Node> m_pAuxNode;
-  cppgc::Member<CXFA_WidgetLayoutData> m_pLayoutData;
+  const XFA_PacketType packet_;
+  uint8_t execute_recursion_depth_ = 0;
+  Mask<XFA_NodeFlag> node_flags_ = XFA_NodeFlag::kNone;
+  uint32_t name_hash_ = 0;
+  cppgc::Member<CXFA_Node> aux_node_;
+  cppgc::Member<CXFA_WidgetLayoutData> layout_data_;
   cppgc::Member<CXFA_Ui> ui_;
   std::vector<cppgc::Member<CXFA_Node>> binding_nodes_;
 };

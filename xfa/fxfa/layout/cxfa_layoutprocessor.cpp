@@ -26,19 +26,18 @@ CXFA_LayoutProcessor* CXFA_LayoutProcessor::FromDocument(
   return static_cast<CXFA_LayoutProcessor*>(pXFADoc->GetLayoutProcessor());
 }
 
-CXFA_LayoutProcessor::CXFA_LayoutProcessor(cppgc::Heap* pHeap)
-    : m_pHeap(pHeap) {}
+CXFA_LayoutProcessor::CXFA_LayoutProcessor(cppgc::Heap* pHeap) : heap_(pHeap) {}
 
 CXFA_LayoutProcessor::~CXFA_LayoutProcessor() = default;
 
 void CXFA_LayoutProcessor::Trace(cppgc::Visitor* visitor) const {
   CXFA_Document::LayoutProcessorIface::Trace(visitor);
-  visitor->Trace(m_pViewLayoutProcessor);
-  visitor->Trace(m_pContentLayoutProcessor);
+  visitor->Trace(view_layout_processor_);
+  visitor->Trace(content_layout_processor_);
 }
 
 void CXFA_LayoutProcessor::SetForceRelayout() {
-  m_bNeedLayout = true;
+  need_layout_ = true;
 }
 
 int32_t CXFA_LayoutProcessor::StartLayout() {
@@ -46,8 +45,8 @@ int32_t CXFA_LayoutProcessor::StartLayout() {
 }
 
 int32_t CXFA_LayoutProcessor::RestartLayout() {
-  m_pContentLayoutProcessor = nullptr;
-  m_nProgressCounter = 0;
+  content_layout_processor_ = nullptr;
+  progress_counter_ = 0;
   CXFA_Node* pFormPacketNode =
       ToNode(GetDocument()->GetXFAObject(XFA_HASHCODE_Form));
   if (!pFormPacketNode)
@@ -58,77 +57,80 @@ int32_t CXFA_LayoutProcessor::RestartLayout() {
   if (!pFormRoot)
     return -1;
 
-  if (!m_pViewLayoutProcessor) {
-    m_pViewLayoutProcessor =
+  if (!view_layout_processor_) {
+    view_layout_processor_ =
         cppgc::MakeGarbageCollected<CXFA_ViewLayoutProcessor>(
             GetHeap()->GetAllocationHandle(), GetHeap(), this);
   }
-  if (!m_pViewLayoutProcessor->InitLayoutPage(pFormRoot))
+  if (!view_layout_processor_->InitLayoutPage(pFormRoot)) {
     return -1;
+  }
 
-  if (!m_pViewLayoutProcessor->PrepareFirstPage(pFormRoot))
+  if (!view_layout_processor_->PrepareFirstPage(pFormRoot)) {
     return -1;
+  }
 
-  m_pContentLayoutProcessor =
+  content_layout_processor_ =
       cppgc::MakeGarbageCollected<CXFA_ContentLayoutProcessor>(
           GetHeap()->GetAllocationHandle(), GetHeap(), pFormRoot,
-          m_pViewLayoutProcessor);
-  m_nProgressCounter = 1;
+          view_layout_processor_);
+  progress_counter_ = 1;
   return 0;
 }
 
 int32_t CXFA_LayoutProcessor::DoLayout() {
-  if (m_nProgressCounter < 1)
+  if (progress_counter_ < 1) {
     return -1;
+  }
 
   CXFA_ContentLayoutProcessor::Result eStatus;
-  CXFA_Node* pFormNode = m_pContentLayoutProcessor->GetFormNode();
+  CXFA_Node* pFormNode = content_layout_processor_->GetFormNode();
   float fPosX =
       pFormNode->JSObject()->GetMeasureInUnit(XFA_Attribute::X, XFA_Unit::Pt);
   float fPosY =
       pFormNode->JSObject()->GetMeasureInUnit(XFA_Attribute::Y, XFA_Unit::Pt);
   do {
-    float fAvailHeight = m_pViewLayoutProcessor->GetAvailHeight();
+    float fAvailHeight = view_layout_processor_->GetAvailHeight();
     eStatus =
-        m_pContentLayoutProcessor->DoLayout(true, fAvailHeight, fAvailHeight);
+        content_layout_processor_->DoLayout(true, fAvailHeight, fAvailHeight);
     if (eStatus != CXFA_ContentLayoutProcessor::Result::kDone)
-      m_nProgressCounter++;
+      progress_counter_++;
 
     CXFA_ContentLayoutItem* pLayoutItem =
-        m_pContentLayoutProcessor->ExtractLayoutItem();
+        content_layout_processor_->ExtractLayoutItem();
     if (pLayoutItem)
-      pLayoutItem->m_sPos = CFX_PointF(fPosX, fPosY);
+      pLayoutItem->s_pos_ = CFX_PointF(fPosX, fPosY);
 
-    m_pViewLayoutProcessor->SubmitContentItem(pLayoutItem, eStatus);
+    view_layout_processor_->SubmitContentItem(pLayoutItem, eStatus);
   } while (eStatus != CXFA_ContentLayoutProcessor::Result::kDone);
 
   if (eStatus == CXFA_ContentLayoutProcessor::Result::kDone) {
-    m_pViewLayoutProcessor->FinishPaginatedPageSets();
-    m_pViewLayoutProcessor->SyncLayoutData();
-    m_bHasChangedContainers = false;
-    m_bNeedLayout = false;
+    view_layout_processor_->FinishPaginatedPageSets();
+    view_layout_processor_->SyncLayoutData();
+    has_changed_containers_ = false;
+    need_layout_ = false;
   }
   return 100 *
          (eStatus == CXFA_ContentLayoutProcessor::Result::kDone
-              ? m_nProgressCounter
-              : m_nProgressCounter - 1) /
-         m_nProgressCounter;
+              ? progress_counter_
+              : progress_counter_ - 1) /
+         progress_counter_;
 }
 
 bool CXFA_LayoutProcessor::IncrementLayout() {
-  if (m_bNeedLayout) {
+  if (need_layout_) {
     RestartLayout();
     return DoLayout() == 100;
   }
-  return !m_bHasChangedContainers;
+  return !has_changed_containers_;
 }
 
 int32_t CXFA_LayoutProcessor::CountPages() const {
-  return m_pViewLayoutProcessor ? m_pViewLayoutProcessor->GetPageCount() : 0;
+  return view_layout_processor_ ? view_layout_processor_->GetPageCount() : 0;
 }
 
 CXFA_ViewLayoutItem* CXFA_LayoutProcessor::GetPage(int32_t index) const {
-  return m_pViewLayoutProcessor ? m_pViewLayoutProcessor->GetPage(index)
+  return view_layout_processor_ ? view_layout_processor_->GetPage(index)
                                 : nullptr;
 }
 
@@ -137,9 +139,9 @@ CXFA_LayoutItem* CXFA_LayoutProcessor::GetLayoutItem(CXFA_Node* pFormItem) {
 }
 
 void CXFA_LayoutProcessor::SetHasChangedContainer() {
-  m_bHasChangedContainers = true;
+  has_changed_containers_ = true;
 }
 
 bool CXFA_LayoutProcessor::NeedLayout() const {
-  return m_bNeedLayout || m_bHasChangedContainers;
+  return need_layout_ || has_changed_containers_;
 }

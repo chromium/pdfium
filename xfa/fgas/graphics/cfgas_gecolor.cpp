@@ -6,13 +6,13 @@
 
 #include "xfa/fgas/graphics/cfgas_gecolor.h"
 
-CFGAS_GEColor::CFGAS_GEColor(FX_ARGB argb) : m_type(Solid), m_argb(argb) {}
+CFGAS_GEColor::CFGAS_GEColor(FX_ARGB argb) : type_(Solid), argb_(argb) {}
 
 CFGAS_GEColor::CFGAS_GEColor(CFGAS_GEPattern* pattern, FX_ARGB argb)
-    : m_type(Pattern), m_argb(argb), m_pPattern(pattern) {}
+    : type_(Pattern), argb_(argb), pattern_(pattern) {}
 
 CFGAS_GEColor::CFGAS_GEColor(CFGAS_GEShading* shading)
-    : m_type(Shading), m_pShading(shading) {}
+    : type_(Shading), shading_(shading) {}
 
 CFGAS_GEColor::CFGAS_GEColor(const CFGAS_GEColor& that) = default;
 

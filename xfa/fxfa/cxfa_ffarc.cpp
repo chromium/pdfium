@@ -19,12 +19,12 @@ void CXFA_FFArc::RenderWidget(CFGAS_GEGraphics* pGS,
   if (!HasVisibleStatus())
     return;
 
-  CXFA_Value* value = m_pNode->GetFormValueIfExists();
+  CXFA_Value* value = node_->GetFormValueIfExists();
   if (!value)
     return;
 
   CFX_RectF rtArc = GetRectWithoutRotate();
-  CXFA_Margin* margin = m_pNode->GetMarginIfExists();
+  CXFA_Margin* margin = node_->GetMarginIfExists();
   XFA_RectWithoutMargin(&rtArc, margin);
 
   CFX_Matrix mtRotate = GetRotateMatrix();

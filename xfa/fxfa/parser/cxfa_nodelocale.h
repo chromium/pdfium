@@ -50,7 +50,7 @@ class CXFA_NodeLocale final : public GCedLocaleIface {
                                int index,
                                bool bAbbr) const;
 
-  cppgc::Member<CXFA_Node> const m_pNode;
+  cppgc::Member<CXFA_Node> const node_;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_NODELOCALE_H_

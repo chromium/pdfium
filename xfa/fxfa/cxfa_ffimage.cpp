@@ -52,18 +52,18 @@ void CXFA_FFImage::RenderWidget(CFGAS_GEGraphics* pGS,
     return;
 
   CFX_RectF rtImage = GetRectWithoutRotate();
-  CXFA_Margin* margin = m_pNode->GetMarginIfExists();
+  CXFA_Margin* margin = node_->GetMarginIfExists();
   XFA_RectWithoutMargin(&rtImage, margin);
 
   XFA_AttributeValue iHorzAlign = XFA_AttributeValue::Left;
   XFA_AttributeValue iVertAlign = XFA_AttributeValue::Top;
-  CXFA_Para* para = m_pNode->GetParaIfExists();
+  CXFA_Para* para = node_->GetParaIfExists();
   if (para) {
     iHorzAlign = para->GetHorizontalAlign();
     iVertAlign = para->GetVerticalAlign();
   }
 
-  auto* value = m_pNode->GetFormValueIfExists();
+  auto* value = node_->GetFormValueIfExists();
   if (!value)
     return;
 
@@ -72,6 +72,6 @@ void CXFA_FFImage::RenderWidget(CFGAS_GEGraphics* pGS,
     return;
 
   XFA_DrawImage(pGS, rtImage, mtRotate, std::move(pDIBitmap),
-                image->GetAspect(), m_pNode->GetLayoutImageDpi(), iHorzAlign,
+                image->GetAspect(), node_->GetLayoutImageDpi(), iHorzAlign,
                 iVertAlign);
 }

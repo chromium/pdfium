@@ -64,9 +64,9 @@ class CXFA_LocaleValue {
                            const WideString& wsFormat,
                            GCedLocaleIface* pLocale);
 
-  bool IsValid() const { return m_bValid; }
-  const WideString& GetValue() const { return m_wsValue; }
-  ValueType GetType() const { return m_eType; }
+  bool IsValid() const { return valid_; }
+  const WideString& GetValue() const { return value_; }
+  ValueType GetType() const { return type_; }
   double GetDoubleNum() const;
   void SetDate(const CFX_DateTime& d);
   CFX_DateTime GetDate() const;
@@ -88,10 +88,10 @@ class CXFA_LocaleValue {
                          const WideString& wsPattern,
                          GCedLocaleIface* pLocale);
 
-  UnownedPtr<CXFA_LocaleMgr> m_pLocaleMgr;  // Ok, stack-only.
-  WideString m_wsValue;
-  ValueType m_eType = ValueType::kNull;
-  bool m_bValid = true;
+  UnownedPtr<CXFA_LocaleMgr> locale_mgr_;  // Ok, stack-only.
+  WideString value_;
+  ValueType type_ = ValueType::kNull;
+  bool valid_ = true;
 };
 
 #endif  // XFA_FXFA_PARSER_CXFA_LOCALEVALUE_H_

@@ -23,9 +23,9 @@ class CFWL_MessageKey final : public CFWL_Message {
                   uint32_t dwKeyCodeOrChar);
   ~CFWL_MessageKey() override;
 
-  const KeyCommand m_dwCmd;
-  const Mask<XFA_FWL_KeyFlag> m_dwFlags;
-  const uint32_t m_dwKeyCodeOrChar;
+  const KeyCommand cmd_;
+  const Mask<XFA_FWL_KeyFlag> flags_;
+  const uint32_t key_code_or_char_;
 };
 
 }  // namespace pdfium

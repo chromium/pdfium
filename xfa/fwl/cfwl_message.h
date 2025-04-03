@@ -23,9 +23,9 @@ class CFWL_Message {
 
   virtual ~CFWL_Message();
 
-  Type GetType() const { return m_type; }
-  CFWL_Widget* GetDstTarget() const { return m_pDstTarget; }
-  void SetDstTarget(CFWL_Widget* pWidget) { m_pDstTarget = pWidget; }
+  Type GetType() const { return type_; }
+  CFWL_Widget* GetDstTarget() const { return dst_target_; }
+  void SetDstTarget(CFWL_Widget* pWidget) { dst_target_ = pWidget; }
 
  protected:
   CFWL_Message(Type type, CFWL_Widget* pDstTarget);
@@ -33,8 +33,8 @@ class CFWL_Message {
   CFWL_Message& operator=(const CFWL_Message& that) = delete;
 
  private:
-  const Type m_type;
-  UnownedPtr<CFWL_Widget> m_pDstTarget;
+  const Type type_;
+  UnownedPtr<CFWL_Widget> dst_target_;
 };
 
 }  // namespace pdfium

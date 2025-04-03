@@ -31,12 +31,12 @@ bool CXFA_FFNumericEdit::LoadWidget() {
 
   CFWL_NoteDriver* pNoteDriver = pWidget->GetFWLApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pWidget, pWidget);
-  m_pOldDelegate = pWidget->GetDelegate();
+  old_delegate_ = pWidget->GetDelegate();
   pWidget->SetDelegate(this);
 
   {
     CFWL_Widget::ScopedUpdateLock update_lock(pWidget);
-    pWidget->SetText(m_pNode->GetValue(XFA_ValuePicture::kDisplay));
+    pWidget->SetText(node_->GetValue(XFA_ValuePicture::kDisplay));
     UpdateWidgetProperty();
   }
 
@@ -52,17 +52,19 @@ void CXFA_FFNumericEdit::UpdateWidgetProperty() {
       FWL_STYLEEXT_EDT_ShowScrollbarFocus | FWL_STYLEEXT_EDT_OuterScrollbar |
       FWL_STYLEEXT_EDT_Validate | FWL_STYLEEXT_EDT_Number;
   dwExtendedStyle |= UpdateUIProperty();
-  if (!m_pNode->IsHorizontalScrollPolicyOff())
+  if (!node_->IsHorizontalScrollPolicyOff()) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_AutoHScroll;
+  }
 
-  std::optional<int32_t> numCells = m_pNode->GetNumberOfCells();
+  std::optional<int32_t> numCells = node_->GetNumberOfCells();
   if (numCells.has_value() && numCells.value() > 0) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_CombText;
     pWidget->SetLimit(numCells.value());
   }
   dwExtendedStyle |= GetAlignment();
-  if (!m_pNode->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive())
+  if (!node_->IsOpenAccess() || !GetDoc()->GetXFADoc()->IsInteractive()) {
     dwExtendedStyle |= FWL_STYLEEXT_EDT_ReadOnly;
+  }
 
   GetNormalWidget()->ModifyStyleExts(dwExtendedStyle, 0xFFFFFFFF);
 }
@@ -78,14 +80,13 @@ void CXFA_FFNumericEdit::OnProcessEvent(CFWL_Event* pEvent) {
 
 bool CXFA_FFNumericEdit::OnValidate(CFWL_Widget* pWidget,
                                     const WideString& wsText) {
-  WideString wsPattern = m_pNode->GetPictureContent(XFA_ValuePicture::kEdit);
+  WideString wsPattern = node_->GetPictureContent(XFA_ValuePicture::kEdit);
   if (!wsPattern.IsEmpty())
     return true;
 
   WideString wsFormat;
-  CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(m_pNode.Get());
-  widgetValue.GetNumericFormat(wsFormat, m_pNode->GetLeadDigits(),
-                               m_pNode->GetFracDigits());
-  return widgetValue.ValidateNumericTemp(wsText, wsFormat,
-                                         m_pNode->GetLocale());
+  CXFA_LocaleValue widgetValue = XFA_GetLocaleValue(node_.Get());
+  widgetValue.GetNumericFormat(wsFormat, node_->GetLeadDigits(),
+                               node_->GetFracDigits());
+  return widgetValue.ValidateNumericTemp(wsText, wsFormat, node_->GetLocale());
 }

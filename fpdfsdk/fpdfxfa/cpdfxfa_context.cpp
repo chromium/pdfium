@@ -445,7 +445,7 @@ void CPDFXFA_Context::SendPostSaveToXFADoc() {
   CXFA_ReadyNodeIterator it(pXFADocView->GetRootSubform());
   while (CXFA_Node* pNode = it.MoveToNext()) {
     CXFA_EventParam preParam(XFA_EVENT_PostSave);
-    preParam.m_bTargeted = false;
+    preParam.targeted_ = false;
     pWidgetHandler->ProcessEvent(pNode, &preParam);
   }
   pXFADocView->UpdateDocView();
@@ -465,7 +465,7 @@ void CPDFXFA_Context::SendPreSaveToXFADoc(
   CXFA_ReadyNodeIterator it(pXFADocView->GetRootSubform());
   while (CXFA_Node* pNode = it.MoveToNext()) {
     CXFA_EventParam preParam(XFA_EVENT_PreSave);
-    preParam.m_bTargeted = false;
+    preParam.targeted_ = false;
     pWidgetHandler->ProcessEvent(pNode, &preParam);
   }
   pXFADocView->UpdateDocView();

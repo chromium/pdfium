@@ -34,13 +34,13 @@ class CXFA_FMSimpleExpression : public CXFA_FMExpression {
  public:
   ~CXFA_FMSimpleExpression() override;
 
-  XFA_FM_TOKEN GetOperatorToken() const { return m_op; }
+  XFA_FM_TOKEN GetOperatorToken() const { return op_; }
 
  protected:
   explicit CXFA_FMSimpleExpression(XFA_FM_TOKEN op);
 
  private:
-  const XFA_FM_TOKEN m_op;
+  const XFA_FM_TOKEN op_;
 };
 
 class CXFA_FMChainableExpression : public CXFA_FMSimpleExpression {
@@ -53,12 +53,12 @@ class CXFA_FMChainableExpression : public CXFA_FMSimpleExpression {
                              CXFA_FMSimpleExpression* pExp1,
                              CXFA_FMSimpleExpression* pExp2);
 
-  CXFA_FMSimpleExpression* GetFirstExpression() const { return m_pExp1; }
-  CXFA_FMSimpleExpression* GetSecondExpression() const { return m_pExp2; }
+  CXFA_FMSimpleExpression* GetFirstExpression() const { return exp_1_; }
+  CXFA_FMSimpleExpression* GetSecondExpression() const { return exp_2_; }
 
  private:
-  cppgc::Member<CXFA_FMSimpleExpression> m_pExp1;
-  cppgc::Member<CXFA_FMSimpleExpression> m_pExp2;
+  cppgc::Member<CXFA_FMSimpleExpression> exp_1_;
+  cppgc::Member<CXFA_FMSimpleExpression> exp_2_;
 };
 
 class CXFA_FMNullExpression final : public CXFA_FMSimpleExpression {
@@ -82,7 +82,7 @@ class CXFA_FMNumberExpression final : public CXFA_FMSimpleExpression {
  private:
   explicit CXFA_FMNumberExpression(WideString wsNumber);
 
-  WideString m_wsNumber;
+  WideString number_;
 };
 
 class CXFA_FMStringExpression final : public CXFA_FMSimpleExpression {
@@ -95,7 +95,7 @@ class CXFA_FMStringExpression final : public CXFA_FMSimpleExpression {
  private:
   explicit CXFA_FMStringExpression(WideString wsString);
 
-  WideString m_wsString;
+  WideString string_;
 };
 
 class CXFA_FMIdentifierExpression final : public CXFA_FMSimpleExpression {
@@ -108,7 +108,7 @@ class CXFA_FMIdentifierExpression final : public CXFA_FMSimpleExpression {
  private:
   explicit CXFA_FMIdentifierExpression(WideString wsIdentifier);
 
-  WideString m_wsIdentifier;
+  WideString identifier_;
 };
 
 class CXFA_FMAssignExpression final : public CXFA_FMChainableExpression {
@@ -137,7 +137,7 @@ class CXFA_FMBinExpression : public CXFA_FMChainableExpression {
                        CXFA_FMSimpleExpression* pExp2);
 
  private:
-  WideString m_OpName;
+  WideString op_name_;
 };
 
 class CXFA_FMLogicalOrExpression final : public CXFA_FMBinExpression {
@@ -285,8 +285,8 @@ class CXFA_FMUnaryExpression : public CXFA_FMSimpleExpression {
                          CXFA_FMSimpleExpression* pExp);
 
  private:
-  WideString m_OpName;
-  cppgc::Member<CXFA_FMSimpleExpression> m_pExp;
+  WideString op_name_;
+  cppgc::Member<CXFA_FMSimpleExpression> exp_;
 };
 
 class CXFA_FMPosExpression final : public CXFA_FMUnaryExpression {
@@ -333,9 +333,9 @@ class CXFA_FMCallExpression final : public CXFA_FMSimpleExpression {
       std::vector<cppgc::Member<CXFA_FMSimpleExpression>>&& pArguments,
       bool bIsSomMethod);
 
-  cppgc::Member<CXFA_FMSimpleExpression> m_pExp;
-  std::vector<cppgc::Member<CXFA_FMSimpleExpression>> m_Arguments;
-  bool m_bIsSomMethod;
+  cppgc::Member<CXFA_FMSimpleExpression> exp_;
+  std::vector<cppgc::Member<CXFA_FMSimpleExpression>> arguments_;
+  bool is_som_method_;
 };
 
 class CXFA_FMDotAccessorExpression final : public CXFA_FMChainableExpression {
@@ -351,7 +351,7 @@ class CXFA_FMDotAccessorExpression final : public CXFA_FMChainableExpression {
                                WideString wsIdentifier,
                                CXFA_FMSimpleExpression* pIndexExp);
 
-  WideString m_wsIdentifier;
+  WideString identifier_;
 };
 
 class CXFA_FMIndexExpression final : public CXFA_FMSimpleExpression {
@@ -374,9 +374,9 @@ class CXFA_FMIndexExpression final : public CXFA_FMSimpleExpression {
                          CXFA_FMSimpleExpression* pIndexExp,
                          bool bIsStarIndex);
 
-  cppgc::Member<CXFA_FMSimpleExpression> m_pExp;
-  AccessorIndex m_accessorIndex;
-  bool m_bIsStarIndex;
+  cppgc::Member<CXFA_FMSimpleExpression> exp_;
+  AccessorIndex accessor_index_;
+  bool is_star_index_;
 };
 
 class CXFA_FMDotDotAccessorExpression final
@@ -393,7 +393,7 @@ class CXFA_FMDotDotAccessorExpression final
                                   WideString wsIdentifier,
                                   CXFA_FMSimpleExpression* pIndexExp);
 
-  WideString m_wsIdentifier;
+  WideString identifier_;
 };
 
 class CXFA_FMMethodCallExpression final : public CXFA_FMChainableExpression {
@@ -422,9 +422,9 @@ class CXFA_FMFunctionDefinition final : public CXFA_FMExpression {
       std::vector<WideString>&& arguments,
       std::vector<cppgc::Member<CXFA_FMExpression>>&& expressions);
 
-  const WideString m_wsName;
-  std::vector<WideString> const m_pArguments;
-  std::vector<cppgc::Member<CXFA_FMExpression>> const m_pExpressions;
+  const WideString name_;
+  std::vector<WideString> const arguments_;
+  std::vector<cppgc::Member<CXFA_FMExpression>> const expressions_;
 };
 
 class CXFA_FMVarExpression final : public CXFA_FMExpression {
@@ -438,8 +438,8 @@ class CXFA_FMVarExpression final : public CXFA_FMExpression {
  private:
   CXFA_FMVarExpression(WideString wsName, CXFA_FMSimpleExpression* pInit);
 
-  WideString const m_wsName;
-  cppgc::Member<CXFA_FMSimpleExpression> const m_pInit;
+  WideString const name_;
+  cppgc::Member<CXFA_FMSimpleExpression> const init_;
 };
 
 class CXFA_FMExpExpression final : public CXFA_FMExpression {
@@ -453,7 +453,7 @@ class CXFA_FMExpExpression final : public CXFA_FMExpression {
  private:
   explicit CXFA_FMExpExpression(CXFA_FMSimpleExpression* pExpression);
 
-  cppgc::Member<CXFA_FMSimpleExpression> const m_pExpression;
+  cppgc::Member<CXFA_FMSimpleExpression> const expression_;
 };
 
 class CXFA_FMBlockExpression final : public CXFA_FMExpression {
@@ -468,7 +468,7 @@ class CXFA_FMBlockExpression final : public CXFA_FMExpression {
   CXFA_FMBlockExpression(
       std::vector<cppgc::Member<CXFA_FMExpression>>&& pExpressionList);
 
-  std::vector<cppgc::Member<CXFA_FMExpression>> const m_ExpressionList;
+  std::vector<cppgc::Member<CXFA_FMExpression>> const expression_list_;
 };
 
 class CXFA_FMDoExpression final : public CXFA_FMExpression {
@@ -482,7 +482,7 @@ class CXFA_FMDoExpression final : public CXFA_FMExpression {
  private:
   explicit CXFA_FMDoExpression(CXFA_FMExpression* pList);
 
-  cppgc::Member<CXFA_FMExpression> const m_pList;
+  cppgc::Member<CXFA_FMExpression> const list_;
 };
 
 class CXFA_FMIfExpression final : public CXFA_FMExpression {
@@ -500,10 +500,10 @@ class CXFA_FMIfExpression final : public CXFA_FMExpression {
       std::vector<cppgc::Member<CXFA_FMIfExpression>>&& pElseIfExpressions,
       CXFA_FMExpression* pElseExpression);
 
-  cppgc::Member<CXFA_FMSimpleExpression> const m_pExpression;
-  cppgc::Member<CXFA_FMExpression> const m_pIfExpression;
-  std::vector<cppgc::Member<CXFA_FMIfExpression>> const m_pElseIfExpressions;
-  cppgc::Member<CXFA_FMExpression> const m_pElseExpression;
+  cppgc::Member<CXFA_FMSimpleExpression> const expression_;
+  cppgc::Member<CXFA_FMExpression> const if_expression_;
+  std::vector<cppgc::Member<CXFA_FMIfExpression>> const else_if_expressions_;
+  cppgc::Member<CXFA_FMExpression> const else_expression_;
 };
 
 class CXFA_FMWhileExpression final : public CXFA_FMExpression {
@@ -518,8 +518,8 @@ class CXFA_FMWhileExpression final : public CXFA_FMExpression {
   CXFA_FMWhileExpression(CXFA_FMSimpleExpression* pCodition,
                          CXFA_FMExpression* pExpression);
 
-  cppgc::Member<CXFA_FMSimpleExpression> const m_pCondition;
-  cppgc::Member<CXFA_FMExpression> const m_pExpression;
+  cppgc::Member<CXFA_FMSimpleExpression> const condition_;
+  cppgc::Member<CXFA_FMExpression> const expression_;
 };
 
 class CXFA_FMBreakExpression final : public CXFA_FMExpression {
@@ -560,12 +560,12 @@ class CXFA_FMForExpression final : public CXFA_FMExpression {
                        CXFA_FMSimpleExpression* pStep,
                        CXFA_FMExpression* pList);
 
-  const WideString m_wsVariant;
-  const bool m_bDirection;
-  cppgc::Member<CXFA_FMSimpleExpression> const m_pAssignment;
-  cppgc::Member<CXFA_FMSimpleExpression> const m_pAccessor;
-  cppgc::Member<CXFA_FMSimpleExpression> const m_pStep;
-  cppgc::Member<CXFA_FMExpression> const m_pList;
+  const WideString variant_;
+  const bool direction_;
+  cppgc::Member<CXFA_FMSimpleExpression> const assignment_;
+  cppgc::Member<CXFA_FMSimpleExpression> const accessor_;
+  cppgc::Member<CXFA_FMSimpleExpression> const step_;
+  cppgc::Member<CXFA_FMExpression> const list_;
 };
 
 class CXFA_FMForeachExpression final : public CXFA_FMExpression {
@@ -583,9 +583,9 @@ class CXFA_FMForeachExpression final : public CXFA_FMExpression {
       std::vector<cppgc::Member<CXFA_FMSimpleExpression>>&& pAccessors,
       CXFA_FMExpression* pList);
 
-  const WideString m_wsIdentifier;
-  std::vector<cppgc::Member<CXFA_FMSimpleExpression>> const m_pAccessors;
-  cppgc::Member<CXFA_FMExpression> const m_pList;
+  const WideString identifier_;
+  std::vector<cppgc::Member<CXFA_FMSimpleExpression>> const accessors_;
+  cppgc::Member<CXFA_FMExpression> const list_;
 };
 
 class CXFA_FMAST : public cppgc::GarbageCollected<CXFA_FMAST> {

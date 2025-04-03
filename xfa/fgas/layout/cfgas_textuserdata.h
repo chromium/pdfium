@@ -16,8 +16,8 @@ class CFGAS_TextUserData final : public Retainable {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  RetainPtr<CFX_CSSComputedStyle> m_pStyle;
-  RetainPtr<CFGAS_LinkUserData> m_pLinkData;
+  RetainPtr<CFX_CSSComputedStyle> style_;
+  RetainPtr<CFGAS_LinkUserData> link_data_;
 
  private:
   explicit CFGAS_TextUserData(const RetainPtr<CFX_CSSComputedStyle>& pStyle);

@@ -32,11 +32,11 @@ CXFA_FFPushButton::~CXFA_FFPushButton() = default;
 
 void CXFA_FFPushButton::Trace(cppgc::Visitor* visitor) const {
   CXFA_FFField::Trace(visitor);
-  visitor->Trace(m_pRolloverTextLayout);
-  visitor->Trace(m_pDownTextLayout);
-  visitor->Trace(m_pRollProvider);
-  visitor->Trace(m_pDownProvider);
-  visitor->Trace(m_pOldDelegate);
+  visitor->Trace(rollover_text_layout_);
+  visitor->Trace(down_text_layout_);
+  visitor->Trace(roll_provider_);
+  visitor->Trace(down_provider_);
+  visitor->Trace(old_delegate_);
   visitor->Trace(button_);
 }
 
@@ -63,7 +63,7 @@ bool CXFA_FFPushButton::LoadWidget() {
 
   CFWL_PushButton* pPushButton = cppgc::MakeGarbageCollected<CFWL_PushButton>(
       GetFWLApp()->GetHeap()->GetAllocationHandle(), GetFWLApp());
-  m_pOldDelegate = pPushButton->GetDelegate();
+  old_delegate_ = pPushButton->GetDelegate();
   pPushButton->SetDelegate(this);
   SetNormalWidget(pPushButton);
   pPushButton->SetAdapterIface(this);
@@ -102,15 +102,15 @@ void CXFA_FFPushButton::PerformLayout() {
   CXFA_FFWidget::PerformLayout();
   CFX_RectF rtWidget = GetRectWithoutRotate();
 
-  m_UIRect = rtWidget;
-  CXFA_Margin* margin = m_pNode->GetMarginIfExists();
+  uirect_ = rtWidget;
+  CXFA_Margin* margin = node_->GetMarginIfExists();
   XFA_RectWithoutMargin(&rtWidget, margin);
 
-  m_CaptionRect = rtWidget;
+  caption_rect_ = rtWidget;
 
-  CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
+  CXFA_Caption* caption = node_->GetCaptionIfExists();
   CXFA_Margin* captionMargin = caption ? caption->GetMarginIfExists() : nullptr;
-  XFA_RectWithoutMargin(&m_CaptionRect, captionMargin);
+  XFA_RectWithoutMargin(&caption_rect_, captionMargin);
 
   LayoutHighlightCaption();
   SetFWLRect();
@@ -120,7 +120,7 @@ void CXFA_FFPushButton::PerformLayout() {
 }
 
 float CXFA_FFPushButton::GetLineWidth() {
-  CXFA_Border* border = m_pNode->GetBorderIfExists();
+  CXFA_Border* border = node_->GetBorderIfExists();
   if (border && border->GetPresence() == XFA_AttributeValue::Visible) {
     CXFA_Edge* edge = border->GetEdgeIfExists(0);
     return edge ? edge->GetThickness() : 0;
@@ -137,63 +137,67 @@ FX_ARGB CXFA_FFPushButton::GetFillColor() {
 }
 
 void CXFA_FFPushButton::LoadHighlightCaption() {
-  CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
+  CXFA_Caption* caption = node_->GetCaptionIfExists();
   if (!caption || caption->IsHidden())
     return;
 
-  if (m_pNode->HasButtonRollover()) {
-    if (!m_pRollProvider) {
-      m_pRollProvider = cppgc::MakeGarbageCollected<CXFA_TextProvider>(
-          GetDoc()->GetHeap()->GetAllocationHandle(), m_pNode.Get(),
+  if (node_->HasButtonRollover()) {
+    if (!roll_provider_) {
+      roll_provider_ = cppgc::MakeGarbageCollected<CXFA_TextProvider>(
+          GetDoc()->GetHeap()->GetAllocationHandle(), node_.Get(),
           CXFA_TextProvider::Type::kRollover);
     }
-    m_pRolloverTextLayout = cppgc::MakeGarbageCollected<CXFA_TextLayout>(
-        GetDoc()->GetHeap()->GetAllocationHandle(), GetDoc(), m_pRollProvider);
+    rollover_text_layout_ = cppgc::MakeGarbageCollected<CXFA_TextLayout>(
+        GetDoc()->GetHeap()->GetAllocationHandle(), GetDoc(), roll_provider_);
   }
-  if (m_pNode->HasButtonDown()) {
-    if (!m_pDownProvider) {
-      m_pDownProvider = cppgc::MakeGarbageCollected<CXFA_TextProvider>(
-          GetDoc()->GetHeap()->GetAllocationHandle(), m_pNode.Get(),
+  if (node_->HasButtonDown()) {
+    if (!down_provider_) {
+      down_provider_ = cppgc::MakeGarbageCollected<CXFA_TextProvider>(
+          GetDoc()->GetHeap()->GetAllocationHandle(), node_.Get(),
           CXFA_TextProvider::Type::kDown);
     }
-    m_pDownTextLayout = cppgc::MakeGarbageCollected<CXFA_TextLayout>(
-        GetDoc()->GetHeap()->GetAllocationHandle(), GetDoc(), m_pDownProvider);
+    down_text_layout_ = cppgc::MakeGarbageCollected<CXFA_TextLayout>(
+        GetDoc()->GetHeap()->GetAllocationHandle(), GetDoc(), down_provider_);
   }
 }
 
 void CXFA_FFPushButton::LayoutHighlightCaption() {
-  CFX_SizeF sz(m_CaptionRect.width, m_CaptionRect.height);
+  CFX_SizeF sz(caption_rect_.width, caption_rect_.height);
   LayoutCaption();
-  if (m_pRolloverTextLayout)
-    m_pRolloverTextLayout->Layout(sz);
-  if (m_pDownTextLayout)
-    m_pDownTextLayout->Layout(sz);
+  if (rollover_text_layout_) {
+    rollover_text_layout_->Layout(sz);
+  }
+  if (down_text_layout_) {
+    down_text_layout_->Layout(sz);
+  }
 }
 
 void CXFA_FFPushButton::RenderHighlightCaption(CFGAS_GEGraphics* pGS,
                                                CFX_Matrix* pMatrix) {
-  CXFA_TextLayout* pCapTextLayout = m_pNode->GetCaptionTextLayout();
-  CXFA_Caption* caption = m_pNode->GetCaptionIfExists();
+  CXFA_TextLayout* pCapTextLayout = node_->GetCaptionTextLayout();
+  CXFA_Caption* caption = node_->GetCaptionIfExists();
   if (!caption || !caption->IsVisible())
     return;
 
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
-  CFX_RectF rtClip = m_CaptionRect;
+  CFX_RectF rtClip = caption_rect_;
   rtClip.Intersect(GetRectWithoutRotate());
-  CFX_Matrix mt(1, 0, 0, 1, m_CaptionRect.left, m_CaptionRect.top);
+  CFX_Matrix mt(1, 0, 0, 1, caption_rect_.left, caption_rect_.top);
   if (pMatrix) {
     rtClip = pMatrix->TransformRect(rtClip);
     mt.Concat(*pMatrix);
   }
 
   uint32_t dwState = GetNormalWidget()->GetStates();
-  if (m_pDownTextLayout && (dwState & FWL_STATE_PSB_Pressed) &&
+  if (down_text_layout_ && (dwState & FWL_STATE_PSB_Pressed) &&
       (dwState & FWL_STATE_PSB_Hovered)) {
-    if (m_pDownTextLayout->DrawString(pRenderDevice, mt, rtClip, 0))
+    if (down_text_layout_->DrawString(pRenderDevice, mt, rtClip, 0)) {
       return;
-  } else if (m_pRolloverTextLayout && (dwState & FWL_STATE_PSB_Hovered)) {
-    if (m_pRolloverTextLayout->DrawString(pRenderDevice, mt, rtClip, 0))
+    }
+  } else if (rollover_text_layout_ && (dwState & FWL_STATE_PSB_Hovered)) {
+    if (rollover_text_layout_->DrawString(pRenderDevice, mt, rtClip, 0)) {
       return;
+    }
   }
 
   if (pCapTextLayout)
@@ -201,11 +205,11 @@ void CXFA_FFPushButton::RenderHighlightCaption(CFGAS_GEGraphics* pGS,
 }
 
 void CXFA_FFPushButton::OnProcessMessage(CFWL_Message* pMessage) {
-  m_pOldDelegate->OnProcessMessage(pMessage);
+  old_delegate_->OnProcessMessage(pMessage);
 }
 
 void CXFA_FFPushButton::OnProcessEvent(pdfium::CFWL_Event* pEvent) {
-  m_pOldDelegate->OnProcessEvent(pEvent);
+  old_delegate_->OnProcessEvent(pEvent);
   CXFA_FFField::OnProcessEvent(pEvent);
 }
 

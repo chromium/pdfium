@@ -13,11 +13,11 @@
 
 CFGAS_TextUserData::CFGAS_TextUserData(
     const RetainPtr<CFX_CSSComputedStyle>& pStyle)
-    : m_pStyle(pStyle) {}
+    : style_(pStyle) {}
 
 CFGAS_TextUserData::CFGAS_TextUserData(
     const RetainPtr<CFX_CSSComputedStyle>& pStyle,
     const RetainPtr<CFGAS_LinkUserData>& pLinkData)
-    : m_pStyle(pStyle), m_pLinkData(pLinkData) {}
+    : style_(pStyle), link_data_(pLinkData) {}
 
 CFGAS_TextUserData::~CFGAS_TextUserData() = default;

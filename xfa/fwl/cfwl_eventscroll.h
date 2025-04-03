@@ -29,12 +29,12 @@ class CFWL_EventScroll final : public CFWL_Event {
   CFWL_EventScroll(CFWL_Widget* pSrcTarget, Code code, float pos);
   ~CFWL_EventScroll() override;
 
-  Code GetScrollCode() const { return m_iScrollCode; }
-  float GetPos() const { return m_fPos; }
+  Code GetScrollCode() const { return scroll_code_; }
+  float GetPos() const { return pos_; }
 
  private:
-  const Code m_iScrollCode;
-  const float m_fPos;
+  const Code scroll_code_;
+  const float pos_;
 };
 
 }  // namespace pdfium

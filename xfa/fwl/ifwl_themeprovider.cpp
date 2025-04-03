@@ -22,69 +22,69 @@
 namespace pdfium {
 
 IFWL_ThemeProvider::IFWL_ThemeProvider(cppgc::Heap* pHeap)
-    : m_pCheckBoxTP(cppgc::MakeGarbageCollected<CFWL_CheckBoxTP>(
+    : check_box_tp_(cppgc::MakeGarbageCollected<CFWL_CheckBoxTP>(
           pHeap->GetAllocationHandle())),
-      m_pListBoxTP(cppgc::MakeGarbageCollected<CFWL_ListBoxTP>(
+      list_box_tp_(cppgc::MakeGarbageCollected<CFWL_ListBoxTP>(
           pHeap->GetAllocationHandle())),
-      m_pPictureBoxTP(cppgc::MakeGarbageCollected<CFWL_PictureBoxTP>(
+      picture_box_tp_(cppgc::MakeGarbageCollected<CFWL_PictureBoxTP>(
           pHeap->GetAllocationHandle())),
-      m_pSrollBarTP(cppgc::MakeGarbageCollected<CFWL_ScrollBarTP>(
+      sroll_bar_tp_(cppgc::MakeGarbageCollected<CFWL_ScrollBarTP>(
           pHeap->GetAllocationHandle())),
-      m_pEditTP(cppgc::MakeGarbageCollected<CFWL_EditTP>(
+      edit_tp_(cppgc::MakeGarbageCollected<CFWL_EditTP>(
           pHeap->GetAllocationHandle())),
-      m_pComboBoxTP(cppgc::MakeGarbageCollected<CFWL_ComboBoxTP>(
+      combo_box_tp_(cppgc::MakeGarbageCollected<CFWL_ComboBoxTP>(
           pHeap->GetAllocationHandle())),
-      m_pMonthCalendarTP(cppgc::MakeGarbageCollected<CFWL_MonthCalendarTP>(
+      month_calendar_tp_(cppgc::MakeGarbageCollected<CFWL_MonthCalendarTP>(
           pHeap->GetAllocationHandle())),
-      m_pDateTimePickerTP(cppgc::MakeGarbageCollected<CFWL_DateTimePickerTP>(
+      date_time_picker_tp_(cppgc::MakeGarbageCollected<CFWL_DateTimePickerTP>(
           pHeap->GetAllocationHandle())),
-      m_pPushButtonTP(cppgc::MakeGarbageCollected<CFWL_PushButtonTP>(
+      push_button_tp_(cppgc::MakeGarbageCollected<CFWL_PushButtonTP>(
           pHeap->GetAllocationHandle())),
-      m_pCaretTP(cppgc::MakeGarbageCollected<CFWL_CaretTP>(
+      caret_tp_(cppgc::MakeGarbageCollected<CFWL_CaretTP>(
           pHeap->GetAllocationHandle())),
-      m_pBarcodeTP(cppgc::MakeGarbageCollected<CFWL_BarcodeTP>(
+      barcode_tp_(cppgc::MakeGarbageCollected<CFWL_BarcodeTP>(
           pHeap->GetAllocationHandle())) {}
 
 IFWL_ThemeProvider::~IFWL_ThemeProvider() = default;
 
 void IFWL_ThemeProvider::Trace(cppgc::Visitor* visitor) const {
-  visitor->Trace(m_pCheckBoxTP);
-  visitor->Trace(m_pListBoxTP);
-  visitor->Trace(m_pPictureBoxTP);
-  visitor->Trace(m_pSrollBarTP);
-  visitor->Trace(m_pEditTP);
-  visitor->Trace(m_pComboBoxTP);
-  visitor->Trace(m_pMonthCalendarTP);
-  visitor->Trace(m_pDateTimePickerTP);
-  visitor->Trace(m_pPushButtonTP);
-  visitor->Trace(m_pCaretTP);
-  visitor->Trace(m_pBarcodeTP);
+  visitor->Trace(check_box_tp_);
+  visitor->Trace(list_box_tp_);
+  visitor->Trace(picture_box_tp_);
+  visitor->Trace(sroll_bar_tp_);
+  visitor->Trace(edit_tp_);
+  visitor->Trace(combo_box_tp_);
+  visitor->Trace(month_calendar_tp_);
+  visitor->Trace(date_time_picker_tp_);
+  visitor->Trace(push_button_tp_);
+  visitor->Trace(caret_tp_);
+  visitor->Trace(barcode_tp_);
 }
 
 CFWL_WidgetTP* IFWL_ThemeProvider::GetTheme(const CFWL_Widget* pWidget) const {
   switch (pWidget->GetClassID()) {
     case FWL_Type::CheckBox:
-      return m_pCheckBoxTP;
+      return check_box_tp_;
     case FWL_Type::ListBox:
-      return m_pListBoxTP;
+      return list_box_tp_;
     case FWL_Type::PictureBox:
-      return m_pPictureBoxTP;
+      return picture_box_tp_;
     case FWL_Type::ScrollBar:
-      return m_pSrollBarTP;
+      return sroll_bar_tp_;
     case FWL_Type::Edit:
-      return m_pEditTP;
+      return edit_tp_;
     case FWL_Type::ComboBox:
-      return m_pComboBoxTP;
+      return combo_box_tp_;
     case FWL_Type::MonthCalendar:
-      return m_pMonthCalendarTP;
+      return month_calendar_tp_;
     case FWL_Type::DateTimePicker:
-      return m_pDateTimePickerTP;
+      return date_time_picker_tp_;
     case FWL_Type::PushButton:
-      return m_pPushButtonTP;
+      return push_button_tp_;
     case FWL_Type::Caret:
-      return m_pCaretTP;
+      return caret_tp_;
     case FWL_Type::Barcode:
-      return m_pBarcodeTP;
+      return barcode_tp_;
     default:
       return nullptr;
   }

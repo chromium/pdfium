@@ -1095,7 +1095,7 @@ void CFDE_TextEditEngine::RebuildPieces() {
 
       current_piece_start += txtEdtPiece.nCount;
       for (int32_t k = 0; k < txtEdtPiece.nCount; ++k)
-        char_widths_.push_back(piece->GetChar(k)->m_iCharWidth);
+        char_widths_.push_back(piece->GetChar(k)->char_width_);
     }
 
     current_line_start += line_spacing_;

@@ -14,13 +14,13 @@ class CFGAS_LinkUserData final : public Retainable {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  WideString GetLinkURL() const { return m_wsURLContent; }
+  WideString GetLinkURL() const { return urlcontent_; }
 
  private:
   explicit CFGAS_LinkUserData(const WideString& wsText);
   ~CFGAS_LinkUserData() override;
 
-  WideString m_wsURLContent;
+  WideString urlcontent_;
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFGAS_LINKUSERDATA_H_

@@ -63,7 +63,7 @@ class CFWL_CheckBoxTP final : public CFWL_WidgetTP {
 
   void EnsureCheckPathInitialized(float fCheckLen);
 
-  std::unique_ptr<CFGAS_GEPath> m_pCheckPath;
+  std::unique_ptr<CFGAS_GEPath> check_path_;
 };
 
 }  // namespace pdfium

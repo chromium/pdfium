@@ -30,12 +30,12 @@ CXFA_FFImageEdit::CXFA_FFImageEdit(CXFA_Node* pNode) : CXFA_FFField(pNode) {}
 CXFA_FFImageEdit::~CXFA_FFImageEdit() = default;
 
 void CXFA_FFImageEdit::PreFinalize() {
-  m_pNode->SetEditImage(nullptr);
+  node_->SetEditImage(nullptr);
 }
 
 void CXFA_FFImageEdit::Trace(cppgc::Visitor* visitor) const {
   CXFA_FFField::Trace(visitor);
-  visitor->Trace(m_pOldDelegate);
+  visitor->Trace(old_delegate_);
 }
 
 bool CXFA_FFImageEdit::LoadWidget() {
@@ -48,12 +48,13 @@ bool CXFA_FFImageEdit::LoadWidget() {
 
   CFWL_NoteDriver* pNoteDriver = pPictureBox->GetFWLApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pPictureBox, pPictureBox);
-  m_pOldDelegate = pPictureBox->GetDelegate();
+  old_delegate_ = pPictureBox->GetDelegate();
   pPictureBox->SetDelegate(this);
 
   CXFA_FFField::LoadWidget();
-  if (!m_pNode->GetEditImage())
+  if (!node_->GetEditImage()) {
     UpdateFWLData();
+  }
 
   return true;
 }
@@ -68,23 +69,23 @@ void CXFA_FFImageEdit::RenderWidget(CFGAS_GEGraphics* pGS,
   mtRotate.Concat(matrix);
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
-  DrawBorder(pGS, m_pNode->GetUIBorder(), m_UIRect, mtRotate);
+  DrawBorder(pGS, node_->GetUIBorder(), uirect_, mtRotate);
   RenderCaption(pGS, mtRotate);
-  RetainPtr<CFX_DIBitmap> pDIBitmap = m_pNode->GetEditImage();
+  RetainPtr<CFX_DIBitmap> pDIBitmap = node_->GetEditImage();
   if (!pDIBitmap)
     return;
 
   CFX_RectF rtImage = GetNormalWidget()->GetWidgetRect();
   XFA_AttributeValue iHorzAlign = XFA_AttributeValue::Left;
   XFA_AttributeValue iVertAlign = XFA_AttributeValue::Top;
-  CXFA_Para* para = m_pNode->GetParaIfExists();
+  CXFA_Para* para = node_->GetParaIfExists();
   if (para) {
     iHorzAlign = para->GetHorizontalAlign();
     iVertAlign = para->GetVerticalAlign();
   }
 
   XFA_AttributeValue iAspect = XFA_AttributeValue::Fit;
-  CXFA_Value* value = m_pNode->GetFormValueIfExists();
+  CXFA_Value* value = node_->GetFormValueIfExists();
   if (value) {
     CXFA_Image* image = value->GetImageIfExists();
     if (image)
@@ -92,7 +93,7 @@ void CXFA_FFImageEdit::RenderWidget(CFGAS_GEGraphics* pGS,
   }
 
   XFA_DrawImage(pGS, rtImage, mtRotate, std::move(pDIBitmap), iAspect,
-                m_pNode->GetEditImageDpi(), iHorzAlign, iVertAlign);
+                node_->GetEditImageDpi(), iHorzAlign, iVertAlign);
 }
 
 bool CXFA_FFImageEdit::AcceptsFocusOnButtonDown(
@@ -102,8 +103,9 @@ bool CXFA_FFImageEdit::AcceptsFocusOnButtonDown(
   if (command != CFWL_MessageMouse::MouseCommand::kLeftButtonDown)
     return CXFA_FFField::AcceptsFocusOnButtonDown(dwFlags, point, command);
 
-  if (!m_pNode->IsOpenAccess())
+  if (!node_->IsOpenAccess()) {
     return false;
+  }
   if (!PtInActiveRect(point))
     return false;
 
@@ -124,8 +126,8 @@ void CXFA_FFImageEdit::SetFWLRect() {
   if (!GetNormalWidget())
     return;
 
-  CFX_RectF rtUIMargin = m_pNode->GetUIMargin();
-  CFX_RectF rtImage(m_UIRect);
+  CFX_RectF rtUIMargin = node_->GetUIMargin();
+  CFX_RectF rtImage(uirect_);
   rtImage.Deflate(rtUIMargin.left, rtUIMargin.top, rtUIMargin.width,
                   rtUIMargin.height);
   GetNormalWidget()->SetWidgetRect(rtImage);
@@ -136,22 +138,22 @@ bool CXFA_FFImageEdit::CommitData() {
 }
 
 void CXFA_FFImageEdit::UpdateFWLData() {
-  m_pNode->SetEditImage(nullptr);
-  m_pNode->LoadEditImage(GetDoc());
+  node_->SetEditImage(nullptr);
+  node_->LoadEditImage(GetDoc());
 }
 
 void CXFA_FFImageEdit::OnProcessMessage(CFWL_Message* pMessage) {
-  m_pOldDelegate->OnProcessMessage(pMessage);
+  old_delegate_->OnProcessMessage(pMessage);
 }
 
 void CXFA_FFImageEdit::OnProcessEvent(pdfium::CFWL_Event* pEvent) {
   CXFA_FFField::OnProcessEvent(pEvent);
-  m_pOldDelegate->OnProcessEvent(pEvent);
+  old_delegate_->OnProcessEvent(pEvent);
 }
 
 void CXFA_FFImageEdit::OnDrawWidget(CFGAS_GEGraphics* pGraphics,
                                     const CFX_Matrix& matrix) {
-  m_pOldDelegate->OnDrawWidget(pGraphics, matrix);
+  old_delegate_->OnDrawWidget(pGraphics, matrix);
 }
 
 FormFieldType CXFA_FFImageEdit::GetFormFieldType() {

@@ -58,16 +58,16 @@ CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp,
                        CallbackIface* pDocEnvironment,
                        CPDF_Document* pPDFDoc,
                        cppgc::Heap* pHeap)
-    : m_pDocEnvironment(pDocEnvironment),
-      m_pPDFDoc(pPDFDoc),
-      m_pHeap(pHeap),
-      m_pApp(pApp),
-      m_pNotify(cppgc::MakeGarbageCollected<CXFA_FFNotify>(
+    : doc_environment_(pDocEnvironment),
+      pdfdoc_(pPDFDoc),
+      heap_(pHeap),
+      app_(pApp),
+      notify_(cppgc::MakeGarbageCollected<CXFA_FFNotify>(
           pHeap->GetAllocationHandle(),
           this)),
-      m_pDocument(cppgc::MakeGarbageCollected<CXFA_Document>(
+      document_(cppgc::MakeGarbageCollected<CXFA_Document>(
           pHeap->GetAllocationHandle(),
-          m_pNotify,
+          notify_,
           pHeap,
           cppgc::MakeGarbageCollected<CXFA_LayoutProcessor>(
               pHeap->GetAllocationHandle(),
@@ -76,52 +76,54 @@ CXFA_FFDoc::CXFA_FFDoc(CXFA_FFApp* pApp,
 CXFA_FFDoc::~CXFA_FFDoc() = default;
 
 void CXFA_FFDoc::PreFinalize() {
-  if (m_DocView)
-    m_DocView->RunDocClose();
+  if (doc_view_) {
+    doc_view_->RunDocClose();
+  }
 
-  if (m_pDocument)
-    m_pDocument->ClearLayoutData();
+  if (document_) {
+    document_->ClearLayoutData();
+  }
 }
 
 void CXFA_FFDoc::Trace(cppgc::Visitor* visitor) const {
-  visitor->Trace(m_pApp);
-  visitor->Trace(m_pNotify);
-  visitor->Trace(m_pDocument);
-  visitor->Trace(m_DocView);
+  visitor->Trace(app_);
+  visitor->Trace(notify_);
+  visitor->Trace(document_);
+  visitor->Trace(doc_view_);
 }
 
 bool CXFA_FFDoc::BuildDoc(CFX_XMLDocument* pXML) {
   DCHECK(pXML);
 
-  CXFA_DocumentBuilder builder(m_pDocument);
+  CXFA_DocumentBuilder builder(document_);
   if (!builder.BuildDocument(pXML, XFA_PacketType::Xdp))
     return false;
 
-  m_pDocument->SetRoot(builder.GetRootNode());
+  document_->SetRoot(builder.GetRootNode());
   return true;
 }
 
 CXFA_FFDocView* CXFA_FFDoc::CreateDocView() {
-  if (!m_DocView) {
-    m_DocView = cppgc::MakeGarbageCollected<CXFA_FFDocView>(
-        m_pHeap->GetAllocationHandle(), this);
+  if (!doc_view_) {
+    doc_view_ = cppgc::MakeGarbageCollected<CXFA_FFDocView>(
+        heap_->GetAllocationHandle(), this);
   }
-  return m_DocView;
+  return doc_view_;
 }
 
 void CXFA_FFDoc::SetChangeMark() {
-  m_pDocEnvironment->SetChangeMark(this);
+  doc_environment_->SetChangeMark(this);
 }
 
 void CXFA_FFDoc::InvalidateRect(CXFA_FFPageView* pPageView,
                                 const CFX_RectF& rt) {
-  m_pDocEnvironment->InvalidateRect(pPageView, rt);
+  doc_environment_->InvalidateRect(pPageView, rt);
 }
 
 void CXFA_FFDoc::DisplayCaret(CXFA_FFWidget* hWidget,
                               bool bVisible,
                               const CFX_RectF* pRtAnchor) {
-  return m_pDocEnvironment->DisplayCaret(hWidget, bVisible, pRtAnchor);
+  return doc_environment_->DisplayCaret(hWidget, bVisible, pRtAnchor);
 }
 
 bool CXFA_FFDoc::GetPopupPos(CXFA_FFWidget* hWidget,
@@ -129,105 +131,105 @@ bool CXFA_FFDoc::GetPopupPos(CXFA_FFWidget* hWidget,
                              float fMaxPopup,
                              const CFX_RectF& rtAnchor,
                              CFX_RectF* pPopupRect) const {
-  return m_pDocEnvironment->GetPopupPos(hWidget, fMinPopup, fMaxPopup, rtAnchor,
-                                        pPopupRect);
+  return doc_environment_->GetPopupPos(hWidget, fMinPopup, fMaxPopup, rtAnchor,
+                                       pPopupRect);
 }
 
 bool CXFA_FFDoc::PopupMenu(CXFA_FFWidget* hWidget, const CFX_PointF& ptPopup) {
-  return m_pDocEnvironment->PopupMenu(hWidget, ptPopup);
+  return doc_environment_->PopupMenu(hWidget, ptPopup);
 }
 
 void CXFA_FFDoc::OnPageViewEvent(CXFA_FFPageView* pPageView,
                                  PageViewEvent eEvent) {
-  m_pDocEnvironment->OnPageViewEvent(pPageView, eEvent);
+  doc_environment_->OnPageViewEvent(pPageView, eEvent);
 }
 
 void CXFA_FFDoc::WidgetPostAdd(CXFA_FFWidget* hWidget) {
-  m_pDocEnvironment->WidgetPostAdd(hWidget);
+  doc_environment_->WidgetPostAdd(hWidget);
 }
 
 void CXFA_FFDoc::WidgetPreRemove(CXFA_FFWidget* hWidget) {
-  m_pDocEnvironment->WidgetPreRemove(hWidget);
+  doc_environment_->WidgetPreRemove(hWidget);
 }
 
 int32_t CXFA_FFDoc::CountPages() const {
-  return m_pDocEnvironment->CountPages(this);
+  return doc_environment_->CountPages(this);
 }
 
 int32_t CXFA_FFDoc::GetCurrentPage() const {
-  return m_pDocEnvironment->GetCurrentPage(this);
+  return doc_environment_->GetCurrentPage(this);
 }
 
 void CXFA_FFDoc::SetCurrentPage(int32_t iCurPage) {
-  m_pDocEnvironment->SetCurrentPage(this, iCurPage);
+  doc_environment_->SetCurrentPage(this, iCurPage);
 }
 
 bool CXFA_FFDoc::IsCalculationsEnabled() const {
-  return m_pDocEnvironment->IsCalculationsEnabled(this);
+  return doc_environment_->IsCalculationsEnabled(this);
 }
 
 void CXFA_FFDoc::SetCalculationsEnabled(bool bEnabled) {
-  return m_pDocEnvironment->SetCalculationsEnabled(this, bEnabled);
+  return doc_environment_->SetCalculationsEnabled(this, bEnabled);
 }
 
 WideString CXFA_FFDoc::GetTitle() const {
-  return m_pDocEnvironment->GetTitle(this);
+  return doc_environment_->GetTitle(this);
 }
 
 void CXFA_FFDoc::SetTitle(const WideString& wsTitle) {
-  m_pDocEnvironment->SetTitle(this, wsTitle);
+  doc_environment_->SetTitle(this, wsTitle);
 }
 
 void CXFA_FFDoc::ExportData(const WideString& wsFilePath, bool bXDP) {
-  m_pDocEnvironment->ExportData(this, wsFilePath, bXDP);
+  doc_environment_->ExportData(this, wsFilePath, bXDP);
 }
 
 void CXFA_FFDoc::GotoURL(const WideString& bsURL) {
-  m_pDocEnvironment->GotoURL(this, bsURL);
+  doc_environment_->GotoURL(this, bsURL);
 }
 
 bool CXFA_FFDoc::IsValidationsEnabled() const {
-  return m_pDocEnvironment->IsValidationsEnabled(this);
+  return doc_environment_->IsValidationsEnabled(this);
 }
 
 void CXFA_FFDoc::SetValidationsEnabled(bool bEnabled) {
-  m_pDocEnvironment->SetValidationsEnabled(this, bEnabled);
+  doc_environment_->SetValidationsEnabled(this, bEnabled);
 }
 
 void CXFA_FFDoc::SetFocusWidget(CXFA_FFWidget* hWidget) {
-  m_pDocEnvironment->SetFocusWidget(this, hWidget);
+  doc_environment_->SetFocusWidget(this, hWidget);
 }
 
 void CXFA_FFDoc::Print(int32_t nStartPage,
                        int32_t nEndPage,
                        Mask<XFA_PrintOpt> dwOptions) {
-  m_pDocEnvironment->Print(this, nStartPage, nEndPage, dwOptions);
+  doc_environment_->Print(this, nStartPage, nEndPage, dwOptions);
 }
 
 FX_ARGB CXFA_FFDoc::GetHighlightColor() const {
-  return m_pDocEnvironment->GetHighlightColor(this);
+  return doc_environment_->GetHighlightColor(this);
 }
 
 IJS_Runtime* CXFA_FFDoc::GetIJSRuntime() const {
-  return m_pDocEnvironment->GetIJSRuntime(this);
+  return doc_environment_->GetIJSRuntime(this);
 }
 
 CFX_XMLDocument* CXFA_FFDoc::GetXMLDocument() const {
-  return m_pDocEnvironment->GetXMLDoc();
+  return doc_environment_->GetXMLDoc();
 }
 
 RetainPtr<IFX_SeekableReadStream> CXFA_FFDoc::OpenLinkedFile(
     const WideString& wsLink) {
-  return m_pDocEnvironment->OpenLinkedFile(this, wsLink);
+  return doc_environment_->OpenLinkedFile(this, wsLink);
 }
 
 CXFA_FFDocView* CXFA_FFDoc::GetDocView(CXFA_LayoutProcessor* pLayout) {
-  return m_DocView && m_DocView->GetLayoutProcessor() == pLayout ? m_DocView
+  return doc_view_ && doc_view_->GetLayoutProcessor() == pLayout ? doc_view_
                                                                  : nullptr;
 }
 
 CXFA_FFDocView* CXFA_FFDoc::GetDocView() {
-  return m_DocView;
+  return doc_view_;
 }
 
 bool CXFA_FFDoc::OpenDoc(CFX_XMLDocument* pXML) {
@@ -236,9 +238,9 @@ bool CXFA_FFDoc::OpenDoc(CFX_XMLDocument* pXML) {
 
   // At this point we've got an XFA document and we want to always return
   // true to signify the load succeeded.
-  m_pPDFFontMgr = std::make_unique<CFGAS_PDFFontMgr>(GetPDFDoc());
-  m_FormType = FormType::kXFAForeground;
-  CXFA_Node* pConfig = ToNode(m_pDocument->GetXFAObject(XFA_HASHCODE_Config));
+  pdffont_mgr_ = std::make_unique<CFGAS_PDFFontMgr>(GetPDFDoc());
+  form_type_ = FormType::kXFAForeground;
+  CXFA_Node* pConfig = ToNode(document_->GetXFAObject(XFA_HASHCODE_Config));
   if (!pConfig)
     return true;
 
@@ -260,7 +262,7 @@ bool CXFA_FFDoc::OpenDoc(CFX_XMLDocument* pXML) {
 
   WideString wsType = pDynamicRender->JSObject()->GetContent(false);
   if (wsType.EqualsASCII("required"))
-    m_FormType = FormType::kXFAFull;
+    form_type_ = FormType::kXFAFull;
 
   return true;
 }
@@ -268,24 +270,25 @@ bool CXFA_FFDoc::OpenDoc(CFX_XMLDocument* pXML) {
 RetainPtr<CFGAS_GEFont> CXFA_FFDoc::GetPDFFont(const WideString& family,
                                                uint32_t styles,
                                                bool strict) {
-  if (!m_pPDFFontMgr)
+  if (!pdffont_mgr_) {
     return nullptr;
+  }
 
-  return m_pPDFFontMgr->GetFont(family, styles, strict);
+  return pdffont_mgr_->GetFont(family, styles, strict);
 }
 
 RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(WideStringView wsName,
                                                      int32_t& iImageXDpi,
                                                      int32_t& iImageYDpi) {
   uint32_t dwHash = FX_HashCode_GetW(wsName);
-  auto it = m_HashToDibDpiMap.find(dwHash);
-  if (it != m_HashToDibDpiMap.end()) {
+  auto it = hash_to_dib_dpi_map_.find(dwHash);
+  if (it != hash_to_dib_dpi_map_.end()) {
     iImageXDpi = it->second.iImageXDpi;
     iImageYDpi = it->second.iImageYDpi;
     return it->second.pDibSource.As<CFX_DIBitmap>();
   }
 
-  auto name_tree = CPDF_NameTree::Create(m_pPDFDoc, "XFAImages");
+  auto name_tree = CPDF_NameTree::Create(pdfdoc_, "XFAImages");
   size_t count = name_tree ? name_tree->GetCount() : 0;
   if (count == 0)
     return nullptr;
@@ -315,7 +318,7 @@ RetainPtr<CFX_DIBitmap> CXFA_FFDoc::GetPDFNamedImage(WideStringView wsName,
       pdfium::MakeRetain<CFX_ReadOnlySpanStream>(pAcc->GetSpan());
   RetainPtr<CFX_DIBitmap> pDibSource = XFA_LoadImageFromBuffer(
       std::move(pImageFileRead), FXCODEC_IMAGE_UNKNOWN, iImageXDpi, iImageYDpi);
-  m_HashToDibDpiMap[dwHash] = {pDibSource, iImageXDpi, iImageYDpi};
+  hash_to_dib_dpi_map_[dwHash] = {pDibSource, iImageXDpi, iImageYDpi};
   return pDibSource;
 }
 

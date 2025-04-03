@@ -19,7 +19,7 @@ CFWL_PictureBoxTP::~CFWL_PictureBoxTP() = default;
 void CFWL_PictureBoxTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.GetPart()) {
     case CFWL_ThemePart::Part::kBorder:
-      DrawBorder(pParams.GetGraphics(), pParams.m_PartRect, pParams.m_matrix);
+      DrawBorder(pParams.GetGraphics(), pParams.part_rect_, pParams.matrix_);
       break;
     default:
       break;

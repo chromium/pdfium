@@ -11,7 +11,7 @@ namespace pdfium {
 CFWL_ThemeText::CFWL_ThemeText(Part iPart,
                                CFWL_Widget* pWidget,
                                CFGAS_GEGraphics* pGraphics)
-    : CFWL_ThemePart(iPart, pWidget), m_pGraphics(pGraphics) {}
+    : CFWL_ThemePart(iPart, pWidget), graphics_(pGraphics) {}
 
 CFWL_ThemeText::~CFWL_ThemeText() = default;
 

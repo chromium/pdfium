@@ -31,13 +31,13 @@ void CXFA_FFText::RenderWidget(CFGAS_GEGraphics* pGS,
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
 
-  CXFA_TextLayout* pTextLayout = m_pNode->GetTextLayout();
+  CXFA_TextLayout* pTextLayout = node_->GetTextLayout();
   if (!pTextLayout)
     return;
 
   CFX_RenderDevice* pRenderDevice = pGS->GetRenderDevice();
   CFX_RectF rtText = GetRectWithoutRotate();
-  CXFA_Margin* margin = m_pNode->GetMarginIfExists();
+  CXFA_Margin* margin = node_->GetMarginIfExists();
   if (margin) {
     CXFA_ContentLayoutItem* pItem = GetLayoutItem();
     if (!pItem->GetPrev() && !pItem->GetNext()) {
@@ -63,13 +63,13 @@ void CXFA_FFText::RenderWidget(CFGAS_GEGraphics* pGS,
 }
 
 bool CXFA_FFText::IsLoaded() {
-  CXFA_TextLayout* pTextLayout = m_pNode->GetTextLayout();
+  CXFA_TextLayout* pTextLayout = node_->GetTextLayout();
   return pTextLayout && !pTextLayout->HasBlock();
 }
 
 void CXFA_FFText::PerformLayout() {
   CXFA_FFWidget::PerformLayout();
-  CXFA_TextLayout* pTextLayout = m_pNode->GetTextLayout();
+  CXFA_TextLayout* pTextLayout = node_->GetTextLayout();
   if (!pTextLayout || !pTextLayout->HasBlock()) {
     return;
   }
@@ -81,7 +81,7 @@ void CXFA_FFText::PerformLayout() {
   pItem = pItem->GetFirst();
   while (pItem) {
     CFX_RectF rtText = pItem->GetAbsoluteRect();
-    CXFA_Margin* margin = m_pNode->GetMarginIfExists();
+    CXFA_Margin* margin = node_->GetMarginIfExists();
     if (margin) {
       if (!pItem->GetPrev())
         rtText.height -= margin->GetTopInset();
@@ -138,7 +138,7 @@ FWL_WidgetHit CXFA_FFText::HitTest(const CFX_PointF& point) {
 }
 
 WideString CXFA_FFText::GetLinkURLAtPoint(const CFX_PointF& point) {
-  CXFA_TextLayout* pTextLayout = m_pNode->GetTextLayout();
+  CXFA_TextLayout* pTextLayout = node_->GetTextLayout();
   if (!pTextLayout)
     return WideString();
 

@@ -22,7 +22,7 @@ CFWL_EditTP::~CFWL_EditTP() = default;
 void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
   switch (pParams.GetPart()) {
     case CFWL_ThemePart::Part::kBorder: {
-      DrawBorder(pParams.GetGraphics(), pParams.m_PartRect, pParams.m_matrix);
+      DrawBorder(pParams.GetGraphics(), pParams.part_rect_, pParams.matrix_);
       break;
     }
     case CFWL_ThemePart::Part::kBackground: {
@@ -33,23 +33,24 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
         pGraphics->SetFillColor(CFGAS_GEColor(FWLTHEME_COLOR_BKSelected));
         pGraphics->FillPath(*pParamsPath,
                             CFX_FillRenderOptions::FillType::kWinding,
-                            pParams.m_matrix);
+                            pParams.matrix_);
       } else {
         CFGAS_GEPath path;
-        path.AddRectangle(pParams.m_PartRect.left, pParams.m_PartRect.top,
-                          pParams.m_PartRect.width, pParams.m_PartRect.height);
+        path.AddRectangle(pParams.part_rect_.left, pParams.part_rect_.top,
+                          pParams.part_rect_.width, pParams.part_rect_.height);
         CFGAS_GEColor cr(FWLTHEME_COLOR_Background);
-        if (!pParams.m_bStaticBackground) {
-          if (pParams.m_dwStates & CFWL_PartState::kDisabled)
+        if (!pParams.static_background_) {
+          if (pParams.states_ & CFWL_PartState::kDisabled) {
             cr = CFGAS_GEColor(FWLTHEME_COLOR_EDGERB1);
-          else if (pParams.m_dwStates & CFWL_PartState::kReadOnly)
+          } else if (pParams.states_ & CFWL_PartState::kReadOnly) {
             cr = CFGAS_GEColor(ArgbEncode(255, 236, 233, 216));
-          else
+          } else {
             cr = CFGAS_GEColor(0xFFFFFFFF);
+          }
         }
         pGraphics->SetFillColor(cr);
         pGraphics->FillPath(path, CFX_FillRenderOptions::FillType::kWinding,
-                            pParams.m_matrix);
+                            pParams.matrix_);
       }
       break;
     }
@@ -63,7 +64,7 @@ void CFWL_EditTP::DrawBackground(const CFWL_ThemeBackground& pParams) {
       pParams.GetGraphics()->SetLineWidth(fWidth);
       const CFGAS_GEPath* pParamsPath = pParams.GetPath();
       if (pParamsPath)
-        pParams.GetGraphics()->StrokePath(*pParamsPath, pParams.m_matrix);
+        pParams.GetGraphics()->StrokePath(*pParamsPath, pParams.matrix_);
       break;
     }
     default:

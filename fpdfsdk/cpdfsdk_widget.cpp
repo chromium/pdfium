@@ -225,15 +225,15 @@ bool CPDFSDK_Widget::OnXFAAAction(PDFSDK_XFAAActionType eXFAAAT,
     return false;
 
   CXFA_EventParam param(eEventType);
-  param.m_wsChange = data->sChange;
-  param.m_iCommitKey = 0;
-  param.m_bShift = data->bShift;
-  param.m_iSelStart = data->nSelStart;
-  param.m_iSelEnd = data->nSelEnd;
-  param.m_wsFullText = data->sValue;
-  param.m_bKeyDown = data->bKeyDown;
-  param.m_bModifier = data->bModifier;
-  param.m_wsPrevText = data->sValue;
+  param.change_ = data->sChange;
+  param.commit_key_ = 0;
+  param.shift_ = data->bShift;
+  param.sel_start_ = data->nSelStart;
+  param.sel_end_ = data->nSelEnd;
+  param.full_text_ = data->sValue;
+  param.key_down_ = data->bKeyDown;
+  param.modifier_ = data->bModifier;
+  param.prev_text_ = data->sValue;
   if ((eEventType == XFA_EVENT_Click || eEventType == XFA_EVENT_Change) &&
       GetFieldType() == FormFieldType::kRadioButton) {
     CXFA_FFWidget* hGroupWidget = GetGroupMixXFAWidget();
@@ -320,15 +320,15 @@ bool CPDFSDK_Widget::HandleXFAAAction(
     return false;
 
   CXFA_EventParam param(eEventType);
-  param.m_wsChange = data->sChange;
-  param.m_iCommitKey = 0;
-  param.m_bShift = data->bShift;
-  param.m_iSelStart = data->nSelStart;
-  param.m_iSelEnd = data->nSelEnd;
-  param.m_wsFullText = data->sValue;
-  param.m_bKeyDown = data->bKeyDown;
-  param.m_bModifier = data->bModifier;
-  param.m_wsPrevText = data->sValue;
+  param.change_ = data->sChange;
+  param.commit_key_ = 0;
+  param.shift_ = data->bShift;
+  param.sel_start_ = data->nSelStart;
+  param.sel_end_ = data->nSelEnd;
+  param.full_text_ = data->sValue;
+  param.key_down_ = data->bKeyDown;
+  param.modifier_ = data->bModifier;
+  param.prev_text_ = data->sValue;
   bool ret = hWidget->ProcessEventUnderHandler(&param, pXFAWidgetHandler);
   CXFA_FFDocView* pDocView = pContext->GetXFADocView();
   if (pDocView)

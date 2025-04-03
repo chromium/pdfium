@@ -19,10 +19,10 @@ class CFWL_EventMouse final : public CFWL_Event {
                   CFWL_MessageMouse::MouseCommand cmd);
   ~CFWL_EventMouse() override;
 
-  CFWL_MessageMouse::MouseCommand GetCommand() const { return m_dwCmd; }
+  CFWL_MessageMouse::MouseCommand GetCommand() const { return cmd_; }
 
  private:
-  const CFWL_MessageMouse::MouseCommand m_dwCmd;
+  const CFWL_MessageMouse::MouseCommand cmd_;
 };
 
 }  // namespace pdfium

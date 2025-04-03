@@ -9,7 +9,7 @@
 namespace pdfium {
 
 CFWL_Message::CFWL_Message(Type type, CFWL_Widget* pDstTarget)
-    : m_type(type), m_pDstTarget(pDstTarget) {}
+    : type_(type), dst_target_(pDstTarget) {}
 
 CFWL_Message::~CFWL_Message() = default;
 

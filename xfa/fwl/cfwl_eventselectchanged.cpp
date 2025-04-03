@@ -11,20 +11,20 @@ namespace pdfium {
 CFWL_EventSelectChanged::CFWL_EventSelectChanged(CFWL_Widget* pSrcTarget,
                                                  bool bLButtonUp)
     : CFWL_Event(CFWL_Event::Type::SelectChanged, pSrcTarget),
-      m_bLButtonUp(bLButtonUp),
-      m_iYear(-1),
-      m_iMonth(-1),
-      m_iDay(-1) {}
+      lbutton_up_(bLButtonUp),
+      year_(-1),
+      month_(-1),
+      day_(-1) {}
 
 CFWL_EventSelectChanged::CFWL_EventSelectChanged(CFWL_Widget* pSrcTarget,
                                                  int32_t iYear,
                                                  int32_t iMonth,
                                                  int32_t iDay)
     : CFWL_Event(CFWL_Event::Type::SelectChanged, pSrcTarget),
-      m_bLButtonUp(false),
-      m_iYear(iYear),
-      m_iMonth(iMonth),
-      m_iDay(iDay) {}
+      lbutton_up_(false),
+      year_(iYear),
+      month_(iMonth),
+      day_(iDay) {}
 
 CFWL_EventSelectChanged::~CFWL_EventSelectChanged() = default;
 

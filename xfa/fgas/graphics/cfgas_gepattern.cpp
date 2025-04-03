@@ -9,6 +9,6 @@
 CFGAS_GEPattern::CFGAS_GEPattern(HatchStyle hatchStyle,
                                  FX_ARGB foreArgb,
                                  FX_ARGB backArgb)
-    : m_hatchStyle(hatchStyle), m_foreArgb(foreArgb), m_backArgb(backArgb) {}
+    : hatch_style_(hatchStyle), fore_argb_(foreArgb), back_argb_(backArgb) {}
 
 CFGAS_GEPattern::~CFGAS_GEPattern() = default;

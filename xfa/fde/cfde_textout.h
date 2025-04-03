@@ -40,11 +40,11 @@ class CFDE_TextOut {
 
   void SetFont(RetainPtr<CFGAS_GEFont> pFont);
   void SetFontSize(float fFontSize);
-  void SetTextColor(FX_ARGB color) { m_TxtColor = color; }
+  void SetTextColor(FX_ARGB color) { txt_color_ = color; }
   void SetStyles(const FDE_TextStyle& dwStyles);
   void SetAlignment(FDE_TextAlignment iAlignment);
   void SetLineSpace(float fLineSpace);
-  void SetMatrix(const CFX_Matrix& matrix) { m_Matrix = matrix; }
+  void SetMatrix(const CFX_Matrix& matrix) { matrix_ = matrix; }
   void SetLineBreakTolerance(float fTolerance);
 
   void CalcLogicSize(WideStringView str, CFX_SizeF* pSize);
@@ -52,7 +52,7 @@ class CFDE_TextOut {
   void DrawLogicText(CFX_RenderDevice* device,
                      const WideString& str,
                      const CFX_RectF& rect);
-  int32_t GetTotalLines() const { return m_iTotalLines; }
+  int32_t GetTotalLines() const { return total_lines_; }
 
  private:
   struct Piece {
@@ -103,24 +103,24 @@ class CFDE_TextOut {
   void DoAlignment(const CFX_RectF& rect);
   size_t GetDisplayPos(const Piece* pPiece);
 
-  std::unique_ptr<CFGAS_TxtBreak> const m_pTxtBreak;
-  RetainPtr<CFGAS_GEFont> m_pFont;
-  float m_fFontSize = 12.0f;
-  float m_fLineSpace = 12.0f;
-  float m_fLinePos = 0.0f;
-  float m_fTolerance = 0.0f;
-  FDE_TextAlignment m_iAlignment = FDE_TextAlignment::kTopLeft;
-  FDE_TextStyle m_Styles;
-  std::vector<int32_t> m_CharWidths;
-  FX_ARGB m_TxtColor = 0xFF000000;
-  Mask<CFGAS_Break::LayoutStyle> m_dwTxtBkStyles;
-  WideString m_wsText;
-  CFX_Matrix m_Matrix;
-  std::deque<Line> m_ttoLines;
-  size_t m_iCurLine = 0;
-  size_t m_iCurPiece = 0;
-  int32_t m_iTotalLines = 0;
-  std::vector<TextCharPos> m_CharPos;
+  std::unique_ptr<CFGAS_TxtBreak> const txt_break_;
+  RetainPtr<CFGAS_GEFont> font_;
+  float font_size_ = 12.0f;
+  float line_space_ = 12.0f;
+  float line_pos_ = 0.0f;
+  float tolerance_ = 0.0f;
+  FDE_TextAlignment alignment_ = FDE_TextAlignment::kTopLeft;
+  FDE_TextStyle styles_;
+  std::vector<int32_t> char_widths_;
+  FX_ARGB txt_color_ = 0xFF000000;
+  Mask<CFGAS_Break::LayoutStyle> txt_bk_styles_;
+  WideString text_;
+  CFX_Matrix matrix_;
+  std::deque<Line> tto_lines_;
+  size_t cur_line_ = 0;
+  size_t cur_piece_ = 0;
+  int32_t total_lines_ = 0;
+  std::vector<TextCharPos> char_pos_;
 };
 
 }  // namespace pdfium

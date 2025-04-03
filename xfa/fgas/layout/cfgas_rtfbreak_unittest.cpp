@@ -90,7 +90,7 @@ TEST_F(CFGASRTFBreakTest, BidiLine) {
   }
 
   std::vector<CFGAS_Char> chars =
-      rtf_break->GetCurrentLineForTesting()->m_LineChars;
+      rtf_break->GetCurrentLineForTesting()->line_chars_;
   CFGAS_Char::BidiLine(&chars, chars.size());
   EXPECT_EQ(3u, chars.size());
 }

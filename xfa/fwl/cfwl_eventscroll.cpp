@@ -12,8 +12,8 @@ CFWL_EventScroll::CFWL_EventScroll(CFWL_Widget* pSrcTarget,
                                    Code code,
                                    float pos)
     : CFWL_Event(CFWL_Event::Type::Scroll, pSrcTarget),
-      m_iScrollCode(code),
-      m_fPos(pos) {}
+      scroll_code_(code),
+      pos_(pos) {}
 
 CFWL_EventScroll::~CFWL_EventScroll() = default;
 

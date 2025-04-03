@@ -35,9 +35,9 @@ class CFWL_MessageMouse final : public CFWL_Message {
                     CFX_PointF pos);
   ~CFWL_MessageMouse() override;
 
-  const MouseCommand m_dwCmd;
-  Mask<XFA_FWL_KeyFlag> m_dwFlags;
-  CFX_PointF m_pos;
+  const MouseCommand cmd_;
+  Mask<XFA_FWL_KeyFlag> flags_;
+  CFX_PointF pos_;
 };
 
 }  // namespace pdfium

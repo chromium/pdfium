@@ -36,24 +36,24 @@ class CFWL_App final : public cppgc::GarbageCollected<CFWL_App> {
   void Trace(cppgc::Visitor* visitor) const;
 
   CFWL_WidgetMgr::AdapterIface* GetWidgetMgrAdapter() const {
-    return m_pAdapter->GetWidgetMgrAdapter();
+    return adapter_->GetWidgetMgrAdapter();
   }
   CFX_Timer::HandlerIface* GetTimerHandler() const {
-    return m_pAdapter->GetTimerHandler();
+    return adapter_->GetTimerHandler();
   }
   IFWL_ThemeProvider* GetThemeProvider() const {
-    return m_pAdapter->GetThemeProvider();
+    return adapter_->GetThemeProvider();
   }
-  cppgc::Heap* GetHeap() const { return m_pAdapter->GetHeap(); }
-  CFWL_WidgetMgr* GetWidgetMgr() const { return m_pWidgetMgr; }
-  CFWL_NoteDriver* GetNoteDriver() const { return m_pNoteDriver; }
+  cppgc::Heap* GetHeap() const { return adapter_->GetHeap(); }
+  CFWL_WidgetMgr* GetWidgetMgr() const { return widget_mgr_; }
+  CFWL_NoteDriver* GetNoteDriver() const { return note_driver_; }
 
  private:
   explicit CFWL_App(AdapterIface* pAdapter);
 
-  cppgc::Member<AdapterIface> const m_pAdapter;
-  cppgc::Member<CFWL_WidgetMgr> m_pWidgetMgr;
-  cppgc::Member<CFWL_NoteDriver> m_pNoteDriver;
+  cppgc::Member<AdapterIface> const adapter_;
+  cppgc::Member<CFWL_WidgetMgr> widget_mgr_;
+  cppgc::Member<CFWL_NoteDriver> note_driver_;
 };
 
 }  // namespace pdfium

@@ -33,12 +33,12 @@ class CFGAS_Break {
   void Reset();
 
   void SetLayoutStyles(Mask<LayoutStyle> dwLayoutStyles);
-  Mask<LayoutStyle> GetLayoutStyles() const { return m_dwLayoutStyles; }
+  Mask<LayoutStyle> GetLayoutStyles() const { return layout_styles_; }
 
   void SetFont(RetainPtr<CFGAS_GEFont> pFont);
   void SetFontSize(float fFontSize);
   void SetTabWidth(float fTabWidth);
-  int32_t GetTabWidth() const { return m_iTabWidth; }
+  int32_t GetTabWidth() const { return tab_width_; }
 
   void SetHorizontalScale(int32_t iScale);
   void SetVerticalScale(int32_t iScale);
@@ -53,7 +53,7 @@ class CFGAS_Break {
   void ClearBreakPieces();
 
   CFGAS_Char* GetLastChar(int32_t index, bool bOmitChar, bool bRichText) const;
-  const CFGAS_BreakLine* GetCurrentLineForTesting() const { return m_pCurLine; }
+  const CFGAS_BreakLine* GetCurrentLineForTesting() const { return cur_line_; }
 
  protected:
   struct TPO {
@@ -69,28 +69,28 @@ class CFGAS_Break {
   explicit CFGAS_Break(Mask<LayoutStyle> dwLayoutStyles);
 
   void SetBreakStatus();
-  bool HasLine() const { return m_iReadyLineIndex >= 0; }
+  bool HasLine() const { return ready_line_index_ >= 0; }
   bool IsGreaterThanLineWidth(int32_t width) const;
   FX_CHARTYPE GetUnifiedCharType(FX_CHARTYPE dwType) const;
 
-  FX_CHARTYPE m_eCharType = FX_CHARTYPE::kUnknown;
-  bool m_bSingleLine = false;
-  bool m_bCombText = false;
-  Mask<LayoutStyle> m_dwLayoutStyles = LayoutStyle::kNone;
-  uint32_t m_dwIdentity = 0;
-  int32_t m_iLineStart = 0;
-  int32_t m_iLineWidth = 2000000;
-  wchar_t m_wParagraphBreakChar = L'\n';
-  int32_t m_iFontSize = 240;
-  int32_t m_iTabWidth = 720000;
-  int32_t m_iHorizontalScale = 100;
-  int32_t m_iVerticalScale = 100;
-  int32_t m_iTolerance = 0;
-  int32_t m_iCharSpace = 0;
-  RetainPtr<CFGAS_GEFont> m_pFont;
-  int8_t m_iReadyLineIndex = -1;
-  std::array<CFGAS_BreakLine, 2> m_Lines;
-  UnownedPtr<CFGAS_BreakLine> m_pCurLine;
+  FX_CHARTYPE char_type_ = FX_CHARTYPE::kUnknown;
+  bool single_line_ = false;
+  bool comb_text_ = false;
+  Mask<LayoutStyle> layout_styles_ = LayoutStyle::kNone;
+  uint32_t identity_ = 0;
+  int32_t line_start_ = 0;
+  int32_t line_width_ = 2000000;
+  wchar_t w_paragraph_break_char_ = L'\n';
+  int32_t font_size_ = 240;
+  int32_t tab_width_ = 720000;
+  int32_t horizontal_scale_ = 100;
+  int32_t vertical_scale_ = 100;
+  int32_t tolerance_ = 0;
+  int32_t char_space_ = 0;
+  RetainPtr<CFGAS_GEFont> font_;
+  int8_t ready_line_index_ = -1;
+  std::array<CFGAS_BreakLine, 2> lines_;
+  UnownedPtr<CFGAS_BreakLine> cur_line_;
 };
 
 #endif  // XFA_FGAS_LAYOUT_CFGAS_BREAK_H_

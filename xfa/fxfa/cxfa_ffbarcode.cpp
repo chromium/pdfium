@@ -148,12 +148,12 @@ bool CXFA_FFBarcode::LoadWidget() {
 
   CFWL_NoteDriver* pNoteDriver = pFWLBarcode->GetFWLApp()->GetNoteDriver();
   pNoteDriver->RegisterEventTarget(pFWLBarcode, pFWLBarcode);
-  m_pOldDelegate = pFWLBarcode->GetDelegate();
+  old_delegate_ = pFWLBarcode->GetDelegate();
   pFWLBarcode->SetDelegate(this);
 
   {
     CFWL_Widget::ScopedUpdateLock update_lock(pFWLBarcode);
-    pFWLBarcode->SetText(m_pNode->GetValue(XFA_ValuePicture::kDisplay));
+    pFWLBarcode->SetText(node_->GetValue(XFA_ValuePicture::kDisplay));
     UpdateWidgetProperty();
   }
 
@@ -170,7 +170,7 @@ void CXFA_FFBarcode::RenderWidget(CFGAS_GEGraphics* pGS,
   mtRotate.Concat(matrix);
 
   CXFA_FFWidget::RenderWidget(pGS, mtRotate, highlight);
-  DrawBorder(pGS, m_pNode->GetUIBorder(), m_UIRect, mtRotate);
+  DrawBorder(pGS, node_->GetUIBorder(), uirect_, mtRotate);
   RenderCaption(pGS, mtRotate);
   CFX_RectF rtWidget = GetNormalWidget()->GetWidgetRect();
 
@@ -249,7 +249,7 @@ bool CXFA_FFBarcode::AcceptsFocusOnButtonDown(
   if (!pBarCodeWidget || pBarCodeWidget->IsProtectedType())
     return false;
   if (command == CFWL_MessageMouse::MouseCommand::kLeftButtonDown &&
-      !m_pNode->IsOpenAccess()) {
+      !node_->IsOpenAccess()) {
     return false;
   }
   return CXFA_FFTextEdit::AcceptsFocusOnButtonDown(dwFlags, point, command);

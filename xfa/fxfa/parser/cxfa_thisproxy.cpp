@@ -19,13 +19,13 @@ CXFA_ThisProxy::CXFA_ThisProxy(CXFA_Node* pThisNode, CXFA_Script* pScriptNode)
           cppgc::MakeGarbageCollected<CJX_Object>(
               pThisNode->GetDocument()->GetHeap()->GetAllocationHandle(),
               this)),
-      m_pThisNode(pThisNode),
-      m_pScriptNode(pScriptNode) {}
+      this_node_(pThisNode),
+      script_node_(pScriptNode) {}
 
 CXFA_ThisProxy::~CXFA_ThisProxy() = default;
 
 void CXFA_ThisProxy::Trace(cppgc::Visitor* visitor) const {
   CXFA_Object::Trace(visitor);
-  visitor->Trace(m_pThisNode);
-  visitor->Trace(m_pScriptNode);
+  visitor->Trace(this_node_);
+  visitor->Trace(script_node_);
 }

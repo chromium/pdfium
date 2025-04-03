@@ -241,68 +241,67 @@ void CJX_EventPseudoModel::Property(v8::Isolate* pIsolate,
 
   switch (dwFlag) {
     case XFA_Event::CancelAction:
-      BooleanProperty(pIsolate, pValue, &pEventParam->m_bCancelAction,
-                      bSetting);
+      BooleanProperty(pIsolate, pValue, &pEventParam->cancel_action_, bSetting);
       break;
     case XFA_Event::Change:
-      StringProperty(pIsolate, pValue, &pEventParam->m_wsChange, bSetting);
+      StringProperty(pIsolate, pValue, &pEventParam->change_, bSetting);
       break;
     case XFA_Event::CommitKey:
-      IntegerProperty(pIsolate, pValue, &pEventParam->m_iCommitKey, bSetting);
+      IntegerProperty(pIsolate, pValue, &pEventParam->commit_key_, bSetting);
       break;
     case XFA_Event::FullText:
-      StringProperty(pIsolate, pValue, &pEventParam->m_wsFullText, bSetting);
+      StringProperty(pIsolate, pValue, &pEventParam->full_text_, bSetting);
       break;
     case XFA_Event::Keydown:
-      BooleanProperty(pIsolate, pValue, &pEventParam->m_bKeyDown, bSetting);
+      BooleanProperty(pIsolate, pValue, &pEventParam->key_down_, bSetting);
       break;
     case XFA_Event::Modifier:
-      BooleanProperty(pIsolate, pValue, &pEventParam->m_bModifier, bSetting);
+      BooleanProperty(pIsolate, pValue, &pEventParam->modifier_, bSetting);
       break;
     case XFA_Event::NewContentType:
-      StringProperty(pIsolate, pValue, &pEventParam->m_wsNewContentType,
+      StringProperty(pIsolate, pValue, &pEventParam->new_content_type_,
                      bSetting);
       break;
     case XFA_Event::NewText:
       NOTREACHED();
     case XFA_Event::PreviousContentType:
-      StringProperty(pIsolate, pValue, &pEventParam->m_wsPrevContentType,
+      StringProperty(pIsolate, pValue, &pEventParam->prev_content_type_,
                      bSetting);
       break;
     case XFA_Event::PreviousText:
-      StringProperty(pIsolate, pValue, &pEventParam->m_wsPrevText, bSetting);
+      StringProperty(pIsolate, pValue, &pEventParam->prev_text_, bSetting);
       break;
     case XFA_Event::Reenter:
-      BooleanProperty(pIsolate, pValue, &pEventParam->m_bReenter, bSetting);
+      BooleanProperty(pIsolate, pValue, &pEventParam->reenter_, bSetting);
       break;
     case XFA_Event::SelectionEnd:
-      IntegerProperty(pIsolate, pValue, &pEventParam->m_iSelEnd, bSetting);
+      IntegerProperty(pIsolate, pValue, &pEventParam->sel_end_, bSetting);
 
-      pEventParam->m_iSelEnd = std::max(0, pEventParam->m_iSelEnd);
-      pEventParam->m_iSelEnd = std::min(
-          pEventParam->m_iSelEnd,
-          pdfium::checked_cast<int32_t>(pEventParam->m_wsPrevText.GetLength()));
-      pEventParam->m_iSelStart =
-          std::min(pEventParam->m_iSelStart, pEventParam->m_iSelEnd);
+      pEventParam->sel_end_ = std::max(0, pEventParam->sel_end_);
+      pEventParam->sel_end_ = std::min(
+          pEventParam->sel_end_,
+          pdfium::checked_cast<int32_t>(pEventParam->prev_text_.GetLength()));
+      pEventParam->sel_start_ =
+          std::min(pEventParam->sel_start_, pEventParam->sel_end_);
       break;
     case XFA_Event::SelectionStart:
-      IntegerProperty(pIsolate, pValue, &pEventParam->m_iSelStart, bSetting);
-      pEventParam->m_iSelStart = std::max(0, pEventParam->m_iSelStart);
-      pEventParam->m_iSelStart = std::min(
-          pEventParam->m_iSelStart,
-          pdfium::checked_cast<int32_t>(pEventParam->m_wsPrevText.GetLength()));
-      pEventParam->m_iSelEnd =
-          std::max(pEventParam->m_iSelStart, pEventParam->m_iSelEnd);
+      IntegerProperty(pIsolate, pValue, &pEventParam->sel_start_, bSetting);
+      pEventParam->sel_start_ = std::max(0, pEventParam->sel_start_);
+      pEventParam->sel_start_ = std::min(
+          pEventParam->sel_start_,
+          pdfium::checked_cast<int32_t>(pEventParam->prev_text_.GetLength()));
+      pEventParam->sel_end_ =
+          std::max(pEventParam->sel_start_, pEventParam->sel_end_);
       break;
     case XFA_Event::Shift:
-      BooleanProperty(pIsolate, pValue, &pEventParam->m_bShift, bSetting);
+      BooleanProperty(pIsolate, pValue, &pEventParam->shift_, bSetting);
       break;
     case XFA_Event::SoapFaultCode:
-      StringProperty(pIsolate, pValue, &pEventParam->m_wsSoapFaultCode,
+      StringProperty(pIsolate, pValue, &pEventParam->soap_fault_code_,
                      bSetting);
       break;
     case XFA_Event::SoapFaultString:
-      StringProperty(pIsolate, pValue, &pEventParam->m_wsSoapFaultString,
+      StringProperty(pIsolate, pValue, &pEventParam->soap_fault_string_,
                      bSetting);
       break;
     case XFA_Event::Target:

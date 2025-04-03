@@ -31,11 +31,11 @@ class CXFA_ImageRenderer {
  private:
   enum class State : bool { kInitial = 0, kStarted };
 
-  State m_State = State::kInitial;
-  const CFX_Matrix m_ImageMatrix;
-  UnownedPtr<CFX_RenderDevice> const m_pDevice;
-  RetainPtr<CFX_DIBitmap> const m_pBitmap;
-  std::unique_ptr<CFX_AggImageRenderer> m_DeviceHandle;
+  State state_ = State::kInitial;
+  const CFX_Matrix image_matrix_;
+  UnownedPtr<CFX_RenderDevice> const device_;
+  RetainPtr<CFX_DIBitmap> const bitmap_;
+  std::unique_ptr<CFX_AggImageRenderer> device_handle_;
 };
 
 #endif  // XFA_FXFA_CXFA_IMAGERENDERER_H_
