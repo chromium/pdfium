@@ -70,6 +70,11 @@ bool WriteColorToStream(fxcrt::ostringstream& buf, const CPDF_Color* color) {
   return true;
 }
 
+// Balances the "q" operator ProcessGraphics() emitted.
+void EndProcessGraphics(fxcrt::ostringstream& buf) {
+  buf << " Q\n";
+}
+
 void RecordPageObjectResourceUsage(const CPDF_PageObject* page_object,
                                    ResourcesMap& seen_resources) {
   const ByteString& resource_name = page_object->GetResourceName();
@@ -571,7 +576,7 @@ void CPDF_PageContentGenerator::ProcessImage(fxcrt::ostringstream* buf,
   if (!pStream)
     return;
 
-  *buf << "q ";
+  ProcessGraphics(buf, pImageObj);
 
   if (!matrix.IsIdentity()) {
     WriteMatrix(*buf, matrix) << " cm ";
@@ -589,7 +594,8 @@ void CPDF_PageContentGenerator::ProcessImage(fxcrt::ostringstream* buf,
     pImageObj->SetImage(pPageData->GetImage(pStream->GetObjNum()));
   }
 
-  *buf << "/" << PDF_NameEncode(name) << " Do Q\n";
+  *buf << "/" << PDF_NameEncode(name) << " Do";
+  EndProcessGraphics(*buf);
 }
 
 void CPDF_PageContentGenerator::ProcessForm(fxcrt::ostringstream* buf,
@@ -606,13 +612,14 @@ void CPDF_PageContentGenerator::ProcessForm(fxcrt::ostringstream* buf,
   ByteString name = RealizeResource(pStream.Get(), "XObject");
   pFormObj->SetResourceName(name);
 
-  *buf << "q\n";
+  ProcessGraphics(buf, pFormObj);
 
   if (!matrix.IsIdentity()) {
     WriteMatrix(*buf, matrix) << " cm ";
   }
 
-  *buf << "/" << PDF_NameEncode(name) << " Do Q\n";
+  *buf << "/" << PDF_NameEncode(name) << " Do";
+  EndProcessGraphics(*buf);
 }
 
 // Processing path construction with operators from Table 4.9 of PDF spec 1.7:
@@ -665,7 +672,6 @@ void CPDF_PageContentGenerator::ProcessPathPoints(fxcrt::ostringstream* buf,
 // Processing path painting with operators from Table 4.10 of PDF spec 1.7:
 // Path painting operators: "S", "n", "B", "f", "B*", "f*", depending on
 // the filling mode and whether we want stroking the path or not.
-// "Q" restores the graphics state imposed by the ProcessGraphics method.
 void CPDF_PageContentGenerator::ProcessPath(fxcrt::ostringstream* buf,
                                             CPDF_PathObject* pPathObj) {
   ProcessGraphics(buf, pPathObj);
@@ -683,7 +689,7 @@ void CPDF_PageContentGenerator::ProcessPath(fxcrt::ostringstream* buf,
     *buf << (pPathObj->stroke() ? " B" : " f");
   else if (pPathObj->has_alternate_filltype())
     *buf << (pPathObj->stroke() ? " B*" : " f*");
-  *buf << " Q\n";
+  EndProcessGraphics(*buf);
 }
 
 // This method supports color operators rg and RGB from Table 4.24 of PDF spec
@@ -882,5 +888,5 @@ void CPDF_PageContentGenerator::ProcessText(fxcrt::ostringstream* buf,
     }
   }
   *buf << PDF_HexEncodeString(text.AsStringView()) << " Tj ET";
-  *buf << " Q\n";
+  EndProcessGraphics(*buf);
 }
