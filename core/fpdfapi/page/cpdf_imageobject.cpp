@@ -73,6 +73,11 @@ RetainPtr<CFX_DIBitmap> CPDF_ImageObject::GetIndependentBitmap() const {
   return pSource ? pSource->Realize() : nullptr;
 }
 
+void CPDF_ImageObject::SetInitialImageMatrix(const CFX_Matrix& matrix) {
+  InitializeOriginalMatrix(matrix);
+  SetImageMatrix(matrix);
+}
+
 void CPDF_ImageObject::SetImageMatrix(const CFX_Matrix& matrix) {
   m_Matrix = matrix;
   CalcBoundingBox();
