@@ -44,7 +44,7 @@ class CPDFXFA_Widget final : public CPDFSDK_Annot,
   bool SetIndexSelected(int index, bool selected) override;
   bool IsIndexSelected(int index) override;
 
-  CXFA_FFWidget* GetXFAFFWidget() const { return m_pXFAFFWidget.Get(); }
+  CXFA_FFWidget* GetXFAFFWidget() const { return xfa_ffwidget_.Get(); }
 
   bool OnChangedFocus();
 
@@ -75,7 +75,7 @@ class CPDFXFA_Widget final : public CPDFSDK_Annot,
   CXFA_FFDocView* GetDocView();
   CXFA_FFWidgetHandler* GetWidgetHandler();
 
-  cppgc::Persistent<CXFA_FFWidget> const m_pXFAFFWidget;
+  cppgc::Persistent<CXFA_FFWidget> const xfa_ffwidget_;
 };
 
 #endif  // FPDFSDK_FPDFXFA_CPDFXFA_WIDGET_H_

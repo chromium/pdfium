@@ -84,7 +84,7 @@ class CPDFXFA_DocEnvironment final : public CXFA_FFDoc::CallbackIface {
   bool SubmitInternal(CXFA_FFDoc* hDoc, CXFA_Submit* submit);
 #endif  // PDF_XFA_ELEMENT_SUBMIT_ENABLED
 
-  UnownedPtr<CPDFXFA_Context> const m_pContext;
+  UnownedPtr<CPDFXFA_Context> const context_;
 };
 
 #endif  // FPDFSDK_FPDFXFA_CPDFXFA_DOCENVIRONMENT_H_

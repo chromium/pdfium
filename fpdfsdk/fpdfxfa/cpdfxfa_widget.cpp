@@ -218,7 +218,7 @@ Mask<XFA_FWL_KeyFlag> GetKeyFlags(Mask<FWL_EVENTFLAG> input) {
 
 CPDFXFA_Widget::CPDFXFA_Widget(CXFA_FFWidget* pXFAFFWidget,
                                CPDFSDK_PageView* pPageView)
-    : CPDFSDK_Annot(pPageView), m_pXFAFFWidget(pXFAFFWidget) {}
+    : CPDFSDK_Annot(pPageView), xfa_ffwidget_(pXFAFFWidget) {}
 
 CPDFXFA_Widget::~CPDFXFA_Widget() = default;
 

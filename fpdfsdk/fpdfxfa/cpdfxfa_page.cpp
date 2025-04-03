@@ -71,15 +71,15 @@ CXFA_FFWidget::IteratorIface* GCedWidgetIteratorForAnnot(
 }  // namespace
 
 CPDFXFA_Page::CPDFXFA_Page(CPDF_Document* pDocument, int page_index)
-    : m_pDocument(pDocument), m_iPageIndex(page_index) {
-  DCHECK(m_pDocument->GetExtension());
-  DCHECK(m_iPageIndex >= 0);
+    : document_(pDocument), page_index_(page_index) {
+  DCHECK(document_->GetExtension());
+  DCHECK(page_index_ >= 0);
 }
 
 CPDFXFA_Page::~CPDFXFA_Page() = default;
 
 CPDF_Page* CPDFXFA_Page::AsPDFPage() {
-  return m_pPDFPage.Get();
+  return pdfpage_.Get();
 }
 
 CPDFXFA_Page* CPDFXFA_Page::AsXFAPage() {
@@ -87,29 +87,30 @@ CPDFXFA_Page* CPDFXFA_Page::AsXFAPage() {
 }
 
 CPDF_Document* CPDFXFA_Page::GetDocument() const {
-  return m_pDocument;
+  return document_;
 }
 
 bool CPDFXFA_Page::LoadPDFPage() {
   RetainPtr<CPDF_Dictionary> pDict =
-      GetDocument()->GetMutablePageDictionary(m_iPageIndex);
+      GetDocument()->GetMutablePageDictionary(page_index_);
   if (!pDict)
     return false;
 
-  if (!m_pPDFPage || m_pPDFPage->GetDict() != pDict)
+  if (!pdfpage_ || pdfpage_->GetDict() != pDict) {
     LoadPDFPageFromDict(std::move(pDict));
+  }
 
   return true;
 }
 
 CXFA_FFPageView* CPDFXFA_Page::GetXFAPageView() const {
-  auto* pContext = static_cast<CPDFXFA_Context*>(m_pDocument->GetExtension());
+  auto* pContext = static_cast<CPDFXFA_Context*>(document_->GetExtension());
   CXFA_FFDocView* pXFADocView = pContext->GetXFADocView();
-  return pXFADocView ? pXFADocView->GetPageView(m_iPageIndex) : nullptr;
+  return pXFADocView ? pXFADocView->GetPageView(page_index_) : nullptr;
 }
 
 bool CPDFXFA_Page::LoadPage() {
-  auto* pContext = static_cast<CPDFXFA_Context*>(m_pDocument->GetExtension());
+  auto* pContext = static_cast<CPDFXFA_Context*>(document_->GetExtension());
   switch (pContext->GetFormType()) {
     case FormType::kNone:
     case FormType::kAcroForm:
@@ -122,24 +123,25 @@ bool CPDFXFA_Page::LoadPage() {
 
 void CPDFXFA_Page::LoadPDFPageFromDict(RetainPtr<CPDF_Dictionary> pPageDict) {
   DCHECK(pPageDict);
-  m_pPDFPage =
-      pdfium::MakeRetain<CPDF_Page>(GetDocument(), std::move(pPageDict));
-  m_pPDFPage->AddPageImageCache();
-  m_pPDFPage->ParseContent();
+  pdfpage_ = pdfium::MakeRetain<CPDF_Page>(GetDocument(), std::move(pPageDict));
+  pdfpage_->AddPageImageCache();
+  pdfpage_->ParseContent();
 }
 
 float CPDFXFA_Page::GetPageWidth() const {
   CXFA_FFPageView* pPageView = GetXFAPageView();
-  if (!m_pPDFPage && !pPageView)
+  if (!pdfpage_ && !pPageView) {
     return 0.0f;
+  }
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(m_pDocument->GetExtension());
+  auto* pContext = static_cast<CPDFXFA_Context*>(document_->GetExtension());
   switch (pContext->GetFormType()) {
     case FormType::kNone:
     case FormType::kAcroForm:
     case FormType::kXFAForeground:
-      if (m_pPDFPage)
-        return m_pPDFPage->GetPageWidth();
+      if (pdfpage_) {
+        return pdfpage_->GetPageWidth();
+      }
       [[fallthrough]];
     case FormType::kXFAFull:
       if (pPageView)
@@ -152,16 +154,18 @@ float CPDFXFA_Page::GetPageWidth() const {
 
 float CPDFXFA_Page::GetPageHeight() const {
   CXFA_FFPageView* pPageView = GetXFAPageView();
-  if (!m_pPDFPage && !pPageView)
+  if (!pdfpage_ && !pPageView) {
     return 0.0f;
+  }
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(m_pDocument->GetExtension());
+  auto* pContext = static_cast<CPDFXFA_Context*>(document_->GetExtension());
   switch (pContext->GetFormType()) {
     case FormType::kNone:
     case FormType::kAcroForm:
     case FormType::kXFAForeground:
-      if (m_pPDFPage)
-        return m_pPDFPage->GetPageHeight();
+      if (pdfpage_) {
+        return pdfpage_->GetPageHeight();
+      }
       [[fallthrough]];
     case FormType::kXFAFull:
       if (pPageView)
@@ -177,8 +181,9 @@ std::optional<CFX_PointF> CPDFXFA_Page::DeviceToPage(
     int rotate,
     const CFX_PointF& device_point) const {
   CXFA_FFPageView* pPageView = GetXFAPageView();
-  if (!m_pPDFPage && !pPageView)
+  if (!pdfpage_ && !pPageView) {
     return std::nullopt;
+  }
 
   CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
   return page2device.GetInverse().Transform(device_point);
@@ -189,8 +194,9 @@ std::optional<CFX_PointF> CPDFXFA_Page::PageToDevice(
     int rotate,
     const CFX_PointF& page_point) const {
   CXFA_FFPageView* pPageView = GetXFAPageView();
-  if (!m_pPDFPage && !pPageView)
+  if (!pdfpage_ && !pPageView) {
     return std::nullopt;
+  }
 
   CFX_Matrix page2device = GetDisplayMatrix(rect, rotate);
   return page2device.Transform(page_point);
@@ -199,16 +205,18 @@ std::optional<CFX_PointF> CPDFXFA_Page::PageToDevice(
 CFX_Matrix CPDFXFA_Page::GetDisplayMatrix(const FX_RECT& rect,
                                           int iRotate) const {
   CXFA_FFPageView* pPageView = GetXFAPageView();
-  if (!m_pPDFPage && !pPageView)
+  if (!pdfpage_ && !pPageView) {
     return CFX_Matrix();
+  }
 
-  auto* pContext = static_cast<CPDFXFA_Context*>(m_pDocument->GetExtension());
+  auto* pContext = static_cast<CPDFXFA_Context*>(document_->GetExtension());
   switch (pContext->GetFormType()) {
     case FormType::kNone:
     case FormType::kAcroForm:
     case FormType::kXFAForeground:
-      if (m_pPDFPage)
-        return m_pPDFPage->GetDisplayMatrix(rect, iRotate);
+      if (pdfpage_) {
+        return pdfpage_->GetDisplayMatrix(rect, iRotate);
+      }
       [[fallthrough]];
     case FormType::kXFAFull:
       if (pPageView)
