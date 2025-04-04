@@ -10,6 +10,7 @@
 #include <array>
 #include <memory>
 #include <stack>
+#include <variant>
 #include <vector>
 
 #include "core/fpdfapi/page/cpdf_contentmarks.h"
@@ -72,17 +73,8 @@ class CPDF_StreamContentParser {
  private:
   enum class RenderType : bool { kFill = false, kStroke = true };
 
-  struct ContentParam {
-    enum class Type : uint8_t { kObject = 0, kNumber, kName };
-
-    ContentParam();
-    ~ContentParam();
-
-    Type m_Type = Type::kObject;
-    FX_Number m_Number;
-    ByteString m_Name;
-    RetainPtr<CPDF_Object> m_pObject;
-  };
+  using ContentParam =
+      std::variant<RetainPtr<CPDF_Object>, FX_Number, ByteString>;
 
   static constexpr int kParamBufSize = 16;
 

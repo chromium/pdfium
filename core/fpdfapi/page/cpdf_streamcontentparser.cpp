@@ -422,8 +422,10 @@ int CPDF_StreamContentParser::GetNextParamPos() {
     if (m_ParamStartPos == kParamBufSize) {
       m_ParamStartPos = 0;
     }
-    if (m_ParamBuf[m_ParamStartPos].m_Type == ContentParam::Type::kObject)
-      m_ParamBuf[m_ParamStartPos].m_pObject.Reset();
+    auto& param = m_ParamBuf[m_ParamStartPos];
+    if (std::holds_alternative<RetainPtr<CPDF_Object>>(param)) {
+      std::get<RetainPtr<CPDF_Object>>(param).Reset();
+    }
 
     return m_ParamStartPos;
   }
@@ -436,31 +438,27 @@ int CPDF_StreamContentParser::GetNextParamPos() {
 }
 
 void CPDF_StreamContentParser::AddNameParam(ByteStringView bsName) {
-  ContentParam& param = m_ParamBuf[GetNextParamPos()];
-  param.m_Type = ContentParam::Type::kName;
-  param.m_Name = PDF_NameDecode(bsName);
+  m_ParamBuf[GetNextParamPos()] = PDF_NameDecode(bsName);
 }
 
 void CPDF_StreamContentParser::AddNumberParam(ByteStringView str) {
-  ContentParam& param = m_ParamBuf[GetNextParamPos()];
-  param.m_Type = ContentParam::Type::kNumber;
-  param.m_Number = FX_Number(str);
+  m_ParamBuf[GetNextParamPos()] = FX_Number(str);
 }
 
 void CPDF_StreamContentParser::AddObjectParam(RetainPtr<CPDF_Object> pObj) {
-  ContentParam& param = m_ParamBuf[GetNextParamPos()];
-  param.m_Type = ContentParam::Type::kObject;
-  param.m_pObject = std::move(pObj);
+  m_ParamBuf[GetNextParamPos()] = std::move(pObj);
 }
 
 void CPDF_StreamContentParser::ClearAllParams() {
   uint32_t index = m_ParamStartPos;
   for (uint32_t i = 0; i < m_ParamCount; i++) {
-    if (m_ParamBuf[index].m_Type == ContentParam::Type::kObject)
-      m_ParamBuf[index].m_pObject.Reset();
+    if (std::holds_alternative<RetainPtr<CPDF_Object>>(m_ParamBuf[index])) {
+      std::get<RetainPtr<CPDF_Object>>(m_ParamBuf[index]).Reset();
+    }
     index++;
-    if (index == kParamBufSize)
+    if (index == kParamBufSize) {
       index = 0;
+    }
   }
   m_ParamStartPos = 0;
   m_ParamCount = 0;
@@ -475,23 +473,20 @@ RetainPtr<CPDF_Object> CPDF_StreamContentParser::GetObject(uint32_t index) {
     real_index -= kParamBufSize;
   }
   ContentParam& param = m_ParamBuf[real_index];
-  if (param.m_Type == ContentParam::Type::kNumber) {
-    param.m_Type = ContentParam::Type::kObject;
-    param.m_pObject =
-        param.m_Number.IsInteger()
-            ? pdfium::MakeRetain<CPDF_Number>(param.m_Number.GetSigned())
-            : pdfium::MakeRetain<CPDF_Number>(param.m_Number.GetFloat());
-    return param.m_pObject;
+  if (std::holds_alternative<FX_Number>(param)) {
+    const auto& number = std::get<FX_Number>(param);
+    param = number.IsInteger()
+                ? pdfium::MakeRetain<CPDF_Number>(number.GetSigned())
+                : pdfium::MakeRetain<CPDF_Number>(number.GetFloat());
+    return std::get<RetainPtr<CPDF_Object>>(param);
   }
-  if (param.m_Type == ContentParam::Type::kName) {
-    param.m_Type = ContentParam::Type::kObject;
-    param.m_pObject = m_pDocument->New<CPDF_Name>(param.m_Name);
-    return param.m_pObject;
+  if (std::holds_alternative<ByteString>(param)) {
+    const auto& name = std::get<ByteString>(param);
+    param = m_pDocument->New<CPDF_Name>(name);
+    return std::get<RetainPtr<CPDF_Object>>(param);
   }
-  if (param.m_Type == ContentParam::Type::kObject)
-    return param.m_pObject;
-
-  NOTREACHED();
+  CHECK(std::holds_alternative<RetainPtr<CPDF_Object>>(param));
+  return std::get<RetainPtr<CPDF_Object>>(param);
 }
 
 ByteString CPDF_StreamContentParser::GetString(uint32_t index) const {
@@ -503,11 +498,16 @@ ByteString CPDF_StreamContentParser::GetString(uint32_t index) const {
     real_index -= kParamBufSize;
 
   const ContentParam& param = m_ParamBuf[real_index];
-  if (param.m_Type == ContentParam::Type::kName)
-    return param.m_Name;
+  if (std::holds_alternative<ByteString>(param)) {
+    return std::get<ByteString>(param);
+  }
 
-  if (param.m_Type == ContentParam::Type::kObject && param.m_pObject)
-    return param.m_pObject->GetString();
+  if (std::holds_alternative<RetainPtr<CPDF_Object>>(param)) {
+    const auto& obj = std::get<RetainPtr<CPDF_Object>>(param);
+    if (obj) {
+      return obj->GetString();
+    }
+  }
 
   return ByteString();
 }
@@ -521,11 +521,16 @@ float CPDF_StreamContentParser::GetNumber(uint32_t index) const {
     real_index -= kParamBufSize;
 
   const ContentParam& param = m_ParamBuf[real_index];
-  if (param.m_Type == ContentParam::Type::kNumber)
-    return param.m_Number.GetFloat();
+  if (std::holds_alternative<FX_Number>(param)) {
+    return std::get<FX_Number>(param).GetFloat();
+  }
 
-  if (param.m_Type == ContentParam::Type::kObject && param.m_pObject)
-    return param.m_pObject->GetNumber();
+  if (std::holds_alternative<RetainPtr<CPDF_Object>>(param)) {
+    const auto& obj = std::get<RetainPtr<CPDF_Object>>(param);
+    if (obj) {
+      return obj->GetNumber();
+    }
+  }
 
   return 0;
 }
@@ -1712,7 +1717,3 @@ ByteStringView CPDF_StreamContentParser::FindValueAbbreviationForTesting(
     ByteStringView abbr) {
   return FindFullName(kInlineValueAbbr, abbr);
 }
-
-CPDF_StreamContentParser::ContentParam::ContentParam() = default;
-
-CPDF_StreamContentParser::ContentParam::~ContentParam() = default;
