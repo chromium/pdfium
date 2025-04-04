@@ -19,6 +19,7 @@
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_codepage.h"
 #include "core/fxcrt/fx_safe_types.h"
+#include "core/fxcrt/span.h"
 #include "core/fxcrt/stl_util.h"
 
 namespace {
@@ -767,27 +768,33 @@ void CPVT_VariableText::Rearrange(const CPVT_WordRange& PlaceRange) {
 }
 
 float CPVT_VariableText::GetAutoFontSize() {
-  int32_t nTotal = sizeof(kFontSizeSteps) / sizeof(uint8_t);
-  if (IsMultiLine())
-    nTotal /= 4;
-  if (nTotal <= 0)
-    return 0;
-  if (GetPlateWidth() <= 0)
-    return 0;
+  constexpr size_t kFullSize = kFontSizeSteps.size();
+  constexpr size_t kQuarterSize = kFullSize / 4;
 
-  // TODO(tsepez): replace with std::lower_bound().
-  int32_t nLeft = 0;
-  int32_t nRight = nTotal - 1;
-  int32_t nMid = nTotal / 2;
-  while (nLeft <= nRight) {
-    if (IsBigger(kFontSizeSteps[nMid])) {
-      nRight = nMid - 1;
-    } else {
-      nLeft = nMid + 1;
-    }
-    nMid = (nLeft + nRight) / 2;
+  static_assert(kFullSize >= 4,
+                "kFontSizeSteps.size() must be at least 4 to ensure "
+                "kQuarterSize is not zero.");
+
+  if (GetPlateWidth() <= 0) {
+    return 0;
   }
-  return static_cast<float>(kFontSizeSteps[nMid]);
+
+  size_t span_size = IsMultiLine() ? kQuarterSize : kFullSize;
+  auto font_span = pdfium::make_span(kFontSizeSteps).first(span_size);
+
+  constexpr bool kUnusedValue = true;
+  auto it = std::lower_bound(
+      font_span.begin(), font_span.end(), kUnusedValue,
+      [this](uint8_t font_size, bool) { return !IsBigger(font_size); });
+
+  if (it == font_span.end()) {
+    return static_cast<float>(font_span.back());
+  }
+
+  if (it == font_span.begin()) {
+    return static_cast<float>(*it);
+  }
+  return static_cast<float>(font_span[it - font_span.begin() - 1]);
 }
 
 bool CPVT_VariableText::IsBigger(float fFontSize) const {

@@ -392,6 +392,11 @@ constexpr span<T> make_span(std::array<T, N>& array) noexcept {
   return span<T>(array);
 }
 
+template <typename T, size_t N>
+constexpr span<const T> make_span(const std::array<T, N>& array) noexcept {
+  return span<const T>(const_cast<std::array<T, N>&>(array));
+}
+
 template <typename Container,
           typename T = typename Container::value_type,
           typename = internal::EnableIfSpanCompatibleContainer<Container, T>>
