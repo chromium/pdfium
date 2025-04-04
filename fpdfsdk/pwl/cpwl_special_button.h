@@ -33,11 +33,11 @@ class CPWL_CheckBox final : public CPWL_Button {
   bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
   bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) override;
 
-  bool IsChecked() const { return m_bChecked; }
-  void SetCheck(bool bCheck) { m_bChecked = bCheck; }
+  bool IsChecked() const { return checked_; }
+  void SetCheck(bool bCheck) { checked_ = bCheck; }
 
  private:
-  bool m_bChecked = false;
+  bool checked_ = false;
 };
 
 class CPWL_RadioButton final : public CPWL_Button {
@@ -51,11 +51,11 @@ class CPWL_RadioButton final : public CPWL_Button {
   bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
   bool OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) override;
 
-  bool IsChecked() const { return m_bChecked; }
-  void SetCheck(bool bCheck) { m_bChecked = bCheck; }
+  bool IsChecked() const { return checked_; }
+  void SetCheck(bool bCheck) { checked_ = bCheck; }
 
  private:
-  bool m_bChecked = false;
+  bool checked_ = false;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_SPECIAL_BUTTON_H_

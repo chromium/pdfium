@@ -37,15 +37,16 @@ void CPWL_ComboBox::OnDestroy() {
   // subclasses, implement the virtual OnDestroy method that does the
   // cleanup first, then invokes the superclass OnDestroy ... gee,
   // like a dtor would.
-  m_pList.ExtractAsDangling();
-  m_pButton.ExtractAsDangling();
-  m_pEdit.ExtractAsDangling();
+  list_.ExtractAsDangling();
+  button_.ExtractAsDangling();
+  edit_.ExtractAsDangling();
   CPWL_Wnd::OnDestroy();
 }
 
 void CPWL_ComboBox::SetFocus() {
-  if (m_pEdit)
-    m_pEdit->SetFocus();
+  if (edit_) {
+    edit_->SetFocus();
+  }
 }
 
 void CPWL_ComboBox::KillFocus() {
@@ -56,76 +57,84 @@ void CPWL_ComboBox::KillFocus() {
 }
 
 WideString CPWL_ComboBox::GetSelectedText() {
-  if (m_pEdit)
-    return m_pEdit->GetSelectedText();
+  if (edit_) {
+    return edit_->GetSelectedText();
+  }
 
   return WideString();
 }
 
 void CPWL_ComboBox::ReplaceAndKeepSelection(const WideString& text) {
-  if (m_pEdit)
-    m_pEdit->ReplaceAndKeepSelection(text);
+  if (edit_) {
+    edit_->ReplaceAndKeepSelection(text);
+  }
 }
 
 void CPWL_ComboBox::ReplaceSelection(const WideString& text) {
-  if (m_pEdit)
-    m_pEdit->ReplaceSelection(text);
+  if (edit_) {
+    edit_->ReplaceSelection(text);
+  }
 }
 
 bool CPWL_ComboBox::SelectAllText() {
-  return m_pEdit && m_pEdit->SelectAllText();
+  return edit_ && edit_->SelectAllText();
 }
 
 bool CPWL_ComboBox::CanUndo() {
-  return m_pEdit && m_pEdit->CanUndo();
+  return edit_ && edit_->CanUndo();
 }
 
 bool CPWL_ComboBox::CanRedo() {
-  return m_pEdit && m_pEdit->CanRedo();
+  return edit_ && edit_->CanRedo();
 }
 
 bool CPWL_ComboBox::Undo() {
-  return m_pEdit && m_pEdit->Undo();
+  return edit_ && edit_->Undo();
 }
 
 bool CPWL_ComboBox::Redo() {
-  return m_pEdit && m_pEdit->Redo();
+  return edit_ && edit_->Redo();
 }
 
 WideString CPWL_ComboBox::GetText() {
-  return m_pEdit ? m_pEdit->GetText() : WideString();
+  return edit_ ? edit_->GetText() : WideString();
 }
 
 void CPWL_ComboBox::SetText(const WideString& text) {
-  if (m_pEdit)
-    m_pEdit->SetText(text);
+  if (edit_) {
+    edit_->SetText(text);
+  }
 }
 
 void CPWL_ComboBox::AddString(const WideString& str) {
-  if (m_pList)
-    m_pList->AddString(str);
+  if (list_) {
+    list_->AddString(str);
+  }
 }
 
 int32_t CPWL_ComboBox::GetSelect() const {
-  return m_nSelectItem;
+  return select_item_;
 }
 
 void CPWL_ComboBox::SetSelect(int32_t nItemIndex) {
-  if (m_pList)
-    m_pList->Select(nItemIndex);
+  if (list_) {
+    list_->Select(nItemIndex);
+  }
 
-  m_pEdit->SetText(m_pList->GetText());
-  m_nSelectItem = nItemIndex;
+  edit_->SetText(list_->GetText());
+  select_item_ = nItemIndex;
 }
 
 void CPWL_ComboBox::SetEditSelection(int32_t nStartChar, int32_t nEndChar) {
-  if (m_pEdit)
-    m_pEdit->SetSelection(nStartChar, nEndChar);
+  if (edit_) {
+    edit_->SetSelection(nStartChar, nEndChar);
+  }
 }
 
 void CPWL_ComboBox::ClearSelection() {
-  if (m_pEdit)
-    m_pEdit->ClearSelection();
+  if (edit_) {
+    edit_->ClearSelection();
+  }
 }
 
 void CPWL_ComboBox::CreateChildWnd(const CreateParams& cp) {
@@ -135,8 +144,9 @@ void CPWL_ComboBox::CreateChildWnd(const CreateParams& cp) {
 }
 
 void CPWL_ComboBox::CreateEdit(const CreateParams& cp) {
-  if (m_pEdit)
+  if (edit_) {
     return;
+  }
 
   CreateParams ecp = cp;
   ecp.dwFlags =
@@ -153,14 +163,15 @@ void CPWL_ComboBox::CreateEdit(const CreateParams& cp) {
   ecp.nBorderStyle = BorderStyle::kSolid;
 
   auto pEdit = std::make_unique<CPWL_Edit>(ecp, CloneAttachedData());
-  m_pEdit = pEdit.get();
+  edit_ = pEdit.get();
   AddChild(std::move(pEdit));
-  m_pEdit->Realize();
+  edit_->Realize();
 }
 
 void CPWL_ComboBox::CreateButton(const CreateParams& cp) {
-  if (m_pButton)
+  if (button_) {
     return;
+  }
 
   CreateParams bcp = cp;
   bcp.dwFlags = PWS_VISIBLE | PWS_BORDER | PWS_BACKGROUND;
@@ -172,14 +183,15 @@ void CPWL_ComboBox::CreateButton(const CreateParams& cp) {
   bcp.eCursorType = IPWL_FillerNotify::CursorStyle::kArrow;
 
   auto pButton = std::make_unique<CPWL_CBButton>(bcp, CloneAttachedData());
-  m_pButton = pButton.get();
+  button_ = pButton.get();
   AddChild(std::move(pButton));
-  m_pButton->Realize();
+  button_->Realize();
 }
 
 void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
-  if (m_pList)
+  if (list_) {
     return;
+  }
 
   CreateParams lcp = cp;
   lcp.dwFlags = PWS_BORDER | PWS_BACKGROUND | PLBS_HOVERSEL | PWS_VSCROLL;
@@ -197,16 +209,16 @@ void CPWL_ComboBox::CreateListBox(const CreateParams& cp) {
     lcp.sBackgroundColor = kDefaultWhiteColor;
 
   auto pList = std::make_unique<CPWL_CBListBox>(lcp, CloneAttachedData());
-  m_pList = pList.get();
+  list_ = pList.get();
   AddChild(std::move(pList));
-  m_pList->Realize();
+  list_->Realize();
 }
 
 bool CPWL_ComboBox::RepositionChildWnd() {
   ObservedPtr<CPWL_ComboBox> this_observed(this);
   const CFX_FloatRect rcClient = this_observed->GetClientRect();
-  if (this_observed->m_bPopup) {
-    const float fOldWindowHeight = this_observed->m_rcOldWindow.Height();
+  if (this_observed->is_popup_) {
+    const float fOldWindowHeight = this_observed->old_window_rect_.Height();
     const float fOldClientHeight = fOldWindowHeight - GetBorderWidth() * 2;
     CFX_FloatRect rcList = CPWL_Wnd::GetWindowRect();
     CFX_FloatRect rcButton = rcClient;
@@ -214,7 +226,7 @@ bool CPWL_ComboBox::RepositionChildWnd() {
         std::max(rcButton.right - kDefaultButtonWidth, rcClient.left);
     CFX_FloatRect rcEdit = rcClient;
     rcEdit.right = std::max(rcButton.left - 1.0f, rcEdit.left);
-    if (this_observed->m_bBottom) {
+    if (this_observed->is_bottom_) {
       rcButton.bottom = rcButton.top - fOldClientHeight;
       rcEdit.bottom = rcEdit.top - fOldClientHeight;
       rcList.top -= fOldWindowHeight;
@@ -223,27 +235,26 @@ bool CPWL_ComboBox::RepositionChildWnd() {
       rcEdit.top = rcEdit.bottom + fOldClientHeight;
       rcList.bottom += fOldWindowHeight;
     }
-    if (this_observed->m_pButton) {
-      this_observed->m_pButton->Move(rcButton, true, false);
+    if (this_observed->button_) {
+      this_observed->button_->Move(rcButton, true, false);
       if (!this_observed) {
         return false;
       }
     }
-    if (this_observed->m_pEdit) {
-      this_observed->m_pEdit->Move(rcEdit, true, false);
+    if (this_observed->edit_) {
+      this_observed->edit_->Move(rcEdit, true, false);
       if (!this_observed) {
         return false;
       }
     }
-    if (this_observed->m_pList) {
-      if (!this_observed->m_pList->SetVisible(true) || !this_observed) {
+    if (this_observed->list_) {
+      if (!this_observed->list_->SetVisible(true) || !this_observed) {
         return false;
       }
-      if (!this_observed->m_pList->Move(rcList, true, false) ||
-          !this_observed) {
+      if (!this_observed->list_->Move(rcList, true, false) || !this_observed) {
         return false;
       }
-      this_observed->m_pList->ScrollToListItem(this_observed->m_nSelectItem);
+      this_observed->list_->ScrollToListItem(this_observed->select_item_);
       if (!this_observed) {
         return false;
       }
@@ -253,8 +264,8 @@ bool CPWL_ComboBox::RepositionChildWnd() {
 
   CFX_FloatRect rcButton = rcClient;
   rcButton.left = std::max(rcButton.right - kDefaultButtonWidth, rcClient.left);
-  if (this_observed->m_pButton) {
-    this_observed->m_pButton->Move(rcButton, true, false);
+  if (this_observed->button_) {
+    this_observed->button_->Move(rcButton, true, false);
     if (!this_observed) {
       return false;
     }
@@ -262,15 +273,15 @@ bool CPWL_ComboBox::RepositionChildWnd() {
 
   CFX_FloatRect rcEdit = rcClient;
   rcEdit.right = std::max(rcButton.left - 1.0f, rcEdit.left);
-  if (this_observed->m_pEdit) {
-    this_observed->m_pEdit->Move(rcEdit, true, false);
+  if (this_observed->edit_) {
+    this_observed->edit_->Move(rcEdit, true, false);
     if (!this_observed) {
       return false;
     }
   }
-  if (this_observed->m_pList) {
-    if (!this_observed->m_pList->SetVisible(false)) {
-      this_observed->m_pList = nullptr;  // Gone, dangling even.
+  if (this_observed->list_) {
+    if (!this_observed->list_->SetVisible(false)) {
+      this_observed->list_ = nullptr;  // Gone, dangling even.
       return false;
     }
     if (!this_observed) {
@@ -281,8 +292,9 @@ bool CPWL_ComboBox::RepositionChildWnd() {
 }
 
 void CPWL_ComboBox::SelectAll() {
-  if (m_pEdit && HasFlag(PCBS_ALLOWCUSTOMTEXT))
-    m_pEdit->SelectAllText();
+  if (edit_ && HasFlag(PCBS_ALLOWCUSTOMTEXT)) {
+    edit_->SelectAllText();
+  }
 }
 
 CFX_FloatRect CPWL_ComboBox::GetFocusRect() const {
@@ -291,19 +303,19 @@ CFX_FloatRect CPWL_ComboBox::GetFocusRect() const {
 
 bool CPWL_ComboBox::SetPopup(bool bPopup) {
   ObservedPtr<CPWL_ComboBox> this_observed(this);
-  if (!this_observed->m_pList) {
+  if (!this_observed->list_) {
     return true;
   }
-  if (bPopup == this_observed->m_bPopup) {
+  if (bPopup == this_observed->is_popup_) {
     return true;
   }
-  float fListHeight = this_observed->m_pList->GetContentRect().Height();
+  float fListHeight = this_observed->list_->GetContentRect().Height();
   if (!FXSYS_IsFloatBigger(fListHeight, 0.0f)) {
     return true;
   }
   if (!bPopup) {
-    this_observed->m_bPopup = false;
-    return Move(this_observed->m_rcOldWindow, true, true);
+    this_observed->is_popup_ = false;
+    return Move(this_observed->old_window_rect_, true, true);
   }
   if (GetFillerNotify()->OnPopupPreOpen(GetAttachedData(), {})) {
     return !!this_observed;
@@ -311,10 +323,10 @@ bool CPWL_ComboBox::SetPopup(bool bPopup) {
   if (!this_observed) {
     return false;
   }
-  float fBorderWidth = this_observed->m_pList->GetBorderWidth() * 2;
+  float fBorderWidth = this_observed->list_->GetBorderWidth() * 2;
   float fPopupMin = 0.0f;
-  if (this_observed->m_pList->GetCount() > 3) {
-    fPopupMin = this_observed->m_pList->GetFirstHeight() * 3 + fBorderWidth;
+  if (this_observed->list_->GetCount() > 3) {
+    fPopupMin = this_observed->list_->GetFirstHeight() * 3 + fBorderWidth;
   }
   float fPopupMax = fListHeight + fBorderWidth;
   bool bBottom;
@@ -325,11 +337,11 @@ bool CPWL_ComboBox::SetPopup(bool bPopup) {
   if (!FXSYS_IsFloatBigger(fPopupRet, 0.0f)) {
     return true;
   }
-  this_observed->m_rcOldWindow = this_observed->CPWL_Wnd::GetWindowRect();
-  this_observed->m_bPopup = bPopup;
-  this_observed->m_bBottom = bBottom;
+  this_observed->old_window_rect_ = this_observed->CPWL_Wnd::GetWindowRect();
+  this_observed->is_popup_ = bPopup;
+  this_observed->is_bottom_ = bBottom;
 
-  CFX_FloatRect rcWindow = this_observed->m_rcOldWindow;
+  CFX_FloatRect rcWindow = this_observed->old_window_rect_;
   if (bBottom) {
     rcWindow.bottom -= fPopupRet;
   } else {
@@ -346,17 +358,17 @@ bool CPWL_ComboBox::SetPopup(bool bPopup) {
 bool CPWL_ComboBox::OnKeyDown(FWL_VKEYCODE nKeyCode,
                               Mask<FWL_EVENTFLAG> nFlag) {
   ObservedPtr<CPWL_ComboBox> this_observed(this);
-  if (!this_observed->m_pList) {
+  if (!this_observed->list_) {
     return false;
   }
-  if (!this_observed->m_pEdit) {
+  if (!this_observed->edit_) {
     return false;
   }
-  this_observed->m_nSelectItem = -1;
+  this_observed->select_item_ = -1;
 
   switch (nKeyCode) {
     case FWL_VKEY_Up:
-      if (this_observed->m_pList->GetCurSel() > 0) {
+      if (this_observed->list_->GetCurSel() > 0) {
         if (this_observed->GetFillerNotify()->OnPopupPreOpen(GetAttachedData(),
                                                              nFlag) ||
             !this_observed) {
@@ -367,8 +379,8 @@ bool CPWL_ComboBox::OnKeyDown(FWL_VKEYCODE nKeyCode,
             !this_observed) {
           return false;
         }
-        if (this_observed->m_pList->IsMovementKey(nKeyCode)) {
-          if (this_observed->m_pList->OnMovementKeyDown(nKeyCode, nFlag) ||
+        if (this_observed->list_->IsMovementKey(nKeyCode)) {
+          if (this_observed->list_->OnMovementKeyDown(nKeyCode, nFlag) ||
               !this_observed) {
             return false;
           }
@@ -377,8 +389,8 @@ bool CPWL_ComboBox::OnKeyDown(FWL_VKEYCODE nKeyCode,
       }
       return true;
     case FWL_VKEY_Down:
-      if (this_observed->m_pList->GetCurSel() <
-          this_observed->m_pList->GetCount() - 1) {
+      if (this_observed->list_->GetCurSel() <
+          this_observed->list_->GetCount() - 1) {
         if (this_observed->GetFillerNotify()->OnPopupPreOpen(GetAttachedData(),
                                                              nFlag) ||
             !this_observed) {
@@ -389,8 +401,8 @@ bool CPWL_ComboBox::OnKeyDown(FWL_VKEYCODE nKeyCode,
             !this_observed) {
           return false;
         }
-        if (this_observed->m_pList->IsMovementKey(nKeyCode)) {
-          if (this_observed->m_pList->OnMovementKeyDown(nKeyCode, nFlag) ||
+        if (this_observed->list_->IsMovementKey(nKeyCode)) {
+          if (this_observed->list_->OnMovementKeyDown(nKeyCode, nFlag) ||
               !this_observed) {
             return false;
           }
@@ -402,17 +414,17 @@ bool CPWL_ComboBox::OnKeyDown(FWL_VKEYCODE nKeyCode,
       break;
   }
   if (this_observed->HasFlag(PCBS_ALLOWCUSTOMTEXT)) {
-    return this_observed->m_pEdit->OnKeyDown(nKeyCode, nFlag);
+    return this_observed->edit_->OnKeyDown(nKeyCode, nFlag);
   }
   return false;
 }
 
 bool CPWL_ComboBox::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
   ObservedPtr<CPWL_ComboBox> this_observed(this);
-  if (!this_observed->m_pList) {
+  if (!this_observed->list_) {
     return false;
   }
-  if (!this_observed->m_pEdit) {
+  if (!this_observed->edit_) {
     return false;
   }
   // In a combo box if the ENTER/SPACE key is pressed, show the combo box
@@ -441,9 +453,9 @@ bool CPWL_ComboBox::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
       break;
   }
 
-  this_observed->m_nSelectItem = -1;
+  this_observed->select_item_ = -1;
   if (this_observed->HasFlag(PCBS_ALLOWCUSTOMTEXT)) {
-    return this_observed->m_pEdit->OnChar(nChar, nFlag);
+    return this_observed->edit_->OnChar(nChar, nFlag);
   }
   if (this_observed->GetFillerNotify()->OnPopupPreOpen(GetAttachedData(),
                                                        nFlag) ||
@@ -455,39 +467,40 @@ bool CPWL_ComboBox::OnChar(uint16_t nChar, Mask<FWL_EVENTFLAG> nFlag) {
       !this_observed) {
     return false;
   }
-  if (!this_observed->m_pList->IsChar(nChar, nFlag)) {
+  if (!this_observed->list_->IsChar(nChar, nFlag)) {
     return false;
   }
-  return this_observed->m_pList->OnCharNotify(nChar, nFlag);
+  return this_observed->list_->OnCharNotify(nChar, nFlag);
 }
 
 void CPWL_ComboBox::NotifyLButtonDown(CPWL_Wnd* child, const CFX_PointF& pos) {
-  if (child == m_pButton) {
-    (void)SetPopup(!m_bPopup);
+  if (child == button_) {
+    (void)SetPopup(!is_popup_);
     // Note, |this| may no longer be viable at this point. If more work needs to
     // be done, check the return value of SetPopup().
   }
 }
 
 void CPWL_ComboBox::NotifyLButtonUp(CPWL_Wnd* child, const CFX_PointF& pos) {
-  if (!m_pEdit || !m_pList || child != m_pList)
+  if (!edit_ || !list_ || child != list_) {
     return;
+  }
 
   SetSelectText();
   SelectAllText();
-  m_pEdit->SetFocus();
+  edit_->SetFocus();
   (void)SetPopup(false);
   // Note, |this| may no longer be viable at this point. If more work needs to
   // be done, check the return value of SetPopup().
 }
 
 bool CPWL_ComboBox::IsPopup() const {
-  return m_bPopup;
+  return is_popup_;
 }
 
 void CPWL_ComboBox::SetSelectText() {
-  m_pEdit->SelectAllText();
-  m_pEdit->ReplaceSelection(m_pList->GetText());
-  m_pEdit->SelectAllText();
-  m_nSelectItem = m_pList->GetCurSel();
+  edit_->SelectAllText();
+  edit_->ReplaceSelection(list_->GetText());
+  edit_->SelectAllText();
+  select_item_ = list_->GetCurSel();
 }

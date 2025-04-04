@@ -146,16 +146,16 @@ class CPWL_ScrollBar final : public CPWL_Wnd, public CFX_Timer::CallbackIface {
   float TrueToFace(float);
   float FaceToTrue(float);
 
-  PWL_SCROLL_INFO m_OriginInfo;
-  UnownedPtr<CPWL_SBButton> m_pMinButton;
-  UnownedPtr<CPWL_SBButton> m_pMaxButton;
-  UnownedPtr<CPWL_SBButton> m_pPosButton;
-  std::unique_ptr<CFX_Timer> m_pTimer;
-  PWL_SCROLL_PRIVATEDATA m_sData;
-  bool m_bMouseDown = false;
-  bool m_bMinOrMax = false;
-  float m_nOldPos = 0.0f;
-  float m_fOldPosButton = 0.0f;
+  PWL_SCROLL_INFO origin_info_;
+  UnownedPtr<CPWL_SBButton> min_button_;
+  UnownedPtr<CPWL_SBButton> max_button_;
+  UnownedPtr<CPWL_SBButton> pos_button_;
+  std::unique_ptr<CFX_Timer> timer_;
+  PWL_SCROLL_PRIVATEDATA private_data_;
+  bool mouse_down_ = false;
+  bool min_or_max_ = false;
+  float old_pos_ = 0.0f;
+  float old_pos_button_ = 0.0f;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_SCROLL_BAR_H_

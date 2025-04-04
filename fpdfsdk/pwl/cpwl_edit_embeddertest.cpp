@@ -29,29 +29,29 @@ class CPWLEditEmbedderTest : public EmbedderTest {
       ADD_FAILURE();
       return ScopedEmbedderTestPage();
     }
-    m_pFormFillEnv =
+    form_fill_env_ =
         CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
-    CPDFSDK_AnnotIterator iter(m_pFormFillEnv->GetPageViewAtIndex(0),
+    CPDFSDK_AnnotIterator iter(form_fill_env_->GetPageViewAtIndex(0),
                                {CPDF_Annot::Subtype::WIDGET});
     // Normal text field.
-    m_pAnnot = ToCPDFSDKWidget(iter.GetFirstAnnot());
-    if (!m_pAnnot) {
+    annot_ = ToCPDFSDKWidget(iter.GetFirstAnnot());
+    if (!annot_) {
       ADD_FAILURE();
       return ScopedEmbedderTestPage();
     }
 
     // Read-only text field.
-    CPDFSDK_Annot* pAnnotReadOnly = iter.GetNextAnnot(m_pAnnot);
+    CPDFSDK_Annot* pAnnotReadOnly = iter.GetNextAnnot(annot_);
 
     // Pre-filled text field with char limit of 10.
-    m_pAnnotCharLimit = ToCPDFSDKWidget(iter.GetNextAnnot(pAnnotReadOnly));
-    if (!m_pAnnotCharLimit) {
+    annot_char_limit_ = ToCPDFSDKWidget(iter.GetNextAnnot(pAnnotReadOnly));
+    if (!annot_char_limit_) {
       ADD_FAILURE();
       return ScopedEmbedderTestPage();
     }
 
     // Password text field.
-    CPDFSDK_Annot* password_annot = iter.GetNextAnnot(m_pAnnotCharLimit);
+    CPDFSDK_Annot* password_annot = iter.GetNextAnnot(annot_char_limit_);
     if (!password_annot) {
       ADD_FAILURE();
       return ScopedEmbedderTestPage();
@@ -71,20 +71,20 @@ class CPWLEditEmbedderTest : public EmbedderTest {
 
   void FormFillerAndWindowSetup(CPDFSDK_Widget* pAnnotTextField) {
     CFFL_InteractiveFormFiller* pInteractiveFormFiller =
-        m_pFormFillEnv->GetInteractiveFormFiller();
+        form_fill_env_->GetInteractiveFormFiller();
     {
       ObservedPtr<CPDFSDK_Widget> pObserved(pAnnotTextField);
       EXPECT_TRUE(pInteractiveFormFiller->OnSetFocus(pObserved, {}));
     }
 
-    m_pFormFiller =
+    form_filler_ =
         pInteractiveFormFiller->GetFormFieldForTesting(pAnnotTextField);
-    ASSERT_TRUE(m_pFormFiller);
+    ASSERT_TRUE(form_filler_);
 
     CPWL_Wnd* pWindow =
-        m_pFormFiller->GetPWLWindow(m_pFormFillEnv->GetPageViewAtIndex(0));
+        form_filler_->GetPWLWindow(form_fill_env_->GetPageViewAtIndex(0));
     ASSERT_TRUE(pWindow);
-    m_pEdit = static_cast<CPWL_Edit*>(pWindow);
+    edit_ = static_cast<CPWL_Edit*>(pWindow);
   }
 
   void TypeTextIntoTextField(int num_chars) {
@@ -94,17 +94,17 @@ class CPWLEditEmbedderTest : public EmbedderTest {
     }
   }
 
-  CPWL_Edit* GetCPWLEdit() { return m_pEdit; }
-  CFFL_FormField* GetCFFLFormFiller() { return m_pFormFiller; }
-  CPDFSDK_Widget* GetCPDFSDKAnnot() { return m_pAnnot; }
-  CPDFSDK_Widget* GetCPDFSDKAnnotCharLimit() { return m_pAnnotCharLimit; }
+  CPWL_Edit* GetCPWLEdit() { return edit_; }
+  CFFL_FormField* GetCFFLFormFiller() { return form_filler_; }
+  CPDFSDK_Widget* GetCPDFSDKAnnot() { return annot_; }
+  CPDFSDK_Widget* GetCPDFSDKAnnotCharLimit() { return annot_char_limit_; }
 
  private:
-  CPWL_Edit* m_pEdit;
-  CFFL_FormField* m_pFormFiller;
-  CPDFSDK_Widget* m_pAnnot;
-  CPDFSDK_Widget* m_pAnnotCharLimit;
-  CPDFSDK_FormFillEnvironment* m_pFormFillEnv;
+  CPWL_Edit* edit_;
+  CFFL_FormField* form_filler_;
+  CPDFSDK_Widget* annot_;
+  CPDFSDK_Widget* annot_char_limit_;
+  CPDFSDK_FormFillEnvironment* form_fill_env_;
 };
 
 TEST_F(CPWLEditEmbedderTest, TypeText) {

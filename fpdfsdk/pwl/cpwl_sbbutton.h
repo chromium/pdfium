@@ -30,8 +30,8 @@ class CPWL_SBButton final : public CPWL_Wnd {
   bool OnMouseMove(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
 
  private:
-  const Type m_eSBButtonType;
-  bool m_bMouseDown = false;
+  const Type sbbutton_type_;
+  bool mouse_down_ = false;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_SBBUTTON_H_

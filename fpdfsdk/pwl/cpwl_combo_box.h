@@ -25,7 +25,7 @@ class CPWL_ComboBox final : public CPWL_Wnd {
       std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData);
   ~CPWL_ComboBox() override;
 
-  CPWL_Edit* GetEdit() const { return m_pEdit; }
+  CPWL_Edit* GetEdit() const { return edit_; }
 
   // CPWL_Wnd:
   void OnDestroy() override;
@@ -67,13 +67,13 @@ class CPWL_ComboBox final : public CPWL_Wnd {
   // Returns |true| iff this instance is still allocated.
   [[nodiscard]] bool SetPopup(bool bPopup);
 
-  UnownedPtr<CPWL_Edit> m_pEdit;
-  UnownedPtr<CPWL_CBButton> m_pButton;
-  UnownedPtr<CPWL_CBListBox> m_pList;
-  CFX_FloatRect m_rcOldWindow;
-  bool m_bPopup = false;
-  bool m_bBottom = true;
-  int32_t m_nSelectItem = -1;
+  UnownedPtr<CPWL_Edit> edit_;
+  UnownedPtr<CPWL_CBButton> button_;
+  UnownedPtr<CPWL_CBListBox> list_;
+  CFX_FloatRect old_window_rect_;
+  bool is_popup_ = false;
+  bool is_bottom_ = true;
+  int32_t select_item_ = -1;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_COMBO_BOX_H_

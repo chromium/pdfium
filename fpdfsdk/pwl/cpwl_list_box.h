@@ -76,9 +76,9 @@ class CPWL_ListBox : public CPWL_Wnd, public CPWL_ListCtrl::NotifyIface {
   CFX_FloatRect GetListRect() const;
 
  protected:
-  bool m_bMouseDown = false;
-  bool m_bHoverSel = false;
-  std::unique_ptr<CPWL_ListCtrl> m_pListCtrl;
+  bool mouse_down_ = false;
+  bool hover_sel_ = false;
+  std::unique_ptr<CPWL_ListCtrl> list_ctrl_;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_LIST_BOX_H_

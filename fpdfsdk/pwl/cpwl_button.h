@@ -24,7 +24,7 @@ class CPWL_Button : public CPWL_Wnd {
   bool OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag, const CFX_PointF& point) override;
 
  protected:
-  bool m_bMouseDown = false;
+  bool mouse_down_ = false;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_BUTTON_H_

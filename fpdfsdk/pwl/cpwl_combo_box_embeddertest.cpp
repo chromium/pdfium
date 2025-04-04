@@ -27,26 +27,26 @@ CPWLComboBoxEmbedderTest::CreateAndInitializeFormComboboxPDF() {
     ADD_FAILURE();
     return ScopedEmbedderTestPage();
   }
-  m_pFormFillEnv = CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
-  m_pPageView = m_pFormFillEnv->GetPageViewAtIndex(0);
-  CPDFSDK_AnnotIterator iter(m_pPageView, {CPDF_Annot::Subtype::WIDGET});
+  form_fill_env_ = CPDFSDKFormFillEnvironmentFromFPDFFormHandle(form_handle());
+  page_view_ = form_fill_env_->GetPageViewAtIndex(0);
+  CPDFSDK_AnnotIterator iter(page_view_, {CPDF_Annot::Subtype::WIDGET});
 
   // User editable combobox.
-  m_pAnnotEditable = ToCPDFSDKWidget(iter.GetFirstAnnot());
-  if (!m_pAnnotEditable) {
+  annot_editable_ = ToCPDFSDKWidget(iter.GetFirstAnnot());
+  if (!annot_editable_) {
     ADD_FAILURE();
     return ScopedEmbedderTestPage();
   }
 
   // Normal combobox with pre-selected value.
-  m_pAnnotNormal = ToCPDFSDKWidget(iter.GetNextAnnot(m_pAnnotEditable));
-  if (!m_pAnnotEditable) {
+  annot_normal_ = ToCPDFSDKWidget(iter.GetNextAnnot(annot_editable_));
+  if (!annot_editable_) {
     ADD_FAILURE();
     return ScopedEmbedderTestPage();
   }
 
   // Read-only combobox.
-  CPDFSDK_Annot* pAnnotReadOnly = iter.GetNextAnnot(m_pAnnotNormal);
+  CPDFSDK_Annot* pAnnotReadOnly = iter.GetNextAnnot(annot_normal_);
   CPDFSDK_Annot* pLastAnnot = iter.GetLastAnnot();
   if (pAnnotReadOnly != pLastAnnot) {
     ADD_FAILURE();
@@ -58,19 +58,19 @@ CPWLComboBoxEmbedderTest::CreateAndInitializeFormComboboxPDF() {
 void CPWLComboBoxEmbedderTest::FormFillerAndWindowSetup(
     CPDFSDK_Widget* pAnnotCombobox) {
   CFFL_InteractiveFormFiller* pInteractiveFormFiller =
-      m_pFormFillEnv->GetInteractiveFormFiller();
+      form_fill_env_->GetInteractiveFormFiller();
   {
     ObservedPtr<CPDFSDK_Widget> pObserved(pAnnotCombobox);
     EXPECT_TRUE(pInteractiveFormFiller->OnSetFocus(pObserved, {}));
   }
 
-  m_pFormField = pInteractiveFormFiller->GetFormFieldForTesting(pAnnotCombobox);
-  ASSERT_TRUE(m_pFormField);
+  form_field_ = pInteractiveFormFiller->GetFormFieldForTesting(pAnnotCombobox);
+  ASSERT_TRUE(form_field_);
 
   CPWL_Wnd* pWindow =
-      m_pFormField->GetPWLWindow(m_pFormFillEnv->GetPageViewAtIndex(0));
+      form_field_->GetPWLWindow(form_fill_env_->GetPageViewAtIndex(0));
   ASSERT_TRUE(pWindow);
-  m_pComboBox = static_cast<CPWL_ComboBox*>(pWindow);
+  combo_box_ = static_cast<CPWL_ComboBox*>(pWindow);
 }
 
 void CPWLComboBoxEmbedderTest::TypeTextIntoTextField(int num_chars) {

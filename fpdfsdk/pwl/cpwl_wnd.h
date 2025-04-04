@@ -191,13 +191,13 @@ class CPWL_Wnd : public Observable {
   int32_t GetBorderWidth() const;
   CFX_FloatRect GetWindowRect() const;
 
-  bool IsVisible() const { return m_bVisible; }
+  bool IsVisible() const { return visible_; }
   bool HasFlag(uint32_t dwFlags) const;
   void RemoveFlag(uint32_t dwFlags);
   void SetClipRect(const CFX_FloatRect& rect);
 
   IPWL_FillerNotify::PerWindowData* GetAttachedData() const {
-    return m_pAttachedData.get();
+    return attached_data_.get();
   }
   std::unique_ptr<IPWL_FillerNotify::PerWindowData> CloneAttachedData() const;
   std::vector<UnownedPtr<CPWL_Wnd>> GetAncestors();
@@ -224,19 +224,19 @@ class CPWL_Wnd : public Observable {
   virtual void OnCreated();
   virtual void OnDestroy();
 
-  bool IsValid() const { return m_bCreated; }
-  CreateParams* GetCreationParams() { return &m_CreationParams; }
+  bool IsValid() const { return created_; }
+  CreateParams* GetCreationParams() { return &creation_params_; }
   ProviderIface* GetProvider() const {
-    return m_CreationParams.pProvider.Get();
+    return creation_params_.pProvider.Get();
   }
   CFX_Timer::HandlerIface* GetTimerHandler() const {
-    return m_CreationParams.pTimerHandler.Get();
+    return creation_params_.pTimerHandler.Get();
   }
   IPWL_FillerNotify* GetFillerNotify() const {
-    return m_CreationParams.pFillerNotify;
+    return creation_params_.pFillerNotify;
   }
 
-  CPWL_Wnd* GetParentWindow() const { return m_pParent; }
+  CPWL_Wnd* GetParentWindow() const { return parent_; }
   CPWL_ScrollBar* GetVScrollBar() const;
 
   // Returns |true| iff this instance is still allocated.
@@ -261,7 +261,7 @@ class CPWL_Wnd : public Observable {
   CFX_PointF GetCenterPoint() const;
   const CFX_FloatRect& GetClipRect() const;
 
-  IPVT_FontMap* GetFontMap() const { return m_CreationParams.pFontMap; }
+  IPVT_FontMap* GetFontMap() const { return creation_params_.pFontMap; }
 
  private:
   void DrawChildAppearance(CFX_RenderDevice* pDevice,
@@ -276,15 +276,15 @@ class CPWL_Wnd : public Observable {
   void DestroySharedCaptureFocusState();
   SharedCaptureFocusState* GetSharedCaptureFocusState() const;
 
-  CreateParams m_CreationParams;
-  std::unique_ptr<IPWL_FillerNotify::PerWindowData> m_pAttachedData;
-  UnownedPtr<CPWL_Wnd> m_pParent;
-  std::vector<std::unique_ptr<CPWL_Wnd>> m_Children;
-  UnownedPtr<CPWL_ScrollBar> m_pVScrollBar;
-  CFX_FloatRect m_rcWindow;
-  CFX_FloatRect m_rcClip;
-  bool m_bCreated = false;
-  bool m_bVisible = false;
+  CreateParams creation_params_;
+  std::unique_ptr<IPWL_FillerNotify::PerWindowData> attached_data_;
+  UnownedPtr<CPWL_Wnd> parent_;
+  std::vector<std::unique_ptr<CPWL_Wnd>> children_;
+  UnownedPtr<CPWL_ScrollBar> vscroll_bar_;
+  CFX_FloatRect window_rect_;
+  CFX_FloatRect clip_rect_;
+  bool created_ = false;
+  bool visible_ = false;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_WND_H_

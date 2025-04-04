@@ -15,7 +15,7 @@ CPWL_SBButton::CPWL_SBButton(
     const CreateParams& cp,
     std::unique_ptr<IPWL_FillerNotify::PerWindowData> pAttachedData,
     Type eButtonType)
-    : CPWL_Wnd(cp, std::move(pAttachedData)), m_eSBButtonType(eButtonType) {
+    : CPWL_Wnd(cp, std::move(pAttachedData)), sbbutton_type_(eButtonType) {
   GetCreationParams()->eCursorType = IPWL_FillerNotify::CursorStyle::kArrow;
 }
 
@@ -39,7 +39,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
   pDevice->DrawStrokeRect(mtUser2Device, rectWnd.GetDeflated(0.5f, 0.5f),
                           ArgbEncode(nTransparency, 255, 255, 255), 1.0f);
 
-  if (m_eSBButtonType != Type::kPosButton) {
+  if (sbbutton_type_ != Type::kPosButton) {
     // draw background
     pDevice->DrawShadow(mtUser2Device, rectWnd.GetDeflated(1.0f, 1.0f),
                         nTransparency, 80, 220);
@@ -47,7 +47,7 @@ void CPWL_SBButton::DrawThisAppearance(CFX_RenderDevice* pDevice,
     if (rectWnd.top - rectWnd.bottom > 6.0f) {
       std::vector<CFX_PointF> pts;
       CFX_PointF origin(rectWnd.left + 1.5f, rectWnd.bottom);
-      if (m_eSBButtonType == Type::kMinButton) {
+      if (sbbutton_type_ == Type::kMinButton) {
         static constexpr CFX_PointF kOffsetsMin[] = {
             {2.5f, 4.0f}, {2.5f, 3.0f}, {4.5f, 5.0f}, {6.5f, 3.0f},
             {6.5f, 4.0f}, {4.5f, 6.0f}, {2.5f, 4.0f}};
@@ -118,7 +118,7 @@ bool CPWL_SBButton::OnLButtonDown(Mask<FWL_EVENTFLAG> nFlag,
   if (CPWL_Wnd* pParent = GetParentWindow())
     pParent->NotifyLButtonDown(this, point);
 
-  m_bMouseDown = true;
+  mouse_down_ = true;
   SetCapture();
 
   return true;
@@ -131,7 +131,7 @@ bool CPWL_SBButton::OnLButtonUp(Mask<FWL_EVENTFLAG> nFlag,
   if (CPWL_Wnd* pParent = GetParentWindow())
     pParent->NotifyLButtonUp(this, point);
 
-  m_bMouseDown = false;
+  mouse_down_ = false;
   ReleaseCapture();
 
   return true;

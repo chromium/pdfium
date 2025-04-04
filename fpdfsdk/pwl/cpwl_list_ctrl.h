@@ -39,7 +39,7 @@ class CPWL_ListCtrl {
   CPWL_ListCtrl();
   ~CPWL_ListCtrl();
 
-  void SetNotify(NotifyIface* pNotify) { m_pNotify = pNotify; }
+  void SetNotify(NotifyIface* pNotify) { notify_ = pNotify; }
   void OnMouseDown(const CFX_PointF& point, bool bShift, bool bCtrl);
   void OnMouseMove(const CFX_PointF& point, bool bShift, bool bCtrl);
   void OnVK_UP(bool bShift, bool bCtrl);
@@ -53,8 +53,8 @@ class CPWL_ListCtrl {
   void SetScrollPos(const CFX_PointF& point);
   void ScrollToListItem(int32_t nItemIndex);
   CFX_FloatRect GetItemRect(int32_t nIndex) const;
-  int32_t GetCaret() const { return m_nCaretIndex; }
-  int32_t GetSelect() const { return m_nSelItem; }
+  int32_t GetCaret() const { return caret_index_; }
+  int32_t GetSelect() const { return sel_item_; }
   int32_t GetTopItem() const;
   CFX_FloatRect GetContentRect() const;
 
@@ -66,18 +66,18 @@ class CPWL_ListCtrl {
   void SetCaret(int32_t nItemIndex);
   WideString GetText() const;
 
-  void SetFontMap(IPVT_FontMap* pFontMap) { m_pFontMap = pFontMap; }
-  void SetFontSize(float fFontSize) { m_fFontSize = fFontSize; }
-  CFX_FloatRect GetPlateRect() const { return m_rcPlate; }
+  void SetFontMap(IPVT_FontMap* pFontMap) { font_map_ = pFontMap; }
+  void SetFontSize(float fFontSize) { font_size_ = fFontSize; }
+  CFX_FloatRect GetPlateRect() const { return plate_rect_; }
   void SetPlateRect(const CFX_FloatRect& rect);
 
-  float GetFontSize() const { return m_fFontSize; }
+  float GetFontSize() const { return font_size_; }
   CPWL_EditImpl* GetItemEdit(int32_t nIndex) const;
   int32_t GetCount() const;
   bool IsItemSelected(int32_t nIndex) const;
   float GetFirstHeight() const;
-  void SetMultipleSel(bool bMultiple) { m_bMultiple = bMultiple; }
-  bool IsMultipleSel() const { return m_bMultiple; }
+  void SetMultipleSel(bool bMultiple) { multiple_ = bMultiple; }
+  bool IsMultipleSel() const { return multiple_; }
   int32_t FindNext(int32_t nIndex, wchar_t nChar) const;
   int32_t GetFirstSelected() const;
 
@@ -88,25 +88,25 @@ class CPWL_ListCtrl {
     ~Item();
 
     void SetFontMap(IPVT_FontMap* pFontMap);
-    CPWL_EditImpl* GetEdit() const { return m_pEdit.get(); }
+    CPWL_EditImpl* GetEdit() const { return edit_.get(); }
 
-    void SetRect(const CFX_FloatRect& rect) { m_rcListItem = rect; }
-    void SetSelect(bool bSelected) { m_bSelected = bSelected; }
+    void SetRect(const CFX_FloatRect& rect) { list_item_rect_ = rect; }
+    void SetSelect(bool bSelected) { selected_ = bSelected; }
     void SetText(const WideString& text);
     void SetFontSize(float fFontSize);
     WideString GetText() const;
 
-    CFX_FloatRect GetRect() const { return m_rcListItem; }
-    bool IsSelected() const { return m_bSelected; }
+    CFX_FloatRect GetRect() const { return list_item_rect_; }
+    bool IsSelected() const { return selected_; }
     float GetItemHeight() const;
     uint16_t GetFirstChar() const;
 
    private:
     CPWL_EditImpl::Iterator* GetIterator() const;
 
-    bool m_bSelected = false;
-    CFX_FloatRect m_rcListItem;
-    std::unique_ptr<CPWL_EditImpl> const m_pEdit;
+    bool selected_ = false;
+    CFX_FloatRect list_item_rect_;
+    std::unique_ptr<CPWL_EditImpl> const edit_;
   };
 
   class SelectState {
@@ -124,11 +124,11 @@ class CPWL_ListCtrl {
     void DeselectAll();
     void Done();
 
-    const_iterator begin() const { return m_Items.begin(); }
-    const_iterator end() const { return m_Items.end(); }
+    const_iterator begin() const { return items_.begin(); }
+    const_iterator end() const { return items_.end(); }
 
    private:
-    std::map<int32_t, State> m_Items;
+    std::map<int32_t, State> items_;
   };
 
   CFX_PointF InToOut(const CFX_PointF& point) const;
@@ -159,28 +159,28 @@ class CPWL_ListCtrl {
   void SetItemSelect(int32_t nIndex, bool bSelected);
   int32_t GetLastSelected() const;
   CFX_PointF GetBTPoint() const {
-    return CFX_PointF(m_rcPlate.left, m_rcPlate.top);
+    return CFX_PointF(plate_rect_.left, plate_rect_.top);
   }
 
-  CFX_FloatRect m_rcPlate;
-  CFX_FloatRect m_rcContent;
-  CFX_PointF m_ptScrollPos;
-  float m_fFontSize = 0.0f;
+  CFX_FloatRect plate_rect_;
+  CFX_FloatRect content_rect_;
+  CFX_PointF scroll_pos_point_;
+  float font_size_ = 0.0f;
 
   // For single:
-  int32_t m_nSelItem = -1;
+  int32_t sel_item_ = -1;
 
   // For multiple:
-  SelectState m_SelectState;
-  int32_t m_nFootIndex = -1;
-  int32_t m_nCaretIndex = -1;
-  bool m_bCtrlSel = false;
+  SelectState select_state_;
+  int32_t foot_index_ = -1;
+  int32_t caret_index_ = -1;
+  bool ctrl_sel_ = false;
 
-  bool m_bMultiple = false;
-  bool m_bNotifyFlag = false;
-  UnownedPtr<NotifyIface> m_pNotify;
-  std::vector<std::unique_ptr<Item>> m_ListItems;
-  UnownedPtr<IPVT_FontMap> m_pFontMap;
+  bool multiple_ = false;
+  bool notify_flag_ = false;
+  UnownedPtr<NotifyIface> notify_;
+  std::vector<std::unique_ptr<Item>> list_items_;
+  UnownedPtr<IPVT_FontMap> font_map_;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_LIST_CTRL_H_

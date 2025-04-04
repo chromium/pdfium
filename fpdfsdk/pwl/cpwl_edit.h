@@ -78,8 +78,8 @@ class CPWL_Edit final : public CPWL_Wnd {
   CFX_PointF GetScrollPos() const;
   void SetScrollPos(const CFX_PointF& point);
 
-  void SetCharSet(FX_Charset nCharSet) { m_nCharSet = nCharSet; }
-  FX_Charset GetCharSet() const { return m_nCharSet; }
+  void SetCharSet(FX_Charset nCharSet) { char_set_ = nCharSet; }
+  FX_Charset GetCharSet() const { return char_set_; }
 
   void SetReadyToInput();
   void SetAlignFormatVerticalCenter();
@@ -126,12 +126,12 @@ class CPWL_Edit final : public CPWL_Wnd {
   bool IsVScrollBarVisible() const;
   void SetParamByFlag();
 
-  bool m_bMouseDown = false;
-  bool m_bFocus = false;
-  FX_Charset m_nCharSet = FX_Charset::kDefault;
-  CFX_FloatRect m_rcOldWindow;
-  std::unique_ptr<CPWL_EditImpl> const m_pEditImpl;
-  UnownedPtr<CPWL_Caret> m_pCaret;
+  bool mouse_down_ = false;
+  bool focus_ = false;
+  FX_Charset char_set_ = FX_Charset::kDefault;
+  CFX_FloatRect old_window_rect_;
+  std::unique_ptr<CPWL_EditImpl> const edit_impl_;
+  UnownedPtr<CPWL_Caret> caret_;
 };
 
 #endif  // FPDFSDK_PWL_CPWL_EDIT_H_
