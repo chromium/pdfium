@@ -90,6 +90,10 @@ void CPDF_PageObject::CopyData(const CPDF_PageObject* pSrc) {
   m_bDirty = true;
 }
 
+void CPDF_PageObject::InitializeOriginalMatrix(const CFX_Matrix& matrix) {
+  m_OriginalMatrix = matrix;
+}
+
 void CPDF_PageObject::SetIsActive(bool value) {
   if (m_bIsActive != value) {
     m_bIsActive = value;

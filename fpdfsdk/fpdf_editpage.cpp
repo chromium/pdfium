@@ -36,6 +36,7 @@
 #include "core/fxcrt/compiler_specific.h"
 #include "core/fxcrt/fx_extension.h"
 #include "core/fxcrt/fx_memcpy_wrappers.h"
+#include "core/fxcrt/notreached.h"
 #include "core/fxcrt/numerics/safe_conversions.h"
 #include "core/fxcrt/span.h"
 #include "core/fxcrt/span_util.h"
@@ -722,28 +723,32 @@ FPDFPageObj_GetMatrix(FPDF_PAGEOBJECT page_object, FS_MATRIX* matrix) {
 FPDF_EXPORT FPDF_BOOL FPDF_CALLCONV
 FPDFPageObj_SetMatrix(FPDF_PAGEOBJECT page_object, const FS_MATRIX* matrix) {
   CPDF_PageObject* pPageObj = CPDFPageObjectFromFPDFPageObject(page_object);
-  if (!pPageObj || !matrix)
+  if (!pPageObj || !matrix) {
     return false;
+  }
 
   CFX_Matrix cmatrix = CFXMatrixFromFSMatrix(*matrix);
   switch (pPageObj->GetType()) {
     case CPDF_PageObject::Type::kText:
       pPageObj->AsText()->SetTextMatrix(cmatrix);
-      break;
+      pPageObj->SetMatrixDirty(true);
+      return true;
     case CPDF_PageObject::Type::kPath:
       pPageObj->AsPath()->SetPathMatrix(cmatrix);
-      break;
+      pPageObj->SetMatrixDirty(true);
+      return true;
     case CPDF_PageObject::Type::kImage:
       pPageObj->AsImage()->SetImageMatrix(cmatrix);
-      break;
+      pPageObj->SetMatrixDirty(pPageObj->original_matrix() != cmatrix);
+      return true;
     case CPDF_PageObject::Type::kShading:
       return false;
     case CPDF_PageObject::Type::kForm:
       pPageObj->AsForm()->SetFormMatrix(cmatrix);
-      break;
+      pPageObj->SetMatrixDirty(true);
+      return true;
   }
-  pPageObj->SetDirty(true);
-  return true;
+  NOTREACHED();
 }
 
 FPDF_EXPORT void FPDF_CALLCONV
