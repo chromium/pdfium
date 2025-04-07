@@ -61,7 +61,8 @@ class CPDF_PageObject {
   virtual const CPDF_FormObject* AsForm() const;
 
   void SetDirty(bool value) { m_bDirty = value; }
-  bool IsDirty() const { return m_bDirty; }
+  bool IsDirty() const { return m_bDirty || m_bMatrixDirty; }
+  void SetMatrixDirty(bool value) { m_bMatrixDirty = value; }
   void SetIsActive(bool value);
   bool IsActive() const { return m_bIsActive; }
   void TransformClipPath(const CFX_Matrix& matrix);
@@ -135,19 +136,28 @@ class CPDF_PageObject {
 
   void SetDefaultStates();
 
+  const CFX_Matrix& original_matrix() const { return m_OriginalMatrix; }
+
  protected:
   void CopyData(const CPDF_PageObject* pSrcObject);
+  void InitializeOriginalMatrix(const CFX_Matrix& matrix);
 
  private:
   CPDF_GraphicStates m_GraphicStates;
   CFX_FloatRect m_Rect;
   CFX_FloatRect m_OriginalRect;
+  // Only used with `CPDF_ImageObject` for now.
+  // TODO(thestig): Use with `CPDF_FormObject` and `CPDF_PageObject` as well.
+  CFX_Matrix m_OriginalMatrix;
   CPDF_ContentMarks m_ContentMarks;
   // Modifying `m_bIsActive` automatically set `m_bDirty` to be true, but
   // otherwise `m_bDirty` and `m_bIsActive` are independent.  A
   // `CPDF_PageObject` can remain dirty until page object processing completes
   // and marks it no longer dirty.
   bool m_bDirty = false;
+  // Separately track if the current matrix is different from
+  // `m_OriginalMatrix`.
+  bool m_bMatrixDirty = false;
   bool m_bIsActive = true;
   int32_t m_ContentStream;
   // The resource name for this object.

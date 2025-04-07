@@ -32,6 +32,8 @@ class CPDF_ImageObject final : public CPDF_PageObject {
   RetainPtr<CPDF_Image> GetImage() const;
   RetainPtr<CFX_DIBitmap> GetIndependentBitmap() const;
 
+  void SetInitialImageMatrix(const CFX_Matrix& matrix);
+
   void SetImageMatrix(const CFX_Matrix& matrix);
   const CFX_Matrix& matrix() const { return m_Matrix; }
 
