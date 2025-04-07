@@ -49,6 +49,12 @@
 
 namespace {
 
+// TODO(thestig): Remove/restore other unused resource types:
+// - ColorSpace
+// - Pattern
+// - Shading
+constexpr const char* kResourceKeys[] = {"ExtGState", "Font", "XObject"};
+
 // Key: The resource type.
 // Value: The resource names of a given type.
 using ResourcesMap = std::map<ByteString, std::set<ByteString>>;
@@ -159,12 +165,6 @@ void RemoveOrRestoreUnusedResources(
     RetainPtr<CPDF_Dictionary> resources_dict,
     const ResourcesMap& resources_in_use,
     CPDF_PageObjectHolder::AllRemovedResourcesMap& all_removed_resources_map) {
-  // TODO(thestig): Remove/restore other unused resource types:
-  // - ColorSpace
-  // - Pattern
-  // - Shading
-  static constexpr const char* kResourceKeys[] = {"ExtGState", "Font",
-                                                  "XObject"};
   for (const char* resource_key : kResourceKeys) {
     auto resources_in_use_it = resources_in_use.find(resource_key);
     const std::set<ByteString>* resource_in_use_of_current_type =
@@ -263,6 +263,51 @@ bool IsPageResourceShared(CPDF_Document* doc,
   }
 
   return false;
+}
+
+void CloneResourcesDictEntries(CPDF_Document* doc,
+                               RetainPtr<CPDF_Dictionary> resources_dict) {
+  struct KeyAndObject {
+    ByteString key;
+    RetainPtr<const CPDF_Object> object;
+  };
+  std::vector<KeyAndObject> entries_to_maybe_clone;
+  {
+    CPDF_DictionaryLocker locker(resources_dict);
+    for (const auto& it : locker) {
+      const ByteString& key = it.first;
+      const RetainPtr<CPDF_Object>& object = it.second;
+      // Clone resource dictionaries that may get modified. While out for
+      // self-referencing loops.
+      if (object != resources_dict &&
+          object->GetType() == CPDF_Object::kReference &&
+          pdfium::Contains(kResourceKeys, key)) {
+        RetainPtr<const CPDF_Object> direct_object = object->GetDirect();
+        if (direct_object) {
+          entries_to_maybe_clone.emplace_back(key, std::move(direct_object));
+        }
+      }
+    }
+  }
+
+  if (entries_to_maybe_clone.empty()) {
+    return;
+  }
+
+  std::set<uint32_t> shared_objects = GetObjectsWithMultipleReferences(doc);
+  if (shared_objects.empty()) {
+    return;
+  }
+
+  // Must modify `resources_dict` after `locker` goes out of scope.
+  for (const auto& entry : entries_to_maybe_clone) {
+    if (pdfium::Contains(shared_objects, entry.object->GetObjNum())) {
+      const uint32_t clone_object_number =
+          doc->AddIndirectObject(entry.object->Clone());
+      resources_dict->SetNewFor<CPDF_Reference>(entry.key, doc,
+                                                clone_object_number);
+    }
+  }
 }
 
 }  // namespace
@@ -440,6 +485,10 @@ void CPDF_PageContentGenerator::UpdateResourcesDict() {
     m_pObjHolder->GetMutableDict()->SetNewFor<CPDF_Reference>(
         pdfium::page_object::kResources, m_pDocument, clone_object_number);
   }
+
+  // Even though `resources` itself is not shared, its dictionary entries may be
+  // shared. Checked for that and clone those as well.
+  CloneResourcesDictEntries(m_pDocument, resources);
 
   ResourcesMap seen_resources;
   for (auto& page_object : m_pageObjects) {
