@@ -34,38 +34,38 @@ BmpDecoder::Status BmpDecoder::ReadHeader(
   DCHECK(pAttribute);
 
   auto* ctx = static_cast<CFX_BmpContext*>(pContext);
-  Status status = ctx->m_Bmp.ReadHeader();
+  Status status = ctx->bmp_.ReadHeader();
   if (status != Status::kSuccess)
     return status;
 
-  *width = ctx->m_Bmp.width();
-  *height = ctx->m_Bmp.height();
-  *tb_flag = ctx->m_Bmp.img_tb_flag();
-  *components = ctx->m_Bmp.components();
-  *palette = ctx->m_Bmp.palette();
-  pAttribute->m_wDPIUnit = CFX_DIBAttribute::kResUnitMeter;
-  pAttribute->m_nXDPI = ctx->m_Bmp.dpi_x();
-  pAttribute->m_nYDPI = ctx->m_Bmp.dpi_y();
+  *width = ctx->bmp_.width();
+  *height = ctx->bmp_.height();
+  *tb_flag = ctx->bmp_.img_tb_flag();
+  *components = ctx->bmp_.components();
+  *palette = ctx->bmp_.palette();
+  pAttribute->dpi_unit_ = CFX_DIBAttribute::kResUnitMeter;
+  pAttribute->x_dpi_ = ctx->bmp_.dpi_x();
+  pAttribute->y_dpi_ = ctx->bmp_.dpi_y();
   return Status::kSuccess;
 }
 
 // static
 BmpDecoder::Status BmpDecoder::LoadImage(
     ProgressiveDecoderIface::Context* pContext) {
-  return static_cast<CFX_BmpContext*>(pContext)->m_Bmp.DecodeImage();
+  return static_cast<CFX_BmpContext*>(pContext)->bmp_.DecodeImage();
 }
 
 // static
 FX_FILESIZE BmpDecoder::GetAvailInput(
     ProgressiveDecoderIface::Context* pContext) {
-  return static_cast<CFX_BmpContext*>(pContext)->m_Bmp.GetAvailInput();
+  return static_cast<CFX_BmpContext*>(pContext)->bmp_.GetAvailInput();
 }
 
 // static
 bool BmpDecoder::Input(ProgressiveDecoderIface::Context* pContext,
                        RetainPtr<CFX_CodecMemory> codec_memory) {
   auto* ctx = static_cast<CFX_BmpContext*>(pContext);
-  ctx->m_Bmp.SetInputBuffer(std::move(codec_memory));
+  ctx->bmp_.SetInputBuffer(std::move(codec_memory));
   return true;
 }
 

@@ -19,8 +19,8 @@ class CFX_BmpContext final : public ProgressiveDecoderIface::Context {
   explicit CFX_BmpContext(BmpDecoder::Delegate* pDelegate);
   ~CFX_BmpContext() override;
 
-  CFX_BmpDecompressor m_Bmp;
-  UnownedPtr<BmpDecoder::Delegate> const m_pDelegate;
+  CFX_BmpDecompressor bmp_;
+  UnownedPtr<BmpDecoder::Delegate> const delegate_;
 };
 
 }  // namespace fxcodec

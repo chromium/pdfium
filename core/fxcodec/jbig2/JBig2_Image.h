@@ -39,24 +39,23 @@ class CJBig2_Image {
 
   static bool IsValidImageSize(int32_t w, int32_t h);
 
-  int32_t width() const { return m_nWidth; }
-  int32_t height() const { return m_nHeight; }
-  int32_t stride() const { return m_nStride; }
+  int32_t width() const { return width_; }
+  int32_t height() const { return height_; }
+  int32_t stride() const { return stride_; }
 
-  uint8_t* data() const { return m_pData.Get(); }
+  uint8_t* data() const { return data_.Get(); }
 
   int GetPixel(int32_t x, int32_t y) const;
   void SetPixel(int32_t x, int32_t y, int v);
 
   // SAFETY: propogated to caller via UNSAFE_BUFFER_USAGE.
   UNSAFE_BUFFER_USAGE uint8_t* GetLineUnsafe(int32_t y) const {
-    return UNSAFE_BUFFERS(data() + y * m_nStride);
+    return UNSAFE_BUFFERS(data() + y * stride_);
   }
 
   uint8_t* GetLine(int32_t y) const {
-    // SAFETY: m_nHeight valid lines in image.
-    return (y >= 0 && y < m_nHeight) ? UNSAFE_BUFFERS(GetLineUnsafe(y))
-                                     : nullptr;
+    // SAFETY: height_ valid lines in image.
+    return (y >= 0 && y < height_) ? UNSAFE_BUFFERS(GetLineUnsafe(y)) : nullptr;
   }
 
   void CopyLine(int32_t hTo, int32_t hFrom);
@@ -99,10 +98,10 @@ class CJBig2_Image {
                          JBig2ComposeOp op,
                          const FX_RECT& rtSrc);
 
-  MaybeOwned<uint8_t, FxFreeDeleter> m_pData;
-  int32_t m_nWidth = 0;   // 1-bit pixels
-  int32_t m_nHeight = 0;  // lines
-  int32_t m_nStride = 0;  // bytes, must be multiple of 4.
+  MaybeOwned<uint8_t, FxFreeDeleter> data_;
+  int32_t width_ = 0;   // 1-bit pixels
+  int32_t height_ = 0;  // lines
+  int32_t stride_ = 0;  // bytes, must be multiple of 4.
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_IMAGE_H_

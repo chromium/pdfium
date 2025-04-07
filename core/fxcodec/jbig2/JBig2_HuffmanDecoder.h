@@ -19,7 +19,7 @@ class CJBig2_HuffmanDecoder {
   int DecodeAValue(const CJBig2_HuffmanTable* pTable, int* nResult);
 
  private:
-  UnownedPtr<CJBig2_BitStream> const m_pStream;
+  UnownedPtr<CJBig2_BitStream> const stream_;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_HUFFMANDECODER_H_

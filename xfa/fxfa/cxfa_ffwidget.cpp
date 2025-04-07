@@ -126,22 +126,22 @@ RetainPtr<CFX_DIBitmap> XFA_LoadImageFromBuffer(
   CFX_DIBAttribute dibAttr;
   pProgressiveDecoder->LoadImageInfo(std::move(pImageFileRead), type, &dibAttr,
                                      false);
-  switch (dibAttr.m_wDPIUnit) {
+  switch (dibAttr.dpi_unit_) {
     case CFX_DIBAttribute::kResUnitCentimeter:
-      dibAttr.m_nXDPI = static_cast<int32_t>(dibAttr.m_nXDPI * 2.54f);
-      dibAttr.m_nYDPI = static_cast<int32_t>(dibAttr.m_nYDPI * 2.54f);
+      dibAttr.x_dpi_ = static_cast<int32_t>(dibAttr.x_dpi_ * 2.54f);
+      dibAttr.y_dpi_ = static_cast<int32_t>(dibAttr.y_dpi_ * 2.54f);
       break;
     case CFX_DIBAttribute::kResUnitMeter:
-      dibAttr.m_nXDPI =
-          static_cast<int32_t>(dibAttr.m_nXDPI / (float)100 * 2.54f);
-      dibAttr.m_nYDPI =
-          static_cast<int32_t>(dibAttr.m_nYDPI / (float)100 * 2.54f);
+      dibAttr.x_dpi_ =
+          static_cast<int32_t>(dibAttr.x_dpi_ / (float)100 * 2.54f);
+      dibAttr.y_dpi_ =
+          static_cast<int32_t>(dibAttr.y_dpi_ / (float)100 * 2.54f);
       break;
     default:
       break;
   }
-  iImageXDpi = dibAttr.m_nXDPI > 1 ? dibAttr.m_nXDPI : (96);
-  iImageYDpi = dibAttr.m_nYDPI > 1 ? dibAttr.m_nYDPI : (96);
+  iImageXDpi = dibAttr.x_dpi_ > 1 ? dibAttr.x_dpi_ : (96);
+  iImageYDpi = dibAttr.y_dpi_ > 1 ? dibAttr.y_dpi_ : (96);
   if (pProgressiveDecoder->GetWidth() <= 0 ||
       pProgressiveDecoder->GetHeight() <= 0) {
     return nullptr;

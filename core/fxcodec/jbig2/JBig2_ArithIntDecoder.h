@@ -23,7 +23,7 @@ class CJBig2_ArithIntDecoder {
   bool Decode(CJBig2_ArithDecoder* pArithDecoder, int* nResult);
 
  private:
-  std::vector<JBig2ArithCtx> m_IAx;
+  std::vector<JBig2ArithCtx> iax_;
 };
 
 class CJBig2_ArithIaidDecoder {
@@ -34,7 +34,7 @@ class CJBig2_ArithIaidDecoder {
   void Decode(CJBig2_ArithDecoder* pArithDecoder, uint32_t* nResult);
 
  private:
-  std::vector<JBig2ArithCtx> m_IAID;
+  std::vector<JBig2ArithCtx> iaid_;
 
   const unsigned char SBSYMCODELEN;
 };

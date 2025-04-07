@@ -48,7 +48,7 @@ class CJBig2_GRDProc {
   FXCODEC_STATUS StartDecodeMMR(std::unique_ptr<CJBig2_Image>* pImage,
                                 CJBig2_BitStream* pStream);
   FXCODEC_STATUS ContinueDecode(ProgressiveArithDecodeState* pState);
-  const FX_RECT& GetReplaceRect() const { return m_ReplaceRect; }
+  const FX_RECT& GetReplaceRect() const { return replace_rect_; }
 
   bool MMR;
   bool TPGDON;
@@ -97,12 +97,12 @@ class CJBig2_GRDProc {
       CJBig2_ArithDecoder* pArithDecoder,
       pdfium::span<JBig2ArithCtx> gbContexts);
 
-  uint32_t m_loopIndex = 0;
-  UNOWNED_PTR_EXCLUSION uint8_t* m_pLine = nullptr;
-  FXCODEC_STATUS m_ProgressiveStatus;
-  uint16_t m_DecodeType = 0;
-  int m_LTP = 0;
-  FX_RECT m_ReplaceRect;
+  uint32_t loop_index_ = 0;
+  UNOWNED_PTR_EXCLUSION uint8_t* line_ = nullptr;
+  FXCODEC_STATUS progressive_status_;
+  uint16_t decode_type_ = 0;
+  int ltp_ = 0;
+  FX_RECT replace_rect_;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_GRDPROC_H_

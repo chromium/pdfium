@@ -43,13 +43,13 @@ IccTransform::IccTransform(cmsHTRANSFORM hTransform,
                            int srcComponents,
                            bool bIsLab,
                            bool bNormal)
-    : m_hTransform(hTransform),
-      m_nSrcComponents(srcComponents),
-      m_bLab(bIsLab),
-      m_bNormal(bNormal) {}
+    : transform_(hTransform),
+      src_components_(srcComponents),
+      lab_(bIsLab),
+      normal_(bNormal) {}
 
 IccTransform::~IccTransform() {
-  cmsDeleteTransform(m_hTransform);
+  cmsDeleteTransform(transform_);
 }
 
 // static
@@ -116,20 +116,20 @@ void IccTransform::Translate(pdfium::span<const float> pSrcValues,
                              pdfium::span<float> pDestValues) {
   uint8_t output[4];
   // TODO(npm): Currently the CmsDoTransform method is part of LCMS and it will
-  // apply some member of m_hTransform to the input. We need to go over all the
+  // apply some member of transform_ to the input. We need to go over all the
   // places which set transform to verify that only `pSrcValues.size()`
   // components are used.
-  if (m_bLab) {
+  if (lab_) {
     DataVector<double> inputs(std::max<size_t>(pSrcValues.size(), 16));
     for (uint32_t i = 0; i < pSrcValues.size(); ++i)
       inputs[i] = pSrcValues[i];
-    cmsDoTransform(m_hTransform, inputs.data(), output, 1);
+    cmsDoTransform(transform_, inputs.data(), output, 1);
   } else {
     DataVector<uint8_t> inputs(std::max<size_t>(pSrcValues.size(), 16));
     for (size_t i = 0; i < pSrcValues.size(); ++i) {
       inputs[i] = static_cast<int>(std::clamp(pSrcValues[i] * 255.0f, 0.0f, 255.0f));
     }
-    cmsDoTransform(m_hTransform, inputs.data(), output, 1);
+    cmsDoTransform(transform_, inputs.data(), output, 1);
   }
   pDestValues[0] = output[2] / 255.0f;
   pDestValues[1] = output[1] / 255.0f;
@@ -139,7 +139,7 @@ void IccTransform::Translate(pdfium::span<const float> pSrcValues,
 void IccTransform::TranslateScanline(pdfium::span<uint8_t> pDest,
                                      pdfium::span<const uint8_t> pSrc,
                                      int32_t pixels) {
-  cmsDoTransform(m_hTransform, pSrc.data(), pDest.data(), pixels);
+  cmsDoTransform(transform_, pSrc.data(), pDest.data(), pixels);
 }
 
 // static

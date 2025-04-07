@@ -55,11 +55,11 @@ CJBig2_Image::CJBig2_Image(int32_t w, int32_t h) {
   if (h > kMaxImagePixels / stride_pixels)
     return;
 
-  m_nWidth = w;
-  m_nHeight = h;
-  m_nStride = stride_pixels / 8;
-  m_pData.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
-      FX_Alloc2D(uint8_t, m_nStride, m_nHeight)));
+  width_ = w;
+  height_ = h;
+  stride_ = stride_pixels / 8;
+  data_.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
+      FX_Alloc2D(uint8_t, stride_, height_)));
 }
 
 CJBig2_Image::CJBig2_Image(int32_t w,
@@ -77,20 +77,18 @@ CJBig2_Image::CJBig2_Image(int32_t w,
   if (stride_pixels < w || h > kMaxImagePixels / stride_pixels)
     return;
 
-  m_nWidth = w;
-  m_nHeight = h;
-  m_nStride = stride;
-  m_pData.Reset(pBuf.data());
+  width_ = w;
+  height_ = h;
+  stride_ = stride;
+  data_.Reset(pBuf.data());
 }
 
 CJBig2_Image::CJBig2_Image(const CJBig2_Image& other)
-    : m_nWidth(other.m_nWidth),
-      m_nHeight(other.m_nHeight),
-      m_nStride(other.m_nStride) {
-  if (other.m_pData) {
-    m_pData.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
-        FX_Alloc2D(uint8_t, m_nStride, m_nHeight)));
-    UNSAFE_TODO(FXSYS_memcpy(data(), other.data(), m_nStride * m_nHeight));
+    : width_(other.width_), height_(other.height_), stride_(other.stride_) {
+  if (other.data_) {
+    data_.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
+        FX_Alloc2D(uint8_t, stride_, height_)));
+    UNSAFE_TODO(FXSYS_memcpy(data(), other.data(), stride_ * height_));
   }
 }
 
@@ -102,11 +100,13 @@ bool CJBig2_Image::IsValidImageSize(int32_t w, int32_t h) {
 }
 
 int CJBig2_Image::GetPixel(int32_t x, int32_t y) const {
-  if (!m_pData)
+  if (!data_) {
     return 0;
+  }
 
-  if (x < 0 || x >= m_nWidth)
+  if (x < 0 || x >= width_) {
     return 0;
+  }
 
   const uint8_t* pLine = GetLine(y);
   if (!pLine)
@@ -118,11 +118,13 @@ int CJBig2_Image::GetPixel(int32_t x, int32_t y) const {
 }
 
 void CJBig2_Image::SetPixel(int32_t x, int32_t y, int v) {
-  if (!m_pData)
+  if (!data_) {
     return;
+  }
 
-  if (x < 0 || x >= m_nWidth)
+  if (x < 0 || x >= width_) {
     return;
+  }
 
   uint8_t* pLine = GetLine(y);
   if (!pLine)
@@ -138,8 +140,9 @@ void CJBig2_Image::SetPixel(int32_t x, int32_t y, int v) {
 }
 
 void CJBig2_Image::CopyLine(int32_t hTo, int32_t hFrom) {
-  if (!m_pData)
+  if (!data_) {
     return;
+  }
 
   uint8_t* pDst = GetLine(hTo);
   if (!pDst)
@@ -148,27 +151,28 @@ void CJBig2_Image::CopyLine(int32_t hTo, int32_t hFrom) {
   const uint8_t* pSrc = GetLine(hFrom);
   UNSAFE_TODO({
     if (!pSrc) {
-      FXSYS_memset(pDst, 0, m_nStride);
+      FXSYS_memset(pDst, 0, stride_);
       return;
     }
-    FXSYS_memcpy(pDst, pSrc, m_nStride);
+    FXSYS_memcpy(pDst, pSrc, stride_);
   });
 }
 
 void CJBig2_Image::Fill(bool v) {
-  if (!m_pData)
+  if (!data_) {
     return;
+  }
 
   UNSAFE_TODO(
-      FXSYS_memset(data(), v ? 0xff : 0, Fx2DSizeOrDie(m_nStride, m_nHeight)));
+      FXSYS_memset(data(), v ? 0xff : 0, Fx2DSizeOrDie(stride_, height_)));
 }
 
 bool CJBig2_Image::ComposeTo(CJBig2_Image* pDst,
                              int32_t x,
                              int32_t y,
                              JBig2ComposeOp op) {
-  return m_pData &&
-         ComposeToInternal(pDst, x, y, op, FX_RECT(0, 0, m_nWidth, m_nHeight));
+  return data_ &&
+         ComposeToInternal(pDst, x, y, op, FX_RECT(0, 0, width_, height_));
 }
 
 bool CJBig2_Image::ComposeToWithRect(CJBig2_Image* pDst,
@@ -176,14 +180,14 @@ bool CJBig2_Image::ComposeToWithRect(CJBig2_Image* pDst,
                                      int32_t y,
                                      const FX_RECT& rtSrc,
                                      JBig2ComposeOp op) {
-  return m_pData && ComposeToInternal(pDst, x, y, op, rtSrc);
+  return data_ && ComposeToInternal(pDst, x, y, op, rtSrc);
 }
 
 bool CJBig2_Image::ComposeFrom(int32_t x,
                                int32_t y,
                                CJBig2_Image* pSrc,
                                JBig2ComposeOp op) {
-  return m_pData && pSrc->ComposeTo(this, x, y, op);
+  return data_ && pSrc->ComposeTo(this, x, y, op);
 }
 
 bool CJBig2_Image::ComposeFromWithRect(int32_t x,
@@ -191,7 +195,7 @@ bool CJBig2_Image::ComposeFromWithRect(int32_t x,
                                        CJBig2_Image* pSrc,
                                        const FX_RECT& rtSrc,
                                        JBig2ComposeOp op) {
-  return m_pData && pSrc->ComposeToWithRect(this, x, y, rtSrc, op);
+  return data_ && pSrc->ComposeToWithRect(this, x, y, rtSrc, op);
 }
 
 std::unique_ptr<CJBig2_Image> CJBig2_Image::SubImage(int32_t x,
@@ -199,11 +203,13 @@ std::unique_ptr<CJBig2_Image> CJBig2_Image::SubImage(int32_t x,
                                                      int32_t w,
                                                      int32_t h) {
   auto pImage = std::make_unique<CJBig2_Image>(w, h);
-  if (!pImage->data() || !m_pData)
+  if (!pImage->data() || !data_) {
     return pImage;
+  }
 
-  if (x < 0 || x >= m_nWidth || y < 0 || y >= m_nHeight)
+  if (x < 0 || x >= width_ || y < 0 || y >= height_) {
     return pImage;
+  }
 
   // Fast case when byte-aligned, normal slow case otherwise.
   if ((x & 7) == 0)
@@ -220,8 +226,8 @@ void CJBig2_Image::SubImageFast(int32_t x,
                                 int32_t h,
                                 CJBig2_Image* pImage) {
   int32_t m = BitIndexToByte(x);
-  int32_t bytes_to_copy = std::min(pImage->m_nStride, m_nStride - m);
-  int32_t lines_to_copy = std::min(pImage->m_nHeight, m_nHeight - y);
+  int32_t bytes_to_copy = std::min(pImage->stride_, stride_ - m);
+  int32_t lines_to_copy = std::min(pImage->height_, height_ - y);
   for (int32_t j = 0; j < lines_to_copy; j++) {
     UNSAFE_TODO(FXSYS_memcpy(pImage->GetLineUnsafe(j), GetLineUnsafe(y + j) + m,
                              bytes_to_copy));
@@ -235,14 +241,14 @@ void CJBig2_Image::SubImageSlow(int32_t x,
                                 CJBig2_Image* pImage) {
   int32_t m = BitIndexToAlignedByte(x);
   int32_t n = x & 31;
-  int32_t bytes_to_copy = std::min(pImage->m_nStride, m_nStride - m);
-  int32_t lines_to_copy = std::min(pImage->m_nHeight, m_nHeight - y);
+  int32_t bytes_to_copy = std::min(pImage->stride_, stride_ - m);
+  int32_t lines_to_copy = std::min(pImage->height_, height_ - y);
   UNSAFE_TODO({
     for (int32_t j = 0; j < lines_to_copy; j++) {
       const uint8_t* pLineSrc = GetLineUnsafe(y + j);
       uint8_t* pLineDst = pImage->GetLineUnsafe(j);
       const uint8_t* pSrc = pLineSrc + m;
-      const uint8_t* pSrcEnd = pLineSrc + m_nStride;
+      const uint8_t* pSrcEnd = pLineSrc + stride_;
       uint8_t* pDstEnd = pLineDst + bytes_to_copy;
       for (uint8_t* pDst = pLineDst; pDst < pDstEnd; pSrc += 4, pDst += 4) {
         uint32_t wTmp = JBIG2_GETDWORD(pSrc) << n;
@@ -256,25 +262,26 @@ void CJBig2_Image::SubImageSlow(int32_t x,
 }
 
 void CJBig2_Image::Expand(int32_t h, bool v) {
-  if (!m_pData || h <= m_nHeight || h > kMaxImageBytes / m_nStride)
+  if (!data_ || h <= height_ || h > kMaxImageBytes / stride_) {
     return;
+  }
 
   // Won't die unless kMaxImageBytes were to be increased someday.
-  const size_t current_size = Fx2DSizeOrDie(m_nHeight, m_nStride);
-  const size_t desired_size = Fx2DSizeOrDie(h, m_nStride);
+  const size_t current_size = Fx2DSizeOrDie(height_, stride_);
+  const size_t desired_size = Fx2DSizeOrDie(h, stride_);
 
-  if (m_pData.IsOwned()) {
-    m_pData.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(FX_Realloc(
-        uint8_t, m_pData.ReleaseAndClear().release(), desired_size)));
+  if (data_.IsOwned()) {
+    data_.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
+        FX_Realloc(uint8_t, data_.ReleaseAndClear().release(), desired_size)));
   } else {
     uint8_t* pExternalBuffer = data();
-    m_pData.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
+    data_.Reset(std::unique_ptr<uint8_t, FxFreeDeleter>(
         FX_Alloc(uint8_t, desired_size)));
     UNSAFE_TODO(FXSYS_memcpy(data(), pExternalBuffer, current_size));
   }
   UNSAFE_TODO(FXSYS_memset(data() + current_size, v ? 0xff : 0,
                            desired_size - current_size));
-  m_nHeight = h;
+  height_ = h;
 }
 
 bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
@@ -282,7 +289,7 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
                                      int32_t y,
                                      JBig2ComposeOp op,
                                      const FX_RECT& rtSrc) {
-  DCHECK(m_pData);
+  DCHECK(data_);
 
   // TODO(weili): Check whether the range check is correct. Should x>=1048576?
   if (x < -1048576 || x > 1048576 || y < -1048576 || y > 1048576)
@@ -293,7 +300,7 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
 
   int32_t xs0 = x < 0 ? -x : 0;
   int32_t xs1;
-  FX_SAFE_INT32 iChecked = pDst->m_nWidth;
+  FX_SAFE_INT32 iChecked = pDst->width_;
   iChecked -= x;
   if (iChecked.IsValid() && sw > iChecked.ValueOrDie())
     xs1 = iChecked.ValueOrDie();
@@ -302,7 +309,7 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
 
   int32_t ys0 = y < 0 ? -y : 0;
   int32_t ys1;
-  iChecked = pDst->m_nHeight;
+  iChecked = pDst->height_;
   iChecked -= y;
   if (iChecked.IsValid() && sh > iChecked.ValueOrDie())
     ys1 = iChecked.ValueOrDie();
@@ -327,8 +334,8 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
   UNSAFE_TODO({
     const uint8_t* lineSrc = GetLineUnsafe(rtSrc.top + ys0) +
                              BitIndexToAlignedByte(xs0 + rtSrc.left);
-    const uint8_t* lineSrcEnd = data() + Fx2DSizeOrDie(m_nHeight, m_nStride);
-    int32_t lineLeft = m_nStride - BitIndexToAlignedByte(xs0);
+    const uint8_t* lineSrcEnd = data() + Fx2DSizeOrDie(height_, stride_);
+    int32_t lineLeft = stride_ - BitIndexToAlignedByte(xs0);
     uint8_t* lineDst = pDst->GetLineUnsafe(yd0) + BitIndexToAlignedByte(xd0);
     if ((xd0 & ~31) == ((xd1 - 1) & ~31)) {
       if ((xs0 & ~31) == ((xs1 - 1) & ~31)) {
@@ -359,8 +366,8 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
                 break;
             }
             JBIG2_PUTDWORD(lineDst, tmp);
-            lineSrc += m_nStride;
-            lineDst += pDst->m_nStride;
+            lineSrc += stride_;
+            lineDst += pDst->stride_;
           }
         } else {
           uint32_t shift = d1 - s1;
@@ -389,8 +396,8 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
                 break;
             }
             JBIG2_PUTDWORD(lineDst, tmp);
-            lineSrc += m_nStride;
-            lineDst += pDst->m_nStride;
+            lineSrc += stride_;
+            lineDst += pDst->stride_;
           }
         }
       } else {
@@ -421,8 +428,8 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
               break;
           }
           JBIG2_PUTDWORD(lineDst, tmp);
-          lineSrc += m_nStride;
-          lineDst += pDst->m_nStride;
+          lineSrc += stride_;
+          lineDst += pDst->stride_;
         }
       }
     } else {
@@ -514,8 +521,8 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
             }
             JBIG2_PUTDWORD(dp, tmp);
           }
-          lineSrc += m_nStride;
-          lineDst += pDst->m_nStride;
+          lineSrc += stride_;
+          lineDst += pDst->stride_;
         }
       } else if (s1 == d1) {
         int32_t middleDwords = (xd1 >> 5) - ((xd0 + 31) >> 5);
@@ -598,8 +605,8 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
             }
             JBIG2_PUTDWORD(dp, tmp);
           }
-          lineSrc += m_nStride;
-          lineDst += pDst->m_nStride;
+          lineSrc += stride_;
+          lineDst += pDst->stride_;
         }
       } else {
         uint32_t shift1 = d1 - s1;
@@ -687,8 +694,8 @@ bool CJBig2_Image::ComposeToInternal(CJBig2_Image* pDst,
             }
             JBIG2_PUTDWORD(dp, tmp);
           }
-          lineSrc += m_nStride;
-          lineDst += pDst->m_nStride;
+          lineSrc += stride_;
+          lineDst += pDst->stride_;
         }
       }
     }

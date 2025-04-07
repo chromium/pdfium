@@ -41,28 +41,28 @@ const unsigned int kDefaultAValue = 0x8000;
 JBig2ArithCtx::JBig2ArithCtx() = default;
 
 int JBig2ArithCtx::DecodeNLPS(const JBig2ArithQe& qe) {
-  bool D = !m_MPS;
+  bool D = !mps_;
   if (qe.bSwitch)
-    m_MPS = !m_MPS;
-  m_I = qe.NLPS;
-  DCHECK_LT(m_I, std::size(kQeTable));
+    mps_ = !mps_;
+  i_ = qe.NLPS;
+  DCHECK_LT(i_, std::size(kQeTable));
   return D;
 }
 
 int JBig2ArithCtx::DecodeNMPS(const JBig2ArithQe& qe) {
-  m_I = qe.NMPS;
-  DCHECK_LT(m_I, std::size(kQeTable));
+  i_ = qe.NMPS;
+  DCHECK_LT(i_, std::size(kQeTable));
   return MPS();
 }
 
 CJBig2_ArithDecoder::CJBig2_ArithDecoder(CJBig2_BitStream* pStream)
-    : m_pStream(pStream) {
-  m_B = m_pStream->getCurByte_arith();
-  m_C = (m_B ^ 0xff) << 16;
+    : stream_(pStream) {
+  b_ = stream_->getCurByte_arith();
+  c_ = (b_ ^ 0xff) << 16;
   BYTEIN();
-  m_C = m_C << 7;
-  m_CT = m_CT - 7;
-  m_A = kDefaultAValue;
+  c_ = c_ << 7;
+  ct_ = ct_ - 7;
+  a_ = kDefaultAValue;
 }
 
 CJBig2_ArithDecoder::~CJBig2_ArithDecoder() = default;
@@ -71,67 +71,70 @@ int CJBig2_ArithDecoder::Decode(JBig2ArithCtx* pCX) {
   CHECK_LT(pCX->I(), std::size(kQeTable));
 
   const JBig2ArithCtx::JBig2ArithQe& qe = kQeTable[pCX->I()];
-  m_A -= qe.Qe;
-  if ((m_C >> 16) < m_A) {
-    if (m_A & kDefaultAValue)
+  a_ -= qe.Qe;
+  if ((c_ >> 16) < a_) {
+    if (a_ & kDefaultAValue) {
       return pCX->MPS();
+    }
 
-    const int D = m_A < qe.Qe ? pCX->DecodeNLPS(qe) : pCX->DecodeNMPS(qe);
+    const int D = a_ < qe.Qe ? pCX->DecodeNLPS(qe) : pCX->DecodeNMPS(qe);
     ReadValueA();
     return D;
   }
 
-  m_C -= m_A << 16;
-  const int D = m_A < qe.Qe ? pCX->DecodeNMPS(qe) : pCX->DecodeNLPS(qe);
-  m_A = qe.Qe;
+  c_ -= a_ << 16;
+  const int D = a_ < qe.Qe ? pCX->DecodeNMPS(qe) : pCX->DecodeNLPS(qe);
+  a_ = qe.Qe;
   ReadValueA();
   return D;
 }
 
 void CJBig2_ArithDecoder::BYTEIN() {
-  if (m_B == 0xff) {
-    unsigned char B1 = m_pStream->getNextByte_arith();
+  if (b_ == 0xff) {
+    unsigned char B1 = stream_->getNextByte_arith();
     if (B1 > 0x8f) {
-      m_CT = 8;
+      ct_ = 8;
 
-      switch (m_State) {
+      switch (state_) {
         case StreamState::kDataAvailable:
           // Finished decoding data (see JBIG2 spec, Section E.3.4).
-          m_State = StreamState::kDecodingFinished;
+          state_ = StreamState::kDecodingFinished;
           break;
         case StreamState::kDecodingFinished:
           // Allow one more call in the finished state. https://crbug.com/947622
-          m_State = StreamState::kLooping;
+          state_ = StreamState::kLooping;
           break;
         case StreamState::kLooping:
           // Looping state detected. Mark decoding as complete to bail out.
           // https://crbug.com/767156
-          m_Complete = true;
+          complete_ = true;
           break;
       }
     } else {
-      m_pStream->incByteIdx();
-      m_B = B1;
-      m_C = m_C + 0xfe00 - (m_B << 9);
-      m_CT = 7;
+      stream_->incByteIdx();
+      b_ = B1;
+      c_ = c_ + 0xfe00 - (b_ << 9);
+      ct_ = 7;
     }
   } else {
-    m_pStream->incByteIdx();
-    m_B = m_pStream->getCurByte_arith();
-    m_C = m_C + 0xff00 - (m_B << 8);
-    m_CT = 8;
+    stream_->incByteIdx();
+    b_ = stream_->getCurByte_arith();
+    c_ = c_ + 0xff00 - (b_ << 8);
+    ct_ = 8;
   }
 
-  if (!m_pStream->IsInBounds())
-    m_Complete = true;
+  if (!stream_->IsInBounds()) {
+    complete_ = true;
+  }
 }
 
 void CJBig2_ArithDecoder::ReadValueA() {
   do {
-    if (m_CT == 0)
+    if (ct_ == 0) {
       BYTEIN();
-    m_A <<= 1;
-    m_C <<= 1;
-    --m_CT;
-  } while ((m_A & kDefaultAValue) == 0);
+    }
+    a_ <<= 1;
+    c_ <<= 1;
+    --ct_;
+  } while ((a_ & kDefaultAValue) == 0);
 }

@@ -138,13 +138,13 @@ CJBig2_HuffmanTable::CJBig2_HuffmanTable(size_t idx) {
   const HuffmanTable& table = kHuffmanTables[idx];
   HTOOB = table.HTOOB;
   NTEMP = pdfium::checked_cast<uint32_t>(table.size);
-  m_bOK = ParseFromStandardTable(idx);
-  DCHECK(m_bOK);
+  ok_ = ParseFromStandardTable(idx);
+  DCHECK(ok_);
 }
 
 CJBig2_HuffmanTable::CJBig2_HuffmanTable(CJBig2_BitStream* pStream)
     : HTOOB(false), NTEMP(0) {
-  m_bOK = ParseFromCodedBuffer(pStream);
+  ok_ = ParseFromCodedBuffer(pStream);
 }
 
 CJBig2_HuffmanTable::~CJBig2_HuffmanTable() = default;

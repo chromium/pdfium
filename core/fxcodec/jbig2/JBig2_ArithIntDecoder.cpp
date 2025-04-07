@@ -51,7 +51,7 @@ size_t RecursiveDecode(CJBig2_ArithDecoder* decoder,
 }  // namespace
 
 CJBig2_ArithIntDecoder::CJBig2_ArithIntDecoder() {
-  m_IAx.resize(512);
+  iax_.resize(512);
 }
 
 CJBig2_ArithIntDecoder::~CJBig2_ArithIntDecoder() = default;
@@ -62,15 +62,15 @@ bool CJBig2_ArithIntDecoder::Decode(CJBig2_ArithDecoder* pArithDecoder,
   // Decoding Procedure" on page 113 of the JBIG2 specification (ISO/IEC FCD
   // 14492).
   int PREV = 1;
-  const int S = pArithDecoder->Decode(&m_IAx[PREV]);
+  const int S = pArithDecoder->Decode(&iax_[PREV]);
   PREV = ShiftOr(PREV, S);
 
   const size_t nDecodeDataIndex =
-      RecursiveDecode(pArithDecoder, &m_IAx, &PREV, 0);
+      RecursiveDecode(pArithDecoder, &iax_, &PREV, 0);
 
   int nTemp = 0;
   for (int i = 0; i < kArithIntDecodeData[nDecodeDataIndex].nNeedBits; ++i) {
-    int D = pArithDecoder->Decode(&m_IAx[PREV]);
+    int D = pArithDecoder->Decode(&iax_[PREV]);
     PREV = ShiftOr(PREV, D);
     if (PREV >= 256)
       PREV = (PREV & 511) | 256;
@@ -95,7 +95,7 @@ bool CJBig2_ArithIntDecoder::Decode(CJBig2_ArithDecoder* pArithDecoder,
 
 CJBig2_ArithIaidDecoder::CJBig2_ArithIaidDecoder(unsigned char SBSYMCODELENA)
     : SBSYMCODELEN(SBSYMCODELENA) {
-  m_IAID.resize(static_cast<size_t>(1) << SBSYMCODELEN);
+  iaid_.resize(static_cast<size_t>(1) << SBSYMCODELEN);
 }
 
 CJBig2_ArithIaidDecoder::~CJBig2_ArithIaidDecoder() = default;
@@ -104,7 +104,7 @@ void CJBig2_ArithIaidDecoder::Decode(CJBig2_ArithDecoder* pArithDecoder,
                                      uint32_t* nResult) {
   int PREV = 1;
   for (unsigned char i = 0; i < SBSYMCODELEN; ++i) {
-    JBig2ArithCtx* pCX = &m_IAID[PREV];
+    JBig2ArithCtx* pCX = &iaid_[PREV];
     int D = pArithDecoder->Decode(pCX);
     PREV = ShiftOr(PREV, D);
   }

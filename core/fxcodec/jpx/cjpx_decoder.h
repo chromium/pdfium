@@ -94,13 +94,13 @@ class CJPX_Decoder {
             uint8_t resolution_levels_to_skip,
             bool strict_mode);
 
-  const ColorSpaceOption m_ColorSpaceOption;
-  pdfium::raw_span<const uint8_t> m_SrcData;
-  std::unique_ptr<DecodeData> m_DecodeData;
-  std::unique_ptr<opj_codec_t, CodecDeleter> m_Codec;
-  std::unique_ptr<opj_stream_t, StreamDeleter> m_Stream;
-  std::unique_ptr<opj_image_t, ImageDeleter> m_Image;
-  opj_dparameters_t m_Parameters = {};
+  const ColorSpaceOption color_space_option_;
+  pdfium::raw_span<const uint8_t> src_data_;
+  std::unique_ptr<DecodeData> decode_data_;
+  std::unique_ptr<opj_codec_t, CodecDeleter> codec_;
+  std::unique_ptr<opj_stream_t, StreamDeleter> stream_;
+  std::unique_ptr<opj_image_t, ImageDeleter> image_;
+  opj_dparameters_t parameters_ = {};
 };
 
 }  // namespace fxcodec

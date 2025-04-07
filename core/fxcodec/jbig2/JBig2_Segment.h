@@ -36,7 +36,7 @@ class CJBig2_Segment {
   CJBig2_Segment();
   ~CJBig2_Segment();
 
-  uint32_t m_dwNumber = 0;
+  uint32_t number_ = 0;
   union {
     struct {
       uint8_t type : 6;
@@ -44,20 +44,20 @@ class CJBig2_Segment {
       uint8_t deferred_non_retain : 1;
     } s;
     uint8_t c = 0;
-  } m_cFlags;
-  int32_t m_nReferred_to_segment_count = 0;
-  std::vector<uint32_t> m_Referred_to_segment_numbers;
-  uint32_t m_dwPage_association = 0;
-  uint32_t m_dwData_length = 0;
-  uint32_t m_dwHeader_Length = 0;
-  uint32_t m_dwDataOffset = 0;
-  uint64_t m_Key = 0;
-  JBig2_SegmentState m_State = JBIG2_SEGMENT_HEADER_UNPARSED;
-  JBig2_ResultType m_nResultType = JBIG2_VOID_POINTER;
-  std::unique_ptr<CJBig2_SymbolDict> m_SymbolDict;
-  std::unique_ptr<CJBig2_PatternDict> m_PatternDict;
-  std::unique_ptr<CJBig2_Image> m_Image;
-  std::unique_ptr<CJBig2_HuffmanTable> m_HuffmanTable;
+  } flags_;
+  int32_t referred_to_segment_count_ = 0;
+  std::vector<uint32_t> referred_to_segment_numbers_;
+  uint32_t page_association_ = 0;
+  uint32_t data_length_ = 0;
+  uint32_t header_length_ = 0;
+  uint32_t data_offset_ = 0;
+  uint64_t key_ = 0;
+  JBig2_SegmentState state_ = JBIG2_SEGMENT_HEADER_UNPARSED;
+  JBig2_ResultType result_type_ = JBIG2_VOID_POINTER;
+  std::unique_ptr<CJBig2_SymbolDict> symbol_dict_;
+  std::unique_ptr<CJBig2_PatternDict> pattern_dict_;
+  std::unique_ptr<CJBig2_Image> image_;
+  std::unique_ptr<CJBig2_HuffmanTable> huffman_table_;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_SEGMENT_H_

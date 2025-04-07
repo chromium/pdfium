@@ -62,12 +62,12 @@ CFX_BmpDecompressor::~CFX_BmpDecompressor() = default;
 
 void CFX_BmpDecompressor::ReadNextScanline() {
   uint32_t row = img_tb_flag_ ? row_num_ : (height_ - 1 - row_num_);
-  context_->m_pDelegate->BmpReadScanline(row, out_row_buffer_);
+  context_->delegate_->BmpReadScanline(row, out_row_buffer_);
   ++row_num_;
 }
 
 bool CFX_BmpDecompressor::GetDataPosition(uint32_t rcd_pos) {
-  return context_->m_pDelegate->BmpInputImagePositionBuf(rcd_pos);
+  return context_->delegate_->BmpInputImagePositionBuf(rcd_pos);
 }
 
 BmpDecoder::Status CFX_BmpDecompressor::ReadHeader() {

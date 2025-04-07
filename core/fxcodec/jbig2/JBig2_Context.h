@@ -50,7 +50,7 @@ class CJBig2_Context {
                     PauseIndicatorIface* pPause);
 
   bool Continue(PauseIndicatorIface* pPause);
-  FXCODEC_STATUS GetProcessingStatus() const { return m_ProcessingStatus; }
+  FXCODEC_STATUS GetProcessingStatus() const { return processing_status_; }
 
  private:
   CJBig2_Context(pdfium::span<const uint8_t> pSrcSpan,
@@ -84,24 +84,24 @@ class CJBig2_Context {
   std::vector<JBig2HuffmanCode> DecodeSymbolIDHuffmanTable(uint32_t SBNUMSYMS);
   const CJBig2_HuffmanTable* GetHuffmanTable(size_t idx);
 
-  std::unique_ptr<CJBig2_Context> m_pGlobalContext;
-  std::unique_ptr<CJBig2_BitStream> m_pStream;
-  std::vector<std::unique_ptr<CJBig2_Segment>> m_SegmentList;
-  std::vector<std::unique_ptr<JBig2PageInfo>> m_PageInfoList;
-  std::unique_ptr<CJBig2_Image> m_pPage;
-  std::vector<std::unique_ptr<CJBig2_HuffmanTable>> m_HuffmanTables;
-  const bool m_bIsGlobal;
-  bool m_bInPage = false;
-  bool m_bBufSpecified = false;
-  int32_t m_PauseStep = 10;
-  FXCODEC_STATUS m_ProcessingStatus = FXCODEC_STATUS::kFrameReady;
-  std::vector<JBig2ArithCtx> m_gbContexts;
-  std::unique_ptr<CJBig2_ArithDecoder> m_pArithDecoder;
-  std::unique_ptr<CJBig2_GRDProc> m_pGRD;
-  std::unique_ptr<CJBig2_Segment> m_pSegment;
-  uint32_t m_nOffset = 0;
-  JBig2RegionInfo m_ri = {};
-  UnownedPtr<std::list<CJBig2_CachePair>> const m_pSymbolDictCache;
+  std::unique_ptr<CJBig2_Context> global_context_;
+  std::unique_ptr<CJBig2_BitStream> stream_;
+  std::vector<std::unique_ptr<CJBig2_Segment>> segment_list_;
+  std::vector<std::unique_ptr<JBig2PageInfo>> page_info_list_;
+  std::unique_ptr<CJBig2_Image> page_;
+  std::vector<std::unique_ptr<CJBig2_HuffmanTable>> huffman_tables_;
+  const bool is_global_;
+  bool in_page_ = false;
+  bool buf_specified_ = false;
+  int32_t pause_step_ = 10;
+  FXCODEC_STATUS processing_status_ = FXCODEC_STATUS::kFrameReady;
+  std::vector<JBig2ArithCtx> gb_contexts_;
+  std::unique_ptr<CJBig2_ArithDecoder> arith_decoder_;
+  std::unique_ptr<CJBig2_GRDProc> grd_;
+  std::unique_ptr<CJBig2_Segment> segment_;
+  uint32_t offset_ = 0;
+  JBig2RegionInfo ri_ = {};
+  UnownedPtr<std::list<CJBig2_CachePair>> const symbol_dict_cache_;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_CONTEXT_H_

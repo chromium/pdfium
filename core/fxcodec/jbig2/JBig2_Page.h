@@ -10,14 +10,14 @@
 #include <stdint.h>
 
 struct JBig2PageInfo {
-  uint32_t m_dwWidth;
-  uint32_t m_dwHeight;
-  uint32_t m_dwResolutionX;
-  uint32_t m_dwResolutionY;
+  uint32_t width_;
+  uint32_t height_;
+  uint32_t resolution_x_;
+  uint32_t resolution_y_;
   // Page segment flags, bit 2.
-  bool m_bDefaultPixelValue;
-  bool m_bIsStriped;
-  uint16_t m_wMaxStripeSize;
+  bool default_pixel_value_;
+  bool is_striped_;
+  uint16_t max_stripe_size_;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_PAGE_H_

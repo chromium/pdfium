@@ -43,36 +43,36 @@ class RLScanlineDecoder final : public ScanlineDecoder {
   void GetNextOperator();
   void UpdateOperator(uint8_t used_bytes);
 
-  DataVector<uint8_t> m_Scanline;
-  pdfium::raw_span<const uint8_t> m_SrcBuf;
-  size_t m_dwLineBytes = 0;
-  size_t m_SrcOffset = 0;
-  bool m_bEOD = false;
-  uint8_t m_Operator = 0;
+  DataVector<uint8_t> scanline_;
+  pdfium::raw_span<const uint8_t> src_buf_;
+  size_t line_bytes_ = 0;
+  size_t src_offset_ = 0;
+  bool eod_ = false;
+  uint8_t operator_ = 0;
 };
 
 RLScanlineDecoder::RLScanlineDecoder() = default;
 
 RLScanlineDecoder::~RLScanlineDecoder() {
   // Span in superclass can't outlive our buffer.
-  m_pLastScanline = pdfium::span<uint8_t>();
+  last_scanline_ = pdfium::span<uint8_t>();
 }
 
 bool RLScanlineDecoder::CheckDestSize() {
   size_t i = 0;
   uint32_t old_size = 0;
   uint32_t dest_size = 0;
-  while (i < m_SrcBuf.size()) {
-    if (m_SrcBuf[i] < 128) {
+  while (i < src_buf_.size()) {
+    if (src_buf_[i] < 128) {
       old_size = dest_size;
-      dest_size += m_SrcBuf[i] + 1;
+      dest_size += src_buf_[i] + 1;
       if (dest_size < old_size) {
         return false;
       }
-      i += m_SrcBuf[i] + 2;
-    } else if (m_SrcBuf[i] > 128) {
+      i += src_buf_[i] + 2;
+    } else if (src_buf_[i] > 128) {
       old_size = dest_size;
-      dest_size += 257 - m_SrcBuf[i];
+      dest_size += 257 - src_buf_[i];
       if (dest_size < old_size) {
         return false;
       }
@@ -81,7 +81,7 @@ bool RLScanlineDecoder::CheckDestSize() {
       break;
     }
   }
-  if (((uint32_t)m_OrigWidth * m_nComps * m_bpc * m_OrigHeight + 7) / 8 >
+  if (((uint32_t)orig_width_ * comps_ * bpc_ * orig_height_ + 7) / 8 >
       dest_size) {
     return false;
   }
@@ -93,11 +93,11 @@ bool RLScanlineDecoder::Create(pdfium::span<const uint8_t> src_buf,
                                int height,
                                int nComps,
                                int bpc) {
-  m_SrcBuf = src_buf;
-  m_OutputWidth = m_OrigWidth = width;
-  m_OutputHeight = m_OrigHeight = height;
-  m_nComps = nComps;
-  m_bpc = bpc;
+  src_buf_ = src_buf;
+  output_width_ = orig_width_ = width;
+  output_height_ = orig_height_ = height;
+  comps_ = nComps;
+  bpc_ = bpc;
   // Aligning the pitch to 4 bytes requires an integer overflow check.
   FX_SAFE_UINT32 pitch = width;
   pitch *= nComps;
@@ -108,107 +108,107 @@ bool RLScanlineDecoder::Create(pdfium::span<const uint8_t> src_buf,
   if (!pitch.IsValid()) {
     return false;
   }
-  m_Pitch = pitch.ValueOrDie();
+  pitch_ = pitch.ValueOrDie();
   // Overflow should already have been checked before this is called.
-  m_dwLineBytes = (static_cast<uint32_t>(width) * nComps * bpc + 7) / 8;
-  m_Scanline.resize(m_Pitch);
+  line_bytes_ = (static_cast<uint32_t>(width) * nComps * bpc + 7) / 8;
+  scanline_.resize(pitch_);
   return CheckDestSize();
 }
 
 bool RLScanlineDecoder::Rewind() {
-  fxcrt::Fill(m_Scanline, 0);
-  m_SrcOffset = 0;
-  m_bEOD = false;
-  m_Operator = 0;
+  fxcrt::Fill(scanline_, 0);
+  src_offset_ = 0;
+  eod_ = false;
+  operator_ = 0;
   return true;
 }
 
 pdfium::span<uint8_t> RLScanlineDecoder::GetNextLine() {
-  if (m_SrcOffset == 0) {
+  if (src_offset_ == 0) {
     GetNextOperator();
-  } else if (m_bEOD) {
+  } else if (eod_) {
     return pdfium::span<uint8_t>();
   }
-  fxcrt::Fill(m_Scanline, 0);
+  fxcrt::Fill(scanline_, 0);
   uint32_t col_pos = 0;
   bool eol = false;
-  auto scan_span = pdfium::make_span(m_Scanline);
-  while (m_SrcOffset < m_SrcBuf.size() && !eol) {
-    if (m_Operator < 128) {
-      uint32_t copy_len = m_Operator + 1;
-      if (col_pos + copy_len >= m_dwLineBytes) {
-        copy_len = pdfium::checked_cast<uint32_t>(m_dwLineBytes - col_pos);
+  auto scan_span = pdfium::make_span(scanline_);
+  while (src_offset_ < src_buf_.size() && !eol) {
+    if (operator_ < 128) {
+      uint32_t copy_len = operator_ + 1;
+      if (col_pos + copy_len >= line_bytes_) {
+        copy_len = pdfium::checked_cast<uint32_t>(line_bytes_ - col_pos);
         eol = true;
       }
-      if (copy_len >= m_SrcBuf.size() - m_SrcOffset) {
+      if (copy_len >= src_buf_.size() - src_offset_) {
         copy_len =
-            pdfium::checked_cast<uint32_t>(m_SrcBuf.size() - m_SrcOffset);
-        m_bEOD = true;
+            pdfium::checked_cast<uint32_t>(src_buf_.size() - src_offset_);
+        eod_ = true;
       }
-      fxcrt::Copy(m_SrcBuf.subspan(m_SrcOffset, copy_len),
+      fxcrt::Copy(src_buf_.subspan(src_offset_, copy_len),
                   scan_span.subspan(col_pos));
       col_pos += copy_len;
       UpdateOperator((uint8_t)copy_len);
-    } else if (m_Operator > 128) {
+    } else if (operator_ > 128) {
       int fill = 0;
-      if (m_SrcOffset < m_SrcBuf.size()) {
-        fill = m_SrcBuf[m_SrcOffset];
+      if (src_offset_ < src_buf_.size()) {
+        fill = src_buf_[src_offset_];
       }
-      uint32_t duplicate_len = 257 - m_Operator;
-      if (col_pos + duplicate_len >= m_dwLineBytes) {
-        duplicate_len = pdfium::checked_cast<uint32_t>(m_dwLineBytes - col_pos);
+      uint32_t duplicate_len = 257 - operator_;
+      if (col_pos + duplicate_len >= line_bytes_) {
+        duplicate_len = pdfium::checked_cast<uint32_t>(line_bytes_ - col_pos);
         eol = true;
       }
       fxcrt::Fill(scan_span.subspan(col_pos, duplicate_len), fill);
       col_pos += duplicate_len;
       UpdateOperator((uint8_t)duplicate_len);
     } else {
-      m_bEOD = true;
+      eod_ = true;
       break;
     }
   }
-  return m_Scanline;
+  return scanline_;
 }
 
 uint32_t RLScanlineDecoder::GetSrcOffset() {
-  return pdfium::checked_cast<uint32_t>(m_SrcOffset);
+  return pdfium::checked_cast<uint32_t>(src_offset_);
 }
 
 void RLScanlineDecoder::GetNextOperator() {
-  if (m_SrcOffset >= m_SrcBuf.size()) {
-    m_Operator = 128;
+  if (src_offset_ >= src_buf_.size()) {
+    operator_ = 128;
     return;
   }
-  m_Operator = m_SrcBuf[m_SrcOffset];
-  m_SrcOffset++;
+  operator_ = src_buf_[src_offset_];
+  src_offset_++;
 }
 void RLScanlineDecoder::UpdateOperator(uint8_t used_bytes) {
   if (used_bytes == 0) {
     return;
   }
-  if (m_Operator < 128) {
-    DCHECK((uint32_t)m_Operator + 1 >= used_bytes);
-    if (used_bytes == m_Operator + 1) {
-      m_SrcOffset += used_bytes;
+  if (operator_ < 128) {
+    DCHECK((uint32_t)operator_ + 1 >= used_bytes);
+    if (used_bytes == operator_ + 1) {
+      src_offset_ += used_bytes;
       GetNextOperator();
       return;
     }
-    m_Operator -= used_bytes;
-    m_SrcOffset += used_bytes;
-    if (m_SrcOffset >= m_SrcBuf.size()) {
-      m_Operator = 128;
+    operator_ -= used_bytes;
+    src_offset_ += used_bytes;
+    if (src_offset_ >= src_buf_.size()) {
+      operator_ = 128;
     }
     return;
   }
-  uint8_t count = 257 - m_Operator;
+  uint8_t count = 257 - operator_;
   DCHECK((uint32_t)count >= used_bytes);
   if (used_bytes == count) {
-    m_SrcOffset++;
+    src_offset_++;
     GetNextOperator();
     return;
   }
   count -= used_bytes;
-  m_Operator = 257 - count;
+  operator_ = 257 - count;
 }
 
 }  // namespace

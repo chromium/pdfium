@@ -19,48 +19,50 @@ ScanlineDecoder::ScanlineDecoder(int nOrigWidth,
                                  int nComps,
                                  int nBpc,
                                  uint32_t nPitch)
-    : m_OrigWidth(nOrigWidth),
-      m_OrigHeight(nOrigHeight),
-      m_OutputWidth(nOutputWidth),
-      m_OutputHeight(nOutputHeight),
-      m_nComps(nComps),
-      m_bpc(nBpc),
-      m_Pitch(nPitch) {}
+    : orig_width_(nOrigWidth),
+      orig_height_(nOrigHeight),
+      output_width_(nOutputWidth),
+      output_height_(nOutputHeight),
+      comps_(nComps),
+      bpc_(nBpc),
+      pitch_(nPitch) {}
 
 ScanlineDecoder::~ScanlineDecoder() = default;
 
 pdfium::span<const uint8_t> ScanlineDecoder::GetScanline(int line) {
-  if (m_NextLine == line + 1)
-    return m_pLastScanline;
+  if (next_line_ == line + 1) {
+    return last_scanline_;
+  }
 
-  if (m_NextLine < 0 || m_NextLine > line) {
+  if (next_line_ < 0 || next_line_ > line) {
     if (!Rewind())
       return pdfium::span<const uint8_t>();
-    m_NextLine = 0;
+    next_line_ = 0;
   }
-  while (m_NextLine < line) {
+  while (next_line_ < line) {
     GetNextLine();
-    m_NextLine++;
+    next_line_++;
   }
-  m_pLastScanline = GetNextLine();
-  m_NextLine++;
-  return m_pLastScanline;
+  last_scanline_ = GetNextLine();
+  next_line_++;
+  return last_scanline_;
 }
 
 bool ScanlineDecoder::SkipToScanline(int line, PauseIndicatorIface* pPause) {
-  if (m_NextLine == line || m_NextLine == line + 1)
+  if (next_line_ == line || next_line_ == line + 1) {
     return false;
+  }
 
-  if (m_NextLine < 0 || m_NextLine > line) {
+  if (next_line_ < 0 || next_line_ > line) {
     if (!Rewind()) {
       return false;
     }
-    m_NextLine = 0;
+    next_line_ = 0;
   }
-  m_pLastScanline = pdfium::span<uint8_t>();
-  while (m_NextLine < line) {
-    m_pLastScanline = GetNextLine();
-    m_NextLine++;
+  last_scanline_ = pdfium::span<uint8_t>();
+  while (next_line_ < line) {
+    last_scanline_ = GetNextLine();
+    next_line_++;
     if (pPause && pPause->NeedToPauseNow()) {
       return true;
     }

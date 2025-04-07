@@ -14,11 +14,11 @@ CJBig2_SymbolDict::~CJBig2_SymbolDict() = default;
 
 std::unique_ptr<CJBig2_SymbolDict> CJBig2_SymbolDict::DeepCopy() const {
   auto dst = std::make_unique<CJBig2_SymbolDict>();
-  for (const auto& image : m_SDEXSYMS) {
-    dst->m_SDEXSYMS.push_back(image ? std::make_unique<CJBig2_Image>(*image)
-                                    : nullptr);
+  for (const auto& image : sdexsyms_) {
+    dst->sdexsyms_.push_back(image ? std::make_unique<CJBig2_Image>(*image)
+                                   : nullptr);
   }
-  dst->m_gbContexts = m_gbContexts;
-  dst->m_grContexts = m_grContexts;
+  dst->gb_contexts_ = gb_contexts_;
+  dst->gr_contexts_ = gr_contexts_;
   return dst;
 }

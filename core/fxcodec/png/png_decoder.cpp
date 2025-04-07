@@ -28,10 +28,10 @@ class CPngContext final : public ProgressiveDecoderIface::Context {
   explicit CPngContext(PngDecoder::Delegate* pDelegate);
   ~CPngContext() override;
 
-  png_structp m_pPng = nullptr;
-  png_infop m_pInfo = nullptr;
-  UnownedPtr<PngDecoder::Delegate> const m_pDelegate;
-  char m_szLastError[PNG_ERROR_SIZE] = {};
+  png_structp png_ = nullptr;
+  png_infop info_ = nullptr;
+  UnownedPtr<PngDecoder::Delegate> const delegate_;
+  char last_error_[PNG_ERROR_SIZE] = {};
 };
 
 extern "C" {
@@ -52,17 +52,17 @@ void _png_load_bmp_attribute(png_structp png_ptr,
                              CFX_DIBAttribute* pAttribute) {
   if (pAttribute) {
 #if defined(PNG_pHYs_SUPPORTED)
-    pAttribute->m_nXDPI = png_get_x_pixels_per_meter(png_ptr, info_ptr);
-    pAttribute->m_nYDPI = png_get_y_pixels_per_meter(png_ptr, info_ptr);
+    pAttribute->xdpi_ = png_get_x_pixels_per_meter(png_ptr, info_ptr);
+    pAttribute->ydpi_ = png_get_y_pixels_per_meter(png_ptr, info_ptr);
     png_uint_32 res_x, res_y;
     int unit_type;
     png_get_pHYs(png_ptr, info_ptr, &res_x, &res_y, &unit_type);
     switch (unit_type) {
       case PNG_RESOLUTION_METER:
-        pAttribute->m_wDPIUnit = CFX_DIBAttribute::kResUnitMeter;
+        pAttribute->dpi_unit_ = CFX_DIBAttribute::kResUnitMeter;
         break;
       default:
-        pAttribute->m_wDPIUnit = CFX_DIBAttribute::kResUnitNone;
+        pAttribute->dpi_unit_ = CFX_DIBAttribute::kResUnitNone;
     }
 #endif
 #if defined(PNG_iCCP_SUPPORTED)
@@ -105,9 +105,9 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
 
   int pass = png_set_interlace_handling(png_ptr);
   double gamma = 1.0;
-  if (!pContext->m_pDelegate->PngReadHeader(width, height, bpc, pass,
-                                            &color_type, &gamma)) {
-    png_error(pContext->m_pPng, "Read Header Callback Error");
+  if (!pContext->delegate_->PngReadHeader(width, height, bpc, pass, &color_type,
+                                          &gamma)) {
+    png_error(pContext->png_, "Read Header Callback Error");
   }
   int intent;
   if (png_get_sRGB(png_ptr, info_ptr, &intent)) {
@@ -128,7 +128,7 @@ void _png_get_header_func(png_structp png_ptr, png_infop info_ptr) {
     } break;
     case PNG_COLOR_TYPE_PALETTE:
       if (color_type1 != PNG_COLOR_TYPE_PALETTE) {
-        png_error(pContext->m_pPng, "Not Support Output Palette Now");
+        png_error(pContext->png_, "Not Support Output Palette Now");
       }
       [[fallthrough]];
     case PNG_COLOR_TYPE_RGB:
@@ -160,11 +160,11 @@ void _png_get_row_func(png_structp png_ptr,
   if (!pContext)
     return;
 
-  uint8_t* src_buf = pContext->m_pDelegate->PngAskScanlineBuf(row_num);
+  uint8_t* src_buf = pContext->delegate_->PngAskScanlineBuf(row_num);
   CHECK(src_buf);
   png_progressive_combine_row(png_ptr, src_buf, new_row);
 
-  pContext->m_pDelegate->PngFillScanlineBufCompleted(pass, row_num);
+  pContext->delegate_->PngFillScanlineBufCompleted(pass, row_num);
 }
 
 int _png_set_read_and_error_fns(png_structrp png_ptr,
@@ -193,11 +193,11 @@ int _png_continue_decode(png_structrp png_ptr,
 }  // extern "C"
 
 CPngContext::CPngContext(PngDecoder::Delegate* pDelegate)
-    : m_pDelegate(pDelegate) {}
+    : delegate_(pDelegate) {}
 
 CPngContext::~CPngContext() {
-  png_destroy_read_struct(m_pPng ? &m_pPng : nullptr,
-                          m_pInfo ? &m_pInfo : nullptr, nullptr);
+  png_destroy_read_struct(png_ ? &png_ : nullptr, info_ ? &info_ : nullptr,
+                          nullptr);
 }
 
 namespace fxcodec {
@@ -206,16 +206,16 @@ namespace fxcodec {
 std::unique_ptr<ProgressiveDecoderIface::Context> PngDecoder::StartDecode(
     Delegate* pDelegate) {
   auto p = std::make_unique<CPngContext>(pDelegate);
-  p->m_pPng =
+  p->png_ =
       png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-  if (!p->m_pPng) {
+  if (!p->png_) {
     return nullptr;
   }
-  p->m_pInfo = png_create_info_struct(p->m_pPng);
-  if (!p->m_pInfo) {
+  p->info_ = png_create_info_struct(p->png_);
+  if (!p->info_) {
     return nullptr;
   }
-  if (!_png_set_read_and_error_fns(p->m_pPng, p.get(), p->m_szLastError)) {
+  if (!_png_set_read_and_error_fns(p->png_, p.get(), p->last_error_)) {
     return nullptr;
   }
   return p;
@@ -227,11 +227,11 @@ bool PngDecoder::ContinueDecode(ProgressiveDecoderIface::Context* pContext,
                                 CFX_DIBAttribute* pAttribute) {
   auto* ctx = static_cast<CPngContext*>(pContext);
   pdfium::span<uint8_t> src_buf = codec_memory->GetUnconsumedSpan();
-  if (!_png_continue_decode(ctx->m_pPng, ctx->m_pInfo, src_buf.data(),
+  if (!_png_continue_decode(ctx->png_, ctx->info_, src_buf.data(),
                             src_buf.size())) {
-    if (pAttribute && UNSAFE_TODO(strcmp(ctx->m_szLastError,
+    if (pAttribute && UNSAFE_TODO(strcmp(ctx->last_error_,
                                          "Read Header Callback Error")) == 0) {
-      _png_load_bmp_attribute(ctx->m_pPng, ctx->m_pInfo, pAttribute);
+      _png_load_bmp_attribute(ctx->png_, ctx->info_, pAttribute);
     }
     return false;
   }

@@ -35,8 +35,8 @@ class IccTransform {
                          pdfium::span<const uint8_t> pSrc,
                          int pixels);
 
-  int components() const { return m_nSrcComponents; }
-  bool IsNormal() const { return m_bNormal; }
+  int components() const { return src_components_; }
+  bool IsNormal() const { return normal_; }
 
   static bool IsValidIccComponents(int components);
 
@@ -46,10 +46,10 @@ class IccTransform {
                bool bIsLab,
                bool bNormal);
 
-  const cmsHTRANSFORM m_hTransform;
-  const int m_nSrcComponents;
-  const bool m_bLab;
-  const bool m_bNormal;
+  const cmsHTRANSFORM transform_;
+  const int src_components_;
+  const bool lab_;
+  const bool normal_;
 };
 
 }  // namespace fxcodec

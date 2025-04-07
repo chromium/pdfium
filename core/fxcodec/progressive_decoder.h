@@ -74,8 +74,8 @@ class ProgressiveDecoder final :
                                CFX_DIBAttribute* pAttribute,
                                bool bSkipImageTypeCheck);
 
-  int32_t GetWidth() const { return m_SrcWidth; }
-  int32_t GetHeight() const { return m_SrcHeight; }
+  int32_t GetWidth() const { return src_width_; }
+  int32_t GetHeight() const { return src_height_; }
 
   FXDIB_Format GetBitmapFormat() const;
 
@@ -158,7 +158,7 @@ class ProgressiveDecoder final :
   FXCODEC_STATUS JpegStartDecode();
   FXCODEC_STATUS JpegContinueDecode();
 
-  int32_t GetBitsPerPixel() const { return m_SrcComponents * m_SrcBPC; }
+  int32_t GetBitsPerPixel() const { return src_components_ * src_bpc_; }
 
   bool DetectImageType(FXCODEC_IMAGE_TYPE imageType,
                        CFX_DIBAttribute* pAttribute);
@@ -177,47 +177,47 @@ class ProgressiveDecoder final :
                 uint8_t* src_scan,
                 FXCodec_Format src_format);
 
-  FXCODEC_STATUS m_status = FXCODEC_STATUS::kDecodeFinished;
-  FXCODEC_IMAGE_TYPE m_imageType = FXCODEC_IMAGE_UNKNOWN;
-  RetainPtr<IFX_SeekableReadStream> m_pFile;
-  RetainPtr<CFX_DIBitmap> m_pDeviceBitmap;
-  RetainPtr<CFX_CodecMemory> m_pCodecMemory;
-  DataVector<uint8_t> m_DecodeBuf;
-  DataVector<FX_ARGB> m_SrcPalette;
-  std::unique_ptr<ProgressiveDecoderIface::Context> m_pJpegContext;
+  FXCODEC_STATUS status_ = FXCODEC_STATUS::kDecodeFinished;
+  FXCODEC_IMAGE_TYPE image_type_ = FXCODEC_IMAGE_UNKNOWN;
+  RetainPtr<IFX_SeekableReadStream> file_;
+  RetainPtr<CFX_DIBitmap> device_bitmap_;
+  RetainPtr<CFX_CodecMemory> codec_memory_;
+  DataVector<uint8_t> decode_buf_;
+  DataVector<FX_ARGB> src_palette_;
+  std::unique_ptr<ProgressiveDecoderIface::Context> jpeg_context_;
 #ifdef PDF_ENABLE_XFA_BMP
-  std::unique_ptr<ProgressiveDecoderIface::Context> m_pBmpContext;
+  std::unique_ptr<ProgressiveDecoderIface::Context> bmp_context_;
 #endif  // PDF_ENABLE_XFA_BMP
 #ifdef PDF_ENABLE_XFA_GIF
-  std::unique_ptr<ProgressiveDecoderIface::Context> m_pGifContext;
+  std::unique_ptr<ProgressiveDecoderIface::Context> gif_context_;
 #endif  // PDF_ENABLE_XFA_GIF
 #ifdef PDF_ENABLE_XFA_PNG
-  std::unique_ptr<ProgressiveDecoderIface::Context> m_pPngContext;
+  std::unique_ptr<ProgressiveDecoderIface::Context> png_context_;
 #endif  // PDF_ENABLE_XFA_PNG
 #ifdef PDF_ENABLE_XFA_TIFF
-  std::unique_ptr<ProgressiveDecoderIface::Context> m_pTiffContext;
+  std::unique_ptr<ProgressiveDecoderIface::Context> tiff_context_;
 #endif  // PDF_ENABLE_XFA_TIFF
-  uint32_t m_offSet = 0;
-  int m_ScanlineSize = 0;
-  WeightTable m_WeightHorz;
-  int m_SrcWidth = 0;
-  int m_SrcHeight = 0;
-  int m_SrcComponents = 0;
-  int m_SrcBPC = 0;
-  TransformMethod m_TransMethod;
-  int m_SrcRow = 0;
-  FXCodec_Format m_SrcFormat = FXCodec_Invalid;
-  int m_SrcPassNumber = 0;
-  size_t m_FrameNumber = 0;
-  size_t m_FrameCur = 0;
+  uint32_t offset_ = 0;
+  int scanline_size_ = 0;
+  WeightTable weight_horz_;
+  int src_width_ = 0;
+  int src_height_ = 0;
+  int src_components_ = 0;
+  int src_bpc_ = 0;
+  TransformMethod trans_method_;
+  int src_row_ = 0;
+  FXCodec_Format src_format_ = FXCodec_Invalid;
+  int src_pass_number_ = 0;
+  size_t frame_number_ = 0;
+  size_t frame_cur_ = 0;
 #ifdef PDF_ENABLE_XFA_GIF
-  int m_GifBgIndex = 0;
-  pdfium::span<CFX_GifPalette> m_GifPalette;
-  int m_GifTransIndex = -1;
-  FX_RECT m_GifFrameRect;
+  int gif_bg_index_ = 0;
+  pdfium::span<CFX_GifPalette> gif_palette_;
+  int gif_trans_index_ = -1;
+  FX_RECT gif_frame_rect_;
 #endif  // PDF_ENABLE_XFA_GIF
 #ifdef PDF_ENABLE_XFA_BMP
-  bool m_BmpIsTopBottom = false;
+  bool bmp_is_top_bottom_ = false;
 #endif  // PDF_ENABLE_XFA_BMP
 };
 

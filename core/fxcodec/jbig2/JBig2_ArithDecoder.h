@@ -29,12 +29,12 @@ class JBig2ArithCtx {
   int DecodeNLPS(const JBig2ArithQe& qe);
   int DecodeNMPS(const JBig2ArithQe& qe);
 
-  unsigned int MPS() const { return m_MPS ? 1 : 0; }
-  unsigned int I() const { return m_I; }
+  unsigned int MPS() const { return mps_ ? 1 : 0; }
+  unsigned int I() const { return i_; }
 
  private:
-  bool m_MPS = false;
-  unsigned int m_I = 0;
+  bool mps_ = false;
+  unsigned int i_ = 0;
 };
 FX_DATA_PARTITION_EXCEPTION(JBig2ArithCtx);
 
@@ -45,7 +45,7 @@ class CJBig2_ArithDecoder {
 
   int Decode(JBig2ArithCtx* pCX);
 
-  bool IsComplete() const { return m_Complete; }
+  bool IsComplete() const { return complete_; }
 
  private:
   enum class StreamState : uint8_t {
@@ -57,13 +57,13 @@ class CJBig2_ArithDecoder {
   void BYTEIN();
   void ReadValueA();
 
-  bool m_Complete = false;
-  StreamState m_State = StreamState::kDataAvailable;
-  uint8_t m_B;
-  unsigned int m_C;
-  unsigned int m_A;
-  unsigned int m_CT;
-  UnownedPtr<CJBig2_BitStream> const m_pStream;
+  bool complete_ = false;
+  StreamState state_ = StreamState::kDataAvailable;
+  uint8_t b_;
+  unsigned int c_;
+  unsigned int a_;
+  unsigned int ct_;
+  UnownedPtr<CJBig2_BitStream> const stream_;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_ARITHDECODER_H_

@@ -36,20 +36,20 @@ class CJBig2_BitStream {
   void addOffset(uint32_t dwDelta);
   uint32_t getBitPos() const;
   void setBitPos(uint32_t dwBitPos);
-  pdfium::span<const uint8_t> getBufSpan() const { return m_Span; }
+  pdfium::span<const uint8_t> getBufSpan() const { return span_; }
   const uint8_t* getPointer() const;
   uint32_t getByteLeft() const;
-  uint64_t getKey() const { return m_Key; }
+  uint64_t getKey() const { return key_; }
   bool IsInBounds() const;
 
  private:
   void AdvanceBit();
   uint32_t LengthInBits() const;
 
-  const pdfium::raw_span<const uint8_t> m_Span;
-  uint32_t m_dwByteIdx = 0;  // Must always be <= `m_Span.size()`.
-  uint32_t m_dwBitIdx = 0;   // Must Always be in [0..7].
-  const uint64_t m_Key;
+  const pdfium::raw_span<const uint8_t> span_;
+  uint32_t byte_idx_ = 0;  // Must always be <= `span_.size()`.
+  uint32_t bit_idx_ = 0;   // Must Always be in [0..7].
+  const uint64_t key_;
 };
 
 #endif  // CORE_FXCODEC_JBIG2_JBIG2_BITSTREAM_H_

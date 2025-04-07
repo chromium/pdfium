@@ -558,9 +558,9 @@ class FlateScanlineDecoder : public ScanlineDecoder {
   uint32_t GetSrcOffset() override;
 
  protected:
-  std::unique_ptr<z_stream, FlateDeleter> m_pFlate;
-  const pdfium::raw_span<const uint8_t> m_SrcBuf;
-  FixedSizeDataVector<uint8_t> m_Scanline;
+  std::unique_ptr<z_stream, FlateDeleter> flate_;
+  const pdfium::raw_span<const uint8_t> src_buf_;
+  FixedSizeDataVector<uint8_t> scanline_;
 };
 
 FlateScanlineDecoder::FlateScanlineDecoder(pdfium::span<const uint8_t> src_span,
@@ -575,30 +575,31 @@ FlateScanlineDecoder::FlateScanlineDecoder(pdfium::span<const uint8_t> src_span,
                       nComps,
                       bpc,
                       fxge::CalculatePitch8OrDie(bpc, nComps, width)),
-      m_SrcBuf(src_span),
-      m_Scanline(FixedSizeDataVector<uint8_t>::Zeroed(m_Pitch)) {}
+      src_buf_(src_span),
+      scanline_(FixedSizeDataVector<uint8_t>::Zeroed(pitch_)) {}
 
 FlateScanlineDecoder::~FlateScanlineDecoder() {
   // Span in superclass can't outlive our buffer.
-  m_pLastScanline = pdfium::span<uint8_t>();
+  last_scanline_ = pdfium::span<uint8_t>();
 }
 
 bool FlateScanlineDecoder::Rewind() {
-  m_pFlate.reset(FlateInit());
-  if (!m_pFlate)
+  flate_.reset(FlateInit());
+  if (!flate_) {
     return false;
+  }
 
-  FlateInput(m_pFlate.get(), m_SrcBuf);
+  FlateInput(flate_.get(), src_buf_);
   return true;
 }
 
 pdfium::span<uint8_t> FlateScanlineDecoder::GetNextLine() {
-  FlateOutput(m_pFlate.get(), m_Scanline);
-  return m_Scanline;
+  FlateOutput(flate_.get(), scanline_);
+  return scanline_;
 }
 
 uint32_t FlateScanlineDecoder::GetSrcOffset() {
-  return FlateGetPossiblyTruncatedTotalIn(m_pFlate.get());
+  return FlateGetPossiblyTruncatedTotalIn(flate_.get());
 }
 
 class FlatePredictorScanlineDecoder final : public FlateScanlineDecoder {
@@ -623,15 +624,15 @@ class FlatePredictorScanlineDecoder final : public FlateScanlineDecoder {
   void GetNextLineWithoutPredictedPitch();
   size_t CopyAndAdvanceLine(size_t bytes_to_go);
 
-  const PredictorType m_Predictor;
-  int m_Colors = 0;
-  int m_BitsPerComponent = 0;
-  int m_Columns = 0;
-  uint32_t m_PredictPitch = 0;
-  size_t m_LeftOver = 0;
-  FixedSizeDataVector<uint8_t> m_LastLine;
-  FixedSizeDataVector<uint8_t> m_PredictBuffer;
-  FixedSizeDataVector<uint8_t> m_PredictRaw;
+  const PredictorType predictor_;
+  int colors_ = 0;
+  int bits_per_component_ = 0;
+  int columns_ = 0;
+  uint32_t predict_pitch_ = 0;
+  size_t left_over_ = 0;
+  FixedSizeDataVector<uint8_t> last_line_;
+  FixedSizeDataVector<uint8_t> predict_buffer_;
+  FixedSizeDataVector<uint8_t> predict_raw_;
 };
 
 FlatePredictorScanlineDecoder::FlatePredictorScanlineDecoder(
@@ -645,60 +646,61 @@ FlatePredictorScanlineDecoder::FlatePredictorScanlineDecoder(
     int BitsPerComponent,
     int Columns)
     : FlateScanlineDecoder(src_span, width, height, comps, bpc),
-      m_Predictor(predictor) {
-  DCHECK(m_Predictor != PredictorType::kNone);
+      predictor_(predictor) {
+  DCHECK(predictor_ != PredictorType::kNone);
   if (BitsPerComponent * Colors * Columns == 0) {
-    BitsPerComponent = m_bpc;
-    Colors = m_nComps;
-    Columns = m_OrigWidth;
+    BitsPerComponent = bpc_;
+    Colors = comps_;
+    Columns = orig_width_;
   }
-  m_Colors = Colors;
-  m_BitsPerComponent = BitsPerComponent;
-  m_Columns = Columns;
-  m_PredictPitch =
-      fxge::CalculatePitch8OrDie(m_BitsPerComponent, m_Colors, m_Columns);
-  m_LastLine = FixedSizeDataVector<uint8_t>::Zeroed(m_PredictPitch);
-  m_PredictBuffer = FixedSizeDataVector<uint8_t>::Zeroed(m_PredictPitch);
-  m_PredictRaw = FixedSizeDataVector<uint8_t>::Zeroed(m_PredictPitch + 1);
+  colors_ = Colors;
+  bits_per_component_ = BitsPerComponent;
+  columns_ = Columns;
+  predict_pitch_ =
+      fxge::CalculatePitch8OrDie(bits_per_component_, colors_, columns_);
+  last_line_ = FixedSizeDataVector<uint8_t>::Zeroed(predict_pitch_);
+  predict_buffer_ = FixedSizeDataVector<uint8_t>::Zeroed(predict_pitch_);
+  predict_raw_ = FixedSizeDataVector<uint8_t>::Zeroed(predict_pitch_ + 1);
 }
 
 FlatePredictorScanlineDecoder::~FlatePredictorScanlineDecoder() {
   // Span in superclass can't outlive our buffer.
-  m_pLastScanline = pdfium::span<uint8_t>();
+  last_scanline_ = pdfium::span<uint8_t>();
 }
 
 bool FlatePredictorScanlineDecoder::Rewind() {
   if (!FlateScanlineDecoder::Rewind())
     return false;
 
-  m_LeftOver = 0;
+  left_over_ = 0;
   return true;
 }
 
 pdfium::span<uint8_t> FlatePredictorScanlineDecoder::GetNextLine() {
-  if (m_Pitch == m_PredictPitch)
+  if (pitch_ == predict_pitch_) {
     GetNextLineWithPredictedPitch();
-  else
+  } else {
     GetNextLineWithoutPredictedPitch();
-  return m_Scanline;
+  }
+  return scanline_;
 }
 
 void FlatePredictorScanlineDecoder::GetNextLineWithPredictedPitch() {
-  switch (m_Predictor) {
+  switch (predictor_) {
     case PredictorType::kPng: {
       const uint32_t row_size =
-          fxge::CalculatePitch8OrDie(m_BitsPerComponent, m_Colors, m_Columns);
-      const uint32_t bytes_per_pixel = (m_BitsPerComponent * m_Colors + 7) / 8;
-      FlateOutput(m_pFlate.get(), m_PredictRaw);
-      PNG_PredictLine(m_Scanline, m_PredictRaw, m_LastLine, row_size,
+          fxge::CalculatePitch8OrDie(bits_per_component_, colors_, columns_);
+      const uint32_t bytes_per_pixel = (bits_per_component_ * colors_ + 7) / 8;
+      FlateOutput(flate_.get(), predict_raw_);
+      PNG_PredictLine(scanline_, predict_raw_, last_line_, row_size,
                       bytes_per_pixel);
-      fxcrt::Copy(m_Scanline.first(m_PredictPitch), m_LastLine.span());
+      fxcrt::Copy(scanline_.first(predict_pitch_), last_line_.span());
       break;
     }
     case PredictorType::kFlate: {
-      FlateOutput(m_pFlate.get(), m_Scanline);
-      TIFF_PredictLine(m_Scanline.first(m_PredictPitch), m_bpc, m_nComps,
-                       m_OutputWidth);
+      FlateOutput(flate_.get(), scanline_);
+      TIFF_PredictLine(scanline_.first(predict_pitch_), bpc_, comps_,
+                       output_width_);
       break;
     }
     case PredictorType::kNone: {
@@ -708,34 +710,34 @@ void FlatePredictorScanlineDecoder::GetNextLineWithPredictedPitch() {
 }
 
 void FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
-  size_t bytes_to_go = m_Pitch;
-  size_t read_leftover = m_LeftOver > bytes_to_go ? bytes_to_go : m_LeftOver;
+  size_t bytes_to_go = pitch_;
+  size_t read_leftover = left_over_ > bytes_to_go ? bytes_to_go : left_over_;
   if (read_leftover) {
     fxcrt::Copy(
-        m_PredictBuffer.subspan(m_PredictPitch - m_LeftOver, read_leftover),
-        m_Scanline.span());
-    m_LeftOver -= read_leftover;
+        predict_buffer_.subspan(predict_pitch_ - left_over_, read_leftover),
+        scanline_.span());
+    left_over_ -= read_leftover;
     bytes_to_go -= read_leftover;
   }
   const uint32_t row_size =
-      fxge::CalculatePitch8OrDie(m_BitsPerComponent, m_Colors, m_Columns);
-  const uint32_t bytes_per_pixel = (m_BitsPerComponent * m_Colors + 7) / 8;
-  switch (m_Predictor) {
+      fxge::CalculatePitch8OrDie(bits_per_component_, colors_, columns_);
+  const uint32_t bytes_per_pixel = (bits_per_component_ * colors_ + 7) / 8;
+  switch (predictor_) {
     case PredictorType::kPng: {
       while (bytes_to_go) {
-        FlateOutput(m_pFlate.get(), m_PredictRaw);
-        PNG_PredictLine(m_PredictBuffer, m_PredictRaw, m_LastLine, row_size,
+        FlateOutput(flate_.get(), predict_raw_);
+        PNG_PredictLine(predict_buffer_, predict_raw_, last_line_, row_size,
                         bytes_per_pixel);
-        fxcrt::Copy(m_PredictBuffer.span(), m_LastLine.span());
+        fxcrt::Copy(predict_buffer_.span(), last_line_.span());
         bytes_to_go = CopyAndAdvanceLine(bytes_to_go);
       }
       break;
     }
     case PredictorType::kFlate: {
       while (bytes_to_go) {
-        FlateOutput(m_pFlate.get(), m_PredictBuffer);
-        TIFF_PredictLine(m_PredictBuffer, m_BitsPerComponent, m_Colors,
-                         m_Columns);
+        FlateOutput(flate_.get(), predict_buffer_);
+        TIFF_PredictLine(predict_buffer_, bits_per_component_, colors_,
+                         columns_);
         bytes_to_go = CopyAndAdvanceLine(bytes_to_go);
       }
       break;
@@ -747,10 +749,10 @@ void FlatePredictorScanlineDecoder::GetNextLineWithoutPredictedPitch() {
 }
 
 size_t FlatePredictorScanlineDecoder::CopyAndAdvanceLine(size_t bytes_to_go) {
-  size_t read_bytes = std::min<size_t>(m_PredictPitch, bytes_to_go);
-  fxcrt::Copy(m_PredictBuffer.first(read_bytes),
-              m_Scanline.subspan(m_Pitch - bytes_to_go));
-  m_LeftOver += m_PredictPitch - read_bytes;
+  size_t read_bytes = std::min<size_t>(predict_pitch_, bytes_to_go);
+  fxcrt::Copy(predict_buffer_.first(read_bytes),
+              scanline_.subspan(pitch_ - bytes_to_go));
+  left_over_ += predict_pitch_ - read_bytes;
   return bytes_to_go - read_bytes;
 }
 

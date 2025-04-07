@@ -429,7 +429,7 @@ void CJPX_Decoder::Sycc420ToRgbForTesting(opj_image_t* img) {
 }
 
 CJPX_Decoder::CJPX_Decoder(ColorSpaceOption option)
-    : m_ColorSpaceOption(option) {}
+    : color_space_option_(option) {}
 
 CJPX_Decoder::~CJPX_Decoder() = default;
 
@@ -443,119 +443,122 @@ bool CJPX_Decoder::Init(pdfium::span<const uint8_t> src_data,
     return false;
   }
 
-  m_Image.reset();
-  m_SrcData = src_data;
-  m_DecodeData = std::make_unique<DecodeData>(src_data);
-  m_Stream.reset(fx_opj_stream_create_memory_stream(m_DecodeData.get()));
-  if (!m_Stream)
+  image_.reset();
+  src_data_ = src_data;
+  decode_data_ = std::make_unique<DecodeData>(src_data);
+  stream_.reset(fx_opj_stream_create_memory_stream(decode_data_.get()));
+  if (!stream_) {
     return false;
+  }
 
-  opj_set_default_decoder_parameters(&m_Parameters);
-  m_Parameters.decod_format = 0;
-  m_Parameters.cod_format = 3;
-  m_Parameters.cp_reduce = resolution_levels_to_skip;
-  if (UNSAFE_TODO(memcmp(m_SrcData.data(), kJP2Header, sizeof(kJP2Header))) ==
+  opj_set_default_decoder_parameters(&parameters_);
+  parameters_.decod_format = 0;
+  parameters_.cod_format = 3;
+  parameters_.cp_reduce = resolution_levels_to_skip;
+  if (UNSAFE_TODO(memcmp(src_data_.data(), kJP2Header, sizeof(kJP2Header))) ==
       0) {
-    m_Codec.reset(opj_create_decompress(OPJ_CODEC_JP2));
-    m_Parameters.decod_format = 1;
+    codec_.reset(opj_create_decompress(OPJ_CODEC_JP2));
+    parameters_.decod_format = 1;
   } else {
-    m_Codec.reset(opj_create_decompress(OPJ_CODEC_J2K));
+    codec_.reset(opj_create_decompress(OPJ_CODEC_J2K));
   }
-  if (!m_Codec)
+  if (!codec_) {
     return false;
-
-  if (m_ColorSpaceOption == ColorSpaceOption::kIndexed) {
-    m_Parameters.flags |= OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
   }
-  opj_set_info_handler(m_Codec.get(), fx_ignore_callback, nullptr);
-  opj_set_warning_handler(m_Codec.get(), fx_ignore_callback, nullptr);
-  opj_set_error_handler(m_Codec.get(), fx_ignore_callback, nullptr);
-  if (!opj_setup_decoder(m_Codec.get(), &m_Parameters)) {
+
+  if (color_space_option_ == ColorSpaceOption::kIndexed) {
+    parameters_.flags |= OPJ_DPARAMETERS_IGNORE_PCLR_CMAP_CDEF_FLAG;
+  }
+  opj_set_info_handler(codec_.get(), fx_ignore_callback, nullptr);
+  opj_set_warning_handler(codec_.get(), fx_ignore_callback, nullptr);
+  opj_set_error_handler(codec_.get(), fx_ignore_callback, nullptr);
+  if (!opj_setup_decoder(codec_.get(), &parameters_)) {
     return false;
   }
 
   // For https://crbug.com/42270564
   if (!strict_mode) {
-    CHECK(opj_decoder_set_strict_mode(m_Codec.get(), false));
+    CHECK(opj_decoder_set_strict_mode(codec_.get(), false));
   }
 
   opj_image_t* pTempImage = nullptr;
-  if (!opj_read_header(m_Stream.get(), m_Codec.get(), &pTempImage)) {
+  if (!opj_read_header(stream_.get(), codec_.get(), &pTempImage)) {
     return false;
   }
 
-  m_Image.reset(pTempImage);
+  image_.reset(pTempImage);
   return true;
 }
 
 bool CJPX_Decoder::StartDecode() {
-  if (!m_Parameters.nb_tile_to_decode) {
-    if (!opj_set_decode_area(m_Codec.get(), m_Image.get(), m_Parameters.DA_x0,
-                             m_Parameters.DA_y0, m_Parameters.DA_x1,
-                             m_Parameters.DA_y1)) {
-      m_Image.reset();
+  if (!parameters_.nb_tile_to_decode) {
+    if (!opj_set_decode_area(codec_.get(), image_.get(), parameters_.DA_x0,
+                             parameters_.DA_y0, parameters_.DA_x1,
+                             parameters_.DA_y1)) {
+      image_.reset();
       return false;
     }
-    if (!(opj_decode(m_Codec.get(), m_Stream.get(), m_Image.get()) &&
-          opj_end_decompress(m_Codec.get(), m_Stream.get()))) {
-      m_Image.reset();
+    if (!(opj_decode(codec_.get(), stream_.get(), image_.get()) &&
+          opj_end_decompress(codec_.get(), stream_.get()))) {
+      image_.reset();
       return false;
     }
-  } else if (!opj_get_decoded_tile(m_Codec.get(), m_Stream.get(), m_Image.get(),
-                                   m_Parameters.tile_index)) {
+  } else if (!opj_get_decoded_tile(codec_.get(), stream_.get(), image_.get(),
+                                   parameters_.tile_index)) {
     return false;
   }
 
-  m_Stream.reset();
-  auto components = components_span(m_Image.get());
-  if (m_Image->color_space != OPJ_CLRSPC_SYCC && components.size() == 3 &&
+  stream_.reset();
+  auto components = components_span(image_.get());
+  if (image_->color_space != OPJ_CLRSPC_SYCC && components.size() == 3 &&
       components[0].dx == components[0].dy && components[1].dx != 1) {
-    m_Image->color_space = OPJ_CLRSPC_SYCC;
-  } else if (m_Image->numcomps <= 2) {
-    m_Image->color_space = OPJ_CLRSPC_GRAY;
+    image_->color_space = OPJ_CLRSPC_SYCC;
+  } else if (image_->numcomps <= 2) {
+    image_->color_space = OPJ_CLRSPC_GRAY;
   }
-  if (m_Image->color_space == OPJ_CLRSPC_SYCC)
-    color_sycc_to_rgb(m_Image.get());
+  if (image_->color_space == OPJ_CLRSPC_SYCC) {
+    color_sycc_to_rgb(image_.get());
+  }
 
   // TODO(crbug.com/346606150): Investigate if it makes sense to use the data in
   // `icc_profile_buf` instead of discarding it.
-  if (m_Image->icc_profile_buf) {
+  if (image_->icc_profile_buf) {
 #if defined(USE_SYSTEM_LIBOPENJPEG2)
     // Since opj_free() is an internal function within OpenJPEG, do not assume
     // it exists and call free() here.
-    free(m_Image->icc_profile_buf);
+    free(image_->icc_profile_buf);
 #else
     // Memory is allocated with opj_malloc() inside OpenJPEG, so call opj_free()
     // to match that. The bundled copy of OpenJPEG is known to have opj_free().
-    opj_free(m_Image->icc_profile_buf);
+    opj_free(image_->icc_profile_buf);
 #endif
-    m_Image->icc_profile_buf = nullptr;
-    m_Image->icc_profile_len = 0;
+    image_->icc_profile_buf = nullptr;
+    image_->icc_profile_len = 0;
   }
   return true;
 }
 
 CJPX_Decoder::JpxImageInfo CJPX_Decoder::GetInfo() const {
-  const auto components = components_span(m_Image.get());
+  const auto components = components_span(image_.get());
   return {components[0].w, components[0].h,
           pdfium::checked_cast<uint32_t>(components.size()),
-          m_Image->color_space};
+          image_->color_space};
 }
 
 bool CJPX_Decoder::Decode(pdfium::span<uint8_t> dest_buf,
                           uint32_t pitch,
                           bool swap_rgb,
                           uint32_t component_count) {
-  CHECK_LE(component_count, m_Image->numcomps);
+  CHECK_LE(component_count, image_->numcomps);
   uint32_t channel_count = component_count;
-  if (channel_count == 3 && m_Image->numcomps == 4) {
+  if (channel_count == 3 && image_->numcomps == 4) {
     // When decoding for an ARGB image, include the alpha channel in the channel
     // count.
     channel_count = 4;
   }
 
   std::optional<uint32_t> calculated_pitch =
-      fxge::CalculatePitch32(8 * channel_count, m_Image->comps[0].w);
+      fxge::CalculatePitch32(8 * channel_count, image_->comps[0].w);
   if (!calculated_pitch.has_value() || pitch < calculated_pitch.value()) {
     return false;
   }
@@ -566,14 +569,14 @@ bool CJPX_Decoder::Decode(pdfium::span<uint8_t> dest_buf,
 
   // Initialize `channel_bufs` and `adjust_comps` to store information from all
   // the channels of the JPX image. They will contain more information besides
-  // the color component data if `m_Image->numcomps` > `component_count`.
+  // the color component data if `image_->numcomps` > `component_count`.
   // Currently only the color component data is used for rendering.
   // TODO(crbug.com/pdfium/1747): Make full use of the component information.
-  fxcrt::Fill(dest_buf.first(m_Image->comps[0].h * pitch), 0xff);
-  std::vector<uint8_t*> channel_bufs(m_Image->numcomps);
-  std::vector<int> adjust_comps(m_Image->numcomps);
+  fxcrt::Fill(dest_buf.first(image_->comps[0].h * pitch), 0xff);
+  std::vector<uint8_t*> channel_bufs(image_->numcomps);
+  std::vector<int> adjust_comps(image_->numcomps);
   const pdfium::span<opj_image_comp_t> components =
-      components_span(m_Image.get());
+      components_span(image_.get());
   for (size_t i = 0; i < components.size(); i++) {
     channel_bufs[i] = dest_buf.subspan(i).data();
     adjust_comps[i] = components[i].prec - 8;
