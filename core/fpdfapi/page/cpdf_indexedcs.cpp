@@ -64,11 +64,10 @@ uint32_t CPDF_IndexedCS::v_Load(CPDF_Document* pDoc,
     comp.max -= comp.min;
   }
 
-  // ISO 32000-1:2008 section 8.6.6.3 says the maximum value is 255.
-  max_index_ = pArray->GetIntegerAt(2);
-  if (max_index_ < 0 || max_index_ > 255) {
-    return 0;
-  }
+  // ISO 32000-1:2008 section 8.6.6.3 says the maximum value is 255.  Clamp
+  // the value to this range, so that images with an out-of-range hival value
+  // can still be loaded.
+  max_index_ = std::clamp(pArray->GetIntegerAt(2), 0, 255);
 
   RetainPtr<const CPDF_Object> pTableObj = pArray->GetDirectObjectAt(3);
   if (!pTableObj) {
