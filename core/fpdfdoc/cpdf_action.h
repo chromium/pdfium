@@ -47,8 +47,8 @@ class CPDF_Action {
   CPDF_Action(const CPDF_Action& that);
   ~CPDF_Action();
 
-  bool HasDict() const { return !!m_pDict; }
-  const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
+  bool HasDict() const { return !!dict_; }
+  const CPDF_Dictionary* GetDict() const { return dict_.Get(); }
 
   Type GetType() const;
   CPDF_Dest GetDest(CPDF_Document* pDoc) const;
@@ -73,7 +73,7 @@ class CPDF_Action {
  private:
   RetainPtr<const CPDF_Object> GetJavaScriptObject() const;
 
-  RetainPtr<const CPDF_Dictionary> const m_pDict;
+  RetainPtr<const CPDF_Dictionary> const dict_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_ACTION_H_

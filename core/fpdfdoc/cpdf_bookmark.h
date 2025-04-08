@@ -22,7 +22,7 @@ class CPDF_Bookmark {
   explicit CPDF_Bookmark(RetainPtr<const CPDF_Dictionary> pDict);
   ~CPDF_Bookmark();
 
-  const CPDF_Dictionary* GetDict() const { return m_pDict.Get(); }
+  const CPDF_Dictionary* GetDict() const { return dict_.Get(); }
 
   WideString GetTitle() const;
   CPDF_Dest GetDest(CPDF_Document* pDocument) const;
@@ -30,7 +30,7 @@ class CPDF_Bookmark {
   int GetCount() const;
 
  private:
-  RetainPtr<const CPDF_Dictionary> m_pDict;
+  RetainPtr<const CPDF_Dictionary> dict_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_BOOKMARK_H_

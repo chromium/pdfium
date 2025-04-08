@@ -34,8 +34,8 @@ class CPVT_Section final {
     CPVT_WordPlace GetEndWordPlace() const;
     CPVT_WordPlace GetPrevWordPlace(const CPVT_WordPlace& place) const;
     CPVT_WordPlace GetNextWordPlace(const CPVT_WordPlace& place) const;
-    CPVT_WordPlace m_LinePlace;
-    CPVT_LineInfo m_LineInfo;
+    CPVT_WordPlace line_place_;
+    CPVT_LineInfo line_info_;
   };
 
   explicit CPVT_Section(CPVT_VariableText* pVT);
@@ -59,10 +59,10 @@ class CPVT_Section final {
                                  const CPVT_WordPlace& lineplace) const;
   CPVT_WordPlace SearchWordPlace(float fx, const CPVT_WordRange& range) const;
 
-  void SetPlace(const CPVT_WordPlace& place) { m_SecPlace = place; }
-  void SetPlaceIndex(int32_t index) { m_SecPlace.nSecIndex = index; }
-  const CPVT_FloatRect& GetRect() const { return m_Rect; }
-  void SetRect(const CPVT_FloatRect& rect) { m_Rect = rect; }
+  void SetPlace(const CPVT_WordPlace& place) { sec_place_ = place; }
+  void SetPlaceIndex(int32_t index) { sec_place_.nSecIndex = index; }
+  const CPVT_FloatRect& GetRect() const { return rect_; }
+  void SetRect(const CPVT_FloatRect& rect) { rect_ = rect; }
 
   int32_t GetLineArraySize() const;
   const Line* GetLineFromArray(int32_t index) const;
@@ -80,11 +80,11 @@ class CPVT_Section final {
   void ClearRightWords(int32_t nWordIndex);
   void ClearMidWords(int32_t nBeginIndex, int32_t nEndIndex);
 
-  CPVT_WordPlace m_SecPlace;
-  CPVT_FloatRect m_Rect;
-  std::vector<std::unique_ptr<Line>> m_LineArray;
-  std::vector<std::unique_ptr<CPVT_WordInfo>> m_WordArray;
-  UnownedPtr<CPVT_VariableText> const m_pVT;
+  CPVT_WordPlace sec_place_;
+  CPVT_FloatRect rect_;
+  std::vector<std::unique_ptr<Line>> line_array_;
+  std::vector<std::unique_ptr<CPVT_WordInfo>> word_array_;
+  UnownedPtr<CPVT_VariableText> const vt_;
 };
 
 #endif  // CORE_FPDFDOC_CPVT_SECTION_H_

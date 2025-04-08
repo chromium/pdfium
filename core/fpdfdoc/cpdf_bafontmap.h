@@ -77,13 +77,13 @@ class CPDF_BAFontMap final : public IPVT_FontMap {
   RetainPtr<CPDF_Font> AddStandardFont(ByteString sFontName);
   RetainPtr<CPDF_Font> AddSystemFont(ByteString sFontName, FX_Charset nCharset);
 
-  std::vector<std::unique_ptr<Data>> m_Data;
-  std::vector<std::unique_ptr<Native>> m_NativeFont;
-  UnownedPtr<CPDF_Document> const m_pDocument;
-  RetainPtr<CPDF_Dictionary> const m_pAnnotDict;
-  RetainPtr<CPDF_Font> m_pDefaultFont;
-  ByteString m_sDefaultFontName;
-  const ByteString m_sAPType;
+  std::vector<std::unique_ptr<Data>> data_;
+  std::vector<std::unique_ptr<Native>> native_font_;
+  UnownedPtr<CPDF_Document> const document_;
+  RetainPtr<CPDF_Dictionary> const annot_dict_;
+  RetainPtr<CPDF_Font> default_font_;
+  ByteString default_font_name_;
+  const ByteString ap_type_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_BAFONTMAP_H_

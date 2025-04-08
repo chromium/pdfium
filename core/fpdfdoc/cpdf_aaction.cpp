@@ -44,18 +44,18 @@ constexpr const std::array<const char*, CPDF_AAction::kNumberOfActions - 1>
 }  // namespace
 
 CPDF_AAction::CPDF_AAction(RetainPtr<const CPDF_Dictionary> pDict)
-    : m_pDict(std::move(pDict)) {}
+    : dict_(std::move(pDict)) {}
 
 CPDF_AAction::CPDF_AAction(const CPDF_AAction& that) = default;
 
 CPDF_AAction::~CPDF_AAction() = default;
 
 bool CPDF_AAction::ActionExist(AActionType eType) const {
-  return m_pDict && m_pDict->KeyExist(kAATypes[eType]);
+  return dict_ && dict_->KeyExist(kAATypes[eType]);
 }
 
 CPDF_Action CPDF_AAction::GetAction(AActionType eType) const {
-  return CPDF_Action(m_pDict ? m_pDict->GetDictFor(kAATypes[eType]) : nullptr);
+  return CPDF_Action(dict_ ? dict_->GetDictFor(kAATypes[eType]) : nullptr);
 }
 
 // static

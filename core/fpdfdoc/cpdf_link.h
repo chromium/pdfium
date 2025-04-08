@@ -20,13 +20,13 @@ class CPDF_Link {
   CPDF_Link(const CPDF_Link& that);
   ~CPDF_Link();
 
-  RetainPtr<CPDF_Dictionary> GetMutableDict() const { return m_pDict; }
+  RetainPtr<CPDF_Dictionary> GetMutableDict() const { return dict_; }
   CFX_FloatRect GetRect();
   CPDF_Dest GetDest(CPDF_Document* pDoc);
   CPDF_Action GetAction();
 
  private:
-  RetainPtr<CPDF_Dictionary> m_pDict;
+  RetainPtr<CPDF_Dictionary> dict_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_LINK_H_

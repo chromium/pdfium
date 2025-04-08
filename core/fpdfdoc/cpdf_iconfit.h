@@ -33,7 +33,7 @@ class CPDF_IconFit {
  private:
   CFX_PointF GetIconPosition() const;
 
-  RetainPtr<const CPDF_Dictionary> const m_pDict;
+  RetainPtr<const CPDF_Dictionary> const dict_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_ICONFIT_H_

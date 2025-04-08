@@ -40,11 +40,11 @@ class CPVT_VariableText {
     bool GetLine(CPVT_Line& line) const;
     void SetAt(int32_t nWordIndex);
     void SetAt(const CPVT_WordPlace& place);
-    const CPVT_WordPlace& GetWordPlace() const { return m_CurPos; }
+    const CPVT_WordPlace& GetWordPlace() const { return cur_pos_; }
 
    private:
-    CPVT_WordPlace m_CurPos;
-    UnownedPtr<const CPVT_VariableText> const m_pVT;
+    CPVT_WordPlace cur_pos_;
+    UnownedPtr<const CPVT_VariableText> const vt_;
   };
 
   class Provider {
@@ -60,10 +60,10 @@ class CPVT_VariableText {
                                      int32_t nFontIndex);
     virtual int32_t GetDefaultFontIndex();
 
-    IPVT_FontMap* GetFontMap() { return m_pFontMap; }
+    IPVT_FontMap* GetFontMap() { return font_map_; }
 
    private:
-    UnownedPtr<IPVT_FontMap> const m_pFontMap;
+    UnownedPtr<IPVT_FontMap> const font_map_;
   };
 
   explicit CPVT_VariableText(Provider* Provider);
@@ -77,17 +77,17 @@ class CPVT_VariableText {
   void SetPlateRect(const CFX_FloatRect& rect);
   const CFX_FloatRect& GetPlateRect() const;
 
-  void SetAlignment(int32_t nFormat) { m_nAlignment = nFormat; }
-  void SetPasswordChar(uint16_t wSubWord) { m_wSubWord = wSubWord; }
-  void SetLimitChar(int32_t nLimitChar) { m_nLimitChar = nLimitChar; }
-  void SetMultiLine(bool bMultiLine) { m_bMultiLine = bMultiLine; }
-  void SetAutoReturn(bool bAuto) { m_bLimitWidth = bAuto; }
-  void SetFontSize(float fFontSize) { m_fFontSize = fFontSize; }
-  void SetCharArray(int32_t nCharArray) { m_nCharArray = nCharArray; }
-  void SetAutoFontSize(bool bAuto) { m_bAutoFontSize = bAuto; }
+  void SetAlignment(int32_t nFormat) { alignment_ = nFormat; }
+  void SetPasswordChar(uint16_t wSubWord) { sub_word_ = wSubWord; }
+  void SetLimitChar(int32_t nLimitChar) { limit_char_ = nLimitChar; }
+  void SetMultiLine(bool bMultiLine) { multi_line_ = bMultiLine; }
+  void SetAutoReturn(bool bAuto) { limit_width_ = bAuto; }
+  void SetFontSize(float fFontSize) { font_size_ = fFontSize; }
+  void SetCharArray(int32_t nCharArray) { char_array_ = nCharArray; }
+  void SetAutoFontSize(bool bAuto) { auto_font_size_ = bAuto; }
   void Initialize();
 
-  bool IsValid() const { return m_bInitialized; }
+  bool IsValid() const { return initialized_; }
 
   void RearrangeAll();
   void RearrangePart(const CPVT_WordRange& PlaceRange);
@@ -101,13 +101,13 @@ class CPVT_VariableText {
   CPVT_WordPlace BackSpaceWord(const CPVT_WordPlace& place);
 
   int32_t GetTotalWords() const;
-  float GetFontSize() const { return m_fFontSize; }
-  int32_t GetAlignment() const { return m_nAlignment; }
+  float GetFontSize() const { return font_size_; }
+  int32_t GetAlignment() const { return alignment_; }
   uint16_t GetPasswordChar() const { return GetSubWord(); }
-  int32_t GetCharArray() const { return m_nCharArray; }
-  int32_t GetLimitChar() const { return m_nLimitChar; }
-  bool IsMultiLine() const { return m_bMultiLine; }
-  bool IsAutoReturn() const { return m_bLimitWidth; }
+  int32_t GetCharArray() const { return char_array_; }
+  int32_t GetLimitChar() const { return limit_char_; }
+  bool IsMultiLine() const { return multi_line_; }
+  bool IsAutoReturn() const { return limit_width_; }
 
   CPVT_WordPlace GetBeginWordPlace() const;
   CPVT_WordPlace GetEndWordPlace() const;
@@ -128,10 +128,10 @@ class CPVT_VariableText {
   int32_t WordPlaceToWordIndex(const CPVT_WordPlace& place) const;
   CPVT_WordPlace WordIndexToWordPlace(int32_t index) const;
 
-  uint16_t GetSubWord() const { return m_wSubWord; }
+  uint16_t GetSubWord() const { return sub_word_; }
 
-  float GetPlateWidth() const { return m_rcPlate.right - m_rcPlate.left; }
-  float GetPlateHeight() const { return m_rcPlate.top - m_rcPlate.bottom; }
+  float GetPlateWidth() const { return plate_rect_.right - plate_rect_.left; }
+  float GetPlateHeight() const { return plate_rect_.top - plate_rect_.bottom; }
   CFX_PointF GetBTPoint() const;
   CFX_PointF GetETPoint() const;
 
@@ -184,21 +184,21 @@ class CPVT_VariableText {
   bool IsBigger(float fFontSize) const;
   CPVT_FloatRect RearrangeSections(const CPVT_WordRange& PlaceRange);
 
-  bool m_bInitialized = false;
-  bool m_bMultiLine = false;
-  bool m_bLimitWidth = false;
-  bool m_bAutoFontSize = false;
-  uint16_t m_wSubWord = 0;
-  int32_t m_nLimitChar = 0;
-  int32_t m_nCharArray = 0;
-  int32_t m_nAlignment = 0;
-  float m_fLineLeading = 0.0f;
-  float m_fFontSize = 0.0f;
-  std::vector<std::unique_ptr<CPVT_Section>> m_SectionArray;
-  UnownedPtr<Provider> m_pVTProvider;
-  std::unique_ptr<Iterator> m_pVTIterator;
-  CFX_FloatRect m_rcPlate;
-  CPVT_FloatRect m_rcContent;
+  bool initialized_ = false;
+  bool multi_line_ = false;
+  bool limit_width_ = false;
+  bool auto_font_size_ = false;
+  uint16_t sub_word_ = 0;
+  int32_t limit_char_ = 0;
+  int32_t char_array_ = 0;
+  int32_t alignment_ = 0;
+  float line_leading_ = 0.0f;
+  float font_size_ = 0.0f;
+  std::vector<std::unique_ptr<CPVT_Section>> section_array_;
+  UnownedPtr<Provider> vt_provider_;
+  std::unique_ptr<Iterator> vt_iterator_;
+  CFX_FloatRect plate_rect_;
+  CPVT_FloatRect content_rect_;
 };
 
 #endif  // CORE_FPDFDOC_CPVT_VARIABLETEXT_H_

@@ -48,12 +48,13 @@ const std::vector<RetainPtr<CPDF_Dictionary>>* CPDF_LinkList::GetPageLinks(
   if (objnum == 0)
     return nullptr;
 
-  auto it = m_PageMap.find(objnum);
-  if (it != m_PageMap.end())
+  auto it = page_map_.find(objnum);
+  if (it != page_map_.end()) {
     return &it->second;
+  }
 
   // std::map::operator[] forces the creation of a map entry.
-  auto* page_link_list = &m_PageMap[objnum];
+  auto* page_link_list = &page_map_[objnum];
   RetainPtr<CPDF_Array> pAnnotList = pPage->GetMutableAnnotsArray();
   if (!pAnnotList)
     return page_link_list;

@@ -33,7 +33,7 @@ class CPDF_FileSpec {
   RetainPtr<CPDF_Dictionary> GetMutableParamsDict();
 
  private:
-  RetainPtr<const CPDF_Object> const m_pObj;
+  RetainPtr<const CPDF_Object> const obj_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_FILESPEC_H_

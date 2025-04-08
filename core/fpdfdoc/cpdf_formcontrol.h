@@ -41,10 +41,10 @@ class CPDF_FormControl {
                    CPDF_InteractiveForm* pForm);
   ~CPDF_FormControl();
 
-  CPDF_FormField::Type GetType() const { return m_pField->GetType(); }
-  CPDF_FormField* GetField() const { return m_pField; }
+  CPDF_FormField::Type GetType() const { return field_->GetType(); }
+  CPDF_FormField* GetField() const { return field_; }
   RetainPtr<const CPDF_Dictionary> GetWidgetDict() const {
-    return m_pWidgetDict;
+    return widget_dict_;
   }
   CFX_FloatRect GetRect() const;
 
@@ -107,9 +107,9 @@ class CPDF_FormControl {
   RetainPtr<CPDF_Stream> GetIcon(const ByteString& csEntry);
   CPDF_ApSettings GetMK() const;
 
-  UnownedPtr<CPDF_FormField> const m_pField;
-  RetainPtr<CPDF_Dictionary> const m_pWidgetDict;
-  UnownedPtr<const CPDF_InteractiveForm> const m_pForm;
+  UnownedPtr<CPDF_FormField> const field_;
+  RetainPtr<CPDF_Dictionary> const widget_dict_;
+  UnownedPtr<const CPDF_InteractiveForm> const form_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_FORMCONTROL_H_

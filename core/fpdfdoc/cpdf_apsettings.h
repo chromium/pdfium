@@ -48,7 +48,7 @@ class CPDF_ApSettings {
   RetainPtr<CPDF_Stream> GetIcon(const ByteString& csEntry) const;
 
  private:
-  RetainPtr<CPDF_Dictionary> const m_pDict;
+  RetainPtr<CPDF_Dictionary> const dict_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_APSETTINGS_H_

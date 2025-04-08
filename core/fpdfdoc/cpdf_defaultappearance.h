@@ -30,7 +30,7 @@ class CPDF_DefaultAppearance {
                                               int nParams);
 
  private:
-  const ByteString m_csDA;
+  const ByteString da_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_DEFAULTAPPEARANCE_H_

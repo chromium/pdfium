@@ -113,20 +113,20 @@ class CPDF_InteractiveForm {
 
   static bool s_bUpdateAP;
 
-  ByteString m_bsEncoding;
-  UnownedPtr<CPDF_Document> const m_pDocument;
-  RetainPtr<CPDF_Dictionary> m_pFormDict;
-  std::unique_ptr<CFieldTree> m_pFieldTree;
+  ByteString encoding_;
+  UnownedPtr<CPDF_Document> const document_;
+  RetainPtr<CPDF_Dictionary> form_dict_;
+  std::unique_ptr<CFieldTree> field_tree_;
   std::map<RetainPtr<const CPDF_Dictionary>,
            std::unique_ptr<CPDF_FormControl>,
            std::less<>>
-      m_ControlMap;
-  // Points into |m_ControlMap|.
+      control_map_;
+  // Points into |control_map_|.
   std::map<UnownedPtr<const CPDF_FormField>,
            std::vector<UnownedPtr<CPDF_FormControl>>,
            std::less<>>
-      m_ControlLists;
-  UnownedPtr<NotifierIface> m_pFormNotify;
+      control_lists_;
+  UnownedPtr<NotifierIface> form_notify_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_INTERACTIVEFORM_H_

@@ -15,26 +15,27 @@
 #include "core/fpdfdoc/cpdf_formcontrol.h"
 
 CPDF_ApSettings::CPDF_ApSettings(RetainPtr<CPDF_Dictionary> pDict)
-    : m_pDict(std::move(pDict)) {}
+    : dict_(std::move(pDict)) {}
 
 CPDF_ApSettings::CPDF_ApSettings(const CPDF_ApSettings& that) = default;
 
 CPDF_ApSettings::~CPDF_ApSettings() = default;
 
 bool CPDF_ApSettings::HasMKEntry(const ByteString& csEntry) const {
-  return m_pDict && m_pDict->KeyExist(csEntry);
+  return dict_ && dict_->KeyExist(csEntry);
 }
 
 int CPDF_ApSettings::GetRotation() const {
-  return m_pDict ? m_pDict->GetIntegerFor("R") : 0;
+  return dict_ ? dict_->GetIntegerFor("R") : 0;
 }
 
 CFX_Color::TypeAndARGB CPDF_ApSettings::GetColorARGB(
     const ByteString& csEntry) const {
-  if (!m_pDict)
+  if (!dict_) {
     return {CFX_Color::Type::kTransparent, 0};
+  }
 
-  RetainPtr<const CPDF_Array> pEntry = m_pDict->GetArrayFor(csEntry);
+  RetainPtr<const CPDF_Array> pEntry = dict_->GetArrayFor(csEntry);
   if (!pEntry)
     return {CFX_Color::Type::kTransparent, 0};
 
@@ -65,18 +66,20 @@ CFX_Color::TypeAndARGB CPDF_ApSettings::GetColorARGB(
 float CPDF_ApSettings::GetOriginalColorComponent(
     int index,
     const ByteString& csEntry) const {
-  if (!m_pDict)
+  if (!dict_) {
     return 0;
+  }
 
-  RetainPtr<const CPDF_Array> pEntry = m_pDict->GetArrayFor(csEntry);
+  RetainPtr<const CPDF_Array> pEntry = dict_->GetArrayFor(csEntry);
   return pEntry ? pEntry->GetFloatAt(index) : 0;
 }
 
 CFX_Color CPDF_ApSettings::GetOriginalColor(const ByteString& csEntry) const {
-  if (!m_pDict)
+  if (!dict_) {
     return CFX_Color();
+  }
 
-  RetainPtr<const CPDF_Array> pEntry = m_pDict->GetArrayFor(csEntry);
+  RetainPtr<const CPDF_Array> pEntry = dict_->GetArrayFor(csEntry);
   if (!pEntry)
     return CFX_Color();
 
@@ -97,19 +100,18 @@ CFX_Color CPDF_ApSettings::GetOriginalColor(const ByteString& csEntry) const {
 }
 
 WideString CPDF_ApSettings::GetCaption(const ByteString& csEntry) const {
-  return m_pDict ? m_pDict->GetUnicodeTextFor(csEntry) : WideString();
+  return dict_ ? dict_->GetUnicodeTextFor(csEntry) : WideString();
 }
 
 RetainPtr<CPDF_Stream> CPDF_ApSettings::GetIcon(
     const ByteString& csEntry) const {
-  return m_pDict ? m_pDict->GetMutableStreamFor(csEntry) : nullptr;
+  return dict_ ? dict_->GetMutableStreamFor(csEntry) : nullptr;
 }
 
 CPDF_IconFit CPDF_ApSettings::GetIconFit() const {
-  return CPDF_IconFit(m_pDict ? m_pDict->GetDictFor("IF") : nullptr);
+  return CPDF_IconFit(dict_ ? dict_->GetDictFor("IF") : nullptr);
 }
 
 int CPDF_ApSettings::GetTextPosition() const {
-  return m_pDict ? m_pDict->GetIntegerFor("TP", TEXTPOS_CAPTION)
-                 : TEXTPOS_CAPTION;
+  return dict_ ? dict_->GetIntegerFor("TP", TEXTPOS_CAPTION) : TEXTPOS_CAPTION;
 }

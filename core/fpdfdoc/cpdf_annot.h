@@ -80,8 +80,8 @@ class CPDF_Annot {
   Subtype GetSubtype() const;
   uint32_t GetFlags() const;
   CFX_FloatRect GetRect() const;
-  const CPDF_Dictionary* GetAnnotDict() const { return m_pAnnotDict.Get(); }
-  RetainPtr<CPDF_Dictionary> GetMutableAnnotDict() { return m_pAnnotDict; }
+  const CPDF_Dictionary* GetAnnotDict() const { return annot_dict_.Get(); }
+  RetainPtr<CPDF_Dictionary> GetMutableAnnotDict() { return annot_dict_; }
 
   bool IsHidden() const;
 
@@ -97,10 +97,10 @@ class CPDF_Annot {
   void ClearCachedAP();
   void DrawBorder(CFX_RenderDevice* pDevice, const CFX_Matrix* pUser2Device);
   CPDF_Form* GetAPForm(CPDF_Page* pPage, AppearanceMode mode);
-  void SetOpenState(bool bOpenState) { m_bOpenState = bOpenState; }
+  void SetOpenState(bool bOpenState) { open_state_ = bOpenState; }
   void SetPopupAnnotOpenState(bool bOpenState);
   std::optional<CFX_FloatRect> GetPopupAnnotRect() const;
-  void SetPopupAnnot(CPDF_Annot* pAnnot) { m_pPopupAnnot = pAnnot; }
+  void SetPopupAnnot(CPDF_Annot* pAnnot) { popup_annot_ = pAnnot; }
 
  private:
   void GenerateAPIfNeeded();
@@ -109,16 +109,16 @@ class CPDF_Annot {
 
   CFX_FloatRect RectForDrawing() const;
 
-  RetainPtr<CPDF_Dictionary> const m_pAnnotDict;
-  UnownedPtr<CPDF_Document> const m_pDocument;
-  std::map<RetainPtr<CPDF_Stream>, std::unique_ptr<CPDF_Form>> m_APMap;
+  RetainPtr<CPDF_Dictionary> const annot_dict_;
+  UnownedPtr<CPDF_Document> const document_;
+  std::map<RetainPtr<CPDF_Stream>, std::unique_ptr<CPDF_Form>> ap_map_;
   // If non-null, then this is not a popup annotation.
-  UnownedPtr<CPDF_Annot> m_pPopupAnnot;
-  const Subtype m_nSubtype;
-  const bool m_bIsTextMarkupAnnotation;
-  // |m_bOpenState| is only set for popup annotations.
-  bool m_bOpenState = false;
-  bool m_bHasGeneratedAP;
+  UnownedPtr<CPDF_Annot> popup_annot_;
+  const Subtype subtype_;
+  const bool is_text_markup_annotation_;
+  // |open_state_| is only set for popup annotations.
+  bool open_state_ = false;
+  bool has_generated_ap_;
 };
 
 // Get the AP in an annotation dict for a given appearance mode.

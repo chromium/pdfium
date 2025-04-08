@@ -415,8 +415,8 @@ RetainPtr<const CPDF_Array> LookupOldStyleNamedDest(CPDF_Document* pDoc,
 }  // namespace
 
 CPDF_NameTree::CPDF_NameTree(RetainPtr<CPDF_Dictionary> pRoot)
-    : m_pRoot(std::move(pRoot)) {
-  DCHECK(m_pRoot);
+    : root_(std::move(pRoot)) {
+  DCHECK(root_);
 }
 
 CPDF_NameTree::~CPDF_NameTree() = default;
@@ -489,7 +489,7 @@ RetainPtr<const CPDF_Array> CPDF_NameTree::LookupNamedDest(
 
 size_t CPDF_NameTree::GetCount() const {
   std::set<const CPDF_Dictionary*> seen;
-  return CountNamesInternal(m_pRoot.Get(), 0, seen);
+  return CountNamesInternal(root_.Get(), 0, seen);
 }
 
 bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
@@ -497,14 +497,14 @@ bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
   NodeToInsert node_to_insert;
   // Handle the corner case where the root node is empty. i.e. No kids and no
   // names. In which case, just insert into it and skip all the searches.
-  RetainPtr<CPDF_Array> pNames = m_pRoot->GetMutableArrayFor("Names");
-  if (pNames && pNames->IsEmpty() && !m_pRoot->GetArrayFor("Kids")) {
+  RetainPtr<CPDF_Array> pNames = root_->GetMutableArrayFor("Names");
+  if (pNames && pNames->IsEmpty() && !root_->GetArrayFor("Kids")) {
     node_to_insert.names = pNames;
   }
 
   if (!node_to_insert.names) {
     // Fail if the tree already contains this name or if the tree is too deep.
-    if (SearchNameNodeByName(m_pRoot, name, &node_to_insert)) {
+    if (SearchNameNodeByName(root_, name, &node_to_insert)) {
       return false;
     }
   }
@@ -515,7 +515,7 @@ bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
   // place `name` and `pObj`.
   if (!node_to_insert.names) {
     std::optional<IndexSearchResult> result =
-        SearchNameNodeByIndex(m_pRoot.Get(), 0);
+        SearchNameNodeByIndex(root_.Get(), 0);
     if (!result.has_value()) {
       // Give up if that fails too.
       return false;
@@ -536,7 +536,7 @@ bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
   // Expand the limits that the newly added name is under, if the name falls
   // outside of the limits of its leaf array or any arrays above it.
   std::vector<CPDF_Array*> all_limits =
-      GetNodeAncestorsLimits(m_pRoot, node_to_insert.names.Get());
+      GetNodeAncestorsLimits(root_, node_to_insert.names.Get());
   for (auto* pLimits : all_limits) {
     if (!pLimits)
       continue;
@@ -552,7 +552,7 @@ bool CPDF_NameTree::AddValueAndName(RetainPtr<CPDF_Object> pObj,
 
 bool CPDF_NameTree::DeleteValueAndName(size_t nIndex) {
   std::optional<IndexSearchResult> result =
-      SearchNameNodeByIndex(m_pRoot.Get(), nIndex);
+      SearchNameNodeByIndex(root_.Get(), nIndex);
   if (!result) {
     // Fail if the tree does not contain |nIndex|.
     return false;
@@ -564,8 +564,8 @@ bool CPDF_NameTree::DeleteValueAndName(size_t nIndex) {
   pFind->RemoveAt(result.value().index);
 
   // Delete empty nodes and update the limits of |pFind|'s ancestors as needed.
-  UpdateNodesAndLimitsUponDeletion(m_pRoot.Get(), pFind.Get(),
-                                   result.value().key, 0);
+  UpdateNodesAndLimitsUponDeletion(root_.Get(), pFind.Get(), result.value().key,
+                                   0);
   return true;
 }
 
@@ -573,7 +573,7 @@ RetainPtr<CPDF_Object> CPDF_NameTree::LookupValueAndName(
     size_t nIndex,
     WideString* csName) const {
   std::optional<IndexSearchResult> result =
-      SearchNameNodeByIndex(m_pRoot.Get(), nIndex);
+      SearchNameNodeByIndex(root_.Get(), nIndex);
   if (!result) {
     csName->clear();
     return nullptr;
@@ -585,7 +585,7 @@ RetainPtr<CPDF_Object> CPDF_NameTree::LookupValueAndName(
 
 RetainPtr<const CPDF_Object> CPDF_NameTree::LookupValue(
     const WideString& csName) const {
-  return SearchNameNodeByName(m_pRoot, csName, nullptr);
+  return SearchNameNodeByName(root_, csName, nullptr);
 }
 
 RetainPtr<const CPDF_Array> CPDF_NameTree::LookupNewStyleNamedDest(

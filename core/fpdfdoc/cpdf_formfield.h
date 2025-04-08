@@ -82,7 +82,7 @@ class CPDF_FormField {
       const ByteString& name);
 
   WideString GetFullName() const;
-  Type GetType() const { return m_Type; }
+  Type GetType() const { return type_; }
 
   RetainPtr<const CPDF_Object> GetFieldAttr(const ByteString& name) const;
   RetainPtr<const CPDF_Dictionary> GetFieldDict() const;
@@ -101,8 +101,8 @@ class CPDF_FormField {
   uint32_t GetFieldFlags() const;
   void SetFieldFlags(uint32_t dwFlags);
 
-  bool IsRequired() const { return m_bRequired; }
-  bool IsNoExport() const { return m_bNoExport; }
+  bool IsRequired() const { return required_; }
+  bool IsNoExport() const { return no_export_; }
 
   WideString GetValue() const;
   WideString GetDefaultValue() const;
@@ -173,14 +173,14 @@ class CPDF_FormField {
 
   const std::vector<UnownedPtr<CPDF_FormControl>>& GetControls() const;
 
-  CPDF_FormField::Type m_Type = kUnknown;
-  bool m_bRequired = false;
-  bool m_bNoExport = false;
-  bool m_bIsMultiSelectListBox = false;
-  bool m_bIsUnison = false;
-  bool m_bUseSelectedIndices = false;
-  UnownedPtr<CPDF_InteractiveForm> const m_pForm;
-  RetainPtr<CPDF_Dictionary> const m_pDict;
+  CPDF_FormField::Type type_ = kUnknown;
+  bool required_ = false;
+  bool no_export_ = false;
+  bool is_multi_select_list_box_ = false;
+  bool is_unison_ = false;
+  bool use_selected_indices_ = false;
+  UnownedPtr<CPDF_InteractiveForm> const form_;
+  RetainPtr<CPDF_Dictionary> const dict_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_FORMFIELD_H_

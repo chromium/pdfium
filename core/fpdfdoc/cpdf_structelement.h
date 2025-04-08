@@ -22,7 +22,7 @@ class CPDF_StructElement final : public Retainable {
  public:
   CONSTRUCT_VIA_MAKE_RETAIN;
 
-  ByteString GetType() const { return m_Type; }
+  ByteString GetType() const { return type_; }
   ByteString GetObjType() const;
   WideString GetAltText() const;
   WideString GetActualText() const;
@@ -38,9 +38,9 @@ class CPDF_StructElement final : public Retainable {
   bool UpdateKidIfElement(const CPDF_Dictionary* pDict,
                           CPDF_StructElement* pElement);
 
-  CPDF_StructElement* GetParent() const { return m_pParentElement; }
+  CPDF_StructElement* GetParent() const { return parent_element_; }
   void SetParent(CPDF_StructElement* pParentElement) {
-    m_pParentElement = pParentElement;
+    parent_element_ = pParentElement;
   }
 
  private:
@@ -51,12 +51,12 @@ class CPDF_StructElement final : public Retainable {
     Kid(const Kid& that);
     ~Kid();
 
-    Type m_Type = kInvalid;
-    uint32_t m_PageObjNum = 0;  // For {PageContent, StreamContent, Object}.
-    uint32_t m_RefObjNum = 0;   // For {StreamContent, Object} types.
-    uint32_t m_ContentId = 0;   // For {PageContent, StreamContent} types.
-    RetainPtr<CPDF_StructElement> m_pElement;  // For Element type.
-    RetainPtr<const CPDF_Dictionary> m_pDict;  // For Element type.
+    Type type_ = kInvalid;
+    uint32_t page_obj_num_ = 0;  // For {PageContent, StreamContent, Object}.
+    uint32_t ref_obj_num_ = 0;   // For {StreamContent, Object} types.
+    uint32_t content_id_ = 0;    // For {PageContent, StreamContent} types.
+    RetainPtr<CPDF_StructElement> element_;  // For Element type.
+    RetainPtr<const CPDF_Dictionary> dict_;  // For Element type.
   };
 
   CPDF_StructElement(const CPDF_StructTree* pTree,
@@ -68,11 +68,11 @@ class CPDF_StructElement final : public Retainable {
                RetainPtr<const CPDF_Object> pKidObj,
                Kid& kid);
 
-  UnownedPtr<const CPDF_StructTree> const m_pTree;
-  RetainPtr<const CPDF_Dictionary> const m_pDict;
-  UnownedPtr<CPDF_StructElement> m_pParentElement;
-  const ByteString m_Type;
-  std::vector<Kid> m_Kids;
+  UnownedPtr<const CPDF_StructTree> const tree_;
+  RetainPtr<const CPDF_Dictionary> const dict_;
+  UnownedPtr<CPDF_StructElement> parent_element_;
+  const ByteString type_;
+  std::vector<Kid> kids_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_STRUCTELEMENT_H_

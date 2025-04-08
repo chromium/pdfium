@@ -23,7 +23,7 @@ class CPDF_Icon final {
   ByteString GetImageAlias() const;
 
  private:
-  RetainPtr<const CPDF_Stream> const m_pStream;
+  RetainPtr<const CPDF_Stream> const stream_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_ICON_H_

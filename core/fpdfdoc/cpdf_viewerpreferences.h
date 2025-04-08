@@ -36,7 +36,7 @@ class CPDF_ViewerPreferences {
  private:
   RetainPtr<const CPDF_Dictionary> GetViewerPreferences() const;
 
-  UnownedPtr<const CPDF_Document> const m_pDoc;
+  UnownedPtr<const CPDF_Document> const doc_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_VIEWERPREFERENCES_H_

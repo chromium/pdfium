@@ -171,12 +171,12 @@ void GenerateAP(CPDF_Document* pDoc, CPDF_Dictionary* pAnnotDict) {
 }  // namespace
 
 CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
-    : m_pPage(pPage), m_pDocument(m_pPage->GetDocument()) {
-  RetainPtr<CPDF_Array> pAnnots = m_pPage->GetMutableAnnotsArray();
+    : page_(pPage), document_(page_->GetDocument()) {
+  RetainPtr<CPDF_Array> pAnnots = page_->GetMutableAnnotsArray();
   if (!pAnnots)
     return;
 
-  const CPDF_Dictionary* pRoot = m_pDocument->GetRoot();
+  const CPDF_Dictionary* pRoot = document_->GetRoot();
   RetainPtr<const CPDF_Dictionary> pAcroForm = pRoot->GetDictFor("AcroForm");
   bool bRegenerateAP =
       pAcroForm && pAcroForm->GetBooleanFor("NeedAppearances", false);
@@ -192,41 +192,41 @@ CPDF_AnnotList::CPDF_AnnotList(CPDF_Page* pPage)
       // provides its own Popup annotations.
       continue;
     }
-    pAnnots->ConvertToIndirectObjectAt(i, m_pDocument);
-    m_AnnotList.push_back(std::make_unique<CPDF_Annot>(pDict, m_pDocument));
+    pAnnots->ConvertToIndirectObjectAt(i, document_);
+    annot_list_.push_back(std::make_unique<CPDF_Annot>(pDict, document_));
     if (bRegenerateAP && subtype == "Widget" &&
         CPDF_InteractiveForm::IsUpdateAPEnabled() &&
         !pDict->GetDictFor(pdfium::annotation::kAP)) {
-      GenerateAP(m_pDocument, pDict.Get());
+      GenerateAP(document_, pDict.Get());
     }
   }
 
-  m_nAnnotCount = m_AnnotList.size();
-  for (size_t i = 0; i < m_nAnnotCount; ++i) {
+  annot_count_ = annot_list_.size();
+  for (size_t i = 0; i < annot_count_; ++i) {
     std::unique_ptr<CPDF_Annot> pPopupAnnot =
-        CreatePopupAnnot(m_pDocument, m_pPage, m_AnnotList[i].get());
+        CreatePopupAnnot(document_, page_, annot_list_[i].get());
     if (pPopupAnnot)
-      m_AnnotList.push_back(std::move(pPopupAnnot));
+      annot_list_.push_back(std::move(pPopupAnnot));
   }
 }
 
 CPDF_AnnotList::~CPDF_AnnotList() {
-  // Move the pop-up annotations out of |m_AnnotList| into |popups|. Then
-  // destroy |m_AnnotList| first. This prevents dangling pointers to the pop-up
+  // Move the pop-up annotations out of |annot_list_| into |popups|. Then
+  // destroy |annot_list_| first. This prevents dangling pointers to the pop-up
   // annotations.
-  size_t nPopupCount = m_AnnotList.size() - m_nAnnotCount;
+  size_t nPopupCount = annot_list_.size() - annot_count_;
   std::vector<std::unique_ptr<CPDF_Annot>> popups(nPopupCount);
   for (size_t i = 0; i < nPopupCount; ++i)
-    popups[i] = std::move(m_AnnotList[m_nAnnotCount + i]);
-  m_AnnotList.clear();
+    popups[i] = std::move(annot_list_[annot_count_ + i]);
+  annot_list_.clear();
 }
 
 bool CPDF_AnnotList::Contains(const CPDF_Annot* pAnnot) const {
-  auto it = std::find_if(m_AnnotList.begin(), m_AnnotList.end(),
+  auto it = std::find_if(annot_list_.begin(), annot_list_.end(),
                          [pAnnot](const std::unique_ptr<CPDF_Annot>& annot) {
                            return annot.get() == pAnnot;
                          });
-  return it != m_AnnotList.end();
+  return it != annot_list_.end();
 }
 
 void CPDF_AnnotList::DisplayPass(CPDF_RenderContext* pContext,
@@ -234,7 +234,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_RenderContext* pContext,
                                  const CFX_Matrix& mtMatrix,
                                  bool bWidgetPass) {
   CHECK(pContext);
-  for (const auto& pAnnot : m_AnnotList) {
+  for (const auto& pAnnot : annot_list_) {
     bool bWidget = pAnnot->GetSubtype() == CPDF_Annot::Subtype::WIDGET;
     if ((bWidgetPass && !bWidget) || (!bWidgetPass && bWidget))
       continue;
@@ -249,7 +249,7 @@ void CPDF_AnnotList::DisplayPass(CPDF_RenderContext* pContext,
     if (!bPrinting && (annot_flags & pdfium::annotation_flags::kNoView))
       continue;
 
-    pAnnot->DrawInContext(m_pPage, pContext, mtMatrix,
+    pAnnot->DrawInContext(page_, pContext, mtMatrix,
                           CPDF_Annot::AppearanceMode::kNormal);
   }
 }

@@ -45,12 +45,12 @@ class CPDF_AAction {
 
   bool ActionExist(AActionType eType) const;
   CPDF_Action GetAction(AActionType eType) const;
-  bool HasDict() const { return !!m_pDict; }
+  bool HasDict() const { return !!dict_; }
 
   static bool IsUserInput(AActionType type);
 
  private:
-  RetainPtr<const CPDF_Dictionary> const m_pDict;
+  RetainPtr<const CPDF_Dictionary> const dict_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_AACTION_H_

@@ -55,7 +55,7 @@ bool FindTagParamFromStart(CPDF_SimpleParser* parser,
 }  // namespace
 
 CPDF_DefaultAppearance::CPDF_DefaultAppearance(const ByteString& csDA)
-    : m_csDA(csDA) {}
+    : da_(csDA) {}
 
 CPDF_DefaultAppearance::CPDF_DefaultAppearance(
     const CPDF_DefaultAppearance& cDA) = default;
@@ -65,11 +65,12 @@ CPDF_DefaultAppearance::~CPDF_DefaultAppearance() = default;
 std::optional<ByteString> CPDF_DefaultAppearance::GetFont(
     float* fFontSize) const {
   *fFontSize = 0.0f;
-  if (m_csDA.IsEmpty())
+  if (da_.IsEmpty()) {
     return std::nullopt;
+  }
 
   ByteString csFontNameTag;
-  CPDF_SimpleParser syntax(m_csDA.AsStringView().unsigned_span());
+  CPDF_SimpleParser syntax(da_.AsStringView().unsigned_span());
   if (FindTagParamFromStart(&syntax, "Tf", 2)) {
     csFontNameTag = ByteString(syntax.GetWord());
     csFontNameTag.Delete(0, 1);
@@ -79,10 +80,11 @@ std::optional<ByteString> CPDF_DefaultAppearance::GetFont(
 }
 
 std::optional<CFX_Color> CPDF_DefaultAppearance::GetColor() const {
-  if (m_csDA.IsEmpty())
+  if (da_.IsEmpty()) {
     return std::nullopt;
+  }
 
-  CPDF_SimpleParser syntax(m_csDA.AsStringView().unsigned_span());
+  CPDF_SimpleParser syntax(da_.AsStringView().unsigned_span());
   if (FindTagParamFromStart(&syntax, "g", 1)) {
     float gray = StringToFloat(syntax.GetWord());
     return CFX_Color(CFX_Color::Type::kGray, gray);

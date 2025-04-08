@@ -25,7 +25,7 @@ class CPDF_Dest {
   static CPDF_Dest Create(CPDF_Document* pDoc,
                           RetainPtr<const CPDF_Object> pDest);
 
-  const CPDF_Array* GetArray() const { return m_pArray.Get(); }
+  const CPDF_Array* GetArray() const { return array_.Get(); }
 
   int GetDestPageIndex(CPDF_Document* pDoc) const;
   std::vector<float> GetScrollPositionArray() const;
@@ -43,7 +43,7 @@ class CPDF_Dest {
               float* pZoom) const;
 
  private:
-  RetainPtr<const CPDF_Array> const m_pArray;
+  RetainPtr<const CPDF_Array> const array_;
 };
 
 #endif  // CORE_FPDFDOC_CPDF_DEST_H_
